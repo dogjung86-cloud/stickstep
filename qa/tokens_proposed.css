@@ -1,0 +1,443 @@
+/* =========================================================================
+   PREMIUM TOKEN LAYER — extends the existing Toss-style base, no collisions.
+   All new vars are namespaced under --p-* / --ds-*; existing names are kept
+   as aliases so current markup keeps working while new components level up.
+   ========================================================================= */
+
+:root {
+  /* ---- 0. RE-DECLARE EXISTING BASE (unchanged values, kept for reference) ---- */
+  --blue: #3182F6;
+  --blue-press: #1B64DA;
+  --blue-tint: #EEF4FF;
+  --ink: #191F28;
+  --sub: #4E5968;
+  --line: #E7EAEE;
+  --surface: #F2F4F7;
+  --green: #04B45F;
+  --red: #F04452;
+  --bio: #12B886;
+
+  /* =======================================================================
+     1. DENSER NEUTRAL RAMP  (surface / border / text hierarchy)
+     The flat "old JS" look comes from ~4 grays doing 12 jobs. A real ramp
+     gives you elevation and text hierarchy without ever touching black.
+     ======================================================================= */
+  --p-neutral-0:  #FFFFFF;   /* pure card top */
+  --p-neutral-25: #FBFCFD;   /* raised card face */
+  --p-neutral-50: #F7F8FA;   /* app canvas (softer than #F2F4F7) */
+  --p-neutral-100:#F2F4F7;   /* = legacy surface, sunken fields */
+  --p-neutral-150:#EDF0F4;   /* hover on surface */
+  --p-neutral-200:#E7EAEE;   /* = legacy line, hairline border */
+  --p-neutral-300:#DCE0E6;   /* strong border / divider */
+  --p-neutral-400:#C4CAD2;   /* disabled stroke */
+  --p-neutral-500:#9AA3AD;   /* placeholder */
+  --p-neutral-600:#6B7684;   /* tertiary text */
+  --p-neutral-700:#4E5968;   /* = legacy sub, secondary text */
+  --p-neutral-800:#333D4B;   /* strong body */
+  --p-neutral-900:#191F28;   /* = legacy ink, primary text/heading */
+
+  /* semantic text roles (never use raw #191F28 in components again) */
+  --p-text-strong:   var(--p-neutral-900);
+  --p-text-primary:  var(--p-neutral-800);
+  --p-text-secondary:var(--p-neutral-700);
+  --p-text-tertiary: var(--p-neutral-600);
+  --p-text-muted:    var(--p-neutral-500);
+  --p-text-on-blue:  #FFFFFF;
+
+  --p-surface-canvas:var(--p-neutral-50);
+  --p-surface-sunken:var(--p-neutral-100);
+  --p-surface-card:  var(--p-neutral-0);
+  --p-surface-raised:var(--p-neutral-25);
+
+  --p-border:        var(--p-neutral-200);
+  --p-border-strong: var(--p-neutral-300);
+  --p-border-subtle: #EEF1F5;
+
+  /* brand tints, expanded so blue can breathe at multiple intensities */
+  --p-blue-50:  #F4F8FF;
+  --p-blue-100: #EEF4FF;   /* = legacy tint */
+  --p-blue-200: #D8E7FE;
+  --p-blue-400: #6BA4F9;
+  --p-blue-500: #3182F6;   /* = legacy blue */
+  --p-blue-600: #1B64DA;   /* = legacy press */
+  --p-blue-700: #1957BE;
+
+  /* =======================================================================
+     2. MULTI-LAYER SHADOW SCALE  (ambient + key, per component)
+     A single "0 2px 4px rgba(0,0,0,.1)" is THE tell of old JS UI. Real depth
+     = a soft wide ambient shadow (light bounce) + a tighter darker key
+     shadow (direct light) + a hairline ring so edges read on white-on-white.
+     Tinted slightly blue-cool, never pure black (pure black = muddy/cheap).
+     ======================================================================= */
+  --p-shadow-color: 214 32% 20%;              /* cool ink, as HSL channels */
+  --p-ring: 0 0 0 1px rgba(23, 31, 40, 0.04); /* knockout hairline */
+
+  /* resting card: barely-there, just lifts off canvas */
+  --p-elev-card:
+    var(--p-ring),
+    0 1px 2px    hsl(var(--p-shadow-color) / 0.06),
+    0 4px 12px  -2px hsl(var(--p-shadow-color) / 0.05);
+
+  /* floating: dropdowns, popovers, hover-lifted cards */
+  --p-elev-float:
+    var(--p-ring),
+    0 2px 4px    hsl(var(--p-shadow-color) / 0.06),
+    0 8px 16px  -4px hsl(var(--p-shadow-color) / 0.08),
+    0 16px 32px -8px hsl(var(--p-shadow-color) / 0.06);
+
+  /* button: crisp contact shadow + soft base, small so it feels tactile */
+  --p-elev-button:
+    0 1px 1px  hsl(var(--p-shadow-color) / 0.10),
+    0 2px 6px -1px hsl(var(--p-shadow-color) / 0.14);
+
+  /* primary blue button: colored ambient glow reads as "energized" */
+  --p-elev-button-blue:
+    0 1px 1px  rgba(20, 60, 130, 0.24),
+    0 4px 12px -2px rgba(49, 130, 246, 0.40);
+
+  /* medallion: pronounced, sculpted — like a physical coin/badge */
+  --p-elev-medallion:
+    var(--p-ring),
+    0 2px 4px    hsl(var(--p-shadow-color) / 0.10),
+    0 10px 20px -4px hsl(var(--p-shadow-color) / 0.14),
+    0 24px 48px -12px hsl(var(--p-shadow-color) / 0.18);
+
+  /* bottom sheet / modal: heavy diffuse lift from the page */
+  --p-elev-sheet:
+    0 -1px 0 0 hsl(var(--p-shadow-color) / 0.04),
+    0 -8px 24px -8px hsl(var(--p-shadow-color) / 0.10),
+    0 -24px 64px -16px hsl(var(--p-shadow-color) / 0.14);
+
+  /* inset for pressed / sunken fields */
+  --p-elev-inset:
+    inset 0 1px 2px hsl(var(--p-shadow-color) / 0.08),
+    inset 0 0 0 1px rgba(23, 31, 40, 0.03);
+
+  /* focus ring — soft blue halo, not a hard 2px outline */
+  --p-focus-ring:
+    0 0 0 3px rgba(49, 130, 246, 0.16),
+    0 0 0 1px rgba(49, 130, 246, 0.55);
+
+  /* =======================================================================
+     3. REFINED GRADIENTS  (2–3 stops, subtle — light rakes across a surface)
+     Old JS gradients were 45deg blue→dark, high contrast, "web 2.0". Premium
+     gradients are near-tonal: top slightly lighter, a hair of hue shift, so
+     the surface just catches light. Direction is vertical (overhead light).
+     ======================================================================= */
+  /* card face: whisper of top-light so flat white gets dimension */
+  --p-grad-card:
+    linear-gradient(180deg, #FFFFFF 0%, #FDFDFE 60%, #FAFBFC 100%);
+
+  /* blue primary button: tonal, energetic but not garish */
+  --p-grad-blue:
+    linear-gradient(180deg, #4A93F8 0%, #3182F6 52%, #2575EE 100%);
+  --p-grad-blue-hover:
+    linear-gradient(180deg, #3F8BF7 0%, #2A79EF 52%, #1F6BE0 100%);
+
+  /* unit banner: wide brand wash with a cool-to-warm drift for richness */
+  --p-grad-unit-banner:
+    linear-gradient(135deg, #3B87F7 0%, #3182F6 40%, #2C6FE6 100%);
+
+  /* bio accent banner/badge (생물 강조) */
+  --p-grad-bio:
+    linear-gradient(135deg, #22C58E 0%, #12B886 55%, #0BA378 100%);
+
+  /* medallion: radial highlight top-left + tonal blue body = coined metal */
+  --p-grad-medallion:
+    radial-gradient(120% 120% at 30% 22%,
+      rgba(255,255,255,0.85) 0%,
+      rgba(255,255,255,0.18) 24%,
+      rgba(255,255,255,0) 46%),
+    linear-gradient(160deg, #5A9CF9 0%, #3182F6 48%, #1F6BE0 100%);
+
+  /* gold medallion variant for "earned" states */
+  --p-grad-medallion-gold:
+    radial-gradient(120% 120% at 30% 22%,
+      rgba(255,255,255,0.9) 0%,
+      rgba(255,255,255,0.15) 26%,
+      rgba(255,255,255,0) 48%),
+    linear-gradient(160deg, #FFD873 0%, #F5A623 50%, #E0891A 100%);
+
+  /* subtle sheen for glass headers */
+  --p-grad-sheen:
+    linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%);
+
+  /* =======================================================================
+     4. GLASS SURFACE  (translucent + blur + inner-highlight border)
+     The premium "frosted" look: a semi-opaque fill, backdrop blur+saturate
+     (saturate is the secret — keeps color underneath vivid), and a double
+     border: outer hairline + inset white top-highlight for the "lit rim".
+     ======================================================================= */
+  --p-glass-fill:        rgba(255, 255, 255, 0.62);
+  --p-glass-fill-strong: rgba(255, 255, 255, 0.78);
+  --p-glass-blur:        saturate(180%) blur(20px);
+  --p-glass-border:      rgba(255, 255, 255, 0.55);
+  --p-glass-highlight:   inset 0 1px 0 0 rgba(255, 255, 255, 0.65);
+  --p-glass-shadow:
+    var(--p-glass-highlight),
+    0 1px 1px rgba(23, 31, 40, 0.04),
+    0 8px 24px -6px hsl(var(--p-shadow-color) / 0.12);
+
+  /* dark-on-color glass, e.g. floating pill over an image/banner */
+  --p-glass-fill-dark:   rgba(23, 31, 40, 0.28);
+  --p-glass-border-dark: rgba(255, 255, 255, 0.22);
+
+  /* =======================================================================
+     5. RADIUS SCALE  (refined — nested corners stay concentric)
+     ======================================================================= */
+  --p-radius-xs:   6px;   /* chips, tags */
+  --p-radius-sm:   10px;  /* inputs, small buttons */
+  --p-radius-md:   14px;  /* buttons, list rows */
+  --p-radius-lg:   18px;  /* cards */
+  --p-radius-xl:   24px;  /* feature cards, banners */
+  --p-radius-2xl:  32px;  /* sheets, hero */
+  --p-radius-pill: 999px;
+  --p-radius-round:50%;
+
+  /* =======================================================================
+     6. TYPOGRAPHY SCALE  (tightened tracking + optical line-height)
+     Old JS = one font-weight, default tracking, 1.5 everywhere. Premium =
+     a real type scale, negative tracking on display sizes, weights that
+     step cleanly. Uses the Toss-house stack.
+     ======================================================================= */
+  --p-font-sans: "Pretendard", "Toss Product Sans", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo",
+    "Malgun Gothic", system-ui, sans-serif;
+  --p-font-num:  "Toss Face", "Pretendard", var(--p-font-sans); /* tabular */
+
+  --p-weight-regular: 400;
+  --p-weight-medium:  500;
+  --p-weight-semibold:600;
+  --p-weight-bold:    700;
+
+  /* size / line-height / tracking triplets */
+  --p-display:      700 34px/1.24 var(--p-font-sans);
+  --p-title-1:      700 28px/1.30 var(--p-font-sans);
+  --p-title-2:      600 22px/1.36 var(--p-font-sans);
+  --p-title-3:      600 18px/1.44 var(--p-font-sans);
+  --p-body:         400 16px/1.60 var(--p-font-sans);
+  --p-body-strong:  600 16px/1.55 var(--p-font-sans);
+  --p-label:        500 14px/1.50 var(--p-font-sans);
+  --p-caption:      400 13px/1.46 var(--p-font-sans);
+  --p-micro:        500 11px/1.40 var(--p-font-sans);
+
+  --p-track-display: -0.02em;   /* tighten big text */
+  --p-track-title:   -0.015em;
+  --p-track-body:    -0.003em;
+  --p-track-caps:     0.02em;   /* loosen small caps/labels */
+
+  /* =======================================================================
+     7. MOTION TOKENS  (durations + a real easing library + springs)
+     "ease" / 0.2s everywhere is the flattest motion tell. Premium motion has
+     a small duration scale and distinct curves: a decelerate for entrances,
+     an accelerate for exits, an anticipate-overshoot spring for delight,
+     and a snappy standard. Springs are expressed as cubic-beziers so they
+     work on plain CSS transitions.
+     ======================================================================= */
+  --p-dur-instant: 90ms;
+  --p-dur-fast:    140ms;
+  --p-dur-snap:    200ms;
+  --p-dur-base:    280ms;
+  --p-dur-slow:    420ms;
+  --p-dur-slower:  640ms;
+
+  --p-ease-standard:  cubic-bezier(0.20, 0.00, 0.00, 1.00);  /* Toss-y decel */
+  --p-ease-out:       cubic-bezier(0.16, 1.00, 0.30, 1.00);  /* strong out */
+  --p-ease-in:        cubic-bezier(0.55, 0.00, 0.85, 0.15);  /* exits */
+  --p-ease-in-out:    cubic-bezier(0.65, 0.00, 0.35, 1.00);
+  --p-spring-soft:    cubic-bezier(0.34, 1.26, 0.64, 1.00);  /* gentle overshoot */
+  --p-spring-bounce:  cubic-bezier(0.34, 1.56, 0.50, 1.00);  /* playful pop */
+  --p-spring-anticip: cubic-bezier(0.36, 0.00, 0.10, 1.10);  /* wind-up */
+
+  /* composed transition presets */
+  --p-t-color:    color var(--p-dur-fast) var(--p-ease-standard),
+                  background-color var(--p-dur-fast) var(--p-ease-standard),
+                  border-color var(--p-dur-fast) var(--p-ease-standard);
+  --p-t-transform:transform var(--p-dur-snap) var(--p-spring-soft);
+  --p-t-elevate:  transform var(--p-dur-base) var(--p-ease-out),
+                  box-shadow var(--p-dur-base) var(--p-ease-out);
+}
+
+/* =========================================================================
+   UTILITY CLASSES  (small set — do the heavy lifting, opt-in per component)
+   ========================================================================= */
+
+/* ---- surfaces & elevation ---- */
+.p-card {
+  background: var(--p-grad-card);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-elev-card);
+  color: var(--p-text-primary);
+  transition: var(--p-t-elevate);
+}
+.p-card--raised   { box-shadow: var(--p-elev-float); }
+.p-card--hoverable:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--p-elev-float);
+}
+
+/* ---- glass ---- */
+.p-glass {
+  background: var(--p-glass-fill);
+  -webkit-backdrop-filter: var(--p-glass-blur);
+  backdrop-filter: var(--p-glass-blur);
+  border: 1px solid var(--p-glass-border);
+  border-radius: var(--p-radius-lg);
+  box-shadow: var(--p-glass-shadow);
+}
+.p-glass--strong { background: var(--p-glass-fill-strong); }
+.p-glass--dark {
+  background: var(--p-glass-fill-dark);
+  border-color: var(--p-glass-border-dark);
+  color: #fff;
+}
+
+/* ---- buttons ---- */
+.p-btn {
+  font: var(--p-label);
+  letter-spacing: var(--p-track-body);
+  padding: 12px 18px;
+  border: 0;
+  border-radius: var(--p-radius-md);
+  cursor: pointer;
+  color: var(--p-text-primary);
+  background: var(--p-surface-card);
+  box-shadow: var(--p-elev-button);
+  transition: var(--p-t-elevate), var(--p-t-color);
+  will-change: transform;
+}
+.p-btn:hover  { transform: translateY(-1px); }
+.p-btn:active { transform: translateY(0) scale(0.97); box-shadow: var(--p-elev-inset); }
+.p-btn:focus-visible { outline: 0; box-shadow: var(--p-focus-ring), var(--p-elev-button); }
+
+.p-btn--primary {
+  color: var(--p-text-on-blue);
+  background: var(--p-grad-blue);
+  box-shadow: var(--p-elev-button-blue);
+}
+.p-btn--primary:hover  { background: var(--p-grad-blue-hover); }
+.p-btn--primary:active { transform: translateY(0) scale(0.97);
+                         box-shadow: var(--p-elev-button-blue), var(--p-elev-inset); }
+
+/* ---- unit banner ---- */
+.p-unit-banner {
+  background: var(--p-grad-unit-banner);
+  color: #fff;
+  border-radius: var(--p-radius-xl);
+  padding: 24px;
+  box-shadow: var(--p-elev-float);
+  position: relative;
+  overflow: hidden;
+}
+.p-unit-banner::before {   /* top sheen */
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 55%;
+  background: var(--p-grad-sheen); pointer-events: none;
+}
+.p-unit-banner--bio { background: var(--p-grad-bio); }
+
+/* ---- medallion ---- */
+.p-medallion {
+  width: 88px; height: 88px;
+  border-radius: var(--p-radius-round);
+  background: var(--p-grad-medallion);
+  box-shadow: var(--p-elev-medallion);
+  display: grid; place-items: center;
+  color: #fff;
+  position: relative;
+  transition: var(--p-t-transform);
+}
+.p-medallion::after {   /* inner rim highlight */
+  content: ""; position: absolute; inset: 4px;
+  border-radius: var(--p-radius-round);
+  box-shadow: inset 0 2px 3px rgba(255,255,255,0.55),
+              inset 0 -3px 6px rgba(20,60,130,0.35);
+  pointer-events: none;
+}
+.p-medallion--gold  { background: var(--p-grad-medallion-gold); color: #7A4A05; }
+.p-medallion:hover  { transform: scale(1.04) rotate(-1.5deg); }
+
+/* ---- micro-interaction presets ---- */
+.p-press      { transition: var(--p-t-transform); }
+.p-press:active { transform: scale(0.96); }
+
+.p-lift       { transition: var(--p-t-elevate); }
+.p-lift:hover { transform: translateY(-3px); box-shadow: var(--p-elev-float); }
+
+.p-tap        { transition: transform var(--p-dur-fast) var(--p-spring-bounce); }
+.p-tap:active { transform: scale(0.92); }
+
+/* ---- text roles ---- */
+.p-t-display  { font: var(--p-display);  letter-spacing: var(--p-track-display); color: var(--p-text-strong); }
+.p-t-title-1  { font: var(--p-title-1);  letter-spacing: var(--p-track-title);   color: var(--p-text-strong); }
+.p-t-title-2  { font: var(--p-title-2);  letter-spacing: var(--p-track-title);   color: var(--p-text-strong); }
+.p-t-title-3  { font: var(--p-title-3);  letter-spacing: var(--p-track-title);   color: var(--p-text-primary); }
+.p-t-body     { font: var(--p-body);     letter-spacing: var(--p-track-body);    color: var(--p-text-primary); }
+.p-t-label    { font: var(--p-label);    letter-spacing: var(--p-track-body);    color: var(--p-text-secondary); }
+.p-t-caption  { font: var(--p-caption);  color: var(--p-text-tertiary); }
+.p-t-num      { font-family: var(--p-font-num); font-variant-numeric: tabular-nums; }
+
+/* ---- sunken field ---- */
+.p-field {
+  background: var(--p-surface-sunken);
+  border: 1px solid transparent;
+  border-radius: var(--p-radius-sm);
+  padding: 12px 14px;
+  font: var(--p-body);
+  color: var(--p-text-primary);
+  box-shadow: var(--p-elev-inset);
+  transition: var(--p-t-color), box-shadow var(--p-dur-fast) var(--p-ease-standard);
+}
+.p-field:focus-visible {
+  outline: 0; background: var(--p-surface-card);
+  border-color: var(--p-blue-400);
+  box-shadow: var(--p-focus-ring);
+}
+
+/* ---- bottom sheet ---- */
+.p-sheet {
+  background: var(--p-surface-card);
+  border-radius: var(--p-radius-2xl) var(--p-radius-2xl) 0 0;
+  box-shadow: var(--p-elev-sheet);
+  padding: 8px 20px 24px;
+}
+.p-sheet::before {   /* grab handle */
+  content: ""; display: block; width: 40px; height: 4px; margin: 8px auto 16px;
+  border-radius: var(--p-radius-pill); background: var(--p-neutral-300);
+}
+
+/* =========================================================================
+   ACCESSIBILITY & DARK MODE HOOKS
+   ========================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .p-card, .p-btn, .p-medallion, .p-press, .p-lift, .p-tap, .p-field,
+  .p-card--hoverable, .p-medallion:hover {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+  }
+  .p-card--hoverable:hover, .p-lift:hover, .p-btn:hover,
+  .p-medallion:hover { transform: none !important; }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --p-neutral-0:  #1B222C;
+    --p-neutral-25: #1E2630;
+    --p-neutral-50: #14181F;
+    --p-neutral-100:#20272F;
+    --p-neutral-150:#262E38;
+    --p-neutral-200:#2C3540;
+    --p-neutral-300:#3A4552;
+    --p-neutral-500:#7A8595;
+    --p-neutral-600:#9AA5B2;
+    --p-neutral-700:#B0BAC6;
+    --p-neutral-800:#D4DAE1;
+    --p-neutral-900:#EEF1F5;
+    --p-shadow-color: 214 40% 3%;
+    --p-glass-fill:        rgba(30, 38, 48, 0.55);
+    --p-glass-fill-strong: rgba(30, 38, 48, 0.74);
+    --p-glass-border:      rgba(255, 255, 255, 0.10);
+    --p-glass-highlight:   inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+    --p-grad-card: linear-gradient(180deg, #1E2630 0%, #1B222C 100%);
+    --p-ring: 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+}

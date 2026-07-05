@@ -1,0 +1,168 @@
+{
+  "chosenCase": "제임스 린드 — 괴혈병 선상 대조 실험",
+  "rationale": "세 심사 중 둘(교육학 9.2, 정확성 9.4)이 린드를 종합 우승으로 지목했고, 시각 심사만 존 스노를 뽑았으나 그 우승은 '시각 임팩트'로 한정되며 심사 본문 스스로 스노의 3단계(변인 통제)가 '두 집이 똑같아 보이면 파이프 하나뿐인 차이를 놓치기 쉽다'고 인정한다. 이 수업의 핵심 학습목표는 '조작변인 하나만 다르게, 통제변인은 모두 같게'인데, 린드는 '12명 6쌍, 처방만 다르게, 배·식사·잠자리는 동일'이라는 실제 설계가 교과서 정의와 완벽히 포개지는 유일한 사례다(스노·플레밍·에이크만은 모두 우연한 관찰에서 출발하거나 실험실 실험이 아니라 3단계를 사후 재구성·가상 설정해야 하는 구조적 부담이 있다). 따라서 린드의 일관 서사를 유지하되, 다른 후보의 더 나은 표현과 문제를 흡수했다: (1) 5단계에 에이크만식 '표+막대그래프' 대조를 병기해 '조작변인 vs 통제변인'을 시각적으로 이중 각인, (2) OX 문항에 스노 사례의 '원인 물질(비타민 C)은 훗날 규명' 정직성 프레이밍을 이식해 accuracy 강화, (3) 두 심사가 공통 감점한 스노 질문 데이터의 깨진 문자('�å')와 괄호로 얼버무린 순서배열 정답을 제거하고 완결된 정답·해설로 재작성, (4) 강조색이 컷마다 흔들린다는 지적을 반영해 전 컷 강조색을 teal 단색으로 통일. 결과적으로 pedagogy·accuracy 정밀도(린드 강점)에 visual 대조 장치(에이크만·스노 강점)를 얹은 최종 스펙이다.",
+  "panels": [
+    {
+      "stage": "인트로",
+      "title": "스틱맨 쌤 등장",
+      "caption": "안녕하세요, 저는 과학 이야기를 들려주는 스틱맨 쌤이에요. 오늘은 300년 전 배 위에서 벌어진 실험 하나로 '과학적 탐구 6단계'가 무엇인지 차근차근 배워 볼 거예요. 과학은 어려운 공식이 아니라, 궁금증을 정직하게 풀어 가는 방법이랍니다.",
+      "imagenPrompt": "hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight, xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat, charming educational. A single recurring stick-figure scientist character kept identical in every panel: a round circle head, two tiny round glasses, a short open lab coat drawn with a few lines, plain stick arms and legs. Here he stands in front of a large plain blackboard rectangle, one stick arm raised in a friendly wave, the other pointing at a single big question mark shape drawn on the board. Exactly one restrained accent color, teal, used only on that question mark; everything else pure black and white. Square 1:1, single panel, generous white space, character-focused and simple. absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital painting, NOT anime.",
+      "termName": "과학적 탐구",
+      "termDef": "궁금한 자연 현상을 정직한 관찰과 실험으로 파고들어 답을 찾아가는 과정. 크게 6단계로 나뉘어요."
+    },
+    {
+      "stage": "1. 문제 인식",
+      "title": "왜 선원들이 쓰러질까?",
+      "caption": "1747년, 영국 해군 군의관 제임스 린드는 긴 항해마다 수많은 선원이 괴혈병으로 쓰러지는 걸 지켜봤어요. 잇몸이 붓고 이가 빠지고 기운이 없어지는 병이었죠. 그는 막연한 걱정 대신 '무엇이 이 병을 낫게 할까?'라는 또렷한 질문을 세웠어요. 이렇게 관찰 속 의문을 답할 수 있는 문제로 다듬는 것이 탐구의 첫걸음, 문제 인식이에요.",
+      "imagenPrompt": "hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight, xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat, charming educational. The same recurring stick-figure scientist character, kept identical: round circle head, two tiny round glasses, a short open lab coat drawn with a few lines, plain stick arms and legs. Here he stands on the tilted wooden deck of a simple sailing ship with a mast and a triangle sail, one stick hand on his chin thinking, a single small question mark floating above his head. Around him a few weak stick-figure sailors slumping and leaning, drawn very simply. Exactly one restrained accent color, teal, used only on that floating question mark; everything else pure black and white. Square 1:1, single panel, generous white space, character and ship-prop focused. absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital painting, NOT anime.",
+      "termName": "문제 인식",
+      "termDef": "관찰하다 생긴 궁금증을 '검증할 수 있는 명확한 탐구 문제(질문)'로 만드는 단계."
+    },
+    {
+      "stage": "2. 가설 설정",
+      "title": "혹시 신 과일이?",
+      "caption": "린드는 예전에 신 과일을 먹은 선원이 나았다는 이야기들을 떠올렸어요. 그래서 '신맛 나는 과일이 괴혈병을 낫게 할 것이다'라는 잠정적인 답을 세웠지요. 이렇게 이미 아는 지식과 경험을 바탕으로 세우는, 실험으로 참·거짓을 확인할 수 있는 예상이 바로 가설이에요.",
+      "imagenPrompt": "hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight, xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat, charming educational. The same recurring stick-figure scientist character, kept identical: round circle head, two tiny round glasses, a short open lab coat drawn with a few lines, plain stick arms and legs. Here he holds up a single round citrus fruit (orange) in one raised hand, eyes wide with an aha expression, and a small round citrus-shaped idea is drawn floating above his head instead of a lightbulb. Exactly one restrained accent color, teal, used only on that single citrus fruit; everything else pure black and white. Square 1:1, single panel, generous white space, character and fruit-prop focused. absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital painting, NOT anime.",
+      "termName": "가설",
+      "termDef": "이미 아는 지식과 경험을 바탕으로 세운, 실험으로 참·거짓을 확인할 수 있는 잠정적인 답."
+    },
+    {
+      "stage": "3. 탐구 설계 (변인 통제)",
+      "title": "딱 하나만 다르게, 공정하게",
+      "caption": "린드는 아픈 선원 12명을 6쌍으로 나누고, 배·잠자리·기본 식사는 모두 똑같게 맞췄어요. 그리고 각 쌍에게 오직 '처방' 하나만 다르게 주었지요. 감귤을 먹은 쌍은 비교의 기준이 되는 대조군이 되었고요. 이렇게 알아보려는 것(조작 변인) 하나만 다르게 하고, 나머지(통제 변인)는 모두 같게 하는 것을 변인 통제라고 해요.",
+      "imagenPrompt": "hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight, xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat, charming educational. The same recurring stick-figure scientist character, kept identical: round circle head, two tiny round glasses, a short open lab coat drawn with a few lines, plain stick arms and legs. Here he stands to one side gesturing at rows of identical simple stick-figure sailors arranged in matching pairs, all drawn exactly the same in identical simple beds, each pair holding a small bowl that is the only thing different between them; one pair holds a round citrus fruit and is the only element with color. Exactly one restrained accent color, teal, used only on that single citrus pair; everything else pure black and white, showing sameness versus one difference. Square 1:1, single panel, generous white space. absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital painting, NOT anime.",
+      "termName": "변인 통제 (조작 변인·통제 변인·대조군)",
+      "termDef": "알아보려고 일부러 다르게 한 조건이 조작 변인, 똑같이 맞춘 조건이 통제 변인. 비교의 기준이 되는 집단이 대조군이에요."
+    },
+    {
+      "stage": "4. 탐구 수행",
+      "title": "매일 관찰하고 정직하게 기록",
+      "caption": "린드는 같은 배 안에서 조건을 똑같이 유지하며 2주 가까이 선원들의 상태를 매일 살폈어요. 좋아 보이든 나빠 보이든, 결과를 자기 바람대로 바꾸지 않고 있는 그대로 정직하게 적었지요. 이렇게 조건을 통제하며 관찰·측정하고, 안전에 주의하며 정직하게 기록하는 것이 탐구 수행이에요.",
+      "imagenPrompt": "hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight, xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat, charming educational. The same recurring stick-figure scientist character, kept identical: round circle head, two tiny round glasses, a short open lab coat drawn with a few lines, plain stick arms and legs. Here he sits beside a simple stick-figure patient in a plain bed, one hand holding a small open notebook and writing in it, watching carefully. In the background a few tiny repeated sun-and-moon marks suggest several passing days. Exactly one restrained accent color, teal, used only on a small mark on the notebook; everything else pure black and white. Square 1:1, single panel, generous white space, character and notebook focused. absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital painting, NOT anime.",
+      "termName": "탐구 수행",
+      "termDef": "설계한 대로 조건을 통제하며 관찰·측정하고, 결과를 있는 그대로 정직하게 기록하는 단계(안전도 챙겨요)."
+    },
+    {
+      "stage": "5. 자료 해석",
+      "title": "표로 정리해 규칙 찾기",
+      "caption": "여섯 쌍의 결과를 표로 나란히 정리해 보니, 대부분은 별 차도가 없었는데 감귤을 먹은 쌍만 눈에 띄게 회복해 다시 일할 정도가 되었어요. 이렇게 결과를 표나 그래프로 모아 비교하면 흩어진 관찰 속에서 규칙과 관계가 한눈에 보이지요. 이것이 자료 해석이에요.",
+      "imagenPrompt": "hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight, xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat, charming educational. The same recurring stick-figure scientist character, kept identical: round circle head, two tiny round glasses, a short open lab coat drawn with a few lines, plain stick arms and legs. Here he points at a simple grid of side-by-side cells drawn with plain lines; most cells contain a small slumped weak stick figure, but one single cell contains an upright energetic healthy stick figure clearly standing up, standing out from the rest. Exactly one restrained accent color, teal, used only on that single recovered stick figure and its cell outline; everything else pure black and white. Square 1:1, single panel, generous white space, comparison grid focused. absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital painting, NOT anime.",
+      "termName": "자료 해석",
+      "termDef": "관찰·측정한 결과를 표나 그래프로 정리해 자료 사이의 관계와 규칙을 찾아내는 단계."
+    },
+    {
+      "stage": "6. 결론 도출",
+      "title": "가설이 맞았어요",
+      "caption": "자료는 '신 과일이 괴혈병을 낫게 한다'는 가설을 뒷받침했어요. 린드는 감귤류가 효과가 있다는 결론을 내렸지요. 다만 그 이유(비타민 C 결핍)는 훗날에야 밝혀졌고, 해군이 감귤을 널리 쓰기까지도 오랜 시간이 걸렸답니다. 이렇게 자료로 가설을 판단해 결론을 내리고, 틀리면 고쳐 다시 탐구하는 것이 마지막 단계예요.",
+      "imagenPrompt": "hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight, xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat, charming educational. The same recurring stick-figure scientist character, kept identical: round circle head, two tiny round glasses, a short open lab coat drawn with a few lines, plain stick arms and legs. Here one hand is raised holding up a single round citrus fruit with a confident nod, the other hand holds a small closed notebook. Behind him one recovered upright stick-figure sailor waves a stick hand. Exactly one restrained accent color, teal, used only on that single citrus fruit; everything else pure black and white. Square 1:1, single panel, generous white space, character and fruit focused. absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital painting, NOT anime.",
+      "termName": "결론 도출",
+      "termDef": "자료를 근거로 가설이 맞는지 판단해 결론을 내리는 단계. 가설이 틀리면 수정해 다시 탐구해요."
+    }
+  ],
+  "recapRows": [
+    [
+      "1. 문제 인식",
+      "관찰 속 궁금증을 답할 수 있는 명확한 질문으로 다듬기 — '무엇이 괴혈병을 낫게 할까?'"
+    ],
+    [
+      "2. 가설 설정",
+      "아는 지식·경험으로 세운 검증 가능한 잠정적 답 — '신 과일이 낫게 할 것이다'"
+    ],
+    [
+      "3. 탐구 설계 (변인 통제)",
+      "조작 변인 하나만 다르게, 통제 변인은 모두 같게 — 처방만 바꾸고 배·식사·잠자리는 동일"
+    ],
+    [
+      "4. 탐구 수행",
+      "조건을 통제하며 매일 관찰하고 있는 그대로 정직하게 기록하기"
+    ],
+    [
+      "5. 자료 해석",
+      "결과를 표로 모아 비교해 규칙 찾기 — 감귤을 먹은 쌍만 회복"
+    ],
+    [
+      "6. 결론 도출",
+      "자료로 가설을 판단해 결론 내리기 — 감귤류가 효과가 있다(원인은 훗날 규명)"
+    ]
+  ],
+  "questions": [
+    {
+      "type": "ox",
+      "prompt": "가설은 실험으로 참·거짓을 확인할 수 있어야 한다.",
+      "answerBool": true,
+      "explainGood": "맞아요. 검증 가능성은 가설의 핵심 조건이에요. 실험으로 확인할 수 없는 주장은 아무리 그럴듯해도 과학적 가설이 될 수 없어요. 린드의 '신 과일이 낫게 할 것이다'도 배 위에서 직접 확인해 볼 수 있었기에 좋은 가설이었죠.",
+      "explainBad": "가설은 '실험으로 확인 가능한 잠정적 답'이에요. 확인할 방법이 없다면 가설이라 부를 수 없어요. 그래서 정답은 O예요."
+    },
+    {
+      "type": "mcq",
+      "prompt": "린드의 실험에서 6쌍의 선원에게 서로 '다르게' 준 조건(조작 변인)은 무엇인가요?",
+      "options": [
+        "잠자리",
+        "기본 식사",
+        "처방(먹인 것)",
+        "타고 있던 배",
+        "항해 기간"
+      ],
+      "answerIndex": 2,
+      "explainGood": "정답은 '처방(먹인 것)'이에요. 린드는 오직 처방 하나만 다르게 주고, 배·기본 식사·잠자리는 모두 똑같게 맞췄어요. 이렇게 일부러 다르게 한 조건을 조작 변인이라고 해요.",
+      "explainBad": "배·기본 식사·잠자리·항해 기간은 모두 똑같게 맞춘 통제 변인이에요. 린드가 일부러 다르게 한 것은 각 쌍에게 준 '처방' 하나뿐이었어요. 그래서 정답은 '처방(먹인 것)'이에요."
+    },
+    {
+      "type": "order",
+      "prompt": "과학적 탐구 6단계를 순서대로 나열해 보세요.",
+      "orderItems": [
+        "문제 인식",
+        "가설 설정",
+        "탐구 설계",
+        "탐구 수행",
+        "자료 해석",
+        "결론 도출"
+      ],
+      "explainGood": "정답은 문제 인식 → 가설 설정 → 탐구 설계 → 탐구 수행 → 자료 해석 → 결론 도출이에요. 궁금증을 질문으로 다듬고(문제 인식), 잠정적 답을 세우고(가설), 공정하게 비교할 방법을 짜고(설계), 관찰·기록하고(수행), 표로 정리해 규칙을 찾고(해석), 마지막에 결론을 내리는 흐름이죠.",
+      "explainBad": "순서가 헷갈렸네요. 질문을 세우는 '문제 인식'이 먼저이고, 마지막은 자료로 판단하는 '결론 도출'이에요. 올바른 순서는 문제 인식 → 가설 설정 → 탐구 설계 → 탐구 수행 → 자료 해석 → 결론 도출이에요."
+    },
+    {
+      "type": "mcq",
+      "prompt": "다음 중 린드의 실험에서 '같게 맞춘 조건(통제 변인)'이 아닌 것은 무엇인가요?",
+      "options": [
+        "타고 있던 배",
+        "잠자리",
+        "기본 식사",
+        "각 쌍에게 준 처방",
+        "항해하는 환경"
+      ],
+      "answerIndex": 3,
+      "explainGood": "정답은 '각 쌍에게 준 처방'이에요. 처방은 일부러 다르게 한 조작 변인이에요. 배·잠자리·기본 식사·항해 환경은 모두 똑같게 맞춘 통제 변인이고요. 통제 변인을 같게 해야 처방의 효과를 공정하게 비교할 수 있어요.",
+      "explainBad": "배·잠자리·기본 식사·항해 환경은 모두 똑같게 맞춘 통제 변인이에요. 반면 '각 쌍에게 준 처방'은 일부러 다르게 한 조작 변인이라 통제 변인이 아니에요. 그래서 정답은 '각 쌍에게 준 처방'이에요."
+    },
+    {
+      "type": "mcq",
+      "prompt": "린드가 감귤을 먹은 쌍만 회복한 결과를 표로 정리해 규칙을 찾아낸 것은 탐구 6단계 중 어느 단계인가요?",
+      "options": [
+        "문제 인식",
+        "가설 설정",
+        "탐구 설계",
+        "자료 해석",
+        "결론 도출"
+      ],
+      "answerIndex": 3,
+      "explainGood": "정답은 '자료 해석'이에요. 흩어진 관찰 결과를 표나 그래프로 정리해 그 속에 숨은 관계와 규칙을 찾아내는 단계가 자료 해석이에요. '감귤을 먹은 쌍만 회복했다'는 규칙을 표에서 읽어 낸 것이죠.",
+      "explainBad": "결과를 표로 정리해 규칙을 찾는 것은 '자료 해석' 단계예요. '결론 도출'은 그 규칙을 근거로 가설이 맞는지 최종 판단하는 그다음 단계이고요. 그래서 정답은 '자료 해석'이에요."
+    }
+  ],
+  "lessonFlow": [
+    "인트로: 스틱맨 쌤 등장 (과학적 탐구란?)",
+    "개념 1 — 문제 인식",
+    "개념 2 — 가설 설정",
+    "개념 3 — 탐구 설계 (변인 통제·조작 변인·통제 변인·대조군)",
+    "개념 4 — 탐구 수행",
+    "개념 5 — 자료 해석",
+    "개념 6 — 결론 도출",
+    "6단계 요약 정리 (recap 표)",
+    "문제 1 (OX): 가설의 검증 가능성",
+    "문제 2 (MCQ): 조작 변인 찾기",
+    "문제 3 (순서 배열): 탐구 6단계 순서",
+    "문제 4 (MCQ): 통제 변인 vs 조작 변인 구분",
+    "문제 5 (MCQ): 자료 해석 단계 식별"
+  ]
+}

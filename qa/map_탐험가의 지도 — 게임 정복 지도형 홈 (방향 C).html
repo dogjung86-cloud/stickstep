@@ -1,0 +1,314 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#E7EBF0;display:flex;justify-content:center}</style></head><body><div class="atlas-root">
+  <style>
+    .atlas-root{
+      --blue:#3182F6; --blue-deep:#1B64DA; --ink:#191F28;
+      --paper:#F2F4F7; --green:#12B886;
+      --line:#D7DDE5; --muted:#8B95A1;
+      max-width:402px; margin:0 auto; position:relative;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+      color:var(--ink);
+      background:radial-gradient(120% 60% at 50% -10%, #FBFDFE 0%, #EEF3F6 55%, #E7EEF2 100%);
+      overflow:hidden;
+      -webkit-font-smoothing:antialiased;
+    }
+    .atlas-root *{box-sizing:border-box;}
+    .atlas-bg{position:absolute; inset:0; z-index:0; pointer-events:none;}
+    .atlas-scroll{position:relative; z-index:2; padding:0 0 108px;}
+
+    .topbar{position:relative; z-index:3; padding:16px 20px 8px; display:flex; align-items:center; justify-content:space-between;}
+    .brand{display:flex; align-items:center; gap:9px;}
+    .brand-mark{width:34px; height:34px; border-radius:11px; background:linear-gradient(145deg,#3B8BFF,#1B64DA);
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 5px 14px rgba(49,130,246,.38), inset 0 1px 0 rgba(255,255,255,.4);}
+    .brand-name{font-size:19px; font-weight:800; letter-spacing:-.5px;}
+    .brand-name b{color:var(--blue);}
+    .streak{display:flex; align-items:center; gap:5px; background:#fff; border:1px solid var(--line);
+      padding:6px 11px 6px 8px; border-radius:20px; font-size:13px; font-weight:700; color:var(--ink);
+      box-shadow:0 3px 10px rgba(25,31,40,.06);}
+
+    .banner{position:relative; z-index:3; margin:6px 16px 4px; border-radius:20px; overflow:hidden;
+      background:linear-gradient(135deg,#245BC4 0%,#3182F6 52%,#4B93FF 100%);
+      box-shadow:0 14px 30px -10px rgba(43,102,214,.55), inset 0 1px 0 rgba(255,255,255,.18);
+      color:#fff; padding:16px 18px 15px;}
+    .banner .compass-deco{position:absolute; right:-14px; top:-16px;}
+    .banner-kicker{font-size:11px; font-weight:800; letter-spacing:1.4px; color:#CFE0FF;
+      display:flex; align-items:center; gap:6px; margin-bottom:7px;}
+    .banner-kicker .dot{width:5px; height:5px; border-radius:50%; background:#9CC2FF;}
+    .banner-title{font-size:19px; font-weight:800; letter-spacing:-.4px; line-height:1.28; max-width:260px;}
+    .banner-foot{display:flex; align-items:center; gap:10px; margin-top:13px;}
+    .prog-track{flex:1; height:7px; border-radius:6px; background:rgba(255,255,255,.24); overflow:hidden;}
+    .prog-fill{width:33%; height:100%; border-radius:6px; background:linear-gradient(90deg,#BFE3FF,#fff); box-shadow:0 0 8px rgba(255,255,255,.6);}
+    .prog-label{font-size:12px; font-weight:800; color:#EAF2FF; white-space:nowrap;}
+
+    .mapwrap{position:relative; z-index:2; margin-top:2px;}
+    .map-svg{display:block; width:100%; height:auto;}
+
+    .node-labels{position:absolute; inset:0; z-index:3; pointer-events:none;}
+    .nlabel{position:absolute; transform:translate(-50%,0); text-align:center;}
+    .nlabel .tag{display:inline-block; font-size:13px; font-weight:800; letter-spacing:-.3px;
+      padding:5px 11px; border-radius:12px; background:#fff;
+      box-shadow:0 5px 14px rgba(25,31,40,.12); border:1px solid rgba(215,221,229,.9);
+      color:var(--ink); white-space:nowrap;}
+    .nlabel.locked .tag{background:#EEF1F4; color:#AEB6C0; box-shadow:0 3px 8px rgba(25,31,40,.05); border-color:#E4E8EC;}
+    .nlabel.current .tag{background:var(--blue); color:#fff; box-shadow:0 8px 18px rgba(49,130,246,.4); border:none;}
+    .nlabel .sub{display:block; margin-top:4px; font-size:10.5px; font-weight:700; color:var(--muted); letter-spacing:.2px;}
+    .nlabel.current .sub{color:var(--blue-deep);}
+
+    .cta-cue{position:absolute; z-index:4; transform:translate(-50%,0);
+      background:var(--ink); color:#fff; font-size:11px; font-weight:800;
+      padding:6px 12px; border-radius:20px; white-space:nowrap; box-shadow:0 8px 18px rgba(25,31,40,.3);}
+    .cta-cue::after{content:""; position:absolute; left:50%; bottom:-5px; transform:translateX(-50%) rotate(45deg);
+      width:10px; height:10px; background:var(--ink); border-radius:2px;}
+
+    .tabbar{position:absolute; left:0; right:0; bottom:0; z-index:6; max-width:402px; margin:0 auto;
+      background:rgba(255,255,255,.9); backdrop-filter:blur(14px); border-top:1px solid var(--line);
+      padding:9px 22px calc(9px + env(safe-area-inset-bottom)); display:flex; justify-content:space-between; align-items:center;}
+    .tab{display:flex; flex-direction:column; align-items:center; gap:3px; font-size:10.5px; font-weight:700; color:var(--muted);}
+    .tab.on{color:var(--blue);}
+    .tab .ic{width:24px; height:24px; display:flex; align-items:center; justify-content:center;}
+  </style>
+
+  <svg class="atlas-bg" viewBox="0 0 402 900" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="atlasSea" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#FBFDFE"/><stop offset="1" stop-color="#E9F0F4"/>
+      </linearGradient>
+      <radialGradient id="atlasLand" cx="50%" cy="42%" r="60%">
+        <stop offset="0" stop-color="#EAF4F1"/><stop offset="1" stop-color="#E2EDEF"/>
+      </radialGradient>
+    </defs>
+    <rect width="402" height="900" fill="url(#atlasSea)"/>
+
+    <g stroke="#CBD6DE" stroke-width="1" opacity=".38">
+      <line x1="0" y1="150" x2="402" y2="150"/><line x1="0" y1="300" x2="402" y2="300"/>
+      <line x1="0" y1="450" x2="402" y2="450"/><line x1="0" y1="600" x2="402" y2="600"/>
+      <line x1="0" y1="750" x2="402" y2="750"/>
+      <line x1="100" y1="0" x2="100" y2="900"/><line x1="200" y1="0" x2="200" y2="900"/>
+      <line x1="300" y1="0" x2="300" y2="900"/>
+    </g>
+    <g fill="#A9B6C0" font-family="-apple-system,sans-serif" font-size="8" font-weight="700" opacity=".5">
+      <text x="6" y="146">42°N</text><text x="6" y="296">41°N</text>
+      <text x="6" y="446">40°N</text><text x="6" y="596">39°N</text>
+    </g>
+
+    <g>
+      <path d="M30 560 C 60 480, 150 450, 210 480 C 280 514, 330 470, 372 520 C 380 640, 320 720, 240 740 C 150 764, 60 720, 34 640 Z"
+            fill="url(#atlasLand)" stroke="#B9D8CE" stroke-width="1.5" opacity=".9"/>
+      <path d="M60 570 C 100 510, 170 500, 220 522 C 275 546, 320 512, 350 552" fill="none" stroke="#C4DED5" stroke-width="1.2" opacity=".7"/>
+      <path d="M70 620 C 120 580, 200 585, 250 606 C 300 626, 330 600, 352 620" fill="none" stroke="#C4DED5" stroke-width="1.2" opacity=".6"/>
+      <path d="M80 672 C 140 646, 210 656, 260 668" fill="none" stroke="#C4DED5" stroke-width="1.2" opacity=".5"/>
+    </g>
+
+    <g fill="none" stroke="#C9DBEA" stroke-width="1.2" opacity=".55">
+      <path d="M40 180 C 100 140, 200 160, 260 130 C 320 104, 360 140, 384 118"/>
+      <path d="M30 230 C 110 196, 210 214, 280 190"/>
+      <path d="M60 120 C 130 92, 210 108, 300 84"/>
+    </g>
+
+    <g opacity=".35" fill="none" stroke="#C3CDD6" stroke-width="1.3">
+      <path d="M20 810 l40 -34 l30 26 l46 -40 l34 30 l50 -42 l40 34 l44 -30 l40 30"/>
+      <path d="M20 848 l52 -30 l40 24 l50 -34 l44 28 l52 -30 l44 24 l48 -26"/>
+    </g>
+
+    <g stroke="#B7C4CE" stroke-width="1" opacity=".4">
+      <path d="M330 250 l0 12 M324 256 l12 0"/>
+      <path d="M70 400 l0 12 M64 406 l12 0"/>
+      <path d="M300 700 l0 10 M295 705 l10 0"/>
+    </g>
+  </svg>
+
+  <div class="atlas-scroll">
+
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2 L14 9 L21 9 L15.5 13.5 L17.5 21 L12 16.5 L6.5 21 L8.5 13.5 L3 9 L10 9 Z" fill="#fff" opacity=".95"/>
+          </svg>
+        </div>
+        <div class="brand-name"><b>탐구</b></div>
+      </div>
+      <div class="streak">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2c1 3 4 4 4 8a4 4 0 1 1-8 0c0-2 1-3 2-4 0 2 1 2 2 3 .5-2-1-4 0-7Z" fill="#FF8A3D"/>
+        </svg>
+        <span>12일</span>
+      </div>
+    </div>
+
+    <div class="banner">
+      <svg class="compass-deco" width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="60" cy="60" r="42" stroke="#fff" stroke-opacity=".28" stroke-width="2"/>
+        <circle cx="60" cy="60" r="52" stroke="#fff" stroke-opacity=".14" stroke-width="1"/>
+        <g opacity=".85">
+          <path d="M60 26 L67 60 L60 55 L53 60 Z" fill="#fff"/>
+          <path d="M60 94 L53 60 L60 65 L67 60 Z" fill="#fff" fill-opacity=".45"/>
+        </g>
+        <circle cx="60" cy="60" r="3.5" fill="#fff"/>
+        <text x="60" y="20" fill="#fff" fill-opacity=".7" font-size="9" font-weight="800" text-anchor="middle" font-family="sans-serif">N</text>
+      </svg>
+      <div class="banner-kicker"><span class="dot"></span>대단원 I · 탐험 진행 중</div>
+      <div class="banner-title">과학과 인류의<br/>지속가능한 삶</div>
+      <div class="banner-foot">
+        <div class="prog-track"><div class="prog-fill"></div></div>
+        <div class="prog-label">2 / 6 정복</div>
+      </div>
+    </div>
+
+    <div class="mapwrap">
+      <svg class="map-svg" viewBox="0 0 402 560" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="atlasNodeDone" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#3B8BFF"/><stop offset="1" stop-color="#1B64DA"/>
+          </linearGradient>
+          <linearGradient id="atlasNodeCurrent" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#4B93FF"/><stop offset="1" stop-color="#2E74E8"/>
+          </linearGradient>
+          <linearGradient id="atlasNodeLock" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FDFEFE"/><stop offset="1" stop-color="#EDF1F4"/>
+          </linearGradient>
+          <radialGradient id="atlasPulse" cx="50%" cy="50%" r="50%">
+            <stop offset="0" stop-color="#3182F6" stop-opacity=".28"/>
+            <stop offset="1" stop-color="#3182F6" stop-opacity="0"/>
+          </radialGradient>
+          <filter id="atlasShadowStrong" x="-60%" y="-60%" width="220%" height="220%">
+            <feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#1B64DA" flood-opacity=".38"/>
+          </filter>
+          <filter id="atlasShadowSoft" x="-60%" y="-60%" width="220%" height="220%">
+            <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#7C8A99" flood-opacity=".28"/>
+          </filter>
+          <filter id="atlasFlagShadow" x="-60%" y="-60%" width="220%" height="220%">
+            <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1B64DA" flood-opacity=".4"/>
+          </filter>
+        </defs>
+
+        <path d="M300 60 C 240 95, 150 105, 110 150 C 70 195, 250 210, 300 255"
+              fill="none" stroke="#3182F6" stroke-width="6" stroke-linecap="round"/>
+
+        <path d="M300 255 C 350 300, 40 315, 96 360 C 140 398, 260 405, 300 455 C 336 500, 210 500, 150 525"
+              fill="none" stroke="#C4CDD6" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 12"/>
+
+        <path d="M300 255 C 350 300, 40 315, 96 360"
+              fill="none" stroke="#9DBEF0" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 9" opacity=".8"/>
+
+        <g fill="#3182F6" opacity=".6">
+          <circle cx="205" cy="118" r="2.4"/><circle cx="150" cy="185" r="2.4"/><circle cx="235" cy="210" r="2.4"/>
+        </g>
+
+        <g filter="url(#atlasShadowStrong)"><circle cx="300" cy="60" r="30" fill="url(#atlasNodeDone)"/></g>
+        <circle cx="300" cy="60" r="30" fill="none" stroke="#fff" stroke-width="3" opacity=".9"/>
+        <g filter="url(#atlasFlagShadow)">
+          <path d="M300 60 l0 -30" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M300 30 l16 5 l-16 6 Z" fill="#FFC24B"/>
+        </g>
+        <path d="M291 61 l6 6 l13 -14" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <g transform="translate(300,96)">
+          <g transform="translate(-16,0) scale(.9)"><path d="M0 -5 L1.4 -1.4 L5 -1.4 L2 1 L3 5 L0 2.6 L-3 5 L-2 1 L-5 -1.4 L-1.4 -1.4 Z" fill="#FFB020"/></g>
+          <g transform="translate(0,-2) scale(1.05)"><path d="M0 -5 L1.4 -1.4 L5 -1.4 L2 1 L3 5 L0 2.6 L-3 5 L-2 1 L-5 -1.4 L-1.4 -1.4 Z" fill="#FFB020"/></g>
+          <g transform="translate(16,0) scale(.9)"><path d="M0 -5 L1.4 -1.4 L5 -1.4 L2 1 L3 5 L0 2.6 L-3 5 L-2 1 L-5 -1.4 L-1.4 -1.4 Z" fill="#FFB020"/></g>
+        </g>
+
+        <g filter="url(#atlasShadowStrong)"><circle cx="110" cy="150" r="30" fill="url(#atlasNodeDone)"/></g>
+        <circle cx="110" cy="150" r="30" fill="none" stroke="#fff" stroke-width="3" opacity=".9"/>
+        <g filter="url(#atlasFlagShadow)">
+          <path d="M110 150 l0 -30" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M110 120 l16 5 l-16 6 Z" fill="#FFC24B"/>
+        </g>
+        <path d="M101 151 l6 6 l13 -14" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <g transform="translate(110,186)">
+          <g transform="translate(-16,0) scale(.9)"><path d="M0 -5 L1.4 -1.4 L5 -1.4 L2 1 L3 5 L0 2.6 L-3 5 L-2 1 L-5 -1.4 L-1.4 -1.4 Z" fill="#FFB020"/></g>
+          <g transform="translate(0,-2) scale(1.05)"><path d="M0 -5 L1.4 -1.4 L5 -1.4 L2 1 L3 5 L0 2.6 L-3 5 L-2 1 L-5 -1.4 L-1.4 -1.4 Z" fill="#FFB020"/></g>
+          <g transform="translate(16,0) scale(.9)"><path d="M0 -5 L1.4 -1.4 L5 -1.4 L2 1 L3 5 L0 2.6 L-3 5 L-2 1 L-5 -1.4 L-1.4 -1.4 Z" fill="#FFB020"/></g>
+        </g>
+
+        <circle cx="300" cy="255" r="48" fill="url(#atlasPulse)"/>
+        <circle cx="300" cy="255" r="40" fill="none" stroke="#3182F6" stroke-width="2" stroke-dasharray="4 6" opacity=".6"/>
+        <g filter="url(#atlasShadowStrong)"><circle cx="300" cy="255" r="34" fill="url(#atlasNodeCurrent)"/></g>
+        <circle cx="300" cy="255" r="34" fill="none" stroke="#fff" stroke-width="3.5"/>
+        <g filter="url(#atlasFlagShadow)" transform="translate(300,255)">
+          <path d="M0 -20 C 11 -20, 16 -11, 12 -3 C 9 3, 0 12, 0 12 C 0 12, -9 3, -12 -3 C -16 -11, -11 -20, 0 -20 Z" fill="#fff"/>
+          <circle cx="0" cy="-9" r="5.4" fill="#2E74E8"/>
+        </g>
+
+        <g filter="url(#atlasShadowSoft)"><circle cx="96" cy="360" r="29" fill="url(#atlasNodeLock)"/></g>
+        <circle cx="96" cy="360" r="29" fill="none" stroke="#E1E6EB" stroke-width="2"/>
+        <g transform="translate(96,360)">
+          <rect x="-8" y="-2" width="16" height="13" rx="3.5" fill="#C3CBD3"/>
+          <path d="M-5 -2 v-4 a5 5 0 0 1 10 0 v4" fill="none" stroke="#B4BDC6" stroke-width="2.6" stroke-linecap="round"/>
+        </g>
+
+        <g filter="url(#atlasShadowSoft)"><circle cx="300" cy="455" r="29" fill="url(#atlasNodeLock)"/></g>
+        <circle cx="300" cy="455" r="29" fill="none" stroke="#E1E6EB" stroke-width="2"/>
+        <g transform="translate(300,455)">
+          <rect x="-8" y="-2" width="16" height="13" rx="3.5" fill="#C3CBD3"/>
+          <path d="M-5 -2 v-4 a5 5 0 0 1 10 0 v4" fill="none" stroke="#B4BDC6" stroke-width="2.6" stroke-linecap="round"/>
+        </g>
+
+        <g filter="url(#atlasShadowSoft)"><circle cx="150" cy="525" r="31" fill="url(#atlasNodeLock)"/></g>
+        <circle cx="150" cy="525" r="31" fill="none" stroke="#E1E6EB" stroke-width="2"/>
+        <g transform="translate(150,525)" fill="#B4BDC6">
+          <path d="M-9 -8 h18 v4 a9 9 0 0 1 -18 0 Z"/>
+          <path d="M-4 3 h8 v3 h-8 Z"/>
+          <rect x="-7" y="8" width="14" height="3.5" rx="1.5"/>
+          <path d="M-9 -6 a4 4 0 0 0 -4 4 a4 4 0 0 0 4 4" fill="none" stroke="#B4BDC6" stroke-width="2"/>
+          <path d="M9 -6 a4 4 0 0 1 4 4 a4 4 0 0 1 -4 4" fill="none" stroke="#B4BDC6" stroke-width="2"/>
+        </g>
+
+        <g transform="translate(200,410)" opacity=".9">
+          <path d="M0 0 l0 -22" stroke="#B98A5E" stroke-width="3" stroke-linecap="round"/>
+          <path d="M0 -20 l16 0 l4 4 l-4 4 l-16 0 Z" fill="#E7D9C6" stroke="#CBB89E" stroke-width="1"/>
+          <path d="M0 -11 l-14 0 l-4 4 l4 4 l14 0 Z" fill="#E7D9C6" stroke="#CBB89E" stroke-width="1"/>
+        </g>
+      </svg>
+
+      <div class="node-labels">
+        <div class="nlabel" style="left:74.6%; top:1.5%;"><span class="tag">과학적 탐구 방법</span></div>
+        <div class="nlabel" style="left:27.4%; top:17.5%;"><span class="tag">과학사 속 탐구</span></div>
+        <div class="cta-cue" style="left:74.6%; top:33.5%;">여기서 출발</div>
+        <div class="nlabel current" style="left:74.6%; top:53%;">
+          <span class="tag">과학과 인류 문명</span>
+          <span class="sub">현재 위치 · 레슨 1/4</span>
+        </div>
+        <div class="nlabel locked" style="left:23.9%; top:70.5%;"><span class="tag">첨단 과학기술</span></div>
+        <div class="nlabel locked" style="left:74.6%; top:87.5%;"><span class="tag">지속가능한 삶</span></div>
+        <div class="nlabel locked" style="left:37.3%; top:106%;"><span class="tag">대단원 마무리</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="tabbar">
+    <div class="tab on">
+      <span class="ic">
+        <svg width="23" height="23" viewBox="0 0 24 24" fill="none">
+          <path d="M9 4 L4 6 v14 l5 -2 6 2 5 -2 V4 l-5 2 -6 -2Z" fill="#3182F6" fill-opacity=".16"/>
+          <path d="M9 4 L4 6 v14 l5 -2 6 2 5 -2 V4 l-5 2 -6 -2Z" stroke="#3182F6" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M9 4 v14 M15 6 v14" stroke="#3182F6" stroke-width="1.6"/>
+        </svg>
+      </span>지도
+    </div>
+    <div class="tab">
+      <span class="ic">
+        <svg width="23" height="23" viewBox="0 0 24 24" fill="none">
+          <path d="M4 19 V9 M9 19 V5 M14 19 v-8 M19 19 V7" stroke="#8B95A1" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>진도
+    </div>
+    <div class="tab">
+      <span class="ic">
+        <svg width="23" height="23" viewBox="0 0 24 24" fill="none">
+          <path d="M12 3 L14.4 8.6 L20.5 9.1 L15.8 13 L17.3 19 L12 15.7 L6.7 19 L8.2 13 L3.5 9.1 L9.6 8.6 Z" stroke="#8B95A1" stroke-width="1.8" stroke-linejoin="round"/>
+        </svg>
+      </span>도전
+    </div>
+    <div class="tab">
+      <span class="ic">
+        <svg width="23" height="23" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="8" r="4" stroke="#8B95A1" stroke-width="2"/>
+          <path d="M5 20 c0 -4 3.5 -6 7 -6 s7 2 7 6" stroke="#8B95A1" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>내 정보
+    </div>
+  </div>
+
+</div></body></html>

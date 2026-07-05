@@ -1,0 +1,60 @@
+// 스텝 타입 → 렌더러 매핑. 새 인터랙션을 추가하면 여기에 등록한다.
+
+import type { StepRenderer } from "./types";
+import { concept } from "./steps/concept";
+import { quiz } from "./steps/quiz";
+import { table } from "./steps/table";
+import { order } from "./steps/order";
+import { binSort } from "./steps/binSort";
+import { hotspot } from "./steps/hotspot";
+import { dataGraph } from "./steps/dataGraph";
+import { historyCase } from "./steps/historyCase";
+import { techCards } from "./steps/techCards";
+import { orgLevels } from "./steps/orgLevels";
+import { finchSim } from "./steps/finchSim";
+import { microscope } from "./steps/microscope";
+import { dichotomKey } from "./steps/dichotomKey";
+import { comic } from "./steps/comic";
+import { hook } from "./steps/hook";
+import { recap } from "./steps/recap";
+import { heatParticles } from "./steps/heatParticles";
+import { heatContact } from "./steps/heatContact";
+import { conduction } from "./steps/conduction";
+import { convection } from "./steps/convection";
+import { radiation } from "./steps/radiation";
+import { specificHeat } from "./steps/specificHeat";
+import { expansion } from "./steps/expansion";
+
+const R: Record<string, StepRenderer> = {
+  concept,
+  comic,
+  hook,
+  recap,
+  heatParticles,
+  heatContact,
+  conduction,
+  convection,
+  radiation,
+  specificHeat,
+  expansion,
+  quiz,
+  table,
+  order,
+  binSort,
+  hotspot,
+  dataGraph,
+  historyCase,
+  techCards,
+  orgLevels,
+  finchSim,
+  microscope,
+  dichotomKey,
+};
+
+export function getRenderer(type: string): StepRenderer | undefined {
+  return R[type];
+}
+
+export function register(type: string, renderer: StepRenderer): void {
+  R[type] = renderer;
+}

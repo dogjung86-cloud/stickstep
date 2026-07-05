@@ -1,0 +1,155 @@
+/* ============================================================
+   디자인 토큰 — 이 앱의 헌법. 프로토타입(sample/)에서 확정된
+   토스 블루 체계를 그대로 계승하고, 다단원 확장을 위해 넓혔다.
+   색은 전부 여기서만 정의한다. 컴포넌트는 var()만 참조.
+   ============================================================ */
+:root {
+  /* 잉크 계열 (글자) */
+  --ink: #191F28;
+  --sub: #4E5968;
+  --ter: #8B95A1;
+  --faint: #B0B8C1;
+
+  /* 면·선 */
+  --line: #E7EAEE;
+  --surface: #F2F4F7;
+  --surface-2: #E7EBF0;
+  --card: #FFFFFF;
+
+  /* 브랜드 — 토스 블루 */
+  --blue: #3182F6;
+  --blue-press: #1B64DA;
+  --blue-tint: #EEF4FF;
+  --blue-tint-2: #DCEAFF;
+
+  /* 정답/오답 */
+  --green: #04B45F;
+  --green-press: #029A51;
+  --green-tint: #E9F9F1;
+  --red: #F04452;
+  --red-press: #D93440;
+  --red-tint: #FEEDEF;
+
+  /* 보조 강조 */
+  --amber: #FF9500;
+  --amber-tint: #FFF4E0;
+  --gold: #F5A623;
+  --violet: #8A6BFF;
+  --violet-tint: #F0ECFF;
+  --streak: #FF8A3D;
+
+  /* 무대(다크 캔버스 패널) */
+  --stage: #0B1524;
+  --stage-2: #15263F;
+  --stage-line: #20334F;
+
+  /* 상태 아이덴티티(물질의 상태 변화 단원용, 계승) */
+  --c-solid: hsl(212 88% 62%);
+  --c-liquid: hsl(263 80% 66%);
+  --c-gas: hsl(8 88% 62%);
+
+  /* 과목/대단원 액센트 — 지도에서 단원 색으로 사용 */
+  --subj-inquiry: #3182F6;   /* I  과학과 인류의 지속가능한 삶 */
+  --subj-bio: #12B886;       /* II 생물의 구성과 다양성 */
+  --subj-heat: #FF6B4A;      /* III 열 */
+  --subj-heat-press: #E8431F;
+  --subj-heat-tint: #FFF4EF;
+  --subj-matter: #7C6BFF;    /* IV 물질의 상태 변화 */
+  --subj-bio-deep: #0CA678;
+
+  /* 라운드 스케일 */
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 20px;
+  --r-xl: 24px;
+  --r-2xl: 28px;
+  --r-pill: 999px;
+
+  /* 그림자 */
+  --sh-card: 0 2px 10px rgba(23, 32, 48, .04);
+  --sh-raise: 0 6px 20px -6px rgba(23, 32, 48, .16);
+  --sh-cta: 0 8px 20px -6px rgba(49, 130, 246, .45);
+  --sh-sheet: 0 -12px 40px rgba(23, 32, 48, .16);
+
+  /* 이징 */
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --spring: cubic-bezier(.34, 1.35, .5, 1);
+
+  /* 안전영역 */
+  --safe-b: env(safe-area-inset-bottom);
+}
+
+/* ============================================================
+   프리미엄 레이어 — 납작한 "옛날 자바스크립트" 룩을 걷어낸다.
+   (1) 다층 그림자(ambient+key+ring, 쿨톤) (2) 근-동조 그라데이션
+   (3) 촘촘한 중립 램프 (4) 유리 표면 (5) 메달리온 (6) 스프링 모션.
+   기존 var 이름을 그대로 격상해 모든 컴포넌트가 자동으로 좋아진다.
+   ============================================================ */
+:root {
+  /* 촘촘한 중립 램프 */
+  --n0: #FFFFFF; --n25: #FBFCFD; --n50: #F7F8FA; --n100: #F2F4F7;
+  --n150: #EDF0F4; --n200: #E7EAEE; --n300: #DCE0E6; --n400: #C4CAD2;
+  --n500: #9AA3AD; --n600: #6B7684; --n700: #4E5968; --n800: #333D4B; --n900: #191F28;
+  --app-bg: var(--n50);
+
+  /* 쿨 잉크 그림자 채널 + 히어라인 링 */
+  --sh-c: 214 32% 20%;
+  --ring: 0 0 0 1px rgba(23, 31, 40, .04);
+
+  /* 다층 그림자 — 기존 이름을 격상 */
+  --sh-card:
+    var(--ring),
+    0 1px 2px hsl(var(--sh-c) / .06),
+    0 4px 12px -2px hsl(var(--sh-c) / .05);
+  --sh-raise:
+    var(--ring),
+    0 2px 4px hsl(var(--sh-c) / .06),
+    0 8px 18px -4px hsl(var(--sh-c) / .09),
+    0 18px 34px -10px hsl(var(--sh-c) / .07);
+  --sh-cta:
+    0 1px 1px rgba(20, 60, 130, .24),
+    0 6px 16px -3px rgba(49, 130, 246, .42);
+  --sh-sheet:
+    0 -1px 0 hsl(var(--sh-c) / .04),
+    0 -10px 28px -8px hsl(var(--sh-c) / .12),
+    0 -28px 64px -16px hsl(var(--sh-c) / .16);
+  --sh-medallion:
+    var(--ring),
+    0 2px 4px hsl(var(--sh-c) / .10),
+    0 10px 20px -4px hsl(var(--sh-c) / .16),
+    0 24px 44px -12px hsl(var(--sh-c) / .20);
+  --sh-inset:
+    inset 0 1px 2px hsl(var(--sh-c) / .09),
+    inset 0 0 0 1px rgba(23, 31, 40, .03);
+  --focus-ring: 0 0 0 3px rgba(49, 130, 246, .16), 0 0 0 1px rgba(49, 130, 246, .5);
+
+  /* 근-동조 그라데이션 */
+  --grad-card: linear-gradient(180deg, #FFFFFF 0%, #FCFDFE 100%);
+  --grad-blue: linear-gradient(180deg, #4A93F8 0%, #3182F6 52%, #2575EE 100%);
+  --grad-blue-press: linear-gradient(180deg, #2C79EF 0%, #1E6BE0 100%);
+  --grad-green: linear-gradient(180deg, #16C56C 0%, #04B45F 55%, #039E53 100%);
+  --grad-red: linear-gradient(180deg, #F6606D 0%, #F04452 55%, #E23A48 100%);
+  --grad-red-press: linear-gradient(180deg, #D93440, #C22A35);
+  --grad-unit: linear-gradient(150deg, #4A93F8 0%, #3182F6 44%, #2A6BE0 100%);
+  --grad-bio: linear-gradient(150deg, #2AD6A0 0%, #12B886 52%, #0B9E76 100%);
+  --grad-heat: linear-gradient(150deg, #FF9A62 0%, #FF6B4A 50%, #F04E2E 100%);
+  --grad-sheen: linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,0));
+  --grad-medallion: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #5A9CF9 0%, #3182F6 48%, #1F6BE0 100%);
+  --grad-medallion-bio: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #34DCA6 0%, #12B886 50%, #0A9670 100%);
+  --grad-medallion-heat: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #FFA26B 0%, #FF6B4A 50%, #E8431F 100%);
+  --grad-gold: radial-gradient(120% 120% at 30% 20%, rgba(255,255,255,.92) 0%, rgba(255,255,255,.15) 26%, rgba(255,255,255,0) 48%), linear-gradient(160deg, #FFD873 0%, #F5A623 50%, #E0891A 100%);
+
+  /* 유리 표면 */
+  --glass-fill: rgba(255,255,255,.66);
+  --glass-blur: saturate(180%) blur(18px);
+  --glass-border: rgba(255,255,255,.55);
+  --glass-hi: inset 0 1px 0 rgba(255,255,255,.65);
+  --glass-sh: var(--glass-hi), 0 1px 1px rgba(23,31,40,.04), 0 8px 24px -6px hsl(var(--sh-c) / .12);
+  --glass-dark: rgba(15,24,38,.32);
+  --glass-dark-border: rgba(255,255,255,.2);
+
+  /* 모션 */
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --spring-soft: cubic-bezier(.34, 1.26, .64, 1);
+  --spring-bounce: cubic-bezier(.34, 1.56, .5, 1);
+}
