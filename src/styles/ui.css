@@ -890,12 +890,12 @@
 .hook-cup.cold .hk-grab { opacity: 1; }
 .hook-cup.spill { border: 1.5px solid var(--gold); background: var(--amber-tint); }
 .hook-cup.spill .hook-cup-label { color: #B97A0C; }
-.hook-cup .hk-pud { transform-box: fill-box; transform-origin: center; transition: transform .6s var(--ease-out); }
-.hook-cup.spill .hk-pud { transform: scaleX(1.14) scaleY(.82); }
+.hook-cup .hk-pud, .hook-cup .hk-pud2 { transform-box: fill-box; transform-origin: center; transition: transform .6s var(--ease-out); }
+.hook-cup.spill .hk-pud, .hook-cup.spill .hk-pud2 { transform: scaleX(1.14) scaleY(.82); }
 .hook-cup.spill .hk-drip { opacity: 1; }
-.hook-cup.spill .hk-drip circle { animation: hkDrip .8s ease-in both; }
-.hook-cup.spill .hk-drip circle:nth-child(2) { animation-delay: .12s; }
-.hook-cup.spill .hk-drip circle:nth-child(3) { animation-delay: .24s; }
+.hook-cup.spill .hk-drip > * { animation: hkDrip .8s ease-in both; }
+.hook-cup.spill .hk-drip > *:nth-child(2) { animation-delay: .12s; }
+.hook-cup.spill .hk-drip > *:nth-child(3) { animation-delay: .24s; }
 @keyframes hkDrip { 0% { opacity: 0; transform: translateY(-8px); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(26px); } }
 
 /* ── hook 장면: 배달 랩 ── */

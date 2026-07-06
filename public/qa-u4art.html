@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QA · IV 단원 훅 장면 아트 검수</title>
+<style>
+  body { background: #EEF1F5; padding: 18px; font-family: Pretendard, sans-serif; }
+  h1 { font-size: 16px; margin: 0 0 12px; color: #4E5968; }
+  .qa-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; }
+  .qa-card { background: #fff; border: 1px solid #E7EAEE; border-radius: 16px; padding: 16px; }
+  .qa-card h2 { font-size: 13px; font-weight: 800; color: #8B95A1; margin: 0 0 10px; }
+  /* 훅 렌더러가 그리는 h1/sub/말풍선은 검수에 불필요 — 장면만 크게 */
+  .qa-card .h1, .qa-card .sub, .qa-card .comic-narrator, .qa-card .helper { display: none; }
+</style>
+</head>
+<body>
+<h1>IV 단원 훅 장면 — 프리미엄 SVG 검수 (왼쪽: 초기 상태 · 오른쪽: 상호작용 후)</h1>
+<div class="qa-grid" id="grid"></div>
+<script type="module">
+  import "/src/styles/tokens.css";
+  import "/src/styles/base.css";
+  import "/src/styles/ui.css";
+  import { getRenderer } from "/src/lessons/registry.ts";
+
+  const hook = getRenderer("hook");
+  const mockApi = { lesson: {}, index: 0, total: 9, setCTA(){}, enableCTA(){}, disableCTA(){}, next(){}, openSheet(){}, recordQuiz(){}, snack(){} };
+  const SCENES = [
+    { key: "smell", step: { type: "hook", title: "t", narrator: "n", scene: "smell" },
+      act: (d) => d.querySelector(".hook-meal")?.click() },
+    { key: "juice", step: { type: "hook", title: "t", narrator: "n", scene: "juice" },
+      act: (d) => d.querySelectorAll(".hook-cup").forEach((c) => c.click()) },
+    { key: "wrap", step: { type: "hook", title: "t", narrator: "n", scene: "wrap" },
+      act: (d) => d.querySelector(".hook-wrap")?.click() },
+    { key: "ramen", step: { type: "hook", title: "t", narrator: "n", scene: "ramen" },
+      act: (d) => [...d.querySelectorAll("button")].find((b) => b.textContent.includes("불 세기"))?.click() },
+  ];
+  const grid = document.getElementById("grid");
+  for (const s of SCENES) {
+    for (const [label, activate] of [["초기", false], ["상호작용 후", true]]) {
+      const card = document.createElement("div");
+      card.className = "qa-card";
+      card.innerHTML = `<h2>${s.key} · ${label}</h2>`;
+      const mountEl = document.createElement("div");
+      card.appendChild(mountEl);
+      grid.appendChild(card);
+      hook(mountEl, s.step, mockApi);
+      if (activate) setTimeout(() => s.act(mountEl), 300);
+    }
+  }
+  window.__ready = true;
+</script>
+</body>
+</html>

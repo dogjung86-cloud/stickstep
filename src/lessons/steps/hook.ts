@@ -389,36 +389,73 @@ function askChoices(
 }
 
 // ── 장면 5: 급식실 냄새 — 뚜껑 열기 + 예측 (IV L1) ───────────
+// 프리미엄 SVG 문법(파운드리 계승): 근-동조 그라데이션 + 좌상단 키라이트 + 접촉 그림자,
+// 외곽선은 재질별 최암색으로 얇게. 스틱맨 캐릭터만 의도적으로 손그림 라인 유지.
 function mealSvg(): string {
   return `<svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <!-- 배식대 -->
-    <path d="M28 120h184" stroke="#C4CAD2" stroke-width="3"/>
-    <path d="M40 120v14M200 120v14" stroke="#C4CAD2" stroke-width="3"/>
-    <!-- 접시 -->
-    <ellipse cx="86" cy="116" rx="46" ry="9" fill="#EDF1F6" stroke="#8B95A1" stroke-width="2.6"/>
-    <path d="M56 112c4-12 18-20 30-20s26 8 30 20" fill="#FFE9C9" stroke="#E8B25C" stroke-width="2.6"/>
+    <defs>
+      <linearGradient id="hkMeal-dome" x1="52" y1="70" x2="120" y2="118" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FAFCFF"/><stop offset=".5" stop-color="#DFE7F1"/><stop offset="1" stop-color="#C2CDDD"/>
+      </linearGradient>
+      <radialGradient id="hkMeal-domeHl" cx=".32" cy=".22" r=".7">
+        <stop offset="0" stop-color="#FFFFFF" stop-opacity=".95"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="hkMeal-counter" x1="0" y1="118" x2="0" y2="128" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#EDF1F7"/><stop offset="1" stop-color="#D5DCE7"/>
+      </linearGradient>
+      <linearGradient id="hkMeal-rice" x1="66" y1="94" x2="106" y2="114" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FFC98E"/><stop offset=".55" stop-color="#F5A45C"/><stop offset="1" stop-color="#DE7F3A"/>
+      </linearGradient>
+      <linearGradient id="hkMeal-steam" x1="0" y1="98" x2="0" y2="82" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FF9E6E" stop-opacity=".9"/><stop offset="1" stop-color="#FF9E6E" stop-opacity="0"/>
+      </linearGradient>
+      <radialGradient id="hkMeal-smell" cx=".4" cy=".35" r=".65">
+        <stop offset="0" stop-color="#7CE8D8"/><stop offset=".6" stop-color="#12B8A6"/><stop offset="1" stop-color="#0E9C8D"/>
+      </radialGradient>
+    </defs>
+    <!-- 접촉 그림자 + 배식대 -->
+    <ellipse cx="92" cy="132" rx="66" ry="6" fill="#2A3A5E" opacity=".10"/>
+    <rect x="28" y="118" width="184" height="9" rx="4.5" fill="url(#hkMeal-counter)"/>
+    <rect x="28" y="118" width="184" height="3.4" rx="1.7" fill="#FFFFFF" opacity=".7"/>
+    <path d="M42 127v9M198 127v9" stroke="#B8C2D0" stroke-width="4"/>
+    <!-- 접시 + 볶음밥 -->
+    <ellipse cx="86" cy="115" rx="47" ry="8.5" fill="#F6F9FC"/>
+    <ellipse cx="86" cy="113.6" rx="47" ry="8.5" fill="#FFFFFF"/>
+    <ellipse cx="86" cy="113.6" rx="47" ry="8.5" stroke="#C6D0DC" stroke-width="1.4"/>
+    <path d="M56 111c4-12 18-19 30-19s26 7 30 19q-30 7 -60 0z" fill="url(#hkMeal-rice)"/>
+    <path d="M62 106c5-8 14-12 24-12 6 0 12 1.6 17 5" stroke="#FFE2BC" stroke-width="3" opacity=".8"/>
+    <circle cx="74" cy="102" r="2" fill="#D8542E"/><circle cx="92" cy="99" r="2" fill="#D8542E"/>
+    <circle cx="101" cy="106" r="1.8" fill="#3F9B4F"/><circle cx="66" cy="108" r="1.8" fill="#3F9B4F"/>
     <!-- 뚜껑(클로슈) -->
     <g class="hk-lid">
-      <path d="M46 112c0-24 18-40 40-40s40 16 40 40" fill="#F4F8FE" stroke="#4E5968" stroke-width="3"/>
-      <circle cx="86" cy="66" r="5" fill="#fff" stroke="#4E5968" stroke-width="3"/>
+      <path d="M46 112c0-24 18-40 40-40s40 16 40 40z" fill="url(#hkMeal-dome)"/>
+      <path d="M46 112c0-24 18-40 40-40s40 16 40 40z" fill="url(#hkMeal-domeHl)"/>
+      <path d="M46 112c0-24 18-40 40-40s40 16 40 40" stroke="#9DAABD" stroke-width="1.6"/>
+      <path d="M58 100c2-13 12-22 24-24" stroke="#FFFFFF" stroke-width="5" opacity=".55"/>
+      <rect x="44" y="109" width="84" height="6" rx="3" fill="#CBD5E2"/>
+      <rect x="44" y="109" width="84" height="2.6" rx="1.3" fill="#F2F6FB"/>
+      <circle cx="86" cy="66" r="5.4" fill="#E7EDF5"/>
+      <circle cx="86" cy="66" r="5.4" stroke="#9DAABD" stroke-width="1.4"/>
+      <circle cx="84.2" cy="64.4" r="1.8" fill="#FFFFFF"/>
     </g>
     <!-- 김 -->
-    <g class="hk-steam" stroke="#FF8A5C" stroke-width="2.8">
+    <g class="hk-steam" stroke="url(#hkMeal-steam)" stroke-width="3.2">
       <path d="M74 98c-2.5-4.5 2.5-6 0-10.5"/>
       <path d="M86 96c-2.5-4.5 2.5-6 0-10.5"/>
       <path d="M98 98c-2.5-4.5 2.5-6 0-10.5"/>
     </g>
     <!-- 냄새 입자(뚜껑 열리면 퍼짐) -->
-    <g class="hk-smellp" fill="#12B8A6">
-      <circle cx="96" cy="92" r="3.4"/>
-      <circle cx="104" cy="86" r="3"/>
-      <circle cx="112" cy="94" r="2.7"/>
-      <circle cx="120" cy="84" r="2.5"/>
-      <circle cx="130" cy="92" r="2.3"/>
-      <circle cx="140" cy="86" r="2.1"/>
+    <g class="hk-smellp" fill="url(#hkMeal-smell)">
+      <circle cx="96" cy="92" r="3.6"/>
+      <circle cx="104" cy="86" r="3.1"/>
+      <circle cx="112" cy="94" r="2.8"/>
+      <circle cx="120" cy="84" r="2.6"/>
+      <circle cx="130" cy="92" r="2.4"/>
+      <circle cx="140" cy="86" r="2.2"/>
     </g>
-    <!-- 멀리 있는 스틱맨(코 킁킁) -->
-    <g stroke="#4E5968" stroke-width="2.6">
+    <!-- 멀리 있는 스틱맨(코 킁킁) — 캐릭터는 손그림 라인 유지 -->
+    <ellipse cx="196" cy="116" rx="17" ry="3.4" fill="#2A3A5E" opacity=".10"/>
+    <g stroke="#3C4654" stroke-width="2.6">
       <circle cx="196" cy="70" r="9" fill="#fff"/>
       <path d="M196 79v22M196 86l-10 7M196 86l10 7M196 101l-8 12M196 101l8 12"/>
     </g>
@@ -471,26 +508,56 @@ function renderSmell(
 // ── 장면 6: 쏟아진 주스와 얼음 (IV L2) ───────────────────────
 function iceSvg(): string {
   return `<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <defs>
+      <linearGradient id="hkIce-body" x1="28" y1="32" x2="66" y2="70" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#F6FBFF"/><stop offset=".5" stop-color="#CFE6FF"/><stop offset="1" stop-color="#9FC6F4"/>
+      </linearGradient>
+      <linearGradient id="hkIce-facet" x1="24" y1="30" x2="70" y2="72" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FFFFFF" stop-opacity=".9"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <ellipse cx="47" cy="79" rx="25" ry="4.6" fill="#2A3A5E" opacity=".12"/>
     <g class="hk-cube">
-      <rect x="24" y="30" width="46" height="42" rx="9" fill="#EAF4FF" stroke="#5AA2F8" stroke-width="3"/>
-      <path d="M33 40l9 9M52 38l6 6" stroke="#fff" stroke-width="3"/>
-      <path d="M33 62h28" stroke="#BFDCFF" stroke-width="2.6"/>
+      <rect x="24" y="30" width="46" height="42" rx="10" fill="url(#hkIce-body)"/>
+      <rect x="24" y="30" width="46" height="42" rx="10" stroke="#7FAEE6" stroke-width="1.6"/>
+      <!-- 얼음 면(패싯) + 키라이트 -->
+      <path d="M30 36q10-4 18 0l-6 12q-8 2-14-4z" fill="url(#hkIce-facet)" opacity=".8"/>
+      <path d="M52 54l12-6v14l-9 6z" fill="#B7D6F8" opacity=".5"/>
+      <path d="M33 62h28" stroke="#E9F4FF" stroke-width="3" opacity=".9"/>
+      <path d="M56 37l7 7" stroke="#FFFFFF" stroke-width="3"/>
+      <circle cx="36" cy="40" r="1.7" fill="#FFFFFF"/>
+      <!-- 냉기 반짝 -->
+      <path d="M76 30v7M72.5 33.5h7" stroke="#9FC6F4" stroke-width="2"/>
     </g>
     <g class="hk-grab" stroke="#8B95A1" stroke-width="2.6" opacity="0">
       <path d="M20 22q4-8 12-8M76 22q-4-8-12-8"/>
     </g>
-    <ellipse cx="47" cy="80" rx="26" ry="5" fill="#EDF1F6" stroke="none"/>
   </svg>`;
 }
 function juicePuddleSvg(): string {
   return `<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path class="hk-pud" d="M14 66q10-10 24-7t22-4 22 5q6 3 2 8t-16 6-26 1-24-2q-8-3-4-7z" fill="#FFD98A" stroke="#F5A623" stroke-width="2.8"/>
-    <g class="hk-drip" fill="#F5A623" opacity="0">
-      <circle cx="34" cy="44" r="3.4"/>
-      <circle cx="50" cy="38" r="3"/>
-      <circle cx="64" cy="46" r="2.7"/>
+    <defs>
+      <linearGradient id="hkJus-body" x1="20" y1="56" x2="76" y2="76" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FFDF9E"/><stop offset=".55" stop-color="#F7B345"/><stop offset="1" stop-color="#DE8F17"/>
+      </linearGradient>
+      <radialGradient id="hkJus-hl" cx=".3" cy=".28" r=".6">
+        <stop offset="0" stop-color="#FFF4DA" stop-opacity=".95"/><stop offset="1" stop-color="#FFF4DA" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="hkJus-drop" x1="0" y1="36" x2="0" y2="50" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FFCE73"/><stop offset="1" stop-color="#EDA028"/>
+      </linearGradient>
+    </defs>
+    <ellipse cx="48" cy="79" rx="32" ry="4.6" fill="#2A3A5E" opacity=".10"/>
+    <path class="hk-pud" d="M14 66q10-10 24-7t22-4 22 5q6 3 2 8t-16 6-26 1-24-2q-8-3-4-7z" fill="url(#hkJus-body)"/>
+    <path class="hk-pud2" d="M14 66q10-10 24-7t22-4 22 5q6 3 2 8t-16 6-26 1-24-2q-8-3-4-7z" fill="url(#hkJus-hl)"/>
+    <path d="M24 64q9-6 20-5" stroke="#FFF0CE" stroke-width="3.4" opacity=".9"/>
+    <circle cx="63" cy="65" r="1.8" fill="#FFF0CE" opacity=".9"/>
+    <circle cx="36" cy="70" r="1.4" fill="#C87F12" opacity=".55"/>
+    <g class="hk-drip" opacity="0">
+      <path d="M34 39c2.4 3 3.6 5 3.6 6.8a3.6 3.6 0 1 1-7.2 0c0-1.8 1.2-3.8 3.6-6.8z" fill="url(#hkJus-drop)"/>
+      <path d="M50 33c2.2 2.8 3.3 4.6 3.3 6.2a3.3 3.3 0 1 1-6.6 0c0-1.6 1.1-3.4 3.3-6.2z" fill="url(#hkJus-drop)"/>
+      <path d="M64 41c2 2.6 3 4.2 3 5.7a3 3 0 1 1-6 0c0-1.5 1-3.1 3-5.7z" fill="url(#hkJus-drop)"/>
     </g>
-    <ellipse cx="48" cy="82" rx="30" ry="4.5" fill="#EDF1F6" stroke="none"/>
   </svg>`;
 }
 
@@ -532,20 +599,50 @@ function renderJuice(scene: HTMLElement, helper: HTMLElement, finish: () => void
 // ── 장면 7: 배달 음식 랩 — 볼록해지는 랩 + 예측 (IV L4) ──────
 function wrapSvg(): string {
   return `<svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <!-- 그릇 -->
-    <path d="M56 84c0 26 22 42 64 42s64-16 64-42" fill="#F4F8FE" stroke="#4E5968" stroke-width="3"/>
-    <path d="M52 84h176" stroke="#4E5968" stroke-width="3"/>
-    <!-- 국물 -->
-    <path d="M66 92c8 14 28 22 54 22s46-8 54-22" fill="#FFE1C2" stroke="none" opacity=".9"/>
+    <defs>
+      <linearGradient id="hkWrap-bowl" x1="120" y1="84" x2="120" y2="128" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FFFFFF"/><stop offset=".55" stop-color="#E9EEF6"/><stop offset="1" stop-color="#CBD5E3"/>
+      </linearGradient>
+      <linearGradient id="hkWrap-soup" x1="120" y1="88" x2="120" y2="114" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FFDCB4"/><stop offset="1" stop-color="#F0A45E"/>
+      </linearGradient>
+      <linearGradient id="hkWrap-steam" x1="0" y1="78" x2="0" y2="60" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FF9E6E" stop-opacity=".85"/><stop offset="1" stop-color="#FF9E6E" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="hkWrap-film" x1="60" y1="40" x2="180" y2="84" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#DCEBFF" stop-opacity=".55"/><stop offset=".5" stop-color="#BFD8F8" stop-opacity=".18"/><stop offset="1" stop-color="#DCEBFF" stop-opacity=".45"/>
+      </linearGradient>
+    </defs>
+    <!-- 접촉 그림자 + 그릇 -->
+    <ellipse cx="120" cy="130" rx="70" ry="6" fill="#2A3A5E" opacity=".10"/>
+    <path d="M56 84c0 26 22 42 64 42s64-16 64-42z" fill="url(#hkWrap-bowl)"/>
+    <path d="M56 84c0 26 22 42 64 42s64-16 64-42" stroke="#A9B6C7" stroke-width="1.6"/>
+    <path d="M66 96c3 10 10 18 21 23" stroke="#FFFFFF" stroke-width="4.5" opacity=".7"/>
+    <rect x="98" y="124" width="44" height="5" rx="2.5" fill="#B9C4D4"/>
+    <!-- 국물(그릇 안쪽) -->
+    <ellipse cx="120" cy="87" rx="60" ry="7.2" fill="url(#hkWrap-soup)"/>
+    <ellipse cx="120" cy="85.8" rx="60" ry="6.6" fill="#FFE7C8"/>
+    <ellipse cx="102" cy="85" rx="19" ry="3.2" fill="#FFF3DF" opacity=".9"/>
+    <circle cx="142" cy="86" r="2.2" fill="#FFF3DF" opacity=".8"/>
+    <ellipse cx="120" cy="84" rx="62" ry="7" stroke="#D9A25E" stroke-width="1.4"/>
     <!-- 김 -->
-    <g class="hk-steam" stroke="#FF8A5C" stroke-width="2.8">
+    <g class="hk-steam" stroke="url(#hkWrap-steam)" stroke-width="3.2">
       <path d="M100 76c-2.5-4.5 2.5-6 0-10.5"/>
       <path d="M120 74c-2.5-4.5 2.5-6 0-10.5"/>
       <path d="M140 76c-2.5-4.5 2.5-6 0-10.5"/>
     </g>
-    <!-- 랩: 평평 ↔ 볼록 -->
-    <path class="hk-wrap-flat" d="M54 82q66 6 132 0" stroke="#9FC1F0" stroke-width="3"/>
-    <path class="hk-wrap-bulge" d="M54 82q66-52 132 0" stroke="#9FC1F0" stroke-width="3" fill="rgba(159,193,240,.12)"/>
+    <!-- 랩: 평평 ↔ 볼록 (반투명 필름 + 광택 스트릭) -->
+    <g class="hk-wrap-flat">
+      <path d="M52 82q68 7 136 0" fill="url(#hkWrap-film)"/>
+      <path d="M52 82q68 7 136 0" stroke="#9FC1F0" stroke-width="2.6"/>
+      <path d="M78 84.5q22 2.6 44 1" stroke="#FFFFFF" stroke-width="2.2" opacity=".8"/>
+    </g>
+    <g class="hk-wrap-bulge">
+      <path d="M52 82q68-54 136 0z" fill="url(#hkWrap-film)"/>
+      <path d="M52 82q68-54 136 0" stroke="#9FC1F0" stroke-width="2.6"/>
+      <path d="M84 62q14-14 34-16" stroke="#FFFFFF" stroke-width="3" opacity=".85"/>
+      <path d="M144 52q10 4 17 12" stroke="#FFFFFF" stroke-width="2.2" opacity=".5"/>
+    </g>
   </svg>`;
 }
 
@@ -592,30 +689,63 @@ function renderWrap(
 // ── 장면 8: 끓는 라면 물 — 불 최대 + 예측 (IV L5) ────────────
 function potSvg(): string {
   return `<svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <defs>
+      <linearGradient id="hkPot-body" x1="66" y1="52" x2="180" y2="118" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#F9FBFE"/><stop offset=".5" stop-color="#DCE4EE"/><stop offset="1" stop-color="#BEC9D9"/>
+      </linearGradient>
+      <linearGradient id="hkPot-rim" x1="0" y1="50" x2="0" y2="58" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#F4F8FD"/><stop offset="1" stop-color="#B9C4D4"/>
+      </linearGradient>
+      <linearGradient id="hkPot-water" x1="120" y1="64" x2="120" y2="113" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#CFE6FF"/><stop offset="1" stop-color="#8FBEF6"/>
+      </linearGradient>
+      <linearGradient id="hkPot-steam" x1="0" y1="46" x2="0" y2="28" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FF9E6E" stop-opacity=".85"/><stop offset="1" stop-color="#FF9E6E" stop-opacity="0"/>
+      </linearGradient>
+      <radialGradient id="hkPot-glow" cx=".5" cy=".85" r=".65">
+        <stop offset="0" stop-color="#FFB03A" stop-opacity=".4"/><stop offset="1" stop-color="#FFB03A" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="hkPot-bub" cx=".35" cy=".3" r=".75">
+        <stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DDEBFF" stop-opacity=".55"/>
+      </radialGradient>
+    </defs>
+    <!-- 접촉 그림자 + 버너 -->
+    <ellipse cx="120" cy="142" rx="58" ry="5" fill="#2A3A5E" opacity=".12"/>
+    <rect x="82" y="136" width="76" height="7" rx="3.5" fill="#5E6B7E"/>
+    <rect x="82" y="136" width="76" height="2.8" rx="1.4" fill="#8A97AA"/>
+    <!-- 불꽃 열기 글로우 -->
+    <ellipse cx="120" cy="128" rx="46" ry="18" fill="url(#hkPot-glow)"/>
     <!-- 냄비 -->
-    <path d="M66 52h108v54a8 8 0 0 1-8 8H74a8 8 0 0 1-8-8z" fill="#F4F8FE" stroke="#4E5968" stroke-width="3"/>
-    <path d="M56 60h10M174 60h10" stroke="#4E5968" stroke-width="3"/>
-    <!-- 물 + 기포 -->
-    <path d="M70 64h100v44a5 5 0 0 1-5 5H75a5 5 0 0 1-5-5z" fill="#CFE4FF" stroke="none" opacity=".9"/>
-    <g class="hk-bub" fill="#fff">
-      <circle cx="92" cy="98" r="3.4"/>
-      <circle cx="118" cy="102" r="4"/>
-      <circle cx="144" cy="97" r="3"/>
-      <circle cx="106" cy="90" r="2.6"/>
-      <circle cx="132" cy="88" r="2.4"/>
+    <path d="M66 56h108v50a8 8 0 0 1-8 8H74a8 8 0 0 1-8-8z" fill="url(#hkPot-body)"/>
+    <path d="M66 56h108v50a8 8 0 0 1-8 8H74a8 8 0 0 1-8-8z" stroke="#97A4B8" stroke-width="1.6"/>
+    <path d="M76 66v34" stroke="#FFFFFF" stroke-width="6" opacity=".55"/>
+    <rect x="62" y="50" width="116" height="7" rx="3.5" fill="url(#hkPot-rim)"/>
+    <rect x="62" y="50" width="116" height="7" rx="3.5" stroke="#97A4B8" stroke-width="1.2"/>
+    <path d="M50 58q0-7 12-6M190 58q0-7-12-6" stroke="#97A4B8" stroke-width="4.5"/>
+    <!-- 물 + 수면 + 기포 -->
+    <path d="M70 64h100v40a5 5 0 0 1-5 5H75a5 5 0 0 1-5-5z" fill="url(#hkPot-water)"/>
+    <ellipse cx="120" cy="65.5" rx="50" ry="3.6" fill="#E8F3FF"/>
+    <g class="hk-bub">
+      <circle cx="92" cy="98" r="3.6" fill="url(#hkPot-bub)"/>
+      <circle cx="118" cy="102" r="4.2" fill="url(#hkPot-bub)"/>
+      <circle cx="144" cy="97" r="3.2" fill="url(#hkPot-bub)"/>
+      <circle cx="106" cy="90" r="2.8" fill="url(#hkPot-bub)"/>
+      <circle cx="132" cy="88" r="2.6" fill="url(#hkPot-bub)"/>
     </g>
     <!-- 김 -->
-    <g class="hk-steam" stroke="#FF8A5C" stroke-width="2.8">
+    <g class="hk-steam" stroke="url(#hkPot-steam)" stroke-width="3.2">
       <path d="M104 44c-2.5-4.5 2.5-6 0-10.5"/>
       <path d="M120 42c-2.5-4.5 2.5-6 0-10.5"/>
       <path d="M136 44c-2.5-4.5 2.5-6 0-10.5"/>
     </g>
-    <!-- 불꽃 -->
+    <!-- 불꽃(층진 방울 + 코어) -->
     <g class="hk-flame">
-      <path d="M100 132q-6-10 4-16 0 8 8 10 6-8 2-14 12 6 8 18t-22 2z" fill="#FF8A5C" stroke="#F25C2E" stroke-width="2"/>
-      <path class="hk-flame2" d="M130 132q-5-8 3-13 0 6 6 8 4-6 1-11 10 5 7 15t-17 1z" fill="#FFB03A" stroke="#F5A623" stroke-width="2" opacity=".9"/>
+      <path d="M100 134q-8-12 3-19 0 9 9 12 7-9 2-16 14 7 10 21t-24 2z" fill="#FF8A5C"/>
+      <path class="hk-flame2" d="M106 134q-5-8 2-12 0 6 6 8 4-6 2-10 9 5 6 14t-16 0z" fill="#FFB03A"/>
+      <path d="M111 134q-3-5 1.5-8 .5 4 4 5 2-3.5 1-6 5 3.5 3.5 9t-10 0z" fill="#FFE9A8"/>
+      <path d="M138 134q-5-8 2-12 0 6 6 8 4-6 1-10 9 5 7 14t-16 0z" fill="#FFB03A" opacity=".95"/>
+      <path d="M142 134q-3-4.5 1.5-7.5 .5 3.5 3.5 4.5 2-3 1-5.5 4.5 3 3.5 8.5t-9.5 0z" fill="#FFE9A8" opacity=".95"/>
     </g>
-    <path d="M84 140h72" stroke="#C4CAD2" stroke-width="3"/>
   </svg>`;
 }
 
