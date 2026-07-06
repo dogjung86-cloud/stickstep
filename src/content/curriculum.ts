@@ -4,6 +4,7 @@ import { isDone } from "../core/store";
 import { UNIT1 } from "./unit1";
 import { UNIT2 } from "./unit2";
 import { UNIT3 } from "./unit3";
+import { UNIT4 } from "./unit4";
 
 export interface Unit {
   id: string;
@@ -16,7 +17,7 @@ export interface Unit {
   lessons: Lesson[];
 }
 
-export const CURRICULUM: Unit[] = [UNIT1, UNIT2, UNIT3];
+export const CURRICULUM: Unit[] = [UNIT1, UNIT2, UNIT3, UNIT4];
 
 export function findLesson(id: string): { unit: Unit; lesson: Lesson; index: number } | null {
   for (const unit of CURRICULUM) {

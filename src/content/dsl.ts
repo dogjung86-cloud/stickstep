@@ -56,7 +56,8 @@ export const hotspot = (o: {
 
 export const hook = (o: {
   title: string; lead?: string; narrator: string; done?: string;
-  scene: "cups" | "egg" | "beach" | "wire"; choices?: string[]; cta?: string;
+  scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen";
+  choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
 export const recap = (o: {
@@ -94,6 +95,35 @@ export const specificHeat = (o: { title: string; lead?: string; cta?: string }):
 
 export const expansion = (o: { title: string; lead?: string; cta?: string }): Step =>
   ({ type: "expansion", ...o });
+
+// ── 물질의 상태 변화 단원(IV) 랩 ────────────────────────────
+export const diffusion = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "diffusion", ...o });
+
+export const evaporation = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "evaporation", ...o });
+
+export const matterTemp = (o: {
+  title: string; lead?: string; goalBoil?: number; goalFreeze?: number; cta?: string;
+}): Step => ({ type: "matterTemp", ...o });
+
+export const matterShape = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "matterShape", ...o });
+
+export const matterCompare = (o: { title: string; lead?: string; note?: string; cta?: string }): Step =>
+  ({ type: "matterCompare", ...o });
+
+export const phaseNames = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "phaseNames", ...o });
+
+export const sublimation = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "sublimation", ...o });
+
+export const phaseVolume = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "phaseVolume", ...o });
+
+export const heatCurve = (o: { title: string; lead?: string; mode?: "heat" | "cool"; cta?: string }): Step =>
+  ({ type: "heatCurve", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

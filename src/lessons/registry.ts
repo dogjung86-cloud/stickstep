@@ -24,6 +24,15 @@ import { convection } from "./steps/convection";
 import { radiation } from "./steps/radiation";
 import { specificHeat } from "./steps/specificHeat";
 import { expansion } from "./steps/expansion";
+import { diffusion } from "./steps/diffusion";
+import { evaporation } from "./steps/evaporation";
+import { matterTemp } from "./steps/matterTemp";
+import { matterShape } from "./steps/matterShape";
+import { matterCompare } from "./steps/matterCompare";
+import { phaseNames } from "./steps/phaseNames";
+import { sublimation } from "./steps/sublimation";
+import { phaseVolume } from "./steps/phaseVolume";
+import { heatCurve } from "./steps/heatCurve";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -37,6 +46,15 @@ const R: Record<string, StepRenderer> = {
   radiation,
   specificHeat,
   expansion,
+  diffusion,
+  evaporation,
+  matterTemp,
+  matterShape,
+  matterCompare,
+  phaseNames,
+  sublimation,
+  phaseVolume,
+  heatCurve,
   quiz,
   table,
   order,

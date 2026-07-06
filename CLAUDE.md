@@ -37,10 +37,17 @@ src/
   lessons/steps/  각 스텝 렌더러 (concept·quiz·table·order·binSort·hotspot·dataGraph·
                   historyCase·techCards·orgLevels·finchSim·microscope·dichotomKey·comic·
                   hook(스틱맨 도입)·recap(통일 정리)·
-                  heatParticles·heatContact·conduction·convection·radiation)
+                  heatParticles·heatContact·conduction·convection·radiation·
+                  diffusion·evaporation·matterTemp·matterShape·matterCompare·
+                  phaseNames·sublimation·phaseVolume·heatCurve)
+  engine/    matterSim — IV 단원 순수 입자 물리(프로토타입 Sim 이식, 렌더링 없음, 수치 불변)
+  renderers/ meta(WebGL 메타볼 — FRAG 원본 이식, 볼 상한 48, dispose 시 lose_context)·
+             dot(발광점 — WebGL 폴백 겸 "입자의 눈" 뷰)·palette(온도→hue 212→370, uniform 3색)
   ui/        blocks(개념 블록), figures(세포도·생물 아이콘 SVG), canvas(DPR 헬퍼),
-             thermo(열 단원 공용: 온도색 램프·발광 입자·불꽃·자유 입자), heatFigures(열 퀴즈 SVG)
-  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금), unit1, unit2, unit3
+             thermo(열 단원 공용: 온도색 램프·발광 입자·불꽃·자유 입자), heatFigures(열 퀴즈 SVG),
+             matterStage(IV 공용 무대 — 메타볼+입자 뷰 크로스페이드 토글·오버레이·토스트),
+             matterFigures(IV 퀴즈 SVG + recap 미니아트)
+  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금), unit1, unit2, unit3, unit4
   screens/   splash, onboarding, home(게임 지도), done
 ```
 - **스텝 = `{ type, ...props }` 데이터.** `player`가 `registry`에서 `type`으로 렌더러를 찾아 그린다.
@@ -53,7 +60,7 @@ src/
    `content/dsl.ts`에 팩토리 추가. 다크 무대가 필요하면 `.stage`/`ui/canvas`를 재사용.
 3. **새 단원 추가** → `content/unitN.ts` 만들고 `curriculum.ts`의 `CURRICULUM`에 넣는다.
    단원 내 레슨은 순차 잠금(직전 레슨 완료 시 해제).
-4. **단원 테마(색)** → `screens/home.ts`의 `UNIT_THEME`에 클래스 등록(u2=bio, u3=heat) +
+4. **단원 테마(색)** → `screens/home.ts`의 `UNIT_THEME`에 클래스 등록(u2=bio, u3=heat, u4=matter) +
    `ui.css`에 `.unit-band.X`/`.gm-terrain.X`/`.gm-path-*.X`/`.gm-node.X` 변형 + tokens에 그라데이션.
    랩 안 킥커는 `concept({ kickerTone: "heat" })` 식으로.
 
@@ -108,9 +115,18 @@ src/
   프롬프트 `qa/u1l1_imagen_prompts.txt`, 스펙 `qa/unit1_comic_spec.json`.
 - unit3(u3l3) = 캠핑장 열의 이동(전도·대류·복사) 7컷 — 같은 방식으로 재검증(7/7, ~68K 토큰).
   프롬프트 `qa/u3l3_imagen_prompts.txt`, 스펙 `qa/unit3_comic_spec.json`, 저장 `public/comics/u3l3/`.
+- unit4 = 2편 발주(각 7/7 성공): u4l3 "물방울의 여행"(융해→기화→액화→응고→승화 순환),
+  u4l6 "이글루와 사막 물주머니"(기화=흡수 vs 응고=방출 대비). 프롬프트 `qa/u4l3_imagen_prompts.txt`
+  `qa/u4l6_imagen_prompts.txt`, 저장 `public/comics/u4l3/` `u4l6/`. 백그라운드 bash로 2편 연속 발주 검증됨.
 - 스타일(검증됨): 손그림 스틱맨(흑선 + teal 강조 하나), **이미지 안 글자 금지**(자막은 앱 UI), 캐릭터 일관.
   gpt-image가 이 스타일을 잘 뽑음(글자 없고, AI-glossy 아님). 저장 경로 `public/comics/u1l1/0..6.png`.
 
-## 렌더러 원본 레퍼런스 (계승용, 아직 미이식)
-- `sample/renderer-comparison.html`의 `FRAG` 셰이더 = WebGL 메타볼 렌더러 원본.
-  물질의 상태 변화(대단원 IV) 단원을 만들 때 `engine/`(순수 입자 물리) + `renderers/`로 이식한다.
+## 메타볼 렌더러 (대단원 IV에서 이식 완료)
+- `sample/renderer-comparison.html`의 `FRAG` 셰이더 원본을 `renderers/meta.ts`로 **수치 그대로** 이식했다.
+  rMul `1.04+0.20·sol-0.48·gas` · threshold 1.0 · soft `mix(.30,.09,sol)` · 조명 `(-0.5,-0.65,0.58)` ·
+  specular `26+42·sol` · ice grain `vnoise(ps*7)`+glint`^14` · 볼 상한 48 · WebGL DPR 캡 1.75.
+- 물리는 `engine/matterSim.ts`(sol=1-smooth(-2,3,T), gas=smooth(96,104,T)) — 렌더러는 parts만 읽는다.
+- 조립은 `ui/matterStage.ts`: 물질 뷰(메타볼) ↔ **입자의 눈**(dot) 크로스페이드 토글, WebGL 실패·유실 시
+  자동 입자 뷰 폴백, 그릇 벽은 2D 오버레이 캔버스, 스텝 이탈 시 `dispose()`가 컨텍스트를 반납한다.
+- IV 단원 콘텐츠 주의: 이 교과서는 **녹는점·어는점·끓는점 용어를 도입하지 않는다** — "온도가 일정하게
+  유지된다"로만 서술하고, 승화는 양방향(고↔기) 모두 같은 이름을 쓴다.

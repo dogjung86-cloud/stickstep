@@ -790,3 +790,153 @@
 /* 펼친 recap 카드에서는 아트를 위쪽에 정렬 */
 .rc-card.open { align-items: flex-start; }
 .rc-card.open .rc-art { margin-top: 2px; }
+
+/* ============================================================
+   물질의 상태 변화(IV) — 메타볼 무대(mstage)
+   캔버스 3겹: 메타볼(WebGL) / 발광점(입자의 눈) / 오버레이(그릇 벽·이펙트).
+   두 렌더러는 같은 Sim을 그리므로 opacity 크로스페이드로 뷰를 전환한다.
+   ============================================================ */
+.mstage-box { position: relative; width: 100%; }
+.mstage-box .mstage-cv {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  transition: opacity .46s var(--ease);
+}
+.mstage-overlay { pointer-events: none; }
+.mstage-toggle {
+  position: absolute; right: 12px; bottom: 10px; z-index: 5;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255, 255, 255, .09); border: 1px solid rgba(255, 255, 255, .16);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  color: #DCE7F5; font-size: 12px; font-weight: 800; letter-spacing: 0;
+  padding: 7px 12px; border-radius: var(--r-pill);
+  transition: transform .12s var(--ease), background .2s, color .2s;
+}
+.mstage-toggle:active { transform: scale(.94); }
+.mstage-toggle .mt-ic { display: grid; place-items: center; color: #9FC1F0; transition: color .2s; }
+.mstage-toggle.on { background: rgba(124, 107, 255, .28); border-color: rgba(155, 140, 255, .45); color: #fff; }
+.mstage-toggle.on .mt-ic { color: #C9BEFF; }
+
+/* ============================================================
+   물질의 상태 변화(IV) — 랩·훅 장면 전용 스타일
+   ============================================================ */
+/* 3상태 비교 미니 그리드 */
+.mini-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 22px; }
+.mini .mini-stage { margin-top: 0; border-radius: 18px; }
+.mini h4 { margin-top: 10px; font-size: 14.5px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+.mini h4 i { width: 8px; height: 8px; border-radius: var(--r-pill); }
+.mini p { margin-top: 3px; font-size: 12px; line-height: 1.45; color: var(--ter); word-break: keep-all; }
+
+/* 이름 수집 배지(phaseNames) */
+.pn-badges { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 18px; }
+.pn-badge {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  border: 1.5px dashed var(--n300); border-radius: var(--r-md); padding: 9px 4px 8px;
+  color: var(--faint); background: var(--n25);
+  transition: all .3s var(--spring-soft);
+}
+.pn-badge b { font-size: 14px; font-weight: 800; letter-spacing: -.01em; }
+.pn-badge span { font-size: 10px; font-weight: 700; }
+.pn-badge.on {
+  border-style: solid; border-color: transparent; color: #fff;
+  background: linear-gradient(150deg, #9C8CFF 0%, #7C6BFF 52%, #6A55F2 100%);
+  box-shadow: 0 6px 14px -4px rgba(124, 107, 255, .55);
+  animation: pnPop .45s var(--spring-bounce);
+}
+@keyframes pnPop { 0% { transform: scale(.82); } 60% { transform: scale(1.08); } 100% { transform: scale(1); } }
+
+/* 가열·냉각 곡선 랩 */
+.hc-graph { margin-top: 10px; }
+.hc-energy-slot { position: absolute; right: 12px; bottom: 10px; pointer-events: none; }
+.hc-energy { opacity: .45; transition: opacity .25s, box-shadow .25s; }
+.hc-energy.on { opacity: 1; box-shadow: 0 0 0 1.5px rgba(255, 176, 58, .55), 0 0 16px rgba(255, 138, 92, .35); }
+
+/* 주목 유도 펄스 */
+.swapbtn.pulse { animation: mtPulse 1.6s ease-in-out infinite; border-color: #B9A8FF; }
+@keyframes mtPulse { 0%, 100% { box-shadow: var(--sh-card); } 50% { box-shadow: 0 0 0 5px rgba(124, 107, 255, .14); } }
+.pill.pulse-soft { box-shadow: 0 0 0 1.5px rgba(255, 255, 255, .5); }
+
+/* 목표 칩 — 물질 단원 색 변형 */
+.hp-goal.matter.on { background: linear-gradient(150deg, #9C8CFF, #7C6BFF); box-shadow: 0 3px 10px -2px rgba(124, 107, 255, .5); }
+
+/* ── hook 장면: 급식 냄새 ── */
+.hook-meal { cursor: pointer; display: block; width: 100%; background: none; border: 0; padding: 0; }
+.hook-meal:disabled { cursor: default; }
+.hook-meal svg { display: block; width: 100%; max-width: 260px; margin: 0 auto; }
+.hook-meal .hk-lid { transform-box: fill-box; transform-origin: center; transition: transform .6s var(--spring); }
+.hook-meal.opened .hk-lid { transform: translate(58px, -44px) rotate(14deg); }
+.hook-meal .hk-steam { opacity: 0; }
+.hook-meal.opened .hk-steam { opacity: 1; }
+.hook-meal.opened .hk-steam path { animation: hkSteam 1.6s ease-in-out infinite; }
+.hook-meal .hk-smellp circle { opacity: 0; }
+.hook-meal.opened .hk-smellp circle { animation: hkSmell 2.4s ease-out infinite; }
+.hook-meal.opened .hk-smellp circle:nth-child(2) { animation-delay: .35s; }
+.hook-meal.opened .hk-smellp circle:nth-child(3) { animation-delay: .7s; }
+.hook-meal.opened .hk-smellp circle:nth-child(4) { animation-delay: 1.05s; }
+.hook-meal.opened .hk-smellp circle:nth-child(5) { animation-delay: 1.4s; }
+.hook-meal.opened .hk-smellp circle:nth-child(6) { animation-delay: 1.75s; }
+.hook-meal .hk-sniff { opacity: 0; }
+.hook-meal.opened .hk-sniff { opacity: 1; animation: hkSniff 1.4s ease-in-out .9s infinite; }
+@keyframes hkSmell {
+  0% { opacity: 0; transform: translate(0, 0); }
+  25% { opacity: .95; }
+  100% { opacity: 0; transform: translate(74px, -26px); }
+}
+@keyframes hkSniff { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+
+/* ── hook 장면: 주스와 얼음 ── */
+.hook-cup .hk-cube { transform-box: fill-box; transform-origin: center; transition: transform .5s var(--spring); }
+.hook-cup.cold .hk-cube { transform: translateY(-10px); }
+.hook-cup .hk-grab { transition: opacity .3s; }
+.hook-cup.cold .hk-grab { opacity: 1; }
+.hook-cup.spill { border: 1.5px solid var(--gold); background: var(--amber-tint); }
+.hook-cup.spill .hook-cup-label { color: #B97A0C; }
+.hook-cup .hk-pud { transform-box: fill-box; transform-origin: center; transition: transform .6s var(--ease-out); }
+.hook-cup.spill .hk-pud { transform: scaleX(1.14) scaleY(.82); }
+.hook-cup.spill .hk-drip { opacity: 1; }
+.hook-cup.spill .hk-drip circle { animation: hkDrip .8s ease-in both; }
+.hook-cup.spill .hk-drip circle:nth-child(2) { animation-delay: .12s; }
+.hook-cup.spill .hk-drip circle:nth-child(3) { animation-delay: .24s; }
+@keyframes hkDrip { 0% { opacity: 0; transform: translateY(-8px); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(26px); } }
+
+/* ── hook 장면: 배달 랩 ── */
+.hook-wrap { cursor: pointer; display: block; width: 100%; background: none; border: 0; padding: 0; }
+.hook-wrap:disabled { cursor: default; }
+.hook-wrap svg { display: block; width: 100%; max-width: 280px; margin: 0 auto; }
+.hook-wrap .hk-wrap-bulge { opacity: 0; }
+.hook-wrap.bulged .hk-wrap-flat { opacity: 0; transition: opacity .5s; }
+.hook-wrap.bulged .hk-wrap-bulge { opacity: 1; transition: opacity .7s .15s; }
+.hook-wrap .hk-steam path { animation: hkSteam 1.6s ease-in-out infinite; }
+.hook-wrap.bulged .hk-steam { opacity: 0; transition: opacity .5s; }
+
+/* ── hook 장면: 라면 냄비 ── */
+.hook-pot svg { display: block; width: 100%; max-width: 280px; margin: 0 auto; }
+.hook-pot .hk-steam path { animation: hkSteam 1.6s ease-in-out infinite; }
+.hook-pot .hk-bub circle { animation: hkBub 1.5s ease-in infinite; }
+.hook-pot .hk-bub circle:nth-child(2) { animation-delay: .3s; }
+.hook-pot .hk-bub circle:nth-child(3) { animation-delay: .6s; }
+.hook-pot .hk-bub circle:nth-child(4) { animation-delay: .9s; }
+.hook-pot .hk-bub circle:nth-child(5) { animation-delay: 1.2s; }
+.hook-pot .hk-flame { transform-box: fill-box; transform-origin: bottom center; animation: hkFlick 1s ease-in-out infinite; }
+.hook-pot.fierce .hk-flame { animation: hkFlickBig .5s ease-in-out infinite; }
+.hook-pot.fierce .hk-bub circle { animation-duration: .7s; }
+@keyframes hkBub { 0% { opacity: 0; transform: translateY(0); } 25% { opacity: .95; } 100% { opacity: 0; transform: translateY(-30px); } }
+@keyframes hkFlick { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+@keyframes hkFlickBig { 0%, 100% { transform: scale(1.28); } 50% { transform: scale(1.42); } }
+
+/* ---------- 물질의 상태 변화 단원(IV) 테마: matter (보라) ---------- */
+.unit-band.matter { background: var(--grad-matter); }
+.gm-terrain.matter {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.55), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #E6E0FF, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #DFD8FF, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #E5DEFF, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #DAD2FF, transparent 72%),
+    linear-gradient(180deg, #F2EFFF 0%, #E9E4FF 55%, #E2DBFF 100%);
+}
+.gm-path-glow.matter { stroke: rgba(124,107,255,.20); }
+.gm-path-done.matter { stroke: #7C6BFF; }
+.gm-node.matter.now .gm-med, .gm-node.matter.done .gm-med { background: var(--grad-medallion-matter); }
+.gm-node.matter .gm-ring { border-color: rgba(124,107,255,.55); }
+.gm-node.matter:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-matter); }
+.kicker.matter { background: var(--subj-matter-tint); color: var(--subj-matter-press); }

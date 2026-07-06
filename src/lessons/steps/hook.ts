@@ -5,6 +5,11 @@
 //   "egg"   — 갓 삶은 달걀을 찬물에 퐁당 넣고, 이후를 예측(채점 없음, 사전 예측 효과)
 //   "beach" — 한여름 해변: 모래를 밟고 바닷물에 발을 담가 보고, 같은 햇볕인데 왜 다른지 궁금증
 //   "wire"  — 전깃줄: 여름/겨울을 오가며 늘어짐·팽팽함을 관찰하고 까닭을 예측
+//   ── IV 물질의 상태 변화 ──
+//   "smell" — 급식실: 뚜껑을 열면 냄새가 교실 끝까지 — 어떻게 왔는지 예측
+//   "juice" — 쏟아진 주스와 얼음: 얼음은 집히고 주스는 흐른다 — 두 가지 다 시도
+//   "wrap"  — 배달 음식 랩: 뜨거운 그릇에 랩을 씌우면 볼록 — 까닭을 예측
+//   "ramen" — 끓는 라면 물: 불을 최대로 올리면 온도가 더 오를지 예측
 
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
@@ -38,8 +43,8 @@ interface HookStep {
   lead?: string;
   narrator: string; // 시작 말풍선(HTML)
   done?: string; // 상호작용 완료 후 말풍선(HTML)
-  scene: "cups" | "egg" | "beach" | "wire";
-  choices?: string[]; // egg·wire 예측 선택지
+  scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen";
+  choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
 }
 
@@ -74,6 +79,10 @@ export const hook: StepRenderer = (host, step, api) => {
   if (s.scene === "cups") renderCups(scene, helper, finish, face);
   else if (s.scene === "beach") renderBeach(scene, helper, finish, face);
   else if (s.scene === "wire") renderWire(scene, helper, s, finish, face);
+  else if (s.scene === "smell") sceneCleanup = renderSmell(scene, helper, s, finish, face);
+  else if (s.scene === "juice") renderJuice(scene, helper, finish, face);
+  else if (s.scene === "wrap") sceneCleanup = renderWrap(scene, helper, s, finish, face);
+  else if (s.scene === "ramen") sceneCleanup = renderRamen(scene, helper, s, finish, face);
   else sceneCleanup = renderEgg(scene, helper, s, finish, api, face);
 
   api.setCTA("스틱맨 쌤과 먼저 관찰해요", { enabled: false });
@@ -350,4 +359,307 @@ function renderWire(scene: HTMLElement, helper: HTMLElement, s: HookStep, finish
   };
   summerBtn.addEventListener("click", () => setSeason("summer"));
   winterBtn.addEventListener("click", () => setSeason("winter"));
+}
+
+// ── 공용: 예측 선택지(채점 없음 — 랩으로 연결) ────────────────
+function askChoices(
+  box: HTMLElement,
+  opts: string[],
+  helper: HTMLElement,
+  doneMsg: string,
+  finish: () => void,
+): void {
+  opts.forEach((label) => {
+    const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" }, text: label });
+    b.addEventListener("click", () => {
+      if (box.classList.contains("locked")) return;
+      box.classList.add("locked");
+      haptic(HAPTIC.select);
+      box.querySelectorAll(".hook-choice").forEach((x) => {
+        x.classList.add(x === b ? "sel" : "dim");
+        x.setAttribute("aria-pressed", x === b ? "true" : "false");
+        (x as HTMLButtonElement).disabled = x !== b;
+      });
+      helper.innerHTML = doneMsg;
+      finish();
+    });
+    box.appendChild(b);
+  });
+  box.classList.add("show");
+}
+
+// ── 장면 5: 급식실 냄새 — 뚜껑 열기 + 예측 (IV L1) ───────────
+function mealSvg(): string {
+  return `<svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <!-- 배식대 -->
+    <path d="M28 120h184" stroke="#C4CAD2" stroke-width="3"/>
+    <path d="M40 120v14M200 120v14" stroke="#C4CAD2" stroke-width="3"/>
+    <!-- 접시 -->
+    <ellipse cx="86" cy="116" rx="46" ry="9" fill="#EDF1F6" stroke="#8B95A1" stroke-width="2.6"/>
+    <path d="M56 112c4-12 18-20 30-20s26 8 30 20" fill="#FFE9C9" stroke="#E8B25C" stroke-width="2.6"/>
+    <!-- 뚜껑(클로슈) -->
+    <g class="hk-lid">
+      <path d="M46 112c0-24 18-40 40-40s40 16 40 40" fill="#F4F8FE" stroke="#4E5968" stroke-width="3"/>
+      <circle cx="86" cy="66" r="5" fill="#fff" stroke="#4E5968" stroke-width="3"/>
+    </g>
+    <!-- 김 -->
+    <g class="hk-steam" stroke="#FF8A5C" stroke-width="2.8">
+      <path d="M74 98c-2.5-4.5 2.5-6 0-10.5"/>
+      <path d="M86 96c-2.5-4.5 2.5-6 0-10.5"/>
+      <path d="M98 98c-2.5-4.5 2.5-6 0-10.5"/>
+    </g>
+    <!-- 냄새 입자(뚜껑 열리면 퍼짐) -->
+    <g class="hk-smellp" fill="#12B8A6">
+      <circle cx="96" cy="92" r="3.4"/>
+      <circle cx="104" cy="86" r="3"/>
+      <circle cx="112" cy="94" r="2.7"/>
+      <circle cx="120" cy="84" r="2.5"/>
+      <circle cx="130" cy="92" r="2.3"/>
+      <circle cx="140" cy="86" r="2.1"/>
+    </g>
+    <!-- 멀리 있는 스틱맨(코 킁킁) -->
+    <g stroke="#4E5968" stroke-width="2.6">
+      <circle cx="196" cy="70" r="9" fill="#fff"/>
+      <path d="M196 79v22M196 86l-10 7M196 86l10 7M196 101l-8 12M196 101l8 12"/>
+    </g>
+    <g class="hk-sniff" stroke="#12B8A6" stroke-width="2.2">
+      <path d="M182 66q-4 3 0 6"/>
+      <path d="M176 62q-6 5 0 10"/>
+    </g>
+  </svg>`;
+}
+
+function renderSmell(
+  scene: HTMLElement,
+  helper: HTMLElement,
+  s: HookStep,
+  finish: () => void,
+  face: (k: AvatarKind) => void,
+): () => void {
+  const art = sceneArt("meal-closed", mealSvg());
+  const fig = el("button", { class: "hook-meal", attrs: { type: "button", "aria-label": "배식대 뚜껑 열기" } }, art.el);
+  const choicesBox = el("div", { class: "hook-choices" });
+  scene.append(fig, choicesBox);
+  helper.innerHTML = "배식대 뚜껑을 <b>눌러서</b> 열어 보세요.";
+
+  let opened = false;
+  let timer = 0;
+  fig.addEventListener("click", () => {
+    if (opened) return;
+    opened = true;
+    fig.classList.add("opened");
+    art.set("meal-open");
+    (fig as HTMLButtonElement).disabled = true;
+    haptic(HAPTIC.select);
+    face("surprised");
+    helper.innerHTML = "뚜껑을 열자마자… 교실 <b>끝자리</b>까지 냄새가 퍼졌어요!";
+    timer = window.setTimeout(() => {
+      face("curious");
+      helper.innerHTML = "바람 한 점 없는 실내예요. 냄새는 <b>어떻게</b> 저 멀리까지 갔을까요?";
+      askChoices(
+        choicesBox,
+        s.choices ?? ["바람이 냄새를 옮겨 줬다", "냄새 입자가 스스로 움직여 퍼졌다", "코가 냄새를 끌어당겼다"],
+        helper,
+        "예측 완료! 실험실에서 <b>물속 잉크</b>로 직접 확인해 봐요.",
+        finish,
+      );
+    }, 900);
+  });
+  return () => window.clearTimeout(timer);
+}
+
+// ── 장면 6: 쏟아진 주스와 얼음 (IV L2) ───────────────────────
+function iceSvg(): string {
+  return `<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <g class="hk-cube">
+      <rect x="24" y="30" width="46" height="42" rx="9" fill="#EAF4FF" stroke="#5AA2F8" stroke-width="3"/>
+      <path d="M33 40l9 9M52 38l6 6" stroke="#fff" stroke-width="3"/>
+      <path d="M33 62h28" stroke="#BFDCFF" stroke-width="2.6"/>
+    </g>
+    <g class="hk-grab" stroke="#8B95A1" stroke-width="2.6" opacity="0">
+      <path d="M20 22q4-8 12-8M76 22q-4-8-12-8"/>
+    </g>
+    <ellipse cx="47" cy="80" rx="26" ry="5" fill="#EDF1F6" stroke="none"/>
+  </svg>`;
+}
+function juicePuddleSvg(): string {
+  return `<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path class="hk-pud" d="M14 66q10-10 24-7t22-4 22 5q6 3 2 8t-16 6-26 1-24-2q-8-3-4-7z" fill="#FFD98A" stroke="#F5A623" stroke-width="2.8"/>
+    <g class="hk-drip" fill="#F5A623" opacity="0">
+      <circle cx="34" cy="44" r="3.4"/>
+      <circle cx="50" cy="38" r="3"/>
+      <circle cx="64" cy="46" r="2.7"/>
+    </g>
+    <ellipse cx="48" cy="82" rx="30" ry="4.5" fill="#EDF1F6" stroke="none"/>
+  </svg>`;
+}
+
+function renderJuice(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: (k: AvatarKind) => void): void {
+  const grid = el("div", { class: "hook-cups" });
+  scene.appendChild(grid);
+  helper.innerHTML = "바닥에 얼음과 주스가 쏟아졌어요! 둘 다 <b>눌러서</b> 주워 보세요.";
+
+  const tried = new Set<string>();
+  const mk = (kind: "ice" | "juice", name: string, artNames: [string, string], svg: string, result: string): HTMLElement => {
+    const label = el("div", { class: "hook-cup-label", text: "눌러서 줍기" });
+    const art = sceneArt(artNames[0], svg);
+    const card = el("button", { class: "hook-cup", attrs: { "aria-label": `${name} — 눌러서 줍기` } }, art.el, label);
+    card.addEventListener("click", () => {
+      if (tried.has(kind)) return;
+      tried.add(kind);
+      card.classList.add(kind === "ice" ? "cold" : "spill");
+      art.set(artNames[1]);
+      label.textContent = result;
+      card.setAttribute("aria-label", `${name} — ${result}`);
+      haptic(kind === "ice" ? HAPTIC.select : HAPTIC.wrong);
+      if (tried.size === 2) {
+        face("curious");
+        helper.innerHTML = "얼음은 <b>모양 그대로</b> 집히는데, 주스는 <b>흘러내려요</b>. 같은 바닥에 쏟아졌는데 왜 다를까요?";
+        finish();
+      } else {
+        face("surprised");
+        helper.innerHTML = kind === "ice" ? "쏙! 이제 <b>주스</b>도 주워 보세요." : "주르륵… 이제 <b>얼음</b>도 주워 보세요.";
+      }
+    });
+    return card;
+  };
+  grid.append(
+    mk("ice", "얼음", ["ice", "ice-picked"], iceSvg(), "쏙! 모양 그대로 집혔어요"),
+    mk("juice", "주스", ["juice", "juice-spill"], juicePuddleSvg(), "주르륵… 손가락 사이로!"),
+  );
+}
+
+// ── 장면 7: 배달 음식 랩 — 볼록해지는 랩 + 예측 (IV L4) ──────
+function wrapSvg(): string {
+  return `<svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <!-- 그릇 -->
+    <path d="M56 84c0 26 22 42 64 42s64-16 64-42" fill="#F4F8FE" stroke="#4E5968" stroke-width="3"/>
+    <path d="M52 84h176" stroke="#4E5968" stroke-width="3"/>
+    <!-- 국물 -->
+    <path d="M66 92c8 14 28 22 54 22s46-8 54-22" fill="#FFE1C2" stroke="none" opacity=".9"/>
+    <!-- 김 -->
+    <g class="hk-steam" stroke="#FF8A5C" stroke-width="2.8">
+      <path d="M100 76c-2.5-4.5 2.5-6 0-10.5"/>
+      <path d="M120 74c-2.5-4.5 2.5-6 0-10.5"/>
+      <path d="M140 76c-2.5-4.5 2.5-6 0-10.5"/>
+    </g>
+    <!-- 랩: 평평 ↔ 볼록 -->
+    <path class="hk-wrap-flat" d="M54 82q66 6 132 0" stroke="#9FC1F0" stroke-width="3"/>
+    <path class="hk-wrap-bulge" d="M54 82q66-52 132 0" stroke="#9FC1F0" stroke-width="3" fill="rgba(159,193,240,.12)"/>
+  </svg>`;
+}
+
+function renderWrap(
+  scene: HTMLElement,
+  helper: HTMLElement,
+  s: HookStep,
+  finish: () => void,
+  face: (k: AvatarKind) => void,
+): () => void {
+  const art = sceneArt("wrap-flat", wrapSvg());
+  const fig = el("button", { class: "hook-wrap flat", attrs: { type: "button", "aria-label": "뜨거운 그릇에 랩 씌워 두기" } }, art.el);
+  const choicesBox = el("div", { class: "hook-choices" });
+  scene.append(fig, choicesBox);
+  helper.innerHTML = "김이 나는 <b>뜨거운 국그릇</b>에 랩을 씌웠어요. 눌러서 잠시 기다려 보세요.";
+
+  let done = false;
+  let timer = 0;
+  fig.addEventListener("click", () => {
+    if (done) return;
+    done = true;
+    fig.classList.remove("flat");
+    fig.classList.add("bulged");
+    art.set("wrap-bulge");
+    fig.setAttribute("aria-label", "랩이 볼록하게 부풀어 올랐어요");
+    (fig as HTMLButtonElement).disabled = true;
+    haptic(HAPTIC.select);
+    face("surprised");
+    helper.innerHTML = "랩이 <b>볼록</b>하게 부풀었어요! 아무도 바람을 넣지 않았는데요.";
+    timer = window.setTimeout(() => {
+      face("curious");
+      askChoices(
+        choicesBox,
+        s.choices ?? ["국물이 수증기로 변하며 부피가 크게 늘어서", "랩이 열을 받아 스스로 늘어나서", "음식 입자의 크기가 커져서"],
+        helper,
+        "예측 완료! 실험실에서 <b>풍선 실험</b>으로 직접 확인해 봐요.",
+        finish,
+      );
+    }, 800);
+  });
+  return () => window.clearTimeout(timer);
+}
+
+// ── 장면 8: 끓는 라면 물 — 불 최대 + 예측 (IV L5) ────────────
+function potSvg(): string {
+  return `<svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <!-- 냄비 -->
+    <path d="M66 52h108v54a8 8 0 0 1-8 8H74a8 8 0 0 1-8-8z" fill="#F4F8FE" stroke="#4E5968" stroke-width="3"/>
+    <path d="M56 60h10M174 60h10" stroke="#4E5968" stroke-width="3"/>
+    <!-- 물 + 기포 -->
+    <path d="M70 64h100v44a5 5 0 0 1-5 5H75a5 5 0 0 1-5-5z" fill="#CFE4FF" stroke="none" opacity=".9"/>
+    <g class="hk-bub" fill="#fff">
+      <circle cx="92" cy="98" r="3.4"/>
+      <circle cx="118" cy="102" r="4"/>
+      <circle cx="144" cy="97" r="3"/>
+      <circle cx="106" cy="90" r="2.6"/>
+      <circle cx="132" cy="88" r="2.4"/>
+    </g>
+    <!-- 김 -->
+    <g class="hk-steam" stroke="#FF8A5C" stroke-width="2.8">
+      <path d="M104 44c-2.5-4.5 2.5-6 0-10.5"/>
+      <path d="M120 42c-2.5-4.5 2.5-6 0-10.5"/>
+      <path d="M136 44c-2.5-4.5 2.5-6 0-10.5"/>
+    </g>
+    <!-- 불꽃 -->
+    <g class="hk-flame">
+      <path d="M100 132q-6-10 4-16 0 8 8 10 6-8 2-14 12 6 8 18t-22 2z" fill="#FF8A5C" stroke="#F25C2E" stroke-width="2"/>
+      <path class="hk-flame2" d="M130 132q-5-8 3-13 0 6 6 8 4-6 1-11 10 5 7 15t-17 1z" fill="#FFB03A" stroke="#F5A623" stroke-width="2" opacity=".9"/>
+    </g>
+    <path d="M84 140h72" stroke="#C4CAD2" stroke-width="3"/>
+  </svg>`;
+}
+
+function renderRamen(
+  scene: HTMLElement,
+  helper: HTMLElement,
+  s: HookStep,
+  finish: () => void,
+  face: (k: AvatarKind) => void,
+): () => void {
+  const art = sceneArt("pot-boil", potSvg());
+  const fig = el("div", { class: "hook-pot boiling", attrs: { role: "img", "aria-label": "물이 보글보글 끓고 있어요" } }, art.el);
+  const fireBtn = el(
+    "button",
+    { class: "swapbtn", attrs: { type: "button" } },
+    el("span", { text: "불 세기 최대로 올리기" }),
+  );
+  const choicesBox = el("div", { class: "hook-choices" });
+  scene.append(fig, fireBtn, choicesBox);
+  helper.innerHTML = "물이 벌써 <b>보글보글</b> 끓고 있어요. 라면을 더 빨리 익히고 싶다면…?";
+
+  let done = false;
+  let timer = 0;
+  fireBtn.addEventListener("click", () => {
+    if (done) return;
+    done = true;
+    fig.classList.add("fierce");
+    art.set("pot-fierce");
+    fig.setAttribute("aria-label", "불을 최대로 — 물이 더 세차게 끓어요");
+    fireBtn.classList.add("done-static");
+    (fireBtn as HTMLButtonElement).disabled = true;
+    haptic(HAPTIC.select);
+    face("surprised");
+    helper.innerHTML = "화력 최대! 기포가 훨씬 <b>세차게</b> 올라와요. 그럼 물의 <b>온도</b>는요?";
+    timer = window.setTimeout(() => {
+      face("curious");
+      askChoices(
+        choicesBox,
+        s.choices ?? ["불이 세니까 온도가 계속 올라간다", "끓는 동안엔 온도가 더 오르지 않는다", "물이 줄어들면서 온도가 내려간다"],
+        helper,
+        "예측 완료! 실험실에서 <b>온도 그래프</b>를 직접 그려서 확인해 봐요.",
+        finish,
+      );
+    }, 900);
+  });
+  return () => window.clearTimeout(timer);
 }
