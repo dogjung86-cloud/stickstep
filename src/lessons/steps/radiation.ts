@@ -1,7 +1,8 @@
 // radiation — 복사 랩(L3).
 // 모닥불의 열이 물질을 거치지 않고 파동처럼 "직접" 날아와 스틱맨을 데운다.
-// 가림판을 넣으면 따뜻함이 '즉시' 사라지고(직진·차단), 빼면 곧바로 되살아난다.
-// 스틱맨을 끌어 거리를 바꾸면 따뜻함이 달라지는 것도 발견할 수 있다.
+// 변인 1 = 거리: 스틱맨을 끌어 가까이/멀리 — 복사는 멀어질수록 약해진다.
+// 변인 2 = 차단: 가림판을 넣으면 '즉시' 사라지고(직진), 빼면 곧바로 되살아난다.
+// 목표 배지 3개(다가가기·떨어지기·차단→복구)를 모두 모으면 완료.
 
 import { el, clamp } from "../../core/dom";
 import { createLoop, type Loop } from "../../core/anim";
@@ -32,14 +33,22 @@ export const radiation: StepRenderer = (host, step, api) => {
     el("div", { class: "cv-gauge-track" }, gaugeFill),
     gaugeVal,
   );
-  const hud = el("div", { class: "stage-hud" }, el("div", { class: "pill" }, el("span", { class: "pdot" }), el("span", { text: "모닥불 곁에서" })), gauge);
+  const distLabel = el("span", { text: "모닥불 곁에서" });
+  const hud = el("div", { class: "stage-hud" }, el("div", { class: "pill" }, el("span", { class: "pdot" }), distLabel), gauge);
   const stage = el("div", { class: "stage rd-stage" }, canvas, hud);
   const shieldBtn = el("button", { class: "swapbtn", html: "<span>가림판 넣기</span>" });
+  const goalChips = el(
+    "div",
+    { class: "pn-badges force3" },
+    el("div", { class: "pn-badge", dataset: { g: "near" } }, el("b", { text: "바짝 다가가기" }), el("span", { text: "따뜻함은?" })),
+    el("div", { class: "pn-badge", dataset: { g: "far" } }, el("b", { text: "멀리 떨어지기" }), el("span", { text: "약해질까?" })),
+    el("div", { class: "pn-badge", dataset: { g: "shield" } }, el("b", { text: "차단했다 빼기" }), el("span", { text: "직진 증거" })),
+  );
   const helper = el("div", {
     class: "helper",
-    html: "불에 <b>닿지 않았는데도</b> 따뜻해요. 열이 물질 없이 <b>직접</b> 날아오기 때문이에요. <b>가림판을 넣으면</b> 어떻게 될까요?",
+    html: "불에 <b>닿지 않았는데도</b> 따뜻해요. 스틱맨을 좌우로 끌어 <b>모닥불과의 거리</b>부터 바꿔 보세요.",
   });
-  host.append(stage, shieldBtn, helper);
+  host.append(goalChips, stage, shieldBtn, helper);
 
   // ---- 상태 ----
   let manX = 0.78; // 화면 비율 좌표
@@ -48,9 +57,21 @@ export const radiation: StepRenderer = (host, step, api) => {
   let shieldDrop = 0; // 삽입 애니메이션 0..1
   let warmth = 0.65;
   let blockedSeen = false;
-  let recoveredSeen = false;
   let finished = false;
   let dragging: "man" | "shield" | null = null;
+  const goals = new Set<string>();
+
+  function collect(id: string, subText: string): void {
+    if (goals.has(id)) return;
+    goals.add(id);
+    const chip = goalChips.querySelector(`[data-g="${id}"]`) as HTMLElement;
+    chip.classList.add("on");
+    chip.querySelector("span")!.textContent = subText;
+    haptic(HAPTIC.ctaUnlock);
+    if (goals.size === 1 && id !== "shield") return;
+    if (goals.has("near") && goals.has("far") && !goals.has("shield") && !shieldOn)
+      helper.innerHTML = "가까우면 후끈, 멀면 미지근 — <b>복사는 멀어질수록 약해져요</b>. 이번엔 <b>가림판</b>을 넣으면 어떻게 될까요?";
+  }
 
   const FIRE_X = 0.17;
 
@@ -284,7 +305,7 @@ export const radiation: StepRenderer = (host, step, api) => {
 
     // 따뜻함 계산 — 복사는 '직진'이라 차단은 즉시, 거리에 따라 약해진다
     const dist = (manX - FIRE_X) * w;
-    const distWarm = clamp(1 - (dist - w * 0.28) / (w * 0.72), 0.16, 0.95);
+    const distWarm = clamp(1 - (dist - w * 0.3) / (w * 0.6), 0.24, 0.95);
     const target = blocked ? 0.04 : distWarm;
     warmth += (target - warmth) * Math.min(1, (blocked ? 0.3 : 0.12) * dt);
 
@@ -306,26 +327,26 @@ export const radiation: StepRenderer = (host, step, api) => {
     ctx.lineTo(mx + 15, groundY + 9.5);
     ctx.stroke();
 
-    // 게이지
+    // 게이지 + 거리 라벨
+    distLabel.textContent = manX < 0.62 ? "모닥불 바로 곁" : manX > 0.82 ? "모닥불에서 멀리" : "모닥불에서 적당히";
     const pct = Math.round(warmth * 100);
     gaugeFill.style.width = `${pct}%`;
     gaugeFill.style.background = tempColor(clamp(warmth, 0, 1));
     gaugeVal.textContent = `${pct}%`;
 
-    // 목표 체크
+    // 목표 체크 — ① 거리(가까이/멀리: 과도 상태가 아닌 '그 거리의 평형값' 기준) ② 차단→복구
+    if (!blocked && distWarm > 0.85 && warmth > 0.78) collect("near", "후끈!");
+    if (!blocked && !shieldOn && distWarm < 0.32 && warmth < 0.36) collect("far", "미지근…");
     if (!blockedSeen && blocked && warmth < 0.1) {
       blockedSeen = true;
-      haptic(HAPTIC.ctaUnlock);
       helper.innerHTML =
         "따뜻함이 <b>순식간에 사라졌어요</b>. 복사는 열이 <b>직진</b>으로 오기 때문에, 사이를 막으면 바로 차단돼요. 이제 <b>가림판을 빼</b> 보세요.";
     }
-    if (blockedSeen && !recoveredSeen && !shieldOn && warmth > 0.5) {
-      recoveredSeen = true;
-    }
-    if (blockedSeen && recoveredSeen && !finished) {
+    if (blockedSeen && !goals.has("shield") && !shieldOn && warmth > Math.min(0.5, distWarm - 0.06)) collect("shield", "즉시 복구!");
+    if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "다시 따뜻해졌어요! 이렇게 열이 <b>물질을 통하지 않고 직접</b> 이동하는 것이 <b>복사</b>예요. 태양의 열도 텅 빈 우주를 건너 지구까지 오죠. 스틱맨을 끌어 <b>거리</b>도 바꿔 보세요.";
+        "이게 <b>복사</b>예요 — 열이 <b>물질을 통하지 않고 직접</b> 이동해요. 그래서 <b>멀어질수록 약해지고</b>, 사이를 막으면 <b>즉시 끊기죠</b>. 태양의 열도 텅 빈 우주를 건너 지구까지 와요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
