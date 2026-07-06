@@ -45,6 +45,12 @@ import { boyleSyringe } from "./steps/boyleSyringe";
 import { diverBubble } from "./steps/diverBubble";
 import { charlesSyringe } from "./steps/charlesSyringe";
 import { hotairRide } from "./steps/hotairRide";
+import { solarTour } from "./steps/solarTour";
+import { sunLab } from "./steps/sunLab";
+import { skyDaily } from "./steps/skyDaily";
+import { zodiacRing } from "./steps/zodiacRing";
+import { moonPhase3d } from "./steps/moonPhase3d";
+import { eclipse3d } from "./steps/eclipse3d";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -79,6 +85,12 @@ const R: Record<string, StepRenderer> = {
   diverBubble,
   charlesSyringe,
   hotairRide,
+  solarTour,
+  sunLab,
+  skyDaily,
+  zodiacRing,
+  moonPhase3d,
+  eclipse3d,
   quiz,
   table,
   order,

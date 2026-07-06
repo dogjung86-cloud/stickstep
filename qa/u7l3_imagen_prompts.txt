@@ -1,0 +1,22 @@
+# u7l3 「고려사에 적힌 태양의 점」 — 7컷 이미지 프롬프트
+# 공통 스타일(모든 컷 프롬프트 앞에 붙일 것):
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal (#12B8A6) used sparingly for highlights,
+# plus warm yellow-orange allowed ONLY for the sun itself.
+# Absolutely NO text, NO letters, NO numbers anywhere in the image.
+# Simple, charming, educational middle-school science comic. Consistent stick figure
+# characters: round head, dot eyes, simple line body. 4:3 landscape panel.
+
+[0] Korean Goryeo-era royal astronomer stick figure wearing a simple traditional hat (gat, drawn with a few lines), standing on a stone observatory platform at dusk, looking up at a large sun low on the horizon. The sun is warm yellow-orange with ONE small distinct dark spot on its face. The astronomer holds a scroll and brush. Teal accent: small starlight sparkles. No text.
+
+[1] Two stick figure villagers at sunset squinting at a hazy sun through drifting mist/fog layers. The sun appears as a pale disc with a visible small dark spot. One villager points at it, the other tilts head puzzled with a question-mark-shaped puff of breath (a curly swirl, NOT an actual question mark character). Teal accent on the mist swirls. No text.
+
+[2] Extreme close-up of the sun's surface drawn as a big warm circle filling most of the panel: bumpy granule texture sketched with short ink strokes, and one large dark patch (sunspot) clearly darker than its bright surroundings. A tiny stick figure scientist stands at the panel corner pointing at the dark patch with a stick. Teal accent: a small magnifying glass rim. No text.
+
+[3] A pot of boiling rice porridge on a small stove, drawn with rising and sinking swirl arrows inside the pot, side-by-side with the sun drawn with the exact same swirl arrows on its surface showing rice-grain-like granule texture. A stick figure teacher gestures connecting the two with an arc. Teal accent: the motion arrows. Warm yellow only on the sun. No text.
+
+[4] Total solar eclipse scene: black disc sun in a darkened sky with a glowing pearly-white corona radiating softly around it, and a thin reddish rim hinted at the edge. Below, three amazed stick figures wearing simple dark viewing glasses look up, arms raised. Teal accent: sparkle stars in the dark sky. No text.
+
+[5] Dynamic close-up of the sun's edge: a huge flame loop (prominence) arcing off the limb like a fiery bridge, and near a dark sunspot a burst explosion (flare) drawn with jagged rays. A tiny stick figure watches from a safe distance with wind-blown hair lines. Warm yellow-orange sun, teal accent on small energy sparkles. No text.
+
+[6] Modern space weather center: a stick figure scientist at a desk with a big monitor showing a simple wavy up-and-down curve (drawn as a plain line, no numbers or letters), a satellite dish outside the window, and faint teal aurora curtains in the night sky through the window. The scientist gives a thumbs up. Teal accent: the aurora and screen glow. No text.

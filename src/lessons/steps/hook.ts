@@ -16,12 +16,16 @@
 //   ── VI 기체의 성질 (렌더러는 hookGas.ts) ──
 //   "polar" 북극곰 얼음판+예측 · "bubblewrap" 뽁뽁이 · "foilballoon" 은박 풍선 안↔밖 ·
 //   "pingpong" 찌그러진 탁구공+예측
+//   ── VII 태양계 (렌더러는 hookSpace.ts) ──
+//   "stargaze" 밤하늘 밝은 점 · "planetsize" 지구 11개=목성+예측 · "shadowclock" 시계탑 그림자+예측 ·
+//   "moonpic" 달 사진 비교+예측 · "sunglasses" 태양 관측 안경+예측
 
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { stickAvatar, setStickAvatar, type AvatarKind } from "../../ui/avatar";
 import { renderBalloon, renderTugRope, renderBow, renderIceslip, renderBottle, renderRollStop } from "./hookForce";
 import { renderPolar, renderBubblewrap, renderFoilballoon, renderPingpong } from "./hookGas";
+import { renderStargaze, renderPlanetSize, renderShadowClock, renderMoonPic, renderSunGlasses } from "./hookSpace";
 import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -52,7 +56,8 @@ interface HookStep {
   narrator: string; // 시작 말풍선(HTML)
   done?: string; // 상호작용 완료 후 말풍선(HTML)
   scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen" | "balloon" | "tugrope" | "bow" | "iceslip" | "bottle" | "rollstop"
-    | "polar" | "bubblewrap" | "foilballoon" | "pingpong";
+    | "polar" | "bubblewrap" | "foilballoon" | "pingpong"
+    | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
 }
@@ -102,6 +107,11 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "bubblewrap") sceneCleanup = renderBubblewrap(scene, helper, finish, face);
   else if (s.scene === "foilballoon") sceneCleanup = renderFoilballoon(scene, helper, finish, face);
   else if (s.scene === "pingpong") sceneCleanup = renderPingpong(scene, helper, s, finish, face);
+  else if (s.scene === "stargaze") sceneCleanup = renderStargaze(scene, helper, finish, face);
+  else if (s.scene === "planetsize") sceneCleanup = renderPlanetSize(scene, helper, s, finish, face);
+  else if (s.scene === "shadowclock") renderShadowClock(scene, helper, s, finish, face);
+  else if (s.scene === "moonpic") renderMoonPic(scene, helper, s, finish, face);
+  else if (s.scene === "sunglasses") renderSunGlasses(scene, helper, s, finish, face);
   else sceneCleanup = renderEgg(scene, helper, s, finish, api, face);
 
   api.setCTA("스틱맨 쌤과 먼저 관찰해요", { enabled: false });

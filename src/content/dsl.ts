@@ -58,7 +58,8 @@ export const hook = (o: {
   title: string; lead?: string; narrator: string; done?: string;
   scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen"
     | "balloon" | "tugrope" | "bow" | "iceslip" | "bottle" | "rollstop"
-    | "polar" | "bubblewrap" | "foilballoon" | "pingpong";
+    | "polar" | "bubblewrap" | "foilballoon" | "pingpong"
+    | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
@@ -160,6 +161,20 @@ export const charlesSyringe = (o: { title: string; lead?: string; cta?: string }
   ({ type: "charlesSyringe", ...o });
 export const hotairRide = (o: { title: string; lead?: string; cta?: string }): Step =>
   ({ type: "hotairRide", ...o });
+
+// ── 태양계 단원(VII) 랩 ─────────────────────────────────────
+export const solarTour = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "solarTour", ...o });
+export const sunLab = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "sunLab", ...o });
+export const skyDaily = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "skyDaily", ...o });
+export const zodiacRing = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "zodiacRing", ...o });
+export const moonPhase3d = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "moonPhase3d", ...o });
+export const eclipse3d = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "eclipse3d", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

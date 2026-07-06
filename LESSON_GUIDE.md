@@ -24,7 +24,9 @@
       V 힘: `balloon` 풍선 끌었다 놓기, `tugrope` 멈춘 줄다리기+예측, `bow` 활쏘기,
       `iceslip` 빙판vs자갈길+예측, `bottle` 페트병 밀어넣기, `rollstop` 멈추는 공+예측,
       VI 기체: `polar` 북극곰 얼음판+예측, `bubblewrap` 뽁뽁이, `foilballoon` 은박 풍선 안↔밖,
-      `pingpong` 찌그러진 탁구공 구출+예측).
+      `pingpong` 찌그러진 탁구공 구출+예측,
+      VII 태양계: `stargaze` 밝은 점 망원경, `planetsize` 지구 11개=목성+예측,
+      `shadowclock` 시계탑 그림자+예측, `moonpic` 달 사진 비교+예측, `sunglasses` 관측 안경+예측).
     - **예측(prediction)은 채점하지 않는다** — 정답을 알려주지 않고 "실험으로 확인해 봐요"로 랩에 연결.
   - `comic` 스텝: 서사가 필요할 때(과학사, 캠핑 이야기 등). 컷 이미지는 codex 발주(CLAUDE.md 참고).
 - 도입의 목적은 지식 전달이 아니라 **궁금증 생성**. 개념 설명은 랩과 recap에 맡긴다.
@@ -34,12 +36,17 @@
 - **예측→실행→확인** 구조를 우선한다(전도 레이스, 난방기 배치처럼). 예측이 있는 랩은
   `recordQuiz(예측 정답 여부)`로 채점에 반영, 관찰만 하는 랩은 완료 시 `recordQuiz(true)`.
 - helper 한 줄이 실시간으로 "지금 무엇을 보고 있는지"를 말로 짚어 준다.
+- **3D 랩(VII 기준 구현)**: 명암·정렬이 개념 그 자체인 주제(달 위상, 일식·월식)는 three.js를 쓴다.
+  `ui/space3d.ts`는 반드시 `await import(...)`로 동적 로드(초기 번들 분리),
+  가로로 긴 장면(태양계 일렬·일식 정렬)은 `ui/rotateStage.ts`(90° 회전 오버레이 + `mapPoint` 포인터 리매핑)로.
+  움직이거나 작은 3D 탭 대상엔 투명 히트 프록시(혜성처럼)를 붙인다. 프레임마다 `st.render()` 호출을 잊지 말 것.
 
 ### 3) 정리 — `recap` 스텝으로 통일
 - **정리 자리는 recap 하나로 통일한다. 표(table)·긴 문단 나열 금지.**
 - 구성: 스틱맨 말풍선 → 개념 카드(미니 일러스트 + 굵은 핵심 한두 문장 + 예시 칩) → (선택) 콜아웃 → 스틱맨 아웃트로.
 - 카드는 2~4장. 카드 색은 개념 정체성 색(예: 전도 `#FF6B4A`, 대류 `#0CA6C0`, 복사 `#F04452`).
-- 미니 일러스트는 단원별 모듈에 64×64 SVG로 추가(열: `ui/heatFigures.ts`, 물질: `ui/matterFigures.ts`의 `miniArt()`).
+- 미니 일러스트는 단원별 모듈에 64×64 SVG로 추가(열: `ui/heatFigures.ts`, 물질: `ui/matterFigures.ts`의 `miniArt()`,
+  기체: `ui/gasFigures.ts`의 `gasMiniArt()`, 태양계: `ui/spaceFigures.ts`의 `spaceMiniArt()`).
 
 ### 4) 문제 — 형식을 섞는다 (3~6문)
 - 순서: **능동형 먼저**(binSort·order), 그다음 mcq/multi/ox. 그림 문제 1개 이상 권장.

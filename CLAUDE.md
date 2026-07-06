@@ -45,7 +45,10 @@ src/
                   forceStudio·tugOfWar·gravityDrop·springLab·frictionPush·buoyancyLab·windSoccer·
                   hookForce(V 훅 6종: balloon·tugrope·bow·iceslip·bottle·rollstop — hook.ts가 위임)·
                   gasPressure·boyleSyringe·diverBubble·charlesSyringe·hotairRide·
-                  hookGas(VI 훅 4종: polar·bubblewrap·foilballoon·pingpong))
+                  hookGas(VI 훅 4종: polar·bubblewrap·foilballoon·pingpong)·
+                  solarTour(VII 3D 가로 투어)·sunLab·skyDaily·zodiacRing·
+                  moonPhase3d(3D 위상 + 지구뷰 인셋)·eclipse3d(3D 가로 정렬 + 지상 개기일식 뷰)·
+                  hookSpace(VII 훅 5종: stargaze·planetsize·shadowclock·moonpic·sunglasses))
   engine/    matterSim — IV 단원 순수 입자 물리(프로토타입 Sim 이식, 렌더링 없음, 수치 불변)
   renderers/ meta(WebGL 메타볼 — FRAG 원본 이식, 볼 상한 48, dispose 시 lose_context)·
              dot(발광점 — WebGL 폴백 겸 "입자의 눈" 뷰)·palette(온도→hue 212→370, uniform 3색)
@@ -59,8 +62,12 @@ src/
              stick(캔버스 스틱맨 — posePull/posePush/poseKick, 관절 좌표 반환),
              forceFigures(V 퀴즈 SVG + recap 미니아트),
              gasKit(VI 공용 — GasBox 자유 입자 물리 + 발광 입자·벽 충돌 플래시·충돌률 게이지),
-             gasFigures(VI 퀴즈 SVG + recap 미니아트)
-  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금), unit1, unit2, unit3, unit4, unit5, unit6
+             gasFigures(VI 퀴즈 SVG + recap 미니아트),
+             space3d(VII 공용 three.js 킷 — 절차적 행성 텍스처·별배경·글로우·고리·궤도선.
+                     **반드시 동적 import**로만 로드, dispose가 지오메트리·재질·텍스처+컨텍스트 반납),
+             rotateStage(가로 모드 오버레이 — fixed 90° 회전 + mapPoint 포인터 리매핑 + 나가기),
+             spaceFigures(VII 퀴즈 SVG + 태양 핫스팟 그림 + spaceMiniArt)
+  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금), unit1 … unit7
   screens/   splash, onboarding, home(게임 지도), done
 ```
 - **스텝 = `{ type, ...props }` 데이터.** `player`가 `registry`에서 `type`으로 렌더러를 찾아 그린다.
@@ -73,9 +80,10 @@ src/
    `content/dsl.ts`에 팩토리 추가. 다크 무대가 필요하면 `.stage`/`ui/canvas`를 재사용.
 3. **새 단원 추가** → `content/unitN.ts` 만들고 `curriculum.ts`의 `CURRICULUM`에 넣는다.
    단원 내 레슨은 순차 잠금(직전 레슨 완료 시 해제).
-4. **단원 테마(색)** → `screens/home.ts`의 `UNIT_THEME`에 클래스 등록(u2=bio, u3=heat, u4=matter, u5=force, u6=gas) +
-   `ui.css`에 `.unit-band.X`/`.gm-terrain.X`/`.gm-path-*.X`/`.gm-node.X` 변형 + tokens에 그라데이션.
-   랩 안 킥커는 `concept({ kickerTone: "heat" })` 식으로.
+4. **단원 테마(색)** → `screens/home.ts`의 `UNIT_THEME`에 클래스 등록(u2=bio, u3=heat, u4=matter, u5=force,
+   u6=gas, u7=space) + `ui.css`에 `.unit-band.X`/`.gm-terrain.X`/`.gm-path-*.X`/`.gm-node.X` 변형 + tokens에 그라데이션.
+   랩 안 킥커는 `concept({ kickerTone: "heat" })` 식으로. 새 색은 기존 단원과 겹치지 않게
+   (u4 matter #7C6BFF 보라 ↔ u7 space #4A54E1 딥 인디고처럼 뚜렷이 구분).
 
 ## 퀴즈 유형 (quiz 스텝 하나로)
 - `mcq`(5지선다) · `ox`(O/X) · `multi`(보기 합답형, 복수정답) · 그림 퀴즈(`figure` 추가).
@@ -138,6 +146,9 @@ src/
 - unit6(u6l2) = 보일의 J자 유리관(3m 유리관·수은·시행착오, 206쪽 과학자 이야기 기반) 7컷 —
   동일 파이프라인(7/7, ~78K 토큰). 프롬프트 `qa/u6l2_imagen_prompts.txt`, 저장 `public/comics/u6l2/`.
   VI 만화는 L2 하나만(분석 결과). 보일 역은 같은 스틱맨에 곱슬 가발.
+- unit7(u7l3) = 고려사의 흑점 기록(236쪽 도입 소재 — 고려 천문 관리→흑점 정체→쌀알 무늬→
+  개기일식의 대기→홍염·플레어→11년 주기 우주 날씨) 7컷. 프롬프트 `qa/u7l3_imagen_prompts.txt`,
+  저장 `public/comics/u7l3/`. VII 만화는 L3 하나만(나머지 레슨은 3D 랩이 주인공이라 분석 결과 불필요).
   프롬프트 `qa/u5l3_imagen_prompts.txt`, 저장 `public/comics/u5l3/`. V 단원 만화는 L3 하나만(분석 결과).
   프롬프트 `qa/u3l3_imagen_prompts.txt`, 스펙 `qa/unit3_comic_spec.json`, 저장 `public/comics/u3l3/`.
 - unit4 = 2편 발주(각 7/7 성공): u4l3 "물방울의 여행"(융해→기화→액화→응고→승화 순환),
@@ -145,6 +156,20 @@ src/
   `qa/u4l6_imagen_prompts.txt`, 저장 `public/comics/u4l3/` `u4l6/`. 백그라운드 bash로 2편 연속 발주 검증됨.
 - 스타일(검증됨): 손그림 스틱맨(흑선 + teal 강조 하나), **이미지 안 글자 금지**(자막은 앱 UI), 캐릭터 일관.
   gpt-image가 이 스타일을 잘 뽑음(글자 없고, AI-glossy 아님). 저장 경로 `public/comics/u1l1/0..6.png`.
+
+## 3D 우주 랩 (대단원 VII — three.js)
+- 위상·일식처럼 **빛의 명암과 3차원 정렬이 개념 그 자체**인 주제만 three.js를 쓴다(장식용 3D 금지).
+- `ui/space3d.ts`가 유일한 three 접점: 절차적 캔버스 텍스처(수성 크레이터~해왕성 대흑점, 외부 에셋 0),
+  별배경·글로우 스프라이트·고리(UV 반지름 재배치)·궤도선. 스텝에서는 **반드시 `await import()`**
+  (vite가 three를 별도 청크로 분리, gzip ~192KB — 초기 번들 무영향. `optimizeDeps.include: ["three"]` 필수,
+  없으면 dev 첫 로드 때 최적화 풀리로드가 나서 레슨 상태가 날아간다).
+- 규율: DPR 캡 1.75 · rAF는 스텝의 `createLoop`가 소유 · **프레임마다 `st.render()` 호출**(빼먹으면 검은 무대) ·
+  cleanup에서 `st.dispose()`(지오메트리·재질·텍스처 해제 + forceContextLoss). WebGL 실패 시 `null` → 텍스트 폴백 후 CTA 개방.
+- **가로 모드** `ui/rotateStage.ts`: fixed 오버레이 안에 90° 회전 무대. 포인터는 `rot.mapPoint(e)`로
+  리매핑(스테이지 x = clientY − top, y = right − clientX). 태양계 일렬(solarTour)·일식 정렬(eclipse3d)이 사용.
+- 조작 문법: 궤도 드래그는 평면(y=0) 레이캐스트 → atan2 각도. 작거나 움직이는 탭 대상(혜성)엔
+  투명 히트 프록시 구를 붙인다. moonPhase3d는 우주뷰 + 우하단 시저 뷰포트 인셋("지구에서 본 달"),
+  eclipse3d 지상 뷰는 phi 스냅 보정 + 달 스케일 1.6×로 개기일식을 연출(궤도선·그림자 원뿔은 숨김).
 
 ## 메타볼 렌더러 (대단원 IV에서 이식 완료)
 - `sample/renderer-comparison.html`의 `FRAG` 셰이더 원본을 `renderers/meta.ts`로 **수치 그대로** 이식했다.
