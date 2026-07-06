@@ -129,12 +129,13 @@ export const hotairRide: StepRenderer = (host, step, api) => {
     ctx.fillStyle = skyG;
     ctx.fillRect(6, 6, W - 12, H - 12);
     for (let i = 0; i < 4; i++) {
+      // 패럴랙스: 열기구가 오르면 구름은 상대적으로 아래로 흐른다
       const cy = ((i * 97 + alt * 2.2) % (H + 60)) - 30;
       const cx = 40 + ((i * 131) % (W - 80));
       ctx.fillStyle = "rgba(226,240,255,.16)";
       ctx.beginPath();
-      ctx.ellipse(cx, H - cy, 34, 11, 0, 0, Math.PI * 2);
-      ctx.ellipse(cx + 22, H - cy + 4, 22, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx, cy, 34, 11, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx + 22, cy + 4, 22, 8, 0, 0, Math.PI * 2);
       ctx.fill();
     }
     // 고도 눈금 + 목표 띠
