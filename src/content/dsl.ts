@@ -56,7 +56,8 @@ export const hotspot = (o: {
 
 export const hook = (o: {
   title: string; lead?: string; narrator: string; done?: string;
-  scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen";
+  scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen"
+    | "balloon" | "tugrope" | "pen" | "books" | "bottle" | "rollstop";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
@@ -124,6 +125,28 @@ export const phaseVolume = (o: { title: string; lead?: string; cta?: string }): 
 
 export const heatCurve = (o: { title: string; lead?: string; mode?: "heat" | "cool"; cta?: string }): Step =>
   ({ type: "heatCurve", ...o });
+
+// ── 힘의 작용 단원(V) 랩 ───────────────────────────────────
+export const springLab = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "springLab", ...o });
+
+export const tugOfWar = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "tugOfWar", ...o });
+
+export const gravityDrop = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "gravityDrop", ...o });
+
+export const frictionPush = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "frictionPush", ...o });
+
+export const buoyancyLab = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "buoyancyLab", ...o });
+
+export const forceStudio = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "forceStudio", ...o });
+
+export const windSoccer = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "windSoccer", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

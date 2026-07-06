@@ -942,3 +942,89 @@
 .gm-node.matter .gm-ring { border-color: rgba(124,107,255,.55); }
 .gm-node.matter:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-matter); }
 .kicker.matter { background: var(--subj-matter-tint); color: var(--subj-matter-press); }
+
+/* ---------- 힘의 작용 단원(V) 지도 테마: force (골드) ---------- */
+.unit-band.force { background: var(--grad-force); }
+.gm-terrain.force {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.55), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #FFE9C2, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #FFE2B0, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #FFE8BE, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #FFDFA6, transparent 72%),
+    linear-gradient(180deg, #FFF6E6 0%, #FFEDCF 55%, #FFE6BC 100%);
+}
+.gm-path-glow.force { stroke: rgba(240,164,34,.22); }
+.gm-path-done.force { stroke: #F0A422; }
+.gm-node.force.now .gm-med, .gm-node.force.done .gm-med { background: var(--grad-medallion-force); }
+.gm-node.force .gm-ring { border-color: rgba(240,164,34,.55); }
+.gm-node.force:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-force); }
+.kicker.force { background: var(--subj-force-tint); color: var(--subj-force-press); }
+
+/* ---------- V 힘 단원 랩 공용 ---------- */
+.pn-badge.force.on {
+  border-style: solid; border-color: transparent; color: #fff;
+  background: linear-gradient(150deg, #FFC24D 0%, #F0A422 55%, #DE8F0D 100%);
+  box-shadow: 0 6px 14px -4px rgba(240, 164, 34, .55);
+}
+.pn-badges.force4 { grid-template-columns: repeat(4, 1fr); }
+.spring-canvas { touch-action: none; cursor: grab; }
+.spring-canvas.dragging { cursor: grabbing; }
+.pn-badges.force3 { grid-template-columns: repeat(3, 1fr); }
+.tg-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.tg-ctrl {
+  display: flex; align-items: center; gap: 8px; justify-content: center;
+  background: #fff; border: 1.5px solid var(--line); border-radius: var(--r-md);
+  padding: 9px 10px; box-shadow: var(--sh-card);
+}
+.tg-ctrl .tg-dot { width: 9px; height: 9px; border-radius: var(--r-pill); }
+.tg-ctrl .tg-name { font-size: 13px; font-weight: 700; color: var(--sub); margin-right: 2px; }
+.tg-ctrl b { font-size: 14px; min-width: 34px; text-align: center; font-variant-numeric: tabular-nums; }
+.tg-btn {
+  width: 34px; height: 34px; border-radius: 10px; background: var(--n100);
+  font-size: 18px; font-weight: 800; color: var(--ink);
+  transition: transform .12s var(--ease), background .15s;
+}
+.tg-btn:active { transform: scale(.92); background: var(--n200); }
+.fp-controls { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; margin-top: 10px; }
+.fp-controls .swapbtn { margin-top: 0; }
+.ws-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px; }
+.ws-controls .swapbtn { margin-top: 0; font-size: 13px; padding: 0 6px; }
+
+/* ---------- V 힘 단원 훅 장면 ---------- */
+.hf-balloon-wrap { touch-action: none; cursor: grab; }
+.hf-balloon-wrap svg { display: block; width: 100%; max-width: 250px; margin: 0 auto; }
+.hf-balloon { animation: hfFloat 2.6s ease-in-out infinite; will-change: transform; }
+@keyframes hfFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
+.hf-tug svg, .hf-books svg, .hf-rollwrap svg, .hf-bottle svg { display: block; width: 100%; max-width: 280px; margin: 0 auto; }
+.hf-tug.straining .hf-tugman { animation: hfShake .18s linear infinite; }
+.hf-tug.straining .hf-strain { opacity: 1; }
+.hf-tug.straining .hf-rope, .hf-tug.straining .hf-ribbon { animation: hfShake .22s linear infinite; }
+@keyframes hfShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-1.2px); } 75% { transform: translateX(1.2px); } }
+.hf-pen { display: block; width: 100%; background: none; border: 0; padding: 0; cursor: pointer; }
+.hf-pen svg { display: block; width: 100%; max-width: 270px; margin: 0 auto; }
+.hf-pen .hf-pen-ink, .hf-pen .hf-pen-spring, .hf-pen .hf-pen-btn { transition: transform .18s var(--spring); }
+.hf-pen.in .hf-pen-ink { transform: translateX(18px); }
+.hf-pen.in .hf-pen-spring { transform: translateX(20px) scaleX(.62); transform-origin: 186px 0; }
+.hf-pen.in .hf-pen-btn { transform: translateX(10px); }
+.hf-books { display: block; width: 100%; background: none; border: 0; padding: 0; cursor: pointer; }
+.hf-books.tugging .hf-bookL { animation: hfTugL .7s var(--ease); }
+.hf-books.tugging .hf-bookR { animation: hfTugR .7s var(--ease); }
+.hf-books.tugging .hf-strain2 { animation: hfStrainIn .7s linear; }
+@keyframes hfTugL { 0% { transform: translateX(0); } 35% { transform: translateX(-7px); } 70% { transform: translateX(2px); } 100% { transform: translateX(0); } }
+@keyframes hfTugR { 0% { transform: translateX(0); } 35% { transform: translateX(7px); } 70% { transform: translateX(-2px); } 100% { transform: translateX(0); } }
+@keyframes hfStrainIn { 0%, 100% { opacity: 0; } 30%, 70% { opacity: 1; } }
+.hf-bottle { touch-action: none; cursor: pointer; }
+.hf-bottle .hf-bottle-g { transform: translateY(14px); transition: transform .5s var(--spring); will-change: transform; }
+.hf-bottle.dunked .hf-bottle-g { transform: translateY(58px); transition: transform .35s var(--ease); }
+.hf-bottle .hf-push-arrows { transition: opacity .25s; }
+.hf-bottle.dunked .hf-push-arrows { opacity: 1; }
+.hf-bottle .hf-wave { animation: hfWave 2.4s ease-in-out infinite; }
+@keyframes hfWave { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-8px); } }
+.hf-rollwrap { display: block; width: 100%; background: none; border: 0; padding: 0; cursor: pointer; }
+.hf-rollwrap:disabled { cursor: default; }
+.hf-roll { transform: translateX(44px); }
+.hf-rollwrap.rolling .hf-roll { animation: hfRoll 2.6s cubic-bezier(.2,.7,.6,1) forwards; }
+.hf-rollwrap.rolling .hf-roll-spin { animation: hfSpin 2.6s cubic-bezier(.2,.7,.6,1) forwards; }
+@keyframes hfRoll { 0% { transform: translateX(44px); } 100% { transform: translateX(196px); } }
+@keyframes hfSpin { 0% { rotate: 0deg; } 100% { rotate: 720deg; } }

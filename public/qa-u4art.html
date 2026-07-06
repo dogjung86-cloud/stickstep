@@ -87,6 +87,98 @@
     });
   }
 
+  // ── V 단원(힘) 훅 장면 ──
+  document.body.insertAdjacentHTML("beforeend", '<h1>V 단원(힘) — 훅 장면 (왼쪽: 초기 · 오른쪽: 상호작용 후)</h1><div class="qa-grid" id="hooks5"></div>');
+  const drag = (elem, dx, dy) => {
+    if (!elem) return;
+    const r = elem.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    elem.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerId: 7, clientX: cx, clientY: cy }));
+    for (let i = 1; i <= 4; i++)
+      elem.dispatchEvent(new PointerEvent("pointermove", { bubbles: true, pointerId: 7, clientX: cx + (dx * i) / 4, clientY: cy + (dy * i) / 4 }));
+    elem.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, pointerId: 7, clientX: cx + dx, clientY: cy + dy }));
+  };
+  const HOOKS5 = [
+    ["balloon", (d) => { drag(d.querySelector(".hf-balloon-wrap"), 0, 50); setTimeout(() => drag(d.querySelector(".hf-balloon-wrap"), 0, 50), 700); }],
+    ["tugrope", (d) => { findBtn(d, "힘껏")?.click(); setTimeout(() => d.querySelectorAll(".hook-choice")[0]?.click(), 1400); }],
+    ["pen", (d) => d.querySelector(".hf-pen")?.click()],
+    ["books", (d) => { d.querySelector(".hf-books")?.click(); setTimeout(() => d.querySelector(".hf-books")?.click(), 900); setTimeout(() => d.querySelectorAll(".hook-choice")[0]?.click(), 2400); }],
+    ["bottle", (d) => { const f = d.querySelector(".hf-bottle"); if (!f) return; const r = f.getBoundingClientRect(); f.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerId: 8, clientX: r.left + 20, clientY: r.top + 20 })); }],
+    ["rollstop", (d) => { d.querySelector(".hf-rollwrap")?.click(); setTimeout(() => d.querySelectorAll(".hook-choice")[0]?.click(), 3200); }],
+  ];
+  for (const [scene, act] of HOOKS5) {
+    const step = { type: "hook", title: "t", narrator: "n", scene };
+    mount("hooks5", scene, "초기", "hook", step, null);
+    mount("hooks5", scene, "상호작용 후", "hook", step, act);
+  }
+
+  // ── V 단원(힘) 재작업 검수 ──
+  document.body.insertAdjacentHTML("beforeend", '<h1>V 단원(힘) — 재작업 랩</h1><div class="qa-grid" id="labs5"></div>');
+  document.querySelectorAll("h1:last-of-type").forEach(() => {});
+  mount("labs5", "springLab", "", "springLab", { type: "springLab", title: "t" }, async (d) => {
+    const cv = d.querySelector(".spring-canvas");
+    const r = cv.getBoundingClientRect();
+    // 손잡이(자연길이 끝 + 10px 근처)를 잡고 8cm 지점까지 드래그 후 유지
+    const ax = r.left + r.width * 0.09, ay = r.top + r.height * 0.44;
+    const hx = ax + r.width * 0.34 + 10;
+    const ev = (t, x, y) => cv.dispatchEvent(new PointerEvent(t, { bubbles: true, pointerId: 21, clientX: x, clientY: y }));
+    ev("pointerdown", hx, ay);
+    const cmPx = Math.min(15, (r.width * 0.42) / 14);
+    for (let i = 1; i <= 8; i++) { ev("pointermove", ax + r.width * 0.34 + i * cmPx, ay); await new Promise(res => setTimeout(res, 90)); }
+  });
+
+  mount("labs5", "tugOfWar", "", "tugOfWar", { type: "tugOfWar", title: "t" }, async (d) => {
+    const btns = [...d.querySelectorAll(".tg-btn")];
+    // 왼쪽 +2, 오른쪽 +3 → 알짜힘 100N 오른쪽 (승리선까지 굴러가는 모습)
+    btns[1]?.click(); btns[1]?.click(); btns[3]?.click(); btns[3]?.click(); btns[3]?.click();
+  });
+
+  mount("labs5", "gravityDrop", "", "gravityDrop", { type: "gravityDrop", title: "t" }, (d) => {
+    const cv = d.querySelectorAll("canvas")[0];
+    const r = cv.getBoundingClientRect();
+    const ev = (x, y) => cv.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerId: 31, clientX: r.left + x, clientY: r.top + y }));
+    ev(r.width * 0.5, 26); setTimeout(() => ev(r.width * 0.1, r.height * 0.55), 500);
+  });
+  mount("labs5", "frictionPush", "", "frictionPush", { type: "frictionPush", title: "t" }, (d) => {
+    const btn = [...d.querySelectorAll("button")].find(b => b.textContent.includes("밀기"));
+    const r = btn.getBoundingClientRect();
+    btn.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerId: 32, clientX: r.left + 8, clientY: r.top + 8 }));
+  });
+  mount("labs5", "buoyancyLab", "", "buoyancyLab", { type: "buoyancyLab", title: "t" }, async (d) => {
+    const cv = d.querySelectorAll("canvas")[0];
+    const r = cv.getBoundingClientRect();
+    const sx = r.left + r.width / 2;
+    const ev = (t, y) => cv.dispatchEvent(new PointerEvent(t, { bubbles: true, pointerId: 33, clientX: sx, clientY: r.top + y }));
+    // 추(초기 위치 근처)를 잡고 절반 잠김까지 드래그
+    ev("pointerdown", r.height * 0.56 - 46);
+    for (let i = 0; i <= 6; i++) { ev("pointermove", r.height * 0.56 - 46 + i * 10); await new Promise(res => setTimeout(res, 80)); }
+  });
+
+  mount("labs5", "forceStudio", "", "forceStudio", { type: "forceStudio", title: "t" }, async (d) => {
+    const cv = d.querySelectorAll("canvas")[0];
+    const r = cv.getBoundingClientRect();
+    const bx = r.left + 90, by = r.top + r.height * 0.8 - 16;
+    const ev = (t, x, y) => cv.dispatchEvent(new PointerEvent(t, { bubbles: true, pointerId: 41, clientX: x, clientY: y }));
+    ev("pointerdown", bx, by);
+    for (let i = 1; i <= 5; i++) { ev("pointermove", bx + i * 12, by - i * 7); await new Promise(res => setTimeout(res, 70)); }
+    // 놓지 않고 유지 → 조준 화살표 상태로 캡처
+  });
+  mount("labs5", "windSoccer", "", "windSoccer", { type: "windSoccer", title: "t" }, (d) => {
+    const btn = [...d.querySelectorAll("button")].find(b => b.textContent.includes("수직"));
+    const r = btn.getBoundingClientRect();
+    btn.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerId: 42, clientX: r.left + 8, clientY: r.top + 8 }));
+  });
+
+  // ── V 단원 콘텐츠 실물(그림 문제 + recap) ──
+  const { UNIT5 } = await import("/src/content/unit5.ts");
+  document.body.insertAdjacentHTML("beforeend", '<h1>V 단원 — 그림 문제 · recap 실물</h1><div class="qa-grid" id="figs5"></div>');
+  for (const les of UNIT5.lessons) {
+    for (const st of les.steps) {
+      if (st.type === "quiz" && st.figure) mount("figs5", les.id, st.mode, "quiz", st, null);
+      if (st.type === "recap") mount("figs5", les.id, "recap", "recap", st, null);
+    }
+  }
+
   window.__ready = true;
 </script>
 </body>

@@ -33,6 +33,13 @@ import { phaseNames } from "./steps/phaseNames";
 import { sublimation } from "./steps/sublimation";
 import { phaseVolume } from "./steps/phaseVolume";
 import { heatCurve } from "./steps/heatCurve";
+import { springLab } from "./steps/springLab";
+import { tugOfWar } from "./steps/tugOfWar";
+import { gravityDrop } from "./steps/gravityDrop";
+import { frictionPush } from "./steps/frictionPush";
+import { buoyancyLab } from "./steps/buoyancyLab";
+import { forceStudio } from "./steps/forceStudio";
+import { windSoccer } from "./steps/windSoccer";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -55,6 +62,13 @@ const R: Record<string, StepRenderer> = {
   sublimation,
   phaseVolume,
   heatCurve,
+  springLab,
+  tugOfWar,
+  gravityDrop,
+  frictionPush,
+  buoyancyLab,
+  forceStudio,
+  windSoccer,
   quiz,
   table,
   order,
