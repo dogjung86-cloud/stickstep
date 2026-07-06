@@ -165,136 +165,250 @@ export function renderTugRope(
   return () => window.clearTimeout(timer);
 }
 
-// ── L4: 볼펜 딸깍(용수철) ────────────────────────────────────
-function penSvg(): string {
+// ── L4: 활쏘기(탄성력 체감) ──────────────────────────────────
+function bowSvg(): string {
   return `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <defs>
-      <linearGradient id="hf-penbody" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0" stop-color="#5B9DF5"/><stop offset=".5" stop-color="#3182F6"/><stop offset="1" stop-color="#2266CC"/>
+      <linearGradient id="hf-limb" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#D8A868"/><stop offset=".5" stop-color="#B98A50"/><stop offset="1" stop-color="#7E5A2E"/>
       </linearGradient>
-      <linearGradient id="hf-pentube" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#F4F8FE"/><stop offset="1" stop-color="#D2DEEE"/>
-      </linearGradient>
+      <radialGradient id="hf-target" cx=".42" cy=".38" r=".9">
+        <stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DCE6F2"/>
+      </radialGradient>
     </defs>
-    <ellipse cx="120" cy="150" rx="80" ry="6" fill="#2A3A5E" opacity=".08"/>
-    <!-- 볼펜 몸통(투명 단면) -->
-    <rect x="40" y="66" width="150" height="34" rx="12" fill="url(#hf-pentube)" stroke="#9DAABD" stroke-width="1.8"/>
-    <rect x="40" y="69" width="150" height="6" rx="3" fill="#FFFFFF" opacity=".6"/>
-    <!-- 용수철(심 뒤) — CSS로 압축 -->
-    <g class="hf-pen-spring" stroke="#8CA0BC" stroke-width="2.6">
-      <path d="M138 83 l6 -9 l6 9 l6 -9 l6 9 l6 -9 l6 9" fill="none"/>
+    <ellipse cx="52" cy="152" rx="40" ry="5" fill="#2A3A5E" opacity=".10"/>
+    <ellipse cx="196" cy="152" rx="30" ry="5" fill="#2A3A5E" opacity=".12"/>
+    <!-- 과녁 -->
+    <g class="hf-bow-target">
+      <path d="M186 150l10-16 10 16" stroke="#8B95A1" stroke-width="3"/>
+      <circle cx="196" cy="96" r="27" fill="url(#hf-target)" stroke="#9DAABD" stroke-width="2"/>
+      <circle cx="196" cy="96" r="18" fill="#F0564C" opacity=".9"/>
+      <circle cx="196" cy="96" r="9.5" fill="#FFF4F2"/>
+      <circle cx="196" cy="96" r="3.4" fill="#C43A32"/>
     </g>
-    <!-- 심 + 촉 -->
-    <g class="hf-pen-ink">
-      <rect x="58" y="78" width="82" height="10" rx="5" fill="url(#hf-penbody)"/>
-      <path class="hf-pen-tip" d="M58 83l-16 0" stroke="#1D5DBF" stroke-width="6"/>
-      <path d="M42 83l-7 0" stroke="#123F86" stroke-width="3.4"/>
+    <!-- 스틱맨(손그림 라인) -->
+    <g class="hf-archer" stroke="#3C4654" stroke-width="2.6">
+      <circle cx="34" cy="74" r="8.5" fill="#fff"/>
+      <path d="M34 83v32M34 90l32 5M34 92l20 8M34 115l-9 26M34 115l11 25"/>
     </g>
-    <!-- 누름 버튼 -->
-    <g class="hf-pen-btn">
-      <rect x="190" y="74" width="26" height="18" rx="6" fill="url(#hf-penbody)"/>
-      <rect x="190" y="76" width="26" height="4" rx="2" fill="#9CC4FA" opacity=".8"/>
+    <!-- 활: 림 + 시위 + 화살 (JS가 d를 갱신) -->
+    <path class="hf-limbs" d="" stroke="url(#hf-limb)" stroke-width="5"/>
+    <path class="hf-limbs-hl" d="" stroke="#F2D9AE" stroke-width="1.4" opacity=".7"/>
+    <path class="hf-string" d="" stroke="#E4ECF6" stroke-width="1.7"/>
+    <g class="hf-arrow">
+      <path d="M56 96h64" stroke="#C9D4E2" stroke-width="3"/>
+      <path d="M126 96l-10-4.5v9z" fill="#8FA6C2"/>
+      <path d="M56 96l-7-5M56 96l-7 5M63 96l-7-5M63 96l-7 5" stroke="#F0A422" stroke-width="2"/>
     </g>
   </svg>`;
 }
 
-export function renderPen(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face): () => void {
-  const fig = el("button", { class: "hf-pen in", attrs: { type: "button", "aria-label": "볼펜 딸깍 누르기" } });
-  fig.innerHTML = penSvg();
-  scene.appendChild(fig);
-  helper.innerHTML = "볼펜을 <b>딸깍</b> 눌러 보세요. 몸통 속이 훤히 보여요!";
+export function renderBow(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face): () => void {
+  const wrap = el("div", { class: "hf-bow", attrs: { role: "img", "aria-label": "활시위를 당겨 과녁 맞히기" } });
+  wrap.innerHTML = bowSvg();
+  scene.appendChild(wrap);
+  helper.innerHTML = "활시위를 <b>뒤로 쭉 당겼다가 놓아</b> 보세요.";
 
-  let clicks = 0;
-  fig.addEventListener("click", () => {
-    clicks++;
-    const out = clicks % 2 === 1;
-    fig.classList.toggle("out", out);
-    fig.classList.toggle("in", !out);
-    haptic(HAPTIC.select);
-    if (clicks === 1) {
+  const limbs = wrap.querySelector(".hf-limbs") as SVGPathElement;
+  const limbsHl = wrap.querySelector(".hf-limbs-hl") as SVGPathElement;
+  const string = wrap.querySelector(".hf-string") as SVGPathElement;
+  const arrow = wrap.querySelector(".hf-arrow") as SVGGElement;
+
+  const BX = 70; // 활 그립 x
+  let d = 0; // 당김량 0..30
+  let dragging = false;
+  let startX = 0;
+  let flying = false;
+  let shots = 0;
+  const timers: number[] = [];
+  const later = (fn: () => void, ms: number): void => {
+    timers.push(window.setTimeout(fn, ms));
+  };
+
+  function paint(): void {
+    const tipX = BX + 16 - d * 0.16;
+    const topY = 44 + d * 0.10;
+    const botY = 148 - d * 0.10;
+    const bellyX = BX + 30 + d * 0.30;
+    limbs.setAttribute("d", `M${tipX} ${topY} Q${bellyX} 96 ${tipX} ${botY}`);
+    limbsHl.setAttribute("d", `M${tipX - 1.5} ${topY + 3} Q${bellyX - 3} 96 ${tipX - 1.5} ${botY - 3}`);
+    const nockX = BX + 2 - d;
+    string.setAttribute("d", `M${tipX} ${topY} L${nockX} 96 L${tipX} ${botY}`);
+    if (!flying) arrow.style.transform = `translateX(${-d}px)`;
+  }
+  paint();
+
+  function relax(from: number): void {
+    // rAF 없이 시위 복원(살짝 오버슈트)
+    d = from;
+    const seq = [from * 0.45, -3.5, 1.6, 0];
+    seq.forEach((v, i) =>
+      later(() => {
+        d = v;
+        paint();
+      }, 26 * (i + 1)),
+    );
+  }
+
+  function shoot(): void {
+    flying = true;
+    haptic(HAPTIC.correct);
+    arrow.style.transition = "transform .26s cubic-bezier(.3,.6,.35,1)";
+    arrow.style.transform = "translateX(64px)"; // 촉이 과녁에 명중
+    shots++;
+    if (shots === 1) {
       face("surprised");
-      helper.innerHTML = "딸깍! 심이 나오면서 안쪽 <b>용수철이 꾹 눌렸어요</b>. 한 번 더 딸깍!";
-    } else if (clicks >= 2) {
+      helper.innerHTML = "명중! 손은 <b>뒤로</b> 당겼는데 화살은 <b>앞으로</b> 날아갔어요. 한 발 더!";
+    } else {
       face("curious");
-      helper.innerHTML = "눌렸던 용수철이 <b>제 모양으로 돌아가면서</b> 심을 도로 데려갔어요. 이 힘의 정체를 실험실에서 파헤쳐 봐요.";
+      helper.innerHTML = "휘었던 활이 <b>제 모양으로 돌아가면서</b> 시위가 화살을 밀어냈어요. 이 힘의 규칙을 실험실에서 파헤쳐 봐요.";
       finish();
     }
+    later(() => {
+      // 새 화살 장전
+      arrow.style.transition = "none";
+      arrow.style.opacity = "0";
+      arrow.style.transform = "translateX(0)";
+      later(() => {
+        arrow.style.transition = "opacity .3s";
+        arrow.style.opacity = "1";
+        flying = false;
+      }, 60);
+    }, 900);
+  }
+
+  wrap.addEventListener("pointerdown", (e) => {
+    if (flying) return;
+    const r = wrap.getBoundingClientRect();
+    const px = ((e.clientX - r.left) / r.width) * 240;
+    const py = ((e.clientY - r.top) / r.height) * 170;
+    if (px > 150 || Math.abs(py - 96) > 58) return;
+    dragging = true;
+    startX = e.clientX;
+    haptic(HAPTIC.tap);
   });
-  return () => undefined;
+  wrap.addEventListener("pointermove", (e) => {
+    if (!dragging || flying) return;
+    const r = wrap.getBoundingClientRect();
+    d = clamp(((startX - e.clientX) / r.width) * 240, 0, 30);
+    paint();
+  });
+  const release = (): void => {
+    if (!dragging) return;
+    dragging = false;
+    if (flying) return;
+    if (d >= 15) {
+      relax(d);
+      shoot();
+    } else {
+      relax(d);
+      if (!shots) helper.innerHTML = "조금 더 <b>세게 당겼다가</b> 놓아 보세요!";
+    }
+  };
+  wrap.addEventListener("pointerup", release);
+  wrap.addEventListener("pointercancel", release);
+  return () => timers.forEach((t) => window.clearTimeout(t));
 }
 
-// ── L5: 겹친 책 당기기(안 빠짐) ──────────────────────────────
-function booksSvg(): string {
-  return `<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+// ── L5: 빙판 vs 자갈길(미끄러짐 관찰+예측) ───────────────────
+function iceslipSvg(): string {
+  return `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <defs>
-      <linearGradient id="hf-bookA" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#5B9DF5"/><stop offset="1" stop-color="#2E6FD6"/>
+      <linearGradient id="hf-ice" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#E4F2FD"/><stop offset="1" stop-color="#AFD3EF"/>
       </linearGradient>
-      <linearGradient id="hf-bookB" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#FFC24D"/><stop offset="1" stop-color="#E8961E"/>
+      <linearGradient id="hf-dirt" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#D4AC72"/><stop offset="1" stop-color="#9A7440"/>
       </linearGradient>
     </defs>
-    <ellipse cx="120" cy="120" rx="88" ry="7" fill="#2A3A5E" opacity=".10"/>
-    <!-- 서로 겹쳐 물린 책 두 권 — 가운데에서 책장이 한 장씩 엇갈림 -->
-    <g class="hf-bookL">
-      <rect x="24" y="72" width="86" height="28" rx="5" fill="url(#hf-bookA)"/>
-      <rect x="24" y="74.5" width="86" height="4" rx="2" fill="#BFDCFF" opacity=".8"/>
-      <rect x="104" y="76" width="34" height="4.6" rx="2.3" fill="#EAF2FF" stroke="#9CC4FA" stroke-width="1"/>
-      <rect x="104" y="85.4" width="34" height="4.6" rx="2.3" fill="#EAF2FF" stroke="#9CC4FA" stroke-width="1"/>
-      <rect x="104" y="94.8" width="30" height="4.6" rx="2.3" fill="#EAF2FF" stroke="#9CC4FA" stroke-width="1"/>
+    <!-- 바닥: 빙판 ↔ 자갈길 (컨테이너 클래스로 전환) -->
+    <g class="hf-ground-ice">
+      <rect x="10" y="128" width="220" height="15" rx="7" fill="url(#hf-ice)" stroke="#8FB9DC" stroke-width="1.4"/>
+      <path d="M28 134h26M84 138h30M150 133h24M196 137h18" stroke="#FFFFFF" stroke-width="2" opacity=".65"/>
     </g>
-    <g class="hf-bookR">
-      <rect x="130" y="72" width="86" height="28" rx="5" fill="url(#hf-bookB)"/>
-      <rect x="130" y="74.5" width="86" height="4" rx="2" fill="#FFE6B8" opacity=".85"/>
-      <rect x="102" y="80.7" width="34" height="4.6" rx="2.3" fill="#FFF3DC" stroke="#F2C879" stroke-width="1"/>
-      <rect x="102" y="90.1" width="34" height="4.6" rx="2.3" fill="#FFF3DC" stroke="#F2C879" stroke-width="1"/>
+    <g class="hf-ground-dirt" opacity="0">
+      <rect x="10" y="128" width="220" height="15" rx="7" fill="url(#hf-dirt)" stroke="#7E5A2E" stroke-width="1.4"/>
+      <path d="M26 134l4 0M52 138l4 0M78 133l4 0M104 137l5 0M132 134l4 0M158 138l4 0M186 133l4 0M208 137l4 0" stroke="#6E4E24" stroke-width="2.6"/>
     </g>
-    <g class="hf-strain2" stroke="#F0A422" stroke-width="2" opacity="0">
-      <path d="M30 66l-5-6M38 64l-3-7M210 66l5-6M202 64l3-7"/>
+    <!-- 스틱맨(발끝 기준, 이동은 .hfw, 넘어짐은 .hfw-body 회전) -->
+    <g class="hfw">
+      <ellipse class="hfw-sh" cx="0" cy="130" rx="14" ry="3" fill="#2A3A5E" opacity=".14"/>
+      <g class="hfw-body" stroke="#3C4654" stroke-width="2.6">
+        <circle cx="0" cy="70" r="8.5" fill="#fff"/>
+        <path d="M0 79v33"/>
+        <path class="hfw-armF" d="M0 88l10 12"/>
+        <path class="hfw-armB" d="M0 88l-10 11"/>
+        <path class="hfw-legF" d="M0 112l8 16"/>
+        <path class="hfw-legB" d="M0 112l-8 16"/>
+      </g>
+      <g class="hfw-burst" stroke="#F0A422" stroke-width="2.2" opacity="0">
+        <path d="M14 118l7-6M18 126l9-2M12 110l4-8"/>
+      </g>
     </g>
   </svg>`;
 }
 
-export function renderBooks(
+export function renderIceslip(
   scene: HTMLElement,
   helper: HTMLElement,
   s: { choices?: string[] },
   finish: () => void,
   face: Face,
 ): () => void {
-  const fig = el("button", { class: "hf-books", attrs: { type: "button", "aria-label": "겹친 책 양쪽으로 당기기" } });
-  fig.innerHTML = booksSvg();
+  const fig = el("div", { class: "hf-iceslip", attrs: { role: "img", "aria-label": "빙판길과 자갈길 걷기 비교" } });
+  fig.innerHTML = iceslipSvg();
+  const walkBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "빙판길 걷기" }));
   const choicesBox = el("div", { class: "hook-choices" });
-  scene.append(fig, choicesBox);
-  helper.innerHTML = "책장을 서로 겹친 두 책이에요. <b>눌러서 양쪽으로 당겨</b> 보세요.";
+  scene.append(fig, walkBtn, choicesBox);
+  helper.innerHTML = "어젯밤 내린 비가 꽁꽁 얼었어요. 버튼을 눌러 <b>빙판길을 걸어가게</b> 해 보세요.";
 
-  let tries = 0;
+  const man = fig.querySelector(".hfw") as SVGGElement;
+  let phase = 0; // 0 대기 → 1 빙판(꽈당) → 2 자갈길(성공)
   let timer = 0;
-  fig.addEventListener("click", () => {
-    if (tries >= 2) return;
-    tries++;
-    fig.classList.remove("tugging");
-    void fig.offsetWidth; // 애니메이션 재시작
-    fig.classList.add("tugging");
-    haptic(HAPTIC.wrong);
-    if (tries === 1) {
+
+  const onEnd = (e: AnimationEvent): void => {
+    if (e.animationName === "hfwMoveIce") {
+      fig.classList.add("slipped");
+      haptic(HAPTIC.wrong);
       face("surprised");
-      helper.innerHTML = "안 빠져요! 풀로 붙인 것도 아닌데… <b>한 번 더</b> 세게!";
-    } else {
-      face("curious");
-      helper.innerHTML = "그래도 안 빠져요! 도대체 <b>무엇이 책장을 붙잡고</b> 있을까요?";
+      helper.innerHTML = "꽈당! 아이고… 같은 신발, 같은 걸음인데 왜 넘어졌을까요? 이번엔 <b>자갈길</b>로!";
       timer = window.setTimeout(() => {
-        ask(
-          choicesBox,
-          s.choices ?? ["겹친 책장 사이사이에서 미끄럼을 방해하는 힘이 있다", "책이 서로 자석처럼 끌어당긴다", "공기가 책을 눌러서 못 빠진다"],
-          helper,
-          "예측 완료! 실험실에서 <b>바닥과 무게를 바꿔 가며</b> 이 힘을 시험해 봐요.",
-          finish,
-        );
-      }, 700);
+        walkBtn.querySelector("span")!.textContent = "자갈길 걷기";
+        (walkBtn as HTMLButtonElement).disabled = false;
+        walkBtn.classList.add("pulse");
+      }, 800);
+    } else if (e.animationName === "hfwMoveDirt") {
+      face("curious");
+      helper.innerHTML = "자갈길은 <b>끝까지 안정적으로</b> 걸었어요. 두 길의 차이는 뭘까요?";
+      ask(
+        choicesBox,
+        s.choices ?? ["매끄러운 바닥에서는 미끄럼을 막아 주는 힘이 약해진다", "빙판이 차가워서 다리에 힘이 빠진다", "자갈이 신발을 끌어당긴다"],
+        helper,
+        "예측 완료! 실험실에서 <b>바닥과 무게를 바꿔 가며</b> 이 힘을 시험해 봐요.",
+        finish,
+      );
+    }
+  };
+  man.addEventListener("animationend", onEnd);
+
+  walkBtn.addEventListener("click", () => {
+    if (phase >= 2) return;
+    phase++;
+    (walkBtn as HTMLButtonElement).disabled = true;
+    walkBtn.classList.remove("pulse");
+    haptic(HAPTIC.select);
+    if (phase === 1) {
+      fig.classList.add("walk-ice");
+    } else {
+      fig.classList.remove("walk-ice", "slipped");
+      void fig.offsetWidth; // 애니메이션 리셋
+      fig.classList.add("dirt", "walk-dirt");
     }
   });
-  return () => window.clearTimeout(timer);
+  return () => {
+    window.clearTimeout(timer);
+    man.removeEventListener("animationend", onEnd);
+  };
 }
 
 // ── L6: 빈 페트병 밀어 넣기(부력 체감) ───────────────────────

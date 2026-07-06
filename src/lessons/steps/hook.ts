@@ -11,13 +11,13 @@
 //   "wrap"  — 배달 음식 랩: 뜨거운 그릇에 랩을 씌우면 볼록 — 까닭을 예측
 //   "ramen" — 끓는 라면 물: 불을 최대로 올리면 온도가 더 오를지 예측
 //   ── V 힘의 작용 (렌더러는 hookForce.ts) ──
-//   "balloon" 풍선 줄 · "tugrope" 멈춘 줄다리기+예측 · "pen" 볼펜 딸깍 ·
-//   "books" 겹친 책+예측 · "bottle" 페트병 밀어넣기 · "rollstop" 멈추는 공+예측
+//   "balloon" 풍선 줄 · "tugrope" 멈춘 줄다리기+예측 · "bow" 활쏘기 ·
+//   "iceslip" 빙판vs자갈길+예측 · "bottle" 페트병 밀어넣기 · "rollstop" 멈추는 공+예측
 
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { stickAvatar, setStickAvatar, type AvatarKind } from "../../ui/avatar";
-import { renderBalloon, renderTugRope, renderPen, renderBooks, renderBottle, renderRollStop } from "./hookForce";
+import { renderBalloon, renderTugRope, renderBow, renderIceslip, renderBottle, renderRollStop } from "./hookForce";
 import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -47,7 +47,7 @@ interface HookStep {
   lead?: string;
   narrator: string; // 시작 말풍선(HTML)
   done?: string; // 상호작용 완료 후 말풍선(HTML)
-  scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen" | "balloon" | "tugrope" | "pen" | "books" | "bottle" | "rollstop";
+  scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen" | "balloon" | "tugrope" | "bow" | "iceslip" | "bottle" | "rollstop";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
 }
@@ -89,8 +89,8 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "ramen") sceneCleanup = renderRamen(scene, helper, s, finish, face);
   else if (s.scene === "balloon") sceneCleanup = renderBalloon(scene, helper, finish, face);
   else if (s.scene === "tugrope") sceneCleanup = renderTugRope(scene, helper, s, finish, face);
-  else if (s.scene === "pen") sceneCleanup = renderPen(scene, helper, finish, face);
-  else if (s.scene === "books") sceneCleanup = renderBooks(scene, helper, s, finish, face);
+  else if (s.scene === "bow") sceneCleanup = renderBow(scene, helper, finish, face);
+  else if (s.scene === "iceslip") sceneCleanup = renderIceslip(scene, helper, s, finish, face);
   else if (s.scene === "bottle") sceneCleanup = renderBottle(scene, helper, finish, face);
   else if (s.scene === "rollstop") sceneCleanup = renderRollStop(scene, helper, s, finish, face);
   else sceneCleanup = renderEgg(scene, helper, s, finish, api, face);

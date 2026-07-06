@@ -1001,19 +1001,35 @@
 .hf-tug.straining .hf-strain { opacity: 1; }
 .hf-tug.straining .hf-rope, .hf-tug.straining .hf-ribbon { animation: hfShake .22s linear infinite; }
 @keyframes hfShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-1.2px); } 75% { transform: translateX(1.2px); } }
-.hf-pen { display: block; width: 100%; background: none; border: 0; padding: 0; cursor: pointer; }
-.hf-pen svg { display: block; width: 100%; max-width: 270px; margin: 0 auto; }
-.hf-pen .hf-pen-ink, .hf-pen .hf-pen-spring, .hf-pen .hf-pen-btn { transition: transform .18s var(--spring); }
-.hf-pen.in .hf-pen-ink { transform: translateX(18px); }
-.hf-pen.in .hf-pen-spring { transform: translateX(20px) scaleX(.62); transform-origin: 186px 0; }
-.hf-pen.in .hf-pen-btn { transform: translateX(10px); }
-.hf-books { display: block; width: 100%; background: none; border: 0; padding: 0; cursor: pointer; }
-.hf-books.tugging .hf-bookL { animation: hfTugL .7s var(--ease); }
-.hf-books.tugging .hf-bookR { animation: hfTugR .7s var(--ease); }
-.hf-books.tugging .hf-strain2 { animation: hfStrainIn .7s linear; }
-@keyframes hfTugL { 0% { transform: translateX(0); } 35% { transform: translateX(-7px); } 70% { transform: translateX(2px); } 100% { transform: translateX(0); } }
-@keyframes hfTugR { 0% { transform: translateX(0); } 35% { transform: translateX(7px); } 70% { transform: translateX(-2px); } 100% { transform: translateX(0); } }
-@keyframes hfStrainIn { 0%, 100% { opacity: 0; } 30%, 70% { opacity: 1; } }
+.hf-bow { touch-action: none; cursor: grab; }
+.hf-bow svg { display: block; width: 100%; max-width: 300px; margin: 0 auto; }
+.hf-bow .hf-arrow { will-change: transform; }
+.hf-iceslip svg { display: block; width: 100%; max-width: 300px; margin: 0 auto; }
+.hf-iceslip .hf-ground-ice, .hf-iceslip .hf-ground-dirt { transition: opacity .3s; }
+.hf-iceslip.dirt .hf-ground-ice { opacity: 0; }
+.hf-iceslip.dirt .hf-ground-dirt { opacity: 1; }
+.hf-iceslip .hfw { transform: translateX(30px); }
+.hf-iceslip .hfw-body { transform-box: view-box; transform-origin: 0px 128px; }
+.hf-iceslip.walk-ice .hfw { animation: hfwMoveIce 1.7s linear forwards; }
+.hf-iceslip.walk-dirt .hfw { animation: hfwMoveDirt 2.5s linear forwards; }
+.hf-iceslip .hfw-legF, .hf-iceslip .hfw-legB, .hf-iceslip .hfw-armF, .hf-iceslip .hfw-armB { transform-box: view-box; }
+.hf-iceslip .hfw-legF, .hf-iceslip .hfw-legB { transform-origin: 0px 112px; }
+.hf-iceslip .hfw-armF, .hf-iceslip .hfw-armB { transform-origin: 0px 88px; }
+.hf-iceslip.walk-ice .hfw-legF, .hf-iceslip.walk-dirt .hfw-legF { animation: hfwSwing .34s ease-in-out infinite alternate; }
+.hf-iceslip.walk-ice .hfw-legB, .hf-iceslip.walk-dirt .hfw-legB { animation: hfwSwingR .34s ease-in-out infinite alternate; }
+.hf-iceslip.walk-ice .hfw-armF, .hf-iceslip.walk-dirt .hfw-armF { animation: hfwSwingR .34s ease-in-out infinite alternate; }
+.hf-iceslip.walk-ice .hfw-armB, .hf-iceslip.walk-dirt .hfw-armB { animation: hfwSwing .34s ease-in-out infinite alternate; }
+.hf-iceslip.slipped .hfw { animation: none; transform: translateX(126px); }
+.hf-iceslip.slipped .hfw-body { animation: hfwFall .6s cubic-bezier(.4,.1,.6,1) forwards; }
+.hf-iceslip.slipped .hfw-legF, .hf-iceslip.slipped .hfw-legB,
+.hf-iceslip.slipped .hfw-armF, .hf-iceslip.slipped .hfw-armB { animation: none; }
+.hf-iceslip.slipped .hfw-burst { animation: hfwBurst .5s .3s forwards; }
+@keyframes hfwMoveIce { from { transform: translateX(30px); } to { transform: translateX(126px); } }
+@keyframes hfwMoveDirt { from { transform: translateX(30px); } to { transform: translateX(200px); } }
+@keyframes hfwSwing { from { transform: rotate(-24deg); } to { transform: rotate(24deg); } }
+@keyframes hfwSwingR { from { transform: rotate(24deg); } to { transform: rotate(-24deg); } }
+@keyframes hfwFall { 0% { transform: rotate(0deg); } 30% { transform: rotate(16deg); } 100% { transform: rotate(-82deg) translateY(-4px); } }
+@keyframes hfwBurst { from { opacity: 0; } to { opacity: 1; } }
 .hf-bottle { touch-action: none; cursor: pointer; }
 .hf-bottle .hf-bottle-g { transform: translateY(14px); transition: transform .5s var(--spring); will-change: transform; }
 .hf-bottle.dunked .hf-bottle-g { transform: translateY(58px); transition: transform .35s var(--ease); }
@@ -1025,6 +1041,7 @@
 .hf-rollwrap:disabled { cursor: default; }
 .hf-roll { transform: translateX(44px); }
 .hf-rollwrap.rolling .hf-roll { animation: hfRoll 2.6s cubic-bezier(.2,.7,.6,1) forwards; }
+.hf-rollwrap .hf-roll-spin { transform-box: fill-box; transform-origin: center; }
 .hf-rollwrap.rolling .hf-roll-spin { animation: hfSpin 2.6s cubic-bezier(.2,.7,.6,1) forwards; }
 @keyframes hfRoll { 0% { transform: translateX(44px); } 100% { transform: translateX(196px); } }
 @keyframes hfSpin { 0% { rotate: 0deg; } 100% { rotate: 720deg; } }

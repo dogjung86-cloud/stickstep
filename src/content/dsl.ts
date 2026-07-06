@@ -57,7 +57,7 @@ export const hotspot = (o: {
 export const hook = (o: {
   title: string; lead?: string; narrator: string; done?: string;
   scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen"
-    | "balloon" | "tugrope" | "pen" | "books" | "bottle" | "rollstop";
+    | "balloon" | "tugrope" | "bow" | "iceslip" | "bottle" | "rollstop";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 

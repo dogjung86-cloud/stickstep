@@ -101,8 +101,8 @@
   const HOOKS5 = [
     ["balloon", (d) => { drag(d.querySelector(".hf-balloon-wrap"), 0, 50); setTimeout(() => drag(d.querySelector(".hf-balloon-wrap"), 0, 50), 700); }],
     ["tugrope", (d) => { findBtn(d, "힘껏")?.click(); setTimeout(() => d.querySelectorAll(".hook-choice")[0]?.click(), 1400); }],
-    ["pen", (d) => d.querySelector(".hf-pen")?.click()],
-    ["books", (d) => { d.querySelector(".hf-books")?.click(); setTimeout(() => d.querySelector(".hf-books")?.click(), 900); setTimeout(() => d.querySelectorAll(".hook-choice")[0]?.click(), 2400); }],
+    ["bow", (d) => { const w = d.querySelector(".hf-bow"); if (!w) return; const r = w.getBoundingClientRect(); const sx = r.left + r.width * 0.32, sy = r.top + r.height * 0.55; const fire = (t, x) => w.dispatchEvent(new PointerEvent(t, { bubbles: true, pointerId: 9, clientX: x, clientY: sy })); fire("pointerdown", sx); for (let i = 1; i <= 5; i++) fire("pointermove", sx - i * 8); fire("pointerup", sx - 40); }],
+    ["iceslip", (d) => { findBtn(d, "빙판길")?.click(); setTimeout(() => findBtn(d, "자갈길")?.click(), 3100); setTimeout(() => d.querySelectorAll(".hook-choice")[0]?.click(), 6200); }],
     ["bottle", (d) => { const f = d.querySelector(".hf-bottle"); if (!f) return; const r = f.getBoundingClientRect(); f.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerId: 8, clientX: r.left + 20, clientY: r.top + 20 })); }],
     ["rollstop", (d) => { d.querySelector(".hf-rollwrap")?.click(); setTimeout(() => d.querySelectorAll(".hook-choice")[0]?.click(), 3200); }],
   ];
@@ -149,9 +149,9 @@
     const r = cv.getBoundingClientRect();
     const sx = r.left + r.width / 2;
     const ev = (t, y) => cv.dispatchEvent(new PointerEvent(t, { bubbles: true, pointerId: 33, clientX: sx, clientY: r.top + y }));
-    // 추(초기 위치 근처)를 잡고 절반 잠김까지 드래그
-    ev("pointerdown", r.height * 0.56 - 46);
-    for (let i = 0; i <= 6; i++) { ev("pointermove", r.height * 0.56 - 46 + i * 10); await new Promise(res => setTimeout(res, 80)); }
+    // 수조를 잡고 위로 올려 절반 잠금 근처까지
+    ev("pointerdown", 236);
+    for (let i = 0; i <= 8; i++) { ev("pointermove", 236 - i * 8); await new Promise(res => setTimeout(res, 90)); }
   });
 
   mount("labs5", "forceStudio", "", "forceStudio", { type: "forceStudio", title: "t" }, async (d) => {

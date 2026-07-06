@@ -43,7 +43,7 @@ src/
                   diffusion·evaporation·matterTemp·matterShape·matterCompare·
                   phaseNames·sublimation·phaseVolume·heatCurve·
                   forceStudio·tugOfWar·gravityDrop·springLab·frictionPush·buoyancyLab·windSoccer·
-                  hookForce(V 훅 6종: balloon·tugrope·pen·books·bottle·rollstop — hook.ts가 위임))
+                  hookForce(V 훅 6종: balloon·tugrope·bow·iceslip·bottle·rollstop — hook.ts가 위임))
   engine/    matterSim — IV 단원 순수 입자 물리(프로토타입 Sim 이식, 렌더링 없음, 수치 불변)
   renderers/ meta(WebGL 메타볼 — FRAG 원본 이식, 볼 상한 48, dispose 시 lose_context)·
              dot(발광점 — WebGL 폴백 겸 "입자의 눈" 뷰)·palette(온도→hue 212→370, uniform 3색)
