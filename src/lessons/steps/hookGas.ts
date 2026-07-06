@@ -256,6 +256,9 @@ function pingpongSvg(): string {
     <g class="hg-steam" stroke="#E8EFF8" stroke-width="2.2" opacity=".7">
       <path d="M138 92q4-10-2-18M162 90q5-9-1-17M186 92q4-10-2-18"/>
     </g>
+    <g class="hg-splash" stroke="#FFD9C4" stroke-width="2.4" opacity="0">
+      <path d="M136 100l-7-8M186 100l7-8M146 96l-3-10M176 96l3-10M161 94v-11"/>
+    </g>
     <!-- 찌그러진 탁구공(드래그 대상) -->
     <g class="hg-pp">
       <ellipse class="hg-pp-sh" cx="44" cy="150" rx="16" ry="3.4" fill="#2A3A5E" opacity=".16"/>
@@ -294,6 +297,10 @@ export function renderPingpong(
     const r = fig.getBoundingClientRect();
     return [((e.clientX - r.left) / r.width) * 240, ((e.clientY - r.top) / r.height) * 190];
   };
+  const setBall = (transition: string): void => {
+    ball.style.transition = transition;
+    ball.style.transform = `translate(${(px / 240) * 100}%, ${(py / 190) * 100}%)`;
+  };
   fig.addEventListener("pointerdown", (e) => {
     if (done) return;
     const [lx, ly] = toLocal(e);
@@ -301,6 +308,7 @@ export function renderPingpong(
     dragging = true;
     ox = lx - px;
     oy = ly - py;
+    fig.setPointerCapture?.(e.pointerId);
     haptic(HAPTIC.tap);
   });
   fig.addEventListener("pointermove", (e) => {
@@ -308,31 +316,50 @@ export function renderPingpong(
     const [lx, ly] = toLocal(e);
     px = lx - ox;
     py = ly - oy;
-    ball.style.transform = `translate(${(px / 240) * 100}%, ${(py / 190) * 100}%)`;
-    // 컵 안(중심 160,120 근처) 도달?
-    if (44 + px > 124 && 44 + px < 196 && 128 + py > 100 && 128 + py < 156) {
-      done = true;
-      dragging = false;
-      fig.classList.add("healed");
-      haptic(HAPTIC.correct);
-      face("surprised");
-      helper.innerHTML = "퐁… <b>펑!</b> 찌그러진 곳이 도로 펴졌어요! 물이 들어간 걸까요?";
-      timer = window.setTimeout(() => {
-        face("curious");
-        ask(
-          choicesBox,
-          s.choices ?? ["공 속 기체가 데워져 부피가 늘며 밀어냈다", "뜨거운 물이 공 안으로 스며들었다", "플라스틱이 녹아서 저절로 펴졌다"],
-          helper,
-          "예측 완료! 실험실에서 <b>열기구</b>로 온도와 부피의 관계를 크게 확인해 봐요.",
-          finish,
-        );
-      }, 900);
-    }
+    setBall("none"); // 드는 동안은 손을 그대로 따라옴
   });
-  const up = (): void => {
+  const drop = (): void => {
+    if (!dragging || done) return;
     dragging = false;
+    const bx = 44 + px;
+    const by = 128 + py;
+    // 컵 입구(116~200) 위쪽 공중에서 놓아야 퐁당 — 물높이(104)보다 충분히 위
+    const overCup = bx > 122 && bx < 194 && by < 112;
+    if (overCup) {
+      done = true;
+      // 1단계: 수면까지 자유낙하(ease-in) → 2단계: 살짝 가라앉았다 떠오르며 복원
+      px = 160 - 44;
+      py = 118 - 128;
+      setBall("transform .34s cubic-bezier(.5,.05,.8,.4)");
+      haptic(HAPTIC.select);
+      timer = window.setTimeout(() => {
+        fig.classList.add("splashed");
+        haptic(HAPTIC.correct);
+        face("surprised");
+        helper.innerHTML = "퐁당… <b>펑!</b> 찌그러진 곳이 도로 펴졌어요! 물이 들어간 걸까요?";
+        py = 112 - 128; // 반 잠긴 채 동동
+        setBall("transform .5s var(--spring)");
+        window.setTimeout(() => fig.classList.add("healed"), 240);
+        timer = window.setTimeout(() => {
+          face("curious");
+          ask(
+            choicesBox,
+            s.choices ?? ["공 속 기체가 데워져 부피가 늘며 밀어냈다", "뜨거운 물이 공 안으로 스며들었다", "플라스틱이 녹아서 저절로 펴졌다"],
+            helper,
+            "예측 완료! 실험실에서 <b>열기구</b>로 온도와 부피의 관계를 크게 확인해 봐요.",
+            finish,
+          );
+        }, 1100);
+      }, 340);
+    } else {
+      // 빗나감 — 제자리로 사뿐히 복귀
+      px = 0;
+      py = 0;
+      setBall("transform .5s var(--spring)");
+      if (bx > 100) helper.innerHTML = "아깝다! 공을 <b>컵 바로 위까지</b> 들고 가서 놓아야 퐁당 들어가요.";
+    }
   };
-  fig.addEventListener("pointerup", up);
-  fig.addEventListener("pointercancel", up);
+  fig.addEventListener("pointerup", drop);
+  fig.addEventListener("pointercancel", drop);
   return () => window.clearTimeout(timer);
 }

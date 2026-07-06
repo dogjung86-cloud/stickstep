@@ -1098,3 +1098,8 @@
 .gm-node.gas .gm-ring { border-color: rgba(31,182,212,.55); }
 .gm-node.gas:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-gas); }
 .kicker.gas { background: var(--subj-gas-tint); color: var(--subj-gas-press); }
+.hg-ppwrap .hg-splash path { transform-box: fill-box; transform-origin: center; }
+.hg-ppwrap.splashed .hg-splash { animation: hgSplash .6s ease-out; }
+@keyframes hgSplash { 0% { opacity: 0; } 18% { opacity: 1; } 100% { opacity: 0; } }
+.hg-ppwrap .hg-pp-sh { transition: opacity .3s; }
+.hg-ppwrap.healed .hg-pp-sh { opacity: 0; }
