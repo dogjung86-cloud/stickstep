@@ -20,6 +20,8 @@
 <div class="qa-grid" id="labs"></div>
 <h1>III 단원(열) 랩 소품</h1>
 <div class="qa-grid" id="labs3"></div>
+<h1>V 단원(힘) — 훅 + 랩</h1>
+<div class="qa-grid" id="labs5"></div>
 <script type="module">
   import "/src/styles/tokens.css";
   import "/src/styles/base.css";
@@ -86,6 +88,25 @@
       if (seg) seg.click();
     });
   }
+
+  // ── V 단원(힘) — balloon 훅 + force 랩 2종 ──
+  mount("labs5", "hook balloon", "", "hook", { type: "hook", title: "t", narrator: "n", scene: "balloon" }, null);
+  mount("labs5", "forceEffects", "", "forceEffects", { type: "forceEffects", title: "t" }, (d) => {
+    const btns = [...d.querySelectorAll(".fe-case")];
+    btns[0]?.click();
+    setTimeout(() => btns[3]?.click(), 1500);
+  });
+  mount("labs5", "forceArrow", "", "forceArrow", { type: "forceArrow", title: "t" }, (d) => {
+    // 드래그 시뮬: 공 중심에서 오른쪽으로 60px
+    const cv = d.querySelector("canvas");
+    const r = cv.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height * 0.55;
+    const ev = (t, x, y) => cv.dispatchEvent(new PointerEvent(t, { bubbles: true, pointerId: 8, clientX: x, clientY: y }));
+    ev("pointerdown", cx, cy);
+    setTimeout(() => ev("pointermove", cx + 30, cy), 120);
+    setTimeout(() => ev("pointermove", cx + 62, cy - 2), 260);
+  });
 
   window.__ready = true;
 </script>

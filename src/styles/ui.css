@@ -942,3 +942,84 @@
 .gm-node.matter .gm-ring { border-color: rgba(124,107,255,.55); }
 .gm-node.matter:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-matter); }
 .kicker.matter { background: var(--subj-matter-tint); color: var(--subj-matter-press); }
+
+/* ============================================================
+   V 힘 단원(u5) — 힘 효과 수집·화살표·풍선 훅
+   ============================================================ */
+.pn-badge.force.on {
+  border-style: solid; border-color: transparent; color: #fff;
+  background: linear-gradient(150deg, #FFC24D 0%, #F0A422 56%, #E08908 100%);
+  box-shadow: 0 6px 14px -4px rgba(240, 164, 34, .5);
+  animation: pnPop .45s var(--spring-bounce);
+}
+
+.fe-cases {
+  margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 8px;
+}
+.fe-case {
+  min-height: 42px; padding: 10px 12px; border-radius: var(--r-pill);
+  background: var(--n0); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 13.5px; font-weight: 800; color: var(--sub);
+  transition: transform .12s var(--spring-soft), border-color .16s, background .16s, color .16s;
+}
+.fe-case:active { transform: scale(.96); }
+.fe-case.on { color: var(--subj-force-press); background: var(--subj-force-tint); border-color: rgba(240, 164, 34, .38); }
+
+.hook-balloon {
+  display: block; width: 100%; background: none; border: 0; padding: 0;
+  cursor: grab; touch-action: none;
+}
+.hook-balloon:active { cursor: grabbing; }
+.hook-balloon svg { display: block; width: 100%; max-width: 280px; margin: 0 auto; overflow: visible; }
+.hook-balloon-float { display: block; animation: hkBalloonFloat 2.4s ease-in-out infinite; }
+.hook-balloon-drag { display: block; will-change: transform; transition: transform .52s var(--spring); }
+.hook-balloon.dragging .hook-balloon-drag { transition: none; }
+.hook-balloon .hk-balloon-moving,
+.hook-balloon .hk-balloon-kid {
+  transform-box: fill-box; transform-origin: center;
+}
+@keyframes hkBalloonFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.force-arrow-canvas { touch-action: none; cursor: crosshair; }
+.force-arrow-canvas.dragging { cursor: grabbing; }
+.fa-missions {
+  margin-top: 12px; display: grid; grid-template-columns: 1fr; gap: 7px;
+}
+.fa-mission {
+  position: relative; min-height: 34px; display: flex; align-items: center; padding: 8px 34px 8px 12px;
+  border-radius: var(--r-sm); background: var(--n50); border: 1px solid var(--n200);
+  color: var(--ter); font-size: 12.5px; font-weight: 800; word-break: keep-all;
+  transition: background .18s, border-color .18s, color .18s;
+}
+.fa-mission.on { color: var(--ink); background: var(--subj-force-tint); border-color: rgba(240, 164, 34, .36); }
+.fa-mission.done {
+  color: #fff; background: linear-gradient(150deg, #FFC24D, #F0A422);
+  border-color: transparent;
+}
+.fa-mission.done::after {
+  content: ""; position: absolute; right: 14px; top: 50%;
+  width: 7px; height: 12px; border-right: 2.4px solid #fff; border-bottom: 2.4px solid #fff;
+  transform: translateY(-60%) rotate(45deg);
+}
+
+/* ---------- 힘의 작용 단원(V) 지도 테마: force (골드) ---------- */
+.unit-band.force { background: var(--grad-force); }
+.gm-terrain.force {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.55), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #FFE9C2, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #FFE2B0, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #FFE8BE, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #FFDFA6, transparent 72%),
+    linear-gradient(180deg, #FFF6E6 0%, #FFEDCF 55%, #FFE6BC 100%);
+}
+.gm-path-glow.force { stroke: rgba(240,164,34,.22); }
+.gm-path-done.force { stroke: #F0A422; }
+.gm-node.force.now .gm-med, .gm-node.force.done .gm-med { background: var(--grad-medallion-force); }
+.gm-node.force .gm-ring { border-color: rgba(240,164,34,.55); }
+.gm-node.force:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-force); }
+.kicker.force { background: var(--subj-force-tint); color: var(--subj-force-press); }

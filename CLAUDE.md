@@ -41,7 +41,7 @@ src/
                   hook(스틱맨 도입)·recap(통일 정리)·
                   heatParticles·heatContact·conduction·convection·radiation·
                   diffusion·evaporation·matterTemp·matterShape·matterCompare·
-                  phaseNames·sublimation·phaseVolume·heatCurve)
+                  phaseNames·sublimation·phaseVolume·heatCurve·forceEffects·forceArrow)
   engine/    matterSim — IV 단원 순수 입자 물리(프로토타입 Sim 이식, 렌더링 없음, 수치 불변)
   renderers/ meta(WebGL 메타볼 — FRAG 원본 이식, 볼 상한 48, dispose 시 lose_context)·
              dot(발광점 — WebGL 폴백 겸 "입자의 눈" 뷰)·palette(온도→hue 212→370, uniform 3색)
@@ -51,7 +51,7 @@ src/
              matterFigures(IV 퀴즈 SVG + recap 미니아트),
              labProps(IV 랩 공용 소품 — 유리 용기·플라스크·전자저울·접촉 그림자·바람 스트릭.
                       캔버스에서도 파운드리 재질 문법을 지키는 헬퍼. 단색 스트로크 소품 금지)
-  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금), unit1, unit2, unit3, unit4
+  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금), unit1, unit2, unit3, unit4, unit5
   screens/   splash, onboarding, home(게임 지도), done
 ```
 - **스텝 = `{ type, ...props }` 데이터.** `player`가 `registry`에서 `type`으로 렌더러를 찾아 그린다.

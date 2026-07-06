@@ -10,8 +10,9 @@
 //   "juice" — 쏟아진 주스와 얼음: 얼음은 집히고 주스는 흐른다 — 두 가지 다 시도
 //   "wrap"  — 배달 음식 랩: 뜨거운 그릇에 랩을 씌우면 볼록 — 까닭을 예측
 //   "ramen" — 끓는 라면 물: 불을 최대로 올리면 온도가 더 오를지 예측
+//   "balloon" — 헬륨 풍선 줄을 당겼다 놓으며 힘이 움직임을 바꾸는지 관찰
 
-import { el } from "../../core/dom";
+import { clamp, el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { stickAvatar, setStickAvatar, type AvatarKind } from "../../ui/avatar";
 import type { StepAPI, StepRenderer } from "../types";
@@ -43,7 +44,7 @@ interface HookStep {
   lead?: string;
   narrator: string; // 시작 말풍선(HTML)
   done?: string; // 상호작용 완료 후 말풍선(HTML)
-  scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen";
+  scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen" | "balloon";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
 }
@@ -83,6 +84,7 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "juice") renderJuice(scene, helper, finish, face);
   else if (s.scene === "wrap") sceneCleanup = renderWrap(scene, helper, s, finish, face);
   else if (s.scene === "ramen") sceneCleanup = renderRamen(scene, helper, s, finish, face);
+  else if (s.scene === "balloon") sceneCleanup = renderBalloon(scene, helper, finish, face);
   else sceneCleanup = renderEgg(scene, helper, s, finish, api, face);
 
   api.setCTA("스틱맨 쌤과 먼저 관찰해요", { enabled: false });
@@ -386,6 +388,131 @@ function askChoices(
     box.appendChild(b);
   });
   box.classList.add("show");
+}
+
+// ── 장면 5: 헬륨 풍선 — 줄 당기기 + 놓기 ────────────────────
+function balloonSvg(): string {
+  return `<svg viewBox="0 0 240 150" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <defs>
+      <radialGradient id="hkBalloon-body" cx=".34" cy=".22" r=".74">
+        <stop offset="0" stop-color="#FFE2E5"/>
+        <stop offset=".42" stop-color="#F65C68"/>
+        <stop offset="1" stop-color="#C72F3F"/>
+      </radialGradient>
+      <radialGradient id="hkBalloon-hi" cx=".35" cy=".24" r=".46">
+        <stop offset="0" stop-color="#FFFFFF" stop-opacity=".9"/>
+        <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="hkBalloon-tail" x1="111" y1="72" x2="130" y2="90" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#F65C68"/>
+        <stop offset="1" stop-color="#B82B38"/>
+      </linearGradient>
+    </defs>
+    <ellipse cx="120" cy="136" rx="50" ry="6" fill="#2A3A5E" opacity=".10"/>
+    <g class="hk-balloon-moving">
+      <path d="M121 82c-4 10-2 21 4 31 5 8 4 13-2 19" stroke="#9AA3AD" stroke-width="2.2"/>
+      <path d="M119 82c2 12 0 22-5 31-4 7-2 13 5 19" stroke="#D1D7E0" stroke-width="1.3" opacity=".9"/>
+      <ellipse cx="120" cy="42" rx="34" ry="39" fill="url(#hkBalloon-body)"/>
+      <ellipse cx="120" cy="42" rx="34" ry="39" stroke="#9E2634" stroke-width="1.6"/>
+      <ellipse cx="108" cy="28" rx="11" ry="15" fill="url(#hkBalloon-hi)"/>
+      <path d="M112 76l16 1-5 11h-6z" fill="url(#hkBalloon-tail)" stroke="#9E2634" stroke-width="1.4"/>
+      <path d="M96 28c-7 15-6 31 2 44" stroke="#FFFFFF" stroke-width="3" opacity=".28"/>
+    </g>
+    <g class="hk-balloon-kid" stroke="#3C4654" stroke-width="2.6">
+      <circle cx="116" cy="109" r="8" fill="#fff"/>
+      <path d="M116 117v18M116 123l-12 7M116 123l10-9M116 135l-9 11M116 135l10 11"/>
+      <path d="M126 114q4 2 9-3" stroke="#3C4654"/>
+    </g>
+    <path d="M125 113q-2 8-5 12" stroke="#9AA3AD" stroke-width="2.1"/>
+    <g stroke="#F0A422" stroke-width="2.2" opacity=".9">
+      <path d="M170 46h14M177 39v14"/>
+      <path d="M68 52h10M73 47v10" opacity=".65"/>
+    </g>
+  </svg>`;
+}
+
+function renderBalloon(
+  scene: HTMLElement,
+  helper: HTMLElement,
+  finish: () => void,
+  face: (k: AvatarKind) => void,
+): () => void {
+  const dragLayer = el("span", { class: "hook-balloon-drag", html: balloonSvg() });
+  const fig = el(
+    "button",
+    {
+      class: "hook-balloon",
+      attrs: { type: "button", "aria-label": "풍선 줄을 아래로 끌었다 놓기" },
+    },
+    el("span", { class: "hook-balloon-float" }, dragLayer),
+  );
+  scene.appendChild(fig);
+  helper.innerHTML = "풍선 줄을 <b>아래로 끌었다 놓아</b> 보세요.";
+
+  let dragging = false;
+  let startY = 0;
+  let pull = 0;
+  let pulls = 0;
+  let finished = false;
+  let returnTimer = 0;
+
+  function setPull(v: number): void {
+    pull = clamp(v, 0, 82);
+    dragLayer.style.transform = `translateY(${pull}px)`;
+  }
+
+  const onDown = (e: PointerEvent): void => {
+    if (finished) return;
+    dragging = true;
+    startY = e.clientY;
+    fig.classList.add("dragging");
+    fig.classList.remove("returning");
+    fig.setPointerCapture(e.pointerId);
+    haptic(HAPTIC.tap);
+    face("curious");
+  };
+  const onMove = (e: PointerEvent): void => {
+    if (!dragging) return;
+    setPull(e.clientY - startY);
+  };
+  const onEnd = (e: PointerEvent): void => {
+    if (!dragging) return;
+    dragging = false;
+    if (fig.hasPointerCapture(e.pointerId)) fig.releasePointerCapture(e.pointerId);
+    fig.classList.remove("dragging");
+    fig.classList.add("returning");
+    const wasPulled = pull >= 28;
+    setPull(0);
+    window.clearTimeout(returnTimer);
+    returnTimer = window.setTimeout(() => fig.classList.remove("returning"), 520);
+
+    if (!wasPulled) return;
+    pulls += 1;
+    haptic(HAPTIC.select);
+    if (pulls === 1) {
+      helper.innerHTML = "한 번 더!";
+      face("surprised");
+      return;
+    }
+    if (!finished) {
+      finished = true;
+      helper.innerHTML = "당길 때 <b>내려오고</b>, 놓으면 <b>올라가요</b> — 풍선의 움직임이 계속 <b>변하고</b> 있어요.";
+      face("curious");
+      finish();
+    }
+  };
+
+  fig.addEventListener("pointerdown", onDown);
+  fig.addEventListener("pointermove", onMove);
+  fig.addEventListener("pointerup", onEnd);
+  fig.addEventListener("pointercancel", onEnd);
+  return () => {
+    window.clearTimeout(returnTimer);
+    fig.removeEventListener("pointerdown", onDown);
+    fig.removeEventListener("pointermove", onMove);
+    fig.removeEventListener("pointerup", onEnd);
+    fig.removeEventListener("pointercancel", onEnd);
+  };
 }
 
 // ── 장면 5: 급식실 냄새 — 뚜껑 열기 + 예측 (IV L1) ───────────
