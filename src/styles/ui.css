@@ -1045,3 +1045,56 @@
 .hf-rollwrap.rolling .hf-roll-spin { animation: hfSpin 2.6s cubic-bezier(.2,.7,.6,1) forwards; }
 @keyframes hfRoll { 0% { transform: translateX(44px); } 100% { transform: translateX(196px); } }
 @keyframes hfSpin { 0% { rotate: 0deg; } 100% { rotate: 720deg; } }
+
+/* ---------- VI 기체 단원 랩 컨트롤 ---------- */
+.gp-controls { display: flex; gap: 10px; margin-top: 14px; }
+.gp-controls .swapbtn { flex: 1; margin-top: 0; }
+
+/* ---------- VI 기체 단원 훅 장면 ---------- */
+.hg-polar svg, .hg-wrap svg, .hg-foilwrap svg, .hg-ppwrap svg { display: block; width: 100%; max-width: 290px; margin: 0 auto; }
+.hg-polar .hg-bear-stand, .hg-polar .hg-bear-crawl { transition: opacity .3s; }
+.hg-polar.cracking .hg-cracks { animation: hgCrackIn .8s ease-out; }
+@keyframes hgCrackIn { 0% { opacity: 0; } 25%, 80% { opacity: 1; } 100% { opacity: 0; } }
+.hg-polar.cracking .hg-bear { animation: hgShiver .16s linear 4; }
+@keyframes hgShiver { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-1.6px); } }
+.hg-polar.crawling .hg-bear-stand { opacity: 0; }
+.hg-polar.crawling .hg-bear-crawl { opacity: 1; }
+.hg-polar.crawling .hg-bear { animation: hgCrawl 2s var(--ease) forwards; }
+.hg-polar.crawling .hg-bear-sh { animation: hgCrawl 2s var(--ease) forwards; }
+@keyframes hgCrawl { from { transform: translateX(0); } to { transform: translateX(72px); } }
+.hg-cap { transition: opacity .2s; }
+.hg-cap.done circle { fill: rgba(190,214,236,.25); }
+.hg-cap.done ellipse { opacity: 0; }
+.hg-cap.done .hg-pop { animation: hgPop .45s ease-out; }
+@keyframes hgPop { 0% { opacity: 0; } 25% { opacity: 1; } 100% { opacity: 0; } }
+.hg-foilwrap .hg-heart { transform-box: fill-box; transform-origin: 50% 40%; transition: transform .7s var(--spring); }
+.hg-foilwrap .hg-wrinkle, .hg-foilwrap .hg-snow { transition: opacity .5s; }
+.hg-foilwrap .hg-snow { opacity: 0; }
+.hg-foilwrap.cold .hg-heart { transform: scale(.82); }
+.hg-foilwrap.cold .hg-wrinkle { opacity: 1; }
+.hg-foilwrap.cold .hg-snow { opacity: .9; }
+.hg-ppwrap { touch-action: none; cursor: grab; }
+.hg-ppwrap .hg-dent { transition: opacity .5s .15s; }
+.hg-ppwrap.healed .hg-dent { opacity: 0; }
+.hg-ppwrap.healed .hg-pp-ball { animation: hgHeal .55s var(--spring-bounce, cubic-bezier(.34,1.35,.5,1)); transform-box: fill-box; transform-origin: center; }
+@keyframes hgHeal { 0% { transform: scale(.94); } 55% { transform: scale(1.1); } 100% { transform: scale(1); } }
+.hg-steam path { animation: hgSteam 2.2s ease-in-out infinite; }
+@keyframes hgSteam { 0%, 100% { transform: translateY(0); opacity: .7; } 50% { transform: translateY(-4px); opacity: .35; } }
+
+/* ---------- VI 기체 단원 테마(gas · 시안) ---------- */
+.unit-band.gas { background: var(--grad-gas); }
+.gm-terrain.gas {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #D6F4FB, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #C6EEF8, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #D2F2FA, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #BFEAF5, transparent 72%),
+    linear-gradient(180deg, #EDFAFE 0%, #DCF4FB 55%, #CDEEF8 100%);
+}
+.gm-path-glow.gas { stroke: rgba(31,182,212,.22); }
+.gm-path-done.gas { stroke: #1FB6D4; }
+.gm-node.gas.now .gm-med, .gm-node.gas.done .gm-med { background: var(--grad-medallion-gas); }
+.gm-node.gas .gm-ring { border-color: rgba(31,182,212,.55); }
+.gm-node.gas:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-gas); }
+.kicker.gas { background: var(--subj-gas-tint); color: var(--subj-gas-press); }

@@ -57,7 +57,8 @@ export const hotspot = (o: {
 export const hook = (o: {
   title: string; lead?: string; narrator: string; done?: string;
   scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen"
-    | "balloon" | "tugrope" | "bow" | "iceslip" | "bottle" | "rollstop";
+    | "balloon" | "tugrope" | "bow" | "iceslip" | "bottle" | "rollstop"
+    | "polar" | "bubblewrap" | "foilballoon" | "pingpong";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
@@ -147,6 +148,18 @@ export const forceStudio = (o: { title: string; lead?: string; cta?: string }): 
 
 export const windSoccer = (o: { title: string; lead?: string; cta?: string }): Step =>
   ({ type: "windSoccer", ...o });
+
+// ── 기체 단원(VI) 랩 ────────────────────────────────────────
+export const gasPressure = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "gasPressure", ...o });
+export const boyleSyringe = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "boyleSyringe", ...o });
+export const diverBubble = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "diverBubble", ...o });
+export const charlesSyringe = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "charlesSyringe", ...o });
+export const hotairRide = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "hotairRide", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

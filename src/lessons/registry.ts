@@ -40,6 +40,11 @@ import { frictionPush } from "./steps/frictionPush";
 import { buoyancyLab } from "./steps/buoyancyLab";
 import { forceStudio } from "./steps/forceStudio";
 import { windSoccer } from "./steps/windSoccer";
+import { gasPressure } from "./steps/gasPressure";
+import { boyleSyringe } from "./steps/boyleSyringe";
+import { diverBubble } from "./steps/diverBubble";
+import { charlesSyringe } from "./steps/charlesSyringe";
+import { hotairRide } from "./steps/hotairRide";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -69,6 +74,11 @@ const R: Record<string, StepRenderer> = {
   buoyancyLab,
   forceStudio,
   windSoccer,
+  gasPressure,
+  boyleSyringe,
+  diverBubble,
+  charlesSyringe,
+  hotairRide,
   quiz,
   table,
   order,

@@ -169,10 +169,60 @@
     btn.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerId: 42, clientX: r.left + 8, clientY: r.top + 8 }));
   });
 
+  // ── VI 단원(기체) — 훅 + 랩 ──
+  document.body.insertAdjacentHTML("beforeend", '<h1>VI 단원(기체) — 훅 장면</h1><div class="qa-grid" id="hooks6"></div>');
+  const HOOKS6 = [
+    ["polar", (d) => { findBtn(d, "성큼")?.click(); setTimeout(() => findBtn(d, "엎드려")?.click(), 900); setTimeout(() => d.querySelectorAll(".hook-choice")[0]?.click(), 3400); }],
+    ["bubblewrap", (d) => { [...d.querySelectorAll(".hg-cap")].slice(0, 3).forEach((c, i) => setTimeout(() => c.dispatchEvent(new MouseEvent("click", { bubbles: true })), i * 350)); }],
+    ["foilballoon", (d) => { findBtn(d, "겨울 밖")?.click(); setTimeout(() => findBtn(d, "안으로")?.click(), 1100); setTimeout(() => findBtn(d, "겨울 밖")?.click(), 2200); setTimeout(() => findBtn(d, "안으로")?.click(), 3300); }],
+    ["pingpong", (d) => { const w = d.querySelector(".hg-ppwrap"); if (!w) return; const r = w.getBoundingClientRect(); const pt = (fx, fy) => [r.left + r.width * fx, r.top + r.height * fy]; const fire = (t, [x, y]) => w.dispatchEvent(new PointerEvent(t, { bubbles: true, pointerId: 12, clientX: x, clientY: y })); fire("pointerdown", pt(0.18, 0.67)); for (let i = 1; i <= 8; i++) fire("pointermove", pt(0.18 + (0.48 * i) / 8, 0.67)); setTimeout(() => d.querySelectorAll(".hook-choice")[0]?.click(), 1600); }],
+  ];
+  for (const [scene, act] of HOOKS6) {
+    const step = { type: "hook", title: "t", narrator: "n", scene };
+    mount("hooks6", scene, "초기", "hook", step, null);
+    mount("hooks6", scene, "상호작용 후", "hook", step, act);
+  }
+  document.body.insertAdjacentHTML("beforeend", '<h1>VI 단원(기체) — 랩</h1><div class="qa-grid" id="labs6"></div>');
+  mount("labs6", "gasPressure", "", "gasPressure", { type: "gasPressure", title: "t" }, (d) => {
+    for (let i = 0; i < 4; i++) setTimeout(() => findBtn(d, "펌프")?.click(), i * 300);
+  });
+  mount("labs6", "boyleSyringe", "", "boyleSyringe", { type: "boyleSyringe", title: "t" }, async (d) => {
+    const cv = d.querySelector("canvas");
+    const r = cv.getBoundingClientRect();
+    const ev = (t, x) => cv.dispatchEvent(new PointerEvent(t, { bubbles: true, pointerId: 61, clientX: r.left + x, clientY: r.top + 128 }));
+    ev("pointerdown", 10);
+    for (let i = 1; i <= 10; i++) { ev("pointermove", 10 + i * 11); await new Promise(res => setTimeout(res, 120)); }
+  });
+  mount("labs6", "diverBubble", "바닷속", "diverBubble", { type: "diverBubble", title: "t" }, (d) => {
+    findBtn(d, "내보내기")?.click();
+    setTimeout(() => findBtn(d, "내보내기")?.click(), 900);
+  });
+  mount("labs6", "diverBubble2", "감압", "diverBubble", { type: "diverBubble", title: "t" }, (d) => {
+    findBtn(d, "감압 용기")?.click();
+    setTimeout(() => { const b = findBtn(d, "꾹 눌러"); if (!b) return; const r = b.getBoundingClientRect(); b.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerId: 62, clientX: r.left + 8, clientY: r.top + 8 })); }, 400);
+  });
+  mount("labs6", "charlesSyringe", "", "charlesSyringe", { type: "charlesSyringe", title: "t" }, (d) => {
+    const tr = d.querySelector(".sl-track");
+    if (!tr) return;
+    const r = tr.getBoundingClientRect();
+    const sl = d.querySelector(".slider");
+    const ev = (t, fx) => sl.dispatchEvent(new PointerEvent(t, { bubbles: true, pointerId: 63, clientX: r.left + r.width * fx, clientY: r.top + 4 }));
+    ev("pointerdown", 0.1);
+    ev("pointermove", 0.75);
+    ev("pointerup", 0.75);
+  });
+  mount("labs6", "hotairRide", "", "hotairRide", { type: "hotairRide", title: "t" }, (d) => {
+    const b = findBtn(d, "버너");
+    if (!b) return;
+    const r = b.getBoundingClientRect();
+    b.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerId: 64, clientX: r.left + 8, clientY: r.top + 8 }));
+  });
+
   // ── V 단원 콘텐츠 실물(그림 문제 + recap) ──
   const { UNIT5 } = await import("/src/content/unit5.ts");
-  document.body.insertAdjacentHTML("beforeend", '<h1>V 단원 — 그림 문제 · recap 실물</h1><div class="qa-grid" id="figs5"></div>');
-  for (const les of UNIT5.lessons) {
+  const { UNIT6 } = await import("/src/content/unit6.ts");
+  document.body.insertAdjacentHTML("beforeend", '<h1>V·VI 단원 — 그림 문제 · recap 실물</h1><div class="qa-grid" id="figs5"></div>');
+  for (const les of [...UNIT5.lessons, ...UNIT6.lessons]) {
     for (const st of les.steps) {
       if (st.type === "quiz" && st.figure) mount("figs5", les.id, st.mode, "quiz", st, null);
       if (st.type === "recap") mount("figs5", les.id, "recap", "recap", st, null);

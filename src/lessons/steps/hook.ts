@@ -13,11 +13,15 @@
 //   ── V 힘의 작용 (렌더러는 hookForce.ts) ──
 //   "balloon" 풍선 줄 · "tugrope" 멈춘 줄다리기+예측 · "bow" 활쏘기 ·
 //   "iceslip" 빙판vs자갈길+예측 · "bottle" 페트병 밀어넣기 · "rollstop" 멈추는 공+예측
+//   ── VI 기체의 성질 (렌더러는 hookGas.ts) ──
+//   "polar" 북극곰 얼음판+예측 · "bubblewrap" 뽁뽁이 · "foilballoon" 은박 풍선 안↔밖 ·
+//   "pingpong" 찌그러진 탁구공+예측
 
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { stickAvatar, setStickAvatar, type AvatarKind } from "../../ui/avatar";
 import { renderBalloon, renderTugRope, renderBow, renderIceslip, renderBottle, renderRollStop } from "./hookForce";
+import { renderPolar, renderBubblewrap, renderFoilballoon, renderPingpong } from "./hookGas";
 import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -47,7 +51,8 @@ interface HookStep {
   lead?: string;
   narrator: string; // 시작 말풍선(HTML)
   done?: string; // 상호작용 완료 후 말풍선(HTML)
-  scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen" | "balloon" | "tugrope" | "bow" | "iceslip" | "bottle" | "rollstop";
+  scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen" | "balloon" | "tugrope" | "bow" | "iceslip" | "bottle" | "rollstop"
+    | "polar" | "bubblewrap" | "foilballoon" | "pingpong";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
 }
@@ -93,6 +98,10 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "iceslip") sceneCleanup = renderIceslip(scene, helper, s, finish, face);
   else if (s.scene === "bottle") sceneCleanup = renderBottle(scene, helper, finish, face);
   else if (s.scene === "rollstop") sceneCleanup = renderRollStop(scene, helper, s, finish, face);
+  else if (s.scene === "polar") sceneCleanup = renderPolar(scene, helper, s, finish, face);
+  else if (s.scene === "bubblewrap") sceneCleanup = renderBubblewrap(scene, helper, finish, face);
+  else if (s.scene === "foilballoon") sceneCleanup = renderFoilballoon(scene, helper, finish, face);
+  else if (s.scene === "pingpong") sceneCleanup = renderPingpong(scene, helper, s, finish, face);
   else sceneCleanup = renderEgg(scene, helper, s, finish, api, face);
 
   api.setCTA("스틱맨 쌤과 먼저 관찰해요", { enabled: false });

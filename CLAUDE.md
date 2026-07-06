@@ -43,7 +43,9 @@ src/
                   diffusion·evaporation·matterTemp·matterShape·matterCompare·
                   phaseNames·sublimation·phaseVolume·heatCurve·
                   forceStudio·tugOfWar·gravityDrop·springLab·frictionPush·buoyancyLab·windSoccer·
-                  hookForce(V 훅 6종: balloon·tugrope·bow·iceslip·bottle·rollstop — hook.ts가 위임))
+                  hookForce(V 훅 6종: balloon·tugrope·bow·iceslip·bottle·rollstop — hook.ts가 위임)·
+                  gasPressure·boyleSyringe·diverBubble·charlesSyringe·hotairRide·
+                  hookGas(VI 훅 4종: polar·bubblewrap·foilballoon·pingpong))
   engine/    matterSim — IV 단원 순수 입자 물리(프로토타입 Sim 이식, 렌더링 없음, 수치 불변)
   renderers/ meta(WebGL 메타볼 — FRAG 원본 이식, 볼 상한 48, dispose 시 lose_context)·
              dot(발광점 — WebGL 폴백 겸 "입자의 눈" 뷰)·palette(온도→hue 212→370, uniform 3색)
@@ -55,8 +57,10 @@ src/
                       캔버스에서도 파운드리 재질 문법을 지키는 헬퍼. 단색 스트로크 소품 금지),
              forceProps(V 공용: drawForceArrow 힘 화살표·drawSpring 3패스 코일·drawRope·drawCrate),
              stick(캔버스 스틱맨 — posePull/posePush/poseKick, 관절 좌표 반환),
-             forceFigures(V 퀴즈 SVG + recap 미니아트)
-  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금), unit1, unit2, unit3, unit4, unit5
+             forceFigures(V 퀴즈 SVG + recap 미니아트),
+             gasKit(VI 공용 — GasBox 자유 입자 물리 + 발광 입자·벽 충돌 플래시·충돌률 게이지),
+             gasFigures(VI 퀴즈 SVG + recap 미니아트)
+  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금), unit1, unit2, unit3, unit4, unit5, unit6
   screens/   splash, onboarding, home(게임 지도), done
 ```
 - **스텝 = `{ type, ...props }` 데이터.** `player`가 `registry`에서 `type`으로 렌더러를 찾아 그린다.
@@ -69,7 +73,7 @@ src/
    `content/dsl.ts`에 팩토리 추가. 다크 무대가 필요하면 `.stage`/`ui/canvas`를 재사용.
 3. **새 단원 추가** → `content/unitN.ts` 만들고 `curriculum.ts`의 `CURRICULUM`에 넣는다.
    단원 내 레슨은 순차 잠금(직전 레슨 완료 시 해제).
-4. **단원 테마(색)** → `screens/home.ts`의 `UNIT_THEME`에 클래스 등록(u2=bio, u3=heat, u4=matter, u5=force) +
+4. **단원 테마(색)** → `screens/home.ts`의 `UNIT_THEME`에 클래스 등록(u2=bio, u3=heat, u4=matter, u5=force, u6=gas) +
    `ui.css`에 `.unit-band.X`/`.gm-terrain.X`/`.gm-path-*.X`/`.gm-node.X` 변형 + tokens에 그라데이션.
    랩 안 킥커는 `concept({ kickerTone: "heat" })` 식으로.
 
@@ -131,6 +135,9 @@ src/
   프롬프트 `qa/u1l1_imagen_prompts.txt`, 스펙 `qa/unit1_comic_spec.json`.
 - unit3(u3l3) = 캠핑장 열의 이동(전도·대류·복사) 7컷 — 같은 방식으로 재검증(7/7, ~68K 토큰).
 - unit5(u5l3) = 사과에서 달까지(중력·무게·질량, 뉴턴 서사) 7컷 — 동일 파이프라인(7/7, ~70K 토큰).
+- unit6(u6l2) = 보일의 J자 유리관(3m 유리관·수은·시행착오, 206쪽 과학자 이야기 기반) 7컷 —
+  동일 파이프라인(7/7, ~78K 토큰). 프롬프트 `qa/u6l2_imagen_prompts.txt`, 저장 `public/comics/u6l2/`.
+  VI 만화는 L2 하나만(분석 결과). 보일 역은 같은 스틱맨에 곱슬 가발.
   프롬프트 `qa/u5l3_imagen_prompts.txt`, 저장 `public/comics/u5l3/`. V 단원 만화는 L3 하나만(분석 결과).
   프롬프트 `qa/u3l3_imagen_prompts.txt`, 스펙 `qa/unit3_comic_spec.json`, 저장 `public/comics/u3l3/`.
 - unit4 = 2편 발주(각 7/7 성공): u4l3 "물방울의 여행"(융해→기화→액화→응고→승화 순환),

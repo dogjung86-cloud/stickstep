@@ -22,7 +22,9 @@
       `smell` 급식 뚜껑 열기+예측, `juice` 얼음/주스 줍기, `wrap` 배달 랩 부풀기+예측,
       `ramen` 끓는 냄비 화력 최대+예측,
       V 힘: `balloon` 풍선 끌었다 놓기, `tugrope` 멈춘 줄다리기+예측, `bow` 활쏘기,
-      `iceslip` 빙판vs자갈길+예측, `bottle` 페트병 밀어넣기, `rollstop` 멈추는 공+예측).
+      `iceslip` 빙판vs자갈길+예측, `bottle` 페트병 밀어넣기, `rollstop` 멈추는 공+예측,
+      VI 기체: `polar` 북극곰 얼음판+예측, `bubblewrap` 뽁뽁이, `foilballoon` 은박 풍선 안↔밖,
+      `pingpong` 찌그러진 탁구공 구출+예측).
     - **예측(prediction)은 채점하지 않는다** — 정답을 알려주지 않고 "실험으로 확인해 봐요"로 랩에 연결.
   - `comic` 스텝: 서사가 필요할 때(과학사, 캠핑 이야기 등). 컷 이미지는 codex 발주(CLAUDE.md 참고).
 - 도입의 목적은 지식 전달이 아니라 **궁금증 생성**. 개념 설명은 랩과 recap에 맡긴다.
