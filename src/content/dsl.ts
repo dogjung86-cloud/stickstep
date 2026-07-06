@@ -56,7 +56,7 @@ export const hotspot = (o: {
 
 export const hook = (o: {
   title: string; lead?: string; narrator: string; done?: string;
-  scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen" | "balloon";
+  scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
@@ -124,13 +124,6 @@ export const phaseVolume = (o: { title: string; lead?: string; cta?: string }): 
 
 export const heatCurve = (o: { title: string; lead?: string; mode?: "heat" | "cool"; cta?: string }): Step =>
   ({ type: "heatCurve", ...o });
-
-// ── 힘의 작용 단원(V) 랩 ───────────────────────────────────
-export const forceEffects = (o: { title: string; lead?: string; cta?: string }): Step =>
-  ({ type: "forceEffects", ...o });
-
-export const forceArrow = (o: { title: string; lead?: string; cta?: string }): Step =>
-  ({ type: "forceArrow", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

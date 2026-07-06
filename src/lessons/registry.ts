@@ -33,8 +33,6 @@ import { phaseNames } from "./steps/phaseNames";
 import { sublimation } from "./steps/sublimation";
 import { phaseVolume } from "./steps/phaseVolume";
 import { heatCurve } from "./steps/heatCurve";
-import { forceEffects } from "./steps/forceEffects";
-import { forceArrow } from "./steps/forceArrow";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -57,8 +55,6 @@ const R: Record<string, StepRenderer> = {
   sublimation,
   phaseVolume,
   heatCurve,
-  forceEffects,
-  forceArrow,
   quiz,
   table,
   order,
