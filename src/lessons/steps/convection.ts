@@ -9,6 +9,7 @@ import { createLoop, type Loop } from "../../core/anim";
 import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { tempColor, drawFlame, drawGlowParticle } from "../../ui/thermo";
+import { contactShadow, glassStrokeStyle, liquidFill, softGlow } from "../../ui/labProps";
 import type { StepRenderer } from "../types";
 
 interface ConvectionStep {
@@ -258,38 +259,89 @@ export const convection: StepRenderer = (host, step, api) => {
     if (mode === "pot") stepPot(dt);
     else if (mode === "room") stepRoom(dt);
 
-    // 용기/방
-    ctx.fillStyle = "rgba(255,255,255,.045)";
+    // 용기/방 — 유리 문법: 접촉 그림자 + 그라데이션 벽 + 좌측 스펙큘러 + 윗면 하이라이트
+    const vx0 = bx - 10;
+    const vy0 = by - 10;
+    const vw = bw + 20;
+    const vh = bh + 20;
+    const vy1 = vy0 + vh;
+    contactShadow(ctx, bx + bw / 2, vy1 + 12, bw * 0.56, 0.28);
+    const tint = ctx.createLinearGradient(0, vy0, 0, vy1);
+    tint.addColorStop(0, "rgba(190,220,255,.08)");
+    tint.addColorStop(1, "rgba(190,220,255,.03)");
+    ctx.fillStyle = tint;
     ctx.beginPath();
-    ctx.roundRect(bx - 10, by - 10, bw + 20, bh + 20, 16);
+    ctx.roundRect(vx0, vy0, vw, vh, 16);
     ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,.12)";
-    ctx.lineWidth = 1.4;
+    if (isPot) {
+      // 주전자 속 물 — 수면 하이라이트를 가진 채움(용기 안쪽으로 클립)
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(vx0 + 1.6, vy0 + 1.6, vw - 3.2, vh - 3.2, 14);
+      ctx.clip();
+      liquidFill(ctx, vx0 + 2, vy0 + 7, vx0 + vw - 2, vy1 - 2, "92,152,235", 0.12);
+      ctx.restore();
+    }
+    ctx.strokeStyle = glassStrokeStyle(ctx, vy0, vy1);
+    ctx.lineWidth = 2.4;
     ctx.beginPath();
-    ctx.roundRect(bx - 10, by - 10, bw + 20, bh + 20, 16);
+    ctx.roundRect(vx0, vy0, vw, vh, 16);
     ctx.stroke();
+    // 좌측 스펙큘러 스트릭
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "rgba(255,255,255,.26)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(vx0 + 5.5, vy0 + 18);
+    ctx.lineTo(vx0 + 5.5, vy1 - 20);
+    ctx.stroke();
+    // 윗면(닫힌 뚜껑·천장) 하이라이트
+    ctx.strokeStyle = "rgba(255,255,255,.2)";
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.moveTo(vx0 + 16, vy0 + 2.4);
+    ctx.lineTo(vx0 + vw - 16, vy0 + 2.4);
+    ctx.stroke();
+    ctx.lineCap = "butt";
 
     if (mode === "pot") {
-      if (fire) drawFlame(ctx, bx + bw / 2, h - 4, 30, tMs);
+      if (fire) {
+        // 열원 글로우 — 불꽃 자체는 drawFlame 유지
+        softGlow(ctx, bx + bw / 2, h - 16, 62, "255,159,67", 0.16 + 0.12 * fieldK);
+        drawFlame(ctx, bx + bw / 2, h - 4, 30, tMs);
+      }
       ctx.fillStyle = "rgba(210,224,245,.6)";
       ctx.font = "600 11.5px Pretendard, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(fire ? "가열 중" : "가열 전", bx + bw / 2, h - 6 - 34);
     } else {
-      // 난방기 본체
+      // 난방기 본체 — 금속 문법: 접촉 그림자 + 열원 글로우 + 세로 그라데이션 + 윗면 하이라이트
       if (heaterAt) {
         const hw = bw * 0.3;
         const hx = bx + bw / 2 - hw / 2;
         const hy = heaterAt === "floor" ? by + bh - 12 : by - 2;
-        ctx.fillStyle = "rgba(255,159,67,.9)";
+        if (heaterAt === "floor") contactShadow(ctx, bx + bw / 2, hy + 19, hw * 0.78, 0.3);
+        softGlow(ctx, bx + bw / 2, hy + 7, 64, "255,159,67", 0.38);
+        const body = ctx.createLinearGradient(0, hy, 0, hy + 14);
+        body.addColorStop(0, "rgba(255,206,148,.98)");
+        body.addColorStop(0.55, "rgba(255,159,67,.95)");
+        body.addColorStop(1, "rgba(206,102,36,.95)");
+        ctx.fillStyle = body;
         ctx.beginPath();
         ctx.roundRect(hx, hy, hw, 14, 6);
         ctx.fill();
-        const glow = ctx.createRadialGradient(bx + bw / 2, hy + 7, 4, bx + bw / 2, hy + 7, 60);
-        glow.addColorStop(0, "rgba(255,159,67,.4)");
-        glow.addColorStop(1, "rgba(255,159,67,0)");
-        ctx.fillStyle = glow;
-        ctx.fillRect(bx, hy - 60, bw, 134);
+        ctx.strokeStyle = "rgba(255,224,180,.5)";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.roundRect(hx, hy, hw, 14, 6);
+        ctx.stroke();
+        // 윗면 하이라이트
+        ctx.strokeStyle = "rgba(255,255,255,.55)";
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.moveTo(hx + 6, hy + 2.4);
+        ctx.lineTo(hx + hw - 6, hy + 2.4);
+        ctx.stroke();
       }
     }
 

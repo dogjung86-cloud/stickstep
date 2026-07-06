@@ -10,6 +10,7 @@ import { createLoop, type Loop } from "../../core/anim";
 import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { tempColor, drawGlowParticle } from "../../ui/thermo";
+import { contactShadow, glassVessel, liquidFill } from "../../ui/labProps";
 import type { StepRenderer } from "../types";
 
 interface HeatContactStep {
@@ -262,16 +263,11 @@ export const heatContact: StepRenderer = (host, step, api) => {
     const X = (nx: number): number => bx + nx * bw;
     const Y = (ny: number): number => by + ny * bh;
 
-    // 수조
-    ctx.fillStyle = "rgba(255,255,255,.05)";
-    ctx.beginPath();
-    ctx.roundRect(bx, by, bw, bh, 16);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,.12)";
-    ctx.lineWidth = 1.4;
-    ctx.beginPath();
-    ctx.roundRect(bx, by, bw, bh, 16);
-    ctx.stroke();
+    // 수조(유리) — 접촉 그림자로 무대에 앉히고, 벽은 그라데이션 유리 + 좌측 스펙큘러
+    contactShadow(ctx, bx + bw / 2, by + bh + 9, bw * 0.55);
+    glassVessel(ctx, { x0: bx, y0: by, x1: bx + bw, y1: by + bh });
+    // 물 채움 — 위가 밝은 세로 그라데이션 + 수면 하이라이트
+    liquidFill(ctx, bx + 3, by + 7, bx + bw - 3, by + bh - 3, "92,152,235", 0.1);
 
     // 칸막이가 있는 동안 좌우 수온 무드
     if (phase === "sealed") {
@@ -289,19 +285,32 @@ export const heatContact: StepRenderer = (host, step, api) => {
       const rise = (bh + 46) * (1 - Math.pow(1 - liftT, 2)) * (liftT > 0 ? 1 : 0);
       const px = X(0.5) - 5;
       const top = by - 6 - rise;
-      const grd = ctx.createLinearGradient(px, 0, px + 10, 0);
-      grd.addColorStop(0, "rgba(200,214,235,.55)");
-      grd.addColorStop(0.5, "rgba(255,255,255,.9)");
-      grd.addColorStop(1, "rgba(180,196,220,.55)");
+      // 금속판 — 세로 2~3스톱 그라데이션(위 밝음) + 좌측 에지 스펙큘러
+      const grd = ctx.createLinearGradient(0, top - 8, 0, top + bh + 12);
+      grd.addColorStop(0, "rgba(245,250,255,.92)");
+      grd.addColorStop(0.42, "rgba(206,220,240,.7)");
+      grd.addColorStop(1, "rgba(170,188,214,.52)");
       ctx.fillStyle = grd;
       ctx.beginPath();
       ctx.roundRect(px, top, 10, bh + 12, 5);
       ctx.fill();
-      // 손잡이
-      ctx.fillStyle = "rgba(255,255,255,.85)";
+      ctx.strokeStyle = "rgba(255,255,255,.45)";
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      ctx.moveTo(px + 1.8, top + 7);
+      ctx.lineTo(px + 1.8, top + bh + 2);
+      ctx.stroke();
+      // 손잡이 — 같은 금속 램프 + 윗면 하이라이트 선
+      ctx.fillStyle = grd;
       ctx.beginPath();
       ctx.roundRect(px - 5, top - 8, 20, 8, 4);
       ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.8)";
+      ctx.lineWidth = 1.3;
+      ctx.beginPath();
+      ctx.moveTo(px - 1.5, top - 6.2);
+      ctx.lineTo(px + 11.5, top - 6.2);
+      ctx.stroke();
       if (phase === "sealed") {
         ctx.fillStyle = "rgba(210,224,245,.65)";
         ctx.font = "600 11px Pretendard, sans-serif";

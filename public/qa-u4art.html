@@ -18,6 +18,8 @@
 <div class="qa-grid" id="scenes"></div>
 <h1>IV 단원 랩 소품 — 유리·금속 재질 (자동 진행 중 상태)</h1>
 <div class="qa-grid" id="labs"></div>
+<h1>III 단원(열) 랩 소품</h1>
+<div class="qa-grid" id="labs3"></div>
 <script type="module">
   import "/src/styles/tokens.css";
   import "/src/styles/base.css";
@@ -73,6 +75,17 @@
     [...d.querySelectorAll(".seg button")][1]?.click();
     setTimeout(() => findBtn(d, "그릇 바꾸기")?.click(), 250);
   });
+
+  // ── III 단원(열) 랩 — 소품 검수용 마운트(가능하면 첫 버튼/세그를 자동 조작) ──
+  const U3 = ["heatParticles", "heatContact", "conduction", "convection", "radiation", "specificHeat", "expansion"];
+  for (const type of U3) {
+    mount("labs3", type, "", type, { type, title: "t" }, (d) => {
+      const swap = d.querySelector(".swapbtn");
+      if (swap) swap.click();
+      const seg = [...d.querySelectorAll(".seg button")][1];
+      if (seg) seg.click();
+    });
+  }
 
   window.__ready = true;
 </script>

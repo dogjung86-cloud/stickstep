@@ -8,6 +8,7 @@ import { createLoop, type Loop } from "../../core/anim";
 import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { tempColor, drawFlame } from "../../ui/thermo";
+import { contactShadow, glassStrokeStyle, softGlow, windStrokeStyle } from "../../ui/labProps";
 import type { StepRenderer } from "../types";
 
 interface RadiationStep {
@@ -161,8 +162,8 @@ export const radiation: StepRenderer = (host, step, api) => {
     const mx = manX * w;
     const groundY = h - 22;
 
-    // 바닥
-    ctx.strokeStyle = "rgba(140,170,215,.22)";
+    // 바닥 — 양끝이 사라지는 그라데이션 스트로크
+    ctx.strokeStyle = windStrokeStyle(ctx, 12, w - 12, "150,182,226", 0.3);
     ctx.lineWidth = 1.6;
     ctx.beginPath();
     ctx.moveTo(12, groundY + 12);
@@ -193,8 +194,13 @@ export const radiation: StepRenderer = (host, step, api) => {
     }
     ctx.restore();
 
-    // 모닥불(돌·장작·불꽃)
-    ctx.strokeStyle = "rgba(190,150,110,.85)";
+    // 모닥불(돌·장작·불꽃) — 접촉 그림자 + 열원 글로우 + 나무 결 그라데이션 + 돌 볼륨
+    contactShadow(ctx, fx, fy + 15, 46, 0.32);
+    softGlow(ctx, fx, fy - 10, 72, "255,159,67", 0.2 + Math.sin(tMs / 95) * 0.04);
+    const logGrad = ctx.createLinearGradient(0, fy - 4, 0, fy + 8);
+    logGrad.addColorStop(0, "rgba(226,176,124,.95)");
+    logGrad.addColorStop(1, "rgba(136,96,62,.9)");
+    ctx.strokeStyle = logGrad;
     ctx.lineWidth = 5;
     ctx.lineCap = "round";
     ctx.beginPath();
@@ -203,21 +209,36 @@ export const radiation: StepRenderer = (host, step, api) => {
     ctx.moveTo(fx - 20, fy - 2);
     ctx.lineTo(fx + 20, fy + 6);
     ctx.stroke();
-    ctx.fillStyle = "rgba(140,160,190,.5)";
+    // 장작 윗면 하이라이트(불빛을 받는 면)
+    ctx.strokeStyle = "rgba(255,214,160,.45)";
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.moveTo(fx - 19, fy + 4.6);
+    ctx.lineTo(fx + 19, fy - 3.4);
+    ctx.moveTo(fx - 19, fy - 3.4);
+    ctx.lineTo(fx + 19, fy + 4.6);
+    ctx.stroke();
     for (let i = 0; i < 7; i++) {
       const ang = Math.PI + (i / 6) * Math.PI;
+      const sx = fx + Math.cos(ang) * 30;
+      const sy = fy + 10 + Math.sin(ang) * 4;
+      const rock = ctx.createRadialGradient(sx - 1.4, sy - 1.7, 0.6, sx, sy, 4.8);
+      rock.addColorStop(0, "rgba(198,214,238,.72)");
+      rock.addColorStop(1, "rgba(96,116,150,.5)");
+      ctx.fillStyle = rock;
       ctx.beginPath();
-      ctx.arc(fx + Math.cos(ang) * 30, fy + 10 + Math.sin(ang) * 4, 4.6, 0, Math.PI * 2);
+      ctx.arc(sx, sy, 4.6, 0, Math.PI * 2);
       ctx.fill();
     }
     drawFlame(ctx, fx, fy + 2, 44, tMs);
 
-    // 가림판
+    // 가림판 — 금속 패널: 접촉 그림자 + 원통 그라데이션 + 그라데이션 테두리 + 스펙큘러
     if (shieldOn) {
       const sx = shieldX * w;
       const dropY = (1 - Math.pow(1 - shieldDrop, 3)) * 0; // 위에서 스르륵
       const top = 26 - (1 - shieldDrop) * 60 + dropY;
       const sh = groundY - top + 8;
+      contactShadow(ctx, sx, top + sh + 3, 26, 0.3 * shieldDrop);
       const grd = ctx.createLinearGradient(sx - 8, 0, sx + 8, 0);
       grd.addColorStop(0, "rgba(210,222,240,.85)");
       grd.addColorStop(0.5, "rgba(255,255,255,.95)");
@@ -226,10 +247,27 @@ export const radiation: StepRenderer = (host, step, api) => {
       ctx.beginPath();
       ctx.roundRect(sx - 8, top, 16, sh, 8);
       ctx.fill();
-      ctx.strokeStyle = "rgba(90,110,140,.4)";
-      ctx.lineWidth = 1.4;
+      // 불 쪽(왼쪽) 면 — 복사를 받아 살짝 달아오른 기운
+      if (blocked) {
+        const heat = ctx.createLinearGradient(sx - 8, 0, sx - 1, 0);
+        heat.addColorStop(0, "rgba(255,159,67,.34)");
+        heat.addColorStop(1, "rgba(255,159,67,0)");
+        ctx.fillStyle = heat;
+        ctx.beginPath();
+        ctx.roundRect(sx - 8, top, 16, sh, 8);
+        ctx.fill();
+      }
+      ctx.strokeStyle = glassStrokeStyle(ctx, top, top + sh);
+      ctx.lineWidth = 1.6;
       ctx.beginPath();
       ctx.roundRect(sx - 8, top, 16, sh, 8);
+      ctx.stroke();
+      // 좌측 스펙큘러 스트릭
+      ctx.strokeStyle = "rgba(255,255,255,.5)";
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(sx - 4.6, top + 12);
+      ctx.lineTo(sx - 4.6, top + sh - 14);
       ctx.stroke();
       // 드래그 손잡이
       ctx.fillStyle = "rgba(25,31,40,.55)";

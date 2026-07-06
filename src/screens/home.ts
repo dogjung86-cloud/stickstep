@@ -14,9 +14,15 @@ const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter"
 // 단원별 보너스 미니게임 — 모든 레슨을 완료하면 지도 끝에 열린다.
 const UNIT_GAME: Record<string, { title: string }> = { u3: { title: "단열 디펜스" } };
 
-export function homeScreen(onOpenLesson: (id: string) => void, onOpenGame: (unitId: string) => void): Screen {
+export function homeScreen(
+  onOpenLesson: (id: string) => void,
+  onOpenGame: (unitId: string) => void,
+  focusUnitId?: string,
+): Screen {
   const st = getState();
-  let sel = CURRICULUM.findIndex((u) => unitProgress(u) < 100);
+  // 우선순위: 방금 학습한 단원 → 첫 미완료 단원 → 첫 단원
+  let sel = focusUnitId ? CURRICULUM.findIndex((u) => u.id === focusUnitId) : -1;
+  if (sel < 0) sel = CURRICULUM.findIndex((u) => unitProgress(u) < 100);
   if (sel < 0) sel = 0;
 
   const chips = el(

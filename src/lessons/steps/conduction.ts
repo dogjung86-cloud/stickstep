@@ -9,6 +9,7 @@ import { createLoop, type Loop } from "../../core/anim";
 import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { drawFlame, drawGlowParticle } from "../../ui/thermo";
+import { contactShadow, softGlow } from "../../ui/labProps";
 import type { StepRenderer } from "../types";
 
 interface ConductionStep {
@@ -142,11 +143,51 @@ export const conduction: StepRenderer = (host, step, api) => {
     const cy = h * 0.46;
     const sy = 22;
 
-    // 막대 몸통(입자 뒤 은은한 판)
-    ctx.fillStyle = "rgba(255,255,255,.05)";
+    // 막대 몸통(입자 뒤 금속 판) — 세로 그라데이션 + 끝단 셰이딩 + 접촉 그림자
+    const rx0 = x0 - 16;
+    const ry0 = cy - sy - 15;
+    const rw = x1 - x0 + 32;
+    const rh = sy * 2 + 30;
+    contactShadow(ctx, (x0 + x1) / 2, ry0 + rh + 16, (x1 - x0) * 0.5, 0.22);
+    const rodBody = ctx.createLinearGradient(0, ry0, 0, ry0 + rh);
+    rodBody.addColorStop(0, "rgba(226,240,255,.13)");
+    rodBody.addColorStop(0.55, "rgba(150,176,214,.055)");
+    rodBody.addColorStop(1, "rgba(92,116,155,.10)");
+    ctx.fillStyle = rodBody;
     ctx.beginPath();
-    ctx.roundRect(x0 - 16, cy - sy - 15, x1 - x0 + 32, sy * 2 + 30, 14);
+    ctx.roundRect(rx0, ry0, rw, rh, 14);
     ctx.fill();
+    // 양 끝단(단면)은 살짝 어둡게
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(rx0, ry0, rw, rh, 14);
+    ctx.clip();
+    const capL = ctx.createLinearGradient(rx0, 0, rx0 + 22, 0);
+    capL.addColorStop(0, "rgba(7,15,30,.26)");
+    capL.addColorStop(1, "rgba(7,15,30,0)");
+    ctx.fillStyle = capL;
+    ctx.fillRect(rx0, ry0, 22, rh);
+    const capR = ctx.createLinearGradient(rx0 + rw - 22, 0, rx0 + rw, 0);
+    capR.addColorStop(0, "rgba(7,15,30,0)");
+    capR.addColorStop(1, "rgba(7,15,30,.26)");
+    ctx.fillStyle = capR;
+    ctx.fillRect(rx0 + rw - 22, ry0, 22, rh);
+    ctx.restore();
+    // 윤곽(위 밝은 그라데이션) + 윗면 하이라이트 선
+    const rodEdge = ctx.createLinearGradient(0, ry0, 0, ry0 + rh);
+    rodEdge.addColorStop(0, "rgba(226,240,255,.28)");
+    rodEdge.addColorStop(1, "rgba(130,158,198,.10)");
+    ctx.strokeStyle = rodEdge;
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.roundRect(rx0, ry0, rw, rh, 14);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,.28)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(rx0 + 13, ry0 + 2.2);
+    ctx.lineTo(rx0 + rw - 13, ry0 + 2.2);
+    ctx.stroke();
 
     // 결합선(격자) — 입자가 "제자리"임을 보여주는 뼈대
     ctx.strokeStyle = "rgba(140,170,215,.16)";
@@ -175,8 +216,11 @@ export const conduction: StepRenderer = (host, step, api) => {
       }
     }
 
-    if (heating) drawFlame(ctx, x0, h - 18, 34, tMs);
-    ctx.fillStyle = "rgba(210,224,245,.6)";
+    if (heating) {
+      softGlow(ctx, x0, h - 35, 52, "255,150,60", 0.2);
+      drawFlame(ctx, x0, h - 18, 34, tMs);
+    }
+    ctx.fillStyle = "rgba(220,236,255,.62)";
     ctx.font = "600 11.5px Pretendard, sans-serif";
     ctx.textAlign = "left";
     ctx.fillText(heating ? "가열" : "가열 전", x0 - 14, h - 8);
@@ -216,18 +260,22 @@ export const conduction: StepRenderer = (host, step, api) => {
       const cy = 56 + i * ((h - 74) / 2); // HUD 필 아래에서 시작해 세 레인 배치
       const f = fronts[i];
       // 레인 라벨
-      ctx.fillStyle = picked === i ? "rgba(255,255,255,.92)" : "rgba(175,195,227,.85)";
+      ctx.fillStyle = picked === i ? "rgba(226,240,255,.95)" : "rgba(175,195,227,.85)";
       ctx.font = `${picked === i ? 800 : 600} 13px Pretendard, sans-serif`;
       ctx.textAlign = "left";
       ctx.fillText(RACERS[i].key, 26, cy + 4);
-      // 막대 바탕(차가움)
-      ctx.fillStyle = "#22335C";
+      // 막대 바탕(차가움) — 막대 축 수직 그라데이션 금속(위 밝음)
+      const cold = ctx.createLinearGradient(0, cy - 8, 0, cy + 8);
+      cold.addColorStop(0, "#334770");
+      cold.addColorStop(0.5, "#22335C");
+      cold.addColorStop(1, "#192646");
+      ctx.fillStyle = cold;
       ctx.beginPath();
       ctx.roundRect(x0, cy - 8, laneW, 16, 8);
       ctx.fill();
       // 열 프런트
+      const fw = laneW * f;
       if (f > 0.015) {
-        const fw = laneW * f;
         const grd = ctx.createLinearGradient(x0, 0, x0 + fw, 0);
         grd.addColorStop(0, "#FFE9A8");
         grd.addColorStop(0.55, "#FF9F43");
@@ -236,7 +284,29 @@ export const conduction: StepRenderer = (host, step, api) => {
         ctx.beginPath();
         ctx.roundRect(x0, cy - 8, fw, 16, 8);
         ctx.fill();
-        // 프런트 글로우
+      }
+      // 금속 셰이딩(원기둥 느낌) — 프런트 색 위에도 같은 결로 얹는다
+      const sheen = ctx.createLinearGradient(0, cy - 8, 0, cy + 8);
+      sheen.addColorStop(0, "rgba(255,255,255,.18)");
+      sheen.addColorStop(0.38, "rgba(255,255,255,.04)");
+      sheen.addColorStop(1, "rgba(6,14,28,.22)");
+      ctx.fillStyle = sheen;
+      ctx.beginPath();
+      ctx.roundRect(x0, cy - 8, laneW, 16, 8);
+      ctx.fill();
+      // 먼 끝단(단면)은 살짝 어둡게
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(x0, cy - 8, laneW, 16, 8);
+      ctx.clip();
+      const laneCap = ctx.createLinearGradient(x1 - 16, 0, x1, 0);
+      laneCap.addColorStop(0, "rgba(6,14,28,0)");
+      laneCap.addColorStop(1, "rgba(6,14,28,.30)");
+      ctx.fillStyle = laneCap;
+      ctx.fillRect(x1 - 16, cy - 8, 16, 16);
+      ctx.restore();
+      // 프런트 글로우
+      if (f > 0.015) {
         const gx = x0 + fw;
         const glow = ctx.createRadialGradient(gx, cy, 1, gx, cy, 18);
         glow.addColorStop(0, "rgba(255,159,67,.55)");
@@ -246,13 +316,26 @@ export const conduction: StepRenderer = (host, step, api) => {
         ctx.arc(gx, cy, 18, 0, Math.PI * 2);
         ctx.fill();
       }
-      ctx.strokeStyle = "rgba(255,255,255,.12)";
+      // 윤곽(위 밝은 그라데이션) + 윗면 하이라이트 선
+      const laneEdge = ctx.createLinearGradient(0, cy - 8, 0, cy + 8);
+      laneEdge.addColorStop(0, "rgba(226,240,255,.30)");
+      laneEdge.addColorStop(1, "rgba(120,148,190,.12)");
+      ctx.strokeStyle = laneEdge;
       ctx.lineWidth = 1.2;
       ctx.beginPath();
       ctx.roundRect(x0, cy - 8, laneW, 16, 8);
       ctx.stroke();
+      ctx.strokeStyle = "rgba(255,255,255,.24)";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(x0 + 7, cy - 5.6);
+      ctx.lineTo(x1 - 7, cy - 5.6);
+      ctx.stroke();
       // 레인마다 왼쪽 끝을 동시에 가열
-      if (mode === "race" || mode === "done") drawFlame(ctx, x0 + 8, cy + 27, 17, tMs + i * 300);
+      if (mode === "race" || mode === "done") {
+        softGlow(ctx, x0 + 8, cy + 18, 30, "255,150,60", 0.18);
+        drawFlame(ctx, x0 + 8, cy + 27, 17, tMs + i * 300);
+      }
       // 완주 체크
       if (f >= 1) {
         ctx.fillStyle = "#04B45F";

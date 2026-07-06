@@ -15,17 +15,22 @@ import { findLesson } from "./content/curriculum";
 const frame = document.getElementById("frame")!;
 nav.init(frame);
 
+// 마지막으로 연 단원 — 레슨 완료·X 이탈 후 홈이 그 단원 지도로 돌아가게 한다.
+let lastUnitId: string | undefined;
+
 function goHome(): void {
-  nav.reset(homeScreen(openLesson, openGame));
+  nav.reset(homeScreen(openLesson, openGame, lastUnitId));
 }
 
-function openGame(): void {
+function openGame(unitId: string): void {
+  lastUnitId = unitId;
   nav.go(minigameScreen(goHome));
 }
 
 function openLesson(id: string): void {
   const found = findLesson(id);
   if (!found) return;
+  lastUnitId = found.unit.id;
   const player = createLessonPlayer(found.lesson, {
     onExit: goHome,
     onComplete: (r) => {

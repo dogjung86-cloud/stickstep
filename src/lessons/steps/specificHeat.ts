@@ -9,6 +9,7 @@ import { createLoop, type Loop } from "../../core/anim";
 import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { tempColor, drawFlame } from "../../ui/thermo";
+import { contactShadow, glassVessel, liquidFill, softGlow } from "../../ui/labProps";
 import type { StepRenderer } from "../types";
 
 interface SpecificHeatStep {
@@ -207,16 +208,21 @@ export const specificHeat: StepRenderer = (host, step, api) => {
     const { ctx, w, h } = fitCanvas(canvas, 210);
     // 판정 시트를 읽는 동안에도 불은 켜져 있다 — "불 끄고 식히기"를 눌러야 꺼진다
     const heating = phase === "heat" || phase === "verdict";
-    const beaker = (cx: number, T: number, label: string, liquid: string): void => {
+    const beaker = (cx: number, T: number, label: string, rgb: string): void => {
       const bw = w * 0.3;
       const bh = h * 0.5;
       const x = cx - bw / 2;
       const y = h * 0.18;
-      // 액체
-      ctx.fillStyle = liquid;
+      // 접촉 그림자(버너 자리에 세트를 앉힘) + 유리 비커(그라데이션 벽 + 스펙큘러 + 림 틱)
+      contactShadow(ctx, cx, y + bh + 24, bw * 0.62);
+      glassVessel(ctx, { x0: x, y0: y, x1: x + bw, y1: y + bh });
+      // 액체 — 위가 밝은 세로 그라데이션 + 수면 하이라이트(비커 안쪽으로 클립)
+      ctx.save();
       ctx.beginPath();
-      ctx.roundRect(x + 4, y + bh * 0.28, bw - 8, bh * 0.72 - 4, [0, 0, 10, 10]);
-      ctx.fill();
+      ctx.roundRect(x + 4, y + bh * 0.28 - 2, bw - 8, bh * 0.72 - 2, [0, 0, 10, 10]);
+      ctx.clip();
+      liquidFill(ctx, x + 4, y + bh * 0.28, x + bw - 4, y + bh - 4, rgb, 0.36);
+      ctx.restore();
       // 온도 무드(뜨거울수록 붉게)
       ctx.fillStyle = tempColor(T01(T), 0.16 * T01(T) + 0.02);
       ctx.beginPath();
@@ -235,27 +241,19 @@ export const specificHeat: StepRenderer = (host, step, api) => {
           ctx.stroke();
         }
       }
-      // 비커 윤곽
-      ctx.strokeStyle = "rgba(220,232,250,.75)";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x, y + bh - 10);
-      ctx.arcTo(x, y + bh, x + 10, y + bh, 10);
-      ctx.lineTo(x + bw - 10, y + bh);
-      ctx.arcTo(x + bw, y + bh, x + bw, y + bh - 10, 10);
-      ctx.lineTo(x + bw, y);
-      ctx.stroke();
       // 라벨
       ctx.fillStyle = "rgba(210,224,245,.75)";
       ctx.font = "600 12px Pretendard, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(label, cx, y + bh + 34);
-      // 불꽃(가열 중일 때만, 두 불꽃 크기 동일)
-      if (heating) drawFlame(ctx, cx, y + bh + 20, 22, tMs);
+      // 불꽃(가열 중일 때만, 두 불꽃 크기 동일) — 주변에 softGlow로 은은한 열기
+      if (heating) {
+        softGlow(ctx, cx, y + bh + 10, 40, "255,150,64", 0.16);
+        drawFlame(ctx, cx, y + bh + 20, 22, tMs);
+      }
     };
-    beaker(w * 0.3, Tw, "물 200 g", "rgba(96,150,230,.30)");
-    beaker(w * 0.7, To, "식용유 200 g", "rgba(240,190,80,.30)");
+    beaker(w * 0.3, Tw, "물 200 g", "96,150,230");
+    beaker(w * 0.7, To, "식용유 200 g", "240,190,80");
   }
 
   // ---- 그래프 ----

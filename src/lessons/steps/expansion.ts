@@ -9,6 +9,7 @@ import { createLoop, type Loop } from "../../core/anim";
 import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { tempColor, drawFlame, drawGlowParticle } from "../../ui/thermo";
+import { contactShadow, softGlow } from "../../ui/labProps";
 import type { StepRenderer } from "../types";
 
 interface ExpansionStep {
@@ -198,9 +199,50 @@ export const expansion: StepRenderer = (host, step, api) => {
     const len0 = s0 * (N - 1);
     const len = sp * (N - 1);
 
-    // 고정단 벽
-    ctx.fillStyle = "rgba(255,255,255,.12)";
+    // 고정단 벽 — 금속 스탠드(세로 그라데이션 + 모서리 하이라이트) + 접촉 그림자
+    contactShadow(ctx, x0 - 14, cy + 32, 20, 0.2);
+    const wall = ctx.createLinearGradient(0, cy - 30, 0, cy + 30);
+    wall.addColorStop(0, "rgba(236,246,255,.26)");
+    wall.addColorStop(0.5, "rgba(168,194,228,.12)");
+    wall.addColorStop(1, "rgba(108,134,172,.16)");
+    ctx.fillStyle = wall;
     ctx.fillRect(x0 - 18, cy - 30, 8, 60);
+    ctx.strokeStyle = "rgba(255,255,255,.26)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(x0 - 16.8, cy - 28);
+    ctx.lineTo(x0 - 16.8, cy + 28);
+    ctx.stroke();
+    // 막대 몸통(입자 뒤 은은한 금속 판 — 길이를 따라 함께 늘어난다)
+    const bx0 = x0 - 12;
+    const bw = len + 24;
+    const by0 = cy - 15;
+    const rodBody = ctx.createLinearGradient(0, by0, 0, by0 + 30);
+    rodBody.addColorStop(0, "rgba(226,240,255,.12)");
+    rodBody.addColorStop(0.55, "rgba(150,176,214,.05)");
+    rodBody.addColorStop(1, "rgba(92,116,155,.09)");
+    ctx.fillStyle = rodBody;
+    ctx.beginPath();
+    ctx.roundRect(bx0, by0, bw, 30, 15);
+    ctx.fill();
+    // 자유단(단면)은 살짝 어둡게
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(bx0, by0, bw, 30, 15);
+    ctx.clip();
+    const rodCap = ctx.createLinearGradient(bx0 + bw - 18, 0, bx0 + bw, 0);
+    rodCap.addColorStop(0, "rgba(7,15,30,0)");
+    rodCap.addColorStop(1, "rgba(7,15,30,.24)");
+    ctx.fillStyle = rodCap;
+    ctx.fillRect(bx0 + bw - 18, by0, 18, 30);
+    ctx.restore();
+    // 윗면 하이라이트 선
+    ctx.strokeStyle = "rgba(255,255,255,.22)";
+    ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    ctx.moveTo(bx0 + 12, by0 + 2.2);
+    ctx.lineTo(bx0 + bw - 12, by0 + 2.2);
+    ctx.stroke();
     // 결합선
     ctx.strokeStyle = "rgba(140,170,215,.2)";
     ctx.lineWidth = 2;
@@ -215,9 +257,13 @@ export const expansion: StepRenderer = (host, step, api) => {
       const oy = Math.cos(tMs * (0.0095 + t * 0.009) + phases[i] * 1.3) * amp;
       drawGlowParticle(ctx, x0 + i * sp + ox, cy + oy, r, 0.08 + t * 0.85, t > 0.1 ? 2 : 1);
     }
-    // 눈금자 + 처음 길이 표식 + 현재 끝 마커
+    // 눈금자 + 처음 길이 표식 + 현재 끝 마커 (자 몸통은 은은한 띠만 — 과한 장식 금지)
     const ry = cy + 46;
-    ctx.strokeStyle = "rgba(160,190,235,.5)";
+    ctx.fillStyle = "rgba(196,220,250,.06)";
+    ctx.beginPath();
+    ctx.roundRect(x0 - 6, ry - 12, len0 * (1 + MAX_GROW) + 26, 16, 4);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(220,236,255,.48)";
     ctx.lineWidth = 1.6;
     ctx.beginPath();
     ctx.moveTo(x0, ry);
@@ -231,14 +277,14 @@ export const expansion: StepRenderer = (host, step, api) => {
       ctx.stroke();
     }
     // 처음 길이(기준선)
-    ctx.strokeStyle = "rgba(220,232,250,.55)";
+    ctx.strokeStyle = "rgba(220,236,255,.55)";
     ctx.setLineDash([3, 4]);
     ctx.beginPath();
     ctx.moveTo(x0 + len0, ry + 4);
     ctx.lineTo(x0 + len0, cy - 26);
     ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle = "rgba(210,224,245,.6)";
+    ctx.fillStyle = "rgba(220,236,255,.62)";
     ctx.font = "600 10.5px Pretendard, sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("처음 길이", x0 + len0, ry + 18);
@@ -251,7 +297,11 @@ export const expansion: StepRenderer = (host, step, api) => {
     ctx.closePath();
     ctx.fill();
 
-    if (t > 0.12) drawFlame(ctx, x0 + len * 0.5, h - 8, 24 * clamp(t * 1.6, 0.4, 1), tMs);
+    if (t > 0.12) {
+      const fs = 24 * clamp(t * 1.6, 0.4, 1);
+      softGlow(ctx, x0 + len * 0.5, h - 8 - fs * 0.5, fs * 2.2, "255,150,60", 0.08 + 0.16 * t);
+      drawFlame(ctx, x0 + len * 0.5, h - 8, fs, tMs);
+    }
   }
 
   function drawBimetal(ctx: CanvasRenderingContext2D, w: number, h: number, tMs: number, dt: number): void {
@@ -272,9 +322,9 @@ export const expansion: StepRenderer = (host, step, api) => {
       const a = theta * tt;
       return [cxC + radius * Math.sin(a), cyC - radius * Math.cos(a)];
     };
-    const layer = (radius: number, color: string): void => {
+    const strip = (radius: number, width: number, color: string): void => {
       ctx.strokeStyle = color;
-      ctx.lineWidth = thick;
+      ctx.lineWidth = width;
       ctx.lineCap = "round";
       ctx.beginPath();
       for (let i = 0; i <= 24; i++) {
@@ -284,20 +334,53 @@ export const expansion: StepRenderer = (host, step, api) => {
       }
       ctx.stroke();
     };
-    // 고정단
-    ctx.fillStyle = "rgba(255,255,255,.12)";
+    // 고정단 — 금속 스탠드(세로 그라데이션 + 모서리 하이라이트) + 접촉 그림자
+    contactShadow(ctx, x0 - 15, y0 + 29, 22, 0.2);
+    const wall = ctx.createLinearGradient(0, y0 - 26, 0, y0 + 26);
+    wall.addColorStop(0, "rgba(236,246,255,.26)");
+    wall.addColorStop(0.5, "rgba(168,194,228,.12)");
+    wall.addColorStop(1, "rgba(108,134,172,.16)");
+    ctx.fillStyle = wall;
     ctx.fillRect(x0 - 20, y0 - 26, 10, 52);
-    // 위: 알루미늄(바깥·더 길어짐), 아래: 철
-    layer(R + thick / 2 + 0.5, "#AFC6E8");
-    layer(R - thick / 2 - 0.5, "#5E6B7E");
+    ctx.strokeStyle = "rgba(255,255,255,.26)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(x0 - 18.6, y0 - 24);
+    ctx.lineTo(x0 - 18.6, y0 + 24);
+    ctx.stroke();
+    // 위: 알루미늄(바깥·더 길어짐), 아래: 철 — 띠 축에 수직인 3톤(바깥 밝음) 금속 재질
+    const RA = R + thick / 2 + 0.5;
+    const RI = R - thick / 2 - 0.5;
+    strip(RA, thick, "#93ABCE");
+    strip(RA + thick * 0.16, thick * 0.6, "#B7CDEC");
+    strip(RA + thick * 0.33, thick * 0.2, "rgba(240,248,255,.8)");
+    strip(RI, thick, "#4C5769");
+    strip(RI + thick * 0.16, thick * 0.6, "#606D80");
+    strip(RI + thick * 0.33, thick * 0.2, "rgba(174,190,212,.4)");
+    // 두 금속의 접합선 + 자유단 끝(단면)은 살짝 어둡게
+    strip(R, 1.2, "rgba(8,16,30,.5)");
+    const endShade = (radius: number): void => {
+      const [ax, ay] = pt(0.96, radius);
+      const [bx, by] = pt(1, radius);
+      ctx.strokeStyle = "rgba(8,16,30,.22)";
+      ctx.lineWidth = thick;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(bx, by);
+      ctx.stroke();
+    };
+    endShade(RA);
+    endShade(RI);
     // 라벨(굽어 내려오는 띠와 겹치지 않게 고정단 쪽에)
-    ctx.fillStyle = "rgba(210,224,245,.8)";
+    ctx.fillStyle = "rgba(220,236,255,.8)";
     ctx.font = "600 11.5px Pretendard, sans-serif";
     ctx.textAlign = "left";
     ctx.fillText("알루미늄 — 열팽창 큼", x0 + 6, y0 - 26);
     ctx.fillText("철 — 열팽창 작음", x0 - 14, y0 + 52);
-    // 불
+    // 불(주변 소프트 글로우)
     if (phase === "bend" || phase === "done") {
+      softGlow(ctx, x0 + L * 0.45, h - 21, 44, "255,150,60", 0.2);
       drawFlame(ctx, x0 + L * 0.45, h - 8, 26, tMs);
       // 끝점 이동 화살(아래로)
       if (bend > 0.25) {
