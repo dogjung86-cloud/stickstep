@@ -846,7 +846,7 @@
 
 /* 가열·냉각 곡선 랩 */
 .hc-graph { margin-top: 10px; }
-.hc-energy-slot { position: absolute; right: 12px; bottom: 10px; pointer-events: none; }
+.hc-energy-slot { position: absolute; left: 12px; bottom: 10px; pointer-events: none; } /* 우하단은 입자의 눈 토글 자리 */
 .hc-energy { opacity: .45; transition: opacity .25s, box-shadow .25s; }
 .hc-energy.on { opacity: 1; box-shadow: 0 0 0 1.5px rgba(255, 176, 58, .55), 0 0 16px rgba(255, 138, 92, .35); }
 
@@ -857,6 +857,8 @@
 
 /* 목표 칩 — 물질 단원 색 변형 */
 .hp-goal.matter.on { background: linear-gradient(150deg, #9C8CFF, #7C6BFF); box-shadow: 0 3px 10px -2px rgba(124, 107, 255, .5); }
+/* 메타볼 무대에서는 우하단이 '입자의 눈' 토글 자리 — 목표 칩은 좌하단으로 */
+.hp-goals.left { left: 14px; right: auto; }
 
 /* ── hook 장면: 급식 냄새 ── */
 .hook-meal { cursor: pointer; display: block; width: 100%; background: none; border: 0; padding: 0; }

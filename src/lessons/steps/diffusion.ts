@@ -6,6 +6,7 @@ import { el, clamp } from "../../core/dom";
 import { createLoop, type Loop } from "../../core/anim";
 import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { contactShadow, glassVessel, liquidFill } from "../../ui/labProps";
 import type { StepRenderer } from "../types";
 
 interface DiffusionStep {
@@ -160,19 +161,10 @@ export const diffusion: StepRenderer = (host, step, api) => {
     const { ctx, w, h } = fitCanvas(canvas, 250);
     box = { x: 26, y: 16, w: w - 52, h: h - 34 };
 
-    // 비커
-    ctx.strokeStyle = "rgba(148,176,214,.5)";
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(box.x - 6, box.y - 4);
-    ctx.lineTo(box.x - 6, box.y + box.h + 6);
-    ctx.lineTo(box.x + box.w + 6, box.y + box.h + 6);
-    ctx.lineTo(box.x + box.w + 6, box.y - 4);
-    ctx.stroke();
-    // 물(은은한 채움)
-    ctx.fillStyle = "rgba(90,162,248,.07)";
-    ctx.fillRect(box.x - 4, box.y + 6, box.w + 8, box.h - 2);
+    // 비커(유리) + 물 — 접촉 그림자로 무대에 앉힌다
+    contactShadow(ctx, box.x + box.w / 2, box.y + box.h + 12, box.w * 0.6);
+    glassVessel(ctx, { x0: box.x - 6, y0: box.y - 4, x1: box.x + box.w + 6, y1: box.y + box.h + 6 });
+    liquidFill(ctx, box.x - 3, box.y + 6, box.x + box.w + 3, box.y + box.h + 3, "92,152,235", 0.13);
 
     stepParticles(water, dt, 0.55);
     if (inkDropped) stepParticles(ink, dt, 0.62);

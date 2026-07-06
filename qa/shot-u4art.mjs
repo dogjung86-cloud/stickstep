@@ -4,10 +4,10 @@ import { chromium } from "playwright-core";
 
 const out = process.argv[2] ?? "qa/u4art.png";
 const browser = await chromium.launch({ channel: "chrome", headless: true });
-const page = await browser.newPage({ viewport: { width: 820, height: 1400 }, deviceScaleFactor: 2 });
+const page = await browser.newPage({ viewport: { width: 1240, height: 1500 }, deviceScaleFactor: 2 });
 await page.goto("http://localhost:5173/qa-u4art.html", { waitUntil: "networkidle" });
 await page.waitForFunction(() => window.__ready === true);
-await page.waitForTimeout(1400); // 상호작용 후 상태 전환(뚜껑·랩·불꽃) 안착 대기
+await page.waitForTimeout(5200); // 랩 자동 진행(잉크 확산·풍선 팽창·가열 곡선)이 자리 잡을 때까지
 await page.screenshot({ path: out, fullPage: true });
 await browser.close();
 console.log("SAVED", out);

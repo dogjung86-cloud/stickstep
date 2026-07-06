@@ -46,7 +46,9 @@ src/
   ui/        blocks(개념 블록), figures(세포도·생물 아이콘 SVG), canvas(DPR 헬퍼),
              thermo(열 단원 공용: 온도색 램프·발광 입자·불꽃·자유 입자), heatFigures(열 퀴즈 SVG),
              matterStage(IV 공용 무대 — 메타볼+입자 뷰 크로스페이드 토글·오버레이·토스트),
-             matterFigures(IV 퀴즈 SVG + recap 미니아트)
+             matterFigures(IV 퀴즈 SVG + recap 미니아트),
+             labProps(IV 랩 공용 소품 — 유리 용기·플라스크·전자저울·접촉 그림자·바람 스트릭.
+                      캔버스에서도 파운드리 재질 문법을 지키는 헬퍼. 단색 스트로크 소품 금지)
   content/   dsl(저작 팩토리), curriculum(단원 집계·잠금), unit1, unit2, unit3, unit4
   screens/   splash, onboarding, home(게임 지도), done
 ```
@@ -94,7 +96,9 @@ src/
   ① 근-동조 3스톱 그라데이션 면 ② 좌상단 키라이트(radial 하이라이트·스펙큘러 스트릭)
   ③ 바닥 접촉 그림자(`#2A3A5E` 타원, opacity .10~.12) ④ 외곽선은 재질별 최암색 1.4~1.6px.
   스틱맨 캐릭터만 의도적으로 손그림 라인 유지(만화·아바타와 같은 정체성). 기준 구현: hook.ts IV 장면 4종.
-  검수: `public/qa-u4art.html` + `node qa/shot-u4art.mjs`(dev 서버 필요, 로컬 크롬 헤드리스 스크린샷).
+  캔버스 랩 소품도 동일 문법 — `ui/labProps.ts`(유리 용기·플라스크·저울·접촉 그림자·바람)만 쓴다.
+  검수: `public/qa-u4art.html`(훅 장면 + 랩 자동 진행 마운트) + `node qa/shot-u4art.mjs`(dev 서버 필요).
+  주의: 다크 무대(.stage)의 우하단은 '입자의 눈' 토글 자리 — 목표 칩·상태 필은 좌하단(`.hp-goals.left`)에.
 
 ## 표준 레슨 공식 — "도입 → 랩 → 정리 → 문제" (상세는 LESSON_GUIDE.md)
 - 모든 레슨: ① 스틱맨 도입(`hook` 미세 상호작용 또는 `comic` 서사) → ② 핵심 랩(다크 무대,

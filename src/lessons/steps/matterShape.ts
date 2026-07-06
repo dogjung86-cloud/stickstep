@@ -9,6 +9,7 @@ import { haptic, HAPTIC } from "../../core/haptics";
 import { createMatterStage } from "../../ui/matterStage";
 import { colFor } from "../../renderers/palette";
 import { icon } from "../../core/icons";
+import { contactShadow, glassStrokeStyle } from "../../ui/labProps";
 import type { SimBounds } from "../../engine/matterSim";
 import type { StepRenderer } from "../types";
 
@@ -34,22 +35,44 @@ function dishWalls(w: number, h: number): SimBounds {
   return { x0: (w - cw) / 2, y0: h * 0.6, x1: (w + cw) / 2, y1: h - 14 };
 }
 
-/** 그릇 벽 — 열린 윗면은 점선(프로토타입 그대로). */
+/** 그릇 벽 — 유리 재질(그라데이션 벽 + 스펙큘러 + 림 틱), 열린 윗면은 점선(프로토타입 계승). */
 function drawContainer(ctx: CanvasRenderingContext2D, b: SimBounds): void {
-  ctx.strokeStyle = "rgba(148,176,214,.55)";
-  ctx.lineWidth = 2;
+  contactShadow(ctx, (b.x0 + b.x1) / 2, b.y1 + 12, (b.x1 - b.x0) * 0.6, 0.26);
+  const r = 8;
+  ctx.strokeStyle = glassStrokeStyle(ctx, b.y0, b.y1 + 4);
+  ctx.lineWidth = 2.4;
   ctx.lineCap = "round";
+  ctx.lineJoin = "round";
   ctx.beginPath();
   ctx.moveTo(b.x0 - 4, b.y0);
-  ctx.lineTo(b.x0 - 4, b.y1 + 4);
-  ctx.lineTo(b.x1 + 4, b.y1 + 4);
+  ctx.lineTo(b.x0 - 4, b.y1 + 4 - r);
+  ctx.quadraticCurveTo(b.x0 - 4, b.y1 + 4, b.x0 - 4 + r, b.y1 + 4);
+  ctx.lineTo(b.x1 + 4 - r, b.y1 + 4);
+  ctx.quadraticCurveTo(b.x1 + 4, b.y1 + 4, b.x1 + 4, b.y1 + 4 - r);
   ctx.lineTo(b.x1 + 4, b.y0);
   ctx.stroke();
-  ctx.setLineDash([4, 5]);
-  ctx.strokeStyle = "rgba(148,176,214,.3)";
+  // 좌측 스펙큘러 + 림 틱
+  ctx.strokeStyle = "rgba(255,255,255,.28)";
+  ctx.lineWidth = 1.8;
   ctx.beginPath();
-  ctx.moveTo(b.x0 - 4, b.y0);
-  ctx.lineTo(b.x1 + 4, b.y0);
+  ctx.moveTo(b.x0 + 1, b.y0 + 10);
+  ctx.lineTo(b.x0 + 1, b.y1 - 10);
+  ctx.stroke();
+  ctx.strokeStyle = "rgba(226,240,255,.9)";
+  ctx.lineWidth = 2.4;
+  ctx.beginPath();
+  ctx.moveTo(b.x0 - 7, b.y0);
+  ctx.lineTo(b.x0 + 2, b.y0);
+  ctx.moveTo(b.x1 - 2, b.y0);
+  ctx.lineTo(b.x1 + 7, b.y0);
+  ctx.stroke();
+  // 열린 윗면(점선)
+  ctx.setLineDash([4, 5]);
+  ctx.strokeStyle = "rgba(178,204,238,.35)";
+  ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  ctx.moveTo(b.x0 + 6, b.y0);
+  ctx.lineTo(b.x1 - 6, b.y0);
   ctx.stroke();
   ctx.setLineDash([]);
 }

@@ -6,6 +6,7 @@ import { el } from "../../core/dom";
 import { createLoop, type Loop } from "../../core/anim";
 import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { contactShadow, scaleBody, glassStrokeStyle, windStrokeStyle } from "../../ui/labProps";
 import type { StepRenderer } from "../types";
 
 interface EvaporationStep {
@@ -105,22 +106,24 @@ export const evaporation: StepRenderer = (host, step, api) => {
     const dishX = w / 2;
     const dishY = h - 64;
 
-    // 전자저울(간단한 몸체 + 표시창)
-    ctx.fillStyle = "rgba(255,255,255,.06)";
-    ctx.strokeStyle = "rgba(148,176,214,.4)";
-    ctx.lineWidth = 2;
+    // 전자저울(금속 몸체 + 파인 표시창) + 접촉 그림자
     const swW = Math.min(w * 0.56, 220);
-    ctx.beginPath();
-    (ctx as CanvasRenderingContext2D & { roundRect(x: number, y: number, w: number, h: number, r: number): void }).roundRect(
-      dishX - swW / 2, dishY + 14, swW, 34, 10,
-    );
-    ctx.fill();
-    ctx.stroke();
-    // 접시(거름종이)
-    ctx.strokeStyle = "rgba(200,220,244,.6)";
+    contactShadow(ctx, dishX, dishY + 52, swW * 0.64);
+    const disp = scaleBody(ctx, dishX, dishY + 14, swW);
+    // 접시(유리) + 거름종이
+    ctx.strokeStyle = glassStrokeStyle(ctx, dishY - 2, dishY + 18);
     ctx.lineWidth = 2.4;
     ctx.beginPath();
     ctx.ellipse(dishX, dishY + 8, swW * 0.42, 9, 0, 0, TAU);
+    ctx.stroke();
+    ctx.fillStyle = "rgba(238,246,255,.10)";
+    ctx.beginPath();
+    ctx.ellipse(dishX, dishY + 7, swW * 0.36, 6.4, 0, 0, TAU);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.35)";
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.ellipse(dishX - swW * 0.08, dishY + 11, swW * 0.22, 4.4, 0, 0.3, Math.PI - 0.5);
     ctx.stroke();
 
     // ---- 증발: 맨 위층 입자만 탈출 ----
@@ -187,10 +190,10 @@ export const evaporation: StepRenderer = (host, step, api) => {
       ctx.fill();
     }
 
-    // ---- 바람 표시 ----
+    // ---- 바람 표시(양끝이 사라지는 스트릭) ----
     if (fanning) {
-      ctx.strokeStyle = "rgba(220,236,255,.35)";
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = windStrokeStyle(ctx, 24, w - 30, "220,236,255", 0.42);
+      ctx.lineWidth = 2.2;
       for (let i = 0; i < 3; i++) {
         const yy = dishY - 40 - i * 26 + Math.sin(tMs / 120 + i) * 4;
         ctx.beginPath();
@@ -200,18 +203,17 @@ export const evaporation: StepRenderer = (host, step, api) => {
       }
     }
 
-    // ---- 저울 표시 ----
+    // ---- 저울 표시(LCD) ----
     const mass = (START_MASS * liquid.length) / START_N;
     const txt = `${mass.toFixed(2)} g`;
     if (txt !== lastMassShown) {
       lastMassShown = txt;
       massVal.textContent = txt;
-      // 저울 표시창에도
     }
-    ctx.fillStyle = "#DFF6F4";
+    ctx.fillStyle = "#A9F0DE";
     ctx.font = "700 15px Pretendard, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(txt, dishX, dishY + 37);
+    ctx.fillText(txt, dishX, disp.dy + disp.dh - 5.5);
 
     if (!finished && liquid.length <= GOAL_LEFT) {
       finished = true;

@@ -6,6 +6,7 @@ import { el } from "../../core/dom";
 import { createLoop, type Loop } from "../../core/anim";
 import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { contactShadow, glassFlask, windStrokeStyle } from "../../ui/labProps";
 import type { StepRenderer } from "../types";
 
 interface PhaseVolumeStep {
@@ -37,7 +38,7 @@ export const phaseVolume: StepRenderer = (host, step, api) => {
   host.appendChild(el("div", { class: "h1", html: s.title }));
   if (s.lead) host.appendChild(el("div", { class: "sub", html: s.lead }));
 
-  const canvas = el("canvas", { class: "mstage-cvblock", style: "height:280px" });
+  const canvas = el("canvas", { class: "mstage-cvblock", style: "height:300px" });
   const countPill = el("div", { class: "pill" }, el("span", { class: "pdot", style: `background:rgb(${LIQ})` }), el("span", { text: `입자 ${N}개` }));
   const massPill = el("div", { class: "pill" }, el("span", { text: "질량 2.0 g — 그대로" }));
   const stage = el(
@@ -90,17 +91,17 @@ export const phaseVolume: StepRenderer = (host, step, api) => {
   heatBtn.addEventListener("pointercancel", stopHeat);
 
   const loop: Loop = createLoop((dt, tMs) => {
-    const { ctx, w, h } = fitCanvas(canvas, 280);
+    const { ctx, w, h } = fitCanvas(canvas, 300);
     const cx = w / 2;
     const botY = h - 30;
     const bodyW = Math.min(w * 0.5, 190);
     const neckW = 26;
-    const neckTop = 78;
-    const bodyTop = botY - 84;
+    const neckTop = 104; // 풍선 최대 지름(~104px)이 위에 들어갈 공간
+    const bodyTop = botY - 82;
     if (ps.length === 0) seed(cx, botY);
 
     const gasCount = ps.filter((p) => p.mode !== "liquid").length;
-    const targetR = 16 + gasCount * 3.1;
+    const targetR = 16 + gasCount * 2.0;
     balloonR += (targetR - balloonR) * Math.min(1, 0.06 * dt);
     const balloonCy = neckTop - balloonR + 6;
 
@@ -166,32 +167,39 @@ export const phaseVolume: StepRenderer = (host, step, api) => {
       }
     }
 
-    // ---- 그리기: 플라스크(삼각) + 목 ----
-    ctx.strokeStyle = "rgba(148,176,214,.55)";
-    ctx.lineWidth = 2.6;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.beginPath();
-    ctx.moveTo(cx - neckW / 2, neckTop);
-    ctx.lineTo(cx - neckW / 2, bodyTop);
-    ctx.lineTo(cx - bodyW / 2, botY);
-    ctx.lineTo(cx + bodyW / 2, botY);
-    ctx.lineTo(cx + neckW / 2, bodyTop);
-    ctx.lineTo(cx + neckW / 2, neckTop);
-    ctx.stroke();
+    // ---- 그리기: 플라스크(유리) + 접촉 그림자 ----
+    contactShadow(ctx, cx, botY + 10, bodyW * 0.62);
+    glassFlask(ctx, cx, neckW, neckTop, bodyTop, bodyW, botY);
 
-    // ---- 풍선 ----
+    // ---- 풍선(고무 재질: 라디얼 볼륨 + 딥 림 + 매듭) ----
     const wob = Math.sin(tMs / 300) * (balloonR * 0.02);
+    const bg = ctx.createRadialGradient(
+      cx - balloonR * 0.35, balloonCy - balloonR * 0.42, balloonR * 0.08,
+      cx, balloonCy, balloonR + wob,
+    );
+    bg.addColorStop(0, "rgba(255,214,228,.38)");
+    bg.addColorStop(0.55, "rgba(255,158,190,.16)");
+    bg.addColorStop(1, "rgba(226,96,142,.12)");
     ctx.beginPath();
     ctx.ellipse(cx, balloonCy, balloonR + wob, balloonR - wob, 0, 0, TAU);
-    ctx.strokeStyle = "rgba(255,158,190,.75)";
+    ctx.fillStyle = bg;
+    ctx.fill();
+    const rim = ctx.createLinearGradient(0, balloonCy - balloonR, 0, balloonCy + balloonR);
+    rim.addColorStop(0, "rgba(255,196,216,.9)");
+    rim.addColorStop(1, "rgba(232,110,150,.65)");
+    ctx.strokeStyle = rim;
     ctx.lineWidth = 2.6;
     ctx.stroke();
-    ctx.fillStyle = "rgba(255,158,190,.07)";
-    ctx.fill();
-    ctx.fillStyle = "rgba(255,255,255,.25)";
+    // 하이라이트 + 매듭
+    ctx.fillStyle = "rgba(255,255,255,.30)";
     ctx.beginPath();
-    ctx.ellipse(cx - balloonR * 0.34, balloonCy - balloonR * 0.36, balloonR * 0.16, balloonR * 0.1, -0.6, 0, TAU);
+    ctx.ellipse(cx - balloonR * 0.34, balloonCy - balloonR * 0.38, balloonR * 0.18, balloonR * 0.10, -0.6, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "rgba(240,130,168,.85)";
+    ctx.beginPath();
+    ctx.moveTo(cx - 7, neckTop + 1);
+    ctx.quadraticCurveTo(cx, neckTop - 6, cx + 7, neckTop + 1);
+    ctx.quadraticCurveTo(cx, neckTop + 5, cx - 7, neckTop + 1);
     ctx.fill();
 
     // ---- 입자 ----
@@ -218,8 +226,8 @@ export const phaseVolume: StepRenderer = (host, step, api) => {
 
     // ---- 드라이기 바람 ----
     if (heating) {
-      ctx.strokeStyle = "rgba(255,196,120,.4)";
-      ctx.lineWidth = 2.2;
+      ctx.strokeStyle = windStrokeStyle(ctx, cx - bodyW / 2 - 34, cx + bodyW / 2 + 34);
+      ctx.lineWidth = 2.4;
       for (let i = 0; i < 3; i++) {
         const yy = botY + 8 + i * 5;
         const ph = Math.sin(tMs / 110 + i * 1.4) * 5;
@@ -247,12 +255,12 @@ export const phaseVolume: StepRenderer = (host, step, api) => {
   });
 
   const onResize = (): void => {
-    fitCanvas(canvas, 280);
+    fitCanvas(canvas, 300);
     ps.length = 0;
   };
   window.addEventListener("resize", onResize);
   const rafId = requestAnimationFrame(() => {
-    fitCanvas(canvas, 280);
+    fitCanvas(canvas, 300);
     loop.start();
   });
 

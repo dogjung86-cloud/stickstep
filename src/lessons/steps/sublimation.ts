@@ -6,6 +6,7 @@ import { el } from "../../core/dom";
 import { createLoop, type Loop } from "../../core/anim";
 import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { contactShadow, glassVessel, softGlow } from "../../ui/labProps";
 import type { StepRenderer } from "../types";
 
 interface SublimationStep {
@@ -101,7 +102,7 @@ export const sublimation: StepRenderer = (host, step, api) => {
     const cupW = Math.min(w * 0.44, 180);
     const cupL = (w - cupW) / 2;
     const cupR = cupL + cupW;
-    const rimY = 64;
+    const rimY = 96; // 위로 부풀 돔 공간(최대 80px)을 남긴다
     const botY = h - 26;
     const cx = w / 2;
     if (block.length === 0 && !finished) seedBlock(cx, botY);
@@ -126,7 +127,7 @@ export const sublimation: StepRenderer = (host, step, api) => {
     }
 
     // ---- 기체 운동(컵 안 + 부푼 막 아래) ----
-    const filmH = 26 + bulge * 66; // 막 돔 높이
+    const filmH = 24 + bulge * 56; // 막 돔 높이(최대 80 — rimY 위 공간 안)
     for (const g of gas) {
       g.vx += (Math.random() - 0.5) * 0.18 * dt;
       g.vy += (Math.random() - 0.5) * 0.18 * dt - 0.004 * dt;
@@ -150,16 +151,9 @@ export const sublimation: StepRenderer = (host, step, api) => {
     for (let i = gas.length - 1; i >= 0; i--) if (gas[i].y < -16) gas.splice(i, 1);
 
     // ---- 그리기 ----
-    // 컵
-    ctx.strokeStyle = "rgba(148,176,214,.55)";
-    ctx.lineWidth = 2.6;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(cupL, rimY);
-    ctx.lineTo(cupL, botY);
-    ctx.lineTo(cupR, botY);
-    ctx.lineTo(cupR, rimY);
-    ctx.stroke();
+    // 컵(유리) + 접촉 그림자
+    contactShadow(ctx, cx, botY + 10, cupW * 0.66);
+    glassVessel(ctx, { x0: cupL, y0: rimY, x1: cupR, y1: botY });
 
     // 드라이아이스 블록(반짝이는 얼음빛 입자들 — 규칙 배열 유지)
     for (const p of block) {
@@ -173,11 +167,8 @@ export const sublimation: StepRenderer = (host, step, api) => {
       ctx.arc(p.x - 2, p.y - 2, 1.8, 0, TAU);
       ctx.fill();
     }
-    // 냉기(블록 주변 옅은 김)
-    ctx.fillStyle = "rgba(196,229,255,.06)";
-    ctx.beginPath();
-    ctx.ellipse(cx, botY - 22, cupW * 0.4, 26, 0, 0, TAU);
-    ctx.fill();
+    // 냉기(블록 주변 발광 안개)
+    softGlow(ctx, cx, botY - 24, cupW * 0.44, "196,229,255", 0.12);
 
     // 기체 입자
     for (const g of gas) {

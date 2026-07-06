@@ -32,7 +32,6 @@ export const matterTemp: StepRenderer = (host, step, api) => {
   const stage = createMatterStage({
     height: "min(300px,36dvh)",
     sim: { count: 48, r: 6.5, temp: T_MIN },
-    cap: "지금 -20℃의 물 입자를 보고 있어요",
   });
   const phaseDot = el("span", { class: "pdot" });
   const phaseName = el("span", { text: "고체" });
@@ -41,9 +40,10 @@ export const matterTemp: StepRenderer = (host, step, api) => {
     el("div", { class: "pill" }, phaseDot, phaseName),
     el("div", { class: "tempread" }, tempNum, el("small", { text: "°C" })),
   );
+  // 우하단은 '입자의 눈' 토글 자리 — 목표 칩은 좌하단에
   const goalChips = el(
     "div",
-    { class: "hp-goals" },
+    { class: "hp-goals left" },
     el("span", { class: "hp-goal matter", dataset: { goal: "boil" }, text: "끓이기" }),
     el("span", { class: "hp-goal matter", dataset: { goal: "freeze" }, text: "다시 얼리기" }),
   );

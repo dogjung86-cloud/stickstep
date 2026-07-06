@@ -224,11 +224,24 @@ export const heatCurve: StepRenderer = (host, step, api) => {
         ctx.lineTo(padL + b.x * plotW, yOf(b.T));
         ctx.stroke();
       }
-      // 현재 점
+      // 현재 점(발광)
       const last = samples[samples.length - 1];
+      const px = padL + last.x * plotW;
+      const py = yOf(last.T);
+      const glow = ctx.createRadialGradient(px, py, 0, px, py, 15);
+      glow.addColorStop(0, colFor(last.T, 62, 0.5));
+      glow.addColorStop(1, colFor(last.T, 62, 0));
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(px, py, 15, 0, Math.PI * 2);
+      ctx.fill();
       ctx.fillStyle = colFor(last.T, 70, 1);
       ctx.beginPath();
-      ctx.arc(padL + last.x * plotW, yOf(last.T), 4.4, 0, Math.PI * 2);
+      ctx.arc(px, py, 4.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,.55)";
+      ctx.beginPath();
+      ctx.arc(px - 1.2, py - 1.2, 1.5, 0, Math.PI * 2);
       ctx.fill();
     }
 
