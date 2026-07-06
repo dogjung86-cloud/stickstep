@@ -10,12 +10,14 @@ import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { drawFlame, drawGlowParticle } from "../../ui/thermo";
 import { contactShadow, softGlow } from "../../ui/labProps";
+import { curioCard, type Curio } from "../../ui/curio";
 import type { StepRenderer } from "../types";
 
 interface ConductionStep {
   title: string;
   lead?: string;
   cta?: string;
+  curio?: Curio;
 }
 
 const COLS = 16;
@@ -40,6 +42,7 @@ export const conduction: StepRenderer = (host, step, api) => {
     html: "고체 막대 속 입자들은 <b>제자리에서</b> 가볍게 떨고 있어요. 왼쪽 끝을 가열하면 무슨 일이 생길까요?",
   });
   host.append(stage, controls, helper);
+  if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
   type Mode = "relay" | "pick" | "race" | "done";

@@ -5,6 +5,7 @@ import { clear, el } from "../core/dom";
 import { haptic, HAPTIC } from "../core/haptics";
 import { icon } from "../core/icons";
 import { stopAllLoops } from "../core/anim";
+import { isDone } from "../core/store";
 import { getRenderer } from "./registry";
 import type { CtaVariant, Lesson, StepAPI, StepCleanup } from "./types";
 
@@ -31,15 +32,21 @@ export function createLessonPlayer(
   let cleanup: StepCleanup;
   let finishTimer = 0;
 
+  // 완료한 레슨 재입장 = 자유 모드: CTA 게이트 없이 앞으로도 이동 가능(채점은 여전히 첫 시도만)
+  const freeNav = isDone(lesson.id);
+
   // ---- DOM ----
   const pbar = el("div", { class: "pbar" });
   const backBtn = el("button", { class: "xbtn", attrs: { "aria-label": "이전 단계" }, html: icon("back", 20, { sw: 2.4 }) });
+  const fwdBtn = el("button", { class: "xbtn fwd", attrs: { "aria-label": "다음 단계" }, html: icon("chevron", 20, { sw: 2.4 }) });
+  if (!freeNav) fwdBtn.style.display = "none"; // 일반 진행에서는 자리도 차지하지 않는다
   const xbtn = el("button", { class: "xbtn", attrs: { "aria-label": "닫기" }, html: icon("x", 20, { sw: 2.4 }) });
   const header = el(
     "div",
     { class: "lheader" },
     backBtn,
     el("div", { class: "pwrap" }, pbar),
+    fwdBtn,
     xbtn,
   );
 
@@ -202,6 +209,7 @@ export function createLessonPlayer(
     idx = i;
     pbar.style.width = `${(i / steps.length) * 100}%`;
     backBtn.style.visibility = i > 0 ? "visible" : "hidden";
+    fwdBtn.style.visibility = freeNav && i < steps.length - 1 ? "visible" : "hidden";
     clear(stepWrap);
     scroll.scrollTop = 0;
     const step = steps[i];
@@ -248,6 +256,12 @@ export function createLessonPlayer(
     renderStep(idx - 1);
   });
 
+  fwdBtn.addEventListener("click", () => {
+    if (!freeNav || idx + 1 >= steps.length) return;
+    haptic(HAPTIC.tap);
+    renderStep(idx + 1);
+  });
+
   xbtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     gen += 1;
@@ -259,6 +273,7 @@ export function createLessonPlayer(
 
   // 첫 스텝
   renderStep(0);
+  if (freeNav) window.setTimeout(() => snack("완료한 레슨이에요 — 위 화살표로 자유롭게 이동할 수 있어요"), 600);
 
   return { el: section };
 }

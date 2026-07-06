@@ -7,12 +7,14 @@ import { createLoop, type Loop } from "../../core/anim";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { createMatterStage } from "../../ui/matterStage";
 import { colFor } from "../../renderers/palette";
+import { curioCard, type Curio } from "../../ui/curio";
 import type { StepRenderer } from "../types";
 
 interface PhaseNamesStep {
   title: string;
   lead?: string;
   cta?: string;
+  curio?: Curio;
 }
 
 const T_MIN = -20;
@@ -89,6 +91,7 @@ export const phaseNames: StepRenderer = (host, step, api) => {
     html: "지금은 25℃ 물이에요. 먼저 온도를 <b>0℃ 아래로</b> 내려 보세요 — 액체가 고체로 변하는 순간, 첫 이름을 얻어요!",
   });
   host.append(badges, stage.el, slider, helper);
+  if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
   let T = 25;

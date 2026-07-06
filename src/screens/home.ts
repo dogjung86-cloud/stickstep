@@ -6,7 +6,7 @@ import { BRAND } from "../core/brand";
 import { getState, currentStreak, isDone, lessonOf } from "../core/store";
 import { CURRICULUM, isUnlocked, unitProgress, type Unit } from "../content/curriculum";
 import { serpentine, smoothPath, pathUpTo } from "../ui/serpentine";
-import { decor } from "../ui/figures";
+import { mapDecorArt } from "../ui/mapDecor";
 import type { Screen } from "../core/router";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
@@ -226,7 +226,7 @@ export function homeScreen(
         (conquered > 0 ? `<path class="gm-path-glow ${theme}" d="${donePath}"/><path class="gm-path-done ${theme}" d="${donePath}"/>` : "") +
         `</svg>`;
       terrain.insertAdjacentHTML("afterend", svg);
-      placeDecor(decorLayer, points, W);
+      placeDecor(decorLayer, points, W, u.id);
     });
   }
 
@@ -240,21 +240,52 @@ export function homeScreen(
   return { el: elm };
 }
 
-const DECO_KEYS = ["tree1", "tree2", "bush", "rock", "grassTuft", "tree2", "tree1", "bush"];
+// 단원 특색 장식 — 트레일 문법(경로·메달리온)은 그대로, 소품이 단원의 이야기를 만든다.
+// seq: 노드 사이 슬롯에 순서대로(순서 자체가 서사 — IV는 고→액→기, VII은 태양에서 먼 행성 순).
+// sky: 지도 위쪽 앰비언트 2개(하늘 소품). 등록 안 된 단원은 기본 자연 세트.
+const UNIT_DECOR: Record<string, { seq: string[]; sky: [string, string] }> = {
+  u1: { seq: ["stones", "palm", "vine", "stones", "flag"], sky: ["cloud", "cloud"] }, // 정글로 가는 징검다리 원정
+  u2: { seq: ["bacteria", "amoeba", "fern", "fish", "bird"], sky: ["cloud", "bird"] }, // 미생물 → 새, 생물의 사다리
+  u3: { seq: ["campfire", "steamMug", "kettleDeco", "campfire", "sunDeco"], sky: ["cloud", "sunDeco"] },
+  u4: { seq: ["iceDeco", "dropDeco", "vaporDeco", "iceDeco", "dropDeco"], sky: ["cloud", "vaporDeco"] }, // 고체 → 액체 → 기체
+  u5: { seq: ["appleTree", "springDeco", "crateDeco", "floatDeco", "appleTree"], sky: ["cloud", "cloud"] }, // 중력·탄성·마찰·부력
+  u6: { seq: ["balloonsDeco", "bubblesDeco", "hotairDeco", "bubblesDeco", "balloonsDeco"], sky: ["hotairDeco", "cloud"] },
+  u7: { seq: ["pMercury", "pVenus", "pMars", "pJupiter", "pSaturn"], sky: ["rocketDeco", "sparkle"] }, // 행성을 밟아 가는 순항
+};
+const DEFAULT_DECOR: { seq: string[]; sky: [string, string] } = {
+  seq: ["tree1", "tree2", "bush", "rock", "grassTuft"],
+  sky: ["cloud", "cloud"],
+};
+const DECOR_SIZE: Record<string, number> = {
+  tree1: 56, tree2: 56, bush: 42, rock: 30, grassTuft: 36,
+  stones: 46, palm: 58, vine: 50, flag: 46,
+  bacteria: 40, amoeba: 42, fern: 46, fish: 44, bird: 42,
+  campfire: 46, steamMug: 40, kettleDeco: 44, sunDeco: 44,
+  iceDeco: 42, dropDeco: 38, vaporDeco: 44,
+  appleTree: 58, springDeco: 42, crateDeco: 42, floatDeco: 46,
+  balloonsDeco: 50, hotairDeco: 54, bubblesDeco: 42,
+  pMercury: 36, pVenus: 38, pMars: 38, pJupiter: 46, pSaturn: 52, rocketDeco: 46, sparkle: 34,
+};
 
-function placeDecor(layer: HTMLElement, points: { x: number; y: number }[], W: number): void {
+function placeDecor(layer: HTMLElement, points: { x: number; y: number }[], W: number, unitId: string): void {
+  const conf = UNIT_DECOR[unitId] ?? DEFAULT_DECOR;
   const add = (key: string, x: number, y: number, w: number, h: number) => {
     layer.appendChild(
-      el("div", { class: `gm-deco ${key === "cloud" ? "cloud" : ""}`, style: `left:${((x / W) * 100).toFixed(2)}%;top:${y}px;width:${w}px;height:${h}px`, html: decor(key) }),
+      el("div", { class: `gm-deco ${key === "cloud" ? "cloud" : ""}`, style: `left:${((x / W) * 100).toFixed(2)}%;top:${y}px;width:${w}px;height:${h}px`, html: mapDecorArt(key) }),
     );
   };
   for (let i = 0; i < points.length - 1; i++) {
     const mid = { x: (points[i].x + points[i + 1].x) / 2, y: (points[i].y + points[i + 1].y) / 2 };
     const x = mid.x > W / 2 ? W * 0.13 : W * 0.87;
-    const key = DECO_KEYS[i % DECO_KEYS.length];
-    const size = key.startsWith("tree") ? 56 : key === "rock" ? 30 : key === "grassTuft" ? 36 : 42;
+    const key = conf.seq[i % conf.seq.length];
+    const size = DECOR_SIZE[key] ?? 42;
     add(key, x, mid.y + (i % 2 ? 12 : -8), size, size);
   }
-  add("cloud", W * 0.8, 30, 62, 40);
-  add("cloud", W * 0.22, points[Math.min(1, points.length - 1)].y - 34, 52, 34);
+  const [skyA, skyB] = conf.sky;
+  const skySize = (k: string, big: boolean): [number, number] =>
+    k === "cloud" ? (big ? [62, 40] : [52, 34]) : [DECOR_SIZE[k] ?? 44, DECOR_SIZE[k] ?? 44];
+  const [wa, ha] = skySize(skyA, true);
+  add(skyA, W * 0.8, 30, wa, ha);
+  const [wb, hb] = skySize(skyB, false);
+  add(skyB, W * 0.22, points[Math.min(1, points.length - 1)].y - 34, wb, hb);
 }

@@ -353,19 +353,34 @@ const readMonth = () => page.evaluate(() => {
   const m = t.match(/(\d+)월/);
   return m ? Number(m[1]) - 1 : null;
 });
+// 3D 원근에선 화면 원호 ↔ 궤도 각의 이득·부호가 화면 위치마다 달라진다.
+// 한 번 밀어 부호를 측정한 뒤, 작은 스텝 피드백으로 수렴시킨다.
+let zSign = 0;
 async function gotoMonth(target, label) {
-  for (let k = 0; k < 7; k++) {
+  if (!zSign) {
+    const before = await readMonth();
+    await dragArc(35);
+    await page.waitForTimeout(300);
+    const after = await readMonth();
+    let d = after - before;
+    if (d > 6) d -= 12;
+    if (d < -6) d += 12;
+    zSign = d < 0 ? -1 : 1;
+    log(`l4 zodiac drag sign: ${zSign} (${before + 1}→${after + 1}월)`);
+  }
+  for (let k = 0; k < 36; k++) {
     const cur = await readMonth();
     if (cur === target) {
       await page.waitForTimeout(950); // 홀드 판정
       log(`l4 zodiac ${label}: ${target + 1}월 도착`, await badges());
       return;
     }
-    let d = (cur == null ? 1 : target - cur);
-    if (d > 6) d -= 12;
-    if (d < -6) d += 12;
-    await dragArc(d * 30);
-    await page.waitForTimeout(350);
+    let diff = target - cur;
+    if (diff > 6) diff -= 12;
+    if (diff < -6) diff += 12;
+    const step = Math.max(14, Math.min(Math.abs(diff) * 26, 80));
+    await dragArc(zSign * Math.sign(diff) * step);
+    await page.waitForTimeout(240);
   }
   log(`l4 zodiac ${label}: 실패(월=${await readMonth()})`);
 }

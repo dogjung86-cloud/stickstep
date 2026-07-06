@@ -8,12 +8,14 @@ import { createLoop, type Loop } from "../../core/anim";
 import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { drawForceArrow } from "../../ui/forceProps";
+import { curioCard, type Curio } from "../../ui/curio";
 import type { StepRenderer } from "../types";
 
 interface GravityDropStep {
   title: string;
   lead?: string;
   cta?: string;
+  curio?: Curio;
 }
 
 interface Apple {
@@ -72,6 +74,7 @@ export const gravityDrop: StepRenderer = (host, step, api) => {
     html: "지구 <b>위쪽·옆·아래쪽</b> 우주 공간을 눌러 사과를 놓아 보세요. 사과가 어느 쪽으로 떨어질까요?",
   });
   host.append(goalChips, stage, seg, helper);
+  if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
   let world: "earth" | "moon" = "earth";

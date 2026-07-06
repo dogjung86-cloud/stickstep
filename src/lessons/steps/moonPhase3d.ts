@@ -1,8 +1,8 @@
 // moonPhase3d — 달의 위상 변화 3D 랩(VII 단원 L5). 교과서 그림 VII-9의 입체 조작판.
 //   · 진짜 3D: 태양광(오른쪽)이 달을 비추고, 카메라가 지구 자리에 서면
 //     그 명암이 그대로 "달의 위상"이 된다 — 그림 암기가 아니라 원리 체험.
-//   · 우주 뷰: 달을 궤도에서 드래그 + 좌하단 인셋에 "지구에서 본 달" 실시간 미리보기.
-//   · 지구 뷰: 지구에서 달을 올려다보는 카메라 — 좌우로 쓸면 달이 공전한다.
+//   · 우주 뷰(단일): 달을 궤도에서 드래그, 우하단 인셋이 "지구에서 본 달"을 실시간으로 보여 준다.
+//     태양 구체와 빛 화살표가 항상 프레임 안 — 빛의 방향이 위상의 원인임이 한 화면에 담긴다.
 // 목표: 삭 → 상현(오른쪽 반달) → 망 → 하현(왼쪽 반달) 네 위상 찾기.
 
 import { el } from "../../core/dom";
@@ -45,16 +45,14 @@ export const moonPhase3d: StepRenderer = (host, step, api) => {
     { class: "sp3-inset", attrs: { "aria-hidden": "true" } },
     el("span", { class: "sp3-inset-label", text: "지구에서 본 달" }),
   );
-  const seg = el("div", { class: "seg stage-seg" });
-  const spaceBtn = el("button", { class: "on", text: "우주에서", attrs: { type: "button", "aria-pressed": "true" } });
-  const earthBtn = el("button", { text: "지구에서", attrs: { type: "button", "aria-pressed": "false" } });
-  seg.append(spaceBtn, earthBtn);
   const cap = el("div", { class: "stage-cap", text: "달을 잡아 궤도를 따라 끌어 보세요" });
+  const sunTag = el("div", { class: "sp3-suntag", attrs: { "aria-hidden": "true" }, text: "태양" });
   const stage = el(
     "div",
     { class: "stage" },
     canvas,
-    el("div", { class: "stage-hud" }, el("div", { class: "pill" }, el("span", { class: "pdot", style: "background:#C9BA8E" }), phasePill), seg),
+    el("div", { class: "stage-hud" }, el("div", { class: "pill" }, el("span", { class: "pdot", style: "background:#C9BA8E" }), phasePill)),
+    sunTag,
     inset,
     cap,
   );
@@ -69,14 +67,13 @@ export const moonPhase3d: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "태양 빛은 <b>오른쪽</b>에서 와요. 달을 궤도 위에서 끌면서, 좌하단 <b>지구에서 본 달</b>이 어떻게 변하는지 보세요!",
+    html: "오른쪽의 <b>태양</b>이 빛을 보내요. 달을 궤도 위에서 끌면서, 우하단 <b>지구에서 본 달</b>이 어떻게 변하는지 보세요!",
   });
   host.append(goalChips, stage, helper);
 
   // ---- 상태 ----
   let theta = Math.PI * 0.5; // 위상각(rad), 0 = 태양 쪽(삭). 상현에서 시작 직전이 아닌 90°=상현… 초기엔 135°쯤 애매한 곳에서 출발
   theta = Math.PI * 0.75;
-  let view: "space" | "earth" = "space";
   let dragging = false;
   let capFaded = false;
   let heldKey = "";
@@ -127,7 +124,7 @@ export const moonPhase3d: StepRenderer = (host, step, api) => {
     const S = await import("../../ui/space3d");
     if (disposed) return;
     THREE = S.THREE;
-    st = S.createSpaceStage(canvas, { fov: 40 });
+    st = S.createSpaceStage(canvas, { fov: 46 });
     if (!st) {
       stage.classList.add("sp3-fallback");
       helper.innerHTML =
@@ -139,14 +136,32 @@ export const moonPhase3d: StepRenderer = (host, step, api) => {
     const { scene, camera } = st;
     scene.add(S.makeStars(700, 120));
 
-    // 태양(오른쪽 멀리) — 글로우 + 방향광
-    const sunGlow = S.makeGlow(30, "rgba(255,190,80,.85)", 0.14);
-    sunGlow.position.set(62, 0, 0);
+    // 태양(오른쪽) — 화면 안에 보이는 구체 + 글로우 + 방향광.
+    // "빛이 어디서 오는지"가 위상의 핵심이라 태양이 항상 프레임 안에 있어야 한다.
+    const sunBall = S.makePlanet("sun", 0.85, 36);
+    sunBall.position.set(5.4, 0, 0);
+    scene.add(sunBall);
+    const sunGlow = S.makeGlow(5.2, "rgba(255,190,80,.85)", 0.14);
+    sunGlow.position.set(5.4, 0, 0);
     scene.add(sunGlow);
     const sun = new THREE.DirectionalLight(0xfff2dc, 2.5);
     sun.position.set(10, 0, 0);
     scene.add(sun);
     scene.add(new THREE.AmbientLight(0x3a4a68, 0.6));
+    // 태양 빛 방향 화살표(태양이 이미 빛나고 있으니 가운데 하나만)
+    const arrow = new THREE.ArrowHelper(
+      new THREE.Vector3(-1, 0, 0),
+      new THREE.Vector3(4.7, 0, 0),
+      1.6,
+      0xffc24e,
+      0.5,
+      0.26,
+    );
+    (arrow.line.material as T.LineBasicMaterial).transparent = true;
+    (arrow.line.material as T.LineBasicMaterial).opacity = 0.75;
+    (arrow.cone.material as T.MeshBasicMaterial).transparent = true;
+    (arrow.cone.material as T.MeshBasicMaterial).opacity = 0.75;
+    scene.add(arrow);
 
     earth = S.makePlanet("earth", 1.0, 56);
     scene.add(earth);
@@ -158,8 +173,9 @@ export const moonPhase3d: StepRenderer = (host, step, api) => {
     moonHalo = S.makeGlow(1.5, "rgba(140,180,255,.4)", 0.3);
     scene.add(moonHalo);
 
-    camera.position.set(0, 7.3, 6.4);
-    camera.lookAt(0, 0, 0);
+    // 태양(x=5.4)까지 한 프레임에 담기게 살짝 오른쪽·위에서 내려다본다
+    camera.position.set(1.2, 7.9, 7.2);
+    camera.lookAt(1.2, 0, 0);
     earthCam = new THREE.PerspectiveCamera(21, 1, 0.05, 300);
 
     loop = createLoop((dt) => frame(dt));
@@ -183,15 +199,11 @@ export const moonPhase3d: StepRenderer = (host, step, api) => {
     return Math.atan2(-hit.z, hit.x);
   }
 
-  let lastX = 0;
   canvas.addEventListener("pointerdown", (e) => {
     dragging = true;
-    lastX = e.clientX;
     fadeCap();
-    if (view === "space") {
-      const t = pointerTheta(e);
-      if (t != null) theta = t;
-    }
+    const t = pointerTheta(e);
+    if (t != null) theta = t;
     try {
       canvas.setPointerCapture(e.pointerId);
     } catch {
@@ -200,38 +212,14 @@ export const moonPhase3d: StepRenderer = (host, step, api) => {
   });
   canvas.addEventListener("pointermove", (e) => {
     if (!dragging) return;
-    if (view === "space") {
-      const t = pointerTheta(e);
-      if (t != null) theta = t;
-    } else {
-      theta += (e.clientX - lastX) * 0.007;
-      lastX = e.clientX;
-    }
+    const t = pointerTheta(e);
+    if (t != null) theta = t;
   });
   const endDrag = (): void => {
     dragging = false;
   };
   canvas.addEventListener("pointerup", endDrag);
   canvas.addEventListener("pointercancel", endDrag);
-
-  function setView(v: "space" | "earth"): void {
-    if (view === v) return;
-    view = v;
-    spaceBtn.classList.toggle("on", v === "space");
-    earthBtn.classList.toggle("on", v === "earth");
-    spaceBtn.setAttribute("aria-pressed", String(v === "space"));
-    earthBtn.setAttribute("aria-pressed", String(v === "earth"));
-    inset.classList.toggle("hide", v === "earth");
-    cap.textContent = v === "earth" ? "좌우로 쓸면 달이 공전해요" : "달을 잡아 궤도를 따라 끌어 보세요";
-    if (!capFaded) {
-      /* 첫 조작 전이면 안내 유지 */
-    } else {
-      cap.classList.add("fade");
-    }
-    haptic(HAPTIC.select);
-  }
-  spaceBtn.addEventListener("click", () => setView("space"));
-  earthBtn.addEventListener("click", () => setView("earth"));
 
   // ---- 프레임 ----
   function frame(dt: number): void {
@@ -270,34 +258,21 @@ export const moonPhase3d: StepRenderer = (host, step, api) => {
       collect(ph.key, sub[ph.key]);
     }
 
-    // 렌더 — 메인 뷰
+    // 렌더 — 우주 뷰 + 우하단 인셋(지구에서 본 달)
     const r = st.renderer;
     r.setScissorTest(false);
     r.setViewport(0, 0, w, h);
-    if (view === "space") {
-      st.render();
-      // 인셋: 지구에서 본 달(우하단)
-      const iw = 108;
-      const pad = 10;
-      const ix = w - iw - pad;
-      r.setScissorTest(true);
-      r.setViewport(ix, pad, iw, iw);
-      r.setScissor(ix, pad, iw, iw);
-      r.setClearColor(0x0b1524, 1);
-      r.clear(true, true, false);
-      r.render(st.scene, earthCam);
-      r.setScissorTest(false);
-    } else {
-      r.render(st.scene, earthCam2Big());
-    }
-  }
-
-  /** 지구 뷰(메인)용 — 인셋 카메라와 같지만 화면비 반영. */
-  function earthCam2Big(): T.PerspectiveCamera {
-    const c = earthCam!;
-    c.aspect = (canvas.clientWidth || 340) / 350;
-    c.updateProjectionMatrix();
-    return c;
+    st.render();
+    const iw = 108;
+    const pad = 10;
+    const ix = w - iw - pad;
+    r.setScissorTest(true);
+    r.setViewport(ix, pad, iw, iw);
+    r.setScissor(ix, pad, iw, iw);
+    r.setClearColor(0x0b1524, 1);
+    r.clear(true, true, false);
+    r.render(st.scene, earthCam);
+    r.setScissorTest(false);
   }
 
   api.setCTA("삭·상현·망·하현을 찾아요", { enabled: false });

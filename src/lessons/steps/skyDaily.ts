@@ -225,16 +225,21 @@ export const skyDaily: StepRenderer = (host, step, api) => {
       ctx.beginPath();
       ctx.arc(px, py, gr, -0.5, -1.5, true);
       ctx.stroke();
+      // 화살촉 — 호의 진행 방향(각도가 줄어드는 쪽) 접선에 정렬
       const aEnd = -1.5;
       const ax = px + Math.cos(aEnd) * gr;
       const ay = py + Math.sin(aEnd) * gr;
-      ctx.fillStyle = "rgba(255,214,138,.85)";
+      ctx.fillStyle = "rgba(255,214,138,.9)";
+      ctx.save();
+      ctx.translate(ax, ay);
+      ctx.rotate(Math.atan2(-Math.cos(aEnd), Math.sin(aEnd)));
       ctx.beginPath();
-      ctx.moveTo(ax, ay);
-      ctx.lineTo(ax - 8, ay - 3);
-      ctx.lineTo(ax - 2, ay + 7);
+      ctx.moveTo(3, 0);
+      ctx.lineTo(-7, -5);
+      ctx.lineTo(-7, 5);
       ctx.closePath();
       ctx.fill();
+      ctx.restore();
       // 북극성
       const tw = poleFound ? 1 : 0.75 + Math.sin(t * 0.1) * 0.25;
       ctx.fillStyle = `rgba(255,240,200,${tw})`;

@@ -1,0 +1,21 @@
+# u1l3 「과학이 바꾼 세상」 — 7컷 이미지 프롬프트 (과학과 인류 문명, 책 20~21쪽)
+# 공통 스타일(모든 컷 프롬프트 앞에 붙일 것):
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal (#12B8A6) used sparingly for highlights.
+# Absolutely NO text, NO letters, NO numbers anywhere in the image.
+# Simple, charming, educational middle-school science comic. Consistent stick figure
+# teacher character: round head, round glasses, dot eyes, simple line body. 4:3 landscape panel.
+
+[0] The stick figure teacher proudly unrolling a very long scroll timeline that flows across the panel like a winding road, with tiny simple doodle icons floating along it (a lens, a steam locomotive, a lightbulb-shaped flask, a satellite) — all drawn as plain doodles with no text. Teal accent: small sparkles along the scroll. No text.
+
+[1] Three-beat progression in one panel, left to right connected by hand-drawn arrows: a simple convex lens bending two light rays → a tabletop antique microscope → a big circle magnifying view showing a honeycomb pattern of little empty rectangular cells (cork cells). A small stick figure (Robert Hooke vibe, plain clothes hat) peers into the microscope. Teal accent: the light rays. No text.
+
+[2] Industrial revolution scene: a cheerful steam locomotive puffing big round steam clouds crossing a bridge, behind it a factory with gears and a spinning wheel, tiny stick figure workers waving. The stick figure teacher points at the steam cloud. Teal accent: small motion swirls in the steam. No text.
+
+[3] Medicine scene: a stick figure doctor giving a gentle shot to a smiling stick figure kid, beside them a petri dish drawn as a circle with a fuzzy mold patch pushing back tiny scribble germs (drawn as small spiky blobs retreating). A simple rising curve drawn as a plain line on a small easel hints at longer life (no numbers). Teal accent: the sparkle of health around the kid. No text.
+
+[4] Information age scene: a round Earth with simple continents, orbited by a small satellite with solar panels; dotted signal arcs connect a laptop, a phone and a TV held by three tiny stick figures on different sides of the globe, all linked in real time. Teal accent: the signal arcs. No text.
+
+[5] New art scene: one stick figure wearing a chunky VR headset reaching out in wonder at floating shapes (stars, a whale outline, geometric shapes) around them; another stick figure filming with a simple camera. The shapes are half-real half-dreamlike doodles. Teal accent: the floating virtual shapes. No text.
+
+[6] Wrap-up: the stick figure teacher at a chalkboard-like blank panel drawing a simple three-step arrow diagram made of pure doodle icons only — a lightbulb (idea/principle) → a gear (technology) → a small city skyline with a heart (civilization) — then handing a glowing teal baton to a small stick figure student wearing a backpack. No text.

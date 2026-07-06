@@ -4,7 +4,7 @@
 //   · 일식 정렬 시 "지상에서 보기" — 달이 태양을 가리고 코로나가 드러나는 개기일식 뷰.
 // 목표: ① 일식 만들기(태양—달—지구) ② 지상에서 개기일식 보기 ③ 월식 만들기(붉은 달).
 
-import { el } from "../../core/dom";
+import { el, clamp } from "../../core/dom";
 import { createLoop, type Loop } from "../../core/anim";
 import { haptic, HAPTIC } from "../../core/haptics";
 import type { StepRenderer } from "../types";
@@ -19,7 +19,7 @@ interface EclipseStep {
 
 const EARTH_X = 12;
 const ORBIT_R = 6.2;
-const SUN_X = -46;
+const SUN_X = -21;
 
 function wrapDeg(d: number): number {
   return ((d + 180) % 360 + 360) % 360 - 180;
@@ -85,6 +85,11 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
   let alignedSolarMs = 0;
   let alignedLunarMs = 0;
   let groundMs = 0;
+  // "왜 매달 일어나지 않을까" 모드 — 달 궤도를 기울여(실제 약 5°, 여기선 과장) 빗나감을 보여 준다
+  let tiltOn = false;
+  let tiltT = 0; // 0..1 애니메이션
+  const TILT = 0.22; // rad(~12.6°) — 과장 표현, 문구에 실제 5° 명시
+  let missToastMs = 0;
 
   async function enter(): Promise<void> {
     if (rot) return;
@@ -100,8 +105,9 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
     const canvas = el("canvas", { class: "sp3-canvas" }) as HTMLCanvasElement;
     const phasePill = el("div", { class: "pill sp3-pill" }, el("span", { class: "pdot", style: "background:#FFB03A" }), el("span", { text: "달을 좌우로 끌어 보세요" }));
     const groundBtn = el("button", { class: "sp3-groundbtn hide", attrs: { type: "button" } }, el("span", { text: "지상에서 보기" }));
+    const tiltBtn = el("button", { class: "sp3-tiltbtn", attrs: { type: "button", "aria-pressed": "false" } }, el("span", { text: "왜 매달 안 일어날까?" }));
     const toast = el("div", { class: "sp3-toast" });
-    rot.stage.append(canvas, phasePill, groundBtn, toast);
+    rot.stage.append(canvas, phasePill, groundBtn, tiltBtn, toast);
     const pillText = phasePill.querySelectorAll("span")[1] as HTMLElement;
 
     const S = await import("../../ui/space3d");
@@ -119,13 +125,13 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
     scene.add(S.makeStars(800, 220));
 
     // 태양(왼쪽) — 교과서 그림 VII-10과 같은 배치
-    const sunBall = S.makePlanet("sun", 7, 48);
+    const sunBall = S.makePlanet("sun", 5, 48);
     sunBall.position.set(SUN_X, 0, 0);
     scene.add(sunBall);
-    const sunGlow = S.makeGlow(34, "rgba(255,180,70,.9)", 0.16);
+    const sunGlow = S.makeGlow(24, "rgba(255,180,70,.9)", 0.16);
     sunGlow.position.set(SUN_X, 0, 0);
     scene.add(sunGlow);
-    const corona = S.makeGlow(52, "rgba(214,230,255,.5)", 0.1);
+    const corona = S.makeGlow(40, "rgba(214,230,255,.5)", 0.1);
     corona.position.set(SUN_X, 0, 0);
     corona.material.opacity = 0;
     scene.add(corona);
@@ -138,9 +144,16 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
     const earth = S.makePlanet("earth", 1.5, 56);
     earth.position.set(EARTH_X, 0, 0);
     scene.add(earth);
+    // 달 궤도(기울기 모드에서 z축 회전) + 비교용 평면 유령 궤도
     const orbit = S.makeOrbitLine(ORBIT_R, "#6E8CB8", 0.45);
-    orbit.position.set(EARTH_X, 0, 0);
-    scene.add(orbit);
+    const orbitGroup = new THREE.Group();
+    orbitGroup.position.set(EARTH_X, 0, 0);
+    orbitGroup.add(orbit);
+    scene.add(orbitGroup);
+    const flatGhost = S.makeOrbitLine(ORBIT_R, "#4A5F86", 0.3);
+    flatGhost.position.set(EARTH_X, 0, 0);
+    flatGhost.visible = false;
+    scene.add(flatGhost);
     const moon = S.makePlanet("moon", 0.44, 40);
     scene.add(moon);
     const moonMat = moon.material as T.MeshLambertMaterial;
@@ -162,8 +175,10 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
     );
     scene.add(spot);
 
-    const spaceCamPos = new THREE.Vector3(EARTH_X - 24, 16, 34);
-    const spaceCamTarget = new THREE.Vector3(EARTH_X - 16, 0, 0);
+    // 태양(왼쪽 끝)부터 달 궤도 바깥(오른쪽)까지 한 프레임 — 가로 ~2.1:1 화면 기준으로 산출.
+    // 필요 반폭 ≈ (20 − (−26.5))/2 + 여유 ≈ 24.5 → dist ≥ 24.5/tan(hfov/2 ≈ 33.5°) ≈ 37.
+    const spaceCamPos = new THREE.Vector3(-3.2, 13, 35.5);
+    const spaceCamTarget = new THREE.Vector3(-3.2, 0, 0);
     camera.position.copy(spaceCamPos);
     camera.lookAt(spaceCamTarget);
 
@@ -208,6 +223,19 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.select);
     });
 
+    tiltBtn.addEventListener("click", () => {
+      tiltOn = !tiltOn;
+      tiltBtn.querySelector("span")!.textContent = tiltOn ? "궤도 평평하게 되돌리기" : "왜 매달 안 일어날까?";
+      tiltBtn.setAttribute("aria-pressed", String(tiltOn));
+      tiltBtn.classList.toggle("on", tiltOn);
+      haptic(HAPTIC.select);
+      if (tiltOn) {
+        showToast("달 궤도는 지구 궤도면보다 약 5° 기울어 있어요(그림은 과장). 달을 태양 쪽으로 끌어 보세요!");
+      } else {
+        showToast("궤도를 다시 평평하게 — 이제 일렬 정렬을 만들 수 있어요");
+      }
+    });
+
     let toastTimer = 0;
     const showToast = (msg: string): void => {
       toast.textContent = msg;
@@ -224,23 +252,47 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
       canvas.style.height = `${h}px`;
       st.resize(w, h);
 
-      const mx = EARTH_X + Math.cos(phi) * ORBIT_R;
+      // 궤도 기울기(기울기 모드) — z축 회전이라 교점(빗나가지 않는 자리)은 옆구리 쪽
+      tiltT = clamp(tiltT + (tiltOn ? 0.045 : -0.06) * dt, 0, 1);
+      const rz = TILT * tiltT;
+      orbitGroup.rotation.z = rz;
+      flatGhost.visible = tiltT > 0.05 && !groundView;
+
+      const mx = EARTH_X + Math.cos(phi) * ORBIT_R * Math.cos(rz);
+      const my = Math.cos(phi) * ORBIT_R * Math.sin(rz);
       const mz = -Math.sin(phi) * ORBIT_R;
-      moon.position.set(mx, 0, mz);
+      moon.position.set(mx, my, mz);
       moon.rotation.y = phi + Math.PI;
-      moonHalo.position.set(mx, 0, mz);
+      moonHalo.position.set(mx, my, mz);
       moonHalo.material.opacity = dragging ? 0.85 : 0.5;
       earth.rotation.y += 0.004 * dt;
 
-      // 달 그림자 원뿔 — 태양 반대 방향으로
-      moonCone.position.set(mx + 4.25, 0, mz);
+      // 달 그림자 원뿔 — 태양 반대 방향으로(달 높이를 따라간다)
+      moonCone.position.set(mx + 4.25, my, mz);
       moonCone.rotation.z = -Math.PI / 2;
 
       const deg = ((phi * 180) / Math.PI + 360) % 360;
       const dSolar = Math.abs(wrapDeg(deg - 180)); // 태양 쪽
       const dLunar = Math.abs(wrapDeg(deg)); // 반대쪽
-      const solarAligned = dSolar < 7;
-      const lunarAligned = dLunar < 7;
+      const onPlane = Math.abs(my) < 0.45; // 그림자가 실제로 닿으려면 궤도면 근처여야 한다
+      const solarAligned = dSolar < 7 && onPlane;
+      const lunarAligned = dLunar < 7 && onPlane;
+
+      // 기울기 모드에서 삭·망 자리에 왔지만 빗나가는 순간 — 희소성의 핵심 장면
+      missToastMs = Math.max(0, missToastMs - dt * 16.7);
+      const nearMiss = tiltT > 0.6 && !onPlane && (dSolar < 9 || dLunar < 9);
+      if (nearMiss) {
+        if (missToastMs === 0) {
+          showToast(
+            dSolar < 9
+              ? "빗나갔어요! 삭이어도 달 그림자가 지구 위·아래로 비껴가요 — 그래서 일식은 가끔만 일어나요"
+              : "빗나갔어요! 망이어도 달이 지구 그림자를 위·아래로 비껴가요 — 그래서 월식도 드물죠",
+          );
+          missToastMs = 3200;
+          haptic(HAPTIC.tap);
+        }
+        pillText.textContent = "그림자가 비껴가요 — 궤도가 기울어 있으니까!";
+      }
 
       // 일식: 지구 표면 그림자 자국 + 지상 보기 버튼
       const spotMat = spot.material as T.MeshBasicMaterial;
@@ -273,7 +325,7 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
       } else {
         alignedLunarMs = 0;
         moonMat.color.lerp(new THREE.Color(0xffffff), Math.min(1, 0.06 * dt));
-        if (!solarAligned && !groundView) {
+        if (!solarAligned && !groundView && !nearMiss) {
           pillText.textContent =
             dSolar < 40 ? "태양 쪽으로 조금만 더…" : dLunar < 40 ? "태양 반대쪽으로 조금만 더…" : "달을 좌우로 끌어 보세요";
         }

@@ -2,6 +2,8 @@
 // 세포 구조도(라벨용), 생물 아이콘(분류·검색표용), 게임 지도 장식.
 import { ART_BIO, ART_CELLS, ART_DECOR } from "./art.generated";
 
+const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+
 // 핫스팟 좌표는 스테이지(패딩 포함) 기준 %로 맞춰 놓았다.
 const PADX = 3.6, PADY = 5.5, SPX = 92.8, SPY = 89;
 export function spot(x: number, y: number, w: number, h: number, label: string, desc?: string) {
@@ -44,8 +46,19 @@ const NAME_ICON: Record<string, string> = {
   개구리: "frog", 고양이: "cat", 들고양이: "cat", 박쥐: "bird", 다람쥐: "dog", 달팽이: "snail",
 };
 
+// 발주 실사 일러스트가 있는 아이콘 키(public/bio/<key>.png). 5계 분류 학습용 14종.
+// 이 키는 실제 발주(codex)로 만든 밝은 교육 일러스트 — 조잡한 픽토그램 SVG를 대체한다.
+const BIO_PHOTO = new Set([
+  "bacteria", "amoeba", "paramecium", "algae", "mushroom", "mold",
+  "yeast", "pine", "fern", "flower", "fish", "bee", "bird",
+]);
+
 export function organism(name: string): string {
   const key = NAME_ICON[name];
+  if (key && BIO_PHOTO.has(key)) {
+    // 발주 일러스트 우선. 로드 실패 시 부드럽게 숨겨 깨진 이미지 아이콘을 피한다.
+    return `<img class="bio-ico" src="${base}bio/${key}.webp" alt="${name}" loading="lazy" onerror="this.classList.add('bio-ico-broken')"/>`;
+  }
   return (key && ART_BIO[key]) || ART_BIO.amoeba || "";
 }
 

@@ -1,22 +1,10 @@
-﻿// 대단원 II. 생물의 구성과 다양성 (중1 교과서, 책 38~75쪽)
-// 상호작용을 본격 투입: 세포 라벨링, 현미경 관찰, 구성 단계, 자연선택, 검색표 분류.
+// 대단원 II. 생물의 구성과 다양성 (중1 교과서, 책 38~75쪽)
+// 표준 레슨 공식: 도입(hook) → 랩(관찰·조작 인터랙션) → recap 카드 → 문제.
+// 시그니처 랩(세포 핫스팟·현미경·구성 단계·자연선택·검색표)은 유지하고 도입/정리만 통일한다.
 import type { Unit } from "./curriculum";
-import { concept, table, mcq, ox, multi, order, binSort, hotspot, orgLevels, finchSim, microscope, dichotomKey } from "./dsl";
+import { hook, recap, mcq, ox, multi, order, binSort, hotspot, orgLevels, finchSim, microscope, dichotomKey } from "./dsl";
 import { animalCell, plantCell, organism } from "../ui/figures";
-
-// ── 구성 단계용 미니 SVG ────────────────────────────────────
-const G = (inner: string) => `<svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
-const cellMini = G(`<ellipse cx="80" cy="60" rx="34" ry="28" fill="#F58BA0" stroke="#D9607C" stroke-width="3"/><circle cx="80" cy="60" r="11" fill="#B04A66"/>`);
-const tissueMini = G(`<g fill="#F58BA0" stroke="#D9607C" stroke-width="2.5">${[0, 1, 2, 3].map((i) => `<rect x="${34 + i * 24}" y="34" width="20" height="52" rx="9"/>`).join("")}</g><g fill="#B04A66">${[0, 1, 2, 3].map((i) => `<circle cx="${44 + i * 24}" cy="60" r="5"/>`).join("")}</g>`);
-const heartMini = G(`<path d="M80 92C50 70 44 52 44 40a18 18 0 0 1 36-4 18 18 0 0 1 36 4c0 12-6 30-36 52z" fill="#E8556B" stroke="#C43A50" stroke-width="3"/>`);
-const systemMini = G(`<path d="M80 20v80M80 40c-24 0-30 14-30 30M80 40c24 0 30 14 30 30M80 60c-18 0-22 10-22 26M80 60c18 0 22 10 22 26" fill="none" stroke="#E8556B" stroke-width="4" stroke-linecap="round"/><path d="M80 30a10 10 0 1 1 0 20 10 10 0 0 1 0-20z" fill="#E8556B"/>`);
-const dogMini = G(`<g transform="translate(56 28) scale(1.0)"><path d="M6 22c0-9 8-14 18-14s18 5 18 14v18a6 6 0 0 1-6 6H12a6 6 0 0 1-6-6z" fill="#C98A3C" stroke="#9A6428" stroke-width="3"/><path d="M6 16l-5 12 8-3M42 16l5 12-8-3" fill="#C98A3C" stroke="#9A6428" stroke-width="3" stroke-linejoin="round"/><circle cx="17" cy="26" r="2.6" fill="#3A2410"/><circle cx="31" cy="26" r="2.6" fill="#3A2410"/><circle cx="24" cy="33" r="3" fill="#3A2410"/></g>`);
-
-const leafCellMini = G(`<rect x="48" y="34" width="64" height="52" rx="8" fill="#DCF3DE" stroke="#79B285" stroke-width="4"/><g fill="#5FB878">${[0, 1, 2].map((i) => `<ellipse cx="${64 + i * 20}" cy="${52 + (i % 2) * 16}" rx="8" ry="5"/>`).join("")}</g><circle cx="70" cy="62" r="8" fill="#C39BEA"/>`);
-const leafTissueMini = G(`<g fill="#DCF3DE" stroke="#79B285" stroke-width="2.5">${[0, 1, 2, 3].map((i) => `<rect x="${34 + i * 24}" y="36" width="20" height="48" rx="6"/>`).join("")}</g><g fill="#5FB878">${[0, 1, 2, 3].map((i) => `<circle cx="${44 + i * 24}" cy="60" r="5"/>`).join("")}</g>`);
-const leafOrganMini = G(`<path d="M80 24c26 4 40 22 40 44-24 2-44-6-52-24M80 24c-26 4-40 22-40 44 24 2 44-6 52-24" fill="#5FB878" stroke="#3B8C3B" stroke-width="3"/><path d="M80 24v72" stroke="#3B8C3B" stroke-width="3"/>`);
-const treeMini = G(`<circle cx="80" cy="46" r="30" fill="#4CB07A" stroke="#2C7C45" stroke-width="3"/><rect x="74" y="70" width="12" height="34" rx="3" fill="#8B5A2B"/>`);
-const leafOrganWide = G(`<g stroke="#79B285" stroke-width="3"><rect x="30" y="30" width="100" height="20" rx="8" fill="#DCF3DE"/><rect x="30" y="54" width="100" height="20" rx="8" fill="#EAF7EC"/><rect x="30" y="78" width="100" height="16" rx="8" fill="#CDEBD0"/></g>`);
+import { bioMiniArt, orgArt } from "../ui/bioFigures";
 
 // ══════════════════════════════════════════════════════════
 // 레슨 1. 세포
@@ -28,19 +16,17 @@ const L1 = {
   subtitle: "생명활동이 일어나는 기본 단위",
   label: "세포",
   icon: "cell",
-  minutes: 7,
+  minutes: 8,
   standard: "책 38~41쪽",
   doneNote: "세포의 구조와 기능을 익혔어요",
   steps: [
-    concept({
-      kicker: "생명의 기본 단위",
-      kickerTone: "bio",
-      title: "모든 생물은<br><em>세포</em>로 이루어져요",
-      lead: "영국의 과학자 훅이 코르크를 현미경으로 보다가 처음 발견했어요. 지구의 모든 생물은 세포로 되어 있고, 그 안에서 생명활동이 일어나요.",
-      blocks: [
-        { k: "term", name: "세포", def: "<b>생명활동이 일어나는 기본 단위</b>. 세포막·핵·마이토콘드리아 등 여러 구조로 이루어져요.", icon: "cell" },
-        { k: "note", tone: "bio", html: "세포는 아주 작아요. 크기를 잴 땐 <b>μm(마이크로미터)</b>를 써요. 1 μm는 1 m의 100만분의 1이에요." },
-      ],
+    hook({
+      title: "매끈한 잎 속에<br><em>숨은 방들</em>",
+      lead: "맨눈엔 매끈해 보이는 나뭇잎. 아주 크게 확대하면 뭐가 보일까요?",
+      narrator: "영국의 훅이 코르크를 확대하다 <b>작은 방들</b>을 발견했어요. 우리도 잎을 확대경으로 들여다봐요!",
+      scene: "cellzoom",
+      done: "이 방 하나하나가 <b>세포</b>예요. 세포 속으로 더 들어가 볼까요?",
+      cta: "세포 속 들여다보기",
     }),
     hotspot({
       title: "동물세포를<br>눌러 보세요",
@@ -56,20 +42,29 @@ const L1 = {
       spots: plantCell.spots,
       mode: "reveal",
     }),
-    table({
-      title: "동물세포 vs 식물세포",
-      lead: "공통점도 많지만, 결정적 차이는 두 가지예요.",
-      head: ["구조", "동물", "식물"],
-      rows: [
-        [{ v: "세포막" }, { v: "○", strong: true }, { v: "○", strong: true }],
-        [{ v: "핵" }, { v: "○", strong: true }, { v: "○", strong: true }],
-        [{ v: "마이토콘드리아" }, { v: "○", strong: true }, { v: "○", strong: true }],
-        [{ v: "세포벽" }, { v: "✕" }, { v: "○", strong: true }],
-        [{ v: "엽록체" }, { v: "✕" }, { v: "○", strong: true }],
+    recap({
+      title: "세포,<br>카드 두 장으로",
+      narrator: "동물세포와 식물세포, 공통점과 차이를 서랍에 정리해요.",
+      cards: [
+        {
+          name: "세포의 공통 살림",
+          color: "#12B886",
+          art: bioMiniArt("animalCell"),
+          text: "동물·식물 세포가 <b>함께 가진</b> 것: <b>세포막</b>(물질 출입 조절), <b>핵</b>(유전물질·사령탑), <b>마이토콘드리아</b>(에너지 생산).",
+          examples: ["세포막 — 드나듦 관리", "핵 — 생명활동 조절", "마이토콘드리아 — 에너지"],
+          more: "세포는 아주 작아서 크기를 잴 땐 <b>μm(마이크로미터)</b>를 써요 — 1 μm는 1 m의 100만분의 1! 이 작은 방 안에서 숨쉬기·양분 처리 같은 생명활동이 다 일어나요.<span class='fun'><b>알고 있나요?</b> '세포(cell)'는 훅이 코르크의 방들을 보고 수도원의 작은 방에서 따온 이름이에요.</span>",
+        },
+        {
+          name: "식물세포만의 두 가지",
+          color: "#2FA35F",
+          art: bioMiniArt("plantCell"),
+          text: "<b>세포벽</b>(세포막 바깥의 단단한 벽 — 몸을 지탱)과 <b>엽록체</b>(빛을 받아 <b>광합성</b>으로 양분을 만듦)는 <b>식물세포에만</b> 있어요.",
+          examples: ["세포벽 — 단단한 보호·지지", "엽록체 — 광합성 공장", "그래서 식물은 초록색"],
+          more: "엽록체 덕분에 식물은 스스로 양분을 만들 수 있어요 — 먹이를 찾아다니지 않아도 되는 이유죠. 동물세포엔 이 둘이 없어서 양분을 밖에서 얻어야 해요.",
+        },
       ],
-      blocks: [
-        { k: "note", tone: "bio", html: "<b>세포벽·엽록체는 식물세포에만</b> 있어요. 엽록체가 있어 식물은 스스로 양분을 만들 수 있죠." },
-      ],
+      note: { icon: "bulb", tone: "bio", title: "한 줄 구분", html: "<b>세포벽·엽록체 = 식물세포에만.</b> 나머지(막·핵·마이토콘드리아)는 둘 다 있어요!" },
+      cta: "문제 풀기",
     }),
     mcq({
       n: 1, of: 3,
@@ -130,19 +125,13 @@ const L2 = {
   standard: "책 42~43쪽",
   doneNote: "현미경으로 세포를 관찰했어요",
   steps: [
-    concept({
-      kicker: "직접 해보기",
-      kickerTone: "bio",
-      title: "세포를<br><em>내 눈으로</em>",
-      lead: "세포는 맨눈으로 볼 수 없어요. 현미경으로 관찰하려면 먼저 얇은 <b>표본</b>을 만들어요.",
-      blocks: [
-        { k: "list", ordered: true, items: [
-          "관찰할 재료를 <b>얇게</b> 떼어 받침유리에 올려요",
-          "<b>염색액</b>을 떨어뜨려 특정 부분을 물들여요",
-          "덮개유리를 비스듬히 덮어 <b>공기 방울</b>이 없게 해요",
-        ] },
-        { k: "callout", tone: "bio", icon: "flask", title: "염색액", html: "양파 표피세포는 <b>아세트올세인(붉은색)</b>, 입안 상피세포는 <b>메틸렌 블루(푸른색)</b>로 물들여요. 그래야 핵이 잘 보여요." },
-      ],
+    hook({
+      title: "투명해서<br>안 보여요",
+      lead: "현미경에 세포를 올렸는데, 너무 투명해서 잘 보이지 않아요.",
+      narrator: "과학자들은 왜 세포에 <b>염색액</b>을 떨어뜨릴까요? 직접 한 방울 떨어뜨려 보고 예측해 봐요!",
+      scene: "stain",
+      done: "염색액은 <b>핵 같은 특정 부분을 물들여</b> 잘 보이게 해요. 이제 진짜 현미경으로 양파 세포를 봐요!",
+      cta: "현미경 관찰 시작",
     }),
     microscope({
       title: "양파 표피세포<br>관찰하기",
@@ -150,16 +139,29 @@ const L2 = {
       specimen: "onion",
       explainGood: "관찰 성공! 벽돌처럼 규칙적인 세포와 붉게 물든 핵이 보이죠.",
     }),
-    concept({
-      title: "현미경의 규칙",
-      blocks: [
-        { k: "term", name: "총배율", def: "<b>접안렌즈 배율 × 대물렌즈 배율</b>. 접안렌즈가 10배, 대물렌즈가 40배면 총배율은 <b>400배</b>예요.", icon: "target" },
-        { k: "list", ordered: false, items: [
-          "관찰은 <b>저배율 → 고배율</b> 순으로 해요 (넓게 찾고, 자세히)",
-          "현미경 속 상은 <b>상하좌우가 바뀌어</b> 보여요",
-          "고배율일수록 보이는 세포는 <b>더 크지만 더 적어져요</b>",
-        ] },
+    recap({
+      title: "현미경 관찰,<br>카드 두 장으로",
+      narrator: "표본 만드는 법과 현미경의 규칙, 두 장이면 끝!",
+      cards: [
+        {
+          name: "표본 만들기 3단계",
+          color: "#12B886",
+          art: bioMiniArt("micro"),
+          text: "① 재료를 <b>얇게</b> 떼어 받침유리에 올리고 ② <b>염색액</b>으로 특정 부분을 물들이고 ③ 덮개유리를 <b>비스듬히</b> 덮어 공기 방울을 없애요.",
+          examples: ["양파 표피 — 아세트올세인(붉게)", "입안 상피 — 메틸렌 블루(푸르게)", "공기 방울은 관찰 방해!"],
+          more: "덮개유리를 비스듬히 내려 덮는 이유는 <b>공기 방울</b>이 갇히지 않게 하려는 거예요. 공기 방울은 검은 동그라미로 보여서 세포와 헷갈리거든요.",
+        },
+        {
+          name: "현미경의 규칙",
+          color: "#0CA6C0",
+          art: bioMiniArt("micro"),
+          text: "<b>총배율 = 접안렌즈 × 대물렌즈</b>. 관찰은 <b>저배율 → 고배율</b> 순으로. 현미경 속 상은 <b>상하좌우가 바뀌어</b> 보여요.",
+          examples: ["10배 × 40배 = 400배", "넓게 찾고(저배율) 자세히(고배율)", "고배율 = 크지만 더 적게"],
+          more: "고배율로 올릴수록 세포는 커 보이지만 <b>한 화면에 보이는 수는 줄어요</b>. 그래서 먼저 저배율로 넓게 찾아 목표를 화면 가운데에 두고, 그다음 배율을 올려요.<span class='fun'><b>알고 있나요?</b> 상이 거꾸로 보이니, 표본을 왼쪽으로 옮기려면 오른쪽으로 밀어야 해요!</span>",
+        },
       ],
+      note: { icon: "bulb", tone: "blue", title: "계산 공식", html: "총배율은 <b>두 렌즈 배율의 곱</b>. 10 × 40 = <b>400배</b>. 더하는 게 아니에요!" },
+      cta: "문제 풀기",
     }),
     mcq({
       n: 1, of: 2,
@@ -189,51 +191,67 @@ const L3 = {
   subtitle: "세포에서 개체까지",
   label: "생물의 구성 단계",
   icon: "layers",
-  minutes: 7,
+  minutes: 8,
   standard: "책 44~45쪽",
   doneNote: "생물이 이루어지는 단계를 배웠어요",
   steps: [
-    concept({
-      kicker: "몸의 조립 순서",
-      kickerTone: "bio",
-      title: "세포가 모여<br><em>‘나’</em>가 돼요",
-      lead: "세포 하나하나가 모여 조직을, 기관을, 마침내 한 생명체(개체)를 이뤄요. 동물의 몸을 아래에서 위로 확대하며 올라가 봐요.",
+    hook({
+      title: "우리 몸은<br>세포가 <em>몇 개?</em>",
+      lead: "세포 하나는 아주 작아요. 그렇다면 사람 몸 전체는 세포가 몇 개일까요?",
+      narrator: "수천 개? 수백만 개? 상상해서 <b>예측</b>해 봐요 — 정답을 들으면 깜짝 놀랄걸요!",
+      scene: "bodycount",
+      done: "약 <b>37조 개</b>! 이 어마어마한 세포들이 아무렇게나 뭉친 게 아니라 <b>차곡차곡 조립</b>돼 몸이 돼요.",
+      cta: "조립 단계 올라가기",
     }),
     orgLevels({
       title: "동물의 구성 단계",
       lead: "‘더 큰 단위로’ 버튼을 눌러 단계를 올라가요.",
       levels: [
-        { name: "세포", example: "근육세포", svg: cellMini, desc: "생명활동이 일어나는 기본 단위예요." },
-        { name: "조직", example: "근육조직", svg: tissueMini, desc: "모양과 기능이 <b>비슷한 세포</b>가 모인 단계예요." },
-        { name: "기관", example: "심장", svg: heartMini, desc: "여러 조직이 모여 <b>일정한 기능</b>을 하는 단계예요." },
-        { name: "기관계", example: "순환계", svg: systemMini, desc: "관련된 기관이 모여 <b>연결된 기능</b>을 해요. (동물에만 있어요)" },
-        { name: "개체", example: "강아지", svg: dogMini, desc: "기관계가 모여 <b>독립된 하나의 생명체</b>가 돼요." },
+        { name: "세포", example: "근육세포", svg: orgArt("cellMuscle"), desc: "생명활동이 일어나는 기본 단위예요." },
+        { name: "조직", example: "근육조직", svg: orgArt("tissueMuscle"), desc: "모양과 기능이 <b>비슷한 세포</b>가 모인 단계예요." },
+        { name: "기관", example: "심장", svg: orgArt("organHeart"), desc: "여러 조직이 모여 <b>일정한 기능</b>을 하는 단계예요." },
+        { name: "기관계", example: "순환계", svg: orgArt("systemCirc"), desc: "관련된 기관이 모여 <b>연결된 기능</b>을 해요. (동물에만 있어요)" },
+        { name: "개체", example: "강아지", svg: orgArt("bodyDog"), desc: "기관계가 모여 <b>독립된 하나의 생명체</b>가 돼요." },
       ],
+      curio: {
+        q: "코끼리는 개미보다 <b>세포가 큰</b> 걸까요, <b>많은</b> 걸까요?",
+        a: "정답은 <b>많은</b> 거예요! 코끼리든 개미든 사람이든, 세포 하나의 크기는 <b>거의 비슷해요</b>(보통 수십 μm).<br><br>몸집 차이는 세포가 얼마나 <b>많이 모였느냐</b>에서 와요 — 개미는 수백만 개, 코끼리는 수백조 개의 세포로 이루어져 있죠. 그래서 큰 동물일수록 세포가 큰 게 아니라 <b>단계별로 더 많이 조립</b>된 거예요.",
+      },
     }),
     orgLevels({
       title: "식물의 구성 단계",
       lead: "식물은 조금 달라요. ‘기관계’ 대신 <b>조직계</b>가 있어요.",
       levels: [
-        { name: "세포", example: "잎살세포", svg: leafCellMini, desc: "광합성이 일어나는 기본 단위예요." },
-        { name: "조직", example: "울타리조직", svg: leafTissueMini, desc: "비슷한 세포가 모인 단계예요." },
-        { name: "조직계", example: "기본조직계", svg: leafOrganWide, desc: "여러 조직이 모여 <b>조직계</b>를 이뤄요. (식물에만 있어요)" },
-        { name: "기관", example: "잎", svg: leafOrganMini, desc: "조직계가 모여 잎·줄기·뿌리 같은 <b>기관</b>이 돼요." },
-        { name: "개체", example: "나무", svg: treeMini, desc: "기관이 모여 한 그루의 <b>식물체(개체)</b>가 돼요." },
+        { name: "세포", example: "잎살세포", svg: orgArt("cellLeaf"), desc: "광합성이 일어나는 기본 단위예요." },
+        { name: "조직", example: "울타리조직", svg: orgArt("tissuePalisade"), desc: "비슷한 세포가 모인 단계예요." },
+        { name: "조직계", example: "기본조직계", svg: orgArt("tissueSystem"), desc: "여러 조직이 모여 <b>조직계</b>를 이뤄요. (식물에만 있어요)" },
+        { name: "기관", example: "잎", svg: orgArt("organLeaf"), desc: "조직계가 모여 잎·줄기·뿌리 같은 <b>기관</b>이 돼요." },
+        { name: "개체", example: "나무", svg: orgArt("bodyTree"), desc: "기관이 모여 한 그루의 <b>식물체(개체)</b>가 돼요." },
       ],
     }),
-    table({
-      title: "동물 vs 식물, 뭐가 달라?",
-      lead: "가장 중요한 차이 한 가지!",
-      head: ["단계", "동물", "식물"],
-      rows: [
-        [{ v: "세포·조직" }, { v: "있음", strong: true }, { v: "있음", strong: true }],
-        [{ v: "조직계" }, { v: "없음" }, { v: "있음", strong: true }],
-        [{ v: "기관계" }, { v: "있음", strong: true }, { v: "없음" }],
-        [{ v: "개체" }, { v: "있음", strong: true }, { v: "있음", strong: true }],
+    recap({
+      title: "구성 단계,<br>카드 두 장으로",
+      narrator: "작은 것에서 큰 것으로 — 동물과 식물의 차이가 핵심!",
+      cards: [
+        {
+          name: "세포에서 개체까지",
+          color: "#12B886",
+          art: bioMiniArt("stack"),
+          text: "<b>세포</b>(기본 단위) → 비슷한 세포가 모여 <b>조직</b> → 여러 조직이 <b>기관</b> → 기관이 모여 <b>개체</b>. 작은 단위가 모여 큰 단위가 돼요.",
+          examples: ["세포 → 조직 → 기관", "조직 = 비슷한 세포", "개체 = 하나의 생명체"],
+          more: "레고 블록(세포)이 모여 벽(조직)이, 벽이 모여 방(기관)이, 방이 모여 집(개체)이 되는 것과 같아요 — 다만 훨씬 정교하게 조립되죠.",
+        },
+        {
+          name: "동물 vs 식물, 딱 한 곳",
+          color: "#2FA35F",
+          art: bioMiniArt("compare"),
+          text: "차이는 딱 하나 — <b>동물엔 기관계</b>(순환계·소화계처럼 관련 기관의 묶음), <b>식물엔 조직계</b>(조직의 묶음)가 있어요.",
+          examples: ["동물: …기관 → 기관계 → 개체", "식물: …조직계 → 기관 → 개체", "기관계는 동물만!"],
+          more: "동물은 심장·혈관처럼 여러 기관이 팀(기관계)을 이뤄 몸속을 돌아다니는 일을 해요. 식물은 그런 이동 시스템 대신 조직들이 뭉친 <b>조직계</b>로 몸을 이루죠.",
+        },
       ],
-      blocks: [
-        { k: "note", tone: "bio", html: "동물엔 <b>기관계</b>, 식물엔 <b>조직계</b>. 이게 두 구성 단계의 핵심 차이예요." },
-      ],
+      note: { icon: "bulb", tone: "bio", title: "핵심 한 줄", html: "<b>동물엔 기관계, 식물엔 조직계.</b> 이 한 곳만 다르고 나머지는 같아요!" },
+      cta: "문제 풀기",
     }),
     order({
       title: "동물의 구성 단계<br>순서 맞추기",
@@ -272,36 +290,42 @@ const L4 = {
   standard: "책 50~55쪽",
   doneNote: "변이와 생물다양성의 관계를 이해했어요",
   steps: [
-    concept({
-      kicker: "다양한 생명",
-      kickerTone: "bio",
-      title: "생물다양성이란<br><em>무엇</em>일까?",
-      lead: "어떤 지역에 살고 있는 <b>생물의 다양한 정도</b>를 생물다양성이라고 해요. 세 가지 측면으로 볼 수 있어요.",
-      blocks: [
-        { k: "callout", tone: "bio", icon: "globe", title: "생태계의 다양함", html: "숲·바다·갯벌·사막처럼 <b>서식 환경</b>이 다양한 정도예요." },
-        { k: "callout", tone: "blue", icon: "paw", title: "종의 다양함", html: "한 지역에 사는 <b>생물 종류</b>가 얼마나 많고 고른지예요." },
-        { k: "callout", tone: "violet", icon: "dna", title: "같은 종 안의 다양함", html: "같은 종이라도 개체마다 <b>특징이 다른</b> 정도예요. (유전적 다양성)" },
-      ],
-    }),
-    concept({
-      title: "변이:<br>같은 종인데 <em>서로 달라요</em>",
-      blocks: [
-        { k: "term", name: "변이", def: "<b>같은 종류의 생물 사이</b>에서 나타나는 서로 다른 특징.", icon: "dna" },
-        { k: "p", html: "무당벌레의 겉날개 무늬, 바지락 껍데기 색, 사람의 피부색과 지문… 모두 <b>변이</b>예요. 같은 종이라도 완전히 똑같은 개체는 없어요." },
-        { k: "note", tone: "violet", html: "이런 변이가 <b>생물다양성의 바탕</b>이 돼요. 변이가 많을수록 환경 변화에 살아남을 개체도 많아지죠." },
-      ],
+    hook({
+      title: "같은 무당벌레인데<br><em>다 달라요</em>",
+      lead: "무당벌레 여섯 마리가 있어요. 전부 같은 종인데… 이상한 점이 보이죠?",
+      narrator: "세 마리를 눌러 <b>무늬(점 개수)</b>를 비교해 봐요. 같은 종인데 왜 이렇게 다를까요?",
+      scene: "ladybugs",
+      done: "같은 종 안에서 개체마다 다른 특징 — 이걸 <b>변이</b>라고 해요. 이 변이가 생물다양성의 씨앗이에요!",
+      cta: "변이의 힘 확인하기",
     }),
     finchSim({
       title: "변이가 만드는<br>자연선택",
       lead: "섬을 골라 보세요. 세대를 진행하면 환경에 맞는 부리를 가진 새가 더 많이 살아남아요.",
       goalGen: 3,
     }),
-    concept({
-      title: "변이에서<br>다양성으로",
-      blocks: [
-        { k: "p", html: "환경에 <b>적합한 변이</b>를 가진 개체가 더 많이 살아남아 자손을 남겨요. 이 과정이 오래 반복되면 생물은 환경에 <b>적응</b>하고, 서로 다른 종류로 나뉘어요." },
-        { k: "callout", tone: "bio", icon: "sparkle", title: "핵심 흐름", html: "<b>변이 → 자연선택 → 적응 → 종 다양성 증가.</b> 다양한 변이가 있어야 이 모든 게 가능해요." },
+    recap({
+      title: "변이와 다양성,<br>카드 두 장으로",
+      narrator: "무당벌레 무늬에서 시작한 이야기를 정리해요.",
+      cards: [
+        {
+          name: "변이 — 다름의 씨앗",
+          color: "#7C5CFF",
+          art: bioMiniArt("variation"),
+          text: "<b>같은 종 안에서</b> 개체마다 나타나는 서로 다른 특징이 <b>변이</b>예요. 무당벌레 무늬, 사람 지문·피부색, 달팽이 껍데기 무늬 모두 변이!",
+          examples: ["같은 종인데 서로 달라요", "완전히 똑같은 개체는 없어요", "변이 많음 = 다양성 큼"],
+          more: "변이는 <b>종과 종 사이의 차이가 아니에요</b> — 어디까지나 같은 종 안에서의 차이죠. 이 차이가 다양할수록, 환경이 갑자기 변해도 살아남는 개체가 있을 가능성이 커져요.",
+        },
+        {
+          name: "변이 → 자연선택 → 다양성",
+          color: "#12B886",
+          art: bioMiniArt("selection"),
+          text: "환경에 <b>적합한 변이</b>를 가진 개체가 더 많이 살아남아 자손을 남겨요(자연선택). 이 과정이 반복되면 생물은 환경에 <b>적응</b>하고 종이 다양해져요.",
+          examples: ["부리가 맞는 새가 생존", "적응 → 새로운 특징", "핀치 실험이 그 증거"],
+          more: "랩에서 세대를 넘길 때마다 환경에 맞는 부리가 늘었죠? 이게 다윈이 갈라파고스 핀치에서 발견한 <b>자연선택</b>이에요.<span class='fun'><b>알고 있나요?</b> 변이가 없는 생물 집단은 환경이 바뀌면 전멸할 위험이 커요 — 다양성이 곧 생존 보험인 셈이죠.</span>",
+        },
       ],
+      note: { icon: "bulb", tone: "violet", title: "핵심 흐름", html: "<b>변이 → 자연선택 → 적응 → 종 다양성.</b> 모든 것의 출발은 다양한 <b>변이</b>!" },
+      cta: "문제 풀기",
     }),
     mcq({
       n: 1, of: 3,
@@ -355,22 +379,13 @@ const L5 = {
   standard: "책 56~63쪽",
   doneNote: "생물을 5계로 분류하는 법을 익혔어요",
   steps: [
-    concept({
-      kicker: "생명의 정리법",
-      kickerTone: "bio",
-      title: "무엇을 기준으로<br><em>나눌까?</em>",
-      lead: "생물을 고유한 특징으로 무리 지어 나누는 것을 <b>생물분류</b>라고 해요. 겉모습이 아니라 진짜 관계를 봐야 해요.",
-      blocks: [
-        { k: "p", html: "박쥐는 갈매기처럼 날개가 있지만, 온몸이 털로 덮이고 <b>새끼를 낳아 젖을 먹여</b> 키워요. 그래서 박쥐는 갈매기보다 <b>다람쥐와 더 가까운</b> 사이예요." },
-        { k: "note", tone: "bio", html: "분류 기준: 몸의 생김새, 한살이, <b>번식 방법</b>, 광합성 여부 등 생물의 고유한 특징." },
-      ],
-    }),
-    concept({
-      title: "‘종’이란<br>무엇일까?",
-      blocks: [
-        { k: "term", name: "종(species)", def: "자연 상태에서 짝짓기하여 <b>번식 능력이 있는 자손</b>을 낳을 수 있는 생물 무리. 분류의 가장 기본 단위예요.", icon: "paw" },
-        { k: "callout", tone: "amber", icon: "swap", title: "말 × 당나귀 = ?", html: "말과 당나귀 사이에서 <b>노새</b>가 태어나지만, 노새는 <b>번식 능력이 없어요.</b> 그래서 말과 당나귀는 <b>다른 종</b>이에요." },
-      ],
+    hook({
+      title: "박쥐는<br><em>새</em>일까 <em>쥐</em>일까?",
+      lead: "박쥐는 날개가 있어 하늘을 날아요. 그럼 박쥐는 어느 무리일까요?",
+      narrator: "날개만 보면 새 같지만… 진짜 무리는 어떻게 정해질까요? <b>예측</b>해 봐요!",
+      scene: "batbird",
+      done: "박쥐는 젖을 먹여 키우는 <b>포유류</b> — 쥐와 한 무리예요! 분류는 <b>겉모습이 아니라 진짜 특징</b>으로 해요.",
+      cta: "분류 기준 배우기",
     }),
     order({
       title: "분류 단계 쌓기",
@@ -378,18 +393,6 @@ const L5 = {
       items: ["종", "속", "과", "목", "강", "문", "계"],
       explainGood: "완벽해요! <b>종 → 속 → 과 → 목 → 강 → 문 → 계</b>. 위로 갈수록 더 많은 생물을 포함해요.",
       explainBad: "분류 단계는 <b>종 → 속 → 과 → 목 → 강 → 문 → 계</b> 순이에요. 종이 가장 작은 단위죠.",
-    }),
-    table({
-      title: "생물 5계",
-      lead: "핵막·세포벽·광합성 여부로 모든 생물을 다섯 무리로 나눠요.",
-      head: ["계", "핵막", "특징"],
-      rows: [
-        [{ v: "원핵생물계", dot: kingdomColor.원핵생물계 }, { v: "없음" }, { v: "단세포, 세포벽 있음" }],
-        [{ v: "원생생물계", dot: kingdomColor.원생생물계 }, { v: "있음", strong: true }, { v: "균·식·동이 아닌 무리" }],
-        [{ v: "균계", dot: kingdomColor.균계 }, { v: "있음", strong: true }, { v: "세포벽 있음, 분해로 양분" }],
-        [{ v: "식물계", dot: kingdomColor.식물계 }, { v: "있음", strong: true }, { v: "엽록체로 광합성" }],
-        [{ v: "동물계", dot: kingdomColor.동물계 }, { v: "있음", strong: true }, { v: "세포벽 없음, 운동" }],
-      ],
     }),
     dichotomKey({
       title: "검색표로<br>분류하기",
@@ -404,6 +407,10 @@ const L5 = {
       ],
       explainGood: "훌륭해요! 검색표는 예/아니요 질문만으로 어떤 생물이든 5계로 분류할 수 있어요.",
       explainBad: "특징을 다시 떠올려 봐요. 핵막·광합성·세포벽·운동성이 분류의 열쇠예요.",
+      curio: {
+        q: "<b>바이러스</b>는 생물일까요, 무생물일까요?",
+        a: "놀랍게도 <b>5계 어디에도 들어가지 않아요</b> — 바이러스는 <b>세포가 없거든요</b>.<br><br>생물의 기본 단위는 세포인데, 바이러스는 단백질 껍질 속에 유전물질만 들어 있어요. 그래서 혼자서는 번식도 못 하고 숨쉬기 같은 생명활동도 안 해요(무생물 같은 면). 하지만 살아 있는 <b>다른 세포 안에 들어가면 유전물질을 복제</b>하며 늘어나죠(생물 같은 면). 이 중간적 성질 때문에 과학자들도 '생물과 무생물의 경계'라고 불러요.",
+      },
     }),
     binSort({
       title: "생태계 생물<br>5계로 분류하기",
@@ -428,6 +435,30 @@ const L5 = {
       ],
       explainGood: "완벽해요! 특징을 기준으로 생태계의 생물을 5계로 깔끔하게 나눴어요.",
       explainBad: "다시 볼까요? 곰팡이·효모는 균계, 광합성하는 진달래·고사리는 식물계, 움직이는 꿀벌·박새는 동물계예요.",
+    }),
+    recap({
+      title: "생물 분류,<br>카드 두 장으로",
+      narrator: "무엇으로 나누는지, 어떻게 나뉘는지 정리해요.",
+      cards: [
+        {
+          name: "종과 분류 단계",
+          color: "#3182F6",
+          art: bioMiniArt("species"),
+          text: "<b>종</b>은 자연에서 짝짓기해 <b>번식 능력이 있는 자손</b>을 낳는 무리 — 분류의 기본 단위예요. 위로 <b>종 → 속 → 과 → 목 → 강 → 문 → 계</b>로 묶여요.",
+          examples: ["말 × 당나귀 = 노새(번식 ✕)", "그래서 말·당나귀는 다른 종", "위로 갈수록 더 큰 무리"],
+          more: "분류는 <b>겉모습이 아니라 진짜 특징</b>(번식 방법·몸 구조·광합성 여부)으로 해요. 그래서 날개 달린 박쥐가 새가 아니라 젖먹이(포유류)로 묶이는 거죠.",
+        },
+        {
+          name: "생물 5계",
+          color: "#12B886",
+          art: bioMiniArt("kingdoms"),
+          text: "핵막·세포벽·광합성 여부로 모든 생물을 다섯 무리로 — <b>원핵생물계</b>(핵막 없음), <b>원생생물계</b>, <b>균계</b>(분해자), <b>식물계</b>(광합성), <b>동물계</b>(운동).",
+          examples: ["원핵 — 대장균·젖산균", "균계 — 버섯·곰팡이·효모", "동물계 — 세포벽 없이 운동"],
+          more: "버섯·곰팡이는 초록색이 아니고 광합성을 못 해요 — 죽은 것을 <b>분해</b>해서 양분을 얻는 <b>균계</b>예요. 식물처럼 생겼다고 식물계가 아니랍니다.",
+        },
+      ],
+      note: { icon: "bulb", tone: "bio", title: "분류의 열쇠", html: "핵막 있나? 세포벽 있나? 광합성 하나? 움직이나? — 이 네 질문이 <b>5계</b>를 가른다!" },
+      cta: "문제 풀기",
     }),
     mcq({
       n: 1, of: 2,
@@ -463,31 +494,17 @@ const L6 = {
   subtitle: "왜, 그리고 어떻게 지킬까",
   label: "생물다양성 보전",
   icon: "heart",
-  minutes: 7,
+  minutes: 8,
   standard: "책 64~67쪽",
   doneNote: "생물다양성을 지키는 법을 배웠어요 · II단원 완성!",
   steps: [
-    concept({
-      kicker: "지켜야 할 이유",
-      kickerTone: "bio",
-      title: "다양성이<br>우리를 <em>살려요</em>",
-      lead: "생물다양성은 인간에게도 아주 소중해요. 종이 다양할수록 생태계가 <b>안정</b>되고, 우리 삶도 풍요로워져요.",
-      blocks: [
-        { k: "callout", tone: "bio", icon: "layers", title: "생태계 안정", html: "먹이 관계가 <b>그물처럼 복잡</b>할수록, 한 종이 사라져도 생태계가 쉽게 무너지지 않아요." },
-        { k: "callout", tone: "blue", icon: "heart", title: "삶의 바탕", html: "식량, <b>의약품</b>의 원료, 깨끗한 공기와 물… 모두 다양한 생물에서 얻어요." },
-      ],
-    }),
-    concept({
-      title: "무엇이 다양성을<br><em>위협</em>할까?",
-      blocks: [
-        { k: "list", ordered: false, items: [
-          "<b>서식지 파괴</b> — 숲·습지가 사라지는 가장 큰 원인",
-          "<b>남획</b> — 지나친 사냥·채집",
-          "<b>외래 생물</b> — 큰입배스처럼 들어와 토종을 위협",
-          "<b>환경 오염과 기후 변화</b>",
-        ] },
-        { k: "note", tone: "amber", html: "이 중 <b>서식지 파괴</b>가 생물다양성 감소의 가장 큰 원인이에요." },
-      ],
+    hook({
+      title: "메뚜기가 사라지면<br><em>어떻게 될까?</em>",
+      lead: "풀 → 메뚜기 → 개구리 → 매로 이어지는 먹이 관계가 있어요.",
+      narrator: "가운데 <b>메뚜기가 모두 사라지면</b> 어떤 일이 생길까요? 직접 없애 보고 예측해 봐요!",
+      scene: "foodweb",
+      done: "한 종이 사라지자 <b>연쇄로</b> 여러 종이 흔들렸죠? 그래서 <b>다양성</b>이 생태계를 지키는 힘이에요.",
+      cta: "지키는 법 알아보기",
     }),
     binSort({
       title: "보전 노력,<br>누구의 몫일까?",
@@ -508,6 +525,30 @@ const L6 = {
       ],
       explainGood: "좋아요! 개인의 작은 실천부터 국가·국제 협약까지, <b>모든 수준</b>의 노력이 필요해요.",
       explainBad: "다시 볼까요? 보호구역·종자은행은 사회·국가, 국제 협약(생물다양성 협약·람사르)은 국제 수준이에요.",
+    }),
+    recap({
+      title: "다양성 보전,<br>카드 두 장으로",
+      narrator: "왜 지켜야 하는지, 무엇이 위협하는지 — II단원의 마지막 정리!",
+      cards: [
+        {
+          name: "왜 지켜야 할까",
+          color: "#12B886",
+          art: bioMiniArt("web"),
+          text: "종이 다양하고 먹이 관계가 <b>그물처럼 복잡</b>할수록 생태계가 <b>안정</b>돼요. 또 식량·의약품 원료·깨끗한 공기와 물… 우리 삶의 바탕이 다양한 생물에서 나와요.",
+          examples: ["먹이그물 복잡 = 안정", "의약품 원료", "식량·깨끗한 환경"],
+          more: "훅에서 봤듯, 한 종이 사라지면 연쇄로 흔들려요 — 하지만 그물이 촘촘하면 한 줄이 끊겨도 전체가 버텨요. 그래서 <b>다양성 자체가 생태계의 보험</b>이에요.",
+        },
+        {
+          name: "위협과 지키기",
+          color: "#F0913E",
+          art: bioMiniArt("conserve"),
+          text: "가장 큰 위협은 <b>서식지 파괴</b>(숲·습지 사라짐). 그 밖에 남획·외래 생물·오염·기후 변화. 지키는 노력은 <b>개인 → 사회·국가 → 국제</b> 모든 수준에서!",
+          examples: ["서식지 파괴 = 최대 원인", "외래 생물 — 큰입배스", "협약·보호구역·종자은행"],
+          more: "큰입배스처럼 들어온 외래 생물은 토종을 잡아먹어 다양성을 해칠 수 있어요. 그래서 '들여오면 무조건 좋다'가 아니라 <b>신중한 관리</b>가 필요하죠.<span class='fun'><b>알고 있나요?</b> 씨앗을 얼려 보관하는 '종자은행'은 지구에 큰일이 나도 식물을 되살리기 위한 <b>노아의 방주</b> 같은 곳이에요.</span>",
+        },
+      ],
+      note: { icon: "bulb", tone: "amber", title: "시험 단골", html: "생물다양성 감소의 <b>가장 큰 원인 = 서식지 파괴.</b> 외래 생물은 '많을수록 좋다' 아님!" },
+      cta: "문제 풀기",
     }),
     mcq({
       n: 1, of: 3,
@@ -536,13 +577,6 @@ const L6 = {
       answer: false,
       explainGood: "맞아요, <b>아니에요</b>! 큰입배스처럼 외래 생물이 <b>토종을 위협</b>해 다양성을 해칠 수 있어요.",
       explainBad: "외래 생물은 토종 생물을 위협해 <b>생물다양성을 줄일</b> 수 있어요. 신중해야 해요.",
-    }),
-    concept({
-      title: "II단원, 정복 완료!",
-      lead: "세포에서 시작해 생명의 다양성과 그 보전까지 모두 배웠어요. 정말 멋진 여정이었어요.",
-      blocks: [
-        { k: "callout", tone: "bio", icon: "trophy", title: "다음 여정", html: "이제 여러분은 생명을 <b>구조·다양성·책임</b>의 눈으로 볼 수 있어요. 다음 단원에서 또 만나요!" },
-      ],
     }),
   ],
 };

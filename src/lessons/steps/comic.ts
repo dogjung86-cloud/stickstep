@@ -74,11 +74,28 @@ export const comic: StepRenderer = (host, step, api) => {
     const color = stageColor(p.stage);
     clear(panelEl);
 
+    const prevBtn = el(
+      "button",
+      { class: "comic-prev", attrs: { type: "button", "aria-label": "이전 컷" } },
+      el("span", { text: "‹ 이전 컷" }),
+    ) as HTMLButtonElement;
+    prevBtn.disabled = i === 0;
+    prevBtn.addEventListener("click", () => {
+      if (i === 0) return;
+      i -= 1;
+      haptic(HAPTIC.tap);
+      render();
+    });
     const head = el(
       "div",
       { class: "comic-head" },
       el("span", { class: "comic-badge", style: `--bc:${color}`, text: p.stage }),
-      el("span", { class: "comic-count", text: `${i + 1} / ${s.panels.length}` }),
+      el(
+        "span",
+        { class: "comic-nav" },
+        prevBtn,
+        el("span", { class: "comic-count", text: `${i + 1} / ${s.panels.length}` }),
+      ),
     );
     const title = el("div", { class: "comic-title", html: p.title });
 

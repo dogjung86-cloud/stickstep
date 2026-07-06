@@ -1,0 +1,22 @@
+# 생물 아이콘 14종 — 5계 분류 학습용 (검색표·분류함)
+# 공통 스타일(모든 아이콘 프롬프트 앞에 붙일 것):
+# Clean modern educational illustration of a single living organism, centered,
+# on a PLAIN WHITE background, soft flat vector style with gentle cel shading and
+# a subtle soft drop shadow beneath. Bright friendly colors, clear silhouette,
+# scientifically recognizable, no cartoon face unless the animal naturally has one.
+# 1:1 square, generous margin, the organism fills ~72% of the frame.
+# Absolutely NO text, NO letters, NO numbers, NO labels, NO background scenery.
+
+[bacteria] A single rod-shaped bacterium (bacillus), a smooth green-teal capsule with a few thin flagella tails, simple and clean. (for 대장균·젖산균)
+[amoeba] A single amoeba, a translucent blob with irregular pseudopod arms and a visible round nucleus inside, soft purple-blue. (for 아메바)
+[paramecium] A single paramecium, a slipper-shaped single cell covered in tiny cilia hairs all around the edge, pale green with a small inner detail. (for 짚신벌레)
+[algae] A short strand of green filamentous algae (spirogyra), a few translucent green rectangular cells joined in a chain with spiral bands. (for 해캄)
+[mushroom] A single shiitake-like mushroom with a rounded brown cap and a sturdy pale stem, soft realistic shading. (for 송이버섯)
+[mold] A small cluster of blue-green mold on a tiny surface, fuzzy round colonies with fine spore dots, greenish. (for 푸른곰팡이)
+[yeast] A few round budding yeast cells, pale cream ovals with small buds attached, one showing a faint inner nucleus. (for 효모)
+[pine] A single evergreen pine tree, conical with layered green needled branches and a brown trunk. (for 소나무)
+[fern] A single fern frond, an arching green stalk with many symmetrical leaflets, fresh green. (for 고사리)
+[flower] A single blooming azalea branch, a few pink five-petal flowers with green leaves. (for 진달래)
+[fish] A single crucian carp fish seen from the side, plump golden-brown body with fins and scales, gentle smile-less. (for 붕어)
+[bee] A single honeybee seen from above, striped yellow-and-black fuzzy body with translucent wings. (for 꿀벌)
+[bird] A single small tit bird (Korean 박새) perched, round body with a black cap, white cheeks, and pale belly, side view. (for 박새)

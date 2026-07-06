@@ -10,12 +10,14 @@ import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { tempColor, drawFlame } from "../../ui/thermo";
 import { contactShadow, glassStrokeStyle, softGlow, windStrokeStyle } from "../../ui/labProps";
+import { curioCard, type Curio } from "../../ui/curio";
 import type { StepRenderer } from "../types";
 
 interface RadiationStep {
   title: string;
   lead?: string;
   cta?: string;
+  curio?: Curio;
 }
 
 export const radiation: StepRenderer = (host, step, api) => {
@@ -49,6 +51,7 @@ export const radiation: StepRenderer = (host, step, api) => {
     html: "불에 <b>닿지 않았는데도</b> 따뜻해요. 스틱맨을 좌우로 끌어 <b>모닥불과의 거리</b>부터 바꿔 보세요.",
   });
   host.append(goalChips, stage, shieldBtn, helper);
+  if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
   let manX = 0.78; // 화면 비율 좌표

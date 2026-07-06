@@ -1,13 +1,35 @@
 // space3d — VII 단원(태양계) 공용 three.js 킷.
 //   · 이 모듈은 three를 정적 import하므로, 스텝 렌더러에서는 반드시
 //     `await import("../../ui/space3d")`로 **동적 로드**한다(초기 번들에서 분리).
-//   · 행성 재질은 전부 절차적(캔버스 → CanvasTexture) — 외부 텍스처 에셋 없음.
+//   · 행성 재질: 절차적 캔버스 텍스처를 즉시 입혀 두고, 실사 텍스처
+//     (public/textures/, Solar System Scope CC BY 4.0)가 로드되면 바꿔 끼운다
+//     — 네트워크·파일 유무와 무관하게 무대가 비지 않는다.
 //   · dispose() 규율: 지오메트리·재질·텍스처 해제 + forceContextLoss (meta.ts와 동일 철학).
 //   · DPR 캡 1.75, rAF 루프는 스텝 쪽 createLoop가 소유한다(여기서는 render()만 제공).
 
 import * as THREE from "three";
 
 export { THREE };
+
+const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+const texLoader = new THREE.TextureLoader();
+
+/** 실사 텍스처 비동기 로드. 성공 시 onLoad, 실패는 조용히 무시(절차적 유지).
+ *  씬마다 새 Texture를 만들어 dispose()가 안전하다(HTTP 캐시 덕에 재로드는 저렴). */
+function loadPhotoTexture(file: string, onLoad: (tex: THREE.Texture) => void): void {
+  texLoader.load(
+    `${base}textures/${file}`,
+    (tex) => {
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.anisotropy = 8;
+      onLoad(tex);
+    },
+    undefined,
+    () => {
+      /* 실사 없으면 절차적 텍스처 유지 */
+    },
+  );
+}
 
 export interface SpaceStage {
   scene: THREE.Scene;
@@ -327,14 +349,22 @@ export function planetTexture(kind: PlanetKind): THREE.CanvasTexture {
   return tex;
 }
 
-/** 행성 구체(램버트 재질 — 태양광 명암이 위상·낮밤을 그대로 만든다). */
+/** 행성 구체(램버트 재질 — 태양광 명암이 위상·낮밤을 그대로 만든다).
+ *  절차적 텍스처로 즉시 그리고, 실사 텍스처가 도착하면 바꿔 끼운다. */
 export function makePlanet(kind: PlanetKind, radius: number, segments = 48): THREE.Mesh {
   const geo = new THREE.SphereGeometry(radius, segments, Math.round(segments * 0.66));
   const mat =
     kind === "sun"
       ? new THREE.MeshBasicMaterial({ map: planetTexture("sun") })
       : new THREE.MeshLambertMaterial({ map: planetTexture(kind) });
-  return new THREE.Mesh(geo, mat);
+  const mesh = new THREE.Mesh(geo, mat);
+  loadPhotoTexture(`${kind}.jpg`, (tex) => {
+    const m = mat as THREE.MeshLambertMaterial;
+    m.map?.dispose();
+    m.map = tex;
+    m.needsUpdate = true;
+  });
+  return mesh;
 }
 
 /** 토성·천왕성 고리 — UV를 반지름 방향으로 재배치해 줄무늬 텍스처를 두른다. */
@@ -362,6 +392,14 @@ export function makeRing(inner: number, outer: number, tone: "saturn" | "faint")
   const tex = new THREE.CanvasTexture(cv);
   tex.colorSpace = THREE.SRGBColorSpace;
   const mat = new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide, transparent: true, depthWrite: false });
+  if (tone === "saturn") {
+    // 실사 고리 스트립(가로축 = 반지름) — UV가 이미 반지름 방향이라 그대로 맞는다
+    loadPhotoTexture("saturn_ring.png", (ptex) => {
+      mat.map?.dispose();
+      mat.map = ptex;
+      mat.needsUpdate = true;
+    });
+  }
   const mesh = new THREE.Mesh(geo, mat);
   mesh.rotation.x = -Math.PI / 2;
   return mesh;
@@ -410,6 +448,51 @@ export function makeStars(count: number, radius: number): THREE.Points {
   geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
   const mat = new THREE.PointsMaterial({ size: 2.2, sizeAttenuation: false, vertexColors: true, transparent: true, opacity: 0.9, depthWrite: false });
   return new THREE.Points(geo, mat);
+}
+
+/** 은하수 배경 구 — 실사 텍스처(stars.jpg)를 안쪽 면에. 로드 전엔 투명(별 포인트가 채운다). */
+export function makeMilkyWay(radius: number): THREE.Mesh {
+  const geo = new THREE.SphereGeometry(radius, 48, 30);
+  const mat = new THREE.MeshBasicMaterial({ side: THREE.BackSide, transparent: true, opacity: 0, depthWrite: false });
+  const mesh = new THREE.Mesh(geo, mat);
+  loadPhotoTexture("stars.jpg", (tex) => {
+    mat.map = tex;
+    mat.opacity = 0.55;
+    mat.needsUpdate = true;
+  });
+  return mesh;
+}
+
+/** 이름 라벨 스프라이트(캔버스 텍스트, 알약 배경). scale은 월드 단위. */
+export function makeLabel(text: string, o?: { size?: number; color?: string }): THREE.Sprite {
+  const H = 88;
+  const probe = document.createElement("canvas").getContext("2d")!;
+  probe.font = `800 ${H * 0.46}px Pretendard, sans-serif`;
+  const W = Math.ceil(probe.measureText(text).width + H * 0.9);
+  const cv = document.createElement("canvas");
+  cv.width = W;
+  cv.height = H;
+  const ctx = cv.getContext("2d")!;
+  ctx.font = `800 ${H * 0.46}px Pretendard, sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = "rgba(10,18,36,.62)";
+  ctx.beginPath();
+  ctx.roundRect(2, H * 0.14, W - 4, H * 0.72, H * 0.36);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(140,165,215,.4)";
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  ctx.fillStyle = o?.color ?? "#E4EDFF";
+  ctx.fillText(text, W / 2, H * 0.52);
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: false });
+  const sp = new THREE.Sprite(mat);
+  const s = o?.size ?? 2.6;
+  sp.scale.set((s * W) / H, s, 1);
+  sp.renderOrder = 5;
+  return sp;
 }
 
 /** 궤도 링(가는 선). */

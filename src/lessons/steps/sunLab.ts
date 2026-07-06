@@ -9,12 +9,14 @@ import { el, clamp } from "../../core/dom";
 import { createLoop, type Loop } from "../../core/anim";
 import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { curioCard, type Curio } from "../../ui/curio";
 import type { StepRenderer } from "../types";
 
 interface SunLabStep {
   title: string;
   lead?: string;
   cta?: string;
+  curio?: Curio;
 }
 
 interface Spot {
@@ -68,11 +70,47 @@ export const sunLab: StepRenderer = (host, step, api) => {
     el("div", { class: "pn-badge", dataset: { g: "corona" } }, el("b", { text: "코로나" }), el("span", { text: "일식으로" })),
     el("div", { class: "pn-badge", dataset: { g: "storm" } }, el("b", { text: "지구 영향" }), el("span", { text: "활발할 때?" })),
   );
+
+  // ── 지구 영향 그래프: 흑점 수 ↑ → 오로라·통신 장애·정전 발생 ↑ ──
+  const GX0 = 36;
+  const GX1 = 264;
+  const GY0 = 92;
+  const CURVES: { key: string; label: string; color: string; pow: number; amp: number }[] = [
+    { key: "aurora", label: "오로라", color: "#2AC98F", pow: 1.5, amp: 66 },
+    { key: "comms", label: "무선 통신 장애", color: "#5AA2F8", pow: 1.9, amp: 52 },
+    { key: "power", label: "대규모 정전", color: "#F0A422", pow: 2.4, amp: 38 },
+  ];
+  const curveY = (c: (typeof CURVES)[number], a: number): number => GY0 - Math.pow(a, c.pow) * c.amp;
+  const curvePath = (c: (typeof CURVES)[number]): string => {
+    let d = `M${GX0} ${GY0}`;
+    for (let i = 1; i <= 24; i++) {
+      const a = i / 24;
+      d += ` L${(GX0 + a * (GX1 - GX0)).toFixed(1)} ${curveY(c, a).toFixed(1)}`;
+    }
+    return d;
+  };
+  const graph = el("div", { class: "sunlab-graph" });
+  graph.innerHTML = `<div class="sunlab-graph-title">흑점 수가 늘면, 지구에서는?</div>
+  <svg viewBox="0 0 280 112" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
+    <path d="M${GX0} ${GY0}H${GX1}M${GX0} ${GY0}V12" stroke="#C6CFDC" stroke-width="1.4" stroke-linecap="round"/>
+    <text x="${GX1}" y="${GY0 + 14}" fill="#6B7684" font-size="9" text-anchor="end" font-family="Pretendard, sans-serif">흑점 수(태양 활동) →</text>
+    <text x="${GX0 - 4}" y="12" fill="#6B7684" font-size="9" text-anchor="start" font-family="Pretendard, sans-serif">발생 횟수</text>
+    ${CURVES.map((c) => `<path d="${curvePath(c)}" stroke="${c.color}" stroke-width="2.4" stroke-linecap="round"/>`).join("")}
+    <g class="slg-marker">
+      <path d="M0 ${GY0}V16" stroke="#8A94A6" stroke-width="1.2" stroke-dasharray="3 3"/>
+      ${CURVES.map((c) => `<circle class="slg-dot-${c.key}" cx="0" cy="${GY0}" r="3.4" fill="${c.color}" stroke="#fff" stroke-width="1.4"/>`).join("")}
+    </g>
+  </svg>
+  <div class="sunlab-legend">${CURVES.map((c) => `<span><i style="background:${c.color}"></i>${c.label}</span>`).join("")}</div>`;
+  const marker = graph.querySelector(".slg-marker") as SVGGElement;
+  const dots = CURVES.map((c) => graph.querySelector(`.slg-dot-${c.key}`) as SVGCircleElement);
+
   const helper = el("div", {
     class: "helper",
     html: "태양의 표면(<b>광구</b>)이에요. 쌀알을 뿌린 듯한 무늬 사이 <b>어두운 점</b>이 보이죠? 눌러 보세요!",
   });
-  host.append(goalChips, stage, slider, helper);
+  host.append(goalChips, stage, slider, graph, helper);
+  if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
   let mode: "surf" | "ecl" = "surf";
@@ -95,13 +133,13 @@ export const sunLab: StepRenderer = (host, step, api) => {
     const hints: Record<string, string> = {
       spot: "그게 <b>흑점</b>! 주위보다 <b>온도가 낮아서</b> 어둡게 보여요. 흑점 수는 약 <b>11년 주기</b>로 변해요. 이제 <b>개기일식</b> 버튼을 눌러 봐요.",
       corona: "광구가 가려지니 <b>붉고 얇은 채층</b>과 <b>진주색 코로나</b>가 드러났어요! 가장자리의 불꽃(<b>홍염</b>)도 보이죠? 이제 슬라이더를 <b>활발한 시기</b>로!",
-      storm: "활동이 활발하면 <b>태양풍</b>이 강해져서 지구에선 오로라가 넓어지고, 무선 통신·인공위성·전력망이 말썽을 부려요!",
+      storm: "아래 그래프를 봐요 — 흑점 수가 늘자 <b>오로라·무선 통신 장애·정전</b>이 나란히 치솟았죠? 활발한 시기엔 <b>태양풍</b>이 강해져 지구까지 영향을 줘요.",
     };
     if (!finished) helper.innerHTML = hints[id] ?? "";
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 표면(광구)엔 <b>쌀알 무늬·흑점</b>, 대기(채층·코로나)에선 <b>홍염·플레어</b>. 활동이 활발하면 <b>흑점 수↑ · 코로나 커짐 · 태양풍 강해짐</b> — 지구까지 들썩이죠.";
+        "정리! 표면(광구)엔 <b>쌀알 무늬·흑점</b>, 대기(채층·코로나)에선 <b>홍염·플레어</b>. 활동이 활발하면 <b>흑점 수↑ · 코로나 커짐 · 태양풍 강해짐</b> — 그 영향이 지구까지 닿아요. 아래 <b>궁금해요 카드</b>도 눌러 보세요!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -328,25 +366,10 @@ export const sunLab: StepRenderer = (host, step, api) => {
       }
     }
 
-    // 지구 영향 스트립(하단)
-    const icons: [string, boolean][] = [
-      ["오로라", activity > 0.78],
-      ["무선 통신", activity > 0.82],
-      ["인공위성·정전", activity > 0.86],
-    ];
-    ctx.font = "600 10.5px Pretendard, sans-serif";
-    ctx.textAlign = "center";
-    const bw = (W - 40) / 3;
-    icons.forEach(([label, on], i) => {
-      const bx = 20 + bw * i + bw / 2;
-      const by = H - 22;
-      ctx.fillStyle = on ? "rgba(255,214,138,.16)" : "rgba(148,168,196,.08)";
-      ctx.beginPath();
-      ctx.roundRect(bx - bw / 2 + 4, by - 14, bw - 8, 24, 8);
-      ctx.fill();
-      ctx.fillStyle = on ? "rgba(255,224,168,.95)" : "rgba(148,168,196,.55)";
-      ctx.fillText(on ? `${label} 들썩!` : label, bx, by + 2);
-    });
+    // 지구 영향 그래프 마커 — 흑점 수(활동)에 따라 세 곡선 위를 함께 이동
+    const gx = GX0 + activity * (GX1 - GX0);
+    marker.setAttribute("transform", `translate(${gx.toFixed(1)} 0)`);
+    CURVES.forEach((c, i) => dots[i].setAttribute("cy", curveY(c, activity).toFixed(1)));
 
     // 코로나 목표(일식 + 완전 덮임 유지)
     if (mode === "ecl" && covered) {

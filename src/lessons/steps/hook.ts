@@ -26,6 +26,8 @@ import { stickAvatar, setStickAvatar, type AvatarKind } from "../../ui/avatar";
 import { renderBalloon, renderTugRope, renderBow, renderIceslip, renderBottle, renderRollStop } from "./hookForce";
 import { renderPolar, renderBubblewrap, renderFoilballoon, renderPingpong } from "./hookGas";
 import { renderStargaze, renderPlanetSize, renderShadowClock, renderMoonPic, renderSunGlasses } from "./hookSpace";
+import { renderColorCups, renderSpeaker, renderSmokestack } from "./hookCiv";
+import { renderCellZoom, renderStain, renderBodyCount, renderLadybugs, renderBatBird, renderFoodWeb } from "./hookBio";
 import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -57,7 +59,9 @@ interface HookStep {
   done?: string; // 상호작용 완료 후 말풍선(HTML)
   scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen" | "balloon" | "tugrope" | "bow" | "iceslip" | "bottle" | "rollstop"
     | "polar" | "bubblewrap" | "foilballoon" | "pingpong"
-    | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses";
+    | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses"
+    | "colorcups" | "speaker" | "smokestack"
+    | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
 }
@@ -107,6 +111,15 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "bubblewrap") sceneCleanup = renderBubblewrap(scene, helper, finish, face);
   else if (s.scene === "foilballoon") sceneCleanup = renderFoilballoon(scene, helper, finish, face);
   else if (s.scene === "pingpong") sceneCleanup = renderPingpong(scene, helper, s, finish, face);
+  else if (s.scene === "colorcups") sceneCleanup = renderColorCups(scene, helper, s, finish, face);
+  else if (s.scene === "speaker") sceneCleanup = renderSpeaker(scene, helper, s, finish, face);
+  else if (s.scene === "smokestack") renderSmokestack(scene, helper, s, finish, face);
+  else if (s.scene === "cellzoom") renderCellZoom(scene, helper, finish, face);
+  else if (s.scene === "stain") renderStain(scene, helper, s, finish, face);
+  else if (s.scene === "bodycount") renderBodyCount(scene, helper, s, finish, face);
+  else if (s.scene === "ladybugs") renderLadybugs(scene, helper, finish, face);
+  else if (s.scene === "batbird") renderBatBird(scene, helper, s, finish, face);
+  else if (s.scene === "foodweb") renderFoodWeb(scene, helper, s, finish, face);
   else if (s.scene === "stargaze") sceneCleanup = renderStargaze(scene, helper, finish, face);
   else if (s.scene === "planetsize") sceneCleanup = renderPlanetSize(scene, helper, s, finish, face);
   else if (s.scene === "shadowclock") renderShadowClock(scene, helper, s, finish, face);

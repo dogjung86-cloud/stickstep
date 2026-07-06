@@ -97,8 +97,22 @@ src/
 - **유리** `--glass-*`. **모션** `--ease-out/--spring-soft/--spring-bounce`.
 - 라이트 전용: `prefers-color-scheme: dark` 자동 반전은 의도적으로 넣지 않았다(디자인이 라이트 기준).
 
+## 브랜드 · 스플래시
+- 앱 이름은 **"스틱스텝 사이언스"**(core/brand.ts) — UI 문구·타이틀·워드마크 모두 여기서만 참조.
+- 스플래시(screens/splash.ts) = **스틱맨 플립북**: `public/brand/loading/0..6.webp`가 105ms 간격으로
+  2바퀴 타다다닥 → `study.webp`(머리 질끈 공부 포즈)로 탁 정착(flipPop) → 워드마크 페이드업.
+  프레임이 없으면 만화 아바타 5종으로 폴백, 그것도 없으면 정적 로고. 탭하면 건너뛰기.
+- 앱 아이콘/파비콘 = `public/brand/icon.png`(512, 파란 라운드 사각 + 흰 스틱맨) — index.html에서 링크.
+- 브랜드 이미지 재발주: `bash qa/order-brand-u1l3.sh`(프롬프트 qa/brand_imagen_prompts.txt),
+  발주 원본은 1254px → `node qa/resize-brand.mjs`(512 png) + webp 변환으로 경량화(프레임당 ~20KB).
+
 ## 게임 정복 지도 (screens/home.ts + ui/serpentine.ts)
 홈은 리스트가 아니라 **모험 트레일**이다.
+- **장식은 단원의 이야기**(ui/mapDecor.ts + home.ts의 UNIT_DECOR): 트레일·메달리온 문법은 절대 바꾸지 않고
+  소품 세트만 단원별로 — I 정글 원정(징검돌·야자수·깃발) · II 생물 사다리(ART_BIO 재사용: 세균→아메바→
+  고사리→물고기→새) · III 열(모닥불·김 나는 잔·주전자·태양) · IV 고체→액체→기체(얼음→물방울→김) ·
+  V 힘 4종(사과나무·용수철·상자·튜브) · VI 기체(풍선·공기방울·열기구) · VII 행성 순항(수성→금성→화성→
+  목성→토성 순서). seq 순서 자체가 서사이니 함부로 섞지 말 것. 새 단원은 UNIT_DECOR에 세트 등록.
 - `serpentine(count, {width,gap,top,amp})` 가 노드 좌표와 부드러운 곡선 path(Catmull-Rom)를 만든다.
 - **좌표계 규칙(중요)**: 노드/장식은 폭 대비 **%-left**로 배치하고, 경로 SVG는 `width:100%` + `vector-effect:non-scaling-stroke`.
   이러면 리사이즈·기기 회전 시 재렌더 없이 노드와 경로가 함께 스케일돼 어긋나지 않는다.
@@ -111,6 +125,10 @@ src/
 - 재생성: `qa/assets.json` 수정/교체 → `node qa/gen-art.mjs`. 검수 갤러리: `node qa/render.mjs && /qa/gallery.html` 스크린샷.
 - 신규/대량 아트는 `premium-redesign-foundry` 워크플로로 생성(세포 좌표는 핫스팟 정렬 위해 유지).
 - **세포도 소기관 좌표는 figures.ts의 spots와 반드시 일치**시킬 것(핵 150,92 / 미토 225,62·82,150 등).
+- **단원별 훅 장면 파일**: III·IV=hook.ts 내부, V=hookForce.ts, VI=hookGas.ts, VII=hookSpace.ts,
+  I=hookCiv.ts(colorcups·speaker·smokestack), II=hookBio.ts(cellzoom·stain·bodycount·ladybugs·batbird·foodweb).
+  recap 미니아트도 단원별: I=civFigures.ts, II=bioFigures.ts, III~=각 단원 figures. 새 훅은 scene 유니온을
+  hook.ts·dsl.ts 양쪽에 등록하고, 상태 애니메이션 CSS는 ui.css의 해당 단원 훅 섹션에.
 - **손코딩 장면 SVG(훅 등)도 파운드리 재질 문법을 따른다** — 균일한 검은 외곽선 금지. 공식:
   ① 근-동조 3스톱 그라데이션 면 ② 좌상단 키라이트(radial 하이라이트·스펙큘러 스트릭)
   ③ 바닥 접촉 그림자(`#2A3A5E` 타원, opacity .10~.12) ④ 외곽선은 재질별 최암색 1.4~1.6px.
@@ -118,12 +136,33 @@ src/
   캔버스 랩 소품도 동일 문법 — `ui/labProps.ts`(유리 용기·플라스크·저울·접촉 그림자·바람)만 쓴다.
   검수: `public/qa-u4art.html`(훅 장면 + 랩 자동 진행 마운트) + `node qa/shot-u4art.mjs`(dev 서버 필요).
   주의: 다크 무대(.stage)의 우하단은 '입자의 눈' 토글 자리 — 목표 칩·상태 필은 좌하단(`.hp-goals.left`)에.
+- **생물 5계 아이콘(검색표·분류함)은 발주 일러스트**(public/bio/<key>.webp, codex gpt-image로 만든 밝은 교육
+  일러스트 13종 — 대장균·아메바·짚신벌레·해캄·버섯·곰팡이·효모·소나무·고사리·진달래·붕어·꿀벌·박새).
+  `figures.ts`의 organism()이 NAME_ICON→key→발주 webp(<img class="bio-ico">)를 우선 반환, 없으면 ART_BIO SVG 폴백.
+  흰 배경 유지(투명 처리 시 밝은 깃털·뺨에 구멍) + CSS로 라운드 배경. 재발주: qa/order-bio-icons.sh →
+  qa/process-bio.mjs(256 webp). 조잡한 픽토그램 SVG(박쥐=새 매핑 오류 포함)를 대체한 것.
+- **구성 단계 도해(orgLevels 랩)는 bioFigures.ts의 orgArt(key)** — 단색 미니 SVG를 파운드리 문법
+  (근-동조 radial 그라데이션 + 좌상단 하이라이트 + 접촉 그림자 + 최암색 외곽선)으로 격상. 순환계는
+  '심장+온몸 혈관망'(무지개 부채꼴 금지), bodycount 훅 세포 격자·사람 실루엣도 같은 문법.
+- **천체(태양·행성·달)는 SVG로 그리지 않는다 — 실사(public/photos/, NASA·NOIRLab PD/CC BY)를 쓴다.**
+  훅·퀴즈 그림에는 SVG `<image href>` + `clipPath` 원형 크롭으로 임베드(기준: hookSpace planetsize·stargaze·
+  moonpic, spaceFigures sunspotFig·sunAnatomyFig). 3D는 space3d의 텍스처 로더가 담당. 출처는 `photos/CREDITS.md`.
+  함정: 사진 위에 얹는 테두리 `<rect>`는 루트 `<svg fill="none">`이 없으면 **기본 검정 채움**으로 사진을 덮는다.
+  hotspot 스텝 spot 좌표(%)는 그림 좌표와 함께 맞출 것(sunAnatomyFig 주석 참고).
+  시계(아날로그) 바늘 회전은 CSS `transform-box: view-box` + px `transform-origin`으로 — fill-box는 어긋난다.
 
 ## 표준 레슨 공식 — "도입 → 랩 → 정리 → 문제" (상세는 LESSON_GUIDE.md)
 - 모든 레슨: ① 스틱맨 도입(`hook` 미세 상호작용 또는 `comic` 서사) → ② 핵심 랩(다크 무대,
   예측→실행→확인 우선) → ③ `recap` 통일 정리(스틱맨 + 개념 카드, 표·문단 나열 금지) → ④ 문제(형식 섞기).
 - 플레이어는 이전 스텝으로 돌아갈 수 있고, 채점은 **스텝당 첫 시도만** 집계된다.
+- **완료한 레슨 재입장 = 자유 모드**: 헤더에 앞으로 가기(›)가 생겨 CTA 게이트 없이 스텝을 오간다
+  (player.ts의 `freeNav = isDone(lesson.id)`). 복습·부분 학습용 — 전 단원 공통.
+- comic 스텝은 하단 CTA(다음 컷) + 헤더 쪽 **‹ 이전 컷** 필 버튼으로 양방향 이동(첫 컷에선 숨김).
 - binSort는 **드래그 앤 드롭이 기본**(탭 폴백 유지). 3단원(열)이 이 공식의 기준 구현.
+- 랩의 "교과서 밖 궁금증"은 `ui/curio.ts`의 curioCard(질문 헤드 탭 → 답 펼침, bulb + 앰버 톤)로 —
+  content에서 `curio: { q, a }`를 넘기면 랩 렌더러가 helper 뒤에 붙인다. 현재: u3 전도(이불)·복사(산꼭대기),
+  u4 phaseNames(하얀 김), u5 gravityDrop(우주 정거장), u7 sunLab(흑점 역설). 오개념 교정형 질문이 기준.
+- hotspot 스텝은 `spot.photo`(+photoCredit)로 부위별 실사 사진 카드를 설명 아래에 띄울 수 있다(태양 지도가 기준).
 
 ## 개념 우선 + 스틱맨 만화 (steps/comic.ts)
 - **원칙: 개념을 다 가르친 뒤 문제.** 개념 하나 → 바로 퀴즈 금지. (단원 I L1이 이 원칙의 기준.)
@@ -159,17 +198,28 @@ src/
 
 ## 3D 우주 랩 (대단원 VII — three.js)
 - 위상·일식처럼 **빛의 명암과 3차원 정렬이 개념 그 자체**인 주제만 three.js를 쓴다(장식용 3D 금지).
-- `ui/space3d.ts`가 유일한 three 접점: 절차적 캔버스 텍스처(수성 크레이터~해왕성 대흑점, 외부 에셋 0),
-  별배경·글로우 스프라이트·고리(UV 반지름 재배치)·궤도선. 스텝에서는 **반드시 `await import()`**
-  (vite가 three를 별도 청크로 분리, gzip ~192KB — 초기 번들 무영향. `optimizeDeps.include: ["three"]` 필수,
-  없으면 dev 첫 로드 때 최적화 풀리로드가 나서 레슨 상태가 날아간다).
+  (황도 12궁 zodiacRing도 3D — 태양 점광이 지구 밤낮 반구를 실제로 갈라 "한밤=태양 반대쪽"이 조명으로 체험된다.)
+- `ui/space3d.ts`가 유일한 three 접점: **절차적 캔버스 텍스처를 즉시 입히고, 실사 텍스처가 로드되면 교체**
+  (`public/textures/` — Solar System Scope CC BY 4.0, `photos/CREDITS.md`에 전체 출처). 실사가 없거나 실패해도
+  절차적 텍스처로 무대가 비지 않는다. 텍스처는 씬마다 새 Texture로 로드(캐시 공유 금지 — dispose와 충돌).
+  별배경·`makeMilkyWay`(은하수 배경 구)·`makeLabel`(이름표 스프라이트)·글로우·고리(UV 반지름 재배치)·궤도선.
+  스텝에서는 **반드시 `await import()`** (vite가 three를 별도 청크로 분리, gzip ~193KB — 초기 번들 무영향.
+  `optimizeDeps.include: ["three"]` 필수, 없으면 dev 첫 로드 때 최적화 풀리로드가 나서 레슨 상태가 날아간다).
 - 규율: DPR 캡 1.75 · rAF는 스텝의 `createLoop`가 소유 · **프레임마다 `st.render()` 호출**(빼먹으면 검은 무대) ·
   cleanup에서 `st.dispose()`(지오메트리·재질·텍스처 해제 + forceContextLoss). WebGL 실패 시 `null` → 텍스트 폴백 후 CTA 개방.
 - **가로 모드** `ui/rotateStage.ts`: fixed 오버레이 안에 90° 회전 무대. 포인터는 `rot.mapPoint(e)`로
-  리매핑(스테이지 x = clientY − top, y = right − clientX). 태양계 일렬(solarTour)·일식 정렬(eclipse3d)이 사용.
+  리매핑(스테이지 x = clientY − top, y = right − clientX). solarTour·eclipse3d가 사용.
+- **solarTour = 궤도형 태양계**(교과서 일렬 그림의 확장): 한 손가락 드래그 = 시점 회전(구면 궤도 카메라),
+  두 손가락 핀치·휠·± 버튼 = 줌, 탭 = 천체 포커스 + 정보 카드(지구와 거리·크기·중력 스탯 칩 + 읽을거리).
+  소행성대는 InstancedMesh 암석 띠 + 투명 토러스 히트 프록시. 미션 칩(안쪽 2곳·바깥 2곳·소행성대)은
+  가로 HUD(.sp3-missions)와 세로 pn-badge를 함께 동기화한다.
 - 조작 문법: 궤도 드래그는 평면(y=0) 레이캐스트 → atan2 각도. 작거나 움직이는 탭 대상(혜성)엔
-  투명 히트 프록시 구를 붙인다. moonPhase3d는 우주뷰 + 우하단 시저 뷰포트 인셋("지구에서 본 달"),
-  eclipse3d 지상 뷰는 phi 스냅 보정 + 달 스케일 1.6×로 개기일식을 연출(궤도선·그림자 원뿔은 숨김).
+  투명 히트 프록시 구를 붙인다. moonPhase3d는 태양 구체+빛 화살표가 프레임 안(fov 46, 카메라 계산으로 확보)
+  + 우하단 시저 뷰포트 인셋("지구에서 본 달"), eclipse3d 지상 뷰는 phi 스냅 보정 + 달 스케일 1.6×로 개기일식 연출.
+- **eclipse3d 궤도 기울기 장치**: "왜 매달 안 일어날까?" 토글 → 궤도를 z축으로 ~12° 기울임(실제 5°는 문구로).
+  기울면 삭·망에서도 |y|>0.45로 정렬 판정이 빗나가고 미스 토스트가 뜬다 — 일식·월식 희소성의 체험 장치.
+- **가로 3D 랩의 카메라 구도는 계산으로 확보한다**: 필요한 x-범위(태양~궤도 끝)를 정하고
+  dist ≥ 반폭/tan(hfov/2)로 검산할 것. 눈대중으로 잡으면 태양이 프레임 밖으로 나간다(실제 있었던 버그).
 
 ## 메타볼 렌더러 (대단원 IV에서 이식 완료)
 - `sample/renderer-comparison.html`의 `FRAG` 셰이더 원본을 `renderers/meta.ts`로 **수치 그대로** 이식했다.

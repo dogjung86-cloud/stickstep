@@ -11,6 +11,10 @@ import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import type { AvatarKind } from "../../ui/avatar";
 
+// 천체는 실제 관측 사진(public/photos/, NASA — CREDITS.md)을 쓴다. 배경·소품만 SVG.
+const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+const photo = (name: string): string => `${base}photos/${name}`;
+
 interface HookStepLike {
   choices?: string[];
 }
@@ -57,9 +61,6 @@ export function renderStargaze(
       <radialGradient id="hsGlow" cx=".5" cy=".5" r=".5">
         <stop offset="0" stop-color="#FFF6D8" stop-opacity=".95"/><stop offset=".4" stop-color="#FFE9A8" stop-opacity=".5"/><stop offset="1" stop-color="#FFE9A8" stop-opacity="0"/>
       </radialGradient>
-      <linearGradient id="hsSat" x1="150" y1="52" x2="176" y2="76" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="#F4E5BC"/><stop offset=".55" stop-color="#E2C88E"/><stop offset="1" stop-color="#B99A5E"/>
-      </linearGradient>
       <linearGradient id="hsHill" x1="0" y1="140" x2="0" y2="170" gradientUnits="userSpaceOnUse">
         <stop offset="0" stop-color="#1C2C4E"/><stop offset="1" stop-color="#101B34"/>
       </linearGradient>
@@ -76,14 +77,14 @@ export function renderStargaze(
       <circle cx="163" cy="64" r="13" fill="url(#hsGlow)"/>
       <circle cx="163" cy="64" r="3.2" fill="#FFF3C4"/>
     </g>
-    <!-- 망원경 뷰(처음엔 숨김) -->
+    <!-- 망원경 뷰(처음엔 숨김) — 카시니가 찍은 진짜 토성 -->
     <g class="hs-scope">
-      <circle cx="163" cy="64" r="34" fill="#0B1524" stroke="#8FB3E8" stroke-width="2.6"/>
-      <g>
-        <ellipse cx="163" cy="64" rx="26" ry="7" stroke="#D9C08A" stroke-width="3" opacity=".9"/>
-        <circle cx="163" cy="64" r="11" fill="url(#hsSat)"/>
-        <path d="M154 58q9-4 18 0" stroke="#FFF4D0" stroke-width="2" opacity=".8"/>
+      <clipPath id="hsScopeClip"><circle cx="163" cy="64" r="34"/></clipPath>
+      <circle cx="163" cy="64" r="34" fill="#04070E"/>
+      <g clip-path="url(#hsScopeClip)">
+        <image href="${photo("saturn_cassini.jpg")}" x="109.8" y="38.3" width="105" height="51.4" preserveAspectRatio="none"/>
       </g>
+      <circle cx="163" cy="64" r="34" stroke="#8FB3E8" stroke-width="2.6"/>
       <path d="M139 40l-8-8M187 40l8-8M139 88l-8 8M187 88l8 8" stroke="#8FB3E8" stroke-width="2" opacity=".5"/>
     </g>
     <path d="M4 152q60-24 118-10t114 4v16a16 16 0 0 1-16 16H20a16 16 0 0 1-16-16z" fill="url(#hsHill)"/>
@@ -138,33 +139,29 @@ export function renderPlanetSize(
       <linearGradient id="hpSky" x1="0" y1="0" x2="0" y2="170" gradientUnits="userSpaceOnUse">
         <stop offset="0" stop-color="#0A1226"/><stop offset="1" stop-color="#182848"/>
       </linearGradient>
-      <linearGradient id="hpJup" x1="60" y1="30" x2="180" y2="140" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="#EADFC6"/><stop offset=".5" stop-color="#D3AC7C"/><stop offset="1" stop-color="#A9714C"/>
-      </linearGradient>
-      <radialGradient id="hpJupHl" cx=".32" cy=".26" r=".7">
-        <stop offset="0" stop-color="#FFF7E2" stop-opacity=".85"/><stop offset="1" stop-color="#FFF7E2" stop-opacity="0"/>
+      <clipPath id="hpJupClip"><circle cx="120" cy="85" r="57"/></clipPath>
+      <clipPath id="hpEarthClip"><circle cx="120" cy="152" r="6"/></clipPath>
+      <radialGradient id="hpJupGlow" cx=".5" cy=".5" r=".5">
+        <stop offset="0" stop-color="#E8CFA0" stop-opacity=".28"/><stop offset="1" stop-color="#E8CFA0" stop-opacity="0"/>
       </radialGradient>
-      <linearGradient id="hpEarth" x1="0" y1="-5" x2="0" y2="5" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="#7FB2F0"/><stop offset="1" stop-color="#2E6FD4"/>
-      </linearGradient>
     </defs>
     <rect x="4" y="4" width="232" height="162" rx="16" fill="url(#hpSky)"/>
     <circle cx="26" cy="26" r="1.4" fill="#DCE8FF"/><circle cx="212" cy="34" r="1.4" fill="#DCE8FF"/>
     <circle cx="196" cy="140" r="1.2" fill="#DCE8FF"/><circle cx="38" cy="140" r="1.2" fill="#DCE8FF"/>
-    <!-- 목성 -->
-    <circle cx="120" cy="85" r="57" fill="url(#hpJup)"/>
-    <circle cx="120" cy="85" r="57" fill="url(#hpJupHl)"/>
-    <g stroke="#B57B50" stroke-width="5" opacity=".55">
-      <path d="M68 66q52 12 104 0"/><path d="M64 92q56 12 112 0"/><path d="M72 116q48 12 96 0"/>
+    <!-- 목성 — 허블 실사 -->
+    <circle cx="120" cy="85" r="66" fill="url(#hpJupGlow)"/>
+    <g clip-path="url(#hpJupClip)">
+      <image href="${photo("jupiter.jpg")}" x="55.4" y="20.7" width="129.3" height="129.3" preserveAspectRatio="none"/>
     </g>
-    <ellipse cx="141" cy="106" rx="10" ry="6" fill="#C4553E"/>
-    <circle cx="120" cy="85" r="57" stroke="#7C4E33" stroke-width="1.6"/>
+    <circle cx="120" cy="85" r="57" stroke="rgba(124,78,51,.8)" stroke-width="1.4"/>
     <!-- 지구 줄(지름 위) -->
     <g class="hp-earthrow"></g>
-    <!-- 기준 지구 -->
-    <circle cx="120" cy="152" r="5.2" fill="url(#hpEarth)"/>
-    <circle cx="120" cy="152" r="5.2" stroke="#1B4B9E" stroke-width="1.2"/>
-    <path d="M116 150q3-2 5 0t4 1" stroke="#7CA65A" stroke-width="1.6"/>
+    <!-- 기준 지구 — 아폴로 17호 실사 -->
+    <g clip-path="url(#hpEarthClip)">
+      <image href="${photo("earth_apollo17.jpg")}" x="113.6" y="145.6" width="12.8" height="12.8" preserveAspectRatio="none"/>
+    </g>
+    <circle cx="120" cy="152" r="6" stroke="rgba(120,170,240,.7)" stroke-width="1"/>
+    <text x="230" y="163" fill="#54679C" font-size="6.5" text-anchor="end" font-family="Pretendard, sans-serif">NASA/ESA Hubble · Apollo 17</text>
   </svg>`;
   const row = fig.querySelector(".hp-earthrow") as unknown as SVGGElement;
   const choicesBox = el("div", { class: "hook-choices" });
@@ -222,39 +219,83 @@ export function renderShadowClock(
   face: (k: AvatarKind) => void,
 ): void {
   const fig = el("div", { class: "hk-space-day t-morning" });
-  fig.innerHTML = `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" aria-hidden="true">
+  fig.innerHTML = `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <defs>
       <linearGradient id="scSky" x1="0" y1="0" x2="0" y2="170" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="#BFE0FF"/><stop offset="1" stop-color="#E8F4FF"/>
+        <stop offset="0" stop-color="#9CCBFF"/><stop offset=".62" stop-color="#CFE7FF"/><stop offset="1" stop-color="#EAF5FF"/>
       </linearGradient>
-      <radialGradient id="scSun" cx=".5" cy=".5" r=".5">
-        <stop offset="0" stop-color="#FFE9A8"/><stop offset=".55" stop-color="#FFD25E"/><stop offset="1" stop-color="#FFB03A"/>
+      <radialGradient id="scSun" cx=".42" cy=".38" r=".68">
+        <stop offset="0" stop-color="#FFF6D8"/><stop offset=".5" stop-color="#FFD25E"/><stop offset="1" stop-color="#F5A028"/>
       </radialGradient>
-      <linearGradient id="scTower" x1="108" y1="60" x2="136" y2="130" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="#FBFDFF"/><stop offset=".5" stop-color="#E2E9F2"/><stop offset="1" stop-color="#C2CDDD"/>
+      <radialGradient id="scSunGlow" cx=".5" cy=".5" r=".5">
+        <stop offset="0" stop-color="#FFE9A8" stop-opacity=".8"/><stop offset="1" stop-color="#FFE9A8" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="scTower" x1="108" y1="64" x2="140" y2="132" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#FDFEFF"/><stop offset=".45" stop-color="#E6EDF6"/><stop offset="1" stop-color="#C4CFDF"/>
+      </linearGradient>
+      <linearGradient id="scRoof" x1="122" y1="44" x2="122" y2="64" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#F2A97E"/><stop offset="1" stop-color="#D97B4E"/>
       </linearGradient>
       <linearGradient id="scGrass" x1="0" y1="130" x2="0" y2="170" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="#BFE3A8"/><stop offset="1" stop-color="#93C77C"/>
+        <stop offset="0" stop-color="#C6E7AE"/><stop offset="1" stop-color="#8FC276"/>
+      </linearGradient>
+      <linearGradient id="scShM" x1="136" y1="0" x2="206" y2="0" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#2A3A5E" stop-opacity=".22"/><stop offset="1" stop-color="#2A3A5E" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="scShE" x1="108" y1="0" x2="38" y2="0" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#2A3A5E" stop-opacity=".22"/><stop offset="1" stop-color="#2A3A5E" stop-opacity="0"/>
       </linearGradient>
     </defs>
     <rect x="4" y="4" width="232" height="162" rx="16" fill="url(#scSky)"/>
+    <rect class="sc-skytint" x="4" y="4" width="232" height="162" rx="16" fill="#FFD68A" opacity=".18"/>
+    <!-- 태양이 지나는 길 -->
+    <path d="M30 64Q120 -2 210 64" stroke="#FFFFFF" stroke-width="1.6" stroke-dasharray="2 6" opacity=".85"/>
+    <!-- 태양(시각에 따라 이동) -->
+    <g class="sc-sun">
+      <circle cx="34" cy="62" r="30" fill="url(#scSunGlow)"/>
+      <circle cx="34" cy="62" r="13" fill="url(#scSun)"/>
+      <circle cx="34" cy="62" r="13" stroke="#E08414" stroke-width="1.2"/>
+    </g>
+    <!-- 풀밭 -->
     <path d="M4 134h232v16a16 16 0 0 1-16 16H20a16 16 0 0 1-16-16z" fill="url(#scGrass)"/>
-    <circle class="sc-sun" cx="48" cy="46" r="15" fill="url(#scSun)"/>
-    <!-- 그림자(시각별 3종) -->
-    <g fill="#2A3A5E">
-      <path class="sc-sh sc-sh-m" d="M122 132l58 14-4 6-56-14z" opacity=".16"/>
-      <path class="sc-sh sc-sh-n" d="M116 132h12l3 10h-18z" opacity=".16"/>
-      <path class="sc-sh sc-sh-e" d="M122 132l-58 14 4 6 56-14z" opacity=".16"/>
+    <path d="M4 134q60 -7 116 0t116 0" stroke="#7FB368" stroke-width="1.4" opacity=".5"/>
+    <!-- 그림자(시각별) — 뿌리는 짙고 끝은 옅게 -->
+    <g>
+      <path class="sc-sh sc-sh-m" d="M135 131l70 11-8 8-62-13z" fill="url(#scShM)"/>
+      <path class="sc-sh sc-sh-n" d="M112 131h20l-2 6h-16z" fill="#2A3A5E" fill-opacity=".14"/>
+      <path class="sc-sh sc-sh-e" d="M109 131l-70 11 8 8 62-13z" fill="url(#scShE)"/>
     </g>
     <!-- 시계탑 -->
-    <ellipse cx="122" cy="134" rx="20" ry="3.4" fill="#2A3A5E" opacity=".10"/>
-    <path d="M110 66h24v66h-24z" fill="url(#scTower)"/>
-    <path d="M110 66h24v66h-24z" stroke="#9DAABD" stroke-width="1.6"/>
-    <path d="M113 72v54" stroke="#FFFFFF" stroke-width="3.4" opacity=".7"/>
-    <path d="M108 62h28l-14-14z" fill="#E4906A"/>
-    <path d="M108 62h28l-14-14z" stroke="#B05E3C" stroke-width="1.6"/>
-    <circle cx="122" cy="88" r="9" fill="#FFFFFF" stroke="#9DAABD" stroke-width="1.6"/>
-    <path class="sc-hand" d="M122 88v-6M122 88l4 3" stroke="#4E5968" stroke-width="1.8"/>
+    <ellipse cx="122" cy="133" rx="21" ry="3.2" fill="#2A3A5E" opacity=".11"/>
+    <path d="M109 66h26v66h-26z" fill="url(#scTower)"/>
+    <path d="M111.6 72v56" stroke="#FFFFFF" stroke-width="3" opacity=".75"/>
+    <path d="M132.4 72v56" stroke="#8A97AC" stroke-width="2" opacity=".35"/>
+    <path d="M109 118h26M109 76h26" stroke="#B9C4D4" stroke-width="1" opacity=".6"/>
+    <path d="M109 66h26v66h-26z" stroke="#8A97AC" stroke-width="1.5"/>
+    <path d="M106 66h32v-4h-32z" fill="#D5DDE8" stroke="#8A97AC" stroke-width="1.4"/>
+    <path d="M106 62h32L122 44z" fill="url(#scRoof)"/>
+    <path d="M106 62L122 44l4 4.5" stroke="#FFE2C8" stroke-width="1.6" opacity=".8"/>
+    <path d="M106 62h32L122 44z" stroke="#B05E3C" stroke-width="1.5"/>
+    <path d="M122 44v-5" stroke="#B05E3C" stroke-width="1.6"/>
+    <circle cx="122" cy="37.5" r="1.8" fill="#E4906A" stroke="#B05E3C" stroke-width="1.1"/>
+    <!-- 시계면: 중심 (122,88) r=10.5 -->
+    <circle cx="122" cy="88" r="10.5" fill="#FFFFFF"/>
+    <circle cx="122" cy="88" r="10.5" stroke="#8A97AC" stroke-width="1.6"/>
+    <path d="M122 79.4v2.2M122 94.4v2.2M113.4 88h2.2M128.4 88h2.2" stroke="#9DAABD" stroke-width="1.4"/>
+    <path class="sc-hh" d="M122 88V82.4" stroke="#38424E" stroke-width="2" />
+    <path class="sc-mh" d="M122 88V80.2" stroke="#4E5968" stroke-width="1.5" />
+    <circle cx="122" cy="88" r="1.4" fill="#38424E"/>
+    <!-- 문 -->
+    <path d="M117 132v-8a5 5 0 0 1 10 0v8z" fill="#41506C"/>
+    <path d="M117 132v-8a5 5 0 0 1 10 0v8" stroke="#2E3A52" stroke-width="1.2"/>
+    <!-- 새 두 마리 -->
+    <path d="M58 34q3-3 6 0q3-3 6 0M172 26q2.6-2.6 5.2 0q2.6-2.6 5.2 0" stroke="#7FA3CC" stroke-width="1.6"/>
+    <!-- 관찰하는 스틱맨(손그림 라인) -->
+    <ellipse cx="66" cy="147" rx="15" ry="2.6" fill="#2A3A5E" opacity=".12"/>
+    <g stroke="#3C4654" stroke-width="2.4">
+      <circle cx="62" cy="112" r="7.5" fill="#fff"/>
+      <path d="M62 120v15M62 125l-8 4M62 125l12-7M62 135l-6 11M62 135l7 11"/>
+    </g>
   </svg>`;
   const seg = el("div", { class: "seg" });
   const mk = (id: "morning" | "noon" | "evening", label: string): HTMLButtonElement => {
@@ -313,9 +354,10 @@ export function renderMoonPic(
       <linearGradient id="mpSky" x1="0" y1="30" x2="0" y2="150" gradientUnits="userSpaceOnUse">
         <stop offset="0" stop-color="#0C1530"/><stop offset="1" stop-color="#1B2C52"/>
       </linearGradient>
-      <radialGradient id="mpMoon" cx=".36" cy=".3" r=".8">
-        <stop offset="0" stop-color="#FCF6E4"/><stop offset=".7" stop-color="#E8DCB8"/><stop offset="1" stop-color="#C9BA8E"/>
-      </radialGradient>
+      <clipPath id="mpMoonClip"><circle cx="120" cy="84" r="24"/></clipPath>
+      <linearGradient id="mpTerm" x1="96" y1="84" x2="126" y2="84" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#070B18" stop-opacity=".97"/><stop offset=".78" stop-color="#070B18" stop-opacity=".92"/><stop offset="1" stop-color="#070B18" stop-opacity="0"/>
+      </linearGradient>
     </defs>
     <ellipse cx="120" cy="163" rx="52" ry="4" fill="#2A3A5E" opacity=".12"/>
     <rect x="72" y="8" width="96" height="152" rx="14" fill="url(#mpBody)"/>
@@ -324,21 +366,13 @@ export function renderMoonPic(
     <rect x="100" y="14" width="40" height="5" rx="2.5" fill="#0D131D"/>
     <circle cx="90" cy="52" r="1.1" fill="#DCE8FF"/><circle cx="148" cy="44" r="1.2" fill="#DCE8FF"/>
     <circle cx="132" cy="118" r="1" fill="#DCE8FF"/><circle cx="96" cy="122" r="1" fill="#DCE8FF"/>
-    <!-- 사진 1: 오른쪽 반달(상현) -->
-    <g class="mp-pic mp-pic0">
-      <path d="M120 60a24 24 0 0 1 0 48z" fill="url(#mpMoon)"/>
-      <path d="M120 60a24 24 0 0 1 0 48" stroke="#A89A72" stroke-width="1.4"/>
-      <circle cx="128" cy="76" r="3" fill="#C9BA8E" opacity=".8"/>
-      <circle cx="124" cy="94" r="2.2" fill="#C9BA8E" opacity=".7"/>
+    <!-- 진짜 달 사진(LRO 모자이크) — 위상은 명암 마스크로 -->
+    <g clip-path="url(#mpMoonClip)">
+      <image href="${photo("moon_lro.jpg")}" x="94.5" y="58.5" width="51" height="51" preserveAspectRatio="none"/>
+      <!-- 사진 1: 오른쪽 반달(상현) — 왼쪽 절반이 밤 -->
+      <rect class="mp-pic mp-pic0" x="94.5" y="58.5" width="31.5" height="51" fill="url(#mpTerm)"/>
     </g>
-    <!-- 사진 2: 보름달 -->
-    <g class="mp-pic mp-pic1">
-      <circle cx="120" cy="84" r="24" fill="url(#mpMoon)"/>
-      <circle cx="120" cy="84" r="24" stroke="#A89A72" stroke-width="1.4"/>
-      <circle cx="111" cy="74" r="4" fill="#C9BA8E" opacity=".7"/>
-      <circle cx="128" cy="88" r="3.2" fill="#C9BA8E" opacity=".7"/>
-      <circle cx="116" cy="98" r="2.4" fill="#C9BA8E" opacity=".6"/>
-    </g>
+    <circle class="mp-ring" cx="120" cy="84" r="24" stroke="#A89A72" stroke-width="1.2" opacity=".7"/>
     <text class="mp-date mp-d0" x="120" y="152" fill="#8FA6CE" font-size="9" text-anchor="middle" font-family="Pretendard, sans-serif">지난주 화요일 밤</text>
     <text class="mp-date mp-d1" x="120" y="152" fill="#8FA6CE" font-size="9" text-anchor="middle" font-family="Pretendard, sans-serif">오늘 밤</text>
   </svg>`;

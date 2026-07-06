@@ -2,3 +2,11 @@ node_modules
 dist
 *.local
 .DS_Store
+
+# e2e·검수 스크린샷 산출물
+qa/e2e_*.png
+qa/u7fix-*.png
+qa/u7card.png
+
+# 발주 실행 로그
+qa/order-*.log

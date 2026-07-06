@@ -1,11 +1,14 @@
 // hotspot — 그림 위 지점을 탭해 구조 이름·기능을 드러내거나(reveal),
 // 지목된 구조를 찾게 한다(find). 세포 소기관 라벨링 등에 사용.
+// spot.photo가 있으면 설명 아래에 해당 부분의 실사 사진 카드를 띄운다(태양 지도 등).
 
-import { el } from "../../core/dom";
+import { el, clear } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import type { StepAPI, StepRenderer } from "../types";
 
-interface Spot { x: number; y: number; label: string; desc?: string; }
+const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+
+interface Spot { x: number; y: number; label: string; desc?: string; photo?: string; photoCredit?: string; }
 interface HotspotStep {
   title: string;
   lead?: string;
@@ -26,13 +29,29 @@ export const hotspot: StepRenderer = (host, step, api) => {
   const stage = el("div", { class: `hs-stage ${s.dark ? "dark" : ""}` });
   stage.appendChild(el("div", { class: "hs-art", html: s.svg }));
   const label = el("div", { class: "hs-readout" });
-  host.append(stage, label);
+  const photoBox = el("div", { class: "hs-photo" });
+  host.append(stage, label, photoBox);
 
   if (mode === "find") return renderFind(stage, label, s, api);
-  return renderReveal(stage, label, s, api);
+  return renderReveal(stage, label, photoBox, s, api);
 };
 
-function renderReveal(stage: HTMLElement, label: HTMLElement, s: HotspotStep, api: StepAPI): void {
+function showPhoto(photoBox: HTMLElement, spot: Spot): void {
+  clear(photoBox);
+  if (!spot.photo) {
+    photoBox.classList.remove("show");
+    return;
+  }
+  const img = el("img", { attrs: { src: base + spot.photo, alt: `${spot.label} 실제 사진`, loading: "lazy" } });
+  img.addEventListener("error", () => photoBox.classList.remove("show"));
+  photoBox.append(img, el("span", { class: "hs-photo-cap", text: `${spot.label} — 실제 관측 사진${spot.photoCredit ? ` (${spot.photoCredit})` : ""}` }));
+  // reflow 후 표시 — 스팟을 바꿔 눌러도 매번 전환 애니메이션이 재생되게
+  photoBox.classList.remove("show");
+  void photoBox.offsetWidth;
+  photoBox.classList.add("show");
+}
+
+function renderReveal(stage: HTMLElement, label: HTMLElement, photoBox: HTMLElement, s: HotspotStep, api: StepAPI): void {
   const revealed = new Set<number>();
   label.innerHTML = `<b>${revealed.size}</b> / ${s.spots.length} · 각 부분을 눌러 보세요`;
   s.spots.forEach((spot, i) => {
@@ -50,6 +69,7 @@ function renderReveal(stage: HTMLElement, label: HTMLElement, s: HotspotStep, ap
       }
       showTag(stage, spot);
       label.innerHTML = `<b class="hs-name">${spot.label}</b>${spot.desc ? " · " + spot.desc : ""}`;
+      showPhoto(photoBox, spot);
       if (revealed.size === s.spots.length) api.enableCTA("다 배웠어요");
     });
     stage.appendChild(dot);

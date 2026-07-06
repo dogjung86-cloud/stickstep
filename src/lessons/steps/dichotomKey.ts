@@ -3,11 +3,12 @@
 
 import { el, clear } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { curioCard, type Curio } from "../../ui/curio";
 import type { StepAPI, StepRenderer } from "../types";
 
 type Kingdom = "원핵생물계" | "원생생물계" | "균계" | "식물계" | "동물계";
 interface Organism { name: string; kingdom: Kingdom; svg?: string; }
-interface DichotomStep { title: string; lead?: string; organisms: Organism[]; explainGood?: string; explainBad?: string; }
+interface DichotomStep { title: string; lead?: string; organisms: Organism[]; explainGood?: string; explainBad?: string; curio?: Curio; }
 
 type Node = "nucleus" | "other" | "photo" | "animal";
 const QTEXT: Record<Node, string> = {
@@ -56,6 +57,7 @@ export const dichotomKey: StepRenderer = (host, step, api) => {
   const btns = el("div", { class: "dk-btns" }, yesBtn, noBtn);
   const hint = el("div", { class: "helper" });
   host.append(progress, card, crumbs, qEl, btns, hint);
+  if (s.curio) host.appendChild(curioCard(s.curio));
 
   function renderOrganism(): void {
     node = "nucleus";

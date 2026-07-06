@@ -1,15 +1,16 @@
-// zodiacRing — 지구의 공전과 별자리 변화 랩(VII 단원 L4). 교과서 그림 VII-8(247쪽)의 조작판.
-//   · 위에서 내려다본 지구 공전 궤도 + 바깥 황도 12궁 링.
-//   · 지구를 궤도에서 끌면 달(月)이 바뀌고, "태양 쪽 별자리(못 봄)"와
-//     "한밤중 남쪽 하늘 별자리(잘 봄)"가 실시간으로 표시된다.
+// zodiacRing — 지구의 공전과 별자리 변화 3D 랩(VII 단원 L4). 교과서 그림 VII-8(247쪽)의 입체판.
+//   · three.js: 태양(중심 광원) 둘레의 지구를 궤도에서 끌면 달(月)이 바뀌고,
+//     "태양 쪽 별자리(못 봄)"와 "한밤중 남쪽 하늘 별자리(잘 봄)"가 실시간 표시된다.
+//   · 태양 점광 덕에 지구의 밤낮 반구가 실제로 갈린다 — 밤 쪽에서 반대편 별자리를 본다는
+//     개념이 그림이 아니라 조명으로 체험된다.
 // 목표: ① 지구를 끌어 두 별자리 비교 ② 물고기자리가 태양 쪽인 달 찾기(4월)
 //       ③ 궁수자리가 한밤에 잘 보이는 달 찾기(7월).
 
 import { el } from "../../core/dom";
 import { createLoop, type Loop } from "../../core/anim";
-import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
 import type { StepRenderer } from "../types";
+import type { SpaceStage, THREE as T } from "../../ui/space3d";
 
 interface ZodiacStep {
   title: string;
@@ -19,6 +20,92 @@ interface ZodiacStep {
 
 // index i = (i+1)월에 태양 쪽에 있는 별자리(그림 VII-8)
 const ZODIAC = ["궁수", "염소", "물병", "물고기", "양", "황소", "쌍둥이", "게", "사자", "처녀", "천칭", "전갈"];
+
+const ORBIT_R = 5.2;
+const RING_R = 11;
+
+// 별자리 스틱 그림 — 꼭짓점이 별, 선이 이어진 모양(간략화한 성좌선).
+// 좌표는 0..1 정규화, l = 잇는 별 인덱스 쌍.
+const SHAPES: Record<string, { p: [number, number][]; l: [number, number][] }> = {
+  궁수: { // 주전자(teapot) 모양
+    p: [[0.32, 0.45], [0.58, 0.42], [0.66, 0.62], [0.34, 0.66], [0.45, 0.28], [0.78, 0.3], [0.18, 0.52]],
+    l: [[0, 1], [1, 2], [2, 3], [3, 0], [0, 4], [4, 1], [1, 5], [0, 6], [6, 3]],
+  },
+  염소: { // 웃는 입꼬리 삼각(고전 모양)
+    p: [[0.18, 0.35], [0.35, 0.55], [0.55, 0.62], [0.75, 0.5], [0.82, 0.32]],
+    l: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]],
+  },
+  물병: { // 물결 두 줄
+    p: [[0.2, 0.38], [0.35, 0.28], [0.5, 0.38], [0.65, 0.28], [0.8, 0.38], [0.2, 0.65], [0.35, 0.55], [0.5, 0.65], [0.65, 0.55], [0.8, 0.65]],
+    l: [[0, 1], [1, 2], [2, 3], [3, 4], [5, 6], [6, 7], [7, 8], [8, 9]],
+  },
+  물고기: { // V자 끈 + 양 끝 물고기 고리
+    p: [[0.22, 0.3], [0.37, 0.5], [0.5, 0.64], [0.63, 0.5], [0.78, 0.3], [0.14, 0.24], [0.26, 0.18], [0.86, 0.24], [0.74, 0.18]],
+    l: [[0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 0], [4, 7], [7, 8], [8, 4]],
+  },
+  양: { // 완만한 호 끝이 꺾인 뿔
+    p: [[0.15, 0.58], [0.4, 0.44], [0.65, 0.4], [0.85, 0.5], [0.8, 0.66]],
+    l: [[0, 1], [1, 2], [2, 3], [3, 4]],
+  },
+  황소: { // V자 얼굴 + 긴 뿔
+    p: [[0.14, 0.2], [0.42, 0.52], [0.5, 0.68], [0.58, 0.52], [0.86, 0.16]],
+    l: [[0, 1], [1, 2], [2, 3], [3, 4]],
+  },
+  쌍둥이: { // 나란한 두 사람
+    p: [[0.32, 0.2], [0.32, 0.5], [0.3, 0.8], [0.64, 0.18], [0.66, 0.5], [0.68, 0.8]],
+    l: [[0, 1], [1, 2], [3, 4], [4, 5], [0, 3], [1, 4]],
+  },
+  게: { // 거꾸로 된 Y
+    p: [[0.5, 0.26], [0.5, 0.52], [0.28, 0.74], [0.72, 0.74]],
+    l: [[0, 1], [1, 2], [1, 3]],
+  },
+  사자: { // 낫(갈기) + 꼬리 삼각
+    p: [[0.24, 0.32], [0.33, 0.2], [0.44, 0.24], [0.47, 0.4], [0.37, 0.5], [0.55, 0.6], [0.8, 0.54], [0.74, 0.74]],
+    l: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 5]],
+  },
+  처녀: { // Y + 치맛자락
+    p: [[0.3, 0.18], [0.46, 0.4], [0.66, 0.24], [0.5, 0.56], [0.34, 0.76], [0.62, 0.78]],
+    l: [[0, 1], [2, 1], [1, 3], [3, 4], [3, 5]],
+  },
+  천칭: { // 저울 삼각 + 다리
+    p: [[0.5, 0.24], [0.26, 0.48], [0.74, 0.48], [0.3, 0.74], [0.7, 0.74]],
+    l: [[0, 1], [0, 2], [1, 2], [1, 3], [2, 4]],
+  },
+  전갈: { // 길게 휘는 꼬리와 독침
+    p: [[0.18, 0.24], [0.28, 0.4], [0.34, 0.56], [0.44, 0.7], [0.6, 0.76], [0.74, 0.7], [0.8, 0.56], [0.72, 0.46]],
+    l: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7]],
+  },
+};
+
+/** 별자리 스틱 그림 스프라이트(흰색으로 그려 material.color로 틴트). */
+function constellationTexture(name: string): HTMLCanvasElement {
+  const S = 112;
+  const pad = 10;
+  const cv = document.createElement("canvas");
+  cv.width = S;
+  cv.height = S;
+  const ctx = cv.getContext("2d")!;
+  const shape = SHAPES[name] ?? SHAPES["게"];
+  const px = (f: number): number => pad + f * (S - pad * 2);
+  ctx.strokeStyle = "rgba(255,255,255,.55)";
+  ctx.lineWidth = 2.2;
+  ctx.lineCap = "round";
+  for (const [a, b] of shape.l) {
+    ctx.beginPath();
+    ctx.moveTo(px(shape.p[a][0]), px(shape.p[a][1]));
+    ctx.lineTo(px(shape.p[b][0]), px(shape.p[b][1]));
+    ctx.stroke();
+  }
+  ctx.fillStyle = "#FFFFFF";
+  ctx.shadowColor = "rgba(255,255,255,.9)";
+  ctx.shadowBlur = 5;
+  for (const [fx, fy] of shape.p) {
+    ctx.beginPath();
+    ctx.arc(px(fx), px(fy), 3.1, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  return cv;
+}
 
 export const zodiacRing: StepRenderer = (host, step, api) => {
   const s = step as unknown as ZodiacStep;
@@ -61,6 +148,7 @@ export const zodiacRing: StepRenderer = (host, step, api) => {
   let holdArcher = 0;
   const goals = new Set<string>();
   let finished = false;
+  let disposed = false;
 
   function collect(id: string, subText: string): void {
     if (goals.has(id)) return;
@@ -84,23 +172,110 @@ export const zodiacRing: StepRenderer = (host, step, api) => {
     }
   }
 
-  // ---- 입력 ----
-  const geom = (): { cx: number; cy: number; orbitR: number; ringR: number } => {
-    const W = canvas.clientWidth || 340;
-    const cx = W / 2;
-    const cy = 172;
-    const orbitR = Math.min(W, 340) * 0.21;
-    const ringR = Math.min(W / 2 - 26, 150);
-    return { cx, cy, orbitR, ringR };
-  };
-  function pointerAngle(e: PointerEvent): number {
+  // ---- three.js 씬(동적 로드) ----
+  let st: SpaceStage | null = null;
+  let THREE: typeof T | null = null;
+  let earth: T.Mesh | null = null;
+  let earthHalo: T.Sprite | null = null;
+  let loop: Loop | null = null;
+  const figures: T.Sprite[] = [];
+  const labels: T.Sprite[] = [];
+  let sunLine: T.Line | null = null;
+  let nightLine: T.Line | null = null;
+  let sunTag: T.Sprite | null = null;
+  let nightTag: T.Sprite | null = null;
+
+  const posOf = (a: number, r: number): [number, number, number] => [Math.cos(a) * r, 0, -Math.sin(a) * r];
+
+  void (async () => {
+    const S = await import("../../ui/space3d");
+    if (disposed) return;
+    THREE = S.THREE;
+    st = S.createSpaceStage(canvas, { fov: 46 });
+    if (!st) {
+      stage.classList.add("sp3-fallback");
+      helper.innerHTML =
+        "이 기기에서 3D를 켤 수 없어요. 그림으로 기억해요 — 지구가 공전하면 <b>태양 쪽 별자리(못 봄)</b>와 <b>반대쪽 별자리(한밤에 잘 봄)</b>가 달마다 바뀌어요.";
+      api.recordQuiz(true);
+      api.enableCTA(s.cta ?? "개념 정리하기");
+      return;
+    }
+    const { scene, camera } = st;
+    scene.add(S.makeStars(650, 150));
+
+    // 태양(중심) — 점광이 지구의 밤낮을 가른다
+    const sunBall = S.makePlanet("sun", 1.5, 40);
+    scene.add(sunBall);
+    const sunGlow = S.makeGlow(9, "rgba(255,190,80,.85)", 0.14);
+    scene.add(sunGlow);
+    scene.add(new THREE.PointLight(0xfff2dc, 2.6, 0, 0));
+    scene.add(new THREE.AmbientLight(0x3c4c6c, 0.75));
+
+    // 지구 궤도 + 지구
+    scene.add(S.makeOrbitLine(ORBIT_R, "#6E8CB8", 0.5, 128));
+    earth = S.makePlanet("earth", 0.62, 48);
+    scene.add(earth);
+    earthHalo = S.makeGlow(2.6, "rgba(140,180,255,.4)", 0.3);
+    scene.add(earthHalo);
+
+    // 황도 12궁 — 별자리 스틱 그림(꼭짓점 별 + 성좌선) + 이름 라벨(안쪽)
+    for (let k = 0; k < 12; k++) {
+      const a = (k / 12) * Math.PI * 2;
+      const [cx, , cz] = posOf(a, RING_R);
+      const tex = new THREE.CanvasTexture(constellationTexture(ZODIAC[k]));
+      tex.colorSpace = THREE.SRGBColorSpace;
+      const mat = new THREE.SpriteMaterial({ map: tex, color: 0xbfd2f0, transparent: true, opacity: 0.95, depthWrite: false });
+      const figure = new THREE.Sprite(mat);
+      figure.position.set(cx, 0.5, cz);
+      figure.scale.setScalar(3.1);
+      scene.add(figure);
+      figures.push(figure);
+      const label = S.makeLabel(`${ZODIAC[k]}자리`, { size: 1.5 });
+      const [lx, , lz] = posOf(a, RING_R - 2.9);
+      label.position.set(lx, 0.1, lz);
+      scene.add(label);
+      labels.push(label);
+    }
+
+    // 시선(지구→태양 쪽 / 지구→한밤 쪽) + 설명 태그
+    const T3 = S.THREE;
+    const mkLine = (color: number, opacity: number): T.Line => {
+      const geo = new T3.BufferGeometry().setFromPoints([new T3.Vector3(), new T3.Vector3()]);
+      const line = new T3.Line(geo, new T3.LineBasicMaterial({ color, transparent: true, opacity }));
+      scene.add(line);
+      return line;
+    };
+    sunLine = mkLine(0xffaa50, 0.55);
+    nightLine = mkLine(0x8cbeff, 0.6);
+    sunTag = S.makeLabel("태양 쪽 — 못 봐요", { size: 1.35, color: "#FFC896" });
+    nightTag = S.makeLabel("한밤 남쪽 — 잘 보여요", { size: 1.35, color: "#BCD8FF" });
+    scene.add(sunTag, nightTag);
+
+    // 카메라 — 비스듬히 내려다보는 입체 시점
+    camera.position.set(0, 24.5, 15.5);
+    camera.lookAt(0, 0, 0);
+
+    loop = createLoop((dt) => frame(dt));
+    loop.start();
+  })();
+
+  // ---- 입력: 지구 드래그(y=0 평면 레이캐스트 → 각도) ----
+  function pointerAngle(e: PointerEvent): number | null {
+    if (!st || !THREE) return null;
     const r = canvas.getBoundingClientRect();
-    const { cx, cy } = geom();
-    return Math.atan2(e.clientY - r.top - cy, e.clientX - r.left - cx);
+    const nx = ((e.clientX - r.left) / r.width) * 2 - 1;
+    const ny = -(((e.clientY - r.top) / r.height) * 2 - 1);
+    const ray = new THREE.Raycaster();
+    ray.setFromCamera(new THREE.Vector2(nx, ny), st.camera);
+    const hit = new THREE.Vector3();
+    if (!ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), hit)) return null;
+    return Math.atan2(-hit.z, hit.x);
   }
   canvas.addEventListener("pointerdown", (e) => {
+    const a = pointerAngle(e);
+    if (a == null) return;
     dragging = true;
-    lastA = pointerAngle(e);
+    lastA = a;
     if (!capFaded) {
       capFaded = true;
       cap.classList.add("fade");
@@ -114,6 +289,7 @@ export const zodiacRing: StepRenderer = (host, step, api) => {
   canvas.addEventListener("pointermove", (e) => {
     if (!dragging) return;
     const a = pointerAngle(e);
+    if (a == null) return;
     let d = a - lastA;
     if (d > Math.PI) d -= Math.PI * 2;
     if (d < -Math.PI) d += Math.PI * 2;
@@ -129,130 +305,56 @@ export const zodiacRing: StepRenderer = (host, step, api) => {
   canvas.addEventListener("pointercancel", up);
 
   // ---- 프레임 ----
-  const loop: Loop = createLoop((dt) => {
-    const fit = fitCanvas(canvas, 340);
-    const ctx = fit.ctx;
-    const W = fit.w;
-    const H = fit.h;
-    const { cx, cy, orbitR, ringR } = geom();
+  function frame(dt: number): void {
+    if (!st || !THREE || !earth || !earthHalo) return;
+    const w = canvas.clientWidth || 340;
+    st.resize(w, 340);
 
-    // 달 계산: i월 태양 쪽 별자리 각도 = i*30°(위=12시부터 시계방향 아님 — 표준 수학각).
-    // 별자리 k(=k+1월 태양 쪽)를 각도 A_k = k*30°에 두고, 지구의 k월 위치는 A_k+180°.
+    // 달 계산(2D 버전과 동일한 각도 규약)
     const norm = ((earthA % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-    const sunSideA = norm + Math.PI; // 지구→태양 방향 연장 = 태양 쪽 별자리 각도
+    const sunSideA = norm + Math.PI;
     month = Math.round((((sunSideA / (Math.PI * 2)) * 12) % 12 + 12) % 12) % 12;
-    const sunConst = ZODIAC[month];
-    monthPill.textContent = `${month + 1}월 — 태양 쪽 ${sunConst}자리`;
+    monthPill.textContent = `${month + 1}월 — 태양 쪽 ${ZODIAC[month]}자리`;
 
-    // 배경
-    ctx.fillStyle = "rgba(8,14,28,.6)";
-    ctx.fillRect(6, 6, W - 12, H - 12);
-    for (let i = 0; i < 30; i++) {
-      const sx = ((i * 89) % (W - 30)) + 15;
-      const sy = ((i * 53) % (H - 30)) + 15;
-      ctx.fillStyle = `rgba(220,232,255,${0.18 + ((i * 31) % 10) / 30})`;
-      ctx.fillRect(sx, sy, 1.4, 1.4);
-    }
+    const [ex, , ez] = posOf(norm, ORBIT_R);
+    earth.position.set(ex, 0, ez);
+    earth.rotation.y += 0.02 * dt;
+    earthHalo.position.set(ex, 0, ez);
+    earthHalo.material.opacity = dragging ? 0.85 : 0.5;
 
-    // 12궁 링
-    ctx.font = "600 10.5px Pretendard, sans-serif";
-    ctx.textAlign = "center";
+    // 별자리 상태(태양 쪽 = 흐리게 / 한밤 쪽 = 금빛)
+    const nightK = (month + 6) % 12;
     for (let k = 0; k < 12; k++) {
-      const a = (k / 12) * Math.PI * 2;
-      const zx = cx + Math.cos(a) * ringR;
-      const zy = cy + Math.sin(a) * ringR;
-      const isSun = k === month;
-      const isNight = k === (month + 6) % 12;
-      // 별 무리(점 3개)
-      const dotC = isSun ? "rgba(148,160,182,.5)" : isNight ? "rgba(255,224,140,.95)" : "rgba(190,210,240,.75)";
-      ctx.fillStyle = dotC;
-      for (let j = 0; j < 3; j++) {
-        const ja = a + (j - 1) * 0.09;
-        ctx.beginPath();
-        ctx.arc(cx + Math.cos(ja) * (ringR + (j % 2) * 7 - 3), cy + Math.sin(ja) * (ringR + (j % 2) * 7 - 3), j === 1 ? 2.2 : 1.5, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      // 이름
-      const lx = cx + Math.cos(a) * (ringR - 22);
-      const ly = cy + Math.sin(a) * (ringR - 22);
-      ctx.fillStyle = isSun ? "rgba(148,160,182,.6)" : isNight ? "rgba(255,232,170,1)" : "rgba(196,212,238,.85)";
-      ctx.fillText(ZODIAC[k], lx, ly + 3.5);
-      if (isNight) {
-        ctx.strokeStyle = "rgba(255,214,138,.7)";
-        ctx.lineWidth = 1.4;
-        ctx.beginPath();
-        ctx.arc(zx, zy, 12, 0, Math.PI * 2);
-        ctx.stroke();
+      const fm = figures[k].material as T.SpriteMaterial;
+      const lm = labels[k].material as T.SpriteMaterial;
+      if (k === month) {
+        fm.color.set(0x6a7690);
+        fm.opacity = 0.5;
+        lm.color.set(0x8892aa);
+      } else if (k === nightK) {
+        fm.color.set(0xffe08c);
+        fm.opacity = 1;
+        lm.color.set(0xffe9ae);
+      } else {
+        fm.color.set(0xbfd2f0);
+        fm.opacity = 0.95;
+        lm.color.set(0xffffff);
       }
     }
 
-    // 시선(지구→태양쪽 / 지구→반대쪽)
-    const ex = cx + Math.cos(norm) * orbitR;
-    const ey = cy + Math.sin(norm) * orbitR;
-    const toSun = Math.atan2(cy - ey, cx - ex);
-    ctx.setLineDash([4, 5]);
-    ctx.lineWidth = 1.4;
-    ctx.strokeStyle = "rgba(255,170,80,.55)";
-    ctx.beginPath();
-    ctx.moveTo(ex, ey);
-    ctx.lineTo(cx + Math.cos(sunSideA) * ringR, cy + Math.sin(sunSideA) * ringR);
-    ctx.stroke();
-    ctx.strokeStyle = "rgba(140,190,255,.6)";
-    ctx.beginPath();
-    ctx.moveTo(ex, ey);
-    ctx.lineTo(ex + Math.cos(toSun + Math.PI) * (ringR - orbitR + 10), ey + Math.sin(toSun + Math.PI) * (ringR - orbitR + 10));
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // 궤도 + 태양
-    ctx.strokeStyle = "rgba(110,140,184,.5)";
-    ctx.lineWidth = 1.6;
-    ctx.beginPath();
-    ctx.arc(cx, cy, orbitR, 0, Math.PI * 2);
-    ctx.stroke();
-    const sg = ctx.createRadialGradient(cx, cy, 2, cx, cy, 26);
-    sg.addColorStop(0, "rgba(255,238,190,1)");
-    sg.addColorStop(0.4, "rgba(255,190,80,.9)");
-    sg.addColorStop(1, "rgba(255,170,60,0)");
-    ctx.fillStyle = sg;
-    ctx.beginPath();
-    ctx.arc(cx, cy, 26, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#FFC85E";
-    ctx.beginPath();
-    ctx.arc(cx, cy, 11, 0, Math.PI * 2);
-    ctx.fill();
-
-    // 지구(드래그 핸들)
-    const eg = ctx.createRadialGradient(ex - 3, ey - 3, 1, ex, ey, 11);
-    eg.addColorStop(0, "#9FC6F4");
-    eg.addColorStop(0.55, "#3D7BDC");
-    eg.addColorStop(1, "#1B4B9E");
-    ctx.fillStyle = eg;
-    ctx.beginPath();
-    ctx.arc(ex, ey, 10, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = dragging ? "rgba(255,255,255,.9)" : "rgba(160,200,255,.6)";
-    ctx.lineWidth = dragging ? 2.4 : 1.6;
-    ctx.beginPath();
-    ctx.arc(ex, ey, 13.5, 0, Math.PI * 2);
-    ctx.stroke();
-    // 지구의 밤쪽(태양 반대 반원)
-    ctx.fillStyle = "rgba(8,12,26,.55)";
-    ctx.beginPath();
-    ctx.arc(ex, ey, 10, toSun + Math.PI / 2, toSun + Math.PI * 1.5);
-    ctx.fill();
-
-    // 라벨(태양 쪽 / 한밤 남쪽) — 시선축과 수직으로 띄워 별자리·지구와 안 겹치게
-    ctx.font = "700 11px Pretendard, sans-serif";
-    const off = 22;
-    const px2 = Math.cos(sunSideA + Math.PI / 2) * off;
-    const py2 = Math.sin(sunSideA + Math.PI / 2) * off;
-    ctx.fillStyle = "rgba(255,178,120,.9)";
-    ctx.fillText("태양 쪽 — 못 봐요", cx + Math.cos(sunSideA) * (ringR - 48) + px2, cy + Math.sin(sunSideA) * (ringR - 48) + py2);
-    const nA = sunSideA + Math.PI;
-    ctx.fillStyle = "rgba(180,214,255,.95)";
-    ctx.fillText("한밤 남쪽 — 잘 보여요", cx + Math.cos(nA) * (ringR - 48) - px2, cy + Math.sin(nA) * (ringR - 48) - py2);
+    // 시선 두 줄 + 태그
+    const [sx, , sz] = posOf(sunSideA, RING_R - 1.2);
+    const [nx2, , nz2] = posOf(norm, RING_R - 1.2);
+    const setLine = (line: T.Line, x2: number, z2: number): void => {
+      const pos = line.geometry.attributes.position as T.BufferAttribute;
+      pos.setXYZ(0, ex, 0, ez);
+      pos.setXYZ(1, x2, 0, z2);
+      pos.needsUpdate = true;
+    };
+    setLine(sunLine!, sx, sz);
+    setLine(nightLine!, nx2, nz2);
+    sunTag!.position.set((ex + sx * 1.6) / 2.6, 1.5, (ez + sz * 1.6) / 2.6);
+    nightTag!.position.set((ex + nx2 * 1.6) / 2.6, 1.5, (ez + nz2 * 1.6) / 2.6);
 
     // 목표 홀드 판정
     if (goals.has("look") && month === 3) {
@@ -263,12 +365,14 @@ export const zodiacRing: StepRenderer = (host, step, api) => {
       holdArcher += dt * 16.7;
       if (holdArcher > 480) collect("archer", "7월!");
     } else holdArcher = 0;
-  });
+
+    st.render();
+  }
 
   api.setCTA("지구를 돌려 별자리를 찾아요", { enabled: false });
-  const rafId = requestAnimationFrame(() => loop.start());
   return () => {
-    cancelAnimationFrame(rafId);
-    loop.stop();
+    disposed = true;
+    loop?.stop();
+    st?.dispose();
   };
 };

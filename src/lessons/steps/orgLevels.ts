@@ -3,10 +3,11 @@
 
 import { el, clear } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { curioCard, type Curio } from "../../ui/curio";
 import type { StepRenderer } from "../types";
 
 interface Level { name: string; example: string; svg: string; desc: string; }
-interface OrgLevelsStep { title: string; lead?: string; levels: Level[]; cta?: string; }
+interface OrgLevelsStep { title: string; lead?: string; levels: Level[]; cta?: string; curio?: Curio; }
 
 export const orgLevels: StepRenderer = (host, step, api) => {
   const s = step as unknown as OrgLevelsStep;
@@ -21,6 +22,7 @@ export const orgLevels: StepRenderer = (host, step, api) => {
   const upBtn = el("button", { class: "org-up" }, el("span", { html: "▲" }), el("span", { class: "org-up-t", text: "더 큰 단위로" }));
   const wrap = el("div", { class: "org-wrap" }, railBox, el("div", { class: "org-main" }, stage, upBtn));
   host.appendChild(wrap);
+  if (s.curio) host.appendChild(curioCard(s.curio));
 
   function rail(): void {
     clear(railBox);

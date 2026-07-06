@@ -72,6 +72,11 @@
 
 ## 단원 I·II 마이그레이션 체크리스트
 새 세션에서 이 문서를 읽고 아래를 레슨 단위로 적용한다.
+**단원 I은 마이그레이션 완료(2026-07-07)** — L1 만화+recap, L2 colorcups 훅+recap,
+L3 「과학이 바꾼 세상」 만화(comics/u1l3)+타임라인 order+recap, L4 speaker 훅+techCards+recap,
+L5 smokestack 훅+binSort(8아이템)+recap. 대단원 마무리 레슨은 제거(사용자 결정 — 마무리 없이 5레슨).
+훅 장면은 steps/hookCiv.ts, recap 미니아트는 ui/civFigures.ts.
+**단원 II도 마이그레이션 완료(2026-07-07)** — 6레슨 전부 hook 도입 + 기존 시그니처 랩(세포 핫스팟·현미경·구성 단계·핀치 자연선택·검색표) 유지 + recap 카드 + 문제. 훅 6종 = steps/hookBio.ts(cellzoom·stain·bodycount·ladybugs·batbird·foodweb), recap 미니아트 = ui/bioFigures.ts. curio 2개(코끼리 세포=L3 orgLevels, 바이러스=L5 dichotomKey — 두 렌더러에 curio prop 추가). 마지막 축하 concept 스텝 제거. **단원 I·II 모두 표준화 끝.**
 
 1. **도입 통일** — 각 레슨 첫 스텝을 확인:
    - 스틱맨 없이 `concept`로 시작하는 레슨 → `hook`(새 장면 필요 시 `steps/hook.ts`에 추가) 또는

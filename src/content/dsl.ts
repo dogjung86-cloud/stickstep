@@ -50,7 +50,7 @@ export const binSort = (o: {
 
 export const hotspot = (o: {
   title: string; lead?: string; svg: string; dark?: boolean;
-  spots: { x: number; y: number; label: string; desc?: string }[];
+  spots: { x: number; y: number; label: string; desc?: string; photo?: string; photoCredit?: string }[];
   mode?: "reveal" | "find"; explainGood?: string; explainBad?: string;
 }): Step => ({ type: "hotspot", ...o });
 
@@ -59,7 +59,9 @@ export const hook = (o: {
   scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen"
     | "balloon" | "tugrope" | "bow" | "iceslip" | "bottle" | "rollstop"
     | "polar" | "bubblewrap" | "foilballoon" | "pingpong"
-    | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses";
+    | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses"
+    | "colorcups" | "speaker" | "smokestack"
+    | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
@@ -84,13 +86,16 @@ export const heatContact = (o: {
   title: string; lead?: string; hot?: number; cold?: number; cta?: string;
 }): Step => ({ type: "heatContact", ...o });
 
-export const conduction = (o: { title: string; lead?: string; cta?: string }): Step =>
+/** 랩 공통 옵션 — curio: "교과서엔 없지만 궁금한 질문" 카드(ui/curio.ts). */
+export type CurioOpt = { q: string; a: string };
+
+export const conduction = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "conduction", ...o });
 
 export const convection = (o: { title: string; lead?: string; cta?: string }): Step =>
   ({ type: "convection", ...o });
 
-export const radiation = (o: { title: string; lead?: string; cta?: string }): Step =>
+export const radiation = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "radiation", ...o });
 
 export const specificHeat = (o: { title: string; lead?: string; cta?: string }): Step =>
@@ -116,7 +121,7 @@ export const matterShape = (o: { title: string; lead?: string; cta?: string }): 
 export const matterCompare = (o: { title: string; lead?: string; note?: string; cta?: string }): Step =>
   ({ type: "matterCompare", ...o });
 
-export const phaseNames = (o: { title: string; lead?: string; cta?: string }): Step =>
+export const phaseNames = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "phaseNames", ...o });
 
 export const sublimation = (o: { title: string; lead?: string; cta?: string }): Step =>
@@ -135,7 +140,7 @@ export const springLab = (o: { title: string; lead?: string; cta?: string }): St
 export const tugOfWar = (o: { title: string; lead?: string; cta?: string }): Step =>
   ({ type: "tugOfWar", ...o });
 
-export const gravityDrop = (o: { title: string; lead?: string; cta?: string }): Step =>
+export const gravityDrop = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "gravityDrop", ...o });
 
 export const frictionPush = (o: { title: string; lead?: string; cta?: string }): Step =>
@@ -165,7 +170,7 @@ export const hotairRide = (o: { title: string; lead?: string; cta?: string }): S
 // ── 태양계 단원(VII) 랩 ─────────────────────────────────────
 export const solarTour = (o: { title: string; lead?: string; cta?: string }): Step =>
   ({ type: "solarTour", ...o });
-export const sunLab = (o: { title: string; lead?: string; cta?: string }): Step =>
+export const sunLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "sunLab", ...o });
 export const skyDaily = (o: { title: string; lead?: string; cta?: string }): Step =>
   ({ type: "skyDaily", ...o });

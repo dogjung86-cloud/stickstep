@@ -1,0 +1,27 @@
+# 브랜드 에셋 — 로딩 플립북 7컷 + 공부 포즈 1컷 + 앱 아이콘 1장
+# 공통 스타일(로딩/공부 컷, [0]~[7]):
+# Hand-drawn stick figure character, pure black ink lines on plain white background,
+# NO color at all (black and white only), NO text, NO letters, NO numbers.
+# Same consistent character as a friendly science teacher: round head, round glasses
+# (two small circles), dot eyes, simple line body. FULL BODY, centered, same scale
+# across all frames (character height ~70% of canvas). Square 1:1 canvas.
+# Charming, comic, energetic — like frames of a flipbook animation.
+
+[0] The stick figure hurriedly running to the right carrying a wobbly tall stack of books, leaning forward, motion dash lines behind. Full body, centered, white background, black ink only, no text.
+
+[1] The stick figure slipping — books flying up in the air around, arms flailing, one leg up, surprised wide dot eyes, small sweat drops. Full body, centered, white background, black ink only, no text.
+
+[2] The stick figure fully upside down mid-tumble, glasses flying slightly off the face, books scattered on the floor. Comic spin lines around. Full body, centered, white background, black ink only, no text.
+
+[3] The stick figure sitting on the floor among fallen books, dizzy spiral eyes, one book balanced open on top of the head like a tent. Full body, centered, white background, black ink only, no text.
+
+[4] The stick figure standing up determined, dusting off, puffed chest, one fist raised with tiny burst lines of determination. Books stacked neatly beside. Full body, centered, white background, black ink only, no text.
+
+[5] The stick figure rolling up sleeves (short line strokes at the arms) and stretching arms overhead, cracking knuckles vibe, standing next to a simple desk and chair. Full body, centered, white background, black ink only, no text.
+
+[6] The stick figure tying hair up into a tiny topknot bun on top of the round head with both hands, elbows out, focused expression, standing by the desk. Comic 'determination' sparkle strokes (black ink) around the head. Full body, centered, white background, black ink only, no text.
+
+[7] STUDY POSE (final): The stick figure with the tiny topknot bun sitting at a simple desk, leaning in, writing intensely in an open notebook with a pencil, a small neat stack of books on the desk corner, short focus lines radiating from the head. Warm and diligent mood. Full body with desk, centered, white background, black ink only, no text.
+
+# ── 앱 아이콘 [8] — 스타일 별도 ──
+[8] Flat modern app icon, 1:1 square with softly rounded corners filling the whole canvas, vivid blue gradient background (from #3D8DFF top-left to #2A6FE8 bottom-right). Centered: a hand-drawn WHITE stick figure scientist head-and-shoulders — round head, round glasses, dot eyes, tiny topknot hair bun — holding up a small white pencil diagonally, drawn with thick friendly ink strokes. Minimal, bold, readable at small size. Absolutely no text, no letters.
