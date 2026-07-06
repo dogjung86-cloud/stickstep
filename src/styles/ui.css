@@ -1207,6 +1207,8 @@
 .sp3-enter-art svg { display: block; width: 100%; height: auto; }
 .sp3-enter-txt { padding: 11px 15px 13px; color: #C2D2EE; font-size: 13px; line-height: 1.55; letter-spacing: -.012em; }
 .sp3-enter-txt b { color: #fff; }
+/* stage-hud 자체는 pointer-events:none(캔버스 조작 보호) — 안에 든 seg만 되살린다 */
+.stage-hud .seg, .stage-seg { pointer-events: auto; }
 .stage-hud .seg, .stage-seg { background: rgba(14, 24, 46, .62); border: 1px solid rgba(120, 140, 190, .26); }
 .stage-hud .seg button, .stage-seg button { color: #A8BCDF; }
 .stage-hud .seg button.on, .stage-seg button.on { background: rgba(214, 228, 255, .17); color: #fff; }
