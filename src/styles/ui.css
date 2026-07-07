@@ -65,6 +65,7 @@
 .q-figure.dark { background: radial-gradient(130% 100% at 50% -10%, var(--stage-2), var(--stage) 62%); border-color: var(--stage-line); }
 .q-figure-art { padding: 14px; }
 .q-figure-art svg { display: block; width: 100%; height: auto; max-height: 220px; }
+.q-figure-art img { display: block; width: 100%; height: auto; max-height: 260px; object-fit: contain; border-radius: 10px; }
 .ox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
 .ox-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 132px; border-radius: var(--r-lg); border: 1.5px solid var(--line); background: #fff; transition: transform .12s var(--ease), border-color .16s, background .16s, box-shadow .16s; }
 .ox-btn:active { transform: scale(.97); }
