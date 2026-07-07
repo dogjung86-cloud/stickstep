@@ -4,30 +4,32 @@ import { ART_BIO, ART_CELLS, ART_DECOR } from "./art.generated";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
-// 핫스팟 좌표는 스테이지(패딩 포함) 기준 %로 맞춰 놓았다.
-const PADX = 3.6, PADY = 5.5, SPX = 92.8, SPY = 89;
-export function spot(x: number, y: number, w: number, h: number, label: string, desc?: string) {
-  return { x: PADX + (x / w) * SPX, y: PADY + (y / h) * SPY, label, desc };
-}
+// ---------- 세포 구조도 (발주 일러스트 + 부위별 핫스팟 좌표) ----------
+// svg 필드는 hotspot 렌더러가 innerHTML로 받는다 — 발주 이미지 <img>를 넣고,
+// 좌표는 이미지 기준 %(스테이지 패딩 0이라 이미지 %와 일치, 스크린샷으로 정렬).
+// 폴백: 이미지 로드 실패 시 손코딩 SVG(ART_CELLS)로 우아하게 대체.
+const cellImg = (file: string, alt: string): string => {
+  const fb = `<svg viewBox='0 0 320 210' xmlns='http://www.w3.org/2000/svg'>${ART_CELLS[file === "animal" ? "animalCell" : "plantCell"]}</svg>`;
+  return `<img src="${base}bio2/cells/${file}.webp" alt="${alt}" onerror="this.outerHTML=this.getAttribute('data-fb')" data-fb="${fb.replace(/"/g, "&quot;")}"/>`;
+};
 
-// ---------- 세포 구조도 (아트의 소기관 좌표에 맞춘 핫스팟) ----------
 export const animalCell = {
-  svg: ART_CELLS.animalCell,
+  svg: cellImg("animal", "동물세포"),
   spots: [
-    spot(30, 152, 320, 210, "세포막", "세포를 둘러싸 안과 밖을 구분하고 물질 출입을 조절해요."),
-    spot(150, 92, 320, 210, "핵", "유전물질이 들어 있어 세포의 생명활동을 조절해요."),
-    spot(225, 62, 320, 210, "마이토콘드리아", "생명활동에 필요한 에너지를 만들어요."),
+    { x: 12, y: 47, label: "세포막", desc: "세포를 둘러싸 안과 밖을 구분하고 물질 출입을 조절해요." },
+    { x: 35, y: 32, label: "핵", desc: "유전물질이 들어 있어 세포의 생명활동을 조절해요." },
+    { x: 51, y: 68, label: "마이토콘드리아", desc: "생명활동에 필요한 에너지를 만들어요." },
   ],
 };
 
 export const plantCell = {
-  svg: ART_CELLS.plantCell,
+  svg: cellImg("plant", "식물세포"),
   spots: [
-    spot(160, 12, 320, 210, "세포벽", "식물세포의 세포막 바깥에 있으며, 두껍고 단단해 세포를 보호해요."),
-    spot(24, 96, 320, 210, "세포막", "세포 안과 밖으로 물질이 드나드는 것을 조절해요."),
-    spot(116, 82, 320, 210, "핵", "유전물질이 들어 있어 생명활동을 조절해요."),
-    spot(78, 152, 320, 210, "마이토콘드리아", "생명활동에 필요한 에너지를 만들어요."),
-    spot(222, 150, 320, 210, "엽록체", "초록색을 띠며, 빛에너지를 흡수해 광합성으로 양분을 만들어요."),
+    { x: 50, y: 8, label: "세포벽", desc: "식물세포의 세포막 바깥에 있으며, 두껍고 단단해 세포를 보호해요." },
+    { x: 20, y: 20, label: "세포막", desc: "세포 안과 밖으로 물질이 드나드는 것을 조절해요." },
+    { x: 48, y: 30, label: "핵", desc: "유전물질이 들어 있어 생명활동을 조절해요." },
+    { x: 26, y: 34, label: "마이토콘드리아", desc: "생명활동에 필요한 에너지를 만들어요." },
+    { x: 31, y: 72, label: "엽록체", desc: "초록색을 띠며, 빛에너지를 흡수해 광합성으로 양분을 만들어요." },
   ],
 };
 

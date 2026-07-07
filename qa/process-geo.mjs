@@ -5,7 +5,7 @@ import { chromium } from "playwright-core";
 import { readFileSync, writeFileSync, readdirSync, unlinkSync, existsSync } from "node:fs";
 
 const SQUARE_DIRS = ["public/geo/rocks", "public/geo/minerals", "public/geo/evid"];
-const ASPECT_DIRS = ["public/geo/drift", "public/geo/figs", "public/recap"];
+const ASPECT_DIRS = ["public/geo/drift", "public/geo/figs", "public/recap", "public/bio2/cells", "public/bio2/levels"];
 
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage();

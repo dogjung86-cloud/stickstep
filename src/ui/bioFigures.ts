@@ -89,9 +89,25 @@ const ORG: Record<string, string> = {
     ${hi(82, 40, 20, 13, 0.45)}`,
 };
 
-/** 구성 단계 도해(라이트). key = cellMuscle·tissueMuscle·organHeart·systemCirc·bodyDog·
- *  cellLeaf·tissuePalisade·tissueSystem·organLeaf·bodyTree. */
+// 발주 일러스트(public/bio2/levels/<file>.webp) — 구성 단계 key → 파일명 매핑.
+// 손코딩 SVG를 대체한다. 로드 실패 시 onerror로 숨겨 깨진 아이콘을 피한다(폴백은 아래 SVG).
+const ORG_PHOTO: Record<string, string> = {
+  cellMuscle: "muscle-cell", tissueMuscle: "muscle-tissue", organHeart: "heart",
+  systemCirc: "circulatory", bodyDog: "dog",
+  cellLeaf: "leaf-cell", tissuePalisade: "palisade", tissueSystem: "tissue-system",
+  organLeaf: "leaf", bodyTree: "tree",
+};
+const ORG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+
+/** 구성 단계 도해. 발주 일러스트 우선(없으면 손코딩 SVG 폴백).
+ *  key = cellMuscle·tissueMuscle·organHeart·systemCirc·bodyDog·
+ *        cellLeaf·tissuePalisade·tissueSystem·organLeaf·bodyTree. */
 export function orgArt(key: string): string {
+  const file = ORG_PHOTO[key];
+  if (file) {
+    const fallback = `<svg viewBox='0 0 200 150' ${NS} fill='none' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><defs>${orgDefs}</defs>${ORG[key] ?? ""}</svg>`;
+    return `<img class="org-photo" src="${ORG_BASE}bio2/levels/${file}.webp" alt="" onerror="this.outerHTML=this.getAttribute('data-fb')" data-fb="${fallback.replace(/"/g, "&quot;")}"/>`;
+  }
   return `<svg viewBox="0 0 200 150" ${NS} fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs>${orgDefs}</defs>${ORG[key] ?? ""}</svg>`;
 }
 

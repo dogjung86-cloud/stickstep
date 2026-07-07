@@ -122,6 +122,9 @@
 .hs-stage.dark { background: radial-gradient(130% 100% at 50% -10%, var(--stage-2), var(--stage) 62%); border-color: var(--stage-line); }
 .hs-art { padding: 12px; }
 .hs-art svg { display: block; width: 100%; height: auto; }
+/* 발주 이미지 세포도: 패딩 0으로 이미지가 스테이지를 꽉 채워 탭 좌표(%)가 이미지와 일치한다 */
+.hs-art:has(img) { padding: 0; }
+.hs-art img { display: block; width: 100%; height: auto; }
 .hs-dot { position: absolute; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 99px; background: rgba(49,130,246,.28); border: 2px solid var(--blue); display: grid; place-items: center; transition: transform .14s var(--spring), background .16s; }
 .hs-dot::after { content: ""; width: 7px; height: 7px; border-radius: 99px; background: var(--blue); }
 .hs-dot:active { transform: scale(.9); }
@@ -199,6 +202,7 @@
 .org-stage.in { opacity: 1; transform: none; }
 .org-art { display: grid; place-items: center; min-height: 130px; }
 .org-art svg { width: 100%; max-width: 200px; height: auto; }
+.org-art img.org-photo { width: 100%; max-width: 200px; height: auto; border-radius: 14px; }
 .org-step { font-size: 12.5px; font-weight: 800; color: var(--subj-bio-deep); margin-top: 8px; }
 .org-ex { font-size: 18px; font-weight: 800; color: var(--ink); margin-top: 2px; }
 .org-desc { font-size: 13.5px; line-height: 1.55; color: var(--sub); margin-top: 8px; word-break: keep-all; }
