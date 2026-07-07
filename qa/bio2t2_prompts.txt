@@ -1,0 +1,13 @@
+# 구성단계 누끼(투명 배경) 재발주 T2 — 식물 3
+# 공통 스타일:
+# Bright, friendly flat educational illustration for a middle-school biology app.
+# Clean flat vector, soft cel shading, smooth rounded shapes, gentle gradients, cheerful colors.
+# NO text, NO letters, NO numbers. IMPORTANT: place the subject on a FULLY TRANSPARENT
+# background (PNG with alpha channel) — no background color, no scene, only a very soft
+# subtle shadow directly beneath the subject. Aspect 1:1, subject centered.
+
+[0] A small CROSS-SECTION slice of a plant leaf showing layered green tissues — an upper row of tall column cells and a lower row of loosely packed rounded cells with small air gaps between them — grouped as a tissue system. Simple and clean, shown as one isolated slab.
+
+[1] A single fresh green tree LEAF seen flat from above, with a central vein and branching side veins, healthy and simple, gentle glossy highlight.
+
+[2] A simple friendly whole TREE with a sturdy brown trunk and a full rounded green leafy canopy, healthy and cheerful.

@@ -1867,10 +1867,16 @@
 /* bodycount — 확대 말풍선 팝 */
 .hk-bio-body .bc-zoom { opacity: 0; transform: scale(.7); transform-origin: 176px 52px; transform-box: view-box; transition: opacity .4s var(--ease), transform .5s var(--spring); }
 .hk-bio-body.reveal .bc-zoom { opacity: 1; transform: none; }
-/* ladybugs — 탭한 개체 강조 */
-.hk-bio .lb-bug { transition: transform .18s var(--spring); }
-.hk-bio .lb-bug.on { transform: translateY(-3px) scale(1.08); }
-.hk-bio .lb-bug.on { filter: drop-shadow(0 3px 6px rgba(196,40,58,.4)); }
+/* fingerprint — 스캔 전 무늬 흐릿 → 탭하면 무늬 선명 + 체크 + 스캔선 */
+.hk-fp .fp-ridge { opacity: .28; transition: opacity .35s var(--ease); }
+.hk-fp .fp-card.on .fp-ridge { opacity: 1; }
+.hk-fp .fp-check { opacity: 0; transform: scale(.4); transform-box: fill-box; transform-origin: center; transition: opacity .3s var(--ease), transform .35s var(--spring); }
+.hk-fp .fp-card.on .fp-check { opacity: 1; transform: none; }
+.hk-fp .fp-card { transition: transform .18s var(--spring); }
+.hk-fp .fp-card.on { transform: translateY(-3px); }
+.hk-fp .fp-scan { opacity: 0; transform-box: view-box; }
+.hk-fp .fp-card.on .fp-scan { animation: fpScan .5s var(--ease); }
+@keyframes fpScan { 0% { opacity: .9; transform: translateY(-18px); } 100% { opacity: 0; transform: translateY(18px); } }
 /* batbird — 두 표지 은은히 */
 .hk-bio-night .bb-side { opacity: .8; }
 /* foodweb — 메뚜기 사라짐 + 개구리·매 흔들, 풀 번성 */

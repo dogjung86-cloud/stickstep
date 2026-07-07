@@ -27,7 +27,7 @@ import { renderBalloon, renderTugRope, renderBow, renderIceslip, renderBottle, r
 import { renderPolar, renderBubblewrap, renderFoilballoon, renderPingpong } from "./hookGas";
 import { renderStargaze, renderPlanetSize, renderShadowClock, renderMoonPic, renderSunGlasses } from "./hookSpace";
 import { renderColorCups, renderSpeaker, renderSmokestack } from "./hookCiv";
-import { renderCellZoom, renderStain, renderBodyCount, renderLadybugs, renderBatBird, renderFoodWeb } from "./hookBio";
+import { renderCellZoom, renderStain, renderBodyCount, renderFingerprint, renderBatBird, renderFoodWeb } from "./hookBio";
 import { renderRings, renderDeadsea, renderCocoa, renderFishmouth, renderGallium, renderMilkzoom, renderSoysauce, renderSyrup, renderPerfume } from "./hookChem";
 import { renderStripemount, renderFoolsgold, renderDolstatue, renderBookcliff, renderPressrock, renderCappadocia, renderGravestone, renderPuzzlemap, renderQuakenews, renderEggearth } from "./hookGeo";
 import { ask } from "./hookAsk";
@@ -64,7 +64,7 @@ interface HookStep {
     | "polar" | "bubblewrap" | "foilballoon" | "pingpong"
     | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses"
     | "colorcups" | "speaker" | "smokestack"
-    | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb"
+    | "cellzoom" | "stain" | "bodycount" | "fingerprint" | "batbird" | "foodweb"
     | "rings" | "deadsea" | "cocoa" | "fishmouth" | "gallium" | "milkzoom" | "soysauce" | "syrup" | "perfume"
     | "stripemount" | "foolsgold" | "dolstatue" | "bookcliff" | "pressrock" | "cappadocia" | "gravestone" | "puzzlemap" | "quakenews" | "eggearth";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
@@ -122,7 +122,7 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "cellzoom") renderCellZoom(scene, helper, finish, face);
   else if (s.scene === "stain") renderStain(scene, helper, s, finish, face);
   else if (s.scene === "bodycount") renderBodyCount(scene, helper, s, finish, face);
-  else if (s.scene === "ladybugs") renderLadybugs(scene, helper, finish, face);
+  else if (s.scene === "fingerprint") renderFingerprint(scene, helper, finish, face);
   else if (s.scene === "batbird") renderBatBird(scene, helper, s, finish, face);
   else if (s.scene === "foodweb") renderFoodWeb(scene, helper, s, finish, face);
   else if (s.scene === "stargaze") sceneCleanup = renderStargaze(scene, helper, finish, face);

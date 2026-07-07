@@ -2,9 +2,9 @@
 // 표준 레슨 공식: 도입(hook) → 랩(관찰·조작 인터랙션) → recap 카드 → 문제.
 // 시그니처 랩(세포 핫스팟·현미경·구성 단계·자연선택·검색표)은 유지하고 도입/정리만 통일한다.
 import type { Unit } from "./curriculum";
-import { hook, recap, mcq, ox, multi, order, binSort, hotspot, orgLevels, finchSim, microscope, dichotomKey } from "./dsl";
+import { hook, concept, table, recap, mcq, ox, multi, order, binSort, hotspot, orgLevels, finchSim, microscope, dichotomKey } from "./dsl";
 import { animalCell, plantCell, organism } from "../ui/figures";
-import { bioMiniArt, orgArt } from "../ui/bioFigures";
+import { bioMiniArt, orgArt, classStagesFig } from "../ui/bioFigures";
 
 // 문제용 발주 그림(public/bio2/quiz/<file>.webp). lazy는 스크롤 컨테이너에서 안 떠 쓰지 않는다.
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -26,9 +26,9 @@ const L1 = {
   doneNote: "세포의 구조와 기능을 익혔어요",
   steps: [
     hook({
-      title: "매끈한 잎 속에<br><em>숨은 방들</em>",
-      lead: "맨눈엔 매끈해 보이는 나뭇잎. 아주 크게 확대하면 뭐가 보일까요?",
-      narrator: "영국의 훅이 코르크를 확대하다 <b>작은 방들</b>을 발견했어요. 우리도 잎을 확대경으로 들여다봐요!",
+      title: "내 몸을<br><em>확대</em>하면?",
+      lead: "맨눈엔 매끈해 보이는 우리 몸. 아주 크게 확대하면 뭐가 보일까요?",
+      narrator: "영국의 훅이 코르크를 확대하다 <b>작은 방들</b>을 발견했어요. 스틱맨쌤 팔을 확대경으로 들여다볼까요?",
       scene: "cellzoom",
       done: "이 방 하나하나가 <b>세포</b>예요. 세포 속으로 더 들어가 볼까요?",
       cta: "세포 속 들여다보기",
@@ -226,7 +226,7 @@ const L3 = {
         { name: "조직", example: "근육조직", svg: orgArt("tissueMuscle"), desc: "모양과 기능이 <b>비슷한 세포</b>가 모인 단계예요." },
         { name: "기관", example: "심장", svg: orgArt("organHeart"), desc: "여러 조직이 모여 <b>일정한 기능</b>을 하는 단계예요." },
         { name: "기관계", example: "순환계", svg: orgArt("systemCirc"), desc: "관련된 기관이 모여 <b>연결된 기능</b>을 해요. (동물에만 있어요)" },
-        { name: "개체", example: "강아지", svg: orgArt("bodyDog"), desc: "기관계가 모여 <b>독립된 하나의 생명체</b>가 돼요." },
+        { name: "개체", example: "사람", svg: orgArt("bodyHuman"), desc: "여러 기관계가 모여 <b>독립된 하나의 생명체(사람)</b>가 돼요." },
       ],
       curio: {
         q: "코끼리는 개미보다 <b>세포가 큰</b> 걸까요, <b>많은</b> 걸까요?",
@@ -306,10 +306,10 @@ const L4 = {
   doneNote: "변이와 생물다양성의 관계를 이해했어요",
   steps: [
     hook({
-      title: "같은 무당벌레인데<br><em>다 달라요</em>",
-      lead: "무당벌레 여섯 마리가 있어요. 전부 같은 종인데… 이상한 점이 보이죠?",
-      narrator: "세 마리를 눌러 <b>무늬(점 개수)</b>를 비교해 봐요. 같은 종인데 왜 이렇게 다를까요?",
-      scene: "ladybugs",
+      title: "같은 사람인데<br><em>지문은 다 달라요</em>",
+      lead: "우리 반 친구 다섯 명의 지문이에요. 전부 같은 종(사람)인데… 무늬가 다르죠?",
+      narrator: "친구 세 명의 지문을 눌러 <b>스캔</b>해 봐요. 같은 사람인데 왜 무늬가 다 다를까요?",
+      scene: "fingerprint",
       done: "같은 종 안에서 개체마다 다른 특징 — 이걸 <b>변이</b>라고 해요. 이 변이가 생물다양성의 씨앗이에요!",
       cta: "변이의 힘 확인하기",
     }),
@@ -418,12 +418,51 @@ const L5 = {
       done: "박쥐는 젖을 먹여 키우는 <b>포유류</b> — 쥐와 한 무리예요! 분류는 <b>겉모습이 아니라 진짜 특징</b>으로 해요.",
       cta: "분류 기준 배우기",
     }),
+    concept({
+      kicker: "개념 — 분류 단계",
+      kickerTone: "bio",
+      title: "닮은 것끼리<br>무리 짓기",
+      lead: "생물을 <b>공통 특징</b>에 따라 무리 짓는 것이 분류예요. 닮은 것끼리 작은 무리부터 점점 큰 무리로 묶어요.",
+      blocks: [
+        { k: "term", name: "종(種)", def: "생물 분류의 <b>기본 단위</b> — 자연에서 짝짓기해 <b>번식 능력이 있는 자손</b>을 낳는 무리예요." },
+        {
+          k: "figure",
+          svg: classStagesFig(),
+          cap: "종 → 속 → 과 → 목 → 강 → 문 → 계. 위로 갈수록 더 많은 생물을 포함해요.",
+        },
+        {
+          k: "p",
+          html: "예를 들어 <b>개</b>는 개속 → 개과 → 식육목 → 포유강 → 척삭동물문 → 동물계에 속해요. 아래로 갈수록 서로 <b>더 닮은</b> 무리끼리, 위로 갈수록 <b>더 많은</b> 생물을 품죠.",
+        },
+      ],
+      cta: "직접 단계 쌓아보기",
+    }),
     order({
       title: "분류 단계 쌓기",
       lead: "가장 작은 단위부터 큰 단위 순으로 놓아 보세요. (들고양이의 예)",
       items: ["종", "속", "과", "목", "강", "문", "계"],
       explainGood: "완벽해요! <b>종 → 속 → 과 → 목 → 강 → 문 → 계</b>. 위로 갈수록 더 많은 생물을 포함해요.",
       explainBad: "분류 단계는 <b>종 → 속 → 과 → 목 → 강 → 문 → 계</b> 순이에요. 종이 가장 작은 단위죠.",
+    }),
+    table({
+      title: "5계, 이렇게 나눠요",
+      lead: "모든 생물은 <b>핵막·세포벽·양분 얻는 방법</b>에 따라 다섯 무리(5계)로 나뉘어요. 검색표를 풀기 전에 기준을 익혀요.",
+      head: ["계", "핵막", "세포벽", "양분 얻기"],
+      rows: [
+        [{ v: "원핵생물계", strong: true, dot: "#8A6BFF" }, "없음", "있음", "다양 (대장균)"],
+        [{ v: "원생생물계", strong: true, dot: "#12B886" }, "있음", "다양", "다양 (아메바)"],
+        [{ v: "균계", strong: true, dot: "#F0913E" }, "있음", "있음", "분해 (버섯)"],
+        [{ v: "식물계", strong: true, dot: "#2FA35F" }, "있음", "있음", "광합성 (소나무)"],
+        [{ v: "동물계", strong: true, dot: "#3182F6" }, "있음", "없음", "섭취 (붕어)"],
+      ],
+      blocks: [
+        {
+          k: "note",
+          tone: "bio",
+          html: "핵심 질문 넷 — <b>핵막이 있나? 세포벽이 있나? 광합성을 하나? 움직이나?</b> 이 순서로 물으면 어떤 생물이든 5계로 갈라져요.",
+        },
+      ],
+      cta: "검색표로 직접 분류하기",
     }),
     dichotomKey({
       title: "검색표로<br>분류하기",
@@ -508,8 +547,8 @@ const L5 = {
     }),
     mcq({
       n: 2, of: 3,
-      prompt: "그림은 개(강아지)의 분류 단계를 나타낸 거예요. 이에 대한 설명으로 옳은 것은?",
-      figure: qimg("rank-pyramid", "위로 갈수록 넓어지는 단계 — 맨 아래 개 한 종에서 위로 갈수록 더 많은 종류의 동물을 포함"),
+      prompt: "그림은 개의 분류 단계를 나타낸 거예요. 이에 대한 설명으로 옳은 것은?",
+      figure: classStagesFig(),
       options: [
         "위(계)로 갈수록 포함하는 생물의 종류가 많아진다",
         "아래(종)로 갈수록 포함하는 생물의 종류가 많아진다",

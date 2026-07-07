@@ -5,14 +5,16 @@ import { chromium } from "playwright-core";
 import { readFileSync, writeFileSync, readdirSync, unlinkSync, existsSync } from "node:fs";
 
 const SQUARE_DIRS = ["public/geo/rocks", "public/geo/minerals", "public/geo/evid"];
-const ASPECT_DIRS = ["public/geo/drift", "public/geo/figs", "public/recap", "public/bio2/cells", "public/bio2/levels", "public/bio2/quiz"];
+const ASPECT_DIRS = ["public/geo/drift", "public/geo/figs", "public/recap", "public/bio2/cells", "public/bio2/quiz"];
+// 투명 배경(누끼) 보존 — 흰 배경을 깔지 않고 알파를 그대로 webp로. 구성단계 개체 아트 등.
+const TRANSPARENT_DIRS = ["public/bio2/levels"];
 
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage();
 
-async function convert(dir, f, aspect) {
+async function convert(dir, f, aspect, transparent) {
   const b64 = readFileSync(`${dir}/${f}`).toString("base64");
-  const out = await page.evaluate(async ({ dataUrl, keepAspect }) => {
+  const out = await page.evaluate(async ({ dataUrl, keepAspect, keepAlpha }) => {
     const img = new Image();
     await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = dataUrl; });
     let w = 512, h = 512;
@@ -25,11 +27,10 @@ async function convert(dir, f, aspect) {
     cv.width = w; cv.height = h;
     const ctx = cv.getContext("2d");
     ctx.imageSmoothingQuality = "high";
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, w, h);
+    if (!keepAlpha) { ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, w, h); }
     ctx.drawImage(img, 0, 0, w, h);
-    return cv.toDataURL("image/webp", 0.88);
-  }, { dataUrl: `data:image/png;base64,${b64}`, keepAspect: aspect });
+    return cv.toDataURL("image/webp", 0.9);
+  }, { dataUrl: `data:image/png;base64,${b64}`, keepAspect: aspect, keepAlpha: transparent });
   const buf = Buffer.from(out.split(",")[1], "base64");
   writeFileSync(`${dir}/${f.replace(/\.png$/, ".webp")}`, buf);
   unlinkSync(`${dir}/${f}`);
@@ -38,11 +39,15 @@ async function convert(dir, f, aspect) {
 
 for (const dir of SQUARE_DIRS) {
   if (!existsSync(dir)) continue;
-  for (const f of readdirSync(dir).filter((f) => f.endsWith(".png"))) await convert(dir, f, false);
+  for (const f of readdirSync(dir).filter((f) => f.endsWith(".png"))) await convert(dir, f, false, false);
 }
 for (const dir of ASPECT_DIRS) {
   if (!existsSync(dir)) continue;
-  for (const f of readdirSync(dir).filter((f) => f.endsWith(".png"))) await convert(dir, f, true);
+  for (const f of readdirSync(dir).filter((f) => f.endsWith(".png"))) await convert(dir, f, true, false);
+}
+for (const dir of TRANSPARENT_DIRS) {
+  if (!existsSync(dir)) continue;
+  for (const f of readdirSync(dir).filter((f) => f.endsWith(".png"))) await convert(dir, f, true, true);
 }
 await browser.close();
 console.log("DONE");
