@@ -249,6 +249,75 @@ const MAP_DECOR: Record<string, string> = {
     <linearGradient id="rk-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8FA0"/><stop offset="1" stop-color="#D6455E"/></linearGradient>
     <linearGradient id="rk-fl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#FF9E3D"/></linearGradient>`,
   ),
+  // ── 중2 III. 빛과 파동 — 빛의 여행(손전등→거울→프리즘→삼원색) 끝에 음표 ──
+  flashlightDeco: S(
+    `${shadow(30, 56, 17, 0.14)}
+    <g transform="rotate(-32 32 32)">
+      <path d="M40 26l16-9v26l-16-9z" fill="url(#fl-beam)" opacity=".85"/>
+      <rect x="14" y="24" width="20" height="16" rx="5" fill="url(#fl-body)"/>
+      <rect x="34" y="22" width="6" height="20" rx="2.5" fill="url(#fl-head)"/>
+      <rect x="16.5" y="27" width="13" height="3.4" rx="1.7" fill="#fff" opacity=".45"/>
+      <circle cx="21" cy="35.5" r="2" fill="#3E4B60"/>
+      <rect x="14" y="24" width="20" height="16" rx="5" stroke="#2E3A4E" stroke-width="1.4" fill="none"/>
+    </g>`,
+    `<linearGradient id="fl-beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#FFE9A8" stop-opacity="0"/></linearGradient>
+    <linearGradient id="fl-body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7E92AE"/><stop offset=".5" stop-color="#5A6C86"/><stop offset="1" stop-color="#3E4B60"/></linearGradient>
+    <linearGradient id="fl-head" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B8C6D8"/><stop offset="1" stop-color="#75879E"/></linearGradient>`,
+  ),
+  mirrorDeco: S(
+    `${shadow(32, 57, 14, 0.14)}
+    <ellipse cx="32" cy="26" rx="15" ry="18" fill="url(#mr-fr)"/>
+    <ellipse cx="32" cy="26" rx="11" ry="14" fill="url(#mr-gl)"/>
+    <path d="M26 17q-3 6-1 13" stroke="#fff" stroke-width="2.6" opacity=".8" fill="none"/>
+    <path d="M36 15l3 3" stroke="#fff" stroke-width="2" opacity=".6"/>
+    <ellipse cx="32" cy="26" rx="11" ry="14" stroke="#8FB2D8" stroke-width="1.2" fill="none"/>
+    <path d="M32 44v9" stroke="url(#mr-hd)" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="32" cy="26" rx="15" ry="18" stroke="#9A6FB4" stroke-width="1.4" fill="none"/>`,
+    `<linearGradient id="mr-fr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E7C7F2"/><stop offset=".5" stop-color="#C99ADC"/><stop offset="1" stop-color="#A472C0"/></linearGradient>
+    <linearGradient id="mr-gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2F9FF"/><stop offset=".55" stop-color="#CFE4F8"/><stop offset="1" stop-color="#A8C6E8"/></linearGradient>
+    <linearGradient id="mr-hd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C99ADC"/><stop offset="1" stop-color="#9A6FB4"/></linearGradient>`,
+  ),
+  prismDeco: S(
+    `${shadow(32, 55, 18, 0.14)}
+    <path d="M6 26h16" stroke="#F5E6A8" stroke-width="2.6" stroke-linecap="round" opacity=".9"/>
+    <path d="M32 12L50 48H14z" fill="url(#pz-g)"/>
+    <path d="M32 12L50 48H14z" stroke="#7FA6CC" stroke-width="1.4" fill="none"/>
+    <path d="M30 20l-8 20" stroke="#fff" stroke-width="2.4" opacity=".65" fill="none"/>
+    <path d="M44 36l14-5" stroke="#F25C54" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M46 40l14-1" stroke="#FFC24D" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M47 44l13 3" stroke="#4DA8F0" stroke-width="2.8" stroke-linecap="round"/>`,
+    `<linearGradient id="pz-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4FAFF"/><stop offset=".5" stop-color="#D8EAF8"/><stop offset="1" stop-color="#AECDE8"/></linearGradient>`,
+  ),
+  rgbDeco: S(
+    `<circle cx="32" cy="24" r="13" fill="url(#rgb-r)" opacity=".88"/>
+    <circle cx="24" cy="37" r="13" fill="url(#rgb-g)" opacity=".82" style="mix-blend-mode:screen"/>
+    <circle cx="40" cy="37" r="13" fill="url(#rgb-b)" opacity=".82" style="mix-blend-mode:screen"/>
+    <circle cx="27" cy="19" r="3.5" fill="#fff" opacity=".5"/>`,
+    `<radialGradient id="rgb-r" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#FF8A80"/><stop offset="1" stop-color="#E5322E"/></radialGradient>
+    <radialGradient id="rgb-g" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#7FE29A"/><stop offset="1" stop-color="#12A84E"/></radialGradient>
+    <radialGradient id="rgb-b" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#7FB4FF"/><stop offset="1" stop-color="#2454D8"/></radialGradient>`,
+  ),
+  noteDeco: S(
+    `${shadow(30, 55, 14, 0.13)}
+    <path d="M24 46V14l22-5v30" stroke="url(#nt-s)" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="19" cy="46" rx="6.5" ry="5" fill="url(#nt-h)" transform="rotate(-14 19 46)"/>
+    <ellipse cx="41" cy="39" rx="6.5" ry="5" fill="url(#nt-h)" transform="rotate(-14 41 39)"/>
+    <ellipse cx="17" cy="44" rx="2.2" ry="1.4" fill="#fff" opacity=".45" transform="rotate(-14 17 44)"/>`,
+    `<linearGradient id="nt-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A64C8"/><stop offset="1" stop-color="#5E3E96"/></linearGradient>
+    <linearGradient id="nt-h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9A74D8"/><stop offset="1" stop-color="#5E3E96"/></linearGradient>`,
+  ),
+  rainbowDeco: S(
+    `<g fill="none" stroke-linecap="round">
+      <path d="M8 46a24 24 0 0 1 48 0" stroke="#F25C54" stroke-width="4.6"/>
+      <path d="M13 46a19 19 0 0 1 38 0" stroke="#FFC24D" stroke-width="4.6"/>
+      <path d="M18 46a14 14 0 0 1 28 0" stroke="#6FCB8B" stroke-width="4.6"/>
+      <path d="M23 46a9 9 0 0 1 18 0" stroke="#5AA2F8" stroke-width="4.6"/>
+    </g>
+    <ellipse cx="12" cy="46" rx="7" ry="4.6" fill="#fff" opacity=".92"/>
+    <ellipse cx="52" cy="46" rx="7" ry="4.6" fill="#fff" opacity=".92"/>
+    <ellipse cx="9" cy="44" rx="3.4" ry="2.4" fill="#fff"/>
+    <ellipse cx="55" cy="44" rx="3.4" ry="2.4" fill="#fff"/>`,
+  ),
 };
 
 /** 지도 장식 아트 — 단원 특색 세트 → 생물 아이콘(ART_BIO) → 공용(ART_DECOR) 순서로 찾는다. */

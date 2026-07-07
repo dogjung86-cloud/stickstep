@@ -26,7 +26,10 @@
       VI 기체: `polar` 북극곰 얼음판+예측, `bubblewrap` 뽁뽁이, `foilballoon` 은박 풍선 안↔밖,
       `pingpong` 찌그러진 탁구공 구출+예측,
       VII 태양계: `stargaze` 밝은 점 망원경, `planetsize` 지구 11개=목성+예측,
-      `shadowclock` 시계탑 그림자+예측, `moonpic` 달 사진 비교+예측, `sunglasses` 관측 안경+예측).
+      `shadowclock` 시계탑 그림자+예측, `moonpic` 달 사진 비교+예측, `sunglasses` 관측 안경+예측,
+      중2 III 빛과 파동(hookLight.ts): `mirrortown` 산 위 거울 마을 비추기, `coinmagic` 물 부으면 동전+예측,
+      `darkroom` 전등 켜기+오개념 예측, `catmirror` 거울 고양이+예측, `spoon` 숟가락 앞뒤 토글,
+      `pointillism` 점묘화 확대+예측, `fishing` 낚시찌 물결+예측, `kalimba` 칼림바 두 막대(실제 소리)+예측).
     - **예측(prediction)은 채점하지 않는다** — 정답을 알려주지 않고 "실험으로 확인해 봐요"로 랩에 연결.
   - `comic` 스텝: 서사가 필요할 때(과학사, 캠핑 이야기 등). 컷 이미지는 codex 발주(CLAUDE.md 참고).
 - 도입의 목적은 지식 전달이 아니라 **궁금증 생성**. 개념 설명은 랩과 recap에 맡긴다.

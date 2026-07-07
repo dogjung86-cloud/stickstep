@@ -41,6 +41,15 @@ const ICONS: Record<string, IconDef> = {
   layers: { v: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>', sw: 2 },
   heart: { v: '<path d="M12 20S4 14.5 4 9.2A4.2 4.2 0 0 1 12 7a4.2 4.2 0 0 1 8 2.2C20 14.5 12 20 12 20z"/>', fill: true },
   handSparkle: { v: '<path d="M12 3l1.3 3.2L16.5 7l-3.2 1.3L12 11l-1.3-2.7L7.5 7l3.2-.8z"/><path d="M6 21v-6a2 2 0 0 1 4 0M10 15a2 2 0 0 1 4 0v6"/>', sw: 2 },
+  // ── 중2 III 빛과 파동 ──
+  reflect: { v: '<path d="M3 19h18"/><path d="M4.5 4.5L12 18.6 19.5 6"/><path d="M19.5 10.5V6h-4.4"/>', sw: 2.1 },
+  prism: { v: '<path d="M12 4L21 19.5H3z"/><path d="M1.5 9.5l6.5 3M15.5 13.5l7 4.5"/>', sw: 2 },
+  eye: { v: '<path d="M2.2 12S5.8 5.8 12 5.8 21.8 12 21.8 12 18.2 18.2 12 18.2 2.2 12 2.2 12z"/><circle cx="12" cy="12" r="3.1"/>', sw: 2 },
+  mirror: { v: '<ellipse cx="12" cy="9" rx="5.5" ry="7"/><path d="M12 16v4.5M8.5 20.5h7"/><path d="M9.8 5.8Q8.4 7.6 8.8 10"/>', sw: 2 },
+  lens: { v: '<path d="M12 3.2c3.1 2.4 4.7 5.3 4.7 8.8s-1.6 6.4-4.7 8.8c-3.1-2.4-4.7-5.3-4.7-8.8S8.9 5.6 12 3.2z"/><path d="M2 12h3.4M18.6 12H22"/>', sw: 2 },
+  rgb: { v: '<circle cx="12" cy="8.6" r="4.9"/><circle cx="8.6" cy="14.6" r="4.9"/><circle cx="15.4" cy="14.6" r="4.9"/>', sw: 1.9 },
+  wave: { v: '<path d="M2 12c1.6-4.8 3.4-7.2 5-7.2S10.4 9 12 12s3.4 7.2 5 7.2 3.4-2.4 5-7.2"/>', sw: 2.1 },
+  note: { v: '<path d="M9.2 17.5V5.2l10-2v11.5"/><ellipse cx="6.6" cy="17.6" rx="2.7" ry="2.2"/><ellipse cx="16.6" cy="14.8" rx="2.7" ry="2.2"/>', sw: 2 },
 };
 
 export function icon(

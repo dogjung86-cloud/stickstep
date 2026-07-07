@@ -61,7 +61,8 @@ export const hook = (o: {
     | "polar" | "bubblewrap" | "foilballoon" | "pingpong"
     | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses"
     | "colorcups" | "speaker" | "smokestack"
-    | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb";
+    | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb"
+    | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
@@ -180,6 +181,30 @@ export const moonPhase3d = (o: { title: string; lead?: string; cta?: string }): 
   ({ type: "moonPhase3d", ...o });
 export const eclipse3d = (o: { title: string; lead?: string; cta?: string }): Step =>
   ({ type: "eclipse3d", ...o });
+
+// ── 중2 III 빛과 파동 랩 ────────────────────────────────────
+export const reflectLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "reflectLab", ...o });
+export const diffuseLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "diffuseLab", ...o });
+export const refractLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "refractLab", ...o });
+export const seeLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "seeLab", ...o });
+export const mirrorImageLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "mirrorImageLab", ...o });
+export const mirrorLens = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "mirrorLens", ...o });
+export const objectColorLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "objectColorLab", ...o });
+export const colorMixLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "colorMixLab", ...o });
+export const pixelLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "pixelLab", ...o });
+export const waveLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "waveLab", ...o });
+export const soundLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "soundLab", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

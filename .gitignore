@@ -10,3 +10,4 @@ qa/u7card.png
 
 # 발주 실행 로그
 qa/order-*.log
+qa/shots/

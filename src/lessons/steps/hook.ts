@@ -19,6 +19,10 @@
 //   ── VII 태양계 (렌더러는 hookSpace.ts) ──
 //   "stargaze" 밤하늘 밝은 점 · "planetsize" 지구 11개=목성+예측 · "shadowclock" 시계탑 그림자+예측 ·
 //   "moonpic" 달 사진 비교+예측 · "sunglasses" 태양 관측 안경+예측
+//   ── 중2 III 빛과 파동 (렌더러는 hookLight.ts) ──
+//   "mirrortown" 산 위 거울로 마을 비추기 · "coinmagic" 물 부으면 동전+예측 ·
+//   "darkroom" 전등 켜기+오개념 예측 · "catmirror" 거울 고양이 앞발+예측 · "spoon" 숟가락 앞뒤 ·
+//   "pointillism" 점묘화 확대+예측 · "fishing" 낚시찌 물결+예측 · "kalimba" 칼림바 두 막대+예측
 
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
@@ -28,6 +32,10 @@ import { renderPolar, renderBubblewrap, renderFoilballoon, renderPingpong } from
 import { renderStargaze, renderPlanetSize, renderShadowClock, renderMoonPic, renderSunGlasses } from "./hookSpace";
 import { renderColorCups, renderSpeaker, renderSmokestack } from "./hookCiv";
 import { renderCellZoom, renderStain, renderBodyCount, renderLadybugs, renderBatBird, renderFoodWeb } from "./hookBio";
+import {
+  renderMirrorTown, renderCoinMagic, renderDarkroom, renderCatMirror,
+  renderSpoon, renderPointillism, renderFishing, renderKalimba,
+} from "./hookLight";
 import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -61,7 +69,8 @@ interface HookStep {
     | "polar" | "bubblewrap" | "foilballoon" | "pingpong"
     | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses"
     | "colorcups" | "speaker" | "smokestack"
-    | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb";
+    | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb"
+    | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
 }
@@ -120,6 +129,14 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "ladybugs") renderLadybugs(scene, helper, finish, face);
   else if (s.scene === "batbird") renderBatBird(scene, helper, s, finish, face);
   else if (s.scene === "foodweb") renderFoodWeb(scene, helper, s, finish, face);
+  else if (s.scene === "mirrortown") sceneCleanup = renderMirrorTown(scene, helper, finish, face);
+  else if (s.scene === "coinmagic") sceneCleanup = renderCoinMagic(scene, helper, s, finish, face);
+  else if (s.scene === "darkroom") sceneCleanup = renderDarkroom(scene, helper, s, finish, face);
+  else if (s.scene === "catmirror") sceneCleanup = renderCatMirror(scene, helper, s, finish, face);
+  else if (s.scene === "spoon") sceneCleanup = renderSpoon(scene, helper, finish, face);
+  else if (s.scene === "pointillism") sceneCleanup = renderPointillism(scene, helper, s, finish, face);
+  else if (s.scene === "fishing") sceneCleanup = renderFishing(scene, helper, s, finish, face);
+  else if (s.scene === "kalimba") sceneCleanup = renderKalimba(scene, helper, s, finish, face);
   else if (s.scene === "stargaze") sceneCleanup = renderStargaze(scene, helper, finish, face);
   else if (s.scene === "planetsize") sceneCleanup = renderPlanetSize(scene, helper, s, finish, face);
   else if (s.scene === "shadowclock") renderShadowClock(scene, helper, s, finish, face);

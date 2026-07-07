@@ -51,6 +51,14 @@ import { skyDaily } from "./steps/skyDaily";
 import { zodiacRing } from "./steps/zodiacRing";
 import { moonPhase3d } from "./steps/moonPhase3d";
 import { eclipse3d } from "./steps/eclipse3d";
+import { reflectLab, diffuseLab } from "./steps/lightReflect";
+import { refractLab } from "./steps/lightRefract";
+import { seeLab } from "./steps/lightSee";
+import { mirrorImageLab } from "./steps/lightMirror";
+import { mirrorLens } from "./steps/lightBench";
+import { objectColorLab, colorMixLab, pixelLab } from "./steps/lightColor";
+import { waveLab } from "./steps/waveTank";
+import { soundLab } from "./steps/soundLab";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -91,6 +99,17 @@ const R: Record<string, StepRenderer> = {
   zodiacRing,
   moonPhase3d,
   eclipse3d,
+  reflectLab,
+  diffuseLab,
+  refractLab,
+  seeLab,
+  mirrorImageLab,
+  mirrorLens,
+  objectColorLab,
+  colorMixLab,
+  pixelLab,
+  waveLab,
+  soundLab,
   quiz,
   table,
   order,

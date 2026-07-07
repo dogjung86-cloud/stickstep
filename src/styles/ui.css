@@ -1157,6 +1157,24 @@
 .gm-node.space:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-space); }
 .kicker.space { background: var(--subj-space-tint); color: var(--subj-space-press); }
 
+/* ---------- 중2 III 빛과 파동 단원 테마(light · 오키드 마젠타) ---------- */
+.unit-band.light { background: var(--grad-light); }
+.gm-terrain.light {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #FBE3F4, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #F9D9EF, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #FBDFF2, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #F5D0EA, transparent 72%),
+    linear-gradient(180deg, #FEF2FB 0%, #FBE4F4 55%, #F6D6EC 100%);
+}
+.gm-path-glow.light { stroke: rgba(200,56,166,.20); }
+.gm-path-done.light { stroke: #C838A6; }
+.gm-node.light.now .gm-med, .gm-node.light.done .gm-med { background: var(--grad-medallion-light); }
+.gm-node.light .gm-ring { border-color: rgba(200,56,166,.5); }
+.gm-node.light:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-light); }
+.kicker.light { background: var(--subj-light-tint); color: var(--subj-light-press); }
+
 /* ---------- 가로 모드 오버레이(rotateStage) ---------- */
 .rot-overlay { position: fixed; inset: 0; z-index: 80; background: #070D1A; opacity: 0; transition: opacity .24s var(--ease); }
 .rot-overlay.in { opacity: 1; }
@@ -1450,3 +1468,114 @@
 .sunlab-sl .sl-track { flex: 1; }
 .stage-hud .seg button, .stage-seg button { padding: 7px 11px; }
 .stage-hud .seg button, .stage-seg button { white-space: nowrap; }
+
+/* ============================================================
+   중2 III 빛과 파동 — 랩 공용
+   ============================================================ */
+.lt-canvas { touch-action: none; cursor: grab; }
+.lt-canvas:active { cursor: grabbing; }
+.pn-badges.duo { grid-template-columns: repeat(2, 1fr); }
+/* 랩 내 예측 선택지는 훅의 .hook-choices/.hook-choice 스타일을 그대로 재사용한다 */
+
+/* ---------- 중2 III 빛과 파동 훅(hookLight) ---------- */
+.hl-town, .hlc, .hld, .hlf, .hlk, .hls { width: 100%; }
+.hl-town svg, .hlc svg, .hld svg, .hlm svg, .hls svg, .hlp svg, .hlf svg, .hlk svg { width: 100%; height: auto; display: block; }
+.hlm, .hlp { appearance: none; border: 0; background: transparent; padding: 0; width: 100%; cursor: pointer; transition: transform .14s var(--spring-soft); }
+.hlm:active, .hlp:active { transform: scale(.985); }
+/* mirrortown — 거울 각도 3단계와 빔 */
+.hl-town .hl-mirror-glass { transform-box: fill-box; transform-origin: center; transform: rotate(-22deg); transition: transform .4s var(--spring); }
+.hl-town.s1 .hl-mirror-glass { transform: rotate(-8deg); }
+.hl-town.s2 .hl-mirror-glass { transform: rotate(5deg); }
+.hl-town.s3 .hl-mirror-glass { transform: rotate(17deg); }
+.hl-town .hl-beam { transition: opacity .3s; }
+.hl-town.s1 .hl-b0 { opacity: 1; }
+.hl-town.s2 .hl-b1 { opacity: 1; }
+.hl-town.s3 .hl-b2 { opacity: 1; }
+.hl-town .hl-spot { transition: opacity .5s; }
+.hl-town.s3 .hl-spot { opacity: .28; animation: hlSpotPulse 1.8s ease-in-out infinite; }
+.hl-town .hl-win { transition: fill .5s; }
+.hl-town.s3 .hl-win { fill: #FFD98A; }
+@keyframes hlSpotPulse { 0%, 100% { opacity: .22; } 50% { opacity: .36; } }
+/* coinmagic */
+.hlc .hlc-waterbox, .hlc .hlc-ray-bent, .hlc .hlc-ray-block { transition: opacity .55s var(--ease-out); }
+.hlc.filled .hlc-waterbox { opacity: 1; }
+.hlc.filled .hlc-ray-block { opacity: 0; }
+.hlc.filled .hlc-ray-bent { opacity: 1; }
+.hlc.filled .hlc-coin { filter: drop-shadow(0 0 7px rgba(255, 214, 100, .85)); }
+/* darkroom */
+.hld .hld-light, .hld .hld-stuff, .hld .hld-rustle { transition: opacity .5s var(--ease-out); }
+.hld.lit .hld-light { opacity: 1; }
+.hld.lit .hld-stuff { opacity: 1; }
+.hld.lit .hld-rustle { opacity: 0; }
+.hld.lit .hld-bulb { fill: #FFE9A8; }
+/* catmirror — 앞발 들기(실물과 상이 동시에) */
+.hlm .hlm-paw, .hlm .hlm-paw2 { transform-box: fill-box; transform-origin: 10% 85%; }
+.hlm.wave .hlm-paw { animation: hlPaw .55s var(--spring); }
+.hlm.wave .hlm-paw2 { animation: hlPaw2 .55s var(--spring); }
+@keyframes hlPaw { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(-26deg); } }
+@keyframes hlPaw2 { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(26deg); } }
+/* spoon */
+.hls .hls-front, .hls .hls-back { transition: opacity .3s var(--ease-out); }
+.hls.back .hls-front { opacity: 0; }
+.hls.back .hls-back { opacity: 1; }
+/* pointillism */
+.hlp .hlp-far, .hlp .hlp-near, .hlp .hlp-loupe { transition: opacity .5s var(--ease-out); }
+.hlp.zoom .hlp-far { opacity: 0; }
+.hlp.zoom .hlp-near { opacity: 1; }
+.hlp.zoom .hlp-loupe { opacity: 1; }
+.hlp svg { transition: transform .5s var(--ease-out); }
+.hlp.zoom svg { transform: scale(1.05); }
+/* fishing */
+.hlf .hlf-rip ellipse { transform-box: view-box; transform-origin: 150px 92px; }
+.hlf.splash .hlf-rip { opacity: 1; }
+.hlf.splash .hlf-rip ellipse { animation: hlfRip 1.8s ease-out infinite; }
+.hlf.splash .hlf-rip ellipse:nth-child(2) { animation-delay: .25s; }
+.hlf.splash .hlf-rip ellipse:nth-child(3) { animation-delay: .5s; }
+@keyframes hlfRip { 0% { transform: scale(.4); opacity: .9; } 100% { transform: scale(1.5); opacity: 0; } }
+.hlf.splash .hlf-float { animation: hlfBob 1.3s ease-in-out .3s infinite; }
+@keyframes hlfBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+.hlf.splash .hlf-stone { animation: hlfThrow .5s var(--ease-out) forwards; }
+@keyframes hlfThrow { 0% { transform: translate(0, 0); opacity: 1; } 90% { transform: translate(-46px, 58px); opacity: 1; } 100% { transform: translate(-46px, 60px); opacity: 0; } }
+/* kalimba */
+.hlk .hlk-t1, .hlk .hlk-t2 { transform-box: fill-box; transform-origin: 50% 92%; }
+.hlk.p1 .hlk-t1 { animation: hlkPluck .6s var(--ease-out); }
+.hlk.p2 .hlk-t2 { animation: hlkPluck .5s var(--ease-out); }
+@keyframes hlkPluck { 0% { transform: rotate(0); } 22% { transform: rotate(-6deg); } 52% { transform: rotate(4deg); } 78% { transform: rotate(-2deg); } 100% { transform: rotate(0); } }
+.hlk.p1 .hlk-w1 { animation: hlkWave .9s ease-out; }
+.hlk.p2 .hlk-w2 { animation: hlkWave .8s ease-out; }
+@keyframes hlkWave { 0% { opacity: 0; } 25% { opacity: .9; } 100% { opacity: 0; } }
+
+/* 화소 조종 슬라이더(pixelLab) — R·G·B 밝기 3줄 */
+.px-sliders { margin-top: 12px; display: none; flex-direction: column; gap: 10px; }
+.px-sliders.show { display: flex; animation: rcIn .35s var(--ease-out) both; }
+.px-sl { display: flex; align-items: center; gap: 10px; }
+.px-sl > b { width: 44px; font-size: 12.5px; font-weight: 800; color: var(--sub); flex: none; }
+.px-sl .px-track {
+  flex: 1; height: 16px; border-radius: var(--r-pill); background: var(--n150);
+  position: relative; touch-action: none; cursor: pointer; box-shadow: var(--sh-inset);
+}
+.px-sl .px-fill { position: absolute; inset: 0 auto 0 0; border-radius: var(--r-pill); width: 50%; }
+.px-sl .px-knob {
+  position: absolute; top: 50%; left: 50%; width: 26px; height: 26px; border-radius: var(--r-pill);
+  background: #fff; box-shadow: var(--sh-raise); transform: translate(-50%, -50%);
+}
+.px-sl .px-val { width: 44px; text-align: right; font-size: 12.5px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+.px-goal {
+  margin-top: 12px; display: flex; align-items: center; gap: 12px;
+  background: var(--grad-card); border: 1px solid var(--n200); border-radius: var(--r-lg);
+  box-shadow: var(--sh-card); padding: 11px 14px;
+}
+.px-goal .px-patch { width: 54px; height: 40px; border-radius: 12px; box-shadow: var(--sh-inset); border: 1px solid rgba(20,30,50,.08); }
+.px-goal .px-goal-txt { font-size: 13.5px; font-weight: 700; color: var(--sub); line-height: 1.45; }
+.px-goal .px-goal-txt b { color: var(--ink); }
+
+/* 거울·렌즈 가로 벤치(lightBench) — sp3-* 가로 HUD 문법 재사용 + 단원색 오버라이드 */
+.lb-seg {
+  position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 5;
+  margin-top: 0; padding: 4px;
+}
+.lb-seg button { height: 36px; font-size: 12.5px; padding: 0 12px; flex: none; }
+.sp3-missions.lb span.on {
+  background: linear-gradient(150deg, #E86FCE 0%, #C838A6 60%, #9C2B84 100%);
+  box-shadow: 0 4px 12px -3px rgba(200, 56, 166, .55);
+}

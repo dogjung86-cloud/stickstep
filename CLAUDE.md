@@ -48,7 +48,14 @@ src/
                   hookGas(VI 훅 4종: polar·bubblewrap·foilballoon·pingpong)·
                   solarTour(VII 3D 가로 투어)·sunLab·skyDaily·zodiacRing·
                   moonPhase3d(3D 위상 + 지구뷰 인셋)·eclipse3d(3D 가로 정렬 + 지상 개기일식 뷰)·
-                  hookSpace(VII 훅 5종: stargaze·planetsize·shadowclock·moonpic·sunglasses))
+                  hookSpace(VII 훅 5종: stargaze·planetsize·shadowclock·moonpic·sunglasses)·
+                  reflectLab·diffuseLab(중2III L1 — 레이저 각도 드래그·난반사 돋보기)·
+                  refractLab(스넬 n=1.33)·seeLab(광원→물체→눈 경로 조립+작살)·
+                  mirrorImageLab(모눈 상 작도 — 상점=거울 대칭점·연장선 교점 정확)·
+                  mirrorLens(가로 광학 벤치 4모드 — 거울/렌즈 공식으로 상 실시간)·
+                  objectColorLab·colorMixLab(캔버스 lighter 진짜 가산혼합)·pixelLab(화소 돋보기+RGB 슬라이더)·
+                  waveLab(이력 버퍼 파동 전파 + 제자리 탁구공)·soundLab(Web Audio + 오실로스코프)·
+                  hookLight(중2III 훅 8종 — hook.ts가 위임))
   engine/    matterSim — IV 단원 순수 입자 물리(프로토타입 Sim 이식, 렌더링 없음, 수치 불변)
   renderers/ meta(WebGL 메타볼 — FRAG 원본 이식, 볼 상한 48, dispose 시 lose_context)·
              dot(발광점 — WebGL 폴백 겸 "입자의 눈" 뷰)·palette(온도→hue 212→370, uniform 3색)
@@ -66,8 +73,11 @@ src/
              space3d(VII 공용 three.js 킷 — 절차적 행성 텍스처·별배경·글로우·고리·궤도선.
                      **반드시 동적 import**로만 로드, dispose가 지오메트리·재질·텍스처+컨텍스트 반납),
              rotateStage(가로 모드 오버레이 — fixed 90° 회전 + mapPoint 포인터 리매핑 + 나가기),
-             spaceFigures(VII 퀴즈 SVG + 태양 핫스팟 그림 + spaceMiniArt)
-  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금), unit1 … unit7
+             spaceFigures(VII 퀴즈 SVG + 태양 핫스팟 그림 + spaceMiniArt),
+             lightKit(중2III 공용 — drawBeam 발광 광선(글로우 3층+광자 점 흐름)·각도 호·각도기·법선·
+                      레이저/거울/눈 소품·capturePointer 합성 이벤트 안전 캡처),
+             lightFigures(중2III 퀴즈 SVG + 파동 핫스팟 그림 + lightMiniArt)
+  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금), unit1 … unit7, g2unit3(중2 III 빛과 파동)
   screens/   splash, onboarding, home(게임 지도), done
 ```
 - **스텝 = `{ type, ...props }` 데이터.** `player`가 `registry`에서 `type`으로 렌더러를 찾아 그린다.
@@ -81,9 +91,13 @@ src/
 3. **새 단원 추가** → `content/unitN.ts` 만들고 `curriculum.ts`의 `CURRICULUM`에 넣는다.
    단원 내 레슨은 순차 잠금(직전 레슨 완료 시 해제).
 4. **단원 테마(색)** → `screens/home.ts`의 `UNIT_THEME`에 클래스 등록(u2=bio, u3=heat, u4=matter, u5=force,
-   u6=gas, u7=space) + `ui.css`에 `.unit-band.X`/`.gm-terrain.X`/`.gm-path-*.X`/`.gm-node.X` 변형 + tokens에 그라데이션.
+   u6=gas, u7=space, g2u3=light) + `ui.css`에 `.unit-band.X`/`.gm-terrain.X`/`.gm-path-*.X`/`.gm-node.X` 변형 + tokens에 그라데이션.
    랩 안 킥커는 `concept({ kickerTone: "heat" })` 식으로. 새 색은 기존 단원과 겹치지 않게
-   (u4 matter #7C6BFF 보라 ↔ u7 space #4A54E1 딥 인디고처럼 뚜렷이 구분).
+   (u4 matter #7C6BFF 보라 ↔ u7 space #4A54E1 딥 인디고 ↔ 중2III light #C838A6 오키드 마젠타처럼 뚜렷이 구분).
+5. **중2(상급 학년) 단원 추가** → `Unit.grade: 2` + 단원 id는 `g2u<대단원 번호>`(레슨 id는 `g2u3l1`식),
+   파일명 `content/g2unitN.ts`. 탭·배너의 "중2 ·" 접두는 grade 필드로 자동 표기(중1 단원은 grade 생략).
+   교과서 텍스트는 `중학교 교과서/중2 단원별 - 텍스트 보존(OCR)/` PDF — pdftotext는 한글이 깨지므로
+   **PyMuPDF(`py -m pip install pymupdf`)의 get_text()로 추출**한다(콘솔 인코딩 문제가 있으니 UTF-8 파일로 저장해 읽기).
 
 ## 퀴즈 유형 (quiz 스텝 하나로)
 - `mcq`(5지선다) · `ox`(O/X) · `multi`(보기 합답형, 복수정답) · 그림 퀴즈(`figure` 추가).
@@ -126,7 +140,8 @@ src/
 - 신규/대량 아트는 `premium-redesign-foundry` 워크플로로 생성(세포 좌표는 핫스팟 정렬 위해 유지).
 - **세포도 소기관 좌표는 figures.ts의 spots와 반드시 일치**시킬 것(핵 150,92 / 미토 225,62·82,150 등).
 - **단원별 훅 장면 파일**: III·IV=hook.ts 내부, V=hookForce.ts, VI=hookGas.ts, VII=hookSpace.ts,
-  I=hookCiv.ts(colorcups·speaker·smokestack), II=hookBio.ts(cellzoom·stain·bodycount·ladybugs·batbird·foodweb).
+  I=hookCiv.ts(colorcups·speaker·smokestack), II=hookBio.ts(cellzoom·stain·bodycount·ladybugs·batbird·foodweb),
+  중2III=hookLight.ts(mirrortown·coinmagic·darkroom·catmirror·spoon·pointillism·fishing·kalimba).
   recap 미니아트도 단원별: I=civFigures.ts, II=bioFigures.ts, III~=각 단원 figures. 새 훅은 scene 유니온을
   hook.ts·dsl.ts 양쪽에 등록하고, 상태 애니메이션 CSS는 ui.css의 해당 단원 훅 섹션에.
 - **손코딩 장면 SVG(훅 등)도 파운드리 재질 문법을 따른다** — 균일한 검은 외곽선 금지. 공식:
@@ -161,7 +176,9 @@ src/
 - binSort는 **드래그 앤 드롭이 기본**(탭 폴백 유지). 3단원(열)이 이 공식의 기준 구현.
 - 랩의 "교과서 밖 궁금증"은 `ui/curio.ts`의 curioCard(질문 헤드 탭 → 답 펼침, bulb + 앰버 톤)로 —
   content에서 `curio: { q, a }`를 넘기면 랩 렌더러가 helper 뒤에 붙인다. 현재: u3 전도(이불)·복사(산꼭대기),
-  u4 phaseNames(하얀 김), u5 gravityDrop(우주 정거장), u7 sunLab(흑점 역설). 오개념 교정형 질문이 기준.
+  u4 phaseNames(하얀 김), u5 gravityDrop(우주 정거장), u7 sunLab(흑점 역설), 중2III diffuseLab(하얀 종이)·
+  refractLab(신기루)·mirrorImageLab(구급차 거울문자)·colorMixLab(물감 혼합)·waveLab(우주 폭발음)·
+  soundLab(헬륨 목소리). 오개념 교정형 질문이 기준.
 - hotspot 스텝은 `spot.photo`(+photoCredit)로 부위별 실사 사진 카드를 설명 아래에 띄울 수 있다(태양 지도가 기준).
 
 ## 개념 우선 + 스틱맨 만화 (steps/comic.ts)
@@ -220,6 +237,27 @@ src/
   기울면 삭·망에서도 |y|>0.45로 정렬 판정이 빗나가고 미스 토스트가 뜬다 — 일식·월식 희소성의 체험 장치.
 - **가로 3D 랩의 카메라 구도는 계산으로 확보한다**: 필요한 x-범위(태양~궤도 끝)를 정하고
   dist ≥ 반폭/tan(hfov/2)로 검산할 것. 눈대중으로 잡으면 태양이 프레임 밖으로 나간다(실제 있었던 버그).
+
+## 중2 III 빛과 파동 — 광학·파동 랩 규칙
+- **광학은 전부 "정확한 계산"으로 그린다** — 눈대중 좌표 금지. 반사=입사각 미러링, 굴절=스넬(n=1.33,
+  물↔공기 경계 교차점은 이분법 22회), 평면거울 상=거울 대칭점(반사점은 상점—눈동자 직선과 거울의 교점 —
+  반사 법칙과 완전 동치), 벤치=1/v+1/u=1/f(실물 쪽 양수, f는 화면 폭 비례 `focalOf`).
+  이상광학에선 물체 끝의 모든 광선이 상점을 지나므로 장치 통과 후 광선은 "히트점→상점 직선"으로
+  작도한다(허상은 반대 방향으로 진행 + 상점까지 점선 연장). 이게 작도법이자 구현이다.
+- **벤치 UI에 '초점·실상·허상' 용어 금지** — 이 교과서는 상의 겉모습(바로/거꾸로·크고/작음)만 서술한다.
+  IV의 '녹는점 용어 미도입'과 같은 결. 상태 필은 "바로 선 상 · 커요(314%) · 거울 뒤" 식으로.
+- 광선은 lightKit.drawBeam만 사용(글로우 3층 + 흐르는 광자 점 = 진행 방향이 몸으로 읽힘). 레이저 초록,
+  랜턴·평행광 웜화이트, 입사각 앰버 "255,196,90" / 반사·굴절각 시안 "126,214,255"로 통일.
+- soundLab의 Web Audio는 사용자 제스처("소리 켜기")로만 시작, 게인 캡 0.2, cleanup에서 osc.stop+ctx.close.
+  오디오 실패 기기에서도 무음 모드로 전 목표 달성 가능해야 한다(훅 kalimba의 ping도 try/catch).
+- waveTank는 소스 이력 버퍼(90Hz 샘플·150px/s 전파)로 **임의의 손 입력이 그대로 파동**이 된다 —
+  탁구공은 dispAt(x)만 읽어 세로로만 움직인다(매질 제자리 진동의 증명 장치).
+- **포인터 캡처는 lightKit.capturePointer로** — 합성 PointerEvent(E2E)에서 setPointerCapture가 throw해
+  핸들러가 중단되는 것을 막는다. 프레임 루프에서 목표 달성 시 setTimeout을 예약할 땐 반드시
+  `!goals.has(id)` 가드를 함께 둘 것(매 프레임 중복 예약 → 예측 선택지가 여러 벌 붙던 실제 버그).
+- QA: `PORT=<포트> node qa/e2e-g2u3.mjs`(8레슨 전 스텝 실플레이 — 훅·랩 목표·예측·작살·벤치 4모드·퀴즈),
+  `PORT=<포트> node qa/shot-g2u3.mjs`(주요 화면 18장 → qa/shots/). 5173이 점유되면 dev 서버가 5174로
+  뜨니 PORT를 맞춘다. 진행도 시딩은 store.ts 실제 스키마(`lessons: {id:{done,acc,bestXp}}`, `totalXp`)로.
 
 ## 메타볼 렌더러 (대단원 IV에서 이식 완료)
 - `sample/renderer-comparison.html`의 `FRAG` 셰이더 원본을 `renderers/meta.ts`로 **수치 그대로** 이식했다.

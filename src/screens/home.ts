@@ -10,7 +10,7 @@ import { mapDecorArt } from "../ui/mapDecor";
 import type { Screen } from "../core/router";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
-const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space" };
+const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u3: "light" };
 // 단원별 보너스 미니게임 — 모든 레슨을 완료하면 지도 끝에 열린다.
 const UNIT_GAME: Record<string, { title: string }> = { u3: { title: "단열 디펜스" } };
 
@@ -88,7 +88,8 @@ export function homeScreen(
   function renderTabs(): void {
     clear(tabs);
     CURRICULUM.forEach((u, i) => {
-      const t = el("button", { class: `unit-tab ${i === sel ? "on" : ""}`, text: `${u.roman}. ${u.title}` });
+      const gradeTag = (u.grade ?? 1) >= 2 ? `중${u.grade} ` : "";
+      const t = el("button", { class: `unit-tab ${i === sel ? "on" : ""}`, text: `${gradeTag}${u.roman}. ${u.title}` });
       t.addEventListener("click", () => {
         sel = i;
         haptic(HAPTIC.tap);
@@ -107,7 +108,7 @@ export function homeScreen(
         "div",
         { class: `unit-band ${theme}` },
         el("div", { class: "ub-glow" }),
-        el("div", { class: "ub-eyebrow", text: `대단원 ${u.roman}` }),
+        el("div", { class: "ub-eyebrow", text: `${(u.grade ?? 1) >= 2 ? `중${u.grade} · ` : ""}대단원 ${u.roman}` }),
         el("div", { class: "ub-title", text: u.title }),
         el("div", { class: "ub-desc", text: u.subtitle }),
         u.standard ? el("div", { class: "ub-meta" }, el("span", { html: icon("check", 13) }), el("span", { text: `${u.standard} · ${pct}% 정복` })) : el("span", {}),
@@ -251,6 +252,7 @@ const UNIT_DECOR: Record<string, { seq: string[]; sky: [string, string] }> = {
   u5: { seq: ["appleTree", "springDeco", "crateDeco", "floatDeco", "appleTree"], sky: ["cloud", "cloud"] }, // 중력·탄성·마찰·부력
   u6: { seq: ["balloonsDeco", "bubblesDeco", "hotairDeco", "bubblesDeco", "balloonsDeco"], sky: ["hotairDeco", "cloud"] },
   u7: { seq: ["pMercury", "pVenus", "pMars", "pJupiter", "pSaturn"], sky: ["rocketDeco", "sparkle"] }, // 행성을 밟아 가는 순항
+  g2u3: { seq: ["flashlightDeco", "mirrorDeco", "prismDeco", "rgbDeco", "noteDeco"], sky: ["rainbowDeco", "cloud"] }, // 빛의 여행 → 소리의 여행
 };
 const DEFAULT_DECOR: { seq: string[]; sky: [string, string] } = {
   seq: ["tree1", "tree2", "bush", "rock", "grassTuft"],
@@ -265,6 +267,7 @@ const DECOR_SIZE: Record<string, number> = {
   appleTree: 58, springDeco: 42, crateDeco: 42, floatDeco: 46,
   balloonsDeco: 50, hotairDeco: 54, bubblesDeco: 42,
   pMercury: 36, pVenus: 38, pMars: 38, pJupiter: 46, pSaturn: 52, rocketDeco: 46, sparkle: 34,
+  flashlightDeco: 48, mirrorDeco: 44, prismDeco: 50, rgbDeco: 44, noteDeco: 38, rainbowDeco: 58,
 };
 
 function placeDecor(layer: HTMLElement, points: { x: number; y: number }[], W: number, unitId: string): void {
