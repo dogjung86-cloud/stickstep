@@ -195,7 +195,7 @@ src/
 - 신규/대량 아트는 `premium-redesign-foundry` 워크플로로 생성(세포 좌표는 핫스팟 정렬 위해 유지).
 - **세포도 소기관 좌표는 figures.ts의 spots와 반드시 일치**시킬 것(핵 150,92 / 미토 225,62·82,150 등).
 - **단원별 훅 장면 파일**: III·IV=hook.ts 내부, V=hookForce.ts, VI=hookGas.ts, VII=hookSpace.ts,
-  I=hookCiv.ts(colorcups·speaker·smokestack), II=hookBio.ts(cellzoom·stain·bodycount·ladybugs·batbird·foodweb).
+  I=hookCiv.ts(colorcups·speaker·smokestack), II=hookBio.ts(cellzoom[스틱맨쌤 팔 확대→세포]·stain·bodycount·fingerprint[지문 스캐너=변이]·batbird·foodweb).
   recap 미니아트도 단원별: I=civFigures.ts, II=bioFigures.ts, III~=각 단원 figures. 새 훅은 scene 유니온을
   hook.ts·dsl.ts 양쪽에 등록하고, 상태 애니메이션 CSS는 ui.css의 해당 단원 훅 섹션에.
 - **손코딩 장면 SVG(훅 등)도 파운드리 재질 문법을 따른다** — 균일한 검은 외곽선 금지. 공식:
@@ -223,6 +223,12 @@ src/
 - **발주 이미지 임베드에 `loading="lazy"` 금지** — 앱은 `.scroll` 컨테이너 안에서 스텝을 렌더하는데,
   lazy 관측 루트가 이 컨테이너와 안 맞아 이미지가 영영 안 뜬다(naturalWidth 0). fresh Image()는 되는데
   DOM img만 안 뜨면 이 문제. hotspot·orgArt·qimg 전부 lazy 없이 즉시 로드한다.
+- **누끼(투명 배경) 발주** — 카드 위에 뜨는 사물 아트(구성단계 등)는 codex에 "FULLY TRANSPARENT
+  background(PNG alpha)"로 발주하면 알파를 준다(초록 세포류는 codex가 흰 배경으로 흘리기도 해 재발주 필요).
+  변환은 process-geo.mjs의 TRANSPARENT_DIRS(흰 배경 fill 생략, 알파 보존). 장면형(서식지·배경 있는 그림)은
+  누끼 대상 아님. **codex image_gen은 tmp/ 작업 디렉터리를 만든다 → .gitignore에 tmp/**.
+- **분류 단계처럼 한글 라벨이 본질인 도형은 codex가 아니라 SVG 도표**(bioFigures.classStagesFig — 이미지
+  안 글자 못 넣는 codex 대신 계급 라벨을 직접 그림). 라벨 없는 codex 피라미드는 "저게 뭐야" 혼란을 부른다.
 - **천체(태양·행성·달)는 SVG로 그리지 않는다 — 실사(public/photos/, NASA·NOIRLab PD/CC BY)를 쓴다.**
   훅·퀴즈 그림에는 SVG `<image href>` + `clipPath` 원형 크롭으로 임베드(기준: hookSpace planetsize·stargaze·
   moonpic, spaceFigures sunspotFig·sunAnatomyFig). 3D는 space3d의 텍스처 로더가 담당. 출처는 `photos/CREDITS.md`.
