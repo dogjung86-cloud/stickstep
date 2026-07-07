@@ -210,9 +210,19 @@ src/
   `figures.ts`의 organism()이 NAME_ICON→key→발주 webp(<img class="bio-ico">)를 우선 반환, 없으면 ART_BIO SVG 폴백.
   흰 배경 유지(투명 처리 시 밝은 깃털·뺨에 구멍) + CSS로 라운드 배경. 재발주: qa/order-bio-icons.sh →
   qa/process-bio.mjs(256 webp). 조잡한 픽토그램 SVG(박쥐=새 매핑 오류 포함)를 대체한 것.
-- **구성 단계 도해(orgLevels 랩)는 bioFigures.ts의 orgArt(key)** — 단색 미니 SVG를 파운드리 문법
-  (근-동조 radial 그라데이션 + 좌상단 하이라이트 + 접촉 그림자 + 최암색 외곽선)으로 격상. 순환계는
-  '심장+온몸 혈관망'(무지개 부채꼴 금지), bodycount 훅 세포 격자·사람 실루엣도 같은 문법.
+- **구성 단계 도해(orgLevels 랩)는 bioFigures.ts의 orgArt(key)** — 손코딩 SVG를 codex 발주 일러스트로
+  교체(public/bio2/levels/*.webp 10종: 근육세포·근육조직·심장·순환계·강아지 / 잎살세포·울타리조직·조직계·
+  잎·나무). orgArt가 key→발주 webp `<img class="org-photo">` 우선 반환, 로드 실패 시 SVG 폴백. 순환계는
+  '심장+온몸 혈관망', 조직계는 '잎 단면(울타리+해면+기공)'.
+- **세포 구조도(L1 hotspot)도 발주 일러스트**(public/bio2/cells/{animal,plant}.webp) — figures.ts의
+  animalCell/plantCell.svg가 발주 `<img>`를 반환하고, spots는 **이미지 기준 %**로 정렬(`.hs-art:has(img)`가
+  패딩 0이라 이미지%=스테이지% 일치). 좌표는 반드시 스크린샷으로 눈으로 맞춘다(동물 3·식물 5부위 정렬 검증됨).
+- **문제 그림도 codex 발주**(public/bio2/quiz/*.webp) — unit2.ts qimg() 헬퍼로 mcq/ox/multi의 figure에 임베드.
+  발주 후보는 감사 워크플로우(레슨 병렬 진단→중복 제거→우선순위)로 뽑는다. `public/bio2/`는 다른 세션이
+  재생성하는 `public/bio/`(5계 아이콘)와 분리 — 병렬 세션 충돌 방지.
+- **발주 이미지 임베드에 `loading="lazy"` 금지** — 앱은 `.scroll` 컨테이너 안에서 스텝을 렌더하는데,
+  lazy 관측 루트가 이 컨테이너와 안 맞아 이미지가 영영 안 뜬다(naturalWidth 0). fresh Image()는 되는데
+  DOM img만 안 뜨면 이 문제. hotspot·orgArt·qimg 전부 lazy 없이 즉시 로드한다.
 - **천체(태양·행성·달)는 SVG로 그리지 않는다 — 실사(public/photos/, NASA·NOIRLab PD/CC BY)를 쓴다.**
   훅·퀴즈 그림에는 SVG `<image href>` + `clipPath` 원형 크롭으로 임베드(기준: hookSpace planetsize·stargaze·
   moonpic, spaceFigures sunspotFig·sunAnatomyFig). 3D는 space3d의 텍스처 로더가 담당. 출처는 `photos/CREDITS.md`.
