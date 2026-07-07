@@ -42,6 +42,10 @@ import {
 import {
   renderZoomTwo, renderSigns, renderPeekAtom, renderMenuSort, renderSpringWater, renderMagnetPull,
 } from "./hookAtom";
+import {
+  renderWinterShock, renderBalloonDoll, renderDeadClock, renderBrightPair,
+  renderMultiTap, renderLabelPeek, renderCompassWire, renderEbike,
+} from "./hookElec";
 import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -79,7 +83,8 @@ interface HookStep {
     | "rings" | "deadsea" | "cocoa" | "fishmouth" | "gallium" | "milkzoom" | "soysauce" | "syrup" | "perfume"
     | "stripemount" | "foolsgold" | "dolstatue" | "bookcliff" | "pressrock" | "cappadocia" | "gravestone" | "puzzlemap" | "quakenews" | "eggearth"
     | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba"
-    | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull";
+    | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull"
+    | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
 }
@@ -144,6 +149,14 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "menusort") renderMenuSort(scene, helper, finish, face);
   else if (s.scene === "springwater") sceneCleanup = renderSpringWater(scene, helper, s, finish, face);
   else if (s.scene === "magnetpull") sceneCleanup = renderMagnetPull(scene, helper, s, finish, face);
+  else if (s.scene === "wintershock") sceneCleanup = renderWinterShock(scene, helper, s, finish, face);
+  else if (s.scene === "balloondoll") sceneCleanup = renderBalloonDoll(scene, helper, s, finish, face);
+  else if (s.scene === "deadclock") sceneCleanup = renderDeadClock(scene, helper, s, finish, face);
+  else if (s.scene === "brightpair") sceneCleanup = renderBrightPair(scene, helper, s, finish, face);
+  else if (s.scene === "multitap") sceneCleanup = renderMultiTap(scene, helper, s, finish, face);
+  else if (s.scene === "labelpeek") sceneCleanup = renderLabelPeek(scene, helper, s, finish, face);
+  else if (s.scene === "compasswire") sceneCleanup = renderCompassWire(scene, helper, s, finish, face);
+  else if (s.scene === "ebike") sceneCleanup = renderEbike(scene, helper, s, finish, face);
   else if (s.scene === "mirrortown") sceneCleanup = renderMirrorTown(scene, helper, finish, face);
   else if (s.scene === "coinmagic") sceneCleanup = renderCoinMagic(scene, helper, s, finish, face);
   else if (s.scene === "darkroom") sceneCleanup = renderDarkroom(scene, helper, s, finish, face);

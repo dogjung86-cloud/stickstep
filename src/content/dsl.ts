@@ -11,7 +11,7 @@ export const rimg = (file: string, alt: string): string =>
 
 export const concept = (o: {
   kicker?: string;
-  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo";
+  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "elec";
   title: string;
   lead?: string;
   blocks?: Block[];
@@ -54,7 +54,7 @@ export const binSort = (o: {
 }): Step => ({ type: "binSort", ...o });
 
 export const hotspot = (o: {
-  title: string; lead?: string; svg: string; dark?: boolean;
+  title: string; lead?: string; svg: string; dark?: boolean; pad0?: boolean;
   spots: { x: number; y: number; label: string; desc?: string; photo?: string; photoCredit?: string; photoCap?: string }[];
   mode?: "reveal" | "find"; explainGood?: string; explainBad?: string;
 }): Step => ({ type: "hotspot", ...o });
@@ -70,7 +70,8 @@ export const hook = (o: {
     | "rings" | "deadsea" | "cocoa" | "fishmouth" | "gallium" | "milkzoom" | "soysauce" | "syrup" | "perfume"
     | "stripemount" | "foolsgold" | "dolstatue" | "bookcliff" | "pressrock" | "cappadocia" | "gravestone" | "puzzlemap" | "quakenews" | "eggearth"
     | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba"
-    | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull";
+    | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull"
+    | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
@@ -203,6 +204,8 @@ export const mirrorImageLab = (o: { title: string; lead?: string; cta?: string; 
   ({ type: "mirrorImageLab", ...o });
 export const mirrorLens = (o: { title: string; lead?: string; cta?: string }): Step =>
   ({ type: "mirrorLens", ...o });
+export const opticView = (o: { title: string; lead?: string; cta?: string }): Step =>
+  ({ type: "opticView", ...o });
 export const objectColorLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "objectColorLab", ...o });
 export const colorMixLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
@@ -230,6 +233,30 @@ export const ionLab = (o: { title: string; lead?: string; cta?: string; curio?: 
   ({ type: "ionLab", ...o });
 export const ionMoveLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "ionMoveLab", ...o });
+// ── 중2 전기와 자기 단원(g2 VII) 랩 ─────────────────────────
+export const frictionLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "frictionLab", ...o });
+export const rubLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "rubLab", ...o });
+export const inductionLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "inductionLab", ...o });
+export const waterCircuit = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "waterCircuit", ...o });
+export const ohmLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "ohmLab", ...o });
+export const circuitLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "circuitLab", ...o });
+export const coilFieldLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "coilFieldLab", ...o });
+export const swingLab3d = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "swingLab3d", ...o });
+
+export const pairMatch = (o: {
+  title: string; lead?: string; aLabel?: string; bLabel?: string;
+  pairs: { a: string; b: string }[]; cta?: string; explainGood?: string; explainBad?: string;
+}): Step => ({ type: "pairMatch", ...o });
+export const formulaLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "formulaLab", ...o });
 
 // ── 중2 물질의 특성 단원(g2 I) 랩 ───────────────────────────
 export const densityLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>

@@ -9,7 +9,20 @@ import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { drawIonLabel, TAU } from "../../ui/chemKit";
 import { curioCard, type Curio } from "../../ui/curio";
+import { labExplain } from "../../ui/labExplain";
 import type { StepRenderer } from "../types";
+
+const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+
+/** 실제 실험 사진(발주) — 전류 전/후 비교 카드용 */
+function realPhotoPair(): string {
+  const fig = (file: string, alt: string, cap: string): string =>
+    `<figure style="margin:0 0 10px"><img src="${IMG_BASE}atom/quiz/${file}" alt="${alt}" style="display:block;width:100%;border-radius:12px"/><figcaption style="text-align:center;font-size:12px;font-weight:700;color:#4E5968;margin-top:5px">${cap}</figcaption></figure>`;
+  return (
+    fig("ionmove.webp", "전류를 흘리기 전 — 파란 반점이 거름종이 가운데에 있다", "전류를 흘리기 전 — 파란 반점이 가운데") +
+    fig("ionmove-after.webp", "전류를 흘린 뒤 — 파란 반점이 (−)극 쪽으로 번져 갔다", "전류를 흘린 뒤 — (−)극 쪽으로 이동!")
+  );
+}
 
 interface LabStep {
   title: string;
@@ -59,6 +72,16 @@ export const ionMoveLab: StepRenderer = (host, step, api) => {
     html: "거름종이 중앙에 <b>황산 구리(Ⅱ) 수용액</b>을 한 방울 떨어뜨렸어요. 파란색의 정체는 <b>구리 이온</b> — 전류를 켜면 어디로 갈까요?",
   });
   host.append(goalChips, stage, row, helper);
+  // 실제 실험 사진 — 시뮬레이션과 같은 결과가 진짜 실험실에서도 나온다는 증거
+  host.appendChild(
+    labExplain({
+      kicker: "실제 실험에서는",
+      tone: "#7CB024",
+      lead: "같은 장치로 실제 실험을 하면 — 파란 구리 이온이 정말 <b>(−)극 쪽으로</b> 번져 가요.",
+      fig: realPhotoPair(),
+      rows: [],
+    }),
+  );
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

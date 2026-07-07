@@ -1,0 +1,33 @@
+# 2차 비주얼 발주 8장 — 원자 훅 3(정사각) + 전기영동 후 1(2:1) + recap 실사 4(4:3)
+# 공통 스타일 A(원자 훅 [0]~[2] — 시리즈로 톤 통일):
+# Clean educational 3D-render style illustration for a middle-school science app.
+# Dark slate-navy gradient background (deep blue #16233A fading to #0B1524 at edges), soft studio key light
+# from upper-left, subtle depth of field. Consistent series look across the three images.
+# NO text, NO letters, NO numbers, NO labels anywhere.
+# 공통 스타일 B(사진류 [3]~[7]):
+# Photorealistic photograph for a middle-school science app. Natural realistic lighting, sharp focus.
+# NO text, NO letters, NO numbers, NO watermarks, NO people, NO faces.
+
+[0] file=public/atom/hook/peek0.png (square 1:1)
+STYLE A. Extreme macro close-up of a sharpened yellow pencil tip lying diagonally, the dark graphite core prominent and glossy in the center of frame, tiny graphite dust specks nearby. The graphite tip is the hero, softly glowing rim light suggesting we are about to zoom into it.
+
+[1] file=public/atom/hook/peek1.png (square 1:1)
+STYLE A. Zoomed into graphite at the atomic scale: many identical smooth matte dark-gray spheres (carbon atoms) packed in neat flat hexagonal honeycomb-like layers, two or three layers stacked with slight depth, filling the frame. One sphere at the center front is subtly rim-lit and slightly brighter, inviting a further zoom. All spheres identical in color and size, no other colors.
+
+[2] file=public/atom/hook/peek2.png (square 1:1)
+STYLE A. Inside a single atom: at the exact center floats one small dense nucleus — a tight cluster of about a dozen small spheres in two colors (warm red-orange spheres and neutral gray spheres) packed together like a raspberry, with a soft warm glow around it. The rest of the frame is vast dark empty space with very subtle depth haze, emphasizing how tiny the nucleus is compared to the atom. IMPORTANT: absolutely NO electrons, NO orbit rings, NO ellipses, NO paths — only the glowing nucleus cluster in empty dark space (small blue electrons will be drawn by the app on top).
+
+[3] file=public/atom/quiz/ionmove-after.png (landscape 2:1)
+STYLE B. Top-down view of a chemistry electrophoresis demonstration AFTER current has flowed for a while: a rectangular strip of white filter paper lying flat on a clear glass slide on a clean white lab bench. A metal alligator clip grips each short end of the strip — the LEFT clip has a black wire, the RIGHT clip has a red wire, both wires running out of frame. The round vivid blue spot of copper(II) sulfate is now clearly shifted to the LEFT of center (toward the black-wire clip), stretched into a soft comet-like smear pointing left, leaving a faint blue trace behind at the center where it started. Even soft lighting, everything sharp and clean, wide 2:1 landscape composition.
+
+[4] file=public/recap/road-mirror.png (4:3)
+STYLE B. A round orange-rimmed convex traffic safety mirror mounted on a pole at a curved narrow road corner, seen slightly from below. The convex mirror surface clearly reflects a wide squeezed fisheye view of the road, roadside trees and sky. Daylight, Korean countryside road feel, no cars with readable plates, no signs with text.
+
+[5] file=public/recap/lake-reflection.png (4:3)
+STYLE B. A perfectly calm mountain lake at golden hour acting like a giant flat mirror: the mountain, trees and clouds reflected symmetrically and sharply upside-down in the still water, horizon line across the middle. Serene, crisp mirror-like specular reflection.
+
+[6] file=public/recap/pixel-macro.png (4:3)
+STYLE B. Extreme macro photograph of a display screen showing a white area: the individual pixels are clearly visible as a regular grid of tiny glowing vertical red, green and blue sub-pixel bars on a black background, slightly blurred at the edges of frame. The RGB triads are crisp and unmistakable in the center.
+
+[7] file=public/recap/neon-argon.png (4:3)
+STYLE B. Close-up of glowing gas discharge tubes in a dark room: a few simple bent glass tubes glowing in warm orange-red (neon) and one glowing pale violet-blue, mounted on a dark wall. Soft glow bloom, abstract shapes only — the tubes must NOT form any letters, numbers or words; use simple loops, zigzags and straight bars.

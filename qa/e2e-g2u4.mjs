@@ -158,7 +158,25 @@ try {
   // ════ L2 원소 기호와 화학식 ════
   await openNextLesson();
   await clickAll("무슨 뜻", 350); // 표지판 3개
-  await clickCTA();
+  await clickCTA(); // 훅 → 개념(원소 기호)
+  console.log("  concept(기호):", await h1());
+  await clickCTA(); // → 짝 맞추기
+  console.log("  pairMatch:", await h1());
+  await page.waitForSelector(".pm-chip.pm-a", { timeout: 9000 });
+  for (const [a, b] of [["H", "수소"], ["C", "탄소"], ["Cl", "염소"], ["N", "질소"], ["Na", "나트륨"], ["O", "산소"]]) {
+    const ok = await page.evaluate(([a, b]) => {
+      const ac = [...document.querySelectorAll(".pm-chip.pm-a")].find((c) => c.textContent === a);
+      const bc = [...document.querySelectorAll(".pm-chip.pm-b")].find((c) => c.textContent === b);
+      if (!ac || !bc) return false;
+      ac.click(); bc.click();
+      return true;
+    }, [a, b]);
+    if (!ok) throw new Error(`pairMatch: ${a}-${b} 칩 못 찾음`);
+    await W(180);
+  }
+  await sheetContinue(); // 완성 시트 → 다음(개념: 화학식)
+  console.log("  concept(화학식):", await h1());
+  await clickCTA(); // → 조립소
   console.log("  moleculeLab:", await h1());
   // H_2 → H_2O → CO_2
   await clickBtn("수소 .*넣기|H.*넣기", 600); await clickBtn("수소 .*넣기|H.*넣기", 1600); // H,H → 수소
@@ -166,6 +184,8 @@ try {
   await clickBtn("탄소 .*넣기|C.*넣기", 500); await clickBtn("산소 .*넣기|O.*넣기", 500); await clickBtn("산소 .*넣기|O.*넣기", 1800); // C,O,O → CO2
   await clickCTA(); await clickCTA();
   await quiz(4); await quiz(1); await quiz(1); await oxPick(true);
+  await quiz(1); // CO₂ 해석(탄소1+산소2)
+  await quiz(3); // NH₃ 원자 총 4개
   await finishLesson();
 
   // ════ L3 원자의 구조 ════
@@ -184,15 +204,21 @@ try {
 
   // ════ L4 주기율표 ════
   await openNextLesson();
-  await clickBtn("정리하기", 900);
-  await clickCTA();
-  console.log("  periodicLab:", await h1());
-  // 9번(F), 1족(Li·Na·K), 18족(He·Ne·Ar) 셀 클릭
-  const cell = async (sym) => { await page.evaluate((sym) => { const c = [...document.querySelectorAll(".pt-cell b")].find((b) => b.textContent === sym); c?.parentElement.click(); }, sym); await W(300); };
-  await cell("F");
+  console.log("  라부아지에 만화:", await h1());
+  for (let c = 0; c < 7; c++) await clickCTA(); // 7컷 — 마지막 컷에서 다음 스텝
+  console.log("  concept(읽는 법):", await h1());
+  await clickCTA(); // 읽는 법 → 주기율표
+  console.log("  periodicLab(가로):", await h1());
+  await clickBtn("가로 화면", 1200);
+  await page.waitForSelector(".rot-overlay.in .ptx-grid", { timeout: 9000 });
+  const cell = async (sym) => { await page.evaluate((sym) => { const c = [...document.querySelectorAll(".ptx-cell b")].find((b) => b.textContent === sym); c?.parentElement.click(); }, sym); await W(260); };
+  // 미션 ① 1족 삼형제 ② 18족 삼형제 ③ 2주기 완주(원자 번호 순 — Li는 ①에서 이미 탭)
   await cell("Li"); await cell("Na"); await cell("K");
   await cell("He"); await cell("Ne"); await cell("Ar");
+  for (const s of ["Be", "B", "C", "N", "O", "F", "Ne"]) await cell(s);
   await W(400);
+  await page.evaluate(() => document.querySelector(".rot-exit")?.click());
+  await W(800);
   await clickCTA(); await clickCTA();
   await quiz(2); await quiz(1); await oxPick(false);
   await finishLesson();
@@ -207,7 +233,26 @@ try {
   await clickBtn("질소 .*넣기|N.*넣기", 500); await clickBtn("수소 .*넣기|H.*넣기", 500); await clickBtn("수소 .*넣기|H.*넣기", 500); await clickBtn("수소 .*넣기|H.*넣기", 1700); // NH3
   await clickBtn("수소 .*넣기|H.*넣기", 500); await clickBtn("수소 .*넣기|H.*넣기", 500); await clickBtn("산소 .*넣기|O.*넣기", 1700); // H2O
   await clickBtn("쪼개기", 1800);
-  await clickCTA();
+  await clickCTA(); // → 화학식 쓰기 랩
+  console.log("  formulaLab:", await h1());
+  await page.waitForSelector(".fl-key", { timeout: 9000 });
+  const flKey = async (t) => {
+    await page.evaluate((t) => {
+      const k = [...document.querySelectorAll(".fl-key")].find((x) => x.textContent === t);
+      k?.click();
+    }, t);
+    await W(140);
+  };
+  const flCheck = async (wait = 1100) => { await clickBtn("화학식 확인", wait); };
+  await flKey("N"); await flKey("X2"); await flCheck(); // N₂
+  await flKey("H"); await flKey("Cl"); await flCheck(); // HCl
+  await flKey("C"); await flKey("O"); await flCheck(); // CO
+  await flKey("C"); await flKey("O"); await flKey("X2"); await flCheck(700); // CO₂
+  await clickCTA(); // → 개념(이온식)
+  console.log("  concept(이온식):", await h1());
+  await clickCTA(); // → 표기 연습 문제
+  await quiz(0); // Mg²⁺
+  await oxPick(true); // O²⁻
   console.log("  ionLab:", await h1());
   await clickBtn("전자 1개 떼기", 700); // Na → Na+
   await segClick("염소");
@@ -224,7 +269,9 @@ try {
   await openNextLesson();
   await clickBtn("가까이 밀기", 1000);
   await hookChoice(0);
-  await clickCTA();
+  await clickCTA(); // 훅 → 실험 설계
+  console.log("  concept(실험 설계):", await h1());
+  await clickCTA(); // 설계 → 실험실
   console.log("  ionMoveLab:", await h1());
   await clickBtn("전류 켜기", 3800); // 구리 이온 (−)극 도달 대기(62px/s)
   await segClick("과망가니즈산 칼륨");

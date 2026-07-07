@@ -4,8 +4,8 @@
 import { chromium } from "playwright-core";
 import { readFileSync, writeFileSync, readdirSync, unlinkSync, existsSync } from "node:fs";
 
-const SQUARE_DIRS = ["public/geo/rocks", "public/geo/minerals", "public/geo/evid"];
-const ASPECT_DIRS = ["public/geo/drift", "public/geo/figs", "public/recap", "public/bio2/cells", "public/bio2/quiz"];
+const SQUARE_DIRS = ["public/geo/rocks", "public/geo/minerals", "public/geo/evid", "public/light/quiz", "public/atom/hook"];
+const ASPECT_DIRS = ["public/geo/drift", "public/geo/figs", "public/recap", "public/bio2/cells", "public/bio2/quiz", "public/atom/quiz"];
 // 투명 배경(누끼) 보존 — 흰 배경을 깔지 않고 알파를 그대로 webp로. 구성단계 개체 아트 등.
 const TRANSPARENT_DIRS = ["public/bio2/levels"];
 

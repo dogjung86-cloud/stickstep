@@ -199,7 +199,16 @@ export const reflectLab: StepRenderer = (host, step, api) => {
     // 각도기 + 거울 + 법선
     drawProtractor(ctx, P.x, P.y, Math.min(R * 0.8, 120), 0);
     mirrorProp(ctx, 24, mirY, W - 24, mirY);
-    drawNormal(ctx, P.x, P.y, -Math.PI / 2, Math.min(R + 30, P.y - 14));
+    const normLen = Math.min(R + 30, P.y - 14);
+    drawNormal(ctx, P.x, P.y, -Math.PI / 2, normLen);
+    // 법선 라벨 — 각도의 기준선임을 화면에서 바로 익히게 표기
+    ctx.font = "700 11px Pretendard, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "rgba(174,196,228,.9)";
+    ctx.fillText("법선", P.x + 8, P.y - normLen + 12);
+    ctx.font = "600 9.5px Pretendard, sans-serif";
+    ctx.fillStyle = "rgba(174,196,228,.6)";
+    ctx.fillText("거울 면에 수직", P.x + 8, P.y - normLen + 25);
 
     // 광선(입사→반사 한 줄기로 — 광자 점이 반사점을 통과해 흐른다)
     const lx = P.x - Math.sin(theta) * R;

@@ -356,6 +356,49 @@ const MAP_DECOR: Record<string, string> = {
     `<radialGradient id="io-p" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#FF9A80"/><stop offset="1" stop-color="#E0452E"/></radialGradient>
     <radialGradient id="io-m" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#8FC4FF"/><stop offset="1" stop-color="#2E6DB4"/></radialGradient>`,
   ),
+  // ── 중2 VII. 전기와 자기 — 전기 순례(스파크→전지→전구→코일→자석) ──
+  boltDeco: S(
+    `${shadow(32, 57, 12, 0.14)}
+    <path d="M36 8L20 36h9l-4 20 19-30h-10z" fill="url(#bo-g)" stroke="#B8860B" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M33 13l-8 15" stroke="#FFF3C0" stroke-width="2.4" stroke-linecap="round" opacity=".85"/>`,
+    `<linearGradient id="bo-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE27A"/><stop offset=".55" stop-color="#F5C400"/><stop offset="1" stop-color="#D69C00"/></linearGradient>`,
+  ),
+  batteryDeco: S(
+    `${shadow(32, 57, 13, 0.14)}
+    <rect x="18" y="18" width="28" height="38" rx="6" fill="url(#ba-g)" stroke="#3E4B66" stroke-width="1.5"/>
+    <rect x="26" y="12" width="12" height="7" rx="2.5" fill="#D8B04A" stroke="#8A6A1E" stroke-width="1.2"/>
+    <path d="M28 30h8M32 26v8" stroke="#FFF" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M28 46h8" stroke="#FFF" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M22 22v30" stroke="#FFF" stroke-width="1.8" opacity=".4"/>`,
+    `<linearGradient id="ba-g" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B8C6DA"/><stop offset=".5" stop-color="#8FA0B8"/><stop offset="1" stop-color="#5E7090"/></linearGradient>`,
+  ),
+  bulbDeco: S(
+    `${shadow(32, 58, 12, 0.14)}
+    <circle cx="32" cy="28" r="15" fill="url(#bu-g)" stroke="#C8A23E" stroke-width="1.4"/>
+    <path d="M26 30q3-6 6-1t6-1" stroke="#E8963E" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <rect x="26" y="42" width="12" height="9" rx="2.5" fill="#8C99AC" stroke="#4E5A70" stroke-width="1.2"/>
+    <path d="M26 45h12M26 48h12" stroke="#5E6C84" stroke-width="1.1"/>
+    <circle cx="27" cy="22" r="3.4" fill="#FFF" opacity=".75"/>
+    <path d="M12 16l4 4M52 16l-4 4M32 6v6" stroke="#F5C400" stroke-width="2.2" stroke-linecap="round"/>`,
+    `<radialGradient id="bu-g" cx=".4" cy=".32" r=".95"><stop offset="0" stop-color="#FFF7D8"/><stop offset=".6" stop-color="#FFDF8A"/><stop offset="1" stop-color="#F0B84A"/></radialGradient>`,
+  ),
+  coilDeco: S(
+    `${shadow(32, 57, 14, 0.14)}
+    <path d="M12 40q4-14 10 0t10 0 10 0 10 0" stroke="url(#co-g)" stroke-width="4.6" fill="none" stroke-linecap="round"/>
+    <path d="M8 40h6M50 40h6" stroke="#8FA4C2" stroke-width="3.4" stroke-linecap="round"/>
+    <circle cx="17" cy="31" r="1.8" fill="#FFF" opacity=".7"/>`,
+    `<linearGradient id="co-g" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E8A05A"/><stop offset=".5" stop-color="#C97F3A"/><stop offset="1" stop-color="#A05E22"/></linearGradient>`,
+  ),
+  magnetDeco: S(
+    `${shadow(32, 57, 14, 0.14)}
+    <path d="M20 14a12 12 0 0 1 24 0v22a12 12 0 0 1-24 0z" fill="none"/>
+    <path d="M20 14v22a12 12 0 0 0 24 0V14" stroke="#8B2E1E" stroke-width="9" fill="none" stroke-linecap="butt"/>
+    <path d="M20 14v22a12 12 0 0 0 24 0V14" stroke="url(#mg-g)" stroke-width="7" fill="none" stroke-linecap="butt"/>
+    <rect x="15.5" y="10" width="9" height="9" rx="1.5" fill="#E8EEF6" stroke="#8C99A8" stroke-width="1.2"/>
+    <rect x="39.5" y="10" width="9" height="9" rx="1.5" fill="#E8EEF6" stroke="#8C99A8" stroke-width="1.2"/>
+    <path d="M12 54l3-3M52 54l-3-3M32 60v-4" stroke="#F5C400" stroke-width="2" stroke-linecap="round"/>`,
+    `<linearGradient id="mg-g" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF8A70"/><stop offset=".5" stop-color="#E0452E"/><stop offset="1" stop-color="#4A6CD8"/></linearGradient>`,
+  ),
   rainbowDeco: S(
     `<g fill="none" stroke-linecap="round">
       <path d="M8 46a24 24 0 0 1 48 0" stroke="#F25C54" stroke-width="4.6"/>

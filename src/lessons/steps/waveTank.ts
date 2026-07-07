@@ -11,6 +11,8 @@ import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { TAU, capturePointer } from "../../ui/lightKit";
 import { curioCard, type Curio } from "../../ui/curio";
+import { labExplain } from "../../ui/labExplain";
+import { waveExplainFig } from "../../ui/lightFigures";
 import type { StepRenderer } from "../types";
 
 interface LabStep {
@@ -21,7 +23,7 @@ interface LabStep {
 }
 
 const RATE = 90; // 이력 샘플/초
-const SPEED = 150; // 파동 전파 속도(px/s)
+const SPEED0 = 150; // 파동 전파 속도 기본값(px/s) — 슬라이더로 60~260 조절
 
 export const waveLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
@@ -56,11 +58,15 @@ export const waveLab: StepRenderer = (host, step, api) => {
   const labelBtn = el("button", { class: "swapbtn", attrs: { type: "button", "aria-pressed": "false" } }, el("span", { text: "마루·골·파장·진폭 이름표 보기" }));
   const btnRow = el("div", { class: "gp-controls" }, autoBtn, labelBtn);
 
-  // 자동 모드 슬라이더(진폭·진동수) — px-sl 문법 재사용
+  // 자동 모드 슬라이더(진폭·진동수) + 항상 보이는 전파 속도 슬라이더 — px-sl 문법 재사용
   const sliders = el("div", { class: "px-sliders" });
+  const speedSliders = el("div", { class: "px-sliders show" });
   let amp = 15; // px
   let freq = 1.0; // Hz
+  let speed = SPEED0; // px/s
+  let speedHinted = false;
   const mkSlider = (
+    box: HTMLElement,
     name: string,
     grad: string,
     get: () => number,
@@ -108,10 +114,11 @@ export const waveLab: StepRenderer = (host, step, api) => {
       e.preventDefault();
       sync();
     });
-    sliders.appendChild(row);
+    box.appendChild(row);
     sync();
   };
   mkSlider(
+    sliders,
     "진폭",
     "linear-gradient(90deg,#1D4E64,#37B6D8)",
     () => (amp - 6) / 20,
@@ -119,6 +126,7 @@ export const waveLab: StepRenderer = (host, step, api) => {
     () => `${Math.round(amp)}px`,
   );
   mkSlider(
+    sliders,
     "진동수",
     "linear-gradient(90deg,#3A2A6E,#8A6BFF)",
     () => (freq - 0.6) / 1.2,
@@ -129,12 +137,42 @@ export const waveLab: StepRenderer = (host, step, api) => {
     },
     () => `${freq.toFixed(1)}Hz`,
   );
+  mkSlider(
+    speedSliders,
+    "전파 속도",
+    "linear-gradient(90deg,#1E5A48,#0B9E96)",
+    () => (speed - 60) / 200,
+    (t) => {
+      speed = 60 + t * 200;
+      if (!speedHinted && showLabels && Math.abs(speed - SPEED0) > 40) {
+        speedHinted = true;
+        helper.innerHTML =
+          "속도를 바꾸면 <b>마루 사이 간격(파장)</b>도 변해요 — 같은 빠르기로 흔들어도 파동이 빨리 도망가면 간격이 넓어지죠!";
+      }
+    },
+    () => `${(speed / SPEED0).toFixed(1)}배`,
+  );
 
   const helper = el("div", {
     class: "helper",
     html: "왼쪽 <b>진동 막대 손잡이를 잡고 위아래로</b> 흔들어 보세요 — 여러분의 손짓이 그대로 물결이 되어 퍼져 나가요!",
   });
-  host.append(goalChips, stage, btnRow, sliders, helper);
+  host.append(goalChips, stage, btnRow, sliders, speedSliders, helper);
+  // 실험은 빠르게 지나가니 — 정지 그림으로 4요소를 붙잡아 두는 설명 카드
+  host.appendChild(
+    labExplain({
+      kicker: "천천히 보는 파동 지도",
+      tone: "#8A6BFF",
+      lead: "움직이는 물결에서 놓쳤다면 여기서 확인 — <b>파동의 네 요소</b>예요.",
+      fig: waveExplainFig(),
+      rows: [
+        { dot: "#E8961E", name: "마루", desc: "파동에서 <b>가장 높은 곳</b>이에요." },
+        { dot: "#3A6CD8", name: "골", desc: "파동에서 <b>가장 낮은 곳</b>이에요." },
+        { dot: "#7C5CD6", name: "파장", desc: "<b>마루에서 이웃한 마루까지</b>의 거리예요. 골에서 이웃한 골까지 재도 같아요." },
+        { dot: "#0B9E96", name: "진폭", desc: "<b>진동 중심에서 마루(골)까지</b>의 거리예요. 마루~골 거리는 진폭의 <b>2배</b>인 것에 주의!" },
+      ],
+    }),
+  );
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
@@ -143,7 +181,7 @@ export const waveLab: StepRenderer = (host, step, api) => {
   const Y0 = (): number => H * 0.46;
   const padX = (): number => 46;
   const duckX = (): number => W * 0.64;
-  const buf = new Float32Array(RATE * 4); // 4초 이력
+  const buf = new Float32Array(RATE * 6); // 6초 이력(최저 속도에서도 화면 폭을 덮는다)
   let head = 0;
   let simMs = 0;
   let manual = 0; // 손 드래그 변위(px, 아래+)
@@ -218,9 +256,9 @@ export const waveLab: StepRenderer = (host, step, api) => {
   canvas.addEventListener("pointerup", endDrag);
   canvas.addEventListener("pointercancel", endDrag);
 
-  // 이력 조회 — x 지점의 표면 변위
+  // 이력 조회 — x 지점의 표면 변위(전파 속도 슬라이더 반영)
   function dispAt(x: number): number {
-    const delay = Math.max(0, (x - padX()) / SPEED); // 초
+    const delay = Math.max(0, (x - padX()) / speed); // 초
     const idx = Math.round(delay * RATE);
     if (idx >= buf.length - 1) return 0;
     const v = buf[(head - 1 - idx + buf.length * 4) % buf.length];

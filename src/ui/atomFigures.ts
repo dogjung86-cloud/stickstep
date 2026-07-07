@@ -106,6 +106,66 @@ export function ionMoveFig(): string {
   </svg>`;
 }
 
+/** L2 개념 — 화학식 해부도: 아래 숫자의 뜻(H₂O) */
+export function formulaAnatomyFig(): string {
+  return `<svg viewBox="0 0 344 150" ${NS} fill="none" role="img" aria-label="화학식 H2O에서 아래 숫자 2는 수소 원자의 개수, 산소의 1은 생략">
+    <text x="118" y="76" text-anchor="middle" font-size="52" font-weight="800" fill="#333D4B">H</text>
+    <text x="152" y="92" text-anchor="middle" font-size="34" font-weight="800" fill="#0B9E62">2</text>
+    <text x="196" y="76" text-anchor="middle" font-size="52" font-weight="800" fill="#333D4B">O</text>
+    <circle cx="152" cy="81" r="21" stroke="#0B9E62" stroke-width="1.8" stroke-dasharray="4 4"/>
+    <path d="M152 104v14" stroke="#0B9E62" stroke-width="1.8"/>
+    <text x="152" y="134" text-anchor="middle" font-size="12.5" font-weight="800" fill="#0B9E62">수소 원자 2개 (기호 오른쪽 아래!)</text>
+    <text x="226" y="92" text-anchor="middle" font-size="26" font-weight="800" fill="#C9D2DC">1</text>
+    <path d="M226 44v22" stroke="#B0B8C1" stroke-width="1.6" stroke-dasharray="3 4"/>
+    <text x="226" y="34" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">산소 원자 1개 — 1은 생략!</text>
+  </svg>`;
+}
+
+/** L4 개념 — 주기율표 칸 읽는 법(교과서 그림 IV-6의 수소 칸 해부도) */
+export function cellAnatomyFig(): string {
+  const callout = (y: number, label: string, tx: number, ty: number, color: string): string => `
+    <text x="118" y="${y + 4}" text-anchor="end" font-size="13" font-weight="800" fill="${color}">${label}</text>
+    <line x1="126" y1="${y}" x2="${tx}" y2="${ty}" stroke="${color}" stroke-width="1.6"/>
+    <circle cx="${tx}" cy="${ty}" r="2.6" fill="${color}"/>`;
+  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="주기율표 칸 읽는 법 — 위 숫자는 원자 번호, 가운데는 원소 기호, 아래는 원소 이름">
+    <!-- 수소 칸(살구 카드 — 입체감) -->
+    <rect x="186" y="34" width="96" height="132" rx="10" fill="#E8C4B0"/>
+    <rect x="180" y="28" width="96" height="132" rx="10" fill="#FBDCCB" stroke="#D8A88E" stroke-width="1.6"/>
+    <path d="M188 38q30 -6 60 0" stroke="#FFF0E4" stroke-width="3" opacity=".8"/>
+    <text x="192" y="52" font-size="16" font-weight="800" fill="#7A4A34">1</text>
+    <text x="228" y="112" text-anchor="middle" font-size="46" font-weight="800" fill="#4A2E20" font-family="Georgia, serif">H</text>
+    <text x="228" y="146" text-anchor="middle" font-size="15" font-weight="700" fill="#7A4A34">수소</text>
+    ${callout(46, "원자 번호", 188, 46, "#C43A2E")}
+    ${callout(100, "원소 기호", 204, 100, "#2E5AA8")}
+    ${callout(142, "원소 이름", 206, 142, "#0B8A5E")}
+    <text x="118" y="66" text-anchor="end" font-size="10" fill="#8B95A1">= 양성자수</text>
+    <rect x="20" y="176" width="304" height="26" rx="9" fill="#F7F9FC"/>
+    <text x="172" y="193" text-anchor="middle" font-size="11" font-weight="700" fill="#4E5968">위에서부터 번호 → 기호 → 이름 — 어떤 칸이든 똑같이 읽어요!</text>
+  </svg>`;
+}
+
+/** L5 개념 — 이온식 쓰는 법: 잃으면 +, 얻으면 −, 숫자는 부호 앞(오른쪽 위) */
+export function ionNotationFig(): string {
+  const ex = (x: number, y: number, from: string, to: string, sup: string, supColor: string, note: string): string => `
+    <text x="${x}" y="${y}" text-anchor="middle" font-size="26" font-weight="800" fill="#8B95A1">${from}</text>
+    <path d="M${x + 26} ${y - 8}h22M${x + 42} ${y - 13}l7 5-7 5" stroke="#8B95A1" stroke-width="2" fill="none"/>
+    <text x="${x + 74}" y="${y}" text-anchor="middle" font-size="30" font-weight="800" fill="#333D4B">${to}</text>
+    <text x="${x + 74 + (to.length > 1 ? 26 : 17)}" y="${y - 16}" font-size="19" font-weight="800" fill="${supColor}">${sup}</text>
+    <text x="${x + 40}" y="${y + 22}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#6B7684">${note}</text>`;
+  return `<svg viewBox="0 0 344 236" ${NS} fill="none" role="img" aria-label="이온식 쓰는 법 — 전자를 잃으면 +, 얻으면 −를 원소 기호 오른쪽 위에 쓴다">
+    <rect x="10" y="10" width="158" height="30" rx="15" fill="#FDEBEA"/>
+    <text x="89" y="30" text-anchor="middle" font-size="12.5" font-weight="800" fill="#C43A2E">전자를 잃으면 → 양이온 +</text>
+    <rect x="176" y="10" width="158" height="30" rx="15" fill="#E8F1FD"/>
+    <text x="255" y="30" text-anchor="middle" font-size="12.5" font-weight="800" fill="#2E5AA8">전자를 얻으면 → 음이온 −</text>
+    ${ex(30, 84, "Na", "Na", "+", "#C43A2E", "전자 1개 잃음 (1은 생략)")}
+    ${ex(30, 152, "Mg", "Mg", "2+", "#C43A2E", "전자 2개 잃음 → 숫자 먼저!")}
+    ${ex(196, 84, "Cl", "Cl", "−", "#2E5AA8", "전자 1개 얻음 · 염화 이온")}
+    ${ex(196, 152, "O", "O", "2−", "#2E5AA8", "전자 2개 얻음 · 산화 이온")}
+    <rect x="24" y="196" width="296" height="30" rx="10" fill="#F7F9FC"/>
+    <text x="172" y="216" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">자리는 언제나 기호의 <tspan font-weight="800">오른쪽 위</tspan> — 아래 숫자(원자 개수)와 헷갈리지 않기!</text>
+  </svg>`;
+}
+
 // ── recap 미니 아트(64×64) ──────────────────────────────────
 const MINI: Record<string, string> = {
   elemPure: `<circle cx="20" cy="24" r="8" fill="#E0A26A"/><circle cx="40" cy="24" r="8" fill="#E0A26A"/><circle cx="30" cy="40" r="8" fill="#E0A26A"/><circle cx="50" cy="40" r="8" fill="#E0A26A"/>

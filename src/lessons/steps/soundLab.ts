@@ -11,6 +11,8 @@ import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { capturePointer } from "../../ui/lightKit";
 import { curioCard, type Curio } from "../../ui/curio";
+import { labExplain } from "../../ui/labExplain";
+import { soundMiniFig } from "../../ui/lightFigures";
 import type { StepRenderer } from "../types";
 
 interface LabStep {
@@ -152,6 +154,31 @@ export const soundLab: StepRenderer = (host, step, api) => {
     html: "먼저 <b>소리 켜기</b>! 그다음 슬라이더를 움직이면 <b>귀로 들리는 것</b>과 <b>화면의 파형</b>이 동시에 변해요.",
   });
   host.append(goalChips, stage, soundBtn, sliders, helper);
+  // 파형은 순식간에 지나가니 — 멈춘 그래프로 3요소를 붙잡아 두는 설명 카드
+  host.appendChild(
+    labExplain({
+      kicker: "천천히 보는 소리의 3요소",
+      tone: "#8A6BFF",
+      lead: "왼쪽·오른쪽 그래프를 비교해 보세요 — <b>무엇이 달라졌는지</b>가 곧 답이에요.",
+      rows: [
+        {
+          svg: soundMiniFig("amp"),
+          name: "세기 = 진폭",
+          desc: "파형의 <b>키(위아래 폭)</b>가 크면 큰 소리, 작으면 작은 소리예요. 촘촘함은 그대로!",
+        },
+        {
+          svg: soundMiniFig("freq"),
+          name: "높낮이 = 진동수",
+          desc: "1초에 더 많이 떨릴수록(진동수↑) <b>높은 소리</b> — 파형이 <b>촘촘</b>해져요. 키는 그대로!",
+        },
+        {
+          svg: soundMiniFig("tone"),
+          name: "음색 = 파형",
+          desc: "진폭·진동수가 같아도 <b>모양이 다르면 다른 소리</b>로 들려요 — 악기를 구별하는 지문이죠.",
+        },
+      ],
+    }),
+  );
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

@@ -369,9 +369,22 @@ src/
 - **포인터 캡처는 lightKit.capturePointer로** — 합성 PointerEvent(E2E)에서 setPointerCapture가 throw해
   핸들러가 중단되는 것을 막는다. 프레임 루프에서 목표 달성 시 setTimeout을 예약할 땐 반드시
   `!goals.has(id)` 가드를 함께 둘 것(매 프레임 중복 예약 → 예측 선택지가 여러 벌 붙던 실제 버그).
-- QA: `PORT=<포트> node qa/e2e-g2u3.mjs`(8레슨 전 스텝 실플레이 — 훅·랩 목표·예측·작살·벤치 4모드·퀴즈),
+- QA: `PORT=<포트> node qa/e2e-g2u3.mjs`(8레슨 전 스텝 실플레이 — 훅·랩 목표·예측·작살·관찰소 4모드·벤치 4모드·퀴즈),
   `PORT=<포트> node qa/shot-g2u3.mjs`(주요 화면 18장 → qa/shots/). 5173이 점유되면 dev 서버가 5174로
   뜨니 PORT를 맞춘다. 진행도 시딩은 store.ts 실제 스키마(`lessons: {id:{done,acc,bestXp}}`, `totalXp`)로.
+- **L5 거울·렌즈는 2랩 체제**: 일반 = `opticView`(세로 3D 관찰소 — space3d를 우주 밖에서 처음 재사용.
+  촛불(물체)과 공식 기반 고스트 촛불(상)을 3D 배치, 상만 layers(2)에 올려 시선 카메라 인셋
+  "눈에 보이는 모습"을 moonPhase3d 시저 문법으로 렌더. 카메라는 촛불·상 스팬을 매 프레임 계산해 추적) →
+  심화 = `mirrorLens`(가로 상 작도 벤치, 물체는 촛불 — 뒤집힘이 불꽃 방향으로 즉시 읽힘).
+  UI에 '초점·실상·허상' 금지 규칙은 두 랩 공통. 배율·방향·위치 문구는 상태 필 하나로 통일.
+- **빠르게 움직이는 랩에는 labExplain 카드**(ui/labExplain.ts): 랩 아래에 정지 그림 + 용어 행으로
+  개념을 붙잡아 준다(waveLab 파동 4요소 + waveExplainFig, soundLab 3요소 + soundMiniFig 비교쌍).
+  waveTank는 전파 속도 슬라이더(60~260px/s, 이력 버퍼 6초)가 있어 속도↑ → 마루 간격(파장)↑을 관찰.
+- **hotspot `pad0` 옵션**: SVG를 스테이지에 꽉 채워(패딩 0) 스팟 % = viewBox 좌표/치수 × 100이 정확히
+  성립(waveHotspotFig가 기준 — 그림 기하 주석에 좌표를 남기고 스팟과 1:1 대응). 상단 근처 스팟(y<24%)의
+  정답 태그는 `.hs-tag.below`로 점 아래에 떠 overflow 잘림을 피한다(showTag가 자동 판단).
+- **광선 화살촉은 lightFigures.rayArrow()**: 반쪽 틱(l10 6류)은 잡선처럼 보여 금지 — V자 화살촉을
+  광선 위 t 지점에 그린다(reflectAngleFig·refractPathFig 적용).
 
 ## 중2 IV 물질의 구성 — 화학 랩 규칙
 - **입자 표현은 ui/chemKit이 유일한 진실 공급원** — 직접 색·크기를 하드코딩하지 말 것. 원소 색은
@@ -390,8 +403,56 @@ src/
 - 만화: u6l2와 같은 codex 파이프라인으로 **g2u3l6 뉴턴 프리즘 7컷 발주 완료**(7/7, `qa/g2u3l6_imagen_prompts.txt`,
   `qa/order-g2u3l6.sh`, 저장 `public/comics/g2u3l6/`). 손그림 스틱맨·글자 없음 스타일 유지, 분광→재합성 정확.
   중2IV는 만화 없이 훅 6종으로 도입(분석 결과).
-- QA: `PORT=<포트> node qa/e2e-g2u4.mjs`(6레슨 실플레이 — 스테퍼·세그·분자 조립·전기영동 전부, 전 스텝 통과),
-  `qa/shot-g2u4.mjs`(랩 화면 캡처). 진행도 시딩·포트 규칙은 중2III과 동일.
+- **표기법 학습은 "개념 → 연습 → 랩" 순서**(사용자 요구로 확립): L2 = 기호 규칙 concept →
+  `pairMatch`(기호↔이름 짝 맞추기, 범용 스텝) → 화학식 concept(formulaAnatomyFig) → moleculeLab →
+  해석 문제(CO₂ 구성·NH₃ 원자 수). L5 = moleculeLab → `formulaLab`(156쪽 '해 보기' — 분자 모형 보고
+  화학식 토큰 입력, 순서/개수/종류별 오답 피드백) → 이온식 concept(ionNotationFig: 잃으면 +·얻으면 −·
+  숫자 먼저·오른쪽 위) → 표기 연습 문제 → ionLab. 훅에서 바로 랩 점프 금지 원칙의 화학판.
+- **L4 주기율표 = 만화 + 읽는 법 concept + 가로 랩**: 도입은 라부아지에→멘델레예프 7컷
+  (`qa/order-g2u4l4.sh`, public/comics/g2u4l4/). **4·6컷은 원소 기호가 든 버전으로 재발주**
+  (`qa/order-g2u4l4-sym.sh` — '이미지 안 글자 금지'의 의도적 예외: 1~2글자 원소 기호만 허용,
+  프롬프트에 기호 철자 검수·재생성 지시. 20종 전부 정확히 나옴). 만화 뒤 concept(atomFigures.
+  cellAnatomyFig — 원자 번호/원소 기호/원소 이름 해부도)로 읽는 법을 가르친 뒤 랩 진입.
+  periodicLab v3는 rotateStage 안 **DOM 18열 × 7주기 그리드**(.ptx-*): 교과서 그림 IV-6 그대로
+  **1~118번 전체**(란타넘족 57~71·악티늄족 89~103은 병합 칸 1개씩, 104번~ 상온 상태는 '추정' 표기),
+  칸에 번호·기호·한글 이름, 탭 → 하단 정보 바에 간단 특징(주요 원소 ~50종은 전용 노트).
+  칠하기 토글은 **순환식**(끄기 → 상온 상태[고체 파랑·액체 초록·기체 살구 — 액체는 Br·Hg 단 둘] →
+  금속·비금속·준금속). 미션 = 1족 삼형제·18족 삼형제·2주기 번호순 완주. rotateStage는 DOM을
+  그대로 회전하므로 캔버스 리매핑 없이 버튼 이벤트가 정상 동작한다.
+- **발주 정확성이 위험한 요소는 라스터+벡터 하이브리드**(hookAtom peekatom이 기준): 배경 3단
+  (연필심 매크로·흑연 원자·핵만 있는 원자 내부)은 발주 라스터(public/atom/hook, "NO electrons" 조건),
+  전자 6개는 SVG animateMotion 오버레이 — 발주 품질과 과학적 정확성(개수·궤도)을 동시에 확보한다.
+- **L6 이온의 이동 = 실험 설계 concept → 랩 → 실제 사진**: 랩 앞 concept가 실제 실험 설계(질산 칼륨
+  적신 거름종이 = 이온의 길, 색깔 이온 = 눈에 보이는 발자국)를 발주 사진+라벨로 설명하고, 랩 아래
+  labExplain 카드가 전류 전/후 실사 쌍(atom/quiz/ionmove.webp·ionmove-after.webp — after는 파란
+  반점이 (−)극 쪽 혜성 꼬리)을 보여 준다. 시뮬레이션↔실물 대응이 원칙.
+- **훅 장면 전자 궤도는 SMIL animateMotion**(hookAtom peekatom): 전자를 궤도 타원 path 위에서 돌려
+  "궤도 이탈" 자체가 불가능하게. 탄소는 전자 6(내2·외4)·핵 알갱이 12(양성자6+중성자6) — 개수 정확히.
+- QA: `PORT=<포트> node qa/e2e-g2u4.mjs`(6레슨 실플레이 — 스테퍼·세그·분자 조립·짝 맞추기·화학식 입력·
+  가로 주기율표·전기영동 전부, 전 스텝 통과), `qa/shot-g2u4.mjs`(랩 화면 캡처). 진행도 시딩·포트 규칙은 중2III과 동일.
+- **문제 그림 발주 임베드**: 거울 2종(public/light/quiz, 정사각 — unit3 lpair로 (가)(나) 라벨)과
+  전기영동 장치(public/atom/quiz, 2:1 — unit4 alabeled로 (−)극·(+)극·용액 라벨 필). process-geo.mjs의
+  SQUARE_DIRS/ASPECT_DIRS에 두 폴더 등록됨. 발주는 반드시 **순차 실행**(병렬 codex exec는 tmp/ 충돌로
+  다른 배치 이미지가 뒤바뀐 실사고 — g2u3l6 3번 컷에 잎 단면이 저장됐었다. qa/order-g2u3l6-fix.sh로 복구).
+
+## 중2 VII 전기와 자기 — 전기·자기 랩 규칙
+- **회로 소품·전하 표현은 ui/elecKit이 단일 진실 공급원**: drawWire(전류 점 흐름 — 속도 ∝ 전류)·
+  drawBattery·drawBulb(밝기 0~1)·drawSwitch·drawPlus·drawSpark. **전자(−)는 chemKit drawElectron을
+  re-export** — IV 단원에서 배운 그 전자와 같은 표현(단원 연계가 학습 장치).
+- **과학 규칙(위반 금지)**: 마찰·유도에서 이동하는 건 언제나 전자(원자핵·(+) 불변). 정전기 유도는
+  가까운 쪽=다른 종류·먼 쪽=같은 종류, 어느 대전체든 결과는 인력. 전류 방향은 전자 이동의 반대
+  ((+)→(−) 관례). 옴의 법칙은 그래프에서 유도(직선=비례 → 기울기 차=저항 → I=V/R). 직렬=전류 같고
+  전압 나눔, 병렬=전압 같고 전류 나눔. 코일 자기장 소단원에선 '오른손 법칙' 용어 금지(관찰 중심),
+  코일이 받는 힘 소단원에서 오른손(네 손가락=자기장·엄지=전류·손바닥=힘) 도입. F=BIL·플레밍 금지.
+- **레슨 공식 이행**: L1 훅(겨울 정전기 3사례) → frictionLab(현상: 끌림·밀림) → rubLab(원인: 전자
+  이동) — "현상 먼저, 원인은 그다음" 2랩 체인. L3 waterCircuit은 가로 비유 랩(물/전기 회로 동기
+  애니 + 대응 5쌍 탭 매칭 — 펌프=전지·물살=전류·방아=전구·관=전선·밸브=스위치). L5는 랩(관찰) →
+  concept(물길 비유 그림 seriesWaterFig/parallelWaterFig로 '왜') 순서. L8 swingLab3d는 space3d 재사용
+  3D(말굽자석 N/S 블록 + 코일 그네, 힘 = 전류부호×자기장부호×세기 — ArrowHelper로 자기장/힘 상시 표시).
+- 니크롬선 수치 규약: 긴 선 R=20Ω·짧은 선 R=10Ω, 전압 0~6V(0.5V 스냅)·전류 축 0~600mA — 그래프
+  문제(viGraphFig: 3V·300mA → 10Ω)와 랩이 같은 수치를 공유한다.
+- elecFigures: 퀴즈 SVG(마찰 전후·깡통 유도·V-I 그래프·전자 방향·병렬 회로·전동기) + 물길 비유 2종 +
+  elecMiniArt. 단원 테마 elec(볼트 옐로 #EFB800) — 중1 force 앰버와는 학년 트랙이 달라 동시 노출 없음.
 
 ## 메타볼 렌더러 (대단원 IV에서 이식 완료)
 - `sample/renderer-comparison.html`의 `FRAG` 셰이더 원본을 `renderers/meta.ts`로 **수치 그대로** 이식했다.

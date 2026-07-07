@@ -56,6 +56,7 @@ import { refractLab } from "./steps/lightRefract";
 import { seeLab } from "./steps/lightSee";
 import { mirrorImageLab } from "./steps/lightMirror";
 import { mirrorLens } from "./steps/lightBench";
+import { opticView } from "./steps/opticView";
 import { objectColorLab, colorMixLab, pixelLab } from "./steps/lightColor";
 import { waveLab } from "./steps/waveTank";
 import { soundLab } from "./steps/soundLab";
@@ -63,6 +64,15 @@ import { elementLab, moleculeLab } from "./steps/chemParticles";
 import { atomLab, ionLab } from "./steps/chemAtom";
 import { periodicLab } from "./steps/chemTable";
 import { ionMoveLab } from "./steps/chemIonMove";
+import { pairMatch } from "./steps/pairMatch";
+import { formulaLab } from "./steps/formulaLab";
+import { frictionLab, rubLab } from "./steps/elecStatic";
+import { inductionLab } from "./steps/elecInduction";
+import { waterCircuit } from "./steps/elecWater";
+import { ohmLab } from "./steps/elecOhm";
+import { circuitLab } from "./steps/elecCircuit";
+import { coilFieldLab } from "./steps/elecCoil";
+import { swingLab3d } from "./steps/elecSwing3d";
 import { densityLab } from "./steps/densityLab";
 import { densityPool } from "./steps/densityPool";
 import { solubilityLab } from "./steps/solubilityLab";
@@ -125,6 +135,7 @@ const R: Record<string, StepRenderer> = {
   seeLab,
   mirrorImageLab,
   mirrorLens,
+  opticView,
   objectColorLab,
   colorMixLab,
   pixelLab,
@@ -136,6 +147,16 @@ const R: Record<string, StepRenderer> = {
   periodicLab,
   ionLab,
   ionMoveLab,
+  pairMatch,
+  formulaLab,
+  frictionLab,
+  rubLab,
+  inductionLab,
+  waterCircuit,
+  ohmLab,
+  circuitLab,
+  coilFieldLab,
+  swingLab3d,
   densityLab,
   densityPool,
   solubilityLab,

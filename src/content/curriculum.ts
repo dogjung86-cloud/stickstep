@@ -13,6 +13,7 @@ import { G2_UNIT1 } from "./g2/unit1";
 import { G2_UNIT2 } from "./g2/unit2";
 import { G2_UNIT3 } from "./g2/unit3";
 import { G2_UNIT4 } from "./g2/unit4";
+import { G2_UNIT7 } from "./g2/unit7";
 
 export interface Unit {
   id: string;
@@ -51,7 +52,7 @@ export const CURRICULUM_G2: Unit[] = [
   G2_UNIT4,
   soon("g2u5", "V", "식물과 에너지", "광합성, 식물이 양분을 만드는 법", "leaf"),
   soon("g2u6", "VI", "동물과 에너지", "소화·순환·호흡·배설의 협동", "heart"),
-  soon("g2u7", "VII", "전기와 자기", "전류·전압·저항, 그리고 자기장", "bolt"),
+  G2_UNIT7,
   soon("g2u8", "VIII", "별과 우주", "별까지의 거리, 우리은하와 우주", "sparkle"),
 ];
 

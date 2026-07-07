@@ -1,5 +1,6 @@
-// lightBench — 거울·렌즈 광학 벤치(중2 III L5, 책 106~111쪽). 가로 모드(rotateStage).
-//   볼록거울·오목거울·볼록렌즈·오목렌즈 4모드. 물체(화살표+무당벌레)를 광축 위에서 끌면
+// lightBench — 심화 실험실 · 거울·렌즈 광학 벤치(중2 III L5, 책 106~111쪽). 가로 모드(rotateStage).
+//   일반 랩(opticView)이 "겉모습 관찰"을 맡고, 이 벤치는 심화 — 빛의 경로(상 작도)를 보여 준다.
+//   볼록거울·오목거울·볼록렌즈·오목렌즈 4모드. 물체(촛불)를 광축 위에서 끌면
 //   거울·렌즈 공식으로 상의 위치·크기·방향을 정확히 계산해 실시간 렌더링한다.
 //   "빛의 경로" 토글: 나란한 광선·중심(꼭짓점) 광선 두 갈래 — 이상광학에서 물체 끝에서 나온
 //   모든 광선은 상점을 지나므로(실상) / 상점에서 나온 것처럼 보이므로(허상, 점선 연장)
@@ -54,7 +55,7 @@ export const mirrorLens: StepRenderer = (host, step, api) => {
     el("div", { class: "sp3-enter-art", html: enterArtSvg() }),
     el("div", {
       class: "sp3-enter-txt",
-      html: "무당벌레가 앉은 화살표를 <b>광축 위에서 끌면</b> 상이 실시간으로 변해요.<br>화면이 자동으로 <b>가로</b>로 돌아가요.",
+      html: "<b>심화 실험실</b> — 촛불을 광축 위에서 끌면 <b>빛의 경로(작도)</b>와 상이 실시간으로 변해요.<br>화면이 자동으로 <b>가로</b>로 돌아가요.",
     }),
   );
   const enterBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "가로 화면으로 크게 열기" }));
@@ -126,7 +127,7 @@ export const mirrorLens: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.select);
     updateSeg();
     const GUIDE: Record<Mode, string> = {
-      cvMirror: "볼록 거울이에요. 무당벌레를 <b>가까이, 또 멀리</b> 끌어 보세요.",
+      cvMirror: "볼록 거울이에요. 촛불을 <b>가까이, 또 멀리</b> 끌어 보세요.",
       ccMirror: "오목 거울! 멀리서 시작 — 천천히 <b>가까이</b> 끌며 상을 지켜보세요. 어느 순간…?",
       cvLens: "볼록 렌즈예요. <b>가까이, 또 멀리</b> — 뒤집히는 순간을 찾아보세요.",
       ccLens: "오목 렌즈예요. 거리를 바꿔도 상이 어떤지 확인!",
@@ -163,7 +164,7 @@ export const mirrorLens: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.select);
     const { enterRotateStage } = await import("../../ui/rotateStage");
     if (disposed) return;
-    rot = enterRotateStage({ title: "거울·렌즈 벤치 — 무당벌레를 끌어 보세요", onLeave: () => leave() });
+    rot = enterRotateStage({ title: "심화 · 상 작도 벤치 — 촛불을 끌어 보세요", onLeave: () => leave() });
 
     const canvas = el("canvas", { class: "sp3-canvas" });
     statusPill = el("div", { class: "pill sp3-pill" }, el("span", { class: "pdot", style: "background:#E86FCE" }), el("span", { text: "" }));
@@ -197,7 +198,7 @@ export const mirrorLens: StepRenderer = (host, step, api) => {
     toastEl = el("div", { class: "sp3-toast" });
     rot.stage.append(canvas, statusPill, seg, rayBtn, missions, toastEl);
     updateSeg();
-    showToast("무당벌레가 앉은 화살표를 <b>좌우로 끌어</b> 보세요!", 2800);
+    showToast("촛불을 <b>좌우로 끌어</b> 보세요 — 빛의 경로가 함께 움직여요!", 2800);
 
     // 포인터(회전 리매핑)
     let dragging = false;
@@ -332,8 +333,8 @@ export const mirrorLens: StepRenderer = (host, step, api) => {
       });
     }
 
-    // 물체(화살표 + 무당벌레)
-    drawArrowBug(ctx, ox, Y0, HO, 1, false, tMs);
+    // 물체(촛불)
+    drawCandle(ctx, ox, Y0, HO, 1, false, tMs);
     ctx.font = "800 11px Pretendard, sans-serif";
     ctx.textAlign = "center";
     ctx.fillStyle = `rgba(${GOLD},.9)`;
@@ -344,7 +345,7 @@ export const mirrorLens: StepRenderer = (host, step, api) => {
       const mag = clamp(Math.abs(sol.m), 0.12, 4.4);
       const hImg = (sol.m > 0 ? 1 : -1) * mag * HO;
       if (sol.xi > -60 && sol.xi < w + 60) {
-        drawArrowBug(ctx, sol.xi, Y0, hImg, mag, true, tMs);
+        drawCandle(ctx, sol.xi, Y0, hImg, mag, true, tMs);
         ctx.fillStyle = `rgba(${CYAN},.9)`;
         ctx.fillText("상", sol.xi, sol.m > 0 ? Y0 + 20 : Y0 - 8 - 0);
       }
@@ -378,7 +379,8 @@ export const mirrorLens: StepRenderer = (host, step, api) => {
     ctx.stroke();
   }
 
-  function drawArrowBug(
+  // 물체 = 촛불(상에서는 배율대로 커지고, m<0이면 불꽃이 아래로 — 뒤집힘이 즉시 읽힌다)
+  function drawCandle(
     ctx: CanvasRenderingContext2D,
     x: number,
     baseY: number,
@@ -387,63 +389,84 @@ export const mirrorLens: StepRenderer = (host, step, api) => {
     isImage: boolean,
     tMs: number,
   ): void {
-    const tipY = baseY - hSigned;
+    const dir = hSigned > 0 ? 1 : -1;
+    const h = Math.abs(hSigned);
+    const bodyH = h * 0.68;
+    const w = clamp(8 * (isImage ? mag : 1), 3.5, 20); // 몸통 반폭
+    const top = baseY - dir * bodyH;
     ctx.save();
-    if (isImage) ctx.setLineDash([5, 5]);
-    const g = ctx.createLinearGradient(0, Math.min(baseY, tipY), 0, Math.max(baseY, tipY));
+    // 몸통(왁스)
+    const g = ctx.createLinearGradient(x - w, 0, x + w, 0);
     if (isImage) {
-      g.addColorStop(0, "rgba(126,214,255,.9)");
-      g.addColorStop(1, "rgba(126,214,255,.5)");
+      g.addColorStop(0, "rgba(140,214,255,.55)");
+      g.addColorStop(0.45, "rgba(126,198,246,.72)");
+      g.addColorStop(1, "rgba(74,134,190,.6)");
     } else {
-      g.addColorStop(0, "#FFE2A8");
-      g.addColorStop(1, "#E8A03E");
+      g.addColorStop(0, "#FFF2D2");
+      g.addColorStop(0.45, "#F0D6A0");
+      g.addColorStop(1, "#C9A05E");
     }
-    ctx.strokeStyle = g;
-    ctx.lineWidth = 4.2;
-    ctx.lineCap = "round";
+    ctx.fillStyle = g;
+    if (isImage) ctx.setLineDash([5, 5]);
     ctx.beginPath();
-    ctx.moveTo(x, baseY);
-    ctx.lineTo(x, tipY + (hSigned > 0 ? 7 : -7));
+    ctx.roundRect(x - w, Math.min(baseY, top), w * 2, bodyH, Math.min(6, w * 0.5));
+    ctx.fill();
+    ctx.strokeStyle = isImage ? "rgba(126,214,255,.85)" : "#8A6A34";
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.roundRect(x - w, Math.min(baseY, top), w * 2, bodyH, Math.min(6, w * 0.5));
     ctx.stroke();
     ctx.setLineDash([]);
-    // 화살촉
-    const dir = hSigned > 0 ? 1 : -1;
-    ctx.fillStyle = isImage ? "rgba(126,214,255,.8)" : "#FFD98A";
+    // 왁스 하이라이트
+    ctx.strokeStyle = isImage ? "rgba(226,244,255,.5)" : "rgba(255,250,235,.8)";
+    ctx.lineWidth = Math.max(1.4, w * 0.28);
     ctx.beginPath();
-    ctx.moveTo(x, tipY - dir * 2);
-    ctx.lineTo(x - 7.5, tipY + dir * 11);
-    ctx.lineTo(x + 7.5, tipY + dir * 11);
+    ctx.moveTo(x - w * 0.55, baseY - dir * bodyH * 0.16);
+    ctx.lineTo(x - w * 0.55, top + dir * bodyH * 0.16);
+    ctx.stroke();
+    // 심지
+    ctx.strokeStyle = isImage ? "rgba(180,220,250,.9)" : "#4A3A24";
+    ctx.lineWidth = Math.max(1.3, w * 0.16);
+    ctx.beginPath();
+    ctx.moveTo(x, top);
+    ctx.lineTo(x, top - dir * h * 0.07);
+    ctx.stroke();
+    // 불꽃(플리커) — 눈물방울, dir로 뒤집힘 표현
+    const flameH = h - bodyH - h * 0.07;
+    const fx = x + (isImage ? 0 : Math.sin(tMs / 130) * w * 0.14);
+    const fBase = top - dir * h * 0.07;
+    const fTip = baseY - dir * h * (1 + Math.sin(tMs / 90) * 0.02);
+    const fw = Math.max(3.4, w * 0.75);
+    const glow = ctx.createRadialGradient(fx, (fBase + fTip) / 2, 1, fx, (fBase + fTip) / 2, Math.abs(flameH) * 1.6 + 6);
+    if (isImage) {
+      glow.addColorStop(0, "rgba(160,224,255,.5)");
+      glow.addColorStop(1, "rgba(160,224,255,0)");
+    } else {
+      glow.addColorStop(0, "rgba(255,201,110,.55)");
+      glow.addColorStop(1, "rgba(255,201,110,0)");
+    }
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(fx, (fBase + fTip) / 2, Math.abs(flameH) * 1.6 + 6, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+    const fg = ctx.createLinearGradient(0, Math.min(fBase, fTip), 0, Math.max(fBase, fTip));
+    if (isImage) {
+      fg.addColorStop(0, "rgba(214,240,255,.95)");
+      fg.addColorStop(1, "rgba(126,214,255,.85)");
+    } else {
+      fg.addColorStop(dir > 0 ? 1 : 0, "#FFF4C0");
+      fg.addColorStop(dir > 0 ? 0 : 1, "#FFAE4E");
+    }
+    ctx.fillStyle = fg;
+    ctx.beginPath();
+    ctx.moveTo(fx, fTip);
+    ctx.quadraticCurveTo(fx + fw, fBase - dir * Math.abs(flameH) * 0.42, fx, fBase);
+    ctx.quadraticCurveTo(fx - fw, fBase - dir * Math.abs(flameH) * 0.42, fx, fTip);
     ctx.closePath();
     ctx.fill();
-    // 무당벌레(끝에 앉음 — 상에서도 함께 커지고 뒤집힌다)
-    const bs = clamp(7 * (isImage ? mag : 1), 3.5, 18);
-    const by = tipY - dir * (bs + 4);
-    const wob = isImage ? 0 : Math.sin(tMs / 500) * 1.2;
-    ctx.setLineDash([]);
-    ctx.globalAlpha = isImage ? 0.85 : 1;
-    const bg = ctx.createRadialGradient(x - bs * 0.3 + wob, by - bs * 0.3, bs * 0.2, x + wob, by, bs);
-    bg.addColorStop(0, "#FF8A80");
-    bg.addColorStop(1, "#D0342C");
-    ctx.fillStyle = bg;
-    ctx.beginPath();
-    ctx.arc(x + wob, by, bs, 0, TAU);
-    ctx.fill();
-    ctx.fillStyle = "#2A1214";
-    ctx.beginPath();
-    ctx.arc(x + wob, by - dir * bs * 0.55, bs * 0.42, 0, TAU);
-    ctx.fill();
-    ctx.strokeStyle = "#2A1214";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(x + wob, by - bs);
-    ctx.lineTo(x + wob, by + bs);
-    ctx.stroke();
-    ctx.fillStyle = "#1D0E10";
-    for (const [sx, sy] of [[-0.45, -0.1], [0.4, 0.25], [-0.25, 0.5]] as [number, number][]) {
-      ctx.beginPath();
-      ctx.arc(x + wob + sx * bs, by + sy * bs, bs * 0.13, 0, TAU);
-      ctx.fill();
-    }
     ctx.restore();
   }
 
@@ -544,22 +567,22 @@ export const mirrorLens: StepRenderer = (host, step, api) => {
   };
 };
 
-// 세로 진입 카드 미니 아트 — 벤치 스케치
+// 세로 진입 카드 미니 아트 — 촛불 + 작도 스케치
 function enterArtSvg(): string {
   return `<svg viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg" fill="none">
     <rect width="360" height="120" fill="#0B1524"/>
     <line x1="16" y1="66" x2="344" y2="66" stroke="#3A4D6E" stroke-width="1.6" stroke-dasharray="6 7"/>
     <path d="M210 22q26 44 0 88" stroke="#9EC2EE" stroke-width="4" stroke-linecap="round"/>
     <path d="M214 22q26 44 0 88" stroke="#40546E" stroke-width="6" stroke-linecap="round" opacity=".5"/>
-    <path d="M96 66V34" stroke="#FFCB70" stroke-width="4.5" stroke-linecap="round"/>
-    <path d="M96 28l-7 12h14z" fill="#FFD98A"/>
-    <circle cx="96" cy="22" r="6" fill="#E0453A"/>
-    <circle cx="96" cy="18.5" r="2.6" fill="#2A1214"/>
-    <path d="M96 34L210 34" stroke="rgba(255,203,112,.8)" stroke-width="2"/>
-    <path d="M96 34L210 66" stroke="rgba(126,214,255,.8)" stroke-width="2"/>
-    <path d="M210 34L306 90M210 66L306 90" stroke="rgba(126,214,255,.5)" stroke-width="1.8" stroke-dasharray="1 0"/>
-    <path d="M306 66v24" stroke="#7ED6FF" stroke-width="4" stroke-linecap="round" stroke-dasharray="5 5"/>
-    <path d="M306 96l-6-10h12z" fill="rgba(126,214,255,.8)"/>
-    <text x="20" y="26" font-family="Pretendard, sans-serif" font-size="12" font-weight="800" fill="#C2D2EE">광학 벤치</text>
+    <rect x="90" y="38" width="12" height="28" rx="4" fill="#F0D6A0" stroke="#8A6A34" stroke-width="1.4"/>
+    <path d="M96 36v-4" stroke="#4A3A24" stroke-width="1.6"/>
+    <path d="M96 20q5 6 0 12q-5-6 0-12z" fill="#FFC36E"/>
+    <circle cx="96" cy="26" r="9" fill="rgba(255,195,110,.25)"/>
+    <path d="M96 30L210 30" stroke="rgba(255,203,112,.8)" stroke-width="2"/>
+    <path d="M96 30L210 66" stroke="rgba(126,214,255,.8)" stroke-width="2"/>
+    <path d="M210 30L306 88M210 66L306 88" stroke="rgba(126,214,255,.5)" stroke-width="1.8"/>
+    <rect x="300" y="70" width="9" height="20" rx="3" fill="rgba(126,198,246,.6)" stroke="rgba(126,214,255,.8)" stroke-width="1.2" stroke-dasharray="4 4"/>
+    <path d="M304.5 96q4-5 0-9q-4 4 0 9z" fill="rgba(160,224,255,.85)"/>
+    <text x="20" y="26" font-family="Pretendard, sans-serif" font-size="12" font-weight="800" fill="#C2D2EE">심화 · 상 작도 벤치</text>
   </svg>`;
 }

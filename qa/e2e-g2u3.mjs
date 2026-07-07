@@ -124,6 +124,19 @@ const canvasPtr = async (calc, seq) => {
   await W(seq ?? 120);
 };
 const chipsOn = () => page.evaluate(() => [...document.querySelectorAll(".pn-badge")].filter((b) => b.className.includes(" on")).length);
+// 보이는 px-sl 슬라이더 idx를 frac 위치로 탭
+const setSlider = async (idx, frac) => {
+  await page.evaluate(([idx, frac]) => {
+    const row = document.querySelectorAll(".px-sliders.show .px-sl")[idx];
+    const tr = row.querySelector(".px-track").getBoundingClientRect();
+    const x = tr.left + frac * tr.width;
+    const y = tr.top + tr.height / 2;
+    for (const type of ["pointerdown", "pointerup"]) {
+      row.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId: 11, isPrimary: true, clientX: x, clientY: y }));
+    }
+  }, [idx, frac]);
+  await W(260);
+};
 
 // 홈(중2 트랙 — viewGrade 시드)에서 "빛과 파동" 단원 탭 → 현재 노드 열기
 const openNextLesson = async (expectTitle) => {
@@ -273,7 +286,22 @@ try {
   await openNextLesson("거울과 렌즈");
   await clickBtn("볼록한 뒷면", 1300);
   await clickCTA();
-  log("  mirrorLens(벤치):", await h1());
+  // 일반 랩: 3D 관찰소(opticView) — 모드마다 기본 u=300(멀리) → 슬라이더로 가까이
+  log("  opticView(관찰소):", await h1());
+  await page.waitForSelector(".stage .seg button", { timeout: 12000 });
+  await W(1400); // three 동적 로드
+  for (const label of ["볼록 거울", "오목 거울", "볼록 렌즈", "오목 렌즈"]) {
+    await page.evaluate((label) => {
+      const b = [...document.querySelectorAll(".stage-hud .seg button")].find((x) => x.textContent === label);
+      b?.click();
+    }, label);
+    await W(500); // 멀리(기본) 관찰
+    await setSlider(0, 0.02); // 가까이
+    await W(600);
+    log(`  관찰소 ${label} 관찰`);
+  }
+  await clickCTA();
+  log("  mirrorLens(심화 벤치):", await h1());
   await clickBtn("가로 화면", 1400);
   await page.waitForSelector(".rot-overlay.in .sp3-canvas", { timeout: 9000 });
   const benchDrag = async (mode, u0, u1) => {
@@ -365,18 +393,6 @@ try {
   await loupeTo(0.15, 0.85); // 자홍
   await loupeTo(0.68, 0.2); // 흰색
   await page.waitForSelector(".px-sliders.show", { timeout: 9000 });
-  const setSlider = async (idx, frac) => {
-    await page.evaluate(([idx, frac]) => {
-      const row = document.querySelectorAll(".px-sliders.show .px-sl")[idx];
-      const tr = row.querySelector(".px-track").getBoundingClientRect();
-      const x = tr.left + frac * tr.width;
-      const y = tr.top + tr.height / 2;
-      for (const type of ["pointerdown", "pointerup"]) {
-        row.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId: 11, isPrimary: true, clientX: x, clientY: y }));
-      }
-    }, [idx, frac]);
-    await W(260);
-  };
   await setSlider(1, 0.5); // 초록 절반
   await setSlider(2, 0.02); // 파랑 끄기 → 주황
   await clickCTA();

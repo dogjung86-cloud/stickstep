@@ -3,6 +3,29 @@
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
 
+/** 광선 위 진행 방향 화살촉(V자) — 어설픈 반쪽 틱이 잡선처럼 보이는 문제를 막는다.
+ *  (x1,y1)→(x2,y2) 광선의 t 지점에 열린 V를 그린다. */
+function rayArrow(x1: number, y1: number, x2: number, y2: number, t: number, color: string, len = 9): string {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const n = Math.hypot(dx, dy) || 1;
+  const ux = dx / n;
+  const uy = dy / n;
+  const ax = x1 + dx * t;
+  const ay = y1 + dy * t;
+  // 화살촉 날개 = 역방향(-u)을 ±0.45rad 회전한 두 선
+  const wing = (sign: number): [number, number] => {
+    const cos = Math.cos(0.45);
+    const sin = Math.sin(0.45) * sign;
+    const wx = -ux * cos + uy * sin;
+    const wy = -ux * sin - uy * cos;
+    return [ax + wx * len, ay + wy * len];
+  };
+  const [w1x, w1y] = wing(1);
+  const [w2x, w2y] = wing(-1);
+  return `<path d="M${w1x.toFixed(1)} ${w1y.toFixed(1)}L${ax.toFixed(1)} ${ay.toFixed(1)}L${w2x.toFixed(1)} ${w2y.toFixed(1)}" stroke="${color}" stroke-width="2.6" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
+}
+
 /** L1 마무리 1번 — 광선이 거울 면과 20°를 이루는 그림(입사각·반사각은?) */
 export function reflectAngleFig(): string {
   // 거울 수평, 입사점 (172,150). 광선은 거울면과 20° → 법선과 70°.
@@ -20,7 +43,8 @@ export function reflectAngleFig(): string {
     <text x="${P.x + 8}" y="30" font-size="11.5" fill="#8B95A1">법선</text>
     <path d="M${sx} ${sy}L${P.x} ${P.y}" stroke="#4E5968" stroke-width="3" stroke-linecap="round"/>
     <path d="M${P.x} ${P.y}L${rx} ${ry}" stroke="#4E5968" stroke-width="3" stroke-linecap="round"/>
-    <path d="M${P.x - 46} ${P.y - Math.tan(deg) * 46} l10 6" stroke="#4E5968" stroke-width="2.4"/>
+    ${rayArrow(sx, sy, P.x, P.y, 0.55, "#4E5968")}
+    ${rayArrow(P.x, P.y, rx, ry, 0.55, "#4E5968")}
     <path d="M${P.x - 52} 150 A52 52 0 0 1 ${P.x - Math.cos(deg) * 52} ${P.y - Math.sin(deg) * 52}" stroke="#F25C54" stroke-width="2.4"/>
     <text x="${P.x - 82}" y="142" font-size="13" font-weight="800" fill="#F25C54">20°</text>
     <text x="${sx - 4}" y="${sy - 8}" font-size="11.5" fill="#4E5968">빛</text>
@@ -47,7 +71,7 @@ export function refractPathFig(): string {
     <text x="30" y="114" font-size="11.5" fill="#5E86B4">물</text>
     <line x1="${P.x}" y1="20" x2="${P.x}" y2="186" stroke="#B0B8C1" stroke-width="1.6" stroke-dasharray="5 6"/>
     <path d="M66 24L${P.x} ${P.y}" stroke="#4E5968" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M112 51l14 3" stroke="#4E5968" stroke-width="2.4"/>
+    ${rayArrow(66, 24, P.x, P.y, 0.55, "#4E5968")}
     ${paths
       .map(
         ([lb, x, y, dx, dy]) =>
@@ -214,23 +238,81 @@ export function waveReadFig(): string {
   </svg>`;
 }
 
-/** L7 hotspot — 마루·골·파장·진폭 찾기용 큰 파동 그림(다크 무대) */
+/** L7 hotspot — 마루·골·파장·진폭 찾기용 큰 파동 그림(다크 무대).
+ *  기하 규약(스팟 좌표와 1:1 — hotspot 스텝은 pad0로 SVG를 스테이지에 꽉 채워
+ *  스팟 % = 좌표/viewBox × 100 이 정확히 성립):
+ *  파형 y = 112 − 46·sin((x−30)/284·4π), x∈[30,314] — 마루 (65.5,66)·(207.5,66),
+ *  골 (136.5,158)·(278.5,158). 파장 브래킷 y=44(65.5→207.5), 진폭 브래킷 x=296(중심→골). */
 export function waveHotspotFig(): string {
   let d = "";
-  for (let x = 0; x <= 300; x += 4) {
-    const y = 108 - Math.sin((x / 300) * Math.PI * 4) * 52;
-    d += `${d ? "L" : "M"}${x + 22} ${y.toFixed(1)}`;
+  for (let x = 30; x <= 314; x += 2) {
+    const y = 112 - Math.sin(((x - 30) / 284) * Math.PI * 4) * 46;
+    d += `${d ? "L" : "M"}${x} ${y.toFixed(1)}`;
   }
-  // 마루 x=97 y=56 · 골 x=172 y=160 · 파장 브래킷(97~247) y=34 · 진폭 브래킷 x=292(247 마루 기준)
   return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="파동의 각 부분을 찾는 그림">
-    <line x1="22" y1="108" x2="322" y2="108" stroke="rgba(196,214,240,.4)" stroke-width="1.4" stroke-dasharray="5 6"/>
-    <text x="26" y="100" font-size="10" fill="rgba(196,214,240,.75)">진동 중심</text>
+    <line x1="24" y1="112" x2="320" y2="112" stroke="rgba(196,214,240,.45)" stroke-width="1.4" stroke-dasharray="5 6"/>
+    <text x="28" y="104" font-size="10.5" fill="rgba(196,214,240,.8)">진동 중심</text>
     <path d="${d}" stroke="#8FD6FF" stroke-width="3.4" stroke-linecap="round"/>
-    <circle cx="97" cy="56" r="4" fill="#FFD978"/>
-    <circle cx="172" cy="160" r="4" fill="#8FB6FF"/>
-    <path d="M97 34h150M97 28v12M247 28v12" stroke="#D8BEFF" stroke-width="2"/>
-    <path d="M292 108v-52M286 108h12M286 56h12" stroke="#7EE6D0" stroke-width="2"/>
-    <path d="M247 44v8" stroke="#D8BEFF" stroke-width="1.4" stroke-dasharray="2 3"/>
+    <!-- 마루(첫 번째)·골(첫 번째) 점 — 곡선 위 정확한 위치 -->
+    <circle cx="65.5" cy="66" r="4.5" fill="#FFD978"/>
+    <circle cx="136.5" cy="158" r="4.5" fill="#8FB6FF"/>
+    <!-- 파장 브래킷: 마루 → 이웃 마루 -->
+    <path d="M65.5 44h142M65.5 38v12M207.5 38v12" stroke="#D8BEFF" stroke-width="2"/>
+    <path d="M65.5 50v13M207.5 50v13" stroke="#D8BEFF" stroke-width="1.4" stroke-dasharray="2 3" opacity=".7"/>
+    <!-- 진폭 브래킷: 진동 중심 → 골 깊이(두 번째 골 옆) -->
+    <path d="M296 112v46M290 112h12M290 158h12" stroke="#7EE6D0" stroke-width="2"/>
+    <path d="M282 158h10" stroke="#7EE6D0" stroke-width="1.4" stroke-dasharray="2 3" opacity=".7"/>
+  </svg>`;
+}
+
+/** L7 waveLab 하단 설명 — 파동 4요소 정지 그림(라이트 카드).
+ *  파형 y = 96 − 38·sin((x−26)/280·4π), x∈[26,306] — 마루 (61,58)·(201,58), 골 (131,134)·(271,134). */
+export function waveExplainFig(): string {
+  let d = "";
+  for (let x = 26; x <= 306; x += 2) {
+    const y = 96 - Math.sin(((x - 26) / 280) * Math.PI * 4) * 38;
+    d += `${d ? "L" : "M"}${x} ${y.toFixed(1)}`;
+  }
+  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="파동의 네 요소 — 마루, 골, 파장, 진폭">
+    <line x1="20" y1="96" x2="320" y2="96" stroke="#C4CBD4" stroke-width="1.3" stroke-dasharray="5 6"/>
+    <text x="320" y="88" text-anchor="end" font-size="10" fill="#8B95A1">진동 중심</text>
+    <path d="${d}" stroke="#5AA2F8" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="61" cy="58" r="4" fill="#E8961E"/>
+    <text x="61" y="50" text-anchor="middle" font-size="11.5" font-weight="800" fill="#E8961E">마루</text>
+    <circle cx="131" cy="134" r="4" fill="#3A6CD8"/>
+    <text x="131" y="153" text-anchor="middle" font-size="11.5" font-weight="800" fill="#3A6CD8">골</text>
+    <path d="M61 36h140M61 30v12M201 30v12" stroke="#7C5CD6" stroke-width="1.8"/>
+    <path d="M61 42v14M201 42v14" stroke="#7C5CD6" stroke-width="1.2" stroke-dasharray="2 3" opacity=".65"/>
+    <text x="131" y="28" text-anchor="middle" font-size="11.5" font-weight="800" fill="#7C5CD6">파장</text>
+    <path d="M288 96v38M283 96h10M283 134h10" stroke="#0B9E96" stroke-width="1.8"/>
+    <text x="288" y="152" text-anchor="middle" font-size="11.5" font-weight="800" fill="#0B9E96">진폭</text>
+  </svg>`;
+}
+
+/** L8 soundLab 하단 설명 — 3요소 미니 그래프(비교 쌍) */
+export function soundMiniFig(kind: "amp" | "freq" | "tone"): string {
+  const wavePath = (x0: number, x1: number, amp: number, cycles: number, mode: "sine" | "tri" = "sine"): string => {
+    let d = "";
+    for (let x = x0; x <= x1; x += 1.5) {
+      const p = ((x - x0) / (x1 - x0)) * cycles;
+      const v = mode === "sine" ? Math.sin(p * Math.PI * 2) : 1 - 4 * Math.abs(((p + 0.25) % 1) - 0.5);
+      d += `${d ? "L" : "M"}${x} ${(24 - v * amp).toFixed(1)}`;
+    }
+    return d;
+  };
+  const inner =
+    kind === "amp"
+      ? `<path d="${wavePath(3, 43, 17, 2)}" stroke="#37B6D8" stroke-width="2.2"/>
+         <path d="${wavePath(49, 89, 6.5, 2)}" stroke="#AEB8C6" stroke-width="2"/>`
+      : kind === "freq"
+        ? `<path d="${wavePath(3, 43, 12, 1.5)}" stroke="#AEB8C6" stroke-width="2"/>
+           <path d="${wavePath(49, 89, 12, 4)}" stroke="#8A6BFF" stroke-width="2.2"/>`
+        : `<path d="${wavePath(3, 43, 12, 2)}" stroke="#E8961E" stroke-width="2.2"/>
+           <path d="${wavePath(49, 89, 12, 2, "tri")}" stroke="#E8961E" stroke-width="2.2"/>`;
+  return `<svg viewBox="0 0 92 48" ${NS} fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <line x1="2" y1="24" x2="90" y2="24" stroke="#E6EAF0" stroke-width="1"/>
+    <line x1="46" y1="6" x2="46" y2="42" stroke="#EDF0F4" stroke-width="1"/>
+    ${inner}
   </svg>`;
 }
 

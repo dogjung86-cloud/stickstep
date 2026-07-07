@@ -16,6 +16,8 @@ interface HotspotStep {
   spots: Spot[];
   mode?: "reveal" | "find";
   dark?: boolean;
+  /** SVG를 스테이지에 꽉 채운다(패딩 0) — 스팟 % = viewBox 좌표 비율이 정확히 성립 */
+  pad0?: boolean;
   explainGood?: string;
   explainBad?: string;
 }
@@ -27,7 +29,7 @@ export const hotspot: StepRenderer = (host, step, api) => {
   if (s.lead) host.appendChild(el("div", { class: "sub", html: s.lead }));
 
   const stage = el("div", { class: `hs-stage ${s.dark ? "dark" : ""}` });
-  stage.appendChild(el("div", { class: "hs-art", html: s.svg }));
+  stage.appendChild(el("div", { class: `hs-art${s.pad0 ? " pad0" : ""}`, html: s.svg }));
   const label = el("div", { class: "hs-readout" });
   const photoBox = el("div", { class: "hs-photo" });
   host.append(stage, label, photoBox);
@@ -136,7 +138,9 @@ function renderFind(stage: HTMLElement, label: HTMLElement, s: HotspotStep, api:
 function showTag(stage: HTMLElement, spot: Spot): void {
   const old = stage.querySelector(".hs-tag");
   if (old) old.remove();
-  const tag = el("div", { class: "hs-tag", style: `left:${spot.x}%;top:${spot.y}%`, html: spot.label });
+  // 스테이지 상단 근처 스팟은 태그가 overflow:hidden에 잘리므로 점 아래쪽에 띄운다
+  const below = spot.y < 24;
+  const tag = el("div", { class: `hs-tag${below ? " below" : ""}`, style: `left:${spot.x}%;top:${spot.y}%`, html: spot.label });
   stage.appendChild(tag);
   requestAnimationFrame(() => tag.classList.add("show"));
 }

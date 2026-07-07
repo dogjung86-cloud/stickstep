@@ -125,6 +125,8 @@
 .hs-art svg { display: block; width: 100%; height: auto; }
 /* 발주 이미지 세포도: 패딩 0으로 이미지가 스테이지를 꽉 채워 탭 좌표(%)가 이미지와 일치한다 */
 .hs-art:has(img) { padding: 0; }
+/* SVG도 스팟 % = viewBox 비율로 정확히 맞추고 싶을 때(hotspot step의 pad0 옵션) */
+.hs-art.pad0 { padding: 0; }
 .hs-art img { display: block; width: 100%; height: auto; }
 .hs-dot { position: absolute; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 99px; background: rgba(49,130,246,.28); border: 2px solid var(--blue); display: grid; place-items: center; transition: transform .14s var(--spring), background .16s; }
 .hs-dot::after { content: ""; width: 7px; height: 7px; border-radius: 99px; background: var(--blue); }
@@ -139,6 +141,9 @@
 @keyframes hsPulse { 0% { transform: scale(.7); opacity: .55; } 100% { transform: scale(1.5); opacity: 0; } }
 .hs-tag { position: absolute; transform: translate(-50%, -140%) scale(.8); margin-top: -13px; background: var(--ink); color: #fff; font-size: 12px; font-weight: 800; padding: 5px 10px; border-radius: 8px; opacity: 0; transition: opacity .2s, transform .28s var(--spring); pointer-events: none; white-space: nowrap; z-index: 3; }
 .hs-tag.show { opacity: 1; transform: translate(-50%, -150%) scale(1); }
+/* 상단 근처 스팟 — 위로 띄우면 스테이지 밖으로 잘리므로 점 아래에 표시 */
+.hs-tag.below { margin-top: 13px; transform: translate(-50%, 30%) scale(.8); }
+.hs-tag.below.show { opacity: 1; transform: translate(-50%, 40%) scale(1); }
 .hs-readout { margin-top: 14px; font-size: 14.5px; line-height: 1.5; color: var(--sub); min-height: 40px; word-break: keep-all; }
 .hs-readout .hs-name { color: var(--ink); font-weight: 800; }
 .hs-photo { display: none; margin-top: 4px; border-radius: var(--r-lg); overflow: hidden; background: #0B1524; box-shadow: var(--sh-card); position: relative; }
@@ -1213,6 +1218,26 @@
 .gm-node.atom .gm-ring { border-color: rgba(124,176,36,.55); }
 .gm-node.atom:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-atom); }
 .kicker.atom { background: var(--subj-atom-tint); color: var(--subj-atom-press); }
+/* 물 비유 랩(가로) — 하단 중앙 펌프 세기 슬라이더 */
+.wc-slider { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); width: min(46%, 340px); margin: 0; }
+
+/* ---------- 중2 VII 전기와 자기 단원 테마(elec · 볼트 옐로) ---------- */
+.unit-band.elec { background: var(--grad-elec); }
+.gm-terrain.elec {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #FFF3C8, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #FDEDba, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #FFF1C2, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #F7E4A4, transparent 72%),
+    linear-gradient(180deg, #FFFBEE 0%, #FDF4D6 55%, #F6E8B8 100%);
+}
+.gm-path-glow.elec { stroke: rgba(239,184,0,.24); }
+.gm-path-done.elec { stroke: #EFB800; }
+.gm-node.elec.now .gm-med, .gm-node.elec.done .gm-med { background: var(--grad-medallion-elec); }
+.gm-node.elec .gm-ring { border-color: rgba(239,184,0,.55); }
+.gm-node.elec:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-elec); }
+.kicker.elec { background: var(--subj-elec-tint); color: var(--subj-elec-press); }
 /* ---------- 중2 I 물질의 특성 테마(chem · 지시약 로즈) ---------- */
 .unit-band.chem { background: var(--grad-chem); }
 .gm-terrain.chem {
@@ -1936,6 +1961,86 @@
 .sunlab-legend i { width: 9px; height: 9px; border-radius: 99px; }
 
 /* curio — 궁금해요 카드(교과서 밖 질문, 탭하면 답 공개 — ui/curio.ts, 전 단원 공용) */
+/* ---------- 중2 IV 주기율표 가로 랩(ptx) — 1~118번 · 7주기 ---------- */
+.ptx-wrap { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 42px 12px 10px; overflow-y: auto; }
+.ptx-grid { display: grid; grid-template-columns: 14px repeat(18, 1fr); gap: 2.5px; width: min(100%, 680px); }
+.ptx-gh { font-size: 7.5px; color: #6E84A8; text-align: center; font-weight: 700; align-self: end; }
+.ptx-ph { font-size: 8px; color: #6E84A8; font-weight: 700; display: grid; place-items: center; }
+.ptx-cell { position: relative; border-radius: 5px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); color: #EAF1FA; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5px 0 2.5px; min-width: 0; transition: transform .12s var(--spring), background .2s, border-color .2s, box-shadow .2s; }
+.ptx-cell small { font-size: 6.5px; line-height: 1.1; color: #8CA2C0; }
+.ptx-cell b { font-size: 9.5px; line-height: 1.15; font-weight: 800; }
+.ptx-cell i { font-style: normal; font-size: 5.8px; line-height: 1.15; color: #9FB2CE; max-width: 98%; overflow: hidden; white-space: nowrap; }
+.ptx-cell:active { transform: scale(.92); }
+.ptx-cell.sel { border-color: #FFD978; box-shadow: 0 0 0 1.5px rgba(255,217,120,.6); z-index: 1; }
+.ptx-cell.blank { background: transparent; border: 0; }
+.ptx-cell.merged { background: rgba(255,255,255,.035); border-style: dashed; }
+.ptx-cell.merged small { font-size: 5.6px; }
+.ptx-cell.merged i { font-size: 5.4px; color: #8CA2C0; }
+.ptx-cell.mark1, .ptx-cell.g1 { background: rgba(240,164,34,.28); border-color: rgba(240,180,106,.7); }
+.ptx-cell.mark18, .ptx-cell.g18 { background: rgba(124,176,36,.26); border-color: rgba(151,207,72,.7); }
+.ptx-cell.p2on { box-shadow: inset 0 -2.5px 0 rgba(126,214,255,.75); }
+/* 칠하기 — 상온 상태(교과서 IV-6 색: 고체 파랑·액체 초록·기체 살구) */
+.ptx-grid.paint-state .ptx-cell.st-sol { background: rgba(90,138,216,.32); border-color: rgba(126,168,238,.62); }
+.ptx-grid.paint-state .ptx-cell.st-liq { background: rgba(50,172,118,.36); border-color: rgba(94,210,160,.7); }
+.ptx-grid.paint-state .ptx-cell.st-gas { background: rgba(240,138,90,.32); border-color: rgba(250,180,130,.64); }
+/* 칠하기 — 금속·비금속·준금속 */
+.ptx-grid.paint-kind .ptx-cell.k-metal { background: rgba(74,134,224,.3); border-color: rgba(126,168,238,.6); }
+.ptx-grid.paint-kind .ptx-cell.k-nonmetal { background: rgba(240,138,58,.28); border-color: rgba(250,178,106,.6); }
+.ptx-grid.paint-kind .ptx-cell.k-semi { background: rgba(150,98,224,.3); border-color: rgba(190,150,240,.6); }
+.ptx-info { width: min(100%, 680px); min-height: 42px; background: rgba(10,20,38,.72); border: 1px solid rgba(255,255,255,.12); border-radius: 12px; padding: 8px 12px; font-size: 12px; line-height: 1.45; color: #C8D6EC; backdrop-filter: blur(6px); }
+.ptx-info b { color: #fff; }
+.ptx-note { color: #9CB2D2; font-size: 11px; }
+
+/* ---------- 짝 맞추기(pairMatch) ---------- */
+.pm-board { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+.pm-head { font-size: 12px; font-weight: 800; color: var(--ter); text-align: center; }
+.pm-col { display: flex; flex-direction: column; gap: 9px; }
+.pm-chip { border: 1.5px solid var(--line); background: #fff; border-radius: 14px; padding: 13px 10px; font-size: 15px; font-weight: 800; color: var(--ink); box-shadow: var(--sh-card); transition: transform .12s var(--spring), border-color .16s, background .16s; }
+.pm-chip.pm-a { font-size: 18px; letter-spacing: .01em; }
+.pm-chip:active { transform: scale(.96); }
+.pm-chip.sel { border-color: var(--blue); background: var(--blue-tint, #EEF4FF); }
+.pm-chip.ok { border-color: var(--green); background: #EAFBF2; color: #068B4F; }
+.pm-chip.miss { animation: shake .4s; border-color: var(--red); }
+
+/* ---------- 화학식 쓰기(formulaLab) ---------- */
+.fl-example { display: flex; gap: 12px; align-items: center; margin-top: 14px; border: 1.5px solid var(--line); border-radius: var(--r-lg); background: #fff; box-shadow: var(--sh-card); padding: 10px 14px 10px 6px; }
+.fl-example .fl-ex-art { flex: 0 0 132px; background: radial-gradient(120% 110% at 50% -10%, var(--stage-2), var(--stage) 70%); border-radius: 12px; }
+.fl-example .fl-ex-art svg { display: block; width: 100%; height: auto; }
+.fl-example .fl-ex-txt { font-size: 12.5px; line-height: 1.6; color: var(--sub); word-break: keep-all; }
+.fl-example .fl-ex-txt b { color: var(--ink); }
+.fl-example .fl-ex-f { font-size: 16px; }
+.fl-stage .fl-art svg { display: block; width: 100%; height: auto; max-height: 190px; }
+.fl-art { padding: 34px 10px 12px; }
+.fl-out { margin-top: 14px; min-height: 54px; display: flex; align-items: center; justify-content: center; font-size: 27px; font-weight: 800; letter-spacing: .02em; color: var(--ink); background: #fff; border: 1.5px dashed var(--line); border-radius: 14px; }
+.fl-out sub { font-size: 17px; }
+.fl-out.empty::after { content: "여기에 화학식이 나타나요"; font-size: 12.5px; font-weight: 600; color: var(--ter); }
+.fl-out.miss { animation: shake .4s; border-color: var(--red); }
+.fl-pad { display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px; margin-top: 10px; }
+.fl-key { border: 1.5px solid var(--line); background: #fff; border-radius: 11px; padding: 9px 0; font-size: 14.5px; font-weight: 800; color: var(--ink); box-shadow: var(--sh-card); transition: transform .12s var(--spring); display: flex; align-items: center; justify-content: center; gap: 4px; }
+.fl-key:active { transform: scale(.93); }
+.fl-key.sym i { width: 9px; height: 9px; border-radius: 99px; display: inline-block; border: 1px solid rgba(20,30,44,.25); }
+.fl-key.sub { color: var(--sub); }
+.fl-key.sub sub { font-size: 10.5px; font-weight: 800; color: var(--ink); }
+.fl-key.del { grid-column: span 2; color: var(--red); font-size: 16px; }
+
+/* ---------- 랩 하단 개념 설명 카드(labExplain) ---------- */
+.lab-explain { margin-top: 14px; border-radius: var(--r-lg); border: 1px solid var(--line); background: #fff; box-shadow: var(--sh-card); padding: 16px 16px 6px; }
+.lab-explain .lx-kicker { font-size: 11.5px; font-weight: 800; letter-spacing: .04em; color: var(--ter); margin-bottom: 6px; }
+.lab-explain .lx-lead { font-size: 13.5px; color: var(--sub); line-height: 1.55; word-break: keep-all; margin-bottom: 10px; }
+.lab-explain .lx-lead b { color: var(--ink); }
+.lab-explain .lx-fig { margin-bottom: 6px; }
+.lab-explain .lx-fig svg { display: block; width: 100%; height: auto; }
+.lab-explain .lx-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; }
+.lab-explain .lx-row + .lx-row { border-top: 1px solid var(--line); }
+.lab-explain .lx-fig + .lx-row { border-top: 1px solid var(--line); }
+.lab-explain .lx-mini { flex: 0 0 92px; }
+.lab-explain .lx-mini svg { display: block; width: 100%; height: auto; }
+.lab-explain .lx-dot { flex: 0 0 10px; width: 10px; height: 10px; border-radius: 99px; }
+.lab-explain .lx-txt { flex: 1; min-width: 0; }
+.lab-explain .lx-txt b { display: block; font-size: 13.5px; color: var(--ink); letter-spacing: -.01em; }
+.lab-explain .lx-txt p { margin: 2px 0 0; font-size: 12.5px; line-height: 1.55; color: var(--sub); word-break: keep-all; }
+.lab-explain .lx-txt p b { display: inline; font-size: inherit; color: var(--ink); }
+
 .curio {
   margin-top: 12px; border-radius: var(--r-lg); border: 1.5px solid #FFE2B0;
   background: linear-gradient(180deg, #FFFBF2, #FFF6E4); box-shadow: var(--sh-card); overflow: hidden;
@@ -1967,6 +2072,12 @@
    ============================================================ */
 .lt-canvas { touch-action: none; cursor: grab; }
 .lt-canvas:active { cursor: grabbing; }
+/* opticView — 상태 필은 좌하단(세그와 겹치지 않게), 인셋은 우하단 */
+.ov-status { position: absolute; left: 10px; bottom: 10px; font-size: 12px; white-space: nowrap; }
+/* opticView — 우하단 "눈에 보이는 모습" 인셋 프레임(렌더러 scissor 좌표와 1:1) */
+.ov-inset { position: absolute; right: 10px; bottom: 10px; width: 104px; height: 104px; border: 1.5px solid rgba(126,214,255,.55); border-radius: 12px; pointer-events: none; box-shadow: 0 4px 14px rgba(4,10,22,.35); transition: opacity .25s; }
+.ov-inset.off { opacity: 0; }
+.ov-inset-cap { position: absolute; left: 50%; top: -9px; transform: translateX(-50%); background: #14263E; border: 1px solid rgba(126,214,255,.4); color: #A8D8FF; font-size: 9.5px; font-weight: 800; border-radius: 99px; padding: 2px 8px; white-space: nowrap; }
 .pn-badges.duo { grid-template-columns: repeat(2, 1fr); }
 /* 랩 내 예측 선택지는 훅의 .hook-choices/.hook-choice 스타일을 그대로 재사용한다 */
 
@@ -1976,10 +2087,11 @@
 .hlm, .hlp { appearance: none; border: 0; background: transparent; padding: 0; width: 100%; cursor: pointer; transition: transform .14s var(--spring-soft); }
 .hlm:active, .hlp:active { transform: scale(.985); }
 /* mirrortown — 거울 각도 3단계와 빔 */
-.hl-town .hl-mirror-glass { transform-box: fill-box; transform-origin: center; transform: rotate(-22deg); transition: transform .4s var(--spring); }
-.hl-town.s1 .hl-mirror-glass { transform: rotate(-8deg); }
-.hl-town.s2 .hl-mirror-glass { transform: rotate(5deg); }
-.hl-town.s3 .hl-mirror-glass { transform: rotate(17deg); }
+/* 거울면 각도 — mirrortownSvg 기하 주석과 1:1(반사 법칙 검산값) */
+.hl-town .hl-mirror-glass { transform-box: fill-box; transform-origin: center; transform: rotate(-30deg); transition: transform .4s var(--spring); }
+.hl-town.s1 .hl-mirror-glass { transform: rotate(-15deg); }
+.hl-town.s2 .hl-mirror-glass { transform: rotate(10deg); }
+.hl-town.s3 .hl-mirror-glass { transform: rotate(22.6deg); }
 .hl-town .hl-beam { transition: opacity .3s; }
 .hl-town.s1 .hl-b0 { opacity: 1; }
 .hl-town.s2 .hl-b1 { opacity: 1; }
@@ -1999,6 +2111,108 @@
 .hld .hld-light, .hld .hld-stuff, .hld .hld-rustle { transition: opacity .5s var(--ease-out); }
 .hld.lit .hld-light { opacity: 1; }
 .hld.lit .hld-stuff { opacity: 1; }
+
+/* ---------- 중2 VII 전기와 자기 훅(hookElec) ---------- */
+.he-fig { display: block; width: 100%; appearance: none; background: none; border: 0; padding: 0; }
+.he-fig svg { width: 100%; height: auto; display: block; }
+button.he-fig { cursor: pointer; transition: transform .14s var(--spring-soft); }
+button.he-fig:active:not(:disabled) { transform: scale(.985); }
+/* wintershock — 겨울밤 정전기 3컷 */
+.he-wcard svg { width: 100%; max-width: 96px; height: auto; }
+.he-wcard.lit { border: 1.5px solid var(--subj-elec); background: var(--subj-elec-tint); }
+.he-wcard.lit .hook-cup-label { color: var(--subj-elec-press); }
+.he-wcard .he-hair { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(.3); opacity: .45; transition: transform .5s var(--spring), opacity .4s; }
+.he-wcard.lit .he-hair { transform: scaleY(1); opacity: 1; }
+.he-wcard .he-spk { transform-box: fill-box; transform-origin: center; }
+.he-wcard.lit .he-spk { animation: heSpk 1.5s ease-in-out infinite; }
+.he-wcard .he-arm2 { transform-box: fill-box; transform-origin: 0% 50%; }
+.he-wcard.lit .he-arm2 { animation: heJerk .6s var(--spring); }
+.he-wcard .he-bal3 { transform-box: fill-box; transform-origin: 50% 100%; }
+.he-wcard.lit .he-bal3 { animation: heBob 1.8s ease-in-out infinite; }
+@keyframes heSpk { 0%, 100% { opacity: 0; transform: scale(.7); } 14%, 34% { opacity: 1; transform: scale(1.05); } 50% { opacity: .15; } }
+@keyframes heJerk { 0% { transform: rotate(0); } 30% { transform: rotate(-9deg); } 100% { transform: rotate(0); } }
+@keyframes heBob { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-2.5px) rotate(2deg); } }
+/* balloondoll — 문지른 풍선과 알루미늄박 인형 */
+.he-bd .he-bal { transition: transform .9s var(--ease-out); }
+.he-bd.rub .he-bal { animation: heRub .55s ease-in-out; }
+.he-bd.rub .he-fric { animation: heSpk .55s ease-out; }
+.he-bd .he-min { transition: opacity .5s; }
+.he-bd.charged .he-min { opacity: 1; }
+.he-bd.charged .he-bal { transform: translate(96px, -14px); }
+.he-bd .he-doll { transform-box: view-box; transform-origin: 176px 130px; transform: rotate(80deg); transition: transform .8s var(--spring); }
+.he-bd.attract .he-doll { transform: rotate(-8deg); }
+.he-bd.attract .he-bal { transform: translate(96px, -6px) rotate(5deg); }
+.he-bd.attract .he-pullspk { animation: heSpk 1.2s ease-in-out 2; }
+@keyframes heRub { 0%, 100% { transform: translateX(0); } 28% { transform: translateX(-11px); } 72% { transform: translateX(10px); } }
+/* deadclock — 멈춘 벽시계 */
+.he-dc .he-obat, .he-dc .he-nbat { transition: transform .55s var(--ease-out), opacity .5s; }
+.he-dc.swap .he-obat { transform: translateY(24px); opacity: 0; }
+.he-dc .he-nbat { transform: translateY(-26px); }
+.he-dc.swap .he-nbat { transform: translateY(0); opacity: 1; }
+.he-dc .he-ring { animation: heRingPulse 1.4s ease-in-out infinite; }
+.he-dc.swap .he-ring { display: none; }
+.he-dc .he-sec { transform-box: view-box; transform-origin: 120px 62px; transform: rotate(222deg); }
+.he-dc.alive .he-sec { animation: heTickSec 60s steps(60, end) infinite; }
+.he-dc .he-cface { transition: fill .8s; }
+.he-dc.alive .he-cface { fill: #F6F9FD; }
+.he-dc .he-q { transition: opacity .5s; }
+.he-dc.alive .he-q { opacity: 0; }
+.he-dc .he-shead { transform-box: view-box; transform-origin: 196px 116px; transform: rotate(14deg); transition: transform .6s var(--spring); }
+.he-dc.alive .he-shead { transform: rotate(0); }
+@keyframes heTickSec { from { transform: rotate(222deg); } to { transform: rotate(582deg); } }
+@keyframes heRingPulse { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+/* brightpair — 전지 하나 더(직렬) */
+.he-bp .he-glow1, .he-bp .he-glow2, .he-bp .he-flow1, .he-bp .he-flow2, .he-bp .he-slot2 { transition: opacity .5s var(--ease-out); }
+.he-bp .he-bat2 { transition: opacity .4s, transform .45s var(--spring); transform: translateY(-22px); }
+.he-bp.ready .he-slot2 { animation: heRingPulse 1.3s ease-in-out infinite; }
+.he-bp.boost .he-bat2 { opacity: 1; transform: translateY(0); }
+.he-bp.boost .he-slot2 { opacity: 0; animation: none; }
+.he-bp.boost .he-glow1, .he-bp.boost .he-flow1 { opacity: 0; }
+.he-bp.boost .he-glow2 { opacity: .95; }
+.he-bp.boost .he-flow2 { opacity: 1; }
+.he-bp .he-fil { transition: stroke .4s; }
+.he-bp.boost .he-fil { stroke: #FFF3D0; }
+/* multitap — 플러그 뽑기 */
+.he-mt .he-plug { transition: transform .45s var(--spring); cursor: pointer; }
+.he-mt .he-plug.out { transform: translateY(-10px); }
+.he-mt.ready .he-plug:not(.out) { animation: heNudge 1.3s ease-in-out infinite; }
+.he-mt.ready .he-plug:not(.out) .he-pbody { stroke: var(--subj-elec); }
+.he-mt .he-glowL, .he-mt .he-windF, .he-mt .he-scrON { transition: opacity .4s; }
+.he-mt.off-lamp .he-glowL { opacity: 0; }
+.he-mt .he-fanb { transform-box: view-box; transform-origin: 118px 62px; animation: heSpin .8s linear infinite; }
+.he-mt.off-fan .he-fanb { animation: none; }
+.he-mt.off-fan .he-windF { opacity: 0; }
+.he-mt.off-chg .he-scrON { opacity: 0; }
+.he-mt .he-windF { animation: heWind 1.2s ease-in-out infinite; }
+@keyframes heNudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes heSpin { to { transform: rotate(360deg); } }
+@keyframes heWind { 0%, 100% { opacity: .35; } 50% { opacity: .9; } }
+/* labelpeek — 라벨 플립 */
+.he-lcard .he-front, .he-lcard .he-back { transition: opacity 0s .19s; }
+.he-lcard.flip svg { animation: heFlip .42s var(--ease-out); }
+.he-lcard.flip .he-front { opacity: 0; }
+.he-lcard.flip .he-back { opacity: 1; }
+.he-lcard.flip { border: 1.5px solid var(--subj-elec); background: var(--subj-elec-tint); }
+.he-lcard.flip .hook-cup-label { color: var(--subj-elec-press); }
+@keyframes heFlip { 0% { transform: scaleX(1); } 50% { transform: scaleX(.06); } 100% { transform: scaleX(1); } }
+/* compasswire — 외르스테드 */
+.he-cw .he-ndl { transform-box: view-box; transform-origin: 150px 92px; transition: transform .65s var(--spring); }
+.he-cw.on .he-ndl { transform: rotate(-74deg); }
+.he-cw .he-lever { transform-box: view-box; transform-origin: 100px 136px; transform: rotate(-38deg); transition: transform .3s var(--spring); }
+.he-cw.on .he-lever { transform: rotate(0deg); }
+.he-cw .he-dots, .he-cw .he-wglow { transition: opacity .35s; }
+.he-cw.on .he-dots { opacity: 1; }
+.he-cw.on .he-wglow { opacity: .4; }
+.he-cw.ready .he-ring { opacity: 1; animation: heRingPulse 1.3s ease-in-out infinite; }
+/* ebike — 페달 없이 출발 */
+.he-eb .he-spo1 { transform-box: view-box; transform-origin: 78px 124px; }
+.he-eb .he-spo2 { transform-box: view-box; transform-origin: 172px 124px; }
+.he-eb.go .he-spo1, .he-eb.go .he-spo2 { animation: heSpin .55s linear infinite; }
+.he-eb.go .he-road { animation: heRoad .5s linear infinite; }
+.he-eb.go .he-windE { opacity: 1; animation: heWind .9s ease-in-out infinite; }
+.he-eb.go .he-bike { animation: heBikeBob 1s ease-in-out infinite; }
+@keyframes heRoad { to { transform: translateX(-48px); } }
+@keyframes heBikeBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.6px); } }
 .hld.lit .hld-rustle { opacity: 0; }
 .hld.lit .hld-bulb { fill: #FFE9A8; }
 /* catmirror — 앞발 들기(실물과 상이 동시에) */
@@ -2078,8 +2292,9 @@
 .hcm .hcm-messy, .hcm .hcm-tidy { transition: opacity .5s var(--ease-out); }
 .hcm.tidy .hcm-messy { opacity: 0; }
 .hcm.tidy .hcm-tidy { opacity: 1; }
-.hcw .hcw-cup { transform-box: fill-box; transform-origin: center; transition: transform .4s var(--spring); }
-.hcw.drank .hcw-cup { transform: rotate(-14deg) translateY(-6px); }
+.hcw .hcw-pose { transition: opacity .3s var(--ease-out); }
+.hcw.drank .hcw-pose-a { opacity: 0; }
+.hcw.drank .hcw-pose-b { opacity: 1; }
 .hcw.drank .hcw-fizz { opacity: 1; animation: hcwFizz 1.4s ease-in-out infinite; }
 @keyframes hcwFizz { 0%, 100% { opacity: .4; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-4px); } }
 .hcg .hcg-m1, .hcg .hcg-m2 { transition: transform .3s var(--ease-out); }

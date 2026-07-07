@@ -1,0 +1,14 @@
+# 중2 III·IV 문제 그림 발주 3장 — 거울 2(정사각) + 전기영동 장치 1(2:1 가로)
+# 공통 스타일(전체 적용):
+# Photorealistic educational photograph for a middle-school science textbook.
+# Clean studio lighting, pure white background with a soft natural shadow.
+# NO text, NO letters, NO numbers, NO labels, NO logos, NO hands, NO people, NO faces anywhere.
+
+[0] file=public/light/quiz/mirror-convex.png (square 1:1)
+A single round CONVEX mirror (dome mirror bulging outward toward the viewer, like a road safety mirror or car blind-spot mirror) mounted on a simple short desk stand. Viewed from a three-quarter angle so the outward-bulging curved silver surface is clearly visible. The curved surface reflects a softly blurred bright neutral room squeezed into a wide miniature fisheye view, showing that the mirror curves outward. No people or faces in the reflection.
+
+[1] file=public/light/quiz/mirror-concave.png (square 1:1)
+A single round CONCAVE mirror (bowl-shaped magnifying makeup mirror, surface curving inward like a shallow dish) mounted on a simple short desk stand. Viewed from a three-quarter angle so the inward-curving dish shape and its rim are clearly visible. The curved surface reflects a softly blurred bright neutral room with a gently magnified, slightly distorted look near the center, showing that the mirror curves inward. No people or faces in the reflection.
+
+[2] file=public/atom/quiz/ionmove.png (landscape 2:1)
+Top-down view of a chemistry electrophoresis demonstration: a rectangular strip of white filter paper lying flat on a clear glass slide on a clean white lab bench. A metal alligator clip grips each short end of the paper strip, and from each clip a thin insulated wire runs out of the frame (one to the left, one to the right). In the exact center of the paper strip there is one small round vivid blue spot of copper(II) sulfate solution soaked into the paper. The paper is slightly damp-looking. Even soft lighting, everything sharp and clean, wide 2:1 landscape composition.

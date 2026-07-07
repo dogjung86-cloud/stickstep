@@ -29,21 +29,39 @@ function ask(box: HTMLElement, opts: string[], helper: HTMLElement, doneMsg: str
 }
 
 // ── L1: 산 위의 거울 — 겨울 해가 안 드는 마을(노르웨이 류칸 실화) ──
+// 기하 규약(반사 법칙으로 검산):
+//   태양 원반 (30,24) 가장자리 S=(38,26) → 거울 중심 M=(64,28), 입사 방향 u=(0.997,0.077).
+//   거울면 각도별 반사 방향(v = u − 2(u·n)n):
+//   s1 글라스 −15° → v=(0.825,−0.565) → 하늘 (93,8) / s2 10° → v=(0.963,0.269) → 마을 위 (232,75)
+//   s3 22.6° → v=(0.757,0.654) → 마을 명중 (182,130). CSS 회전값이 이 각도와 1:1 대응.
 function mirrortownSvg(): string {
   return `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <defs>
-      <linearGradient id="hl-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#20304E"/><stop offset="1" stop-color="#31466A"/></linearGradient>
+      <linearGradient id="hl-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A5580"/><stop offset=".55" stop-color="#2C4166"/><stop offset="1" stop-color="#243450"/></linearGradient>
       <linearGradient id="hl-mt" x1="0" y1="40" x2="60" y2="150" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5E7294"/><stop offset=".55" stop-color="#42536F"/><stop offset="1" stop-color="#2C3A52"/></linearGradient>
       <linearGradient id="hl-vil" x1="150" y1="120" x2="230" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4E5F7C"/><stop offset="1" stop-color="#333F56"/></linearGradient>
-      <radialGradient id="hl-sun" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFE9A8"/><stop offset=".6" stop-color="#FFCE5E"/><stop offset="1" stop-color="#FFCE5E" stop-opacity="0"/></radialGradient>
-      <linearGradient id="hl-beamg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFE9A8" stop-opacity=".9"/><stop offset="1" stop-color="#FFE9A8" stop-opacity=".25"/></linearGradient>
+      <radialGradient id="hl-sun" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFF4CC"/><stop offset=".55" stop-color="#FFD470"/><stop offset="1" stop-color="#FFD470" stop-opacity="0"/></radialGradient>
+      <linearGradient id="hl-beamg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFE9A8" stop-opacity=".95"/><stop offset="1" stop-color="#FFE9A8" stop-opacity=".3"/></linearGradient>
+      <linearGradient id="hl-shade" x1="0" y1="0" x2="1" y2=".3"><stop offset="0" stop-color="#101A2E" stop-opacity=".38"/><stop offset="1" stop-color="#101A2E" stop-opacity=".16"/></linearGradient>
     </defs>
     <rect x="6" y="8" width="228" height="150" rx="12" fill="url(#hl-sky)"/>
-    <circle cx="26" cy="96" r="17" fill="url(#hl-sun)"/>
-    <circle cx="26" cy="96" r="9" fill="#FFE9A8"/>
+    <!-- 겨울 태양 — 하늘 왼쪽 위, 빛은 여기서 출발한다 -->
+    <g class="hl-sunbody">
+      <circle cx="30" cy="24" r="19" fill="url(#hl-sun)"/>
+      <circle cx="30" cy="24" r="9" fill="#FFEEB0"/>
+      <circle cx="27" cy="21" r="3.4" fill="#FFF8DC"/>
+      ${[20, 65, 115, 160, 205, 250, 295, 340].map((a) => {
+        const r = (a * Math.PI) / 180;
+        const c = Math.cos(r);
+        const s = Math.sin(r);
+        return `<line x1="${(30 + c * 12.5).toFixed(1)}" y1="${(24 + s * 12.5).toFixed(1)}" x2="${(30 + c * 16.5).toFixed(1)}" y2="${(24 + s * 16.5).toFixed(1)}" stroke="#FFE9A8" stroke-width="2" opacity=".85"/>`;
+      }).join("")}
+    </g>
     <path d="M6 158L64 44l52 114z" fill="url(#hl-mt)"/>
     <path d="M64 44l14 28-9 3 13 26" stroke="#8FA6C8" stroke-width="2" opacity=".5" fill="none"/>
     <path d="M52 68q10-6 22 0" stroke="#EAF2FF" stroke-width="3" opacity=".8"/>
+    <!-- 산그늘 — 골짜기(마을 쪽)가 어두운 이유 -->
+    <path d="M64 44L234 130v28H96z" fill="url(#hl-shade)"/>
     <!-- 마을(그늘) -->
     <g class="hl-village">
       <ellipse cx="188" cy="156" rx="42" ry="4" fill="#0B1524" opacity=".3"/>
@@ -54,19 +72,21 @@ function mirrortownSvg(): string {
       <rect class="hl-win" x="163" y="139" width="7" height="8" rx="1.5" fill="#3A4A66"/>
       <rect class="hl-win" x="193" y="143" width="7" height="7" rx="1.5" fill="#3A4A66"/>
     </g>
-    <!-- 산꼭대기 거울(각도 상태 r0/r1/r2) -->
+    <!-- 태양 → 거울 입사광(항상 표시 — 빛의 출발점은 태양) -->
+    <path class="hl-bin" d="M38 26L64 28" stroke="url(#hl-beamg)" stroke-width="4"/>
+    <!-- 반사 빔(상태별) — 각 상태의 거울면 각도로 반사 법칙 검산 완료 -->
+    <path class="hl-beam hl-b0" d="M38 26L64 28L93 8" stroke="url(#hl-beamg)" stroke-width="4" opacity="0"/>
+    <path class="hl-beam hl-b1" d="M38 26L64 28L232 75" stroke="url(#hl-beamg)" stroke-width="4" opacity="0"/>
+    <path class="hl-beam hl-b2" d="M38 26L64 28L182 130" stroke="url(#hl-beamg)" stroke-width="5" opacity="0"/>
+    <!-- 산꼭대기 거울(빔 위에 그려 회전이 또렷이 보이게) -->
     <g class="hl-mirror">
-      <path d="M64 40v-9" stroke="#8B95A1" stroke-width="2.6"/>
+      <path d="M64 44v-13" stroke="#8B95A1" stroke-width="2.6"/>
       <g class="hl-mirror-glass">
-        <rect x="52" y="18" width="24" height="7" rx="2.5" fill="#CFE4F8" stroke="#8FB2D8" stroke-width="1.4"/>
-        <path d="M55 20h8" stroke="#FFFFFF" stroke-width="1.8"/>
+        <rect x="52" y="24.5" width="24" height="7" rx="2.5" fill="#CFE4F8" stroke="#8FB2D8" stroke-width="1.4"/>
+        <path d="M55 26.5h8" stroke="#FFFFFF" stroke-width="1.8"/>
       </g>
     </g>
-    <!-- 반사 빔(상태별) -->
-    <path class="hl-beam hl-b0" d="M40 96L64 24l30 -14" stroke="url(#hl-beamg)" stroke-width="4" opacity="0"/>
-    <path class="hl-beam hl-b1" d="M40 96L64 24l60 30" stroke="url(#hl-beamg)" stroke-width="4" opacity="0"/>
-    <path class="hl-beam hl-b2" d="M40 96L64 24l118 106" stroke="url(#hl-beamg)" stroke-width="5" opacity="0"/>
-    <circle class="hl-spot" cx="182" cy="132" r="0" fill="#FFE9A8" opacity="0"/>
+    <circle class="hl-spot" cx="182" cy="130" r="14" fill="#FFE9A8" opacity="0"/>
   </svg>`;
 }
 
@@ -93,9 +113,9 @@ export function renderMirrorTown(
     fig.classList.add(`s${stage}`);
     if (stage === 1) {
       face("surprised");
-      helper.innerHTML = "빛이 하늘로! 각도가 너무 세워졌어요. <b>한 번 더</b> 돌려 봐요.";
+      helper.innerHTML = "햇빛이 하늘로 튕겨 나갔어요! 거울이 너무 서 있네요. <b>한 번 더</b> 돌려 봐요.";
     } else if (stage === 2) {
-      helper.innerHTML = "아깝다 — 산 중턱에 떨어졌어요. <b>조금만 더!</b>";
+      helper.innerHTML = "아깝다 — 이번엔 마을 지붕 <b>위로 휙</b> 지나갔어요. 조금만 되돌려요!";
     } else {
       (btn as HTMLButtonElement).disabled = true;
       btn.classList.add("done-static");

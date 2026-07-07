@@ -87,7 +87,7 @@ function signSvg(kind: "wifi" | "wc" | "plug"): string {
     kind === "wifi"
       ? `<path d="M28 56q20-18 40 0" stroke="#EAF1FA" stroke-width="5" fill="none"/><path d="M36 64q12-11 24 0" stroke="#EAF1FA" stroke-width="5" fill="none"/><circle cx="48" cy="73" r="4.5" fill="#EAF1FA"/>`
       : kind === "wc"
-        ? `<circle cx="38" cy="34" r="6" fill="#EAF1FA"/><path d="M38 42v14l-5 16M38 56l5 16M30 48h16" stroke="#EAF1FA" stroke-width="4.4" fill="none"/><circle cx="60" cy="34" r="6" fill="#EAF1FA"/><path d="M60 42l-7 20h14z" fill="#EAF1FA"/>`
+        ? `<circle cx="38" cy="34" r="6" fill="#EAF1FA"/><path d="M38 42v14l-5 16M38 56l5 16M30 48h16" stroke="#EAF1FA" stroke-width="4.4" fill="none"/><circle cx="60" cy="34" r="6" fill="#EAF1FA"/><path d="M60 42l-7 18h14z" fill="#EAF1FA"/><path d="M56 60v11M64 60v11" stroke="#EAF1FA" stroke-width="4.4" fill="none"/>`
         : `<rect x="34" y="30" width="28" height="26" rx="7" stroke="#EAF1FA" stroke-width="4.4" fill="none"/><path d="M42 30v-8M54 30v-8M48 56v14" stroke="#EAF1FA" stroke-width="4.4"/>`;
   return `<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" aria-hidden="true">
     <defs><linearGradient id="hcs-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4E86D8"/><stop offset="1" stop-color="#2A5AA8"/></linearGradient></defs>
@@ -130,35 +130,43 @@ export function renderSigns(scene: HTMLElement, helper: HTMLElement, finish: () 
 }
 
 // ── L3: 원자 속 들여다보기 — 3단 줌 ─────────────────────────
+// 배경은 발주 라스터 3장(public/atom/hook/peek0..2.webp — 연필심·흑연 원자·핵만 있는 내부).
+// 3단의 전자는 라스터에 없음(발주 조건) — SVG animateMotion 오버레이가 궤도 위를 정확히 돈다.
+// 탄소: 전자 6(내부 궤도 2 + 바깥 궤도 4). 이미지 로드 실패 시에도 궤도·전자는 보인다.
+const HOOK_IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+
 function peekSvg(): string {
-  return `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" aria-hidden="true">
+  const img = (file: string): string =>
+    `<image href="${HOOK_IMG_BASE}atom/hook/${file}" x="0" y="0" width="240" height="240" preserveAspectRatio="xMidYMid slice"/>`;
+  return `<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" aria-hidden="true">
     <defs>
-      <linearGradient id="hcp-pen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F5C93C"/><stop offset="1" stop-color="#D89A18"/></linearGradient>
-      <radialGradient id="hcp-c" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#AEB8C6"/><stop offset="1" stop-color="#3E4854"/></radialGradient>
-      <radialGradient id="hcp-n" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#FFB09A"/><stop offset="1" stop-color="#C23A20"/></radialGradient>
       <radialGradient id="hcp-e" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#B8DCFF"/><stop offset="1" stop-color="#2E6DB4"/></radialGradient>
+      <clipPath id="hcp-clip"><rect x="0" y="0" width="240" height="240" rx="16"/></clipPath>
     </defs>
-    <!-- 1단: 연필 -->
-    <g class="hcp-s hcp-s0">
-      <ellipse cx="120" cy="118" rx="70" ry="6" fill="#2A3A5E" opacity=".12"/>
-      <rect x="48" y="78" width="120" height="22" rx="6" fill="url(#hcp-pen)"/>
-      <path d="M168 78l26 11-26 11z" fill="#E8CFA0"/>
-      <path d="M186 85.5l8 3.5-8 3.5z" fill="#3E4854"/>
-      <path d="M54 82h100" stroke="#FFE9A8" stroke-width="3" opacity=".8"/>
-    </g>
-    <!-- 2단: 탄소 원자들 -->
-    <g class="hcp-s hcp-s1" opacity="0">
-      ${[0, 1, 2, 3, 4, 5, 6].map((i) => `<circle cx="${70 + (i % 4) * 34 + (Math.floor(i / 4) % 2) * 17}" cy="${66 + Math.floor(i / 4) * 30}" r="13" fill="url(#hcp-c)"/>`).join("")}
-      <circle cx="120" cy="120" r="13" fill="url(#hcp-c)" stroke="#EAF1FA" stroke-width="2.4"/>
-    </g>
-    <!-- 3단: 원자 내부(핵 + 전자) -->
-    <g class="hcp-s hcp-s2" opacity="0">
-      <ellipse cx="120" cy="86" rx="76" ry="52" stroke="#3E5478" stroke-width="1.6" stroke-dasharray="5 6"/>
-      <circle cx="120" cy="86" r="17" fill="url(#hcp-n)"/>
-      <circle cx="114" cy="80" r="4" fill="#FFD6BE"/><circle cx="127" cy="84" r="4" fill="#FFD6BE"/><circle cx="118" cy="93" r="4" fill="#96787">
-      </circle>
-      <circle cx="60" cy="62" r="7" fill="url(#hcp-e)"/><circle cx="184" cy="70" r="7" fill="url(#hcp-e)"/>
-      <circle cx="86" cy="126" r="7" fill="url(#hcp-e)"/><circle cx="164" cy="118" r="7" fill="url(#hcp-e)"/>
+    <g clip-path="url(#hcp-clip)">
+      <rect width="240" height="240" fill="#0F1B30"/>
+      <!-- 1단: 연필심 매크로 -->
+      <g class="hcp-s hcp-s0">${img("peek0.webp")}</g>
+      <!-- 2단: 흑연 속 탄소 원자들 -->
+      <g class="hcp-s hcp-s1" opacity="0">${img("peek1.webp")}</g>
+      <!-- 3단: 원자 내부 — 라스터(핵·빈 공간) + 벡터 전자 오버레이 -->
+      <g class="hcp-s hcp-s2" opacity="0">
+        ${img("peek2.webp")}
+        <g transform="rotate(-14 120 120)">
+          <ellipse cx="120" cy="120" rx="46" ry="27" stroke="rgba(140,180,236,.55)" stroke-width="1.6" stroke-dasharray="5 6"/>
+          <circle r="7" fill="url(#hcp-e)"><animateMotion dur="5.2s" repeatCount="indefinite" path="M166 120 A46 27 0 1 1 74 120 A46 27 0 1 1 166 120"/></circle>
+          <circle r="7" fill="url(#hcp-e)"><animateMotion dur="5.2s" begin="-2.6s" repeatCount="indefinite" path="M166 120 A46 27 0 1 1 74 120 A46 27 0 1 1 166 120"/></circle>
+        </g>
+        <g transform="rotate(9 120 120)">
+          <ellipse cx="120" cy="120" rx="92" ry="54" stroke="rgba(140,180,236,.55)" stroke-width="1.6" stroke-dasharray="5 6"/>
+          ${[0, -2.4, -4.8, -7.2]
+            .map(
+              (b) =>
+                `<circle r="7" fill="url(#hcp-e)"><animateMotion dur="9.6s" begin="${b}s" repeatCount="indefinite" path="M212 120 A92 54 0 1 1 28 120 A92 54 0 1 1 212 120"/></circle>`,
+            )
+            .join("")}
+        </g>
+      </g>
     </g>
   </svg>`;
 }
@@ -254,24 +262,56 @@ export function renderMenuSort(scene: HTMLElement, helper: HTMLElement, finish: 
   });
 }
 
-// ── L5: 약수터의 톡 쏘는 물 ─────────────────────────────────
+// ── L5: 약수터의 톡 쏘는 물 — 스틱맨이 바가지로 물을 마신다 ──
 function springSvg(): string {
-  return `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" aria-hidden="true">
+  return `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <defs>
       <linearGradient id="hcw-rock" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8FA0B0"/><stop offset="1" stop-color="#4E5E6E"/></linearGradient>
       <linearGradient id="hcw-w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BFDCFF"/><stop offset="1" stop-color="#7FB0E8"/></linearGradient>
       <linearGradient id="hcw-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F0E6C8"/><stop offset="1" stop-color="#C8B888"/></linearGradient>
     </defs>
-    <ellipse cx="120" cy="158" rx="80" ry="5" fill="#2A3A5E" opacity=".12"/>
-    <path d="M30 40q40-26 90-12l40 14q30 12 46 40l-20 12q-60 24-132 8z" fill="url(#hcw-rock)"/>
-    <path d="M52 44q26-12 52-8" stroke="#C6D2DE" stroke-width="3" opacity=".6"/>
-    <path d="M96 66q6 2 6 10v20" stroke="#5E6E7E" stroke-width="8"/>
-    <path class="hcw-stream" d="M100 96q0 18 -2 30" stroke="url(#hcw-w)" stroke-width="5"/>
-    <path d="M62 128q38 14 78 0v14q-38 12-78 0z" fill="url(#hcw-w)" opacity=".8"/>
-    <g class="hcw-cup"><path d="M138 118q16-6 30 0l-4 22q-11 5-22 0z" fill="url(#hcw-g)" stroke="#8A7A4E" stroke-width="2"/></g>
+    <ellipse cx="120" cy="158" rx="86" ry="5" fill="#2A3A5E" opacity=".12"/>
+    <!-- 약수터 바위 + 물길 -->
+    <path d="M14 48q32-24 68-16l24 10q18 10 26 30l-14 10q-42 18-96 6z" fill="url(#hcw-rock)"/>
+    <path d="M34 50q22-11 44-7" stroke="#C6D2DE" stroke-width="3" opacity=".6"/>
+    <path d="M84 68q6 2 6 10v16" stroke="#5E6E7E" stroke-width="8"/>
+    <path class="hcw-stream" d="M88 94q0 16-2 28" stroke="url(#hcw-w)" stroke-width="5"/>
+    <path d="M46 126q42 14 88 0v14q-44 12-88 0z" fill="url(#hcw-w)" opacity=".8"/>
+    <!-- 스틱맨(손그림 라인 유지) -->
+    <ellipse cx="184" cy="153" rx="24" ry="4" fill="#2A3A5E" opacity=".12"/>
+    <g stroke="#2B3442" stroke-width="3" fill="none">
+      <circle cx="184" cy="62" r="13" fill="#FFF" stroke-width="3"/>
+      <path d="M184 75v38"/>
+      <path d="M184 113l-13 36M184 113l13 36"/>
+      <path d="M184 84l17 15"/>
+    </g>
+    <!-- 얼굴 A(기대) / B(어라?) -->
+    <g class="hcw-pose hcw-pose-a">
+      <circle cx="179.5" cy="60" r="1.7" fill="#2B3442"/><circle cx="188.5" cy="60" r="1.7" fill="#2B3442"/>
+      <path d="M179 67q5 4 10 0" stroke="#2B3442" stroke-width="2.2" fill="none"/>
+    </g>
+    <g class="hcw-pose hcw-pose-b" opacity="0">
+      <path d="M177.5 58.5h4M186.5 58.5h4" stroke="#2B3442" stroke-width="2.4"/>
+      <circle cx="184" cy="68" r="2.8" stroke="#2B3442" stroke-width="2.2" fill="none"/>
+    </g>
+    <!-- 팔+바가지 A: 물을 뜨려고 내림 -->
+    <g class="hcw-pose hcw-pose-a">
+      <path d="M184 84l-20 20" stroke="#2B3442" stroke-width="3" fill="none"/>
+      <path d="M150 104q12-5 24 0l-3 13q-9 4-18 0z" fill="url(#hcw-g)" stroke="#8A7A4E" stroke-width="2"/>
+    </g>
+    <!-- 팔+바가지 B: 입가로 들어 올려 마심 -->
+    <g class="hcw-pose hcw-pose-b" opacity="0">
+      <path d="M184 84l-12-11" stroke="#2B3442" stroke-width="3" fill="none"/>
+      <g transform="rotate(-34 170 72)">
+        <path d="M158 68q12-5 24 0l-3 13q-9 4-18 0z" fill="url(#hcw-g)" stroke="#8A7A4E" stroke-width="2"/>
+        <path d="M162 72q10-3 17 0" stroke="#9CC8F2" stroke-width="2.4"/>
+      </g>
+      <path d="M172 80q-2 5 1 9" stroke="#9CC8F2" stroke-width="2" opacity=".8"/>
+    </g>
+    <!-- 톡 쏘는 기포(마신 뒤) -->
     <g class="hcw-fizz" stroke="#8FC4FF" stroke-width="2.2" opacity="0">
-      <circle cx="148" cy="108" r="2.4"/><circle cx="158" cy="100" r="2"/><circle cx="153" cy="92" r="1.7"/>
-      <path d="M166 106l4-4M170 112l5-2"/>
+      <circle cx="200" cy="46" r="2.4"/><circle cx="208" cy="38" r="2"/><circle cx="203" cy="30" r="1.7"/>
+      <path d="M212 50l4-4M214 58l5-2"/>
     </g>
   </svg>`;
 }
