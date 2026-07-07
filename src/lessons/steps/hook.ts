@@ -29,6 +29,7 @@ import { renderStargaze, renderPlanetSize, renderShadowClock, renderMoonPic, ren
 import { renderColorCups, renderSpeaker, renderSmokestack } from "./hookCiv";
 import { renderCellZoom, renderStain, renderBodyCount, renderLadybugs, renderBatBird, renderFoodWeb } from "./hookBio";
 import { renderRings, renderDeadsea, renderCocoa, renderFishmouth, renderGallium, renderMilkzoom, renderSoysauce, renderSyrup, renderPerfume } from "./hookChem";
+import { renderStripemount, renderFoolsgold, renderDolstatue, renderBookcliff, renderPressrock, renderCappadocia, renderGravestone, renderPuzzlemap, renderQuakenews, renderEggearth } from "./hookGeo";
 import { ask } from "./hookAsk";
 import type { StepAPI, StepRenderer } from "../types";
 
@@ -64,7 +65,8 @@ interface HookStep {
     | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses"
     | "colorcups" | "speaker" | "smokestack"
     | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb"
-    | "rings" | "deadsea" | "cocoa" | "fishmouth" | "gallium" | "milkzoom" | "soysauce" | "syrup" | "perfume";
+    | "rings" | "deadsea" | "cocoa" | "fishmouth" | "gallium" | "milkzoom" | "soysauce" | "syrup" | "perfume"
+    | "stripemount" | "foolsgold" | "dolstatue" | "bookcliff" | "pressrock" | "cappadocia" | "gravestone" | "puzzlemap" | "quakenews" | "eggearth";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
 }
@@ -137,6 +139,16 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "soysauce") sceneCleanup = renderSoysauce(scene, helper, s, finish, face);
   else if (s.scene === "syrup") sceneCleanup = renderSyrup(scene, helper, s, finish, face);
   else if (s.scene === "perfume") sceneCleanup = renderPerfume(scene, helper, s, finish, face);
+  else if (s.scene === "stripemount") sceneCleanup = renderStripemount(scene, helper, s, finish, face);
+  else if (s.scene === "foolsgold") sceneCleanup = renderFoolsgold(scene, helper, s, finish, face);
+  else if (s.scene === "dolstatue") sceneCleanup = renderDolstatue(scene, helper, s, finish, face);
+  else if (s.scene === "bookcliff") sceneCleanup = renderBookcliff(scene, helper, s, finish, face);
+  else if (s.scene === "pressrock") sceneCleanup = renderPressrock(scene, helper, s, finish, face);
+  else if (s.scene === "cappadocia") sceneCleanup = renderCappadocia(scene, helper, s, finish, face);
+  else if (s.scene === "gravestone") sceneCleanup = renderGravestone(scene, helper, s, finish, face);
+  else if (s.scene === "puzzlemap") sceneCleanup = renderPuzzlemap(scene, helper, s, finish, face);
+  else if (s.scene === "quakenews") sceneCleanup = renderQuakenews(scene, helper, s, finish, face);
+  else if (s.scene === "eggearth") sceneCleanup = renderEggearth(scene, helper, s, finish, face);
   else sceneCleanup = renderEgg(scene, helper, s, finish, api, face);
 
   api.setCTA("스틱맨 쌤과 먼저 관찰해요", { enabled: false });

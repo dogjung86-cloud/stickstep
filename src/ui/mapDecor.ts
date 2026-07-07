@@ -306,6 +306,52 @@ const MAP_DECOR: Record<string, string> = {
     `<linearGradient id="al-c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EFC98E"/><stop offset="1" stop-color="#C89454"/></linearGradient>
     <linearGradient id="al-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2D5A4"/><stop offset=".5" stop-color="#D8A868"/><stop offset="1" stop-color="#B07E3E"/></linearGradient>`,
   ),
+
+  // ── 중2 II. 지권의 변화 — 지질 원정(화산→수정→지층→화석→지구 단면) ──
+  volcanoDeco: S(
+    `${shadow(32, 57, 18, 0.14)}
+    <path d="M32 14 L50 52 H14 Z" fill="url(#vc-b)" stroke="#5E3A22" stroke-width="1.6"/>
+    <path d="M26 26 q6 4 12 0 l-2 -8 h-8 z" fill="url(#vc-l)"/>
+    <path d="M28 14 q4 -6 8 0 q-1 3 -4 3 t-4 -3z" fill="#FF9A4A" stroke="#D95F14" stroke-width="1.2"/>
+    <path d="M24 34 q8 5 16 0 M20 44 q12 6 24 0" stroke="#7A4A26" stroke-width="1.6" opacity=".6"/>
+    <ellipse cx="26" cy="30" rx="2" ry="6" fill="#fff" opacity=".25" transform="rotate(16 26 30)"/>`,
+    `<linearGradient id="vc-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A97A4E"/><stop offset=".55" stop-color="#7E5430"/><stop offset="1" stop-color="#5E3A22"/></linearGradient>
+    <linearGradient id="vc-l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC24D"/><stop offset="1" stop-color="#E8642A"/></linearGradient>`,
+  ),
+  quartzDeco: S(
+    `${shadow(32, 57, 15, 0.14)}
+    <path d="M26 50 L20 26 L28 14 L32 24 z" fill="url(#qz-a)" stroke="#8C7A4E" stroke-width="1.3"/>
+    <path d="M32 50 L30 22 L38 10 L44 24 L40 50 z" fill="url(#qz-b)" stroke="#8C7A4E" stroke-width="1.4"/>
+    <path d="M44 50 L44 30 L52 24 L54 38 z" fill="url(#qz-a)" stroke="#8C7A4E" stroke-width="1.2"/>
+    <path d="M34 20 L37 14 M46 32 L50 27" stroke="#FFFDF4" stroke-width="1.4" opacity=".8"/>
+    <path d="M18 52 h30" stroke="#8C7A4E" stroke-width="2"/>`,
+    `<linearGradient id="qz-a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF8E2"/><stop offset="1" stop-color="#E0C888"/></linearGradient>
+    <linearGradient id="qz-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFDF2"/><stop offset=".5" stop-color="#F2E2B0"/><stop offset="1" stop-color="#CBAE6E"/></linearGradient>`,
+  ),
+  strataDeco: S(
+    `${shadow(32, 57, 19, 0.13)}
+    <path d="M12 52 Q14 30 32 26 Q50 30 52 52 Z" fill="url(#st2-a)" stroke="#7E5430" stroke-width="1.5"/>
+    <path d="M15 46 Q32 40 49 46 M18 40 Q32 34 46 40 M22 34 Q32 30 42 34" stroke="#FFF2DC" stroke-width="2.2" opacity=".7"/>
+    <path d="M15 46 Q32 40 49 46" stroke="#B0703C" stroke-width="1" opacity=".5"/>
+    <ellipse cx="24" cy="32" rx="2" ry="5" fill="#fff" opacity=".3" transform="rotate(18 24 32)"/>`,
+    `<linearGradient id="st2-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D8AA70"/><stop offset=".5" stop-color="#BE8A50"/><stop offset="1" stop-color="#9A6B3A"/></linearGradient>`,
+  ),
+  fossilDeco: S(
+    `${shadow(32, 57, 15, 0.14)}
+    <circle cx="32" cy="34" r="19" fill="url(#fs-a)" stroke="#8C6A42" stroke-width="1.5"/>
+    <path d="M32 34 m-12 0 a12 12 0 1 1 24 0 a9 9 0 1 1 -18 0 a6 6 0 1 1 12 0 a3 3 0 1 1 -6 0" fill="none" stroke="#6B4A26" stroke-width="2.2"/>
+    <path d="M20 26 q4 -5 9 -6" stroke="#FFF2DC" stroke-width="1.6" opacity=".6"/>`,
+    `<radialGradient id="fs-a" cx=".38" cy=".32" r=".9"><stop offset="0" stop-color="#F2DCB4"/><stop offset="1" stop-color="#C79A62"/></radialGradient>`,
+  ),
+  earthcutDeco: S(
+    `${shadow(32, 57, 16, 0.14)}
+    <circle cx="32" cy="34" r="20" fill="url(#ec2-sea)" stroke="#2E5FA8" stroke-width="1.4"/>
+    <path d="M32 34 L32 14 A20 20 0 0 1 52 34 Z" fill="url(#ec2-sec)" stroke="#8C5A28" stroke-width="1.2"/>
+    <circle cx="32" cy="34" r="4.5" fill="#FFE9A0"/>
+    <path d="M24 22 q4 -3 8 -2 M20 36 q3 6 8 8" stroke="#7FD49E" stroke-width="3" stroke-linecap="round" opacity=".85"/>`,
+    `<radialGradient id="ec2-sea" cx=".38" cy=".32" r=".9"><stop offset="0" stop-color="#7FB2F0"/><stop offset="1" stop-color="#2E5FA8"/></radialGradient>
+    <radialGradient id="ec2-sec" cx=".5" cy=".5" r=".75"><stop offset="0" stop-color="#FFE9A0"/><stop offset=".4" stop-color="#F5A93E"/><stop offset=".75" stop-color="#B84A26"/><stop offset="1" stop-color="#7E9E5E"/></radialGradient>`,
+  ),
 };
 
 /** 지도 장식 아트 — 단원 특색 세트 → 생물 아이콘(ART_BIO) → 공용(ART_DECOR) 순서로 찾는다. */

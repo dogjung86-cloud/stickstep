@@ -52,7 +52,13 @@ src/
                   hookSpace(VII 훅 5종: stargaze·planetsize·shadowclock·moonpic·sunglasses)·
                   densityLab·densityPool·solubilityLab·gasFizz·meltCurve·sepFunnel·recrystal·distillLab
                   (중2 I 물질의 특성 랩 8종 — buoyancyLab 문법 계승, 목표 칩 = pn-badges force3 + pn-badge chem)·
-                  hookChem(중2 I 훅 9종: rings·deadsea·cocoa·fishmouth·gallium·milkzoom·soysauce·syrup·perfume))
+                  hookChem(중2 I 훅 9종: rings·deadsea·cocoa·fishmouth·gallium·milkzoom·soysauce·syrup·perfume)·
+                  earthCut3d(중2 II 3D 지구 컷어웨이 — 가로, 단면 CanvasTexture 반원 2장+레이캐스트 층 판정)·
+                  streakLab(조흔·자성·염산·굳기)·coolingLab(냉각 속도×조성 2×2)·strataLab(퇴적 층리)·
+                  foliationLab(상하 압력→엽리; 규암·대리암은 엽리 없음)·rockCycle(가로 순환 여행 — 사건 선택 전이+오답 교정)·
+                  driftLab(PALEOMAP 크로스페이드+증거 오버레이)·plateMap(지진·화산 점+판 경계 토글)·
+                  hookGeo(중2 II 훅 10종: eggearth·foolsgold·dolstatue·stripemount·bookcliff·pressrock·
+                  cappadocia·gravestone·puzzlemap·quakenews))
   engine/    matterSim — IV 단원 순수 입자 물리(프로토타입 Sim 이식, 렌더링 없음, 수치 불변)
   renderers/ meta(WebGL 메타볼 — FRAG 원본 이식, 볼 상한 48, dispose 시 lose_context)·
              dot(발광점 — WebGL 폴백 겸 "입자의 눈" 뷰)·palette(온도→hue 212→370, uniform 3색)
@@ -71,8 +77,10 @@ src/
                      **반드시 동적 import**로만 로드, dispose가 지오메트리·재질·텍스처+컨텍스트 반납),
              rotateStage(가로 모드 오버레이 — fixed 90° 회전 + mapPoint 포인터 리매핑 + 나가기),
              spaceFigures(VII 퀴즈 SVG + 태양 핫스팟 그림 + spaceMiniArt),
-             chemFigures(중2 I 퀴즈 SVG — 용해도 곡선·가열 곡선·산점도·증류탑 + chemMiniArt)
-  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금·학년 트랙), unit1 … unit7(중1), g2/unit1 …(중2)
+             chemFigures(중2 I 퀴즈 SVG — 용해도 곡선·가열 곡선·산점도·증류탑 + chemMiniArt),
+             geoFigures(중2 II 퀴즈 SVG — 층상구조 사분원·화성암 2×2·광물 흐름도·토양층·판 구조·
+                        대륙 이동 4단계((나)→(라)→(가)→(다)) + geoMiniArt)
+  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금·학년 트랙), unit1 … unit7(중1), g2/unit1·unit2 …(중2)
   screens/   splash, subject(과목 허브 — 과학 활성·수학/사회 준비 중·스틱맨 낙서 데코),
              onboarding, home(게임 지도 + 중1⇄중2 학년 세그), done,
              paywall(프리미엄 안내·구매), login(구글·카카오·네이버 소셜 스텁 — 출시 시 OAuth 연결)
@@ -109,6 +117,17 @@ src/
 - **중2 콘텐츠 규칙**: 중2 교과서는 녹는점·끓는점·용해도 등 용어를 정식 도입한다(중1 '입자' 제약과 별개).
   교과서 원본: `D:\brilliant\중학교 교과서\중2 단원별 - 텍스트 보존(OCR)\` PDF — poppler가 한글 CMap이 없어
   깨지므로 **pypdf로 텍스트 추출**(`py -m pip install pypdf`)이 확정 경로다.
+- **중2 II 지권 에셋**: 암석·광물 표본과 증거 사진은 codex 실사풍 발주(`bash qa/order-geo.sh` →
+  `node qa/process-geo.mjs`, public/geo/{rocks,minerals,evid} 512 webp). 퀴즈에는 unit2.ts의
+  gimg/gpair/gitem 헬퍼로 `<img>` 임베드(quiz figure·binSort item 모두 raw html 허용).
+  대륙 지도는 PALEOMAP 5시대(public/geo/maps, C.R. Scotese 출처 — CREDITS.md) — driftLab이
+  타임라인 스크럽+두 장 크로스페이드(smoothstep)로 쓰고, plateMap이 현재 지도를 equirect
+  투영(lon/lat→x,y)의 배경으로 쓴다. 사용자 리포 earth-history-2d3d의 슬라이더 문법이 원형.
+- **가로 2D 랩**(rockCycle): rotateStage + plain canvas — 매 프레임 rot.size()로 캔버스를 맞추고
+  논리 좌표(1000×480)를 스케일 매핑, 하단 HUD(rc-actions) 여백을 빼고 배치한다.
+- **earthCut3d 절단면 수학**: SphereGeometry 정점은 x=-r·cosφ·sinθ, z=r·sinφ·sinθ.
+  φ∈[0,270°] 표면이면 뜯긴 창은 -X-Z 사분면(이등분 (-0.707,0,-0.707)) — rotY(3π/4)가 정면,
+  교과서 구도는 -0.55rad 덜 돌린다. 절단면은 -X 반원 CircleGeometry 2장(하나는 rotY -90°).
 
 ## 퀴즈 유형 (quiz 스텝 하나로)
 - `mcq`(5지선다) · `ox`(O/X) · `multi`(보기 합답형, 복수정답) · 그림 퀴즈(`figure` 추가).

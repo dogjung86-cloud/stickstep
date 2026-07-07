@@ -59,6 +59,14 @@ import { meltCurve } from "./steps/meltCurve";
 import { sepFunnel } from "./steps/sepFunnel";
 import { recrystal } from "./steps/recrystal";
 import { distillLab } from "./steps/distillLab";
+import { earthCut3d } from "./steps/earthCut3d";
+import { streakLab } from "./steps/streakLab";
+import { coolingLab } from "./steps/coolingLab";
+import { strataLab } from "./steps/strataLab";
+import { foliationLab } from "./steps/foliationLab";
+import { rockCycle } from "./steps/rockCycle";
+import { driftLab } from "./steps/driftLab";
+import { plateMap } from "./steps/plateMap";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -107,6 +115,14 @@ const R: Record<string, StepRenderer> = {
   sepFunnel,
   recrystal,
   distillLab,
+  earthCut3d,
+  streakLab,
+  coolingLab,
+  strataLab,
+  foliationLab,
+  rockCycle,
+  driftLab,
+  plateMap,
   quiz,
   table,
   order,

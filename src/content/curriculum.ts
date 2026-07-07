@@ -10,6 +10,7 @@ import { UNIT5 } from "./unit5";
 import { UNIT6 } from "./unit6";
 import { UNIT7 } from "./unit7";
 import { G2_UNIT1 } from "./g2/unit1";
+import { G2_UNIT2 } from "./g2/unit2";
 
 export interface Unit {
   id: string;
@@ -43,7 +44,7 @@ const soon = (id: string, roman: string, title: string, subtitle: string, icon: 
 // 중2 — 대단원 8개. V·VI(식물·동물과 에너지)은 의도적으로 뒤 순번 제작(자리만 유지).
 export const CURRICULUM_G2: Unit[] = [
   G2_UNIT1,
-  soon("g2u2", "II", "지권의 변화", "지진·화산, 움직이는 땅의 과학", "globe"),
+  G2_UNIT2,
   soon("g2u3", "III", "빛과 파동", "거울과 렌즈 속 상, 소리의 세계", "bulb"),
   soon("g2u4", "IV", "물질의 구성", "원소·원자·이온, 물질의 알갱이", "layers"),
   soon("g2u5", "V", "식물과 에너지", "광합성, 식물이 양분을 만드는 법", "leaf"),

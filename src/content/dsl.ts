@@ -6,7 +6,7 @@ type Obj = Record<string, unknown>;
 
 export const concept = (o: {
   kicker?: string;
-  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem";
+  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo";
   title: string;
   lead?: string;
   blocks?: Block[];
@@ -62,7 +62,8 @@ export const hook = (o: {
     | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses"
     | "colorcups" | "speaker" | "smokestack"
     | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb"
-    | "rings" | "deadsea" | "cocoa" | "fishmouth" | "gallium" | "milkzoom" | "soysauce" | "syrup" | "perfume";
+    | "rings" | "deadsea" | "cocoa" | "fishmouth" | "gallium" | "milkzoom" | "soysauce" | "syrup" | "perfume"
+    | "stripemount" | "foolsgold" | "dolstatue" | "bookcliff" | "pressrock" | "cappadocia" | "gravestone" | "puzzlemap" | "quakenews" | "eggearth";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
@@ -199,6 +200,24 @@ export const recrystal = (o: { title: string; lead?: string; cta?: string; curio
   ({ type: "recrystal", ...o });
 export const distillLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "distillLab", ...o });
+
+// ── 중2 지권의 변화 단원(g2 II) 랩 ──────────────────────────
+export const earthCut3d = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "earthCut3d", ...o });
+export const streakLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "streakLab", ...o });
+export const coolingLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "coolingLab", ...o });
+export const strataLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "strataLab", ...o });
+export const foliationLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "foliationLab", ...o });
+export const rockCycle = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "rockCycle", ...o });
+export const driftLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "driftLab", ...o });
+export const plateMap = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "plateMap", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });
