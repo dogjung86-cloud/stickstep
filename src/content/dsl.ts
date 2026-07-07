@@ -4,6 +4,11 @@ import type { Block } from "../ui/blocks";
 
 type Obj = Record<string, unknown>;
 
+const RECAP_IMG_BASE = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/";
+/** recap '자세히'(more)용 발주 그림 임베드 — public/recap/<file>. 스타일은 .rc-more img가 담당. */
+export const rimg = (file: string, alt: string): string =>
+  `<img src="${RECAP_IMG_BASE}recap/${file}" alt="${alt}" loading="lazy" />`;
+
 export const concept = (o: {
   kicker?: string;
   kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo";

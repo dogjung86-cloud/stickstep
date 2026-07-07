@@ -1,5 +1,5 @@
 // driftLab — 대륙 이동설 랩(중2 II L8). 교과서 그림 II-19의 조작판.
-//   · PALEOMAP 시대 지도 5장(280·200·150·66·0 Ma)을 타임라인 스크럽으로 크로스페이드
+//   · PALEOMAP 시대 지도 11장(280→0 Ma, 촘촘한 중간 지대 포함)을 타임라인 스크럽으로 크로스페이드
 //     (사용자의 earth-history-2d3d 슬라이더 문법 계승: 목표 나이 관성 수렴 + smoothstep 블렌드).
 //   · 증거 오버레이 3종(화석·빙하 흔적·산맥) — 현재는 대륙마다 흩어져 있지만,
 //     판게아로 감으면 표지가 한 줄로 이어진다(베게너의 논리를 눈으로).
@@ -23,9 +23,15 @@ const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE
 
 const ERAS = [
   { ma: 0, file: "Map01a_PALEOMAP_PaleoAtlas_000.webp", label: "현재" },
+  { ma: 20, file: "ma020.webp", label: "약 2천만 년 전" },
+  { ma: 35, file: "ma035.webp", label: "약 3천5백만 년 전" },
   { ma: 66, file: "Map16a_KT_Boundary_066.webp", label: "약 6천5백만 년 전" },
+  { ma: 90, file: "ma090.webp", label: "약 9천만 년 전" },
+  { ma: 120, file: "ma120.webp", label: "약 1억 2천만 년 전" },
   { ma: 150, file: "Map33a_LtJ_Tithonian_150.webp", label: "약 1억 5천만 년 전" },
+  { ma: 175, file: "ma175.webp", label: "약 1억 7천5백만 년 전" },
   { ma: 200, file: "Map43a_Triassic-Jurassic_Boundary_200.webp", label: "약 2억 년 전 — 분리 시작" },
+  { ma: 240, file: "ma240.webp", label: "약 2억 4천만 년 전" },
   { ma: 280, file: "Map54a_EP_Artinskian_280.webp", label: "약 2억 8천만 년 전 — 판게아" },
 ];
 const MAX_MA = 280;
@@ -193,7 +199,11 @@ export const driftLab: StepRenderer = (host, step, api) => {
   }
   track.addEventListener("pointerdown", (e) => {
     scrubbing = true;
-    track.setPointerCapture(e.pointerId);
+    try {
+      track.setPointerCapture(e.pointerId);
+    } catch {
+      /* 합성 이벤트 등 캡처 불가 환경 */
+    }
     setFromPointer(e);
     haptic(HAPTIC.tap);
   });

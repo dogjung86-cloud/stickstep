@@ -130,7 +130,11 @@ export const binSort: StepRenderer = (host, step, api) => {
     if (!locked) {
       c.addEventListener("pointerdown", (e) => {
         if (drag) return; // 멀티터치: 두 번째 손가락은 무시
-        c.setPointerCapture(e.pointerId);
+        try {
+          c.setPointerCapture(e.pointerId);
+        } catch {
+          /* 합성 이벤트 등 캡처 불가 환경 — 캡처 없이도 드래그는 동작 */
+        }
         drag = { i, pointerId: e.pointerId, chip: c, clone: null, frameRect: null, startX: e.clientX, startY: e.clientY, moved: false };
       });
       c.addEventListener("pointermove", onChipMove);

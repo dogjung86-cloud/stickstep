@@ -118,11 +118,20 @@ src/
   교과서 원본: `D:\brilliant\중학교 교과서\중2 단원별 - 텍스트 보존(OCR)\` PDF — poppler가 한글 CMap이 없어
   깨지므로 **pypdf로 텍스트 추출**(`py -m pip install pypdf`)이 확정 경로다.
 - **중2 II 지권 에셋**: 암석·광물 표본과 증거 사진은 codex 실사풍 발주(`bash qa/order-geo.sh` →
-  `node qa/process-geo.mjs`, public/geo/{rocks,minerals,evid} 512 webp). 퀴즈에는 unit2.ts의
-  gimg/gpair/gitem 헬퍼로 `<img>` 임베드(quiz figure·binSort item 모두 raw html 허용).
-  대륙 지도는 PALEOMAP 5시대(public/geo/maps, C.R. Scotese 출처 — CREDITS.md) — driftLab이
-  타임라인 스크럽+두 장 크로스페이드(smoothstep)로 쓰고, plateMap이 현재 지도를 equirect
-  투영(lon/lat→x,y)의 배경으로 쓴다. 사용자 리포 earth-history-2d3d의 슬라이더 문법이 원형.
+  `node qa/process-geo.mjs`, public/geo/{rocks,minerals,evid} 512 webp — drift/figs 디렉터리는 비율 유지 960 모드).
+  퀴즈에는 unit2.ts의 gimg/gpair/gitem/gquad(2×2 (가)~(라) 순서 문제)/glabeled(사진 위 한글 라벨 필 —
+  '이미지 안 글자 금지' 발주 규칙과 라벨 표기를 양립시키는 표준) 헬퍼로 `<img>` 임베드.
+  2차 발주(qa/order-geo2.sh → geo2_prompts.txt): 대륙 이동 4단계(geo/drift/stage-*.webp),
+  평면 세계지도(geo/figs/worldmap.webp — quakenews 훅 SVG가 `<image href>`로 임베드, 마커는 지도 실좌표),
+  판 구조 단면(geo/figs/plate-section.webp — unit2.ts plateSectionImg()가 L9 개념·문제 공용).
+  대륙 지도는 PALEOMAP 11시대(public/geo/maps, C.R. Scotese — CREDITS.md; 추가분 파일명 ma###.webp,
+  원본 90시대는 scratchpad의 earth-history 리포) — driftLab이 타임라인 스크럽+두 장 크로스페이드로 쓰고
+  (5장은 이동이 뚝뚝 끊긴다는 피드백 → 11장 확장이 결론), plateMap이 현재 지도를 equirect 투영 배경으로 쓴다.
+- **puzzlemap 대륙 퍼즐(훅)은 발주 사진이 아니라 SVG** — 드래그 스냅에 벡터 공유 경계가 필요해서다.
+  남미·아프리카가 해안 곡선 E(DRIFT_EDGE/REV 쌍)를 공유하며, E는 3악장(A에서 살짝 서쪽→브라질 어깨
+  돌출=기니만 홈→남서로 길게 B)으로 설계해야 두 대륙이 실제 지형으로 읽힌다. E만 바꾸면 둘 다 따라온다.
+- **setPointerCapture는 항상 try/catch로 감싼다**(binSort·driftLab 선례): 합성 포인터 id에서 throw하면
+  리스너 전체가 죽어 "드래그가 안 먹히는" 것처럼 보인다. 실기기에선 정상이라 자동 테스트에서만 드러난다.
 - **가로 2D 랩**(rockCycle): rotateStage + plain canvas — 매 프레임 rot.size()로 캔버스를 맞추고
   논리 좌표(1000×480)를 스케일 매핑, 하단 HUD(rc-actions) 여백을 빼고 배치한다.
 - **earthCut3d 절단면 수학**: SphereGeometry 정점은 x=-r·cosφ·sinθ, z=r·sinφ·sinθ.
@@ -222,6 +231,12 @@ src/
 - 랩의 "교과서 밖 궁금증"은 `ui/curio.ts`의 curioCard(질문 헤드 탭 → 답 펼침, bulb + 앰버 톤)로 —
   content에서 `curio: { q, a }`를 넘기면 랩 렌더러가 helper 뒤에 붙인다. 현재: u3 전도(이불)·복사(산꼭대기),
   u4 phaseNames(하얀 김), u5 gravityDrop(우주 정거장), u7 sunLab(흑점 역설). 오개념 교정형 질문이 기준.
+- **recap 카드의 `more`(자세히)는 문제집 수준이 표준** — 모든 카드에 존재해야 하며,
+  `<b class='rm-h'>왜 그럴까요?</b>` 소제목 2~4개(rm-h 전용 CSS가 카드 액센트 색 다이아 불릿을 붙임)로
+  ①원리(왜) → ②구체 예시 → ③시험 함정/오개념 교정 순서를 갖추고, 상식 꼬리는 기존 `<span class='fun'>` 유지.
+  분량 400~800자·해요체. 훅/랩에서 이미 쓴 소재는 반복 말고 "그 장면 기억나요?"식으로 참조만.
+- **상호작용 랩 앞에는 개념이 먼저** — 용어(정의)가 필요한 랩이면 concept 스텝(term 블록)으로 판을 깔고
+  들어간다(g2u2 L9 판→판의 경계→plateMap이 기준). 훅에서 바로 랩으로 점프해 용어 없이 조작만 시키지 말 것.
 - hotspot 스텝은 `spot.photo`(+photoCredit)로 부위별 실사 사진 카드를 설명 아래에 띄울 수 있다(태양 지도가 기준).
 
 ## 훅 예측 규칙 (steps/hookAsk.ts — 위반 금지)

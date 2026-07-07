@@ -899,8 +899,11 @@ export function renderGravestone(
 }
 
 // ── L8: 대륙 퍼즐 — 남아메리카·아프리카 맞추기 ──────────────
-// 두 대륙의 마주 보는 해안선은 같은 곡선 E를 공유한다(맞물림).
-const DRIFT_EDGE = "C124 62 126 78 114 92 C104 104 98 118 96 132";
+// 두 대륙의 마주 보는 해안선은 같은 곡선 E를 공유한다(맞물림). E는 3악장:
+// ① A에서 살짝 서쪽으로(아프리카 서부 불룩/기아나 해안) ② 동쪽으로 브라질 '어깨' 돌출
+//   (아프리카 쪽에선 기니만 홈) ③ 남서로 길게 내려와 B(브라질 동해안/앙골라 해안).
+const DRIFT_EDGE = "C98 44 98 50 100 56 C106 62 120 64 126 72 C130 80 118 86 112 94 C106 104 100 118 96 134"; // A(106,38)→B(96,134)
+const DRIFT_EDGE_REV = "C100 118 106 104 112 94 C118 86 130 80 126 72 C120 64 106 62 100 56 C98 50 98 44 106 38"; // B→A
 function puzzlemapSvg(): string {
   return `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <defs>
@@ -918,28 +921,29 @@ function puzzlemapSvg(): string {
     <g stroke="#CFE8F8" stroke-width=".8" opacity=".45">
       <path d="M10 49h220M10 86h220M10 123h220M65 12v146M120 12v146M175 12v146"/>
     </g>
-    <!-- 남아메리카(고정) -->
+    <!-- 남아메리카(고정): 북쪽이 넓고 남쪽 파타고니아 꼬리로 가늘게 -->
     <g class="hg2-sam">
-      <path d="M110 44 ${DRIFT_EDGE} L84 136 Q64 130 60 112 Q56 96 64 84 Q54 72 58 56 Q64 40 84 38 Q100 36 110 44 Z" fill="url(#hg2-land1)"/>
-      <path d="M110 44 ${DRIFT_EDGE} L84 136 Q64 130 60 112 Q56 96 64 84 Q54 72 58 56 Q64 40 84 38 Q100 36 110 44 Z" stroke="#4E7A38" stroke-width="1.6"/>
-      <path d="M66 54 q10 -10 26 -10" stroke="#E2F4D4" stroke-width="3" opacity=".8"/>
+      <path d="M106 38 ${DRIFT_EDGE} Q94 144 88 151 Q81 156 79 148 Q76 140 78 131 Q73 114 69 98 Q63 78 67 62 Q72 46 86 40 Q98 34 106 38 Z" fill="url(#hg2-land1)"/>
+      <path d="M106 38 ${DRIFT_EDGE} Q94 144 88 151 Q81 156 79 148 Q76 140 78 131 Q73 114 69 98 Q63 78 67 62 Q72 46 86 40 Q98 34 106 38 Z" stroke="#4E7A38" stroke-width="1.6"/>
+      <path d="M72 54 q10 -9 24 -11" stroke="#E2F4D4" stroke-width="3" opacity=".8"/>
     </g>
-    <!-- 아프리카(드래그) — 기본 좌표는 '맞물린 자리', JS가 처음에 오른쪽으로 밀어 둔다 -->
+    <!-- 아프리카(드래그): 북부(사하라)가 넓고, 동쪽에 작은 뿔, 남쪽 끝은 둥글게.
+         서해안(왼쪽)은 공유 곡선 E의 역방향 — 기니만 홈이 브라질 어깨를 문다 -->
     <g class="hg2-africa" style="cursor:grab">
-      <ellipse cx="128" cy="140" rx="34" ry="5" fill="#2A3A5E" opacity=".10"/>
-      <path d="M110 44 ${DRIFT_EDGE} L112 138 Q134 136 142 120 Q150 106 146 92 Q158 82 156 64 Q154 46 136 40 Q120 36 110 44 Z" fill="url(#hg2-land2)"/>
-      <path d="M110 44 ${DRIFT_EDGE} L112 138 Q134 136 142 120 Q150 106 146 92 Q158 82 156 64 Q154 46 136 40 Q120 36 110 44 Z" stroke="#8E6A24" stroke-width="1.6"/>
-      <path d="M120 46 q12 -6 24 0" stroke="#FBEECB" stroke-width="3" opacity=".8"/>
+      <ellipse cx="130" cy="144" rx="30" ry="5" fill="#2A3A5E" opacity=".10"/>
+      <path d="M96 134 ${DRIFT_EDGE_REV} Q120 32 138 33 Q157 35 163 47 Q167 54 171 59 Q163 67 157 75 Q152 96 142 112 Q131 129 119 137 Q104 144 96 134 Z" fill="url(#hg2-land2)"/>
+      <path d="M96 134 ${DRIFT_EDGE_REV} Q120 32 138 33 Q157 35 163 47 Q167 54 171 59 Q163 67 157 75 Q152 96 142 112 Q131 129 119 137 Q104 144 96 134 Z" stroke="#8E6A24" stroke-width="1.6"/>
+      <path d="M124 41 q14 -5 28 4" stroke="#FBEECB" stroke-width="3" opacity=".8"/>
     </g>
     <!-- 맞물린 이음새 + 별 반짝(스냅 시) -->
-    <path class="hg2-seam" d="M110 44 ${DRIFT_EDGE}" stroke="#FFFFFF" stroke-width="2.6" stroke-dasharray="140" stroke-dashoffset="140"/>
+    <path class="hg2-seam" d="M106 38 ${DRIFT_EDGE}" stroke="#FFFFFF" stroke-width="2.6" stroke-dasharray="150" stroke-dashoffset="150"/>
     <g class="hg2-stars" fill="#FFF6C8">
-      <path d="M122 56l2 4.2 4.2 2-4.2 2-2 4.2-2-4.2-4.2-2 4.2-2z"/>
-      <path d="M118 96l1.6 3.4 3.4 1.6-3.4 1.6-1.6 3.4-1.6-3.4-3.4-1.6 3.4-1.6z"/>
-      <path d="M104 124l1.4 3 3 1.4-3 1.4-1.4 3-1.4-3-3-1.4 3-1.4z"/>
+      <path d="M122 66l2 4.2 4.2 2-4.2 2-2 4.2-2-4.2-4.2-2 4.2-2z"/>
+      <path d="M110 94l1.6 3.4 3.4 1.6-3.4 1.6-1.6 3.4-1.6-3.4-3.4-1.6 3.4-1.6z"/>
+      <path d="M99 120l1.4 3 3 1.4-3 1.4-1.4 3-1.4-3-3-1.4 3-1.4z"/>
     </g>
     <text x="70" y="154" text-anchor="middle" font-size="10.5" font-weight="700" fill="#EAF6FF">남아메리카</text>
-    <text x="186" y="154" text-anchor="middle" font-size="10.5" font-weight="700" fill="#EAF6FF">아프리카</text>
+    <text x="192" y="154" text-anchor="middle" font-size="10.5" font-weight="700" fill="#EAF6FF">아프리카</text>
   </svg>`;
 }
 
@@ -961,7 +965,7 @@ export function renderPuzzlemap(
 
   const svg = fig.querySelector("svg") as unknown as SVGSVGElement;
   const africa = fig.querySelector(".hg2-africa") as SVGGElement;
-  let ox = 66; // 시작 오프셋(뷰박스 단위)
+  let ox = 52; // 시작 오프셋(뷰박스 단위) — 아프리카 동쪽 끝(x≈171)이 바다 밖으로 안 나가게
   let oy = 10;
   let dragging = false;
   let lastX = 0;
@@ -1040,16 +1044,16 @@ export function renderPuzzlemap(
 }
 
 // ── L9: 지진 속보 뉴스 — 같은 지역만 반복 ───────────────────
+const HG2_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 function quakenewsSvg(): string {
-  // 간략 세계 지도(대륙 실루엣) — 뉴스 화면 안
+  // 뉴스 화면 속 세계 지도 — 발주 평면 지도(public/geo/figs/worldmap.webp)를 원형 크롭 문법처럼
+  // clipPath 라운드 사각으로 임베드. 마커 좌표는 이 지도 위 실제 위치(일본·칠레·수마트라) 기준.
   return `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <defs>
       <linearGradient id="hg2-tv" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#2E3A50"/><stop offset="1" stop-color="#1A2334"/>
       </linearGradient>
-      <linearGradient id="hg2-map" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#57718E"/><stop offset="1" stop-color="#3E5670"/>
-      </linearGradient>
+      <clipPath id="hg2-mapclip"><rect x="26" y="44" width="188" height="86" rx="9"/></clipPath>
     </defs>
     <ellipse cx="120" cy="164" rx="84" ry="5" fill="#2A3A5E" opacity=".12"/>
     <rect x="14" y="10" width="212" height="148" rx="14" fill="url(#hg2-tv)"/>
@@ -1060,36 +1064,30 @@ function quakenewsSvg(): string {
     <text x="48" y="32.5" text-anchor="middle" font-size="10" font-weight="800" fill="#FFFFFF">속보</text>
     <circle class="hg2-live" cx="82" cy="28.5" r="3.4" fill="#F04452"/>
     <text x="92" y="32.5" font-size="10" font-weight="700" fill="#C9D6E8">세계 지진 소식</text>
-    <!-- 지도 -->
+    <!-- 지도(발주 이미지) -->
     <g>
-      <rect x="26" y="44" width="188" height="86" rx="9" fill="#243248"/>
-      <g fill="url(#hg2-map)" stroke="#2A3A54" stroke-width="1.2">
-        <path d="M46 52 q16 -4 24 6 q2 10 -8 12 q4 8 -2 14 q-8 2 -10 -6 q-8 -8 -4 -26z"/>
-        <path d="M62 88 q10 -2 12 8 q2 12 -6 22 q-6 -2 -7 -12 q-3 -10 1 -18z"/>
-        <path d="M104 52 q12 -4 20 2 q-2 8 -10 8 q-4 -2 -10 -10z"/>
-        <path d="M106 66 q14 -4 22 4 q6 10 0 20 q-8 8 -16 2 q-8 -12 -6 -26z"/>
-        <path d="M130 52 q26 -6 44 4 q10 8 4 18 q-10 8 -22 4 q-14 -2 -26 -26z"/>
-        <path d="M168 100 q10 -2 14 6 q-2 8 -12 6 q-6 -6 -2 -12z"/>
-      </g>
+      <rect x="26" y="44" width="188" height="86" rx="9" fill="#1E4E8C"/>
+      <image href="${HG2_BASE}geo/figs/worldmap.webp" x="26" y="44" width="188" height="86" preserveAspectRatio="xMidYMid slice" clip-path="url(#hg2-mapclip)"/>
+      <rect x="26" y="44" width="188" height="86" rx="9" stroke="#101826" stroke-width="1.4"/>
       <!-- 지진 마커 3지역 + 재발 -->
       <g class="hg2-quake" data-q="jp">
-        <circle class="hg2-ring" cx="182" cy="70" r="9" stroke="#FF8A5C" stroke-width="2"/>
-        <circle class="hg2-qdot" cx="182" cy="70" r="4" fill="#F04452"/>
-        <text x="182" y="58" text-anchor="middle" font-size="9" font-weight="800" fill="#FFD9CC">일본</text>
+        <circle class="hg2-ring" cx="176" cy="79" r="9" stroke="#FF8A5C" stroke-width="2"/>
+        <circle class="hg2-qdot" cx="176" cy="79" r="4" fill="#F04452" stroke="#FFFFFF" stroke-width="1.2"/>
+        <text x="176" y="68" text-anchor="middle" font-size="9" font-weight="800" fill="#FFFFFF" stroke="#10203A" stroke-width="2.6" paint-order="stroke">일본</text>
       </g>
       <g class="hg2-quake" data-q="cl">
-        <circle class="hg2-ring" cx="70" cy="112" r="9" stroke="#FF8A5C" stroke-width="2"/>
-        <circle class="hg2-qdot" cx="70" cy="112" r="4" fill="#F04452"/>
-        <text x="70" y="100" text-anchor="middle" font-size="9" font-weight="800" fill="#FFD9CC">칠레</text>
+        <circle class="hg2-ring" cx="78" cy="116" r="9" stroke="#FF8A5C" stroke-width="2"/>
+        <circle class="hg2-qdot" cx="78" cy="116" r="4" fill="#F04452" stroke="#FFFFFF" stroke-width="1.2"/>
+        <text x="78" y="105" text-anchor="middle" font-size="9" font-weight="800" fill="#FFFFFF" stroke="#10203A" stroke-width="2.6" paint-order="stroke">칠레</text>
       </g>
       <g class="hg2-quake" data-q="id">
-        <circle class="hg2-ring" cx="156" cy="106" r="9" stroke="#FF8A5C" stroke-width="2"/>
-        <circle class="hg2-qdot" cx="156" cy="106" r="4" fill="#F04452"/>
-        <text x="156" y="124" text-anchor="middle" font-size="9" font-weight="800" fill="#FFD9CC">인도네시아</text>
+        <circle class="hg2-ring" cx="158" cy="98" r="9" stroke="#FF8A5C" stroke-width="2"/>
+        <circle class="hg2-qdot" cx="158" cy="98" r="4" fill="#F04452" stroke="#FFFFFF" stroke-width="1.2"/>
+        <text x="150" y="116" text-anchor="middle" font-size="9" font-weight="800" fill="#FFFFFF" stroke="#10203A" stroke-width="2.6" paint-order="stroke">인도네시아</text>
       </g>
       <g class="hg2-quake" data-q="jp2">
-        <circle class="hg2-ring" cx="190" cy="82" r="7" stroke="#FF8A5C" stroke-width="2"/>
-        <circle class="hg2-qdot" cx="190" cy="82" r="3.4" fill="#F04452"/>
+        <circle class="hg2-ring" cx="182" cy="86" r="7" stroke="#FF8A5C" stroke-width="2"/>
+        <circle class="hg2-qdot" cx="182" cy="86" r="3.4" fill="#F04452" stroke="#FFFFFF" stroke-width="1"/>
       </g>
     </g>
     <!-- 하단 자막 바 -->

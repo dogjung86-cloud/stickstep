@@ -1,0 +1,17 @@
+# recap '자세히' 보강 그림 6장 — 전 단원 개념정리 심화용 (문제집 그림 포지션)
+# 공통 스타일([0]~[5]):
+# Clean flat educational vector illustration for a middle-school science app,
+# soft matte colors, near-tonal gradients, subtle top-left key light, gentle contact shadows,
+# light background unless specified, aspect 4:3, NO text, NO labels, NO letters, NO numbers anywhere.
+
+[0] Two side-by-side particle diagrams comparing liquid water and solid ice: left panel shows water particles packed irregularly and densely in a glass of liquid; right panel shows the same particles arranged in an open hexagonal lattice with clearly visible empty spaces inside an ice cube. Cool blue palette, particles as soft glowing spheres. The ice lattice must look airier / less dense than the liquid. No text.
+
+[1] Same wooden crate hanging from two identical spring scales side by side: left scale on Earth stretched far down (long extended spring), right scale on the Moon barely stretched (short spring). Earth horizon with blue sky behind the left, gray cratered lunar horizon with dark sky behind the right. Flat vector, clear 6-to-1 stretch contrast. No text.
+
+[2] A box resting on a floor with a large magnifying glass inset revealing the contact surface: inside the magnified circle, the two surfaces interlock with jagged microscopic ridges and bumps catching each other. Warm neutral palette, flat vector, soft shadows. No text.
+
+[3] Four-panel night sky star-trail panorama seen from one observer location: first panel diagonal trails rising from the horizon, second panel long horizontal arcs flowing across, third panel diagonal trails sinking toward the horizon, fourth panel concentric circular arcs around one bright pole star. Simplified long-exposure look, deep navy palette with soft white arcs. No text.
+
+[4] Top-down diagram of the Moon's orbit around Earth with eight moon positions evenly spaced on the orbit circle; strong parallel sunlight arrives from the right side, so each moon sphere is half lit toward the sun; next to each orbital position floats a small inset disc showing the phase visible from Earth (new, crescent, quarter, gibbous, full on the far side). Dark navy space background, clean flat style, Earth at center with day/night halves. No text.
+
+[5] Side-by-side comparison of boiling temperature changing with pressure: left panel a stovetop pressure cooker with a hissing steam valve and tightly sealed lid in a cozy kitchen; right panel a small camping pot boiling vigorously with big bubbles on a mountain summit, clouds below the peak. Warm kitchen tones vs cool alpine tones, flat vector. No text.

@@ -104,6 +104,8 @@
 .bin-chip-ic svg { width: 18px; height: 18px; }
 /* 발주 생물 일러스트(public/bio/*.webp) — 흰 배경이라 라운드로 감싸 카드/칩에 녹인다 */
 .bin-chip-ic .bio-ico { width: 24px; height: 24px; object-fit: cover; border-radius: 6px; background: #fff; }
+/* 사진 썸네일 칩(암석 분류 등) — 크기 고정 + 포인터 무시(칩 드래그 보존) */
+.bin-chip-ic img { max-width: 56px; max-height: 56px; object-fit: cover; border-radius: 10px; pointer-events: none; -webkit-user-drag: none; }
 .dk-face .bio-ico { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1px rgba(20,30,50,.06); }
 .bio-ico-broken { display: none; }
 .bins { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
@@ -764,6 +766,17 @@
   border-radius: var(--r-sm); padding: 9px 11px; font-size: 12.5px;
 }
 .rc-more .fun b { color: var(--subj-heat-press); }
+/* 자세히 = 문제집식 소제목 구조 — <b class="rm-h">왜 그럴까요?</b> 식으로 섹션을 나눈다 */
+.rc-more .rm-h {
+  display: block; margin: 12px 0 3px; font-size: 12px; font-weight: 800;
+  color: var(--n600); letter-spacing: -.01em;
+}
+.rc-more .rm-h::before {
+  content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 2px;
+  background: var(--rc, var(--blue)); margin-right: 6px; transform: rotate(45deg);
+}
+.rc-more .rm-h:first-child { margin-top: 2px; }
+.rc-more img { display: block; width: 100%; border-radius: 10px; margin: 8px 0 2px; }
 
 /* ============================================================
    보너스 미니게임 — 지도 노드 + 단열 디펜스 화면
