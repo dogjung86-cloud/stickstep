@@ -680,6 +680,9 @@
 .hook-choice:active { transform: scale(.98); }
 .hook-choice.sel { border-color: var(--blue); background: var(--blue-tint); box-shadow: 0 0 0 1px var(--blue) inset; }
 .hook-choice.dim { opacity: .45; }
+/* 오답 예측 — 부드럽게 붉히고, 옳은 예측은 나란히 초록으로 밝힌다(hookAsk) */
+.hook-choice.miss { border-color: var(--red); background: #FFF2F3; box-shadow: 0 0 0 1px var(--red) inset; opacity: .92; }
+.hook-choice.reveal { border-color: var(--green); background: #EFFBF4; box-shadow: 0 0 0 1px var(--green) inset; opacity: 1 !important; }
 
 /* ============================================================
    recap — 통일 개념 정리(스틱맨 + 카드)

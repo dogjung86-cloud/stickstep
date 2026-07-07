@@ -3,29 +3,10 @@
 
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
 
 type Face = (k: AvatarKind) => void;
-
-function ask(box: HTMLElement, opts: string[], helper: HTMLElement, doneMsg: string, finish: () => void): void {
-  opts.forEach((label) => {
-    const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" }, text: label });
-    b.addEventListener("click", () => {
-      if (box.classList.contains("locked")) return;
-      box.classList.add("locked");
-      haptic(HAPTIC.select);
-      box.querySelectorAll(".hook-choice").forEach((x) => {
-        x.classList.add(x === b ? "sel" : "dim");
-        x.setAttribute("aria-pressed", x === b ? "true" : "false");
-        (x as HTMLButtonElement).disabled = x !== b;
-      });
-      helper.innerHTML = doneMsg;
-      finish();
-    });
-    box.appendChild(b);
-  });
-  box.classList.add("show");
-}
 
 // ── L1: 북극곰의 얇은 얼음판(압력 예측) ──────────────────────
 function polarSvg(): string {
@@ -106,13 +87,12 @@ export function renderPolar(
     helper.innerHTML = "무사히 통과! 그런데 <b>몸무게는 그대로</b>인데, 왜 엎드리면 안전했을까요?";
     timer = window.setTimeout(() => {
       face("curious");
-      ask(
-        choicesBox,
-        s.choices ?? ["바닥에 닿는 면적이 넓어져 한 곳에 실리는 힘이 줄었다", "엎드리면 몸무게가 가벼워진다", "얼음이 곰의 체온에 더 단단해진다"],
-        helper,
-        "예측 완료! 실험실에서 <b>힘과 면적, 그리고 기체의 압력</b>까지 파헤쳐 봐요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["바닥에 닿는 면적이 넓어져 한 곳에 실리는 힘이 줄었다", "엎드리면 몸무게가 가벼워진다", "얼음이 곰의 체온에 더 단단해진다"],
+        good: "정확해요! 엎드리면 <b>닿는 면적이 넓어져 한 곳에 실리는 힘(압력)이 줄어요</b>. 실험실에서 힘과 면적, 기체의 압력까지 파헤쳐 봐요!",
+        bad: "몸무게가 줄거나 얼음이 단단해진 게 아니에요 — 엎드리면 <b>닿는 면적이 넓어져</b> 같은 몸무게라도 <b>한 곳에 실리는 힘(압력)이 줄어</b> 안전해요. 실험실에서 확인해요.",
+        onDone: finish,
+      });
     }, 900);
   });
   return () => window.clearTimeout(timer);
@@ -342,13 +322,12 @@ export function renderPingpong(
         window.setTimeout(() => fig.classList.add("healed"), 240);
         timer = window.setTimeout(() => {
           face("curious");
-          ask(
-            choicesBox,
-            s.choices ?? ["공 속 기체가 데워져 부피가 늘며 밀어냈다", "뜨거운 물이 공 안으로 스며들었다", "플라스틱이 녹아서 저절로 펴졌다"],
-            helper,
-            "예측 완료! 실험실에서 <b>열기구</b>로 온도와 부피의 관계를 크게 확인해 봐요.",
-            finish,
-          );
+          ask(choicesBox, helper, {
+            choices: s.choices ?? ["공 속 기체가 데워져 부피가 늘며 밀어냈다", "뜨거운 물이 공 안으로 스며들었다", "플라스틱이 녹아서 저절로 펴졌다"],
+            good: "맞아요! <b>공 속 기체가 데워져 부피가 늘며</b> 찌그러진 곳을 밀어 펴요. 실험실에서 열기구로 확인!",
+            bad: "물이 스며들거나 플라스틱이 녹은 게 아니에요 — <b>공 속 기체가 뜨거워지면 부피가 늘어</b> 안에서 밀어 펴는 거예요. 실험실에서 열기구로 확인해요.",
+            onDone: finish,
+          });
         }, 1100);
       }, 340);
     } else {

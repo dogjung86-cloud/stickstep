@@ -9,6 +9,7 @@
 
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
 
 // 천체는 실제 관측 사진(public/photos/, NASA — CREDITS.md)을 쓴다. 배경·소품만 SVG.
@@ -17,32 +18,6 @@ const photo = (name: string): string => `${base}photos/${name}`;
 
 interface HookStepLike {
   choices?: string[];
-}
-
-function askChoices(
-  box: HTMLElement,
-  opts: string[],
-  helper: HTMLElement,
-  doneMsg: string,
-  finish: () => void,
-): void {
-  opts.forEach((label) => {
-    const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" }, text: label });
-    b.addEventListener("click", () => {
-      if (box.classList.contains("locked")) return;
-      box.classList.add("locked");
-      haptic(HAPTIC.select);
-      box.querySelectorAll(".hook-choice").forEach((x) => {
-        x.classList.add(x === b ? "sel" : "dim");
-        x.setAttribute("aria-pressed", x === b ? "true" : "false");
-        (x as HTMLButtonElement).disabled = x !== b;
-      });
-      helper.innerHTML = doneMsg;
-      finish();
-    });
-    box.appendChild(b);
-  });
-  box.classList.add("show");
 }
 
 // ── L1: 밤하늘의 밝은 점 ─────────────────────────────────────
@@ -171,12 +146,11 @@ export function renderPlanetSize(
 
   let timer = 0;
   const timers: number[] = [];
-  askChoices(
-    choicesBox,
-    s.choices ?? ["지구 3개", "지구 6개", "지구 11개"],
-    helper,
-    "그럼 직접 세어 볼까요? 지구가 한 줄로 들어갑니다 —",
-    () => {
+  ask(choicesBox, helper, {
+    choices: s.choices ?? ["지구 11개", "지구 3개", "지구 6개"],
+    good: "직접 세어 볼까요? 지구가 한 줄로 들어갑니다 —",
+    bad: "3개나 6개로는 어림없어요 — 목성은 훨씬 커요. 지구를 한 줄로 세워 볼게요 —",
+    onDone: () => {
       // 지구 11개 애니메이션
       const R = 57;
       const r = R / 11;
@@ -203,7 +177,7 @@ export function renderPlanetSize(
         );
       }
     },
-  );
+  });
   return () => {
     window.clearTimeout(timer);
     timers.forEach((t) => window.clearTimeout(t));
@@ -324,13 +298,12 @@ export function renderShadowClock(
       asked = true;
       face("curious");
       helper.innerHTML = "해가 움직이니 <b>그림자 방향</b>이 하루 종일 돌아요. 그런데… 진짜로 움직인 건 누구일까요?";
-      askChoices(
-        choicesBox,
-        s.choices ?? ["태양이 지구 둘레를 돈다", "지구가 스스로 돈다", "시계탑이 아주 조금씩 돈다"],
-        helper,
-        "예측 완료! 우주에서 내려다보며 <b>직접 확인</b>해 봐요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["지구가 스스로 돈다", "태양이 지구 둘레를 돈다", "시계탑이 아주 조금씩 돈다"],
+        good: "예리해요! 태양이 도는 게 아니라 <b>지구가 스스로 돌아서(자전)</b> 그림자가 하루 종일 돌아요. 우주에서 직접 확인!",
+        bad: "태양이나 시계탑이 도는 게 아니에요 — <b>지구가 스스로 하루 한 바퀴 돌아서(자전)</b> 해가 움직이는 것처럼 보이는 거예요. 우주에서 내려다보며 확인해요.",
+        onDone: finish,
+      });
     } else if (!asked) {
       face("surprised");
     }
@@ -394,13 +367,12 @@ export function renderMoonPic(
     helper.innerHTML = "오늘은 <b>동그란 보름달</b>! 일주일 만에 모양이 변했어요. 왜 그럴까요?";
     window.setTimeout(() => {
       face("curious");
-      askChoices(
-        choicesBox,
-        s.choices ?? ["달의 모양 자체가 변한다", "지구 그림자가 달을 가린다", "태양 빛을 받아 밝은 부분이 달라 보인다"],
-        helper,
-        "예측 완료! <b>진짜 3D 달</b>을 돌려 보며 확인해 봐요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["태양 빛을 받아 밝은 부분이 달라 보인다", "달의 모양 자체가 변한다", "지구 그림자가 달을 가린다"],
+        good: "맞아요! 달 모양이 변하는 게 아니라 <b>태양 빛을 받는 밝은 부분이 달라 보이는</b> 거예요. 3D 달로 확인!",
+        bad: "달이 실제로 변하거나 지구 그림자가 가린 게 아니에요 — 달은 늘 둥글어요. <b>태양 빛을 받는 밝은 부분</b>이 날마다 달라 보이는 거예요. 3D 달을 돌려 확인해요.",
+        onDone: finish,
+      });
     }, 800);
   });
 }
@@ -475,13 +447,12 @@ export function renderSunGlasses(
     helper.innerHTML = "태양이 <b>한 입 베어문 모양</b>이에요! 달처럼 이지러지고 있어요.";
     window.setTimeout(() => {
       face("curious");
-      askChoices(
-        choicesBox,
-        s.choices ?? ["구름이 태양을 가리는 중이다", "달이 태양 앞을 지나가는 중이다", "태양이 실제로 조금씩 꺼지고 있다"],
-        helper,
-        "예측 완료! 태양·달·지구를 <b>직접 일렬로 세워서</b> 확인해 봐요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["달이 태양 앞을 지나가는 중이다", "구름이 태양을 가리는 중이다", "태양이 실제로 조금씩 꺼지고 있다"],
+        good: "정확해요! <b>달이 태양 앞을 지나가며</b> 가린 거예요 — 이게 일식! 태양·달·지구를 일렬로 세워 확인!",
+        bad: "구름이나 태양이 꺼지는 게 아니에요 — <b>달이 태양 앞을 지나가며</b> 잠깐 가린 거예요(일식). 태양·달·지구를 직접 일렬로 세워 확인해요.",
+        onDone: finish,
+      });
     }, 900);
   });
 }

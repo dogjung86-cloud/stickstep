@@ -50,7 +50,7 @@ export const binSort = (o: {
 
 export const hotspot = (o: {
   title: string; lead?: string; svg: string; dark?: boolean;
-  spots: { x: number; y: number; label: string; desc?: string; photo?: string; photoCredit?: string }[];
+  spots: { x: number; y: number; label: string; desc?: string; photo?: string; photoCredit?: string; photoCap?: string }[];
   mode?: "reveal" | "find"; explainGood?: string; explainBad?: string;
 }): Step => ({ type: "hotspot", ...o });
 

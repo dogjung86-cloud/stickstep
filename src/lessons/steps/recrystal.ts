@@ -289,8 +289,9 @@ export const recrystal: StepRenderer = (host, step, api) => {
     }
 
     // 배치 기하
-    const cx = W * 0.26;
-    const bw = Math.min(W * 0.4, 130);
+    // 비커는 살짝 좁혀 왼쪽 21%에 — 오른쪽 그래프가 라벨 겹침 없이 넓게 산다
+    const cx = W * 0.21;
+    const bw = Math.min(W * 0.32, 104);
     const bx0 = cx - bw / 2;
     const bx1 = cx + bw / 2;
     const by0 = 132;
@@ -560,7 +561,7 @@ export const recrystal: StepRenderer = (host, step, api) => {
     }
 
     // ---- 오른쪽: 실시간 용해도 곡선 ----
-    const gx0 = W * 0.52;
+    const gx0 = W * 0.42;
     const gx1 = W - 14;
     const gy0 = 42;
     const gy1 = CVH - 64;
@@ -598,8 +599,8 @@ export const recrystal: StepRenderer = (host, step, api) => {
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle = "rgba(255,224,168,.75)";
-    ctx.textAlign = "right";
-    ctx.fillText("모두 녹는 선", gx1 - 2, yOf(100) - 5);
+    ctx.textAlign = "left";
+    ctx.fillText("모두 녹는 선", gx0 + 6, yOf(100) - 5); // 왼쪽 끝 — 곡선 라벨과 겹치지 않게
     // 곡선 2개(글로우 + 코어)
     const drawCurve = (pts: ReadonlyArray<readonly [number, number]>, glow: string, core: string): void => {
       for (const pass of [0, 1]) {
@@ -619,9 +620,26 @@ export const recrystal: StepRenderer = (host, step, api) => {
     drawCurve(N_PTS, "rgba(77,212,192,.14)", "rgba(77,212,192,.8)");
     ctx.textAlign = "left";
     ctx.fillStyle = "rgba(255,182,206,.9)";
-    ctx.fillText("질산 칼륨", xOf(52) + 4, yOf(interp(K_PTS, 52)) - 8);
+    ctx.fillText("질산 칼륨", xOf(26) + 6, yOf(interp(K_PTS, 26)) - 9); // 곡선 중턱 — 위 점선 라벨과 분리
     ctx.fillStyle = "rgba(140,226,212,.9)";
-    ctx.fillText("염화 나트륨", xOf(40) + 4, yOf(37) + 14);
+    ctx.fillText("염화 나트륨", xOf(44) + 4, yOf(36) + 15);
+    // 범례 — 점(지금 녹은 양)과 선(한계)의 구분을 명시한다
+    ctx.font = "600 9px Pretendard, sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillStyle = "rgba(226,240,255,.8)";
+    ctx.fillText("점 = 지금 녹은 양", gx1 - 2, gy0 + 4);
+    ctx.fillText("선 = 녹는 한계(용해도)", gx1 - 2, gy0 + 16);
+    ctx.beginPath();
+    ctx.arc(gx1 - 84, gy0 + 1, 2.6, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,156,190,.9)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(140,226,212,.9)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(gx1 - 104, gy0 + 13);
+    ctx.lineTo(gx1 - 92, gy0 + 13);
+    ctx.stroke();
+    ctx.font = "600 9.5px Pretendard, sans-serif";
     // 교차점 링(곡선 × 모두 녹는 선)
     const nearCross = Math.abs(T - T_CROSS) < 4;
     ctx.strokeStyle = nearCross ? "rgba(255,214,138,.95)" : "rgba(255,214,138,.5)";
@@ -648,19 +666,43 @@ export const recrystal: StepRenderer = (host, step, api) => {
     ctx.lineTo(xOf(T) + 3.5, gy1 + 4);
     ctx.closePath();
     ctx.fill();
-    // 현재 농도 점 2개(물 10 mL 기준 ×10 환산)
-    const pulse = 1 + Math.sin(tMs / 260) * 0.3;
+    // 현재 농도 점 2개(물 10 mL 기준 ×10 환산).
+    // 점 = "지금 녹아 있는 양", 곡선 = "그 온도의 한계" — 불포화면 점이 곡선 아래에 있는 게 맞다.
+    // 그 간격이 보이도록 점→곡선 연결 점선을 함께 그린다. (펄스는 흔들려 보이지 않게 미세하게만)
+    const pulse = 1 + Math.sin(tMs / 300) * 0.1;
     const kx = xOf(T);
     const ky = yOf(dissolvedK * 10);
+    const kLimY = yOf(interp(K_PTS, T));
+    if (ky - kLimY > 7) {
+      ctx.strokeStyle = "rgba(255,138,176,.3)";
+      ctx.lineWidth = 1.1;
+      ctx.setLineDash([2, 4]);
+      ctx.beginPath();
+      ctx.moveTo(kx, ky - 4);
+      ctx.lineTo(kx, kLimY + 3);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
     ctx.fillStyle = "rgba(255,138,176,.25)";
     ctx.beginPath();
-    ctx.arc(kx, ky, 7 * pulse, 0, Math.PI * 2);
+    ctx.arc(kx, ky, 6.5 * pulse, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = "#FF9CBE";
     ctx.beginPath();
     ctx.arc(kx, ky, 3.4, 0, Math.PI * 2);
     ctx.fill();
     const ny = yOf(20);
+    const nLimY = yOf(interp(N_PTS, T));
+    if (ny - nLimY > 7) {
+      ctx.strokeStyle = "rgba(77,212,192,.3)";
+      ctx.lineWidth = 1.1;
+      ctx.setLineDash([2, 4]);
+      ctx.beginPath();
+      ctx.moveTo(kx, ny - 4);
+      ctx.lineTo(kx, nLimY + 3);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
     ctx.fillStyle = "rgba(77,212,192,.22)";
     ctx.beginPath();
     ctx.arc(kx, ny, 5.5, 0, Math.PI * 2);

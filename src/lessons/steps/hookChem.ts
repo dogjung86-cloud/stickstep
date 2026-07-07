@@ -13,29 +13,10 @@
 
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
 
 type Face = (k: AvatarKind) => void;
-
-function ask(box: HTMLElement, opts: string[], helper: HTMLElement, doneMsg: string, finish: () => void): void {
-  opts.forEach((label) => {
-    const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" }, text: label });
-    b.addEventListener("click", () => {
-      if (box.classList.contains("locked")) return;
-      box.classList.add("locked");
-      haptic(HAPTIC.select);
-      box.querySelectorAll(".hook-choice").forEach((x) => {
-        x.classList.add(x === b ? "sel" : "dim");
-        x.setAttribute("aria-pressed", x === b ? "true" : "false");
-        (x as HTMLButtonElement).disabled = x !== b;
-      });
-      helper.innerHTML = doneMsg;
-      finish();
-    });
-    box.appendChild(b);
-  });
-  box.classList.add("show");
-}
 
 // ── L1: 백금 반지 vs 은반지 ─────────────────────────────────
 function ringsSvg(): string {
@@ -97,13 +78,12 @@ export function renderRings(
         helper.innerHTML = "굴려 봐도 <b>색도 광택도 똑같아요</b>! 겉모습 말고, 뭘 비교해야 할까요?";
         timer = window.setTimeout(() => {
           face("curious");
-          ask(
-            choicesBox,
-            s.choices ?? ["같은 부피일 때 질량이 다른지 잰다", "돋보기로 색을 더 자세히 본다", "두드려서 소리를 비교한다"],
-            helper,
-            "좋은 예측이에요! 양이 아니라 <b>물질 고유의 성질</b>을 재야 해요 — 실험실에서 확인!",
-            finish,
-          );
+          ask(choicesBox, helper, {
+            choices: s.choices ?? ["같은 부피일 때 질량이 다른지 잰다", "돋보기로 색을 더 자세히 본다", "두드려서 소리를 비교한다"],
+            good: "좋은 예측이에요! 양이 아니라 <b>물질 고유의 성질</b>을 재야 해요 — 실험실에서 확인!",
+            bad: "색과 소리로는 이 둘을 못 갈라요 — 방금 굴려 봤듯 겉모습이 똑같거든요. 열쇠는 <b>같은 부피일 때의 질량</b> 같은 고유 성질! 실험실에서 확인해요.",
+            onDone: finish,
+          });
         }, 800);
       }
     }
@@ -186,13 +166,12 @@ export function renderDeadsea(
       face("curious");
       helper.innerHTML = "수영을 못해도 가라앉질 않아요. <b>왜 그럴까요?</b>";
       timer = window.setTimeout(() => {
-        ask(
-          choicesBox,
-          s.choices ?? ["소금물이라 물보다 밀도가 커서", "사해의 물이 특별히 따뜻해서", "바람이 아래에서 받쳐 줘서"],
-          helper,
-          "바로 그거예요! 소금이 잔뜩 녹아 <b>밀도가 큰 물</b> — 사람이 그 위에 떠요. 실험실에서 확인!",
-          finish,
-        );
+        ask(choicesBox, helper, {
+          choices: s.choices ?? ["소금물이라 물보다 밀도가 커서", "사해의 물이 특별히 따뜻해서", "바람이 아래에서 받쳐 줘서"],
+          good: "바로 그거예요! 소금이 잔뜩 녹아 <b>밀도가 큰 물</b> — 사람이 그 위에 떠요. 실험실에서 확인!",
+          bad: "온도나 바람 때문이 아니에요 — 비밀은 물에 잔뜩 녹은 <b>소금</b>! 소금물은 밀도가 커서 사람이 위에 떠요. 실험실에서 확인해요.",
+          onDone: finish,
+        });
       }, 700);
     }
   };
@@ -281,13 +260,12 @@ export function renderCocoa(
         face("curious");
         helper.innerHTML = "아무리 저어도 <b>더는 안 녹아요</b>. 남은 설탕까지 녹이려면 어떻게 해야 할까요?";
         timer = window.setTimeout(() => {
-          ask(
-            choicesBox,
-            s.choices ?? ["코코아를 따뜻하게 데운다", "숟가락으로 더 세게 젓는다", "더 큰 컵에 옮겨 담는다"],
-            helper,
-            "좋아요, 예측 완료! <b>녹는 양에 한계</b>가 있고 그 한계가 온도에 달라지는지 — 실험실에서 확인!",
-            finish,
-          );
+          ask(choicesBox, helper, {
+            choices: s.choices ?? ["코코아를 따뜻하게 데운다", "숟가락으로 더 세게 젓는다", "더 큰 컵에 옮겨 담는다"],
+            good: "좋은 예측! <b>녹는 양의 한계</b>가 온도에 따라 정말 달라지는지 — 실험실에서 확인해요!",
+            bad: "세게 젓거나 컵을 바꿔도 한계는 그대로예요 — 젓기는 빨리 녹게 할 뿐, 더 많이 녹게 하진 못해요. 열쇠는 <b>온도</b>! 실험실에서 확인해요.",
+            onDone: finish,
+          });
         }, 800);
       }
     }
@@ -365,13 +343,12 @@ export function renderFishmouth(
       helper.innerHTML = "물이 뜨끈해지자 물고기들이 <b>수면으로 올라와 뻐끔뻐끔</b>! 왜 그럴까요?";
       timer = window.setTimeout(() => {
         face("curious");
-        ask(
-          choicesBox,
-          s.choices ?? ["물이 따뜻해지면 녹아 있던 산소가 줄어들어서", "물고기가 햇볕을 쬐고 싶어서", "수면의 먹이가 많아져서"],
-          helper,
-          "예리해요! 온도가 오르면 <b>기체가 물에 덜 녹아요</b> — 산소가 부족해진 거예요. 실험실로!",
-          finish,
-        );
+        ask(choicesBox, helper, {
+          choices: s.choices ?? ["물이 따뜻해지면 녹아 있던 산소가 줄어들어서", "물고기가 햇볕을 쬐고 싶어서", "수면의 먹이가 많아져서"],
+          good: "예리해요! 온도가 오르면 <b>기체가 물에 덜 녹아요</b> — 산소가 부족해진 거예요. 실험실로!",
+          bad: "햇볕도 먹이도 아니에요 — 물이 따뜻해지면 <b>산소가 물에 덜 녹아서</b> 숨쉬기가 힘들어진 거예요. 그래서 산소가 많은 수면으로! 실험실에서 확인해요.",
+          onDone: finish,
+        });
       }, 900);
     }
   };
@@ -407,37 +384,48 @@ export function renderFishmouth(
 }
 
 // ── L5: 손바닥 위 갈륨 숟가락 ───────────────────────────────
+// 위에서 내려다본 펼친 손(스틱맨 라인 문법: 잉크 외곽선 + 흰 면) — 손가락 5개가 또렷해
+// "손 위에 숟가락"이 한눈에 읽힌다. 손가락을 먼저 그리고 손바닥을 덮어 그리면
+// 경계선이 깔끔하게 이어진다(만화 손 기법).
 function galliumSvg(): string {
-  return `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  const finger = (x: number, len: number): string =>
+    `<path d="M${x} 106 v-${len} a7.5 7.5 0 0 1 15 0 v${len} z" fill="#FFFFFF" stroke="#3C4654" stroke-width="2.4"/>`;
+  return `<svg viewBox="0 0 240 176" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <defs>
       <linearGradient id="hc-ga" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0" stop-color="#F8FBFF"/><stop offset=".5" stop-color="#C6D4E4"/><stop offset="1" stop-color="#93A6BC"/>
       </linearGradient>
-      <radialGradient id="hc-palm" cx=".4" cy=".35" r="1">
-        <stop offset="0" stop-color="#FFE4C8"/><stop offset="1" stop-color="#F0BE92"/>
-      </radialGradient>
     </defs>
-    <ellipse cx="120" cy="152" rx="62" ry="7" fill="#2A3A5E" opacity=".12"/>
-    <!-- 손바닥 -->
-    <g>
-      <path d="M62 118q-6-26 10-38 8-28 26-30 4-12 16-12t16 12q18 2 26 30 16 12 10 38-8 26-52 28t-52-28z" fill="url(#hc-palm)" stroke="#C88C56" stroke-width="1.6"/>
-      <path d="M84 96q10-8 24-6M132 90q12 0 20 8" stroke="#D9A06A" stroke-width="1.4" opacity=".7"/>
+    <ellipse cx="118" cy="166" rx="58" ry="6" fill="#2A3A5E" opacity=".12"/>
+    <!-- 손(위에서 본 모습): 손가락 4개 → 엄지 → 손바닥 → 손목 순서로 겹쳐 그리기 -->
+    <g class="hc-hand">
+      ${finger(76, 34)}${finger(95, 44)}${finger(114, 40)}${finger(133, 30)}
+      <!-- 엄지(왼쪽에서 비스듬히) -->
+      <path d="M62 132 l-20 -14 a8 8 0 0 1 10 -12 l20 14 z" fill="#FFFFFF" stroke="#3C4654" stroke-width="2.4"/>
+      <!-- 손바닥(손가락 밑동을 덮는다) -->
+      <path d="M70 106 h80 q6 22 -4 38 q-8 14 -36 14 t-36 -14 q-10 -16 -4 -38 z" fill="#FFFFFF" stroke="#3C4654" stroke-width="2.6"/>
+      <!-- 손금 두 줄 -->
+      <path d="M86 124 q18 10 42 4 M92 140 q14 7 34 2" stroke="#8B95A1" stroke-width="1.6" opacity=".8"/>
+      <!-- 손목 -->
+      <path d="M96 158 q14 6 28 0 l3 12 q-17 6 -34 0 z" fill="#FFFFFF" stroke="#3C4654" stroke-width="2.4"/>
     </g>
-    <!-- 갈륨 숟가락 -->
+    <!-- 갈륨 숟가락: 손바닥을 가로질러 놓임(볼 왼쪽 + 손잡이 오른쪽 위로) -->
     <g class="hc-spoon">
       <g class="hc-spoon-solid">
-        <ellipse cx="120" cy="86" rx="20" ry="12" fill="url(#hc-ga)" stroke="#6E7E92" stroke-width="1.5"/>
-        <rect x="114" y="42" width="11" height="46" rx="5" fill="url(#hc-ga)" stroke="#6E7E92" stroke-width="1.5"/>
-        <ellipse cx="113" cy="82" rx="6" ry="3.4" fill="#FFFFFF" opacity=".75" transform="rotate(-16 113 82)"/>
+        <rect x="118" y="70" width="66" height="9" rx="4.5" transform="rotate(24 118 70)" fill="url(#hc-ga)" stroke="#6E7E92" stroke-width="1.5"/>
+        <ellipse cx="104" cy="122" rx="19" ry="12" transform="rotate(24 104 122)" fill="url(#hc-ga)" stroke="#6E7E92" stroke-width="1.5"/>
+        <ellipse cx="98" cy="117" rx="6" ry="3" transform="rotate(24 98 117)" fill="#FFFFFF" opacity=".8"/>
       </g>
+      <!-- 녹은 웅덩이: 손바닥 굴곡을 따라 퍼지고, 손가락 사이로 흘러내릴 듯한 방울 -->
       <g class="hc-spoon-melt" opacity="0">
-        <path class="hc-melt-blob" d="M96 92q24-14 48 0 6 4 0 8-24 10-48 0-6-4 0-8z" fill="url(#hc-ga)" stroke="#6E7E92" stroke-width="1.4"/>
-        <ellipse cx="108" cy="90" rx="7" ry="3" fill="#FFFFFF" opacity=".8"/>
-        <circle cx="146" cy="98" r="3.4" fill="url(#hc-ga)" stroke="#6E7E92" stroke-width="1"/>
+        <path class="hc-melt-blob" d="M82 122 q20 -12 56 -4 q12 3 8 10 q-6 10 -34 12 q-26 2 -34 -8 q-4 -6 4 -10z" fill="url(#hc-ga)" stroke="#6E7E92" stroke-width="1.4"/>
+        <ellipse cx="98" cy="124" rx="8" ry="3.2" fill="#FFFFFF" opacity=".8"/>
+        <circle cx="104" cy="146" r="3.2" fill="url(#hc-ga)" stroke="#6E7E92" stroke-width="1"/>
+        <circle cx="122" cy="103" r="2.4" fill="url(#hc-ga)" stroke="#6E7E92" stroke-width="1"/>
       </g>
     </g>
     <g class="hc-heatwave" stroke="#FFB37C" stroke-width="2" opacity="0">
-      <path d="M76 122q4-6 0-12M164 122q4-6 0-12"/>
+      <path d="M56 96q4-6 0-12M170 120q4-6 0-12"/>
     </g>
   </svg>`;
 }
@@ -476,13 +464,12 @@ export function renderGallium(
         helper.innerHTML = "사르르— 숟가락이 <b>손바닥 위에서 녹아</b> 버렸어요! 철 숟가락은 멀쩡한데, 왜죠?";
         timer = window.setTimeout(() => {
           face("curious");
-          ask(
-            choicesBox,
-            s.choices ?? ["이 금속의 녹는점이 체온보다 낮아서", "손에 힘을 너무 세게 줘서", "손바닥의 땀에 녹은 것이라서"],
-            helper,
-            "정확해요! 갈륨의 <b>녹는점은 약 30 °C</b> — 체온(36.5 °C)이면 충분히 녹아요. 실험실로!",
-            finish,
-          );
+          ask(choicesBox, helper, {
+            choices: s.choices ?? ["이 금속의 녹는점이 체온보다 낮아서", "손에 힘을 너무 세게 줘서", "손바닥의 땀에 녹은 것이라서"],
+            good: "정확해요! 갈륨의 <b>녹는점은 약 30 °C</b> — 체온(36.5 °C)이면 충분히 녹아요. 실험실로!",
+            bad: "힘도 땀도 금속을 못 녹여요 — 이 금속(갈륨)은 <b>녹는점이 약 30 °C</b>라서 체온(36.5 °C)만으로 녹은 거예요. 물질마다 녹는점이 달라요. 실험실로!",
+            onDone: finish,
+          });
         }, 900);
       }
     } else if (!holding && !done) {
@@ -576,13 +563,12 @@ export function renderMilkzoom(
     helper.innerHTML = "우와 — 물속에 <b>지방 방울, 단백질 알갱이</b>가 잔뜩! 겉은 하나처럼 보였는데요.";
     timer = window.setTimeout(() => {
       face("curious");
-      ask(
-        choicesBox,
-        s.choices ?? ["여러 물질이 섞여 있는 혼합물이다", "우유라는 한 가지 순물질이다", "물이 하얗게 변한 것이다"],
-        helper,
-        "맞아요! 우유는 물·지방·단백질이 <b>제 성질을 지닌 채 섞인</b> 혼합물이에요. 실험실로!",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["여러 물질이 섞여 있는 혼합물이다", "우유라는 한 가지 순물질이다", "물이 하얗게 변한 것이다"],
+        good: "맞아요! 우유는 물·지방·단백질이 <b>제 성질을 지닌 채 섞인</b> 혼합물이에요. 실험실로!",
+        bad: "확대경을 다시 봐요 — 방울과 알갱이가 <b>따로따로</b> 보였죠? 우유는 한 가지 물질이 아니라 물·지방·단백질이 섞인 <b>혼합물</b>이에요. 실험실로!",
+        onDone: finish,
+      });
     }, 900);
   };
   fig.addEventListener("click", zoom);
@@ -664,13 +650,12 @@ export function renderSoysauce(
         helper.innerHTML = "스르륵— 다시 <b>두 층으로</b>! 기름은 위, 간장은 아래. 따로 담으려면 어떻게 할까요?";
         t2 = window.setTimeout(() => {
           face("curious");
-          ask(
-            choicesBox,
-            s.choices ?? ["아래층부터 조심히 따라 낸다", "다시 세게 흔들어 섞는다", "빨대로 가운데를 뽑는다"],
-            helper,
-            "좋은 감각이에요! <b>밀도 차</b>로 나뉜 두 층 — 분별 깔때기로 아래층부터! 실험실로!",
-            finish,
-          );
+          ask(choicesBox, helper, {
+            choices: s.choices ?? ["아래층부터 조심히 따라 낸다", "다시 세게 흔들어 섞는다", "빨대로 가운데를 뽑는다"],
+            good: "좋은 감각이에요! <b>밀도 차</b>로 나뉜 두 층 — 분별 깔때기로 아래층부터! 실험실로!",
+            bad: "흔들면 도로 섞이고, 가운데를 뽑으면 두 층이 함께 딸려 와요 — 이미 <b>밀도 차</b>로 나뉜 층을 살려서 <b>아래층부터</b> 받아 내는 게 정석! 실험실로!",
+            onDone: finish,
+          });
         }, 1000);
       }, 1400);
     } else {
@@ -755,13 +740,12 @@ export function renderSyrup(
     helper.innerHTML = "어라? 병 바닥에 <b>흰 알갱이</b>가 자라 있어요! 분명 다 녹였는데…";
     timer = window.setTimeout(() => {
       face("curious");
-      ask(
-        choicesBox,
-        s.choices ?? ["차가워지자 녹을 수 있는 양이 줄어서", "설탕이 상해서 굳은 것이라서", "물이 증발해 시럽이 마른 것이라서"],
-        helper,
-        "정답에 가까워요! 온도가 내려가면 <b>용해도가 작아져</b> 넘친 설탕이 결정으로 — 이게 <b>석출</b>이에요!",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["차가워지자 녹을 수 있는 양이 줄어서", "설탕이 상해서 굳은 것이라서", "물이 증발해 시럽이 마른 것이라서"],
+        good: "정확해요! 온도가 내려가면 <b>용해도가 작아져</b> 넘친 설탕이 결정으로 — 이게 <b>석출</b>이에요!",
+        bad: "상하거나 마른 게 아니에요 — 밀폐된 병인데도 생겼잖아요? 차가워지며 <b>녹을 수 있는 한계(용해도)가 줄어</b> 넘친 설탕이 결정으로 나온 거예요. 이게 <b>석출</b>!",
+        onDone: finish,
+      });
     }, 900);
   };
   fig.addEventListener("click", open);
@@ -865,13 +849,12 @@ export function renderPerfume(
         helper.innerHTML = "똑… 똑… 병에 <b>향기 나는 액체</b>가 모였어요! 꽃잎은 솥에 그대로인데, 어떻게 향기만 왔을까요?";
         timer = window.setTimeout(() => {
           face("curious");
-          ask(
-            choicesBox,
-            s.choices ?? ["향 성분이 기체가 됐다가 식어서 다시 액체가 됐다", "향기 입자가 관 속을 걸어 넘어왔다", "꽃잎이 아주 작게 부서져 넘어왔다"],
-            helper,
-            "완벽한 예측! <b>기화 → 냉각(액화)</b> — 이게 바로 <b>증류</b>의 원리예요. 실험실로!",
-            finish,
-          );
+          ask(choicesBox, helper, {
+            choices: s.choices ?? ["향 성분이 기체가 됐다가 식어서 다시 액체가 됐다", "향기 입자가 관 속을 걸어 넘어왔다", "꽃잎이 아주 작게 부서져 넘어왔다"],
+            good: "완벽한 예측! <b>기화 → 냉각(액화)</b> — 이게 바로 <b>증류</b>의 원리예요. 실험실로!",
+            bad: "입자가 걸어오지도, 꽃잎이 부서져 넘어오지도 않았어요 — 김을 봤죠? 향 성분이 <b>기체가 됐다가 식어서 다시 액체</b>가 된 거예요. 이게 <b>증류</b>! 실험실로!",
+            onDone: finish,
+          });
         }, 1000);
       }
     }, 700);

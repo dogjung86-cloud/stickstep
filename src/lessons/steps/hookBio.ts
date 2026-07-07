@@ -10,36 +10,11 @@
 
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
 
 interface HookStepLike {
   choices?: string[];
-}
-
-function askChoices(
-  box: HTMLElement,
-  opts: string[],
-  helper: HTMLElement,
-  doneMsg: string,
-  finish: () => void,
-): void {
-  opts.forEach((label) => {
-    const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" }, text: label });
-    b.addEventListener("click", () => {
-      if (box.classList.contains("locked")) return;
-      box.classList.add("locked");
-      haptic(HAPTIC.select);
-      box.querySelectorAll(".hook-choice").forEach((x) => {
-        x.classList.add(x === b ? "sel" : "dim");
-        x.setAttribute("aria-pressed", x === b ? "true" : "false");
-        (x as HTMLButtonElement).disabled = x !== b;
-      });
-      helper.innerHTML = doneMsg;
-      finish();
-    });
-    box.appendChild(b);
-  });
-  box.classList.add("show");
 }
 
 // ── L1: 잎 속 작은 방(세포) ─────────────────────────────────
@@ -186,13 +161,12 @@ export function renderStain(
     helper.innerHTML = "한 방울 떨어뜨리자 <b>핵이 또렷하게</b> 드러났어요! 자, 그럼 염색액은 무슨 일을 한 걸까요?";
     window.setTimeout(() => {
       face("curious");
-      askChoices(
-        choicesBox,
-        s.choices ?? ["세포를 더 크게 키운다", "특정 부분(핵)을 물들여 잘 보이게 한다", "세포를 움직이게 한다"],
-        helper,
-        "예측 완료! 이제 <b>진짜 현미경</b>으로 양파 세포를 관찰해 봐요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["특정 부분(핵)을 물들여 잘 보이게 한다", "세포를 더 크게 키운다", "세포를 움직이게 한다"],
+        good: "맞아요! 염색액이 <b>핵 같은 특정 부분을 물들여</b> 잘 보이게 해요. 진짜 현미경으로 양파 세포를 관찰해 봐요!",
+        bad: "세포를 키우거나 움직이게 한 게 아니에요 — 염색액은 <b>핵 같은 특정 부분을 물들여</b> 투명해서 안 보이던 걸 또렷하게 만들어요. 진짜 현미경으로 관찰해 봐요.",
+        onDone: finish,
+      });
     }, 900);
   });
 }
@@ -249,17 +223,16 @@ export function renderBodyCount(
   scene.append(el("div", { class: "hk-space-wrap" }, fig), choicesBox);
   helper.innerHTML = "우리 몸도 세포로 이루어져 있어요. 그렇다면 <b>사람 한 명의 몸</b>은 세포가 몇 개나 될까요? 예상해 봐요!";
   face("curious");
-  askChoices(
-    choicesBox,
-    s.choices ?? ["약 1만 개", "약 100만 개", "약 37조 개"],
-    helper,
-    "정답은 <b>약 37조 개</b>! 상상하기 힘든 숫자죠. 이 많은 세포가 아무렇게나 뭉친 게 아니라, <b>차곡차곡 조립</b>돼 몸이 돼요.",
-    () => {
+  ask(choicesBox, helper, {
+    choices: s.choices ?? ["약 37조 개", "약 1만 개", "약 100만 개"],
+    good: "정답은 <b>약 37조 개</b>! 상상하기 힘든 숫자죠. 이 많은 세포가 아무렇게나 뭉친 게 아니라, <b>차곡차곡 조립</b>돼 몸이 돼요.",
+    bad: "생각보다 훨씬 많아요 — 사람 몸은 <b>약 37조 개</b>의 세포로 이루어져 있어요! 이 많은 세포가 <b>차곡차곡 조립</b>돼 몸이 돼요.",
+    onDone: () => {
       fig.classList.add("reveal");
       face("surprised");
       finish();
     },
-  );
+  });
 }
 
 // ── L4: 무당벌레는 다 다르다(변이) ──────────────────────────
@@ -326,13 +299,12 @@ export function renderLadybugs(
         asked = true;
         face("surprised");
         helper.innerHTML = "눈치챘나요? <b>무늬(점 개수)가 다 달라요!</b> 같은 종인데도 개체마다 특징이 다른 것 — 이걸 뭐라고 부를까요?";
-        askChoices(
-          choicesBox,
-          ["돌연변이 딱 하나", "변이 — 같은 종 안의 차이", "서로 다른 종이라서"],
-          helper,
-          "맞아요, <b>변이</b>예요! 이 다양한 변이가 생물다양성의 씨앗이 돼요. 랩에서 그 힘을 확인해 봐요.",
-          finish,
-        );
+        ask(choicesBox, helper, {
+          choices: ["변이 — 같은 종 안의 차이", "돌연변이 딱 하나", "서로 다른 종이라서"],
+          good: "맞아요, <b>변이</b>예요! 이 다양한 변이가 생물다양성의 씨앗이 돼요. 랩에서 그 힘을 확인해 봐요.",
+          bad: "돌연변이 하나도, 다른 종도 아니에요 — 같은 종인데 개체마다 특징이 다른 것, 이게 <b>변이</b>예요. 이 변이가 생물다양성의 씨앗이 돼요. 랩에서 확인해 봐요.",
+          onDone: finish,
+        });
       } else if (tapped < 3) {
         helper.innerHTML = `${tapped}마리 확인 — 점 개수를 세어 보세요. 세 마리는 눌러 비교해 봐요!`;
       }
@@ -387,16 +359,15 @@ export function renderBatBird(
   scene.append(el("div", { class: "hk-space-wrap" }, fig), choicesBox);
   helper.innerHTML = "<b>박쥐</b>는 날개가 있어 하늘을 날아요. 그럼 박쥐는 <b>새</b>와 한 무리일까요, 아니면 <b>쥐</b>와 한 무리일까요?";
   face("curious");
-  askChoices(
-    choicesBox,
-    s.choices ?? ["날개가 있으니 새 무리", "젖을 먹여 키우니 쥐(포유류) 무리", "혼자 따로 한 무리"],
-    helper,
-    "박쥐는 온몸이 털로 덮이고 <b>새끼에게 젖을 먹여</b> 키워요 — 그래서 새가 아니라 <b>쥐와 같은 포유류</b>! 분류는 <b>겉모습이 아니라 진짜 특징</b>으로 해요.",
-    () => {
+  ask(choicesBox, helper, {
+    choices: s.choices ?? ["젖을 먹여 키우니 쥐(포유류) 무리", "날개가 있으니 새 무리", "혼자 따로 한 무리"],
+    good: "박쥐는 온몸이 털로 덮이고 <b>새끼에게 젖을 먹여</b> 키워요 — 그래서 새가 아니라 <b>쥐와 같은 포유류</b>! 분류는 <b>겉모습이 아니라 진짜 특징</b>으로 해요.",
+    bad: "날개만 보면 새 같지만 아니에요 — 박쥐는 <b>온몸이 털로 덮이고 새끼에게 젖을 먹여</b> 키워요. 그래서 <b>쥐와 같은 포유류</b>! 분류는 겉모습이 아니라 진짜 특징으로 해요.",
+    onDone: () => {
       face("surprised");
       finish();
     },
-  );
+  });
 }
 
 // ── L6: 먹이그물에서 하나가 빠지면? ─────────────────────────
@@ -456,16 +427,15 @@ export function renderFoodWeb(
     helper.innerHTML = "메뚜기가 사라지자 <b>개구리는 먹이를 잃고</b>, 매까지 흔들려요. 반대로 풀은 먹히지 않아 지나치게 번져요 — 연쇄로 무너지죠!";
     window.setTimeout(() => {
       face("curious");
-      askChoices(
-        choicesBox,
-        s.choices ?? ["한 종만 없어지고 끝난다", "연쇄로 여러 종이 함께 흔들린다"],
-        helper,
-        "맞아요 — 그래서 <b>종이 다양하고 먹이 관계가 그물처럼 복잡할수록</b> 생태계가 안정돼요. 무엇을 지켜야 할지 알아봐요.",
-        () => {
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["연쇄로 여러 종이 함께 흔들린다", "한 종만 없어지고 끝난다"],
+        good: "맞아요 — 그래서 <b>종이 다양하고 먹이 관계가 그물처럼 복잡할수록</b> 생태계가 안정돼요. 무엇을 지켜야 할지 알아봐요.",
+        bad: "한 종만 없어지고 끝나지 않아요 — 개구리는 먹이를 잃고 매까지 흔들려 <b>연쇄로 여러 종이 함께</b> 흔들려요. 그래서 먹이 관계가 복잡할수록 안정적이에요. 무엇을 지켜야 할지 알아봐요.",
+        onDone: () => {
           face("smile");
           finish();
         },
-      );
+      });
     }, 1100);
   });
 }

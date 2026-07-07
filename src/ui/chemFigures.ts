@@ -82,28 +82,45 @@ export function heatPlateausFig(): string {
   </svg>`;
 }
 
-/** 탄산음료 4조건(온도×마개) — 기포 비교(마무리 4번 재구성) */
+/** 탄산음료 4조건(온도×마개) — 기포 비교(마무리 4번 재구성).
+ *  열린 시험관은 입구가 뚫려 보이게(양 벽 + 타원 테) 그리고, 닫힌 것만 고무마개를 얹는다. */
 export function sodaTubesFig(): string {
   const tube = (x: number, label: string, warm: boolean, open: boolean, bubbles: number): string => {
     const beakerFill = warm ? "#FFE0D6" : "#DDF0FB";
     const beakerLine = warm ? "#E8836A" : "#7FB8DC";
+    const cx = x + 20;
+    const topY = 34;
     let bub = "";
     for (let i = 0; i < bubbles; i++) {
-      const bx = x + 20 + ((i * 13) % 18) - 9;
+      const bx = cx + ((i * 13) % 18) - 9;
       const by = 92 - i * 11;
       bub += `<circle cx="${bx}" cy="${by}" r="${2 + (i % 3)}" fill="none" stroke="#5AA2F8" stroke-width="1.4"/>`;
     }
+    // 열린 입에서 빠져나가는 기포(입구 위)
+    const escape = open && bubbles > 0
+      ? `<circle cx="${cx - 4}" cy="${topY - 8}" r="2" fill="none" stroke="#5AA2F8" stroke-width="1.3"/>
+         <circle cx="${cx + 5}" cy="${topY - 15}" r="1.6" fill="none" stroke="#5AA2F8" stroke-width="1.2"/>`
+      : "";
     return `<g>
       <path d="M${x - 6} 66h52v66a10 10 0 0 1-10 10h-32a10 10 0 0 1-10-10z" fill="${beakerFill}" stroke="${beakerLine}" stroke-width="2"/>
-      <rect x="${x + 10}" y="34" width="20" height="94" rx="9" fill="#FFF4E6" stroke="#C9A26A" stroke-width="1.8"/>
-      <rect x="${x + 10}" y="76" width="20" height="52" rx="9" fill="#E8B54A" opacity=".8"/>
-      ${open ? "" : `<rect x="${x + 8}" y="28" width="24" height="9" rx="3" fill="#8C99A8"/>`}
-      ${bub}
-      <text x="${x + 20}" y="158" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${label}</text>
-      <text x="${x + 20}" y="173" text-anchor="middle" font-size="9.5" fill="#8B95A1">${warm ? "따뜻한 물" : "얼음물"} · ${open ? "마개 열림" : "마개 닫힘"}</text>
+      <!-- 시험관 몸통: 위가 뚫린 U자 벽 -->
+      <path d="M${cx - 10} ${topY}v76a10 10 0 0 0 20 0V${topY}" fill="#FFF4E6" stroke="#C9A26A" stroke-width="1.8"/>
+      <rect x="${cx - 10}" y="76" width="20" height="52" rx="9" fill="#E8B54A" opacity=".8"/>
+      ${
+        open
+          ? `<!-- 열린 입구: 타원 테두리(구멍) + 살짝 벌어진 립 -->
+             <ellipse cx="${cx}" cy="${topY}" rx="10" ry="3.4" fill="#FFFBF2" stroke="#C9A26A" stroke-width="1.6"/>
+             <ellipse cx="${cx}" cy="${topY}" rx="6" ry="1.9" fill="#EAD9BC"/>`
+          : `<!-- 닫힌 입구: 고무마개(입보다 넓은 머리 + 목) -->
+             <path d="M${cx - 8} ${topY}l1.5-8h13l1.5 8z" fill="#8C99A8" stroke="#6B7684" stroke-width="1.2"/>
+             <rect x="${cx - 12}" y="${topY - 14}" width="24" height="7" rx="3" fill="#A6B2C0" stroke="#6B7684" stroke-width="1.2"/>`
+      }
+      ${bub}${escape}
+      <text x="${cx}" y="158" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${label}</text>
+      <text x="${cx}" y="173" text-anchor="middle" font-size="9.5" fill="#8B95A1">${warm ? "따뜻한 물" : "얼음물"} · ${open ? "마개 열림" : "마개 닫힘"}</text>
     </g>`;
   };
-  return `<svg viewBox="0 0 344 182" ${NS} fill="none" role="img" aria-label="탄산음료 시험관 네 개. 가는 얼음물에 마개 닫힘, 나는 얼음물에 마개 열림, 다는 따뜻한 물에 마개 닫힘, 라는 따뜻한 물에 마개 열림">
+  return `<svg viewBox="0 0 344 182" ${NS} fill="none" role="img" aria-label="탄산음료 시험관 네 개. 가는 얼음물에 마개 닫힘, 나는 얼음물에 마개 열림, 다는 따뜻한 물에 마개 닫힘, 라는 따뜻한 물에 마개 열림. 열린 시험관은 입구가 뚫려 있어요">
     ${tube(18, "(가)", false, false, 0)}
     ${tube(101, "(나)", false, true, 2)}
     ${tube(184, "(다)", true, false, 3)}
@@ -207,11 +224,41 @@ export function floatLayersFig(): string {
   </svg>`;
 }
 
-/** 원유 증류탑 — hotspot용(끓는점 낮을수록 위층) */
+/** 원유 증류탑 — hotspot용(끓는점 낮을수록 위층). 각 층 오른쪽에 용도 픽토그램(파이프 끝). */
 export function crudeTowerFig(): string {
   const deck = (y: number, w: number, c: string): string =>
     `<rect x="${172 - w / 2}" y="${y}" width="${w}" height="30" rx="7" fill="${c}" stroke="#B08D3E" stroke-width="1.2" opacity=".92"/>`;
-  return `<svg viewBox="0 0 344 260" ${NS} fill="none" role="img" aria-label="원유 증류탑. 아래에서 가열하며 위로 갈수록 끓는점이 낮은 물질이 분리돼요">
+  // 용도 미니 픽토그램(cx≈286, 파이프 높이에 맞춤) — 교과서 그림 I-14의 용도 아이콘 재해석
+  const icoLpg = `<g transform="translate(272 50)">
+      <rect x="0" y="6" width="11" height="20" rx="4" fill="#FFB37C" stroke="#D07030" stroke-width="1.3"/>
+      <rect x="3" y="2" width="5" height="5" rx="1.6" fill="#D07030"/>
+      <path d="M20 22q-4-5 0-10 1.5 3 4 4-1-5 3.4-7 0 6 4 8 2 4-2 7-5 3-9.4-2z" fill="#7FB8F2" stroke="#3A7DDB" stroke-width="1.1"/>
+    </g>`;
+  const icoCar = `<g transform="translate(266 90)">
+      <path d="M4 14 q2-7 9-8 l14 0 q7 1 9 8 l3 1 q2 1 2 3 v3 q0 2 -2 2 h-36 q-2 0 -2 -2 v-3 q0-3 3-4z" fill="#8FC0EC" stroke="#3A6FA8" stroke-width="1.3"/>
+      <path d="M13 8 h12 l3 6 h-18z" fill="#EAF6FF" stroke="#3A6FA8" stroke-width="1"/>
+      <circle cx="12" cy="24" r="4" fill="#4E5968"/><circle cx="30" cy="24" r="4" fill="#4E5968"/>
+    </g>`;
+  const icoPlane = `<g transform="translate(264 128)">
+      <path d="M2 16 q16-5 30-4 l10 3 q3 1 0 3 l-10 2 q-14 1 -30 -4z" fill="#D6E6F5" stroke="#5E7E9E" stroke-width="1.2"/>
+      <path d="M18 13 l-6-8 5 0 8 8z M18 19 l-6 8 5 0 8-8z" fill="#8FB3D6" stroke="#5E7E9E" stroke-width="1"/>
+      <path d="M39 12 l4-5 3 1-4 5z" fill="#8FB3D6" stroke="#5E7E9E" stroke-width="1"/>
+    </g>`;
+  const icoTruck = `<g transform="translate(266 166)">
+      <rect x="0" y="6" width="24" height="14" rx="2.4" fill="#FFD98A" stroke="#C08A2E" stroke-width="1.3"/>
+      <path d="M24 10 h8 l6 6 v4 h-14z" fill="#8FC0EC" stroke="#3A6FA8" stroke-width="1.2"/>
+      <circle cx="9" cy="22" r="3.8" fill="#4E5968"/><circle cx="30" cy="22" r="3.8" fill="#4E5968"/>
+    </g>`;
+  const icoShip = `<g transform="translate(264 204)">
+      <path d="M2 14 h40 l-6 9 h-28z" fill="#5E7E9E" stroke="#3C5670" stroke-width="1.2"/>
+      <rect x="8" y="7" width="9" height="7" rx="1" fill="#F2A45C"/><rect x="18" y="7" width="9" height="7" rx="1" fill="#8FC0EC"/><rect x="28" y="4" width="6" height="10" rx="1" fill="#EAF0F6" stroke="#8B99A8" stroke-width="1"/>
+      <path d="M2 26 q6 3 12 0 t12 0 12 0" stroke="#7FB8F2" stroke-width="1.6"/>
+    </g>`;
+  const icoRoad = `<g transform="translate(268 232)">
+      <path d="M0 10 h38 v8 h-38z" fill="#4E5968"/>
+      <path d="M4 14 h6 M16 14 h6 M28 14 h6" stroke="#FFD98A" stroke-width="1.8"/>
+    </g>`;
+  return `<svg viewBox="0 0 344 260" ${NS} fill="none" role="img" aria-label="원유 증류탑. 아래에서 가열하며 위로 갈수록 끓는점이 낮은 물질이 분리되고, 층마다 쓰임새가 달라요">
     <ellipse cx="172" cy="248" rx="96" ry="7" fill="#2A3A5E" opacity=".10"/>
     <path d="M126 42h92v186a12 12 0 0 1-12 12h-68a12 12 0 0 1-12-12z" fill="#F4E9D2" stroke="#C9A26A" stroke-width="2.2"/>
     <path d="M126 42a46 18 0 0 1 92 0" fill="#F4E9D2" stroke="#C9A26A" stroke-width="2.2"/>
@@ -220,7 +267,10 @@ export function crudeTowerFig(): string {
     ${deck(128, 82, "#FFDF9E")}
     ${deck(166, 86, "#FCD284")}
     ${deck(204, 90, "#F5C468")}
-    <path d="M218 62h34M218 100h34M218 138h34M218 176h34M218 214h34" stroke="#C9A26A" stroke-width="3"/>
+    <path d="M218 62h44M218 100h44M218 138h44M218 176h44M218 214h44" stroke="#C9A26A" stroke-width="3"/>
+    ${icoLpg}${icoCar}${icoPlane}${icoTruck}${icoShip}
+    <path d="M172 240v-2" stroke="#C9A26A" stroke-width="3"/>
+    ${icoRoad}
     <path d="M84 226h42" stroke="#C9A26A" stroke-width="4"/>
     <g>
       <path d="M96 240q-9-11 0-22 2 7 9 9-2-11 7-15 0 13 9 17 5 9-4 15-12 7-21-4z" fill="#FF9A4A" stroke="#D95F14" stroke-width="1.4"/>
