@@ -6,7 +6,7 @@ type Obj = Record<string, unknown>;
 
 export const concept = (o: {
   kicker?: string;
-  kickerTone?: "blue" | "bio" | "heat";
+  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem";
   title: string;
   lead?: string;
   blocks?: Block[];
@@ -61,7 +61,8 @@ export const hook = (o: {
     | "polar" | "bubblewrap" | "foilballoon" | "pingpong"
     | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses"
     | "colorcups" | "speaker" | "smokestack"
-    | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb";
+    | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb"
+    | "rings" | "deadsea" | "cocoa" | "fishmouth" | "gallium" | "milkzoom" | "soysauce" | "syrup" | "perfume";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
@@ -180,6 +181,24 @@ export const moonPhase3d = (o: { title: string; lead?: string; cta?: string }): 
   ({ type: "moonPhase3d", ...o });
 export const eclipse3d = (o: { title: string; lead?: string; cta?: string }): Step =>
   ({ type: "eclipse3d", ...o });
+
+// ── 중2 물질의 특성 단원(g2 I) 랩 ───────────────────────────
+export const densityLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "densityLab", ...o });
+export const densityPool = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "densityPool", ...o });
+export const solubilityLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "solubilityLab", ...o });
+export const gasFizz = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "gasFizz", ...o });
+export const meltCurve = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "meltCurve", ...o });
+export const sepFunnel = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "sepFunnel", ...o });
+export const recrystal = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "recrystal", ...o });
+export const distillLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "distillLab", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

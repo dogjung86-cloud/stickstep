@@ -10,6 +10,8 @@ export interface AppState {
   version: number;
   onboarded: boolean;
   grade: string | null;
+  viewGrade: string | null; // 홈이 보여주는 학년 커리큘럼("g1"|"g2") — 온보딩 학년과 별개로 전환 가능
+  premium: boolean; // 프리미엄 구매 여부 — premium 레슨 잠금 해제
   goalMin: number;
   streak: number;
   lastStudyDay: string | null; // 'YYYY-MM-DD'
@@ -24,6 +26,8 @@ const DEFAULT_STATE: AppState = {
   version: 1,
   onboarded: false,
   grade: null,
+  viewGrade: null,
+  premium: false,
   goalMin: 10,
   streak: 0,
   lastStudyDay: null,
@@ -73,6 +77,27 @@ export function setOnboarding(grade: string, goalMin: number): void {
   state.onboarded = true;
   state.grade = grade;
   state.goalMin = goalMin;
+  save();
+}
+
+/** 홈 지도가 보여줄 학년 — 직접 전환한 적이 없으면 온보딩 학년에서 유도한다. */
+export function getViewGrade(): "g1" | "g2" {
+  if (state.viewGrade === "g1" || state.viewGrade === "g2") return state.viewGrade;
+  return state.grade === "g2" || state.grade === "g3" ? "g2" : "g1";
+}
+
+export function setViewGrade(g: "g1" | "g2"): void {
+  state.viewGrade = g;
+  save();
+}
+
+export function isPremium(): boolean {
+  return state.premium;
+}
+
+/** 결제 성공/복원 시 core/purchase.ts가 호출한다. */
+export function setPremium(v: boolean): void {
+  state.premium = v;
   save();
 }
 

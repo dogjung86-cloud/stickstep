@@ -48,7 +48,10 @@ src/
                   hookGas(VI 훅 4종: polar·bubblewrap·foilballoon·pingpong)·
                   solarTour(VII 3D 가로 투어)·sunLab·skyDaily·zodiacRing·
                   moonPhase3d(3D 위상 + 지구뷰 인셋)·eclipse3d(3D 가로 정렬 + 지상 개기일식 뷰)·
-                  hookSpace(VII 훅 5종: stargaze·planetsize·shadowclock·moonpic·sunglasses))
+                  hookSpace(VII 훅 5종: stargaze·planetsize·shadowclock·moonpic·sunglasses)·
+                  densityLab·densityPool·solubilityLab·gasFizz·meltCurve·sepFunnel·recrystal·distillLab
+                  (중2 I 물질의 특성 랩 8종 — buoyancyLab 문법 계승, 목표 칩 = pn-badges force3 + pn-badge chem)·
+                  hookChem(중2 I 훅 9종: rings·deadsea·cocoa·fishmouth·gallium·milkzoom·soysauce·syrup·perfume))
   engine/    matterSim — IV 단원 순수 입자 물리(프로토타입 Sim 이식, 렌더링 없음, 수치 불변)
   renderers/ meta(WebGL 메타볼 — FRAG 원본 이식, 볼 상한 48, dispose 시 lose_context)·
              dot(발광점 — WebGL 폴백 겸 "입자의 눈" 뷰)·palette(온도→hue 212→370, uniform 3색)
@@ -66,9 +69,10 @@ src/
              space3d(VII 공용 three.js 킷 — 절차적 행성 텍스처·별배경·글로우·고리·궤도선.
                      **반드시 동적 import**로만 로드, dispose가 지오메트리·재질·텍스처+컨텍스트 반납),
              rotateStage(가로 모드 오버레이 — fixed 90° 회전 + mapPoint 포인터 리매핑 + 나가기),
-             spaceFigures(VII 퀴즈 SVG + 태양 핫스팟 그림 + spaceMiniArt)
-  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금), unit1 … unit7
-  screens/   splash, onboarding, home(게임 지도), done
+             spaceFigures(VII 퀴즈 SVG + 태양 핫스팟 그림 + spaceMiniArt),
+             chemFigures(중2 I 퀴즈 SVG — 용해도 곡선·가열 곡선·산점도·증류탑 + chemMiniArt)
+  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금·학년 트랙), unit1 … unit7(중1), g2/unit1 …(중2)
+  screens/   splash, onboarding, home(게임 지도 + 중1⇄중2 학년 세그), done, paywall(프리미엄 안내·구매)
 ```
 - **스텝 = `{ type, ...props }` 데이터.** `player`가 `registry`에서 `type`으로 렌더러를 찾아 그린다.
 - 렌더러 시그니처: `(host, step, api) => cleanup?`. `api`로 CTA·시트·채점·다음을 조종.
@@ -81,9 +85,27 @@ src/
 3. **새 단원 추가** → `content/unitN.ts` 만들고 `curriculum.ts`의 `CURRICULUM`에 넣는다.
    단원 내 레슨은 순차 잠금(직전 레슨 완료 시 해제).
 4. **단원 테마(색)** → `screens/home.ts`의 `UNIT_THEME`에 클래스 등록(u2=bio, u3=heat, u4=matter, u5=force,
-   u6=gas, u7=space) + `ui.css`에 `.unit-band.X`/`.gm-terrain.X`/`.gm-path-*.X`/`.gm-node.X` 변형 + tokens에 그라데이션.
+   u6=gas, u7=space, g2u1=chem) + `ui.css`에 `.unit-band.X`/`.gm-terrain.X`/`.gm-path-*.X`/`.gm-node.X` 변형 + tokens에 그라데이션.
    랩 안 킥커는 `concept({ kickerTone: "heat" })` 식으로. 새 색은 기존 단원과 겹치지 않게
-   (u4 matter #7C6BFF 보라 ↔ u7 space #4A54E1 딥 인디고처럼 뚜렷이 구분).
+   (u4 matter #7C6BFF 보라 ↔ u7 space #4A54E1 딥 인디고 ↔ g2u1 chem #E64980 지시약 로즈처럼 뚜렷이 구분).
+
+## 중2 트랙 · 프리미엄(수익화)
+- **학년 트랙**: `curriculum.ts`의 `CURRICULA = { g1: CURRICULUM, g2: CURRICULUM_G2 }`.
+  중2 단원 파일은 `content/g2/unitN.ts`, id는 `g2uN`(레슨 `g2uNlM`) — 중1 `uN`과 절대 충돌 금지.
+  홈 상단 학년 세그(중1⇄중2)가 `store.viewGrade`로 전환·저장되고, 온보딩 학년(g2·g3→중2)에서 기본값을 유도.
+  `findLesson`은 두 트랙을 모두 검색, 완료 후 홈 복귀는 `gradeOfUnit(unitId)`로 올바른 학년 지도로 돌아간다.
+- **준비 중 단원**: 아직 안 만든 단원은 `comingSoon: true` + `lessons: []`(curriculum.ts의 `soon()` 헬퍼) —
+  탭·밴드는 노출하되 지도 대신 `.coming-card` 안내를 그린다. 콘텐츠가 완성되면 실제 UNIT 모듈로 교체.
+  중2 V·VI(식물·동물과 에너지)은 의도적으로 뒤 순번 제작(자리만 유지) — 우선순위: 1→2→3→4→7→8.
+- **프리미엄 잠금**: 레슨에 `premium: true`(중2 I 기준 무료 3레슨 + 프리미엄 7레슨). `isPremiumLocked()` =
+  premium && !store.premium. 지도에서 골드 크라운 메달리온(`.gm-node.prem`, 첫 노드에만 `gm-ribbon gold` 리본),
+  탭하면 `screens/paywall.ts` 전면 페이월(혜택 3 + 평생 이용권 가격 카드 + 구매·복원).
+- **결제**: `core/purchase.ts`가 단일 창구(가격 문자열 포함). 현재 스텁 — **DEV에서만 즉시 해금**(QA용),
+  프로덕션 웹은 "출시 후 결제" 안내. Capacitor 포장 시 이 파일만 IAP(cordova-plugin-purchase/RevenueCat)로
+  교체하면 UI는 그대로 동작한다. 구매 성공 경로: 스토어 결제 → 영수증 검증 → `setPremium(true)`.
+- **중2 콘텐츠 규칙**: 중2 교과서는 녹는점·끓는점·용해도 등 용어를 정식 도입한다(중1 '입자' 제약과 별개).
+  교과서 원본: `D:\brilliant\중학교 교과서\중2 단원별 - 텍스트 보존(OCR)\` PDF — poppler가 한글 CMap이 없어
+  깨지므로 **pypdf로 텍스트 추출**(`py -m pip install pypdf`)이 확정 경로다.
 
 ## 퀴즈 유형 (quiz 스텝 하나로)
 - `mcq`(5지선다) · `ox`(O/X) · `multi`(보기 합답형, 복수정답) · 그림 퀴즈(`figure` 추가).
@@ -112,7 +134,8 @@ src/
   소품 세트만 단원별로 — I 정글 원정(징검돌·야자수·깃발) · II 생물 사다리(ART_BIO 재사용: 세균→아메바→
   고사리→물고기→새) · III 열(모닥불·김 나는 잔·주전자·태양) · IV 고체→액체→기체(얼음→물방울→김) ·
   V 힘 4종(사과나무·용수철·상자·튜브) · VI 기체(풍선·공기방울·열기구) · VII 행성 순항(수성→금성→화성→
-  목성→토성 순서). seq 순서 자체가 서사이니 함부로 섞지 말 것. 새 단원은 UNIT_DECOR에 세트 등록.
+  목성→토성 순서) · 중2 I 실험대 순례(플라스크→층 병→결정→분별 깔때기→증류기).
+  seq 순서 자체가 서사이니 함부로 섞지 말 것. 새 단원은 UNIT_DECOR에 세트 등록.
 - `serpentine(count, {width,gap,top,amp})` 가 노드 좌표와 부드러운 곡선 path(Catmull-Rom)를 만든다.
 - **좌표계 규칙(중요)**: 노드/장식은 폭 대비 **%-left**로 배치하고, 경로 SVG는 `width:100%` + `vector-effect:non-scaling-stroke`.
   이러면 리사이즈·기기 회전 시 재렌더 없이 노드와 경로가 함께 스케일돼 어긋나지 않는다.

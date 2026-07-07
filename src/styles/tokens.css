@@ -66,6 +66,9 @@
   --subj-space: #4A54E1;   /* VII 태양계 — 밤하늘 딥 인디고 */
   --subj-space-press: #3A42C8;
   --subj-space-tint: #ECEEFF;
+  --subj-chem: #E64980;    /* 중2 I 물질의 특성 — 지시약 로즈 */
+  --subj-chem-press: #D6336C;
+  --subj-chem-tint: #FFF0F6;
   --subj-bio-deep: #0CA678;
 
   /* 라운드 스케일 */
@@ -148,6 +151,7 @@
   --grad-force: linear-gradient(150deg, #FFC24D 0%, #F0A422 50%, #E08908 100%);
   --grad-gas: linear-gradient(150deg, #4AD4EC 0%, #1FB6D4 50%, #0E96B2 100%);
   --grad-space: linear-gradient(150deg, #7A82FF 0%, #4A54E1 50%, #3438B8 100%);
+  --grad-chem: linear-gradient(150deg, #FF7AA8 0%, #E64980 50%, #C2255C 100%);
   --grad-sheen: linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,0));
   --grad-medallion: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #5A9CF9 0%, #3182F6 48%, #1F6BE0 100%);
   --grad-medallion-bio: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #34DCA6 0%, #12B886 50%, #0A9670 100%);
@@ -156,6 +160,7 @@
   --grad-medallion-force: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #FFC96A 0%, #F0A422 50%, #D18708 100%);
   --grad-medallion-gas: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #5EDCF2 0%, #1FB6D4 50%, #0E96B2 100%);
   --grad-medallion-space: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #8A92FF 0%, #4A54E1 50%, #3038B0 100%);
+  --grad-medallion-chem: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #FF85B0 0%, #E64980 50%, #C2255C 100%);
   --grad-gold: radial-gradient(120% 120% at 30% 20%, rgba(255,255,255,.92) 0%, rgba(255,255,255,.15) 26%, rgba(255,255,255,0) 48%), linear-gradient(160deg, #FFD873 0%, #F5A623 50%, #E0891A 100%);
 
   /* 유리 표면 */

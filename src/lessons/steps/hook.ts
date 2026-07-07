@@ -28,6 +28,7 @@ import { renderPolar, renderBubblewrap, renderFoilballoon, renderPingpong } from
 import { renderStargaze, renderPlanetSize, renderShadowClock, renderMoonPic, renderSunGlasses } from "./hookSpace";
 import { renderColorCups, renderSpeaker, renderSmokestack } from "./hookCiv";
 import { renderCellZoom, renderStain, renderBodyCount, renderLadybugs, renderBatBird, renderFoodWeb } from "./hookBio";
+import { renderRings, renderDeadsea, renderCocoa, renderFishmouth, renderGallium, renderMilkzoom, renderSoysauce, renderSyrup, renderPerfume } from "./hookChem";
 import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -61,7 +62,8 @@ interface HookStep {
     | "polar" | "bubblewrap" | "foilballoon" | "pingpong"
     | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses"
     | "colorcups" | "speaker" | "smokestack"
-    | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb";
+    | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb"
+    | "rings" | "deadsea" | "cocoa" | "fishmouth" | "gallium" | "milkzoom" | "soysauce" | "syrup" | "perfume";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
 }
@@ -125,6 +127,15 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "shadowclock") renderShadowClock(scene, helper, s, finish, face);
   else if (s.scene === "moonpic") renderMoonPic(scene, helper, s, finish, face);
   else if (s.scene === "sunglasses") renderSunGlasses(scene, helper, s, finish, face);
+  else if (s.scene === "rings") sceneCleanup = renderRings(scene, helper, s, finish, face);
+  else if (s.scene === "deadsea") sceneCleanup = renderDeadsea(scene, helper, s, finish, face);
+  else if (s.scene === "cocoa") sceneCleanup = renderCocoa(scene, helper, s, finish, face);
+  else if (s.scene === "fishmouth") sceneCleanup = renderFishmouth(scene, helper, s, finish, face);
+  else if (s.scene === "gallium") sceneCleanup = renderGallium(scene, helper, s, finish, face);
+  else if (s.scene === "milkzoom") sceneCleanup = renderMilkzoom(scene, helper, s, finish, face);
+  else if (s.scene === "soysauce") sceneCleanup = renderSoysauce(scene, helper, s, finish, face);
+  else if (s.scene === "syrup") sceneCleanup = renderSyrup(scene, helper, s, finish, face);
+  else if (s.scene === "perfume") sceneCleanup = renderPerfume(scene, helper, s, finish, face);
   else sceneCleanup = renderEgg(scene, helper, s, finish, api, face);
 
   api.setCTA("스틱맨 쌤과 먼저 관찰해요", { enabled: false });

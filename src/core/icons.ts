@@ -9,6 +9,8 @@ const ICONS: Record<string, IconDef> = {
   x: { v: '<path d="M6 6l12 12M18 6L6 18"/>', sw: 2.4 },
   xThick: { v: '<path d="M7 7l10 10M17 7L7 17"/>', sw: 3.2 },
   lock: { v: '<rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>', sw: 2.1 },
+  crown: { v: '<path d="M4.5 18.5L3 8l5 3.8L12 5l4 6.8L21 8l-1.5 10.5z"/><path d="M4.5 21h15" stroke-width="2.4"/>', fill: true },
+  drop: { v: '<path d="M12 3.5C15 8 18 11.2 18 14.6a6 6 0 0 1-12 0C6 11.2 9 8 12 3.5z"/>', sw: 2 },
   play: { v: '<path d="M8 5.5v13l11-6.5z"/>', fill: true },
   chevron: { v: '<path d="M9.5 6l6 6-6 6"/>', sw: 2.4 },
   back: { v: '<path d="M15 6l-6 6 6 6"/>', sw: 2.2 },

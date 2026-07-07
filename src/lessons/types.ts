@@ -11,6 +11,7 @@ export interface Lesson {
   minutes?: number;
   standard?: string; // 성취기준/출처 표기
   doneNote?: string; // 완료 화면 부제
+  premium?: boolean; // 프리미엄 전용 — 구매 전에는 페이월로 안내
   steps: Step[];
 }
 

@@ -249,6 +249,63 @@ const MAP_DECOR: Record<string, string> = {
     <linearGradient id="rk-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8FA0"/><stop offset="1" stop-color="#D6455E"/></linearGradient>
     <linearGradient id="rk-fl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#FF9E3D"/></linearGradient>`,
   ),
+
+  // ── 중2 I. 물질의 특성 — 실험대 순례(측정→용해→결정→분리→증류) ──
+  flaskDeco: S(
+    `${shadow(32, 57, 15, 0.14)}
+    <path d="M27 12h10v12l10 20a7 7 0 0 1-6.4 10H23.4A7 7 0 0 1 17 44l10-20z" fill="url(#fk-g)"/>
+    <path d="M27 12h10v12l10 20a7 7 0 0 1-6.4 10H23.4A7 7 0 0 1 17 44l10-20z" stroke="#7E93A8" stroke-width="1.5" fill="none"/>
+    <path d="M21.5 42l10.5-2 11 2 2.4 5a4 4 0 0 1-3.7 6H22.8a4 4 0 0 1-3.7-6z" fill="url(#fk-l)"/>
+    <ellipse cx="27" cy="26" rx="2.6" ry="7" fill="#fff" opacity=".5" transform="rotate(8 27 26)"/>
+    <rect x="26" y="8" width="12" height="5" rx="2" fill="#C9D4E0" stroke="#8C99A8" stroke-width="1.2"/>`,
+    `<linearGradient id="fk-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2F9FF" stop-opacity=".5"/><stop offset="1" stop-color="#C8DCEE" stop-opacity=".65"/></linearGradient>
+    <linearGradient id="fk-l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8FB4"/><stop offset="1" stop-color="#D6336C"/></linearGradient>`,
+  ),
+  layersDeco: S(
+    `${shadow(32, 57, 13, 0.14)}
+    <path d="M24 14h16v6l4 6v24a6 6 0 0 1-6 6H26a6 6 0 0 1-6-6V26l4-6z" fill="url(#ly-g)" stroke="#7E93A8" stroke-width="1.5"/>
+    <path d="M21 34h22v16a5 5 0 0 1-5 5H26a5 5 0 0 1-5-5z" fill="url(#ly-w)"/>
+    <path d="M21 26h22v8H21z" fill="url(#ly-o)"/>
+    <path d="M21 34h22" stroke="#FFF0C0" stroke-width="1.4" opacity=".9"/>
+    <ellipse cx="27" cy="24" rx="2" ry="6" fill="#fff" opacity=".45" transform="rotate(8 27 24)"/>
+    <rect x="23" y="10" width="18" height="6" rx="2.4" fill="#C9D4E0" stroke="#8C99A8" stroke-width="1.2"/>`,
+    `<linearGradient id="ly-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2F9FF" stop-opacity=".45"/><stop offset="1" stop-color="#C8DCEE" stop-opacity=".55"/></linearGradient>
+    <linearGradient id="ly-o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#F2C14E"/></linearGradient>
+    <linearGradient id="ly-w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9CD0F5"/><stop offset="1" stop-color="#5E9CD8"/></linearGradient>`,
+  ),
+  crystalDeco: S(
+    `${shadow(32, 57, 16, 0.14)}
+    <path d="M32 12l9 16-9 26-9-26z" fill="url(#cr-a)" stroke="#B4488A" stroke-width="1.4"/>
+    <path d="M18 34l6 10-4 10-7-9z" fill="url(#cr-b)" stroke="#B4488A" stroke-width="1.2"/>
+    <path d="M46 34l7 11-6 9-5-10z" fill="url(#cr-b)" stroke="#B4488A" stroke-width="1.2"/>
+    <path d="M32 12l4 16-4 22" stroke="#fff" stroke-width="1.2" opacity=".55" fill="none"/>
+    <path d="M50 16l1.8 3.8 3.8 1.8-3.8 1.8-1.8 3.8-1.8-3.8-3.8-1.8 3.8-1.8z" fill="#FFD7E8"/>`,
+    `<linearGradient id="cr-a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE3F0"/><stop offset=".5" stop-color="#F78FBB"/><stop offset="1" stop-color="#D6336C"/></linearGradient>
+    <linearGradient id="cr-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFD7E8"/><stop offset="1" stop-color="#E64980"/></linearGradient>`,
+  ),
+  funnelDeco: S(
+    `${shadow(32, 58, 12, 0.14)}
+    <path d="M20 14h24l-9 22v10h-6V36z" fill="url(#fn-g)" stroke="#7E93A8" stroke-width="1.5"/>
+    <path d="M22 18h20l-3.4 8H25.4z" fill="url(#fn-o)"/>
+    <path d="M26.5 27h11l-2.5 6.6v6h-6v-6z" fill="url(#fn-w)"/>
+    <rect x="28" y="46" width="8" height="6" rx="2" fill="#8B99AC" stroke="#5E6B7E" stroke-width="1"/>
+    <path d="M32 52q-1 4 0 7" stroke="#7FB8F2" stroke-width="2.4"/>
+    <ellipse cx="26" cy="20" rx="1.6" ry="4" fill="#fff" opacity=".5" transform="rotate(14 26 20)"/>`,
+    `<linearGradient id="fn-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2F9FF" stop-opacity=".45"/><stop offset="1" stop-color="#C8DCEE" stop-opacity=".55"/></linearGradient>
+    <linearGradient id="fn-o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#F2C14E"/></linearGradient>
+    <linearGradient id="fn-w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9CD0F5"/><stop offset="1" stop-color="#5E9CD8"/></linearGradient>`,
+  ),
+  alembicDeco: S(
+    `${shadow(28, 57, 15, 0.14)}
+    <path d="M20 22a12 12 0 0 1 16 0l-2 6H22z" fill="url(#al-c)" stroke="#A8763E" stroke-width="1.4"/>
+    <path d="M18 28h20l4 14a12 12 0 0 1-28 0z" fill="url(#al-b)" stroke="#A8763E" stroke-width="1.5"/>
+    <path d="M36 24q10 2 12 12 1 6-2 12" stroke="#C9D4E0" stroke-width="3" fill="none"/>
+    <circle cx="46" cy="52" r="2.4" fill="#7FB8F2"/>
+    <ellipse cx="24" cy="36" rx="2.4" ry="6" fill="#fff" opacity=".35" transform="rotate(10 24 36)"/>
+    <path d="M24 14q2-4 4 0M30 12q2-4 4 0" stroke="#D8E4F0" stroke-width="1.8" fill="none" opacity=".8"/>`,
+    `<linearGradient id="al-c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EFC98E"/><stop offset="1" stop-color="#C89454"/></linearGradient>
+    <linearGradient id="al-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2D5A4"/><stop offset=".5" stop-color="#D8A868"/><stop offset="1" stop-color="#B07E3E"/></linearGradient>`,
+  ),
 };
 
 /** 지도 장식 아트 — 단원 특색 세트 → 생물 아이콘(ART_BIO) → 공용(ART_DECOR) 순서로 찾는다. */

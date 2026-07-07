@@ -9,8 +9,9 @@ import { onboardingScreen } from "./screens/onboarding";
 import { homeScreen } from "./screens/home";
 import { doneScreen } from "./screens/done";
 import { minigameScreen } from "./screens/minigame";
+import { paywallScreen } from "./screens/paywall";
 import { createLessonPlayer } from "./lessons/player";
-import { findLesson } from "./content/curriculum";
+import { findLesson, isPremiumLocked } from "./content/curriculum";
 
 const frame = document.getElementById("frame")!;
 nav.init(frame);
@@ -31,6 +32,17 @@ function openLesson(id: string): void {
   const found = findLesson(id);
   if (!found) return;
   lastUnitId = found.unit.id;
+  // 프리미엄 잠금 — 구매 전에는 페이월로 안내
+  if (isPremiumLocked(found.lesson)) {
+    nav.go(
+      paywallScreen({
+        lessonTitle: found.lesson.title,
+        onUnlocked: goHome,
+        onClose: () => nav.back(),
+      }),
+    );
+    return;
+  }
   const player = createLessonPlayer(found.lesson, {
     onExit: goHome,
     onComplete: (r) => {

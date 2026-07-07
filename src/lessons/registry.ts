@@ -51,6 +51,14 @@ import { skyDaily } from "./steps/skyDaily";
 import { zodiacRing } from "./steps/zodiacRing";
 import { moonPhase3d } from "./steps/moonPhase3d";
 import { eclipse3d } from "./steps/eclipse3d";
+import { densityLab } from "./steps/densityLab";
+import { densityPool } from "./steps/densityPool";
+import { solubilityLab } from "./steps/solubilityLab";
+import { gasFizz } from "./steps/gasFizz";
+import { meltCurve } from "./steps/meltCurve";
+import { sepFunnel } from "./steps/sepFunnel";
+import { recrystal } from "./steps/recrystal";
+import { distillLab } from "./steps/distillLab";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -91,6 +99,14 @@ const R: Record<string, StepRenderer> = {
   zodiacRing,
   moonPhase3d,
   eclipse3d,
+  densityLab,
+  densityPool,
+  solubilityLab,
+  gasFizz,
+  meltCurve,
+  sepFunnel,
+  recrystal,
+  distillLab,
   quiz,
   table,
   order,
