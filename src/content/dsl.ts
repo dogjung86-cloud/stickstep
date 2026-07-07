@@ -62,7 +62,8 @@ export const hook = (o: {
     | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses"
     | "colorcups" | "speaker" | "smokestack"
     | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb"
-    | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba";
+    | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba"
+    | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
@@ -205,6 +206,23 @@ export const waveLab = (o: { title: string; lead?: string; cta?: string; curio?:
   ({ type: "waveLab", ...o });
 export const soundLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "soundLab", ...o });
+
+// ── 중2 IV 물질의 구성 랩 ───────────────────────────────────
+export const elementLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "elementLab", ...o });
+export const moleculeLab = (o: {
+  title: string; lead?: string; cta?: string; curio?: CurioOpt;
+  targets: { formula: string; name: string; comp: Record<string, number> }[];
+  split?: boolean; palette?: string[];
+}): Step => ({ type: "moleculeLab", ...o });
+export const atomLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "atomLab", ...o });
+export const periodicLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "periodicLab", ...o });
+export const ionLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "ionLab", ...o });
+export const ionMoveLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "ionMoveLab", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

@@ -59,6 +59,10 @@ import { mirrorLens } from "./steps/lightBench";
 import { objectColorLab, colorMixLab, pixelLab } from "./steps/lightColor";
 import { waveLab } from "./steps/waveTank";
 import { soundLab } from "./steps/soundLab";
+import { elementLab, moleculeLab } from "./steps/chemParticles";
+import { atomLab, ionLab } from "./steps/chemAtom";
+import { periodicLab } from "./steps/chemTable";
+import { ionMoveLab } from "./steps/chemIonMove";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -110,6 +114,12 @@ const R: Record<string, StepRenderer> = {
   pixelLab,
   waveLab,
   soundLab,
+  elementLab,
+  moleculeLab,
+  atomLab,
+  periodicLab,
+  ionLab,
+  ionMoveLab,
   quiz,
   table,
   order,

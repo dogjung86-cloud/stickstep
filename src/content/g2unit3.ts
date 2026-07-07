@@ -6,7 +6,7 @@
 // 정답 키는 과학적으로 직접 확정(반사 법칙·스넬·거울/렌즈 공식·삼원색·소리 3요소).
 import type { Unit } from "./curriculum";
 import {
-  hook, recap, mcq, ox, binSort, order, hotspot,
+  hook, comic, recap, mcq, ox, binSort, order, hotspot,
   reflectLab, diffuseLab, refractLab, seeLab, mirrorImageLab, mirrorLens,
   objectColorLab, colorMixLab, pixelLab, waveLab, soundLab,
 } from "./dsl";
@@ -558,8 +558,23 @@ const L6 = {
       lead: "점만 콕콕 찍어 그리는 점묘화예요. 화가의 팔레트엔 빨강과 초록뿐이었어요.",
       narrator: "완성된 그림 속 물고기는 분명 <b>노란색</b>이에요. 그림을 <b>눌러 확대</b>해 보세요!",
       scene: "pointillism",
-      done: "예측 완료! 실험실에서 빛을 직접 겹치고, 화면 속 <b>화소</b>의 비밀까지 파헤쳐요.",
+      done: "예측 완료! 그런데 '여러 색이 합쳐진 빛'이라는 생각, 350년 전 한 청년이 프리즘으로 증명했어요 — 그 이야기부터!",
+      cta: "뉴턴 이야기 보기",
+    }),
+    comic({
+      title: "뉴턴의 프리즘 —<br>갈라진 빛을 다시 합치다",
+      lead: "스틱맨 쌤이 들려주는 백색광의 정체",
+      narrator: "햇빛은 그냥 '흰 빛' 아니냐고요? 1666년의 뉴턴은 다르게 생각했어요.",
       cta: "실험실 열기",
+      panels: [
+        { img: "comics/g2u3l6/0.png", stage: "1666년, 영국 시골", title: "프리즘을 손에 든 청년", caption: "전염병으로 대학이 문을 닫자 뉴턴은 고향에 내려왔어요. 심심할 틈은 없었죠 — 시장에서 사 온 유리 프리즘 하나가 그의 장난감이자 실험 도구였거든요." },
+        { img: "comics/g2u3l6/1.png", stage: "암실 실험", title: "덧창에 뚫은 작은 구멍", caption: "뉴턴은 방을 캄캄하게 막고 덧창에 작은 구멍 하나만 남겼어요. 가느다란 햇빛 한 줄기가 어둠을 가로질렀죠. 실험 준비 끝!" },
+        { img: "comics/g2u3l6/2.png", stage: "첫 번째 발견", title: "벽에 펼쳐진 무지개", caption: "그 빛줄기에 프리즘을 대자 — 벽에 빨강부터 보라까지 색 띠가 쫙 펼쳐졌어요! 하나였던 햇빛이 여러 색의 빛으로 갈라진 거예요." },
+        { img: "comics/g2u3l6/3.png", stage: "사람들의 반론", title: "\"유리가 색을 만든 거야\"", caption: "사람들은 믿지 않았어요. \"색은 원래 없었고, 유리가 물감처럼 색을 만들어 칠한 것\"이라고 생각했죠. 여러분이 뉴턴이라면 어떻게 증명할래요?", term: { name: "백색광", def: "여러 가지 색의 빛이 고르게 합쳐진 빛. 햇빛이 대표적" } },
+        { img: "comics/g2u3l6/4.png", stage: "결정적 실험", title: "프리즘 하나를 더!", caption: "뉴턴의 한 수 — 갈라진 색 띠를 거꾸로 세운 두 번째 프리즘에 통과시켰어요. 그러자 여러 색의 빛이 도로 합쳐져 하나의 빛이 됐죠! 유리가 색을 '만드는' 거라면 두 번째 유리에서 색이 더 늘어야 했을 텐데요." },
+        { img: "comics/g2u3l6/5.png", stage: "결론", title: "햇빛 = 여러 색 빛의 합", caption: "그러니까 색은 유리가 만든 게 아니라 처음부터 햇빛 속에 들어 있었던 거예요. 여러 색의 빛이 고르게 합쳐지면 우리 눈에는 흰 빛으로 보여요 — 이것이 백색광!" },
+        { img: "comics/g2u3l6/6.png", stage: "350년 뒤, 오늘", title: "화면 속의 뉴턴", caption: "빛을 합쳐 색을 만든다는 아이디어는 오늘날 모든 화면과 무대 조명이 쓰고 있어요. 단 세 가지 빛으로요! 이제 실험실에서 직접 빛을 합쳐 봐요." },
+      ],
     }),
     objectColorLab({
       title: "조명 스튜디오 —<br>물체의 색",

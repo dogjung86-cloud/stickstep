@@ -9,6 +9,7 @@ import { UNIT5 } from "./unit5";
 import { UNIT6 } from "./unit6";
 import { UNIT7 } from "./unit7";
 import { G2UNIT3 } from "./g2unit3";
+import { G2UNIT4 } from "./g2unit4";
 
 export interface Unit {
   id: string;
@@ -22,7 +23,7 @@ export interface Unit {
   lessons: Lesson[];
 }
 
-export const CURRICULUM: Unit[] = [UNIT1, UNIT2, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7, G2UNIT3];
+export const CURRICULUM: Unit[] = [UNIT1, UNIT2, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7, G2UNIT3, G2UNIT4];
 
 // 퀴즈 스텝 자동 번호 — "문제 n / of" 헤더용. 이미 n/of를 명시한 스텝은 그대로 둔다.
 for (const u of CURRICULUM) {

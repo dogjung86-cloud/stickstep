@@ -306,6 +306,56 @@ const MAP_DECOR: Record<string, string> = {
     `<linearGradient id="nt-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A64C8"/><stop offset="1" stop-color="#5E3E96"/></linearGradient>
     <linearGradient id="nt-h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9A74D8"/><stop offset="1" stop-color="#5E3E96"/></linearGradient>`,
   ),
+  // ── 중2 IV. 물질의 구성 — 비커→원자→주기율표→분자→이온 ──
+  beakerDeco: S(
+    `${shadow(32, 56, 15, 0.14)}
+    <path d="M22 12v14L12 46a6 6 0 0 0 5.5 8h29A6 6 0 0 0 52 46L42 26V12z" fill="url(#bk-g)"/>
+    <path d="M22 12v14L12 46a6 6 0 0 0 5.5 8h29A6 6 0 0 0 52 46L42 26V12z" stroke="#7E92AC" stroke-width="1.8" fill="none"/>
+    <path d="M18 40h28l6 8a4 4 0 0 1-4 5h-32a4 4 0 0 1-4-5z" fill="url(#bk-liq)"/>
+    <circle cx="26" cy="46" r="2.2" fill="#D6F09A"/><circle cx="37" cy="49" r="1.8" fill="#D6F09A"/>
+    <path d="M25 15v10" stroke="#FFFFFF" stroke-width="2.6" opacity=".7"/>
+    <rect x="19" y="9" width="26" height="4.5" rx="2.2" fill="#B9C8DC"/>`,
+    `<linearGradient id="bk-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4FAFF"/><stop offset="1" stop-color="#CBDCEE" stop-opacity=".7"/></linearGradient>
+    <linearGradient id="bk-liq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B4DE62"/><stop offset="1" stop-color="#7CB024"/></linearGradient>`,
+  ),
+  atomDeco: S(
+    `<circle cx="32" cy="32" r="6" fill="url(#at-n)"/>
+    <ellipse cx="32" cy="32" rx="24" ry="10" stroke="#7E92AC" stroke-width="2" fill="none"/>
+    <ellipse cx="32" cy="32" rx="24" ry="10" stroke="#9FB6D0" stroke-width="2" fill="none" transform="rotate(62 32 32)"/>
+    <circle cx="54" cy="27" r="3.4" fill="url(#at-e)"/>
+    <circle cx="24" cy="53" r="3.4" fill="url(#at-e)"/>
+    <circle cx="29.5" cy="29.5" r="1.8" fill="#FFF" opacity=".7"/>`,
+    `<radialGradient id="at-n" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#FF9A80"/><stop offset="1" stop-color="#E0452E"/></radialGradient>
+    <radialGradient id="at-e" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#8FC4FF"/><stop offset="1" stop-color="#2E6DB4"/></radialGradient>`,
+  ),
+  tableDeco: S(
+    `${shadow(32, 56, 16, 0.13)}
+    <rect x="10" y="14" width="44" height="36" rx="6" fill="url(#tb-g)" stroke="#5A8E0E" stroke-width="1.6"/>
+    <path d="M10 26h44M10 38h44M25 14v36M40 14v36" stroke="#FFFFFF" stroke-width="1.8" opacity=".6"/>
+    <rect x="25" y="26" width="15" height="12" fill="#FFFFFF" opacity=".35"/>
+    <rect x="12.5" y="16.5" width="9" height="7" rx="2" fill="#FFF" opacity=".5"/>`,
+    `<linearGradient id="tb-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B8E070"/><stop offset="1" stop-color="#7CB024"/></linearGradient>`,
+  ),
+  moleculeDeco: S(
+    `${shadow(32, 57, 15, 0.13)}
+    <path d="M20 40L32 26M44 40L32 26" stroke="#8B95A1" stroke-width="3"/>
+    <circle cx="32" cy="24" r="11" fill="url(#mo-o)"/>
+    <circle cx="28.5" cy="20.5" r="3.4" fill="#FFF" opacity=".6"/>
+    <circle cx="18" cy="44" r="8" fill="url(#mo-h)"/>
+    <circle cx="46" cy="44" r="8" fill="url(#mo-h)"/>
+    <circle cx="15.5" cy="41.5" r="2.4" fill="#FFF" opacity=".8"/>`,
+    `<radialGradient id="mo-o" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#FF8A76"/><stop offset="1" stop-color="#D63A24"/></radialGradient>
+    <radialGradient id="mo-h" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#C6D2E0"/></radialGradient>`,
+  ),
+  ionDeco: S(
+    `<circle cx="24" cy="30" r="13" fill="url(#io-p)"/>
+    <path d="M19 30h10M24 25v10" stroke="#FFF" stroke-width="2.6"/>
+    <circle cx="45" cy="42" r="10" fill="url(#io-m)"/>
+    <path d="M40.5 42h9" stroke="#FFF" stroke-width="2.4"/>
+    <circle cx="20.5" cy="26" r="2.6" fill="#FFF" opacity=".55"/>`,
+    `<radialGradient id="io-p" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#FF9A80"/><stop offset="1" stop-color="#E0452E"/></radialGradient>
+    <radialGradient id="io-m" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#8FC4FF"/><stop offset="1" stop-color="#2E6DB4"/></radialGradient>`,
+  ),
   rainbowDeco: S(
     `<g fill="none" stroke-linecap="round">
       <path d="M8 46a24 24 0 0 1 48 0" stroke="#F25C54" stroke-width="4.6"/>

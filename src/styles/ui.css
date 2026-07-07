@@ -1175,6 +1175,24 @@
 .gm-node.light:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-light); }
 .kicker.light { background: var(--subj-light-tint); color: var(--subj-light-press); }
 
+/* ---------- 중2 IV 물질의 구성 단원 테마(chem · 라임 그린) ---------- */
+.unit-band.chem { background: var(--grad-chem); }
+.gm-terrain.chem {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #EAF5D2, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #E2F1C4, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #E7F4CC, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #DAEDB8, transparent 72%),
+    linear-gradient(180deg, #F6FBEA 0%, #EDF6D8 55%, #E2F0C6 100%);
+}
+.gm-path-glow.chem { stroke: rgba(124,176,36,.22); }
+.gm-path-done.chem { stroke: #7CB024; }
+.gm-node.chem.now .gm-med, .gm-node.chem.done .gm-med { background: var(--grad-medallion-chem); }
+.gm-node.chem .gm-ring { border-color: rgba(124,176,36,.55); }
+.gm-node.chem:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-chem); }
+.kicker.chem { background: var(--subj-chem-tint); color: var(--subj-chem-press); }
+
 /* ---------- 가로 모드 오버레이(rotateStage) ---------- */
 .rot-overlay { position: fixed; inset: 0; z-index: 80; background: #070D1A; opacity: 0; transition: opacity .24s var(--ease); }
 .rot-overlay.in { opacity: 1; }
@@ -1568,6 +1586,65 @@
 .px-goal .px-patch { width: 54px; height: 40px; border-radius: 12px; box-shadow: var(--sh-inset); border: 1px solid rgba(20,30,50,.08); }
 .px-goal .px-goal-txt { font-size: 13.5px; font-weight: 700; color: var(--sub); line-height: 1.45; }
 .px-goal .px-goal-txt b { color: var(--ink); }
+
+/* ---------- 중2 IV 물질의 구성 훅(hookChem) ---------- */
+.hook-cups.three { grid-template-columns: repeat(3, 1fr); }
+.hcz .hc-in, .hcz .hc-out { transition: opacity .45s var(--ease-out); }
+.hcz .hc-in { opacity: 0; }
+.hook-cup.zoomed .hc-out { opacity: 0; }
+.hook-cup.zoomed .hc-in { opacity: 1; }
+.hook-cup.zoomed { border: 1.5px solid var(--subj-chem); background: var(--subj-chem-tint); }
+.hcp svg, .hcm svg, .hcw svg, .hcg svg { width: 100%; height: auto; display: block; }
+.hcp .hcp-s { transition: opacity .45s var(--ease-out); }
+.hcp.s1 .hcp-s0 { opacity: 0; }
+.hcp.s1 .hcp-s1 { opacity: 1; }
+.hcp.s2 .hcp-s0, .hcp.s2 .hcp-s1 { opacity: 0; }
+.hcp.s2 .hcp-s2 { opacity: 1; }
+.hcm .hcm-messy, .hcm .hcm-tidy { transition: opacity .5s var(--ease-out); }
+.hcm.tidy .hcm-messy { opacity: 0; }
+.hcm.tidy .hcm-tidy { opacity: 1; }
+.hcw .hcw-cup { transform-box: fill-box; transform-origin: center; transition: transform .4s var(--spring); }
+.hcw.drank .hcw-cup { transform: rotate(-14deg) translateY(-6px); }
+.hcw.drank .hcw-fizz { opacity: 1; animation: hcwFizz 1.4s ease-in-out infinite; }
+@keyframes hcwFizz { 0%, 100% { opacity: .4; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-4px); } }
+.hcg .hcg-m1, .hcg .hcg-m2 { transition: transform .3s var(--ease-out); }
+.hcg.snap .hcg-m1 { transform: translateX(32px); }
+.hcg.snap .hcg-m2 { transform: translateX(-32px); }
+.hcg.snap .hcg-spark { opacity: 1; animation: hcwFizz 1s ease-in-out 2; }
+
+/* 중2 IV 화학 랩 — 입자 스테퍼(양성자/중성자/전자 ± 조절) + 주기율표 */
+.ck-steppers { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.ck-step { display: flex; align-items: center; gap: 10px; }
+.ck-step > b { flex: 1; font-size: 13.5px; font-weight: 800; color: var(--ink); display: flex; align-items: center; gap: 7px; }
+.ck-step > b i { width: 12px; height: 12px; border-radius: 99px; flex: none; }
+.ck-step .ck-val { width: 30px; text-align: center; font-size: 15px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+.ck-btn {
+  width: 44px; height: 40px; border-radius: 12px; font-size: 19px; font-weight: 800; color: var(--sub);
+  background: var(--grad-card); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  transition: transform .12s var(--spring-soft);
+}
+.ck-btn:active { transform: scale(.94); }
+.ck-btn:disabled { opacity: .35; }
+.pt-grid { margin-top: 14px; display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; }
+.pt-cell {
+  aspect-ratio: 1; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--grad-card); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-weight: 800; color: var(--ink); transition: transform .12s var(--spring-soft), border-color .16s, background .2s;
+  padding: 0;
+}
+.pt-cell:active { transform: scale(.93); }
+.pt-cell small { font-size: 8.5px; font-weight: 700; color: var(--ter); line-height: 1; }
+.pt-cell b { font-size: 13.5px; line-height: 1.15; }
+.pt-cell.blank { visibility: hidden; }
+.pt-cell.sel { border-color: var(--subj-chem); box-shadow: 0 0 0 1.5px var(--subj-chem) inset, var(--sh-card); }
+.pt-cell.g1 { background: linear-gradient(180deg, #FFF3E4, #FFE7CC); border-color: #F0B46A; }
+.pt-cell.g18 { background: linear-gradient(180deg, #E8F4FF, #D4EAFF); border-color: #7FB0E0; }
+.pt-info {
+  margin-top: 12px; padding: 12px 14px; border-radius: var(--r-lg); background: var(--grad-card);
+  border: 1px solid var(--n200); box-shadow: var(--sh-card); font-size: 13.5px; line-height: 1.55; color: var(--sub);
+  min-height: 64px; word-break: keep-all;
+}
+.pt-info b { color: var(--ink); }
 
 /* 거울·렌즈 가로 벤치(lightBench) — sp3-* 가로 HUD 문법 재사용 + 단원색 오버라이드 */
 .lb-seg {

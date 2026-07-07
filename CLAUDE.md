@@ -55,7 +55,11 @@ src/
                   mirrorLens(가로 광학 벤치 4모드 — 거울/렌즈 공식으로 상 실시간)·
                   objectColorLab·colorMixLab(캔버스 lighter 진짜 가산혼합)·pixelLab(화소 돋보기+RGB 슬라이더)·
                   waveLab(이력 버퍼 파동 전파 + 제자리 탁구공)·soundLab(Web Audio + 오실로스코프)·
-                  hookLight(중2III 훅 8종 — hook.ts가 위임))
+                  hookLight(중2III 훅 8종 — hook.ts가 위임)·
+                  elementLab·moleculeLab(중2IV 원소/화합물·분자 조립+쪼개기)·
+                  atomLab·ionLab(원자 조립소 스테퍼·이온 공방 전자 떼기붙이기)·
+                  periodicLab(주기율표 1~20 탐험 DOM)·ionMoveLab(이온 이동 전기영동)·
+                  hookChem(중2IV 훅 6종 — hook.ts가 위임))
   engine/    matterSim — IV 단원 순수 입자 물리(프로토타입 Sim 이식, 렌더링 없음, 수치 불변)
   renderers/ meta(WebGL 메타볼 — FRAG 원본 이식, 볼 상한 48, dispose 시 lose_context)·
              dot(발광점 — WebGL 폴백 겸 "입자의 눈" 뷰)·palette(온도→hue 212→370, uniform 3색)
@@ -76,8 +80,12 @@ src/
              spaceFigures(VII 퀴즈 SVG + 태양 핫스팟 그림 + spaceMiniArt),
              lightKit(중2III 공용 — drawBeam 발광 광선(글로우 3층+광자 점 흐름)·각도 호·각도기·법선·
                       레이저/거울/눈 소품·capturePointer 합성 이벤트 안전 캡처),
-             lightFigures(중2III 퀴즈 SVG + 파동 핫스팟 그림 + lightMiniArt)
-  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금), unit1 … unit7, g2unit3(중2 III 빛과 파동)
+             lightFigures(중2III 퀴즈 SVG + 파동 핫스팟 그림 + lightMiniArt),
+             chemKit(중2IV 공용 — 원자 공/원자핵(+N)/전자(−)/이온식 렌더 + ELEMS(CPK 색·상대 크기)·
+                     결합 막대·formulaHtml. 입자 표현의 단일 진실 공급원 — 여기 관례를 반드시 따를 것),
+             chemFigures(중2IV 퀴즈 SVG + chemMiniArt)
+  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금), unit1 … unit7,
+             g2unit3(중2 III 빛과 파동), g2unit4(중2 IV 물질의 구성)
   screens/   splash, onboarding, home(게임 지도), done
 ```
 - **스텝 = `{ type, ...props }` 데이터.** `player`가 `registry`에서 `type`으로 렌더러를 찾아 그린다.
@@ -91,9 +99,10 @@ src/
 3. **새 단원 추가** → `content/unitN.ts` 만들고 `curriculum.ts`의 `CURRICULUM`에 넣는다.
    단원 내 레슨은 순차 잠금(직전 레슨 완료 시 해제).
 4. **단원 테마(색)** → `screens/home.ts`의 `UNIT_THEME`에 클래스 등록(u2=bio, u3=heat, u4=matter, u5=force,
-   u6=gas, u7=space, g2u3=light) + `ui.css`에 `.unit-band.X`/`.gm-terrain.X`/`.gm-path-*.X`/`.gm-node.X` 변형 + tokens에 그라데이션.
+   u6=gas, u7=space, g2u3=light, g2u4=chem) + `ui.css`에 `.unit-band.X`/`.gm-terrain.X`/`.gm-path-*.X`/`.gm-node.X` 변형 + tokens에 그라데이션.
    랩 안 킥커는 `concept({ kickerTone: "heat" })` 식으로. 새 색은 기존 단원과 겹치지 않게
-   (u4 matter #7C6BFF 보라 ↔ u7 space #4A54E1 딥 인디고 ↔ 중2III light #C838A6 오키드 마젠타처럼 뚜렷이 구분).
+   (u4 matter #7C6BFF 보라 ↔ u7 space #4A54E1 딥 인디고 ↔ 중2III light #C838A6 오키드 마젠타 ↔
+   중2IV chem #7CB024 라임 그린처럼 뚜렷이 구분).
 5. **중2(상급 학년) 단원 추가** → `Unit.grade: 2` + 단원 id는 `g2u<대단원 번호>`(레슨 id는 `g2u3l1`식),
    파일명 `content/g2unitN.ts`. 탭·배너의 "중2 ·" 접두는 grade 필드로 자동 표기(중1 단원은 grade 생략).
    교과서 텍스트는 `중학교 교과서/중2 단원별 - 텍스트 보존(OCR)/` PDF — pdftotext는 한글이 깨지므로
@@ -141,7 +150,8 @@ src/
 - **세포도 소기관 좌표는 figures.ts의 spots와 반드시 일치**시킬 것(핵 150,92 / 미토 225,62·82,150 등).
 - **단원별 훅 장면 파일**: III·IV=hook.ts 내부, V=hookForce.ts, VI=hookGas.ts, VII=hookSpace.ts,
   I=hookCiv.ts(colorcups·speaker·smokestack), II=hookBio.ts(cellzoom·stain·bodycount·ladybugs·batbird·foodweb),
-  중2III=hookLight.ts(mirrortown·coinmagic·darkroom·catmirror·spoon·pointillism·fishing·kalimba).
+  중2III=hookLight.ts(mirrortown·coinmagic·darkroom·catmirror·spoon·pointillism·fishing·kalimba),
+  중2IV=hookChem.ts(zoomtwo·signs·peekatom·menusort·springwater·magnetpull).
   recap 미니아트도 단원별: I=civFigures.ts, II=bioFigures.ts, III~=각 단원 figures. 새 훅은 scene 유니온을
   hook.ts·dsl.ts 양쪽에 등록하고, 상태 애니메이션 CSS는 ui.css의 해당 단원 훅 섹션에.
 - **손코딩 장면 SVG(훅 등)도 파운드리 재질 문법을 따른다** — 균일한 검은 외곽선 금지. 공식:
@@ -178,7 +188,8 @@ src/
   content에서 `curio: { q, a }`를 넘기면 랩 렌더러가 helper 뒤에 붙인다. 현재: u3 전도(이불)·복사(산꼭대기),
   u4 phaseNames(하얀 김), u5 gravityDrop(우주 정거장), u7 sunLab(흑점 역설), 중2III diffuseLab(하얀 종이)·
   refractLab(신기루)·mirrorImageLab(구급차 거울문자)·colorMixLab(물감 혼합)·waveLab(우주 폭발음)·
-  soundLab(헬륨 목소리). 오개념 교정형 질문이 기준.
+  soundLab(헬륨 목소리), 중2IV elementLab(수소도 쪼갤까)·moleculeLab(산소vs오존)·atomLab(전자는 왜 안 빨려드나)·
+  periodicLab(수소는 왜 예외)·ionLab(나트륨 원자vs이온)·ionMoveLab(안 보이는 이온을 어떻게). 오개념 교정형 질문이 기준.
 - hotspot 스텝은 `spot.photo`(+photoCredit)로 부위별 실사 사진 카드를 설명 아래에 띄울 수 있다(태양 지도가 기준).
 
 ## 개념 우선 + 스틱맨 만화 (steps/comic.ts)
@@ -258,6 +269,26 @@ src/
 - QA: `PORT=<포트> node qa/e2e-g2u3.mjs`(8레슨 전 스텝 실플레이 — 훅·랩 목표·예측·작살·벤치 4모드·퀴즈),
   `PORT=<포트> node qa/shot-g2u3.mjs`(주요 화면 18장 → qa/shots/). 5173이 점유되면 dev 서버가 5174로
   뜨니 PORT를 맞춘다. 진행도 시딩은 store.ts 실제 스키마(`lessons: {id:{done,acc,bestXp}}`, `totalXp`)로.
+
+## 중2 IV 물질의 구성 — 화학 랩 규칙
+- **입자 표현은 ui/chemKit이 유일한 진실 공급원** — 직접 색·크기를 하드코딩하지 말 것. 원소 색은
+  CPK 관례(H 흰·O 빨강·C 짙은회색·N 파랑·Cl 초록·S 노랑·Na 보라·금속들), 상대 크기 대소 관계 준수
+  (H가 가장 작고, 음이온 Cl⁻ > 원자 > 양이온 Na⁺). 원자핵은 붉은 구 + `+N`(양성자수) 라벨,
+  전자는 파란 (−) 알갱이. drawAtomBall·drawNucleus·drawElectron·drawIonLabel·formulaHtml만 쓴다.
+- **과학적 정확성(사용자 요구)**: 원자 종류는 양성자수가 정함(atomLab이 명시), 이온화는 전자 수만 변하고
+  양성자수 불변(ionLab: 전하 = 양성자수 − 전자수 정확 계산), NaCl은 분자가 아니라 Na⁺/Cl⁻ 교대 격자로
+  그린다(elementLab). 물 분자는 굽은형(104.5°), CO₂ 직선형, NH₃ 세 갈래 — GEOM 테이블(chemParticles).
+  이 교과서는 전자껍질/옥텟을 도입 안 함 → 전자는 보기 좋게 두 원에 분산(껍질 이론으로 오해 말 것).
+- moleculeLab은 목표 화학식의 종류별 개수가 정확히 맞아야 완성(초과 시 "빼기" 유도). split 모드는
+  물 분자를 쪼개 "분자가 원자로 나뉘면 성질을 잃는다"를 체험(원자→물성 없음).
+- ionMoveLab(전기영동): 양이온→(−)극·음이온→(+)극. 색 이온(Cu²⁺ 파랑·MnO₄⁻ 보라)만 보이고 짝 무색
+  이온(SO₄²⁻·K⁺)은 토글로 표시. 이동 속도는 넉넉히(62px/s — 14px/s는 답답해서 올림), flip 목표는
+  "극 바꾼 뒤 반대로 45px 이동"으로 감지(중앙 통과 순간만 잡으면 놓친다 — 실제 버그였음).
+- 만화: u6l2와 같은 codex 파이프라인으로 **g2u3l6 뉴턴 프리즘 7컷 발주 완료**(7/7, `qa/g2u3l6_imagen_prompts.txt`,
+  `qa/order-g2u3l6.sh`, 저장 `public/comics/g2u3l6/`). 손그림 스틱맨·글자 없음 스타일 유지, 분광→재합성 정확.
+  중2IV는 만화 없이 훅 6종으로 도입(분석 결과).
+- QA: `PORT=<포트> node qa/e2e-g2u4.mjs`(6레슨 실플레이 — 스테퍼·세그·분자 조립·전기영동 전부, 전 스텝 통과),
+  `qa/shot-g2u4.mjs`(랩 화면 캡처). 진행도 시딩·포트 규칙은 중2III과 동일.
 
 ## 메타볼 렌더러 (대단원 IV에서 이식 완료)
 - `sample/renderer-comparison.html`의 `FRAG` 셰이더 원본을 `renderers/meta.ts`로 **수치 그대로** 이식했다.

@@ -50,6 +50,11 @@ const ICONS: Record<string, IconDef> = {
   rgb: { v: '<circle cx="12" cy="8.6" r="4.9"/><circle cx="8.6" cy="14.6" r="4.9"/><circle cx="15.4" cy="14.6" r="4.9"/>', sw: 1.9 },
   wave: { v: '<path d="M2 12c1.6-4.8 3.4-7.2 5-7.2S10.4 9 12 12s3.4 7.2 5 7.2 3.4-2.4 5-7.2"/>', sw: 2.1 },
   note: { v: '<path d="M9.2 17.5V5.2l10-2v11.5"/><ellipse cx="6.6" cy="17.6" rx="2.7" ry="2.2"/><ellipse cx="16.6" cy="14.8" rx="2.7" ry="2.2"/>', sw: 2 },
+  // ── 중2 IV 물질의 구성 ──
+  atom: { v: '<circle cx="12" cy="12" r="2.2"/><ellipse cx="12" cy="12" rx="9" ry="3.8"/><ellipse cx="12" cy="12" rx="9" ry="3.8" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="3.8" transform="rotate(-60 12 12)"/>', sw: 1.7 },
+  grid: { v: '<rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 9.2h17M3.5 14.9h17M9.2 3.5v17M14.9 3.5v17"/>', sw: 1.8 },
+  molecule: { v: '<circle cx="7.5" cy="15.5" r="3.4"/><circle cx="16.5" cy="15.5" r="3.4"/><circle cx="12" cy="7.2" r="3.8"/><path d="M9.6 10.3l-1 2.1M14.4 10.3l1 2.1"/>', sw: 1.9 },
+  ionArrow: { v: '<circle cx="9" cy="13" r="6.2"/><path d="M9 10.4v5.2M6.4 13h5.2"/><path d="M16 4.5h4.5M18.25 2.25v4.5"/>', sw: 1.9 },
 };
 
 export function icon(
