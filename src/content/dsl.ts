@@ -4,9 +4,14 @@ import type { Block } from "../ui/blocks";
 
 type Obj = Record<string, unknown>;
 
+const RECAP_IMG_BASE = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/";
+/** recap '자세히'(more)용 발주 그림 임베드 — public/recap/<file>. 스타일은 .rc-more img가 담당. */
+export const rimg = (file: string, alt: string): string =>
+  `<img src="${RECAP_IMG_BASE}recap/${file}" alt="${alt}" loading="lazy" />`;
+
 export const concept = (o: {
   kicker?: string;
-  kickerTone?: "blue" | "bio" | "heat";
+  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo";
   title: string;
   lead?: string;
   blocks?: Block[];
@@ -50,7 +55,7 @@ export const binSort = (o: {
 
 export const hotspot = (o: {
   title: string; lead?: string; svg: string; dark?: boolean;
-  spots: { x: number; y: number; label: string; desc?: string; photo?: string; photoCredit?: string }[];
+  spots: { x: number; y: number; label: string; desc?: string; photo?: string; photoCredit?: string; photoCap?: string }[];
   mode?: "reveal" | "find"; explainGood?: string; explainBad?: string;
 }): Step => ({ type: "hotspot", ...o });
 
@@ -61,7 +66,9 @@ export const hook = (o: {
     | "polar" | "bubblewrap" | "foilballoon" | "pingpong"
     | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses"
     | "colorcups" | "speaker" | "smokestack"
-    | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb"
+    | "cellzoom" | "stain" | "bodycount" | "fingerprint" | "batbird" | "foodweb"
+    | "rings" | "deadsea" | "cocoa" | "fishmouth" | "gallium" | "milkzoom" | "soysauce" | "syrup" | "perfume"
+    | "stripemount" | "foolsgold" | "dolstatue" | "bookcliff" | "pressrock" | "cappadocia" | "gravestone" | "puzzlemap" | "quakenews" | "eggearth"
     | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba"
     | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull";
   choices?: string[]; cta?: string;
@@ -223,6 +230,42 @@ export const ionLab = (o: { title: string; lead?: string; cta?: string; curio?: 
   ({ type: "ionLab", ...o });
 export const ionMoveLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "ionMoveLab", ...o });
+
+// ── 중2 물질의 특성 단원(g2 I) 랩 ───────────────────────────
+export const densityLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "densityLab", ...o });
+export const densityPool = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "densityPool", ...o });
+export const solubilityLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "solubilityLab", ...o });
+export const gasFizz = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "gasFizz", ...o });
+export const meltCurve = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "meltCurve", ...o });
+export const sepFunnel = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "sepFunnel", ...o });
+export const recrystal = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "recrystal", ...o });
+export const distillLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "distillLab", ...o });
+
+// ── 중2 지권의 변화 단원(g2 II) 랩 ──────────────────────────
+export const earthCut3d = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "earthCut3d", ...o });
+export const streakLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "streakLab", ...o });
+export const coolingLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "coolingLab", ...o });
+export const strataLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "strataLab", ...o });
+export const foliationLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "foliationLab", ...o });
+export const rockCycle = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "rockCycle", ...o });
+export const driftLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "driftLab", ...o });
+export const plateMap = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "plateMap", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

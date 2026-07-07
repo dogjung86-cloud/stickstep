@@ -1,0 +1,17 @@
+# 지권의 변화 추가 발주 6장 — 대륙 이동 4단계 + 세계지도 + 판 구조 단면
+# 공통 스타일([0]~[5]):
+# Clean flat educational illustration for a middle-school science app,
+# soft matte colors, smooth rounded shapes, subtle paper-like texture,
+# square or specified aspect, NO text, NO labels, NO letters anywhere.
+
+[0] World map at the Pangaea stage: one single giant C-shaped supercontinent (Pangaea) centered on the map, surrounded by one vast blue ocean. Flat map style, warm tan-brown landmass with slight shading, deep blue ocean. Aspect 4:3. No text.
+
+[1] World map at the early breakup stage: the supercontinent has just split into two large masses (Laurasia to the north, Gondwana to the south) with a narrow new sea opening between them. Same flat style, tan land, blue ocean. Aspect 4:3. No text.
+
+[2] World map at the drifting stage: several continents clearly separated and moving apart — South America and Africa split with a young narrow Atlantic ocean between their matching coastlines, India moving north alone. Same flat style. Aspect 4:3. No text.
+
+[3] World map of the present day: modern continents in their current positions — Americas on the left, Africa and Eurasia in the middle, Australia lower right, Antarctica at the bottom. Same flat style, geographically recognizable shapes. Aspect 4:3. No text.
+
+[4] Simple clean world map, equirectangular-like flat projection, all modern continents in soft warm grey-beige on a calm deep-blue ocean, thin subtle coastline highlight, minimal and modern like an infographic base map. Wide aspect 2:1. Geographically accurate recognizable continent shapes. No text, no borders between countries.
+
+[5] Cross-section diagram of Earth's outermost layers for a textbook: side view showing (left) a thick continental crust block with gentle mountains on top, (right) a thin oceanic crust under a shallow blue sea, and beneath both a warm orange-brown upper mantle layer; the crust plus uppermost mantle reads as one rigid slab about the same total thickness across. Flat colors with slight gradients, clear layer boundaries. Wide aspect 16:9. No text, no arrows.

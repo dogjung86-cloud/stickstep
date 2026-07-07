@@ -65,6 +65,7 @@
 .q-figure.dark { background: radial-gradient(130% 100% at 50% -10%, var(--stage-2), var(--stage) 62%); border-color: var(--stage-line); }
 .q-figure-art { padding: 14px; }
 .q-figure-art svg { display: block; width: 100%; height: auto; max-height: 220px; }
+.q-figure-art img { display: block; width: 100%; height: auto; max-height: 260px; object-fit: contain; border-radius: 10px; }
 .ox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
 .ox-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 132px; border-radius: var(--r-lg); border: 1.5px solid var(--line); background: #fff; transition: transform .12s var(--ease), border-color .16s, background .16s, box-shadow .16s; }
 .ox-btn:active { transform: scale(.97); }
@@ -104,6 +105,8 @@
 .bin-chip-ic svg { width: 18px; height: 18px; }
 /* 발주 생물 일러스트(public/bio/*.webp) — 흰 배경이라 라운드로 감싸 카드/칩에 녹인다 */
 .bin-chip-ic .bio-ico { width: 24px; height: 24px; object-fit: cover; border-radius: 6px; background: #fff; }
+/* 사진 썸네일 칩(암석 분류 등) — 크기 고정 + 포인터 무시(칩 드래그 보존) */
+.bin-chip-ic img { max-width: 56px; max-height: 56px; object-fit: cover; border-radius: 10px; pointer-events: none; -webkit-user-drag: none; }
 .dk-face .bio-ico { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1px rgba(20,30,50,.06); }
 .bio-ico-broken { display: none; }
 .bins { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
@@ -120,6 +123,9 @@
 .hs-stage.dark { background: radial-gradient(130% 100% at 50% -10%, var(--stage-2), var(--stage) 62%); border-color: var(--stage-line); }
 .hs-art { padding: 12px; }
 .hs-art svg { display: block; width: 100%; height: auto; }
+/* 발주 이미지 세포도: 패딩 0으로 이미지가 스테이지를 꽉 채워 탭 좌표(%)가 이미지와 일치한다 */
+.hs-art:has(img) { padding: 0; }
+.hs-art img { display: block; width: 100%; height: auto; }
 .hs-dot { position: absolute; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 99px; background: rgba(49,130,246,.28); border: 2px solid var(--blue); display: grid; place-items: center; transition: transform .14s var(--spring), background .16s; }
 .hs-dot::after { content: ""; width: 7px; height: 7px; border-radius: 99px; background: var(--blue); }
 .hs-dot:active { transform: scale(.9); }
@@ -197,6 +203,7 @@
 .org-stage.in { opacity: 1; transform: none; }
 .org-art { display: grid; place-items: center; min-height: 130px; }
 .org-art svg { width: 100%; max-width: 200px; height: auto; }
+.org-art img.org-photo { width: 100%; max-width: 200px; height: auto; border-radius: 14px; }
 .org-step { font-size: 12.5px; font-weight: 800; color: var(--subj-bio-deep); margin-top: 8px; }
 .org-ex { font-size: 18px; font-weight: 800; color: var(--ink); margin-top: 2px; }
 .org-desc { font-size: 13.5px; line-height: 1.55; color: var(--sub); margin-top: 8px; word-break: keep-all; }
@@ -680,6 +687,9 @@
 .hook-choice:active { transform: scale(.98); }
 .hook-choice.sel { border-color: var(--blue); background: var(--blue-tint); box-shadow: 0 0 0 1px var(--blue) inset; }
 .hook-choice.dim { opacity: .45; }
+/* 오답 예측 — 부드럽게 붉히고, 옳은 예측은 나란히 초록으로 밝힌다(hookAsk) */
+.hook-choice.miss { border-color: var(--red); background: #FFF2F3; box-shadow: 0 0 0 1px var(--red) inset; opacity: .92; }
+.hook-choice.reveal { border-color: var(--green); background: #EFFBF4; box-shadow: 0 0 0 1px var(--green) inset; opacity: 1 !important; }
 
 /* ============================================================
    recap — 통일 개념 정리(스틱맨 + 카드)
@@ -761,6 +771,17 @@
   border-radius: var(--r-sm); padding: 9px 11px; font-size: 12.5px;
 }
 .rc-more .fun b { color: var(--subj-heat-press); }
+/* 자세히 = 문제집식 소제목 구조 — <b class="rm-h">왜 그럴까요?</b> 식으로 섹션을 나눈다 */
+.rc-more .rm-h {
+  display: block; margin: 12px 0 3px; font-size: 12px; font-weight: 800;
+  color: var(--n600); letter-spacing: -.01em;
+}
+.rc-more .rm-h::before {
+  content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 2px;
+  background: var(--rc, var(--blue)); margin-right: 6px; transform: rotate(45deg);
+}
+.rc-more .rm-h:first-child { margin-top: 2px; }
+.rc-more img { display: block; width: 100%; border-radius: 10px; margin: 8px 0 2px; }
 
 /* ============================================================
    보너스 미니게임 — 지도 노드 + 단열 디펜스 화면
@@ -1175,9 +1196,9 @@
 .gm-node.light:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-light); }
 .kicker.light { background: var(--subj-light-tint); color: var(--subj-light-press); }
 
-/* ---------- 중2 IV 물질의 구성 단원 테마(chem · 라임 그린) ---------- */
-.unit-band.chem { background: var(--grad-chem); }
-.gm-terrain.chem {
+/* ---------- 중2 IV 물질의 구성 단원 테마(atom · 라임 그린) ---------- */
+.unit-band.atom { background: var(--grad-atom); }
+.gm-terrain.atom {
   background:
     radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
     radial-gradient(60% 22% at 86% 26%, #EAF5D2, transparent 72%),
@@ -1186,12 +1207,460 @@
     radial-gradient(70% 24% at 20% 94%, #DAEDB8, transparent 72%),
     linear-gradient(180deg, #F6FBEA 0%, #EDF6D8 55%, #E2F0C6 100%);
 }
-.gm-path-glow.chem { stroke: rgba(124,176,36,.22); }
-.gm-path-done.chem { stroke: #7CB024; }
+.gm-path-glow.atom { stroke: rgba(124,176,36,.22); }
+.gm-path-done.atom { stroke: #7CB024; }
+.gm-node.atom.now .gm-med, .gm-node.atom.done .gm-med { background: var(--grad-medallion-atom); }
+.gm-node.atom .gm-ring { border-color: rgba(124,176,36,.55); }
+.gm-node.atom:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-atom); }
+.kicker.atom { background: var(--subj-atom-tint); color: var(--subj-atom-press); }
+/* ---------- 중2 I 물질의 특성 테마(chem · 지시약 로즈) ---------- */
+.unit-band.chem { background: var(--grad-chem); }
+.gm-terrain.chem {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.55), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #FFE0EC, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #FFD6E6, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #FFDCE9, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #FBCBDE, transparent 72%),
+    linear-gradient(180deg, #FFF3F8 0%, #FFE7F0 55%, #FAD9E7 100%);
+}
+.gm-path-glow.chem { stroke: rgba(230, 73, 128, .2); }
+.gm-path-done.chem { stroke: #E64980; }
 .gm-node.chem.now .gm-med, .gm-node.chem.done .gm-med { background: var(--grad-medallion-chem); }
-.gm-node.chem .gm-ring { border-color: rgba(124,176,36,.55); }
+.gm-node.chem .gm-ring { border-color: rgba(230, 73, 128, .5); }
 .gm-node.chem:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-chem); }
 .kicker.chem { background: var(--subj-chem-tint); color: var(--subj-chem-press); }
+/* 중2 I 랩 공용 — 목표 칩 로즈 변형 */
+.pn-badge.chem.on {
+  border-style: solid; border-color: transparent; color: #fff;
+  background: linear-gradient(150deg, #FF7AA8 0%, #E64980 55%, #D6336C 100%);
+  box-shadow: 0 6px 14px -4px rgba(230, 73, 128, .55);
+}
+
+/* ---------- 중2 II 지권의 변화 테마(geo · 지층 브라운) ---------- */
+.unit-band.geo { background: var(--grad-geo); }
+.gm-terrain.geo {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.5), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #F2E2C8, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #EDD9BC, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #EEDcc2, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #E5CCA8, transparent 72%),
+    linear-gradient(180deg, #FAF3E6 0%, #F2E5CE 55%, #E8D5B4 100%);
+}
+.gm-path-glow.geo { stroke: rgba(169, 113, 59, .22); }
+.gm-path-done.geo { stroke: #A9713B; }
+.gm-node.geo.now .gm-med, .gm-node.geo.done .gm-med { background: var(--grad-medallion-geo); }
+.gm-node.geo .gm-ring { border-color: rgba(169, 113, 59, .55); }
+.gm-node.geo:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-geo); }
+.kicker.geo { background: var(--subj-geo-tint); color: var(--subj-geo-press); }
+.pn-badge.geo.on {
+  border-style: solid; border-color: transparent; color: #fff;
+  background: linear-gradient(150deg, #C89459 0%, #A9713B 55%, #8C5A28 100%);
+  box-shadow: 0 6px 14px -4px rgba(169, 113, 59, .55);
+}
+/* ---------- 중2 II 훅 장면(hookGeo) 상태 애니메이션 ---------- */
+.hg2-mount svg, .hg2-pyrite svg, .hg2-statues svg, .hg2-cliff svg, .hg2-press svg,
+.hg2-fairy svg, .hg2-grave svg, .hg2-drift svg, .hg2-news svg, .hg2-eggearth svg {
+  display: block; width: 100%; max-width: 300px; margin: 0 auto;
+}
+
+/* stripemount — 탭마다 색 층 한 겹 */
+.hg2-mount { cursor: pointer; touch-action: manipulation; }
+.hg2-mount .hg2-band { opacity: 0; transform: translateY(5px); transition: opacity .5s var(--ease), transform .5s var(--ease); }
+.hg2-mount .hg2-band.on { opacity: 1; transform: translateY(0); }
+.hg2-mount.reveal .hg2-shine { animation: hg2Flash .7s ease-out; }
+@keyframes hg2Flash { 0% { opacity: 0; } 30% { opacity: .9; } 100% { opacity: 0; } }
+
+/* foolsgold — 뒤집기 반짝 → 조흔판 문지르기 → 검은 조흔 */
+.hg2-pyrite { cursor: pointer; touch-action: manipulation; }
+.hg2-pyrite .hg2-nug-flip { transform-box: fill-box; transform-origin: center; }
+.hg2-pyrite.spin .hg2-nug-flip { animation: hg2Spin .7s var(--ease); }
+@keyframes hg2Spin { 0% { transform: scaleX(1); } 35% { transform: scaleX(.16); } 70% { transform: scaleX(1.06); } 100% { transform: scaleX(1); } }
+.hg2-pyrite.spin .hg2-sparkle { animation: hg2Flash .8s ease-out; }
+.hg2-pyrite .hg2-nug { transform-box: fill-box; transform-origin: center; }
+.hg2-pyrite.rubbed .hg2-nug { animation: hg2Rub 1.15s var(--ease) forwards; }
+@keyframes hg2Rub {
+  0% { transform: translate(0, 0); }
+  30% { transform: translate(75px, 53px); }
+  45% { transform: translate(60px, 55px); }
+  60% { transform: translate(88px, 55px); }
+  75% { transform: translate(62px, 55px); }
+  100% { transform: translate(78px, 48px); }
+}
+.hg2-pyrite .hg2-streak { transform-box: fill-box; transform-origin: left center; transform: scaleX(0); transition: transform .5s .6s var(--ease); }
+.hg2-pyrite.rubbed .hg2-streak { transform: scaleX(1); }
+
+/* dolstatue — 돋보기 인셋 팝 + 질감 전환 */
+.hg2-statues { cursor: pointer; }
+.hg2-statues .hg2-statue { transform-box: fill-box; transform-origin: 50% 100%; transition: transform .25s var(--spring-soft); }
+.hg2-statues .hg2-statue.sel { transform: scale(1.05); }
+.hg2-statues .hg2-lens { opacity: 0; transform-box: fill-box; transform-origin: center; transform: scale(.72); transition: opacity .35s var(--ease), transform .45s var(--spring-bounce); pointer-events: none; }
+.hg2-statues.showdol .hg2-lens, .hg2-statues.showhae .hg2-lens { opacity: 1; transform: scale(1); }
+.hg2-statues .hg2-tex, .hg2-statues .hg2-tail-l, .hg2-statues .hg2-tail-r { opacity: 0; transition: opacity .3s var(--ease); }
+.hg2-statues.showdol .hg2-tex-dol, .hg2-statues.showdol .hg2-tail-l { opacity: 1; }
+.hg2-statues.showhae .hg2-tex-hae, .hg2-statues.showhae .hg2-tail-r { opacity: 1; }
+.hg2-statues .hg2-glint path, .hg2-statues .hg2-glint2 path { transform-box: fill-box; transform-origin: center; animation: hg2Twinkle 1.6s ease-in-out infinite; }
+.hg2-statues .hg2-glint path:nth-child(2), .hg2-statues .hg2-glint2 path:nth-child(2) { animation-delay: .5s; }
+@keyframes hg2Twinkle { 0%, 100% { transform: scale(1); opacity: .85; } 50% { transform: scale(1.25); opacity: 1; } }
+
+/* bookcliff — 위로 드래그 스캔(JS가 --scan 0..1) */
+.hg2-cliff { touch-action: none; cursor: grab; }
+.hg2-cliff:active { cursor: grabbing; }
+.hg2-cliff .hg2-scan { transform: translateY(calc(var(--scan, 0) * -86px)); }
+.hg2-cliff.top .hg2-scan path { animation: hg2Flash 1s ease-out 2; }
+
+/* pressrock — 홀드 압축(변형은 JS가 attr로), 완료 시 칩 정렬 탄성 */
+.hg2-press { cursor: pointer; touch-action: manipulation; }
+.hg2-press .hg2-squeeze { transition: opacity .25s; }
+.hg2-press.pressing .hg2-squeeze { opacity: .85; animation: hg2Heatwave 1s ease-in-out infinite; }
+@keyframes hg2Heatwave { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+.hg2-press.done .hg2-chips { transform-box: fill-box; transform-origin: center; animation: hg2Jiggle .7s var(--spring-bounce); }
+@keyframes hg2Jiggle { 0% { transform: scale(1.05, .92); } 60% { transform: scale(.98, 1.03); } 100% { transform: scale(1); } }
+
+/* cappadocia — 침식 먼지·바람, 끝에 모자 돌 흔들 */
+.hg2-fairy .hg2-dust circle { opacity: 0; }
+.hg2-fairy.eroding .hg2-dust circle { animation: hg2Dust 1s ease-out infinite; }
+.hg2-fairy.eroding .hg2-dust circle:nth-child(2) { animation-delay: .25s; }
+.hg2-fairy.eroding .hg2-dust circle:nth-child(3) { animation-delay: .1s; }
+.hg2-fairy.eroding .hg2-dust circle:nth-child(4) { animation-delay: .35s; }
+@keyframes hg2Dust { 0% { opacity: 0; transform: translate(0, 0); } 25% { opacity: .9; } 100% { opacity: 0; transform: translate(16px, -8px); } }
+.hg2-fairy.eroding .hg2-wind { animation: hg2Wind 1.2s ease-in-out infinite; }
+@keyframes hg2Wind { 0%, 100% { transform: translateX(0); opacity: .35; } 50% { transform: translateX(6px); opacity: .8; } }
+.hg2-fairy .hg2-caprock { transform-box: fill-box; transform-origin: 50% 100%; }
+.hg2-fairy.teeter .hg2-caprock { animation: hg2Teeter 1.5s ease-in-out infinite; }
+@keyframes hg2Teeter { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(2deg); } }
+
+/* gravestone — st1..st4 누적: 획 흐려짐 → 금 → 이끼 → 모서리 탈락 */
+.hg2-grave { cursor: pointer; touch-action: manipulation; }
+.hg2-grave .hg2-glyph { transition: opacity .7s var(--ease); }
+.hg2-grave.st1 .hg2-glyph { opacity: .72; }
+.hg2-grave.st2 .hg2-glyph { opacity: .5; }
+.hg2-grave.st3 .hg2-glyph { opacity: .3; }
+.hg2-grave.st4 .hg2-glyph { opacity: .13; }
+.hg2-grave .hg2-crack, .hg2-grave .hg2-chipoff { opacity: 0; transition: opacity .7s var(--ease); }
+.hg2-grave .hg2-moss { opacity: 0; transform-box: fill-box; transform-origin: center; transform: scale(.55); transition: opacity .6s var(--ease), transform .6s var(--spring-bounce); }
+.hg2-grave.st2 .hg2-crack1 { opacity: 1; }
+.hg2-grave.st3 .hg2-crack2 { opacity: 1; }
+.hg2-grave.st3 .hg2-moss1 { opacity: 1; transform: scale(1); }
+.hg2-grave.st4 .hg2-moss2 { opacity: 1; transform: scale(1); }
+.hg2-grave.st4 .hg2-chipoff { opacity: 1; }
+
+/* puzzlemap — 드래그(JS가 style.transform), 스냅 시 이음새 글로우 + 별 */
+.hg2-drift { touch-action: none; }
+.hg2-drift .hg2-africa { cursor: grab; }
+.hg2-drift.dragging .hg2-africa { cursor: grabbing; }
+.hg2-drift.fit .hg2-africa { transition: transform .35s var(--spring-bounce); }
+.hg2-drift .hg2-seam { opacity: 0; }
+.hg2-drift.fit .hg2-seam { opacity: .9; animation: hg2Seam 1s ease-out .15s both; }
+@keyframes hg2Seam { from { stroke-dashoffset: 140; } to { stroke-dashoffset: 0; } }
+.hg2-drift .hg2-stars { opacity: 0; }
+.hg2-drift.fit .hg2-stars { opacity: 1; }
+.hg2-drift.fit .hg2-stars path { transform-box: fill-box; transform-origin: center; animation: hg2Twinkle 1.2s ease-in-out 2; }
+.hg2-drift.fit .hg2-stars path:nth-child(2) { animation-delay: .3s; }
+.hg2-drift.fit .hg2-stars path:nth-child(3) { animation-delay: .6s; }
+
+/* quakenews — 속보 점 펄스 + 파문(누적 유지) */
+.hg2-news .hg2-quake { opacity: 0; transition: opacity .3s var(--ease); }
+.hg2-news .hg2-quake.on { opacity: 1; }
+.hg2-news .hg2-quake.on .hg2-qdot { transform-box: fill-box; transform-origin: center; animation: hg2Blink 1.3s ease-in-out infinite; }
+.hg2-news .hg2-quake.on .hg2-ring { transform-box: fill-box; transform-origin: center; animation: hg2Ripple 1.7s ease-out infinite; }
+@keyframes hg2Blink { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.4); } }
+@keyframes hg2Ripple { 0% { transform: scale(.35); opacity: .95; } 100% { transform: scale(2.2); opacity: 0; } }
+.hg2-news .hg2-live { transform-box: fill-box; transform-origin: center; animation: hg2Blink 1.1s ease-in-out infinite; }
+
+/* eggearth — 칼 내려찍기 → 두 쪽이 스프링으로 벌어지며 단면 등장 */
+.hg2-eggearth { cursor: pointer; touch-action: manipulation; }
+.hg2-eggearth .hg2-egghalves { opacity: 0; }
+.hg2-eggearth.cut .hg2-eggwhole { opacity: 0; transition: opacity .2s .35s; }
+.hg2-eggearth.cut .hg2-egghalves { opacity: 1; transition: opacity .2s .35s; }
+.hg2-eggearth .hg2-half-l, .hg2-eggearth .hg2-half-r { transform-box: fill-box; transform-origin: center; }
+.hg2-eggearth.cut .hg2-half-l { animation: hg2HalfL .7s var(--spring-bounce) .4s both; }
+.hg2-eggearth.cut .hg2-half-r { animation: hg2HalfR .7s var(--spring-bounce) .4s both; }
+@keyframes hg2HalfL { from { transform: translateX(14px); } to { transform: translateX(0); } }
+@keyframes hg2HalfR { from { transform: translateX(-22px); } to { transform: translateX(0); } }
+.hg2-eggearth .hg2-knifeg { transform-box: fill-box; transform-origin: center; }
+.hg2-eggearth.cut .hg2-knifeg { animation: hg2Chop .65s var(--ease) both; }
+@keyframes hg2Chop { 0% { transform: translateY(0); } 45% { transform: translateY(56px); } 70% { transform: translateY(50px); opacity: 1; } 100% { transform: translateY(-4px); opacity: 0; } }
+.hg2-eggearth.cut .hg2-cutflash { animation: hg2Flash .5s ease-out .32s; }
+
+/* driftLab — 대륙 이동 지도·타임라인·증거 토글 */
+.df-stage { aspect-ratio: 2 / 1; min-height: 0; height: auto; padding: 0; overflow: hidden; position: relative; }
+.df-map { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.df-blend { transition: none; }
+.df-overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.df-age {
+  position: absolute; left: 10px; top: 10px; padding: 6px 12px; border-radius: 99px;
+  background: rgba(15,24,38,.72); color: #F2E8D8; font-size: 12.5px; font-weight: 800;
+  border: 1px solid rgba(255,255,255,.14);
+}
+.df-timeline { margin-top: 12px; }
+.df-track {
+  position: relative; height: 34px; border-radius: 99px; background: var(--n100);
+  box-shadow: var(--sh-inset); touch-action: none; cursor: pointer;
+}
+.df-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 99px; background: linear-gradient(90deg, rgba(200,148,89,.25), rgba(169,113,59,.45)); }
+.df-tick { position: absolute; top: 50%; width: 3px; height: 12px; border-radius: 2px; background: var(--n400); transform: translate(-50%, -50%); }
+.df-thumb {
+  position: absolute; left: 0%; top: 50%; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--grad-medallion-geo); box-shadow: var(--sh-medallion);
+  transform: translate(-50%, -50%); pointer-events: none;
+}
+.df-evrow { display: flex; gap: 8px; margin-top: 12px; }
+.df-ev {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 10px 6px; border-radius: var(--r-md); font-size: 12.5px; font-weight: 700;
+  background: var(--n0); border: 1.5px solid var(--n200); color: var(--n600); box-shadow: var(--sh-card);
+  transition: all .16s var(--ease-out);
+}
+.df-ev:active { transform: scale(.97); }
+.df-ev.on { border-color: var(--subj-geo); color: var(--subj-geo-press); background: var(--subj-geo-tint); }
+
+/* rockCycle — 가로 무대 하단 사건 버튼 바 */
+.rc-actions {
+  position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
+  display: flex; gap: 8px; padding: 8px 10px; border-radius: 16px;
+  background: rgba(15,24,38,.72); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.12);
+}
+.rc-act {
+  padding: 9px 13px; border-radius: 12px; font-size: 12.5px; font-weight: 700;
+  color: #C6D2E4; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+  transition: transform .14s var(--spring-soft), background .16s, color .16s;
+  white-space: nowrap;
+}
+.rc-act:active { transform: scale(.94); }
+.rc-act.ok { color: #FFE9C8; background: rgba(200,148,89,.28); border-color: rgba(200,148,89,.5); }
+
+/* 가로 3D 무대의 정보 카드(earthCut3d 등) — 우측 다크 글래스 */
+.sp3-infocard {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  width: min(240px, 34%); padding: 14px 15px; border-radius: 16px;
+  background: rgba(15, 24, 38, .78); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.14); color: #E8EEF8;
+  transition: opacity .25s var(--ease), transform .3s var(--ease);
+}
+.sp3-infocard.hide { opacity: 0; pointer-events: none; transform: translateY(-46%); }
+.sp3-infocard .ic-name { font-size: 17px; font-weight: 800; margin-bottom: 7px; }
+.sp3-infocard .ic-row { display: flex; gap: 8px; font-size: 12px; color: #C6D2E4; margin-top: 3px; }
+.sp3-infocard .ic-row b { flex: none; color: #8FA2BE; font-weight: 700; }
+.sp3-infocard .ic-desc { margin-top: 8px; font-size: 12px; line-height: 1.55; color: #D8E2F0; word-break: keep-all; }
+
+/* ---------- 중2 I 훅 장면(hookChem) 상태 애니메이션 ---------- */
+/* rings — 탭하면 굴러 반짝 */
+.hc-rings .hc-ring-spin { transform-box: fill-box; transform-origin: center; }
+.hc-rings .hc-ring.spin .hc-ring-spin { animation: hcSpin .7s var(--ease); }
+@keyframes hcSpin { 0% { transform: scaleX(1); } 35% { transform: scaleX(.18); } 70% { transform: scaleX(1.06); } 100% { transform: scaleX(1); } }
+.hc-rings .hc-ring.spin .hc-sparkle { animation: hcFlash .8s ease-out; }
+@keyframes hcFlash { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
+
+/* deadsea — 꾹 누르면 잠기고, 놓으면 뿅 떠오름 */
+.hc-deadsea { cursor: pointer; touch-action: manipulation; }
+.hc-deadsea .hc-floatman { transform-box: fill-box; transform-origin: center; transition: transform .5s var(--ease); }
+.hc-deadsea.dunk .hc-floatman { transform: translateY(16px) rotate(-2deg); }
+.hc-deadsea.bob .hc-floatman { animation: hcBob .9s var(--spring-bounce); }
+@keyframes hcBob { 0% { transform: translateY(16px); } 45% { transform: translateY(-7px) rotate(2deg); } 75% { transform: translateY(3px); } 100% { transform: translateY(0); } }
+.hc-deadsea .hc-wave { animation: hcWave 3.2s ease-in-out infinite; }
+@keyframes hcWave { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(7px); } }
+
+/* cocoa — 붓기 낙하 + 김 */
+.hc-cocoa .hc-steam path { animation: hcSteam 2.6s ease-in-out infinite; }
+.hc-cocoa .hc-steam path:nth-child(2) { animation-delay: .5s; }
+.hc-cocoa .hc-steam path:nth-child(3) { animation-delay: 1s; }
+@keyframes hcSteam { 0%, 100% { opacity: .35; transform: translateY(0); } 50% { opacity: .8; transform: translateY(-3px); } }
+.hc-cocoa.pour .hc-spoonfall { animation: hcPour .55s ease-in; }
+@keyframes hcPour { 0% { opacity: 1; transform: translateY(-8px); } 100% { opacity: 0; transform: translateY(26px); } }
+.hc-cocoa .hc-pile { transition: all .3s var(--ease); }
+
+/* fishmouth — 해 올리면 한낮, 물고기 수면 뻐끔 */
+.hc-fishpond { touch-action: none; cursor: grab; }
+.hc-fishpond svg { filter: brightness(calc(1 + var(--heat, 0) * .12)); }
+.hc-fishpond .hc-fish-a, .hc-fishpond .hc-fish-b, .hc-fishpond .hc-fish-c { transition: transform 1.4s var(--ease); }
+.hc-fishpond.noon .hc-fish-a { transform: translate(88px, 88px) scale(1.15); }
+.hc-fishpond.noon .hc-fish-b { transform: translate(156px, 92px) scale(-0.95, 0.95); }
+.hc-fishpond.noon .hc-fish-c { transform: translate(122px, 86px) scale(.8); }
+.hc-fishpond.noon .hc-fish-a, .hc-fishpond.noon .hc-fish-b, .hc-fishpond.noon .hc-fish-c { animation: hcGasp 1.1s ease-in-out infinite; }
+@keyframes hcGasp { 0%, 100% { opacity: 1; } 50% { opacity: .82; } }
+.hc-fishpond.noon .hc-bubbles { opacity: 1; animation: hcBubb 1.6s ease-in-out infinite; }
+@keyframes hcBubb { 0% { transform: translateY(3px); opacity: .4; } 60% { opacity: 1; } 100% { transform: translateY(-4px); opacity: 0; } }
+
+/* gallium — 홀드하면 --melt 진행: 동전이 사그라들고 웅덩이로 */
+.hc-gallium { cursor: pointer; touch-action: manipulation; }
+.hc-gallium .hc-spoon-solid { transform-box: fill-box; transform-origin: 50% 90%; transform: scaleY(calc(1 - var(--melt, 0) * .82)); opacity: calc(1 - var(--melt, 0) * .55); transition: transform .12s linear, opacity .12s linear; }
+.hc-gallium .hc-spoon-melt { opacity: calc(var(--melt, 0) * var(--melt, 0)); transition: opacity .12s linear; }
+.hc-gallium.warming .hc-heatwave { opacity: .8; animation: hcHeat 1.2s ease-in-out infinite; }
+@keyframes hcHeat { 0%, 100% { transform: translateY(0); opacity: .4; } 50% { transform: translateY(-4px); opacity: .9; } }
+.hc-gallium.melted .hc-spoon-melt { animation: hcJiggle .8s var(--spring-bounce); }
+@keyframes hcJiggle { 0% { transform: scale(1.06, .9); } 60% { transform: scale(.97, 1.04); } 100% { transform: scale(1); } }
+
+/* milkzoom — 확대경 팝 */
+.hc-milk { cursor: pointer; }
+.hc-milk .hc-lensview { transform-box: fill-box; transform-origin: center; transform: scale(.6); transition: opacity .4s var(--ease), transform .5s var(--spring-bounce); }
+.hc-milk.zoom .hc-lensview { opacity: 1 !important; transform: scale(1); }
+.hc-milk.zoom .hc-drops circle { animation: hcDrift 3s ease-in-out infinite alternate; }
+.hc-milk.zoom .hc-drops circle:nth-child(2n) { animation-duration: 3.8s; animation-direction: alternate-reverse; }
+@keyframes hcDrift { from { transform: translate(0, 0); } to { transform: translate(3px, -2px); } }
+
+/* soysauce — 흔들기 → 두 층 정착 */
+.hc-sauce { cursor: pointer; touch-action: manipulation; }
+.hc-sauce.shake .hc-bottle { animation: hcShake .5s ease-in-out; }
+@keyframes hcShake { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-7deg); } 50% { transform: rotate(6deg); } 75% { transform: rotate(-4deg); } }
+.hc-sauce .hc-mixed, .hc-sauce .hc-split { transition: opacity 1.2s var(--ease); }
+.hc-sauce.settle .hc-mixed { opacity: 0; }
+.hc-sauce.settle .hc-split { opacity: 1; }
+
+/* syrup — 냉장고 문 열림 */
+.hc-syrup { cursor: pointer; }
+.hc-syrup .hc-door { transform-box: fill-box; transform-origin: left center; transition: transform .6s var(--ease), opacity .5s; }
+.hc-syrup.open .hc-door { transform: perspective(600px) rotateY(-74deg); opacity: .25; }
+.hc-syrup .hc-inside { transition: opacity .5s .15s; }
+.hc-syrup.open .hc-inside { opacity: 1 !important; }
+.hc-syrup.open .hc-crystals path { animation: hcTwinkle 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.hc-syrup.open .hc-crystals path:nth-child(2) { animation-delay: .4s; }
+.hc-syrup.open .hc-crystals path:nth-child(3) { animation-delay: .8s; }
+@keyframes hcTwinkle { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+.hc-syrup.open .hc-sparkle2 { animation: hcFlash 1.4s ease-out .3s; }
+
+/* perfume — 점화: 불꽃·김·낙하 방울 */
+.hc-perfume .hc-flame2 { transform-box: fill-box; transform-origin: 50% 90%; }
+.hc-perfume.lit .hc-flame2 { opacity: 1; animation: hcFlick .7s ease-in-out infinite alternate; }
+@keyframes hcFlick { from { transform: scale(1) rotate(-2deg); } to { transform: scale(1.08, 1.14) rotate(2deg); } }
+.hc-perfume.lit .hc-vapor { opacity: .85; }
+.hc-perfume.lit .hc-vapor path { animation: hcSteam 2s ease-in-out infinite; }
+.hc-perfume.lit .hc-vapor path:nth-child(2) { animation-delay: .4s; }
+.hc-perfume.lit .hc-vapor path:nth-child(3) { animation-delay: .8s; }
+.hc-perfume.dripping .hc-dropfall { animation: hcDrip .6s ease-in; }
+@keyframes hcDrip { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(18px); } }
+.hc-perfume .hc-fill { transition: all .5s var(--ease); }
+
+/* ---------- 학년 전환(중1 ⇄ 중2) ---------- */
+.grade-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 22px 4px; }
+.grade-seg { display: inline-flex; gap: 3px; background: var(--n100); border-radius: 99px; padding: 3px; box-shadow: var(--sh-inset); }
+.gseg { padding: 7px 16px; border-radius: 99px; font-size: 13.5px; font-weight: 800; color: var(--n600); transition: all .18s var(--ease-out); }
+.gseg.on { background: var(--n0); color: var(--n900); box-shadow: var(--sh-card); }
+.gseg:active { transform: scale(.96); }
+.grade-hint { font-size: 11.5px; font-weight: 600; color: var(--n500); letter-spacing: -.01em; }
+
+/* 준비 중 단원 — 탭 톤 다운 + 안내 카드 */
+.unit-tab.soon { color: var(--n500); }
+.unit-tab.soon.on { background: linear-gradient(180deg, #6B7684, #4E5968); }
+.coming-card {
+  margin: 18px 22px 26px; padding: 30px 22px; border-radius: var(--r-xl);
+  background: var(--grad-card); box-shadow: var(--sh-card);
+  display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;
+}
+.cc-med {
+  width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center; color: #fff;
+  background: var(--grad-medallion); box-shadow: var(--sh-medallion); margin-bottom: 4px;
+}
+.cc-title { font-size: 16.5px; font-weight: 800; color: var(--n900); }
+.cc-desc { font-size: 13.5px; color: var(--n600); line-height: 1.5; word-break: keep-all; }
+
+/* ---------- 프리미엄 잠금 노드(골드 크라운) ---------- */
+.gm-node.prem .gm-med {
+  background: var(--grad-gold);
+  box-shadow: var(--sh-medallion);
+  color: #fff;
+}
+.gm-node.prem .gm-med svg { color: #fff; filter: drop-shadow(0 1px 1px rgba(160,100,10,.35)); }
+.gm-node.prem .gm-label { color: var(--n700); }
+.gm-ribbon.gold { background: linear-gradient(180deg, #FFB937, #F5A623); color: #5C3D06; }
+.gm-ribbon.gold::after { background: #F5A623; }
+
+/* ---------- 페이월 ---------- */
+.pw-body { padding-top: 4px; }
+.pw-hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 10px 0 22px; }
+.pw-crown {
+  width: 88px; height: 88px; border-radius: 50%; display: grid; place-items: center; color: #fff;
+  background: var(--grad-gold); box-shadow: var(--sh-medallion);
+}
+.pw-crown svg { filter: drop-shadow(0 2px 2px rgba(160,100,10,.35)); }
+.pw-title { font-size: 22px; font-weight: 800; color: var(--n900); letter-spacing: -.02em; }
+.pw-sub { font-size: 14px; color: var(--n600); line-height: 1.55; word-break: keep-all; max-width: 300px; }
+.pw-benefits { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+.pw-item {
+  display: flex; align-items: center; gap: 13px; padding: 14px 16px;
+  border-radius: var(--r-md); background: var(--grad-card); box-shadow: var(--sh-card);
+}
+.pw-ico {
+  flex: none; width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center;
+  background: #FFF6E4; color: #D18708;
+}
+.pw-t { font-size: 14.5px; font-weight: 800; color: var(--n900); }
+.pw-s { font-size: 12.5px; color: var(--n600); margin-top: 2px; }
+.pw-price {
+  padding: 18px; border-radius: var(--r-lg); text-align: center;
+  background: linear-gradient(150deg, #FFF9EC 0%, #FFF3D9 100%);
+  box-shadow: var(--sh-card), inset 0 0 0 1.5px rgba(245,166,35,.35);
+  margin-bottom: 10px;
+}
+.pw-badge {
+  display: inline-block; padding: 4px 12px; border-radius: 99px; font-size: 11.5px; font-weight: 800;
+  background: linear-gradient(180deg, #FFB937, #F5A623); color: #5C3D06; margin-bottom: 8px;
+}
+.pw-amount { font-size: 28px; font-weight: 800; color: var(--n900); letter-spacing: -.02em; }
+.pw-note { font-size: 12.5px; color: var(--n600); margin-top: 4px; }
+.pw-restore { width: 100%; padding: 12px 0 2px; font-size: 13px; font-weight: 600; color: var(--n500); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- 앱바 확장(과목·프로필 버튼) + 검토 모드 ---------- */
+.ab-side { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.abtn {
+  flex: none; width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center;
+  background: var(--n0); border: 1px solid var(--n200); box-shadow: var(--sh-card); color: var(--n600);
+  transition: transform .14s var(--spring-soft), background .16s;
+}
+.abtn:active { transform: scale(.94); background: var(--n100); }
+.appbar .brand { cursor: default; user-select: none; -webkit-user-select: none; white-space: nowrap; }
+.appbar .brand.review { color: var(--subj-chem); } /* 검토 모드 표시 — 브랜드가 로즈로 */
+
+/* ---------- 과목 허브 ---------- */
+.subj-screen { position: relative; }
+.subj-brand { font-size: 20px; font-weight: 800; letter-spacing: -.04em; }
+.subj-body-wrap { position: relative; z-index: 1; padding-top: 10px; }
+.subj-doodles { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.subj-doodle { position: absolute; opacity: .38; }
+.subj-list { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
+.subj-card {
+  display: flex; align-items: center; gap: 14px; text-align: left; width: 100%;
+  padding: 16px; border-radius: var(--r-lg); background: var(--grad-card);
+  box-shadow: var(--sh-raise); border: 1.5px solid transparent;
+  transition: transform .16s var(--spring-soft), box-shadow .2s var(--ease-out);
+}
+.subj-card:active { transform: scale(.982); }
+.subj-card.sci { border-color: rgba(49,130,246,.35); }
+.subj-card.soon { background: var(--n25); box-shadow: var(--sh-card); }
+.subj-card.soon .subj-body, .subj-card.soon .subj-ico { opacity: .55; }
+.subj-ava { flex: none; width: 56px; height: 56px; border-radius: 18px; background: var(--blue-tint, #EEF4FF); display: grid; place-items: center; overflow: hidden; }
+.subj-ava svg { width: 44px; height: 44px; }
+.subj-ico { flex: none; width: 56px; height: 56px; border-radius: 18px; background: var(--n100); display: grid; place-items: center; color: var(--n600); }
+.subj-body { flex: 1; min-width: 0; }
+.subj-name { display: flex; align-items: center; gap: 7px; font-size: 17px; font-weight: 800; color: var(--n900); }
+.subj-name svg { color: var(--blue); }
+.subj-desc { margin-top: 3px; font-size: 13px; color: var(--n600); }
+.subj-meta { margin-top: 5px; font-size: 11.5px; font-weight: 700; color: var(--blue); }
+.subj-go { flex: none; color: var(--n400); }
+.subj-soon-pill {
+  font-size: 10.5px; font-weight: 800; padding: 3px 9px; border-radius: 99px;
+  background: var(--n150); color: var(--n600);
+}
+.subj-note { margin-top: 18px; text-align: center; font-size: 12.5px; color: var(--n500); }
+
+/* ---------- 로그인(소셜 스텁) ---------- */
+.login-hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 12px 0 24px; }
+.login-ava { width: 84px; height: 84px; border-radius: 50%; background: var(--blue-tint, #EEF4FF); display: grid; place-items: center; }
+.login-ava svg { width: 62px; height: 62px; }
+.login-list { display: flex; flex-direction: column; gap: 10px; }
+.login-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; height: 52px; border-radius: var(--r-md); font-size: 15px; font-weight: 700;
+  box-shadow: var(--sh-card); transition: transform .14s var(--spring-soft);
+}
+.login-btn:active { transform: scale(.975); }
+.login-mark { display: grid; place-items: center; }
+.login-btn.google { background: #fff; border: 1.5px solid var(--n300); color: var(--n800); }
+.login-btn.kakao { background: #FEE500; color: #3C1E1E; }
+.login-btn.naver { background: #03C75A; color: #fff; }
+.login-note { margin-top: 16px; text-align: center; font-size: 12.5px; color: var(--n500); line-height: 1.55; word-break: keep-all; }
 
 /* ---------- 가로 모드 오버레이(rotateStage) ---------- */
 .rot-overlay { position: fixed; inset: 0; z-index: 80; background: #070D1A; opacity: 0; transition: opacity .24s var(--ease); }
@@ -1433,10 +1902,16 @@
 /* bodycount — 확대 말풍선 팝 */
 .hk-bio-body .bc-zoom { opacity: 0; transform: scale(.7); transform-origin: 176px 52px; transform-box: view-box; transition: opacity .4s var(--ease), transform .5s var(--spring); }
 .hk-bio-body.reveal .bc-zoom { opacity: 1; transform: none; }
-/* ladybugs — 탭한 개체 강조 */
-.hk-bio .lb-bug { transition: transform .18s var(--spring); }
-.hk-bio .lb-bug.on { transform: translateY(-3px) scale(1.08); }
-.hk-bio .lb-bug.on { filter: drop-shadow(0 3px 6px rgba(196,40,58,.4)); }
+/* fingerprint — 스캔 전 무늬 흐릿 → 탭하면 무늬 선명 + 체크 + 스캔선 */
+.hk-fp .fp-ridge { opacity: .28; transition: opacity .35s var(--ease); }
+.hk-fp .fp-card.on .fp-ridge { opacity: 1; }
+.hk-fp .fp-check { opacity: 0; transform: scale(.4); transform-box: fill-box; transform-origin: center; transition: opacity .3s var(--ease), transform .35s var(--spring); }
+.hk-fp .fp-card.on .fp-check { opacity: 1; transform: none; }
+.hk-fp .fp-card { transition: transform .18s var(--spring); }
+.hk-fp .fp-card.on { transform: translateY(-3px); }
+.hk-fp .fp-scan { opacity: 0; transform-box: view-box; }
+.hk-fp .fp-card.on .fp-scan { animation: fpScan .5s var(--ease); }
+@keyframes fpScan { 0% { opacity: .9; transform: translateY(-18px); } 100% { opacity: 0; transform: translateY(18px); } }
 /* batbird — 두 표지 은은히 */
 .hk-bio-night .bb-side { opacity: .8; }
 /* foodweb — 메뚜기 사라짐 + 개구리·매 흔들, 풀 번성 */
@@ -1636,7 +2111,7 @@
 .pt-cell small { font-size: 8.5px; font-weight: 700; color: var(--ter); line-height: 1; }
 .pt-cell b { font-size: 13.5px; line-height: 1.15; }
 .pt-cell.blank { visibility: hidden; }
-.pt-cell.sel { border-color: var(--subj-chem); box-shadow: 0 0 0 1.5px var(--subj-chem) inset, var(--sh-card); }
+.pt-cell.sel { border-color: var(--subj-atom); box-shadow: 0 0 0 1.5px var(--subj-atom) inset, var(--sh-card); }
 .pt-cell.g1 { background: linear-gradient(180deg, #FFF3E4, #FFE7CC); border-color: #F0B46A; }
 .pt-cell.g18 { background: linear-gradient(180deg, #E8F4FF, #D4EAFF); border-color: #7FB0E0; }
 .pt-info {

@@ -1,0 +1,63 @@
+# 지권의 변화(중2 II) 이미지 발주 — 암석 12 + 광물 6 + 증거·문제용 8 = 26장
+# 공통 스타일 A(암석·광물 표본, [0]~[17]):
+# Photorealistic geology specimen photograph for a science textbook.
+# A single hand-sized rock/mineral specimen, centered on a pure white background
+# with a soft natural shadow beneath. Even studio lighting, sharp macro detail
+# showing grain texture and crystal structure accurately. Square 1:1.
+# NO text, NO labels, NO scale bars, NO hands.
+
+[0] Granite specimen (화강암): light-colored plutonic igneous rock, speckled with clearly visible large interlocking crystals — white/pink feldspar, glassy grey quartz, black biotite flakes. Coarse-grained, pale overall tone.
+
+[1] Basalt specimen (현무암): dark grey-black volcanic igneous rock, very fine-grained with small round gas vesicles (holes) scattered on the surface, like Jeju island basalt.
+
+[2] Rhyolite specimen (유문암): light pinkish-grey volcanic igneous rock, very fine-grained smooth texture, subtle flow banding, no visible crystals.
+
+[3] Gabbro specimen (반려암): dark greenish-black plutonic igneous rock with clearly visible coarse interlocking dark crystals, no holes, dense and heavy look.
+
+[4] Conglomerate specimen (역암): sedimentary rock made of rounded pebbles of various sizes and colors cemented together in a sandy matrix — like hardened gravel.
+
+[5] Sandstone specimen (사암): sedimentary rock of uniform sand grains, tan-beige color, slightly rough granular surface, faint horizontal layering.
+
+[6] Mudstone specimen (이암): sedimentary rock of very fine clay particles, smooth dull surface, grey-brown color, breaks in flat plates.
+
+[7] Limestone specimen (석회암): sedimentary rock, light grey-cream color, fine-grained, with a few small fossil shell fragments visible on the surface.
+
+[8] Schist specimen (편암): metamorphic rock with thin wavy foliation layers, sparkly mica flakes catching light, greenish-grey, visibly banded at an angle.
+
+[9] Gneiss specimen (편마암): metamorphic rock with bold alternating light and dark bands (clear striped foliation), granite-like minerals separated into stripes.
+
+[10] Quartzite specimen (규암): metamorphic rock, very hard sugary-glassy texture, white to light grey, fused quartz grains, slightly translucent edges.
+
+[11] Marble specimen (대리암): metamorphic rock, white with soft grey veins, crystalline sparkling surface, smooth appearance like sculpture stone.
+
+[12] Quartz mineral specimen (석영): cluster of glassy transparent-to-milky hexagonal crystal points, colorless, sharp prism shapes.
+
+[13] Feldspar mineral specimen (장석): blocky opaque crystal, milky white to pale pink, flat cleavage faces catching light.
+
+[14] Biotite mica specimen (흑운모): stack of thin shiny black flaky sheets, layered like a booklet, glossy surfaces.
+
+[15] Hornblende/amphibole specimen (각섬석): elongated dark greenish-black prismatic crystal, dull luster, columnar shape.
+
+[16] Calcite specimen (방해석): transparent rhombohedral crystal block (tilted box shape), colorless with visible internal cleavage planes.
+
+[17] Magnetite specimen (자철석): dark metallic black octahedral crystals, slightly rusty patches, with 3-4 small steel paper clips clinging to its surface showing magnetism. (클립이 붙은 모습 필수 — 자성 표현)
+
+# 공통 스타일 B(증거·문제 사진, [18]~[25]):
+# Photorealistic educational photograph, natural setting, square 1:1.
+# NO text, NO labels, NO people.
+
+[18] Dol hareubang (돌하르방): traditional Jeju stone grandfather statue carved from dark porous basalt, standing outdoors, round hat and big eyes, volcanic stone texture with visible holes, soft daylight.
+
+[19] Haetae statue (해태상): Korean mythical lion-like guardian statue carved from light-colored granite with visible mineral speckles, palace setting blurred behind, daylight.
+
+[20] Layered sedimentary cliff (채석강 층리): coastal cliff of thinly stacked horizontal sedimentary rock layers like thousands of book pages, waves at the base, warm afternoon light — like Chaeseokgang in Korea.
+
+[21] Dinosaur footprint fossils (공룡 발자국): a flat grey mudstone surface with a clear trail of three-toed dinosaur footprints pressed into the rock, slight water in one print.
+
+[22] Weathered old gravestone (풍화된 비석): an old stone monument with its carved surface crumbling and flaking, letters worn away to faint traces (no readable characters), moss patches, cracks widened by time.
+
+[23] Mesosaurus fossil (메소사우루스 화석): a small slender aquatic reptile skeleton fossil embedded in flat grey shale slab, long tail and needle teeth visible, museum specimen look on white background.
+
+[24] Glossopteris leaf fossils (글로소프테리스 화석): several tongue-shaped fern leaf imprints with clear central veins, fossilized in beige-brown rock slab, on white background.
+
+[25] Glacial striations on bedrock (빙하 흔적): smooth polished bedrock surface with deep parallel scratch grooves carved by ancient glacier movement, in a sunny rocky landscape.

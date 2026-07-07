@@ -9,6 +9,11 @@ const ICONS: Record<string, IconDef> = {
   x: { v: '<path d="M6 6l12 12M18 6L6 18"/>', sw: 2.4 },
   xThick: { v: '<path d="M7 7l10 10M17 7L7 17"/>', sw: 3.2 },
   lock: { v: '<rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>', sw: 2.1 },
+  crown: { v: '<path d="M4.5 18.5L3 8l5 3.8L12 5l4 6.8L21 8l-1.5 10.5z"/><path d="M4.5 21h15" stroke-width="2.4"/>', fill: true },
+  user: { v: '<circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>', sw: 2.1 },
+  grid: { v: '<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>', sw: 2 },
+  ruler: { v: '<rect x="3" y="8.5" width="18" height="7" rx="2"/><path d="M7.5 8.5v3M12 8.5v3M16.5 8.5v3"/>', sw: 1.9 },
+  drop: { v: '<path d="M12 3.5C15 8 18 11.2 18 14.6a6 6 0 0 1-12 0C6 11.2 9 8 12 3.5z"/>', sw: 2 },
   play: { v: '<path d="M8 5.5v13l11-6.5z"/>', fill: true },
   chevron: { v: '<path d="M9.5 6l6 6-6 6"/>', sw: 2.4 },
   back: { v: '<path d="M15 6l-6 6 6 6"/>', sw: 2.2 },
@@ -52,7 +57,7 @@ const ICONS: Record<string, IconDef> = {
   note: { v: '<path d="M9.2 17.5V5.2l10-2v11.5"/><ellipse cx="6.6" cy="17.6" rx="2.7" ry="2.2"/><ellipse cx="16.6" cy="14.8" rx="2.7" ry="2.2"/>', sw: 2 },
   // ── 중2 IV 물질의 구성 ──
   atom: { v: '<circle cx="12" cy="12" r="2.2"/><ellipse cx="12" cy="12" rx="9" ry="3.8"/><ellipse cx="12" cy="12" rx="9" ry="3.8" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="3.8" transform="rotate(-60 12 12)"/>', sw: 1.7 },
-  grid: { v: '<rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 9.2h17M3.5 14.9h17M9.2 3.5v17M14.9 3.5v17"/>', sw: 1.8 },
+  ptable: { v: '<rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 9.2h17M3.5 14.9h17M9.2 3.5v17M14.9 3.5v17"/>', sw: 1.8 },
   molecule: { v: '<circle cx="7.5" cy="15.5" r="3.4"/><circle cx="16.5" cy="15.5" r="3.4"/><circle cx="12" cy="7.2" r="3.8"/><path d="M9.6 10.3l-1 2.1M14.4 10.3l1 2.1"/>', sw: 1.9 },
   ionArrow: { v: '<circle cx="9" cy="13" r="6.2"/><path d="M9 10.4v5.2M6.4 13h5.2"/><path d="M16 4.5h4.5M18.25 2.25v4.5"/>', sw: 1.9 },
 };

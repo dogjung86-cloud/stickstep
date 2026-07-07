@@ -1,0 +1,18 @@
+# 중1 II 상호작용 아트 A — 세포도 2 + 동물 구성단계 4
+# 공통 스타일([0]~[5]):
+# Bright, friendly educational illustration for a middle-school biology app.
+# Clean flat vector style with soft cel shading, smooth rounded shapes, gentle gradients,
+# subtle soft shadows, cheerful saturated (not neon) colors, plain very-light neutral background.
+# Absolutely NO text, NO letters, NO numbers, NO labels anywhere in the image.
+
+[0] A single ANIMAL CELL as a rounded soft-edged blob cutaway. Semi-transparent pale pink cytoplasm enclosed by one smooth thin outer cell membrane. Inside, clearly separated so each is easy to point at: ONE large round purple-blue nucleus placed slightly upper-left of center, several distinct bean-shaped orange mitochondria scattered in the lower-right cytoplasm, a few tiny pale vesicles. Distinct colors per organelle. Aspect 3:2.
+
+[1] A single PLANT CELL as a rounded rectangle cutaway. A thick sturdy light-tan outer CELL WALL, with a thin cell membrane just inside it along the top-left edge. Inside: one large round purple-blue nucleus in the upper-center, several bright green oval chloroplasts spread in the lower half, a couple of bean-shaped orange mitochondria on the left, and one big pale bluish central vacuole in the middle. Organelles clearly separated with distinct colors. Aspect 3:2.
+
+[2] A single elongated spindle-shaped MUSCLE CELL, soft red-pink, with faint lengthwise striations and one small oval nucleus. Simple and iconic, centered on plain background. Aspect 1:1.
+
+[3] A neat bundle of several identical elongated red-pink MUSCLE CELLS lying parallel and packed tightly together, forming a small block of muscle tissue. Centered. Aspect 1:1.
+
+[4] A friendly simplified anatomical HUMAN HEART organ, red-pink with slightly darker chambers and a few large blue and red vessels at the top, three-dimensional and rounded, cartoon-clean. Centered. Aspect 1:1.
+
+[5] A simplified front-view HUMAN BODY silhouette in soft gray, containing a red heart in the chest and a spreading network of red and blue BLOOD VESSELS branching throughout the whole body (circulatory system). Emphasis on the heart-plus-vessel network. Centered. Aspect 1:1.

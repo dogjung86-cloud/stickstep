@@ -30,7 +30,7 @@
       중2 III 빛과 파동(hookLight.ts): `mirrortown` 산 위 거울 마을 비추기, `coinmagic` 물 부으면 동전+예측,
       `darkroom` 전등 켜기+오개념 예측, `catmirror` 거울 고양이+예측, `spoon` 숟가락 앞뒤 토글,
       `pointillism` 점묘화 확대+예측, `fishing` 낚시찌 물결+예측, `kalimba` 칼림바 두 막대(실제 소리)+예측,
-      중2 IV 물질의 구성(hookChem.ts): `zoomtwo` 구리/소금 확대 비교, `signs` 만국 기호 맞히기,
+      중2 IV 물질의 구성(hookAtom.ts): `zoomtwo` 구리/소금 확대 비교, `signs` 만국 기호 맞히기,
       `peekatom` 연필심 3단 줌+예측, `menusort` 뒤죽박죽 메뉴 정리, `springwater` 약수 톡 쏘는 맛+예측,
       `magnetpull` 자석 끌림→이온도?+예측).
     - **예측(prediction)은 채점하지 않는다** — 정답을 알려주지 않고 "실험으로 확인해 봐요"로 랩에 연결.

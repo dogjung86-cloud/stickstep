@@ -17,8 +17,8 @@ await page.addInitScript(() => {
   const KEY = "science-app.v1";
   if (!localStorage.getItem(KEY)) {
     localStorage.setItem(KEY, JSON.stringify({
-      onboarded: true, grade: "중2", goal: "daily5", streak: 0, xp: 0,
-      lastDay: "", done: {}, quiz: {},
+      version: 1, onboarded: true, grade: "g2", viewGrade: "g2", premium: true, reviewMode: false,
+      goalMin: 10, streak: 0, lastStudyDay: null, totalXp: 0, lessons: {}, minigame: {},
     }));
   }
 });
@@ -125,11 +125,11 @@ const canvasPtr = async (calc, seq) => {
 };
 const chipsOn = () => page.evaluate(() => [...document.querySelectorAll(".pn-badge")].filter((b) => b.className.includes(" on")).length);
 
-// 홈에서 중2 단원 탭 → 현재 노드 열기
+// 홈(중2 트랙 — viewGrade 시드)에서 "빛과 파동" 단원 탭 → 현재 노드 열기
 const openNextLesson = async (expectTitle) => {
   await page.waitForSelector(".unit-tab", { timeout: 9000 });
   await page.evaluate(() => {
-    const t = [...document.querySelectorAll(".unit-tab")].find((x) => x.textContent.includes("중2"));
+    const t = [...document.querySelectorAll(".unit-tab")].find((x) => x.textContent.includes("빛과 파동"));
     t?.click();
   });
   await W(700);
@@ -328,6 +328,8 @@ try {
   await W(1200);
   await hookChoice(0);
   await clickCTA();
+  log("  뉴턴 만화:", await h1());
+  for (let c = 0; c < 7; c++) await clickCTA(); // 7컷 — 여섯 번 넘기고 마지막 컷에서 다음 스텝
   log("  objectColorLab:", await h1());
   await hookChoice(2); // 거의 검은색
   const pickLight = async (name) => {

@@ -63,6 +63,22 @@ import { elementLab, moleculeLab } from "./steps/chemParticles";
 import { atomLab, ionLab } from "./steps/chemAtom";
 import { periodicLab } from "./steps/chemTable";
 import { ionMoveLab } from "./steps/chemIonMove";
+import { densityLab } from "./steps/densityLab";
+import { densityPool } from "./steps/densityPool";
+import { solubilityLab } from "./steps/solubilityLab";
+import { gasFizz } from "./steps/gasFizz";
+import { meltCurve } from "./steps/meltCurve";
+import { sepFunnel } from "./steps/sepFunnel";
+import { recrystal } from "./steps/recrystal";
+import { distillLab } from "./steps/distillLab";
+import { earthCut3d } from "./steps/earthCut3d";
+import { streakLab } from "./steps/streakLab";
+import { coolingLab } from "./steps/coolingLab";
+import { strataLab } from "./steps/strataLab";
+import { foliationLab } from "./steps/foliationLab";
+import { rockCycle } from "./steps/rockCycle";
+import { driftLab } from "./steps/driftLab";
+import { plateMap } from "./steps/plateMap";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -120,6 +136,22 @@ const R: Record<string, StepRenderer> = {
   periodicLab,
   ionLab,
   ionMoveLab,
+  densityLab,
+  densityPool,
+  solubilityLab,
+  gasFizz,
+  meltCurve,
+  sepFunnel,
+  recrystal,
+  distillLab,
+  earthCut3d,
+  streakLab,
+  coolingLab,
+  strataLab,
+  foliationLab,
+  rockCycle,
+  driftLab,
+  plateMap,
   quiz,
   table,
   order,

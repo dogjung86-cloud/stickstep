@@ -3,30 +3,10 @@
 
 import { el, clamp } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
 
 type Face = (k: AvatarKind) => void;
-
-/** 공용: 예측 선택지(채점 없음) — hook.ts의 askChoices와 동일 규약 */
-function ask(box: HTMLElement, opts: string[], helper: HTMLElement, doneMsg: string, finish: () => void): void {
-  opts.forEach((label) => {
-    const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" }, text: label });
-    b.addEventListener("click", () => {
-      if (box.classList.contains("locked")) return;
-      box.classList.add("locked");
-      haptic(HAPTIC.select);
-      box.querySelectorAll(".hook-choice").forEach((x) => {
-        x.classList.add(x === b ? "sel" : "dim");
-        x.setAttribute("aria-pressed", x === b ? "true" : "false");
-        (x as HTMLButtonElement).disabled = x !== b;
-      });
-      helper.innerHTML = doneMsg;
-      finish();
-    });
-    box.appendChild(b);
-  });
-  box.classList.add("show");
-}
 
 // ── L1: 풍선 줄 당기기(관찰) ─────────────────────────────────
 function balloonSvg(): string {
@@ -153,13 +133,12 @@ export function renderTugRope(
     helper.innerHTML = "양쪽 다 <b>있는 힘껏</b> 당기는 중… 그런데 줄이 <b>꿈쩍도 안 해요!</b>";
     timer = window.setTimeout(() => {
       face("curious");
-      ask(
-        choicesBox,
-        s.choices ?? ["두 힘이 똑같아서 합쳐서 0이 됐다", "줄이 무거워서 못 움직인다", "둘 다 사실 힘을 안 주고 있다"],
-        helper,
-        "예측 완료! 실험실에서 <b>직접 줄다리기</b>를 시켜 보며 확인해요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["두 힘이 똑같아서 합쳐서 0이 됐다", "줄이 무거워서 못 움직인다", "둘 다 사실 힘을 안 주고 있다"],
+        good: "정확해요! <b>두 힘의 크기가 같고 방향이 반대</b>라 합이 0 — 그래서 안 움직여요. 실험실에서 직접 확인!",
+        bad: "줄이 무겁거나 힘을 안 준 게 아니에요 — 양쪽이 <b>똑같은 크기의 힘을 반대로</b> 줘서 <b>합이 0</b>이 된 거예요. 그래서 꿈쩍 안 하죠. 실험실에서 확인해요.",
+        onDone: finish,
+      });
     }, 1100);
   });
   return () => window.clearTimeout(timer);
@@ -380,13 +359,12 @@ export function renderIceslip(
     } else if (e.animationName === "hfwMoveDirt") {
       face("curious");
       helper.innerHTML = "자갈길은 <b>끝까지 안정적으로</b> 걸었어요. 두 길의 차이는 뭘까요?";
-      ask(
-        choicesBox,
-        s.choices ?? ["매끄러운 바닥에서는 미끄럼을 막아 주는 힘이 약해진다", "빙판이 차가워서 다리에 힘이 빠진다", "자갈이 신발을 끌어당긴다"],
-        helper,
-        "예측 완료! 실험실에서 <b>바닥과 무게를 바꿔 가며</b> 이 힘을 시험해 봐요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["매끄러운 바닥에서는 미끄럼을 막아 주는 힘이 약해진다", "빙판이 차가워서 다리에 힘이 빠진다", "자갈이 신발을 끌어당긴다"],
+        good: "좋은 예측! 빙판은 <b>미끄럼을 막아 주는 힘(마찰)이 약해</b> 넘어져요. 실험실에서 바닥을 바꿔 가며 확인!",
+        bad: "차가워서나 자갈이 당겨서가 아니에요 — 자갈길은 <b>미끄럼을 막는 힘(마찰)이 크고</b> 빙판은 그 힘이 약해요. 그래서 빙판에서 미끄러지죠. 실험실에서 확인해요.",
+        onDone: finish,
+      });
     }
   };
   man.addEventListener("animationend", onEnd);
@@ -530,13 +508,12 @@ export function renderRollStop(
     helper.innerHTML = "굴러간다… 굴러간다… 어라, <b>점점 느려지더니 멈췄어요!</b> 아무도 안 건드렸는데요.";
     timer = window.setTimeout(() => {
       face("curious");
-      ask(
-        choicesBox,
-        s.choices ?? ["잔디와 공 사이의 힘이 운동을 방해했다", "공이 힘을 다 써 버렸다", "지구가 공을 뒤로 당겼다"],
-        helper,
-        "예측 완료! 실험실에서 <b>바람으로 힘을 줘 가며</b> 힘과 운동의 관계를 확인해요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["잔디와 공 사이의 힘이 운동을 방해했다", "공이 힘을 다 써 버렸다", "지구가 공을 뒤로 당겼다"],
+        good: "맞아요! <b>잔디와 공 사이의 힘(마찰)</b>이 운동을 방해해 멈춰요. 실험실에서 힘과 운동을 확인!",
+        bad: "힘을 다 쓰거나 지구가 뒤로 당긴 게 아니에요 — <b>잔디와 공 사이의 마찰</b>이 운동을 조금씩 방해해 멈춘 거예요. 실험실에서 바람으로 힘을 줘 가며 확인해요.",
+        onDone: finish,
+      });
     }, 2400);
   });
   return () => window.clearTimeout(timer);

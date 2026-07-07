@@ -368,6 +368,109 @@ const MAP_DECOR: Record<string, string> = {
     <ellipse cx="9" cy="44" rx="3.4" ry="2.4" fill="#fff"/>
     <ellipse cx="55" cy="44" rx="3.4" ry="2.4" fill="#fff"/>`,
   ),
+
+  // ── 중2 I. 물질의 특성 — 실험대 순례(측정→용해→결정→분리→증류) ──
+  flaskDeco: S(
+    `${shadow(32, 57, 15, 0.14)}
+    <path d="M27 12h10v12l10 20a7 7 0 0 1-6.4 10H23.4A7 7 0 0 1 17 44l10-20z" fill="url(#fk-g)"/>
+    <path d="M27 12h10v12l10 20a7 7 0 0 1-6.4 10H23.4A7 7 0 0 1 17 44l10-20z" stroke="#7E93A8" stroke-width="1.5" fill="none"/>
+    <path d="M21.5 42l10.5-2 11 2 2.4 5a4 4 0 0 1-3.7 6H22.8a4 4 0 0 1-3.7-6z" fill="url(#fk-l)"/>
+    <ellipse cx="27" cy="26" rx="2.6" ry="7" fill="#fff" opacity=".5" transform="rotate(8 27 26)"/>
+    <rect x="26" y="8" width="12" height="5" rx="2" fill="#C9D4E0" stroke="#8C99A8" stroke-width="1.2"/>`,
+    `<linearGradient id="fk-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2F9FF" stop-opacity=".5"/><stop offset="1" stop-color="#C8DCEE" stop-opacity=".65"/></linearGradient>
+    <linearGradient id="fk-l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8FB4"/><stop offset="1" stop-color="#D6336C"/></linearGradient>`,
+  ),
+  layersDeco: S(
+    `${shadow(32, 57, 13, 0.14)}
+    <path d="M24 14h16v6l4 6v24a6 6 0 0 1-6 6H26a6 6 0 0 1-6-6V26l4-6z" fill="url(#ly-g)" stroke="#7E93A8" stroke-width="1.5"/>
+    <path d="M21 34h22v16a5 5 0 0 1-5 5H26a5 5 0 0 1-5-5z" fill="url(#ly-w)"/>
+    <path d="M21 26h22v8H21z" fill="url(#ly-o)"/>
+    <path d="M21 34h22" stroke="#FFF0C0" stroke-width="1.4" opacity=".9"/>
+    <ellipse cx="27" cy="24" rx="2" ry="6" fill="#fff" opacity=".45" transform="rotate(8 27 24)"/>
+    <rect x="23" y="10" width="18" height="6" rx="2.4" fill="#C9D4E0" stroke="#8C99A8" stroke-width="1.2"/>`,
+    `<linearGradient id="ly-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2F9FF" stop-opacity=".45"/><stop offset="1" stop-color="#C8DCEE" stop-opacity=".55"/></linearGradient>
+    <linearGradient id="ly-o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#F2C14E"/></linearGradient>
+    <linearGradient id="ly-w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9CD0F5"/><stop offset="1" stop-color="#5E9CD8"/></linearGradient>`,
+  ),
+  crystalDeco: S(
+    `${shadow(32, 57, 16, 0.14)}
+    <path d="M32 12l9 16-9 26-9-26z" fill="url(#cr-a)" stroke="#B4488A" stroke-width="1.4"/>
+    <path d="M18 34l6 10-4 10-7-9z" fill="url(#cr-b)" stroke="#B4488A" stroke-width="1.2"/>
+    <path d="M46 34l7 11-6 9-5-10z" fill="url(#cr-b)" stroke="#B4488A" stroke-width="1.2"/>
+    <path d="M32 12l4 16-4 22" stroke="#fff" stroke-width="1.2" opacity=".55" fill="none"/>
+    <path d="M50 16l1.8 3.8 3.8 1.8-3.8 1.8-1.8 3.8-1.8-3.8-3.8-1.8 3.8-1.8z" fill="#FFD7E8"/>`,
+    `<linearGradient id="cr-a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE3F0"/><stop offset=".5" stop-color="#F78FBB"/><stop offset="1" stop-color="#D6336C"/></linearGradient>
+    <linearGradient id="cr-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFD7E8"/><stop offset="1" stop-color="#E64980"/></linearGradient>`,
+  ),
+  funnelDeco: S(
+    `${shadow(32, 58, 12, 0.14)}
+    <path d="M20 14h24l-9 22v10h-6V36z" fill="url(#fn-g)" stroke="#7E93A8" stroke-width="1.5"/>
+    <path d="M22 18h20l-3.4 8H25.4z" fill="url(#fn-o)"/>
+    <path d="M26.5 27h11l-2.5 6.6v6h-6v-6z" fill="url(#fn-w)"/>
+    <rect x="28" y="46" width="8" height="6" rx="2" fill="#8B99AC" stroke="#5E6B7E" stroke-width="1"/>
+    <path d="M32 52q-1 4 0 7" stroke="#7FB8F2" stroke-width="2.4"/>
+    <ellipse cx="26" cy="20" rx="1.6" ry="4" fill="#fff" opacity=".5" transform="rotate(14 26 20)"/>`,
+    `<linearGradient id="fn-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2F9FF" stop-opacity=".45"/><stop offset="1" stop-color="#C8DCEE" stop-opacity=".55"/></linearGradient>
+    <linearGradient id="fn-o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#F2C14E"/></linearGradient>
+    <linearGradient id="fn-w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9CD0F5"/><stop offset="1" stop-color="#5E9CD8"/></linearGradient>`,
+  ),
+  alembicDeco: S(
+    `${shadow(28, 57, 15, 0.14)}
+    <path d="M20 22a12 12 0 0 1 16 0l-2 6H22z" fill="url(#al-c)" stroke="#A8763E" stroke-width="1.4"/>
+    <path d="M18 28h20l4 14a12 12 0 0 1-28 0z" fill="url(#al-b)" stroke="#A8763E" stroke-width="1.5"/>
+    <path d="M36 24q10 2 12 12 1 6-2 12" stroke="#C9D4E0" stroke-width="3" fill="none"/>
+    <circle cx="46" cy="52" r="2.4" fill="#7FB8F2"/>
+    <ellipse cx="24" cy="36" rx="2.4" ry="6" fill="#fff" opacity=".35" transform="rotate(10 24 36)"/>
+    <path d="M24 14q2-4 4 0M30 12q2-4 4 0" stroke="#D8E4F0" stroke-width="1.8" fill="none" opacity=".8"/>`,
+    `<linearGradient id="al-c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EFC98E"/><stop offset="1" stop-color="#C89454"/></linearGradient>
+    <linearGradient id="al-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2D5A4"/><stop offset=".5" stop-color="#D8A868"/><stop offset="1" stop-color="#B07E3E"/></linearGradient>`,
+  ),
+
+  // ── 중2 II. 지권의 변화 — 지질 원정(화산→수정→지층→화석→지구 단면) ──
+  volcanoDeco: S(
+    `${shadow(32, 57, 18, 0.14)}
+    <path d="M32 14 L50 52 H14 Z" fill="url(#vc-b)" stroke="#5E3A22" stroke-width="1.6"/>
+    <path d="M26 26 q6 4 12 0 l-2 -8 h-8 z" fill="url(#vc-l)"/>
+    <path d="M28 14 q4 -6 8 0 q-1 3 -4 3 t-4 -3z" fill="#FF9A4A" stroke="#D95F14" stroke-width="1.2"/>
+    <path d="M24 34 q8 5 16 0 M20 44 q12 6 24 0" stroke="#7A4A26" stroke-width="1.6" opacity=".6"/>
+    <ellipse cx="26" cy="30" rx="2" ry="6" fill="#fff" opacity=".25" transform="rotate(16 26 30)"/>`,
+    `<linearGradient id="vc-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A97A4E"/><stop offset=".55" stop-color="#7E5430"/><stop offset="1" stop-color="#5E3A22"/></linearGradient>
+    <linearGradient id="vc-l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC24D"/><stop offset="1" stop-color="#E8642A"/></linearGradient>`,
+  ),
+  quartzDeco: S(
+    `${shadow(32, 57, 15, 0.14)}
+    <path d="M26 50 L20 26 L28 14 L32 24 z" fill="url(#qz-a)" stroke="#8C7A4E" stroke-width="1.3"/>
+    <path d="M32 50 L30 22 L38 10 L44 24 L40 50 z" fill="url(#qz-b)" stroke="#8C7A4E" stroke-width="1.4"/>
+    <path d="M44 50 L44 30 L52 24 L54 38 z" fill="url(#qz-a)" stroke="#8C7A4E" stroke-width="1.2"/>
+    <path d="M34 20 L37 14 M46 32 L50 27" stroke="#FFFDF4" stroke-width="1.4" opacity=".8"/>
+    <path d="M18 52 h30" stroke="#8C7A4E" stroke-width="2"/>`,
+    `<linearGradient id="qz-a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF8E2"/><stop offset="1" stop-color="#E0C888"/></linearGradient>
+    <linearGradient id="qz-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFDF2"/><stop offset=".5" stop-color="#F2E2B0"/><stop offset="1" stop-color="#CBAE6E"/></linearGradient>`,
+  ),
+  strataDeco: S(
+    `${shadow(32, 57, 19, 0.13)}
+    <path d="M12 52 Q14 30 32 26 Q50 30 52 52 Z" fill="url(#st2-a)" stroke="#7E5430" stroke-width="1.5"/>
+    <path d="M15 46 Q32 40 49 46 M18 40 Q32 34 46 40 M22 34 Q32 30 42 34" stroke="#FFF2DC" stroke-width="2.2" opacity=".7"/>
+    <path d="M15 46 Q32 40 49 46" stroke="#B0703C" stroke-width="1" opacity=".5"/>
+    <ellipse cx="24" cy="32" rx="2" ry="5" fill="#fff" opacity=".3" transform="rotate(18 24 32)"/>`,
+    `<linearGradient id="st2-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D8AA70"/><stop offset=".5" stop-color="#BE8A50"/><stop offset="1" stop-color="#9A6B3A"/></linearGradient>`,
+  ),
+  fossilDeco: S(
+    `${shadow(32, 57, 15, 0.14)}
+    <circle cx="32" cy="34" r="19" fill="url(#fs-a)" stroke="#8C6A42" stroke-width="1.5"/>
+    <path d="M32 34 m-12 0 a12 12 0 1 1 24 0 a9 9 0 1 1 -18 0 a6 6 0 1 1 12 0 a3 3 0 1 1 -6 0" fill="none" stroke="#6B4A26" stroke-width="2.2"/>
+    <path d="M20 26 q4 -5 9 -6" stroke="#FFF2DC" stroke-width="1.6" opacity=".6"/>`,
+    `<radialGradient id="fs-a" cx=".38" cy=".32" r=".9"><stop offset="0" stop-color="#F2DCB4"/><stop offset="1" stop-color="#C79A62"/></radialGradient>`,
+  ),
+  earthcutDeco: S(
+    `${shadow(32, 57, 16, 0.14)}
+    <circle cx="32" cy="34" r="20" fill="url(#ec2-sea)" stroke="#2E5FA8" stroke-width="1.4"/>
+    <path d="M32 34 L32 14 A20 20 0 0 1 52 34 Z" fill="url(#ec2-sec)" stroke="#8C5A28" stroke-width="1.2"/>
+    <circle cx="32" cy="34" r="4.5" fill="#FFE9A0"/>
+    <path d="M24 22 q4 -3 8 -2 M20 36 q3 6 8 8" stroke="#7FD49E" stroke-width="3" stroke-linecap="round" opacity=".85"/>`,
+    `<radialGradient id="ec2-sea" cx=".38" cy=".32" r=".9"><stop offset="0" stop-color="#7FB2F0"/><stop offset="1" stop-color="#2E5FA8"/></radialGradient>
+    <radialGradient id="ec2-sec" cx=".5" cy=".5" r=".75"><stop offset="0" stop-color="#FFE9A0"/><stop offset=".4" stop-color="#F5A93E"/><stop offset=".75" stop-color="#B84A26"/><stop offset="1" stop-color="#7E9E5E"/></radialGradient>`,
+  ),
 };
 
 /** 지도 장식 아트 — 단원 특색 세트 → 생물 아이콘(ART_BIO) → 공용(ART_DECOR) 순서로 찾는다. */

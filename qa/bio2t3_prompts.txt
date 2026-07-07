@@ -1,0 +1,11 @@
+# 구성단계 누끼 재발주 T3 — T1 실패분 3
+# 공통 스타일:
+# Bright, friendly flat educational illustration, clean flat vector, soft cel shading,
+# gentle gradients, cheerful colors. NO text, NO letters, NO numbers.
+# IMPORTANT: FULLY TRANSPARENT background (PNG alpha) — subject only, soft shadow beneath. Aspect 1:1.
+
+[0] A simplified front-view HUMAN BODY outline containing a red heart in the chest and a spreading network of red and blue BLOOD VESSELS branching through the whole body (circulatory system). Soft light gray body silhouette so the vessel network is the focus.
+
+[1] A single plant LEAF MESOPHYLL CELL, rounded rectangle with pale green cytoplasm, several bright green oval chloroplasts inside, one small oval nucleus.
+
+[2] Several tall column-shaped green PALISADE CELLS standing upright side by side, each packed with small green chloroplasts, forming a neat layer of palisade tissue.

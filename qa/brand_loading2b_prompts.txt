@@ -1,0 +1,25 @@
+# 브랜드 로딩 플립북 v2 추가분 — 놀이 7컷([0]~[6] → loading/7..13.png) + 공부 정착 컷 수정([7] → study.png)
+# 공통 스타일([0]~[7]):
+# Hand-drawn stick figure character, pure black ink lines on plain white background,
+# NO color at all (black and white only). Same consistent GENDER-NEUTRAL character:
+# perfectly round bald head (NO hair, NO hair bun, NO topknot), round glasses
+# (two small circles), dot eyes, simple line body. Square 1:1 canvas.
+# Charming, comic, energetic — like frames of a flipbook animation.
+# 글자 규칙: [0]~[6]에는 글자·숫자·알파벳 절대 금지(잠자는 컷에 Zzz도 금지 — 코 방울로 표현).
+# [7]만 머리띠 위 한글 "공부하자!" 필수.
+
+[0] The stick figure lying on the floor on its back with legs kicked up crossed, holding a smartphone above the face with both hands, giggling with squinted dot eyes, tiny laughter burst lines around the head. Full body, centered, white background, black ink only, no text on the phone screen (blank or abstract shapes).
+
+[1] The stick figure sprawled belly-down on the floor reading a comic book, chin resting on one hand, feet swinging up behind, a messy pile of comic books beside. Book covers show only abstract shapes, no letters. Full body, centered, white background, black ink only.
+
+[2] The stick figure napping deeply on a sofa, mouth open, one arm dangling to the floor, a big round snot bubble inflating from the nose (classic comic sleep gag), a small cushion fallen on the floor. NO letters (no Zzz). Full body, centered, white background, black ink only.
+
+[3] The stick figure surrounded by open snack bags, stuffing chips into the mouth with one hand, holding a fizzy soda bottle in the other, crumbs flying, blissful closed-curve eyes. Plain bags with no labels. Full body, centered, white background, black ink only.
+
+[4] The stick figure singing passionately into a microphone like a karaoke star, one arm stretched dramatic, head tilted back, big musical notes floating around (musical notes allowed, no letters). Full body, centered, white background, black ink only.
+
+[5] The stick figure riding a bicycle fast, leaning forward, glasses pushed by the wind, motion dash lines behind the wheels, one small bird flying alongside. Full body, centered, white background, black ink only.
+
+[6] The stick figure playing with a small floppy-eared puppy — tossing a ball, the puppy mid-jump to catch it, both joyful, tiny heart shapes (hearts allowed) floating. Full body, centered, white background, black ink only.
+
+[7] FINAL SETTLE POSE (REVISED, waist-up): The stick figure SITTING AT A SIMPLE DESK, shown from the waist up — the head is BIG in the frame (about half the canvas height), with the desk edge and an open notebook with a pencil visible along the bottom of the frame. Both hands are up at the sides of the head, tightly tying a white headband (hachimaki) around the forehead, knot with two short tails sticking out on the side. Determined burning dot eyes behind round glasses, small focused eyebrows. On the headband, write the Korean text "공부하자!" clearly in bold black Korean characters — exactly these 5 characters: 공부하자! This Korean headband text is REQUIRED. Everything else black ink on white, no other text anywhere.

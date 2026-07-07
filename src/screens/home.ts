@@ -3,14 +3,14 @@ import { el, clear, afterPaint } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { BRAND } from "../core/brand";
-import { getState, currentStreak, isDone, lessonOf } from "../core/store";
-import { CURRICULUM, isUnlocked, unitProgress, type Unit } from "../content/curriculum";
+import { getState, currentStreak, isDone, lessonOf, getViewGrade, setViewGrade, toggleReviewMode, isReviewMode } from "../core/store";
+import { CURRICULA, GRADE_LABEL, gradeOfUnit, isUnlocked, isPremiumLocked, unitProgress, type Unit, type GradeId } from "../content/curriculum";
 import { serpentine, smoothPath, pathUpTo } from "../ui/serpentine";
 import { mapDecorArt } from "../ui/mapDecor";
 import type { Screen } from "../core/router";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
-const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u3: "light", g2u4: "chem" };
+const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom" };
 // 단원별 보너스 미니게임 — 모든 레슨을 완료하면 지도 끝에 열린다.
 const UNIT_GAME: Record<string, { title: string }> = { u3: { title: "단열 디펜스" } };
 
@@ -18,11 +18,15 @@ export function homeScreen(
   onOpenLesson: (id: string) => void,
   onOpenGame: (unitId: string) => void,
   focusUnitId?: string,
+  nav2?: { onSubjects?: () => void; onLogin?: () => void },
 ): Screen {
   const st = getState();
+  // 학년 트랙 — 방금 학습한 단원이 있으면 그 단원의 학년으로 따라간다.
+  let grade: GradeId = focusUnitId ? gradeOfUnit(focusUnitId) : getViewGrade();
+  let cur = CURRICULA[grade];
   // 우선순위: 방금 학습한 단원 → 첫 미완료 단원 → 첫 단원
-  let sel = focusUnitId ? CURRICULUM.findIndex((u) => u.id === focusUnitId) : -1;
-  if (sel < 0) sel = CURRICULUM.findIndex((u) => unitProgress(u) < 100);
+  let sel = focusUnitId ? cur.findIndex((u) => u.id === focusUnitId) : -1;
+  if (sel < 0) sel = cur.findIndex((u) => !u.comingSoon && unitProgress(u) < 100);
   if (sel < 0) sel = 0;
 
   const chips = el(
@@ -31,7 +35,42 @@ export function homeScreen(
     el("div", { class: "chip streak" }, el("span", { html: icon("flame", 15) }), el("span", { text: `${currentStreak()}일` })),
     el("div", { class: "chip gem" }, el("span", { html: icon("bolt", 15) }), el("span", { text: `${st.totalXp} XP` })),
   );
-  const appbar = el("div", { class: "appbar" }, el("div", { class: "brand", text: BRAND.name }), chips);
+  // 과목 허브(그리드)·로그인(프로필) 진입 버튼
+  const subjBtn = el("button", { class: "abtn", attrs: { "aria-label": "과목 선택" }, html: icon("grid", 19) });
+  subjBtn.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    nav2?.onSubjects?.();
+  });
+  const profBtn = el("button", { class: "abtn", attrs: { "aria-label": "로그인" }, html: icon("user", 19) });
+  profBtn.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    nav2?.onLogin?.();
+  });
+  const brandEl = el("div", { class: `brand ${isReviewMode() ? "review" : ""}`, text: BRAND.name });
+  // 검토 모드 — 브랜드 7연타 토글(콘텐츠 검수용: 순차·프리미엄 잠금 전부 해제)
+  let brandTaps = 0;
+  let brandTapTimer = 0;
+  brandEl.addEventListener("click", () => {
+    brandTaps += 1;
+    window.clearTimeout(brandTapTimer);
+    brandTapTimer = window.setTimeout(() => {
+      brandTaps = 0;
+    }, 1600);
+    if (brandTaps >= 7) {
+      brandTaps = 0;
+      const on = toggleReviewMode();
+      haptic(HAPTIC.done);
+      brandEl.classList.toggle("review", on);
+      snack(on ? "검토 모드 ON — 모든 레슨이 열렸어요" : "검토 모드 OFF — 잠금이 되돌아왔어요");
+      renderAll();
+    }
+  });
+  const appbar = el(
+    "div",
+    { class: "appbar" },
+    el("div", { class: "ab-side" }, subjBtn, brandEl),
+    el("div", { class: "ab-side" }, chips, profBtn),
+  );
 
   const tabs = el("div", { class: "unit-tabs" });
   // 마우스로도 탭을 잡아 끌어 넘길 수 있게(터치는 네이티브 스크롤이 담당)
@@ -70,9 +109,36 @@ export function homeScreen(
     },
     true,
   );
+  // 학년 전환 — 중1 ⇄ 중2 세그먼트. 전환은 저장되어 다음 방문에도 유지된다.
+  const gradeSeg = el("div", { class: "grade-seg", attrs: { role: "tablist", "aria-label": "학년 선택" } });
+  (Object.keys(CURRICULA) as GradeId[]).forEach((g) => {
+    const b = el("button", {
+      class: `gseg ${g === grade ? "on" : ""}`,
+      text: GRADE_LABEL[g],
+      attrs: { role: "tab", "aria-selected": g === grade ? "true" : "false" },
+    });
+    b.addEventListener("click", () => {
+      if (g === grade) return;
+      haptic(HAPTIC.tap);
+      grade = g;
+      setViewGrade(g);
+      cur = CURRICULA[g];
+      sel = cur.findIndex((u) => !u.comingSoon && unitProgress(u) < 100);
+      if (sel < 0) sel = 0;
+      gradeSeg.querySelectorAll(".gseg").forEach((x, i) => {
+        const on = (Object.keys(CURRICULA) as GradeId[])[i] === g;
+        x.classList.toggle("on", on);
+        x.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      renderAll();
+    });
+    gradeSeg.appendChild(b);
+  });
+  const gradeRow = el("div", { class: "grade-row" }, gradeSeg, el("div", { class: "grade-hint", text: "최신 개정 교육과정 반영" }));
+
   const bandHost = el("div", {});
   const mapHost = el("div", {});
-  const scroll = el("div", { class: "scroll" }, tabs, bandHost, mapHost);
+  const scroll = el("div", { class: "scroll" }, gradeRow, tabs, bandHost, mapHost);
   const elm = el("section", { class: "screen", attrs: { id: "sc-home" } }, appbar, scroll);
 
   let snackTimer = 0;
@@ -87,9 +153,8 @@ export function homeScreen(
 
   function renderTabs(): void {
     clear(tabs);
-    CURRICULUM.forEach((u, i) => {
-      const gradeTag = (u.grade ?? 1) >= 2 ? `중${u.grade} ` : "";
-      const t = el("button", { class: `unit-tab ${i === sel ? "on" : ""}`, text: `${gradeTag}${u.roman}. ${u.title}` });
+    cur.forEach((u, i) => {
+      const t = el("button", { class: `unit-tab ${i === sel ? "on" : ""} ${u.comingSoon ? "soon" : ""}`, text: `${u.roman}. ${u.title}` });
       t.addEventListener("click", () => {
         sel = i;
         haptic(HAPTIC.tap);
@@ -108,10 +173,13 @@ export function homeScreen(
         "div",
         { class: `unit-band ${theme}` },
         el("div", { class: "ub-glow" }),
-        el("div", { class: "ub-eyebrow", text: `${(u.grade ?? 1) >= 2 ? `중${u.grade} · ` : ""}대단원 ${u.roman}` }),
+        el("div", { class: "ub-eyebrow", text: `대단원 ${u.roman}` }),
         el("div", { class: "ub-title", text: u.title }),
         el("div", { class: "ub-desc", text: u.subtitle }),
-        u.standard ? el("div", { class: "ub-meta" }, el("span", { html: icon("check", 13) }), el("span", { text: `${u.standard} · ${pct}% 정복` })) : el("span", {}),
+        // 모든 학년·단원 공통 표기: "단원 정복률 N%" (교육과정·쪽수 문구는 밴드에 쓰지 않는다)
+        u.comingSoon
+          ? el("div", { class: "ub-meta" }, el("span", { html: icon("clock", 13) }), el("span", { text: "다음 업데이트에서 열려요" }))
+          : el("div", { class: "ub-meta" }, el("span", { html: icon("check", 13) }), el("span", { text: `단원 정복률 ${pct}%` })),
         el("div", { class: "ub-prog" }, el("i", { style: `width:${pct}%` })),
       ),
     );
@@ -119,6 +187,19 @@ export function homeScreen(
 
   function renderMap(u: Unit): void {
     clear(mapHost);
+    // 준비 중 단원 — 지도 대신 안내 카드
+    if (u.comingSoon) {
+      mapHost.appendChild(
+        el(
+          "div",
+          { class: "coming-card" },
+          el("div", { class: "cc-med", html: icon(u.icon || "flask", 30) }),
+          el("div", { class: "cc-title", text: "열심히 만들고 있어요" }),
+          el("div", { class: "cc-desc", text: `${u.title} 단원은 다음 업데이트에서 만나요.` }),
+        ),
+      );
+      return;
+    }
     const theme = UNIT_THEME[u.id] ?? "";
     mapHost.appendChild(el("div", { class: "sec-head", text: "레슨 지도" }));
 
@@ -131,29 +212,47 @@ export function homeScreen(
 
     const game = UNIT_GAME[u.id];
     const started = u.lessons.some((l) => isDone(l.id));
+    let premRibbon = false; // 첫 프리미엄 노드에만 리본을 달아 소음을 줄인다
     const nodeEls: HTMLElement[] = u.lessons.map((lesson, i) => {
       const unlocked = isUnlocked(u, i);
       const done = isDone(lesson.id);
-      const now = unlocked && !done;
+      const prem = !done && isPremiumLocked(lesson); // 완료된 레슨은 그대로 훈장
+      const now = unlocked && !done && !prem;
       const cls = ["gm-node"];
       if (theme) cls.push(theme);
-      cls.push(done ? "done" : now ? "now" : "locked");
+      cls.push(done ? "done" : prem ? "prem" : now ? "now" : "locked");
 
       const med = el("div", {
         class: "gm-med",
         attrs: { "aria-hidden": "true" },
-        html: done ? icon("check", 34, { sw: 3.4 }) : unlocked ? icon(lesson.icon ?? "book", 34) : icon("lock", 30),
+        html: done
+          ? icon("check", 34, { sw: 3.4 })
+          : prem
+            ? icon("crown", 30)
+            : unlocked
+              ? icon(lesson.icon ?? "book", 34)
+              : icon("lock", 30),
       });
-      const stateLabel = done ? "완료" : now ? "학습 시작 가능" : "잠김 · 이전 레슨을 먼저 완료해요";
+      const stateLabel = done
+        ? "완료"
+        : prem
+          ? "프리미엄 · 이용권으로 열려요"
+          : now
+            ? "학습 시작 가능"
+            : "잠김 · 이전 레슨을 먼저 완료해요";
       const node = el("button", {
         class: cls.join(" "),
-        attrs: unlocked
+        attrs: now || done || prem
           ? { "aria-label": `${lesson.label ?? lesson.title} — ${stateLabel}` }
           : { "aria-label": `${lesson.label ?? lesson.title} — ${stateLabel}`, "aria-disabled": "true" },
       }, med);
       if (now) {
         med.appendChild(el("div", { class: "gm-ring" }));
         node.appendChild(el("div", { class: "gm-ribbon", text: started ? "학습" : "시작" }));
+      }
+      if (prem && !premRibbon) {
+        premRibbon = true;
+        node.appendChild(el("div", { class: "gm-ribbon gold", text: "프리미엄" }));
       }
       if (done) {
         const acc = lessonOf(lesson.id).acc ?? 0;
@@ -165,6 +264,11 @@ export function homeScreen(
       node.appendChild(el("div", { class: "gm-label", text: lesson.label ?? lesson.title }));
       node.addEventListener("click", () => {
         haptic(HAPTIC.tap);
+        if (prem) {
+          // 프리미엄 잠금 — 페이월로 안내(main.ts openLesson이 라우팅)
+          onOpenLesson(lesson.id);
+          return;
+        }
         if (!unlocked) {
           snack("이전 레슨을 먼저 완료해요");
           return;
@@ -233,8 +337,8 @@ export function homeScreen(
 
   function renderAll(): void {
     renderTabs();
-    renderBand(CURRICULUM[sel]);
-    renderMap(CURRICULUM[sel]);
+    renderBand(cur[sel]);
+    renderMap(cur[sel]);
   }
 
   renderAll();
@@ -252,6 +356,8 @@ const UNIT_DECOR: Record<string, { seq: string[]; sky: [string, string] }> = {
   u5: { seq: ["appleTree", "springDeco", "crateDeco", "floatDeco", "appleTree"], sky: ["cloud", "cloud"] }, // 중력·탄성·마찰·부력
   u6: { seq: ["balloonsDeco", "bubblesDeco", "hotairDeco", "bubblesDeco", "balloonsDeco"], sky: ["hotairDeco", "cloud"] },
   u7: { seq: ["pMercury", "pVenus", "pMars", "pJupiter", "pSaturn"], sky: ["rocketDeco", "sparkle"] }, // 행성을 밟아 가는 순항
+  g2u1: { seq: ["flaskDeco", "layersDeco", "crystalDeco", "funnelDeco", "alembicDeco"], sky: ["cloud", "sparkle"] }, // 실험대 순례: 측정→층→결정→분리→증류
+  g2u2: { seq: ["earthcutDeco", "quartzDeco", "volcanoDeco", "strataDeco", "fossilDeco"], sky: ["cloud", "sparkle"] }, // 지질 원정: 지구 단면→수정→화산→지층→화석
   g2u3: { seq: ["flashlightDeco", "mirrorDeco", "prismDeco", "rgbDeco", "noteDeco"], sky: ["rainbowDeco", "cloud"] }, // 빛의 여행 → 소리의 여행
   g2u4: { seq: ["beakerDeco", "atomDeco", "tableDeco", "moleculeDeco", "ionDeco"], sky: ["atomDeco", "cloud"] }, // 성분에서 입자로 — 원소→원자→주기율표→분자→이온
 };
@@ -268,6 +374,8 @@ const DECOR_SIZE: Record<string, number> = {
   appleTree: 58, springDeco: 42, crateDeco: 42, floatDeco: 46,
   balloonsDeco: 50, hotairDeco: 54, bubblesDeco: 42,
   pMercury: 36, pVenus: 38, pMars: 38, pJupiter: 46, pSaturn: 52, rocketDeco: 46, sparkle: 34,
+  flaskDeco: 46, layersDeco: 44, crystalDeco: 46, funnelDeco: 42, alembicDeco: 48,
+  volcanoDeco: 50, quartzDeco: 44, strataDeco: 50, fossilDeco: 42, earthcutDeco: 46,
   flashlightDeco: 48, mirrorDeco: 44, prismDeco: 50, rgbDeco: 44, noteDeco: 38, rainbowDeco: 58,
   beakerDeco: 46, atomDeco: 46, tableDeco: 46, moleculeDeco: 46, ionDeco: 42,
 };

@@ -1,0 +1,19 @@
+# 구성단계 누끼(투명 배경) 재발주 T1 — 동물 4 + 식물 2
+# 공통 스타일:
+# Bright, friendly flat educational illustration for a middle-school biology app.
+# Clean flat vector, soft cel shading, smooth rounded shapes, gentle gradients, cheerful colors.
+# NO text, NO letters, NO numbers. IMPORTANT: place the subject on a FULLY TRANSPARENT
+# background (PNG with alpha channel) — no background color, no scene, only a very soft
+# subtle shadow directly beneath the subject. Aspect 1:1, subject centered.
+
+[0] A single elongated spindle-shaped MUSCLE CELL, soft red-pink, faint lengthwise striations, one small oval nucleus. Iconic and simple.
+
+[1] A neat bundle of several identical elongated red-pink MUSCLE CELLS lying parallel and packed tightly, forming a small block of muscle tissue.
+
+[2] A friendly simplified anatomical HUMAN HEART organ, red-pink with slightly darker chambers and a few large blue and red vessels at the top, rounded and cartoon-clean.
+
+[3] A simplified front-view HUMAN BODY outline containing a red heart in the chest and a spreading network of red and blue BLOOD VESSELS branching through the whole body (circulatory system). The body outline is a soft light gray silhouette so the vessel network is the focus.
+
+[4] A single plant LEAF MESOPHYLL CELL, rounded rectangle with pale green cytoplasm, several bright green oval chloroplasts inside, one small oval nucleus.
+
+[5] Several tall column-shaped green PALISADE CELLS standing upright side by side, each packed with small green chloroplasts, forming a neat layer of palisade tissue.

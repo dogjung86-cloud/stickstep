@@ -4,14 +4,14 @@
 // 중단원 2 '물질을 구성하는 입자': 원자·분자·이온(154~157) · 이온의 이동(158~159)
 // 6레슨. 문제는 중단원 정리(150·160)와 대단원 마무리(164~167) 기반.
 // 입자 표현은 ui/chemKit 관례를 따라 과학적으로 정확하게(원자핵 +N·전자 −·CPK 색·상대 크기·NaCl 격자).
-import type { Unit } from "./curriculum";
+import type { Unit } from "../curriculum";
 import {
   hook, recap, mcq, ox, binSort, order,
   elementLab, moleculeLab, atomLab, periodicLab, ionLab, ionMoveLab,
-} from "./dsl";
+} from "../dsl";
 import {
-  atomModelFig, miniTableFig, fourModelFig, ionFormFig, waterPeroxFig, ionMoveFig, chemMiniArt,
-} from "../ui/chemFigures";
+  atomModelFig, miniTableFig, fourModelFig, ionFormFig, waterPeroxFig, ionMoveFig, atomMiniArt,
+} from "../../ui/atomFigures";
 
 // ══════════════════════════════════════════════════════════
 // 레슨 1. 원소와 화합물 (책 138~139쪽)
@@ -22,7 +22,7 @@ const L1 = {
   title: "원소와 화합물",
   subtitle: "한 종류일까, 여러 종류일까",
   label: "원소와 화합물",
-  icon: "beaker",
+  icon: "flask",
   minutes: 9,
   standard: "책 138~139쪽",
   doneNote: "원소와 화합물을 입자로 구분하는 법을 배웠어요",
@@ -51,7 +51,7 @@ const L1 = {
         {
           name: "원소",
           color: "#7CB024",
-          art: chemMiniArt("elemPure"),
+          art: atomMiniArt("elemPure"),
           text: "<b>한 가지 종류</b>의 입자로만 이루어진 순물질. 더 이상 다른 물질로 <b>분해되지 않아요</b>.",
           examples: ["구리·철·금", "산소·수소", "탄소(흑연·다이아몬드)"],
           more: "지금까지 알려진 원소는 <b>118가지</b>. 이 118가지가 다양하게 결합해 세상의 수많은 물질을 만들어요 — 레고 블록 종류는 얼마 안 되지만 만들 수 있는 게 무한한 것처럼요!<span class='fun'><b>알고 있나요?</b> 우리 몸의 96%는 단 4가지 원소(산소·탄소·수소·질소)로 이루어져 있어요.</span>",
@@ -59,7 +59,7 @@ const L1 = {
         {
           name: "화합물",
           color: "#37B6D8",
-          art: chemMiniArt("compoundMix"),
+          art: atomMiniArt("compoundMix"),
           text: "<b>서로 다른</b> 원소가 결합해 만들어진 새로운 물질. 성분 원소로 <b>분해할 수 있어요</b>.",
           examples: ["물 = 수소 + 산소", "염화 나트륨 = 나트륨 + 염소", "이산화 탄소 = 탄소 + 산소"],
           more: "화합물의 성질은 성분 원소와 <b>완전히 달라요</b>. 소금(염화 나트륨)을 떠올려요 — 나트륨은 물에 닿으면 격렬히 폭발하고 염소는 독가스인데, 둘이 결합한 소금은 우리가 매일 먹죠!<span class='fun'><b>알고 있나요?</b> 그래서 '섞은 것(혼합물)'과 '결합한 것(화합물)'은 달라요. 소금물은 섞은 혼합물, 소금 자체는 결합한 화합물이에요.</span>",
@@ -131,7 +131,7 @@ const L2 = {
   title: "원소 기호와 화학식",
   subtitle: "전 세계가 함께 쓰는 물질의 언어",
   label: "기호와 화학식",
-  icon: "grid",
+  icon: "ptable",
   minutes: 9,
   standard: "책 140~143쪽",
   doneNote: "원소 기호와 화학식으로 물질을 표현하는 법을 배웠어요",
@@ -166,7 +166,7 @@ const L2 = {
         {
           name: "원소 기호",
           color: "#3182F6",
-          art: chemMiniArt("symbolMini"),
+          art: atomMiniArt("symbolMini"),
           text: "원소를 <b>알파벳</b>으로 나타낸 기호. 첫 글자는 <b>대문자</b>, 둘째 글자는 <b>소문자</b>로 써요.",
           examples: ["수소 H · 산소 O", "탄소 C · 염소 Cl", "철 Fe · 나트륨 Na"],
           more: "첫 글자가 겹치면 둘째 글자를 소문자로 붙여 구분해요 — 탄소 C, 염소 Cl, 칼슘 Ca처럼요. 라틴어 이름에서 온 것도 있어요(나트륨 Na, 철 Fe, 금 Au).<span class='fun'><b>알고 있나요?</b> 원소 기호는 200년 전 스웨덴 과학자 베르셀리우스가 정리했어요. 덕분에 어느 나라 과학자든 'H₂O'만 쓰면 서로 통하죠.</span>",
@@ -174,7 +174,7 @@ const L2 = {
         {
           name: "화학식",
           color: "#7CB024",
-          art: chemMiniArt("formulaMini"),
+          art: atomMiniArt("formulaMini"),
           text: "원소 기호와 <b>숫자</b>로 물질을 나타낸 식. 원자 개수는 기호 <b>오른쪽 아래</b>에 작게(1은 생략).",
           examples: ["물 H₂O (H 2, O 1)", "이산화 탄소 CO₂", "철 Fe (원자가 이어진 물질)"],
           more: "H₂O의 작은 2는 <b>수소 원자가 2개</b>라는 뜻이에요. 철·구리처럼 같은 원자가 죽 이어진 물질은 기호 하나(Fe, Cu)로만 써요.<span class='fun'><b>알고 있나요?</b> 화학식만 보면 그 물질이 원소인지 화합물인지 바로 알 수 있어요 — 기호가 한 종류면 원소, 여러 종류면 화합물!</span>",
@@ -252,7 +252,7 @@ const L3 = {
         {
           name: "원자의 구조",
           color: "#F04452",
-          art: chemMiniArt("atomCore"),
+          art: atomMiniArt("atomCore"),
           text: "원자 = <b>원자핵</b>(가운데) + <b>전자</b>(주위). 원자핵은 (+)<b>양성자</b>와 전하 없는 <b>중성자</b>로 이루어져요.",
           examples: ["양성자 (+)전하", "중성자 전하 없음", "전자 (−)전하"],
           more: "원자핵은 아주 작지만 원자 <b>질량의 대부분</b>을 차지해요. 전자는 질량이 거의 0에 가까울 만큼 가볍죠. 양성자수 = 전자 수라서 원자는 <b>전기적으로 중성</b>이에요.<span class='fun'><b>알고 있나요?</b> 원자가 축구장만 하다면 원자핵은 그 한가운데 놓인 <b>구슬</b> 하나 정도! 원자 속은 거의 텅 비어 있어요.</span>",
@@ -260,7 +260,7 @@ const L3 = {
         {
           name: "양성자수 = 원소의 정체",
           color: "#7CB024",
-          art: chemMiniArt("protonKey"),
+          art: atomMiniArt("protonKey"),
           text: "원자의 <b>종류(원소)</b>는 <b>양성자수</b>가 정해요. 양성자 1개면 수소, 6개면 탄소, 8개면 산소!",
           examples: ["양성자 1개 → 수소", "양성자 6개 → 탄소", "양성자 8개 → 산소"],
           more: "실험실에서 봤듯 중성자나 전자를 바꿔도 정체는 안 변했지만, <b>양성자수</b>를 바꾸는 순간 다른 원소가 됐어요. 그래서 양성자수를 <b>원자 번호</b>라고도 불러요.<span class='fun'><b>알고 있나요?</b> 양성자가 19개인 원자를 발견했다면? 전자도 19개(중성이니까), 그리고 그 정체는 무조건 <b>칼륨</b>이에요 — 양성자수가 곧 이름표거든요.</span>",
@@ -312,10 +312,11 @@ const L3 = {
 const L4 = {
   id: "g2u4l4",
   unitId: "g2u4",
+  premium: true,
   title: "주기율표",
   subtitle: "위치만 봐도 성질이 보인다",
   label: "주기율표",
-  icon: "grid",
+  icon: "ptable",
   minutes: 10,
   standard: "책 146~149쪽",
   doneNote: "주기율표의 족·주기와 같은 족의 유사성을 배웠어요",
@@ -344,7 +345,7 @@ const L4 = {
         {
           name: "주기율표의 구조",
           color: "#7CB024",
-          art: chemMiniArt("tableMini"),
+          art: atomMiniArt("tableMini"),
           text: "원소를 <b>원자 번호(=양성자수) 순</b>으로 배열한 표. 세로줄이 <b>족</b>, 가로줄이 <b>주기</b>예요.",
           examples: ["18개의 족", "7개의 주기", "원자 번호 = 양성자수"],
           more: "멘델레예프가 처음 만들 때는 성질이 비슷한 것끼리 묶었는데, 놀랍게도 그 순서가 <b>양성자수 순서</b>와 거의 같았어요. 심지어 그는 빈칸을 남겨 두고 '여기 이런 원소가 있을 것'이라 예언했고, 실제로 발견됐죠!<span class='fun'><b>알고 있나요?</b> 주기율표의 빈칸 예언이 다 맞아떨어지면서, 과학자들은 이 표가 우연이 아니라 <b>자연의 규칙</b>임을 확신하게 됐어요.</span>",
@@ -352,7 +353,7 @@ const L4 = {
         {
           name: "같은 족 = 비슷한 성질",
           color: "#37B6D8",
-          art: chemMiniArt("groupTwin"),
+          art: atomMiniArt("groupTwin"),
           text: "<b>같은 세로줄(족)</b> 원소는 성질이 비슷해요. 그래서 위치만 봐도 성질을 <b>예측</b>할 수 있어요.",
           examples: ["1족: 물과 활발히 반응", "18족: 거의 반응 안 함", "17족: 반응성 큰 기체"],
           more: "1족(리튬·나트륨·칼륨)은 모두 물과 활발히 반응해 기체를 내고, 18족(헬륨·네온·아르곤)은 다른 물질과 거의 반응하지 않아 안정해요. 처음 보는 원소도 <b>족만 알면</b> 성질을 짐작할 수 있죠.<span class='fun'><b>알고 있나요?</b> 18족을 '비활성 기체'라고 불러요 — 반응을 안 하니 전구 속을 채우거나(아르곤) 풍선을 띄우는 데(헬륨) 안전하게 써요.</span>",
@@ -403,6 +404,7 @@ const L4 = {
 const L5 = {
   id: "g2u4l5",
   unitId: "g2u4",
+  premium: true,
   title: "원자 · 분자 · 이온",
   subtitle: "물질을 이루는 세 가지 입자",
   label: "원자·분자·이온",
@@ -446,7 +448,7 @@ const L5 = {
         {
           name: "원자",
           color: "#F0A422",
-          art: chemMiniArt("atomCore"),
+          art: atomMiniArt("atomCore"),
           text: "물질을 이루는 <b>기본 입자</b>. 금·구리·철 같은 금속은 원자가 <b>규칙적으로 배열</b>돼 있어요.",
           examples: ["금·구리·철", "흑연(탄소)", "규칙적 배열"],
           more: "금 표면을 확대하면 금 원자가 빼곡히 이어져 있어요 — 분자를 이루지 않고 원자 그대로 모여 있죠.<span class='fun'><b>알고 있나요?</b> 그래서 금속 화학식은 기호 하나로만 써요(금 Au, 철 Fe). '분자'가 아니라 '원자가 모인 덩어리'거든요.</span>",
@@ -454,7 +456,7 @@ const L5 = {
         {
           name: "분자",
           color: "#37B6D8",
-          art: chemMiniArt("moleculeWater"),
+          art: atomMiniArt("moleculeWater"),
           text: "2개 이상의 원자가 결합한 입자로, <b>물질의 성질을 나타내는 가장 작은 입자</b>. 쪼개지면 성질을 잃어요.",
           examples: ["물 H₂O · 산소 O₂", "이산화 탄소 CO₂", "암모니아 NH₃"],
           more: "물 분자를 수소와 산소로 쪼개면 더는 '물'이 아니에요 — 실험실에서 직접 봤죠! 그래서 분자는 <b>성질을 지닌 가장 작은 단위</b>예요.<span class='fun'><b>알고 있나요?</b> 헬륨처럼 18족 기체는 원자 1개로도 고유한 성질을 지녀서 그 자체를 분자로 보기도 해요.</span>",
@@ -462,7 +464,7 @@ const L5 = {
         {
           name: "이온",
           color: "#F04452",
-          art: chemMiniArt("ionPair"),
+          art: atomMiniArt("ionPair"),
           text: "원자가 전자를 <b>잃거나 얻어</b> 전하를 띤 입자. 잃으면 <b>양이온(+)</b>, 얻으면 <b>음이온(−)</b>.",
           examples: ["Na⁺ 나트륨 이온", "Cl⁻ 염화 이온", "O²⁻ 산화 이온"],
           more: "변하는 건 <b>전자 수뿐</b>, 양성자수(정체)는 그대로예요. 이온식은 오른쪽 위에 잃거나 얻은 전자 수와 전하를 써요(O²⁻는 전자 2개를 얻음). 음이온은 '~화 이온'으로 읽죠(염화·산화).<span class='fun'><b>알고 있나요?</b> 약수의 톡 쏘는 맛의 정체가 바로 이 이온들! 우리 몸속 신경 신호도 나트륨·칼륨 이온이 주고받는답니다.</span>",
@@ -542,6 +544,7 @@ const L5 = {
 const L6 = {
   id: "g2u4l6",
   unitId: "g2u4",
+  premium: true,
   title: "이온의 이동",
   subtitle: "전하를 띤 입자가 극으로 끌려간다",
   label: "이온의 이동",
@@ -574,7 +577,7 @@ const L6 = {
         {
           name: "이온은 극으로 끌려간다",
           color: "#F04452",
-          art: chemMiniArt("moveMini"),
+          art: atomMiniArt("moveMini"),
           text: "이온은 <b>전하를 띠고</b> 있어서, 전류를 흘리면 <b>양이온은 (−)극으로, 음이온은 (+)극으로</b> 이동해요.",
           examples: ["Cu²⁺(파랑) → (−)극", "MnO₄⁻(보라) → (+)극", "다른 극끼리 끌림"],
           more: "자석의 다른 극이 끌리듯, (+)이온은 (−)극에·(−)이온은 (+)극에 끌려요. 극을 바꾸면 이동 방향도 <b>반대</b>가 되죠 — 끌림의 원인이 전하라는 확실한 증거예요.<span class='fun'><b>알고 있나요?</b> 이 원리로 바닷물에서 소금(이온)을 모으거나, 금속에 도금을 하고, 배터리가 작동해요. 이온의 이동은 우리 생활 곳곳에!</span>",
@@ -582,7 +585,7 @@ const L6 = {
         {
           name: "이동이 전하의 증거",
           color: "#37B6D8",
-          art: chemMiniArt("ionPair"),
+          art: atomMiniArt("ionPair"),
           text: "색깔 있는 이온이 <b>한쪽 극으로 번져 가는 것</b>이 곧 이온이 전하를 띤다는 증거예요.",
           examples: ["파란색 = 구리 이온", "보라색 = 과망가니즈산 이온", "무색 이온도 똑같이 이동"],
           more: "색이 없는 황산 이온·칼륨 이온도 반대쪽으로 이동하지만 눈에 안 보일 뿐이에요. 그래서 실험은 일부러 <b>색깔 있는 이온</b>을 골라 이동을 눈으로 확인하게 설계했죠.<span class='fun'><b>알고 있나요?</b> 우리 몸의 신경도 나트륨·칼륨 이온이 세포막 안팎으로 이동하며 전기 신호를 만들어요 — 지금 이 글을 읽는 것도 이온 덕분!</span>",
@@ -627,14 +630,14 @@ const L6 = {
   ],
 };
 
-export const G2UNIT4: Unit = {
+export const G2_UNIT4: Unit = {
   id: "g2u4",
   roman: "IV",
   title: "물질의 구성",
   subtitle: "원소에서 원자·분자·이온까지",
   color: "#7CB024",
   icon: "atom",
-  grade: 2,
+
   standard: "2022 개정 교육과정",
   lessons: [L1, L2, L3, L4, L5, L6],
 };

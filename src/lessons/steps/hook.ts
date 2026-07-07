@@ -31,14 +31,17 @@ import { renderBalloon, renderTugRope, renderBow, renderIceslip, renderBottle, r
 import { renderPolar, renderBubblewrap, renderFoilballoon, renderPingpong } from "./hookGas";
 import { renderStargaze, renderPlanetSize, renderShadowClock, renderMoonPic, renderSunGlasses } from "./hookSpace";
 import { renderColorCups, renderSpeaker, renderSmokestack } from "./hookCiv";
-import { renderCellZoom, renderStain, renderBodyCount, renderLadybugs, renderBatBird, renderFoodWeb } from "./hookBio";
+import { renderCellZoom, renderStain, renderBodyCount, renderFingerprint, renderBatBird, renderFoodWeb } from "./hookBio";
+import { renderRings, renderDeadsea, renderCocoa, renderFishmouth, renderGallium, renderMilkzoom, renderSoysauce, renderSyrup, renderPerfume } from "./hookChem";
+import { renderStripemount, renderFoolsgold, renderDolstatue, renderBookcliff, renderPressrock, renderCappadocia, renderGravestone, renderPuzzlemap, renderQuakenews, renderEggearth } from "./hookGeo";
+import { ask } from "./hookAsk";
 import {
   renderMirrorTown, renderCoinMagic, renderDarkroom, renderCatMirror,
   renderSpoon, renderPointillism, renderFishing, renderKalimba,
 } from "./hookLight";
 import {
   renderZoomTwo, renderSigns, renderPeekAtom, renderMenuSort, renderSpringWater, renderMagnetPull,
-} from "./hookChem";
+} from "./hookAtom";
 import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -72,7 +75,9 @@ interface HookStep {
     | "polar" | "bubblewrap" | "foilballoon" | "pingpong"
     | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses"
     | "colorcups" | "speaker" | "smokestack"
-    | "cellzoom" | "stain" | "bodycount" | "ladybugs" | "batbird" | "foodweb"
+    | "cellzoom" | "stain" | "bodycount" | "fingerprint" | "batbird" | "foodweb"
+    | "rings" | "deadsea" | "cocoa" | "fishmouth" | "gallium" | "milkzoom" | "soysauce" | "syrup" | "perfume"
+    | "stripemount" | "foolsgold" | "dolstatue" | "bookcliff" | "pressrock" | "cappadocia" | "gravestone" | "puzzlemap" | "quakenews" | "eggearth"
     | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba"
     | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
@@ -130,7 +135,7 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "cellzoom") renderCellZoom(scene, helper, finish, face);
   else if (s.scene === "stain") renderStain(scene, helper, s, finish, face);
   else if (s.scene === "bodycount") renderBodyCount(scene, helper, s, finish, face);
-  else if (s.scene === "ladybugs") renderLadybugs(scene, helper, finish, face);
+  else if (s.scene === "fingerprint") renderFingerprint(scene, helper, finish, face);
   else if (s.scene === "batbird") renderBatBird(scene, helper, s, finish, face);
   else if (s.scene === "foodweb") renderFoodWeb(scene, helper, s, finish, face);
   else if (s.scene === "zoomtwo") renderZoomTwo(scene, helper, finish, face);
@@ -152,6 +157,25 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "shadowclock") renderShadowClock(scene, helper, s, finish, face);
   else if (s.scene === "moonpic") renderMoonPic(scene, helper, s, finish, face);
   else if (s.scene === "sunglasses") renderSunGlasses(scene, helper, s, finish, face);
+  else if (s.scene === "rings") sceneCleanup = renderRings(scene, helper, s, finish, face);
+  else if (s.scene === "deadsea") sceneCleanup = renderDeadsea(scene, helper, s, finish, face);
+  else if (s.scene === "cocoa") sceneCleanup = renderCocoa(scene, helper, s, finish, face);
+  else if (s.scene === "fishmouth") sceneCleanup = renderFishmouth(scene, helper, s, finish, face);
+  else if (s.scene === "gallium") sceneCleanup = renderGallium(scene, helper, s, finish, face);
+  else if (s.scene === "milkzoom") sceneCleanup = renderMilkzoom(scene, helper, s, finish, face);
+  else if (s.scene === "soysauce") sceneCleanup = renderSoysauce(scene, helper, s, finish, face);
+  else if (s.scene === "syrup") sceneCleanup = renderSyrup(scene, helper, s, finish, face);
+  else if (s.scene === "perfume") sceneCleanup = renderPerfume(scene, helper, s, finish, face);
+  else if (s.scene === "stripemount") sceneCleanup = renderStripemount(scene, helper, s, finish, face);
+  else if (s.scene === "foolsgold") sceneCleanup = renderFoolsgold(scene, helper, s, finish, face);
+  else if (s.scene === "dolstatue") sceneCleanup = renderDolstatue(scene, helper, s, finish, face);
+  else if (s.scene === "bookcliff") sceneCleanup = renderBookcliff(scene, helper, s, finish, face);
+  else if (s.scene === "pressrock") sceneCleanup = renderPressrock(scene, helper, s, finish, face);
+  else if (s.scene === "cappadocia") sceneCleanup = renderCappadocia(scene, helper, s, finish, face);
+  else if (s.scene === "gravestone") sceneCleanup = renderGravestone(scene, helper, s, finish, face);
+  else if (s.scene === "puzzlemap") sceneCleanup = renderPuzzlemap(scene, helper, s, finish, face);
+  else if (s.scene === "quakenews") sceneCleanup = renderQuakenews(scene, helper, s, finish, face);
+  else if (s.scene === "eggearth") sceneCleanup = renderEggearth(scene, helper, s, finish, face);
   else sceneCleanup = renderEgg(scene, helper, s, finish, api, face);
 
   api.setCTA("스틱맨 쌤과 먼저 관찰해요", { enabled: false });
@@ -259,24 +283,12 @@ function renderEgg(scene: HTMLElement, helper: HTMLElement, s: HookStep, finish:
     dropTimer = window.setTimeout(() => {
       face("curious");
       helper.innerHTML = "퐁당! 시간이 지나면 달걀과 찬물은 <b>어떻게 될까요?</b> 예상을 골라 보세요.";
-      const opts = s.choices ?? ["달걀만 식는다", "물만 미지근해진다", "달걀은 식고, 물은 미지근해진다"];
-      opts.forEach((label) => {
-        const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" } , text: label });
-        b.addEventListener("click", () => {
-          if (choicesBox.classList.contains("locked")) return;
-          choicesBox.classList.add("locked");
-          haptic(HAPTIC.select);
-          choicesBox.querySelectorAll(".hook-choice").forEach((x) => {
-            x.classList.add(x === b ? "sel" : "dim");
-            x.setAttribute("aria-pressed", x === b ? "true" : "false");
-            (x as HTMLButtonElement).disabled = x !== b;
-          });
-          helper.innerHTML = "좋아요, 예측 완료! 정답은 알려주지 않을게요 — <b>실험으로 직접 확인</b>해 봐요.";
-          finish();
-        });
-        choicesBox.appendChild(b);
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["달걀은 식고, 물은 미지근해진다", "달걀만 식는다", "물만 미지근해진다"],
+        good: "좋은 예측이에요! 뜨거운 달걀은 <b>식고</b>, 찬물은 <b>미지근</b>해져요 — 둘 다 변해요. 무대에서 직접 확인!",
+        bad: "한쪽만 변하는 게 아니에요 — 뜨거운 달걀은 <b>식고</b>, 동시에 찬물은 <b>미지근</b>해져요. 열이 옮겨 가거든요. 무대에서 직접 확인해 봐요.",
+        onDone: finish,
       });
-      choicesBox.classList.add("show");
       api.snack("예상을 골라 보세요");
     }, 750);
   });
@@ -404,57 +416,18 @@ function renderWire(scene: HTMLElement, helper: HTMLElement, s: HookStep, finish
       asked = true;
       face("curious");
       helper.innerHTML = "겨울엔 <b>팽팽</b>, 여름엔 <b>축 늘어짐</b> — 같은 전깃줄인데요! 왜 그럴지 예상을 골라 보세요.";
-      const opts = s.choices ?? ["여름엔 전봇대 사이가 멀어져서", "전깃줄이 열을 받아 길이가 늘어나서", "여름엔 바람이 약해서"];
-      opts.forEach((label) => {
-        const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" }, text: label });
-        b.addEventListener("click", () => {
-          if (choicesBox.classList.contains("locked")) return;
-          choicesBox.classList.add("locked");
-          haptic(HAPTIC.select);
-          choicesBox.querySelectorAll(".hook-choice").forEach((x) => {
-            x.classList.add(x === b ? "sel" : "dim");
-            x.setAttribute("aria-pressed", x === b ? "true" : "false");
-            (x as HTMLButtonElement).disabled = x !== b;
-          });
-          helper.innerHTML = "예측 완료! 정답은 실험실에서 <b>직접</b> 확인해 봐요.";
-          finish();
-        });
-        choicesBox.appendChild(b);
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["전깃줄이 열을 받아 길이가 늘어나서", "여름엔 전봇대 사이가 멀어져서", "여름엔 바람이 약해서"],
+        good: "정확해요! 전깃줄이 <b>열을 받으면 길이가 늘어나</b> 여름엔 축 늘어져요. 실험실에서 직접 확인!",
+        bad: "전봇대 간격이나 바람 때문이 아니에요 — 같은 전깃줄이 <b>열을 받아 길이가 늘어난</b> 거예요. 그래서 더운 여름엔 축 늘어지죠. 실험실에서 확인해요.",
+        onDone: finish,
       });
-      choicesBox.classList.add("show");
     } else if (!asked) {
       face("surprised");
     }
   };
   summerBtn.addEventListener("click", () => setSeason("summer"));
   winterBtn.addEventListener("click", () => setSeason("winter"));
-}
-
-// ── 공용: 예측 선택지(채점 없음 — 랩으로 연결) ────────────────
-function askChoices(
-  box: HTMLElement,
-  opts: string[],
-  helper: HTMLElement,
-  doneMsg: string,
-  finish: () => void,
-): void {
-  opts.forEach((label) => {
-    const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" }, text: label });
-    b.addEventListener("click", () => {
-      if (box.classList.contains("locked")) return;
-      box.classList.add("locked");
-      haptic(HAPTIC.select);
-      box.querySelectorAll(".hook-choice").forEach((x) => {
-        x.classList.add(x === b ? "sel" : "dim");
-        x.setAttribute("aria-pressed", x === b ? "true" : "false");
-        (x as HTMLButtonElement).disabled = x !== b;
-      });
-      helper.innerHTML = doneMsg;
-      finish();
-    });
-    box.appendChild(b);
-  });
-  box.classList.add("show");
 }
 
 // ── 장면 5: 급식실 냄새 — 뚜껑 열기 + 예측 (IV L1) ───────────
@@ -562,13 +535,12 @@ function renderSmell(
     timer = window.setTimeout(() => {
       face("curious");
       helper.innerHTML = "바람 한 점 없는 실내예요. 냄새는 <b>어떻게</b> 저 멀리까지 갔을까요?";
-      askChoices(
-        choicesBox,
-        s.choices ?? ["바람이 냄새를 옮겨 줬다", "냄새 입자가 스스로 움직여 퍼졌다", "코가 냄새를 끌어당겼다"],
-        helper,
-        "예측 완료! 실험실에서 <b>물속 잉크</b>로 직접 확인해 봐요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["냄새 입자가 스스로 움직여 퍼졌다", "바람이 냄새를 옮겨 줬다", "코가 냄새를 끌어당겼다"],
+        good: "맞아요! 바람이 없어도 <b>냄새 입자가 스스로 움직여</b> 사방으로 퍼져요. 실험실에서 물속 잉크로 확인!",
+        bad: "바람이나 코가 끌어당긴 게 아니에요 — 바람 한 점 없었잖아요? <b>냄새 입자가 스스로 움직여</b> 퍼진 거예요. 실험실에서 물속 잉크로 확인해요.",
+        onDone: finish,
+      });
     }, 900);
   });
   return () => window.clearTimeout(timer);
@@ -743,13 +715,12 @@ function renderWrap(
     helper.innerHTML = "랩이 <b>볼록</b>하게 부풀었어요! 아무도 바람을 넣지 않았는데요.";
     timer = window.setTimeout(() => {
       face("curious");
-      askChoices(
-        choicesBox,
-        s.choices ?? ["국물이 수증기로 변하며 부피가 크게 늘어서", "랩이 열을 받아 스스로 늘어나서", "음식 입자의 크기가 커져서"],
-        helper,
-        "예측 완료! 실험실에서 <b>풍선 실험</b>으로 직접 확인해 봐요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["국물이 수증기로 변하며 부피가 크게 늘어서", "랩이 열을 받아 스스로 늘어나서", "음식 입자의 크기가 커져서"],
+        good: "좋은 예측! <b>국물이 수증기로 변하면 부피가 크게 늘어나</b> 랩을 밀어 올려요. 실험실에서 풍선 실험으로 확인!",
+        bad: "랩이 스스로 늘거나 입자가 커진 게 아니에요 — <b>액체(국물)가 기체(수증기)로 변하면 부피가 확 커져요</b>. 그 기체가 랩을 밀어 올린 거예요. 실험실에서 확인해요.",
+        onDone: finish,
+      });
     }, 800);
   });
   return () => window.clearTimeout(timer);
@@ -851,13 +822,12 @@ function renderRamen(
     helper.innerHTML = "화력 최대! 기포가 훨씬 <b>세차게</b> 올라와요. 그럼 물의 <b>온도</b>는요?";
     timer = window.setTimeout(() => {
       face("curious");
-      askChoices(
-        choicesBox,
-        s.choices ?? ["불이 세니까 온도가 계속 올라간다", "끓는 동안엔 온도가 더 오르지 않는다", "물이 줄어들면서 온도가 내려간다"],
-        helper,
-        "예측 완료! 실험실에서 <b>온도 그래프</b>를 직접 그려서 확인해 봐요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["끓는 동안엔 온도가 더 오르지 않는다", "불이 세니까 온도가 계속 올라간다", "물이 줄어들면서 온도가 내려간다"],
+        good: "예리해요! <b>끓는 동안에는 온도가 더 오르지 않아요</b> — 불이 세도 그대로예요. 실험실에서 온도 그래프로 확인!",
+        bad: "불이 세다고 온도가 계속 오르진 않아요 — <b>끓는 동안에는 온도가 일정하게 유지</b>돼요. 화력은 물이 끓는 속도만 키울 뿐이에요. 실험실에서 온도 그래프로 확인해요.",
+        onDone: finish,
+      });
     }, 900);
   });
   return () => window.clearTimeout(timer);

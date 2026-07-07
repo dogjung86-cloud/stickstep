@@ -26,7 +26,8 @@
 - 완전 한글 **해요체**. 이모지 금지 — 픽토그램은 `core/icons.ts`의 SVG만.
 - 중1은 '분자'가 아니라 '입자'. 교과서 쪽수를 `lesson.standard`에 표기("책 NN~NN쪽").
 - 원 교과서(중1)의 **단원·소단원 순서와 내용을 지킨다**. 문제는 대단원 마무리를 참고.
-- **교과서 출판사 이름을 UI 문구에 쓰지 않는다.** 단원 배너는 "2022 개정 교육과정"으로만 표기.
+- **교과서 출판사 이름을 UI 문구에 쓰지 않는다.** 교육과정 언급은 스플래시의 "최신 개정 교육과정 반영"
+  단 한 곳(BRAND.note)뿐. 단원 밴드 메타는 학년·단원 불문 **"단원 정복률 N%"로 통일**(쪽수·과정 문구 금지).
 - **UI 문구에 '교과서'라는 단어 자체도 쓰지 않는다** — 앱이 특정 교과서 기반임을 드러내지 않는다.
   ("교과서 탐구 그대로" 같은 리드 금지.) 쪽수 출처 표기는 `lesson.standard`의 "책 NN~NN쪽" 형식만 허용.
 - 교과서에 정답이 인쇄돼 있지 않으므로, 정답 키는 과학적으로 정확하게 직접 확정한다.
@@ -49,17 +50,26 @@ src/
                   solarTour(VII 3D 가로 투어)·sunLab·skyDaily·zodiacRing·
                   moonPhase3d(3D 위상 + 지구뷰 인셋)·eclipse3d(3D 가로 정렬 + 지상 개기일식 뷰)·
                   hookSpace(VII 훅 5종: stargaze·planetsize·shadowclock·moonpic·sunglasses)·
-                  reflectLab·diffuseLab(중2III L1 — 레이저 각도 드래그·난반사 돋보기)·
+                  densityLab·densityPool·solubilityLab·gasFizz·meltCurve·sepFunnel·recrystal·distillLab
+                  (중2 I 물질의 특성 랩 8종 — buoyancyLab 문법 계승, 목표 칩 = pn-badges force3 + pn-badge chem)·
+                  hookChem(중2 I 훅 9종: rings·deadsea·cocoa·fishmouth·gallium·milkzoom·soysauce·syrup·perfume)·
+                  earthCut3d(중2 II 3D 지구 컷어웨이 — 가로, 단면 CanvasTexture 반원 2장+레이캐스트 층 판정)·
+                  streakLab(조흔·자성·염산·굳기)·coolingLab(냉각 속도×조성 2×2)·strataLab(퇴적 층리)·
+                  foliationLab(상하 압력→엽리; 규암·대리암은 엽리 없음)·rockCycle(가로 순환 여행 — 사건 선택 전이+오답 교정)·
+                  driftLab(PALEOMAP 크로스페이드+증거 오버레이)·plateMap(지진·화산 점+판 경계 토글)·
+                  hookGeo(중2 II 훅 10종: eggearth·foolsgold·dolstatue·stripemount·bookcliff·pressrock·
+                  cappadocia·gravestone·puzzlemap·quakenews)·
+                  reflectLab·diffuseLab(중2 III L1 — 레이저 각도 드래그·난반사 돋보기)·
                   refractLab(스넬 n=1.33)·seeLab(광원→물체→눈 경로 조립+작살)·
                   mirrorImageLab(모눈 상 작도 — 상점=거울 대칭점·연장선 교점 정확)·
                   mirrorLens(가로 광학 벤치 4모드 — 거울/렌즈 공식으로 상 실시간)·
                   objectColorLab·colorMixLab(캔버스 lighter 진짜 가산혼합)·pixelLab(화소 돋보기+RGB 슬라이더)·
                   waveLab(이력 버퍼 파동 전파 + 제자리 탁구공)·soundLab(Web Audio + 오실로스코프)·
-                  hookLight(중2III 훅 8종 — hook.ts가 위임)·
-                  elementLab·moleculeLab(중2IV 원소/화합물·분자 조립+쪼개기)·
+                  hookLight(중2 III 훅 8종 — hook.ts가 위임)·
+                  elementLab·moleculeLab(중2 IV 원소/화합물·분자 조립+쪼개기)·
                   atomLab·ionLab(원자 조립소 스테퍼·이온 공방 전자 떼기붙이기)·
                   periodicLab(주기율표 1~20 탐험 DOM)·ionMoveLab(이온 이동 전기영동)·
-                  hookChem(중2IV 훅 6종 — hook.ts가 위임))
+                  hookAtom(중2 IV 훅 6종 — hook.ts가 위임))
   engine/    matterSim — IV 단원 순수 입자 물리(프로토타입 Sim 이식, 렌더링 없음, 수치 불변)
   renderers/ meta(WebGL 메타볼 — FRAG 원본 이식, 볼 상한 48, dispose 시 lose_context)·
              dot(발광점 — WebGL 폴백 겸 "입자의 눈" 뷰)·palette(온도→hue 212→370, uniform 3색)
@@ -78,15 +88,20 @@ src/
                      **반드시 동적 import**로만 로드, dispose가 지오메트리·재질·텍스처+컨텍스트 반납),
              rotateStage(가로 모드 오버레이 — fixed 90° 회전 + mapPoint 포인터 리매핑 + 나가기),
              spaceFigures(VII 퀴즈 SVG + 태양 핫스팟 그림 + spaceMiniArt),
-             lightKit(중2III 공용 — drawBeam 발광 광선(글로우 3층+광자 점 흐름)·각도 호·각도기·법선·
+             chemFigures(중2 I 퀴즈 SVG — 용해도 곡선·가열 곡선·산점도·증류탑 + chemMiniArt),
+             geoFigures(중2 II 퀴즈 SVG — 층상구조 사분원·화성암 2×2·광물 흐름도·토양층·판 구조·
+                        대륙 이동 4단계((나)→(라)→(가)→(다)) + geoMiniArt),
+             lightKit(중2 III 공용 — drawBeam 발광 광선(글로우 3층+광자 점 흐름)·각도 호·각도기·법선·
                       레이저/거울/눈 소품·capturePointer 합성 이벤트 안전 캡처),
-             lightFigures(중2III 퀴즈 SVG + 파동 핫스팟 그림 + lightMiniArt),
-             chemKit(중2IV 공용 — 원자 공/원자핵(+N)/전자(−)/이온식 렌더 + ELEMS(CPK 색·상대 크기)·
+             lightFigures(중2 III 퀴즈 SVG + 파동 핫스팟 그림 + lightMiniArt),
+             chemKit(중2 IV 공용 — 원자 공/원자핵(+N)/전자(−)/이온식 렌더 + ELEMS(CPK 색·상대 크기)·
                      결합 막대·formulaHtml. 입자 표현의 단일 진실 공급원 — 여기 관례를 반드시 따를 것),
-             chemFigures(중2IV 퀴즈 SVG + chemMiniArt)
-  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금), unit1 … unit7,
-             g2unit3(중2 III 빛과 파동), g2unit4(중2 IV 물질의 구성)
-  screens/   splash, onboarding, home(게임 지도), done
+             atomFigures(중2 IV 퀴즈 SVG + atomMiniArt — 'chem' 이름은 중2 I이 선점, IV는 atom 접두)
+  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금·학년 트랙), unit1 … unit7(중1),
+             g2/unit1…unit4(중2 — I 물질의 특성·II 지권의 변화·III 빛과 파동·IV 물질의 구성)
+  screens/   splash, subject(과목 허브 — 과학 활성·수학/사회 준비 중·스틱맨 낙서 데코),
+             onboarding, home(게임 지도 + 중1⇄중2 학년 세그), done,
+             paywall(프리미엄 안내·구매), login(구글·카카오·네이버 소셜 스텁 — 출시 시 OAuth 연결)
 ```
 - **스텝 = `{ type, ...props }` 데이터.** `player`가 `registry`에서 `type`으로 렌더러를 찾아 그린다.
 - 렌더러 시그니처: `(host, step, api) => cleanup?`. `api`로 CTA·시트·채점·다음을 조종.
@@ -99,14 +114,49 @@ src/
 3. **새 단원 추가** → `content/unitN.ts` 만들고 `curriculum.ts`의 `CURRICULUM`에 넣는다.
    단원 내 레슨은 순차 잠금(직전 레슨 완료 시 해제).
 4. **단원 테마(색)** → `screens/home.ts`의 `UNIT_THEME`에 클래스 등록(u2=bio, u3=heat, u4=matter, u5=force,
-   u6=gas, u7=space, g2u3=light, g2u4=chem) + `ui.css`에 `.unit-band.X`/`.gm-terrain.X`/`.gm-path-*.X`/`.gm-node.X` 변형 + tokens에 그라데이션.
+   u6=gas, u7=space, g2u1=chem, g2u2=geo, g2u3=light, g2u4=atom) + `ui.css`에 `.unit-band.X`/`.gm-terrain.X`/`.gm-path-*.X`/`.gm-node.X` 변형 + tokens에 그라데이션.
    랩 안 킥커는 `concept({ kickerTone: "heat" })` 식으로. 새 색은 기존 단원과 겹치지 않게
-   (u4 matter #7C6BFF 보라 ↔ u7 space #4A54E1 딥 인디고 ↔ 중2III light #C838A6 오키드 마젠타 ↔
-   중2IV chem #7CB024 라임 그린처럼 뚜렷이 구분).
-5. **중2(상급 학년) 단원 추가** → `Unit.grade: 2` + 단원 id는 `g2u<대단원 번호>`(레슨 id는 `g2u3l1`식),
-   파일명 `content/g2unitN.ts`. 탭·배너의 "중2 ·" 접두는 grade 필드로 자동 표기(중1 단원은 grade 생략).
-   교과서 텍스트는 `중학교 교과서/중2 단원별 - 텍스트 보존(OCR)/` PDF — pdftotext는 한글이 깨지므로
-   **PyMuPDF(`py -m pip install pymupdf`)의 get_text()로 추출**한다(콘솔 인코딩 문제가 있으니 UTF-8 파일로 저장해 읽기).
+   (u4 matter #7C6BFF 보라 ↔ u7 space #4A54E1 딥 인디고 ↔ g2u1 chem #E64980 지시약 로즈 ↔
+   g2u3 light #C838A6 오키드 마젠타 ↔ g2u4 atom #7CB024 라임 그린처럼 뚜렷이 구분).
+   주의: 'chem' 테마명은 중2 I(물질의 특성)이 선점 — 중2 IV(물질의 구성)는 'atom'을 쓴다.
+
+## 중2 트랙 · 프리미엄(수익화)
+- **학년 트랙**: `curriculum.ts`의 `CURRICULA = { g1: CURRICULUM, g2: CURRICULUM_G2 }`.
+  중2 단원 파일은 `content/g2/unitN.ts`, id는 `g2uN`(레슨 `g2uNlM`) — 중1 `uN`과 절대 충돌 금지.
+  홈 상단 학년 세그(중1⇄중2)가 `store.viewGrade`로 전환·저장되고, 온보딩 학년(g2·g3→중2)에서 기본값을 유도.
+  `findLesson`은 두 트랙을 모두 검색, 완료 후 홈 복귀는 `gradeOfUnit(unitId)`로 올바른 학년 지도로 돌아간다.
+- **준비 중 단원**: 아직 안 만든 단원은 `comingSoon: true` + `lessons: []`(curriculum.ts의 `soon()` 헬퍼) —
+  탭·밴드는 노출하되 지도 대신 `.coming-card` 안내를 그린다. 콘텐츠가 완성되면 실제 UNIT 모듈로 교체.
+  중2 V·VI(식물·동물과 에너지)은 의도적으로 뒤 순번 제작(자리만 유지) — 우선순위: 1→2→3→4→7→8.
+- **프리미엄 잠금**: 레슨에 `premium: true`(중2 I 기준 무료 3레슨 + 프리미엄 7레슨). `isPremiumLocked()` =
+  premium && !store.premium. 지도에서 골드 크라운 메달리온(`.gm-node.prem`, 첫 노드에만 `gm-ribbon gold` 리본),
+  탭하면 `screens/paywall.ts` 전면 페이월(혜택 3 + 평생 이용권 가격 카드 + 구매·복원).
+- **결제**: `core/purchase.ts`가 단일 창구(가격 문자열 포함). 현재 스텁 — **DEV에서만 즉시 해금**(QA용),
+  프로덕션 웹은 "출시 후 결제" 안내. Capacitor 포장 시 이 파일만 IAP(cordova-plugin-purchase/RevenueCat)로
+  교체하면 UI는 그대로 동작한다. 구매 성공 경로: 스토어 결제 → 영수증 검증 → `setPremium(true)`.
+- **중2 콘텐츠 규칙**: 중2 교과서는 녹는점·끓는점·용해도 등 용어를 정식 도입한다(중1 '입자' 제약과 별개).
+  교과서 원본: `D:\brilliant\중학교 교과서\중2 단원별 - 텍스트 보존(OCR)\` PDF — poppler가 한글 CMap이 없어
+  깨지므로 **pypdf로 텍스트 추출**(`py -m pip install pypdf`)이 확정 경로다.
+- **중2 II 지권 에셋**: 암석·광물 표본과 증거 사진은 codex 실사풍 발주(`bash qa/order-geo.sh` →
+  `node qa/process-geo.mjs`, public/geo/{rocks,minerals,evid} 512 webp — drift/figs 디렉터리는 비율 유지 960 모드).
+  퀴즈에는 unit2.ts의 gimg/gpair/gitem/gquad(2×2 (가)~(라) 순서 문제)/glabeled(사진 위 한글 라벨 필 —
+  '이미지 안 글자 금지' 발주 규칙과 라벨 표기를 양립시키는 표준) 헬퍼로 `<img>` 임베드.
+  2차 발주(qa/order-geo2.sh → geo2_prompts.txt): 대륙 이동 4단계(geo/drift/stage-*.webp),
+  평면 세계지도(geo/figs/worldmap.webp — quakenews 훅 SVG가 `<image href>`로 임베드, 마커는 지도 실좌표),
+  판 구조 단면(geo/figs/plate-section.webp — unit2.ts plateSectionImg()가 L9 개념·문제 공용).
+  대륙 지도는 PALEOMAP 11시대(public/geo/maps, C.R. Scotese — CREDITS.md; 추가분 파일명 ma###.webp,
+  원본 90시대는 scratchpad의 earth-history 리포) — driftLab이 타임라인 스크럽+두 장 크로스페이드로 쓰고
+  (5장은 이동이 뚝뚝 끊긴다는 피드백 → 11장 확장이 결론), plateMap이 현재 지도를 equirect 투영 배경으로 쓴다.
+- **puzzlemap 대륙 퍼즐(훅)은 발주 사진이 아니라 SVG** — 드래그 스냅에 벡터 공유 경계가 필요해서다.
+  남미·아프리카가 해안 곡선 E(DRIFT_EDGE/REV 쌍)를 공유하며, E는 3악장(A에서 살짝 서쪽→브라질 어깨
+  돌출=기니만 홈→남서로 길게 B)으로 설계해야 두 대륙이 실제 지형으로 읽힌다. E만 바꾸면 둘 다 따라온다.
+- **setPointerCapture는 항상 try/catch로 감싼다**(binSort·driftLab 선례): 합성 포인터 id에서 throw하면
+  리스너 전체가 죽어 "드래그가 안 먹히는" 것처럼 보인다. 실기기에선 정상이라 자동 테스트에서만 드러난다.
+- **가로 2D 랩**(rockCycle): rotateStage + plain canvas — 매 프레임 rot.size()로 캔버스를 맞추고
+  논리 좌표(1000×480)를 스케일 매핑, 하단 HUD(rc-actions) 여백을 빼고 배치한다.
+- **earthCut3d 절단면 수학**: SphereGeometry 정점은 x=-r·cosφ·sinθ, z=r·sinφ·sinθ.
+  φ∈[0,270°] 표면이면 뜯긴 창은 -X-Z 사분면(이등분 (-0.707,0,-0.707)) — rotY(3π/4)가 정면,
+  교과서 구도는 -0.55rad 덜 돌린다. 절단면은 -X 반원 CircleGeometry 2장(하나는 rotY -90°).
 
 ## 퀴즈 유형 (quiz 스텝 하나로)
 - `mcq`(5지선다) · `ox`(O/X) · `multi`(보기 합답형, 복수정답) · 그림 퀴즈(`figure` 추가).
@@ -121,10 +171,25 @@ src/
 - 라이트 전용: `prefers-color-scheme: dark` 자동 반전은 의도적으로 넣지 않았다(디자인이 라이트 기준).
 
 ## 브랜드 · 스플래시
-- 앱 이름은 **"스틱스텝 사이언스"**(core/brand.ts) — UI 문구·타이틀·워드마크 모두 여기서만 참조.
-- 스플래시(screens/splash.ts) = **스틱맨 플립북**: `public/brand/loading/0..6.webp`가 105ms 간격으로
-  2바퀴 타다다닥 → `study.webp`(머리 질끈 공부 포즈)로 탁 정착(flipPop) → 워드마크 페이드업.
-  프레임이 없으면 만화 아바타 5종으로 폴백, 그것도 없으면 정적 로고. 탭하면 건너뛰기.
+- 앱 이름은 **"스틱스텝"**(core/brand.ts) — 과목이 늘어날 예정이라 브랜드에 과목명을 붙이지 않는다.
+  UI 문구·타이틀·워드마크 모두 BRAND에서만 참조. 태그라인 "손끝으로 배우는 중학 과학"은 유지
+  (과목 추가 시 태그라인만 손본다).
+- **첫 사용 플로우**: 스플래시 → 과목 허브(screens/subject.ts — 과학만 활성, 수학·사회 "준비 중") →
+  학년·목표 온보딩 → 홈. 홈 앱바 왼쪽 grid 버튼으로 과목 허브 재진입, 오른쪽 user 버튼으로 로그인 화면.
+- **로그인 정책(결정)**: 로그인을 강요하지 않는다 — 학습·구매 모두 무로그인 가능, 기록은 기기 저장.
+  로그인 화면은 진입 장치만(소셜 3종 스텁, 출시 시 OAuth+동기화 백엔드 연결). 강한 프롬프트를 붙인다면
+  "첫 레슨 완료 직후"가 최적 시점(가치 먼저, Duolingo 방식) — 단원 진입을 로그인으로 막지 말 것.
+- **검토 모드(콘텐츠 검수용)**: 홈 앱바의 브랜드 워드마크 **7연타**로 토글 — 순차·프리미엄 잠금이 전부
+  풀리고 브랜드가 로즈색으로 표시된다(store.reviewMode, 기기 저장). **출시 전 유지/제거 여부 결정 필요**
+  (남기면 QA 편리하지만 발견 시 프리미엄 우회 구멍).
+- 스플래시(screens/splash.ts) = **스틱맨 플립북 v2 "실컷 놀다가 → 공부하자!"**: `public/brand/loading/0..13.webp`
+  놀이 14컷(먹기·티비·게임·컴퓨터·친구·공놀이·폰·만화책·낮잠·과자·노래방·자전거·강아지·아차!)을
+  `FLIP_SEQ` 몽타주 순서로 125ms 간격 **1바퀴**(서사라 반복 금지, '아차! 시계' 컷이 항상 마지막) →
+  `study.webp`(책상 앞 **상체 샷** — 머리띠 질끈, 띠에 한글 "공부하자!", 성별 중립 민머리+안경)로 탁 정착 →
+  워드마크 페이드업. 프레임이 없으면 만화 아바타 5종으로 폴백, 그것도 없으면 정적 로고. 탭하면 건너뛰기.
+  재발주: `bash qa/order-splash2-tower.sh`(0..6+study+증류탑) / `bash qa/order-splash2b.sh`(7..13+study 상체 수정) →
+  `node qa/process-loading2.mjs`(512 webp 경량화, 프레임당 11~33KB). 이미지 속 글자는 study 머리띠 단 하나만 예외
+  (잠자는 컷의 Zzz도 금지 — 코 방울로, 음표·하트는 허용).
 - 앱 아이콘/파비콘 = `public/brand/icon.png`(512, 파란 라운드 사각 + 흰 스틱맨) — index.html에서 링크.
 - 브랜드 이미지 재발주: `bash qa/order-brand-u1l3.sh`(프롬프트 qa/brand_imagen_prompts.txt),
   발주 원본은 1254px → `node qa/resize-brand.mjs`(512 png) + webp 변환으로 경량화(프레임당 ~20KB).
@@ -135,7 +200,8 @@ src/
   소품 세트만 단원별로 — I 정글 원정(징검돌·야자수·깃발) · II 생물 사다리(ART_BIO 재사용: 세균→아메바→
   고사리→물고기→새) · III 열(모닥불·김 나는 잔·주전자·태양) · IV 고체→액체→기체(얼음→물방울→김) ·
   V 힘 4종(사과나무·용수철·상자·튜브) · VI 기체(풍선·공기방울·열기구) · VII 행성 순항(수성→금성→화성→
-  목성→토성 순서). seq 순서 자체가 서사이니 함부로 섞지 말 것. 새 단원은 UNIT_DECOR에 세트 등록.
+  목성→토성 순서) · 중2 I 실험대 순례(플라스크→층 병→결정→분별 깔때기→증류기).
+  seq 순서 자체가 서사이니 함부로 섞지 말 것. 새 단원은 UNIT_DECOR에 세트 등록.
 - `serpentine(count, {width,gap,top,amp})` 가 노드 좌표와 부드러운 곡선 path(Catmull-Rom)를 만든다.
 - **좌표계 규칙(중요)**: 노드/장식은 폭 대비 **%-left**로 배치하고, 경로 SVG는 `width:100%` + `vector-effect:non-scaling-stroke`.
   이러면 리사이즈·기기 회전 시 재렌더 없이 노드와 경로가 함께 스케일돼 어긋나지 않는다.
@@ -149,9 +215,10 @@ src/
 - 신규/대량 아트는 `premium-redesign-foundry` 워크플로로 생성(세포 좌표는 핫스팟 정렬 위해 유지).
 - **세포도 소기관 좌표는 figures.ts의 spots와 반드시 일치**시킬 것(핵 150,92 / 미토 225,62·82,150 등).
 - **단원별 훅 장면 파일**: III·IV=hook.ts 내부, V=hookForce.ts, VI=hookGas.ts, VII=hookSpace.ts,
-  I=hookCiv.ts(colorcups·speaker·smokestack), II=hookBio.ts(cellzoom·stain·bodycount·ladybugs·batbird·foodweb),
+  I=hookCiv.ts(colorcups·speaker·smokestack), II=hookBio.ts(cellzoom[스틱맨쌤 팔 확대→세포]·stain·bodycount·fingerprint[지문 스캐너=변이]·batbird·foodweb),
+  중2I=hookChem.ts(9종)·중2II=hookGeo.ts(10종),
   중2III=hookLight.ts(mirrortown·coinmagic·darkroom·catmirror·spoon·pointillism·fishing·kalimba),
-  중2IV=hookChem.ts(zoomtwo·signs·peekatom·menusort·springwater·magnetpull).
+  중2IV=hookAtom.ts(zoomtwo·signs·peekatom·menusort·springwater·magnetpull).
   recap 미니아트도 단원별: I=civFigures.ts, II=bioFigures.ts, III~=각 단원 figures. 새 훅은 scene 유니온을
   hook.ts·dsl.ts 양쪽에 등록하고, 상태 애니메이션 CSS는 ui.css의 해당 단원 훅 섹션에.
 - **손코딩 장면 SVG(훅 등)도 파운드리 재질 문법을 따른다** — 균일한 검은 외곽선 금지. 공식:
@@ -166,9 +233,25 @@ src/
   `figures.ts`의 organism()이 NAME_ICON→key→발주 webp(<img class="bio-ico">)를 우선 반환, 없으면 ART_BIO SVG 폴백.
   흰 배경 유지(투명 처리 시 밝은 깃털·뺨에 구멍) + CSS로 라운드 배경. 재발주: qa/order-bio-icons.sh →
   qa/process-bio.mjs(256 webp). 조잡한 픽토그램 SVG(박쥐=새 매핑 오류 포함)를 대체한 것.
-- **구성 단계 도해(orgLevels 랩)는 bioFigures.ts의 orgArt(key)** — 단색 미니 SVG를 파운드리 문법
-  (근-동조 radial 그라데이션 + 좌상단 하이라이트 + 접촉 그림자 + 최암색 외곽선)으로 격상. 순환계는
-  '심장+온몸 혈관망'(무지개 부채꼴 금지), bodycount 훅 세포 격자·사람 실루엣도 같은 문법.
+- **구성 단계 도해(orgLevels 랩)는 bioFigures.ts의 orgArt(key)** — 손코딩 SVG를 codex 발주 일러스트로
+  교체(public/bio2/levels/*.webp 10종: 근육세포·근육조직·심장·순환계·강아지 / 잎살세포·울타리조직·조직계·
+  잎·나무). orgArt가 key→발주 webp `<img class="org-photo">` 우선 반환, 로드 실패 시 SVG 폴백. 순환계는
+  '심장+온몸 혈관망', 조직계는 '잎 단면(울타리+해면+기공)'.
+- **세포 구조도(L1 hotspot)도 발주 일러스트**(public/bio2/cells/{animal,plant}.webp) — figures.ts의
+  animalCell/plantCell.svg가 발주 `<img>`를 반환하고, spots는 **이미지 기준 %**로 정렬(`.hs-art:has(img)`가
+  패딩 0이라 이미지%=스테이지% 일치). 좌표는 반드시 스크린샷으로 눈으로 맞춘다(동물 3·식물 5부위 정렬 검증됨).
+- **문제 그림도 codex 발주**(public/bio2/quiz/*.webp) — unit2.ts qimg() 헬퍼로 mcq/ox/multi의 figure에 임베드.
+  발주 후보는 감사 워크플로우(레슨 병렬 진단→중복 제거→우선순위)로 뽑는다. `public/bio2/`는 다른 세션이
+  재생성하는 `public/bio/`(5계 아이콘)와 분리 — 병렬 세션 충돌 방지.
+- **발주 이미지 임베드에 `loading="lazy"` 금지** — 앱은 `.scroll` 컨테이너 안에서 스텝을 렌더하는데,
+  lazy 관측 루트가 이 컨테이너와 안 맞아 이미지가 영영 안 뜬다(naturalWidth 0). fresh Image()는 되는데
+  DOM img만 안 뜨면 이 문제. hotspot·orgArt·qimg 전부 lazy 없이 즉시 로드한다.
+- **누끼(투명 배경) 발주** — 카드 위에 뜨는 사물 아트(구성단계 등)는 codex에 "FULLY TRANSPARENT
+  background(PNG alpha)"로 발주하면 알파를 준다(초록 세포류는 codex가 흰 배경으로 흘리기도 해 재발주 필요).
+  변환은 process-geo.mjs의 TRANSPARENT_DIRS(흰 배경 fill 생략, 알파 보존). 장면형(서식지·배경 있는 그림)은
+  누끼 대상 아님. **codex image_gen은 tmp/ 작업 디렉터리를 만든다 → .gitignore에 tmp/**.
+- **분류 단계처럼 한글 라벨이 본질인 도형은 codex가 아니라 SVG 도표**(bioFigures.classStagesFig — 이미지
+  안 글자 못 넣는 codex 대신 계급 라벨을 직접 그림). 라벨 없는 codex 피라미드는 "저게 뭐야" 혼란을 부른다.
 - **천체(태양·행성·달)는 SVG로 그리지 않는다 — 실사(public/photos/, NASA·NOIRLab PD/CC BY)를 쓴다.**
   훅·퀴즈 그림에는 SVG `<image href>` + `clipPath` 원형 크롭으로 임베드(기준: hookSpace planetsize·stargaze·
   moonpic, spaceFigures sunspotFig·sunAnatomyFig). 3D는 space3d의 텍스처 로더가 담당. 출처는 `photos/CREDITS.md`.
@@ -190,7 +273,27 @@ src/
   refractLab(신기루)·mirrorImageLab(구급차 거울문자)·colorMixLab(물감 혼합)·waveLab(우주 폭발음)·
   soundLab(헬륨 목소리), 중2IV elementLab(수소도 쪼갤까)·moleculeLab(산소vs오존)·atomLab(전자는 왜 안 빨려드나)·
   periodicLab(수소는 왜 예외)·ionLab(나트륨 원자vs이온)·ionMoveLab(안 보이는 이온을 어떻게). 오개념 교정형 질문이 기준.
+- **recap 카드의 `more`(자세히)는 문제집 수준이 표준** — 모든 카드에 존재해야 하며,
+  `<b class='rm-h'>왜 그럴까요?</b>` 소제목 2~4개(rm-h 전용 CSS가 카드 액센트 색 다이아 불릿을 붙임)로
+  ①원리(왜) → ②구체 예시 → ③시험 함정/오개념 교정 순서를 갖추고, 상식 꼬리는 기존 `<span class='fun'>` 유지.
+  분량 400~800자·해요체. 훅/랩에서 이미 쓴 소재는 반복 말고 "그 장면 기억나요?"식으로 참조만.
+  (중2 III·IV recap은 아직 이 표준 이전 분량 — 검수 때 함께 격상 후보.)
+- **상호작용 랩 앞에는 개념이 먼저** — 용어(정의)가 필요한 랩이면 concept 스텝(term 블록)으로 판을 깔고
+  들어간다(g2u2 L9 판→판의 경계→plateMap이 기준). 훅에서 바로 랩으로 점프해 용어 없이 조작만 시키지 말 것.
 - hotspot 스텝은 `spot.photo`(+photoCredit)로 부위별 실사 사진 카드를 설명 아래에 띄울 수 있다(태양 지도가 기준).
+
+## 훅 예측 규칙 (steps/hookAsk.ts — 위반 금지)
+- 훅의 예측 선택지는 **반드시 공용 `hookAsk.ask()`**로 만든다(장면 파일 안에 로컬 ask 복제 금지).
+- 데이터 규약: **choices[0]이 항상 과학적으로 옳은 예측**(content에서 커스텀 choices를 넘길 때도 동일).
+  화면 표시는 자동 셔플되므로 "첫 번째=정답" 노출 걱정은 없다.
+- **good(정답)·bad(오답) 문구는 반드시 다르게** — 오답 문구는 고른 오개념을 짚고 옳은 방향을 알려 준다.
+  무엇을 골라도 "완벽한 예측!"이라 칭찬하는 구현은 버그다(실제 있었던 사고).
+- 정답이 없는 열린 예측(이후 실험으로 확인)만 `neutral: true` — 이때도 문구는 "예측 완료, 실험으로 확인!"
+  톤이어야 하고 정답 칭찬("완벽해요/정확해요")을 쓰면 안 된다.
+- 오답 선택 시 옳은 보기가 초록(`.hook-choice.reveal`)으로 함께 밝혀진다. 예측은 채점에 넣지 않는다.
+- **맥락 규칙**: 소재의 이름·설정(갈륨 동전, 로르산 같은 재료명)은 반드시 **도입(title/lead/narrator/장면
+  안내)에서 먼저 소개**한다 — 답변에서 처음 튀어나오면 결함(실제 있었던 갈륨 사고). 단, 개념적 정답
+  (자전·확산·압력 원리)은 답변에서 처음 등장하는 게 정상 — 미리 말하면 예측이 무의미해진다.
 
 ## 개념 우선 + 스틱맨 만화 (steps/comic.ts)
 - **원칙: 개념을 다 가르친 뒤 문제.** 개념 하나 → 바로 퀴즈 금지. (단원 I L1이 이 원칙의 기준.)

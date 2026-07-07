@@ -1,0 +1,7 @@
+# 중1 II 추가 아트 C — 구성단계 '개체=사람' (강아지 대체) + 투명 배경(누끼) 테스트
+# 공통 스타일:
+# Bright, friendly flat educational illustration for a middle-school biology app.
+# Clean flat vector, soft cel shading, smooth rounded shapes, gentle gradients,
+# subtle soft shadow, cheerful colors. NO text, NO letters, NO numbers anywhere.
+
+[0] A single friendly cartoon CHILD (a healthy elementary-school kid) standing and facing forward, whole body visible head to feet, smiling, arms relaxed at the sides, simple clothes (t-shirt and shorts). This represents "one whole individual organism (a person)". Centered. IMPORTANT: place the subject on a FULLY TRANSPARENT background (PNG with alpha channel) — no background color, no scenery, no ground, only a very soft subtle drop shadow directly under the feet. Aspect 1:1.

@@ -1,0 +1,18 @@
+# 중1 II 상호작용 아트 B — 동물 개체 1 + 식물 구성단계 5
+# 공통 스타일([0]~[5]):
+# Bright, friendly educational illustration for a middle-school biology app.
+# Clean flat vector style with soft cel shading, smooth rounded shapes, gentle gradients,
+# subtle soft shadows, cheerful saturated (not neon) colors, plain very-light neutral background.
+# Absolutely NO text, NO letters, NO numbers, NO labels anywhere in the image.
+
+[0] A cute simple friendly cartoon PUPPY standing in side view, light brown fur, whole healthy happy dog. Centered on plain background. Aspect 1:1.
+
+[1] A single plant LEAF MESOPHYLL CELL, rounded rectangle with pale green cytoplasm, several bright green oval chloroplasts inside, and one small oval nucleus. Iconic and simple, centered. Aspect 1:1.
+
+[2] Several tall column-shaped green PALISADE CELLS standing upright side by side, each packed with small green chloroplasts, forming a neat layer of palisade tissue. Centered. Aspect 1:1.
+
+[3] A small CROSS-SECTION slice of a plant leaf showing layered green tissues — an upper row of tall column cells and a lower row of loosely packed rounded cells with small air gaps between them — grouped together as a tissue system. Simple and clean, centered. Aspect 1:1.
+
+[4] A single fresh green tree LEAF seen flat from above, with a central vein and branching side veins, healthy and simple, gentle glossy highlight. Centered. Aspect 1:1.
+
+[5] A simple friendly whole TREE with a sturdy brown trunk and a full rounded green leafy canopy, healthy and cheerful. Centered. Aspect 1:1.

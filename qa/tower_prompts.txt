@@ -1,0 +1,18 @@
+# 원유 증류탑 층별 용도 일러스트 6종 — 교과서 그림 I-14(원유의 증류) 참고.
+# 공통 스타일([0]~[5]):
+# Bright, friendly educational illustration for middle-school science app,
+# soft flat colors with subtle gradients, clean rounded shapes, gentle shadows,
+# plain white background, single centered subject, square 1:1 canvas.
+# NO text, NO letters, NO numbers anywhere in the image.
+
+[0] A portable gas stove with a bright blue flame burning, next to a small orange LPG gas cylinder — home cooking fuel concept. Centered, white background, no text.
+
+[1] A cute compact car being refueled at a fuel pump, green pump nozzle inserted into the car, tiny sparkle of freshness — gasoline for cars concept. Centered, white background, no text.
+
+[2] A passenger airplane climbing through a few soft clouds, seen from a slight low angle, friendly rounded design — jet fuel (kerosene) for aircraft concept. Centered, white background, no text.
+
+[3] A sturdy delivery truck driving on a road, slight motion lines behind the wheels, rounded friendly design — diesel fuel for trucks concept. Centered, white background, no text.
+
+[4] A large container ship on calm blue waves, colorful container boxes stacked on deck, small smoke puff from the funnel — heavy fuel oil for ships concept. Centered, white background, no text.
+
+[5] A yellow road roller flattening fresh dark asphalt on a road under construction, orange traffic cone beside, smooth new black road surface shining slightly — asphalt for road paving concept. Centered, white background, no text.

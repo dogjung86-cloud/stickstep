@@ -1,0 +1,25 @@
+# 브랜드 로딩 플립북 v2 — "실컷 놀다가 → 공부하자!" 서사 (7컷 + 정착 1컷)
+# 공통 스타일([0]~[7]):
+# Hand-drawn stick figure character, pure black ink lines on plain white background,
+# NO color at all (black and white only). Same consistent GENDER-NEUTRAL character:
+# perfectly round bald head (NO hair, NO hair bun, NO topknot), round glasses
+# (two small circles), dot eyes, simple line body. FULL BODY, centered, same scale
+# across all frames (character height ~70% of canvas). Square 1:1 canvas.
+# Charming, comic, energetic — like frames of a flipbook animation.
+# 글자 규칙: [0]~[6]에는 글자·숫자 절대 금지. [7]만 머리띠 위 한글 "공부하자!" 필수.
+
+[0] The stick figure happily slurping a big bowl of noodles with chopsticks, cheeks puffed, tiny steam curls above the bowl, sitting cross-legged. Full body, centered, white background, black ink only, no text.
+
+[1] The stick figure sprawled on a simple sofa watching TV, holding a remote control, one leg dangling, relaxed melted posture, small TV on the left showing plain static lines (no letters). Full body, centered, white background, black ink only, no text.
+
+[2] The stick figure playing a video game — gripping a game controller with both hands, leaning hard to one side, tongue sticking out slightly, comic concentration lines, a simple game screen behind (abstract shapes only, no letters). Full body, centered, white background, black ink only, no text.
+
+[3] The stick figure at a computer desk, hunched over a keyboard, one hand on mouse, spiral-tired dot eyes, an energy drink can beside the monitor (plain can, no label text). Full body with desk, centered, white background, black ink only, no text.
+
+[4] The stick figure goofing around with TWO friend stick figures — all three laughing, one mid high-five with the main character (the one wearing round glasses), another rolling on the floor laughing. Full bodies, centered group, white background, black ink only, no text.
+
+[5] The stick figure outdoors kicking a soccer ball high, dynamic action pose, motion dash lines, tiny sweat drop of fun. Full body, centered, white background, black ink only, no text.
+
+[6] The stick figure suddenly freezing mid-play, looking at a big round wall clock, jaw dropped, glasses slightly slipping, comic shock lines around the head, scattered game controller and ball on the floor. Full body, centered, white background, black ink only, no numbers on the clock face (just tick marks and hands).
+
+[7] FINAL SETTLE POSE: The stick figure standing straight, tying a white headband (hachimaki) around the forehead tightly with both hands, elbows out, determined burning dot eyes, knot with two short tails sticking out on the side of the head. On the headband, write the Korean text "공부하자!" clearly in bold black Korean characters — exactly these 5 characters: 공부하자! This Korean headband text is REQUIRED. Everything else stays black ink on white, full body, centered. No other text anywhere.

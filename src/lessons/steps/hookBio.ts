@@ -2,7 +2,7 @@
 //   "cellzoom"  L1 · 매끈해 보이는 잎에 확대경을 대면 작은 방(세포)이 드러난다(발견)
 //   "stain"     L2 · 투명해 안 보이던 표본에 염색액을 떨어뜨리면 핵이 드러난다 — 왜 염색할까? 예측
 //   "bodycount" L3 · 우리 몸은 세포가 몇 개일까? 예측(약 37조 개)
-//   "ladybugs"  L4 · 같은 무당벌레인데 무늬가 다 다르다 — 변이 발견
+//   "fingerprint" L4 · 우리 반 친구들 지문이 다 다르다(같은 종=사람) — 변이 발견
 //   "batbird"   L5 · 박쥐는 새 무리일까, 쥐 무리일까? 예측(젖먹이 = 포유류)
 //   "foodweb"   L6 · 먹이그물에서 한 종이 사라지면? 예측(연쇄로 흔들린다)
 // 파운드리 재질 문법(근-동조 그라데이션·키라이트·접촉 그림자·최암색 외곽선)을 따르고,
@@ -10,36 +10,11 @@
 
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
 
 interface HookStepLike {
   choices?: string[];
-}
-
-function askChoices(
-  box: HTMLElement,
-  opts: string[],
-  helper: HTMLElement,
-  doneMsg: string,
-  finish: () => void,
-): void {
-  opts.forEach((label) => {
-    const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" }, text: label });
-    b.addEventListener("click", () => {
-      if (box.classList.contains("locked")) return;
-      box.classList.add("locked");
-      haptic(HAPTIC.select);
-      box.querySelectorAll(".hook-choice").forEach((x) => {
-        x.classList.add(x === b ? "sel" : "dim");
-        x.setAttribute("aria-pressed", x === b ? "true" : "false");
-        (x as HTMLButtonElement).disabled = x !== b;
-      });
-      helper.innerHTML = doneMsg;
-      finish();
-    });
-    box.appendChild(b);
-  });
-  box.classList.add("show");
 }
 
 // ── L1: 잎 속 작은 방(세포) ─────────────────────────────────
@@ -50,55 +25,58 @@ export function renderCellZoom(
   face: (k: AvatarKind) => void,
 ): void {
   const fig = el("div", { class: "hk-bio bare" });
+  // 확대경 안(팔 위)에 드러날 동물세포 격자 — 사람 몸이니 동물세포(로즈 막 + 보라 핵)
+  const CELLS: [number, number][] = [[133, 63], [160, 60], [176, 82], [150, 85], [129, 92], [168, 102], [147, 110]];
+  const cellsSvg = CELLS.map(([x, y]) =>
+    `<g><ellipse cx="${x}" cy="${y}" rx="14" ry="11" fill="url(#czMemb)" stroke="#C43A50" stroke-width="1.6"/>` +
+    `<circle cx="${x}" cy="${y}" r="4.4" fill="#7C6BFF"/><circle cx="${x}" cy="${y}" r="1.8" fill="#4A3AAE"/>` +
+    `<ellipse cx="${x - 4}" cy="${y - 4}" rx="3.4" ry="2.2" fill="#FFD1DB" opacity=".55"/></g>`).join("");
   fig.innerHTML = `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <defs>
       <linearGradient id="czBg" x1="0" y1="0" x2="0" y2="170" gradientUnits="userSpaceOnUse">
         <stop offset="0" stop-color="#EAF7EC"/><stop offset="1" stop-color="#D3EED8"/>
       </linearGradient>
-      <radialGradient id="czLeaf" cx=".4" cy=".32" r=".8">
-        <stop offset="0" stop-color="#7FD08C"/><stop offset=".6" stop-color="#4CB07A"/><stop offset="1" stop-color="#2C7C45"/>
+      <radialGradient id="czMemb" cx=".4" cy=".32" r=".8">
+        <stop offset="0" stop-color="#F7A6B8"/><stop offset="1" stop-color="#DE6E86"/>
       </radialGradient>
       <radialGradient id="czLens" cx=".5" cy=".5" r=".5">
-        <stop offset="0" stop-color="#F4FBF5" stop-opacity=".2"/><stop offset=".8" stop-color="#DFF3E4" stop-opacity=".1"/><stop offset="1" stop-color="#BFE6C8" stop-opacity=".35"/>
+        <stop offset="0" stop-color="#FFFFFF" stop-opacity=".18"/><stop offset=".8" stop-color="#EAF3FF" stop-opacity=".08"/><stop offset="1" stop-color="#BFD4E6" stop-opacity=".32"/>
       </radialGradient>
-      <clipPath id="czClip"><circle cx="150" cy="76" r="40"/></clipPath>
+      <clipPath id="czClip"><circle cx="152" cy="80" r="38"/></clipPath>
     </defs>
     <rect x="4" y="4" width="232" height="162" rx="16" fill="url(#czBg)"/>
-    <!-- 잎 -->
-    <path d="M120 30c40 6 60 34 60 66-36 4-66-8-78-36M120 30c-40 6-60 34-60 66 36 4 66-8 78-36" fill="url(#czLeaf)"/>
-    <path d="M120 30v106" stroke="#2C7C45" stroke-width="2.4" opacity=".7"/>
-    <path d="M120 58c14 4 22 10 30 22M120 58c-14 4-22 10-30 22M120 88c12 3 18 8 24 18M120 88c-12 3-18 8-24 18" stroke="#2C7C45" stroke-width="1.4" opacity=".5"/>
-    <ellipse cx="100" cy="52" rx="14" ry="9" fill="#C9F0CF" opacity=".45"/>
-    <!-- 확대경 뷰(세포 격자) — 처음엔 숨김 -->
+    <!-- 스틱맨쌤(손그림 라인 + teal 안경) — 오른팔을 확대경 쪽으로 뻗음 -->
+    <ellipse cx="70" cy="152" rx="26" ry="4.5" fill="#2A3A5E" opacity=".12"/>
+    <g stroke="#2B3442" stroke-width="3.2" fill="none">
+      <circle cx="70" cy="42" r="15" fill="#fff"/>
+      <circle cx="64" cy="41" r="5" stroke="#12B886" stroke-width="2.4" fill="#F4FBF7"/>
+      <circle cx="76" cy="41" r="5" stroke="#12B886" stroke-width="2.4" fill="#F4FBF7"/>
+      <path d="M69 41h2" stroke="#12B886" stroke-width="2"/>
+      <path d="M60 26q10 -7 20 0" stroke-width="2.6"/>
+      <path d="M63 49q7 5 14 0" stroke-width="2.2"/>
+      <path d="M70 57v40"/>
+      <path d="M70 68 L50 90"/>
+      <path d="M70 64 L120 78" stroke-width="3.4"/>
+      <path d="M70 97 L58 133 M70 97 L82 133"/>
+    </g>
+    <!-- 확대경 뷰(팔 위 세포 격자) — 처음엔 숨김 -->
     <g class="cz-cells" clip-path="url(#czClip)">
-      <rect x="108" y="34" width="84" height="84" fill="#DCF3DE"/>
-      <g stroke="#5F9E6E" stroke-width="1.6">
-        <path d="M110 50h80M110 68h80M110 86h80M110 104h80M128 36v82M148 36v82M168 36v82"/>
-      </g>
-      <g fill="#7C6BFF" opacity=".85">
-        <circle cx="119" cy="59" r="3.4"/><circle cx="139" cy="77" r="3.4"/><circle cx="159" cy="59" r="3.4"/>
-        <circle cx="177" cy="95" r="3.4"/><circle cx="119" cy="95" r="3.4"/><circle cx="159" cy="95" r="3"/>
-      </g>
+      <rect x="114" y="42" width="76" height="76" fill="#FCE7EC"/>
+      ${cellsSvg}
     </g>
     <!-- 확대경 -->
     <g class="cz-loupe">
-      <circle cx="150" cy="76" r="40" fill="url(#czLens)"/>
-      <circle cx="150" cy="76" r="40" stroke="#3A424E" stroke-width="4"/>
-      <circle cx="150" cy="76" r="35" stroke="#EAF7EC" stroke-width="1.4" opacity=".6"/>
-      <path d="M178 104l22 22" stroke="#3A424E" stroke-width="9" stroke-linecap="round"/>
-      <path d="M178 104l22 22" stroke="#5A6470" stroke-width="4" stroke-linecap="round"/>
-      <path d="M138 60a20 20 0 0 1 12-8" stroke="#fff" stroke-width="3" opacity=".55"/>
-    </g>
-    <!-- 스틱맨(손그림) -->
-    <ellipse cx="40" cy="150" rx="15" ry="2.6" fill="#2A3A5E" opacity=".12"/>
-    <g stroke="#3C4654" stroke-width="2.4">
-      <circle cx="40" cy="112" r="7.5" fill="#fff"/>
-      <path d="M40 120v14M40 125l-9 4M40 125l11-4M40 134l-6 12M40 134l7 12"/>
+      <circle cx="152" cy="80" r="38" fill="url(#czLens)"/>
+      <circle cx="152" cy="80" r="38" stroke="#3A424E" stroke-width="4"/>
+      <circle cx="152" cy="80" r="33" stroke="#FFFFFF" stroke-width="1.4" opacity=".5"/>
+      <path d="M179 107l20 20" stroke="#3A424E" stroke-width="9" stroke-linecap="round"/>
+      <path d="M179 107l20 20" stroke="#5A6470" stroke-width="4" stroke-linecap="round"/>
+      <path d="M140 66a18 18 0 0 1 11 -7" stroke="#FFFFFF" stroke-width="3" opacity=".5"/>
     </g>
   </svg>`;
-  const zoomBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "확대경으로 잎 들여다보기" }));
+  const zoomBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "확대경으로 팔을 들여다보기" }));
   scene.append(el("div", { class: "hk-space-wrap" }, fig), zoomBtn);
-  helper.innerHTML = "매끈해 보이는 <b>나뭇잎</b>이에요. 그런데 아주 크게 확대하면 뭐가 보일까요? 확대경을 대 봐요!";
+  helper.innerHTML = "매끈해 보이는 <b>스틱맨쌤의 팔</b>이에요. 그런데 아주 크게 확대하면 뭐가 보일까요? 확대경을 대 봐요!";
   face("curious");
 
   let done = false;
@@ -112,10 +90,10 @@ export function renderCellZoom(
     (zoomBtn as HTMLButtonElement).disabled = true;
     haptic(HAPTIC.select);
     face("surprised");
-    helper.innerHTML = "우아 — 매끈한 줄 알았던 잎이 <b>작은 방들</b>로 가득 차 있어요! 이 방 하나하나가 바로 <b>세포</b>예요.";
+    helper.innerHTML = "우아 — 매끈한 줄 알았던 팔이 <b>작은 방들</b>로 가득 차 있어요! 이 방 하나하나가 바로 <b>세포</b>예요.";
     window.setTimeout(() => {
       face("smile");
-      helper.innerHTML = "지구의 <b>모든 생물</b>이 이런 세포로 이루어져 있어요. 세포 속으로 더 들어가 볼까요?";
+      helper.innerHTML = "나도, 너도, 지구의 <b>모든 생물</b>이 이런 세포로 이루어져 있어요. 세포 속으로 더 들어가 볼까요?";
       finish();
     }, 1500);
   });
@@ -139,6 +117,13 @@ export function renderStain(
         <stop offset="0" stop-color="#F4FAFF" stop-opacity=".12"/><stop offset="1" stop-color="#F4FAFF" stop-opacity="0"/>
       </radialGradient>
       <linearGradient id="stDrop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7FA0FF"/><stop offset="1" stop-color="#3D63D2"/></linearGradient>
+      <linearGradient id="stGlass" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#C7D6EA"/><stop offset=".45" stop-color="#EEF5FF"/><stop offset="1" stop-color="#9FB4CE"/>
+      </linearGradient>
+      <linearGradient id="stRubber" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#8A6BFF"/><stop offset=".55" stop-color="#6E4AC0"/><stop offset="1" stop-color="#553399"/>
+      </linearGradient>
+      <linearGradient id="stInk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8BB0FF"/><stop offset="1" stop-color="#3D63D2"/></linearGradient>
     </defs>
     <rect x="4" y="4" width="232" height="162" rx="16" fill="url(#stBg)"/>
     <!-- 현미경 시야(원형) -->
@@ -158,12 +143,20 @@ export function renderStain(
         )
         .join("")}
     </g>
-    <!-- 스포이트 -->
+    <!-- 스포이트: 고무 벌브 + 유리관(파란 염색액) + 뾰족한 유리 끝 + 방울 -->
     <g class="st-dropper">
-      <rect x="112" y="6" width="16" height="30" rx="4" fill="#4A5568"/>
-      <path d="M114 36h12l-6 10z" fill="#6A7688"/>
-      <rect x="114" y="2" width="12" height="8" rx="3" fill="#8A6BFF"/>
-      <circle class="st-bead" cx="120" cy="50" r="4" fill="url(#stDrop)"/>
+      <ellipse cx="120" cy="154" rx="9" ry="2.2" fill="#2A3A5E" opacity=".14"/>
+      <!-- 고무 벌브 -->
+      <path d="M112 10c0-5 3.6-8 8-8s8 3 8 8c0 5-2.6 8-2.6 12h-10.8c0-4-2.6-7-2.6-12z" fill="url(#stRubber)" stroke="#432C7A" stroke-width="1.2"/>
+      <ellipse cx="116" cy="9" rx="2.6" ry="4" fill="#FFFFFF" opacity=".4"/>
+      <!-- 유리관 -->
+      <rect x="114.5" y="22" width="11" height="26" rx="3" fill="url(#stGlass)" stroke="#8298B4" stroke-width="1"/>
+      <rect x="115.5" y="34" width="9" height="13" rx="2.4" fill="url(#stInk)"/>
+      <rect x="117" y="24" width="2.4" height="22" rx="1.2" fill="#FFFFFF" opacity=".55"/>
+      <!-- 유리 끝(뾰족) -->
+      <path d="M115 48h10l-3.4 9a1.6 1.6 0 0 1-3.2 0z" fill="url(#stGlass)" stroke="#8298B4" stroke-width="1"/>
+      <!-- 맺힌 방울 -->
+      <path class="st-bead" d="M120 58c2.4 2 3.4 3.6 3.4 5.4a3.4 3.4 0 0 1-6.8 0c0-1.8 1-3.4 3.4-5.4z" fill="url(#stDrop)"/>
     </g>
   </svg>`;
   const dropBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "염색액 한 방울 떨어뜨리기" }));
@@ -186,13 +179,12 @@ export function renderStain(
     helper.innerHTML = "한 방울 떨어뜨리자 <b>핵이 또렷하게</b> 드러났어요! 자, 그럼 염색액은 무슨 일을 한 걸까요?";
     window.setTimeout(() => {
       face("curious");
-      askChoices(
-        choicesBox,
-        s.choices ?? ["세포를 더 크게 키운다", "특정 부분(핵)을 물들여 잘 보이게 한다", "세포를 움직이게 한다"],
-        helper,
-        "예측 완료! 이제 <b>진짜 현미경</b>으로 양파 세포를 관찰해 봐요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["특정 부분(핵)을 물들여 잘 보이게 한다", "세포를 더 크게 키운다", "세포를 움직이게 한다"],
+        good: "맞아요! 염색액이 <b>핵 같은 특정 부분을 물들여</b> 잘 보이게 해요. 진짜 현미경으로 양파 세포를 관찰해 봐요!",
+        bad: "세포를 키우거나 움직이게 한 게 아니에요 — 염색액은 <b>핵 같은 특정 부분을 물들여</b> 투명해서 안 보이던 걸 또렷하게 만들어요. 진짜 현미경으로 관찰해 봐요.",
+        onDone: finish,
+      });
     }, 900);
   });
 }
@@ -249,92 +241,86 @@ export function renderBodyCount(
   scene.append(el("div", { class: "hk-space-wrap" }, fig), choicesBox);
   helper.innerHTML = "우리 몸도 세포로 이루어져 있어요. 그렇다면 <b>사람 한 명의 몸</b>은 세포가 몇 개나 될까요? 예상해 봐요!";
   face("curious");
-  askChoices(
-    choicesBox,
-    s.choices ?? ["약 1만 개", "약 100만 개", "약 37조 개"],
-    helper,
-    "정답은 <b>약 37조 개</b>! 상상하기 힘든 숫자죠. 이 많은 세포가 아무렇게나 뭉친 게 아니라, <b>차곡차곡 조립</b>돼 몸이 돼요.",
-    () => {
+  ask(choicesBox, helper, {
+    choices: s.choices ?? ["약 37조 개", "약 1만 개", "약 100만 개"],
+    good: "정답은 <b>약 37조 개</b>! 상상하기 힘든 숫자죠. 이 많은 세포가 아무렇게나 뭉친 게 아니라, <b>차곡차곡 조립</b>돼 몸이 돼요.",
+    bad: "생각보다 훨씬 많아요 — 사람 몸은 <b>약 37조 개</b>의 세포로 이루어져 있어요! 이 많은 세포가 <b>차곡차곡 조립</b>돼 몸이 돼요.",
+    onDone: () => {
       fig.classList.add("reveal");
       face("surprised");
       finish();
     },
-  );
+  });
 }
 
-// ── L4: 무당벌레는 다 다르다(변이) ──────────────────────────
-export function renderLadybugs(
+// ── L4: 우리 반 지문은 다 다르다(변이) ──────────────────────
+// 같은 '사람'인데 지문 무늬가 저마다 다르다 — 변이의 대표 예. 카드를 탭해 스캔.
+export function renderFingerprint(
   scene: HTMLElement,
   helper: HTMLElement,
   finish: () => void,
   face: (k: AvatarKind) => void,
 ): void {
   const NS = "http://www.w3.org/2000/svg";
-  // 6마리, 무늬(점 개수·배치)가 제각각
-  const bugs: [number, number, number[]][] = [
-    [56, 52, [-8, -6, 8, -6, 0, 8]],
-    [120, 44, [-9, 0, 9, 0]],
-    [184, 54, [-7, -7, 7, -7, -7, 7, 7, 7]],
-    [58, 116, [0, -8, -8, 6, 8, 6]],
-    [122, 122, [-6, -6, 6, -6, -6, 6, 6, 6, 0, 0]],
-    [186, 114, [0, 0]],
-  ];
-  const bug = (cx: number, cy: number, dots: number[], i: number): string => {
-    let spots = "";
-    for (let k = 0; k < dots.length; k += 2) {
-      spots += `<circle cx="${cx + dots[k]}" cy="${cy + dots[k + 1]}" r="2.4" fill="#1E1210"/>`;
-    }
-    return `<g class="lb-bug lb-${i}">
-      <ellipse cx="${cx}" cy="${cy + 15}" rx="15" ry="3" fill="#2A3A5E" opacity=".12"/>
-      <path d="M${cx} ${cy - 15}a15 15 0 0 1 0 30 15 15 0 0 1 0-30z" fill="#1E1210"/>
-      <path d="M${cx} ${cy - 14}a14 14 0 0 1 14 14 14 14 0 0 1-14 14z" fill="url(#lbR)"/>
-      <path d="M${cx} ${cy - 14}a14 14 0 0 0-14 14 14 14 0 0 0 14 14z" fill="url(#lbR2)"/>
-      <path d="M${cx} ${cy - 14}v28" stroke="#1E1210" stroke-width="1.6"/>
-      <circle cx="${cx}" cy="${cy - 13}" r="4.4" fill="#1E1210"/>
-      ${spots}
-      <path d="M${cx - 8} ${cy - 30}a4 4 0 0 1 3 4M${cx + 8} ${cy - 30}a4 4 0 0 0-3 4" stroke="#1E1210" stroke-width="1.4"/>
+  // 5장의 지문 카드 — 무늬 유형이 제각각(소용돌이·왼고리·아치·오른고리·이중고리)
+  const RIDGES: Record<string, string> = {
+    whorl: `<ellipse rx="3" ry="4"/><ellipse rx="6" ry="8"/><ellipse rx="9" ry="12"/><ellipse rx="12" ry="16"/>`,
+    loopL: `<path d="M9 -16 C -6 -13 -6 13 9 16"/><path d="M9 -11 C -1 -9 -1 9 9 11"/><path d="M9 -6 C 3 -4 3 4 9 6"/><path d="M9 -1 h-3"/>`,
+    arch: `<path d="M-12 -2 Q0 -15 12 -2"/><path d="M-12 5 Q0 -8 12 5"/><path d="M-12 12 Q0 -1 12 12"/><path d="M-11 17 Q0 7 11 17"/>`,
+    loopR: `<path d="M-9 -16 C 6 -13 6 13 -9 16"/><path d="M-9 -11 C 1 -9 1 9 -9 11"/><path d="M-9 -6 C -3 -4 -3 4 -9 6"/><path d="M-9 -1 h3"/>`,
+    dloop: `<path d="M0 0 C 4 -1 4 5 -1 5 C -7 5 -7 -4 0 -4 C 8 -4 8 8 -1 8 C -12 8 -12 -7 1 -7 C 14 -7 13 13 -1 13"/>`,
+  };
+  const TYPES = ["whorl", "loopL", "arch", "loopR", "dloop"];
+  const card = (i: number): string => {
+    const x = 9 + i * 46; // 카드 좌상단 x (폭 42, 간격 4)
+    const cx = x + 21, cy = 82; // 지문 오벌 중심
+    return `<g class="fp-card fp-${i}" style="cursor:pointer">
+      <rect x="${x}" y="44" width="42" height="82" rx="10" fill="#FFFFFF" stroke="#D4DCE6" stroke-width="1.4"/>
+      <ellipse cx="${cx}" cy="118" rx="12" ry="2.4" fill="#2A3A5E" opacity=".08"/>
+      <ellipse class="fp-pad" cx="${cx}" cy="${cy}" rx="15" ry="19" fill="#FBEFE6" stroke="#E6C9B4" stroke-width="1.4"/>
+      <g class="fp-ridge" clip-path="url(#fpc${i})" transform="translate(${cx} ${cy})" stroke="#B98A5E" stroke-width="1.5">${RIDGES[TYPES[i]]}</g>
+      <g class="fp-check"><circle cx="${cx}" cy="118" r="7" fill="#12B886"/><path d="M${cx - 3} 118l2 2 4-4" stroke="#fff" stroke-width="1.8"/></g>
+      <line class="fp-scan" x1="${x + 5}" y1="${cy}" x2="${x + 37}" y2="${cy}" stroke="#12B886" stroke-width="2"/>
     </g>`;
   };
-  const fig = el("div", { class: "hk-bio" });
-  fig.innerHTML = `<svg viewBox="0 0 240 170" xmlns="${NS}" fill="none" stroke-linecap="round" aria-hidden="true">
+  const clips = TYPES.map((_, i) => `<clipPath id="fpc${i}"><ellipse cx="0" cy="0" rx="14" ry="18"/></clipPath>`).join("");
+  const fig = el("div", { class: "hk-fp" });
+  fig.innerHTML = `<svg viewBox="0 0 240 170" xmlns="${NS}" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <defs>
-      <linearGradient id="lbBg" x1="0" y1="0" x2="0" y2="170" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="#F0F8EC"/><stop offset="1" stop-color="#DCEED0"/>
+      <linearGradient id="fpBg" x1="0" y1="0" x2="0" y2="170" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#EAF7EC"/><stop offset="1" stop-color="#D6EEDD"/>
       </linearGradient>
-      <linearGradient id="lbR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F0505A"/><stop offset="1" stop-color="#C4283A"/></linearGradient>
-      <linearGradient id="lbR2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E23E4C"/><stop offset="1" stop-color="#A81E30"/></linearGradient>
+      ${clips}
     </defs>
-    <rect x="4" y="4" width="232" height="162" rx="16" fill="url(#lbBg)"/>
-    <path d="M14 150q40-10 100-6t112 4" stroke="#9EC77E" stroke-width="2" opacity=".5"/>
-    ${bugs.map(([x, y, d], i) => bug(x, y, d, i)).join("")}
+    <rect x="4" y="4" width="232" height="162" rx="16" fill="url(#fpBg)"/>
+    <text x="120" y="28" text-anchor="middle" font-size="12" font-weight="800" fill="#2E8C4A" font-family="Pretendard, sans-serif">우리 반 친구들의 지문</text>
+    ${TYPES.map((_, i) => card(i)).join("")}
   </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(el("div", { class: "hk-space-wrap" }, fig), choicesBox);
-  helper.innerHTML = "여기 무당벌레 <b>여섯 마리</b>가 있어요. 전부 <b>같은 종</b>인데… 자세히 보면 이상한 점이 있죠?";
+  helper.innerHTML = "우리 반 친구 <b>다섯 명</b>의 지문이에요. 모두 <b>같은 사람(사람이라는 종)</b>인데… 카드를 눌러 스캔해 봐요!";
   face("curious");
+
   let tapped = 0;
-  const bugEls = [...fig.querySelectorAll<HTMLElement>(".lb-bug")];
   let asked = false;
-  bugEls.forEach((b) => {
-    b.style.cursor = "pointer";
-    b.addEventListener("click", () => {
-      if (b.classList.contains("on")) return;
-      b.classList.add("on");
+  [...fig.querySelectorAll<HTMLElement>(".fp-card")].forEach((c) => {
+    c.addEventListener("click", () => {
+      if (c.classList.contains("on")) return;
+      c.classList.add("on");
       tapped += 1;
       haptic(HAPTIC.tap);
       if (tapped >= 3 && !asked) {
         asked = true;
         face("surprised");
-        helper.innerHTML = "눈치챘나요? <b>무늬(점 개수)가 다 달라요!</b> 같은 종인데도 개체마다 특징이 다른 것 — 이걸 뭐라고 부를까요?";
-        askChoices(
-          choicesBox,
-          ["돌연변이 딱 하나", "변이 — 같은 종 안의 차이", "서로 다른 종이라서"],
-          helper,
-          "맞아요, <b>변이</b>예요! 이 다양한 변이가 생물다양성의 씨앗이 돼요. 랩에서 그 힘을 확인해 봐요.",
-          finish,
-        );
+        helper.innerHTML = "봤죠? <b>지문 무늬가 다 달라요!</b> 같은 사람인데도 개체마다 특징이 다른 것 — 이걸 뭐라고 부를까요?";
+        ask(choicesBox, helper, {
+          choices: ["변이 — 같은 종 안의 차이", "돌연변이 딱 하나", "서로 다른 종이라서"],
+          good: "맞아요, <b>변이</b>예요! 지문처럼 같은 종 안에서 개체마다 다른 특징 — 이 다양한 변이가 생물다양성의 씨앗이 돼요. 랩에서 그 힘을 확인해 봐요.",
+          bad: "돌연변이 하나도, 다른 종도 아니에요 — 같은 종인데 개체마다 특징이 다른 것, 이게 <b>변이</b>예요. 지문·눈동자색·키가 다 변이죠. 랩에서 확인해 봐요.",
+          onDone: finish,
+        });
       } else if (tapped < 3) {
-        helper.innerHTML = `${tapped}마리 확인 — 점 개수를 세어 보세요. 세 마리는 눌러 비교해 봐요!`;
+        helper.innerHTML = `${tapped}명 스캔 — 무늬 모양을 비교해 보세요. 세 명은 눌러 봐요!`;
       }
     });
   });
@@ -387,16 +373,15 @@ export function renderBatBird(
   scene.append(el("div", { class: "hk-space-wrap" }, fig), choicesBox);
   helper.innerHTML = "<b>박쥐</b>는 날개가 있어 하늘을 날아요. 그럼 박쥐는 <b>새</b>와 한 무리일까요, 아니면 <b>쥐</b>와 한 무리일까요?";
   face("curious");
-  askChoices(
-    choicesBox,
-    s.choices ?? ["날개가 있으니 새 무리", "젖을 먹여 키우니 쥐(포유류) 무리", "혼자 따로 한 무리"],
-    helper,
-    "박쥐는 온몸이 털로 덮이고 <b>새끼에게 젖을 먹여</b> 키워요 — 그래서 새가 아니라 <b>쥐와 같은 포유류</b>! 분류는 <b>겉모습이 아니라 진짜 특징</b>으로 해요.",
-    () => {
+  ask(choicesBox, helper, {
+    choices: s.choices ?? ["젖을 먹여 키우니 쥐(포유류) 무리", "날개가 있으니 새 무리", "혼자 따로 한 무리"],
+    good: "박쥐는 온몸이 털로 덮이고 <b>새끼에게 젖을 먹여</b> 키워요 — 그래서 새가 아니라 <b>쥐와 같은 포유류</b>! 분류는 <b>겉모습이 아니라 진짜 특징</b>으로 해요.",
+    bad: "날개만 보면 새 같지만 아니에요 — 박쥐는 <b>온몸이 털로 덮이고 새끼에게 젖을 먹여</b> 키워요. 그래서 <b>쥐와 같은 포유류</b>! 분류는 겉모습이 아니라 진짜 특징으로 해요.",
+    onDone: () => {
       face("surprised");
       finish();
     },
-  );
+  });
 }
 
 // ── L6: 먹이그물에서 하나가 빠지면? ─────────────────────────
@@ -456,16 +441,15 @@ export function renderFoodWeb(
     helper.innerHTML = "메뚜기가 사라지자 <b>개구리는 먹이를 잃고</b>, 매까지 흔들려요. 반대로 풀은 먹히지 않아 지나치게 번져요 — 연쇄로 무너지죠!";
     window.setTimeout(() => {
       face("curious");
-      askChoices(
-        choicesBox,
-        s.choices ?? ["한 종만 없어지고 끝난다", "연쇄로 여러 종이 함께 흔들린다"],
-        helper,
-        "맞아요 — 그래서 <b>종이 다양하고 먹이 관계가 그물처럼 복잡할수록</b> 생태계가 안정돼요. 무엇을 지켜야 할지 알아봐요.",
-        () => {
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["연쇄로 여러 종이 함께 흔들린다", "한 종만 없어지고 끝난다"],
+        good: "맞아요 — 그래서 <b>종이 다양하고 먹이 관계가 그물처럼 복잡할수록</b> 생태계가 안정돼요. 무엇을 지켜야 할지 알아봐요.",
+        bad: "한 종만 없어지고 끝나지 않아요 — 개구리는 먹이를 잃고 매까지 흔들려 <b>연쇄로 여러 종이 함께</b> 흔들려요. 그래서 먹이 관계가 복잡할수록 안정적이에요. 무엇을 지켜야 할지 알아봐요.",
+        onDone: () => {
           face("smile");
           finish();
         },
-      );
+      });
     }, 1100);
   });
 }

@@ -13,8 +13,8 @@ await page.addInitScript(() => {
   // 앞 단원(중2 III까지) 완료 처리해 IV가 첫 미완료 단원이 되게
   ["g2u3l1","g2u3l2","g2u3l3","g2u3l4","g2u3l5","g2u3l6","g2u3l7","g2u3l8"].forEach((id) => lessons[id] = { done: true, acc: 95, bestXp: 120 });
   localStorage.setItem(KEY, JSON.stringify({
-    version: 1, onboarded: true, grade: "중2", goalMin: 10, streak: 2,
-    lastStudyDay: null, totalXp: 900, lessons, minigame: {},
+    version: 1, onboarded: true, grade: "g2", viewGrade: "g2", premium: true, reviewMode: false,
+    goalMin: 10, streak: 2, lastStudyDay: null, totalXp: 900, lessons, minigame: {},
   }));
 });
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
@@ -121,8 +121,8 @@ const stepPlus = async (labelRe, n) => {
 
 const openNextLesson = async () => {
   await page.evaluate(() => {
-    const t = [...document.querySelectorAll(".unit-tab")].find((x) => x.textContent.includes("IV") && x.textContent.includes("중2"));
-    (t ?? [...document.querySelectorAll(".unit-tab")].find((x) => x.textContent.includes("물질의 구성"))).click();
+    const t = [...document.querySelectorAll(".unit-tab")].find((x) => x.textContent.includes("물질의 구성"));
+    t?.click();
   });
   await W(650);
   await page.waitForSelector(".gm-node.now", { timeout: 9000 });

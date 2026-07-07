@@ -66,12 +66,18 @@
   --subj-space: #4A54E1;   /* VII 태양계 — 밤하늘 딥 인디고 */
   --subj-space-press: #3A42C8;
   --subj-space-tint: #ECEEFF;
+  --subj-chem: #E64980;    /* 중2 I 물질의 특성 — 지시약 로즈 */
+  --subj-chem-press: #D6336C;
+  --subj-chem-tint: #FFF0F6;
+  --subj-geo: #A9713B;     /* 중2 II 지권의 변화 — 지층 브라운 */
+  --subj-geo-press: #8C5A28;
+  --subj-geo-tint: #F7EFE3;
   --subj-light: #C838A6;   /* 중2 III 빛과 파동 — 오키드 마젠타(자홍 = 빛의 합성색) */
   --subj-light-press: #A82B8C;
   --subj-light-tint: #FBEDF8;
-  --subj-chem: #7CB024;    /* 중2 IV 물질의 구성 — 라임 그린 */
-  --subj-chem-press: #649312;
-  --subj-chem-tint: #F3F9E2;
+  --subj-atom: #7CB024;    /* 중2 IV 물질의 구성 — 라임 그린 */
+  --subj-atom-press: #649312;
+  --subj-atom-tint: #F3F9E2;
   --subj-bio-deep: #0CA678;
 
   /* 라운드 스케일 */
@@ -154,8 +160,10 @@
   --grad-force: linear-gradient(150deg, #FFC24D 0%, #F0A422 50%, #E08908 100%);
   --grad-gas: linear-gradient(150deg, #4AD4EC 0%, #1FB6D4 50%, #0E96B2 100%);
   --grad-space: linear-gradient(150deg, #7A82FF 0%, #4A54E1 50%, #3438B8 100%);
+  --grad-chem: linear-gradient(150deg, #FF7AA8 0%, #E64980 50%, #C2255C 100%);
+  --grad-geo: linear-gradient(150deg, #C89459 0%, #A9713B 50%, #8C5A28 100%);
   --grad-light: linear-gradient(150deg, #E15FC4 0%, #C838A6 50%, #A62B8C 100%);
-  --grad-chem: linear-gradient(150deg, #A2D13F 0%, #7CB024 50%, #5E9310 100%);
+  --grad-atom: linear-gradient(150deg, #A2D13F 0%, #7CB024 50%, #5E9310 100%);
   --grad-sheen: linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,0));
   --grad-medallion: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #5A9CF9 0%, #3182F6 48%, #1F6BE0 100%);
   --grad-medallion-bio: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #34DCA6 0%, #12B886 50%, #0A9670 100%);
@@ -164,8 +172,10 @@
   --grad-medallion-force: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #FFC96A 0%, #F0A422 50%, #D18708 100%);
   --grad-medallion-gas: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #5EDCF2 0%, #1FB6D4 50%, #0E96B2 100%);
   --grad-medallion-space: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #8A92FF 0%, #4A54E1 50%, #3038B0 100%);
+  --grad-medallion-chem: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #FF85B0 0%, #E64980 50%, #C2255C 100%);
+  --grad-medallion-geo: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #CDA06A 0%, #A9713B 50%, #85541F 100%);
   --grad-medallion-light: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #E86FCE 0%, #C838A6 50%, #A02B87 100%);
-  --grad-medallion-chem: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #AEDA52 0%, #7CB024 50%, #5A8E0E 100%);
+  --grad-medallion-atom: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #AEDA52 0%, #7CB024 50%, #5A8E0E 100%);
   --grad-gold: radial-gradient(120% 120% at 30% 20%, rgba(255,255,255,.92) 0%, rgba(255,255,255,.15) 26%, rgba(255,255,255,0) 48%), linear-gradient(160deg, #FFD873 0%, #F5A623 50%, #E0891A 100%);
 
   /* 유리 표면 */

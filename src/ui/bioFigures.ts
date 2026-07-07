@@ -89,10 +89,58 @@ const ORG: Record<string, string> = {
     ${hi(82, 40, 20, 13, 0.45)}`,
 };
 
-/** 구성 단계 도해(라이트). key = cellMuscle·tissueMuscle·organHeart·systemCirc·bodyDog·
- *  cellLeaf·tissuePalisade·tissueSystem·organLeaf·bodyTree. */
+// 발주 일러스트(public/bio2/levels/<file>.webp) — 구성 단계 key → 파일명 매핑.
+// 손코딩 SVG를 대체한다. 로드 실패 시 onerror로 숨겨 깨진 아이콘을 피한다(폴백은 아래 SVG).
+const ORG_PHOTO: Record<string, string> = {
+  cellMuscle: "muscle-cell", tissueMuscle: "muscle-tissue", organHeart: "heart",
+  systemCirc: "circulatory", bodyHuman: "human",
+  cellLeaf: "leaf-cell", tissuePalisade: "palisade", tissueSystem: "tissue-system",
+  organLeaf: "leaf", bodyTree: "tree",
+};
+const ORG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+
+/** 구성 단계 도해. 발주 일러스트 우선(없으면 손코딩 SVG 폴백).
+ *  key = cellMuscle·tissueMuscle·organHeart·systemCirc·bodyDog·
+ *        cellLeaf·tissuePalisade·tissueSystem·organLeaf·bodyTree. */
 export function orgArt(key: string): string {
+  const file = ORG_PHOTO[key];
+  if (file) {
+    const fallback = `<svg viewBox='0 0 200 150' ${NS} fill='none' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><defs>${orgDefs}</defs>${ORG[key] ?? ""}</svg>`;
+    return `<img class="org-photo" src="${ORG_BASE}bio2/levels/${file}.webp" alt="" onerror="this.outerHTML=this.getAttribute('data-fb')" data-fb="${fallback.replace(/"/g, "&quot;")}"/>`;
+  }
   return `<svg viewBox="0 0 200 150" ${NS} fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs>${orgDefs}</defs>${ORG[key] ?? ""}</svg>`;
+}
+
+// 분류 단계 도표 — 종 → 속 → 과 → 목 → 강 → 문 → 계 계층(개 예시).
+// 위로 갈수록 폭이 넓어(더 많은 생물), 각 층에 한글 계급명 + 개의 실제 분류를 라벨한다.
+// codex는 이미지 안 글자를 못 넣으므로, 라벨이 본질인 이 도표는 SVG로 직접 그린다.
+export function classStagesFig(): string {
+  const RANK = ["계", "문", "강", "목", "과", "속", "종"];
+  const DOG = ["동물계", "척삭동물문", "포유강", "식육목", "개과", "개속", "개"];
+  const cx = 150, topW = 250, botW = 60, y0 = 30, h = 24, gap = 3;
+  const wAt = (i: number): number => topW + (botW - topW) * (i / 7);
+  const lerp = (a: number, b: number, t: number): number => Math.round(a + (b - a) * t);
+  let bars = "";
+  for (let i = 0; i < 7; i++) {
+    const yt = y0 + i * (h + gap), yb = yt + h;
+    const wt = wAt(i), wb = wAt(i + 1), t = i / 6;
+    const fill = `rgb(${lerp(214, 18, t)},${lerp(240, 184, t)},${lerp(222, 134, t)})`;
+    const ink = t > 0.55 ? "#FFFFFF" : "#0E5A38";
+    bars +=
+      `<path d="M${cx - wt / 2} ${yt} L${cx + wt / 2} ${yt} L${cx + wb / 2} ${yb} L${cx - wb / 2} ${yb} Z" fill="${fill}" stroke="#2E8C4A" stroke-width="1"/>` +
+      `<text x="${cx}" y="${yt + h / 2 + 4.5}" text-anchor="middle" font-size="13" font-weight="800" fill="${ink}" font-family="Pretendard, sans-serif">${RANK[i]}</text>` +
+      `<text x="${cx + wt / 2 + 8}" y="${yt + h / 2 + 4}" font-size="10.5" font-weight="700" fill="#4E5968" font-family="Pretendard, sans-serif">${DOG[i]}</text>`;
+  }
+  return `<svg viewBox="0 0 300 232" ${NS} fill="none" role="img" aria-label="개의 분류 단계 — 위 계에서 아래 종까지, 위로 갈수록 더 많은 생물을 포함해요">
+    <rect x="2" y="2" width="296" height="228" rx="14" fill="#F4FBF6"/>
+    <text x="12" y="20" font-size="11.5" font-weight="800" fill="#2E8C4A" font-family="Pretendard, sans-serif">개의 분류 단계</text>
+    <path d="M14 32 V 214" stroke="#8FD0A6" stroke-width="1.5"/>
+    <path d="M14 32 l-3 6 h6 z" fill="#2E8C4A"/>
+    <text x="20" y="46" font-size="9.5" font-weight="700" fill="#2E8C4A" font-family="Pretendard, sans-serif">많은 생물</text>
+    <text x="20" y="210" font-size="9.5" font-weight="700" fill="#2E8C4A" font-family="Pretendard, sans-serif">닮은 무리</text>
+    ${bars}
+    <text x="150" y="226" text-anchor="middle" font-size="10.5" font-weight="700" fill="#4E5968" font-family="Pretendard, sans-serif">위(계)로 갈수록 더 많은 생물을 포함 · 종이 가장 작은 단위</text>
+  </svg>`;
 }
 
 export function bioMiniArt(key: string): string {

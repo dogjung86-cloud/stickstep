@@ -1,7 +1,7 @@
-// 스플래시 — 스틱맨 플립북 로딩.
-// 코믹한 포즈 프레임(public/brand/loading/0..6.png)이 타다다닥 넘어가다가
-// 마지막에 "머리 질끈 묶고 공부하는 포즈"(public/brand/study.png)로 탁! 멈추며
-// 워드마크가 떠오른다. 프레임이 없으면(발주 전) 아바타 5종으로 우아하게 폴백.
+// 스플래시 — 스틱맨 플립북 로딩 v2: "실컷 놀다가 → 공부하자!" 서사.
+// 노는 프레임(먹기·티비·게임·컴퓨터·친구·공놀이·아차, public/brand/loading/0..6.webp)이
+// 타다다닥 1바퀴 돌고, 머리띠("공부하자!")를 질끈 묶는 정착 컷(public/brand/study.webp)에서
+// 탁! 멈추며 워드마크가 떠오른다. 프레임이 없으면 아바타 5종으로 우아하게 폴백.
 // 탭하면 애니메이션을 건너뛰고 바로 완성 상태로.
 
 import { el } from "../core/dom";
@@ -11,14 +11,20 @@ import type { Screen } from "../core/router";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
-const FLIP_FRAMES = [0, 1, 2, 3, 4, 5, 6].map((i) => `${base}brand/loading/${i}.webp`);
+// 몽타주 순서 — 놀이 컷 13장을 리듬 있게 섞고, '아차! 시계'(6)는 항상 마지막에 온다.
+// 0 먹기 · 1 티비 · 2 게임 · 3 컴퓨터 · 4 친구들 · 5 공놀이 · 6 아차!시계 ·
+// 7 폰 낄낄 · 8 만화책 · 9 낮잠 · 10 과자 · 11 노래방 · 12 자전거 · 13 강아지
+const FLIP_SEQ = [0, 1, 7, 2, 8, 3, 9, 10, 4, 11, 5, 12, 13, 6];
+const FLIP_FRAMES = FLIP_SEQ.map((i) => `${base}brand/loading/${i}.webp`);
 const STUDY = `${base}brand/study.webp`;
 // 발주 전 폴백 — 만화 아바타(손그림 스틱맨 5종)
 const FALLBACK_FRAMES = [0, 1, 2, 3, 4].map((i) => `${base}comics/avatar/${i}.png`);
 const FALLBACK_STUDY = `${base}comics/avatar/4.png`;
 
-const FRAME_MS = 105; // 타다다다 속도
-const LOOPS = 2;
+// v2 플립북은 서사(먹고·놀고·티비·게임·친구·공놀이·아차!)라 1바퀴만 돌고
+// 머리띠("공부하자!") 정착 컷으로 끝난다 — 반복하면 이야기가 두 번 재생돼 어색하다.
+const FRAME_MS = 125; // 타다다닥 속도(서사가 읽히는 최소 호흡)
+const LOOPS = 1;
 
 export function splashScreen(onStart: () => void): Screen {
   const img = el("img", { class: "flip-img", attrs: { alt: "", "aria-hidden": "true" } }) as HTMLImageElement;

@@ -8,7 +8,7 @@ import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
-interface Spot { x: number; y: number; label: string; desc?: string; photo?: string; photoCredit?: string; }
+interface Spot { x: number; y: number; label: string; desc?: string; photo?: string; photoCredit?: string; photoCap?: string; }
 interface HotspotStep {
   title: string;
   lead?: string;
@@ -42,9 +42,16 @@ function showPhoto(photoBox: HTMLElement, spot: Spot): void {
     photoBox.classList.remove("show");
     return;
   }
-  const img = el("img", { attrs: { src: base + spot.photo, alt: `${spot.label} 실제 사진`, loading: "lazy" } });
+  const img = el("img", { attrs: { src: base + spot.photo, alt: `${spot.label} 사진`, loading: "lazy" } });
   img.addEventListener("error", () => photoBox.classList.remove("show"));
-  photoBox.append(img, el("span", { class: "hs-photo-cap", text: `${spot.label} — 실제 관측 사진${spot.photoCredit ? ` (${spot.photoCredit})` : ""}` }));
+  photoBox.append(
+    img,
+    el("span", {
+      class: "hs-photo-cap",
+      // photoCap으로 캡션을 바꿀 수 있다(일러스트 카드 등). 기본은 실사 관측 사진용 문구.
+      text: `${spot.label} — ${spot.photoCap ?? "실제 관측 사진"}${spot.photoCredit ? ` (${spot.photoCredit})` : ""}`,
+    }),
+  );
   // reflow 후 표시 — 스팟을 바꿔 눌러도 매번 전환 애니메이션이 재생되게
   photoBox.classList.remove("show");
   void photoBox.offsetWidth;

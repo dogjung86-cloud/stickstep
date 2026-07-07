@@ -4,17 +4,17 @@
 // 중단원 2 '파동': 1 파동의 발생과 전달(120~121) · 2 소리의 특성(122~127)
 // 문제는 중단원 정리(116~117·126~127)와 대단원 마무리(130~133) 기반.
 // 정답 키는 과학적으로 직접 확정(반사 법칙·스넬·거울/렌즈 공식·삼원색·소리 3요소).
-import type { Unit } from "./curriculum";
+import type { Unit } from "../curriculum";
 import {
   hook, comic, recap, mcq, ox, binSort, order, hotspot,
   reflectLab, diffuseLab, refractLab, seeLab, mirrorImageLab, mirrorLens,
   objectColorLab, colorMixLab, pixelLab, waveLab, soundLab,
-} from "./dsl";
+} from "../dsl";
 import {
   reflectAngleFig, refractPathFig, coinCupFig, dogMirrorFig, twoMirrorsFig, twoLensFig,
   pixelRGFig, clothLightFig, waveReadFig, waveHotspotFig, pondBallFig, waveFourFig, pianoKeysFig,
   lightMiniArt,
-} from "../ui/lightFigures";
+} from "../../ui/lightFigures";
 
 // ══════════════════════════════════════════════════════════
 // 레슨 1. 빛의 반사 (책 98~99쪽)
@@ -331,6 +331,7 @@ const L3 = {
 const L4 = {
   id: "g2u3l4",
   unitId: "g2u3",
+  premium: true,
   title: "평면거울의 상",
   subtitle: "거울 뒤 같은 거리, 같은 크기",
   label: "평면거울의 상",
@@ -421,6 +422,7 @@ const L4 = {
 const L5 = {
   id: "g2u3l5",
   unitId: "g2u3",
+  premium: true,
   title: "거울과 렌즈",
   subtitle: "볼록·오목이 만드는 상의 변신",
   label: "거울과 렌즈",
@@ -545,6 +547,7 @@ const L5 = {
 const L6 = {
   id: "g2u3l6",
   unitId: "g2u3",
+  premium: true,
   title: "빛의 합성",
   subtitle: "세 가지 빛으로 만드는 모든 색",
   label: "빛의 합성",
@@ -678,6 +681,7 @@ const L6 = {
 const L7 = {
   id: "g2u3l7",
   unitId: "g2u3",
+  premium: true,
   title: "파동의 발생과 전달",
   subtitle: "물은 제자리, 진동만 여행한다",
   label: "파동",
@@ -794,6 +798,7 @@ const L7 = {
 const L8 = {
   id: "g2u3l8",
   unitId: "g2u3",
+  premium: true,
   title: "소리의 특성",
   subtitle: "세기·높낮이·음색, 소리의 3요소",
   label: "소리의 특성",
@@ -901,14 +906,14 @@ const L8 = {
   ],
 };
 
-export const G2UNIT3: Unit = {
+export const G2_UNIT3: Unit = {
   id: "g2u3",
   roman: "III",
   title: "빛과 파동",
   subtitle: "보이는 세상, 들리는 세상의 비밀",
   color: "#C838A6",
   icon: "prism",
-  grade: 2,
+
   standard: "2022 개정 교육과정",
   lessons: [L1, L2, L3, L4, L5, L6, L7, L8],
 };

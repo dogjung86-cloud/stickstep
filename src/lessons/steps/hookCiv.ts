@@ -7,36 +7,11 @@
 
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
 
 interface HookStepLike {
   choices?: string[];
-}
-
-function askChoices(
-  box: HTMLElement,
-  opts: string[],
-  helper: HTMLElement,
-  doneMsg: string,
-  finish: () => void,
-): void {
-  opts.forEach((label) => {
-    const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" }, text: label });
-    b.addEventListener("click", () => {
-      if (box.classList.contains("locked")) return;
-      box.classList.add("locked");
-      haptic(HAPTIC.select);
-      box.querySelectorAll(".hook-choice").forEach((x) => {
-        x.classList.add(x === b ? "sel" : "dim");
-        x.setAttribute("aria-pressed", x === b ? "true" : "false");
-        (x as HTMLButtonElement).disabled = x !== b;
-      });
-      helper.innerHTML = doneMsg;
-      finish();
-    });
-    box.appendChild(b);
-  });
-  box.classList.add("show");
 }
 
 // ── L2: 색깔 컵 온도 레이스 ──────────────────────────────────
@@ -99,12 +74,11 @@ export function renderColorCups(
   face("curious");
 
   let timer = 0;
-  askChoices(
-    choicesBox,
-    s.choices ?? ["검은색 컵", "파란색 컵", "흰색 컵", "셋 다 같다"],
-    helper,
-    "온도계가 올라갑니다 — 지켜보세요!",
-    () => {
+  ask(choicesBox, helper, {
+    choices: s.choices ?? ["검은색 컵", "파란색 컵", "흰색 컵", "셋 다 같다"],
+    good: "좋아요, 온도계가 올라갑니다 — 지켜보세요!",
+    bad: "다시 볼까요 — <b>검은색</b>이 햇빛을 가장 잘 흡수해요. 온도계를 지켜보세요!",
+    onDone: () => {
       fig.classList.add("heat");
       haptic(HAPTIC.tap);
       timer = window.setTimeout(() => {
@@ -113,7 +87,7 @@ export function renderColorCups(
         finish();
       }, 1700);
     },
-  );
+  });
   return () => window.clearTimeout(timer);
 }
 
@@ -194,13 +168,12 @@ export function renderSpeaker(
       helper.innerHTML = "스피커가 알아듣고 <b>음악을 골라 틀었어요!</b> 사람도 아닌데, 어떻게 말을 알아들었을까요?";
       window.setTimeout(() => {
         face("curious");
-        askChoices(
-          choicesBox,
-          s.choices ?? ["스피커 안에서 사람이 듣고 있다", "컴퓨터가 말을 학습해서 알아듣는다", "아무 음악이나 무작위로 튼 것이다"],
-          helper,
-          "예측 완료! 이런 <b>첨단 과학기술</b>들을 카드로 하나씩 뒤집어 봐요.",
-          finish,
-        );
+        ask(choicesBox, helper, {
+          choices: s.choices ?? ["컴퓨터가 말을 학습해서 알아듣는다", "스피커 안에서 사람이 듣고 있다", "아무 음악이나 무작위로 튼 것이다"],
+          good: "맞아요! <b>컴퓨터가 수많은 말을 학습해</b> 사람 말을 알아들어요 — 인공지능이죠. 카드로 하나씩 뒤집어 봐요!",
+          bad: "안에 사람이 있거나 무작위로 튼 게 아니에요 — <b>컴퓨터가 수많은 말을 학습해서</b> 알아듣고 골라 준 거예요(인공지능). 카드로 하나씩 뒤집어 봐요.",
+          onDone: finish,
+        });
       }, 900);
     }, 800);
   });
@@ -283,13 +256,12 @@ export function renderSmokestack(
       (puffBtn as HTMLButtonElement).disabled = true;
       face("curious");
       helper.innerHTML = "온도계가 쭉 올랐어요. 이대로 계속 뿜으면 <b>지구는 어떻게 될까요?</b>";
-      askChoices(
-        choicesBox,
-        s.choices ?? ["기후가 변하고 빙하가 녹는다", "지구가 알아서 식혀 준다", "아무 일도 일어나지 않는다"],
-        helper,
-        "예측 완료! 그래서 필요한 게 <b>지속가능한 삶</b> — 무엇을 할 수 있는지 직접 분류해 봐요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["기후가 변하고 빙하가 녹는다", "지구가 알아서 식혀 준다", "아무 일도 일어나지 않는다"],
+        good: "그래요 — 온실 기체가 쌓이면 <b>기후가 변하고 빙하가 녹아요</b>. 그래서 필요한 게 <b>지속가능한 삶</b>! 직접 분류해 봐요.",
+        bad: "지구가 알아서 식히거나 아무 일도 없는 게 아니에요 — 온실 기체가 쌓이면 <b>기후가 변하고 빙하가 녹아요</b>. 그래서 <b>지속가능한 삶</b>이 필요해요. 직접 분류해 봐요.",
+        onDone: finish,
+      });
     }
   });
 }

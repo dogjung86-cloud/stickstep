@@ -156,7 +156,12 @@ export const microscope: StepRenderer = (host, step, api) => {
         ctx.fillStyle = cyto;
         ctx.strokeStyle = wall;
         ctx.lineWidth = Math.max(1, cellW * 0.05);
-        roundRect(ctx, bx, by, cellW * 0.94, cellH * 0.94, Math.min(8, cellW * 0.18));
+        // 양파·검정말 같은 식물 표피는 벽이 각진 육각형으로 맞물린다(둥근 사각 금지).
+        if (preset.shape === "brick" || preset.shape === "elodea") {
+          hexCell(ctx, bx, by, cellW * 0.98, cellH * 0.98);
+        } else {
+          roundRect(ctx, bx, by, cellW * 0.94, cellH * 0.94, Math.min(8, cellW * 0.18));
+        }
         ctx.fill();
         ctx.stroke();
         if (preset.shape === "elodea") {
@@ -198,6 +203,20 @@ export const microscope: StepRenderer = (host, step, api) => {
   api.setCTA("현미경을 조작해 관찰하세요", { enabled: false });
   afterPaint(redraw);
 };
+
+// 각진 육각형 세포(식물 표피) — 위·아래 변은 평평하고 좌·우가 뾰족한 길쭉한 육각형.
+// 벽돌 오프셋(홀수 행 +w/2)과 맞물려 표피세포처럼 타일링된다.
+function hexCell(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number): void {
+  const ix = w * 0.22; // 좌우 뾰족한 정도
+  ctx.beginPath();
+  ctx.moveTo(x + ix, y);
+  ctx.lineTo(x + w - ix, y);
+  ctx.lineTo(x + w, y + h / 2);
+  ctx.lineTo(x + w - ix, y + h);
+  ctx.lineTo(x + ix, y + h);
+  ctx.lineTo(x, y + h / 2);
+  ctx.closePath();
+}
 
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number): void {
   ctx.beginPath();
