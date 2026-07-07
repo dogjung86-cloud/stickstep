@@ -82,8 +82,13 @@ export const recrystal: StepRenderer = (host, step, api) => {
     el(
       "div",
       { class: "stage-hud" },
-      el("div", { class: "pill" }, tempDot, tempPill),
-      el("div", { class: "pill" }, el("span", { class: "pdot", style: "background:#FF8AB0" }), crysPill),
+      // 두 필을 왼쪽 세로 스택으로 — 오른쪽 상단은 그래프 제목·범례 자리라 겹치면 안 된다
+      el(
+        "div",
+        { style: "display:flex;flex-direction:column;gap:8px;align-items:flex-start" },
+        el("div", { class: "pill" }, tempDot, tempPill),
+        el("div", { class: "pill" }, el("span", { class: "pdot", style: "background:#FF8AB0" }), crysPill),
+      ),
     ),
     toastEl,
     capEl,

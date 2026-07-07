@@ -83,24 +83,14 @@ export function heatPlateausFig(): string {
 }
 
 /** 탄산음료 4조건(온도×마개) — 기포 비교(마무리 4번 재구성).
- *  열린 시험관은 입구가 뚫려 보이게(양 벽 + 타원 테) 그리고, 닫힌 것만 고무마개를 얹는다. */
+ *  열린 시험관은 입구가 뚫려 보이게(양 벽 + 타원 테) 그리고, 닫힌 것만 고무마개를 얹는다.
+ *  주의: 기포는 절대 그리지 않는다 — 조건만 보여 줘야 문제가 성립한다(기포 수 = 정답 유출). */
 export function sodaTubesFig(): string {
-  const tube = (x: number, label: string, warm: boolean, open: boolean, bubbles: number): string => {
+  const tube = (x: number, label: string, warm: boolean, open: boolean): string => {
     const beakerFill = warm ? "#FFE0D6" : "#DDF0FB";
     const beakerLine = warm ? "#E8836A" : "#7FB8DC";
     const cx = x + 20;
     const topY = 34;
-    let bub = "";
-    for (let i = 0; i < bubbles; i++) {
-      const bx = cx + ((i * 13) % 18) - 9;
-      const by = 92 - i * 11;
-      bub += `<circle cx="${bx}" cy="${by}" r="${2 + (i % 3)}" fill="none" stroke="#5AA2F8" stroke-width="1.4"/>`;
-    }
-    // 열린 입에서 빠져나가는 기포(입구 위)
-    const escape = open && bubbles > 0
-      ? `<circle cx="${cx - 4}" cy="${topY - 8}" r="2" fill="none" stroke="#5AA2F8" stroke-width="1.3"/>
-         <circle cx="${cx + 5}" cy="${topY - 15}" r="1.6" fill="none" stroke="#5AA2F8" stroke-width="1.2"/>`
-      : "";
     return `<g>
       <path d="M${x - 6} 66h52v66a10 10 0 0 1-10 10h-32a10 10 0 0 1-10-10z" fill="${beakerFill}" stroke="${beakerLine}" stroke-width="2"/>
       <!-- 시험관 몸통: 위가 뚫린 U자 벽 -->
@@ -115,16 +105,15 @@ export function sodaTubesFig(): string {
              <path d="M${cx - 8} ${topY}l1.5-8h13l1.5 8z" fill="#8C99A8" stroke="#6B7684" stroke-width="1.2"/>
              <rect x="${cx - 12}" y="${topY - 14}" width="24" height="7" rx="3" fill="#A6B2C0" stroke="#6B7684" stroke-width="1.2"/>`
       }
-      ${bub}${escape}
       <text x="${cx}" y="158" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${label}</text>
       <text x="${cx}" y="173" text-anchor="middle" font-size="9.5" fill="#8B95A1">${warm ? "따뜻한 물" : "얼음물"} · ${open ? "마개 열림" : "마개 닫힘"}</text>
     </g>`;
   };
-  return `<svg viewBox="0 0 344 182" ${NS} fill="none" role="img" aria-label="탄산음료 시험관 네 개. 가는 얼음물에 마개 닫힘, 나는 얼음물에 마개 열림, 다는 따뜻한 물에 마개 닫힘, 라는 따뜻한 물에 마개 열림. 열린 시험관은 입구가 뚫려 있어요">
-    ${tube(18, "(가)", false, false, 0)}
-    ${tube(101, "(나)", false, true, 2)}
-    ${tube(184, "(다)", true, false, 3)}
-    ${tube(267, "(라)", true, true, 6)}
+  return `<svg viewBox="0 0 344 182" ${NS} fill="none" role="img" aria-label="탄산음료 시험관 네 개의 조건. 가는 얼음물에 마개 닫힘, 나는 얼음물에 마개 열림, 다는 따뜻한 물에 마개 닫힘, 라는 따뜻한 물에 마개 열림">
+    ${tube(18, "(가)", false, false)}
+    ${tube(101, "(나)", false, true)}
+    ${tube(184, "(다)", true, false)}
+    ${tube(267, "(라)", true, true)}
   </svg>`;
 }
 

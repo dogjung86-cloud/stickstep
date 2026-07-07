@@ -1222,7 +1222,7 @@
 .hc-fishpond.noon .hc-bubbles { opacity: 1; animation: hcBubb 1.6s ease-in-out infinite; }
 @keyframes hcBubb { 0% { transform: translateY(3px); opacity: .4; } 60% { opacity: 1; } 100% { transform: translateY(-4px); opacity: 0; } }
 
-/* gallium — 홀드하면 --melt 진행: 숟가락 사그라들고 웅덩이로 */
+/* gallium — 홀드하면 --melt 진행: 동전이 사그라들고 웅덩이로 */
 .hc-gallium { cursor: pointer; touch-action: manipulation; }
 .hc-gallium .hc-spoon-solid { transform-box: fill-box; transform-origin: 50% 90%; transform: scaleY(calc(1 - var(--melt, 0) * .82)); opacity: calc(1 - var(--melt, 0) * .55); transition: transform .12s linear, opacity .12s linear; }
 .hc-gallium .hc-spoon-melt { opacity: calc(var(--melt, 0) * var(--melt, 0)); transition: opacity .12s linear; }
@@ -1339,6 +1339,66 @@
 .pw-amount { font-size: 28px; font-weight: 800; color: var(--n900); letter-spacing: -.02em; }
 .pw-note { font-size: 12.5px; color: var(--n600); margin-top: 4px; }
 .pw-restore { width: 100%; padding: 12px 0 2px; font-size: 13px; font-weight: 600; color: var(--n500); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- 앱바 확장(과목·프로필 버튼) + 검토 모드 ---------- */
+.ab-side { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.abtn {
+  flex: none; width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center;
+  background: var(--n0); border: 1px solid var(--n200); box-shadow: var(--sh-card); color: var(--n600);
+  transition: transform .14s var(--spring-soft), background .16s;
+}
+.abtn:active { transform: scale(.94); background: var(--n100); }
+.appbar .brand { cursor: default; user-select: none; -webkit-user-select: none; white-space: nowrap; }
+.appbar .brand.review { color: var(--subj-chem); } /* 검토 모드 표시 — 브랜드가 로즈로 */
+
+/* ---------- 과목 허브 ---------- */
+.subj-screen { position: relative; }
+.subj-brand { font-size: 20px; font-weight: 800; letter-spacing: -.04em; }
+.subj-body-wrap { position: relative; z-index: 1; padding-top: 10px; }
+.subj-doodles { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.subj-doodle { position: absolute; opacity: .38; }
+.subj-list { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
+.subj-card {
+  display: flex; align-items: center; gap: 14px; text-align: left; width: 100%;
+  padding: 16px; border-radius: var(--r-lg); background: var(--grad-card);
+  box-shadow: var(--sh-raise); border: 1.5px solid transparent;
+  transition: transform .16s var(--spring-soft), box-shadow .2s var(--ease-out);
+}
+.subj-card:active { transform: scale(.982); }
+.subj-card.sci { border-color: rgba(49,130,246,.35); }
+.subj-card.soon { background: var(--n25); box-shadow: var(--sh-card); }
+.subj-card.soon .subj-body, .subj-card.soon .subj-ico { opacity: .55; }
+.subj-ava { flex: none; width: 56px; height: 56px; border-radius: 18px; background: var(--blue-tint, #EEF4FF); display: grid; place-items: center; overflow: hidden; }
+.subj-ava svg { width: 44px; height: 44px; }
+.subj-ico { flex: none; width: 56px; height: 56px; border-radius: 18px; background: var(--n100); display: grid; place-items: center; color: var(--n600); }
+.subj-body { flex: 1; min-width: 0; }
+.subj-name { display: flex; align-items: center; gap: 7px; font-size: 17px; font-weight: 800; color: var(--n900); }
+.subj-name svg { color: var(--blue); }
+.subj-desc { margin-top: 3px; font-size: 13px; color: var(--n600); }
+.subj-meta { margin-top: 5px; font-size: 11.5px; font-weight: 700; color: var(--blue); }
+.subj-go { flex: none; color: var(--n400); }
+.subj-soon-pill {
+  font-size: 10.5px; font-weight: 800; padding: 3px 9px; border-radius: 99px;
+  background: var(--n150); color: var(--n600);
+}
+.subj-note { margin-top: 18px; text-align: center; font-size: 12.5px; color: var(--n500); }
+
+/* ---------- 로그인(소셜 스텁) ---------- */
+.login-hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 12px 0 24px; }
+.login-ava { width: 84px; height: 84px; border-radius: 50%; background: var(--blue-tint, #EEF4FF); display: grid; place-items: center; }
+.login-ava svg { width: 62px; height: 62px; }
+.login-list { display: flex; flex-direction: column; gap: 10px; }
+.login-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; height: 52px; border-radius: var(--r-md); font-size: 15px; font-weight: 700;
+  box-shadow: var(--sh-card); transition: transform .14s var(--spring-soft);
+}
+.login-btn:active { transform: scale(.975); }
+.login-mark { display: grid; place-items: center; }
+.login-btn.google { background: #fff; border: 1.5px solid var(--n300); color: var(--n800); }
+.login-btn.kakao { background: #FEE500; color: #3C1E1E; }
+.login-btn.naver { background: #03C75A; color: #fff; }
+.login-note { margin-top: 16px; text-align: center; font-size: 12.5px; color: var(--n500); line-height: 1.55; word-break: keep-all; }
 
 /* ---------- 가로 모드 오버레이(rotateStage) ---------- */
 .rot-overlay { position: fixed; inset: 0; z-index: 80; background: #070D1A; opacity: 0; transition: opacity .24s var(--ease); }

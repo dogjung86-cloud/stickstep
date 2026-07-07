@@ -12,6 +12,7 @@ export interface AppState {
   grade: string | null;
   viewGrade: string | null; // 홈이 보여주는 학년 커리큘럼("g1"|"g2") — 온보딩 학년과 별개로 전환 가능
   premium: boolean; // 프리미엄 구매 여부 — premium 레슨 잠금 해제
+  reviewMode: boolean; // 검토 모드(브랜드 7연타) — 순차·프리미엄 잠금 전부 해제(콘텐츠 검수용)
   goalMin: number;
   streak: number;
   lastStudyDay: string | null; // 'YYYY-MM-DD'
@@ -28,6 +29,7 @@ const DEFAULT_STATE: AppState = {
   grade: null,
   viewGrade: null,
   premium: false,
+  reviewMode: false,
   goalMin: 10,
   streak: 0,
   lastStudyDay: null,
@@ -93,6 +95,17 @@ export function setViewGrade(g: "g1" | "g2"): void {
 
 export function isPremium(): boolean {
   return state.premium;
+}
+
+export function isReviewMode(): boolean {
+  return state.reviewMode;
+}
+
+/** 검토 모드 토글(홈 브랜드 7연타). 켜면 모든 잠금이 풀린다 — 콘텐츠 검수용. */
+export function toggleReviewMode(): boolean {
+  state.reviewMode = !state.reviewMode;
+  save();
+  return state.reviewMode;
 }
 
 /** 결제 성공/복원 시 core/purchase.ts가 호출한다. */

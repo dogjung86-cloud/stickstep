@@ -6,6 +6,8 @@ import { nav } from "./core/router";
 import { getState, completeLesson } from "./core/store";
 import { splashScreen } from "./screens/splash";
 import { onboardingScreen } from "./screens/onboarding";
+import { subjectScreen } from "./screens/subject";
+import { loginScreen } from "./screens/login";
 import { homeScreen } from "./screens/home";
 import { doneScreen } from "./screens/done";
 import { minigameScreen } from "./screens/minigame";
@@ -20,7 +22,22 @@ nav.init(frame);
 let lastUnitId: string | undefined;
 
 function goHome(): void {
-  nav.reset(homeScreen(openLesson, openGame, lastUnitId));
+  nav.reset(homeScreen(openLesson, openGame, lastUnitId, { onSubjects: openSubjects, onLogin: openLogin }));
+}
+
+/** 과목 허브(홈에서 재진입) — 과학을 고르면 다시 홈으로. */
+function openSubjects(): void {
+  nav.go(
+    subjectScreen({
+      mode: "hub",
+      onPickScience: () => nav.back(),
+      onBack: () => nav.back(),
+    }),
+  );
+}
+
+function openLogin(): void {
+  nav.go(loginScreen(() => nav.back()));
 }
 
 function openGame(unitId: string): void {
@@ -58,7 +75,17 @@ function start(): void {
   if (getState().onboarded) {
     goHome();
   } else {
-    nav.go(splashScreen(() => nav.go(onboardingScreen(goHome))));
+    // 첫 사용 플로우: 스플래시 → 과목 선택(과학만 열림) → 학년·목표 온보딩 → 홈
+    nav.go(
+      splashScreen(() =>
+        nav.go(
+          subjectScreen({
+            mode: "onboard",
+            onPickScience: () => nav.go(onboardingScreen(goHome)),
+          }),
+        ),
+      ),
+    );
   }
 }
 

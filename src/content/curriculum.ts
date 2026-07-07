@@ -1,7 +1,7 @@
 // 커리큘럼 — 교과서 대단원 순서 그대로. 단원 = 데이터.
 // 학년별 트랙: 중1(CURRICULUM)·중2(CURRICULUM_G2). 홈이 getViewGrade()로 전환한다.
 import type { Lesson } from "../lessons/types";
-import { isDone, isPremium } from "../core/store";
+import { isDone, isPremium, isReviewMode } from "../core/store";
 import { UNIT1 } from "./unit1";
 import { UNIT2 } from "./unit2";
 import { UNIT3 } from "./unit3";
@@ -80,15 +80,16 @@ export function gradeOfUnit(unitId: string): GradeId {
   return CURRICULUM_G2.some((u) => u.id === unitId) ? "g2" : "g1";
 }
 
-/** 단원 내 순차 잠금 해제: 첫 레슨 또는 직전 레슨 완료 시 열림. */
+/** 단원 내 순차 잠금 해제: 첫 레슨 또는 직전 레슨 완료 시 열림. 검토 모드는 전부 개방. */
 export function isUnlocked(unit: Unit, index: number): boolean {
+  if (isReviewMode()) return true;
   if (index === 0) return true;
   return isDone(unit.lessons[index - 1].id);
 }
 
-/** 프리미엄 잠금 — premium 레슨 && 미구매. 순차 잠금과 별개의 겹층이다. */
+/** 프리미엄 잠금 — premium 레슨 && 미구매. 순차 잠금과 별개의 겹층. 검토 모드는 해제. */
 export function isPremiumLocked(lesson: Lesson): boolean {
-  return !!lesson.premium && !isPremium();
+  return !!lesson.premium && !isPremium() && !isReviewMode();
 }
 
 export function unitProgress(unit: Unit): number {

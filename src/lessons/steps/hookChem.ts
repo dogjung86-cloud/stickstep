@@ -5,7 +5,7 @@
 //   deadsea   L2 — 사해: 스틱맨을 눌러 넣어도 뿅 떠오름 → 까닭 예측
 //   cocoa     L3 — 코코아에 설탕: 어느 순간부터 바닥에 쌓임 → 더 녹이는 법 예측
 //   fishmouth L4 — 한여름 연못: 해를 올리면 물고기가 수면에서 뻐끔 → 까닭 예측
-//   gallium   L5 — 손바닥 위 갈륨 숟가락: 꾹 쥐고 있으면 녹아내림 → 까닭 예측
+//   gallium   L5 — 손바닥 위 갈륨 동전: 꾹 쥐고 있으면 녹아내림 → 까닭 예측(갈륨은 도입에서 소개)
 //   milkzoom  L6 — 우유 확대: 렌즈로 보면 물·지방·단백질 알갱이 → 순물질일까 예측
 //   soysauce  L7 — 간장+올리브유: 흔들어도 가만두면 두 층 → 분리법 예측
 //   syrup     L8 — 냉장고 속 시럽병: 문을 열면 흰 결정이 반짝 → 까닭 예측
@@ -383,13 +383,21 @@ export function renderFishmouth(
   return () => window.clearTimeout(timer);
 }
 
-// ── L5: 손바닥 위 갈륨 숟가락 ───────────────────────────────
-// 위에서 내려다본 펼친 손(스틱맨 라인 문법: 잉크 외곽선 + 흰 면) — 손가락 5개가 또렷해
-// "손 위에 숟가락"이 한눈에 읽힌다. 손가락을 먼저 그리고 손바닥을 덮어 그리면
-// 경계선이 깔끔하게 이어진다(만화 손 기법).
+// ── L5: 손바닥 위 갈륨 동전 ─────────────────────────────────
+// 위에서 내려다본 펼친 손(스틱맨 라인 문법) 위에 은색 동전 — 동그란 동전이라
+// 형태가 즉시 읽힌다. 갈륨이라는 이름은 도입 문구에서 먼저 소개한다(맥락 규칙).
 function galliumSvg(): string {
   const finger = (x: number, len: number): string =>
     `<path d="M${x} 106 v-${len} a7.5 7.5 0 0 1 15 0 v${len} z" fill="#FFFFFF" stroke="#3C4654" stroke-width="2.4"/>`;
+  // 동전 테두리 톱니(테두리 돌기) — 원 둘레를 따라 짧은 눈금
+  const ridges = Array.from({ length: 20 }, (_, i) => {
+    const a = (i / 20) * Math.PI * 2;
+    const x1 = 112 + Math.cos(a) * 24.5;
+    const y1 = 124 + Math.sin(a) * 18.5;
+    const x2 = 112 + Math.cos(a) * 27;
+    const y2 = 124 + Math.sin(a) * 20.5;
+    return `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)}L${x2.toFixed(1)} ${y2.toFixed(1)}"/>`;
+  }).join("");
   return `<svg viewBox="0 0 240 176" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <defs>
       <linearGradient id="hc-ga" x1="0" y1="0" x2="1" y2="1">
@@ -409,14 +417,17 @@ function galliumSvg(): string {
       <!-- 손목 -->
       <path d="M96 158 q14 6 28 0 l3 12 q-17 6 -34 0 z" fill="#FFFFFF" stroke="#3C4654" stroke-width="2.4"/>
     </g>
-    <!-- 갈륨 숟가락: 손바닥을 가로질러 놓임(볼 왼쪽 + 손잡이 오른쪽 위로) -->
+    <!-- 갈륨 동전: 손바닥 한가운데(살짝 기운 원반 + 테두리 톱니 + 안쪽 면 + 별 문양) -->
     <g class="hc-spoon">
       <g class="hc-spoon-solid">
-        <rect x="118" y="70" width="66" height="9" rx="4.5" transform="rotate(24 118 70)" fill="url(#hc-ga)" stroke="#6E7E92" stroke-width="1.5"/>
-        <ellipse cx="104" cy="122" rx="19" ry="12" transform="rotate(24 104 122)" fill="url(#hc-ga)" stroke="#6E7E92" stroke-width="1.5"/>
-        <ellipse cx="98" cy="117" rx="6" ry="3" transform="rotate(24 98 117)" fill="#FFFFFF" opacity=".8"/>
+        <ellipse cx="112" cy="127" rx="27" ry="20.5" fill="#8FA2B8"/>
+        <ellipse cx="112" cy="124" rx="27" ry="20.5" fill="url(#hc-ga)" stroke="#6E7E92" stroke-width="1.6"/>
+        <g stroke="#7C8EA4" stroke-width="1.2">${ridges}</g>
+        <ellipse cx="112" cy="124" rx="19" ry="14" fill="none" stroke="#A8B8CC" stroke-width="1.3"/>
+        <path d="M112 116l2.6 5.4 6 .9-4.3 4.2 1 5.9-5.3-2.8-5.3 2.8 1-5.9-4.3-4.2 6-.9z" fill="#DFE9F4" stroke="#8FA2B8" stroke-width="1"/>
+        <ellipse cx="102" cy="114" rx="9" ry="4.6" fill="#FFFFFF" opacity=".75" transform="rotate(-18 102 114)"/>
       </g>
-      <!-- 녹은 웅덩이: 손바닥 굴곡을 따라 퍼지고, 손가락 사이로 흘러내릴 듯한 방울 -->
+      <!-- 녹은 웅덩이: 손바닥 굴곡을 따라 퍼지고, 방울이 또르르 -->
       <g class="hc-spoon-melt" opacity="0">
         <path class="hc-melt-blob" d="M82 122 q20 -12 56 -4 q12 3 8 10 q-6 10 -34 12 q-26 2 -34 -8 q-4 -6 4 -10z" fill="url(#hc-ga)" stroke="#6E7E92" stroke-width="1.4"/>
         <ellipse cx="98" cy="124" rx="8" ry="3.2" fill="#FFFFFF" opacity=".8"/>
@@ -439,12 +450,12 @@ export function renderGallium(
 ): () => void {
   const fig = el("div", {
     class: "hc-gallium",
-    attrs: { role: "button", tabindex: "0", "aria-label": "숟가락을 꾹 쥐고 있기" },
+    attrs: { role: "button", tabindex: "0", "aria-label": "동전을 꾹 쥐고 있기" },
   });
   fig.innerHTML = galliumSvg();
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "은색 숟가락을 손 위에 올렸어요. <b>꾹 누른 채 잠시 기다려</b> 보세요.";
+  helper.innerHTML = "<b>갈륨</b>이라는 금속으로 만든 동전을 손 위에 올렸어요. <b>꾹 누른 채 잠시 기다려</b> 보세요.";
 
   let hold = 0;
   let raf = 0;
@@ -461,13 +472,13 @@ export function renderGallium(
         fig.classList.add("melted");
         face("surprised");
         haptic(HAPTIC.correct);
-        helper.innerHTML = "사르르— 숟가락이 <b>손바닥 위에서 녹아</b> 버렸어요! 철 숟가락은 멀쩡한데, 왜죠?";
+        helper.innerHTML = "사르르— 갈륨 동전이 <b>손바닥 위에서 녹아</b> 버렸어요! 철 동전은 멀쩡한데, 왜죠?";
         timer = window.setTimeout(() => {
           face("curious");
           ask(choicesBox, helper, {
-            choices: s.choices ?? ["이 금속의 녹는점이 체온보다 낮아서", "손에 힘을 너무 세게 줘서", "손바닥의 땀에 녹은 것이라서"],
+            choices: s.choices ?? ["갈륨의 녹는점이 체온보다 낮아서", "손에 힘을 너무 세게 줘서", "손바닥의 땀에 녹은 것이라서"],
             good: "정확해요! 갈륨의 <b>녹는점은 약 30 °C</b> — 체온(36.5 °C)이면 충분히 녹아요. 실험실로!",
-            bad: "힘도 땀도 금속을 못 녹여요 — 이 금속(갈륨)은 <b>녹는점이 약 30 °C</b>라서 체온(36.5 °C)만으로 녹은 거예요. 물질마다 녹는점이 달라요. 실험실로!",
+            bad: "힘도 땀도 금속을 못 녹여요 — 갈륨은 <b>녹는점이 약 30 °C</b>라서 체온(36.5 °C)만으로 녹은 거예요. 물질마다 녹는점이 달라요. 실험실로!",
             onDone: finish,
           });
         }, 900);

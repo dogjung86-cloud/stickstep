@@ -3,7 +3,7 @@ import { el, clear, afterPaint } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { BRAND } from "../core/brand";
-import { getState, currentStreak, isDone, lessonOf, getViewGrade, setViewGrade } from "../core/store";
+import { getState, currentStreak, isDone, lessonOf, getViewGrade, setViewGrade, toggleReviewMode, isReviewMode } from "../core/store";
 import { CURRICULA, GRADE_LABEL, gradeOfUnit, isUnlocked, isPremiumLocked, unitProgress, type Unit, type GradeId } from "../content/curriculum";
 import { serpentine, smoothPath, pathUpTo } from "../ui/serpentine";
 import { mapDecorArt } from "../ui/mapDecor";
@@ -18,6 +18,7 @@ export function homeScreen(
   onOpenLesson: (id: string) => void,
   onOpenGame: (unitId: string) => void,
   focusUnitId?: string,
+  nav2?: { onSubjects?: () => void; onLogin?: () => void },
 ): Screen {
   const st = getState();
   // 학년 트랙 — 방금 학습한 단원이 있으면 그 단원의 학년으로 따라간다.
@@ -34,7 +35,42 @@ export function homeScreen(
     el("div", { class: "chip streak" }, el("span", { html: icon("flame", 15) }), el("span", { text: `${currentStreak()}일` })),
     el("div", { class: "chip gem" }, el("span", { html: icon("bolt", 15) }), el("span", { text: `${st.totalXp} XP` })),
   );
-  const appbar = el("div", { class: "appbar" }, el("div", { class: "brand", text: BRAND.name }), chips);
+  // 과목 허브(그리드)·로그인(프로필) 진입 버튼
+  const subjBtn = el("button", { class: "abtn", attrs: { "aria-label": "과목 선택" }, html: icon("grid", 19) });
+  subjBtn.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    nav2?.onSubjects?.();
+  });
+  const profBtn = el("button", { class: "abtn", attrs: { "aria-label": "로그인" }, html: icon("user", 19) });
+  profBtn.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    nav2?.onLogin?.();
+  });
+  const brandEl = el("div", { class: `brand ${isReviewMode() ? "review" : ""}`, text: BRAND.name });
+  // 검토 모드 — 브랜드 7연타 토글(콘텐츠 검수용: 순차·프리미엄 잠금 전부 해제)
+  let brandTaps = 0;
+  let brandTapTimer = 0;
+  brandEl.addEventListener("click", () => {
+    brandTaps += 1;
+    window.clearTimeout(brandTapTimer);
+    brandTapTimer = window.setTimeout(() => {
+      brandTaps = 0;
+    }, 1600);
+    if (brandTaps >= 7) {
+      brandTaps = 0;
+      const on = toggleReviewMode();
+      haptic(HAPTIC.done);
+      brandEl.classList.toggle("review", on);
+      snack(on ? "검토 모드 ON — 모든 레슨이 열렸어요" : "검토 모드 OFF — 잠금이 되돌아왔어요");
+      renderAll();
+    }
+  });
+  const appbar = el(
+    "div",
+    { class: "appbar" },
+    el("div", { class: "ab-side" }, subjBtn, brandEl),
+    el("div", { class: "ab-side" }, chips, profBtn),
+  );
 
   const tabs = el("div", { class: "unit-tabs" });
   // 마우스로도 탭을 잡아 끌어 넘길 수 있게(터치는 네이티브 스크롤이 담당)
@@ -98,7 +134,7 @@ export function homeScreen(
     });
     gradeSeg.appendChild(b);
   });
-  const gradeRow = el("div", { class: "grade-row" }, gradeSeg, el("div", { class: "grade-hint", text: "2022 개정 교육과정" }));
+  const gradeRow = el("div", { class: "grade-row" }, gradeSeg, el("div", { class: "grade-hint", text: "최신 개정 교육과정 반영" }));
 
   const bandHost = el("div", {});
   const mapHost = el("div", {});
@@ -140,11 +176,10 @@ export function homeScreen(
         el("div", { class: "ub-eyebrow", text: `대단원 ${u.roman}` }),
         el("div", { class: "ub-title", text: u.title }),
         el("div", { class: "ub-desc", text: u.subtitle }),
+        // 모든 학년·단원 공통 표기: "단원 정복률 N%" (교육과정·쪽수 문구는 밴드에 쓰지 않는다)
         u.comingSoon
           ? el("div", { class: "ub-meta" }, el("span", { html: icon("clock", 13) }), el("span", { text: "다음 업데이트에서 열려요" }))
-          : u.standard
-            ? el("div", { class: "ub-meta" }, el("span", { html: icon("check", 13) }), el("span", { text: `${u.standard} · ${pct}% 정복` }))
-            : el("span", {}),
+          : el("div", { class: "ub-meta" }, el("span", { html: icon("check", 13) }), el("span", { text: `단원 정복률 ${pct}%` })),
         el("div", { class: "ub-prog" }, el("i", { style: `width:${pct}%` })),
       ),
     );
