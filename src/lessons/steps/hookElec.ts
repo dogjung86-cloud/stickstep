@@ -23,105 +23,13 @@ interface HookOpts {
   choices?: string[];
 }
 
+const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+
 // ══════════════════════════════════════════════════════════
 // L1. wintershock — 겨울밤 정전기 3연타 미니 코믹
 // ══════════════════════════════════════════════════════════
-// 밤 실내 톤(#1A2A4C→#0E1830), 스파크는 elec 앰버(#FFD24A) 계열.
-function wsKnobSvg(): string {
-  return `<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <defs>
-      <linearGradient id="heW1-room" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A2A4C"/><stop offset="1" stop-color="#0E1830"/></linearGradient>
-      <linearGradient id="heW1-door" x1="56" y1="10" x2="90" y2="88" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4E608A"/><stop offset=".55" stop-color="#3A4A70"/><stop offset="1" stop-color="#2A3654"/></linearGradient>
-      <radialGradient id="heW1-knob" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#F4F8FE"/><stop offset=".55" stop-color="#B8C6DA"/><stop offset="1" stop-color="#7E8FA8"/></radialGradient>
-    </defs>
-    <rect x="4" y="4" width="88" height="88" rx="12" fill="url(#heW1-room)"/>
-    <!-- 문 -->
-    <path d="M56 10h30v78h-30z" fill="url(#heW1-door)"/>
-    <path d="M56 10v78" stroke="#1E2A46" stroke-width="1.6"/>
-    <rect x="61" y="16" width="20" height="30" rx="2" stroke="#5A6C96" stroke-width="1.4" opacity=".7"/>
-    <path d="M62 15q9 -3 18 0" stroke="#8FA2C8" stroke-width="1.6" opacity=".5"/>
-    <!-- 금속 손잡이 -->
-    <circle cx="63" cy="55" r="6" fill="url(#heW1-knob)"/>
-    <circle cx="63" cy="55" r="6" stroke="#55647E" stroke-width="1.2"/>
-    <circle cx="61" cy="53" r="1.6" fill="#FFFFFF" opacity=".9"/>
-    <!-- 스틱맨(손 뻗음) — 손그림 라인 -->
-    <g stroke="#E8EEF8" stroke-width="2.4" fill="none">
-      <circle cx="20" cy="34" r="7" fill="#101B34"/>
-      <path d="M20 41v17M20 58l-6 14M20 58l7 13M20 46l-8 9"/>
-      <g class="he-arm2"><path d="M20 46q14 4 26 7"/></g>
-    </g>
-    <!-- 찌릿 스파크 -->
-    <g class="he-spk" opacity="0">
-      <circle cx="53" cy="54" r="8" fill="#FFC45A" opacity=".22"/>
-      <path d="M48 50l5 2-3 3 6 2" stroke="#FFD24A" stroke-width="2.2"/>
-      <path d="M50 60l3-2M55 47l2-2" stroke="#FFE9A8" stroke-width="1.6"/>
-    </g>
-  </svg>`;
-}
-function wsSweaterSvg(): string {
-  return `<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <defs>
-      <linearGradient id="heW2-room" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A2A4C"/><stop offset="1" stop-color="#0E1830"/></linearGradient>
-      <linearGradient id="heW2-swt" x1="32" y1="24" x2="66" y2="44" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FF9A82"/><stop offset=".55" stop-color="#E86450"/><stop offset="1" stop-color="#B83E2E"/></linearGradient>
-    </defs>
-    <rect x="4" y="4" width="88" height="88" rx="12" fill="url(#heW2-room)"/>
-    <!-- 폭발하는 머리카락(탭하면 곤두섬) -->
-    <g class="he-hair" stroke="#E8EEF8" stroke-width="2">
-      <path d="M41 50l-9 -7"/><path d="M44 47l-6 -10"/><path d="M48 46v-11"/><path d="M52 47l6 -10"/><path d="M55 50l9 -7"/>
-    </g>
-    <!-- 머리·몸(손그림 라인) -->
-    <g stroke="#E8EEF8" stroke-width="2.4" fill="none">
-      <circle cx="48" cy="56" r="9" fill="#101B34"/>
-      <path d="M48 65v13M48 78l-7 10M48 78l7 10"/>
-      <path d="M48 68L34 38M48 68l14-30"/>
-    </g>
-    <!-- 벗는 중인 스웨터(머리 위) -->
-    <g class="he-swt">
-      <path d="M31 30q17 -13 34 0l1 9q-18 8 -36 0z" fill="url(#heW2-swt)"/>
-      <path d="M31 30q17 -13 34 0l1 9q-18 8 -36 0z" stroke="#8E2A1C" stroke-width="1.4"/>
-      <path d="M37 34q3 -2 3 2M45 31q3 -2 3 2M53 31q3 -2 3 2M60 34q3 -2 3 2" stroke="#FFC9B8" stroke-width="1.3" opacity=".8"/>
-      <path d="M36 27q12 -8 23 -1" stroke="#FFD8CC" stroke-width="2" opacity=".7"/>
-    </g>
-    <!-- 타닥 스파크 -->
-    <g class="he-spk" opacity="0">
-      <path d="M28 42l4 1-2 3 4 1" stroke="#FFD24A" stroke-width="2"/>
-      <path d="M68 42l-4 1 2 3-4 1" stroke="#FFD24A" stroke-width="2"/>
-      <circle cx="48" cy="30" r="1.6" fill="#FFE9A8"/>
-    </g>
-  </svg>`;
-}
-function wsBalloonSvg(): string {
-  return `<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <defs>
-      <linearGradient id="heW3-room" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A2A4C"/><stop offset="1" stop-color="#0E1830"/></linearGradient>
-      <radialGradient id="heW3-bal" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#FFB3A2"/><stop offset=".5" stop-color="#F0705A"/><stop offset="1" stop-color="#C24028"/></radialGradient>
-    </defs>
-    <rect x="4" y="4" width="88" height="88" rx="12" fill="url(#heW3-room)"/>
-    <!-- 풍선 쪽으로 곤두서는 머리카락 -->
-    <g class="he-hair" stroke="#E8EEF8" stroke-width="2">
-      <path d="M40 55l9 -9"/><path d="M42 59l11 -6"/><path d="M36 53l4 -10"/><path d="M31 53l-1 -9"/><path d="M28 56l-6 -6"/>
-    </g>
-    <!-- 머리·몸(손그림 라인) -->
-    <g stroke="#E8EEF8" stroke-width="2.4" fill="none">
-      <circle cx="34" cy="62" r="9" fill="#101B34"/>
-      <path d="M34 71v13M34 84l-7 8M34 84l7 8M34 75l-9 4M34 75l9 4"/>
-    </g>
-    <!-- 문지른 풍선 -->
-    <g class="he-bal3">
-      <ellipse cx="64" cy="30" rx="13" ry="16" fill="url(#heW3-bal)"/>
-      <ellipse cx="64" cy="30" rx="13" ry="16" stroke="#8E2A1C" stroke-width="1.3"/>
-      <ellipse cx="59" cy="24" rx="4" ry="6" fill="#FFD8CC" opacity=".75"/>
-      <path d="M64 46l-3 4h6z" fill="#C24028"/>
-      <path d="M64 50q4 10 -2 16" stroke="#B8C2D2" stroke-width="1.4"/>
-    </g>
-    <!-- 정전기 반짝 -->
-    <g class="he-spk" opacity="0">
-      <path d="M50 44l3 3M46 37l3 1M53 50l3 1" stroke="#FFE9A8" stroke-width="1.8"/>
-      <circle cx="56" cy="41" r="1.4" fill="#FFD24A"/>
-    </g>
-  </svg>`;
-}
-
+// 발주 스틱맨 컷 쌍(public/elec/hook/{knob,sweater,balloon}-{calm,zap}.webp) —
+// 탭하면 calm → zap 크로스페이드(스파크·곤두선 머리는 이미지에 그려져 있다).
 export function renderWinterShock(scene: HTMLElement, helper: HTMLElement, s: HookOpts, finish: () => void, face: Face): () => void {
   const grid = el("div", { class: "hook-cups three" });
   const choicesBox = el("div", { class: "hook-choices" });
@@ -130,10 +38,16 @@ export function renderWinterShock(scene: HTMLElement, helper: HTMLElement, s: Ho
 
   const seen = new Set<string>();
   let timer = 0;
-  const mk = (key: string, name: string, svg: string, before: string, after: string): HTMLElement => {
+  const mk = (key: string, name: string, file: string, before: string, after: string): HTMLElement => {
     const label = el("div", { class: "hook-cup-label", text: before });
-    const card = el("button", { class: "hook-cup he-wcard", html: svg, attrs: { type: "button", "aria-label": `${name} — 탭해서 보기` } });
-    card.appendChild(label);
+    const frame = el(
+      "span",
+      { class: "he-wframe" },
+      el("img", { class: "calm", attrs: { src: `${IMG_BASE}elec/hook/${file}-calm.webp`, alt: "" } }),
+      el("img", { class: "zap", attrs: { src: `${IMG_BASE}elec/hook/${file}-zap.webp`, alt: "" } }),
+    );
+    const card = el("button", { class: "hook-cup he-wcard", attrs: { type: "button", "aria-label": `${name} — 탭해서 보기` } });
+    card.append(frame, label);
     card.addEventListener("click", () => {
       // 애니 재생(재탭 시 리플레이)
       card.classList.remove("lit");
@@ -165,9 +79,9 @@ export function renderWinterShock(scene: HTMLElement, helper: HTMLElement, s: Ho
     return card;
   };
   grid.append(
-    mk("knob", "금속 문손잡이", wsKnobSvg(), "문손잡이 잡기", "찌릿, 따가워!"),
-    mk("swt", "스웨터 벗기", wsSweaterSvg(), "스웨터 벗기", "타닥타닥!"),
-    mk("bal", "문지른 풍선", wsBalloonSvg(), "풍선 대 보기", "머리카락이 쭈뼛!"),
+    mk("knob", "금속 문손잡이", "knob", "문손잡이 잡기", "찌릿, 따가워!"),
+    mk("swt", "스웨터 벗기", "sweater", "스웨터 벗기", "타닥타닥!"),
+    mk("bal", "문지른 풍선", "balloon", "풍선 대 보기", "머리카락이 쭈뼛!"),
   );
   return () => window.clearTimeout(timer);
 }
@@ -614,40 +528,58 @@ function multiTapSvg(): string {
 }
 
 export function renderMultiTap(scene: HTMLElement, helper: HTMLElement, s: HookOpts, finish: () => void, face: Face): () => void {
+  // 흐름(나레이터 약속과 일치): ① 플러그를 하나씩 꽂아 "따로따로 켜진다"를 확인 →
+  // ② "하나를 뽑으면 나머지는?" 예측 → ③ 뽑아서 검증(이후 자유 토글).
   const fig = el("div", {
-    class: "he-fig he-mt",
+    class: "he-fig he-mt plugin off-lamp off-fan off-chg",
     html: multiTapSvg(),
-    attrs: { role: "img", "aria-label": "멀티탭 하나에 스탠드·선풍기·충전기가 꽂혀 모두 동작 중 — 예측 후 플러그를 탭해 뽑아 보기" },
+    attrs: { role: "img", "aria-label": "멀티탭 하나와 뽑혀 있는 플러그 셋 — 하나씩 탭해 꽂아 보기" },
   });
+  fig.querySelectorAll(".he-plug").forEach((g) => g.classList.add("out"));
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "스탠드 불빛, 씽씽 선풍기, 충전 중인 폰 — 셋 다 <b>멀티탭 하나</b>에 꽂혀 있어요. 여기서 플러그 <b>하나를 뽑으면</b>, 나머지 둘은?";
+  helper.innerHTML = "스탠드·선풍기·충전기 — 셋 다 <b>멀티탭 하나</b>를 쓰는데 지금은 전부 뽑혀 있어요. 플러그를 <b>하나씩 탭해 꽂아</b> 보세요!";
   face("curious");
 
   const NAME: Record<string, string> = { lamp: "스탠드", fan: "선풍기", chg: "충전기" };
-  let ready = false;
+  let phase: "plugin" | "asking" | "pull" = "plugin";
   let confirmed = false;
   const timers: number[] = [];
   const later = (fn: () => void, ms: number): void => {
     timers.push(window.setTimeout(fn, ms));
   };
-  ask(choicesBox, helper, {
-    choices: s.choices ?? ["나머지 둘은 그대로 켜져 있다", "셋 다 함께 꺼진다", "나머지 둘이 더 세게 켜진다"],
-    good: "좋은 예측! 정말 그런지 — 플러그 <b>하나를 탭해서 뽑아</b> 봐요.",
-    bad: "한 줄로 이어졌다면 다 꺼지고, 나눠 쓰던 전기가 몰린다면 세지겠죠 — 과연 그럴까요? 플러그 <b>하나를 탭해서 뽑아</b> 직접 확인!",
-    onDone: () => {
-      ready = true;
-      fig.classList.add("ready");
-    },
-  });
+  const allIn = (): boolean => fig.querySelectorAll(".he-plug.out").length === 0;
   fig.addEventListener("click", (e) => {
-    if (!ready) return;
+    if (phase === "asking") return; // 예측 중에는 장면을 잠근다
     const g = (e.target as Element).closest(".he-plug") as SVGGElement | null;
     if (!g) return;
     const d = g.dataset.d ?? "";
     const out = g.classList.toggle("out");
     fig.classList.toggle(`off-${d}`, out);
     haptic(HAPTIC.select);
+    if (phase === "plugin") {
+      if (!out && !allIn()) {
+        helper.innerHTML = `딸깍 — <b>${NAME[d]}만 켜졌어요</b>! 다른 건 꿈쩍도 안 하죠. 나머지도 꽂아 봐요.`;
+      } else if (allIn()) {
+        phase = "asking";
+        fig.classList.remove("plugin");
+        face("curious");
+        helper.innerHTML = "셋 다 <b>따로따로</b> 켜졌어요 — 서로 눈치도 안 보네요. 그럼 이제, 이 중 <b>하나를 뽑으면</b> 나머지 둘은?";
+        ask(choicesBox, helper, {
+          choices: s.choices ?? ["나머지 둘은 그대로 켜져 있다", "셋 다 함께 꺼진다", "나머지 둘이 더 세게 켜진다"],
+          good: "좋은 예측! 정말 그런지 — 플러그 <b>하나를 탭해서 뽑아</b> 봐요.",
+          bad: "한 줄로 이어졌다면 다 꺼지고, 나눠 쓰던 전기가 몰린다면 세지겠죠 — 과연 그럴까요? 플러그 <b>하나를 탭해서 뽑아</b> 직접 확인!",
+          onDone: () => {
+            phase = "pull";
+            fig.classList.add("ready");
+          },
+        });
+      } else {
+        helper.innerHTML = `${NAME[d]}를 도로 뽑았어요 — 그 기구만 꺼져요. 셋 다 꽂아 봐요!`;
+      }
+      return;
+    }
+    // phase === "pull"
     if (!confirmed && out) {
       confirmed = true;
       fig.classList.remove("ready");
@@ -831,51 +763,52 @@ function compassWireSvg(): string {
 }
 
 export function renderCompassWire(scene: HTMLElement, helper: HTMLElement, s: HookOpts, finish: () => void, face: Face): () => void {
+  // 흐름(나레이터 약속과 일치): ① 스위치를 먼저 켠다 → 바늘이 홱! ② "왜 움직였을까" 예측 ③ 껐다 켰다 자유 재현.
   const fig = el("button", {
-    class: "he-fig he-cw",
+    class: "he-fig he-cw ready",
     html: compassWireSvg(),
-    attrs: { type: "button", "aria-label": "예측 후 스위치를 탭해서 전류 켜고 끄기" },
+    attrs: { type: "button", "aria-label": "스위치를 탭해서 전류 켜고 끄기" },
   });
-  (fig as HTMLButtonElement).disabled = true;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "나침반 바늘(빨간 쪽이 <b>N극</b>)은 늘 북쪽만 봐요. 그 <b>위로 전선</b>이 지나가고, 스위치는 아직 꺼짐. 스위치를 켜서 <b>전류를 흘리면</b> 바늘은 어떻게 될까요?";
+  helper.innerHTML = "나침반 바늘(빨간 쪽이 <b>N극</b>)은 늘 북쪽만 봐요. 그 <b>위로 전선</b>이 지나가고, 스위치는 아직 꺼짐. <b>스위치를 탭</b>해서 전류를 흘려 보세요!";
   face("curious");
 
-  let ready = false;
-  let confirmed = false;
+  let asked = false;
+  let answered = false;
   let on = false;
   const timers: number[] = [];
   const later = (fn: () => void, ms: number): void => {
     timers.push(window.setTimeout(fn, ms));
   };
-  ask(choicesBox, helper, {
-    choices: s.choices ?? ["바늘이 움직인다", "아무 변화 없다", "바늘이 뜨거워져 녹는다"],
-    good: "좋은 예측! 정말 움직일까요 — <b>스위치를 탭</b>해서 전류를 흘려 봐요.",
-    bad: "녹지도 않고, 가만있지도 않아요 — 전선과 나침반 사이에 <b>보이지 않는 무언가</b>가 오간답니다. <b>스위치를 탭</b>해서 직접 확인!",
-    onDone: () => {
-      ready = true;
-      (fig as HTMLButtonElement).disabled = false;
-      fig.classList.add("ready");
-    },
-  });
   fig.addEventListener("click", () => {
-    if (!ready) return;
     on = !on;
     fig.classList.toggle("on", on);
     haptic(HAPTIC.select);
-    if (!confirmed && on) {
-      confirmed = true;
+    if (!asked && on) {
+      asked = true;
       fig.classList.remove("ready");
       face("surprised");
       haptic(HAPTIC.correct);
       helper.innerHTML = "휙—! 전선은 자석도 아닌데 <b>바늘이 돌아갔어요</b>.";
       later(() => {
         face("curious");
-        helper.innerHTML = "껐다 켰다 반복해 보세요 — <b>전류가 흐를 때만</b> 바늘이 돌아요. 전선 둘레에 대체 뭐가 생기는 걸까요? 코일로 크게 재현해 봐요!";
-        finish();
-      }, 1100);
-    } else if (confirmed) {
+        helper.innerHTML = "전선은 바늘에 닿지도 않았는데… <b>왜 움직였을까요?</b>";
+        ask(choicesBox, helper, {
+          choices: s.choices ?? [
+            "전류가 흐르는 전선 둘레에 자석 같은 성질이 생겨서",
+            "전선이 뜨거워져 주변 공기가 바늘을 밀어서",
+            "전지가 나침반 바늘을 직접 끌어당겨서",
+          ],
+          good: "맞아요! 전류가 흐르는 전선 둘레엔 <b>자석 같은 성질</b>이 생겨요 — 200년 전 외르스테드도 강의 중에 우연히 이 장면을 봤죠. 스위치를 껐다 켰다 해 보세요, <b>전류가 흐를 때만</b> 바늘이 돌아요!",
+          bad: "열도, 전지의 끌어당김도 아니에요 — 스위치를 꺼 보면 바늘이 바로 돌아오거든요. 비밀은 <b>전류가 흐르는 전선 둘레에 생기는 자석 같은 성질</b>! 껐다 켰다 하며 확인하고, 코일로 크게 재현해 봐요.",
+          onDone: () => {
+            answered = true;
+            finish();
+          },
+        });
+      }, 1200);
+    } else if (answered) {
       helper.innerHTML = on
         ? "켜짐 — 바늘이 <b>휙</b> 돌아가요!"
         : "꺼짐 — 바늘이 <b>북쪽</b>으로 되돌아와요.";

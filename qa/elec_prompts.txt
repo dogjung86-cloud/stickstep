@@ -1,0 +1,64 @@
+# 중2 VII 전기와 자기 발주 17장 — 훅 3장면×2상태(정사각) + 정리 그림 5(figs) + 스틱맨 개념 컷 6(cuts)
+# 스타일 블록 A(훅·컷 공용 — 스틱맨 만화):
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs. absolutely no text, no letters, no numbers, no words, no speech
+# bubbles, no captions, no labels anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy
+# render, NOT digital painting, NOT anime.
+# 스타일 블록 B(figs 공용 — 교과서 일러스트):
+# Clean modern educational 3D-style illustration for a middle-school science textbook, soft studio
+# lighting, gentle shadows, light neutral background, crisp edges, realistic materials.
+# absolutely no text, no letters, no numbers, no symbols, no labels, no logos, no faces, no people
+# (hands are allowed ONLY where the prompt explicitly asks for a hand).
+
+[0] file=public/elec/hook/knob-calm.png (square 1:1, 스타일 A)
+A stick figure in a simple winter sweater (drawn with a few zigzag knit strokes) reaches one arm toward a plain door drawn on the right; on the door is a round metal doorknob. The hand hovers just short of the knob, about to touch it. Exactly one restrained accent color, teal, used only on the sweater; everything else pure black and white. Square, single panel, generous white space.
+
+[1] file=public/elec/hook/knob-zap.png (square 1:1, 스타일 A)
+The same scene: a stick figure in a teal winter sweater touching a round metal doorknob on a plain door at the right — but at the exact moment of a static shock: a small burst of jagged spark lines between the fingertip and the knob, the stick figure's mouth open wide and body flinching back, a few hair strands standing up. The spark burst is colored warm yellow; the sweater keeps its teal accent; everything else pure black and white. Square, single panel, generous white space.
+
+[2] file=public/elec/hook/sweater-calm.png (square 1:1, 스타일 A)
+A stick figure pulling a knit sweater up over its head — the sweater is halfway off, covering the face, both arms raised inside the sleeves. The sweater is drawn with a few zigzag knit strokes and is the only colored element, teal. Everything else pure black and white. Square, single panel, generous white space.
+
+[3] file=public/elec/hook/sweater-zap.png (square 1:1, 스타일 A)
+The same scene: a stick figure pulling a teal knit sweater over its head — but now tiny jagged crackle sparks pop in the gap between the sweater hem and the hair, and several hair strands stand straight up toward the sweater. The small sparks are warm yellow; the sweater keeps its teal accent; everything else pure black and white. Square, single panel, generous white space.
+
+[4] file=public/elec/hook/balloon-calm.png (square 1:1, 스타일 A)
+A stick figure holds a round party balloon on a short string and lifts it beside its own head, tilting the head curiously toward the balloon. The balloon is the only colored element, teal. Everything else pure black and white. Square, single panel, generous white space.
+
+[5] file=public/elec/hook/balloon-zap.png (square 1:1, 스타일 A)
+The same scene: a stick figure holds a teal party balloon right above its own head — and many hair strands rise straight up toward the balloon, clearly attracted to it, with two or three tiny warm-yellow sparkle ticks between hair and balloon. The stick figure's eyes are wide with surprise. Balloon teal, sparkle ticks warm yellow, everything else pure black and white. Square, single panel, generous white space.
+
+[6] file=public/elec/figs/circuit.png (landscape 2:1, 스타일 B)
+A simple complete electric circuit laid out neatly on a light wooden desk, seen from a slightly elevated front angle: on the left, one yellow D-cell battery lying horizontally in a small holder, its raised metal button terminal clearly visible on the right end and the flat terminal on the left end. From the two battery terminals, two smooth dark insulated wires run in a clean rounded rectangular loop to the right side, where a small clear incandescent light bulb stands upright in a short socket stand, glowing warm yellow. The wire loop is fully connected with no gaps: battery terminal to bulb socket on both sides. Wide 2:1 landscape composition, everything sharp and clean.
+
+[7] file=public/elec/figs/grip.png (landscape 4:3, 스타일 B)
+A single right hand (realistic but clean and simplified, exactly five fingers) gripping around a horizontal cylindrical coil of copper wire (a solenoid with clearly separated turns). The four fingers wrap around the coil following the winding direction, and the thumb sticks straight out along the coil's axis pointing to the left. The coil is copper colored; the hand is neutral light skin tone; background plain light. Composition centered, large and clear, landscape 4:3. No arrows, no text.
+
+[8] file=public/elec/figs/palm.png (landscape 4:3, 스타일 B)
+A single open right hand (realistic but clean and simplified, exactly five fingers), palm facing up toward the viewer slightly, all four fingers held straight and together pointing to the right, and the thumb spread wide apart pointing toward the top of the frame — a clear L-shape between thumb and fingers. Neutral light skin tone, plain light background, centered, large and clear, landscape 4:3. No arrows, no text.
+
+[9] file=public/elec/figs/swing.png (landscape 4:3, 스타일 B)
+A classic physics demonstration apparatus on a light desk: a silver horseshoe magnet (U-shaped, lying sideways so its two straight pole arms point toward the viewer, one arm red and one arm blue) with a narrow horizontal gap between the arms. A small rectangular swing made of a single loop of copper wire hangs from a thin horizontal support bar above, on two thin wires like a trapeze, so that the bottom side of the copper loop hangs inside the magnet gap between the red and blue arms. Thin wires run from the top support toward a small battery pack at the side. Clean, large, uncluttered, landscape 4:3. No arrows, no text.
+
+[10] file=public/elec/figs/motor.png (landscape 4:3, 스타일 B)
+A clear cutaway 3D illustration of a simple DC electric motor's inside: a rectangular coil of copper wire mounted on a central horizontal axle, placed in the gap between two curved permanent magnets (left magnet red, right magnet blue). At one end of the axle, a split-ring commutator with two small graphite brushes touching it, connected by two wires to a small battery drawn at the bottom corner. Slight three-quarter perspective so the depth of the coil and magnets reads clearly. Clean, large, uncluttered, landscape 4:3. No arrows, no text.
+
+[11] file=public/elec/cuts/induction.png (landscape 4:3, 스타일 A)
+A stick figure kneels at a low table holding a straight plastic rod horizontally near an empty aluminum drink can lying on its side; the can is rolling toward the rod, shown with two short curved motion arcs around the can and a short trail line behind it. The stick figure's eyes are wide with delight. Exactly one accent color, teal, used only on the plastic rod; everything else pure black and white. Landscape 4:3, single panel, generous white space.
+
+[12] file=public/elec/cuts/analogy.png (landscape 4:3, 스타일 A)
+Split scene, left and right, with a stick figure standing in the middle looking back and forth (head turned, one finger on chin). Left half: a simple closed water pipe loop with a small pump box at the left side and a waterwheel with paddles at the right of the loop. Right half: a simple closed electric circuit loop with a battery at the left side and a glowing round bulb at the right of the loop, drawn with the exact same loop shape as the water loop — the two loops mirror each other. The only colored element is the water inside the pipe loop, teal; everything else pure black and white. Landscape 4:3, single panel, generous white space.
+
+[13] file=public/elec/cuts/ohm.png (landscape 4:3, 스타일 A)
+A stick-figure scientist with tiny round glasses stands proudly beside a big flip-chart board, tapping it with a pointer stick. On the board: a simple graph with two bare axes (no numbers, no letters) and one perfectly straight rising line from the origin, with four small dots sitting exactly on the line. The straight line is the only colored element, teal; everything else pure black and white. Landscape 4:3, single panel, generous white space.
+
+[14] file=public/elec/cuts/parallel.png (landscape 4:3, 스타일 A)
+Top-down doodle view of two water channel systems side by side, with a small stick figure standing between them pointing at each. Left system: one single channel with two waterwheels placed one after another along the same channel. Right system: a channel that splits into two parallel branches, each branch with its own single waterwheel, then the branches merge back together. The water in the channels is the only colored element, teal; everything else pure black and white. Landscape 4:3, single panel, generous white space.
+
+[15] file=public/elec/cuts/energy.png (landscape 4:3, 스타일 A)
+A stick figure ironing a shirt on an ironing board with a big clothes iron that radiates three wavy heat lines; on a small side table sits a tiny phone charger plugged into the wall, comically small next to the huge iron — the stick figure glances at the tiny charger with raised eyebrows. The iron's soleplate glow is the only colored element, warm yellow-orange; everything else pure black and white. Landscape 4:3, single panel, generous white space.
+
+[16] file=public/elec/cuts/motor.png (landscape 4:3, 스타일 A)
+A stick figure has opened the round back cover of a desk fan (cover leaning against the table) and peeks inside the motor housing with a flashlight; inside the opened housing a simple doodle shows a small coil of wire sitting between two magnets. The small coil inside is the only teal accent; the fan blades at the front are drawn with two faint motion arcs. Everything else pure black and white. Landscape 4:3, single panel, generous white space.

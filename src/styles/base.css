@@ -133,6 +133,7 @@ img { display: block; max-width: 100%; }
   transition: opacity .25s, transform .3s var(--spring); pointer-events: none; white-space: nowrap; z-index: 4;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.low { top: auto; bottom: 14px; } /* 관찰 대상이 무대 위쪽일 때 — 팝업이 가리지 않게 하단으로 */
 .helper { margin-top: 14px; font-size: 14.5px; line-height: 1.5; color: var(--sub); min-height: 44px; word-break: keep-all; transition: opacity .2s; }
 .helper b { color: var(--ink); }
 

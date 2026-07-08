@@ -36,17 +36,19 @@ const PAIRS: [string, string, string][] = [
   ["pipe", "wire", "흐르는 길"],
   ["valve", "switch", "길을 여닫는 곳"],
 ];
+// 두 회로는 **위치까지 거울 대칭**(교과서 그림 VII-5 구도): 왼쪽 세로 = 펌프↔전지,
+// 위 가운데 = 밸브↔스위치, 오른쪽 = 물레방아↔전구, 아래 = 수도관↔전선. 오프셋 +518.
 const SPOTS: Spot[] = [
-  { id: "pump", side: "water", label: "펌프", x: 92, y: 235, r: 52 },
-  { id: "flow", side: "water", label: "물의 흐름", x: 250, y: 96, r: 46 },
+  { id: "pump", side: "water", label: "펌프", x: 92, y: 240, r: 52 },
+  { id: "valve", side: "water", label: "밸브", x: 244, y: 96, r: 36 },
+  { id: "flow", side: "water", label: "물의 흐름", x: 155, y: 96, r: 38 },
   { id: "wheel", side: "water", label: "물레방아", x: 395, y: 205, r: 55 },
-  { id: "pipe", side: "water", label: "수도관", x: 236, y: 372, r: 46 },
-  { id: "valve", side: "water", label: "밸브", x: 168, y: 96, r: 34 },
-  { id: "battery", side: "elec", label: "전지", x: 745, y: 388, r: 52 },
-  { id: "current", side: "elec", label: "전류", x: 790, y: 96, r: 46 },
-  { id: "bulb", side: "elec", label: "전구", x: 920, y: 205, r: 52 },
-  { id: "wire", side: "elec", label: "전선", x: 610, y: 240, r: 42 },
-  { id: "switch", side: "elec", label: "스위치", x: 872, y: 388, r: 40 },
+  { id: "pipe", side: "water", label: "수도관", x: 244, y: 372, r: 46 },
+  { id: "battery", side: "elec", label: "전지", x: 610, y: 240, r: 52 },
+  { id: "switch", side: "elec", label: "스위치", x: 762, y: 96, r: 36 },
+  { id: "current", side: "elec", label: "전류", x: 673, y: 96, r: 38 },
+  { id: "bulb", side: "elec", label: "전구", x: 913, y: 205, r: 52 },
+  { id: "wire", side: "elec", label: "전선", x: 762, y: 372, r: 46 },
 ];
 const MATCH_COLORS = ["#F0A422", "#37B6D8", "#8A6BFF", "#4CAF6E", "#E86FCE"];
 
@@ -327,29 +329,26 @@ export const waterCircuit: StepRenderer = (host, step, api) => {
     }
   }
 
-  // ── 물 회로(좌) — 교과서 그림 VII-5 구도 ──
+  // ── 물 회로(좌) — 교과서 그림 VII-5 구도. 폐로: 왼쪽(펌프 상승) → 위(밸브) → 오른쪽(낙하 → 물레방아) → 아래 귀환 ──
   function drawWaterSide(ctx: CanvasRenderingContext2D, rate: number, phase: number, wheel: number, isOpen: boolean): void {
     // 제목
     ctx.font = "800 17px Pretendard, sans-serif";
     ctx.textAlign = "center";
     ctx.fillStyle = "rgba(150,196,255,.9)";
-    ctx.fillText("물의 회로", 250, 34);
+    ctx.fillText("물의 회로", 244, 34);
 
-    // 경로: 펌프(92,300→92,96 상승) → 위 수로(92,96→368,96) → 물레방아 낙하(368,96→368,205 부근)
-    //      → 아래 수로(395,330→92,330... 단순 폐로)
+    // 관: 위 구간(왼쪽 세로 → 위 가로 → 오른쪽 세로, 끝이 물레방아 위에서 열림) + 아래 귀환 구간
     const pipe: { x: number; y: number }[] = [
-      { x: 92, y: 330 },
+      { x: 92, y: 372 },
       { x: 92, y: 96 },
-      { x: 368, y: 96 },
-      { x: 368, y: 160 },
+      { x: 395, y: 96 },
+      { x: 395, y: 118 },
     ];
     const back: { x: number; y: number }[] = [
-      { x: 395, y: 300 },
+      { x: 395, y: 262 },
       { x: 395, y: 372 },
       { x: 92, y: 372 },
-      { x: 92, y: 330 },
     ];
-    // 수로(파이프) — 물색 파란 관
     for (const seg of [pipe, back]) {
       ctx.strokeStyle = "#2A4A6E";
       ctx.lineWidth = 22;
@@ -364,8 +363,8 @@ export const waterCircuit: StepRenderer = (host, step, api) => {
       seg.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
       ctx.stroke();
     }
-    // 물 흐름 점(파랑) — 두 세그먼트를 이어 흐름
-    const flowPts = [...pipe, { x: 368, y: 205 }, { x: 395, y: 240 }, ...back];
+    // 물 흐름 점(파랑) — 폐로 전체를 한 경로로(방아 구간은 방아가 위에 그려져 자연히 가려진다)
+    const flowPts = [...pipe, ...back];
     if (rate > 0.02) {
       let total = 0;
       const segs: { a: { x: number; y: number }; b: { x: number; y: number }; len: number }[] = [];
@@ -394,28 +393,43 @@ export const waterCircuit: StepRenderer = (host, step, api) => {
       }
       ctx.shadowBlur = 0;
     }
-    // 펌프(빨간 헤드 + 몸통)
+    // 낙하수(관 끝 → 방아 위) — 세기 비례 폭
+    if (rate > 0.02) {
+      ctx.strokeStyle = `rgba(150,214,255,${0.4 + rate * 0.5})`;
+      ctx.lineWidth = 5 + rate * 5;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(395, 122);
+      ctx.lineTo(395, 152);
+      ctx.stroke();
+    }
+    // 펌프(왼쪽 세로 관 위 — 전지와 같은 위치) : 몸통 + 빨간 헤드 + 상승 화살표
     ctx.fillStyle = "#4E5E78";
     ctx.beginPath();
-    ctx.roundRect(72, 250, 40, 84, 8);
+    ctx.roundRect(72, 214, 40, 84, 8);
     ctx.fill();
+    ctx.strokeStyle = "#25324A";
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.roundRect(72, 214, 40, 84, 8);
+    ctx.stroke();
     const pg = ctx.createLinearGradient(70, 0, 114, 0);
     pg.addColorStop(0, "#FF8A76");
     pg.addColorStop(1, "#C23A28");
     ctx.fillStyle = pg;
     ctx.beginPath();
-    ctx.roundRect(70, 218, 44, 36, 9);
+    ctx.roundRect(70, 184, 44, 34, 9);
     ctx.fill();
     ctx.strokeStyle = "#7E1E12";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.roundRect(70, 218, 44, 36, 9);
+    ctx.roundRect(70, 184, 44, 34, 9);
     ctx.stroke();
-    // 펌프 상승 화살표(세기 비례 진동)
+    // 펌프 상승 화살표(펌프 위 관 속, 세기 비례)
     ctx.fillStyle = `rgba(150,214,255,${0.4 + rate * 0.55})`;
-    for (let i = 0; i < 3; i++) {
-      const yy = 205 - i * 26 - (phase * 26) % 26;
-      if (yy > 120) {
+    for (let i = 0; i < 2; i++) {
+      const yy = 172 - i * 26 - (phase * 26) % 26;
+      if (yy > 116) {
         ctx.beginPath();
         ctx.moveTo(92, yy - 8);
         ctx.lineTo(84, yy + 4);
@@ -424,9 +438,9 @@ export const waterCircuit: StepRenderer = (host, step, api) => {
         ctx.fill();
       }
     }
-    // 밸브(위 수로 중간)
+    // 밸브(위 관 가운데 — 스위치와 같은 위치)
     ctx.save();
-    ctx.translate(168, 96);
+    ctx.translate(244, 96);
     ctx.fillStyle = "#8C99AC";
     ctx.beginPath();
     ctx.roundRect(-6, -20, 12, 20, 3);
@@ -440,14 +454,14 @@ export const waterCircuit: StepRenderer = (host, step, api) => {
     ctx.roundRect(-17, -26, 34, 10, 5);
     ctx.fill();
     ctx.restore();
-    // 물레방아
+    // 물레방아(오른쪽 — 전구와 같은 위치, 낙하수가 위에서 때린다)
     ctx.save();
     ctx.translate(395, 205);
     ctx.rotate(wheel);
     ctx.strokeStyle = "#C9A05E";
     ctx.lineWidth = 7;
     ctx.beginPath();
-    ctx.arc(0, 0, 52, 0, TAU);
+    ctx.arc(0, 0, 48, 0, TAU);
     ctx.stroke();
     ctx.strokeStyle = "#8A6A34";
     ctx.lineWidth = 5;
@@ -455,11 +469,11 @@ export const waterCircuit: StepRenderer = (host, step, api) => {
       const a = (i / 8) * TAU;
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.lineTo(Math.cos(a) * 52, Math.sin(a) * 52);
+      ctx.lineTo(Math.cos(a) * 48, Math.sin(a) * 48);
       ctx.stroke();
       // 물받이 판
       ctx.save();
-      ctx.translate(Math.cos(a) * 52, Math.sin(a) * 52);
+      ctx.translate(Math.cos(a) * 48, Math.sin(a) * 48);
       ctx.rotate(a + Math.PI / 2);
       ctx.fillStyle = "#E8C890";
       ctx.fillRect(-11, -4, 22, 8);
@@ -470,47 +484,41 @@ export const waterCircuit: StepRenderer = (host, step, api) => {
     ctx.arc(0, 0, 8, 0, TAU);
     ctx.fill();
     ctx.restore();
-    // 낙하수(수로 끝 → 방아 위)
-    if (rate > 0.02) {
-      ctx.strokeStyle = `rgba(150,214,255,${0.35 + rate * 0.5})`;
-      ctx.lineWidth = 8;
-      ctx.beginPath();
-      ctx.moveTo(368, 108);
-      ctx.quadraticCurveTo(372, 150, 386, 168);
-      ctx.stroke();
-    }
   }
 
-  // ── 전기 회로(우) — 물 회로와 같은 구도 ──
+  // ── 전기 회로(우) — 물 회로와 거울 대칭(+518): 전지 왼쪽 세로·스위치 위·전구 오른쪽 ──
   function drawElecSide(ctx: CanvasRenderingContext2D, rate: number, phase: number, isOpen: boolean): void {
     ctx.font = "800 17px Pretendard, sans-serif";
     ctx.textAlign = "center";
     ctx.fillStyle = `rgba(${ELEC.amber},.9)`;
-    ctx.fillText("전기 회로", 790, 34);
+    ctx.fillText("전기 회로", 762, 34);
 
-    // 폐회로: 전지(745,388) → 왼쪽 위로 → 위 전선 → 전구(920,205) → 아래로 → 스위치(872,388) → 전지
-    const loopPts = [
-      { x: 700, y: 388 },
-      { x: 610, y: 388 },
+    // 관례 전류 방향((+)→스위치→전구→(−)) 순서로 점이 흐르게 경로를 나눈다.
+    // 전지: 세로(중심 610,240 · 몸통 반 43) — (+)극 위. 스위치: (762,96) 접점 ±22. 전구: (913,205) r26.
+    const wireA = [
+      { x: 610, y: 197 },
       { x: 610, y: 96 },
-      { x: 920, y: 96 },
-      { x: 920, y: 175 },
+      { x: 740, y: 96 },
     ];
-    const loopPts2 = [
-      { x: 920, y: 245 },
-      { x: 920, y: 388 },
-      { x: 896, y: 388 },
+    const wireB = [
+      { x: 784, y: 96 },
+      { x: 913, y: 96 },
+      { x: 913, y: 179 },
     ];
-    const loopPts3 = [
-      { x: 848, y: 388 },
-      { x: 790, y: 388 },
+    const wireC = [
+      { x: 913, y: 233 },
+      { x: 913, y: 372 },
+      { x: 610, y: 372 },
+      { x: 610, y: 283 },
     ];
-    drawWire(ctx, loopPts, { on: rate > 0.02, flow: phase, width: 5 });
-    drawWire(ctx, loopPts2, { on: rate > 0.02, flow: phase, width: 5 });
-    drawWire(ctx, loopPts3, { on: rate > 0.02, flow: phase, width: 5 });
-    drawBattery(ctx, 745, 388, 86, 34);
-    drawBulb(ctx, 920, 205, 26, rate);
-    drawSwitch(ctx, 872, 388, isOpen, 44);
+    const on = rate > 0.02;
+    drawWire(ctx, wireA, { on, flow: phase, width: 5 });
+    drawWire(ctx, wireB, { on, flow: phase, width: 5 });
+    drawWire(ctx, wireC, { on, flow: phase, width: 5 });
+    // 전지 — 세로((+)캡 위, 라벨은 elecKit vert 모드가 바로 세워 준다)
+    drawBattery(ctx, 610, 240, 86, 34, false, true);
+    drawBulb(ctx, 913, 205, 26, rate);
+    drawSwitch(ctx, 762, 96, isOpen, 44);
   }
 
   function leave(): void {
@@ -537,19 +545,39 @@ export const waterCircuit: StepRenderer = (host, step, api) => {
   };
 };
 
-// 세로 진입 카드 미니 아트 — 물레방아↔전구 스케치
+// 세로 진입 카드 미니 아트 — 거울 대칭 두 폐로(펌프↔전지 왼쪽 · 밸브↔스위치 위 · 물레방아↔전구 오른쪽)
 function enterArtSvg(): string {
-  return `<svg viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg" fill="none">
-    <rect width="360" height="120" fill="#0B1524"/>
-    <path d="M30 88V38h96" stroke="#2A4A6E" stroke-width="10" stroke-linecap="round"/>
-    <path d="M30 88V38h96" stroke="rgba(86,158,238,.55)" stroke-width="6" stroke-linecap="round"/>
-    <circle cx="146" cy="62" r="22" stroke="#C9A05E" stroke-width="4"/>
-    ${[0, 1, 2, 3].map((i) => `<line x1="146" y1="62" x2="${146 + Math.cos((i / 4) * 6.283) * 22}" y2="${62 + Math.sin((i / 4) * 6.283) * 22}" stroke="#8A6A34" stroke-width="3"/>`).join("")}
-    <rect x="22" y="84" width="18" height="16" rx="4" fill="#C23A28"/>
-    <path d="M206 92h44M206 92V44h110v22" stroke="#8FA4C2" stroke-width="4" stroke-linecap="round"/>
-    <circle cx="316" cy="80" r="13" fill="rgba(255,214,120,.9)"/>
-    <circle cx="316" cy="80" r="20" fill="rgba(255,214,120,.25)"/>
-    <rect x="252" y="84" width="34" height="15" rx="4" fill="#8FA0B8" stroke="#3E4B66" stroke-width="1.6"/>
-    <text x="20" y="24" font-family="Pretendard, sans-serif" font-size="12" font-weight="800" fill="#C2D2EE">물의 흐름 ↔ 전류</text>
+  const wheel = `
+    <circle cx="160" cy="70" r="15" stroke="#C9A05E" stroke-width="3.4"/>
+    ${[0, 1, 2, 3].map((i) => {
+      const a = (i / 4) * Math.PI * 2 + 0.4;
+      return `<line x1="160" y1="70" x2="${(160 + Math.cos(a) * 15).toFixed(1)}" y2="${(70 + Math.sin(a) * 15).toFixed(1)}" stroke="#8A6A34" stroke-width="2.6"/>`;
+    }).join("")}`;
+  return `<svg viewBox="0 0 360 128" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect width="360" height="128" fill="#0B1524"/>
+    <text x="18" y="22" font-family="Pretendard, sans-serif" font-size="12" font-weight="800" fill="#C2D2EE">물의 회로</text>
+    <text x="206" y="22" font-family="Pretendard, sans-serif" font-size="12" font-weight="800" fill="#FFD98C">전기 회로</text>
+    <!-- 물 폐로: 왼쪽 세로(펌프) → 위(밸브) → 오른쪽(낙하 → 물레방아) → 아래 귀환 -->
+    <path d="M28 108V36H160v14M160 92v16H28" stroke="#2A4A6E" stroke-width="9"/>
+    <path d="M28 108V36H160v14M160 92v16H28" stroke="rgba(86,158,238,.55)" stroke-width="5"/>
+    <path d="M160 52v8" stroke="rgba(150,214,255,.8)" stroke-width="3.4"/>
+    ${wheel}
+    <rect x="20" y="62" width="16" height="26" rx="4" fill="#4E5E78" stroke="#25324A" stroke-width="1.4"/>
+    <rect x="18" y="52" width="20" height="13" rx="4" fill="#C23A28" stroke="#7E1E12" stroke-width="1.4"/>
+    <rect x="88" y="26" width="4.5" height="10" rx="2" fill="#8C99AC"/>
+    <rect x="82" y="22" width="17" height="5" rx="2.5" fill="#E86450"/>
+    <!-- 전기 폐로(+180 거울): 왼쪽 세로(전지) → 위(스위치) → 오른쪽(전구) → 아래 귀환 -->
+    <path d="M208 108V36h60M282 36h58v22M340 84v24H208" stroke="#4E5E78" stroke-width="6.5"/>
+    <path d="M208 108V36h60M282 36h58v22M340 84v24H208" stroke="#8FA4C2" stroke-width="3"/>
+    <rect x="200" y="58" width="16" height="30" rx="4" fill="#8FA0B8" stroke="#25324A" stroke-width="1.4"/>
+    <rect x="204.5" y="53" width="7" height="5" rx="2" fill="#D8B04A"/>
+    <text x="208" y="68" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="9" font-weight="800" fill="#F2F7FF">+</text>
+    <text x="208" y="83" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="9" font-weight="800" fill="#F2F7FF">−</text>
+    <circle cx="268" cy="36" r="2.6" fill="#AEBDD6"/>
+    <circle cx="282" cy="36" r="2.6" fill="#AEBDD6"/>
+    <path d="M268 36l12-7" stroke="#C9D8EE" stroke-width="3"/>
+    <circle cx="340" cy="71" r="16" fill="rgba(255,214,120,.22)"/>
+    <circle cx="340" cy="71" r="10" fill="rgba(255,214,120,.92)"/>
+    <path d="M336 74q2-5 4-1t4-1" stroke="#C87F2E" stroke-width="1.6"/>
   </svg>`;
 }

@@ -4,7 +4,7 @@
 //   언제나 반대 종류의 전기가 유도돼 — 막대가 (−)든 (+)든 깡통은 끌려서 굴러온다.
 //   물리 근사(모두 스무스스텝 기반):
 //   · gap = 막대 끝~깡통 몸통 가장자리 수평 거리
-//   · 전하 치우침 pol = smooth(REACH→26, gap) — 전자 목표 x = home·(1−.55·pol) + shiftDir·pol·0.56·CAN_HL
+//   · 전하 치우침 pol = smooth(REACH→26, gap) — 전자 목표 x = home·(1−.55·pol) + shiftDir·pol·0.8·(CAN_RAD−10), 원판 안 clamp
 //   · 전자는 저강성 스프링(v += Δ·0.085·dt, v ×= 0.8^dt)으로 목표를 쫓는다
 //   · 굴림: gap < ROLL_GAP이면 가속 ∝ smooth(ROLL_GAP→STOP_GAP, gap), 속도 상한 V_MAX, 마찰 0.93^dt
 
@@ -27,12 +27,13 @@ interface LabStep {
 }
 
 // ---- 무대 상수 ----
+// 깡통은 눕혀 놓고 **정면(끝면)에서 본 원판**으로 그린다 — 축이 화면 안쪽을 향하므로
+// 좌우로 끌리는 이동이 곧 '구름'이고, 회전(rollPhase)이 당김 고리·림 점으로 휠처럼 읽힌다.
+// (예전 옆모습(축이 좌우) 그림은 축 방향으로 미끄러지는 셈이라 물리적으로 구를 수 없던 구도 — 실제 피드백.)
 const CVH = 300; // 캔버스 높이
 const DESK_Y = 246; // 책상 윗면
-const CAN_R = 33; // 깡통 반지름(세로)
-const CAN_HL = 62; // 깡통 몸통 절반 길이(가로)
-const CAP_RX = 11; // 양끝 타원의 가로 반지름
-const CAN_CY = DESK_Y - CAN_R; // 깡통 중심 높이
+const CAN_RAD = 46; // 깡통 끝면(원판) 반지름
+const CAN_CY = DESK_Y - CAN_RAD; // 깡통 중심 높이
 const ROD_TIP_Y = 202; // 막대 끝 높이(깡통 몸통 높이)
 const ROD_LEN = 154;
 const ROD_TILT = 0.3; // 막대 기울기(rad) — 손잡이가 오른쪽 위
@@ -41,16 +42,16 @@ const ROLL_GAP = 106; // 이보다 가까우면 깡통이 굴러온다(임계)
 const STOP_GAP = 15; // 막대 코앞 — 여기서 멈춘다
 const V_MAX = 1.15; // 굴림 속도 상한(px/프레임) — "천천히"
 
-// 전자 8개의 집 자리(깡통 중심 기준 오프셋)
+// 전자 8개의 집 자리(원판 중심 기준 오프셋 — 반지름 36 안)
 const E_HOMES = [
-  { x: -46, y: -11 }, { x: -46, y: 11 },
-  { x: -17, y: -12 }, { x: -17, y: 10 },
-  { x: 12, y: -10 }, { x: 12, y: 12 },
-  { x: 42, y: -12 }, { x: 42, y: 10 },
+  { x: -22, y: -15 }, { x: -24, y: 11 },
+  { x: -8, y: -26 }, { x: -6, y: 27 },
+  { x: 4, y: -6 }, { x: 8, y: 14 },
+  { x: 21, y: -18 }, { x: 24, y: 6 },
 ];
 // 고정 (+) 4개 — 원자핵 자리(움직이지 않는다)
 const P_SITES = [
-  { x: -40, y: 5 }, { x: -14, y: -7 }, { x: 14, y: 7 }, { x: 40, y: -5 },
+  { x: -18, y: -2 }, { x: -4, y: 16 }, { x: 7, y: -20 }, { x: 19, y: -4 },
 ];
 
 export const inductionLab: StepRenderer = (host, step, api) => {
@@ -79,7 +80,7 @@ export const inductionLab: StepRenderer = (host, step, api) => {
   const hudTxt = el("span", { text: "전하 치우침 없음" });
   const hudPill = el("div", { class: "pill", style: "white-space:nowrap" }, hudDot, hudTxt);
   const toastEl = el("div", { class: "toast" });
-  const capEl = el("div", { class: "stage-cap", style: "transition:opacity .4s", text: "막대를 잡고 좌우로 끌어 보세요" });
+  const capEl = el("div", { class: "stage-cap", style: "transition:opacity .4s", text: "눕힌 깡통을 정면에서 봐요 — 막대를 잡고 좌우로 끌어 보세요" });
   const stage = el(
     "div",
     { class: "stage" },
@@ -228,67 +229,70 @@ export const inductionLab: StepRenderer = (host, step, api) => {
   }
 
   function drawCan(ctx: CanvasRenderingContext2D, tMs: number): void {
-    const x0 = canX - CAN_HL;
-    const x1 = canX + CAN_HL;
-    // 굴림 흔적(지나온 자리의 옅은 타원)
+    // 굴림 흔적(지나온 자리의 옅은 원 자국)
     for (const t of trail) {
-      ctx.strokeStyle = `rgba(150,190,255,${t.a * 0.5})`;
+      ctx.strokeStyle = `rgba(150,190,255,${t.a * 0.45})`;
       ctx.lineWidth = 1.3;
       ctx.beginPath();
-      ctx.ellipse(t.x, CAN_CY, CAP_RX, CAN_R * 0.94, 0, 0, TAU);
+      ctx.arc(t.x, CAN_CY, CAN_RAD * 0.97, 0, TAU);
       ctx.stroke();
     }
-    contactShadow(ctx, canX, DESK_Y + 2, CAN_HL * 1.15, 0.26);
-    // 몸통(금속 원통 세로 그라데이션)
-    const body = ctx.createLinearGradient(0, CAN_CY - CAN_R, 0, CAN_CY + CAN_R);
-    body.addColorStop(0, "#6F8098");
-    body.addColorStop(0.16, "#C6D4E4");
-    body.addColorStop(0.34, "#EDF3FA");
-    body.addColorStop(0.58, "#A2B2C8");
-    body.addColorStop(1, "#4A5A74");
-    ctx.fillStyle = body;
+    contactShadow(ctx, canX, DESK_Y + 2, CAN_RAD * 1.3, 0.26);
+    // 끝면(알루미늄 원판) — 좌상단 키라이트 radial
+    const face = ctx.createRadialGradient(canX - CAN_RAD * 0.32, CAN_CY - CAN_RAD * 0.36, CAN_RAD * 0.16, canX, CAN_CY, CAN_RAD);
+    face.addColorStop(0, "#EDF3FA");
+    face.addColorStop(0.5, "#B4C3D8");
+    face.addColorStop(1, "#5A6C8C");
+    ctx.fillStyle = face;
     ctx.beginPath();
-    ctx.roundRect(x0, CAN_CY - CAN_R, CAN_HL * 2, CAN_R * 2, 4);
+    ctx.arc(canX, CAN_CY, CAN_RAD, 0, TAU);
     ctx.fill();
-    ctx.strokeStyle = "#2A3850";
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = "#26334C";
+    ctx.lineWidth = 1.6;
     ctx.beginPath();
-    ctx.roundRect(x0, CAN_CY - CAN_R, CAN_HL * 2, CAN_R * 2, 4);
+    ctx.arc(canX, CAN_CY, CAN_RAD, 0, TAU);
     ctx.stroke();
-    // 양끝 타원(뚜껑·바닥)
-    for (const ex of [x0, x1]) {
-      const capG = ctx.createLinearGradient(0, CAN_CY - CAN_R, 0, CAN_CY + CAN_R);
-      capG.addColorStop(0, "#8CA0BC");
-      capG.addColorStop(0.5, "#5A6C8C");
-      capG.addColorStop(1, "#3C4C6A");
-      ctx.fillStyle = capG;
-      ctx.beginPath();
-      ctx.ellipse(ex, CAN_CY, CAP_RX, CAN_R, 0, 0, TAU);
-      ctx.fill();
-      ctx.strokeStyle = "#26334C";
-      ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      ctx.ellipse(ex, CAN_CY, CAP_RX, CAN_R, 0, 0, TAU);
-      ctx.stroke();
-      ctx.strokeStyle = "rgba(226,238,252,.28)";
-      ctx.lineWidth = 1.1;
-      ctx.beginPath();
-      ctx.ellipse(ex, CAN_CY, CAP_RX * 0.6, CAN_R * 0.66, 0, 0, TAU);
-      ctx.stroke();
-      // 굴림 마커 — 타원 테두리를 도는 점 2개(회전이 눈에 보이게)
-      for (const off of [0, TAU / 3]) {
-        const a = rollPhase + off;
-        ctx.fillStyle = "rgba(232,242,255,.55)";
-        ctx.beginPath();
-        ctx.arc(ex + Math.cos(a) * CAP_RX * 0.78, CAN_CY + Math.sin(a) * (CAN_R - 4.5), 2.2, 0, TAU);
-        ctx.fill();
-      }
-    }
-    // 몸통 스펙큘러 스트릭
-    ctx.fillStyle = "rgba(255,255,255,.26)";
+    // 림(말린 테두리) + 안쪽 홈
+    ctx.strokeStyle = "rgba(236,244,252,.5)";
+    ctx.lineWidth = 2.6;
     ctx.beginPath();
-    ctx.roundRect(x0 + 10, CAN_CY - CAN_R * 0.52, CAN_HL * 2 - 20, 5, 3);
+    ctx.arc(canX, CAN_CY, CAN_RAD - 3.2, 0, TAU);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(58,74,106,.5)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(canX, CAN_CY, CAN_RAD - 7, 0, TAU);
+    ctx.stroke();
+    // 굴림 마커 — 당김 고리(풀탭)와 림 점이 rollPhase로 함께 돈다(회전이 휠처럼 읽힌다)
+    ctx.save();
+    ctx.translate(canX, CAN_CY);
+    ctx.rotate(rollPhase);
+    const tabG = ctx.createLinearGradient(0, -30, 0, -8);
+    tabG.addColorStop(0, "#DCE7F4");
+    tabG.addColorStop(1, "#7E90AC");
+    ctx.fillStyle = tabG;
+    ctx.beginPath();
+    ctx.roundRect(-4.5, -30, 9, 20, 4.5);
     ctx.fill();
+    ctx.strokeStyle = "#3C4C6A";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.roundRect(-4.5, -30, 9, 20, 4.5);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, -23, 3.2, 0, TAU);
+    ctx.stroke();
+    ctx.fillStyle = "#8CA0BC";
+    ctx.beginPath();
+    ctx.arc(0, -6, 3.4, 0, TAU);
+    ctx.fill();
+    for (const off of [TAU / 3, TAU * 2 / 3]) {
+      ctx.fillStyle = "rgba(240,248,255,.6)";
+      ctx.beginPath();
+      ctx.arc(Math.cos(off - Math.PI / 2) * (CAN_RAD - 5.2), Math.sin(off - Math.PI / 2) * (CAN_RAD - 5.2), 2.1, 0, TAU);
+      ctx.fill();
+    }
+    ctx.restore();
 
     // 고정 (+) 원자핵 자리 — 전자가 떠난 쪽이 살짝 도드라진다
     const posSide = mode === -1 ? dirRod : -dirRod; // (+)로 유도되는 쪽
@@ -303,7 +307,7 @@ export const inductionLab: StepRenderer = (host, step, api) => {
       drawElectron(ctx, canX + p.x + wx, CAN_CY + p.hy + wy, 6.5);
     });
 
-    // 유도 전하 라벨 — 표면(양끝) 근처, 세기 비례
+    // 유도 전하 라벨 — 원판 좌우 가장자리 바깥, 세기 비례
     if (pol > 0.06) {
       const nearSign = mode === -1 ? "+" : "−";
       const farSign = mode === -1 ? "−" : "+";
@@ -313,11 +317,11 @@ export const inductionLab: StepRenderer = (host, step, api) => {
       ctx.textBaseline = "middle";
       const a = Math.min(1, pol * 0.95);
       for (const [side, sign] of [[dirRod, nearSign], [-dirRod, farSign]] as [number, string][]) {
-        const gx = canX + side * (CAN_HL + 3);
+        const gx = canX + side * (CAN_RAD + 10);
         ctx.fillStyle = sign === "+" ? `rgba(${ELEC.amber},${a})` : `rgba(126,214,255,${a})`;
         ctx.shadowColor = sign === "+" ? `rgba(${ELEC.amber},${a * 0.8})` : `rgba(126,214,255,${a * 0.8})`;
         ctx.shadowBlur = 7;
-        for (const gy of [-16, 0, 16]) ctx.fillText(sign, gx + (gy === 0 ? side * 3 : 0), CAN_CY + gy);
+        for (const gy of [-16, 0, 16]) ctx.fillText(sign, gx + (gy === 0 ? side * 4 : 0), CAN_CY + gy);
       }
       ctx.restore();
     }
@@ -377,12 +381,12 @@ export const inductionLab: StepRenderer = (host, step, api) => {
     if (!inited) {
       inited = true;
       rodX = rodTX = Math.max(44, W * 0.13);
-      canX = Math.min(W - CAN_HL - 14, W * 0.78);
+      canX = Math.min(W - CAN_RAD - 14, W * 0.78);
       lastTrailX = canX;
       setAria();
     }
     rodTX = clamp(rodTX, rodMin(), rodMax());
-    canX = clamp(canX, CAN_HL + 16, W - CAN_HL - 12);
+    canX = clamp(canX, CAN_RAD + 16, W - CAN_RAD - 12);
 
     // 막대는 드래그 목표로 묵직하게 수렴
     rodX += (rodTX - rodX) * Math.min(1, 0.4 * dt);
@@ -390,14 +394,16 @@ export const inductionLab: StepRenderer = (host, step, api) => {
     // 기하 — 방향(히스테리시스)과 간격
     const dxRC = rodX - canX;
     if (Math.abs(dxRC) > 10) dirRod = dxRC > 0 ? 1 : -1;
-    const gap = Math.max(0, Math.abs(dxRC) - CAN_HL - 9);
+    const gap = Math.max(0, Math.abs(dxRC) - CAN_RAD - 9);
     pol = smooth(REACH, 26, gap);
 
     // 전자 재배치 — (−)막대면 먼 쪽, (+)막대면 가까운 쪽으로 스프링 이동
     const shiftDir = mode === -1 ? -dirRod : dirRod;
     eParts.forEach((p, i) => {
       const jit = 0.86 + (i % 3) * 0.11;
-      const tx = clamp(p.hx * (1 - 0.55 * pol) + shiftDir * pol * CAN_HL * 0.56 * jit, -(CAN_HL - 13), CAN_HL - 13);
+      // 원판 안에 머물도록 세로 위치별 가로 한계(현 = 원 방정식)로 clamp
+      const lim = Math.sqrt(Math.max(36, (CAN_RAD - 11) * (CAN_RAD - 11) - p.hy * p.hy));
+      const tx = clamp(p.hx * (1 - 0.55 * pol) + shiftDir * pol * (CAN_RAD - 10) * 0.8 * jit, -lim, lim);
       p.v += (tx - p.x) * 0.085 * dt;
       p.v *= Math.pow(0.8, dt);
       p.x += p.v * dt;
@@ -416,11 +422,11 @@ export const inductionLab: StepRenderer = (host, step, api) => {
       if (mode === 1) plusRoll += moved;
     }
     // 막대와 겹치지 않게(코앞에서 정지)
-    if (Math.abs(rodX - canX) - CAN_HL - 9 < 4) {
-      canX = rodX - dirRod * (CAN_HL + 13);
+    if (Math.abs(rodX - canX) - CAN_RAD - 9 < 4) {
+      canX = rodX - dirRod * (CAN_RAD + 13);
       canV = 0;
     }
-    rollPhase += (canX - before) / CAN_R;
+    rollPhase += (canX - before) / CAN_RAD; // 구름 조건: 회전각 = 이동 거리 ÷ 반지름
     // 굴림 흔적 적립·감쇠
     if (Math.abs(canX - lastTrailX) > 13) {
       trail.push({ x: canX, a: 0.3 });
@@ -466,7 +472,7 @@ export const inductionLab: StepRenderer = (host, step, api) => {
     // 인력 화살표(깡통 → 막대)
     if (pull > 0.08) {
       const len = Math.min(18 + 30 * pull, Math.max(10, gap - 8));
-      drawForceArrow(ctx, canX + dirRod * (CAN_HL + CAP_RX + 5), CAN_CY, dirRod * len, 0, {
+      drawForceArrow(ctx, canX + dirRod * (CAN_RAD + 24), CAN_CY, dirRod * len, 0, {
         color: "#FFC45A",
         width: 4,
         alpha: 0.35 + 0.65 * pull,

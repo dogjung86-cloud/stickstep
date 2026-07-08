@@ -1,9 +1,13 @@
 // elecOhm — 전류·전압·저항 관계 랩(중2 VII, 책 250~253쪽 탐구).
-//   ohmLab: 전원 장치(다이얼)로 전압 0~6V(0.5V 스냅)를 걸고 전류계(mA)를 읽어
+//   ohmLab: 두 가지 실험 모드(세그 전환).
+//   [전압 바꾸기] 전원 장치(다이얼)로 전압 0~6V(0.5V 스냅)를 걸고 전류계(mA)를 읽어
 //   "이 지점 기록"으로 V-I 그래프에 점을 찍는다.
 //   · 한 니크롬선에서 서로 다른 전압 4점 → 원점을 지나는 직선(전류 ∝ 전압)
 //   · 긴 니크롬선 R=20Ω vs 짧은 니크롬선 R=10Ω — 같은 전압에서 전류 2배(저항 절반)
 //   · 같은 선에서 V와 2V 두 점(예: 2V·4V) 기록 → 비례 확인 자동 달성
+//   [저항 바꾸기] 전압을 3V에 고정하고 니크롬선 길이 1·2·3배(10·20·30Ω)를 갈아 끼워
+//   I-R 그래프에 3점 → 반비례 곡선(I = 3000/R)이 자라난다. (사용자 피드백: 비례 그래프만으론
+//   '저항에 반비례'가 체험되지 않는다 → 반비례가 유도되는 상호작용을 추가.)
 //   회로 표현은 elecKit이 단일 진실 공급원 — drawWire(전류 점 흐름·속도 ∝ 전류)·
 //   drawBattery·ELEC 색만 쓴다. 니크롬선은 지그재그 코일 + 전류에 비례한 주황 발열 글로우.
 
@@ -24,6 +28,7 @@ interface LabStep {
 }
 
 type WireKind = "long" | "short";
+type ExpMode = "volt" | "res";
 
 const CVH = 342; // 캔버스 전체 높이 — 상단 회로 ~110px + 하단 그래프 ~210px
 const V_MAX = 6; // 전압 축 0~6V(눈금 1V)
@@ -32,6 +37,11 @@ const R_OHM: Record<WireKind, number> = { long: 20, short: 10 }; // 긴 20Ω · 
 const COLOR: Record<WireKind, string> = { long: ELEC.amber, short: ELEC.cyan }; // 긴=앰버, 짧은=시안
 const WIRES: WireKind[] = ["long", "short"];
 const WIRE_NAME: Record<WireKind, string> = { long: "긴 니크롬선", short: "짧은 니크롬선" };
+// 저항 바꾸기 모드 — 전압 3V 고정, 니크롬선 길이 1·2·3배(저항은 길이에 비례)
+const RES_V = 3;
+const LEN_R = [10, 20, 30]; // Ω
+const R_MAX = 35; // I-R 그래프 x축(Ω)
+const RES_COLOR = "168,148,255"; // 반비례 곡선 — 바이올렛(직선 두 색과 구분)
 
 // ---- 회로 기하(상단 영역, y 16~104) ----
 const Y_TOP = 24; // 위쪽 전선
@@ -56,10 +66,11 @@ export const ohmLab: StepRenderer = (host, step, api) => {
   // ---- 목표 칩 ----
   const goalChips = el(
     "div",
-    { class: "pn-badges force3" },
+    { class: "pn-badges force4" },
     el("div", { class: "pn-badge", dataset: { g: "lineL" } }, el("b", { text: "긴 니크롬선" }), el("span", { text: "0/4점" })),
     el("div", { class: "pn-badge", dataset: { g: "lineS" } }, el("b", { text: "짧은 니크롬선" }), el("span", { text: "0/4점" })),
     el("div", { class: "pn-badge", dataset: { g: "prop" } }, el("b", { text: "비례 확인" }), el("span", { text: "예: 2V·4V" })),
+    el("div", { class: "pn-badge", dataset: { g: "inverse" } }, el("b", { text: "반비례 확인" }), el("span", { text: "저항 바꾸기" })),
   );
 
   // ---- 무대(회로 + 그래프 캔버스) ----
@@ -81,10 +92,24 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     toastEl,
   );
 
-  // ---- 컨트롤: 세그(니크롬선) + 전압 슬라이더 + 기록 버튼 ----
+  // ---- 컨트롤: 실험 모드 세그 → (전압 모드: 니크롬선 세그 + 전압 슬라이더 / 저항 모드: 길이 세그) + 기록 버튼 ----
+  const modeVolt = el("button", { class: "on", text: "① 전압 바꾸기", attrs: { type: "button", "aria-pressed": "true" } });
+  const modeRes = el("button", { text: "② 저항 바꾸기", attrs: { type: "button", "aria-pressed": "false" } });
+  const modeSeg = el("div", { class: "seg", style: "margin-top:14px", attrs: { "aria-label": "실험 고르기" } }, modeVolt, modeRes);
+
   const btnL = el("button", { class: "on", text: WIRE_NAME.long, attrs: { type: "button", "aria-pressed": "true" } });
   const btnS = el("button", { text: WIRE_NAME.short, attrs: { type: "button", "aria-pressed": "false" } });
-  const seg = el("div", { class: "seg", style: "margin-top:14px", attrs: { "aria-label": "니크롬선 고르기" } }, btnL, btnS);
+  const seg = el("div", { class: "seg", style: "margin-top:10px", attrs: { "aria-label": "니크롬선 고르기" } }, btnL, btnS);
+
+  const lenBtns: HTMLButtonElement[] = [];
+  const lenSeg = el("div", { class: "seg", style: "margin-top:10px;display:none", attrs: { "aria-label": "니크롬선 길이 고르기" } });
+  ["길이 1배·10Ω", "길이 2배·20Ω", "길이 3배·30Ω"].forEach((t, i) => {
+    const b = el("button", { text: t, attrs: { type: "button", "aria-pressed": String(i === 0) } });
+    if (i === 0) b.classList.add("on");
+    b.addEventListener("click", () => setLen(i));
+    lenBtns.push(b);
+    lenSeg.appendChild(b);
+  });
 
   const sliders = el("div", { class: "px-sliders show" });
   const recordBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "이 지점 기록" }));
@@ -93,19 +118,23 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     html: "전압을 바꿔 가며 <b>이 지점 기록</b>을 눌러 (전압, 전류) 점을 모아요 — 한 니크롬선에서 <b>서로 다른 전압 4점</b>이면 규칙이 보여요!",
   });
 
-  host.append(goalChips, stage, seg, sliders, recordBtn, helper);
+  host.append(goalChips, stage, modeSeg, seg, lenSeg, sliders, recordBtn, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
   let W = 340;
+  let expMode: ExpMode = "volt";
   let wire: WireKind = "long";
-  let V = 0; // 전압(0.5V 스냅)
+  let lenIdx = 0; // 저항 모드의 길이 선택(0..2 → 10·20·30Ω)
+  let V = 0; // 전압(0.5V 스냅, 전압 모드)
   let dispI = 0; // 바늘·발열용 관성 전류(mA)
   let dispV = 0; // 다이얼·전압계 관성 전압(V)
   let flow = 0; // 전류 점 흐름 위상
   const recs: Record<WireKind, Set<number>> = { long: new Set(), short: new Set() }; // key = V*2(정수)
+  const recsR = new Set<number>(); // 저항 모드 기록(key = R)
   const lineProg: Record<WireKind, number> = { long: 0, short: 0 }; // 직선 그려지는 진행도
-  const pops: { v: number; i: number; rgb: string; t0: number }[] = []; // 기록 스탬프 링
+  let curveProg = 0; // 반비례 곡선 진행도
+  const pops: { v: number; i: number; rgb: string; t0: number; res?: boolean }[] = []; // 기록 스탬프 링(v = x축 값)
   const goals = new Set<string>();
   let totalRecs = 0;
   let finished = false;
@@ -114,6 +143,8 @@ export const ohmLab: StepRenderer = (host, step, api) => {
 
   const iOf = (v: number, w: WireKind): number => (v / R_OHM[w]) * 1000; // mA
   const gidOf = (w: WireKind): string => (w === "long" ? "lineL" : "lineS");
+  const effV = (): number => (expMode === "volt" ? V : RES_V); // 저항 모드는 3V 고정
+  const effR = (): number => (expMode === "volt" ? R_OHM[wire] : LEN_R[lenIdx]);
 
   function toast(msg: string): void {
     toastEl.textContent = msg;
@@ -130,16 +161,38 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     chip.querySelector("span")!.textContent = subText;
     haptic(HAPTIC.ctaUnlock);
     toast(msg);
-    if (goals.size === 3 && !finished) {
+    if (goals.size === 4 && !finished) {
       finished = true;
       helper.innerHTML =
-        "전류는 <b>전압에 비례</b>하고 <b>저항에 반비례</b> — <b>I = V/R</b>, 이것이 <b>옴의 법칙</b>이에요! 다음 개념에서 차근차근 정리해요.";
+        "전압이 커질수록 전류도 커졌죠?(<b>비례</b>) 저항이 커질수록 전류는 줄었죠?(<b>반비례</b>) 네, 맞아요 — 이 둘을 한 줄로 합친 게 <b>I = V/R</b>, 옴의 법칙이에요! 다음 개념에서 차근차근 정리해요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
   }
 
-  // ---- 세그: 니크롬선 교체 ----
+  // ---- 세그: 실험 모드 ----
+  function setMode(m: ExpMode): void {
+    if (expMode === m) return;
+    expMode = m;
+    modeVolt.classList.toggle("on", m === "volt");
+    modeRes.classList.toggle("on", m === "res");
+    modeVolt.setAttribute("aria-pressed", String(m === "volt"));
+    modeRes.setAttribute("aria-pressed", String(m === "res"));
+    seg.style.display = m === "volt" ? "" : "none";
+    sliders.style.display = m === "volt" ? "" : "none";
+    lenSeg.style.display = m === "res" ? "" : "none";
+    pdotEl.style.background = m === "res" ? `rgb(${RES_COLOR})` : `rgb(${COLOR[wire]})`;
+    haptic(HAPTIC.select);
+    if (finished) return;
+    helper.innerHTML =
+      m === "res"
+        ? "이번엔 <b>전압을 3V에 고정</b>하고 <b>저항(니크롬선 길이)</b>을 바꿔요. 길이 1배·2배·3배 — <b>세 점을 모두 기록</b>하면 곡선이 나타나요!"
+        : "전압을 바꿔 가며 점을 기록해 <b>직선 두 개</b>(긴·짧은)와 <b>2배 쌍</b>을 모아요.";
+  }
+  modeVolt.addEventListener("click", () => setMode("volt"));
+  modeRes.addEventListener("click", () => setMode("res"));
+
+  // ---- 세그: 니크롬선 교체(전압 모드) ----
   function setWire(w: WireKind): void {
     if (wire === w) return;
     wire = w;
@@ -152,6 +205,19 @@ export const ohmLab: StepRenderer = (host, step, api) => {
   }
   btnL.addEventListener("click", () => setWire("long"));
   btnS.addEventListener("click", () => setWire("short"));
+
+  // ---- 세그: 길이 교체(저항 모드) ----
+  function setLen(i: number): void {
+    if (lenIdx === i) return;
+    lenIdx = i;
+    lenBtns.forEach((b, k) => {
+      b.classList.toggle("on", k === i);
+      b.setAttribute("aria-pressed", String(k === i));
+    });
+    haptic(HAPTIC.select);
+    if (!finished && !goals.has("inverse"))
+      helper.innerHTML = `길이 ${i + 1}배 = 저항 ${LEN_R[i]}Ω — 전류계를 읽고 <b>이 지점 기록</b>!`;
+  }
 
   // ---- 전압 슬라이더(px-sl 문법, 0.5V 스냅) ----
   {
@@ -202,8 +268,33 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     sync();
   }
 
-  // ---- 기록 버튼: 현재 (V, I) 점을 그래프에 스탬프 ----
+  // ---- 기록 버튼: 현재 지점을 그래프에 스탬프(모드별 축) ----
   recordBtn.addEventListener("click", () => {
+    if (expMode === "res") {
+      const R = LEN_R[lenIdx];
+      if (recsR.has(R)) {
+        toast("이미 기록한 길이예요 — 다른 길이로 바꿔 봐요");
+        haptic(HAPTIC.tap);
+        return;
+      }
+      recsR.add(R);
+      recordBtn.classList.remove("pulse");
+      pops.push({ v: R, i: (RES_V / R) * 1000, rgb: RES_COLOR, t0: performance.now(), res: true });
+      haptic(HAPTIC.tap);
+      if (!goals.has("inverse")) {
+        const span = goalChips.querySelector('[data-g="inverse"] span') as HTMLElement;
+        span.textContent = `${Math.min(recsR.size, 3)}/3점`;
+      }
+      if (recsR.size === 1 && !finished) helper.innerHTML = "첫 점! 위 세그에서 <b>다른 길이</b>로 바꿔 두 점 더 기록해요.";
+      else if (recsR.size === 2 && !finished && !goals.has("inverse")) helper.innerHTML = "좋아요 — <b>남은 길이</b>도 기록하면 곡선이 완성돼요!";
+      if (recsR.size >= 3 && !goals.has("inverse")) {
+        collect("inverse", "곡선 완성!", "저항 2배 → 전류 절반, 반비례!");
+        if (!finished)
+          helper.innerHTML =
+            "보이죠? 저항이 2배·3배가 되니 전류는 <b>1/2·1/3</b>(300→150→100mA)로 줄었어요 — 이런 관계가 <b>반비례</b>! 그래프도 직선이 아니라 <b>곡선</b>으로 휘어요.";
+      }
+      return;
+    }
     const key = Math.round(V * 2);
     const set = recs[wire];
     if (set.has(key)) {
@@ -231,7 +322,8 @@ export const ohmLab: StepRenderer = (host, step, api) => {
         collect("prop", "2배 → 2배!", "전압 2배 → 전류 2배!");
         if (!finished)
           helper.innerHTML =
-            "<b>전압이 2배</b>가 되면 전류도 딱 <b>2배</b> — 이게 비례예요. 그래프에선 <b>원점을 지나는 직선</b>으로 나타나요.";
+            "전압이 커질수록 전류가 커졌죠? 네, 맞아요 — 전압이 딱 <b>2배</b>가 되니 전류도 딱 <b>2배</b>! 이런 관계가 <b>비례</b>이고, 그래프에선 <b>원점을 지나는 직선</b>으로 나타나요." +
+            (goals.has("lineL") && goals.has("lineS") ? " 이제 위 세그에서 <b>② 저항 바꾸기</b>!" : "");
       }
     }
     // 직선 목표 — 서로 다른 전압 4점
@@ -241,7 +333,7 @@ export const ohmLab: StepRenderer = (host, step, api) => {
       if (!finished)
         helper.innerHTML = second
           ? "두 직선 비교 — <b>같은 전압에서 짧은 선의 전류가 2배</b>! 길이가 절반이라 전류를 방해하는 정도, <b>저항이 절반</b>이기 때문이에요." +
-            (goals.has("prop") ? "" : " 마지막으로 같은 선에 <b>2배 쌍(예: 2V·4V)</b>을 찍으면 완성돼요!")
+            (goals.has("prop") ? " 이제 위 세그에서 <b>② 저항 바꾸기</b>로 반비례를 눈으로 확인해요!" : " 같은 선에 <b>2배 쌍(예: 2V·4V)</b>도 찍어 보세요!")
           : "점 네 개가 <b>원점을 지나는 직선</b> 위에! 전류는 전압에 <b>비례</b>해요. 이제 <b>다른 니크롬선</b>으로 바꿔 직선을 하나 더 완성해요.";
     }
   });
@@ -383,16 +475,18 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     const ctx = fit.ctx;
     W = fit.w;
 
-    const target = iOf(V, wire);
+    const R = effR();
+    const target = (effV() / R) * 1000;
     dispI += (target - dispI) * Math.min(1, 0.16 * dt);
-    dispV += (V - dispV) * Math.min(1, 0.2 * dt);
+    dispV += (effV() - dispV) * Math.min(1, 0.2 * dt);
     flow = (flow + ((dt * 16.7) / 1000) * (dispI / I_MAX) * 4.2) % 1; // 점 흐름 속도 ∝ 전류
     for (const w of WIRES) if (goals.has(gidOf(w))) lineProg[w] = Math.min(1, lineProg[w] + dt * 0.035);
+    if (goals.has("inverse")) curveProg = Math.min(1, curveProg + dt * 0.03);
 
     const ax = W - 52; // 전류계 중심 x
     const ay = 58;
-    const coilHalf = wire === "long" ? 50 : 26; // 짧은 선은 코일도 짧게
-    const teeth = wire === "long" ? 10 : 5;
+    const coilHalf = R === 10 ? 26 : R === 20 ? 50 : 74; // 저항(길이)에 비례해 코일도 길게
+    const teeth = R / 2;
     const cx0 = CX - coilHalf;
     const cx1 = CX + coilHalf;
     const on = dispI > 2;
@@ -451,25 +545,35 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     ctx.font = "700 10px Pretendard, sans-serif";
     ctx.textAlign = "center";
     ctx.fillStyle = "rgba(174,196,228,.85)";
-    ctx.fillText(WIRE_NAME[wire], CX, 45);
+    ctx.fillText(expMode === "res" ? `니크롬선 (길이 ${lenIdx + 1}배)` : WIRE_NAME[wire], CX, 45);
 
     // ---- 계기·전원 장치 ----
     meter(ctx, CX, VMY, 15, dispV / V_MAX, "V", "전압계", "below");
     meter(ctx, ax, ay, 21, dispI / I_MAX, "mA", "전류계", "left");
     powerBox(ctx);
 
-    // ---- V-I 그래프 ----
+    // ---- 그래프(모드별 축: 전압 모드 V-I / 저항 모드 R-I) ----
     const GX1 = W - 22;
-    const xOf = (v: number): number => GX0 + (v / V_MAX) * (GX1 - GX0);
+    const xOf = (v: number): number => GX0 + (v / V_MAX) * (GX1 - GX0); // 전압 축
+    const xR = (r: number): number => GX0 + (r / R_MAX) * (GX1 - GX0); // 저항 축
     const yOf = (i: number): number => GY1 - (i / I_MAX) * (GY1 - GY0);
     // 그리드
     ctx.lineWidth = 1;
     ctx.strokeStyle = "rgba(148,168,196,.12)";
-    for (let v = 1; v <= V_MAX; v++) {
-      ctx.beginPath();
-      ctx.moveTo(xOf(v), GY0);
-      ctx.lineTo(xOf(v), GY1);
-      ctx.stroke();
+    if (expMode === "volt") {
+      for (let v = 1; v <= V_MAX; v++) {
+        ctx.beginPath();
+        ctx.moveTo(xOf(v), GY0);
+        ctx.lineTo(xOf(v), GY1);
+        ctx.stroke();
+      }
+    } else {
+      for (let r = 5; r <= R_MAX; r += 5) {
+        ctx.beginPath();
+        ctx.moveTo(xR(r), GY0);
+        ctx.lineTo(xR(r), GY1);
+        ctx.stroke();
+      }
     }
     for (let i = 100; i <= I_MAX; i += 100) {
       ctx.beginPath();
@@ -489,66 +593,111 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     ctx.font = "600 10px Pretendard, sans-serif";
     ctx.fillStyle = "rgba(196,212,232,.75)";
     ctx.textAlign = "center";
-    for (let v = 0; v <= V_MAX; v++) ctx.fillText(String(v), xOf(v), GY1 + 15);
+    if (expMode === "volt") for (let v = 0; v <= V_MAX; v++) ctx.fillText(String(v), xOf(v), GY1 + 15);
+    else for (let r = 0; r <= 30; r += 10) ctx.fillText(String(r), xR(r), GY1 + 15);
     ctx.textAlign = "right";
     for (let i = 100; i <= I_MAX; i += 100) ctx.fillText(String(i), GX0 - 7, yOf(i) + 3.5);
     ctx.textAlign = "left";
     ctx.fillText("전류(mA)", 16, GY0 - 12);
     ctx.textAlign = "center";
-    ctx.fillText("전압(V)", (GX0 + GX1) / 2, GY1 + 32);
-    // 범례(좌상단 — 직선이 지나지 않는 빈 구석)
+    ctx.fillText(expMode === "volt" ? "전압(V)" : "저항(Ω)", (GX0 + GX1) / 2, GY1 + 32);
+    // 범례(좌상단 — 그래프가 비껴가는 구석)
     ctx.font = "700 10px Pretendard, sans-serif";
     ctx.textAlign = "left";
-    let lx = GX0 + 10;
-    for (const w of WIRES) {
-      ctx.fillStyle = `rgba(${COLOR[w]},.95)`;
-      ctx.beginPath();
-      ctx.arc(lx, GY0 + 11, 3, 0, TAU);
-      ctx.fill();
-      ctx.fillStyle = "rgba(196,212,232,.8)";
-      const nm = w === "long" ? "긴 선" : "짧은 선";
-      ctx.fillText(nm, lx + 7, GY0 + 14.5);
-      lx += 7 + ctx.measureText(nm).width + 14;
-    }
-    // 완성된 직선(원점 통과 — 자라나는 애니메이션)
-    for (const w of WIRES) {
-      const p = lineProg[w];
-      if (p <= 0) continue;
-      const vEnd = V_MAX * p;
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      ctx.strokeStyle = `rgba(${COLOR[w]},.2)`;
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      ctx.moveTo(xOf(0), yOf(0));
-      ctx.lineTo(xOf(vEnd), yOf(iOf(vEnd, w)));
-      ctx.stroke();
-      ctx.restore();
-      ctx.strokeStyle = `rgba(${COLOR[w]},.9)`;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(xOf(0), yOf(0));
-      ctx.lineTo(xOf(vEnd), yOf(iOf(vEnd, w)));
-      ctx.stroke();
-    }
-    // 기록한 점(긴=앰버, 짧은=시안)
-    for (const w of WIRES) {
-      ctx.save();
-      ctx.fillStyle = `rgba(${COLOR[w]},.95)`;
-      ctx.shadowColor = `rgba(${COLOR[w]},.7)`;
-      ctx.shadowBlur = 6;
-      for (const k of recs[w]) {
-        const v = k / 2;
+    if (expMode === "volt") {
+      let lx = GX0 + 10;
+      for (const w of WIRES) {
+        ctx.fillStyle = `rgba(${COLOR[w]},.95)`;
         ctx.beginPath();
-        ctx.arc(xOf(v), yOf(iOf(v, w)), 3.2, 0, TAU);
+        ctx.arc(lx, GY0 + 11, 3, 0, TAU);
+        ctx.fill();
+        ctx.fillStyle = "rgba(196,212,232,.8)";
+        const nm = w === "long" ? "긴 선" : "짧은 선";
+        ctx.fillText(nm, lx + 7, GY0 + 14.5);
+        lx += 7 + ctx.measureText(nm).width + 14;
+      }
+    } else {
+      // 반비례 모드 배지 — 통제 변인(전압 고정)을 계속 상기
+      ctx.fillStyle = `rgba(${RES_COLOR},.95)`;
+      ctx.beginPath();
+      ctx.arc(GX1 - 96, GY0 + 11, 3, 0, TAU);
+      ctx.fill();
+      ctx.fillStyle = "rgba(196,212,232,.85)";
+      ctx.fillText("전압 3V 고정", GX1 - 88, GY0 + 14.5);
+    }
+    if (expMode === "volt") {
+      // 완성된 직선(원점 통과 — 자라나는 애니메이션)
+      for (const w of WIRES) {
+        const p = lineProg[w];
+        if (p <= 0) continue;
+        const vEnd = V_MAX * p;
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.strokeStyle = `rgba(${COLOR[w]},.2)`;
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(xOf(0), yOf(0));
+        ctx.lineTo(xOf(vEnd), yOf(iOf(vEnd, w)));
+        ctx.stroke();
+        ctx.restore();
+        ctx.strokeStyle = `rgba(${COLOR[w]},.9)`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(xOf(0), yOf(0));
+        ctx.lineTo(xOf(vEnd), yOf(iOf(vEnd, w)));
+        ctx.stroke();
+      }
+      // 기록한 점(긴=앰버, 짧은=시안)
+      for (const w of WIRES) {
+        ctx.save();
+        ctx.fillStyle = `rgba(${COLOR[w]},.95)`;
+        ctx.shadowColor = `rgba(${COLOR[w]},.7)`;
+        ctx.shadowBlur = 6;
+        for (const k of recs[w]) {
+          const v = k / 2;
+          ctx.beginPath();
+          ctx.arc(xOf(v), yOf(iOf(v, w)), 3.2, 0, TAU);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    } else {
+      // 반비례 곡선 I = 3000/R (3점 완성 후 자라난다 — R=5에서 600mA로 시작)
+      if (curveProg > 0) {
+        const rEnd = 5 + (R_MAX - 1 - 5) * curveProg;
+        for (const pass of [0, 1]) {
+          ctx.save();
+          if (!pass) ctx.globalCompositeOperation = "lighter";
+          ctx.strokeStyle = `rgba(${RES_COLOR},${pass ? 0.9 : 0.2})`;
+          ctx.lineWidth = pass ? 2 : 6;
+          ctx.beginPath();
+          for (let r = 5; r <= rEnd; r += 0.4) {
+            const px = xR(r);
+            const py = yOf((RES_V / r) * 1000);
+            if (r === 5) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+      // 기록한 점(바이올렛)
+      ctx.save();
+      ctx.fillStyle = `rgba(${RES_COLOR},.95)`;
+      ctx.shadowColor = `rgba(${RES_COLOR},.7)`;
+      ctx.shadowBlur = 6;
+      for (const r of recsR) {
+        ctx.beginPath();
+        ctx.arc(xR(r), yOf((RES_V / r) * 1000), 3.4, 0, TAU);
         ctx.fill();
       }
       ctx.restore();
     }
     // 현재 지점 미리보기(십자 가이드 + 맥동 링 — 기록 버튼이 찍을 자리)
-    const lpx = xOf(V);
+    const prevColor = expMode === "volt" ? COLOR[wire] : RES_COLOR;
+    const lpx = expMode === "volt" ? xOf(V) : xR(R);
     const lpy = yOf(target);
-    ctx.strokeStyle = `rgba(${COLOR[wire]},.3)`;
+    ctx.strokeStyle = `rgba(${prevColor},.3)`;
     ctx.lineWidth = 1.2;
     ctx.setLineDash([3, 5]);
     ctx.beginPath();
@@ -558,16 +707,16 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     ctx.lineTo(lpx, lpy);
     ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle = `rgba(${COLOR[wire]},.16)`;
+    ctx.fillStyle = `rgba(${prevColor},.16)`;
     ctx.beginPath();
     ctx.arc(lpx, lpy, 8.5 + Math.sin(tMs / 260) * 1.6, 0, TAU);
     ctx.fill();
-    ctx.strokeStyle = `rgba(${COLOR[wire]},.95)`;
+    ctx.strokeStyle = `rgba(${prevColor},.95)`;
     ctx.lineWidth = 1.8;
     ctx.beginPath();
     ctx.arc(lpx, lpy, 4.6, 0, TAU);
     ctx.stroke();
-    // 기록 스탬프 팝(퍼지는 링)
+    // 기록 스탬프 팝(퍼지는 링 — 자기 모드의 축에서만)
     const now = performance.now();
     for (let i = pops.length - 1; i >= 0; i--) {
       const t = (now - pops[i].t0) / 450;
@@ -575,23 +724,24 @@ export const ohmLab: StepRenderer = (host, step, api) => {
         pops.splice(i, 1);
         continue;
       }
+      if (!!pops[i].res !== (expMode === "res")) continue;
       ctx.strokeStyle = `rgba(${pops[i].rgb},${(1 - t) * 0.85})`;
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.arc(xOf(pops[i].v), yOf(pops[i].i), 4 + t * 12, 0, TAU);
+      ctx.arc((pops[i].res ? xR : xOf)(pops[i].v), yOf(pops[i].i), 4 + t * 12, 0, TAU);
       ctx.stroke();
     }
 
     // ---- HUD ----
-    const hud = `${V.toFixed(1)}|${Math.round(dispI)}`;
+    const hud = `${expMode}|${V.toFixed(1)}|${R}|${Math.round(dispI)}`;
     if (hud !== shownHud) {
       shownHud = hud;
-      voltSpan.textContent = `전압 ${V.toFixed(1)} V`;
+      voltSpan.textContent = expMode === "volt" ? `전압 ${V.toFixed(1)} V` : `3.0 V 고정 · ${R}Ω`;
       ampRead.textContent = String(Math.round(dispI));
     }
   });
 
-  api.setCTA("직선 두 개 + 2배 쌍을 완성하면 열려요", { enabled: false });
+  api.setCTA("직선 둘 + 2배 쌍 + 반비례 곡선!", { enabled: false });
   const rafId = requestAnimationFrame(() => loop.start());
   return () => {
     cancelAnimationFrame(rafId);

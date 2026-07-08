@@ -2118,17 +2118,15 @@
 button.he-fig { cursor: pointer; transition: transform .14s var(--spring-soft); }
 button.he-fig:active:not(:disabled) { transform: scale(.985); }
 /* wintershock — 겨울밤 정전기 3컷 */
-.he-wcard svg { width: 100%; max-width: 96px; height: auto; }
+/* 발주 컷 쌍(calm 위에 zap을 겹쳐 두고 탭하면 크로스페이드 + 팝) */
+.he-wcard .he-wframe { position: relative; display: block; width: 100%; max-width: 118px; margin: 0 auto; }
+.he-wcard .he-wframe img { display: block; width: 100%; border-radius: 12px; }
+.he-wcard .he-wframe .zap { position: absolute; inset: 0; opacity: 0; transition: opacity .22s var(--ease-out); }
 .he-wcard.lit { border: 1.5px solid var(--subj-elec); background: var(--subj-elec-tint); }
 .he-wcard.lit .hook-cup-label { color: var(--subj-elec-press); }
-.he-wcard .he-hair { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(.3); opacity: .45; transition: transform .5s var(--spring), opacity .4s; }
-.he-wcard.lit .he-hair { transform: scaleY(1); opacity: 1; }
-.he-wcard .he-spk { transform-box: fill-box; transform-origin: center; }
-.he-wcard.lit .he-spk { animation: heSpk 1.5s ease-in-out infinite; }
-.he-wcard .he-arm2 { transform-box: fill-box; transform-origin: 0% 50%; }
-.he-wcard.lit .he-arm2 { animation: heJerk .6s var(--spring); }
-.he-wcard .he-bal3 { transform-box: fill-box; transform-origin: 50% 100%; }
-.he-wcard.lit .he-bal3 { animation: heBob 1.8s ease-in-out infinite; }
+.he-wcard.lit .he-wframe .zap { opacity: 1; }
+.he-wcard.lit .he-wframe { animation: heZapPop .45s var(--spring); }
+@keyframes heZapPop { 0% { transform: scale(1); } 45% { transform: scale(1.07); } 100% { transform: scale(1); } }
 @keyframes heSpk { 0%, 100% { opacity: 0; transform: scale(.7); } 14%, 34% { opacity: 1; transform: scale(1.05); } 50% { opacity: .15; } }
 @keyframes heJerk { 0% { transform: rotate(0); } 30% { transform: rotate(-9deg); } 100% { transform: rotate(0); } }
 @keyframes heBob { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-2.5px) rotate(2deg); } }
@@ -2177,6 +2175,9 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .he-mt .he-plug.out { transform: translateY(-10px); }
 .he-mt.ready .he-plug:not(.out) { animation: heNudge 1.3s ease-in-out infinite; }
 .he-mt.ready .he-plug:not(.out) .he-pbody { stroke: var(--subj-elec); }
+/* 1단계(하나씩 꽂기): 뽑혀 있는 플러그가 살랑 — 꽂을 대상 안내(.out의 -10px 기준 유지) */
+.he-mt.plugin .he-plug.out { animation: heNudgeOut 1.3s ease-in-out infinite; }
+.he-mt.plugin .he-plug.out .he-pbody { stroke: var(--subj-elec); }
 .he-mt .he-glowL, .he-mt .he-windF, .he-mt .he-scrON { transition: opacity .4s; }
 .he-mt.off-lamp .he-glowL { opacity: 0; }
 .he-mt .he-fanb { transform-box: view-box; transform-origin: 118px 62px; animation: heSpin .8s linear infinite; }
@@ -2185,6 +2186,7 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .he-mt.off-chg .he-scrON { opacity: 0; }
 .he-mt .he-windF { animation: heWind 1.2s ease-in-out infinite; }
 @keyframes heNudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes heNudgeOut { 0%, 100% { transform: translateY(-10px); } 50% { transform: translateY(-15px); } }
 @keyframes heSpin { to { transform: rotate(360deg); } }
 @keyframes heWind { 0%, 100% { opacity: .35; } 50% { opacity: .9; } }
 /* labelpeek — 라벨 플립 */

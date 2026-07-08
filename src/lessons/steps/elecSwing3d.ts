@@ -103,6 +103,7 @@ export const swingLab3d: StepRenderer = (host, step, api) => {
   let poleDir: 1 | -1 = 1; // 자기장 방향(1: N위→아래로 향하는 자기장)
   let theta = 0; // 그네 각(rad)
   let omega = 0;
+  let flowPhase = 0; // 전류 알갱이 흐름 위상
   const goals = new Set<string>();
   let finished = false;
   let disposed = false;
@@ -140,10 +141,13 @@ export const swingLab3d: StepRenderer = (host, step, api) => {
   let forceArrow: T.ArrowHelper | null = null;
   let fieldArrows: T.ArrowHelper[] = [];
   let currentCones: T.Mesh[] = [];
+  let flowDots: T.Mesh[] = []; // 아래변을 따라 흐르는 전류 알갱이(방향이 몸으로 읽히게)
   let poleN: T.Mesh | null = null;
   let poleS: T.Mesh | null = null;
   let labelN: T.Sprite | null = null;
   let labelS: T.Sprite | null = null;
+  let labelI: T.Sprite | null = null; // "전류" — 코일 그룹에 붙어 그네와 함께 움직인다
+  let labelF: T.Sprite | null = null; // "힘" — 매 프레임 힘 화살표 끝을 따라간다
 
   const PIVOT_Y = 168;
   const BOT_Y = 46; // 코일 아래변 높이(자석 틈 중앙)
@@ -242,6 +246,21 @@ export const swingLab3d: StepRenderer = (host, step, api) => {
       coil.add(cone);
       currentCones.push(cone);
     }
+    // 전류 알갱이 — 아래변을 따라 흐르는 점 4개(2D 랩의 drawWire 점 흐름과 같은 문법)
+    const dotMat = new THREE.MeshBasicMaterial({ color: 0xffc46e, transparent: true, opacity: 0.95 });
+    for (let k = 0; k < 4; k++) {
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(2.7, 10, 10), dotMat);
+      dot.position.set(0, -drop, -HALF_Z + (k / 4) * HALF_Z * 2);
+      dot.visible = false;
+      coil.add(dot);
+      flowDots.push(dot);
+    }
+    // "전류" 라벨 — 코일 그룹 소속(그네와 함께 기운다)
+    labelI = mod.makeLabel("전류", { size: 22, color: "#FFC46E" });
+    labelI.position.set(0, -drop + 26, HALF_Z + 16);
+    labelI.scale.multiplyScalar(0.42);
+    labelI.visible = false;
+    coil.add(labelI);
     coil.position.set(0, PIVOT_Y, 0);
     st.scene.add(coil);
 
@@ -258,9 +277,16 @@ export const swingLab3d: StepRenderer = (host, step, api) => {
     lblB.position.set(-44, BOT_Y - 34, 0);
     lblB.scale.multiplyScalar(0.42);
     st.scene.add(lblB);
+    // "힘" 라벨 — 매 프레임 힘 화살표 끝을 따라간다
+    labelF = mod.makeLabel("힘", { size: 24, color: "#7ED6FF" });
+    labelF.scale.multiplyScalar(0.42);
+    labelF.visible = false;
+    st.scene.add(labelF);
 
-    st.camera.position.set(215, 150, 320);
-    st.camera.lookAt(-10, 92, 0);
+    // 카메라 — 장면을 키우라는 피드백 반영(거리 ~395→~340). 검산: lookAt(-16,90,0) 기준
+    // 필요한 반높이 ~110 → dist ≥ 110/tan(20°) ≈ 302, 반폭은 방위각 35° 투영으로 여유.
+    st.camera.position.set(186, 132, 272);
+    st.camera.lookAt(-16, 90, 0);
 
     // ---- 프레임 ----
     loop = createLoop((dt, tMs) => {
@@ -276,25 +302,38 @@ export const swingLab3d: StepRenderer = (host, step, api) => {
       theta += omega * dt;
       coil!.rotation.z = theta;
 
-      // 힘 화살표
+      // 힘 화살표 + "힘" 라벨(화살표 끝을 따라간다)
       if (forceArrow) {
         forceArrow.visible = on;
+        if (labelF) labelF.visible = on;
         if (on) {
           const dir = force >= 0 ? 1 : -1;
+          const alen = 26 + Math.abs(force) * 46;
           forceArrow.setDirection(new three!.Vector3(dir, 0, 0));
-          forceArrow.setLength(26 + Math.abs(force) * 46, 14, 9);
+          forceArrow.setLength(alen, 14, 9);
           // 아래변 위치 따라 이동
           const bx = Math.sin(theta) * (PIVOT_Y - BOT_Y) * -1;
-          forceArrow.position.set(bx, BOT_Y + (1 - Math.cos(theta)) * (PIVOT_Y - BOT_Y), 0);
+          const by = BOT_Y + (1 - Math.cos(theta)) * (PIVOT_Y - BOT_Y);
+          forceArrow.position.set(bx, by, 0);
+          labelF?.position.set(bx + dir * (alen + 16), by + 15, 0);
         }
       }
-      // 전류 원뿔 방향 + 점멸
+      // 전류 원뿔 방향 + 점멸, "전류" 라벨
       const blink = on ? 0.75 + Math.sin(tMs / 160) * 0.25 : 0.25;
       currentCones.forEach((cone) => {
         cone.rotation.x = curDir > 0 ? Math.PI / 2 : -Math.PI / 2;
         (cone.material as T.MeshBasicMaterial).opacity = blink;
         (cone.material as T.MeshBasicMaterial).transparent = true;
         cone.visible = on;
+      });
+      if (labelI) labelI.visible = on;
+      // 전류 알갱이 — 아래변을 따라 curDir 방향으로 흐른다(속도 ∝ 세기)
+      if (on) flowPhase = (flowPhase + dt * 0.011 * (0.4 + amp)) % 1;
+      flowDots.forEach((dot, k) => {
+        dot.visible = on;
+        if (!on) return;
+        const t = (flowPhase + k / 4) % 1;
+        dot.position.z = curDir > 0 ? -HALF_Z + t * HALF_Z * 2 : HALF_Z - t * HALF_Z * 2;
       });
       // 자기장 화살표 방향(극 반전 시)
       fieldArrows.forEach((a) => a.setDirection(new three!.Vector3(0, -poleDir, 0)));

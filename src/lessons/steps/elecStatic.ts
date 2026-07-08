@@ -140,16 +140,16 @@ export const frictionLab: StepRenderer = (host, step, api) => {
   const goalChips = el(
     "div",
     { class: "pn-badges force3" },
-    el("div", { class: "pn-badge elec", dataset: { g: "attract" } }, el("b", { text: "털가죽" }), el("span", { text: "끌려올까?" })),
-    el("div", { class: "pn-badge elec", dataset: { g: "repel" } }, el("b", { text: "파란 빨대" }), el("span", { text: "밀려날까?" })),
+    el("div", { class: "pn-badge elec", dataset: { g: "repel" } }, el("b", { text: "파란 빨대" }), el("span", { text: "가까이 대면?" })),
+    el("div", { class: "pn-badge elec", dataset: { g: "attract" } }, el("b", { text: "털가죽" }), el("span", { text: "가까이 대면?" })),
     el("div", { class: "pn-badge elec", dataset: { g: "close" } }, el("b", { text: "더 가까이" }), el("span", { text: "힘은?" })),
   );
 
   const segBtns: Record<Tool, HTMLButtonElement> = {} as Record<Tool, HTMLButtonElement>;
   const seg = el("div", { class: "seg" });
-  (["fur", "blue"] as Tool[]).forEach((k) => {
-    const b = el("button", { text: k === "fur" ? "털가죽" : "문지른 파란 빨대", attrs: { type: "button" } });
-    if (k === "fur") b.classList.add("on");
+  (["blue", "fur"] as Tool[]).forEach((k) => {
+    const b = el("button", { text: k === "fur" ? "문지른 털가죽" : "문지른 파란 빨대", attrs: { type: "button" } });
+    if (k === "blue") b.classList.add("on");
     b.addEventListener("click", () => pick(k));
     segBtns[k] = b;
     seg.appendChild(b);
@@ -157,7 +157,7 @@ export const frictionLab: StepRenderer = (host, step, api) => {
 
   const helper = el("div", {
     class: "helper",
-    html: "빨간 빨대는 <b>이미 털가죽으로 문질러 (−)전기로 대전</b>해 뒀어요. 아래에서 도구를 골라, <b>잡아서 빨대 끝 가까이</b> 가져가 보세요.",
+    html: "핀에 꽂아 둔 <b>빨간 빨대</b> — 파란 빨대와 함께 <b>같은 털가죽으로 문질러</b> 뒀어요(둘 다 (−)로 대전). 먼저 <b>파란 빨대를 잡아</b> 빨간 빨대 끝 가까이 가져가면 어떻게 될까요?",
   });
   host.append(goalChips, stage, seg, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -169,7 +169,7 @@ export const frictionLab: StepRenderer = (host, step, api) => {
   let H = CVH;
   let theta = -0.35; // 빨대 각도(수평면)
   let omega = 0; // 각속도(rad/frame, 1frame=16.7ms)
-  let tool: Tool = "fur";
+  let tool: Tool = "blue"; // 파란 빨대(같은 전기·척력)부터 — 문지른 짝끼리 먼저 만난다
   let toolX = -1; // 첫 프레임에 배치
   let toolY = -1;
   let dragging = false;
@@ -218,8 +218,8 @@ export const frictionLab: StepRenderer = (host, step, api) => {
     if (finished) return;
     helper.innerHTML =
       k === "fur"
-        ? "털가죽은 문지르고 나면 <b>(+)전기</b>를 띠어요. 빨대의 (−)와는 <b>다른 종류</b> — 끝에 가까이 대면 어떻게 될까요?"
-        : "파란 빨대도 문질러서 <b>(−)전기</b>로 대전해 뒀어요. 빨간 빨대와 <b>같은 종류</b> — 가까이 대면?";
+        ? "이번엔 <b>빨대들을 문지르는 데 썼던 그 털가죽</b> 차례예요. 전자를 빨대에 내주었으니 <b>(+)전기</b> — 빨간 빨대의 (−)와는 <b>다른 종류</b>죠. 끝에 가까이 대면 어떻게 될까요?"
+        : "파란 빨대는 빨간 빨대와 <b>같은 털가죽으로 문지른 짝꿍</b> — 똑같이 <b>(−)전기</b>를 띠어요. <b>같은 종류</b>끼리 만나면 어떻게 될까요?";
   }
 
   // ---- 입력: 도구 드래그 ----
@@ -322,15 +322,15 @@ export const frictionLab: StepRenderer = (host, step, api) => {
       collect(
         "attract", "인력!", "끌려 왔어요 — 다른 종류의 전기!",
         "빨대가 털가죽 쪽으로 <b>끌려 왔어요</b>. (+)와 (−), <b>다른 종류의 전기 사이에는 인력</b>이 작용해요." +
-          (goals.has("repel") ? " 이제 <b>더 가까이</b> 대며 세기를 비교해 봐요!" : " 이제 <b>문지른 파란 빨대</b>로 바꿔 볼까요?"),
+          (goals.has("repel") ? " 이제 <b>더 가까이</b> 대며 세기를 비교해 봐요!" : " <b>파란 빨대</b>로도 확인해 봐요!"),
       );
       attractAcc = 0;
     }
     if (repelAcc > 0.5) {
       collect(
         "repel", "척력!", "밀려났어요 — 같은 종류의 전기!",
-        "이번엔 빨대가 <b>밀려나요</b>. (−)와 (−), <b>같은 종류의 전기 사이에는 척력</b>이 작용해요." +
-          (goals.has("attract") ? " 이제 도구를 <b>더 가까이</b> 대 보세요!" : " <b>털가죽</b>으로도 확인해 봐요!"),
+        "빨대가 <b>밀려나요</b>! (−)와 (−), <b>같은 종류의 전기 사이에는 척력</b>이 작용해요." +
+          (goals.has("attract") ? " 이제 도구를 <b>더 가까이</b> 대 보세요!" : " 이번엔 위에서 <b>문지른 털가죽</b>으로 바꿔 볼까요?"),
       );
       repelAcc = 0;
     }
@@ -443,7 +443,7 @@ export const frictionLab: StepRenderer = (host, step, api) => {
     ctx.font = "700 10.5px Pretendard, sans-serif";
     ctx.textAlign = "center";
     ctx.fillStyle = "rgba(174,196,228,.75)";
-    ctx.fillText(tool === "fur" ? "털가죽 (+)" : "문지른 빨대 (−)", toolX, toolY + 42);
+    ctx.fillText(tool === "fur" ? "문지른 털가죽 (+)" : "문지른 파란 빨대 (−)", toolX, toolY + 42);
     // 잡기 유도(아직 안 잡았을 때 — 숨 쉬는 링)
     if (!everGrabbed) {
       const pulse = 30 + Math.sin(tMs / 300) * 4;
@@ -726,7 +726,7 @@ export const rubLab: StepRenderer = (host, step, api) => {
     if (returned && !quizShown) {
       quizShown = true;
       quizRow.style.display = "";
-      helper.innerHTML = "전자 3개가 이사를 마쳤어요. 그럼 퀴즈 — 전자를 얻은 <b>빨대는 어느 전기</b>를 띠게 됐을까요? 아래에서 골라 보세요.";
+      helper.innerHTML = "전자 3개가 이사를 마쳤어요. 그럼 퀴즈 — 전자를 얻은 <b>빨대는 어느 전기</b>를 띠게 됐을까요? 위에서 골라 보세요.";
     }
 
     // ---- 털가죽 ----

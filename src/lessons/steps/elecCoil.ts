@@ -307,10 +307,14 @@ export const coilFieldLab: StepRenderer = (host, step, api) => {
   }
 
   function coilLoopPts(ex: number): { x: number; y: number }[] {
+    // 권선 방향 주의: 전류는 오른쪽 레일을 타고 올라와 코일 아래-오른쪽으로 들어온다(pol=+1).
+    // 점 순서를 위→왼→아래→오른(x에 −sin)으로 두면 루프의 오른쪽 변이 '위로', 왼쪽 변이
+    // '아래로' 흘러 — 들어오는 전선(위로)·나가는 전선(아래로)과 흐름이 이어져 보인다.
+    // (예전 +sin 순서는 오른쪽 변이 아래로 흘러 진입 전선과 정반대로 보이던 실제 피드백 버그.)
     const pts: { x: number; y: number }[] = [];
     for (let i = 0; i <= 26; i++) {
       const t = (i / 26) * TAU;
-      pts.push({ x: ex + Math.sin(t) * 9, y: CY - Math.cos(t) * 30 });
+      pts.push({ x: ex - Math.sin(t) * 9, y: CY - Math.cos(t) * 30 });
     }
     return pts;
   }

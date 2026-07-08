@@ -5,7 +5,7 @@ import { clear, el } from "../core/dom";
 import { haptic, HAPTIC } from "../core/haptics";
 import { icon } from "../core/icons";
 import { stopAllLoops } from "../core/anim";
-import { isDone } from "../core/store";
+import { isDone, isReviewMode } from "../core/store";
 import { getRenderer } from "./registry";
 import type { CtaVariant, Lesson, StepAPI, StepCleanup } from "./types";
 
@@ -33,7 +33,8 @@ export function createLessonPlayer(
   let finishTimer = 0;
 
   // 완료한 레슨 재입장 = 자유 모드: CTA 게이트 없이 앞으로도 이동 가능(채점은 여전히 첫 시도만)
-  const freeNav = isDone(lesson.id);
+  // 검토 모드(브랜드 7연타)에서는 미완료 레슨도 자유 모드 — 문제까지 전 스텝 검수 가능
+  const freeNav = isDone(lesson.id) || isReviewMode();
 
   // ---- DOM ----
   const pbar = el("div", { class: "pbar" });
@@ -273,7 +274,16 @@ export function createLessonPlayer(
 
   // 첫 스텝
   renderStep(0);
-  if (freeNav) window.setTimeout(() => snack("완료한 레슨이에요 — 위 화살표로 자유롭게 이동할 수 있어요"), 600);
+  if (freeNav)
+    window.setTimeout(
+      () =>
+        snack(
+          isDone(lesson.id)
+            ? "완료한 레슨이에요 — 위 화살표로 자유롭게 이동할 수 있어요"
+            : "검토 모드 — 위 화살표로 모든 단계를 자유롭게 볼 수 있어요",
+        ),
+      600,
+    );
 
   return { el: section };
 }

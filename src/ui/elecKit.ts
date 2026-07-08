@@ -99,41 +99,49 @@ export function drawWire(
   ctx.restore();
 }
 
-/** 전지 — 가로형(왼쪽 −, 오른쪽 + 기본). 파운드리 재질 + (+)(−) 라벨. */
-export function drawBattery(ctx: CanvasRenderingContext2D, x: number, y: number, w = 74, h = 30, flip = false): void {
+/** 전지 — 가로형(왼쪽 −, 오른쪽 + 기본). 파운드리 재질 + (+)(−) 라벨.
+ *  vert=true면 세로로 세운다(캡(+)이 위) — 라벨 글자는 화면 기준으로 바로 세워 그린다. */
+export function drawBattery(ctx: CanvasRenderingContext2D, x: number, y: number, w = 74, h = 30, flip = false, vert = false): void {
   ctx.save();
-  const g = ctx.createLinearGradient(x, y - h / 2, x, y + h / 2);
+  ctx.translate(x, y);
+  if (vert) ctx.rotate(-Math.PI / 2);
+  const g = ctx.createLinearGradient(0, -h / 2, 0, h / 2);
   g.addColorStop(0, "#B8C6DA");
   g.addColorStop(0.5, "#8FA0B8");
   g.addColorStop(1, "#5E7090");
   ctx.fillStyle = g;
   ctx.beginPath();
-  ctx.roundRect(x - w / 2, y - h / 2, w, h, 7);
+  ctx.roundRect(-w / 2, -h / 2, w, h, 7);
   ctx.fill();
   // (+)극 캡
-  const capX = flip ? x - w / 2 - 7 : x + w / 2;
+  const capX = flip ? -w / 2 - 7 : w / 2;
   ctx.fillStyle = "#D8B04A";
   ctx.beginPath();
-  ctx.roundRect(capX, y - h * 0.22, 7, h * 0.44, 2.5);
+  ctx.roundRect(capX, -h * 0.22, 7, h * 0.44, 2.5);
   ctx.fill();
   ctx.strokeStyle = "#25324A";
   ctx.lineWidth = 1.6;
   ctx.beginPath();
-  ctx.roundRect(x - w / 2, y - h / 2, w, h, 7);
+  ctx.roundRect(-w / 2, -h / 2, w, h, 7);
   ctx.stroke();
   ctx.strokeStyle = "rgba(255,255,255,.55)";
   ctx.lineWidth = 1.6;
   ctx.beginPath();
-  ctx.moveTo(x - w / 2 + 7, y - h / 2 + 5);
-  ctx.lineTo(x + w / 2 - 10, y - h / 2 + 5);
+  ctx.moveTo(-w / 2 + 7, -h / 2 + 5);
+  ctx.lineTo(w / 2 - 10, -h / 2 + 5);
   ctx.stroke();
   ctx.font = "800 14px Pretendard, sans-serif";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillStyle = "#F2F7FF";
   // (+) 라벨은 언제나 캡 쪽에 — flip이면 캡이 왼쪽이므로 라벨도 함께 이동
-  ctx.fillText("+", x + (flip ? -1 : 1) * w * 0.3, y + 0.5);
-  ctx.fillText("−", x + (flip ? 1 : -1) * w * 0.3, y + 0.5);
+  for (const [lx, ch] of [[(flip ? -1 : 1) * w * 0.3, "+"], [(flip ? 1 : -1) * w * 0.3, "−"]] as [number, string][]) {
+    ctx.save();
+    ctx.translate(lx, 0.5);
+    if (vert) ctx.rotate(Math.PI / 2); // 세로 전지에서도 글자는 바로 서게
+    ctx.fillText(ch, 0, 0);
+    ctx.restore();
+  }
   ctx.restore();
 }
 

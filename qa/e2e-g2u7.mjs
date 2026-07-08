@@ -156,7 +156,7 @@ try {
   await hookChoice(0);
   await clickCTA();
   log("  frictionLab:", await h1());
-  // 털가죽을 빨대 끝(오른쪽)으로 — 키보드 이동(14px/회)
+  // 기본 도구 = 파란 빨대(척력 먼저) — 빨대 끝(오른쪽)으로 끌기
   await W(700);
   await canvasPtr((w) => {
     const sx = Math.max(52, w * 0.16), sy = 234;
@@ -166,14 +166,14 @@ try {
     seq.push(["pointerup", tx, ty]);
     return seq;
   }, 300);
-  await W(2800); // 인력 + 근접(빠른 회전) 판정 대기
+  await W(2800); // 척력 + 근접(빠른 회전) 판정 대기
   log("   칩:", await chipsOn());
-  await clickBtn("파란", 400);
+  await clickBtn("털가죽", 400);
   await canvasPtr((w) => {
     const sx = w / 2 + 66, sy = 162; // 직전 위치에서 다시 잡기
     return [["pointerdown", sx, sy], ["pointermove", w / 2 + 78, 160], ["pointerup", w / 2 + 78, 160]];
   }, 300);
-  await W(2600); // 척력 판정 대기
+  await W(2600); // 인력 판정 대기
   log("   칩:", await chipsOn());
   await clickCTA();
   log("  rubLab:", await h1());
@@ -215,6 +215,8 @@ try {
   await canvasPtr(() => [["pointerdown", 56, 200], ["pointerup", 56, 200]], 300);
   await W(2800); // (+)막대 굴림 42px
   log("   칩:", await chipsOn());
+  await clickCTA(); // → concept(끌려온 이유)
+  log("  concept(유도 원리):", await h1());
   await clickCTA(); await clickCTA(); // recap → 문제
   await quiz(3); await oxPick(false); await quiz(0);
   await finishLesson();
@@ -233,8 +235,8 @@ try {
   await W(800);
   // 회전 무대 좌표 → 화면 좌표 매핑 A(우상단 원점) 시도, 실패 시 B
   const SPOT = {
-    pump: [92, 235], flow: [250, 96], wheel: [395, 205], pipe: [236, 372], valve: [168, 96],
-    battery: [745, 388], current: [790, 96], bulb: [920, 205], wire: [610, 240], switch: [872, 388],
+    pump: [92, 240], flow: [155, 96], wheel: [395, 205], pipe: [244, 372], valve: [244, 96],
+    battery: [610, 240], current: [673, 96], bulb: [913, 205], wire: [762, 372], switch: [762, 96],
   };
   const tapSpot = async (id, mapB) => {
     await page.evaluate(([X, Y, mapB]) => {
@@ -301,6 +303,11 @@ try {
   for (const v of [1, 2, 3, 4]) { await setSlider(0, v / 6); await clickBtn("이 지점 기록", 500); }
   await clickBtn("짧은", 500);
   for (const v of [1, 2, 3, 4]) { await setSlider(0, v / 6); await clickBtn("이 지점 기록", 500); }
+  // ② 저항 바꾸기 — 3V 고정, 길이 1·2·3배 기록 → 반비례 곡선
+  await clickBtn("저항 바꾸기", 600);
+  await clickBtn("이 지점 기록", 500); // 길이 1배(기본)
+  await clickBtn("길이 2배", 400); await clickBtn("이 지점 기록", 500);
+  await clickBtn("길이 3배", 400); await clickBtn("이 지점 기록", 500);
   log("   칩:", await chipsOn());
   await clickCTA(); // → concept(V=IR 유도)
   log("  concept(옴):", await h1());
@@ -312,13 +319,20 @@ try {
 
   // ════ L5 저항의 연결 ════
   await openNextLesson();
-  // 훅 multitap: 예측 먼저 → 플러그 하나 뽑기
+  // 훅 multitap: ① 플러그 셋 꽂기 → ② 예측 → ③ 하나 뽑아 검증
+  await page.waitForSelector(".he-mt .he-plug", { timeout: 9000 });
+  for (let i = 0; i < 3; i++) {
+    await page.evaluate((i) => {
+      document.querySelectorAll(".he-mt .he-plug")[i]?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    }, i);
+    await W(650);
+  }
   await hookChoice(0);
   await page.evaluate(() => {
     const plug = document.querySelector(".he-mt .he-plug");
     plug?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
-  await W(1300);
+  await W(1400);
   await clickCTA();
   log("  circuitLab:", await h1());
   await W(600);
@@ -357,10 +371,11 @@ try {
 
   // ════ L7 전류의 자기장 ════
   await openNextLesson();
-  // 훅 compasswire: 예측 먼저 → 스위치 탭(전류 ON)
-  await hookChoice(0);
+  // 훅 compasswire: ① 스위치를 먼저 켠다(바늘 홱) → ② "왜 움직였을까" 예측
+  await page.waitForSelector(".he-cw", { timeout: 9000 });
   await page.evaluate(() => document.querySelector(".he-cw").click());
-  await W(1200);
+  await W(1700); // 홱 + 질문 등장(1.2s 뒤 ask)
+  await hookChoice(0);
   await clickCTA();
   log("  coilFieldLab:", await h1());
   await W(600);
@@ -369,6 +384,8 @@ try {
   await setSlider(0, 0.97); await W(900);
   await setSlider(0, 0.03); await W(900);
   log("   칩:", await chipsOn());
+  await clickCTA(); // → concept(오른손 감싸쥐기 팁)
+  log("  concept(오른손 팁):", await h1());
   await clickCTA(); await clickCTA(); // recap → 문제
   await quiz(2); await oxPick(false); await quiz(0);
   await finishLesson();
@@ -387,6 +404,8 @@ try {
   await setSlider(0, 0.97); await W(800);
   await setSlider(0, 0.05); await W(800);
   log("   칩:", await chipsOn());
+  await clickCTA(); // → concept(그림으로 정리)
+  log("  concept(그림 정리):", await h1());
   await clickCTA(); // → concept(전동기)
   log("  concept(전동기):", await h1());
   await clickCTA(); await clickCTA(); // recap → 문제

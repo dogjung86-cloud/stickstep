@@ -66,8 +66,9 @@ export const circuitLab: StepRenderer = (host, step, api) => {
       "aria-label": "회로 실험 무대. 엔터 키로 스위치를 여닫고, 숫자 1과 2 키로 전구를 빼거나 끼워요.",
     },
   });
+  // 세그(모드 선택)는 무대 밖 아래에 — 무대 위 HUD에 두면 전구를 가린다(실사용 피드백).
   const segBtns: Record<Mode, HTMLButtonElement> = {} as Record<Mode, HTMLButtonElement>;
-  const seg = el("div", { class: "seg stage-seg", style: "margin-top:0" });
+  const seg = el("div", { class: "seg" });
   (Object.keys(MODE_NAME) as Mode[]).forEach((k) => {
     const b = el("button", { text: MODE_NAME[k], attrs: { type: "button", "aria-pressed": String(k === "single") } });
     if (k === "single") b.classList.add("on");
@@ -77,13 +78,15 @@ export const circuitLab: StepRenderer = (host, step, api) => {
   });
   const hudDot = el("span", { class: "pdot", style: "background:#5E7090" });
   const hudRead = el("span", { text: "전구 1개 · 전체 전류 0×" });
-  const hudBot = el(
+  // 토스트는 하단(.low) — 뺐다 꼈다 할 때 밝기 변화(위쪽 전구)를 가리지 않게.
+  const toastEl = el("div", { class: "toast low" });
+  const stage = el(
     "div",
-    { class: "stage-hud", style: "top:auto;bottom:12px;justify-content:flex-start" },
-    el("div", { class: "pill" }, hudDot, hudRead),
+    { class: "stage" },
+    canvas,
+    el("div", { class: "stage-hud" }, el("div", { class: "pill" }, hudDot, hudRead)),
+    toastEl,
   );
-  const toastEl = el("div", { class: "toast" });
-  const stage = el("div", { class: "stage" }, canvas, el("div", { class: "stage-hud" }, seg), hudBot, toastEl);
 
   const goalChips = el(
     "div",
@@ -97,7 +100,7 @@ export const circuitLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "지금은 <b>전구 1개</b> 회로예요. 오른쪽 아래 <b>스위치를 탭해 닫고</b>, 이 전구의 밝기를 기준으로 봐 두세요.",
   });
-  host.append(goalChips, stage, helper);
+  host.append(goalChips, stage, seg, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
