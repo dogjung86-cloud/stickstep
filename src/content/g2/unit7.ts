@@ -8,7 +8,7 @@
 // 전하·회로 소품 표현은 ui/elecKit(전자는 chemKit과 동일 톤) — 하드코딩 금지.
 import type { Unit } from "../curriculum";
 import {
-  hook, concept, recap, mcq, ox, multi, binSort, hotspot, figTabs,
+  hook, concept, recap, mcq, ox, multi, binSort, hotspot, figTabs, cut,
   frictionLab, rubLab, inductionLab, waterCircuit, ohmLab, circuitLab, coilFieldLab, swingLab3d,
 } from "../dsl";
 import {
@@ -29,10 +29,6 @@ const elabeled = (path: string, alt: string, labels: { x: number; y: number; t: 
       )
       .join("")}
   </div>`;
-
-/** 스틱맨 개념 컷(발주 만화 1컷, public/elec/cuts) — concept의 figure 블록에 끼운다 */
-const cut = (name: string, alt: string): string =>
-  `<img src="${IMG_BASE}elec/cuts/${name}.webp" alt="${alt}" style="display:block;width:100%;border-radius:12px"/>`;
 
 /** 라벨 필 HTML(공용) — elabeled와 같은 규격 */
 const pills = (labels: { x: number; y: number; t: string; c?: string }[]): string =>
@@ -264,7 +260,7 @@ const L2 = {
       title: "끌려온 이유,<br>다섯 걸음으로 따라가기",
       lead: "문지르지도 않은 깡통이 왜 굴러왔을까요? 방금 본 장면을 한 걸음씩 되짚어요.",
       blocks: [
-        { k: "figure", svg: cut("induction", "대전된 막대를 가까이 대자 깡통이 데굴데굴 굴러오는 장면을 보고 신난 스틱맨"), cap: "문지르지도 않았는데 데굴데굴 — 방금 그 장면, 왜 그럴까요?" },
+        { k: "figure", svg: cut("elec", "induction", "대전된 막대를 가까이 대자 깡통이 데굴데굴 굴러오는 장면을 보고 신난 스틱맨"), cap: "문지르지도 않았는데 데굴데굴 — 방금 그 장면, 왜 그럴까요?" },
         {
           k: "list",
           ordered: true,
@@ -371,7 +367,7 @@ const L3 = {
       title: "전류의 방향,<br>전자의 방향",
       lead: "전선 속에서 실제로 움직이는 건 전자 — 그런데 전류의 방향은 따로 있어요.",
       blocks: [
-        { k: "figure", svg: cut("analogy", "물 회로와 전기 회로를 번갈아 바라보며 생각에 잠긴 스틱맨"), cap: "물의 회로와 전기 회로 — 같은 모양이니, 물처럼 전기도 '흐름'으로 읽어 봐요" },
+        { k: "figure", svg: cut("elec", "analogy", "물 회로와 전기 회로를 번갈아 바라보며 생각에 잠긴 스틱맨"), cap: "물의 회로와 전기 회로 — 같은 모양이니, 물처럼 전기도 '흐름'으로 읽어 봐요" },
         {
           k: "p",
           html: "전선 속 전자들은 스위치가 열려 있으면 <b>제멋대로(불규칙하게)</b> 움직여요. 스위치를 닫으면 전자들이 <b>일정한 방향</b>으로 움직이죠 — 이런 전하의 흐름이 <b>전류</b>예요(단위 A, 암페어).",
@@ -518,7 +514,7 @@ const L4 = {
       title: "그래프에서 태어난<br>옴의 법칙",
       lead: "방금 그린 직선과 곡선이 법칙 그 자체예요 — 식은 그래프를 요약한 것뿐!",
       blocks: [
-        { k: "figure", svg: cut("ohm", "안경 쓴 스틱맨 과학자가 원점을 지나는 직선 그래프를 가리키는 모습"), cap: "점 네 개가 한 줄로 서면 — 그게 바로 법칙의 탄생이에요" },
+        { k: "figure", svg: cut("elec", "ohm", "안경 쓴 스틱맨 과학자가 원점을 지나는 직선 그래프를 가리키는 모습"), cap: "점 네 개가 한 줄로 서면 — 그게 바로 법칙의 탄생이에요" },
         {
           k: "p",
           html: "<b>① 전압 바꾸기</b> — 전압을 올릴수록 전류가 커졌죠? 네, 맞아요. 그래프도 <b>원점을 지나는 직선</b>이었어요. 전압을 2배, 3배로 하면 전류도 딱 2배, 3배 — 전류는 전압에 <b>비례</b>해요(I ∝ V).",
@@ -662,7 +658,7 @@ const L5 = {
       title: "물길로 보는<br>직렬과 병렬",
       lead: "실험대의 결과가 신기했다면 — 물레방아 비유로 보면 당연해져요.",
       blocks: [
-        { k: "figure", svg: cut("parallel", "한 물길에 물레방아 두 개가 걸린 직렬 물길과, 두 갈래로 갈라져 하나씩 도는 병렬 물길을 가리키는 스틱맨"), cap: "한 줄에 두 개 vs 두 갈래에 하나씩 — 물길로 보면 차이가 한눈에!" },
+        { k: "figure", svg: cut("elec", "parallel", "한 물길에 물레방아 두 개가 걸린 직렬 물길과, 두 갈래로 갈라져 하나씩 도는 병렬 물길을 가리키는 스틱맨"), cap: "한 줄에 두 개 vs 두 갈래에 하나씩 — 물길로 보면 차이가 한눈에!" },
         {
           k: "p",
           html: "<b>직렬 = 물길이 하나.</b> 물레방아 두 개가 한 물길에 놓이면, 전체 높이 차를 <b>둘이 나눠</b> 쓰고 물살은 어디서나 같아요. 전기로 옮기면 — 직렬 연결에서 각 저항(전구)에 걸리는 <b>전압은 나눠 갖고</b>, <b>전류는 어디서나 같아요</b>.",
@@ -800,7 +796,7 @@ const L6 = {
       title: "전기 에너지와<br>소비 전력",
       lead: "전기 기구는 전기 에너지를 받아 우리가 원하는 형태의 에너지로 바꿔요.",
       blocks: [
-        { k: "figure", svg: cut("energy", "김이 나는 커다란 다리미로 다림질하며 옆의 조그만 충전기를 흘겨보는 스틱맨"), cap: "다리미는 왕창, 충전기는 찔끔 — 같은 전기를 쓰는데 왜 이렇게 다를까요?" },
+        { k: "figure", svg: cut("elec", "energy", "김이 나는 커다란 다리미로 다림질하며 옆의 조그만 충전기를 흘겨보는 스틱맨"), cap: "다리미는 왕창, 충전기는 찔끔 — 같은 전기를 쓰는데 왜 이렇게 다를까요?" },
         {
           k: "p",
           html: "전류가 흐를 때 공급하는 에너지가 <b>전기 에너지</b>예요. 전등은 이걸 <b>빛에너지</b>로, 선풍기는 <b>운동 에너지</b>로, 다리미는 <b>열에너지</b>로, 배터리 충전은 <b>화학 에너지</b>로 바꾸죠.",

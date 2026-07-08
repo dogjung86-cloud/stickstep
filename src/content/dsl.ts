@@ -9,6 +9,11 @@ const RECAP_IMG_BASE = (import.meta as unknown as { env?: { BASE_URL?: string } 
 export const rimg = (file: string, alt: string): string =>
   `<img src="${RECAP_IMG_BASE}recap/${file}" alt="${alt}" loading="lazy" />`;
 
+/** 스틱맨 개념 컷(발주 만화 1컷) — public/<theme>/cuts/<name>.webp. concept의 첫 블록에 figure로 끼운다.
+ *  중2 VII(elec)이 기준 구현. lazy 금지(.scroll 컨테이너에서 안 뜸 — CLAUDE.md 사고 14). */
+export const cut = (theme: string, name: string, alt: string): string =>
+  `<img src="${RECAP_IMG_BASE}${theme}/cuts/${name}.webp" alt="${alt}" style="display:block;width:100%;border-radius:12px"/>`;
+
 export const concept = (o: {
   kicker?: string;
   kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "elec";

@@ -5,7 +5,7 @@
 // 정답 키는 과학적으로 직접 확정(교과서에 정답 미인쇄): 밀도·용해도 수치는 CRC 표 기준.
 import type { Unit } from "../curriculum";
 import {
-  lesson, concept, table, mcq, ox, multi, binSort, hotspot, hook, recap, rimg,
+  lesson, concept, table, mcq, ox, multi, binSort, hotspot, hook, recap, rimg, cut,
   densityLab, densityPool, solubilityLab, gasFizz, meltCurve, sepFunnel, recrystal, distillLab,
 } from "../dsl";
 import {
@@ -507,6 +507,9 @@ export const G2_UNIT1: Unit = {
           kickerTone: "chem",
           title: "순물질과 혼합물",
           lead: "물·구리·설탕처럼 <b>한 종류의 물질</b>로만 이루어지면 <b>순물질</b>, 우유·암석·공기처럼 <b>두 가지 이상의 순물질이 섞여</b> 있으면 <b>혼합물</b>이에요. 혼합물 속 순물질들은 각자의 성질을 그대로 지닌 채 섞여 있어요 — 우유 속 물은 여전히 물, 지방은 여전히 지방이죠.",
+          blocks: [
+            { k: "figure", svg: cut("chem", "purity", "한 종류만 든 맑은 병과 여러 가지가 섞인 병을 양손에 들고 견주는 스틱맨"), cap: "한 가지뿐인 병 vs 뒤섞인 병 — 섞여도 각자의 성질은 그대로 남아요" },
+          ],
           cta: "직접 분류하기",
         }),
         binSort({
@@ -619,6 +622,9 @@ export const G2_UNIT1: Unit = {
           kickerTone: "chem",
           title: "볍씨 고르기와 기름 방제",
           lead: "농부는 소금물에 볍씨를 넣어 <b>속이 찬 볍씨는 가라앉고 쭉정이는 뜨는</b> 것으로 골라내요 — 이때 액체는 두 고체를 녹이지 않으면서 밀도가 <b>두 고체의 중간</b>이어야 하죠. 바다에 기름이 유출되면 기름이 물보다 밀도가 작아 <b>물 위에 뜬 채 퍼지므로</b>, 기름막이를 치고 뜰채·흡착포로 걷어 내요.",
+          blocks: [
+            { k: "figure", svg: cut("chem", "density-sep", "소금물 통에 볍씨를 부으니 속 찬 것은 가라앉고 쭉정이는 뜨는 두 층을 지켜보는 삿갓 쓴 농부 스틱맨"), cap: "속이 찬 볍씨는 가라앉고 빈 쭉정이는 둥둥 — 밀도 차 하나로 알아서 갈라져요" },
+          ],
           cta: "정리하기",
         }),
         recap({

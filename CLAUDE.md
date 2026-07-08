@@ -281,6 +281,18 @@ src/
   (중2 III·IV recap은 아직 이 표준 이전 분량 — 검수 때 함께 격상 후보.)
 - **상호작용 랩 앞에는 개념이 먼저** — 용어(정의)가 필요한 랩이면 concept 스텝(term 블록)으로 판을 깔고
   들어간다(g2u2 L9 판→판의 경계→plateMap이 기준). 훅에서 바로 랩으로 점프해 용어 없이 조작만 시키지 말 것.
+- **스틱맨 개념 컷 표준(사용자 확정 — 전 concept 스텝 필수)**: 모든 `concept` 스텝은 **첫 블록**에 발주
+  스틱맨 만화 1컷을 둔다 — `{ k: "figure", svg: cut("<theme>", "<name>", "<alt>"), cap: "위트 있는 한 줄" }`.
+  `cut(theme, name, alt)`는 dsl.ts의 단일 헬퍼(구 unit7 로컬 복제본 승격) — `public/<theme>/cuts/<name>.webp`를
+  임베드하고 lazy 금지(스크롤 컨테이너에서 안 뜸). 폴더는 단원 테마별 분리로 병렬 세션 충돌을 막는다:
+  bio2·chem·geo·light·atom·elec (중1 II=bio2, 중2 I=chem, II=geo, IV=atom, VII=elec).
+  컷 장면은 그 개념을 **일상 스틱맨 장면**으로 — 훅/랩에서 쓴 소재 재활용 금지, **새 각도**로 잡는다
+  (분류=겹원에 생물 담기, 순물질/혼합물=한 종류 병 vs 뒤섞인 병, 화학식=손가락으로 원자 개수 세기,
+  주기율표=빈 칸 도표에서 한 칸 짚기, 이온식=전자 알갱이 건네주기 — 숫자·기호는 손가락·개수차로 대신).
+  발주는 `qa/cuts_prompts.txt`(스타일 블록 A = elec와 동일: 손그림·teal 원포인트·글자 절대 금지·4:3) +
+  `qa/order-cuts.sh`(단원별 순차 배치 — 병렬 codex 금지). 변환 전 새 폴더를 process-geo.mjs ASPECT_DIRS에
+  등록. 발주 후 Read 도구로 눈 검수(글자 없음·손가락 5개·과학 정확), 로드 검증은 `qa/check-cuts.mjs`
+  (전 트랙 스캔 → naturalWidth>0). **중2 III(빛과 파동)은 concept 스텝이 0개**(훅→랩→recap 구조)라 컷 대상 아님.
 - hotspot 스텝은 `spot.photo`(+photoCredit)로 부위별 실사 사진 카드를 설명 아래에 띄울 수 있다(태양 지도가 기준).
 
 ## 훅 예측 규칙 (steps/hookAsk.ts — 위반 금지)
@@ -461,7 +473,8 @@ src/
 - **발주 에셋(public/elec/)**: hook(정사각 — wintershock calm/zap 쌍 6장, `.he-wframe` 크로스페이드) ·
   figs(회로 사진·오른손 grip·손바닥 palm·그네 장치 swing·전동기 motor — unit7.ts `elabeled()`로 한글 라벨
   필 오버레이) · cuts(**스틱맨 개념 컷** 6장 — concept 첫 블록에 `cut()` 헬퍼로 임베드. 사용자 확정 표준:
-  개념 스텝마다 발주 스틱맨 컷 1장, VII이 기준 구현이고 타 단원 롤아웃 예정). 발주 qa/order-elec.sh,
+  개념 스텝마다 발주 스틱맨 컷 1장, VII이 기준 구현이고 **전 단원 롤아웃 완료** — 아래 "스틱맨 개념 컷 표준" 참조).
+  발주 qa/order-elec.sh,
   변환은 process-geo.mjs(SQUARE/ASPECT_DIRS 등록됨). **발주 손 사진이 왼손으로 나오면 qa/flip-grip.mjs
   좌우 반전**(거울상=반대 손) — 라벨 x는 100−x로 미러. 오브젝트 "삽입"(틈 사이 끼움) 구도는 codex가
   잘 실패한다 — 가림(occlusion) 단서를 프롬프트에 명시하고 눈 검수로 재발주.
