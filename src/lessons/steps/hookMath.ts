@@ -578,59 +578,83 @@ function renderDaytemp(scene: HTMLElement, helper: HTMLElement, finish: () => vo
 /* ── L10 rewind, 거꾸로 재생의 마법 ─────────────────────────── */
 function renderRewind(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]): void {
   const fig = el("div", {});
+  // 측면 스틱맨(오른쪽을 보는 옆모습): 엉덩이 관절이 로컬 (0,0), 팔다리는 관절 회전(.rw-limb).
+  // "뒤로 걷기" = 몸은 오른쪽을 향한 채 왼쪽으로 이동. 역재생하면 오른쪽으로 이동 = 앞으로 걷는 듯 보인다.
+  const GROUND = 132;
+  const MAN_Y = GROUND - 30; // 엉덩이 높이(다리 29 + 여유)
+  const X0 = 236; // 시작 x
+  const X1 = 96; // 재생 후 x(왼쪽으로 140px 후진)
   fig.innerHTML = wrapSvg(
-    `${SHADOW(180, 186, 92, 0.1)}
-    <rect x="34" y="16" width="292" height="164" rx="14" fill="url(#rw-bg)" stroke="#39424E" stroke-width="2"/>
-    <rect x="34" y="146" width="292" height="34" rx="0" fill="#1E2A38" opacity=".85"/>
-    <path d="M34 160 h292" stroke="#39424E" stroke-width="1"/>
-    <circle cx="60" cy="163" r="9" fill="#2FA8C4" class="rw-pl"/>
-    <path d="M57 158 v10 l8 -5 z" fill="#fff"/>
-    <rect x="84" y="160" width="180" height="5" rx="2.5" fill="#4E5968"/>
-    <rect x="84" y="160" width="30" height="5" rx="2.5" fill="#7FE0D2" class="rw-bar" style="transition: width 1.6s linear"/>
-    <g class="rw-man" style="transition: transform 1.6s linear">
-      <circle cx="230" cy="72" r="11" fill="#FFF" stroke="#3C4654" stroke-width="2.4"/>
-      <path d="M226 70 h2.5 M233 70 h2.5 M226.5 76 q3.5 2.6 7 0" stroke="#3C4654" stroke-width="1.7" fill="none" stroke-linecap="round"/>
-      <path d="M230 83 v22 M230 90 l-11 7 M230 90 l11 6 M230 105 l-10 14 M230 105 l9 14" stroke="#3C4654" stroke-width="2.6" fill="none" stroke-linecap="round"/>
-      <path d="M216 128 l-6 3 M242 126 l6 3" stroke="#3C4654" stroke-width="2.2" stroke-linecap="round"/>
+    `${SHADOW(180, 188, 96, 0.11)}
+    <rect x="30" y="12" width="300" height="172" rx="16" fill="url(#rw-bz)" stroke="#101A28" stroke-width="2"/>
+    <rect x="40" y="22" width="280" height="124" rx="9" fill="url(#rw-sky)" stroke="#2A3646" stroke-width="1.4"/>
+    <circle cx="292" cy="44" r="12" fill="url(#rw-sun)"/>
+    <path d="M58 ${GROUND} q10 -12 22 0 M232 ${GROUND} q11 -13 24 0" fill="url(#rw-bush)" stroke="#5E8A5E" stroke-width="1.3"/>
+    <line x1="42" y1="${GROUND}" x2="318" y2="${GROUND}" stroke="#7AA05E" stroke-width="2.4" stroke-linecap="round"/>
+    <g class="rw-man" style="transform: translate(${X0}px, ${MAN_Y}px); transition: transform 2.1s linear">
+      <g transform="translate(0,-28)"><path class="rw-limb rw-armB" d="M0 0 L6 13 l6.5 2" stroke="#5E718A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+      <path d="M0 0 L0 -30" stroke="#39424E" stroke-width="2.8" stroke-linecap="round"/>
+      <circle cx="3" cy="-41" r="9.5" fill="#FFFFFF" stroke="#39424E" stroke-width="2.4"/>
+      <circle cx="8.5" cy="-43" r="1.6" fill="#39424E"/>
+      <path d="M11.5 -39.5 h2.5" stroke="#39424E" stroke-width="1.6" stroke-linecap="round"/>
+      <g transform="translate(0,0)"><path class="rw-limb rw-legB" d="M0 0 L3 15 L1.5 29 l7 1.5" stroke="#39424E" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+      <g transform="translate(0,0)"><path class="rw-limb rw-legF" d="M0 0 L3 15 L1.5 29 l7 1.5" stroke="#39424E" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+      <g transform="translate(0,-28)"><path class="rw-limb rw-armF" d="M0 0 L6 13 l6.5 2" stroke="#39424E" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
     </g>
-    <text x="180" y="40" text-anchor="middle" font-size="12.5" font-weight="800" fill="#8CA0B3" class="rw-cap">뒤로 걷는 사람.mp4</text>`,
-    `<linearGradient id="rw-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EAF2FA"/><stop offset="1" stop-color="#D2E0EC"/></linearGradient>`,
+    <g class="rw-rev" style="opacity:0; transition: opacity .3s ease">
+      <path d="M64 36 l-9 6 9 6 z M74 36 l-9 6 9 6 z" fill="#7FE0D2"/>
+    </g>
+    <rect x="40" y="152" width="280" height="24" rx="7" fill="#16202E"/>
+    <circle cx="58" cy="164" r="8" fill="#2FA8C4"/>
+    <path d="M55.5 160 v8 l7 -4 z" fill="#fff"/>
+    <rect x="76" y="161.5" width="216" height="5" rx="2.5" fill="#4E5968"/>
+    <rect x="76" y="161.5" width="34" height="5" rx="2.5" fill="#7FE0D2" class="rw-bar" style="transition: width 2.1s linear"/>
+    <text x="180" y="40" text-anchor="middle" font-size="12" font-weight="800" fill="#64788C" class="rw-cap">뒤로 걷는 사람.mp4</text>`,
+    `<linearGradient id="rw-bz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E3C50"/><stop offset=".55" stop-color="#1E2A38"/><stop offset="1" stop-color="#141E2A"/></linearGradient>
+    <linearGradient id="rw-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EAF5FE"/><stop offset=".7" stop-color="#D8ECFA"/><stop offset="1" stop-color="#CCE4F4"/></linearGradient>
+    <radialGradient id="rw-sun" cx=".4" cy=".35" r="1"><stop offset="0" stop-color="#FFF3D6"/><stop offset="1" stop-color="#FFD44A"/></radialGradient>
+    <linearGradient id="rw-bush" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A8D89A"/><stop offset="1" stop-color="#7AB870"/></linearGradient>`,
   );
   const btnPlay = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "재생 ▸" }));
   const btnRev = el("button", { class: "swapbtn", attrs: { type: "button", style: "display:none" } }, el("span", { text: "◂ 거꾸로 재생" }));
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, btnPlay, btnRev, box);
-  helper.innerHTML = "스틱맨이 <b>뒤로 걷는</b> 영상이 있어요. 먼저 그냥 재생해 볼까요?";
+  helper.innerHTML = "스틱맨이 <b>뒤로 걷는</b> 영상이 있어요(오른쪽을 본 채 등 방향으로 걸어요). 먼저 그냥 재생해 볼까요?";
   const man = (): SVGGElement => fig.querySelector(".rw-man") as SVGGElement;
   const bar = (): SVGRectElement => fig.querySelector(".rw-bar") as SVGRectElement;
   btnPlay.addEventListener("click", () => {
     (btnPlay as HTMLButtonElement).disabled = true;
     btnPlay.classList.remove("pulse");
     haptic(HAPTIC.select);
-    man().style.transform = "translateX(-150px)";
-    bar().setAttribute("width", "180");
+    man().classList.add("rw-walk");
+    man().style.transform = `translate(${X1}px, ${MAN_Y}px)`;
+    bar().setAttribute("width", "216");
     window.setTimeout(() => {
-      helper.innerHTML = "뒤로 걷기(−방향)를 그대로 재생(+)하면, 뒤로 가요. 이제 이 영상을 <b>거꾸로</b> 돌리면?";
+      man().classList.remove("rw-walk");
+      helper.innerHTML = "몸은 오른쪽을 보는데 <b>등 쪽(왼쪽)으로</b> 걸어갔죠? 이게 뒤로 걷기(−방향). 이제 이 영상을 <b>거꾸로</b> 돌리면 어떻게 보일까요?";
       btnRev.style.display = "";
       btnRev.classList.add("pulse");
       face("curious");
-    }, 1700);
+    }, 2200);
   });
   btnRev.addEventListener("click", () => {
     (btnRev as HTMLButtonElement).disabled = true;
     btnRev.classList.remove("pulse");
     haptic(HAPTIC.select);
     (fig.querySelector(".rw-cap") as SVGTextElement).textContent = "뒤로 걷는 사람.mp4, 역재생 중";
-    man().style.transform = "translateX(0px)";
-    bar().setAttribute("width", "30");
+    (fig.querySelector(".rw-rev") as SVGGElement).style.opacity = "1";
+    man().classList.add("rw-walk");
+    man().style.transform = `translate(${X0}px, ${MAN_Y}px)`;
+    bar().setAttribute("width", "34");
     window.setTimeout(() => {
+      man().classList.remove("rw-walk");
       ask(box, helper, {
         choices: choices ?? ["앞으로 걷는 것처럼 보인다", "더 빨리 뒤로 걷는다", "그 자리에 멈춰 있다"],
         good: "바로 그거예요, <b>반대(−)를 반대(−)로 하면 원래 방향(+)</b>! 방금 눈으로 본 이 느낌이 (−)×(−)=(+)의 정체예요. 이제 수의 패턴으로 증명해 봐요.",
-        bad: "다시 보면, 뒤로 걷던 발걸음이 거꾸로 감기니 <b>앞으로 걷는 것처럼</b> 보였죠? 반대(−)의 반대(−)는 원래 방향(+), (−)×(−)=(+)를 수의 패턴으로 확인하러 가요.",
+        bad: "다시 보면, 뒤로 걷던 발걸음이 거꾸로 감기니 몸이 향한 쪽으로 나아가 <b>앞으로 걷는 것처럼</b> 보였죠? 반대(−)의 반대(−)는 원래 방향(+), (−)×(−)=(+)를 수의 패턴으로 확인하러 가요.",
         onDone: finish,
       });
-    }, 1750);
+    }, 2250);
   });
 }
 

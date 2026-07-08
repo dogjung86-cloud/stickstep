@@ -27,6 +27,46 @@
   box-shadow: 0 6px 14px -4px rgba(13, 165, 198, .55);
 }
 
+/* ---------- 단원 테마: alge(문자와 식 · x의 바이올렛) ---------- */
+.unit-band.alge { background: linear-gradient(150deg, #A48CF2 0%, #7C5CE8 55%, #5F42C9 100%); }
+.gm-terrain.alge {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #E4DCFA, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #DCD2F8, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #E0D6FA, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #D2C6F5, transparent 72%),
+    linear-gradient(180deg, #F7F4FE 0%, #EEE8FC 55%, #E2D9F8 100%);
+}
+.gm-path-glow.alge { stroke: rgba(124,92,232,.22); }
+.gm-path-done.alge { stroke: #7C5CE8; }
+.gm-node.alge.now .gm-med, .gm-node.alge.done .gm-med {
+  background: radial-gradient(120% 120% at 32% 26%, #B5A0F6 0%, #7C5CE8 58%, #5F42C9 100%);
+}
+.gm-node.alge .gm-ring { border-color: rgba(124,92,232,.55); }
+.gm-node.alge:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px #7C5CE8; }
+.kicker.alge { background: #F1EDFF; color: #5F42C9; }
+
+/* ---------- 단원 테마: grph(좌표평면과 그래프 · 그래프 로즈) ---------- */
+.unit-band.grph { background: linear-gradient(150deg, #F284A2 0%, #E8547E 55%, #C93A62 100%); }
+.gm-terrain.grph {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #FBDCE5, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #F9D2DF, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #FAD6E2, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #F6C6D6, transparent 72%),
+    linear-gradient(180deg, #FEF4F7 0%, #FCE8EE 55%, #F8D9E3 100%);
+}
+.gm-path-glow.grph { stroke: rgba(232,84,126,.22); }
+.gm-path-done.grph { stroke: #E8547E; }
+.gm-node.grph.now .gm-med, .gm-node.grph.done .gm-med {
+  background: radial-gradient(120% 120% at 32% 26%, #F79EB6 0%, #E8547E 58%, #C93A62 100%);
+}
+.gm-node.grph .gm-ring { border-color: rgba(232,84,126,.55); }
+.gm-node.grph:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px #E8547E; }
+.kicker.grph { background: #FDEEF3; color: #C93A62; }
+
 /* ---------- 과목 허브: 수학 카드 ---------- */
 .subj-card.mth { border-color: rgba(13,165,198,.35); }
 .subj-card.mth .subj-ava { background: var(--subj-num-tint); }
@@ -337,6 +377,17 @@
 .nw-expr { text-align: center; font-size: 25px; padding: 12px 0 2px; }
 .nw-stage { position: relative; touch-action: none; }
 .nw-stage svg { width: 100%; height: auto; display: block; }
+
+/* ---------- 거꾸로 재생 훅: 측면 스틱맨 걷기 사이클 ----------
+   팔다리는 관절(경로 시작점 0,0)에서 회전: transform-box fill-box + origin 0 0.
+   이동(translate)은 부모 g(.rw-man)의 인라인 스타일 트랜지션이 담당한다. */
+.rw-limb { transform-box: fill-box; transform-origin: 0 0; }
+.rw-walk .rw-legF { animation: rwSwingA .48s ease-in-out infinite; }
+.rw-walk .rw-legB { animation: rwSwingB .48s ease-in-out infinite; }
+.rw-walk .rw-armF { animation: rwSwingB .48s ease-in-out infinite; }
+.rw-walk .rw-armB { animation: rwSwingA .48s ease-in-out infinite; }
+@keyframes rwSwingA { 0%, 100% { transform: rotate(24deg); } 50% { transform: rotate(-20deg); } }
+@keyframes rwSwingB { 0%, 100% { transform: rotate(-20deg); } 50% { transform: rotate(24deg); } }
 
 /* ---------- 보스전 배지 ---------- */
 .boss-head {

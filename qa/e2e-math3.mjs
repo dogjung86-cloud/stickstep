@@ -450,7 +450,7 @@ await clickBtn("홈으로", 900).catch(() => {});
 log("L8 완료");
 
 /* ================= L9 보스전 ================= */
-await openLesson("종합");
+await openLesson("보스전");
 log(`L9: ${await h1()}`);
 await waitBtn("그날의 기록 재생", 2600);
 await hookChoice();

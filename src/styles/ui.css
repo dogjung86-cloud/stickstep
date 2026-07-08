@@ -2415,3 +2415,22 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
   background: rgba(140, 165, 215, .18); color: #DCE8FF; font-weight: 800; font-size: 13px; cursor: pointer;
 }
 .g3d-photo-x:active { transform: scale(.97); }
+
+/* ---------- 스틱맨 컷 말풍선(하이브리드: 발주 라스터 + 앱이 얹는 한글) ---------- */
+.cutwrap { position: relative; display: block; }
+.cut-bubble {
+  position: absolute; transform: translate(-50%, -100%); max-width: 46%;
+  padding: 6px 11px 7px; border-radius: 14px; border: 1.6px solid #39424E;
+  background: #FFFFFF; color: #1E2A38; font-size: 12.5px; font-weight: 800; line-height: 1.25;
+  box-shadow: 0 2px 6px -2px rgba(42, 58, 94, .28); white-space: nowrap; pointer-events: none;
+}
+.cut-bubble::after {
+  content: ""; position: absolute; left: 50%; bottom: -6.5px; width: 10px; height: 10px;
+  transform: translateX(-50%) rotate(45deg);
+  background: #FFFFFF; border-right: 1.6px solid #39424E; border-bottom: 1.6px solid #39424E;
+}
+.cut-bubble.flip { transform: translate(-50%, 0); }
+.cut-bubble.flip::after {
+  bottom: auto; top: -6.5px;
+  border: 0; border-left: 1.6px solid #39424E; border-top: 1.6px solid #39424E;
+}

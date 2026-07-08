@@ -9,14 +9,33 @@ const RECAP_IMG_BASE = (import.meta as unknown as { env?: { BASE_URL?: string } 
 export const rimg = (file: string, alt: string): string =>
   `<img src="${RECAP_IMG_BASE}recap/${file}" alt="${alt}" loading="lazy" />`;
 
+/** 컷 위 한글 말풍선(하이브리드 표준): 발주 이미지에 글자를 넣는 대신 앱이 얹는다.
+ *  x·y는 이미지 기준 %(말풍선의 중심), flip이면 꼬리가 위를 향한다(인물 아래 배치용). */
+export interface CutBubble {
+  text: string;
+  x: number;
+  y: number;
+  flip?: boolean;
+}
+
 /** 스틱맨 개념 컷(발주 만화 1컷) — public/<theme>/cuts/<name>.webp. concept의 첫 블록에 figure로 끼운다.
- *  중2 VII(elec)이 기준 구현. lazy 금지(.scroll 컨테이너에서 안 뜸 — CLAUDE.md 사고 14). */
-export const cut = (theme: string, name: string, alt: string): string =>
-  `<img src="${RECAP_IMG_BASE}${theme}/cuts/${name}.webp" alt="${alt}" style="display:block;width:100%;border-radius:12px"/>`;
+ *  중2 VII(elec)이 기준 구현. lazy 금지(.scroll 컨테이너에서 안 뜸 — CLAUDE.md 사고 14).
+ *  bubbles를 주면 이미지 위에 위트 말풍선을 겹친다(글자 생성 리스크 없는 라스터+HTML 하이브리드). */
+export const cut = (theme: string, name: string, alt: string, bubbles?: CutBubble[]): string => {
+  const img = `<img src="${RECAP_IMG_BASE}${theme}/cuts/${name}.webp" alt="${alt}" style="display:block;width:100%;border-radius:12px"/>`;
+  if (!bubbles?.length) return img;
+  const bs = bubbles
+    .map(
+      (b) =>
+        `<span class="cut-bubble${b.flip ? " flip" : ""}" style="left:${b.x}%;top:${b.y}%">${b.text}</span>`,
+    )
+    .join("");
+  return `<span class="cutwrap">${img}${bs}</span>`;
+};
 
 export const concept = (o: {
   kicker?: string;
-  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "elec" | "num" | "star";
+  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "elec" | "num" | "star" | "alge" | "grph";
   title: string;
   lead?: string;
   blocks?: Block[];

@@ -58,7 +58,7 @@ export interface DrillItem {
   strip?: { from: number; move: number };
 }
 
-/** 계산 스프린트, 넘패드 연속 풀이. recordQuiz는 "첫 시도 정답률 ≥ passRatio" 1회. */
+/** 스피드 퀴즈(넘패드 연속 풀이 피날레). recordQuiz는 "첫 시도 정답률 ≥ passRatio" 1회. */
 export const mathDrill = (o: {
   title: string;
   lead?: string;
