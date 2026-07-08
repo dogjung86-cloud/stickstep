@@ -165,13 +165,18 @@ src/
   과목 전환 창구는 **과목 허브뿐**(subject.ts) — main.ts `pickSubject()`가 setViewSubject 후 `goHome()`으로
   홈을 재생성한다(nav.back은 이전 과목 홈을 보여주므로 금지). 이때 lastUnitId를 반드시 비운다.
   수학 단원 id는 `m1uN`/`m2uN`(레슨 `m1uNlM`) — 과학 `uN`·`g2uN`과 절대 충돌 금지.
-- **수학 전용 코드는 신규 파일에 격리**(병합 충돌 0 설계): content/math/(curriculum·unit1·unit2·mdsl),
-  ui/mathKit·mathFigures, steps/hookMath·hookMath2(독립 `mathHook` 타입 — 과학 hook.ts 디스패치 불변),
+- **수학 전용 코드는 신규 파일에 격리**(병합 충돌 0 설계): content/math/(curriculum·unit1·unit2·unit3·mdsl),
+  ui/mathKit·mathFigures, steps/hookMath·hookMath2·hookMath3(독립 `mathHook` 타입 — 과학 hook.ts 디스패치 불변),
   steps/{sieveLab·powBuild·factorTree·vennFactor(gcd/lcm/coprime 3모드)·numline·numWalk·counterLab·
   patternLab·areaSplit·mathDrill}(Ⅰ) + {patternRule·substLab·exprAnatomy·likeTerms·eqTruth·balanceLab·
-  solveLab}(Ⅱ), screens/starGame(Ⅰ 보너스 게임), **styles/math.css**(ui.css를 건드리지 않는 수학 전용
+  solveLab}(Ⅱ) + {coordLab·quadLab·bottleLab·droneLab·linkLab·lineLab·shareLab·curveLab}(Ⅲ),
+  screens/starGame(Ⅰ 보너스 게임), **styles/math.css**(ui.css를 건드리지 않는 수학 전용
   시트, main.ts에서 import). 공유 파일 수정은 store·curriculum·home·subject·main·registry·tokens.css·
   mapDecor의 최소 append뿐.
+- **Ⅲ 좌표평면·그래프 관행**: 좌표평면 배경은 mathKit `planeSpec()`이 단일 진실 공급원(랩 4종과
+  mathFigures 좌표 그림 공용, 축 화살표는 양의 끝에만·원점 O). 격자 조작은 최근접 격자점 스냅
+  (판정은 pointerup에서), 발견 랩엔 반례 국면(저금통·남은 사탕)으로 "증가=정비례/감소=반비례" 오개념을
+  랩 안에서 깬다. **'기울기'는 중2 용어라 금지**, "가파름/y축에 가까워진다"로. 상세는 MATH_GUIDE.md Ⅲ 표.
 - **"신기한 응용" 랩은 본선이 아니라 보너스 게임으로**(별그리기 사례, 사용자 확정): 개념의 최단 경로가
   아닌 화려한 응용(한붓 별 = 서로소)은 본선에서 혼란을 부른다 → 서로소는 vennFactor coprime 모드
   (판별소: 8·9 → 9·25 합성수끼리 → 14·21 함정 — 같은 벤 문법 재사용)로 가르치고, 별그리기는
@@ -202,8 +207,9 @@ src/
 - **드릴 채점 규약**: recordQuiz는 스텝당 1회(플레이어 공통)라 mathDrill은 "첫 시도 정답률 ≥
   passRatio(기본 0.7)"를 1회로 기록. 오답 시 정답 공개 + why 한 줄 + (정수 덧뺄이면) `mstrip`
   수직선 미니 재생 — 텍스트만으로 끝내지 않는다.
-- **QA**: `PORT=<포트> node qa/e2e-math.mjs`(Ⅰ 12레슨) · `qa/e2e-math2.mjs`(Ⅱ 9레슨) — 훅 장면 버튼·
-  랩 전 조작(체 탭·칩 병합·트리·벤·별 드로잉·셈돌·저울 버튼·이항 탭탭)·넘패드 드릴 입력까지 실플레이.
+- **QA**: `PORT=<포트> node qa/e2e-math.mjs`(Ⅰ 12레슨) · `qa/e2e-math2.mjs`(Ⅱ 9레슨) ·
+  `qa/e2e-math3.mjs`(Ⅲ 9레슨 — 격자 탭·사분면 드래그·물병 예측·드론 스크럽·링크/곱 검사·a 스테퍼·
+  곡선 자취 드래그 포함) — 훅 장면 버튼·랩 전 조작·넘패드 드릴 입력까지 실플레이.
   랩 애니 잠금에 탭이 먹힐 수 있으니 e2e는 "미완료 대상 재시도 루프"로 조작한다(고정 횟수 탭 금지).
   **e2e 실행 중 src 편집 금지** — HMR 풀리로드로 레슨 상태가 증발한다(사고 #12의 수학판 재발 사례).
 - 수학 훅 12장면은 hookMath.ts 안(cicada·paperfold·lockcode·tilefloor·buslight·freezer·gpsdist·

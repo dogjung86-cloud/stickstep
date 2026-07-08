@@ -704,6 +704,51 @@ const MAP_DECOR: Record<string, string> = {
     <path d="M26 20q6-8 12 0" stroke="#076074" stroke-width="2" fill="none"/>`,
     `<linearGradient id="bx-tl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7FD4EC"/><stop offset=".55" stop-color="#2FA8C4"/><stop offset="1" stop-color="#0A87A3"/></linearGradient>`,
   ),
+  // ── 수학 Ⅲ. 좌표평면과 그래프 — 점 핀 → 좌표평면 → 꺾은선 → 직선 → 곡선 ──
+  pinDeco: S(
+    `${shadow(32, 57, 13, 0.14)}
+    <path d="M32 54 Q20 38 20 27 a12 12 0 1 1 24 0 Q44 38 32 54z" fill="url(#pn-bd)" stroke="#B03A54" stroke-width="1.6"/>
+    <ellipse cx="26" cy="21" rx="5" ry="3.4" fill="#fff" opacity=".45"/>
+    <circle cx="32" cy="27" r="5.2" fill="#FFF3F5" stroke="#B03A54" stroke-width="1.4"/>`,
+    `<radialGradient id="pn-bd" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#FF8FA8"/><stop offset=".6" stop-color="#F25C7E"/><stop offset="1" stop-color="#D93E62"/></radialGradient>`,
+  ),
+  gridDeco: S(
+    `${shadow(32, 56, 16, 0.13)}
+    <rect x="12" y="12" width="40" height="40" rx="9" fill="url(#gd-tl)" stroke="#077E9C" stroke-width="1.6"/>
+    <ellipse cx="22" cy="18" rx="6.5" ry="3" fill="#fff" opacity=".4"/>
+    <path d="M22 12v40M42 12v40M12 22h40M12 42h40" stroke="#FFFFFF" stroke-width="1.1" opacity=".38"/>
+    <path d="M32 14v36M14 32h36" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" opacity=".85"/>
+    <circle cx="42" cy="22" r="3.4" fill="#FFD44A" stroke="#B98A00" stroke-width="1.2"/>`,
+    `<linearGradient id="gd-tl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#52CCE4"/><stop offset=".55" stop-color="#0DA5C6"/><stop offset="1" stop-color="#077E9C"/></linearGradient>`,
+  ),
+  zigDeco: S(
+    `${shadow(32, 56, 15, 0.13)}
+    <rect x="12" y="14" width="40" height="36" rx="9" fill="url(#zg-tl)" stroke="#C6D2DE" stroke-width="1.5"/>
+    <ellipse cx="22" cy="20" rx="6" ry="2.8" fill="#fff" opacity=".65"/>
+    <path d="M17 44h30M17 44V19" stroke="#8CA0B3" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M17 40 L26 30 L33 35 L45 21" stroke="url(#zg-ln)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <circle cx="26" cy="30" r="2.2" fill="#F25C7E"/><circle cx="33" cy="35" r="2.2" fill="#F25C7E"/>`,
+    `<linearGradient id="zg-tl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E8EEF5"/></linearGradient>
+    <linearGradient id="zg-ln" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#F2789A"/><stop offset="1" stop-color="#D93E62"/></linearGradient>`,
+  ),
+  riseDeco: S(
+    `${shadow(32, 56, 15, 0.13)}
+    <rect x="12" y="14" width="40" height="36" rx="9" fill="url(#rs-tl)" stroke="#0A87A3" stroke-width="1.6"/>
+    <ellipse cx="22" cy="20" rx="6" ry="2.8" fill="#fff" opacity=".4"/>
+    <path d="M17 44h30M17 44V19" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>
+    <path d="M18 46 L46 20" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+    <path d="M46 20l-7 1.2M46 20l-1.2 7" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+    <circle cx="32" cy="33" r="2.4" fill="#FFD44A" stroke="#B98A00" stroke-width="1"/>`,
+    `<linearGradient id="rs-tl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7FD4EC"/><stop offset=".55" stop-color="#2FA8C4"/><stop offset="1" stop-color="#0A87A3"/></linearGradient>`,
+  ),
+  hyperDeco: S(
+    `${shadow(32, 56, 15, 0.13)}
+    <rect x="12" y="14" width="40" height="36" rx="9" fill="url(#hy-tl)" stroke="#6A55F2" stroke-width="1.6"/>
+    <ellipse cx="22" cy="20" rx="6" ry="2.8" fill="#fff" opacity=".45"/>
+    <path d="M32 16v32M14 32h36" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" opacity=".5"/>
+    <path d="M35 19 Q36 28 45 29 M29 45 Q28 36 19 35" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" fill="none"/>`,
+    `<linearGradient id="hy-tl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B9A6F2"/><stop offset=".55" stop-color="#8A6EE0"/><stop offset="1" stop-color="#6A55F2"/></linearGradient>`,
+  ),
 };
 
 /** 지도 장식 아트 — 단원 특색 세트 → 생물 아이콘(ART_BIO) → 공용(ART_DECOR) 순서로 찾는다. */

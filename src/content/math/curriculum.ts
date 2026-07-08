@@ -3,6 +3,7 @@
 import type { Unit, GradeId } from "../curriculum";
 import { M1_UNIT1 } from "./unit1";
 import { M1_UNIT2 } from "./unit2";
+import { M1_UNIT3 } from "./unit3";
 
 /** 준비 중 단원 자리, 콘텐츠가 완성되면 실제 UNIT 모듈로 교체한다. */
 const soon = (id: string, roman: string, title: string, subtitle: string, icon: string): Unit => ({
@@ -20,7 +21,7 @@ const soon = (id: string, roman: string, title: string, subtitle: string, icon: 
 export const MATH_G1: Unit[] = [
   M1_UNIT1,
   M1_UNIT2,
-  soon("m1u3", "III", "좌표평면과 그래프", "위치를 수의 쌍으로", "grid"),
+  M1_UNIT3,
   soon("m1u4", "IV", "기본 도형", "점·선·면과 각의 세계", "ruler"),
   soon("m1u5", "V", "평면도형과 입체도형", "둘레·넓이·겉넓이·부피", "layers"),
   soon("m1u6", "VI", "통계", "자료를 정리하고 읽는 법", "target"),

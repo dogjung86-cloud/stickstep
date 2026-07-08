@@ -383,6 +383,70 @@ export function goalChips(defs: { id: string; label: string; sub: string }[]): G
   };
 }
 
+/* ============================== 좌표평면 스펙 (Ⅲ 단원 공용) ============================== */
+
+export interface PlaneSpec {
+  vb: string; // viewBox 문자열
+  grid: string; // 모눈+축+눈금 라벨(정적 배경 SVG 조각)
+  px(x: number): number; // 좌표 → 픽셀
+  py(y: number): number;
+  vx(px: number): number; // 픽셀 → 좌표(스냅 없음)
+  vy(py: number): number;
+  unit: number; // 1칸의 픽셀
+  size: number;
+  min: number;
+  max: number;
+}
+
+/** 좌표평면 배경 스펙. 랩(mboard 위 SVG)과 퀴즈 그림(mathFigures)이 같은 문법을 쓴다.
+ *  교과서 관례: 축 화살표는 양의 방향 한쪽 끝에만, 원점은 O. */
+export function planeSpec(o: { min?: number; max?: number; size?: number; labelEvery?: number } = {}): PlaneSpec {
+  const min = o.min ?? -5;
+  const max = o.max ?? 5;
+  const size = o.size ?? 340;
+  const pad = 18;
+  const unit = (size - pad * 2) / (max - min);
+  const px = (x: number): number => pad + (x - min) * unit;
+  const py = (y: number): number => size - pad - (y - min) * unit;
+  const le = o.labelEvery ?? (max - min > 12 ? 2 : 1);
+  let g = "";
+  // 모눈(0선 제외)
+  for (let v = min; v <= max; v++) {
+    if (v !== 0) {
+      g += `<line x1="${px(v)}" y1="${py(min)}" x2="${px(v)}" y2="${py(max)}" stroke="#E2E9F2" stroke-width="1"/>`;
+      g += `<line x1="${px(min)}" y1="${py(v)}" x2="${px(max)}" y2="${py(v)}" stroke="#E2E9F2" stroke-width="1"/>`;
+    }
+  }
+  // 축(화살표는 양의 끝에만)
+  const ax = py(0);
+  const ay = px(0);
+  g += `<line x1="${px(min) - 6}" y1="${ax}" x2="${px(max) + 8}" y2="${ax}" stroke="#64748B" stroke-width="1.8"/>`;
+  g += `<path d="M${px(max) + 8} ${ax} l-7 -4 v8 z" fill="#64748B"/>`;
+  g += `<line x1="${ay}" y1="${py(min) + 6}" x2="${ay}" y2="${py(max) - 8}" stroke="#64748B" stroke-width="1.8"/>`;
+  g += `<path d="M${ay} ${py(max) - 8} l-4 7 h8 z" fill="#64748B"/>`;
+  // 눈금 라벨(0 제외, 축 위 겹침 방지 오프셋)
+  for (let v = min; v <= max; v += le) {
+    if (v === 0) continue;
+    g += `<text x="${px(v)}" y="${ax + 13}" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8093A8">${String(v).replace("-", "−")}</text>`;
+    g += `<text x="${ay - 5}" y="${py(v) + 3.4}" text-anchor="end" font-size="9.5" font-weight="700" fill="#8093A8">${String(v).replace("-", "−")}</text>`;
+  }
+  g += `<text x="${ay - 6}" y="${ax + 13}" text-anchor="end" font-size="10.5" font-weight="800" fill="#64748B">O</text>`;
+  g += `<text x="${px(max) + 6}" y="${ax - 7}" font-size="12" font-weight="800" font-style="italic" fill="#475569">x</text>`;
+  g += `<text x="${ay + 8}" y="${py(max) - 4}" font-size="12" font-weight="800" font-style="italic" fill="#475569">y</text>`;
+  return {
+    vb: `0 0 ${size} ${size}`,
+    grid: g,
+    px,
+    py,
+    vx: (p: number): number => (p - pad) / unit + min,
+    vy: (p: number): number => (size - pad - p) / unit + min,
+    unit,
+    size,
+    min,
+    max,
+  };
+}
+
 /* ============================== 수직선 미니 스트립 ============================== */
 
 /** 드릴 오답 재생용 미니 수직선: from에서 move만큼 점프하는 화살을 CSS 트랜지션으로 보여준다. */

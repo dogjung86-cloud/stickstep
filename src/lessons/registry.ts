@@ -113,6 +113,14 @@ import { likeTerms } from "./steps/likeTerms";
 import { eqTruth } from "./steps/eqTruth";
 import { balanceLab } from "./steps/balanceLab";
 import { solveLab } from "./steps/solveLab";
+import { coordLab } from "./steps/coordLab";
+import { quadLab } from "./steps/quadLab";
+import { bottleLab } from "./steps/bottleLab";
+import { droneLab } from "./steps/droneLab";
+import { linkLab } from "./steps/linkLab";
+import { lineLab } from "./steps/lineLab";
+import { shareLab } from "./steps/shareLab";
+import { curveLab } from "./steps/curveLab";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -221,6 +229,14 @@ const R: Record<string, StepRenderer> = {
   eqTruth,
   balanceLab,
   solveLab,
+  coordLab,
+  quadLab,
+  bottleLab,
+  droneLab,
+  linkLab,
+  lineLab,
+  shareLab,
+  curveLab,
   quiz,
   table,
   order,

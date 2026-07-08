@@ -91,6 +91,37 @@
   숫자분수 꼴이 아니면 그룹 기호로 재귀 렌더(파서가 crash하던 실사고의 수정).
 - 항 칩 공용 클래스 `.tm-chip`(동류항·이항 랩) — 셈돌처럼 left/top 배치 + translate 금지 규칙 준수.
 
+## 중1 Ⅲ. 좌표평면과 그래프 : 레슨 설계표 (책 102~139쪽, 9레슨: 무료 3 + 프리미엄 6)
+
+| id | 제목 | 훅(일상 미스터리) | 핵심 랩 | 마무리 | prem |
+|---|---|---|---|---|---|
+| m1u3l1 | 좌표: 위치를 수의 쌍으로 | cinema 캄캄한 영화관 좌석 | coordLab 좌표 명중(읽기 2+찍기 4, (4,2)≠(2,4) 함정) | 그림 퀴즈+드릴 | 무료 |
+| m1u3l2 | 사분면: 부호의 네 구역 | sos 바다 조난 신호(위도·경도) | quadLab 점 드래그 구역 발견(축 위=무소속) | binSort+드릴 | 무료 |
+| m1u3l3 | 그래프: 변화를 그림으로 | views 조회수 같은 두 영상 | bottleLab 물병 3종 예측→붓기→실시간 그래프 | pairMatch+드릴 | 무료 |
+| m1u3l4 | 그래프 해석: 그래프 탐정 | wheel 대관람차 20분 주기 | droneLab 시간 스크러버(교과서 113쪽 수치 그대로) | 그림 퀴즈 3+드릴 | ✓ |
+| m1u3l5 | 정비례: 2배는 2배를 부른다 | thunder 번개 후 천둥 5초 | linkLab 2배 링크 검사(반례: 저금통 y=500x+1000) | multi+드릴 | ✓ |
+| m1u3l6 | 정비례 그래프: 원점 직선 | download 남은 시간의 비밀 | lineLab 점 7개→촘촘×2→직선, a 스테퍼(-3~3) | a 읽기 퀴즈+드릴 | ✓ |
+| m1u3l7 | 반비례: 곱이 일정한 관계 | pizza 8조각 나눠 먹기 | shareLab 60초 타임라인 x등분(반례: 남은 사탕) | binSort+드릴 | ✓ |
+| m1u3l8 | 반비례 그래프: 한 쌍의 곡선 | seesaw 시소 균형(30×2=60×1) | curveLab 넓이 고정 직사각형 드래그→쌍곡선 자취 | 찢어진 그래프+드릴 | ✓ |
+| m1u3l9 | 보스전: 그래프로 미래 읽기 | quakealert 흔들림보다 빠른 문자 | (concept 지진 P·S파 그래프) | order+종합 드릴 10문 | ✓ |
+
+- 소단원 순서 준수: 순서쌍과 좌표(01) → 그래프와 그 해석(02) → 정비례(01) → 반비례(02).
+- **개념 선행은 L1 하나뿐**(순서쌍·좌표 용어가 랩 조작의 전제). 나머지 랩은 용어 없이 조작 가능한
+  발견 랩이라 조작 뒤 명명이 맞다(L2 사분면 이름은 랩 무대 라벨로 자연 노출).
+- **좌표평면은 mathKit의 `planeSpec()`이 단일 진실 공급원**: 모눈·축(화살표는 양의 끝에만)·눈금 라벨·
+  픽셀↔좌표 변환을 한 곳에서. 랩 4종(coordLab·quadLab·lineLab·curveLab)과 mathFigures의
+  좌표평면 그림(planeFig)이 전부 이걸 쓴다. 새 좌표 그림도 직접 축을 그리지 말 것.
+- **격자 조작 문법**: 탭 판정은 최근접 격자점 스냅(+허용 반경), 드래그는 정수 스냅(부호·축 판정이
+  명확해짐). 판정은 드롭(pointerup)에서만, 조작 재시도는 e2e의 "미완료 대상 재시도 루프"와 짝.
+- **발견 랩에 반례(가짜 판별) 국면을 넣는다**: 정비례엔 저금통(늘지만 배율 깨짐), 반비례엔 남은 사탕
+  (줄지만 곱 깨짐). "증가=정비례, 감소=반비례" 오개념을 랩 안에서 스스로 무너뜨리는 장치.
+- **'기울기' 용어 금지(중2 일차함수에서 도입)**: "가파름/기울어진 정도/y축에 가까워진다"로 서술.
+  '함수'도 본문 학습 서술엔 안 쓰고, 다음 학년 예고 멘트(중2 일차함수)에서만 등장.
+- 상황↔그래프 모양 문제는 mathFigures의 `miniGraphRow(kinds, labels)`(미니 그래프 스트립,
+  up/upflat/upflatup/updown/twoup/curvefast/curveslow/wave/spike 프리셋)로 그린다.
+- QA: `PORT=<포트> node qa/e2e-math3.mjs`(9레슨 실플레이: 격자 탭·드래그·물병 예측·스크럽·
+  링크/곱 검사·a 스테퍼·곡선 자취 드래그·binSort·pairMatch·order·넘패드 드릴 전부).
+
 ## 학년 언어 규칙 (수학 중1)
 
 - 이 교과서 범위: 소수/합성수/거듭제곱(밑·지수)/소인수분해/서로소/최대공약수/최소공배수/
@@ -106,12 +137,17 @@
 ```
 src/content/math/curriculum.ts   MATH_CURRICULA(g1·g2) + soon 단원 + 퀴즈 자동 번호
 src/content/math/unit1.ts        Ⅰ 수와 연산 콘텐츠
+src/content/math/unit2.ts        Ⅱ 문자와 식 콘텐츠
+src/content/math/unit3.ts        Ⅲ 좌표평면과 그래프 콘텐츠
 src/content/math/mdsl.ts         수학 스텝 팩토리(과학 dsl.ts를 건드리지 않는다)
-src/ui/mathKit.ts                mfmt 수식 렌더 + numpad + 공용 보드 헬퍼
-src/ui/mathFigures.ts            퀴즈 SVG 그림 + mathMiniArt(recap)
+src/ui/mathKit.ts                mfmt 수식 렌더 + numpad + 공용 보드 헬퍼 + planeSpec(좌표평면)
+src/ui/mathFigures.ts            퀴즈 SVG 그림 + mathMiniArt(recap) + miniGraphRow(그래프 스트립)
 src/lessons/steps/hookMath.ts    mathHook 스텝(자체 렌더러 — hook.ts 디스패치 불변)
-src/lessons/steps/math*.ts       sieveLab·powBuild·factorTree·vennFactor·
+src/lessons/steps/hookMath2.ts   Ⅱ 훅 9장면 / hookMath3.ts  Ⅲ 훅 9장면
+src/lessons/steps/math*.ts       Ⅰ: sieveLab·powBuild·factorTree·vennFactor·
                                  numline·numWalk·counterLab·patternLab·areaSplit·mathDrill
+                                 Ⅱ: patternRule·substLab·exprAnatomy·likeTerms·eqTruth·balanceLab·solveLab
+                                 Ⅲ: coordLab·quadLab·bottleLab·droneLab·linkLab·lineLab·shareLab·curveLab
 src/styles/math.css              수학 전용 스타일(ui.css를 건드리지 않는다)
 ```
 - 공유 파일 수정은 최소 append만: store(viewSubject), curriculum(과목 차원),

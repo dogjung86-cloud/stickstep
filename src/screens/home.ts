@@ -10,7 +10,7 @@ import { mapDecorArt } from "../ui/mapDecor";
 import type { Screen } from "../core/router";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
-const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "num" };
+const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "num", m1u3: "num" };
 // 단원별 보너스 미니게임 — 모든 레슨을 완료하면 지도 끝에 열린다.
 const UNIT_GAME: Record<string, { title: string }> = { u3: { title: "단열 디펜스" }, m1u1: { title: "별자리 한붓그리기" } };
 
@@ -366,6 +366,7 @@ const UNIT_DECOR: Record<string, { seq: string[]; sky: [string, string] }> = {
   g2u8: { seq: ["starsDeco", "clusterDeco", "galaxyDeco", "telescopeDeco", "rocketDeco"], sky: ["starsDeco", "sparkle"] }, // 별빛 순항: 별→성단→은하→망원경→로켓
   m1u1: { seq: ["pmDeco", "fracDeco", "primeDeco", "opsDeco", "numlineDeco"], sky: ["sparkle", "cloud"] }, // 수와 연산: 부호 타일, 분수 카드, 소수 7 배지, 연산 타일, 수직선 팻말
   m1u2: { seq: ["xDeco", "eqDeco", "scaleDeco", "aDeco", "boxDeco"], sky: ["sparkle", "cloud"] }, // 문자와 식: x 카드, 등호, 양팔저울, a 카드, x 상자
+  m1u3: { seq: ["pinDeco", "gridDeco", "zigDeco", "riseDeco", "hyperDeco"], sky: ["sparkle", "cloud"] }, // 좌표평면과 그래프: 점 핀, 좌표평면, 꺾은선, 정비례 직선, 반비례 곡선(단원 여정 순)
 };
 const DEFAULT_DECOR: { seq: string[]; sky: [string, string] } = {
   seq: ["tree1", "tree2", "bush", "rock", "grassTuft"],

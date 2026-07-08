@@ -11,6 +11,10 @@ import {
   renderVending, renderChatslang, renderFurniture, renderMacaron, renderBasket,
   renderCatfood, renderJustice, renderLeap, renderHorse,
 } from "./hookMath2";
+import {
+  renderCinema, renderSos, renderViews, renderWheel, renderThunder,
+  renderDownload, renderPizza, renderSeesaw, renderQuakealert,
+} from "./hookMath3";
 import type { StepRenderer } from "../types";
 
 type Face = (k: AvatarKind) => void;
@@ -76,6 +80,16 @@ export const mathHook: StepRenderer = (host, step, api) => {
     justice: renderJustice,
     leap: renderLeap,
     horse: renderHorse,
+    // Ⅲ 좌표평면과 그래프(hookMath3.ts)
+    cinema: renderCinema,
+    sos: renderSos,
+    views: renderViews,
+    wheel: renderWheel,
+    thunder: renderThunder,
+    download: renderDownload,
+    pizza: renderPizza,
+    seesaw: renderSeesaw,
+    quakealert: renderQuakealert,
   };
   const fn = fns[s.scene];
   if (fn) fn(scene, helper, finish, face, s.choices);

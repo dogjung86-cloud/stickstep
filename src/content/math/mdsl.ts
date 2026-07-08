@@ -32,7 +32,17 @@ export const mathHook = (o: {
     | "catfood" // 얼룩진 영수증, 등식·방정식
     | "justice" // 정의의 여신 저울, 등식의 성질
     | "leap" // 항의 점프(부호 반전), 이항
-    | "horse"; // 구일집 추격전, 방정식 활용
+    | "horse" // 구일집 추격전, 방정식 활용
+    // ── Ⅲ 좌표평면과 그래프 (hookMath3.ts) ──
+    | "cinema" // 불 꺼진 영화관, 좌석 순서쌍
+    | "sos" // 바다 조난 신호, 위도·경도 부호(사분면)
+    | "views" // 조회수 같은 두 영상, 그래프 모양
+    | "wheel" // 대관람차, 주기 그래프
+    | "thunder" // 번개와 천둥 5초, 정비례
+    | "download" // 다운로드 남은 시간, 직선의 예측력
+    | "pizza" // 피자 나눠 먹기, 반비례
+    | "seesaw" // 시소의 비밀, 곱 일정
+    | "quakealert"; // 지진 조기 경보, 보스전
   choices?: string[];
   cta?: string;
 }): Step => ({ type: "mathHook", ...o });
@@ -138,3 +148,37 @@ export const balanceLab = (o: { title: string; lead?: string; cta?: string; curi
 /** 이항 랩, 항을 등호 너머로 드래그하면 부호가 뒤집힌다(방정식 풀이). */
 export const solveLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "solveLab", ...o });
+
+/* ── Ⅲ 좌표평면과 그래프 ─────────────────────────────────────── */
+
+/** 좌표 명중, 순서쌍 카드를 보고 좌표평면에 점을 찍고((2,4)≠(4,2) 함정), 점의 좌표를 읽는다. */
+export const coordLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "coordLab", ...o });
+
+/** 사분면 탐사, 점 하나를 자유 드래그하며 부호 패널·구역 발견(축 위=어느 사분면도 아님 포함). */
+export const quadLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "quadLab", ...o });
+
+/** 물병 그래프, 모양이 다른 물병 3종에 물을 부으며 높이-시간 그래프를 실시간으로 발견(예측 먼저). */
+export const bottleLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "bottleLab", ...o });
+
+/** 그래프 탐정, 드론 비행 그래프를 시간 스크러버로 오가며 구간(증가·수평·감소)을 해석한다. */
+export const droneLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "droneLab", ...o });
+
+/** 2배 링크 검사기, 달걀 단백질 표에서 x 2배→y 2배를 발견하고 반례(저금통)를 판별한다(정비례). */
+export const linkLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "linkLab", ...o });
+
+/** 직선 제조기, y=2x 점 찍기→간격 반으로→수 전체=원점 직선, a 슬라이더로 기울기·사분면 탐험. */
+export const lineLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "lineLab", ...o });
+
+/** 나눠 갖기, 60초 영상을 사진 x장으로 등분하며 xy=60(곱 일정)을 발견하고 반례를 판별한다(반비례). */
+export const shareLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "shareLab", ...o });
+
+/** 곡선 정원, 넓이 고정 직사각형의 꼭짓점을 드래그해 자취로 반비례 곡선을 그린다(축 근접 발견). */
+export const curveLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "curveLab", ...o });
