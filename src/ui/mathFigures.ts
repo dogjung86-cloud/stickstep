@@ -242,6 +242,61 @@ export function divisorGridFig(): string {
   );
 }
 
+/** 정삼각형 막대 패턴 그림 — 1개(3), 2개(5), 3개(7)… 문자의 필요(Ⅱ L1). */
+export function triPatternFig(): string {
+  const tri = (x0: number, n: number): string => {
+    let out = "";
+    const s = 40;
+    const h = 34;
+    for (let i = 0; i < n; i++) {
+      const up = i % 2 === 0;
+      const x = x0 + i * (s / 2);
+      out += up
+        ? `<path d="M ${x} 76 L ${x + s / 2} ${76 - h} L ${x + s} 76 Z" fill="rgba(13,165,198,.1)" stroke="${CYAN}" stroke-width="2" stroke-linejoin="round"/>`
+        : `<path d="M ${x} ${76 - h} L ${x + s / 2} 76 L ${x + s} ${76 - h}" fill="none" stroke="${CYAN}" stroke-width="2" stroke-linejoin="round"/>`;
+    }
+    return out;
+  };
+  return svg(
+    "0 0 360 130",
+    tri(18, 1) +
+      tri(94, 2) +
+      tri(196, 3) +
+      `<text x="38" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">1개 — 3</text>` +
+      `<text x="134" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">2개 — 5</text>` +
+      `<text x="256" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">3개 — 7</text>` +
+      `<text x="330" y="70" text-anchor="middle" font-size="17" font-weight="900" fill="${FAINT}">…</text>`,
+  );
+}
+
+/** 양팔저울 그림 — 왼쪽 x상자+구슬 2, 오른쪽 구슬 6(평형). 등식의 성질 문제용. */
+export function scaleEqFig(): string {
+  const bead = (x: number, y: number): string =>
+    `<circle cx="${x}" cy="${y}" r="8" fill="#FFD98A" stroke="#D8952E" stroke-width="1.3"/>`;
+  const box = (x: number, y: number): string =>
+    `<rect x="${x - 11}" y="${y - 10}" width="22" height="20" rx="4" fill="rgba(13,165,198,.85)" stroke="#076074" stroke-width="1.3"/>` +
+    `<text x="${x}" y="${y + 5}" text-anchor="middle" font-size="12" font-weight="900" font-style="italic" fill="#fff">x</text>`;
+  return svg(
+    "0 0 360 150",
+    `<path d="M 180 40 L 168 128 L 192 128 Z" fill="#C89A5E" stroke="#7E5A2E" stroke-width="1.4"/>` +
+      `<rect x="130" y="126" width="100" height="8" rx="4" fill="#B8895A" stroke="#7E5A2E" stroke-width="1.2"/>` +
+      `<rect x="76" y="36" width="208" height="7" rx="3.5" fill="#94A2B4" stroke="#4E5D6E" stroke-width="1.2"/>` +
+      `<circle cx="180" cy="40" r="6" fill="#54677A"/>` +
+      `<line x1="80" y1="42" x2="66" y2="72" stroke="${FAINT}" stroke-width="1.5"/><line x1="80" y1="42" x2="94" y2="72" stroke="${FAINT}" stroke-width="1.5"/>` +
+      `<line x1="280" y1="42" x2="266" y2="72" stroke="${FAINT}" stroke-width="1.5"/><line x1="280" y1="42" x2="294" y2="72" stroke="${FAINT}" stroke-width="1.5"/>` +
+      `<ellipse cx="80" cy="78" rx="42" ry="7" fill="#D8E2EC" stroke="#6E7C8C" stroke-width="1.3"/>` +
+      `<ellipse cx="280" cy="78" rx="42" ry="7" fill="#D8E2EC" stroke="#6E7C8C" stroke-width="1.3"/>` +
+      box(62, 60) +
+      bead(88, 62) +
+      bead(104, 66) +
+      bead(258, 62) +
+      bead(276, 62) +
+      bead(294, 62) +
+      bead(266, 44) +
+      bead(284, 44),
+  );
+}
+
 /* ── recap 미니아트 ─────────────────────────────────────────── */
 const MINI: Record<string, string> = {
   sieve: svg(

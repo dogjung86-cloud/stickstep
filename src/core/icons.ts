@@ -63,6 +63,7 @@ const ICONS: Record<string, IconDef> = {
   // ── 수학 ──
   mathop: { v: '<path d="M4.5 7.5h6.5M7.75 4.25v6.5M13.5 4.5l5.5 5.5M19 4.5L13.5 10"/><path d="M4.5 16.5h6.5M13.5 16.5h5.5M16.25 13.5v.01M16.25 19.5v.01"/>', sw: 2.1 },
   divide: { v: '<path d="M5 12h14"/><circle cx="12" cy="6.6" r="1.5"/><circle cx="12" cy="17.4" r="1.5"/>', sw: 2.3 },
+  scale: { v: '<path d="M12 4v15M8 19h8M12 6l-6 2.5M12 6l6 2.5"/><path d="M3.5 13a2.6 2.6 0 0 0 5 0L6 8.5z"/><path d="M15.5 13a2.6 2.6 0 0 0 5 0L18 8.5z"/>', sw: 1.9 },
 };
 
 export function icon(

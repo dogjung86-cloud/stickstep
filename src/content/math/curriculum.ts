@@ -2,6 +2,7 @@
 // 수학 단원 id는 m1uN(중1)·m2uN(중2) — 과학 uN·g2uN과 절대 충돌 금지.
 import type { Unit, GradeId } from "../curriculum";
 import { M1_UNIT1 } from "./unit1";
+import { M1_UNIT2 } from "./unit2";
 
 /** 준비 중 단원 자리 — 콘텐츠가 완성되면 실제 UNIT 모듈로 교체한다. */
 const soon = (id: string, roman: string, title: string, subtitle: string, icon: string): Unit => ({
@@ -18,7 +19,7 @@ const soon = (id: string, roman: string, title: string, subtitle: string, icon: 
 // 중1 수학 — 교과서 대단원 순서 그대로(Ⅰ만 완성, 나머지는 자리).
 export const MATH_G1: Unit[] = [
   M1_UNIT1,
-  soon("m1u2", "II", "문자와 식", "수 대신 문자로 말하는 법", "book"),
+  M1_UNIT2,
   soon("m1u3", "III", "좌표평면과 그래프", "위치를 수의 쌍으로", "grid"),
   soon("m1u4", "IV", "기본 도형", "점·선·면과 각의 세계", "ruler"),
   soon("m1u5", "V", "평면도형과 입체도형", "둘레·넓이·겉넓이·부피", "layers"),

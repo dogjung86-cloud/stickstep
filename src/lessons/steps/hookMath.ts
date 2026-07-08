@@ -7,6 +7,10 @@ import { haptic, HAPTIC } from "../../core/haptics";
 import { stickAvatar, setStickAvatar, type AvatarKind } from "../../ui/avatar";
 import { ask } from "./hookAsk";
 import { mfmt } from "../../ui/mathKit";
+import {
+  renderVending, renderChatslang, renderFurniture, renderMacaron, renderBasket,
+  renderCatfood, renderJustice, renderLeap, renderHorse,
+} from "./hookMath2";
 import type { StepRenderer } from "../types";
 
 type Face = (k: AvatarKind) => void;
@@ -62,6 +66,16 @@ export const mathHook: StepRenderer = (host, step, api) => {
     rewind: renderRewind,
     mentalmath: renderMentalmath,
     snsdebate: renderSnsdebate,
+    // Ⅱ 문자와 식(hookMath2.ts)
+    vending: renderVending,
+    chatslang: renderChatslang,
+    furniture: renderFurniture,
+    macaron: renderMacaron,
+    basket: renderBasket,
+    catfood: renderCatfood,
+    justice: renderJustice,
+    leap: renderLeap,
+    horse: renderHorse,
   };
   const fn = fns[s.scene];
   if (fn) fn(scene, helper, finish, face, s.choices);

@@ -12,11 +12,11 @@ import { haptic, HAPTIC } from "../core/haptics";
 const esc = (s: string): string => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const pretty = (s: string): string => esc(s).replace(/-/g, "−");
 
-/** 분수 HTML — sign은 분수 앞에 색 부호로. */
+/** 분수 HTML — sign은 분수 앞에 색 부호로. 분자·분모는 재귀 렌더(문자 지원). */
 function fracHtml(num: string, den: string, signCls?: string): string {
   const m = num.match(/^([+-])?(.+)$/)!;
   const sign = m[1];
-  const body = `<span class="mx-frac"><span class="fr-n">${pretty(m[2])}</span><span class="fr-d">${pretty(den)}</span></span>`;
+  const body = `<span class="mx-frac"><span class="fr-n">${fmtCore(m[2])}</span><span class="fr-d">${fmtCore(den)}</span></span>`;
   if (signCls) return body; // 부호는 바깥에서 이미 그림
   if (sign) return `<span class="${sign === "-" ? "mx-neg" : "mx-pos"}">${sign === "-" ? "−" : "+"}${body}</span>`;
   return body;
@@ -75,7 +75,7 @@ function fmtCore(src: string): string {
       const close = matchBrace(src, i);
       if (close > i) {
         const body = src.slice(i + 1, close);
-        const fr = body.match(/^([+-]?\d+)\/(\d+)$/);
+        const fr = body.match(/^([+-]?[0-9a-z.]+)\/([0-9a-z.]+)$/);
         if (fr) {
           out += fracHtml(fr[1], fr[2]);
         } else {
@@ -89,6 +89,14 @@ function fmtCore(src: string): string {
     if (/\d/.test(ch)) {
       const m = src.slice(i).match(/^(\d+(?:\.\d+)?)(?:\^(\d+))?/)!;
       out += pretty(m[1]);
+      if (m[2]) out += `<sup>${m[2]}</sup>`;
+      i += m[0].length;
+      continue;
+    }
+    // 문자(변수 — 이탤릭, 지수 지원): x, y, a, x^2 ...
+    if (/[a-z]/.test(ch)) {
+      const m = src.slice(i).match(/^([a-z])(?:\^(\d+))?/)!;
+      out += `<i class="mx-v">${m[1]}</i>`;
       if (m[2]) out += `<sup>${m[2]}</sup>`;
       i += m[0].length;
       continue;
@@ -108,7 +116,7 @@ function fmtCore(src: string): string {
     out += esc(ch);
     i += 1;
   }
-  return `<span class="mx">${out}</span>`;
+  return out;
 }
 
 /** mfmt를 담은 span 요소. */

@@ -165,10 +165,11 @@ src/
   과목 전환 창구는 **과목 허브뿐**(subject.ts) — main.ts `pickSubject()`가 setViewSubject 후 `goHome()`으로
   홈을 재생성한다(nav.back은 이전 과목 홈을 보여주므로 금지). 이때 lastUnitId를 반드시 비운다.
   수학 단원 id는 `m1uN`/`m2uN`(레슨 `m1uNlM`) — 과학 `uN`·`g2uN`과 절대 충돌 금지.
-- **수학 전용 코드는 신규 파일에 격리**(병합 충돌 0 설계): content/math/(curriculum·unit1·mdsl),
-  ui/mathKit·mathFigures, steps/hookMath(독립 `mathHook` 타입 — 과학 hook.ts 디스패치 불변),
+- **수학 전용 코드는 신규 파일에 격리**(병합 충돌 0 설계): content/math/(curriculum·unit1·unit2·mdsl),
+  ui/mathKit·mathFigures, steps/hookMath·hookMath2(독립 `mathHook` 타입 — 과학 hook.ts 디스패치 불변),
   steps/{sieveLab·powBuild·factorTree·vennFactor·starDraw·numline·numWalk·counterLab·patternLab·
-  areaSplit·mathDrill}, **styles/math.css**(ui.css를 건드리지 않는 수학 전용 시트, main.ts에서 import).
+  areaSplit·mathDrill}(Ⅰ) + {patternRule·substLab·exprAnatomy·likeTerms·eqTruth·balanceLab·solveLab}(Ⅱ),
+  **styles/math.css**(ui.css를 건드리지 않는 수학 전용 시트, main.ts에서 import).
   공유 파일 수정은 store·curriculum·home·subject·main·registry·tokens.css·mapDecor의 최소 append뿐.
 - **수학 레슨 공식**: 미리보기 퍼즐(mathHook) → 발견 랩 → 이름 붙이기(concept, 조작 뒤 명명) →
   recap → 퀴즈(오개념 선택지) → **mathDrill 계산 스프린트**(피날레). 과학과 달리 "작은 상호작용을
@@ -183,8 +184,9 @@ src/
 - **드릴 채점 규약**: recordQuiz는 스텝당 1회(플레이어 공통)라 mathDrill은 "첫 시도 정답률 ≥
   passRatio(기본 0.7)"를 1회로 기록. 오답 시 정답 공개 + why 한 줄 + (정수 덧뺄이면) `mstrip`
   수직선 미니 재생 — 텍스트만으로 끝내지 않는다.
-- **QA**: `PORT=<포트> node qa/e2e-math.mjs`(12레슨 전 스텝 실플레이 — 훅 장면 버튼·체 탭·칩 병합·
-  트리·벤 탭짝·별그리기·수직선 좌표 탭·셈돌 탭탭·넘패드 드릴 입력까지) + qa/shots/math-*.png.
+- **QA**: `PORT=<포트> node qa/e2e-math.mjs`(Ⅰ 12레슨) · `qa/e2e-math2.mjs`(Ⅱ 9레슨) — 훅 장면 버튼·
+  랩 전 조작(체 탭·칩 병합·트리·벤·별 드로잉·셈돌·저울 버튼·이항 탭탭)·넘패드 드릴 입력까지 실플레이.
+  랩 애니 잠금에 탭이 먹힐 수 있으니 e2e는 "미완료 대상 재시도 루프"로 조작한다(고정 횟수 탭 금지).
   **e2e 실행 중 src 편집 금지** — HMR 풀리로드로 레슨 상태가 증발한다(사고 #12의 수학판 재발 사례).
 - 수학 훅 12장면은 hookMath.ts 안(cicada·paperfold·lockcode·tilefloor·buslight·freezer·gpsdist·
   golfscore·daytemp·rewind·mentalmath·snsdebate). 공용 hookAsk.ask() 규칙(choices[0]=정답,

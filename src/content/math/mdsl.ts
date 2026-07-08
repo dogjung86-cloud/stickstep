@@ -22,7 +22,17 @@ export const mathHook = (o: {
     | "daytemp" // L9 일교차 3−(−7)
     | "rewind" // L10 거꾸로 재생×뒤로 걷기
     | "mentalmath" // L11 암산왕 98×5
-    | "snsdebate"; // L12 6÷2(1+2) 논쟁
+    | "snsdebate" // L12 6÷2(1+2) 논쟁
+    // ── Ⅱ 문자와 식 (hookMath2.ts) ──
+    | "vending" // 페트병 회수기 — 문자의 필요
+    | "chatslang" // 채팅 줄임말 — 기호 생략
+    | "furniture" // 키에 맞는 가구 높이 — 대입
+    | "macaron" // 마카롱 상자 무게 — 항·상수항
+    | "basket" // 사과·바나나 장바구니 — 동류항
+    | "catfood" // 얼룩진 영수증 — 등식·방정식
+    | "justice" // 정의의 여신 저울 — 등식의 성질
+    | "leap" // 항의 점프(부호 반전) — 이항
+    | "horse"; // 구일집 추격전 — 방정식 활용
   choices?: string[];
   cta?: string;
 }): Step => ({ type: "mathHook", ...o });
@@ -101,3 +111,33 @@ export const patternLab = (o: { title: string; lead?: string; cta?: string; curi
 /** 분배법칙 넓이 랩 — 직사각형을 쪼개도 넓이 합이 같음 → 98×5 암산 지름길. */
 export const areaSplit = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "areaSplit", ...o });
+
+/* ── Ⅱ 문자와 식 ─────────────────────────────────────────── */
+
+/** 패턴→식 랩 — 정삼각형 막대 패턴에서 2a+1을 발견(문자의 필요). */
+export const patternRule = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "patternRule", ...o });
+
+/** 대입 머신 — x 값을 바꿔 넣으며 식의 값 계산(음수 대입 괄호·(-x)² 함정). */
+export const substLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "substLab", ...o });
+
+/** 식의 해부 — 6x+10의 항·계수·상수항·차수를 탭으로 태깅. */
+export const exprAnatomy = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "exprAnatomy", ...o });
+
+/** 동류항 칩 합치기 — 문자·차수가 같은 항만 합쳐진다. */
+export const likeTerms = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "likeTerms", ...o });
+
+/** 등식 참·거짓 테이블 — 대입으로 해를 찾아 방정식의 뜻 발견. */
+export const eqTruth = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "eqTruth", ...o });
+
+/** 양팔저울 랩(기함) — 등식의 성질 4가지를 저울 조작으로 발견, x 상자 무게 알아내기. */
+export const balanceLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "balanceLab", ...o });
+
+/** 이항 랩 — 항을 등호 너머로 드래그하면 부호가 뒤집힌다(방정식 풀이). */
+export const solveLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "solveLab", ...o });

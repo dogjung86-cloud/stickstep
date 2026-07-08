@@ -69,6 +69,26 @@
   margin: 0 .1em; line-height: 1.12; }
 .mx .mx-frac > .fr-n { padding: 0 .28em .06em; font-size: .82em; }
 .mx .mx-frac > .fr-d { padding: .06em .28em 0; border-top: .09em solid currentColor; font-size: .82em; }
+.mx .mx-v { font-style: italic; font-weight: 800; padding: 0 .02em; }
+
+/* ---------- 항 칩(동류항·이항 랩 공용) ---------- */
+.tm-chip {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 52px; height: 46px; padding: 0 14px; border-radius: 14px;
+  font-size: 19px; font-weight: 800; color: #fff; position: relative;
+  background: linear-gradient(160deg, #52CCE4, #0DA5C6 60%, #0A87A3);
+  box-shadow: 0 5px 12px -3px rgba(13,165,198,.5), inset 0 1.5px 0 rgba(255,255,255,.45);
+  touch-action: none; user-select: none; -webkit-user-select: none;
+  transition: box-shadow .2s;
+}
+.tm-chip .mx { color: #fff; }
+.tm-chip .mx .mx-pos, .tm-chip .mx .mx-neg, .tm-chip .mx .mx-op { color: #fff; }
+.tm-chip.alt { background: linear-gradient(160deg, #9C8CFF, #7C6BFF 60%, #6A55F2);
+  box-shadow: 0 5px 12px -3px rgba(124,107,255,.5), inset 0 1.5px 0 rgba(255,255,255,.45); }
+.tm-chip.const { background: linear-gradient(160deg, #FFC24D, #F0A422 60%, #DE8F0D);
+  box-shadow: 0 5px 12px -3px rgba(240,164,34,.5), inset 0 1.5px 0 rgba(255,255,255,.45); }
+.tm-chip.drag { z-index: 6; box-shadow: 0 14px 26px -8px rgba(23,32,48,.45); }
+.tm-chip.merged { animation: pwMerge .35s var(--spring-bounce); }
 
 /* ---------- 넘패드 + 답 슬롯 ---------- */
 .mans {
