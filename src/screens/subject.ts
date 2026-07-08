@@ -7,14 +7,15 @@ import { haptic, HAPTIC } from "../core/haptics";
 import { BRAND } from "../core/brand";
 import { stickAvatar } from "../ui/avatar";
 import { getState, currentStreak } from "../core/store";
-import { CURRICULA } from "../content/curriculum";
+import { CURRICULA_OF, type SubjectId } from "../content/curriculum";
 import { isDone } from "../core/store";
 import type { Screen } from "../core/router";
 
-function scienceProgress(): { done: number; total: number } {
+function subjectProgress(subject: SubjectId): { done: number; total: number } {
   let done = 0;
   let total = 0;
-  for (const units of [CURRICULA.g1, CURRICULA.g2]) {
+  const cur = CURRICULA_OF[subject];
+  for (const units of [cur.g1, cur.g2]) {
     for (const u of units) {
       for (const l of u.lessons) {
         total += 1;
@@ -28,6 +29,7 @@ function scienceProgress(): { done: number; total: number } {
 export function subjectScreen(opts: {
   mode: "onboard" | "hub";
   onPickScience: () => void;
+  onPickMath?: () => void;
   onBack?: () => void;
 }): Screen {
   const st = getState();
@@ -54,10 +56,10 @@ export function subjectScreen(opts: {
   }
 
   const h1 = el("div", { class: "h1", html: opts.mode === "onboard" ? "무엇을<br>배워 볼까요?" : "과목 고르기" });
-  const sub = el("div", { class: "sub", text: "지금은 과학이 열려 있어요. 수학·사회도 곧 만나요!" });
+  const sub = el("div", { class: "sub", text: "과학과 수학이 열려 있어요. 사회도 곧 만나요!" });
 
   // ── 과학 카드(활성) — 스틱맨 쌤이 손을 흔든다 ──
-  const prog = scienceProgress();
+  const prog = subjectProgress("sci");
   const started = prog.done > 0;
   const sci = el(
     "button",
@@ -77,6 +79,29 @@ export function subjectScreen(opts: {
   sci.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     opts.onPickScience();
+  });
+
+  // ── 수학 카드(활성) — 문제를 손으로 만지며 푸는 트랙 ──
+  const mprog = subjectProgress("math");
+  const mstarted = mprog.done > 0;
+  const mth = el(
+    "button",
+    { class: "subj-card mth", attrs: { "aria-label": "수학 시작하기" } },
+    el("div", { class: "subj-ava" }, stickAvatar(mstarted ? "cheer" : "curious")),
+    el(
+      "div",
+      { class: "subj-body" },
+      el("div", { class: "subj-name" }, el("span", { html: icon("mathop", 18) }), el("span", { text: "수학" })),
+      el("div", { class: "subj-desc", text: "중1 — 계산이 아니라 감각으로" }),
+      mstarted
+        ? el("div", { class: "subj-meta", text: `레슨 ${mprog.done}개 완료 · ${currentStreak()}일 연속` })
+        : el("div", { class: "subj-meta", text: "수와 연산부터 — 발견 랩 + 스프린트" }),
+    ),
+    el("div", { class: "subj-go", html: icon("chevron", 20) }),
+  );
+  mth.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    opts.onPickMath?.();
   });
 
   // ── 준비 중 카드(수학·사회) ──
@@ -124,7 +149,7 @@ export function subjectScreen(opts: {
     { class: "scroll pad subj-body-wrap" },
     h1,
     sub,
-    el("div", { class: "subj-list" }, sci, soonCard("수학", "ruler", "계산이 아니라 감각으로"), soonCard("사회", "globe", "지도 위에서 배우는 세상")),
+    el("div", { class: "subj-list" }, sci, mth, soonCard("사회", "globe", "지도 위에서 배우는 세상")),
     el("div", { class: "subj-note", text: st.onboarded ? "과목은 언제든 여기서 바꿀 수 있어요." : "지금은 과학부터! 다른 과목도 준비되는 대로 열려요." },
     ),
   );

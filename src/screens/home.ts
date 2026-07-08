@@ -3,14 +3,14 @@ import { el, clear, afterPaint } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { BRAND } from "../core/brand";
-import { getState, currentStreak, isDone, lessonOf, getViewGrade, setViewGrade, toggleReviewMode, isReviewMode } from "../core/store";
-import { CURRICULA, GRADE_LABEL, gradeOfUnit, isUnlocked, isPremiumLocked, unitProgress, type Unit, type GradeId } from "../content/curriculum";
+import { getState, currentStreak, isDone, lessonOf, getViewGrade, setViewGrade, getViewSubject, toggleReviewMode, isReviewMode } from "../core/store";
+import { CURRICULA_OF, GRADE_LABEL, gradeOfUnit, subjectOfUnit, isUnlocked, isPremiumLocked, unitProgress, type Unit, type GradeId, type SubjectId } from "../content/curriculum";
 import { serpentine, smoothPath, pathUpTo } from "../ui/serpentine";
 import { mapDecorArt } from "../ui/mapDecor";
 import type { Screen } from "../core/router";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
-const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u7: "elec" };
+const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u7: "elec", m1u1: "num", m1u2: "num" };
 // 단원별 보너스 미니게임 — 모든 레슨을 완료하면 지도 끝에 열린다.
 const UNIT_GAME: Record<string, { title: string }> = { u3: { title: "단열 디펜스" } };
 
@@ -21,7 +21,9 @@ export function homeScreen(
   nav2?: { onSubjects?: () => void; onLogin?: () => void },
 ): Screen {
   const st = getState();
-  // 학년 트랙 — 방금 학습한 단원이 있으면 그 단원의 학년으로 따라간다.
+  // 과목·학년 트랙 — 방금 학습한 단원이 있으면 그 단원의 과목·학년으로 따라간다.
+  const subject: SubjectId = focusUnitId ? subjectOfUnit(focusUnitId) : getViewSubject();
+  const CURRICULA = CURRICULA_OF[subject];
   let grade: GradeId = focusUnitId ? gradeOfUnit(focusUnitId) : getViewGrade();
   let cur = CURRICULA[grade];
   // 우선순위: 방금 학습한 단원 → 첫 미완료 단원 → 첫 단원
@@ -361,6 +363,8 @@ const UNIT_DECOR: Record<string, { seq: string[]; sky: [string, string] }> = {
   g2u3: { seq: ["flashlightDeco", "mirrorDeco", "prismDeco", "rgbDeco", "noteDeco"], sky: ["rainbowDeco", "cloud"] }, // 빛의 여행 → 소리의 여행
   g2u4: { seq: ["beakerDeco", "atomDeco", "tableDeco", "moleculeDeco", "ionDeco"], sky: ["atomDeco", "cloud"] }, // 성분에서 입자로 — 원소→원자→주기율표→분자→이온
   g2u7: { seq: ["boltDeco", "batteryDeco", "bulbDeco", "coilDeco", "magnetDeco"], sky: ["boltDeco", "cloud"] }, // 전기 순례: 스파크→전지→전구→코일→자석
+  m1u1: { seq: ["pebblesDeco", "sieveDeco", "numTreeDeco", "vennDeco", "numlineDeco"], sky: ["cloud", "sparkle"] }, // 수의 계곡 등반: 조약돌→체→인수 나무→벤→수직선 팻말
+  m1u2: { seq: ["numlineDeco", "pebblesDeco", "vennDeco", "numTreeDeco", "sieveDeco"], sky: ["sparkle", "cloud"] }, // 문자와 식 — 수학 소품 재사용(추후 전용 세트)
 };
 const DEFAULT_DECOR: { seq: string[]; sky: [string, string] } = {
   seq: ["tree1", "tree2", "bush", "rock", "grassTuft"],
@@ -379,6 +383,7 @@ const DECOR_SIZE: Record<string, number> = {
   volcanoDeco: 50, quartzDeco: 44, strataDeco: 50, fossilDeco: 42, earthcutDeco: 46,
   flashlightDeco: 48, mirrorDeco: 44, prismDeco: 50, rgbDeco: 44, noteDeco: 38, rainbowDeco: 58,
   beakerDeco: 46, atomDeco: 46, tableDeco: 46, moleculeDeco: 46, ionDeco: 42,
+  pebblesDeco: 44, sieveDeco: 48, numTreeDeco: 46, vennDeco: 48, numlineDeco: 44,
 };
 
 function placeDecor(layer: HTMLElement, points: { x: number; y: number }[], W: number, unitId: string): void {

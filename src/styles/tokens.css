@@ -82,6 +82,11 @@
   --subj-elec-press: #C79400;
   --subj-elec-tint: #FFF7DC;
   --subj-bio-deep: #0CA678;
+  --subj-num: #0DA5C6;     /* 수학 Ⅰ 수와 연산 — 수학 시안(과학 트랙과 동시 노출 없음) */
+  --subj-num-press: #0A87A3;
+  --subj-num-tint: #E6F7FB;
+  --m-pos: #2F6FE4;        /* 수학 부호 색 — 양수 + */
+  --m-neg: #E8434F;        /* 수학 부호 색 — 음수 − */
 
   /* 라운드 스케일 */
   --r-sm: 12px;
@@ -168,6 +173,7 @@
   --grad-light: linear-gradient(150deg, #E15FC4 0%, #C838A6 50%, #A62B8C 100%);
   --grad-atom: linear-gradient(150deg, #A2D13F 0%, #7CB024 50%, #5E9310 100%);
   --grad-elec: linear-gradient(150deg, #FFD44A 0%, #EFB800 50%, #CE9600 100%);
+  --grad-num: linear-gradient(150deg, #3FC6E0 0%, #0DA5C6 50%, #0884A2 100%);
   --grad-sheen: linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,0));
   --grad-medallion: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #5A9CF9 0%, #3182F6 48%, #1F6BE0 100%);
   --grad-medallion-bio: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #34DCA6 0%, #12B886 50%, #0A9670 100%);
@@ -180,6 +186,7 @@
   --grad-medallion-geo: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #CDA06A 0%, #A9713B 50%, #85541F 100%);
   --grad-medallion-light: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #E86FCE 0%, #C838A6 50%, #A02B87 100%);
   --grad-medallion-atom: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #AEDA52 0%, #7CB024 50%, #5A8E0E 100%);
+  --grad-medallion-num: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #52CCE4 0%, #0DA5C6 50%, #077E9C 100%);
   --grad-medallion-elec: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #FFDF6E 0%, #EFB800 50%, #C08E00 100%);
   --grad-gold: radial-gradient(120% 120% at 30% 20%, rgba(255,255,255,.92) 0%, rgba(255,255,255,.15) 26%, rgba(255,255,255,0) 48%), linear-gradient(160deg, #FFD873 0%, #F5A623 50%, #E0891A 100%);
 

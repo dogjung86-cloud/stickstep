@@ -1,7 +1,8 @@
-# CLAUDE.md — 중학 과학 학습 앱의 헌법
+# CLAUDE.md — 중학 학습 앱(과학·수학)의 헌법
 
 이 문서는 모든 세션이 따라야 하는 규칙이다. 새 단원·인터랙션을 얹기 전에 반드시 읽는다.
 목표: Brilliant처럼 개념 인터랙션과 퀴즈를 교차한 레슨, 토스 수준의 터치감, Duolingo식 지속 학습.
+**수학 트랙 작업은 MATH_GUIDE.md(수학 헌법)를 함께 읽는다** — 과목 차원 요약은 아래 "수학 트랙" 섹션.
 
 ## 스택 · 실행
 - Vite + TypeScript, **프레임워크 없이 바닐라**. Tailwind·컴포넌트 라이브러리 금지.
@@ -97,9 +98,10 @@ src/
              chemKit(중2 IV 공용 — 원자 공/원자핵(+N)/전자(−)/이온식 렌더 + ELEMS(CPK 색·상대 크기)·
                      결합 막대·formulaHtml. 입자 표현의 단일 진실 공급원 — 여기 관례를 반드시 따를 것),
              atomFigures(중2 IV 퀴즈 SVG + atomMiniArt — 'chem' 이름은 중2 I이 선점, IV는 atom 접두)
-  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금·학년 트랙), unit1 … unit7(중1),
-             g2/unit1…unit4(중2 — I 물질의 특성·II 지권의 변화·III 빛과 파동·IV 물질의 구성)
-  screens/   splash, subject(과목 허브 — 과학 활성·수학/사회 준비 중·스틱맨 낙서 데코),
+  content/   dsl(저작 팩토리), curriculum(단원 집계·잠금·학년 트랙·과목 차원), unit1 … unit7(중1),
+             g2/unit1…unit4(중2 — I 물질의 특성·II 지권의 변화·III 빛과 파동·IV 물질의 구성),
+             math/(수학 트랙 — curriculum·unit1(중1 Ⅰ 수와 연산)·mdsl 수학 팩토리. MATH_GUIDE.md 참조)
+  screens/   splash, subject(과목 허브 — 과학·수학 활성·사회 준비 중·스틱맨 낙서 데코),
              onboarding, home(게임 지도 + 중1⇄중2 학년 세그), done,
              paywall(프리미엄 안내·구매), login(구글·카카오·네이버 소셜 스텁 — 출시 시 OAuth 연결)
 ```
@@ -157,6 +159,38 @@ src/
 - **earthCut3d 절단면 수학**: SphereGeometry 정점은 x=-r·cosφ·sinθ, z=r·sinφ·sinθ.
   φ∈[0,270°] 표면이면 뜯긴 창은 -X-Z 사분면(이등분 (-0.707,0,-0.707)) — rotY(3π/4)가 정면,
   교과서 구도는 -0.55rad 덜 돌린다. 절단면은 -X 반원 CircleGeometry 2장(하나는 rotY -90°).
+
+## 수학 트랙 — 과목 차원 · 수학 레슨 문법 (상세는 MATH_GUIDE.md)
+- **과목 차원**: `store.viewSubject`("sci"|"math") + `curriculum.ts`의 `CURRICULA_OF`/`subjectOfUnit`.
+  과목 전환 창구는 **과목 허브뿐**(subject.ts) — main.ts `pickSubject()`가 setViewSubject 후 `goHome()`으로
+  홈을 재생성한다(nav.back은 이전 과목 홈을 보여주므로 금지). 이때 lastUnitId를 반드시 비운다.
+  수학 단원 id는 `m1uN`/`m2uN`(레슨 `m1uNlM`) — 과학 `uN`·`g2uN`과 절대 충돌 금지.
+- **수학 전용 코드는 신규 파일에 격리**(병합 충돌 0 설계): content/math/(curriculum·unit1·unit2·mdsl),
+  ui/mathKit·mathFigures, steps/hookMath·hookMath2(독립 `mathHook` 타입 — 과학 hook.ts 디스패치 불변),
+  steps/{sieveLab·powBuild·factorTree·vennFactor·starDraw·numline·numWalk·counterLab·patternLab·
+  areaSplit·mathDrill}(Ⅰ) + {patternRule·substLab·exprAnatomy·likeTerms·eqTruth·balanceLab·solveLab}(Ⅱ),
+  **styles/math.css**(ui.css를 건드리지 않는 수학 전용 시트, main.ts에서 import).
+  공유 파일 수정은 store·curriculum·home·subject·main·registry·tokens.css·mapDecor의 최소 append뿐.
+- **수학 레슨 공식**: 미리보기 퍼즐(mathHook) → 발견 랩 → 이름 붙이기(concept, 조작 뒤 명명) →
+  recap → 퀴즈(오개념 선택지) → **mathDrill 계산 스프린트**(피날레). 과학과 달리 "작은 상호작용을
+  촘촘히"가 정체 — 개념 카드 하나가 길어지면 실패. 용어는 랩 뒤에 붙인다(브릴리언트 리서치 결론).
+- **수식·입력은 mathKit이 단일 진실 공급원**: `mfmt()` 마이크로 마크업("{a/b}" 분수·"^n" 지수·
+  "(+3)"/"(-5)" 부호 수 — 부호만 색: --m-pos/--m-neg), `makeAnswerPad()` 커스텀 넘패드
+  (kind: int/frac/dec — **시스템 키보드 절대 금지**), 밝은 모눈 보드 `mboard()`(과학 다크 .stage의 수학판),
+  목표 칩 `goalChips()`(pn-badge num). 분수 답은 값이 같으면 정답 + 기약 아니면 스낵 안내.
+- **수학 랩은 rAF를 쓰지 않는다** — 전부 CSS 트랜지션/키프레임 + setTimeout 체인(타이머는 Set으로
+  모아 cleanup에서 일괄 해제). QA 프리즈 환경에서도 완주 가능하고 배터리에도 유리. 셈돌 배치는
+  left/top으로(transform은 born/poof 키프레임 몫 — 겹치면 순간이동, counterLab 헤더 주석 참조).
+- **드릴 채점 규약**: recordQuiz는 스텝당 1회(플레이어 공통)라 mathDrill은 "첫 시도 정답률 ≥
+  passRatio(기본 0.7)"를 1회로 기록. 오답 시 정답 공개 + why 한 줄 + (정수 덧뺄이면) `mstrip`
+  수직선 미니 재생 — 텍스트만으로 끝내지 않는다.
+- **QA**: `PORT=<포트> node qa/e2e-math.mjs`(Ⅰ 12레슨) · `qa/e2e-math2.mjs`(Ⅱ 9레슨) — 훅 장면 버튼·
+  랩 전 조작(체 탭·칩 병합·트리·벤·별 드로잉·셈돌·저울 버튼·이항 탭탭)·넘패드 드릴 입력까지 실플레이.
+  랩 애니 잠금에 탭이 먹힐 수 있으니 e2e는 "미완료 대상 재시도 루프"로 조작한다(고정 횟수 탭 금지).
+  **e2e 실행 중 src 편집 금지** — HMR 풀리로드로 레슨 상태가 증발한다(사고 #12의 수학판 재발 사례).
+- 수학 훅 12장면은 hookMath.ts 안(cicada·paperfold·lockcode·tilefloor·buslight·freezer·gpsdist·
+  golfscore·daytemp·rewind·mentalmath·snsdebate). 공용 hookAsk.ask() 규칙(choices[0]=정답,
+  good≠bad)은 과학과 동일하게 적용된다.
 
 ## 퀴즈 유형 (quiz 스텝 하나로)
 - `mcq`(5지선다) · `ox`(O/X) · `multi`(보기 합답형, 복수정답) · 그림 퀴즈(`figure` 추가).

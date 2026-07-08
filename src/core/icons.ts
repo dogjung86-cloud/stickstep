@@ -60,6 +60,10 @@ const ICONS: Record<string, IconDef> = {
   ptable: { v: '<rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 9.2h17M3.5 14.9h17M9.2 3.5v17M14.9 3.5v17"/>', sw: 1.8 },
   molecule: { v: '<circle cx="7.5" cy="15.5" r="3.4"/><circle cx="16.5" cy="15.5" r="3.4"/><circle cx="12" cy="7.2" r="3.8"/><path d="M9.6 10.3l-1 2.1M14.4 10.3l1 2.1"/>', sw: 1.9 },
   ionArrow: { v: '<circle cx="9" cy="13" r="6.2"/><path d="M9 10.4v5.2M6.4 13h5.2"/><path d="M16 4.5h4.5M18.25 2.25v4.5"/>', sw: 1.9 },
+  // ── 수학 ──
+  mathop: { v: '<path d="M4.5 7.5h6.5M7.75 4.25v6.5M13.5 4.5l5.5 5.5M19 4.5L13.5 10"/><path d="M4.5 16.5h6.5M13.5 16.5h5.5M16.25 13.5v.01M16.25 19.5v.01"/>', sw: 2.1 },
+  divide: { v: '<path d="M5 12h14"/><circle cx="12" cy="6.6" r="1.5"/><circle cx="12" cy="17.4" r="1.5"/>', sw: 2.3 },
+  scale: { v: '<path d="M12 4v15M8 19h8M12 6l-6 2.5M12 6l6 2.5"/><path d="M3.5 13a2.6 2.6 0 0 0 5 0L6 8.5z"/><path d="M15.5 13a2.6 2.6 0 0 0 5 0L18 8.5z"/>', sw: 1.9 },
 };
 
 export function icon(

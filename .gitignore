@@ -8,7 +8,7 @@ qa/e2e_*.png
 qa/u7fix-*.png
 qa/u7card.png
 
-# 발주 실행 로그
+# 발주·e2e 실행 로그
 qa/order-*.log
 qa/*-order.log
 qa/dev-*.log

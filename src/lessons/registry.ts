@@ -90,6 +90,25 @@ import { foliationLab } from "./steps/foliationLab";
 import { rockCycle } from "./steps/rockCycle";
 import { driftLab } from "./steps/driftLab";
 import { plateMap } from "./steps/plateMap";
+import { mathHook } from "./steps/hookMath";
+import { mathDrill } from "./steps/mathDrill";
+import { sieveLab } from "./steps/sieveLab";
+import { powBuild } from "./steps/powBuild";
+import { factorTree } from "./steps/factorTree";
+import { vennFactor } from "./steps/vennFactor";
+import { starDraw } from "./steps/starDraw";
+import { numline } from "./steps/numline";
+import { numWalk } from "./steps/numWalk";
+import { counterLab } from "./steps/counterLab";
+import { patternLab } from "./steps/patternLab";
+import { areaSplit } from "./steps/areaSplit";
+import { patternRule } from "./steps/patternRule";
+import { substLab } from "./steps/substLab";
+import { exprAnatomy } from "./steps/exprAnatomy";
+import { likeTerms } from "./steps/likeTerms";
+import { eqTruth } from "./steps/eqTruth";
+import { balanceLab } from "./steps/balanceLab";
+import { solveLab } from "./steps/solveLab";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -175,6 +194,25 @@ const R: Record<string, StepRenderer> = {
   rockCycle,
   driftLab,
   plateMap,
+  mathHook,
+  mathDrill,
+  sieveLab,
+  powBuild,
+  factorTree,
+  vennFactor,
+  starDraw,
+  numline,
+  numWalk,
+  counterLab,
+  patternLab,
+  areaSplit,
+  patternRule,
+  substLab,
+  exprAnatomy,
+  likeTerms,
+  eqTruth,
+  balanceLab,
+  solveLab,
   quiz,
   table,
   order,
