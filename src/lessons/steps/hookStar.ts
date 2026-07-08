@@ -118,12 +118,11 @@ export function renderNightRoad(scene: HTMLElement, helper: HTMLElement, finish:
     ${lampAt(52, 148, 1.35, 1.25)}
     ${lampAt(136, 141, 0.92, 0.8)}
     ${lampAt(198, 136, 0.62, 0.5)}
-    <!-- 스틱맨(밤 라인) -->
+    <!-- 밤길을 걷다 가로등을 바라보는 스틱맨(손그림 라인) -->
+    <ellipse cx="30" cy="160" rx="17" ry="2.8" fill="#000" opacity=".2"/>
     <g stroke="#E8EEF8" stroke-width="2.6" fill="none">
-      <circle cx="30" cy="120" r="8" fill="none"/>
-      <line x1="30" y1="128" x2="30" y2="146"/>
-      <line x1="30" y1="134" x2="21" y2="141"/><line x1="30" y1="134" x2="39" y2="141"/>
-      <line x1="30" y1="146" x2="23" y2="158"/><line x1="30" y1="146" x2="37" y2="158"/>
+      <circle cx="33" cy="119" r="7.5" fill="#16223E"/>
+      <path d="M31 127l-2 17M30 132l-9 7M30 132l12 3M29 144l-7 13M29 144l10 12"/>
     </g>
   </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
@@ -255,15 +254,17 @@ export function renderMilkyBand(scene: HTMLElement, helper: HTMLElement, finish:
   fig.innerHTML = `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" aria-hidden="true">
     <clipPath id="mbClip"><rect x="4" y="4" width="232" height="128" rx="16"/></clipPath>
     <g clip-path="url(#mbClip)">
-      <image href="${starPhoto("milkyway-pan.webp")}" x="-30" y="-38" width="310" height="155" preserveAspectRatio="xMidYMid slice"/>
+      <rect x="4" y="4" width="232" height="128" fill="#07090F"/>
+      <image href="${starPhoto("milkyway-pan.webp")}" x="-34" y="-42" width="318" height="184" preserveAspectRatio="xMidYMid slice"/>
     </g>
     <rect x="4" y="4" width="232" height="128" rx="16" stroke="#3A4A68" stroke-width="1.6"/>
     <!-- 지평선 실루엣 -->
     <path d="M4 132 L48 122 L84 130 L130 118 L180 130 L236 124 L236 166 L4 166 Z" fill="#0E1626"/>
-    <g stroke="#E8EEF8" stroke-width="2.4" fill="none">
-      <circle cx="120" cy="140" r="7"/>
-      <line x1="120" y1="147" x2="120" y2="160"/>
-      <line x1="120" y1="151" x2="111" y2="145"/><line x1="120" y1="151" x2="129" y2="145"/>
+    <!-- 올려다보는 스틱맨(손그림 라인 — stargaze 문법: 접촉 그림자 + 젖힌 고개 + 하늘 가리키는 팔) -->
+    <ellipse cx="120" cy="163" rx="20" ry="3" fill="#000" opacity=".22"/>
+    <g stroke="#E8EEF8" stroke-width="2.6" fill="none">
+      <circle cx="117" cy="136" r="7.5" fill="#0E1626"/>
+      <path d="M120 143l2 17M121 148l-10 4M121 148l14-10M122 160l-9 11M122 160l7 12"/>
     </g>
     <text x="120" y="30" fill="#DCE8FF" font-size="11" font-weight="700" text-anchor="middle" opacity=".85">깜깜한 시골 밤하늘</text>
   </svg>`;
@@ -379,10 +380,11 @@ export function renderMovingStar(scene: HTMLElement, helper: HTMLElement, finish
       <circle cx="120" cy="66" r="36" stroke="#8FB3E8" stroke-width="2.4"/>
     </g>
     <path d="M4 142 L60 130 L120 140 L190 128 L236 138 L236 166 L4 166 Z" fill="#0E1626"/>
-    <g stroke="#E8EEF8" stroke-width="2.4" fill="none">
-      <circle cx="52" cy="148" r="7"/>
-      <line x1="52" y1="155" x2="52" y2="164"/>
-      <line x1="52" y1="157" x2="44" y2="152"/><line x1="52" y1="157" x2="60" y2="151"/>
+    <!-- 움직이는 점을 가리키는 스틱맨(손그림 라인) -->
+    <ellipse cx="52" cy="164" rx="17" ry="2.6" fill="#000" opacity=".22"/>
+    <g stroke="#E8EEF8" stroke-width="2.6" fill="none">
+      <circle cx="49" cy="140" r="7.2" fill="#0E1626"/>
+      <path d="M52 147l1 13M53 151l-9 5M53 151l13-9M53 160l-7 5M53 160l8 4"/>
     </g>
   </svg>`;
   const zoomBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "망원경으로 보기" }));

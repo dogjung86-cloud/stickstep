@@ -14,6 +14,7 @@ const ICONS: Record<string, IconDef> = {
   grid: { v: '<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>', sw: 2 },
   ruler: { v: '<rect x="3" y="8.5" width="18" height="7" rx="2"/><path d="M7.5 8.5v3M12 8.5v3M16.5 8.5v3"/>', sw: 1.9 },
   drop: { v: '<path d="M12 3.5C15 8 18 11.2 18 14.6a6 6 0 0 1-12 0C6 11.2 9 8 12 3.5z"/>', sw: 2 },
+  cloud: { v: '<path d="M7 18a4 4 0 0 1-.6-7.96 5.5 5.5 0 0 1 10.7-1.1A4.3 4.3 0 0 1 16.8 18z"/>', sw: 2 },
   play: { v: '<path d="M8 5.5v13l11-6.5z"/>', fill: true },
   chevron: { v: '<path d="M9.5 6l6 6-6 6"/>', sw: 2.4 },
   back: { v: '<path d="M15 6l-6 6 6 6"/>', sw: 2.2 },

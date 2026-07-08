@@ -78,6 +78,7 @@ import { parallaxLab } from "./steps/parallaxLab";
 import { starLight3d } from "./steps/starLight3d";
 import { starColorLab } from "./steps/starColorLab";
 import { balloonUniverse } from "./steps/balloonUniverse";
+import { galaxy3d } from "./steps/galaxy3d";
 import { densityLab } from "./steps/densityLab";
 import { densityPool } from "./steps/densityPool";
 import { solubilityLab } from "./steps/solubilityLab";
@@ -186,6 +187,7 @@ const R: Record<string, StepRenderer> = {
   starLight3d,
   starColorLab,
   balloonUniverse,
+  galaxy3d,
   densityLab,
   densityPool,
   solubilityLab,

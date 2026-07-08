@@ -347,11 +347,13 @@ export const starLight3d: StepRenderer = (host, step, api) => {
       const vfov = (44 * Math.PI) / 180;
       const hfov = 2 * Math.atan(Math.tan(vfov / 2) * aspect);
       // 씬 스팬: 별 글로우(-1.2) ~ 스크린 ×3(6.3)+프레임 여유 → 중심 x 3.0, 반폭 4.1
+      // 카메라는 +x쪽으로 비틀어(방위 ~31°) 격자 스크린의 "면"이 보이게 — 정측면이면
+      // 몇 칸을 덮는지 안 읽힌다(사용자 피드백). 비튼 만큼 겉보기 폭이 줄어 halfW 보정.
       const C = new THREE.Vector3(3.0, -0.1, 0);
-      const halfW = 4.1;
+      const halfW = 3.75;
       const halfH = PLATE / 2 + 0.75;
       const dist = Math.max(halfW / Math.tan(hfov / 2), halfH / Math.tan(vfov / 2)) + 0.4;
-      const dir = new THREE.Vector3(0.16, 0.35, 1).normalize();
+      const dir = new THREE.Vector3(0.62, 0.4, 1).normalize();
       st.camera.position.copy(C.clone().add(dir.multiplyScalar(dist)));
       st.camera.lookAt(C);
     }

@@ -84,6 +84,8 @@ export const starColorLab = (o: { title: string; lead?: string; cta?: string; cu
 export const balloonUniverse = (o: { title: string; lead?: string; cta?: string; curio?: { q: string; a: string } }): Step =>
   ({ type: "balloonUniverse", ...o });
 
+export const galaxy3d = (o: { title: string; lead?: string; cta?: string }): Step => ({ type: "galaxy3d", ...o });
+
 export const hook = (o: {
   title: string; lead?: string; narrator: string; done?: string;
   scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen"

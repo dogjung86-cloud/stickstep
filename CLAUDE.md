@@ -564,6 +564,19 @@ src/
 - e2e(`PORT=<포트> node qa/e2e-g2u8.mjs`): **nav.go 연속 push 방식은 셀렉터를 전부 `.screen.active`로
   스코프**해야 한다(숨은 화면의 CTA를 잡던 실사고) + createLessonPlayer 두 번째 인자는
   `{ onExit, onComplete }` 객체. 프리뷰 하니스 rAF 프리즈(사고 17) 시 이 e2e가 픽셀 검증의 확정 경로.
+- **galaxy3d(L5) = 가로 3D 우리은하 관측선**(2차 피드백로 hotspot 대체): 디스크는 milkyway-top 실사에
+  **원형 알파 페이드 마스크**(캔버스 destination-in — 사각 텍스처 그대로면 검은 다이아 윤곽 실사고)를
+  합성한 평면 + 입자 볼륨(원반 두께·벌지)이라 옆에서도 "납작+불룩"이 산다. 드래그 = polar/azim 궤도,
+  탭 = 태양계·은하 중심(**중심 탭 → 은하수 파노라마 카드** — "안에서 중심 방향을 보면"의 위치 논리),
+  지름 10만·중심~태양 3만 광년 라벨을 씬에 상시 표기. **가로 랩 leave()는 반드시 rot.dispose()까지** —
+  onLeave 콜백은 오버레이를 제거하지 않아, 빠뜨리면 fixed 오버레이가 남아 이후 모든 터치를 가로챈다(실사고).
+- **comic panels의 img는 상대 경로만**("comics/g2u8l7/0.png") — 렌더러가 BASE를 붙인다. spot.photo와
+  같은 이중 접두 함정(만화가 전부 폴백 스틱맨으로 보인 실사고). concept term의 icon은 **core/icons.ts에
+  있는 키만**(cloud는 이번에 추가) — 없는 키는 조용히 빈 아이콘이 된다.
+- starLight3d 카메라는 +x쪽으로 비튼 dir(0.62,0.4,1) — 정측면이면 격자 "면"이 안 보여 몇 칸 덮는지
+  안 읽힌다(2차 피드백). 훅 실사 `<image>`는 slice 기준 viewport가 클립 rect를 **완전히 덮게** 잡을 것
+  (7px 모자라 흰 띠가 생겼던 milkyband 실사고). 밤 장면 스틱맨은 stargaze 문법(접촉 그림자+머리 fill+
+  한 path 포즈) — 뻣뻣한 대칭 line 스틱맨 금지.
 
 ## 메타볼 렌더러 (대단원 IV에서 이식 완료)
 - `sample/renderer-comparison.html`의 `FRAG` 셰이더 원본을 `renderers/meta.ts`로 **수치 그대로** 이식했다.

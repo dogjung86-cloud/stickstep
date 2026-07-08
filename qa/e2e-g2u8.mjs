@@ -216,12 +216,72 @@ await quiz(0); await quiz(0); await oxPick(false); await quiz(0);
 log("L4 DONE");
 await page.evaluate(() => document.querySelector(".screen.active .xbtn")?.click()); await W(700);
 
-// ══════════ L5 우리은하 ══════════
+// ══════════ L5 우리은하 (galaxy3d 가로 랩) ══════════
 await openLesson("g2u8l5");
+await W(1100); await shot("g2u8-hook-milkyband");
 await hookChoice(0); await clickCTA();
-await clickCTA(); // concept
-await hotspotAll(); await shot("g2u8-hotspot-galaxy");
-await clickCTA(); // recap
+await clickCTA(); // concept(용어)
+await clickBtn("가로 화면", 1600);
+await page.waitForSelector(".rot-overlay canvas", { timeout: 9000 });
+await W(1600); // three 로드
+// 초기 카메라(azim .9, polar .62) 기준 월드 좌표 → 무대 → 뷰포트 좌표로 탭
+const tapWorld = async (wx, wy, wz) => {
+  await page.evaluate(([wx, wy, wz]) => {
+    const overlay = document.querySelector(".rot-overlay");
+    const cv = overlay.querySelector("canvas");
+    const r = overlay.getBoundingClientRect();
+    const w = r.height, h = r.width; // 가로 무대: 논리 폭 = 화면 세로
+    const az = 0.9, po = 0.62, D = 20.5, t = Math.tan((40 * Math.PI) / 360);
+    const eye = [Math.cos(az) * Math.cos(po) * D, Math.sin(po) * D, Math.sin(az) * Math.cos(po) * D];
+    const norm = (a) => { const l = Math.hypot(a[0], a[1], a[2]); return [a[0] / l, a[1] / l, a[2] / l]; };
+    const zA = norm(eye);
+    const xA = norm([zA[2], 0, -zA[0]]);
+    const yA = [zA[1] * xA[2] - zA[2] * xA[1], zA[2] * xA[0] - zA[0] * xA[2], zA[0] * xA[1] - zA[1] * xA[0]];
+    const v = [wx - eye[0], wy - eye[1], wz - eye[2]];
+    const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    const xv = dot(v, xA), yv = dot(v, yA), zv = dot(v, zA);
+    const xn = (xv / -zv) / (t * (w / h)), yn = (yv / -zv) / t;
+    const mx = ((xn + 1) / 2) * w, my = ((1 - yn) / 2) * h;
+    const cx = r.right - my, cy = r.top + mx;
+    for (const type of ["pointerdown", "pointerup"]) {
+      cv.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId: 9, isPrimary: true, pointerType: "touch", clientX: cx, clientY: cy }));
+    }
+  }, [wx, wy, wz]);
+  await W(700);
+};
+await tapWorld(0, 0, 0); // 은하 중심 → 은하수 사진 카드
+const photoShown = await page.evaluate(() => document.querySelector(".g3d-photo")?.classList.contains("show"));
+log("  galaxy photo card:", photoShown);
+await shot("g2u8-galaxy3d-photo");
+await page.evaluate(() => document.querySelector(".g3d-photo-x")?.click()); await W(400);
+await tapWorld(6 * Math.cos(-0.55), 0.05, 6 * Math.sin(-0.55)); // 태양계 마커
+// 세로 드래그(azim 유지)로 위 → 옆 시점
+const dragV = async (fromY, toY) => {
+  await page.evaluate(([fromY, toY]) => {
+    const overlay = document.querySelector(".rot-overlay");
+    const cv = overlay.querySelector("canvas");
+    const r = overlay.getBoundingClientRect();
+    const w = r.height;
+    const mmap = (mx, my) => ({ cx: r.right - my, cy: r.top + mx });
+    const seq = [["pointerdown", w / 2, fromY]];
+    const steps = 12;
+    for (let i = 1; i <= steps; i++) seq.push(["pointermove", w / 2, fromY + ((toY - fromY) * i) / steps]);
+    seq.push(["pointerup", w / 2, toY]);
+    for (const [type, mx, my] of seq) {
+      const { cx, cy } = mmap(mx, my);
+      cv.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId: 10, isPrimary: true, pointerType: "touch", clientX: cx, clientY: cy }));
+    }
+  }, [fromY, toY]);
+  await W(900);
+};
+await dragV(100, 270); // polar +0.78 → 탑뷰(>1.25)
+await shot("g2u8-galaxy3d-top");
+await dragV(300, 8); // polar −1.34 → 에지온(<0.2)
+await shot("g2u8-galaxy3d-side");
+log("  galaxy chips:", await chipsOn());
+await page.evaluate(() => document.querySelector(".rot-exit")?.click()); await W(900);
+await clickCTA(); // lab →
+await clickCTA(); // recap →
 await quiz(0); await quiz(0); await oxPick(false); await quiz(0);
 log("L5 DONE");
 await page.evaluate(() => document.querySelector(".screen.active .xbtn")?.click()); await W(700);
@@ -240,6 +300,13 @@ await page.evaluate(() => document.querySelector(".screen.active .xbtn")?.click(
 
 // ══════════ L7 팽창하는 우주 ══════════
 await openLesson("g2u8l7");
+await W(900);
+const comicImg = await page.evaluate(() => {
+  const img = document.querySelector(".screen.active .comic-img");
+  return img ? { complete: img.complete, nw: img.naturalWidth } : null;
+});
+log("  comic img loaded:", JSON.stringify(comicImg));
+await shot("g2u8-comic-hubble");
 for (let i = 0; i < 7; i++) await clickCTA(); // comic 7컷
 {
   const r = await cvRect();

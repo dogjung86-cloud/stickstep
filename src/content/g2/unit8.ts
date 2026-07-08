@@ -11,7 +11,7 @@
 // 천체는 SVG로 그리지 않는다 — 실사 원칙. 개념 스텝마다 발주 스틱맨 컷 1장(cut("star", …)).
 import type { Unit } from "../curriculum";
 import {
-  concept, mcq, ox, multi, order, binSort, hotspot, figTabs, hook, recap, comic, cut,
+  concept, mcq, ox, multi, order, binSort, figTabs, hook, recap, comic, cut, galaxy3d,
   parallaxLab, starLight3d, starColorLab, balloonUniverse,
 } from "../dsl";
 import {
@@ -19,7 +19,7 @@ import {
 } from "../../ui/starFigures";
 
 const BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
-const COMIC_BASE = `${BASE}comics/g2u8l7/`;
+const COMIC_BASE = "comics/g2u8l7/"; // comic 렌더러가 BASE를 붙인다 — 여기서 붙이면 //comics 이중 접두 사고
 
 /** 퀴즈 figure용 실사 임베드(별과 우주 — NASA·ESO, 출처는 photos/CREDITS.md) */
 const simg = (file: string, alt: string): string =>
@@ -573,65 +573,27 @@ const L5 = {
       cta: "은하 지도 열기",
     }),
     concept({
-      kicker: "개념 먼저",
+      kicker: "이름 먼저",
       kickerTone: "star",
       title: "우리은하 — 태양계가 사는<br>별의 도시",
       blocks: [
         {
           k: "figure",
           svg: cut("star", "galaxy", "나선 은하 그림 위 한 지점을 가리키는 스틱맨 — 그 지점 원 안에 꼬마 스틱맨이 손을 흔든다"),
-          cap: "우리은하 — 그리고 우리는 나선팔 위 이 지점에 살아요",
+          cap: "우리은하 — 그리고 우리는 이 도시 어딘가에 살아요. 어디쯤일까요?",
         },
         { k: "term", name: "우리은하", def: "태양계가 속한 은하. 수천억 개의 별과 성단·성운으로 이루어진 거대한 별의 집단", icon: "sparkle" },
         {
           k: "p",
-          html: "위에서 보면 <b>막대 모양 중심부</b>에서 <b>나선팔</b>이 뻗어 나온 소용돌이, 옆에서 보면 <b>가운데가 불룩한 납작한 원반</b>이에요. 태양계는 중심이 아니라 <b>변두리</b> — 중심에서 약 3만 광년 떨어진 나선팔에 있어요.",
-        },
-        {
-          k: "stats",
-          items: [
-            { v: "약 10만 광년", label: "우리은하 지름" },
-            { v: "약 3만 광년", label: "중심 ↔ 태양계" },
-            { v: "수천억 개", label: "별의 수" },
-          ],
-        },
-        {
-          k: "p",
-          html: "훅에서 본 <b>은하수</b>의 정체 — 원반 안에 있는 우리가 원반의 <b>안쪽을 빙 둘러본 모습</b>이에요. 그래서 하늘을 한 바퀴 도는 띠로 보이고, 별이 빽빽한 중심 방향(궁수자리 쪽)이 가장 밝고 두껍게 보여요.",
+          html: "이 도시의 모양·크기, 그리고 <b>우리 집(태양계)의 주소</b>는 — 밖에서 직접 돌려 보는 게 최고예요. 관측선을 타고 나가 봐요!",
         },
       ],
-      cta: "실사 지도 탐험",
+      cta: "관측선 탑승",
     }),
-    hotspot({
-      title: "우리은하 실사 지도",
-      lead: "NASA가 그린 우리은하 지도예요. 세 곳을 눌러 확인해 보세요.",
-      svg: simg("milkyway-top.webp", "위에서 본 우리은하 상상도 — 막대 중심부와 나선팔"),
-      dark: true,
-      mode: "reveal",
-      spots: [
-        {
-          x: 50,
-          y: 50,
-          label: "은하 중심부",
-          desc: "별이 가장 빽빽한 막대 모양 중심 — 은하수에서 가장 밝고 두껍게 보이는 방향이에요.",
-        },
-        {
-          x: 76,
-          y: 30,
-          label: "나선팔",
-          desc: "중심에서 소용돌이처럼 뻗어 나온 팔 — 별과 성운이 모여 있어요.",
-          photo: "photos/star/milkyway-pan.webp",
-          photoCap: "원반 안에서 안쪽을 둘러보면 — 이 띠(은하수)로 보여요 (ESO 파노라마 실사)",
-        },
-        {
-          x: 50,
-          y: 71,
-          label: "태양계는 여기",
-          desc: "중심에서 약 3만 광년 — 우리은하의 변두리 나선팔 위. 우리는 도시 외곽 주민이에요!",
-        },
-      ],
-      explainGood: "은하 지도 완주! 중심·나선팔·우리 집까지 확인했어요.",
-      explainBad: "세 지점을 모두 눌러 보세요 — 중심부, 나선팔, 그리고 태양계의 위치!",
+    galaxy3d({
+      title: "우리은하 관측선",
+      lead: "NASA 실사 지도를 3D로 — 돌려 보고, 태양계와 은하 중심을 찾아 탭!",
+      cta: "정리하러 가기",
     }),
     recap({
       title: "우리은하, 정리!",
@@ -740,7 +702,19 @@ const L6 = {
           cap: "허술하게 흩어진 무리 vs 공처럼 빽빽한 무리 — 모양이 곧 이름이에요",
         },
         { k: "term", name: "산개 성단", def: "수십~수천 개의 별이 허술하게 흩어져 모인 무리. 주로 파랗고 젊은 별", icon: "sparkle" },
-        { k: "term", name: "구상 성단", def: "수만~수십만 개의 별이 공 모양으로 빽빽하게 모인 무리. 주로 붉고 늙은 별", icon: "planet" },
+        {
+          k: "figure",
+          svg: simg("pleiades.webp", "산개 성단 플레이아데스 — 파란 별들이 허술하게 모인 실사"),
+          cap: "산개 성단(플레이아데스) — 파란 별들이 듬성듬성, 맨눈에도 6~7개가 보여요",
+          dark: true,
+        },
+        { k: "term", name: "구상 성단", def: "수만~수십만 개의 별이 공 모양으로 빽빽하게 모인 무리. 주로 붉고 늙은 별", icon: "star" },
+        {
+          k: "figure",
+          svg: simg("m5-globular.webp", "구상 성단 M5 — 수십만 개의 별이 공 모양으로 빽빽한 실사"),
+          cap: "구상 성단(M5) — 중심으로 갈수록 빽빽한 별의 공, 수십만 개!",
+          dark: true,
+        },
         {
           k: "p",
           html: "위치도 달라요 — 산개 성단은 주로 <b>나선팔(원반)</b>에, 구상 성단은 은하 중심부와 <b>원반을 감싸는 헤일로</b>에 흩어져 있어요. 색깔 힌트: 산개는 <b>파란 별</b>(뜨겁고 젊음), 구상은 <b>붉은 별</b>(차갑고 늙음) 위주!",
