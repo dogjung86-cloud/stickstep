@@ -12,6 +12,7 @@ import { loginScreen } from "./screens/login";
 import { homeScreen } from "./screens/home";
 import { doneScreen } from "./screens/done";
 import { minigameScreen } from "./screens/minigame";
+import { starGameScreen } from "./screens/starGame";
 import { paywallScreen } from "./screens/paywall";
 import { createLessonPlayer } from "./lessons/player";
 import { findLesson, isPremiumLocked } from "./content/curriculum";
@@ -50,6 +51,11 @@ function openLogin(): void {
 
 function openGame(unitId: string): void {
   lastUnitId = unitId;
+  // 단원별 보너스 게임 분기 — 수학 I은 별자리 한붓그리기, 과학 III은 단열 디펜스
+  if (unitId === "m1u1") {
+    nav.go(starGameScreen(goHome));
+    return;
+  }
   nav.go(minigameScreen(goHome));
 }
 

@@ -348,3 +348,26 @@
   background: var(--grad-num); box-shadow: inset 0 1.5px 0 rgba(255,255,255,.4); }
 .boss-head .bh-t { font-size: 16px; font-weight: 800; }
 .boss-head .bh-s { font-size: 12.5px; color: rgba(255,255,255,.72); margin-top: 2px; }
+
+/* ---------- 별자리 한붓그리기(보너스 게임 화면) ---------- */
+.stg-screen { display: flex; flex-direction: column; }
+.stg-screen .scroll { flex: 1; overflow-y: auto; }
+.stg-wrap { display: grid; gap: 12px; padding: 12px 16px 28px; }
+.stg-dex { display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px; }
+.stg-slot {
+  aspect-ratio: 1; border-radius: 10px; border: 1.6px dashed var(--n300);
+  display: grid; place-items: center; font-size: 11px; font-weight: 800;
+  color: var(--n400); background: var(--n0); transition: transform .25s var(--spring-soft);
+}
+.stg-slot.on {
+  border: none; color: #fff; transform: scale(1.06);
+  background: radial-gradient(120% 120% at 32% 26%, #33BCD8 0%, #0DA5C6 58%, #0A87A3 100%);
+  box-shadow: var(--sh-raise);
+}
+.stg-slot.secret { border-color: #E8C56A; color: #C79400; background: #FFFBEE; }
+.stg-slot.secret.on {
+  background: radial-gradient(120% 120% at 32% 26%, #FFD44A 0%, #F2B430 62%, #DA9A18 100%);
+  color: #7A5800;
+}
+.stg-segs { flex-wrap: wrap; }
+.stg-segs .ct-btn { padding: 8px 13px; }

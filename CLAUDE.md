@@ -167,10 +167,16 @@ src/
   수학 단원 id는 `m1uN`/`m2uN`(레슨 `m1uNlM`) — 과학 `uN`·`g2uN`과 절대 충돌 금지.
 - **수학 전용 코드는 신규 파일에 격리**(병합 충돌 0 설계): content/math/(curriculum·unit1·unit2·mdsl),
   ui/mathKit·mathFigures, steps/hookMath·hookMath2(독립 `mathHook` 타입 — 과학 hook.ts 디스패치 불변),
-  steps/{sieveLab·powBuild·factorTree·vennFactor·starDraw·numline·numWalk·counterLab·patternLab·
-  areaSplit·mathDrill}(Ⅰ) + {patternRule·substLab·exprAnatomy·likeTerms·eqTruth·balanceLab·solveLab}(Ⅱ),
-  **styles/math.css**(ui.css를 건드리지 않는 수학 전용 시트, main.ts에서 import).
-  공유 파일 수정은 store·curriculum·home·subject·main·registry·tokens.css·mapDecor의 최소 append뿐.
+  steps/{sieveLab·powBuild·factorTree·vennFactor(gcd/lcm/coprime 3모드)·numline·numWalk·counterLab·
+  patternLab·areaSplit·mathDrill}(Ⅰ) + {patternRule·substLab·exprAnatomy·likeTerms·eqTruth·balanceLab·
+  solveLab}(Ⅱ), screens/starGame(Ⅰ 보너스 게임), **styles/math.css**(ui.css를 건드리지 않는 수학 전용
+  시트, main.ts에서 import). 공유 파일 수정은 store·curriculum·home·subject·main·registry·tokens.css·
+  mapDecor의 최소 append뿐.
+- **"신기한 응용" 랩은 본선이 아니라 보너스 게임으로**(별그리기 사례, 사용자 확정): 개념의 최단 경로가
+  아닌 화려한 응용(한붓 별 = 서로소)은 본선에서 혼란을 부른다 → 서로소는 vennFactor coprime 모드
+  (판별소: 8·9 → 9·25 합성수끼리 → 14·21 함정 — 같은 벤 문법 재사용)로 가르치고, 별그리기는
+  screens/starGame.ts "별자리 한붓그리기"(UNIT_GAME m1u1, 단원 100% 정복 시 해제, 도감 9칸 =
+  별 8종 + 6점의 비밀, 신기록 갱신분만 +5XP)로 승격. main.ts openGame이 unitId로 분기한다.
 - **수학 레슨 공식**: 미리보기 퍼즐(mathHook) → 발견 랩 → 이름 붙이기(concept, 조작 뒤 명명) →
   recap → 퀴즈(오개념 선택지) → **mathDrill 계산 스프린트**(피날레). 과학과 달리 "작은 상호작용을
   촘촘히"가 정체 — 개념 카드 하나가 길어지면 실패. 용어는 랩 뒤에 붙인다(브릴리언트 리서치 결론).

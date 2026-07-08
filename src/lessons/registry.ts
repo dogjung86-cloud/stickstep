@@ -96,7 +96,6 @@ import { sieveLab } from "./steps/sieveLab";
 import { powBuild } from "./steps/powBuild";
 import { factorTree } from "./steps/factorTree";
 import { vennFactor } from "./steps/vennFactor";
-import { starDraw } from "./steps/starDraw";
 import { numline } from "./steps/numline";
 import { numWalk } from "./steps/numWalk";
 import { counterLab } from "./steps/counterLab";
@@ -200,7 +199,6 @@ const R: Record<string, StepRenderer> = {
   powBuild,
   factorTree,
   vennFactor,
-  starDraw,
   numline,
   numWalk,
   counterLab,

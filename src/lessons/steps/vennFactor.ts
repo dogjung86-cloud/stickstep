@@ -1,6 +1,8 @@
 // vennFactor, 소인수 벤 다이어그램(L4·L5 기함 랩).
 // gcd: 36·60의 소인수 칩에서 "같은 수끼리" 짝지어 교집합으로, 교집합의 곱이 최대공약수.
 // lcm: (L4에서 만든 벤 그대로) 울타리 전체를 탭해 곱하면 최소공배수, 검산·서로소까지.
+// coprime: 서로소 판별소 3스테이지(8·9 → 9·25 → 14·21 함정), 짝을 찾아 겹치거나
+//   확신이 서면 "서로소!" 선언. 겹침이 하나라도 합쳐지면 그 자리에서 "서로소 아님" 판정.
 // rAF 없음. 드래그 + 탭 폴백, setPointerCapture는 try/catch.
 import { el, clamp } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
@@ -11,7 +13,7 @@ import type { StepRenderer } from "../types";
 interface VennStep {
   title: string;
   lead?: string;
-  mode: "gcd" | "lcm";
+  mode: "gcd" | "lcm" | "coprime";
   cta?: string;
   curio?: Curio;
 }
@@ -49,11 +51,17 @@ export const vennFactor: StepRenderer = (host, step, api) => {
           { id: "gcd", label: "최대공약수", sub: "교집합의 곱" },
           { id: "divs", label: "공약수", sub: "누구의 약수?" },
         ]
-      : [
-          { id: "lcm", label: "울타리 전체", sub: "곱하면?" },
-          { id: "check", label: "검산", sub: "정말 배수?" },
-          { id: "coprime", label: "서로소면?", sub: "5와 8" },
-        ],
+      : s.mode === "coprime"
+        ? [
+            { id: "st1", label: "8과 9", sub: "겹칠까?" },
+            { id: "st2", label: "9와 25", sub: "합성수끼리" },
+            { id: "st3", label: "14와 21", sub: "함정 주의" },
+          ]
+        : [
+            { id: "lcm", label: "울타리 전체", sub: "곱하면?" },
+            { id: "check", label: "검산", sub: "정말 배수?" },
+            { id: "coprime", label: "서로소면?", sub: "5와 8" },
+          ],
   );
   const board = mboard(H + 14);
   const toast = mtoast(board);
@@ -106,7 +114,7 @@ export const vennFactor: StepRenderer = (host, step, api) => {
     place(c);
     board.appendChild(c.el);
     chips.push(c);
-    if (isGcd && !locked) bindDrag(c);
+    if (s.mode !== "lcm" && !locked) bindDrag(c);
     return c;
   }
 
@@ -166,6 +174,10 @@ export const vennFactor: StepRenderer = (host, step, api) => {
     place(b);
     chips.push(b);
     haptic(HAPTIC.select);
+    if (s.mode === "coprime") {
+      coprimeMerged(b.base);
+      return;
+    }
     if (goals.on("common", "찾았다!")) {
       helper.innerHTML = "좋아요, 겹치는 소인수는 <b>가운데(교집합)</b>로 모여요. 남은 겹침도 찾아보세요.";
     }
@@ -313,9 +325,147 @@ export const vennFactor: StepRenderer = (host, step, api) => {
     api.enableCTA(s.cta ?? "연습하기");
   }
 
-  /* ================= 드래그(GCD 전용) ================= */
+  /* ================= COPRIME 모드(서로소 판별소) ================= */
+  interface CoStage {
+    a: number;
+    b: number;
+    L: [number, [number, number]][];
+    R: [number, [number, number]][];
+    coprime: boolean;
+    goal: string;
+    intro: string;
+    win: string;
+  }
+  const CO_STAGES: CoStage[] = [
+    {
+      a: 8,
+      b: 9,
+      L: [
+        [2, [56, 70]],
+        [2, [42, 128]],
+        [2, [68, 170]],
+      ],
+      R: [
+        [3, [256, 92]],
+        [3, [272, 152]],
+      ],
+      coprime: true,
+      goal: "st1",
+      intro: "8 = 2×2×2, 9 = 3×3. <b>겹치는 재료가 있는지</b> 같은 수끼리 짝지어 보고, 하나도 없다는 확신이 서면 <b>서로소!</b>를 눌러요.",
+      win: "맞아요! 재료가 하나도 안 겹치면 함께 나눌 수 있는 수는 <b>1뿐</b>, 최대공약수 1이에요. 이 관계를 곧 <b>서로소</b>라 부를 거예요.",
+    },
+    {
+      a: 9,
+      b: 25,
+      L: [
+        [3, [54, 92]],
+        [3, [70, 154]],
+      ],
+      R: [
+        [5, [258, 92]],
+        [5, [272, 152]],
+      ],
+      coprime: true,
+      goal: "st2",
+      intro: "이번엔 <b>9와 25</b>, 둘 다 소수가 아니에요(합성수). 그래도 서로소일 수 있을까요?",
+      win: "정답! 9 = 3², 25 = 5², <b>둘 다 합성수여도</b> 재료가 안 겹치면 서로소예요. '서로소 = 둘 다 소수'가 아니라는 것, 시험 단골!",
+    },
+    {
+      a: 14,
+      b: 21,
+      L: [
+        [2, [52, 82]],
+        [7, [68, 152]],
+      ],
+      R: [
+        [3, [276, 82]],
+        [7, [252, 152]],
+      ],
+      coprime: false,
+      goal: "st3",
+      intro: "마지막, <b>14와 21</b>. 딱 보면 안 겹칠 것 같은데… 정말요? 확인해 보세요.",
+      win: "",
+    },
+  ];
+  let coStage = 0;
+  let coBtn: HTMLButtonElement | null = null;
+  let coDone = false;
+
+  function setupCoprime(stageNo: number): void {
+    coStage = stageNo;
+    const st = CO_STAGES[stageNo];
+    chips.forEach((c) => c.el.remove());
+    chips = [];
+    centerUsed = 0;
+    pendingTap = null;
+    read.innerHTML = "";
+    actions.innerHTML = "";
+    labelA = st.a;
+    labelB = st.b;
+    drawVenn();
+    helper.innerHTML = st.intro;
+    st.L.forEach(([b, [x, y]], i) => later(() => mkChip(b, x, y, "L"), i * 90));
+    st.R.forEach(([b, [x, y]], i) => later(() => mkChip(b, x, y, "R"), 300 + i * 90));
+    coBtn = el("button", { class: "ct-btn hero", text: "겹침 없음, 서로소!", attrs: { type: "button" } }) as HTMLButtonElement;
+    coBtn.addEventListener("click", () => declareCoprime());
+    actions.appendChild(coBtn);
+  }
+
+  function declareCoprime(): void {
+    if (coDone) return;
+    const st = CO_STAGES[coStage];
+    if (!st.coprime) {
+      // 함정: 겹침(7)이 있는데 서로소 선언
+      haptic(HAPTIC.wrong);
+      toast("정말요? 잘 봐요!");
+      helper.innerHTML = "성급했어요! <b>7</b>이 양쪽에 숨어 있어요. 같은 수끼리 끌어 겹쳐 보세요.";
+      chips
+        .filter((c) => c.base === 7)
+        .forEach((c) => {
+          c.el.style.outline = "3px solid rgba(240,68,82,.55)";
+          later(() => {
+            c.el.style.outline = "";
+          }, 900);
+        });
+      return;
+    }
+    haptic(HAPTIC.correct);
+    read.innerHTML = mfmt(`교집합: 텅! → 최대공약수 1`);
+    toast("서로소!");
+    goals.on(st.goal, "서로소!");
+    helper.innerHTML = st.win;
+    coBtn?.remove();
+    if (coStage + 1 < CO_STAGES.length) {
+      later(() => setupCoprime(coStage + 1), 2100);
+    }
+  }
+
+  /** 함정 스테이지에서 겹침(7·7)이 실제로 합쳐진 순간 → 서로소 아님 판정. */
+  function coprimeMerged(base: number): void {
+    const st = CO_STAGES[coStage];
+    read.innerHTML = mfmt(`교집합: ${base} → 최대공약수 ${base}`);
+    toast("겹쳤다, 서로소 아님!");
+    goals.on(st.goal, `gcd ${base}!`);
+    coBtn?.remove();
+    finishCoprime();
+  }
+
+  function finishCoprime(): void {
+    if (coDone) return;
+    coDone = true;
+    haptic(HAPTIC.done);
+    later(() => {
+      helper.innerHTML =
+        "판별 완료! 서로소 = <b>최대공약수가 1</b> = 소인수 재료가 <b>하나도 안 겹침</b>. " +
+        "9와 25처럼 합성수끼리도 서로소일 수 있고, 14와 21처럼 겉만 봐선 몰라요. <b>분해해 봐야 안다</b>, 이게 오늘의 무기!";
+      api.recordQuiz(true);
+      api.enableCTA(s.cta ?? "이름 붙이기");
+    }, 1400);
+  }
+
+  /* ================= 드래그(GCD·COPRIME 짝짓기) ================= */
   function bindDrag(c: VChip): void {
-    if (!isGcd || c.locked || c.el.dataset.bound) return;
+    if (s.mode === "lcm" || c.locked || c.el.dataset.bound) return;
     c.el.dataset.bound = "1";
     let sx = 0;
     let sy = 0;
@@ -420,6 +570,7 @@ export const vennFactor: StepRenderer = (host, step, api) => {
 
   drawVenn();
   if (isGcd) setupGcd();
+  else if (s.mode === "coprime") setupCoprime(0);
   else setupLcm(0);
 
   api.setCTA("목표를 모두 모으면 열려요", { enabled: false });

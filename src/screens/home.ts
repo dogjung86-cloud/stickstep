@@ -12,7 +12,7 @@ import type { Screen } from "../core/router";
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
 const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u7: "elec", m1u1: "num", m1u2: "num" };
 // 단원별 보너스 미니게임 — 모든 레슨을 완료하면 지도 끝에 열린다.
-const UNIT_GAME: Record<string, { title: string }> = { u3: { title: "단열 디펜스" } };
+const UNIT_GAME: Record<string, { title: string }> = { u3: { title: "단열 디펜스" }, m1u1: { title: "별자리 한붓그리기" } };
 
 export function homeScreen(
   onOpenLesson: (id: string) => void,

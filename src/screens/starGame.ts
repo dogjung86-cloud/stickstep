@@ -1,23 +1,16 @@
-// starDraw, 별그리기 랩. 학생이 원 위의 점을 손으로 직접 이어 별을 그린다.
-//   첫 걸음(시작점 → 아무 점)이 보폭 k를 정하고, 그다음부터는 같은 보폭만 허용,
-//   시작점으로 돌아왔을 때 모든 점을 밟았으면 한붓 별(성공 조건 = n과 k가 서로소).
-//   시나리오: ① n=6, 건너뛰는 보폭(2·3·4)은 전부 실패 → "6점 별은 없다"
-//             ② n=5, 성공, '서로소' 명명 ③ n=8, 성공 보폭(3·5) 찾기. 세그 잠금 해제 순서 6→5→8.
-//   조작: 점에서 점으로 드래그(러버밴드) 또는 목표 점 탭. rAF 금지, CSS 트랜지션만.
-//   setPointerCapture는 try/catch(합성 포인터 안전).
+// starGame — "별자리 한붓그리기" (수학 Ⅰ 수와 연산 보너스 게임, 단원 정복 보상)
+// L4 별그리기 랩을 자유 놀이로 승격한 화면: 점 개수(5~12)를 고르고 보폭을 그어
+// 한붓 별을 수집한다. 성공 조건 = 점 개수와 보폭이 서로소(레슨에서 배운 그 감각).
+// 도감 9칸 = 별 8종(5·2, 7·2, 7·3, 8·3, 9·2, 9·4, 10·3, 12·5) + 비밀 1(6점 별은 없다).
+// 새 발견마다 +5 XP(최고 기록 갱신분만 — 파밍 방지). rAF 없음, CSS 트랜지션만(수학 규율).
+import { el, clear } from "../core/dom";
+import { icon } from "../core/icons";
+import { haptic, HAPTIC } from "../core/haptics";
+import { mboard, mtoast, gcd } from "../ui/mathKit";
+import { awardXp, bestScore, submitScore } from "../core/store";
+import type { Screen } from "../core/router";
 
-import { el, clear } from "../../core/dom";
-import { haptic, HAPTIC } from "../../core/haptics";
-import { mboard, mtoast, goalChips, gcd } from "../../ui/mathKit";
-import { curioCard, type Curio } from "../../ui/curio";
-import type { StepRenderer } from "../types";
-
-interface StarStep {
-  title: string;
-  lead?: string;
-  cta?: string;
-  curio?: Curio;
-}
+export const STAR_GAME_ID = "m1u1-stars";
 
 // ---- SVG 헬퍼 ----
 const NS = "http://www.w3.org/2000/svg";
@@ -35,9 +28,8 @@ const VB_H = 240;
 const CX = 180;
 const CY = 126;
 const R = 90;
-const HIT = 30; // 점 히트 반경(뷰박스 단위)
+const HIT = 30;
 
-// 장면 색
 const C_PT_STROKE = "#0DA5C6";
 const C_PT_FILL = "#0DA5C6";
 const C_LINE = "#22ACCB";
@@ -47,21 +39,77 @@ const C_GUIDE = "#D8E9EF";
 const C_DIM = "#64748B";
 const C_RUBBER = "#7CCBDE";
 
-const SEG_NS = [6, 5, 8];
-const SEG_LABELS = ["6점", "5점", "8점"];
+const SEG_NS = [5, 6, 7, 8, 9, 10, 12];
 
-export const starDraw: StepRenderer = (host, step, api) => {
-  const s = step as unknown as StarStep;
-  host.appendChild(el("div", { class: "h1", html: s.title }));
-  if (s.lead) host.appendChild(el("div", { class: "sub", html: s.lead }));
+/** 도감: 존재하는 한붓 별 전부(보폭은 방향 무관 대표값 2..n/2, n과 서로소, 1 제외) + 비밀 1. */
+const DEX: { key: string; n: number; k: number }[] = [
+  { key: "5/2", n: 5, k: 2 },
+  { key: "7/2", n: 7, k: 2 },
+  { key: "7/3", n: 7, k: 3 },
+  { key: "8/3", n: 8, k: 3 },
+  { key: "9/2", n: 9, k: 2 },
+  { key: "9/4", n: 9, k: 4 },
+  { key: "10/3", n: 10, k: 3 },
+  { key: "12/5", n: 12, k: 5 },
+];
+const SECRET_KEY = "no6";
+const DEX_TOTAL = DEX.length + 1; // 9
 
-  const chips = goalChips([
-    { id: "six", label: "6점의 비밀", sub: "별은?" },
-    { id: "five", label: "첫 별", sub: "n=5" },
-    { id: "eight", label: "8점 별", sub: "보폭은?" },
-  ]);
-  const board = mboard(330);
+/** {n/k} 미니 별 SVG(도감 칸용). */
+function miniStar(n: number, k: number, size = 22): string {
+  const r = size / 2 - 1.6;
+  const c = size / 2;
+  const pt = (i: number): [number, number] => {
+    const a = -Math.PI / 2 + (i * 2 * Math.PI) / n;
+    return [c + r * Math.cos(a), c + r * Math.sin(a)];
+  };
+  let d = "";
+  let cur = 0;
+  for (let i = 0; i <= n; i++) {
+    const [x, y] = pt(cur);
+    d += `${i === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`;
+    cur = (cur + k) % n;
+  }
+  return `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" fill="none"><path d="${d}Z" stroke="#FFF7E0" stroke-width="1.7" stroke-linejoin="round"/></svg>`;
+}
 
+export function starGameScreen(onExit: () => void): Screen {
+  // ---- 헤더 ----
+  const xbtn = el("button", { class: "xbtn", attrs: { "aria-label": "나가기" }, html: icon("x", 20, { sw: 2.4 }) });
+  const bestPill = el("div", { class: "pill mg-best", text: `최고 ${bestScore(STAR_GAME_ID)}/${DEX_TOTAL}` });
+  const header = el("div", { class: "lheader" }, xbtn, el("div", { class: "mg-title", text: "별자리 한붓그리기" }), bestPill);
+
+  // ---- 도감 ----
+  const found = new Set<string>();
+  const dexRow = el("div", { class: "stg-dex", attrs: { role: "list", "aria-label": "별 도감" } });
+  const slotEls = new Map<string, HTMLElement>();
+  for (const d of DEX) {
+    const slot = el("div", { class: "stg-slot", text: "?", attrs: { role: "listitem", "aria-label": "미발견 별" } });
+    slotEls.set(d.key, slot);
+    dexRow.appendChild(slot);
+  }
+  const secretSlot = el("div", { class: "stg-slot secret", text: "6?", attrs: { role: "listitem", "aria-label": "6점의 비밀" } });
+  slotEls.set(SECRET_KEY, secretSlot);
+  dexRow.appendChild(secretSlot);
+
+  function paintDex(): void {
+    for (const d of DEX) {
+      const slot = slotEls.get(d.key)!;
+      if (found.has(d.key) && !slot.classList.contains("on")) {
+        slot.classList.add("on");
+        slot.innerHTML = miniStar(d.n, d.k);
+        slot.setAttribute("aria-label", `${d.n}점 별, 보폭 ${d.k}`);
+      }
+    }
+    if (found.has(SECRET_KEY) && !secretSlot.classList.contains("on")) {
+      secretSlot.classList.add("on");
+      secretSlot.textContent = "6✕";
+      secretSlot.setAttribute("aria-label", "비밀: 6점 별은 없다");
+    }
+  }
+
+  // ---- 무대(레슨 별그리기와 같은 기하) ----
+  const board = mboard(322);
   const svg = sv("svg", {
     viewBox: `0 0 ${VB_W} ${VB_H}`,
     role: "application",
@@ -83,14 +131,11 @@ export const starDraw: StepRenderer = (host, step, api) => {
   stage.appendChild(svg);
   svg.style.touchAction = "none";
 
-  // 세그(점 개수), 시나리오 순서대로 잠금 해제
-  const unlockedN = new Set<number>([6]);
-  const segBtns: HTMLButtonElement[] = SEG_NS.map((nv, i) =>
-    el("button", { class: "ct-btn", text: SEG_LABELS[i], attrs: { type: "button", "aria-label": `점 ${nv}개로 전환` } }),
+  const segBtns: HTMLButtonElement[] = SEG_NS.map((nv) =>
+    el("button", { class: "ct-btn", text: `${nv}점`, attrs: { type: "button", "aria-label": `점 ${nv}개로 전환` } }),
   );
-  const segRow = el("div", { class: "ct-actions" }, ...segBtns);
+  const segRow = el("div", { class: "ct-actions stg-segs" }, ...segBtns);
 
-  // 보폭 표시 + 다시 그리기
   const kvMain = el("div", { html: "보폭 <b>?</b>" });
   const kvGcd = el("div", { style: "font-size:11px; font-weight:700; color:var(--n500); margin-top:2px", text: "첫 걸음이 보폭을 정해요" });
   const kv = el("div", { class: "sd-kv" }, kvMain, kvGcd);
@@ -99,12 +144,24 @@ export const starDraw: StepRenderer = (host, step, api) => {
 
   board.append(stage, segRow, ctrl);
   const toast = mtoast(board);
-  const helper = el("div", {
+  const coach = el("div", {
     class: "helper",
-    html: "<b>시작 점</b>에서 원하는 점으로 <b>선을 그어 보세요</b>(탭도 돼요). 첫 걸음의 칸수가 보폭이 되고, 그다음부턴 <b>같은 보폭</b>으로만 갈 수 있어요. 한붓 별, 될까요?",
+    html: "점 개수를 고르고 <b>시작 점</b>에서 선을 그어 별을 완성해 봐요. 레슨에서 배운 <b>서로소 감각</b>이 무기예요, 도감 9칸을 채워요!",
   });
-  host.append(chips.el, board, helper);
-  if (s.curio) host.appendChild(curioCard(s.curio));
+
+  const wrap = el("div", { class: "wrap stg-wrap" }, dexRow, board, coach);
+  const scroll = el("div", { class: "scroll" }, wrap);
+  const section = el("section", { class: "screen stg-screen" }, header, scroll);
+
+  const snackEl = el("div", { class: "snack" });
+  section.appendChild(snackEl);
+  let snackTimer = 0;
+  function snack(msg: string): void {
+    snackEl.textContent = msg;
+    snackEl.classList.add("show");
+    window.clearTimeout(snackTimer);
+    snackTimer = window.setTimeout(() => snackEl.classList.remove("show"), 2200);
+  }
 
   // ---- 타이머 ----
   const timers = new Set<number>();
@@ -117,19 +174,17 @@ export const starDraw: StepRenderer = (host, step, api) => {
   };
 
   // ---- 상태 ----
-  let n = 6;
-  let k = 0; // 0 = 아직 보폭 미정(첫 걸음 전)
-  let cur = 0; // 현재 점
-  let ended = false; // 이번 시도 종료(성공/실패), 재시도 전 입력 잠금
-  let named = false; // '서로소' 명명 이후 표기
-  let finished = false;
+  let n = 5;
+  let k = 0;
+  let cur = 0;
+  let ended = false;
   let ptEls: SVGCircleElement[] = [];
   let lineEls: SVGLineElement[] = [];
   let seen = new Set<number>();
-  const sixTried = new Set<number>();
+  let paidBest = bestScore(STAR_GAME_ID); // 이미 보상받은 최고 기록(파밍 방지선)
 
   const ptPos = (i: number): { x: number; y: number } => {
-    const a = -Math.PI / 2 + (i * 2 * Math.PI) / n; // 12시부터 시계 방향
+    const a = -Math.PI / 2 + (i * 2 * Math.PI) / n;
     return { x: CX + R * Math.cos(a), y: CY + R * Math.sin(a) };
   };
 
@@ -139,13 +194,13 @@ export const starDraw: StepRenderer = (host, step, api) => {
       kvGcd.textContent = "첫 걸음이 보폭을 정해요";
       return;
     }
-    const kd = Math.min(k, n - k); // 표시용 보폭(방향 무관)
-    kvMain.innerHTML = `보폭 <b>${kd}</b>칸`;
+    const kd = Math.min(k, n - k);
     const g = gcd(n, kd);
+    kvMain.innerHTML = `보폭 <b>${kd}</b>칸`;
     kvGcd.innerHTML =
-      named && g === 1
-        ? `최대공약수 1, <span style="color:var(--subj-num-press)">서로소!</span>`
-        : `최대공약수 ${g}`;
+      g === 1
+        ? `${n}과 ${kd}, 최대공약수 1 <span style="color:var(--subj-num-press, #0A87A3)">(서로소!)</span>`
+        : `${n}과 ${kd}, 최대공약수 ${g}…`;
   }
 
   function buildPoints(): void {
@@ -160,7 +215,6 @@ export const starDraw: StepRenderer = (host, step, api) => {
     }
   }
 
-  /** 다음에 갈 수 있는 점을 살짝 크게(첫 걸음 전엔 전부 후보). */
   function paintHints(): void {
     ptEls.forEach((c, i) => {
       const isNext = !ended && i !== cur && (k === 0 || i === (cur + k) % n);
@@ -187,12 +241,7 @@ export const starDraw: StepRenderer = (host, step, api) => {
   }
 
   function paintSegs(): void {
-    segBtns.forEach((x, i) => {
-      x.classList.toggle("hero", SEG_NS[i] === n);
-      const on = unlockedN.has(SEG_NS[i]);
-      x.disabled = !on;
-      x.style.opacity = on ? "" : ".38";
-    });
+    segBtns.forEach((x, i) => x.classList.toggle("hero", SEG_NS[i] === n));
   }
 
   function drawSeg(a: number, b: number): void {
@@ -203,7 +252,7 @@ export const starDraw: StepRenderer = (host, step, api) => {
     ln.style.setProperty("stroke-dasharray", String(len));
     ln.style.setProperty("stroke-dashoffset", String(len));
     gLines.appendChild(ln);
-    void ln.getBoundingClientRect(); // 트랜지션 시작점 확정
+    void ln.getBoundingClientRect();
     ln.style.transition = "stroke-dashoffset .16s linear, stroke .5s, stroke-width .5s, opacity .4s";
     ln.style.setProperty("stroke-dashoffset", "0");
     lineEls.push(ln);
@@ -230,27 +279,32 @@ export const starDraw: StepRenderer = (host, step, api) => {
     }
   }
 
-  function collect(id: string, sub: string, msg: string): void {
-    if (!chips.on(id, sub)) return;
-    toast(msg);
-    if (chips.count() === 3 && !finished) {
-      finished = true;
+  /** 새 발견 → 도감 갱신 + 최고 기록 갱신분만 XP 보상. */
+  function discover(key: string, msg: string): void {
+    if (found.has(key)) {
+      toast("이미 도감에 있어요!");
+      return;
+    }
+    found.add(key);
+    paintDex();
+    haptic(HAPTIC.correct);
+    const score = found.size;
+    let reward = "";
+    if (score > paidBest) {
+      submitScore(STAR_GAME_ID, score);
+      awardXp(5);
+      paidBest = score;
+      bestPill.textContent = `최고 ${score}/${DEX_TOTAL}`;
+      reward = " (+5 XP)";
+    }
+    snack(`${msg}, 도감 ${score}/${DEX_TOTAL}${reward}`);
+    if (score === DEX_TOTAL) {
       haptic(HAPTIC.done);
-      later(() => {
-        helper.innerHTML =
-          "별의 비밀은 <b>서로소</b>! 점 개수 n과 보폭 k의 <b>최대공약수가 1</b>일 때만, 내 손으로 그은 선이 모든 점을 도는 별이 돼요.";
-        api.recordQuiz(true);
-        api.enableCTA(s.cta ?? "다음");
-      }, 1600);
+      coach.innerHTML =
+        "<b>도감 완성!</b> 존재하는 한붓 별을 전부 찾았어요. 별이 되는 조건은 언제나 하나, 점 개수와 보폭이 <b>서로소</b>일 것. 이제 어떤 n이든 별이 몇 종류인지 세어 볼 수 있겠죠?";
     }
   }
 
-  function unlock(nv: number): void {
-    unlockedN.add(nv);
-    paintSegs();
-  }
-
-  /** 시작점으로 돌아온 순간, 시도 평가. */
   function evaluate(): void {
     ended = true;
     paintHints();
@@ -258,59 +312,36 @@ export const starDraw: StepRenderer = (host, step, api) => {
     const g = gcd(n, kd);
     if (seen.size === n) {
       if (kd === 1) {
-        // 다각형, 모든 점을 돌긴 했지만 별이 아니다
         haptic(HAPTIC.tap);
         toast("다 돌긴 했는데… 다각형!");
-        helper.innerHTML =
-          "이웃 점끼리 이으면 <b>다각형 둘레</b>가 될 뿐이에요. 별은 <b>건너뛰어야</b> 태어나요, 다시 그리기로 2칸 이상 건너 보세요!";
+        coach.innerHTML = "이웃 점끼리 이으면 <b>다각형 둘레</b>일 뿐, 별은 <b>건너뛰어야</b> 태어나요. 다시 그리기로 2칸 이상!";
         return;
       }
-      // ---- 성공: 한붓 별 ----
       goldify();
-      haptic(HAPTIC.correct);
-      if (n === 5 && !chips.has("five")) {
-        named = true;
-        updateKv();
-        collect("five", "별 완성!", "내 손으로 그린 한붓 별!");
-        helper.innerHTML =
-          `<b>gcd(5,${kd})=1</b>, 최대공약수가 1인 두 수를 <b>서로소</b>라고 해요. 서로소라서 모든 점을 한 번씩 다 돌았어요! 이제 <b>8점</b>에 도전!`;
-        unlock(8);
-      } else if (n === 8 && !chips.has("eight")) {
-        collect("eight", `${kd}칸!`, `보폭 ${kd}, 8점 별 완성!`);
-        helper.innerHTML = `8과 ${kd}의 최대공약수는 1, <b>서로소</b>예요. 8점에서는 서로소인 보폭(3, 5)만 별을 그려요!`;
-      } else {
-        toast("한붓 별 완성!");
-      }
+      discover(`${n}/${kd}`, `별 ${n}·${kd} 발견!`);
+      if (found.size < DEX_TOTAL)
+        coach.innerHTML = `${n}과 ${kd}는 <b>서로소</b>(최대공약수 1)라 모든 점을 다 돌았어요. 같은 ${n}점에 <b>다른 서로소 보폭</b>이 더 있을지도?`;
     } else {
-      // ---- 실패: 일부 점만 밟고 제자리 ----
       dimUnvisited();
       haptic(HAPTIC.cross);
       toast(`점 ${seen.size}개만 밟고 제자리로!`);
-      if (n === 6) {
-        if (kd >= 2) sixTried.add(kd);
-        if (sixTried.size >= 2 && !chips.has("six")) {
-          collect("six", "별 불가!", "6점 별은 불가능!");
-          helper.innerHTML =
-            "6과 서로소인 보폭은 <b>1과 5뿐</b>, 그건 그냥 육각형 둘레라서, <b>6점 별은 없어요!</b> 이제 5점으로 가 볼까요?";
-          unlock(5);
-        } else if (!chips.has("six")) {
-          helper.innerHTML = `gcd(6,${kd})=${g}라서 점 ${6 / g}개만 밟고 시작점으로 돌아왔어요. <b>다른 보폭</b>으로도 그어 봐요!`;
-        }
+      if (n === 6 && kd >= 2) {
+        discover(SECRET_KEY, "비밀 발견: 6점 별은 없다!");
+        coach.innerHTML =
+          "6과 서로소인 보폭은 <b>1과 5뿐</b>(둘 다 육각형 둘레)이라 <b>6점 별은 존재하지 않아요</b>. 도감의 비밀 칸이 열렸어요!";
       } else {
-        helper.innerHTML = `gcd(${n},${kd})=${g}라서 점 ${n / g}개만 밟았어요. <b>다시 그리기</b>로 보폭을 바꿔 도전!`;
+        coach.innerHTML = `${n}과 ${kd}의 최대공약수가 <b>${g}</b>라서 점을 ${n}÷${g} = <b>${n / g}개</b>만 밟고 돌아왔어요. 서로소인 보폭으로 다시!`;
       }
     }
   }
 
-  /** 점프 시도, 목표 점 t로. */
   function jump(t: number): void {
-    if (ended || finished || t === cur) return;
+    if (ended || t === cur) return;
     const skip = (t - cur + n) % n;
     if (k === 0) {
       k = skip;
       updateKv();
     } else if (skip !== k) {
-      // 같은 보폭 강제, 별의 규칙
       haptic(HAPTIC.wrong);
       const want = (cur + k) % n;
       ptEls[want]?.style.setProperty("r", "9.5");
@@ -343,7 +374,7 @@ export const starDraw: StepRenderer = (host, step, api) => {
   let rubber: SVGLineElement | null = null;
 
   svg.addEventListener("pointerdown", (e) => {
-    if (ended || finished) return;
+    if (ended) return;
     try {
       svg.setPointerCapture(e.pointerId);
     } catch {
@@ -368,7 +399,7 @@ export const starDraw: StepRenderer = (host, step, api) => {
     dragging = false;
     gRubber.innerHTML = "";
     rubber = null;
-    if (ended || finished) return;
+    if (ended) return;
     const t = hitPoint(toVb(e));
     if (t >= 0 && t !== cur) jump(t);
     else paintHints();
@@ -380,37 +411,33 @@ export const starDraw: StepRenderer = (host, step, api) => {
     rubber = null;
   });
 
-  // ---- 컨트롤 배선 ----
+  // ---- 컨트롤 ----
   retryB.addEventListener("click", () => {
-    if (finished && chips.count() === 3) return;
     haptic(HAPTIC.tap);
     resetAttempt();
     toast("처음부터, 보폭을 골라 그어요");
   });
-
   function switchN(nv: number): void {
-    if (nv === n || !unlockedN.has(nv)) return;
+    if (nv === n) return;
     n = nv;
     haptic(HAPTIC.select);
     buildPoints();
     resetAttempt();
     paintSegs();
-    helper.innerHTML =
-      nv === 6
-        ? "6점이에요. 보폭을 바꿔 가며 직접 그어 봐요!"
-        : nv === 5
-          ? "이번엔 <b>5점</b>! 2칸씩 건너 그으면 어떻게 될까요?"
-          : "<b>8점 별</b>에 도전, 성공하는 보폭을 찾아 그어 봐요!";
   }
   segBtns.forEach((b, i) => b.addEventListener("click", () => switchN(SEG_NS[i])));
+
+  xbtn.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    timers.forEach((id) => window.clearTimeout(id));
+    timers.clear();
+    window.clearTimeout(snackTimer);
+    onExit();
+  });
 
   buildPoints();
   resetAttempt();
   paintSegs();
-  api.setCTA("별 미션 3개를 완수해요", { enabled: false });
 
-  return () => {
-    timers.forEach((id) => window.clearTimeout(id));
-    timers.clear();
-  };
-};
+  return { el: section };
+}

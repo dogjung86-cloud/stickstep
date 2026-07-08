@@ -69,18 +69,15 @@ export const powBuild = (o: { title: string; lead?: string; cta?: string; curio?
 export const factorTree = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "factorTree", ...o });
 
-/** 소인수 벤 다이어그램, gcd: 공통 소인수를 교집합으로 모으기, lcm: 울타리 전체 곱하기. */
+/** 소인수 벤 다이어그램, gcd: 공통 소인수를 교집합으로, lcm: 울타리 전체 곱,
+ *  coprime: 서로소 판별소(겹침을 찾거나 "서로소!" 선언, 8·9 → 9·25 → 14·21 함정). */
 export const vennFactor = (o: {
   title: string;
   lead?: string;
-  mode: "gcd" | "lcm";
+  mode: "gcd" | "lcm" | "coprime";
   cta?: string;
   curio?: CurioOpt;
 }): Step => ({ type: "vennFactor", ...o });
-
-/** 별그리기, 원 위 n점을 k칸씩 잇기. 한붓 성공 조건이 서로소임을 발견. */
-export const starDraw = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "starDraw", ...o });
 
 /** 수직선, place: 수 카드를 자리에 놓기, abs: 원점 거리 재기·절댓값 쌍 찾기. */
 export const numline = (o: {
