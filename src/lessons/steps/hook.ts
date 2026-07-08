@@ -46,6 +46,10 @@ import {
   renderWinterShock, renderBalloonDoll, renderDeadClock, renderBrightPair,
   renderMultiTap, renderLabelPeek, renderCompassWire, renderEbike,
 } from "./hookElec";
+import {
+  renderThumbJump, renderNightRoad, renderBrightLie, renderGasFlame,
+  renderMilkyBand, renderOrionBlur, renderMovingStar,
+} from "./hookStar";
 import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -84,7 +88,8 @@ interface HookStep {
     | "stripemount" | "foolsgold" | "dolstatue" | "bookcliff" | "pressrock" | "cappadocia" | "gravestone" | "puzzlemap" | "quakenews" | "eggearth"
     | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba"
     | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull"
-    | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike";
+    | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
+    | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
 }
@@ -157,6 +162,13 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "labelpeek") sceneCleanup = renderLabelPeek(scene, helper, s, finish, face);
   else if (s.scene === "compasswire") sceneCleanup = renderCompassWire(scene, helper, s, finish, face);
   else if (s.scene === "ebike") sceneCleanup = renderEbike(scene, helper, s, finish, face);
+  else if (s.scene === "thumbjump") sceneCleanup = renderThumbJump(scene, helper, finish, face);
+  else if (s.scene === "nightroad") sceneCleanup = renderNightRoad(scene, helper, finish, face);
+  else if (s.scene === "brightlie") sceneCleanup = renderBrightLie(scene, helper, finish, face);
+  else if (s.scene === "gasflame") sceneCleanup = renderGasFlame(scene, helper, finish, face);
+  else if (s.scene === "milkyband") sceneCleanup = renderMilkyBand(scene, helper, finish, face);
+  else if (s.scene === "orionblur") sceneCleanup = renderOrionBlur(scene, helper, finish, face);
+  else if (s.scene === "movingstar") sceneCleanup = renderMovingStar(scene, helper, finish, face);
   else if (s.scene === "mirrortown") sceneCleanup = renderMirrorTown(scene, helper, finish, face);
   else if (s.scene === "coinmagic") sceneCleanup = renderCoinMagic(scene, helper, s, finish, face);
   else if (s.scene === "darkroom") sceneCleanup = renderDarkroom(scene, helper, s, finish, face);

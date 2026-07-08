@@ -539,6 +539,32 @@ src/
   `.toast.low`(base.css — 관찰 대상이 무대 위쪽일 때 하단 배치). drawBattery에 vert 옵션(세로 전지,
   라벨은 바로 서게 — waterCircuit 전지가 사용).
 
+## 중2 VIII 별과 우주 — 천문 랩·실사 규칙
+- **NASA/ESO 실사 파이프라인**: `node qa/fetch-nasa-star.mjs`(정본 직링크만 — **API 자동 검색 매칭 금지**,
+  pleiades→WISE·apollo11→훈련 사진·jwst→행사장 사진 오배송 실사고) → `node qa/process-star.mjs`
+  (최대 1400px webp, 원본 jpg 삭제). **photojournal.jpl.nasa.gov·nssdc는 HTML 챌린지 페이지를 반환**하므로
+  금지 — images-assets.nasa.gov 미러가 확정 경로. 다운로드 후 매직 바이트(ffd8ff)와 눈 검수 필수,
+  출처는 photos/CREDITS.md. 13종: 은하 2(top R.Hurt·pan ESO)·성운 3(오리온/말머리/M78)·성단 2(플레이아데스/M5)·
+  명왕성·스푸트니크·아폴로11·허블(sts061-73-040)·ISS·JWST(GSFC e000162 골든 미러).
+- **hotspot `spot.photo`는 상대 경로만**("photos/star/x.webp") — 렌더러가 base를 붙이므로 BASE를 미리
+  붙이면 `//photos/…` 프로토콜 상대 URL이 되어 영영 로드 실패(naturalWidth 0 실사고).
+- **space3d makeLabel·makeGlow의 size는 월드 단위** — VII 태양계는 수백 단위 좌표계(size 26 OK),
+  소형 씬(수 단위 span)에선 0.5 안팎. 26을 넘기면 라벨 하나가 화면을 덮는 흐린 블롭이 된다(실사고).
+- 랩 4종: parallaxLab(연주시차 **스테퍼** — 버튼마다 지구 이동·시선이 자라나는 단계 연출, 지구가
+  실제로 반 바퀴 돌고 3월 자리에 유령 지구; 각도는 2·atan(orbR/세로거리) 기하 그대로 + "과장 모형" 명시),
+  starLight3d(역제곱 3D — 단위 사각뿔 scale=d로 스크린 단면과 일치, 광자 240알 개수 불변 연출,
+  **카메라 고정·회전/줌 입력 없음**(사용자 지시), dist는 hfov 검산), starColorLab(켈빈→RGB 흑체 근사
+  Tanner Helland — 3,000~30,000 K 로그 슬라이더, 색 구간마다 실제 별 이름), balloonUniverse(풍선 우주 —
+  은하 딱지 탭=시점 전환, 화살표 길이 ∝ 표면 거리 증가분=허블 법칙).
+- 훅 7종(hookStar.ts): thumbjump(엄지 시차)·nightroad·brightlie(시리우스vs데네브)·gasflame·
+  milkyband(은하수 pan 실사)·orionblur·movingstar(ISS) — 실사는 SVG `<image href>` 스코프 문법(hookSpace 계승).
+- 만화: g2u8l7 허블 7컷(`qa/order-g2u8l7.sh`) — 컷5는 "화살표가 관측자를 향함(다가오는 것처럼 읽힘)"
+  오개념 리스크로 재발주(관측자 왼쪽 고정 + 은하가 오른쪽으로 멀어지는 구도). 스틱맨 컷 6종은
+  public/star/cuts(`qa/order-star-cuts.sh`, process-geo.mjs ASPECT_DIRS 등록).
+- e2e(`PORT=<포트> node qa/e2e-g2u8.mjs`): **nav.go 연속 push 방식은 셀렉터를 전부 `.screen.active`로
+  스코프**해야 한다(숨은 화면의 CTA를 잡던 실사고) + createLessonPlayer 두 번째 인자는
+  `{ onExit, onComplete }` 객체. 프리뷰 하니스 rAF 프리즈(사고 17) 시 이 e2e가 픽셀 검증의 확정 경로.
+
 ## 메타볼 렌더러 (대단원 IV에서 이식 완료)
 - `sample/renderer-comparison.html`의 `FRAG` 셰이더 원본을 `renderers/meta.ts`로 **수치 그대로** 이식했다.
   rMul `1.04+0.20·sol-0.48·gas` · threshold 1.0 · soft `mix(.30,.09,sol)` · 조명 `(-0.5,-0.65,0.58)` ·

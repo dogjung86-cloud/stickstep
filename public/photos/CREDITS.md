@@ -22,6 +22,23 @@
 앱 내 표기: 3D 투어 정보 카드 하단과 이 파일로 출처를 밝힌다.
 NASA 이미지는 퍼블릭 도메인이며 NASA의 보증을 의미하지 않는다.
 
+## public/photos/star/ — 중2 VIII 별과 우주 실사 (최대 1400px webp, qa/process-star.mjs)
+| 파일 | 출처 · 크레딧 | 라이선스 |
+|---|---|---|
+| milkyway-top.webp | NASA/JPL-Caltech/R. Hurt (SSC) — 우리은하 상상도(위에서 본 막대나선, PIA10748) | Public Domain (NASA) |
+| milkyway-pan.webp | ESO/S. Brunier — The Milky Way panorama (eso0932a) | CC BY 4.0 |
+| orion-nebula.webp | NASA, ESA, M. Robberto (STScI/ESA), HST Orion Treasury Team (heic0601a) | CC BY 4.0 |
+| horsehead.webp | ESO — Horsehead Nebula (eso0202a) | CC BY 4.0 |
+| m78-reflection.webp | ESO/Igor Chekalin — M78 반사 성운 (eso1105a) | CC BY 4.0 |
+| pleiades.webp | KPNO/NOIRLab/NSF/AURA — Pleiades M45 (noao-m45) | CC BY 4.0 |
+| m5-globular.webp | ESA/Hubble & NASA — 구상 성단 M5 (potw1118a) | CC BY 4.0 |
+| pluto.webp | NASA/JHUAPL/SwRI — New Horizons 명왕성 (PIA19952) | Public Domain (NASA) |
+| sputnik.webp | NASA/NSSDC — 스푸트니크 1호 레플리카 (Wikimedia Commons: Sputnik_asm.jpg) | Public Domain (NASA) |
+| apollo11.webp | NASA — Apollo 11, 올드린과 성조기 (AS11-40-5875) | Public Domain (NASA) |
+| hubble-telescope.webp | NASA — 허블 우주 망원경, STS-61 정비 임무에서 촬영 (sts061-73-040) | Public Domain (NASA) |
+| iss.webp | NASA — 국제우주정거장 전경, STS-134 (s134e010137) | Public Domain (NASA) |
+| jwst.webp | NASA/Chris Gunn — 제임스 웹 우주 망원경 주경(고더드, GSFC_20171208_Archive_e000162) | Public Domain (NASA) |
+
 ## public/geo/maps/ — 고지리 지도 (등장방형)
 - C.R. Scotese, **PALEOMAP Project** (PALEOMAP PaleoAtlas for GPlates) — 교육 목적 사용, 출처 표기.
 - 사용 시대: 현재(000) · 66 Ma(K-Pg 경계) · 150 Ma(쥐라기 후기) · 200 Ma(트라이아스-쥐라기 경계) · 280 Ma(페름기 초기, 판게아)

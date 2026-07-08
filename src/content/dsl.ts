@@ -16,7 +16,7 @@ export const cut = (theme: string, name: string, alt: string): string =>
 
 export const concept = (o: {
   kicker?: string;
-  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "elec" | "num";
+  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "elec" | "num" | "star";
   title: string;
   lead?: string;
   blocks?: Block[];
@@ -71,6 +71,19 @@ export const figTabs = (o: {
   cta?: string;
 }): Step => ({ type: "figTabs", ...o });
 
+// ── 별과 우주 단원(중2 VIII) 랩 ─────────────────────────────
+export const parallaxLab = (o: { title: string; lead?: string; cta?: string; curio?: { q: string; a: string } }): Step =>
+  ({ type: "parallaxLab", ...o });
+
+export const starLight3d = (o: { title: string; lead?: string; cta?: string; curio?: { q: string; a: string } }): Step =>
+  ({ type: "starLight3d", ...o });
+
+export const starColorLab = (o: { title: string; lead?: string; cta?: string; curio?: { q: string; a: string } }): Step =>
+  ({ type: "starColorLab", ...o });
+
+export const balloonUniverse = (o: { title: string; lead?: string; cta?: string; curio?: { q: string; a: string } }): Step =>
+  ({ type: "balloonUniverse", ...o });
+
 export const hook = (o: {
   title: string; lead?: string; narrator: string; done?: string;
   scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen"
@@ -83,7 +96,8 @@ export const hook = (o: {
     | "stripemount" | "foolsgold" | "dolstatue" | "bookcliff" | "pressrock" | "cappadocia" | "gravestone" | "puzzlemap" | "quakenews" | "eggearth"
     | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba"
     | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull"
-    | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike";
+    | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
+    | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 

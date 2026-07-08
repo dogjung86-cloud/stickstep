@@ -18,7 +18,7 @@ export const concept: StepRenderer = (host, step, api) => {
     host.appendChild(
       el(
         "div",
-        { class: `kicker ${s.kickerTone === "bio" ? "bio" : s.kickerTone === "heat" ? "heat" : ""}` },
+        { class: `kicker ${s.kickerTone ?? ""}` },
         el("span", { class: "kdot" }),
         el("span", { text: s.kicker }),
       ),

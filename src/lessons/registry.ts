@@ -74,6 +74,10 @@ import { circuitLab } from "./steps/elecCircuit";
 import { coilFieldLab } from "./steps/elecCoil";
 import { swingLab3d } from "./steps/elecSwing3d";
 import { figTabs } from "./steps/figTabs";
+import { parallaxLab } from "./steps/parallaxLab";
+import { starLight3d } from "./steps/starLight3d";
+import { starColorLab } from "./steps/starColorLab";
+import { balloonUniverse } from "./steps/balloonUniverse";
 import { densityLab } from "./steps/densityLab";
 import { densityPool } from "./steps/densityPool";
 import { solubilityLab } from "./steps/solubilityLab";
@@ -178,6 +182,10 @@ const R: Record<string, StepRenderer> = {
   coilFieldLab,
   swingLab3d,
   figTabs,
+  parallaxLab,
+  starLight3d,
+  starColorLab,
+  balloonUniverse,
   densityLab,
   densityPool,
   solubilityLab,

@@ -249,6 +249,62 @@ const MAP_DECOR: Record<string, string> = {
     <linearGradient id="rk-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8FA0"/><stop offset="1" stop-color="#D6455E"/></linearGradient>
     <linearGradient id="rk-fl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#FF9E3D"/></linearGradient>`,
   ),
+  // ── 중2 VIII. 별과 우주 — 별빛 순항(별→성단→은하→망원경, 로켓은 기존 rocketDeco 재사용) ──
+  starsDeco: S(
+    `<g>
+      <path d="M22 18l2.6 6.2 6.2 2.6-6.2 2.6L22 36l-2.6-6.6-6.2-2.6 6.2-2.6z" fill="url(#sd-a)"/>
+      <path d="M44 30l1.9 4.5 4.5 1.9-4.5 1.9L44 43l-1.9-4.7-4.5-1.9 4.5-1.9z" fill="url(#sd-b)"/>
+      <path d="M33 44l1.4 3.3 3.3 1.4-3.3 1.4L33 53.6l-1.4-3.5-3.3-1.4 3.3-1.4z" fill="url(#sd-a)" opacity=".85"/>
+      <circle cx="46" cy="18" r="1.6" fill="#8FA2E8"/>
+      <circle cx="14" cy="44" r="1.3" fill="#8FA2E8" opacity=".8"/>
+    </g>`,
+    `<linearGradient id="sd-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF6D8"/><stop offset="1" stop-color="#F2C94C"/></linearGradient>
+    <linearGradient id="sd-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E4E9FF"/><stop offset="1" stop-color="#8FA2E8"/></linearGradient>`,
+  ),
+  clusterDeco: S(
+    `<g>
+      <circle cx="32" cy="30" r="15" fill="url(#cl-h)" opacity=".5"/>
+      <circle cx="32" cy="30" r="3.2" fill="#FFF3C8"/>
+      <circle cx="25" cy="26" r="2.3" fill="#FFE9A8"/>
+      <circle cx="39" cy="25" r="2.1" fill="#FFEEC0"/>
+      <circle cx="27" cy="36" r="2" fill="#F8DE9C"/>
+      <circle cx="38" cy="35" r="2.4" fill="#FFE9A8"/>
+      <circle cx="32" cy="21" r="1.7" fill="#FFF6DC"/>
+      <circle cx="21" cy="31" r="1.5" fill="#F2CE7E"/>
+      <circle cx="43" cy="30" r="1.5" fill="#F2CE7E"/>
+      <circle cx="34" cy="41" r="1.5" fill="#EFC96E"/>
+    </g>`,
+    `<radialGradient id="cl-h" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFEDB8"/><stop offset="1" stop-color="#FFEDB8" stop-opacity="0"/></radialGradient>`,
+  ),
+  galaxyDeco: S(
+    `<g transform="rotate(-18 32 32)">
+      <ellipse cx="32" cy="32" rx="21" ry="12" fill="url(#gx-h)" opacity=".45"/>
+      <path d="M32 32q-16-4-12-14 2 8 12 9z" fill="url(#gx-a)"/>
+      <path d="M32 32q16 4 12 14-2-8-12-9z" fill="url(#gx-a)"/>
+      <path d="M32 32q-4-16 8-17-7 5-3 14z" fill="url(#gx-b)" opacity=".85"/>
+      <path d="M32 32q4 16-8 17 7-5 3-14z" fill="url(#gx-b)" opacity=".85"/>
+      <circle cx="32" cy="32" r="5" fill="url(#gx-c)"/>
+      <circle cx="20" cy="25" r="1.1" fill="#fff" opacity=".8"/>
+      <circle cx="45" cy="39" r="1.1" fill="#fff" opacity=".8"/>
+    </g>`,
+    `<radialGradient id="gx-h" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#C8D2F8"/><stop offset="1" stop-color="#C8D2F8" stop-opacity="0"/></radialGradient>
+    <linearGradient id="gx-a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#AFC0F2"/><stop offset="1" stop-color="#5E6BD8"/></linearGradient>
+    <linearGradient id="gx-b" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#DCE4FB"/><stop offset="1" stop-color="#8FA2E8"/></linearGradient>
+    <radialGradient id="gx-c" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#FFF9E4"/><stop offset="1" stop-color="#F2C94C"/></radialGradient>`,
+  ),
+  telescopeDeco: S(
+    `${shadow(32, 56, 16, 0.13)}
+    <g transform="rotate(-24 32 30)">
+      <rect x="14" y="24" width="30" height="12" rx="6" fill="url(#tel-t)"/>
+      <rect x="42" y="26" width="7" height="8" rx="3" fill="url(#tel-e)"/>
+      <rect x="11" y="26.5" width="5" height="7" rx="2.5" fill="#DCE6F4"/>
+      <rect x="17" y="27" width="16" height="2.6" rx="1.3" fill="#fff" opacity=".5"/>
+    </g>
+    <path d="M30 38l-7 16M34 38l7 16M32 40v13" stroke="url(#tel-l)" stroke-width="2.6" stroke-linecap="round" fill="none"/>`,
+    `<linearGradient id="tel-t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8FA2E8"/><stop offset=".55" stop-color="#5E6BD8"/><stop offset="1" stop-color="#3A4494"/></linearGradient>
+    <linearGradient id="tel-e" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#E8B84E"/></linearGradient>
+    <linearGradient id="tel-l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6E7A9E"/><stop offset="1" stop-color="#4A5474"/></linearGradient>`,
+  ),
   // ── 중2 III. 빛과 파동 — 빛의 여행(손전등→거울→프리즘→삼원색) 끝에 음표 ──
   flashlightDeco: S(
     `${shadow(30, 56, 17, 0.14)}

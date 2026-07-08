@@ -1238,6 +1238,28 @@
 .gm-node.elec .gm-ring { border-color: rgba(239,184,0,.55); }
 .gm-node.elec:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-elec); }
 .kicker.elec { background: var(--subj-elec-tint); color: var(--subj-elec-press); }
+/* ---------- 중2 VIII 별과 우주 단원 테마(star · 미드나잇 네이비) ---------- */
+.unit-band.star { background: var(--grad-star); }
+.gm-terrain.star {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.55), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #DDE2F8, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #D2D9F4, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #DBE0F8, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #C8D0EE, transparent 72%),
+    linear-gradient(180deg, #F4F6FE 0%, #E7EBFA 55%, #D8DEF2 100%);
+}
+.gm-path-glow.star { stroke: rgba(46,58,140,.22); }
+.gm-path-done.star { stroke: #2E3A8C; }
+.gm-node.star.now .gm-med, .gm-node.star.done .gm-med { background: var(--grad-medallion-star); }
+.gm-node.star .gm-ring { border-color: rgba(46,58,140,.5); }
+.gm-node.star:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-star); }
+.kicker.star { background: var(--subj-star-tint); color: var(--subj-star-press); }
+.pn-badge.star.on {
+  border-style: solid; border-color: transparent; color: #fff;
+  background: linear-gradient(150deg, #5A68CE 0%, #2E3A8C 55%, #222C6E 100%);
+  box-shadow: 0 6px 14px -4px rgba(46, 58, 140, .5);
+}
 /* ---------- 중2 I 물질의 특성 테마(chem · 지시약 로즈) ---------- */
 .unit-band.chem { background: var(--grad-chem); }
 .gm-terrain.chem {
@@ -2348,3 +2370,29 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
   background: linear-gradient(150deg, #E86FCE 0%, #C838A6 60%, #9C2B84 100%);
   box-shadow: 0 4px 12px -3px rgba(200, 56, 166, .55);
 }
+
+/* ── 중2 VIII 별과 우주 훅(hookStar) — 접두사 hst- ─────────────── */
+.hst-frame { border-radius: var(--r-lg); overflow: hidden; }
+.hst-frame svg { display: block; width: 100%; height: auto; }
+/* thumbjump — 왼눈(기본)·오른눈 전환: 엄지가 배경 대비 점프 */
+.hst-thumb { transition: opacity .28s var(--ease); transform-box: fill-box; transform-origin: center; }
+.hst-frame .hst-thumb.R { opacity: .16; }
+.hst-frame.eyeR .hst-thumb.R { opacity: 1; }
+.hst-frame.eyeR .hst-thumb.L { opacity: .16; }
+.hst-jump { opacity: .5; animation: hstDash 1.6s linear infinite; }
+@keyframes hstDash { to { stroke-dashoffset: -16; } }
+/* 불꽃 일렁임 */
+.hst-flame { animation: hstFlick 1.1s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom center; }
+.hst-flame.slow { animation-duration: 1.7s; }
+@keyframes hstFlick { 0%, 100% { transform: scaleY(1) skewX(0deg); } 40% { transform: scaleY(1.06) skewX(-1.6deg); } 70% { transform: scaleY(.95) skewX(1.4deg); } }
+/* 실사 스코프(orionblur·movingstar) — 탭하면 등장 */
+.hst-scope { opacity: 0; transform: scale(.55); transform-box: fill-box; transform-origin: center; transition: opacity .4s var(--ease), transform .5s var(--spring); }
+.hst-frame.scoped .hst-scope { opacity: 1; transform: scale(1); }
+.hst-frame.scoped .hst-blur, .hst-frame.scoped .hst-mover { opacity: 0; }
+/* brightlie — 시리우스 반짝 + 거리 배지 공개 */
+.hst-sirius circle:first-child { animation: hsGlowPulse 2.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.hst-dist { opacity: 0; transition: opacity .5s var(--ease); }
+.hst-frame.revealed .hst-dist { opacity: 1; }
+/* movingstar — 하늘을 천천히 가로지르는 점 */
+.hst-mover { animation: hstGlide 7s linear infinite; transition: opacity .3s; }
+@keyframes hstGlide { 0% { transform: translate(26px, 96px); } 100% { transform: translate(214px, 40px); } }
