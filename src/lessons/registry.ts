@@ -73,6 +73,7 @@ import { ohmLab } from "./steps/elecOhm";
 import { circuitLab } from "./steps/elecCircuit";
 import { coilFieldLab } from "./steps/elecCoil";
 import { swingLab3d } from "./steps/elecSwing3d";
+import { figTabs } from "./steps/figTabs";
 import { densityLab } from "./steps/densityLab";
 import { densityPool } from "./steps/densityPool";
 import { solubilityLab } from "./steps/solubilityLab";
@@ -157,6 +158,7 @@ const R: Record<string, StepRenderer> = {
   circuitLab,
   coilFieldLab,
   swingLab3d,
+  figTabs,
   densityLab,
   densityPool,
   solubilityLab,

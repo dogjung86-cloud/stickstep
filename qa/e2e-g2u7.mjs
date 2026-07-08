@@ -405,8 +405,12 @@ try {
   await setSlider(0, 0.97); await W(800);
   await setSlider(0, 0.05); await W(800);
   log("   칩:", await chipsOn());
-  await clickCTA(); // → concept(그림으로 정리)
-  log("  concept(그림 정리):", await h1());
+  await clickCTA(); // → figTabs(그네 세 장면)
+  log("  figTabs(그네 3상태):", await h1());
+  await clickBtn("전류 방향 반전", 500);
+  await clickBtn("자석 극 반전", 500);
+  await clickCTA(); // → concept(오른손)
+  log("  concept(오른손):", await h1());
   await clickCTA(); // → hotspot(전동기 구조와 원리)
   log("  hotspot(전동기):", await h1());
   await page.waitForSelector(".hs-dot", { timeout: 9000 });

@@ -23,10 +23,11 @@
   <path d="M292 22 L162 162" stroke="#6E3F16" stroke-width="15"/>
   <path d="M292 22 L162 162" stroke="url(#mlWire)" stroke-width="11"/>
   <path d="M285 27 L176 144" stroke="#FFD9AE" stroke-width="2.6" opacity=".6"/>
-  <!-- 전류(앞쪽 ↙) -->
-  <path d="M252 66 L218 102" stroke="#F0A422" stroke-width="6.5"/>
-  <path d="M225 114 L204 126 L211 99 Z" fill="#F0A422"/>
-  <text x="258" y="78" font-family="Pretendard, sans-serif" font-size="15.5" font-weight="800" fill="#B87700" stroke="#FFFFFF" stroke-width="5" paint-order="stroke">전류 (앞쪽으로)</text>
+  <!-- 전류(앞쪽 ↙) — 볼트 옐로 + 진갈색 테두리(구리 코일과 구분, 3차 피드백) -->
+  <path d="M252 66 L218 102" stroke="#6E3F16" stroke-width="9.5"/>
+  <path d="M252 66 L218 102" stroke="#FFD400" stroke-width="6"/>
+  <path d="M225 114 L204 126 L211 99 Z" fill="#FFD400" stroke="#6E3F16" stroke-width="1.6"/>
+  <text x="258" y="78" font-family="Pretendard, sans-serif" font-size="15.5" font-weight="800" fill="#8A6600" stroke="#FFFFFF" stroke-width="5" paint-order="stroke">전류 (앞쪽으로)</text>
   <!-- 힘(위 ↑) -->
   <path d="M196 118 V52" stroke="#0B9E96" stroke-width="8"/>
   <path d="M182 56 L196 24 L210 56 Z" fill="#0B9E96"/>

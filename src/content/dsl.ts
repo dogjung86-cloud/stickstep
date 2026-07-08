@@ -59,6 +59,13 @@ export const hotspot = (o: {
   mode?: "reveal" | "find"; explainGood?: string; explainBad?: string;
 }): Step => ({ type: "hotspot", ...o });
 
+/** 그림 상태 전환(세그 탭 → 그림+설명 교체) — 교과서 "~할 때" 상태 비교 그림의 인터랙션판 */
+export const figTabs = (o: {
+  title: string; lead?: string;
+  tabs: { name: string; art: string; cap: string }[];
+  cta?: string;
+}): Step => ({ type: "figTabs", ...o });
+
 export const hook = (o: {
   title: string; lead?: string; narrator: string; done?: string;
   scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen"

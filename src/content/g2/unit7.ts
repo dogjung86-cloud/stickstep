@@ -8,7 +8,7 @@
 // 전하·회로 소품 표현은 ui/elecKit(전자는 chemKit과 동일 톤) — 하드코딩 금지.
 import type { Unit } from "../curriculum";
 import {
-  hook, concept, recap, mcq, ox, multi, binSort, hotspot,
+  hook, concept, recap, mcq, ox, multi, binSort, hotspot, figTabs,
   frictionLab, rubLab, inductionLab, waterCircuit, ohmLab, circuitLab, coilFieldLab, swingLab3d,
 } from "../dsl";
 import {
@@ -66,28 +66,55 @@ const motorArt = (): string =>
     ])}
   </div>`;
 
-/** 그네 정리 그림 — 자석 단독 발주 사진 위에 코일 그네를 벡터로 얹는 하이브리드.
- *  '틈 사이 삽입' 구도는 발주가 4연속 실패한 지점 — 오버레이는 아래변이 정확히 틈(y≈67%)을 지난다. */
-const swingArt = (): string =>
-  `<div style="position:relative">
-    <img src="${IMG_BASE}elec/figs/swingbase.webp" alt="말굽자석(위팔 N·아래팔 S)과 지지대, 전지 — 코일 그네의 아래변이 두 팔 사이 틈을 지난다" style="display:block;width:100%;border-radius:14px"/>
-    <svg viewBox="0 0 100 75" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%" fill="none" stroke-linecap="round">
-      <path d="M42 7.2 C50 1.5 72 1 78 7 C83 12 83.5 36 81.5 53" stroke="#2E3540" stroke-width=".55" opacity=".85"/>
-      <path d="M62 7.4 C70 5 74 15 73.5 30 C73.2 42 70.5 49 68.2 52.5" stroke="#C43A2E" stroke-width=".55" opacity=".9"/>
-      <circle cx="42" cy="7.6" r="1" stroke="#8A5322" stroke-width=".5"/>
-      <circle cx="62" cy="7.6" r="1" stroke="#8A5322" stroke-width=".5"/>
-      <path d="M42 8.4 V50.3 H62 V8.4" stroke="#6E3F16" stroke-width="1.5"/>
-      <path d="M42 8.4 V50.3 H62 V8.4" stroke="#C97F3A" stroke-width="1"/>
-      <path d="M42.35 10 V48.5" stroke="#F0B87A" stroke-width=".26" opacity=".85"/>
-      <path d="M61.65 10 V48.5" stroke="#F0B87A" stroke-width=".26" opacity=".85"/>
+/** 그네 3상태 그림(figTabs용) — 직립 말굽자석 발주 2상태(swingtab-a/b) 위에 코일·자기장·전류·힘을
+ *  벡터로 얹는다(교과서 그림 VII-13 모작 — '기본 / 전류 반전 / 극 반전' 비교). viewBox 100×100(=이미지 %).
+ *  전류 화살표는 볼트 옐로 + 진갈색 테두리(구리 코일과 구분 — 3차 피드백). */
+const swingTabArt = (state: "base" | "flipI" | "flipB"): string => {
+  const img = state === "flipB" ? "swingtab-b" : "swingtab-a";
+  const fieldUp = state !== "flipB"; // a: 아래 N(빨강)→위 S(파랑) = 위쪽
+  const curRight = state !== "flipI";
+  const forceOut = state === "base";
+  const turns = [0, 0.9, 1.8, 2.7, 3.6]
+    .map(
+      (d) =>
+        `<path d="M${64 + d} 8 V52 H${84 + d} V8" stroke="#6E3F16" stroke-width="1.7"/><path d="M${64 + d} 8 V52 H${84 + d} V8" stroke="#C97F3A" stroke-width="1.05"/>`,
+    )
+    .join("");
+  const fieldArrows = [44, 52, 60]
+    .map((x) =>
+      fieldUp
+        ? `<path d="M${x} 62 V46" stroke="#E0452E" stroke-width="1.5" opacity=".8"/><path d="M${x - 2} 47 L${x} 41 L${x + 2} 47 Z" fill="#E0452E" opacity=".85"/>`
+        : `<path d="M${x} 42 V58" stroke="#E0452E" stroke-width="1.5" opacity=".8"/><path d="M${x - 2} 57 L${x} 63 L${x + 2} 57 Z" fill="#E0452E" opacity=".85"/>`,
+    )
+    .join("");
+  const cur = curRight
+    ? `<path d="M68 52 H78" stroke="#6E3F16" stroke-width="2.6"/><path d="M68 52 H78" stroke="#FFD400" stroke-width="1.5"/><path d="M78 50.2 L82 52 L78 53.8 Z" fill="#FFD400" stroke="#6E3F16" stroke-width=".5"/>`
+    : `<path d="M80 52 H70" stroke="#6E3F16" stroke-width="2.6"/><path d="M80 52 H70" stroke="#FFD400" stroke-width="1.5"/><path d="M70 50.2 L66 52 L70 53.8 Z" fill="#FFD400" stroke="#6E3F16" stroke-width=".5"/>`;
+  const force = forceOut
+    ? `<path d="M78 57 L90 60.2" stroke="#0B9E96" stroke-width="2.2"/><path d="M89 56.8 L96 62 L87.8 63.8 Z" fill="#0B9E96"/>`
+    : `<path d="M72 57 L60 60.2" stroke="#0B9E96" stroke-width="2.2"/><path d="M61 56.8 L54 62 L62.2 63.8 Z" fill="#0B9E96"/>`;
+  const poleTop = state === "flipB" ? { t: "N극", c: "#C4302B" } : { t: "S극", c: "#1B64DA" };
+  const poleBot = state === "flipB" ? { t: "S극", c: "#1B64DA" } : { t: "N극", c: "#C4302B" };
+  const alt =
+    state === "base" ? "기본 상태 — 힘은 바깥쪽" : state === "flipI" ? "전류 방향을 바꾼 상태 — 힘은 안쪽" : "자석의 두 극을 바꾼 상태 — 힘은 안쪽";
+  return `<div style="position:relative">
+    <img src="${IMG_BASE}elec/figs/${img}.webp" alt="직립 말굽자석 사이에 걸린 코일 그네 — ${alt}" style="display:block;width:100%;border-radius:14px"/>
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%" fill="none" stroke-linecap="round">
+      <path d="M66 0 V8 M86 0 V8" stroke="#8A93A6" stroke-width=".7"/>
+      ${turns}
+      ${fieldArrows}
+      ${cur}
+      ${force}
     </svg>
     ${pills([
-      { x: 33, y: 58, t: "N극", c: "#C4302B" },
-      { x: 31, y: 77, t: "S극", c: "#1B64DA" },
-      { x: 52, y: 24, t: "코일 그네" },
-      { x: 74, y: 64, t: "전원(전지)" },
+      { x: 70, y: 24, t: poleTop.t, c: poleTop.c },
+      { x: 70, y: 80, t: poleBot.t, c: poleBot.c },
+      { x: 47, y: 33, t: "자기장", c: "#C4302B" },
+      { x: 73, y: 43, t: "전류", c: "#8A6600" },
+      forceOut ? { x: 86, y: 69, t: "힘 — 바깥쪽!", c: "#0B7285" } : { x: 61, y: 69, t: "힘 — 안쪽!", c: "#0B7285" },
     ])}
   </div>`;
+};
 
 // ══════════════════════════════════════════════════════════
 // 레슨 1. 마찰 전기 (책 244~245쪽)
@@ -1004,31 +1031,48 @@ const L8 = {
     swingLab3d({
       title: "말굽자석 전기 그네 —<br>3D 실험실",
       lead: "자석 틈의 코일 그네에 전류를 켜 보세요. 전류 방향·자석 극·세기를 바꾸면 힘이 어떻게 변할까요?",
-      cta: "그림으로 정리하기",
+      cta: "세 장면으로 정리하기",
+    }),
+    figTabs({
+      title: "그네는 어느 쪽으로?<br>세 장면 비교",
+      lead: "방금 실험의 세 가지 상황 — 위 탭을 눌러 가며 힘의 방향이 어떻게 바뀌는지 비교해 봐요.",
+      tabs: [
+        {
+          name: "기본",
+          art: swingTabArt("base"),
+          cap: "전기 그네는 말굽자석 <b>바깥쪽</b>으로 힘을 받아 움직여요.",
+        },
+        {
+          name: "전류 방향 반전",
+          art: swingTabArt("flipI"),
+          cap: "코일에 흐르는 <b>전류의 방향이 바뀌면</b> — 전기 그네는 말굽자석 <b>안쪽</b>으로 힘을 받아 움직여요.",
+        },
+        {
+          name: "자석 극 반전",
+          art: swingTabArt("flipB"),
+          cap: "말굽자석의 두 극을 바꿔 <b>자기장의 방향이 바뀌면</b> — 역시 전기 그네는 <b>안쪽</b>으로 힘을 받아 움직여요.",
+        },
+      ],
+      cta: "오른손에 담기",
     }),
     concept({
-      kicker: "그림으로 정리",
+      kicker: "쉽게 기억하는 법",
       kickerTone: "elec",
       title: "그네를 민 힘,<br>오른손에 담기",
-      lead: "방금 한 실험을 실제 장치 그림으로 한 번 더 — 힘의 방향을 찾는 손 모양까지.",
+      lead: "세 장면의 힘의 방향 — 오른손 하나로 전부 찾을 수 있어요.",
       blocks: [
         {
           k: "figure",
-          svg: swingArt(),
-          cap: "N극과 S극 사이 틈 — 그 속을 지나는 코일 아래변이 힘을 받아 그네 전체가 밀려나요",
-        },
-        {
-          k: "figure",
           svg: elabeled("figs/palm.webp", "펼친 오른손 — 네 손가락은 자기장, 엄지는 전류, 손바닥이 미는 쪽이 힘", [
-            { x: 80, y: 44, t: "네 손가락 = 자기장", c: "#C4302B" },
-            { x: 37, y: 12, t: "엄지 = 전류", c: "#B87700" },
-            { x: 47, y: 66, t: "손바닥이 미는 쪽 = 힘", c: "#0B7285" },
+            { x: 20, y: 44, t: "네 손가락 = 자기장", c: "#C4302B" },
+            { x: 63, y: 12, t: "엄지 = 전류", c: "#B87700" },
+            { x: 53, y: 66, t: "손바닥이 미는 쪽 = 힘", c: "#0B7285" },
           ]),
           cap: "오른손을 쫙 펴서 — 네 손가락은 자기장, 엄지는 전류 방향으로. 손바닥이 미는 쪽이 힘!",
         },
         {
           k: "p",
-          html: "실험의 네 가지 발견과 손 모양이 딱 맞아요 — 전류를 <b>뒤집으면</b>(엄지 반대) 힘도 반대, 자석 극을 <b>바꾸면</b>(네 손가락 반대) 힘도 반대, <b>둘 다 뒤집으면</b> 도로 원래 방향!",
+          html: "세 장면과 손 모양이 딱 맞아요 — 전류를 <b>뒤집으면</b>(엄지 반대) 손바닥도 반대, 자석 극을 <b>바꾸면</b>(네 손가락 반대) 역시 반대. <b>둘 다 뒤집으면</b>? 도로 원래 방향!",
         },
       ],
       cta: "전동기 원리로",
