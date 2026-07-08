@@ -343,7 +343,8 @@ src/
   스틱맨 만화 1컷을 둔다 — `{ k: "figure", svg: cut("<theme>", "<name>", "<alt>"), cap: "위트 있는 한 줄" }`.
   `cut(theme, name, alt)`는 dsl.ts의 단일 헬퍼(구 unit7 로컬 복제본 승격) — `public/<theme>/cuts/<name>.webp`를
   임베드하고 lazy 금지(스크롤 컨테이너에서 안 뜸). 폴더는 단원 테마별 분리로 병렬 세션 충돌을 막는다:
-  bio2·chem·geo·light·atom·elec (중1 II=bio2, 중2 I=chem, II=geo, IV=atom, VII=elec).
+  bio2·chem·geo·light·atom·elec·math (중1 II=bio2, 중2 I=chem, II=geo, IV=atom, VII=elec,
+  **수학 Ⅰ~Ⅲ=math** — 컷 이름은 uNlM, 발주 qa/order-mathcuts.sh + mathcut_prompts.txt, 30컷 소급 롤아웃 완료).
   컷 장면은 그 개념을 **일상 스틱맨 장면**으로 — 훅/랩에서 쓴 소재 재활용 금지, **새 각도**로 잡는다
   (분류=겹원에 생물 담기, 순물질/혼합물=한 종류 병 vs 뒤섞인 병, 화학식=손가락으로 원자 개수 세기,
   주기율표=빈 칸 도표에서 한 칸 짚기, 이온식=전자 알갱이 건네주기 — 숫자·기호는 손가락·개수차로 대신).

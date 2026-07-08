@@ -1,0 +1,109 @@
+# 스틱맨 개념 컷 수학 트랙 롤아웃 — 중1 수학 Ⅰ·Ⅱ·Ⅲ concept 30장 (전부 가로 4:3)
+# 과학 전 단원 표준(concept 첫 블록 스틱맨 컷)의 수학 확장. 폴더: public/math/cuts (이름 = uNlM)
+# 장면 규칙: 그 레슨의 훅·랩 소재 재활용 금지(새 각도), 숫자·글자 대신 사물·개수·손짓으로.
+#
+# ── 스타일 블록 A (전 컷 공용 — 스틱맨 만화) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+
+# ══ 중1 Ⅰ 수와 연산 → public/math/cuts ══
+
+[0] file=public/math/cuts/u1l1.png (landscape 4:3, 스타일 A)
+Two stick figures arranging small identical bricks on the ground. The left figure has arranged their bricks into a neat filled rectangle of two even rows and stands proud, arms on hips. The right figure tried to make two even rows but one single brick is left sticking out with nowhere to go, and the figure scratches their head staring at it. Only that one leftover brick is teal; everything else pure black and white.
+
+[1] file=public/math/cuts/u1l2.png (landscape 4:3, 스타일 A)
+A stick figure stands between two tall facing mirrors, seeing their own reflection repeated again and again, each copy smaller and deeper into the distance, all copies striking the same waving pose. The real figure looks delighted at the endless repeats. Only the two mirror frames are teal; everything else pure black and white.
+
+[2] file=public/math/cuts/u1l3.png (landscape 4:3, 스타일 A)
+A stick figure at a small table has taken one orange apart completely: on the table sit the two half peels and a tidy row of individual orange segments laid side by side. The figure holds the last single segment up close to their eyes with both hands, inspecting it, clearly unable to split it any further. Only the row of orange segments is teal; everything else pure black and white.
+
+[3] file=public/math/cuts/u1l4.png (landscape 4:3, 스타일 A)
+Two stick figures sit facing each other, each with their own bowl of assorted doodle marbles of different patterns. Between them is one shared flat plate. Each figure is picking out from their own bowl only the marble kinds that both bowls contain and placing them onto the shared plate together, hands meeting over it. Only the marbles on the shared middle plate are teal; everything else pure black and white.
+
+[4] file=public/math/cuts/u1l5.png (landscape 4:3, 스타일 A)
+Two stick figures walk side by side along a straight path, one taking short strides and one taking long strides, each leaving their own trail of footprints with clearly different spacing. Ahead of them, one single spot on the path has both kinds of footprints landing exactly on top of each other, and both figures point at that overlapping spot excitedly. Only the overlapping footprint spot is teal; everything else pure black and white.
+
+[5] file=public/math/cuts/u1l6.png (landscape 4:3, 스타일 A)
+A side cross-section of sea and cliff: one stick figure stands on a cliff ledge above the water waving, another stick figure snorkels below the waterline among small fish, bubbles rising. A single calm horizontal waterline stretches across the whole panel between them, with a bird in the sky and seaweed at the bottom. Only the horizontal waterline is teal; everything else pure black and white.
+
+[6] file=public/math/cuts/u1l7.png (landscape 4:3, 스타일 A)
+A stick figure stands exactly in the middle holding two leashes, one in each hand, stretched taut to two doodle dogs pulling in opposite directions, left and right. Both leashes are visibly the exact same length, and the figure's arms are spread wide and symmetric. Only the two leashes are teal; everything else pure black and white.
+
+[7] file=public/math/cuts/u1l8.png (landscape 4:3, 스타일 A)
+A tug of war: three stick figures pull the rope on the left side, two stick figures pull on the right side, everyone leaning hard with strained faces. The small ribbon tied at the rope's center has clearly shifted toward the left team, and the rightmost figure's feet are dragging. Only the center ribbon is teal; everything else pure black and white.
+
+[8] file=public/math/cuts/u1l9.png (landscape 4:3, 스타일 A)
+A stick figure wearing a bulky heavy backpack stands upright and relieved: next to their feet lies one heavy rock they could have removed from the pack, but instead a round balloon is tied to the top of the backpack, tugging it upward, string taut. The figure gives a thumbs up, feeling lighter either way. Only the balloon is teal; everything else pure black and white.
+
+[9] file=public/math/cuts/u1l10.png (landscape 4:3, 스타일 A)
+A stick figure stands at an easel flipping a large picture card of a simple doodle cat: on the left an identical card is pinned upside down, cat feet in the air; on the right the same card is pinned right side up after being flipped once more, cat standing normally. The figure is mid-motion turning the card, grinning. Only the right-side-up cat card is teal; everything else pure black and white.
+
+[10] file=public/math/cuts/u1l11.png (landscape 4:3, 스타일 A)
+A mail-carrier stick figure with a shoulder bag walks along a row of small houses, each house with its own little mailbox on a post. The figure holds a fat bundle of identical letters and is slotting one single letter into each mailbox down the row, some mailboxes already fed with one letter peeking out. Only the letters are teal; everything else pure black and white.
+
+[11] file=public/math/cuts/u1l12.png (landscape 4:3, 스타일 A)
+Morning routine, two stick figures side by side: the left figure is hopelessly tangled, having pulled a shoe on before the pants, now tripping with the pants stuck at the knees and one sock in hand. The right figure stands neatly and fully dressed, buttoning the last button calmly, everything worn in the proper order. Only the neat figure's shirt is teal; everything else pure black and white.
+
+# ══ 중1 Ⅱ 문자와 식 → public/math/cuts ══
+
+[12] file=public/math/cuts/u2l1.png (landscape 4:3, 스타일 A)
+A stick figure stands at a clothes rack holding up one empty hanger at eye level, studying it with curiosity. On the rack beside them hang a few completely different outfits: a dress, a puffy coat, a tiny shirt, each on its own hanger, showing the same hanger can hold anything. Only the empty hanger in the figure's hand is teal; everything else pure black and white.
+
+[13] file=public/math/cuts/u2l2.png (landscape 4:3, 스타일 A)
+A barber stick figure gives another seated stick figure a haircut: wild long shaggy hair is being trimmed, tufts of cut hair falling around the chair, the emerging hairstyle short and tidy on the finished side of the head. The seated figure looks pleased in a small hand mirror. Only the scissors are teal; everything else pure black and white.
+
+[14] file=public/math/cuts/u2l3.png (landscape 4:3, 스타일 A)
+A stick figure kneels over a large nearly-finished jigsaw puzzle laid on the floor, with exactly one empty piece-shaped hole remaining. The figure holds the one exactly-matching piece directly above the hole, about to press it in, face focused. Only the held puzzle piece is teal; everything else pure black and white.
+
+[15] file=public/math/cuts/u2l4.png (landscape 4:3, 스타일 A)
+A stick figure plays with a toy train on the floor: a small engine followed by clearly separate connected cars, each car carrying a different simple cargo doodle (a ball, a block, a cone). The figure is clicking one more car onto the end of the train, holding it mid-air. Only the car being attached is teal; everything else pure black and white.
+
+[16] file=public/math/cuts/u2l5.png (landscape 4:3, 스타일 A)
+A stick figure sits folding laundry into separate neat stacks on the floor: one stack of only socks, one stack of only folded shirts, one stack of only towels. The figure holds a single sock and reaches to place it on top of the sock stack specifically. Only the sock in hand and the sock stack are teal; everything else pure black and white.
+
+[17] file=public/math/cuts/u2l6.png (landscape 4:3, 스타일 A)
+A shoe shop: a seated stick figure tries on shoes while a clerk stick figure watches. Scattered around lie rejected shoes, one comically huge boot and one tiny shoe. On the seated figure's foot one shoe fits exactly right, and the figure points at it beaming. Only the perfectly fitting shoe is teal; everything else pure black and white.
+
+[18] file=public/math/cuts/u2l7.png (landscape 4:3, 스타일 A)
+A porter stick figure carries a shoulder pole across the shoulders with a hanging basket on each end, the pole perfectly level. A second stick figure is adding one identical melon into each of the two baskets at the same time, one melon per hand. The pole stays exactly horizontal and the porter smiles. Only the two melons being added are teal; everything else pure black and white.
+
+[19] file=public/math/cuts/u2l8.png (landscape 4:3, 스타일 A)
+A room with one bold straight line drawn across the middle of the floor. On the left side of the line sits a box right side up. A stick figure has carried an identical box across the line to the right side, and that carried box is now upside down, flaps at the bottom, while the figure sets it down mid-crouch. Only the upside-down box on the right is teal; everything else pure black and white.
+
+[20] file=public/math/cuts/u2l9.png (landscape 4:3, 스타일 A)
+A chef stick figure stirs a big pot on a counter while looking up at a picture-only recipe card pinned on the wall: the card shows four small framed doodles in a row, raw vegetables, then a knife chopping, then the pot boiling, then a finished dish with steam. The chef follows along happily, ladle in hand. Only the pot on the stove is teal; everything else pure black and white.
+
+# ══ 중1 Ⅲ 좌표평면과 그래프 → public/math/cuts ══
+
+[21] file=public/math/cuts/u3l1.png (landscape 4:3, 스타일 A)
+Two stick figures play go (baduk) at a low table, the board drawn as a clean grid of crossing horizontal and vertical lines with a few round stones already resting exactly on intersections. One figure reaches out and places a stone precisely on one crossing point, fingertip still touching it, the other watches closely. Only that just-placed stone is teal; everything else pure black and white.
+
+[22] file=public/math/cuts/u3l2.png (landscape 4:3, 스타일 A)
+A stick figure on a small step stool cleans a big square window divided by a plus-shaped frame into four equal panes. Three panes still have doodle smudges; the one pane the figure is wiping is spotless and gleaming with little sparkle ticks. The figure stretches with a cloth in hand. Only the gleaming clean pane is teal; everything else pure black and white.
+
+[23] file=public/math/cuts/u3l3.png (landscape 4:3, 스타일 A)
+A parent stick figure marks a child stick figure's height on a doorframe with a pencil, the child standing on tiptoe against the frame. The doorframe already carries several older short horizontal marks climbing higher and higher up the frame, telling a story of growth. Only the newest topmost mark being drawn is teal; everything else pure black and white.
+
+[24] file=public/math/cuts/u3l4.png (landscape 4:3, 스타일 A)
+A detective stick figure in a simple deerstalker hat crouches with a large magnifying glass, following a trail of footprints across snow: first the prints march evenly spaced, then cluster in a circling jumble in the middle, then stretch far apart in long leaps toward the edge. The detective traces them, intrigued. Only the magnifying glass rim and lens are teal; everything else pure black and white.
+
+[25] file=public/math/cuts/u3l5.png (landscape 4:3, 스타일 A)
+A stick figure climbs a staircase built of visible identical bricks, where every single step is exactly two bricks taller than the previous one, the brick courses clearly drawn and even. The figure marches up confidently, mid-step, arms swinging. Only the bricks of the step currently underfoot are teal; everything else pure black and white.
+
+[26] file=public/math/cuts/u3l6.png (landscape 4:3, 스타일 A)
+A playground with two perfectly straight slides that both land at the very same base point on the ground but rise at different angles: one slide is steep and tall, the other long and gentle. One stick figure kid whooshes down the steep slide with motion lines while another climbs the gentle one. Only the steep slide is teal; everything else pure black and white.
+
+[27] file=public/math/cuts/u3l7.png (landscape 4:3, 스타일 A)
+Three stick figures lie side by side in one bed under a single blanket that is stretched thin to cover them all: the middle one is snug, but the outermost figure's legs and feet stick out completely uncovered, with little shiver squiggles around the cold toes. Only the blanket is teal; everything else pure black and white.
+
+[28] file=public/math/cuts/u3l8.png (landscape 4:3, 스타일 A)
+A stick figure rides a doodle donkey while holding a long fishing rod that dangles a carrot just in front of the donkey's nose. The donkey leans and stretches its neck toward the carrot, forever almost touching it but never reaching, motion lines showing steady walking. Only the dangling carrot is teal; everything else pure black and white.
+
+[29] file=public/math/cuts/u3l9.png (landscape 4:3, 스타일 A)
+A race track: a doodle rabbit has just burst through the finish ribbon at the line, while far behind on the same track a doodle turtle is still plodding along, sweat drop above its head. A referee stick figure beside the finish line raises a flag, and small dashed motion trails behind each racer show how far each has come. Only the finish ribbon is teal; everything else pure black and white.

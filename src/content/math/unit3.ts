@@ -4,7 +4,7 @@
 // 용어가 랩 조작의 전제인 L1(순서쌍·좌표)만 concept가 랩보다 먼저다(Ⅱ L3·L4 기준).
 // 수학 텍스트에 em대시 금지: 제목류는 콜론, 본문은 쉼표. 수식은 mfmt만.
 import type { Unit } from "../curriculum";
-import { lesson, concept, mcq, ox, multi, binSort, order, recap, pairMatch } from "../dsl";
+import { lesson, concept, mcq, ox, multi, binSort, order, recap, pairMatch, cut } from "../dsl";
 import {
   mathHook, mathDrill, coordLab, quadLab, bottleLab, droneLab, linkLab, lineLab, shareLab, curveLab,
 } from "./mdsl";
@@ -49,6 +49,7 @@ export const M1_UNIT3: Unit = {
           title: "순서쌍과 좌표평면",
           lead: "영화관 좌석의 아이디어를 수학의 언어로 옮겨요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u3l1", "바둑판 교차점에 돌을 정확히 놓는 두 스틱맨"), cap: "가로줄과 세로줄이 만나는 교차점, 바둑돌의 주소예요" },
             { k: "term", name: "순서쌍", def: "순서를 정해 두 수를 짝 지은 것. 좌석 (7열, 4번)처럼 <b>(2, 4)와 (4, 2)는 서로 다른</b> 순서쌍이에요." },
             { k: "term", name: "좌표평면", def: "두 수직선을 원점 O에서 수직으로 만나게 놓은 평면. 가로가 <b>x축</b>, 세로가 <b>y축</b>, 두 축을 통틀어 <b>좌표축</b>이라 해요." },
             { k: "term", name: "점의 좌표", def: "점 P의 위치를 순서쌍으로 나타낸 것, 기호로 <b>P(a, b)</b>. a가 x좌표, b가 y좌표예요. 수직선에서는 수 하나로 <b>P(a)</b>." },
@@ -178,6 +179,7 @@ export const M1_UNIT3: Unit = {
           title: "사분면의 부호 지도",
           lead: "탐사에서 발견한 규칙을 한 장으로 정리해요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u3l2", "십자 창틀로 나뉜 네 유리칸 중 한 칸을 닦는 스틱맨"), cap: "십자 틀이 나눈 네 칸, 지금 닦는 칸은 어디일까요?" },
             { k: "term", name: "사분면", def: "좌표축이 평면을 나눈 네 부분. 오른쪽 위부터 <b>반시계 방향</b>으로 제1, 제2, 제3, 제4사분면이에요. 사분면(四分面)은 '넷으로 나눈 면'이라는 뜻!" },
             {
               k: "list",
@@ -305,6 +307,7 @@ export const M1_UNIT3: Unit = {
           title: "변수와 그래프",
           lead: "물병 실험에서 움직인 것들에 이름을 붙여요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u3l3", "문틀에 아이 키 자국을 새로 긋는 부모 스틱맨"), cap: "문틀에 쌓인 키 자국들, 그게 자람의 그래프예요" },
             { k: "term", name: "변수", def: "x, y처럼 <b>여러 가지로 변하는 값</b>을 나타내는 문자. 물병 실험에선 시간 x와 물의 높이 y가 변수였어요." },
             { k: "term", name: "그래프", def: "두 변수의 순서쌍 (x, y)를 좌표로 하는 <b>점 전체</b>를 좌표평면에 나타낸 것." },
             { k: "note", tone: "blue", html: "그래프의 기본 3모양: <b>오른쪽 위로(증가) · 수평(변화 없음) · 오른쪽 아래로(감소)</b>. 여기에 '점점 빠르게(가팔라짐)'와 '점점 느리게(완만해짐)'가 곁들여져요." },
@@ -420,6 +423,7 @@ export const M1_UNIT3: Unit = {
           title: "그래프 해석 3단계",
           lead: "어떤 그래프가 와도 통하는 읽기 순서예요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u3l4", "눈밭 발자국을 돋보기로 따라 읽는 탐정 스틱맨"), cap: "발자국만 보고 걷고 멈추고 달린 걸 읽어내죠, 그래프도 똑같이" },
             {
               k: "list",
               ordered: true,
@@ -543,6 +547,7 @@ export const M1_UNIT3: Unit = {
           title: "정비례와 y=ax",
           lead: "링크 검사를 통과한 관계에 이름과 식을 줘요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u3l5", "한 칸마다 벽돌 두 장씩 높아지는 계단을 오르는 스틱맨"), cap: "한 계단에 두 장씩, 배율이 한결같으면 정비례" },
             { k: "term", name: "정비례", def: "x가 2배, 3배, 4배, ...로 변할 때 y도 <b>2배, 3배, 4배, ...로 변하는</b> 관계. 달걀 x개와 단백질 y g이 그랬죠." },
             { k: "term", name: "관계식 y=ax", def: "y가 x에 정비례하면 <b>y=ax(a≠0)</b>. 거꾸로 y=ax 꼴이면 정비례예요. 이때 " + mfmt("{y/x}") + "의 값은 항상 a로 일정!" },
             { k: "note", tone: "blue", html: "관계식 구하기는 두 걸음: ① y=ax라 놓기 ② 아는 순서쌍 하나를 대입해 a 구하기. x=4일 때 y=12라면 12=4a, a=3이니 <b>y=3x</b>." },
@@ -662,6 +667,7 @@ export const M1_UNIT3: Unit = {
           title: "y=ax 그래프의 성질",
           lead: "제조기에서 본 것들을 시험용 언어로 정리해요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u3l6", "같은 지점에 착지하는 가파른 미끄럼틀과 완만한 미끄럼틀"), cap: "같은 곳을 지나는 두 미끄럼틀, 가파름이 a의 몫이에요" },
             { k: "term", name: "모양", def: "x의 값의 범위가 수 전체일 때, y=ax(a≠0)의 그래프는 <b>원점을 지나는 직선</b>이에요." },
             {
               k: "list",
@@ -790,6 +796,7 @@ export const M1_UNIT3: Unit = {
           title: "반비례와 y=a/x",
           lead: "곱 검사를 통과한 관계에 이름과 식을 줘요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u3l7", "한 담요를 셋이 나눠 덮어 발이 삐져나온 장면"), cap: "식구가 늘수록 담요 몫은 줄어요, 담요 전체는 그대로!" },
             { k: "term", name: "반비례", def: "x가 2배, 3배, 4배, ...로 변할 때 y는 <b>½배, ⅓배, ¼배, ...로 변하는</b> 관계. 사진 장수 x와 장당 시간 y가 그랬죠." },
             { k: "term", name: "관계식 y=a/x", def: "y가 x에 반비례하면 " + mfmt("y={a/x}") + "(a≠0). 이때 <b>곱 xy는 항상 a로 일정</b>해요. 거꾸로 xy=a면 반비례!" },
             { k: "note", tone: "blue", html: "관계식 구하기도 두 걸음: ① y=a/x라 놓기 ② 순서쌍 하나 대입. x=4일 때 y=2라면 2=a/4, a=8이니 " + mfmt("y={8/x}") + ". 사실 <b>a = x×y 한 번에 끝</b>이에요!" },
@@ -914,6 +921,7 @@ export const M1_UNIT3: Unit = {
           title: "y=a/x 그래프의 성질",
           lead: "정원에서 키운 곡선을 시험용 언어로 정리해요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u3l8", "낚싯대 당근을 영원히 쫓는 당나귀와 스틱맨"), cap: "닿을 듯 영원히 닿지 않는 당근, 곡선과 축의 사이예요" },
             { k: "term", name: "모양", def: "x의 값의 범위가 0이 아닌 수 전체일 때, " + mfmt("y={a/x}") + "(a≠0)의 그래프는 좌표축에 가까워지면서 한없이 뻗어 나가는 <b>한 쌍의 매끄러운 곡선</b>이에요." },
             {
               k: "list",
@@ -1030,6 +1038,7 @@ export const M1_UNIT3: Unit = {
           title: "지진 그래프 읽는 법",
           lead: "이 단원에서 배운 모든 무기를 한 그래프에 모아요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u3l9", "결승선을 먼저 끊은 토끼와 아직 달려오는 거북"), cap: "빠른 주자와 느린 주자의 도착 차이, 그 몇 초가 골든타임" },
             { k: "figure", svg: quakeGraphFig(true), cap: "P파와 S파의 경주, 두 도착 시각의 차이가 곧 대피 시간" },
             { k: "term", name: "초기 미동 시간", def: "P파가 도착한 후 S파가 도착할 때까지 걸리는 시간. <b>이 몇 초가 대피의 골든타임</b>이에요." },
             {

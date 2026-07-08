@@ -2,7 +2,7 @@
 // 일차방정식(01 방정식과 그 해·02 풀이와 활용). 책 62~101쪽.
 // 레슨 공식(MATH_GUIDE.md): 미리보기 퍼즐 → 발견 랩 → 이름 붙이기 → recap → 퀴즈 → 드릴.
 import type { Unit } from "../curriculum";
-import { lesson, concept, mcq, ox, multi, binSort, recap, pairMatch } from "../dsl";
+import { lesson, concept, mcq, ox, multi, binSort, recap, pairMatch, cut } from "../dsl";
 import {
   mathHook, mathDrill, patternRule, substLab, exprAnatomy, likeTerms, eqTruth, balanceLab, solveLab,
 } from "./mdsl";
@@ -51,6 +51,7 @@ export const M1_UNIT2: Unit = {
           title: "문자를 사용한 식",
           lead: "방금 만든 2a+1처럼, 문자는 수량 관계를 한 줄로 담아요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u2l1", "빈 옷걸이를 들고 어떤 옷이든 걸 수 있음을 깨닫는 스틱맨"), cap: "어떤 옷이든 걸리는 빈 옷걸이, 문자는 수의 옷걸이예요" },
             { k: "term", name: "문자를 사용한 식", def: "수량이나 수량 사이의 관계를 문자로 나타낸 식. 페트병 x개의 적립금은 <b>(10×x)원</b>, x에 어떤 수가 와도 통해요." },
             { k: "note", tone: "blue", html: "전체 학생 250명 중 남학생이 x명이면 여학생은 <b>(250−x)명</b>, 12켤레에 a원인 양말 한 켤레는 <b>(a÷12)원</b>, 문장을 식으로 번역하는 연습이 핵심이에요." },
             { k: "note", tone: "amber", html: "문자는 x가 아니어도 돼요(a, y, p…). 이름표일 뿐, 뜻은 '아직 정해지지 않은 수'!" },
@@ -147,6 +148,7 @@ export const M1_UNIT2: Unit = {
           title: "곱셈 기호 ×를 지우는 4가지 약속",
           lead: "아무렇게나 지우면 오해가 생겨요, 그래서 약속이 필요해요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u2l2", "덥수룩한 머리를 단정하게 잘라 주는 미용사 스틱맨"), cap: "뜻은 그대로 두고 군더더기만 싹둑, 수학식 다이어트" },
             {
               k: "list",
               ordered: true,
@@ -273,6 +275,7 @@ export const M1_UNIT2: Unit = {
           title: "대입과 식의 값",
           lead: "머신에 들어가기 전, 동작의 이름부터 붙여요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u2l3", "퍼즐의 마지막 빈칸에 딱 맞는 조각을 끼우는 스틱맨"), cap: "빈자리에 조각이 딱 들어가는 순간, 식의 값이 태어나요" },
             { k: "term", name: "대입", def: "문자를 사용한 식에서 문자에 <b>어떤 수를 바꾸어 넣는 것</b>. 0.6x에 x=1000을 대입하면 0.6×1000." },
             { k: "term", name: "식의 값", def: "대입하여 계산한 결과. 0.6×1000 = <b>600</b>이 식의 값이에요." },
             { k: "note", tone: "amber", html: "<b>음수는 반드시 괄호와 함께 대입!</b> x=−5일 때 x²은 (−5)²=25예요. 괄호 없이 −5²라 쓰면 −25가 되어 버리는, 부호 사고 1순위 지점이에요." },
@@ -380,6 +383,7 @@ export const M1_UNIT2: Unit = {
           title: "다항식과 일차식",
           lead: "해부실에 들어가기 전, 식을 이루는 부품들의 이름부터 익혀요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u2l4", "장난감 기차에 칸을 하나씩 이어 붙이는 스틱맨"), cap: "식은 칸칸이 이어 붙인 열차, 칸 하나하나가 항이에요" },
             { k: "term", name: "항 · 상수항 · 계수", def: "수 또는 문자의 곱으로 된 조각이 <b>항</b>(6x, 10), 수만으로 된 항이 <b>상수항</b>(10), 문자에 곱해진 수가 <b>계수</b>(6x의 6)." },
             { k: "term", name: "다항식 · 단항식", def: "항 1개 이상의 합이 <b>다항식</b>, 그중 항이 딱 1개면 <b>단항식</b>(2x). 단항식도 다항식의 한 종류예요!" },
             { k: "term", name: "차수 · 일차식", def: "항에서 <b>문자가 곱해진 개수</b>가 차수(3a²은 2차). 다항식의 차수는 가장 큰 항의 차수이고, 차수가 1이면 <b>일차식</b>!" },
@@ -496,6 +500,7 @@ export const M1_UNIT2: Unit = {
           title: "일차식의 덧셈과 뺄셈",
           lead: "칩 정리의 규칙을 계산 절차로 옮겨요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u2l5", "양말은 양말끼리, 셔츠는 셔츠끼리 개어 쌓는 스틱맨"), cap: "포개지는 건 같은 무리뿐, 빨래가 가르쳐 주는 동류항" },
             { k: "term", name: "동류항", def: "<b>문자가 같고 차수도 같은</b> 항. 5x와 3x는 동류항, 6x와 4y는 아니에요. 상수항끼리는 모두 동류항!" },
             { k: "note", tone: "blue", html: "판 깔기: 단항식과 수의 곱셈은 <b>수끼리 곱해 문자 앞에</b>(2x×3=6x), 나눗셈은 <b>역수 곱</b>(8x÷2=8x×½=4x). 일차식과 수의 곱셈은 분배법칙으로 각 항에!" },
             {
@@ -613,6 +618,7 @@ export const M1_UNIT2: Unit = {
           title: "등식 · 방정식 · 항등식",
           lead: "판별기가 가른 세 가지에 이름을 붙여요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u2l6", "여러 신발 중 발에 딱 맞는 한 켤레를 찾은 스틱맨"), cap: "수십 켤레 중 발에 딱 맞는 한 켤레, 그게 해예요" },
             { k: "term", name: "등식", def: "등호(=)로 수량 관계를 나타낸 식. 왼쪽이 <b>좌변</b>, 오른쪽이 <b>우변</b>, 합쳐서 <b>양변</b>. (부등호 식이나 등호 없는 식은 등식이 아님!)" },
             { k: "term", name: "방정식과 해", def: "x 값에 따라 <b>참·거짓이 갈리는 등식</b>이 방정식. 참이 되게 하는 x가 <b>해(근)</b>, 해를 찾는 게 '방정식을 푼다'!" },
             { k: "term", name: "항등식", def: "x에 <b>무엇을 넣어도 항상 참</b>인 등식. x+3x=4x처럼 양변을 정리하면 완전히 같은 식이에요." },
@@ -718,6 +724,7 @@ export const M1_UNIT2: Unit = {
           title: "등식의 성질 4가지",
           lead: "저울에서 발견한 법칙을 문장으로 새겨요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u2l7", "수평인 멜대 양쪽 바구니에 참외를 하나씩 똑같이 얹는 장면"), cap: "양쪽에 똑같이 얹으면 어깨는 여전히 수평!" },
             {
               k: "list",
               ordered: true,
@@ -838,6 +845,7 @@ export const M1_UNIT2: Unit = {
           title: "일차방정식과 풀이 4단계",
           lead: "이제 어떤 일차방정식이 와도 이 순서로!",
           blocks: [
+            { k: "figure", svg: cut("math", "u2l8", "바닥 경계선을 넘기며 상자가 뒤집힌 이사 스틱맨"), cap: "경계선을 넘는 짐은 뒤집혀요, 이항의 규칙" },
             { k: "term", name: "이항", def: "등식의 한 변의 항을 <b>부호를 바꿔</b> 다른 변으로 옮기는 것, 등식의 성질(같은 수 더하고 빼기)의 지름길이에요." },
             { k: "term", name: "일차방정식", def: "모든 항을 좌변으로 이항해 정리했을 때 <b>(x에 대한 일차식)=0</b> 꼴이 되는 방정식. 3x−6=0처럼!" },
             {
@@ -957,6 +965,7 @@ export const M1_UNIT2: Unit = {
           title: "활용 문제 4단계",
           lead: "어떤 문장 문제든 이 순서로 방정식이 돼요.",
           blocks: [
+            { k: "figure", svg: cut("math", "u2l9", "그림 4칸 레시피를 보며 요리하는 요리사 스틱맨"), cap: "그림 레시피 순서대로면 어떤 문장 문제도 요리돼요" },
             {
               k: "list",
               ordered: true,

@@ -14,7 +14,9 @@ await page.goto(BASE, { waitUntil: "networkidle" });
 // 데이터 계약: 전 트랙 레슨 스텝을 순회하며 cut src를 수집
 const found = await page.evaluate(async () => {
   const cur = await import("/src/content/curriculum.ts");
-  const tracks = cur.CURRICULA || { g1: cur.CURRICULUM };
+  const mcur = await import("/src/content/math/curriculum.ts");
+  const tracks = { ...(cur.CURRICULA || { g1: cur.CURRICULUM }) };
+  for (const [g, units] of Object.entries(mcur.MATH_CURRICULA || {})) tracks[`math-${g}`] = units;
   const out = [];
   for (const [g, units] of Object.entries(tracks)) {
     for (const u of units) {
