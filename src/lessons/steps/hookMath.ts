@@ -137,28 +137,45 @@ function renderCicada(scene: HTMLElement, helper: HTMLElement, finish: () => voi
   });
 }
 
-/* ── L2 paperfold — 종이 접기 두께 ───────────────────────────── */
+/* ── L2 paperfold — 종이 접기 두께 (가로 반토막·두께 두 배, 넓이 보존) ── */
 function renderPaperfold(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]): void {
   const fig = el("div", {});
-  const layerBars = (n: number): string => {
-    let out = "";
-    const count = Math.min(2 ** n, 64);
-    const h = Math.min(88, 6 + count * 1.6);
-    out += `<rect x="120" y="${150 - h}" width="120" height="${h}" rx="5" fill="url(#pf-pp)" stroke="#B8A26E" stroke-width="1.4"/>`;
-    for (let i = 1; i < Math.min(count, 12); i++) {
-      const yy = 150 - (h / Math.min(count, 12)) * i;
-      out += `<line x1="124" y1="${yy}" x2="236" y2="${yy}" stroke="#C8B47E" stroke-width="1" opacity=".5"/>`;
-    }
-    return out;
-  };
+  const GROUND = 150;
+  const paperAt = (n: number): { w: number; t: number } => ({ w: 256 / 2 ** n, t: 3 * 2 ** n });
   const draw = (n: number, label: string): void => {
+    const { w, t } = paperAt(n);
+    const x = 180 - w / 2;
+    const y = GROUND - t;
+    // 직전 크기 잔상(점선) — "가로가 반으로 접혀 들어갔다"가 눈에 보이게
+    let ghost = "";
+    if (n > 0) {
+      const p = paperAt(n - 1);
+      ghost =
+        `<rect x="${180 - p.w / 2}" y="${GROUND - p.t}" width="${p.w}" height="${p.t}" rx="2.5" fill="none" stroke="#B0BCC8" stroke-width="1.4" stroke-dasharray="4 4" opacity=".65"/>` +
+        `<path d="M ${180 + p.w / 2 - 6} ${GROUND - p.t - 9} q -${p.w / 4} -14 -${p.w / 2 - 4} -2" stroke="#8CA0B3" stroke-width="1.6" fill="none" stroke-dasharray="3 3" opacity=".8"/>` +
+        `<path d="M ${180 - 2} ${GROUND - p.t - 12} l -4 3 l 5 2" stroke="#8CA0B3" stroke-width="1.6" fill="none" opacity=".8"/>`;
+    }
+    // 겹 경계선(층이 보일 만큼만)
+    const layers = 2 ** n;
+    let strata = "";
+    if (layers > 1) {
+      const shown = Math.min(layers, 16);
+      const step = t / shown;
+      if (step >= 2.6) {
+        for (let i = 1; i < shown; i++) {
+          strata += `<line x1="${x + 1.5}" y1="${GROUND - step * i}" x2="${x + w - 1.5}" y2="${GROUND - step * i}" stroke="#C8B47E" stroke-width="1" opacity=".55"/>`;
+        }
+      }
+    }
     fig.innerHTML = wrapSvg(
-      `${SHADOW(180, 158, 74)}
-      <line x1="60" y1="150" x2="300" y2="150" stroke="#8CA0B3" stroke-width="2"/>
-      ${layerBars(n)}
-      <ellipse cx="138" cy="${104 - Math.min(88, 6 + Math.min(2 ** n, 64) * 1.6) * 0 + 0}" rx="0" ry="0" fill="#fff"/>
-      <text x="180" y="52" text-anchor="middle" font-size="14" font-weight="800" fill="#54677A">${label}</text>
-      <text x="180" y="30" text-anchor="middle" font-size="16" font-weight="900" fill="#0A87A3" class="pf-count"></text>`,
+      `${SHADOW(180, 158, Math.max(26, w * 0.34))}
+      <line x1="60" y1="${GROUND}" x2="300" y2="${GROUND}" stroke="#8CA0B3" stroke-width="2"/>
+      ${ghost}
+      <rect x="${x}" y="${y}" width="${w}" height="${Math.max(t, 3)}" rx="${Math.min(5, w / 4)}" fill="url(#pf-pp)" stroke="#B8A26E" stroke-width="1.4"/>
+      ${strata}
+      <ellipse cx="${180 - w * 0.22}" cy="${y + Math.min(6, t * 0.3)}" rx="${w * 0.2}" ry="2" fill="#fff" opacity=".5"/>
+      <text x="180" y="30" text-anchor="middle" font-size="14" font-weight="800" fill="#54677A">${label}</text>
+      ${n > 0 ? `<text x="180" y="${GROUND + 24}" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8CA0B3">가로는 반으로, 두께는 두 배로</text>` : ""}`,
       `<linearGradient id="pf-pp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF8E2"/><stop offset="1" stop-color="#EAD9A8"/></linearGradient>`,
     );
   };
