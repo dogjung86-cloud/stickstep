@@ -8,12 +8,12 @@
 // 전하·회로 소품 표현은 ui/elecKit(전자는 chemKit과 동일 톤) — 하드코딩 금지.
 import type { Unit } from "../curriculum";
 import {
-  hook, concept, recap, mcq, ox, multi, binSort,
+  hook, concept, recap, mcq, ox, multi, binSort, hotspot,
   frictionLab, rubLab, inductionLab, waterCircuit, ohmLab, circuitLab, coilFieldLab, swingLab3d,
 } from "../dsl";
 import {
   rubBeforeAfterFig, canInductionFig, viGraphFig, parallelBulbsFig,
-  seriesWaterFig, parallelWaterFig, motorFig, elecMiniArt,
+  seriesWaterFig, parallelWaterFig, elecMiniArt,
 } from "../../ui/elecFigures";
 
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -33,6 +33,61 @@ const elabeled = (path: string, alt: string, labels: { x: number; y: number; t: 
 /** 스틱맨 개념 컷(발주 만화 1컷, public/elec/cuts) — concept의 figure 블록에 끼운다 */
 const cut = (name: string, alt: string): string =>
   `<img src="${IMG_BASE}elec/cuts/${name}.webp" alt="${alt}" style="display:block;width:100%;border-radius:12px"/>`;
+
+/** 라벨 필 HTML(공용) — elabeled와 같은 규격 */
+const pills = (labels: { x: number; y: number; t: string; c?: string }[]): string =>
+  labels
+    .map(
+      (l) =>
+        `<span style="position:absolute;left:${l.x}%;top:${l.y}%;transform:translate(-50%,-50%);background:rgba(255,255,255,.93);border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:800;color:${l.c ?? "#333D4B"};box-shadow:0 1px 4px rgba(10,20,40,.2);white-space:nowrap">${l.t}</span>`,
+    )
+    .join("");
+
+/** 전동기 구조 아트(hotspot용) — 발주 구조 사진(그림 VII-15 모작) + 자기장·전류 방향 SVG 오버레이.
+ *  방향 화살표는 발주에 못 맡긴다(정확성) — 교과서 방향을 벡터로 얹는다. viewBox 100×75(4:3 = 이미지 %). */
+const motorArt = (): string =>
+  `<div style="position:relative">
+    <img src="${IMG_BASE}elec/figs/motor2.webp" alt="전동기 구조 — 왼쪽 N극 자석과 오른쪽 S극 자석 사이에 수평 코일이 회전축을 물고 있다" style="display:block;width:100%;border-radius:14px"/>
+    <svg viewBox="0 0 100 75" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%" fill="none">
+      <path d="M30 30 H62" stroke="#E0452E" stroke-width="1.4" opacity=".6" stroke-linecap="round"/>
+      <path d="M62 27.8 L67 30 L62 32.2 Z" fill="#E0452E" opacity=".7"/>
+      <path d="M42.6 65 L41.8 57.5" stroke="#F0A422" stroke-width="1.1" stroke-linecap="round"/>
+      <path d="M40.6 58 L41.6 54.6 L43.2 57.7 Z" fill="#F0A422"/>
+      <path d="M57.4 57.5 L58.6 65" stroke="#F0A422" stroke-width="1.1" stroke-linecap="round"/>
+      <path d="M57.2 64.6 L59 68 L59.9 64.4 Z" fill="#F0A422"/>
+    </svg>
+    ${pills([
+      { x: 14, y: 30, t: "자석 (N극)", c: "#C4302B" },
+      { x: 85, y: 27, t: "자석 (S극)", c: "#1B64DA" },
+      { x: 49, y: 25, t: "코일" },
+      { x: 66, y: 60, t: "회전축" },
+      { x: 34, y: 76, t: "전류", c: "#B87700" },
+      { x: 46, y: 36, t: "자기장", c: "#C4302B" },
+    ])}
+  </div>`;
+
+/** 그네 정리 그림 — 자석 단독 발주 사진 위에 코일 그네를 벡터로 얹는 하이브리드.
+ *  '틈 사이 삽입' 구도는 발주가 4연속 실패한 지점 — 오버레이는 아래변이 정확히 틈(y≈67%)을 지난다. */
+const swingArt = (): string =>
+  `<div style="position:relative">
+    <img src="${IMG_BASE}elec/figs/swingbase.webp" alt="말굽자석(위팔 N·아래팔 S)과 지지대, 전지 — 코일 그네의 아래변이 두 팔 사이 틈을 지난다" style="display:block;width:100%;border-radius:14px"/>
+    <svg viewBox="0 0 100 75" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%" fill="none" stroke-linecap="round">
+      <path d="M42 7.2 C50 1.5 72 1 78 7 C83 12 83.5 36 81.5 53" stroke="#2E3540" stroke-width=".55" opacity=".85"/>
+      <path d="M62 7.4 C70 5 74 15 73.5 30 C73.2 42 70.5 49 68.2 52.5" stroke="#C43A2E" stroke-width=".55" opacity=".9"/>
+      <circle cx="42" cy="7.6" r="1" stroke="#8A5322" stroke-width=".5"/>
+      <circle cx="62" cy="7.6" r="1" stroke="#8A5322" stroke-width=".5"/>
+      <path d="M42 8.4 V50.3 H62 V8.4" stroke="#6E3F16" stroke-width="1.5"/>
+      <path d="M42 8.4 V50.3 H62 V8.4" stroke="#C97F3A" stroke-width="1"/>
+      <path d="M42.35 10 V48.5" stroke="#F0B87A" stroke-width=".26" opacity=".85"/>
+      <path d="M61.65 10 V48.5" stroke="#F0B87A" stroke-width=".26" opacity=".85"/>
+    </svg>
+    ${pills([
+      { x: 33, y: 58, t: "N극", c: "#C4302B" },
+      { x: 31, y: 77, t: "S극", c: "#1B64DA" },
+      { x: 52, y: 24, t: "코일 그네" },
+      { x: 74, y: 64, t: "전원(전지)" },
+    ])}
+  </div>`;
 
 // ══════════════════════════════════════════════════════════
 // 레슨 1. 마찰 전기 (책 244~245쪽)
@@ -416,7 +471,7 @@ const L4 = {
     hook({
       title: "전지를 하나 더 끼우면<br><em>얼마나</em> 밝아질까?",
       lead: "전구에 전지 1개 — 불이 켜져 있어요. 여기에 전지를 직렬로 하나 더 끼우면?",
-      narrator: "먼저 <b>예측</b>하고, 전지를 하나 더 끼워 직접 확인해 봐요!",
+      narrator: "홀더의 <b>빈자리를 탭</b>해 전지를 끼우고 — 달라진 밝기에서 전류를 예측해 봐요!",
       scene: "brightpair",
       done: "전압을 키우니 전구가 더 밝아졌어요 — 그럼 전압과 전류는 정확히 <b>어떤 관계</b>일까요? 실험으로 그래프를 그려 봐요.",
       cta: "실험실 열기",
@@ -959,12 +1014,7 @@ const L8 = {
       blocks: [
         {
           k: "figure",
-          svg: elabeled("figs/swing.webp", "말굽자석의 위팔과 아래팔 사이 틈에 코일 그네의 아래변이 끼워져 있고 전선이 전지로 이어진 실험 장치", [
-            { x: 30, y: 52, t: "N극", c: "#C4302B" },
-            { x: 28, y: 73, t: "S극", c: "#1B64DA" },
-            { x: 54, y: 27, t: "코일 그네" },
-            { x: 81, y: 74, t: "전원(전지)" },
-          ]),
+          svg: swingArt(),
           cap: "N극과 S극 사이 틈 — 그 속을 지나는 코일 아래변이 힘을 받아 그네 전체가 밀려나요",
         },
         {
@@ -983,37 +1033,26 @@ const L8 = {
       ],
       cta: "전동기 원리로",
     }),
-    concept({
-      kicker: "원리의 완성",
-      kickerTone: "elec",
-      title: "전동기 —<br>힘을 회전으로",
-      lead: "그네가 받던 그 힘으로 코일을 뱅글뱅글 돌리면 — 전동기가 돼요.",
-      blocks: [
-        { k: "figure", svg: cut("motor", "선풍기 뒤판을 열고 안을 들여다보는 스틱맨 — 모터 속에 자석 사이 코일이 보인다"), cap: "선풍기 뒤통수를 열면 — 자석 사이에 코일! 모든 전동기의 속은 이렇게 생겼어요" },
+    hotspot({
+      title: "전동기 —<br>구조와 원리",
+      lead: "그네가 받던 그 힘으로 코일을 뱅글뱅글 돌리는 게 <b>전동기</b> — 자석 사이의 코일, 그게 전부예요. 코일의 <b>왼쪽 변과 오른쪽 변</b>을 눌러 힘의 방향을 확인해 봐요!",
+      svg: motorArt(),
+      spots: [
         {
-          k: "p",
-          html: "전동기의 속은 생각보다 단순해요 — <b>자석 사이에 사각 코일이 회전축을 물고</b> 들어앉아 있을 뿐! 그런데 코일에 전류를 흘리면, 코일의 <b>왼쪽과 오른쪽에는 전류가 서로 반대 방향</b>으로 흘러요(한쪽은 들어가고 한쪽은 나오니까). 그래서 두 부분이 받는 <b>힘의 방향도 반대</b> — 한쪽은 위로, 한쪽은 아래로 밀리며 코일이 <b>회전</b>해요.",
+          x: 34, y: 38,
+          label: "코일의 왼쪽 변",
+          desc: "전류가 <b>앞쪽</b>으로 흘러 → <b>위쪽으로 힘</b>을 받아요",
+          photo: "elec/figs/motor-left.svg",
+          photoCap: "확대 — 전류(앞쪽)·자기장(N→S)·힘(위쪽)",
         },
         {
-          k: "figure",
-          svg: elabeled("figs/motor.webp", "전동기 내부 구조 — 붉은 자석과 파란 자석 사이 회전축에 사각 코일이 걸려 있고 전선이 전지로 이어진다", [
-            { x: 25, y: 18, t: "자석" },
-            { x: 78, y: 14, t: "자석" },
-            { x: 52, y: 28, t: "코일" },
-            { x: 63, y: 33, t: "회전축" },
-            { x: 70, y: 84, t: "전지" },
-          ]),
-          cap: "실제 전동기의 속 — 자석 사이 코일이 축을 중심으로 돌아요",
-        },
-        { k: "figure", svg: motorFig(), cap: "왼쪽 위로·오른쪽 아래로 — 반대 방향 힘의 짝이 회전을 만든다" },
-        {
-          k: "callout",
-          tone: "amber",
-          title: "우리 주변의 전동기",
-          html: "선풍기·세탁기·엘리베이터·전기 자동차·드론 — 전기로 <b>움직이는</b> 것 속엔 어김없이 전동기가 있어요. 이어폰도 코일과 자석 사이의 힘으로 진동판을 떨어 소리를 내죠!",
+          x: 66, y: 32,
+          label: "코일의 오른쪽 변",
+          desc: "전류가 <b>뒤쪽(반대)</b>으로 흘러 → <b>아래쪽으로 힘</b>을 받아요",
+          photo: "elec/figs/motor-right.svg",
+          photoCap: "확대 — 전류(뒤쪽)·자기장(N→S)·힘(아래쪽)",
         },
       ],
-      cta: "개념 정리하기",
     }),
     recap({
       title: "코일이 받는 힘,<br>카드 두 장으로 정리",

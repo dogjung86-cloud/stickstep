@@ -44,7 +44,8 @@ function showPhoto(photoBox: HTMLElement, spot: Spot): void {
     photoBox.classList.remove("show");
     return;
   }
-  const img = el("img", { attrs: { src: base + spot.photo, alt: `${spot.label} 사진`, loading: "lazy" } });
+  // loading="lazy" 금지 — .scroll 컨테이너와 관측 루트가 어긋나 영영 안 뜨는 사고 이력(CLAUDE.md)
+  const img = el("img", { attrs: { src: base + spot.photo, alt: `${spot.label} 사진` } });
   img.addEventListener("error", () => photoBox.classList.remove("show"));
   photoBox.append(
     img,

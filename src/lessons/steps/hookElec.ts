@@ -386,35 +386,24 @@ function brightPairSvg(): string {
 }
 
 export function renderBrightPair(scene: HTMLElement, helper: HTMLElement, s: HookOpts, finish: () => void, face: Face): () => void {
+  // 흐름(2차 피드백): ① 빈자리를 탭해 전지를 먼저 끼운다(밝아짐 관찰) → ② "전류는 어떻게 됐을까" 예측.
   const fig = el("button", {
-    class: "he-fig he-bp",
+    class: "he-fig he-bp ready",
     html: brightPairSvg(),
     attrs: { type: "button", "aria-label": "빈 전지 자리를 탭해서 전지 하나 더 끼우기" },
   });
-  (fig as HTMLButtonElement).disabled = true;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "전지 <b>1개</b>로 전구가 켜져 있어요(전선 위 흐름 점이 보이죠?). 옆의 <b>빈자리</b>에 전지를 하나 더(직렬) 끼우면 — 밝기는?";
+  helper.innerHTML = "전지 <b>1개</b>로 전구가 켜져 있어요(전선 위 흐름 점이 보이죠?). 홀더의 <b>빈자리를 탭</b>해서 전지를 하나 더(직렬) 끼워 봐요!";
   face("curious");
 
-  let ready = false;
   let boosted = false;
   const timers: number[] = [];
   const later = (fn: () => void, ms: number): void => {
     timers.push(window.setTimeout(fn, ms));
   };
-  ask(choicesBox, helper, {
-    choices: s.choices ?? ["전구가 지금보다 더 밝아진다", "밝기는 변하지 않는다", "불이 오히려 꺼진다"],
-    good: "좋은 예측! 정말 그런지 — 홀더의 <b>빈자리를 탭</b>해서 전지를 끼워 봐요.",
-    bad: "전지를 늘리면 전기를 <b>미는 힘(전압)이 커져요</b> — 그대로이거나 꺼지지 않아요. 홀더의 <b>빈자리를 탭</b>해서 직접 확인!",
-    onDone: () => {
-      ready = true;
-      (fig as HTMLButtonElement).disabled = false;
-      fig.classList.add("ready");
-    },
-  });
   fig.addEventListener("click", () => {
-    if (!ready || boosted) return;
+    if (boosted) return;
     boosted = true;
     (fig as HTMLButtonElement).disabled = true;
     fig.classList.remove("ready");
@@ -424,9 +413,14 @@ export function renderBrightPair(scene: HTMLElement, helper: HTMLElement, s: Hoo
     helper.innerHTML = "딸깍 — <b>확 밝아졌어요!</b> 흐름 점도 빨라졌죠?";
     later(() => {
       face("curious");
-      helper.innerHTML = "전지 2개 직렬 = 미는 힘(전압) 2배. 전류계 없이도 밝기가 말해 주네요 — <b>전류가 커졌다</b>는 걸!";
-      finish();
-    }, 1100);
+      helper.innerHTML = "전지 2개 직렬 = 미는 힘(전압)이 커졌어요. 그럼 전구를 지나는 <b>전류</b>는 어떻게 됐을까요?";
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["전류도 함께 세졌다", "전류는 변하지 않았다", "전류는 오히려 줄었다"],
+        good: "맞아요! <b>밝기가 곧 전류의 증거</b> — 전압을 키우니 전류도 세진 거예요. 그럼 전압을 2배로 하면 전류는 정확히 몇 배일까요? 그래프로 밝혀 봐요!",
+        bad: "밝기를 다시 봐요 — 전구는 전류가 셀수록 밝아져요. <b>더 밝아졌다 = 전류가 세졌다</b>는 뜻! 전압을 키우면 전류도 커져요. 정확히 몇 배인지는 그래프로!",
+        onDone: finish,
+      });
+    }, 1200);
   });
   return () => timers.forEach((t) => window.clearTimeout(t));
 }

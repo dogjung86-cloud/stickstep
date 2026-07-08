@@ -293,10 +293,11 @@ try {
 
   // ════ L4 옴의 법칙 ════
   await openNextLesson();
-  // 훅 brightpair: 예측 먼저 → 빈 슬롯 탭(전지 2개 직렬)
-  await hookChoice(0);
+  // 훅 brightpair: ① 빈 슬롯 탭(전지 끼우기, 밝아짐 관찰) → ② "전류는?" 예측
+  await page.waitForSelector(".he-bp", { timeout: 9000 });
   await page.evaluate(() => document.querySelector(".he-bp").click());
-  await W(1400);
+  await W(1700); // 밝아짐 + 질문 등장(1.2s 뒤 ask)
+  await hookChoice(0);
   await clickCTA();
   log("  ohmLab:", await h1());
   await W(600);
@@ -406,8 +407,13 @@ try {
   log("   칩:", await chipsOn());
   await clickCTA(); // → concept(그림으로 정리)
   log("  concept(그림 정리):", await h1());
-  await clickCTA(); // → concept(전동기)
-  log("  concept(전동기):", await h1());
+  await clickCTA(); // → hotspot(전동기 구조와 원리)
+  log("  hotspot(전동기):", await h1());
+  await page.waitForSelector(".hs-dot", { timeout: 9000 });
+  for (let i = 0; i < 2; i++) {
+    await page.evaluate((i) => document.querySelectorAll(".hs-dot")[i].click(), i);
+    await W(700);
+  }
   await clickCTA(); await clickCTA(); // recap → 문제
   await multiPick([0, 2]); await multiPick([0, 1]);
   await binSortAuto([["선풍기", "받는 힘"], ["드론", "받는 힘"], ["이어폰", "받는 힘"], ["전기 자동차", "받는 힘"], ["기중기", "자기장"], ["잠금장치", "자기장"]]);

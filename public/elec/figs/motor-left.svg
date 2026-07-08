@@ -1,0 +1,34 @@
+<svg viewBox="0 0 400 184" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- 전동기 코일 '왼쪽 변' 속컷 — hs-photo 카드는 170px 고정·object-fit:cover라
+       표시 비율(≈2.2:1)로 저작한다(400×184). 하단 y≈146 아래는 캡션 필이 덮는다.
+       색 규약: 자기장=레드 · 전류=앰버 · 힘=틸. 전류 앞쪽(↙) → 힘 위(↑). -->
+  <defs>
+    <linearGradient id="mlWire" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E8A05E"/><stop offset=".5" stop-color="#C97F3A"/><stop offset="1" stop-color="#8A5322"/>
+    </linearGradient>
+    <linearGradient id="mlBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FDFEFF"/><stop offset="1" stop-color="#EDF2F9"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="184" fill="url(#mlBg)"/>
+  <!-- 자기장(N→S, 왼→오) 2줄 -->
+  <g stroke="#E0452E" stroke-width="4.5" opacity=".5">
+    <path d="M28 48H344M28 128H344"/>
+  </g>
+  <g fill="#E0452E" opacity=".5">
+    <path d="M344 38l22 10-22 10z"/><path d="M344 118l22 10-22 10z"/>
+  </g>
+  <text x="16" y="30" font-family="Pretendard, sans-serif" font-size="15" font-weight="800" fill="#C4302B" stroke="#FFFFFF" stroke-width="5" paint-order="stroke">자기장 (N→S)</text>
+  <!-- 코일 왼쪽 변(앞뒤 방향 — 앞 = 좌하단) -->
+  <path d="M292 22 L162 162" stroke="#6E3F16" stroke-width="15"/>
+  <path d="M292 22 L162 162" stroke="url(#mlWire)" stroke-width="11"/>
+  <path d="M285 27 L176 144" stroke="#FFD9AE" stroke-width="2.6" opacity=".6"/>
+  <!-- 전류(앞쪽 ↙) -->
+  <path d="M252 66 L218 102" stroke="#F0A422" stroke-width="6.5"/>
+  <path d="M225 114 L204 126 L211 99 Z" fill="#F0A422"/>
+  <text x="258" y="78" font-family="Pretendard, sans-serif" font-size="15.5" font-weight="800" fill="#B87700" stroke="#FFFFFF" stroke-width="5" paint-order="stroke">전류 (앞쪽으로)</text>
+  <!-- 힘(위 ↑) -->
+  <path d="M196 118 V52" stroke="#0B9E96" stroke-width="8"/>
+  <path d="M182 56 L196 24 L210 56 Z" fill="#0B9E96"/>
+  <text x="212" y="42" font-family="Pretendard, sans-serif" font-size="17" font-weight="800" fill="#0B7285" stroke="#FFFFFF" stroke-width="5" paint-order="stroke">힘 (위쪽!)</text>
+</svg>

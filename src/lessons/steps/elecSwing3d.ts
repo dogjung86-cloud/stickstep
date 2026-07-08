@@ -335,8 +335,12 @@ export const swingLab3d: StepRenderer = (host, step, api) => {
         const t = (flowPhase + k / 4) % 1;
         dot.position.z = curDir > 0 ? -HALF_Z + t * HALF_Z * 2 : HALF_Z - t * HALF_Z * 2;
       });
-      // 자기장 화살표 방향(극 반전 시)
-      fieldArrows.forEach((a) => a.setDirection(new three!.Vector3(0, -poleDir, 0)));
+      // 자기장 화살표 — 극 반전 시 방향과 함께 시작점도 옮겨 틈 안(y 28~64)에 머물게 한다.
+      // (원점 고정이면 반전 때 화살표가 위 극 블록 속으로 숨는 실사용 피드백 버그.)
+      fieldArrows.forEach((a) => {
+        a.setDirection(new three!.Vector3(0, -poleDir, 0));
+        a.position.y = BOT_Y + 18 * poleDir;
+      });
 
       // 상태 필
       const pillTxt = !on
