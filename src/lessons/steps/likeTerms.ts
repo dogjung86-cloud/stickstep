@@ -1,8 +1,8 @@
-// likeTerms — 동류항 정리소(Ⅱ 문자와 식 랩, 책 74~75쪽). 문자와 차수가 같은 항 칩만
+// likeTerms, 동류항 정리소(Ⅱ 문자와 식 랩, 책 74~75쪽). 문자와 차수가 같은 항 칩만
 // 드래그로 포개면 계수가 더해져 합쳐진다(3x+2x → 5x). 다른 종류는 스프링 복귀 +
 // 오개념 토스트("x와 y는 못 합쳐요" / "상수항은 상수항끼리!" / "x와 x²은 차수가 달라요").
 // powBuild의 드래그 병합 + 탭탭 폴백 문법을 그대로 계승. 마지막 판은 동류항이 없는
-// 함정 판 — "더는 못 합쳐요!" 선언이 정답(못 합치면 그대로 두는 것도 실력).
+// 함정 판, "더는 못 합쳐요!" 선언이 정답(못 합치면 그대로 두는 것도 실력).
 // 모션은 전부 CSS transition + setTimeout 체인(rAF 금지). setPointerCapture는 try/catch.
 // 병합 팝은 translate+scale을 한 인라인 transform으로 합성(키프레임이 배치 translate를
 // 덮어쓰는 충돌 없이 .merged와 같은 스프링 바운스).
@@ -33,7 +33,7 @@ interface Chip extends ChipDef {
 
 const BOARD_H = 260;
 const CHIP_H = 46;
-// 색 규약: x·x²=기본(시안 — 같은 문자라 색이 같아도 차수가 다르면 안 합쳐지는 게 함정 학습),
+// 색 규약: x·x²=기본(시안, 같은 문자라 색이 같아도 차수가 다르면 안 합쳐지는 게 함정 학습),
 // y=.alt(보라), 상수항=.const(앰버)
 const KIND_CLS: Record<Kind, string> = { x: "", y: "alt", x2: "", c: "const" };
 const KIND_ORDER: Record<Kind, number> = { x2: 0, x: 1, y: 2, c: 3 };
@@ -46,7 +46,7 @@ function termSrc(t: ChipDef, lead: boolean): string {
   const sgn = t.coef < 0 ? "-" : lead ? "" : "+";
   return `${sgn}${a === 1 ? "" : a}${vr}`;
 }
-/** 칩 라벨 — 문자항은 "3x"·"-x", 상수항은 부호를 항상 붙여 "+10"·"-8". */
+/** 칩 라벨, 문자항은 "3x"·"-x", 상수항은 부호를 항상 붙여 "+10"·"-8". */
 const chipLabel = (t: ChipDef): string => termSrc(t, t.kind !== "c");
 /** 남은 칩들을 x² → x → y → 상수 순으로 이어 붙인 정리 결과 식. */
 function composeSrc(list: ChipDef[]): string {
@@ -59,17 +59,17 @@ function composeSrc(list: ChipDef[]): string {
 function wrongMsg(a: Kind, b: Kind): string {
   if (a === "c" || b === "c") return "상수항은 상수항끼리!";
   if ((a === "x" && b === "x2") || (a === "x2" && b === "x")) return "x와 x²은 차수가 달라요";
-  return "문자가 달라요 — x와 y는 못 합쳐요";
+  return "문자가 달라요, x와 y는 못 합쳐요";
 }
 
 interface StageDef {
   chips: ChipDef[];
-  pos: [number, number][]; // [x 비율, y px] — 같은 종류는 대각선으로 떨어뜨린다
+  pos: [number, number][]; // [x 비율, y px], 같은 종류는 대각선으로 떨어뜨린다
   goal: string;
   sub: string;
   intro: string;
   done: string;
-  declare?: boolean; // 함정 판 — 병합이 아니라 "없다" 선언이 완료 경로
+  declare?: boolean; // 함정 판, 병합이 아니라 "없다" 선언이 완료 경로
 }
 
 const STAGES: StageDef[] = [
@@ -88,7 +88,7 @@ const STAGES: StageDef[] = [
     ],
     goal: "s1",
     sub: "5x+2!",
-    intro: "<b>같은 문자끼리</b> 끌어 포개 보세요 — x는 x끼리, 상수는 상수끼리!",
+    intro: "<b>같은 문자끼리</b> 끌어 포개 보세요, x는 x끼리, 상수는 상수끼리!",
     done: "3x+2x=<b>5x</b>, (+10)+(−8)=<b>+2</b>. 이렇게 문자와 차수가 같은 항이 <b>동류항</b>이에요.",
   },
   {
@@ -108,7 +108,7 @@ const STAGES: StageDef[] = [
     ],
     goal: "s2",
     sub: "3종 정리!",
-    intro: "세 종류가 섞였어요 — <b>x·y·상수</b>를 각각 모아요.",
+    intro: "세 종류가 섞였어요, <b>x·y·상수</b>를 각각 모아요.",
     done: "4x−x=<b>3x</b>, 7y+2y=<b>9y</b>, −3은 짝이 없어 <b>그대로</b>. 종류별로 딱 한 항씩!",
   },
   {
@@ -124,8 +124,8 @@ const STAGES: StageDef[] = [
     ],
     goal: "s3",
     sub: "그대로!",
-    intro: "함정 판 — <b>합칠 수 있는 짝</b>이 있을까요? 전부 시도해 보고, 없으면 아래에서 선언!",
-    done: "x와 x²은 <b>차수가 달라서</b> 동류항이 아니에요. 못 합치면 그대로 두기 — 그것도 실력!",
+    intro: "함정 판, <b>합칠 수 있는 짝</b>이 있을까요? 전부 시도해 보고, 없으면 아래에서 선언!",
+    done: "x와 x²은 <b>차수가 달라서</b> 동류항이 아니에요. 못 합치면 그대로 두기, 그것도 실력!",
     declare: true,
   },
 ];
@@ -157,7 +157,7 @@ export const likeTerms: StepRenderer = (host, step, api) => {
   host.append(goals.el, board, read, declareRow, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));
 
-  // ---- 타이머(모든 지연은 여기로 — cleanup에서 일괄 해제) ----
+  // ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ----
   const timers = new Set<number>();
   const later = (fn: () => void, ms: number): void => {
     const id = window.setTimeout(() => {
@@ -185,7 +185,7 @@ export const likeTerms: StepRenderer = (host, step, api) => {
 
   function addChip(d: ChipDef, fx: number, y: number): void {
     const c: Chip = { ...d, x: 0, y, el: el("div", { class: `tm-chip ${KIND_CLS[d.kind]}`, attrs: { role: "button" } }) };
-    // 배치 기준을 보드 원점으로 고정(absolute + left/top 0 + transform — vn-chip 사고 방지)
+    // 배치 기준을 보드 원점으로 고정(absolute + left/top 0 + transform, vn-chip 사고 방지)
     c.el.style.position = "absolute";
     c.el.style.left = "0";
     c.el.style.top = "0";
@@ -194,7 +194,7 @@ export const likeTerms: StepRenderer = (host, step, api) => {
     const w = c.el.offsetWidth || 64;
     const bw = boardW();
     c.x = clamp(12 + fx * (bw - w - 24), 4, bw - w - 4);
-    // 등장 팝(인라인 트랜지션 — 배치 transform과 합성)
+    // 등장 팝(인라인 트랜지션, 배치 transform과 합성)
     c.el.style.opacity = "0";
     setXY(c, 0.3);
     void c.el.offsetWidth;
@@ -242,7 +242,7 @@ export const likeTerms: StepRenderer = (host, step, api) => {
     }, 420);
   }
 
-  /** c가 o에 흡수 — 계수 합산 + 스프링 팝. */
+  /** c가 o에 흡수, 계수 합산 + 스프링 팝. */
   function merge(c: Chip, o: Chip): void {
     chips = chips.filter((k) => k !== c);
     c.el.style.pointerEvents = "none";
@@ -268,10 +268,10 @@ export const likeTerms: StepRenderer = (host, step, api) => {
     checkStage();
   }
 
-  /** 드래그를 놓았을 때 — 가까운 칩과 병합 시도. 다른 종류면 스프링 복귀. */
+  /** 드래그를 놓았을 때, 가까운 칩과 병합 시도. 다른 종류면 스프링 복귀. */
   function dropMerge(c: Chip, homeX: number, homeY: number): void {
     const hit = nearest(c);
-    if (!hit || hit.d > 54) return; // 빈 곳 — 놓은 자리 그대로
+    if (!hit || hit.d > 54) return; // 빈 곳, 놓은 자리 그대로
     if (hit.o.kind !== c.kind) {
       haptic(HAPTIC.wrong);
       toast(wrongMsg(c.kind, hit.o.kind));
@@ -281,7 +281,7 @@ export const likeTerms: StepRenderer = (host, step, api) => {
     merge(c, hit.o);
   }
 
-  /** 탭탭 폴백 — 선택 → 같은 종류 탭이면 병합, 다르면 교정 토스트. */
+  /** 탭탭 폴백, 선택 → 같은 종류 탭이면 병합, 다르면 교정 토스트. */
   function tapSelect(c: Chip): void {
     if (selected && selected !== c) {
       const a = selected;
@@ -352,7 +352,7 @@ export const likeTerms: StepRenderer = (host, step, api) => {
     c.el.addEventListener("pointercancel", up);
   }
 
-  /** 같은 종류 쌍이 더 없으면 스테이지 완료(함정 판 제외 — 그쪽은 선언 버튼). */
+  /** 같은 종류 쌍이 더 없으면 스테이지 완료(함정 판 제외, 그쪽은 선언 버튼). */
   function checkStage(): void {
     const st = STAGES[stageNo];
     if (st.declare) return;
@@ -362,7 +362,7 @@ export const likeTerms: StepRenderer = (host, step, api) => {
     helper.innerHTML = st.done;
     haptic(HAPTIC.correct);
     goals.on(st.goal, st.sub);
-    toast(stageNo === 0 ? "정리 완료 — 5x+2!" : "3종 딱 정리!");
+    toast(stageNo === 0 ? "정리 완료, 5x+2!" : "3종 딱 정리!");
     if (stageNo + 1 < STAGES.length) later(() => spawnStage(stageNo + 1), 2100);
   }
 
@@ -397,7 +397,7 @@ export const likeTerms: StepRenderer = (host, step, api) => {
     const st = STAGES[stageNo];
     read.innerHTML = mfmt(composeSrc(chips));
     helper.innerHTML = st.done;
-    toast("정답 — 동류항이 없어요!");
+    toast("정답, 동류항이 없어요!");
     goals.on(st.goal, st.sub);
     declareBtn.disabled = true;
     declareRow.style.opacity = "0";

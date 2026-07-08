@@ -1,10 +1,10 @@
-// 수학 트랙 커리큘럼 — 중1(Ⅰ 수와 연산부터)·중2(준비 중). 과학 curriculum.ts와 같은 Unit 계약.
-// 수학 단원 id는 m1uN(중1)·m2uN(중2) — 과학 uN·g2uN과 절대 충돌 금지.
+// 수학 트랙 커리큘럼, 중1(Ⅰ 수와 연산부터)·중2(준비 중). 과학 curriculum.ts와 같은 Unit 계약.
+// 수학 단원 id는 m1uN(중1)·m2uN(중2), 과학 uN·g2uN과 절대 충돌 금지.
 import type { Unit, GradeId } from "../curriculum";
 import { M1_UNIT1 } from "./unit1";
 import { M1_UNIT2 } from "./unit2";
 
-/** 준비 중 단원 자리 — 콘텐츠가 완성되면 실제 UNIT 모듈로 교체한다. */
+/** 준비 중 단원 자리, 콘텐츠가 완성되면 실제 UNIT 모듈로 교체한다. */
 const soon = (id: string, roman: string, title: string, subtitle: string, icon: string): Unit => ({
   id,
   roman,
@@ -16,7 +16,7 @@ const soon = (id: string, roman: string, title: string, subtitle: string, icon: 
   comingSoon: true,
 });
 
-// 중1 수학 — 교과서 대단원 순서 그대로(Ⅰ만 완성, 나머지는 자리).
+// 중1 수학, 교과서 대단원 순서 그대로(Ⅰ만 완성, 나머지는 자리).
 export const MATH_G1: Unit[] = [
   M1_UNIT1,
   M1_UNIT2,
@@ -26,7 +26,7 @@ export const MATH_G1: Unit[] = [
   soon("m1u6", "VI", "통계", "자료를 정리하고 읽는 법", "target"),
 ];
 
-// 중2 수학 — 전부 준비 중(중1 Ⅰ 완성 후 순차 제작).
+// 중2 수학, 전부 준비 중(중1 Ⅰ 완성 후 순차 제작).
 export const MATH_G2: Unit[] = [
   soon("m2u1", "I", "유리수의 표현과 식의 계산", "순환소수와 지수법칙", "book"),
   soon("m2u2", "II", "부등식과 연립방정식", "조건을 만족하는 수 찾기", "ruler"),
@@ -38,7 +38,7 @@ export const MATH_G2: Unit[] = [
 
 export const MATH_CURRICULA: Record<GradeId, Unit[]> = { g1: MATH_G1, g2: MATH_G2 };
 
-// 퀴즈 스텝 자동 번호 — 과학 curriculum.ts와 같은 규칙(수학 단원은 여기서 처리).
+// 퀴즈 스텝 자동 번호, 과학 curriculum.ts와 같은 규칙(수학 단원은 여기서 처리).
 for (const units of [MATH_G1, MATH_G2]) {
   for (const u of units) {
     for (const les of u.lessons) {

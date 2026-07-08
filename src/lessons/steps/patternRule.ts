@@ -1,9 +1,9 @@
-// patternRule — 패턴에서 식으로(Ⅱ 문자와 식 도입 랩, 책 66·79쪽 소재).
+// patternRule, 패턴에서 식으로(Ⅱ 문자와 식 도입 랩, 책 66·79쪽 소재).
 // 길이가 같은 막대로 정삼각형을 옆으로 이어 붙이면 3, 5, 7, 9 … 2개씩 늘어난다.
-//   1막 관찰: "삼각형 하나 더" — 그림과 카운터 표가 함께 자란다(+2 배지)
+//   1막 관찰: "삼각형 하나 더", 그림과 카운터 표가 함께 자란다(+2 배지)
 //   2막 도약: 5개 예측(수) → a개 일반화(식 2a+1). 오답은 실제 오개념을 짚는다
 //            (3a = 공유하는 변을 두 번 셈, a+2 = a=1만 맞는 착시)
-//   3막 위력: 넘패드로 a=100 대입, 201 즉답 — 그리지 않아도 아는 것이 문자의 힘.
+//   3막 위력: 넘패드로 a=100 대입, 201 즉답, 그리지 않아도 아는 것이 문자의 힘.
 // 모션은 전부 CSS transition + setTimeout 체인(rAF 금지).
 
 import { el, clear } from "../../core/dom";
@@ -30,7 +30,7 @@ function sv<K extends keyof SVGElementTagNameMap>(
   return n;
 }
 
-// ---- 기하(viewBox 360×140) — 변 48, 밑변 y=110. 꼭짓점 P(k)가 24px 간격으로
+// ---- 기하(viewBox 360×140), 변 48, 밑변 y=110. 꼭짓점 P(k)가 24px 간격으로
 //      아래(짝수)·위(홀수)를 오가며 △▽가 변을 공유하는 표준 그림이 된다. ----
 const VB_W = 360;
 const VB_H = 140;
@@ -39,7 +39,7 @@ const SIDE = 48;
 const Y_BOT = 110;
 const Y_TOP = Y_BOT - SIDE * Math.sin(Math.PI / 3); // ≈ 68.4
 
-// 장면 색(areaSplit의 장면 색 문법 계승 — 기존 막대 시안 잉크, 새 막대 앰버 플래시)
+// 장면 색(areaSplit의 장면 색 문법 계승, 기존 막대 시안 잉크, 새 막대 앰버 플래시)
 const C_STICK = "#0A87A3";
 const C_FRESH = "#F0A422";
 const C_DIM = "#94A3B8";
@@ -55,7 +55,7 @@ interface Choice {
   label: string; // mfmt 마크업
   ok?: boolean;
   toast?: string; // 오답 짧은 교정(질문 ①)
-  why?: string; // 오답 긴 교정 패널(질문 ② — 오개념 짚기)
+  why?: string; // 오답 긴 교정 패널(질문 ②, 오개념 짚기)
 }
 
 function shuffled<T>(arr: T[]): T[] {
@@ -89,7 +89,7 @@ export const patternRule: StepRenderer = (host, step, api) => {
   svg.appendChild(strip);
   board.appendChild(svg);
 
-  // ---- 카운터 표(삼각형 n / 막대 개수) — 새 열이 +2 배지와 함께 자란다 ----
+  // ---- 카운터 표(삼각형 n / 막대 개수), 새 열이 +2 배지와 함께 자란다 ----
   const tbl = el("div", {
     style: "display:flex; align-items:flex-end; justify-content:center; gap:3px; padding:0 6px 12px; flex-wrap:wrap",
   });
@@ -117,7 +117,7 @@ export const patternRule: StepRenderer = (host, step, api) => {
   const heroRow = el("div", { class: "ct-actions" }, heroBtn);
   board.appendChild(heroRow);
 
-  // ---- 질문 영역(보드 안 — ①은 수 예측, ②는 식 도약) ----
+  // ---- 질문 영역(보드 안, ①은 수 예측, ②는 식 도약) ----
   const qTitle = el("div", {
     style: "text-align:center; font-size:15.5px; font-weight:800; color:var(--n800); padding:0 12px 2px",
   });
@@ -126,7 +126,7 @@ export const patternRule: StepRenderer = (host, step, api) => {
   const qWrap = el("div", { style: "display:none; opacity:0; transition:opacity .35s var(--ease-out)" }, qTitle, qChoices, qWhy);
   board.appendChild(qWrap);
 
-  // ---- 리드아웃 + 넘패드(질문 ③ — 식의 위력) ----
+  // ---- 리드아웃 + 넘패드(질문 ③, 식의 위력) ----
   const read = el("div", { class: "pw-read" });
   const confirmBtn = el("button", { class: "ct-btn hero", text: "확인하기", attrs: { type: "button" } });
   const setConfirm = (b: boolean): void => {
@@ -155,7 +155,7 @@ export const patternRule: StepRenderer = (host, step, api) => {
   host.append(goals.el, board, read, padWrap, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));
 
-  // ---- 타이머(모든 지연은 여기로 — cleanup에서 일괄 해제) ----
+  // ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ----
   const timers = new Set<number>();
   const later = (fn: () => void, ms: number): void => {
     const id = window.setTimeout(() => {
@@ -302,15 +302,15 @@ export const patternRule: StepRenderer = (host, step, api) => {
     mountChoices(
       [
         { label: "11", ok: true },
-        { label: "15", toast: "이웃과 변을 같이 써요 — 3×5보다 적어요" },
-        { label: "10", toast: "표를 봐요 — 2씩 늘어요" },
+        { label: "15", toast: "이웃과 변을 같이 써요, 3×5보다 적어요" },
+        { label: "10", toast: "표를 봐요, 2씩 늘어요" },
       ],
       () => {
         later(hideQ, 350);
         later(() => {
           addTriangle(() => {
-            toast("9 다음 +2 — 정말 11개!");
-            helper.innerHTML = "확인! 그럼 <b>몇 개든</b> 답할 수 있는 마법의 한 줄 — 식을 세워 봐요.";
+            toast("9 다음 +2, 정말 11개!");
+            helper.innerHTML = "확인! 그럼 <b>몇 개든</b> 답할 수 있는 마법의 한 줄, 식을 세워 봐요.";
             later(showQ2, 1200);
           });
         }, 520);
@@ -319,15 +319,15 @@ export const patternRule: StepRenderer = (host, step, api) => {
     showQ();
   }
 
-  // ---- 질문 ②: a개 일반화(식) — 오답은 오개념 교정 패널 ----
+  // ---- 질문 ②: a개 일반화(식), 오답은 오개념 교정 패널 ----
   function showQ2(): void {
-    qTitle.innerHTML = `이제 도약 — 삼각형이 ${mfmt("a")}개면 막대는?`;
+    qTitle.innerHTML = `이제 도약, 삼각형이 ${mfmt("a")}개면 막대는?`;
     mountChoices(
       [
         { label: "2a+1", ok: true },
         {
           label: "3a",
-          why: `삼각형마다 막대 3개면 ${mfmt("a")}=5일 때 <b>15개</b>여야 해요. 실제론 11개 — 이웃과 <b>공유하는 변을 두 번</b> 센 거예요.`,
+          why: `삼각형마다 막대 3개면 ${mfmt("a")}=5일 때 <b>15개</b>여야 해요. 실제론 11개: 이웃과 <b>공유하는 변을 두 번</b> 센 거예요.`,
         },
         {
           label: "a+2",
@@ -340,7 +340,7 @@ export const patternRule: StepRenderer = (host, step, api) => {
           `<span style="font-size:14px; font-weight:700; color:var(--n600); margin-right:6px">막대 개수</span>` +
           mfmt("=2a+1");
         toast("어떤 개수든 한 줄 식으로!");
-        helper.innerHTML = `식의 뜻: 맨 왼쪽 막대 <b>1개</b>에서 시작해 삼각형마다 <b>2개</b>씩 — 그래서 ${mfmt("2a+1")}이에요.`;
+        helper.innerHTML = `식의 뜻: 맨 왼쪽 막대 <b>1개</b>에서 시작해 삼각형마다 <b>2개</b>씩, 그래서 ${mfmt("2a+1")}이에요.`;
         later(hideQ, 900);
         later(showPad, 1250);
       },
@@ -348,12 +348,12 @@ export const patternRule: StepRenderer = (host, step, api) => {
     showQ();
   }
 
-  // ---- 질문 ③: a=100 대입 — 넘패드 ----
+  // ---- 질문 ③: a=100 대입, 넘패드 ----
   function showPad(): void {
     padWrap.style.display = "block";
     void padWrap.offsetWidth;
     padWrap.style.opacity = "1";
-    helper.innerHTML = `${mfmt("a")} 자리에 <b>100</b>을 넣어요 — 그리지 않아도 바로 나와요!`;
+    helper.innerHTML = `${mfmt("a")} 자리에 <b>100</b>을 넣어요, 그리지 않아도 바로 나와요!`;
   }
 
   confirmBtn.addEventListener("click", () => {
@@ -367,15 +367,15 @@ export const patternRule: StepRenderer = (host, step, api) => {
       setConfirm(false);
       read.innerHTML = mfmt("2×100+1=201");
       goals.on("power", "201개!");
-      toast("정답 — 201개!");
-      helper.innerHTML = "그리지 않고도 즉답 — 이게 <b>문자의 힘</b>이에요! 1000개든 백만 개든, 식 하나면 끝.";
+      toast("정답, 201개!");
+      helper.innerHTML = "그리지 않고도 즉답, 이게 <b>문자의 힘</b>이에요! 1000개든 백만 개든, 식 하나면 끝.";
       haptic(HAPTIC.done);
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     } else {
       pad.flash(false);
       haptic(HAPTIC.wrong);
-      toast("a 자리에 100 — 2×100+1을 계산해요");
+      toast("a 자리에 100, 2×100+1을 계산해요");
       later(() => pad.ansEl.classList.remove("bad"), 700);
     }
   });
@@ -391,7 +391,7 @@ export const patternRule: StepRenderer = (host, step, api) => {
       busy = false;
       if (n >= 4) {
         goals.on("grow", "+2씩!");
-        toast("3, 5, 7, 9 — 2개씩 늘어요!");
+        toast("3, 5, 7, 9, 2개씩 늘어요!");
         heroRow.style.transition = "opacity .3s ease";
         heroRow.style.opacity = "0";
         later(() => {

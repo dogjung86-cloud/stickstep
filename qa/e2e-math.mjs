@@ -288,6 +288,7 @@ await clickCTA();
 await quiz(2);
 await quiz(0);
 await multiQuiz([0, 1, 2]);
+await quiz(0); // 제곱수 만들기(사다리 소인수분해 응용)
 await drill([7, 2, 3, 2, 100, 11]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L3 완료");
@@ -323,32 +324,25 @@ await vennPair(3);
 await W(900);
 await waitBtn("공약수 전부 보기", 700);
 await shot("math-l4-venn");
-await clickCTA(); // starDraw로
-// 별그리기(직접 드로잉): 점을 순서대로 탭 — 첫 탭이 보폭을 정한다
-await page.waitForSelector(".sd-stage svg", { timeout: 9000 });
-const starTap = async (i, nPts) => {
-  const a = -Math.PI / 2 + (i * 2 * Math.PI) / nPts;
-  await clickSvgAt(".sd-stage svg", (180 + 90 * Math.cos(a)) / 360, (126 + 90 * Math.sin(a)) / 240);
-  await W(180);
-};
-for (const i of [2, 4, 0]) await starTap(i, 6); // 보폭 2 → 3점만 밟고 실패
-await W(1000);
-await waitBtn("다시 그리기", 800);
-for (const i of [3, 0]) await starTap(i, 6); // 보폭 3 → 실패 → 6점의 비밀
-await W(1200);
-await waitBtn("5점", 800);
-for (const i of [2, 4, 1, 3, 0]) await starTap(i, 5); // 보폭 2 → 5점 별 성공
-await W(1400);
-await waitBtn("8점", 800);
-for (const i of [3, 6, 1, 4, 7, 2, 5, 0]) await starTap(i, 8); // 보폭 3 → 8점 별 성공
-await W(2100);
-await shot("math-l4-star");
+await clickCTA(); // 서로소 판별소로
+// 판별소: 선언(8·9) → 선언(9·25) → 함정(14·21)은 선언 거절 확인 후 7·7 짝짓기
+await page.waitForSelector(".vn-chip", { timeout: 9000 });
+await W(1200); // 칩 스폰
+await waitBtn("서로소!", 900); // 스테이지 1: 8과 9 선언
+await W(2400); // 스테이지 2 전환
+await waitBtn("서로소!", 900); // 스테이지 2: 9와 25 선언
+await W(2400); // 스테이지 3 전환
+await clickBtn("서로소!", 800); // 함정: 성급한 선언 → 거절(7 힌트)
+await vennPair(7); // 7·7 짝짓기 → 서로소 아님 판정
+await W(2000);
+await shot("math-l4-coprime");
 await clickCTA(); // concept
 await clickCTA(); // recap
 await clickCTA();
 await quiz(0);
 await quiz(0);
 await oxPick(true);
+await quiz(0); // 나눗셈 사다리로 최대공약수 읽기
 await drill([6, 4, 7, 1, 12]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L4 완료");
@@ -431,6 +425,7 @@ await clickCTA(); // recap
 await clickCTA();
 await quiz(0);
 await quiz(0);
+await quiz(0); // 부등호 표기(a≥−4)
 await orderAuto(["산소", "에탄올", "수은", "얼음", "납"]);
 await W(200);
 await shot("math-l7-temp");
@@ -644,6 +639,30 @@ await W(400);
 await shot("math-l12-done");
 await clickBtn("홈으로", 900).catch(() => {});
 log("L12 완료");
+
+/* ================= 보너스: 별자리 한붓그리기(단원 정복 보상) ================= */
+await page.waitForSelector(".gm-node.game", { timeout: 9000 });
+await page.evaluate(() => document.querySelector(".gm-node.game").click());
+await W(1100);
+await page.waitForSelector(".stg-screen .sd-stage svg", { timeout: 9000 });
+const starTap = async (i, nPts) => {
+  const a = -Math.PI / 2 + (i * 2 * Math.PI) / nPts;
+  await clickSvgAt(".stg-screen .sd-stage svg", (180 + 90 * Math.cos(a)) / 360, (126 + 90 * Math.sin(a)) / 240);
+  await W(220);
+};
+for (const i of [2, 4, 1, 3, 0]) await starTap(i, 5); // 5점 보폭 2 → 별 발견
+await W(1000);
+const dexOn = await page.evaluate(() => document.querySelectorAll(".stg-slot.on").length);
+if (dexOn < 1) throw new Error("별 도감이 갱신되지 않음");
+await clickBtn("^6점$", 800);
+for (const i of [2, 4, 0]) await starTap(i, 6); // 6점 보폭 2 → 비밀(별 없음) 수집
+await W(1000);
+const dexOn2 = await page.evaluate(() => document.querySelectorAll(".stg-slot.on").length);
+if (dexOn2 < 2) throw new Error("6점의 비밀이 수집되지 않음");
+log(`보너스 게임: 도감 ${dexOn2}칸 수집`);
+await shot("math-stargame");
+await page.evaluate(() => document.querySelector('.stg-screen .xbtn[aria-label="나가기"]').click());
+await W(1000);
 
 // 최종 지도 상태
 await W(800);

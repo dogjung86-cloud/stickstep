@@ -1,8 +1,8 @@
-// eqTruth — 등식 참·거짓 테이블(교과서 85쪽 방정식과 그 해). 행을 탭하면 그 x 값이
+// eqTruth, 등식 참·거짓 테이블(교과서 85쪽 방정식과 그 해). 행을 탭하면 그 x 값이
 // 좌변·우변에 각각 대입돼 순차 계산되고 참/거짓 판정이 붙는다.
 //   1단계 3x=x+6: x=1..4 중 x=3에서만 참 → "참이 되게 하는 값 = 해" 발견
 //   2단계 x+3x=4x: 네 값 전부 참 → "모든 값에서 참 = 항등식" 발견
-// 채점 아님(발견 랩) — 전 목표 달성 시 recordQuiz(true)+enableCTA.
+// 채점 아님(발견 랩), 전 목표 달성 시 recordQuiz(true)+enableCTA.
 // 모션은 전부 CSS transition + setTimeout(타이머 Set으로 모아 cleanup 해제). rAF 금지.
 
 import { el, clear } from "../../core/dom";
@@ -67,12 +67,12 @@ export const eqTruth: StepRenderer = (host, step, api) => {
   const toast = mtoast(board);
   const helper = el("div", {
     class: "helper",
-    html: "행을 탭하면 그 값이 좌변·우변에 대입돼요. <b>x=1부터 4까지 전부</b> 검사 — 등식은 어디서 참이 될까요?",
+    html: "행을 탭하면 그 값이 좌변·우변에 대입돼요. <b>x=1부터 4까지 전부</b> 검사, 등식은 어디서 참이 될까요?",
   });
   host.append(chips.el, board, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));
 
-  // ---- 타이머(모든 지연은 여기로 — cleanup에서 일괄 해제) ----
+  // ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ----
   const timers = new Set<number>();
   const later = (fn: () => void, ms: number): void => {
     const id = window.setTimeout(() => {
@@ -88,7 +88,7 @@ export const eqTruth: StepRenderer = (host, step, api) => {
   let evaluating = false;
   let finished = false;
 
-  /** 등장 팝 — 트랜지션을 잠깐 끄고 축소 상태를 심은 뒤 스프링으로 복귀. */
+  /** 등장 팝, 트랜지션을 잠깐 끄고 축소 상태를 심은 뒤 스프링으로 복귀. */
   function pop(n: HTMLElement): void {
     const t = n.style.transition;
     n.style.transition = "none";
@@ -183,14 +183,14 @@ export const eqTruth: StepRenderer = (host, step, api) => {
             verdict.style.background = "var(--green)";
             verdict.style.color = "#fff";
             haptic(HAPTIC.correct);
-            toast(`좌변 ${lv} = 우변 ${rv} — 참!`);
+            toast(`좌변 ${lv} = 우변 ${rv}, 참!`);
           } else {
             verdict.textContent = "거짓";
             verdict.setAttribute("aria-label", "판정 거짓");
             verdict.style.background = "var(--n200)";
             verdict.style.color = "var(--n600)";
             haptic(HAPTIC.cross);
-            toast(`${lv} ≠ ${rv} — 거짓`);
+            toast(`${lv} ≠ ${rv}, 거짓`);
           }
           pop(verdict);
           doneCount += 1;
@@ -209,7 +209,7 @@ export const eqTruth: StepRenderer = (host, step, api) => {
       toast("네 값 모두 검사 완료!");
       later(() => {
         chips.on("sol", "x=3!");
-        helper.innerHTML = "x=3일 때<b>만</b> 참이었죠 — 등식을 참이 되게 하는 값, 그게 바로 <b>해</b>예요!";
+        helper.innerHTML = "x=3일 때<b>만</b> 참이었죠, 등식을 참이 되게 하는 값, 그게 바로 <b>해</b>예요!";
       }, 700);
       later(() => {
         rowsWrap.style.opacity = "0";
@@ -220,7 +220,7 @@ export const eqTruth: StepRenderer = (host, step, api) => {
         swapEq();
         buildRows();
         rowsWrap.style.opacity = "1";
-        helper.innerHTML = "새 등식이 왔어요. 이번에도 <b>네 값 모두</b> 검사 — 참은 몇 번 나올까요?";
+        helper.innerHTML = "새 등식이 왔어요. 이번에도 <b>네 값 모두</b> 검사, 참은 몇 번 나올까요?";
       }, 2650);
     } else {
       chips.on("iden", "전부 참!");
@@ -230,7 +230,7 @@ export const eqTruth: StepRenderer = (host, step, api) => {
         finished = true;
         haptic(HAPTIC.done);
         helper.innerHTML =
-          "이번엔 <b>모든 값에서 참</b> — 이런 등식을 <b>항등식</b>이라고 해요. " +
+          "이번엔 <b>모든 값에서 참</b>, 이런 등식을 <b>항등식</b>이라고 해요. " +
           "x=3에서만 참이던 아까 등식과는 성격이 완전히 다르죠!";
         api.recordQuiz(true);
         api.enableCTA(s.cta ?? "다음");

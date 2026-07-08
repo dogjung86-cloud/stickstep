@@ -1,9 +1,9 @@
-// exprAnatomy — 식의 해부(교과서 71~72쪽 항·계수·상수항·차수). 다항식을 탭 가능한
+// exprAnatomy, 식의 해부(교과서 71~72쪽 항·계수·상수항·차수). 다항식을 탭 가능한
 // 조각으로 분리해 미션 순서대로 태깅한다.
 //   1단계 6x+10: 항 2개 탭(+는 다리) → 상수항(10) → 계수(6x 속 6 하이라이트)
-//   2단계 3x−2: 항은 3x와 −2 — 부호까지 한 몸(− 또는 2를 탭하면 교정 후 −2로 합체)
+//   2단계 3x−2: 항은 3x와 −2, 부호까지 한 몸(− 또는 2를 탭하면 교정 후 −2로 합체)
 //   3단계 차수 보기(1·2·0) → 정답 시 "차수 1인 다항식 = 일차식" 명명
-// 채점 아님(발견 랩) — 전 목표 달성 시 recordQuiz(true)+enableCTA.
+// 채점 아님(발견 랩), 전 목표 달성 시 recordQuiz(true)+enableCTA.
 // 모션은 전부 CSS transition/animation + setTimeout(타이머 Set으로 모아 cleanup 해제). rAF 금지.
 
 import { el, clear } from "../../core/dom";
@@ -21,7 +21,7 @@ interface AnatomyStep {
 
 type Phase = "A1" | "A2" | "A3" | "AX" | "B" | "C";
 
-/** 6x — 계수 하이라이트를 위해 6을 별도 스팬으로(수공 조립, mfmt와 같은 클래스). */
+/** 6x, 계수 하이라이트를 위해 6을 별도 스팬으로(수공 조립, mfmt와 같은 클래스). */
 const HTML_6X =
   `<span class="mx"><span data-cf style="border-radius:7px; padding:0 3px; margin:0 -2px;` +
   ` transition:background .3s, color .3s, box-shadow .3s, transform .35s var(--spring-bounce)">6</span>` +
@@ -62,12 +62,12 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
   const toast = mtoast(board);
   const helper = el("div", {
     class: "helper",
-    html: "식은 <b>+로 이어진 조각</b>들로 이루어져요 — 그 조각 하나하나가 <b>항</b>! 6x+10에서 항을 <b>모두</b> 탭하세요.",
+    html: "식은 <b>+로 이어진 조각</b>들로 이루어져요, 그 조각 하나하나가 <b>항</b>! 6x+10에서 항을 <b>모두</b> 탭하세요.",
   });
   host.append(chips.el, board, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));
 
-  // ---- 타이머(모든 지연은 여기로 — cleanup에서 일괄 해제) ----
+  // ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ----
   const timers = new Set<number>();
   const later = (fn: () => void, ms: number): void => {
     const id = window.setTimeout(() => {
@@ -171,24 +171,24 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
         phase = "A2";
         toast("항 2개 발견!");
         later(() => {
-          helper.innerHTML = "잘했어요! 이 중 <b>상수항</b> — 문자 없이 수만 있는 항은 어느 것일까요?";
+          helper.innerHTML = "잘했어요! 이 중 <b>상수항</b>, 문자 없이 수만 있는 항은 어느 것일까요?";
         }, 550);
       } else {
-        toast("하나 찾았어요 — 항이 또 있어요!");
+        toast("하나 찾았어요, 항이 또 있어요!");
       }
     }
 
     pPlus.btn.addEventListener("click", () => {
       if (phase !== "A1" && phase !== "A2" && phase !== "A3") return;
       shake(pPlus.btn);
-      toast("부호는 항을 잇는 다리 — 항이 아니에요!");
+      toast("부호는 항을 잇는 다리, 항이 아니에요!");
     });
 
     p6x.btn.addEventListener("click", () => {
       if (phase === "A1") tagTerm("6x");
       else if (phase === "A2") {
         shake(p6x.btn);
-        toast("6x엔 문자 x가 있어요 — 문자 없는 항을 찾아요!");
+        toast("6x엔 문자 x가 있어요, 문자 없는 항을 찾아요!");
       } else if (phase === "A3") {
         // ---- 계수 발견: 6만 하이라이트 ----
         phase = "AX";
@@ -205,9 +205,9 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
         }
         tag(p6x, "계수 6");
         chips.on("coef", "완료!");
-        toast("6x = 6×x — 계수는 6!");
+        toast("6x = 6×x, 계수는 6!");
         helper.innerHTML =
-          "6x는 <b>6×x</b> — 곱셈 기호가 숨어 있을 뿐, 문자 앞의 <b>6이 x의 계수</b>예요. 이제 새 식으로 실전 점검!";
+          "6x는 <b>6×x</b>, 곱셈 기호가 숨어 있을 뿐, 문자 앞의 <b>6이 x의 계수</b>예요. 이제 새 식으로 실전 점검!";
         later(() => slideStage(buildB), 1600);
       }
     });
@@ -218,13 +218,13 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
         phase = "A3";
         haptic(HAPTIC.correct);
         tag(p10, "상수항", "amber");
-        toast("문자 없이 수만 — 10이 상수항!");
+        toast("문자 없이 수만, 10이 상수항!");
         later(() => {
           helper.innerHTML = "이번엔 x의 <b>계수</b>는 어디 숨었을까요? 문자 앞에 곱해진 수를 품은 조각을 탭!";
         }, 550);
       } else if (phase === "A3") {
         shake(p10.btn);
-        toast("10은 상수항이었죠 — 계수는 문자 앞에 곱해진 수예요!");
+        toast("10은 상수항이었죠, 계수는 문자 앞에 곱해진 수예요!");
       }
     });
   }
@@ -234,7 +234,7 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
   function buildB(): void {
     phase = "B";
     clear(stage);
-    helper.innerHTML = "새 식 <b>3x−2</b>가 왔어요. 이 식의 <b>항 2개</b>를 탭하세요 — 방심 금지!";
+    helper.innerHTML = "새 식 <b>3x−2</b>가 왔어요. 이 식의 <b>항 2개</b>를 탭하세요, 방심 금지!";
 
     const p3x = piece(mfmt("3x"), { aria: "3x 조각" });
     const pMinus = piece(HTML_MINUS, { op: true, aria: "빼기 기호" });
@@ -275,7 +275,7 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
         p2.wrap.remove();
         pn2.btn.style.animation = "mansPop .4s var(--spring-bounce)";
         pn2.btn.style.boxShadow = "0 0 0 4px var(--subj-num-tint)";
-        helper.innerHTML = "빼기 2는 <b>+(−2)</b>로 읽어요 — 부호까지 한 몸인 <b>−2</b>를 통째로 탭하세요!";
+        helper.innerHTML = "빼기 2는 <b>+(−2)</b>로 읽어요, 부호까지 한 몸인 <b>−2</b>를 통째로 탭하세요!";
         pn2.btn.addEventListener("click", () => {
           if (gotN2) return;
           gotN2 = true;
@@ -283,15 +283,15 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
           pn2.btn.style.animation = "";
           pn2.btn.style.boxShadow = "";
           tag(pn2, "항");
-          toast("−2까지 통째로 — 정확해요!");
+          toast("−2까지 통째로, 정확해요!");
           helper.innerHTML =
-            "뺄셈은 <b>+(−2)</b>로 읽어요 — 항은 <b>부호까지 한 몸</b>! 3x−2의 항은 3x와 <b>−2</b>예요.";
+            "뺄셈은 <b>+(−2)</b>로 읽어요, 항은 <b>부호까지 한 몸</b>! 3x−2의 항은 3x와 <b>−2</b>예요.";
           checkDone();
         });
       }, 500);
     }
-    pMinus.btn.addEventListener("click", () => mergeNeg(pMinus.btn, "− 혼자는 항이 아니에요 — 뒤의 2와 한 몸!"));
-    p2.btn.addEventListener("click", () => mergeNeg(p2.btn, "부호를 두고 왔어요 — 항은 부호까지 포함해요!"));
+    pMinus.btn.addEventListener("click", () => mergeNeg(pMinus.btn, "− 혼자는 항이 아니에요, 뒤의 2와 한 몸!"));
+    p2.btn.addEventListener("click", () => mergeNeg(p2.btn, "부호를 두고 왔어요, 항은 부호까지 포함해요!"));
   }
 
   /* ============================== 3단계: 차수 → 일차식 ============================== */
@@ -303,11 +303,11 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
       el("div", { class: "mdr-q slidein", style: "margin:0; flex:1; font-size:29px", html: mfmt("6x+10") }),
     );
     helper.innerHTML =
-      "마지막 — <b>6x+10</b>의 <b>차수</b>는? 항에서 문자가 곱해진 개수가 차수, 식의 차수는 그중 <b>가장 큰</b> 것이에요.";
+      "마지막, <b>6x+10</b>의 <b>차수</b>는? 항에서 문자가 곱해진 개수가 차수, 식의 차수는 그중 <b>가장 큰</b> 것이에요.";
 
     const defs: { t: string; ok: boolean; why?: string }[] = [
       { t: "1", ok: true },
-      { t: "2", ok: false, why: "항의 개수(2개)와 차수는 달라요 — x가 몇 번 곱해졌는지를 봐요!" },
+      { t: "2", ok: false, why: "항의 개수(2개)와 차수는 달라요, x가 몇 번 곱해졌는지를 봐요!" },
       { t: "0", ok: false, why: "상수항 10만 보면 0이지만, 식의 차수는 가장 높은 항이 정해요!" },
     ];
     const choiceRow = el("div", { class: "pt-choices" });
@@ -352,7 +352,7 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.done);
     later(() => {
       helper.innerHTML =
-        "6x는 x가 <b>한 번</b> 곱해진 항이라 차수 1 — 차수가 1인 다항식을 <b>일차식</b>이라고 해요. " +
+        "6x는 x가 <b>한 번</b> 곱해진 항이라 차수 1, 차수가 1인 다항식을 <b>일차식</b>이라고 해요. " +
         "항·계수·상수항·차수, 식을 읽는 네 개의 눈 완성!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");

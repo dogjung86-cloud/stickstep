@@ -1,9 +1,9 @@
-// balanceLab — 양팔저울 랩(Ⅱ 일차방정식 기함). 등식의 성질을 저울 조작으로 발견한다.
+// balanceLab, 양팔저울 랩(Ⅱ 일차방정식 기함). 등식의 성질을 저울 조작으로 발견한다.
 //   0막(실험): 평형 저울에 [양쪽 +1][양쪽 −1][양쪽 ×2][양쪽 ÷2]는 평형 유지,
-//              [왼쪽만 +1]은 기울어짐 — "양변에 같은 일"만 등호를 지킨다.
+//              [왼쪽만 +1]은 기울어짐, "양변에 같은 일"만 등호를 지킨다.
 //   1막: x상자+3구슬 = 8구슬 → 양쪽 빼기로 상자만 남기기 → 상자가 열리며 x=5.
 //   2막: x상자 3개 = 12구슬 → 뺄 구슬이 없다! → 3등분으로 → x=4.
-// rAF 금지 — 기울기·접시는 CSS transform 트랜지션(보 회전 + 접시는 끝점 좌표로 수평 유지).
+// rAF 금지, 기울기·접시는 CSS transform 트랜지션(보 회전 + 접시는 끝점 좌표로 수평 유지).
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { mfmt, mboard, mtoast, goalChips } from "../../ui/mathKit";
@@ -66,7 +66,7 @@ export const balanceLab: StepRenderer = (host, step, api) => {
   };
 
   /* ---------- SVG 골격(고정) + 동적 그룹 ---------- */
-  const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "양팔저울 — 버튼으로 양쪽을 함께 조작해요" });
+  const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "양팔저울, 버튼으로 양쪽을 함께 조작해요" });
   const defs = sv("defs");
   defs.innerHTML =
     `<linearGradient id="bl-post" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#C89A5E"/><stop offset="1" stop-color="#8C6432"/></linearGradient>` +
@@ -189,7 +189,7 @@ export const balanceLab: StepRenderer = (host, step, api) => {
     revealed = false;
     paint();
     helper.innerHTML =
-      "지금 저울은 <b>3 = 3</b> 평형이에요. 버튼으로 실험해 보세요 — <b>어떤 조작이 평형을 지킬까요?</b> (한쪽만 건드리면 어떻게 될까요?)";
+      "지금 저울은 <b>3 = 3</b> 평형이에요. 버튼으로 실험해 보세요, <b>어떤 조작이 평형을 지킬까요?</b> (한쪽만 건드리면 어떻게 될까요?)";
     clearBtns();
     btn("양쪽 +1", false, () =>
       lawOp("add", () => {
@@ -212,7 +212,7 @@ export const balanceLab: StepRenderer = (host, step, api) => {
     btn("양쪽 ×2", false, () =>
       lawOp("mul", () => {
         if (L.beads > 8) {
-          toast("접시가 넘쳐요 — ÷2로 줄여 봐요");
+          toast("접시가 넘쳐요, ÷2로 줄여 봐요");
           return false;
         }
         L.beads *= 2;
@@ -253,7 +253,7 @@ export const balanceLab: StepRenderer = (host, step, api) => {
     paint();
     haptic(HAPTIC.select);
     lawBoth.add(key);
-    toast("양쪽에 같은 일 — 평형 그대로!");
+    toast("양쪽에 같은 일, 평형 그대로!");
     checkLaw();
   }
   function checkLaw(): void {
@@ -277,7 +277,7 @@ export const balanceLab: StepRenderer = (host, step, api) => {
     R.beads = 8;
     paint();
     helper.innerHTML =
-      "왼쪽 <b>x 상자</b>의 무게가 궁금해요. <b>상자만 남기면</b> 오른쪽이 곧 답이 되겠죠 — 평형을 지키면서 구슬을 치워 봐요!";
+      "왼쪽 <b>x 상자</b>의 무게가 궁금해요. <b>상자만 남기면</b> 오른쪽이 곧 답이 되겠죠, 평형을 지키면서 구슬을 치워 봐요!";
     clearBtns();
     btn("양쪽에서 구슬 1개씩 빼기", true, () => {
       if (busy || revealed) return;
@@ -298,7 +298,7 @@ export const balanceLab: StepRenderer = (host, step, api) => {
       L.beads -= 1;
       paint();
       haptic(HAPTIC.wrong);
-      toast("기울었어요 — 오른쪽도 똑같이 해야죠!");
+      toast("기울었어요, 오른쪽도 똑같이 해야죠!");
       later(() => {
         L.beads += 1;
         paint();
@@ -320,7 +320,7 @@ export const balanceLab: StepRenderer = (host, step, api) => {
       "이번엔 상자가 <b>3개</b>! 그런데 왼쪽엔 뺄 구슬이 하나도 없어요. 상자 <b>1개</b>만 남기려면 어떤 조작이 필요할까요?";
     clearBtns();
     btn("양쪽에서 구슬 1개씩 빼기", false, () => {
-      toast("왼쪽엔 구슬이 없어요 — 빼기로는 안 돼요!");
+      toast("왼쪽엔 구슬이 없어요, 빼기로는 안 돼요!");
       haptic(HAPTIC.wrong);
     });
     btn("양쪽을 3등분하기", true, () => {
@@ -338,15 +338,15 @@ export const balanceLab: StepRenderer = (host, step, api) => {
     revealed = true;
     paint();
     haptic(HAPTIC.correct);
-    toast(`상자를 열어 보니 — ${sub}`);
+    toast(`상자를 열어 보니, ${sub}`);
     goals.on(goalId, sub);
     if (nextFn) {
       helper.innerHTML =
-        "상자만 남기니 오른쪽이 곧 답 — <b>x = 5</b>! '양변에서 같은 수 빼기'가 해낸 일이에요. 다음 저울로!";
+        "상자만 남기니 오른쪽이 곧 답, <b>x = 5</b>! '양변에서 같은 수 빼기'가 해낸 일이에요. 다음 저울로!";
       later(nextFn, 2400);
     } else {
       helper.innerHTML =
-        "<b>양변을 3으로 나누기</b>까지 — 등식의 성질 네 가지를 전부 손으로 확인했어요. 방정식 풀이의 정체는 결국 <b>저울 조작</b>이랍니다!";
+        "<b>양변을 3으로 나누기</b>까지, 등식의 성질 네 가지를 전부 손으로 확인했어요. 방정식 풀이의 정체는 결국 <b>저울 조작</b>이랍니다!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }

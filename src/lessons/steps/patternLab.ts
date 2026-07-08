@@ -1,8 +1,8 @@
-// patternLab — 곱 패턴 랩. 곱하는 수를 1씩 줄이며 (−)×(−)=+를 패턴으로 발견.
-//   1막 (+3)×□: 곱이 3씩 작아지는 패턴을 이어 (+3)×(−2)=−6 — 양×음=음
-//   2막 (−3)×□: 곱이 3씩 커지는 패턴을 이어 (−3)×(−2)=+6 — 음×음=양(클라이맥스)
+// patternLab, 곱 패턴 랩. 곱하는 수를 1씩 줄이며 (−)×(−)=+를 패턴으로 발견.
+//   1막 (+3)×□: 곱이 3씩 작아지는 패턴을 이어 (+3)×(−2)=−6, 양×음=음
+//   2막 (−3)×□: 곱이 3씩 커지는 패턴을 이어 (−3)×(−2)=+6, 음×음=양(클라이맥스)
 //   3막 규칙 카드: 탭해 뒤집으면 "부호가 같으면 +, 다르면 −" 한 줄 법칙
-// 보기 선택은 예측 취급 — 채점에 넣지 않고, 전 목표 달성 시 recordQuiz(true) 1회.
+// 보기 선택은 예측 취급, 채점에 넣지 않고, 전 목표 달성 시 recordQuiz(true) 1회.
 // 모션은 전부 CSS transition/animation + setTimeout 체인(rAF 금지).
 
 import { el, clear } from "../../core/dom";
@@ -21,7 +21,7 @@ interface PatternStep {
 interface RowDef {
   lhs: string; // mfmt 마크업
   rhs: string; // 정답(mfmt 마크업)
-  choices?: [string, string, string]; // [정답, 오답, 오답] — 표시 순서는 셔플
+  choices?: [string, string, string]; // [정답, 오답, 오답], 표시 순서는 셔플
 }
 
 interface ActDef {
@@ -33,7 +33,7 @@ interface ActDef {
 const ACTS: ActDef[] = [
   {
     delta: "곱이 3씩 작아져요",
-    wrongToast: "패턴을 봐요 — 곱이 3씩 작아지는 중이에요",
+    wrongToast: "패턴을 봐요, 곱이 3씩 작아지는 중이에요",
     rows: [
       { lhs: "(+3)×(+2)", rhs: "(+6)" },
       { lhs: "(+3)×(+1)", rhs: "(+3)" },
@@ -44,7 +44,7 @@ const ACTS: ActDef[] = [
   },
   {
     delta: "곱이 3씩 커져요!",
-    wrongToast: "패턴을 봐요 — 곱이 3씩 커지는 중이에요",
+    wrongToast: "패턴을 봐요, 곱이 3씩 커지는 중이에요",
     rows: [
       { lhs: "(-3)×(+2)", rhs: "(-6)" },
       { lhs: "(-3)×(+1)", rhs: "(-3)" },
@@ -105,7 +105,7 @@ export const patternLab: StepRenderer = (host, step, api) => {
   host.append(chips.el, board, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));
 
-  // ---- 타이머(모든 지연은 여기로 — cleanup에서 일괄 해제) ----
+  // ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ----
   const timers = new Set<number>();
   const later = (fn: () => void, ms: number): void => {
     const id = window.setTimeout(() => {
@@ -172,7 +172,7 @@ export const patternLab: StepRenderer = (host, step, api) => {
     const firstAsk = rows.findIndex((r) => !!r.choices);
     rows.forEach((r, i) => {
       const state: "done" | "ask" | "future" = r.choices ? (i === firstAsk ? "ask" : "future") : "done";
-      // 완료 행 사이에 델타 배지 — "3씩" 패턴을 세로로 시각화
+      // 완료 행 사이에 델타 배지, "3씩" 패턴을 세로로 시각화
       if (i > 0 && !r.choices && !rows[i - 1].choices) rowsWrap.appendChild(deltaGap());
       const row = makeRow(r, state);
       rowEls.push(row);
@@ -210,7 +210,7 @@ export const patternLab: StepRenderer = (host, step, api) => {
       // ---- 1막 완료: 양×음=음 발견 ----
       chips.on("pxn");
       toast("양수 × 음수 = 음수! 패턴 그대로예요");
-      helper.innerHTML = "이번엔 <b>(−3)의 곱</b>이에요. 곱이 3씩 <b>커지는</b> 패턴 — 0을 지나면 어떻게 될까요?";
+      helper.innerHTML = "이번엔 <b>(−3)의 곱</b>이에요. 곱이 3씩 <b>커지는</b> 패턴, 0을 지나면 어떻게 될까요?";
       later(toAct2, 1300);
     } else {
       // ---- 2막 클라이맥스: 음×음=양 ----
@@ -221,7 +221,7 @@ export const patternLab: StepRenderer = (host, step, api) => {
       }, 950);
       chips.on("nxn");
       toast("음수 × 음수 = 양수!");
-      helper.innerHTML = "패턴이 알려 줬어요 — 양×음은 <b>음</b>, 음×음은 <b>양</b>. 아래 카드를 탭해 한 줄로 정리해요!";
+      helper.innerHTML = "패턴이 알려 줬어요, 양×음은 <b>음</b>, 음×음은 <b>양</b>. 아래 카드를 탭해 한 줄로 정리해요!";
       later(showRule, 1000);
     }
   }
@@ -264,7 +264,7 @@ export const patternLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.done);
     toast("부호 법칙 완성!");
     helper.innerHTML =
-      "발견 완료! 곱셈의 부호는 <b>같으면 +, 다르면 −</b> — 절댓값의 곱에 부호만 붙이면 어떤 곱셈도 문제없어요.";
+      "발견 완료! 곱셈의 부호는 <b>같으면 +, 다르면 −</b>, 절댓값의 곱에 부호만 붙이면 어떤 곱셈도 문제없어요.";
     api.recordQuiz(true);
     api.enableCTA(s.cta ?? "다음");
   }

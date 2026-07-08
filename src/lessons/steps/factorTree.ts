@@ -1,7 +1,7 @@
-// factorTree — 소인수분해 인수 트리(L3 기함 랩).
+// factorTree, 소인수분해 인수 트리(L3 기함 랩).
 // 합성수 노드를 탭 → 인수 쌍을 골라 두 갈래로 가른다. 소수 잎은 초록으로 잠긴다.
 // 미션: ① 60 완전 분해 ② 60을 "다른 첫 갈래"로 다시(결과 유일성 체험) ③ 90 분해.
-// rAF 없음 — 상태 변경마다 SVG를 다시 그리고 CSS로만 모션.
+// rAF 없음, 상태 변경마다 SVG를 다시 그리고 CSS로만 모션.
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { mfmt, mboard, mtoast, goalChips } from "../../ui/mathKit";
@@ -57,13 +57,13 @@ export const factorTree: StepRenderer = (host, step, api) => {
   const stage = el("div", { class: "ft-stage" });
   const result = el("div", { class: "ft-result" });
   board.append(stage, result);
-  const helper = el("div", { class: "helper", html: "<b>60</b>을 탭해서 두 수의 곱으로 갈라 보세요 — 어떤 갈래든 좋아요." });
+  const helper = el("div", { class: "helper", html: "<b>60</b>을 탭해서 두 수의 곱으로 갈라 보세요, 어떤 갈래든 좋아요." });
   host.append(goals.el, board, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   let root: Node = mkRoot(60);
   let mission: "t60" | "path2" | "t90" = "t60";
-  let firstSplit60: string | null = null; // "2×30" — 두 번째 길에서 비활성화
+  let firstSplit60: string | null = null; // "2×30", 두 번째 길에서 비활성화
   let picker: HTMLElement | null = null;
   const timers: number[] = [];
   const later = (fn: () => void, ms: number): void => {
@@ -189,7 +189,7 @@ export const factorTree: StepRenderer = (host, step, api) => {
     const newPrimes = [a, b].filter(isPrime).length;
     if (newPrimes) haptic(HAPTIC.tap);
     if (allPrime(root)) later(missionDone, 420);
-    else helper.innerHTML = "아직 <b>하늘색 수</b>가 남아 있어요 — 소수(초록)가 될 때까지 계속 갈라요.";
+    else helper.innerHTML = "아직 <b>하늘색 수</b>가 남아 있어요, 소수(초록)가 될 때까지 계속 갈라요.";
   }
 
   function missionDone(): void {
@@ -200,7 +200,7 @@ export const factorTree: StepRenderer = (host, step, api) => {
       goals.on("t60", "2²×3×5!");
       toast("60 완전 분해!");
       helper.innerHTML =
-        `모든 잎이 소수예요: <b>60 = ${ls.join("×")}</b>. 작은 소인수부터 쓰고 같은 수는 거듭제곱으로 — <b>${expo.replace("^2", "²")}</b>. ` +
+        `모든 잎이 소수예요: <b>60 = ${ls.join("×")}</b>. 작은 소인수부터 쓰고 같은 수는 거듭제곱으로, <b>${expo.replace("^2", "²")}</b>. ` +
         "그런데… 처음에 <b>다른 갈래</b>로 갈랐어도 결과가 같았을까요?";
       mission = "path2";
       later(() => {
@@ -213,7 +213,7 @@ export const factorTree: StepRenderer = (host, step, api) => {
       goals.on("path2", "똑같다!");
       toast("길이 달라도 2×2×3×5!");
       helper.innerHTML =
-        "첫 갈래가 달라도 잎은 언제나 <b>2, 2, 3, 5</b> — 소인수분해 한 결과는 <b>오직 한 가지</b>예요(곱하는 순서만 다를 뿐). " +
+        "첫 갈래가 달라도 잎은 언제나 <b>2, 2, 3, 5</b>, 소인수분해 한 결과는 <b>오직 한 가지</b>예요(곱하는 순서만 다를 뿐). " +
         "마지막 도전, <b>90</b>도 분해해 볼까요?";
       mission = "t90";
       later(() => {
@@ -237,10 +237,10 @@ export const factorTree: StepRenderer = (host, step, api) => {
     const v = Number(g.dataset.v);
     haptic(HAPTIC.tap);
     if (isPrime(v)) {
-      toast(`${v}는 소수 — 더는 쪼갤 수 없어요!`);
+      toast(`${v}는 소수, 더는 쪼갤 수 없어요!`);
       return;
     }
-    // 해당 노드(잎만 탭 가능 — .ft-node 클래스가 잎에만 붙는다)
+    // 해당 노드(잎만 탭 가능, .ft-node 클래스가 잎에만 붙는다)
     const target = nodes(root).find((n) => !n.kids && n.v === v && String(n.x) === g.dataset.x && String(n.y) === g.dataset.y);
     if (target) openPicker(target);
   });

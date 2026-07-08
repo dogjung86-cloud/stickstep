@@ -1,4 +1,4 @@
-// 과목 허브 — "무엇을 배워 볼까요?" 과목 선택 화면.
+// 과목 허브, "무엇을 배워 볼까요?" 과목 선택 화면.
 // 온보딩 진입(mode "onboard": 스플래시 다음)과 홈 재진입(mode "hub": 앱바 과목 버튼) 겸용.
 // 과학만 열려 있고 수학·사회는 준비 중 카드. 배경엔 스틱맨·스틱 소품 데코(브랜드 정체성).
 import { el } from "../core/dom";
@@ -58,7 +58,7 @@ export function subjectScreen(opts: {
   const h1 = el("div", { class: "h1", html: opts.mode === "onboard" ? "무엇을<br>배워 볼까요?" : "과목 고르기" });
   const sub = el("div", { class: "sub", text: "과학과 수학이 열려 있어요. 사회도 곧 만나요!" });
 
-  // ── 과학 카드(활성) — 스틱맨 쌤이 손을 흔든다 ──
+  // ── 과학 카드(활성), 스틱맨 쌤이 손을 흔든다 ──
   const prog = subjectProgress("sci");
   const started = prog.done > 0;
   const sci = el(
@@ -81,7 +81,7 @@ export function subjectScreen(opts: {
     opts.onPickScience();
   });
 
-  // ── 수학 카드(활성) — 문제를 손으로 만지며 푸는 트랙 ──
+  // ── 수학 카드(활성), 문제를 손으로 만지며 푸는 트랙 ──
   const mprog = subjectProgress("math");
   const mstarted = mprog.done > 0;
   const mth = el(
@@ -92,10 +92,10 @@ export function subjectScreen(opts: {
       "div",
       { class: "subj-body" },
       el("div", { class: "subj-name" }, el("span", { html: icon("mathop", 18) }), el("span", { text: "수학" })),
-      el("div", { class: "subj-desc", text: "중1 — 계산이 아니라 감각으로" }),
+      el("div", { class: "subj-desc", text: "중1, 계산이 아니라 감각으로" }),
       mstarted
         ? el("div", { class: "subj-meta", text: `레슨 ${mprog.done}개 완료 · ${currentStreak()}일 연속` })
-        : el("div", { class: "subj-meta", text: "수와 연산부터 — 발견 랩 + 스프린트" }),
+        : el("div", { class: "subj-meta", text: "수와 연산부터, 발견 랩 + 스프린트" }),
     ),
     el("div", { class: "subj-go", html: icon("chevron", 20) }),
   );
@@ -108,7 +108,7 @@ export function subjectScreen(opts: {
   const soonCard = (name: string, ico: string, desc: string): HTMLElement => {
     const c = el(
       "button",
-      { class: "subj-card soon", attrs: { "aria-label": `${name} — 준비 중`, "aria-disabled": "true" } },
+      { class: "subj-card soon", attrs: { "aria-label": `${name}, 준비 중`, "aria-disabled": "true" } },
       el("div", { class: "subj-ico", html: icon(ico, 24) }),
       el(
         "div",
@@ -120,17 +120,17 @@ export function subjectScreen(opts: {
     );
     c.addEventListener("click", () => {
       haptic(HAPTIC.tap);
-      snack(`${name}은 열심히 만들고 있어요 — 곧 만나요!`);
+      snack(`${name}은 열심히 만들고 있어요, 곧 만나요!`);
     });
     return c;
   };
 
-  // ── 배경 데코 — 스틱맨 낙서 소품(연하게, 콘텐츠 방해 금지) ──
+  // ── 배경 데코, 스틱맨 낙서 소품(연하게, 콘텐츠 방해 금지) ──
   const doodles = el("div", { class: "subj-doodles", attrs: { "aria-hidden": "true" } });
   const doodle = (svg: string, style: string): void => {
     doodles.appendChild(el("div", { class: "subj-doodle", style, html: svg }));
   };
-  // 연필 든 스틱 팔 / 별 낙서 / 계단(스텝) 낙서 — 손그림 잉크 라인 문법
+  // 연필 든 스틱 팔 / 별 낙서 / 계단(스텝) 낙서, 손그림 잉크 라인 문법
   doodle(
     `<svg viewBox="0 0 64 64" fill="none" stroke="#3C4654" stroke-width="2.2" stroke-linecap="round"><circle cx="26" cy="16" r="8" fill="#fff"/><path d="M23 14h2M29 14h2M23 20q3 2 6 0"/><path d="M26 24v16M26 30l-9 7M26 30l10 6M26 40l-8 12M26 40l9 12"/><path d="M36 36l12-9 3 4-12 9z" fill="#FFD98A" stroke-width="1.8"/></svg>`,
     "right:7%;top:8%;width:72px;transform:rotate(6deg)",

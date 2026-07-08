@@ -1,6 +1,6 @@
-// areaSplit — 분배법칙 넓이 랩. 직사각형을 쪼개도 넓이 합이 같다 → 98×5 암산 지름길.
-//   1막 5×7: 쪼개기 핸들을 드래그(정수 열 스냅) — 어디서 잘라도 5×c + 5×(7−c) = 35
-//   2막 5×98: "90+8" vs "100−2" 두 길 비교 — 채웠다 빼는 지름길이 한눈에 쉬움
+// areaSplit, 분배법칙 넓이 랩. 직사각형을 쪼개도 넓이 합이 같다 → 98×5 암산 지름길.
+//   1막 5×7: 쪼개기 핸들을 드래그(정수 열 스냅), 어디서 잘라도 5×c + 5×(7−c) = 35
+//   2막 5×98: "90+8" vs "100−2" 두 길 비교, 채웠다 빼는 지름길이 한눈에 쉬움
 //   3막 넘패드: 500 − 10 = 490 입력으로 암산 완성
 // 모션은 전부 CSS transition + setTimeout 체인(rAF 금지). setPointerCapture는 try/catch.
 
@@ -51,7 +51,7 @@ const X0B = 22;
 const Y0B = 46;
 const HB = 64;
 
-// 장면 색(파운드리 재질 문법 — 시안/보라 연한 면 + 재질별 진한 라벨)
+// 장면 색(파운드리 재질 문법, 시안/보라 연한 면 + 재질별 진한 라벨)
 const C_CYAN_FILL = "rgba(13,165,198,.15)";
 const C_CYAN_INK = "#0A87A3";
 const C_VIOLET_FILL = "rgba(124,107,255,.15)";
@@ -187,7 +187,7 @@ export const areaSplit: StepRenderer = (host, step, api) => {
     svg.innerHTML = "";
     svg.setAttribute("tabindex", "0");
     svg.setAttribute("role", "slider");
-    svg.setAttribute("aria-label", "쪼개기 손잡이 — 좌우로 드래그하거나 화살표 키로 옮겨요");
+    svg.setAttribute("aria-label", "쪼개기 손잡이, 좌우로 드래그하거나 화살표 키로 옮겨요");
     svg.setAttribute("aria-valuemin", "1");
     svg.setAttribute("aria-valuemax", String(COLS - 1));
     svg.setAttribute("aria-valuenow", String(col));
@@ -210,7 +210,7 @@ export const areaSplit: StepRenderer = (host, step, api) => {
     topR = txt(0, Y0 - 5, "", C_DIM, 11);
     svg.append(lblL, lblR, topL, topR, txt(X0 - 13, Y0 + RH / 2 + 4, "5", C_DIM, 12));
 
-    // 절단선 + 둥근 손잡이(x=0 기준 그룹 — transform으로 이동)
+    // 절단선 + 둥근 손잡이(x=0 기준 그룹, transform으로 이동)
     divG = sv("g");
     divG.appendChild(
       sv("line", { x1: 0, y1: Y0 - 6, x2: 0, y2: KNOB_Y - 11, stroke: C_HANDLE, "stroke-width": 2.4, "stroke-dasharray": "5 4", "stroke-linecap": "round" }),
@@ -234,7 +234,7 @@ export const areaSplit: StepRenderer = (host, step, api) => {
     svg.removeAttribute("aria-valuemax");
     svg.removeAttribute("aria-valuenow");
     svg.setAttribute("role", "img");
-    svg.setAttribute("aria-label", "5 곱하기 98 직사각형 — 점선 100 윤곽에서 5 곱하기 2 조각이 빠진 모양");
+    svg.setAttribute("aria-label", "5 곱하기 98 직사각형, 점선 100 윤곽에서 5 곱하기 2 조각이 빠진 모양");
 
     const solidW = 98 * U;
     const midY = Y0B + HB / 2 + 7;
@@ -298,7 +298,7 @@ export const areaSplit: StepRenderer = (host, step, api) => {
       strip.style.opacity = ".35";
       lblTop2.style.opacity = ".35";
       read.innerHTML = mfmt("5×98=5×90+5×8=450+40");
-      toast("되긴 해요 — 그런데 곱을 두 번이나 해야 해요");
+      toast("되긴 해요, 그런데 곱을 두 번이나 해야 해요");
     } else {
       strip.style.opacity = "1";
       lblTop2.style.opacity = "1";
@@ -321,7 +321,7 @@ export const areaSplit: StepRenderer = (host, step, api) => {
       finished = true;
       later(() => {
         helper.innerHTML =
-          "이 쪼개기의 정체는 <b>분배법칙</b> — 곱을 쪼개거나 채워서 계산해도 결과가 같아요. 99×7, 102×3도 이제 암산!";
+          "이 쪼개기의 정체는 <b>분배법칙</b>, 곱을 쪼개거나 채워서 계산해도 결과가 같아요. 99×7, 102×3도 이제 암산!";
         haptic(HAPTIC.done);
         api.recordQuiz(true);
         api.enableCTA(s.cta ?? "다음");
@@ -338,7 +338,7 @@ export const areaSplit: StepRenderer = (host, step, api) => {
       btnRow.style.display = "";
       stage.style.opacity = "1";
       read.innerHTML = mfmt("5×98=?");
-      helper.innerHTML = "이번엔 <b>5×98</b> — 98을 어떻게 쪼개면 암산이 쉬울까요? 두 길을 눌러 비교해 봐요.";
+      helper.innerHTML = "이번엔 <b>5×98</b>, 98을 어떻게 쪼개면 암산이 쉬울까요? 두 길을 눌러 비교해 봐요.";
     }, 300);
   }
 
@@ -346,7 +346,7 @@ export const areaSplit: StepRenderer = (host, step, api) => {
     padWrap.style.display = "block";
     void padWrap.offsetWidth;
     padWrap.style.opacity = "1";
-    helper.innerHTML = "마지막 — <b>500 − 10</b>. 넘패드로 답을 완성해요!";
+    helper.innerHTML = "마지막, <b>500 − 10</b>. 넘패드로 답을 완성해요!";
   }
 
   confirmBtn.addEventListener("click", () => {

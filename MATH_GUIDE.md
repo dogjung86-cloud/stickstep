@@ -26,10 +26,21 @@
 ⑤ 개념 퀴즈 2~4(mcq/ox/multi/binSort/order — 오개념 선택지 필수)
 ⑥ `mathDrill` 계산 스프린트(넘패드, 4~8문항, 피날레)
 
+- **개념 선행 예외(사용자 피드백으로 확정)**: 랩 조작 자체가 용어를 전제하면 ③ concept가 ② 랩보다
+  먼저 온다 — 대입(substLab), 항·계수·차수(exprAnatomy)가 해당(Ⅱ L3·L4 기준). "용어 없이 조작
+  가능한 발견 랩"(체·트리·저울·벤)만 조작 뒤 명명.
+- **교과서 정석 절차는 concept의 figure 블록으로 명문화**: `alignedFactorFig`(세로 정렬 소인수분해
+  비교 — 공통 소인수 하이라이트 + 지수 규칙 태그)와 `ladderFig`(나눗셈 사다리 — 왼쪽 기둥 강조)를
+  랩(직관) 뒤에 배치해 "시험지에 쓰는 손 절차"를 챙긴다(Ⅰ L3·L4·L5 기준).
+- **em대시(—) 금지, 수학 전 텍스트**: −(마이너스)와 혼동. 제목류는 콜론, 본문은 쉼표로 쓴다.
 - 무대 문법: 과학=다크 `.stage`, **수학=밝은 보드 `.mboard`** — 종이/화이트보드 정체성.
 - 채점: 랩·드릴도 `recordQuiz` 1회(스텝당 첫 시도 규칙은 플레이어 공통).
   드릴은 "첫 시도 정답률 ≥ 70%"를 1회로 기록한다.
 - 오답 피드백에 가능하면 **미니 시각 재생**(수직선 스트립 애니 등) — 텍스트만으로 끝내지 않는다.
+- **"신기한 응용"은 본선 금지, 보너스 게임으로**: 개념의 최단 경로가 아닌 화려한 응용 랩(별그리기 =
+  서로소 한붓 별)은 본선에서 혼란을 부른다(사용자 피드백). 서로소는 벤 문법 그대로의 판별소
+  (vennFactor coprime: 8·9 → 9·25 → 14·21 함정)로 가르치고, 별그리기는 단원 정복 보너스 게임
+  screens/starGame.ts로 승격(도감 9칸, 신기록 갱신분만 +5XP). 앞으로도 같은 기준으로 판단한다.
 
 ## 수학 표기 렌더링 (ui/mathKit.ts — 단일 진실 공급원)
 
@@ -47,7 +58,7 @@
 | m1u1l1 | 소수 — 쪼개지지 않는 수 | cicada 매미 13·17년 주기 | sieveLab 에라토스테네스의 체 | 분류 binSort+드릴 | 무료 |
 | m1u1l2 | 거듭제곱 — 수를 쌓는 법 | paperfold 종이 접기 두께 | powBuild 같은 수 칩 쌓기 | 표기 드릴 | 무료 |
 | m1u1l3 | 소인수분해 — 수의 DNA | lockcode 소수 자물쇠(RSA) | factorTree 인수 트리(경로 달라도 결과 유일) | 분해 드릴 | 무료 |
-| m1u1l4 | 최대공약수 — 겹치는 소인수 | tilefloor 정사각 타일 깔기 | vennFactor(gcd) 소인수 벤 + starDraw 서로소 별그리기 | GCD 드릴 | ✓ |
+| m1u1l4 | 최대공약수 — 겹치는 소인수 | tilefloor 정사각 타일 깔기 | vennFactor(gcd) 소인수 벤 + vennFactor(coprime) 서로소 판별소 | GCD 드릴 | ✓ |
 | m1u1l5 | 최소공배수 — 다시 만나는 순간 | buslight 두 버스 동시 출발 | vennFactor(lcm) 벤 합집합 | LCM 드릴 | ✓ |
 | m1u1l6 | 음수 — 0 아래의 세계 | freezer 냉동고 −18℃ | numline(place) 수직선에 수 놓기 | 분류 binSort | ✓ |
 | m1u1l7 | 절댓값 — 원점에서의 거리 | gpsdist "3 km 떨어짐, 어느 쪽?" | numline(abs) 거리 링·쌍 찾기 | 대소 order+드릴 | ✓ |
@@ -99,7 +110,7 @@ src/content/math/mdsl.ts         수학 스텝 팩토리(과학 dsl.ts를 건드
 src/ui/mathKit.ts                mfmt 수식 렌더 + numpad + 공용 보드 헬퍼
 src/ui/mathFigures.ts            퀴즈 SVG 그림 + mathMiniArt(recap)
 src/lessons/steps/hookMath.ts    mathHook 스텝(자체 렌더러 — hook.ts 디스패치 불변)
-src/lessons/steps/math*.ts       sieveLab·powBuild·factorTree·vennFactor·starDraw·
+src/lessons/steps/math*.ts       sieveLab·powBuild·factorTree·vennFactor·
                                  numline·numWalk·counterLab·patternLab·areaSplit·mathDrill
 src/styles/math.css              수학 전용 스타일(ui.css를 건드리지 않는다)
 ```

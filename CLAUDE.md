@@ -167,13 +167,31 @@ src/
   수학 단원 id는 `m1uN`/`m2uN`(레슨 `m1uNlM`) — 과학 `uN`·`g2uN`과 절대 충돌 금지.
 - **수학 전용 코드는 신규 파일에 격리**(병합 충돌 0 설계): content/math/(curriculum·unit1·unit2·mdsl),
   ui/mathKit·mathFigures, steps/hookMath·hookMath2(독립 `mathHook` 타입 — 과학 hook.ts 디스패치 불변),
-  steps/{sieveLab·powBuild·factorTree·vennFactor·starDraw·numline·numWalk·counterLab·patternLab·
-  areaSplit·mathDrill}(Ⅰ) + {patternRule·substLab·exprAnatomy·likeTerms·eqTruth·balanceLab·solveLab}(Ⅱ),
-  **styles/math.css**(ui.css를 건드리지 않는 수학 전용 시트, main.ts에서 import).
-  공유 파일 수정은 store·curriculum·home·subject·main·registry·tokens.css·mapDecor의 최소 append뿐.
+  steps/{sieveLab·powBuild·factorTree·vennFactor(gcd/lcm/coprime 3모드)·numline·numWalk·counterLab·
+  patternLab·areaSplit·mathDrill}(Ⅰ) + {patternRule·substLab·exprAnatomy·likeTerms·eqTruth·balanceLab·
+  solveLab}(Ⅱ), screens/starGame(Ⅰ 보너스 게임), **styles/math.css**(ui.css를 건드리지 않는 수학 전용
+  시트, main.ts에서 import). 공유 파일 수정은 store·curriculum·home·subject·main·registry·tokens.css·
+  mapDecor의 최소 append뿐.
+- **"신기한 응용" 랩은 본선이 아니라 보너스 게임으로**(별그리기 사례, 사용자 확정): 개념의 최단 경로가
+  아닌 화려한 응용(한붓 별 = 서로소)은 본선에서 혼란을 부른다 → 서로소는 vennFactor coprime 모드
+  (판별소: 8·9 → 9·25 합성수끼리 → 14·21 함정 — 같은 벤 문법 재사용)로 가르치고, 별그리기는
+  screens/starGame.ts "별자리 한붓그리기"(UNIT_GAME m1u1, 단원 100% 정복 시 해제, 도감 9칸 =
+  별 8종 + 6점의 비밀, 신기록 갱신분만 +5XP)로 승격. main.ts openGame이 unitId로 분기한다.
 - **수학 레슨 공식**: 미리보기 퍼즐(mathHook) → 발견 랩 → 이름 붙이기(concept, 조작 뒤 명명) →
   recap → 퀴즈(오개념 선택지) → **mathDrill 계산 스프린트**(피날레). 과학과 달리 "작은 상호작용을
   촘촘히"가 정체 — 개념 카드 하나가 길어지면 실패. 용어는 랩 뒤에 붙인다(브릴리언트 리서치 결론).
+  **단, 랩 조작 자체가 용어를 전제하면 concept가 랩보다 먼저다**(사용자 피드백으로 확정): 대입(substLab)·
+  항/계수/차수(exprAnatomy)처럼 이름 없이는 조작 지시문 자체가 안 읽히는 랩이 해당 — Ⅱ L3·L4가 기준.
+  "용어 없이 조작 가능한 발견 랩(체·트리·저울)"만 조작 뒤 명명이 맞다.
+- **수학 트랙 텍스트에 em대시(—) 금지**(사용자 요구, 진짜 중요): 수학에선 −(마이너스)와 혼동된다.
+  제목류(title·subtitle·name·label)는 콜론(:), 본문은 쉼표로. 과학 트랙은 해당 없음. 수식의 −는
+  U+2212(mfmt가 자동 변환)만 쓴다. 신규 수학 콘텐츠 저작 시 — 문자를 아예 타이핑하지 말 것.
+- **교과서 정석 절차는 그림으로 명문화**: mathFigures의 `alignedFactorFig("gcd"|"lcm")`(소인수분해
+  세로 정렬 비교 — 지수 같으면 그대로·다르면 작은/큰 쪽)과 `ladderFig("factor"|"gcd")`(나눗셈 사다리)를
+  concept figure 블록으로 임베드(Ⅰ L3·L4·L5가 기준). 랩(벤 다이어그램)은 '왜', 정석 그림은 '어떻게'.
+- **지도 장식은 수학 기호 세트**(mapDecor.ts): Ⅰ=pmDeco(±)·fracDeco(½)·primeDeco(7)·opsDeco(×÷)·
+  numlineDeco, Ⅱ=xDeco(x)·eqDeco(=)·scaleDeco(저울)·aDeco(a)·boxDeco(x 상자). 새 수학 단원도
+  그 단원의 상징 기호로 별도 세트를 만든다(단원마다 달라야 함 — 사용자 요구).
 - **수식·입력은 mathKit이 단일 진실 공급원**: `mfmt()` 마이크로 마크업("{a/b}" 분수·"^n" 지수·
   "(+3)"/"(-5)" 부호 수 — 부호만 색: --m-pos/--m-neg), `makeAnswerPad()` 커스텀 넘패드
   (kind: int/frac/dec — **시스템 키보드 절대 금지**), 밝은 모눈 보드 `mboard()`(과학 다크 .stage의 수학판),
