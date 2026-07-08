@@ -1,9 +1,10 @@
 import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/ui.css";
+import "./styles/math.css";
 
 import { nav } from "./core/router";
-import { getState, completeLesson } from "./core/store";
+import { getState, completeLesson, setViewSubject } from "./core/store";
 import { splashScreen } from "./screens/splash";
 import { onboardingScreen } from "./screens/onboarding";
 import { subjectScreen } from "./screens/subject";
@@ -25,15 +26,22 @@ function goHome(): void {
   nav.reset(homeScreen(openLesson, openGame, lastUnitId, { onSubjects: openSubjects, onLogin: openLogin }));
 }
 
-/** 과목 허브(홈에서 재진입) — 과학을 고르면 다시 홈으로. */
+/** 과목 허브(홈에서 재진입) — 과목을 고르면 그 과목 지도로 홈을 다시 그린다. */
 function openSubjects(): void {
   nav.go(
     subjectScreen({
       mode: "hub",
-      onPickScience: () => nav.back(),
+      onPickScience: () => pickSubject("sci"),
+      onPickMath: () => pickSubject("math"),
       onBack: () => nav.back(),
     }),
   );
+}
+
+function pickSubject(s: "sci" | "math"): void {
+  setViewSubject(s);
+  lastUnitId = undefined; // 직전 과목의 단원 포커스를 버리고 새 과목 지도로
+  goHome();
 }
 
 function openLogin(): void {
@@ -81,7 +89,14 @@ function start(): void {
         nav.go(
           subjectScreen({
             mode: "onboard",
-            onPickScience: () => nav.go(onboardingScreen(goHome)),
+            onPickScience: () => {
+              setViewSubject("sci");
+              nav.go(onboardingScreen(goHome));
+            },
+            onPickMath: () => {
+              setViewSubject("math");
+              nav.go(onboardingScreen(goHome));
+            },
           }),
         ),
       ),

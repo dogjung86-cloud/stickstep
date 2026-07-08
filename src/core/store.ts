@@ -11,6 +11,7 @@ export interface AppState {
   onboarded: boolean;
   grade: string | null;
   viewGrade: string | null; // 홈이 보여주는 학년 커리큘럼("g1"|"g2") — 온보딩 학년과 별개로 전환 가능
+  viewSubject: string | null; // 홈이 보여주는 과목("sci"|"math") — 과목 허브에서 전환·저장
   premium: boolean; // 프리미엄 구매 여부 — premium 레슨 잠금 해제
   reviewMode: boolean; // 검토 모드(브랜드 7연타) — 순차·프리미엄 잠금 전부 해제(콘텐츠 검수용)
   goalMin: number;
@@ -28,6 +29,7 @@ const DEFAULT_STATE: AppState = {
   onboarded: false,
   grade: null,
   viewGrade: null,
+  viewSubject: null,
   premium: false,
   reviewMode: false,
   goalMin: 10,
@@ -90,6 +92,16 @@ export function getViewGrade(): "g1" | "g2" {
 
 export function setViewGrade(g: "g1" | "g2"): void {
   state.viewGrade = g;
+  save();
+}
+
+/** 홈 지도가 보여줄 과목 — 전환한 적이 없으면 과학(기존 사용자 그대로). */
+export function getViewSubject(): "sci" | "math" {
+  return state.viewSubject === "math" ? "math" : "sci";
+}
+
+export function setViewSubject(s: "sci" | "math"): void {
+  state.viewSubject = s;
   save();
 }
 

@@ -11,7 +11,7 @@ export const rimg = (file: string, alt: string): string =>
 
 export const concept = (o: {
   kicker?: string;
-  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "elec";
+  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "elec" | "num";
   title: string;
   lead?: string;
   blocks?: Block[];
