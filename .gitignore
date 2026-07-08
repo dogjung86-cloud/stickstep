@@ -10,6 +10,9 @@ qa/u7card.png
 
 # 발주 실행 로그
 qa/order-*.log
+qa/*-order.log
+qa/dev-*.log
+qa/e2e-*.log
 qa/shots/
 
 # codex image_gen 작업 디렉터리(발주 임시)

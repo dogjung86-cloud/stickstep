@@ -2,7 +2,7 @@
 // 표준 레슨 공식: 도입(hook) → 랩(관찰·조작 인터랙션) → recap 카드 → 문제.
 // 시그니처 랩(세포 핫스팟·현미경·구성 단계·자연선택·검색표)은 유지하고 도입/정리만 통일한다.
 import type { Unit } from "./curriculum";
-import { hook, concept, table, recap, mcq, ox, multi, order, binSort, hotspot, orgLevels, finchSim, microscope, dichotomKey } from "./dsl";
+import { hook, concept, table, recap, mcq, ox, multi, order, binSort, hotspot, orgLevels, finchSim, microscope, dichotomKey, cut } from "./dsl";
 import { animalCell, plantCell, organism } from "../ui/figures";
 import { bioMiniArt, orgArt, classStagesFig } from "../ui/bioFigures";
 
@@ -424,6 +424,7 @@ const L5 = {
       title: "닮은 것끼리<br>무리 짓기",
       lead: "생물을 <b>공통 특징</b>에 따라 무리 짓는 것이 분류예요. 닮은 것끼리 작은 무리부터 점점 큰 무리로 묶어요.",
       blocks: [
+        { k: "figure", svg: cut("bio2", "classify", "흩어진 생물들을 닮은 것끼리 겹겹의 원 안으로 나눠 담는 스틱맨"), cap: "닮은 것끼리 작은 무리로, 그 무리를 다시 큰 무리로 — 무리 짓기가 바로 분류예요" },
         { k: "term", name: "종(種)", def: "생물 분류의 <b>기본 단위</b> — 자연에서 짝짓기해 <b>번식 능력이 있는 자손</b>을 낳는 무리예요." },
         {
           k: "figure",

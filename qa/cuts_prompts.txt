@@ -1,0 +1,57 @@
+# 스틱맨 개념 컷 롤아웃 — 중1 II + 중2 I·II·IV concept 12장 (전부 가로 4:3)
+# 중2 VII(elec)에서 확립한 표준의 확장: concept 첫 블록에 스틱맨 만화 1컷.
+# 폴더 분리: bio2/cuts(중1 II) · chem/cuts(중2 I) · geo/cuts(중2 II) · atom/cuts(중2 IV)
+#
+# ── 스타일 블록 A (전 컷 공용 — 스틱맨 만화) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+
+# ══ 중1 II 생물의 다양성 → public/bio2/cuts ══
+
+[0] file=public/bio2/cuts/classify.png (landscape 4:3, 스타일 A)
+A stick figure sorting a scattered pile of small doodled creatures (tiny fish, bugs, birds) into nested rings drawn on the ground: a small ring of nearly-identical creatures sits inside a medium ring, which sits inside a large ring — three concentric grouping rings. The figure kneels holding one creature, about to place it into the innermost ring with the ones most like it. The innermost (smallest) ring is the only teal element; everything else pure black and white.
+
+# ══ 중2 I 물질의 특성 → public/chem/cuts ══
+
+[1] file=public/chem/cuts/purity.png (landscape 4:3, 스타일 A)
+A stick figure stands holding up two transparent jars, one in each hand, looking between them to compare. The left jar is filled with many identical small round dots, all the same (one pure kind). The right jar is filled with a jumble of clearly different shapes and sizes mixed together (a mixture). Only the contents of the left (pure) jar are teal; everything else pure black and white.
+
+[2] file=public/chem/cuts/density-sep.png (landscape 4:3, 스타일 A)
+A stick figure farmer wearing a simple wide conical straw hat pours a scoop of small seeds into a tall clear bucket of water. Inside the bucket the seeds have separated into two clear layers: several seeds sunk at the very bottom, and several seeds floating at the very top surface, with clear water between. The figure watches, one hand on chin, intrigued. Only the water inside the bucket is teal; everything else pure black and white.
+
+# ══ 중2 II 지권의 변화 → public/geo/cuts ══
+
+[3] file=public/geo/cuts/mineral.png (landscape 4:3, 스타일 A)
+A stick figure holds a large round magnifying glass up close to a chunky rough rock held in the other hand. Through the magnifier's circular lens the rock is revealed to be packed with many distinct different-shaped grains crowded together like a mosaic. The figure's one eye is drawn wide behind the lens, delighted. Only the magnifying glass rim and lens are teal; everything else pure black and white.
+
+[4] file=public/geo/cuts/weathering.png (landscape 4:3, 스타일 A)
+A stick figure stands beside a huge boulder that has a deep jagged crack splitting down its middle. A small scrappy plant grows straight out of the crack, its roots visibly wedging the crack wider, and a few rock chips have crumbled off and lie at the boulder's base. The figure watches with a hand on chin. Only the little plant and its leaves are teal; everything else pure black and white.
+
+[5] file=public/geo/cuts/plates.png (landscape 4:3, 스타일 A)
+A stick figure stands balanced on top of a big round globe whose whole surface is divided into interlocking jigsaw-puzzle pieces. One puzzle piece right by the figure's feet is slightly lifted and tilted up, revealing it is a separate slab that can move. The figure balances with both arms out, peering down curiously at the loose piece. Only the globe's puzzle surface is teal; everything else pure black and white.
+
+[6] file=public/geo/cuts/boundary.png (landscape 4:3, 스타일 A)
+A stick figure straddles a seam with one foot on each of two large ground slabs that are pushing against each other. Right between the figure's feet the two slabs press together and the ground buckles up into a small ridge at the seam, with a few little debris flecks popping out. The figure wobbles with both arms flung out for balance, looking down alarmed. Only the seam line where the two slabs meet is teal; everything else pure black and white.
+
+# ══ 중2 IV 물질의 구성 → public/atom/cuts ══
+
+[7] file=public/atom/cuts/symbol.png (landscape 4:3, 스타일 A)
+Three stick figures of clearly different appearance (one with a pointed wizard-ish hat, one with round glasses, one with a ponytail) gather around a small round-bottomed flask on a table. A small blank rectangular name-tag hangs from the flask's neck on a string. All three figures point at the same blank tag and nod in agreement, and one gives a thumbs-up. The tag stays completely blank with no marks. Only the name-tag is teal; everything else pure black and white.
+
+[8] file=public/atom/cuts/formula.png (landscape 4:3, 스타일 A)
+A stick figure has built a molecule model on a table: two small identical balls attached to one larger central ball, arranged in a bent wide V shape (like a water molecule). The figure holds up exactly two fingers of one hand right beside the two small balls, as if counting them, grinning proudly. Only the two small balls are teal; the large central ball and everything else pure black and white. No numbers anywhere — the count is shown only by the two raised fingers.
+
+[9] file=public/atom/cuts/periodic.png (landscape 4:3, 스타일 A)
+A stick figure stands in front of a large wall chart shaped exactly like the periodic table silhouette — a neat grid of many small empty square tiles, wide across the top with a tall gap in the upper middle and a separate two-row island of tiles floating below. The figure taps one single tile with a long pointer stick while holding a magnifying glass up to that same tile, which is filled solid to stand out. Every tile stays completely blank with no marks. Only the one highlighted tile is teal; everything else pure black and white.
+
+[10] file=public/atom/cuts/ion.png (landscape 4:3, 스타일 A)
+Two stick figures face each other, each holding a round atom-ball speckled with a few tiny dots (electrons). The left figure has just plucked one tiny dot off its own ball and is handing it across through the air to the right figure, who reaches out to receive it onto their ball. The left ball now clearly has one fewer dot, the right ball one more. The left figure looks relieved and lighter, the right figure pleased. Only the single transferred dot and the little curved arc of its path are teal; everything else pure black and white.
+
+[11] file=public/atom/cuts/seeion.png (landscape 4:3, 스타일 A)
+A stick figure detective wearing a deerstalker cap holds a big magnifying glass over a clear empty beaker and sees nothing inside — shoulders raised in a puzzled shrug. But on a strip of paper lying beside the beaker, a trail of distinct round dots marches along in a neat line, and the detective's eyes go wide noticing them. Only the trail of dots on the paper strip is teal; the beaker and everything else pure black and white.

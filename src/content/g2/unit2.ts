@@ -5,7 +5,7 @@
 // 정답 키는 과학적으로 직접 확정(마무리 문제 번호는 저작 노트).
 import type { Unit } from "../curriculum";
 import {
-  lesson, concept, mcq, ox, multi, order, binSort, hook, recap,
+  lesson, concept, mcq, ox, multi, order, binSort, hook, recap, cut,
   earthCut3d, streakLab, coolingLab, strataLab, foliationLab, rockCycle, driftLab, plateMap,
 } from "../dsl";
 import {
@@ -213,6 +213,9 @@ export const G2_UNIT2: Unit = {
           kickerTone: "geo",
           title: "광물과 조암 광물",
           lead: "암석을 자세히 보면 색이 다른 크고 작은 알갱이들이 보여요 — 이 알갱이 하나하나가 <b>광물</b>이에요. 지구엔 수천 종의 광물이 있는데, 그중 암석을 이루는 주된 광물을 <b>조암 광물</b>이라 하고 <b>석영·장석·흑운모·각섬석·방해석</b> 등이 대표예요.",
+          blocks: [
+            { k: "figure", svg: cut("geo", "mineral", "돋보기로 암석을 들여다보니 서로 다른 알갱이들이 빼곡한 걸 보고 눈이 커진 스틱맨"), cap: "돋보기를 대 보면 — 암석은 색과 모양이 다른 알갱이들의 모임! 그 알갱이가 광물이에요" },
+          ],
           cta: "특성 관찰하러 가기",
         }),
         streakLab({
@@ -680,6 +683,9 @@ export const G2_UNIT2: Unit = {
           kickerTone: "geo",
           title: "풍화 작용",
           lead: "암석이 오랜 시간 <b>물·공기·생물</b>의 작용으로 잘게 부서지거나 성분이 변하는 현상을 <b>풍화</b>라고 해요. 암석 틈에 스며든 <b>물이 얼며 부피가 커져</b> 틈을 벌리고, <b>식물 뿌리</b>가 틈을 파고들며 넓히고, <b>지하수</b>는 암석을 녹여 동굴을 만들죠. 이런 일이 수천, 수만 년 반복되면 바위도 버티지 못해요.",
+          blocks: [
+            { k: "figure", svg: cut("geo", "weathering", "커다란 바위 갈라진 틈으로 자란 작은 나무의 뿌리가 틈을 벌리고 조각이 떨어지는 걸 지켜보는 스틱맨"), cap: "틈으로 파고든 뿌리가 바위를 조금씩 벌려요 — 물·뿌리·지하수가 수만 년 반복하면 바위도 못 버텨요" },
+          ],
           cta: "토양은 어떻게?",
         }),
         order({
@@ -906,6 +912,7 @@ export const G2_UNIT2: Unit = {
           title: "지구의 껍데기는<br>한 장이 아니에요",
           lead: "지구 겉부분은 커다란 암석 조각 여러 개가 퍼즐처럼 덮고 있어요. 그 조각 하나하나가 '판'!",
           blocks: [
+            { k: "figure", svg: cut("geo", "plates", "표면이 퍼즐 조각으로 나뉜 지구본 위에 올라서서, 발밑에 살짝 들린 한 조각을 신기하게 내려다보는 스틱맨"), cap: "지구 껍데기는 한 장이 아니라 퍼즐 조각들 — 그 조각 하나하나가 '판'이에요" },
             {
               k: "term",
               name: "판",
@@ -936,6 +943,7 @@ export const G2_UNIT2: Unit = {
           title: "사달은 늘<br><em>경계</em>에서 나요",
           lead: "방향이 다른 판끼리 만나면? 부딪히고, 멀어지고, 어긋나요. 그 만나는 금이 '판의 경계'예요.",
           blocks: [
+            { k: "figure", svg: cut("geo", "boundary", "두 땅덩이의 경계선에 양발을 걸치고 섰다가 그 사이 땅이 솟아오르자 팔을 벌려 휘청이는 스틱맨"), cap: "두 판이 만나 밀고 벌어지고 어긋나는 바로 그 금 — 지진과 화산이 여기에 몰려요" },
             {
               k: "term",
               name: "판의 경계",
