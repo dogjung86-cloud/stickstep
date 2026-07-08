@@ -1,6 +1,6 @@
-// numWalk — 수직선 산책(L8 랩). 도착점을 먼저 예측(탭)하고, 스틱맨이 걸어가 확인한다.
-// 예측→실행→확인 문법. 예측은 채점하지 않는다(사전 예측 효과 — 훅 규칙과 같은 정신).
-// rAF 없음 — 걸음은 setTimeout 체인 + CSS transform 트랜지션.
+// numWalk, 수직선 산책(L8 랩). 도착점을 먼저 예측(탭)하고, 스틱맨이 걸어가 확인한다.
+// 예측→실행→확인 문법. 예측은 채점하지 않는다(사전 예측 효과, 훅 규칙과 같은 정신).
+// rAF 없음, 걸음은 setTimeout 체인 + CSS transform 트랜지션.
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { mfmt, mboard, mtoast, goalChips } from "../../ui/mathKit";
@@ -27,21 +27,21 @@ const PROBS: { a: number; b: number; goal: string; sub: string; note: string }[]
     b: 2,
     goal: "pp",
     sub: "(+3)+(+2)",
-    note: "같은 방향으로 쭉 — 오른쪽 3칸, 또 2칸. 부호가 같으면 <b>절댓값의 합</b>에 그 부호!",
+    note: "같은 방향으로 쭉, 오른쪽 3칸, 또 2칸. 부호가 같으면 <b>절댓값의 합</b>에 그 부호!",
   },
   {
     a: 3,
     b: -5,
     goal: "pn",
     sub: "(+3)+(-5)",
-    note: "오른쪽 3칸, 다시 왼쪽 5칸 — 반대로 걸으면 <b>절댓값의 차</b>만 남아요. 부호는 더 많이 걸은 쪽!",
+    note: "오른쪽 3칸, 다시 왼쪽 5칸, 반대로 걸으면 <b>절댓값의 차</b>만 남아요. 부호는 더 많이 걸은 쪽!",
   },
   {
     a: -2,
     b: -3,
     goal: "nn",
     sub: "(-2)+(-3)",
-    note: "왼쪽으로 2칸, 또 3칸 — 음수끼리도 규칙은 같아요. 절댓값의 합에 <b>−</b>!",
+    note: "왼쪽으로 2칸, 또 3칸, 음수끼리도 규칙은 같아요. 절댓값의 합에 <b>−</b>!",
   },
 ];
 
@@ -59,7 +59,7 @@ export const numWalk: StepRenderer = (host, step, api) => {
   const expr = el("div", { class: "nw-expr" });
   const board = mboard(0);
   const toast = mtoast(board);
-  const stage = el("div", { class: "nw-stage", attrs: { tabindex: "0", role: "slider", "aria-label": "도착점 예측 — 좌우 화살표로 이동, 엔터로 확정" } });
+  const stage = el("div", { class: "nw-stage", attrs: { tabindex: "0", role: "slider", "aria-label": "도착점 예측, 좌우 화살표로 이동, 엔터로 확정" } });
   board.appendChild(stage);
   const helper = el("div", { class: "helper" });
   host.append(goals.el, expr, board, helper);
@@ -95,7 +95,7 @@ export const numWalk: StepRenderer = (host, step, api) => {
     );
   }
 
-  /** 스틱맨(손그림 라인) — pos 위치에 서 있는 그룹. transform으로 걷는다. */
+  /** 스틱맨(손그림 라인), pos 위치에 서 있는 그룹. transform으로 걷는다. */
   function stickSvg(): string {
     return (
       `<g class="nwman" style="transition: transform .24s cubic-bezier(.34,1.2,.5,1)">` +
@@ -163,7 +163,7 @@ export const numWalk: StepRenderer = (host, step, api) => {
     guess = v;
     setFlag(v);
     haptic(HAPTIC.select);
-    helper.innerHTML = `<b>${String(v).replace("-", "−")}</b>에 깃발을 꽂았어요 — 이제 걸어서 확인!`;
+    helper.innerHTML = `<b>${String(v).replace("-", "−")}</b>에 깃발을 꽂았어요, 이제 걸어서 확인!`;
     later(walk, 550);
   }
 
@@ -201,14 +201,14 @@ export const numWalk: StepRenderer = (host, step, api) => {
     haptic(hit ? HAPTIC.correct : HAPTIC.tap);
     toast(hit ? "예측 명중!" : `도착: ${String(v).replace("-", "−")}`);
     expr.innerHTML = mfmt(`(${p.a >= 0 ? "+" + p.a : p.a})+(${p.b >= 0 ? "+" + p.b : p.b}) = (${v >= 0 ? "+" + v : v})`);
-    helper.innerHTML = (hit ? "" : "예측과 달랐어도 괜찮아요 — 눈으로 확인했으니까요. ") + p.note;
+    helper.innerHTML = (hit ? "" : "예측과 달랐어도 괜찮아요, 눈으로 확인했으니까요. ") + p.note;
     goals.on(p.goal, `${v >= 0 ? "+" + v : String(v).replace("-", "−")}!`);
     if (pi + 1 < PROBS.length) {
       later(() => mount(pi + 1), 2400);
     } else {
       later(() => {
         helper.innerHTML =
-          "산책 정리: 부호가 <b>같으면</b> 같은 방향 — 절댓값의 <b>합</b>. 부호가 <b>다르면</b> 반대로 걷다 — 절댓값의 <b>차</b>, 부호는 절댓값이 큰 쪽!";
+          "산책 정리: 부호가 <b>같으면</b> 같은 방향, 절댓값의 <b>합</b>. 부호가 <b>다르면</b> 반대로 걷다, 절댓값의 <b>차</b>, 부호는 절댓값이 큰 쪽!";
         api.recordQuiz(true);
         api.enableCTA(s.cta ?? "정리하기");
       }, 1400);

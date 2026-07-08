@@ -1,7 +1,7 @@
-// numline — 수직선 랩(수학 · 정수와 유리수).
+// numline, 수직선 랩(수학 · 정수와 유리수).
 //   place: 수 카드(정수 2·분수·소수)를 0.5 스냅 프리뷰로 끌어/탭해 자리 찾기
 //   abs  : 고정점 5개를 탭해 원점 거리 호(arc)를 그리며 절댓값 발견(|−3|=|+3|=3, |0|=0)
-// 규율: rAF 금지(QA 프리즈) — 모든 모션은 CSS 트랜지션 + 전역 키프레임(mansShake·svGlow) + setTimeout.
+// 규율: rAF 금지(QA 프리즈), 모든 모션은 CSS 트랜지션 + 전역 키프레임(mansShake·svGlow) + setTimeout.
 // setPointerCapture는 반드시 try/catch(합성 포인터에서 throw하면 리스너 전체가 죽는다).
 
 import { el, clamp } from "../../core/dom";
@@ -86,7 +86,7 @@ export const numline: StepRenderer = (host, step, api) => {
     api.enableCTA(s.cta ?? "다음");
   }
 
-  /** 요소를 흔들거나(pop) 다시 재생 — 전역 키프레임 재사용, 리플로로 재시작. */
+  /** 요소를 흔들거나(pop) 다시 재생, 전역 키프레임 재사용, 리플로로 재시작. */
   function replay(node: SVGElement | HTMLElement, anim: string): void {
     node.style.animation = "none";
     void node.getBoundingClientRect();
@@ -98,7 +98,7 @@ export const numline: StepRenderer = (host, step, api) => {
 
   api.setCTA("목표를 달성해 보세요", { enabled: false });
 
-  /* ================================ place — 수 카드 놓기 ================================ */
+  /* ================================ place, 수 카드 놓기 ================================ */
   if (s.mode === "place") {
     const CARDS = [
       { src: "(-3)", v: -3, kind: "int", tag: "−3", hint: "−3은 0에서 왼쪽으로 3칸이에요" },
@@ -107,16 +107,16 @@ export const numline: StepRenderer = (host, step, api) => {
       { src: "(+2.5)", v: 2.5, kind: "dec", tag: "+2.5", hint: "+2.5는 +2와 +3 사이예요" },
     ] as const;
     const HELP = [
-      `지금 카드는 ${mfmt("(-3)")} — 0에서 <b>왼쪽이 −, 오른쪽이 +</b> 방향이에요. 수직선을 탭하거나 끌어서 자리를 잡고, 손을 떼면 확인돼요.`,
-      `이번엔 ${mfmt("(+2)")} — 어느 쪽으로 몇 칸일까요?`,
+      `지금 카드는 ${mfmt("(-3)")}, 0에서 <b>왼쪽이 −, 오른쪽이 +</b> 방향이에요. 수직선을 탭하거나 끌어서 자리를 잡고, 손을 떼면 확인돼요.`,
+      `이번엔 ${mfmt("(+2)")}, 어느 쪽으로 몇 칸일까요?`,
       `분수 차례! −3/2는 <b>−1과 −2 사이, −1.5 자리</b>예요. 반 칸 눈금을 써 보세요.`,
-      `마지막은 소수 ${mfmt("(+2.5)")} — 반 칸 눈금이 또 나설 차례예요.`,
+      `마지막은 소수 ${mfmt("(+2.5)")}, 반 칸 눈금이 또 나설 차례예요.`,
     ];
     const OK_MSG = [
-      "딱 맞았어요 — 0에서 왼쪽으로 3칸!",
-      "정확해요 — 오른쪽으로 2칸!",
-      "−3/2 = −1.5 — 분수도 수직선 위 한 점이에요!",
-      "+2.5 완성 — 소수도 한 점이에요!",
+      "딱 맞았어요, 0에서 왼쪽으로 3칸!",
+      "정확해요, 오른쪽으로 2칸!",
+      "−3/2 = −1.5, 분수도 수직선 위 한 점이에요!",
+      "+2.5 완성, 소수도 한 점이에요!",
     ];
 
     const stage = el("div", {
@@ -225,7 +225,7 @@ export const numline: StepRenderer = (host, step, api) => {
       } else {
         const diff = c.v - curV;
         const side = diff > 0 ? "오른쪽" : "왼쪽";
-        say(`${Math.abs(diff) <= 1 ? "조금 더" : "더"} ${side}이에요 — ${c.hint}`);
+        say(`${Math.abs(diff) <= 1 ? "조금 더" : "더"} ${side}이에요, ${c.hint}`);
         replay(pvi, "mansShake .38s");
         haptic(HAPTIC.wrong);
       }
@@ -236,7 +236,7 @@ export const numline: StepRenderer = (host, step, api) => {
       try {
         stage.setPointerCapture(e.pointerId);
       } catch {
-        /* 합성 포인터 — 캡처 없이 진행 */
+        /* 합성 포인터, 캡처 없이 진행 */
       }
       tracking = true;
       showPreview(evToVal(e), !shown);
@@ -275,12 +275,12 @@ export const numline: StepRenderer = (host, step, api) => {
     helper.innerHTML = HELP[0];
     refreshCards();
   } else {
-    /* ================================ abs — 원점에서의 거리 ================================ */
+    /* ================================ abs, 원점에서의 거리 ================================ */
     const POINTS = [-4, -3, 0, 1.5, 3];
     const stage = el("div", {
       class: "nl-stage",
       style: "padding:34px 0 22px",
-      attrs: { role: "group", "aria-label": "수직선 위 다섯 점 — 탭해서 원점과의 거리를 재요" },
+      attrs: { role: "group", "aria-label": "수직선 위 다섯 점, 탭해서 원점과의 거리를 재요" },
       html:
         `<svg viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg">` +
         railSvg() +
@@ -316,7 +316,7 @@ export const numline: StepRenderer = (host, step, api) => {
         t.style.opacity = "1";
       });
     }
-    /** 0→v 거리 호 — stroke-dashoffset 트랜지션으로 스르륵 그린다. */
+    /** 0→v 거리 호, stroke-dashoffset 트랜지션으로 스르륵 그린다. */
     function drawArc(v: number): void {
       const x0 = X(0);
       const x1 = X(v);
@@ -356,13 +356,13 @@ export const numline: StepRenderer = (host, step, api) => {
           markFound(g);
           drawArc(v);
           chips.on("dist", "거리 3!");
-          helper.innerHTML = "같은 거리 3인 짝이 <b>하나 더</b> 있어요 — 0의 반대쪽에서 찾아보세요.";
-          say("0에서 3칸 — 거리 3!");
+          helper.innerHTML = "같은 거리 3인 짝이 <b>하나 더</b> 있어요, 0의 반대쪽에서 찾아보세요.";
+          say("0에서 3칸, 거리 3!");
           haptic(HAPTIC.correct);
         } else if (v === 0) {
-          wrong(g, "0은 원점 그 자체 — 거리가 0이에요. 거리 3인 점을 찾아요");
+          wrong(g, "0은 원점 그 자체, 거리가 0이에요. 거리 3인 점을 찾아요");
         } else {
-          wrong(g, `${fs(v)}는 원점에서 거리가 ${Math.abs(v)}예요 — 3이 아니에요`);
+          wrong(g, `${fs(v)}는 원점에서 거리가 ${Math.abs(v)}예요, 3이 아니에요`);
         }
       } else if (phase === 2) {
         if (v === -first) {
@@ -372,14 +372,14 @@ export const numline: StepRenderer = (host, step, api) => {
           fadeText(180, 27, "|−3| = |+3| = 3", 14.5, "var(--subj-num-press)", 480);
           chips.on("pair", "대칭!");
           helper.innerHTML = "그럼 <b>0의 절댓값</b>은 얼마일까요? 원점 0을 탭해 보세요.";
-          say("반대쪽도 3칸 — 부호는 달라도 거리는 같아요!");
+          say("반대쪽도 3칸, 부호는 달라도 거리는 같아요!");
           haptic(HAPTIC.correct);
         } else if (v === first) {
-          wrong(g, "그 점은 이미 쟀어요 — 0의 반대쪽에서 짝을 찾아요");
+          wrong(g, "그 점은 이미 쟀어요, 0의 반대쪽에서 짝을 찾아요");
         } else if (v === 0) {
-          wrong(g, "0은 거리가 0이에요 — 거리 3인 짝을 찾아요");
+          wrong(g, "0은 거리가 0이에요, 거리 3인 짝을 찾아요");
         } else {
-          wrong(g, `${fs(v)}는 거리가 ${Math.abs(v)}예요 — 3이 아니에요`);
+          wrong(g, `${fs(v)}는 거리가 ${Math.abs(v)}예요, 3이 아니에요`);
         }
       } else {
         if (v === 0) {
@@ -388,12 +388,12 @@ export const numline: StepRenderer = (host, step, api) => {
           fadeText(180, 68, "|0| = 0", 12.5, "var(--green)", 120);
           chips.on("zero", "0!");
           helper.innerHTML =
-            "절댓값은 <b>원점 0에서 그 수까지의 거리</b>예요. 방향(부호)은 버리고 거리만 봐요 — 그래서 |−3| = |+3| = 3이고, |0| = 0이에요.";
-          say("거리 0 — |0| = 0이에요!");
+            "절댓값은 <b>원점 0에서 그 수까지의 거리</b>예요. 방향(부호)은 버리고 거리만 봐요, 그래서 |−3| = |+3| = 3이고, |0| = 0이에요.";
+          say("거리 0, |0| = 0이에요!");
           haptic(HAPTIC.correct);
           maybeFinish();
         } else {
-          wrong(g, "0의 절댓값을 묻고 있어요 — 원점 0을 탭!");
+          wrong(g, "0의 절댓값을 묻고 있어요, 원점 0을 탭!");
         }
       }
     }

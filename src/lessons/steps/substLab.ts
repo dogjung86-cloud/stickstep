@@ -1,8 +1,8 @@
-// substLab — 대입 머신(교과서 69쪽 대입·식의 값). 식을 고르고 x 값을 스테퍼로 정한 뒤
-// "대입!" — 문자 자리에 수가 들어가는 순간을 2줄 계산 과정으로 펼쳐 보인다.
-//   1줄차: 식에서 x가 값으로 치환된 모습(음수는 반드시 괄호와 함께 — 강조 상자)
+// substLab, 대입 머신(교과서 69쪽 대입·식의 값). 식을 고르고 x 값을 스테퍼로 정한 뒤
+// "대입!", 문자 자리에 수가 들어가는 순간을 2줄 계산 과정으로 펼쳐 보인다.
+//   1줄차: 식에서 x가 값으로 치환된 모습(음수는 반드시 괄호와 함께, 강조 상자)
 //   2줄차: 식의 값. 목표 ① 양수 대입 ② 음수 대입(괄호!) ③ (-x)²+x에 음수 대입(함정 비교).
-// 식·x를 바꿔 가며 자유 탐색 — 전 목표 달성 시 recordQuiz(true)+enableCTA.
+// 식·x를 바꿔 가며 자유 탐색, 전 목표 달성 시 recordQuiz(true)+enableCTA.
 // 모션은 전부 CSS transition + setTimeout(타이머 Set으로 모아 cleanup 해제). rAF 금지.
 
 import { el, clear } from "../../core/dom";
@@ -27,7 +27,7 @@ const HL_STYLE =
   " border:1.5px solid var(--subj-num); border-radius:9px; padding:1px 6px; margin:0 1px;";
 const hl = (html: string): string => `<span style="${HL_STYLE}">${html}</span>`;
 
-/** x 자리에 들어갈 값 토큰 — 음수는 반드시 괄호와 함께. */
+/** x 자리에 들어갈 값 토큰, 음수는 반드시 괄호와 함께. */
 const valTok = (x: number): string => (x < 0 ? mfmt(`(${x})`) : mfmt(String(x)));
 
 const fmtNum = (v: number): string => String(v).replace("-", "−");
@@ -40,7 +40,7 @@ const NEGX_LABEL =
 interface ExprDef {
   label: string; // 탭·큰 표시용 HTML
   fn: (x: number) => number;
-  subst: (x: number) => string; // 1줄차 — x가 값으로 치환된 모습(HTML)
+  subst: (x: number) => string; // 1줄차, x가 값으로 치환된 모습(HTML)
 }
 
 const EXPRS: ExprDef[] = [
@@ -130,12 +130,12 @@ export const substLab: StepRenderer = (host, step, api) => {
   const toast = mtoast(board);
   const helper = el("div", {
     class: "helper",
-    html: "식을 고르고 x 값을 정한 뒤 <b>대입!</b> — 문자 자리에 수가 들어가는 순간을 지켜봐요.",
+    html: "식을 고르고 x 값을 정한 뒤 <b>대입!</b>, 문자 자리에 수가 들어가는 순간을 지켜봐요.",
   });
   host.append(chips.el, board, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));
 
-  // ---- 타이머(모든 지연은 여기로 — cleanup에서 일괄 해제) ----
+  // ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ----
   const timers = new Set<number>();
   const later = (fn: () => void, ms: number): void => {
     const id = window.setTimeout(() => {
@@ -185,7 +185,7 @@ export const substLab: StepRenderer = (host, step, api) => {
       exprIdx = i;
       paintTabs();
       paintExpr();
-      placeholder("식을 바꿨어요 — 대입!으로 확인해요");
+      placeholder("식을 바꿨어요, 대입!으로 확인해요");
       if (i === 2 && !chips.has("trap"))
         helper.innerHTML = "이 식, 괄호 없는 <b>−x²</b>과 같을까요 다를까요? <b>음수</b>를 대입해서 확인해 봐요!";
     }),
@@ -198,7 +198,7 @@ export const substLab: StepRenderer = (host, step, api) => {
     x = nx;
     haptic(HAPTIC.tap);
     paintX();
-    placeholder("값을 바꿨어요 — 대입!으로 확인해요");
+    placeholder("값을 바꿨어요, 대입!으로 확인해요");
   }
   minusB.addEventListener("click", () => stepX(-1));
   plusB.addEventListener("click", () => stepX(1));
@@ -236,7 +236,7 @@ export const substLab: StepRenderer = (host, step, api) => {
   });
 
   function onSubst(r: number): void {
-    // 조건 판정을 먼저 — chips.on은 "새로 켜졌을 때만" true
+    // 조건 판정을 먼저, chips.on은 "새로 켜졌을 때만" true
     const gotTrap = exprIdx === 2 && x < 0 && chips.on("trap", "정체 확인!");
     const gotNeg = x < 0 && chips.on("neg", "완료!");
     const gotPos = x > 0 && chips.on("pos", "완료!");
@@ -251,19 +251,19 @@ export const substLab: StepRenderer = (host, step, api) => {
     } else if (gotNeg) {
       toast("음수는 괄호에 담아 대입!");
       helper.innerHTML =
-        "음수를 대입할 땐 <b>괄호가 필수</b>예요 — 괄호 없이 2×−3−1처럼 쓰면 사고! " +
+        "음수를 대입할 땐 <b>괄호가 필수</b>예요, 괄호 없이 2×−3−1처럼 쓰면 사고! " +
         `방금처럼 <b>(${fmtNum(x)})</b>에 담아야 안전해요.` +
-        (chips.has("trap") ? "" : " 다음은 세 번째 식 — (−x)²의 정체를 밝혀 봐요!");
+        (chips.has("trap") ? "" : " 다음은 세 번째 식, (−x)²의 정체를 밝혀 봐요!");
     } else if (gotPos) {
       toast(`식의 값은 ${fmtNum(r)}!`);
       helper.innerHTML =
         `x가 ${x}일 때 이 식의 값은 <b>${fmtNum(r)}</b>! ` +
-        (chips.has("neg") ? "새 식도 골라 자유롭게 실험해 봐요." : "이번엔 x를 <b>음수</b>로 내려서 대입해 봐요 — 뭐가 달라질까요?");
+        (chips.has("neg") ? "새 식도 골라 자유롭게 실험해 봐요." : "이번엔 x를 <b>음수</b>로 내려서 대입해 봐요, 뭐가 달라질까요?");
     } else if (!finished) {
       toast(`식의 값은 ${fmtNum(r)}`);
-      if (!chips.has("neg")) helper.innerHTML = "이번엔 x를 <b>음수</b>로 내려서 대입해 봐요 — − 버튼으로!";
-      else if (!chips.has("trap")) helper.innerHTML = "세 번째 식으로 바꾸고 <b>음수</b>를 대입해 봐요 — (−x)²의 정체는?";
-      else if (!chips.has("pos")) helper.innerHTML = "마지막 미션 — x를 <b>양수</b>로 올려서 대입 1회!";
+      if (!chips.has("neg")) helper.innerHTML = "이번엔 x를 <b>음수</b>로 내려서 대입해 봐요, − 버튼으로!";
+      else if (!chips.has("trap")) helper.innerHTML = "세 번째 식으로 바꾸고 <b>음수</b>를 대입해 봐요, (−x)²의 정체는?";
+      else if (!chips.has("pos")) helper.innerHTML = "마지막 미션, x를 <b>양수</b>로 올려서 대입 1회!";
     } else {
       toast(`식의 값은 ${fmtNum(r)}`);
     }
@@ -275,7 +275,7 @@ export const substLab: StepRenderer = (host, step, api) => {
         toast("대입 마스터!");
         helper.innerHTML =
           "문자에 수를 넣는 것이 <b>대입</b>, 그 결과가 <b>식의 값</b>이에요. " +
-          "음수는 언제나 <b>괄호</b>에 담아 넣기 — 이 습관 하나가 부호 사고를 막아요!";
+          "음수는 언제나 <b>괄호</b>에 담아 넣기, 이 습관 하나가 부호 사고를 막아요!";
         api.recordQuiz(true);
         api.enableCTA(s.cta ?? "다음");
       }, 1500);

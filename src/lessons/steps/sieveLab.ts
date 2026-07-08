@@ -1,4 +1,4 @@
-// sieveLab — 에라토스테네스의 체(L1 기함 랩). 상호작용 자체가 알고리즘이다:
+// sieveLab, 에라토스테네스의 체(L1 기함 랩). 상호작용 자체가 알고리즘이다:
 // "남은 수 중 가장 작은 수를 찾아 탭" → 그 수는 남고 배수가 연쇄로 쓸려 나간다.
 // 2→3→5→7을 직접 찾아 탭하면 1~60에서 소수 17개만 남는다(11²=121>60이라 7에서 끝).
 import { el } from "../../core/dom";
@@ -33,7 +33,7 @@ export const sieveLab: StepRenderer = (host, step, api) => {
   board.appendChild(grid);
   const helper = el("div", {
     class: "helper",
-    html: "먼저 <b>1</b>부터 정리할게요 — 1은 약수가 1개뿐이라 소수도 합성수도 아니에요.",
+    html: "먼저 <b>1</b>부터 정리할게요, 1은 약수가 1개뿐이라 소수도 합성수도 아니에요.",
   });
   host.append(goals.el, board, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -88,7 +88,7 @@ export const sieveLab: StepRenderer = (host, step, api) => {
     const p = PRIMES_STEPS[stage];
     cells.get(p)!.classList.add("pulse");
     if (stage === 0) {
-      helper.innerHTML = "남은 수 중 <b>가장 작은 수</b>를 탭하세요 — 그 수는 남기고, 그 수의 배수를 모두 쓸어낼 거예요.";
+      helper.innerHTML = "남은 수 중 <b>가장 작은 수</b>를 탭하세요, 그 수는 남기고, 그 수의 배수를 모두 쓸어낼 거예요.";
     } else {
       helper.innerHTML = `좋아요! 이제 남은 수 중 <b>가장 작은 수</b>는 무엇일까요? 찾아서 탭해 보세요.`;
     }
@@ -96,7 +96,7 @@ export const sieveLab: StepRenderer = (host, step, api) => {
 
   function finishAll(): void {
     helper.innerHTML =
-      "7 다음으로 남은 수는 11 — 그런데 11의 배수 중 남은 건 <b>11×11=121부터</b>라 이 판엔 없어요. 체질 끝!";
+      "7 다음으로 남은 수는 11, 그런데 11의 배수 중 남은 건 <b>11×11=121부터</b>라 이 판엔 없어요. 체질 끝!";
     let i = 0;
     for (let v = 2; v <= MAX; v++) {
       if (!alive.has(v)) continue;
@@ -111,7 +111,7 @@ export const sieveLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.correct);
       toast(`소수 ${i}개만 남았어요!`);
       helper.innerHTML =
-        `체에 걸러 남은 <b>소수 ${i}개</b> — 전부 약수가 <b>1과 자기 자신뿐</b>인 수예요. ` +
+        `체에 걸러 남은 <b>소수 ${i}개</b>, 전부 약수가 <b>1과 자기 자신뿐</b>인 수예요. ` +
         "지워진 수(합성수)는 더 작은 수의 배수, 즉 약수가 3개 이상이었죠.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "이름 붙이기");
@@ -125,7 +125,7 @@ export const sieveLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     if (stage === -1) return; // 인트로 진행 중
     if (v === 1) {
-      toast("1은 소수도 합성수도 아니에요 — 이미 제외!");
+      toast("1은 소수도 합성수도 아니에요, 이미 제외!");
       return;
     }
     if (!alive.has(v)) {
@@ -139,7 +139,7 @@ export const sieveLab: StepRenderer = (host, step, api) => {
     }
     const want = PRIMES_STEPS[stage];
     if (v !== want) {
-      toast(v > want ? `더 작은 수가 남아 있어요 — ${want}부터!` : `${want}부터 차례로!`);
+      toast(v > want ? `더 작은 수가 남아 있어요, ${want}부터!` : `${want}부터 차례로!`);
       return;
     }
     // 정답: 배수 쓸어내기

@@ -234,7 +234,8 @@ log(`L3: ${await h1()}`);
 await waitBtn("170", 700).catch(async () => { await waitBtn("cm", 700); });
 await waitBtn("160", 700).catch(() => {});
 await hookChoice();
-await clickCTA();
+await clickCTA(); // → concept(대입의 이름 먼저)
+await clickCTA(); // → substLab
 // substLab: 양수 대입 → 음수 대입 → 3번식 음수 대입
 await page.waitForSelector(".sd-step", { timeout: 9000 });
 await clickBtn("^\\+$", 260).catch(() => {});
@@ -247,9 +248,8 @@ await W(400);
 await clickBtn("대입", 1600);
 await W(700);
 await shot("math2-l3-subst");
-await clickCTA(); // concept
-await clickCTA(); // recap
-await clickCTA();
+await clickCTA(); // → recap
+await clickCTA(); // → 문제
 await quiz(0);
 await oxPick(false);
 await quiz(0);
@@ -263,7 +263,8 @@ log(`L4: ${await h1()}`);
 await waitBtn("마카롱", 600);
 for (let i = 0; i < 5; i++) await clickBtn("마카롱", 550).catch(() => {});
 await hookChoice();
-await clickCTA();
+await clickCTA(); // → concept(부품 이름 먼저)
+await clickCTA(); // → exprAnatomy
 // exprAnatomy
 await page.waitForSelector(".nl-card", { timeout: 9000 });
 await tapEl(".nl-card", "6x");
@@ -282,9 +283,8 @@ await W(1000);
 await pickChoice("^1$");
 await W(900);
 await shot("math2-l4-anatomy");
-await clickCTA(); // concept
-await clickCTA(); // recap
-await clickCTA();
+await clickCTA(); // → recap
+await clickCTA(); // → 문제
 await quiz(0);
 await multiQuiz([0, 1]);
 await oxPick(false);
@@ -322,7 +322,7 @@ await clickCTA();
 await quiz(0);
 await quiz(0);
 await oxPick(false);
-await drill([1, 4, 12, 9, -3, -4]);
+await drill([1, 4, 12, 9, -3, -4, 21, 18]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L5 완료");
 
@@ -463,6 +463,8 @@ await clickCTA();
 await quiz(0);
 await quiz(0);
 await quiz(0);
+await quiz(0); // 보스전 4: 비례식
+await quiz(0); // 보스전 5: 수조 채우기
 await multiQuiz([0, 1, 4]);
 await drill([21, 5, 2, 3, 21, 10, 36, 2]);
 await W(400);

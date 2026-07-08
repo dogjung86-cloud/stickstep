@@ -1,6 +1,6 @@
-// hookMath — 수학 트랙 미리보기 퍼즐(훅). 과학 hook.ts와 같은 쉘 문법이지만
+// hookMath, 수학 트랙 미리보기 퍼즐(훅). 과학 hook.ts와 같은 쉘 문법이지만
 // 별도 스텝 타입("mathHook")으로 등록해 과학 파일을 건드리지 않는다.
-// 예측 선택지는 반드시 공용 hookAsk.ask() — choices[0]=정답, good≠bad(오개념 교정).
+// 예측 선택지는 반드시 공용 hookAsk.ask(), choices[0]=정답, good≠bad(오개념 교정).
 // 장면 상태 변화는 인라인 스타일 트랜지션(rAF 금지 환경 대응).
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
@@ -87,7 +87,7 @@ export const mathHook: StepRenderer = (host, step, api) => {
   api.setCTA(s.cta ?? "발견 랩 열기", { enabled: false });
 };
 
-/* ── L1 cicada — 매미의 13·17년 미스터리 ─────────────────────── */
+/* ── L1 cicada, 매미의 13·17년 미스터리 ─────────────────────── */
 function renderCicada(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]): void {
   const fig = el("div", {});
   fig.innerHTML = wrapSvg(
@@ -143,15 +143,15 @@ function renderCicada(scene: HTMLElement, helper: HTMLElement, finish: () => voi
           "13과 17이 행운의 숫자라서",
           "우연일 뿐, 숫자에 이유는 없다",
         ],
-        good: "정확해요! 2·3·4·6년 주기로 늘어나는 천적과 <b>최대한 안 겹치는 수</b> — 1과 자기 자신 말고는 약수가 없는 수예요. 이런 수를 뭐라고 부르는지, 체로 걸러서 찾아봐요.",
-        bad: "매미는 수학자였어요 — 12년이면 2·3·4·6년 주기 천적과 계속 겹치지만, 13과 17은 <b>1과 자기 자신 말고 약수가 없어</b> 거의 안 겹쳐요. 이런 수의 정체를 체로 걸러 확인해 봐요.",
+        good: "정확해요! 2·3·4·6년 주기로 늘어나는 천적과 <b>최대한 안 겹치는 수</b>, 1과 자기 자신 말고는 약수가 없는 수예요. 이런 수를 뭐라고 부르는지, 체로 걸러서 찾아봐요.",
+        bad: "매미는 수학자였어요, 12년이면 2·3·4·6년 주기 천적과 계속 겹치지만, 13과 17은 <b>1과 자기 자신 말고 약수가 없어</b> 거의 안 겹쳐요. 이런 수의 정체를 체로 걸러 확인해 봐요.",
         onDone: finish,
       });
     }, 700);
   });
 }
 
-/* ── L2 paperfold — 종이 접기 두께 (가로 반토막·두께 두 배, 넓이 보존) ── */
+/* ── L2 paperfold, 종이 접기 두께 (가로 반토막·두께 두 배, 넓이 보존) ── */
 function renderPaperfold(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]): void {
   const fig = el("div", {});
   const GROUND = 150;
@@ -160,7 +160,7 @@ function renderPaperfold(scene: HTMLElement, helper: HTMLElement, finish: () => 
     const { w, t } = paperAt(n);
     const x = 180 - w / 2;
     const y = GROUND - t;
-    // 직전 크기 잔상(점선) — "가로가 반으로 접혀 들어갔다"가 눈에 보이게
+    // 직전 크기 잔상(점선), "가로가 반으로 접혀 들어갔다"가 눈에 보이게
     let ghost = "";
     if (n > 0) {
       const p = paperAt(n - 1);
@@ -200,7 +200,7 @@ function renderPaperfold(scene: HTMLElement, helper: HTMLElement, finish: () => 
   scene.append(fig, read, btn, box);
   helper.innerHTML = "얇디얇은 종이 한 장(0.1mm)을 <b>반으로 접으면 두께는 2배</b>가 돼요. 계속 접어 볼까요?";
   let n = 0;
-  const LABELS = ["", "2겹", "4겹", "8겹 — 벌써 두툼", "16겹", "32겹 — 공책 두께!"];
+  const LABELS = ["", "2겹", "4겹", "8겹, 벌써 두툼", "16겹", "32겹, 공책 두께!"];
   btn.addEventListener("click", () => {
     if (n >= 5) return;
     n += 1;
@@ -215,8 +215,8 @@ function renderPaperfold(scene: HTMLElement, helper: HTMLElement, finish: () => 
       window.setTimeout(() => {
         ask(box, helper, {
           choices: choices ?? ["달까지 닿는다(약 38만 km)", "책상 높이쯤 된다", "아파트 한 층쯤 된다"],
-          good: "믿기 어렵지만 진짜예요 — 2를 42번 곱하면 약 4조 4천억 겹, 44만 km! <b>같은 수를 거듭 곱하는 것</b>의 위력이에요. 이걸 짧게 쓰는 법을 배워요.",
-          bad: "훨씬 커요! 2를 42번 곱하면 약 4조 4천억 겹 — 두께 44만 km로 <b>달(38만 km)을 지나쳐요</b>. 같은 수를 거듭 곱하면 폭발적으로 커지죠. 이걸 짧게 쓰는 법이 오늘 주인공!",
+          good: "믿기 어렵지만 진짜예요, 2를 42번 곱하면 약 4조 4천억 겹, 44만 km! <b>같은 수를 거듭 곱하는 것</b>의 위력이에요. 이걸 짧게 쓰는 법을 배워요.",
+          bad: "훨씬 커요! 2를 42번 곱하면 약 4조 4천억 겹, 두께 44만 km로 <b>달(38만 km)을 지나쳐요</b>. 같은 수를 거듭 곱하면 폭발적으로 커지죠. 이걸 짧게 쓰는 법이 오늘 주인공!",
           onDone: finish,
         });
       }, 600);
@@ -224,7 +224,7 @@ function renderPaperfold(scene: HTMLElement, helper: HTMLElement, finish: () => 
   });
 }
 
-/* ── L3 lockcode — 소수 자물쇠(암호) ─────────────────────────── */
+/* ── L3 lockcode, 소수 자물쇠(암호) ─────────────────────────── */
 function renderLockcode(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]): void {
   const fig = el("div", {});
   fig.innerHTML = wrapSvg(
@@ -243,14 +243,14 @@ function renderLockcode(scene: HTMLElement, helper: HTMLElement, finish: () => v
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, box);
   helper.innerHTML =
-    "은행 보안은 이렇게 걸려 있어요: <b>두 소수를 곱한 수</b>는 공개하고, 원래 두 소수는 비밀. 이 자물쇠의 공개 열쇠는 <b>91</b> — 비밀 열쇠를 찾아야 열려요!";
+    "은행 보안은 이렇게 걸려 있어요: <b>두 소수를 곱한 수</b>는 공개하고, 원래 두 소수는 비밀. 이 자물쇠의 공개 열쇠는 <b>91</b>, 비밀 열쇠를 찾아야 열려요!";
   const lockFig = fig.querySelector(".lk-shackle") as SVGGElement;
   window.setTimeout(() => {
     face("curious");
     ask(box, helper, {
       choices: choices ?? ["7과 13", "3과 31", "9와 11"],
-      good: "철컥! <b>7×13=91</b> — 자물쇠가 열렸어요. 91처럼 작은 수는 금방 풀리지만, 수백 자리 수를 소수의 곱으로 쪼개는 건 슈퍼컴퓨터도 수만 년이 걸려요. 수를 소수의 곱으로 쪼개는 기술, 지금 배워요.",
-      bad: "곱해서 검산해 봐요 — 3×31=93, 9×11=99라 어긋나요(게다가 9는 3×3으로 더 쪼개지는 수!). 91을 작은 소수부터 나눠 보면 <b>7×13</b>이 딱 맞아요. 이 '쪼개기'가 오늘의 기술이에요.",
+      good: "철컥! <b>7×13=91</b>, 자물쇠가 열렸어요. 91처럼 작은 수는 금방 풀리지만, 수백 자리 수를 소수의 곱으로 쪼개는 건 슈퍼컴퓨터도 수만 년이 걸려요. 수를 소수의 곱으로 쪼개는 기술, 지금 배워요.",
+      bad: "곱해서 검산해 봐요, 3×31=93, 9×11=99라 어긋나요(게다가 9는 3×3으로 더 쪼개지는 수!). 91을 작은 소수부터 나눠 보면 <b>7×13</b>이 딱 맞아요. 이 '쪼개기'가 오늘의 기술이에요.",
       onDone: () => {
         lockFig.style.transform = "translateY(-16px) rotate(-14deg)";
         haptic(HAPTIC.correct);
@@ -260,7 +260,7 @@ function renderLockcode(scene: HTMLElement, helper: HTMLElement, finish: () => v
   }, 900);
 }
 
-/* ── L4 tilefloor — 가장 큰 정사각 타일 ──────────────────────── */
+/* ── L4 tilefloor, 가장 큰 정사각 타일 ──────────────────────── */
 function renderTilefloor(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]): void {
   const fig = el("div", {});
   const F = { x: 60, y: 34, w: 240, h: 150 }; // 36×60 비율(가로 60, 세로 36 → 240×144에 맞춤)
@@ -295,7 +295,7 @@ function renderTilefloor(scene: HTMLElement, helper: HTMLElement, finish: () => 
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, box);
   helper.innerHTML =
-    "가로 60, 세로 36인 주방 바닥을 <b>정사각형 타일</b>로 빈틈도, 자름도 없이 깔고 싶어요. 타일이 클수록 일이 줄죠 — <b>가장 큰</b> 타일 한 변은 몇일까요?";
+    "가로 60, 세로 36인 주방 바닥을 <b>정사각형 타일</b>로 빈틈도, 자름도 없이 깔고 싶어요. 타일이 클수록 일이 줄죠, <b>가장 큰</b> 타일 한 변은 몇일까요?";
   function fill(t: number): void {
     fig.innerHTML = floorSvg(t);
     window.setTimeout(() => {
@@ -305,8 +305,8 @@ function renderTilefloor(scene: HTMLElement, helper: HTMLElement, finish: () => 
   window.setTimeout(() => {
     ask(box, helper, {
       choices: choices ?? ["한 변 12", "한 변 18", "한 변 6"],
-      good: "딱 맞아요! 12는 60도 나누고(5장) 36도 나눠서(3장) 빈틈이 없어요 — 60과 36을 <b>동시에 나누는 가장 큰 수</b>죠. 왜 하필 12인지, 소인수로 뜯어 봐요.",
-      bad: "직접 깔아 보면 보여요 — 18은 36은 나누지만 60은 못 나눠 오른쪽에 빈틈이 남고, 6은 깔리긴 해도 <b>더 큰 12</b>가 가능해요. '두 수를 동시에 나누는 가장 큰 수'를 찾는 법을 배워요.",
+      good: "딱 맞아요! 12는 60도 나누고(5장) 36도 나눠서(3장) 빈틈이 없어요, 60과 36을 <b>동시에 나누는 가장 큰 수</b>죠. 왜 하필 12인지, 소인수로 뜯어 봐요.",
+      bad: "직접 깔아 보면 보여요, 18은 36은 나누지만 60은 못 나눠 오른쪽에 빈틈이 남고, 6은 깔리긴 해도 <b>더 큰 12</b>가 가능해요. '두 수를 동시에 나누는 가장 큰 수'를 찾는 법을 배워요.",
       onDone: () => {
         face("curious");
         fill(12);
@@ -317,7 +317,7 @@ function renderTilefloor(scene: HTMLElement, helper: HTMLElement, finish: () => 
   }, 900);
 }
 
-/* ── L5 buslight — 두 버스의 동시 출발 ───────────────────────── */
+/* ── L5 buslight, 두 버스의 동시 출발 ───────────────────────── */
 function renderBuslight(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]): void {
   const fig = el("div", {});
   const bus = (x: number, color1: string, color2: string, label: string, cls: string): string =>
@@ -346,8 +346,8 @@ function renderBuslight(scene: HTMLElement, helper: HTMLElement, finish: () => v
   window.setTimeout(() => {
     ask(box, helper, {
       choices: choices ?? ["12분 뒤", "24분 뒤", "10분 뒤"],
-      good: "명중! 파랑은 4·8·12분, 초록은 6·12분 — <b>12분</b>에 처음 다시 만나요. 시계를 돌려 확인해 볼게요.",
-      bad: "시계를 돌려 봐요 — 파랑은 4·8·12…, 초록은 6·12…분에 출발해요. 24분에도 만나지만 <b>'처음' 만나는 건 12분</b>이고, 10분(4+6)은 둘 다 출발하지 않는 함정!",
+      good: "명중! 파랑은 4·8·12분, 초록은 6·12분, <b>12분</b>에 처음 다시 만나요. 시계를 돌려 확인해 볼게요.",
+      bad: "시계를 돌려 봐요, 파랑은 4·8·12…, 초록은 6·12…분에 출발해요. 24분에도 만나지만 <b>'처음' 만나는 건 12분</b>이고, 10분(4+6)은 둘 다 출발하지 않는 함정!",
       onDone: () => {
         // 시계 감기 연출: 1분씩 12분까지, 배수 순간 버스 글로우
         const clock = fig.querySelector(".bl-clock") as SVGTextElement;
@@ -375,7 +375,7 @@ function renderBuslight(scene: HTMLElement, helper: HTMLElement, finish: () => v
   }, 900);
 }
 
-/* ── L6 freezer — 0 아래의 세계 ──────────────────────────────── */
+/* ── L6 freezer, 0 아래의 세계 ──────────────────────────────── */
 function renderFreezer(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]): void {
   const fig = el("div", {});
   const draw = (frz: boolean): void => {
@@ -399,7 +399,7 @@ function renderFreezer(scene: HTMLElement, helper: HTMLElement, finish: () => vo
   const btn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "냉동실 보기" }));
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, btn, box);
-  helper.innerHTML = "냉장실은 <b>+3℃</b> — 0보다 3도 높아요. 그럼 아이스크림이 사는 냉동실은?";
+  helper.innerHTML = "냉장실은 <b>+3℃</b>, 0보다 3도 높아요. 그럼 아이스크림이 사는 냉동실은?";
   let frz = false;
   btn.addEventListener("click", () => {
     frz = !frz;
@@ -408,12 +408,12 @@ function renderFreezer(scene: HTMLElement, helper: HTMLElement, finish: () => vo
     (btn.querySelector("span") as HTMLElement).textContent = frz ? "냉장실 보기" : "냉동실 보기";
     if (frz && !box.classList.contains("show")) {
       face("curious");
-      helper.innerHTML = "<b>영하 18도</b> — 0보다 <b>낮은</b> 온도예요. 이걸 수로 쓰면 어떻게 될까요?";
+      helper.innerHTML = "<b>영하 18도</b>, 0보다 <b>낮은</b> 온도예요. 이걸 수로 쓰면 어떻게 될까요?";
       window.setTimeout(() => {
         ask(box, helper, {
           choices: choices ?? ["−18 (0보다 낮음을 − 부호로)", "그냥 18", "0.18"],
-          good: "맞아요! 0을 기준으로 <b>반대쪽은 − 부호</b>를 붙여요 — 영하 18℃는 −18℃. 온도뿐 아니라 지하층, 해저, 골프 스코어까지, 0 아래의 세계가 열려요.",
-          bad: "그냥 18이면 영상 18도와 구별이 안 돼요! 0을 기준으로 위는 +, <b>아래(반대쪽)는 −</b> — 영하 18℃는 <b>−18℃</b>. 0 아래의 새로운 수, 음수를 만나러 가요.",
+          good: "맞아요! 0을 기준으로 <b>반대쪽은 − 부호</b>를 붙여요, 영하 18℃는 −18℃. 온도뿐 아니라 지하층, 해저, 골프 스코어까지, 0 아래의 세계가 열려요.",
+          bad: "그냥 18이면 영상 18도와 구별이 안 돼요! 0을 기준으로 위는 +, <b>아래(반대쪽)는 −</b>, 영하 18℃는 <b>−18℃</b>. 0 아래의 새로운 수, 음수를 만나러 가요.",
           onDone: finish,
         });
       }, 600);
@@ -421,7 +421,7 @@ function renderFreezer(scene: HTMLElement, helper: HTMLElement, finish: () => vo
   });
 }
 
-/* ── L7 gpsdist — 거리만 알 때 ───────────────────────────────── */
+/* ── L7 gpsdist, 거리만 알 때 ───────────────────────────────── */
 function renderGpsdist(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]): void {
   const fig = el("div", {});
   fig.innerHTML = wrapSvg(
@@ -452,9 +452,9 @@ function renderGpsdist(scene: HTMLElement, helper: HTMLElement, finish: () => vo
       helper.innerHTML = "“3 km”라는 <b>거리</b>만으로 가게 위치를 알 수 있을까요?";
       window.setTimeout(() => {
         ask(box, helper, {
-          choices: choices ?? ["모른다 — 동쪽 3 km일 수도, 서쪽 3 km일 수도", "당연히 동쪽 3 km 지점", "지도에서 딱 한 곳으로 정해진다"],
-          good: "그렇죠 — <b>거리는 방향을 지워요</b>. 수직선에서도 똑같아요: 0에서 거리가 3인 수는 +3과 −3, <b>둘</b>! 이 '거리'에 붙는 이름이 절댓값이에요.",
-          bad: "안내엔 방향이 없었어요 — 3 km 반경 위 <b>어디든</b> 가능하죠. 수직선에서도 0에서 거리 3인 수는 +3과 −3 <b>둘</b>이에요. 방향을 지운 크기, 절댓값을 배워요.",
+          choices: choices ?? ["모른다, 동쪽 3 km일 수도, 서쪽 3 km일 수도", "당연히 동쪽 3 km 지점", "지도에서 딱 한 곳으로 정해진다"],
+          good: "그렇죠, <b>거리는 방향을 지워요</b>. 수직선에서도 똑같아요: 0에서 거리가 3인 수는 +3과 −3, <b>둘</b>! 이 '거리'에 붙는 이름이 절댓값이에요.",
+          bad: "안내엔 방향이 없었어요, 3 km 반경 위 <b>어디든</b> 가능하죠. 수직선에서도 0에서 거리 3인 수는 +3과 −3 <b>둘</b>이에요. 방향을 지운 크기, 절댓값을 배워요.",
           onDone: finish,
         });
       }, 700);
@@ -462,7 +462,7 @@ function renderGpsdist(scene: HTMLElement, helper: HTMLElement, finish: () => vo
   });
 }
 
-/* ── L8 golfscore — 골프, 낮을수록 이기는 게임 ───────────────── */
+/* ── L8 golfscore, 골프, 낮을수록 이기는 게임 ───────────────── */
 function renderGolfscore(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]): void {
   const fig = el("div", {});
   const card = (x: number, name: string, r1: string, r2: string, sum: string, cls: string, col: string): string =>
@@ -499,16 +499,16 @@ function renderGolfscore(scene: HTMLElement, helper: HTMLElement, finish: () => 
     helper.innerHTML = "A는 (−1)+(−3)=<b>−4</b>, B는 (+2)+(−5)=<b>−3</b>. 그래서… 우승은 누구일까요?";
     window.setTimeout(() => {
       ask(box, helper, {
-        choices: choices ?? ["A 선수 — −4가 −3보다 낮다", "B 선수 — 3이 4보다 작으니까", "동점이다"],
-        good: "정답! 수직선에서 −4는 −3보다 <b>왼쪽</b>, 더 낮은 점수예요. 그런데 방금 한 (−1)+(−3), (+2)+(−5) 같은 계산 — 규칙이 뭘까요? 돌멩이로 직접 만들어 봐요.",
-        bad: "숫자만 보면 3<4지만, 음수는 <b>절댓값이 클수록 더 작아요(더 왼쪽)</b> — −4가 −3보다 낮은 점수라 A의 우승! 이런 부호 있는 덧셈의 규칙을 지금 만들어 봐요.",
+        choices: choices ?? ["A 선수, −4가 −3보다 낮다", "B 선수, 3이 4보다 작으니까", "동점이다"],
+        good: "정답! 수직선에서 −4는 −3보다 <b>왼쪽</b>, 더 낮은 점수예요. 그런데 방금 한 (−1)+(−3), (+2)+(−5) 같은 계산, 규칙이 뭘까요? 돌멩이로 직접 만들어 봐요.",
+        bad: "숫자만 보면 3<4지만, 음수는 <b>절댓값이 클수록 더 작아요(더 왼쪽)</b>, −4가 −3보다 낮은 점수라 A의 우승! 이런 부호 있는 덧셈의 규칙을 지금 만들어 봐요.",
         onDone: finish,
       });
     }, 800);
   });
 }
 
-/* ── L9 daytemp — 일교차의 함정 ──────────────────────────────── */
+/* ── L9 daytemp, 일교차의 함정 ──────────────────────────────── */
 function renderDaytemp(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]): void {
   const fig = el("div", {});
   const draw = (night: boolean): void => {
@@ -537,7 +537,7 @@ function renderDaytemp(scene: HTMLElement, helper: HTMLElement, finish: () => vo
   const btn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "밤으로 넘기기" }));
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, btn, box);
-  helper.innerHTML = "봄날 한낮은 <b>+3℃ </b>— 그런데 밤이 되면 뚝 떨어져요.";
+  helper.innerHTML = "봄날 한낮은 <b>+3℃ </b>, 그런데 밤이 되면 뚝 떨어져요.";
   let night = false;
   let asked = false;
   btn.addEventListener("click", () => {
@@ -548,12 +548,12 @@ function renderDaytemp(scene: HTMLElement, helper: HTMLElement, finish: () => vo
     if (night && !asked) {
       asked = true;
       face("curious");
-      helper.innerHTML = "한밤엔 <b>−7℃</b>! 그럼 이날의 일교차 — <b>낮 기온에서 밤 기온을 뺀 값</b>은 몇 도일까요?";
+      helper.innerHTML = "한밤엔 <b>−7℃</b>! 그럼 이날의 일교차, <b>낮 기온에서 밤 기온을 뺀 값</b>은 몇 도일까요?";
       window.setTimeout(() => {
         ask(box, helper, {
           choices: choices ?? ["10도", "4도", "−4도"],
-          good: "정답! 수직선에서 +3과 −7 사이는 <b>10칸</b>이에요. 그런데 식으로 쓰면 (+3)−(−7) — 음수를 빼는데 왜 커질까요? 오늘 그 마법을 풀어요.",
-          bad: "3−7=4로 계산했다면 함정에 빠진 거예요 — 밤 기온은 <b>−7</b>! 수직선에서 +3과 −7 사이는 <b>10칸</b>, 식으로는 (+3)−(−7)=+10. '음수 빼기'의 비밀을 지금 배워요.",
+          good: "정답! 수직선에서 +3과 −7 사이는 <b>10칸</b>이에요. 그런데 식으로 쓰면 (+3)−(−7), 음수를 빼는데 왜 커질까요? 오늘 그 마법을 풀어요.",
+          bad: "3−7=4로 계산했다면 함정에 빠진 거예요, 밤 기온은 <b>−7</b>! 수직선에서 +3과 −7 사이는 <b>10칸</b>, 식으로는 (+3)−(−7)=+10. '음수 빼기'의 비밀을 지금 배워요.",
           onDone: finish,
         });
       }, 600);
@@ -561,7 +561,7 @@ function renderDaytemp(scene: HTMLElement, helper: HTMLElement, finish: () => vo
   });
 }
 
-/* ── L10 rewind — 거꾸로 재생의 마법 ─────────────────────────── */
+/* ── L10 rewind, 거꾸로 재생의 마법 ─────────────────────────── */
 function renderRewind(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]): void {
   const fig = el("div", {});
   fig.innerHTML = wrapSvg(
@@ -596,7 +596,7 @@ function renderRewind(scene: HTMLElement, helper: HTMLElement, finish: () => voi
     man().style.transform = "translateX(-150px)";
     bar().setAttribute("width", "180");
     window.setTimeout(() => {
-      helper.innerHTML = "뒤로 걷기(−방향)를 그대로 재생(+)하면 — 뒤로 가요. 이제 이 영상을 <b>거꾸로</b> 돌리면?";
+      helper.innerHTML = "뒤로 걷기(−방향)를 그대로 재생(+)하면, 뒤로 가요. 이제 이 영상을 <b>거꾸로</b> 돌리면?";
       btnRev.style.display = "";
       btnRev.classList.add("pulse");
       face("curious");
@@ -606,21 +606,21 @@ function renderRewind(scene: HTMLElement, helper: HTMLElement, finish: () => voi
     (btnRev as HTMLButtonElement).disabled = true;
     btnRev.classList.remove("pulse");
     haptic(HAPTIC.select);
-    (fig.querySelector(".rw-cap") as SVGTextElement).textContent = "뒤로 걷는 사람.mp4 — 역재생 중";
+    (fig.querySelector(".rw-cap") as SVGTextElement).textContent = "뒤로 걷는 사람.mp4, 역재생 중";
     man().style.transform = "translateX(0px)";
     bar().setAttribute("width", "30");
     window.setTimeout(() => {
       ask(box, helper, {
         choices: choices ?? ["앞으로 걷는 것처럼 보인다", "더 빨리 뒤로 걷는다", "그 자리에 멈춰 있다"],
-        good: "바로 그거예요 — <b>반대(−)를 반대(−)로 하면 원래 방향(+)</b>! 방금 눈으로 본 이 느낌이 (−)×(−)=(+)의 정체예요. 이제 수의 패턴으로 증명해 봐요.",
-        bad: "다시 보면 — 뒤로 걷던 발걸음이 거꾸로 감기니 <b>앞으로 걷는 것처럼</b> 보였죠? 반대(−)의 반대(−)는 원래 방향(+) — (−)×(−)=(+)를 수의 패턴으로 확인하러 가요.",
+        good: "바로 그거예요, <b>반대(−)를 반대(−)로 하면 원래 방향(+)</b>! 방금 눈으로 본 이 느낌이 (−)×(−)=(+)의 정체예요. 이제 수의 패턴으로 증명해 봐요.",
+        bad: "다시 보면, 뒤로 걷던 발걸음이 거꾸로 감기니 <b>앞으로 걷는 것처럼</b> 보였죠? 반대(−)의 반대(−)는 원래 방향(+), (−)×(−)=(+)를 수의 패턴으로 확인하러 가요.",
         onDone: finish,
       });
     }, 1750);
   });
 }
 
-/* ── L11 mentalmath — 암산왕의 비밀 ──────────────────────────── */
+/* ── L11 mentalmath, 암산왕의 비밀 ──────────────────────────── */
 function renderMentalmath(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]): void {
   const fig = el("div", {});
   fig.innerHTML = wrapSvg(
@@ -628,7 +628,7 @@ function renderMentalmath(scene: HTMLElement, helper: HTMLElement, finish: () =>
     <rect x="44" y="20" width="272" height="128" rx="10" fill="url(#mm-bd)" stroke="#3E5A52" stroke-width="3"/>
     <rect x="44" y="20" width="272" height="128" rx="10" fill="none" stroke="#8C6A42" stroke-width="1.4" opacity=".5"/>
     <text x="180" y="78" text-anchor="middle" font-size="30" font-weight="900" fill="#F6FBEA" style="letter-spacing:.04em">98 × 5 = ?</text>
-    <text x="180" y="118" text-anchor="middle" font-size="15" font-weight="800" fill="#9FE8C8" class="mm-ans" opacity="0" style="transition: opacity .4s">“490!” — 0.87초</text>
+    <text x="180" y="118" text-anchor="middle" font-size="15" font-weight="800" fill="#9FE8C8" class="mm-ans" opacity="0" style="transition: opacity .4s">“490!”, 0.87초</text>
     <g class="mm-watch" style="transition: transform .3s">
       <circle cx="296" cy="166" r="20" fill="url(#mm-wt)" stroke="#54677A" stroke-width="2"/>
       <rect x="292" y="140" width="8" height="7" rx="2" fill="#54677A"/>
@@ -658,8 +658,8 @@ function renderMentalmath(scene: HTMLElement, helper: HTMLElement, finish: () =>
             "구구단을 98단까지 외우고 있다",
             "미리 답을 알고 있었다",
           ],
-          good: "들켰네요! <b>(100−2)×5 = 100×5 − 2×5 = 500−10 = 490</b>. 쪼개서 각각 곱해도 되는 이 규칙(분배법칙)이 오늘의 무기예요 — 넓이로 직접 확인해 봐요.",
-          bad: "98단은 없어요! 비밀은 <b>98 = 100−2</b>로 바꿔치기 — (100−2)×5 = 500−10 = 490. 쪼개서 각각 곱해도 결과가 같은 규칙, 넓이로 확인하러 가요.",
+          good: "들켰네요! <b>(100−2)×5 = 100×5 − 2×5 = 500−10 = 490</b>. 쪼개서 각각 곱해도 되는 이 규칙(분배법칙)이 오늘의 무기예요, 넓이로 직접 확인해 봐요.",
+          bad: "98단은 없어요! 비밀은 <b>98 = 100−2</b>로 바꿔치기, (100−2)×5 = 500−10 = 490. 쪼개서 각각 곱해도 결과가 같은 규칙, 넓이로 확인하러 가요.",
           onDone: finish,
         });
       }, 700);
@@ -667,7 +667,7 @@ function renderMentalmath(scene: HTMLElement, helper: HTMLElement, finish: () =>
   });
 }
 
-/* ── L12 snsdebate — 댓글창을 불태운 계산 ────────────────────── */
+/* ── L12 snsdebate, 댓글창을 불태운 계산 ────────────────────── */
 function renderSnsdebate(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]): void {
   const fig = el("div", {});
   const draw = (l1: number, l2: number): void => {
@@ -705,16 +705,16 @@ function renderSnsdebate(scene: HTMLElement, helper: HTMLElement, finish: () => 
       if (k < 4) window.setTimeout(bump, 260);
       else {
         face("curious");
-        helper.innerHTML = "좋아요가 미친 듯이 올라가요. 단원 마지막 문제 — <b>누가 맞을까요?</b>";
+        helper.innerHTML = "좋아요가 미친 듯이 올라가요. 단원 마지막 문제, <b>누가 맞을까요?</b>";
         window.setTimeout(() => {
           ask(box, helper, {
             choices: choices ?? [
-              "9 — 괄호 먼저, 그다음 ÷와 ×는 왼쪽부터",
-              "1 — 2×(1+2)를 통째로 먼저 계산",
+              "9, 괄호 먼저, 그다음 ÷와 ×는 왼쪽부터",
+              "1, 2×(1+2)를 통째로 먼저 계산",
               "둘 다 맞는 답이다",
             ],
             good: "규칙이 싸움을 끝내요: 괄호 안 (1+2)=3 먼저 → 6÷2×3은 <b>왼쪽부터</b> → 3×3=<b>9</b>. 이 계산 순서 규칙으로 단원 보스전을 치러요!",
-            bad: "아쉽지만 규칙은 하나예요 — 괄호 안 (1+2)=3을 먼저, 그다음 ÷와 ×는 <b>왼쪽부터 차례로</b>: 6÷2=3, 3×3=<b>9</b>. 답이 두 개인 수학은 없죠. 계산 순서로 보스전을 치러요!",
+            bad: "아쉽지만 규칙은 하나예요, 괄호 안 (1+2)=3을 먼저, 그다음 ÷와 ×는 <b>왼쪽부터 차례로</b>: 6÷2=3, 3×3=<b>9</b>. 답이 두 개인 수학은 없죠. 계산 순서로 보스전을 치러요!",
             onDone: finish,
           });
         }, 500);

@@ -1,5 +1,5 @@
-// hookMath2 — Ⅱ 문자와 식 훅 장면 9종. hookMath.ts의 mathHook이 디스패치한다.
-// 장면 계약: (scene, helper, finish, face, choices?) — 공용 hookAsk.ask()만 사용,
+// hookMath2, Ⅱ 문자와 식 훅 장면 9종. hookMath.ts의 mathHook이 디스패치한다.
+// 장면 계약: (scene, helper, finish, face, choices?), 공용 hookAsk.ask()만 사용,
 // choices[0]=정답, good≠bad(오개념 교정), 소재명·설정은 도입(helper/narrator)에서 소개.
 // 상태 변화는 인라인 스타일 트랜지션(rAF 금지). SVG는 파운드리 문법:
 // 3스톱 그라데이션 면 + 키라이트 + 접촉 그림자(#2A3A5E) + 재질별 최암색 외곽선.
@@ -12,7 +12,7 @@ import type { AvatarKind } from "../../ui/avatar";
 type Face = (k: AvatarKind) => void;
 type SceneFn = (scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]) => void;
 
-/* 파운드리 문법 공용 조각 (hookMath.ts와 동일 문법 — 소유 분리 때문에 자체 정의) */
+/* 파운드리 문법 공용 조각 (hookMath.ts와 동일 문법, 소유 분리 때문에 자체 정의) */
 const SHADOW = (cx: number, cy: number, rx: number, o = 0.11): string =>
   `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="5" fill="#2A3A5E" opacity="${o}"/>`;
 
@@ -33,7 +33,7 @@ function star(cx: number, cy: number, rOut: number, rIn: number, fill: string, s
   return `<path d="${d}Z" fill="${fill}" stroke="${stroke}" stroke-width="1.2"/>`;
 }
 
-/* ── 1 vending — 페트병 회수기(문자의 필요) ──────────────────── */
+/* ── 1 vending, 페트병 회수기(문자의 필요) ──────────────────── */
 export const renderVending: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
   const BXS = [64, 106, 148];
@@ -85,16 +85,16 @@ export const renderVending: SceneFn = (scene, helper, finish, face, choices) => 
       btn.classList.remove("pulse");
       window.setTimeout(() => {
         face("surprised");
-        helper.innerHTML = "1개에 10원 — 그럼 <b>100개</b>면? <b>3752개</b>면? 매번 그림을 그려 셀 순 없죠. 회수기의 계산 비법은 뭘까요?";
+        helper.innerHTML = "1개에 10원, 그럼 <b>100개</b>면? <b>3752개</b>면? 매번 그림을 그려 셀 순 없죠. 회수기의 계산 비법은 뭘까요?";
         window.setTimeout(() => {
           ask(box, helper, {
             choices: choices ?? [
-              "개수를 문자 x로 두고 10×x원 — 한 줄로 끝",
+              "개수를 문자 x로 두고 10×x원, 한 줄로 끝",
               "100개 그림을 그려서 센다",
               "그때그때 계산기를 두드린다",
             ],
-            good: "바로 그거예요! 개수에 <b>x</b>라는 이름을 붙이면 10개든 3752개든 <b>10×x원</b> 한 줄로 끝 — 문자 하나가 모든 개수를 대신해요. 오늘의 발명품이에요.",
-            bad: "그림도 계산기도 개수가 바뀔 때마다 <b>처음부터 다시</b> 해야 해요. 개수를 x로 이름 붙이면 <b>10×x원</b> 한 줄로 전부 커버 — 그게 문자의 힘이에요!",
+            good: "바로 그거예요! 개수에 <b>x</b>라는 이름을 붙이면 10개든 3752개든 <b>10×x원</b> 한 줄로 끝, 문자 하나가 모든 개수를 대신해요. 오늘의 발명품이에요.",
+            bad: "그림도 계산기도 개수가 바뀔 때마다 <b>처음부터 다시</b> 해야 해요. 개수를 x로 이름 붙이면 <b>10×x원</b> 한 줄로 전부 커버, 그게 문자의 힘이에요!",
             onDone: finish,
           });
         }, 700);
@@ -103,7 +103,7 @@ export const renderVending: SceneFn = (scene, helper, finish, face, choices) => 
   });
 };
 
-/* ── 2 chatslang — 줄임말의 민족(기호 생략) ──────────────────── */
+/* ── 2 chatslang, 줄임말의 민족(기호 생략) ──────────────────── */
 export const renderChatslang: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
   const frB = (x: number, y: number, w: number, t: string): string =>
@@ -138,7 +138,7 @@ export const renderChatslang: SceneFn = (scene, helper, finish, face, choices) =
   const btn = mkBtn("원래 말로 보기");
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, btn, box);
-  helper.innerHTML = "친구들의 채팅이에요 — <b>ㅊㅋㅊㅋ, ㄱㅅ, ㅇㅋ</b>. 다들 줄임말로도 찰떡같이 알아듣죠. 원래 말로 펼쳐 볼까요?";
+  helper.innerHTML = "친구들의 채팅이에요, <b>ㅊㅋㅊㅋ, ㄱㅅ, ㅇㅋ</b>. 다들 줄임말로도 찰떡같이 알아듣죠. 원래 말로 펼쳐 볼까요?";
   let expanded = false;
   let asked = false;
   btn.addEventListener("click", () => {
@@ -151,16 +151,16 @@ export const renderChatslang: SceneFn = (scene, helper, finish, face, choices) =
       asked = true;
       btn.classList.remove("pulse");
       face("curious");
-      helper.innerHTML = "펼치니 두 배로 길어졌죠? 수학도 이런 <b>줄임말 약속</b>을 써요 — 그럼 <b>3×a</b>는 어떻게 줄일까요?";
+      helper.innerHTML = "펼치니 두 배로 길어졌죠? 수학도 이런 <b>줄임말 약속</b>을 써요, 그럼 <b>3×a</b>는 어떻게 줄일까요?";
       window.setTimeout(() => {
         ask(box, helper, {
           choices: choices ?? [
-            "3a — 곱셈 기호를 생략하고 수를 앞에",
-            "a3 — 문자를 앞에",
+            "3a, 곱셈 기호를 생략하고 수를 앞에",
+            "a3, 문자를 앞에",
             "3+a로 바꿔 쓴다",
           ],
-          good: "정확해요! 수학의 약속은 <b>×를 생략하고 수를 문자 앞에</b> — 3×a는 <b>3a</b>. 줄임말처럼 짧지만 전 세계 누구나 같은 뜻으로 읽어요.",
-          bad: "약속은 <b>수를 문자 앞에, ×는 생략</b> — 3×a는 <b>3a</b>예요. a3이라 쓰면 다른 뜻으로 오해받고, 덧셈 <b>+는 절대 생략 불가</b>(3+a는 3a가 아니에요)! 생략 규칙을 배우러 가요.",
+          good: "정확해요! 수학의 약속은 <b>×를 생략하고 수를 문자 앞에</b>, 3×a는 <b>3a</b>. 줄임말처럼 짧지만 전 세계 누구나 같은 뜻으로 읽어요.",
+          bad: "약속은 <b>수를 문자 앞에, ×는 생략</b>, 3×a는 <b>3a</b>예요. a3이라 쓰면 다른 뜻으로 오해받고, 덧셈 <b>+는 절대 생략 불가</b>(3+a는 3a가 아니에요)! 생략 규칙을 배우러 가요.",
           onDone: finish,
         });
       }, 650);
@@ -168,7 +168,7 @@ export const renderChatslang: SceneFn = (scene, helper, finish, face, choices) =
   });
 };
 
-/* ── 3 furniture — 내 몸에 맞는 책상(대입) ───────────────────── */
+/* ── 3 furniture, 내 몸에 맞는 책상(대입) ───────────────────── */
 export const renderFurniture: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
   const draw = (h: number): void => {
@@ -220,7 +220,7 @@ export const renderFurniture: SceneFn = (scene, helper, finish, face, choices) =
   row.append(...btns);
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, row, box);
-  helper.innerHTML = "몸에 딱 맞는 책상 높이는 <b>키의 0.41배</b>래요. 지금은 키 160cm 기준 — 버튼으로 키를 바꿔 보세요.";
+  helper.innerHTML = "몸에 딱 맞는 책상 높이는 <b>키의 0.41배</b>래요. 지금은 키 160cm 기준, 버튼으로 키를 바꿔 보세요.";
   const tried = new Set<number>();
   let taps = 0;
   let asked = false;
@@ -236,16 +236,16 @@ export const renderFurniture: SceneFn = (scene, helper, finish, face, choices) =
         btns.forEach((b) => b.classList.remove("pulse"));
         face("curious");
         window.setTimeout(() => {
-          helper.innerHTML = "키가 바뀌면 책상 높이도 따라 바뀌어요. 가구 회사엔 <b>세상 모든 키</b>에 맞는 높이표가 있는 셈인데 — 비밀이 뭘까요?";
+          helper.innerHTML = "키가 바뀌면 책상 높이도 따라 바뀌어요. 가구 회사엔 <b>세상 모든 키</b>에 맞는 높이표가 있는 셈인데, 비밀이 뭘까요?";
           window.setTimeout(() => {
             ask(box, helper, {
               choices: choices ?? [
-                "키를 x로 둔 식 0.41x — 누구든 대입만 하면 끝",
+                "키를 x로 둔 식 0.41x, 누구든 대입만 하면 끝",
                 "키별로 표를 전부 만들어 둔다",
                 "평균 키 하나로 통일한다",
               ],
-              good: "그렇죠! 키를 <b>x</b>로 두면 식은 <b>0.41x</b> 하나뿐 — 150이든 163이든 값을 <b>대입</b>만 하면 즉시 나와요. 식 하나+대입, 그게 맞춤의 비밀이에요.",
-              bad: "1cm 단위로 표를 다 만들면 수백 줄이고, 평균 키 하나로는 몸에 안 맞아요. 비밀은 키를 x로 둔 식 <b>0.41x</b> — 누구든 자기 키를 <b>대입</b>하면 끝이에요. 문자에 수를 넣는 대입을 배워요.",
+              good: "그렇죠! 키를 <b>x</b>로 두면 식은 <b>0.41x</b> 하나뿐, 150이든 163이든 값을 <b>대입</b>만 하면 즉시 나와요. 식 하나+대입, 그게 맞춤의 비밀이에요.",
+              bad: "1cm 단위로 표를 다 만들면 수백 줄이고, 평균 키 하나로는 몸에 안 맞아요. 비밀은 키를 x로 둔 식 <b>0.41x</b>, 누구든 자기 키를 <b>대입</b>하면 끝이에요. 문자에 수를 넣는 대입을 배워요.",
               onDone: finish,
             });
           }, 700);
@@ -255,7 +255,7 @@ export const renderFurniture: SceneFn = (scene, helper, finish, face, choices) =
   });
 };
 
-/* ── 4 macaron — 마카롱 상자의 비밀(항·상수항) ───────────────── */
+/* ── 4 macaron, 마카롱 상자의 비밀(항·상수항) ───────────────── */
 export const renderMacaron: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
   const POS: [number, number][] = [[152, 92], [180, 92], [208, 92], [166, 99], [194, 99], [222, 99]];
@@ -315,16 +315,16 @@ export const renderMacaron: SceneFn = (scene, helper, finish, face, choices) => 
       btn.classList.remove("pulse");
       window.setTimeout(() => {
         face("curious");
-        helper.innerHTML = "마카롱이 늘 때마다 <b>x가 하나씩</b> 붙었어요. 그런데 뒤의 <b>10</b>은 6개를 담는 내내 꿈쩍도 안 했죠 — 정체가 뭘까요?";
+        helper.innerHTML = "마카롱이 늘 때마다 <b>x가 하나씩</b> 붙었어요. 그런데 뒤의 <b>10</b>은 6개를 담는 내내 꿈쩍도 안 했죠, 정체가 뭘까요?";
         window.setTimeout(() => {
           ask(box, helper, {
             choices: choices ?? [
-              "상자 무게 — 개수와 상관없이 늘 그대로(상수)",
+              "상자 무게, 개수와 상관없이 늘 그대로(상수)",
               "마카롱과 함께 늘어난다",
               "6개가 넘으면 사라진다",
             ],
-            good: "정확해요! 10은 <b>상자 무게</b> — 개수와 상관없이 늘 그대로인 <b>상수항</b>이에요. 6x처럼 변하는 항과 10처럼 변하지 않는 항, 식은 이 두 부품으로 조립돼요.",
-            bad: "늘어난 건 마카롱 몫인 <b>6x</b>뿐 — 10은 <b>상자 무게</b>라 1개를 담든 6개를 담든 그대로예요. 변하는 항(6x)과 변하지 않는 상수항(10), 식의 두 부품을 해부하러 가요.",
+            good: "정확해요! 10은 <b>상자 무게</b>, 개수와 상관없이 늘 그대로인 <b>상수항</b>이에요. 6x처럼 변하는 항과 10처럼 변하지 않는 항, 식은 이 두 부품으로 조립돼요.",
+            bad: "늘어난 건 마카롱 몫인 <b>6x</b>뿐, 10은 <b>상자 무게</b>라 1개를 담든 6개를 담든 그대로예요. 변하는 항(6x)과 변하지 않는 상수항(10), 식의 두 부품을 해부하러 가요.",
             onDone: finish,
           });
         }, 750);
@@ -333,7 +333,7 @@ export const renderMacaron: SceneFn = (scene, helper, finish, face, choices) => 
   });
 };
 
-/* ── 5 basket — 뒤섞인 장바구니(동류항) ──────────────────────── */
+/* ── 5 basket, 뒤섞인 장바구니(동류항) ──────────────────────── */
 export const renderBasket: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
   const apple = (i: number, x: number, y: number): string =>
@@ -403,16 +403,16 @@ export const renderBasket: SceneFn = (scene, helper, finish, face, choices) => {
     }, 650);
     window.setTimeout(() => {
       face("curious");
-      helper.innerHTML = "합치려 해도 튕겨 나와요 — 사과는 사과끼리 <b>3</b>, 바나나는 바나나끼리 <b>2</b>. 사과 3개+바나나 2개=<b>5개</b>라고 해도 될까요? 뭔가 이상하죠.";
+      helper.innerHTML = "합치려 해도 튕겨 나와요, 사과는 사과끼리 <b>3</b>, 바나나는 바나나끼리 <b>2</b>. 사과 3개+바나나 2개=<b>5개</b>라고 해도 될까요? 뭔가 이상하죠.";
       window.setTimeout(() => {
         ask(box, helper, {
           choices: choices ?? [
-            "같은 종류끼리만 더할 수 있다 — 3x+2y는 그대로",
+            "같은 종류끼리만 더할 수 있다, 3x+2y는 그대로",
             "과일이니까 5개로 합쳐도 된다",
             "바나나를 사과로 바꿔 계산한다",
           ],
-          good: "맞아요! <b>문자가 같아야 한 무리(동류항)</b> — 사과끼리 3x, 바나나끼리 2y까지만 합쳐지고, 다르면 나란히 둘 뿐이에요. 3x+2y는 이미 완성형!",
-          bad: "'5개'라고 합치는 순간 사과인지 바나나인지 <b>정보가 사라져요</b>(바나나를 사과로 바꿀 수도 없고요). 더하기는 <b>같은 종류끼리만</b> — 3x+2y는 그대로 두는 게 답이에요. 동류항 가리는 눈을 길러요.",
+          good: "맞아요! <b>문자가 같아야 한 무리(동류항)</b>, 사과끼리 3x, 바나나끼리 2y까지만 합쳐지고, 다르면 나란히 둘 뿐이에요. 3x+2y는 이미 완성형!",
+          bad: "'5개'라고 합치는 순간 사과인지 바나나인지 <b>정보가 사라져요</b>(바나나를 사과로 바꿀 수도 없고요). 더하기는 <b>같은 종류끼리만</b>, 3x+2y는 그대로 두는 게 답이에요. 동류항 가리는 눈을 길러요.",
           onDone: finish,
         });
       }, 650);
@@ -420,7 +420,7 @@ export const renderBasket: SceneFn = (scene, helper, finish, face, choices) => {
   });
 };
 
-/* ── 6 catfood — 얼룩진 영수증(등식·방정식) ──────────────────── */
+/* ── 6 catfood, 얼룩진 영수증(등식·방정식) ──────────────────── */
 export const renderCatfood: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
   let bars = "";
@@ -471,7 +471,7 @@ export const renderCatfood: SceneFn = (scene, helper, finish, face, choices) => 
   const btn = mkBtn("얼룩 확대");
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, btn, box);
-  helper.innerHTML = "고양이 간식을 사 온 영수증 — 사료 8000원, 간식 <b>4개</b>, 합계 16000원. 그런데 간식 <b>1개 값</b> 위에 얼룩이 앉았어요!";
+  helper.innerHTML = "고양이 간식을 사 온 영수증, 사료 8000원, 간식 <b>4개</b>, 합계 16000원. 그런데 간식 <b>1개 값</b> 위에 얼룩이 앉았어요!";
   btn.addEventListener("click", () => {
     btn.disabled = true;
     btn.classList.remove("pulse");
@@ -489,8 +489,8 @@ export const renderCatfood: SceneFn = (scene, helper, finish, face, choices) => 
             "가게에 전화해 봐야만 안다",
             "알 방법이 없다",
           ],
-          good: "명탐정이에요! 모르는 값을 x로 두면 <b>8000+4×x=16000</b> — 이런 등식을 <b>방정식</b>이라 불러요. 풀면 x=2000, 간식은 1개 2000원이었네요!",
-          bad: "전화 없이도 단서는 영수증 안에 다 있어요 — 얼룩 값을 x로 두면 <b>8000+4×x=16000</b>이라는 등식이 되죠. 이걸 <b>방정식</b>이라 부르고, 풀면 2000원! 모르는 수를 알아내는 기술을 배워요.",
+          good: "명탐정이에요! 모르는 값을 x로 두면 <b>8000+4×x=16000</b>, 이런 등식을 <b>방정식</b>이라 불러요. 풀면 x=2000, 간식은 1개 2000원이었네요!",
+          bad: "전화 없이도 단서는 영수증 안에 다 있어요, 얼룩 값을 x로 두면 <b>8000+4×x=16000</b>이라는 등식이 되죠. 이걸 <b>방정식</b>이라 부르고, 풀면 2000원! 모르는 수를 알아내는 기술을 배워요.",
           onDone: finish,
         });
       }, 700);
@@ -498,7 +498,7 @@ export const renderCatfood: SceneFn = (scene, helper, finish, face, choices) => 
   });
 };
 
-/* ── 7 justice — 정의의 여신(등식의 성질) ────────────────────── */
+/* ── 7 justice, 정의의 여신(등식의 성질) ────────────────────── */
 export const renderJustice: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
   fig.innerHTML = wrapSvg(
@@ -542,7 +542,7 @@ export const renderJustice: SceneFn = (scene, helper, finish, face, choices) => 
   const btn = mkBtn("왼쪽에만 추 올리기");
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, btn, box);
-  helper.innerHTML = "법원 앞 <b>정의의 여신상</b>이에요. 눈을 가리고 손에는 양팔저울 — 지금은 완벽한 균형이죠. 살짝 건드려 볼까요?";
+  helper.innerHTML = "법원 앞 <b>정의의 여신상</b>이에요. 눈을 가리고 손에는 양팔저울, 지금은 완벽한 균형이죠. 살짝 건드려 볼까요?";
   btn.addEventListener("click", () => {
     btn.disabled = true;
     btn.classList.remove("pulse");
@@ -565,12 +565,12 @@ export const renderJustice: SceneFn = (scene, helper, finish, face, choices) => 
       window.setTimeout(() => {
         ask(box, helper, {
           choices: choices ?? [
-            "양쪽을 똑같이 다뤄야 균형이 유지되니까 — 공정의 상징",
+            "양쪽을 똑같이 다뤄야 균형이 유지되니까, 공정의 상징",
             "무게 재는 일이 많아서",
             "장식일 뿐 의미 없다",
           ],
-          good: "맞아요 — 저울은 <b>양쪽을 똑같이</b> 대할 때만 수평이라 공정의 상징이 됐어요. 등식도 저울이에요: <b>양변에 같은 일</b>을 해야 =가 유지되죠. 다음 랩에서 직접 확인해요!",
-          bad: "무게 재기용도, 장식도 아니에요 — 저울은 <b>양쪽을 똑같이 다뤄야 균형</b>이 유지되는 물건이라 공정의 상징이 됐죠. 등식도 똑같아요: 양변에 같은 일을 하면 =가 그대로! 저울 랩에서 직접 만져 봐요.",
+          good: "맞아요, 저울은 <b>양쪽을 똑같이</b> 대할 때만 수평이라 공정의 상징이 됐어요. 등식도 저울이에요: <b>양변에 같은 일</b>을 해야 =가 유지되죠. 다음 랩에서 직접 확인해요!",
+          bad: "무게 재기용도, 장식도 아니에요, 저울은 <b>양쪽을 똑같이 다뤄야 균형</b>이 유지되는 물건이라 공정의 상징이 됐죠. 등식도 똑같아요: 양변에 같은 일을 하면 =가 그대로! 저울 랩에서 직접 만져 봐요.",
           onDone: finish,
         });
       }, 750);
@@ -578,7 +578,7 @@ export const renderJustice: SceneFn = (scene, helper, finish, face, choices) => 
   });
 };
 
-/* ── 8 leap — 강 건너는 항(이항 예고) ────────────────────────── */
+/* ── 8 leap, 강 건너는 항(이항 예고) ────────────────────────── */
 export const renderLeap: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
   const chip = (x: number, gradId: string, outline: string, label: string, italic = false): string =>
@@ -622,7 +622,7 @@ export const renderLeap: SceneFn = (scene, helper, finish, face, choices) => {
   const btn = mkBtn("−4를 건너 보내기");
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, btn, box);
-  helper.innerHTML = "등식 <b>x−4=17</b> — 등호가 <b>강</b>처럼 양쪽 기슭을 가르고 있어요. 왼쪽 기슭의 −4를 강 건너로 보내 볼게요.";
+  helper.innerHTML = "등식 <b>x−4=17</b>, 등호가 <b>강</b>처럼 양쪽 기슭을 가르고 있어요. 왼쪽 기슭의 −4를 강 건너로 보내 볼게요.";
   btn.addEventListener("click", () => {
     btn.disabled = true;
     btn.classList.remove("pulse");
@@ -661,12 +661,12 @@ export const renderLeap: SceneFn = (scene, helper, finish, face, choices) => {
       window.setTimeout(() => {
         ask(box, helper, {
           choices: choices ?? [
-            "부호가 반대로 바뀐다 — 양변에 4를 더한 것과 같은 일",
+            "부호가 반대로 바뀐다, 양변에 4를 더한 것과 같은 일",
             "그대로 넘어간다",
             "등호가 부등호로 바뀐다",
           ],
-          good: "예리해요! 순간이동처럼 보이지만 정체는 <b>등식의 성질</b> — 양변에 똑같이 4를 더한 것과 같은 일이라, 건너간 항은 부호가 뒤집혀요. 이 기술의 이름은 <b>이항</b>!",
-          bad: "방금 봤죠 — −4는 <b>+4로 변신</b>해서 건넜어요. 그대로 넘어가면 등식이 깨지고, 등호는 그대로 등호예요. 정체는 '양변에 4 더하기'(등식의 성질) — 부호가 뒤집히는 이 기술, <b>이항</b>을 배워요.",
+          good: "예리해요! 순간이동처럼 보이지만 정체는 <b>등식의 성질</b>, 양변에 똑같이 4를 더한 것과 같은 일이라, 건너간 항은 부호가 뒤집혀요. 이 기술의 이름은 <b>이항</b>!",
+          bad: "방금 봤죠, −4는 <b>+4로 변신</b>해서 건넜어요. 그대로 넘어가면 등식이 깨지고, 등호는 그대로 등호예요. 정체는 '양변에 4 더하기'(등식의 성질), 부호가 뒤집히는 이 기술, <b>이항</b>을 배워요.",
           onDone: finish,
         });
       }, 700);
@@ -674,7 +674,7 @@ export const renderLeap: SceneFn = (scene, helper, finish, face, choices) => {
   });
 };
 
-/* ── 9 horse — 구일집의 추격전(방정식 활용) ──────────────────── */
+/* ── 9 horse, 구일집의 추격전(방정식 활용) ──────────────────── */
 export const renderHorse: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
   const horse = (cls: string, grad: string, outline: string, x: number, y: number): string =>
@@ -734,7 +734,7 @@ export const renderHorse: SceneFn = (scene, helper, finish, face, choices) => {
       fx.style.opacity = "1";
       fx.style.transform = "scale(1.05)";
       window.setTimeout(() => (fx.style.opacity = "0"), 650);
-      helper.innerHTML = "따라잡았어요! 그날이 출발로부터 <b>며칠째</b>인지 — 말을 다시 달리게 하지 않고도 아는 방법이 있을까요?";
+      helper.innerHTML = "따라잡았어요! 그날이 출발로부터 <b>며칠째</b>인지, 말을 다시 달리게 하지 않고도 아는 방법이 있을까요?";
       window.setTimeout(() => {
         ask(box, helper, {
           choices: choices ?? [
@@ -742,8 +742,8 @@ export const renderHorse: SceneFn = (scene, helper, finish, face, choices) => {
             "말을 실제로 달리게 해 봐야 안다",
             "느린 말이 영원히 앞선다",
           ],
-          good: "그거예요! 만나는 순간 <b>두 말이 간 거리가 같다</b> — 빠른 말이 달린 날을 x로 두면 120x=75(x+9), 풀면 <b>x=15일</b>. 방정식 한 줄이 추격전을 끝내요. 문장을 식으로 바꾸는 법을 배워요.",
-          bad: "실제로 달리면 15일이나 걸리고, 매일 45리씩 좁혀지니 영원히 앞서지도 못해요. 비법은 만나는 순간 <b>두 말이 간 거리가 같다</b>를 식으로 쓰기 — 120x=75(x+9), 풀면 15일! 이 번역술이 이번 레슨의 마지막 기술이에요.",
+          good: "그거예요! 만나는 순간 <b>두 말이 간 거리가 같다</b>, 빠른 말이 달린 날을 x로 두면 120x=75(x+9), 풀면 <b>x=15일</b>. 방정식 한 줄이 추격전을 끝내요. 문장을 식으로 바꾸는 법을 배워요.",
+          bad: "실제로 달리면 15일이나 걸리고, 매일 45리씩 좁혀지니 영원히 앞서지도 못해요. 비법은 만나는 순간 <b>두 말이 간 거리가 같다</b>를 식으로 쓰기, 120x=75(x+9), 풀면 15일! 이 번역술이 이번 레슨의 마지막 기술이에요.",
           onDone: finish,
         });
       }, 700);

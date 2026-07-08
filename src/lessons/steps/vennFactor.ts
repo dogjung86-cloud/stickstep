@@ -1,6 +1,6 @@
-// vennFactor — 소인수 벤 다이어그램(L4·L5 기함 랩).
-// gcd: 36·60의 소인수 칩에서 "같은 수끼리" 짝지어 교집합으로 — 교집합의 곱이 최대공약수.
-// lcm: (L4에서 만든 벤 그대로) 울타리 전체를 탭해 곱하면 최소공배수 — 검산·서로소까지.
+// vennFactor, 소인수 벤 다이어그램(L4·L5 기함 랩).
+// gcd: 36·60의 소인수 칩에서 "같은 수끼리" 짝지어 교집합으로, 교집합의 곱이 최대공약수.
+// lcm: (L4에서 만든 벤 그대로) 울타리 전체를 탭해 곱하면 최소공배수, 검산·서로소까지.
 // rAF 없음. 드래그 + 탭 폴백, setPointerCapture는 try/catch.
 import { el, clamp } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
@@ -167,7 +167,7 @@ export const vennFactor: StepRenderer = (host, step, api) => {
     chips.push(b);
     haptic(HAPTIC.select);
     if (goals.on("common", "찾았다!")) {
-      helper.innerHTML = "좋아요 — 겹치는 소인수는 <b>가운데(교집합)</b>로 모여요. 남은 겹침도 찾아보세요.";
+      helper.innerHTML = "좋아요, 겹치는 소인수는 <b>가운데(교집합)</b>로 모여요. 남은 겹침도 찾아보세요.";
     }
     paintGcdRead();
     if (!commonRemains()) {
@@ -197,12 +197,12 @@ export const vennFactor: StepRenderer = (host, step, api) => {
     goals.on("gcd", `${prod}!`);
     helper.innerHTML =
       `겹침은 끝! 교집합의 곱 <b>2×2×3 = 12</b>가 36과 60의 <b>최대공약수</b>예요. ` +
-      "그런데 공약수는 12 말고도 있었죠 — 확인해 볼까요?";
+      "그런데 공약수는 12 말고도 있었죠, 확인해 볼까요?";
     const btn = el("button", { class: "ct-btn hero", text: "공약수 전부 보기", attrs: { type: "button" } });
     btn.addEventListener("click", () => {
       haptic(HAPTIC.tap);
       btn.remove();
-      read.innerHTML = mfmt("공약수: 1, 2, 3, 4, 6, 12") + `&nbsp;<b style="font-size:14px">— 전부 12의 약수!</b>`;
+      read.innerHTML = mfmt("공약수: 1, 2, 3, 4, 6, 12") + `&nbsp;<b style="font-size:14px">, 전부 12의 약수!</b>`;
       helper.innerHTML =
         "36과 60의 공약수 <b>1, 2, 3, 4, 6, 12</b>는 정확히 <b>최대공약수 12의 약수</b>와 같아요. " +
         "그래서 최대공약수 하나만 찾으면 공약수를 전부 아는 셈이에요.";
@@ -231,7 +231,7 @@ export const vennFactor: StepRenderer = (host, step, api) => {
       labelB = 60;
       drawVenn();
       helper.innerHTML =
-        "지난번에 만든 벤 그대로예요. 이번엔 <b>울타리 안 전체</b> — 교집합 + 양쪽 나머지를 <b>모두</b> 탭해서 곱해 보세요.";
+        "지난번에 만든 벤 그대로예요. 이번엔 <b>울타리 안 전체</b>, 교집합 + 양쪽 나머지를 <b>모두</b> 탭해서 곱해 보세요.";
       // 교집합(2,2,3) + 왼쪽 나머지 3 + 오른쪽 나머지 5
       mkChip(2, 159, 52, "C", true);
       mkChip(2, 159, 118, "C", true);
@@ -243,7 +243,7 @@ export const vennFactor: StepRenderer = (host, step, api) => {
       labelB = 8;
       drawVenn();
       helper.innerHTML =
-        "이번엔 <b>5와 8</b> — 겹치는 소인수가 하나도 없어요(교집합이 텅 빈 벤!). 그래도 규칙은 같아요: 전부 곱하기.";
+        "이번엔 <b>5와 8</b>, 겹치는 소인수가 하나도 없어요(교집합이 텅 빈 벤!). 그래도 규칙은 같아요: 전부 곱하기.";
       mkChip(5, 62, 118, "L", true);
       mkChip(2, 250, 62, "R", true);
       mkChip(2, 268, 122, "R", true);
@@ -279,7 +279,7 @@ export const vennFactor: StepRenderer = (host, step, api) => {
     const seq = [...doneTap].map((c) => c.base);
     read.innerHTML = seq.length
       ? mfmt(`${seq.join("×")} = ${product}`)
-      : mfmt("아직 0개 — 칩을 탭!");
+      : mfmt("아직 0개: 칩을 탭!");
   }
 
   function finishLcm0(): void {
@@ -288,14 +288,14 @@ export const vennFactor: StepRenderer = (host, step, api) => {
     toast(`최소공배수 ${product}!`);
     goals.on("lcm", `${product}!`);
     helper.innerHTML =
-      "울타리 전체의 곱 <b>180</b>이 최소공배수예요 — 공통 소인수는 <b>한 번만</b>(교집합), 나머지는 전부. 정말 둘 다의 배수인지 검산해 볼까요?";
+      "울타리 전체의 곱 <b>180</b>이 최소공배수예요, 공통 소인수는 <b>한 번만</b>(교집합), 나머지는 전부. 정말 둘 다의 배수인지 검산해 볼까요?";
     const btn = el("button", { class: "ct-btn hero", text: "검산하기", attrs: { type: "button" } });
     btn.addEventListener("click", () => {
       haptic(HAPTIC.tap);
       btn.remove();
-      read.innerHTML = mfmt("180÷36 = 5") + "&nbsp;&nbsp;" + mfmt("180÷60 = 3") + `&nbsp;<b style="font-size:14px">— 딱 떨어져요!</b>`;
+      read.innerHTML = mfmt("180÷36 = 5") + "&nbsp;&nbsp;" + mfmt("180÷60 = 3") + `&nbsp;<b style="font-size:14px">, 딱 떨어져요!</b>`;
       helper.innerHTML =
-        "180은 36의 배수이자 60의 배수 — 그중 <b>가장 작은</b> 공배수예요. 모든 공배수(180, 360, 540, ...)는 180의 배수고요. 마지막으로 <b>서로소</b>면 어떻게 될까요?";
+        "180은 36의 배수이자 60의 배수, 그중 <b>가장 작은</b> 공배수예요. 모든 공배수(180, 360, 540, ...)는 180의 배수고요. 마지막으로 <b>서로소</b>면 어떻게 될까요?";
       goals.on("check", "딱 떨어짐!");
       later(() => setupLcm(1), 1900);
     });
@@ -308,7 +308,7 @@ export const vennFactor: StepRenderer = (host, step, api) => {
     toast("서로소면 그냥 곱!");
     goals.on("coprime", "5×8=40!");
     helper.innerHTML =
-      "겹침(교집합)이 없으니 <b>최소공배수 = 두 수의 곱</b>이 돼요. 5와 8처럼 최대공약수가 1인 두 수 — <b>서로소</b>일 때만 생기는 지름길!";
+      "겹침(교집합)이 없으니 <b>최소공배수 = 두 수의 곱</b>이 돼요. 5와 8처럼 최대공약수가 1인 두 수, <b>서로소</b>일 때만 생기는 지름길!";
     api.recordQuiz(true);
     api.enableCTA(s.cta ?? "연습하기");
   }
@@ -404,7 +404,7 @@ export const vennFactor: StepRenderer = (host, step, api) => {
     }
     if (a.base !== b.base) {
       haptic(HAPTIC.wrong);
-      toast(`${a.base}와 ${b.base}는 달라요 — 같은 수끼리만 겹쳐요`);
+      toast(`${a.base}와 ${b.base}는 달라요, 같은 수끼리만 겹쳐요`);
       resetPos(a);
       return;
     }

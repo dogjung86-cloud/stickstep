@@ -1,5 +1,5 @@
-// mathFigures — 수학 퀴즈 그림 SVG + recap 미니아트(mathMiniArt).
-// 밝은 카드 위 그림 — 얇은 잉크 라인 + 부호 색(--m-pos/--m-neg 대응 고정색)만 절제해 쓴다.
+// mathFigures, 수학 퀴즈 그림 SVG + recap 미니아트(mathMiniArt).
+// 밝은 카드 위 그림, 얇은 잉크 라인 + 부호 색(--m-pos/--m-neg 대응 고정색)만 절제해 쓴다.
 // 좌표 주석을 남겨 스팟·라벨과 1:1 대응(geoFigures 관례).
 
 const POS = "#2F6FE4";
@@ -25,7 +25,7 @@ function line(lo: number, hi: number, X: (v: number) => number, y: number, label
   return out;
 }
 
-/** 수직선 위 점 4개(A~D) — 대응 수 찾기·대소 문제용.
+/** 수직선 위 점 4개(A~D), 대응 수 찾기·대소 문제용.
  *  기하: -5..+5, A=-3.5? 기본 마크 [-4, -1.5, +0.5, +3]. */
 export function numlinePointsFig(marks: { v: number; label: string }[] = [
   { v: -4, label: "A" },
@@ -43,7 +43,7 @@ export function numlinePointsFig(marks: { v: number; label: string }[] = [
   return svg("0 0 360 110", line(-5, 5, X, 64) + pts);
 }
 
-/** 절댓값 거리 호 — |−3|과 |+3|이 같은 거리임을 보여주는 그림. */
+/** 절댓값 거리 호, |−3|과 |+3|이 같은 거리임을 보여주는 그림. */
 export function absArcsFig(): string {
   const X = (v: number): number => 30 + ((v + 5) / 10) * 300;
   const arc = (a: number, b: number, col: string, lift: number): string =>
@@ -59,7 +59,7 @@ export function absArcsFig(): string {
   );
 }
 
-/** 수직선 산책 그림 — a 이동 후 b 이동(덧셈 문제용). */
+/** 수직선 산책 그림, a 이동 후 b 이동(덧셈 문제용). */
 export function walkFig(a: number, b: number): string {
   const lo = Math.min(0, a, a + b) - 1;
   const hi = Math.max(0, a, a + b) + 1;
@@ -80,7 +80,7 @@ export function walkFig(a: number, b: number): string {
   );
 }
 
-/** 셈돌 그림 — (+) 파랑 n개, (−) 빨강 m개. 상쇄 쌍 표시 옵션. */
+/** 셈돌 그림, (+) 파랑 n개, (−) 빨강 m개. 상쇄 쌍 표시 옵션. */
 export function stonesFig(pos: number, neg: number, pairLines = true): string {
   let out = "";
   const R = 15;
@@ -103,7 +103,7 @@ export function stonesFig(pos: number, neg: number, pairLines = true): string {
   return svg("0 0 360 116", out);
 }
 
-/** 소인수 벤 그림 — 36과 60(교집합 2·2·3). GCD/LCM 문제용. */
+/** 소인수 벤 그림, 36과 60(교집합 2·2·3). GCD/LCM 문제용. */
 export function vennQuizFig(): string {
   const chip = (x: number, y: number, v: number): string => {
     const col = v === 2 ? POS : v === 3 ? "#0CA678" : AMBER;
@@ -123,7 +123,7 @@ export function vennQuizFig(): string {
   );
 }
 
-/** 인수 트리 빈칸 그림 — 84 = 2×42, 42 = ?×7, … (빈칸 □ 포함). */
+/** 인수 트리 빈칸 그림, 84 = 2×42, 42 = ?×7, … (빈칸 □ 포함). */
 export function treeBlankFig(): string {
   const node = (x: number, y: number, t: string, blank = false, prime = false): string =>
     `<circle cx="${x}" cy="${y}" r="19" fill="${blank ? "#FFF4D6" : prime ? "#DCF7EA" : "#EAF5FA"}" stroke="${blank ? AMBER : prime ? "#0CA678" : "#9BB8C8"}" stroke-width="${blank ? 2.2 : 1.8}"/>` +
@@ -145,13 +145,13 @@ export function treeBlankFig(): string {
   );
 }
 
-/** 온도 카드 그림 — 네 도시의 아침 기온(대소 비교 문제). */
+/** 온도 카드 그림, 네 도시의 아침 기온(대소 비교 문제). */
 export function tempCardsFig(): string {
   const card = (x: number, name: string, t: string, cold: boolean): string =>
     `<rect x="${x}" y="26" width="76" height="86" rx="12" fill="#fff" stroke="#D5DDE6" stroke-width="1.6"/>` +
     `<text x="${x + 38}" y="50" text-anchor="middle" font-size="13" font-weight="800" fill="${INK}">${name}</text>` +
     `<text x="${x + 38}" y="86" text-anchor="middle" font-size="18" font-weight="900" fill="${cold ? POS : NEG}">${t}</text>`;
-  // 주의: 음수 온도는 빨강이 아니라 '추움' 직관과 반대라 — 양수 NEG/음수 POS 색이 아니라
+  // 주의: 음수 온도는 빨강이 아니라 '추움' 직관과 반대라, 양수 NEG/음수 POS 색이 아니라
   // 온도 표기는 전부 잉크색이 안전하지만, 부호 학습 중이므로 +빨강/−파랑(온도 관례)을 쓴다.
   return svg(
     "0 0 360 130",
@@ -159,7 +159,7 @@ export function tempCardsFig(): string {
   );
 }
 
-/** 거듭제곱 칩 그림 — 2·2·2·5·5 (표기 문제). */
+/** 거듭제곱 칩 그림, 2·2·2·5·5 (표기 문제). */
 export function powChipsFig(): string {
   const chip = (x: number, v: number, col: string): string =>
     `<rect x="${x}" y="34" width="52" height="52" rx="14" fill="${col}"/><text x="${x + 26}" y="68" text-anchor="middle" font-size="21" font-weight="900" fill="#fff">${v}</text>`;
@@ -170,7 +170,7 @@ export function powChipsFig(): string {
   );
 }
 
-/** 분배법칙 넓이 그림 — 5×(10+3)을 두 조각으로. */
+/** 분배법칙 넓이 그림, 5×(10+3)을 두 조각으로. */
 export function areaFig(): string {
   return svg(
     "0 0 360 150",
@@ -183,7 +183,7 @@ export function areaFig(): string {
   );
 }
 
-/** 버스 시간표 그림 — 4분·6분 배수 점등(최소공배수 문제). */
+/** 버스 시간표 그림, 4분·6분 배수 점등(최소공배수 문제). */
 export function busTimesFig(): string {
   const row = (y: number, col: string, mul: number, name: string): string => {
     let out = `<text x="14" y="${y + 5}" font-size="12.5" font-weight="800" fill="${col}">${name}</text>`;
@@ -202,7 +202,7 @@ export function busTimesFig(): string {
   );
 }
 
-/** 체질이 끝난 1~24 격자 — 소수만 남은 그림(소수 찾기 문제). */
+/** 체질이 끝난 1~24 격자, 소수만 남은 그림(소수 찾기 문제). */
 export function sieveGridFig(): string {
   const primes = new Set([2, 3, 5, 7, 11, 13, 17, 19, 23]);
   let out = "";
@@ -220,7 +220,7 @@ export function sieveGridFig(): string {
   return svg("0 0 360 190", out);
 }
 
-/** 약수 격자 — 63 = 3²×7의 약수를 (1,3,9)×(1,7)로 만드는 표. */
+/** 약수 격자, 63 = 3²×7의 약수를 (1,3,9)×(1,7)로 만드는 표. */
 export function divisorGridFig(): string {
   const cell = (x: number, y: number, t: string, head = false): string =>
     `<rect x="${x}" y="${y}" width="86" height="40" rx="8" fill="${head ? "rgba(13,165,198,.12)" : "#fff"}" stroke="${head ? CYAN : "#D5DDE6"}" stroke-width="1.4"/>` +
@@ -242,7 +242,89 @@ export function divisorGridFig(): string {
   );
 }
 
-/** 정삼각형 막대 패턴 그림 — 1개(3), 2개(5), 3개(7)… 문자의 필요(Ⅱ L1). */
+/** 소인수분해 정렬 비교(교과서 방식), 54·90을 세로로 맞추고 공통 소인수 기둥을 하이라이트.
+ *  mode gcd = 공통만·지수 작은 쪽 / lcm = 공통은 큰 쪽 + 공통 아닌 것 전부. */
+export function alignedFactorFig(mode: "gcd" | "lcm"): string {
+  const isG = mode === "gcd";
+  const X = { n: 52, eq: 84, two: 118, x1: 150, three: 188, x2: 234, five: 264 };
+  const row = (y: number, label: string, threeSup: string, hasFive: boolean): string =>
+    `<text x="${X.n}" y="${y}" text-anchor="middle" font-size="17" font-weight="800" fill="${INK}">${label}</text>` +
+    `<text x="${X.eq}" y="${y}" text-anchor="middle" font-size="15" font-weight="700" fill="${FAINT}">=</text>` +
+    `<text x="${X.two}" y="${y}" text-anchor="middle" font-size="17" font-weight="800" fill="${INK}">2</text>` +
+    `<text x="${X.x1}" y="${y}" text-anchor="middle" font-size="13" font-weight="700" fill="${FAINT}">×</text>` +
+    `<text x="${X.three}" y="${y}" text-anchor="middle" font-size="17" font-weight="800" fill="${INK}">3<tspan font-size="11" dy="-7">${threeSup}</tspan></text>` +
+    (hasFive
+      ? `<text x="${X.x2}" y="${y}" text-anchor="middle" font-size="13" font-weight="700" fill="${FAINT}">×</text>` +
+        `<text x="${X.five}" y="${y}" text-anchor="middle" font-size="17" font-weight="800" fill="${INK}">5</text>`
+      : "");
+  const band = (cx: number, w: number, col: string): string =>
+    `<rect x="${cx - w / 2}" y="18" width="${w}" height="72" rx="9" fill="${col}"/>`;
+  return svg(
+    "0 0 360 186",
+    band(X.two, 32, "rgba(13,165,198,.12)") +
+      band(X.three, 46, "rgba(13,165,198,.12)") +
+      (isG ? "" : band(X.five, 32, "rgba(240,140,46,.16)")) +
+      row(44, "54", "3", false) +
+      row(78, "90", "2", true) +
+      `<line x1="30" y1="94" x2="330" y2="94" stroke="${FAINT}" stroke-width="1.6"/>` +
+      `<text x="60" y="122" text-anchor="middle" font-size="12.5" font-weight="800" fill="${INK}">${isG ? "최대공약수" : "최소공배수"}</text>` +
+      `<text x="104" y="122" text-anchor="middle" font-size="15" font-weight="700" fill="${FAINT}">=</text>` +
+      `<text x="122" y="123" text-anchor="start" font-size="17" font-weight="900" fill="#0A87A3">2 × 3<tspan font-size="11" dy="-7">${isG ? "2" : "3"}</tspan>${isG ? "" : `<tspan dy="7"> × 5</tspan>`}</text>` +
+      `<text x="252" y="123" text-anchor="start" font-size="14" font-weight="800" fill="${FAINT}">= ${isG ? "18" : "270"}</text>` +
+      `<text x="${X.three}" y="152" text-anchor="middle" font-size="11.5" font-weight="800" fill="#0A87A3">공통: 지수가 ${isG ? "작은" : "큰"} 쪽</text>` +
+      (isG
+        ? `<text x="${X.five + 14}" y="152" text-anchor="middle" font-size="11.5" font-weight="700" fill="${FAINT}">공통 아님: 제외</text>`
+        : `<text x="${X.five + 22}" y="152" text-anchor="middle" font-size="11.5" font-weight="800" fill="#B3771A">공통 아닌 것도 전부</text>`),
+  );
+}
+
+/** 나눗셈 사다리(교과서 왼쪽 여백의 방법).
+ *  kind factor = 60을 소수로 계속 나눠 소인수분해 / gcd = 54·90을 공약수로 함께 나눠 18. */
+export function ladderFig(kind: "factor" | "gcd"): string {
+  const rows: { div: string; a: string; b?: string }[] =
+    kind === "factor"
+      ? [
+          { div: "2", a: "60" },
+          { div: "2", a: "30" },
+          { div: "3", a: "15" },
+          { div: "", a: "5" },
+        ]
+      : [
+          { div: "2", a: "54", b: "90" },
+          { div: "3", a: "27", b: "45" },
+          { div: "3", a: "9", b: "15" },
+          { div: "", a: "3", b: "5" },
+        ];
+  const x0 = kind === "factor" ? 128 : 104;
+  const colA = x0 + 52;
+  const colB = x0 + 112;
+  let out = "";
+  rows.forEach((r, i) => {
+    const y = 36 + i * 36;
+    if (r.div) {
+      out +=
+        `<rect x="${x0 - 28}" y="${y - 20}" width="30" height="28" rx="8" fill="rgba(13,165,198,.12)"/>` +
+        `<text x="${x0 - 13}" y="${y}" text-anchor="middle" font-size="16" font-weight="900" fill="#0A87A3">${r.div}</text>` +
+        `<path d="M ${x0 + 8} ${y - 22} v 28 M ${x0 + 8} ${y + 6} h ${r.b ? 146 : 88}" stroke="${FAINT}" stroke-width="1.6" fill="none"/>`;
+    }
+    out += `<text x="${colA}" y="${y}" text-anchor="middle" font-size="16" font-weight="800" fill="${INK}">${r.a}</text>`;
+    if (r.b) out += `<text x="${colB}" y="${y}" text-anchor="middle" font-size="16" font-weight="800" fill="${INK}">${r.b}</text>`;
+  });
+  const cap =
+    kind === "factor"
+      ? "몫이 소수가 될 때까지 나눠요. 60 = 2×2×3×5 = 2²×3×5"
+      : "함께 나눈 수(왼쪽 기둥)를 모두 곱하면 2×3×3 = 18";
+  return svg(
+    "0 0 360 196",
+    out +
+      (kind === "gcd"
+        ? `<rect x="${x0 - 32}" y="12" width="38" height="116" rx="10" fill="none" stroke="#0DA5C6" stroke-width="1.6" stroke-dasharray="4 4"/>`
+        : "") +
+      `<text x="180" y="${36 + rows.length * 36 + 6}" text-anchor="middle" font-size="12" font-weight="700" fill="${FAINT}">${cap}</text>`,
+  );
+}
+
+/** 정삼각형 막대 패턴 그림, 1개(3), 2개(5), 3개(7)… 문자의 필요(Ⅱ L1). */
 export function triPatternFig(): string {
   const tri = (x0: number, n: number): string => {
     let out = "";
@@ -262,14 +344,14 @@ export function triPatternFig(): string {
     tri(18, 1) +
       tri(94, 2) +
       tri(196, 3) +
-      `<text x="38" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">1개 — 3</text>` +
-      `<text x="134" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">2개 — 5</text>` +
-      `<text x="256" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">3개 — 7</text>` +
+      `<text x="38" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">1개: 3</text>` +
+      `<text x="134" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">2개: 5</text>` +
+      `<text x="256" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">3개: 7</text>` +
       `<text x="330" y="70" text-anchor="middle" font-size="17" font-weight="900" fill="${FAINT}">…</text>`,
   );
 }
 
-/** 양팔저울 그림 — 왼쪽 x상자+구슬 2, 오른쪽 구슬 6(평형). 등식의 성질 문제용. */
+/** 양팔저울 그림, 왼쪽 x상자+구슬 2, 오른쪽 구슬 6(평형). 등식의 성질 문제용. */
 export function scaleEqFig(): string {
   const bead = (x: number, y: number): string =>
     `<circle cx="${x}" cy="${y}" r="8" fill="#FFD98A" stroke="#D8952E" stroke-width="1.3"/>`;

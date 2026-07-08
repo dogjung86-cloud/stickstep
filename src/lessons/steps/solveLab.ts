@@ -1,8 +1,8 @@
-// solveLab — 이항 랩(Ⅱ 일차방정식). 항 칩을 등호 너머로 드래그하면 부호가 뒤집힌다.
-//   좌·우 두 구역에 항 칩(ax / 상수) — 칩을 반대편으로 끌면(탭-탭 폴백) 부호 반전 + 자동 동류항 정리.
+// solveLab, 이항 랩(Ⅱ 일차방정식). 항 칩을 등호 너머로 드래그하면 부호가 뒤집힌다.
+//   좌·우 두 구역에 항 칩(ax / 상수), 칩을 반대편으로 끌면(탭-탭 폴백) 부호 반전 + 자동 동류항 정리.
 //   좌변이 ax, 우변이 상수만 남으면 "양변 ÷a" 버튼 등장 → x=(수) 완성.
 //   미션: ① x+7=10 ② 5x-4=3x+8 ③ 4x+2=x+11. 어느 방향으로 옮겨도 수학적으로 처리된다.
-// rAF 금지 — 칩 이동은 left/top 트랜지션(셈돌 관례), setPointerCapture는 try/catch.
+// rAF 금지, 칩 이동은 left/top 트랜지션(셈돌 관례), setPointerCapture는 try/catch.
 import { el, clamp } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { mfmt, mboard, mtoast, goalChips } from "../../ui/mathKit";
@@ -57,7 +57,7 @@ export const solveLab: StepRenderer = (host, step, api) => {
   const eqRead = el("div", { class: "nw-expr" });
   const board = mboard(BOARD_H);
   const toast = mtoast(board);
-  // 등호 분리선(가운데) — 강처럼
+  // 등호 분리선(가운데), 강처럼
   const divider = el("div", {
     style:
       `position:absolute; left:50%; top:10px; bottom:10px; width:2px; transform:translateX(-50%);` +
@@ -198,7 +198,7 @@ export const solveLab: StepRenderer = (host, step, api) => {
     );
   }
 
-  /** 이항: 항 t를 반대편으로 — 부호 반전 + 플래시. */
+  /** 이항: 항 t를 반대편으로, 부호 반전 + 플래시. */
   function transpose(t: Term): void {
     if (solving || solved) return;
     solving = true;
@@ -264,7 +264,7 @@ export const solveLab: StepRenderer = (host, step, api) => {
           later(() => finishMission(b / a), 460);
         });
         actions.appendChild(db);
-        helper.innerHTML = `이제 <b>${mfmt(eqSrc())}</b> — 마지막 성질, <b>양변 나누기</b>로 x만 남겨요!`;
+        helper.innerHTML = `이제 <b>${mfmt(eqSrc())}</b>, 마지막 성질, <b>양변 나누기</b>로 x만 남겨요!`;
       }
       return;
     }
@@ -272,7 +272,7 @@ export const solveLab: StepRenderer = (host, step, api) => {
     // 안내: 아직 섞여 있음
     if (!solved) {
       helper.innerHTML =
-        "<b>x 항은 왼쪽으로, 상수는 오른쪽으로</b> — 칩을 등호 너머로 끌어 보내세요(탭 → 반대편 탭도 돼요).";
+        "<b>x 항은 왼쪽으로, 상수는 오른쪽으로</b>, 칩을 등호 너머로 끌어 보내세요(탭 → 반대편 탭도 돼요).";
     }
   }
 
@@ -289,11 +289,11 @@ export const solveLab: StepRenderer = (host, step, api) => {
       helper.innerHTML =
         mi === 0
           ? "이항 성공! 겉보기엔 순간이동이지만 정체는 <b>양변에서 같은 수 빼기</b>예요. 다음 방정식!"
-          : "좋아요 — x는 왼쪽, 상수는 오른쪽으로 모으는 흐름이 손에 익었죠? 마지막 문제!";
+          : "좋아요, x는 왼쪽, 상수는 오른쪽으로 모으는 흐름이 손에 익었죠? 마지막 문제!";
       later(() => setupMission(mi + 1), 2300);
     } else {
       helper.innerHTML =
-        "완주! <b>이항 → 동류항 정리 → 양변 나누기</b> — 일차방정식 풀이의 세 박자예요. 이제 어떤 방정식이 와도 이 순서로!";
+        "완주! <b>이항 → 동류항 정리 → 양변 나누기</b>, 일차방정식 풀이의 세 박자예요. 이제 어떤 방정식이 와도 이 순서로!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }
@@ -386,10 +386,10 @@ export const solveLab: StepRenderer = (host, step, api) => {
     }, 40);
     helper.innerHTML =
       i === 0
-        ? `첫 문제 ${mfmt("x+7=10")} — <b>+7 칩을 등호 너머로</b> 끌어 보내면 무슨 일이 벌어질까요?`
+        ? `첫 문제 ${mfmt("x+7=10")}, <b>+7 칩을 등호 너머로</b> 끌어 보내면 무슨 일이 벌어질까요?`
         : i === 1
-          ? `${mfmt("5x-4=3x+8")} — <b>x 항은 왼쪽으로, 상수는 오른쪽으로</b> 모아 보세요. 순서는 자유!`
-          : `마지막 ${mfmt("4x+2=x+11")} — 안내 없이 혼자 풀어 봐요!`;
+          ? `${mfmt("5x-4=3x+8")}, <b>x 항은 왼쪽으로, 상수는 오른쪽으로</b> 모아 보세요. 순서는 자유!`
+          : `마지막 ${mfmt("4x+2=x+11")}, 안내 없이 혼자 풀어 봐요!`;
   }
 
   setupMission(0);

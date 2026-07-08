@@ -1,9 +1,9 @@
-// starDraw — 별그리기 랩. 학생이 원 위의 점을 손으로 직접 이어 별을 그린다.
-//   첫 걸음(시작점 → 아무 점)이 보폭 k를 정하고, 그다음부터는 같은 보폭만 허용 —
+// starDraw, 별그리기 랩. 학생이 원 위의 점을 손으로 직접 이어 별을 그린다.
+//   첫 걸음(시작점 → 아무 점)이 보폭 k를 정하고, 그다음부터는 같은 보폭만 허용,
 //   시작점으로 돌아왔을 때 모든 점을 밟았으면 한붓 별(성공 조건 = n과 k가 서로소).
-//   시나리오: ① n=6 — 건너뛰는 보폭(2·3·4)은 전부 실패 → "6점 별은 없다"
-//             ② n=5 — 성공, '서로소' 명명 ③ n=8 — 성공 보폭(3·5) 찾기. 세그 잠금 해제 순서 6→5→8.
-//   조작: 점에서 점으로 드래그(러버밴드) 또는 목표 점 탭. rAF 금지 — CSS 트랜지션만.
+//   시나리오: ① n=6, 건너뛰는 보폭(2·3·4)은 전부 실패 → "6점 별은 없다"
+//             ② n=5, 성공, '서로소' 명명 ③ n=8, 성공 보폭(3·5) 찾기. 세그 잠금 해제 순서 6→5→8.
+//   조작: 점에서 점으로 드래그(러버밴드) 또는 목표 점 탭. rAF 금지, CSS 트랜지션만.
 //   setPointerCapture는 try/catch(합성 포인터 안전).
 
 import { el, clear } from "../../core/dom";
@@ -65,7 +65,7 @@ export const starDraw: StepRenderer = (host, step, api) => {
   const svg = sv("svg", {
     viewBox: `0 0 ${VB_W} ${VB_H}`,
     role: "application",
-    "aria-label": "별그리기 무대 — 시작 점에서 다른 점으로 선을 그어요. 첫 걸음이 보폭이 되고, 이후 같은 보폭으로만 이을 수 있어요.",
+    "aria-label": "별그리기 무대, 시작 점에서 다른 점으로 선을 그어요. 첫 걸음이 보폭이 되고, 이후 같은 보폭으로만 이을 수 있어요.",
   });
   const gLines = sv("g");
   const gRubber = sv("g");
@@ -83,7 +83,7 @@ export const starDraw: StepRenderer = (host, step, api) => {
   stage.appendChild(svg);
   svg.style.touchAction = "none";
 
-  // 세그(점 개수) — 시나리오 순서대로 잠금 해제
+  // 세그(점 개수), 시나리오 순서대로 잠금 해제
   const unlockedN = new Set<number>([6]);
   const segBtns: HTMLButtonElement[] = SEG_NS.map((nv, i) =>
     el("button", { class: "ct-btn", text: SEG_LABELS[i], attrs: { type: "button", "aria-label": `점 ${nv}개로 전환` } }),
@@ -120,7 +120,7 @@ export const starDraw: StepRenderer = (host, step, api) => {
   let n = 6;
   let k = 0; // 0 = 아직 보폭 미정(첫 걸음 전)
   let cur = 0; // 현재 점
-  let ended = false; // 이번 시도 종료(성공/실패) — 재시도 전 입력 잠금
+  let ended = false; // 이번 시도 종료(성공/실패), 재시도 전 입력 잠금
   let named = false; // '서로소' 명명 이후 표기
   let finished = false;
   let ptEls: SVGCircleElement[] = [];
@@ -144,7 +144,7 @@ export const starDraw: StepRenderer = (host, step, api) => {
     const g = gcd(n, kd);
     kvGcd.innerHTML =
       named && g === 1
-        ? `최대공약수 1 — <span style="color:var(--subj-num-press)">서로소!</span>`
+        ? `최대공약수 1, <span style="color:var(--subj-num-press)">서로소!</span>`
         : `최대공약수 ${g}`;
   }
 
@@ -250,7 +250,7 @@ export const starDraw: StepRenderer = (host, step, api) => {
     paintSegs();
   }
 
-  /** 시작점으로 돌아온 순간 — 시도 평가. */
+  /** 시작점으로 돌아온 순간, 시도 평가. */
   function evaluate(): void {
     ended = true;
     paintHints();
@@ -258,11 +258,11 @@ export const starDraw: StepRenderer = (host, step, api) => {
     const g = gcd(n, kd);
     if (seen.size === n) {
       if (kd === 1) {
-        // 다각형 — 모든 점을 돌긴 했지만 별이 아니다
+        // 다각형, 모든 점을 돌긴 했지만 별이 아니다
         haptic(HAPTIC.tap);
         toast("다 돌긴 했는데… 다각형!");
         helper.innerHTML =
-          "이웃 점끼리 이으면 <b>다각형 둘레</b>가 될 뿐이에요. 별은 <b>건너뛰어야</b> 태어나요 — 다시 그리기로 2칸 이상 건너 보세요!";
+          "이웃 점끼리 이으면 <b>다각형 둘레</b>가 될 뿐이에요. 별은 <b>건너뛰어야</b> 태어나요, 다시 그리기로 2칸 이상 건너 보세요!";
         return;
       }
       // ---- 성공: 한붓 별 ----
@@ -273,11 +273,11 @@ export const starDraw: StepRenderer = (host, step, api) => {
         updateKv();
         collect("five", "별 완성!", "내 손으로 그린 한붓 별!");
         helper.innerHTML =
-          `<b>gcd(5,${kd})=1</b> — 최대공약수가 1인 두 수를 <b>서로소</b>라고 해요. 서로소라서 모든 점을 한 번씩 다 돌았어요! 이제 <b>8점</b>에 도전!`;
+          `<b>gcd(5,${kd})=1</b>, 최대공약수가 1인 두 수를 <b>서로소</b>라고 해요. 서로소라서 모든 점을 한 번씩 다 돌았어요! 이제 <b>8점</b>에 도전!`;
         unlock(8);
       } else if (n === 8 && !chips.has("eight")) {
-        collect("eight", `${kd}칸!`, `보폭 ${kd} — 8점 별 완성!`);
-        helper.innerHTML = `8과 ${kd}의 최대공약수는 1 — <b>서로소</b>예요. 8점에서는 서로소인 보폭(3, 5)만 별을 그려요!`;
+        collect("eight", `${kd}칸!`, `보폭 ${kd}, 8점 별 완성!`);
+        helper.innerHTML = `8과 ${kd}의 최대공약수는 1, <b>서로소</b>예요. 8점에서는 서로소인 보폭(3, 5)만 별을 그려요!`;
       } else {
         toast("한붓 별 완성!");
       }
@@ -291,7 +291,7 @@ export const starDraw: StepRenderer = (host, step, api) => {
         if (sixTried.size >= 2 && !chips.has("six")) {
           collect("six", "별 불가!", "6점 별은 불가능!");
           helper.innerHTML =
-            "6과 서로소인 보폭은 <b>1과 5뿐</b> — 그건 그냥 육각형 둘레라서, <b>6점 별은 없어요!</b> 이제 5점으로 가 볼까요?";
+            "6과 서로소인 보폭은 <b>1과 5뿐</b>, 그건 그냥 육각형 둘레라서, <b>6점 별은 없어요!</b> 이제 5점으로 가 볼까요?";
           unlock(5);
         } else if (!chips.has("six")) {
           helper.innerHTML = `gcd(6,${kd})=${g}라서 점 ${6 / g}개만 밟고 시작점으로 돌아왔어요. <b>다른 보폭</b>으로도 그어 봐요!`;
@@ -302,7 +302,7 @@ export const starDraw: StepRenderer = (host, step, api) => {
     }
   }
 
-  /** 점프 시도 — 목표 점 t로. */
+  /** 점프 시도, 목표 점 t로. */
   function jump(t: number): void {
     if (ended || finished || t === cur) return;
     const skip = (t - cur + n) % n;
@@ -310,12 +310,12 @@ export const starDraw: StepRenderer = (host, step, api) => {
       k = skip;
       updateKv();
     } else if (skip !== k) {
-      // 같은 보폭 강제 — 별의 규칙
+      // 같은 보폭 강제, 별의 규칙
       haptic(HAPTIC.wrong);
       const want = (cur + k) % n;
       ptEls[want]?.style.setProperty("r", "9.5");
       later(() => paintHints(), 380);
-      toast(`별은 같은 보폭으로만 — ${Math.min(k, n - k)}칸씩!`);
+      toast(`별은 같은 보폭으로만, ${Math.min(k, n - k)}칸씩!`);
       return;
     }
     haptic(HAPTIC.tap);
@@ -385,7 +385,7 @@ export const starDraw: StepRenderer = (host, step, api) => {
     if (finished && chips.count() === 3) return;
     haptic(HAPTIC.tap);
     resetAttempt();
-    toast("처음부터 — 보폭을 골라 그어요");
+    toast("처음부터, 보폭을 골라 그어요");
   });
 
   function switchN(nv: number): void {
@@ -400,7 +400,7 @@ export const starDraw: StepRenderer = (host, step, api) => {
         ? "6점이에요. 보폭을 바꿔 가며 직접 그어 봐요!"
         : nv === 5
           ? "이번엔 <b>5점</b>! 2칸씩 건너 그으면 어떻게 될까요?"
-          : "<b>8점 별</b>에 도전 — 성공하는 보폭을 찾아 그어 봐요!";
+          : "<b>8점 별</b>에 도전, 성공하는 보폭을 찾아 그어 봐요!";
   }
   segBtns.forEach((b, i) => b.addEventListener("click", () => switchN(SEG_NS[i])));
 

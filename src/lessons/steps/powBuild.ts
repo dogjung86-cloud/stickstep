@@ -1,6 +1,6 @@
-// powBuild — 거듭제곱 칩 쌓기(L2 랩). 같은 수 칩을 겹치면 지수 배지가 자란다:
+// powBuild, 거듭제곱 칩 쌓기(L2 랩). 같은 수 칩을 겹치면 지수 배지가 자란다:
 // 2·2·2 → [2]³. 밑이 다른 칩은 합쳐지지 않는다(2²×5³처럼 곱으로 나란히).
-// 드래그가 기본, 탭-탭 폴백. rAF 없음 — transform + CSS 애니만.
+// 드래그가 기본, 탭-탭 폴백. rAF 없음, transform + CSS 애니만.
 import { el, clamp } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { mfmt, mboard, mtoast, goalChips } from "../../ui/mathKit";
@@ -57,7 +57,7 @@ export const powBuild: StepRenderer = (host, step, api) => {
       want: { 2: 3 },
       goal: "s1",
       sub: "2³!",
-      intro: "<b>2</b> 칩 세 개 — 같은 수끼리 겹쳐 보세요(끌어서 포개기).",
+      intro: "<b>2</b> 칩 세 개: 같은 수끼리 겹쳐 보세요(끌어서 포개기).",
       doneMsg: "2×2×2를 <b>2³</b> 한 글자로! 아래 숫자 <b>2</b>가 밑, 오른쪽 위 <b>3</b>이 지수(곱한 횟수)예요.",
       readSrc: "2×2×2 = 2^3",
     },
@@ -66,8 +66,8 @@ export const powBuild: StepRenderer = (host, step, api) => {
       want: { 3: 4 },
       goal: "s2",
       sub: "3⁴!",
-      intro: "이번엔 <b>3</b>이 네 개 — 전부 한 칩으로 모아 보세요.",
-      doneMsg: "3×3×3×3 = <b>3⁴</b>. 지수는 '곱한 횟수'예요 — 3⁴은 3×4(=12)가 아니라 <b>81</b>!",
+      intro: "이번엔 <b>3</b>이 네 개: 전부 한 칩으로 모아 보세요.",
+      doneMsg: "3×3×3×3 = <b>3⁴</b>. 지수는 '곱한 횟수'예요, 3⁴은 3×4(=12)가 아니라 <b>81</b>!",
       readSrc: "3×3×3×3 = 3^4",
     },
     {
@@ -75,8 +75,8 @@ export const powBuild: StepRenderer = (host, step, api) => {
       want: { 2: 2, 5: 3 },
       goal: "s3",
       sub: "2²×5³!",
-      intro: "<b>2</b>와 <b>5</b>가 섞여 있어요 — 같은 수끼리만 모아 보세요.",
-      doneMsg: "밑이 다르면 하나로 못 합쳐요 — 곱으로 나란히 <b>2²×5³</b>. 작은 밑부터 쓰는 게 약속!",
+      intro: "<b>2</b>와 <b>5</b>가 섞여 있어요, 같은 수끼리만 모아 보세요.",
+      doneMsg: "밑이 다르면 하나로 못 합쳐요, 곱으로 나란히 <b>2²×5³</b>. 작은 밑부터 쓰는 게 약속!",
       readSrc: "2×2×5×5×5 = 2^2×5^3",
     },
   ];
@@ -152,7 +152,7 @@ export const powBuild: StepRenderer = (host, step, api) => {
     if (!best || bd > CHIP * 0.92) return false;
     if (best.base !== c.base) {
       haptic(HAPTIC.wrong);
-      toast(`밑이 달라요 — ${c.base}는 ${c.base}끼리만!`);
+      toast(`밑이 달라요, ${c.base}는 ${c.base}끼리만!`);
       return false;
     }
     // 병합: best가 흡수
@@ -238,7 +238,7 @@ export const powBuild: StepRenderer = (host, step, api) => {
             tryMerge(selected);
           } else {
             haptic(HAPTIC.wrong);
-            toast(`밑이 달라요 — ${selected.base}는 ${selected.base}끼리만!`);
+            toast(`밑이 달라요, ${selected.base}는 ${selected.base}끼리만!`);
           }
           chips.forEach((o) => (o.el.style.outline = ""));
           selected = null;

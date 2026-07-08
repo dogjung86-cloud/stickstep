@@ -1,8 +1,8 @@
-// mathKit — 수학 트랙 공용 킷. 수식 표기(mfmt)·넘패드·밝은 보드·목표 칩의 단일 진실 공급원.
+// mathKit, 수학 트랙 공용 킷. 수식 표기(mfmt)·넘패드·밝은 보드·목표 칩의 단일 진실 공급원.
 // 표기 마이크로 마크업(MATH_GUIDE.md):
 //   {a/b}   분수(가로줄 스택, a에 부호 허용: {-3/4})
 //   x^n     지수(숫자 뒤 또는 닫는 괄호 뒤: 2^3, (-2)^2)
-//   (+3)    부호 수 — 괄호는 회색, 부호+수는 색(+파랑 −빨강). (-{3/4})도 지원.
+//   (+3)    부호 수, 괄호는 회색, 부호+수는 색(+파랑 −빨강). (-{3/4})도 지원.
 //   그 외   문자 그대로(× ÷ = □ | | 등). '-'는 −(U+2212)로 표시.
 import { el } from "../core/dom";
 import { haptic, HAPTIC } from "../core/haptics";
@@ -12,7 +12,7 @@ import { haptic, HAPTIC } from "../core/haptics";
 const esc = (s: string): string => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const pretty = (s: string): string => esc(s).replace(/-/g, "−");
 
-/** 분수 HTML — sign은 분수 앞에 색 부호로. 분자·분모는 재귀 렌더(문자 지원). */
+/** 분수 HTML, sign은 분수 앞에 색 부호로. 분자·분모는 재귀 렌더(문자 지원). */
 function fracHtml(num: string, den: string, signCls?: string): string {
   const m = num.match(/^([+-])?(.+)$/)!;
   const sign = m[1];
@@ -93,7 +93,7 @@ function fmtCore(src: string): string {
       i += m[0].length;
       continue;
     }
-    // 문자(변수 — 이탤릭, 지수 지원): x, y, a, x^2 ...
+    // 문자(변수, 이탤릭, 지수 지원): x, y, a, x^2 ...
     if (/[a-z]/.test(ch)) {
       const m = src.slice(i).match(/^([a-z])(?:\^(\d+))?/)!;
       out += `<i class="mx-v">${m[1]}</i>`;
@@ -128,7 +128,7 @@ export function mexpr(src: string, cls = ""): HTMLElement {
 
 export type AnswerKind = "int" | "frac" | "dec";
 
-/** 정규화 문자열 비교용 값 파싱 — "3/4" | "-3" | "2.5". */
+/** 정규화 문자열 비교용 값 파싱, "3/4" | "-3" | "2.5". */
 function parseVal(s: string): { v: number; num?: number; den?: number } | null {
   s = s.trim().replace(/−/g, "-");
   if (/^[+-]?\d+\/\d+$/.test(s)) {
@@ -141,7 +141,7 @@ function parseVal(s: string): { v: number; num?: number; den?: number } | null {
   return Number.isFinite(f) ? { v: f } : null;
 }
 
-/** 값 동치 검사(분수는 값이 같으면 정답 — 기약이 아니면 isReduced=false로 알려줌). */
+/** 값 동치 검사(분수는 값이 같으면 정답, 기약이 아니면 isReduced=false로 알려줌). */
 export function checkAnswer(
   input: string,
   expected: string | number,
@@ -175,7 +175,7 @@ export interface AnswerPad {
   clear(): void;
   setEnabled(b: boolean): void;
   flash(good: boolean): void;
-  /** 정답 공개(오답 뒤) — 슬롯에 정답을 채워 보여준다. */
+  /** 정답 공개(오답 뒤), 슬롯에 정답을 채워 보여준다. */
   reveal(expected: string | number): void;
 }
 
@@ -255,7 +255,7 @@ export function makeAnswerPad(kind: AnswerKind, onReady: (ready: boolean) => voi
       if (c.length >= 4) return;
       if (c === "0" && k !== ".") setCur(k);
       else setCur(c + k);
-      // 분자 4자리 또는 명시 이동 전까지 분자에 머문다 — '/' 키가 이동 담당
+      // 분자 4자리 또는 명시 이동 전까지 분자에 머문다, '/' 키가 이동 담당
     }
     paint();
   }
@@ -327,7 +327,7 @@ export function makeAnswerPad(kind: AnswerKind, onReady: (ready: boolean) => voi
 
 /* ============================== 보드·토스트·목표 칩 ============================== */
 
-/** 밝은 모눈 보드 — 수학 랩의 무대. */
+/** 밝은 모눈 보드, 수학 랩의 무대. */
 export function mboard(minH: number): HTMLElement {
   return el("div", { class: "mboard", style: `min-height:${minH}px` });
 }

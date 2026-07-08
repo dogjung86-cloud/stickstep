@@ -1,7 +1,7 @@
-// mathDrill — 계산 스프린트. 커스텀 넘패드로 연속 풀이(시스템 키보드 금지 원칙).
+// mathDrill, 계산 스프린트. 커스텀 넘패드로 연속 풀이(시스템 키보드 금지 원칙).
 // 흐름: 문항 카드 → 넘패드 입력 → 확인하기 → 정답: 초록 플래시 후 자동 진행 /
 //       오답: 정답 공개 + 오개념 한 줄(why) + (정수 덧뺄이면) 수직선 미니 재생 → 계속하기.
-// 채점: recordQuiz는 스텝당 1회 — 첫 시도 정답률 ≥ passRatio(기본 0.7)를 성공으로 기록.
+// 채점: recordQuiz는 스텝당 1회, 첫 시도 정답률 ≥ passRatio(기본 0.7)를 성공으로 기록.
 
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
@@ -93,7 +93,7 @@ export const mathDrill: StepRenderer = (host, step, api) => {
         pad.reveal(it.a);
         pad.setEnabled(false);
         const aTxt = String(it.a).includes("/") ? `{${it.a}}` : String(it.a);
-        whyBox.innerHTML = `<b>정답은 ${mfmt(aTxt)}</b>` + (it.why ? ` — ${mfmt(it.why)}` : "");
+        whyBox.innerHTML = `<b>정답은 ${mfmt(aTxt)}</b>` + (it.why ? `, ${mfmt(it.why)}` : "");
         whyBox.style.display = "";
         if (it.strip) stripHost.appendChild(mstrip(it.strip.from, it.strip.move));
         api.setCTA("계속하기", { enabled: true, onClick: advance, pop: true });
@@ -119,7 +119,7 @@ export const mathDrill: StepRenderer = (host, step, api) => {
     stripHost.innerHTML = "";
     pips.style.display = "none";
     const ok = firstTry / Math.max(1, items.length) >= passRatio;
-    summary.innerHTML = `<b>${items.length}문제 중 ${firstTry}문제</b>를 첫 시도에 해결했어요${ok ? " — 스프린트 성공!" : " — 오답을 한 번 더 살펴봐요"}`;
+    summary.innerHTML = `<b>${items.length}문제 중 ${firstTry}문제</b>를 첫 시도에 해결했어요${ok ? ", 스프린트 성공!" : ", 오답을 한 번 더 살펴봐요"}`;
     haptic(ok ? HAPTIC.correct : HAPTIC.tap);
     api.recordQuiz(ok);
     api.setCTA(s.cta ?? "계속하기", { enabled: true, onClick: api.next, pop: true });

@@ -1,8 +1,8 @@
-// counterLab — 셈돌 랩(수학 · 정수와 유리수의 덧셈·뺄셈).
-//   add: (+1)파랑·(−1)빨강 돌을 겹쳐 0쌍으로 상쇄 — 문제 3개(다른 부호·같은 부호·정반대)
-//   sub: (+3)−(−2) — 뺄 빨간 돌이 없어서 0쌍(+1,−1)을 투입한 뒤 빼기 통으로 꺼낸다
-// 규율: rAF 금지(QA 프리즈) — 이동은 left/top 트랜지션, 등장/소멸은 .born/.poof 키프레임 + setTimeout.
-// 돌 배치는 left/top(px)로만 한다 — transform은 .born/.poof/.drag 애니메이션 몫이라 겹치면 순간이동한다.
+// counterLab, 셈돌 랩(수학 · 정수와 유리수의 덧셈·뺄셈).
+//   add: (+1)파랑·(−1)빨강 돌을 겹쳐 0쌍으로 상쇄, 문제 3개(다른 부호·같은 부호·정반대)
+//   sub: (+3)−(−2), 뺄 빨간 돌이 없어서 0쌍(+1,−1)을 투입한 뒤 빼기 통으로 꺼낸다
+// 규율: rAF 금지(QA 프리즈), 이동은 left/top 트랜지션, 등장/소멸은 .born/.poof 키프레임 + setTimeout.
+// 돌 배치는 left/top(px)로만 한다, transform은 .born/.poof/.drag 애니메이션 몫이라 겹치면 순간이동한다.
 // setPointerCapture는 반드시 try/catch(합성 포인터에서 throw하면 리스너 전체가 죽는다).
 
 import { el, clamp } from "../../core/dom";
@@ -33,7 +33,7 @@ interface Stone {
 const SZ = 46; // 돌 지름(px)
 const R = SZ / 2;
 const PAIR_DIST = 44; // 상쇄 판정 중심 거리
-const RING = "0 0 0 3px #fff, 0 0 0 5px var(--subj-num)"; // 선택/타깃 강조(인라인 — 클래스 불필요)
+const RING = "0 0 0 3px #fff, 0 0 0 5px var(--subj-num)"; // 선택/타깃 강조(인라인, 클래스 불필요)
 const rnd = (a: number, b: number): number => a + Math.random() * (b - a);
 
 export const counterLab: StepRenderer = (host, step, api) => {
@@ -75,7 +75,7 @@ export const counterLab: StepRenderer = (host, step, api) => {
   let busy = true; // 스폰이 끝나면 풀린다
   let finished = false;
   let bin: HTMLElement | null = null;
-  // 모드별 구현(아래 분기에서 채움)을 공용 드래그 로직과 잇는 훅 — 렌더러 스코프라 인스턴스 간 누수 없음
+  // 모드별 구현(아래 분기에서 채움)을 공용 드래그 로직과 잇는 훅, 렌더러 스코프라 인스턴스 간 누수 없음
   let addDoneHook: (() => void) | null = null;
   let binTakeHook: ((st: Stone) => void) | null = null;
   const timers = new Set<number>();
@@ -98,7 +98,7 @@ export const counterLab: StepRenderer = (host, step, api) => {
     api.enableCTA(s.cta ?? "다음");
   }
 
-  /** left/top 배치(트랜지션 옵션). transform은 건드리지 않는다 — born/poof 몫. */
+  /** left/top 배치(트랜지션 옵션). transform은 건드리지 않는다, born/poof 몫. */
   function put(st: Stone, x: number, y: number, trans = ""): void {
     st.x = x;
     st.y = y;
@@ -147,7 +147,7 @@ export const counterLab: StepRenderer = (host, step, api) => {
     try {
       st.elm.setPointerCapture(e.pointerId);
     } catch {
-      /* 합성 포인터 — 캡처 없이 진행 */
+      /* 합성 포인터, 캡처 없이 진행 */
     }
     drag = { st, pid: e.pointerId, sx: e.clientX, sy: e.clientY, ox: st.x, oy: st.y, moved: false };
   }
@@ -217,12 +217,12 @@ export const counterLab: StepRenderer = (host, step, api) => {
     if (!hit) return; // 빈자리에 놓으면 자유 배치
     if (hit.sign === st.sign) {
       goHome(st, d);
-      say("같은 부호끼리는 사라지지 않아요 — 그냥 모여요");
+      say("같은 부호끼리는 사라지지 않아요, 그냥 모여요");
       return;
     }
     if (!isAdd) {
       goHome(st, d);
-      say("지금은 빼기 실험 — 겹치기 말고 빼기 통에 넣어요");
+      say("지금은 빼기 실험, 겹치기 말고 빼기 통에 넣어요");
       return;
     }
     cancelPair(st, hit);
@@ -245,7 +245,7 @@ export const counterLab: StepRenderer = (host, step, api) => {
       }
       return;
     }
-    if (sel && isAdd) say("같은 부호끼리는 사라지지 않아요 — 그냥 모여요");
+    if (sel && isAdd) say("같은 부호끼리는 사라지지 않아요, 그냥 모여요");
     setSel(st);
   }
 
@@ -278,7 +278,7 @@ export const counterLab: StepRenderer = (host, step, api) => {
     later(480, () => st.elm.classList.remove("born"));
     return st;
   }
-  /** 0쌍! — 끌던 돌이 상대 위로 탁 붙고 함께 사라진다. */
+  /** 0쌍!, 끌던 돌이 상대 위로 탁 붙고 함께 사라진다. */
   function cancelPair(a: Stone, b: Stone): void {
     a.alive = false;
     b.alive = false;
@@ -309,7 +309,7 @@ export const counterLab: StepRenderer = (host, step, api) => {
     return b;
   }
 
-  /* ============================== add — 상쇄로 덧셈 ============================== */
+  /* ============================== add, 상쇄로 덧셈 ============================== */
   if (isAdd) {
     interface Prob {
       src: string;
@@ -336,16 +336,16 @@ export const counterLab: StepRenderer = (host, step, api) => {
         lineUp(alive, 96);
         readEl.innerHTML = mfmt("(+3)+(-5)=(-2)");
         helper.innerHTML =
-          "파란 3개가 빨간 3개와 <b>0쌍으로 사라지고</b>, 빨간 2개가 남았어요 — 그래서 −2! 다른 부호의 합은 <b>절댓값의 차</b>에 절댓값 큰 쪽 부호예요.";
+          "파란 3개가 빨간 3개와 <b>0쌍으로 사라지고</b>, 빨간 2개가 남았어요, 그래서 −2! 다른 부호의 합은 <b>절댓값의 차</b>에 절댓값 큰 쪽 부호예요.";
         chips.on("mix", "−2!");
         haptic(HAPTIC.correct);
         later(900, () => startProblem(1));
       } else {
-        // 정반대 — 전부 소멸
+        // 정반대, 전부 소멸
         readEl.innerHTML =
           mfmt("(+4)+(-4)") + `<span class="mx-op" style="margin:0 .18em">=</span><b style="font-size:31px;color:var(--subj-num-press)">0!</b>`;
         helper.innerHTML =
-          "전부 사라졌어요! <b>절댓값이 같고 부호가 다르면 합이 0</b>이에요. 정리 — 다른 부호는 차(상쇄), 같은 부호는 그냥 모임(합), 정반대는 0!";
+          "전부 사라졌어요! <b>절댓값이 같고 부호가 다르면 합이 0</b>이에요. 정리, 다른 부호는 차(상쇄), 같은 부호는 그냥 모임(합), 정반대는 0!";
         chips.on("zero", "0!");
         haptic(HAPTIC.done);
         maybeFinish();
@@ -376,8 +376,8 @@ export const counterLab: StepRenderer = (host, step, api) => {
       readEl.innerHTML = "";
       if (k === 0)
         helper.innerHTML =
-          "파랑(+1)과 빨강(−1)이 만나면 <b>0쌍</b> — 서로 지워져요! 파란 돌을 끌어 빨간 돌 위에 놓아 보세요. 돌 탭 → 반대색 탭도 돼요.";
-      if (k === 2) helper.innerHTML = "이번엔 파랑 4개, 빨강 4개 — 전부 없애면 뭐가 남을까요?";
+          "파랑(+1)과 빨강(−1)이 만나면 <b>0쌍</b>, 서로 지워져요! 파란 돌을 끌어 빨간 돌 위에 놓아 보세요. 돌 탭 → 반대색 탭도 돼요.";
+      if (k === 2) helper.innerHTML = "이번엔 파랑 4개, 빨강 4개: 전부 없애면 뭐가 남을까요?";
 
       // 스폰 계획: 다른 부호면 위(+)/아래(−) 줄, 같은 부호면 항별 두 무더기
       const w = trayW();
@@ -429,21 +429,21 @@ export const counterLab: StepRenderer = (host, step, api) => {
       );
       readEl.innerHTML = mfmt("(-2)+(-4)=(-6)");
       helper.innerHTML =
-        "사라질 짝이 없으니 <b>그냥 모여요</b> — 개수는 2+4=6, 부호는 그대로 −. 같은 부호의 합은 <b>절댓값의 합</b>에 공통 부호!";
+        "사라질 짝이 없으니 <b>그냥 모여요</b>, 개수는 2+4=6, 부호는 그대로 −. 같은 부호의 합은 <b>절댓값의 합</b>에 공통 부호!";
       chips.on("same", "−6!");
       later(1400, () => startProblem(2));
     }
 
     later(140, () => startProblem(0));
   } else {
-    /* ============================== sub — 0쌍 투입으로 뺄셈 ============================== */
+    /* ============================== sub, 0쌍 투입으로 뺄셈 ============================== */
     let pairs = 0; // 투입한 0쌍 수(최대 2)
     let taken = 0; // 통에 뺀 빨간 돌 수
     let hero: HTMLElement | null = null;
 
     bin = el(
       "div",
-      { class: "ct-bin", attrs: { role: "button", tabindex: "0", "aria-label": "빼기 통 — 빼낼 돌을 여기에 넣어요" } },
+      { class: "ct-bin", attrs: { role: "button", tabindex: "0", "aria-label": "빼기 통, 빼낼 돌을 여기에 넣어요" } },
       el("span", { html: icon("x", 20), style: "display:grid;place-items:center" }),
       el("span", { text: "빼기", style: "font-size:10px;font-weight:800" }),
     );
@@ -454,7 +454,7 @@ export const counterLab: StepRenderer = (host, step, api) => {
       const src = v === 0 ? "0" : `(${v > 0 ? "+" : "-"}${Math.abs(v)})`;
       return `<span style="font-size:14px;font-weight:700;color:var(--n500)">지금 합&nbsp;</span>${mfmt(src)}`;
     };
-    /** 밴드(부호별 줄)에 돌 하나 추가 — 기존 돌은 글라이드로 자리를 내준다. */
+    /** 밴드(부호별 줄)에 돌 하나 추가, 기존 돌은 글라이드로 자리를 내준다. */
     function addToBand(sign: 1 | -1): void {
       const st = makeStone(sign);
       tray.appendChild(st.elm);
@@ -485,7 +485,7 @@ export const counterLab: StepRenderer = (host, step, api) => {
       });
       taken++;
       readEl.innerHTML = liveSum();
-      if (taken === 1) say("−1 하나 뺐어요 — 하나 더!");
+      if (taken === 1) say("−1 하나 뺐어요, 하나 더!");
       if (taken === 2) later(760, finishSub);
     }
     binTakeHook = binTakeSub;
@@ -500,7 +500,7 @@ export const counterLab: StepRenderer = (host, step, api) => {
       readEl.innerHTML = mfmt("(+3)-(-2)=(+5)");
       chips.on("out", "+5!");
       helper.innerHTML =
-        "빨간 돌 2개를 <b>빼는</b> 것과 파란 돌 2개를 <b>더하는</b> 것 — 결과가 같아요! 그래서 빼기는 <b>반대 수의 덧셈</b>으로 바꿀 수 있어요." +
+        "빨간 돌 2개를 <b>빼는</b> 것과 파란 돌 2개를 <b>더하는</b> 것, 결과가 같아요! 그래서 빼기는 <b>반대 수의 덧셈</b>으로 바꿀 수 있어요." +
         `<div style="margin-top:8px">${mfmt("(+3)-(-2)=(+3)+(+2)")}</div>`;
       haptic(HAPTIC.done);
       maybeFinish();
@@ -514,9 +514,9 @@ export const counterLab: StepRenderer = (host, step, api) => {
       addToBand(1);
       addToBand(-1);
       readEl.innerHTML = liveSum();
-      say(pairs === 1 ? "합은 변하지 않아요 — 0을 넣었으니까요" : "또 0쌍! 합은 여전히 +3이에요");
+      say(pairs === 1 ? "합은 변하지 않아요, 0을 넣었으니까요" : "또 0쌍! 합은 여전히 +3이에요");
       if (pairs === 1) {
-        helper.innerHTML = "빨간 돌이 생겼어요! 그런데 <b>2개</b> 필요하죠 — 한 쌍 더 넣어요.";
+        helper.innerHTML = "빨간 돌이 생겼어요! 그런데 <b>2개</b> 필요하죠, 한 쌍 더 넣어요.";
       } else {
         chips.on("pairin", "완료!");
         if (hero) {

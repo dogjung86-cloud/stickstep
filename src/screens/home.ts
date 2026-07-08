@@ -363,8 +363,8 @@ const UNIT_DECOR: Record<string, { seq: string[]; sky: [string, string] }> = {
   g2u3: { seq: ["flashlightDeco", "mirrorDeco", "prismDeco", "rgbDeco", "noteDeco"], sky: ["rainbowDeco", "cloud"] }, // 빛의 여행 → 소리의 여행
   g2u4: { seq: ["beakerDeco", "atomDeco", "tableDeco", "moleculeDeco", "ionDeco"], sky: ["atomDeco", "cloud"] }, // 성분에서 입자로 — 원소→원자→주기율표→분자→이온
   g2u7: { seq: ["boltDeco", "batteryDeco", "bulbDeco", "coilDeco", "magnetDeco"], sky: ["boltDeco", "cloud"] }, // 전기 순례: 스파크→전지→전구→코일→자석
-  m1u1: { seq: ["pebblesDeco", "sieveDeco", "numTreeDeco", "vennDeco", "numlineDeco"], sky: ["cloud", "sparkle"] }, // 수의 계곡 등반: 조약돌→체→인수 나무→벤→수직선 팻말
-  m1u2: { seq: ["numlineDeco", "pebblesDeco", "vennDeco", "numTreeDeco", "sieveDeco"], sky: ["sparkle", "cloud"] }, // 문자와 식 — 수학 소품 재사용(추후 전용 세트)
+  m1u1: { seq: ["pmDeco", "fracDeco", "primeDeco", "opsDeco", "numlineDeco"], sky: ["sparkle", "cloud"] }, // 수와 연산: 부호 타일, 분수 카드, 소수 7 배지, 연산 타일, 수직선 팻말
+  m1u2: { seq: ["xDeco", "eqDeco", "scaleDeco", "aDeco", "boxDeco"], sky: ["sparkle", "cloud"] }, // 문자와 식: x 카드, 등호, 양팔저울, a 카드, x 상자
 };
 const DEFAULT_DECOR: { seq: string[]; sky: [string, string] } = {
   seq: ["tree1", "tree2", "bush", "rock", "grassTuft"],
@@ -384,6 +384,7 @@ const DECOR_SIZE: Record<string, number> = {
   flashlightDeco: 48, mirrorDeco: 44, prismDeco: 50, rgbDeco: 44, noteDeco: 38, rainbowDeco: 58,
   beakerDeco: 46, atomDeco: 46, tableDeco: 46, moleculeDeco: 46, ionDeco: 42,
   pebblesDeco: 44, sieveDeco: 48, numTreeDeco: 46, vennDeco: 48, numlineDeco: 44,
+  pmDeco: 42, fracDeco: 42, primeDeco: 44, opsDeco: 46, xDeco: 44, aDeco: 40, eqDeco: 42, scaleDeco: 46, boxDeco: 44,
 };
 
 function placeDecor(layer: HTMLElement, points: { x: number; y: number }[], W: number, unitId: string): void {

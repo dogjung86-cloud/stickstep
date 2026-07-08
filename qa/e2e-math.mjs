@@ -288,6 +288,7 @@ await clickCTA();
 await quiz(2);
 await quiz(0);
 await multiQuiz([0, 1, 2]);
+await quiz(0); // 제곱수 만들기(사다리 소인수분해 응용)
 await drill([7, 2, 3, 2, 100, 11]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L3 완료");
@@ -349,6 +350,7 @@ await clickCTA();
 await quiz(0);
 await quiz(0);
 await oxPick(true);
+await quiz(0); // 나눗셈 사다리로 최대공약수 읽기
 await drill([6, 4, 7, 1, 12]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L4 완료");
@@ -431,6 +433,7 @@ await clickCTA(); // recap
 await clickCTA();
 await quiz(0);
 await quiz(0);
+await quiz(0); // 부등호 표기(a≥−4)
 await orderAuto(["산소", "에탄올", "수은", "얼음", "납"]);
 await W(200);
 await shot("math-l7-temp");
