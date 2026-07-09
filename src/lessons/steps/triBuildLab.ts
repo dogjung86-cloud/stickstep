@@ -1,7 +1,7 @@
 // triBuildLab, "되는 삼각형, 하나뿐인 삼각형"(Ⅳ L11 — 교과서 169~172쪽).
 // 2국면 자동 진행:
 //   1 빨대 삼각형 공장 — 세 변 스테퍼 + 컴퍼스 원호 작도로 삼각형 부등식 발견
-//     (초기 7·9·16은 딱 붙는 실패 조합, 성공 1회+서로 다른 실패 2회면 규칙 배지)
+//     (초기 6·8·14는 딱 붙는 실패 조합 — 수치는 교과서와 다르게 자체 제작. 성공 1회+서로 다른 실패 2회면 규칙 배지)
 //   2 설계도 3장 — SSS·SAS·ASA 프리셋 작도 애니 + 반례(끼인각이 아니면 삼각형 2개)
 // 모션은 전부 CSS transition/keyframes + setTimeout 체인(rAF 금지),
 // 원호·선분 성장은 stroke-dashoffset 트랜지션. 타이머는 Set으로 모아 cleanup에서 해제.
@@ -51,7 +51,7 @@ export const triBuildLab: StepRenderer = (host, step, api) => {
   if (s.lead) host.appendChild(el("div", { class: "sub", html: s.lead }));
 
   const chips = goalChips([
-    { id: "fail", label: "안 되는 삼각형", sub: "7·9·16" },
+    { id: "fail", label: "안 되는 삼각형", sub: "6·8·14" },
     { id: "rule", label: "되는 규칙", sub: "긴 변<합" },
     { id: "unique", label: "하나로 정해짐", sub: "설계도 3장" },
   ]);
@@ -62,7 +62,7 @@ export const triBuildLab: StepRenderer = (host, step, api) => {
   const toast = mtoast(board);
   const helper = el("div", {
     class: "helper",
-    html: "빨대 세 개로 삼각형을 만들어요. 먼저 지금 조합 <b>7·9·16</b> 그대로 <b>만들어 보기</b>를 눌러 보세요!",
+    html: "빨대 세 개로 삼각형을 만들어요. 먼저 지금 조합 <b>6·8·14</b> 그대로 <b>만들어 보기</b>를 눌러 보세요!",
   });
   host.append(chips.el, board, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -88,9 +88,9 @@ export const triBuildLab: StepRenderer = (host, step, api) => {
 
   /* ============================== 국면 1: 빨대 삼각형 공장 ============================== */
 
-  let a = 16;
-  let b = 7;
-  let c = 9;
+  let a = 14;
+  let b = 6;
+  let c = 8;
   let locking = false;
   let succCount = 0;
   const failCombos = new Set<string>();

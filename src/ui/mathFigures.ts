@@ -896,12 +896,12 @@ export function vertXFig(known = 50): string {
   );
 }
 
-/** 세 직선이 한 점에서 만나는 그림(교과서 162쪽 기본 문제 6): 위쪽 반원의 세 각이 평각을 이룬다.
- *  각 라벨: (3x−40)° · 2x° · (x+4)°  — 실제 답 x=36에 맞춘 각도(68°·72°·40°)로 그린다. */
+/** 세 직선이 한 점에서 만나는 그림(위쪽 반원의 세 각이 평각 — 수치는 자체 제작, 교과서와 다르게).
+ *  각 라벨: (x+20)° · 2x° · (3x−20)°, 답 x=30에 맞춘 각도(50°·60°·70°)로 그린다. */
 export function threeLinesFig(): string {
   const cx = 180;
   const cy = 92;
-  // 세 직선의 기울기 0°·40°·112°: 위 반원이 (x+4)=40° · 2x=72° · (3x−40)=68°로 나뉜다(합 180)
+  // 세 직선의 기울기 0°·50°·110°: 위 반원이 (x+20)=50° · 2x=60° · (3x−20)=70°로 나뉜다(합 180)
   const L = (ang: number): string => {
     const r = 150;
     const x1 = cx + r * Math.cos((ang * Math.PI) / 180);
@@ -919,10 +919,10 @@ export function threeLinesFig(): string {
   };
   return svg(
     "0 0 360 184",
-    L(0) + L(40) + L(112) +
-      lab(0, 40, `(<tspan font-style="italic">x</tspan>+4)°`, CYAN, 52) +
-      lab(40, 112, `2<tspan font-style="italic">x</tspan>°`, AMBER, 48) +
-      lab(112, 180, `(3<tspan font-style="italic">x</tspan>−40)°`, VIOLET, 52) +
+    L(0) + L(50) + L(110) +
+      lab(0, 50, `(<tspan font-style="italic">x</tspan>+20)°`, CYAN, 54) +
+      lab(50, 110, `2<tspan font-style="italic">x</tspan>°`, AMBER, 48) +
+      lab(110, 180, `(3<tspan font-style="italic">x</tspan>−20)°`, VIOLET, 54) +
       gdot(cx, cy, INK, 3),
   );
 }
@@ -952,15 +952,16 @@ export function notVertFig(): string {
   );
 }
 
-/** 사다리꼴 ABCD(교과서 151쪽 문제 10): AD∥BC, ∠A=∠B=90°, AB=4·AD=3·BC=6·CD=5.
- *  기하: A(84,36) D(174,36) B(84,156) C(264,156), 1cm=30px. */
+/** 사다리꼴 ABCD(수선의 발·거리 문제 — 수치는 자체 제작 6·8·12·10, 교과서 수치와 다르게):
+ *  AD∥BC, ∠A=∠B=90°, AB=8·AD=6·BC=12·CD=10(가로 차 6, 세로 8의 6-8-10 직각삼각형).
+ *  기하: A(70,28) D(166,28) B(70,156) C(262,156), 1cm=16px. */
 export function trapezoidFig(): string {
-  const Ax = 84;
-  const Ay = 36;
-  const Dx = 174;
-  const Bx = 84;
+  const Ax = 70;
+  const Ay = 28;
+  const Dx = 166;
+  const Bx = 70;
   const By = 156;
-  const Cx = 264;
+  const Cx = 262;
   const dim = (x: number, y: number, t: string, col = INK): string =>
     `<text x="${x}" y="${y}" text-anchor="middle" font-size="12" font-weight="800" fill="${col}">${t}</text>`;
   return svg(
@@ -971,10 +972,10 @@ export function trapezoidFig(): string {
       lineSvg(Dx, Ay, Cx, By, INK, 2.4) +
       rightMark(Ax, Ay, -90, 11, CYAN) +
       rightMark(Bx, By, 0, 11, CYAN) +
-      dim((Ax + Dx) / 2, Ay - 12, "3 cm", AMBER) +
-      dim(Ax - 26, (Ay + By) / 2 + 4, "4 cm", AMBER) +
-      dim((Bx + Cx) / 2, By + 20, "6 cm", AMBER) +
-      dim((Dx + Cx) / 2 + 18, (Ay + By) / 2 - 4, "5 cm", AMBER) +
+      dim((Ax + Dx) / 2, Ay - 12, "6 cm", AMBER) +
+      dim(Ax - 26, (Ay + By) / 2 + 4, "8 cm", AMBER) +
+      dim((Bx + Cx) / 2, By + 20, "12 cm", AMBER) +
+      dim((Dx + Cx) / 2 + 20, (Ay + By) / 2 - 6, "10 cm", AMBER) +
       ptLabel(Ax, Ay, "A", -12, -6) + ptLabel(Dx, Ay, "D", 12, -6) +
       ptLabel(Bx, By, "B", -12, 14) + ptLabel(Cx, By, "C", 12, 14),
   );
@@ -1104,9 +1105,9 @@ export function parallelAngleFig(kind: "co" | "alt", known: number): string {
   );
 }
 
-/** 꺾인 점 보조선 문제(중단원 9-(2) 각색): l∥m, l 위 점에서 a°, m 위 점에서 b°, 꺾인 점의 ∠x=a+b.
+/** 꺾인 점 보조선 문제(l∥m, 꺾인 점 ∠x=a+b — 수치는 자체 제작 26°·45°, 교과서와 다르게).
  *  기하 검산: V는 P에서 수학 각도 −a 방향, Q는 V에서 각도 b가 정확히 서도록 역산. */
-export function zigzagFig(a = 30, b = 52): string {
+export function zigzagFig(a = 26, b = 45): string {
   const ly = 48;
   const my = 168;
   const P = { x: 92, y: ly };
@@ -1127,12 +1128,12 @@ export function zigzagFig(a = 30, b = 52): string {
   );
 }
 
-/** 평행 판별(교과서 160쪽 문제 4 각색): 세 직선 p·q·r가 횡단선과 이루는 각 115°·65°·115°.
- *  p와 r만 평행(동위각 115°=115°). q는 65°라 탈락. */
+/** 평행 판별: 세 직선 p·q·r가 횡단선과 이루는 각 108°·72°·108°(수치 자체 제작).
+ *  p와 r만 평행(동위각 108°=108°). q는 72°라 탈락. */
 export function parallelTestFig(): string {
   const xs = [86, 190, 294];
   const names = ["p", "q", "r"];
-  const degs = [115, 65, 115];
+  const degs = [108, 72, 108];
   const ty = 108;
   let out = lineSvg(16, ty, 344, ty, FAINT, 2); // 횡단선(수평)
   xs.forEach((x, i) => {
@@ -1148,24 +1149,22 @@ export function parallelTestFig(): string {
   return svg("0 0 360 208", out);
 }
 
-/** 합동인 두 삼각형 △ABC≡△DEF(교과서 173쪽 문제 1 각색).
- *  왼쪽 △ABC: AB에 12cm, ∠B에 25° 표시. 오른쪽 △DEF(거울 배치): ∠D에 45°, EF에 9cm 표시.
- *  대응: A↔D, B↔E, C↔F. 기하: 실제 각도 45°·25°로 정확히 작도. */
+/** 합동인 두 삼각형 △ABC≡△DEF(수치 자체 제작 — 교과서와 다르게).
+ *  왼쪽 △ABC: AB에 10cm, ∠B에 30° 표시. 오른쪽 △DEF(거울 배치): ∠D에 40°, EF에 8cm 표시.
+ *  대응: A↔D, B↔E, C↔F(∠A=∠D=40°, ∠B=∠E=30°, ∠C=∠F=110°). 실제 각도로 정확히 작도. */
 export function congTwinFig(): string {
-  // △ABC: B(24,150) C(150,150), ∠B=25°, ∠C=180−45−25=110... 시각상 ∠A=45·∠B=25로 C 결정
   const B = { x: 26, y: 150 };
   const C = { x: 152, y: 150 };
-  // A = B에서 25° 방향과 C에서 (180−110)=70°... ∠C=110이면 바깥, 시각화: A는 두 반직선 교점
-  // ∠B=25° → BA 방향 25°, ∠C=110°(내각) → CA 방향 70°. A = 두 반직선의 교점.
-  const tanB = Math.tan((25 * Math.PI) / 180);
+  // ∠B=30° → BA 방향 30°, ∠C=110°(내각) → CA 방향 70°. A = 두 반직선의 교점.
+  const tanB = Math.tan((30 * Math.PI) / 180);
   const tan70 = Math.tan((70 * Math.PI) / 180);
   const ax = (tanB * B.x + tan70 * C.x) / (tanB + tan70);
   const ay = 150 - tanB * (ax - B.x);
   const D = { x: 334, y: 150 };
   const E = { x: 208, y: 150 };
-  // △DEF: D가 오른쪽 끝(∠D=45), E 왼쪽(∠E=25), 거울 배치
-  const tanD = Math.tan((45 * Math.PI) / 180);
-  const tanE = Math.tan((25 * Math.PI) / 180);
+  // △DEF: D가 오른쪽 끝(∠D=40), E 왼쪽(∠E=30), 거울 배치
+  const tanD = Math.tan((40 * Math.PI) / 180);
+  const tanE = Math.tan((30 * Math.PI) / 180);
   const fx = (tanD * D.x + tanE * E.x) / (tanD + tanE);
   const fy = 150 - tanE * (fx - E.x);
   return svg(
@@ -1174,15 +1173,15 @@ export function congTwinFig(): string {
     lineSvg(B.x, B.y, C.x, C.y, INK, 2.3) +
       lineSvg(B.x, B.y, ax, ay, INK, 2.3) +
       lineSvg(C.x, C.y, ax, ay, INK, 2.3) +
-      angleArc(B.x, B.y, 18, 0, 25, AMBER, "25°", { labelR: 34, fontSize: 11 }) +
-      `<text x="${((B.x + ax) / 2 - 12).toFixed(1)}" y="${((B.y + ay) / 2 - 8).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="800" fill="${CYAN}">12 cm</text>` +
+      angleArc(B.x, B.y, 18, 0, 30, AMBER, "30°", { labelR: 34, fontSize: 11 }) +
+      `<text x="${((B.x + ax) / 2 - 12).toFixed(1)}" y="${((B.y + ay) / 2 - 8).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="800" fill="${CYAN}">10 cm</text>` +
       ptLabel(ax, ay, "A", 0, -9) + ptLabel(B.x, B.y, "B", -10, 14) + ptLabel(C.x, C.y, "C", 8, 14) +
       // △DEF (거울: E 왼쪽, D 오른쪽)
       lineSvg(E.x, E.y, D.x, D.y, INK, 2.3) +
       lineSvg(D.x, D.y, fx, fy, INK, 2.3) +
       lineSvg(E.x, E.y, fx, fy, INK, 2.3) +
-      angleArc(D.x, D.y, 18, 135, 180, AMBER, "45°", { labelR: 34, fontSize: 11 }) +
-      `<text x="${((E.x + D.x) / 2).toFixed(1)}" y="166" text-anchor="middle" font-size="11.5" font-weight="800" fill="${CYAN}">9 cm</text>` +
+      angleArc(D.x, D.y, 18, 140, 180, AMBER, "40°", { labelR: 34, fontSize: 11 }) +
+      `<text x="${((E.x + D.x) / 2).toFixed(1)}" y="166" text-anchor="middle" font-size="11.5" font-weight="800" fill="${CYAN}">8 cm</text>` +
       ptLabel(fx, fy, "F", 0, -9) + ptLabel(E.x, E.y, "E", -10, 14) + ptLabel(D.x, D.y, "D", 8, 14) +
       `<text x="180" y="42" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">△ABC ≡ △DEF</text>`,
   );

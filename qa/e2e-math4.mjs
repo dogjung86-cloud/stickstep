@@ -201,6 +201,12 @@ await W(1900);
 await untilChip("fc", async () => {
   await svgDrag(".mtl-stage svg", [[52, 132], [120, 132], [200, 132], [270, 132]], 340, 264, 60);
 }, 6, "면 쓸기");
+await W(1500);
+// 만남(새 선을 세로로 그어 아까의 가로 선과 교차 → 교점 발견 + 교선 비네트)
+await untilChip("x", async () => {
+  await svgDrag(".mtl-stage svg", [[150, 70], [150, 130], [150, 200]], 340, 264, 60);
+}, 6, "교점 만들기");
+await W(2200); // 교선 비네트
 await clickCTA(); // concept
 await clickCTA(); // recap
 await clickCTA();
@@ -253,7 +259,7 @@ await quiz(0);
 await oxPick(false);
 await quiz(0);
 await multiQuiz([0, 1]);
-await drill([6, 14, 5, 15, "4.5", 1]);
+await drill([8, 14, 5, 15, "4.5", 1]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L2 완료");
 
@@ -319,7 +325,7 @@ await clickCTA();
 await quiz(0);
 await quiz(0);
 await oxPick(false);
-await drill([65, 115, 360, 40, 2, 48]);
+await drill([65, 115, 360, 35, 2, 53]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L4 완료");
 
@@ -353,7 +359,7 @@ await multiQuiz([0, 1]);
 await quiz(0);
 await quiz(0);
 await oxPick(true);
-await drill([90, 3, 4, 8, 0, 90]);
+await drill([90, 6, 8, 8, 0, 90]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L5 완료");
 
@@ -586,7 +592,7 @@ await multiQuiz([0, 1]);
 await multiQuiz([0, 2]);
 await oxPick(false);
 await quiz(0);
-await drill([1, 0, 0, 1, 13, 25]);
+await drill([1, 0, 0, 1, 10, 20]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L11 완료");
 

@@ -568,10 +568,10 @@ export const renderSubwayexit: SceneFn = (scene, helper, finish, face, choices) 
     ${exitDot(j1.x + 22, j1.y - 20, "2", "se-e2", "#E8547E")}
     ${exitDot(j1.x + 26, j1.y + 16, "3", "se-e3", "#F08C00")}
     ${exitDot(j1.x - 22, j1.y + 20, "4")}
-    ${exitDot(j2.x - 26, j2.y - 16, "5", "se-e5", "#F08C00")}
-    ${exitDot(j2.x + 22, j2.y - 20, "6")}
+    ${exitDot(j2.x - 26, j2.y - 16, "5")}
+    ${exitDot(j2.x + 22, j2.y - 20, "6", "se-e6", "#E8547E")}
     ${exitDot(j2.x + 26, j2.y + 16, "7")}
-    ${exitDot(j2.x - 22, j2.y + 20, "8", "se-e8", "#E8547E")}`,
+    ${exitDot(j2.x - 22, j2.y + 20, "8")}`,
     `<linearGradient id="se-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E4EFE0"/><stop offset=".6" stop-color="#D6E6D0"/><stop offset="1" stop-color="#C2D6BA"/></linearGradient>
     <linearGradient id="se-rd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#98A4B2"/><stop offset="1" stop-color="#78848E"/></linearGradient>
     <linearGradient id="se-bd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2E8D2"/><stop offset="1" stop-color="#D8C8A4"/></linearGradient>
@@ -581,7 +581,7 @@ export const renderSubwayexit: SceneFn = (scene, helper, finish, face, choices) 
   const btn = mkBtn("2번 출구의 짝 찾기");
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, btn, box);
-  helper.innerHTML = "친구와 지하철역에서 만나기로 했어요. 대각선 대로가 사거리 <b>㈎와 ㈏</b>를 지나고, 출구가 여덟 개! 친구가 \"㈎의 2번 출구랑 ㈏의 8번 출구가 <b>같은 위치</b>야\"라고 하네요.";
+  helper.innerHTML = "친구와 지하철역에서 만나기로 했어요. 대각선 대로가 사거리 <b>㈎와 ㈏</b>를 지나고, 출구가 여덟 개! 친구가 \"㈎의 2번 출구랑 ㈏의 6번 출구가 <b>같은 위치</b>야\"라고 하네요.";
 
   btn.addEventListener("click", () => {
     btn.disabled = true;
@@ -595,16 +595,16 @@ export const renderSubwayexit: SceneFn = (scene, helper, finish, face, choices) 
       g.style.transform = "scale(1.45)";
     };
     glow("se-e2");
-    glow("se-e8");
+    glow("se-e6");
     window.setTimeout(() => {
       face("curious");
       glow("se-e3");
-      helper.innerHTML = "2번(위 사거리)과 8번(아래 사거리), 정말 대로 기준 <b>같은 모퉁이</b>에 있네요! 그럼 <b>3번 출구</b>와 같은 위치에 있는 ㈏의 출구는 몇 번일까요?";
+      helper.innerHTML = "2번(위 사거리)과 6번(아래 사거리), 정말 대로 기준 <b>같은 모퉁이(위-오른쪽)</b>에 있네요! 그럼 <b>3번 출구</b>와 같은 위치에 있는 ㈏의 출구는 몇 번일까요?";
       window.setTimeout(() => {
         ask(box, helper, {
-          choices: choices ?? ["5번 출구", "7번 출구", "6번 출구"],
-          good: "정확해요! 대각선 대로에서 <b>같은 쪽, 가로 도로에서 같은 쪽</b>이면 같은 모퉁이죠. 사거리(교차점)가 두 개면 이런 '같은 위치의 짝'이 생겨요. 수학은 이 짝에 이름을 붙였답니다!",
-          bad: "모퉁이의 방향을 봐요. 3번은 대각선 대로의 <b>오른쪽 아래</b> 모퉁이니까, ㈏에서도 오른쪽... 이 아니라 같은 방향인 <b>5번</b>이 짝이에요. 같은 위치의 각, 엇갈린 위치의 각, 오늘 그 이름을 배워요!",
+          choices: choices ?? ["7번 출구", "5번 출구", "8번 출구"],
+          good: "정확해요! 3번은 아래-오른쪽 모퉁이, ㈏에서 같은 모퉁이는 <b>7번</b>이죠. 사거리(교차점)가 두 개면 이런 '같은 위치의 짝'이 생겨요. 수학은 이 짝에 이름을 붙였답니다!",
+          bad: "모퉁이의 방향을 봐요. 3번은 대각선 대로 기준 <b>아래-오른쪽</b> 모퉁이예요. ㈏에서 같은 방향을 찾으면 <b>7번</b>! 같은 위치의 각, 엇갈린 위치의 각, 오늘 그 이름을 배워요!",
           onDone: finish,
         });
       }, 950);
@@ -778,35 +778,35 @@ export const renderCurtain: SceneFn = (scene, helper, finish, face, choices) => 
   });
 };
 
-/* ── 11 straws, 빨대 삼각형 도전(삼각형 부등식) ─────────────── */
+/* ── 11 straws, 빨대 삼각형 도전(삼각형 부등식 — 수치 14·6·8, 교과서와 다르게) ── */
 export const renderStraws: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
-  // 빨대 3개: 16(밑) · 7 · 9. 스케일 8px/단위
+  // 빨대 3개: 14(밑) · 6 · 8. 스케일 8px/단위
   const U = 8;
-  const BX = 76;
+  const BX = 84;
   const BY = 150; // 밑변 시작
   fig.innerHTML = wrapSvg(
     `<rect x="28" y="6" width="304" height="188" rx="16" fill="url(#st-tb)" stroke="#C8B088" stroke-width="1.8"/>
     <g class="st-tray">
-      <rect x="60" y="30" width="132" height="10" rx="5" fill="url(#st-s16)" stroke="#0E7A92" stroke-width="1.3" transform="rotate(4 126 35)"/>
-      <rect x="216" y="26" width="58" height="10" rx="5" fill="url(#st-s7)" stroke="#B26200" stroke-width="1.3" transform="rotate(-7 245 31)"/>
-      <rect x="238" y="52" width="74" height="10" rx="5" fill="url(#st-s9)" stroke="#8A2F42" stroke-width="1.3" transform="rotate(6 275 57)"/>
-      <text x="126" y="24" text-anchor="middle" font-size="11" font-weight="900" fill="#0E7A92">16 cm</text>
-      <text x="245" y="16" text-anchor="middle" font-size="11" font-weight="900" fill="#B26200">7 cm</text>
-      <text x="278" y="46" text-anchor="middle" font-size="11" font-weight="900" fill="#8A2F42">9 cm</text>
+      <rect x="60" y="30" width="112" height="10" rx="5" fill="url(#st-s16)" stroke="#0E7A92" stroke-width="1.3" transform="rotate(4 116 35)"/>
+      <rect x="216" y="26" width="48" height="10" rx="5" fill="url(#st-s7)" stroke="#B26200" stroke-width="1.3" transform="rotate(-7 240 31)"/>
+      <rect x="238" y="52" width="64" height="10" rx="5" fill="url(#st-s9)" stroke="#8A2F42" stroke-width="1.3" transform="rotate(6 270 57)"/>
+      <text x="116" y="24" text-anchor="middle" font-size="11" font-weight="900" fill="#0E7A92">14 cm</text>
+      <text x="240" y="16" text-anchor="middle" font-size="11" font-weight="900" fill="#B26200">6 cm</text>
+      <text x="273" y="46" text-anchor="middle" font-size="11" font-weight="900" fill="#8A2F42">8 cm</text>
     </g>
     ${SHADOW(180, 168, 96, 0.1)}
     <g class="st-base" style="opacity:0">
-      <rect x="${BX}" y="${BY}" width="${16 * U}" height="10" rx="5" fill="url(#st-s16)" stroke="#0E7A92" stroke-width="1.3"/>
+      <rect x="${BX}" y="${BY}" width="${14 * U}" height="10" rx="5" fill="url(#st-s16)" stroke="#0E7A92" stroke-width="1.3"/>
     </g>
     <g class="st-l7" style="transform-box: view-box; transform-origin: ${BX + 5}px ${BY + 5}px; transform: rotate(0deg); transition: transform 1.1s cubic-bezier(.34,1.2,.5,1); opacity:0">
-      <rect x="${BX}" y="${BY}" width="${7 * U}" height="10" rx="5" fill="url(#st-s7)" stroke="#B26200" stroke-width="1.3"/>
+      <rect x="${BX}" y="${BY}" width="${6 * U}" height="10" rx="5" fill="url(#st-s7)" stroke="#B26200" stroke-width="1.3"/>
     </g>
-    <g class="st-l9" style="transform-box: view-box; transform-origin: ${BX + 16 * U - 5}px ${BY + 5}px; transform: rotate(0deg); transition: transform 1.1s cubic-bezier(.34,1.2,.5,1); opacity:0">
-      <rect x="${BX + 16 * U - 9 * U}" y="${BY}" width="${9 * U}" height="10" rx="5" fill="url(#st-s9)" stroke="#8A2F42" stroke-width="1.3"/>
+    <g class="st-l9" style="transform-box: view-box; transform-origin: ${BX + 14 * U - 5}px ${BY + 5}px; transform: rotate(0deg); transition: transform 1.1s cubic-bezier(.34,1.2,.5,1); opacity:0">
+      <rect x="${BX + 14 * U - 8 * U}" y="${BY}" width="${8 * U}" height="10" rx="5" fill="url(#st-s9)" stroke="#8A2F42" stroke-width="1.3"/>
     </g>
     <g class="st-gap" style="opacity:0">
-      <circle cx="${BX + 7 * U}" cy="${BY + 5}" r="10" fill="none" stroke="#F04452" stroke-width="2.4" stroke-dasharray="4 4"/>
+      <circle cx="${BX + 6 * U}" cy="${BY + 5}" r="10" fill="none" stroke="#F04452" stroke-width="2.4" stroke-dasharray="4 4"/>
     </g>
     ${stick(52, 130, 0.9, POSE_STAND, "#243040")}`,
     `<linearGradient id="st-tb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FAF1DE"/><stop offset=".6" stop-color="#F2E4C8"/><stop offset="1" stop-color="#E2CEA6"/></linearGradient>
@@ -817,7 +817,7 @@ export const renderStraws: SceneFn = (scene, helper, finish, face, choices) => {
   const btn = mkBtn("삼각형 만들기 도전");
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, btn, box);
-  helper.innerHTML = "미술 시간, <b>빨대 세 개</b>(16cm, 7cm, 9cm)로 삼각형 뼈대를 만들래요. 셋을 이어 붙이기만 하면 되겠죠? 도전!";
+  helper.innerHTML = "미술 시간, <b>빨대 세 개</b>(14cm, 6cm, 8cm)로 삼각형 뼈대를 만들래요. 셋을 이어 붙이기만 하면 되겠죠? 도전!";
 
   btn.addEventListener("click", () => {
     btn.disabled = true;
@@ -834,7 +834,7 @@ export const renderStraws: SceneFn = (scene, helper, finish, face, choices) => {
       (fig.querySelector(".st-l7") as SVGGElement).style.transform = "rotate(-74deg)";
       (fig.querySelector(".st-l9") as SVGGElement).style.transform = "rotate(64deg)";
     }, 500);
-    // 일으켜 세우려다... 스르륵 다시 눕는다(7+9=16, 딱 붙음)
+    // 일으켜 세우려다... 스르륵 다시 눕는다(6+8=14, 딱 붙음)
     window.setTimeout(() => {
       (fig.querySelector(".st-l7") as SVGGElement).style.transform = "rotate(0deg)";
       (fig.querySelector(".st-l9") as SVGGElement).style.transform = "rotate(0deg)";
@@ -845,16 +845,16 @@ export const renderStraws: SceneFn = (scene, helper, finish, face, choices) => {
       gap.style.transition = "opacity .5s ease";
       gap.style.opacity = "1";
       face("surprised");
-      helper.innerHTML = "어라?! 두 빨대를 아무리 세워도 <b>납작하게 누워 버려요.</b> 7과 9의 끝이 밑변 위에서 겨우 만나기만 해요. 왜 삼각형이 안 될까요?";
+      helper.innerHTML = "어라?! 두 빨대를 아무리 세워도 <b>납작하게 누워 버려요.</b> 6과 8의 끝이 밑변 위에서 겨우 만나기만 해요. 왜 삼각형이 안 될까요?";
       window.setTimeout(() => {
         ask(box, helper, {
           choices: choices ?? [
-            "7+9=16이라 딱 붙기만 하고 설 수 없어요",
+            "6+8=14라 딱 붙기만 하고 설 수 없어요",
             "각도를 더 잘 조절하면 만들 수 있어요",
             "빨대가 휘어야 삼각형이 돼요",
           ],
-          good: "정확해요! 두 변의 합이 밑변과 <b>똑같으면(7+9=16)</b> 일직선으로 딱 붙어 버려요. 세모가 봉긋 서려면 두 변의 합이 더 커야 하죠. 얼마나 커야 할까요? 랩에서 실험해요!",
-          bad: "각도의 문제가 아니에요. 7과 9를 어떻게 세워도 <b>합이 16밖에 안 돼서</b> 밑변 위에 납작하게 눕는 게 최선이거든요. 삼각형이 서려면 두 변의 합이 나머지보다 커야 해요, 그 규칙을 랩에서 발견해요!",
+          good: "정확해요! 두 변의 합이 밑변과 <b>똑같으면(6+8=14)</b> 일직선으로 딱 붙어 버려요. 세모가 봉긋 서려면 두 변의 합이 더 커야 하죠. 얼마나 커야 할까요? 랩에서 실험해요!",
+          bad: "각도의 문제가 아니에요. 6과 8을 어떻게 세워도 <b>합이 14밖에 안 돼서</b> 밑변 위에 납작하게 눕는 게 최선이거든요. 삼각형이 서려면 두 변의 합이 나머지보다 커야 해요, 그 규칙을 랩에서 발견해요!",
           onDone: finish,
         });
       }, 950);

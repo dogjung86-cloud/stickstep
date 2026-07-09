@@ -155,7 +155,7 @@
 | m1u4l8 | 동위각과 엇각 | subwayexit 사거리 출구 | anglePairLab 자리 찾기(함정: 바깥은 엇각 없음) | 쌍 개수 드릴 | ✓ |
 | m1u4l9 | 평행선의 성질 | blinds 블라인드 햇살 | **parallelLab(기함)** 평행 스냅+엇각 180° 회전 연출 | 보조선 각도 퀴즈 | ✓ |
 | m1u4l10 | 작도: 자와 컴퍼스만으로 | curtain 끈으로 길이 복사 | compassLab 순서 선택 스테퍼(함정 선택지) | 작도 순서 order | ✓ |
-| m1u4l11 | 삼각형: 되는·하나뿐인 | straws 빨대 7·9·16 | triBuildLab 원호 작도 부등식+결정조건 3모드+ASS 반례 | 부등식 판별 드릴 | ✓ |
+| m1u4l11 | 삼각형: 되는·하나뿐인 | straws 빨대 6·8·14 | triBuildLab 원호 작도 부등식+결정조건 3모드+ASS 반례 | 부등식 판별 드릴 | ✓ |
 | m1u4l12 | 합동: 판박이 판별법 | bakery 붕어빵 틀 | congLab 카드 6장 3쌍 매칭+근거(SSS·SAS·ASA) 판정 | 대응 읽기 드릴 | ✓ |
 | m1u4l13 | 보스전: 합동 탐정 탈레스 | thales 배까지의 거리 | (concept 브리핑: ASA=줄자) | order+종합 드릴 10문 | ✓ |
 

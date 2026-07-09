@@ -45,107 +45,108 @@ function cardSvg(inner: string): string {
 }
 
 /* ---------- 카드 6장(교과서 문제 2 각색 수치, 1cm=15~18px) ----------
-   A △ABC: 세 변 4·6·3(SSS 짝 D) · B △DEF: 변 4 + 양 끝 각 40°·50°(ASA 짝 E)
-   C △GHI: 두 변 3·4 + 끼인각 100°(SAS 짝 F). D·E·F는 각 짝의 거울/재배열판. */
+   A △ABC: 세 변 5·7·4(SSS 짝 D) · B △DEF: 변 5 + 양 끝 각 35°·55°(ASA 짝 E)
+   C △GHI: 두 변 4·6 + 끼인각 110°(SAS 짝 F). D·E·F는 각 짝의 거울/재배열판.
+   수치는 자체 제작(교과서 문제와 다르게)이 원칙. */
 
 function makeCards(): CardDef[] {
-  // A △ABC: B=(30,84) C=(120,84) A=(83.7,57.3), AB=4 BC=6 CA=3
+  // A △ABC: B=(24,84) C=(129,84) A=(86.1,42), AB=5 BC=7 CA=4 (15px/cm)
   const cardA = cardSvg(
-    given(83.7, 57.3, 30, 84) +
-      given(30, 84, 120, 84) +
-      given(120, 84, 83.7, 57.3) +
-      txt(49, 64, "4cm", GEO.hlB) +
-      txt(75, 96.5, "6cm", GEO.hlB) +
-      txt(110, 64, "3cm", GEO.hlB) +
-      vtx(83.7, 57.3) +
-      vtx(30, 84) +
-      vtx(120, 84) +
-      vlab(83.7, 49, "A") +
-      vlab(23.5, 89, "B") +
-      vlab(126.5, 89, "C"),
+    given(86.1, 42, 24, 84) +
+      given(24, 84, 129, 84) +
+      given(129, 84, 86.1, 42) +
+      txt(44, 58, "5cm", GEO.hlB) +
+      txt(76.5, 96.5, "7cm", GEO.hlB) +
+      txt(115, 58, "4cm", GEO.hlB) +
+      vtx(86.1, 42) +
+      vtx(24, 84) +
+      vtx(129, 84) +
+      vlab(86.1, 34, "A") +
+      vlab(17.5, 89, "B") +
+      vlab(135.5, 89, "C"),
   );
-  // D △MNO: O=(30,84) N=(120,84) M=(66.3,57.3) — A의 거울상, MN=4 NO=6 OM=3
+  // D △MNO: O=(24,84) N=(129,84) M=(66.9,42) — A의 거울상, MN=5 NO=7 OM=4
   const cardD = cardSvg(
-    given(30, 84, 66.3, 57.3) +
-      given(120, 84, 30, 84) +
-      given(66.3, 57.3, 120, 84) +
-      txt(40, 64, "3cm", GEO.hlB) +
-      txt(75, 96.5, "6cm", GEO.hlB) +
-      txt(102, 64, "4cm", GEO.hlB) +
-      vtx(66.3, 57.3) +
-      vtx(30, 84) +
-      vtx(120, 84) +
-      vlab(66.3, 49, "M") +
-      vlab(23.5, 89, "O") +
-      vlab(126.5, 89, "N"),
+    given(24, 84, 66.9, 42) +
+      given(129, 84, 24, 84) +
+      given(66.9, 42, 129, 84) +
+      txt(36, 58, "4cm", GEO.hlB) +
+      txt(76.5, 96.5, "7cm", GEO.hlB) +
+      txt(108, 58, "5cm", GEO.hlB) +
+      vtx(66.9, 42) +
+      vtx(24, 84) +
+      vtx(129, 84) +
+      vlab(66.9, 34, "M") +
+      vlab(17.5, 89, "O") +
+      vlab(135.5, 89, "N"),
   );
-  // B △DEF: E=(39,82) F=(111,82) D=(81.3,46.5), EF=4 ∠E=40° ∠F=50°
+  // B △DEF: E=(37,82) F=(112,82) D=(87.3,46.8), EF=5 ∠E=35° ∠F=55°
   const cardB = cardSvg(
-    faint(39, 82, 81.3, 46.5) +
-      faint(111, 82, 81.3, 46.5) +
-      given(39, 82, 111, 82) +
-      angleArc(39, 82, 15, 0, 40, GEO.hlA, "40°", { labelR: 27, fontSize: 9.5 }) +
-      angleArc(111, 82, 15, 130, 180, GEO.hlA, "50°", { labelR: 27, fontSize: 9.5 }) +
-      txt(75, 95.5, "4cm", GEO.hlB) +
-      vtx(81.3, 46.5) +
-      vtx(39, 82) +
-      vtx(111, 82) +
-      vlab(81.3, 38.5, "D") +
-      vlab(33, 88, "E") +
-      vlab(117, 88, "F"),
-  );
-  // E △JKL: J=(39,82) K=(111,82) L=(68.8,46.6), ∠J=50° ∠K=40° JK=4
-  const cardE = cardSvg(
-    faint(39, 82, 68.8, 46.6) +
-      faint(111, 82, 68.8, 46.6) +
-      given(39, 82, 111, 82) +
-      angleArc(39, 82, 15, 0, 50, GEO.hlA, "50°", { labelR: 27, fontSize: 9.5 }) +
-      angleArc(111, 82, 15, 140, 180, GEO.hlA, "40°", { labelR: 27, fontSize: 9.5 }) +
-      txt(75, 95.5, "4cm", GEO.hlB) +
-      vtx(68.8, 46.6) +
-      vtx(39, 82) +
-      vtx(111, 82) +
-      vlab(68.8, 38.6, "L") +
-      vlab(33, 88, "J") +
-      vlab(117, 88, "K"),
-  );
-  // C △GHI: H=(48,82) I=(112,82) G=(39.7,34.7), HI=4 HG=3 ∠H=100°
-  const cardC = cardSvg(
-    faint(39.7, 34.7, 112, 82) +
-      given(48, 82, 112, 82) +
-      given(48, 82, 39.7, 34.7) +
-      angleArc(48, 82, 13, 0, 100, GEO.hlA, "100°", { labelR: 25, fontSize: 9.5 }) +
-      txt(80, 95.5, "4cm", GEO.hlB) +
-      txt(33, 57, "3cm", GEO.hlB) +
-      vtx(39.7, 34.7) +
-      vtx(48, 82) +
+    faint(37, 82, 87.3, 46.8) +
+      faint(112, 82, 87.3, 46.8) +
+      given(37, 82, 112, 82) +
+      angleArc(37, 82, 15, 0, 35, GEO.hlA, "35°", { labelR: 27, fontSize: 9.5 }) +
+      angleArc(112, 82, 15, 125, 180, GEO.hlA, "55°", { labelR: 27, fontSize: 9.5 }) +
+      txt(74.5, 95.5, "5cm", GEO.hlB) +
+      vtx(87.3, 46.8) +
+      vtx(37, 82) +
       vtx(112, 82) +
-      vlab(39.7, 27.5, "G") +
-      vlab(42, 92.5, "H") +
-      vlab(118, 92.5, "I"),
+      vlab(87.3, 38.8, "D") +
+      vlab(31, 88, "E") +
+      vlab(118, 88, "F"),
   );
-  // F △PQR: Q=(102,82) P=(38,82) R=(110.3,34.7), QP=4 QR=3 ∠Q=100° — C의 거울상
+  // E △JKL: J=(37,82) K=(112,82) L=(61.7,46.8), ∠J=55° ∠K=35° JK=5
+  const cardE = cardSvg(
+    faint(37, 82, 61.7, 46.8) +
+      faint(112, 82, 61.7, 46.8) +
+      given(37, 82, 112, 82) +
+      angleArc(37, 82, 15, 0, 55, GEO.hlA, "55°", { labelR: 27, fontSize: 9.5 }) +
+      angleArc(112, 82, 15, 145, 180, GEO.hlA, "35°", { labelR: 27, fontSize: 9.5 }) +
+      txt(74.5, 95.5, "5cm", GEO.hlB) +
+      vtx(61.7, 46.8) +
+      vtx(37, 82) +
+      vtx(112, 82) +
+      vlab(61.7, 38.8, "L") +
+      vlab(31, 88, "J") +
+      vlab(118, 88, "K"),
+  );
+  // C △GHI: H=(46,82) I=(136,82) G=(25.5,25.6), HI=6 HG=4 ∠H=110°
+  const cardC = cardSvg(
+    faint(25.5, 25.6, 136, 82) +
+      given(46, 82, 136, 82) +
+      given(46, 82, 25.5, 25.6) +
+      angleArc(46, 82, 13, 0, 110, GEO.hlA, "110°", { labelR: 25, fontSize: 9.5 }) +
+      txt(91, 95.5, "6cm", GEO.hlB) +
+      txt(24, 55, "4cm", GEO.hlB) +
+      vtx(25.5, 25.6) +
+      vtx(46, 82) +
+      vtx(136, 82) +
+      vlab(25.5, 18.5, "G") +
+      vlab(40, 92.5, "H") +
+      vlab(142, 92.5, "I"),
+  );
+  // F △PQR: Q=(104,82) P=(14,82) R=(124.5,25.6), QP=6 QR=4 ∠Q=110° — C의 거울상
   const cardF = cardSvg(
-    faint(38, 82, 110.3, 34.7) +
-      given(102, 82, 38, 82) +
-      given(102, 82, 110.3, 34.7) +
-      angleArc(102, 82, 13, 80, 180, GEO.hlA, "100°", { labelR: 25, fontSize: 9.5 }) +
-      txt(70, 95.5, "4cm", GEO.hlB) +
-      txt(121, 57, "3cm", GEO.hlB) +
-      vtx(110.3, 34.7) +
-      vtx(102, 82) +
-      vtx(38, 82) +
-      vlab(110.3, 27.5, "R") +
-      vlab(108, 92.5, "Q") +
-      vlab(32, 92.5, "P"),
+    faint(14, 82, 124.5, 25.6) +
+      given(104, 82, 14, 82) +
+      given(104, 82, 124.5, 25.6) +
+      angleArc(104, 82, 13, 70, 180, GEO.hlA, "110°", { labelR: 25, fontSize: 9.5 }) +
+      txt(59, 95.5, "6cm", GEO.hlB) +
+      txt(126, 55, "4cm", GEO.hlB) +
+      vtx(124.5, 25.6) +
+      vtx(104, 82) +
+      vtx(14, 82) +
+      vlab(124.5, 18.5, "R") +
+      vlab(110, 92.5, "Q") +
+      vlab(8, 92.5, "P"),
   );
   return [
-    { id: "A", name: "ABC", svg: cardA, aria: "삼각형 ABC 카드, 세 변 4·6·3" },
-    { id: "B", name: "DEF", svg: cardB, aria: "삼각형 DEF 카드, 변 4와 양 끝 각 40도·50도" },
-    { id: "C", name: "GHI", svg: cardC, aria: "삼각형 GHI 카드, 두 변 3·4와 끼인각 100도" },
-    { id: "D", name: "MNO", svg: cardD, aria: "삼각형 MNO 카드, 세 변 3·6·4" },
-    { id: "E", name: "JKL", svg: cardE, aria: "삼각형 JKL 카드, 각 50도·40도와 그 사이 변 4" },
-    { id: "F", name: "PQR", svg: cardF, aria: "삼각형 PQR 카드, 끼인각 100도와 두 변 4·3" },
+    { id: "A", name: "ABC", svg: cardA, aria: "삼각형 ABC 카드, 세 변 5·7·4" },
+    { id: "B", name: "DEF", svg: cardB, aria: "삼각형 DEF 카드, 변 5와 양 끝 각 35도·55도" },
+    { id: "C", name: "GHI", svg: cardC, aria: "삼각형 GHI 카드, 두 변 4·6과 끼인각 110도" },
+    { id: "D", name: "MNO", svg: cardD, aria: "삼각형 MNO 카드, 세 변 4·7·5" },
+    { id: "E", name: "JKL", svg: cardE, aria: "삼각형 JKL 카드, 각 55도·35도와 그 사이 변 5" },
+    { id: "F", name: "PQR", svg: cardF, aria: "삼각형 PQR 카드, 끼인각 110도와 두 변 6·4" },
   ];
 }
 
@@ -158,9 +159,9 @@ const ORDER = ["A", "E", "C", "B", "F", "D"];
 const PAIR_COLORS = [GEO.hlD, GEO.hlC, GEO.hlA];
 
 const PRAISE: Record<Basis, string> = {
-  SSS: "세 변이 3·4·6으로 똑같아요, SSS 합동!",
-  ASA: "변 4cm과 그 양 끝 각 40°·50°, ASA 합동!",
-  SAS: "두 변 3·4와 그 끼인각 100°, SAS 합동!",
+  SSS: "세 변이 4·5·7로 똑같아요, SSS 합동!",
+  ASA: "변 5cm와 그 양 끝 각 35°·55°, ASA 합동!",
+  SAS: "두 변 4·6과 그 끼인각 110°, SAS 합동!",
 };
 
 export const congLab: StepRenderer = (host, step, api) => {
