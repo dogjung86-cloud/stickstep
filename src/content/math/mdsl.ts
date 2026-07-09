@@ -42,7 +42,21 @@ export const mathHook = (o: {
     | "download" // 다운로드 남은 시간, 직선의 예측력
     | "pizza" // 피자 나눠 먹기, 반비례
     | "seesaw" // 시소의 비밀, 곱 일정
-    | "quakealert"; // 지진 조기 경보, 보스전
+    | "quakealert" // 지진 조기 경보, 보스전
+    // ── Ⅳ 기본 도형 (hookMath4.ts) ──
+    | "sparkler" // 불꽃막대 잔상, 점이 움직이면 선
+    | "laserline" // 하늘로 쏜 레이저, 반직선
+    | "clockhands" // 6시 정각 두 바늘 일직선, 평각
+    | "scissors" // 가위 양날, 맞꼭지각
+    | "longjump" // 멀리뛰기 기록 재기, 수선과 거리
+    | "railroad" // 기차 레일, 평행
+    | "overpass" // 고가도로, 꼬인 위치
+    | "subwayexit" // 사거리 지하철 출구, 동위각·엇각
+    | "blinds" // 블라인드 햇빛 줄무늬, 평행선의 성질
+    | "curtain" // 끈으로 길이 복사, 작도
+    | "straws" // 빨대 삼각형 도전, 삼각형 부등식
+    | "bakery" // 붕어빵 틀, 합동
+    | "thales"; // 탈레스 배 거리, 보스전
   choices?: string[];
   cta?: string;
 }): Step => ({ type: "mathHook", ...o });
@@ -182,3 +196,53 @@ export const shareLab = (o: { title: string; lead?: string; cta?: string; curio?
 /** 곡선 정원, 넓이 고정 직사각형의 꼭짓점을 드래그해 자취로 반비례 곡선을 그린다(축 근접 발견). */
 export const curveLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "curveLab", ...o });
+
+/* ── Ⅳ 기본 도형 ─────────────────────────────────────── */
+
+/** 점→선→면 생성 랩, 점을 찍고·끌어 선을 만들고·쓸어 면을 만든다(교점·교선 국면 포함). */
+export const traceLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "traceLab", ...o });
+
+/** 직선·반직선·선분 3형제 랩, 두 점으로 셋을 만들고 AB³≠BA³(방향)을 발견한다. */
+export const rayLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "rayLab", ...o });
+
+/** 각 만들기 랩, 반직선을 돌려 예각→직각→둔각→평각을 만들고 각의 크기=회전량을 몸으로 안다. */
+export const angleLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "angleLab", ...o });
+
+/** 맞꼭지각 랩, 두 직선을 회전시키며 마주 보는 각이 항상 같음을 발견한다(평각 180° 유도). */
+export const vertAngleLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "vertAngleLab", ...o });
+
+/** 수직·최단거리 랩, 점에서 직선까지 여러 선분을 긋고 수선이 가장 짧음을 발견한다. */
+export const perpLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "perpLab", ...o });
+
+/** 평면 두 직선 위치 관계 랩, 직선을 돌리며 한 점/평행/일치를 판정(줌아웃으로 먼 교점 발견). */
+export const lineRelLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "lineRelLab", ...o });
+
+/** 공간 위치 관계 랩(기함), CSS 3D 직육면체를 돌리며 모서리를 만남/평행/꼬인 위치로 분류. */
+export const boxRelLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "boxRelLab", ...o });
+
+/** 동위각·엇각 찾기 랩, 8개의 각 무대에서 같은 위치·엇갈린 위치의 짝을 탭으로 찾는다. */
+export const anglePairLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "anglePairLab", ...o });
+
+/** 평행선 성질 랩(기함), 직선을 기울이며 동위각·엇각을 실시간 비교, 평행일 때만 같음을 발견. */
+export const parallelLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "parallelLab", ...o });
+
+/** 작도 스테퍼 랩, 눈금 없는 자와 컴퍼스로 길이 같은 선분·크기 같은 각을 순서대로 옮긴다. */
+export const compassLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "compassLab", ...o });
+
+/** 삼각형 조건 랩, 세 변으로 원호 교차를 시험(부등식)하고 결정조건 3가지를 확인한다. */
+export const triBuildLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "triBuildLab", ...o });
+
+/** 합동 판별 랩, 주어진 3요소 조합이 SSS·SAS·ASA인지 가려 두 삼각형의 합동을 판정한다. */
+export const congLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "congLab", ...o });

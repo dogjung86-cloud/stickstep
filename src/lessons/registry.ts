@@ -121,6 +121,18 @@ import { linkLab } from "./steps/linkLab";
 import { lineLab } from "./steps/lineLab";
 import { shareLab } from "./steps/shareLab";
 import { curveLab } from "./steps/curveLab";
+import { traceLab } from "./steps/traceLab";
+import { rayLab } from "./steps/rayLab";
+import { angleLab } from "./steps/angleLab";
+import { vertAngleLab } from "./steps/vertAngleLab";
+import { perpLab } from "./steps/perpLab";
+import { lineRelLab } from "./steps/lineRelLab";
+import { boxRelLab } from "./steps/boxRelLab";
+import { anglePairLab } from "./steps/anglePairLab";
+import { parallelLab } from "./steps/parallelLab";
+import { compassLab } from "./steps/compassLab";
+import { triBuildLab } from "./steps/triBuildLab";
+import { congLab } from "./steps/congLab";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -237,6 +249,18 @@ const R: Record<string, StepRenderer> = {
   lineLab,
   shareLab,
   curveLab,
+  traceLab,
+  rayLab,
+  angleLab,
+  vertAngleLab,
+  perpLab,
+  lineRelLab,
+  boxRelLab,
+  anglePairLab,
+  parallelLab,
+  compassLab,
+  triBuildLab,
+  congLab,
   quiz,
   table,
   order,

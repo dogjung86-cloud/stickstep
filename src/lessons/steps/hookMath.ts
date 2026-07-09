@@ -15,6 +15,11 @@ import {
   renderCinema, renderSos, renderViews, renderWheel, renderThunder,
   renderDownload, renderPizza, renderSeesaw, renderQuakealert,
 } from "./hookMath3";
+import {
+  renderSparkler, renderLaserline, renderClockhands, renderScissors, renderLongjump,
+  renderRailroad, renderOverpass, renderSubwayexit, renderBlinds, renderCurtain,
+  renderStraws, renderBakery, renderThales,
+} from "./hookMath4";
 import type { StepRenderer } from "../types";
 
 type Face = (k: AvatarKind) => void;
@@ -90,6 +95,20 @@ export const mathHook: StepRenderer = (host, step, api) => {
     pizza: renderPizza,
     seesaw: renderSeesaw,
     quakealert: renderQuakealert,
+    // Ⅳ 기본 도형(hookMath4.ts)
+    sparkler: renderSparkler,
+    laserline: renderLaserline,
+    clockhands: renderClockhands,
+    scissors: renderScissors,
+    longjump: renderLongjump,
+    railroad: renderRailroad,
+    overpass: renderOverpass,
+    subwayexit: renderSubwayexit,
+    blinds: renderBlinds,
+    curtain: renderCurtain,
+    straws: renderStraws,
+    bakery: renderBakery,
+    thales: renderThales,
   };
   const fn = fns[s.scene];
   if (fn) fn(scene, helper, finish, face, s.choices);

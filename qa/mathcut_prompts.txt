@@ -107,3 +107,46 @@ A stick figure rides a doodle donkey while holding a long fishing rod that dangl
 
 [29] file=public/math/cuts/u3l9.png (landscape 4:3, 스타일 A)
 A race track: a doodle rabbit has just burst through the finish ribbon at the line, while far behind on the same track a doodle turtle is still plodding along, sweat drop above its head. A referee stick figure beside the finish line raises a flag, and small dashed motion trails behind each racer show how far each has come. Only the finish ribbon is teal; everything else pure black and white.
+
+# ══ 중1 Ⅳ 기본 도형 → public/math/cuts ══
+# 장면 규칙 동일: 그 레슨의 훅·랩 소재(불꽃막대·레이저·시계·가위·멀리뛰기·기찻길·고가도로·지하철 출구·
+# 블라인드·끈 커튼·빨대·붕어빵·탈레스 해변) 재활용 금지 — 전부 새 각도의 일상 장면.
+
+[30] file=public/math/cuts/u4l1.png (landscape 4:3, 스타일 A)
+A stick figure sews by hand at a table: on the fabric, a row of tiny separate needle-prick stitch dots gradually becomes one continuous seam line toward the finished side, showing dots merging into a line. The figure pulls the needle and thread up high mid-stitch, focused. Only the finished continuous seam line is teal; everything else pure black and white.
+
+[31] file=public/math/cuts/u4l2.png (landscape 4:3, 스타일 A)
+A stick figure hangs laundry on a clothesline stretched perfectly straight and taut between exactly two wooden posts, one post at each end. The line sags nowhere, drawn as one clean straight segment ending exactly at the two posts, with a few doodle shirts clipped on. The figure pins one more sock. Only the taut clothesline is teal; everything else pure black and white.
+
+[32] file=public/math/cuts/u4l3.png (landscape 4:3, 스타일 A)
+A stick figure holds a folding hand fan half opened: the fan's flat ribs spread from one single pivot point at the handle, clearly showing the opening between the first rib and the last rib. Small motion arcs near the pivot show it opening wider. The figure looks delighted, other hand raised. Only the fan's outer paper edge is teal; everything else pure black and white.
+
+[33] file=public/math/cuts/u4l4.png (landscape 4:3, 스타일 A)
+Bird's-eye view of two straight roads crossing in an X shape. Two stick figures stand on the two corners that face each other diagonally across the crossing point, waving at each other, while the other two facing corners hold two identical doodle streetlamps. Only the two waving figures' corner curbs are teal; everything else pure black and white.
+
+[34] file=public/math/cuts/u4l5.png (landscape 4:3, 스타일 A)
+A stick figure on a small stool hangs a picture frame on a wall, holding up a plumb line: a string with a small pointed weight hanging perfectly straight down toward the floor. The string meets the floor squarely, and the figure squints comparing the frame's edge to the hanging string. Only the plumb string and its weight are teal; everything else pure black and white.
+
+[35] file=public/math/cuts/u4l6.png (landscape 4:3, 스타일 A)
+Top-down view of a swimming pool with three straight lane ropes dividing it, all perfectly evenly spaced and never touching. In each lane a stick figure swims freestyle with little splash doodles, each staying inside their own lane. Only the lane ropes are teal; everything else pure black and white.
+
+[36] file=public/math/cuts/u4l7.png (landscape 4:3, 스타일 A)
+A close-up tabletop scene: one chopstick lies flat on the table pointing one way, while the second chopstick rests up on the rim of a bowl pointing a different way, so the two chopsticks cross in the air without touching, clearly at different heights. A stick figure leans in very close, one eye squinted, checking the gap between them with a puzzled tilt of the head. Only the raised chopstick is teal; everything else pure black and white.
+
+[37] file=public/math/cuts/u4l8.png (landscape 4:3, 스타일 A)
+A straight hiking trail cuts diagonally across two long parallel wooden fences. At each of the two spots where the trail crosses a fence, a small triangular pennant flag is planted on the same left-hand corner of the crossing. A stick figure hiker walks the trail between the two crossings, backpack on. Only the two pennant flags are teal; everything else pure black and white.
+
+[38] file=public/math/cuts/u4l9.png (landscape 4:3, 스타일 A)
+A bookshelf scene: a row of books all leaning at exactly the same slant against each other like fallen dominoes at rest, their spines making identical angles with the flat shelf. A stick figure slides one more book into the row at the very same slant, tongue out in concentration. Only the book being inserted is teal; everything else pure black and white.
+
+[39] file=public/math/cuts/u4l10.png (landscape 4:3, 스타일 A)
+A schoolyard scene: one stick figure holds a stake planted in the ground with a taut rope tied to it, while a second stick figure at the rope's far end walks in a circle dragging a stick in the dirt, leaving a large clean round circle line behind them, halfway drawn. Only the taut rope is teal; everything else pure black and white.
+
+[40] file=public/math/cuts/u4l11.png (landscape 4:3, 스타일 A)
+Camping scene with two small teepee-style tents side by side: the left tent stands tall and proud, its two visible poles meeting at a peak above the wide base. The right tent lies collapsed completely flat on the ground because its two poles are far too short for the same wide base, and a stick figure kneels beside it scratching their head. Only the standing left tent is teal; everything else pure black and white.
+
+[41] file=public/math/cuts/u4l12.png (landscape 4:3, 스타일 A)
+A stick figure office worker stamps papers at a desk: one rubber stamp in hand, two sheets of paper side by side each showing the exact same simple doodle flower mark, identical in size and shape. The figure holds the stamp up after the second satisfying stamp, small action lines around it. Only the two flower marks are teal; everything else pure black and white.
+
+[42] file=public/math/cuts/u4l13.png (landscape 4:3, 스타일 A)
+A stick figure stands on a riverbank wearing a cap, using the cap's visor as a sight: a straight dashed sight-line runs from under the visor across the river to a rock on the far bank. Beside it, the same figure drawn again after turning in place, the identical dashed sight-line at the identical downward tilt now landing on a spot on the flat ground along the bank, marked with a small pebble pile. Only the two dashed sight-lines are teal; everything else pure black and white.

@@ -10,7 +10,7 @@ import { mapDecorArt } from "../ui/mapDecor";
 import type { Screen } from "../core/router";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
-const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph" };
+const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom" };
 // 단원별 보너스 미니게임 — 모든 레슨을 완료하면 지도 끝에 열린다.
 const UNIT_GAME: Record<string, { title: string }> = { u3: { title: "단열 디펜스" }, m1u1: { title: "별자리 한붓그리기" } };
 
@@ -367,6 +367,7 @@ const UNIT_DECOR: Record<string, { seq: string[]; sky: [string, string] }> = {
   m1u1: { seq: ["pmDeco", "fracDeco", "primeDeco", "opsDeco", "numlineDeco"], sky: ["sparkle", "cloud"] }, // 수와 연산: 부호 타일, 분수 카드, 소수 7 배지, 연산 타일, 수직선 팻말
   m1u2: { seq: ["xDeco", "eqDeco", "scaleDeco", "aDeco", "boxDeco"], sky: ["sparkle", "cloud"] }, // 문자와 식: x 카드, 등호, 양팔저울, a 카드, x 상자
   m1u3: { seq: ["pinDeco", "gridDeco", "zigDeco", "riseDeco", "hyperDeco"], sky: ["sparkle", "cloud"] }, // 좌표평면과 그래프: 점 핀, 좌표평면, 꺾은선, 정비례 직선, 반비례 곡선(단원 여정 순)
+  m1u4: { seq: ["pointDeco", "segmentDeco", "protracDeco", "compassDeco", "trisqDeco"], sky: ["sparkle", "cloud"] }, // 기본 도형: 점 → 선분 → 각도기 → 컴퍼스 → 삼각자(도형 여정 순)
 };
 const DEFAULT_DECOR: { seq: string[]; sky: [string, string] } = {
   seq: ["tree1", "tree2", "bush", "rock", "grassTuft"],
@@ -387,6 +388,7 @@ const DECOR_SIZE: Record<string, number> = {
   beakerDeco: 46, atomDeco: 46, tableDeco: 46, moleculeDeco: 46, ionDeco: 42,
   pebblesDeco: 44, sieveDeco: 48, numTreeDeco: 46, vennDeco: 48, numlineDeco: 44,
   pmDeco: 42, fracDeco: 42, primeDeco: 44, opsDeco: 46, xDeco: 44, aDeco: 40, eqDeco: 42, scaleDeco: 46, boxDeco: 44,
+  pointDeco: 38, segmentDeco: 46, protracDeco: 48, compassDeco: 46, trisqDeco: 48,
 };
 
 function placeDecor(layer: HTMLElement, points: { x: number; y: number }[], W: number, unitId: string): void {

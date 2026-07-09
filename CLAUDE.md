@@ -165,11 +165,16 @@ src/
   과목 전환 창구는 **과목 허브뿐**(subject.ts) — main.ts `pickSubject()`가 setViewSubject 후 `goHome()`으로
   홈을 재생성한다(nav.back은 이전 과목 홈을 보여주므로 금지). 이때 lastUnitId를 반드시 비운다.
   수학 단원 id는 `m1uN`/`m2uN`(레슨 `m1uNlM`) — 과학 `uN`·`g2uN`과 절대 충돌 금지.
-- **수학 전용 코드는 신규 파일에 격리**(병합 충돌 0 설계): content/math/(curriculum·unit1·unit2·unit3·mdsl),
-  ui/mathKit·mathFigures, steps/hookMath·hookMath2·hookMath3(독립 `mathHook` 타입 — 과학 hook.ts 디스패치 불변),
+- **수학 전용 코드는 신규 파일에 격리**(병합 충돌 0 설계): content/math/(curriculum·unit1~unit4·mdsl),
+  ui/mathKit·mathFigures·**geoKit**(Ⅳ 기하 공용 — GEO 팔레트·각 호 angleArc·직각 표시·gsym 기호·
+  capturePointer. 기하 그림·랩은 재구현 금지, 이걸 쓴다),
+  steps/hookMath·hookMath2·hookMath3·hookMath4(독립 `mathHook` 타입 — 과학 hook.ts 디스패치 불변),
   steps/{sieveLab·powBuild·factorTree·vennFactor(gcd/lcm/coprime 3모드)·numline·numWalk·counterLab·
   patternLab·areaSplit·mathDrill}(Ⅰ) + {patternRule·substLab·exprAnatomy·likeTerms·eqTruth·balanceLab·
-  solveLab}(Ⅱ) + {coordLab·quadLab·bottleLab·droneLab·linkLab·lineLab·shareLab·curveLab}(Ⅲ),
+  solveLab}(Ⅱ) + {coordLab·quadLab·bottleLab·droneLab·linkLab·lineLab·shareLab·curveLab}(Ⅲ) +
+  {traceLab·rayLab·angleLab·vertAngleLab·perpLab·lineRelLab·boxRelLab(기함 — rAF 없는 이벤트 구동
+  SVG 3D 투영, 숨은 모서리는 면 법선 판정 점선)·anglePairLab·parallelLab(기함 — 평행 스냅+엇각
+  180° 회전 연출)·compassLab·triBuildLab·congLab}(Ⅳ),
   screens/starGame(Ⅰ 보너스 게임), **styles/math.css**(ui.css를 건드리지 않는 수학 전용
   시트, main.ts에서 import). 공유 파일 수정은 store·curriculum·home·subject·main·registry·tokens.css·
   mapDecor의 최소 append뿐.
@@ -210,12 +215,15 @@ src/
   수직선 미니 재생 — 텍스트만으로 끝내지 않는다.
 - **QA**: `PORT=<포트> node qa/e2e-math.mjs`(Ⅰ 12레슨) · `qa/e2e-math2.mjs`(Ⅱ 9레슨) ·
   `qa/e2e-math3.mjs`(Ⅲ 9레슨 — 격자 탭·사분면 드래그·물병 예측·드론 스크럽·링크/곱 검사·a 스테퍼·
-  곡선 자취 드래그 포함) — 훅 장면 버튼·랩 전 조작·넘패드 드릴 입력까지 실플레이.
+  곡선 자취 드래그 포함) · `qa/e2e-math4.mjs`(Ⅳ 13레슨 — 자유 드로잉·각 드래그·3D 상자 회전·평행
+  스냅·작도 스테퍼·합동 매칭. **조작 후 위치가 변하는 핸들은 getBoundingClientRect로 실좌표를 잡아
+  드래그한다** — 고정 좌표는 두 번째 시도부터 빗나간 실사고) — 훅 장면 버튼·랩 전 조작·넘패드 드릴 입력까지 실플레이.
   랩 애니 잠금에 탭이 먹힐 수 있으니 e2e는 "미완료 대상 재시도 루프"로 조작한다(고정 횟수 탭 금지).
   **e2e 실행 중 src 편집 금지** — HMR 풀리로드로 레슨 상태가 증발한다(사고 #12의 수학판 재발 사례).
 - 수학 훅 12장면은 hookMath.ts 안(cicada·paperfold·lockcode·tilefloor·buslight·freezer·gpsdist·
-  golfscore·daytemp·rewind·mentalmath·snsdebate). 공용 hookAsk.ask() 규칙(choices[0]=정답,
-  good≠bad)은 과학과 동일하게 적용된다.
+  golfscore·daytemp·rewind·mentalmath·snsdebate). Ⅳ 훅 13장면은 hookMath4.ts(sparkler·laserline·
+  clockhands·scissors·longjump·railroad·overpass·subwayexit·blinds·curtain·straws·bakery·thales).
+  공용 hookAsk.ask() 규칙(choices[0]=정답, good≠bad)은 과학과 동일하게 적용된다.
 
 ## 퀴즈 유형 (quiz 스텝 하나로)
 - `mcq`(5지선다) · `ox`(O/X) · `multi`(보기 합답형, 복수정답) · 그림 퀴즈(`figure` 추가).
