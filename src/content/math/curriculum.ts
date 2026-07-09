@@ -5,6 +5,8 @@ import { M1_UNIT1 } from "./unit1";
 import { M1_UNIT2 } from "./unit2";
 import { M1_UNIT3 } from "./unit3";
 import { M1_UNIT4 } from "./unit4";
+import { M1_UNIT5 } from "./unit5";
+import { M1_UNIT6 } from "./unit6";
 
 /** 준비 중 단원 자리, 콘텐츠가 완성되면 실제 UNIT 모듈로 교체한다. */
 const soon = (id: string, roman: string, title: string, subtitle: string, icon: string): Unit => ({
@@ -24,8 +26,8 @@ export const MATH_G1: Unit[] = [
   M1_UNIT2,
   M1_UNIT3,
   M1_UNIT4,
-  soon("m1u5", "V", "평면도형과 입체도형", "둘레·넓이·겉넓이·부피", "layers"),
-  soon("m1u6", "VI", "통계", "자료를 정리하고 읽는 법", "target"),
+  M1_UNIT5,
+  M1_UNIT6,
 ];
 
 // 중2 수학, 전부 준비 중(중1 Ⅰ 완성 후 순차 제작).

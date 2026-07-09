@@ -150,3 +150,74 @@ A stick figure office worker stamps papers at a desk: one rubber stamp in hand, 
 
 [42] file=public/math/cuts/u4l13.png (landscape 4:3, 스타일 A)
 A stick figure stands on a riverbank wearing a cap, using the cap's visor as a sight: a straight dashed sight-line runs from under the visor across the river to a rock on the far bank. Beside it, the same figure drawn again after turning in place, the identical dashed sight-line at the identical downward tilt now landing on a spot on the flat ground along the bank, marked with a small pebble pile. Only the two dashed sight-lines are teal; everything else pure black and white.
+
+# ══ 중1 Ⅴ 평면도형과 입체도형 → public/math/cuts ══
+
+[43] file=public/math/cuts/u5l1.png (landscape 4:3, 스타일 A)
+A stick figure carpenter reinforcing a pentagon-shaped wooden roof frame. The pentagon outline is built from five wooden beams, and the figure is pushing one long straight brace beam across the inside of the pentagon, connecting two non-neighboring corners, with visible effort. A small toolbox sits nearby. Only the single cross brace beam is teal; everything else pure black and white.
+
+[44] file=public/math/cuts/u5l2.png (landscape 4:3, 스타일 A)
+A stick figure at a table has torn a paper triangle into three corner pieces and rearranged them side by side along the edge of a ruler so their pointed corners meet at one spot, together forming a perfectly flat straight line. The figure leans down at eye level with the table, admiring how flat the row is, one hand flat above it as if checking levelness. Only the three torn corner pieces are teal; everything else pure black and white.
+
+[45] file=public/math/cuts/u5l3.png (landscape 4:3, 스타일 A)
+A stick figure snapping a large flat chocolate bar shaped like a hexagon into several clean triangular pieces on a table, all triangle pieces fanned out from one corner of the hexagon like slices. The figure holds up one triangular piece happily. Only the triangular chocolate pieces are teal; everything else pure black and white.
+
+[46] file=public/math/cuts/u5l4.png (landscape 4:3, 스타일 A)
+A stick figure jogging along a pentagon-shaped park path drawn as a loop, seen from above at a slight angle. The figure is rounding one corner mid-run, body leaning into the turn. At the starting point of the loop a small stick-figure dog waits, tail up, and footprint trails show the runner has gone almost all the way around. Only the pentagon path line is teal; everything else pure black and white.
+
+[47] file=public/math/cuts/u5l5.png (landscape 4:3, 스타일 A)
+A stick figure archer seen from the side, drawing a large bow with the string pulled far back to full tension, arrow ready, one eye squinting in aim at a distant round target on a stand. The bow body curves like an arc and the taut string makes a straight line between its two tips. Only the taut bowstring is teal; everything else pure black and white.
+
+[48] file=public/math/cuts/u5l6.png (landscape 4:3, 스타일 A)
+Two stick figures sitting side by side on a bench on a hot day. One holds a folding hand fan opened only a little, looking sweaty and disappointed with tiny motion lines of weak breeze. The other holds an identical folding fan opened wide into a big sector shape, hair blown back with strong breeze motion lines, delighted. Only the two fans are teal; everything else pure black and white.
+
+[49] file=public/math/cuts/u5l7.png (landscape 4:3, 스타일 A)
+A stick figure wrapping a soft measuring tape all the way around the rim of a large round pizza on a table, carefully reading where the tape meets itself. Next to the pizza lies a straight wooden stick exactly as long as the pizza is wide, placed across the middle for comparison. Only the measuring tape is teal; everything else pure black and white.
+
+[50] file=public/math/cuts/u5l8.png (landscape 4:3, 스타일 A)
+A stick figure assembling a box from several flat polygon cardboard panels spread on the floor, holding two panels together at an edge while the half-built box stands with some faces already joined. Every panel is perfectly flat with straight edges, no curved pieces anywhere. Only the panel currently being attached is teal; everything else pure black and white.
+
+[51] file=public/math/cuts/u5l9.png (landscape 4:3, 스타일 A)
+A stick figure museum curator in white gloves placing the last of five gem-like geometric solids onto a glass display shelf: a tetrahedron, a cube, an octahedron, a dodecahedron and an icosahedron, each on its own small pedestal. The figure handles the last one with great care, other hand raised as if presenting the collection. Only the solid currently being placed is teal; everything else pure black and white.
+
+[52] file=public/math/cuts/u5l10.png (landscape 4:3, 스타일 A)
+A stick figure spinning a large top on the floor, crouched with the pulling string still in hand. The top spins so fast that its blurred motion outline forms the smooth silhouette of a round vase, drawn with light whirl lines around it. The figure watches wide-eyed. Only the blurred vase-shaped spin outline is teal; everything else pure black and white.
+
+[53] file=public/math/cuts/u5l11.png (landscape 4:3, 스타일 A)
+A stick figure standing at a kitchen counter, holding up with both hands a paper label freshly peeled off a tin can, stretched out into a perfect flat rectangle. The bare shiny can stands on the counter beside them. The figure looks back and forth between the round can and the straight rectangular label in amazement. Only the unrolled rectangular label is teal; everything else pure black and white.
+
+[54] file=public/math/cuts/u5l12.png (landscape 4:3, 스타일 A)
+A stick figure pouring water from a cone-shaped paper cup into a tall cylinder-shaped glass of the same width and height, tongue out in concentration. Two more identical cone cups full of water wait in a row on the table, and the glass is only partly filled so far. Only the cone cups are teal; everything else pure black and white.
+
+[55] file=public/math/cuts/u5l13.png (landscape 4:3, 스타일 A)
+A stick figure at a table peeling a round orange and sorting the flat peel pieces evenly onto four identical round plates arranged in a row, one hand mid-placement. Each plate holds a similar small pile of peel pieces, and the naked peeled orange sits in the middle. Only the orange peel pieces are teal; everything else pure black and white.
+
+[56] file=public/math/cuts/u5l14.png (landscape 4:3, 스타일 A)
+A stick figure archaeologist kneeling in tall weeds, gently brushing moss off an old rounded gravestone with a small hand brush. On the stone, a carved engraving is being revealed: a circle fitted snugly inside a rectangle frame. The figure's face shows awe, brush frozen mid-stroke. Only the revealed carved engraving is teal; everything else pure black and white.
+
+[57] file=public/math/cuts/u6l1.png (landscape 4:3, 스타일 A)
+Five stick figures riding one long seesaw plank in a playground. Four of them sit bunched together near the middle of the plank, while one figure sits alone at the very far end, and the plank tilts steeply down toward that lone far sitter. A triangular pivot support stands under the plank. The bunched four wave their arms in surprise as they rise into the air. Only the lone far sitter is teal; everything else pure black and white.
+
+[58] file=public/math/cuts/u6l2.png (landscape 4:3, 스타일 A)
+A stick figure shop owner standing behind a small counter, proudly pointing with one arm at a wall shelf unit holding several stacks of identical round hats. One stack in the middle is piled clearly taller than every other stack, almost touching the shelf above. A small paper order pad rests on the counter, completely blank. Only the tallest hat stack is teal; everything else pure black and white.
+
+[59] file=public/math/cuts/u6l3.png (landscape 4:3, 스타일 A)
+A stick figure gardener carefully sticking leaves onto one long horizontal branch of a small bare tree, so the leaves line up in a neat row from smallest to largest along the branch. A basket of loose unsorted leaves sits on the ground. The figure holds the next leaf up to the branch, comparing sizes with squinting eyes. Only the leaf currently held in hand is teal; everything else pure black and white.
+
+[60] file=public/math/cuts/u6l4.png (landscape 4:3, 스타일 A)
+A stick figure sorting a big pile of round fruits into a row of five open wooden crates on a table, where each crate holds fruits of visibly increasing size from left to right: tiny ones in the leftmost crate, huge ones in the rightmost. The figure holds one medium fruit above the middle crate, about to drop it in. Only the fruit in hand is teal; everything else pure black and white.
+
+[61] file=public/math/cuts/u6l5.png (landscape 4:3, 스타일 A)
+A stick figure on a small ladder stringing one continuous rope across the tops of a row of stacked block towers of different heights, so the rope traces a mountain-shaped zigzag line from tower top to tower top down to the ground on both ends. The towers rise and fall like a skyline: low, taller, tallest in the middle, then lower again. Only the rope is teal; everything else pure black and white.
+
+[62] file=public/math/cuts/u6l6.png (landscape 4:3, 스타일 A)
+Two stick figures standing side by side on two separate weighing scales: a big burly figure on a large wide scale, and a small skinny figure on a small narrow scale, each scale sized to match its rider. Both scale dials are completely blank white circles with only a plain needle pointing, no marks of any kind on the dials. The two figures lean toward each other comparing, eyebrows raised. Only the two dial needles are teal; everything else pure black and white.
+
+[63] file=public/math/cuts/u6l7.png (landscape 4:3, 스타일 A)
+A stick figure detective in a deerstalker hat holding a large magnifying glass up to a big line chart standing on a wooden easel. On the chart a single line plunges steeply downward like a crash. Under the magnifying lens, the bottom of the chart's vertical axis is revealed to have a jagged zigzag break, as if the axis was snipped and shortened. The detective's other hand points at the break accusingly. Only the jagged axis break under the lens is teal; everything else pure black and white.
+
+[64] file=public/math/cuts/u6l1a.png (landscape 4:3, 스타일 A)
+A stick figure fishing contest by a pond: five stick figures stand in a row on the bank, each proudly holding up one fish of a clearly different size, from small to large. In front of them a reporter stick figure with a boxy doodle camera crouches and photographs exactly one medium fish in the middle of the row, ignoring the others. Only that one photographed medium fish is teal; everything else pure black and white.
+
+[65] file=public/math/cuts/u6l1b.png (landscape 4:3, 스타일 A)
+Five stick figures standing shoulder to shoulder in one straight line, arranged strictly by height like ascending stairs: shortest on the far left, tallest on the far right. The one exactly in the middle of the line beams with a big smile and holds up a small triangular pennant flag on a stick, while the two figures on each side politely clap. Only the pennant flag is teal; everything else pure black and white.

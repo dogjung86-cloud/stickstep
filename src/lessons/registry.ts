@@ -133,6 +133,24 @@ import { parallelLab } from "./steps/parallelLab";
 import { compassLab } from "./steps/compassLab";
 import { triBuildLab } from "./steps/triBuildLab";
 import { congLab } from "./steps/congLab";
+import { diagLab } from "./steps/diagLab";
+import { triSumLab } from "./steps/triSumLab";
+import { polySplitLab } from "./steps/polySplitLab";
+import { walkLab } from "./steps/walkLab";
+import { circleLab } from "./steps/circleLab";
+import { sectorLab } from "./steps/sectorLab";
+import { solidLab } from "./steps/solidLab";
+import { platonicLab } from "./steps/platonicLab";
+import { latheLab } from "./steps/latheLab";
+import { prismLab } from "./steps/prismLab";
+import { coneLab } from "./steps/coneLab";
+import { sphereLab } from "./steps/sphereLab";
+import { meanPullLab } from "./steps/meanPullLab";
+import { modeLab } from "./steps/modeLab";
+import { stemLab } from "./steps/stemLab";
+import { freqLab } from "./steps/freqLab";
+import { histoLab } from "./steps/histoLab";
+import { relFreqLab } from "./steps/relFreqLab";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -261,6 +279,24 @@ const R: Record<string, StepRenderer> = {
   compassLab,
   triBuildLab,
   congLab,
+  diagLab,
+  triSumLab,
+  polySplitLab,
+  walkLab,
+  circleLab,
+  sectorLab,
+  solidLab,
+  platonicLab,
+  latheLab,
+  prismLab,
+  coneLab,
+  sphereLab,
+  meanPullLab,
+  modeLab,
+  stemLab,
+  freqLab,
+  histoLab,
+  relFreqLab,
   quiz,
   table,
   order,

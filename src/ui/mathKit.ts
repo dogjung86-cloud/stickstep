@@ -70,12 +70,13 @@ function fmtCore(src: string): string {
         continue;
       }
     }
-    // 중괄호: {a/b} 숫자 분수만 분수로, 그 외({6-(3-5)} 같은 수학 중괄호)는 그룹 기호로 재귀 렌더
+    // 중괄호: {a/b} 분수(분자엔 n(n-3) 같은 괄호식도 허용 — Ⅴ 공식 카드),
+    // 그 외({6-(3-5)} 같은 수학 중괄호)는 그룹 기호로 재귀 렌더
     if (ch === "{") {
       const close = matchBrace(src, i);
       if (close > i) {
         const body = src.slice(i + 1, close);
-        const fr = body.match(/^([+-]?[0-9a-z.]+)\/([0-9a-z.]+)$/);
+        const fr = body.match(/^([+-]?[0-9a-z.()\-]+)\/([0-9a-z.]+)$/);
         if (fr) {
           out += fracHtml(fr[1], fr[2]);
         } else {
@@ -93,9 +94,9 @@ function fmtCore(src: string): string {
       i += m[0].length;
       continue;
     }
-    // 문자(변수, 이탤릭, 지수 지원): x, y, a, x^2 ...
-    if (/[a-z]/.test(ch)) {
-      const m = src.slice(i).match(/^([a-z])(?:\^(\d+))?/)!;
+    // 문자(변수, 이탤릭, 지수 지원): x, y, a, x^2 ...  π도 변수처럼(Ⅴ 원주율, πr^2)
+    if (/[a-zπ]/.test(ch)) {
+      const m = src.slice(i).match(/^([a-zπ])(?:\^(\d+))?/)!;
       out += `<i class="mx-v">${m[1]}</i>`;
       if (m[2]) out += `<sup>${m[2]}</sup>`;
       i += m[0].length;
@@ -332,7 +333,10 @@ export function mboard(minH: number): HTMLElement {
   return el("div", { class: "mboard", style: `min-height:${minH}px` });
 }
 
-/** 보드 위 다크 토스트. 반환 함수로 메시지를 띄운다. */
+/** 보드 위 다크 토스트. 반환 함수로 메시지를 띄운다.
+ *  지속 시간은 메시지 길이에 비례(base 1800ms + 글자당 35ms, 상한 4800ms)라
+ *  긴 안내도 읽을 시간을 준다. 연속 호출은 이전 타이머를 지우고
+ *  새 메시지 길이 기준으로 다시 잡는다(교체돼도 새 문구가 충분히 머문다). */
 export function mtoast(board: HTMLElement): (msg: string) => void {
   const t = el("div", { class: "mtoast" });
   board.appendChild(t);
@@ -341,7 +345,8 @@ export function mtoast(board: HTMLElement): (msg: string) => void {
     t.textContent = msg;
     t.classList.add("show");
     window.clearTimeout(timer);
-    timer = window.setTimeout(() => t.classList.remove("show"), 1900);
+    const dur = Math.min(4800, 1800 + msg.length * 35);
+    timer = window.setTimeout(() => t.classList.remove("show"), dur);
   };
 }
 

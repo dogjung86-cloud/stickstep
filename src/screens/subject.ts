@@ -95,7 +95,7 @@ export function subjectScreen(opts: {
       el("div", { class: "subj-desc", text: "중1, 계산이 아니라 감각으로" }),
       mstarted
         ? el("div", { class: "subj-meta", text: `레슨 ${mprog.done}개 완료 · ${currentStreak()}일 연속` })
-        : el("div", { class: "subj-meta", text: "수와 연산부터, 발견 랩 + 스프린트" }),
+        : el("div", { class: "subj-meta", text: "수와 연산부터, 발견 랩 + 스피드 퀴즈" }),
     ),
     el("div", { class: "subj-go", html: icon("chevron", 20) }),
   );

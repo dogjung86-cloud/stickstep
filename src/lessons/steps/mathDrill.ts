@@ -119,7 +119,7 @@ export const mathDrill: StepRenderer = (host, step, api) => {
     stripHost.innerHTML = "";
     pips.style.display = "none";
     const ok = firstTry / Math.max(1, items.length) >= passRatio;
-    summary.innerHTML = `<b>${items.length}문제 중 ${firstTry}문제</b>를 첫 시도에 해결했어요${ok ? ", 스프린트 성공!" : ", 오답을 한 번 더 살펴봐요"}`;
+    summary.innerHTML = `<b>${items.length}문제 중 ${firstTry}문제</b>를 첫 시도에 해결했어요${ok ? ", 스피드 퀴즈 성공!" : ", 오답을 한 번 더 살펴봐요"}`;
     haptic(ok ? HAPTIC.correct : HAPTIC.tap);
     api.recordQuiz(ok);
     api.setCTA(s.cta ?? "계속하기", { enabled: true, onClick: api.next, pop: true });

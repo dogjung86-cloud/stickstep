@@ -4,6 +4,7 @@
 // Ⅲ 좌표평면 그림은 mathKit의 planeSpec(축·모눈 단일 진실 공급원)을 재사용한다.
 import { planeSpec } from "./mathKit";
 import { angleArc, rightMark, tickMark, arrowHead, lineSvg, dot as gdot, ptLabel } from "./geoKit";
+import { frustumSolid, solidSvg } from "./solidKit";
 
 const POS = "#2F6FE4";
 const NEG = "#E8434F";
@@ -1269,4 +1270,559 @@ export function squareCurveFig(): string {
       `<text x="${X(2.6)}" y="${Y(5.7)}" font-size="11" font-weight="900" fill="${CYAN}">y=2x</text>` +
       `<text x="${X(6.9)}" y="${Y(4.9)}" font-size="11" font-weight="900" fill="${VIOLET}">y=a/x</text>`,
   );
+}
+
+/* ════════════════ Ⅴ 평면도형과 입체도형 그림 ════════════════ */
+
+const GREEN5 = "#2F9E44";
+const ROSE5 = "#E8547E";
+
+/** Ⅴ 공통: 정n각형 꼭짓점 좌표(중심 cx,cy 반지름 r, 시작각 a0 반시계). */
+function ngonPts(cx: number, cy: number, r: number, n: number, a0 = 90): { x: number; y: number }[] {
+  const pts: { x: number; y: number }[] = [];
+  for (let i = 0; i < n; i++) {
+    const a = ((a0 + (360 / n) * i) * Math.PI) / 180;
+    pts.push({ x: cx + r * Math.cos(a), y: cy - r * Math.sin(a) });
+  }
+  return pts;
+}
+const ptsPath = (pts: { x: number; y: number }[]): string =>
+  "M" + pts.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" L") + " Z";
+
+/** L1 대각선 판별 — 육각형 ABCDEF에 표시 선분 4개(㉠ 변 · ㉡ 대각선 · ㉢ 대각선 · ㉣ 꼭짓점→변 위 점 함정).
+ *  좌표: 중심 130,88 반지름 66, A 위(90°)에서 반시계 ABCDEF. */
+export function hexaDiagFig(): string {
+  const pts = ngonPts(130, 88, 66, 6);
+  const NAME = ["A", "B", "C", "D", "E", "F"];
+  const [A, B, C, D, E] = pts;
+  const M = { x: (D.x + E.x) / 2, y: (D.y + E.y) / 2 }; // 변 DE의 중간점(꼭짓점 아님)
+  const seg = (p: { x: number; y: number }, q: { x: number; y: number }, color: string): string =>
+    `<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${q.x.toFixed(1)}" y2="${q.y.toFixed(1)}" stroke="${color}" stroke-width="3.4" stroke-linecap="round"/>`;
+  const tag = (x: number, y: number, t: string, color: string): string =>
+    `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="10" fill="#fff" stroke="${color}" stroke-width="1.8"/>` +
+    `<text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="900" fill="${color}">${t}</text>`;
+  return svg(
+    "0 0 260 176",
+    `<path d="${ptsPath(pts)}" stroke="${INK}" stroke-width="2.6" fill="none" stroke-linejoin="round"/>` +
+      // ㉠ 변 AB(앰버) · ㉡ 대각선 BD(그린) · ㉢ 대각선 AD(시안) · ㉣ C→변 DE 중간점(로즈, 함정)
+      seg(A, B, AMBER) + tag((A.x + B.x) / 2 - 13, (A.y + B.y) / 2 - 7, "㉠", AMBER) +
+      seg(B, D, GREEN5) + tag((B.x + D.x) / 2 - 12, (B.y + D.y) / 2 - 8, "㉡", GREEN5) +
+      seg(A, D, CYAN) + tag((A.x + D.x) / 2 + 13, (A.y + D.y) / 2 - 4, "㉢", CYAN) +
+      seg(C, M, ROSE5) + tag((C.x + M.x) / 2, (C.y + M.y) / 2 + 13, "㉣", ROSE5) +
+      `<circle cx="${M.x.toFixed(1)}" cy="${M.y.toFixed(1)}" r="3.4" fill="${ROSE5}"/>` +
+      pts.map((p, i) => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.6" fill="${INK}"/>` +
+        `<text x="${(p.x + (p.x - 130) * 0.16).toFixed(1)}" y="${(p.y + (p.y - 88) * 0.2 + 4).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="900" fill="${INK}">${NAME[i]}</text>`).join(""),
+  );
+}
+
+/** Ⅴ recap 미니아트('geo'는 Ⅳ가 선점, Ⅴ는 solid 접두). 64×64 카드 아이콘. */
+export function solidMiniArt(key: string): string {
+  const penta = ngonPts(32, 34, 24, 5);
+  const A: Record<string, string> = {
+    // 오각형 + 대각선(별) — L1 대각선
+    diag:
+      `<path d="${ptsPath(penta)}" stroke="${INK}" stroke-width="2.6" fill="none" stroke-linejoin="round"/>` +
+      `<path d="M${penta[0].x.toFixed(1)} ${penta[0].y.toFixed(1)} L${penta[2].x.toFixed(1)} ${penta[2].y.toFixed(1)} L${penta[4].x.toFixed(1)} ${penta[4].y.toFixed(1)} L${penta[1].x.toFixed(1)} ${penta[1].y.toFixed(1)} L${penta[3].x.toFixed(1)} ${penta[3].y.toFixed(1)} Z" stroke="${GREEN5}" stroke-width="2.2" fill="none" stroke-linejoin="round"/>`,
+    // 한 꼭짓점에서 n-3 — 꼭짓점 하나 강조 + 대각선 2
+    vtx:
+      `<path d="${ptsPath(penta)}" stroke="${INK}" stroke-width="2.6" fill="none" stroke-linejoin="round"/>` +
+      `<line x1="${penta[0].x.toFixed(1)}" y1="${penta[0].y.toFixed(1)}" x2="${penta[2].x.toFixed(1)}" y2="${penta[2].y.toFixed(1)}" stroke="${GREEN5}" stroke-width="2.4"/>` +
+      `<line x1="${penta[0].x.toFixed(1)}" y1="${penta[0].y.toFixed(1)}" x2="${penta[3].x.toFixed(1)}" y2="${penta[3].y.toFixed(1)}" stroke="${GREEN5}" stroke-width="2.4"/>` +
+      `<circle cx="${penta[0].x.toFixed(1)}" cy="${penta[0].y.toFixed(1)}" r="5" fill="${GREEN5}"/>` +
+      `<line x1="${penta[0].x.toFixed(1)}" y1="${penta[0].y.toFixed(1)}" x2="${penta[1].x.toFixed(1)}" y2="${penta[1].y.toFixed(1)}" stroke="${ROSE5}" stroke-width="2" stroke-dasharray="3 4" opacity=".7"/>` +
+      `<line x1="${penta[0].x.toFixed(1)}" y1="${penta[0].y.toFixed(1)}" x2="${penta[4].x.toFixed(1)}" y2="${penta[4].y.toFixed(1)}" stroke="${ROSE5}" stroke-width="2" stroke-dasharray="3 4" opacity=".7"/>`,
+  };
+  return svg("0 0 64 64", A[key] ?? A.diag);
+}
+
+/** L2 삼각형 내각합 정당화(교과서 정석): BC 연장 + C에서 BA와 평행한 반직선 CE.
+ *  기하 검산: B(30,120) C(150,120) A(96,34), BA 기울기 52.5° = CE. ∠A=∠ACE=69.6(엇각, 앰버),
+ *  ∠B=∠ECD=52.5(동위각, 시안), ∠C=57.9(잉크). C에서 세 각 합 = 180. */
+export function triProofFig(): string {
+  const Bp = { x: 30, y: 120 };
+  const Cp = { x: 150, y: 120 };
+  const Dp = { x: 234, y: 120 };
+  const Ap = { x: 96, y: 34 };
+  const Ep = { x: 199.5, y: 55.5 };
+  return svg(
+    "0 0 260 152",
+    `<path d="M${Ap.x} ${Ap.y} L${Bp.x} ${Bp.y} L${Cp.x} ${Cp.y} Z" stroke="${INK}" stroke-width="2.6" fill="none" stroke-linejoin="round"/>` +
+      lineSvg(Cp.x, Cp.y, Dp.x, Dp.y, INK, 2.2, "6 5") + arrowHead(Dp.x, Dp.y, 0, INK, 6) +
+      lineSvg(Cp.x, Cp.y, Ep.x, Ep.y, FAINT, 2.2, "6 5") + arrowHead(Ep.x, Ep.y, 52.5, FAINT, 6) +
+      // C의 세 각(합 180): ∠BCA 잉크 · ∠ACE 앰버(=∠A 엇각) · ∠ECD 시안(=∠B 동위각)
+      angleArc(Cp.x, Cp.y, 20, 122.1, 180, INK, undefined, { fill: true, width: 2 }) +
+      angleArc(Cp.x, Cp.y, 26, 52.5, 122.1, AMBER, undefined, { fill: true, width: 2.2 }) +
+      angleArc(Cp.x, Cp.y, 20, 0, 52.5, CYAN, undefined, { fill: true, width: 2.2 }) +
+      angleArc(Ap.x, Ap.y, 18, 232.5, 302.1, AMBER, undefined, { fill: true, width: 2.2 }) +
+      angleArc(Bp.x, Bp.y, 18, 0, 52.5, CYAN, undefined, { fill: true, width: 2.2 }) +
+      ptLabel(Ap.x, Ap.y, "A", 0, -8) + ptLabel(Bp.x, Bp.y, "B", -9, 14) + ptLabel(Cp.x, Cp.y, "C", 2, 17) +
+      ptLabel(Dp.x, Dp.y, "D", 8, 14) + ptLabel(Ep.x, Ep.y, "E", 10, -4, FAINT) +
+      `<text x="112" y="16" font-size="10.5" font-weight="800" fill="${FAINT}">CE는 BA와 평행</text>`,
+  );
+}
+
+/** L2 내각 x 문제: ∠B=65° ∠C=48° x=∠A(=67).
+ *  기하 검산: B(60,138) C(200,138), BA 65°·CA 132° 교점 A(107.8, 35.6). */
+export function triAngleXFig(): string {
+  const Bp = { x: 60, y: 138 };
+  const Cp = { x: 200, y: 138 };
+  const Ap = { x: 107.8, y: 35.6 };
+  return svg(
+    "0 0 260 164",
+    `<path d="M${Ap.x} ${Ap.y} L${Bp.x} ${Bp.y} L${Cp.x} ${Cp.y} Z" stroke="${INK}" stroke-width="2.6" fill="none" stroke-linejoin="round"/>` +
+      angleArc(Bp.x, Bp.y, 20, 0, 65, CYAN, "65°", { fill: true, width: 2.2, labelR: 34 }) +
+      angleArc(Cp.x, Cp.y, 20, 115, 180, AMBER, "48°", { fill: true, width: 2.2, labelR: 34 }) +
+      angleArc(Ap.x, Ap.y, 17, 245, 312.1, ROSE5, undefined, { fill: true, width: 2.2 }) +
+      `<text x="${Ap.x + 4}" y="${Ap.y + 34}" text-anchor="middle" font-size="13" font-weight="900" fill="${ROSE5}" font-style="italic">x</text>` +
+      ptLabel(Ap.x, Ap.y, "A", 0, -8) + ptLabel(Bp.x, Bp.y, "B", -9, 14) + ptLabel(Cp.x, Cp.y, "C", 9, 14),
+  );
+}
+
+/** L2 외각 x 문제: ∠A=64° ∠B=38°, C의 외각 x(=102).
+ *  기하 검산: B(40,130) C(190,130) D(246,130), A(168.7, 29.5), 내각 C=78. */
+export function triExtXFig(): string {
+  const Bp = { x: 40, y: 130 };
+  const Cp = { x: 190, y: 130 };
+  const Dp = { x: 246, y: 130 };
+  const Ap = { x: 168.7, y: 29.5 };
+  return svg(
+    "0 0 270 158",
+    `<path d="M${Ap.x} ${Ap.y} L${Bp.x} ${Bp.y} L${Cp.x} ${Cp.y} Z" stroke="${INK}" stroke-width="2.6" fill="none" stroke-linejoin="round"/>` +
+      lineSvg(Cp.x, Cp.y, Dp.x, Dp.y, INK, 2.2, "6 5") + arrowHead(Dp.x, Dp.y, 0, INK, 6) +
+      angleArc(Bp.x, Bp.y, 20, 0, 38, CYAN, "38°", { fill: true, width: 2.2, labelR: 34 }) +
+      angleArc(Ap.x, Ap.y, 17, 218, 282, AMBER, "64°", { fill: true, width: 2.2, labelR: 30 }) +
+      angleArc(Cp.x, Cp.y, 20, 0, 102, ROSE5, undefined, { fill: true, width: 2.2 }) +
+      `<text x="${Cp.x + 25}" y="${Cp.y - 26}" text-anchor="middle" font-size="13" font-weight="900" fill="${ROSE5}" font-style="italic">x</text>` +
+      ptLabel(Ap.x, Ap.y, "A", 0, -8) + ptLabel(Bp.x, Bp.y, "B", -9, 14) + ptLabel(Cp.x, Cp.y, "C", -4, 17) + ptLabel(Dp.x, Dp.y, "D", 8, 14),
+  );
+}
+
+/** L4 외각의 합 문제: 오각형 다섯 외각 중 x 하나.
+ *  기하 검산(walkLab PENTA와 동일 좌표): 회전각 35°(V1)+88°(V2)+65°(V3)+81°(V4)+x(V0)=360, x=91°.
+ *  각 꼭짓점에서 들어온 변의 연장선(점선) ~ 나가는 변 사이 호가 외각. */
+export function polyExtXFig(): string {
+  const V = [
+    { x: 62, y: 176 },
+    { x: 182, y: 202 },
+    { x: 294, y: 156 },
+    { x: 252, y: 42 },
+    { x: 98, y: 30 },
+  ];
+  const n = V.length;
+  const head = (i: number): number => {
+    const a = V[i % n];
+    const b = V[(i + 1) % n];
+    return (Math.atan2(a.y - b.y, b.x - a.x) * 180) / Math.PI; // 수학 각도
+  };
+  const norm = (d: number): number => ((d % 360) + 360) % 360;
+  const pol2 = (cx: number, cy: number, r: number, a: number): { x: number; y: number } => ({
+    x: cx + r * Math.cos((a * Math.PI) / 180),
+    y: cy - r * Math.sin((a * Math.PI) / 180),
+  });
+  const LBL = ["<i>x</i>", "35°", "88°", "65°", "81°"]; // 도착 꼭짓점 V0 ~ V4 순
+  let marks = "";
+  for (let i = 0; i < n; i++) {
+    const arrive = (i + 1) % n; // 변 i를 걸어 도착하는 꼭짓점
+    const v = V[arrive];
+    const back = norm(head(i)); // 연장선 방향
+    const out = norm(head(arrive));
+    const ext = pol2(v.x, v.y, 30, back);
+    const sweepCCW = norm(out - back) <= 180;
+    const a0 = sweepCCW ? back : out;
+    const a1 = sweepCCW ? out : back;
+    const mid = pol2(v.x, v.y, 33, a0 + norm(a1 - a0) / 2);
+    const isX = arrive === 0;
+    const color = isX ? ROSE5 : CYAN;
+    marks +=
+      `<line x1="${v.x}" y1="${v.y}" x2="${ext.x.toFixed(1)}" y2="${ext.y.toFixed(1)}" stroke="${FAINT}" stroke-width="1.8" stroke-dasharray="4 3"/>` +
+      angleArc(v.x, v.y, 16, a0, a1, color, undefined, { fill: isX, width: 2.4 }) +
+      `<text x="${mid.x.toFixed(1)}" y="${(mid.y + 4).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="900" fill="${color}">${LBL[arrive]}</text>`;
+  }
+  return svg(
+    "0 0 340 236",
+    `<path d="M${V.map((p) => `${p.x} ${p.y}`).join(" L")} Z" stroke="${INK}" stroke-width="2.6" fill="none" stroke-linejoin="round"/>` + marks,
+  );
+}
+
+/** L5 원의 부품 판별: ㉠ 호(앰버) · ㉡ 현(시안) · ㉢ 할선(로즈) · ㉣ 반지름(그린). 중심 O(130,92) r 70. */
+export function circlePartsFig(): string {
+  const cx = 130;
+  const cy = 92;
+  const r = 70;
+  const pt = (a: number, rr = r): { x: number; y: number } => ({
+    x: cx + rr * Math.cos((a * Math.PI) / 180),
+    y: cy - rr * Math.sin((a * Math.PI) / 180),
+  });
+  const A = pt(150);
+  const B = pt(210);
+  const C = pt(20);
+  const D = pt(75);
+  const S0 = pt(255);
+  const tag = (x: number, y: number, t: string, color: string): string =>
+    `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="10" fill="#fff" stroke="${color}" stroke-width="1.8"/>` +
+    `<text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="900" fill="${color}">${t}</text>`;
+  // 할선: 원 위 두 점(255°, 330°)을 지나 양쪽으로 뚫고 나가는 직선
+  const S1 = pt(330);
+  const dx = S1.x - S0.x;
+  const dy = S1.y - S0.y;
+  const len = Math.hypot(dx, dy);
+  const ux = dx / len;
+  const uy = dy / len;
+  return svg(
+    "0 0 260 184",
+    `<circle cx="${cx}" cy="${cy}" r="${r}" stroke="${INK}" stroke-width="2.4" fill="none"/>` +
+      gdot(cx, cy, INK, 3.4) + ptLabel(cx, cy, "O", 0, -8) +
+      // ㉠ 호(150°→210°, 앰버 강조)
+      `<path d="M${A.x.toFixed(1)} ${A.y.toFixed(1)} A${r} ${r} 0 0 0 ${B.x.toFixed(1)} ${B.y.toFixed(1)}" stroke="${AMBER}" stroke-width="5" fill="none" stroke-linecap="round"/>` +
+      tag(A.x - 14, (A.y + B.y) / 2, "㉠", AMBER) +
+      // ㉡ 현(20°~75°)
+      lineSvg(C.x, C.y, D.x, D.y, CYAN, 3.2) + tag((C.x + D.x) / 2 + 14, (C.y + D.y) / 2, "㉡", CYAN) +
+      // ㉢ 할선(원을 뚫고 지나는 직선)
+      lineSvg(S0.x - ux * 26, S0.y - uy * 26, S1.x + ux * 26, S1.y + uy * 26, ROSE5, 2.6) +
+      tag(S1.x + ux * 26 + 6, S1.y + uy * 26 - 10, "㉢", ROSE5) +
+      // ㉣ 반지름(O→110°)
+      lineSvg(cx, cy, pt(110).x, pt(110).y, GREEN5, 3.2) + tag((cx + pt(110).x) / 2 - 13, (cy + pt(110).y) / 2, "㉣", GREEN5),
+  );
+}
+
+/** L5 binSort 미니 아이콘: sector 부채꼴 / segment 활꼴 / semi 반원. */
+export function sectorItemArt(kind: "sector" | "segment" | "semi"): string {
+  if (kind === "sector")
+    return svg("0 0 64 64", `<path d="M32 50 L10 22 A36 36 0 0 1 54 22 Z" fill="${AMBER}" opacity=".3" stroke="${AMBER}" stroke-width="2.4" stroke-linejoin="round"/>`);
+  if (kind === "segment")
+    return svg("0 0 64 64", `<path d="M12 40 A26 26 0 0 1 52 40 Z" fill="${CYAN}" opacity=".3" stroke="${CYAN}" stroke-width="2.4" stroke-linejoin="round"/>`);
+  return svg("0 0 64 64", `<path d="M10 38 A22 22 0 0 1 54 38 Z" fill="${GREEN5}" opacity=".3" stroke="${GREEN5}" stroke-width="2.4" stroke-linejoin="round"/>`);
+}
+
+/** L6 비례 문제: 같은 원의 두 부채꼴, 40°의 호 x cm · 120°의 호 9 cm(답 3). 중심 130,96 r 74. */
+export function sectorRatioFig(): string {
+  const cx = 130;
+  const cy = 100;
+  const r = 74;
+  const pt = (a: number, rr = r): { x: number; y: number } => ({
+    x: cx + rr * Math.cos((a * Math.PI) / 180),
+    y: cy - rr * Math.sin((a * Math.PI) / 180),
+  });
+  const a0 = pt(20);
+  const a1 = pt(60);
+  const b0 = pt(120);
+  const b1 = pt(240);
+  const la = pt(40, r + 15);
+  const lb = pt(180, r + 15);
+  const ta = pt(40, 42);
+ 
+  return svg(
+    "0 0 260 200",
+    `<circle cx="${cx}" cy="${cy}" r="${r}" stroke="${FAINT}" stroke-width="1.6" stroke-dasharray="4 5" fill="none"/>` +
+      gdot(cx, cy, INK, 3.4) + ptLabel(cx, cy, "O", 10, 4) +
+      `<path d="M${cx} ${cy} L${a0.x.toFixed(1)} ${a0.y.toFixed(1)} A${r} ${r} 0 0 0 ${a1.x.toFixed(1)} ${a1.y.toFixed(1)} Z" fill="${AMBER}" opacity=".2"/>` +
+      `<path d="M${a0.x.toFixed(1)} ${a0.y.toFixed(1)} A${r} ${r} 0 0 0 ${a1.x.toFixed(1)} ${a1.y.toFixed(1)}" stroke="${AMBER}" stroke-width="4.6" fill="none" stroke-linecap="round"/>` +
+      lineSvg(cx, cy, a0.x, a0.y, INK, 2.2) + lineSvg(cx, cy, a1.x, a1.y, INK, 2.2) +
+      `<text x="${ta.x.toFixed(1)}" y="${ta.y.toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="900" fill="${INK}">40°</text>` +
+      `<text x="${la.x.toFixed(1)}" y="${la.y.toFixed(1)}" text-anchor="middle" font-size="12" font-weight="900" fill="${AMBER}" font-style="italic">x cm</text>` +
+      `<path d="M${cx} ${cy} L${b0.x.toFixed(1)} ${b0.y.toFixed(1)} A${r} ${r} 0 0 0 ${b1.x.toFixed(1)} ${b1.y.toFixed(1)} Z" fill="${CYAN}" opacity=".16"/>` +
+      `<path d="M${b0.x.toFixed(1)} ${b0.y.toFixed(1)} A${r} ${r} 0 0 0 ${b1.x.toFixed(1)} ${b1.y.toFixed(1)}" stroke="${CYAN}" stroke-width="4.6" fill="none" stroke-linecap="round"/>` +
+      lineSvg(cx, cy, b0.x, b0.y, INK, 2.2) + lineSvg(cx, cy, b1.x, b1.y, INK, 2.2) +
+      `<text x="${(cx - 26).toFixed(1)}" y="${(cy - 6).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="900" fill="${INK}">120°</text>` +
+      `<text x="${lb.x.toFixed(1)}" y="${lb.y.toFixed(1)}" text-anchor="middle" font-size="12" font-weight="900" fill="${CYAN}">9 cm</text>`,
+  );
+}
+
+/** L7 계산 문제: 반지름 r cm·중심각 deg° 부채꼴(라벨만 다름, 재사용). */
+export function sectorCalcFig(r: number, deg: number): string {
+  const cx = 120;
+  const cy = 118;
+  const R = 86;
+  const pt = (a: number, rr = R): { x: number; y: number } => ({
+    x: cx + rr * Math.cos((a * Math.PI) / 180),
+    y: cy - rr * Math.sin((a * Math.PI) / 180),
+  });
+  const p0 = pt(0);
+  const p1 = pt(deg);
+  const lab = pt(deg / 2, 40);
+  const rl = pt(0, R / 2);
+  return svg(
+    "0 0 250 190",
+    `<path d="M${cx} ${cy} L${p0.x.toFixed(1)} ${p0.y.toFixed(1)} A${R} ${R} 0 ${deg > 180 ? 1 : 0} 0 ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} Z" fill="${GREEN5}" opacity=".18"/>` +
+      `<path d="M${p0.x.toFixed(1)} ${p0.y.toFixed(1)} A${R} ${R} 0 ${deg > 180 ? 1 : 0} 0 ${p1.x.toFixed(1)} ${p1.y.toFixed(1)}" stroke="${GREEN5}" stroke-width="4.6" fill="none" stroke-linecap="round"/>` +
+      lineSvg(cx, cy, p0.x, p0.y, INK, 2.4) + lineSvg(cx, cy, p1.x, p1.y, INK, 2.4) +
+      gdot(cx, cy, INK, 3.4) + ptLabel(cx, cy, "O", -4, 14) +
+      `<text x="${lab.x.toFixed(1)}" y="${(lab.y + 4).toFixed(1)}" text-anchor="middle" font-size="12.5" font-weight="900" fill="${ROSE5}">${deg}°</text>` +
+      `<text x="${rl.x.toFixed(1)}" y="${(rl.y + 16).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">${r} cm</text>`,
+  );
+}
+
+/** L8 각뿔대 겨냥도(solidKit 투영, 숨은 모서리 점선) — 옆면 모양 문제용. */
+export function frustumFig(): string {
+  return svg(
+    "0 0 260 190",
+    solidSvg(frustumSolid(5, 76, 40, 96), -0.5, -0.32, { cx: 130, cy: 95, faceFill: GREEN5, faceOpacity: 0.08 }),
+  );
+}
+
+/** L10 회전 문제: 직각삼각형 + 회전축 l (1회전시키면 생기는 입체 문제). */
+export function rotateProfileFig(): string {
+  const ax = 104;
+  return svg(
+    "0 0 260 190",
+    `<line x1="${ax}" y1="16" x2="${ax}" y2="174" stroke="${FAINT}" stroke-width="2" stroke-dasharray="7 6"/>` +
+      `<text x="${ax - 12}" y="26" font-size="12" font-weight="800" fill="${FAINT}" font-style="italic">l</text>` +
+      `<path d="M${ax} 46 L${ax + 78} 148 L${ax} 148 Z" fill="${GREEN5}" fill-opacity=".22" stroke="#1E7A31" stroke-width="2.6" stroke-linejoin="round"/>` +
+      rightMark(ax, 148, 0, 12, INK) +
+      `<path d="M${ax + 46} 30 a30 14 0 0 1 34 10" stroke="${ROSE5}" stroke-width="2.4" fill="none" stroke-linecap="round"/>` +
+      arrowHead(ax + 80, 40, -35, ROSE5, 6) +
+      `<text x="${ax + 66}" y="22" font-size="11.5" font-weight="800" fill="${ROSE5}">1회전</text>`,
+  );
+}
+
+/* ════════════════ Ⅵ 통계 그림 ════════════════ */
+
+const NAVY6 = "#364FC7";
+
+/** L1 자료 카드: 교과서식 자료 상자(제목 + 단위 + 변량 칩 한 줄, 5개 기준).
+ *  hot 인덱스는 극단값 강조(로즈). 좌표: 카드 4,4~316,98, 칩 y=50 높이 36. */
+export function statDataFig(vals: number[], opts: { title: string; unit: string; hot?: number }): string {
+  const n = vals.length;
+  const CW = 48;
+  const GAP = 10;
+  const x0 = (320 - (n * CW + (n - 1) * GAP)) / 2;
+  let chips = "";
+  vals.forEach((v, i) => {
+    const hot = opts.hot === i;
+    const x = x0 + i * (CW + GAP);
+    chips +=
+      `<rect x="${x.toFixed(1)}" y="50" width="${CW}" height="36" rx="9" fill="${hot ? "#FDEDF2" : "#EEF1FB"}" stroke="${hot ? ROSE5 : "#B9C3EE"}" stroke-width="1.6"/>` +
+      `<text x="${(x + CW / 2).toFixed(1)}" y="74" text-anchor="middle" font-size="15" font-weight="900" fill="${hot ? "#C0355C" : "#2839A0"}">${v}</text>`;
+  });
+  return svg(
+    "0 0 320 102",
+    `<rect x="4" y="4" width="312" height="94" rx="14" fill="#FFFFFF" stroke="#DDE3EC" stroke-width="1.5"/>` +
+      `<text x="20" y="33" font-size="12.5" font-weight="900" fill="${INK}">${opts.title}</text>` +
+      `<text x="302" y="33" text-anchor="end" font-size="10" font-weight="700" fill="${FAINT}">(단위: ${opts.unit})</text>` +
+      chips,
+  );
+}
+
+/** L1 중앙값 절차 그림: 밥값 정렬(7 8 8 9 33) + 한가운데 깃발 + 양쪽 2개 브래킷.
+ *  좌표: 칩 y=84 높이 38, 가운데 칩 중심 x=160, 깃발 y=30~50, 브래킷 y=130~152. */
+export function medianOrderFig(): string {
+  const vals = [7, 8, 8, 9, 33];
+  const CW = 50;
+  const GAP = 10;
+  const x0 = (320 - (5 * CW + 4 * GAP)) / 2; // 15
+  let out = `<text x="15" y="18" font-size="10.5" font-weight="800" fill="${FAINT}">작은 값부터 크기순으로 나열!</text>`;
+  vals.forEach((v, i) => {
+    const x = x0 + i * (CW + GAP);
+    const mid = i === 2;
+    const hot = i === 4;
+    out +=
+      `<rect x="${x}" y="84" width="${CW}" height="38" rx="10" fill="${mid ? "#FDEDF2" : "#FFFFFF"}" stroke="${mid ? ROSE5 : hot ? "#E8A0B6" : "#C6CEEE"}" stroke-width="${mid ? 2.4 : 1.6}"/>` +
+      `<text x="${x + CW / 2}" y="109" text-anchor="middle" font-size="16" font-weight="900" fill="${mid ? "#C0355C" : hot ? "#D06A8B" : "#2839A0"}">${v}</text>`;
+  });
+  const cx = x0 + 2 * (CW + GAP) + CW / 2; // 160
+  out +=
+    `<line x1="${cx}" y1="82" x2="${cx}" y2="34" stroke="${ROSE5}" stroke-width="2.6"/>` +
+    `<path d="M${cx} 30 h66 l-9 10 9 10 h-66 Z" fill="${ROSE5}"/>` +
+    `<text x="${cx + 30}" y="44" text-anchor="middle" font-size="10.5" font-weight="900" fill="#FFFFFF">중앙값 8</text>`;
+  const brk = (xa: number, xb: number): string =>
+    `<path d="M${xa} 130 v6 h${xb - xa} v-6" stroke="${FAINT}" stroke-width="1.6" fill="none"/>` +
+    `<text x="${(xa + xb) / 2}" y="152" text-anchor="middle" font-size="10.5" font-weight="800" fill="${FAINT}">2개</text>`;
+  out += brk(x0 + 2, x0 + CW * 2 + GAP - 2) + brk(x0 + 3 * (CW + GAP) + 2, x0 + 4 * (CW + GAP) + CW - 2);
+  return svg("0 0 320 160", out);
+}
+
+/** Ⅵ 점 자료 그림: 수직선 위 변량 점 + 평균 마커(▲, 축 아래)와 중앙값 깃발(축 위).
+ *  해석 문제용. hot 값은 로즈(극단값), 같은 값은 세로 스택. */
+export function dotPlotFig(
+  vals: number[],
+  opts: { lo: number; hi: number; tick: number; unit: string; mean?: number; median?: number; hot?: number },
+): string {
+  const W7 = 320;
+  const AXY = 108;
+  const X = (v: number): number => 24 + ((v - opts.lo) / (opts.hi - opts.lo)) * (W7 - 48);
+  let out = `<line x1="${X(opts.lo) - 8}" y1="${AXY}" x2="${X(opts.hi) + 8}" y2="${AXY}" stroke="${FAINT}" stroke-width="2" stroke-linecap="round"/>`;
+  for (let v = opts.lo; v <= opts.hi; v += opts.tick) {
+    out += `<line x1="${X(v)}" y1="${AXY - 5}" x2="${X(v)}" y2="${AXY + 5}" stroke="#C2CBD6" stroke-width="1.4"/>`;
+    if (v < opts.hi) // 마지막 눈금 숫자는 단위 라벨과 겹치므로 생략
+      out += `<text x="${X(v)}" y="${AXY + 20}" text-anchor="middle" font-size="9.5" font-weight="700" fill="${FAINT}">${v}</text>`;
+  }
+  out += `<text x="${W7 - 4}" y="${AXY + 20}" text-anchor="end" font-size="9" font-weight="700" fill="${FAINT}">(${opts.unit})</text>`;
+  const seen: Record<string, number> = {};
+  vals.forEach((v) => {
+    const k = String(v);
+    const s = seen[k] ?? 0;
+    seen[k] = s + 1;
+    const hot = opts.hot === v;
+    out += `<circle cx="${X(v).toFixed(1)}" cy="${AXY - 12 - s * 15}" r="5.5" fill="${hot ? ROSE5 : NAVY6}" stroke="${hot ? "#B23A48" : "#1F2E8C"}" stroke-width="1.4"/>`;
+  });
+  if (opts.median !== undefined) {
+    const mx = X(opts.median);
+    out +=
+      `<line x1="${mx.toFixed(1)}" y1="${AXY - 24}" x2="${mx.toFixed(1)}" y2="${AXY - 62}" stroke="${ROSE5}" stroke-width="2.2"/>` +
+      `<path d="M${mx.toFixed(1)} ${AXY - 62} h58 l-8 9 8 9 h-58 Z" fill="${ROSE5}"/>` +
+      `<text x="${(mx + 29).toFixed(1)}" y="${AXY - 49.5}" text-anchor="middle" font-size="9.5" font-weight="900" fill="#FFFFFF">중앙값 ${opts.median}</text>`;
+  }
+  if (opts.mean !== undefined) {
+    const gx = X(opts.mean);
+    out +=
+      `<path d="M${gx.toFixed(1)} ${AXY + 3} l-8 13 h16 Z" fill="${NAVY6}"/>` +
+      `<text x="${gx.toFixed(1)}" y="${AXY + 34}" text-anchor="middle" font-size="10" font-weight="900" fill="${NAVY6}">평균 ${opts.mean}</text>`;
+  }
+  return svg(`0 0 ${W7} 148`, out);
+}
+
+/** Ⅵ 공용 히스토그램/도수분포다각형 그림.
+ *  freqs: 도수 배열, x0: 첫 계급 시작값, cw: 계급 크기. opts.poly면 다각형(양 끝 0 포함) 오버레이. */
+export function histoFig(
+  freqs: number[],
+  x0: number,
+  cw: number,
+  opts: { poly?: boolean; barsOff?: boolean; xUnit?: string; yUnit?: string; yMax?: number } = {},
+): string {
+  const n = freqs.length;
+  const yMax = opts.yMax ?? Math.max(...freqs) + 1;
+  const W6 = 300;
+  const H6 = 190;
+  const L = 34;
+  const AXY = 158;
+  const bw = (W6 - L - 20) / n;
+  const ty = (f: number): number => AXY - (f / yMax) * 120;
+  let out = "";
+  // 눈금
+  for (let f = 1; f <= yMax; f++) {
+    if (yMax > 8 && f % 2 === 1) continue;
+    out += `<line x1="${L}" y1="${ty(f)}" x2="${W6 - 12}" y2="${ty(f)}" stroke="#EDF0F6" stroke-width="1.1"/><text x="${L - 8}" y="${ty(f) + 3.5}" text-anchor="middle" font-size="8.5" font-weight="700" fill="${FAINT}">${f}</text>`;
+  }
+  out += `<line x1="${L}" y1="${AXY}" x2="${W6 - 12}" y2="${AXY}" stroke="${INK}" stroke-width="1.8"/>`;
+  out += `<line x1="${L}" y1="${AXY}" x2="${L}" y2="${ty(yMax) - 8}" stroke="${INK}" stroke-width="1.8"/>`;
+  for (let i = 0; i <= n; i++)
+    out += `<text x="${(L + i * bw).toFixed(1)}" y="${AXY + 14}" text-anchor="middle" font-size="8.5" font-weight="700" fill="${FAINT}">${x0 + i * cw}</text>`;
+  if (opts.xUnit) out += `<text x="${W6 - 10}" y="${AXY + 27}" text-anchor="end" font-size="8" font-weight="700" fill="${FAINT}">(${opts.xUnit})</text>`;
+  if (opts.yUnit) out += `<text x="${L - 14}" y="${ty(yMax) - 12}" font-size="8" font-weight="700" fill="${FAINT}">(${opts.yUnit})</text>`;
+  if (!opts.barsOff)
+    freqs.forEach((f, i) => {
+      out += `<rect x="${(L + i * bw).toFixed(1)}" y="${ty(f).toFixed(1)}" width="${bw.toFixed(1)}" height="${(AXY - ty(f)).toFixed(1)}" fill="#8B99EE" fill-opacity=".45" stroke="${NAVY6}" stroke-width="1.4"/>`;
+    });
+  if (opts.poly) {
+    const pts: [number, number][] = [[L - bw / 2, AXY]];
+    freqs.forEach((f, i) => pts.push([L + i * bw + bw / 2, ty(f)]));
+    pts.push([L + n * bw + bw / 2, AXY]);
+    const d = pts.map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
+    out += `<path d="${d}" stroke="${ROSE5}" stroke-width="2.2" fill="none" stroke-linejoin="round"/>`;
+    out += pts.map(([x, y]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.8" fill="#FFFFFF" stroke="${ROSE5}" stroke-width="1.8"/>`).join("");
+  }
+  return svg(`0 0 ${W6} ${H6}`, out);
+}
+
+/** L6 상대도수 비교: 두 집단의 도수분포다각형 모양 그래프(A가 오른쪽으로 치우침). */
+export function relCompareFig(): string {
+  // 좌표: y축 x=30, 계급 경계 4~9시간은 x=64+i·40(64~264), 유령 계급 중앙 44/284 — 양 끝 0점이 축 안에 든다.
+  const W6 = 300;
+  const AXY = 156;
+  const XB = (i: number): number => 64 + i * 40; // 경계(4+i 시간)의 x
+  const ty = (r: number): number => AXY - r * 340;
+  const A = [0.05, 0.15, 0.25, 0.35, 0.2];
+  const B = [0.24, 0.3, 0.26, 0.14, 0.06];
+  const line6 = (arr: number[], color: string): string => {
+    const pts: [number, number][] = [[XB(0) - 20, AXY]]; // 왼쪽 유령 계급 중앙(0)
+    arr.forEach((r, i) => pts.push([XB(i) + 20, ty(r)]));
+    pts.push([XB(arr.length) + 20, AXY]); // 오른쪽 유령 계급 중앙(0)
+    const d = pts.map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
+    return (
+      `<path d="${d}" stroke="${color}" stroke-width="2.2" fill="none" stroke-linejoin="round"/>` +
+      pts.map(([x, y]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6" fill="#FFFFFF" stroke="${color}" stroke-width="1.7"/>`).join("")
+    );
+  };
+  let out = "";
+  [0.1, 0.2, 0.3].forEach((r) => {
+    out += `<line x1="30" y1="${ty(r)}" x2="${W6 - 8}" y2="${ty(r)}" stroke="#EDF0F6" stroke-width="1.1"/><text x="24" y="${ty(r) + 3.5}" text-anchor="end" font-size="8.5" font-weight="700" fill="${FAINT}">${r}</text>`;
+  });
+  out += `<line x1="30" y1="${AXY}" x2="${W6 - 8}" y2="${AXY}" stroke="${INK}" stroke-width="1.8"/><line x1="30" y1="${AXY}" x2="30" y2="24" stroke="${INK}" stroke-width="1.8"/>`;
+  for (let i = 0; i <= 5; i++)
+    out += `<text x="${XB(i)}" y="${AXY + 14}" text-anchor="middle" font-size="8.5" font-weight="700" fill="${FAINT}">${4 + i}</text>`;
+  out += `<text x="${W6 - 8}" y="${AXY + 27}" text-anchor="end" font-size="8" font-weight="700" fill="${FAINT}">(시간)</text>`;
+  out += `<text x="14" y="16" font-size="8" font-weight="700" fill="${FAINT}">(상대도수)</text>`;
+  out += line6(A, NAVY6) + line6(B, GREEN5);
+  out += `<rect x="224" y="18" width="11" height="11" rx="3" fill="${NAVY6}"/><text x="240" y="27" font-size="9.5" font-weight="800" fill="${INK}">A 동아리</text>`;
+  out += `<rect x="224" y="36" width="11" height="11" rx="3" fill="${GREEN5}"/><text x="240" y="45" font-size="9.5" font-weight="800" fill="${INK}">B 동아리</text>`;
+  return svg(`0 0 ${W6} 186`, out);
+}
+
+/** L7 눈금 조작 그림: 같은 자료(94→91), 왼쪽 정상 축(0~100) vs 오른쪽 확대 축(90~95). */
+export function fakeAxisFig(): string {
+  const panel = (x: number, title: string, y0: number, y1: number, color: string, drop: string): string => {
+    const ty = (v: number): number => 150 - ((v - y0) / (y1 - y0)) * 100;
+    const pts = [94, 93, 91];
+    const d = pts.map((v, i) => `${i === 0 ? "M" : "L"}${x + 24 + i * 38} ${ty(v).toFixed(1)}`).join(" ");
+    return (
+      `<rect x="${x}" y="16" width="136" height="160" rx="10" fill="#FFFFFF" stroke="#DDE3EC" stroke-width="1.4"/>` +
+      `<text x="${x + 68}" y="34" text-anchor="middle" font-size="10" font-weight="900" fill="${color}">${title}</text>` +
+      `<line x1="${x + 16}" y1="150" x2="${x + 124}" y2="150" stroke="${FAINT}" stroke-width="1.5"/>` +
+      `<line x1="${x + 16}" y1="150" x2="${x + 16}" y2="42" stroke="${FAINT}" stroke-width="1.5"/>` +
+      `<text x="${x + 12}" y="${ty(y1) + 3}" text-anchor="end" font-size="7.5" font-weight="700" fill="${FAINT}">${y1}</text>` +
+      `<text x="${x + 12}" y="153" text-anchor="end" font-size="7.5" font-weight="700" fill="${FAINT}">${y0}</text>` +
+      `<path d="${d}" stroke="${color}" stroke-width="2.4" fill="none" stroke-linecap="round"/>` +
+      pts.map((v, i) => `<circle cx="${x + 24 + i * 38}" cy="${ty(v).toFixed(1)}" r="3" fill="#FFFFFF" stroke="${color}" stroke-width="1.8"/>`).join("") +
+      `<text x="${x + 68}" y="170" text-anchor="middle" font-size="9" font-weight="800" fill="${color}">${drop}</text>`
+    );
+  };
+  return svg(
+    "0 0 300 186",
+    panel(6, "그래프 ㄱ (0부터)", 0, 100, NAVY6, "거의 그대로네") + panel(158, "그래프 ㄴ (90부터)", 90, 95, ROSE5, "대폭락이야!"),
+  );
+}
+
+/** Ⅵ recap 미니아트('stat' 접두). 64×64 카드 아이콘. */
+export function statMiniArt(key: string): string {
+  const towers = [[12, 3], [26, 5], [40, 2]]
+    .map(([x, c]) =>
+      Array.from({ length: c }, (_, k) => `<rect x="${x}" y="${48 - k * 9}" width="12" height="8" rx="2" fill="${x === 26 ? NAVY6 : "#8B99EE"}"/>`).join(""),
+    )
+    .join("");
+  const stems = [0, 1, 2]
+    .map(
+      (r) =>
+        `<text x="14" y="${22 + r * 14}" font-size="11" font-weight="900" fill="${NAVY6}">${r + 1}</text>` +
+        Array.from({ length: [2, 4, 1][r] }, (_, k) => `<circle cx="${32 + k * 8}" cy="${18 + r * 14}" r="2.6" fill="${INK}"/>`).join(""),
+    )
+    .join("");
+  const A: Record<string, string> = {
+    seesaw:
+      `<path d="M27 48 L32 38 L37 48 Z" fill="${AMBER}" stroke="#8C5A12" stroke-width="1.4"/>` +
+      `<rect x="8" y="31" width="48" height="4.5" rx="2.2" fill="${NAVY6}" transform="rotate(-7 32 33)"/>` +
+      `<circle cx="14" cy="26" r="4.5" fill="${CYAN}"/>` +
+      `<circle cx="50" cy="31" r="6.5" fill="${ROSE5}"/>`,
+    pull:
+      `<line x1="8" y1="44" x2="56" y2="44" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>` +
+      `<circle cx="13" cy="36" r="3.4" fill="${NAVY6}"/><circle cx="20" cy="36" r="3.4" fill="${NAVY6}"/><circle cx="20" cy="28" r="3.4" fill="${NAVY6}"/><circle cx="27" cy="36" r="3.4" fill="${NAVY6}"/>` +
+      `<circle cx="52" cy="36" r="4.4" fill="${ROSE5}"/>` +
+      `<path d="M33 47 l-6 10 h12 Z" fill="${AMBER}" stroke="#8C5A12" stroke-width="1.2"/>` +
+      `<path d="M21 60 h9 m0 0 l-4 -3.4 m4 3.4 l-4 3.4" stroke="${AMBER}" stroke-width="1.8" stroke-linecap="round"/>`,
+    flag:
+      `<line x1="14" y1="52" x2="52" y2="52" stroke="${INK}" stroke-width="2.4" stroke-linecap="round"/>` +
+      `<circle cx="18" cy="52" r="2.4" fill="${NAVY6}"/><circle cx="26" cy="52" r="2.4" fill="${NAVY6}"/><circle cx="34" cy="52" r="2.4" fill="${ROSE5}"/><circle cx="42" cy="52" r="2.4" fill="${NAVY6}"/><circle cx="50" cy="52" r="2.4" fill="${NAVY6}"/>` +
+      `<line x1="34" y1="50" x2="34" y2="18" stroke="${ROSE5}" stroke-width="2.2"/>` +
+      `<path d="M34 18 h16 l-5 5 5 5 h-16 Z" fill="${ROSE5}"/>`,
+    tower: towers + `<path d="M27 12 l3 -6 4 4 4 -4 3 6 Z" fill="${AMBER}" stroke="#8C5A12" stroke-width="1"/>`,
+    stems: `<line x1="24" y1="12" x2="24" y2="52" stroke="${INK}" stroke-width="2"/>` + stems,
+    bars:
+      `<line x1="10" y1="52" x2="54" y2="52" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>` +
+      `<rect x="12" y="42" width="10" height="10" fill="#8B99EE" stroke="${NAVY6}" stroke-width="1.2"/>` +
+      `<rect x="22" y="30" width="10" height="22" fill="#8B99EE" stroke="${NAVY6}" stroke-width="1.2"/>` +
+      `<rect x="32" y="18" width="10" height="34" fill="#8B99EE" stroke="${NAVY6}" stroke-width="1.2"/>` +
+      `<rect x="42" y="34" width="10" height="18" fill="#8B99EE" stroke="${NAVY6}" stroke-width="1.2"/>`,
+    poly:
+      `<line x1="10" y1="52" x2="54" y2="52" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>` +
+      `<path d="M10 52 L18 42 L27 26 L36 18 L45 36 L54 52" stroke="${ROSE5}" stroke-width="2.4" fill="none" stroke-linejoin="round"/>` +
+      `<circle cx="18" cy="42" r="2.6" fill="#FFFFFF" stroke="${ROSE5}" stroke-width="1.6"/><circle cx="27" cy="26" r="2.6" fill="#FFFFFF" stroke="${ROSE5}" stroke-width="1.6"/><circle cx="36" cy="18" r="2.6" fill="#FFFFFF" stroke="${ROSE5}" stroke-width="1.6"/><circle cx="45" cy="36" r="2.6" fill="#FFFFFF" stroke="${ROSE5}" stroke-width="1.6"/>`,
+    ratio:
+      `<circle cx="32" cy="32" r="20" fill="#8B99EE"/>` +
+      `<path d="M32 32 L32 12 A20 20 0 0 1 51 38 Z" fill="${AMBER}" stroke="#FFFFFF" stroke-width="1.6"/>`,
+    magnify:
+      `<line x1="10" y1="50" x2="54" y2="50" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>` +
+      `<path d="M12 40 L26 36 L40 30 L52 20" stroke="${NAVY6}" stroke-width="2.4" fill="none"/>` +
+      `<circle cx="40" cy="30" r="10" fill="none" stroke="${ROSE5}" stroke-width="2.4"/>` +
+      `<line x1="47" y1="38" x2="54" y2="46" stroke="${ROSE5}" stroke-width="3" stroke-linecap="round"/>`,
+  };
+  return svg("0 0 64 64", A[key] ?? A.bars);
 }

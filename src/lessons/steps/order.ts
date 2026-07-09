@@ -31,7 +31,8 @@ export const order: StepRenderer = (host, step, api) => {
 
   const n = s.items.length;
   const placed: (number | null)[] = Array(n).fill(null); // 슬롯별 origIndex
-  const inPool = new Set(shuffled(n));
+  const poolOrder = shuffled(n); // 풀 표시 순서: 섞되 고정(회수한 칩이 제자리로 돌아가 안정적)
+  const inPool = new Set(poolOrder);
   let locked = false;
 
   const slotsBox = el("div", { class: "ord-slots" });
@@ -59,7 +60,7 @@ export const order: StepRenderer = (host, step, api) => {
     });
 
     clear(poolBox);
-    Array.from(inPool).sort((a, b) => a - b).forEach((orig) => {
+    poolOrder.filter((orig) => inPool.has(orig)).forEach((orig) => {
       const chip = el("button", { class: "ord-chip", html: s.items[orig] });
       chip.addEventListener("click", () => {
         if (locked) return;
