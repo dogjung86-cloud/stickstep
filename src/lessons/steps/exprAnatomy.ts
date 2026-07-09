@@ -51,10 +51,16 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
   ]);
 
   const board = mboard(300);
+  // 질문 바 — 질문은 반드시 조작 대상(조각·선택지)보다 위에 보여야 한다(질문이 helper에만 있던 실사용 피드백).
+  const qbar = el("div", {
+    style: "padding:12px 16px 0; font-size:14px; font-weight:700; color:#2A3040; text-align:center; line-height:1.5;",
+    html: "식은 <b>+로 이어진 조각</b>들로 이루어져요. 그 조각이 <b>항</b>! 5x+8에서 항을 <b>모두</b> 탭하세요",
+  });
+  board.appendChild(qbar);
   const stage = el("div", {
     style:
       "display:flex; align-items:flex-start; justify-content:center; gap:10px;" +
-      " padding:30px 12px 10px; min-height:136px;" +
+      " padding:20px 12px 10px; min-height:126px;" +
       " transition:opacity .26s var(--ease-out), transform .26s var(--ease-out)",
     attrs: { role: "group", "aria-label": "식 조각" },
   });
@@ -62,7 +68,7 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
   const toast = mtoast(board);
   const helper = el("div", {
     class: "helper",
-    html: "식은 <b>+로 이어진 조각</b>들로 이루어져요, 그 조각 하나하나가 <b>항</b>! 5x+8에서 항을 <b>모두</b> 탭하세요.",
+    html: "조각을 잘못 짚어도 괜찮아요, 왜 아닌지 알려 줄게요!",
   });
   host.append(chips.el, board, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -171,7 +177,7 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
         phase = "A2";
         toast("항 2개 발견!");
         later(() => {
-          helper.innerHTML = "잘했어요! 이 중 <b>상수항</b>, 문자 없이 수만 있는 항은 어느 것일까요?";
+          qbar.innerHTML = "잘했어요! 이 중 <b>상수항</b>, 문자 없이 수만 있는 항은 어느 것일까요?";
         }, 550);
       } else {
         toast("하나 찾았어요, 항이 또 있어요!");
@@ -220,7 +226,7 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
         tag(p8, "상수항", "amber");
         toast("문자 없이 수만, 8이 상수항!");
         later(() => {
-          helper.innerHTML = "이번엔 x의 <b>계수</b>는 어디 숨었을까요? 문자 앞에 곱해진 수를 품은 조각을 탭!";
+          qbar.innerHTML = "이번엔 x의 <b>계수</b>는 어디 숨었을까요? 문자 앞에 곱해진 수를 품은 조각을 탭!";
         }, 550);
       } else if (phase === "A3") {
         shake(p8.btn);
@@ -234,7 +240,8 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
   function buildB(): void {
     phase = "B";
     clear(stage);
-    helper.innerHTML = "새 식 <b>3x−2</b>가 왔어요. 이 식의 <b>항 2개</b>를 탭하세요, 방심 금지!";
+    qbar.innerHTML = "새 식 <b>3x−2</b>가 왔어요. 이 식의 <b>항 2개</b>를 탭하세요, 방심 금지!";
+    helper.innerHTML = "뺄셈이 섞이면 항의 부호를 조심해요!";
 
     const p3x = piece(mfmt("3x"), { aria: "3x 조각" });
     const pMinus = piece(HTML_MINUS, { op: true, aria: "빼기 기호" });
@@ -275,7 +282,7 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
         p2.wrap.remove();
         pn2.btn.style.animation = "mansPop .4s var(--spring-bounce)";
         pn2.btn.style.boxShadow = "0 0 0 4px var(--subj-num-tint)";
-        helper.innerHTML = "빼기 2는 <b>+(−2)</b>로 읽어요, 부호까지 한 몸인 <b>−2</b>를 통째로 탭하세요!";
+        qbar.innerHTML = "빼기 2는 <b>+(−2)</b>로 읽어요, 부호까지 한 몸인 <b>−2</b>를 통째로 탭하세요!";
         pn2.btn.addEventListener("click", () => {
           if (gotN2) return;
           gotN2 = true;
@@ -302,8 +309,9 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
     stage.appendChild(
       el("div", { class: "mdr-q slidein", style: "margin:0; flex:1; font-size:29px", html: mfmt("5x+8") }),
     );
-    helper.innerHTML =
-      "마지막, <b>5x+8</b>의 <b>차수</b>는? 항에서 문자가 곱해진 개수가 차수, 식의 차수는 그중 <b>가장 큰</b> 것이에요.";
+    qbar.innerHTML =
+      "마지막, <b>5x+8</b>의 <b>차수</b>는? 항에서 문자가 곱해진 개수가 차수, 식의 차수는 그중 <b>가장 큰</b> 것!";
+    helper.innerHTML = "5x에서 x는 몇 번 곱해져 있을까요?";
 
     const defs: { t: string; ok: boolean; why?: string }[] = [
       { t: "1", ok: true },

@@ -127,7 +127,11 @@ export const refractLab: StepRenderer = (host, step, api) => {
   // ---- 예측 흐름 ----
   function startPredict(): void {
     phase = "predict";
-    helper.innerHTML = "빛이 물속으로 들어가며 <b>법선 쪽으로 꺾였어요</b>. 그럼 입사각을 <b>더 크게</b> 하면 굴절각은 어떻게 될까요?";
+    // 질문은 선택지 위(.hook-q)에 — helper는 선택지 아래라 질문이 안 보인다(실사용 피드백 2026-07-10).
+    choices.appendChild(
+      el("div", { class: "hook-q", html: "빛이 물속으로 들어가며 <b>법선 쪽으로 꺾였어요</b>. 그럼 입사각을 <b>더 크게</b> 하면 굴절각은 어떻게 될까요?" }),
+    );
+    helper.innerHTML = "정답을 몰라도 괜찮아요. 직감으로 하나를 골라 보세요!";
     const opts = ["굴절각도 함께 커진다", "굴절각은 그대로다", "굴절각은 오히려 작아진다"];
     opts.forEach((label, i) => {
       const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" }, text: label });

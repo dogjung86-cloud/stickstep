@@ -26,6 +26,14 @@ export interface AskOpts {
 }
 
 export function ask(box: HTMLElement, helper: HTMLElement, o: AskOpts): void {
+  // 질문을 선택지 위로 끌어올린다 — 장면들은 질문을 helper(카드 아래)에 쓰고 ask()를 부르는데,
+  // helper는 선택지보다 아래라 스크롤 전엔 질문이 안 보인다(실사용 피드백 2026-07-10).
+  // helper의 현재 문구(=방금 쓴 질문)를 .hook-q로 복제하고, helper는 안내 문구로 교체한다.
+  const q = helper.innerHTML.trim();
+  if (q) {
+    box.appendChild(el("div", { class: "hook-q", html: q }));
+    helper.innerHTML = "정답을 몰라도 괜찮아요. 직감으로 하나를 골라 보세요, 예측은 채점하지 않아요!";
+  }
   const order = o.choices.map((_, i) => i);
   if (o.shuffle !== false) {
     for (let i = order.length - 1; i > 0; i--) {

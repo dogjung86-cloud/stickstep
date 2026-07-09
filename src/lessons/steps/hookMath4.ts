@@ -934,7 +934,7 @@ export const renderBakery: SceneFn = (scene, helper, finish, face, choices) => {
   });
 };
 
-/* ── 13 thales, 탈레스의 바닷가(합동의 활용 · 보스전) ───────── */
+/* ── 13 thales, 탈레스의 바닷가(합동의 활용) ─────────────────── */
 export const renderThales: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
   // 위에서 본 해변: 위쪽 바다(배 A), 해변선, 아래 육지. B(관측점)·C(보조점)·D(육지의 복제점)
@@ -1003,7 +1003,7 @@ export const renderThales: SceneFn = (scene, helper, finish, face, choices) => {
             "D에서 배까지 눈대중으로 어림한 거예요",
             "우연히 비슷한 값이 나오는 요령일 뿐이에요",
           ],
-          good: "정확해요! 변 BC는 공통, 그 양 끝 각이 각각 같으니 두 삼각형은 <b>완전히 똑같은 쌍둥이(합동)</b>예요. 그러니 바다의 BA와 육지의 BD도 같은 길이! 이 마지막 무기를 다듬어 보스전을 끝내요!",
+          good: "정확해요! 변 BC는 공통, 그 양 끝 각이 각각 같으니 두 삼각형은 <b>완전히 똑같은 쌍둥이(합동)</b>예요. 그러니 바다의 BA와 육지의 BD도 같은 길이! 이 마지막 무기를 다듬어 측량 원리를 완성해요!",
           bad: "어림도 우연도 아니에요. <b>한 변(BC)과 그 양 끝 각</b>이 같으면 삼각형은 단 하나로 정해진다는 걸 배웠죠? 그래서 육지 삼각형은 바다 삼각형의 완벽한 쌍둥이고, BD=BA예요. 수학이 곧 줄자였던 거죠!",
           onDone: finish,
         });

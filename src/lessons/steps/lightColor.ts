@@ -107,6 +107,10 @@ export const objectColorLab: StepRenderer = (host, step, api) => {
   }
 
   function startPredict(): void {
+    // 질문은 선택지 위(.hook-q)에 — helper는 선택지 아래라 질문이 안 보인다(실사용 피드백 2026-07-10).
+    choices.appendChild(
+      el("div", { class: "hook-q", html: "질문! <b>빨간 조명</b>만 있는 방에서 <b>초록 잎</b>은 무슨 색으로 보일까요?" }),
+    );
     const opts = ["잎도 원래대로 초록색", "잎은 더 밝은 빨간색", "잎은 거의 검은색"];
     opts.forEach((label, i) => {
       const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" }, text: label });
@@ -125,7 +129,7 @@ export const objectColorLab: StepRenderer = (host, step, api) => {
       });
       choices.appendChild(b);
     });
-    helper.innerHTML = "질문! <b>빨간 조명</b>만 있는 방에서 <b>초록 잎</b>은 무슨 색으로 보일까요?";
+    helper.innerHTML = "정답을 몰라도 괜찮아요. 직감으로 하나를 골라 보세요!";
     choices.classList.add("show");
   }
 

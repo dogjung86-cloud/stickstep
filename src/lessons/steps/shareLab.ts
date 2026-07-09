@@ -166,7 +166,7 @@ export const shareLab: StepRenderer = (host, step, api) => {
     fakeMode = true;
     const chip = chips.el.querySelector(`[data-g="fake"] span`) as HTMLElement;
     chip.textContent = "도전!";
-    scene.innerHTML = `<div class="lk-swap">새 도전! <b>스티커 12장</b> 중에서 x장을 쓰고 남은 스티커가 y장이에요.</div>`;
+    scene.innerHTML = `<div class="lk-swap">새 도전! <b>스티커 12장</b> 중에서 x장을 쓰고 남은 스티커가 y장이에요. y가 줄어들긴 하는데, 이것도 <b>반비례</b>일까요? 곱을 검사하고 판정!</div>`;
     clear(stepper);
     drawTable([1, 2, 3, 4, 5, 6], STICKER_Y, ["x(장)", "y(장)"]);
     // 곱 행은 검사 버튼으로 채운다
@@ -174,7 +174,7 @@ export const shareLab: StepRenderer = (host, step, api) => {
       c.textContent = "";
       c.classList.add("empty");
     });
-    helper.innerHTML = "y가 줄어들긴 해요. 이것도 <b>반비례</b>일까요? 곱을 검사하고 판정해 보세요!";
+    helper.innerHTML = "곱 검사 버튼을 눌러 보면 진실이 드러나요. 틀려도 왜 아닌지 알려 줄게요!";
     clear(actions);
     const test = el("button", { class: "ct-btn", attrs: { type: "button" } }, el("span", { text: "곱 검사" })) as HTMLButtonElement;
     let tested = false;

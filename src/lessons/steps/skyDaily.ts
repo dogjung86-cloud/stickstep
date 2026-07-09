@@ -128,9 +128,13 @@ export const skyDaily: StepRenderer = (host, step, api) => {
       poleFlash = 1400;
       haptic(HAPTIC.correct);
       collect("pole", "북극성!");
-      helper.innerHTML = "맞아요, <b>북극성</b>! 다른 별들이 모두 이 별을 중심으로 돌아요. 그럼 도는 방향은…?";
+      helper.innerHTML = "맞아요, <b>북극성</b>! 다른 별들이 모두 이 별을 중심으로 돌아요.";
       if (!spinAsked) {
         spinAsked = true;
+        // 질문은 선택지 위(.hook-q)에 — helper는 선택지 아래라 질문이 안 보인다(실사용 피드백 2026-07-10).
+        choiceRow.appendChild(
+          el("div", { class: "hook-q", html: "그럼 별들이 도는 <b>방향</b>은 어느 쪽일까요? 궤적 화살표를 보고 골라 보세요" }),
+        );
         const mk = (label: string, ok: boolean): HTMLButtonElement => {
           const b = el("button", { class: "hook-choice", attrs: { type: "button" }, text: label }) as HTMLButtonElement;
           b.addEventListener("click", () => {

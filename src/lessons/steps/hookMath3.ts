@@ -636,7 +636,7 @@ export const renderSeesaw: SceneFn = (scene, helper, finish, face, choices) => {
   });
 };
 
-/* ── 9 quakealert, 흔들림보다 빠른 문자(보스전) ─────────────── */
+/* ── 9 quakealert, 흔들림보다 빠른 문자(정비례 활용) ──────────── */
 export const renderQuakealert: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
   const EX = 84; // 진원
@@ -716,7 +716,7 @@ export const renderQuakealert: SceneFn = (scene, helper, finish, face, choices) 
             "기상청이 지진이 날 시각을 미리 계산해 뒀어요",
             "문자가 S파보다 강해서 뚫고 온 거예요",
           ],
-          good: "맞아요! 관측소가 <b>먼저 온 P파</b>를 감지하는 순간 경보를 쏘면, 진짜 흔들림(S파)이 오기까지 몇 초의 골든타임이 생겨요. 그 몇 초를 계산하는 게 오늘의 보스전이에요.",
+          good: "맞아요! 관측소가 <b>먼저 온 P파</b>를 감지하는 순간 경보를 쏘면, 진짜 흔들림(S파)이 오기까지 몇 초의 골든타임이 생겨요. 그 몇 초를 계산하는 게 오늘의 미션이에요.",
           bad: "지진은 예언할 수 없어요. 비결은 <b>속력 차이</b>예요. 빠른 P파가 관측소에 먼저 닿는 순간 경보를 쏘고, 느린 S파가 도착할 때까지의 몇 초가 대피 시간이 되죠. 오늘 그 계산을 직접 해요!",
           onDone: finish,
         });

@@ -78,8 +78,12 @@ export const bottleLab: StepRenderer = (host, step, api) => {
 
   const board = mboard(440);
   const svgWrap = el("div", { class: "bt-stage" });
+  // 질문 바 — 예측 질문은 카드(선택지)보다 위, 보드 안에 보여야 한다(질문이 helper에만 있던 실사용 피드백).
+  const qbar = el("div", {
+    style: "padding:2px 16px 0; font-size:14px; font-weight:700; color:#2A3040; text-align:center; line-height:1.5;",
+  });
   const controls = el("div", { class: "bt-cards" });
-  board.append(svgWrap, controls);
+  board.append(svgWrap, qbar, controls);
   const toast = mtoast(board);
   const helper = el("div", { class: "helper" });
   host.append(chips.el, board, helper);
@@ -268,7 +272,8 @@ export const bottleLab: StepRenderer = (host, step, api) => {
     const b = BOTTLES[idx];
     drawStage(b);
     drawCards();
-    helper.innerHTML = `<b>${b.name}</b>에 1초에 같은 양씩 물을 부어요. 물의 높이 그래프는 어떤 모양일까요? 카드를 골라 예측해 보세요.`;
+    qbar.innerHTML = `<b>${b.name}</b>에 1초에 같은 양씩 물을 부어요. 물의 <b>높이 그래프</b>는 어떤 모양일까요? 카드를 골라 예측!`;
+    helper.innerHTML = "예측이 빗나가도 괜찮아요, 직접 부어 보며 확인할 거예요!";
   }
 
   round();

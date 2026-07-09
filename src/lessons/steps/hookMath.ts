@@ -20,6 +20,16 @@ import {
   renderRailroad, renderOverpass, renderSubwayexit, renderBlinds, renderCurtain,
   renderStraws, renderBakery, renderThales,
 } from "./hookMath4";
+import {
+  renderFivestar, renderAladder, renderHoneycomb, renderRobotvac,
+  renderWatermelon, renderCakecut, renderLanestart,
+  renderDiamond, renderDicegame, renderPottery,
+  renderDrinkcan, renderPartyhat, renderBalloonup, renderTombstone,
+} from "./hookMath5";
+import {
+  renderLunchavg, renderPenstock, renderMarathon, renderWeightclass,
+  renderCamerahisto, renderLikeratio, renderFakegraph,
+} from "./hookMath6";
 import type { StepRenderer } from "../types";
 
 type Face = (k: AvatarKind) => void;
@@ -109,6 +119,29 @@ export const mathHook: StepRenderer = (host, step, api) => {
     straws: renderStraws,
     bakery: renderBakery,
     thales: renderThales,
+    // Ⅴ 평면도형과 입체도형(hookMath5.ts)
+    fivestar: renderFivestar,
+    aladder: renderAladder,
+    honeycomb: renderHoneycomb,
+    robotvac: renderRobotvac,
+    watermelon: renderWatermelon,
+    cakecut: renderCakecut,
+    lanestart: renderLanestart,
+    diamond: renderDiamond,
+    dicegame: renderDicegame,
+    pottery: renderPottery,
+    drinkcan: renderDrinkcan,
+    partyhat: renderPartyhat,
+    balloonup: renderBalloonup,
+    tombstone: renderTombstone,
+    // Ⅵ 통계(hookMath6.ts)
+    lunchavg: renderLunchavg,
+    penstock: renderPenstock,
+    marathon: renderMarathon,
+    weightclass: renderWeightclass,
+    camerahisto: renderCamerahisto,
+    likeratio: renderLikeratio,
+    fakegraph: renderFakegraph,
   };
   const fn = fns[s.scene];
   if (fn) fn(scene, helper, finish, face, s.choices);
@@ -770,8 +803,8 @@ function renderSnsdebate(scene: HTMLElement, helper: HTMLElement, finish: () => 
               "1, 2×(1+2)를 통째로 먼저 계산",
               "둘 다 맞는 답이다",
             ],
-            good: "규칙이 싸움을 끝내요: 괄호 안 (1+2)=3 먼저 → 6÷2×3은 <b>왼쪽부터</b> → 3×3=<b>9</b>. 이 계산 순서 규칙으로 단원 보스전을 치러요!",
-            bad: "아쉽지만 규칙은 하나예요, 괄호 안 (1+2)=3을 먼저, 그다음 ÷와 ×는 <b>왼쪽부터 차례로</b>: 6÷2=3, 3×3=<b>9</b>. 답이 두 개인 수학은 없죠. 계산 순서로 보스전을 치러요!",
+            good: "규칙이 싸움을 끝내요: 괄호 안 (1+2)=3 먼저 → 6÷2×3은 <b>왼쪽부터</b> → 3×3=<b>9</b>. 이 계산 순서 규칙을 지금부터 정식으로 배워요!",
+            bad: "아쉽지만 규칙은 하나예요, 괄호 안 (1+2)=3을 먼저, 그다음 ÷와 ×는 <b>왼쪽부터 차례로</b>: 6÷2=3, 3×3=<b>9</b>. 답이 두 개인 수학은 없죠. 그 규칙을 지금부터 정식으로 배워요!",
             onDone: finish,
           });
         }, 500);

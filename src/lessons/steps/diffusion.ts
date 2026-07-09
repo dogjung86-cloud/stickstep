@@ -41,6 +41,10 @@ export const diffusion: StepRenderer = (host, step, api) => {
 
   // ---- 예측 → 실행 컨트롤 ----
   const choices = el("div", { class: "hook-choices show" });
+  // 질문은 선택지 위(.hook-q)에 — helper는 선택지 아래라 질문이 안 보인다(실사용 피드백 2026-07-10).
+  choices.appendChild(
+    el("div", { class: "hook-q", html: "넣기 전에 먼저 예측! 바닥에 넣은 잉크를 <b>젓지 않고</b> 가만히 두면 어떻게 될까요?" }),
+  );
   const dropBtn = el(
     "button",
     { class: "swapbtn", attrs: { type: "button", disabled: "true" } },
@@ -48,7 +52,7 @@ export const diffusion: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "넣기 전에 먼저 예측! 바닥에 넣은 잉크를 <b>젓지 않고</b> 가만히 두면 어떻게 될까요?",
+    html: "정답을 몰라도 괜찮아요. 직감으로 하나를 골라 보세요, 예측은 실험으로 확인해요!",
   });
   host.append(stage, choices, dropBtn, helper);
 

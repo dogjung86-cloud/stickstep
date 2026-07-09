@@ -198,10 +198,10 @@ export const linkLab: StepRenderer = (host, step, api) => {
     const chip = chips.el.querySelector(`[data-g="fake"] span`) as HTMLElement;
     chip.textContent = "도전!";
     scene.innerHTML =
-      `<div class="lk-swap">새 도전! <b>저금통</b>: 처음 1000원이 들어 있고, 매주 500원씩 저금해요.</div>`;
+      `<div class="lk-swap">새 도전! <b>저금통</b>: 처음 1000원이 들어 있고, 매주 500원씩 저금해요. y가 늘어나긴 하는데, 이것도 <b>정비례</b>일까요? 링크로 검사하고 판정!</div>`;
     drawTable([1, 2, 3, 4, 5, 6], BANK_Y, ["x(주)", "y(원)"]);
     clear(actions);
-    helper.innerHTML = "y가 늘어나긴 해요. 그런데 이것도 <b>정비례</b>일까요? 링크로 검사하고 판정해 보세요!";
+    helper.innerHTML = "×2 링크를 걸어 보면 진실이 드러나요. 틀려도 왜 아닌지 알려 줄게요!";
     const test = el("button", { class: "ct-btn", attrs: { type: "button" } }, el("span", { text: "×2 링크 (1주→2주)" })) as HTMLButtonElement;
     let tested = false;
     test.addEventListener("click", () => {

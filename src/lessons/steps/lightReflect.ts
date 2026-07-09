@@ -133,7 +133,11 @@ export const reflectLab: StepRenderer = (host, step, api) => {
   // ---- 예측 → 확인 → 조준 흐름 ----
   function startPredict(): void {
     phase = "predict";
-    helper.innerHTML = "질문! 지금처럼 반사각은 늘 입사각을 따라왔죠. 입사각을 <b>60°</b>로 키우면 반사각은 어떻게 될까요?";
+    // 질문은 선택지 위(.hook-q)에 — helper는 선택지 아래라 질문이 안 보인다(실사용 피드백 2026-07-10).
+    choices.appendChild(
+      el("div", { class: "hook-q", html: "질문! 지금처럼 반사각은 늘 입사각을 따라왔죠. 입사각을 <b>60°</b>로 키우면 반사각은 어떻게 될까요?" }),
+    );
+    helper.innerHTML = "정답을 몰라도 괜찮아요. 직감으로 하나를 골라 보세요!";
     const opts = ["반사각은 지금 그대로 멈춘다", "반사각도 똑같이 60°가 된다", "반사각은 두 배인 120°가 된다"];
     opts.forEach((label, i) => {
       const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" }, text: label });

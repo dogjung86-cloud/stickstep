@@ -683,6 +683,8 @@
 
 .hook-choices { margin-top: 4px; display: none; flex-direction: column; gap: 8px; }
 .hook-choices.show { display: flex; animation: rcIn .35s var(--ease-out) both; }
+/* 선택지 위로 끌어올린 질문(hookAsk가 helper의 질문을 복제 — 질문이 버튼 아래에 깔리던 결함의 공용 수정) */
+.hook-choices .hook-q { padding: 4px 6px 2px; font-size: 14px; font-weight: 700; line-height: 1.55; color: var(--ink); }
 .hook-choice {
   text-align: left; padding: 12px 14px; border-radius: var(--r-md);
   border: 1.5px solid var(--n200); background: var(--n0);

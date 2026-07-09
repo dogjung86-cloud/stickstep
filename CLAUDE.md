@@ -28,8 +28,11 @@
 - 중1은 '분자'가 아니라 '입자'. 교과서 쪽수를 `lesson.standard`에 표기("책 NN~NN쪽").
 - 원 교과서(중1)의 **단원·소단원 순서와 내용을 지킨다**. 문제는 대단원 마무리를 참고하되,
   **교과서 문항의 임의 수치·선지 문구를 그대로 가져오지 않는다**(사용자 확정, 2026-07 전 단원 감사로 소급 적용).
-  함정 구조·출제 의도만 계승하고 수치 세팅·문구·소재는 자체 제작. 자연값·과학 사실(밀도 7.87, 달 중력 1/6,
+  함정 구조·출제 의도만 계승하고 수치 세팅·문구는 자체 제작. 자연값·과학 사실(밀도 7.87, 달 중력 1/6,
   CPK 색 등)과 표준 도해(층상 구조 사분원 등)는 허용 — "교과서가 임의로 지어낸 숫자·문장"이 금지 대상.
+  **설정·소재의 차용은 허용**(사용자 확정 2026-07-10): 교과서가 고른 상황 설정(나이 자료, 스포츠 득점,
+  신발 치수 등)은 학생에게 친숙한 검증된 소재라 그대로 따라도 된다. 소재까지 피하려고 억지로 낯선
+  설정을 만들면(수학 Ⅵ 도서관 청구기호 훅 사례) 오히려 이해를 해쳐 실격이다.
   그림 헬퍼 주석에 "마무리 N번" 같은 출처 자기 선언도 남기지 않는다.
 - **용어 선경험 원칙(사용자 확정)**: concept·recap·퀴즈에 등장하는 모든 용어/개념은 그 앞의 훅·랩·조작에서
   "어떤 형태로든" 먼저 경험시킨다(예: traceLab에 '만남' 국면을 추가해 교점·교선을 정의 전에 체험).
@@ -128,6 +131,9 @@ src/
    (u4 matter #7C6BFF 보라 ↔ u7 space #4A54E1 딥 인디고 ↔ g2u1 chem #E64980 지시약 로즈 ↔
    g2u3 light #C838A6 오키드 마젠타 ↔ g2u4 atom #7CB024 라임 그린처럼 뚜렷이 구분).
    주의: 'chem' 테마명은 중2 I(물질의 특성)이 선점 — 중2 IV(물질의 구성)는 'atom'을 쓴다.
+   **테마명은 기존 유틸 클래스와도 충돌 검사**: 수학 Ⅵ이 'stat'을 썼다가 완료 화면 카드 `.stat`
+   (ui.css, 흰 카드)에 `.gm-node.stat`이 걸려 지도 노드가 흰 카드로 감싸인 실사고 → 'data'로 교체.
+   새 테마명 확정 전 `grep "\.<이름>\b" src/styles/*.css`로 선점 여부부터 확인한다.
 
 ## 중2 트랙 · 프리미엄(수익화)
 - **학년 트랙**: `curriculum.ts`의 `CURRICULA = { g1: CURRICULUM, g2: CURRICULUM_G2 }`.
@@ -172,16 +178,28 @@ src/
   과목 전환 창구는 **과목 허브뿐**(subject.ts) — main.ts `pickSubject()`가 setViewSubject 후 `goHome()`으로
   홈을 재생성한다(nav.back은 이전 과목 홈을 보여주므로 금지). 이때 lastUnitId를 반드시 비운다.
   수학 단원 id는 `m1uN`/`m2uN`(레슨 `m1uNlM`) — 과학 `uN`·`g2uN`과 절대 충돌 금지.
-- **수학 전용 코드는 신규 파일에 격리**(병합 충돌 0 설계): content/math/(curriculum·unit1~unit4·mdsl),
+- **수학 전용 코드는 신규 파일에 격리**(병합 충돌 0 설계): content/math/(curriculum·unit1~unit6·mdsl),
   ui/mathKit·mathFigures·**geoKit**(Ⅳ 기하 공용 — GEO 팔레트·각 호 angleArc·직각 표시·gsym 기호·
-  capturePointer. 기하 그림·랩은 재구현 금지, 이걸 쓴다),
-  steps/hookMath·hookMath2·hookMath3·hookMath4(독립 `mathHook` 타입 — 과학 hook.ts 디스패치 불변),
+  capturePointer. 기하 그림·랩은 재구현 금지, 이걸 쓴다)·**solidKit**(Ⅴ 입체 공용 — boxRelLab 투영의
+  승격판: prism/pyramid/frustum·PLATONIC 5종(면은 쌍대 좌표 직사용 금지, 면 중심 방향 법선으로 생성 —
+  오일러 V−E+F=2 검산 필수)·solidSvg 겨냥도),
+  steps/hookMath·hookMath2·hookMath3·hookMath4·hookMath5·hookMath6(독립 `mathHook` 타입 — 과학 hook.ts 디스패치 불변),
   steps/{sieveLab·powBuild·factorTree·vennFactor(gcd/lcm/coprime 3모드)·numline·numWalk·counterLab·
   patternLab·areaSplit·mathDrill}(Ⅰ) + {patternRule·substLab·exprAnatomy·likeTerms·eqTruth·balanceLab·
   solveLab}(Ⅱ) + {coordLab·quadLab·bottleLab·droneLab·linkLab·lineLab·shareLab·curveLab}(Ⅲ) +
   {traceLab·rayLab·angleLab·vertAngleLab·perpLab·lineRelLab·boxRelLab(기함 — rAF 없는 이벤트 구동
   SVG 3D 투영, 숨은 모서리는 면 법선 판정 점선)·anglePairLab·parallelLab(기함 — 평행 스냅+엇각
-  180° 회전 연출)·compassLab·triBuildLab·congLab}(Ⅳ),
+  180° 회전 연출)·compassLab·triBuildLab·congLab}(Ⅳ) +
+  {diagLab·triSumLab·polySplitLab·walkLab·circleLab·sectorLab(ratio/calc 2모드)·solidLab·
+  platonicLab(기함 — 꼭짓점 접기 360° 심판+정다면체 도감)·latheLab(기함 — 물레 스와이프 회전 잔상+
+  단면 예측)·prismLab·coneLab·sphereLab}(Ⅴ — 입체 3D는 ui/solidKit 공용) +
+  {meanPullLab(L1 소형 랩 — 수직선 변량 점+평균 마커: 평균 계산 탭→극단값 8→33 드래그→새 대표 선택.
+  Ⅵ은 교과서 서사형이 원칙[사용자 확정 2026-07-09]: 개념 하나씩+자료 해석 중심, 기함 랩에 다 담기 금지)·
+  modeLab(색 타워 + "평균 색깔 계산" 불가 체험 + 최빈값 명명 비트 + 대푯값 선발전 — meanPullLab과 함께
+  L1 대푯값 통합 레슨[2026-07-10, Ⅵ은 6레슨] 안에 산다)·stemLab(농구부 시즌 득점 선반 꽂기·정렬 —
+  소재는 교과서 설정 계승·수치 자체 제작)·freqLab(체급 접수처 — 이상~미만 경계 함정 50.0·구간 너비
+  25/5/1kg 실험, 버튼 라벨은 자기설명형)·histoLab(막대 세우기+중앙점 잇기, 양 끝 도수 0 내려닫기 함정)·
+  relFreqLab(도수 5vs4 → 비율 0.2vs0.4 역전 토글+세로축 눈금·막대 값 라벨, '상대도수' 명명은 랩 결론)}(Ⅵ 통계),
   screens/starGame(Ⅰ 보너스 게임), **styles/math.css**(ui.css를 건드리지 않는 수학 전용
   시트, main.ts에서 import). 공유 파일 수정은 store·curriculum·home·subject·main·registry·tokens.css·
   mapDecor의 최소 append뿐.
@@ -208,10 +226,12 @@ src/
   세로 정렬 비교 — 지수 같으면 그대로·다르면 작은/큰 쪽)과 `ladderFig("factor"|"gcd")`(나눗셈 사다리)를
   concept figure 블록으로 임베드(Ⅰ L3·L4·L5가 기준). 랩(벤 다이어그램)은 '왜', 정석 그림은 '어떻게'.
 - **지도 장식은 수학 기호 세트**(mapDecor.ts): Ⅰ=pmDeco(±)·fracDeco(½)·primeDeco(7)·opsDeco(×÷)·
-  numlineDeco, Ⅱ=xDeco(x)·eqDeco(=)·scaleDeco(저울)·aDeco(a)·boxDeco(x 상자). 새 수학 단원도
-  그 단원의 상징 기호로 별도 세트를 만든다(단원마다 달라야 함 — 사용자 요구).
-- **수식·입력은 mathKit이 단일 진실 공급원**: `mfmt()` 마이크로 마크업("{a/b}" 분수·"^n" 지수·
-  "(+3)"/"(-5)" 부호 수 — 부호만 색: --m-pos/--m-neg), `makeAnswerPad()` 커스텀 넘패드
+  numlineDeco, Ⅱ=xDeco(x)·eqDeco(=)·scaleDeco(저울)·aDeco(a)·boxDeco(x 상자),
+  Ⅴ=pentaDeco(오각형)·fanDeco(부채꼴)·diceDeco(주사위)·coneDeco(원뿔)·sphereDeco(구),
+  Ⅵ=seesawDeco(시소)·stemshelfDeco(줄기 선반)·histoDeco(막대)·fpolyDeco(다각형 선)·ratioDeco(비율 원).
+  새 수학 단원도 그 단원의 상징 기호로 별도 세트를 만든다(단원마다 달라야 함 — 사용자 요구).
+- **수식·입력은 mathKit이 단일 진실 공급원**: `mfmt()` 마이크로 마크업("{a/b}" 분수(분자에 n(n-3)
+  같은 괄호식 허용)·"^n" 지수·"(+3)"/"(-5)" 부호 수 — 부호만 색: --m-pos/--m-neg·π는 변수처럼 이탤릭), `makeAnswerPad()` 커스텀 넘패드
   (kind: int/frac/dec — **시스템 키보드 절대 금지**), 밝은 모눈 보드 `mboard()`(과학 다크 .stage의 수학판),
   목표 칩 `goalChips()`(pn-badge num). 분수 답은 값이 같으면 정답 + 기약 아니면 스낵 안내.
 - **수학 랩은 rAF를 쓰지 않는다** — 전부 CSS 트랜지션/키프레임 + setTimeout 체인(타이머는 Set으로
@@ -223,13 +243,23 @@ src/
 - **QA**: `PORT=<포트> node qa/e2e-math.mjs`(Ⅰ 12레슨) · `qa/e2e-math2.mjs`(Ⅱ 9레슨) ·
   `qa/e2e-math3.mjs`(Ⅲ 9레슨 — 격자 탭·사분면 드래그·물병 예측·드론 스크럽·링크/곱 검사·a 스테퍼·
   곡선 자취 드래그 포함) · `qa/e2e-math4.mjs`(Ⅳ 13레슨 — 자유 드로잉·각 드래그·3D 상자 회전·평행
-  스냅·작도 스테퍼·합동 매칭. **조작 후 위치가 변하는 핸들은 getBoundingClientRect로 실좌표를 잡아
-  드래그한다** — 고정 좌표는 두 번째 시도부터 빗나간 실사고) — 훅 장면 버튼·랩 전 조작·넘패드 드릴 입력까지 실플레이.
+  스냅·작도 스테퍼·합동 매칭) · `qa/e2e-math5.mjs`(Ⅴ 14레슨 — 대각선 탭·각 조각 드래그·정다면체
+  접기·물레 스와이프·전개도 펼치기·모래 예측, 드릴 종료 후는 CTA가 아니라 완료 화면 "홈으로" 버튼. **조작 후 위치가 변하는 핸들은 getBoundingClientRect로 실좌표를 잡아
+  드래그한다** — 고정 좌표는 두 번째 시도부터 빗나간 실사고) · `qa/e2e-math6.mjs`(Ⅵ 6레슨 — 평균 계산
+  탭/극단값 드래그/새 대표 선택·타워 카드·줄기 선반·체급 열·막대/중앙점 탭·비율 토글·dec 드릴은 넘패드 · 키) —
+  훅 장면 버튼·랩 전 조작·넘패드 드릴 입력까지 실플레이.
   랩 애니 잠금에 탭이 먹힐 수 있으니 e2e는 "미완료 대상 재시도 루프"로 조작한다(고정 횟수 탭 금지).
   **e2e 실행 중 src 편집 금지** — HMR 풀리로드로 레슨 상태가 증발한다(사고 #12의 수학판 재발 사례).
+  **대량 콘텐츠 수정 후 검증 방식(사용자 확정 2026-07-10)**: 전 단원 e2e 재실행은 시간이 과해 생략하고,
+  tsc+build 통과 확인 후 수정 목록을 보고해 사용자가 직접 확인한다(e2e 스크립트 자체는 새 구조에 맞게
+  갱신해 둘 것 — 다음 실행자가 쓴다).
 - 수학 훅 12장면은 hookMath.ts 안(cicada·paperfold·lockcode·tilefloor·buslight·freezer·gpsdist·
   golfscore·daytemp·rewind·mentalmath·snsdebate). Ⅳ 훅 13장면은 hookMath4.ts(sparkler·laserline·
   clockhands·scissors·longjump·railroad·overpass·subwayexit·blinds·curtain·straws·bakery·thales).
+  Ⅴ 훅 14장면은 hookMath5.ts(fivestar·aladder·honeycomb·robotvac·watermelon·cakecut·lanestart·
+  diamond·dicegame·pottery·drinkcan·partyhat·balloonup·tombstone). Ⅵ 훅 7장면은 hookMath6.ts
+  (lunchavg·penstock·marathon(마라톤 접수처 나이 명단 — 구 library 대체, 교과서 도입 소재 계승)·
+  weightclass·camerahisto·likeratio·fakegraph — 전부 "조작 버튼 1개 → 장면 변화 → 예측" 단일 문법).
   공용 hookAsk.ask() 규칙(choices[0]=정답, good≠bad)은 과학과 동일하게 적용된다.
 
 ## 퀴즈 유형 (quiz 스텝 하나로)
@@ -379,6 +409,10 @@ src/
 - 정답이 없는 열린 예측(이후 실험으로 확인)만 `neutral: true` — 이때도 문구는 "예측 완료, 실험으로 확인!"
   톤이어야 하고 정답 칭찬("완벽해요/정확해요")을 쓰면 안 된다.
 - 오답 선택 시 옳은 보기가 초록(`.hook-choice.reveal`)으로 함께 밝혀진다. 예측은 채점에 넣지 않는다.
+- **질문은 선택지 위에 뜬다(2026-07-10)**: 장면들은 질문을 helper(카드 아래)에 쓰고 ask()를 부르는데,
+  helper는 선택지보다 아래라 화면 밖에 깔린다(실사용 피드백 — 매미 훅 사례). ask()가 helper의 현재
+  문구를 `.hook-q`로 선택지 위에 복제하고 helper를 "직감으로 골라 보세요" 안내로 교체한다 —
+  전 훅(과학·수학) 공용 동작이니 장면 쪽에서 따로 처리하지 말 것.
 - **맥락 규칙**: 소재의 이름·설정(갈륨 동전, 로르산 같은 재료명)은 반드시 **도입(title/lead/narrator/장면
   안내)에서 먼저 소개**한다 — 답변에서 처음 튀어나오면 결함(실제 있었던 갈륨 사고). 단, 개념적 정답
   (자전·확산·압력 원리)은 답변에서 처음 등장하는 게 정상 — 미리 말하면 예측이 무의미해진다.
