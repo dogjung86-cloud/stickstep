@@ -4,28 +4,9 @@
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import type { AvatarKind } from "../../ui/avatar";
+import { ask } from "./hookAsk";
 
 type Face = (k: AvatarKind) => void;
-
-function ask(box: HTMLElement, opts: string[], helper: HTMLElement, doneMsg: string, finish: () => void): void {
-  opts.forEach((label) => {
-    const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" }, text: label });
-    b.addEventListener("click", () => {
-      if (box.classList.contains("locked")) return;
-      box.classList.add("locked");
-      haptic(HAPTIC.select);
-      box.querySelectorAll(".hook-choice").forEach((x) => {
-        x.classList.add(x === b ? "sel" : "dim");
-        x.setAttribute("aria-pressed", x === b ? "true" : "false");
-        (x as HTMLButtonElement).disabled = x !== b;
-      });
-      helper.innerHTML = doneMsg;
-      finish();
-    });
-    box.appendChild(b);
-  });
-  box.classList.add("show");
-}
 
 // ── L1: 구리 조각 vs 소금 결정 — 확대해 보기 ─────────────────
 function zoomtwoSvg(kind: "cu" | "salt"): string {
@@ -201,13 +182,12 @@ export function renderPeekAtom(
       face("curious");
       helper.innerHTML = "원자 속엔 무언가 더 있었어요! 가운데 덩어리와 주위의 작은 알갱이들 — 정체가 뭘까요?";
       window.setTimeout(() => {
-        ask(
-          choicesBox,
-          s.choices ?? ["가운데 (+)원자핵과 주위의 (−)전자", "속이 꽉 찬 단단한 구슬", "아무것도 없이 텅 비어 있다"],
-          helper,
-          "예측 완료! 실험실 <b>원자 조립소</b>에서 부품을 직접 넣으며 확인해요.",
-          finish,
-        );
+        ask(choicesBox, helper, {
+          choices: s.choices ?? ["가운데 (+)원자핵과 주위의 (−)전자", "속이 꽉 찬 단단한 구슬", "아무것도 없이 텅 비어 있다"],
+          good: "정확해요! 가운데 <b>(+)원자핵</b>, 그 주위를 도는 <b>(−)전자</b> — 이게 원자의 속살이에요. 원자 조립소에서 부품을 직접 넣어 봐요!",
+          bad: "꽉 찬 구슬도, 완전히 텅 빈 것도 아니에요 — 방금 봤듯 가운데 <b>(+)원자핵</b>이 있고 주위를 <b>(−)전자</b>가 돌아요. 나머지는 거의 빈 공간이죠. 원자 조립소에서 직접 넣어 봐요!",
+          onDone: finish,
+        });
       }, 700);
     }
   });
@@ -343,13 +323,12 @@ export function renderSpringWater(
     helper.innerHTML = "그냥 맹물이 아니에요 — 살짝 <b>쇠 맛</b>에 <b>톡 쏘는 느낌</b>까지! 물속에 뭐가 들어 있는 걸까요?";
     timer = window.setTimeout(() => {
       face("curious");
-      ask(
-        choicesBox,
-        s.choices ?? ["전하를 띤 작은 입자(이온)들이 녹아 있다", "아주 작은 모래 알갱이가 섞여 있다", "물 분자 자체의 맛이 다른 것이다"],
-        helper,
-        "예측 완료! 실험실에서 <b>분자</b>를 조립하고 <b>이온</b>을 직접 만들어 봐요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["전하를 띤 작은 입자(이온)들이 녹아 있다", "아주 작은 모래 알갱이가 섞여 있다", "물 분자 자체의 맛이 다른 것이다"],
+        good: "정확해요! 바위틈을 지나온 물엔 <b>전하를 띤 입자(이온)</b>가 녹아 있어요 — 그게 톡 쏘는 맛의 정체! 실험실에서 분자를 조립하고 이온을 직접 만들어 봐요.",
+        bad: "모래였다면 가라앉거나 씹혔을 테고, 물 분자는 어느 물이든 <b>똑같은 분자</b>라 맛이 다를 수 없어요. 정체는 물에 녹아 있는 <b>전하를 띤 입자, 이온</b>! 실험실에서 직접 만들어 봐요.",
+        onDone: finish,
+      });
     }, 850);
   });
   return () => window.clearTimeout(timer);
@@ -396,13 +375,12 @@ export function renderMagnetPull(
     helper.innerHTML = "다른 극끼리는 <b>서로 끌어당겨요</b>. 그런데 — 전자를 잃거나 얻어 <b>전하를 띤 이온</b>도, 전기의 극을 만나면 끌려갈까요?";
     timer = window.setTimeout(() => {
       face("curious");
-      ask(
-        choicesBox,
-        s.choices ?? ["양이온은 (−)극으로, 음이온은 (+)극으로 끌려간다", "이온은 너무 작고 가벼워 움직이지 않는다", "모든 이온이 같은 극으로 몰려간다"],
-        helper,
-        "예측 완료! 실험실에서 <b>색깔 있는 이온</b>으로 직접 확인해요 — 눈에 보인답니다!",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["양이온은 (−)극으로, 음이온은 (+)극으로 끌려간다", "이온은 너무 작고 가벼워 움직이지 않는다", "모든 이온이 같은 극으로 몰려간다"],
+        good: "정확해요! 자석처럼 전기도 <b>다른 전하끼리 끌어당겨요</b> — 양이온은 (−)극으로, 음이온은 (+)극으로! 색깔 있는 이온으로 직접 확인해요.",
+        bad: "이온은 작아서 오히려 <b>잘 움직이고</b>, (+)와 (−)가 서로 다른 극에 끌리니 한쪽으로 몰릴 수도 없어요. 자석처럼 <b>다른 전하끼리</b> 끌려가요 — 양이온은 (−)극, 음이온은 (+)극! 직접 확인해요.",
+        onDone: finish,
+      });
     }, 850);
   });
   return () => window.clearTimeout(timer);

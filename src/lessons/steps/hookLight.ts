@@ -5,28 +5,9 @@
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import type { AvatarKind } from "../../ui/avatar";
+import { ask } from "./hookAsk";
 
 type Face = (k: AvatarKind) => void;
-
-function ask(box: HTMLElement, opts: string[], helper: HTMLElement, doneMsg: string, finish: () => void): void {
-  opts.forEach((label) => {
-    const b = el("button", { class: "hook-choice", attrs: { "aria-pressed": "false" }, text: label });
-    b.addEventListener("click", () => {
-      if (box.classList.contains("locked")) return;
-      box.classList.add("locked");
-      haptic(HAPTIC.select);
-      box.querySelectorAll(".hook-choice").forEach((x) => {
-        x.classList.add(x === b ? "sel" : "dim");
-        x.setAttribute("aria-pressed", x === b ? "true" : "false");
-        (x as HTMLButtonElement).disabled = x !== b;
-      });
-      helper.innerHTML = doneMsg;
-      finish();
-    });
-    box.appendChild(b);
-  });
-  box.classList.add("show");
-}
 
 // ── L1: 산 위의 거울 — 겨울 해가 안 드는 마을(노르웨이 류칸 실화) ──
 // 기하 규약(반사 법칙으로 검산):
@@ -200,13 +181,12 @@ export function renderCoinMagic(
     helper.innerHTML = "우와 — 눈도 컵도 동전도 <b>그대로</b>인데 동전이 보여요! 왜일까요?";
     timer = window.setTimeout(() => {
       face("curious");
-      ask(
-        choicesBox,
-        s.choices ?? ["동전의 빛이 수면에서 꺾여 눈까지 와서", "물이 돋보기처럼 컵 속을 키워서", "동전이 물에 살짝 떠올라서"],
-        helper,
-        "예측 완료! 실험실에서 빛이 물을 만나면 <b>어떻게 꺾이는지</b> 직접 쏘아 봐요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["동전의 빛이 수면에서 꺾여 눈까지 와서", "물이 돋보기처럼 컵 속을 키워서", "동전이 물에 살짝 떠올라서"],
+        good: "정확해요! 동전은 그대로인데, 동전에서 온 빛이 <b>수면에서 꺾여</b> 눈에 들어온 거예요. 실험실에서 직접 쏘아 봐요!",
+        bad: "돋보기 효과도, 떠오른 것도 아니에요 — 금속 동전은 바닥에 <b>그대로</b> 있어요. 동전에서 온 빛이 <b>수면에서 꺾여</b> 눈까지 온 거죠. 실험실에서 직접 쏘아 확인해요!",
+        onDone: finish,
+      });
     }, 850);
   });
   return () => window.clearTimeout(timer);
@@ -282,13 +262,12 @@ export function renderDarkroom(
     helper.innerHTML = "고양이가 책 위에! 그런데 이상하죠 — 고양이는 <b>아까도 거기 있었어요</b>. 빛이 있어야만 보이는 이유는 뭘까요?";
     timer = window.setTimeout(() => {
       face("curious");
-      ask(
-        choicesBox,
-        s.choices ?? ["물체에서 반사된 빛이 눈에 들어와야 보인다", "눈에서 나간 빛이 물체에 닿아야 보인다", "밝으면 눈이 커져서 잘 보이는 것뿐이다"],
-        helper,
-        "예측 완료! 밤 캠핑장에서 <b>빛의 경로</b>를 직접 이어 봐요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["물체에서 반사된 빛이 눈에 들어와야 보인다", "눈에서 나간 빛이 물체에 닿아야 보인다", "밝으면 눈이 커져서 잘 보이는 것뿐이다"],
+        good: "정확해요! 전등 빛이 고양이에 닿고, 거기서 <b>반사된 빛이 눈에 들어와야</b> 비로소 보여요. 밤 캠핑장에서 빛의 경로를 이어 봐요!",
+        bad: "눈에서 빛이 나간다면 캄캄한 방에서도 보였겠죠? 눈동자가 커져도 <b>들어올 빛이 없으면</b> 소용없어요. 전등 빛이 물체에 <b>반사되어 눈에 들어와야</b> 보이는 거예요. 캠핑장에서 경로를 이어 봐요!",
+        onDone: finish,
+      });
     }, 850);
   });
   return () => window.clearTimeout(timer);
@@ -361,13 +340,12 @@ export function renderCatMirror(
       face("curious");
       helper.innerHTML = "똑같이 따라 하는 거울 속 고양이 — 그런데 저 고양이는 <b>어디에 있는</b> 걸까요?";
       timer = window.setTimeout(() => {
-        ask(
-          choicesBox,
-          s.choices ?? ["거울 뒤쪽에 있는 것처럼 보일 뿐, 실제로는 없다", "거울 표면에 그려져 있다", "거울 뒤에 진짜 고양이 공간이 있다"],
-          helper,
-          "예측 완료! 실험실에서 상이 생기는 <b>정확한 위치</b>를 작도해 봐요.",
-          finish,
-        );
+        ask(choicesBox, helper, {
+          choices: s.choices ?? ["거울 뒤쪽에 있는 것처럼 보일 뿐, 실제로는 없다", "거울 표면에 그려져 있다", "거울 뒤에 진짜 고양이 공간이 있다"],
+          good: "정확해요! 거울 뒤로 가 봐도 아무것도 없어요 — 반사된 빛이 <b>뒤쪽에서 온 것처럼</b> 보이게 할 뿐이죠. 그 정확한 위치를 실험실에서 작도해 봐요!",
+          bad: "거울 표면을 만져 봐도 유리뿐이고, 뒤로 돌아가 봐도 고양이는 없어요 — 반사된 빛이 <b>거울 뒤쪽에 있는 것처럼</b> 보이게 할 뿐이에요. 그 정확한 위치를 실험실에서 작도해 봐요!",
+          onDone: finish,
+        });
       }, 500);
     }
   });
@@ -528,13 +506,12 @@ export function renderPointillism(
     helper.innerHTML = "가까이 보니 — <b>빨간 점과 초록 점</b>뿐! 노란 물감은 한 방울도 안 썼어요. 그런데 왜 노랗게 보였을까요?";
     timer = window.setTimeout(() => {
       face("curious");
-      ask(
-        choicesBox,
-        s.choices ?? ["빨간 빛과 초록 빛이 눈에서 합쳐져 노랑으로 보였다", "빨강과 초록 물감이 종이에서 섞여 노랑이 됐다", "노란 조명이 그림을 비추고 있었다"],
-        helper,
-        "예측 완료! 실험실에서 <b>빛의 삼원색</b>을 직접 겹쳐 봐요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["빨간 빛과 초록 빛이 눈에서 합쳐져 노랑으로 보였다", "빨강과 초록 물감이 종이에서 섞여 노랑이 됐다", "노란 조명이 그림을 비추고 있었다"],
+        good: "정확해요! 점은 그대로인데, 빨간 점과 초록 점에서 온 <b>빛이 눈에서 합쳐져</b> 노랑으로 보인 거예요. 빛의 혼합은 물감 혼합과 달라요!",
+        bad: "확대해 보니 점은 <b>따로따로</b>였죠? 물감이 섞였다면 탁한 색이 됐을 테고, 노란 조명이라면 가까이서도 노랗게 보였을 거예요. 빨간 빛과 초록 빛이 <b>눈에서 합쳐지면</b> 노랑 — 빛의 혼합은 물감과 달라요!",
+        onDone: finish,
+      });
     }, 900);
   });
   return () => window.clearTimeout(timer);
@@ -604,13 +581,12 @@ export function renderFishing(
     helper.innerHTML = "동심원 물결이 찌 쪽으로 <b>퍼져 가요</b>! 물결이 찌를 지나가면, 찌는 어떻게 될까요?";
     timer = window.setTimeout(() => {
       face("curious");
-      ask(
-        choicesBox,
-        s.choices ?? ["제자리에서 위아래로만 출렁인다", "물결을 따라 물가로 밀려온다", "물결에 밀려 반대쪽으로 떠내려간다"],
-        helper,
-        "예측 완료! 실험실 물결 수조에서 <b>탁구공</b>으로 직접 확인해요.",
-        finish,
-      );
+      ask(choicesBox, helper, {
+        choices: s.choices ?? ["제자리에서 위아래로만 출렁인다", "물결을 따라 물가로 밀려온다", "물결에 밀려 반대쪽으로 떠내려간다"],
+        good: "정확해요! 물결이 옮기는 건 <b>흔들림(에너지)</b>뿐이라, 물도 찌도 <b>제자리에서 위아래로</b>만 출렁여요. 물결 수조에서 탁구공으로 확인해요!",
+        bad: "찌가 밀려갈 것 같지만, 물결이 옮기는 건 물이 아니라 <b>흔들림(에너지)</b>이에요. 물도 찌도 <b>제자리에서 위아래로</b>만 출렁이죠. 물결 수조에서 탁구공으로 직접 확인해요!",
+        onDone: finish,
+      });
     }, 900);
   });
   return () => window.clearTimeout(timer);
@@ -707,13 +683,12 @@ export function renderKalimba(
       face("curious");
       helper.innerHTML = "긴 막대는 <b>낮은 소리</b>, 짧은 막대는 <b>높은 소리</b> — 같은 세기로 튕겼는데 왜 다를까요?";
       timer = window.setTimeout(() => {
-        ask(
-          choicesBox,
-          s.choices ?? ["막대 길이가 달라 1초에 떨리는 횟수가 달라서", "긴 막대가 더 무거워 소리가 커져서", "짧은 막대가 몸통에 더 가까워서"],
-          helper,
-          "예측 완료! 실험실 소리 합성기에서 <b>진동수</b>를 직접 돌려 봐요.",
-          finish,
-        );
+        ask(choicesBox, helper, {
+          choices: s.choices ?? ["막대 길이가 달라 1초에 떨리는 횟수가 달라서", "긴 막대가 더 무거워 소리가 커져서", "짧은 막대가 몸통에 더 가까워서"],
+          good: "정확해요! 짧은 막대일수록 <b>1초에 더 많이 떨려서</b> 높은 소리가 나요. 소리 합성기에서 직접 돌려 봐요!",
+          bad: "소리가 <b>큰 것</b>과 <b>높은 것</b>은 달라요 — 높낮이는 무게나 위치가 아니라 <b>1초에 떨리는 횟수</b>가 정해요. 짧은 막대가 더 빨리 떨려 높은 소리가 나죠. 소리 합성기에서 직접 확인해요!",
+          onDone: finish,
+        });
       }, 800);
     }
   };
