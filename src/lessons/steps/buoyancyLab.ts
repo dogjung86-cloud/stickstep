@@ -1,9 +1,9 @@
-// buoyancyLab — 부력 랩(V 단원 L6). 교과서 탐구(180쪽) V-14의 조작판.
+// buoyancyLab — 부력 랩(V 단원 L6). 교과서 탐구(부력 170~173쪽)의 조작판 — 수치는 자체 제작.
 //   · 용수철저울은 스탠드에 고정, 사용자는 "수조"를 실험실 잭처럼 들어 올려 추를 물에 잠근다
 //   · 추의 높이는 눈금(용수철 길이)에서 유도 — 부력이 생기면 용수철이 짧아지며 추가 살짝 떠오른다
 //   · 부력은 기하로 계산: 추 밑면이 수면에 닿기 전엔 정확히 0, 잠긴 깊이/추 높이 = 잠긴 비율
 //   · 하단 실시간 그래프: 잠긴 부피(→ 더 깊이 구간)에 따른 저울 눈금 — 완전 잠김 뒤 평평함이 보인다
-// 목표: ① 절반 잠그기(12 N) ② 완전히 잠그기(9 N) ③ 더 깊이 눌러 보기(그대로 9 N).
+// 목표: ① 절반 잠그기(17 N) ② 완전히 잠그기(14 N) ③ 더 깊이 눌러 보기(그대로 14 N).
 
 import { el, clamp } from "../../core/dom";
 import { createLoop, type Loop } from "../../core/anim";
@@ -19,7 +19,7 @@ interface BuoyancyStep {
   cta?: string;
 }
 
-const W_AIR = 15; // 공기 중 무게(N)
+const W_AIR = 20; // 공기 중 무게(N) — 자체 제작 수치
 const BUOY_MAX = 6; // 완전 잠김 부력(N)
 const CVH = 396; // 캔버스 전체 높이
 const LABH = 292; // 위쪽 실험 영역 높이(아래는 그래프)
@@ -70,7 +70,7 @@ export const buoyancyLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "공기 중에서 추의 무게는 <b>15 N</b>. 수조를 올려 추를 담그면서 <b>저울 눈금과 용수철</b>을 지켜보세요.",
+    html: "공기 중에서 추의 무게는 <b>20 N</b>. 수조를 올려 추를 담그면서 <b>저울 눈금과 용수철</b>을 지켜보세요.",
   });
   host.append(goalChips, stage, helper);
 
@@ -134,7 +134,7 @@ export const buoyancyLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "발견 완료! 저울 눈금이 <b>줄어든 만큼이 부력</b>이에요 (15 − 9 = 6 N). 그래프처럼 부력은 <b>물에 잠긴 부피</b>를 따라 커지다가, 완전히 잠긴 뒤엔 더 깊어져도 <b>평평 — 그대로</b>였죠.";
+        "발견 완료! 저울 눈금이 <b>줄어든 만큼이 부력</b>이에요 (20 − 14 = 6 N). 그래프처럼 부력은 <b>물에 잠긴 부피</b>를 따라 커지다가, 완전히 잠긴 뒤엔 더 깊어져도 <b>평평 — 그대로</b>였죠.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -190,7 +190,7 @@ export const buoyancyLab: StepRenderer = (host, step, api) => {
     const gy0 = LABH + 14;
     const gy1 = H - 24;
     const xOf = (x01: number): number => gx0 + x01 * (gx1 - gx0);
-    const yOf = (n: number): number => gy1 - ((n - 8) / (16 - 8)) * (gy1 - gy0);
+    const yOf = (n: number): number => gy1 - ((n - 13) / (21 - 13)) * (gy1 - gy0);
 
     // 축
     ctx.strokeStyle = "rgba(148,168,196,.4)";
@@ -200,10 +200,10 @@ export const buoyancyLab: StepRenderer = (host, step, api) => {
     ctx.lineTo(gx0, gy1);
     ctx.lineTo(gx1, gy1);
     ctx.stroke();
-    // 눈금선 15/12/9
+    // 눈금선 20/17/14
     ctx.font = "600 10px Pretendard, sans-serif";
     ctx.textAlign = "right";
-    for (const n of [15, 12, 9]) {
+    for (const n of [20, 17, 14]) {
       ctx.strokeStyle = "rgba(148,168,196,.16)";
       ctx.beginPath();
       ctx.moveTo(gx0, yOf(n));
@@ -280,10 +280,10 @@ export const buoyancyLab: StepRenderer = (host, step, api) => {
     // 목표 판정 (기하 기준)
     if (f > 0.38 && f < 0.66) {
       halfMs += dt * 16.7;
-      if (halfMs > 360) collect("half", "12 N!", "절반 잠김 — 저울이 12 N");
+      if (halfMs > 360) collect("half", "17 N!", "절반 잠김 — 저울이 17 N");
     } else halfMs = 0;
-    if (f >= 0.995) collect("full", "9 N!", "완전 잠김 — 부력이 6 N");
-    if (goals.has("full") && deepPx() > 16) collect("deep", "그대로 9 N", "더 깊어도 9 N — 잠긴 부피가 같으니까!");
+    if (f >= 0.995) collect("full", "14 N!", "완전 잠김 — 부력이 6 N");
+    if (goals.has("full") && deepPx() > 16) collect("deep", "그대로 14 N", "더 깊어도 14 N — 잠긴 부피가 같으니까!");
 
     // ---- 그리기: 스탠드(고정) ----
     ctx.strokeStyle = "rgba(196,212,236,.65)";
@@ -409,7 +409,7 @@ export const buoyancyLab: StepRenderer = (host, step, api) => {
       shown = txt;
       readVal.textContent = txt;
       const b = W_AIR - reading;
-      buoyPill.textContent = b < 0.05 ? "부력 0.0 N — 아직 물 밖" : `부력 ${b.toFixed(1)} N = 15 − ${txt}`;
+      buoyPill.textContent = b < 0.05 ? "부력 0.0 N — 아직 물 밖" : `부력 ${b.toFixed(1)} N = 20 − ${txt}`;
     }
   });
 

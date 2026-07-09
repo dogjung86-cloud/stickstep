@@ -1,7 +1,8 @@
-// curveLab, 곡선 정원(교과서 129~131쪽 반비례 그래프). xy=6을 지키는 점을 좌우로 끌면
-// 원점과 점이 만드는 직사각형(넓이 항상 6)이 변형되고, 지나간 자리에 자취가 남아
+// curveLab, 곡선 정원(반비례 그래프 발견 랩, 자체 제작 상수 xy=8). xy=8을 지키는 점을 좌우로
+// 끌면 원점과 점이 만드는 직사각형(넓이 항상 8)이 변형되고, 지나간 자리에 자취가 남아
 // 한 쌍의 매끄러운 곡선이 자라난다. 축 끝까지 밀면 "닿을 듯 닿지 않는" 성질을 만난다.
-//   목표 ① 자취로 곡선 만들기 ② 양 끝 관찰(축 근접, 0 금지) ③ a=−6 반전(제2·4사분면)
+//   격자점 (1,8)(2,4)(4,2)(8,1)이 전부 모눈 위: 좌표평면은 ±8.
+//   목표 ① 자취로 곡선 만들기 ② 양 끝 관찰(축 근접, 0 금지) ③ a=−8 반전(제2·4사분면)
 // 점은 곡선 위에 구속(드래그는 x만 조종, y=a/x 자동). setPointerCapture는 try/catch(사고 7).
 // 채점 아님(발견 랩), 전 목표 달성 시 recordQuiz(true)+enableCTA. rAF 금지(CSS+setTimeout).
 
@@ -31,7 +32,7 @@ export const curveLab: StepRenderer = (host, step, api) => {
 
   const board = mboard(500);
   const qCard = el("div", { class: "mdr-q mcl-q" });
-  const spec = planeSpec({ min: -6, max: 6, size: 340, labelEvery: 2 });
+  const spec = planeSpec({ min: -8, max: 8, size: 340, labelEvery: 2 });
   const svgWrap = el("div", { class: "mcl-plane" });
   svgWrap.innerHTML =
     `<svg viewBox="${spec.vb}" xmlns="http://www.w3.org/2000/svg" fill="none">${spec.grid}` +
@@ -50,7 +51,7 @@ export const curveLab: StepRenderer = (host, step, api) => {
   const toast = mtoast(board);
   const helper = el("div", {
     class: "helper",
-    html: "분홍 점은 <b>곱 x×y=6</b>을 절대 어기지 않아요. 좌우로 끌면서 직사각형과 자취를 관찰해 보세요!",
+    html: "분홍 점은 <b>곱 x×y=8</b>을 절대 어기지 않아요. 좌우로 끌면서 직사각형과 자취를 관찰해 보세요!",
   });
   host.append(chips.el, board, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -63,7 +64,7 @@ export const curveLab: StepRenderer = (host, step, api) => {
 
   const timers = new Set<number>();
 
-  let a = 6;
+  let a = 8;
   let x = 2; // 현재 점의 x(부호 = 가지)
   let lastStamp = 0;
   let trailN = 0;
@@ -73,10 +74,10 @@ export const curveLab: StepRenderer = (host, step, api) => {
   let finished = false;
 
   const yOf = (xx: number): number => a / xx;
-  const X_MIN = 1; // |x| ∈ [1, 6] → |y|도 [1, 6]
+  const X_MIN = 1; // |x| ∈ [1, 8] → |y|도 [1, 8]
 
   function fmtEq(): string {
-    return `x×y = ${a < 0 ? "−6" : "6"}`;
+    return `x×y = ${a < 0 ? "−8" : "8"}`;
   }
 
   function paintCard(): void {
@@ -103,7 +104,7 @@ export const curveLab: StepRenderer = (host, step, api) => {
     const col = a > 0 ? "#0DA5C6" : "#8A6EE0";
     gRect.innerHTML =
       `<rect x="${rx}" y="${ry}" width="${w}" height="${h}" fill="${col}" opacity=".12" stroke="${col}" stroke-width="1.4" stroke-dasharray="5 4"/>` +
-      `<text x="${rx + w / 2}" y="${ry + h / 2 + 4}" text-anchor="middle" font-size="12.5" font-weight="900" fill="${col}">넓이 6</text>`;
+      `<text x="${rx + w / 2}" y="${ry + h / 2 + 4}" text-anchor="middle" font-size="12.5" font-weight="900" fill="${col}">넓이 8</text>`;
     paintCard();
   }
 
@@ -140,7 +141,7 @@ export const curveLab: StepRenderer = (host, step, api) => {
     const branch = (sign: 1 | -1): string => {
       let d = "";
       for (let i = 0; i <= 40; i++) {
-        const xx = sign * (X_MIN + (i / 40) * (6 - X_MIN));
+        const xx = sign * (X_MIN + (i / 40) * (8 - X_MIN));
         const yy = yOf(xx);
         d += `${i === 0 ? "M" : "L"}${spec.px(xx).toFixed(1)} ${spec.py(yy).toFixed(1)} `;
       }
@@ -153,7 +154,7 @@ export const curveLab: StepRenderer = (host, step, api) => {
 
   function judgeEdges(): void {
     if (a < 0 || chips.has("asym")) return;
-    if (Math.abs(x) >= 5.75 && !edgeFar) {
+    if (Math.abs(x) >= 7.5 && !edgeFar) {
       edgeFar = true;
       haptic(HAPTIC.tap);
       toast("x가 커질수록 y는 0에 다가가요, 그런데 절대 0이 되진 않죠!");
@@ -166,7 +167,7 @@ export const curveLab: StepRenderer = (host, step, api) => {
     if (edgeFar && edgeNear) {
       chips.on("asym", "닿을 듯 안 닿아!");
       helper.innerHTML =
-        "곡선은 좌표축에 <b>한없이 가까워지지만 절대 닿지 않아요</b>. 곱이 6이어야 하는데 x나 y가 0이면 곱이 0이 되어 버리니까요! 이제 아래에서 <b>a를 −6으로</b> 바꿔 보세요.";
+        "곡선은 좌표축에 <b>한없이 가까워지지만 절대 닿지 않아요</b>. 곱이 8이어야 하는데 x나 y가 0이면 곱이 0이 되어 버리니까요! 이제 아래에서 <b>a를 −8로</b> 바꿔 보세요.";
       const chip = chips.el.querySelector(`[data-g="neg"] span`) as HTMLElement;
       chip.textContent = "도전!";
       negBtn();
@@ -175,8 +176,8 @@ export const curveLab: StepRenderer = (host, step, api) => {
 
   function negBtn(): void {
     clear(actions);
-    const pos = el("button", { class: "ct-btn", attrs: { type: "button" } }, el("span", { text: "a = 6" })) as HTMLButtonElement;
-    const neg = el("button", { class: "ct-btn hero", attrs: { type: "button" } }, el("span", { text: "a = −6" })) as HTMLButtonElement;
+    const pos = el("button", { class: "ct-btn", attrs: { type: "button" } }, el("span", { text: "a = 8" })) as HTMLButtonElement;
+    const neg = el("button", { class: "ct-btn hero", attrs: { type: "button" } }, el("span", { text: "a = −8" })) as HTMLButtonElement;
     const swap = (na: number): void => {
       if (a === na) return;
       a = na;
@@ -184,14 +185,14 @@ export const curveLab: StepRenderer = (host, step, api) => {
       gTrail.innerHTML = "";
       curve.style.opacity = "0";
       if (a < 0) {
-        helper.innerHTML = "곱이 <b>−6</b>이 됐어요. x가 양수면 y는 음수, 곡선이 <b>제2·4사분면</b>으로 이사했죠. 자취를 남겨 확인해 보세요!";
-        toast("이제 x×y=−6, 부호가 반대인 짝!");
+        helper.innerHTML = "곱이 <b>−8</b>이 됐어요. x가 양수면 y는 음수, 곡선이 <b>제2·4사분면</b>으로 이사했죠. 자취를 남겨 확인해 보세요!";
+        toast("이제 x×y=−8, 부호가 반대인 짝!");
       }
       haptic(HAPTIC.select);
       paint();
     };
-    pos.addEventListener("click", () => swap(6));
-    neg.addEventListener("click", () => swap(-6));
+    pos.addEventListener("click", () => swap(8));
+    neg.addEventListener("click", () => swap(-8));
     actions.append(pos, neg);
   }
 
@@ -215,7 +216,7 @@ export const curveLab: StepRenderer = (host, step, api) => {
     const wantNeg = a > 0 ? vx < 0 && vy < 0 : vx < 0;
     const sign = wantNeg ? -1 : 1;
     vx = Math.abs(vx);
-    vx = Math.max(X_MIN, Math.min(6, vx));
+    vx = Math.max(X_MIN, Math.min(8, vx));
     x = sign * (Math.round(vx * 4) / 4);
     paint();
     stamp();

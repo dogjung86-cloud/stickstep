@@ -207,7 +207,7 @@ await clickCTA();
 await quiz(0);
 await quiz(0);
 await oxPick(false);
-await drill([21, 250, 8, 130, 201]);
+await drill([21, 2500, 8, 180, 201]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L1 완료");
 
@@ -253,26 +253,26 @@ await clickCTA(); // → 문제
 await quiz(0);
 await oxPick(false);
 await quiz(0);
-await drill([7, 20, -6, 27, 6, 69.7]);
+await drill([7, 20, -6, 29, 6, 70]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L3 완료");
 
 /* ================= L4 식의 해부 ================= */
 await openLesson("일차식");
 log(`L4: ${await h1()}`);
-await waitBtn("마카롱", 600);
-for (let i = 0; i < 5; i++) await clickBtn("마카롱", 550).catch(() => {});
+await waitBtn("쿠키", 600);
+for (let i = 0; i < 4; i++) await clickBtn("쿠키", 550).catch(() => {});
 await hookChoice();
 await clickCTA(); // → concept(부품 이름 먼저)
 await clickCTA(); // → exprAnatomy
 // exprAnatomy
 await page.waitForSelector(".nl-card", { timeout: 9000 });
-await tapEl(".nl-card", "6x");
-await tapEl(".nl-card", "10");
+await tapEl(".nl-card", "5x");
+await tapEl(".nl-card", "8");
 await W(600);
-await tapEl(".nl-card", "10"); // 상수항
+await tapEl(".nl-card", "8"); // 상수항
 await W(600);
-await tapEl(".nl-card", "6x"); // 계수
+await tapEl(".nl-card", "5x"); // 계수
 await W(2500); // 2단계(3x−2) 전환 대기
 await tapEl(".nl-card", "3x"); // 항 1
 await W(500);
@@ -288,7 +288,7 @@ await clickCTA(); // → 문제
 await quiz(0);
 await multiQuiz([0, 1]);
 await oxPick(false);
-await drill([-7, 2, 2, -4, 2]);
+await drill([-9, 2, 3, -3, 2]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L4 완료");
 
@@ -307,8 +307,8 @@ const mergePair = async (aTxt, bTxt) => {
   await tapEl(".tm-chip", bTxt);
   await W(1000);
 };
-await mergePair("3x", "2x");
-await mergePair("+10", "−8");
+await mergePair("5x", "3x");
+await mergePair("+7", "−2");
 await W(1800); // 스테이지 전환
 await mergePair("4x", "−x");
 await mergePair("7y", "2y");
@@ -322,7 +322,7 @@ await clickCTA();
 await quiz(0);
 await quiz(0);
 await oxPick(false);
-await drill([1, 4, 12, 9, -3, -4, 21, 18]);
+await drill([1, 3, 11, 14, -5, -3, 20, 25]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L5 완료");
 
@@ -362,7 +362,7 @@ await clickCTA();
 await quiz(0);
 await quiz(0);
 await multiQuiz([0, 1]);
-await drill([4, 3, 2, 2000, 4]);
+await drill([4, 2, 3, 1500, 3]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L6 완료");
 
@@ -392,7 +392,7 @@ await clickCTA();
 await quiz(0);
 await quiz(0);
 await oxPick(false);
-await drill([14, 6, 48, "-4/3", "5/2"]);
+await drill([11, 5, 30, "-3/2", "7/3"]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L7 완료");
 
@@ -445,7 +445,7 @@ await clickCTA();
 await quiz(0);
 await quiz(0);
 await oxPick(false);
-await drill([-1, 1, -8, 2, -3, -2]);
+await drill([-2, 2, -7, 3, -1, -3]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L8 완료");
 
@@ -466,7 +466,7 @@ await quiz(0);
 await quiz(0); // 보스전 4: 비례식
 await quiz(0); // 보스전 5: 수조 채우기
 await multiQuiz([0, 1, 4]);
-await drill([21, 5, 2, 3, 21, 10, 36, 2]);
+await drill([18, 4, 3, 1, 19, 9, 84, 3]);
 await W(400);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L9 완료");

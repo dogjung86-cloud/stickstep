@@ -26,17 +26,17 @@ function rayArrow(x1: number, y1: number, x2: number, y2: number, t: number, col
   return `<path d="M${w1x.toFixed(1)} ${w1y.toFixed(1)}L${ax.toFixed(1)} ${ay.toFixed(1)}L${w2x.toFixed(1)} ${w2y.toFixed(1)}" stroke="${color}" stroke-width="2.6" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
 }
 
-/** L1 마무리 1번 — 광선이 거울 면과 20°를 이루는 그림(입사각·반사각은?) */
+/** L1 반사각 문제 — 광선이 거울 면과 35°를 이루는 그림(입사각·반사각은?) */
 export function reflectAngleFig(): string {
-  // 거울 수평, 입사점 (172,150). 광선은 거울면과 20° → 법선과 70°.
+  // 거울 수평, 입사점 (172,150). 광선은 거울면과 35° → 법선과 55°(반사 법칙: 반사각도 55°).
   const P = { x: 172, y: 150 };
-  const deg = (20 * Math.PI) / 180;
+  const deg = (35 * Math.PI) / 180;
   const L = 128;
   const sx = P.x - Math.cos(deg) * L;
   const sy = P.y - Math.sin(deg) * L;
   const rx = P.x + Math.cos(deg) * L;
   const ry = P.y - Math.sin(deg) * L;
-  return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="거울에 입사한 빛이 거울 면과 20도를 이루는 그림">
+  return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="거울에 입사한 빛이 거울 면과 35도를 이루는 그림">
     <line x1="30" y1="150" x2="314" y2="150" stroke="#5E6B7E" stroke-width="3.4"/>
     ${Array.from({ length: 14 }, (_, i) => `<line x1="${44 + i * 20}" y1="150" x2="${36 + i * 20}" y2="162" stroke="#B0B8C1" stroke-width="1.6"/>`).join("")}
     <line x1="${P.x}" y1="150" x2="${P.x}" y2="34" stroke="#8B95A1" stroke-width="1.8" stroke-dasharray="6 6"/>
@@ -46,7 +46,7 @@ export function reflectAngleFig(): string {
     ${rayArrow(sx, sy, P.x, P.y, 0.55, "#4E5968")}
     ${rayArrow(P.x, P.y, rx, ry, 0.55, "#4E5968")}
     <path d="M${P.x - 52} 150 A52 52 0 0 1 ${P.x - Math.cos(deg) * 52} ${P.y - Math.sin(deg) * 52}" stroke="#F25C54" stroke-width="2.4"/>
-    <text x="${P.x - 82}" y="142" font-size="13" font-weight="800" fill="#F25C54">20°</text>
+    <text x="${P.x - 84}" y="138" font-size="13" font-weight="800" fill="#F25C54">35°</text>
     <text x="${sx - 4}" y="${sy - 8}" font-size="11.5" fill="#4E5968">빛</text>
     <text x="292" y="176" font-size="11.5" fill="#8B95A1">거울</text>
   </svg>`;
@@ -82,7 +82,7 @@ export function refractPathFig(): string {
   </svg>`;
 }
 
-/** L2 마무리 2번 — 물을 붓기 전/후 컵 속 동전 */
+/** L2 동전 컵 문제 — 물을 붓기 전/후 컵 속 동전 */
 export function coinCupFig(): string {
   const cup = (x: number, water: boolean): string => `
     <g transform="translate(${x},0)">
@@ -102,23 +102,28 @@ export function coinCupFig(): string {
   return `<svg viewBox="0 0 344 204" ${NS} fill="none" role="img" aria-label="물을 붓기 전에는 동전이 안 보이고, 부으면 보인다">${cup(4, false)}${cup(178, true)}</svg>`;
 }
 
-/** L4 마무리 4번 — 평면거울에 비친 강아지와 상 (가) */
-export function dogMirrorFig(): string {
-  const dog = (x: number, ghost: boolean): string => `
-    <g transform="translate(${x},96)" ${ghost ? 'opacity=".55"' : ""} stroke="${ghost ? "#7FA6CC" : "#4E5968"}" stroke-width="2.4" fill="${ghost ? "#EAF3FE" : "#FFF7EE"}" ${ghost ? 'stroke-dasharray="4 4"' : ""}>
-      <ellipse cx="0" cy="24" rx="26" ry="17"/>
-      <circle cx="${ghost ? -30 : 30}" cy="6" r="13"/>
-      <path d="M${ghost ? -38 : 38} -4l${ghost ? -4 : 4}-9 ${ghost ? 7 : -7} 3M${ghost ? -24 : 24} -6l${ghost ? 3 : -3}-8 ${ghost ? -7 : 7} 2" fill="none"/>
-      <circle cx="${ghost ? -33 : 33}" cy="4" r="1.8" fill="${ghost ? "#7FA6CC" : "#4E5968"}" stroke="none"/>
-      <path d="M${ghost ? 24 : -24} 14q${ghost ? 10 : -10}-3 ${ghost ? 12 : -12}-12" fill="none"/>
-      <path d="M-12 39v8M12 39v8" fill="none"/>
+/** L4 평면거울 문제 — 평면거울에 비친 고양이와 상 (가) */
+export function catMirrorFig(): string {
+  const cat = (x: number, ghost: boolean): string => {
+    const s = ghost ? -1 : 1; // 상은 좌우 반전
+    const ink = ghost ? "#7FA6CC" : "#4E5968";
+    return `
+    <g transform="translate(${x},96)" ${ghost ? 'opacity=".55"' : ""} stroke="${ink}" stroke-width="2.4" fill="${ghost ? "#EAF3FE" : "#FFF7EE"}" ${ghost ? 'stroke-dasharray="4 4"' : ""}>
+      <ellipse cx="0" cy="26" rx="24" ry="16"/>
+      <circle cx="${s * 26}" cy="2" r="12"/>
+      <path d="M${s * 18} -6l${s * 2} -11 ${s * 7} 6zM${s * 30} -8l${s * 4} -10 ${s * 5} 8z"/>
+      <circle cx="${s * 29}" cy="0" r="1.8" fill="${ink}" stroke="none"/>
+      <path d="M${s * 36} 5h${s * 8}M${s * 35} 9l${s * 8} 3" fill="none" stroke-width="1.6"/>
+      <path d="M${s * -22} 18q${s * -12} -2 ${s * -10} -16" fill="none"/>
+      <path d="M-10 41v7M10 41v7" fill="none"/>
     </g>`;
-  return `<svg viewBox="0 0 344 176" ${NS} fill="none" role="img" aria-label="평면거울 앞의 강아지와 거울 속 상 (가)">
+  };
+  return `<svg viewBox="0 0 344 176" ${NS} fill="none" role="img" aria-label="평면거울 앞의 고양이와 거울 속 상 (가)">
     <line x1="172" y1="16" x2="172" y2="160" stroke="#5E6B7E" stroke-width="4"/>
     ${Array.from({ length: 8 }, (_, i) => `<line x1="176" y1="${22 + i * 18}" x2="186" y2="${14 + i * 18}" stroke="#B0B8C1" stroke-width="1.6"/>`).join("")}
-    ${dog(84, false)}
-    ${dog(260, true)}
-    <text x="84" y="166" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">강아지</text>
+    ${cat(84, false)}
+    ${cat(260, true)}
+    <text x="84" y="166" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">고양이</text>
     <text x="260" y="166" text-anchor="middle" font-size="12" font-weight="700" fill="#5E86B4">(가)</text>
     <text x="160" y="14" text-anchor="end" font-size="11" fill="#8B95A1">평면거울</text>
   </svg>`;
@@ -152,7 +157,7 @@ export function twoMirrorsFig(): string {
   </svg>`;
 }
 
-/** L5 마무리 6번 — 렌즈 (가)(나)로 가까운 물체를 본 모습 */
+/** L5 — 렌즈 (가)(나)로 가까운 물체를 본 모습(현재 미사용 — 문제는 발주 사진 lpair 사용) */
 export function twoLensFig(): string {
   const bug = (x: number, y: number, s: number): string => `
     <g transform="translate(${x},${y}) scale(${s})">
@@ -177,7 +182,7 @@ export function twoLensFig(): string {
   </svg>`;
 }
 
-/** L6 마무리 8번 — 모니터 확대: 빨강·초록 화소만 켜짐 */
+/** L6 화소 문제 — 모니터 확대: 빨강·초록 화소만 켜짐 */
 export function pixelRGFig(): string {
   const cell = (x: number, y: number): string => {
     const bars = [
@@ -200,7 +205,8 @@ export function pixelRGFig(): string {
   </svg>`;
 }
 
-/** L6 마무리 7번 — 어떤 옷에 빨강·초록·파랑 조명을 비춘 모습 */
+/** L6 물체의 색 문제 — 어떤 옷에 빨강·초록·파랑 조명을 하나씩 비춘 모습.
+ *  옷은 노란색(빨강+초록 반사·파랑 흡수) → 빨간 조명 빨강·초록 조명 초록·파란 조명 검정. */
 export function clothLightFig(): string {
   const shirt = (x: number, bodyColor: string, lightName: string, lightColor: string): string => `
     <g transform="translate(${x},0)">
@@ -211,10 +217,10 @@ export function clothLightFig(): string {
       <path d="M-8 52q8 7 16 0" stroke="#3C4654" stroke-width="1.6" fill="none"/>
       <text x="0" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">${lightName}</text>
     </g>`;
-  return `<svg viewBox="0 0 344 156" ${NS} fill="none" role="img" aria-label="같은 옷이 빨간 조명에선 검은색, 초록 조명에선 초록색, 파란 조명에선 파란색으로 보인다">
-    ${shirt(66, "#20262E", "빨간 조명", "#E5322E")}
+  return `<svg viewBox="0 0 344 156" ${NS} fill="none" role="img" aria-label="같은 옷이 빨간 조명에선 빨간색, 초록 조명에선 초록색, 파란 조명에선 검은색으로 보인다">
+    ${shirt(66, "#D2382E", "빨간 조명", "#E5322E")}
     ${shirt(172, "#18A34A", "초록 조명", "#12A84E")}
-    ${shirt(278, "#2454C8", "파란 조명", "#3A6CFF")}
+    ${shirt(278, "#20262E", "파란 조명", "#3A6CFF")}
   </svg>`;
 }
 
@@ -316,29 +322,29 @@ export function soundMiniFig(kind: "amp" | "freq" | "tone"): string {
   </svg>`;
 }
 
-/** L7 마무리 10번 — 호수의 공과 돌 */
-export function pondBallFig(): string {
-  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="호수에 뜬 축구공 뒤쪽에 돌이 떨어져 물결이 퍼진다">
+/** L7 파동 문제 — 수영장의 튜브와, 뒤쪽 수면에 떨어지는 공(매질 제자리 함정) */
+export function poolTubeFig(): string {
+  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="수영장에 뜬 튜브 뒤쪽 수면에 공이 떨어져 물결이 퍼진다">
     <rect x="12" y="86" width="320" height="70" rx="10" fill="#D6E9FB"/>
     <path d="M12 88h320" stroke="#7FB0E0" stroke-width="2.2"/>
     ${[16, 34, 54].map((r) => `<ellipse cx="252" cy="88" rx="${r}" ry="${r * 0.26}" stroke="#7FA6CC" stroke-width="1.8" fill="none" opacity="${1 - r / 80}"/>`).join("")}
-    <circle cx="252" cy="76" r="7" fill="#8B95A1" stroke="#5E6B7E" stroke-width="1.6"/>
+    <circle cx="252" cy="76" r="7" fill="#F2A93B" stroke="#B87A18" stroke-width="1.6"/>
     <path d="M252 40v22M247 56l5 7 5-7" stroke="#8B95A1" stroke-width="2" fill="none"/>
-    <g transform="translate(120,74)">
-      <circle cx="0" cy="0" r="15" fill="#fff" stroke="#4E5968" stroke-width="2.2"/>
-      <path d="M0-4l4.5 3-1.7 5.3H-2.8L-4.5-1z" fill="#4E5968"/>
-      <path d="M-10-9q5 4 5 9M10-9q-5 4-5 9" stroke="#8B95A1" stroke-width="1.6" fill="none"/>
+    <g transform="translate(120,84)">
+      <ellipse cx="0" cy="0" rx="22" ry="10" fill="#F58A93" stroke="#C24E60" stroke-width="2"/>
+      <ellipse cx="0" cy="-1" rx="9" ry="3.6" fill="#D6E9FB" stroke="#C24E60" stroke-width="1.6"/>
+      <path d="M-17 -4q5 -4 11 -3" stroke="#FCC7CE" stroke-width="2.2" fill="none"/>
     </g>
     <g stroke="#3C4654" stroke-width="2.2" fill="none">
       <circle cx="52" cy="34" r="8"/>
       <path d="M52 42v16M52 47l9 5M52 47l-8 6M52 58l-6 11M52 58l7 11"/>
     </g>
-    <text x="120" y="122" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">축구공</text>
-    <text x="252" y="122" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">돌</text>
+    <text x="120" y="122" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">튜브</text>
+    <text x="252" y="122" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">공</text>
   </svg>`;
 }
 
-/** L8 마무리 13번 — 파형 (가)~(라): 세기·높낮이 비교 */
+/** L8 파형 비교 문제 — 파형 (가)~(라): 세기·높낮이 비교 */
 export function waveFourFig(): string {
   const cell = (x: number, y: number, label: string, amp: number, cyc: number): string => {
     let d = "";
@@ -358,19 +364,27 @@ export function waveFourFig(): string {
   </svg>`;
 }
 
-/** L8 — 피아노 건반 ㉠㉡㉢ (진동수 비교) */
-export function pianoKeysFig(): string {
-  const white = Array.from({ length: 10 }, (_, i) => `<rect x="${32 + i * 28}" y="36" width="27" height="108" rx="3" fill="#FDFEFF" stroke="#B0B8C1" stroke-width="1.4"/>`).join("");
-  const blackIdx = [0, 1, 3, 4, 5, 7, 8];
-  const black = blackIdx.map((i) => `<rect x="${32 + i * 28 + 19}" y="36" width="17" height="66" rx="2.5" fill="#333D4B"/>`).join("");
-  const mark = (i: number, t: string): string =>
-    `<circle cx="${32 + i * 28 + 13.5}" cy="128" r="9.5" fill="#EEF4FF" stroke="#3182F6" stroke-width="1.6"/><text x="${32 + i * 28 + 13.5}" y="132.5" text-anchor="middle" font-size="11" font-weight="800" fill="#1B64DA">${t}</text>`;
-  return `<svg viewBox="0 0 344 168" ${NS} fill="none" role="img" aria-label="피아노 건반 — 왼쪽부터 ㉠, 가운데 ㉡, 오른쪽 ㉢">
-    <rect x="28" y="24" width="288" height="124" rx="8" fill="#E7EBF0"/>
-    ${white}${black}
-    ${mark(0, "㉠")}${mark(4, "㉡")}${mark(9, "㉢")}
-    <text x="32" y="16" font-size="10.5" fill="#8B95A1">낮은 음 ←</text>
-    <text x="316" y="16" text-anchor="end" font-size="10.5" fill="#8B95A1">→ 높은 음</text>
+/** L8 높낮이 문제 — 실로폰 음판 ㉠㉡㉢ (길이 차이 → 진동수 비교).
+ *  음판이 짧을수록 빠르게 떨려 진동수가 크다(칼림바 훅과 같은 물리) — 길이가 그림의 단서. */
+export function xyloBarsFig(): string {
+  const bar = (i: number): string => {
+    const x = 40 + i * 38;
+    const h = 118 - i * 10;
+    const y = 88 - h / 2;
+    return `<rect x="${x}" y="${y}" width="27" height="${h}" rx="6" fill="#F5C878" stroke="#C08A3E" stroke-width="1.8"/>
+      <circle cx="${x + 13.5}" cy="${y + 9}" r="2.4" fill="#C08A3E"/>
+      <circle cx="${x + 13.5}" cy="${y + h - 9}" r="2.4" fill="#C08A3E"/>`;
+  };
+  const mark = (i: number, t: string): string => {
+    const cx = 40 + i * 38 + 13.5;
+    return `<circle cx="${cx}" cy="88" r="10" fill="#EEF4FF" stroke="#3182F6" stroke-width="1.6"/><text x="${cx}" y="92.5" text-anchor="middle" font-size="11" font-weight="800" fill="#1B64DA">${t}</text>`;
+  };
+  return `<svg viewBox="0 0 344 168" ${NS} fill="none" role="img" aria-label="실로폰 — 왼쪽의 긴 음판에 ㉠, 가운데 ㉡, 오른쪽의 짧은 음판에 ㉢ 표시">
+    <path d="M32 24L303 54L303 122L32 152z" fill="#E7EBF0"/>
+    ${Array.from({ length: 7 }, (_, i) => bar(i)).join("")}
+    ${mark(0, "㉠")}${mark(3, "㉡")}${mark(6, "㉢")}
+    <line x1="306" y1="150" x2="328" y2="114" stroke="#B0846A" stroke-width="3.4" stroke-linecap="round"/>
+    <circle cx="330" cy="110" r="7" fill="#6B7684" stroke="#4E5968" stroke-width="1.4"/>
   </svg>`;
 }
 

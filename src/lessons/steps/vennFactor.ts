@@ -1,5 +1,5 @@
 // vennFactor, 소인수 벤 다이어그램(L4·L5 기함 랩).
-// gcd: 36·60의 소인수 칩에서 "같은 수끼리" 짝지어 교집합으로, 교집합의 곱이 최대공약수.
+// gcd: 45·75의 소인수 칩에서 "같은 수끼리" 짝지어 교집합으로, 교집합의 곱이 최대공약수.
 // lcm: (L4에서 만든 벤 그대로) 울타리 전체를 탭해 곱하면 최소공배수, 검산·서로소까지.
 // coprime: 서로소 판별소 3스테이지(8·9 → 9·25 → 14·21 함정), 짝을 찾아 겹치거나
 //   확신이 서면 "서로소!" 선언. 겹침이 하나라도 합쳐지면 그 자리에서 "서로소 아님" 판정.
@@ -79,8 +79,8 @@ export const vennFactor: StepRenderer = (host, step, api) => {
   };
 
   let chips: VChip[] = [];
-  let labelA = 36;
-  let labelB = 60;
+  let labelA = 45;
+  let labelB = 75;
 
   function drawVenn(): void {
     stage.innerHTML =
@@ -125,30 +125,27 @@ export const vennFactor: StepRenderer = (host, step, api) => {
   }
 
   const CENTER_SLOTS: [number, number][] = [
-    [159, 46],
-    [159, 108],
-    [159, 168],
+    [159, 56],
+    [159, 122],
   ];
   let centerUsed = 0;
 
   /* ================= GCD 모드 ================= */
   function setupGcd(): void {
-    labelA = 36;
-    labelB = 60;
+    labelA = 45;
+    labelB = 75;
     drawVenn();
     helper.innerHTML =
-      "36 = 2×2×3×3, 60 = 2×2×3×5. <b>양쪽에 다 있는 소인수</b>를 찾아 같은 수끼리 끌어 겹쳐 보세요.";
+      "45 = 3×3×5, 75 = 3×5×5. <b>양쪽에 다 있는 소인수</b>를 찾아 같은 수끼리 끌어 겹쳐 보세요.";
     const L: [number, [number, number]][] = [
-      [2, [58, 62]],
-      [2, [42, 122]],
-      [3, [62, 172]],
-      [3, [96, 96]],
+      [3, [56, 64]],
+      [3, [44, 126]],
+      [5, [76, 172]],
     ];
     const R: [number, [number, number]][] = [
-      [2, [262, 62]],
-      [2, [278, 122]],
-      [3, [258, 172]],
-      [5, [222, 96]],
+      [3, [262, 64]],
+      [5, [276, 126]],
+      [5, [246, 172]],
     ];
     L.forEach(([b, [x, y]], i) => later(() => mkChip(b, x, y, "L"), i * 90));
     R.forEach(([b, [x, y]], i) => later(() => mkChip(b, x, y, "R"), 380 + i * 90));
@@ -208,17 +205,17 @@ export const vennFactor: StepRenderer = (host, step, api) => {
     toast(`최대공약수 ${prod}!`);
     goals.on("gcd", `${prod}!`);
     helper.innerHTML =
-      `겹침은 끝! 교집합의 곱 <b>2×2×3 = 12</b>가 36과 60의 <b>최대공약수</b>예요. ` +
-      "그런데 공약수는 12 말고도 있었죠, 확인해 볼까요?";
+      `겹침은 끝! 교집합의 곱 <b>3×5 = 15</b>가 45와 75의 <b>최대공약수</b>예요. ` +
+      "그런데 공약수는 15 말고도 있었죠, 확인해 볼까요?";
     const btn = el("button", { class: "ct-btn hero", text: "공약수 전부 보기", attrs: { type: "button" } });
     btn.addEventListener("click", () => {
       haptic(HAPTIC.tap);
       btn.remove();
-      read.innerHTML = mfmt("공약수: 1, 2, 3, 4, 6, 12") + `&nbsp;<b style="font-size:14px">, 전부 12의 약수!</b>`;
+      read.innerHTML = mfmt("공약수: 1, 3, 5, 15") + `&nbsp;<b style="font-size:14px">, 전부 15의 약수!</b>`;
       helper.innerHTML =
-        "36과 60의 공약수 <b>1, 2, 3, 4, 6, 12</b>는 정확히 <b>최대공약수 12의 약수</b>와 같아요. " +
+        "45와 75의 공약수 <b>1, 3, 5, 15</b>는 정확히 <b>최대공약수 15의 약수</b>와 같아요. " +
         "그래서 최대공약수 하나만 찾으면 공약수를 전부 아는 셈이에요.";
-      goals.on("divs", "12의 약수!");
+      goals.on("divs", "15의 약수!");
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "연습하기");
     });
@@ -228,7 +225,7 @@ export const vennFactor: StepRenderer = (host, step, api) => {
   /* ================= LCM 모드 ================= */
   let product = 1;
   let tapped = 0;
-  let lcmStage = 0; // 0: 36·60, 1: 5·8(서로소)
+  let lcmStage = 0; // 0: 45·75, 1: 5·8(서로소)
 
   function setupLcm(stageNo: number): void {
     lcmStage = stageNo;
@@ -239,15 +236,14 @@ export const vennFactor: StepRenderer = (host, step, api) => {
     tapped = 0;
     read.innerHTML = "";
     if (stageNo === 0) {
-      labelA = 36;
-      labelB = 60;
+      labelA = 45;
+      labelB = 75;
       drawVenn();
       helper.innerHTML =
         "지난번에 만든 벤 그대로예요. 이번엔 <b>울타리 안 전체</b>, 교집합 + 양쪽 나머지를 <b>모두</b> 탭해서 곱해 보세요.";
-      // 교집합(2,2,3) + 왼쪽 나머지 3 + 오른쪽 나머지 5
-      mkChip(2, 159, 52, "C", true);
-      mkChip(2, 159, 118, "C", true);
-      mkChip(3, 159, 178, "C", true);
+      // 교집합(3,5) + 왼쪽 나머지 3 + 오른쪽 나머지 5
+      mkChip(3, 159, 56, "C", true);
+      mkChip(5, 159, 122, "C", true);
       mkChip(3, 62, 118, "L", true);
       mkChip(5, 282, 118, "R", true);
     } else {
@@ -295,19 +291,19 @@ export const vennFactor: StepRenderer = (host, step, api) => {
   }
 
   function finishLcm0(): void {
-    read.innerHTML = mfmt(`최소공배수 = 2×2×3×3×5 = ${product}`);
+    read.innerHTML = mfmt(`최소공배수 = 3×3×5×5 = ${product}`);
     haptic(HAPTIC.correct);
     toast(`최소공배수 ${product}!`);
     goals.on("lcm", `${product}!`);
     helper.innerHTML =
-      "울타리 전체의 곱 <b>180</b>이 최소공배수예요, 공통 소인수는 <b>한 번만</b>(교집합), 나머지는 전부. 정말 둘 다의 배수인지 검산해 볼까요?";
+      "울타리 전체의 곱 <b>225</b>가 최소공배수예요, 공통 소인수는 <b>한 번만</b>(교집합), 나머지는 전부. 정말 둘 다의 배수인지 검산해 볼까요?";
     const btn = el("button", { class: "ct-btn hero", text: "검산하기", attrs: { type: "button" } });
     btn.addEventListener("click", () => {
       haptic(HAPTIC.tap);
       btn.remove();
-      read.innerHTML = mfmt("180÷36 = 5") + "&nbsp;&nbsp;" + mfmt("180÷60 = 3") + `&nbsp;<b style="font-size:14px">, 딱 떨어져요!</b>`;
+      read.innerHTML = mfmt("225÷45 = 5") + "&nbsp;&nbsp;" + mfmt("225÷75 = 3") + `&nbsp;<b style="font-size:14px">, 딱 떨어져요!</b>`;
       helper.innerHTML =
-        "180은 36의 배수이자 60의 배수, 그중 <b>가장 작은</b> 공배수예요. 모든 공배수(180, 360, 540, ...)는 180의 배수고요. 마지막으로 <b>서로소</b>면 어떻게 될까요?";
+        "225는 45의 배수이자 75의 배수, 그중 <b>가장 작은</b> 공배수예요. 모든 공배수(225, 450, 675, ...)는 225의 배수고요. 마지막으로 <b>서로소</b>면 어떻게 될까요?";
       goals.on("check", "딱 떨어짐!");
       later(() => setupLcm(1), 1900);
     });

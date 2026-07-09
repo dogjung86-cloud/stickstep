@@ -388,7 +388,7 @@ try {
   await clickCTA(); // → concept(오른손 감싸쥐기 팁)
   log("  concept(오른손 팁):", await h1());
   await clickCTA(); await clickCTA(); // recap → 문제
-  await quiz(2); await oxPick(false); await quiz(0);
+  await quiz(2); await oxPick(true); await quiz(0); // ox 정답 O("멀수록 바늘이 덜 돈다" 정정 반영)
   await finishLesson();
 
   // ════ L8 자기장 속 전류가 받는 힘 ════

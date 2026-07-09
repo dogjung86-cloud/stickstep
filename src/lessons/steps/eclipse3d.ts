@@ -90,6 +90,9 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
   let tiltT = 0; // 0..1 애니메이션
   const TILT = 0.22; // rad(~12.6°) — 과장 표현, 문구에 실제 5° 명시
   let missToastMs = 0;
+  // 부분일식·부분월식 선경험 — 개기 정렬(<7°) 직전의 7~14° 구간에 한 번씩 토스트.
+  // 목표(collect) 조건은 개기 정렬 기준 그대로 — 부분 구간은 안내만 한다.
+  let partialSide: "" | "solar" | "lunar" = "";
 
   async function enter(): Promise<void> {
     if (rot) return;
@@ -294,6 +297,21 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
         pillText.textContent = "그림자가 비껴가요 — 궤도가 기울어 있으니까!";
       }
 
+      // 부분일식·부분월식(7~14° 어중간한 정렬 — 궤도면 위일 때만)
+      const partialSolar = !solarAligned && dSolar < 14 && onPlane && !groundView;
+      const partialLunar = !lunarAligned && dLunar < 14 && onPlane && !groundView;
+      if (partialSolar && partialSide !== "solar") {
+        partialSide = "solar";
+        showToast("태양이 일부만 가려졌어요 — 부분일식! 더 정확히 일렬로 맞추면 개기일식이 돼요");
+        haptic(HAPTIC.tap);
+      } else if (partialLunar && partialSide !== "lunar") {
+        partialSide = "lunar";
+        showToast("달이 지구 그림자에 일부만 걸쳤어요 — 부분월식! 더 깊이 넣으면 개기월식이 돼요");
+        haptic(HAPTIC.tap);
+      } else if (!partialSolar && !partialLunar && dSolar > 16 && dLunar > 16) {
+        partialSide = "";
+      }
+
       // 일식: 지구 표면 그림자 자국 + 지상 보기 버튼
       const spotMat = spot.material as T.MeshBasicMaterial;
       if (solarAligned) {
@@ -326,8 +344,15 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
         alignedLunarMs = 0;
         moonMat.color.lerp(new THREE.Color(0xffffff), Math.min(1, 0.06 * dt));
         if (!solarAligned && !groundView && !nearMiss) {
-          pillText.textContent =
-            dSolar < 40 ? "태양 쪽으로 조금만 더…" : dLunar < 40 ? "태양 반대쪽으로 조금만 더…" : "달을 좌우로 끌어 보세요";
+          pillText.textContent = partialSolar
+            ? "부분일식 — 태양 쪽으로 조금만 더!"
+            : partialLunar
+              ? "부분월식 — 더 깊이 넣어 보세요!"
+              : dSolar < 40
+                ? "태양 쪽으로 조금만 더…"
+                : dLunar < 40
+                  ? "태양 반대쪽으로 조금만 더…"
+                  : "달을 좌우로 끌어 보세요";
         }
       }
 

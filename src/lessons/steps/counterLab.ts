@@ -1,6 +1,6 @@
 // counterLab, 셈돌 랩(수학 · 정수와 유리수의 덧셈·뺄셈).
 //   add: (+1)파랑·(−1)빨강 돌을 겹쳐 0쌍으로 상쇄, 문제 3개(다른 부호·같은 부호·정반대)
-//   sub: (+3)−(−2), 뺄 빨간 돌이 없어서 0쌍(+1,−1)을 투입한 뒤 빼기 통으로 꺼낸다
+//   sub: (+4)−(−2), 뺄 빨간 돌이 없어서 0쌍(+1,−1)을 투입한 뒤 빼기 통으로 꺼낸다
 // 규율: rAF 금지(QA 프리즈), 이동은 left/top 트랜지션, 등장/소멸은 .born/.poof 키프레임 + setTimeout.
 // 돌 배치는 left/top(px)로만 한다, transform은 .born/.poof/.drag 애니메이션 몫이라 겹치면 순간이동한다.
 // setPointerCapture는 반드시 try/catch(합성 포인터에서 throw하면 리스너 전체가 죽는다).
@@ -317,7 +317,7 @@ export const counterLab: StepRenderer = (host, step, api) => {
       t2: { sign: 1 | -1; n: number };
     }
     const PROBS: Prob[] = [
-      { src: "(+3)+(-5)", t1: { sign: 1, n: 3 }, t2: { sign: -1, n: 5 } },
+      { src: "(+4)+(-6)", t1: { sign: 1, n: 4 }, t2: { sign: -1, n: 6 } },
       { src: "(-2)+(-4)", t1: { sign: -1, n: 2 }, t2: { sign: -1, n: 4 } },
       { src: "(+4)+(-4)", t1: { sign: 1, n: 4 }, t2: { sign: -1, n: 4 } },
     ];
@@ -334,9 +334,9 @@ export const counterLab: StepRenderer = (host, step, api) => {
       const alive = stones.filter((q) => q.alive);
       if (prob === 0) {
         lineUp(alive, 96);
-        readEl.innerHTML = mfmt("(+3)+(-5)=(-2)");
+        readEl.innerHTML = mfmt("(+4)+(-6)=(-2)");
         helper.innerHTML =
-          "파란 3개가 빨간 3개와 <b>0쌍으로 사라지고</b>, 빨간 2개가 남았어요, 그래서 −2! 다른 부호의 합은 <b>절댓값의 차</b>에 절댓값 큰 쪽 부호예요.";
+          "파란 4개가 빨간 4개와 <b>0쌍으로 사라지고</b>, 빨간 2개가 남았어요, 그래서 −2! 다른 부호의 합은 <b>절댓값의 차</b>에 절댓값 큰 쪽 부호예요.";
         chips.on("mix", "−2!");
         haptic(HAPTIC.correct);
         later(900, () => startProblem(1));
@@ -497,11 +497,11 @@ export const counterLab: StepRenderer = (host, step, api) => {
         stones.filter((q) => q.alive),
         108,
       );
-      readEl.innerHTML = mfmt("(+3)-(-2)=(+5)");
-      chips.on("out", "+5!");
+      readEl.innerHTML = mfmt("(+4)-(-2)=(+6)");
+      chips.on("out", "+6!");
       helper.innerHTML =
         "빨간 돌 2개를 <b>빼는</b> 것과 파란 돌 2개를 <b>더하는</b> 것, 결과가 같아요! 그래서 빼기는 <b>반대 수의 덧셈</b>으로 바꿀 수 있어요." +
-        `<div style="margin-top:8px">${mfmt("(+3)-(-2)=(+3)+(+2)")}</div>`;
+        `<div style="margin-top:8px">${mfmt("(+4)-(-2)=(+4)+(+2)")}</div>`;
       haptic(HAPTIC.done);
       maybeFinish();
     }
@@ -514,7 +514,7 @@ export const counterLab: StepRenderer = (host, step, api) => {
       addToBand(1);
       addToBand(-1);
       readEl.innerHTML = liveSum();
-      say(pairs === 1 ? "합은 변하지 않아요, 0을 넣었으니까요" : "또 0쌍! 합은 여전히 +3이에요");
+      say(pairs === 1 ? "합은 변하지 않아요, 0을 넣었으니까요" : "또 0쌍! 합은 여전히 +4예요");
       if (pairs === 1) {
         helper.innerHTML = "빨간 돌이 생겼어요! 그런데 <b>2개</b> 필요하죠, 한 쌍 더 넣어요.";
       } else {
@@ -549,11 +549,11 @@ export const counterLab: StepRenderer = (host, step, api) => {
       }
     });
 
-    exprEl.innerHTML = mfmt("(+3)-(-2)");
+    exprEl.innerHTML = mfmt("(+4)-(-2)");
     helper.innerHTML = "빨간 돌(−1) <b>2개를 꺼내야</b> 해요. …그런데 빨간 돌이 없네요?";
-    const slots0 = rowSlots(3, 74);
+    const slots0 = rowSlots(4, 74);
     slots0.forEach((q, i) => later(160 + i * 120, () => spawnAt(1, q.x, q.y)));
-    later(160 + 3 * 120 + 320, () => {
+    later(160 + 4 * 120 + 320, () => {
       busy = false;
       readEl.innerHTML = liveSum();
       hero = showHero("0쌍 넣기 (+1 −1)", onPairTap);

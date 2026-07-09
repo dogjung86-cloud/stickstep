@@ -1,7 +1,7 @@
 // hotairRide — 생활 속 샤를 법칙 랩(VI 단원 L5). 교과서 그림 VI-8(열기구)의 조작판.
 //   · 버너를 꾹 누르면 풍선 속 기체 온도↑ → 부피가 늘어 풍선이 부풀고, 가벼워져 떠오른다
 //   · 손을 떼면 식으며 부피가 줄어 서서히 내려온다 — 목표 고도에 맞춰 조종!
-// 목표: ① 이륙 ② 목표 고도 띠(60~80 m)에서 2초 버티기 ③ 부드럽게 착륙.
+// 목표: ① 이륙 ② 목표 고도 띠(55~85 m)에서 2초 버티기 ③ 부드럽게 착륙.
 
 import { el, clamp } from "../../core/dom";
 import { createLoop, type Loop } from "../../core/anim";
@@ -114,7 +114,7 @@ export const hotairRide: StepRenderer = (host, step, api) => {
       if (!goals.has("band")) helper.innerHTML = "좋아요! 이제 <b>55~85 m 목표 띠</b> 안에서 버텨 보세요 — 가열과 식힘을 번갈아!";
     }
     bandMs = alt >= 55 && alt <= 85 ? bandMs + dt * 16.7 : 0;
-    if (bandMs > 1200) {
+    if (bandMs > 2000) {
       collect("band", "2초 유지!");
       if (!goals.has("land")) helper.innerHTML = "이제 버너에서 손을 떼고 <b>천천히 식혀서</b> 착륙해 보세요.";
     }

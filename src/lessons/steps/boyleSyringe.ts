@@ -1,8 +1,8 @@
 // boyleSyringe — 보일 법칙 랩(VI 단원 L2). 교과서 탐구(200~203쪽)의 조작판.
-//   · 가로 주사기: 피스톤을 끌어 부피를 20→5 mL로 — 압력은 P·V=20으로 반비례(1→20, 2→10, 4→5)
+//   · 가로 주사기: 피스톤을 끌어 부피를 24→6 mL로 — 압력은 P·V=24로 반비례(1→24, 2→12, 4→6, 자체 수치)
 //   · 속 입자는 GasBox — 좁아질수록 벽 충돌이 잦아지는 게 눈에 보인다(속력은 그대로 = 온도 일정)
 //   · 하단 실시간 그래프(교과서 VI-3 축: x=압력(기압), y=부피(mL)) — 반비례 곡선이 그려진다
-// 목표: ① 2기압(10 mL) ② 4기압(5 mL) ③ 1기압으로 복귀(20 mL).
+// 목표: ① 2기압(12 mL) ② 4기압(6 mL) ③ 1기압으로 복귀(24 mL).
 
 import { el, clamp } from "../../core/dom";
 import { createLoop, type Loop } from "../../core/anim";
@@ -18,9 +18,9 @@ interface BoyleStep {
   cta?: string;
 }
 
-const PV = 20; // P(기압) × V(mL) = 20
-const V_MIN = 5;
-const V_MAX = 20;
+const PV = 24; // P(기압) × V(mL) = 24
+const V_MIN = 6;
+const V_MAX = 24;
 const CVH = 400;
 const LABH = 288;
 
@@ -43,7 +43,7 @@ export const boyleSyringe: StepRenderer = (host, step, api) => {
     },
   });
   const readVal = el("span", { text: "1.0" });
-  const volPill = el("span", { text: "부피 20 mL" });
+  const volPill = el("span", { text: "부피 24 mL" });
   const toastEl = el("div", { class: "toast" });
   const capEl = el("div", { class: "stage-cap", text: "피스톤 손잡이를 잡고 밀거나 당겨 보세요" });
   const stage = el(
@@ -69,7 +69,7 @@ export const boyleSyringe: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "20 mL·1기압에서 시작. 피스톤을 <b>천천히 눌러</b> 보세요 — 입자 충돌이 어떻게 변하는지도 관찰!",
+    html: "24 mL·1기압에서 시작. 피스톤을 <b>천천히 눌러</b> 보세요 — 입자 충돌이 어떻게 변하는지도 관찰!",
   });
   host.append(goalChips, stage, helper);
 
@@ -118,7 +118,7 @@ export const boyleSyringe: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "이게 <b>보일 법칙</b> — 온도가 일정할 때 압력과 부피는 <b>반비례</b>해요 (1기압×20 = 2기압×10 = 4기압×5). 입자의 <b>속력은 그대로</b>, 공간이 좁아져 <b>충돌이 잦아진</b> 것뿐!";
+        "이게 <b>보일 법칙</b> — 온도가 일정할 때 압력과 부피는 <b>반비례</b>해요 (1기압×24 = 2기압×12 = 4기압×6). 입자의 <b>속력은 그대로</b>, 공간이 좁아져 <b>충돌이 잦아진</b> 것뿐!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -170,7 +170,7 @@ export const boyleSyringe: StepRenderer = (host, step, api) => {
     const gy0 = LABH + 16;
     const gy1 = H - 24;
     const xOf = (p: number): number => gx0 + ((p - 0.5) / 4) * (gx1 - gx0); // 0.5~4.5기압
-    const yOf = (v: number): number => gy1 - ((v - 3) / 20) * (gy1 - gy0); // 3~23mL
+    const yOf = (v: number): number => gy1 - ((v - 4) / 24) * (gy1 - gy0); // 4~28mL
 
     ctx.strokeStyle = "rgba(148,168,196,.4)";
     ctx.lineWidth = 1.4;
@@ -182,7 +182,7 @@ export const boyleSyringe: StepRenderer = (host, step, api) => {
     ctx.font = "600 10px Pretendard, sans-serif";
     ctx.fillStyle = "rgba(196,212,232,.75)";
     ctx.textAlign = "right";
-    for (const v of [20, 10, 5]) {
+    for (const v of [24, 12, 6]) {
       ctx.strokeStyle = "rgba(148,168,196,.14)";
       ctx.beginPath();
       ctx.moveTo(gx0, yOf(v));
@@ -250,12 +250,12 @@ export const boyleSyringe: StepRenderer = (host, step, api) => {
 
     // 목표 판정(±0.6mL 창에서 400ms 유지)
     const near = (target: number): boolean => Math.abs(vol - target) < 0.6;
-    holdMs.p2 = near(10) ? holdMs.p2 + dt * 16.7 : 0;
-    holdMs.p4 = near(5.2) || vol <= 5.4 ? holdMs.p4 + dt * 16.7 : 0;
-    holdMs.back = near(20) || vol >= 19.4 ? holdMs.back + dt * 16.7 : 0;
-    if (holdMs.p2 > 400) collect("p2", "10 mL!", "2기압 — 부피가 절반(10 mL)");
-    if (goals.has("p2") && holdMs.p4 > 400) collect("p4", "5 mL!", "4기압 — 부피가 1/4(5 mL)");
-    if (goals.has("p4") && holdMs.back > 400) collect("back", "20 mL!", "당기면 도로 1기압 — 반비례!");
+    holdMs.p2 = near(12) ? holdMs.p2 + dt * 16.7 : 0;
+    holdMs.p4 = near(6.2) || vol <= 6.4 ? holdMs.p4 + dt * 16.7 : 0;
+    holdMs.back = near(24) || vol >= 23.4 ? holdMs.back + dt * 16.7 : 0;
+    if (holdMs.p2 > 400) collect("p2", "12 mL!", "2기압 — 부피가 절반(12 mL)");
+    if (goals.has("p2") && holdMs.p4 > 400) collect("p4", "6 mL!", "4기압 — 부피가 1/4(6 mL)");
+    if (goals.has("p4") && holdMs.back > 400) collect("back", "24 mL!", "당기면 도로 1기압 — 반비례!");
 
     // 샘플 기록
     const last = samples[samples.length - 1];
@@ -279,10 +279,10 @@ export const boyleSyringe: StepRenderer = (host, step, api) => {
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // 눈금(20~5mL)
+    // 눈금(24~6mL)
     ctx.font = "600 9.5px Pretendard, sans-serif";
     ctx.textAlign = "center";
-    for (let mv = 5; mv <= 20; mv += 5) {
+    for (let mv = 6; mv <= 24; mv += 6) {
       const mx = x1 - (mv / V_MAX) * (x1 - x0 - 6);
       ctx.strokeStyle = "rgba(226,240,255,.4)";
       ctx.lineWidth = 1.2;
@@ -347,7 +347,7 @@ export const boyleSyringe: StepRenderer = (host, step, api) => {
     ctx.strokeStyle = "rgba(24,42,64,.6)";
     ctx.stroke();
     // 잡기 유도
-    if (!dragging && !finished && vol > 19) {
+    if (!dragging && !finished && vol > 23) {
       const bob = Math.sin(tMs / 300) * 4;
       ctx.strokeStyle = "rgba(255,194,77,.55)";
       ctx.lineWidth = 3;

@@ -39,7 +39,7 @@ export const sunLab: StepRenderer = (host, step, api) => {
   if (s.lead) host.appendChild(el("div", { class: "sub", html: s.lead }));
 
   const canvas = el("canvas", { class: "mstage-cvblock", style: "height:300px" }) as HTMLCanvasElement;
-  const spotPill = el("span", { text: "흑점 5개" });
+  const spotPill = el("span", { text: "흑점 6개" }); // 초기 activity 0.35 → spotCount()=6 — 첫 프레임 값과 일치
   const seg = el("div", { class: "seg stage-seg" });
   const surfBtn = el("button", { class: "on", text: "광구", attrs: { type: "button", "aria-pressed": "true" } });
   const eclBtn = el("button", { text: "개기일식", attrs: { type: "button", "aria-pressed": "false" } });

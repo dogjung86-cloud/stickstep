@@ -1,5 +1,5 @@
 // springLab — 탄성력 랩(V 단원 L4). 진짜 코일 용수철을 직접 잡아 늘인다.
-//   · 늘어난 길이에 비례하는 탄성력(훅 법칙) — 게이지·그래프가 실시간 반응 (기준: 4cm=1.5N, 8cm=3.0N, 12cm=4.5N)
+//   · 늘어난 길이에 비례하는 탄성력(훅 법칙) — 게이지·그래프가 실시간 반응 (기준: 4cm=2N, 8cm=4N, 12cm=6N)
 //   · 손을 놓으면 감쇠 진동하며 원래 길이로 — "되돌아가려는 힘"이 몸으로 보인다
 //   · 당기는 힘(파랑)과 탄성력(빨강)이 반대 방향 화살표로 동시에 표시된다 (그림 V-7)
 // 목표: 4·8·12cm 지점 기록 3개 + 놓아서 진동 관찰 1회.
@@ -18,7 +18,7 @@ interface SpringLabStep {
   cta?: string;
 }
 
-const N_PER_CM = 0.375; // 4cm → 1.5N (교과서 그림 V-9 실측 비율)
+const N_PER_CM = 0.5; // 4cm → 2N (자체 제작 0.5 N/cm 용수철 — 교과서 수치와 무관)
 const MAX_CM = 14;
 const SNAPS = [4, 8, 12];
 
@@ -186,7 +186,7 @@ export const springLab: StepRenderer = (host, step, api) => {
     const plotW = gw - padL - padR;
     const plotH = gh - padT - padB;
     const xOf = (cm: number): number => padL + (cm / MAX_CM) * plotW;
-    const yOf = (n: number): number => padT + (1 - n / 5.5) * plotH;
+    const yOf = (n: number): number => padT + (1 - n / 7.5) * plotH;
 
     ctx.strokeStyle = "rgba(148,176,214,.4)";
     ctx.lineWidth = 1.6;
@@ -198,8 +198,8 @@ export const springLab: StepRenderer = (host, step, api) => {
     ctx.fillStyle = "#8CA2C0";
     ctx.font = "600 10.5px Pretendard, sans-serif";
     ctx.textAlign = "right";
-    for (const n of [1.5, 3.0, 4.5]) {
-      ctx.fillText(n.toFixed(1), padL - 6, yOf(n) + 3.5);
+    for (const n of [2, 4, 6]) {
+      ctx.fillText(String(n), padL - 6, yOf(n) + 3.5);
       ctx.strokeStyle = "rgba(148,176,214,.16)";
       ctx.beginPath();
       ctx.moveTo(padL, yOf(n));

@@ -1,9 +1,9 @@
 // charlesSyringe — 샤를 법칙 랩(VI 단원 L4). 교과서 탐구(210~213쪽)의 조작판.
-//   · 물중탕 속 세로 주사기: 물 온도 슬라이더 20~80℃ — 부피는 교과서 표 그대로
-//     (20→27.2, 30→28.1, 40→29.1, 50→30.0, 60→30.9, 70→31.8, 80→32.8 mL ≈ 선형)
+//   · 물중탕 속 세로 주사기: 물 온도 슬라이더 20~80℃ — 부피는 자체 제작 수치(0.1 mL/℃ 선형)
+//     (20→30.0, 30→31.0, 40→32.0, 50→33.0, 60→34.0, 70→35.0, 80→36.0 mL)
 //   · 속 입자는 온도에 비례해 빨라지고(꼬리 길어짐), 피스톤이 밀려 올라간다 (압력 일정)
 //   · 하단 실시간 그래프(x=온도 ℃, y=부피 mL) — 직선이 그려진다
-// 목표: ① 50℃(30.0 mL) ② 80℃(32.8 mL) ③ 도로 식혀 20℃(27.2 mL).
+// 목표: ① 50℃(33.0 mL) ② 80℃(36.0 mL) ③ 도로 식혀 20℃(30.0 mL).
 
 import { el, clamp } from "../../core/dom";
 import { createLoop, type Loop } from "../../core/anim";
@@ -22,7 +22,7 @@ interface CharlesStep {
 
 const T_MIN = 20;
 const T_MAX = 80;
-const volOf = (t: number): number => 27.2 + (t - 20) * (5.6 / 60); // 표의 선형 근사(양끝 정확)
+const volOf = (t: number): number => 30.0 + (t - 20) * 0.1; // 20℃ 30.0 mL 기준, 0.1 mL/℃ 선형
 const CVH = 400;
 const LABH = 288;
 
@@ -33,7 +33,7 @@ export const charlesSyringe: StepRenderer = (host, step, api) => {
   if (s.lead) host.appendChild(el("div", { class: "sub", html: s.lead }));
 
   const canvas = el("canvas", { class: "mstage-cvblock", style: `height:${CVH}px` });
-  const readVal = el("span", { text: "27.2" });
+  const readVal = el("span", { text: "30.0" });
   const tempPill = el("span", { text: "물 온도 20℃" });
   const toastEl = el("div", { class: "toast" });
   const stage = el(
@@ -163,7 +163,7 @@ export const charlesSyringe: StepRenderer = (host, step, api) => {
     const gy0 = LABH + 16;
     const gy1 = H - 24;
     const xOf = (t: number): number => gx0 + ((t - 15) / 70) * (gx1 - gx0);
-    const yOf = (v: number): number => gy1 - ((v - 26.4) / 7.2) * (gy1 - gy0);
+    const yOf = (v: number): number => gy1 - ((v - 29.2) / 7.6) * (gy1 - gy0);
 
     ctx.strokeStyle = "rgba(148,168,196,.4)";
     ctx.lineWidth = 1.4;
@@ -175,7 +175,7 @@ export const charlesSyringe: StepRenderer = (host, step, api) => {
     ctx.font = "600 10px Pretendard, sans-serif";
     ctx.fillStyle = "rgba(196,212,232,.75)";
     ctx.textAlign = "right";
-    for (const v of [28, 30, 32]) {
+    for (const v of [31, 33, 35]) {
       ctx.strokeStyle = "rgba(148,168,196,.14)";
       ctx.beginPath();
       ctx.moveTo(gx0, yOf(v));
@@ -235,9 +235,9 @@ export const charlesSyringe: StepRenderer = (host, step, api) => {
     holdMs.t50 = nearT(50) ? holdMs.t50 + dt * 16.7 : 0;
     holdMs.t80 = temp >= 78 ? holdMs.t80 + dt * 16.7 : 0;
     holdMs.cool = temp <= 22 ? holdMs.cool + dt * 16.7 : 0;
-    if (holdMs.t50 > 500) collect("t50", "30.0 mL!", "50℃ — 딱 30.0 mL");
-    if (goals.has("t50") && holdMs.t80 > 500) collect("t80", "32.8 mL!", "80℃ — 32.8 mL까지 팽창");
-    if (goals.has("t80") && holdMs.cool > 500) collect("cool", "27.2 mL!", "식히니 그대로 돌아왔어요");
+    if (holdMs.t50 > 500) collect("t50", "33.0 mL!", "50℃ — 딱 33.0 mL");
+    if (goals.has("t50") && holdMs.t80 > 500) collect("t80", "36.0 mL!", "80℃ — 36.0 mL까지 팽창");
+    if (goals.has("t80") && holdMs.cool > 500) collect("cool", "30.0 mL!", "식히니 그대로 돌아왔어요");
 
     // 샘플
     const last = samples[samples.length - 1];
@@ -301,8 +301,8 @@ export const charlesSyringe: StepRenderer = (host, step, api) => {
     const syL = sx - syW / 2;
     const syBot = bkBot - 12;
     const syTop = 96;
-    // 기체 기둥: 27.2~32.8mL → 픽셀 높이
-    const colH = 74 + ((dispVol - 27.2) / 5.6) * 46; // 74..120px
+    // 기체 기둥: 30.0~36.0mL → 픽셀 높이
+    const colH = 74 + ((dispVol - 30.0) / 6.0) * 46; // 74..120px
     const gasTop = syBot - colH;
     const b = { x0: syL + 5, y0: gasTop + 3, x1: syL + syW - 5, y1: syBot - 5 };
     gas.setCount(12, b);
@@ -321,11 +321,11 @@ export const charlesSyringe: StepRenderer = (host, step, api) => {
     ctx.strokeStyle = glassStrokeStyle(ctx, syTop, syBot);
     ctx.lineWidth = 2;
     ctx.stroke();
-    // 눈금 27~33
+    // 눈금 31~35
     ctx.font = "600 9px Pretendard, sans-serif";
     ctx.textAlign = "left";
-    for (let mv = 28; mv <= 32; mv += 2) {
-      const my = syBot - (74 + ((mv - 27.2) / 5.6) * 46);
+    for (let mv = 31; mv <= 35; mv += 2) {
+      const my = syBot - (74 + ((mv - 30.0) / 6.0) * 46);
       ctx.strokeStyle = "rgba(226,240,255,.42)";
       ctx.lineWidth = 1.1;
       ctx.beginPath();

@@ -8,74 +8,82 @@ const plus = (x: number, y: number, r = 7): string =>
 const minus = (x: number, y: number, r = 7): string =>
   `<circle cx="${x}" cy="${y}" r="${r}" fill="#5A9AE0" stroke="#2A5AA0" stroke-width="1.2"/><path d="M${x - r * 0.45} ${y}h${r * 0.9}" stroke="#FFF" stroke-width="1.6" stroke-linecap="round"/>`;
 
-/** L1 — 마찰 전/후의 털가죽·빨대 대전 상태(마무리 2번) */
+/** L1 — 마찰 전/후의 스웨터·풍선 대전 상태(훅 wintershock 소재 회수).
+ *  전하 개수는 보존: (+)는 좌우 3/2개 불변, 전자(−)는 스웨터→풍선으로 2개 이동(5개 총합 유지). */
 export function rubBeforeAfterFig(): string {
-  const fur = (x: number, y: number): string => `
-    <ellipse cx="${x}" cy="${y}" rx="52" ry="30" fill="#C9975E" stroke="#8A5E2A" stroke-width="1.6"/>
-    ${Array.from({ length: 9 }, (_, i) => `<path d="M${x - 44 + i * 11} ${y - 26}q2-7 6-9" stroke="#8A5E2A" stroke-width="1.4" fill="none"/>`).join("")}`;
-  const straw = (x: number, y: number): string =>
-    `<rect x="${x - 55}" y="${y - 7}" width="110" height="14" rx="7" fill="#7FB0E8" stroke="#3E6EA4" stroke-width="1.6"/>
-     <path d="M${x - 46} ${y - 3}h30" stroke="#D6E9FF" stroke-width="2.4" stroke-linecap="round" opacity=".8"/>`;
-  return `<svg viewBox="0 0 344 240" ${NS} fill="none" role="img" aria-label="마찰 전에는 둘 다 중성, 마찰 후에는 털가죽이 플러스, 빨대가 마이너스로 대전된다">
-    <text x="86" y="20" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">마찰 전</text>
-    <text x="258" y="20" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">마찰 후</text>
+  const sweater = (x: number, y: number): string => `
+    <path d="M${x - 34} ${y - 20} L${x - 56} ${y - 8} L${x - 48} ${y + 8} L${x - 34} ${y + 2} V${y + 26} Q${x - 34} ${y + 32} ${x - 28} ${y + 32} H${x + 28} Q${x + 34} ${y + 32} ${x + 34} ${y + 26} V${y + 2} L${x + 48} ${y + 8} L${x + 56} ${y - 8} L${x + 34} ${y - 20} Q${x} ${y - 28} ${x - 34} ${y - 20} Z" fill="#8FBF8A" stroke="#4E7A4C" stroke-width="1.6"/>
+    <path d="M${x - 12} ${y - 23}q12 -6 24 0" stroke="#4E7A4C" stroke-width="1.6" fill="none"/>
+    ${Array.from({ length: 5 }, (_, i) => `<path d="M${x - 24 + i * 12} ${y + 26}v5" stroke="#4E7A4C" stroke-width="1.2" fill="none"/>`).join("")}`;
+  const balloon = (x: number, y: number): string => `
+    <ellipse cx="${x}" cy="${y}" rx="25" ry="31" fill="#F5CB5C" stroke="#B8862A" stroke-width="1.6"/>
+    <path d="M${x - 13} ${y - 18}q7 -8 15 -7" stroke="#FFF2C8" stroke-width="2.6" stroke-linecap="round" opacity=".85"/>
+    <path d="M${x - 5} ${y + 30} L${x + 5} ${y + 30} L${x} ${y + 37} Z" fill="#E0A93E" stroke="#B8862A" stroke-width="1"/>
+    <path d="M${x} ${y + 37}q6 6 0 13" stroke="#8B95A1" stroke-width="1.4" fill="none"/>`;
+  return `<svg viewBox="0 0 344 240" ${NS} fill="none" role="img" aria-label="스웨터와 풍선을 마찰하기 전에는 둘 다 중성, 마찰 후에는 스웨터가 플러스, 풍선이 마이너스로 대전된다">
+    <text x="86" y="18" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">마찰 전</text>
+    <text x="258" y="18" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">마찰 후</text>
     <g>
-      ${fur(86, 66)}
-      ${plus(66, 58)}${minus(80, 70)}${plus(96, 58)}${minus(106, 70)}
-      ${straw(86, 150)}
-      ${plus(58, 150, 6)}${minus(76, 150, 6)}${plus(96, 150, 6)}${minus(114, 150, 6)}
-      <text x="86" y="196" text-anchor="middle" font-size="11" fill="#8B95A1">둘 다 (+)=(−) — 중성</text>
+      ${sweater(86, 60)}
+      ${plus(66, 54, 6)}${minus(86, 54, 6)}${plus(106, 54, 6)}${minus(70, 74, 6)}${plus(86, 76, 6)}${minus(102, 74, 6)}
+      ${balloon(86, 148)}
+      ${plus(76, 140, 5.5)}${minus(96, 140, 5.5)}${minus(76, 160, 5.5)}${plus(96, 160, 5.5)}
+      <text x="86" y="210" text-anchor="middle" font-size="11" fill="#8B95A1">둘 다 (+)=(−) — 중성</text>
     </g>
     <path d="M158 110h28M178 104l8 6-8 6" stroke="#8B95A1" stroke-width="2.2" fill="none"/>
     <g>
-      ${fur(258, 66)}
-      ${plus(238, 58)}${plus(258, 70)}${plus(278, 58)}${minus(266, 54, 6)}
-      ${straw(258, 150)}
-      ${plus(236, 150, 6)}${minus(222, 150, 6)}${minus(252, 150, 6)}${minus(270, 150, 6)}${minus(288, 150, 6)}
-      <text x="258" y="196" text-anchor="middle" font-size="11" fill="#8B95A1">전자가 털가죽 → 빨대로!</text>
+      ${sweater(258, 60)}
+      ${plus(238, 54, 6)}${plus(258, 54, 6)}${plus(278, 54, 6)}${minus(258, 76, 6)}
+      ${balloon(258, 148)}
+      ${minus(244, 139, 5.5)}${plus(258, 139, 5.5)}${minus(272, 139, 5.5)}${minus(244, 158, 5.5)}${minus(258, 161, 5.5)}${plus(272, 158, 5.5)}
+      <text x="258" y="210" text-anchor="middle" font-size="11" fill="#8B95A1">전자가 스웨터 → 풍선으로!</text>
     </g>
-    <text x="172" y="226" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">마찰 후 — 털가죽 ( ? )전기, 빨대 ( ? )전기</text>
+    <text x="172" y="230" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">마찰 후 — 스웨터 ( ? )전기, 풍선 ( ? )전기</text>
   </svg>`;
 }
 
-/** L2 — (−)대전 막대를 깡통에 접근(마무리 5번) */
+/** L2 — (+)대전 유리 막대를 깡통에 접근(랩의 (+)막대 모드와 짝) */
 export function canInductionFig(): string {
-  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="마이너스 대전체인 플라스틱 막대를 알루미늄 깡통에 가까이 가져가는 그림">
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="플러스 대전체인 유리 막대를 알루미늄 깡통에 가까이 가져가는 그림">
     <line x1="20" y1="158" x2="324" y2="158" stroke="#C9D2DC" stroke-width="2"/>
     <g transform="rotate(-32 84 74)">
-      <rect x="34" y="64" width="100" height="17" rx="8" fill="#5E6B7E" stroke="#333D4B" stroke-width="1.6"/>
-      ${minus(52, 72, 6)}${minus(76, 72, 6)}${minus(100, 72, 6)}${minus(120, 72, 6)}
+      <rect x="34" y="64" width="100" height="17" rx="8" fill="#C8DCEC" stroke="#7A94AC" stroke-width="1.6"/>
+      <path d="M42 68h32" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+      ${plus(52, 72, 6)}${plus(76, 72, 6)}${plus(100, 72, 6)}${plus(120, 72, 6)}
     </g>
-    <text x="60" y="34" font-size="11.5" font-weight="700" fill="#4E5968">(−)대전 플라스틱 막대</text>
+    <text x="60" y="34" font-size="11.5" font-weight="700" fill="#4E5968">(+)대전 유리 막대</text>
     <g>
       <rect x="170" y="88" width="128" height="66" rx="33" fill="#D8E2EE" stroke="#8B99AC" stroke-width="2"/>
       <ellipse cx="176" cy="121" rx="12" ry="33" fill="#B8C6D8" stroke="#8B99AC" stroke-width="1.6"/>
       <text x="240" y="80" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">알루미늄 깡통</text>
-      <text x="196" y="126" font-size="14" font-weight="800" fill="#C43A2E">(가)</text>
-      <text x="266" y="126" font-size="14" font-weight="800" fill="#2E5AA8">(나)</text>
+      <text x="196" y="126" font-size="14" font-weight="800" fill="#2E5AA8">(가)</text>
+      <text x="266" y="126" font-size="14" font-weight="800" fill="#C43A2E">(나)</text>
     </g>
     <path d="M150 120q-10 8 0 16" stroke="#F0A422" stroke-width="2" fill="none"/>
     <text x="172" y="180" text-anchor="middle" font-size="11" fill="#8B95A1">(가)는 막대와 가까운 쪽, (나)는 먼 쪽</text>
   </svg>`;
 }
 
-/** L4 — 어떤 니크롬선의 전압-전류 그래프(마무리 3번: 저항 구하기 — 3V에 300mA → 10Ω) */
+/** L4 — 어떤 니크롬선의 전압-전류 그래프(저항 읽기: 4V에 200mA → 20Ω. mA→A 변환 함정 유지) */
 export function viGraphFig(): string {
-  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="원점을 지나는 직선 그래프 — 전압 3볼트에서 전류 300밀리암페어">
+  // 축 스케일: 전압 1V = 64px(0~4V), 전류 1mA = 0.55px(0~약 210mA) — 점은 I = V × 50mA 직선 위
+  const px = (v: number): number => 52 + v * 64;
+  const py = (ma: number): number => 170 - ma * 0.55;
+  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="원점을 지나는 직선 그래프 — 전압 4볼트에서 전류 200밀리암페어">
     <line x1="52" y1="20" x2="52" y2="170" stroke="#B0B8C1" stroke-width="1.6"/>
-    <line x1="52" y1="170" x2="320" y2="170" stroke="#B0B8C1" stroke-width="1.6"/>
-    ${[1, 2, 3].map((v) => `<line x1="${52 + v * 80}" y1="170" x2="${52 + v * 80}" y2="174" stroke="#B0B8C1" stroke-width="1.4"/><text x="${52 + v * 80}" y="188" text-anchor="middle" font-size="11" fill="#6B7684">${v}</text>`).join("")}
-    ${[100, 200, 300].map((c, i) => `<line x1="48" y1="${170 - (i + 1) * 44}" x2="52" y2="${170 - (i + 1) * 44}" stroke="#B0B8C1" stroke-width="1.4"/><text x="42" y="${174 - (i + 1) * 44}" text-anchor="end" font-size="11" fill="#6B7684">${c}</text>`).join("")}
-    ${[0.5, 1, 1.5, 2, 2.5, 3].map((v) => `<circle cx="${52 + v * 80}" cy="${170 - v * 44}" r="3.4" fill="#3182F6"/>`).join("")}
-    <line x1="52" y1="170" x2="308" y2="${170 - 3.2 * 44}" stroke="#3182F6" stroke-width="2" opacity=".55"/>
-    <path d="M292 38v${170 - 38}" stroke="#F0A422" stroke-width="1.4" stroke-dasharray="4 4"/>
-    <path d="M52 ${170 - 3 * 44}h240" stroke="#F0A422" stroke-width="1.4" stroke-dasharray="4 4"/>
+    <line x1="52" y1="170" x2="326" y2="170" stroke="#B0B8C1" stroke-width="1.6"/>
+    ${[1, 2, 3, 4].map((v) => `<line x1="${px(v)}" y1="170" x2="${px(v)}" y2="174" stroke="#B0B8C1" stroke-width="1.4"/><text x="${px(v)}" y="188" text-anchor="middle" font-size="11" fill="#6B7684">${v}</text>`).join("")}
+    ${[50, 100, 150, 200].map((c) => `<line x1="48" y1="${py(c)}" x2="52" y2="${py(c)}" stroke="#B0B8C1" stroke-width="1.4"/><text x="42" y="${py(c) + 4}" text-anchor="end" font-size="11" fill="#6B7684">${c}</text>`).join("")}
+    <line x1="52" y1="170" x2="${px(4.15)}" y2="${py(4.15 * 50)}" stroke="#3182F6" stroke-width="2" opacity=".55"/>
+    ${[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4].map((v) => `<circle cx="${px(v)}" cy="${py(v * 50)}" r="3.4" fill="#3182F6"/>`).join("")}
+    <path d="M${px(4)} ${py(200)}V170" stroke="#F0A422" stroke-width="1.4" stroke-dasharray="4 4"/>
+    <path d="M52 ${py(200)}H${px(4)}" stroke="#F0A422" stroke-width="1.4" stroke-dasharray="4 4"/>
     <text x="24" y="16" font-size="11.5" font-weight="700" fill="#4E5968">전류(mA)</text>
-    <text x="320" y="200" text-anchor="end" font-size="11.5" font-weight="700" fill="#4E5968">전압(V)</text>
+    <text x="326" y="200" text-anchor="end" font-size="11.5" font-weight="700" fill="#4E5968">전압(V)</text>
   </svg>`;
 }
 
-/** L3 — 회로 속 전류의 방향 문제(마무리 4번: (가)(나)는 전류 방향, 전자는 그 반대) */
+/** L3 — 회로 속 전류의 방향 도해((가)(나)는 전류 방향, 전자는 그 반대 — 현재 미사용 예비) */
 export function electronFlowFig(): string {
   return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="전지와 전구가 연결된 회로 — (가)와 (나)는 전류가 흐르는 방향">
     <path d="M92 156h-40V44h240v112h-40" stroke="#8B95A1" stroke-width="4" fill="none" stroke-linecap="round"/>
@@ -92,7 +100,7 @@ export function electronFlowFig(): string {
   </svg>`;
 }
 
-/** L5 — 병렬 전구 (가)(나) 회로(마무리 6번) */
+/** L5 — 병렬 전구 (가)(나) 회로((나) 가지에 열린 스위치 — '닫으면?' 문항용) */
 export function parallelBulbsFig(): string {
   const bulb = (x: number, y: number, label: string): string => `
     <circle cx="${x}" cy="${y}" r="16" fill="#FFF3C4" stroke="#C8A23E" stroke-width="1.8"/>

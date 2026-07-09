@@ -33,7 +33,7 @@ function star(cx: number, cy: number, rOut: number, rIn: number, fill: string, s
   return `<path d="${d}Z" fill="${fill}" stroke="${stroke}" stroke-width="1.2"/>`;
 }
 
-/* ── 1 vending, 페트병 회수기(문자의 필요) ──────────────────── */
+/* ── 1 vending, 빈 병 보증금 회수기(문자의 필요) ────────────── */
 export const renderVending: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
   const BXS = [64, 106, 148];
@@ -64,7 +64,7 @@ export const renderVending: SceneFn = (scene, helper, finish, face, choices) => 
   const btn = mkBtn("병 넣기");
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, btn, box);
-  helper.innerHTML = "빈 페트병을 넣으면 <b>1개에 10원</b>씩 적립해 주는 무인 회수기예요. 병을 하나씩 넣어 볼까요?";
+  helper.innerHTML = "빈 병을 넣으면 <b>1병에 100원</b>씩 보증금을 돌려주는 무인 회수기예요. 병을 하나씩 넣어 볼까요?";
   let n = 0;
   btn.addEventListener("click", () => {
     if (n >= 3) return;
@@ -77,7 +77,7 @@ export const renderVending: SceneFn = (scene, helper, finish, face, choices) => 
     b.style.opacity = "0";
     const paid = n;
     window.setTimeout(() => {
-      (fig.querySelector(".vd-cnt") as SVGTextElement).textContent = `${paid * 10}원`;
+      (fig.querySelector(".vd-cnt") as SVGTextElement).textContent = `${paid * 100}원`;
       haptic(HAPTIC.tap);
     }, 560);
     if (n === 3) {
@@ -85,16 +85,16 @@ export const renderVending: SceneFn = (scene, helper, finish, face, choices) => 
       btn.classList.remove("pulse");
       window.setTimeout(() => {
         face("surprised");
-        helper.innerHTML = "1개에 10원, 그럼 <b>100개</b>면? <b>3752개</b>면? 매번 그림을 그려 셀 순 없죠. 회수기의 계산 비법은 뭘까요?";
+        helper.innerHTML = "1병에 100원, 그럼 <b>100병</b>이면? <b>3752병</b>이면? 매번 그림을 그려 셀 순 없죠. 회수기의 계산 비법은 뭘까요?";
         window.setTimeout(() => {
           ask(box, helper, {
             choices: choices ?? [
-              "개수를 문자 x로 두고 10×x원, 한 줄로 끝",
-              "100개 그림을 그려서 센다",
+              "개수를 문자 x로 두고 100×x원, 한 줄로 끝",
+              "100병 그림을 그려서 센다",
               "그때그때 계산기를 두드린다",
             ],
-            good: "바로 그거예요! 개수에 <b>x</b>라는 이름을 붙이면 10개든 3752개든 <b>10×x원</b> 한 줄로 끝, 문자 하나가 모든 개수를 대신해요. 오늘의 발명품이에요.",
-            bad: "그림도 계산기도 개수가 바뀔 때마다 <b>처음부터 다시</b> 해야 해요. 개수를 x로 이름 붙이면 <b>10×x원</b> 한 줄로 전부 커버, 그게 문자의 힘이에요!",
+            good: "바로 그거예요! 개수에 <b>x</b>라는 이름을 붙이면 10병이든 3752병이든 <b>100×x원</b> 한 줄로 끝, 문자 하나가 모든 개수를 대신해요. 오늘의 발명품이에요.",
+            bad: "그림도 계산기도 개수가 바뀔 때마다 <b>처음부터 다시</b> 해야 해요. 개수를 x로 이름 붙이면 <b>100×x원</b> 한 줄로 전부 커버, 그게 문자의 힘이에요!",
             onDone: finish,
           });
         }, 700);
@@ -176,7 +176,7 @@ export const renderFurniture: SceneFn = (scene, helper, finish, face, choices) =
     const headCy = 178 - H + 11;
     const sy = headCy + 14;
     const hip = 178 - H * 0.42;
-    const surf = 178 - 0.41 * h * 0.72;
+    const surf = 178 - (0.4 * h + 2) * 0.72;
     fig.innerHTML = wrapSvg(
       `${SHADOW(110, 183, 36, 0.1)}${SHADOW(251, 183, 62)}
       <line x1="24" y1="178" x2="336" y2="178" stroke="#8CA0B3" stroke-width="2" stroke-linecap="round"/>
@@ -195,7 +195,7 @@ export const renderFurniture: SceneFn = (scene, helper, finish, face, choices) =
       <line x1="322" y1="178" x2="322" y2="${surf.toFixed(1)}" stroke="#0A87A3" stroke-width="1.8"/>
       <path d="M322 ${surf.toFixed(1)} l-4 7 M322 ${surf.toFixed(1)} l4 7 M322 178 l-4 -7 M322 178 l4 -7" stroke="#0A87A3" stroke-width="1.6" fill="none" stroke-linecap="round"/>
       <line x1="314" y1="${surf.toFixed(1)}" x2="330" y2="${surf.toFixed(1)}" stroke="#0A87A3" stroke-width="1.4"/>
-      <text x="322" y="${(surf - 10).toFixed(1)}" text-anchor="middle" font-size="13" font-weight="900" fill="#0A87A3">${(0.41 * h).toFixed(1)}<tspan font-size="9" font-weight="700"> cm</tspan></text>`,
+      <text x="322" y="${(surf - 10).toFixed(1)}" text-anchor="middle" font-size="13" font-weight="900" fill="#0A87A3">${(0.4 * h + 2).toFixed(0)}<tspan font-size="9" font-weight="700"> cm</tspan></text>`,
       `<linearGradient id="fu-wd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E8BE86"/><stop offset=".55" stop-color="#C08A4E"/><stop offset="1" stop-color="#8F6132"/></linearGradient>
       <linearGradient id="fu-mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF9AA2"/><stop offset="1" stop-color="#E8434F"/></linearGradient>
       <linearGradient id="fu-bk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8CC4F0"/><stop offset="1" stop-color="#4A8CC4"/></linearGradient>`,
@@ -220,7 +220,7 @@ export const renderFurniture: SceneFn = (scene, helper, finish, face, choices) =
   row.append(...btns);
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, row, box);
-  helper.innerHTML = "몸에 딱 맞는 책상 높이는 <b>키의 0.41배</b>래요. 지금은 키 160cm 기준, 버튼으로 키를 바꿔 보세요.";
+  helper.innerHTML = "몸에 딱 맞는 책상 높이는 <b>키의 0.4배에 2를 더한 값</b>이래요. 지금은 키 160cm 기준, 버튼으로 키를 바꿔 보세요.";
   const tried = new Set<number>();
   let taps = 0;
   let asked = false;
@@ -240,12 +240,12 @@ export const renderFurniture: SceneFn = (scene, helper, finish, face, choices) =
           window.setTimeout(() => {
             ask(box, helper, {
               choices: choices ?? [
-                "키를 x로 둔 식 0.41x, 누구든 대입만 하면 끝",
+                "키를 x로 둔 식 0.4x+2, 누구든 대입만 하면 끝",
                 "키별로 표를 전부 만들어 둔다",
                 "평균 키 하나로 통일한다",
               ],
-              good: "그렇죠! 키를 <b>x</b>로 두면 식은 <b>0.41x</b> 하나뿐, 150이든 163이든 값을 <b>대입</b>만 하면 즉시 나와요. 식 하나+대입, 그게 맞춤의 비밀이에요.",
-              bad: "1cm 단위로 표를 다 만들면 수백 줄이고, 평균 키 하나로는 몸에 안 맞아요. 비밀은 키를 x로 둔 식 <b>0.41x</b>, 누구든 자기 키를 <b>대입</b>하면 끝이에요. 문자에 수를 넣는 대입을 배워요.",
+              good: "그렇죠! 키를 <b>x</b>로 두면 식은 <b>0.4x+2</b> 하나뿐, 150이든 163이든 값을 <b>대입</b>만 하면 즉시 나와요. 식 하나+대입, 그게 맞춤의 비밀이에요.",
+              bad: "1cm 단위로 표를 다 만들면 수백 줄이고, 평균 키 하나로는 몸에 안 맞아요. 비밀은 키를 x로 둔 식 <b>0.4x+2</b>, 누구든 자기 키를 <b>대입</b>하면 끝이에요. 문자에 수를 넣는 대입을 배워요.",
               onDone: finish,
             });
           }, 700);
@@ -255,76 +255,70 @@ export const renderFurniture: SceneFn = (scene, helper, finish, face, choices) =
   });
 };
 
-/* ── 4 macaron, 마카롱 상자의 비밀(항·상수항) ───────────────── */
+/* ── 4 macaron, 쿠키 봉투의 비밀(항·상수항) ─────────────────── */
 export const renderMacaron: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
-  const POS: [number, number][] = [[152, 92], [180, 92], [208, 92], [166, 99], [194, 99], [222, 99]];
-  const COLS: [string, string, string, string][] = [
-    ["#FFC4D8", "#F088AC", "#D45A86", "#A83A62"],
-    ["#C4F0DC", "#7DD4AC", "#48B285", "#2E7C5A"],
-    ["#FFEFB8", "#F5D468", "#DCAF32", "#A5790E"],
-    ["#DCD0FF", "#B49CF0", "#8A6CD8", "#5E44A8"],
-    ["#E8C8A4", "#C89A6E", "#9C6E42", "#6B4520"],
-    ["#C8E8FF", "#8CC4F0", "#58A0D8", "#2E6C9E"],
-  ];
-  const mac = (i: number): string => {
+  const POS: [number, number][] = [[152, 92], [180, 92], [208, 92], [166, 99], [194, 99]];
+  const cookie = (i: number): string => {
     const [x, y] = POS[i];
     return `<g class="mc-m${i}" style="opacity:0; transform: translate(${x}px, ${y - 22}px) scale(.7); transition: transform .5s cubic-bezier(.34,1.35,.5,1), opacity .3s">
-      <ellipse cx="0" cy="0" rx="12" ry="8.5" fill="url(#mc-c${i})" stroke="${COLS[i][3]}" stroke-width="1.2"/>
-      <rect x="-10" y="1.5" width="20" height="3" rx="1.5" fill="#FFF3E0" stroke="${COLS[i][3]}" stroke-width=".8" opacity=".95"/>
-      <ellipse cx="-4" cy="-3.5" rx="4" ry="1.8" fill="#fff" opacity=".5"/>
+      <circle cx="0" cy="0" r="10.5" fill="url(#mc-ck)" stroke="#7E5226" stroke-width="1.3"/>
+      <circle cx="-4" cy="-2" r="1.7" fill="#5E3A1C"/><circle cx="3" cy="-4" r="1.4" fill="#5E3A1C"/>
+      <circle cx="4.5" cy="2.5" r="1.5" fill="#5E3A1C"/><circle cx="-1.5" cy="4" r="1.2" fill="#5E3A1C"/>
+      <ellipse cx="-3.5" cy="-4.5" rx="3.6" ry="1.8" fill="#fff" opacity=".4"/>
     </g>`;
   };
   fig.innerHTML = wrapSvg(
     `${SHADOW(180, 183, 86)}
-    <rect x="134" y="86" width="92" height="18" rx="4" fill="#A5714A" stroke="#8F5A34" stroke-width="1.2"/>
-    ${[0, 1, 2, 3, 4, 5].map(mac).join("")}
+    <rect x="134" y="86" width="92" height="18" rx="4" fill="#9C6E46" stroke="#7E5226" stroke-width="1.2"/>
+    ${[0, 1, 2, 3, 4].map(cookie).join("")}
     <rect x="132" y="100" width="96" height="30" rx="5" fill="url(#mc-bx)" stroke="#9C6242" stroke-width="1.5"/>
-    <ellipse cx="150" cy="106" rx="10" ry="3" fill="#fff" opacity=".3"/>
+    <rect x="132" y="100" width="96" height="6.5" rx="3" fill="#C98A64" stroke="#9C6242" stroke-width=".9"/>
+    <ellipse cx="150" cy="110" rx="10" ry="3" fill="#fff" opacity=".3"/>
     <rect x="118" y="128" width="124" height="8" rx="4" fill="url(#mc-pl)" stroke="#7E8C9C" stroke-width="1.3"/>
     <rect x="172" y="136" width="16" height="9" fill="#8C99A8" stroke="#5E6C7C" stroke-width="1.2"/>
     <rect x="96" y="144" width="168" height="34" rx="13" fill="url(#mc-mt)" stroke="#6E7C8C" stroke-width="1.6"/>
     <ellipse cx="114" cy="150" rx="10" ry="3.5" fill="#fff" opacity=".4"/>
     <rect x="192" y="152" width="60" height="19" rx="5" fill="#1E2A38"/>
-    <text class="mc-disp" x="222" y="166" text-anchor="middle" font-size="12" font-weight="900" fill="#7FE0D2">10</text>`,
+    <text class="mc-disp" x="222" y="166" text-anchor="middle" font-size="12" font-weight="900" fill="#7FE0D2">8</text>`,
     `<linearGradient id="mc-bx" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F6D7C4"/><stop offset=".55" stop-color="#E8B08E"/><stop offset="1" stop-color="#C98A64"/></linearGradient>
     <linearGradient id="mc-pl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2F6FA"/><stop offset="1" stop-color="#C2CEDA"/></linearGradient>
     <linearGradient id="mc-mt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2F6FA"/><stop offset=".5" stop-color="#D8E2EC"/><stop offset="1" stop-color="#AEBCCA"/></linearGradient>
-    ${COLS.map((c, i) => `<linearGradient id="mc-c${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c[0]}"/><stop offset=".55" stop-color="${c[1]}"/><stop offset="1" stop-color="${c[2]}"/></linearGradient>`).join("")}`,
+    <radialGradient id="mc-ck" cx=".38" cy=".32" r=".95"><stop offset="0" stop-color="#F2CE96"/><stop offset=".55" stop-color="#D9A25E"/><stop offset="1" stop-color="#A87038"/></radialGradient>`,
   );
   const read = el("div", { class: "pw-read" });
   const gUnit = `<span style="font-size:15px;font-weight:800;color:#8CA0B3"> g</span>`;
-  read.innerHTML = mfmt("10") + gUnit;
-  const btn = mkBtn("마카롱 추가");
+  read.innerHTML = mfmt("8") + gUnit;
+  const btn = mkBtn("쿠키 추가");
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, read, btn, box);
-  helper.innerHTML = "저울 위 상자만 달면 <b>10g</b>. 마카롱 1개 무게는 아직 모르니 <b>x g</b>이라 부를게요. 하나씩 담아 봐요.";
+  helper.innerHTML = "저울 위 봉투만 달면 <b>8g</b>. 쿠키 1개 무게는 아직 모르니 <b>x g</b>이라 부를게요. 하나씩 담아 봐요.";
   let n = 0;
   btn.addEventListener("click", () => {
-    if (n >= 6) return;
+    if (n >= 5) return;
     n += 1;
     haptic(HAPTIC.select);
     const m = fig.querySelector(`.mc-m${n - 1}`) as SVGGElement;
     m.style.opacity = "1";
     m.style.transform = `translate(${POS[n - 1][0]}px, ${POS[n - 1][1]}px) scale(1)`;
-    const expr = `${n === 1 ? "" : n}x+10`;
+    const expr = `${n === 1 ? "" : n}x+8`;
     read.innerHTML = mfmt(expr) + gUnit;
     (fig.querySelector(".mc-disp") as SVGTextElement).textContent = expr;
-    if (n === 6) {
+    if (n === 5) {
       btn.disabled = true;
       btn.classList.remove("pulse");
       window.setTimeout(() => {
         face("curious");
-        helper.innerHTML = "마카롱이 늘 때마다 <b>x가 하나씩</b> 붙었어요. 그런데 뒤의 <b>10</b>은 6개를 담는 내내 꿈쩍도 안 했죠, 정체가 뭘까요?";
+        helper.innerHTML = "쿠키가 늘 때마다 <b>x가 하나씩</b> 붙었어요. 그런데 뒤의 <b>8</b>은 5개를 담는 내내 꿈쩍도 안 했죠, 정체가 뭘까요?";
         window.setTimeout(() => {
           ask(box, helper, {
             choices: choices ?? [
-              "상자 무게, 개수와 상관없이 늘 그대로(상수)",
-              "마카롱과 함께 늘어난다",
-              "6개가 넘으면 사라진다",
+              "봉투 무게, 개수와 상관없이 늘 그대로(상수)",
+              "쿠키와 함께 늘어난다",
+              "5개가 넘으면 사라진다",
             ],
-            good: "정확해요! 10은 <b>상자 무게</b>, 개수와 상관없이 늘 그대로인 <b>상수항</b>이에요. 6x처럼 변하는 항과 10처럼 변하지 않는 항, 식은 이 두 부품으로 조립돼요.",
-            bad: "늘어난 건 마카롱 몫인 <b>6x</b>뿐, 10은 <b>상자 무게</b>라 1개를 담든 6개를 담든 그대로예요. 변하는 항(6x)과 변하지 않는 상수항(10), 식의 두 부품을 해부하러 가요.",
+            good: "정확해요! 8은 <b>봉투 무게</b>, 개수와 상관없이 늘 그대로인 <b>상수항</b>이에요. 5x처럼 변하는 항과 8처럼 변하지 않는 항, 식은 이 두 부품으로 조립돼요.",
+            bad: "늘어난 건 쿠키 몫인 <b>5x</b>뿐, 8은 <b>봉투 무게</b>라 1개를 담든 5개를 담든 그대로예요. 변하는 항(5x)과 변하지 않는 상수항(8), 식의 두 부품을 해부하러 가요.",
             onDone: finish,
           });
         }, 750);
@@ -446,15 +440,15 @@ export const renderCatfood: SceneFn = (scene, helper, finish, face, choices) => 
       <circle cx="223.5" cy="23.5" r="1.6" fill="#E8968C" opacity=".9"/><circle cx="228" cy="22.2" r="1.6" fill="#E8968C" opacity=".9"/><circle cx="232.5" cy="23.5" r="1.6" fill="#E8968C" opacity=".9"/>
       <line x1="118" y1="38" x2="242" y2="38" stroke="#C9C2AC" stroke-width="1.6" stroke-dasharray="5 4"/>
       <text x="120" y="66" font-size="12.5" font-weight="700" fill="#54677A">사료</text>
-      <text x="240" y="66" text-anchor="end" font-size="14" font-weight="900" fill="#1E2A38">8000</text>
+      <text x="240" y="66" text-anchor="end" font-size="14" font-weight="900" fill="#1E2A38">9000</text>
       <text x="120" y="92" font-size="12.5" font-weight="700" fill="#54677A">간식</text>
-      <text x="190" y="92" text-anchor="end" font-size="14" font-weight="900" fill="#1E2A38">4 ×</text>
+      <text x="190" y="92" text-anchor="end" font-size="14" font-weight="900" fill="#1E2A38">3 ×</text>
       <ellipse cx="216" cy="86" rx="21" ry="9" fill="url(#cf-sm)" opacity=".92"/>
       <ellipse cx="206" cy="82" rx="11" ry="7" fill="url(#cf-sm)" opacity=".85"/>
       <ellipse cx="228" cy="90" rx="11" ry="6" fill="url(#cf-sm)" opacity=".85"/>
       <line x1="118" y1="106" x2="242" y2="106" stroke="#C9C2AC" stroke-width="1.6" stroke-dasharray="5 4"/>
       <text x="120" y="130" font-size="13" font-weight="800" fill="#54677A">합계</text>
-      <text x="240" y="130" text-anchor="end" font-size="15" font-weight="900" fill="#0A87A3">16000</text>
+      <text x="240" y="130" text-anchor="end" font-size="15" font-weight="900" fill="#0A87A3">13500</text>
       ${bars}
     </g>
     <g class="cf-mg" style="opacity:0; transform: scale(.5); transform-origin: 214px 84px; transition: transform .55s cubic-bezier(.34,1.35,.5,1), opacity .35s">
@@ -471,7 +465,7 @@ export const renderCatfood: SceneFn = (scene, helper, finish, face, choices) => 
   const btn = mkBtn("얼룩 확대");
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, btn, box);
-  helper.innerHTML = "고양이 간식을 사 온 영수증, 사료 8000원, 간식 <b>4개</b>, 합계 16000원. 그런데 간식 <b>1개 값</b> 위에 얼룩이 앉았어요!";
+  helper.innerHTML = "고양이 간식을 사 온 영수증, 사료 9000원, 간식 <b>3개</b>, 합계 13500원. 그런데 간식 <b>1개 값</b> 위에 얼룩이 앉았어요!";
   btn.addEventListener("click", () => {
     btn.disabled = true;
     btn.classList.remove("pulse");
@@ -485,12 +479,12 @@ export const renderCatfood: SceneFn = (scene, helper, finish, face, choices) => 
       window.setTimeout(() => {
         ask(box, helper, {
           choices: choices ?? [
-            "8000+4×▢=16000이라는 등식에서 거꾸로 알아낼 수 있다",
+            "9000+3×▢=13500이라는 등식에서 거꾸로 알아낼 수 있다",
             "가게에 전화해 봐야만 안다",
             "알 방법이 없다",
           ],
-          good: "명탐정이에요! 모르는 값을 x로 두면 <b>8000+4×x=16000</b>, 이런 등식을 <b>방정식</b>이라 불러요. 풀면 x=2000, 간식은 1개 2000원이었네요!",
-          bad: "전화 없이도 단서는 영수증 안에 다 있어요, 얼룩 값을 x로 두면 <b>8000+4×x=16000</b>이라는 등식이 되죠. 이걸 <b>방정식</b>이라 부르고, 풀면 2000원! 모르는 수를 알아내는 기술을 배워요.",
+          good: "명탐정이에요! 모르는 값을 x로 두면 <b>9000+3×x=13500</b>, 이런 등식을 <b>방정식</b>이라 불러요. 풀면 x=1500, 간식은 1개 1500원이었네요!",
+          bad: "전화 없이도 단서는 영수증 안에 다 있어요, 얼룩 값을 x로 두면 <b>9000+3×x=13500</b>이라는 등식이 되죠. 이걸 <b>방정식</b>이라 부르고, 풀면 1500원! 모르는 수를 알아내는 기술을 배워요.",
           onDone: finish,
         });
       }, 700);
@@ -596,15 +590,15 @@ export const renderLeap: SceneFn = (scene, helper, finish, face, choices) => {
     <rect x="168" y="98.5" width="24" height="5.5" rx="2.75" fill="#fff" stroke="#4A9CD4" stroke-width=".8"/>
     <rect x="36" y="120" width="118" height="8" rx="4" fill="url(#lp-gs)" stroke="#4E8C3E" stroke-width="1.2"/>
     <rect x="208" y="120" width="116" height="8" rx="4" fill="url(#lp-gs)" stroke="#4E8C3E" stroke-width="1.2"/>
-    <text class="lp-eq" x="180" y="44" text-anchor="middle" font-size="16" font-weight="900" fill="#1E2A38"><tspan font-style="italic">x</tspan> − 4 = 17</text>
+    <text class="lp-eq" x="180" y="44" text-anchor="middle" font-size="16" font-weight="900" fill="#1E2A38"><tspan font-style="italic">x</tspan> − 5 = 13</text>
     ${chip(78, "lp-x", "#086E86", "x", true)}
-    ${chip(248, "lp-num", "#4E3AC4", "17")}
+    ${chip(248, "lp-num", "#4E3AC4", "13")}
     <g class="lp-jx" style="transform: translate(128px,100px); transition: transform .95s linear">
       <g class="lp-jy" style="transform-box: fill-box; transform-origin: center; transition: transform .48s cubic-bezier(.25,.6,.45,1)">
         <g class="lp-spin" style="transform-box: fill-box; transform-origin: center; transition: transform .95s linear">
           <rect class="lp-jr" x="-21" y="-20" width="42" height="40" rx="12" fill="url(#lp-neg)" stroke="#8F1B26" stroke-width="1.5"/>
           <ellipse cx="-7" cy="-12" rx="8" ry="3.5" fill="#fff" opacity=".35"/>
-          <text class="lp-jt" x="0" y="6" text-anchor="middle" font-size="17" font-weight="900" fill="#fff">−4</text>
+          <text class="lp-jt" x="0" y="6" text-anchor="middle" font-size="17" font-weight="900" fill="#fff">−5</text>
         </g>
       </g>
     </g>
@@ -619,10 +613,10 @@ export const renderLeap: SceneFn = (scene, helper, finish, face, choices) => {
     <linearGradient id="lp-neg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF9AA2"/><stop offset=".55" stop-color="#F0525E"/><stop offset="1" stop-color="#C42834"/></linearGradient>
     <linearGradient id="lp-pos" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8FE8C4"/><stop offset=".55" stop-color="#26B87E"/><stop offset="1" stop-color="#148C5E"/></linearGradient>`,
   );
-  const btn = mkBtn("−4를 건너 보내기");
+  const btn = mkBtn("−5를 건너 보내기");
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, btn, box);
-  helper.innerHTML = "등식 <b>x−4=17</b>, 등호가 <b>강</b>처럼 양쪽 기슭을 가르고 있어요. 왼쪽 기슭의 −4를 강 건너로 보내 볼게요.";
+  helper.innerHTML = "등식 <b>x−5=13</b>, 등호가 <b>강</b>처럼 양쪽 기슭을 가르고 있어요. 왼쪽 기슭의 −5를 강 건너로 보내 볼게요.";
   btn.addEventListener("click", () => {
     btn.disabled = true;
     btn.classList.remove("pulse");
@@ -640,11 +634,11 @@ export const renderLeap: SceneFn = (scene, helper, finish, face, choices) => {
     window.setTimeout(() => {
       haptic(HAPTIC.correct);
       face("surprised");
-      (fig.querySelector(".lp-jt") as SVGTextElement).textContent = "+4";
+      (fig.querySelector(".lp-jt") as SVGTextElement).textContent = "+5";
       const jr = fig.querySelector(".lp-jr") as SVGRectElement;
       jr.setAttribute("fill", "url(#lp-pos)");
       jr.setAttribute("stroke", "#0B6E46");
-      (fig.querySelector(".lp-eq") as SVGTextElement).innerHTML = `<tspan font-style="italic">x</tspan> = 17 + 4`;
+      (fig.querySelector(".lp-eq") as SVGTextElement).innerHTML = `<tspan font-style="italic">x</tspan> = 13 + 5`;
       const fx = fig.querySelector(".lp-fx") as SVGGElement;
       fx.style.opacity = "1";
       fx.style.transform = "scale(1.1)";
@@ -657,16 +651,16 @@ export const renderLeap: SceneFn = (scene, helper, finish, face, choices) => {
       fx.style.opacity = "0";
     }, 1550);
     window.setTimeout(() => {
-      helper.innerHTML = "건너는 순간 <b>−4가 +4로</b> 변신했어요! 항이 등호를 건너면 무슨 일이 일어난 걸까요?";
+      helper.innerHTML = "건너는 순간 <b>−5가 +5로</b> 변신했어요! 항이 등호를 건너면 무슨 일이 일어난 걸까요?";
       window.setTimeout(() => {
         ask(box, helper, {
           choices: choices ?? [
-            "부호가 반대로 바뀐다, 양변에 4를 더한 것과 같은 일",
+            "부호가 반대로 바뀐다, 양변에 5를 더한 것과 같은 일",
             "그대로 넘어간다",
             "등호가 부등호로 바뀐다",
           ],
-          good: "예리해요! 순간이동처럼 보이지만 정체는 <b>등식의 성질</b>, 양변에 똑같이 4를 더한 것과 같은 일이라, 건너간 항은 부호가 뒤집혀요. 이 기술의 이름은 <b>이항</b>!",
-          bad: "방금 봤죠, −4는 <b>+4로 변신</b>해서 건넜어요. 그대로 넘어가면 등식이 깨지고, 등호는 그대로 등호예요. 정체는 '양변에 4 더하기'(등식의 성질), 부호가 뒤집히는 이 기술, <b>이항</b>을 배워요.",
+          good: "예리해요! 순간이동처럼 보이지만 정체는 <b>등식의 성질</b>, 양변에 똑같이 5를 더한 것과 같은 일이라, 건너간 항은 부호가 뒤집혀요. 이 기술의 이름은 <b>이항</b>!",
+          bad: "방금 봤죠, −5는 <b>+5로 변신</b>해서 건넜어요. 그대로 넘어가면 등식이 깨지고, 등호는 그대로 등호예요. 정체는 '양변에 5 더하기'(등식의 성질), 부호가 뒤집히는 이 기술, <b>이항</b>을 배워요.",
           onDone: finish,
         });
       }, 700);
@@ -703,9 +697,9 @@ export const renderHorse: SceneFn = (scene, helper, finish, face, choices) => {
     <line x1="44" y1="100" x2="146" y2="100" stroke="#0A87A3" stroke-width="1.6"/>
     <line x1="44" y1="96" x2="44" y2="104" stroke="#0A87A3" stroke-width="1.6"/>
     <line x1="146" y1="96" x2="146" y2="104" stroke="#0A87A3" stroke-width="1.6"/>
-    <text x="95" y="94" text-anchor="middle" font-size="11.5" font-weight="800" fill="#0A87A3">9일</text>
-    <text x="150" y="112" text-anchor="middle" font-size="11.5" font-weight="800" fill="#6B4520">75리</text>
-    <text x="48" y="190" text-anchor="middle" font-size="11.5" font-weight="800" fill="#2E3E52">120리</text>
+    <text x="95" y="94" text-anchor="middle" font-size="11.5" font-weight="800" fill="#0A87A3">6일</text>
+    <text x="150" y="112" text-anchor="middle" font-size="11.5" font-weight="800" fill="#6B4520">80리</text>
+    <text x="48" y="190" text-anchor="middle" font-size="11.5" font-weight="800" fill="#2E3E52">128리</text>
     ${horse("hr-slow", "hr-sl", "#6B4520", 150, 133)}
     ${horse("hr-fast", "hr-fa", "#1E2A38", 48, 155)}
     <g class="hr-fx" style="opacity:0; transform: scale(.4); transform-origin: 296px 118px; transition: transform .35s cubic-bezier(.34,1.6,.5,1), opacity .3s">
@@ -720,7 +714,7 @@ export const renderHorse: SceneFn = (scene, helper, finish, face, choices) => {
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, btn, box);
   helper.innerHTML =
-    "300년 전 조선 수학자 <b>홍정하</b>의 책 구일집에 실린 문제예요. 느린 말이 하루 <b>75리</b>씩 <b>9일 먼저</b> 출발했고, 빠른 말이 하루 <b>120리</b>로 뒤쫓아요. 며칠 만에 따라잡을까요?";
+    "300년 전 조선 수학자 <b>홍정하</b>의 책 구일집에 실린 문제예요. 느린 말이 하루 <b>80리</b>씩 <b>6일 먼저</b> 출발했고, 빠른 말이 하루 <b>128리</b>로 뒤쫓아요. 며칠 만에 따라잡을까요?";
   btn.addEventListener("click", () => {
     btn.disabled = true;
     btn.classList.remove("pulse");
@@ -738,12 +732,12 @@ export const renderHorse: SceneFn = (scene, helper, finish, face, choices) => {
       window.setTimeout(() => {
         ask(box, helper, {
           choices: choices ?? [
-            "같은 거리를 간 순간을 등식으로: 120x=75(x+9)",
+            "같은 거리를 간 순간을 등식으로: 128x=80(x+6)",
             "말을 실제로 달리게 해 봐야 안다",
             "느린 말이 영원히 앞선다",
           ],
-          good: "그거예요! 만나는 순간 <b>두 말이 간 거리가 같다</b>, 빠른 말이 달린 날을 x로 두면 120x=75(x+9), 풀면 <b>x=15일</b>. 방정식 한 줄이 추격전을 끝내요. 문장을 식으로 바꾸는 법을 배워요.",
-          bad: "실제로 달리면 15일이나 걸리고, 매일 45리씩 좁혀지니 영원히 앞서지도 못해요. 비법은 만나는 순간 <b>두 말이 간 거리가 같다</b>를 식으로 쓰기, 120x=75(x+9), 풀면 15일! 이 번역술이 이번 레슨의 마지막 기술이에요.",
+          good: "그거예요! 만나는 순간 <b>두 말이 간 거리가 같다</b>, 빠른 말이 달린 날을 x로 두면 128x=80(x+6), 풀면 <b>x=10일</b>. 방정식 한 줄이 추격전을 끝내요. 문장을 식으로 바꾸는 법을 배워요.",
+          bad: "실제로 달리면 10일이나 걸리고, 매일 48리씩 좁혀지니 영원히 앞서지도 못해요. 비법은 만나는 순간 <b>두 말이 간 거리가 같다</b>를 식으로 쓰기, 128x=80(x+6), 풀면 10일! 이 번역술이 이번 레슨의 마지막 기술이에요.",
           onDone: finish,
         });
       }, 700);

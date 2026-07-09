@@ -105,6 +105,16 @@ const BODIES: Body[] = [
     grav: "중력 지구의 1.14배",
     more: "태양에서 가장 먼 여덟 번째 행성. 시속 2,000km가 넘는 태양계 최강의 바람이 불고, 대흑점이라는 커다란 소용돌이가 나타났다 사라져요. 망원경 관측이 아니라 계산으로 위치를 먼저 예측해 발견한 첫 행성이기도 해요.",
   },
+  {
+    // 왜소 행성 선경험(레슨 마무리 문제·binSort의 '왜소 행성'을 투어에서 먼저 만난다).
+    // BODIES에 있어도 미션(TERRA/JOVIAN/belt)에는 안 잡힘 — 목표 로직 불변.
+    key: "pluto", kind: "moon", name: "명왕성", d: 104, r: 0.55, group: "etc",
+    fact: "해왕성 바깥을 도는 작은 얼음 천체, <b>왜소 행성</b>이에요. 둥글지만 자기 궤도 주변을 <b>홀로 지배하지 못해서</b> 행성과 달라요.",
+    dist: "태양에서 약 59억 km — 지구의 약 40배",
+    size: "지름 2,377 km · 달보다 작아요",
+    grav: "중력 지구의 약 1/15",
+    more: "2006년까지는 아홉 번째 행성으로 불렸어요. 하지만 명왕성 곁에서 비슷한 얼음 천체들이 잇달아 발견되면서, '둥글지만 궤도 주변을 홀로 지배하지 못하는 천체'는 왜소 행성으로 새로 분류하게 됐죠. 태양계 가장자리엔 이런 얼음 천체가 아주 많답니다.",
+  },
 ];
 
 const EXTRA: Record<string, Pick<Body, "name" | "fact" | "dist" | "size" | "grav" | "more">> = {
@@ -159,7 +169,7 @@ export const solarTour: StepRenderer = (host, step, api) => {
   const enterBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "가로 화면으로 출발하기" }));
   const helper = el("div", {
     class: "helper",
-    html: "한 손가락으로 <b>빙 돌리고</b>, 두 손가락으로 <b>당겨서 확대</b>해 보세요. 천체를 <b>탭</b>하면 다가가서 소개 카드를 읽을 수 있어요. 화성과 목성 사이의 <b>소행성대</b>도 찾아보세요!",
+    html: "한 손가락으로 <b>빙 돌리고</b>, 두 손가락으로 <b>당겨서 확대</b>해 보세요. 천체를 <b>탭</b>하면 다가가서 소개 카드를 읽을 수 있어요. 화성과 목성 사이의 <b>소행성대</b>, 해왕성 바깥 끝자락의 <b>명왕성</b>도 찾아보세요!",
   });
   host.append(goalChips, preview, enterBtn, helper);
 
@@ -331,6 +341,10 @@ export const solarTour: StepRenderer = (host, step, api) => {
     const cometProxy = new THREE.Mesh(new THREE.SphereGeometry(3.2, 10, 8), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 }));
     cometProxy.userData.key = "comet";
     scene.add(cometProxy);
+    // 명왕성 탭 판정용 투명 프록시(혜성 프록시 문법 재사용 — 작은 천체는 직접 탭이 어렵다)
+    const plutoProxy = new THREE.Mesh(new THREE.SphereGeometry(2.8, 10, 8), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 }));
+    plutoProxy.userData.key = "pluto";
+    scene.add(plutoProxy);
     const tail: T.Sprite[] = [];
     for (let i = 0; i < 8; i++) {
       const sp = S.makeGlow(2.4 - i * 0.22, "rgba(150,210,255,.55)", 0.25);
@@ -419,7 +433,7 @@ export const solarTour: StepRenderer = (host, step, api) => {
         const p = rot.mapPoint(e);
         const ray = new THREE.Raycaster();
         ray.setFromCamera(new THREE.Vector2((p.x / w) * 2 - 1, -((p.y / h) * 2 - 1)), st.camera);
-        const hits = ray.intersectObjects([...meshes.values(), cometProxy], false);
+        const hits = ray.intersectObjects([...meshes.values(), cometProxy, plutoProxy], false);
         if (hits.length) openCard(hits[0].object.userData.key as string);
         else if (focus) closeCard();
       }
@@ -523,6 +537,7 @@ export const solarTour: StepRenderer = (host, step, api) => {
       moon.position.set(earthM.position.x + Math.cos(ma) * 3.1, 0.25, earthM.position.z + Math.sin(ma) * 3.1);
       moon.rotation.y += 0.004 * dt;
       belt.rotation.y += 0.00018 * dt;
+      plutoProxy.position.copy(meshes.get("pluto")!.position);
 
       // 혜성 — 길쭉한 타원(태양이 한 초점)
       const ce = 0.62;

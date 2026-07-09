@@ -143,7 +143,7 @@ export const patternRule = (o: { title: string; lead?: string; cta?: string; cur
 export const substLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "substLab", ...o });
 
-/** 식의 해부, 6x+10의 항·계수·상수항·차수를 탭으로 태깅. */
+/** 식의 해부, 5x+8의 항·계수·상수항·차수를 탭으로 태깅. */
 export const exprAnatomy = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "exprAnatomy", ...o });
 

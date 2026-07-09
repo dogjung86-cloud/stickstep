@@ -188,7 +188,7 @@ await clickCTA(); // recap
 await quiz(0); await quiz(0);
 await binSortAuto([
   ["눈에 보이는", "겉보기"], ["거리의 영향", "겉보기"], ["진짜 밝기", "절대"],
-  ["10 pc", "절대"], ["−26.7", "겉보기"], ["\\+4.8", "절대"],
+  ["10 pc", "절대"], ["−26.8", "겉보기"], ["\\+4.8", "절대"],
 ]);
 await oxPick(true); await quiz(0);
 log("L3 DONE");

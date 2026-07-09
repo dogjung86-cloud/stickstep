@@ -1,7 +1,7 @@
 // starColorLab — 별빛 온도계(중2 VIII L4, 책 288~289쪽).
 // 표면 온도 슬라이더(3,000~30,000 K 로그 스케일)를 밀면 별의 색이 흑체 복사 근사색으로
-// 연속 변화(적 → 주황 → 황 → 황백 → 백 → 청백). 온도 구간에 들어가면 그 색의 실제 별
-// 이름표가 붙는다(베텔게우스·태양·시리우스·리겔 …). "빨강 = 뜨겁다" 오개념을 뒤집는 랩.
+// 연속 변화(적 → 주황 → 황 → 황백 → 백 → 청백 → 청, 교과서 7단). 온도 구간에 들어가면
+// 그 색의 실제 별 이름표가 붙는다(베텔게우스·태양·시리우스·리겔 …). "빨강 = 뜨겁다" 오개념을 뒤집는 랩.
 // 목표: ① 붉은 별(≤3,900 K) ② 태양급 노란 별(5,200~6,000 K) ③ 청백 별(≥10,000 K).
 
 import { el, clamp } from "../../core/dom";
@@ -42,14 +42,17 @@ function kelvinRGB(k: number): [number, number, number] {
   return [Math.round(clamp(r, 0, 255)), Math.round(clamp(g, 0, 255)), Math.round(clamp(b, 0, 255))];
 }
 
-// 색 구간 — 교과서 그림 VIII-7의 6단(온도 오름차순)
+// 색 구간 — 교과서 그림 VIII-7의 7단(온도 오름차순). 최고온 단은 청백이 아니라 '청색'.
+// 청색(O형) 경계는 약 30,000 K — 슬라이더 최대치가 딱 30,000 K라, 끝까지 밀면 도달하도록
+// 29,000 K부터 청색으로 표기한다(태양 5,800 K·리겔 12,000 K 등 나머지 경계는 관례값).
 const BANDS: { upTo: number; name: string; stars: string }[] = [
   { upTo: 3900, name: "적색", stars: "베텔게우스 · 안타레스" },
   { upTo: 5200, name: "주황색", stars: "알데바란 · 아크투루스" },
   { upTo: 6000, name: "황색", stars: "태양 · 카펠라" },
   { upTo: 7500, name: "황백색", stars: "프로키온 · 북극성" },
   { upTo: 10000, name: "백색", stars: "시리우스 · 베가" },
-  { upTo: 99000, name: "청백색", stars: "리겔 · 스피카" },
+  { upTo: 29000, name: "청백색", stars: "리겔 · 스피카" },
+  { upTo: 99000, name: "청색", stars: "나오스 · 민타카" },
 ];
 const bandOf = (k: number): (typeof BANDS)[number] => BANDS.find((b) => k <= b.upTo)!;
 
@@ -121,7 +124,7 @@ export const starColorLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! <b>파란(청백) 별이 가장 뜨겁고, 붉은 별이 가장 차가워요</b> — 불꽃 이미지와 반대죠? 참고로 '차가운' 붉은 별도 표면이 <b>약 3,000 ℃</b>나 돼요. 색 순서: 적 → 주황 → 황 → 황백 → 백 → 청백(온도 오름차순).";
+        "정리! <b>파란 별이 가장 뜨겁고, 붉은 별이 가장 차가워요</b> — 불꽃 이미지와 반대죠? 참고로 '차가운' 붉은 별도 표면이 <b>약 3,000 ℃</b>나 돼요. 색 순서: 적 → 주황 → 황 → 황백 → 백 → 청백 → 청(온도 오름차순).";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }
@@ -269,7 +272,7 @@ export const starColorLab: StepRenderer = (host, step, api) => {
       if (holdMs > 400) {
         if (zone === "red") collect("red", "베텔게우스급!", "붉은 별 — 가장 '차가운' 별이에요 (그래도 3,000 ℃!)");
         if (zone === "sun") collect("sun", "태양과 같아요!", "약 5,800 K 황색 — 우리 태양의 색!");
-        if (zone === "blue") collect("blue", "리겔급!", "청백 별 — 가장 뜨거운 별! 빨강보다 파랑이 뜨거워요");
+        if (zone === "blue") collect("blue", "리겔급!", "청백 별! 끝까지 밀면 청색 — 빨강보다 파랑이 뜨거워요");
       }
     } else holdMs = 0;
     lastZone = zone;

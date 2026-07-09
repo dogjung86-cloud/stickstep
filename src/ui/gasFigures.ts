@@ -23,19 +23,19 @@ export function balloonParticleFig(): string {
   </svg>`;
 }
 
-/** VI-3 압력-부피 반비례 곡선 (1기압 20mL · 2기압 10mL · 4기압 5mL) */
+/** VI-3 압력-부피 반비례 곡선 (자체 수치: 1기압 24mL · 2기압 12mL · 4기압 6mL) */
 export function pvCurveFig(): string {
   const gx = (p: number): number => 56 + ((p - 0) / 4.6) * 264;
-  const gy = (v: number): number => 176 - (v / 23) * 148;
+  const gy = (v: number): number => 176 - (v / 27.6) * 148;
   let d = "";
-  for (let p = 0.9; p <= 4.4; p += 0.05) d += `${d ? "L" : "M"}${gx(p).toFixed(1)} ${gy(20 / p).toFixed(1)}`;
-  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="압력에 따른 부피 반비례 그래프. 1기압 20밀리리터, 2기압 10밀리리터, 4기압 5밀리리터">
+  for (let p = 0.9; p <= 4.4; p += 0.05) d += `${d ? "L" : "M"}${gx(p).toFixed(1)} ${gy(24 / p).toFixed(1)}`;
+  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="압력에 따른 부피 반비례 그래프. 1기압 24밀리리터, 2기압 12밀리리터, 4기압 6밀리리터">
     <line x1="56" y1="20" x2="56" y2="176" stroke="#B0B8C1" stroke-width="1.6"/>
     <line x1="56" y1="176" x2="326" y2="176" stroke="#B0B8C1" stroke-width="1.6"/>
-    ${[20, 10, 5].map((v) => `<line x1="56" y1="${gy(v)}" x2="320" y2="${gy(v)}" stroke="#EDF0F4"/><text x="48" y="${gy(v) + 4}" text-anchor="end" font-size="10.5" fill="#8B95A1">${v}</text>`).join("")}
+    ${[24, 12, 6].map((v) => `<line x1="56" y1="${gy(v)}" x2="320" y2="${gy(v)}" stroke="#EDF0F4"/><text x="48" y="${gy(v) + 4}" text-anchor="end" font-size="10.5" fill="#8B95A1">${v}</text>`).join("")}
     ${[1, 2, 3, 4].map((p) => `<text x="${gx(p)}" y="192" text-anchor="middle" font-size="10.5" fill="#8B95A1">${p}</text>`).join("")}
     <path d="${d}" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
-    ${[[1, 20], [2, 10], [4, 5]].map(([p, v]) => `<circle cx="${gx(p)}" cy="${gy(v)}" r="4.2" fill="#5E6B7E"/><line x1="${gx(p)}" y1="${gy(v)}" x2="${gx(p)}" y2="176" stroke="#C9D2DC" stroke-width="1.2" stroke-dasharray="3 4"/>`).join("")}
+    ${[[1, 24], [2, 12], [4, 6]].map(([p, v]) => `<circle cx="${gx(p)}" cy="${gy(v)}" r="4.2" fill="#5E6B7E"/><line x1="${gx(p)}" y1="${gy(v)}" x2="${gx(p)}" y2="176" stroke="#C9D2DC" stroke-width="1.2" stroke-dasharray="3 4"/>`).join("")}
     <text x="16" y="14" font-size="11" fill="#4E5968">부피(mL)</text>
     <text x="326" y="206" text-anchor="end" font-size="11" fill="#4E5968">압력(기압)</text>
   </svg>`;
@@ -53,11 +53,11 @@ export function graphChoicesFig(): string {
       <text x="92" y="76" text-anchor="end" font-size="8.5" fill="#8B95A1">압력</text>
     </g>`;
   return `<svg viewBox="0 0 344 180" ${NS} fill="none" role="img" aria-label="부피와 압력 그래프 보기 다섯 개">
-    ${cell(0, 8, 6, "M20 30h66")}
-    ${cell(1, 122, 6, "M20 22 L86 62")}
+    ${cell(0, 8, 6, "M20 22 L86 62")}
+    ${cell(1, 122, 6, "M20 62 L86 22")}
     ${cell(2, 236, 6, "M20 20 C34 22 34 40 46 48 C58 56 74 58 88 59")}
-    ${cell(3, 8, 96, "M20 62 L86 22")}
-    ${cell(4, 122, 96, "M20 58 L52 26 L86 26")}
+    ${cell(3, 8, 96, "M20 30h66")}
+    ${cell(4, 122, 96, "M20 24 L52 56 L86 56")}
   </svg>`;
 }
 
@@ -88,7 +88,7 @@ export function tempVolLineFig(): string {
     <line x1="52" y1="158" x2="322" y2="158" stroke="#B0B8C1" stroke-width="1.6"/>
     <line x1="52" y1="132" x2="310" y2="52" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
     ${[[92, 120, "(가)"], [180, 94, "(나)"], [268, 68, "(다)"]].map(([x, y, t]) => `<circle cx="${x}" cy="${y}" r="4.4" fill="#5E6B7E"/><text x="${x}" y="${Number(y) - 10}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${t}</text>`).join("")}
-    <text x="14" y="14" font-size="11" fill="#4E5968">부피(L)</text>
+    <text x="14" y="14" font-size="11" fill="#4E5968">부피(mL)</text>
     <text x="322" y="176" text-anchor="end" font-size="11" fill="#4E5968">온도(℃)</text>
   </svg>`;
 }

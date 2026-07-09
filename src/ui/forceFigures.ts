@@ -24,69 +24,69 @@ export function arrow3Fig(): string {
   </svg>`;
 }
 
-/** 합력 계산 — (가) 같은 방향 2N+3N, (나) 반대 방향 2N·3N (라이트) */
+/** 합력 계산 — (가) 같은 방향 4N+2N, (나) 반대 방향 4N·2N (라이트, 화살표 길이 2:1) */
 export function netForceFig(): string {
   const block = (bx: number, label: string): string =>
     `<rect x="${bx}" y="60" width="58" height="44" rx="7" fill="#EDF1F6" stroke="#B0B8C1" stroke-width="2"/>
      <text x="${bx + 29}" y="140" text-anchor="middle" font-size="13.5" font-weight="700" fill="#4E5968">${label}</text>`;
-  return `<svg viewBox="0 0 344 150" ${NS} role="img" aria-label="나무토막 두 개에 작용하는 힘 화살표: 가는 같은 방향 2N과 3N, 나는 반대 방향 2N과 3N">
+  return `<svg viewBox="0 0 344 150" ${NS} role="img" aria-label="나무토막 두 개에 작용하는 힘 화살표: 가는 같은 방향 4N과 2N, 나는 반대 방향 4N과 2N">
     ${block(52, "(가)")}
     <path d="M110 72h44" stroke="#5E6B7E" stroke-width="4" stroke-linecap="round"/>
     <path d="M162 72l-12-7v14z" fill="#5E6B7E"/>
-    <text x="128" y="62" font-size="12" font-weight="700" fill="#4E5968">3 N</text>
-    <path d="M110 94h30" stroke="#5E6B7E" stroke-width="4" stroke-linecap="round"/>
-    <path d="M148 94l-12-7v14z" fill="#5E6B7E"/>
-    <text x="120" y="118" font-size="12" font-weight="700" fill="#4E5968">2 N</text>
+    <text x="128" y="62" font-size="12" font-weight="700" fill="#4E5968">4 N</text>
+    <path d="M110 94h18" stroke="#5E6B7E" stroke-width="4" stroke-linecap="round"/>
+    <path d="M136 94l-12-7v14z" fill="#5E6B7E"/>
+    <text x="112" y="118" font-size="12" font-weight="700" fill="#4E5968">2 N</text>
     ${block(234, "(나)")}
     <path d="M292 72h44" stroke="#5E6B7E" stroke-width="4" stroke-linecap="round"/>
     <path d="M344 72l-12-7v14z" fill="#5E6B7E"/>
-    <text x="306" y="62" font-size="12" font-weight="700" fill="#4E5968">3 N</text>
-    <path d="M234 94h-30" stroke="#5E6B7E" stroke-width="4" stroke-linecap="round"/>
-    <path d="M196 94l12-7v14z" fill="#5E6B7E"/>
-    <text x="204" y="118" font-size="12" font-weight="700" fill="#4E5968">2 N</text>
+    <text x="306" y="62" font-size="12" font-weight="700" fill="#4E5968">4 N</text>
+    <path d="M234 94h-18" stroke="#5E6B7E" stroke-width="4" stroke-linecap="round"/>
+    <path d="M208 94l12-7v14z" fill="#5E6B7E"/>
+    <text x="214" y="118" font-size="12" font-weight="700" fill="#4E5968">2 N</text>
   </svg>`;
 }
 
-/** 중력 방향 고르기 — 지구 위 (가)(나) 두 물체와 A~D 화살표 (라이트) */
+/** 중력 방향 고르기 — 지구 왼쪽 (가)·아래쪽 (나) 물체와 A~F 화살표 (라이트) */
 export function gravityDirFig(): string {
   return `<svg viewBox="0 0 344 210" ${NS} role="img" aria-label="지구 주위 두 물체에서 뻗은 화살표 후보들">
-    <circle cx="172" cy="120" r="62" fill="#EAF2FD" stroke="#8FB3E8" stroke-width="2.4"/>
-    <ellipse cx="152" cy="104" rx="22" ry="14" fill="#CBE4D2"/>
-    <ellipse cx="192" cy="140" rx="16" ry="10" fill="#CBE4D2"/>
-    <circle cx="172" cy="120" r="3" fill="#4E5968"/>
-    <text x="172" y="106" text-anchor="middle" font-size="10.5" fill="#8B95A1">지구 중심</text>
-    <!-- (가) 위쪽 물체 -->
-    <rect x="162" y="18" width="20" height="20" rx="5" fill="#fff" stroke="#5E6B7E" stroke-width="2.4"/>
-    <text x="140" y="34" font-size="13" font-weight="700" fill="#4E5968">(가)</text>
-    <path d="M172 14v-8" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/><path d="M172 2l-5 8h10z" fill="#5E6B7E"/>
-    <text x="182" y="10" font-size="12" font-weight="700" fill="#4E5968">A</text>
-    <path d="M186 34h12" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/><path d="M204 34l-8-5v10z" fill="#5E6B7E"/>
-    <text x="206" y="26" font-size="12" font-weight="700" fill="#4E5968">B</text>
-    <path d="M172 42v10" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/><path d="M172 58l-5-8h10z" fill="#5E6B7E"/>
-    <text x="180" y="58" font-size="12" font-weight="700" fill="#4E5968">C</text>
-    <!-- (나) 오른쪽 물체 -->
-    <rect x="296" y="110" width="20" height="20" rx="5" fill="#fff" stroke="#5E6B7E" stroke-width="2.4"/>
-    <text x="322" y="126" font-size="13" font-weight="700" fill="#4E5968">(나)</text>
-    <path d="M292 120h-10" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/><path d="M276 120l8-5v10z" fill="#5E6B7E"/>
-    <text x="272" y="112" font-size="12" font-weight="700" fill="#4E5968">D</text>
-    <path d="M306 134v10" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/><path d="M306 150l-5-8h10z" fill="#5E6B7E"/>
-    <text x="314" y="150" font-size="12" font-weight="700" fill="#4E5968">E</text>
-    <path d="M320 106l8-8" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/><path d="M332 94l-10 2 5 8z" fill="#5E6B7E"/>
-    <text x="330" y="112" font-size="12" font-weight="700" fill="#4E5968">F</text>
+    <circle cx="172" cy="88" r="52" fill="#EAF2FD" stroke="#8FB3E8" stroke-width="2.4"/>
+    <ellipse cx="154" cy="72" rx="20" ry="13" fill="#CBE4D2"/>
+    <ellipse cx="192" cy="106" rx="14" ry="9" fill="#CBE4D2"/>
+    <circle cx="172" cy="88" r="3" fill="#4E5968"/>
+    <text x="172" y="74" text-anchor="middle" font-size="10.5" fill="#8B95A1">지구 중심</text>
+    <!-- (가) 왼쪽 물체 -->
+    <rect x="30" y="78" width="20" height="20" rx="5" fill="#fff" stroke="#5E6B7E" stroke-width="2.4"/>
+    <text x="40" y="136" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(가)</text>
+    <path d="M26 88h-10" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/><path d="M10 88l8-5v10z" fill="#5E6B7E"/>
+    <text x="8" y="78" font-size="12" font-weight="700" fill="#4E5968">A</text>
+    <path d="M54 88h14" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/><path d="M74 88l-8-5v10z" fill="#5E6B7E"/>
+    <text x="58" y="78" font-size="12" font-weight="700" fill="#4E5968">B</text>
+    <path d="M40 102v10" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/><path d="M40 118l-5-8h10z" fill="#5E6B7E"/>
+    <text x="48" y="120" font-size="12" font-weight="700" fill="#4E5968">C</text>
+    <!-- (나) 아래쪽 물체 -->
+    <rect x="162" y="158" width="20" height="20" rx="5" fill="#fff" stroke="#5E6B7E" stroke-width="2.4"/>
+    <text x="190" y="174" font-size="13" font-weight="700" fill="#4E5968">(나)</text>
+    <path d="M172 154v-6" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/><path d="M172 142l-5 8h10z" fill="#5E6B7E"/>
+    <text x="156" y="152" text-anchor="end" font-size="12" font-weight="700" fill="#4E5968">E</text>
+    <path d="M172 182v8" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/><path d="M172 196l-5-8h10z" fill="#5E6B7E"/>
+    <text x="180" y="200" font-size="12" font-weight="700" fill="#4E5968">D</text>
+    <path d="M186 154l8-8" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/><path d="M198 142l-10 2 5 8z" fill="#5E6B7E"/>
+    <text x="202" y="150" font-size="12" font-weight="700" fill="#4E5968">F</text>
   </svg>`;
 }
 
-/** 용수철 탄성력 그래프 — 늘어난 길이∝힘 (교과서 V-9 수치, 라이트) */
+/** 용수철 탄성력 그래프 — 늘어난 길이∝힘 (자체 수치 0.5 N/cm, 라이트) */
 export function springGraphFig(): string {
   const gx = (cm: number): number => 48 + cm * 20;
-  const gy = (n: number): number => 168 - (n / 5) * 132;
+  const gy = (n: number): number => 168 - (n / 7) * 132;
   return `<svg viewBox="0 0 344 200" ${NS} role="img" aria-label="용수철이 늘어난 길이에 따른 탄성력 그래프. 원점을 지나는 직선">
     <line x1="48" y1="24" x2="48" y2="168" stroke="#B0B8C1" stroke-width="1.6"/>
     <line x1="48" y1="168" x2="316" y2="168" stroke="#B0B8C1" stroke-width="1.6"/>
-    ${[1.5, 3.0, 4.5].map((n) => `<line x1="48" y1="${gy(n)}" x2="316" y2="${gy(n)}" stroke="#EDF0F4" stroke-width="1"/><text x="40" y="${gy(n) + 4}" text-anchor="end" font-size="10.5" fill="#8B95A1">${n.toFixed(1)}</text>`).join("")}
+    ${[2, 4, 6].map((n) => `<line x1="48" y1="${gy(n)}" x2="316" y2="${gy(n)}" stroke="#EDF0F4" stroke-width="1"/><text x="40" y="${gy(n) + 4}" text-anchor="end" font-size="10.5" fill="#8B95A1">${n}</text>`).join("")}
     ${[4, 8, 12].map((cm) => `<line x1="${gx(cm)}" y1="168" x2="${gx(cm)}" y2="24" stroke="#EDF0F4" stroke-width="1"/><text x="${gx(cm)}" y="184" text-anchor="middle" font-size="10.5" fill="#8B95A1">${cm}</text>`).join("")}
-    <line x1="${gx(0)}" y1="${gy(0)}" x2="${gx(13)}" y2="${gy(13 * 0.375)}" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
-    ${[[4, 1.5], [8, 3.0], [12, 4.5]].map(([cm, n]) => `<circle cx="${gx(cm)}" cy="${gy(n)}" r="4" fill="#5E6B7E"/>`).join("")}
+    <line x1="${gx(0)}" y1="${gy(0)}" x2="${gx(13)}" y2="${gy(13 * 0.5)}" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
+    ${[[4, 2], [8, 4], [12, 6]].map(([cm, n]) => `<circle cx="${gx(cm)}" cy="${gy(n)}" r="4" fill="#5E6B7E"/>`).join("")}
     <text x="10" y="16" font-size="11" fill="#4E5968">탄성력(N)</text>
     <text x="316" y="198" text-anchor="end" font-size="11" fill="#4E5968">늘어난 길이(cm)</text>
   </svg>`;

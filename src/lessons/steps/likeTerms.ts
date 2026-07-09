@@ -1,5 +1,5 @@
 // likeTerms, 동류항 정리소(Ⅱ 문자와 식 랩, 책 74~75쪽). 문자와 차수가 같은 항 칩만
-// 드래그로 포개면 계수가 더해져 합쳐진다(3x+2x → 5x). 다른 종류는 스프링 복귀 +
+// 드래그로 포개면 계수가 더해져 합쳐진다(5x+3x → 8x). 다른 종류는 스프링 복귀 +
 // 오개념 토스트("x와 y는 못 합쳐요" / "상수항은 상수항끼리!" / "x와 x²은 차수가 달라요").
 // powBuild의 드래그 병합 + 탭탭 폴백 문법을 그대로 계승. 마지막 판은 동류항이 없는
 // 함정 판, "더는 못 합쳐요!" 선언이 정답(못 합치면 그대로 두는 것도 실력).
@@ -46,7 +46,7 @@ function termSrc(t: ChipDef, lead: boolean): string {
   const sgn = t.coef < 0 ? "-" : lead ? "" : "+";
   return `${sgn}${a === 1 ? "" : a}${vr}`;
 }
-/** 칩 라벨, 문자항은 "3x"·"-x", 상수항은 부호를 항상 붙여 "+10"·"-8". */
+/** 칩 라벨, 문자항은 "5x"·"-x", 상수항은 부호를 항상 붙여 "+7"·"-2". */
 const chipLabel = (t: ChipDef): string => termSrc(t, t.kind !== "c");
 /** 남은 칩들을 x² → x → y → 상수 순으로 이어 붙인 정리 결과 식. */
 function composeSrc(list: ChipDef[]): string {
@@ -75,10 +75,10 @@ interface StageDef {
 const STAGES: StageDef[] = [
   {
     chips: [
+      { coef: 5, kind: "x" },
       { coef: 3, kind: "x" },
-      { coef: 2, kind: "x" },
-      { coef: 10, kind: "c" },
-      { coef: -8, kind: "c" },
+      { coef: 7, kind: "c" },
+      { coef: -2, kind: "c" },
     ],
     pos: [
       [0.06, 36],
@@ -87,9 +87,9 @@ const STAGES: StageDef[] = [
       [0.1, 152],
     ],
     goal: "s1",
-    sub: "5x+2!",
+    sub: "8x+5!",
     intro: "<b>같은 문자끼리</b> 끌어 포개 보세요, x는 x끼리, 상수는 상수끼리!",
-    done: "3x+2x=<b>5x</b>, (+10)+(−8)=<b>+2</b>. 이렇게 문자와 차수가 같은 항이 <b>동류항</b>이에요.",
+    done: "5x+3x=<b>8x</b>, (+7)+(−2)=<b>+5</b>. 이렇게 문자와 차수가 같은 항이 <b>동류항</b>이에요.",
   },
   {
     chips: [

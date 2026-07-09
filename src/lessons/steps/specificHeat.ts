@@ -252,8 +252,9 @@ export const specificHeat: StepRenderer = (host, step, api) => {
         drawFlame(ctx, cx, y + bh + 20, 22, tMs);
       }
     };
-    beaker(w * 0.3, Tw, "물 200 g", "96,150,230");
-    beaker(w * 0.7, To, "식용유 200 g", "240,190,80");
+    // 질량 라벨은 교과서 탐구 수치와 다르게(같은 질량이라는 조건만 유지)
+    beaker(w * 0.3, Tw, "물 150 g", "96,150,230");
+    beaker(w * 0.7, To, "식용유 150 g", "240,190,80");
   }
 
   // ---- 그래프 ----

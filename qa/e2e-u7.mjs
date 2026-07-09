@@ -1,6 +1,8 @@
 // VII 태양계 — 6레슨 전 스텝 실플레이 E2E (headless Chrome, WebGL/rAF 살아 있음)
-// node qa/e2e-u7.mjs  (dev 서버 5173 필요)
+// PORT=<포트> node qa/e2e-u7.mjs  (기본 5173 — dev 서버 필요)
 import { chromium } from "playwright-core";
+
+const PORT = process.env.PORT || 5173;
 
 const log = (...a) => console.log("[e2e]", ...a);
 const browser = await chromium.launch({ channel: "chrome", headless: true });
@@ -16,7 +18,7 @@ await page.addInitScript(() => {
     }));
   }
 });
-await page.goto("http://localhost:5173/", { waitUntil: "networkidle" });
+await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
 await page.waitForTimeout(1100);
 
 const cta = () => page.evaluate(() => {
@@ -203,7 +205,7 @@ await page.waitForTimeout(700);
 await clickCTA(); // 개념 정리하기
 log("l1 step3(recap):", await h1());
 await clickCTA(); // 문제 풀기
-await solveQuiz("태양 쪽으로 꼬리", "l1q1 혜성");
+await solveQuiz("태양을 향해 뻗는다", "l1q1 혜성");
 // ox: 위성 → X
 await page.waitForTimeout(400);
 await clickBtn("^X$|아니에요");
@@ -229,7 +231,7 @@ await clickCTA(); // 그래프로 확인 → mcq
 await solveQuiz("수성·금성·지구·화성이다", "l2 그래프");
 await solveBinSort([["수성|금성|지구|화성", "지구형"], ["목성|토성|천왕성|해왕성", "목성형"]]);
 await clickCTA(); // recap → 문제
-await solveQuiz("고리 — 지구형: 없다", "l2q1");
+await solveQuiz("위성 수 — 지구형은 없거나", "l2q1");
 await solveQuiz("\\(다\\) → \\(나\\) → \\(가\\)", "l2q2 거리순");
 await page.waitForTimeout(400);
 await clickBtn("^O$|맞아요");
@@ -275,9 +277,9 @@ await page.waitForTimeout(500);
 await clickCTA(); // 다 배웠어요 → recap
 await clickCTA(); // 문제
 await solveQuiz("^ㄴ, ㄷ$", "l3q1 흑점");
-await solveQuiz("홍염은 발생하지 않는다", "l3q2");
+await solveQuiz("홍염이 오히려 뜸해진다", "l3q2");
 await solveMulti(["오로라", "무선 통신", "대규모 정전"], "l3q3");
-await solveQuiz("흑점 수가 \\(가\\)보다 많았기", "l3q4");
+await solveQuiz("흑점 수가 훨씬 많았기", "l3q4");
 await page.waitForTimeout(400);
 await clickBtn("^O$|맞아요");
 await clickCTA();
@@ -393,15 +395,15 @@ log("l4 zodiac badges2:", await badges());
 await page.screenshot({ path: "qa/e2e_u7_zodiac.png" });
 await clickCTA(); // 개념 정리하기
 await clickCTA(); // 문제
-await solveQuiz("북극성을 중심으로", "l4q1");
+await solveQuiz("궤적 한가운데의 별이 북극성", "l4q1");
 await page.waitForTimeout(400);
 await clickBtn("^X$|아니에요");
 await clickCTA();
 await page.waitForTimeout(500);
 await clickBtn("계속하기|다음");
 await page.waitForTimeout(700);
-await solveQuiz("염소자리 — \\(나\\) 게자리", "l4q3 12궁");
-await solveMulti(["연주 운동", "계절에 따라"], "l4q4");
+await solveQuiz("양자리 — \\(나\\) 천칭자리", "l4q3 12궁");
+await solveMulti(["연주 운동", "계절마다"], "l4q4");
 await finishLesson();
 
 // ════════ L5 달의 위상 ════════
@@ -445,14 +447,14 @@ await page.screenshot({ path: "qa/e2e_u7_moon_earthview.png" });
 await clickCTA(); // 개념 정리
 await clickCTA(); // 문제
 await solveQuiz("^③$", "l5q1 상현");
-await solveQuiz("오른쪽이 밝은 반달", "l5q2 (라)");
+await solveQuiz("오른쪽이 밝은 반달", "l5q2 (다) 하현");
 await page.waitForTimeout(400);
 await clickBtn("^O$|맞아요");
 await clickCTA();
 await page.waitForTimeout(500);
 await clickBtn("계속하기|다음");
 await page.waitForTimeout(700);
-await solveQuiz("지구가 태양과 달 사이", "l5q4 추석");
+await solveQuiz("지구를 사이에 두고", "l5q4 대보름");
 await solveBinSort([["삭", "같은 방향"], ["망", "반대 방향"], ["상현|하현", "직각"]]);
 await finishLesson();
 
@@ -521,9 +523,9 @@ await clickCTA();
 await page.waitForTimeout(500);
 await clickBtn("계속하기|다음");
 await page.waitForTimeout(700);
-await solveQuiz("개기월식 — \\(나\\) 부분월식", "l6q3");
-await solveQuiz("굴절된 빛", "l6q4");
-await solveQuiz("밤인 지역 어디서나", "l6q5");
+await solveQuiz("부분월식 — \\(나\\) 개기월식", "l6q3");
+await solveQuiz("굴절된 붉은 빛", "l6q4");
+await solveQuiz("밤을 맞은 지역", "l6q5");
 await finishLesson();
 
 const homeEnd = await page.evaluate(() => ({

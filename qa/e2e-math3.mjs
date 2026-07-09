@@ -279,7 +279,7 @@ await quiz(0);
 await pairMatchAuto([
   ["폭이 일정한", "일정하게"], ["위로 좁아지는", "점점 빠르게"], ["위로 넓어지는", "점점 느리게"], ["안 붓는", "수평"],
 ]);
-await drill([12, 0, 14, 5, 40]);
+await drill([12, 0, 18, 5, 40]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L3 완료");
 
@@ -295,7 +295,7 @@ const droneScrub = async (t) => {
     const svg = document.querySelector(".dr-stage svg");
     const r = svg.getBoundingClientRect();
     const GX0 = 46, GX1 = 338;
-    const cx = r.left + ((GX0 + (t / 20) * (GX1 - GX0)) / 360) * r.width;
+    const cx = r.left + ((GX0 + (t / 18) * (GX1 - GX0)) / 360) * r.width;
     const cy = r.top + (180 / 260) * r.height;
     const o = { bubbles: true, pointerId: 22, isPrimary: true, clientX: cx, clientY: cy };
     svg.dispatchEvent(new PointerEvent("pointerdown", o));
@@ -303,9 +303,9 @@ const droneScrub = async (t) => {
   }, t);
   await W(700);
 };
-await droneScrub(14);
-await droneScrub(7);
-await droneScrub(20);
+await droneScrub(12);
+await droneScrub(5);
+await droneScrub(18);
 await shot("math3-l4-drone");
 await clickCTA(); // concept
 await clickCTA(); // recap
@@ -314,7 +314,7 @@ await quiz(0);
 await quiz(0);
 await quiz(0);
 await quiz(0);
-await drill([14, 11, 3, 4, 12]);
+await drill([12, 10, 3, 4, 9]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L4 완료");
 
@@ -325,7 +325,7 @@ await waitBtn("번개 기다리기", 600);
 await hookChoice();
 await clickCTA(); // linkLab
 await page.waitForSelector(".lk-grid", { timeout: 9000 });
-for (let i = 0; i < 6; i++) { await waitBtn("달걀 추가", 420); }
+for (let i = 0; i < 6; i++) { await waitBtn("귤 추가", 420); }
 await waitBtn("×2 링크 \\(1개", 1300);
 await waitBtn("×3 링크", 2200);
 await waitBtn("×2 링크 \\(1주", 1400);
@@ -338,7 +338,7 @@ await multiQuiz([0, 1]);
 await quiz(0);
 await oxPick(false);
 await quiz(0);
-await drill([24, 5, -4, 1020, "2/3", -5]);
+await drill([24, 5, -4, 1360, "2/3", -5]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L5 완료");
 
@@ -391,7 +391,7 @@ await binSortAuto([
 await quiz(0);
 await oxPick(false);
 await quiz(0);
-await drill([12, 8, -12, 5, 45, -3]);
+await drill([12, 8, -12, 4, 40, -4]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L7 완료");
 
@@ -402,7 +402,7 @@ await waitBtn("자리 바꿔 앉기", 3400);
 await hookChoice();
 await clickCTA(); // curveLab
 await page.waitForSelector(".cv-read", { timeout: 9000 });
-const curveEvt = async (kind, x, y, range = 6) => {
+const curveEvt = async (kind, x, y, range = 8) => {
   await page.evaluate(([kind, x, y, range]) => {
     const svg = document.querySelector(".mcl-plane svg");
     const r = svg.getBoundingClientRect();
@@ -424,16 +424,16 @@ const curveDrag = async (pts) => {
 // 자취(느리게 왕복: 이벤트 간 간격을 시뮬레이션하기 위해 여러 번 나눠 드래그)
 for (let k = 0; k < 4; k++) {
   const seg = [];
-  const [from, to] = k % 2 === 0 ? [1, 6] : [6, 1];
+  const [from, to] = k % 2 === 0 ? [1, 8] : [8, 1];
   const step = (to - from) / 8;
-  for (let i = 0; i <= 8; i++) { const x = from + step * i; seg.push([x, 6 / x]); }
+  for (let i = 0; i <= 8; i++) { const x = from + step * i; seg.push([x, 8 / x]); }
   await curveDrag(seg);
   await W(400);
 }
-await waitBtn("a = −6", 800);
+await waitBtn("a = −8", 800);
 for (let k = 0; k < 3; k++) {
   const seg = [];
-  for (let i = 0; i <= 8; i++) { const x = 1 + (5 / 8) * i; seg.push([x, -6 / x]); }
+  for (let i = 0; i <= 8; i++) { const x = 1 + (7 / 8) * i; seg.push([x, -8 / x]); }
   await curveDrag(seg);
   await W(400);
 }
@@ -445,7 +445,7 @@ await quiz(0);
 await quiz(0);
 await quiz(0);
 await oxPick(false);
-await drill([4, 2, -6, 2, 8, 9]);
+await drill([4, 2, -6, 3, 8, 9]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L8 완료");
 
@@ -463,7 +463,7 @@ await quiz(0);
 await multiQuiz([0, 1]);
 await orderAuto(["변수", "관계식 꼴", "a 구하기", "답 구하기"]);
 await shot("math3-l9-boss");
-await drill([2, 0, -10, 6, 8, -20, 7, 10.5, 3.5, "-3/5"]);
+await drill([2, 0, -10, 6, 8, -20, 7, 14, 7, "-3/5"]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L9 완료");
 

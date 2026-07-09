@@ -299,7 +299,7 @@ log(`L4: ${await h1()}`);
 await hookChoice();
 await W(600);
 await clickCTA();
-// venn gcd: 탭-탭 짝짓기 (좌 2↔우 2)×2, (좌 3↔우 3)
+// venn gcd(45·75): 탭-탭 짝짓기 (좌 3↔우 3), (좌 5↔우 5)
 await page.waitForSelector(".vn-chip", { timeout: 9000 });
 await W(1500); // 칩 스폰
 const vennPair = async (base) => {
@@ -318,9 +318,8 @@ const vennPair = async (base) => {
   await W(700);
   return ok;
 };
-await vennPair(2);
-await vennPair(2);
 await vennPair(3);
+await vennPair(5);
 await W(900);
 await waitBtn("공약수 전부 보기", 700);
 await shot("math-l4-venn");
@@ -343,7 +342,7 @@ await quiz(0);
 await quiz(0);
 await oxPick(true);
 await quiz(0); // 나눗셈 사다리로 최대공약수 읽기
-await drill([6, 4, 7, 1, 12]);
+await drill([6, 4, 7, 1, 18]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L4 완료");
 
@@ -353,7 +352,7 @@ log(`L5: ${await h1()}`);
 await hookChoice();
 await W(4200); // 시계 감기 연출
 await clickCTA();
-// venn lcm: 칩 전부 탭 (5개) → 검산 → 서로소 스테이지(4개)
+// venn lcm(45·75): 칩 전부 탭 (4개) → 검산 → 서로소 스테이지(4개)
 await page.waitForSelector(".vn-chip", { timeout: 9000 });
 const tapAllVenn = async () => {
   const n = await page.evaluate(() => {
@@ -404,7 +403,7 @@ await quiz(4);
 await binSortAuto([["−7|^-7", "^정수"], ["3.5", "아닌"], ["^0$", "^정수"], ["3/2", "아닌"], ["9/3", "^정수"], ["0.8", "아닌"]]);
 await quiz(0);
 await oxPick(true);
-await drill([-7, -3, -5, "-3/2", 2.5, -70]);
+await drill([-7, -3, -5, "-3/2", 2.5, -60]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L6 완료");
 
@@ -425,12 +424,12 @@ await clickCTA(); // recap
 await clickCTA();
 await quiz(0);
 await quiz(0);
-await quiz(0); // 부등호 표기(a≥−4)
-await orderAuto(["산소", "에탄올", "수은", "얼음", "납"]);
+await quiz(0); // 부등호 표기(a≥−6)
+await orderAuto(["질소", "산소", "에탄올", "물", "철"]);
 await W(200);
 await shot("math-l7-temp");
 await quiz(0);
-await drill([7, 4.5, 0, "3/4", 5, 3]);
+await drill([7, 4.5, 0, "3/4", 7, 3]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L7 완료");
 
@@ -478,7 +477,7 @@ const annihilateAll = async () => {
     await W(1150);
   }
 };
-await waitStones(8); // (+3)+(-5)
+await waitStones(10); // (+4)+(-6)
 await annihilateAll();
 await waitBtn("그냥 세어 보기", 1400); // (-2)+(-4)
 await page.waitForFunction(() => /\(\+4\)/.test(document.querySelector(".nw-expr")?.textContent ?? ""), { timeout: 12000 });
@@ -499,7 +498,7 @@ await clickCTA();
 await quiz(0);
 await quiz(0);
 await oxPick(true);
-await drill([16, -2, -8, 1.9, "-13/10", 23]);
+await drill([15, -4, -8, 2.5, "-19/15", 19]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L8 완료");
 
@@ -542,7 +541,7 @@ await quiz(0);
 await quiz(0);
 await quiz(0);
 await oxPick(true);
-await drill([7, 10, -9, -6, "-1/12", -7, 5]);
+await drill([5, 10, -9, -5.5, "-1/6", -5, 4]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L9 완료");
 
@@ -584,7 +583,7 @@ await binSortAuto([
   ["\\(−2\\)×\\(−5\\)", "양수"], ["\\(\\+3\\)×\\(−7\\)", "음수"], ["\\(−2\\)³", "음수"],
   ["\\(−1\\)", "양수"], ["−3²", "음수"], ["\\(−4\\)", "음수"],
 ]);
-await drill([-30, 20, "-1/3", 42, -8, -9]);
+await drill([-32, 9, "-1/4", 40, -8, -9]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L10 완료");
 
@@ -616,7 +615,7 @@ await quiz(0);
 await quiz(0);
 await quiz(0);
 await oxPick(true);
-await drill([-9, -2.1, -20, -14, 5, 485]);
+await drill([-6, -2.4, -21, -10, 5, 485]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L11 완료");
 
@@ -634,7 +633,7 @@ await clickCTA();
 await quiz(0);
 await multiQuiz([0, 2, 4]);
 await quiz(0);
-await drill([-10, -20, 4, 13, 9, 2, "7/12", -1, 294, -5]);
+await drill([-10, -20, 4, 13, 9, 2, "11/12", -1, 294, -6]);
 await W(400);
 await shot("math-l12-done");
 await clickBtn("홈으로", 900).catch(() => {});

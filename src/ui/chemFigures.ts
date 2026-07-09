@@ -1,14 +1,13 @@
 // 중2 I 단원(물질의 특성) 퀴즈·개념 그림 — 손코딩 교육용 SVG. 라이트(흰 카드) 기준.
-// 곡선 데이터는 교과서 그래프(CRC Handbook 출처)를 따른다.
+// 곡선 데이터는 CRC Handbook 자연값(실측 용해도)을 따른다. 문항 세팅 수치는 자체 제작.
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
 
-// 용해도(g/물 100 g) — 교과서 그림 I-3 곡선 근사
+// 용해도(g/물 100 g) — CRC Handbook 실측값 근사. 10 ℃ 값: 질산 칼륨 20.9, 염화 나트륨 35.8
 const SOL: Record<string, [number, number][]> = {
   kno3: [[0, 13.3], [20, 31.6], [40, 63.9], [60, 110], [80, 169]],
   nano3: [[0, 73], [20, 88], [40, 105], [60, 124], [80, 148]],
   nacl: [[0, 35.7], [20, 36], [40, 36.6], [60, 37.3], [80, 38.4]],
-  boric: [[0, 2.7], [20, 5.0], [40, 8.7], [60, 14.8], [80, 23.6]],
 };
 
 function curvePath(pts: [number, number][], gx: (t: number) => number, gy: (s: number) => number): string {
@@ -40,7 +39,7 @@ export function massVolScatterFig(): string {
   </svg>`;
 }
 
-/** 용해도 곡선 3종(질산 나트륨·질산 칼륨·염화 나트륨) — 마무리 3번 */
+/** 용해도 곡선 3종(질산 나트륨·질산 칼륨·염화 나트륨) — L3 퀴즈(문항 세팅 수치는 자체 제작) */
 export function solCurves3Fig(): string {
   const gx = (t: number): number => 54 + (t / 85) * 268;
   const gy = (s: number): number => 170 - (s / 170) * 150;
@@ -82,34 +81,35 @@ export function heatPlateausFig(): string {
   </svg>`;
 }
 
-/** 탄산음료 4조건(온도×마개) — 기포 비교(마무리 4번 재구성).
- *  열린 시험관은 입구가 뚫려 보이게(양 벽 + 타원 테) 그리고, 닫힌 것만 고무마개를 얹는다.
+/** 탄산음료 4조건(온도×흔들기) — 기포 비교(자체 제작 문항).
+ *  네 시험관 모두 입구가 열려 있고(압력 조건 동일), 물 온도(얼음물/따뜻한 물)와 흔들기 여부만 다르다.
+ *  흔드는 시험관은 살짝 기울이고 양옆에 진동 호를 그린다.
  *  주의: 기포는 절대 그리지 않는다 — 조건만 보여 줘야 문제가 성립한다(기포 수 = 정답 유출). */
 export function sodaTubesFig(): string {
-  const tube = (x: number, label: string, warm: boolean, open: boolean): string => {
+  const tube = (x: number, label: string, warm: boolean, shake: boolean): string => {
     const beakerFill = warm ? "#FFE0D6" : "#DDF0FB";
     const beakerLine = warm ? "#E8836A" : "#7FB8DC";
     const cx = x + 20;
     const topY = 34;
+    // 시험관 몸통: 위가 뚫린 U자 벽 + 열린 입구(타원 테)
+    const body = `<path d="M${cx - 10} ${topY}v76a10 10 0 0 0 20 0V${topY}" fill="#FFF4E6" stroke="#C9A26A" stroke-width="1.8"/>
+      <rect x="${cx - 10}" y="76" width="20" height="52" rx="9" fill="#E8B54A" opacity=".8"/>
+      <ellipse cx="${cx}" cy="${topY}" rx="10" ry="3.4" fill="#FFFBF2" stroke="#C9A26A" stroke-width="1.6"/>
+      <ellipse cx="${cx}" cy="${topY}" rx="6" ry="1.9" fill="#EAD9BC"/>`;
     return `<g>
       <path d="M${x - 6} 66h52v66a10 10 0 0 1-10 10h-32a10 10 0 0 1-10-10z" fill="${beakerFill}" stroke="${beakerLine}" stroke-width="2"/>
-      <!-- 시험관 몸통: 위가 뚫린 U자 벽 -->
-      <path d="M${cx - 10} ${topY}v76a10 10 0 0 0 20 0V${topY}" fill="#FFF4E6" stroke="#C9A26A" stroke-width="1.8"/>
-      <rect x="${cx - 10}" y="76" width="20" height="52" rx="9" fill="#E8B54A" opacity=".8"/>
       ${
-        open
-          ? `<!-- 열린 입구: 타원 테두리(구멍) + 살짝 벌어진 립 -->
-             <ellipse cx="${cx}" cy="${topY}" rx="10" ry="3.4" fill="#FFFBF2" stroke="#C9A26A" stroke-width="1.6"/>
-             <ellipse cx="${cx}" cy="${topY}" rx="6" ry="1.9" fill="#EAD9BC"/>`
-          : `<!-- 닫힌 입구: 고무마개(입보다 넓은 머리 + 목) -->
-             <path d="M${cx - 8} ${topY}l1.5-8h13l1.5 8z" fill="#8C99A8" stroke="#6B7684" stroke-width="1.2"/>
-             <rect x="${cx - 12}" y="${topY - 14}" width="24" height="7" rx="3" fill="#A6B2C0" stroke="#6B7684" stroke-width="1.2"/>`
+        shake
+          ? `<g transform="rotate(7 ${cx} 100)">${body}</g>
+             <path d="M${cx - 17} 37q-6 6 0 13M${cx - 23} 31q-9 9 0 21" stroke="#8B99A8" stroke-width="1.8" fill="none" opacity=".9"/>
+             <path d="M${cx + 17} 37q6 6 0 13M${cx + 23} 31q9 9 0 21" stroke="#8B99A8" stroke-width="1.8" fill="none" opacity=".9"/>`
+          : body
       }
       <text x="${cx}" y="158" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${label}</text>
-      <text x="${cx}" y="173" text-anchor="middle" font-size="9.5" fill="#8B95A1">${warm ? "따뜻한 물" : "얼음물"} · ${open ? "마개 열림" : "마개 닫힘"}</text>
+      <text x="${cx}" y="173" text-anchor="middle" font-size="9.5" fill="#8B95A1">${warm ? "따뜻한 물" : "얼음물"} · ${shake ? "흔들기" : "가만히"}</text>
     </g>`;
   };
-  return `<svg viewBox="0 0 344 182" ${NS} fill="none" role="img" aria-label="탄산음료 시험관 네 개의 조건. 가는 얼음물에 마개 닫힘, 나는 얼음물에 마개 열림, 다는 따뜻한 물에 마개 닫힘, 라는 따뜻한 물에 마개 열림">
+  return `<svg viewBox="0 0 344 182" ${NS} fill="none" role="img" aria-label="탄산음료 시험관 네 개의 조건. 네 시험관 모두 입구가 열려 있어요. 가는 얼음물에 가만히, 나는 얼음물에서 흔들기, 다는 따뜻한 물에 가만히, 라는 따뜻한 물에서 흔들기">
     ${tube(18, "(가)", false, false)}
     ${tube(101, "(나)", false, true)}
     ${tube(184, "(다)", true, false)}
@@ -155,37 +155,42 @@ export function funnelPartsFig(): string {
   </svg>`;
 }
 
-/** 물+에탄올 가열 곡선 — (가)~(라) 구간(마무리 9번) */
+/** 물+에탄올 가열 곡선 — ①~④ 구간(L9 퀴즈, 구간 구성 수치는 자체 제작) */
 export function mixDistillCurveFig(): string {
   const gy = (c: number): number => 156 - (c / 120) * 132;
-  return `<svg viewBox="0 0 344 206" ${NS} fill="none" role="img" aria-label="물과 에탄올 혼합물의 가열 곡선. 가 상승, 나 78도 부근 평평, 다 다시 상승, 라 100도 평평">
+  return `<svg viewBox="0 0 344 206" ${NS} fill="none" role="img" aria-label="물과 에탄올 혼합물의 가열 곡선. 1구간 상승, 2구간 78도 부근 평평, 3구간 다시 상승, 4구간 100도 평평">
     <line x1="50" y1="12" x2="50" y2="156" stroke="#B0B8C1" stroke-width="1.6"/>
     <line x1="50" y1="156" x2="328" y2="156" stroke="#B0B8C1" stroke-width="1.6"/>
     ${[78, 100].map((c) => `<line x1="50" y1="${gy(c)}" x2="322" y2="${gy(c)}" stroke="#EDF0F4"/><text x="42" y="${gy(c) + 4}" text-anchor="end" font-size="10" fill="#8B95A1">${c}</text>`).join("")}
     <path d="M56 ${gy(22)} L118 ${gy(76)} C126 ${gy(78)} 134 ${gy(78)} 142 ${gy(79)} L186 ${gy(80)} L238 ${gy(98)} C246 ${gy(100)} 254 ${gy(100)} 262 ${gy(100)} L322 ${gy(100)}" stroke="#E64980" stroke-width="3" fill="none"/>
-    ${[["(가)", 84, 40], ["(나)", 158, 96], ["(다)", 212, 68], ["(라)", 288, 118]].map(([t, x, c]) => `<text x="${x}" y="${gy(Number(c)) - 10}" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">${t}</text>`).join("")}
+    ${[["①", 84, 40], ["②", 158, 96], ["③", 212, 68], ["④", 288, 118]].map(([t, x, c]) => `<text x="${x}" y="${gy(Number(c)) - 10}" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">${t}</text>`).join("")}
     ${[130, 186, 250].map((x) => `<line x1="${x}" y1="18" x2="${x}" y2="156" stroke="#C4CAD2" stroke-width="1" stroke-dasharray="3 5"/>`).join("")}
     <text x="14" y="12" font-size="10.5" fill="#4E5968">온도(℃)</text>
     <text x="328" y="196" text-anchor="end" font-size="11" fill="#4E5968">가열 시간(분)</text>
   </svg>`;
 }
 
-/** 염화 나트륨 vs 붕산 — 20 g 냉각 석출(마무리 8번) */
-export function boricCoolFig(): string {
-  const gx = (t: number): number => 54 + (t / 85) * 268;
-  const gy = (s: number): number => 166 - (s / 45) * 146;
-  return `<svg viewBox="0 0 344 204" ${NS} fill="none" role="img" aria-label="염화 나트륨과 붕산의 용해도 곡선. 물 100그램에 20그램씩 녹인 용액을 20도로 식히는 상황">
+/** 질산 칼륨 vs 염화 나트륨 — 냉각 석출(L8 퀴즈, 자체 세팅: 물 100 g에 40 g·15 g을 녹여 10 ℃로 냉각).
+ *  판정 검산(CRC): 10 ℃ 용해도 질산 칼륨 20.9(40 g 중 약 19 g 석출) vs 염화 나트륨 35.8(15 g 그대로 용해). */
+export function kno3CoolFig(): string {
+  const gx = (t: number): number => 54 + (t / 65) * 268;
+  const gy = (s: number): number => 166 - (s / 120) * 146;
+  const kno3 = SOL.kno3.filter(([t]) => t <= 60);
+  const nacl = SOL.nacl.filter(([t]) => t <= 60);
+  return `<svg viewBox="0 0 344 204" ${NS} fill="none" role="img" aria-label="질산 칼륨과 염화 나트륨의 용해도 곡선. 물 100그램에 질산 칼륨 40그램과 염화 나트륨 15그램을 녹인 뜨거운 용액을 10도로 식히는 상황">
     <line x1="54" y1="12" x2="54" y2="166" stroke="#B0B8C1" stroke-width="1.6"/>
     <line x1="54" y1="166" x2="326" y2="166" stroke="#B0B8C1" stroke-width="1.6"/>
-    ${[10, 20, 30, 40].map((s) => `<line x1="54" y1="${gy(s)}" x2="320" y2="${gy(s)}" stroke="#EDF0F4"/><text x="46" y="${gy(s) + 4}" text-anchor="end" font-size="10" fill="#8B95A1">${s}</text>`).join("")}
-    ${[20, 40, 60, 80].map((t) => `<text x="${gx(t)}" y="182" text-anchor="middle" font-size="10" fill="#8B95A1">${t}</text>`).join("")}
-    <line x1="54" y1="${gy(20)}" x2="320" y2="${gy(20)}" stroke="#F0A422" stroke-width="1.6" stroke-dasharray="6 5"/>
-    <line x1="${gx(20)}" y1="16" x2="${gx(20)}" y2="166" stroke="#C4CAD2" stroke-width="1.2" stroke-dasharray="3 5"/>
-    <path d="${curvePath(SOL.nacl, gx, gy)}" stroke="#5AA2F8" stroke-width="3"/>
-    <path d="${curvePath(SOL.boric, gx, gy)}" stroke="#12B886" stroke-width="3"/>
-    <text x="${gx(56)}" y="${gy(39)}" font-size="11" font-weight="700" fill="#3A7DDB">염화 나트륨</text>
-    <text x="${gx(58)}" y="${gy(11)}" font-size="11" font-weight="700" fill="#0CA678">붕산</text>
-    <text x="322" y="${gy(20) - 6}" text-anchor="end" font-size="10.5" font-weight="700" fill="#D18708">넣은 양 20 g</text>
+    ${[40, 80, 120].map((s) => `<line x1="54" y1="${gy(s)}" x2="320" y2="${gy(s)}" stroke="#EDF0F4"/><text x="46" y="${gy(s) + 4}" text-anchor="end" font-size="10" fill="#8B95A1">${s}</text>`).join("")}
+    ${[10, 20, 40, 60].map((t) => `<text x="${gx(t)}" y="182" text-anchor="middle" font-size="10" fill="#8B95A1">${t}</text>`).join("")}
+    <line x1="54" y1="${gy(40)}" x2="320" y2="${gy(40)}" stroke="#D6336C" stroke-width="1.6" stroke-dasharray="6 5" opacity=".75"/>
+    <line x1="54" y1="${gy(15)}" x2="320" y2="${gy(15)}" stroke="#3A7DDB" stroke-width="1.6" stroke-dasharray="6 5" opacity=".75"/>
+    <line x1="${gx(10)}" y1="16" x2="${gx(10)}" y2="166" stroke="#C4CAD2" stroke-width="1.2" stroke-dasharray="3 5"/>
+    <path d="${curvePath(nacl, gx, gy)}" stroke="#5AA2F8" stroke-width="3"/>
+    <path d="${curvePath(kno3, gx, gy)}" stroke="#E64980" stroke-width="3"/>
+    <text x="${gx(33)}" y="${gy(89)}" font-size="11" font-weight="700" fill="#D6336C">질산 칼륨</text>
+    <text x="${gx(26)}" y="${gy(27)}" font-size="11" font-weight="700" fill="#3A7DDB">염화 나트륨</text>
+    <text x="322" y="${gy(40) - 6}" text-anchor="end" font-size="10.5" font-weight="700" fill="#D6336C">질산 칼륨 40 g</text>
+    <text x="322" y="${gy(15) - 6}" text-anchor="end" font-size="10.5" font-weight="700" fill="#3A7DDB">염화 나트륨 15 g</text>
     <text x="12" y="12" font-size="10.5" fill="#4E5968">용해도(g/물 100 g)</text>
     <text x="326" y="198" text-anchor="end" font-size="11" fill="#4E5968">온도(℃)</text>
   </svg>`;

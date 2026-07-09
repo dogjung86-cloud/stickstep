@@ -9,7 +9,7 @@
 //   deadclock    L3 멈춘 벽시계 — 전지를 갈아 끼우면 다시 똑딱 + 예측
 //   brightpair   L4 전지 1개 → 2개 직렬, 전구가 더 밝아진다 + 예측
 //   multitap     L5 멀티탭 — 플러그 하나를 뽑으면 나머지는? + 예측
-//   labelpeek    L6 가전 라벨 뒤집어 보기 — 다리미 1500W vs 충전기 6W(예측 없음)
+//   labelpeek    L6 가전 라벨 뒤집어 보기 — 다리미 1800W vs 충전기 5W(예측 없음)
 //   compasswire  L7 전선 옆 나침반 — 스위치를 켜자 바늘이 홱! + 예측
 //   ebike        L8 전기 자전거 — 페달 없이 바퀴가 돈다 + 예측
 
@@ -591,7 +591,7 @@ export function renderMultiTap(scene: HTMLElement, helper: HTMLElement, s: HookO
   return () => timers.forEach((t) => window.clearTimeout(t));
 }
 // ══════════════════════════════════════════════════════════
-// L6. labelpeek — 다리미 1500W vs 충전기 6W, 라벨 뒤집어 보기 (ask 없음)
+// L6. labelpeek — 다리미 1800W vs 충전기 5W, 라벨 뒤집어 보기 (ask 없음)
 // ══════════════════════════════════════════════════════════
 function lpPlate(title: string, watt: string): string {
   return `<g class="he-back" opacity="0">
@@ -622,7 +622,7 @@ function lpIronSvg(): string {
       <path d="M24 48q6 -6 16 -6" stroke="#DCEBFA" stroke-width="2.4" opacity=".85"/>
       <circle cx="70" cy="48" r="2.6" fill="#DCEBFA" stroke="#24446E" stroke-width="1"/>
     </g>
-    ${lpPlate("전기다리미", "1500 W")}
+    ${lpPlate("전기다리미", "1800 W")}
   </svg>`;
 }
 function lpChargerSvg(): string {
@@ -638,7 +638,7 @@ function lpChargerSvg(): string {
       <path d="M35 38q5 -4 12 -4" stroke="#FFFFFF" stroke-width="2.2" opacity=".9"/>
       <rect x="42" y="62" width="12" height="5" rx="2" fill="#31415C"/>
     </g>
-    ${lpPlate("휴대 전화 충전기", "6 W")}
+    ${lpPlate("휴대 전화 충전기", "5 W")}
   </svg>`;
 }
 
@@ -672,7 +672,7 @@ export function renderLabelPeek(scene: HTMLElement, helper: HTMLElement, _s: Hoo
         later(() => {
           face("curious");
           helper.innerHTML =
-            "둘 다 <b>220V</b>(전기를 밀어 주는 정도)는 똑같은데 — W는 <b>1500 대 6, 250배</b>! 이 <b>W(와트)</b>가 바로 오늘의 주인공, <b>1초에 쓰는 전기 에너지</b>의 단위랍니다.";
+            "둘 다 <b>220V</b>(전기를 밀어 주는 정도)는 똑같은데 — W는 <b>1800 대 5, 360배</b>! 이 <b>W(와트)</b>가 바로 오늘의 주인공, <b>1초에 쓰는 전기 에너지</b>의 단위랍니다.";
           finish();
         }, 750);
       }
@@ -680,8 +680,8 @@ export function renderLabelPeek(scene: HTMLElement, helper: HTMLElement, _s: Hoo
     return card;
   };
   grid.append(
-    mk("iron", "전기다리미", lpIronSvg(), "220V · 1500W!", "<b>1500W</b>?! 숫자가 어마어마해요. 이제 <b>충전기</b>도 뒤집어 봐요."),
-    mk("chg", "휴대 전화 충전기", lpChargerSvg(), "220V · 6W!", "<b>6W</b> — 아담하네요. 이제 <b>다리미</b>도 뒤집어 봐요."),
+    mk("iron", "전기다리미", lpIronSvg(), "220V · 1800W!", "<b>1800W</b>?! 숫자가 어마어마해요. 이제 <b>충전기</b>도 뒤집어 봐요."),
+    mk("chg", "휴대 전화 충전기", lpChargerSvg(), "220V · 5W!", "<b>5W</b> — 아담하네요. 이제 <b>다리미</b>도 뒤집어 봐요."),
   );
   return () => timers.forEach((t) => window.clearTimeout(t));
 }

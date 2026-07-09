@@ -73,7 +73,8 @@ export function igneousGridFig(): string {
 }
 
 /** 광물 분류 흐름도 — 석영·방해석·자철석을 두 가지 성질 검사로 가르기.
- *  (가)=자철석(클립 끌어당김), (나)=방해석(묽은 염산 반응), (다)=석영 자리 — 마무리 5번용. */
+ *  (가)=방해석(묽은 염산 반응), (나)=자철석(클립 끌어당김), (다)=석영 자리 — L2 흐름도 문제용.
+ *  판정 순서(염산 먼저 → 자성 나중)는 unit2.ts 문항 선지와 반드시 일치시킬 것. */
 export function mineralFlowFig(): string {
   const arrow = (x1: number, y1: number, x2: number, y2: number): string =>
     `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#8B95A1" stroke-width="1.8"/>
@@ -83,14 +84,14 @@ export function mineralFlowFig(): string {
   const result = (x: number, y: number, label: string): string =>
     `<rect x="${x}" y="${y}" width="76" height="40" rx="10" fill="#F8FAFC" stroke="#B0B8C1" stroke-width="1.4" stroke-dasharray="5 4"/>
      <text x="${x + 38}" y="${y + 25}" text-anchor="middle" font-size="14.5" font-weight="800" fill="#4E5968">(${label})</text>`;
-  return `<svg viewBox="0 0 344 248" ${NS} fill="none" role="img" aria-label="광물 분류 흐름도. 석영, 방해석, 자철석을 클립을 끌어당기는지, 묽은 염산과 반응하는지 두 번 물어 가, 나, 다로 가릅니다">
+  return `<svg viewBox="0 0 344 248" ${NS} fill="none" role="img" aria-label="광물 분류 흐름도. 석영, 방해석, 자철석을 묽은 염산과 반응하는지, 클립을 끌어당기는지 두 번 물어 가, 나, 다로 가릅니다">
     <!-- 시작 -->
     <rect x="82" y="10" width="150" height="34" rx="17" fill="#F2F4F6" stroke="#C4CAD2" stroke-width="1.4"/>
     <text x="157" y="31" text-anchor="middle" font-size="12.5" font-weight="800" fill="#333D4B">석영 · 방해석 · 자철석</text>
     ${arrow(157, 44, 157, 66)}
     <!-- 질문 1 -->
     <rect x="62" y="68" width="190" height="38" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
-    <text x="157" y="91" text-anchor="middle" font-size="12" font-weight="700" fill="#1B64DA">클립을 끌어당기는가?</text>
+    <text x="157" y="91" text-anchor="middle" font-size="12" font-weight="700" fill="#1B64DA">묽은 염산과 반응하는가?</text>
     <line x1="252" y1="87" x2="284" y2="87" stroke="#8B95A1" stroke-width="1.8"/>
     <path d="M284 87 l-7 -4.5 v9 z" fill="#8B95A1"/>
     <text x="266" y="80" text-anchor="middle" font-size="10.5" font-weight="800" fill="#0CA678">예</text>
@@ -99,7 +100,7 @@ export function mineralFlowFig(): string {
     <text x="144" y="123" text-anchor="end" font-size="10.5" font-weight="800" fill="#8B95A1">아니요</text>
     <!-- 질문 2 -->
     <rect x="62" y="132" width="190" height="38" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
-    <text x="157" y="155" text-anchor="middle" font-size="12" font-weight="700" fill="#1B64DA">묽은 염산과 반응하는가?</text>
+    <text x="157" y="155" text-anchor="middle" font-size="12" font-weight="700" fill="#1B64DA">클립을 끌어당기는가?</text>
     <line x1="252" y1="151" x2="284" y2="151" stroke="#8B95A1" stroke-width="1.8"/>
     <path d="M284 151 l-7 -4.5 v9 z" fill="#8B95A1"/>
     <text x="266" y="144" text-anchor="middle" font-size="10.5" font-weight="800" fill="#0CA678">예</text>

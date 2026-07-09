@@ -157,7 +157,7 @@ export const frictionLab: StepRenderer = (host, step, api) => {
 
   const helper = el("div", {
     class: "helper",
-    html: "핀에 꽂아 둔 <b>빨간 빨대</b> — 파란 빨대와 함께 <b>같은 털가죽으로 문질러</b> 뒀어요(둘 다 (−)로 대전). 먼저 <b>파란 빨대를 잡아</b> 빨간 빨대 끝 가까이 가져가면 어떻게 될까요?",
+    html: "핀에 꽂아 둔 <b>빨간 빨대</b> — 파란 빨대와 함께 <b>같은 털가죽으로 문질러</b> 뒀어요. 먼저 <b>파란 빨대를 잡아</b> 빨간 빨대 끝 가까이 가져가면 어떻게 될까요?",
   });
   host.append(goalChips, stage, seg, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));

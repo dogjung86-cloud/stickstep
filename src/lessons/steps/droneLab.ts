@@ -1,7 +1,7 @@
-// droneLab, 그래프 탐정: 드론 비행(교과서 113쪽 함께 탐구 수치 그대로).
+// droneLab, 그래프 탐정: 드론 비행(자체 제작 비행 프로필, 꺾인 점이 전부 2초 눈금 위).
 // 그래프 위를 문지르면(스크럽) 시간이 흐르고, 위 장면의 드론이 그 높이로 나는 연동 장치.
-//   비행 기록: (0,0)→(4,3) 상승, (4,10) 3m 유지, (10,14) 3→11m 상승, (14,20) 11→0m 하강
-//   미션 ① 가장 높이 난 순간 찾기(t=14) ② 높이가 변하지 않는 구간에 머물기 ③ 착륙 순간(t=20)
+//   비행 기록: (0,0)→(2,4) 상승, (2,8) 4m 유지, (8,12) 4→10m 상승, (12,18) 10→0m 하강
+//   미션 ① 가장 높이 난 순간 찾기(t=12) ② 높이가 변하지 않는 구간에 머물기 ③ 착륙 순간(t=18)
 // 판정은 드롭(pointerup) 시점의 t로. setPointerCapture는 try/catch(사고 7). rAF 금지.
 
 import { el } from "../../core/dom";
@@ -17,8 +17,8 @@ interface DroneStep {
   curio?: Curio;
 }
 
-/** 비행 기록(교과서 수치). */
-const hOf = (t: number): number => (t <= 4 ? 0.75 * t : t <= 10 ? 3 : t <= 14 ? 3 + 2 * (t - 10) : 11 - (11 / 6) * (t - 14));
+/** 비행 기록(자체 제작 프로필). */
+const hOf = (t: number): number => (t <= 2 ? 2 * t : t <= 8 ? 4 : t <= 12 ? 4 + 1.5 * (t - 8) : 10 - (10 / 6) * (t - 12));
 
 /* 기하: 위 장면(0..88) + 아래 그래프(104..252), viewBox 360×260 */
 const DX = 64; // 드론 x
@@ -28,7 +28,7 @@ const GX0 = 46;
 const GX1 = 338;
 const GY0 = 246;
 const GY1 = 108;
-const T_MAX = 20;
+const T_MAX = 18;
 const H_MAX = 12;
 const gx = (t: number): number => GX0 + (t / T_MAX) * (GX1 - GX0);
 const gy = (h: number): number => GY0 - (h / H_MAX) * (GY0 - GY1);
@@ -60,10 +60,10 @@ export const droneLab: StepRenderer = (host, step, api) => {
   }
   // 비행 곡선(구간 색 = 상승 시안 / 수평 앰버 / 상승 시안 / 하강 로즈)
   const segs = [
-    { d: `M${gx(0)} ${gy(0)} L${gx(4)} ${gy(3)}`, c: "#0DA5C6" },
-    { d: `M${gx(4)} ${gy(3)} L${gx(10)} ${gy(3)}`, c: "#F08C2E" },
-    { d: `M${gx(10)} ${gy(3)} L${gx(14)} ${gy(11)}`, c: "#0DA5C6" },
-    { d: `M${gx(14)} ${gy(11)} L${gx(20)} ${gy(0)}`, c: "#E8608A" },
+    { d: `M${gx(0)} ${gy(0)} L${gx(2)} ${gy(4)}`, c: "#0DA5C6" },
+    { d: `M${gx(2)} ${gy(4)} L${gx(8)} ${gy(4)}`, c: "#F08C2E" },
+    { d: `M${gx(8)} ${gy(4)} L${gx(12)} ${gy(10)}`, c: "#0DA5C6" },
+    { d: `M${gx(12)} ${gy(10)} L${gx(18)} ${gy(0)}`, c: "#E8608A" },
   ];
   const segSvg = segs.map((sg) => `<path d="${sg.d}" stroke="${sg.c}" stroke-width="3.2" stroke-linecap="round" fill="none"/>`).join("");
 
@@ -73,10 +73,10 @@ export const droneLab: StepRenderer = (host, step, api) => {
     `<rect x="14" y="4" width="332" height="84" rx="12" fill="url(#dr-sky)"/>` +
     `<line x1="20" y1="${S_GND}" x2="340" y2="${S_GND}" stroke="#7AA05E" stroke-width="3" stroke-linecap="round"/>` +
     `<ellipse cx="290" cy="20" rx="16" ry="6" fill="#FFFFFF" opacity=".7"/><ellipse cx="312" cy="26" rx="12" ry="5" fill="#FFFFFF" opacity=".55"/>` +
-    `<line x1="30" y1="${sy(3)}" x2="340" y2="${sy(3)}" stroke="#F08C2E" stroke-width="1" stroke-dasharray="3 5" opacity=".55"/>` +
-    `<text x="336" y="${sy(3) - 3}" text-anchor="end" font-size="8.5" font-weight="800" fill="#C87F3A">3 m</text>` +
-    `<line x1="30" y1="${sy(11)}" x2="340" y2="${sy(11)}" stroke="#E8608A" stroke-width="1" stroke-dasharray="3 5" opacity=".5"/>` +
-    `<text x="336" y="${sy(11) - 3}" text-anchor="end" font-size="8.5" font-weight="800" fill="#C74A72">11 m</text>` +
+    `<line x1="30" y1="${sy(4)}" x2="340" y2="${sy(4)}" stroke="#F08C2E" stroke-width="1" stroke-dasharray="3 5" opacity=".55"/>` +
+    `<text x="336" y="${sy(4) - 3}" text-anchor="end" font-size="8.5" font-weight="800" fill="#C87F3A">4 m</text>` +
+    `<line x1="30" y1="${sy(10)}" x2="340" y2="${sy(10)}" stroke="#E8608A" stroke-width="1" stroke-dasharray="3 5" opacity=".5"/>` +
+    `<text x="336" y="${sy(10) - 3}" text-anchor="end" font-size="8.5" font-weight="800" fill="#C74A72">10 m</text>` +
     `<g class="dr-bird" style="transition: transform .12s ease-out">` +
     `<rect x="${DX - 14}" y="-7" width="28" height="12" rx="6" fill="url(#dr-bd)" stroke="#243040" stroke-width="1.4"/>` +
     `<circle cx="${DX}" cy="0" r="3.2" fill="#7FE0EE" stroke="#0A7E8C" stroke-width="1"/>` +
@@ -136,29 +136,29 @@ export const droneLab: StepRenderer = (host, step, api) => {
     dot.setAttribute("cx", String(x));
     dot.setAttribute("cy", String(gy(h)));
     // 하강 구간은 살짝 앞으로 기운다
-    const tilt = t > 14 ? 9 : t > 10 ? -7 : t > 4 ? 0 : -5;
+    const tilt = t > 12 ? 9 : t > 8 ? -7 : t > 2 ? 0 : -5;
     bird.style.transform = `translate(0, ${sy(h)}px) rotate(${tilt}deg)`;
     readout.innerHTML = `<b>${t % 1 === 0 ? t : t.toFixed(1)}초</b> · 높이 <b>${h % 1 === 0 ? h : h.toFixed(1)} m</b>`;
   }
 
   function judge(): void {
     if (finished) return;
-    if (Math.abs(t - 14) <= 0.3 && chips.on("peak", "14초, 11 m!")) {
+    if (Math.abs(t - 12) <= 0.3 && chips.on("peak", "12초, 10 m!")) {
       haptic(HAPTIC.correct);
-      toast("14초, 11 m가 최고점이에요!");
+      toast("12초, 10 m가 최고점이에요!");
       helper.innerHTML = "그래프의 <b>꼭대기</b>가 곧 가장 높은 순간! 이번엔 높이가 <b>변하지 않는 구간</b>에 손을 놓아 보세요.";
-    } else if (t >= 4.3 && t <= 9.7 && chips.on("flat", "4~10초!")) {
+    } else if (t >= 2.3 && t <= 7.7 && chips.on("flat", "2~8초!")) {
       haptic(HAPTIC.correct);
-      toast("4초부터 10초까지, 6초 동안 3 m 그대로!");
-      helper.innerHTML = "<b>수평 구간 = 변화 없음</b>이에요. 드론은 3 m에서 6초 동안 맴돌았죠. 이제 <b>착륙 순간</b>(높이 0)으로 가 보세요.";
-    } else if (t >= 19.6 && hOf(t) < 0.8 && chips.on("land", "20초, 0 m!")) {
+      toast("2초부터 8초까지, 6초 동안 4 m 그대로!");
+      helper.innerHTML = "<b>수평 구간 = 변화 없음</b>이에요. 드론은 4 m에서 6초 동안 맴돌았죠. 이제 <b>착륙 순간</b>(높이 0)으로 가 보세요.";
+    } else if (t >= 17.6 && hOf(t) < 0.8 && chips.on("land", "18초, 0 m!")) {
       haptic(HAPTIC.done);
-      toast("20초, 무사 착륙!");
+      toast("18초, 무사 착륙!");
     }
     if (chips.count() === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "탐정 완료! 이 비행은 네 문장이었어요. <b>① 4초 동안 3 m까지 상승 ② 6초 동안 3 m 유지 ③ 14초까지 11 m로 상승 ④ 6초 동안 하강, 착륙.</b> 그래프 한 장이 이야기 전체를 담아요.";
+        "탐정 완료! 이 비행은 네 문장이었어요. <b>① 2초 동안 4 m까지 상승 ② 6초 동안 4 m 유지 ③ 12초까지 10 m로 상승 ④ 6초 동안 하강, 착륙.</b> 그래프 한 장이 이야기 전체를 담아요.";
       later(() => {
         api.recordQuiz(true);
         api.enableCTA(s.cta ?? "다음");

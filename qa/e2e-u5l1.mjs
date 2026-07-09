@@ -1,6 +1,8 @@
 // u5l1 힘의 표현 — 전 스텝 실플레이 E2E (headless Chrome, rAF 살아 있음)
-// node qa/e2e-u5l1.mjs  (dev 서버 5173 필요)
+// PORT=<포트> node qa/e2e-u5l1.mjs  (dev 서버 필요, 기본 5173)
 import { chromium } from "playwright-core";
+
+const PORT = process.env.PORT || "5173";
 
 const log = (...a) => console.log("[e2e]", ...a);
 const browser = await chromium.launch({ channel: "chrome", headless: true });
@@ -17,7 +19,7 @@ await page.addInitScript(() => {
     }));
   }
 });
-await page.goto("http://localhost:5173/", { waitUntil: "networkidle" });
+await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
 await page.waitForTimeout(1200);
 
 // 혹시 온보딩이 뜨면 CTA 연타로 통과
@@ -183,7 +185,7 @@ async function solveQuiz(matcher) {
   });
   await page.waitForTimeout(800);
 }
-await solveQuiz("물질의 종류"); // mcq1 정답 ④
+await solveQuiz("데워져 따뜻"); // mcq1 정답 ④(힘의 효과가 아닌 것 = 물이 데워짐)
 await solveQuiz("작용점, ㉡ 힘의 크기"); // mcq2 정답 ①
 // ox: O 버튼
 await page.waitForTimeout(400);

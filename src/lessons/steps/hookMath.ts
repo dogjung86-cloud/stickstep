@@ -296,17 +296,17 @@ function renderLockcode(scene: HTMLElement, helper: HTMLElement, finish: () => v
 /* ── L4 tilefloor, 가장 큰 정사각 타일 ──────────────────────── */
 function renderTilefloor(scene: HTMLElement, helper: HTMLElement, finish: () => void, face: Face, choices?: string[]): void {
   const fig = el("div", {});
-  const F = { x: 60, y: 34, w: 240, h: 150 }; // 36×60 비율(가로 60, 세로 36 → 240×144에 맞춤)
+  const F = { x: 60, y: 34, w: 240, h: 150 }; // 45×75 비율(가로 75, 세로 45 → 240×144에 맞춤)
   function floorSvg(tile = 0): string {
     let tiles = "";
     if (tile > 0) {
-      const px = (F.w / 60) * tile;
+      const px = (F.w / 75) * tile;
       let k = 0;
-      for (let yy = 0; yy + 0.1 < F.h; yy += (F.h / 36) * tile) {
+      for (let yy = 0; yy + 0.1 < F.h; yy += (F.h / 45) * tile) {
         for (let xx = 0; xx + 0.1 < F.w; xx += px) {
           const wRem = Math.min(px, F.w - xx);
-          const hRem = Math.min((F.h / 36) * tile, F.h - yy);
-          const fit = wRem >= px - 0.1 && hRem >= (F.h / 36) * tile - 0.1;
+          const hRem = Math.min((F.h / 45) * tile, F.h - yy);
+          const fit = wRem >= px - 0.1 && hRem >= (F.h / 45) * tile - 0.1;
           tiles += `<rect x="${F.x + xx + 1.2}" y="${F.y + yy + 1.2}" width="${wRem - 2.4}" height="${hRem - 2.4}" rx="3" fill="${fit ? "url(#tf-tl)" : "#F2B0B6"}" stroke="${fit ? "#2FA8C4" : "#E8434F"}" stroke-width="1.2" opacity="0" style="transition: opacity .3s; transition-delay: ${k * 24}ms" class="tf-t"/>`;
           k += 1;
         }
@@ -317,8 +317,8 @@ function renderTilefloor(scene: HTMLElement, helper: HTMLElement, finish: () => 
       <rect x="${F.x - 8}" y="${F.y - 8}" width="${F.w + 16}" height="${F.h + 16}" rx="10" fill="url(#tf-wd)" stroke="#8C6A42" stroke-width="1.6"/>
       <rect x="${F.x}" y="${F.y}" width="${F.w}" height="${F.h}" rx="4" fill="#F4F8FB" stroke="#B9C6D2" stroke-width="1.4"/>
       ${tiles}
-      <text x="${F.x + F.w / 2}" y="${F.y - 14}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#54677A">가로 60</text>
-      <text x="${F.x - 26}" y="${F.y + F.h / 2}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#54677A" transform="rotate(-90 ${F.x - 26} ${F.y + F.h / 2})">세로 36</text>`,
+      <text x="${F.x + F.w / 2}" y="${F.y - 14}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#54677A">가로 75</text>
+      <text x="${F.x - 26}" y="${F.y + F.h / 2}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#54677A" transform="rotate(-90 ${F.x - 26} ${F.y + F.h / 2})">세로 45</text>`,
       `<linearGradient id="tf-wd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D8AA70"/><stop offset="1" stop-color="#A97A4C"/></linearGradient>
       <linearGradient id="tf-tl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D7F2F8"/><stop offset="1" stop-color="#9ADEED"/></linearGradient>`,
       "0 0 360 216",
@@ -328,7 +328,7 @@ function renderTilefloor(scene: HTMLElement, helper: HTMLElement, finish: () => 
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, box);
   helper.innerHTML =
-    "가로 60, 세로 36인 주방 바닥을 <b>정사각형 타일</b>로 빈틈도, 자름도 없이 깔고 싶어요. 타일이 클수록 일이 줄죠, <b>가장 큰</b> 타일 한 변은 몇일까요?";
+    "가로 75, 세로 45인 주방 바닥을 <b>정사각형 타일</b>로 빈틈도, 자름도 없이 깔고 싶어요. 타일이 클수록 일이 줄죠, <b>가장 큰</b> 타일 한 변은 몇일까요?";
   function fill(t: number): void {
     fig.innerHTML = floorSvg(t);
     window.setTimeout(() => {
@@ -337,12 +337,12 @@ function renderTilefloor(scene: HTMLElement, helper: HTMLElement, finish: () => 
   }
   window.setTimeout(() => {
     ask(box, helper, {
-      choices: choices ?? ["한 변 12", "한 변 18", "한 변 6"],
-      good: "딱 맞아요! 12는 60도 나누고(5장) 36도 나눠서(3장) 빈틈이 없어요, 60과 36을 <b>동시에 나누는 가장 큰 수</b>죠. 왜 하필 12인지, 소인수로 뜯어 봐요.",
-      bad: "직접 깔아 보면 보여요, 18은 36은 나누지만 60은 못 나눠 오른쪽에 빈틈이 남고, 6은 깔리긴 해도 <b>더 큰 12</b>가 가능해요. '두 수를 동시에 나누는 가장 큰 수'를 찾는 법을 배워요.",
+      choices: choices ?? ["한 변 15", "한 변 9", "한 변 5"],
+      good: "딱 맞아요! 15는 75도 나누고(5장) 45도 나눠서(3장) 빈틈이 없어요, 75와 45를 <b>동시에 나누는 가장 큰 수</b>죠. 왜 하필 15인지, 소인수로 뜯어 봐요.",
+      bad: "직접 깔아 보면 보여요, 9는 45는 나누지만 75는 못 나눠 오른쪽에 빈틈이 남고, 5는 깔리긴 해도 <b>더 큰 15</b>가 가능해요. '두 수를 동시에 나누는 가장 큰 수'를 찾는 법을 배워요.",
       onDone: () => {
         face("curious");
-        fill(12);
+        fill(15);
         haptic(HAPTIC.correct);
         finish();
       },
@@ -514,8 +514,8 @@ function renderGolfscore(scene: HTMLElement, helper: HTMLElement, finish: () => 
     </g>`;
   fig.innerHTML = wrapSvg(
     `${SHADOW(180, 184, 104, 0.1)}
-    ${card(42, "선수 A", "−1", "−3", "−4", "gf-a", "#0DA5C6")}
-    ${card(190, "선수 B", "+2", "−5", "−3", "gf-b", "#8A6EE0")}
+    ${card(42, "선수 A", "−6", "−2", "−8", "gf-a", "#0DA5C6")}
+    ${card(190, "선수 B", "+3", "−7", "−4", "gf-b", "#8A6EE0")}
     <text x="180" y="28" text-anchor="middle" font-size="12.5" font-weight="800" fill="#54677A">골프는 점수가 낮을수록 이겨요</text>`,
     `<linearGradient id="gf-cd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EEF3F8"/></linearGradient>`,
   );
@@ -529,12 +529,12 @@ function renderGolfscore(scene: HTMLElement, helper: HTMLElement, finish: () => 
     haptic(HAPTIC.select);
     fig.querySelectorAll(".gf-sum").forEach((t) => ((t as SVGTextElement).style.opacity = "1"));
     face("curious");
-    helper.innerHTML = "A는 (−1)+(−3)=<b>−4</b>, B는 (+2)+(−5)=<b>−3</b>. 그래서… 우승은 누구일까요?";
+    helper.innerHTML = "A는 (−6)+(−2)=<b>−8</b>, B는 (+3)+(−7)=<b>−4</b>. 그래서… 우승은 누구일까요?";
     window.setTimeout(() => {
       ask(box, helper, {
-        choices: choices ?? ["A 선수, −4가 −3보다 낮다", "B 선수, 3이 4보다 작으니까", "동점이다"],
-        good: "정답! 수직선에서 −4는 −3보다 <b>왼쪽</b>, 더 낮은 점수예요. 그런데 방금 한 (−1)+(−3), (+2)+(−5) 같은 계산, 규칙이 뭘까요? 돌멩이로 직접 만들어 봐요.",
-        bad: "숫자만 보면 3<4지만, 음수는 <b>절댓값이 클수록 더 작아요(더 왼쪽)</b>, −4가 −3보다 낮은 점수라 A의 우승! 이런 부호 있는 덧셈의 규칙을 지금 만들어 봐요.",
+        choices: choices ?? ["A 선수, −8이 −4보다 낮다", "B 선수, 4가 8보다 작으니까", "동점이다"],
+        good: "정답! 수직선에서 −8은 −4보다 <b>왼쪽</b>, 더 낮은 점수예요. 그런데 방금 한 (−6)+(−2), (+3)+(−7) 같은 계산, 규칙이 뭘까요? 돌멩이로 직접 만들어 봐요.",
+        bad: "숫자만 보면 4<8이지만, 음수는 <b>절댓값이 클수록 더 작아요(더 왼쪽)</b>, −8이 −4보다 낮은 점수라 A의 우승! 이런 부호 있는 덧셈의 규칙을 지금 만들어 봐요.",
         onDone: finish,
       });
     }, 800);

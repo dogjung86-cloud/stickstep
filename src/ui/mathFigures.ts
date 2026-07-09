@@ -106,7 +106,7 @@ export function stonesFig(pos: number, neg: number, pairLines = true): string {
   return svg("0 0 360 116", out);
 }
 
-/** 소인수 벤 그림, 36과 60(교집합 2·2·3). GCD/LCM 문제용. */
+/** 소인수 벤 그림, 45와 75(교집합 3·5, 왼쪽 단독 3·오른쪽 단독 5). GCD/LCM 문제용. */
 export function vennQuizFig(): string {
   const chip = (x: number, y: number, v: number): string => {
     const col = v === 2 ? POS : v === 3 ? "#0CA678" : AMBER;
@@ -116,17 +116,16 @@ export function vennQuizFig(): string {
     "0 0 360 190",
     `<circle cx="130" cy="100" r="76" fill="rgba(13,165,198,.08)" stroke="${CYAN}" stroke-width="2"/>` +
       `<circle cx="230" cy="100" r="76" fill="rgba(124,107,255,.07)" stroke="${VIOLET}" stroke-width="2"/>` +
-      `<text x="66" y="28" font-size="15" font-weight="800" fill="${CYAN}">36</text>` +
-      `<text x="282" y="28" font-size="15" font-weight="800" fill="${VIOLET}">60</text>` +
+      `<text x="66" y="28" font-size="15" font-weight="800" fill="${CYAN}">45</text>` +
+      `<text x="282" y="28" font-size="15" font-weight="800" fill="${VIOLET}">75</text>` +
       chip(84, 100, 3) +
-      chip(180, 62, 2) +
-      chip(180, 100, 2) +
-      chip(180, 138, 3) +
+      chip(180, 81, 3) +
+      chip(180, 119, 5) +
       chip(276, 100, 5),
   );
 }
 
-/** 인수 트리 빈칸 그림, 84 = 2×42, 42 = ?×7, … (빈칸 □ 포함). */
+/** 인수 트리 빈칸 그림, 126 = 2×63, 63 = ?×7, … (빈칸 ㉠, 답 9). */
 export function treeBlankFig(): string {
   const node = (x: number, y: number, t: string, blank = false, prime = false): string =>
     `<circle cx="${x}" cy="${y}" r="19" fill="${blank ? "#FFF4D6" : prime ? "#DCF7EA" : "#EAF5FA"}" stroke="${blank ? AMBER : prime ? "#0CA678" : "#9BB8C8"}" stroke-width="${blank ? 2.2 : 1.8}"/>` +
@@ -139,12 +138,12 @@ export function treeBlankFig(): string {
       edge(180, 34, 250, 100) +
       edge(250, 100, 200, 170) +
       edge(250, 100, 300, 170) +
-      node(180, 34, "84") +
+      node(180, 34, "126") +
       node(110, 100, "2", false, true) +
-      node(250, 100, "42") +
+      node(250, 100, "63") +
       node(200, 170, "㉠", true) +
       node(300, 170, "7", false, true) +
-      `<text x="66" y="196" font-size="12.5" font-weight="700" fill="${FAINT}">42 = ㉠ × 7</text>`,
+      `<text x="66" y="196" font-size="12.5" font-weight="700" fill="${FAINT}">63 = ㉠ × 7</text>`,
   );
 }
 
@@ -223,7 +222,7 @@ export function sieveGridFig(): string {
   return svg("0 0 360 190", out);
 }
 
-/** 약수 격자, 63 = 3²×7의 약수를 (1,3,9)×(1,7)로 만드는 표. */
+/** 약수 격자, 44 = 2²×11의 약수를 (1,2,4)×(1,11)로 만드는 표. */
 export function divisorGridFig(): string {
   const cell = (x: number, y: number, t: string, head = false): string =>
     `<rect x="${x}" y="${y}" width="86" height="40" rx="8" fill="${head ? "rgba(13,165,198,.12)" : "#fff"}" stroke="${head ? CYAN : "#D5DDE6"}" stroke-width="1.4"/>` +
@@ -232,57 +231,51 @@ export function divisorGridFig(): string {
     "0 0 360 190",
     cell(42, 14, "×", true) +
       cell(134, 14, "1", true) +
-      cell(226, 14, "7", true) +
+      cell(226, 14, "11", true) +
       cell(42, 60, "1", true) +
       cell(134, 60, "1") +
-      cell(226, 60, "7") +
-      cell(42, 106, "3", true) +
-      cell(134, 106, "3") +
-      cell(226, 106, "21") +
-      cell(42, 152, "9", true) +
-      cell(134, 152, "9") +
-      cell(226, 152, "63"),
+      cell(226, 60, "11") +
+      cell(42, 106, "2", true) +
+      cell(134, 106, "2") +
+      cell(226, 106, "22") +
+      cell(42, 152, "4", true) +
+      cell(134, 152, "4") +
+      cell(226, 152, "44"),
   );
 }
 
-/** 소인수분해 정렬 비교(교과서 방식), 54·90을 세로로 맞추고 공통 소인수 기둥을 하이라이트.
- *  mode gcd = 공통만·지수 작은 쪽 / lcm = 공통은 큰 쪽 + 공통 아닌 것 전부. */
+/** 소인수분해 정렬 비교(교과서 방식), 45·75를 세로로 맞추고 공통 소인수 기둥(3·5)을 하이라이트.
+ *  45=3²×5, 75=3×5². mode gcd = 기둥마다 지수 작은 쪽(3×5=15) / lcm = 기둥마다 지수 큰 쪽(3²×5²=225). */
 export function alignedFactorFig(mode: "gcd" | "lcm"): string {
   const isG = mode === "gcd";
-  const X = { n: 52, eq: 84, two: 118, x1: 150, three: 188, x2: 234, five: 264 };
-  const row = (y: number, label: string, threeSup: string, hasFive: boolean): string =>
+  const X = { n: 56, eq: 90, three: 132, x1: 172, five: 212 };
+  const sup = (s: string): string => (s ? `<tspan font-size="11" dy="-7">${s}</tspan>` : "");
+  const row = (y: number, label: string, s3: string, s5: string): string =>
     `<text x="${X.n}" y="${y}" text-anchor="middle" font-size="17" font-weight="800" fill="${INK}">${label}</text>` +
     `<text x="${X.eq}" y="${y}" text-anchor="middle" font-size="15" font-weight="700" fill="${FAINT}">=</text>` +
-    `<text x="${X.two}" y="${y}" text-anchor="middle" font-size="17" font-weight="800" fill="${INK}">2</text>` +
+    `<text x="${X.three}" y="${y}" text-anchor="middle" font-size="17" font-weight="800" fill="${INK}">3${sup(s3)}</text>` +
     `<text x="${X.x1}" y="${y}" text-anchor="middle" font-size="13" font-weight="700" fill="${FAINT}">×</text>` +
-    `<text x="${X.three}" y="${y}" text-anchor="middle" font-size="17" font-weight="800" fill="${INK}">3<tspan font-size="11" dy="-7">${threeSup}</tspan></text>` +
-    (hasFive
-      ? `<text x="${X.x2}" y="${y}" text-anchor="middle" font-size="13" font-weight="700" fill="${FAINT}">×</text>` +
-        `<text x="${X.five}" y="${y}" text-anchor="middle" font-size="17" font-weight="800" fill="${INK}">5</text>`
-      : "");
+    `<text x="${X.five}" y="${y}" text-anchor="middle" font-size="17" font-weight="800" fill="${INK}">5${sup(s5)}</text>`;
   const band = (cx: number, w: number, col: string): string =>
     `<rect x="${cx - w / 2}" y="18" width="${w}" height="72" rx="9" fill="${col}"/>`;
+  const result = isG ? "3 × 5" : `3${sup("2")}<tspan dy="7"> × 5</tspan>${sup("2")}`;
   return svg(
     "0 0 360 186",
-    band(X.two, 32, "rgba(13,165,198,.12)") +
-      band(X.three, 46, "rgba(13,165,198,.12)") +
-      (isG ? "" : band(X.five, 32, "rgba(240,140,46,.16)")) +
-      row(44, "54", "3", false) +
-      row(78, "90", "2", true) +
+    band(X.three, 46, "rgba(13,165,198,.12)") +
+      band(X.five, 46, "rgba(13,165,198,.12)") +
+      row(44, "45", "2", "") +
+      row(78, "75", "", "2") +
       `<line x1="30" y1="94" x2="330" y2="94" stroke="${FAINT}" stroke-width="1.6"/>` +
       `<text x="60" y="122" text-anchor="middle" font-size="12.5" font-weight="800" fill="${INK}">${isG ? "최대공약수" : "최소공배수"}</text>` +
       `<text x="104" y="122" text-anchor="middle" font-size="15" font-weight="700" fill="${FAINT}">=</text>` +
-      `<text x="122" y="123" text-anchor="start" font-size="17" font-weight="900" fill="#0A87A3">2 × 3<tspan font-size="11" dy="-7">${isG ? "2" : "3"}</tspan>${isG ? "" : `<tspan dy="7"> × 5</tspan>`}</text>` +
-      `<text x="252" y="123" text-anchor="start" font-size="14" font-weight="800" fill="${FAINT}">= ${isG ? "18" : "270"}</text>` +
-      `<text x="${X.three}" y="152" text-anchor="middle" font-size="11.5" font-weight="800" fill="#0A87A3">공통: 지수가 ${isG ? "작은" : "큰"} 쪽</text>` +
-      (isG
-        ? `<text x="${X.five + 14}" y="152" text-anchor="middle" font-size="11.5" font-weight="700" fill="${FAINT}">공통 아님: 제외</text>`
-        : `<text x="${X.five + 22}" y="152" text-anchor="middle" font-size="11.5" font-weight="800" fill="#B3771A">공통 아닌 것도 전부</text>`),
+      `<text x="122" y="123" text-anchor="start" font-size="17" font-weight="900" fill="#0A87A3">${result}</text>` +
+      `<text x="204" y="123" text-anchor="start" font-size="14" font-weight="800" fill="${FAINT}">= ${isG ? "15" : "225"}</text>` +
+      `<text x="180" y="152" text-anchor="middle" font-size="11.5" font-weight="800" fill="#0A87A3">공통 기둥마다 지수가 ${isG ? "작은" : "큰"} 쪽을 골라요</text>`,
   );
 }
 
 /** 나눗셈 사다리(교과서 왼쪽 여백의 방법).
- *  kind factor = 60을 소수로 계속 나눠 소인수분해 / gcd = 54·90을 공약수로 함께 나눠 18. */
+ *  kind factor = 60을 소수로 계속 나눠 소인수분해 / gcd = 24·40을 공약수로 함께 나눠 8. */
 export function ladderFig(kind: "factor" | "gcd"): string {
   const rows: { div: string; a: string; b?: string }[] =
     kind === "factor"
@@ -293,9 +286,9 @@ export function ladderFig(kind: "factor" | "gcd"): string {
           { div: "", a: "5" },
         ]
       : [
-          { div: "2", a: "54", b: "90" },
-          { div: "3", a: "27", b: "45" },
-          { div: "3", a: "9", b: "15" },
+          { div: "2", a: "24", b: "40" },
+          { div: "2", a: "12", b: "20" },
+          { div: "2", a: "6", b: "10" },
           { div: "", a: "3", b: "5" },
         ];
   const x0 = kind === "factor" ? 128 : 104;
@@ -316,7 +309,7 @@ export function ladderFig(kind: "factor" | "gcd"): string {
   const cap =
     kind === "factor"
       ? "몫이 소수가 될 때까지 나눠요. 60 = 2×2×3×5 = 2²×3×5"
-      : "함께 나눈 수(왼쪽 기둥)를 모두 곱하면 2×3×3 = 18";
+      : "함께 나눈 수(왼쪽 기둥)를 모두 곱하면 2×2×2 = 8";
   return svg(
     "0 0 360 196",
     out +
@@ -338,7 +331,7 @@ export function triPatternFig(): string {
       const x = x0 + i * (s / 2);
       out += up
         ? `<path d="M ${x} 76 L ${x + s / 2} ${76 - h} L ${x + s} 76 Z" fill="rgba(13,165,198,.1)" stroke="${CYAN}" stroke-width="2" stroke-linejoin="round"/>`
-        : `<path d="M ${x} ${76 - h} L ${x + s / 2} 76 L ${x + s} ${76 - h}" fill="none" stroke="${CYAN}" stroke-width="2" stroke-linejoin="round"/>`;
+        : `<path d="M ${x} ${76 - h} L ${x + s} ${76 - h} L ${x + s / 2} 76 Z" fill="rgba(13,165,198,.1)" stroke="${CYAN}" stroke-width="2" stroke-linejoin="round"/>`;
     }
     return out;
   };
@@ -348,8 +341,8 @@ export function triPatternFig(): string {
       tri(94, 2) +
       tri(196, 3) +
       `<text x="38" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">1개: 3</text>` +
-      `<text x="134" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">2개: 5</text>` +
-      `<text x="256" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">3개: 7</text>` +
+      `<text x="124" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">2개: 5</text>` +
+      `<text x="236" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">3개: 7</text>` +
       `<text x="330" y="70" text-anchor="middle" font-size="17" font-weight="900" fill="${FAINT}">…</text>`,
   );
 }
@@ -512,8 +505,8 @@ function dotAt(p: ReturnType<typeof planeSpec>, x: number, y: number, label: str
   );
 }
 
-/** L1 관광 지도: 역(−1,2)·호수(2,4)·공원(3,0)·극장(−3,−1)·기념품점(1,−2).
- *  아이콘은 점 위(y−26~−12), 이름표는 항상 점 아래(y+17) — 서로 겹치지 않게. */
+/** L1 동네 지도: 서점(−1,3)·빵집(0,3)·병원(3,1)·학교(−2,−3)·놀이터(2,−2).
+ *  아이콘은 점 위(y−26~−12), 이름표는 항상 점 아래(y+17), 서로 겹치지 않게. */
 export function mapPointsFig(): string {
   return planeFig({ min: -4, max: 4, size: 320 }, (p) => {
     const spot = (x: number, y: number, name: string, ic: string, col: string): string => {
@@ -526,19 +519,19 @@ export function mapPointsFig(): string {
       );
     };
     return (
-      spot(-1, 2, "역", `<path d="M-7 -14 h14 v-7 h-14 z M-5 -21 v-4 h10 v4" stroke="${VIOLET}" stroke-width="1.7" fill="#F4F0FF"/>`, VIOLET) +
-      spot(2, 4, "호수", `<ellipse cx="0" cy="-17" rx="10" ry="5.5" fill="#DDF0FF" stroke="${POS}" stroke-width="1.6"/>`, POS) +
-      spot(3, 0, "공원", `<path d="M0 -26 l7 11 h-14 z M0 -15 v4" stroke="#0CA678" stroke-width="1.7" fill="#E6F9F1"/>`, "#0CA678") +
-      spot(-3, -1, "극장", `<rect x="-8" y="-23" width="16" height="10" rx="2" fill="#FEF0F1" stroke="${NEG}" stroke-width="1.6"/><path d="M-4 -20 l3 4 3 -4" stroke="${NEG}" stroke-width="1.3"/>`, NEG) +
-      spot(1, -2, "기념품점", `<path d="M-7 -13 h14 l-2 -9 h-10 z" fill="#FFFBEE" stroke="${AMBER}" stroke-width="1.6"/>`, AMBER)
+      spot(-1, 3, "서점", `<rect x="-7" y="-23" width="14" height="10" rx="1.5" fill="#F4F0FF" stroke="${VIOLET}" stroke-width="1.6"/><line x1="-3.5" y1="-23" x2="-3.5" y2="-13" stroke="${VIOLET}" stroke-width="1.2"/>`, VIOLET) +
+      spot(0, 3, "빵집", `<ellipse cx="0" cy="-17" rx="9.5" ry="6" fill="#FFF3E0" stroke="${AMBER}" stroke-width="1.6"/><path d="M-4 -19 v4 M0 -20 v5 M4 -19 v4" stroke="${AMBER}" stroke-width="1.2"/>`, AMBER) +
+      spot(3, 1, "병원", `<rect x="-8" y="-24" width="16" height="12" rx="2" fill="#FEF0F1" stroke="${NEG}" stroke-width="1.6"/><path d="M0 -21 v6 M-3 -18 h6" stroke="${NEG}" stroke-width="1.6"/>`, NEG) +
+      spot(-2, -3, "학교", `<rect x="-9" y="-21" width="18" height="9" fill="#EAF2FF" stroke="${POS}" stroke-width="1.6"/><path d="M0 -21 v-5 l5 1.8 -5 1.8" fill="#EAF2FF" stroke="${POS}" stroke-width="1.4"/>`, POS) +
+      spot(2, -2, "놀이터", `<path d="M-8 -12 L2 -24 L2 -12" fill="#E6F9F1" stroke="#0CA678" stroke-width="1.7" stroke-linejoin="round"/><line x1="2" y1="-24" x2="8" y2="-12" stroke="#0CA678" stroke-width="1.7"/>`, "#0CA678")
     );
   });
 }
 
-/** L1 점 읽기: A(3,6)·B(−4,−3)·C(5,0) (교과서 108쪽 문제 2). */
+/** L1 점 읽기: A(2,5)·B(−3,−4)·C(4,0), 자체 제작 좌표. */
 export function coordReadFig(): string {
   return planeFig({ min: -6, max: 6, size: 320, labelEvery: 2 }, (p) =>
-    dotAt(p, 3, 6, "A", CYAN) + dotAt(p, -4, -3, "B", VIOLET) + dotAt(p, 5, 0, "C", AMBER, 2),
+    dotAt(p, 2, 5, "A", CYAN) + dotAt(p, -3, -4, "B", VIOLET) + dotAt(p, 4, 0, "C", AMBER, 2),
   );
 }
 
@@ -549,6 +542,7 @@ export type MiniKind =
   | "upflatup" // 증가·수평·다시 증가
   | "updown" // 증가 후 감소
   | "twoup" // 완만한 직선 → 가파른 직선(꺾임)
+  | "threeup" // 세 단계로 점점 가팔라지는 꺾은선(3단 병)
   | "curvefast" // 점점 빠르게(위로 휨)
   | "curveslow" // 점점 느리게(눕는 곡선)
   | "wave" // 오르내림 반복
@@ -560,6 +554,7 @@ const MINI_PATH: Record<MiniKind, string> = {
   upflatup: "M8 56 L26 38 L44 38 L64 10",
   updown: "M8 56 L36 12 L64 56",
   twoup: "M8 56 L40 42 L64 8",
+  threeup: "M8 56 L30 48 L48 32 L64 8",
   curvefast: "M8 56 Q42 52 64 10",
   curveslow: "M8 56 Q16 14 64 8",
   wave: "M8 40 Q15 12 22 40 Q29 68 36 40 Q43 12 50 40 Q57 68 64 40",
@@ -583,13 +578,13 @@ export function miniGraphRow(kinds: MiniKind[], labels?: string[]): string {
   return svg(`0 0 ${W + 16} 94`, out);
 }
 
-/** L3 물병 A(아래 넓은 원기둥 위에 좁은 원기둥) + 후보 그래프 ㄱ~ㄹ (교과서 112쪽). */
+/** L3 물병 A(아래부터 넓은·중간·좁은 원기둥 3단) + 후보 그래프 ㄱ~ㄹ. 폭 3단 = 직선 3도막. */
 export function bottleQuizFig(): string {
   const bottle =
     `<g transform="translate(10 10)">` +
     `<ellipse cx="42" cy="86" rx="38" ry="4" fill="#2A3A5E" opacity=".08"/>` +
-    `<path d="M14 84 V38 H30 V10 H54 V38 H70 V84 Z" fill="#E8F3FB" stroke="#5E86A4" stroke-width="2"/>` +
-    `<line x1="20" y1="78" x2="20" y2="20" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round" opacity=".6"/>` +
+    `<path d="M12 84 V58 H24 V34 H34 V8 H50 V34 H60 V58 H72 V84 Z" fill="#E8F3FB" stroke="#5E86A4" stroke-width="2"/>` +
+    `<line x1="18" y1="78" x2="18" y2="64" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round" opacity=".6"/>` +
     `<text x="42" y="102" text-anchor="middle" font-size="11.5" font-weight="800" fill="${INK}">물병 A</text>` +
     `</g>`;
   const cell = (k: MiniKind, label: string, ox: number, oy: number): string =>
@@ -601,7 +596,7 @@ export function bottleQuizFig(): string {
     `</g>`;
   return svg(
     "0 0 340 140",
-    bottle + cell("twoup", "ㄱ", 122, 4) + cell("upflat", "ㄴ", 238, 4) + cell("up", "ㄷ", 122, 74) + cell("curveslow", "ㄹ", 238, 74),
+    bottle + cell("threeup", "ㄱ", 122, 4) + cell("upflat", "ㄴ", 238, 4) + cell("up", "ㄷ", 122, 74) + cell("curvefast", "ㄹ", 238, 74),
   );
 }
 
@@ -615,57 +610,64 @@ function axes1Q(o: { x0: number; y0: number; x1: number; y1: number; xl: string;
   );
 }
 
-/** L4 자전거 나들이: 집(0)→박물관(18km)→음식점(9km)→집. 시각 9~15시.
- *  경로: (9,0)(10,12)(10.5,12)(11,18)(12.5,18)(13,9)(14,9)(14.75,0) — 문제 답과 1:1. */
+/** L4 자전거 나들이: 집(0)→미술관(15km)→카페(6km)→집. 시각 9~15시, 자체 제작 여정.
+ *  경로: (9,0)(10,9)(11,15)(13,15)(13.5,6)(14.25,6)(15,0), 문제 답(13시 출발·카페 45분)과 1:1.
+ *  30분 보조선(연한 색)이 있어 13시 30분·14시 15분을 읽을 수 있다. */
 export function bikeTripFig(): string {
   const X = (t: number): number => 44 + ((t - 9) / 6) * 280;
-  const Y = (d: number): number => 168 - (d / 18) * 130;
-  const pts: [number, number][] = [[9, 0], [10, 12], [10.5, 12], [11, 18], [12.5, 18], [13, 9], [14, 9], [14.75, 0]];
+  const Y = (d: number): number => 168 - (d / 15) * 130;
+  const pts: [number, number][] = [[9, 0], [10, 9], [11, 15], [13, 15], [13.5, 6], [14.25, 6], [15, 0]];
   const path = pts.map(([t, d], i) => `${i === 0 ? "M" : "L"}${X(t).toFixed(1)} ${Y(d).toFixed(1)}`).join(" ");
   let grid = "";
+  for (let t = 9.5; t < 15; t += 1)
+    grid += `<line x1="${X(t)}" y1="168" x2="${X(t)}" y2="30" stroke="#F5F8FB" stroke-width="1"/>`;
   for (let t = 9; t <= 15; t++)
-    grid += `<line x1="${X(t)}" y1="168" x2="${X(t)}" y2="30" stroke="#EEF2F7" stroke-width="1"/><text x="${X(t)}" y="183" text-anchor="middle" font-size="9.5" font-weight="700" fill="${FAINT}">${t}시</text>`;
-  for (const d of [3, 6, 9, 12, 15, 18])
+    grid +=
+      `<line x1="${X(t)}" y1="168" x2="${X(t)}" y2="30" stroke="#EEF2F7" stroke-width="1"/>` +
+      (t < 15 ? `<text x="${X(t)}" y="183" text-anchor="middle" font-size="9.5" font-weight="700" fill="${FAINT}">${t}시</text>` : "");
+  for (const d of [3, 6, 9, 12, 15])
     grid += `<line x1="44" y1="${Y(d)}" x2="330" y2="${Y(d)}" stroke="#EEF2F7" stroke-width="1"/><text x="38" y="${Y(d) + 3}" text-anchor="end" font-size="9.5" font-weight="700" fill="${FAINT}">${d}</text>`;
   return svg(
     "0 0 360 196",
     grid +
       axes1Q({ x0: 44, y0: 168, x1: 330, y1: 30, xl: "시각(시)", yl: "거리(km)" }) +
       `<path d="${path}" stroke="${CYAN}" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>` +
-      `<text x="${X(11.75)}" y="${Y(18) - 8}" text-anchor="middle" font-size="10" font-weight="800" fill="${INK}">박물관</text>` +
-      `<text x="${X(13.5)}" y="${Y(9) - 8}" text-anchor="middle" font-size="10" font-weight="800" fill="${AMBER}">음식점</text>`,
+      `<text x="${X(12)}" y="${Y(15) - 8}" text-anchor="middle" font-size="10" font-weight="800" fill="${INK}">미술관</text>` +
+      `<text x="${X(13.875)}" y="${Y(6) - 8}" text-anchor="middle" font-size="10" font-weight="800" fill="${AMBER}">카페</text>`,
   );
 }
 
-/** L4 음료수 대결: 은수 직선(24초 완주), 예지 4~14초 휴식 후 18초 완주, 준호 22초에 100mL 남김. */
+/** L4 주스 대결: 태오 직선(21초 완주), 리아 3~10초 휴식 후 15초 완주, 소민 18초부터 80mL 남김. */
 export function drinkRaceFig(): string {
-  const X = (t: number): number => 44 + (t / 24) * 286;
-  const Y = (v: number): number => 168 - (v / 600) * 132;
+  const X = (t: number): number => 44 + (t / 21) * 286;
+  const Y = (v: number): number => 168 - (v / 500) * 132;
   const lineOf = (pts: [number, number][], col: string): string =>
     `<path d="${pts.map(([t, v], i) => `${i === 0 ? "M" : "L"}${X(t).toFixed(1)} ${Y(v).toFixed(1)}`).join(" ")}" stroke="${col}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
   let grid = "";
-  for (let t = 4; t <= 24; t += 4)
-    grid += `<line x1="${X(t)}" y1="168" x2="${X(t)}" y2="30" stroke="#EEF2F7" stroke-width="1"/><text x="${X(t)}" y="183" text-anchor="middle" font-size="9.5" font-weight="700" fill="${FAINT}">${t}</text>`;
-  for (const v of [100, 200, 300, 400, 500, 600])
+  for (let t = 3; t <= 21; t += 3)
+    grid +=
+      `<line x1="${X(t)}" y1="168" x2="${X(t)}" y2="30" stroke="#EEF2F7" stroke-width="1"/>` +
+      (t < 21 ? `<text x="${X(t)}" y="183" text-anchor="middle" font-size="9.5" font-weight="700" fill="${FAINT}">${t}</text>` : "");
+  for (const v of [100, 200, 300, 400, 500])
     grid += `<line x1="44" y1="${Y(v)}" x2="336" y2="${Y(v)}" stroke="#EEF2F7" stroke-width="1"/><text x="38" y="${Y(v) + 3}" text-anchor="end" font-size="9" font-weight="700" fill="${FAINT}">${v}</text>`;
   return svg(
     "0 0 360 196",
     grid +
       axes1Q({ x0: 44, y0: 168, x1: 336, y1: 30, xl: "시간(초)", yl: "남은 양(mL)" }) +
-      lineOf([[0, 600], [24, 0]], CYAN) +
-      lineOf([[0, 600], [4, 350], [14, 350], [18, 0]], VIOLET) +
-      lineOf([[0, 600], [22, 100], [24, 100]], AMBER) +
-      `<text x="${X(21)}" y="${Y(180)}" font-size="10.5" font-weight="800" fill="${CYAN}">은수</text>` +
-      `<text x="${X(8)}" y="${Y(350) - 8}" font-size="10.5" font-weight="800" fill="${VIOLET}">예지</text>` +
-      `<text x="${X(16.6)}" y="${Y(210)}" font-size="10.5" font-weight="800" fill="${AMBER}">준호</text>`,
+      lineOf([[0, 500], [21, 0]], CYAN) +
+      lineOf([[0, 500], [3, 300], [10, 300], [15, 0]], VIOLET) +
+      lineOf([[0, 500], [18, 80], [21, 80]], AMBER) +
+      `<text x="${X(16.5)}" y="${Y(180)}" font-size="10.5" font-weight="800" fill="${CYAN}">태오</text>` +
+      `<text x="${X(5)}" y="${Y(300) + 17}" font-size="10.5" font-weight="800" fill="${VIOLET}">리아</text>` +
+      `<text x="${X(19)}" y="${Y(80) - 8}" font-size="10.5" font-weight="800" fill="${AMBER}">소민</text>`,
   );
 }
 
-/** L6 정비례 그래프 a 읽기: y=ax 직선 + 격자점 강조 (교과서 125쪽 문제 6). */
-export function propReadFig(a: number, mx: number): string {
-  const my = Math.round(a * mx * 1000) / 1000; // 부동소수 꼬리 제거((2/3)×3 = 1.999… 방지)
-  return planeFig({ min: -4, max: 4, size: 300 }, (p) => {
-    const xEnd = Math.min(4, 4 / Math.abs(a));
+/** L6 정비례 그래프 a 읽기: y=ax 직선 + 격자점 강조. range로 모눈 폭을 넓힐 수 있다. */
+export function propReadFig(a: number, mx: number, range = 4): string {
+  const my = Math.round(a * mx * 1000) / 1000; // 부동소수 꼬리 제거((3/4)×4 등 방지)
+  return planeFig({ min: -range, max: range, size: 300 }, (p) => {
+    const xEnd = Math.min(range, range / Math.abs(a));
     const x0 = -xEnd;
     return (
       `<line x1="${p.px(x0)}" y1="${p.py(a * x0)}" x2="${p.px(xEnd)}" y2="${p.py(a * xEnd)}" stroke="${CYAN}" stroke-width="2.8" stroke-linecap="round"/>` +
@@ -677,14 +679,14 @@ export function propReadFig(a: number, mx: number): string {
 }
 
 /** L8 반비례 그래프 a 읽기: y=a/x 곡선 한 쌍 + 격자점 강조. torn=true면 한 가지가 찢겨 안 보인다. */
-export function invReadFig(a: number, mx: number, torn = false): string {
+export function invReadFig(a: number, mx: number, torn = false, range = 4): string {
   const my = a / mx;
-  return planeFig({ min: -4, max: 4, size: 300 }, (p) => {
+  return planeFig({ min: -range, max: range, size: 300 }, (p) => {
     const branch = (sign: 1 | -1): string => {
-      const xMin = Math.abs(a) / 4;
+      const xMin = Math.abs(a) / range;
       let d = "";
       for (let i = 0; i <= 36; i++) {
-        const x = sign * (xMin + (i / 36) * (4 - xMin));
+        const x = sign * (xMin + (i / 36) * (range - xMin));
         d += `${i === 0 ? "M" : "L"}${p.px(x).toFixed(1)} ${p.py(a / x).toFixed(1)} `;
       }
       return `<path d="${d}" stroke="${CYAN}" stroke-width="2.6" stroke-linecap="round" fill="none"/>`;
@@ -692,10 +694,10 @@ export function invReadFig(a: number, mx: number, torn = false): string {
     let tear = "";
     if (torn) {
       // 3사분면을 덮는 찢긴 종이: 대각 지그재그 가장자리 + 흰 면
-      const x0 = p.px(-4) - 8;
+      const x0 = p.px(-range) - 8;
       const y0 = p.py(-0.12);
       const x1 = p.px(-0.12);
-      const y1 = p.py(-4) + 8;
+      const y1 = p.py(-range) + 8;
       let d = `M${x0} ${y0}`;
       const N = 7;
       for (let i = 1; i <= N; i++) {
@@ -706,9 +708,10 @@ export function invReadFig(a: number, mx: number, torn = false): string {
         d += ` L${(bx + off).toFixed(1)} ${(by + off * 0.7).toFixed(1)}`;
       }
       d += ` L${x1} ${y1} L${x0} ${y1} Z`;
+      const tc = -range * 0.675;
       tear =
         `<path d="${d}" fill="#FBFCFE" stroke="#C9D4E0" stroke-width="1.6" stroke-dasharray="6 4"/>` +
-        `<text x="${p.px(-2.7)}" y="${p.py(-2.7)}" text-anchor="middle" font-size="11" font-weight="800" fill="${FAINT}" transform="rotate(-38 ${p.px(-2.7)} ${p.py(-2.7)})">찢어진 부분</text>`;
+        `<text x="${p.px(tc)}" y="${p.py(tc)}" text-anchor="middle" font-size="11" font-weight="800" fill="${FAINT}" transform="rotate(-38 ${p.px(tc)} ${p.py(tc)})">찢어진 부분</text>`;
     }
     return (
       branch(1) +
@@ -721,55 +724,57 @@ export function invReadFig(a: number, mx: number, torn = false): string {
   });
 }
 
-/** L9 지진 조기 경보(교과서 134쪽): P파 y=6x·S파 y=4x, 72 km 수평선과 초기 미동 시간. */
+/** L9 지진 조기 경보: P파 y=8x·S파 y=4x(실제 근사 속력), 80 km 수평선과 초기 미동 시간. */
 export function quakeGraphFig(withGap = true): string {
-  const X = (t: number): number => 44 + (t / 20) * 286;
-  const Y = (d: number): number => 168 - (d / 120) * 132;
+  const X = (t: number): number => 44 + (t / 25) * 286;
+  const Y = (d: number): number => 168 - (d / 160) * 132;
   let grid = "";
-  for (let t = 5; t <= 20; t += 5)
-    grid += `<line x1="${X(t)}" y1="168" x2="${X(t)}" y2="30" stroke="#EEF2F7" stroke-width="1"/><text x="${X(t)}" y="183" text-anchor="middle" font-size="9.5" font-weight="700" fill="${FAINT}">${t}</text>`;
-  for (const d of [30, 60, 90, 120])
+  for (let t = 5; t <= 25; t += 5)
+    grid +=
+      `<line x1="${X(t)}" y1="168" x2="${X(t)}" y2="30" stroke="#EEF2F7" stroke-width="1"/>` +
+      (t < 25 ? `<text x="${X(t)}" y="183" text-anchor="middle" font-size="9.5" font-weight="700" fill="${FAINT}">${t}</text>` : "");
+  for (const d of [40, 80, 120, 160])
     grid += `<line x1="44" y1="${Y(d)}" x2="330" y2="${Y(d)}" stroke="#EEF2F7" stroke-width="1"/><text x="38" y="${Y(d) + 3}" text-anchor="end" font-size="9" font-weight="700" fill="${FAINT}">${d}</text>`;
   const gap = withGap
-    ? `<line x1="44" y1="${Y(72)}" x2="${X(18)}" y2="${Y(72)}" stroke="${INK}" stroke-width="1.4" stroke-dasharray="5 4"/>` +
-      `<circle cx="${X(12)}" cy="${Y(72)}" r="4.5" fill="${CYAN}"/><circle cx="${X(18)}" cy="${Y(72)}" r="4.5" fill="${NEG}"/>` +
-      `<path d="M${X(12)} ${Y(72) - 12} H${X(18)}" stroke="${AMBER}" stroke-width="2.4"/>` +
-      `<path d="M${X(12)} ${Y(72) - 16} v8 M${X(18)} ${Y(72) - 16} v8" stroke="${AMBER}" stroke-width="2.4"/>` +
-      `<text x="${X(15)}" y="${Y(72) - 20}" text-anchor="middle" font-size="10" font-weight="900" fill="${AMBER}">초기 미동 시간</text>` +
-      `<text x="60" y="${Y(72) - 6}" font-size="10" font-weight="800" fill="${INK}">72 km</text>`
+    ? `<line x1="44" y1="${Y(80)}" x2="${X(21)}" y2="${Y(80)}" stroke="${INK}" stroke-width="1.4" stroke-dasharray="5 4"/>` +
+      `<circle cx="${X(10)}" cy="${Y(80)}" r="4.5" fill="${CYAN}"/><circle cx="${X(20)}" cy="${Y(80)}" r="4.5" fill="${NEG}"/>` +
+      `<path d="M${X(10)} ${Y(80) - 12} H${X(20)}" stroke="${AMBER}" stroke-width="2.4"/>` +
+      `<path d="M${X(10)} ${Y(80) - 16} v8 M${X(20)} ${Y(80) - 16} v8" stroke="${AMBER}" stroke-width="2.4"/>` +
+      `<text x="${X(15)}" y="${Y(80) - 20}" text-anchor="middle" font-size="10" font-weight="900" fill="${AMBER}">초기 미동 시간</text>` +
+      `<text x="60" y="${Y(80) - 6}" font-size="10" font-weight="800" fill="${INK}">80 km</text>`
     : "";
   return svg(
     "0 0 360 196",
     grid +
       axes1Q({ x0: 44, y0: 168, x1: 330, y1: 30, xl: "시간(초)", yl: "거리(km)" }) +
-      `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(20)}" y2="${Y(120)}" stroke="${CYAN}" stroke-width="2.8" stroke-linecap="round"/>` +
-      `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(20)}" y2="${Y(80)}" stroke="${NEG}" stroke-width="2.8" stroke-linecap="round"/>` +
-      `<text x="${X(17.4)}" y="${Y(114)}" font-size="11" font-weight="900" fill="${CYAN}">P파</text>` +
-      `<text x="${X(18)}" y="${Y(66)}" font-size="11" font-weight="900" fill="${NEG}">S파</text>` +
+      `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(20)}" y2="${Y(160)}" stroke="${CYAN}" stroke-width="2.8" stroke-linecap="round"/>` +
+      `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(25)}" y2="${Y(100)}" stroke="${NEG}" stroke-width="2.8" stroke-linecap="round"/>` +
+      `<text x="${X(17.2)}" y="${Y(150)}" font-size="11" font-weight="900" fill="${CYAN}">P파</text>` +
+      `<text x="${X(22.8)}" y="${Y(76)}" font-size="11" font-weight="900" fill="${NEG}">S파</text>` +
       gap,
   );
 }
 
-/** L9 교점 문제(중단원 도전 8): y=ax와 y=24/x가 x좌표 6인 점 P에서 만난다. */
+/** L9 교점 문제: y=ax와 y=18/x가 x좌표 3인 점 P(3, 6)에서 만난다(a=2 검산). */
 export function crossFig(): string {
   const X = (x: number): number => 40 + (x / 9) * 290;
   const Y = (y: number): number => 170 - (y / 9) * 140;
   let curve = "";
   for (let i = 0; i <= 40; i++) {
-    const x = 2.7 + (i / 40) * 6.3;
-    curve += `${i === 0 ? "M" : "L"}${X(x).toFixed(1)} ${Y(24 / x).toFixed(1)} `;
+    const x = 2.1 + (i / 40) * 6.9;
+    curve += `${i === 0 ? "M" : "L"}${X(x).toFixed(1)} ${Y(18 / x).toFixed(1)} `;
   }
   return svg(
     "0 0 360 196",
     axes1Q({ x0: 40, y0: 170, x1: 330, y1: 30, xl: "x", yl: "y" }) +
-      `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(9)}" y2="${Y(6)}" stroke="${CYAN}" stroke-width="2.6" stroke-linecap="round"/>` +
+      `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(4.4)}" y2="${Y(8.8)}" stroke="${CYAN}" stroke-width="2.6" stroke-linecap="round"/>` +
       `<path d="${curve}" stroke="${VIOLET}" stroke-width="2.6" stroke-linecap="round" fill="none"/>` +
-      `<line x1="${X(6)}" y1="${Y(0)}" x2="${X(6)}" y2="${Y(4)}" stroke="${INK}" stroke-width="1.4" stroke-dasharray="4 4"/>` +
-      `<circle cx="${X(6)}" cy="${Y(4)}" r="5" fill="#E8608A" stroke="#FFFFFF" stroke-width="1.4"/>` +
-      `<text x="${X(6) + 10}" y="${Y(4) - 8}" font-size="12" font-weight="900" fill="${INK}">P</text>` +
-      `<text x="${X(6)}" y="${Y(0) + 16}" text-anchor="middle" font-size="11" font-weight="800" fill="${INK}">6</text>` +
-      `<text x="${X(8.2)}" y="${Y(5.9)}" font-size="11" font-weight="900" fill="${CYAN}">y=ax</text>` +
-      `<text x="${X(3.1)}" y="${Y(8.6)}" font-size="11" font-weight="900" fill="${VIOLET}">y=24/x</text>`,
+      `<line x1="${X(3)}" y1="${Y(0)}" x2="${X(3)}" y2="${Y(6)}" stroke="${INK}" stroke-width="1.4" stroke-dasharray="4 4"/>` +
+      `<circle cx="${X(3)}" cy="${Y(6)}" r="5" fill="#E8608A" stroke="#FFFFFF" stroke-width="1.4"/>` +
+      `<text x="${X(3) + 10}" y="${Y(6) - 8}" font-size="12" font-weight="900" fill="${INK}">P</text>` +
+      `<text x="${X(3)}" y="${Y(0) + 16}" text-anchor="middle" font-size="11" font-weight="800" fill="${INK}">3</text>` +
+      `<text x="${X(4.55)}" y="${Y(8.65)}" font-size="11" font-weight="900" fill="${CYAN}">y=ax</text>` +
+      `<text x="${X(6.4)}" y="${Y(3.6)}" font-size="11" font-weight="900" fill="${VIOLET}">y=18/x</text>`,
   );
 }
 
@@ -1241,27 +1246,27 @@ export function geoMiniArt(key: string): string {
   return svg("0 0 64 64", A[key] ?? A.dot);
 }
 
-/** L9 정사각형 ABCD(대단원 13): A는 y=3x 위, D는 y=a/x 위, 한 변 3, B·C는 x축. */
+/** L9 정사각형 ABCD: A는 y=2x 위, D는 y=a/x 위, 한 변 4, B·C는 x축(A(2,4)·D(6,4)·a=24 검산). */
 export function squareCurveFig(): string {
-  const X = (x: number): number => 40 + (x / 7) * 290;
-  const Y = (y: number): number => 170 - (y / 7) * 140;
+  const X = (x: number): number => 40 + (x / 8) * 290;
+  const Y = (y: number): number => 170 - (y / 9) * 140;
   let curve = "";
   for (let i = 0; i <= 40; i++) {
-    const x = 1.8 + (i / 40) * 5.2;
-    curve += `${i === 0 ? "M" : "L"}${X(x).toFixed(1)} ${Y(12 / x).toFixed(1)} `;
+    const x = 3 + (i / 40) * 5;
+    curve += `${i === 0 ? "M" : "L"}${X(x).toFixed(1)} ${Y(24 / x).toFixed(1)} `;
   }
   return svg(
     "0 0 360 196",
     axes1Q({ x0: 40, y0: 170, x1: 330, y1: 30, xl: "x", yl: "y" }) +
-      `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(2.1)}" y2="${Y(6.3)}" stroke="${CYAN}" stroke-width="2.6" stroke-linecap="round"/>` +
+      `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(2.7)}" y2="${Y(5.4)}" stroke="${CYAN}" stroke-width="2.6" stroke-linecap="round"/>` +
       `<path d="${curve}" stroke="${VIOLET}" stroke-width="2.6" stroke-linecap="round" fill="none"/>` +
-      `<rect x="${X(1)}" y="${Y(3)}" width="${X(4) - X(1)}" height="${Y(0) - Y(3)}" fill="${AMBER}" fill-opacity=".12" stroke="${AMBER}" stroke-width="1.8"/>` +
-      `<circle cx="${X(1)}" cy="${Y(3)}" r="4" fill="${CYAN}"/><circle cx="${X(4)}" cy="${Y(3)}" r="4" fill="${VIOLET}"/>` +
-      `<text x="${X(1) - 10}" y="${Y(3) - 6}" font-size="11.5" font-weight="900" fill="${INK}">A</text>` +
-      `<text x="${X(1) - 10}" y="${Y(0) + 14}" font-size="11.5" font-weight="900" fill="${INK}">B</text>` +
-      `<text x="${X(4) + 4}" y="${Y(0) + 14}" font-size="11.5" font-weight="900" fill="${INK}">C</text>` +
-      `<text x="${X(4) + 8}" y="${Y(3) - 6}" font-size="11.5" font-weight="900" fill="${INK}">D</text>` +
-      `<text x="${X(1.2)}" y="${Y(6.5)}" font-size="11" font-weight="900" fill="${CYAN}">y=3x</text>` +
-      `<text x="${X(5.4)}" y="${Y(3.4)}" font-size="11" font-weight="900" fill="${VIOLET}">y=a/x</text>`,
+      `<rect x="${X(2)}" y="${Y(4)}" width="${X(6) - X(2)}" height="${Y(0) - Y(4)}" fill="${AMBER}" fill-opacity=".12" stroke="${AMBER}" stroke-width="1.8"/>` +
+      `<circle cx="${X(2)}" cy="${Y(4)}" r="4" fill="${CYAN}"/><circle cx="${X(6)}" cy="${Y(4)}" r="4" fill="${VIOLET}"/>` +
+      `<text x="${X(2) - 10}" y="${Y(4) - 6}" font-size="11.5" font-weight="900" fill="${INK}">A</text>` +
+      `<text x="${X(2) - 10}" y="${Y(0) + 14}" font-size="11.5" font-weight="900" fill="${INK}">B</text>` +
+      `<text x="${X(6) + 4}" y="${Y(0) + 14}" font-size="11.5" font-weight="900" fill="${INK}">C</text>` +
+      `<text x="${X(6) + 8}" y="${Y(4) - 6}" font-size="11.5" font-weight="900" fill="${INK}">D</text>` +
+      `<text x="${X(2.6)}" y="${Y(5.7)}" font-size="11" font-weight="900" fill="${CYAN}">y=2x</text>` +
+      `<text x="${X(6.9)}" y="${Y(4.9)}" font-size="11" font-weight="900" fill="${VIOLET}">y=a/x</text>`,
   );
 }

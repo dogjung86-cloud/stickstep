@@ -1,5 +1,5 @@
-// linkLab, 2배 링크 검사기(교과서 120~121쪽 정비례 도입, 달걀 단백질 소재).
-//   ① 달걀을 한 개씩 추가하며 표를 채운다(x 1..6, y=6x)
+// linkLab, 2배 링크 검사기(정비례 도입 발견 랩, 자체 제작 소재: 귤 비타민 C).
+//   ① 귤을 한 개씩 추가하며 표를 채운다(x 1..6, y=30x)
 //   ② 링크 검사: ×2(1→2열)·×3(2→6열) 화살을 쏘아 "x가 2배면 y도 2배"를 눈으로 확인
 //   ③ 가짜 판별: 저금통 표(y=500x+1000, 늘어나긴 함)가 정비례인지 같은 검사로 판별
 // 채점 아님(발견 랩), 전 목표 달성 시 recordQuiz(true)+enableCTA. rAF 금지(CSS+setTimeout).
@@ -17,7 +17,7 @@ interface LinkStep {
   curio?: Curio;
 }
 
-const EGG_Y = [6, 12, 18, 24, 30, 36];
+const TANG_Y = [30, 60, 90, 120, 150, 180]; // 귤 x개의 비타민 C(mg), y=30x
 const BANK_Y = [1500, 2000, 2500, 3000, 3500, 4000];
 
 export const linkLab: StepRenderer = (host, step, api) => {
@@ -26,7 +26,7 @@ export const linkLab: StepRenderer = (host, step, api) => {
   if (s.lead) host.appendChild(el("div", { class: "sub", html: s.lead }));
 
   const chips = goalChips([
-    { id: "fill", label: "표 채우기", sub: "달걀 0/6" },
+    { id: "fill", label: "표 채우기", sub: "귤 0/6" },
     { id: "link", label: "링크 검사", sub: "×2 그리고 ×3" },
     { id: "fake", label: "가짜 판별", sub: "잠김" },
   ]);
@@ -39,7 +39,7 @@ export const linkLab: StepRenderer = (host, step, api) => {
   const toast = mtoast(board);
   const helper = el("div", {
     class: "helper",
-    html: "50 g짜리 달걀 한 개엔 단백질이 <b>6 g</b> 들어 있어요. 달걀을 하나씩 추가하며 표를 채워 봐요!",
+    html: "귤 한 개엔 비타민 C가 약 <b>30 mg</b> 들어 있어요. 귤을 하나씩 추가하며 표를 채워 봐요!",
   });
   host.append(chips.el, board, helper);
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -53,26 +53,27 @@ export const linkLab: StepRenderer = (host, step, api) => {
     timers.add(id);
   };
 
-  let eggs = 0;
+  let eggs = 0; // 추가한 귤 수
   let linksDone = 0;
   let busy = false;
 
-  /* ── 장면: 달걀 판 + 단백질 게이지 ── */
+  /* ── 장면: 귤 바구니 + 비타민 C 게이지 ── */
   function drawScene(): void {
-    const eggSvg = (i: number): string =>
+    const fruitSvg = (i: number): string =>
       `<g class="lk-egg" style="opacity:${i < eggs ? 1 : 0.18}; transition: opacity .3s ease">
-        <ellipse cx="${26 + i * 34}" cy="30" rx="13" ry="16.5" fill="url(#lk-eg)" stroke="#B98A5E" stroke-width="1.4"/>
-        <ellipse cx="${21 + i * 34}" cy="24" rx="4.5" ry="6" fill="#fff" opacity=".55"/>
+        <circle cx="${26 + i * 34}" cy="32" r="14" fill="url(#lk-tg)" stroke="#C46A1B" stroke-width="1.4"/>
+        <ellipse cx="${21 + i * 34}" cy="26" rx="4.5" ry="5.5" fill="#fff" opacity=".4"/>
+        <path d="M${26 + i * 34} 19 q5 -6 10 -4 q-4 6 -10 4" fill="#3E9B4F" stroke="#2E7A3C" stroke-width="1"/>
       </g>`;
     const gaugeW = Math.round((eggs / 6) * 150);
     scene.innerHTML =
       `<svg viewBox="0 0 360 62" xmlns="http://www.w3.org/2000/svg" fill="none">` +
       `<ellipse cx="112" cy="54" rx="104" ry="4" fill="#2A3A5E" opacity=".08"/>` +
-      Array.from({ length: 6 }, (_, i) => eggSvg(i)).join("") +
+      Array.from({ length: 6 }, (_, i) => fruitSvg(i)).join("") +
       `<rect x="228" y="18" width="118" height="24" rx="12" fill="#F4F7FA" stroke="#D5DDE6" stroke-width="1.2"/>` +
       `<rect x="230" y="20" width="${Math.max(0, Math.round((gaugeW / 150) * 114))}" height="20" rx="10" fill="url(#lk-pr)" style="transition: width .4s var(--ease-out)"/>` +
-      `<text x="287" y="34" text-anchor="middle" font-size="12" font-weight="900" fill="${eggs >= 3 ? "#FFFFFF" : "#5E4E2A"}">단백질 ${eggs * 6} g</text>` +
-      `<defs><radialGradient id="lk-eg" cx=".38" cy=".3" r="1"><stop offset="0" stop-color="#FFF6E4"/><stop offset="1" stop-color="#F2D8AE"/></radialGradient>` +
+      `<text x="287" y="34" text-anchor="middle" font-size="11.5" font-weight="900" fill="${eggs >= 3 ? "#FFFFFF" : "#5E4E2A"}">비타민 C ${eggs * 30} mg</text>` +
+      `<defs><radialGradient id="lk-tg" cx=".38" cy=".3" r="1"><stop offset="0" stop-color="#FFC873"/><stop offset="1" stop-color="#F29B38"/></radialGradient>` +
       `<linearGradient id="lk-pr" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFC46E"/><stop offset="1" stop-color="#F2A030"/></linearGradient></defs>` +
       `</svg>`;
   }
@@ -129,12 +130,12 @@ export const linkLab: StepRenderer = (host, step, api) => {
     return;
   }
 
-  /* ── 1국면: 달걀 추가 ── */
+  /* ── 1국면: 귤 추가 ── */
   function phaseFill(): void {
     drawScene();
-    drawTable([1, 2, 3, 4, 5, 6], Array.from({ length: 6 }, () => null), ["x(개)", "y(g)"]);
+    drawTable([1, 2, 3, 4, 5, 6], Array.from({ length: 6 }, () => null), ["x(개)", "y(mg)"]);
     clear(actions);
-    const btn = el("button", { class: "ct-btn hero", attrs: { type: "button" } }, el("span", { text: "달걀 추가" })) as HTMLButtonElement;
+    const btn = el("button", { class: "ct-btn hero", attrs: { type: "button" } }, el("span", { text: "귤 추가" })) as HTMLButtonElement;
     btn.addEventListener("click", () => {
       if (busy || eggs >= 6) return;
       busy = true;
@@ -142,11 +143,11 @@ export const linkLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.select);
       drawScene();
       const cell = tableWrap.querySelector(`.lk-y[data-col="${eggs - 1}"]`) as HTMLElement;
-      cell.textContent = String(EGG_Y[eggs - 1]);
+      cell.textContent = String(TANG_Y[eggs - 1]);
       cell.classList.remove("empty");
       cell.classList.add("pop");
       const chip = chips.el.querySelector(`[data-g="fill"] span`) as HTMLElement;
-      chip.textContent = `달걀 ${eggs}/6`;
+      chip.textContent = `귤 ${eggs}/6`;
       later(() => {
         busy = false;
         if (eggs === 6) {
@@ -170,8 +171,8 @@ export const linkLab: StepRenderer = (host, step, api) => {
         b.disabled = true;
         haptic(HAPTIC.select);
         drawArc(i, j, mul, true);
-        const yi = EGG_Y[i];
-        const yj = EGG_Y[j];
+        const yi = TANG_Y[i];
+        const yj = TANG_Y[j];
         later(() => {
           const t = tableWrap.querySelectorAll(".lk-ymul");
           const last = t[t.length - 1] as SVGTextElement;

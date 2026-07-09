@@ -1,6 +1,6 @@
 // eqTruth, 등식 참·거짓 테이블(교과서 85쪽 방정식과 그 해). 행을 탭하면 그 x 값이
 // 좌변·우변에 각각 대입돼 순차 계산되고 참/거짓 판정이 붙는다.
-//   1단계 3x=x+6: x=1..4 중 x=3에서만 참 → "참이 되게 하는 값 = 해" 발견
+//   1단계 5x=2x+6: x=1..4 중 x=2에서만 참 → "참이 되게 하는 값 = 해" 발견
 //   2단계 x+3x=4x: 네 값 전부 참 → "모든 값에서 참 = 항등식" 발견
 // 채점 아님(발견 랩), 전 목표 달성 시 recordQuiz(true)+enableCTA.
 // 모션은 전부 CSS transition + setTimeout(타이머 Set으로 모아 cleanup 해제). rAF 금지.
@@ -28,11 +28,11 @@ interface PhaseDef {
 
 const PHASES: PhaseDef[] = [
   {
-    eq: "3x=x+6",
-    lhsDisp: (x) => `3×${x}`,
-    rhsDisp: (x) => `${x}+6`,
-    lhsVal: (x) => 3 * x,
-    rhsVal: (x) => x + 6,
+    eq: "5x=2x+6",
+    lhsDisp: (x) => `5×${x}`,
+    rhsDisp: (x) => `2×${x}+6`,
+    lhsVal: (x) => 5 * x,
+    rhsVal: (x) => 2 * x + 6,
   },
   {
     eq: "x+3x=4x",
@@ -208,8 +208,8 @@ export const eqTruth: StepRenderer = (host, step, api) => {
       chips.on("table", "완료!");
       toast("네 값 모두 검사 완료!");
       later(() => {
-        chips.on("sol", "x=3!");
-        helper.innerHTML = "x=3일 때<b>만</b> 참이었죠, 등식을 참이 되게 하는 값, 그게 바로 <b>해</b>예요!";
+        chips.on("sol", "x=2!");
+        helper.innerHTML = "x=2일 때<b>만</b> 참이었죠, 등식을 참이 되게 하는 값, 그게 바로 <b>해</b>예요!";
       }, 700);
       later(() => {
         rowsWrap.style.opacity = "0";
@@ -231,7 +231,7 @@ export const eqTruth: StepRenderer = (host, step, api) => {
         haptic(HAPTIC.done);
         helper.innerHTML =
           "이번엔 <b>모든 값에서 참</b>, 이런 등식을 <b>항등식</b>이라고 해요. " +
-          "x=3에서만 참이던 아까 등식과는 성격이 완전히 다르죠!";
+          "x=2에서만 참이던 아까 등식과는 성격이 완전히 다르죠!";
         api.recordQuiz(true);
         api.enableCTA(s.cta ?? "다음");
       }, 900);
