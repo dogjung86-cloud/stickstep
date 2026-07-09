@@ -174,6 +174,12 @@ src/
   교과서 구도는 -0.55rad 덜 돌린다. 절단면은 -X 반원 CircleGeometry 2장(하나는 rotY -90°).
 
 ## 수학 트랙 — 과목 차원 · 수학 레슨 문법 (상세는 MATH_GUIDE.md)
+- **중2 수학 Ⅰ(m2u1, 유리수의 표현과 식의 계산) 완성** — 10레슨(무료 3+프리미엄 7), 테마 `calc`
+  (그레이프 #9C36B5). 중2 수학 신규 파일: content/math/g2/unit1.ts·ui/mathFigures2.ts(cyc 순환점
+  표기·calcMiniArt)·steps/hookM2u1.ts+랩 9종(divLab·cycleLab·denomLab·shiftLab 기함·powMulLab·
+  powDivLab·monoLab·polyAddLab·expandLab)·**styles/math2.css**(중2 수학 전용 시트, main.ts import).
+  스틱맨 컷 폴더는 **math2**(public/math2/cuts, u1lN — 중1 math/cuts와 분리). mfmt가 `)^n`
+  (괄호 뒤 지수)을 지원한다. QA: `PORT=<포트> node qa/e2e-m2u1.mjs`.
 - **과목 차원**: `store.viewSubject`("sci"|"math") + `curriculum.ts`의 `CURRICULA_OF`/`subjectOfUnit`.
   과목 전환 창구는 **과목 허브뿐**(subject.ts) — main.ts `pickSubject()`가 setViewSubject 후 `goHome()`으로
   홈을 재생성한다(nav.back은 이전 과목 홈을 보여주므로 금지). 이때 lastUnitId를 반드시 비운다.

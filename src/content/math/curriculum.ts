@@ -7,6 +7,7 @@ import { M1_UNIT3 } from "./unit3";
 import { M1_UNIT4 } from "./unit4";
 import { M1_UNIT5 } from "./unit5";
 import { M1_UNIT6 } from "./unit6";
+import { M2_UNIT1 } from "./g2/unit1";
 
 /** 준비 중 단원 자리, 콘텐츠가 완성되면 실제 UNIT 모듈로 교체한다. */
 const soon = (id: string, roman: string, title: string, subtitle: string, icon: string): Unit => ({
@@ -30,9 +31,9 @@ export const MATH_G1: Unit[] = [
   M1_UNIT6,
 ];
 
-// 중2 수학, 전부 준비 중(중1 Ⅰ 완성 후 순차 제작).
+// 중2 수학, Ⅰ부터 순차 제작(나머지는 준비 중 자리).
 export const MATH_G2: Unit[] = [
-  soon("m2u1", "I", "유리수의 표현과 식의 계산", "순환소수와 지수법칙", "book"),
+  M2_UNIT1,
   soon("m2u2", "II", "부등식과 연립방정식", "조건을 만족하는 수 찾기", "ruler"),
   soon("m2u3", "III", "일차함수", "변화를 직선으로 읽기", "route"),
   soon("m2u4", "IV", "삼각형과 사각형의 성질", "도형의 논리", "layers"),

@@ -2,6 +2,7 @@ import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/ui.css";
 import "./styles/math.css";
+import "./styles/math2.css";
 
 import { nav } from "./core/router";
 import { getState, completeLesson, setViewSubject } from "./core/store";

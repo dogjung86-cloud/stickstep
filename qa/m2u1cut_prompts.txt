@@ -1,0 +1,45 @@
+# 스틱맨 개념 컷 — 중2 수학 Ⅰ(유리수의 표현과 식의 계산) concept 10장 (전부 가로 4:3)
+# 폴더: public/math2/cuts (이름 = u1lM — math2 폴더가 학년을 구분하므로 중1 math/cuts와 충돌 없음)
+# 장면 규칙: 그 레슨의 훅·랩 소재 재활용 금지(새 각도), 숫자·글자 대신 사물·개수·손짓으로.
+#
+# ── 스타일 블록 A (전 컷 공용 — 스틱맨 만화) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+
+# ══ 중2 수학 Ⅰ 유리수의 표현과 식의 계산 → public/math2/cuts ══
+
+[0] file=public/math2/cuts/u1l1.png (landscape 4:3, 스타일 A)
+Two stick figures running side by side on two parallel roads. The left road ends clearly at a finish line ribbon a short distance ahead, and that runner is happily breaking through the ribbon, arms up. The right road stretches perfectly straight all the way to the horizon with no end in sight, and that runner keeps running with sweat drops, glancing sideways in disbelief. Only the finish line ribbon is teal; everything else pure black and white.
+
+[1] file=public/math2/cuts/u1l2.png (landscape 4:3, 스타일 A)
+A stick figure decorates a long horizontal wallpaper border strip near the ceiling using one single rubber stamp, stamping the exact same little flower motif over and over along the strip; several identical motifs already printed in a row, the next spot empty, arm mid-press. A tiny ink pad sits on the ladder shelf. Only the rubber stamp in the figure's hand is teal; everything else pure black and white.
+
+[2] file=public/math2/cuts/u1l3.png (landscape 4:3, 스타일 A)
+A stick figure stands at an open front door looking up at a sky full of heavy doodle rain clouds, and confidently grabs an umbrella from a stand before stepping out, other hand pointing at the clouds. Not a single raindrop has fallen yet. Only the umbrella is teal; everything else pure black and white.
+
+[3] file=public/math2/cuts/u1l4.png (landscape 4:3, 스타일 A)
+A stick figure kneels on the floor folding an absurdly long paper scroll that trails out through the doorway and beyond, fold by fold, into a tidy small accordion booklet held in one hand; the figure pats the little booklet proudly while the endless tail still snakes away behind. Only the tidy folded booklet is teal; everything else pure black and white.
+
+[4] file=public/math2/cuts/u1l5.png (landscape 4:3, 스타일 A)
+A stick figure stands under a tall doodle tree, looking up along the trunk: the trunk splits into two branches, each branch splits again into two, and again, so the crown is a huge cloud of tiny twigs. The figure holds one hand over their eyebrows in awe. Only the topmost layer of tiny twigs is teal; everything else pure black and white.
+
+[5] file=public/math2/cuts/u1l6.png (landscape 4:3, 스타일 A)
+A stick figure rides in the basket of a small hot air balloon, tossing identical sandbags overboard one at a time; three sandbags are already falling away below, and with each bag gone the balloon floats visibly higher, the figure grinning upward. Only the falling sandbags are teal; everything else pure black and white.
+
+[6] file=public/math2/cuts/u1l7.png (landscape 4:3, 스타일 A)
+A stick figure stands over a messy mixed laundry pile, sorting it into two separate baskets: one basket already holds a neat stack of identical folded shirts, the other holds a neat row of rolled sock pairs, and the figure is mid-toss with one sock flying toward the sock basket. Only the flying sock is teal; everything else pure black and white.
+
+[7] file=public/math2/cuts/u1l8.png (landscape 4:3, 스타일 A)
+A stick figure at a recycling station with three open bins holding shapes drawn on their fronts: one bin with round bottles inside, one with flat cans, one with folded paper sheets. The figure holds one bottle and reaches to drop it into the bottle bin, the other bins already partly filled with only their own kind. Only the bottle in the figure's hand is teal; everything else pure black and white.
+
+[8] file=public/math2/cuts/u1l9.png (landscape 4:3, 스타일 A)
+A stick figure snaps a large flat chocolate bar cleanly in two along its molded groove, holding one chunk in each hand above the opened flat wrapper on the table; the two chunks visibly fit the wrapper outline exactly if put back together. Crumbs are absent, the break line is crisp. Only the flat opened wrapper is teal; everything else pure black and white.
+
+[9] file=public/math2/cuts/u1l10.png (landscape 4:3, 스타일 A)
+A stick figure measures a room without any tools by walking heel-to-toe along the wall, arms out for balance, leaving a trail of neat matching footprints behind; the figure looks back counting the trail with a satisfied face. A rolled-up rug and a potted plant sit in the corner. Only the trail of footprints is teal; everything else pure black and white.

@@ -30,6 +30,10 @@ import {
   renderLunchavg, renderPenstock, renderMarathon, renderWeightclass,
   renderCamerahisto, renderLikeratio, renderFakegraph,
 } from "./hookMath6";
+import {
+  renderCalculator, renderMelody, renderBirthday, renderNines, renderGerms,
+  renderStorage, renderSolarpanel, renderReceipt, renderKiosk, renderTangram,
+} from "./hookM2u1";
 import type { StepRenderer } from "../types";
 
 type Face = (k: AvatarKind) => void;
@@ -142,6 +146,17 @@ export const mathHook: StepRenderer = (host, step, api) => {
     camerahisto: renderCamerahisto,
     likeratio: renderLikeratio,
     fakegraph: renderFakegraph,
+    // 중2 Ⅰ 유리수의 표현과 식의 계산(hookM2u1.ts)
+    calculator: renderCalculator,
+    melody: renderMelody,
+    birthday: renderBirthday,
+    nines: renderNines,
+    germs: renderGerms,
+    storage: renderStorage,
+    solarpanel: renderSolarpanel,
+    receipt: renderReceipt,
+    kiosk: renderKiosk,
+    tangram: renderTangram,
   };
   const fn = fns[s.scene];
   if (fn) fn(scene, helper, finish, face, s.choices);

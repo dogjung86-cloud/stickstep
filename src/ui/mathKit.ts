@@ -102,6 +102,17 @@ function fmtCore(src: string): string {
       i += m[0].length;
       continue;
     }
+    // 닫는 괄호 뒤 지수: (a^2)^3, (2a)^3 — 괄호는 그대로, 지수만 sup으로(중2 Ⅰ 지수법칙)
+    if (ch === ")") {
+      out += ")";
+      i += 1;
+      const p = src.slice(i).match(/^\^(\d+)/);
+      if (p) {
+        out += `<sup>${p[1]}</sup>`;
+        i += p[0].length;
+      }
+      continue;
+    }
     // 연산 기호는 살짝 여백
     if (ch === "×" || ch === "÷" || ch === "=" || ch === "<" || ch === ">" || ch === "≥" || ch === "≤") {
       out += `<span class="mx-op">${esc(ch)}</span>`;
@@ -253,7 +264,8 @@ export function makeAnswerPad(kind: AnswerKind, onReady: (ready: boolean) => voi
       setFocus("den");
     } else {
       const c = cur();
-      if (c.length >= 4) return;
+      // 자리 제한은 숫자 4자리 기준(소수점은 제외 — 1.125, 0.375 같은 세 자리 소수 허용)
+      if (c.replace(".", "").length >= 4) return;
       if (c === "0" && k !== ".") setCur(k);
       else setCur(c + k);
       // 분자 4자리 또는 명시 이동 전까지 분자에 머문다, '/' 키가 이동 담당

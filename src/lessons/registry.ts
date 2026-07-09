@@ -151,6 +151,15 @@ import { stemLab } from "./steps/stemLab";
 import { freqLab } from "./steps/freqLab";
 import { histoLab } from "./steps/histoLab";
 import { relFreqLab } from "./steps/relFreqLab";
+import { divLab } from "./steps/divLab";
+import { cycleLab } from "./steps/cycleLab";
+import { denomLab } from "./steps/denomLab";
+import { shiftLab } from "./steps/shiftLab";
+import { powMulLab } from "./steps/powMulLab";
+import { powDivLab } from "./steps/powDivLab";
+import { monoLab } from "./steps/monoLab";
+import { polyAddLab } from "./steps/polyAddLab";
+import { expandLab } from "./steps/expandLab";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -297,6 +306,15 @@ const R: Record<string, StepRenderer> = {
   freqLab,
   histoLab,
   relFreqLab,
+  divLab,
+  cycleLab,
+  denomLab,
+  shiftLab,
+  powMulLab,
+  powDivLab,
+  monoLab,
+  polyAddLab,
+  expandLab,
   quiz,
   table,
   order,

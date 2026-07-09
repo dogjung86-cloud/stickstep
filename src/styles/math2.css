@@ -1,0 +1,820 @@
+/* math2.css — 중2 수학 트랙 전용 시트(math.css·ui.css를 건드리지 않는다). main.ts에서 import.
+   Ⅰ. 유리수의 표현과 식의 계산: 테마 calc(그레이프 #9C36B5) + 랩 9종 스타일.
+   랩 섹션 접두: dvl(divLab)·cyl(cycleLab)·dnl(denomLab)·sfl(shiftLab)·pml(powMulLab)·
+   pdl(powDivLab)·mnl(monoLab)·pal(polyAddLab)·exl(expandLab). */
+
+/* ---------- 단원 테마: calc(중2 Ⅰ · 그레이프 — alge 바이올렛·light 마젠타와 뚜렷이 구분) ---------- */
+.unit-band.calc { background: linear-gradient(150deg, #C77BD6 0%, #9C36B5 55%, #7D2A93 100%); }
+.gm-terrain.calc {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #F2E3F7, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #EDD8F3, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #EFDCF4, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #E5C9EE, transparent 72%),
+    linear-gradient(180deg, #FBF6FD 0%, #F4E9F8 55%, #EAD6F1 100%);
+}
+.gm-path-glow.calc { stroke: rgba(156,54,181,.22); }
+.gm-path-done.calc { stroke: #9C36B5; }
+.gm-node.calc.now .gm-med, .gm-node.calc.done .gm-med {
+  background: radial-gradient(120% 120% at 32% 26%, #C77BD6 0%, #9C36B5 58%, #7D2A93 100%);
+}
+.gm-node.calc .gm-ring { border-color: rgba(156,54,181,.55); }
+.gm-node.calc:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px #9C36B5; }
+.kicker.calc { background: #F7ECFA; color: #7D2A93; }
+
+/* ============================================================
+   Ⅰ 랩 공용(mq21-) — 패널·안내·판단 질문 줄(Ⅵ mq6- 문법 계승)
+   ============================================================ */
+
+/* ---------- shiftLab(.sfl-) 무한 꼬리 지우개 ---------- */
+.sfl-stage { padding: 16px 12px 14px; display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
+.sfl-rows { display: flex; flex-direction: column; gap: 10px; padding: 6px 2px; transition: opacity .4s var(--ease-out); }
+.sfl-rows.collapse { opacity: 0; height: 0; padding: 0; overflow: hidden; }
+.sfl-row {
+  display: flex; align-items: center; gap: 8px;
+  transition: opacity .4s var(--ease-out), transform .4s var(--ease-out);
+}
+.sfl-row.enter { opacity: 0; transform: translateY(-8px); }
+.sfl-row.leave { opacity: 0; transform: translateY(-6px); }
+.sfl-row.shake { animation: sflShake .5s ease-in-out; }
+@keyframes sflShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); } 55% { transform: translateX(4px); } 80% { transform: translateX(-2px); }
+}
+.sfl-lab { min-width: 46px; text-align: right; font-weight: 800; font-size: 17px; color: var(--n800, #2A3648); }
+.sfl-eq { font-weight: 800; color: var(--n500, #7A8698); }
+.sfl-strip { position: relative; display: flex; gap: 4px; padding: 0 2px 8px; }
+.sfl-cell {
+  width: 22px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+  font-weight: 800; font-size: 16px; color: #2A3648;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F4EBF8 100%);
+  border: 1.4px solid #D9C2E4; box-shadow: 0 1px 2px rgba(42,58,94,.08);
+  transition: opacity .35s, transform .35s, background .3s, border-color .3s;
+}
+.sfl-cell.more { background: none; border: none; box-shadow: none; color: #A08CB0; letter-spacing: 1px; }
+.sfl-cell.dim { opacity: .22; }
+.sfl-cell.pair { background: linear-gradient(180deg, #EBFBF2 0%, #D3F5E2 100%); border-color: #57C793; }
+.sfl-cell.bad { background: linear-gradient(180deg, #FEEFF0 0%, #FBD9DC 100%); border-color: #EE8B95; }
+.sfl-cell.poof { opacity: 0; transform: scale(.35) translateY(-8px); }
+.sfl-dot {
+  position: absolute; bottom: 2px; width: 9px; height: 9px; border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #C77BD6 0%, #9C36B5 70%);
+  border: 1.2px solid #7D2A93; box-shadow: 0 1px 2px rgba(125,42,147,.35);
+}
+.sfl-q { font-weight: 800; font-size: 14.5px; color: #5E2470; padding: 2px 2px 0; }
+.sfl-levers, .sfl-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.sfl-btn {
+  border: none; border-radius: 14px; padding: 10px 16px; font-weight: 800; font-size: 15px;
+  font-family: inherit; letter-spacing: -.012em; color: #5E2470; cursor: pointer;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F1E3F6 100%);
+  border: 1.4px solid #D9C2E4; box-shadow: 0 2px 5px rgba(42,58,94,.1);
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: transform .16s var(--ease-out), opacity .3s;
+}
+.sfl-btn:active { transform: scale(.965); }
+.sfl-btn[disabled] { opacity: .42; pointer-events: none; }
+.sfl-btn .sfl-bs { font-size: 12px; font-weight: 700; color: #9A7FA8; }
+.sfl-btn.go {
+  color: #fff;
+  background: linear-gradient(160deg, #B85CCB 0%, #9C36B5 60%, #7D2A93 100%);
+  border-color: #7D2A93; box-shadow: 0 3px 8px rgba(125,42,147,.32);
+}
+.sfl-btn.go .sfl-bs { color: #EAD0F2; }
+.sfl-btn.pulse { animation: sflPulse 1.6s ease-in-out infinite; }
+@keyframes sflPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.045); } }
+.sfl-result, .sfl-frac {
+  align-self: center; padding: 12px 22px; border-radius: 16px; font-size: 20px; font-weight: 800;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F7EDFA 100%);
+  border: 1.6px solid #D9C2E4; box-shadow: 0 4px 12px rgba(42,58,94,.12);
+  opacity: 0; transform: scale(.86); transition: opacity .4s var(--ease-out), transform .4s var(--spring, cubic-bezier(.34,1.35,.5,1));
+}
+.sfl-result.show, .sfl-frac.show { opacity: 1; transform: scale(1); }
+.sfl-frac { border-color: #9C36B5; color: #5E2470; }
+.sfl-check { align-self: center; font-size: 13.5px; font-weight: 700; color: #7A8698; opacity: 0; transition: opacity .5s; }
+.sfl-check.show { opacity: 1; }
+
+/* ============================================================
+   denomLab(dnl-) — 분모의 비밀 실험실(m2u1l3)
+   국면 1·2 분수 카드+소인수 칩 → 국면 3 나머지 룰렛(1÷7)
+   ============================================================ */
+
+.dnl-stage { padding: 14px 14px 4px; transition: opacity .3s var(--ease-out); }
+.dnl-scene { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+
+/* --- 분수 카드(국면 1·2) --- */
+.dnl-frac {
+  position: relative; display: flex; flex-direction: column; align-items: center;
+  min-width: 132px; max-width: 260px; padding: 14px 26px 16px; border-radius: var(--r-lg);
+  background: linear-gradient(165deg, #FFFFFF 0%, #FBF6FD 55%, #F1E4F7 100%);
+  border: 1px solid #E4D2EC; box-shadow: var(--sh-card);
+}
+.dnl-fnum {
+  font-size: 30px; font-weight: 900; color: var(--ink); line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+.dnl-fbar { align-self: stretch; height: 3px; border-radius: 2px; background: var(--n800); margin: 7px 0 9px; }
+.dnl-fden { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; min-height: 42px; }
+.dnl-dnum {
+  font-size: 30px; font-weight: 900; color: var(--ink); line-height: 1.2; padding: 2px 10px;
+  border-radius: 12px; font-variant-numeric: tabular-nums;
+  transition: transform .22s var(--ease-out), opacity .22s;
+}
+.dnl-dnum.hint { cursor: pointer; color: #7D2A93; background: #F7ECFA; animation: dnlHint 1.6s ease-in-out infinite; }
+@keyframes dnlHint {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(156, 54, 181, .35); }
+  55% { box-shadow: 0 0 0 10px rgba(156, 54, 181, 0); }
+}
+
+/* 소인수 칩 — 파운드리 재질(3스톱 그라데이션+키라이트, 균일 검정 외곽선 금지) */
+.dnl-chip {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: 12px; font-size: 17px; font-weight: 900; color: #fff;
+  box-shadow: 0 4px 10px -3px rgba(35, 48, 74, .4), inset 0 1.5px 0 rgba(255, 255, 255, .45);
+  transition: width .26s var(--ease-out), padding .26s, margin .26s, opacity .26s, transform .26s, box-shadow .2s;
+  overflow: hidden; user-select: none; -webkit-user-select: none;
+}
+.dnl-chip.p2 { background: linear-gradient(160deg, #7FA8F2, #2F6FE4 60%, #2558B8); }
+.dnl-chip.p5 { background: linear-gradient(160deg, #FFC24D, #F08C2E 60%, #D9741C); }
+.dnl-chip.p3 { background: linear-gradient(160deg, #6FD8A8, #0CA678 60%, #08865F); }
+.dnl-chip.p10 { background: linear-gradient(160deg, #C77BD6, #9C36B5 58%, #7D2A93); width: 46px; }
+.dnl-chip.fuse { box-shadow: 0 0 0 3px rgba(255, 176, 31, .8), 0 4px 10px -3px rgba(35, 48, 74, .4); transform: scale(1.1); }
+.dnl-chip.gone { width: 0; padding: 0; margin: 0 -3px; opacity: 0; transform: scale(.3); }
+.dnl-chip.curse { box-shadow: 0 0 0 3px rgba(240, 68, 82, .55), 0 4px 10px -3px rgba(35, 48, 74, .4); }
+.dnl-chip.shake { animation: dnlShake .62s ease-in-out; }
+@keyframes dnlShake {
+  0%, 100% { transform: rotate(0); }
+  15% { transform: rotate(-15deg); }
+  32% { transform: rotate(12deg); }
+  49% { transform: rotate(-9deg); }
+  66% { transform: rotate(6deg); }
+  83% { transform: rotate(-3deg); }
+}
+
+/* 등장 팝(배치는 플로우 레이아웃, transform은 키프레임 몫) */
+.dnl-pop { animation: dnlPop .38s var(--spring-bounce); }
+@keyframes dnlPop {
+  0% { transform: scale(.25); opacity: 0; }
+  60% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* 분자·분모 동시 곱 부유 배지 */
+.dnl-fx {
+  position: absolute; right: -14px; padding: 3px 9px; border-radius: 99px;
+  background: #7D2A93; color: #fff; font-size: 12.5px; font-weight: 800;
+  box-shadow: 0 4px 10px -3px rgba(125, 42, 147, .5);
+  pointer-events: none; animation: dnlFly .85s ease-out both;
+}
+.dnl-fx.n { top: 10px; }
+.dnl-fx.d { bottom: 12px; }
+@keyframes dnlFly {
+  0% { opacity: 0; transform: translateY(6px) scale(.7); }
+  25% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-18px) scale(1); }
+}
+
+/* 곱하기 버튼(mq6-choice 확장) · 선언/다음 버튼 */
+.dnl-mul { font-size: 20px; min-height: 54px; font-variant-numeric: tabular-nums; color: #7D2A93; }
+.dnl-go {
+  width: 100%; min-height: 50px; border-radius: 14px; border: 0;
+  background: linear-gradient(160deg, #C77BD6, #9C36B5 55%, #7D2A93);
+  color: #fff; font-size: 15.5px; font-weight: 800; letter-spacing: -.012em;
+  box-shadow: 0 6px 14px -4px rgba(156, 54, 181, .55), inset 0 1.5px 0 rgba(255, 255, 255, .4);
+  transition: transform .12s var(--ease-out), opacity .2s; touch-action: manipulation;
+}
+.dnl-go:active { transform: scale(.965); }
+.dnl-go[disabled] { opacity: .45; pointer-events: none; }
+.dnl-go.pulse { animation: dnlGoPulse 1.6s ease-in-out infinite; }
+@keyframes dnlGoPulse {
+  0%, 100% { box-shadow: 0 6px 14px -4px rgba(156, 54, 181, .55), 0 0 0 0 rgba(156, 54, 181, .35); }
+  50% { box-shadow: 0 6px 14px -4px rgba(156, 54, 181, .55), 0 0 0 9px rgba(156, 54, 181, 0); }
+}
+
+/* --- 나머지 룰렛(국면 3) --- */
+.dnl-wheel { width: 100%; }
+.dnl-wheel svg { display: block; width: 100%; max-width: 320px; height: auto; margin: 0 auto; }
+.dnl-slot .ov { transition: opacity .35s ease; }
+.dnl-slot.on .ov { opacity: 1; }
+.dnl-snum { fill: #6B5A78; transition: fill .35s; }
+.dnl-slot.on .dnl-snum { fill: #FFFFFF; }
+.dnl-slot.re { transform-box: fill-box; transform-origin: center; animation: dnlSlotPop .55s var(--spring-bounce); }
+.dnl-slot.re .ov { stroke: #FFD43B; stroke-width: 2.6; }
+@keyframes dnlSlotPop { 0% { transform: scale(1); } 45% { transform: scale(1.28); } 100% { transform: scale(1); } }
+.dnl-needle { transition: transform .85s cubic-bezier(.3, .7, .25, 1); }
+.dnl-ringline {
+  stroke: #A94ABF; stroke-width: 3; stroke-linecap: round; opacity: .8;
+  transition: stroke-dashoffset .5s ease .25s, stroke-width .4s, opacity .4s;
+}
+.dnl-wheel svg.loop .dnl-ringline { stroke: #9C36B5; stroke-width: 4; opacity: 1; }
+.dnl-wheel svg.loop .dnl-glowring { animation: dnlRingPulse 1.5s ease-in-out infinite; }
+@keyframes dnlRingPulse { 0%, 100% { opacity: 0; } 50% { opacity: .85; } }
+.dnl-flashc.go { animation: dnlFlash .9s ease-out both; }
+@keyframes dnlFlash { 0% { opacity: 0; } 22% { opacity: .8; } 100% { opacity: 0; } }
+
+/* 몫 띠 */
+.dnl-strip {
+  display: flex; justify-content: center; align-items: center; flex-wrap: wrap;
+  gap: 4px; row-gap: 12px; min-height: 44px;
+}
+.dnl-striplab {
+  font-size: 11.5px; font-weight: 800; color: #7D2A93; background: #F7ECFA;
+  border: 1px solid rgba(156, 54, 181, .3); padding: 3px 8px; border-radius: 99px; margin-right: 3px;
+}
+.dnl-cell {
+  position: relative; width: 30px; height: 38px; border-radius: 9px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 900; color: #fff; font-variant-numeric: tabular-nums;
+  background: linear-gradient(160deg, #C77BD6, #9C36B5 58%, #7D2A93);
+  box-shadow: 0 4px 10px -3px rgba(156, 54, 181, .5), inset 0 1.5px 0 rgba(255, 255, 255, .4);
+}
+.dnl-cell.pre { width: 20px; background: none; box-shadow: none; color: var(--n800); font-size: 21px; }
+.dnl-cell.ghost { background: #EBDDF1; box-shadow: none; color: #B08FC2; }
+.dnl-cell.dot::after {
+  content: ""; position: absolute; top: -10px; left: 50%; margin-left: -3px;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--ink);
+  animation: dnlPop .4s var(--spring-bounce) both;
+}
+.dnl-rep { min-height: 18px; font-size: 12.5px; font-weight: 700; color: var(--n600); text-align: center; }
+.dnl-rep:empty { display: none; }
+.dnl-remtag {
+  margin-left: 6px; padding: 3px 10px; border-radius: 99px; background: #F7ECFA;
+  border: 1px solid rgba(156, 54, 181, .35); color: #7D2A93; font-size: 12.5px; font-weight: 800;
+}
+
+/* ============================================================
+   exl(expandLab) — 중2 Ⅰ L9 전개 작업대
+   ============================================================ */
+.exl-stage { position: relative; padding: 8px 12px 0; touch-action: none; }
+.exl-stage svg { width: 100%; height: auto; display: block; cursor: grab; outline: none; }
+.exl-stage svg:focus-visible { outline: 3px solid rgba(156,54,181,.4); outline-offset: 2px; border-radius: 12px; }
+
+/* 저울 카드: 전체(왼쪽) = 조각 합(오른쪽), 무대 위에 */
+.exl-scale { display: flex; align-items: stretch; justify-content: center; gap: 8px; padding: 14px 14px 0; }
+.exl-scard {
+  flex: 1; max-width: 172px; min-height: 56px; padding: 7px 10px; border-radius: var(--r-md);
+  background: var(--n0); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  display: grid; align-content: center; justify-items: center; gap: 2px; text-align: center;
+}
+.exl-scard .cap { font-size: 10.5px; font-weight: 800; color: var(--n500); letter-spacing: -.01em; }
+.exl-scard .val { font-size: 15.5px; font-weight: 800; color: var(--n900); line-height: 1.25; }
+.exl-scard.wait .val { color: var(--n400); }
+.exl-scard.on { border-color: rgba(156,54,181,.5); background: #FBF4FD; }
+.exl-scard.on .val { color: #7D2A93; }
+.exl-seq {
+  align-self: center; font-size: 21px; font-weight: 900; color: var(--n400);
+  transition: color .3s, transform .3s var(--spring-bounce);
+}
+.exl-seq.on { color: #9C36B5; transform: scale(1.25); }
+
+/* 국면 2 예측: 고른 선택지 유지 표시(disabled 흐림 무시) */
+.mq6-choice.exl-picked { outline: 3px solid rgba(156,54,181,.4); outline-offset: -1px; }
+.mq6-choice.exl-picked[disabled]:not(.ok):not(.no) { opacity: 1; }
+
+/* 국면 3: 조각에 붙는 ÷2a 오버레이 버튼 + 완성 선언 버튼 */
+.exl-divbtn {
+  position: absolute; bottom: 4px; transform: translateX(-50%); min-width: 66px; height: 38px;
+  padding: 0 14px; border-radius: 12px; border: 1.5px solid rgba(156,54,181,.5);
+  background: #FBF4FD; color: #7D2A93; font-size: 15px; font-weight: 800;
+  box-shadow: var(--sh-card); transition: transform .12s, opacity .3s; touch-action: manipulation;
+}
+.exl-divbtn:active { transform: translateX(-50%) scale(.94); }
+.exl-divbtn.gone { opacity: 0; pointer-events: none; }
+.exl-declare {
+  width: 100%; height: 48px; border-radius: 14px; border: 0;
+  background: linear-gradient(160deg, #C77BD6, #9C36B5 55%, #7D2A93);
+  color: #fff; font-size: 15.5px; font-weight: 800; letter-spacing: -.012em;
+  box-shadow: 0 6px 14px -4px rgba(156,54,181,.55), inset 0 1.5px 0 rgba(255,255,255,.4);
+  transition: transform .12s var(--ease-out), opacity .3s; touch-action: manipulation;
+}
+.exl-declare:active { transform: scale(.965); }
+.exl-declare[disabled] { opacity: .45; pointer-events: none; }
+
+/* ============================================================
+   powMulLab(.pml-) — 거듭제곱 상자 병합·복제 (중2 Ⅰ L5)
+   ============================================================ */
+.pml-eq { text-align: center; padding: 14px 12px 0; font-size: 23px; font-weight: 800; color: var(--n900); min-height: 36px; }
+.pml-stage { position: relative; min-height: 212px; margin-top: 4px; touch-action: none; }
+.pml-box {
+  position: absolute; left: 0; top: 0; width: 112px; padding: 8px 8px 10px; border-radius: 18px;
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  background: linear-gradient(165deg, #FDF7FF 0%, #F6E7FA 62%, #EFD9F5 100%);
+  border: 1.5px solid rgba(156,54,181,.38);
+  box-shadow: 0 8px 18px -8px rgba(125,42,147,.35), inset 0 1.5px 0 rgba(255,255,255,.8);
+  touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab;
+  transition: box-shadow .2s;
+}
+.pml-box.alt {
+  background: linear-gradient(165deg, #FFF9F0 0%, #FCEEDC 62%, #F8E3C8 100%);
+  border-color: rgba(222,143,13,.42);
+  box-shadow: 0 8px 18px -8px rgba(222,143,13,.35), inset 0 1.5px 0 rgba(255,255,255,.8);
+}
+.pml-box.drag { z-index: 6; box-shadow: 0 16px 30px -10px rgba(23,32,48,.45); }
+.pml-box.born { animation: pmlBorn .42s var(--spring-bounce); }
+.pml-box.pop { animation: pmlPop .38s var(--spring-bounce); }
+.pml-box.no { animation: pmlShake .4s; }
+.pml-box.gone { opacity: 0; transform: scale(.72); pointer-events: none; transition: opacity .24s ease, transform .24s ease; }
+.pml-cap { font-size: 19px; line-height: 1; padding-top: 2px; }
+.pml-chips { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; max-width: 96px; min-height: 26px; }
+.pml-chip {
+  width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+  font-size: 14px; font-weight: 800; color: #fff;
+  background: radial-gradient(120% 120% at 32% 26%, #C77BD6 0%, #9C36B5 60%, #7D2A93 100%);
+  box-shadow: 0 3px 7px -2px rgba(125,42,147,.55), inset 0 1px 0 rgba(255,255,255,.45);
+  transition: opacity .2s;
+}
+.pml-box.alt .pml-chip, .pml-chip.alt {
+  background: radial-gradient(120% 120% at 32% 26%, #FFC24D 0%, #F0A422 60%, #DE8F0D 100%);
+  box-shadow: 0 3px 7px -2px rgba(222,143,13,.55), inset 0 1px 0 rgba(255,255,255,.45);
+}
+.pml-box.va .pml-chip, .pml-chip.va { font-style: italic; font-size: 15px; }
+.pml-chip.fly { position: absolute; left: 0; top: 0; z-index: 7; }
+.pml-chip.born { animation: pmlBorn .4s var(--spring-bounce); }
+@keyframes pmlBorn { 0% { transform: scale(.2); opacity: 0; } 55% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes pmlPop { 0% { transform: scale(1.14); } 100% { transform: scale(1); } }
+@keyframes pmlShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-7px); } 55% { transform: translateX(6px); } 80% { transform: translateX(-3px); } }
+.pml-read { text-align: center; font-size: 24px; min-height: 40px; padding: 2px 0 10px; }
+.pml-q {
+  margin: 2px 14px 0; padding: 11px 14px; border-radius: var(--r-md); background: #F7ECFA;
+  border: 1.5px solid rgba(156,54,181,.45); color: #7D2A93; font-size: 14.5px; font-weight: 800;
+  line-height: 1.55; text-align: center;
+}
+.pml-q:empty { display: none; }
+.pml-ctl { margin: 10px 14px 0; display: grid; gap: 8px; padding-bottom: 14px; }
+.pml-ctl:empty { display: none; }
+.pml-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+.pml-choice {
+  min-height: 58px; padding: 8px 10px; border-radius: 14px; border: 1.5px solid var(--n300);
+  background: var(--n0); box-shadow: var(--sh-card);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  font-size: 17px; font-weight: 800; color: var(--n900); line-height: 1.3;
+  transition: transform .12s, border-color .2s, background .2s; touch-action: manipulation;
+}
+.pml-choice:active { transform: scale(.95); }
+.pml-choice.ok { border-color: var(--green); background: #F0FBF5; }
+.pml-choice.no { border-color: var(--red); background: #FEF3F4; }
+.pml-choice[disabled]:not(.ok):not(.no) { opacity: .45; }
+.pml-chsub { font-size: 12px; font-weight: 700; color: var(--n600); }
+.pml-btn {
+  width: 100%; min-height: 50px; border-radius: 14px; border: 0;
+  background: linear-gradient(160deg, #C77BD6, #9C36B5 55%, #7D2A93);
+  color: #fff; font-size: 15.5px; font-weight: 800; letter-spacing: -.012em;
+  box-shadow: 0 6px 14px -4px rgba(156,54,181,.55), inset 0 1.5px 0 rgba(255,255,255,.4);
+  transition: transform .12s var(--ease-out), opacity .2s; touch-action: manipulation;
+}
+.pml-btn:active { transform: scale(.965); }
+.pml-btn[disabled] { opacity: .45; pointer-events: none; }
+@keyframes pmlPulse { 0%, 100% { box-shadow: 0 6px 14px -4px rgba(156,54,181,.5), 0 0 0 0 rgba(156,54,181,.35); } 50% { box-shadow: 0 6px 14px -4px rgba(156,54,181,.5), 0 0 0 9px rgba(156,54,181,0); } }
+.pml-pulse { animation: pmlPulse 1.6s ease-in-out infinite; }
+
+/* ============================================================
+   powDivLab(.pdl-) — 약분 실험대(세 운명)·괄호 분배 (중2 Ⅰ L6)
+   ============================================================ */
+.pdl-eq { text-align: center; padding: 14px 12px 0; font-size: 23px; font-weight: 800; color: var(--n900); min-height: 36px; }
+.pdl-stage { position: relative; min-height: 176px; margin-top: 4px; }
+.pdl-bar {
+  position: absolute; left: 10%; right: 10%; top: 94px; height: 5px; border-radius: 3px;
+  background: linear-gradient(90deg, #B65CC9, #7D2A93 55%, #B65CC9);
+  box-shadow: 0 2px 5px -1px rgba(125,42,147,.4), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.pdl-rowlab {
+  position: absolute; left: 10px; font-size: 11px; font-weight: 800; color: var(--n400);
+  background: var(--n0); border: 1px solid var(--n200); border-radius: 99px; padding: 3px 8px;
+  pointer-events: none; transition: opacity .4s;
+}
+.pdl-chip {
+  position: absolute; left: 0; top: 0; width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 18px; font-weight: 800; color: #fff;
+  background: radial-gradient(120% 120% at 32% 26%, #C77BD6 0%, #9C36B5 60%, #7D2A93 100%);
+  box-shadow: 0 4px 10px -2px rgba(125,42,147,.55), inset 0 1.5px 0 rgba(255,255,255,.45);
+  touch-action: manipulation; user-select: none; -webkit-user-select: none; cursor: pointer;
+  transition: box-shadow .2s;
+}
+.pdl-chip .mx, .pdl-chip .mx .mx-v { color: #fff; }
+.pdl-chip.num {
+  background: radial-gradient(120% 120% at 32% 26%, #FFC24D 0%, #F0A422 60%, #DE8F0D 100%);
+  box-shadow: 0 4px 10px -2px rgba(222,143,13,.55), inset 0 1.5px 0 rgba(255,255,255,.45);
+}
+.pdl-chip.mini { position: static; width: 26px; height: 26px; font-size: 14px; }
+.pdl-chip.born { animation: pdlBorn .4s var(--spring-bounce); }
+.pdl-chip.poof { animation: pdlPoof .44s var(--ease-out) forwards; }
+.pdl-chip.cut::after {
+  content: ""; position: absolute; left: -7px; right: -7px; top: 50%; height: 3.5px; margin-top: -1.75px;
+  border-radius: 2px; background: #fff; box-shadow: 0 1px 3px rgba(23,32,48,.4);
+  transform: rotate(-48deg) scaleX(0); animation: pdlSlash .2s ease-out forwards;
+}
+@keyframes pdlSlash { to { transform: rotate(-48deg) scaleX(1); } }
+@keyframes pdlBorn { 0% { transform: scale(.2); opacity: 0; } 55% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes pdlPoof { 0% { transform: scale(1) rotate(0deg); opacity: 1; } 100% { transform: scale(.1) rotate(140deg); opacity: 0; } }
+.pdl-one {
+  position: absolute; width: 50px; height: 50px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 24px; font-weight: 900; color: #6B4A00;
+  background: radial-gradient(120% 120% at 32% 26%, #FFE28A 0%, #F2B430 60%, #DE9A0D 100%);
+  box-shadow: 0 6px 14px -4px rgba(200,130,10,.6), inset 0 1.5px 0 rgba(255,255,255,.6);
+  animation: pdlBorn .5s var(--spring-bounce);
+}
+.pdl-fate { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 14px 0; }
+.pdl-slot {
+  border-radius: 14px; border: 1.5px dashed var(--n300); background: var(--n0);
+  padding: 8px 6px 9px; text-align: center;
+  display: flex; flex-direction: column; gap: 4px; align-items: center;
+  transition: border-color .25s, background .25s;
+}
+.pdl-slot.on { border-style: solid; border-color: rgba(156,54,181,.5); background: #FBF3FD; box-shadow: var(--sh-card); }
+.pdl-slot.pop { animation: pdlPop .4s var(--spring-bounce); }
+@keyframes pdlPop { 0% { transform: scale(1.1); } 100% { transform: scale(1); } }
+.pdl-slotcap { font-size: 11px; font-weight: 800; color: var(--n500); }
+.pdl-slot.on .pdl-slotcap { color: #7D2A93; }
+.pdl-sloteq { font-size: 13px; }
+.pdl-slotres { min-height: 24px; font-size: 17px; font-weight: 800; color: var(--n300); }
+.pdl-slot.on .pdl-slotres { color: var(--n900); }
+.pdl-box {
+  position: absolute; left: 0; top: 0; width: 112px; padding: 10px 8px 12px; border-radius: 18px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  background: linear-gradient(165deg, #FDF7FF 0%, #F6E7FA 62%, #EFD9F5 100%);
+  border: 1.5px solid rgba(156,54,181,.38);
+  box-shadow: 0 8px 18px -8px rgba(125,42,147,.35), inset 0 1.5px 0 rgba(255,255,255,.8);
+  touch-action: manipulation; user-select: none; -webkit-user-select: none; cursor: pointer;
+}
+.pdl-box.born { animation: pdlBorn .42s var(--spring-bounce); }
+.pdl-cap { font-size: 20px; line-height: 1; }
+.pdl-boxchips { display: flex; gap: 6px; }
+.pdl-exp {
+  position: absolute; top: -9px; right: -9px; min-width: 26px; height: 26px; border-radius: 99px;
+  background: #FFB01F; color: #5C3A00; font-size: 14px; font-weight: 900;
+  display: grid; place-items: center; padding: 0 5px;
+  box-shadow: 0 3px 8px -2px rgba(200,130,10,.6); border: 2px solid #fff;
+}
+.pdl-times { position: absolute; font-size: 18px; font-weight: 800; color: var(--n500); transition: opacity .3s; }
+.pdl-grp {
+  position: absolute; width: 120px; text-align: center; padding: 6px 4px; border-radius: 10px;
+  background: var(--n0); border: 1px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 14px; animation: pdlBorn .4s var(--spring-bounce);
+}
+.pdl-read { text-align: center; font-size: 24px; min-height: 40px; padding: 2px 0 10px; }
+.pdl-q {
+  margin: 2px 14px 0; padding: 11px 14px; border-radius: var(--r-md); background: #F7ECFA;
+  border: 1.5px solid rgba(156,54,181,.45); color: #7D2A93; font-size: 14.5px; font-weight: 800;
+  line-height: 1.55; text-align: center;
+}
+.pdl-q:empty { display: none; }
+.pdl-ctl { margin: 10px 14px 0; display: grid; gap: 8px; padding-bottom: 14px; }
+.pdl-ctl:empty { display: none; }
+.pdl-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+.pdl-choice {
+  min-height: 58px; padding: 8px 10px; border-radius: 14px; border: 1.5px solid var(--n300);
+  background: var(--n0); box-shadow: var(--sh-card);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  font-size: 15px; font-weight: 800; color: var(--n900); line-height: 1.3;
+  transition: transform .12s, border-color .2s, background .2s; touch-action: manipulation;
+}
+.pdl-choice:active { transform: scale(.95); }
+.pdl-choice.ok { border-color: var(--green); background: #F0FBF5; }
+.pdl-choice.no { border-color: var(--red); background: #FEF3F4; }
+.pdl-choice[disabled]:not(.ok):not(.no) { opacity: .45; }
+.pdl-chsub { font-size: 11.5px; font-weight: 700; color: var(--n600); }
+@keyframes pdlPulse { 0%, 100% { box-shadow: 0 8px 18px -8px rgba(125,42,147,.35), 0 0 0 0 rgba(156,54,181,.35); } 50% { box-shadow: 0 8px 18px -8px rgba(125,42,147,.35), 0 0 0 9px rgba(156,54,181,0); } }
+.pdl-pulse { animation: pdlPulse 1.6s ease-in-out infinite; }
+
+/* ============================================================
+   monoLab(.mnl-) — 단항식 헤쳐 모여 랩(중2 Ⅰ L7)
+   ============================================================ */
+
+/* 미션 수식 필(보드 상단, 흐름 배치) */
+.mnl-expr {
+  width: fit-content; margin: 12px auto 0; padding: 7px 18px; border-radius: 99px;
+  background: var(--n0); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 17px; position: relative;
+}
+
+/* 분류 존 두 칸(보드 하단 고정) — 수 존은 앰버(상수 칩 색), 문자 존은 시안(문자 칩 색) */
+.mnl-zones {
+  position: absolute; left: 10px; right: 10px; bottom: 10px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  transition: opacity .3s ease;
+}
+.mnl-zone {
+  position: relative; height: 108px; border-radius: 16px;
+  border: 2px dashed rgba(156,54,181,.3);
+  transition: border-color .2s, background .2s, box-shadow .25s;
+}
+.mnl-zone.znum {
+  border-color: rgba(240,164,34,.5);
+  background: linear-gradient(180deg, #FFFDF6 0%, #FCF3DF 100%);
+}
+.mnl-zone.zvar {
+  border-color: rgba(13,165,198,.45);
+  background: linear-gradient(180deg, #F7FDFE 0%, #E4F5FA 100%);
+}
+.mnl-zlabel {
+  position: absolute; top: 9px; left: 0; right: 0; text-align: center;
+  font-size: 12.5px; font-weight: 800; letter-spacing: -.01em; pointer-events: none;
+}
+.mnl-zone.znum .mnl-zlabel { color: #B26200; }
+.mnl-zone.zvar .mnl-zlabel { color: #0A87A3; }
+.mnl-zone.znum.hot { border-style: solid; border-color: #F0A422; background: #FCEFD2; box-shadow: 0 0 0 4px rgba(240,164,34,.18); }
+.mnl-zone.zvar.hot { border-style: solid; border-color: #0DA5C6; background: #DDF2F8; box-shadow: 0 0 0 4px rgba(13,165,198,.16); }
+.mnl-zone.cue { animation: mnlCue 1.5s ease-in-out infinite; }
+@keyframes mnlCue {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(156,54,181,0); }
+  50% { box-shadow: 0 0 0 6px rgba(156,54,181,.14); }
+}
+
+/* 결과 카드(그레이프, 합체 완성 순간 팝) */
+.mnl-result {
+  position: absolute; left: 50%; top: 86px; transform: translate(-50%, 0) scale(.5);
+  padding: 12px 22px; border-radius: 18px; opacity: 0; pointer-events: none;
+  background: linear-gradient(165deg, #C77BD6 0%, #9C36B5 60%, #7D2A93 100%);
+  border: 1px solid #6E2482;
+  box-shadow: 0 10px 24px -8px rgba(156,54,181,.65), inset 0 1.5px 0 rgba(255,255,255,.4);
+  font-size: 24px; transition: transform .45s var(--spring-bounce), opacity .3s ease;
+}
+.mnl-result.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+.mnl-result .mx, .mnl-result .mx .mx-op, .mnl-result .mx .mx-pos, .mnl-result .mx .mx-neg { color: #fff; }
+
+/* 교환·결합법칙 라벨(국면 1 완성 때 슬쩍) */
+.mnl-laws {
+  position: absolute; left: 0; right: 0; top: 150px;
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+  opacity: 0; transition: opacity .5s var(--ease-out); pointer-events: none;
+}
+.mnl-laws.show { opacity: 1; }
+.mnl-law {
+  padding: 5px 12px; border-radius: 99px; background: #F7ECFA;
+  border: 1px solid rgba(156,54,181,.3); color: #7D2A93;
+  font-size: 11.5px; font-weight: 800;
+}
+
+/* 국면 3: 나눗셈 카드 행 + 뒤집기 플립(perspective 회전) */
+.mnl-divrow {
+  position: absolute; left: 0; right: 0; top: 60px;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  transition: opacity .35s ease;
+}
+.mnl-card {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 64px; padding: 6px 16px; border-radius: 16px;
+  background: linear-gradient(165deg, #FFFFFF 0%, #F6FBFD 75%, #ECF4F9 100%);
+  border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 20px;
+}
+.mnl-flip { perspective: 520px; }
+.mnl-flipin { position: relative; transform-style: preserve-3d; transition: transform .72s var(--spring-soft); }
+.mnl-flipin.go { transform: rotateY(180deg); }
+.mnl-face {
+  display: flex; align-items: center; justify-content: center;
+  min-width: 106px; min-height: 64px; padding: 6px 14px; border-radius: 16px;
+  background: linear-gradient(165deg, #FFFFFF 0%, #F7ECFA 70%, #EFDCF4 100%);
+  border: 1.5px solid #E0C2EA; box-shadow: var(--sh-card);
+  font-size: 20px; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+}
+.mnl-face.back {
+  position: absolute; inset: 0; transform: rotateY(180deg);
+  background: linear-gradient(165deg, #FDF7FF 0%, #F2E2F8 70%, #E9CFF3 100%);
+  border-color: #D5A9E4;
+}
+
+/* 국면 3: 분수 무대(위 분자·아래 분모, 탭 상쇄) */
+.mnl-fracwrap {
+  position: absolute; left: 0; right: 0; top: 138px;
+  display: grid; justify-items: center; gap: 10px;
+  opacity: 0; transition: opacity .4s var(--ease-out);
+}
+.mnl-fracwrap.show { opacity: 1; }
+.mnl-frow { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 46px; }
+.mnl-fbar { width: 208px; height: 4px; border-radius: 3px; background: var(--n700); box-shadow: 0 1px 0 rgba(255,255,255,.6); }
+
+/* 약분 빗금(상쇄된 칩은 흔적을 남긴 채 흐려진다) */
+.tm-chip.mnl-x { pointer-events: none; opacity: .35; transition: opacity .3s ease .22s; }
+.tm-chip.mnl-x::after {
+  content: ""; position: absolute; left: 9%; right: 9%; top: 50%; height: 3.5px; margin-top: -1.75px;
+  border-radius: 2px; background: rgba(255,255,255,.92);
+  box-shadow: 0 1px 3px rgba(23,32,48,.35);
+  transform: rotate(-16deg); animation: mnlStrike .28s var(--ease-out);
+}
+@keyframes mnlStrike {
+  0% { transform: rotate(-16deg) scaleX(0); }
+  100% { transform: rotate(-16deg) scaleX(1); }
+}
+
+/* ============================================================
+   polyAddLab(.pal-) — 다항식 정리소(중2 Ⅰ L8)
+   ============================================================ */
+
+/* 괄호 상자 행(보드 상단) */
+.pal-boxrow {
+  position: absolute; left: 0; right: 0; top: 14px;
+  display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+  padding: 0 8px;
+}
+.pal-box {
+  position: relative; padding: 12px 14px; border-radius: 16px; cursor: pointer;
+  background: linear-gradient(165deg, #FFF9EF 0%, #F8ECD9 70%, #F0DFC4 100%);
+  border: 1.5px solid #E3CBA4;
+  box-shadow: 0 6px 14px -6px rgba(122,86,40,.35), inset 0 1.5px 0 rgba(255,255,255,.7);
+  font-size: 17px; white-space: nowrap;
+  transition: transform .18s var(--spring-soft), opacity .3s ease, box-shadow .3s ease, background .3s ease;
+  touch-action: manipulation; user-select: none; -webkit-user-select: none;
+}
+.pal-box:active { transform: scale(.96); }
+.pal-box.minus {
+  background: linear-gradient(165deg, #FFF6F6 0%, #FBE7E9 70%, #F6D6DA 100%);
+  border-color: #EBBFC6;
+  box-shadow: 0 6px 14px -6px rgba(194,40,52,.3), inset 0 1.5px 0 rgba(255,255,255,.7);
+}
+.pal-box.open {
+  opacity: .5; cursor: default; background: transparent;
+  border-style: dashed; box-shadow: none;
+}
+.pal-tap {
+  position: absolute; top: -10px; right: -8px; padding: 3px 9px; border-radius: 99px;
+  background: linear-gradient(160deg, #C77BD6, #9C36B5 65%, #7D2A93); color: #fff;
+  font-size: 10.5px; font-weight: 900; letter-spacing: -.01em;
+  border: 1.5px solid #fff; box-shadow: 0 4px 10px -3px rgba(156,54,181,.6);
+  animation: palNudge 1.5s ease-in-out infinite; pointer-events: none;
+}
+@keyframes palNudge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.pal-stamp {
+  position: absolute; top: -13px; left: -11px; width: 34px; height: 34px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: radial-gradient(120% 120% at 32% 26%, #FF8B95 0%, #E8434F 58%, #C22834 100%);
+  color: #fff; font-size: 21px; font-weight: 900; line-height: 1;
+  border: 2px solid #fff; box-shadow: 0 5px 12px -4px rgba(232,67,79,.7);
+  transform: rotate(-12deg); pointer-events: none;
+}
+.pal-op { font-size: 24px; font-weight: 900; color: var(--n600); }
+.pal-op.minus { color: #C22834; font-size: 27px; }
+
+/* 부호 배지(칩 좌상단) — 셈돌(counterLab)의 파랑(+)·빨강(−) 부호 언어를 항 칩에 계승 */
+.pal-sg {
+  position: absolute; top: -8px; left: -8px; width: 22px; height: 22px; border-radius: 99px;
+  display: grid; place-items: center; font-size: 14px; font-weight: 900; color: #fff;
+  border: 2px solid #fff; box-shadow: 0 3px 8px -2px rgba(23,32,48,.4);
+  transition: background .15s ease; pointer-events: none;
+}
+.pal-sg.p { background: linear-gradient(160deg, #7FB4FF, #2F6FE4 65%, #1D53BC); }
+.pal-sg.n { background: linear-gradient(160deg, #FF9AA2, #E8434F 65%, #C22834); }
+
+/* ============================================================
+   divLab(중2 Ⅰ L1) — 나눗셈 기계 .dvl-*
+   파운드리 재질: 3스톱 그라데이션 + 좌상 키라이트 + 접촉 그림자
+   ============================================================ */
+
+.dvl-stage { padding: 16px 14px 2px; display: grid; justify-items: center; }
+.dvl-machine {
+  position: relative; width: min(320px, 100%); border-radius: 20px; padding: 12px 12px 14px;
+  background: linear-gradient(165deg, #F6ECFB 0%, #E9D2F4 55%, #D9B8EA 100%);
+  border: 1.5px solid #B285CD;
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.65), 0 10px 20px -12px rgba(42,58,94,.35);
+}
+.dvl-machine::before { /* 좌상단 키라이트 */
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(120% 70% at 16% 0%, rgba(255,255,255,.55), transparent 55%);
+}
+.dvl-machine::after { /* 바닥 접촉 그림자 */
+  content: ""; position: absolute; left: 10%; right: 10%; bottom: -11px; height: 14px;
+  border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, #2A3A5E, transparent 72%);
+  opacity: .12; pointer-events: none;
+}
+.dvl-mhead { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.dvl-frac {
+  min-width: 76px; min-height: 46px; padding: 4px 12px; border-radius: 12px;
+  display: grid; place-items: center;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FBF6FD 70%, #F3E8F8 100%);
+  border: 1.4px solid #D9C2E6; box-shadow: inset 0 2px 4px rgba(125,42,147,.08);
+}
+.dvl-frac .mx { font-size: 20px; }
+.dvl-frac.pop { animation: dvlPop .38s var(--spring-bounce); }
+.dvl-wheel { width: 46px; height: 48px; flex: 0 0 auto; }
+.dvl-wheel svg { display: block; width: 100%; height: auto; }
+.dvl-wheelg { transform-box: view-box; transform-origin: 22px 22px; transition: transform .5s var(--spring-soft); }
+.dvl-lamp {
+  width: 16px; height: 16px; border-radius: 50%; flex: 0 0 auto;
+  background: radial-gradient(circle at 32% 28%, #FFD98A, #F0A422 62%, #C77E08);
+  box-shadow: inset 0 -2px 3px rgba(0,0,0,.18), 0 0 0 3px rgba(240,164,34,.16);
+  transition: background .3s, box-shadow .3s;
+}
+.dvl-lamp.go { animation: dvlLampGo .32s ease; }
+.dvl-lamp.stop {
+  background: radial-gradient(circle at 32% 28%, #7BE3AC, #04B45F 62%, #02914C);
+  box-shadow: inset 0 -2px 3px rgba(0,0,0,.16), 0 0 0 4px rgba(4,180,95,.2), 0 0 12px rgba(4,180,95,.55);
+  animation: dvlLampOn .5s var(--spring-bounce);
+}
+.dvl-quot {
+  display: flex; align-items: center; gap: 5px; flex-wrap: nowrap; overflow: hidden;
+  min-height: 58px; padding: 6px 12px; border-radius: 12px;
+  background: linear-gradient(180deg, #F1E6F7 0%, #FFFFFF 34%, #FFFFFF 100%);
+  border: 1.4px solid #D9C2E6; box-shadow: inset 0 3px 6px rgba(125,42,147,.1);
+}
+.dvl-int { font-size: 24px; font-weight: 900; color: var(--n600); padding: 0 2px; flex: 0 0 auto; }
+.dvl-digit {
+  width: 30px; height: 42px; border-radius: 10px; flex: 0 0 auto;
+  display: grid; place-items: center; font-size: 21px; font-weight: 900; color: #fff;
+  background: linear-gradient(165deg, #C77BD6 0%, #9C36B5 60%, #7D2A93 100%);
+  border: 1px solid #7D2A93;
+  box-shadow: 0 4px 9px -3px rgba(125,42,147,.5), inset 0 1.5px 0 rgba(255,255,255,.42);
+  animation: dvlIn .38s var(--spring-bounce) both;
+}
+.dvl-ell { font-size: 22px; font-weight: 900; color: #B285CD; padding-left: 2px; flex: 0 0 auto; }
+.dvl-ell.pop { animation: dvlPop .3s var(--spring-bounce); }
+.dvl-mfoot { margin-top: 10px; display: flex; justify-content: center; }
+.dvl-rem {
+  padding: 7px 16px; border-radius: 99px; font-size: 14px; font-weight: 800; color: var(--n700);
+  background: linear-gradient(180deg, #FFFFFF, #FBF6FD);
+  border: 1.4px solid #D9C2E6;
+  box-shadow: 0 3px 7px -3px rgba(64,32,84,.25), inset 0 1.2px 0 rgba(255,255,255,.8);
+  transition: border-color .25s, background .25s;
+}
+.dvl-rem b { font-size: 17px; color: #7D2A93; margin-left: 3px; font-variant-numeric: tabular-nums; }
+.dvl-rem.bump { animation: dvlBump .35s var(--spring-bounce); }
+.dvl-rem.zero { border-color: var(--green); background: #F0FBF5; }
+.dvl-rem.zero b { color: #1E7A31; }
+.dvl-stamp {
+  position: absolute; top: 56px; right: 14px; z-index: 2; pointer-events: none;
+  padding: 4px 12px; border: 3px solid currentColor; border-radius: 10px;
+  font-size: 20px; font-weight: 900; letter-spacing: .08em; color: #04935B;
+  background: rgba(255,255,255,.88); opacity: 0; transform: rotate(-12deg);
+}
+.dvl-stamp.inf { color: #C2255C; }
+.dvl-stamp.show { animation: dvlStamp .5s var(--spring-bounce) both; }
+.mq6-btn.dvl-crank {
+  background: linear-gradient(160deg, #C77BD6, #9C36B5 55%, #7D2A93);
+  box-shadow: 0 6px 14px -4px rgba(156,54,181,.55), inset 0 1.5px 0 rgba(255,255,255,.4);
+}
+.mq6-btn.dvl-declare {
+  background: linear-gradient(160deg, #F783AC, #E8547E 55%, #C2255C);
+  box-shadow: 0 6px 14px -4px rgba(232,84,126,.55), inset 0 1.5px 0 rgba(255,255,255,.4);
+}
+.mq6-choice.dvl-sel:not(.ok):not(.no) { opacity: 1; border-color: #9C36B5; background: #F6EBFA; color: #7D2A93; }
+@keyframes dvlIn { from { opacity: 0; transform: translateX(18px) scale(.55); } to { opacity: 1; transform: none; } }
+@keyframes dvlPop { 0% { opacity: .35; transform: scale(.82); } 60% { transform: scale(1.06); } 100% { opacity: 1; transform: none; } }
+@keyframes dvlBump { 0% { transform: scale(1); } 45% { transform: scale(1.14); } 100% { transform: scale(1); } }
+@keyframes dvlStamp { 0% { opacity: 0; transform: rotate(-12deg) scale(2.1); } 62% { opacity: 1; transform: rotate(-12deg) scale(.94); } 100% { opacity: 1; transform: rotate(-12deg) scale(1); } }
+@keyframes dvlLampGo { 0%, 100% { filter: none; } 40% { filter: brightness(1.55); } }
+@keyframes dvlLampOn { 0% { transform: scale(.7); } 55% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
+/* ============================================================
+   cycleLab(중2 Ⅰ L2) — 순환마디 스캐너 .cyl-*
+   ============================================================ */
+
+.cyl-stage { padding: 14px 8px 0; }
+.cyl-strip {
+  display: flex; align-items: center; justify-content: center; gap: 2px;
+  padding: 16px 6px 8px; touch-action: manipulation;
+  transform-origin: 50% 60%; transition: transform .42s var(--ease-out), opacity .42s;
+}
+.cyl-strip.fold { transform: scaleY(.12); opacity: 0; pointer-events: none; }
+.cyl-int { font-size: 19px; font-weight: 900; color: var(--n700); padding-right: 2px; white-space: nowrap; flex: 0 0 auto; }
+.cyl-d {
+  position: relative; flex: 0 1 26px; min-width: 17px; height: 38px; padding: 0;
+  border-radius: 9px; border: 1.4px solid #D9C2E6;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAF5FC 60%, #F1E6F7 100%);
+  box-shadow: 0 2px 5px -2px rgba(64,32,84,.2), inset 0 1.2px 0 rgba(255,255,255,.8);
+  display: grid; place-items: center; font-size: 17px; font-weight: 900; color: var(--n800);
+  touch-action: manipulation; user-select: none; -webkit-user-select: none;
+  animation: cylIn .34s var(--ease-out) both;
+  transition: background .2s, border-color .2s, box-shadow .2s, color .2s;
+}
+.cyl-d.sel { background: #F6EBFA; border-color: #C77BD6; color: #7D2A93; }
+.cyl-d.edge { border-color: #9C36B5; box-shadow: 0 0 0 2.5px rgba(156,54,181,.25), 0 2px 5px -2px rgba(64,32,84,.2); }
+.cyl-d.cmp { border-color: #F08C00; box-shadow: 0 0 0 2.5px rgba(240,140,0,.32), 0 2px 5px -2px rgba(64,32,84,.2); }
+.cyl-d.hit { background: #E9FBF1; border-color: var(--green); color: #1E7A31; animation: cylHit .3s ease; }
+.cyl-d.miss { background: #FEF3F4; border-color: var(--red); color: rgba(240,68,82,.4); }
+.cyl-d.dotted { background: #F6EBFA; border-color: #9C36B5; color: #7D2A93; }
+.cyl-x {
+  position: absolute; inset: 0; display: grid; place-items: center; font-style: normal;
+  font-size: 24px; font-weight: 900; color: var(--red); text-shadow: 0 0 4px #fff;
+  animation: cylPop .28s var(--spring-bounce) both; pointer-events: none;
+}
+.cyl-dot {
+  position: absolute; left: 0; right: 0; text-align: center; font-style: normal;
+  font-weight: 900; color: #9C36B5; line-height: 12px; pointer-events: none;
+  animation: cylDrop .45s var(--spring-bounce) both;
+}
+.cyl-d .cyl-dot { top: -16px; font-size: 30px; }
+.cyl-ell { font-size: 19px; font-weight: 900; color: #C6A9D6; padding-left: 3px; opacity: .7; flex: 0 0 auto; }
+.cyl-pick { text-align: center; font-size: 13.5px; font-weight: 800; color: var(--n600); padding: 2px 0 0; }
+.cyl-pick:empty { display: none; }
+.cyl-pick b { color: #7D2A93; font-size: 15px; letter-spacing: .14em; margin-left: 2px; }
+.mq6-btn.cyl-check {
+  background: linear-gradient(160deg, #C77BD6, #9C36B5 55%, #7D2A93);
+  box-shadow: 0 6px 14px -4px rgba(156,54,181,.55), inset 0 1.5px 0 rgba(255,255,255,.4);
+}
+.cyl-fold {
+  display: grid; gap: 5px; justify-items: center; padding: 14px 14px 12px;
+  border-radius: var(--r-md); background: linear-gradient(180deg, #FBF6FD, #F4E9F8);
+  border: 1.5px solid rgba(156,54,181,.4); box-shadow: var(--sh-card);
+}
+.cyl-note { display: inline-flex; align-items: baseline; font-size: 26px; font-weight: 900; color: var(--n900); font-variant-numeric: tabular-nums; }
+.cyl-dg { position: relative; display: inline-block; min-width: 15px; padding: 0 1px; text-align: center; }
+.cyl-note .cyl-dot { top: -12px; font-size: 24px; }
+.cyl-read { font-size: 13px; font-weight: 700; color: var(--n600); text-align: center; line-height: 1.5; }
+@keyframes cylIn { from { opacity: 0; transform: translateY(7px) scale(.7); } to { opacity: 1; transform: none; } }
+@keyframes cylHit { 40% { transform: scale(1.12); } }
+@keyframes cylDrop { 0% { opacity: 0; transform: translateY(-12px); } 62% { opacity: 1; transform: translateY(2px); } 100% { opacity: 1; transform: none; } }
+@keyframes cylPop { 0% { opacity: 0; transform: scale(.5); } 60% { opacity: 1; transform: scale(1.15); } 100% { opacity: 1; transform: scale(1); } }
+
+/* (랩 구현 에이전트 스니펫은 이 아래에 메인이 붙인다 — 접두 규약 준수) */

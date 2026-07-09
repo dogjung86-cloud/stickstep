@@ -896,6 +896,71 @@ const MAP_DECOR: Record<string, string> = {
     `<radialGradient id="rt-a" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#B9C3F5"/><stop offset="1" stop-color="#7787E8"/></radialGradient>
     <linearGradient id="rt-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFD98A"/><stop offset="1" stop-color="#E8A93E"/></linearGradient>`,
   ),
+  // ── 중2 수학 Ⅰ. 유리수의 표현과 식의 계산 — 계산기 → 반복 테이프 → 무한 리본 → 지수 탑 → 항 칩 ──
+  calcDeco: S(
+    `${shadow(32, 56, 16, 0.13)}
+    <rect x="14" y="10" width="36" height="44" rx="7" fill="url(#cc-bd)" stroke="#5E2470" stroke-width="1.6"/>
+    <rect x="19" y="15" width="26" height="12" rx="3.5" fill="url(#cc-sc)" stroke="#5E2470" stroke-width="1.2"/>
+    <circle cx="27" cy="21" r="1.6" fill="#7D2A93"/><circle cx="32" cy="21" r="1.6" fill="#7D2A93"/><circle cx="37" cy="21" r="1.6" fill="#7D2A93"/>
+    <g fill="url(#cc-k)" stroke="#5E2470" stroke-width="1">
+      <rect x="19" y="31" width="7.4" height="6.4" rx="2.4"/><rect x="28.3" y="31" width="7.4" height="6.4" rx="2.4"/><rect x="37.6" y="31" width="7.4" height="6.4" rx="2.4"/>
+      <rect x="19" y="40" width="7.4" height="6.4" rx="2.4"/><rect x="28.3" y="40" width="7.4" height="6.4" rx="2.4"/>
+    </g>
+    <rect x="37.6" y="40" width="7.4" height="6.4" rx="2.4" fill="url(#cc-eq)" stroke="#5E2470" stroke-width="1"/>
+    <ellipse cx="22" cy="14" rx="4.6" ry="2" fill="#fff" opacity=".5"/>`,
+    `<linearGradient id="cc-bd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C77BD6"/><stop offset=".5" stop-color="#9C36B5"/><stop offset="1" stop-color="#7D2A93"/></linearGradient>
+    <linearGradient id="cc-sc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBF3FD"/><stop offset="1" stop-color="#E8D3EF"/></linearGradient>
+    <linearGradient id="cc-k" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3E4F8"/><stop offset="1" stop-color="#D9B5E4"/></linearGradient>
+    <linearGradient id="cc-eq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD98A"/><stop offset="1" stop-color="#E8A93E"/></linearGradient>`,
+  ),
+  tapeDeco: S(
+    `${shadow(30, 56, 18, 0.13)}
+    <path d="M14 44 h38 v9 h-38 z" fill="url(#tp-st)" stroke="#5E2470" stroke-width="1.3"/>
+    <g stroke="#9C36B5" stroke-width="2.2" opacity=".8"><path d="M19 44 v9"/><path d="M29 44 v9"/><path d="M39 44 v9"/><path d="M49 44 v9"/></g>
+    <g stroke="#E8A93E" stroke-width="2.2" opacity=".85"><path d="M24 44 v9"/><path d="M34 44 v9"/><path d="M44 44 v9"/></g>
+    <circle cx="30" cy="28" r="16" fill="url(#tp-rl)" stroke="#5E2470" stroke-width="1.6"/>
+    <circle cx="30" cy="28" r="6.5" fill="url(#tp-co)" stroke="#5E2470" stroke-width="1.2"/>
+    <ellipse cx="24" cy="20" rx="5" ry="3" fill="#fff" opacity=".55" transform="rotate(-24 24 20)"/>`,
+    `<radialGradient id="tp-rl" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#E3B9EE"/><stop offset=".55" stop-color="#C77BD6"/><stop offset="1" stop-color="#9C36B5"/></radialGradient>
+    <linearGradient id="tp-co" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBF3FD"/><stop offset="1" stop-color="#E0C4EA"/></linearGradient>
+    <linearGradient id="tp-st" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCF7FE"/><stop offset="1" stop-color="#EEDDF4"/></linearGradient>`,
+  ),
+  loopDeco: S(
+    `${shadow(32, 54, 17, 0.12)}
+    <path d="M18 32 C18 22 30 22 32 30 C34 38 46 38 46 28 C46 20 36 19 32 26 C28 33 18 42 18 32 Z"
+      fill="none" stroke="url(#lp-a)" stroke-width="6.5" stroke-linecap="round" opacity=".35"/>
+    <path d="M32 30 C30 22 18 22 18 32 C18 42 28 33 32 26 C36 19 46 20 46 28 C46 38 34 38 32 30 Z"
+      fill="none" stroke="url(#lp-b)" stroke-width="4.6" stroke-linecap="round"/>
+    <circle cx="46" cy="28" r="3.4" fill="url(#lp-dot)" stroke="#8C5A12" stroke-width="1.1"/>
+    <ellipse cx="24" cy="24" rx="4.4" ry="2.2" fill="#fff" opacity=".5" transform="rotate(-18 24 24)"/>`,
+    `<linearGradient id="lp-a" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E3B9EE"/><stop offset="1" stop-color="#C77BD6"/></linearGradient>
+    <linearGradient id="lp-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B85CCB"/><stop offset=".5" stop-color="#9C36B5"/><stop offset="1" stop-color="#7D2A93"/></linearGradient>
+    <radialGradient id="lp-dot" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#FFD98A"/><stop offset="1" stop-color="#E8A93E"/></radialGradient>`,
+  ),
+  powtowerDeco: S(
+    `${shadow(32, 57, 18, 0.13)}
+    <rect x="24" y="40" width="16" height="14" rx="3.5" fill="url(#pw-a)" stroke="#5E2470" stroke-width="1.5"/>
+    <rect x="26.5" y="26" width="11" height="11" rx="3" fill="url(#pw-b)" stroke="#5E2470" stroke-width="1.4"/>
+    <rect x="28.6" y="15.5" width="6.8" height="7.5" rx="2.4" fill="url(#pw-c)" stroke="#5E2470" stroke-width="1.2"/>
+    <circle cx="43" cy="14" r="5.2" fill="url(#pw-sun)" stroke="#8C5A12" stroke-width="1.2"/>
+    <ellipse cx="28" cy="43" rx="4" ry="2" fill="#fff" opacity=".5"/>
+    <ellipse cx="41.5" cy="12.4" rx="1.8" ry="1.1" fill="#fff" opacity=".6"/>`,
+    `<linearGradient id="pw-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C77BD6"/><stop offset="1" stop-color="#9C36B5"/></linearGradient>
+    <linearGradient id="pw-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D9A0E5"/><stop offset="1" stop-color="#B85CCB"/></linearGradient>
+    <linearGradient id="pw-c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EDD3F4"/><stop offset="1" stop-color="#D9A0E5"/></linearGradient>
+    <radialGradient id="pw-sun" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#FFE3A6"/><stop offset="1" stop-color="#E8A93E"/></radialGradient>`,
+  ),
+  termchipDeco: S(
+    `${shadow(32, 55, 17, 0.13)}
+    <rect x="12" y="30" width="24" height="17" rx="8.5" fill="url(#tc-a)" stroke="#5E2470" stroke-width="1.5" transform="rotate(-7 24 38)"/>
+    <rect x="28" y="22" width="24" height="17" rx="8.5" fill="url(#tc-b)" stroke="#8C5A12" stroke-width="1.5" transform="rotate(6 40 30)"/>
+    <text x="24" y="42.5" text-anchor="middle" font-size="11" font-style="italic" font-weight="800" fill="#FFFFFF" transform="rotate(-7 24 38)">a</text>
+    <text x="40" y="34.5" text-anchor="middle" font-size="11" font-style="italic" font-weight="800" fill="#7A4A0E" transform="rotate(6 40 30)">a</text>
+    <ellipse cx="18" cy="32.5" rx="3.6" ry="1.8" fill="#fff" opacity=".5" transform="rotate(-7 18 32.5)"/>
+    <ellipse cx="34" cy="24.5" rx="3.6" ry="1.8" fill="#fff" opacity=".6" transform="rotate(6 34 24.5)"/>`,
+    `<linearGradient id="tc-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B85CCB"/><stop offset="1" stop-color="#8C2FA3"/></linearGradient>
+    <linearGradient id="tc-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD98A"/><stop offset="1" stop-color="#EDAF45"/></linearGradient>`,
+  ),
 };
 
 /** 지도 장식 아트 — 단원 특색 세트 → 생물 아이콘(ART_BIO) → 공용(ART_DECOR) 순서로 찾는다. */

@@ -79,7 +79,18 @@ export const mathHook = (o: {
     | "weightclass" // 태권도 체급표, 도수분포표
     | "camerahisto" // 카메라 앱 산 모양 그래프, 히스토그램
     | "likeratio" // 구독자 대비 좋아요, 상대도수
-    | "fakegraph"; // 눈금 조작 그래프, 통계적 문제해결
+    | "fakegraph" // 눈금 조작 그래프, 통계적 문제해결
+    // ── 중2 Ⅰ 유리수의 표현과 식의 계산 (hookM2u1.ts) ──
+    | "calculator" // 계산기 1÷3, 화면 끝까지 3만 가득
+    | "melody" // 후렴 무한 반복 노래, 마디 하나면 전곡
+    | "birthday" // 생일 날짜 분수, 딱 떨어지는 생일
+    | "nines" // 1/3=0.333… 양변 ×3, 1=0.999…?!
+    | "germs" // 잠든 사이 입속 세균 2배씩
+    | "storage" // 폰 저장 공간, 영상 몇 개 더?
+    | "solarpanel" // 태양광 패널 넓이, 가로×세로
+    | "receipt" // 두 사람 주문 합치기 영수증
+    | "kiosk" // 키오스크 화면 두 구역의 넓이
+    | "tangram"; // 칠교 조각 둘레, 문자로 재기
   choices?: string[];
   cta?: string;
 }): Step => ({ type: "mathHook", ...o });
@@ -351,3 +362,41 @@ export const histoLab = (o: { title: string; lead?: string; cta?: string; curio?
 /** 상대도수 랩, 총합이 다른 두 집단을 도수로 비교했다가 상대도수 토글로 역전을 목격한다. */
 export const relFreqLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "relFreqLab", ...o });
+
+/* ── 중2 Ⅰ 유리수의 표현과 식의 계산 ─────────────────────── */
+
+/** 나눗셈 기계, 분수를 소수로 파 내려가며 멈추는 수(유한)와 계속되는 수(무한)를 가른다. */
+export const divLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "divLab", ...o });
+
+/** 순환마디 스캐너, 무한소수 띠에서 최단 반복 블록을 고르고 검사해 점 표기로 봉인한다. */
+export const cycleLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "cycleLab", ...o });
+
+/** 분모의 비밀 실험, 분모 소인수에 2·5만 있으면 10^n 변신(유한), 3이 끼면 나머지 룰렛(순환). */
+export const denomLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "denomLab", ...o });
+
+/** 무한 꼬리 지우개(기함), 10^n배 시프트로 꼬리를 맞추고 빼기로 소멸시켜 순환소수를 분수로 잡는다. */
+export const shiftLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "shiftLab", ...o });
+
+/** 지수법칙 1 랩, 거듭제곱 상자 병합(aᵐ×aⁿ)과 상자 복제((aᵐ)ⁿ)로 지수의 덧셈·곱셈을 발견. */
+export const powMulLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "powMulLab", ...o });
+
+/** 지수법칙 2 랩, 분자·분모 칩 상쇄로 나눗셈의 세 운명을 가르고 괄호 지수를 전원에 분배한다. */
+export const powDivLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "powDivLab", ...o });
+
+/** 단항식 헤쳐 모여 랩, 계수는 계수끼리 문자는 문자끼리 정렬해 곱하고, 역수 뒤집기로 나눈다. */
+export const monoLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "monoLab", ...o });
+
+/** 다항식 정리 랩, 이차항 칩까지 동류항 병합(x²·x 함정), 빼기 괄호를 열면 부호가 반전된다. */
+export const polyAddLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "polyAddLab", ...o });
+
+/** 전개 랩, 직사각형 넓이를 절단선으로 쪼개 단항식×다항식을 전개하고 각 항 나눗셈으로 되돌린다. */
+export const expandLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "expandLab", ...o });
