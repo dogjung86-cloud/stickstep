@@ -134,7 +134,17 @@ export const mathHook = (o: {
     | "letterfold" // 가정통신문 3단 접기, 공책 줄의 마법(평행선 사이 비)
     | "traytrick" // 쟁반 한 손 서빙, 균형의 한 점(무게중심)
     | "tvsize" // TV 인치의 정체는 대각선(피타고라스 정리)
-    | "courtline"; // 운동장 직각 라인 긋기, 3·4·5 줄자(직각삼각형 조건)
+    | "courtline" // 운동장 직각 라인 긋기, 3·4·5 줄자(직각삼각형 조건)
+    // ── 중2 Ⅵ 확률 (hookM2u6.ts) ──
+    | "boardgame" // 뱀사다리 탈출 직전, 6만? 짝수만? 경우를 세면 유불리가 보인다
+    | "ottnight" // 뭘 볼까, 코미디 5편 또는 액션 3편, 또는이면 더한다
+    | "avatar" // 게임 아바타 꾸미기, 모자 3종 × 옷 2종
+    | "cointoss" // 순서 정하기 동전, 왜 공평할까
+    | "sundaynight" // 일요일 밤, 내일이 토요일일 확률은
+    | "gacha" // 뽑기 5성 3%, 그럼 꽝이 나올 확률은
+    | "roulette" // 원판의 흩어진 당첨 칸, 이거나 저거나
+    | "doublespin" // 두 원판 모두 당첨이어야 상품, 이것도 저것도
+    | "umbrella"; // 비 올 확률 60%, 우산 챙길까
   choices?: string[];
   cta?: string;
 }): Step => ({ type: "mathHook", ...o });
@@ -600,3 +610,37 @@ export const pythaLab = (o: { title: string; lead?: string; cta?: string; curio?
 /** 직각 판정소, 세 변으로 삼각형을 조립하고 a²+b²와 c² 저울로 직각을 판정(최장변 함정). */
 export const rightCheckLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "rightCheckLab", ...o });
+
+/* ── 중2 Ⅵ 확률 ─────────────────────────────────────────────── */
+
+/** 경우 수집대, 사건 카드의 조건에 맞는 경우를 빠짐없이 겹치지 않게 골라 담는다(누락·중복 함정). */
+export const caseLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "caseLab", ...o });
+
+/** 또는 검문소, 두 사건의 경우를 합쳐 세되 "동시에 일어나지 않는지"를 먼저 확인한다(겹침 함정). */
+export const orLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "orLab", ...o });
+
+/** 나뭇가지 그림 랩(기함), 선택이 이어질 때 가지가 벌어지는 것을 직접 펼쳐 a×b를 발견한다(재사용 금지 함정). */
+export const treeLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "treeLab", ...o });
+
+/** 던지기 실험실(기함), 동전을 여러 번 던져 상대도수가 일정한 값으로 다가가는 것을 관찰하고 경우의 수 비율과 잇는다. */
+export const tossLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "tossLab", ...o });
+
+/** 확률 눈금 랩, 주머니 구성을 바꿔 가며 확률이 0~1 눈금 어디에 꽂히는지 본다(0과 1의 정체). */
+export const probBarLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "probBarLab", ...o });
+
+/** 나머지 영역 랩, 전체 1에서 사건의 확률을 빼면 일어나지 않을 확률이 남는다("적어도"의 지름길 포함). */
+export const notLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "notLab", ...o });
+
+/** 확률 덧셈 랩, 겹치지 않는 두 사건의 칸을 나눠 칠해 확률을 더한다(겹침 없음 확인 게이트). */
+export const probAddLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "probAddLab", ...o });
+
+/** 확률 곱셈 랩, 정사각형 넓이 모델을 가로 p·세로 q로 쪼개 동시에 일어날 확률 p×q를 본다. */
+export const probMulLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "probMulLab", ...o });

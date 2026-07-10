@@ -63,6 +63,8 @@ const ICONS: Record<string, IconDef> = {
   ionArrow: { v: '<circle cx="9" cy="13" r="6.2"/><path d="M9 10.4v5.2M6.4 13h5.2"/><path d="M16 4.5h4.5M18.25 2.25v4.5"/>', sw: 1.9 },
   // ── 수학 ──
   mathop: { v: '<path d="M4.5 7.5h6.5M7.75 4.25v6.5M13.5 4.5l5.5 5.5M19 4.5L13.5 10"/><path d="M4.5 16.5h6.5M13.5 16.5h5.5M16.25 13.5v.01M16.25 19.5v.01"/>', sw: 2.1 },
+  dice: { v: '<rect x="4" y="4" width="16" height="16" rx="4.2"/><circle cx="8.7" cy="8.7" r="1.45" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.45" fill="currentColor" stroke="none"/><circle cx="15.3" cy="15.3" r="1.45" fill="currentColor" stroke="none"/>', sw: 2 },
+  coin: { v: '<circle cx="12" cy="12" r="8.5"/><path d="M12 8.2v7.6M9.4 10.1h5.2M9.4 13.9h5.2"/>', sw: 1.9 },
   divide: { v: '<path d="M5 12h14"/><circle cx="12" cy="6.6" r="1.5"/><circle cx="12" cy="17.4" r="1.5"/>', sw: 2.3 },
   scale: { v: '<path d="M12 4v15M8 19h8M12 6l-6 2.5M12 6l6 2.5"/><path d="M3.5 13a2.6 2.6 0 0 0 5 0L6 8.5z"/><path d="M15.5 13a2.6 2.6 0 0 0 5 0L18 8.5z"/>', sw: 1.9 },
 };

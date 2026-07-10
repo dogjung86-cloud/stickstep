@@ -1,4 +1,4 @@
-// mapDecor — 게임 지도 "단원 특색" 장식. 트레일·메달리온 문법은 그대로 두고
+﻿// mapDecor — 게임 지도 "단원 특색" 장식. 트레일·메달리온 문법은 그대로 두고
 // 장식 소품만 단원 이야기로 바꾼다(I 정글 원정 · II 생물 · III 열 · IV 상태 · V 힘 · VI 기체 · VII 행성).
 // 파운드리 재질 문법: 근-동조 그라데이션 + 키라이트 + 접촉 그림자 + 최암색 외곽선.
 // u2 생물 아이콘은 art.generated의 ART_BIO를 재사용한다.
@@ -1268,6 +1268,66 @@ const MAP_DECOR: Record<string, string> = {
     <ellipse cx="28" cy="50.4" rx="5" ry="1.2" fill="#fff" opacity=".35"/>`,
     `<linearGradient id="kr-rope" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E8C48A"/><stop offset=".55" stop-color="#C99B55"/><stop offset="1" stop-color="#A87833"/></linearGradient>
     <radialGradient id="kr-knot" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#E8C48A"/><stop offset="1" stop-color="#B58335"/></radialGradient>`,
+  ),
+
+  // ── 중2 수학 Ⅵ. 확률 — 동전에서 원판까지, 우연의 도구들(주사위 레드) ──
+  coinDeco: S(
+    `${shadow(32, 56, 14, 0.12)}
+    <circle cx="32" cy="32" r="17" fill="url(#cn6-gold)" stroke="#8C6A1E" stroke-width="2"/>
+    <circle cx="32" cy="32" r="12.5" fill="none" stroke="#B8925C" stroke-width="1.3"/>
+    <path d="M32 25 v14 M26.5 29.5 h11 M26.5 34.5 h11" stroke="#8C6A1E" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M14 18 q3 -5 8 -6 M50 18 q-3 -5 -8 -6" stroke="#B7A29A" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <ellipse cx="26" cy="24" rx="5" ry="2.2" fill="#fff" opacity=".5" transform="rotate(-24 26 24)"/>`,
+    `<radialGradient id="cn6-gold" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#FFE08A"/><stop offset=".6" stop-color="#E8B93E"/><stop offset="1" stop-color="#C9962A"/></radialGradient>`,
+  ),
+  spinnerDeco: S(
+    `${shadow(32, 57, 15, 0.12)}
+    <circle cx="32" cy="33" r="17" fill="url(#sp6-dud)" stroke="#8F1D1D" stroke-width="2"/>
+    <path d="M32 33 L32 16 A17 17 0 0 1 46.7 24.5 Z" fill="url(#sp6-win)" stroke="#8F1D1D" stroke-width="1.4"/>
+    <path d="M32 33 L17.3 41.5 A17 17 0 0 1 17.3 24.5 Z" fill="url(#sp6-win)" stroke="#8F1D1D" stroke-width="1.4"/>
+    <circle cx="32" cy="33" r="4" fill="url(#sp6-hub)" stroke="#8C6A1E" stroke-width="1.2"/>
+    <path d="M32 12 l-4 -6 h8 z" fill="#3A2A2A" stroke="#1E1414" stroke-width="1"/>
+    <ellipse cx="26" cy="23" rx="4.6" ry="2" fill="#fff" opacity=".4" transform="rotate(-30 26 23)"/>`,
+    `<linearGradient id="sp6-win" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F98C7E"/><stop offset=".55" stop-color="#E85A4E"/><stop offset="1" stop-color="#C92A2A"/></linearGradient>
+    <linearGradient id="sp6-dud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F8FAFD"/><stop offset="1" stop-color="#D9DFEA"/></linearGradient>
+    <radialGradient id="sp6-hub" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#FFE08A"/><stop offset="1" stop-color="#E8B93E"/></radialGradient>`,
+  ),
+  branchDeco: S(
+    `${shadow(32, 57, 15, 0.11)}
+    <circle cx="10" cy="32" r="4" fill="url(#br6-root)" stroke="#8F1D1D" stroke-width="1.4"/>
+    <path d="M13 32 C 22 32 22 18 30 18 M13 32 C 22 32 22 46 30 46" stroke="#C92A2A" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+    <circle cx="32" cy="18" r="3.4" fill="url(#br6-root)" stroke="#8F1D1D" stroke-width="1.2"/>
+    <circle cx="32" cy="46" r="3.4" fill="url(#br6-root)" stroke="#8F1D1D" stroke-width="1.2"/>
+    <path d="M35 18 C 42 18 42 10 49 10 M35 18 C 42 18 42 26 49 26 M35 46 C 42 46 42 38 49 38 M35 46 C 42 46 42 54 49 54" stroke="#4A7BE8" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <circle cx="51" cy="10" r="2.8" fill="url(#br6-leaf)" stroke="#1D4E8F" stroke-width="1.1"/>
+    <circle cx="51" cy="26" r="2.8" fill="url(#br6-leaf)" stroke="#1D4E8F" stroke-width="1.1"/>
+    <circle cx="51" cy="38" r="2.8" fill="url(#br6-leaf)" stroke="#1D4E8F" stroke-width="1.1"/>
+    <circle cx="51" cy="54" r="2.8" fill="url(#br6-leaf)" stroke="#1D4E8F" stroke-width="1.1"/>`,
+    `<radialGradient id="br6-root" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#F98C7E"/><stop offset="1" stop-color="#C92A2A"/></radialGradient>
+    <radialGradient id="br6-leaf" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#8AB4FF"/><stop offset="1" stop-color="#2A57C2"/></radialGradient>`,
+  ),
+  chanceDeco: S(
+    `${shadow(32, 54, 16, 0.11)}
+    <rect x="8" y="34" width="48" height="6" rx="3" fill="url(#ch6-bar)" stroke="#8A93A6" stroke-width="1.2"/>
+    <line x1="12" y1="30" x2="12" y2="44" stroke="#5A6B7E" stroke-width="2" stroke-linecap="round"/>
+    <line x1="32" y1="31" x2="32" y2="43" stroke="#8A93A6" stroke-width="1.6" stroke-linecap="round"/>
+    <line x1="52" y1="30" x2="52" y2="44" stroke="#5A6B7E" stroke-width="2" stroke-linecap="round"/>
+    <path d="M42 30 l-6 -11 h12 z" fill="url(#ch6-mark)" stroke="#8F1D1D" stroke-width="1.6" stroke-linejoin="round"/>
+    <text x="12" y="54" text-anchor="middle" font-size="9" font-weight="900" fill="#5A6B7E">0</text>
+    <text x="52" y="54" text-anchor="middle" font-size="9" font-weight="900" fill="#5A6B7E">1</text>`,
+    `<linearGradient id="ch6-bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F4F6FA"/><stop offset="1" stop-color="#F9BFB5"/></linearGradient>
+    <linearGradient id="ch6-mark" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F98C7E"/><stop offset="1" stop-color="#C92A2A"/></linearGradient>`,
+  ),
+  capsuleDeco: S(
+    `${shadow(32, 58, 13, 0.12)}
+    <path d="M15 32 a17 17 0 0 1 34 0 z" fill="url(#cp6-top)" stroke="#8F1D1D" stroke-width="2"/>
+    <path d="M15 32 a17 17 0 0 0 34 0 z" fill="url(#cp6-bot)" stroke="#8A93A6" stroke-width="2"/>
+    <rect x="13" y="30" width="38" height="4" rx="2" fill="#FFF" opacity=".5"/>
+    <circle cx="32" cy="24" r="4.5" fill="#fff" opacity=".35"/>
+    <path d="M26 52 l3 4 M38 52 l-3 4" stroke="#B7A29A" stroke-width="1.6" stroke-linecap="round"/>
+    <ellipse cx="24" cy="20" rx="5" ry="2.4" fill="#fff" opacity=".5" transform="rotate(-28 24 20)"/>`,
+    `<linearGradient id="cp6-top" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F98C7E"/><stop offset=".6" stop-color="#E85A4E"/><stop offset="1" stop-color="#D8443C"/></linearGradient>
+    <linearGradient id="cp6-bot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDFEFF"/><stop offset="1" stop-color="#D9DFEA"/></linearGradient>`,
   ),
 };
 

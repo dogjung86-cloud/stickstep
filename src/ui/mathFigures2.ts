@@ -1,4 +1,4 @@
-// mathFigures2 — 중2 수학 트랙 퀴즈 SVG 그림 + recap 미니아트(calcMiniArt).
+﻿// mathFigures2 — 중2 수학 트랙 퀴즈 SVG 그림 + recap 미니아트(calcMiniArt).
 // mathFigures.ts(중1)와 분리해 병렬 세션 충돌을 없앤다. 루트 svg는 fill="none",
 // 파운드리 문법(3스톱 그라데이션·키라이트·접촉 그림자·재질별 최암색 외곽선)을 지킨다.
 // 단원 Ⅰ 팔레트: 그레이프 #9C36B5(진한 #7D2A93·연한 #C77BD6), 보조 앰버 #E8A93E.
@@ -2197,5 +2197,361 @@ export function simMiniArt(key: string): string {
     `<linearGradient id="m5-bd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBDFE9"/><stop offset="1" stop-color="#F3AECB"/></linearGradient>
     <linearGradient id="m5-deep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EE7FAC"/><stop offset="1" stop-color="#C2255C"/></linearGradient>
     <linearGradient id="m5-paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F9EEF3"/></linearGradient>`,
+  );
+}
+
+/* ══════════════════ 중2 Ⅵ 확률 (m2u6) ══════════════════
+   팔레트: 주사위 레드 #C92A2A(진한 #8F1D1D·바탕 #FBECE6), 대비 블루 #4A7BE8(진한 #1D4E8F),
+   성공 그린 #0BA05F. 그림 규칙: 루트 svg fill="none", 좌표는 전부 계산, 라벨은 그림 안 한글 허용. */
+
+const P6 = {
+  main: "#C92A2A",
+  deep: "#8F1D1D",
+  blue: "#4A7BE8",
+  bdeep: "#1D4E8F",
+  green: "#0BA05F",
+  ink: "#2A3648",
+  soft: "#5A6B7E",
+  faint: "#C2CBD6",
+};
+
+const DEFS6 =
+  `<linearGradient id="m6-red" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F98C7E"/><stop offset=".55" stop-color="#E85A4E"/><stop offset="1" stop-color="#C92A2A"/></linearGradient>` +
+  `<linearGradient id="m6-blue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8AB4FF"/><stop offset=".55" stop-color="#4A7BE8"/><stop offset="1" stop-color="#2A57C2"/></linearGradient>` +
+  `<linearGradient id="m6-paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F2E9E4"/></linearGradient>` +
+  `<linearGradient id="m6-dud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4F6FA"/><stop offset="1" stop-color="#D9DFEA"/></linearGradient>` +
+  `<linearGradient id="m6-dice" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".6" stop-color="#F6E8E4"/><stop offset="1" stop-color="#EBCFC7"/></linearGradient>` +
+  `<linearGradient id="m6-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE08A"/><stop offset="1" stop-color="#E8B93E"/></linearGradient>`;
+
+/* 주사위 눈 배치(단위 좌표, size로 스케일) */
+const PIP6: Record<number, [number, number][]> = {
+  1: [[0, 0]],
+  2: [[-0.19, -0.19], [0.19, 0.19]],
+  3: [[-0.21, -0.21], [0, 0], [0.21, 0.21]],
+  4: [[-0.19, -0.19], [0.19, -0.19], [-0.19, 0.19], [0.19, 0.19]],
+  5: [[-0.21, -0.21], [0.21, -0.21], [0, 0], [-0.21, 0.21], [0.21, 0.21]],
+  6: [[-0.18, -0.22], [0.18, -0.22], [-0.18, 0], [0.18, 0], [-0.18, 0.22], [0.18, 0.22]],
+};
+
+function dice6(cx: number, cy: number, n: number, size: number, on = false): string {
+  const h = size / 2;
+  return (
+    `<rect x="${(cx - h).toFixed(1)}" y="${(cy - h).toFixed(1)}" width="${size}" height="${size}" rx="${(size * 0.22).toFixed(1)}" fill="url(#m6-dice)" stroke="${on ? P6.main : "#B7A29A"}" stroke-width="${on ? 2.6 : 1.6}"/>` +
+    `<ellipse cx="${(cx - size * 0.2).toFixed(1)}" cy="${(cy - size * 0.28).toFixed(1)}" rx="${(size * 0.18).toFixed(1)}" ry="${(size * 0.08).toFixed(1)}" fill="#fff" opacity=".55"/>` +
+    (PIP6[n] ?? []).map(([ux, uy]) => `<circle cx="${(cx + ux * size).toFixed(1)}" cy="${(cy + uy * size).toFixed(1)}" r="${(size * 0.075).toFixed(1)}" fill="${on ? "#8F1D1D" : "#6E5A54"}"/>`).join("")
+  );
+}
+
+/** L1 사건 그림: 주사위 눈 1~6 나열, marks(강조 눈)에 링. label은 사건 칩 문구. */
+export function diceEventFig(marks: number[], label: string): string {
+  const size = 42;
+  const gap = 12.4;
+  const x0 = 24 + size / 2;
+  const y = 96;
+  let out = `<ellipse cx="180" cy="138" rx="130" ry="6" fill="#2A3A5E" opacity=".08"/>`;
+  out += `<rect x="24" y="20" width="${label.length * 13 + 40}" height="28" rx="14" fill="url(#m6-red)" stroke="${P6.deep}" stroke-width="1.4"/>`;
+  out += `<text x="${24 + (label.length * 13 + 40) / 2}" y="39" text-anchor="middle" font-size="12.5" font-weight="800" fill="#fff">${label}</text>`;
+  for (let n = 1; n <= 6; n++) {
+    const cx = x0 + (n - 1) * (size + gap);
+    const on = marks.includes(n);
+    out += dice6(cx, y, n, size, on);
+    if (on) out += `<circle cx="${cx}" cy="${y}" r="${size * 0.74}" fill="none" stroke="${P6.main}" stroke-width="2" stroke-dasharray="5 4" opacity=".8"/>`;
+  }
+  out += `<text x="336" y="142" text-anchor="end" font-size="11.5" font-weight="800" fill="${P6.soft}">경우의 수 ${marks.length}</text>`;
+  return svg("0 0 360 152", out, DEFS6);
+}
+
+/** L2 또는 그림: 두 묶음 카드(겹침 없음) 또는 겹침 함정(공통 항목이 두 묶음에 동시에). */
+export function orGroupsFig(kind: "ok" | "overlap"): string {
+  const chip = (x: number, y: number, w: number, t: string, tone: "red" | "blue" | "both"): string =>
+    `<rect x="${x}" y="${y}" width="${w}" height="30" rx="9" fill="url(#m6-${tone === "red" ? "red" : tone === "blue" ? "blue" : "gold"})" stroke="${tone === "red" ? P6.deep : tone === "blue" ? P6.bdeep : "#8C6A1E"}" stroke-width="1.4"/>` +
+    `<text x="${x + w / 2}" y="${y + 20}" text-anchor="middle" font-size="12.5" font-weight="800" fill="${tone === "both" ? "#5A4A18" : "#fff"}">${t}</text>`;
+  if (kind === "ok") {
+    let out = `<ellipse cx="180" cy="168" rx="140" ry="6" fill="#2A3A5E" opacity=".08"/>`;
+    out += `<rect x="22" y="26" width="150" height="120" rx="14" fill="#FBECE6" stroke="${P6.main}" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+    out += `<text x="97" y="48" text-anchor="middle" font-size="12" font-weight="900" fill="${P6.main}">홀수 눈</text>`;
+    out += chip(40, 60, 50, "1", "red") + chip(98, 60, 50, "3", "red") + chip(69, 100, 50, "5", "red");
+    out += `<rect x="188" y="26" width="150" height="120" rx="14" fill="#EAF1FD" stroke="${P6.blue}" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+    out += `<text x="263" y="48" text-anchor="middle" font-size="12" font-weight="900" fill="${P6.bdeep}">6의 눈</text>`;
+    out += chip(238, 80, 50, "6", "blue");
+    out += `<text x="180" y="170" text-anchor="middle" font-size="12.5" font-weight="800" fill="${P6.ink}">함께 일어날 수 없다, 그래서 3+1=4가지</text>`;
+    return svg("0 0 360 184", out, DEFS6);
+  }
+  let out = `<ellipse cx="180" cy="168" rx="140" ry="6" fill="#2A3A5E" opacity=".08"/>`;
+  out += `<ellipse cx="132" cy="86" rx="106" ry="62" fill="#FBECE6" stroke="${P6.main}" stroke-width="1.6" opacity=".9"/>`;
+  out += `<ellipse cx="228" cy="86" rx="106" ry="62" fill="#EAF1FD" stroke="${P6.blue}" stroke-width="1.6" opacity=".75"/>`;
+  out += `<text x="72" y="40" text-anchor="middle" font-size="12" font-weight="900" fill="${P6.main}">짝수 눈</text>`;
+  out += `<text x="292" y="40" text-anchor="middle" font-size="12" font-weight="900" fill="${P6.bdeep}">4 이상의 눈</text>`;
+  out += chip(52, 72, 42, "2", "red") + chip(236, 100, 42, "5", "blue");
+  out += chip(158, 58, 44, "4", "both") + chip(158, 98, 44, "6", "both");
+  out += `<text x="180" y="170" text-anchor="middle" font-size="12.5" font-weight="800" fill="${P6.deep}">4와 6이 양쪽에! 그냥 더하면 두 번 세진다</text>`;
+  return svg("0 0 360 184", out, DEFS6);
+}
+
+/** L3 나뭇가지 그림: 첫 선택(first) 각각에 두 번째 선택(second)이 벌어진다. 전체 곱 전용. */
+export function branchFig(first: string[], second: string[], head1: string, head2: string): string {
+  const n = first.length * second.length;
+  const rowH = 27;
+  const H = Math.max(150, n * rowH + 58);
+  const leafYs: number[] = [];
+  for (let i = 0; i < n; i++) leafYs.push(44 + i * rowH);
+  const midOf = (i: number): number => {
+    const ys = leafYs.slice(i * second.length, (i + 1) * second.length);
+    return (ys[0] + ys[ys.length - 1]) / 2;
+  };
+  const rootY = (midOf(0) + midOf(first.length - 1)) / 2;
+  let out = "";
+  out += `<text x="96" y="24" text-anchor="middle" font-size="11.5" font-weight="900" fill="${P6.main}">${head1}</text>`;
+  out += `<text x="216" y="24" text-anchor="middle" font-size="11.5" font-weight="900" fill="${P6.bdeep}">${head2}</text>`;
+  out += `<circle cx="36" cy="${rootY.toFixed(1)}" r="5" fill="url(#m6-red)" stroke="${P6.deep}" stroke-width="1.4"/>`;
+  first.forEach((f, i) => {
+    const my = midOf(i);
+    out += `<path d="M41 ${rootY.toFixed(1)} C 60 ${rootY.toFixed(1)} 60 ${my.toFixed(1)} 76 ${my.toFixed(1)}" stroke="${P6.main}" stroke-width="1.8" fill="none"/>`;
+    out += `<rect x="76" y="${(my - 13).toFixed(1)}" width="40" height="26" rx="8" fill="url(#m6-red)" stroke="${P6.deep}" stroke-width="1.3"/>`;
+    out += `<text x="96" y="${(my + 4.5).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#fff">${f}</text>`;
+    second.forEach((s, j) => {
+      const ly = leafYs[i * second.length + j];
+      out += `<path d="M116 ${my.toFixed(1)} C 140 ${my.toFixed(1)} 140 ${ly} 164 ${ly}" stroke="${P6.blue}" stroke-width="1.6" fill="none"/>`;
+      out += `<rect x="164" y="${ly - 12}" width="40" height="24" rx="8" fill="url(#m6-blue)" stroke="${P6.bdeep}" stroke-width="1.2"/>`;
+      out += `<text x="184" y="${ly + 4}" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">${s}</text>`;
+      out += `<text x="222" y="${ly + 4}" font-size="11" font-weight="700" fill="${P6.ink}">${f} · ${s}</text>`;
+    });
+  });
+  out += `<rect x="272" y="${(rootY - 16).toFixed(1)}" width="70" height="32" rx="10" fill="url(#m6-gold)" stroke="#8C6A1E" stroke-width="1.4"/>`;
+  out += `<text x="307" y="${(rootY + 5).toFixed(1)}" text-anchor="middle" font-size="13" font-weight="900" fill="#5A4A18">${first.length}×${second.length}=${n}</text>`;
+  return svg(`0 0 360 ${H}`, out, DEFS6);
+}
+
+/** L4 상대도수 수렴 그래프: 던진 횟수가 늘수록 상대도수가 0.5에 다가간다(자체 실험 수치). */
+export function convergeFig(): string {
+  const pts: [number, number][] = [
+    [50, 0.42], [100, 0.56], [150, 0.46], [200, 0.53], [300, 0.487],
+    [400, 0.515], [500, 0.492], [600, 0.505], [700, 0.497], [800, 0.503], [900, 0.499], [1000, 0.5],
+  ];
+  const X0 = 52;
+  const X1 = 336;
+  const Y0 = 176;
+  const Y1 = 28;
+  const mx = (t: number): number => X0 + (t / 1000) * (X1 - X0);
+  const my = (v: number): number => Y0 - v * (Y0 - Y1);
+  let out = `<line x1="${X0}" y1="${Y0}" x2="${X1}" y2="${Y0}" stroke="${P6.faint}" stroke-width="2"/>`;
+  out += `<line x1="${X0}" y1="${Y0}" x2="${X0}" y2="${Y1 - 6}" stroke="${P6.faint}" stroke-width="2"/>`;
+  [0, 0.5, 1].forEach((v) => {
+    out += `<text x="${X0 - 8}" y="${my(v) + 4}" text-anchor="end" font-size="10" font-weight="700" fill="${P6.soft}">${v}</text>`;
+    out += `<line x1="${X0 - 4}" y1="${my(v)}" x2="${X0}" y2="${my(v)}" stroke="${P6.faint}" stroke-width="1.6"/>`;
+  });
+  [200, 400, 600, 800, 1000].forEach((t) => {
+    out += `<text x="${mx(t)}" y="${Y0 + 16}" text-anchor="middle" font-size="9.5" font-weight="700" fill="${P6.soft}">${t}</text>`;
+  });
+  out += `<text x="${X1}" y="${Y0 + 30}" text-anchor="end" font-size="9.5" font-weight="700" fill="${P6.soft}">(던진 횟수, 번)</text>`;
+  out += `<line x1="${X0}" y1="${my(0.5)}" x2="${X1}" y2="${my(0.5)}" stroke="${P6.main}" stroke-width="1.8" stroke-dasharray="6 4"/>`;
+  out += `<text x="${X1 - 2}" y="${my(0.5) - 7}" text-anchor="end" font-size="10.5" font-weight="900" fill="${P6.main}">0.5</text>`;
+  out += `<path d="M${pts.map(([t, v], i) => `${i === 0 ? "" : "L"}${mx(t).toFixed(1)} ${my(v).toFixed(1)}`).join(" ")}" stroke="${P6.blue}" stroke-width="2" fill="none" opacity=".85"/>`;
+  pts.forEach(([t, v]) => {
+    out += `<circle cx="${mx(t).toFixed(1)}" cy="${my(v).toFixed(1)}" r="3.4" fill="url(#m6-blue)" stroke="${P6.bdeep}" stroke-width="1.2"/>`;
+  });
+  out += `<text x="${X0 + 4}" y="${Y1 - 10}" font-size="10.5" font-weight="800" fill="${P6.soft}">앞면의 상대도수</text>`;
+  return svg("0 0 360 210", out, DEFS6);
+}
+
+/** 두 주사위 순서쌍 표(6×6): pick(a,b)가 true인 칸을 강조. cap은 아래 캡션. */
+export function pairGridFig(pick: (a: number, b: number) => boolean, cap = ""): string {
+  const X0 = 64;
+  const Y0 = 58;
+  const C = 44;
+  let out = `<rect x="${X0 - 1}" y="${Y0 - 1}" width="${C * 6 + 2}" height="${C * 6 + 2}" rx="8" fill="url(#m6-paper)" stroke="#B7A29A" stroke-width="1.4"/>`;
+  out += `<text x="${X0 - 26}" y="${Y0 + C * 3}" text-anchor="middle" font-size="12" font-weight="900" fill="${P6.main}">A</text>`;
+  out += `<text x="${X0 + C * 3}" y="${Y0 - 30}" text-anchor="middle" font-size="12" font-weight="900" fill="${P6.bdeep}">B</text>`;
+  for (let i = 1; i <= 6; i++) {
+    out += `<text x="${X0 - 12}" y="${Y0 + (i - 0.5) * C + 4}" text-anchor="middle" font-size="11" font-weight="800" fill="${P6.main}">${i}</text>`;
+    out += `<text x="${X0 + (i - 0.5) * C}" y="${Y0 - 10}" text-anchor="middle" font-size="11" font-weight="800" fill="${P6.bdeep}">${i}</text>`;
+  }
+  for (let a = 1; a <= 6; a++) {
+    for (let b = 1; b <= 6; b++) {
+      const x = X0 + (b - 1) * C;
+      const y = Y0 + (a - 1) * C;
+      const on = pick(a, b);
+      out += `<rect x="${x}" y="${y}" width="${C}" height="${C}" fill="${on ? "#FBD5CE" : "none"}" stroke="#E2D4CE" stroke-width="1"/>`;
+      out += `<text x="${x + C / 2}" y="${y + C / 2 + 3.5}" text-anchor="middle" font-size="9" font-weight="${on ? 900 : 600}" fill="${on ? P6.deep : "#9A8E88"}">${a},${b}</text>`;
+    }
+  }
+  if (cap) out += `<text x="${X0 + C * 3}" y="${Y0 + C * 6 + 24}" text-anchor="middle" font-size="12" font-weight="800" fill="${P6.ink}">${cap}</text>`;
+  return svg(`0 0 360 ${Y0 + C * 6 + (cap ? 38 : 16)}`, out, DEFS6);
+}
+
+/** L5 확률 눈금: 0~1 수직선 위에 사건 마커를 꽂는다. marks: {at(0~1), label, tone} */
+export function probLineFig(marks: { at: number; label: string; tone?: "red" | "blue" | "green" }[]): string {
+  const X0 = 34;
+  const X1 = 326;
+  const Y = 96;
+  const mx = (v: number): number => X0 + v * (X1 - X0);
+  let out = `<line x1="${X0}" y1="${Y}" x2="${X1}" y2="${Y}" stroke="${P6.faint}" stroke-width="3" stroke-linecap="round"/>`;
+  [0, 0.25, 0.5, 0.75, 1].forEach((v) => {
+    out += `<line x1="${mx(v)}" y1="${Y - 6}" x2="${mx(v)}" y2="${Y + 6}" stroke="#A9B2C0" stroke-width="1.6"/>`;
+  });
+  ([[0, "0"], [0.5, "1/2"], [1, "1"]] as [number, string][]).forEach(([v, t]) => {
+    out += `<text x="${mx(v)}" y="${Y + 24}" text-anchor="middle" font-size="12" font-weight="900" fill="${P6.ink}">${t}</text>`;
+  });
+  out += `<text x="${X0}" y="${Y + 42}" text-anchor="middle" font-size="10" font-weight="700" fill="${P6.soft}">절대 안 일어남</text>`;
+  out += `<text x="${X1}" y="${Y + 42}" text-anchor="middle" font-size="10" font-weight="700" fill="${P6.soft}">반드시 일어남</text>`;
+  marks.forEach((m) => {
+    const x = mx(m.at);
+    const col = m.tone === "blue" ? P6.bdeep : m.tone === "green" ? "#0B7A4A" : P6.deep;
+    const fill = m.tone === "blue" ? "url(#m6-blue)" : m.tone === "green" ? "#7BE3AE" : "url(#m6-red)";
+    out += `<path d="M${x.toFixed(1)} ${Y - 8} l-8 -13 h16 z" fill="${fill}" stroke="${col}" stroke-width="1.5" stroke-linejoin="round"/>`;
+    out += `<text x="${x.toFixed(1)}" y="${Y - 30}" text-anchor="middle" font-size="10.5" font-weight="800" fill="${col}">${m.label}</text>`;
+  });
+  return svg("0 0 360 150", out, DEFS6);
+}
+
+/** L6 나머지 영역: total칸 중 part칸이 사건, 나머지가 "일어나지 않음". 5열 그리드. */
+export function restGridFig(total: number, part: number, partLabel: string, restLabel: string): string {
+  const cols = 5;
+  const rows = Math.ceil(total / cols);
+  const C = 52;
+  const GAP = 8;
+  const X0 = (360 - (cols * C + (cols - 1) * GAP)) / 2;
+  const Y0 = 30;
+  let out = "";
+  for (let i = 0; i < total; i++) {
+    const x = X0 + (i % cols) * (C + GAP);
+    const y = Y0 + Math.floor(i / cols) * (C + GAP);
+    const on = i < part;
+    out += `<rect x="${x.toFixed(1)}" y="${y}" width="${C}" height="${C}" rx="10" fill="${on ? "url(#m6-red)" : "url(#m6-dud)"}" stroke="${on ? P6.deep : "#8A93A6"}" stroke-width="1.5"/>`;
+    if (on) out += `<circle cx="${(x + C / 2).toFixed(1)}" cy="${y + C / 2}" r="9" fill="#fff" opacity=".28"/>`;
+  }
+  const y1 = Y0 + rows * (C + GAP) + 14;
+  out += `<rect x="${X0.toFixed(1)}" y="${y1}" width="14" height="14" rx="4" fill="url(#m6-red)"/><text x="${(X0 + 22).toFixed(1)}" y="${y1 + 12}" font-size="11.5" font-weight="800" fill="${P6.ink}">${partLabel}</text>`;
+  out += `<rect x="${(X0 + 150).toFixed(1)}" y="${y1}" width="14" height="14" rx="4" fill="url(#m6-dud)" stroke="#8A93A6" stroke-width="1"/><text x="${(X0 + 172).toFixed(1)}" y="${y1 + 12}" font-size="11.5" font-weight="800" fill="${P6.ink}">${restLabel}</text>`;
+  return svg(`0 0 360 ${y1 + 30}`, out, DEFS6);
+}
+
+/** 동전 2개 모든 경우 나열: 적어도 하나 앞면 그룹 vs 모두 뒷면. */
+export function coinCasesFig(): string {
+  const pair = (x: number, labels: [string, string], atLeast: boolean): string => {
+    const coin = (cx: number, t: string): string =>
+      `<circle cx="${cx}" cy="70" r="17" fill="${t === "앞" ? "url(#m6-gold)" : "url(#m6-dud)"}" stroke="${t === "앞" ? "#8C6A1E" : "#8A93A6"}" stroke-width="1.6"/>` +
+      `<text x="${cx}" y="75" text-anchor="middle" font-size="12" font-weight="900" fill="${t === "앞" ? "#5A4A18" : "#6E7787"}">${t}</text>`;
+    return (
+      `<rect x="${x}" y="34" width="74" height="94" rx="12" fill="${atLeast ? "#FBECE6" : "#F1F3F8"}" stroke="${atLeast ? P6.main : "#8A93A6"}" stroke-width="1.5" ${atLeast ? "" : 'stroke-dasharray="5 4"'}/>` +
+      coin(x + 24, labels[0]) +
+      coin(x + 50, labels[1])
+    );
+  };
+  let out = pair(16, ["앞", "앞"], true) + pair(100, ["앞", "뒤"], true) + pair(184, ["뒤", "앞"], true) + pair(268, ["뒤", "뒤"], false);
+  out += `<text x="137" y="24" text-anchor="middle" font-size="11.5" font-weight="900" fill="${P6.main}">적어도 한 번은 앞면, 3가지</text>`;
+  out += `<text x="305" y="24" text-anchor="middle" font-size="11" font-weight="900" fill="#6E7787">모두 뒷면, 1가지</text>`;
+  out += `<text x="180" y="152" text-anchor="middle" font-size="12" font-weight="800" fill="${P6.ink}">(적어도 한 번 앞면일 확률) = 1 - (모두 뒷면일 확률)</text>`;
+  return svg("0 0 360 166", out, DEFS6);
+}
+
+/** L7 원판: total 등분 중 wins 인덱스 칸이 당첨. */
+export function spinnerFig(total: number, wins: number[], winLabel = "당첨"): string {
+  const CX = 118;
+  const CY = 104;
+  const R = 74;
+  let out = `<ellipse cx="${CX}" cy="${CY + R + 12}" rx="${(R * 0.9).toFixed(0)}" ry="6" fill="#2A3A5E" opacity=".08"/>`;
+  for (let i = 0; i < total; i++) {
+    const a0 = ((i * 360) / total - 90) * (Math.PI / 180);
+    const a1 = (((i + 1) * 360) / total - 90) * (Math.PI / 180);
+    const x0 = CX + R * Math.cos(a0);
+    const y0 = CY + R * Math.sin(a0);
+    const x1 = CX + R * Math.cos(a1);
+    const y1 = CY + R * Math.sin(a1);
+    const win = wins.includes(i);
+    out += `<path d="M${CX} ${CY} L${x0.toFixed(1)} ${y0.toFixed(1)} A${R} ${R} 0 ${360 / total > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)} Z" fill="${win ? "url(#m6-red)" : "url(#m6-dud)"}" stroke="${P6.deep}" stroke-width="1.4"/>`;
+  }
+  out += `<circle cx="${CX}" cy="${CY}" r="9" fill="url(#m6-gold)" stroke="#8C6A1E" stroke-width="1.4"/>`;
+  out += `<path d="M${CX} ${CY - R - 10} l-7 -11 h14 z" fill="#3A2A2A" stroke="#1E1414" stroke-width="1.2"/>`;
+  out += `<rect x="228" y="62" width="112" height="30" rx="15" fill="url(#m6-red)" stroke="${P6.deep}" stroke-width="1.4"/>`;
+  out += `<text x="284" y="82" text-anchor="middle" font-size="12" font-weight="900" fill="#fff">${winLabel} ${wins.length}칸</text>`;
+  out += `<rect x="228" y="102" width="112" height="30" rx="15" fill="url(#m6-dud)" stroke="#8A93A6" stroke-width="1.4"/>`;
+  out += `<text x="284" y="122" text-anchor="middle" font-size="12" font-weight="900" fill="#5A6B7E">꽝 ${total - wins.length}칸</text>`;
+  out += `<text x="284" y="156" text-anchor="middle" font-size="11" font-weight="800" fill="${P6.soft}">전체 ${total}등분</text>`;
+  return svg("0 0 360 208", out, DEFS6);
+}
+
+/** L8 넓이 모델: 가로를 pd등분해 pn만큼(사건 A), 세로를 qd등분해 qn만큼(사건 B), 교차가 동시. */
+export function areaModelFig(pn: number, pd: number, qn: number, qd: number, aLabel = "A", bLabel = "B"): string {
+  const S = 150;
+  const X0 = 46;
+  const Y0 = 30;
+  const cw = S / pd;
+  const rh = S / qd;
+  let out = `<rect x="${X0}" y="${Y0}" width="${S}" height="${S}" fill="url(#m6-paper)" stroke="#B7A29A" stroke-width="1.6"/>`;
+  out += `<rect x="${X0}" y="${Y0}" width="${(cw * pn).toFixed(1)}" height="${S}" fill="#F9BFB5" opacity=".85"/>`;
+  out += `<rect x="${X0}" y="${(Y0 + S - rh * qn).toFixed(1)}" width="${S}" height="${(rh * qn).toFixed(1)}" fill="#B9CFF7" opacity=".7"/>`;
+  out += `<rect x="${X0}" y="${(Y0 + S - rh * qn).toFixed(1)}" width="${(cw * pn).toFixed(1)}" height="${(rh * qn).toFixed(1)}" fill="url(#m6-red)" opacity=".95"/>`;
+  for (let i = 1; i < pd; i++) out += `<line x1="${(X0 + i * cw).toFixed(1)}" y1="${Y0}" x2="${(X0 + i * cw).toFixed(1)}" y2="${Y0 + S}" stroke="#B7A29A" stroke-width="1"/>`;
+  for (let j = 1; j < qd; j++) out += `<line x1="${X0}" y1="${(Y0 + j * rh).toFixed(1)}" x2="${X0 + S}" y2="${(Y0 + j * rh).toFixed(1)}" stroke="#B7A29A" stroke-width="1"/>`;
+  out += `<text x="${(X0 + (cw * pn) / 2).toFixed(1)}" y="${Y0 + S + 20}" text-anchor="middle" font-size="11" font-weight="900" fill="${P6.deep}">${aLabel}, ${pn}/${pd}</text>`;
+  out += `<text x="${X0 - 10}" y="${(Y0 + S - (rh * qn) / 2 + 4).toFixed(1)}" text-anchor="end" font-size="11" font-weight="900" fill="${P6.bdeep}">${bLabel}</text>`;
+  out += `<text x="${X0 - 10}" y="${(Y0 + S - (rh * qn) / 2 + 18).toFixed(1)}" text-anchor="end" font-size="10" font-weight="800" fill="${P6.bdeep}">${qn}/${qd}</text>`;
+  out += `<rect x="226" y="70" width="118" height="70" rx="12" fill="url(#m6-paper)" stroke="#B7A29A" stroke-width="1.4"/>`;
+  out += `<text x="285" y="96" text-anchor="middle" font-size="11.5" font-weight="800" fill="${P6.ink}">겹친 진한 칸</text>`;
+  out += `<text x="285" y="122" text-anchor="middle" font-size="13" font-weight="900" fill="${P6.deep}">${pn}×${qn}칸 / ${pd * qd}칸</text>`;
+  return svg("0 0 360 216", out, DEFS6);
+}
+
+/** L9 결항 기록 표: 항공사 3곳의 운항·결항 기록(자체 수치). 건수 최저와 확률 최저가 다르게 설계. */
+export function flightTableFig(): string {
+  const rows: [string, number, number, string][] = [
+    ["가", 2400, 24, "0.010"],
+    ["나", 500, 8, "0.016"],
+    ["다", 1500, 18, "0.012"],
+  ];
+  const X0 = 22;
+  const W = 316;
+  const cw = [70, 92, 76, 78];
+  const rh = 34;
+  const Y0 = 40;
+  let out = `<rect x="${X0}" y="${Y0 - 28}" width="${W}" height="28" rx="8" fill="url(#m6-red)" stroke="${P6.deep}" stroke-width="1.4"/>`;
+  const heads = ["항공사", "운항(회)", "결항(회)", "결항 확률"];
+  let cx = X0;
+  heads.forEach((h, i) => {
+    out += `<text x="${cx + cw[i] / 2}" y="${Y0 - 9}" text-anchor="middle" font-size="11.5" font-weight="900" fill="#fff">${h}</text>`;
+    cx += cw[i];
+  });
+  rows.forEach(([name, fly, cancel, p], r) => {
+    const y = Y0 + r * rh;
+    out += `<rect x="${X0}" y="${y}" width="${W}" height="${rh}" fill="${r % 2 ? "#FBF4F1" : "#FFFFFF"}" stroke="#E2D4CE" stroke-width="1"/>`;
+    const cells = [name, String(fly), String(cancel), p];
+    let cx2 = X0;
+    cells.forEach((c, i) => {
+      out += `<text x="${cx2 + cw[i] / 2}" y="${y + 22}" text-anchor="middle" font-size="12" font-weight="${i === 3 ? 900 : 700}" fill="${i === 3 ? P6.deep : P6.ink}">${c}</text>`;
+      cx2 += cw[i];
+    });
+  });
+  out += `<text x="180" y="${Y0 + rows.length * rh + 24}" text-anchor="middle" font-size="11.5" font-weight="800" fill="${P6.ink}">결항 건수가 가장 적은 곳과 결항 확률이 가장 낮은 곳이 다르다!</text>`;
+  return svg(`0 0 360 ${Y0 + rows.length * rh + 40}`, out, DEFS6);
+}
+
+/* ── 중2 Ⅵ recap 미니아트(probMiniArt) ───────────────────────── */
+const MINI6: Record<string, string> = {
+  cases: `${dice6(24, 34, 2, 26, false)}${dice6(50, 34, 4, 26, true)}<rect x="14" y="50" width="44" height="14" rx="7" fill="url(#m6-red)"/><text x="36" y="61" text-anchor="middle" font-size="9" font-weight="900" fill="#fff">사건</text>`,
+  dice: dice6(36, 36, 5, 40, true),
+  orAdd: `<rect x="8" y="22" width="22" height="28" rx="6" fill="url(#m6-red)" stroke="#8F1D1D"/><rect x="42" y="22" width="22" height="28" rx="6" fill="url(#m6-blue)" stroke="#1D4E8F"/><text x="36" y="41" text-anchor="middle" font-size="16" font-weight="900" fill="#2A3648">+</text>`,
+  overlap: `<circle cx="28" cy="36" r="18" fill="#F9BFB5" stroke="#C92A2A" stroke-width="1.8" opacity=".85"/><circle cx="44" cy="36" r="18" fill="#B9CFF7" stroke="#1D4E8F" stroke-width="1.8" opacity=".7"/><path d="M36 20.6 a18 18 0 0 1 0 30.8 a18 18 0 0 1 0 -30.8" fill="url(#m6-red)" opacity=".9"/><text x="36" y="41" text-anchor="middle" font-size="12" font-weight="900" fill="#fff">!</text>`,
+  branch: `<circle cx="12" cy="36" r="4" fill="url(#m6-red)"/><path d="M15 36 C 26 36 26 20 36 20 M15 36 C 26 36 26 52 36 52" stroke="#C92A2A" stroke-width="2.2" fill="none"/><path d="M40 20 C 48 20 48 12 56 12 M40 20 C 48 20 48 28 56 28 M40 52 C 48 52 48 44 56 44 M40 52 C 48 52 48 60 56 60" stroke="#4A7BE8" stroke-width="2" fill="none"/><circle cx="38" cy="20" r="3.4" fill="url(#m6-red)"/><circle cx="38" cy="52" r="3.4" fill="url(#m6-red)"/><circle cx="58" cy="12" r="3" fill="url(#m6-blue)"/><circle cx="58" cy="28" r="3" fill="url(#m6-blue)"/><circle cx="58" cy="44" r="3" fill="url(#m6-blue)"/><circle cx="58" cy="60" r="3" fill="url(#m6-blue)"/>`,
+  toss: `<circle cx="36" cy="34" r="20" fill="url(#m6-gold)" stroke="#8C6A1E" stroke-width="2"/><text x="36" y="40" text-anchor="middle" font-size="14" font-weight="900" fill="#5A4A18">앞</text><path d="M14 14 q4 -7 10 -8 M58 14 q-4 -7 -10 -8" stroke="#B7A29A" stroke-width="1.8" fill="none"/>`,
+  converge: `<line x1="10" y1="56" x2="62" y2="56" stroke="#C2CBD6" stroke-width="2"/><line x1="10" y1="34" x2="62" y2="34" stroke="#C92A2A" stroke-width="1.8" stroke-dasharray="4 3"/><path d="M12 22 L20 44 L28 28 L36 40 L44 32 L52 36 L60 34" stroke="#4A7BE8" stroke-width="2.2" fill="none"/><circle cx="60" cy="34" r="3.2" fill="url(#m6-blue)"/>`,
+  ratio: `<rect x="16" y="10" width="40" height="52" rx="8" fill="url(#m6-paper)" stroke="#B7A29A" stroke-width="1.6"/><text x="36" y="30" text-anchor="middle" font-size="14" font-weight="900" fill="#C92A2A">a</text><line x1="26" y1="36" x2="46" y2="36" stroke="#2A3648" stroke-width="2"/><text x="36" y="54" text-anchor="middle" font-size="14" font-weight="900" fill="#2A3648">n</text>`,
+  scale01: `<line x1="8" y1="40" x2="64" y2="40" stroke="#C2CBD6" stroke-width="3" stroke-linecap="round"/><line x1="8" y1="34" x2="8" y2="46" stroke="#8A93A6" stroke-width="2"/><line x1="36" y1="35" x2="36" y2="45" stroke="#8A93A6" stroke-width="1.6"/><line x1="64" y1="34" x2="64" y2="46" stroke="#8A93A6" stroke-width="2"/><text x="8" y="60" text-anchor="middle" font-size="10" font-weight="900" fill="#2A3648">0</text><text x="64" y="60" text-anchor="middle" font-size="10" font-weight="900" fill="#2A3648">1</text><path d="M50 36 l-7 -12 h14 z" fill="url(#m6-red)" stroke="#8F1D1D" stroke-width="1.4"/>`,
+  rest: `<rect x="10" y="16" width="52" height="40" rx="8" fill="url(#m6-dud)" stroke="#8A93A6" stroke-width="1.6"/><rect x="10" y="16" width="18" height="40" rx="8" fill="url(#m6-red)" stroke="#8F1D1D" stroke-width="1.4"/><text x="45" y="41" text-anchor="middle" font-size="11" font-weight="900" fill="#5A6B7E">1-p</text>`,
+  atleast: `<circle cx="22" cy="30" r="12" fill="url(#m6-gold)" stroke="#8C6A1E" stroke-width="1.6"/><circle cx="50" cy="30" r="12" fill="url(#m6-dud)" stroke="#8A93A6" stroke-width="1.6"/><path d="M14 52 q22 14 44 0" stroke="#C92A2A" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M56 54 l6 -3 -2 7 z" fill="#C92A2A"/>`,
+  pieAdd: `<circle cx="36" cy="36" r="24" fill="url(#m6-dud)" stroke="#8F1D1D" stroke-width="1.6"/><path d="M36 36 L36 12 A24 24 0 0 1 56.8 24 Z" fill="url(#m6-red)" stroke="#8F1D1D" stroke-width="1.4"/><path d="M36 36 L15.2 48 A24 24 0 0 1 15.2 24 Z" fill="url(#m6-red)" stroke="#8F1D1D" stroke-width="1.4"/><circle cx="36" cy="36" r="5" fill="url(#m6-gold)" stroke="#8C6A1E" stroke-width="1.2"/>`,
+  mulGrid: `<rect x="14" y="14" width="44" height="44" fill="url(#m6-paper)" stroke="#B7A29A" stroke-width="1.6"/><rect x="14" y="14" width="22" height="44" fill="#F9BFB5"/><rect x="14" y="36" width="44" height="22" fill="#B9CFF7" opacity=".7"/><rect x="14" y="36" width="22" height="22" fill="url(#m6-red)"/><line x1="36" y1="14" x2="36" y2="58" stroke="#B7A29A"/><line x1="14" y1="36" x2="58" y2="36" stroke="#B7A29A"/>`,
+  decide: `<rect x="12" y="10" width="48" height="34" rx="8" fill="url(#m6-paper)" stroke="#B7A29A" stroke-width="1.6"/><text x="36" y="33" text-anchor="middle" font-size="13" font-weight="900" fill="#C92A2A">60%</text><path d="M22 54 l8 8 14 -16" stroke="#0BA05F" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+  fair: `<path d="M36 14 v34 M20 52 h32" stroke="#5A6B7E" stroke-width="2.4" stroke-linecap="round"/><path d="M36 18 l-16 6 M36 18 l16 6" stroke="#5A6B7E" stroke-width="2"/><circle cx="20" cy="32" r="7" fill="url(#m6-red)" stroke="#8F1D1D" stroke-width="1.4"/><circle cx="52" cy="32" r="7" fill="url(#m6-blue)" stroke="#1D4E8F" stroke-width="1.4"/>`,
+};
+
+/** 중2 Ⅵ recap 미니아트 — probMiniArt("cases"|"dice"|"orAdd"|"branch"|"toss"|"converge"|"ratio"|"scale01"|"rest"|"atleast"|"pieAdd"|"mulGrid"|"decide"|"fair") */
+export function probMiniArt(key: string): string {
+  const m = MINI6[key];
+  if (!m) return "";
+  return svg(
+    "0 0 72 72",
+    `<ellipse cx="36" cy="64" rx="20" ry="3.5" fill="#2A3A5E" opacity=".1"/>${m}`,
+    DEFS6,
   );
 }

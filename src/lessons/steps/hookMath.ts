@@ -1,4 +1,4 @@
-// hookMath, 수학 트랙 미리보기 퍼즐(훅). 과학 hook.ts와 같은 쉘 문법이지만
+﻿// hookMath, 수학 트랙 미리보기 퍼즐(훅). 과학 hook.ts와 같은 쉘 문법이지만
 // 별도 스텝 타입("mathHook")으로 등록해 과학 파일을 건드리지 않는다.
 // 예측 선택지는 반드시 공용 hookAsk.ask(), choices[0]=정답, good≠bad(오개념 교정).
 // 장면 상태 변화는 인라인 스타일 트랜지션(rAF 금지 환경 대응).
@@ -50,6 +50,10 @@ import {
   renderPhotoedit, renderPapersize, renderJumbobear, renderTriruler, renderStreetlamp,
   renderHillroad, renderGrasscut, renderLetterfold, renderTraytrick, renderTvsize, renderCourtline,
 } from "./hookM2u5";
+import {
+  renderBoardgame, renderOttnight, renderAvatar, renderCointoss, renderSundaynight,
+  renderGacha, renderRoulette, renderDoublespin, renderUmbrella,
+} from "./hookM2u6";
 import type { StepRenderer } from "../types";
 
 type Face = (k: AvatarKind) => void;
@@ -217,6 +221,16 @@ export const mathHook: StepRenderer = (host, step, api) => {
     traytrick: renderTraytrick,
     tvsize: renderTvsize,
     courtline: renderCourtline,
+    // 중2 Ⅵ 확률(hookM2u6.ts)
+    boardgame: renderBoardgame,
+    ottnight: renderOttnight,
+    avatar: renderAvatar,
+    cointoss: renderCointoss,
+    sundaynight: renderSundaynight,
+    gacha: renderGacha,
+    roulette: renderRoulette,
+    doublespin: renderDoublespin,
+    umbrella: renderUmbrella,
   };
   const fn = fns[s.scene];
   if (fn) fn(scene, helper, finish, face, s.choices);
