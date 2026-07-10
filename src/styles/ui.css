@@ -769,19 +769,20 @@
 .rc-more {
   display: none; margin-top: 10px; padding-top: 10px;
   border-top: 1px dashed var(--n200);
-  font-size: 13px; line-height: 1.62; color: var(--sub); word-break: keep-all;
+  /* 400~800자 심화 본문 — 13px는 "작은 글자의 벽"이라는 실사용 피드백으로 리프트(2026-07-10) */
+  font-size: 14px; line-height: 1.68; color: var(--sub); word-break: keep-all;
 }
 .rc-more b { color: var(--ink); }
 .rc-card.open .rc-more { display: block; animation: rcIn .3s var(--ease-out); }
 .rc-more .fun {
-  display: block; margin-top: 9px; background: var(--n50);
-  border-radius: var(--r-sm); padding: 9px 11px; font-size: 12.5px;
+  display: block; margin-top: 11px; background: var(--n50);
+  border-radius: var(--r-sm); padding: 10px 12px; font-size: 13px;
 }
 .rc-more .fun b { color: var(--subj-heat-press); }
 /* 자세히 = 문제집식 소제목 구조 — <b class="rm-h">왜 그럴까요?</b> 식으로 섹션을 나눈다 */
 .rc-more .rm-h {
-  display: block; margin: 12px 0 3px; font-size: 12px; font-weight: 800;
-  color: var(--n600); letter-spacing: -.01em;
+  display: block; margin: 14px 0 4px; font-size: 13px; font-weight: 800;
+  color: var(--n700); letter-spacing: -.01em;
 }
 .rc-more .rm-h::before {
   content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 2px;
