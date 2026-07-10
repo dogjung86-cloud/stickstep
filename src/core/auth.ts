@@ -6,8 +6,11 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
 const env = (import.meta as unknown as { env?: Record<string, unknown> }).env ?? {};
-const SUPABASE_URL = typeof env.VITE_SUPABASE_URL === "string" ? env.VITE_SUPABASE_URL : "";
-const SUPABASE_ANON_KEY = typeof env.VITE_SUPABASE_ANON_KEY === "string" ? env.VITE_SUPABASE_ANON_KEY : "";
+// BOM·공백 제거 필수: 배포 파이프라인이 환경변수 값 앞에 U+FEFF를 붙인 실사고 — 헤더에 들어가면
+// fetch가 "String contains non ISO-8859-1 code point"로 전부 죽는다(로컬은 멀쩡해 재현 안 됨).
+const cleanEnv = (v: unknown): string => (typeof v === "string" ? v.replace(/\uFEFF/g, "").trim() : "");
+const SUPABASE_URL = cleanEnv(env.VITE_SUPABASE_URL);
+const SUPABASE_ANON_KEY = cleanEnv(env.VITE_SUPABASE_ANON_KEY);
 
 export type OAuthProvider = "google" | "kakao";
 

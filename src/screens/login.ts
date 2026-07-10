@@ -23,7 +23,7 @@ const KAKAO_MARK = `<svg viewBox="0 0 24 24" width="20" height="20" fill="#3C1E1
 const PROVIDER_LABEL: Record<string, string> = { google: "Google", kakao: "카카오" };
 
 // 실기기에서 "지금 어떤 빌드를 보고 있나"를 판별하는 표식 — 배포 때마다 올린다(캐시 디버깅용).
-const BUILD_TAG = "v4";
+const BUILD_TAG = "v5";
 
 /** 프로필 사진 원형(없거나 로드 실패 시 스틱맨 아바타 폴백). */
 function avatarEl(u: AuthUser): HTMLElement {
