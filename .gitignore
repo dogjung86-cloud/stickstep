@@ -17,3 +17,9 @@ qa/shots/
 
 # codex image_gen 작업 디렉터리(발주 임시)
 tmp/
+.vercel
+.env*
+
+# QA 디버그 스크린샷(세션 산출물)
+qa/u2-*.png
+qa/e2e-u2-fail.png

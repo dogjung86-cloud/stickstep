@@ -136,7 +136,18 @@ function start(): void {
   }
 }
 
-start();
+// [임시 프리뷰] 적용 랩 시제품 — DEV에서 ?preview=u3l1v2 로 진입. 폐기 시 이 분기를 지우고 start()만 남긴다.
+if (import.meta.env.DEV && new URLSearchParams(location.search).get("preview") === "u3l1v2") {
+  void import("./content/previewU3l1").then(({ previewU3L1 }) => {
+    const player = createLessonPlayer(previewU3L1(), {
+      onExit: goHome,
+      onComplete: () => goHome(), // 프리뷰는 완료를 기록하지 않는다(store 오염 방지)
+    });
+    nav.go({ el: player.el });
+  });
+} else {
+  start();
+}
 
 // 로그인·동기화 부팅 — Supabase 환경변수(.env.local)가 없으면 둘 다 no-op(core/auth.ts 참조).
 // initSync가 먼저 리스너를 배선해야 initAuth의 세션 복원 이벤트를 놓치지 않는다.

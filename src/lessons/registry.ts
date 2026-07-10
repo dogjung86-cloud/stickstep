@@ -25,6 +25,7 @@ import { convection } from "./steps/convection";
 import { radiation } from "./steps/radiation";
 import { specificHeat } from "./steps/specificHeat";
 import { expansion } from "./steps/expansion";
+import { directorLab } from "./steps/directorLab"; // [임시 프리뷰] 적용 랩 시제품 — 폐기 시 이 줄과 R 항목 삭제
 import { diffusion } from "./steps/diffusion";
 import { evaporation } from "./steps/evaporation";
 import { matterTemp } from "./steps/matterTemp";
@@ -224,6 +225,8 @@ const R: Record<string, StepRenderer> = {
   radiation,
   specificHeat,
   expansion,
+  directorLab, // [임시 프리뷰] 적용 랩 시제품
+
   diffusion,
   evaporation,
   matterTemp,
