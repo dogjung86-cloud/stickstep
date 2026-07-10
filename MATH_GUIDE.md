@@ -404,6 +404,56 @@
 - QA: `PORT=<포트> node qa/e2e-m2u3.mjs`(10레슨 실플레이 — 기계 검사 판정·직선 드래그·격자 탭·
   핸들 계단 세모·a/b 스테퍼·해 점등·교점 3국면·binSort/order/multi·넘패드 드릴 전부).
 
+## 중2 Ⅳ. 삼각형과 사각형의 성질 : 레슨 설계표 (책 138~187쪽, 10레슨: 무료 3 + 프리미엄 7)
+
+| id | 제목 | 훅(일상 미스터리) | 핵심 랩 | 마무리 | prem |
+|---|---|---|---|---|---|
+| m2u4l1 | 이등변삼각형의 성질: 접기에서 증명으로 | hanger 옷걸이 두 어깨의 밑각 | **isoFoldLab(기함)** 접기 3종→"전부는 못 접어" 판정→SAS 증명 조립(순환 논법 함정 카드) | 그림 mcq+증명 order+ox+각 드릴 | 무료 |
+| m2u4l2 | 이등변삼각형이 되는 조건: 거꾸로 뒤집기 | foldstrip 종이 띠 접기 겹침 삼각형 | isoBuildLab 두 밑각 스테퍼→변 길이 리드아웃(같을 때만 이등변) | 접기 그림 mcq+판별 binSort+드릴 | 무료 |
+| m2u4l3 | 직각삼각형의 합동 조건: RHA와 RHS | phonestand 접이식 폰 거치대 | rhCongLab 복제 공방(빗변+2정보 성공, 예각 2개 함정 3형제) | (가)~(라) 그림 mcq+3분류 binSort+드릴 | 무료 |
+| m2u4l4 | 삼각형의 외심: 세 꼭짓점에서 같은 거리 | fairspot 세 집 공평 약속 장소 | **circumLab(기함)** 감 드래그 좌절→수직이등분선 밴드 스냅→외접원→직각·둔각 마을 탐사 | ㄱㄷ multi+빗변 그림 mcq+위치 binSort+드릴 | ✓ |
+| m2u4l5 | 삼각형의 내심: 세 변에서 같은 거리 | cookiecut 삼각형 반죽 최대 쿠키 | inCircleLab 최대 원 드래그→각 이등분선 교점 스냅→접점 3개 | 각 그림 mcq+외/내 binSort+반지름 유도 mcq+드릴 | ✓ |
+| m2u4l6 | 평행사변형의 성질: 반 바퀴의 마법 | cardspin 그림 카드 거꾸로 잡아도 똑같음 | **paraSpinLab(기함)** 사본 180° 드래그 회전 포개짐→성질 3 수집→변형 재검증 | x·y 그림 mcq+비율 mcq+성질 binSort+드릴 | ✓ |
+| m2u4l7 | 평행사변형이 되는 조건: 다섯 개의 열쇠 | chopstick 어른+아이 젓가락 사각형 | paraCondLab 조건 생성 검증(합격 2건+함정 "다른 쌍" 반례 불합격) | ㄱㄴㄷㄹ multi+반례 그림 mcq+증명 order+코드 드릴 | ✓ |
+| m2u4l8 | 직사각형과 마름모: 대각선의 비밀 | bookshelf 조립 책장 대각선 검사 | diagRigLab 대각선 토글(길이/수직)→네 끝점 잇기→4종 탄생+정사각형 판정 | 대각선 그림 mcq 2+연 mcq+3분류 binSort+드릴 | ✓ |
+| m2u4l9 | 여러 가지 사각형의 관계: 조건의 계단 | pickrect "직사각형을 모두 고르시오" 앞 망설임 | quadFamilyLab 조건 추가 진화(직사 경로·마름모 경로 2갈래)+포함 판정 | ox+ㄱ~ㄹ multi+관계도 빈칸 그림 mcq+수직 binSort+드릴 | ✓ |
+| m2u4l10 | 평행선과 넓이: 모양이 달라도 넓이는 그대로 | bentfence ㄱ자 텃밭 경계 펴기 | areaSlideLab 꼭짓점 레일 드래그(넓이 불변)→경계 펴기 미션(D→E) | 등적 그림 mcq+사다리꼴 mcq+작도 order+드릴 | ✓ |
+
+- 소단원 순서 준수: 삼각형의 성질(01 이등변삼각형의 성질 → 02 직각삼각형의 합동 조건 →
+  03 삼각형의 외심과 내심) → 사각형의 성질(01 평행사변형 → 02 여러 가지 사각형).
+  단원의 심장은 **증명의 첫 도입**: L1 isoFoldLab이 "관찰(접기)은 유한 → 무한 검증 불가 판정 →
+  SAS 증명 조립 → 모양이 바뀌어도 결론 유지 피날레"의 4박자 기함. 증명 조립에는 **순환 논법 함정
+  카드**(목표 ∠B=∠C를 근거로 내면 거부)를 넣는다 — 이후 증명 order 문제(L1·L7·L10)의 원형.
+- 신규 파일: content/math/g2/unit4.ts, steps/hookM2u4.ts(10장면)+랩 10종(isoFoldLab·isoBuildLab·
+  rhCongLab·circumLab·inCircleLab·paraSpinLab·paraCondLab·diagRigLab·quadFamilyLab·areaSlideLab),
+  mathFigures2에 Ⅳ 그림 15종(isoPropFig·isoExtFig·foldIsoFig·rhaRhsFig·rhPairsFig·rightCircumFig·
+  circumAngleFig·incenterAngleFig·paraXYFig·trapCounterFig·rectDiagFig·rhombusDiagFig·
+  quadTreeFig(blank 옵션 — concept 명문화와 빈칸 퀴즈 겸용)·areaParaFig·trapAreaFig)+
+  **proveMiniArt** 15키(proof·iso·isoCond·rh·ccenter·icenter·para·keys·diag·family·area·compare·adj·rect·kite).
+  기하 원소는 전부 geoKit 재사용(arcIn 헬퍼로 내각 호는 항상 짧은 쪽).
+- 테마 m2u4 = `prove`(블루프린트 코발트 #1971C2 — 토스 브랜드 블루보다 어둡고, data 네이비 #364FC7
+  인디고와 계열 구분. "설계도 위의 증명" 서사), 지도 장식 = 옷걸이→증명 도장→외접원→평행사변형
+  리프트→마름모 연(삼각형에서 사각형으로).
+- **회전 드래그 문법(paraSpinLab)**: CSS rotate(+)=시계, geoKit angleOf(+)=반시계라 델타에 부호 반전.
+  `theta = normDeg(startTheta + (startPtr − cur))`, 스냅은 |θ−180|<8. SVG 그룹 회전·반전에는
+  **transform-box: view-box 명시**(시계 바늘 사고의 SVG판 예방 — isoFoldLab 접기 scaleX(-1)도 동일).
+- **등거리 수색 문법(circumLab)**: 감 드래그(누적 260px)로 좌절 설계 → 수직이등분선을 "등거리 지대
+  밴드"로 켜고 근접 시 선 위 사영 스냅(12px) → 두 밴드 교점 15px 스냅. 삼각형 모양 트윈은
+  setTimeout 체인 14×30ms, 외심·내접원 좌표는 공식으로 런타임 계산(눈대중 금지).
+- **mdr-q 장문 자동 강등**: mathDrill이 q 26자 초과에 `.long`(18px)을 부여한다(math.css). 기하 단원처럼
+  문장형 드릴이 많은 단원의 공용 해법 — 드릴 문항은 자기완결형으로(그림·직전 문항 참조 금지).
+- **언어 범위(중2 Ⅳ)**: 증명/꼭지각·밑변·밑각/빗변/RHA·RHS/외접·외접원·외심/접한다·접선·접점/
+  내접·내접원·내심/▱ABCD·대변·대각(삼각형과 뜻 다름 주의)/△ABC=넓이 표기/등적 이동.
+  **금지**: '역'(고교 — "거꾸로"·"화살표 방향"으로), 닮음·피타고라스(다음 단원 — "모양만 같고 크기가
+  다른"으로 서술), '등변사다리꼴' 명명(교과서 미명명 — "삐딱한 사다리꼴" 그림으로만),
+  '점대칭'(교과서 미사용 — "반 바퀴 돌리면 겹친다"), ∠BOC=2∠A·∠BIC=90°+½∠A 공식 암기(전부
+  이등변 세 조각·반각 합 유도로 풀게 한다 — 교과서 지도 방침).
+- QA: `PORT=<포트> node qa/e2e-m2u4.mjs`(10레슨 실플레이 — 접기·스테퍼 일치·복제 주문서·핀 등거리
+  드래그·최대 원·회전 스냅·조건 생성기·대각선 토글·진화 계보·레일 등적 드래그, 훅은 hookPlay 공용
+  루프(swapbtn 반복→선택지). 드래그 시작점은 DOM에서 실좌표를 읽는다(svgCircleAt — 핀·핸들이 움직이므로).
+  컷 발주: `bash qa/order-m2u4cuts.sh`(프롬프트 qa/m2u4cut_prompts.txt — **실행 전 다른 세션 codex
+  발주와 겹치지 않는지 확인**, 병렬 codex 금지).
+
 ## 학년 언어 규칙 (수학 중1)
 
 - 이 교과서 범위: 소수/합성수/거듭제곱(밑·지수)/소인수분해/서로소/최대공약수/최소공배수/

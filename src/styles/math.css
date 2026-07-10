@@ -232,6 +232,8 @@
   font-size: 27px; text-align: center;
 }
 .mdr-q.slidein { animation: mdrIn .32s var(--ease-out); }
+/* 문장형 장문 문항은 본문 크기로 강등(mathDrill이 26자 초과에 .long 부여 — mdr-q 날한글 규칙) */
+.mdr-q.long { font-size: 18px; line-height: 1.55; font-weight: 700; }
 @keyframes mdrIn { 0% { opacity: 0; transform: translateX(26px); } 100% { opacity: 1; transform: translateX(0); } }
 .mdr-why {
   margin-top: 10px; padding: 10px 14px; border-radius: var(--r-md);

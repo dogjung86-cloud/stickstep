@@ -63,6 +63,27 @@
 .gm-node.func:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px #0CA678; }
 .kicker.func { background: #E7F8F1; color: #067D57; }
 
+/* ---------- 단원 테마: prove(중2 Ⅳ · 블루프린트 코발트 — 설계도 위의 증명 서사.
+   토스 브랜드 블루(#3182F6)보다 어둡고 차분, data 네이비(#364FC7 인디고)와 색상 계열 구분) ---------- */
+.unit-band.prove { background: linear-gradient(150deg, #5CA4E8 0%, #1971C2 55%, #114E85 100%); }
+.gm-terrain.prove {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #E0EEFA, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #D4E7F8, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #DAEAF8, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #C4DDF3, transparent 72%),
+    linear-gradient(180deg, #F3F9FE 0%, #E6F1FB 55%, #D2E5F6 100%);
+}
+.gm-path-glow.prove { stroke: rgba(25,113,194,.22); }
+.gm-path-done.prove { stroke: #1971C2; }
+.gm-node.prove.now .gm-med, .gm-node.prove.done .gm-med {
+  background: radial-gradient(120% 120% at 32% 26%, #5CA4E8 0%, #1971C2 58%, #114E85 100%);
+}
+.gm-node.prove .gm-ring { border-color: rgba(25,113,194,.55); }
+.gm-node.prove:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px #1971C2; }
+.kicker.prove { background: #E7F1FB; color: #12579B; }
+
 /* ============================================================
    Ⅰ 랩 공용(mq21-) — 패널·안내·판단 질문 줄(Ⅵ mq6- 문법 계승)
    ============================================================ */
@@ -1625,3 +1646,223 @@
 }
 .mel-ok { display: inline-block; margin: 2px 4px 2px 0; padding: 2px 8px; border-radius: 8px; background: #E7F8F1; color: #067D57; font-weight: 800; font-size: 12px; }
 .mel-glow line { filter: drop-shadow(0 0 6px rgba(240,140,0,.75)); }
+
+/* ============================================================
+   중2 Ⅳ 삼각형과 사각형의 성질(m2u4) 랩 스타일
+   공용: .mq6-q 코발트 톤 / L1 ifl · L2 ibl · L3 rhc · L4 ccl ·
+   L5 icl · L6 psl · L7 pcd · L8 drg · L9 qf · L10 asl
+   ============================================================ */
+.mq6-q.m2u4q, .mq6-q.icl-q, .mq6-q.qf-q, .mq6-q.asl-q { background: #E7F1FB; border-color: rgba(25,113,194,.5); color: #12579B; }
+
+/* ---------- isoFoldLab(.ifl-) 접기 실험실(L1 기함) ---------- */
+.ifl-counter {
+  display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;
+  padding: 9px 14px; border-radius: 14px; background: #FFFFFF; border: 1.6px solid #C9DCEF;
+  box-shadow: var(--sh-card); font-size: 12.5px; font-weight: 800; color: var(--n600);
+}
+.ifl-counter .ifl-cnt-n b { color: #12579B; font-size: 15px; font-variant-numeric: tabular-nums; }
+.ifl-counter .ifl-cnt-inf { color: #C2255C; }
+.ifl-counter .ifl-cnt-inf b { font-size: 15px; }
+
+/* ---------- isoBuildLab(.ibl-) 각도 조립소(L2) ---------- */
+.ibl-len { margin-bottom: 6px; gap: 8px; flex-wrap: wrap; font-size: 17px; font-weight: 800; color: var(--n800); transition: border-color .25s, background .25s; }
+.ibl-len .ibl-side { display: inline-flex; align-items: baseline; gap: 6px; }
+.ibl-len b { font-size: 20px; font-variant-numeric: tabular-nums; }
+.ibl-cmp { font-size: 18px; font-weight: 900; color: var(--n400); }
+.ibl-cap { width: 100%; text-align: center; font-size: 11px; font-weight: 700; color: #8093A8; }
+.ibl-len.eq { border-color: var(--green); background: #F0FBF5; }
+.ibl-len.eq b, .ibl-len.eq .ibl-cmp { color: #1E7A31; }
+.ibl-step { display: flex; align-items: center; gap: 8px; }
+.ibl-read { min-width: 92px; text-align: center; font-size: 15.5px; font-weight: 800; color: #334155; }
+.ibl-read b { font-size: 17px; font-variant-numeric: tabular-nums; }
+.ibl-read.angb b { color: #C87414; }
+.ibl-read.angc b { color: #0B7285; }
+.ct-btn.ibl-dim { opacity: .38; }
+
+/* ---------- rhCongLab(.rhc-) 직각삼각형 복제 공방(L3) ---------- */
+.rhc-clone { opacity: 0; transition: opacity .5s var(--ease-out), transform .7s var(--ease); }
+.rhc-clone.show { opacity: 1; }
+.rhc-clone.flash { animation: rhcFlash .9s ease-out; }
+@keyframes rhcFlash { 0%, 100% { filter: none; } 35% { filter: drop-shadow(0 0 7px rgba(25,113,194,.9)); } }
+.rhc-trap { opacity: 0; }
+.rhc-trap.pop { transform-box: fill-box; transform-origin: 0 100%; animation: rhcTrapIn .5s var(--spring-soft) forwards; }
+@keyframes rhcTrapIn { 0% { opacity: 0; transform: scale(.5); } 100% { opacity: 1; transform: scale(1); } }
+.rhc-order { position: relative; margin: 10px 14px 14px; padding: 12px 14px 10px; border-radius: var(--r-md);
+  background: linear-gradient(160deg, #FFFFFF 0%, #F0F6FD 100%); border: 1.6px solid #BCD4EC;
+  box-shadow: var(--sh-card); transition: transform .4s var(--spring-soft), opacity .4s; }
+.rhc-order.enter { transform: translateY(12px) scale(.96); opacity: 0; }
+.rhc-head { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.rhc-tag { padding: 3px 10px; border-radius: 999px; background: #1971C2; color: #fff; font-size: 11.5px; font-weight: 900; }
+.rhc-note { font-size: 12px; font-weight: 700; color: #8093A8; }
+.rhc-chips { display: flex; flex-wrap: wrap; gap: 7px; padding: 10px 0 2px; justify-content: center; }
+.rhc-chip { padding: 7px 13px; border-radius: 12px; font-size: 14.5px; font-weight: 800; border: 1.6px solid; }
+.rhc-chip.hyp { color: #12579B; border-color: rgba(25,113,194,.55); background: #EAF3FC; }
+.rhc-chip.ang { color: #B26200; border-color: rgba(240,140,0,.5); background: #FDF3E3; }
+.rhc-chip.cyn { color: #0B7285; border-color: rgba(13,165,198,.5); background: #E7F7FB; }
+.rhc-order .lk-actions { padding: 8px 0 2px; }
+.ct-btn.hero.rhc-do { background: linear-gradient(160deg, #4D94DB 0%, #1971C2 55%, #114E85 100%);
+  box-shadow: 0 6px 16px -5px rgba(25,113,194,.6); }
+.rhc-stamp { position: absolute; top: -12px; right: -6px; padding: 5px 11px; border-radius: 999px;
+  font-size: 12.5px; font-weight: 900; color: #fff; box-shadow: var(--sh-cta);
+  transform: rotate(7deg); animation: rhcStampIn .4s var(--spring-bounce); }
+.rhc-stamp.ok { background: linear-gradient(160deg, #2BBA8C, #049352); }
+.rhc-stamp.no { background: linear-gradient(160deg, #F26D79, #D93440); }
+@keyframes rhcStampIn { 0% { transform: rotate(7deg) scale(.2); opacity: 0; } 100% { transform: rotate(7deg) scale(1); opacity: 1; } }
+
+/* ---------- circumLab(.ccl-) 등거리 수색대(L4 기함) ---------- */
+.ccl-reads { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; min-height: 34px; }
+.ccl-reads:empty { display: none; }
+.ccl-read {
+  padding: 6px 12px; border-radius: 99px; background: #FFFFFF; border: 1.6px solid var(--hue, #C9DCEF);
+  font-size: 12.5px; font-weight: 800; color: var(--n700); box-shadow: var(--sh-card); font-variant-numeric: tabular-nums;
+}
+.ccl-read b { color: var(--hue, #12579B); }
+.ccl-read.eq { background: #F0FBF5; border-color: var(--green); animation: mansPop .4s var(--spring-bounce); }
+.ccl-read.eq b { color: #1E7A31; }
+.ccl-pulse { transform-box: fill-box; transform-origin: center; animation: iclPulse 1.5s ease-in-out infinite; }
+
+/* ---------- inCircleLab(.icl-) 최대 원 공방(L5) ---------- */
+.icl-read {
+  display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 8px; padding: 9px 14px; border-radius: 14px; min-height: 48px;
+  background: #FFFFFF; border: 1.6px solid #C9DCEF; box-shadow: var(--sh-card);
+  font-size: 12.5px; font-weight: 700; color: var(--n600);
+}
+.icl-read .icl-rv { font-size: 20px; font-weight: 900; color: #1971C2; font-variant-numeric: tabular-nums; }
+.icl-read .icl-rv i { font-family: Georgia, serif; margin-right: 1px; }
+.icl-read .icl-best, .icl-read .icl-max {
+  font-size: 11.5px; font-weight: 800; border-radius: 99px; padding: 3px 10px;
+  background: var(--n100); color: var(--n600); font-variant-numeric: tabular-nums;
+}
+.icl-read .icl-max { background: #E7F1FB; color: #12518B; }
+.icl-hd { cursor: grab; }
+.icl-tool[disabled] { opacity: .45; }
+.icl-dot { width: 10px; height: 10px; border-radius: 99px; flex: none; }
+.icl-x { transform-box: fill-box; transform-origin: center; animation: iclPulse 1.5s ease-in-out infinite; }
+@keyframes iclPulse { 0%, 100% { transform: scale(1); opacity: .95; } 50% { transform: scale(1.5); opacity: .4; } }
+.icl-tp { transform-box: fill-box; transform-origin: center; animation: iclPop .55s var(--spring-bounce) both; }
+@keyframes iclPop { 0% { transform: scale(0); } 62% { transform: scale(1.45); } 100% { transform: scale(1); } }
+
+/* ---------- paraSpinLab(.psl-) 반 바퀴 회전 실험실(L6 기함) ---------- */
+.psl-dial {
+  display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 8px;
+  padding: 9px 14px; border-radius: 14px; background: #FFFFFF; border: 1.6px solid #C9DCEF;
+  box-shadow: var(--sh-card); font-size: 13px; font-weight: 800; color: var(--n600);
+}
+.psl-deg b { font-size: 19px; color: #B26200; font-variant-numeric: tabular-nums; }
+.psl-deg.hit { animation: mansPop .4s var(--spring-bounce); }
+.psl-deg.hit b { color: #1E7A31; }
+.psl-goal { font-size: 11.5px; padding: 3px 10px; border-radius: 99px; background: #E7F1FB; color: #12579B; }
+
+/* ---------- paraCondLab(.pcd-) 조건 감별소(L7) ---------- */
+.pcd-stage { position: relative; }
+.pcd-lamps {
+  position: absolute; left: 14px; right: 14px; top: 10px; z-index: 2;
+  display: flex; justify-content: space-between; gap: 8px; pointer-events: none;
+}
+.pcd-lamp {
+  display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px; border-radius: 99px;
+  background: rgba(255,255,255,.93); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 12px; font-weight: 800; color: var(--n700); transition: border-color .25s;
+}
+.pcd-bulb {
+  width: 10px; height: 10px; border-radius: 50%; background: var(--n300);
+  box-shadow: inset 0 -1.5px 2px rgba(0,0,0,.14); transition: background .25s, box-shadow .25s;
+}
+.pcd-lamp.wait .pcd-bulb { animation: pcdBlink .55s ease-in-out infinite; }
+.pcd-lamp.on { border-color: rgba(4,180,95,.5); }
+.pcd-lamp.on .pcd-bulb { background: var(--green); box-shadow: 0 0 8px rgba(4,180,95,.65), inset 0 -1.5px 2px rgba(0,0,0,.14); }
+.pcd-lamp.no { border-color: rgba(240,68,82,.55); }
+.pcd-lamp.no .pcd-bulb { background: var(--red); box-shadow: 0 0 8px rgba(240,68,82,.65), inset 0 -1.5px 2px rgba(0,0,0,.14); }
+.pcd-lamp.pop { animation: pcdLampPop .4s var(--spring-bounce); }
+@keyframes pcdBlink { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+@keyframes pcdLampPop { 0% { transform: scale(.85); } 55% { transform: scale(1.12); } 100% { transform: scale(1); } }
+.pcd-card {
+  margin: 4px 14px 10px; padding: 11px 13px; border-radius: var(--r-md);
+  display: flex; align-items: center; gap: 11px;
+  background: #E7F1FB; border: 1.5px solid rgba(25,113,194,.45);
+  transition: opacity .24s var(--ease-out), transform .24s var(--ease-out);
+}
+.pcd-card.swap { opacity: 0; transform: translateX(16px); }
+.pcd-badge {
+  flex: 0 0 auto; width: 46px; height: 46px; border-radius: 13px;
+  display: grid; place-items: center; align-content: center;
+  background: linear-gradient(160deg, #5CA4E8, #1971C2 60%, #114E85); color: #fff;
+  font-size: 10.5px; font-weight: 900; line-height: 1.1; text-align: center;
+  box-shadow: 0 4px 10px -3px rgba(25,113,194,.55), inset 0 1.5px 0 rgba(255,255,255,.35);
+}
+.pcd-badge b { display: block; font-size: 17px; line-height: 1.15; }
+.pcd-card p { margin: 0; font-size: 14px; font-weight: 800; color: #12579B; line-height: 1.5; }
+.pcd-card p b { color: #0D3D6E; }
+.pcd-card p small { display: block; margin-top: 2px; font-size: 12px; font-weight: 700; color: rgba(18,87,155,.75); }
+.pcd-dots { display: inline-flex; gap: 6px; align-items: center; padding: 0 2px; }
+.pcd-dot {
+  width: 9px; height: 9px; border-radius: 50%; background: var(--n300);
+  transition: background .25s, transform .25s var(--spring-bounce);
+}
+.pcd-dot.on { background: #1971C2; transform: scale(1.2); }
+.ct-btn.pcd-hero {
+  color: #fff; border-color: transparent; font-size: 15px;
+  background: linear-gradient(160deg, #5CA4E8, #1971C2 60%, #114E85);
+  box-shadow: 0 6px 16px -5px rgba(25,113,194,.6), inset 0 1.5px 0 rgba(255,255,255,.35);
+}
+.ct-btn.pcd-hero[disabled] { opacity: .45; pointer-events: none; }
+.pcd-stamp {
+  position: absolute; left: 50%; top: 45%; z-index: 3; pointer-events: none;
+  display: inline-flex; align-items: center; gap: 7px; padding: 7px 16px;
+  border: 3.5px solid currentColor; border-radius: 12px;
+  font-size: 23px; font-weight: 900; letter-spacing: .1em; color: #1971C2;
+  background: rgba(255,255,255,.9); opacity: 0; transform: translate(-50%,-50%) rotate(-10deg);
+}
+.pcd-stamp.no { color: #C2255C; }
+.pcd-stamp.show { animation: pcdStamp .55s var(--spring-bounce) both; }
+@keyframes pcdStamp {
+  0% { opacity: 0; transform: translate(-50%,-50%) rotate(-10deg) scale(1.6); }
+  62% { opacity: 1; transform: translate(-50%,-50%) rotate(-10deg) scale(.94); }
+  100% { opacity: 1; transform: translate(-50%,-50%) rotate(-10deg) scale(1); }
+}
+
+/* ---------- diagRigLab(.drg-) 대각선 조작대(L8) ---------- */
+.drg-tg { padding: 10px 13px; }
+.drg-tg.on { border-color: rgba(25,113,194,.55); background: #EAF3FC; color: #14588F; box-shadow: var(--sh-card), inset 0 0 0 1px rgba(25,113,194,.22); }
+.drg-tg[disabled] { opacity: .45; }
+.drg-namerow { display: flex; justify-content: center; padding: 0 14px 4px; }
+.drg-namerow:empty { display: none; }
+.drg-name { padding: 7px 20px; border-radius: 99px; background: #EAF3FC; border: 1.5px solid rgba(25,113,194,.5); color: #14588F; font-size: 15px; font-weight: 800; animation: m5Pop .4s var(--spring-bounce); }
+.drg-name.gold { background: linear-gradient(160deg, #FFF8E1, #FFE9B0); border-color: #E3A008; color: #8A5A00; box-shadow: 0 0 0 3px rgba(240,180,41,.22), var(--sh-card); }
+.drg-name.dim { opacity: .45; }
+
+/* ---------- quadFamilyLab(.qf-) 사각형 진화 계보(L9) ---------- */
+.qf-name {
+  margin: 2px auto 0; width: fit-content; padding: 7px 18px; border-radius: 99px;
+  background: #E7F1FB; border: 1.5px solid rgba(25,113,194,.4); color: #12579B;
+  font-size: 15px; font-weight: 800; letter-spacing: -.012em;
+}
+.qf-name.pop { animation: mansPop .4s var(--spring-bounce); }
+.qf-tree { margin: 6px 14px 0; padding: 8px 0 12px; border-top: 1px dashed var(--n200); }
+.qf-acts .ct-btn[disabled] { opacity: .55; pointer-events: none; }
+.qf-poly.glow { animation: qfGlow 1.3s var(--ease-out); }
+@keyframes qfGlow {
+  0% { filter: drop-shadow(0 0 0 rgba(25,113,194,0)); }
+  35% { filter: drop-shadow(0 0 13px rgba(25,113,194,.8)); }
+  100% { filter: drop-shadow(0 0 0 rgba(25,113,194,0)); }
+}
+.qf-spark { opacity: 0; transform-box: fill-box; transform-origin: center; animation: qfSpark .95s var(--ease-out) forwards; }
+@keyframes qfSpark {
+  0% { opacity: 0; transform: scale(.2) rotate(0deg); }
+  45% { opacity: 1; transform: scale(1.15) rotate(20deg); }
+  100% { opacity: 0; transform: scale(.55) rotate(45deg); }
+}
+
+/* ---------- areaSlideLab(.asl-) 꼭짓점 미끄럼틀(L10) ---------- */
+.asl-read {
+  margin: 10px auto 0; width: fit-content; display: flex; align-items: center; gap: 8px;
+  padding: 7px 16px; border-radius: 99px; background: var(--n0);
+  border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 13.5px; font-weight: 800; color: var(--n700); font-variant-numeric: tabular-nums;
+}
+.asl-read b { color: #1971C2; font-size: 17px; }
+.asl-same {
+  padding: 2.5px 9px; border-radius: 99px; background: #EDF9F0; color: #1E7A31;
+  font-size: 11.5px; font-weight: 800; border: 1px solid rgba(47,158,68,.4);
+}

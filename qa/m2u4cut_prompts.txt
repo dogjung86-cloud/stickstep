@@ -1,0 +1,45 @@
+# 스틱맨 개념 컷 — 중2 수학 Ⅳ(삼각형과 사각형의 성질) concept 10장 (전부 가로 4:3)
+# 폴더: public/math2/cuts (이름 = u4lM). 장면 규칙: 그 레슨의 훅·랩 소재 재활용 금지(새 각도),
+# 숫자·글자 대신 사물·개수·손짓으로.
+#
+# ── 스타일 블록 A (전 컷 공용 — 스틱맨 만화) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+
+# ══ 중2 수학 Ⅳ 삼각형과 사각형의 성질 → public/math2/cuts ══
+
+[0] file=public/math2/cuts/u4l1.png (landscape 4:3, 스타일 A)
+A stick figure stands beside an endless row of outlined triangles of all different shapes stretching toward the horizon, and presses one big rubber stamp down onto the floor in front of them; the stamp leaves a small solid triangle imprint, and faint identical imprints already appear under every triangle in the row at once. Confident smile. Only the rubber stamp in the figure's hand is teal; everything else pure black and white.
+
+[1] file=public/math2/cuts/u4l2.png (landscape 4:3, 스타일 A)
+A stick figure playfully tries to walk up an escalator that clearly moves downward, drawn in clean side view with motion lines on the steps flowing down while the figure strides up, one hand on the rail, determined face. A second stick figure at the bottom watches with a surprised face. Only the escalator handrail is teal; everything else pure black and white.
+
+[2] file=public/math2/cuts/u4l3.png (landscape 4:3, 스타일 A)
+A stick figure assembles a right-triangle picture frame lying on a workbench: the corner piece with a small square notch is already fixed, and the figure snaps in just two remaining parts, the long slanted bar and one short bar, like puzzle pieces clicking into place. A small toolbox sits nearby, closed. Only the long slanted bar being inserted is teal; everything else pure black and white.
+
+[3] file=public/math2/cuts/u4l4.png (landscape 4:3, 스타일 A)
+A stick figure jeweler lowers a triangle-shaped pendant into a perfectly round case held in the other hand: all three corners of the triangle touch the circular rim at the same time, fitting exactly. The figure squints with one eye, concentrating. Only the round case rim is teal; everything else pure black and white.
+
+[4] file=public/math2/cuts/u4l5.png (landscape 4:3, 스타일 A)
+A stick figure gently lowers a large ball into an open triangular box seen from above: the ball touches all three inner walls of the triangle at the same time, fitting snugly with no gap. The figure's face shows careful satisfaction. Only the ball is teal; everything else pure black and white.
+
+[5] file=public/math2/cuts/u4l6.png (landscape 4:3, 스타일 A)
+A stick figure on a small stool rotates a slanted parallelogram-shaped picture frame half a turn around its center nail on the wall: a dashed ghost outline shows the frame before rotating, and the solid frame after rotating looks exactly identical in the same place. The figure scratches their head, amazed. Only the picture frame is teal; everything else pure black and white.
+
+[6] file=public/math2/cuts/u4l7.png (landscape 4:3, 스타일 A)
+A stick figure stands before a garden gate shaped like a slanted parallelogram, holding up a ring of exactly five different keys, inserting one of them into the single padlock; the lock is popping open with small motion lines. Only the one key being used is teal; everything else pure black and white.
+
+[7] file=public/math2/cuts/u4l8.png (landscape 4:3, 스타일 A)
+A stick figure opens an umbrella in clean view from slightly below: the straight ribs of the umbrella frame are drawn boldly, and the canopy stretches to exactly follow the shape the ribs make. The figure looks up at the frame, one hand pushing the runner up the pole. Only the umbrella ribs are teal; everything else pure black and white.
+
+[8] file=public/math2/cuts/u4l9.png (landscape 4:3, 스타일 A)
+A stick figure unrolls a large family-tree scroll on the wall: the tree is made only of plain quadrilateral shapes connected by branching lines, a generic slanted quadrilateral at the top, a trapezoid below it, then a parallelogram, splitting into a rectangle on one branch and a diamond rhombus on the other, both joining into one perfect square at the bottom. The figure points proudly at the square. Only the square at the bottom of the tree is teal; everything else pure black and white.
+
+[9] file=public/math2/cuts/u4l10.png (landscape 4:3, 스타일 A)
+A stick figure baker looks at a balance scale that stays perfectly level: on one pan sits a tall narrow lump of dough, on the other pan a flat wide lump of dough, clearly different shapes but balancing exactly. The figure holds a rolling pin and smiles knowingly. Only the flat wide dough is teal; everything else pure black and white.

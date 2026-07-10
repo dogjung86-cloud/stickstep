@@ -35,7 +35,7 @@ export const cut = (theme: string, name: string, alt: string, bubbles?: CutBubbl
 
 export const concept = (o: {
   kicker?: string;
-  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "plant" | "elec" | "num" | "star" | "alge" | "grph" | "geom" | "solid" | "data" | "calc" | "ineq" | "func";
+  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "plant" | "elec" | "num" | "star" | "alge" | "grph" | "geom" | "solid" | "data" | "calc" | "ineq" | "func" | "prove";
   title: string;
   lead?: string;
   blocks?: Block[];

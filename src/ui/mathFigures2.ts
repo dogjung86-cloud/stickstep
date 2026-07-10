@@ -937,3 +937,453 @@ export function lineFig(o: {
   }
   return svg(spec.vb, spec.grid + g);
 }
+
+/* ════════════════════════════════════════════════════════════
+   중2 Ⅳ 삼각형과 사각형의 성질 — 퀴즈·concept 그림 + proveMiniArt
+   기하 원소는 geoKit(각 호·직각 표시·틱·점 라벨)만 사용, 좌표는 전부 계산.
+   팔레트: 코발트 #1971C2(진한 #12579B), 보조 앰버 #E8A93E·시안 #0DA5C6·로즈 #E8547E.
+   ════════════════════════════════════════════════════════════ */
+import { angleArc, rightMark, tickMark, dot as gdot, ptLabel, angleOf, normDeg } from "./geoKit";
+
+const P4 = { main: "#1971C2", deep: "#12579B", fill: "#D9E9F9", amber: "#E8A93E", cyan: "#0DA5C6", rose: "#E8547E", ink: "#334155" } as const;
+
+/** 세 꼭짓점 path. */
+const triPath = (a: [number, number], b: [number, number], c: [number, number], fill: string = P4.fill): string =>
+  `<path d="M${a[0]} ${a[1]} L${b[0]} ${b[1]} L${c[0]} ${c[1]} Z" fill="${fill}" stroke="${P4.deep}" stroke-width="2.2" stroke-linejoin="round"/>`;
+
+/** 꼭짓점 p에서 p1·p2로 벌어진 내각 호(항상 짧은 쪽). */
+function arcIn(p: [number, number], p1: [number, number], p2: [number, number], color: string, label?: string, r = 22): string {
+  const a1 = angleOf(p[0], p[1], p1[0], p1[1]);
+  const a2 = angleOf(p[0], p[1], p2[0], p2[1]);
+  return normDeg(a2 - a1) <= 180
+    ? angleArc(p[0], p[1], r, a1, a2, color, label)
+    : angleArc(p[0], p[1], r, a2, a1, color, label);
+}
+
+/* ── L1 isoPropFig: 이등변삼각형의 성질 도해(밑각 같음 + 꼭지각 이등분선의 수직이등분) ── */
+export function isoPropFig(): string {
+  const A: [number, number] = [180, 34];
+  const B: [number, number] = [84, 172];
+  const C: [number, number] = [276, 172];
+  const D: [number, number] = [180, 172];
+  return svg(
+    "0 0 360 208",
+    `<ellipse cx="180" cy="192" rx="120" ry="6" fill="#2A3A5E" opacity=".08"/>` +
+      triPath(A, B, C) +
+      `<line x1="${A[0]}" y1="${A[1]}" x2="${D[0]}" y2="${D[1]}" stroke="${P4.rose}" stroke-width="2.2" stroke-dasharray="6 4"/>` +
+      tickMark(A[0], A[1], B[0], B[1], 1, P4.main) + tickMark(A[0], A[1], C[0], C[1], 1, P4.main) +
+      arcIn(B, A, C, P4.amber) + arcIn(C, B, A, P4.amber) +
+      angleArc(A[0], A[1], 20, 235, 270, P4.rose) + angleArc(A[0], A[1], 20, 270, 305, P4.rose) +
+      rightMark(D[0], D[1], 90, 10, P4.rose) +
+      tickMark(B[0], B[1], D[0], D[1], 2, P4.cyan) + tickMark(D[0], D[1], C[0], C[1], 2, P4.cyan) +
+      gdot(...A) + gdot(...B) + gdot(...C) + gdot(D[0], D[1], P4.rose, 3.2) +
+      ptLabel(A[0], A[1], "A", 0, -10) + ptLabel(B[0], B[1], "B", -11, 14) + ptLabel(C[0], C[1], "C", 11, 14) + ptLabel(D[0], D[1], "D", 0, 17, "#C2255C"),
+  );
+}
+
+/* ── L1 isoExtFig: 외각 문제(C의 외각 112° → 밑각 68° → 꼭지각 x=44°) ── */
+export function isoExtFig(): string {
+  const A: [number, number] = [150, 34];
+  const B: [number, number] = [64, 168];
+  const C: [number, number] = [236, 168];
+  const E: [number, number] = [318, 168];
+  return svg(
+    "0 0 360 204",
+    `<ellipse cx="180" cy="190" rx="130" ry="6" fill="#2A3A5E" opacity=".08"/>` +
+      `<line x1="${C[0]}" y1="${C[1]}" x2="${E[0]}" y2="${E[1]}" stroke="#8093A8" stroke-width="2" stroke-dasharray="6 4"/>` +
+      triPath(A, B, C) +
+      tickMark(A[0], A[1], B[0], B[1], 1, P4.main) + tickMark(A[0], A[1], C[0], C[1], 1, P4.main) +
+      arcIn(A, B, C, P4.rose, "x") +
+      arcIn(C, A, E, P4.amber, "112°", 24) +
+      gdot(...A) + gdot(...B) + gdot(...C) +
+      ptLabel(A[0], A[1], "A", 0, -10) + ptLabel(B[0], B[1], "B", -11, 14) + ptLabel(C[0], C[1], "C", 0, 17),
+  );
+}
+
+/* ── L2 foldIsoFig: 종이 띠 접기 → 겹침 삼각형(접은 각 ●=엇각 ● → 이등변) ── */
+export function foldIsoFig(): string {
+  const x0 = 96;
+  const spread = 128;
+  const x1 = x0 + spread;
+  return svg(
+    "0 0 360 200",
+    `<ellipse cx="180" cy="184" rx="130" ry="6" fill="#2A3A5E" opacity=".08"/>` +
+      `<rect x="24" y="66" width="312" height="54" rx="6" fill="url(#fi-strip)" stroke="#B8925C" stroke-width="1.6"/>` +
+      `<rect x="24" y="70" width="312" height="7" fill="#fff" opacity=".35"/>` +
+      `<path d="M${x0} 66 L${x0} 120 L${x1} 120 Z" fill="url(#fi-fold)" stroke="#0F4674" stroke-width="2" stroke-linejoin="round" opacity=".94"/>` +
+      `<path d="M${x0} 66 L${x1} 120" stroke="#0F4674" stroke-width="1.4" stroke-dasharray="4 3" opacity=".5"/>` +
+      angleArc(x0, 120, 17, 0, Math.round((Math.atan2(54, spread) * 180) / Math.PI) + 90 - 90 + 23, P4.amber, "●", { labelR: 26 }) +
+      angleArc(x1, 120, 17, 180 - 23, 180, P4.cyan, "○", { labelR: 26 }) +
+      angleArc(x1, 120, 30, 157, 180, P4.cyan) +
+      `<text x="${x0 + spread / 2}" y="152" text-anchor="middle" font-size="12" font-weight="800" fill="#12579B">접은 각 ● 와 엇갈린 위치의 각 ○</text>`,
+    `<linearGradient id="fi-strip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCEFD8"/><stop offset=".5" stop-color="#F2DDB4"/><stop offset="1" stop-color="#E3C68E"/></linearGradient>
+    <linearGradient id="fi-fold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A9CDF2"/><stop offset=".55" stop-color="#5CA4E8"/><stop offset="1" stop-color="#2B79C0"/></linearGradient>`,
+  );
+}
+
+/* ── L3 rhaRhsFig: 직각삼각형 합동 조건 2종 도해(빗변+예각 / 빗변+다른 한 변) ── */
+export function rhaRhsFig(): string {
+  const one = (ox: number, kind: "rha" | "rhs"): string => {
+    const C: [number, number] = [ox, 150];
+    const B: [number, number] = [ox + 118, 150];
+    const A: [number, number] = [ox, 66];
+    return (
+      triPath(A, B, C) +
+      rightMark(C[0], C[1], 0, 11, P4.ink) +
+      `<line x1="${A[0]}" y1="${A[1]}" x2="${B[0]}" y2="${B[1]}" stroke="${P4.main}" stroke-width="3.4" stroke-linecap="round"/>` +
+      `<text x="${(A[0] + B[0]) / 2 + 10}" y="${(A[1] + B[1]) / 2 - 8}" font-size="10.5" font-weight="900" fill="${P4.deep}">빗변</text>` +
+      (kind === "rha"
+        ? arcIn(B, A, C, P4.amber, "예각")
+        : `<line x1="${C[0]}" y1="${C[1]}" x2="${B[0]}" y2="${B[1]}" stroke="${P4.cyan}" stroke-width="3.4" stroke-linecap="round"/>` +
+          `<text x="${(C[0] + B[0]) / 2}" y="${C[1] + 16}" text-anchor="middle" font-size="10.5" font-weight="900" fill="#0B7285">다른 한 변</text>`)
+    );
+  };
+  return svg(
+    "0 0 360 200",
+    `<ellipse cx="180" cy="184" rx="130" ry="6" fill="#2A3A5E" opacity=".08"/>` +
+      one(36, "rha") + one(206, "rhs") +
+      `<text x="95" y="38" text-anchor="middle" font-size="12.5" font-weight="900" fill="#12579B">RHA: 빗변 + 한 예각</text>` +
+      `<text x="265" y="38" text-anchor="middle" font-size="12.5" font-weight="900" fill="#0B7285">RHS: 빗변 + 다른 한 변</text>`,
+  );
+}
+
+/* ── L3 rhPairsFig: 합동 짝 찾기 4형제 (가)빗8·40° (나)빗8·변5 (다)빗8·50°(나머지 40°) (라)변5·40° ── */
+export function rhPairsFig(): string {
+  const one = (ox: number, oy: number, tag: string, hyp: boolean, angLabel: string, sideLabel: string, angAtTop = false): string => {
+    const C: [number, number] = [ox, oy];
+    const B: [number, number] = [ox + 92, oy];
+    const A: [number, number] = [ox, oy - 62];
+    let g = triPath(A, B, C, "#EAF3FC") + rightMark(C[0], C[1], 0, 9, P4.ink);
+    if (hyp)
+      g +=
+        `<line x1="${A[0]}" y1="${A[1]}" x2="${B[0]}" y2="${B[1]}" stroke="${P4.main}" stroke-width="3" stroke-linecap="round"/>` +
+        `<text x="${(A[0] + B[0]) / 2 + 8}" y="${(A[1] + B[1]) / 2 - 6}" font-size="10.5" font-weight="900" fill="${P4.deep}">8</text>`;
+    if (angLabel) g += angAtTop ? arcIn(A, C, B, P4.amber, angLabel, 16) : arcIn(B, A, C, P4.amber, angLabel, 20);
+    if (sideLabel)
+      g +=
+        `<line x1="${C[0]}" y1="${C[1]}" x2="${B[0]}" y2="${B[1]}" stroke="${P4.cyan}" stroke-width="3" stroke-linecap="round"/>` +
+        `<text x="${(C[0] + B[0]) / 2}" y="${C[1] + 15}" text-anchor="middle" font-size="10.5" font-weight="900" fill="#0B7285">${sideLabel}</text>`;
+    g += `<text x="${ox + 40}" y="${oy + 32}" text-anchor="middle" font-size="12" font-weight="900" fill="#334155">${tag}</text>`;
+    return g;
+  };
+  return svg(
+    "0 0 360 250",
+    one(34, 92, "(가)", true, "40°", "") +
+      one(226, 92, "(나)", true, "", "5") +
+      one(34, 210, "(다)", true, "50°", "") +
+      one(226, 210, "(라)", false, "40°", "5"),
+  );
+}
+
+/* ── L4 rightCircumFig: 직각삼각형의 외접원(외심 = 빗변의 중점, 빗변 12 → r 6) ── */
+export function rightCircumFig(): string {
+  const B: [number, number] = [96, 60];
+  const C: [number, number] = [96, 168];
+  const A: [number, number] = [252, 168];
+  const O: [number, number] = [(B[0] + A[0]) / 2, (B[1] + A[1]) / 2];
+  const r = Math.hypot(A[0] - O[0], A[1] - O[1]);
+  return svg(
+    "0 0 360 234",
+    `<circle cx="${O[0]}" cy="${O[1]}" r="${r.toFixed(1)}" stroke="${P4.main}" stroke-width="2.4" fill="rgba(25,113,194,.05)"/>` +
+      triPath(A, B, C) +
+      rightMark(C[0], C[1], 0, 11, P4.ink) +
+      `<line x1="${B[0]}" y1="${B[1]}" x2="${A[0]}" y2="${A[1]}" stroke="${P4.amber}" stroke-width="3" stroke-linecap="round"/>` +
+      `<text x="${O[0] + 4}" y="${O[1] - 32}" font-size="12" font-weight="900" fill="#B26200">빗변 12 cm</text>` +
+      tickMark(B[0], B[1], O[0], O[1], 1, P4.rose) + tickMark(O[0], O[1], A[0], A[1], 1, P4.rose) +
+      gdot(O[0], O[1], P4.rose, 4.5) + ptLabel(O[0], O[1], "O", 12, 14, "#C2255C") +
+      gdot(...A) + gdot(...B) + gdot(...C) +
+      ptLabel(A[0], A[1], "A", 12, 5) + ptLabel(B[0], B[1], "B", -4, -10) + ptLabel(C[0], C[1], "C", -12, 12),
+  );
+}
+
+/* ── L4 circumAngleFig: 외심 각 유도(∠OBA=24°, ∠OCA=36° → ∠BAC=60°) ── */
+export function circumAngleFig(): string {
+  const A: [number, number] = [176, 36];
+  const B: [number, number] = [62, 186];
+  const C: [number, number] = [300, 172];
+  // 외심 계산
+  const d = 2 * (A[0] * (B[1] - C[1]) + B[0] * (C[1] - A[1]) + C[0] * (A[1] - B[1]));
+  const ux = ((A[0] ** 2 + A[1] ** 2) * (B[1] - C[1]) + (B[0] ** 2 + B[1] ** 2) * (C[1] - A[1]) + (C[0] ** 2 + C[1] ** 2) * (A[1] - B[1])) / d;
+  const uy = ((A[0] ** 2 + A[1] ** 2) * (C[0] - B[0]) + (B[0] ** 2 + B[1] ** 2) * (A[0] - C[0]) + (C[0] ** 2 + C[1] ** 2) * (B[0] - A[0])) / d;
+  const O: [number, number] = [ux, uy];
+  return svg(
+    "0 0 360 224",
+    triPath(A, B, C) +
+      `<line x1="${O[0]}" y1="${O[1]}" x2="${A[0]}" y2="${A[1]}" stroke="#8FB6DC" stroke-width="1.8" stroke-dasharray="5 4"/>` +
+      `<line x1="${O[0]}" y1="${O[1]}" x2="${B[0]}" y2="${B[1]}" stroke="#8FB6DC" stroke-width="1.8" stroke-dasharray="5 4"/>` +
+      `<line x1="${O[0]}" y1="${O[1]}" x2="${C[0]}" y2="${C[1]}" stroke="#8FB6DC" stroke-width="1.8" stroke-dasharray="5 4"/>` +
+      arcIn(B, O, A, P4.amber, "24°", 24) +
+      arcIn(C, A, O, P4.cyan, "36°", 24) +
+      arcIn(A, B, C, P4.rose, "x", 20) +
+      gdot(O[0], O[1], "#C2255C", 4) + ptLabel(O[0], O[1], "O", 0, 18, "#C2255C") +
+      gdot(...A) + gdot(...B) + gdot(...C) +
+      ptLabel(A[0], A[1], "A", 0, -10) + ptLabel(B[0], B[1], "B", -11, 13) + ptLabel(C[0], C[1], "C", 12, 12),
+  );
+}
+
+/* ── L5 incenterAngleFig: 내심 각 유도(∠IBA=26°, ∠ICA=33° → ∠BAC=x) ── */
+export function incenterAngleFig(): string {
+  const A: [number, number] = [168, 34];
+  const B: [number, number] = [58, 188];
+  const C: [number, number] = [304, 176];
+  const a = Math.hypot(B[0] - C[0], B[1] - C[1]);
+  const b = Math.hypot(A[0] - C[0], A[1] - C[1]);
+  const c = Math.hypot(A[0] - B[0], A[1] - B[1]);
+  const I: [number, number] = [(a * A[0] + b * B[0] + c * C[0]) / (a + b + c), (a * A[1] + b * B[1] + c * C[1]) / (a + b + c)];
+  return svg(
+    "0 0 360 224",
+    triPath(A, B, C) +
+      `<line x1="${I[0]}" y1="${I[1]}" x2="${A[0]}" y2="${A[1]}" stroke="#8FB6DC" stroke-width="1.8" stroke-dasharray="5 4"/>` +
+      `<line x1="${I[0]}" y1="${I[1]}" x2="${B[0]}" y2="${B[1]}" stroke="#8FB6DC" stroke-width="1.8" stroke-dasharray="5 4"/>` +
+      `<line x1="${I[0]}" y1="${I[1]}" x2="${C[0]}" y2="${C[1]}" stroke="#8FB6DC" stroke-width="1.8" stroke-dasharray="5 4"/>` +
+      arcIn(B, A, I, P4.amber, "26°", 24) + arcIn(B, I, C, P4.amber, "●", 38) +
+      arcIn(C, I, A, P4.cyan, "33°", 24) + arcIn(C, B, I, P4.cyan, "○", 40) +
+      arcIn(A, B, C, P4.rose, "x", 20) +
+      gdot(I[0], I[1], "#C2255C", 4) + ptLabel(I[0], I[1], "I", 0, 18, "#C2255C") +
+      gdot(...A) + gdot(...B) + gdot(...C) +
+      ptLabel(A[0], A[1], "A", 0, -10) + ptLabel(B[0], B[1], "B", -11, 13) + ptLabel(C[0], C[1], "C", 12, 12),
+  );
+}
+
+/* ── L6 paraXYFig: 평행사변형 x·y(AB=7, AD=9, ∠A=105° → x=BC=9, y=∠B=75°) ── */
+export function paraXYFig(): string {
+  const B: [number, number] = [58, 172];
+  const C: [number, number] = [258, 172];
+  const A: [number, number] = [108, 62];
+  const D: [number, number] = [A[0] + (C[0] - B[0]), A[1]];
+  return svg(
+    "0 0 360 210",
+    `<path d="M${A[0]} ${A[1]} L${B[0]} ${B[1]} L${C[0]} ${C[1]} L${D[0]} ${D[1]} Z" fill="${P4.fill}" stroke="${P4.deep}" stroke-width="2.2" stroke-linejoin="round"/>` +
+      `<text x="${(A[0] + B[0]) / 2 - 16}" y="${(A[1] + B[1]) / 2 + 4}" font-size="12.5" font-weight="900" fill="#334155">7 cm</text>` +
+      `<text x="${(A[0] + D[0]) / 2}" y="${A[1] - 10}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#334155">9 cm</text>` +
+      `<text x="${(B[0] + C[0]) / 2}" y="${B[1] + 20}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#C2255C">x cm</text>` +
+      arcIn(A, B, D, P4.amber, "105°", 22) +
+      arcIn(B, C, A, P4.rose, "y°", 22) +
+      gdot(...A) + gdot(...B) + gdot(...C) + gdot(...D) +
+      ptLabel(A[0], A[1], "A", -10, -8) + ptLabel(B[0], B[1], "B", -11, 14) + ptLabel(C[0], C[1], "C", 11, 14) + ptLabel(D[0], D[1], "D", 11, -8),
+  );
+}
+
+/* ── L7 trapCounterFig: 함정 조건의 반례(AD∥BC + AB=DC인데 평행사변형이 아닌 사다리꼴) ── */
+export function trapCounterFig(): string {
+  const A: [number, number] = [124, 66];
+  const D: [number, number] = [236, 66];
+  const B: [number, number] = [64, 168];
+  const C: [number, number] = [296, 168];
+  return svg(
+    "0 0 360 206",
+    `<path d="M${A[0]} ${A[1]} L${B[0]} ${B[1]} L${C[0]} ${C[1]} L${D[0]} ${D[1]} Z" fill="#FDF0F3" stroke="#C2255C" stroke-width="2.2" stroke-linejoin="round"/>` +
+      `<path d="M${(A[0] + D[0]) / 2 - 8} ${A[1] - 8} l8 4 l-8 4" stroke="${P4.main}" stroke-width="2" fill="none"/>` +
+      `<path d="M${(B[0] + C[0]) / 2 - 8} ${B[1] + 6} l8 4 l-8 4" stroke="${P4.main}" stroke-width="2" fill="none"/>` +
+      tickMark(A[0], A[1], B[0], B[1], 1, P4.cyan) + tickMark(D[0], D[1], C[0], C[1], 1, P4.cyan) +
+      `<text x="180" y="40" text-anchor="middle" font-size="12" font-weight="800" fill="#12579B">AD ∥ BC (평행)</text>` +
+      `<text x="180" y="196" text-anchor="middle" font-size="12" font-weight="800" fill="#0B7285">AB = DC (다른 쌍의 길이)</text>` +
+      gdot(...A) + gdot(...B) + gdot(...C) + gdot(...D) +
+      ptLabel(A[0], A[1], "A", -10, -8) + ptLabel(B[0], B[1], "B", -11, 14) + ptLabel(C[0], C[1], "C", 11, 14) + ptLabel(D[0], D[1], "D", 11, -8),
+  );
+}
+
+/* ── L8 rectDiagFig: 직사각형 대각선(OA=5cm → 나머지·BD 유도) ── */
+export function rectDiagFig(): string {
+  const A: [number, number] = [70, 60];
+  const B: [number, number] = [70, 168];
+  const C: [number, number] = [290, 168];
+  const D: [number, number] = [290, 60];
+  const O: [number, number] = [180, 114];
+  return svg(
+    "0 0 360 206",
+    `<path d="M${A[0]} ${A[1]} L${B[0]} ${B[1]} L${C[0]} ${C[1]} L${D[0]} ${D[1]} Z" fill="${P4.fill}" stroke="${P4.deep}" stroke-width="2.2" stroke-linejoin="round"/>` +
+      `<line x1="${A[0]}" y1="${A[1]}" x2="${C[0]}" y2="${C[1]}" stroke="${P4.main}" stroke-width="2.2"/>` +
+      `<line x1="${B[0]}" y1="${B[1]}" x2="${D[0]}" y2="${D[1]}" stroke="${P4.rose}" stroke-width="2.2"/>` +
+      `<text x="${(A[0] + O[0]) / 2 - 12}" y="${(A[1] + O[1]) / 2 - 6}" font-size="12.5" font-weight="900" fill="${P4.deep}">5 cm</text>` +
+      gdot(O[0], O[1], P4.ink, 4) + ptLabel(O[0], O[1], "O", 2, -10) +
+      gdot(...A) + gdot(...B) + gdot(...C) + gdot(...D) +
+      ptLabel(A[0], A[1], "A", -11, -6) + ptLabel(B[0], B[1], "B", -11, 14) + ptLabel(C[0], C[1], "C", 11, 14) + ptLabel(D[0], D[1], "D", 11, -6),
+  );
+}
+
+/* ── L8 rhombusDiagFig: 마름모 대각선(수직 + ∠ABO=32° → x=∠BAO) ── */
+export function rhombusDiagFig(): string {
+  const A: [number, number] = [180, 42];
+  const B: [number, number] = [84, 118];
+  const C: [number, number] = [180, 194];
+  const D: [number, number] = [276, 118];
+  const O: [number, number] = [180, 118];
+  return svg(
+    "0 0 360 226",
+    `<path d="M${A[0]} ${A[1]} L${B[0]} ${B[1]} L${C[0]} ${C[1]} L${D[0]} ${D[1]} Z" fill="${P4.fill}" stroke="${P4.deep}" stroke-width="2.2" stroke-linejoin="round"/>` +
+      `<line x1="${A[0]}" y1="${A[1]}" x2="${C[0]}" y2="${C[1]}" stroke="${P4.main}" stroke-width="2"/>` +
+      `<line x1="${B[0]}" y1="${B[1]}" x2="${D[0]}" y2="${D[1]}" stroke="${P4.rose}" stroke-width="2"/>` +
+      rightMark(O[0], O[1], 90, 10, "#C2255C") +
+      arcIn(B, A, O, P4.amber, "32°", 26) +
+      arcIn(A, O, B, P4.cyan, "x", 26) +
+      gdot(...A) + gdot(...B) + gdot(...C) + gdot(...D) + gdot(O[0], O[1], P4.ink, 3.4) +
+      ptLabel(A[0], A[1], "A", 0, -10) + ptLabel(B[0], B[1], "B", -12, 5) + ptLabel(C[0], C[1], "C", 0, 18) + ptLabel(D[0], D[1], "D", 12, 5) + ptLabel(O[0], O[1], "O", 12, 14),
+  );
+}
+
+/* ── L9 quadTreeFig: 사각형 가족 관계 계단(빈칸 퀴즈 겸용: blank ㉠=평사→직사 조건) ── */
+export function quadTreeFig(blank = false): string {
+  const node = (x: number, y: number, w: number, label: string): string =>
+    `<rect x="${x - w / 2}" y="${y - 15}" width="${w}" height="30" rx="10" fill="url(#qt-node)" stroke="#12579B" stroke-width="1.6"/>` +
+    `<text x="${x}" y="${y + 5}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#12579B">${label}</text>`;
+  const arrow = (x1: number, y1: number, x2: number, y2: number, label: string, hi = false): string => {
+    const mx = (x1 + x2) / 2;
+    const my = (y1 + y2) / 2;
+    return (
+      `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${hi ? "#C2255C" : "#8FB6DC"}" stroke-width="2"/>` +
+      `<path d="M${x2} ${y2} l-5 -8 l9 -1 z" fill="${hi ? "#C2255C" : "#8FB6DC"}"/>` +
+      (label
+        ? `<rect x="${mx - 52}" y="${my - 12}" width="104" height="21" rx="8" fill="#FFFFFF" stroke="${hi ? "#C2255C" : "#C9DCEF"}" stroke-width="1.2"/>` +
+          `<text x="${mx}" y="${my + 3}" text-anchor="middle" font-size="10" font-weight="800" fill="${hi ? "#C2255C" : "#5A6B7E"}">${label}</text>`
+        : "")
+    );
+  };
+  return svg(
+    "0 0 360 322",
+    node(180, 24, 96, "사각형") +
+      arrow(180, 39, 180, 74, "한 쌍의 대변이 평행") +
+      node(180, 90, 104, "사다리꼴") +
+      arrow(180, 105, 180, 140, "다른 쌍도 평행") +
+      node(180, 156, 124, "평행사변형") +
+      arrow(126, 168, 92, 216, blank ? "㉠ ?" : "한 내각이 직각", blank) +
+      arrow(234, 168, 268, 216, "이웃하는 두 변이 같음") +
+      node(92, 232, 104, "직사각형") +
+      node(268, 232, 96, "마름모") +
+      arrow(112, 247, 158, 288, "이웃하는 두 변이 같음") +
+      arrow(248, 247, 202, 288, "한 내각이 직각") +
+      node(180, 304, 104, "정사각형"),
+    `<linearGradient id="qt-node" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E7F1FB"/></linearGradient>`,
+  );
+}
+
+/* ── L10 areaParaFig: 평행선 사이 삼각형(밑변 공통 BC, △ABC=15cm² → △DBC=?) ── */
+export function areaParaFig(): string {
+  const l = 54;
+  const m = 168;
+  const A: [number, number] = [104, l];
+  const Dp: [number, number] = [252, l];
+  const B: [number, number] = [88, m];
+  const C: [number, number] = [212, m];
+  return svg(
+    "0 0 360 206",
+    `<line x1="26" y1="${l}" x2="334" y2="${l}" stroke="#8093A8" stroke-width="2"/>` +
+      `<line x1="26" y1="${m}" x2="334" y2="${m}" stroke="#8093A8" stroke-width="2"/>` +
+      `<text x="342" y="${l + 4}" font-size="12" font-style="italic" font-weight="800" fill="#5A6B7E">l</text>` +
+      `<text x="340" y="${m + 4}" font-size="12" font-style="italic" font-weight="800" fill="#5A6B7E">m</text>` +
+      `<path d="M${A[0]} ${A[1]} L${B[0]} ${B[1]} L${C[0]} ${C[1]} Z" fill="rgba(25,113,194,.13)" stroke="${P4.main}" stroke-width="2.2" stroke-linejoin="round"/>` +
+      `<path d="M${Dp[0]} ${Dp[1]} L${B[0]} ${B[1]} L${C[0]} ${C[1]} Z" fill="rgba(232,84,126,.1)" stroke="${P4.rose}" stroke-width="2.2" stroke-dasharray="7 4" stroke-linejoin="round"/>` +
+      `<text x="${A[0] - 2}" y="${A[1] - 10}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#12579B">A</text>` +
+      `<text x="${Dp[0]}" y="${Dp[1] - 10}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#C2255C">D</text>` +
+      ptLabel(B[0], B[1], "B", -10, 16) + ptLabel(C[0], C[1], "C", 8, 16) +
+      `<text x="134" y="142" font-size="11.5" font-weight="900" fill="#12579B">15 cm²</text>` +
+      `<text x="206" y="112" font-size="11.5" font-weight="900" fill="#C2255C">?</text>`,
+  );
+}
+
+/* ── L10 trapAreaFig: 사다리꼴 대각선 넓이(△ABC=24, △OBC=15 → △DOC=9) ── */
+export function trapAreaFig(): string {
+  const A: [number, number] = [118, 56];
+  const D: [number, number] = [252, 56];
+  const B: [number, number] = [58, 172];
+  const C: [number, number] = [308, 172];
+  // 대각선 AC·BD 교점
+  const O: [number, number] = (() => {
+    const d1x = C[0] - A[0];
+    const d1y = C[1] - A[1];
+    const d2x = D[0] - B[0];
+    const d2y = D[1] - B[1];
+    const t = ((B[0] - A[0]) * d2y - (B[1] - A[1]) * d2x) / (d1x * d2y - d1y * d2x);
+    return [A[0] + d1x * t, A[1] + d1y * t];
+  })();
+  return svg(
+    "0 0 360 210",
+    `<path d="M${A[0]} ${A[1]} L${B[0]} ${B[1]} L${C[0]} ${C[1]} L${D[0]} ${D[1]} Z" fill="${P4.fill}" stroke="${P4.deep}" stroke-width="2.2" stroke-linejoin="round"/>` +
+      `<path d="M${(A[0] + D[0]) / 2 - 8} ${A[1] - 9} l8 4 l-8 4" stroke="${P4.main}" stroke-width="1.8" fill="none"/>` +
+      `<path d="M${(B[0] + C[0]) / 2 - 8} ${B[1] + 5} l8 4 l-8 4" stroke="${P4.main}" stroke-width="1.8" fill="none"/>` +
+      `<line x1="${A[0]}" y1="${A[1]}" x2="${C[0]}" y2="${C[1]}" stroke="${P4.main}" stroke-width="2"/>` +
+      `<line x1="${B[0]}" y1="${B[1]}" x2="${D[0]}" y2="${D[1]}" stroke="${P4.rose}" stroke-width="2"/>` +
+      gdot(O[0], O[1], P4.ink, 3.6) + ptLabel(O[0], O[1], "O", 0, -10) +
+      gdot(...A) + gdot(...B) + gdot(...C) + gdot(...D) +
+      ptLabel(A[0], A[1], "A", -10, -8) + ptLabel(B[0], B[1], "B", -11, 14) + ptLabel(C[0], C[1], "C", 11, 14) + ptLabel(D[0], D[1], "D", 11, -8),
+  );
+}
+
+/* ── proveMiniArt: 중2 Ⅳ recap 미니아트(코발트 팔레트, 72×72) ── */
+const MINI4: Record<string, string> = {
+  proof: `<rect x="20" y="12" width="30" height="12" rx="5" fill="url(#m4-bd)" stroke="#0F4674" stroke-width="1.4"/>
+    <path d="M24 24 h22 l3 12 h-28 z" fill="url(#m4-deep)" stroke="#0F4674" stroke-width="1.5" stroke-linejoin="round"/>
+    <rect x="14" y="42" width="42" height="14" rx="4" fill="url(#m4-paper)" stroke="#B8C6D6" stroke-width="1.2"/>
+    <path d="M28 49 l4 4 8 -9" stroke="#1971C2" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+  iso: `<path d="M36 14 L14 52 L58 52 Z" fill="url(#m4-bd)" stroke="#0F4674" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M36 14 L36 52" stroke="#C2255C" stroke-width="1.6" stroke-dasharray="4 3"/>
+    <path d="M20.5 45 A11 11 0 0 1 23 52" stroke="#E8A93E" stroke-width="2.4" fill="none"/>
+    <path d="M51.5 45 A11 11 0 0 0 49 52" stroke="#E8A93E" stroke-width="2.4" fill="none"/>`,
+  isoCond: `<path d="M36 16 L16 50 L56 50 Z" fill="none" stroke="#0F4674" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M22 44 A10 10 0 0 1 24.5 50" stroke="#E8A93E" stroke-width="2.6" fill="none"/>
+    <path d="M50 44 A10 10 0 0 0 47.5 50" stroke="#E8A93E" stroke-width="2.6" fill="none"/>
+    <path d="M28 30 h16 M28 34 h16" stroke="#1971C2" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M40 24 l6 8 -6 8" stroke="#04B45F" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(-14 0)"/>`,
+  rh: `<path d="M14 52 L14 22 L48 52 Z" fill="url(#m4-bd)" stroke="#0F4674" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M14 46 h6 v6" stroke="#33475C" stroke-width="1.6" fill="none"/>
+    <line x1="14" y1="22" x2="48" y2="52" stroke="#1971C2" stroke-width="3" stroke-linecap="round"/>
+    <path d="M50 18 a9 9 0 0 1 9 9" stroke="#E8A93E" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
+  ccenter: `<circle cx="36" cy="35" r="21" stroke="#1971C2" stroke-width="2.2" fill="rgba(25,113,194,.07)"/>
+    <path d="M36 16 L20 44 L54 41 Z" fill="url(#m4-bd)" stroke="#0F4674" stroke-width="1.6" stroke-linejoin="round"/>
+    <circle cx="36" cy="34.5" r="2.6" fill="#E8A93E" stroke="#9C5A10" stroke-width="1"/>`,
+  icenter: `<path d="M36 12 L14 54 L60 50 Z" fill="url(#m4-bd)" stroke="#0F4674" stroke-width="1.7" stroke-linejoin="round"/>
+    <circle cx="37" cy="41" r="12.5" fill="rgba(255,255,255,.75)" stroke="#E8547E" stroke-width="2.2"/>
+    <circle cx="37" cy="41" r="2.4" fill="#C2255C"/>`,
+  para: `<path d="M22 22 L12 50 L50 50 L60 22 Z" fill="url(#m4-bd)" stroke="#0F4674" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M46 14 a16 16 0 0 1 10 14 l-5 -3 m5 3 l2 -5" stroke="#E8A93E" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="36" cy="36" r="2.4" fill="#C2255C"/>`,
+  keys: `<circle cx="24" cy="26" r="9" fill="none" stroke="#E8A93E" stroke-width="3"/>
+    <path d="M31 33 L48 50 M42 44 l5 -5 M46 52 l5 -5" stroke="#E8A93E" stroke-width="3" stroke-linecap="round"/>
+    <path d="M16 52 l8 -8 M14 44 l4 -4" stroke="#1971C2" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>`,
+  diag: `<path d="M18 20 L54 52 M54 20 L18 52" stroke="#1971C2" stroke-width="3" stroke-linecap="round"/>
+    <path d="M18 20 L54 20 L54 52 L18 52 Z" stroke="#8FB6DC" stroke-width="1.6" fill="none" stroke-dasharray="4 3"/>
+    <circle cx="36" cy="36" r="3" fill="#E8A93E" stroke="#9C5A10" stroke-width="1"/>`,
+  family: `<rect x="26" y="10" width="20" height="10" rx="4" fill="url(#m4-bd)" stroke="#0F4674" stroke-width="1.3"/>
+    <rect x="12" y="30" width="20" height="10" rx="4" fill="url(#m4-bd)" stroke="#0F4674" stroke-width="1.3"/>
+    <rect x="40" y="30" width="20" height="10" rx="4" fill="url(#m4-bd)" stroke="#0F4674" stroke-width="1.3"/>
+    <rect x="26" y="50" width="20" height="10" rx="4" fill="url(#m4-gold)" stroke="#9C5A10" stroke-width="1.3"/>
+    <path d="M32 20 L24 30 M40 20 L48 30 M24 40 L32 50 M48 40 L40 50" stroke="#8FB6DC" stroke-width="1.8"/>`,
+  area: `<line x1="10" y1="18" x2="62" y2="18" stroke="#8093A8" stroke-width="2"/>
+    <line x1="10" y1="54" x2="62" y2="54" stroke="#8093A8" stroke-width="2"/>
+    <path d="M22 18 L14 54 L38 54 Z" fill="rgba(25,113,194,.2)" stroke="#1971C2" stroke-width="2"/>
+    <path d="M52 18 L34 54 L58 54 Z" fill="rgba(232,84,126,.14)" stroke="#E8547E" stroke-width="2" stroke-dasharray="5 3"/>
+    <path d="M28 12 h14 l-4 -3 m4 3 l-4 3" stroke="#E8A93E" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+  compare: `<circle cx="26" cy="34" r="17" fill="none" stroke="#1971C2" stroke-width="2.2"/>
+    <path d="M26 20 L14 42 L39 42 Z" fill="url(#m4-bd)" stroke="#0F4674" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M46 22 L34 48 L62 46 Z" fill="none" stroke="#0F4674" stroke-width="1.4" stroke-linejoin="round"/>
+    <circle cx="47" cy="41" r="7.5" fill="rgba(232,84,126,.15)" stroke="#E8547E" stroke-width="2"/>
+    <circle cx="26" cy="34" r="2" fill="#1971C2"/><circle cx="47" cy="41" r="2" fill="#C2255C"/>`,
+  adj: `<path d="M22 20 L12 50 L46 50 L56 20 Z" fill="url(#m4-bd)" stroke="#0F4674" stroke-width="1.8" stroke-linejoin="round"/>
+    <circle cx="20" cy="44" r="8" fill="none" stroke="#E8A93E" stroke-width="2.6" stroke-dasharray="12.6 38" transform="rotate(-90 20 44)"/>
+    <circle cx="26" cy="26" r="8" fill="none" stroke="#0DA5C6" stroke-width="2.6" stroke-dasharray="21 30" transform="rotate(72 26 26)"/>
+    <path d="M14 14 q10 -6 20 0" stroke="#C2255C" stroke-width="2" fill="none" stroke-dasharray="4 3" stroke-linecap="round" transform="translate(9 46)"/>`,
+  rect: `<rect x="12" y="20" width="48" height="32" fill="url(#m4-bd)" stroke="#0F4674" stroke-width="1.8"/>
+    <line x1="12" y1="20" x2="60" y2="52" stroke="#1971C2" stroke-width="2.4"/>
+    <line x1="60" y1="20" x2="12" y2="52" stroke="#E8547E" stroke-width="2.4"/>
+    <line x1="21" y1="30" x2="27" y2="21" stroke="#1971C2" stroke-width="2" stroke-linecap="round"/>
+    <line x1="45" y1="30" x2="51" y2="21" stroke="#E8547E" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="36" cy="36" r="2.6" fill="#E8A93E" stroke="#9C5A10" stroke-width="1"/>`,
+  kite: `<path d="M36 10 L56 34 L36 60 L16 34 Z" fill="url(#m4-bd)" stroke="#0F4674" stroke-width="1.8" stroke-linejoin="round"/>
+    <line x1="36" y1="10" x2="36" y2="60" stroke="#1971C2" stroke-width="2.2"/>
+    <line x1="16" y1="34" x2="56" y2="34" stroke="#E8547E" stroke-width="2.2"/>
+    <path d="M36 28 h6 v6" stroke="#C2255C" stroke-width="1.8" fill="none"/>`,
+};
+
+/** 중2 Ⅳ recap 미니아트 — proveMiniArt("proof"|"iso"|"isoCond"|"rh"|"ccenter"|"icenter"|"para"|"keys"|"diag"|"family"|"area") */
+export function proveMiniArt(key: string): string {
+  const m = MINI4[key];
+  if (!m) return "";
+  return svg(
+    "0 0 72 72",
+    `<ellipse cx="36" cy="62" rx="20" ry="3.5" fill="#2A3A5E" opacity=".1"/>${m}`,
+    `<linearGradient id="m4-bd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D9E9F9"/><stop offset="1" stop-color="#A9CDF2"/></linearGradient>
+    <linearGradient id="m4-deep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B79C0"/><stop offset="1" stop-color="#114E85"/></linearGradient>
+    <linearGradient id="m4-paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9F0F7"/></linearGradient>
+    <linearGradient id="m4-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9B0"/><stop offset="1" stop-color="#E8B54A"/></linearGradient>`,
+  );
+}

@@ -57,6 +57,8 @@ export const mathDrill: StepRenderer = (host, step, api) => {
     const it = items[i];
     pipEls.forEach((p, k) => p.classList.toggle("now", k === i));
     qCard.innerHTML = mfmt(it.q);
+    // 문장형 장문(수식 아닌 서술 26자 초과)은 27px 대신 본문 크기로(mdr-q 날한글 규칙)
+    qCard.classList.toggle("long", it.q.length > 26);
     qCard.classList.remove("slidein");
     void qCard.offsetWidth;
     qCard.classList.add("slidein");

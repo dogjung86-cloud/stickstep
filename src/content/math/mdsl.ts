@@ -111,7 +111,18 @@ export const mathHook = (o: {
     | "bonekey" // 법의학 뼈 한 조각, 관계식의 위력
     | "stalactite" // 종유석의 100년, 일정 변화의 예측
     | "twomask" // 방정식 카드의 뒷면, 같은 직선 두 이름
-    | "chase"; // 자전거 추격전, 교점 = 따라잡는 순간
+    | "chase" // 자전거 추격전, 교점 = 따라잡는 순간
+    // ── 중2 Ⅳ 삼각형과 사각형의 성질 (hookM2u4.ts) ──
+    | "hanger" // 옷걸이 두 어깨, 이등변의 밑각
+    | "foldstrip" // 종이 띠 접기, 겹침 삼각형은 늘 이등변
+    | "phonestand" // 접이식 폰 거치대, 직각+2정보면 같은 자세
+    | "fairspot" // 세 친구 공평 약속 장소, 등거리 지점
+    | "cookiecut" // 삼각형 반죽 최대 원 쿠키, 내접원
+    | "cardspin" // 트럼프 카드 거꾸로 잡아도 같은 그림, 반 바퀴 대칭
+    | "chopstick" // 젓가락 두 쌍 사각형, 대변 길이 조건
+    | "bookshelf" // 조립 가구 대각선 검사, 직사각형 판별
+    | "pickrect" // "직사각형을 모두 고르시오", 포함 관계
+    | "bentfence"; // 꺾인 텃밭 경계 펴기, 등적 변형
   choices?: string[];
   cta?: string;
 }): Step => ({ type: "mathHook", ...o });
@@ -489,3 +500,45 @@ export const lineRevealLab = (o: { title: string; lead?: string; cta?: string; c
 /** 교점 실험 랩, 두 직선을 조종해 한 점(해 1)·평행(해 0)·일치(해 무수)를 전부 만들어 본다. */
 export const meetLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "meetLab", ...o });
+
+/* ── 중2 Ⅳ 삼각형과 사각형의 성질 ─────────────────────────── */
+
+/** 이등변 접기 랩(기함), 접어 확인→모양 바꿔 재확인→"전부는 못 접는다" 판정→SAS 증명 조립. */
+export const isoFoldLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "isoFoldLab", ...o });
+
+/** 이등변 되는 조건 랩, 두 밑각 다이얼로 삼각형을 만들고 변 길이를 재서 "같은 각→같은 변"을 발견. */
+export const isoBuildLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "isoBuildLab", ...o });
+
+/** 직각삼각형 복제 공방, 직각+정보 2개(빗변+예각·빗변+변)로 복제 성공, 함정 조합은 반례로 실패. */
+export const rhCongLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "rhCongLab", ...o });
+
+/** 외심 수색 랩(기함), 세 지점 등거리 후보를 찾다 수직이등분선 밴드로 교점을 스냅, 외접원과 위치 3종. */
+export const circumLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "circumLab", ...o });
+
+/** 내심 원 키우기 랩, 삼각형 안에서 가장 큰 원을 찾다 각의 이등분선 교점=내심을 발견, 내접원 완성. */
+export const inCircleLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "inCircleLab", ...o });
+
+/** 평행사변형 회전 랩(기함), 대각선 교점 중심 반 바퀴 회전으로 포개짐을 보고 성질 3개를 수집. */
+export const paraSpinLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "paraSpinLab", ...o });
+
+/** 평행사변형 조건 감별소, 조건 카드로 사각형을 무작위 생성해 5조건은 합격, 함정 조건은 반례. */
+export const paraCondLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "paraCondLab", ...o });
+
+/** 대각선 조작대, 두 대각선(길이·수직·이등분)을 세팅하고 네 끝점을 이어 사각형 4종을 만든다. */
+export const diagRigLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "diagRigLab", ...o });
+
+/** 사각형 계보 랩, 조건을 하나씩 추가해 사각형→사다리꼴→평행사변형→직사각형/마름모→정사각형 진화. */
+export const quadFamilyLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "quadFamilyLab", ...o });
+
+/** 평행선 넓이 랩, 꼭짓점을 평행 레일로 끌어 모양이 변해도 넓이가 그대로임을 보고 꺾인 경계를 편다. */
+export const areaSlideLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "areaSlideLab", ...o });

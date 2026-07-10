@@ -42,6 +42,10 @@ import {
   renderVendbox, renderBubbletea, renderTwinlift, renderGiftcard, renderSlide,
   renderUpdown, renderBonekey, renderStalactite, renderTwomask, renderChase,
 } from "./hookM2u3";
+import {
+  renderHanger, renderFoldstrip, renderPhonestand, renderFairspot, renderCookiecut,
+  renderCardspin, renderChopstick, renderBookshelf, renderPickrect, renderBentfence,
+} from "./hookM2u4";
 import type { StepRenderer } from "../types";
 
 type Face = (k: AvatarKind) => void;
@@ -186,6 +190,17 @@ export const mathHook: StepRenderer = (host, step, api) => {
     stalactite: renderStalactite,
     twomask: renderTwomask,
     chase: renderChase,
+    // 중2 Ⅳ 삼각형과 사각형의 성질(hookM2u4.ts)
+    hanger: renderHanger,
+    foldstrip: renderFoldstrip,
+    phonestand: renderPhonestand,
+    fairspot: renderFairspot,
+    cookiecut: renderCookiecut,
+    cardspin: renderCardspin,
+    chopstick: renderChopstick,
+    bookshelf: renderBookshelf,
+    pickrect: renderPickrect,
+    bentfence: renderBentfence,
   };
   const fn = fns[s.scene];
   if (fn) fn(scene, helper, finish, face, s.choices);

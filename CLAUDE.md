@@ -228,6 +228,17 @@ src/
   `~/.codex/generated_images/<uuid>/`에 생성 후 복사**(구버전 tmp/ 충돌 사고의 원인 구조가 바뀜 —
   그래도 검증 전까지 동시 발주는 계속 금지). 상세는 MATH_GUIDE.md 중2 Ⅲ 표.
   QA: `PORT=<포트> node qa/e2e-m2u3.mjs`.
+- **중2 수학 Ⅳ(m2u4, 삼각형과 사각형의 성질) 완성** — 10레슨(무료 3+프리미엄 7), 테마 `prove`
+  (블루프린트 코발트 #1971C2 — "설계도 위의 증명" 서사, data 네이비와 계열 구분). 단원의 심장은
+  **증명의 첫 도입**: isoFoldLab(기함)이 "접기 관찰 3종 → 무한 검증 불가 판정 → SAS 증명 조립(순환
+  논법 함정 카드) → 모양이 바뀌어도 결론 유지 피날레"를 체험시킨다. 신규: content/math/g2/unit4.ts·
+  steps/hookM2u4.ts(10장면)+랩 10종(isoFoldLab 기함·isoBuildLab·rhCongLab·circumLab 기함·
+  inCircleLab·paraSpinLab 기함·paraCondLab·diagRigLab·quadFamilyLab·areaSlideLab)·mathFigures2에
+  Ⅳ 그림 15종+proveMiniArt 15키. **SVG 그룹 회전·반전은 transform-box: view-box 명시**(접기
+  scaleX(-1)·180° 회전 드래그 — 시계 바늘 사고의 SVG 그룹판 예방), 회전 드래그는 CSS(시계+)와
+  수학 각(반시계+)의 부호 반전 주의. mathDrill에 **장문 자동 강등**(q 26자 초과 → .mdr-q.long 18px)
+  공용 개선. 컷 u4lN 10장은 미발주(qa/order-m2u4cuts.sh 대기 — 병렬 codex 금지).
+  상세는 MATH_GUIDE.md 중2 Ⅳ 표. QA: `PORT=<포트> node qa/e2e-m2u4.mjs`.
 - **과목 차원**: `store.viewSubject`("sci"|"math") + `curriculum.ts`의 `CURRICULA_OF`/`subjectOfUnit`.
   과목 전환 창구는 **과목 허브뿐**(subject.ts) — main.ts `pickSubject()`가 setViewSubject 후 `goHome()`으로
   홈을 재생성한다(nav.back은 이전 과목 홈을 보여주므로 금지). 이때 lastUnitId를 반드시 비운다.

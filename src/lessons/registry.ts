@@ -182,6 +182,16 @@ import { lineFamilyLab } from "./steps/lineFamilyLab";
 import { lineBuildLab } from "./steps/lineBuildLab";
 import { lineRevealLab } from "./steps/lineRevealLab";
 import { meetLab } from "./steps/meetLab";
+import { isoFoldLab } from "./steps/isoFoldLab";
+import { isoBuildLab } from "./steps/isoBuildLab";
+import { rhCongLab } from "./steps/rhCongLab";
+import { circumLab } from "./steps/circumLab";
+import { inCircleLab } from "./steps/inCircleLab";
+import { paraSpinLab } from "./steps/paraSpinLab";
+import { paraCondLab } from "./steps/paraCondLab";
+import { diagRigLab } from "./steps/diagRigLab";
+import { quadFamilyLab } from "./steps/quadFamilyLab";
+import { areaSlideLab } from "./steps/areaSlideLab";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -359,6 +369,16 @@ const R: Record<string, StepRenderer> = {
   lineBuildLab,
   lineRevealLab,
   meetLab,
+  isoFoldLab,
+  isoBuildLab,
+  rhCongLab,
+  circumLab,
+  inCircleLab,
+  paraSpinLab,
+  paraCondLab,
+  diagRigLab,
+  quadFamilyLab,
+  areaSlideLab,
   quiz,
   table,
   order,
