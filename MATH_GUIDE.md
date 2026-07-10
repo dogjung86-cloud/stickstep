@@ -22,7 +22,8 @@
 ① `mathHook` 미리보기 퍼즐(스틱맨 + 일상 미스터리 + hookAsk 예측)
 ② 발견 랩 1~2개(개념을 손으로 발견 — 밝은 보드, 다크 무대 아님)
 ③ `concept` 용어 정복(term 카드 위주, 문단 나열 금지 — 아래 '친절 정의 표준' 필수)
-④ `recap`(rm-h more 표준 — CLAUDE.md 규격 그대로)
+④ `recap`(rm-h more 표준 — CLAUDE.md 규격 그대로. **전 카드 미니아트**(2026-07-10): 카드마다
+   mathMiniArt/geoMiniArt/solidMiniArt/statMiniArt(중1)·calcMiniArt(중2) 키를 만들어 `art:` 필수 — 색 점 금지)
 ⑤ 개념 퀴즈 2~4(mcq/ox/multi/binSort/order — 오개념 선택지 필수)
 ⑥ `mathDrill` 스피드 퀴즈(넘패드, 4~8문항, 피날레 — 제목은 "X 스피드 퀴즈", '스프린트' 금지)
 

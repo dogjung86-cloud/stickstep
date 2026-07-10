@@ -479,6 +479,162 @@ const MINI: Record<string, string> = {
     `<path d="M10 42 H74 M42 10 V74" stroke="${FAINT}" stroke-width="2" stroke-linecap="round"/>` +
       `<path d="M48 14 Q50 36 72 38 M36 70 Q34 48 12 46" stroke="${VIOLET}" stroke-width="3.2" stroke-linecap="round"/>`,
   ),
+  // ── 보조 카드 글리프(recap 전 카드 미니아트 표준, 2026-07-10) ──
+  // 밑과 지수: 큰 상자(밑)·작은 배지(지수)를 각각 가리키는 화살
+  base: svg(
+    "0 0 84 84",
+    `<rect x="16" y="30" width="34" height="34" rx="10" fill="${VIOLET}"/><text x="33" y="55" text-anchor="middle" font-size="19" font-weight="900" fill="#fff">5</text>` +
+      `<circle cx="58" cy="26" r="12" fill="#FFB01F" stroke="#fff" stroke-width="2.5"/><text x="58" y="31" text-anchor="middle" font-size="12" font-weight="900" fill="#5C3A00">3</text>` +
+      `<path d="M33 78 V70 M29.5 73.5 L33 69.5 L36.5 73.5" stroke="${INK}" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` +
+      `<path d="M74 8 L66 15 M73.5 14 L65.5 15.5 L67.5 7.5" stroke="${INK}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+  ),
+  // 소인수: 접시 위 소수 알갱이(수의 원재료)
+  factor: svg(
+    "0 0 84 84",
+    `<path d="M18 52 h48 l-6 12 a8 8 0 0 1 -7 4 h-22 a8 8 0 0 1 -7 -4 z" fill="#F2E2C0" stroke="#B8965E" stroke-width="2.2" stroke-linejoin="round"/>` +
+      `<circle cx="27" cy="42" r="9" fill="#9FE8C8" stroke="#0C8A5E" stroke-width="1.8"/><text x="27" y="47" text-anchor="middle" font-size="12" font-weight="900" fill="#0A6B4A">2</text>` +
+      `<circle cx="46" cy="34" r="9" fill="#9FE8C8" stroke="#0C8A5E" stroke-width="1.8"/><text x="46" y="39" text-anchor="middle" font-size="12" font-weight="900" fill="#0A6B4A">3</text>` +
+      `<circle cx="60" cy="46" r="8" fill="#9FE8C8" stroke="#0C8A5E" stroke-width="1.8"/><text x="60" y="51" text-anchor="middle" font-size="11" font-weight="900" fill="#0A6B4A">5</text>`,
+  ),
+  // 정수: 수직선의 큰 눈금마다 앉은 수(음수·0·양수)
+  intline: svg(
+    "0 0 84 84",
+    `<line x1="8" y1="46" x2="76" y2="46" stroke="${FAINT}" stroke-width="2.4" stroke-linecap="round"/>` +
+      `<path d="M14 40 V52 M28 40 V52 M42 37 V55 M56 40 V52 M70 40 V52" stroke="#C2CBD6" stroke-width="2"/>` +
+      `<circle cx="14" cy="46" r="4.6" fill="${NEG}"/><circle cx="28" cy="46" r="4.6" fill="${NEG}"/>` +
+      `<circle cx="42" cy="46" r="4.6" fill="${INK}"/>` +
+      `<circle cx="56" cy="46" r="4.6" fill="${POS}"/><circle cx="70" cy="46" r="4.6" fill="${POS}"/>`,
+  ),
+  // 유리수: 분수 꼴(분자·바·분모)
+  rational: svg(
+    "0 0 84 84",
+    `<rect x="30" y="16" width="24" height="17" rx="5" fill="rgba(240,140,46,.2)" stroke="${AMBER}" stroke-width="2.2"/>` +
+      `<path d="M24 42 h36" stroke="${INK}" stroke-width="3.6" stroke-linecap="round"/>` +
+      `<rect x="30" y="51" width="24" height="17" rx="5" fill="rgba(240,140,46,.38)" stroke="${AMBER}" stroke-width="2.2"/>`,
+  ),
+  // 부호 생략 읽기: 준말 → 본디말 펼치기
+  omitsign: svg(
+    "0 0 84 84",
+    `<text x="42" y="28" text-anchor="middle" font-size="16" font-weight="900" fill="${INK}">2−3</text>` +
+      `<path d="M42 36 V48 M37.5 43.5 L42 49 L46.5 43.5" stroke="${FAINT}" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` +
+      `<text x="42" y="68" text-anchor="middle" font-size="13" font-weight="900"><tspan fill="${POS}">(+2)</tspan><tspan fill="${INK}">+</tspan><tspan fill="${NEG}">(−3)</tspan></text>`,
+  ),
+  // 나눗셈은 곱셈의 거울: 거울선 양쪽의 × ÷
+  mirror: svg(
+    "0 0 84 84",
+    `<line x1="42" y1="14" x2="42" y2="70" stroke="${FAINT}" stroke-width="2.2" stroke-dasharray="5 4"/>` +
+      `<text x="23" y="52" text-anchor="middle" font-size="26" font-weight="900" fill="${INK}">×</text>` +
+      `<text x="61" y="52" text-anchor="middle" font-size="26" font-weight="900" fill="${AMBER}">÷</text>` +
+      `<path d="M28 20 a16 9 0 0 1 28 0" stroke="${FAINT}" stroke-width="2.2" fill="none" stroke-linecap="round"/>` +
+      `<path d="M28 20 l1 -5.5 M28 20 l5.5 -1 M56 20 l-1 -5.5 M56 20 l-5.5 -1" stroke="${FAINT}" stroke-width="2.2" stroke-linecap="round"/>`,
+  ),
+  // 괄호와 부호의 함정: 괄호 속 음수 + 경고 배지
+  trap: svg(
+    "0 0 84 84",
+    `<path d="M31 22 q-11 21 0 42" stroke="${AMBER}" stroke-width="3.4" fill="none" stroke-linecap="round"/>` +
+      `<path d="M53 22 q11 21 0 42" stroke="${AMBER}" stroke-width="3.4" fill="none" stroke-linecap="round"/>` +
+      `<text x="42" y="49" text-anchor="middle" font-size="17" font-weight="900" fill="${NEG}">−2</text>` +
+      `<circle cx="64" cy="18" r="10" fill="${NEG}"/><text x="64" y="23" text-anchor="middle" font-size="13" font-weight="900" fill="#fff">!</text>`,
+  ),
+  // 패턴 → 식 → 예측: 이어지는 점 + 점선 미래
+  predict: svg(
+    "0 0 84 84",
+    `<path d="M16 60 L33 47 L50 34" stroke="${CYAN}" stroke-width="2.8" stroke-linecap="round"/>` +
+      `<path d="M50 34 L67 21" stroke="${FAINT}" stroke-width="2.4" stroke-dasharray="4 4" stroke-linecap="round"/>` +
+      `<circle cx="16" cy="60" r="5" fill="${CYAN}"/><circle cx="33" cy="47" r="5" fill="${CYAN}"/><circle cx="50" cy="34" r="5" fill="${CYAN}"/>` +
+      `<circle cx="67" cy="21" r="5.5" fill="#fff" stroke="${VIOLET}" stroke-width="2.6"/>`,
+  ),
+  // 식의 값: 수를 넣으면 값이 나오는 기계(3 → 7)
+  value: svg(
+    "0 0 84 84",
+    `<circle cx="42" cy="13" r="8" fill="#FFB01F" stroke="#fff" stroke-width="2"/><text x="42" y="17.5" text-anchor="middle" font-size="11" font-weight="900" fill="#5C3A00">3</text>` +
+      `<path d="M42 23 V29" stroke="${FAINT}" stroke-width="2.4" stroke-linecap="round"/>` +
+      `<rect x="20" y="31" width="44" height="26" rx="8" fill="rgba(138,110,224,.16)" stroke="${VIOLET}" stroke-width="2.2"/>` +
+      `<text x="42" y="49" text-anchor="middle" font-size="14" font-weight="900" font-style="italic" fill="${VIOLET}">x</text>` +
+      `<path d="M42 59 V65" stroke="${FAINT}" stroke-width="2.4" stroke-linecap="round"/>` +
+      `<circle cx="42" cy="72" r="8" fill="${POS}"/><text x="42" y="76.5" text-anchor="middle" font-size="11" font-weight="900" fill="#fff">7</text>`,
+  ),
+  // 항등식: 어떤 x를 돌려 넣어도 늘 참(= + 순환 화살 + 체크)
+  identity: svg(
+    "0 0 84 84",
+    `<text x="42" y="53" text-anchor="middle" font-size="30" font-weight="900" fill="${VIOLET}">=</text>` +
+      `<path d="M64 42 a22 22 0 1 1 -10 -18.6" stroke="${CYAN}" stroke-width="2.6" fill="none" stroke-linecap="round"/>` +
+      `<path d="M54 23.4 l-6.5 -1 M54 23.4 l1.5 -6.2" stroke="${CYAN}" stroke-width="2.4" stroke-linecap="round"/>` +
+      `<path d="M60 62 l5 5 9 -11" stroke="#0C8A5E" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+  ),
+  // 단골 공식 세 가지: 부채꼴로 펼친 카드 3장(돈·시계·물)
+  formula: svg(
+    "0 0 84 84",
+    `<g transform="rotate(-12 27 45)"><rect x="14" y="28" width="26" height="34" rx="6" fill="rgba(240,140,46,.16)" stroke="${AMBER}" stroke-width="2"/><circle cx="27" cy="45" r="6" fill="none" stroke="${AMBER}" stroke-width="2"/></g>` +
+      `<rect x="29" y="22" width="26" height="34" rx="6" fill="rgba(13,165,198,.14)" stroke="${CYAN}" stroke-width="2"/><circle cx="42" cy="39" r="6.5" fill="none" stroke="${CYAN}" stroke-width="2"/><path d="M42 35.5 V39 l2.6 2" stroke="${CYAN}" stroke-width="1.8" fill="none" stroke-linecap="round"/>` +
+      `<g transform="rotate(12 57 45)"><rect x="44" y="28" width="26" height="34" rx="6" fill="rgba(138,110,224,.16)" stroke="${VIOLET}" stroke-width="2"/><path d="M57 38 q-5 7 0 11 q5 -4 0 -11z" fill="none" stroke="${VIOLET}" stroke-width="2" stroke-linejoin="round"/></g>`,
+  ),
+  // 좌표평면: 눈금 있는 두 수직선의 합체(원점 강조)
+  merge: svg(
+    "0 0 84 84",
+    `<line x1="10" y1="42" x2="74" y2="42" stroke="${INK}" stroke-width="2.4"/><path d="M74 42 l-6 -3.4 v6.8 z" fill="${INK}"/>` +
+      `<line x1="42" y1="74" x2="42" y2="10" stroke="${INK}" stroke-width="2.4"/><path d="M42 10 l-3.4 6 h6.8 z" fill="${INK}"/>` +
+      `<path d="M22 39 V45 M32 39 V45 M52 39 V45 M62 39 V45" stroke="${FAINT}" stroke-width="2"/>` +
+      `<path d="M39 22 H45 M39 32 H45 M39 52 H45 M39 62 H45" stroke="${FAINT}" stroke-width="2"/>` +
+      `<circle cx="42" cy="42" r="5" fill="${AMBER}"/><circle cx="42" cy="42" r="9.5" fill="none" stroke="${AMBER}" stroke-width="1.8" stroke-dasharray="3 3"/>`,
+  ),
+  // 축 위의 점: 사분면 어디에도 안 속하는 축 위 두 점
+  axispt: svg(
+    "0 0 84 84",
+    `<rect x="46" y="14" width="26" height="24" rx="4" fill="rgba(13,165,198,.1)"/><rect x="12" y="14" width="26" height="24" rx="4" fill="rgba(13,165,198,.1)"/>` +
+      `<rect x="12" y="46" width="26" height="24" rx="4" fill="rgba(13,165,198,.1)"/><rect x="46" y="46" width="26" height="24" rx="4" fill="rgba(13,165,198,.1)"/>` +
+      `<path d="M8 42 H76 M42 8 V76" stroke="${FAINT}" stroke-width="2.2" stroke-linecap="round"/>` +
+      `<circle cx="60" cy="42" r="5" fill="${AMBER}" stroke="#fff" stroke-width="1.6"/>` +
+      `<circle cx="42" cy="24" r="5" fill="${AMBER}" stroke="#fff" stroke-width="1.6"/>`,
+  ),
+  // 모양 읽기: 가파른 선 vs 완만한 선(빠르기)
+  steep: svg(
+    "0 0 84 84",
+    `<path d="M14 70 H74 M14 70 V10" stroke="${FAINT}" stroke-width="2.4" stroke-linecap="round"/>` +
+      `<path d="M14 70 L46 18" stroke="${CYAN}" stroke-width="3.2" stroke-linecap="round"/><path d="M46 18 l-6.6 1.2 3.4 5.6 z" fill="${CYAN}"/>` +
+      `<path d="M14 70 L68 50" stroke="${VIOLET}" stroke-width="2.8" stroke-linecap="round"/><path d="M68 50 l-6.4 -1.6 1.6 6.2 z" fill="${VIOLET}"/>`,
+  ),
+  // 주기: 되풀이 물결 + 다음 주기는 점선 예측
+  repeat: svg(
+    "0 0 84 84",
+    `<path d="M8 64 H76" stroke="${FAINT}" stroke-width="2.2" stroke-linecap="round"/>` +
+      `<path d="M10 46 q7 -22 14 0 q7 22 14 0 q7 -22 14 0" stroke="${CYAN}" stroke-width="3" fill="none" stroke-linecap="round"/>` +
+      `<path d="M52 46 q7 22 14 0 q3.5 -11 7 -5" stroke="${VIOLET}" stroke-width="2.6" fill="none" stroke-dasharray="4 4" stroke-linecap="round"/>` +
+      `<path d="M10 54 v4 h28 v-4" stroke="${AMBER}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+  ),
+  // 관계식은 점 하나면 충분: 직선 위 한 점 + 좌표 읽기
+  onepoint: svg(
+    "0 0 84 84",
+    `<path d="M10 42 H74 M42 10 V74" stroke="${FAINT}" stroke-width="2" stroke-linecap="round"/>` +
+      `<path d="M14 66 L70 18" stroke="${CYAN}" stroke-width="3" stroke-linecap="round"/>` +
+      `<path d="M56 30 V42 M56 30 H42" stroke="${AMBER}" stroke-width="1.8" stroke-dasharray="3 3"/>` +
+      `<circle cx="56" cy="30" r="5.5" fill="${AMBER}" stroke="#fff" stroke-width="1.8"/>`,
+  ),
+  // 그래프에서 a 읽기: 격자점을 찾아 y÷x
+  reada: svg(
+    "0 0 84 84",
+    `<path d="M34 14 V64 M48 14 V64 M62 14 V64 M20 50 H72 M20 36 H72 M20 22 H72" stroke="#E2E8F0" stroke-width="1.6"/>` +
+      `<path d="M20 64 H72 M20 64 V12" stroke="${FAINT}" stroke-width="2.2" stroke-linecap="round"/>` +
+      `<path d="M20 64 L68 16" stroke="${CYAN}" stroke-width="2.8" stroke-linecap="round"/>` +
+      `<circle cx="48" cy="36" r="5" fill="${AMBER}" stroke="#fff" stroke-width="1.6"/>` +
+      `<circle cx="66" cy="58" r="10" fill="#FFF4D6" stroke="${AMBER}" stroke-width="2"/><text x="66" y="63" text-anchor="middle" font-size="13" font-weight="900" fill="#B3771A">÷</text>`,
+  ),
+  // 반비례 관계식: 곡선 위 점의 곱(직사각형 넓이)이 곧 a
+  hypa: svg(
+    "0 0 84 84",
+    `<path d="M16 70 H74 M16 70 V10" stroke="${FAINT}" stroke-width="2.2" stroke-linecap="round"/>` +
+      `<path d="M24 14 C24 36 28 48 38 53 S60 60 72 61" stroke="${VIOLET}" stroke-width="2.8" fill="none" stroke-linecap="round"/>` +
+      `<rect x="16" y="53" width="22" height="17" fill="rgba(240,140,46,.2)" stroke="${AMBER}" stroke-width="1.8"/>` +
+      `<circle cx="38" cy="53" r="4.6" fill="${VIOLET}" stroke="#fff" stroke-width="1.6"/>`,
+  ),
+  // a가 정하는 것: 가지가 앉는 구역(1·3사분면)과 원점에서의 거리
+  zone: svg(
+    "0 0 84 84",
+    `<path d="M8 42 H76 M42 8 V76" stroke="${FAINT}" stroke-width="2" stroke-linecap="round"/>` +
+      `<path d="M48 12 C48 26 54 32 70 34" stroke="${CYAN}" stroke-width="2.8" fill="none" stroke-linecap="round"/>` +
+      `<path d="M36 72 C36 58 30 52 14 50" stroke="${CYAN}" stroke-width="2.8" fill="none" stroke-linecap="round"/>` +
+      `<path d="M46 38 L58 26 M58 26 l-6.2 .8 M58 26 l-.8 6.2" stroke="${AMBER}" stroke-width="2.4" stroke-linecap="round"/>`,
+  ),
 };
 
 export function mathMiniArt(key: string): string {
@@ -1194,7 +1350,10 @@ export function congTwinFig(): string {
 }
 
 /** Ⅳ recap 미니아트(64×64). key: dot(점선면)·trio(선 삼형제)·ang(각)·vert(맞꼭지각)·
- *  perp(수직)·skew(꼬인 위치)·pair(동위·엇각)·para(평행)·comp(컴퍼스)·tri(삼각형)·cong(합동). */
+ *  perp(수직)·skew(꼬인 위치)·pair(동위·엇각)·para(평행)·comp(컴퍼스)·tri(삼각형)·cong(합동) +
+ *  보조 카드: meet(교점·교선)·mid(중점)·angclass(각 4분류)·vertcond(맞꼭지각 자격)·pbis(수직이등분선)·
+ *  same(일치)·planerel(직선과 평면)·alt(엇각)·aux(보조선)·copyang(각 옮기기)·det3(결정 3조건)·
+ *  stamp3(합동 3판별)·free(공짜 조건). */
 export function geoMiniArt(key: string): string {
   const A: Record<string, string> = {
     dot:
@@ -1243,6 +1402,100 @@ export function geoMiniArt(key: string): string {
     cong:
       `<path d="M22 14 L8 40 H36 Z" fill="none" stroke="${AMBER}" stroke-width="2.8" stroke-linejoin="round"/>` +
       `<path d="M42 26 L28 52 H56 Z" fill="none" stroke="${CYAN}" stroke-width="2.8" stroke-linejoin="round"/>`,
+    // ── 보조 카드 글리프(recap 전 카드 미니아트 표준, 2026-07-10) ──
+    // 교점·교선: 위 작은 X(교점) + 두 평면이 만나 생기는 교선
+    meet:
+      `<path d="M8 18 L28 6 M8 6 L28 18" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>` +
+      gdot(18, 12, AMBER, 3) +
+      `<path d="M32 30 L10 36 L22 60 L44 54 Z" fill="rgba(13,165,198,.12)" stroke="${FAINT}" stroke-width="1.6" stroke-linejoin="round"/>` +
+      `<path d="M32 30 L50 26 L62 50 L44 54 Z" fill="rgba(240,140,46,.12)" stroke="${FAINT}" stroke-width="1.6" stroke-linejoin="round"/>` +
+      lineSvg(32, 30, 44, 54, CYAN, 3),
+    // 중점: 선분을 반으로 딱(같은 길이 틱 2개 + M)
+    mid:
+      lineSvg(10, 40, 54, 40, INK, 3) +
+      tickMark(10, 40, 32, 40, 1, CYAN) +
+      tickMark(32, 40, 54, 40, 1, CYAN) +
+      gdot(10, 40, INK, 3.4) + gdot(54, 40, INK, 3.4) + gdot(32, 40, AMBER, 4.6) +
+      `<text x="32" y="24" text-anchor="middle" font-size="13" font-weight="900" fill="${AMBER}">M</text>`,
+    // 각의 4분류: 평각 기준선 위 예각·직각·둔각 부챗살
+    angclass:
+      lineSvg(6, 46, 58, 46, INK, 2.6) +
+      lineSvg(32, 46, 48.7, 26.1, CYAN, 2.8) +
+      lineSvg(32, 46, 32, 20, INK, 2.2) + rightMark(32, 46, 90, 7, FAINT) +
+      lineSvg(32, 46, 12.1, 29.3, AMBER, 2.8) +
+      angleArc(32, 46, 12, 0, 50, CYAN, undefined, { width: 2 }) +
+      gdot(32, 46, INK, 3),
+    // 맞꼭지각의 자격: 진짜 교차(체크) vs 마주 보기만(엑스)
+    vertcond:
+      `<path d="M6 14 L30 36 M6 36 L30 14" stroke="${INK}" stroke-width="2.4" stroke-linecap="round"/>` +
+      gdot(18, 25, AMBER, 3.2) +
+      `<path d="M12 46 l4.5 4.5 8 -9" stroke="#2F9E44" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` +
+      `<path d="M38 14 L48 25 L38 36" fill="none" stroke="${AMBER}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>` +
+      `<path d="M62 14 L52 25 L62 36" fill="none" stroke="${AMBER}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>` +
+      `<path d="M46 46 l10 10 M56 46 l-10 10" stroke="${NEG}" stroke-width="3" stroke-linecap="round"/>`,
+    // 수직이등분선: 중점 통과(틱 2) + 수직(직각 표시)
+    pbis:
+      lineSvg(10, 46, 54, 46, INK, 3) +
+      gdot(10, 46, INK, 3.2) + gdot(54, 46, INK, 3.2) +
+      tickMark(10, 46, 32, 46, 1, CYAN) +
+      tickMark(32, 46, 54, 46, 1, CYAN) +
+      lineSvg(32, 62, 32, 12, AMBER, 3) +
+      rightMark(32, 46, 90, 7, CYAN),
+    // 일치: 두 직선이 한 몸으로 포개짐(할로 + 심)
+    same:
+      `<line x1="10" y1="46" x2="56" y2="18" stroke="${CYAN}" stroke-width="7" stroke-linecap="round" opacity=".3"/>` +
+      lineSvg(10, 46, 56, 18, INK, 2.8) +
+      arrowHead(56, 18, 31.3, INK, 5) + arrowHead(10, 46, 211.3, INK, 5),
+    // 직선과 평면: 평행한 직선 + 평면을 뚫는 직선(숨은 쪽 점선)
+    planerel:
+      lineSvg(14, 16, 50, 10, AMBER, 2.8) +
+      `<path d="M10 40 L34 30 L58 36 L34 46 Z" fill="rgba(13,165,198,.13)" stroke="${CYAN}" stroke-width="1.8" stroke-linejoin="round"/>` +
+      lineSvg(46, 8, 36, 37, INK, 2.4) +
+      lineSvg(36, 37, 29, 57, INK, 2, "4 3") +
+      gdot(36, 37, AMBER, 3.4),
+    // 엇각: 두 직선 안쪽의 엇갈린 짝
+    alt:
+      lineSvg(8, 22, 56, 22, INK, 2.6) +
+      lineSvg(8, 46, 56, 46, INK, 2.6) +
+      lineSvg(16, 58, 48, 8, FAINT, 2.2) +
+      angleArc(39, 22, 9, 180, 237, AMBER, undefined, { fill: true, width: 2 }) +
+      angleArc(23.7, 46, 9, 0, 57, AMBER, undefined, { fill: true, width: 2 }),
+    // 보조선: 꺾인 점에 평행선을 긋는다(점선)
+    aux:
+      lineSvg(8, 14, 56, 14, INK, 2.4) +
+      lineSvg(8, 50, 56, 50, INK, 2.4) +
+      `<path d="M18 14 L38 32 L20 50" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>` +
+      lineSvg(10, 32, 58, 32, AMBER, 2.4, "5 4") +
+      gdot(38, 32, AMBER, 3.6),
+    // 각 옮기기: 원본 각의 원호를 재서 새 자리에 옮겨 찍기
+    copyang:
+      lineSvg(12, 48, 34, 48, INK, 2.6) + lineSvg(12, 48, 30, 26, INK, 2.6) +
+      angleArc(12, 48, 11, 0, 50.7, CYAN, undefined, { width: 2.2 }) +
+      lineSvg(36, 48, 58, 48, INK, 2.6) + lineSvg(36, 48, 54, 26, INK, 2.2, "4 3") +
+      angleArc(36, 48, 11, 0, 50.7, CYAN, undefined, { width: 2.2 }) +
+      gdot(47, 48, AMBER, 2.8) + gdot(42.9, 39.5, AMBER, 2.8),
+    // 하나로 정해지는 3가지: 변·각 조건 + 배지 3
+    det3:
+      `<path d="M32 14 L12 50 H52 Z" fill="none" stroke="${INK}" stroke-width="2.8" stroke-linejoin="round"/>` +
+      tickMark(12, 50, 52, 50, 1, CYAN) +
+      angleArc(12, 50, 10, 0, 61, AMBER, undefined, { fill: true, width: 2 }) +
+      angleArc(52, 50, 10, 119, 180, AMBER, undefined, { fill: true, width: 2 }) +
+      `<circle cx="55" cy="16" r="9" fill="#FFF4D6" stroke="${AMBER}" stroke-width="1.8"/><text x="55" y="20.5" text-anchor="middle" font-size="11" font-weight="900" fill="#B3771A">3</text>`,
+    // 판별 3도장: 조건이 맞으면 합동 확정 도장 쾅쾅쾅
+    stamp3:
+      `<rect x="8" y="34" width="14" height="10" rx="2.5" fill="${CYAN}"/><rect x="12.5" y="25" width="5" height="9" rx="2" fill="${CYAN}" opacity=".7"/>` +
+      `<rect x="25" y="34" width="14" height="10" rx="2.5" fill="${AMBER}"/><rect x="29.5" y="25" width="5" height="9" rx="2" fill="${AMBER}" opacity=".7"/>` +
+      `<rect x="42" y="34" width="14" height="10" rx="2.5" fill="${VIOLET}"/><rect x="46.5" y="25" width="5" height="9" rx="2" fill="${VIOLET}" opacity=".7"/>` +
+      `<path d="M11 54 l3 3 5 -6" fill="none" stroke="${CYAN}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>` +
+      `<path d="M28 54 l3 3 5 -6" fill="none" stroke="${AMBER}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>` +
+      `<path d="M45 54 l3 3 5 -6" fill="none" stroke="${VIOLET}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`,
+    // 공짜 조건: 나비넥타이의 맞꼭지각은 재지 않아도 같다
+    free:
+      `<path d="M8 16 L8 48 L32 32 Z" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>` +
+      `<path d="M56 16 L56 48 L32 32 Z" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>` +
+      angleArc(32, 32, 8, 146, 214, AMBER, undefined, { fill: true, width: 2 }) +
+      angleArc(32, 32, 8, -34, 34, AMBER, undefined, { fill: true, width: 2 }) +
+      gdot(32, 32, AMBER, 3.6),
   };
   return svg("0 0 64 64", A[key] ?? A.dot);
 }
@@ -1315,7 +1568,11 @@ export function hexaDiagFig(): string {
   );
 }
 
-/** Ⅴ recap 미니아트('geo'는 Ⅳ가 선점, Ⅴ는 solid 접두). 64×64 카드 아이콘. */
+/** Ⅴ recap 미니아트('geo'는 Ⅳ가 선점, Ⅴ는 solid 접두). 64×64 카드 아이콘.
+ *  key: diag·vtx + 보조 카드(L2~L14 순): trisum·extang / nsplit·regin / ext360·extdiv /
+ *  arcchord·fanbow / proparc·chordtrap / arcformula·halfrl / polyhedron·frustum2 /
+ *  regcond·judge360 / lathe·section / unfold·stackvol / conenet·third / sphere4·sphere23 /
+ *  ratio321·shortcut. */
 export function solidMiniArt(key: string): string {
   const penta = ngonPts(32, 34, 24, 5);
   const A: Record<string, string> = {
@@ -1331,6 +1588,172 @@ export function solidMiniArt(key: string): string {
       `<circle cx="${penta[0].x.toFixed(1)}" cy="${penta[0].y.toFixed(1)}" r="5" fill="${GREEN5}"/>` +
       `<line x1="${penta[0].x.toFixed(1)}" y1="${penta[0].y.toFixed(1)}" x2="${penta[1].x.toFixed(1)}" y2="${penta[1].y.toFixed(1)}" stroke="${ROSE5}" stroke-width="2" stroke-dasharray="3 4" opacity=".7"/>` +
       `<line x1="${penta[0].x.toFixed(1)}" y1="${penta[0].y.toFixed(1)}" x2="${penta[4].x.toFixed(1)}" y2="${penta[4].y.toFixed(1)}" stroke="${ROSE5}" stroke-width="2" stroke-dasharray="3 4" opacity=".7"/>`,
+    // ── 보조 카드 글리프(recap 전 카드 미니아트 표준, 2026-07-10) ──
+    // L2 내각의 합 180°: 세 각이 평각 하나로
+    trisum:
+      `<path d="M32 10 L12 44 H52 Z" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>` +
+      angleArc(12, 44, 10, 0, 59.5, GREEN5, undefined, { fill: true, width: 2 }) +
+      angleArc(52, 44, 10, 120.5, 180, CYAN, undefined, { fill: true, width: 2 }) +
+      angleArc(32, 10, 10, 239.5, 300.5, AMBER, undefined, { fill: true, width: 2 }) +
+      `<text x="32" y="61" text-anchor="middle" font-size="11" font-weight="900" fill="${INK}">180°</text>`,
+    // L2 외각 = 이웃하지 않는 두 내각의 합
+    extang:
+      `<path d="M36 12 L10 46 H44 Z" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>` +
+      lineSvg(44, 46, 58, 46, INK, 2, "4 3") + arrowHead(58, 46, 0, INK, 5) +
+      angleArc(10, 46, 9, 0, 52.6, GREEN5, undefined, { fill: true, width: 2 }) +
+      angleArc(36, 12, 9, 232.6, 283.2, CYAN, undefined, { fill: true, width: 2 }) +
+      angleArc(44, 46, 11, 0, 103.2, ROSE5, undefined, { fill: true, width: 2.2 }),
+    // L3 내각의 합 공식: 한 꼭짓점에서 삼각형 (n−2)개로 분할
+    nsplit:
+      `<path d="M${penta[0].x.toFixed(1)} ${penta[0].y.toFixed(1)} L${penta[1].x.toFixed(1)} ${penta[1].y.toFixed(1)} L${penta[2].x.toFixed(1)} ${penta[2].y.toFixed(1)} Z" fill="rgba(47,158,68,.14)"/>` +
+      `<path d="M${penta[0].x.toFixed(1)} ${penta[0].y.toFixed(1)} L${penta[2].x.toFixed(1)} ${penta[2].y.toFixed(1)} L${penta[3].x.toFixed(1)} ${penta[3].y.toFixed(1)} Z" fill="rgba(47,158,68,.28)"/>` +
+      `<path d="M${penta[0].x.toFixed(1)} ${penta[0].y.toFixed(1)} L${penta[3].x.toFixed(1)} ${penta[3].y.toFixed(1)} L${penta[4].x.toFixed(1)} ${penta[4].y.toFixed(1)} Z" fill="rgba(47,158,68,.42)"/>` +
+      `<line x1="${penta[0].x.toFixed(1)}" y1="${penta[0].y.toFixed(1)}" x2="${penta[2].x.toFixed(1)}" y2="${penta[2].y.toFixed(1)}" stroke="${GREEN5}" stroke-width="2.2"/>` +
+      `<line x1="${penta[0].x.toFixed(1)}" y1="${penta[0].y.toFixed(1)}" x2="${penta[3].x.toFixed(1)}" y2="${penta[3].y.toFixed(1)}" stroke="${GREEN5}" stroke-width="2.2"/>` +
+      `<path d="${ptsPath(penta)}" stroke="${INK}" stroke-width="2.4" fill="none" stroke-linejoin="round"/>`,
+    // L3 정다각형 한 내각 = 합÷n(모든 꼭짓점 동등)
+    regin:
+      `<path d="${ptsPath(penta)}" stroke="${INK}" stroke-width="2.4" fill="none" stroke-linejoin="round"/>` +
+      penta.map((p) => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.2" fill="${AMBER}"/>`).join("") +
+      `<text x="32" y="40" text-anchor="middle" font-size="13" font-weight="900" fill="${GREEN5}">÷5</text>`,
+    // L4 외각의 합 = 항상 360°(둘레 한 바퀴)
+    ext360:
+      `<path d="${ptsPath(ngonPts(32, 34, 15, 5))}" stroke="${INK}" stroke-width="2.2" fill="none" stroke-linejoin="round"/>` +
+      `<path d="M32 8 A26 26 0 1 0 56.4 25.1" fill="none" stroke="${ROSE5}" stroke-width="2.6" stroke-linecap="round"/>` +
+      arrowHead(56.4, 25.1, 110, ROSE5, 6),
+    // L4 정n각형 한 외각 = 360°÷n(정육각형 60°)
+    extdiv:
+      `<path d="${ptsPath(ngonPts(32, 36, 20, 6))}" stroke="${INK}" stroke-width="2.2" fill="none" stroke-linejoin="round"/>` +
+      lineSvg(49.3, 46, 59.7, 40, FAINT, 2, "4 3") +
+      angleArc(49.3, 46, 9, 30, 90, ROSE5, undefined, { fill: true, width: 2 }) +
+      `<text x="54" y="26" text-anchor="middle" font-size="10" font-weight="900" fill="${ROSE5}">60°</text>`,
+    // L5 호는 굽은 길, 현은 곧은 길
+    arcchord:
+      `<circle cx="32" cy="34" r="22" stroke="${FAINT}" stroke-width="2" fill="none"/>` +
+      `<path d="M12.9 23 A22 22 0 0 1 51.1 23" fill="none" stroke="${GREEN5}" stroke-width="3.4" stroke-linecap="round"/>` +
+      lineSvg(12.9, 23, 51.1, 23, CYAN, 3) +
+      gdot(12.9, 23, INK, 3.4) + gdot(51.1, 23, INK, 3.4),
+    // L5 부채꼴(반지름 2개+호) vs 활꼴(현+호)
+    fanbow:
+      `<circle cx="32" cy="34" r="20" stroke="${FAINT}" stroke-width="1.8" fill="none"/>` +
+      `<path d="M32 34 L25.2 15.2 A20 20 0 0 0 12 34 Z" fill="rgba(47,158,68,.3)" stroke="${GREEN5}" stroke-width="1.8" stroke-linejoin="round"/>` +
+      `<path d="M49.3 44 A20 20 0 0 0 44.9 18.7 Z" fill="rgba(13,165,198,.28)" stroke="${CYAN}" stroke-width="1.8" stroke-linejoin="round"/>`,
+    // L6 호·넓이는 중심각에 정비례(30° vs 60° 부채)
+    proparc:
+      `<circle cx="32" cy="36" r="20" stroke="${FAINT}" stroke-width="1.8" fill="none"/>` +
+      `<path d="M32 36 L47.3 23.1 A20 20 0 0 0 38.8 17.2 Z" fill="rgba(240,140,46,.42)" stroke="${AMBER}" stroke-width="1.6" stroke-linejoin="round"/>` +
+      `<path d="M32 36 L28.5 16.3 A20 20 0 0 0 13.2 29.2 Z" fill="rgba(47,158,68,.42)" stroke="${GREEN5}" stroke-width="1.6" stroke-linejoin="round"/>` +
+      `<text x="53" y="55" text-anchor="middle" font-size="12" font-weight="900" fill="${GREEN5}">×2</text>`,
+    // L6 현의 길이는 함정(각 2배여도 현은 2배 아님)
+    chordtrap:
+      `<circle cx="32" cy="34" r="20" stroke="${FAINT}" stroke-width="1.8" fill="none"/>` +
+      lineSvg(38.8, 15.2, 25.2, 15.2, CYAN, 2.8) +
+      lineSvg(50.8, 40.8, 28.5, 53.7, CYAN, 2.8) +
+      `<text x="52" y="20" text-anchor="middle" font-size="11" font-weight="900" fill="${ROSE5}">×2</text>` +
+      lineSvg(44, 25, 60, 9, ROSE5, 2.2),
+    // L7 호의 길이 = 둘레의 x/360 조각
+    arcformula:
+      `<circle cx="32" cy="34" r="20" stroke="${FAINT}" stroke-width="1.8" fill="none" stroke-dasharray="4 4"/>` +
+      lineSvg(32, 34, 50.8, 27.2, INK, 1.8) +
+      lineSvg(32, 34, 28.5, 14.3, INK, 1.8) +
+      `<path d="M50.8 27.2 A20 20 0 0 0 28.5 14.3" fill="none" stroke="${GREEN5}" stroke-width="4" stroke-linecap="round"/>` +
+      gdot(32, 34, INK, 2.6),
+    // L7 넓이 = ½rl(반지름 r과 호 l의 곱의 절반)
+    halfrl:
+      `<path d="M30 40 L50.8 28 A24 24 0 0 0 21.8 17.4 Z" fill="rgba(240,140,46,.3)" stroke="${AMBER}" stroke-width="2" stroke-linejoin="round"/>` +
+      `<text x="20" y="32" text-anchor="middle" font-size="11.5" font-weight="900" font-style="italic" fill="${INK}">r</text>` +
+      `<text x="42" y="13" text-anchor="middle" font-size="11.5" font-weight="900" font-style="italic" fill="${GREEN5}">l</text>`,
+    // L8 다면체: 다각형 면만으로(삼각기둥 겨냥도)
+    polyhedron:
+      `<path d="M18 22 L10 50 H38 Z" fill="rgba(47,158,68,.15)" stroke="${INK}" stroke-width="2.2" stroke-linejoin="round"/>` +
+      lineSvg(18, 22, 36, 13, INK, 2.2) + lineSvg(38, 50, 56, 41, INK, 2.2) + lineSvg(36, 13, 56, 41, INK, 2.2) +
+      lineSvg(10, 50, 28, 41, FAINT, 1.8, "4 3") + lineSvg(36, 13, 28, 41, FAINT, 1.8, "4 3") + lineSvg(28, 41, 56, 41, FAINT, 1.8, "4 3"),
+    // L8 각뿔대: 각뿔을 평행하게 자른 아랫동강
+    frustum2:
+      `<path d="M21 30 L32 8 L43 30" fill="none" stroke="${FAINT}" stroke-width="2" stroke-dasharray="4 3" stroke-linejoin="round"/>` +
+      `<path d="M21 30 L43 30 L54 52 H10 Z" fill="rgba(240,140,46,.15)" stroke="${AMBER}" stroke-width="2.4" stroke-linejoin="round"/>` +
+      lineSvg(21, 30, 43, 30, ROSE5, 2.4),
+    // L9 정다면체 자격: 합동 정다각형 면 + 꼭짓점마다 같은 면 수
+    regcond:
+      `<path d="M8 24 L20 24 L14 13 Z" fill="none" stroke="${GREEN5}" stroke-width="2" stroke-linejoin="round"/>` +
+      tickMark(8, 24, 20, 24, 1, GREEN5) +
+      `<path d="M10 46 L22 46 L16 35 Z" fill="none" stroke="${GREEN5}" stroke-width="2" stroke-linejoin="round"/>` +
+      tickMark(10, 46, 22, 46, 1, GREEN5) +
+      `<path d="M45 34 L45 18 L31.1 42 Z" fill="rgba(13,165,198,.13)" stroke="${CYAN}" stroke-width="1.6" stroke-linejoin="round"/>` +
+      `<path d="M45 34 L31.1 42 L58.9 42 Z" fill="rgba(13,165,198,.13)" stroke="${CYAN}" stroke-width="1.6" stroke-linejoin="round"/>` +
+      `<path d="M45 34 L58.9 42 L45 18 Z" fill="rgba(13,165,198,.13)" stroke="${CYAN}" stroke-width="1.6" stroke-linejoin="round"/>` +
+      gdot(45, 34, CYAN, 2.8),
+    // L9 360°의 심판: 모인 각의 합이 360° 미만이어야 접힌다
+    judge360:
+      `<path d="M32 30 L32 13 A17 17 0 0 0 15.3 32.9 Z" fill="rgba(47,158,68,.28)" stroke="${GREEN5}" stroke-width="1.6" stroke-linejoin="round"/>` +
+      `<path d="M32 30 L15.3 32.9 A17 17 0 0 0 37.8 46 Z" fill="rgba(47,158,68,.38)" stroke="${GREEN5}" stroke-width="1.6" stroke-linejoin="round"/>` +
+      `<path d="M32 30 L37.8 46 A17 17 0 0 0 46.7 21.5 Z" fill="rgba(47,158,68,.48)" stroke="${GREEN5}" stroke-width="1.6" stroke-linejoin="round"/>` +
+      `<path d="M46.7 21.5 A17 17 0 0 0 32 13" fill="none" stroke="${ROSE5}" stroke-width="2" stroke-dasharray="3 3"/>` +
+      `<text x="32" y="60" text-anchor="middle" font-size="11" font-weight="900" fill="${ROSE5}">&lt;360°</text>`,
+    // L10 회전체: 단면 하나가 축 둘레를 돌아 온몸을 만든다
+    lathe:
+      lineSvg(32, 6, 32, 58, FAINT, 2, "4 3") +
+      `<path d="M32 12 C46 16 44 28 36 32 C48 38 46 52 32 54" fill="none" stroke="${GREEN5}" stroke-width="2.8" stroke-linecap="round"/>` +
+      `<path d="M32 12 C18 16 20 28 28 32 C16 38 18 52 32 54" fill="none" stroke="${FAINT}" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>` +
+      `<path d="M46 10 A14 4.5 0 1 0 24 13" fill="none" stroke="${AMBER}" stroke-width="2.2" stroke-linecap="round"/>` +
+      arrowHead(24, 13, 190, AMBER, 5),
+    // L10 단면의 2대 법칙: 수직 = 원, 축 포함 = 대칭 도형
+    section:
+      `<circle cx="17" cy="34" r="11" fill="rgba(13,165,198,.2)" stroke="${CYAN}" stroke-width="2.2"/>` +
+      `<path d="M46 16 L33 52 H59 Z" fill="none" stroke="${AMBER}" stroke-width="2.2" stroke-linejoin="round"/>` +
+      lineSvg(46, 12, 46, 56, FAINT, 1.8, "4 3"),
+    // L11 겉넓이 = 전개도(밑 2장 + 옆 직사각형)
+    unfold:
+      `<rect x="14" y="26" width="40" height="18" rx="2" fill="rgba(47,158,68,.18)" stroke="${GREEN5}" stroke-width="2"/>` +
+      `<circle cx="34" cy="14" r="8" fill="rgba(240,140,46,.15)" stroke="${AMBER}" stroke-width="2"/>` +
+      `<circle cx="34" cy="55" r="8" fill="rgba(240,140,46,.15)" stroke="${AMBER}" stroke-width="2"/>`,
+    // L11 부피 = 밑넓이 한 층을 높이만큼 쌓기
+    stackvol:
+      `<rect x="16" y="42" width="32" height="8" rx="3" fill="rgba(13,165,198,.45)" stroke="${CYAN}" stroke-width="1.6"/>` +
+      `<rect x="16" y="32" width="32" height="8" rx="3" fill="rgba(13,165,198,.32)" stroke="${CYAN}" stroke-width="1.6"/>` +
+      `<rect x="16" y="22" width="32" height="8" rx="3" fill="rgba(13,165,198,.2)" stroke="${CYAN}" stroke-width="1.6"/>` +
+      lineSvg(56, 50, 56, 20, AMBER, 2.4) + arrowHead(56, 20, 90, AMBER, 5) +
+      lineSvg(12, 54, 52, 54, FAINT, 2),
+    // L12 원뿔 전개도: 부채꼴 옆면 + 원 밑면
+    conenet:
+      `<path d="M32 12 L17 38 A30 30 0 0 0 47 38 Z" fill="rgba(47,158,68,.22)" stroke="${GREEN5}" stroke-width="2" stroke-linejoin="round"/>` +
+      `<circle cx="32" cy="51" r="8.5" fill="rgba(240,140,46,.2)" stroke="${AMBER}" stroke-width="2"/>`,
+    // L12 부피 = 같은 밑·높이 기둥의 1/3
+    third:
+      `<ellipse cx="32" cy="16" rx="16" ry="5" fill="none" stroke="${FAINT}" stroke-width="2"/>` +
+      lineSvg(16, 16, 16, 50, FAINT, 2) + lineSvg(48, 16, 48, 50, FAINT, 2) +
+      `<path d="M16 50 A16 5 0 0 0 48 50" fill="none" stroke="${FAINT}" stroke-width="2"/>` +
+      `<path d="M32 16 L16 50 A16 5 0 0 0 48 50 Z" fill="rgba(240,140,46,.3)" stroke="${AMBER}" stroke-width="2.2" stroke-linejoin="round"/>` +
+      `<text x="55" y="16" text-anchor="middle" font-size="13" font-weight="900" fill="${AMBER}">⅓</text>`,
+    // L13 겉넓이 = 같은 반지름 원 4개(4πr²)
+    sphere4:
+      `<circle cx="24" cy="34" r="17" fill="none" stroke="${GREEN5}" stroke-width="2.4"/>` +
+      `<ellipse cx="24" cy="34" rx="17" ry="5.5" fill="none" stroke="${FAINT}" stroke-width="1.6" stroke-dasharray="4 3"/>` +
+      `<circle cx="47" cy="22" r="5" fill="none" stroke="${AMBER}" stroke-width="1.8"/>` +
+      `<circle cx="58" cy="22" r="5" fill="none" stroke="${AMBER}" stroke-width="1.8"/>` +
+      `<circle cx="47" cy="34" r="5" fill="none" stroke="${AMBER}" stroke-width="1.8"/>` +
+      `<circle cx="58" cy="34" r="5" fill="none" stroke="${AMBER}" stroke-width="1.8"/>`,
+    // L13 부피 = 꼭 맞는 원기둥의 2/3(아르키메데스)
+    sphere23:
+      `<ellipse cx="32" cy="15" rx="16" ry="5" fill="none" stroke="${FAINT}" stroke-width="2"/>` +
+      lineSvg(16, 15, 16, 49, FAINT, 2) + lineSvg(48, 15, 48, 49, FAINT, 2) +
+      `<path d="M16 49 A16 5 0 0 0 48 49" fill="none" stroke="${FAINT}" stroke-width="2"/>` +
+      `<circle cx="32" cy="32" r="16" fill="rgba(13,165,198,.15)" stroke="${CYAN}" stroke-width="2.4"/>` +
+      `<text x="56" y="14" text-anchor="middle" font-size="13" font-weight="900" fill="${CYAN}">⅔</text>`,
+    // L14 원기둥·구·원뿔 부피비 3:2:1
+    ratio321:
+      `<ellipse cx="15" cy="20" rx="7" ry="2.5" fill="none" stroke="${GREEN5}" stroke-width="1.8"/>` +
+      lineSvg(8, 20, 8, 46, GREEN5, 1.8) + lineSvg(22, 20, 22, 46, GREEN5, 1.8) +
+      `<path d="M8 46 A7 2.5 0 0 0 22 46" fill="none" stroke="${GREEN5}" stroke-width="1.8"/>` +
+      `<circle cx="32" cy="33" r="13" fill="none" stroke="${CYAN}" stroke-width="2"/>` +
+      `<path d="M49 20 L41 46 A8 2.5 0 0 0 57 46 Z" fill="none" stroke="${AMBER}" stroke-width="1.8" stroke-linejoin="round"/>` +
+      `<text x="32" y="60" text-anchor="middle" font-size="11" font-weight="900" fill="${INK}">3:2:1</text>`,
+    // L14 비율은 지름길: 계단 대신 곱셈 한 번
+    shortcut:
+      `<path d="M10 52 h11 v-13 h11 v-13 h11 v-13 h11" fill="none" stroke="${FAINT}" stroke-width="2" stroke-dasharray="4 3" stroke-linejoin="round"/>` +
+      lineSvg(10, 52, 50, 16, AMBER, 3) + arrowHead(50, 16, 42, AMBER, 6) +
+      gdot(10, 52, INK, 3.4) + gdot(54, 13, INK, 3.4) +
+      `<circle cx="30" cy="34" r="8" fill="#FFF4D6" stroke="${AMBER}" stroke-width="1.8"/><text x="30" y="38.5" text-anchor="middle" font-size="12" font-weight="900" fill="#B3771A">×</text>`,
   };
   return svg("0 0 64 64", A[key] ?? A.diag);
 }
@@ -1823,6 +2246,50 @@ export function statMiniArt(key: string): string {
       `<path d="M12 40 L26 36 L40 30 L52 20" stroke="${NAVY6}" stroke-width="2.4" fill="none"/>` +
       `<circle cx="40" cy="30" r="10" fill="none" stroke="${ROSE5}" stroke-width="2.4"/>` +
       `<line x1="47" y1="38" x2="54" y2="46" stroke="${ROSE5}" stroke-width="3" stroke-linecap="round"/>`,
+    // ── 보조 카드 글리프(recap 전 카드 미니아트 표준, 2026-07-10) ──
+    // 대표 선발 기준: 자료 따라 골라 가는 갈림길 표지판
+    pick:
+      `<rect x="30" y="24" width="4" height="32" rx="2" fill="#8C6A4A"/>` +
+      `<path d="M32 8 h16 l6 6 -6 6 h-16 z" fill="${NAVY6}"/>` +
+      `<path d="M32 24 h-16 l-6 6 6 6 h16 z" fill="${CYAN}"/>` +
+      `<path d="M32 40 h16 l6 6 -6 6 h-16 z" fill="${ROSE5}"/>`,
+    // 정리했더니 분포가 보인다: 흩어진 점 → 가지런한 산
+    dist:
+      `<circle cx="9" cy="22" r="2.6" fill="#8B99EE"/><circle cx="17" cy="32" r="2.6" fill="#8B99EE"/><circle cx="10" cy="42" r="2.6" fill="#8B99EE"/>` +
+      `<circle cx="21" cy="18" r="2.6" fill="#8B99EE"/><circle cx="23" cy="44" r="2.6" fill="#8B99EE"/><circle cx="15" cy="52" r="2.6" fill="#8B99EE"/>` +
+      `<path d="M28 32 h7 m0 0 l-3 -2.6 m3 2.6 l-3 2.6" stroke="${INK}" stroke-width="1.8" stroke-linecap="round"/>` +
+      `<line x1="40" y1="54" x2="62" y2="54" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>` +
+      `<circle cx="43" cy="49" r="2.8" fill="${NAVY6}"/>` +
+      `<circle cx="51" cy="49" r="2.8" fill="${NAVY6}"/><circle cx="51" cy="42" r="2.8" fill="${NAVY6}"/><circle cx="51" cy="35" r="2.8" fill="${NAVY6}"/>` +
+      `<circle cx="59" cy="49" r="2.8" fill="${NAVY6}"/><circle cx="59" cy="42" r="2.8" fill="${NAVY6}"/>`,
+    // 계급: 이상(●)~미만(○)의 구간 띠
+    bin:
+      `<line x1="8" y1="40" x2="58" y2="40" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>` +
+      `<rect x="20" y="33" width="24" height="14" rx="3" fill="rgba(54,79,199,.2)"/>` +
+      `<circle cx="20" cy="40" r="4.2" fill="${NAVY6}"/>` +
+      `<circle cx="44" cy="40" r="4.2" fill="#FFFFFF" stroke="${NAVY6}" stroke-width="2.2"/>`,
+    // 도수분포표: 계급 열 + 도수 세기
+    table:
+      `<rect x="12" y="12" width="40" height="42" rx="3" fill="none" stroke="${NAVY6}" stroke-width="1.8"/>` +
+      `<rect x="12" y="12" width="40" height="9" fill="rgba(54,79,199,.22)"/>` +
+      `<path d="M12 21 h40 M12 32 h40 M12 43 h40 M34 12 v42" stroke="${NAVY6}" stroke-width="1.4"/>` +
+      `<circle cx="40" cy="26.5" r="2.2" fill="#8B99EE"/>` +
+      `<circle cx="40" cy="37.5" r="2.2" fill="#8B99EE"/><circle cx="46" cy="37.5" r="2.2" fill="#8B99EE"/>` +
+      `<circle cx="40" cy="48.5" r="2.2" fill="#8B99EE"/><circle cx="46" cy="48.5" r="2.2" fill="#8B99EE"/><circle cx="43" cy="48.5" r="2.2" fill="#8B99EE"/>`,
+    // 상대도수 그래프 겹쳐 비교(집단 2개)
+    overlay:
+      `<line x1="8" y1="52" x2="56" y2="52" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>` +
+      `<path d="M10 46 L20 34 L30 26 L40 32 L50 44" stroke="${NAVY6}" stroke-width="2.4" fill="none" stroke-linejoin="round"/>` +
+      `<path d="M10 40 L20 30 L30 34 L40 20 L50 36" stroke="${ROSE5}" stroke-width="2.4" fill="none" stroke-linejoin="round"/>` +
+      `<circle cx="30" cy="26" r="2.6" fill="#FFFFFF" stroke="${NAVY6}" stroke-width="1.6"/>` +
+      `<circle cx="40" cy="20" r="2.6" fill="#FFFFFF" stroke="${ROSE5}" stroke-width="1.6"/>`,
+    // 통계적 문제해결 4단계: 오르는 디딤돌 1→4
+    steps4:
+      `<path d="M16 46 L25 37 M31 31 L40 22 M46 16 L50 12" stroke="#C2CBD6" stroke-width="2" stroke-linecap="round"/>` +
+      `<circle cx="11" cy="51" r="7" fill="#8B99EE"/><text x="11" y="55" text-anchor="middle" font-size="9.5" font-weight="900" fill="#fff">1</text>` +
+      `<circle cx="28" cy="34" r="7" fill="#8B99EE"/><text x="28" y="38" text-anchor="middle" font-size="9.5" font-weight="900" fill="#fff">2</text>` +
+      `<circle cx="43" cy="19" r="7" fill="${NAVY6}"/><text x="43" y="23" text-anchor="middle" font-size="9.5" font-weight="900" fill="#fff">3</text>` +
+      `<circle cx="56" cy="8" r="7" fill="${NAVY6}"/><text x="56" y="12" text-anchor="middle" font-size="9.5" font-weight="900" fill="#fff">4</text>`,
   };
   return svg("0 0 64 64", A[key] ?? A.bars);
 }

@@ -664,9 +664,195 @@ const MINI: Record<string, [string, string]> = {
      <path d="M22 46 v4 M20 48 h4" stroke="#E8A93E" stroke-width="1.6" stroke-linecap="round"/>`,
     "",
   ],
+  // ── Ⅰ 보조 카드 글리프(recap 전 카드 미니아트 표준, 2026-07-10) ──
+  // 멈춤의 조건: 나머지 창의 0 + 초록 통과 체크
+  stop0: [
+    `<rect x="12" y="24" width="30" height="22" rx="6" fill="#FFFFFF" stroke="#D9C2E4" stroke-width="1.6"/>
+     <text x="27" y="40" text-anchor="middle" font-size="15" font-weight="800" fill="#0BA05F">0</text>
+     <circle cx="54" cy="35" r="9" fill="url(#mi-gr)" stroke="#0B7A4A" stroke-width="1.4"/>
+     <path d="M50 35 l3 3.2 5.5 -6.4" stroke="#FFFFFF" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+    "",
+  ],
+  // 점 두 개의 표기법: 마디 양 끝 숫자 위에 점
+  dots2: [
+    `<rect x="15" y="32" width="12" height="15" rx="3.5" fill="url(#mi-gp2)" stroke="#7D2A93" stroke-width="1.2"/>
+     <rect x="30" y="32" width="12" height="15" rx="3.5" fill="#F7EFFA" stroke="#C9A6D6" stroke-width="1.2"/>
+     <rect x="45" y="32" width="12" height="15" rx="3.5" fill="url(#mi-gp2)" stroke="#7D2A93" stroke-width="1.2"/>
+     <circle cx="21" cy="24" r="3" fill="#9C36B5"/><circle cx="51" cy="24" r="3" fill="#9C36B5"/>
+     <path d="M15 53 h42" stroke="#C9A6D6" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 4"/>`,
+    "",
+  ],
+  // 함정 주의: 약분 먼저(빗금 지우고 작은 기약분수로)
+  reduce: [
+    `<rect x="12" y="20" width="18" height="13" rx="4" fill="url(#mi-gp2)" stroke="#7D2A93" stroke-width="1.2"/>
+     <path d="M10 38 h22" stroke="#5E2470" stroke-width="2.6" stroke-linecap="round"/>
+     <rect x="12" y="43" width="18" height="13" rx="4" fill="url(#mi-gp2)" stroke="#7D2A93" stroke-width="1.2"/>
+     <path d="M10 35 L32 20 M10 58 L32 43" stroke="#E8434F" stroke-width="2.2" stroke-linecap="round"/>
+     <path d="M37 38 h7 m0 0 l-3 -2.6 m3 2.6 l-3 2.6" stroke="#8A6E96" stroke-width="1.8" stroke-linecap="round"/>
+     <rect x="49" y="24" width="13" height="10" rx="3" fill="url(#mi-gp)" stroke="#7D2A93" stroke-width="1.2"/>
+     <path d="M47 38 h17" stroke="#5E2470" stroke-width="2.2" stroke-linecap="round"/>
+     <rect x="49" y="42" width="13" height="10" rx="3" fill="url(#mi-gp)" stroke="#7D2A93" stroke-width="1.2"/>`,
+    "",
+  ],
+  // 순환의 정체: 나머지가 고리를 돌아 되돌아온다
+  remcycle: [
+    `<path d="M36 20 A16 16 0 1 0 49.9 28" fill="none" stroke="#9C36B5" stroke-width="2.8" stroke-linecap="round"/>
+     <path d="M49.9 28 l-6.4 -1.2 M49.9 28 l1 -6.4" stroke="#9C36B5" stroke-width="2.4" stroke-linecap="round"/>
+     <circle cx="36" cy="20" r="4.4" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.2"/>
+     <circle cx="22.1" cy="44" r="3.8" fill="url(#mi-gp2)" stroke="#7D2A93" stroke-width="1.2"/>
+     <circle cx="49.9" cy="44" r="3.8" fill="url(#mi-gp2)" stroke="#7D2A93" stroke-width="1.2"/>`,
+    "",
+  ],
+  // 유리수의 두 얼굴: 끝나는 소수(멈춤 점)와 도는 소수(물결)
+  twoface: [
+    `<circle cx="25" cy="36" r="14" fill="url(#mi-gp2)" stroke="#7D2A93" stroke-width="1.5"/>
+     <path d="M18 36 h9" stroke="#5E2470" stroke-width="2.6" stroke-linecap="round"/><circle cx="31" cy="36" r="2.6" fill="#5E2470"/>
+     <circle cx="47" cy="36" r="14" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.5"/>
+     <path d="M39 36 q4 -7 8 0 q4 7 8 0" fill="none" stroke="#8C5A12" stroke-width="2.4" stroke-linecap="round"/>`,
+    "",
+  ],
+  // (aᵐ)ⁿ: 괄호 속 탑을 통째로 복제하면 지수는 곱셈
+  powpow: [
+    `<path d="M15 22 q-6 14 0 28" fill="none" stroke="#7D2A93" stroke-width="2.4" stroke-linecap="round"/>
+     <path d="M33 22 q6 14 0 28" fill="none" stroke="#7D2A93" stroke-width="2.4" stroke-linecap="round"/>
+     <rect x="19" y="38" width="10" height="8" rx="2.5" fill="url(#mi-gp2)" stroke="#7D2A93" stroke-width="1.1"/>
+     <rect x="19" y="28" width="10" height="8" rx="2.5" fill="url(#mi-gp2)" stroke="#7D2A93" stroke-width="1.1"/>
+     <path d="M39 36 h6 m0 0 l-2.6 -2.4 m2.6 2.4 l-2.6 2.4" stroke="#8A6E96" stroke-width="1.8" stroke-linecap="round"/>
+     <rect x="50" y="46" width="10" height="8" rx="2.5" fill="url(#mi-gp)" stroke="#7D2A93" stroke-width="1.1"/>
+     <rect x="50" y="37" width="10" height="8" rx="2.5" fill="url(#mi-gp)" stroke="#7D2A93" stroke-width="1.1"/>
+     <rect x="50" y="28" width="10" height="8" rx="2.5" fill="url(#mi-gp2)" stroke="#7D2A93" stroke-width="1.1"/>
+     <rect x="50" y="19" width="10" height="8" rx="2.5" fill="url(#mi-gp2)" stroke="#7D2A93" stroke-width="1.1"/>`,
+    "",
+  ],
+  // (ab)ᵐ: 괄호 안 전원에게 지수가 배달된다
+  powall: [
+    `<path d="M20 26 q-7 12 0 24" fill="none" stroke="#7D2A93" stroke-width="2.4" stroke-linecap="round"/>
+     <path d="M44 26 q7 12 0 24" fill="none" stroke="#7D2A93" stroke-width="2.4" stroke-linecap="round"/>
+     <circle cx="27" cy="40" r="6" fill="url(#mi-gp)" stroke="#7D2A93" stroke-width="1.3"/>
+     <circle cx="38" cy="40" r="6" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.3"/>
+     <circle cx="53" cy="18" r="8" fill="url(#mi-gp)" stroke="#7D2A93" stroke-width="1.3"/>
+     <text x="53" y="22" text-anchor="middle" font-size="10" font-weight="800" font-style="italic" fill="#FFFFFF">m</text>
+     <path d="M48 25 q-12 4 -19 9" fill="none" stroke="#8A6E96" stroke-width="1.6" stroke-dasharray="3 3" stroke-linecap="round"/>
+     <path d="M50 27 q-6 5 -10 7" fill="none" stroke="#8A6E96" stroke-width="1.6" stroke-dasharray="3 3" stroke-linecap="round"/>`,
+    "",
+  ],
+  // 나눗셈: 분수를 뒤집어 곱하기(회전 화살)
+  flipdiv: [
+    `<rect x="22" y="17" width="18" height="13" rx="4" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.2"/>
+     <path d="M18 36 h26" stroke="#5E2470" stroke-width="2.6" stroke-linecap="round"/>
+     <rect x="22" y="42" width="18" height="13" rx="4" fill="url(#mi-gp)" stroke="#7D2A93" stroke-width="1.2"/>
+     <path d="M50 22 a15 15 0 0 1 0 28" fill="none" stroke="#9C36B5" stroke-width="2.6" stroke-linecap="round"/>
+     <path d="M50 50 l6 -1 M50 50 l1.4 -6.2" stroke="#9C36B5" stroke-width="2.2" stroke-linecap="round"/>`,
+    "",
+  ],
+  // 빼기 괄호는 전원 반전: −( ) 속 부호가 모두 뒤집힌다
+  minusflip: [
+    `<rect x="6" y="34" width="10" height="4" rx="2" fill="#E8434F"/>
+     <path d="M24 20 q-8 16 0 32" fill="none" stroke="#7D2A93" stroke-width="2.4" stroke-linecap="round"/>
+     <path d="M50 20 q8 16 0 32" fill="none" stroke="#7D2A93" stroke-width="2.4" stroke-linecap="round"/>
+     <circle cx="31" cy="30" r="6.5" fill="url(#mi-bl)" stroke="#2558B8" stroke-width="1.2"/>
+     <path d="M31 27 v6 M28 30 h6" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
+     <circle cx="43" cy="44" r="6.5" fill="#F7D4D8" stroke="#C43A46" stroke-width="1.4"/>
+     <path d="M40 44 h6" stroke="#C43A46" stroke-width="1.8" stroke-linecap="round"/>
+     <path d="M37 32 q6 3 4.5 8" fill="none" stroke="#8A6E96" stroke-width="1.8" stroke-linecap="round"/>
+     <path d="M41.5 40 l0.4 -4.4 M41.5 40 l-4.2 -1.4" stroke="#8A6E96" stroke-width="1.8" stroke-linecap="round"/>`,
+    "",
+  ],
+  // (다항식)÷(단항식): 모든 항이 각자 나눗셈을 받는다
+  divterm: [
+    `<rect x="14" y="13" width="17" height="13" rx="4" fill="url(#mi-gp2)" stroke="#7D2A93" stroke-width="1.2"/>
+     <rect x="41" y="13" width="17" height="13" rx="4" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.2"/>
+     <path d="M22.5 29 v7 M49.5 29 v7" stroke="#8A6E96" stroke-width="1.8" stroke-linecap="round"/>
+     <circle cx="22.5" cy="45" r="8" fill="#FFFFFF" stroke="#7D2A93" stroke-width="1.5"/>
+     <text x="22.5" y="50" text-anchor="middle" font-size="12" font-weight="800" fill="#7D2A93">÷</text>
+     <circle cx="49.5" cy="45" r="8" fill="#FFFFFF" stroke="#8C5A12" stroke-width="1.5"/>
+     <text x="49.5" y="50" text-anchor="middle" font-size="12" font-weight="800" fill="#8C5A12">÷</text>`,
+    "",
+  ],
+  // 거꾸로 재기: 부피 식에서 빠진 모서리를 나눗셈으로 복원
+  backlen: [
+    `<path d="M18 30 L28 20 L54 20 L44 30 Z" fill="url(#mi-bd)" stroke="#7D2A93" stroke-width="1.4" stroke-linejoin="round"/>
+     <path d="M44 30 L54 20 L54 42 L44 52 Z" fill="url(#mi-gp2)" stroke="#7D2A93" stroke-width="1.4" stroke-linejoin="round"/>
+     <rect x="18" y="30" width="26" height="22" fill="#FFFFFF" stroke="#7D2A93" stroke-width="1.4"/>
+     <path d="M18 30 V52" stroke="#E8A93E" stroke-width="2.6" stroke-dasharray="4 3" stroke-linecap="round"/>
+     <text x="10" y="45" text-anchor="middle" font-size="12" font-weight="800" fill="#E8830E">?</text>`,
+    "",
+  ],
+  // ── Ⅱ 보조 카드 글리프(캐러멜) ──
+  // 해: 게이트를 통과해 참이 되는 값들(여러 개)
+  truthset: [
+    `<path d="M16 52 V28 M56 52 V28 M16 28 H56" fill="none" stroke="#7F4A12" stroke-width="3" stroke-linecap="round"/>
+     <circle cx="27" cy="44" r="4.5" fill="url(#mi-bl)" stroke="#2558B8" stroke-width="1.1"/>
+     <circle cx="36" cy="44" r="4.5" fill="url(#mi-bl)" stroke="#2558B8" stroke-width="1.1"/>
+     <circle cx="45" cy="44" r="4.5" fill="url(#mi-bl)" stroke="#2558B8" stroke-width="1.1"/>
+     <path d="M52 16 l3.5 3.5 6 -7" stroke="#0BA05F" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+    "",
+  ],
+  // 유리한 선택: 경계 깃대를 넘어선 첫 지점부터 이득
+  border: [
+    `<line x1="8" y1="46" x2="62" y2="46" stroke="#8C6A3E" stroke-width="2.2" stroke-linecap="round"/>
+     <line x1="34" y1="46" x2="34" y2="18" stroke="#A9631B" stroke-width="2.4"/>
+     <path d="M34 18 h12 l-4 4.5 4 4.5 h-12 z" fill="#E8434F"/>
+     <path d="M14 36 h26" stroke="url(#mi-am)" stroke-width="3.6" stroke-linecap="round"/>
+     <path d="M46 36 l-6 -3.4 v6.8 z" fill="#E8A93E"/>
+     <circle cx="46" cy="46" r="4.2" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.2"/>`,
+    "",
+  ],
+  // 순서쌍 (x, y): 첫째 자리·둘째 자리의 순서가 생명
+  opair: [
+    `<path d="M18 20 q-8 16 0 32" fill="none" stroke="#7F4A12" stroke-width="2.6" stroke-linecap="round"/>
+     <path d="M54 20 q8 16 0 32" fill="none" stroke="#7F4A12" stroke-width="2.6" stroke-linecap="round"/>
+     <circle cx="29" cy="36" r="7" fill="url(#mi-bl)" stroke="#2558B8" stroke-width="1.3"/>
+     <text x="29" y="40" text-anchor="middle" font-size="9.5" font-weight="800" fill="#FFFFFF">1</text>
+     <circle cx="45" cy="36" r="7" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.3"/>
+     <text x="45" y="40" text-anchor="middle" font-size="9.5" font-weight="800" fill="#5C3A00">2</text>
+     <circle cx="37" cy="48" r="1.6" fill="#7F4A12"/>`,
+    "",
+  ],
+  // 해의 검산: 두 관문을 모두 통과해야 진짜 해
+  bothpass: [
+    `<rect x="14" y="24" width="14" height="26" rx="4" fill="url(#mi-crm)" stroke="#7F4A12" stroke-width="1.6"/>
+     <rect x="40" y="24" width="14" height="26" rx="4" fill="url(#mi-crm)" stroke="#7F4A12" stroke-width="1.6"/>
+     <path d="M6 37 H62" stroke="#E8A93E" stroke-width="2" stroke-dasharray="3 3" stroke-linecap="round"/>
+     <circle cx="60" cy="37" r="4.5" fill="url(#mi-bl)" stroke="#2558B8" stroke-width="1.2"/>
+     <path d="M17 16 l2.6 2.6 4.6 -5.2 M43 16 l2.6 2.6 4.6 -5.2" stroke="#0BA05F" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+    "",
+  ],
+  // 괄호째 꽂기: 식을 통째로 감싸 슬롯에 넣는다
+  bracket: [
+    `<rect x="16" y="12" width="40" height="16" rx="8" fill="url(#mi-crm)" stroke="#7F4A12" stroke-width="1.5"/>
+     <path d="M27 16 q-3 4 0 8 M45 16 q3 4 0 8" fill="none" stroke="#7F4A12" stroke-width="1.8" stroke-linecap="round"/>
+     <path d="M30 20 h12" stroke="#B08749" stroke-width="2" stroke-linecap="round"/>
+     <path d="M36 31 v6 M33 34 l3 3.6 3 -3.6" fill="none" stroke="#8A6E96" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+     <rect x="20" y="42" width="32" height="18" rx="6" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.4"/>
+     <rect x="27" y="46" width="18" height="10" rx="4" fill="none" stroke="#8C5A12" stroke-width="1.4" stroke-dasharray="3 3"/>`,
+    "",
+  ],
+  // 확대경: 양변에 수를 곱해 계수의 절댓값을 맞춘다
+  scale2: [
+    `<circle cx="30" cy="30" r="17" fill="url(#mi-lens)" stroke="#5E6C78" stroke-width="2.6"/>
+     <text x="30" y="35.5" text-anchor="middle" font-size="14" font-weight="800" fill="#A9631B">×3</text>
+     <line x1="42" y1="43" x2="55" y2="56" stroke="#5E6C78" stroke-width="4.4" stroke-linecap="round"/>`,
+    "",
+  ],
+  // 풀고, 반드시 확인: 답을 원래 식에 되넣어 검산
+  verify: [
+    `<rect x="16" y="10" width="36" height="15" rx="5" fill="url(#mi-crm)" stroke="#7F4A12" stroke-width="1.5"/>
+     <path d="M22 17.5 h13 M40 17.5 h7" stroke="#B08749" stroke-width="2.2" stroke-linecap="round"/>
+     <circle cx="30" cy="48" r="9" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.4"/>
+     <text x="30" y="52.5" text-anchor="middle" font-size="11" font-weight="800" fill="#5C3A00">3</text>
+     <path d="M42 50 a15 15 0 0 0 12 -19" fill="none" stroke="#A9631B" stroke-width="2.4" stroke-linecap="round"/>
+     <path d="M54 31 l-5 2 M54 31 l1 5.4" stroke="#A9631B" stroke-width="2.2" stroke-linecap="round"/>
+     <path d="M56 14 l3 3 5 -6" stroke="#0BA05F" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+    "",
+  ],
 };
 
-/** recap 카드 미니아트 — calcMiniArt("divide" | "cycle" | "denom" | "shift" | "pow" | "mono" | "poly" | "expand") */
+/** recap 카드 미니아트 — calcMiniArt(key). Ⅰ: divide·cycle·denom·shift·pow·mono·poly·expand +
+ *  보조 stop0·dots2·reduce·remcycle·twoface·powpow·powall·flipdiv·minusflip·divterm·backlen /
+ *  Ⅱ: ineq·flip·range·cross·subst·elim + 보조 truthset·border·opair·bothpass·bracket·scale2·verify /
+ *  Ⅲ: func·linear·shiftg·icept·slope·family·build·reveal·meet + 보조 fval·bshift·twopoints·
+ *  downhill·parallel·axpair·coincide. 전 카드 미니아트 표준(2026-07-10). */
 export function calcMiniArt(key: string): string {
   const m = MINI[key];
   if (!m) return "";

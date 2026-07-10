@@ -322,6 +322,37 @@ const MINI: Record<string, string> = {
     <path d="M24 24h16M24 34h16M24 44h16" stroke="#C9A26A" stroke-width="1.8"/>
     <path d="M42 20h10M42 32h10M42 44h10" stroke="#8B95A1" stroke-width="2.2"/>
     <path d="M28 60q-3-4 0-7 3 3 6 0 2 4-1 7-3 2-5 0z" fill="#FF9A4A"/>`,
+  // ── 보조 카드 글리프(recap 전 카드 미니아트 표준, 2026-07-10) ──
+  // 생활 속 밀도: 수면 위 구명튜브(↑)와 가라앉는 납 벨트(↓)
+  lifeDensityMini: `<path d="M8 32q6-5 12 0t12 0t12 0t12 0" stroke="#5AA2F8" stroke-width="2.2" fill="none"/>
+    <circle cx="22" cy="24" r="7" fill="none" stroke="#F0A422" stroke-width="4.5"/>
+    <path d="M22 12v-4M19 10l3-3 3 3" stroke="#F0A422" stroke-width="2" fill="none"/>
+    <rect x="38" y="42" width="16" height="8" rx="2" fill="#7C8698" stroke="#4E5968" stroke-width="1.6"/>
+    <path d="M46 54v4M43 56l3 3 3-3" stroke="#8B95A1" stroke-width="2" fill="none"/>`,
+  // 압력이 낮으면 용해도 ↓: 뚜껑 연 탄산음료에서 달아나는 기포
+  pressGasMini: `<rect x="27" y="16" width="10" height="8" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="2"/>
+    <path d="M27 24h10q6 4 6 11v14a10 10 0 0 1-10 5h-2a10 10 0 0 1-10-5V35q0-7 6-11z" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="2.2"/>
+    <rect x="40" y="6" width="13" height="6" rx="2" fill="#8B99AC" transform="rotate(18 46 9)"/>
+    <circle cx="31" cy="44" r="2" fill="none" stroke="#5AA2F8" stroke-width="1.4"/>
+    <circle cx="34" cy="36" r="2.6" fill="none" stroke="#5AA2F8" stroke-width="1.4"/>
+    <circle cx="30" cy="29" r="2.2" fill="none" stroke="#5AA2F8" stroke-width="1.4"/>
+    <circle cx="40" cy="12" r="2.2" fill="none" stroke="#5AA2F8" stroke-width="1.4"/>
+    <circle cx="46" cy="18" r="1.8" fill="none" stroke="#5AA2F8" stroke-width="1.4"/>`,
+  // 혼합물의 성질: 섞여 있어도 각자 성질 유지, 그래서 다시 분리
+  mixKeepMini: `<rect x="8" y="20" width="22" height="26" rx="5" fill="none" stroke="#8B95A1" stroke-width="2.2"/>
+    <circle cx="14" cy="27" r="3" fill="#5AA2F8"/><circle cx="23" cy="31" r="3" fill="#E64980"/>
+    <circle cx="15" cy="39" r="3" fill="#E64980"/><circle cx="24" cy="40" r="3" fill="#5AA2F8"/>
+    <path d="M33 33h7M37 30l4 3-4 3" stroke="#8B95A1" stroke-width="2" fill="none"/>
+    <rect x="45" y="14" width="14" height="14" rx="4" fill="none" stroke="#5AA2F8" stroke-width="1.8"/>
+    <circle cx="50" cy="21" r="2.6" fill="#5AA2F8"/><circle cx="55" cy="21" r="2.6" fill="#5AA2F8"/>
+    <rect x="45" y="36" width="14" height="14" rx="4" fill="none" stroke="#E64980" stroke-width="1.8"/>
+    <circle cx="50" cy="43" r="2.6" fill="#E64980"/><circle cx="55" cy="43" r="2.6" fill="#E64980"/>`,
+  // 석출: 식힌 용액 바닥에 되돌아온 고체 결정
+  depositMini: `<path d="M20 12h24l-3 12v20a9 9 0 0 1-18 0V24z" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="2.2"/>
+    <circle cx="28" cy="26" r="2.2" fill="#E64980"/><circle cx="36" cy="31" r="2.2" fill="#E64980"/>
+    <path d="M27 46l4-6 4 6-4 5z" fill="#FFF6DE" stroke="#E8B54A" stroke-width="1.8"/>
+    <path d="M36 49l3-4.5 3 4.5-3 4z" fill="#FFF6DE" stroke="#E8B54A" stroke-width="1.6"/>
+    <path d="M54 18v14M50 28l4 5 4-5" stroke="#5AA2F8" stroke-width="2.2" fill="none"/>`,
 };
 
 export function chemMiniArt(key: string): string {

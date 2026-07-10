@@ -301,6 +301,59 @@ const MINI: Record<string, string> = {
     <path d="M32 24 l-3 10 4 8 -3 10" stroke="#57616F" stroke-width="1.8"/>
     <path d="M33 34 q5 -8 10 -8 M33 34 q-1 -8 4 -12" stroke="#0CA678" stroke-width="2.2"/>
     <circle cx="43" cy="25" r="2.4" fill="#12B886"/>`,
+  // ── 보조 카드 글리프(recap 전 카드 미니아트 표준, 2026-07-10) ──
+  // 지구계: 지구 + 기권 고리 + 외권 별 + 생물권 잎
+  sysMini: `<circle cx="32" cy="34" r="13" fill="#DDF0FB" stroke="#5AA2F8" stroke-width="1.8"/>
+    <path d="M25 28 q6 -3 9 2 q2 5 -3 7 q-6 1 -8 -3 q-1 -4 2 -6z" fill="#94C878" stroke="#4E7A38" stroke-width="1"/>
+    <path d="M36 41 q4 -1 5 3" stroke="#4E7A38" stroke-width="2"/>
+    <circle cx="32" cy="34" r="19" fill="none" stroke="#8FBBF2" stroke-width="1.8" stroke-dasharray="4 4"/>
+    <path d="M53 11 l1.6 3.4 3.4 1.6 -3.4 1.6 -1.6 3.4 -1.6 -3.4 -3.4 -1.6 3.4 -1.6z" fill="#F0A422"/>
+    <path d="M11 51 q-2 6 3 8 q5 -1 4 -7 q-3 -3 -7 -1z M14 58 q2 -4 4 -6" fill="#B7E4CE" stroke="#12B886" stroke-width="1.6"/>`,
+  // 굳기·자성·염산 반응: 긁기 지그재그 + 자석에 붙은 클립 + 거품
+  probeMini: `<path d="M20 30 v-6 a12 12 0 0 1 24 0 v6" fill="none" stroke="#F25C54" stroke-width="7"/>
+    <rect x="16.5" y="26" width="7" height="6" fill="#8B99AC"/>
+    <rect x="40.5" y="26" width="7" height="6" fill="#8B99AC"/>
+    <ellipse cx="31" cy="41" rx="6.5" ry="3" fill="none" stroke="#4E5968" stroke-width="1.8" transform="rotate(-18 31 41)"/>
+    <circle cx="53" cy="20" r="2.4" fill="none" stroke="#5AA2F8" stroke-width="1.5"/>
+    <circle cx="56" cy="28" r="2" fill="none" stroke="#5AA2F8" stroke-width="1.5"/>
+    <circle cx="51" cy="34" r="1.7" fill="none" stroke="#5AA2F8" stroke-width="1.5"/>
+    <path d="M10 54 l7 -5 7 5 7 -5 7 5" fill="none" stroke="#C9A26A" stroke-width="2.2"/>`,
+  // 암석 색 = 광물 조성: 어두운 광물 많은 돌 vs 밝은 돌
+  rockShadeMini: `<rect x="9" y="20" width="21" height="25" rx="5" fill="#5E6B7E" stroke="#3E4550" stroke-width="1.8"/>
+    <circle cx="15" cy="27" r="2.4" fill="#2E3540"/><circle cx="24" cy="30" r="2.6" fill="#2E3540"/>
+    <circle cx="17" cy="38" r="2.6" fill="#2E3540"/><circle cx="25" cy="40" r="2.2" fill="#2E3540"/>
+    <rect x="34" y="20" width="21" height="25" rx="5" fill="#EDEFF2" stroke="#8B95A1" stroke-width="1.8"/>
+    <circle cx="41" cy="29" r="2.2" fill="#C4CAD2"/><circle cx="49" cy="38" r="2.2" fill="#C4CAD2"/>
+    <path d="M14 54 h32" stroke="#C4CAD2" stroke-width="2.4"/>`,
+  // 화석: 돌 속 암모나이트 나선
+  fossilMini: `<path d="M14 40 q-4 -16 10 -24 q16 -8 24 4 q6 12 -2 22 q-14 10 -32 -2z" fill="#F4E9D2" stroke="#C9A26A" stroke-width="2"/>
+    <path d="M32 32 a3 3 0 0 1 6 0 a6 6 0 0 1 -12 0 a9 9 0 0 1 18 0 a12 12 0 0 1 -24 0" fill="none" stroke="#0CA678" stroke-width="2.2"/>
+    <path d="M20 52 h24" stroke="#C4CAD2" stroke-width="2.2"/>`,
+  // 엽리 없는 변성암: 치밀한 입자 돌 + 줄무늬 금지 배지
+  nofoliMini: `<rect x="10" y="24" width="34" height="24" rx="9" fill="#F0F4F8" stroke="#8B95A1" stroke-width="2"/>
+    <circle cx="18" cy="32" r="1.8" fill="#B8C4D0"/><circle cx="27" cy="30" r="1.8" fill="#B8C4D0"/><circle cx="36" cy="33" r="1.8" fill="#B8C4D0"/>
+    <circle cx="22" cy="40" r="1.8" fill="#B8C4D0"/><circle cx="31" cy="42" r="1.8" fill="#B8C4D0"/><circle cx="38" cy="40" r="1.8" fill="#B8C4D0"/>
+    <circle cx="50" cy="18" r="9" fill="#FFFFFF" stroke="#F25C54" stroke-width="2"/>
+    <path d="M45 15 h10 M45 18 h10 M45 21 h10" stroke="#8B95A1" stroke-width="1.4"/>
+    <path d="M44 24 L56 12" stroke="#F25C54" stroke-width="2.2"/>`,
+  // 순환의 원동력: 누르는 압력 + 열(불꽃) + 물방울
+  forceMini: `<path d="M22 10 v8 M18 14 l4 5 4 -5 M42 10 v8 M38 14 l4 5 4 -5" stroke="#8A6BB8" stroke-width="2.2" fill="none"/>
+    <path d="M32 30 q-7 8 -4 15 q3 7 10 5 q7 -3 5 -11 q-1 -5 -5 -9 q0 5 -3 6 q-2 -3 -3 -6z" fill="#FF9A4A" stroke="#D95F14" stroke-width="1.6"/>
+    <path d="M13 38 q-4 6 0 10 q5 3 8 -2 q2 -5 -3 -10 q-2 -2 -5 2z" fill="#BFE0F8" stroke="#5AA2F8" stroke-width="1.6"/>`,
+  // 네 가지 증거: 맞물리는 두 대륙 퍼즐 + 화석 분포 연결
+  evidMini: `<path d="M10 20 h13 v7 a5 5 0 1 0 0 10 v7 h-13 z" fill="#94C878" stroke="#4E7A38" stroke-width="1.8"/>
+    <path d="M39 20 h15 v24 h-15 v-7 a5 5 0 1 1 0 -10 z" fill="#DDB868" stroke="#8E6A24" stroke-width="1.8"/>
+    <circle cx="17" cy="27" r="2.2" fill="#D6336C"/>
+    <circle cx="47" cy="27" r="2.2" fill="#D6336C"/>
+    <path d="M20 27 h24" stroke="#D6336C" stroke-width="1.6" stroke-dasharray="3 3"/>
+    <path d="M22 52 h20" stroke="#8FBBF2" stroke-width="2.2"/>`,
+  // 화산대·지진대: 지도 위 띠를 이루는 지진 점 + 화산
+  beltMini: `<rect x="8" y="14" width="48" height="36" rx="6" fill="#DDF0FB" stroke="#7FB8DC" stroke-width="1.6"/>
+    <path d="M13 44 Q28 36 34 30 T51 19" fill="none" stroke="#F04452" stroke-width="7" opacity=".16"/>
+    <g fill="#F04452"><circle cx="14" cy="43" r="1.8"/><circle cx="20" cy="39" r="1.8"/><circle cx="26" cy="35" r="1.8"/>
+    <circle cx="33" cy="31" r="1.8"/><circle cx="40" cy="26" r="1.8"/><circle cx="47" cy="22" r="1.8"/></g>
+    <path d="M19 34 l4 -7 4 7 z" fill="#FF9A4A" stroke="#D95F14" stroke-width="1.2"/>
+    <path d="M41 21 l3.4 -6 3.4 6 z" fill="#FF9A4A" stroke="#D95F14" stroke-width="1.2"/>`,
 };
 
 export function geoMiniArt(key: string): string {

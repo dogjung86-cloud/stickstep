@@ -422,6 +422,12 @@ src/
   refractLab(신기루)·mirrorImageLab(구급차 거울문자)·colorMixLab(물감 혼합)·waveLab(우주 폭발음)·
   soundLab(헬륨 목소리), 중2IV elementLab(수소도 쪼갤까)·moleculeLab(산소vs오존)·atomLab(전자는 왜 안 빨려드나)·
   periodicLab(수소는 왜 예외)·ionLab(나트륨 원자vs이온)·ionMoveLab(안 보이는 이온을 어떻게). 오개념 교정형 질문이 기준.
+- **recap 카드는 전 카드에 미니아트**(사용자 확정 2026-07-10) — 대표 카드만 아트·보조 카드는 색 점(rc-dot)이던
+  관행 폐기. 전 트랙 롤아웃 완료(과학 중1·중2 + 수학 중1 Ⅰ~Ⅵ·중2 Ⅰ~Ⅲ, 404장 전수). 새 recap 저작 시
+  카드마다 해당 단원 figures 파일의 미니아트 함수에 키를 만들어 `art:`를 채운다 — 문법은 파일별 관례 그대로
+  (mathMiniArt 84×84 플랫 / geoMiniArt·solidMiniArt·statMiniArt 64×64 geoKit 프리미티브 재사용 /
+  calcMiniArt 72×72 mi-* 그라데이션+접촉 그림자 / 과학 *Figures 64×64 플랫). rc-dot 폴백은 코드에 남아 있지만
+  신규 콘텐츠에서 쓰면 실격. 글리프는 카드의 한 문장 핵심을 도상 하나로(텍스트 최소, 원호 스윕은 bbox로 검증).
 - **recap 카드의 `more`(자세히)는 문제집 수준이 표준** — 모든 카드에 존재해야 하며,
   `<b class='rm-h'>왜 그럴까요?</b>` 소제목 2~4개(rm-h 전용 CSS가 카드 액센트 색 다이아 불릿을 붙임)로
   ①원리(왜) → ②구체 예시 → ③시험 함정/오개념 교정 순서를 갖추고, 상식 꼬리는 기존 `<span class='fun'>` 유지.
