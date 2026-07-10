@@ -192,6 +192,17 @@ import { paraCondLab } from "./steps/paraCondLab";
 import { diagRigLab } from "./steps/diagRigLab";
 import { quadFamilyLab } from "./steps/quadFamilyLab";
 import { areaSlideLab } from "./steps/areaSlideLab";
+import { zoomLab } from "./steps/zoomLab";
+import { simHuntLab } from "./steps/simHuntLab";
+import { scaleTileLab } from "./steps/scaleTileLab";
+import { shapeLockLab } from "./steps/shapeLockLab";
+import { peelLab } from "./steps/peelLab";
+import { triSliceLab } from "./steps/triSliceLab";
+import { midpointLab } from "./steps/midpointLab";
+import { lineDivLab } from "./steps/lineDivLab";
+import { centroidLab } from "./steps/centroidLab";
+import { pythaLab } from "./steps/pythaLab";
+import { rightCheckLab } from "./steps/rightCheckLab";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -379,6 +390,17 @@ const R: Record<string, StepRenderer> = {
   diagRigLab,
   quadFamilyLab,
   areaSlideLab,
+  zoomLab,
+  simHuntLab,
+  scaleTileLab,
+  shapeLockLab,
+  peelLab,
+  triSliceLab,
+  midpointLab,
+  lineDivLab,
+  centroidLab,
+  pythaLab,
+  rightCheckLab,
   quiz,
   table,
   order,

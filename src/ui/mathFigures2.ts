@@ -943,7 +943,7 @@ export function lineFig(o: {
    기하 원소는 geoKit(각 호·직각 표시·틱·점 라벨)만 사용, 좌표는 전부 계산.
    팔레트: 코발트 #1971C2(진한 #12579B), 보조 앰버 #E8A93E·시안 #0DA5C6·로즈 #E8547E.
    ════════════════════════════════════════════════════════════ */
-import { angleArc, rightMark, tickMark, dot as gdot, ptLabel, angleOf, normDeg } from "./geoKit";
+import { angleArc, rightMark, tickMark, dot as gdot, ptLabel, angleOf, normDeg, polar, arrowHead } from "./geoKit";
 
 const P4 = { main: "#1971C2", deep: "#12579B", fill: "#D9E9F9", amber: "#E8A93E", cyan: "#0DA5C6", rose: "#E8547E", ink: "#334155" } as const;
 
@@ -1385,5 +1385,817 @@ export function proveMiniArt(key: string): string {
     <linearGradient id="m4-deep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B79C0"/><stop offset="1" stop-color="#114E85"/></linearGradient>
     <linearGradient id="m4-paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9F0F7"/></linearGradient>
     <linearGradient id="m4-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9B0"/><stop offset="1" stop-color="#E8B54A"/></linearGradient>`,
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   중2 Ⅴ. 도형의 닮음과 피타고라스 정리 — 퀴즈·개념 그림 + simMiniArt
+   기하 원소는 geoKit(각 호·직각·틱·점 라벨)만 사용, 좌표는 전부 계산.
+   팔레트: 라즈베리 #C2255C(진한 #8C1843·연한 #FBE3EC), 각 하이라이트는
+   GEO 순서(앰버 #E8A93E → 시안 #0DA5C6 → 로즈 #E8547E → 그린 #12B886).
+   구하는 값은 반드시 ?/x 로만 — 그림·라벨에 정답 수치 노출 금지.
+   ══════════════════════════════════════════════════════════════ */
+
+const P5 = {
+  main: "#C2255C", deep: "#8C1843", fill: "#FBE3EC",
+  amber: "#E8A93E", amberT: "#B26200", cyan: "#0DA5C6", cyanT: "#0B7285",
+  green: "#12B886", ink: "#334155",
+} as const;
+
+/** 다각형 path(라즈베리 톤 기본). */
+const poly5 = (pts: [number, number][], fill: string = P5.fill, stroke: string = P5.deep, w = 2.2): string =>
+  `<path d="M${pts.map((p) => `${p[0]} ${p[1]}`).join(" L")} Z" fill="${fill}" stroke="${stroke}" stroke-width="${w}" stroke-linejoin="round"/>`;
+
+/** 평행 표시 화살촉(교과서 > 표기). 선분 x1y1→x2y2 방향, t는 위치(0~1), n개 겹침. */
+function paraTick(x1: number, y1: number, x2: number, y2: number, n = 1, color: string = P5.ink, t = 0.5): string {
+  const a = angleOf(x1, y1, x2, y2);
+  let s = "";
+  for (let i = 0; i < n; i++) {
+    const off = (i - (n - 1) / 2) * 7;
+    const c = polar(x1 + (x2 - x1) * t, y1 + (y2 - y1) * t, off, a);
+    s += arrowHead(c.x, c.y, a, color, 6.5);
+  }
+  return s;
+}
+
+/* ── L1 simQuadFig: 닮은 두 사각형(큰 ABCD ∽ 작은 EFGH, 2/3 축소 동일 방향) ──
+   큰: BC=9cm·∠B=70°, AD=? / 작은: FG=6cm·EH=4cm. 작은 쪽 ∠F에도 무라벨 호(대응 읽기). */
+export function simQuadFig(): string {
+  const A: [number, number] = [72, 61];
+  const B: [number, number] = [34, 166];
+  const C: [number, number] = [174, 166];
+  const D: [number, number] = [166, 58];
+  const E: [number, number] = [254, 80];
+  const F: [number, number] = [228, 150];
+  const G: [number, number] = [321, 150];
+  const H: [number, number] = [316, 78];
+  return svg(
+    "0 0 360 200",
+    `<ellipse cx="104" cy="174" rx="82" ry="6" fill="#2A3A5E" opacity=".08"/>` +
+      `<ellipse cx="274" cy="158" rx="58" ry="5" fill="#2A3A5E" opacity=".08"/>` +
+      poly5([A, B, C, D]) +
+      poly5([E, F, G, H]) +
+      arcIn(B, A, C, P5.amber, "70°", 20) +
+      arcIn(F, E, G, P5.amber, undefined, 14) +
+      `<text x="104" y="186" text-anchor="middle" font-size="12" font-weight="900" fill="${P5.ink}">9 cm</text>` +
+      `<text x="275" y="168" text-anchor="middle" font-size="11.5" font-weight="900" fill="${P5.ink}">6 cm</text>` +
+      `<text x="285" y="66" text-anchor="middle" font-size="11.5" font-weight="900" fill="${P5.ink}">4 cm</text>` +
+      `<text x="119" y="48" text-anchor="middle" font-size="14" font-weight="900" fill="${P5.main}">?</text>` +
+      gdot(...A) + gdot(...B) + gdot(...C) + gdot(...D) +
+      gdot(...E) + gdot(...F) + gdot(...G) + gdot(...H) +
+      ptLabel(A[0], A[1], "A", -9, -8) + ptLabel(B[0], B[1], "B", -11, 14) +
+      ptLabel(C[0], C[1], "C", 9, 16) + ptLabel(D[0], D[1], "D", 9, -7) +
+      ptLabel(E[0], E[1], "E", -3, -9) + ptLabel(F[0], F[1], "F", -11, 13) +
+      ptLabel(G[0], G[1], "G", 10, 13) + ptLabel(H[0], H[1], "H", 9, -6),
+  );
+}
+/* ── L2 frameFig: 직사각형 액자 반례(바깥 30×24 : 안쪽 24×18 — 닮음 아님) ──
+   8px/cm. 바깥 (64,18)~(304,210), 테두리 3cm=24px, 안쪽 (88,42)~(280,186). */
+export function frameFig(): string {
+  return svg(
+    "0 0 360 248",
+    `<ellipse cx="184" cy="216" rx="128" ry="6" fill="#2A3A5E" opacity=".1"/>
+    <rect x="64" y="18" width="240" height="192" rx="4" fill="url(#fr-wood)" stroke="#6E4514" stroke-width="1.8"/>
+    <rect x="66" y="20" width="236" height="6" rx="3" fill="#FFFFFF" opacity=".28"/>
+    <path d="M64 18 L88 42 M304 18 L280 42 M64 210 L88 186 M304 210 L280 186" stroke="#8C5A1E" stroke-width="1.2" opacity=".55"/>
+    <rect x="88" y="42" width="192" height="144" fill="url(#fr-win)" stroke="#B8925C" stroke-width="1.4"/>
+    <path d="M196 18 v24" stroke="#B26200" stroke-width="2"/>
+    <path d="M196 18 l-3.4 5.6 h6.8 z M196 42 l-3.4 -5.6 h6.8 z" fill="#B26200"/>
+    <text x="206" y="35" font-size="11.5" font-weight="900" fill="#B26200">3 cm</text>
+    <path d="M64 230 h240 M64 225 v10 M304 225 v10" stroke="#8093A8" stroke-width="1.5"/>
+    <rect x="157" y="220" width="54" height="20" rx="10" fill="#FFFFFF" stroke="#E4C9D7" stroke-width="1.2"/>
+    <text x="184" y="234" text-anchor="middle" font-size="12" font-weight="800" fill="#5A6B7E">30 cm</text>
+    <path d="M44 18 v192 M39 18 h10 M39 210 h10" stroke="#8093A8" stroke-width="1.5"/>
+    <rect x="19" y="104" width="50" height="20" rx="10" fill="#FFFFFF" stroke="#E4C9D7" stroke-width="1.2"/>
+    <text x="44" y="118" text-anchor="middle" font-size="12" font-weight="800" fill="#5A6B7E">24 cm</text>
+    <path d="M100 174 h168 M100 169 v10 M268 169 v10" stroke="#A98BA0" stroke-width="1.3"/>
+    <text x="184" y="168" text-anchor="middle" font-size="11.5" font-weight="800" fill="#7A5A70">24 cm</text>
+    <path d="M264 54 v108 M259 54 h10 M259 162 h10" stroke="#A98BA0" stroke-width="1.3"/>
+    <text x="250" y="112" text-anchor="end" font-size="11.5" font-weight="800" fill="#7A5A70">18 cm</text>`,
+    `<linearGradient id="fr-wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E3B476"/><stop offset=".5" stop-color="#C98A3D"/><stop offset="1" stop-color="#8C5A1E"/></linearGradient>
+    <linearGradient id="fr-win" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F5EBF1"/></linearGradient>`,
+  );
+}
+
+/* ── L3 coneWaterFig: 뒤집힌 원뿔 그릇 + 아래 1/3 높이 물(닮음비 1:3) ──
+   꼭짓점 (150,180), 입구 y=44 rx=84. 물 수면 y=135(1/3 지점), rx=28. */
+export function coneWaterFig(): string {
+  return svg(
+    "0 0 360 210",
+    `<ellipse cx="150" cy="192" rx="58" ry="6" fill="#2A3A5E" opacity=".1"/>
+    <path d="M66 44 L150 180 L234 44 A84 13 0 0 1 66 44 Z" fill="url(#cw-glass)" stroke="#6E8296" stroke-width="1.8" stroke-linejoin="round" opacity=".92"/>
+    <path d="M122 135 L150 180 L178 135 A28 5 0 0 1 122 135 Z" fill="url(#cw-wat)" stroke="#1E6FB8" stroke-width="1.4" stroke-linejoin="round"/>
+    <ellipse cx="150" cy="135" rx="28" ry="5" fill="url(#cw-wats)" stroke="#1E6FB8" stroke-width="1.2"/>
+    <ellipse cx="150" cy="44" rx="84" ry="13" fill="url(#cw-rim)" stroke="#6E8296" stroke-width="1.6"/>
+    <path d="M104 62 L136 126" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity=".35"/>
+    <path d="M234 44 h28 M178 135 h84 M150 180 h112" stroke="#8093A8" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <path d="M262 44 v136 M256 44 h12 M256 180 h12" stroke="#8093A8" stroke-width="1.6"/>
+    <text x="272" y="86" font-size="10.5" font-weight="700" fill="#7A8698">전체 높이</text>
+    <path d="M262 135 v45" stroke="#2F86D6" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M256 135 h12" stroke="#2F86D6" stroke-width="1.8"/>
+    <text x="272" y="162" font-size="11" font-weight="900" fill="#1E6FB8">높이의 1/3</text>`,
+    `<linearGradient id="cw-glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EAF2F8"/><stop offset=".55" stop-color="#CFDEEA"/><stop offset="1" stop-color="#B7CBDC"/></linearGradient>
+    <linearGradient id="cw-rim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6FAFD"/><stop offset="1" stop-color="#DDE9F2"/></linearGradient>
+    <linearGradient id="cw-wat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7CC1F2"/><stop offset="1" stop-color="#2F86D6"/></linearGradient>
+    <linearGradient id="cw-wats" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A5D5F7"/><stop offset="1" stop-color="#5FA8E6"/></linearGradient>`,
+  );
+}
+/* ── L4 simCondFig: 삼각형의 닮음 조건 3단 비교(SSS·SAS·AA) ──
+   열마다 작은/큰 닮은 삼각형 쌍. SSS는 세 변 수치(6·8·10 : 9·12·15 = 2:3),
+   SAS는 두 변(6·8 : 9·12)+끼인각 로즈 호, AA는 두 각(앰버·시안 호)만. */
+export function simCondFig(): string {
+  const col = (ox: number, kind: "sss" | "sas" | "aa", name: string): string => {
+    const S1: [number, number] = [ox + 26, 88];
+    const S2: [number, number] = [ox + 80, 88];
+    const S3: [number, number] = [ox + 38, 46];
+    const B1: [number, number] = [ox + 18, 182];
+    const B2: [number, number] = [ox + 99, 182];
+    const B3: [number, number] = [ox + 36, 119];
+    let g = poly5([S1, S2, S3], "#FDF0F5", P5.deep, 1.8) + poly5([B1, B2, B3], P5.fill, P5.deep, 2);
+    const side = (p: [number, number], q: [number, number], c: string): string =>
+      `<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke="${c}" stroke-width="3.2" stroke-linecap="round"/>`;
+    const num = (x: number, y: number, t: string, c: string, anchor = "middle"): string =>
+      `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="10" font-weight="900" fill="${c}">${t}</text>`;
+    if (kind === "sss" || kind === "sas") {
+      g += side(S1, S2, P5.amber) + side(B1, B2, P5.amber) + side(S1, S3, P5.cyan) + side(B1, B3, P5.cyan);
+      g += num(ox + 53, 101, "8", P5.amberT) + num(ox + 58, 196, "12", P5.amberT);
+      g += num(ox + 24, 66, "6", P5.cyanT, "end") + num(ox + 19, 150, "9", P5.cyanT, "end");
+    }
+    if (kind === "sss") {
+      g += side(S2, S3, "#E8547E") + side(B2, B3, "#E8547E");
+      g += num(ox + 68, 58, "10", "#C2255C") + num(ox + 78, 141, "15", "#C2255C");
+    }
+    if (kind === "sas") {
+      g += arcIn(S1, S2, S3, "#E8547E", undefined, 11) + arcIn(B1, B2, B3, "#E8547E", undefined, 13);
+    }
+    if (kind === "aa") {
+      g += arcIn(S1, S2, S3, P5.amber, undefined, 11) + arcIn(B1, B2, B3, P5.amber, undefined, 13);
+      g += arcIn(S2, S3, S1, P5.cyan, undefined, 13) + arcIn(B2, B3, B1, P5.cyan, undefined, 15);
+    }
+    g += `<rect x="${ox + 8}" y="198" width="104" height="24" rx="12" fill="url(#sc5-tag)"/>
+      <text x="${ox + 60}" y="214.5" text-anchor="middle" font-size="11.5" font-weight="900" fill="#FFFFFF">${name}</text>`;
+    return g;
+  };
+  return svg(
+    "0 0 360 232",
+    `<line x1="120" y1="26" x2="120" y2="188" stroke="#EED4E0" stroke-width="1.4"/>
+    <line x1="240" y1="26" x2="240" y2="188" stroke="#EED4E0" stroke-width="1.4"/>` +
+      col(0, "sss", "SSS 닮음") + col(120, "sas", "SAS 닮음") + col(240, "aa", "AA 닮음"),
+    `<linearGradient id="sc5-tag" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E0447F"/><stop offset="1" stop-color="#C2255C"/></linearGradient>`,
+  );
+}
+
+/* ── L4 condPairFig: SAS 닮음 쌍(4·6cm 끼인각 50° vs 6·9cm 끼인각 50°, 방향 살짝 회전) ── */
+export function condPairFig(): string {
+  const V0: [number, number] = [38, 160];
+  const B0: [number, number] = [140, 160];
+  const C0: [number, number] = [82, 108];
+  const V1: [number, number] = [215, 120];
+  const B1: [number, number] = [325, 160];
+  const C1: [number, number] = [283, 81];
+  return svg(
+    "0 0 360 200",
+    `<ellipse cx="90" cy="176" rx="64" ry="5" fill="#2A3A5E" opacity=".08"/>
+    <ellipse cx="268" cy="176" rx="70" ry="5" fill="#2A3A5E" opacity=".08"/>` +
+      poly5([V0, B0, C0], "#FDF0F5", P5.deep, 2) +
+      poly5([V1, B1, C1], P5.fill, P5.deep, 2.2) +
+      `<line x1="${V0[0]}" y1="${V0[1]}" x2="${B0[0]}" y2="${B0[1]}" stroke="${P5.amber}" stroke-width="3.2" stroke-linecap="round"/>` +
+      `<line x1="${V0[0]}" y1="${V0[1]}" x2="${C0[0]}" y2="${C0[1]}" stroke="${P5.cyan}" stroke-width="3.2" stroke-linecap="round"/>` +
+      `<line x1="${V1[0]}" y1="${V1[1]}" x2="${B1[0]}" y2="${B1[1]}" stroke="${P5.amber}" stroke-width="3.2" stroke-linecap="round"/>` +
+      `<line x1="${V1[0]}" y1="${V1[1]}" x2="${C1[0]}" y2="${C1[1]}" stroke="${P5.cyan}" stroke-width="3.2" stroke-linecap="round"/>` +
+      angleArc(V0[0], V0[1], 15, 0, 50, "#E8547E", "50°", { labelR: 28 }) +
+      angleArc(V1[0], V1[1], 15, -20, 30, "#E8547E", "50°", { labelR: 28 }) +
+      `<text x="89" y="178" text-anchor="middle" font-size="11.5" font-weight="900" fill="${P5.amberT}">6 cm</text>` +
+      `<text x="52" y="128" text-anchor="end" font-size="11.5" font-weight="900" fill="${P5.cyanT}">4 cm</text>` +
+      `<text x="268" y="155" text-anchor="middle" font-size="11.5" font-weight="900" fill="${P5.amberT}">9 cm</text>` +
+      `<text x="242" y="89" text-anchor="end" font-size="11.5" font-weight="900" fill="${P5.cyanT}">6 cm</text>`,
+  );
+}
+/* ── L5 overlapFig: 공통각 겹침(△ABC 안 D·E, ∠AED=∠ABC 같은 색 호) ──
+   AD=4·DB=8(→AB=12)·AE=6, AC는 ?(바깥 치수선). 픽셀은 12.5px/cm 실축척이라
+   △AED∽△ABC(SAS)가 실제로 성립 — 두 호의 각이 진짜 같다. DE∦BC 배치. */
+export function overlapFig(): string {
+  const A: [number, number] = [150, 34];
+  const B: [number, number] = [99, 175];
+  const C: [number, number] = [200, 121];
+  const D: [number, number] = [133, 81];
+  const E: [number, number] = [187.5, 99.3];
+  const n = [0.866, -0.5]; // AC 바깥쪽 법선
+  return svg(
+    "0 0 360 198",
+    poly5([A, B, C]) +
+      `<line x1="${D[0]}" y1="${D[1]}" x2="${E[0]}" y2="${E[1]}" stroke="${P5.main}" stroke-width="2.4" stroke-linecap="round"/>` +
+      arcIn(E, A, D, P5.amber, undefined, 13) +
+      arcIn(B, A, C, P5.amber, undefined, 16) +
+      `<line x1="${A[0] + n[0] * 14}" y1="${A[1] + n[1] * 14}" x2="${A[0] + n[0] * 24}" y2="${A[1] + n[1] * 24}" stroke="#B98CA0" stroke-width="1.2"/>` +
+      `<line x1="${C[0] + n[0] * 14}" y1="${C[1] + n[1] * 14}" x2="${C[0] + n[0] * 24}" y2="${C[1] + n[1] * 24}" stroke="#B98CA0" stroke-width="1.2"/>` +
+      `<line x1="${A[0] + n[0] * 22}" y1="${A[1] + n[1] * 22}" x2="${C[0] + n[0] * 22}" y2="${C[1] + n[1] * 22}" stroke="#B98CA0" stroke-width="1.5"/>` +
+      `<text x="204" y="66" text-anchor="middle" font-size="14" font-weight="900" fill="${P5.main}">?</text>` +
+      `<text x="131" y="60" text-anchor="end" font-size="11" font-weight="900" fill="${P5.ink}">4 cm</text>` +
+      `<text x="104" y="132" text-anchor="end" font-size="11" font-weight="900" fill="${P5.ink}">8 cm</text>` +
+      `<text x="172" y="76" text-anchor="end" font-size="11" font-weight="900" fill="${P5.ink}">6 cm</text>` +
+      gdot(...A) + gdot(...B) + gdot(...C) +
+      gdot(D[0], D[1], P5.main, 3.4) + gdot(E[0], E[1], P5.main, 3.4) +
+      ptLabel(A[0], A[1], "A", 0, -10) + ptLabel(B[0], B[1], "B", -11, 13) +
+      ptLabel(C[0], C[1], "C", 8, 16) + ptLabel(D[0], D[1], "D", -13, 3, "#C2255C") +
+      ptLabel(E[0], E[1], "E", 8, 16, "#C2255C"),
+  );
+}
+
+/* ── L5 butterflyFig: 맞꼭지각 나비(AD·BE가 C에서 교차, AB∥DE 실배치) ──
+   위 △ABC: AC=9·BC=12 / 아래 △DEC: CE=4·CD=?. ∠A=∠D 앰버, 맞꼭지각 C 로즈 2개. */
+export function butterflyFig(): string {
+  const C: [number, number] = [186, 104];
+  const A: [number, number] = [93, 70];
+  const B: [number, number] = [294, 28];
+  const D: [number, number] = [228, 119.3];
+  const E: [number, number] = [138.5, 137.4];
+  return svg(
+    "0 0 360 170",
+    poly5([A, B, C], "rgba(194,37,92,.08)", P5.deep, 2.2) +
+      poly5([D, E, C], "rgba(13,165,198,.1)", P5.deep, 2.2) +
+      arcIn(A, B, C, P5.amber, undefined, 22) +
+      arcIn(D, E, C, P5.amber, undefined, 17) +
+      // 맞꼭지각 표시: 125° 부채를 통째로 그리면 원처럼 보여, 마주 보는 짧은 호 2개만
+      angleArc(C[0], C[1], 11, 73.5, 121.5, "#E8547E") +
+      angleArc(C[0], C[1], 11, 253.5, 301.5, "#E8547E") +
+      `<text x="134" y="78" text-anchor="middle" font-size="11" font-weight="900" fill="${P5.ink}">9 cm</text>` +
+      `<text x="249" y="80" text-anchor="middle" font-size="11" font-weight="900" fill="${P5.ink}">12 cm</text>` +
+      `<text x="148" y="106" text-anchor="middle" font-size="11" font-weight="900" fill="${P5.ink}">4 cm</text>` +
+      `<text x="216" y="102" text-anchor="middle" font-size="13" font-weight="900" fill="${P5.main}">?</text>` +
+      gdot(...A) + gdot(...B) + gdot(...C) + gdot(...D) + gdot(...E) +
+      ptLabel(A[0], A[1], "A", -12, 0) + ptLabel(B[0], B[1], "B", 11, -4) +
+      ptLabel(C[0], C[1], "C", -14, 8) + ptLabel(D[0], D[1], "D", 12, 10) +
+      ptLabel(E[0], E[1], "E", -6, 16),
+  );
+}
+/* ── L5 altitudeFig: 직각삼각형 수선의 발(∠A=90°, AD⊥BC, BD=4·CD=9, AD=?) ──
+   16px/cm 실축척(BD=64·CD=144·AD=96px) — ∠A가 진짜 90°가 되는 배치. */
+export function altitudeFig(): string {
+  const A: [number, number] = [128, 72];
+  const B: [number, number] = [64, 168];
+  const C: [number, number] = [272, 168];
+  const D: [number, number] = [128, 168];
+  return svg(
+    "0 0 360 204",
+    `<ellipse cx="168" cy="186" rx="120" ry="6" fill="#2A3A5E" opacity=".08"/>` +
+      poly5([A, B, C]) +
+      `<line x1="${A[0]}" y1="${A[1]}" x2="${D[0]}" y2="${D[1]}" stroke="#E8547E" stroke-width="2.2" stroke-dasharray="6 4"/>` +
+      rightMark(D[0], D[1], 0, 10, "#C2255C") +
+      rightMark(A[0], A[1], angleOf(A[0], A[1], B[0], B[1]), 10, P5.ink) +
+      `<text x="96" y="188" text-anchor="middle" font-size="11.5" font-weight="900" fill="${P5.ink}">4 cm</text>` +
+      `<text x="204" y="188" text-anchor="middle" font-size="11.5" font-weight="900" fill="${P5.ink}">9 cm</text>` +
+      `<text x="120" y="126" text-anchor="end" font-size="13" font-weight="900" fill="${P5.main}">?</text>` +
+      gdot(...A) + gdot(...B) + gdot(...C) + gdot(D[0], D[1], "#C2255C", 3.4) +
+      ptLabel(A[0], A[1], "A", 0, -10) + ptLabel(B[0], B[1], "B", -11, 14) +
+      ptLabel(C[0], C[1], "C", 11, 14) + ptLabel(D[0], D[1], "D", 5, 16, "#C2255C"),
+  );
+}
+
+/* ── L6 triParaFig: 삼각형 속 평행선 두 구도(변 위 D·E / 연장선 위 D·E) ──
+   두 패널 모두 AD 앰버·(AB 또는 DB) 시안 색 구분 + DE·BC 평행 화살촉. */
+export function triParaFig(): string {
+  const seg = (p: [number, number], q: [number, number], c: string, w = 3.6): string =>
+    `<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
+  // 왼쪽: 기본형(D·E가 변 위)
+  const A1: [number, number] = [88, 44];
+  const B1: [number, number] = [28, 172];
+  const C1: [number, number] = [162, 172];
+  const D1: [number, number] = [59.2, 105.4];
+  const E1: [number, number] = [123.5, 105.4];
+  // 오른쪽: 연장선형(D·E가 A 반대편 — 나비꼴)
+  const A2: [number, number] = [272, 104];
+  const B2: [number, number] = [214, 172];
+  const C2: [number, number] = [330, 172];
+  const D2: [number, number] = [308, 62];
+  const E2: [number, number] = [236, 62];
+  return svg(
+    "0 0 360 206",
+    `<line x1="186" y1="24" x2="186" y2="184" stroke="#EED4E0" stroke-width="1.4"/>` +
+      poly5([A1, B1, C1], "#FDF3F7") +
+      seg(A1, D1, P5.amber) + seg(D1, B1, P5.cyan) + seg(A1, E1, P5.amber) + seg(E1, C1, P5.cyan) +
+      `<line x1="${D1[0]}" y1="${D1[1]}" x2="${E1[0]}" y2="${E1[1]}" stroke="${P5.main}" stroke-width="2.6" stroke-linecap="round"/>` +
+      paraTick(D1[0], D1[1], E1[0], E1[1], 1, P5.ink) +
+      paraTick(B1[0], B1[1], C1[0], C1[1], 1, P5.ink) +
+      gdot(...A1) + gdot(...B1) + gdot(...C1) +
+      gdot(D1[0], D1[1], P5.main, 3.4) + gdot(E1[0], E1[1], P5.main, 3.4) +
+      ptLabel(A1[0], A1[1], "A", 0, -10) + ptLabel(B1[0], B1[1], "B", -11, 14) +
+      ptLabel(C1[0], C1[1], "C", 11, 14) + ptLabel(D1[0], D1[1], "D", -13, 2, "#C2255C") +
+      ptLabel(E1[0], E1[1], "E", 13, 2, "#C2255C") +
+      `<text x="95" y="198" text-anchor="middle" font-size="11" font-weight="700" fill="#8093A8">D·E가 변 위</text>` +
+      `<line x1="${B2[0]}" y1="${B2[1]}" x2="${D2[0]}" y2="${D2[1]}" stroke="${P5.ink}" stroke-width="2" opacity=".45"/>` +
+      `<line x1="${C2[0]}" y1="${C2[1]}" x2="${E2[0]}" y2="${E2[1]}" stroke="${P5.ink}" stroke-width="2" opacity=".45"/>` +
+      `<line x1="${B2[0]}" y1="${B2[1]}" x2="${C2[0]}" y2="${C2[1]}" stroke="${P5.deep}" stroke-width="2.4" stroke-linecap="round"/>` +
+      seg(A2, D2, P5.amber) + seg(A2, B2, P5.cyan) + seg(A2, E2, P5.amber) + seg(A2, C2, P5.cyan) +
+      `<line x1="${D2[0]}" y1="${D2[1]}" x2="${E2[0]}" y2="${E2[1]}" stroke="${P5.main}" stroke-width="2.6" stroke-linecap="round"/>` +
+      paraTick(E2[0], E2[1], D2[0], D2[1], 1, P5.ink) +
+      paraTick(B2[0], B2[1], C2[0], C2[1], 1, P5.ink) +
+      gdot(...A2) + gdot(...B2) + gdot(...C2) +
+      gdot(D2[0], D2[1], P5.main, 3.4) + gdot(E2[0], E2[1], P5.main, 3.4) +
+      ptLabel(A2[0], A2[1], "A", 14, 3) + ptLabel(B2[0], B2[1], "B", -11, 14) +
+      ptLabel(C2[0], C2[1], "C", 11, 14) + ptLabel(D2[0], D2[1], "D", 11, -4, "#C2255C") +
+      ptLabel(E2[0], E2[1], "E", -11, -4, "#C2255C") +
+      `<text x="272" y="198" text-anchor="middle" font-size="11" font-weight="700" fill="#8093A8">D·E가 연장선 위</text>`,
+  );
+}
+/* ── L6 triParaQuizFig: BC∥DE 수치판(AD=4·DB=6로 AB=10이 읽힘, DE=6 → BC=?) ──
+   AD 구간 앰버·DB 구간 시안으로 구분 표기(D 점이 경계). */
+export function triParaQuizFig(): string {
+  const A: [number, number] = [150, 36];
+  const B: [number, number] = [66, 188];
+  const C: [number, number] = [296, 188];
+  const D: [number, number] = [116.4, 96.8];
+  const E: [number, number] = [208.4, 96.8];
+  return svg(
+    "0 0 360 216",
+    poly5([A, B, C]) +
+      `<line x1="${A[0]}" y1="${A[1]}" x2="${D[0]}" y2="${D[1]}" stroke="${P5.amber}" stroke-width="3.4" stroke-linecap="round"/>` +
+      `<line x1="${D[0]}" y1="${D[1]}" x2="${B[0]}" y2="${B[1]}" stroke="${P5.cyan}" stroke-width="3.4" stroke-linecap="round"/>` +
+      `<line x1="${D[0]}" y1="${D[1]}" x2="${E[0]}" y2="${E[1]}" stroke="${P5.main}" stroke-width="2.6" stroke-linecap="round"/>` +
+      paraTick(D[0], D[1], E[0], E[1], 1, P5.ink) +
+      paraTick(B[0], B[1], C[0], C[1], 1, P5.ink) +
+      `<text x="127" y="69" text-anchor="end" font-size="11.5" font-weight="900" fill="${P5.amberT}">4 cm</text>` +
+      `<text x="84" y="146" text-anchor="end" font-size="11.5" font-weight="900" fill="${P5.cyanT}">6 cm</text>` +
+      `<text x="162" y="90" text-anchor="middle" font-size="11.5" font-weight="900" fill="${P5.ink}">6 cm</text>` +
+      `<text x="181" y="208" text-anchor="middle" font-size="13.5" font-weight="900" fill="${P5.main}">?</text>` +
+      gdot(...A) + gdot(...B) + gdot(...C) +
+      gdot(D[0], D[1], P5.main, 3.6) + gdot(E[0], E[1], P5.main, 3.6) +
+      ptLabel(A[0], A[1], "A", 0, -10) + ptLabel(B[0], B[1], "B", -11, 14) +
+      ptLabel(C[0], C[1], "C", 11, 14) + ptLabel(D[0], D[1], "D", -13, 2, "#C2255C") +
+      ptLabel(E[0], E[1], "E", 13, 2, "#C2255C"),
+  );
+}
+
+/* ── L7 midsegFig: 중점연결정리(M·N 중점 틱, MN∥BC 화살촉, MN=½BC 태그) ── */
+export function midsegFig(): string {
+  const A: [number, number] = [180, 36];
+  const B: [number, number] = [76, 180];
+  const C: [number, number] = [292, 180];
+  const M: [number, number] = [128, 108];
+  const N: [number, number] = [236, 108];
+  return svg(
+    "0 0 360 208",
+    poly5([A, B, C]) +
+      `<line x1="${M[0]}" y1="${M[1]}" x2="${N[0]}" y2="${N[1]}" stroke="${P5.main}" stroke-width="2.8" stroke-linecap="round"/>` +
+      tickMark(A[0], A[1], M[0], M[1], 1, P5.amber) + tickMark(M[0], M[1], B[0], B[1], 1, P5.amber) +
+      tickMark(A[0], A[1], N[0], N[1], 2, P5.cyan) + tickMark(N[0], N[1], C[0], C[1], 2, P5.cyan) +
+      paraTick(M[0], M[1], N[0], N[1], 1, P5.ink, 0.62) +
+      paraTick(B[0], B[1], C[0], C[1], 1, P5.ink, 0.56) +
+      gdot(...A) + gdot(...B) + gdot(...C) +
+      gdot(M[0], M[1], P5.main, 3.6) + gdot(N[0], N[1], P5.main, 3.6) +
+      ptLabel(A[0], A[1], "A", 0, -10) + ptLabel(B[0], B[1], "B", -11, 14) +
+      ptLabel(C[0], C[1], "C", 11, 14) + ptLabel(M[0], M[1], "M", -14, 3, "#C2255C") +
+      ptLabel(N[0], N[1], "N", 14, 3, "#C2255C") +
+      `<rect x="246" y="26" width="96" height="26" rx="13" fill="url(#ms5-tag)"/>
+      <text x="294" y="44" text-anchor="middle" font-size="12" font-weight="900" fill="#FFFFFF">MN = ½BC</text>`,
+    `<linearGradient id="ms5-tag" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E0447F"/><stop offset="1" stop-color="#C2255C"/></linearGradient>`,
+  );
+}
+
+/* ── L7 midsegQuizFig: 중점연결 수치판(MN=7cm·∠AMN=65° → BC=?·∠B=?) ── */
+export function midsegQuizFig(): string {
+  const A: [number, number] = [180, 36];
+  const B: [number, number] = [76, 180];
+  const C: [number, number] = [292, 180];
+  const M: [number, number] = [128, 108];
+  const N: [number, number] = [236, 108];
+  return svg(
+    "0 0 360 212",
+    poly5([A, B, C]) +
+      `<line x1="${M[0]}" y1="${M[1]}" x2="${N[0]}" y2="${N[1]}" stroke="${P5.main}" stroke-width="2.8" stroke-linecap="round"/>` +
+      tickMark(A[0], A[1], M[0], M[1], 1, P5.amber) + tickMark(M[0], M[1], B[0], B[1], 1, P5.amber) +
+      tickMark(A[0], A[1], N[0], N[1], 2, P5.cyan) + tickMark(N[0], N[1], C[0], C[1], 2, P5.cyan) +
+      arcIn(M, N, A, P5.amber, "65°", 15) +
+      arcIn(B, C, A, "#E8547E", "?", 17) +
+      `<text x="182" y="99" text-anchor="middle" font-size="11.5" font-weight="900" fill="${P5.ink}">7 cm</text>` +
+      `<text x="184" y="201" text-anchor="middle" font-size="13.5" font-weight="900" fill="${P5.main}">?</text>` +
+      gdot(...A) + gdot(...B) + gdot(...C) +
+      gdot(M[0], M[1], P5.main, 3.6) + gdot(N[0], N[1], P5.main, 3.6) +
+      ptLabel(A[0], A[1], "A", 0, -10) + ptLabel(B[0], B[1], "B", -11, 14) +
+      ptLabel(C[0], C[1], "C", 11, 14) + ptLabel(M[0], M[1], "M", -14, 3, "#C2255C") +
+      ptLabel(N[0], N[1], "N", 14, 3, "#C2255C"),
+  );
+}
+/* ── L7 midQuadFig: 사각형 네 변 중점 연결(바리뇽 평행사변형 PQRS) ──
+   볼록 사각형 ABCD + 대각선 AC=16cm(앰버 점선)·BD=12cm(시안 점선). */
+export function midQuadFig(): string {
+  const A: [number, number] = [84, 40];
+  const B: [number, number] = [30, 150];
+  const C: [number, number] = [220, 196];
+  const D: [number, number] = [320, 84];
+  const P: [number, number] = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2];
+  const Q: [number, number] = [(B[0] + C[0]) / 2, (B[1] + C[1]) / 2];
+  const R: [number, number] = [(C[0] + D[0]) / 2, (C[1] + D[1]) / 2];
+  const S: [number, number] = [(D[0] + A[0]) / 2, (D[1] + A[1]) / 2];
+  return svg(
+    "0 0 360 218",
+    poly5([A, B, C, D], "#FDF4F8") +
+      `<line x1="${A[0]}" y1="${A[1]}" x2="${C[0]}" y2="${C[1]}" stroke="${P5.amber}" stroke-width="2" stroke-dasharray="6 4"/>` +
+      `<line x1="${B[0]}" y1="${B[1]}" x2="${D[0]}" y2="${D[1]}" stroke="${P5.cyan}" stroke-width="2" stroke-dasharray="6 4"/>` +
+      poly5([P, Q, R, S], "rgba(194,37,92,.14)", "#C2255C", 2.2) +
+      `<text x="130" y="100" text-anchor="end" font-size="11" font-weight="900" fill="${P5.amberT}">16 cm</text>` +
+      `<text x="245" y="89" font-size="11" font-weight="900" fill="${P5.cyanT}">12 cm</text>` +
+      gdot(...A) + gdot(...B) + gdot(...C) + gdot(...D) +
+      gdot(P[0], P[1], "#C2255C", 3.6) + gdot(Q[0], Q[1], "#C2255C", 3.6) +
+      gdot(R[0], R[1], "#C2255C", 3.6) + gdot(S[0], S[1], "#C2255C", 3.6) +
+      ptLabel(A[0], A[1], "A", -8, -8) + ptLabel(B[0], B[1], "B", -12, 6) +
+      ptLabel(C[0], C[1], "C", 6, 17) + ptLabel(D[0], D[1], "D", 12, -4) +
+      ptLabel(P[0], P[1], "P", -12, 2, "#C2255C") + ptLabel(Q[0], Q[1], "Q", -2, 17, "#C2255C") +
+      ptLabel(R[0], R[1], "R", 13, 8, "#C2255C") + ptLabel(S[0], S[1], "S", 6, -9, "#C2255C"),
+  );
+}
+
+/* ── L8 paraLines 공통 밑그림: 평행선 l·m·n + 사선 p·q(교점 6개) ──
+   개념판은 a·b·c·d 문자, 퀴즈판은 4·6·x·9 수치(4:6=x:9). */
+function paraLinesBase(la: string, lb: string, lc: string, ld: string, tag: string): string {
+  const line = (y: number, name: string): string =>
+    `<line x1="22" y1="${y}" x2="338" y2="${y}" stroke="${P5.ink}" stroke-width="2" stroke-linecap="round"/>` +
+    paraTick(22, y, 338, y, 1, P5.ink, 0.92) +
+    `<text x="344" y="${y + 4}" font-size="11.5" font-weight="800" font-style="italic" fill="#5A6B7E">${name}</text>`;
+  const px = (y: number): number => 86 + ((y - 30) / 170) * 64;
+  const qx = (y: number): number => 232 + ((y - 26) / 178) * 68;
+  const piece = (x1: number, y1: number, x2: number, y2: number, c: string): string =>
+    `<line x1="${x1.toFixed(1)}" y1="${y1}" x2="${x2.toFixed(1)}" y2="${y2}" stroke="${c}" stroke-width="4" stroke-linecap="round"/>`;
+  const dots = [54, 110, 178]
+    .map((y) => gdot(px(y), y, P5.ink, 2.6) + gdot(qx(y), y, P5.ink, 2.6))
+    .join("");
+  return (
+    line(54, "l") + line(110, "m") + line(178, "n") +
+    `<line x1="86" y1="30" x2="150" y2="200" stroke="#8093A8" stroke-width="2"/>` +
+    `<line x1="232" y1="26" x2="300" y2="204" stroke="#8093A8" stroke-width="2"/>` +
+    piece(px(54), 54, px(110), 110, P5.amber) +
+    piece(px(110), 110, px(178), 178, P5.cyan) +
+    piece(qx(54), 54, qx(110), 110, P5.amber) +
+    piece(qx(110), 110, qx(178), 178, P5.cyan) +
+    dots +
+    `<text x="98" y="86" text-anchor="end" font-size="12.5" font-weight="900" fill="${P5.amberT}">${la}</text>` +
+    `<text x="119" y="150" text-anchor="end" font-size="12.5" font-weight="900" fill="${P5.cyanT}">${lb}</text>` +
+    `<text x="262" y="86" font-size="12.5" font-weight="900" fill="${lc.includes("x") ? P5.main : P5.amberT}">${lc}</text>` +
+    `<text x="286" y="150" font-size="12.5" font-weight="900" fill="${P5.cyanT}">${ld}</text>` +
+    tag
+  );
+}
+
+/** L8 평행선 사이 비 규칙(l∥m∥n, a:b=c:d 태그). */
+export function paraLinesFig(): string {
+  return svg(
+    "0 0 360 240",
+    paraLinesBase(
+      "a", "b", "c", "d",
+      `<rect x="112" y="206" width="136" height="26" rx="13" fill="url(#pl5-tag)"/>
+      <text x="180" y="224" text-anchor="middle" font-size="12.5" font-weight="900" font-style="italic" fill="#FFFFFF">a : b = c : d</text>`,
+    ),
+    `<linearGradient id="pl5-tag" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E0447F"/><stop offset="1" stop-color="#C2255C"/></linearGradient>`,
+  );
+}
+
+/** L8 퀴즈(l∥m∥n, 왼쪽 4·6 / 오른쪽 x·9). */
+export function paraLinesQuizFig(): string {
+  return svg("0 0 360 212", paraLinesBase("4 cm", "6 cm", "x cm", "9 cm", ""));
+}
+/* ── L8 perspectFig: 미술관 복도 원근(세로 기둥 AD∥BE∥CF, 천장·바닥 사선) ──
+   천장 y=60−0.12(x−56), 바닥 y=150+0.18(x−56). 기둥 x=56·150·291(가로 2:3).
+   위 AB=10·BC=15, 아래 DE=14·EF=?(같은 2:3 비 — 그림도 실제 비례). */
+export function perspectFig(): string {
+  const ceil = (x: number): number => 60 - 0.12 * (x - 56);
+  const floor = (x: number): number => 150 + 0.18 * (x - 56);
+  const pillar = (x: number): string =>
+    `<rect x="${x - 4}" y="${ceil(x).toFixed(1)}" width="8" height="${(floor(x) - ceil(x)).toFixed(1)}" rx="2.5" fill="url(#pv-col)" stroke="#5F5470" stroke-width="1.3"/>` +
+    paraTick(x, ceil(x), x, floor(x), 1, "#5F5470", 0.56);
+  return svg(
+    "0 0 360 224",
+    `<line x1="36" y1="${ceil(36).toFixed(1)}" x2="326" y2="${ceil(326).toFixed(1)}" stroke="${P5.ink}" stroke-width="2.2"/>` +
+      `<line x1="36" y1="${floor(36).toFixed(1)}" x2="326" y2="${floor(326).toFixed(1)}" stroke="${P5.ink}" stroke-width="2.2"/>` +
+      `<rect x="66" y="86" width="20" height="15" fill="#F7F2EA" stroke="#8C5A1E" stroke-width="1.6"/>` +
+      `<rect x="70" y="89.5" width="12" height="8" fill="#D9C0E8" stroke="#B8925C" stroke-width=".8"/>` +
+      `<rect x="196" y="92" width="24" height="18" fill="#F7F2EA" stroke="#8C5A1E" stroke-width="1.6"/>` +
+      `<rect x="200.5" y="96" width="15" height="10" fill="#BBD3EA" stroke="#B8925C" stroke-width=".8"/>` +
+      pillar(56) + pillar(150) + pillar(291) +
+      gdot(56, ceil(56)) + gdot(150, ceil(150)) + gdot(291, ceil(291)) +
+      gdot(56, floor(56)) + gdot(150, floor(150)) + gdot(291, floor(291)) +
+      ptLabel(56, ceil(56), "A", -2, -10) + ptLabel(150, ceil(150), "B", 0, -10) + ptLabel(291, ceil(291), "C", 2, -10) +
+      ptLabel(56, floor(56), "D", -2, 17) + ptLabel(150, floor(150), "E", 0, 17) + ptLabel(291, floor(291), "F", 2, 17) +
+      `<text x="103" y="76" text-anchor="middle" font-size="11" font-weight="900" fill="${P5.ink}">10 cm</text>` +
+      `<text x="220" y="66" text-anchor="middle" font-size="11" font-weight="900" fill="${P5.ink}">15 cm</text>` +
+      `<text x="103" y="149" text-anchor="middle" font-size="11" font-weight="900" fill="${P5.ink}">14 cm</text>` +
+      `<text x="220" y="170" text-anchor="middle" font-size="13" font-weight="900" fill="${P5.main}">?</text>`,
+    `<linearGradient id="pv-col" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F1EBF4"/><stop offset=".5" stop-color="#CFC4D8"/><stop offset="1" stop-color="#A99BB8"/></linearGradient>`,
+  );
+}
+
+/* ── L9 centroidFig: 무게중심(세 중선 + G, 중선 AMa의 2:1 구간 색·라벨) ── */
+export function centroidFig(): string {
+  const A: [number, number] = [178, 32];
+  const B: [number, number] = [54, 190];
+  const C: [number, number] = [310, 178];
+  const Ma: [number, number] = [(B[0] + C[0]) / 2, (B[1] + C[1]) / 2];
+  const Mb: [number, number] = [(A[0] + C[0]) / 2, (A[1] + C[1]) / 2];
+  const Mc: [number, number] = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2];
+  const G: [number, number] = [(A[0] + B[0] + C[0]) / 3, (A[1] + B[1] + C[1]) / 3];
+  return svg(
+    "0 0 360 212",
+    poly5([A, B, C], "#FDF4F8") +
+      `<line x1="${B[0]}" y1="${B[1]}" x2="${Mb[0]}" y2="${Mb[1]}" stroke="#D8A9BE" stroke-width="1.8"/>` +
+      `<line x1="${C[0]}" y1="${C[1]}" x2="${Mc[0]}" y2="${Mc[1]}" stroke="#D8A9BE" stroke-width="1.8"/>` +
+      `<line x1="${A[0]}" y1="${A[1]}" x2="${G[0].toFixed(1)}" y2="${G[1].toFixed(1)}" stroke="${P5.amber}" stroke-width="3.6" stroke-linecap="round"/>` +
+      `<line x1="${G[0].toFixed(1)}" y1="${G[1].toFixed(1)}" x2="${Ma[0]}" y2="${Ma[1]}" stroke="${P5.cyan}" stroke-width="3.6" stroke-linecap="round"/>` +
+      tickMark(B[0], B[1], Ma[0], Ma[1], 1, P5.ink) + tickMark(Ma[0], Ma[1], C[0], C[1], 1, P5.ink) +
+      tickMark(A[0], A[1], Mb[0], Mb[1], 2, P5.ink) + tickMark(Mb[0], Mb[1], C[0], C[1], 2, P5.ink) +
+      tickMark(A[0], A[1], Mc[0], Mc[1], 3, P5.ink) + tickMark(Mc[0], Mc[1], B[0], B[1], 3, P5.ink) +
+      `<text x="192" y="88" font-size="12.5" font-weight="900" fill="${P5.amberT}">2</text>` +
+      `<text x="193" y="164" font-size="12.5" font-weight="900" fill="${P5.cyanT}">1</text>` +
+      gdot(Ma[0], Ma[1], P5.ink, 3) + gdot(Mb[0], Mb[1], P5.ink, 3) + gdot(Mc[0], Mc[1], P5.ink, 3) +
+      gdot(...A) + gdot(...B) + gdot(...C) +
+      gdot(G[0], G[1], "#C2255C", 4.5) +
+      ptLabel(G[0], G[1], "G", 13, 4, "#C2255C") +
+      ptLabel(A[0], A[1], "A", 0, -10) + ptLabel(B[0], B[1], "B", -11, 13) + ptLabel(C[0], C[1], "C", 12, 10),
+  );
+}
+
+/* ── L9 areaSixFig: 세 중선의 6조각 등분할(전부 같은 넓이 S) ── */
+export function areaSixFig(): string {
+  const A: [number, number] = [178, 32];
+  const B: [number, number] = [54, 190];
+  const C: [number, number] = [310, 178];
+  const Ma: [number, number] = [(B[0] + C[0]) / 2, (B[1] + C[1]) / 2];
+  const Mb: [number, number] = [(A[0] + C[0]) / 2, (A[1] + C[1]) / 2];
+  const Mc: [number, number] = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2];
+  const G: [number, number] = [(A[0] + B[0] + C[0]) / 3, (A[1] + B[1] + C[1]) / 3];
+  const pieces: [[number, number], [number, number], string][] = [
+    [A, Mc, "rgba(232,169,62,.38)"],
+    [Mc, B, "rgba(13,165,198,.3)"],
+    [B, Ma, "rgba(232,84,126,.3)"],
+    [Ma, C, "rgba(18,184,134,.3)"],
+    [C, Mb, "rgba(124,107,255,.28)"],
+    [Mb, A, "rgba(61,91,192,.26)"],
+  ];
+  let g = "";
+  for (const [p, q, fill] of pieces) {
+    g += `<path d="M${p[0]} ${p[1]} L${q[0]} ${q[1]} L${G[0].toFixed(1)} ${G[1].toFixed(1)} Z" fill="${fill}"/>`;
+    const cx = (p[0] + q[0] + G[0]) / 3;
+    const cy = (p[1] + q[1] + G[1]) / 3;
+    g += `<text x="${cx.toFixed(1)}" y="${(cy + 4).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="800" font-style="italic" fill="${P5.ink}">S</text>`;
+  }
+  return svg(
+    "0 0 360 212",
+    g +
+      `<line x1="${A[0]}" y1="${A[1]}" x2="${Ma[0]}" y2="${Ma[1]}" stroke="${P5.ink}" stroke-width="1.6"/>` +
+      `<line x1="${B[0]}" y1="${B[1]}" x2="${Mb[0]}" y2="${Mb[1]}" stroke="${P5.ink}" stroke-width="1.6"/>` +
+      `<line x1="${C[0]}" y1="${C[1]}" x2="${Mc[0]}" y2="${Mc[1]}" stroke="${P5.ink}" stroke-width="1.6"/>` +
+      `<path d="M${A[0]} ${A[1]} L${B[0]} ${B[1]} L${C[0]} ${C[1]} Z" fill="none" stroke="${P5.deep}" stroke-width="2.2" stroke-linejoin="round"/>` +
+      gdot(G[0], G[1], "#C2255C", 4) +
+      ptLabel(G[0], G[1], "G", 3, -9, "#C2255C") +
+      ptLabel(A[0], A[1], "A", 0, -10) + ptLabel(B[0], B[1], "B", -11, 13) + ptLabel(C[0], C[1], "C", 12, 10),
+  );
+}
+/* ── L9 centroidQuizFig: 중선 AD=18cm 안내문·G 표시 → AG 구간 ? ──
+   AG 앰버·GD 시안(개념 그림 2:1 색 문법 계승). 전체 길이는 텍스트 안내
+   "AD = 18 cm"(trapCounterFig 문법 — 중선은 내부 선분이라 바깥 치수선 불가). */
+export function centroidQuizFig(): string {
+  const A: [number, number] = [160, 34];
+  const B: [number, number] = [52, 186];
+  const C: [number, number] = [300, 186];
+  const D: [number, number] = [176, 186];
+  const G: [number, number] = [A[0] + (D[0] - A[0]) * (2 / 3), A[1] + (D[1] - A[1]) * (2 / 3)];
+  return svg(
+    "0 0 360 210",
+    poly5([A, B, C]) +
+      `<line x1="${A[0]}" y1="${A[1]}" x2="${G[0].toFixed(1)}" y2="${G[1].toFixed(1)}" stroke="${P5.amber}" stroke-width="3.4" stroke-linecap="round"/>` +
+      `<line x1="${G[0].toFixed(1)}" y1="${G[1].toFixed(1)}" x2="${D[0]}" y2="${D[1]}" stroke="${P5.cyan}" stroke-width="3.4" stroke-linecap="round"/>` +
+      tickMark(B[0], B[1], D[0], D[1], 1, P5.ink) + tickMark(D[0], D[1], C[0], C[1], 1, P5.ink) +
+      `<text x="248" y="56" text-anchor="middle" font-size="12.5" font-weight="800" fill="${P5.ink}">AD = 18 cm</text>` +
+      `<text x="${(A[0] + (G[0] - A[0]) / 2 - 9).toFixed(1)}" y="${(A[1] + (G[1] - A[1]) / 2 + 8).toFixed(1)}" text-anchor="end" font-size="13" font-weight="900" fill="${P5.main}">?</text>` +
+      gdot(...A) + gdot(...B) + gdot(...C) + gdot(D[0], D[1], P5.ink, 3.4) +
+      gdot(G[0], G[1], "#C2255C", 4.5) +
+      ptLabel(G[0], G[1], "G", -13, 4, "#C2255C") +
+      ptLabel(A[0], A[1], "A", 0, -10) + ptLabel(B[0], B[1], "B", -11, 14) +
+      ptLabel(C[0], C[1], "C", 11, 14) + ptLabel(D[0], D[1], "D", 0, 17),
+  );
+}
+
+/* ── L10 pythaFig: 피타고라스 표준 그림(3·4·5 비 직각삼각형 + 세 변 위 정사각형) ──
+   C(120,168) 직각, 가로 a=96·세로 b=72·빗변 c=120. 넓이 라벨은 a²·b²·c²만. */
+export function pythaFig(): string {
+  return svg(
+    "0 0 360 288",
+    `<rect x="120" y="168" width="96" height="96" fill="rgba(232,169,62,.32)" stroke="#B26200" stroke-width="2"/>
+    <rect x="48" y="96" width="72" height="72" fill="rgba(13,165,198,.24)" stroke="#0B7285" stroke-width="2"/>
+    <path d="M120 96 L216 168 L312 96 L216 24 Z" fill="rgba(194,37,92,.16)" stroke="#C2255C" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M120 96 L120 168 L216 168 Z" fill="#FFFFFF" stroke="${P5.ink}" stroke-width="2.4" stroke-linejoin="round"/>` +
+      rightMark(120, 168, 0, 11, P5.ink) +
+      `<text x="168" y="222" text-anchor="middle" font-size="15" font-weight="800" font-style="italic" fill="#8C5E00">a²</text>
+    <text x="84" y="137" text-anchor="middle" font-size="15" font-weight="800" font-style="italic" fill="#0B7285">b²</text>
+    <text x="216" y="101" text-anchor="middle" font-size="15" font-weight="800" font-style="italic" fill="#A61E4D">c²</text>
+    <text x="168" y="162" text-anchor="middle" font-size="13" font-weight="800" font-style="italic" fill="#B26200">a</text>
+    <text x="131" y="137" text-anchor="middle" font-size="13" font-weight="800" font-style="italic" fill="#0DA5C6">b</text>
+    <text x="176" y="123" text-anchor="middle" font-size="13" font-weight="800" font-style="italic" fill="#C2255C">c</text>
+    <rect x="24" y="30" width="118" height="28" rx="14" fill="url(#py5-tag)"/>
+    <text x="83" y="49" text-anchor="middle" font-size="13.5" font-weight="900" font-style="italic" fill="#FFFFFF">a²+b²=c²</text>`,
+    `<linearGradient id="py5-tag" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E0447F"/><stop offset="1" stop-color="#C2255C"/></linearGradient>`,
+  );
+}
+
+/* ── L10 pythaQuizFig: 빗변 17cm·한 변 8cm → 나머지 변 ?(직각 C 명확히) ──
+   10px/cm 실축척(80·150·170px = 8·15·17). */
+export function pythaQuizFig(): string {
+  const A: [number, number] = [84, 96];
+  const C: [number, number] = [84, 176];
+  const B: [number, number] = [234, 176];
+  return svg(
+    "0 0 360 212",
+    `<ellipse cx="160" cy="192" rx="110" ry="6" fill="#2A3A5E" opacity=".08"/>` +
+      poly5([A, B, C]) +
+      rightMark(C[0], C[1], 0, 12, P5.ink) +
+      `<text x="76" y="140" text-anchor="end" font-size="12" font-weight="900" fill="${P5.ink}">8 cm</text>` +
+      `<text x="172" y="129" text-anchor="middle" font-size="12" font-weight="900" fill="${P5.ink}">17 cm</text>` +
+      `<text x="159" y="196" text-anchor="middle" font-size="13.5" font-weight="900" fill="${P5.main}">?</text>` +
+      gdot(...A) + gdot(...B) + gdot(...C) +
+      ptLabel(A[0], A[1], "A", 0, -10) + ptLabel(B[0], B[1], "B", 12, 14) + ptLabel(C[0], C[1], "C", -11, 14),
+  );
+}
+/* ── L10 ladderWallFig: 벽에 기댄 사다리 장면(10m 빗변·바닥 6m·높이 ?) ──
+   17px/m 실축척: 벽 접점 (156,52)·발 (258,188) → 가로 102=6m·세로 136=8m·빗변 170=10m. */
+export function ladderWallFig(): string {
+  const T: [number, number] = [156, 52];
+  const F: [number, number] = [258, 188];
+  const p = [0.8 * 4, -0.6 * 4]; // 사다리 폭 절반(빗변의 수직 방향)
+  let rungs = "";
+  for (const t of [0.16, 0.31, 0.46, 0.61, 0.76]) {
+    const cx = F[0] + (T[0] - F[0]) * t;
+    const cy = F[1] + (T[1] - F[1]) * t;
+    rungs += `<line x1="${(cx + p[0]).toFixed(1)}" y1="${(cy + p[1]).toFixed(1)}" x2="${(cx - p[0]).toFixed(1)}" y2="${(cy - p[1]).toFixed(1)}" stroke="#A9702C" stroke-width="3"/>`;
+  }
+  return svg(
+    "0 0 360 232",
+    `<ellipse cx="258" cy="193" rx="36" ry="5" fill="#2A3A5E" opacity=".12"/>
+    <ellipse cx="150" cy="193" rx="28" ry="4" fill="#2A3A5E" opacity=".1"/>
+    <rect x="140" y="30" width="16" height="158" fill="url(#lw-wall)" stroke="#5F6B7A" stroke-width="1.6"/>
+    <path d="M140 62 h16 M140 94 h16 M140 126 h16 M140 158 h16" stroke="#8A98A8" stroke-width="1.1" opacity=".5"/>
+    <rect x="104" y="188" width="216" height="8" fill="url(#lw-gnd)"/>
+    <line x1="104" y1="188" x2="320" y2="188" stroke="${P5.ink}" stroke-width="2.2"/>` +
+      `<line x1="${(F[0] + p[0]).toFixed(1)}" y1="${(F[1] + p[1]).toFixed(1)}" x2="${(T[0] + p[0]).toFixed(1)}" y2="${(T[1] + p[1]).toFixed(1)}" stroke="#C98A3D" stroke-width="3.5" stroke-linecap="round"/>` +
+      `<line x1="${(F[0] - p[0]).toFixed(1)}" y1="${(F[1] - p[1]).toFixed(1)}" x2="${(T[0] - p[0]).toFixed(1)}" y2="${(T[1] - p[1]).toFixed(1)}" stroke="#C98A3D" stroke-width="3.5" stroke-linecap="round"/>` +
+      rungs +
+      rightMark(156, 188, 0, 12, P5.ink) +
+      `<path d="M156 206 h102 M156 201 v10 M258 201 v10" stroke="#8093A8" stroke-width="1.5"/>
+    <text x="207" y="222" text-anchor="middle" font-size="12" font-weight="800" fill="#5A6B7E">6 m</text>
+    <path d="M156 52 h-32" stroke="#8093A8" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <path d="M124 52 v136 M119 52 h10 M119 188 h10" stroke="#8093A8" stroke-width="1.5"/>
+    <rect x="110" y="110" width="28" height="22" rx="8" fill="#FFFFFF" stroke="#E4C9D7" stroke-width="1.2"/>
+    <text x="124" y="126" text-anchor="middle" font-size="14" font-weight="900" fill="${P5.main}">?</text>
+    <text x="222" y="112" font-size="12" font-weight="800" fill="#8C5E00">10 m</text>`,
+    `<linearGradient id="lw-wall" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E8EDF2"/><stop offset=".5" stop-color="#C9D3DC"/><stop offset="1" stop-color="#A9B6C2"/></linearGradient>
+    <linearGradient id="lw-gnd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D9C7A8"/><stop offset="1" stop-color="#B89A6E"/></linearGradient>`,
+  );
+}
+
+/* ── L10 lunesFig: 히포크라테스의 초승달(6·8·10 직각삼각형, 20px/cm 실축척) ──
+   빗변 반원은 안쪽(삼각형 쪽 — C를 지나는 큰 반원), 두 변 반원은 바깥.
+   초승달 = 변 반원에서 빗변 반원 밖으로 남는 노란 조각 2개. */
+export function lunesFig(): string {
+  return svg(
+    "0 0 360 190",
+    `<path d="M80 150 A100 100 0 0 1 280 150 Z" fill="rgba(51,65,85,.06)" stroke="#8093A8" stroke-width="1.8"/>
+    <path d="M80 150 A60 60 0 0 1 152 54 A100 100 0 0 0 80 150 Z" fill="url(#ln5-y)" stroke="#E0A800" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M152 54 A80 80 0 0 1 280 150 A100 100 0 0 0 152 54 Z" fill="url(#ln5-y)" stroke="#E0A800" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M80 150 L152 54 L280 150 Z" fill="#FFF7FA" stroke="${P5.ink}" stroke-width="2.2" stroke-linejoin="round"/>
+    <line x1="80" y1="150" x2="280" y2="150" stroke="${P5.ink}" stroke-width="2.2"/>` +
+      rightMark(152, 54, angleOf(152, 54, 80, 150), 10, P5.ink) +
+      `<text x="129" y="112" text-anchor="middle" font-size="11.5" font-weight="900" fill="${P5.ink}">6 cm</text>
+    <text x="205" y="113" text-anchor="middle" font-size="11.5" font-weight="900" fill="${P5.ink}">8 cm</text>
+    <text x="180" y="170" text-anchor="middle" font-size="11.5" font-weight="900" fill="${P5.ink}">10 cm</text>`,
+    `<linearGradient id="ln5-y" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF3C4"/><stop offset=".55" stop-color="#FFD43B"/><stop offset="1" stop-color="#F5B915"/></linearGradient>`,
+  );
+}
+
+/* ── MINI5: 중2 Ⅴ recap 미니아트 도감(라즈베리 팔레트, 72×72) ── */
+const MINI5: Record<string, string> = {
+  // 큰 마트료시카·작은 마트료시카(같은 모양 다른 크기)
+  sim: `<ellipse cx="25" cy="42" rx="12" ry="15" fill="url(#m5-deep)" stroke="#8C1843" stroke-width="1.4"/>
+    <circle cx="25" cy="22" r="8" fill="url(#m5-bd)" stroke="#8C1843" stroke-width="1.4"/>
+    <circle cx="22.4" cy="21" r="1.3" fill="#5C1130"/><circle cx="27.6" cy="21" r="1.3" fill="#5C1130"/>
+    <ellipse cx="51" cy="48" rx="8" ry="10" fill="url(#m5-deep)" stroke="#8C1843" stroke-width="1.3"/>
+    <circle cx="51" cy="34.5" r="5.4" fill="url(#m5-bd)" stroke="#8C1843" stroke-width="1.3"/>
+    <circle cx="49.2" cy="33.8" r="1" fill="#5C1130"/><circle cx="52.8" cy="33.8" r="1" fill="#5C1130"/>`,
+  // 카드 위 닮음 기호 ∽ + 1:2 태그
+  symbol: `<rect x="12" y="12" width="48" height="32" rx="8" fill="url(#m5-paper)" stroke="#D9A8BC" stroke-width="1.4"/>
+    <path d="M20 28 q8 -11 16 0 q8 11 16 0" fill="none" stroke="url(#m5-deep)" stroke-width="4.6" stroke-linecap="round"/>
+    <rect x="20" y="48" width="32" height="14" rx="7" fill="url(#m5-deep)" stroke="#8C1843" stroke-width="1.2"/>
+    <text x="36" y="58.5" text-anchor="middle" font-size="9.5" font-weight="800" fill="#FFFFFF">1:2</text>`,
+  // 닮은 두 삼각형 + 대응변 비 화살표
+  prop: `<path d="M10 50 L34 50 L26 32 Z" fill="url(#m5-deep)" stroke="#8C1843" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M36 56 L64 56 L55 32 Z" fill="url(#m5-bd)" stroke="#8C1843" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M26 24 q13 -12 26 2" fill="none" stroke="#E8A93E" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M52 26 l-6 -1 m6 1 l-1.4 -5.6" stroke="#E8A93E" stroke-width="2.2" stroke-linecap="round"/>`,
+  // 정사각형·원엔 체크, 길쭉한 직사각형엔 X(항상 닮음 판별)
+  always: `<rect x="10" y="12" width="15" height="15" rx="2.5" fill="url(#m5-bd)" stroke="#8C1843" stroke-width="1.4"/>
+    <circle cx="45" cy="19.5" r="8" fill="url(#m5-bd)" stroke="#8C1843" stroke-width="1.4"/>
+    <path d="M13 33 l3 3 5.5 -6 M41 33 l3 3 5.5 -6" stroke="#04B45F" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="12" y="44" width="42" height="10" rx="2.5" fill="#F1E4EA" stroke="#B98CA0" stroke-width="1.3"/>
+    <path d="M58 44 l6 10 m0 -10 l-6 10" stroke="#F04452" stroke-width="2.4" stroke-linecap="round"/>`,
+  // 큰 정사각형 안 작은 정사각형 4장(닮음비 1:2 → 넓이 1:4)
+  area2: `<rect x="16" y="14" width="40" height="40" fill="url(#m5-bd)" stroke="#8C1843" stroke-width="1.6"/>
+    <path d="M36 14 V54 M16 34 H56" stroke="#8C1843" stroke-width="1.3" opacity=".7"/>
+    <rect x="16" y="14" width="20" height="20" fill="url(#m5-deep)" stroke="#8C1843" stroke-width="1.3"/>`,
+  // 아이소메트릭 큐브 2×2×2(부피 1:8)
+  vol3: `<path d="M20 24 L36 16 L52 24 L36 32 Z" fill="url(#m5-bd)" stroke="#8C1843" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M20 24 L36 32 L36 52 L20 44 Z" fill="#F7C6D8" stroke="#8C1843" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M36 32 L52 24 L52 44 L36 52 Z" fill="url(#m5-deep)" stroke="#8C1843" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M28 20 L44 28 M44 20 L28 28 M28 28 V48 M20 34 L36 42 M44 28 V48 M36 42 L52 34" stroke="#8C1843" stroke-width="1" opacity=".55" fill="none"/>`,
+  // 미니 카드 3장(SSS·SAS·AA)
+  cond: `<g transform="rotate(-8 17 34)"><rect x="8" y="22" width="18" height="24" rx="4" fill="url(#m5-paper)" stroke="#C2255C" stroke-width="1.3"/><text x="17" y="37" text-anchor="middle" font-size="7" font-weight="800" fill="#A61E4D">SSS</text></g>
+    <g><rect x="27" y="18" width="18" height="24" rx="4" fill="url(#m5-paper)" stroke="#C2255C" stroke-width="1.3"/><text x="36" y="33" text-anchor="middle" font-size="7" font-weight="800" fill="#A61E4D">SAS</text></g>
+    <g transform="rotate(8 55 34)"><rect x="46" y="22" width="18" height="24" rx="4" fill="url(#m5-paper)" stroke="#C2255C" stroke-width="1.3"/><text x="55" y="37" text-anchor="middle" font-size="7" font-weight="800" fill="#A61E4D">AA</text></g>`,
+  // 삼각형 하나에 두 각 호 강조(AA)
+  aa: `<path d="M36 12 L12 54 L62 54 Z" fill="url(#m5-bd)" stroke="#8C1843" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M23 54 A11 11 0 0 0 17.5 44.5" fill="none" stroke="#E8A93E" stroke-width="2.6"/>
+    <path d="M56.2 44.7 A11 11 0 0 0 51 54" fill="none" stroke="#0DA5C6" stroke-width="2.6"/>`,
+  // 겹친 두 삼각형과 분리 화살표(숨은 닮음 찾기)
+  hidden: `<path d="M26 12 L10 50 L52 50 Z" fill="none" stroke="#8C1843" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M26 12 L18.4 30 L38.3 30 Z" fill="url(#m5-deep)" stroke="#8C1843" stroke-width="1.3" stroke-linejoin="round" opacity=".9"/>
+    <path d="M40 34 h8 m0 0 l-3 -2.6 m3 2.6 l-3 2.6" stroke="#E8A93E" stroke-width="2" stroke-linecap="round"/>
+    <path d="M50 28 L43.6 43.3 L60.5 43.3 Z" fill="url(#m5-bd)" stroke="#C2255C" stroke-width="1.4" stroke-dasharray="3 2" stroke-linejoin="round"/>`,
+  // 직각삼각형 속 수선의 발(작은 삼각형 3형제)
+  triplet: `<path d="M10 52 L28.7 52 L28.7 27 Z" fill="rgba(232,169,62,.4)"/>
+    <path d="M28.7 52 L62 52 L28.7 27 Z" fill="rgba(13,165,198,.3)"/>
+    <path d="M10 52 L62 52 L28.7 27 Z" fill="none" stroke="#C2255C" stroke-width="1.8" stroke-linejoin="round"/>
+    <line x1="28.7" y1="27" x2="28.7" y2="52" stroke="#8C1843" stroke-width="1.6"/>
+    <path d="M28.7 47 h-4 v5" fill="none" stroke="#334155" stroke-width="1.3"/>`,
+  // 삼각형 속 평행 슬라이스 선
+  tripara: `<path d="M36 10 L12 56 L62 56 Z" fill="url(#m5-bd)" stroke="#8C1843" stroke-width="1.6" stroke-linejoin="round"/>
+    <line x1="22.4" y1="36" x2="50.9" y2="36" stroke="#C2255C" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M33.5 33.4 L38 36 L33.5 38.6 M33.5 53.4 L38 56 L33.5 58.6" fill="none" stroke="#334155" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`,
+  // 두 선분 비 2:1=2:1 → 평행 판정
+  parajudge: `<text x="36" y="10" text-anchor="middle" font-size="8.5" font-weight="800" fill="#A61E4D">2:1=2:1</text>
+    <path d="M36 16 L12 58 L60 58 Z" fill="none" stroke="#8C1843" stroke-width="1.5" stroke-linejoin="round"/>
+    <line x1="36" y1="16" x2="20" y2="44" stroke="#E8A93E" stroke-width="3"/>
+    <line x1="20" y1="44" x2="12" y2="58" stroke="#0DA5C6" stroke-width="3"/>
+    <line x1="36" y1="16" x2="52" y2="44" stroke="#E8A93E" stroke-width="3"/>
+    <line x1="52" y1="44" x2="60" y2="58" stroke="#0DA5C6" stroke-width="3"/>
+    <line x1="20" y1="44" x2="52" y2="44" stroke="#12B886" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M33 41.4 L38 44 L33 46.6 M33 55.4 L38 58 L33 60.6" fill="none" stroke="#12B886" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`,
+  // 중점 연결선(절반 태그)
+  midseg: `<path d="M36 14 L12 58 L60 58 Z" fill="url(#m5-bd)" stroke="#8C1843" stroke-width="1.6" stroke-linejoin="round"/>
+    <line x1="24" y1="36" x2="48" y2="36" stroke="#C2255C" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M27.4 23.6 L32.6 26.4 M15.4 45.6 L20.6 48.4 M44.6 23.6 L39.4 26.4 M56.6 45.6 L51.4 48.4" stroke="#8C1843" stroke-width="1.8" stroke-linecap="round"/>
+    <text x="36" y="30" text-anchor="middle" font-size="10" font-weight="800" fill="#A61E4D">½</text>`,
+  // 찌그러진 사각형 속 평행사변형
+  midquad: `<path d="M18 18 L8 46 L50 58 L62 14 Z" fill="#FDF0F5" stroke="#8C1843" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M13 32 L29 52 L56 36 L40 16 Z" fill="rgba(194,37,92,.25)" stroke="#C2255C" stroke-width="1.8" stroke-linejoin="round"/>`,
+  // 평행선 3줄과 사선
+  plines: `<path d="M10 20 H62 M10 36 H62 M10 52 H62" stroke="#8C1843" stroke-width="2" stroke-linecap="round"/>
+    <path d="M52 17.2 L57 20 L52 22.8 M52 33.2 L57 36 L52 38.8 M52 49.2 L57 52 L52 54.8" fill="none" stroke="#8C1843" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="24" y1="12" x2="48" y2="60" stroke="#E8A93E" stroke-width="2.6" stroke-linecap="round"/>`,
+  // 3단 접힌 편지지(같은 폭으로 나뉜 평행선)
+  foldmagic: `<path d="M18 14 h36 l-8 12 h-36 z" fill="url(#m5-paper)" stroke="#B98CA0" stroke-width="1.3" stroke-linejoin="round"/>
+    <path d="M10 26 h36 l8 12 h-36 z" fill="url(#m5-bd)" stroke="#B98CA0" stroke-width="1.3" stroke-linejoin="round"/>
+    <path d="M18 38 h36 l-8 12 h-36 z" fill="url(#m5-paper)" stroke="#B98CA0" stroke-width="1.3" stroke-linejoin="round"/>`,
+  // 세 중선과 무게중심
+  centroid: `<path d="M36 12 L10 56 L62 52 Z" fill="url(#m5-bd)" stroke="#8C1843" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M36 12 L36 54 M10 56 L49 32 M62 52 L23 34" stroke="#8C1843" stroke-width="1.3" opacity=".6"/>
+    <circle cx="36" cy="40" r="3.6" fill="#C2255C" stroke="#FFFFFF" stroke-width="1.2"/>`,
+  // 6색 조각 삼각형(넓이 6등분)
+  sixpart: `<path d="M36 12 L23 34 L36 40 Z" fill="rgba(232,169,62,.5)"/>
+    <path d="M23 34 L10 56 L36 40 Z" fill="rgba(13,165,198,.4)"/>
+    <path d="M10 56 L36 54 L36 40 Z" fill="rgba(232,84,126,.42)"/>
+    <path d="M36 54 L62 52 L36 40 Z" fill="rgba(18,184,134,.4)"/>
+    <path d="M62 52 L49 32 L36 40 Z" fill="rgba(124,107,255,.38)"/>
+    <path d="M49 32 L36 12 L36 40 Z" fill="rgba(61,91,192,.36)"/>
+    <path d="M36 12 L10 56 L62 52 Z" fill="none" stroke="#8C1843" stroke-width="1.6" stroke-linejoin="round"/>
+    <circle cx="36" cy="40" r="2.6" fill="#C2255C"/>`,
+  // 세 정사각형 붙은 직각삼각형(피타고라스)
+  pytha: `<rect x="28" y="44" width="16" height="16" fill="rgba(232,169,62,.45)" stroke="#B26200" stroke-width="1.3"/>
+    <rect x="16" y="32" width="12" height="12" fill="rgba(13,165,198,.35)" stroke="#0B7285" stroke-width="1.3"/>
+    <path d="M28 32 L44 44 L56 28 L40 16 Z" fill="rgba(194,37,92,.3)" stroke="#C2255C" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M28 32 L28 44 L44 44 Z" fill="#FFFFFF" stroke="#334155" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M28 41 h3 v3" fill="none" stroke="#334155" stroke-width="1.2"/>`,
+  // 정사각형 틀 속 직각삼각형 4개와 가운데 구멍(퍼즐 증명)
+  puzzle: `<rect x="14" y="14" width="44" height="44" fill="none" stroke="#8C1843" stroke-width="1.6"/>
+    <path d="M14 14 L30 14 L14 42 Z M30 14 L58 14 L58 30 Z M58 30 L58 58 L42 58 Z M42 58 L14 58 L14 42 Z" fill="url(#m5-deep)" stroke="#8C1843" stroke-width="1.1" stroke-linejoin="round" opacity=".85"/>
+    <path d="M30 14 L58 30 L42 58 L14 42 Z" fill="none" stroke="#C2255C" stroke-width="1.5" stroke-dasharray="4 3" stroke-linejoin="round"/>`,
+  // 매듭 로프 직각삼각형(3·4·5)
+  judge345: `<path d="M14 52 L50 52 L14 25 Z" fill="none" stroke="#C98A3D" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M19 52 v-5 h-5" fill="none" stroke="#334155" stroke-width="1.3"/>
+    ${[[14, 52], [23, 52], [32, 52], [41, 52], [50, 52], [14, 43], [14, 34], [14, 25], [21.2, 30.4], [28.4, 35.8], [35.6, 41.2], [42.8, 46.6]]
+      .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.1" fill="#8C5A1E"/>`)
+      .join("")}`,
+  // 크기 다른 직각삼각형 2개 겹침(3·4·5와 6·8·10)
+  family: `<path d="M14 56 L58 56 L14 23 Z" fill="none" stroke="#8C1843" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M14 56 L36 56 L14 39.5 Z" fill="url(#m5-bd)" stroke="#C2255C" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M18 56 v-4 h-4" fill="none" stroke="#334155" stroke-width="1.3"/>`,
+};
+
+/** 중2 Ⅴ recap 미니아트 — simMiniArt(72×72, 라즈베리 m5- 그라데이션).
+ *  키: sim·symbol·prop·always·area2·vol3·cond·aa·hidden·triplet·tripara·parajudge·
+ *  midseg·midquad·plines·foldmagic·centroid·sixpart·pytha·puzzle·judge345·family */
+export function simMiniArt(key: string): string {
+  const m = MINI5[key];
+  if (!m) return "";
+  return svg(
+    "0 0 72 72",
+    `<ellipse cx="36" cy="62" rx="20" ry="3.5" fill="#2A3A5E" opacity=".1"/>${m}`,
+    `<linearGradient id="m5-bd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBDFE9"/><stop offset="1" stop-color="#F3AECB"/></linearGradient>
+    <linearGradient id="m5-deep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EE7FAC"/><stop offset="1" stop-color="#C2255C"/></linearGradient>
+    <linearGradient id="m5-paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F9EEF3"/></linearGradient>`,
   );
 }

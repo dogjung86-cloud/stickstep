@@ -239,6 +239,16 @@ src/
   수학 각(반시계+)의 부호 반전 주의. mathDrill에 **장문 자동 강등**(q 26자 초과 → .mdr-q.long 18px)
   공용 개선. 컷 u4lN 10장 발주·눈검수·webp 변환 완료(qa/order-m2u4cuts.sh, u4l10만 저울대 수평 1회 재발주).
   상세는 MATH_GUIDE.md 중2 Ⅳ 표. QA: `PORT=<포트> node qa/e2e-m2u4.mjs`.
+- **중2 수학 Ⅴ(m2u5, 도형의 닮음과 피타고라스 정리) 완성** — 11레슨(무료 3+프리미엄 8), 테마 `sim`
+  (마트료시카 라즈베리 #C2255C — 중2 수학 내 유일한 붉은 계열, 오답 red보다 깊은 자줏빛).
+  신규: content/math/g2/unit5.ts·steps/hookM2u5.ts(11장면)+랩 11종(zoomLab·simHuntLab·scaleTileLab·
+  shapeLockLab·peelLab·triSliceLab·midpointLab·lineDivLab·**centroidLab 기함**(감 드래그 좌절→중선→
+  2:1)·**pythaLab 기함**(모눈 세기→4삼각형 옮겨 담기 증명→a·b 일반화)·rightCheckLab)·mathFigures2에
+  Ⅴ 그림 23종+simMiniArt 22키. **√ 금지(중3)라 피타고라스 수치는 전부 자연수 트리플 풀**(3·4·5 계열),
+  "제곱해서 N이 되는 양수는 □" 서술이 표준. pythaLab 퍼즐 이동은 바깥 g CSS translate+안쪽 g SVG
+  rotate 합성(배치 전환에도 회전값 불변 = 순수 슬라이드) — SVG 퍼즐 이동의 공용 문법. 훅 traytrick만
+  swapbtn이 아니라 `.tt5-spot` 3곳 탭(e2e 주의). 컷 u5lN 11장(qa/order-m2u5cuts.sh — 발주는 병렬
+  codex 금지 확인 후). 상세는 MATH_GUIDE.md 중2 Ⅴ 표. QA: `PORT=<포트> node qa/e2e-m2u5.mjs`.
 - **과목 차원**: `store.viewSubject`("sci"|"math") + `curriculum.ts`의 `CURRICULA_OF`/`subjectOfUnit`.
   과목 전환 창구는 **과목 허브뿐**(subject.ts) — main.ts `pickSubject()`가 setViewSubject 후 `goHome()`으로
   홈을 재생성한다(nav.back은 이전 과목 홈을 보여주므로 금지). 이때 lastUnitId를 반드시 비운다.

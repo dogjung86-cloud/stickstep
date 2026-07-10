@@ -122,7 +122,19 @@ export const mathHook = (o: {
     | "chopstick" // 젓가락 두 쌍 사각형, 대변 길이 조건
     | "bookshelf" // 조립 가구 대각선 검사, 직사각형 판별
     | "pickrect" // "직사각형을 모두 고르시오", 포함 관계
-    | "bentfence"; // 꺾인 텃밭 경계 펴기, 등적 변형
+    | "bentfence" // 꺾인 텃밭 경계 펴기, 등적 변형
+    // ── 중2 Ⅴ 도형의 닮음과 피타고라스 정리 (hookM2u5.ts) ──
+    | "photoedit" // 사진 크기 조절, 모서리 핸들 vs 변 핸들(닮음의 뜻)
+    | "papersize" // A4를 반으로 접으면 A5, 늘 같은 모양?(항상 닮은 도형)
+    | "jumbobear" // 점보 곰인형, 키 2배인데 무게는 8배(넓이·부피의 비)
+    | "triruler" // 문방구 삼각자, 크기 제각각 모양은 딱 2종(AA 닮음)
+    | "streetlamp" // 가로등 그림자 끝 일직선, 겹친 두 삼각형(숨은 닮음)
+    | "hillroad" // 산 중턱 수평 산책로, 삼각형 속 평행선의 비
+    | "grasscut" // 잔디밭 대각 샛길, 두 변 중점을 이으면 절반(중점연결)
+    | "letterfold" // 가정통신문 3단 접기, 공책 줄의 마법(평행선 사이 비)
+    | "traytrick" // 쟁반 한 손 서빙, 균형의 한 점(무게중심)
+    | "tvsize" // TV 인치의 정체는 대각선(피타고라스 정리)
+    | "courtline"; // 운동장 직각 라인 긋기, 3·4·5 줄자(직각삼각형 조건)
   choices?: string[];
   cta?: string;
 }): Step => ({ type: "mathHook", ...o });
@@ -542,3 +554,49 @@ export const quadFamilyLab = (o: { title: string; lead?: string; cta?: string; c
 /** 평행선 넓이 랩, 꼭짓점을 평행 레일로 끌어 모양이 변해도 넓이가 그대로임을 보고 꺾인 경계를 편다. */
 export const areaSlideLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "areaSlideLab", ...o });
+
+/* ── 중2 Ⅴ 도형의 닮음과 피타고라스 정리 ─────────────────────────── */
+
+/** 확대 복사기, 배율 다이얼로 도형을 확대·축소해 목표에 포개기(가로만 늘리기 함정 = 닮음 아님). */
+export const zoomLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "zoomLab", ...o });
+
+/** 반례 사냥터, 도형 패밀리를 랜덤 재생성하며 "항상 닮음"인지 반례를 찾아 판정한다(입체 포함). */
+export const simHuntLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "simHuntLab", ...o });
+
+/** 사본 채우기, 닮음비 1:2·1:3 도형을 원본 사본으로 채워 넓이 m², 큐브 쌓기로 부피 m³을 발견. */
+export const scaleTileLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "scaleTileLab", ...o });
+
+/** 모양 잠금 공방, 정보 카드를 열며 삼각형 후보 무리가 한 모양으로 수렴(SSS·SAS·AA, 끼인각 함정). */
+export const shapeLockLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "shapeLockLab", ...o });
+
+/** 겹침 벗겨내기, 겹친 두 삼각형(공통각·맞꼭지각·직각 수선)을 분리·정렬해 대응변을 찾는다. */
+export const peelLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "peelLab", ...o });
+
+/** 평행 슬라이서, 삼각형 속 평행선을 드래그하며 잘린 선분의 비가 늘 같음을 발견(기울이면 붕괴). */
+export const triSliceLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "triSliceLab", ...o });
+
+/** 중점 잇기, 삼각형 두 변 중점 연결(평행·절반)에서 아무 사각형 중점 연결=평행사변형 피날레로. */
+export const midpointLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "midpointLab", ...o });
+
+/** 공책 줄 등분기, 평행선 무리 위 사선을 돌려도 잘린 비가 그대로, 선분 3등분 미션. */
+export const lineDivLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "lineDivLab", ...o });
+
+/** 균형 수색 랩(기함), 감 드래그 좌절 → 중선 긋기 → 교점 스냅 → 2:1 발견 → 넓이 6등분. */
+export const centroidLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "centroidLab", ...o });
+
+/** 피타고라스 넓이 퍼즐(기함), 모눈 세 정사각형 세기 → 4삼각형 재배치 증명 → 어떤 직각삼각형이든. */
+export const pythaLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "pythaLab", ...o });
+
+/** 직각 판정소, 세 변으로 삼각형을 조립하고 a²+b²와 c² 저울로 직각을 판정(최장변 함정). */
+export const rightCheckLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "rightCheckLab", ...o });

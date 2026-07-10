@@ -1,0 +1,48 @@
+﻿# 스틱맨 개념 컷 — 중2 수학 Ⅴ(도형의 닮음과 피타고라스 정리) concept 11장 (전부 가로 4:3)
+# 폴더: public/math2/cuts (이름 = u5lM). 장면 규칙: 그 레슨의 훅·랩 소재 재활용 금지(새 각도),
+# 숫자·글자 대신 사물·개수·손짓으로.
+#
+# ── 스타일 블록 A (전 컷 공용 — 스틱맨 만화) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+
+# ══ 중2 수학 Ⅴ 도형의 닮음과 피타고라스 정리 → public/math2/cuts ══
+
+[0] file=public/math2/cuts/u5l1.png (landscape 4:3, 스타일 A)
+A stick figure holds a tiny toy car flat on one open palm and looks out a large window at a real car parked outside; the toy car and the real car share exactly the same silhouette, one small and one big, and the figure's eyes are wide comparing the two. Only the toy car is teal; everything else pure black and white.
+
+[1] file=public/math2/cuts/u5l2.png (landscape 4:3, 스타일 A)
+A stick figure stands with a proud thumbs-up in front of an open cupboard whose shelves hold round dinner plates of many different sizes, all perfect circles, lined up from small to large like a family. Only the rim of the largest plate is teal; everything else pure black and white.
+
+[2] file=public/math2/cuts/u5l3.png (landscape 4:3, 스타일 A)
+A stick figure scratches their head standing between two blank walls to be painted: a small square wall with a single paint bucket in front of it, and a wall exactly twice as tall and twice as wide with four identical paint buckets lined up in front, a paint roller leaning against it. Only the paint visible inside the buckets is teal; everything else pure black and white.
+
+[3] file=public/math2/cuts/u5l4.png (landscape 4:3, 스타일 A)
+A stick figure stands before a small safe shaped like a triangle with one padlock on its door, confidently holding up just two keys together in one hand toward the lock, while a third unused key lies on the floor. The lock is popping open with small motion lines. Only the two keys in the figure's hand are teal; everything else pure black and white.
+
+[4] file=public/math2/cuts/u5l5.png (landscape 4:3, 스타일 A)
+A stick figure opens a matryoshka nesting doll, holding the lifted top half in one hand, and pulls out a smaller doll with the exact same shape, setting it on the table beside the big one; the two dolls stand side by side, identical in shape but different in size. Curious smile. Only the smaller doll is teal; everything else pure black and white.
+
+[5] file=public/math2/cuts/u5l6.png (landscape 4:3, 스타일 A)
+A stick figure with full cheeks holds a triangular wrapped rice ball from which the top corner has been bitten off in one clean cut exactly parallel to the bottom edge; the bitten-off small triangle piece floats beside it and is clearly the same shape as the whole rice ball, only smaller. Only the small bitten-off piece is teal; everything else pure black and white.
+
+[6] file=public/math2/cuts/u5l7.png (landscape 4:3, 스타일 A)
+A stick figure kneels beside a standing A-frame ladder and snaps a new horizontal rung exactly into the midpoints of the two slanted legs; the new middle rung is clearly half the length of the wide rung at the bottom of the ladder. Only the new middle rung being inserted is teal; everything else pure black and white.
+
+[7] file=public/math2/cuts/u5l8.png (landscape 4:3, 스타일 A)
+A stick figure hangs one long scarf diagonally across three horizontal parallel clotheslines in a backyard; the three lines cross the slanted scarf with a clothespin at each crossing point, dividing the scarf into equal-looking sections. The figure tilts their head, pleasantly surprised. Only the scarf is teal; everything else pure black and white.
+
+[8] file=public/math2/cuts/u5l9.png (landscape 4:3, 스타일 A)
+A stick figure on a small stool hangs a flat triangle ornament from the ceiling by a single thread, and the triangle floats perfectly level and horizontal; the figure steps back with hands on hips, looking up with a satisfied smile. A second crooked ornament hangs tilted in the background. Only the level triangle ornament is teal; everything else pure black and white.
+
+[9] file=public/math2/cuts/u5l10.png (landscape 4:3, 스타일 A)
+A stick figure walks with big confident steps diagonally across a huge treasure map unrolled on the ground, heading straight from one corner toward a small treasure chest at the opposite corner; dashed footprints trace the straight diagonal shortcut, while the map's two edges hint at the much longer way around. Only the treasure chest is teal; everything else pure black and white.
+
+[10] file=public/math2/cuts/u5l11.png (landscape 4:3, 스타일 A)
+A stick figure carpenter holds a large L-shaped carpenter's square up to the top corner of a triangle built from three straight wooden sticks leaning on a workbench; the square fits that corner exactly, and the figure beams with pride, one fist raised. Only the L-shaped carpenter's square is teal; everything else pure black and white.

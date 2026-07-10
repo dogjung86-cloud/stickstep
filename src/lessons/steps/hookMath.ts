@@ -46,6 +46,10 @@ import {
   renderHanger, renderFoldstrip, renderPhonestand, renderFairspot, renderCookiecut,
   renderCardspin, renderChopstick, renderBookshelf, renderPickrect, renderBentfence,
 } from "./hookM2u4";
+import {
+  renderPhotoedit, renderPapersize, renderJumbobear, renderTriruler, renderStreetlamp,
+  renderHillroad, renderGrasscut, renderLetterfold, renderTraytrick, renderTvsize, renderCourtline,
+} from "./hookM2u5";
 import type { StepRenderer } from "../types";
 
 type Face = (k: AvatarKind) => void;
@@ -201,6 +205,18 @@ export const mathHook: StepRenderer = (host, step, api) => {
     bookshelf: renderBookshelf,
     pickrect: renderPickrect,
     bentfence: renderBentfence,
+    // 중2 Ⅴ 도형의 닮음과 피타고라스 정리(hookM2u5.ts)
+    photoedit: renderPhotoedit,
+    papersize: renderPapersize,
+    jumbobear: renderJumbobear,
+    triruler: renderTriruler,
+    streetlamp: renderStreetlamp,
+    hillroad: renderHillroad,
+    grasscut: renderGrasscut,
+    letterfold: renderLetterfold,
+    traytrick: renderTraytrick,
+    tvsize: renderTvsize,
+    courtline: renderCourtline,
   };
   const fn = fns[s.scene];
   if (fn) fn(scene, helper, finish, face, s.choices);

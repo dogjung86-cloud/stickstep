@@ -11,7 +11,7 @@ import { mapDecorArt } from "../ui/mapDecor";
 import type { Screen } from "../core/router";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
-const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove" };
+const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim" };
 // 단원별 보너스 미니게임 — 모든 레슨을 완료하면 지도 끝에 열린다.
 const UNIT_GAME: Record<string, { title: string }> = { u3: { title: "단열 디펜스" }, m1u1: { title: "별자리 한붓그리기" } };
 
@@ -396,6 +396,7 @@ const UNIT_DECOR: Record<string, { seq: string[]; sky: [string, string] }> = {
   m2u2: { seq: ["signDeco", "tiltDeco", "rangeDeco", "duoboxDeco", "birdrabbitDeco"], sky: ["sparkle", "cloud"] }, // 중2 Ⅱ: 제한 표지판 → 기운 저울 → 수직선 범위 → x·y 상자 쌍 → 꿩과 토끼(부등식에서 연립방정식으로)
   m2u3: { seq: ["funcboxDeco", "duolineDeco", "axisdotDeco", "slopetriDeco", "crosspointDeco"], sky: ["sparkle", "cloud"] }, // 중2 Ⅲ: 함수 기계 → 나란한 두 직선 → 절편 점 → 기울기 세모 → 교점(함수에서 교점까지)
   m2u4: { seq: ["hangerDeco", "sealDeco", "circumDeco", "paraliftDeco", "kiteDeco"], sky: ["sparkle", "cloud"] }, // 중2 Ⅳ: 이등변 옷걸이 → 증명 도장 → 외접원 → 평행사변형 리프트 → 마름모 연(삼각형에서 사각형으로)
+  m2u5: { seq: ["matryoDeco", "trirulerDeco", "foldletterDeco", "trayDeco", "knotropeDeco"], sky: ["sparkle", "cloud"] }, // 중2 Ⅴ: 마트료시카 → 삼각자 → 3단 접기 편지 → 균형 쟁반 → 3·4·5 매듭 밧줄(닮음에서 피타고라스로)
 };
 const DEFAULT_DECOR: { seq: string[]; sky: [string, string] } = {
   seq: ["tree1", "tree2", "bush", "rock", "grassTuft"],
@@ -424,6 +425,7 @@ const DECOR_SIZE: Record<string, number> = {
   signDeco: 44, tiltDeco: 48, rangeDeco: 46, duoboxDeco: 46, birdrabbitDeco: 50,
   funcboxDeco: 46, duolineDeco: 48, axisdotDeco: 44, slopetriDeco: 46, crosspointDeco: 48,
   hangerDeco: 46, sealDeco: 42, circumDeco: 48, paraliftDeco: 48, kiteDeco: 46,
+  matryoDeco: 46, trirulerDeco: 46, foldletterDeco: 44, trayDeco: 48, knotropeDeco: 48,
 };
 
 function placeDecor(layer: HTMLElement, points: { x: number; y: number }[], W: number, unitId: string): void {
