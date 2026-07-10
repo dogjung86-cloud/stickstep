@@ -67,4 +67,7 @@ export function ask(box: HTMLElement, helper: HTMLElement, o: AskOpts): void {
     box.appendChild(b);
   });
   box.classList.add("show");
+  // 예측 등장 자동 스크롤 — 연출이 끝나고 선택지가 화면 밖에서 태어나면 부드럽게 따라간다.
+  // 이미 보이면 아무 일도 없음(nearest). Ⅲ 장면별 검증(2026-07-10) 후 전 트랙 공용 승격.
+  window.setTimeout(() => box.scrollIntoView({ behavior: "smooth", block: "nearest" }), 140);
 }
