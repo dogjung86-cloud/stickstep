@@ -610,6 +610,60 @@ const MINI: Record<string, [string, string]> = {
      <circle cx="34.5" cy="33.7" r="6" fill="#FFFFFF" stroke="#C2255C" stroke-width="2.4"/>`,
     "",
   ],
+  // ── Ⅲ 보조 카드 글리프(recap 전 카드 미니아트, 사용자 확정 2026-07-10) ──
+  // 함숫값: 슬롯에 구슬을 대입
+  fval: [
+    `<rect x="20" y="36" width="32" height="20" rx="7" fill="url(#mi-tl2)" stroke="#067D57" stroke-width="1.5"/>
+     <circle cx="36" cy="46" r="5.5" fill="none" stroke="#0A8F67" stroke-width="1.6" stroke-dasharray="3 3"/>
+     <circle cx="36" cy="16" r="6" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.3"/>
+     <path d="M36 25 v7" stroke="#94A3B8" stroke-width="2" stroke-dasharray="2 3" stroke-linecap="round"/>`,
+    "",
+  ],
+  // y=ax+b: 원점 직선을 b만큼 나란히(간격 점선 2개)
+  bshift: [
+    `<line x1="12" y1="52" x2="60" y2="28" stroke="#94A3B8" stroke-width="2.6" stroke-dasharray="6 5" stroke-linecap="round"/>
+     <line x1="12" y1="38" x2="60" y2="14" stroke="url(#mi-tl)" stroke-width="4" stroke-linecap="round"/>
+     <path d="M24 46 v-10 M46 35 v-10" stroke="#E8A93E" stroke-width="2.2" stroke-dasharray="3 3" stroke-linecap="round"/>`,
+    "",
+  ],
+  // 두 점이면 직선이 정해진다(절편 두 개로 긋기)
+  twopoints: [
+    `<line x1="10" y1="54" x2="62" y2="16" stroke="url(#mi-tl)" stroke-width="3.4" stroke-linecap="round"/>
+     <circle cx="24" cy="43.8" r="5" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.3"/>
+     <circle cx="48" cy="26.2" r="5" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.3"/>`,
+    "",
+  ],
+  // 내려가는 직선(음수 기울기 세모)
+  downhill: [
+    `<line x1="10" y1="18" x2="62" y2="50" stroke="url(#mi-rs)" stroke-width="4" stroke-linecap="round"/>
+     <path d="M26 28 h14 v8.6" fill="none" stroke="#E8608A" stroke-width="2.4" stroke-dasharray="4 3" stroke-linejoin="round"/>
+     <circle cx="26" cy="27.8" r="3.8" fill="url(#mi-rs)" stroke="#9C3D5E" stroke-width="1.1"/>
+     <circle cx="40" cy="36.4" r="3.8" fill="url(#mi-rs)" stroke="#9C3D5E" stroke-width="1.1"/>`,
+    "",
+  ],
+  // 평행: 나란한 두 직선 + 등간격 틱
+  parallel: [
+    `<line x1="12" y1="42" x2="60" y2="18" stroke="url(#mi-tl)" stroke-width="3.6" stroke-linecap="round"/>
+     <line x1="12" y1="56" x2="60" y2="32" stroke="url(#mi-bl)" stroke-width="3.6" stroke-linecap="round"/>
+     <path d="M28 48 l4 -7 M44 40 l4 -7" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>`,
+    "",
+  ],
+  // x=m 세로선 · y=n 가로선(축과 평행한 특수 직선 쌍)
+  axpair: [
+    `<line x1="8" y1="40" x2="62" y2="40" stroke="#C2CBD6" stroke-width="1.8"/>
+     <line x1="22" y1="10" x2="22" y2="58" stroke="#C2CBD6" stroke-width="1.8"/>
+     <line x1="46" y1="12" x2="46" y2="58" stroke="url(#mi-tl)" stroke-width="3.4" stroke-linecap="round"/>
+     <line x1="10" y1="24" x2="60" y2="24" stroke="url(#mi-am)" stroke-width="3.4" stroke-linecap="round"/>`,
+    "",
+  ],
+  // 일치: 두 직선이 한 몸으로 포개짐(해 무수히)
+  coincide: [
+    `<line x1="10" y1="50" x2="62" y2="18" stroke="url(#mi-bl)" stroke-width="6.4" stroke-linecap="round" opacity=".4"/>
+     <line x1="10" y1="50" x2="62" y2="18" stroke="url(#mi-tl)" stroke-width="3.2" stroke-linecap="round"/>
+     <path d="M50 32 v6 M47 35 h6" stroke="#E8A93E" stroke-width="2" stroke-linecap="round"/>
+     <path d="M22 46 v4 M20 48 h4" stroke="#E8A93E" stroke-width="1.6" stroke-linecap="round"/>`,
+    "",
+  ],
 };
 
 /** recap 카드 미니아트 — calcMiniArt("divide" | "cycle" | "denom" | "shift" | "pow" | "mono" | "poly" | "expand") */

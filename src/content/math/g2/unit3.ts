@@ -85,6 +85,7 @@ export const M2_UNIT3: Unit = {
               name: "함숫값 f(x): 대입하면 끝",
               text: "y=f(x)에서 <b>f(a)는 x 자리에 a를 대입한 값</b>이에요. f(2), f(−3)처럼 써요.",
               color: "#E8A93E",
+              art: calcMiniArt("fval"),
               examples: ["f(x)=5x → f(3)=15", "f(x)=−x+4 → f(−1)=5"],
               more:
                 "<b class='rm-h'>왜 그럴까요?</b>함수마다 이름을 붙여 두면 'x가 2일 때의 y' 같은 긴 말을 f(2) 두 글자로 끝낼 수 있어요. f(x)는 함수 전체의 이름표, f(2)는 그 기계에 2를 넣었을 때 나오는 출력 하나를 가리키죠." +
@@ -315,6 +316,7 @@ export const M2_UNIT3: Unit = {
               name: "y=ax+b는 y=ax의 b만큼 이동",
               text: "y=ax의 그래프를 <b>y축 방향으로 b만큼</b> 평행이동하면 y=ax+b의 그래프!",
               color: "#8A6EE0",
+              art: calcMiniArt("bshift"),
               examples: ["y=2x+3: 위로 3", "y=2x−2: 아래로 2"],
               more:
                 "<b class='rm-h'>왜 그럴까요?</b>같은 x를 넣어 보면 y=ax+b의 값은 y=ax의 값보다 항상 b만큼 커요. 그래프의 모든 점이 b만큼 위(또는 아래)에 있다는 뜻이니, 직선 전체가 b만큼 이동한 모양이 되는 거죠." +
@@ -447,6 +449,7 @@ export const M2_UNIT3: Unit = {
               name: "절편 두 개면 직선 완성",
               text: "두 절편이 알려 주는 <b>두 점을 찍고 직선으로 연결</b>하면 그래프 완성이에요.",
               color: "#E8A93E",
+              art: calcMiniArt("twopoints"),
               examples: ["x절편 −3, y절편 2 → (−3,0), (0,2)", "y=ax는 예외(점이 하나)"],
               more:
                 "<b class='rm-h'>왜 두 점이면 될까요?</b>서로 다른 두 점을 지나는 직선은 세상에 단 하나뿐이에요. 절편 두 개는 곧 축 위의 두 점이니, 찍고 잇기만 하면 직선이 유일하게 정해지죠. 일차함수의 그래프를 그리는 가장 빠른 방법 중 하나예요." +
@@ -581,6 +584,7 @@ export const M2_UNIT3: Unit = {
               name: "내려가면 음수",
               text: "x가 증가할 때 y가 감소하면 증가량이 음수, <b>기울기도 음수</b>예요.",
               color: "#E8608A",
+              art: calcMiniArt("downhill"),
               examples: ["y=−3x+7 → 기울기 −3", "'5 감소'는 '−5 증가'"],
               more:
                 "<b class='rm-h'>왜 그럴까요?</b>증가량은 (나중 값)−(처음 값)이에요. 줄어들면 나중 값이 작아 빼기 결과가 음수가 되죠. 부호 하나로 '오르는 직선인지 내리는 직선인지'까지 담아내는 것이 기울기의 힘이에요." +
@@ -715,6 +719,7 @@ export const M2_UNIT3: Unit = {
               name: "기울기 같음 = 평행 또는 일치",
               text: "기울기가 같으면 <b>평행하거나 일치</b>해요. y절편까지 같아야 일치!",
               color: "#3D5BC0",
+              art: calcMiniArt("parallel"),
               examples: ["y=2x+1 ∥ y=2x−3", "y=2x+1과 y=2x+1은 일치"],
               more:
                 "<b class='rm-h'>왜 그럴까요?</b>기울기가 같은 두 직선은 같은 x에서 세로 간격이 늘 'y절편의 차'만큼이에요. 간격이 일정하니 만날 수 없고(평행), 그 간격이 0이면 아예 같은 직선(일치)이죠. 조종실에서 점선에 딱 겹쳤던 순간이 일치예요." +
@@ -1111,6 +1116,7 @@ export const M2_UNIT3: Unit = {
               name: "x=m 세로선, y=n 가로선",
               text: "x=m은 <b>y축에 평행한 세로 직선</b>, y=n은 <b>x축에 평행한 가로 직선</b>이에요.",
               color: "#E8A93E",
+              art: calcMiniArt("axpair"),
               examples: ["x=2: (2,0)을 지나는 세로선", "y=−3: (0,−3)을 지나는 가로선"],
               more:
                 "<b class='rm-h'>왜 그런 모양일까요?</b>x=2는 'x좌표가 2인 점 전부'라는 뜻이에요. y는 조건이 없으니 위아래로 무한히 자유롭죠. 그래서 x축 위 2에서 수직으로 뻗은 세로선이 돼요. y=n은 반대로 y만 못박혀 가로선!" +
@@ -1256,6 +1262,7 @@ export const M2_UNIT3: Unit = {
               name: "해의 개수는 기울기가 말해요",
               text: "기울기 다르면 <b>해 1개</b>, 기울기 같고 y절편 다르면 <b>해 없음</b>, 둘 다 같으면 <b>무수히</b>!",
               color: "#E8608A",
+              art: calcMiniArt("coincide"),
               examples: ["y=2x+1, y=−x+4 → 1개", "y=2x+1, y=2x−3 → 없음"],
               more:
                 "<b class='rm-h'>왜 그럴까요?</b>해의 개수는 곧 교점의 개수예요. 평면의 두 직선은 만나거나(1점), 평행하거나(0점), 겹치거나(무한 점), 세 가지 말고는 길이 없죠. 그래서 해도 정확히 세 가지 경우뿐이에요." +
