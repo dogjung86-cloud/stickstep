@@ -1220,6 +1220,21 @@
 .gm-node.atom .gm-ring { border-color: rgba(124,176,36,.55); }
 .gm-node.atom:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--subj-atom); }
 .kicker.atom { background: var(--subj-atom-tint); color: var(--subj-atom-press); }
+
+/* ---------- 중2 V 식물과 에너지 단원 테마(plant · 포레스트 그린) ---------- */
+.unit-band.plant { background: var(--grad-plant); }
+.gm-terrain.plant {
+  background:
+    radial-gradient(85% 30% at 18% 8%, color-mix(in srgb, var(--n0) 64%, transparent), transparent 62%),
+    linear-gradient(180deg, var(--subj-plant-tint) 0%, color-mix(in srgb, var(--subj-plant-tint) 68%, var(--n0)) 48%, color-mix(in srgb, var(--subj-plant) 18%, var(--n0)) 100%);
+}
+.gm-path-glow.plant { stroke: color-mix(in srgb, var(--subj-plant) 24%, transparent); }
+.gm-path-done.plant { stroke: var(--subj-plant); }
+.gm-node.plant.now .gm-med, .gm-node.plant.done .gm-med { background: var(--grad-medallion-plant); }
+.gm-node.plant .gm-ring { border-color: color-mix(in srgb, var(--subj-plant) 58%, transparent); }
+.gm-node.plant:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px var(--n0), 0 0 0 6px var(--subj-plant); }
+.kicker.plant { background: var(--subj-plant-tint); color: var(--subj-plant-press); }
+.pn-badge.plant.on { border-color: var(--subj-plant); background: var(--subj-plant-tint); color: var(--subj-plant-press); }
 /* 물 비유 랩(가로) — 하단 중앙 펌프 세기 슬라이더 */
 .wc-slider { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); width: min(46%, 340px); margin: 0; }
 

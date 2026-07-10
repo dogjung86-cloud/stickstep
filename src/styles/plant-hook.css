@@ -1,0 +1,206 @@
+/* 중2 V 식물과 에너지 훅. SVG 색은 장면 defs가 소유하고, 이 파일은 상태·모션·배치만 맡는다. */
+.hk-plant {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--n200);
+  border-radius: var(--r-md);
+  background: var(--n25);
+  box-shadow: var(--sh-inset);
+}
+
+.hk-plant svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.plant-action {
+  border-color: var(--subj-plant);
+  color: var(--subj-plant-press);
+  background: var(--subj-plant-tint);
+}
+
+.plant-action:focus-visible {
+  outline: 3px solid var(--blue-tint);
+  outline-offset: 2px;
+}
+
+.plant-choices { margin-top: 10px; }
+
+/* potmass */
+.hp-potmass .pm-plant {
+  transform-box: view-box;
+  transform-origin: 121px 76px;
+  transform: translateY(20px) scale(.64);
+  transition: transform .95s var(--spring-soft), filter .7s var(--ease-out);
+}
+
+.hp-potmass .pm-needle {
+  transform-box: view-box;
+  transform-origin: 52px 130px;
+  transform: rotate(-28deg);
+  transition: transform .9s .1s var(--spring-soft);
+}
+
+.hp-potmass.grown .pm-plant {
+  transform: translateY(0) scale(1);
+  filter: saturate(1.08);
+}
+
+.hp-potmass.grown .pm-needle { transform: rotate(27deg); }
+
+/* waterweed */
+.hp-waterweed .ww-beam,
+.hp-waterweed .ww-bubbles {
+  opacity: 0;
+  transition: opacity .48s var(--ease-out);
+}
+
+.hp-waterweed .ww-bulb { transition: filter .3s var(--ease-out); }
+.hp-waterweed.lit .ww-beam,
+.hp-waterweed.lit .ww-bubbles { opacity: 1; }
+.hp-waterweed.lit .ww-bulb { filter: brightness(1.65) saturate(1.35); }
+
+.hp-waterweed .ww-weed {
+  transform-box: view-box;
+  transform-origin: 137px 123px;
+}
+
+.hp-waterweed.lit .ww-weed { animation: hpWeedSway 2.8s ease-in-out infinite; }
+.hp-waterweed.lit .ww-bubble {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hpBubbleRise 1.9s ease-in-out infinite;
+}
+.hp-waterweed.lit .ww-bubble.b2 { animation-delay: .28s; }
+.hp-waterweed.lit .ww-bubble.b3 { animation-delay: .56s; }
+.hp-waterweed.lit .ww-bubble.b4 { animation-delay: .84s; }
+.hp-waterweed.lit .ww-bubble.b5 { animation-delay: 1.12s; }
+
+@keyframes hpWeedSway {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1.5deg); }
+}
+
+@keyframes hpBubbleRise {
+  0% { opacity: 0; transform: translateY(8px) scale(.7); }
+  28% { opacity: .9; }
+  100% { opacity: 0; transform: translateY(-22px) scale(1.12); }
+}
+
+/* windowplant */
+.hp-windowplant .wp-rays { transition: opacity .55s var(--ease-out); }
+.hp-windowplant .wp-growth {
+  transform-box: view-box;
+  transition: transform .9s var(--spring-soft), filter .65s var(--ease-out);
+}
+.hp-windowplant .wp-near .wp-growth {
+  transform-origin: 71px 105px;
+  transform: scale(.72);
+}
+.hp-windowplant .wp-far .wp-growth {
+  transform-origin: 186px 105px;
+  transform: scale(.72);
+}
+.hp-windowplant.observed .wp-rays { opacity: .78; }
+.hp-windowplant.observed .wp-near .wp-growth {
+  transform: scale(1);
+  filter: saturate(1.12);
+}
+.hp-windowplant.observed .wp-far .wp-growth {
+  transform: rotate(7deg) scale(.59);
+  filter: saturate(.72) brightness(.94);
+}
+
+/* bedroomplant */
+.hp-bedroomplant .bp-dark,
+.hp-bedroomplant .bp-lamp-glow {
+  transition: opacity .7s var(--ease-out);
+}
+.hp-bedroomplant .bp-plant { transition: filter .7s var(--ease-out); }
+.hp-bedroomplant.night .bp-dark { opacity: .82; }
+.hp-bedroomplant.night .bp-lamp-glow { opacity: 0; }
+.hp-bedroomplant.night .bp-plant { filter: brightness(.82) saturate(.86); }
+.hp-bedroomplant.night .bp-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hpBreath 2.2s ease-out infinite;
+}
+.hp-bedroomplant.night .bp-pulse.p2 { animation-delay: 1.1s; }
+
+@keyframes hpBreath {
+  0% { opacity: 0; transform: scale(.76); }
+  26% { opacity: .58; }
+  100% { opacity: 0; transform: scale(1.2); }
+}
+
+/* germinating */
+.hp-germinating .gm-root,
+.hp-germinating .gm-side-root,
+.hp-germinating .gm-shoot {
+  stroke-dasharray: 110;
+  stroke-dashoffset: 110;
+}
+.hp-germinating .gm-cotyledon {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.hp-germinating .gm-drop { opacity: 0; }
+.hp-germinating.sprouted .gm-drop { animation: hpWaterDrop .65s var(--ease-out) both; }
+.hp-germinating.sprouted .gm-root { animation: hpRootGrow .9s .28s var(--ease-out) forwards; }
+.hp-germinating.sprouted .gm-side-root { animation: hpRootGrow .62s .75s var(--ease-out) forwards; }
+.hp-germinating.sprouted .gm-shoot { animation: hpRootGrow .78s .46s var(--ease-out) forwards; }
+.hp-germinating.sprouted .gm-cotyledon { animation: hpCotyledon .55s 1s var(--spring-soft) forwards; }
+
+@keyframes hpWaterDrop {
+  0% { opacity: 0; transform: translateY(-8px); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(62px) scale(.7); }
+}
+
+@keyframes hpRootGrow { to { stroke-dashoffset: 0; } }
+
+@keyframes hpCotyledon {
+  0% { opacity: 0; transform: scale(.65); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* fruitthinning */
+.hp-fruitthinning .ft-fruit {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity .5s var(--ease-out), filter .65s var(--ease-out), transform .7s var(--spring-soft);
+}
+.hp-fruitthinning .ft-flow { transition: opacity .45s .32s var(--ease-out); }
+.hp-fruitthinning.thinned .ft-remove {
+  opacity: 0;
+  filter: saturate(.5) blur(1px);
+  transform: translateY(17px) scale(.62);
+}
+.hp-fruitthinning.thinned .ft-keep {
+  transform: scale(1.16);
+  filter: saturate(1.25) brightness(1.05) drop-shadow(0 2px 2px hsl(var(--sh-c) / .22));
+}
+.hp-fruitthinning.thinned .ft-flow {
+  opacity: .9;
+  animation: hpSapFlow 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes hpSapFlow {
+  from { opacity: .35; }
+  to { opacity: .95; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hk-plant *,
+  .hk-plant *::before,
+  .hk-plant *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

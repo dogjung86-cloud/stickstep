@@ -13,6 +13,7 @@ import { G2_UNIT1 } from "./g2/unit1";
 import { G2_UNIT2 } from "./g2/unit2";
 import { G2_UNIT3 } from "./g2/unit3";
 import { G2_UNIT4 } from "./g2/unit4";
+import { G2_UNIT5 } from "./g2/unit5";
 import { G2_UNIT7 } from "./g2/unit7";
 import { G2_UNIT8 } from "./g2/unit8";
 import { MATH_CURRICULA } from "./math/curriculum";
@@ -52,7 +53,7 @@ export const CURRICULUM_G2: Unit[] = [
   G2_UNIT2,
   G2_UNIT3,
   G2_UNIT4,
-  soon("g2u5", "V", "식물과 에너지", "광합성, 식물이 양분을 만드는 법", "leaf"),
+  G2_UNIT5,
   soon("g2u6", "VI", "동물과 에너지", "소화·순환·호흡·배설의 협동", "heart"),
   G2_UNIT7,
   G2_UNIT8,

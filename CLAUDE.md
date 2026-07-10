@@ -687,3 +687,17 @@ src/
   자동 입자 뷰 폴백, 그릇 벽은 2D 오버레이 캔버스, 스텝 이탈 시 `dispose()`가 컨텍스트를 반납한다.
 - IV 단원 콘텐츠 주의: 이 교과서는 **녹는점·어는점·끓는점 용어를 도입하지 않는다** — "온도가 일정하게
   유지된다"로만 서술하고, 승화는 양방향(고↔기) 모두 같은 이름을 쓴다.
+
+## 중2 과학 V 식물과 에너지 제작 관례
+- `g2u5`는 6레슨이며 L1~L3 무료, L4~L6 프리미엄이다. 훅은 `hookPlant.ts`의 potmass·waterweed·
+  windowplant·bedroomplant·germinating·fruitthinning 6종을 쓴다.
+- 전용 랩 6종은 leafFactoryLab(`plantFactoryLab.ts`)·photoEvidenceLab(`plantEvidenceLab.ts`)·
+  photoFactorLab(`plantFactorLab.ts`)·plantRespireLab/dayNightLab(`plantRespirationLab.ts`)·
+  sugarJourneyLab(`sugarJourneyLab.ts`)이다.
+- `ui/plantKit.ts`는 식물 색·에셋 경로·잎/엽록체/기공/물질 토큰의 단일 진실 공급원이고,
+  `ui/plantFigures.ts`는 문제·recap용 과학 도해를 맡는다. `public/plant/{figs,cuts}`의 저용량 WebP와
+  코드 벡터를 결합하되, 정확한 구조·화살표·글자는 벡터/HTML로 얹는다.
+- 광합성 잎 실험은 먼저 암처리해 기존 녹말을 소모시키며, 아이오딘 반응은 포도당이 아니라 **녹말**을
+  확인한다. 식물 호흡은 낮과 밤 모두 계속되고, 체관의 설탕은 필요한 기관을 향해 위·아래로 이동한다.
+  온도는 높을수록 무조건 유리한 것이 아니라 알맞은 범위 뒤 광합성량이 감소한다.
+- QA는 DEV 서버에서 `PORT=<포트> node qa/e2e-g2u5.mjs`로 6레슨의 훅·랩·문제를 실플레이한다.

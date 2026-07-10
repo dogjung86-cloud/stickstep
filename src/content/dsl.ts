@@ -35,7 +35,7 @@ export const cut = (theme: string, name: string, alt: string, bubbles?: CutBubbl
 
 export const concept = (o: {
   kicker?: string;
-  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "elec" | "num" | "star" | "alge" | "grph" | "geom" | "solid" | "data" | "calc" | "ineq";
+  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "plant" | "elec" | "num" | "star" | "alge" | "grph" | "geom" | "solid" | "data" | "calc" | "ineq";
   title: string;
   lead?: string;
   blocks?: Block[];
@@ -119,6 +119,7 @@ export const hook = (o: {
     | "stripemount" | "foolsgold" | "dolstatue" | "bookcliff" | "pressrock" | "cappadocia" | "gravestone" | "puzzlemap" | "quakenews" | "eggearth"
     | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba"
     | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull"
+    | "potmass" | "waterweed" | "windowplant" | "bedroomplant" | "germinating" | "fruitthinning"
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar";
   choices?: string[]; cta?: string;
@@ -282,6 +283,20 @@ export const ionLab = (o: { title: string; lead?: string; cta?: string; curio?: 
   ({ type: "ionLab", ...o });
 export const ionMoveLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "ionMoveLab", ...o });
+
+// ── 중2 V 식물과 에너지 랩 ──────────────────────────────────
+export const leafFactoryLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "leafFactoryLab", ...o });
+export const photoEvidenceLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "photoEvidenceLab", ...o });
+export const photoFactorLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "photoFactorLab", ...o });
+export const plantRespireLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "plantRespireLab", ...o });
+export const dayNightLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "dayNightLab", ...o });
+export const sugarJourneyLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "sugarJourneyLab", ...o });
 // ── 중2 전기와 자기 단원(g2 VII) 랩 ─────────────────────────
 export const frictionLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "frictionLab", ...o });

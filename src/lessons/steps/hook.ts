@@ -43,6 +43,10 @@ import {
   renderZoomTwo, renderSigns, renderPeekAtom, renderMenuSort, renderSpringWater, renderMagnetPull,
 } from "./hookAtom";
 import {
+  renderPotMass, renderWaterweed, renderWindowPlant,
+  renderBedroomPlant, renderGerminating, renderFruitThinning,
+} from "./hookPlant";
+import {
   renderWinterShock, renderBalloonDoll, renderDeadClock, renderBrightPair,
   renderMultiTap, renderLabelPeek, renderCompassWire, renderEbike,
 } from "./hookElec";
@@ -88,6 +92,7 @@ interface HookStep {
     | "stripemount" | "foolsgold" | "dolstatue" | "bookcliff" | "pressrock" | "cappadocia" | "gravestone" | "puzzlemap" | "quakenews" | "eggearth"
     | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba"
     | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull"
+    | "potmass" | "waterweed" | "windowplant" | "bedroomplant" | "germinating" | "fruitthinning"
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
@@ -154,6 +159,12 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "menusort") renderMenuSort(scene, helper, finish, face);
   else if (s.scene === "springwater") sceneCleanup = renderSpringWater(scene, helper, s, finish, face);
   else if (s.scene === "magnetpull") sceneCleanup = renderMagnetPull(scene, helper, s, finish, face);
+  else if (s.scene === "potmass") sceneCleanup = renderPotMass(scene, helper, s, finish, face);
+  else if (s.scene === "waterweed") sceneCleanup = renderWaterweed(scene, helper, s, finish, face);
+  else if (s.scene === "windowplant") sceneCleanup = renderWindowPlant(scene, helper, s, finish, face);
+  else if (s.scene === "bedroomplant") sceneCleanup = renderBedroomPlant(scene, helper, s, finish, face);
+  else if (s.scene === "germinating") sceneCleanup = renderGerminating(scene, helper, s, finish, face);
+  else if (s.scene === "fruitthinning") sceneCleanup = renderFruitThinning(scene, helper, s, finish, face);
   else if (s.scene === "wintershock") sceneCleanup = renderWinterShock(scene, helper, s, finish, face);
   else if (s.scene === "balloondoll") sceneCleanup = renderBalloonDoll(scene, helper, s, finish, face);
   else if (s.scene === "deadclock") sceneCleanup = renderDeadClock(scene, helper, s, finish, face);

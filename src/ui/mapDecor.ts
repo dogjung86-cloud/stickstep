@@ -961,6 +961,50 @@ const MAP_DECOR: Record<string, string> = {
     `<linearGradient id="tc-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B85CCB"/><stop offset="1" stop-color="#8C2FA3"/></linearGradient>
     <linearGradient id="tc-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD98A"/><stop offset="1" stop-color="#EDAF45"/></linearGradient>`,
   ),
+  // ── 중2 V. 식물과 에너지 — 잎 → 기공 → 엽록체 → 꽃 → 열매 ──
+  leafDeco: S(
+    `${shadow(32, 55, 18, 0.12)}
+    <path d="M11 43 C13 16 39 8 54 13 C52 35 39 52 13 50 Z" fill="url(#pl-leaf)" stroke="var(--plant-leaf-lo)" stroke-width="1.6"/>
+    <path d="M15 47 C27 36 36 26 50 16" fill="none" stroke="var(--plant-vein)" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M27 36 L23 25 M35 29 L34 19 M37 28 L47 29" fill="none" stroke="var(--plant-vein)" stroke-width="1.2" stroke-linecap="round" opacity=".8"/>
+    <ellipse cx="23" cy="20" rx="7" ry="3" fill="var(--n0)" opacity=".32" transform="rotate(-28 23 20)"/>`,
+    `<linearGradient id="pl-leaf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--plant-leaf-hi)"/><stop offset=".55" stop-color="var(--plant-leaf)"/><stop offset="1" stop-color="var(--plant-leaf-lo)"/></linearGradient>`,
+  ),
+  stomaDeco: S(
+    `${shadow(32, 55, 17, 0.11)}
+    <ellipse cx="32" cy="31" rx="25" ry="20" fill="url(#pl-skin)" stroke="var(--plant-leaf-lo)" stroke-width="1.4"/>
+    <path d="M29 18 C15 19 14 44 28 45 C35 40 35 24 29 18 Z" fill="url(#pl-guard)" stroke="var(--plant-leaf-lo)" stroke-width="1.4"/>
+    <path d="M35 18 C49 19 50 44 36 45 C29 40 29 24 35 18 Z" fill="url(#pl-guard)" stroke="var(--plant-leaf-lo)" stroke-width="1.4"/>
+    <ellipse cx="32" cy="31.5" rx="4.2" ry="13" fill="var(--stage)"/>
+    <ellipse cx="23" cy="23" rx="4.5" ry="2.3" fill="var(--n0)" opacity=".34" transform="rotate(-24 23 23)"/>`,
+    `<linearGradient id="pl-skin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--plant-leaf-hi)"/><stop offset="1" stop-color="var(--plant-leaf)"/></linearGradient>
+    <linearGradient id="pl-guard" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--plant-vein)"/><stop offset="1" stop-color="var(--plant-leaf)"/></linearGradient>`,
+  ),
+  chloroplastDeco: S(
+    `${shadow(32, 55, 18, 0.12)}
+    <ellipse cx="32" cy="31" rx="25" ry="18" fill="url(#pl-chl)" stroke="var(--plant-leaf-lo)" stroke-width="1.8"/>
+    ${[18, 27, 37, 46].map((x) => `<g fill="var(--plant-leaf-lo)" opacity=".78"><ellipse cx="${x}" cy="27" rx="4.3" ry="2"/><ellipse cx="${x}" cy="31" rx="4.3" ry="2"/><ellipse cx="${x}" cy="35" rx="4.3" ry="2"/></g>`).join("")}
+    <path d="M13 31 C20 20 42 18 51 29" fill="none" stroke="var(--plant-vein)" stroke-width="1.3" opacity=".55"/>
+    <ellipse cx="24" cy="19" rx="7" ry="3" fill="var(--n0)" opacity=".34" transform="rotate(-12 24 19)"/>`,
+    `<radialGradient id="pl-chl" cx=".34" cy=".28" r=".9"><stop offset="0" stop-color="var(--plant-leaf-hi)"/><stop offset=".58" stop-color="var(--plant-leaf)"/><stop offset="1" stop-color="var(--plant-leaf-lo)"/></radialGradient>`,
+  ),
+  flowerDeco: S(
+    `${shadow(32, 56, 17, 0.11)}
+    <path d="M32 51 C31 41 33 32 32 24" fill="none" stroke="var(--plant-leaf-lo)" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M32 40 C21 34 17 39 20 45 C25 44 29 42 32 40 Z" fill="url(#pl-fl)" stroke="var(--plant-leaf-lo)" stroke-width="1.2"/>
+    ${[0,72,144,216,288].map((a) => `<ellipse cx="32" cy="20" rx="7" ry="12" fill="var(--n0)" stroke="var(--plant-leaf)" stroke-width="1.2" transform="rotate(${a} 32 28)"/>`).join("")}
+    <circle cx="32" cy="28" r="7" fill="var(--plant-sun)" stroke="var(--plant-soil)" stroke-width="1.3"/>
+    <ellipse cx="29" cy="25" rx="2.4" ry="1.4" fill="var(--n0)" opacity=".6"/>`,
+    `<linearGradient id="pl-fl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--plant-leaf-hi)"/><stop offset="1" stop-color="var(--plant-leaf)"/></linearGradient>`,
+  ),
+  fruitDeco: S(
+    `${shadow(32, 56, 18, 0.13)}
+    <path d="M32 18 C31 12 34 9 38 7" fill="none" stroke="var(--plant-leaf-lo)" stroke-width="3" stroke-linecap="round"/>
+    <path d="M32 18 C23 12 13 18 13 31 C13 46 23 54 32 54 C41 54 51 46 51 31 C51 18 41 12 32 18 Z" fill="url(#pl-fruit)" stroke="var(--subj-plant-press)" stroke-width="1.6"/>
+    <path d="M32 18 l-8 -5 2 8 -7 2 10 3 3 -8 3 8 10 -3 -7 -2 2 -8z" fill="var(--plant-leaf)" stroke="var(--plant-leaf-lo)" stroke-width="1"/>
+    <ellipse cx="23" cy="28" rx="5" ry="8" fill="var(--n0)" opacity=".32" transform="rotate(28 23 28)"/>`,
+    `<radialGradient id="pl-fruit" cx=".32" cy=".25" r=".9"><stop offset="0" stop-color="var(--plant-sun)"/><stop offset=".32" stop-color="var(--red)"/><stop offset="1" stop-color="var(--red-press)"/></radialGradient>`,
+  ),
   // ── 중2 수학 Ⅱ. 부등식과 연립방정식 — 제한 표지판 → 기운 저울 → 수직선 범위 → x·y 상자 쌍 → 꿩과 토끼 ──
   signDeco: S(
     `${shadow(32, 57, 14, 0.13)}

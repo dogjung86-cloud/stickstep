@@ -1,0 +1,40 @@
+/* 중2 V 식물과 에너지 전용. 모든 색은 tokens.css의 변수만 참조한다. */
+.plant-stage { overflow: hidden; }
+.plant-canvas { display: block; width: 100%; touch-action: none; cursor: grab; }
+.plant-canvas.dragging { cursor: grabbing; }
+.plant-controls { display: grid; gap: 10px; margin: 12px 0; }
+.plant-controls.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.plant-controls.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.plant-btn {
+  min-height: 46px; border: 1px solid color-mix(in srgb, var(--subj-plant) 28%, var(--n200));
+  border-radius: var(--r-md); background: var(--grad-card); color: var(--n800);
+  box-shadow: var(--sh-card); font: inherit; font-weight: 800; transition: transform .16s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+}
+.plant-btn:active { transform: scale(.965); }
+.plant-btn.on { border-color: var(--subj-plant); background: var(--subj-plant-tint); color: var(--subj-plant-press); }
+.plant-btn:disabled,
+.plant-btn:disabled:active {
+  cursor: not-allowed; opacity: .48; transform: none;
+  border-color: var(--n200); background: var(--n100); color: var(--n500); box-shadow: none;
+}
+.plant-readout {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 12px; border: 1px solid var(--n200); border-radius: var(--r-md);
+  background: var(--n0); box-shadow: var(--sh-card); color: var(--n700); font-size: 13px; font-weight: 700;
+}
+.plant-readout b { color: var(--subj-plant-press); }
+.plant-range { width: 100%; accent-color: var(--subj-plant); }
+.plant-note {
+  padding: 12px 14px; border-radius: var(--r-md); background: var(--subj-plant-tint);
+  color: var(--subj-plant-press); font-size: 13px; font-weight: 700; line-height: 1.55;
+}
+.plant-photo { display: block; width: 100%; border-radius: var(--r-lg); }
+.plant-photo-wrap { position: relative; overflow: hidden; border-radius: var(--r-lg); background: var(--n0); box-shadow: var(--sh-card); }
+.plant-label {
+  position: absolute; transform: translate(-50%, -50%); padding: 4px 9px; border-radius: 999px;
+  background: color-mix(in srgb, var(--n0) 92%, transparent); color: var(--n800);
+  box-shadow: var(--sh-card); font-size: 11px; font-weight: 850; white-space: nowrap;
+}
+@media (max-width: 390px) {
+  .plant-controls.three { grid-template-columns: 1fr; }
+}

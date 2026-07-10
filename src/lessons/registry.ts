@@ -65,6 +65,11 @@ import { elementLab, moleculeLab } from "./steps/chemParticles";
 import { atomLab, ionLab } from "./steps/chemAtom";
 import { periodicLab } from "./steps/chemTable";
 import { ionMoveLab } from "./steps/chemIonMove";
+import { leafFactoryLab } from "./steps/plantFactoryLab";
+import { photoEvidenceLab } from "./steps/plantEvidenceLab";
+import { photoFactorLab } from "./steps/plantFactorLab";
+import { plantRespireLab, dayNightLab } from "./steps/plantRespirationLab";
+import { sugarJourneyLab } from "./steps/sugarJourneyLab";
 import { pairMatch } from "./steps/pairMatch";
 import { formulaLab } from "./steps/formulaLab";
 import { frictionLab, rubLab } from "./steps/elecStatic";
@@ -227,6 +232,12 @@ const R: Record<string, StepRenderer> = {
   periodicLab,
   ionLab,
   ionMoveLab,
+  leafFactoryLab,
+  photoEvidenceLab,
+  photoFactorLab,
+  plantRespireLab,
+  dayNightLab,
+  sugarJourneyLab,
   pairMatch,
   formulaLab,
   frictionLab,
