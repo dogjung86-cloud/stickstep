@@ -56,13 +56,13 @@ const sheetContinue = async (timeout = 9000) => {
 };
 const quiz = async (i) => {
   await page.waitForSelector(".screen.active .opts .opt", { timeout: 9000 });
-  await page.evaluate((i) => document.querySelectorAll(".screen.active .opts .opt")[i].click(), i);
+  await page.evaluate((i) => document.querySelector(`.screen.active .opts .opt[data-oi="${i}"]`).click(), i);
   await W(220); await clickCTA(); await sheetContinue();
 };
 const multiPick = async (idxs) => {
   await page.waitForSelector(".screen.active .opts .opt", { timeout: 9000 });
   for (const i of idxs) {
-    await page.evaluate((i) => document.querySelectorAll(".screen.active .opts .opt")[i].click(), i);
+    await page.evaluate((i) => document.querySelector(`.screen.active .opts .opt[data-oi="${i}"]`).click(), i);
     await W(160);
   }
   await clickCTA(); await sheetContinue();

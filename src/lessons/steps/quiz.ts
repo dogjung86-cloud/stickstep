@@ -15,6 +15,8 @@ interface QuizStep {
   figureDark?: boolean;
   options?: string[];
   answer: number | boolean | number[];
+  /** false면 표시 순서를 저작 순서로 고정 — ㄱㄴㄷ 조합·(가)(나)·①~⑤ 라벨형 보기용 */
+  shuffle?: boolean;
   explainGood?: string;
   explainBad?: string;
 }
@@ -61,30 +63,42 @@ function renderChoice(host: HTMLElement, q: QuizStep, api: StepAPI, mode: "mcq" 
   let locked = false;
   const answerSet = new Set<number>(Array.isArray(q.answer) ? q.answer : [q.answer as number]);
 
-  const cards = opts.map((text, i) => {
-    const card = el("button", { class: "opt", html: `${text}<span class="radio">${CHECK}</span>` });
+  // 표시 순서만 셔플(hookAsk 문법) — selected·answerSet·cards는 전부 저작 인덱스 기준이라
+  // 채점·해설은 그대로다. "첫 보기=정답" 패턴 학습 방지. 라벨형 보기는 shuffle: false로 고정.
+  const order = opts.map((_, i) => i);
+  if (q.shuffle !== false) {
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+  }
+
+  const cards: HTMLButtonElement[] = []; // 저작 인덱스 → 카드
+  for (const oi of order) {
+    const card = el("button", { class: "opt", html: `${opts[oi]}<span class="radio">${CHECK}</span>` });
+    if (import.meta.env.DEV) card.dataset.oi = String(oi); // e2e가 셔플 무관하게 보기를 집는 열쇠(dev 전용)
     card.addEventListener("click", () => {
       if (locked) return;
       haptic(HAPTIC.select);
       if (mode === "multi") {
-        if (selected.has(i)) {
-          selected.delete(i);
+        if (selected.has(oi)) {
+          selected.delete(oi);
           card.classList.remove("sel");
         } else {
-          selected.add(i);
+          selected.add(oi);
           card.classList.add("sel");
         }
       } else {
         selected.clear();
-        selected.add(i);
+        selected.add(oi);
         cards.forEach((c) => c.classList.remove("sel"));
         card.classList.add("sel");
       }
       api.setCTA("확인하기", { enabled: selected.size > 0, onClick: confirm, pop: true });
     });
     box.appendChild(card);
-    return card;
-  });
+    cards[oi] = card;
+  }
 
   function confirm(): void {
     if (locked || selected.size === 0) return;

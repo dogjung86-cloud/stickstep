@@ -66,12 +66,12 @@ const sheetContinue = async (timeout = 9000) => {
 };
 const quiz = async (i) => {
   await page.waitForSelector(".opts .opt", { timeout: 9000 });
-  await page.evaluate((i) => document.querySelectorAll(".opts .opt")[i].click(), i);
+  await page.evaluate((i) => document.querySelector(`.opts .opt[data-oi="${i}"]`).click(), i);
   await W(220); await clickCTA(); await sheetContinue();
 };
 const multiQuiz = async (idxs) => {
   await page.waitForSelector(".opts .opt", { timeout: 9000 });
-  for (const i of idxs) { await page.evaluate((i) => document.querySelectorAll(".opts .opt")[i].click(), i); await W(160); }
+  for (const i of idxs) { await page.evaluate((i) => document.querySelector(`.opts .opt[data-oi="${i}"]`).click(), i); await W(160); }
   await clickCTA(); await sheetContinue();
 };
 const oxPick = async (v) => {
@@ -206,7 +206,7 @@ await clickCTA();
 await clickCTA(); // concept
 await clickCTA(); // recap
 await quiz(0);
-await multiQuiz([0, 1]);
+await multiQuiz([1, 2]); // 대각선 판별 ㉡,㉢ — shuffle:false 라벨, ㉠㉡㉢㉣ 관례순 재배열로 정답이 1·2번째
 await oxPick(false);
 await drill([9, 5, 54, 4, 17, 8]);
 await clickBtn("홈으로", 900).catch(() => {});
@@ -333,7 +333,7 @@ await W(1500);
 await clickCTA();
 await clickCTA();
 await clickCTA();
-await quiz(0);
+await quiz(1); // 현 ㉡ — shuffle:false 라벨, ㉠㉡㉢㉣ 관례순 재배열로 정답이 2번째 칸
 await binSortAuto([["피자", "부채꼴"], ["반달", "활꼴"], ["부채", "부채꼴"], ["식빵", "활꼴"]]);
 await oxPick(true);
 await drill([180, 2, 4, 2]);
@@ -577,18 +577,17 @@ await drill([36, 144, 4, 8, 18, 36]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L13 완료");
 
-/* ================= L14 보스전 ================= */
-await openLesson("보스전");
+/* ================= L14 부피 비율 3:2:1 (구 보스전 — 5111be0에서 아르키메데스 묘비 레슨으로 개편) ================= */
+await openLesson("부피 비율");
 log(`L14: ${await h1()}`);
 await waitBtn("이끼 걷어 내기", 2600);
 await hookChoice();
-await clickCTA();
-await clickCTA(); // 브리핑
+await clickCTA(); // 훅 → 검산 준비
+await clickCTA(); // concept(전설의 비율)
 await clickCTA(); // recap
-await quiz(0);
-await oxPick(true);
-await quiz(0);
-await drill([44, 60, 1080, 15, 25, 2, 9, 5, 20, 36]);
+await quiz(0); // 원기둥:구 = 3:2
+await oxPick(true); // 뿔 = 기둥의 1/3
+await drill([20, 12, 36, 18, 10, 6]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L14 완료");
 

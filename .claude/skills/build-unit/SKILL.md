@@ -182,6 +182,8 @@ location.reload();                       // eval 1
 - [ ] 훅 전수: choices[0]=정답, good≠bad, 소재명은 도입에서 소개, neutral 훅에 정답 칭찬 없음
 - [ ] recap 전 카드에 more(rm-h 2~4개, 400~800자) + fun 유지
 - [ ] 문제: 그림 문제 ≥1, 능동형(binSort/order/hotspot) ≥1, explainBad가 오개념 교정형
+- [ ] mcq/multi 셔플 규칙: 라벨형 보기(ㄱㄴㄷ 조합·(가)(나)·①~⑤)는 `shuffle: false` + 관례 순서로 저작,
+      해설이 보기 "위치"(N번째)를 지칭하지 않음 (표시 순서는 렌더 셔플 — CLAUDE.md '퀴즈 유형' 참조)
 - [ ] 학년 언어 규칙 grep: 중1 파일에 `분자` 0건, unit4에 `녹는점|끓는점|어는점` 0건, UI 문구에 `교과서` 0건, 이모지 0건
 - [ ] 이미지: 발주 원본 png 삭제·webp만 존재, 이미지 안 글자 없음, 외부 출처는 photos/CREDITS.md 기재
 - [ ] 랩: cleanup 완비(루프·리스너), setPointerCapture try/catch, 3D는 dispose 확인

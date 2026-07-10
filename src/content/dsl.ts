@@ -35,7 +35,7 @@ export const cut = (theme: string, name: string, alt: string, bubbles?: CutBubbl
 
 export const concept = (o: {
   kicker?: string;
-  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "elec" | "num" | "star" | "alge" | "grph" | "geom" | "solid" | "data" | "calc";
+  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "elec" | "num" | "star" | "alge" | "grph" | "geom" | "solid" | "data" | "calc" | "ineq";
   title: string;
   lead?: string;
   blocks?: Block[];
@@ -51,9 +51,11 @@ export const table = (o: {
   cta?: string;
 }): Step => ({ type: "table", ...o });
 
+// mcq/multi 보기는 렌더 시 표시 순서가 셔플된다(채점은 저작 인덱스 기준).
+// ㄱㄴㄷ 조합·(가)(나)·①~⑤처럼 순서가 관례인 라벨형 보기만 shuffle: false로 고정한다.
 export const mcq = (o: {
   n?: number; of?: number; prompt: string; figure?: string; figureDark?: boolean;
-  options: string[]; answer: number; explainGood?: string; explainBad?: string;
+  options: string[]; answer: number; shuffle?: boolean; explainGood?: string; explainBad?: string;
 }): Step => ({ type: "quiz", mode: "mcq", ...o });
 
 export const ox = (o: {
@@ -63,7 +65,7 @@ export const ox = (o: {
 
 export const multi = (o: {
   n?: number; of?: number; prompt: string; figure?: string; figureDark?: boolean;
-  options: string[]; answer: number[]; explainGood?: string; explainBad?: string;
+  options: string[]; answer: number[]; shuffle?: boolean; explainGood?: string; explainBad?: string;
 }): Step => ({ type: "quiz", mode: "multi", ...o });
 
 export const order = (o: {
@@ -348,6 +350,7 @@ export const orgLevels = (o: Obj): Step => ({ type: "orgLevels", ...o });
 export const finchSim = (o: Obj): Step => ({ type: "finchSim", ...o });
 export const microscope = (o: Obj): Step => ({ type: "microscope", ...o });
 export const dichotomKey = (o: Obj): Step => ({ type: "dichotomKey", ...o });
+export const biodiversityLab = (o: Obj): Step => ({ type: "biodiversityLab", ...o });
 
 export function lesson(l: Lesson): Lesson {
   return l;

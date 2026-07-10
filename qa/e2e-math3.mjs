@@ -63,12 +63,12 @@ const sheetContinue = async (timeout = 9000) => {
 };
 const quiz = async (i) => {
   await page.waitForSelector(".opts .opt", { timeout: 9000 });
-  await page.evaluate((i) => document.querySelectorAll(".opts .opt")[i].click(), i);
+  await page.evaluate((i) => document.querySelector(`.opts .opt[data-oi="${i}"]`).click(), i);
   await W(220); await clickCTA(); await sheetContinue();
 };
 const multiQuiz = async (idxs) => {
   await page.waitForSelector(".opts .opt", { timeout: 9000 });
-  for (const i of idxs) { await page.evaluate((i) => document.querySelectorAll(".opts .opt")[i].click(), i); await W(160); }
+  for (const i of idxs) { await page.evaluate((i) => document.querySelector(`.opts .opt[data-oi="${i}"]`).click(), i); await W(160); }
   await clickCTA(); await sheetContinue();
 };
 const oxPick = async (v) => {

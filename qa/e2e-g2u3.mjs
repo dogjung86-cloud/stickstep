@@ -61,7 +61,7 @@ const sheetContinue = async (timeout = 9000) => {
 // 퀴즈: n번 보기 → 확인 → 시트 계속
 const quiz = async (optIdx) => {
   await page.waitForSelector(".opts .opt", { timeout: 9000 });
-  await page.evaluate((i) => document.querySelectorAll(".opts .opt")[i].click(), optIdx);
+  await page.evaluate((i) => document.querySelector(`.opts .opt[data-oi="${i}"]`).click(), optIdx);
   await W(240);
   await clickCTA();
   await sheetContinue();
@@ -472,8 +472,8 @@ try {
     ["칼림바", "높낮이"], ["피아노", "높낮이"],
     ["플루트", "음색"], ["목소리", "음색"],
   ]);
-  await quiz(0);
-  await quiz(2);
+  await quiz(1); // 파형 (가),(다) — shuffle:false 라벨 조합, 정답 2번째 칸
+  await quiz(2); // 실로폰 ㉢
   await oxPick(true);
   await finishLesson();
 
