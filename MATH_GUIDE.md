@@ -339,6 +339,44 @@
   ○●수직선 표기. **금지**: '연립부등식'(고교), 일차함수·기울기·그래프의 직선(중2 Ⅲ 선행 —
   crossLab 점만), 부등식의 영역(고교). ×0 곱하기는 성질에서 제외됨을 curio로만 언급.
 
+## 중2 Ⅲ. 일차함수 : 레슨 설계표 (책 94~137쪽, 10레슨: 무료 3 + 프리미엄 7)
+
+| id | 제목 | 훅(일상 미스터리) | 핵심 랩 | 마무리 | prem |
+|---|---|---|---|---|---|
+| m2u3l1 | 함수: 하나에 하나씩 | vendbox 자판기 vs 랜덤박스(정해지는 대응) | funcLab 대응 기계 검사소(약수 반례·상수 함정) | 판별 binSort+그래프 f(2) 그림 mcq+함숫값 드릴 | 무료 |
+| m2u3l2 | 일차함수: y=ax+b | bubbletea 버블티 기본값+토핑 500원 | (concept 선행, 판별 조작이 용어 전제) 판별 binSort | 상황→식 mcq+판별 코드 드릴 | 무료 |
+| m2u3l3 | 평행이동: 나란히 옮기기 | twinlift 같은 속도 두 엘리베이터 | shiftGraphLab 직선 통째로 끌기(연결선 +b·모양 판정) | 이동량 mcq+방향 binSort+드릴 | 무료 |
+| m2u3l4 | 절편: 축과 만나는 곳 | giftcard 기프트카드 잔액 0의 날 | interceptLab 절편 수집(두 절편 긋기+원점 함정 부채 회전) | 절편 계산·그림 mcq+그리기 order+드릴 | ✓ |
+| m2u3l5 | 기울기: 기울어진 정도의 수 | slide 같은 높이 두 미끄럼틀 | **slopeLab(기함)** 두 핸들 계단 세모(어디서 재도 같은 비율·음수) | 세모 그림 mcq+부호 binSort+드릴 | ✓ |
+| m2u3l6 | 그래프의 성질: 방향과 평행 | updown 두 채널 구독자 그래프 | lineFamilyLab a·b 조종실(방향·절벽·평행 미션, 일치 함정) | 성질 multi+사분면 그림+가파름 binSort+드릴 | ✓ |
+| m2u3l7 | 일차함수의 식 구하기 | bonekey 법의학 뼈 한 조각 | lineBuildLab 직선 복원 수사대(기울기 판정 끼움) | 유형별 mcq 3+절차 order+그림 mcq+드릴 | ✓ |
+| m2u3l8 | 일차함수의 활용 | stalactite 종유석 100년 | (concept 4단계, 랩 없음) | 4단계 order+양초·기온 mcq+x절편 그림+예측 드릴 | ✓ |
+| m2u3l9 | 일차함수와 일차방정식 | twomask 방정식 카드의 뒷면 | lineRevealLab 해 점등(crossLab "한 줄 예감" 회수+x=2 함수 판정) | 변신 mcq+세로선 그림+함수 binSort+multi+드릴 | ✓ |
+| m2u3l10 | 그래프와 연립방정식 | chase 자전거 추격전 | meetLab 두 직선 교차 실험(한 점·평행·일치 3국면+검산 카드) | 교점 mcq·그림+해 개수 binSort+드릴 | ✓ |
+
+- 소단원 순서 준수: 일차함수와 그 그래프(01 함수 → 02 일차함수와 그 그래프 → 03 그래프의 성질) →
+  일차함수와 일차방정식의 관계(01 일차함수와 일차방정식 → 02 그래프와 연립일차방정식).
+- 신규 파일: content/math/g2/unit3.ts, steps/hookM2u3.ts(10장면)+랩 8종(funcLab·shiftGraphLab·
+  interceptLab·slopeLab·lineFamilyLab·lineBuildLab·lineRevealLab·meetLab), mathFigures2에
+  **lineFig**(planeSpec 기반 Ⅲ 직선 그림 공용 헬퍼 — lines/dots/tri(계단 세모)/vert(x=m 세로선))+
+  미니아트 9종(func·linear·shiftg·icept·slope·family·build·reveal·meet). 컷은 math2/cuts/u3lN.
+- 테마 m2u3 = `func`(틸 그린 #0CA678 — solid 포레스트·bio 민트와 구분되는 청록), 지도 장식 =
+  함수 기계 → 나란한 두 직선 → 절편 점 → 기울기 세모 → 교점(단원 여정 순).
+- **직선 조작 공용 문법**: 원점 픽셀 transform-origin에 `translateY(-b·unit) rotate(-atan(a))`
+  (lineLab 계승 — lineFamily·lineBuild·meet 3랩 공유). 스테퍼는 .lfm-step(aria-label "a 키우기" 등 —
+  e2e가 이 라벨로 조작), a는 0.5 스텝에 0 건너뛰기.
+- **용어 선경험**: 함수·평행이동·절편·기울기 전부 랩 조작 뒤 명명(funcLab은 '함수' 단어 없이
+  "하나로 딱 정해지나요?"로 판정). L2 일차함수만 concept 선행(판별 조작이 용어를 전제 — Ⅱ L3·L4 예외 규칙).
+- **e2e mq6 판단 질문 대기는 연출 체인 총 시간으로**: 선택 → 연출(스핀 등) → 칩 점등이 3.7초 체인인
+  interceptLab에서 3초 대기가 50ms 차이로 재시도를 돌려 타임아웃(질문은 이미 제거됨) — 실제 사고.
+  드라이버 대기는 체인 끝(칩 점등)까지 넉넉히.
+- **언어 범위(중2 Ⅲ)**: 함수/함숫값/y=f(x)/일차함수/평행이동/x절편·y절편/기울기/직선의 방정식 도입.
+  '기울기'는 이 단원이 정식 도입(중1 Ⅲ 금지 용어의 해금). 연립방정식·해(Ⅱ 기왕)는 자유 사용.
+  **금지**: 정의역·치역·공역(고교), x축 방향 평행이동(교과서 제외 — curio로만), '상수함수' 명칭
+  (y=7은 "일차함수가 아니다"로만), 이차함수(중3 — 예고 멘트에서만 이름 언급).
+- QA: `PORT=<포트> node qa/e2e-m2u3.mjs`(10레슨 실플레이 — 기계 검사 판정·직선 드래그·격자 탭·
+  핸들 계단 세모·a/b 스테퍼·해 점등·교점 3국면·binSort/order/multi·넘패드 드릴 전부).
+
 ## 학년 언어 규칙 (수학 중1)
 
 - 이 교과서 범위: 소수/합성수/거듭제곱(밑·지수)/소인수분해/서로소/최대공약수/최소공배수/

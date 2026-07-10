@@ -100,7 +100,18 @@ export const mathHook = (o: {
     | "boats" // 보트 6대에 14명, 조건 두 개
     | "bingsu" // 과일빙수는 팥빙수보다 3000원 비싸다
     | "combo" // 세트 메뉴 두 장, 가격 차의 정체
-    | "pheasant"; // 손자산경, 머리 35에 다리 94
+    | "pheasant" // 손자산경, 머리 35에 다리 94
+    // ── 중2 Ⅲ 일차함수 (hookM2u3.ts) ──
+    | "vendbox" // 자판기 vs 랜덤박스, 정해지는 대응
+    | "bubbletea" // 버블티 토핑, 기본값+개당 500원
+    | "twinlift" // 같은 속도 두 엘리베이터, 나란한 그래프
+    | "giftcard" // 기프트카드 잔액 0의 날, 축과 만나는 점
+    | "slide" // 같은 높이 두 미끄럼틀, (세로)/(가로) 비율
+    | "updown" // 두 채널 구독자 그래프, 방향의 정체
+    | "bonekey" // 법의학 뼈 한 조각, 관계식의 위력
+    | "stalactite" // 종유석의 100년, 일정 변화의 예측
+    | "twomask" // 방정식 카드의 뒷면, 같은 직선 두 이름
+    | "chase"; // 자전거 추격전, 교점 = 따라잡는 순간
   choices?: string[];
   cta?: string;
 }): Step => ({ type: "mathHook", ...o });
@@ -444,3 +455,37 @@ export const subSlotLab = (o: { title: string; lead?: string; cta?: string; curi
 /** 가감법 랩, 두 식 카드를 나란히 놓고 변끼리 더하거나 빼 한 미지수를 소거한다(×2 확대경 포함). */
 export const elimLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "elimLab", ...o });
+
+/* ── 중2 Ⅲ 일차함수 ─────────────────────────────────────── */
+
+/** 대응 기계 검사소, 수 기계 3대를 검사하며 "x 하나에 y 오직 하나"를 발견한다(상수 함정 포함). */
+export const funcLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "funcLab", ...o });
+
+/** 평행이동 랩, y=2x 직선을 통째로 끌어 올리고 내리며 "모든 점이 같이 +b"를 발견한다. */
+export const shiftGraphLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "shiftGraphLab", ...o });
+
+/** 절편 수집 랩, 직선이 축과 만나는 점을 탭해 절편을 읽고, 절편 두 개로 직선을 고정한다(원점 함정). */
+export const interceptLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "interceptLab", ...o });
+
+/** 기울기 랩(기함), 직선 위 두 점의 계단 세모(가로·세로 증가량)로 어디서 재도 같은 비율을 발견한다. */
+export const slopeLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "slopeLab", ...o });
+
+/** 직선 가족 랩, a·b 스테퍼로 방향(a부호)·가파름(|a|)·평행(기울기 같음)을 발견한다(일치 함정). */
+export const lineFamilyLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "lineFamilyLab", ...o });
+
+/** 직선 복원 랩, 단서(기울기·점·두 점)에 맞춰 a·b를 조종해 일차함수의 식을 복원한다. */
+export const lineBuildLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "lineBuildLab", ...o });
+
+/** 해 점등 랩, 일차방정식의 해를 격자에 찍고 수 전체로 확장해 직선을 완성한다(x=m 수직선 포함). */
+export const lineRevealLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "lineRevealLab", ...o });
+
+/** 교점 실험 랩, 두 직선을 조종해 한 점(해 1)·평행(해 0)·일치(해 무수)를 전부 만들어 본다. */
+export const meetLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "meetLab", ...o });

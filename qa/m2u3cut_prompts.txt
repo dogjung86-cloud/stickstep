@@ -1,0 +1,45 @@
+# 스틱맨 개념 컷 — 중2 수학 Ⅲ(일차함수) concept 10장 (전부 가로 4:3)
+# 폴더: public/math2/cuts (이름 = u3lM). 장면 규칙: 그 레슨의 훅·랩 소재 재활용 금지(새 각도),
+# 숫자·글자 대신 사물·개수·손짓으로.
+#
+# ── 스타일 블록 A (전 컷 공용 — 스틱맨 만화) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+
+# ══ 중2 수학 Ⅲ 일차함수 → public/math2/cuts ══
+
+[0] file=public/math2/cuts/u3l1.png (landscape 4:3, 스타일 A)
+A stick figure stands at a school shoe-cubby wall, a neat grid of small open cubbies, each cubby holding exactly one pair of shoes. The figure slides their own pair into the one empty cubby that belongs to them, with a satisfied face. Only the pair of shoes in the figure's hands is teal; everything else pure black and white.
+
+[1] file=public/math2/cuts/u3l2.png (landscape 4:3, 스타일 A)
+A stick figure climbs a staircase drawn in clean side view: the staircase does not start on the floor but on top of a low solid platform, and every step above it has exactly the same rise. The figure is mid-climb, one foot lifted to the next step. Only the low starting platform under the staircase is teal; everything else pure black and white.
+
+[2] file=public/math2/cuts/u3l3.png (landscape 4:3, 스타일 A)
+A stick figure on a small stool re-hangs a picture frame on a wall, lifting it straight up: the old position of the frame is shown as a dashed ghost outline lower on the wall, and the figure holds the identical frame a bit higher, perfectly level, same tilt. Only the picture frame in the figure's hands is teal; everything else pure black and white.
+
+[3] file=public/math2/cuts/u3l4.png (landscape 4:3, 스타일 A)
+A stick figure diver in clean side view leaps from a springboard toward calm water drawn as one long flat horizontal line, arms stretched, fingertips about to touch the surface at exactly one spot where a small splash rises. Only the small splash at the meeting point is teal; everything else pure black and white.
+
+[4] file=public/math2/cuts/u3l5.png (landscape 4:3, 스타일 A)
+Two ladders lean against the same wall in clean side view: one ladder stands very steep, the other leans long and shallow, both reaching the same rooftop edge. A stick figure at the bottom looks up, one hand on each ladder, comparing them with a puzzled face. Only the steep ladder is teal; everything else pure black and white.
+
+[5] file=public/math2/cuts/u3l6.png (landscape 4:3, 스타일 A)
+Two stick figure skiers glide down a snowy hill in side view, leaving two long straight trails behind them that run perfectly parallel, never meeting, evenly spaced all the way. Both skiers lean in the same pose, scarves flying. Only one of the two parallel trails is teal; everything else pure black and white.
+
+[6] file=public/math2/cuts/u3l7.png (landscape 4:3, 스타일 A)
+A stick figure detective with a deerstalker hat crouches over snowy ground, holding a magnifying glass over two separate footprints; a long straight dashed line passes exactly through both footprints and extends beyond them across the panel. The detective traces the dashed line with one finger. Only the dashed straight line is teal; everything else pure black and white.
+
+[7] file=public/math2/cuts/u3l8.png (landscape 4:3, 스타일 A)
+A stick figure kneels beside a small potted plant, holding a plain measuring stick with evenly spaced tick marks but no numerals next to the stem; beside them sits the same plant in a second pot, clearly taller, with a bright sun above. The figure looks from one plant to the other, imagining growth. Only the young plant's leaves are teal; everything else pure black and white.
+
+[8] file=public/math2/cuts/u3l9.png (landscape 4:3, 스타일 A)
+A stick figure stands face to face with their own reflection in a tall full-length mirror, pressing one palm flat against the reflected palm through the glass, the two poses matching perfectly like one being in two forms. Only the mirror's frame is teal; everything else pure black and white.
+
+[9] file=public/math2/cuts/u3l10.png (landscape 4:3, 스타일 A)
+Bird's-eye view of two straight footpaths crossing at a single intersection in a park; two stick figures, each having walked along a different path shown by their own dotted trail of footsteps, meet exactly at the crossing point and high-five. Only the crossing point where the two paths overlap is teal; everything else pure black and white.

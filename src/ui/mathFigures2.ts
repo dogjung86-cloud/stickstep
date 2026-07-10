@@ -533,6 +533,83 @@ const MINI: Record<string, [string, string]> = {
      <line x1="10" y1="58" x2="62" y2="58" stroke="#A9631B" stroke-width="2.2" stroke-linecap="round"/>`,
     "",
   ],
+  // ── 중2 Ⅲ 일차함수(틸 그린) ──
+  // 대응 기계(x 하나에 y 하나)
+  func: [
+    `<rect x="16" y="24" width="40" height="26" rx="8" fill="url(#mi-tl2)" stroke="#067D57" stroke-width="1.5"/>
+     <rect x="30" y="18" width="12" height="6" rx="3" fill="#0B3B2C"/>
+     <rect x="30" y="50" width="12" height="6" rx="3" fill="#0B3B2C"/>
+     <circle cx="36" cy="10" r="4.6" fill="url(#mi-tl)" stroke="#067D57" stroke-width="1.2"/>
+     <circle cx="36" cy="62" r="4.6" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.2"/>
+     <circle cx="36" cy="37" r="4" fill="#067D57"/>`,
+    "",
+  ],
+  // 계단(시작 단 + 일정 오르기 = ax+b)
+  linear: [
+    `<rect x="10" y="48" width="18" height="10" rx="3" fill="url(#mi-tl)" stroke="#067D57" stroke-width="1.3"/>
+     <path d="M28 48 h12 v-10 h12 v-10 h12" stroke="#0A8F67" stroke-width="3" fill="none" stroke-linejoin="round"/>
+     <path d="M28 58 h36 v-40" stroke="#C8DAD2" stroke-width="1.6" fill="none"/>`,
+    "",
+  ],
+  // 나란한 두 직선(평행이동)
+  shiftg: [
+    `<line x1="12" y1="54" x2="58" y2="20" stroke="url(#mi-tl)" stroke-width="4" stroke-linecap="round"/>
+     <line x1="12" y1="40" x2="58" y2="6" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 5"/>
+     <path d="M30 40 v-10" stroke="#E8A93E" stroke-width="2.4" stroke-linecap="round"/>
+     <path d="M30 28 l-3.4 4.6 h6.8 z" fill="#E8A93E"/>`,
+    "",
+  ],
+  // 축과 만나는 두 점(절편)
+  icept: [
+    `<line x1="8" y1="44" x2="62" y2="44" stroke="#64748B" stroke-width="2"/>
+     <line x1="24" y1="60" x2="24" y2="8" stroke="#64748B" stroke-width="2"/>
+     <line x1="10" y1="58" x2="60" y2="14" stroke="url(#mi-tl)" stroke-width="3.4" stroke-linecap="round"/>
+     <circle cx="42" cy="30" r="5" fill="url(#mi-tl)" stroke="#067D57" stroke-width="1.4" transform="translate(-1.8 14)"/>
+     <circle cx="24" cy="45.6" r="5" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.4" transform="translate(0 -20)"/>`,
+    "",
+  ],
+  // 기울기 세모(가로·세로 증가량)
+  slope: [
+    `<line x1="10" y1="56" x2="60" y2="16" stroke="url(#mi-tl)" stroke-width="3.6" stroke-linecap="round"/>
+     <path d="M22 46 h20 v-16" stroke="#E8A93E" stroke-width="2.6" fill="none" stroke-dasharray="4 3" stroke-linejoin="round"/>
+     <circle cx="22" cy="46" r="4.2" fill="url(#mi-tl)" stroke="#067D57" stroke-width="1.2"/>
+     <circle cx="42" cy="30" r="4.2" fill="url(#mi-tl)" stroke="#067D57" stroke-width="1.2"/>`,
+    "",
+  ],
+  // 방향 두 갈래(a의 부호)
+  family: [
+    `<line x1="12" y1="52" x2="58" y2="18" stroke="url(#mi-tl)" stroke-width="3.8" stroke-linecap="round"/>
+     <line x1="12" y1="18" x2="58" y2="52" stroke="url(#mi-rs)" stroke-width="3.8" stroke-linecap="round"/>
+     <path d="M58 18 l-8 .5 4.4 6.6 z" fill="#0A8F67"/>
+     <path d="M58 52 l-8 -.5 4.4 -6.6 z" fill="#D8465C"/>`,
+    "",
+  ],
+  // 돋보기 속 직선(단서로 복원)
+  build: [
+    `<circle cx="32" cy="32" r="18" fill="url(#mi-lens)" stroke="#5E6C78" stroke-width="2.6"/>
+     <line x1="22" y1="40" x2="42" y2="24" stroke="url(#mi-tl)" stroke-width="3.2" stroke-linecap="round"/>
+     <circle cx="27" cy="36" r="3" fill="#E8A93E" stroke="#8C5A12" stroke-width="1"/>
+     <circle cx="38" cy="27" r="3" fill="#E8A93E" stroke="#8C5A12" stroke-width="1"/>
+     <line x1="45" y1="46" x2="56" y2="57" stroke="#5E6C78" stroke-width="4.4" stroke-linecap="round"/>`,
+    "",
+  ],
+  // 점들이 이어져 직선(방정식의 그래프)
+  reveal: [
+    `<line x1="10" y1="56" x2="60" y2="14" stroke="url(#mi-tl)" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 7"/>
+     <circle cx="18" cy="49.3" r="3.6" fill="url(#mi-tl)" stroke="#067D57" stroke-width="1.1"/>
+     <circle cx="32" cy="37.5" r="3.6" fill="url(#mi-tl)" stroke="#067D57" stroke-width="1.1"/>
+     <circle cx="46" cy="25.8" r="3.6" fill="url(#mi-tl)" stroke="#067D57" stroke-width="1.1"/>
+     <line x1="10" y1="30" x2="34" y2="30" stroke="#94A3B8" stroke-width="1.6"/>
+     <line x1="22" y1="18" x2="22" y2="42" stroke="#94A3B8" stroke-width="1.6"/>`,
+    "",
+  ],
+  // 교차 X + 교점(연립방정식의 해)
+  meet: [
+    `<line x1="10" y1="18" x2="60" y2="50" stroke="url(#mi-bl)" stroke-width="3.4" stroke-linecap="round"/>
+     <line x1="10" y1="52" x2="60" y2="16" stroke="url(#mi-tl)" stroke-width="3.4" stroke-linecap="round"/>
+     <circle cx="34.5" cy="33.7" r="6" fill="#FFFFFF" stroke="#C2255C" stroke-width="2.4"/>`,
+    "",
+  ],
 };
 
 /** recap 카드 미니아트 — calcMiniArt("divide" | "cycle" | "denom" | "shift" | "pow" | "mono" | "poly" | "expand") */
@@ -549,6 +626,74 @@ export function calcMiniArt(key: string): string {
     <radialGradient id="mi-gr" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#7BE3AE"/><stop offset="1" stop-color="#0BA05F"/></radialGradient>
     <linearGradient id="mi-crm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBF3E4"/><stop offset="1" stop-color="#EDD9B4"/></linearGradient>
     <linearGradient id="mi-br2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#C98A3D"/><stop offset="1" stop-color="#8C5A1E"/></linearGradient>
-    <radialGradient id="mi-bl" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#7FA8F2"/><stop offset="1" stop-color="#2F6FE4"/></radialGradient>`,
+    <radialGradient id="mi-bl" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#7FA8F2"/><stop offset="1" stop-color="#2F6FE4"/></radialGradient>
+    <linearGradient id="mi-tl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4ECBA0"/><stop offset="1" stop-color="#0A8F67"/></linearGradient>
+    <linearGradient id="mi-tl2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DFF5EC"/><stop offset="1" stop-color="#A5E0CC"/></linearGradient>
+    <linearGradient id="mi-rs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F58C9C"/><stop offset="1" stop-color="#D8465C"/></linearGradient>
+    <radialGradient id="mi-lens" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#F2FAFF"/><stop offset="1" stop-color="#CBE2F2"/></radialGradient>`,
   );
+}
+
+/* ── 중2 Ⅲ 범용 직선 그림(lineFig) ─────────────────────────────
+   좌표평면은 mathKit planeSpec이 단일 진실 공급원(직접 축 그리기 금지 관례).
+   lines: y=ax+b(또는 vert: x=m 세로선), dots: 강조점(+라벨), tri: 기울기 계단 세모.
+   퀴즈 figure 전용 — 랩은 각 스텝 렌더러가 같은 planeSpec으로 직접 그린다. */
+import { planeSpec } from "./mathKit";
+
+export interface LineFigLine {
+  a?: number;
+  b?: number;
+  vert?: number; // x=m 세로선(a·b 대신)
+  color?: string;
+  dash?: boolean;
+  label?: string;
+  lx?: number; // 라벨을 얹을 x 위치(기본 2.6)
+}
+
+export function lineFig(o: {
+  lines: LineFigLine[];
+  dots?: { x: number; y: number; color?: string; label?: string; below?: boolean }[];
+  tri?: { x1: number; x2: number; a: number; b: number }; // 세모를 그릴 직선의 a·b와 가로 구간
+  min?: number;
+  max?: number;
+}): string {
+  const spec = planeSpec({ min: o.min ?? -5, max: o.max ?? 5, size: 260 });
+  const PALETTE = ["#0CA678", "#E8608A", "#3D5BC0", "#E8A93E"];
+  let g = "";
+  o.lines.forEach((ln, i) => {
+    const color = ln.color ?? PALETTE[i % PALETTE.length];
+    if (ln.vert != null) {
+      g += `<line x1="${spec.px(ln.vert)}" y1="${spec.py(spec.min - 0.6)}" x2="${spec.px(ln.vert)}" y2="${spec.py(spec.max + 0.6)}" stroke="${color}" stroke-width="3"${ln.dash ? ' stroke-dasharray="7 5"' : ""} stroke-linecap="round"/>`;
+      if (ln.label)
+        g += `<text x="${spec.px(ln.vert) + 7}" y="${spec.py(spec.max - 0.8)}" font-size="11" font-weight="800" font-style="italic" fill="${color}">${ln.label}</text>`;
+      return;
+    }
+    const a = ln.a ?? 1;
+    const b = ln.b ?? 0;
+    const t = spec.max + 1.2;
+    g += `<line x1="${spec.px(-t)}" y1="${spec.py(a * -t + b)}" x2="${spec.px(t)}" y2="${spec.py(a * t + b)}" stroke="${color}" stroke-width="3"${ln.dash ? ' stroke-dasharray="7 5"' : ""} stroke-linecap="round"/>`;
+    if (ln.label) {
+      const lx = ln.lx ?? 2.6;
+      g += `<text x="${spec.px(lx)}" y="${spec.py(a * lx + b) + (a >= 0 ? -9 : 15)}" font-size="11" font-weight="800" font-style="italic" fill="${color}">${ln.label}</text>`;
+    }
+  });
+  if (o.tri) {
+    const { x1, x2, a, b } = o.tri;
+    const cx = spec.px(x2);
+    const cy = spec.py(a * x1 + b);
+    const run = x2 - x1;
+    const rise = a * (x2 - x1);
+    g +=
+      `<line x1="${spec.px(x1)}" y1="${cy}" x2="${cx}" y2="${cy}" stroke="#E8A93E" stroke-width="2.2" stroke-dasharray="5 4"/>` +
+      `<line x1="${cx}" y1="${cy}" x2="${cx}" y2="${spec.py(a * x2 + b)}" stroke="${rise >= 0 ? "#0DA5C6" : "#E8608A"}" stroke-width="2.2" stroke-dasharray="5 4"/>` +
+      `<text x="${(spec.px(x1) + cx) / 2}" y="${cy + 15}" text-anchor="middle" font-size="10.5" font-weight="900" fill="#B87708">+${run}</text>` +
+      `<text x="${cx + 6}" y="${(cy + spec.py(a * x2 + b)) / 2 + 4}" font-size="10.5" font-weight="900" fill="${rise >= 0 ? "#0B7285" : "#C2255C"}">${rise >= 0 ? "+" + rise : "−" + Math.abs(rise)}</text>`;
+  }
+  for (const d of o.dots ?? []) {
+    const color = d.color ?? "#E8A93E";
+    g += `<circle cx="${spec.px(d.x)}" cy="${spec.py(d.y)}" r="5" fill="${color}" stroke="#4A3208" stroke-width="1.2" opacity=".95"/>`;
+    if (d.label)
+      g += `<text x="${spec.px(d.x) + 8}" y="${spec.py(d.y) + (d.below ? 15 : -8)}" font-size="10.5" font-weight="900" fill="#334155">${d.label}</text>`;
+  }
+  return svg(spec.vb, spec.grid + g);
 }

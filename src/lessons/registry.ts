@@ -174,6 +174,14 @@ import { pairLab } from "./steps/pairLab";
 import { crossLab } from "./steps/crossLab";
 import { subSlotLab } from "./steps/subSlotLab";
 import { elimLab } from "./steps/elimLab";
+import { funcLab } from "./steps/funcLab";
+import { shiftGraphLab } from "./steps/shiftGraphLab";
+import { interceptLab } from "./steps/interceptLab";
+import { slopeLab } from "./steps/slopeLab";
+import { lineFamilyLab } from "./steps/lineFamilyLab";
+import { lineBuildLab } from "./steps/lineBuildLab";
+import { lineRevealLab } from "./steps/lineRevealLab";
+import { meetLab } from "./steps/meetLab";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -343,6 +351,14 @@ const R: Record<string, StepRenderer> = {
   crossLab,
   subSlotLab,
   elimLab,
+  funcLab,
+  shiftGraphLab,
+  interceptLab,
+  slopeLab,
+  lineFamilyLab,
+  lineBuildLab,
+  lineRevealLab,
+  meetLab,
   quiz,
   table,
   order,

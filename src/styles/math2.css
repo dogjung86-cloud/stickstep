@@ -43,6 +43,26 @@
 .gm-node.ineq:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px #A9631B; }
 .kicker.ineq { background: #F8EEDD; color: #7F4A12; }
 
+/* ---------- 단원 테마: func(중2 Ⅲ · 틸 그린 — solid 포레스트·bio 민트와 구분되는 청록, 우상향 직선의 서사) ---------- */
+.unit-band.func { background: linear-gradient(150deg, #4ECBA0 0%, #0CA678 55%, #067D57 100%); }
+.gm-terrain.func {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #DDF5EB, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #D0F0E2, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #D6F2E6, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #BEE9D6, transparent 72%),
+    linear-gradient(180deg, #F4FCF8 0%, #E6F7EF 55%, #D3EFE2 100%);
+}
+.gm-path-glow.func { stroke: rgba(12,166,120,.22); }
+.gm-path-done.func { stroke: #0CA678; }
+.gm-node.func.now .gm-med, .gm-node.func.done .gm-med {
+  background: radial-gradient(120% 120% at 32% 26%, #4ECBA0 0%, #0CA678 58%, #067D57 100%);
+}
+.gm-node.func .gm-ring { border-color: rgba(12,166,120,.55); }
+.gm-node.func:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px #0CA678; }
+.kicker.func { background: #E7F8F1; color: #067D57; }
+
 /* ============================================================
    Ⅰ 랩 공용(mq21-) — 패널·안내·판단 질문 줄(Ⅵ mq6- 문법 계승)
    ============================================================ */
@@ -1424,3 +1444,172 @@
 .isl-hole.off { opacity: 0; animation: none; }
 @keyframes islHolePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
 .mq6-q.isl-q { background: #F8EEDD; border-color: rgba(169,99,27,.5); color: #7F4A12; }
+
+/* ============================================================
+   Ⅲ 일차함수 랩 공용 — 판단 질문 줄은 mq6-q에 func 톤만 입힌다
+   랩 접두: fnl(funcLab)·sgl(shiftGraphLab)·icl(interceptLab)·spl(slopeLab)·
+   lfm(lineFamilyLab)·lbd(lineBuildLab)·lrv(lineRevealLab)·mel(meetLab — mtl은 math.css 선점)
+   ============================================================ */
+.mq6-q.fnl-q, .mq6-q.m2u3q { background: #E7F8F1; border-color: rgba(12,166,120,.5); color: #067D57; }
+
+/* ---------- funcLab(.fnl-) 대응 기계 검사소 ---------- */
+.fnl-title { margin-bottom: 10px; }
+.fnl-in { display: flex; justify-content: center; gap: 12px; padding: 2px 0 12px; }
+.fnl-chip {
+  min-width: 64px; padding: 12px 14px; border-radius: 14px; border: 2px solid #0CA678;
+  background: linear-gradient(180deg, #FFFFFF 0%, #EAF9F3 100%);
+  font-size: 20px; font-weight: 800; color: #067D57;
+  box-shadow: var(--sh-card); transition: transform .18s var(--ease-out), opacity .3s, filter .3s;
+}
+.fnl-chip:active { transform: scale(.94); }
+.fnl-chip.used { opacity: .3; filter: grayscale(1); transform: scale(.86); }
+.fnl-mac {
+  position: relative; margin: 0 auto; width: min(300px, 84%);
+  border-radius: 18px; border: 2.4px solid #0A8F67;
+  background: linear-gradient(160deg, #DFF5EC 0%, #BFEBDB 55%, #A5E0CC 100%);
+  padding: 20px 14px 22px; text-align: center;
+  box-shadow: var(--sh-raise);
+  transition: transform .45s var(--spring-soft), opacity .45s;
+}
+.fnl-mac.enter { transform: translateY(14px) scale(.94); opacity: 0; }
+.fnl-mac.chew { animation: fnlChew .5s ease-in-out; }
+@keyframes fnlChew {
+  0%, 100% { transform: none; }
+  25% { transform: rotate(-2.2deg) scale(1.03); }
+  55% { transform: rotate(2deg) scale(.985); }
+  80% { transform: rotate(-1deg) scale(1.01); }
+}
+.fnl-mouth, .fnl-chute {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  width: 84px; height: 12px; border-radius: 7px; background: #0B3B2C;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.45);
+}
+.fnl-mouth { top: -6px; }
+.fnl-chute { bottom: -6px; }
+.fnl-face { display: flex; align-items: center; justify-content: center; gap: 9px; }
+.fnl-face b { font-size: 16.5px; color: #06543C; letter-spacing: -.012em; }
+.fnl-gear {
+  width: 15px; height: 15px; border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #7FE0BD 0%, #0CA678 70%);
+  border: 2px solid #067D57; display: inline-block;
+}
+.fnl-mac.passed { border-color: #04B45F; }
+.fnl-mac.failed { border-color: #F04452; background: linear-gradient(160deg, #FBE9E9 0%, #F5D4D6 60%, #EFC3C6 100%); }
+.fnl-stamp {
+  position: absolute; top: -12px; right: -8px; transform: rotate(8deg);
+  padding: 6px 11px; border-radius: 999px; font-size: 13px; font-weight: 900; color: #fff;
+  box-shadow: var(--sh-cta); transition: transform .4s var(--spring-bounce);
+}
+.fnl-stamp.ok { background: linear-gradient(160deg, #2BBA8C, #067D57); }
+.fnl-stamp.no { background: linear-gradient(160deg, #F26D79, #D93440); }
+.fnl-log { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; min-height: 46px; padding: 14px 4px 6px; }
+.fnl-pair {
+  display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px;
+  border-radius: 12px; border: 1.6px solid #C8DAD2; background: #FFFFFF;
+  font-size: 15px; font-weight: 700; color: #334155;
+  box-shadow: var(--sh-card); transition: transform .4s var(--spring-bounce);
+}
+.fnl-pair b { color: #067D57; font-weight: 900; }
+.fnl-arr { color: #94A3B8; font-weight: 800; }
+.fnl-ys { font-weight: 800; }
+.fnl-pair.multi { border-color: #F04452; background: #FFF5F5; }
+.fnl-pair.multi .fnl-ys { color: #D93440; }
+.fnl-cnt { font-style: normal; font-size: 11.5px; font-weight: 900; color: #fff; background: #F04452; border-radius: 999px; padding: 2px 7px; }
+
+/* ---------- shiftGraphLab(.sgl-) 직선 통째로 옮기기 ---------- */
+.sgl-eq { margin-bottom: 8px; }
+.sgl-eq .mx { font-size: 19px; }
+
+/* ---------- interceptLab(.icl-) 절편 수집 ---------- */
+.icl-q { margin-bottom: 8px; }
+.icl-spin { animation: iclSpin 2.4s ease-in-out infinite alternate; }
+@keyframes iclSpin {
+  0% { transform: rotate(18deg); }
+  100% { transform: rotate(160deg); }
+}
+
+/* ---------- slopeLab(.spl-) 기울기 측정소 ---------- */
+.spl-ratio {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-bottom: 8px; padding: 10px 14px; border-radius: 14px;
+  background: #FFFFFF; border: 1.6px solid #C8DAD2; box-shadow: var(--sh-card);
+  min-height: 52px; flex-wrap: wrap;
+}
+.spl-fr .mx { font-size: 18px; }
+.spl-eqs { font-weight: 800; color: #64748B; }
+.spl-val { font-size: 22px; font-weight: 900; color: #067D57; }
+.spl-val.neg { color: #C2255C; }
+.spl-cap { width: 100%; text-align: center; font-size: 11px; font-weight: 700; color: #8093A8; }
+.spl-h { cursor: grab; }
+
+/* ---------- lineFamilyLab(.lfm-) 직선 가족 조종실 + 공용 스테퍼 ---------- */
+.lfm-eq { margin-bottom: 6px; }
+.lfm-eq .mx { font-size: 18px; }
+.lfm-dir { display: flex; justify-content: center; gap: 8px; margin-bottom: 6px; }
+.lfm-pill {
+  padding: 5px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 800;
+  border: 1.4px solid; transition: all .25s var(--ease-out);
+}
+.lfm-pill.up { color: #067D57; background: #E7F8F1; border-color: rgba(12,166,120,.5); }
+.lfm-pill.down { color: #C2255C; background: #FDF0F4; border-color: rgba(232,96,138,.5); }
+.lfm-pill.sub { color: #64748B; background: #F1F5F9; border-color: #DBE3EC; }
+.lfm-ctl { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; padding: 10px 0 4px; }
+.lfm-step { display: flex; align-items: center; gap: 8px; }
+.lfm-read { min-width: 74px; text-align: center; font-size: 16px; font-weight: 800; color: #334155; }
+.lfm-read i { font-style: italic; color: #067D57; margin-right: 2px; }
+.lfm-read b { font-size: 18px; }
+
+/* ---------- lineBuildLab(.lbd-) 직선 복원 수사대 ---------- */
+.lbd-clue {
+  margin-bottom: 8px; padding: 11px 14px; border-radius: 14px;
+  background: linear-gradient(160deg, #FFF9EC 0%, #FCF0D8 100%);
+  border: 1.6px solid #E8C86E; box-shadow: var(--sh-card);
+  font-size: 14px; color: #6B4E10; line-height: 1.5;
+}
+.lbd-k {
+  display: inline-block; margin-right: 6px; padding: 2px 9px; border-radius: 999px;
+  background: #B87708; color: #fff; font-size: 11.5px; font-weight: 900;
+}
+.lbd-eq { margin-top: 6px; }
+.lbd-eq .mx { font-size: 18px; }
+
+/* ---------- lineRevealLab(.lrv-) 해 점등 ---------- */
+.lrv-eq { margin-bottom: 8px; }
+.lrv-eq .mx { font-size: 18px; }
+.lrv-hint { font-size: 12px; font-weight: 700; color: #8093A8; margin-left: 6px; }
+.lrv-morph {
+  display: none; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+  margin-top: 8px; padding: 11px 14px; border-radius: 14px;
+  background: #FFFFFF; border: 1.6px solid #C8DAD2; box-shadow: var(--sh-card);
+}
+.lrv-morph.show { display: flex; animation: lrvMorphIn .5s var(--spring-soft) both; }
+@keyframes lrvMorphIn { 0% { opacity: 0; transform: translateY(8px) scale(.96); } 100% { opacity: 1; transform: none; } }
+.lrv-arr { font-weight: 900; color: #0CA678; font-size: 18px; }
+.lrv-m1 .mx, .lrv-m2 .mx { font-size: 17px; }
+.lrv-m2 { padding: 3px 10px; border-radius: 10px; background: #E7F8F1; border: 1.4px solid rgba(12,166,120,.45); }
+.lrv-tag { width: 100%; text-align: center; font-size: 12px; font-weight: 800; color: #067D57; }
+
+/* ---------- meetLab(.mel-) 두 직선 교차 실험실 ---------- */
+.mel-status {
+  display: flex; align-items: center; justify-content: center; gap: 9px; flex-wrap: wrap;
+  margin-bottom: 8px; padding: 10px 12px; border-radius: 14px;
+  background: #FFFFFF; border: 1.6px solid #C8DAD2; box-shadow: var(--sh-card);
+}
+.mel-status .mx { font-size: 16px; }
+.mel-pill { padding: 4px 11px; border-radius: 999px; font-size: 12px; font-weight: 900; border: 1.4px solid; }
+.mel-pill.one { color: #C2255C; background: #FDF0F4; border-color: rgba(194,37,92,.4); }
+.mel-pill.zero { color: #64748B; background: #F1F5F9; border-color: #DBE3EC; }
+.mel-pill.inf { color: #067D57; background: #E7F8F1; border-color: rgba(12,166,120,.5); }
+.mel-co { font-size: 12.5px; font-weight: 700; color: #64748B; }
+.mel-check {
+  display: none; margin-top: 8px; padding: 11px 14px; border-radius: 14px;
+  background: linear-gradient(160deg, #FDF6EC 0%, #FBEBD2 100%);
+  border: 1.6px solid #E8C86E; font-size: 13px; color: #6B4E10; line-height: 1.6;
+}
+.mel-check.show { display: block; animation: lrvMorphIn .5s var(--spring-soft) both; }
+.mel-ck {
+  display: inline-block; margin-right: 6px; padding: 2px 9px; border-radius: 999px;
+  background: #B87708; color: #fff; font-size: 11px; font-weight: 900;
+}
+.mel-ok { display: inline-block; margin: 2px 4px 2px 0; padding: 2px 8px; border-radius: 8px; background: #E7F8F1; color: #067D57; font-weight: 800; font-size: 12px; }
+.mel-glow line { filter: drop-shadow(0 0 6px rgba(240,140,0,.75)); }

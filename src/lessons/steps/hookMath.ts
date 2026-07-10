@@ -38,6 +38,10 @@ import {
   renderEggsize, renderColder, renderRollercoaster, renderGroupticket, renderFourcut,
   renderBoats, renderBingsu, renderCombo, renderPheasant,
 } from "./hookM2u2";
+import {
+  renderVendbox, renderBubbletea, renderTwinlift, renderGiftcard, renderSlide,
+  renderUpdown, renderBonekey, renderStalactite, renderTwomask, renderChase,
+} from "./hookM2u3";
 import type { StepRenderer } from "../types";
 
 type Face = (k: AvatarKind) => void;
@@ -171,6 +175,17 @@ export const mathHook: StepRenderer = (host, step, api) => {
     bingsu: renderBingsu,
     combo: renderCombo,
     pheasant: renderPheasant,
+    // 중2 Ⅲ 일차함수(hookM2u3.ts)
+    vendbox: renderVendbox,
+    bubbletea: renderBubbletea,
+    twinlift: renderTwinlift,
+    giftcard: renderGiftcard,
+    slide: renderSlide,
+    updown: renderUpdown,
+    bonekey: renderBonekey,
+    stalactite: renderStalactite,
+    twomask: renderTwomask,
+    chase: renderChase,
   };
   const fn = fns[s.scene];
   if (fn) fn(scene, helper, finish, face, s.choices);

@@ -186,6 +186,17 @@ src/
   **crossLab은 직선 금지·격자 점만**(일차함수는 중2 Ⅲ 선행), '연립부등식'은 고교 과정이라 금지.
   innerHTML 문자열의 `a<b`는 `&lt;` 이스케이프 필수(단 recap examples는 textContent라 raw <) —
   상세는 MATH_GUIDE.md 중2 Ⅱ 표. QA: `PORT=<포트> node qa/e2e-m2u2.mjs`(퀴즈 보기는 data-oi로 클릭).
+- **중2 수학 Ⅲ(m2u3, 일차함수) 완성** — 10레슨(무료 3+프리미엄 7), 테마 `func`(틸 그린 #0CA678).
+  신규: content/math/g2/unit3.ts·steps/hookM2u3.ts(10장면)+랩 8종(funcLab·shiftGraphLab·
+  interceptLab·slopeLab 기함·lineFamilyLab·lineBuildLab·lineRevealLab·meetLab — 직선 조작은
+  원점 픽셀 기준 translateY+rotate 공용 문법)·mathFigures2에 lineFig(planeSpec 기반 Ⅲ 직선 그림
+  공용: lines/dots/계단 세모/x=m 세로선)+미니아트 9종. '기울기'는 이 단원이 정식 도입(중1 Ⅲ 금지
+  해금), lineRevealLab이 Ⅱ crossLab의 "점들이 한 줄로" 예고를 회수한다. 컷 u3lN은 2/10 확보
+  (u3l1·u3l5 검수 완료) — 잔여 8컷은 다른 세션 codex 발주 종료 후 `bash qa/order-m2u3cuts-rest.sh`
+  (병렬 codex 금지 규칙 준수로 보류). **codex 0.144+는 이미지를 공용 tmp/가 아니라 exec별
+  `~/.codex/generated_images/<uuid>/`에 생성 후 복사**(구버전 tmp/ 충돌 사고의 원인 구조가 바뀜 —
+  그래도 검증 전까지 동시 발주는 계속 금지). 상세는 MATH_GUIDE.md 중2 Ⅲ 표.
+  QA: `PORT=<포트> node qa/e2e-m2u3.mjs`.
 - **과목 차원**: `store.viewSubject`("sci"|"math") + `curriculum.ts`의 `CURRICULA_OF`/`subjectOfUnit`.
   과목 전환 창구는 **과목 허브뿐**(subject.ts) — main.ts `pickSubject()`가 setViewSubject 후 `goHome()`으로
   홈을 재생성한다(nav.back은 이전 과목 홈을 보여주므로 금지). 이때 lastUnitId를 반드시 비운다.
