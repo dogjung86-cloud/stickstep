@@ -124,9 +124,11 @@ export const renderVendbox: SceneFn = (scene, helper, finish, face, choices) => 
 /* 2 bubbletea: 버블티 토핑, 기본값 + 개당 500원, 일정하게 커지는 규칙(일차함수의 몸) */
 export const renderBubbletea: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
+  // 펄 4알을 컵 중심(x=180)에 정렬 — 4알 폭 39px의 절반을 빼서 시작(160.5). 컵 벽 안쪽 검산:
+  // 가장 낮은 줄 y=160에서 벽은 x≈144.8~215.2, 펄 양 끝은 155.1~204.9로 여유 있게 안쪽이다.
   const pearlRow = (id: number, y: number): string =>
     `<g id="bt-top${id}" style="opacity:0; transition: opacity .4s, transform .45s ${SPRING}; transform: translateY(-6px)">
-      ${[0, 1, 2, 3].map((i) => `<circle cx="${142 + i * 13}" cy="${y}" r="5.4" fill="url(#bt-pearl)" stroke="#3E2723" stroke-width="1.2"/>`).join("")}
+      ${[0, 1, 2, 3].map((i) => `<circle cx="${160.5 + i * 13}" cy="${y}" r="5.4" fill="url(#bt-pearl)" stroke="#3E2723" stroke-width="1.2"/>`).join("")}
     </g>`;
   fig.innerHTML = wrapSvg(
     `${CARD}
