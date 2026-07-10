@@ -6,6 +6,13 @@ export interface LessonProgress {
   bestXp: number;
 }
 
+/** 단원 종합 평가 기록 — 응시(제출 완료 기준)·최고 점수·정복 인증. */
+export interface ExamRecord {
+  attempts: number; // 제출 완료 횟수 — 1회 무료, 재응시는 프리미엄
+  best: number; // 최고 점수(100점 만점)
+  conquered: boolean; // 단원 100% 정복 상태로 응시해 얻은 인증 배지
+}
+
 export interface AppState {
   version: number;
   onboarded: boolean;
@@ -20,6 +27,7 @@ export interface AppState {
   totalXp: number;
   lessons: Record<string, LessonProgress>;
   minigame: Record<string, number>; // gameId -> 최고 점수
+  exams: Record<string, ExamRecord>; // examId -> 단원 종합 평가 기록
 }
 
 const KEY = "science-app.v1";
@@ -38,6 +46,7 @@ const DEFAULT_STATE: AppState = {
   totalXp: 0,
   lessons: {},
   minigame: {},
+  exams: {},
 };
 
 function dayKey(d = new Date()): string {
@@ -141,6 +150,19 @@ export function currentStreak(): number {
   return gap <= 1 ? state.streak : 0;
 }
 
+/** 오늘을 학습일로 기록(스트릭 갱신) — 레슨 완료·시험 제출 공용. */
+function touchStudyDay(): void {
+  const today = dayKey();
+  if (state.lastStudyDay !== today) {
+    const gap = state.lastStudyDay ? daysBetween(state.lastStudyDay, today) : 999;
+    state.streak = gap === 1 ? state.streak + 1 : 1;
+    state.lastStudyDay = today;
+  } else if (state.streak === 0) {
+    state.streak = 1;
+    state.lastStudyDay = today;
+  }
+}
+
 /** 레슨 완료 처리. 스트릭·XP 갱신 후 획득 XP를 반환. */
 export function completeLesson(id: string, acc: number, xp: number): number {
   const prev = lessonOf(id);
@@ -151,15 +173,7 @@ export function completeLesson(id: string, acc: number, xp: number): number {
     bestXp: Math.max(prev.bestXp, xp),
   };
 
-  const today = dayKey();
-  if (state.lastStudyDay !== today) {
-    const gap = state.lastStudyDay ? daysBetween(state.lastStudyDay, today) : 999;
-    state.streak = gap === 1 ? state.streak + 1 : 1;
-    state.lastStudyDay = today;
-  } else if (state.streak === 0) {
-    state.streak = 1;
-    state.lastStudyDay = today;
-  }
+  touchStudyDay();
 
   const gained = firstClear ? xp : Math.round(xp * 0.3); // 복습은 30%
   state.totalXp += gained;
@@ -179,6 +193,38 @@ export function spendXp(n: number): boolean {
 export function awardXp(n: number): void {
   state.totalXp += Math.max(0, Math.round(n));
   save();
+}
+
+// ── 단원 종합 평가 ──────────────────────────────────────────
+export function examRecordOf(examId: string): ExamRecord {
+  return state.exams?.[examId] ?? { attempts: 0, best: 0, conquered: false };
+}
+
+/** 재응시 잠금 — 단원당 1회 무료, 두 번째부터 프리미엄(검토 모드는 해제). */
+export function isExamRetakeLocked(examId: string): boolean {
+  return examRecordOf(examId).attempts >= 1 && !state.premium && !state.reviewMode;
+}
+
+/** 시험 제출 처리 — 응시 횟수·최고 점수·정복 인증 기록.
+ *  XP는 스타 게임 문법: 신기록 갱신분(새 최고점 − 이전 최고점)만 지급해 파밍을 막는다. */
+export function recordExamResult(
+  examId: string,
+  score: number,
+  conqueredNow: boolean,
+): { gained: number; newBest: boolean } {
+  if (!state.exams) state.exams = {};
+  const prev = examRecordOf(examId);
+  const newBest = score > prev.best;
+  const gained = newBest ? score - prev.best : 0;
+  state.exams[examId] = {
+    attempts: prev.attempts + 1,
+    best: Math.max(prev.best, score),
+    conquered: prev.conquered || conqueredNow,
+  };
+  touchStudyDay();
+  state.totalXp += gained;
+  save();
+  return { gained, newBest };
 }
 
 export function bestScore(gameId: string): number {

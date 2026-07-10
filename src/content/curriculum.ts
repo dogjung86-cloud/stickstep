@@ -95,6 +95,15 @@ export function findLesson(id: string): { unit: Unit; lesson: Lesson; index: num
   return null;
 }
 
+/** 단원 찾기 — 단원 종합 평가 화면 등 unitId만 아는 곳에서 쓴다. */
+export function findUnit(unitId: string): Unit | null {
+  for (const cur of [CURRICULUM, CURRICULUM_G2, MATH_CURRICULA.g1, MATH_CURRICULA.g2]) {
+    const u = cur.find((x) => x.id === unitId);
+    if (u) return u;
+  }
+  return null;
+}
+
 /** 단원이 속한 학년 — 레슨 완료 후 홈이 올바른 학년 지도로 복귀할 때 쓴다. */
 export function gradeOfUnit(unitId: string): GradeId {
   if (subjectOfUnit(unitId) === "math") return MATH_CURRICULA.g2.some((u) => u.id === unitId) ? "g2" : "g1";

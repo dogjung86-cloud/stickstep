@@ -3,8 +3,9 @@ import { el, clear, afterPaint } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { BRAND } from "../core/brand";
-import { getState, currentStreak, isDone, lessonOf, getViewGrade, setViewGrade, getViewSubject, toggleReviewMode, isReviewMode } from "../core/store";
+import { getState, currentStreak, isDone, lessonOf, getViewGrade, setViewGrade, getViewSubject, toggleReviewMode, isReviewMode, examRecordOf } from "../core/store";
 import { CURRICULA_OF, GRADE_LABEL, gradeOfUnit, subjectOfUnit, isUnlocked, isPremiumLocked, unitProgress, type Unit, type GradeId, type SubjectId } from "../content/curriculum";
+import { examForUnit } from "../content/exams";
 import { serpentine, smoothPath, pathUpTo } from "../ui/serpentine";
 import { mapDecorArt } from "../ui/mapDecor";
 import type { Screen } from "../core/router";
@@ -18,7 +19,7 @@ export function homeScreen(
   onOpenLesson: (id: string) => void,
   onOpenGame: (unitId: string) => void,
   focusUnitId?: string,
-  nav2?: { onSubjects?: () => void; onLogin?: () => void },
+  nav2?: { onSubjects?: () => void; onLogin?: () => void; onOpenExam?: (unitId: string) => void },
 ): Screen {
   const st = getState();
   // 과목·학년 트랙 — 방금 학습한 단원이 있으면 그 단원의 과목·학년으로 따라간다.
@@ -280,6 +281,26 @@ export function homeScreen(
       nodesLayer.appendChild(node);
       return node;
     });
+
+    // 단원 종합 평가 노드 — 레슨 진행과 무관하게 항상 열려 있다(레슨 뒤·보너스 게임 앞)
+    const exam = examForUnit(u.id);
+    if (exam) {
+      const rec = examRecordOf(exam.id);
+      const med = el("div", { class: "gm-med", attrs: { "aria-hidden": "true" }, html: icon("target", 32) });
+      const node = el("button", {
+        class: `gm-node exam ${theme} ${rec.conquered ? "conq" : ""}`,
+        attrs: { "aria-label": `단원 종합 평가 — ${rec.best > 0 ? `최고 ${rec.best}점` : "언제든 도전 가능"}` },
+      }, med);
+      if (rec.conquered) node.appendChild(el("div", { class: "gm-ribbon gold", text: "정복 인증" }));
+      node.appendChild(el("div", { class: "gm-label", text: "단원 종합 평가" }));
+      if (rec.best > 0) node.appendChild(el("div", { class: "gm-exam-best", text: `최고 ${rec.best}점` }));
+      node.addEventListener("click", () => {
+        haptic(HAPTIC.tap);
+        nav2?.onOpenExam?.(u.id);
+      });
+      nodesLayer.appendChild(node);
+      nodeEls.push(node);
+    }
 
     // 보너스 미니게임 노드 — 단원 100% 정복 시 해제
     if (game) {

@@ -13,7 +13,7 @@ const BENEFITS = [
   { icon: "trophy", t: "대단원 정복 문제 세트", s: "시험 대비 총정리까지 한 번에" },
 ];
 
-export function paywallScreen(opts: { lessonTitle?: string; onUnlocked: () => void; onClose: () => void }): Screen {
+export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlocked: () => void; onClose: () => void }): Screen {
   const close = el("button", { class: "backbtn", attrs: { "aria-label": "닫기" }, html: icon("x", 22) });
   close.addEventListener("click", () => {
     haptic(HAPTIC.tap);
@@ -28,9 +28,11 @@ export function paywallScreen(opts: { lessonTitle?: string; onUnlocked: () => vo
     el("div", { class: "pw-title", text: `${BRAND.name} 프리미엄` }),
     el("div", {
       class: "pw-sub",
-      text: opts.lessonTitle
-        ? `‘${opts.lessonTitle}’를 포함한 모든 프리미엄 레슨을 열 수 있어요.`
-        : "모든 프리미엄 레슨을 잠금 해제해요.",
+      text:
+        opts.sub ??
+        (opts.lessonTitle
+          ? `‘${opts.lessonTitle}’를 포함한 모든 프리미엄 레슨을 열 수 있어요.`
+          : "모든 프리미엄 레슨을 잠금 해제해요."),
     }),
   );
 

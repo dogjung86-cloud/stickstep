@@ -1,0 +1,16 @@
+// 단원 종합 평가 레지스트리 — 단원 id → 시험 정의.
+// 새 단원 시험을 추가하면 여기와 해당 단원 풀 파일(content/exams/<unit>*.ts)만 만들면 된다.
+import type { ExamDef } from "./types";
+import { U3_EXAM } from "./u3";
+
+export type { ExamDef, ExamItem, ExamItemType } from "./types";
+export { drawExamItems } from "./types";
+
+const EXAMS: Record<string, ExamDef> = {
+  u3: U3_EXAM,
+};
+
+/** 단원에 종합 평가가 있으면 정의를 반환(홈 지도 노드·라우팅의 근거). */
+export function examForUnit(unitId: string): ExamDef | null {
+  return EXAMS[unitId] ?? null;
+}

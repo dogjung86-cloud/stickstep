@@ -15,6 +15,7 @@ import { doneScreen } from "./screens/done";
 import { minigameScreen } from "./screens/minigame";
 import { starGameScreen } from "./screens/starGame";
 import { paywallScreen } from "./screens/paywall";
+import { examScreen } from "./screens/exam";
 import { createLessonPlayer } from "./lessons/player";
 import { findLesson, isPremiumLocked } from "./content/curriculum";
 
@@ -25,7 +26,29 @@ nav.init(frame);
 let lastUnitId: string | undefined;
 
 function goHome(): void {
-  nav.reset(homeScreen(openLesson, openGame, lastUnitId, { onSubjects: openSubjects, onLogin: openLogin }));
+  nav.reset(homeScreen(openLesson, openGame, lastUnitId, { onSubjects: openSubjects, onLogin: openLogin, onOpenExam: openExam }));
+}
+
+/** 단원 종합 평가 — 항상 열린 지도 노드에서 진입. 재응시 잠금은 화면 안에서 페이월로 안내한다. */
+function openExam(unitId: string): void {
+  lastUnitId = unitId;
+  nav.go(
+    examScreen(unitId, {
+      onExit: goHome,
+      onOpenLesson: openLesson,
+      onPaywall: (unlocked) =>
+        nav.go(
+          paywallScreen({
+            sub: "단원 종합 평가를 무제한으로 다시 풀고, 모든 프리미엄 레슨도 함께 열 수 있어요.",
+            onUnlocked: () => {
+              nav.back();
+              unlocked();
+            },
+            onClose: () => nav.back(),
+          }),
+        ),
+    }),
+  );
 }
 
 /** 과목 허브(홈에서 재진입) — 과목을 고르면 그 과목 지도로 홈을 다시 그린다. */
