@@ -46,7 +46,18 @@ export const recap: StepRenderer = (host, step, api) => {
   const cardsBox = el("div", { class: "rc-cards" });
   s.cards.forEach((c, i) => {
     const body = el("div", { class: "rc-body" });
-    body.appendChild(el("div", { class: "rc-name" }, el("span", { class: "rc-dot", style: c.color ? `background:${c.color}` : "" }), el("span", { html: c.name })));
+    // 미니아트는 제목 줄 안에만(작게) — 옆 열로 세우면 본문·자세히까지 폭이 좁아져
+    // 답답해진다(실사용 피드백 2026-07-10). 아트가 없으면 기존 색 점(rc-dot).
+    body.appendChild(
+      el(
+        "div",
+        { class: "rc-name" },
+        c.art
+          ? el("span", { class: "rc-art sm", html: c.art })
+          : el("span", { class: "rc-dot", style: c.color ? `background:${c.color}` : "" }),
+        el("span", { html: c.name }),
+      ),
+    );
     body.appendChild(el("div", { class: "rc-text", html: c.text }));
     if (c.examples?.length) {
       const ex = el("div", { class: "rc-ex" });
@@ -56,7 +67,6 @@ export const recap: StepRenderer = (host, step, api) => {
     const card = el(
       "div",
       { class: "rc-card", style: `--rc:${c.color ?? "var(--blue)"};animation-delay:${i * 90}ms` },
-      c.art ? el("div", { class: "rc-art", html: c.art }) : null,
       body,
     );
     // 더 알고 싶은 학생을 위한 펼침 — 카드(또는 '자세히' 버튼)를 탭하면 심화 설명이 열린다

@@ -712,6 +712,9 @@
 @keyframes rcIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .rc-art { width: 58px; height: 58px; flex: none; border-radius: var(--r-md); background: var(--n50); display: grid; place-items: center; }
 .rc-art svg { width: 48px; height: 48px; }
+/* 제목 줄 안 소형 아트 — 본문 폭을 침식하지 않는 배치(2026-07-10) */
+.rc-name .rc-art.sm { width: 40px; height: 40px; border-radius: 10px; }
+.rc-name .rc-art.sm svg { width: 32px; height: 32px; }
 .rc-body { min-width: 0; }
 .rc-name { font-size: 15.5px; font-weight: 800; color: var(--ink); display: flex; align-items: center; gap: 7px; }
 .rc-dot { width: 8px; height: 8px; border-radius: var(--r-pill); background: var(--rc, var(--blue)); flex: none; }
