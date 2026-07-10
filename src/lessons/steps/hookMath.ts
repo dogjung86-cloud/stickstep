@@ -34,6 +34,10 @@ import {
   renderCalculator, renderMelody, renderBirthday, renderNines, renderGerms,
   renderStorage, renderSolarpanel, renderReceipt, renderKiosk, renderTangram,
 } from "./hookM2u1";
+import {
+  renderEggsize, renderColder, renderRollercoaster, renderGroupticket, renderFourcut,
+  renderBoats, renderBingsu, renderCombo, renderPheasant,
+} from "./hookM2u2";
 import type { StepRenderer } from "../types";
 
 type Face = (k: AvatarKind) => void;
@@ -157,6 +161,16 @@ export const mathHook: StepRenderer = (host, step, api) => {
     receipt: renderReceipt,
     kiosk: renderKiosk,
     tangram: renderTangram,
+    // 중2 Ⅱ 부등식과 연립방정식(hookM2u2.ts)
+    eggsize: renderEggsize,
+    colder: renderColder,
+    rollercoaster: renderRollercoaster,
+    groupticket: renderGroupticket,
+    fourcut: renderFourcut,
+    boats: renderBoats,
+    bingsu: renderBingsu,
+    combo: renderCombo,
+    pheasant: renderPheasant,
   };
   const fn = fns[s.scene];
   if (fn) fn(scene, helper, finish, face, s.choices);

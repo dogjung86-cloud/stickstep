@@ -1,0 +1,42 @@
+# 스틱맨 개념 컷 — 중2 수학 Ⅱ(부등식과 연립방정식) concept 9장 (전부 가로 4:3)
+# 폴더: public/math2/cuts (이름 = u2lM). 장면 규칙: 그 레슨의 훅·랩 소재 재활용 금지(새 각도),
+# 숫자·글자 대신 사물·개수·손짓으로.
+#
+# ── 스타일 블록 A (전 컷 공용 — 스틱맨 만화) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+
+# ══ 중2 수학 Ⅱ 부등식과 연립방정식 → public/math2/cuts ══
+
+[0] file=public/math2/cuts/u2l1.png (landscape 4:3, 스타일 A)
+A stick figure angler kneels by the water holding a fish above a flat measuring board that has one single bold limit line marked across it. The fish clearly extends past the limit line, and the angler makes a happy OK gesture; a bucket sits nearby. Only the limit line across the measuring board is teal; everything else pure black and white.
+
+[1] file=public/math2/cuts/u2l2.png (landscape 4:3, 스타일 A)
+A stick figure holds a photographic film negative strip up to the light, comparing it with the printed photo lying on the table below: on the print a snowman is bright on a dark night sky, on the film strip the same snowman appears dark on a bright background, everything reversed. The figure looks back and forth in wonder. Only the film strip's frame border is teal; everything else pure black and white.
+
+[2] file=public/math2/cuts/u2l3.png (landscape 4:3, 스타일 A)
+A stick figure at an airport-style luggage scale: an open suitcase overflows slightly, the scale's needle leans just past a marked limit tick on the dial, and the figure lifts one thick sweater out of the suitcase with a determined face. Only the scale's needle is teal; everything else pure black and white.
+
+[3] file=public/math2/cuts/u2l4.png (landscape 4:3, 스타일 A)
+A stick figure stands at a fork in a path before two signposts: the left path is short but climbs steeply over a bumpy hill, the right path is long but flat and smooth, both leading to the same little house in the distance. The figure strokes their chin, comparing, one foot already pointing to a chosen path. Only the arrow blade of the signpost pointing to the chosen right path is teal; everything else pure black and white.
+
+[4] file=public/math2/cuts/u2l5.png (landscape 4:3, 스타일 A)
+A stick figure sits at a table arranging coins into several separate small piles: each pile mixes big coins and small coins in a different combination, yet every pile sits on its own equal-sized tray, suggesting each tray holds the same total. The figure holds up one more coin, deciding where it fits. Only that one coin in the figure's hand is teal; everything else pure black and white.
+
+[5] file=public/math2/cuts/u2l6.png (landscape 4:3, 스타일 A)
+A stick figure pirate studies a treasure map on a table: one wide band shades the map vertically and another band shades it horizontally, and where the two bands overlap there is a single spot marked with a small crossed-shovels emblem. The figure plants a finger exactly on that overlap. Only the overlapping region of the two bands is teal; everything else pure black and white.
+
+[6] file=public/math2/cuts/u2l7.png (landscape 4:3, 스타일 A)
+A stick figure opens a big matryoshka nesting doll: the top half lifts off and inside sits a smaller identical doll that fits the cavity exactly. A row of even smaller dolls stands beside on the shelf. The figure peers inside with delight. Only the smallest doll on the shelf is teal; everything else pure black and white.
+
+[7] file=public/math2/cuts/u2l8.png (landscape 4:3, 스타일 A)
+Two nearly identical drawings pinned side by side on a corkboard, each showing the same house with the same sun and the same tree; a stick figure peels the identical sun sticker off one drawing, holding it in the air, so the two drawings now differ by exactly that one element. Only the peeled-off sun sticker in the figure's hand is teal; everything else pure black and white.
+
+[8] file=public/math2/cuts/u2l9.png (landscape 4:3, 스타일 A)
+A stick figure detective with a magnifying glass crouches in a snowy yard examining two kinds of animal footprints: one trail of small two-toed bird tracks and one trail of paired long rabbit tracks, both leading to a wooden coop. The figure counts on raised fingers. Only the rabbit track trail is teal; everything else pure black and white.

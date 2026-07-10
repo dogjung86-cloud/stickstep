@@ -247,6 +247,177 @@ export function boxFig(): string {
   );
 }
 
+/* ══════════════════ 중2 Ⅱ 부등식과 연립방정식 그림 ══════════════════ */
+
+/* ── L1 eggRangeFig: 계란 등급 범위 띠(수직선 위 구간) ──
+   44~52 중란 / 52~60 대란 / 60~68 특란 / 68~ 왕란, 눈금 g 단위. */
+export function eggRangeFig(): string {
+  const x = (g: number): number => 30 + (g - 40) * 9.6; // 40g~72g → 30~337px
+  const band = (a: number, b: number, fill: string, label: string): string =>
+    `<rect x="${x(a)}" y="70" width="${x(b) - x(a)}" height="34" rx="8" fill="${fill}" stroke="#B99A70" stroke-width="1.2"/>
+     <text x="${(x(a) + x(b)) / 2}" y="91" text-anchor="middle" font-size="12" font-weight="800" fill="#6B4210">${label}</text>`;
+  return svg(
+    "0 0 360 170",
+    `<rect x="10" y="8" width="340" height="154" rx="14" fill="url(#eg-bg)"/>
+    ${band(44, 52, "#F8EDDA", "중란")}${band(52, 60, "#F2DFC0", "대란")}${band(60, 68, "#EBCFA0", "특란")}
+    <rect x="${x(68)}" y="70" width="${x(72.5) - x(68)}" height="34" rx="8" fill="#E3BE80" stroke="#B99A70" stroke-width="1.2"/>
+    <text x="${x(70.4)}" y="91" text-anchor="middle" font-size="12" font-weight="800" fill="#6B4210">왕란</text>
+    <line x1="24" y1="122" x2="344" y2="122" stroke="#8C6A3E" stroke-width="2"/>
+    <path d="M344 122 l-6 -3.4 v6.8 z" fill="#8C6A3E"/>
+    ${[44, 52, 60, 68].map((g) => `<line x1="${x(g)}" y1="66" x2="${x(g)}" y2="126" stroke="#A9631B" stroke-width="1.4" stroke-dasharray="3 3"/>
+      <text x="${x(g)}" y="141" text-anchor="middle" font-size="11" font-weight="800" fill="#7F4A12">${g}</text>`).join("")}
+    <text x="344" y="141" text-anchor="end" font-size="10" font-weight="700" fill="#A08B6E">무게(g)</text>
+    <circle cx="${x(64)}" cy="122" r="5" fill="url(#eg-dot)" stroke="#6B4210" stroke-width="1.3"/>
+    <text x="${x(64)}" y="52" text-anchor="middle" font-size="11.5" font-weight="800" fill="#0B7A4A">이 계란은 64g</text>`,
+    `<linearGradient id="eg-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCF7EF"/><stop offset="1" stop-color="#F3E7D3"/></linearGradient>
+    <radialGradient id="eg-dot" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#7BE3AE"/><stop offset="1" stop-color="#0BA05F"/></radialGradient>`,
+  );
+}
+
+/* ── L3 solLineFig: 부등식 해의 수직선(○ 미포함·● 포함 + 방향 화살) ──
+   kind: "gt"(x>v, ○ 오른쪽), "ge"(x≥v, ● 오른쪽), "lt"(x<v, ○ 왼쪽), "le"(x≤v, ● 왼쪽) */
+export function solLineFig(kind: "gt" | "ge" | "lt" | "le", v: number): string {
+  const lo = v - 3;
+  const hi = v + 3;
+  const x = (t: number): number => 40 + ((t - lo) / (hi - lo)) * 280;
+  const right = kind === "gt" || kind === "ge";
+  const filled = kind === "ge" || kind === "le";
+  let ticks = "";
+  for (let t = lo; t <= hi; t++)
+    ticks += `<line x1="${x(t)}" y1="60" x2="${x(t)}" y2="72" stroke="#C2A87F" stroke-width="1.5"/>
+      <text x="${x(t)}" y="90" text-anchor="middle" font-size="11.5" font-weight="800" fill="#8C6A3E">${String(t).replace("-", "−")}</text>`;
+  const ax = x(v);
+  const ex = right ? x(hi) + 14 : x(lo) - 14;
+  return svg(
+    "0 0 360 110",
+    `<line x1="24" y1="66" x2="336" y2="66" stroke="#8C6A3E" stroke-width="2"/>
+    <path d="M336 66 l-6 -3.4 v6.8 z" fill="#8C6A3E"/>
+    ${ticks}
+    <path d="M${ax} 40 H${ex}" stroke="url(#sl-arr)" stroke-width="5" stroke-linecap="round"/>
+    <path d="M${ex} 40 l${right ? -8 : 8} -4.6 v9.2 z" fill="#E8A93E"/>
+    <circle cx="${ax}" cy="40" r="7" fill="${filled ? "url(#sl-fill)" : "#FFFFFF"}" stroke="#A9631B" stroke-width="2.2"/>`,
+    `<linearGradient id="sl-arr" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F2C468"/><stop offset="1" stop-color="#E8A93E"/></linearGradient>
+    <radialGradient id="sl-fill" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#D9A45C"/><stop offset="1" stop-color="#A9631B"/></radialGradient>`,
+  );
+}
+
+/* ── L4 vsBarFig: 개인 합계 vs 단체 정액 비교 막대(교차 직후 상태) ── */
+export function vsBarFig(): string {
+  return svg(
+    "0 0 360 170",
+    `<rect x="10" y="8" width="340" height="154" rx="14" fill="url(#vb-bg)"/>
+    <text x="30" y="42" font-size="12" font-weight="800" fill="#2558B8">개인권 합계 (21명)</text>
+    <rect x="30" y="50" width="268" height="24" rx="9" fill="url(#vb-a)" stroke="#2558B8" stroke-width="1.4"/>
+    <text x="306" y="67" font-size="12" font-weight="800" fill="#2558B8">84000원</text>
+    <text x="30" y="104" font-size="12" font-weight="800" fill="#B87A14">단체권 정액</text>
+    <rect x="30" y="112" width="256" height="24" rx="9" fill="url(#vb-b)" stroke="#B87A14" stroke-width="1.4"/>
+    <text x="294" y="129" font-size="12" font-weight="800" fill="#B87A14">80000원</text>
+    <line x1="286" y1="42" x2="286" y2="146" stroke="#E8434F" stroke-width="2" stroke-dasharray="5 4"/>
+    <rect x="234" y="146" width="104" height="17" rx="8.5" fill="#FDF0F1" stroke="#EE8B95" stroke-width="1"/>
+    <text x="286" y="158.5" text-anchor="middle" font-size="10.5" font-weight="800" fill="#C4303C">여기부터 단체가 이득</text>`,
+    `<linearGradient id="vb-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCF7EF"/><stop offset="1" stop-color="#F3E7D3"/></linearGradient>
+    <linearGradient id="vb-a" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7FA8F2"/><stop offset="1" stop-color="#3D6BD9"/></linearGradient>
+    <linearGradient id="vb-b" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFC24D"/><stop offset="1" stop-color="#E8A93E"/></linearGradient>`,
+  );
+}
+
+/* ── L6 gridSolFig: 두 방정식의 해 점 + 공통점(격자, 직선 없음) ── */
+export function gridSolFig(): string {
+  const S2 = 220;
+  const P = 26;
+  const U = (S2 - P * 2) / 6;
+  const gx = (v: number): number => 60 + P + v * U;
+  const gy = (v: number): number => S2 - P - v * U;
+  let grid = "";
+  for (let v = 0; v <= 6; v++) {
+    grid += `<line x1="${gx(0)}" y1="${gy(v)}" x2="${gx(6)}" y2="${gy(v)}" stroke="#E4D6C2" stroke-width="1"/>`;
+    grid += `<line x1="${gx(v)}" y1="${gy(0)}" x2="${gx(v)}" y2="${gy(6)}" stroke="#E4D6C2" stroke-width="1"/>`;
+    if (v > 0) {
+      grid += `<text x="${gx(v)}" y="${gy(0) + 14}" text-anchor="middle" font-size="9.5" font-weight="700" fill="#A08B6E">${v}</text>`;
+      grid += `<text x="${gx(0) - 7}" y="${gy(v) + 3.4}" text-anchor="end" font-size="9.5" font-weight="700" fill="#A08B6E">${v}</text>`;
+    }
+  }
+  const blue = [[1, 5], [2, 4], [3, 3], [4, 2], [5, 1]]
+    .map(([a, b]) => `<circle cx="${gx(a)}" cy="${gy(b)}" r="6" fill="rgba(47,111,228,.88)" stroke="#2558B8" stroke-width="1.8"/>`)
+    .join("");
+  const orange = [[1, 4], [4, 2]]
+    .map(([a, b]) => `<circle cx="${gx(a)}" cy="${gy(b)}" r="10" fill="none" stroke="#E8830E" stroke-width="3"/>`)
+    .join("");
+  return svg(
+    "0 0 360 230",
+    `${grid}
+    <line x1="${gx(0)}" y1="${gy(0)}" x2="${gx(6) + 6}" y2="${gy(0)}" stroke="#8C6A3E" stroke-width="1.8"/>
+    <line x1="${gx(0)}" y1="${gy(0)}" x2="${gx(0)}" y2="${gy(6) - 6}" stroke="#8C6A3E" stroke-width="1.8"/>
+    <text x="${gx(0) - 7}" y="${gy(0) + 14}" text-anchor="end" font-size="10" font-weight="800" fill="#8C6A3E">O</text>
+    ${blue}${orange}
+    <circle cx="${gx(4)}" cy="${gy(2)}" r="14" fill="none" stroke="#A9631B" stroke-width="2" stroke-dasharray="4 3"/>
+    <rect x="240" y="52" width="110" height="26" rx="13" fill="#FFFFFF" stroke="#2558B8" stroke-width="1.3"/>
+    <circle cx="256" cy="65" r="5" fill="rgba(47,111,228,.88)"/>
+    <text x="268" y="69" font-size="11" font-weight="800" fill="#2558B8">x+y=6 의 해</text>
+    <rect x="240" y="86" width="110" height="26" rx="13" fill="#FFFFFF" stroke="#B87A14" stroke-width="1.3"/>
+    <circle cx="256" cy="99" r="6" fill="none" stroke="#E8830E" stroke-width="2.6"/>
+    <text x="268" y="103" font-size="10.5" font-weight="800" fill="#B87A14">2x+3y=14 의 해</text>
+    <rect x="240" y="120" width="110" height="30" rx="13" fill="#FBF3E6" stroke="#A9631B" stroke-width="1.4"/>
+    <text x="295" y="133" text-anchor="middle" font-size="10.5" font-weight="800" fill="#7F4A12">두 색이 겹친 점이</text>
+    <text x="295" y="145" text-anchor="middle" font-size="10.5" font-weight="800" fill="#7F4A12">연립방정식의 해</text>`,
+    ``,
+  );
+}
+
+/* ── L8 elimAlignFig: 가감법 세로 정석(같은 항끼리 줄 맞춰 빼기) ── */
+export function elimAlignFig(): string {
+  return svg(
+    "0 0 360 170",
+    `<rect x="42" y="12" width="276" height="146" rx="14" fill="url(#ea-bd)" stroke="#DFC7A4" stroke-width="1.4"/>
+    <text x="150" y="50" text-anchor="end" font-size="18" font-weight="800" fill="#2A3648">4x+2y</text>
+    <text x="172" y="50" text-anchor="middle" font-size="16" font-weight="700" fill="#7A8698">=</text>
+    <text x="196" y="50" font-size="18" font-weight="800" fill="#2A3648">8800</text>
+    <text x="74" y="84" font-size="18" font-weight="800" fill="#A9631B">−</text>
+    <text x="150" y="84" text-anchor="end" font-size="18" font-weight="800" fill="#2A3648">2x+2y</text>
+    <text x="172" y="84" text-anchor="middle" font-size="16" font-weight="700" fill="#7A8698">=</text>
+    <text x="196" y="84" font-size="18" font-weight="800" fill="#2A3648">5600</text>
+    <line x1="64" y1="98" x2="296" y2="98" stroke="#A9631B" stroke-width="2.2"/>
+    <text x="150" y="128" text-anchor="end" font-size="18" font-weight="800" fill="#7F4A12">2x</text>
+    <text x="172" y="128" text-anchor="middle" font-size="16" font-weight="700" fill="#7A8698">=</text>
+    <text x="196" y="128" font-size="18" font-weight="800" fill="#7F4A12">3200</text>
+    <rect x="216" y="62" width="92" height="34" rx="10" fill="#F2FBF6" stroke="#57C793" stroke-width="1.3"/>
+    <text x="262" y="76" text-anchor="middle" font-size="10.5" font-weight="800" fill="#0B7A4A">같은 2y끼리 소거,</text>
+    <text x="262" y="89" text-anchor="middle" font-size="10.5" font-weight="800" fill="#0B7A4A">y가 사라져요</text>`,
+    `<linearGradient id="ea-bd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F8EFE1"/></linearGradient>`,
+  );
+}
+
+/* ── L9 pheasantFig: 손자산경 꿩과 토끼(머리·다리 배지) ── */
+export function pheasantFig(): string {
+  return svg(
+    "0 0 360 200",
+    `<ellipse cx="180" cy="182" rx="120" ry="7" fill="#2A3A5E" opacity=".1"/>
+    <path d="M96 96 h168 l-12 72 h-144 z" fill="url(#ph-bk)" stroke="#6B4210" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M104 112 h152 M108 132 h144 M112 152 h136" stroke="#8C5A1E" stroke-width="1.3" opacity=".5"/>
+    <circle cx="140" cy="84" r="13" fill="url(#ph-bird)" stroke="#245A38" stroke-width="1.4"/>
+    <path d="M152 82 l9 3 -9 3.4 z" fill="#E8A93E" stroke="#8C5A1E" stroke-width=".9"/>
+    <circle cx="137" cy="81" r="1.8" fill="#1E2A38"/>
+    <path d="M132 74 q-4 -7 1 -11" fill="none" stroke="#245A38" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="205" cy="86" r="12" fill="url(#ph-rab)" stroke="#8C6A4A" stroke-width="1.4"/>
+    <path d="M199 76 q-2.4 -12 3 -14.5 q2.8 8 1.2 14 M211 76 q2.4 -12 -3 -14.5 q-2.8 8 -1.2 14" fill="url(#ph-ear)" stroke="#8C6A4A" stroke-width="1.2"/>
+    <circle cx="201.6" cy="83.6" r="1.7" fill="#1E2A38"/><circle cx="208.4" cy="83.6" r="1.7" fill="#1E2A38"/>
+    <circle cx="252" cy="88" r="10" fill="url(#ph-bird)" stroke="#245A38" stroke-width="1.3"/>
+    <path d="M261 86.5 l7.5 2.5 -7.5 2.8 z" fill="#E8A93E" stroke="#8C5A1E" stroke-width=".8"/>
+    <circle cx="249.6" cy="85.6" r="1.5" fill="#1E2A38"/>
+    <rect x="42" y="20" width="130" height="30" rx="15" fill="url(#ph-tag1)" stroke="#2558B8" stroke-width="1.4"/>
+    <text x="107" y="40" text-anchor="middle" font-size="13" font-weight="900" fill="#FFFFFF">머리 모두 35</text>
+    <rect x="190" y="20" width="130" height="30" rx="15" fill="url(#ph-tag2)" stroke="#B87A14" stroke-width="1.4"/>
+    <text x="255" y="40" text-anchor="middle" font-size="13" font-weight="900" fill="#5C3A00">다리 모두 94</text>
+    <text x="180" y="192" text-anchor="middle" font-size="11" font-weight="700" fill="#8C6A3E">꿩의 다리는 2개, 토끼의 다리는 4개</text>`,
+    `<linearGradient id="ph-bk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E3B476"/><stop offset="1" stop-color="#B57226"/></linearGradient>
+    <radialGradient id="ph-bird" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#7FC79A"/><stop offset="1" stop-color="#3E8B5E"/></radialGradient>
+    <radialGradient id="ph-rab" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#FBF3E8"/><stop offset="1" stop-color="#DFC5A8"/></radialGradient>
+    <linearGradient id="ph-ear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBF3E8"/><stop offset="1" stop-color="#E8CBAF"/></linearGradient>
+    <linearGradient id="ph-tag1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7FA8F2"/><stop offset="1" stop-color="#3D6BD9"/></linearGradient>
+    <linearGradient id="ph-tag2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFD98A"/><stop offset="1" stop-color="#E8A93E"/></linearGradient>`,
+  );
+}
+
 /* ── recap 미니아트(calcMiniArt) — 72×72 카드 아이콘 ── */
 const MINI: Record<string, [string, string]> = {
   // 나눗셈 기계(멈춤 램프)
@@ -307,6 +478,61 @@ const MINI: Record<string, [string, string]> = {
      <line x1="44" y1="18" x2="44" y2="56" stroke="#E8434F" stroke-width="2" stroke-dasharray="4 3"/>`,
     "",
   ],
+  // ── 중2 Ⅱ 부등식과 연립방정식 ──
+  // 부등호 표지판
+  ineq: [
+    `<rect x="33.4" y="34" width="5" height="22" rx="2.5" fill="url(#mi-br2)" stroke="#6B4210" stroke-width="1.1"/>
+     <circle cx="36" cy="24" r="14" fill="url(#mi-crm)" stroke="#7F4A12" stroke-width="1.8"/>
+     <path d="M42.5 17.5 L30 24 L42.5 30.5" fill="none" stroke="#7F4A12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`,
+    "",
+  ],
+  // 원점 반사 화살(음수 곱 반전)
+  flip: [
+    `<line x1="10" y1="44" x2="62" y2="44" stroke="#8C6A3E" stroke-width="2.2" stroke-linecap="round"/>
+     <line x1="36" y1="24" x2="36" y2="52" stroke="#E8A93E" stroke-width="2" stroke-dasharray="3 3"/>
+     <circle cx="52" cy="44" r="5" fill="url(#mi-bl)" stroke="#2558B8" stroke-width="1.2"/>
+     <circle cx="20" cy="44" r="5" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.2"/>
+     <path d="M50 36 q-14 -14 -28 0" fill="none" stroke="#A9631B" stroke-width="2.4" stroke-linecap="round"/>
+     <path d="M22 36 l-2 5 5.5 -.6 z" fill="#A9631B"/>`,
+    "",
+  ],
+  // 수직선 범위(○+화살)
+  range: [
+    `<line x1="10" y1="46" x2="62" y2="46" stroke="#8C6A3E" stroke-width="2.2" stroke-linecap="round"/>
+     <line x1="22" y1="42" x2="22" y2="50" stroke="#C2A87F" stroke-width="1.6"/>
+     <line x1="46" y1="42" x2="46" y2="50" stroke="#C2A87F" stroke-width="1.6"/>
+     <circle cx="30" cy="34" r="5.4" fill="#FFFFFF" stroke="#A9631B" stroke-width="2.2"/>
+     <path d="M35 34 h20" stroke="url(#mi-am)" stroke-width="4.4" stroke-linecap="round"/>
+     <path d="M56 34 l-5 -3 v6 z" fill="#E8A93E"/>`,
+    "",
+  ],
+  // 격자 교점(공통 해)
+  cross: [
+    `${[18, 30, 42, 54].map((v) => `<line x1="${v}" y1="16" x2="${v}" y2="54" stroke="#E4D6C2" stroke-width="1.2"/><line x1="12" y1="${v - 2}" x2="58" y2="${v - 2}" stroke="#E4D6C2" stroke-width="1.2"/>`).join("")}
+     <circle cx="30" cy="28" r="4.4" fill="url(#mi-bl)" stroke="#2558B8" stroke-width="1.1"/>
+     <circle cx="42" cy="40" r="4.4" fill="url(#mi-bl)" stroke="#2558B8" stroke-width="1.1"/>
+     <circle cx="42" cy="40" r="8.6" fill="none" stroke="#E8830E" stroke-width="2.6"/>
+     <circle cx="18" cy="16" r="4.4" fill="none" stroke="#E8830E" stroke-width="2.2"/>`,
+    "",
+  ],
+  // 대입 슬롯(마트료시카 끼움)
+  subst: [
+    `<rect x="14" y="26" width="26" height="26" rx="7" fill="url(#mi-crm)" stroke="#7F4A12" stroke-width="1.4"/>
+     <rect x="22" y="34" width="10" height="18" rx="4" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.2"/>
+     <path d="M46 32 h8 m-8 8 h8" stroke="#A9631B" stroke-width="2.4" stroke-linecap="round"/>
+     <rect x="50" y="22" width="12" height="12" rx="4" fill="url(#mi-br2)" stroke="#6B4210" stroke-width="1.2"/>`,
+    "",
+  ],
+  // 가감 소거(두 줄에서 같은 항 지우기)
+  elim: [
+    `<rect x="12" y="20" width="48" height="13" rx="6.5" fill="url(#mi-crm)" stroke="#B99A70" stroke-width="1.1"/>
+     <rect x="12" y="39" width="48" height="13" rx="6.5" fill="url(#mi-crm)" stroke="#B99A70" stroke-width="1.1"/>
+     <circle cx="46" cy="26.5" r="5" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.1"/>
+     <circle cx="46" cy="45.5" r="5" fill="url(#mi-am)" stroke="#8C5A12" stroke-width="1.1"/>
+     <path d="M39 20 l14 13 m0 -13 l-14 13 M39 39 l14 13 m0 -13 l-14 13" stroke="#E8434F" stroke-width="2" stroke-linecap="round"/>
+     <line x1="10" y1="58" x2="62" y2="58" stroke="#A9631B" stroke-width="2.2" stroke-linecap="round"/>`,
+    "",
+  ],
 };
 
 /** recap 카드 미니아트 — calcMiniArt("divide" | "cycle" | "denom" | "shift" | "pow" | "mono" | "poly" | "expand") */
@@ -320,6 +546,9 @@ export function calcMiniArt(key: string): string {
     <linearGradient id="mi-gp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C77BD6"/><stop offset="1" stop-color="#9C36B5"/></linearGradient>
     <linearGradient id="mi-gp2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E9CDF1"/><stop offset="1" stop-color="#D9B5E4"/></linearGradient>
     <linearGradient id="mi-am" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBE7C0"/><stop offset="1" stop-color="#EDAF45"/></linearGradient>
-    <radialGradient id="mi-gr" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#7BE3AE"/><stop offset="1" stop-color="#0BA05F"/></radialGradient>`,
+    <radialGradient id="mi-gr" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#7BE3AE"/><stop offset="1" stop-color="#0BA05F"/></radialGradient>
+    <linearGradient id="mi-crm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBF3E4"/><stop offset="1" stop-color="#EDD9B4"/></linearGradient>
+    <linearGradient id="mi-br2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#C98A3D"/><stop offset="1" stop-color="#8C5A1E"/></linearGradient>
+    <radialGradient id="mi-bl" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#7FA8F2"/><stop offset="1" stop-color="#2F6FE4"/></radialGradient>`,
   );
 }

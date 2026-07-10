@@ -10,7 +10,7 @@ import { mapDecorArt } from "../ui/mapDecor";
 import type { Screen } from "../core/router";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
-const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc" };
+const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq" };
 // 단원별 보너스 미니게임 — 모든 레슨을 완료하면 지도 끝에 열린다.
 const UNIT_GAME: Record<string, { title: string }> = { u3: { title: "단열 디펜스" }, m1u1: { title: "별자리 한붓그리기" } };
 
@@ -371,6 +371,7 @@ const UNIT_DECOR: Record<string, { seq: string[]; sky: [string, string] }> = {
   m1u5: { seq: ["pentaDeco", "fanDeco", "diceDeco", "coneDeco", "sphereDeco"], sky: ["sparkle", "cloud"] }, // 평면도형과 입체도형: 오각형 → 부채꼴 → 주사위 → 원뿔 → 구(평면에서 입체로의 여정 순)
   m1u6: { seq: ["seesawDeco", "stemshelfDeco", "histoDeco", "fpolyDeco", "ratioDeco"], sky: ["sparkle", "cloud"] }, // 통계: 평균 시소 → 줄기 선반 → 히스토그램 → 도수분포다각형 → 상대도수 비율(자료 정리의 여정 순)
   m2u1: { seq: ["calcDeco", "tapeDeco", "loopDeco", "powtowerDeco", "termchipDeco"], sky: ["sparkle", "cloud"] }, // 중2 Ⅰ: 계산기 → 반복 무늬 테이프 → 무한 리본 → 지수 탑 → 항 칩(수의 표현에서 식의 계산으로)
+  m2u2: { seq: ["signDeco", "tiltDeco", "rangeDeco", "duoboxDeco", "birdrabbitDeco"], sky: ["sparkle", "cloud"] }, // 중2 Ⅱ: 제한 표지판 → 기운 저울 → 수직선 범위 → x·y 상자 쌍 → 꿩과 토끼(부등식에서 연립방정식으로)
 };
 const DEFAULT_DECOR: { seq: string[]; sky: [string, string] } = {
   seq: ["tree1", "tree2", "bush", "rock", "grassTuft"],
@@ -395,6 +396,7 @@ const DECOR_SIZE: Record<string, number> = {
   pentaDeco: 44, fanDeco: 48, diceDeco: 44, coneDeco: 46, sphereDeco: 42,
   seesawDeco: 48, stemshelfDeco: 46, histoDeco: 46, fpolyDeco: 46, ratioDeco: 42,
   calcDeco: 46, tapeDeco: 46, loopDeco: 48, powtowerDeco: 48, termchipDeco: 44,
+  signDeco: 44, tiltDeco: 48, rangeDeco: 46, duoboxDeco: 46, birdrabbitDeco: 50,
 };
 
 function placeDecor(layer: HTMLElement, points: { x: number; y: number }[], W: number, unitId: string): void {

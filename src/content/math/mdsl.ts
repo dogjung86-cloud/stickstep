@@ -90,7 +90,17 @@ export const mathHook = (o: {
     | "solarpanel" // 태양광 패널 넓이, 가로×세로
     | "receipt" // 두 사람 주문 합치기 영수증
     | "kiosk" // 키오스크 화면 두 구역의 넓이
-    | "tangram"; // 칠교 조각 둘레, 문자로 재기
+    | "tangram" // 칠교 조각 둘레, 문자로 재기
+    // ── 중2 Ⅱ 부등식과 연립방정식 (hookM2u2.ts) ──
+    | "eggsize" // 계란 등급표, 특란의 조건은 범위
+    | "colder" // 겨울 기온, 3<5인데 −3>−5
+    | "rollercoaster" // 놀이기구 키 제한, 몇 cm 더 크면?
+    | "groupticket" // 30명 미만인데 단체권이 더 쌀까
+    | "fourcut" // 인생네컷, 3컷 x장+4컷 y장=25컷
+    | "boats" // 보트 6대에 14명, 조건 두 개
+    | "bingsu" // 과일빙수는 팥빙수보다 3000원 비싸다
+    | "combo" // 세트 메뉴 두 장, 가격 차의 정체
+    | "pheasant"; // 손자산경, 머리 35에 다리 94
   choices?: string[];
   cta?: string;
 }): Step => ({ type: "mathHook", ...o });
@@ -400,3 +410,37 @@ export const polyAddLab = (o: { title: string; lead?: string; cta?: string; curi
 /** 전개 랩, 직사각형 넓이를 절단선으로 쪼개 단항식×다항식을 전개하고 각 항 나눗셈으로 되돌린다. */
 export const expandLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "expandLab", ...o });
+
+/* ── 중2 Ⅱ 부등식과 연립방정식 ─────────────────────────── */
+
+/** 부등식 참·거짓 판정기, 값 카드를 대입해 해가 '여러 개(범위)'임을 발견한다(eqTruth의 부등식판). */
+export const ineqTruthLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "ineqTruthLab", ...o });
+
+/** 수직선 반전 랩(기함), 두 점에 같은 연산을 가하며 음수 곱·나눗셈=원점 반사로 부등호 반전을 목격. */
+export const flipLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "flipLab", ...o });
+
+/** 일차부등식 풀이 랩, 이항 드래그와 음수 나눗셈 반전, 해를 수직선 ○●로 새긴다. */
+export const ineqSolveLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "ineqSolveLab", ...o });
+
+/** 유리한 선택 랩, 인원 스테퍼로 개인·단체 요금 막대를 비교해 손익 교차점을 찾는다. */
+export const vsLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "vsLab", ...o });
+
+/** 미지수 2개 랩, (x, y) 카드 조합을 대입해 일차방정식의 해가 여러 개임을 발견하고 순서쌍으로 적는다. */
+export const pairLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "pairLab", ...o });
+
+/** 공통 해 랩(기함), 두 방정식의 해 순서쌍을 격자에 점찍고 겹치는 단 한 점을 찾는다(직선 금지). */
+export const crossLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "crossLab", ...o });
+
+/** 대입법 랩, y 슬롯에 식 카드를 통째로 꽂아 미지수가 하나로 줄어드는 것을 본다. */
+export const subSlotLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "subSlotLab", ...o });
+
+/** 가감법 랩, 두 식 카드를 나란히 놓고 변끼리 더하거나 빼 한 미지수를 소거한다(×2 확대경 포함). */
+export const elimLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "elimLab", ...o });

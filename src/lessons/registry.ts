@@ -160,6 +160,14 @@ import { powDivLab } from "./steps/powDivLab";
 import { monoLab } from "./steps/monoLab";
 import { polyAddLab } from "./steps/polyAddLab";
 import { expandLab } from "./steps/expandLab";
+import { ineqTruthLab } from "./steps/ineqTruthLab";
+import { flipLab } from "./steps/flipLab";
+import { ineqSolveLab } from "./steps/ineqSolveLab";
+import { vsLab } from "./steps/vsLab";
+import { pairLab } from "./steps/pairLab";
+import { crossLab } from "./steps/crossLab";
+import { subSlotLab } from "./steps/subSlotLab";
+import { elimLab } from "./steps/elimLab";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -315,6 +323,14 @@ const R: Record<string, StepRenderer> = {
   monoLab,
   polyAddLab,
   expandLab,
+  ineqTruthLab,
+  flipLab,
+  ineqSolveLab,
+  vsLab,
+  pairLab,
+  crossLab,
+  subSlotLab,
+  elimLab,
   quiz,
   table,
   order,

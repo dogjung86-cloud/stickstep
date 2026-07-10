@@ -961,6 +961,73 @@ const MAP_DECOR: Record<string, string> = {
     `<linearGradient id="tc-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B85CCB"/><stop offset="1" stop-color="#8C2FA3"/></linearGradient>
     <linearGradient id="tc-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD98A"/><stop offset="1" stop-color="#EDAF45"/></linearGradient>`,
   ),
+  // ── 중2 수학 Ⅱ. 부등식과 연립방정식 — 제한 표지판 → 기운 저울 → 수직선 범위 → x·y 상자 쌍 → 꿩과 토끼 ──
+  signDeco: S(
+    `${shadow(32, 57, 14, 0.13)}
+    <rect x="29.5" y="30" width="5" height="26" rx="2.5" fill="url(#sg-pole)" stroke="#6B4210" stroke-width="1.2"/>
+    <circle cx="32" cy="20" r="15" fill="url(#sg-face)" stroke="#7F4A12" stroke-width="2"/>
+    <path d="M39 13 L26 20 L39 27" fill="none" stroke="#7F4A12" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <ellipse cx="26" cy="12.5" rx="5" ry="2.6" fill="#fff" opacity=".55" transform="rotate(-18 26 12.5)"/>`,
+    `<linearGradient id="sg-pole" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#C98A3D"/><stop offset="1" stop-color="#8C5A1E"/></linearGradient>
+    <radialGradient id="sg-face" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#FDF3E4"/><stop offset="1" stop-color="#F2D9AE"/></radialGradient>`,
+  ),
+  tiltDeco: S(
+    `${shadow(32, 57, 17, 0.13)}
+    <path d="M26 54 L32 42 L38 54 Z" fill="url(#tl-base)" stroke="#6B4210" stroke-width="1.4" stroke-linejoin="round"/>
+    <rect x="10" y="30" width="44" height="4.6" rx="2.3" fill="url(#tl-beam)" stroke="#6B4210" stroke-width="1.2" transform="rotate(-12 32 32)"/>
+    <path d="M15 24 v6 M12 33 a5.5 3.2 0 0 0 11 0 z" fill="url(#tl-pan)" stroke="#6B4210" stroke-width="1.2" transform="rotate(-12 32 32)"/>
+    <path d="M49 24 v6 M46 33 a5.5 3.2 0 0 0 11 0 z" fill="url(#tl-pan)" stroke="#6B4210" stroke-width="1.2" transform="rotate(-12 32 32)"/>
+    <circle cx="14.5" cy="27" r="4.6" fill="url(#tl-big)" stroke="#6B4210" stroke-width="1.1"/>
+    <circle cx="51" cy="17" r="3" fill="url(#tl-small)" stroke="#8C1F30" stroke-width="1.1"/>
+    <ellipse cx="13" cy="25.4" rx="1.6" ry="1" fill="#fff" opacity=".6"/>`,
+    `<linearGradient id="tl-base" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E3B476"/><stop offset="1" stop-color="#A9631B"/></linearGradient>
+    <linearGradient id="tl-beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D9A45C"/><stop offset="1" stop-color="#8C5A1E"/></linearGradient>
+    <linearGradient id="tl-pan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2D9AE"/><stop offset="1" stop-color="#C98A3D"/></linearGradient>
+    <radialGradient id="tl-big" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#B7A2E8"/><stop offset="1" stop-color="#7C5CE8"/></radialGradient>
+    <radialGradient id="tl-small" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#F58C9C"/><stop offset="1" stop-color="#D8465C"/></radialGradient>`,
+  ),
+  rangeDeco: S(
+    `${shadow(32, 54, 18, 0.12)}
+    <line x1="8" y1="38" x2="56" y2="38" stroke="#8C5A1E" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M56 38 l-6 -3.4 v6.8 z" fill="#8C5A1E"/>
+    ${[16, 26, 36, 46].map((x) => `<line x1="${x}" y1="34.5" x2="${x}" y2="41.5" stroke="#C98A3D" stroke-width="1.6"/>`).join("")}
+    <circle cx="26" cy="38" r="4.6" fill="url(#rg-dot)" stroke="#6B4210" stroke-width="1.4"/>
+    <path d="M26 27 h22" stroke="url(#rg-arr)" stroke-width="4.4" stroke-linecap="round"/>
+    <path d="M48 27 l-5.5 -3.2 v6.4 z" fill="#E8A93E"/>
+    <ellipse cx="24.4" cy="36.4" rx="1.6" ry="1" fill="#fff" opacity=".65"/>`,
+    `<radialGradient id="rg-dot" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#E3B476"/><stop offset="1" stop-color="#A9631B"/></radialGradient>
+    <linearGradient id="rg-arr" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F2C468"/><stop offset="1" stop-color="#E8A93E"/></linearGradient>`,
+  ),
+  duoboxDeco: S(
+    `${shadow(32, 56, 18, 0.13)}
+    <rect x="10" y="28" width="22" height="24" rx="5" fill="url(#db-a)" stroke="#6B4210" stroke-width="1.5"/>
+    <rect x="32" y="24" width="24" height="28" rx="5" fill="url(#db-b)" stroke="#27408B" stroke-width="1.5"/>
+    <path d="M10 36 h22 M32 33 h24" stroke="#FFFFFF" stroke-width="1.2" opacity=".35"/>
+    <text x="21" y="46" text-anchor="middle" font-size="13" font-style="italic" font-weight="800" fill="#FFF7EA">x</text>
+    <text x="44" y="44" text-anchor="middle" font-size="13" font-style="italic" font-weight="800" fill="#EAF0FF">y</text>
+    <path d="M21 28 q11 -12 23 -4" fill="none" stroke="#8C5A1E" stroke-width="2" stroke-dasharray="3 3"/>
+    <ellipse cx="16" cy="31" rx="3.4" ry="1.7" fill="#fff" opacity=".5"/>
+    <ellipse cx="38" cy="27.5" rx="3.4" ry="1.7" fill="#fff" opacity=".5"/>`,
+    `<linearGradient id="db-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D9A45C"/><stop offset="1" stop-color="#A9631B"/></linearGradient>
+    <linearGradient id="db-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7C93E8"/><stop offset="1" stop-color="#3D5BC0"/></linearGradient>`,
+  ),
+  birdrabbitDeco: S(
+    `${shadow(32, 57, 19, 0.13)}
+    <path d="M14 40 h36 l-4 16 h-28 z" fill="url(#br-bk)" stroke="#6B4210" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M17 44 h30 M18.5 49 h27" stroke="#8C5A1E" stroke-width="1.2" opacity=".55"/>
+    <circle cx="24" cy="34" r="6.5" fill="url(#br-bird)" stroke="#245A38" stroke-width="1.3"/>
+    <path d="M30 33 l5 1.6 -5 1.8 z" fill="#E8A93E" stroke="#8C5A1E" stroke-width=".8"/>
+    <circle cx="22.6" cy="32.4" r="1" fill="#1E2A38"/>
+    <path d="M20 29 q-2.5 -4 0.5 -6.5" fill="none" stroke="#245A38" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="43" cy="35" r="6" fill="url(#br-rab)" stroke="#8C6A4A" stroke-width="1.3"/>
+    <path d="M40 30 q-1.4 -7 1.8 -8.5 q1.6 4.5 0.6 8.2 M46 30 q1.4 -7 -1.8 -8.5 q-1.6 4.5 -0.6 8.2" fill="url(#br-ear)" stroke="#8C6A4A" stroke-width="1.1"/>
+    <circle cx="41.4" cy="33.6" r="1" fill="#1E2A38"/><circle cx="45" cy="33.6" r="1" fill="#1E2A38"/>
+    <ellipse cx="20" cy="42.5" rx="4" ry="1.8" fill="#fff" opacity=".35"/>`,
+    `<linearGradient id="br-bk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E3B476"/><stop offset="1" stop-color="#B57226"/></linearGradient>
+    <radialGradient id="br-bird" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#7FC79A"/><stop offset="1" stop-color="#3E8B5E"/></radialGradient>
+    <radialGradient id="br-rab" cx=".36" cy=".3" r=".95"><stop offset="0" stop-color="#FBF3E8"/><stop offset="1" stop-color="#DFC5A8"/></radialGradient>
+    <linearGradient id="br-ear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBF3E8"/><stop offset="1" stop-color="#E8CBAF"/></linearGradient>`,
+  ),
 };
 
 /** 지도 장식 아트 — 단원 특색 세트 → 생물 아이콘(ART_BIO) → 공용(ART_DECOR) 순서로 찾는다. */

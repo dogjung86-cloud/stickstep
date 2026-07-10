@@ -180,6 +180,12 @@ src/
   powDivLab·monoLab·polyAddLab·expandLab)·**styles/math2.css**(중2 수학 전용 시트, main.ts import).
   스틱맨 컷 폴더는 **math2**(public/math2/cuts, u1lN — 중1 math/cuts와 분리). mfmt가 `)^n`
   (괄호 뒤 지수)을 지원한다. QA: `PORT=<포트> node qa/e2e-m2u1.mjs`.
+- **중2 수학 Ⅱ(m2u2, 부등식과 연립방정식) 완성** — 9레슨(무료 3+프리미엄 6), 테마 `ineq`(캐러멜
+  브라운 #A9631B). 랩 8종(ineqTruthLab·flipLab 기함·ineqSolveLab·vsLab·pairLab·crossLab 기함·
+  subSlotLab·elimLab)+hookM2u2 9장면, 그림·컷은 mathFigures2/math2 관행 계승(u2lN).
+  **crossLab은 직선 금지·격자 점만**(일차함수는 중2 Ⅲ 선행), '연립부등식'은 고교 과정이라 금지.
+  innerHTML 문자열의 `a<b`는 `&lt;` 이스케이프 필수(단 recap examples는 textContent라 raw <) —
+  상세는 MATH_GUIDE.md 중2 Ⅱ 표. QA: `PORT=<포트> node qa/e2e-m2u2.mjs`(퀴즈 보기는 data-oi로 클릭).
 - **과목 차원**: `store.viewSubject`("sci"|"math") + `curriculum.ts`의 `CURRICULA_OF`/`subjectOfUnit`.
   과목 전환 창구는 **과목 허브뿐**(subject.ts) — main.ts `pickSubject()`가 setViewSubject 후 `goHome()`으로
   홈을 재생성한다(nav.back은 이전 과목 홈을 보여주므로 금지). 이때 lastUnitId를 반드시 비운다.
