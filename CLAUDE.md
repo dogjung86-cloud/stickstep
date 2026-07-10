@@ -203,6 +203,17 @@ src/
   대조·언어 규칙, 보고만) 후 메인이 수정.
 - **새 단원 시험 추가**: content/exams/<unit>lN.ts 풀 저작 → <unit>.ts 조립 → index.ts EXAMS 등록이
   전부(지도 노드·라우팅은 examForUnit으로 자동). 그림은 examFigures.ts에 단원 섹션을 나눠 추가.
+- **u4(물질의 상태 변화) 100문항 — 6레슨 단원 확장으로 확립된 관행**: 레슨 수가 5가 아니어도
+  drawExamItems가 자동 균형(6레슨이면 3×4+4×2), 인트로 "N 파트" 문구는 풀 lessonId 수로 동적 계산
+  (exam.ts — 하드코딩 금지). 유형 구성은 u3 규격 75(mcq+multi)/12(num)/13(word) 유지, 분포는
+  17·17·17·17·16·16. num 값 읽기용 그래프는 examCurveFig(수치 눈금 파라미터형) — **정답 수치는 반드시
+  y·x 눈금선 위에 얹는다**(눈금 사이 값은 출제 금지). 저울류 그림 표시창은 빈 패널(숫자 각인 금지).
+  **시험용 실사 사진 발주 표준**: public/exam/uN(process-geo.mjs SQUARE_DIRS 등록) + 풀 파일 로컬
+  ximg/xpair 헬퍼(**loading=lazy 금지** — 사고 #14), 사진 문항은 발주 후 Read 눈검수를 통과한 파일명만
+  참조. 신규 SVG는 qa/shot-exam-figs-u4.mjs 방식(한 페이지 렌더 스크린샷)으로 눈검수. 셔플 규칙 기계
+  검사: shuffle:false && answer===0 조합은 커밋 전 스캔으로 잡는다(u4 저작 중 2건 적발 전례 — 독립 완결
+  명제 보기면 shuffle:false를 제거하는 쪽이 원칙). u1·u2 시험 추가 시 이 관행 그대로.
+  QA: `PORT=<포트> node qa/e2e-exam-u4.mjs`(47검증 — 사진 8장 로드·여섯 파트 문구·6레슨 진단 포함).
 
 ## 수학 트랙 — 과목 차원 · 수학 레슨 문법 (상세는 MATH_GUIDE.md)
 - **중2 수학 Ⅰ(m2u1, 유리수의 표현과 식의 계산) 완성** — 10레슨(무료 3+프리미엄 7), 테마 `calc`

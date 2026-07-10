@@ -132,10 +132,13 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
       el("div", { class: "ex-sub", text: "레슨 진행과 상관없이 언제든 도전할 수 있어요. 실전처럼 풀고, 약한 부분을 찾아요." }),
     );
 
+    // 파트 수는 풀의 레슨 수에서 계산(u3는 다섯, u4는 여섯 파트 — 하드코딩 금지)
+    const partCount = new Set(def.pool.map((it) => it.lessonId)).size;
+    const partWord = ["", "한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉", "열"][partCount] ?? String(partCount);
     const rules = el(
       "div",
       { class: "ex-rules" },
-      ruleRow("layers", "매번 새로운 20문제", "문제 은행에서 다섯 파트를 골고루 섞어 새로 뽑아요"),
+      ruleRow("layers", `매번 새로운 ${def.pick}문제`, `문제 은행에서 ${partWord} 파트를 골고루 섞어 새로 뽑아요`),
       ruleRow("play", "푸는 동안 해설 없음", "실전처럼 몰입해서 끝까지 풀어요. 채점은 제출 후 한 번에!"),
       ruleRow("route", "제출하면 약점 진단", "점수와 함께 파트별 정오표, 전 문항 해설을 받아요"),
     );
@@ -319,8 +322,13 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
       step.appendChild(pad.padEl);
       setCTA(ctaLabel, false, null);
     } else {
-      // word — 워드뱅크 칩(시스템 키보드 금지 원칙)
-      const bank = it.bank ?? [];
+      // word — 워드뱅크 칩(시스템 키보드 금지 원칙). 표시 순서만 셔플 —
+      // 풀 전체가 정답을 bank[0]에 저작하는 관행이라 고정 노출 시 "첫 칩=정답" 패턴이 학습된다(u4 감사 지적).
+      const bank = [...(it.bank ?? [])];
+      for (let i = bank.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [bank[i], bank[j]] = [bank[j], bank[i]];
+      }
       const grid = el("div", { class: "ex-bank" });
       step.appendChild(grid);
       let picked: string | null = null;

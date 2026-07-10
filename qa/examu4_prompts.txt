@@ -1,0 +1,28 @@
+스타일 블록 A (모든 프롬프트 앞에 붙일 공통 스타일):
+Photorealistic photograph, natural lighting, shallow depth of field, clean composition, single clear subject.
+ABSOLUTELY NO text, NO numbers, NO letters, NO logos, NO watermarks anywhere in the image.
+No people, no hands, no faces. Square 1:1 aspect ratio. High detail, realistic textures.
+
+[0] file=public/exam/u4/squid-dry.png
+Rows of squid hanging on a wooden drying rack by the seaside on a sunny day, bodies flattened and drying in the wind, blue sky and distant sea softly blurred in the background. The squid look partially dried, surfaces matte. Bright coastal daylight.
+
+[1] file=public/exam/u4/dew-grass.png
+Extreme close-up of fresh green blades of grass at dawn, covered with many round clear dew droplets, each droplet catching soft morning light. Cool early-morning atmosphere, blurred green background bokeh.
+
+[2] file=public/exam/u4/frost-leaf.png
+Extreme close-up of a fallen brown leaf covered with white frost crystals on a cold winter morning, delicate needle-like ice crystals along the leaf edges and veins, frosty ground softly blurred behind. Cold blue-white tone.
+
+[3] file=public/exam/u4/fog-mirror.png
+A bathroom mirror completely fogged up with condensation after a hot shower, countless tiny water droplets covering the glass surface, a few larger drops running down leaving clear trails. Warm humid bathroom light. The mirror surface is plain fog and droplets only — nothing drawn or written on it.
+
+[4] file=public/exam/u4/dryice-cup.png
+A clear glass cup on a dark table containing chunks of dry ice, thick white fog billowing up and spilling over the rim, flowing down the sides of the glass onto the table. Dramatic but realistic, dark neutral background. No liquid pool around the glass.
+
+[5] file=public/exam/u4/candle-wax.png
+Close-up of a lit cream-colored pillar candle with melted wax pooling at the top around the flame and streams of wax that have dripped down the side and hardened into solid ridges. Warm candlelight, dark blurred background.
+
+[6] file=public/exam/u4/window-frost.png
+Interior view of a window glass on a freezing winter morning, covered with beautiful feather-like white frost crystal patterns spreading across the pane, soft cold daylight glowing through. The frost patterns are purely natural crystal shapes.
+
+[7] file=public/exam/u4/kettle-steam.png
+A stainless steel kettle on a kitchen stove actively boiling, a strong plume of white steam rising from the spout, with a short transparent gap visible right at the spout mouth before the white plume forms. Cozy kitchen background softly blurred. The kettle body is plain metal without any markings.

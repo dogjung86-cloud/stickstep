@@ -370,6 +370,249 @@ export function ringSphere(): string {
   </svg>`;
 }
 
+/* ══════════════ u4 물질의 상태 변화 ══════════════ */
+// 규칙 계승: 그래프 aria-label에 정답 수치 금지(값 읽기 문항의 답 노출 방지),
+// 입자 모형은 다크·전부 같은 색(배열·간격·잔상만 단서), 실험 장치 저울 표시창은 빈 패널(숫자 각인 금지).
+
+const P4 = "#6E9EDB"; // 입자 공통색(다크)
+const dot4 = (x: number, y: number, r = 6): string =>
+  `<circle cx="${x}" cy="${y}" r="${r}" fill="${P4}"/><circle cx="${(x - r * 0.3).toFixed(1)}" cy="${(y - r * 0.33).toFixed(1)}" r="${(r * 0.3).toFixed(1)}" fill="rgba(255,255,255,.4)"/>`;
+const trail4 = (x: number, y: number, ang: number, len: number): string => {
+  const dx = Math.cos(ang) * len;
+  const dy = Math.sin(ang) * len;
+  return `<line x1="${(x - dx * 0.5).toFixed(1)}" y1="${(y - dy * 0.5).toFixed(1)}" x2="${(x + dx).toFixed(1)}" y2="${(y + dy).toFixed(1)}" stroke="#8FB3E8" stroke-width="2" stroke-linecap="round" opacity=".5"/>`;
+};
+/** 입자 배치 3종 — 상자 좌표계(0,0)~(94,84) 기준 */
+const GRID4 = (): string => {
+  let out = "";
+  for (let i = 0; i < 9; i++) out += dot4(26 + (i % 3) * 21, 22 + Math.floor(i / 3) * 21, 6.2);
+  return out;
+};
+const CLUMP4 = (): string => {
+  const pts: [number, number][] = [[30, 30], [46, 24], [62, 32], [24, 46], [40, 42], [56, 48], [70, 44], [34, 60], [52, 62]];
+  return pts.map(([x, y]) => trail4(x, y, (x + y) % 6, 3.2) + dot4(x, y, 6)).join("");
+};
+const SCATTER4 = (): string => {
+  const pts: [number, number, number][] = [[20, 18, 0.7], [66, 14, 2.4], [44, 40, 4.1], [16, 60, 1.2], [74, 62, 5.3], [50, 72, 3.2]];
+  return pts.map(([x, y, a]) => trail4(x, y, a, 8.5) + dot4(x, y, 5.2)).join("");
+};
+
+/** 상태 변화 전후 입자 모형(다크) — 왼쪽 상자가 화살표를 지나 오른쪽 상자로.
+ *  melt: 규칙→붙은 불규칙 · freeze: 붙은 불규칙→규칙 · condense: 흩어짐→붙은 불규칙 · sublime: 규칙→흩어짐 */
+export function particlePairFig(kind: "melt" | "freeze" | "condense" | "sublime"): string {
+  const inner: Record<string, [string, string, string]> = {
+    melt: [GRID4(), CLUMP4(), "규칙적으로 늘어선 입자들이 화살표를 지나 서로 붙은 채 불규칙하게 흐트러진 배열로 변하는 모형"],
+    freeze: [CLUMP4(), GRID4(), "서로 붙은 채 불규칙하게 배열된 입자들이 화살표를 지나 규칙적으로 늘어선 배열로 변하는 모형"],
+    condense: [SCATTER4(), CLUMP4(), "멀리 흩어져 날아다니던 입자들이 화살표를 지나 서로 붙은 불규칙한 배열로 변하는 모형"],
+    sublime: [GRID4(), SCATTER4(), "규칙적으로 늘어선 입자들이 화살표를 지나 멀리 흩어져 날아다니는 배열로 변하는 모형"],
+  };
+  const [a, b, aria] = inner[kind];
+  return `<svg viewBox="0 0 344 124" ${NS} role="img" aria-label="${aria}">
+    <g transform="translate(28,14)"><rect x="0" y="0" width="94" height="84" rx="13" fill="rgba(255,255,255,.04)" stroke="#2C4066" stroke-width="1.5"/>${a}</g>
+    <path d="M142 56h52" stroke="#AFC3E3" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M186 44l14 12-14 12" fill="none" stroke="#AFC3E3" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(222,14)"><rect x="0" y="0" width="94" height="84" rx="13" fill="rgba(255,255,255,.04)" stroke="#2C4066" stroke-width="1.5"/>${b}</g>
+  </svg>`;
+}
+
+/** 상태 변화 A~F 다이어그램(라이트) — 기체 위, 고체·액체 아래. 화살표 색은 전부 중립(열 출입 단서 금지). */
+export function phaseTriFig(): string {
+  const box = (x: number, y: number, label: string, mini: string): string =>
+    `<g transform="translate(${x},${y})">
+      <rect x="0" y="0" width="96" height="58" rx="12" fill="#F7F8FA" stroke="#DCE0E6" stroke-width="1.5"/>
+      <text x="48" y="24" text-anchor="middle" font-size="14" font-weight="800" fill="#333D4B">${label}</text>
+      <g transform="translate(24,32)">${mini}</g>
+    </g>`;
+  const md = (x: number, y: number, r = 3.1): string => `<circle cx="${x}" cy="${y}" r="${r}" fill="#8B95A1"/>`;
+  const miniSolid = `${md(6, 6)}${md(16, 6)}${md(26, 6)}${md(6, 15)}${md(16, 15)}${md(26, 15)}`;
+  const miniLiquid = `${md(7, 8)}${md(16, 5)}${md(25, 9)}${md(11, 15)}${md(21, 15)}`;
+  const miniGas = `${md(4, 4, 2.7)}${md(24, 7, 2.7)}${md(13, 14, 2.7)}${md(30, 16, 2.7)}`;
+  const arrow = (x1: number, y1: number, x2: number, y2: number, lab: string, lx: number, ly: number): string => {
+    const ang = Math.atan2(y2 - y1, x2 - x1);
+    const hx = (a: number): number => x2 - Math.cos(ang - a) * 9;
+    const hy = (a: number): number => y2 - Math.sin(ang - a) * 9;
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#6B7684" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M${x2} ${y2} L${hx(0.44).toFixed(1)} ${hy(0.44).toFixed(1)} M${x2} ${y2} L${hx(-0.44).toFixed(1)} ${hy(-0.44).toFixed(1)}" stroke="#6B7684" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+      <circle cx="${lx}" cy="${ly}" r="11" fill="#fff" stroke="#B0B8C1" stroke-width="1.4"/>
+      <text x="${lx}" y="${ly + 4.5}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#333D4B">${lab}</text>`;
+  };
+  return `<svg viewBox="0 0 344 252" ${NS} role="img" aria-label="고체, 액체, 기체 세 상자 사이의 상태 변화를 화살표 A부터 F로 나타낸 그림. A는 고체에서 액체로, B는 액체에서 고체로, C는 액체에서 기체로, D는 기체에서 액체로, E는 고체에서 기체로, F는 기체에서 고체로 향한다">
+    ${box(124, 10, "기체", miniGas)}
+    ${box(18, 180, "고체", miniSolid)}
+    ${box(230, 180, "액체", miniLiquid)}
+    ${arrow(122, 196, 222, 196, "A", 172, 182)}
+    ${arrow(222, 222, 122, 222, "B", 172, 238)}
+    ${arrow(268, 172, 210, 76, "C", 252, 118)}
+    ${arrow(228, 66, 286, 162, "D", 292, 112)}
+    ${arrow(76, 172, 134, 76, "E", 92, 112)}
+    ${arrow(116, 66, 58, 162, "F", 52, 118)}
+  </svg>`;
+}
+
+/** 수치형 가열·냉각 곡선(라이트) — 온도 축 눈금 숫자 포함(값 읽기 문항용).
+ *  t = 구간 경계 시각 [t1,t2] 또는 [t1,t2,t3,t4]. p2가 없으면 수평 구간 1개.
+ *  secLabels: ㉠~㉤ 구간 라벨. aria-label에는 수치를 쓰지 않는다. */
+export function examCurveFig(o: {
+  mode: "heat" | "cool";
+  start: number;
+  p1: number;
+  p2?: number;
+  end: number;
+  t: number[];
+  tMax: number;
+  yMin?: number;
+  yMax: number;
+  yStep: number;
+  xStep?: number;
+  secLabels?: boolean;
+}): string {
+  const yMin = o.yMin ?? 0;
+  const gx = (t: number): number => 44 + t * (272 / o.tMax);
+  const gy = (T: number): number => 186 - ((T - yMin) / (o.yMax - yMin)) * 156;
+  const xStep = o.xStep ?? 2;
+  let xt = "";
+  for (let t = 0; t <= o.tMax; t += xStep) {
+    xt += `<line x1="${gx(t)}" y1="186" x2="${gx(t)}" y2="26" stroke="#EDF0F4" stroke-width="1"/>
+      <text x="${gx(t)}" y="202" text-anchor="middle" font-size="10.5" fill="#8B95A1">${t}</text>`;
+  }
+  let yt = "";
+  for (let T = yMin; T <= o.yMax; T += o.yStep) {
+    yt += `<line x1="44" y1="${gy(T)}" x2="320" y2="${gy(T)}" stroke="#EDF0F4" stroke-width="1"/>
+      <text x="36" y="${gy(T) + 3.5}" text-anchor="end" font-size="10.5" fill="#8B95A1">${T}</text>`;
+  }
+  const pts: [number, number][] = [[0, o.start]];
+  if (o.p2 == null) {
+    pts.push([o.t[0], o.p1], [o.t[1], o.p1], [o.tMax, o.end]);
+  } else {
+    pts.push([o.t[0], o.p1], [o.t[1], o.p1], [o.t[2], o.p2], [o.t[3], o.p2], [o.tMax, o.end]);
+  }
+  const path = pts.map(([t, T], i) => `${i === 0 ? "M" : "L"}${gx(t).toFixed(1)},${gy(T).toFixed(1)}`).join(" ");
+  const dash = (T: number, tEnd: number): string =>
+    `<line x1="44" y1="${gy(T)}" x2="${gx(tEnd)}" y2="${gy(T)}" stroke="#B9C2CE" stroke-width="1.2" stroke-dasharray="3 4"/>`;
+  let dashes = dash(o.p1, o.t[1]);
+  if (o.p2 != null) dashes += dash(o.p2, o.t[3]);
+  let secs = "";
+  if (o.secLabels) {
+    const marks = ["㉠", "㉡", "㉢", "㉣", "㉤"];
+    const bounds = [0, ...o.t, o.tMax];
+    for (let i = 0; i < bounds.length - 1 && i < marks.length; i++) {
+      const mid = (bounds[i] + bounds[i + 1]) / 2;
+      const Tof = (idx: number): number => pts[Math.min(idx, pts.length - 1)][1];
+      const hi = Math.min(gy(Math.max(Tof(i), Tof(i + 1))), 170);
+      secs += `<text x="${gx(mid)}" y="${hi - 12}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${marks[i]}</text>
+        <line x1="${gx(bounds[i + 1])}" y1="186" x2="${gx(bounds[i + 1])}" y2="30" stroke="#DCE0E6" stroke-width="1" stroke-dasharray="2 4"/>`;
+    }
+  }
+  return `<svg viewBox="0 0 344 222" ${NS} role="img" aria-label="물질을 ${o.mode === "heat" ? "가열" : "냉각"}할 때 시간에 따른 온도 그래프. 온도가 일정하게 유지되는 수평 구간이 나타난다">
+    ${yt}${xt}${dashes}${secs}
+    <line x1="44" y1="26" x2="44" y2="186" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="44" y1="186" x2="320" y2="186" stroke="#B0B8C1" stroke-width="1.6"/>
+    <path d="${path}" fill="none" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="8" y="14" font-size="11" fill="#4E5968">온도(℃)</text>
+    <text x="338" y="218" text-anchor="end" font-size="11" fill="#4E5968">시간(분)</text>
+  </svg>`;
+}
+
+/** 전자저울 위 거름종이 + 액체 몇 방울(라이트) — 표시창은 빈 패널(숫자 각인 금지). */
+export function evapScaleFig(): string {
+  return `<svg viewBox="0 0 344 190" ${NS} role="img" aria-label="전자저울 위에 액체를 몇 방울 떨어뜨린 거름종이가 놓여 있고, 표면에서 무언가 피어오르는 그림">
+    <ellipse cx="172" cy="96" rx="86" ry="14" fill="#fff" stroke="#8B95A1" stroke-width="2"/>
+    <ellipse cx="172" cy="92" rx="86" ry="14" fill="#F4F6F8" stroke="#8B95A1" stroke-width="2"/>
+    <ellipse cx="172" cy="92" rx="58" ry="9" fill="#fff" stroke="#B0B8C1" stroke-width="1.4"/>
+    <g fill="#9EC5FB"><ellipse cx="150" cy="90" rx="7" ry="3.4"/><ellipse cx="178" cy="93" rx="8" ry="3.8"/><ellipse cx="200" cy="89" rx="6" ry="3"/></g>
+    <g stroke="#9EC5FB" stroke-width="2.2" fill="none" stroke-linecap="round">
+      <path d="M150 76c-3-5 3-7 0-12M178 78c-3-5 3-7 0-13M200 76c-3-5 3-7 0-12"/>
+      <path d="M147 58l3-4 3 4M175 59l3-4 3 4M197 58l3-4 3 4"/>
+    </g>
+    <path d="M96 108h152a10 10 0 0 1 10 10v30a10 10 0 0 1-10 10H96a10 10 0 0 1-10-10v-30a10 10 0 0 1 10-10z" fill="#EDF1F6" stroke="#8B95A1" stroke-width="2"/>
+    <rect x="130" y="120" width="84" height="26" rx="6" fill="#2A3442"/>
+    <circle cx="234" cy="133" r="7" fill="#fff" stroke="#B0B8C1" stroke-width="1.6"/>
+    <text x="172" y="176" text-anchor="middle" font-size="11" fill="#8B95A1">전자저울</text>
+    <text x="60" y="84" text-anchor="end" font-size="12" font-weight="700" fill="#4E5968">거름종이</text>
+    <path d="M64 86l40 5" stroke="#B0B8C1" stroke-width="1.5"/>
+  </svg>`;
+}
+
+/** 밀폐 플라스크 저울 실험(라이트) — (가) 액체 상태 / (나) 전부 기체가 된 후. 표시창은 빈 패널. */
+export function sealedScaleFig(): string {
+  const flask = (x: number, inner: string): string => `
+    <g transform="translate(${x},0)">
+      <rect x="60" y="18" width="20" height="12" rx="4" fill="#C4CAD2" stroke="#8B95A1" stroke-width="1.6"/>
+      <path d="M62 30 v18 L38 92 a10 10 0 0 0 9 14 h46 a10 10 0 0 0 9-14 L78 48 v-18" fill="#fff" stroke="#8B95A1" stroke-width="2"/>
+      ${inner}
+      <path d="M52 112h36a8 8 0 0 1 8 8v16a8 8 0 0 1-8 8H52a8 8 0 0 1-8-8v-16a8 8 0 0 1 8-8z" fill="#EDF1F6" stroke="#8B95A1" stroke-width="1.8"/>
+      <rect x="56" y="120" width="28" height="14" rx="4" fill="#2A3442"/>
+    </g>`;
+  const liquid = `<path d="M44 88 L96 88 a8 8 0 0 1 4 10 l-2 4 a8 8 0 0 1 -8 4 h-48 a8 8 0 0 1 -8 -4 l-2 -4 a8 8 0 0 1 4 -10z" fill="#B7D3F2" opacity=".9" transform="translate(0,0)"/>`;
+  const gasDots = [[56, 60], [76, 52], [66, 76], [50, 88], [84, 84], [72, 96]]
+    .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3" fill="#9EC5FB" opacity=".85"/>`)
+    .join("");
+  return `<svg viewBox="0 0 344 176" ${NS} role="img" aria-label="마개로 밀폐한 플라스크를 전자저울에 올린 두 장면. (가)는 바닥에 액체가 조금 있고, (나)는 액체가 모두 기체로 변한 뒤의 모습이다">
+    ${flask(18, liquid)}
+    ${flask(186, gasDots)}
+    <text x="88" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(가) 가열 전</text>
+    <text x="256" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(나) 모두 기체가 된 후</text>
+  </svg>`;
+}
+
+/** 물의 응고 부피 변화(라이트) — 같은 병의 (가) 물 / (나) 언 뒤. 언 뒤의 높이가 더 높다. */
+export function waterFreezeFig(): string {
+  const jar = (x: number, level: number, fill: string, cracked: boolean): string => `
+    <g transform="translate(${x},0)">
+      <path d="M20 30 h72 v104 a10 10 0 0 1-10 10 H30 a10 10 0 0 1-10-10z" fill="none" stroke="#8B95A1" stroke-width="2.2"/>
+      <path d="M24 ${level} h64 v${140 - level} a6 6 0 0 1-6 6 H30 a6 6 0 0 1-6-6z" fill="${fill}"/>
+      ${cracked ? `<path d="M40 ${level + 10} l10 14 -8 12 M66 ${level + 6} l-6 16 9 13" fill="none" stroke="#fff" stroke-width="1.8" opacity=".8"/>` : ""}
+      <line x1="12" y1="72" x2="20" y2="72" stroke="#8B95A1" stroke-width="1.6"/>
+      <line x1="12" y1="102" x2="20" y2="102" stroke="#8B95A1" stroke-width="1.6"/>
+    </g>`;
+  return `<svg viewBox="0 0 344 200" ${NS} role="img" aria-label="같은 유리병에 담긴 (가) 물과, 통째로 얼린 뒤의 (나). 언 뒤의 표면 높이가 물일 때보다 높다">
+    ${jar(28, 82, "#B7D3F2", false)}
+    ${jar(200, 62, "#EAF4FF", true)}
+    <line x1="52" y1="82" x2="292" y2="82" stroke="#F04452" stroke-width="1.4" stroke-dasharray="5 5" opacity=".6"/>
+    <text x="84" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(가) 물</text>
+    <text x="256" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(나) 언 뒤</text>
+    <text x="84" y="190" text-anchor="middle" font-size="11" fill="#8B95A1">처음 높이</text>
+  </svg>`;
+}
+
+/** 물질의 상태 분류 순서도(라이트) — 예/아니요가 각자의 결론 칸으로 갈라진다(㉠·㉡·㉢ 빈칸). */
+export function stateFlowFig(): string {
+  const boxStyle = `fill="#F7F8FA" stroke="#B0B8C1" stroke-width="1.5"`;
+  const ansBox = (x: number, y: number, lab: string): string =>
+    `<rect x="${x}" y="${y}" width="88" height="34" rx="10" fill="#EEF4FF" stroke="#3182F6" stroke-width="1.5"/>
+     <text x="${x + 44}" y="${y + 22}" text-anchor="middle" font-size="14" font-weight="800" fill="#1B64DA">${lab}</text>`;
+  const arr = (x1: number, y1: number, x2: number, y2: number): string =>
+    `<path d="M${x1} ${y1} L${x2} ${y2}" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
+     <path d="M${x2} ${y2} l-5 -7 M${x2} ${y2} l5 -7" fill="none" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round" transform="rotate(${(Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI - 90} ${x2} ${y2})"/>`;
+  return `<svg viewBox="0 0 344 264" ${NS} role="img" aria-label="물질의 상태를 나누는 순서도. 첫 질문은 담는 그릇에 따라 모양이 변하는지이고, 아니요 갈래는 결론 칸 ㉠, 예 갈래는 부피도 변하는지 물은 뒤 아니요는 ㉡, 예는 ㉢ 결론 칸으로 이어진다. 결론 칸은 모두 비어 있다">
+    <rect x="122" y="8" width="100" height="32" rx="10" ${boxStyle}/>
+    <text x="172" y="29" text-anchor="middle" font-size="13" font-weight="700" fill="#333D4B">물질</text>
+    ${arr(172, 40, 172, 58)}
+    <path d="M172 58 L296 88 L172 118 L48 88 Z" fill="#FFF6E6" stroke="#E8B04B" stroke-width="1.5"/>
+    <text x="172" y="83" text-anchor="middle" font-size="12" font-weight="700" fill="#8A5A00">담는 그릇에 따라</text>
+    <text x="172" y="99" text-anchor="middle" font-size="12" font-weight="700" fill="#8A5A00">모양이 변하는가?</text>
+    <text x="30" y="80" font-size="11.5" font-weight="700" fill="#4E5968">아니요</text>
+    <path d="M48 88 H30 V140" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M30 140 l-5 -7 M30 140 l5 -7" fill="none" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round"/>
+    ${ansBox(8, 142, "㉠")}
+    <text x="310" y="80" font-size="11.5" font-weight="700" fill="#4E5968">예</text>
+    <path d="M296 88 H314 V118" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M314 118 H232 V132" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M232 132 l-5 -7 M232 132 l5 -7" fill="none" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M232 134 L296 162 L232 190 L168 162 Z" fill="#FFF6E6" stroke="#E8B04B" stroke-width="1.5"/>
+    <text x="232" y="157" text-anchor="middle" font-size="12" font-weight="700" fill="#8A5A00">담는 그릇에 따라</text>
+    <text x="232" y="173" text-anchor="middle" font-size="12" font-weight="700" fill="#8A5A00">부피도 변하는가?</text>
+    <text x="150" y="154" font-size="11.5" font-weight="700" fill="#4E5968">아니요</text>
+    <path d="M168 162 H120 V212" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M120 212 l-5 -7 M120 212 l5 -7" fill="none" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round"/>
+    ${ansBox(76, 214, "㉡")}
+    <text x="304" y="154" font-size="11.5" font-weight="700" fill="#4E5968">예</text>
+    <path d="M296 162 H316 V212" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M316 212 l-5 -7 M316 212 l5 -7" fill="none" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round"/>
+    ${ansBox(240, 214, "㉢")}
+  </svg>`;
+}
+
 /** 액체 팽창 실험 그래프 — 온도에 따라 유리관 눈금이 비례해 오르는 직선. 수치 읽기 문항용. (라이트) */
 export function expandScaleGraph(): string {
   const gx = (T: number): number => 40 + T * 3.5; // 0~80℃
