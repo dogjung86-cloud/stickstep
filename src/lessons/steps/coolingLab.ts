@@ -157,7 +157,7 @@ export const coolingLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "같은 마그마라도 <b>어디서 식느냐</b>에 따라 다른 암석이 돼요. 위치와 성분을 고르고 <b>식히기</b>를 눌러 결정이 자라는 걸 지켜보세요!",
   });
-  host.append(goalChips, stage, locSeg, compSeg, coolBtn, helper);
+  host.append(goalChips, helper, stage, locSeg, compSeg, coolBtn, tbl); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
