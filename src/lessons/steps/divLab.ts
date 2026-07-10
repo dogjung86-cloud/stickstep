@@ -106,7 +106,7 @@ export const divLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "크랭크 한 번에 소수점 아래 몫이 한 자리씩! <b>나머지 필</b>을 잘 지켜봐요, 멈춤의 비밀이 숨어 있어요.",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ── 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ──
@@ -256,6 +256,7 @@ export const divLab: StepRenderer = (host, step, api) => {
       attrs: { type: "button", "aria-label": "크랭크 돌리기, 몫을 한 자리 더 파기" },
     }) as HTMLButtonElement;
     ctl.appendChild(crankBtn);
+    later(() => crankBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     const settle = (): void => {
       if (rem === 0) {
         resolved = true;
@@ -277,6 +278,7 @@ export const divLab: StepRenderer = (host, step, api) => {
             attrs: { type: "button", "aria-label": "이 나눗셈은 끝나지 않는다고 선언하기" },
           }) as HTMLButtonElement;
           ctl.appendChild(declBtn);
+          later(() => declBtn?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
           helper.innerHTML = "크랭크를 아무리 돌려도 끝이 안 나요. 이럴 땐 <b>멈추지 않는다고 선언</b>하는 게 실험 완료예요!";
           declBtn.addEventListener("click", () => {
             if (busy || resolved) return;
@@ -342,6 +344,7 @@ export const divLab: StepRenderer = (host, step, api) => {
     inst.innerHTML = `두 번째 손님: ${mfmt("{1/6}")} 이에요. 이번에도 크랭크로 파 내려가요`;
     helper.innerHTML = "이번 손님은 어쩐지 느낌이 달라요. <b>나머지 필</b>에서 눈을 떼지 마세요!";
     askPredict("이번 나눗셈은 멈출까요?", () => armCrank({ goal: "nostop", after: startP3 }));
+    later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ── 국면 3: 3/8 vs 2/3 직접 선택 ── */
@@ -368,6 +371,7 @@ export const divLab: StepRenderer = (host, step, api) => {
     });
     clear(ctl);
     ctl.appendChild(row);
+    later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     busy = false;
   }
 
@@ -402,6 +406,7 @@ export const divLab: StepRenderer = (host, step, api) => {
       armCrank({ bonus: true, after: bonusDone });
     });
     ctl.appendChild(b);
+    later(() => b.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     busy = false;
   }
 

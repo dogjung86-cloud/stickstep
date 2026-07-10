@@ -64,7 +64,7 @@ export const expansion: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "슬라이더로 금속 막대를 <b>가열</b>해 보세요. 입자와 막대 끝의 <b>눈금</b>을 함께 지켜보는 게 포인트!",
   });
-  host.append(stage, slider, controls, helper);
+  host.append(helper, stage, slider, controls); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   type Phase = "rod" | "pick" | "bend" | "done";
@@ -137,6 +137,7 @@ export const expansion: StepRenderer = (host, step, api) => {
         toPick();
       });
       controls.appendChild(nextBtn);
+      window.setTimeout(() => nextBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     }
   }
 
@@ -169,6 +170,7 @@ export const expansion: StepRenderer = (host, step, api) => {
       row.appendChild(b);
     });
     controls.appendChild(row);
+    window.setTimeout(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function bendVerdict(): void {

@@ -183,7 +183,7 @@ export const congLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "여섯 장 속에 <b>합동인 쌍둥이가 3쌍</b> 숨어 있어요. 주어진 변·각을 비교하며 카드 두 장을 탭해 짝을 지어 보세요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();
@@ -301,6 +301,7 @@ export const congLab: StepRenderer = (host, step, api) => {
     board.appendChild(overlay);
     overlay.getBoundingClientRect(); // reflow 후 페이드 인
     overlay.classList.add("show");
+    later(() => sheet.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function confirmPair(idA: string, idB: string, basis: Basis): void {

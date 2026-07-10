@@ -128,13 +128,13 @@ export const photoFactorLab: StepRenderer = (host, step, api) => {
 
   host.append(
     goals,
+    helper, // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
     stage,
     el("div", { class: "plant-controls three" }, ...factorButtons),
     readout,
     range,
     el("div", { class: "plant-controls three" }, lowBtn, midBtn, highBtn),
     lockNote,
-    helper,
   );
   if (s.curio) host.appendChild(curioCard(s.curio));
 

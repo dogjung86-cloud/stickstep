@@ -1451,13 +1451,8 @@
    lfm(lineFamilyLab)·lbd(lineBuildLab)·lrv(lineRevealLab)·mel(meetLab — mtl은 math.css 선점)
    ============================================================ */
 .mq6-q.fnl-q, .mq6-q.m2u3q { background: #E7F8F1; border-color: rgba(12,166,120,.5); color: #067D57; }
-/* 지시(helper)를 보드 위로 올린 배치(칩 → helper → 보드) — 조작 요소 근처 지시 원칙.
-   빈 예약 공간이 간격 비대의 범인이라 min-height는 해제(기본 44px까지 0으로),
-   대신 가이드 줄 정체성은 단원 톤 왼쪽 바로 준다(태그 없이 지시·해설 양쪽에 어울리는 톤). */
-.pn-badges + .helper {
-  margin: 10px 2px 0; min-height: 0;
-  padding: 2px 0 2px 11px; border-left: 3px solid rgba(12,166,120,.55); border-radius: 2px;
-}
+/* 지시(helper) 가이드 바(칩 → helper → 보드)는 base.css로 승격(전 트랙 롤아웃 2026-07-10) —
+   색은 중립 --n400 기본, 단원 톤이 필요하면 --helper-bar로 덮는다. */
 /* 보드 안 상단 카드(지금 직선·임무 등)는 드릴용 mdr-q 크기(84px)를 버리고 내용에 맞게 —
    드릴 진짜 질문 카드는 mboard 밖이라 영향 없다 */
 .mboard .mdr-q { min-height: 0; padding: 12px 16px; }

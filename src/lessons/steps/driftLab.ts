@@ -140,7 +140,7 @@ export const driftLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "베게너의 눈으로 봐요 — 타임라인을 <b>과거로</b> 밀면 대륙들이 모여요. <b>증거</b>를 켜고 무슨 일이 생기는지 지켜봐요!",
   });
-  host.append(goalChips, stage, timeline, evRow, helper);
+  host.append(goalChips, helper, stage, timeline, evRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

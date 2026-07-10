@@ -50,7 +50,7 @@ export const hotairRide: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "버너 버튼을 <b>꾹 누르면</b> 풍선 속 기체가 데워져요. 풍선이 어떻게 변하는지 보면서 <b>이륙</b>시켜 보세요!",
   });
-  host.append(goalChips, stage, burnBtn, helper);
+  host.append(goalChips, helper, stage, burnBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let W = 340;

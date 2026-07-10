@@ -215,7 +215,7 @@ export const plateMap: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "지난 수십 년의 <b>지진·화산 관측 기록</b>을 세계 지도에 뿌려 볼 거예요. <b>재생</b>을 눌러 보세요!",
   });
-  host.append(goalChips, stage, tgRow, playBtn, helper);
+  host.append(goalChips, helper, stage, tgRow, playBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 지도 이미지 ----

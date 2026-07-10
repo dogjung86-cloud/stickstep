@@ -106,7 +106,7 @@ export const areaSplit: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "손잡이를 <b>좌우로 드래그</b>해 직사각형을 잘라 보세요. 두 조각의 넓이를 더하면 얼마일까요?",
   });
-  host.append(chips.el, board, padWrap, helper);
+  host.append(chips.el, helper, board, padWrap); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 타이머 ----
@@ -339,6 +339,7 @@ export const areaSplit: StepRenderer = (host, step, api) => {
       stage.style.opacity = "1";
       read.innerHTML = mfmt("5×98=?");
       helper.innerHTML = "이번엔 <b>5×98</b>, 98을 어떻게 쪼개면 암산이 쉬울까요? 두 길을 눌러 비교해 봐요.";
+      later(() => btnRow.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     }, 300);
   }
 
@@ -347,6 +348,7 @@ export const areaSplit: StepRenderer = (host, step, api) => {
     void padWrap.offsetWidth;
     padWrap.style.opacity = "1";
     helper.innerHTML = "마지막, <b>500 − 10</b>. 넘패드로 답을 완성해요!";
+    later(() => padWrap.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   confirmBtn.addEventListener("click", () => {

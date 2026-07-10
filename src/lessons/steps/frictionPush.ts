@@ -75,7 +75,7 @@ export const frictionPush: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "<b>꾹 눌러 밀기</b>를 누르고 있으면 미는 힘이 점점 커져요. 상자가 언제 움직이기 시작하는지 지켜보세요!",
   });
-  host.append(goalChips, stage, seg, controls, helper);
+  host.append(goalChips, helper, stage, seg, controls); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let floor: FloorId = "wood";

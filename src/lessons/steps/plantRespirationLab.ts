@@ -281,7 +281,7 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "식물은 <b>포도당에 저장된 에너지를 생명활동에 바로 쓸 수는 없어요</b>. 포도당과 산소를 마이토콘드리아에 넣어 생명활동에 쓸 에너지를 꺼내 보세요.",
   });
-  host.append(goalChips, stage, inputControls, startBtn, equation, helper);
+  host.append(goalChips, helper, stage, inputControls, startBtn, equation); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const loaded: Record<RespireInput, boolean> = { glucose: false, oxygen: false };
@@ -731,7 +731,7 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "시간을 <b>강한 낮</b>과 <b>빛 없는 밤</b>으로 옮겨 보세요. 위 상태표에서 호흡이 한 번이라도 꺼지는지 확인해요.",
   });
-  host.append(goalChips, stage, readout, range, quickControls, note, helper);
+  host.append(goalChips, helper, stage, readout, range, quickControls, note); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   let hour = 7;

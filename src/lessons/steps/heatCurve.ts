@@ -91,7 +91,7 @@ export const heatCurve: StepRenderer = (host, step, api) => {
       ? "버튼을 꾹 누르는 동안 <b>-20℃ 얼음</b>이 가열돼요. 그래프의 온도 곡선을 잘 보세요 — 어딘가에서 <b>이상한 일</b>이 벌어져요."
       : "버튼을 꾹 누르는 동안 <b>120℃ 수증기</b>가 식어요. 온도가 <b>내려가다 멈추는 곳</b>이 있는지 잘 보세요.",
   });
-  host.append(stage.el, graphWrap, actBtn, helper);
+  host.append(helper, stage.el, graphWrap, actBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let E = heatMode ? 0 : E_MAX;

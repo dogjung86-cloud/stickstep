@@ -78,7 +78,7 @@ export const sepFunnel: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "물과 식용유를 넣고 <b>방금 흔든</b> 분별 깔때기예요. 뿌연 혼합물 — 가만히 두면 어떻게 될까요?",
   });
-  host.append(goalChips, stage, btnAct, choices, helper);
+  host.append(goalChips, helper, stage, btnAct, choices); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
@@ -745,6 +745,7 @@ export const sepFunnel: StepRenderer = (host, step, api) => {
         toast("층이 나뉘었어요 — 물 아래, 식용유 위!");
         capEl.textContent = "마개를 먼저 연 다음, 꼭지로 아래층만!";
         choices.classList.add("show");
+        window.setTimeout(() => choices.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
         if (!finished)
           helper.innerHTML =
             "위층·아래층 라벨을 탭해 <b>왜 이렇게 나뉘었는지</b> 확인하고, <b>마개 → 꼭지</b> 순서로 물을 받아요.";

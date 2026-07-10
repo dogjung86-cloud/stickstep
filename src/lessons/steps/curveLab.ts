@@ -53,7 +53,7 @@ export const curveLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "분홍 점은 <b>곱 x×y=8</b>을 절대 어기지 않아요. 좌우로 끌면서 직사각형과 자취를 관찰해 보세요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = svgWrap.querySelector("svg") as SVGSVGElement;
@@ -194,6 +194,7 @@ export const curveLab: StepRenderer = (host, step, api) => {
     pos.addEventListener("click", () => swap(8));
     neg.addEventListener("click", () => swap(-8));
     actions.append(pos, neg);
+    timers.add(window.setTimeout(() => actions.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80)); // 화면 밖 등장 보정
   }
 
   function finishLab(): void {

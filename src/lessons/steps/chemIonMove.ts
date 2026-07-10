@@ -71,7 +71,7 @@ export const ionMoveLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "거름종이 중앙에 <b>황산 구리(Ⅱ) 수용액</b>을 한 방울 떨어뜨렸어요. 파란색의 정체는 <b>구리 이온</b> — 전류를 켜면 어디로 갈까요?",
   });
-  host.append(goalChips, stage, row, helper);
+  host.append(goalChips, helper, stage, row); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   // 실제 실험 사진 — 시뮬레이션과 같은 결과가 진짜 실험실에서도 나온다는 증거
   host.appendChild(
     labExplain({

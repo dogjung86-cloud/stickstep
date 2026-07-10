@@ -125,7 +125,7 @@ export const denomLab: StepRenderer = (host, step, api) => {
   board.append(stage, panel);
   const toast = mtoast(board);
   const helper = el("div", { class: "helper" });
-  host.append(goals.el, board, helper);
+  host.append(goals.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   /* ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ---- */
@@ -310,6 +310,7 @@ export const denomLab: StepRenderer = (host, step, api) => {
       const row = el("div", { class: "mq6-choices" });
       row.append(mulBtn(2), mulBtn(5));
       ctl.appendChild(row);
+      later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     }
 
     function mulBtn(m: 2 | 5): HTMLButtonElement {
@@ -411,6 +412,7 @@ export const denomLab: StepRenderer = (host, step, api) => {
         mulBtns.push(b2, b5);
         row.append(b2, b5);
         ctl.appendChild(row);
+        later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
       }, 750);
     });
 
@@ -436,6 +438,7 @@ export const denomLab: StepRenderer = (host, step, api) => {
       });
       declareBtn.addEventListener("click", declare);
       ctl.appendChild(declareBtn);
+      later(() => declareBtn?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     }
 
     function mulBtn(m: 2 | 5): HTMLButtonElement {
@@ -578,6 +581,7 @@ export const denomLab: StepRenderer = (host, step, api) => {
     });
     nextBtn.addEventListener("click", tapNext);
     ctl.appendChild(nextBtn);
+    later(() => nextBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
 
     function tapNext(): void {
       if (busy || stepNo >= DIV.length) return;
@@ -649,6 +653,7 @@ export const denomLab: StepRenderer = (host, step, api) => {
         row.appendChild(b);
       });
       ctl.appendChild(row);
+      later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     }
 
     function finale(): void {

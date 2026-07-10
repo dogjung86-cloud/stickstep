@@ -86,7 +86,7 @@ export const bottleLab: StepRenderer = (host, step, api) => {
   board.append(svgWrap, qbar, controls);
   const toast = mtoast(board);
   const helper = el("div", { class: "helper" });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();

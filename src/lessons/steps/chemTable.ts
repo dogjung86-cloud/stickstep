@@ -171,7 +171,7 @@ export const periodicLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "세로줄이 <b>족</b>(1~18), 가로줄이 <b>주기</b>(1~7) — 원소들은 <b>원자 번호(=양성자수)</b> 순서로 줄을 서 있어요.",
   });
-  host.append(goalChips, preview, enterBtn, helper);
+  host.append(goalChips, helper, preview, enterBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

@@ -54,7 +54,7 @@ export const balloonUniverse: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "풍선 표면 = 우주, 딱지 = 은하. 풍선이 부풀면 <b>모든 딱지 사이가 한꺼번에</b> 멀어져요 — 은하가 움직이는 게 아니라 <b>공간 자체가 늘어나는</b> 거예요.",
   });
-  host.append(goalChips, stage, btnRow, helper);
+  host.append(goalChips, helper, stage, btnRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

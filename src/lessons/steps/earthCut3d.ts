@@ -134,7 +134,7 @@ export const earthCut3d: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "땅을 아무리 깊이 파도 지구 반지름의 0.2 %도 못 내려가요. 그런데 속을 어떻게 알았을까요? 일단 <b>뜯어 봅시다!</b>",
   });
-  host.append(goalChips, preview, enterBtn, helper);
+  host.append(goalChips, helper, preview, enterBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const goals = new Set<string>();

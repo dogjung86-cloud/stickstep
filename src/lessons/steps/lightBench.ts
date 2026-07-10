@@ -63,7 +63,7 @@ export const mirrorLens: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "네 가지 거울·렌즈에 같은 물체를 비추면 상이 어떻게 다를까요? 각 장치에서 <b>가까이·멀리</b> 모두 관찰해 봐요.",
   });
-  host.append(goalChips, preview, enterBtn, helper);
+  host.append(goalChips, helper, preview, enterBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let mode: Mode = "cvMirror";

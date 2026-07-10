@@ -95,7 +95,7 @@ export const swingLab3d: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "말굽자석의 틈에 <b>코일 그네</b>가 걸려 있어요. 전류를 켜면 무슨 일이 생길까요?",
   });
-  host.append(goalChips, stage, btnRow, sliders, helper);
+  host.append(goalChips, helper, stage, btnRow, sliders); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let on = false;

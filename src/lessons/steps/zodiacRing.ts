@@ -135,7 +135,7 @@ export const zodiacRing: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "지구는 태양 둘레를 <b>1년에 한 바퀴</b> 돌아요(공전). 지구를 끌면서 — <b>태양 쪽</b> 별자리와 <b>반대쪽</b> 별자리가 어떻게 바뀌는지 보세요!",
   });
-  host.append(goalChips, stage, helper);
+  host.append(goalChips, helper, stage); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let month = 0; // 0 = 1월

@@ -68,7 +68,7 @@ export const reflectLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "레이저를 <b>잡고 이리저리 돌려</b> 보세요. 위 두 각도가 어떻게 변하는지 지켜봐요!",
   });
-  host.append(goalChips, stage, choices, helper);
+  host.append(goalChips, helper, stage, choices); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
@@ -157,6 +157,7 @@ export const reflectLab: StepRenderer = (host, step, api) => {
       choices.appendChild(b);
     });
     choices.classList.add("show");
+    window.setTimeout(() => choices.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function confirmDone(): void {
@@ -333,7 +334,7 @@ export const diffuseLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "매끈한 거울에 나란한 빛 다섯 줄기가 들어와요. 반사된 빛도 <b>나란</b>하죠? 이제 표면을 <b>울퉁불퉁</b>으로 바꿔 보세요.",
   });
-  host.append(goalChips, stage, helper);
+  host.append(goalChips, helper, stage); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

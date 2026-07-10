@@ -58,7 +58,7 @@ export const factorTree: StepRenderer = (host, step, api) => {
   const result = el("div", { class: "ft-result" });
   board.append(stage, result);
   const helper = el("div", { class: "helper", html: "<b>60</b>을 탭해서 두 수의 곱으로 갈라 보세요, 어떤 갈래든 좋아요." });
-  host.append(goals.el, board, helper);
+  host.append(goals.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   let root: Node = mkRoot(60);

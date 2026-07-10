@@ -72,7 +72,7 @@ export const buoyancyLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "공기 중에서 추의 무게는 <b>20 N</b>. 수조를 올려 추를 담그면서 <b>저울 눈금과 용수철</b>을 지켜보세요.",
   });
-  host.append(goalChips, stage, helper);
+  host.append(goalChips, helper, stage); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let W = 340;

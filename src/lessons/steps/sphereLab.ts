@@ -46,7 +46,7 @@ export const sphereLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "구는 펼칠 수 없는 유일한 도형! 그래서 실험으로 잰답니다. 오렌지 한 알이면 충분해요.",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const scene = stage.querySelector(".msp-scene") as SVGGElement;
@@ -185,6 +185,7 @@ export const sphereLab: StepRenderer = (host, step, api) => {
     );
     clear(ctl);
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function runWater(): void {
@@ -249,6 +250,7 @@ export const sphereLab: StepRenderer = (host, step, api) => {
     );
     clear(ctl);
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function finish(): void {

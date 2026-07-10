@@ -73,7 +73,7 @@ export const coordLab: StepRenderer = (host, step, api) => {
   board.append(qCard, svgWrap, optRow);
   const toast = mtoast(board);
   const helper = el("div", { class: "helper", html: "점이 깜빡이고 있어요. 이 점의 좌표를 아래에서 골라 보세요!" });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = svgWrap.querySelector("svg") as SVGSVGElement;

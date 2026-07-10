@@ -63,7 +63,7 @@ export const mirrorImageLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "화살표 물체를 <b>좌우로 끌어</b> 보세요. 위 두 거리(물체→거울, 거울→상)가 어떻게 변하나요?",
   });
-  host.append(goalChips, stage, extBtn, helper);
+  host.append(goalChips, helper, stage, extBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

@@ -71,7 +71,7 @@ export const heatParticles: StepRenderer = (host, step, api) => {
   );
 
   const helper = el("div", { class: "helper", html: "슬라이더를 밀어 물을 <b>뜨겁게</b> 데워 보세요. 입자들이 어떻게 달라질까요?" });
-  host.append(stage, slider, helper);
+  host.append(helper, stage, slider); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let T = 24; // 슬라이더 목표 온도

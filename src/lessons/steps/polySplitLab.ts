@@ -54,7 +54,7 @@ export const polySplitLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "삼각형의 180°는 알아냈죠? 이제 <b>큰 도형을 삼각형으로 쪼개서</b> 그 힘을 빌려요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();
@@ -203,6 +203,7 @@ export const polySplitLab: StepRenderer = (host, step, api) => {
       row.appendChild(b);
     });
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function finish(): void {

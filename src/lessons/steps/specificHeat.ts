@@ -61,7 +61,7 @@ export const specificHeat: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "두 비커에 <b>질량이 같은</b> 물과 식용유를 담고, <b>같은 세기의 불</b>로 동시에 데울 거예요. 어느 쪽이 먼저 60℃에 닿을까요?",
   });
-  host.append(stage, graph, controls, helper);
+  host.append(helper, stage, graph, controls); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   type Phase = "pick" | "heat" | "verdict" | "cool" | "done";
@@ -119,6 +119,7 @@ export const specificHeat: StepRenderer = (host, step, api) => {
       b.innerHTML = "<span>식는 중…</span>";
     });
     controls.appendChild(b);
+    window.setTimeout(() => b.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function showResetBtn(): void {
@@ -140,6 +141,7 @@ export const specificHeat: StepRenderer = (host, step, api) => {
       helper.innerHTML = "다시 가열! 이번엔 그래프의 <b>기울기 차이</b>에 집중해 보세요.";
     });
     controls.appendChild(b);
+    window.setTimeout(() => b.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function verdict(): void {

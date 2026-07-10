@@ -60,7 +60,7 @@ export const meanPullLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "먹방 사건이 나기 전, 다들 비슷하게 먹은 <b>평범한 날</b>부터 시작해요. 마지막 친구(빨강)도 아직은 8천 원!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = stage.querySelector("svg") as SVGSVGElement;
@@ -257,6 +257,7 @@ export const meanPullLab: StepRenderer = (host, step, api) => {
     });
     clear(ctl);
     ctl.appendChild(row);
+    later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function finish(): void {

@@ -102,7 +102,7 @@ export const gasFizz: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "탄산음료 속엔 이산화 탄소 기체가 <b>녹아</b> 있어요. 온도와 압력을 바꾸면 기포가 어떻게 될까요?",
   });
-  host.append(goalChips, stage, slider, ctlRow, helper);
+  host.append(goalChips, helper, stage, slider, ctlRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

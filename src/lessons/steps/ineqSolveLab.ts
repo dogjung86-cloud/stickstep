@@ -95,7 +95,7 @@ export const ineqSolveLab: StepRenderer = (host, step, api) => {
   const ctl = el("div", { class: "mq6-ctl" });
   const panel = el("div", { class: "mq6-panel" }, qline, ctl);
   const helper = el("div", { class: "helper" });
-  host.append(goals.el, eqRead, board, actions, panel, helper);
+  host.append(goals.el, helper, eqRead, board, actions, panel); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ----
@@ -223,6 +223,7 @@ export const ineqSolveLab: StepRenderer = (host, step, api) => {
     }
     clear(ctl);
     ctl.appendChild(row);
+    later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ---------- 국면 1: 이항 조작(동류항 정리·드래그·탭탭·표준형 검사) ---------- */
@@ -377,6 +378,7 @@ export const ineqSolveLab: StepRenderer = (host, step, api) => {
       }
     });
     actions.appendChild(db);
+    later(() => db.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     helper.innerHTML =
       a < 0
         ? `${mfmt(eqSrc())} 까지 왔어요. 남은 건 <b>음수로 나누기</b>, 부등호에서 눈을 떼지 마세요!`
@@ -704,6 +706,7 @@ export const ineqSolveLab: StepRenderer = (host, step, api) => {
         }, 300);
       });
       actions.appendChild(xb);
+      later(() => xb.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     }
     if (m.l[0]) mkTerm(true, m.l[0], "L");
     if (m.l[1]) mkTerm(false, m.l[1], "L");

@@ -94,7 +94,7 @@ export const atomLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "부품은 셋 — <b>양성자(+)</b>와 <b>중성자</b>는 원자핵에, <b>전자(−)</b>는 그 주위에 들어가요. 첫 미션: <b>수소</b>(양성자 1, 중성자 0, 전자 1)!",
   });
-  host.append(goalChips, stage, steppers, helper);
+  host.append(goalChips, helper, stage, steppers); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   let mission = 0;
@@ -215,7 +215,7 @@ export const ionLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "나트륨 원자예요 — (+)11과 (−)11로 지금은 중성. 나트륨은 전자 <b>1개를 잃고 싶어</b> 해요. 떼어 볼까요?",
   });
-  host.append(goalChips, stage, btnRow, helper);
+  host.append(goalChips, helper, stage, btnRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   let sample: IonSample = "Na";

@@ -46,7 +46,7 @@ export const prismLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "겉넓이의 비밀 병기는 <b>전개도</b>! 통조림 라벨을 뜯듯 원기둥을 펼쳐 봐요.",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const scene = stage.querySelector(".mpr-scene") as SVGGElement;
@@ -137,6 +137,7 @@ export const prismLab: StepRenderer = (host, step, api) => {
     });
     clear(ctl);
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ── 국면 3: 부피 층 쌓기 ── */
@@ -156,6 +157,7 @@ export const prismLab: StepRenderer = (host, step, api) => {
       `<text class="mpr-vol" x="${cx}" y="34" text-anchor="middle" font-size="14" font-weight="900" fill="#1E7A31">부피: 0</text>`;
     const btn = el("button", { class: "mpr-btn pulse", text: "한 층 쌓기 (+9π)", attrs: { type: "button" } }) as HTMLButtonElement;
     ctl.appendChild(btn);
+    later(() => btn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     const gL = scene.querySelector(".mpr-layers") as SVGGElement;
     const vol = scene.querySelector(".mpr-vol") as SVGTextElement;
     btn.addEventListener("click", () => {

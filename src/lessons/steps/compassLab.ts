@@ -83,7 +83,7 @@ export const compassLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "다음 한 수를 고르면 무대에서 바로 실행돼요. <b>작도는 순서가 생명</b>이에요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();
@@ -444,6 +444,7 @@ export const compassLab: StepRenderer = (host, step, api) => {
       });
       optRow.appendChild(b);
     }
+    later(() => qCard.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function advance(): void {
@@ -488,6 +489,7 @@ export const compassLab: StepRenderer = (host, step, api) => {
       `</div>`;
     board.appendChild(wrap);
     later(() => wrap.classList.add("show"), 30);
+    later(() => wrap.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     let confirmed = false;
     (wrap.querySelector(".mcp-okbtn") as HTMLButtonElement).addEventListener("click", () => {
       if (confirmed) return;

@@ -55,7 +55,7 @@ export const starLight3d: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "별빛은 사방으로 <b>퍼지며</b> 나아가요. 같은 빛다발이 거리 2배에서는 <b>2×2 = 4칸</b>을 비추니, 한 칸이 받는 빛은 <b>1/4</b>이 돼요.",
   });
-  host.append(goalChips, stage, helper);
+  host.append(goalChips, helper, stage); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

@@ -200,8 +200,9 @@ export const microscope: StepRenderer = (host, step, api) => {
   const helper = el("div", { class: "helper mic-helper", attrs: { "aria-live": "polite" } });
 
   if (goalChips) host.appendChild(goalChips);
+  host.appendChild(helper); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (compareMode) host.appendChild(specimenSeg);
-  host.append(stage, prepBtn, objectiveSeg, slider, helper);
+  host.append(stage, prepBtn, objectiveSeg, slider);
 
   function currentPreset(): Preset {
     return PRESET[specimen];

@@ -65,7 +65,7 @@ export const parallelLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "주황 손잡이를 위아래로 끌어 직선 <i>m</i>을 <b>기울여 보세요</b>. 두 각의 크기가 어떻게 변하나요?",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = stage.querySelector("svg") as SVGSVGElement;
@@ -201,6 +201,7 @@ export const parallelLab: StepRenderer = (host, step, api) => {
       if (chips.has("diff") && !chips.has("alt")) {
         altBtn.classList.remove("mpr-hide");
         altBtn.classList.add("pulse");
+        later(() => altBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
       }
       maybeFinish();
     } else if (Math.abs(theta) >= DIFF) {

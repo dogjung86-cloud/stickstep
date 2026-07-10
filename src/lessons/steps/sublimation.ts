@@ -56,7 +56,7 @@ export const sublimation: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "비눗물 적신 끈으로 컵 입구를 스치면 <b>비누막</b>이 생겨요. 막을 만들고 무슨 일이 생기는지 보세요.",
   });
-  host.append(stage, filmBtn, helper);
+  host.append(helper, stage, filmBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   // 드라이아이스 격자(줄어드는 고체) — 각 입자는 자리 고정, 승화 시 제거

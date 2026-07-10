@@ -44,7 +44,7 @@ export const seeLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "캄캄한 밤, 랜턴 하나만 켜져 있어요. 첫 미션 — 우리는 <b>랜턴</b>을 어떻게 볼까요? 빛의 경로를 <b>출발점부터</b> 순서대로 탭!",
   });
-  host.append(goalChips, stage, helper);
+  host.append(goalChips, helper, stage); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 장면 좌표(프레임마다 W,H 기준 갱신) ----

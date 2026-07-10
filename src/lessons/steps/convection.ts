@@ -46,7 +46,7 @@ export const convection: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "주전자는 <b>아래만</b> 가열해요. 그런데 어떻게 물 <b>전체</b>가 뜨거워질까요? 불을 켜고 지켜보세요.",
   });
-  host.append(stage, controls, helper);
+  host.append(helper, stage, controls); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   type Mode = "pot" | "pick" | "room";
@@ -118,6 +118,7 @@ export const convection: StepRenderer = (host, step, api) => {
     mk("floor", "바닥에 두기", "방 아래쪽");
     mk("ceil", "천장에 달기", "방 위쪽");
     controls.appendChild(row);
+    window.setTimeout(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function startRoom(at: "floor" | "ceil"): void {
@@ -163,6 +164,7 @@ export const convection: StepRenderer = (host, step, api) => {
               toPick();
             });
             controls.appendChild(again);
+            window.setTimeout(() => again.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
           }
         }, 400);
       }, 600);
@@ -174,6 +176,7 @@ export const convection: StepRenderer = (host, step, api) => {
         toPick();
       });
       controls.appendChild(again);
+      window.setTimeout(() => again.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     }
   }
 
@@ -216,6 +219,7 @@ export const convection: StepRenderer = (host, step, api) => {
         toPick();
       });
       controls.appendChild(nextBtn);
+      window.setTimeout(() => nextBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     }
   }
 

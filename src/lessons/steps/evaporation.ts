@@ -65,7 +65,7 @@ export const evaporation: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "가만히 두고 저울 숫자를 지켜보세요. <b>표면의 입자</b>가 하나씩 날아가요. 부채질하면 더 빨라져요!",
   });
-  host.append(stage, fanBtn, helper);
+  host.append(helper, stage, fanBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   const liquid: LiquidP[] = [];

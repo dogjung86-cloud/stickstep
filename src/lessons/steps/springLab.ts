@@ -69,7 +69,7 @@ export const springLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "용수철 끝 고리를 잡고 <b>오른쪽으로 천천히</b> 당겨 보세요. 힘 게이지와 그래프가 함께 움직여요.",
   });
-  host.append(goalChips, stage, graphWrap, helper);
+  host.append(goalChips, helper, stage, graphWrap); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let w = 340;

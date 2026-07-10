@@ -160,7 +160,7 @@ export const monoLab: StepRenderer = (host, step, api) => {
   const read = el("div", { class: "pw-read" });
   const actions = el("div", { class: "ct-actions", style: "display:none" });
   const helper = el("div", { class: "helper" });
-  host.append(goals.el, board, read, actions, helper);
+  host.append(goals.el, helper, board, read, actions); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ----
@@ -507,6 +507,7 @@ export const monoLab: StepRenderer = (host, step, api) => {
     });
     actions.style.display = "";
     actions.appendChild(lever);
+    later(() => lever.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     lever.addEventListener("click", () => {
       if (flipped) return;
       flipped = true;
@@ -553,6 +554,7 @@ export const monoLab: StepRenderer = (host, step, api) => {
     board.appendChild(fracwrap);
     void fracwrap.offsetWidth;
     fracwrap.classList.add("show");
+    later(() => fracwrap?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function pickF(f: FChip): void {

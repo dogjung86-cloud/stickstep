@@ -164,7 +164,7 @@ export const foliationLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "변성암 공장에 왔어요. 먼저 <b>슬라이더</b>로 암석을 지하 깊은 곳까지 내려요 — 온도·압력 게이지를 지켜보세요!",
   });
-  host.append(goalChips, stage, seg, slider, pressBtn, helper);
+  host.append(goalChips, helper, stage, seg, slider, pressBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

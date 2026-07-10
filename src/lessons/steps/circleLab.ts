@@ -48,7 +48,7 @@ export const circleLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "수박을 자르기 전에, 원의 <b>부품</b>부터 알아야 해요. 점 두 개가 원을 어떻게 나누는지 봐요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();
@@ -274,6 +274,7 @@ export const circleLab: StepRenderer = (host, step, api) => {
     if (phase === 1 && moveAcc > 40 && chordBtn.style.display === "none" && !chordDrawn) {
       chordBtn.style.display = "";
       chordBtn.classList.add("pulse");
+      later(() => chordBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
       inst.innerHTML = "점 두 개가 원을 <b>두 동강</b> 냈어요. 이제 두 점을 곧게 이어 볼까요?";
       toast("굽은 조각 두 개가 모두 호!");
     }

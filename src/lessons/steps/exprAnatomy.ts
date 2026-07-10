@@ -70,7 +70,7 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "조각을 잘못 짚어도 괜찮아요, 왜 아닌지 알려 줄게요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ----
@@ -352,6 +352,7 @@ export const exprAnatomy: StepRenderer = (host, step, api) => {
       choiceRow.appendChild(b);
     }
     board.appendChild(choiceRow);
+    later(() => choiceRow.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function finish(): void {

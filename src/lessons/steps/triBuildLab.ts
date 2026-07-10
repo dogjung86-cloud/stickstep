@@ -64,7 +64,7 @@ export const triBuildLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "빨대 세 개로 삼각형을 만들어요. 먼저 지금 조합 <b>6·8·14</b> 그대로 <b>만들어 보기</b>를 눌러 보세요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();
@@ -366,6 +366,7 @@ export const triBuildLab: StepRenderer = (host, step, api) => {
     actions2.append(drawBtn, counterBtn);
 
     wrap.append(modes, stage2, panel2, actions2);
+    later(() => drawBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     gBase = stage2.querySelector(".tb-base") as SVGGElement;
     gArcs = stage2.querySelector(".tb-arcs") as SVGGElement;
     gOut = stage2.querySelector(".tb-out") as SVGGElement;
@@ -414,6 +415,7 @@ export const triBuildLab: StepRenderer = (host, step, api) => {
         toast("설계도 3장 완성! 그런데 마지막 반전이 있어요.");
         counterBtn.style.display = "";
         counterBtn.classList.add("mtb-in");
+        later(() => counterBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
         helper.innerHTML = "마지막 반전! 각이 <b>끼인각이 아니면</b> 어떻게 될까요? 주황 버튼을 눌러 보세요.";
       }, 900);
     }

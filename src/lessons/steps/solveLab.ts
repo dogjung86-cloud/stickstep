@@ -75,7 +75,7 @@ export const solveLab: StepRenderer = (host, step, api) => {
   board.append(divider, eqSign);
   const actions = el("div", { class: "ct-actions" });
   const helper = el("div", { class: "helper" });
-  host.append(goals.el, eqRead, board, actions, helper);
+  host.append(goals.el, helper, eqRead, board, actions); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();
@@ -264,6 +264,7 @@ export const solveLab: StepRenderer = (host, step, api) => {
           later(() => finishMission(b / a), 460);
         });
         actions.appendChild(db);
+        later(() => db.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
         helper.innerHTML = `이제 <b>${mfmt(eqSrc())}</b>, 마지막 성질, <b>양변 나누기</b>로 x만 남겨요!`;
       }
       return;

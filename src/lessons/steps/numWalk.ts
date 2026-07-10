@@ -62,7 +62,7 @@ export const numWalk: StepRenderer = (host, step, api) => {
   const stage = el("div", { class: "nw-stage", attrs: { tabindex: "0", role: "slider", "aria-label": "도착점 예측, 좌우 화살표로 이동, 엔터로 확정" } });
   board.appendChild(stage);
   const helper = el("div", { class: "helper" });
-  host.append(goals.el, expr, board, helper);
+  host.append(goals.el, helper, expr, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   let pi = 0;

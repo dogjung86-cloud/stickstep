@@ -63,7 +63,7 @@ export const sectorLab: StepRenderer = (host, step, api) => {
   board.append(stage, panel);
   const toast = mtoast(board);
   const helper = el("div", { class: "helper" });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();
@@ -200,6 +200,7 @@ export const sectorLab: StepRenderer = (host, step, api) => {
       });
       clear(ctl);
       ctl.appendChild(row);
+      later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     }
 
     svg.addEventListener("pointerdown", (e) => {
@@ -315,6 +316,7 @@ export const sectorLab: StepRenderer = (host, step, api) => {
       const btn = el("button", { class: "msc-btn pulse", text: "계산해 보기", attrs: { type: "button" } }) as HTMLButtonElement;
       clear(ctl);
       ctl.appendChild(btn);
+      later(() => btn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
       btn.addEventListener("click", () => {
         btn.disabled = true;
         haptic(HAPTIC.correct);

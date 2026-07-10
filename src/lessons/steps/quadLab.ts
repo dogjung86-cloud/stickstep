@@ -75,7 +75,7 @@ export const quadLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "파란 점을 <b>이리저리 옮기며</b> 아래 패널을 관찰해요. 네 구역의 부호가 각각 어떻게 다른가요?",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = svgWrap.querySelector("svg") as SVGSVGElement;

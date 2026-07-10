@@ -53,7 +53,7 @@ export const lineRelLab: StepRenderer = (host, step, api) => {
   board.append(qCard, stage, actions, badge, angEl);
   const toast = mtoast(board);
   const helper = el("div", { class: "helper" });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();
@@ -220,6 +220,7 @@ export const lineRelLab: StepRenderer = (host, step, api) => {
       "화면에선 만날 것 같지 않죠. 그런데 직선은 화면 밖으로도 <b>끝없이</b> 뻗어 나가요. 줌아웃으로 확인해 봐요!";
     clear(actions);
     actions.appendChild(mkBtn("줌아웃!", true, doZoom));
+    later(() => actions.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     haptic(HAPTIC.ctaUnlock);
   }
 
@@ -242,6 +243,7 @@ export const lineRelLab: StepRenderer = (host, step, api) => {
         "보이나요? <b>평행이 아니면 아무리 멀어도 반드시 만나요!</b> 아주 살짝만 기울어도 결국 교점이 생겨요.";
       clear(actions);
       actions.appendChild(mkBtn("돌아오기", false, doReturn));
+      later(() => actions.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     }, 1180);
   }
 

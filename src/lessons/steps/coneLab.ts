@@ -46,7 +46,7 @@ export const coneLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "생일 고깔을 펼치면 무슨 모양일까요? 직접 펼쳐서 옆면의 정체를 확인해요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const scene = stage.querySelector(".mcn-scene") as SVGGElement;
@@ -138,6 +138,7 @@ export const coneLab: StepRenderer = (host, step, api) => {
     });
     clear(ctl);
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ── 국면 3: 모래 실험 ── */
@@ -179,6 +180,7 @@ export const coneLab: StepRenderer = (host, step, api) => {
     });
     clear(ctl);
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
 
     function runPour(predictedRight: boolean, chosen: HTMLButtonElement): void {
       const gFill = scene.querySelector(".mcn-fill") as SVGGElement;

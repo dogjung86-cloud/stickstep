@@ -62,7 +62,7 @@ export const objectColorLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "백색광 아래 <b>빨간 장미와 초록 잎</b>, 그리고 흰 공·검은 공이 있어요. 먼저 질문 하나!",
   });
-  host.append(goalChips, stage, choices, helper);
+  host.append(goalChips, helper, stage, choices); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
@@ -338,7 +338,7 @@ export const colorMixLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "무대 스크린에 <b>빨강·초록·파랑</b> 조명 세 개가 켜져 있어요. 조명을 <b>끌어서 겹쳐</b> 보세요 — 겹친 곳의 색은 진짜 빛의 덧셈이에요!",
   });
-  host.append(goalChips, stage, helper);
+  host.append(goalChips, helper, stage); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
@@ -558,7 +558,7 @@ export const pixelLab: StepRenderer = (host, step, api) => {
   const patch = el("div", { class: "px-patch" });
   const goalTxt = el("div", { class: "px-goal-txt", html: "미션: 슬라이더로 <b>주황</b>을 만들어 보세요. 힌트 — 빨강 가득, 초록 절반!" });
   const goalCard = el("div", { class: "px-goal", style: "display:none" }, patch, goalTxt);
-  host.append(goalChips, stage, sliders, goalCard, helper);
+  host.append(goalChips, helper, stage, sliders, goalCard); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const chan = [255, 255, 255]; // R,G,B 0~255
@@ -709,6 +709,7 @@ export const pixelLab: StepRenderer = (host, step, api) => {
           goalCard.style.display = "flex";
           helper.innerHTML = "이제 직접! 아래 <b>화소 슬라이더</b>로 세 빛의 밝기를 조절해 <b>주황</b>을 만들어 보세요.";
           syncSliders();
+          window.setTimeout(() => sliders.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
         }, 900);
       }
     }

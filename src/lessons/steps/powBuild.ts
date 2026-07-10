@@ -40,7 +40,7 @@ export const powBuild: StepRenderer = (host, step, api) => {
   const toast = mtoast(board);
   const read = el("div", { class: "pw-read" });
   const helper = el("div", { class: "helper" });
-  host.append(goals.el, board, read, helper);
+  host.append(goals.el, helper, board, read); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   let chips: Chip[] = [];

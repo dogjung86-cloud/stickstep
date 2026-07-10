@@ -71,7 +71,7 @@ export const windSoccer: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "공이 굴러가는 동안 <b>바람 버튼을 꾹</b> 눌러 보세요. 운동 방향과 <b>나란한</b> 바람부터!",
   });
-  host.append(goalChips, stage, controls, helper);
+  host.append(goalChips, helper, stage, controls); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let W = 340;

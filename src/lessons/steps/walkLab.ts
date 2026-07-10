@@ -71,7 +71,7 @@ export const walkLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "훅의 로봇청소기처럼, 이번엔 <b>내가 직접</b> 다각형 둘레를 걸어요. 모퉁이에서 몸을 돌린 만큼이 쌓여요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();
@@ -227,6 +227,7 @@ export const walkLab: StepRenderer = (host, step, api) => {
     inst.innerHTML = `코스 교체, 이번엔 <b>삼각형</b>! 모퉁이가 적으면 합계도 작아질까요?`;
     helper.innerHTML = "모퉁이가 3개뿐이지만 한 번에 도는 각이 커요. 확인해 봐요!";
     runCourse("tri", startOcta);
+    later(() => ctl.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ── 국면 3: 정팔각형 미션 ── */
@@ -255,6 +256,7 @@ export const walkLab: StepRenderer = (host, step, api) => {
       row.appendChild(b);
     });
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function finish(): void {

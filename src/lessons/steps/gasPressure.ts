@@ -61,7 +61,7 @@ export const gasPressure: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "타이어 단면이에요. 속 입자들이 <b>벽에 부딪히는 순간</b>을 잘 보세요 — 그리고 <b>펌프</b>를 눌러 보세요!",
   });
-  host.append(goalChips, stage, btnRow, helper);
+  host.append(goalChips, helper, stage, btnRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let W = 340;

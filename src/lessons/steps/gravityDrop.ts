@@ -73,7 +73,7 @@ export const gravityDrop: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "지구 <b>위쪽·옆·아래쪽</b> 우주 공간을 눌러 사과를 놓아 보세요. 사과가 어느 쪽으로 떨어질까요?",
   });
-  host.append(goalChips, stage, seg, helper);
+  host.append(goalChips, helper, stage, seg); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

@@ -63,7 +63,7 @@ export const relFreqLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "1반과 2반의 독서 대결! <b>4시간 이상 6시간 미만</b> 구간을 두고 두 반이 다투고 있어요.",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = stage.querySelector("svg") as SVGSVGElement;
@@ -178,6 +178,7 @@ export const relFreqLab: StepRenderer = (host, step, api) => {
     });
     clear(ctl);
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function showToggle(): void {
@@ -185,6 +186,7 @@ export const relFreqLab: StepRenderer = (host, step, api) => {
     const btn = el("button", { class: "mq6-btn mq6-pulse", text: "세로축을 비율로 바꾸기", attrs: { type: "button" } }) as HTMLButtonElement;
     clear(ctl);
     ctl.appendChild(btn);
+    later(() => btn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     btn.addEventListener("click", () => {
       btn.disabled = true;
       haptic(HAPTIC.done);
@@ -236,6 +238,7 @@ export const relFreqLab: StepRenderer = (host, step, api) => {
       row.appendChild(b);
     });
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function finish(): void {

@@ -78,7 +78,7 @@ export const charlesSyringe: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "주사기를 물에 담갔어요(끝은 막음, 압력 일정). 슬라이더로 <b>물 온도</b>를 올리며 피스톤을 지켜보세요.",
   });
-  host.append(goalChips, stage, slider, helper);
+  host.append(goalChips, helper, stage, slider); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let W = 340;

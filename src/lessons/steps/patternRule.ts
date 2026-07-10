@@ -152,7 +152,7 @@ export const patternRule: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "<b>삼각형 하나 더</b>를 눌러 이어 붙여 보세요. 막대가 몇 개씩 늘어나는지가 열쇠예요.",
   });
-  host.append(goals.el, board, read, padWrap, helper);
+  host.append(goals.el, helper, board, read, padWrap); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ----
@@ -259,6 +259,7 @@ export const patternRule: StepRenderer = (host, step, api) => {
     qWrap.style.display = "block";
     void qWrap.offsetWidth;
     qWrap.style.opacity = "1";
+    later(() => qWrap.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
   function hideQ(): void {
     qWrap.style.opacity = "0";
@@ -354,6 +355,7 @@ export const patternRule: StepRenderer = (host, step, api) => {
     void padWrap.offsetWidth;
     padWrap.style.opacity = "1";
     helper.innerHTML = `${mfmt("a")} 자리에 <b>100</b>을 넣어요, 그리지 않아도 바로 나와요!`;
+    later(() => padWrap.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   confirmBtn.addEventListener("click", () => {

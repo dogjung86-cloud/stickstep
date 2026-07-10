@@ -106,7 +106,7 @@ export const rockCycle: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "암석은 한번 만들어지면 끝이 아니에요 — 환경이 바뀌면 <b>끊임없이 다른 암석으로</b> 변해요. 마그마 한 방울에서 출발!",
   });
-  host.append(goalChips, preview, enterBtn, helper);
+  host.append(goalChips, helper, preview, enterBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const goals = new Set<string>();

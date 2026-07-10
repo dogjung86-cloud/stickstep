@@ -124,7 +124,7 @@ export const formulaLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "모형 속 원자의 <b>종류</b>와 <b>개수</b>를 세고, 기호와 아래 숫자 버튼으로 화학식을 완성해요. (개수 1은 생략!)",
   });
-  host.append(example, roundChips, stage, out, pad, checkBtn, helper);
+  host.append(example, roundChips, helper, stage, out, pad, checkBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

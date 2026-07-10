@@ -132,7 +132,7 @@ export const recrystal: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "물 10 mL에 <b>질산 칼륨 10 g + 염화 나트륨 2 g</b>을 넣고 저었어요. 질산 칼륨은 일부만 녹고 가라앉았네요 — 온도를 올려 볼까요?",
   });
-  host.append(goalChips, stage, slider, filterBtn, helper);
+  host.append(goalChips, helper, stage, slider, filterBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

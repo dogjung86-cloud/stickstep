@@ -70,7 +70,7 @@ export const freqLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "태권도 대회 접수처가 됐어요! 참가자를 <b>이상~미만</b> 규칙대로 체급에 배정해요.",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = stage.querySelector("svg") as SVGSVGElement;
@@ -195,6 +195,7 @@ export const freqLab: StepRenderer = (host, step, api) => {
     });
     clear(ctl);
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ── 국면 3: 표 읽기 ── */
@@ -230,6 +231,7 @@ export const freqLab: StepRenderer = (host, step, api) => {
     });
     clear(ctl);
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function finish(): void {

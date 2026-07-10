@@ -181,7 +181,7 @@ export const anglePairLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "두 직선 <i>l</i>, <i>m</i> 위로 직선 <i>n</i>이 비스듬히 지나가면서 각이 8개 생겼어요. 미션 카드가 부르는 각을 무대에서 찾아 탭해 보세요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = svgWrap.querySelector("svg") as SVGSVGElement;
@@ -223,6 +223,7 @@ export const anglePairLab: StepRenderer = (host, step, api) => {
         succeedTrap(none);
       });
       qCard.appendChild(none);
+      later(() => none.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     }
   }
 

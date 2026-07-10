@@ -64,7 +64,7 @@ export const powMulLab: StepRenderer = (host, step, api) => {
   board.append(eqEl, stage, readEl, qEl, ctlEl);
   const toast = mtoast(board);
   const helper = el("div", { class: "helper" });
-  host.append(goals.el, board, helper);
+  host.append(goals.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   api.setCTA("목표 세 개를 모두 달성하면 열려요", { enabled: false });
@@ -366,6 +366,7 @@ export const powMulLab: StepRenderer = (host, step, api) => {
       row.appendChild(btn);
     });
     ctlEl.replaceChildren(row);
+    later(() => qEl.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /** 자기설명형 선택지 라벨(수식 + 근거 한 줄). */
@@ -441,6 +442,7 @@ export const powMulLab: StepRenderer = (host, step, api) => {
     });
     later(() => {
       ctlEl.replaceChildren(declare);
+      later(() => declare.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
       busy = false;
     }, 900);
   }
@@ -494,6 +496,7 @@ export const powMulLab: StepRenderer = (host, step, api) => {
             }, 1050);
           });
           ctlEl.replaceChildren(rep);
+          later(() => rep.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
           helper.innerHTML = "버튼을 눌러 a³ 상자를 <b>복제</b>해 봐요.";
         },
       );

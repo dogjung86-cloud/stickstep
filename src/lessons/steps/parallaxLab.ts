@@ -89,7 +89,7 @@ export const parallaxLab: StepRenderer = (host, step, api) => {
   const nextBtn = el("button", { class: "swapbtn", attrs: { type: "button" } }, el("span", { text: SCRIPT[0].btn! }));
   const btnRow = el("div", { class: "gp-controls" }, nextBtn);
   const helper = el("div", { class: "helper", html: SCRIPT[0].help });
-  host.append(goalChips, stage, btnRow, helper);
+  host.append(goalChips, helper, stage, btnRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

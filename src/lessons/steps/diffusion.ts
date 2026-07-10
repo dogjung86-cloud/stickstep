@@ -54,7 +54,7 @@ export const diffusion: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "정답을 몰라도 괜찮아요. 직감으로 하나를 골라 보세요, 예측은 실험으로 확인해요!",
   });
-  host.append(stage, choices, dropBtn, helper);
+  host.append(helper, stage, choices, dropBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   const OPTS = ["잉크가 바닥에 그대로 가라앉아 있는다", "잉크가 물 전체로 천천히 퍼진다", "잉크가 물 위쪽으로만 떠오른다"];
   const ANSWER = 1;

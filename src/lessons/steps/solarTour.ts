@@ -171,7 +171,7 @@ export const solarTour: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "한 손가락으로 <b>빙 돌리고</b>, 두 손가락으로 <b>당겨서 확대</b>해 보세요. 천체를 <b>탭</b>하면 다가가서 소개 카드를 읽을 수 있어요. 화성과 목성 사이의 <b>소행성대</b>, 해왕성 바깥 끝자락의 <b>명왕성</b>도 찾아보세요!",
   });
-  host.append(goalChips, preview, enterBtn, helper);
+  host.append(goalChips, helper, preview, enterBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   const visited = new Set<string>();
   const goals = new Set<string>();

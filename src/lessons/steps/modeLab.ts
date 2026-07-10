@@ -79,7 +79,7 @@ export const modeLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "판매 기록을 색깔별로 쌓다 보면 사장님의 답이 저절로 보여요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const gBlocks = stage.querySelector(".mmo-blocks") as SVGGElement;
@@ -155,6 +155,7 @@ export const modeLab: StepRenderer = (host, step, api) => {
     const btn = el("button", { class: "mq6-btn mq6-pulse", text: "평균 색깔 계산하기", attrs: { type: "button" } }) as HTMLButtonElement;
     clear(ctl);
     ctl.appendChild(btn);
+    later(() => btn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     btn.addEventListener("click", () => {
       btn.disabled = true;
       haptic(HAPTIC.cross);
@@ -209,6 +210,7 @@ export const modeLab: StepRenderer = (host, step, api) => {
       row.appendChild(b);
     });
     ctl.appendChild(row);
+    later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function finish(): void {

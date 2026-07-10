@@ -177,7 +177,7 @@ export const densityPool: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "아래로 갈수록 밀도가 큰 액체예요 — <b>에탄올 0.79 → 식용유 0.91 → 물 1.00</b>. 물체는 <b>자기보다 밀도가 큰 첫 액체의 표면</b>에 떠요.",
   });
-  host.append(goalChips, stage, seg, cubeCard, helper);
+  host.append(goalChips, helper, stage, seg, cubeCard); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

@@ -78,7 +78,7 @@ export const waterCircuit: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "물이 계속 흐르려면 <b>높이 차</b>를 만들어 주는 펌프가 필요해요 — 전기 회로에서 그 역할을 하는 게 <b>전지(전압)</b>랍니다.",
   });
-  host.append(goalChips, preview, enterBtn, helper);
+  host.append(goalChips, helper, preview, enterBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let power = 0.65; // 펌프 세기(=전압) 0.2~1

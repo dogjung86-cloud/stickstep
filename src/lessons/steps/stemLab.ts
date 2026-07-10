@@ -65,7 +65,7 @@ export const stemLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "우리 학교 농구부의 <b>시즌 12경기 득점</b>이 뒤죽박죽! 마라톤 접수처처럼 <b>앞자리(줄기) 선반</b>에 꽂아 정리해요.",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = stage.querySelector("svg") as SVGSVGElement;
@@ -144,6 +144,7 @@ export const stemLab: StepRenderer = (host, step, api) => {
     const btn = el("button", { class: "mq6-btn mq6-pulse", text: "잎 크기순 정렬", attrs: { type: "button" } }) as HTMLButtonElement;
     clear(ctl);
     ctl.appendChild(btn);
+    later(() => btn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     btn.addEventListener("click", () => {
       btn.disabled = true;
       haptic(HAPTIC.correct);
@@ -179,6 +180,7 @@ export const stemLab: StepRenderer = (host, step, api) => {
     });
     clear(ctl);
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ── 국면 3: 읽기 미션 ── */
@@ -210,6 +212,7 @@ export const stemLab: StepRenderer = (host, step, api) => {
     });
     clear(ctl);
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function finish(): void {

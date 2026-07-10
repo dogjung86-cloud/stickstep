@@ -54,7 +54,7 @@ export const phaseVolume: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "버튼을 <b>꾹 누르고 있으면</b> 플라스크 바닥이 데워져요. 액체 아세톤 입자에게 무슨 일이 생기는지 보세요.",
   });
-  host.append(stage, heatBtn, helper);
+  host.append(helper, stage, heatBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   const ps: P[] = [];

@@ -49,7 +49,7 @@ export const galaxy3d: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "우리은하를 <b>밖에서</b> 도는 관측선에 탑승해요. 드래그로 <b>위에서도, 옆에서도</b> 돌려 보고 — 태양계와 은하 중심을 찾아 탭해 보세요.",
   });
-  host.append(goalChips, enterArt, btnRow, helper);
+  host.append(goalChips, helper, enterArt, btnRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   const goals = new Set<string>();
   let finished = false;

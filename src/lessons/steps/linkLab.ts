@@ -41,7 +41,7 @@ export const linkLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "귤 한 개엔 비타민 C가 약 <b>30 mg</b> 들어 있어요. 귤을 하나씩 추가하며 표를 채워 봐요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();
@@ -191,6 +191,7 @@ export const linkLab: StepRenderer = (host, step, api) => {
       return b;
     };
     actions.append(mk("×2 링크 (1개→2개)", 0, 1, "×2"), mk("×3 링크 (2개→6개)", 1, 5, "×3"));
+    later(() => actions.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ── 3국면: 가짜 판별(저금통) ── */
@@ -241,6 +242,7 @@ export const linkLab: StepRenderer = (host, step, api) => {
       api.enableCTA(s.cta ?? "다음");
     });
     actions.append(test, yes, no);
+    later(() => actions.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   phaseFill();

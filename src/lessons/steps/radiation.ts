@@ -50,7 +50,7 @@ export const radiation: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "불에 <b>닿지 않았는데도</b> 따뜻해요. 스틱맨을 좌우로 끌어 <b>모닥불과의 거리</b>부터 바꿔 보세요.",
   });
-  host.append(goalChips, stage, shieldBtn, helper);
+  host.append(goalChips, helper, stage, shieldBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

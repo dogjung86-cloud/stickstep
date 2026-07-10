@@ -57,7 +57,7 @@ export const diverBubble: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "잠수부가 숨을 내쉬려 해요. 버튼을 눌러 <b>공기 방울</b>을 내보내고, 올라가면서 <b>크기</b>를 지켜보세요.",
   });
-  host.append(goalChips, stage, seg, actBtn, helper);
+  host.append(goalChips, helper, stage, seg, actBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let W = 340;

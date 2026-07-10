@@ -71,7 +71,7 @@ export const boyleSyringe: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "24 mL·1기압에서 시작. 피스톤을 <b>천천히 눌러</b> 보세요 — 입자 충돌이 어떻게 변하는지도 관찰!",
   });
-  host.append(goalChips, stage, helper);
+  host.append(goalChips, helper, stage); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let W = 340;

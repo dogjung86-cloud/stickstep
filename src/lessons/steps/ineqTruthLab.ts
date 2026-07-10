@@ -98,7 +98,7 @@ export const ineqTruthLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "카드를 탭하면 그 값이 부등식에 대입돼요. <b>x=1부터 4까지 전부</b> 판정! 참 램프는 몇 번 켜질까요?",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ----
@@ -281,6 +281,7 @@ export const ineqTruthLab: StepRenderer = (host, step, api) => {
     }
     clear(ctl);
     ctl.appendChild(row);
+    later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /** 국면 2 경계값(x=3): 좌변=우변, 램프 대신 판단 질문으로 정면 승부. */

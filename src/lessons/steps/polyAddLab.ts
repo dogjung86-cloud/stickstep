@@ -213,7 +213,7 @@ export const polyAddLab: StepRenderer = (host, step, api) => {
     declareBtn,
   );
   const helper = el("div", { class: "helper" });
-  host.append(goals.el, board, read, declareRow, helper);
+  host.append(goals.el, helper, board, read, declareRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ----
@@ -605,6 +605,7 @@ export const polyAddLab: StepRenderer = (host, step, api) => {
             declareRow.style.display = "";
             void declareRow.offsetWidth;
             declareRow.style.opacity = "1";
+            later(() => declareBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
           },
           260 + st.loose.length * 90 + 260,
         );

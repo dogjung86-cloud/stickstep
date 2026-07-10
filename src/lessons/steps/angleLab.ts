@@ -161,7 +161,7 @@ export const angleLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "무대 아무 곳이나 드래그하면 변 OA가 따라 돌아요. 먼저 예각부터!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = stage.querySelector("svg") as SVGSVGElement;

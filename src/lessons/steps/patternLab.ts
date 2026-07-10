@@ -102,7 +102,7 @@ export const patternLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "곱하는 수가 <b>1씩 작아질 때</b> 곱이 어떻게 변하는지 보세요. 완성된 세 줄의 패턴이 다음 답을 알려 줘요.",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ----
@@ -205,6 +205,7 @@ export const patternLab: StepRenderer = (host, step, api) => {
         rowEls[i + 1].classList.remove("future");
         rowEls[i + 1].classList.add("ask");
         mountChoices(i + 1);
+        later(() => rowEls[i + 1].scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
       }, 300);
     } else if (act === 0) {
       // ---- 1막 완료: 양×음=음 발견 ----
@@ -242,6 +243,7 @@ export const patternLab: StepRenderer = (host, step, api) => {
     ruleCard.style.display = "block";
     void ruleCard.offsetWidth; // 트랜지션 재시작
     ruleCard.style.opacity = "1";
+    later(() => ruleCard.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   ruleCard.addEventListener("click", () => {

@@ -78,7 +78,7 @@ export const heatContact: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "가운데 <b>단열 칸막이</b>가 뜨거운 물과 찬물을 나누고 있어요. 칸막이를 제거하면 어떻게 될까요?",
   });
-  host.append(stage, graph, runBtn, helper);
+  host.append(helper, stage, graph, runBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   type Phase = "sealed" | "lift" | "mix" | "eq";

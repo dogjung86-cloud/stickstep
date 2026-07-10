@@ -93,7 +93,7 @@ export const solubilityLab: StepRenderer = (host, step, api) => {
   const addBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "0.5 g 넣기" }));
   const ctlRow = el("div", { class: "fp-controls" }, tempSeg, addBtn);
 
-  host.append(goalChips, stage, soluteSeg, ctlRow, helper);
+  host.append(goalChips, helper, stage, soluteSeg, ctlRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

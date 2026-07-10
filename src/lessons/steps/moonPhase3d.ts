@@ -69,7 +69,7 @@ export const moonPhase3d: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "오른쪽의 <b>태양</b>이 빛을 보내요. 달을 궤도 위에서 끌면서, 우하단 <b>지구에서 본 달</b>이 어떻게 변하는지 보세요!",
   });
-  host.append(goalChips, stage, helper);
+  host.append(goalChips, helper, stage); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let theta = Math.PI * 0.5; // 위상각(rad), 0 = 태양 쪽(삭). 상현에서 시작 직전이 아닌 90°=상현… 초기엔 135°쯤 애매한 곳에서 출발

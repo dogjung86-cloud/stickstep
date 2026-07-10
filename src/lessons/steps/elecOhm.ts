@@ -118,7 +118,7 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     html: "전압을 바꿔 가며 <b>이 지점 기록</b>을 눌러 (전압, 전류) 점을 모아요 — 한 니크롬선에서 <b>서로 다른 전압 4점</b>이면 규칙이 보여요!",
   });
 
-  host.append(goalChips, stage, modeSeg, seg, lenSeg, sliders, recordBtn, helper);
+  host.append(goalChips, helper, stage, modeSeg, seg, lenSeg, sliders, recordBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

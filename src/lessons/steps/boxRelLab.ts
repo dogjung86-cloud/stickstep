@@ -129,7 +129,7 @@ export const boxRelLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "상자를 <b>드래그해서 빙글빙글</b> 돌려 보세요. 파란 기준 모서리가 <b>AB</b>예요.",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = stage.querySelector("svg") as SVGSVGElement;

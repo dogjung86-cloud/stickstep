@@ -86,7 +86,7 @@ export const rayLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "아래 <b>버튼 4개</b> 중 미션에 맞는 것을 골라 탭해요. 문자 위의 마크가 힌트!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = stage.querySelector("svg") as SVGSVGElement;
@@ -255,6 +255,7 @@ export const rayLab: StepRenderer = (host, step, api) => {
     same.addEventListener("click", () => onSame(same));
     diff.addEventListener("click", () => onDiff(diff));
     askCard.append(same, diff);
+    later(() => askCard.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function onDiff(btn: HTMLButtonElement): void {
@@ -330,6 +331,7 @@ export const rayLab: StepRenderer = (host, step, api) => {
       opts.appendChild(b);
     }
     askCard.appendChild(opts);
+    later(() => askCard.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function onSymPick(k: SymKind, btn: HTMLButtonElement): void {

@@ -131,7 +131,7 @@ export const opticView: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "정면의 거울을 바라보고 있어요. 촛불을 <b>가까이, 또 멀리</b> 옮기며 거울 <b>속 모습</b>이 어떻게 변하는지 지켜보세요!",
   });
-  host.append(goalChips, stage, sliders, helper);
+  host.append(goalChips, helper, stage, sliders); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let mode: Mode = "cvMirror";

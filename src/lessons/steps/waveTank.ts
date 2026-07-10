@@ -157,7 +157,7 @@ export const waveLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "왼쪽 <b>진동 막대 손잡이를 잡고 위아래로</b> 흔들어 보세요 — 여러분의 손짓이 그대로 물결이 되어 퍼져 나가요!",
   });
-  host.append(goalChips, stage, btnRow, sliders, speedSliders, helper);
+  host.append(goalChips, helper, stage, btnRow, sliders, speedSliders); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   // 실험은 빠르게 지나가니 — 정지 그림으로 4요소를 붙잡아 두는 설명 카드
   host.appendChild(
     labExplain({

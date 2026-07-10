@@ -101,7 +101,7 @@ export const inductionLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "깡통 같은 금속 안에는 <b>자유롭게 움직이는 전자</b>가 가득해요. (−)막대를 잡아 깡통 쪽으로 천천히 끌어 보세요.",
   });
-  host.append(goalChips, stage, helper);
+  host.append(goalChips, helper, stage); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

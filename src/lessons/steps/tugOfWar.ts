@@ -76,7 +76,7 @@ export const tugOfWar: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "<b>+</b> 버튼으로 양 팀에 사람을 넣어 보세요. 한 명이 당기는 힘은 <b>100 N</b>이에요.",
   });
-  host.append(goalChips, stage, controls, helper);
+  host.append(goalChips, helper, stage, controls); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let nL = 0;

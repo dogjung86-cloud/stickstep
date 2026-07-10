@@ -63,7 +63,7 @@ export const traceLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "종이를 <b>콕콕 탭</b>하면 그 자리에 점이 생겨요. 아무 데나 3개!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = stage.querySelector("svg") as SVGSVGElement;

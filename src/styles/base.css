@@ -136,6 +136,14 @@ img { display: block; max-width: 100%; }
 .toast.low { top: auto; bottom: 14px; } /* 관찰 대상이 무대 위쪽일 때 — 팝업이 가리지 않게 하단으로 */
 .helper { margin-top: 14px; font-size: 14.5px; line-height: 1.5; color: var(--sub); min-height: 44px; word-break: keep-all; transition: opacity .2s; }
 .helper b { color: var(--ink); }
+/* 랩 지시 줄(칩 → helper → 보드) — 지시(helper)가 조작 요소 위에 설 때의 가이드 바.
+   min-height 예약은 간격 비대의 범인이라 해제, 가이드 줄 정체성은 왼쪽 3px 바로 준다
+   (중립 톤 기본 — 단원 톤이 필요하면 --helper-bar 변수로 덮는다).
+   Ⅲ(m2u3) 실사용 검증(math2.css) 후 전 트랙 승격, 2026-07-10. */
+.pn-badges + .helper {
+  margin: 10px 2px 0; min-height: 0;
+  padding: 2px 0 2px 11px; border-left: 3px solid var(--helper-bar, var(--n400)); border-radius: 2px;
+}
 
 /* ---------- 슬라이더 ---------- */
 .slider { position: relative; margin-top: 18px; padding: 26px 6px 30px; touch-action: none; cursor: pointer; }

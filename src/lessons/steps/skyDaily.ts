@@ -66,7 +66,7 @@ export const skyDaily: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "하룻밤 별 사진을 <b>길게 노출</b>해 찍으면 궤적이 남아요. 동쪽 하늘부터 — 별이 어느 쪽으로 흐르나요?",
   });
-  host.append(goalChips, stage, choiceRow, helper);
+  host.append(goalChips, helper, stage, choiceRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let dir: Dir = "E";
@@ -157,6 +157,7 @@ export const skyDaily: StepRenderer = (host, step, api) => {
         };
         choiceRow.append(mk("시계 방향", false), mk("시계 반대 방향", true));
         choiceRow.classList.add("show");
+        window.setTimeout(() => choiceRow.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
       }
     } else {
       haptic(HAPTIC.tap);

@@ -177,7 +177,7 @@ export const expandLab: StepRenderer = (host, step, api) => {
   board.append(scaleRow, stage, panel);
   const toast = mtoast(board);
   const helper = el("div", { class: "helper" });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   /* ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ---- */
@@ -631,6 +631,7 @@ export const expandLab: StepRenderer = (host, step, api) => {
       choiceOk = mkChoice(`${mfmt("6a^2-10a")}, 뒤 항에도 2a를 곱해요`, true);
       choiceNo = mkChoice(`${mfmt("6a^2-5")}, 뒤 항은 그대로예요`, false);
       ctl.append(choiceOk, choiceNo);
+      later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
       helper.innerHTML = "먼저 <b>예측</b>을 고르고, 칼질로 확인해요.";
     });
   }
@@ -729,6 +730,7 @@ export const expandLab: StepRenderer = (host, step, api) => {
       declareBtn = el("button", { class: "exl-declare", text: "다 나눴어요, 완성!", attrs: { type: "button" } });
       declareBtn.addEventListener("click", onDeclare);
       ctl.appendChild(declareBtn);
+      later(() => declareBtn?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
       helper.innerHTML = "조각마다 붙은 <b>÷2a</b> 버튼을 탭해요. 세로 2a를 걷어내면 남는 가로가 몫!";
     });
   }

@@ -60,7 +60,7 @@ export const perpLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "주황 점 <b>H</b>를 좌우로 끌어 P에서 <i>l</i>까지 길을 놓아 보세요. 손을 떼면 레이저 거리계가 그 길이를 기록해요!",
   });
-  host.append(chips.el, board, terms, helper);
+  host.append(chips.el, helper, board, terms); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();

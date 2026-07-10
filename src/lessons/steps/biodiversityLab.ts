@@ -466,7 +466,7 @@ export const biodiversityLab: StepRenderer = (host, step, api) => {
   speciesPanel.hidden = true;
   variationPanel.hidden = true;
   const stage = el("div", { class: "stage bd-stage" }, tablist, ecosystemPanel, speciesPanel, variationPanel);
-  host.append(goalChips, stage, helper);
+  host.append(goalChips, helper, stage); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   return () => {
     cleanups.forEach((cleanup) => cleanup());

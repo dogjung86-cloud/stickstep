@@ -96,7 +96,7 @@ export const starColorLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "대장간의 쇠는 달굴수록 <b>빨강 → 노랑 → 흰색</b>으로 변해요. 별도 똑같아요 — 색이 곧 <b>표면 온도의 온도계</b>! 온도를 밀며 확인해 보세요.",
   });
-  host.append(goalChips, stage, sliders, helper);
+  host.append(goalChips, helper, stage, sliders); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

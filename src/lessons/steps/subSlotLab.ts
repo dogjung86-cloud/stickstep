@@ -56,7 +56,7 @@ export const subSlotLab: StepRenderer = (host, step, api) => {
   board.append(stage, panel);
   const toast = mtoast(board);
   const helper = el("div", { class: "helper" });
-  host.append(goals.el, board, helper);
+  host.append(goals.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();
@@ -102,6 +102,7 @@ export const subSlotLab: StepRenderer = (host, step, api) => {
       on();
     });
     ctl.appendChild(b);
+    later(() => b.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     busy = false;
   }
 
@@ -477,6 +478,7 @@ export const subSlotLab: StepRenderer = (host, step, api) => {
     bNaked.addEventListener("click", () => pick(false, bNaked));
     row.append(bWrap, bNaked);
     ctl.appendChild(row);
+    later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     busy = false; // 예측 선택 개방(ask 콜백 busy 해제 규칙)
   }
   function p3Good(slot: HTMLElement): void {

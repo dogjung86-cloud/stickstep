@@ -407,8 +407,17 @@ src/
   (player.ts의 `freeNav = isDone(lesson.id)`). 복습·부분 학습용 — 전 단원 공통.
 - comic 스텝은 하단 CTA(다음 컷) + 헤더 쪽 **‹ 이전 컷** 필 버튼으로 양방향 이동(첫 컷에선 숨김).
 - binSort는 **드래그 앤 드롭이 기본**(탭 폴백 유지). 3단원(열)이 이 공식의 기준 구현.
+- **랩 지시(helper)는 조작 요소 위(전 과목·전 단원 공통, 2026-07-10 롤아웃 완료)**: 배치 = 목표 칩 →
+  helper(지시) → 보드/무대 → 조작부. "~해 보세요"가 보드 아래 깔리면 유저가 뭘 할지 모른다(수학 Ⅲ 실사용
+  피드백 — 훅 "질문은 선택지 위에" 규칙의 랩판). 조작부(버튼·스테퍼·슬라이더)는 무대 아래 유지(연타하는
+  손의 호가 무대를 가리므로). 새 박스·"미션" 태그 금지 — helper가 지시↔해설을 오가므로 기존 helper를 이동만.
+  `.pn-badges + .helper`가 base.css의 왼쪽 3px 가이드 바를 받는다(중립 `--n400` 기본, 단원 톤은
+  `--helper-bar` 변수로 덮기, min-height 예약 해제). **판정 질문·새 조작 버튼이 랩 중간에 등장하는 지점은
+  `later(() => X.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80)` 보정**(Ⅲ 문법 — 훅은
+  hookAsk.ask() 공용이 이미 처리). 예외: 훅 장면(scene→helper 순서 유지), pairMatch(연습 스텝 —
+  helper가 즉답 리드아웃이라 보드 아래 유지), rotateStage 오버레이 내부(스크롤 개념 없음).
 - 랩의 "교과서 밖 궁금증"은 `ui/curio.ts`의 curioCard(질문 헤드 탭 → 답 펼침, bulb + 앰버 톤)로 —
-  content에서 `curio: { q, a }`를 넘기면 랩 렌더러가 helper 뒤에 붙인다. 현재: u3 전도(이불)·복사(산꼭대기),
+  content에서 `curio: { q, a }`를 넘기면 랩 렌더러가 랩 맨 아래(보드·조작부 뒤)에 붙인다. 현재: u3 전도(이불)·복사(산꼭대기),
   u4 phaseNames(하얀 김), u5 gravityDrop(우주 정거장), u7 sunLab(흑점 역설), 중2III diffuseLab(하얀 종이)·
   refractLab(신기루)·mirrorImageLab(구급차 거울문자)·colorMixLab(물감 혼합)·waveLab(우주 폭발음)·
   soundLab(헬륨 목소리), 중2IV elementLab(수소도 쪼갤까)·moleculeLab(산소vs오존)·atomLab(전자는 왜 안 빨려드나)·

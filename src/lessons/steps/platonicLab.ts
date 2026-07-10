@@ -90,7 +90,7 @@ export const platonicLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "입체가 되려면 꼭짓점이 <b>접혀야</b> 해요. 몇 개를 모아야 접히고, 몇 개면 실패할까요? 도감 5칸을 모두 채워요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = stage.querySelector("svg") as SVGSVGElement;

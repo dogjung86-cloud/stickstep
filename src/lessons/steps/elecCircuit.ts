@@ -100,7 +100,7 @@ export const circuitLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "지금은 <b>전구 1개</b> 회로예요. 오른쪽 아래 <b>스위치를 탭해 닫고</b>, 이 전구의 밝기를 기준으로 봐 두세요.",
   });
-  host.append(goalChips, stage, seg, helper);
+  host.append(goalChips, helper, stage, seg); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

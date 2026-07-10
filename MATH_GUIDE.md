@@ -376,14 +376,17 @@
   즉각 피드백은 mtoast(무대 위)·판정 질문은 mq6-q(버튼 바로 위) 기존 규칙 그대로.
   **조작부(스테퍼·버튼 열)는 무대 아래 유지** — 연타하는 손의 호가 무대(그래프)를 가리므로 무대 위
   배치는 오답. 조작부가 첫 화면 밖이면 위치가 아니라 무대 높이/자동 스크롤로 푼다(사용자 확정).
-- **전 트랙 롤아웃 스펙(다음 세션 몫 — 훅은 이미 완료)**: 훅 자동 스크롤은 hookAsk.ask() 공용에
-  들어가 전 과목·전 단원 적용 끝(27a9ba5). 남은 것은 **랩 helper 이동 스윕**: ① 전 랩 파일에서
-  `host.append(chips.el, board, helper)` 패턴을 `(chips.el, helper, board)`로 재배열(수학 중1 Ⅰ~Ⅵ·
-  중2 Ⅰ·Ⅱ ~46+17개, 과학은 랩별 DOM이 달라 개별 확인 — pn-badges/goals 다음에 helper가 오도록)
-  ② `.pn-badges + .helper` 액센트 바 규칙을 math2.css에서 base.css로 승격하되 색은 틸 고정이 아니라
-  중립 토큰(또는 단원 톤 변수)으로 ③ 판정 질문·버튼 등장 지점에 scrollIntoView 보정(Ⅲ 문법: ask
-  row/actions append 직후 later 80ms) ④ 검증은 tsc+build+단원 대표 화면 스크린샷(전 e2e 재실행은
-  생략 정책 — 단, e2e 스크립트가 helper 위치를 참조하지 않는지 grep 확인).
+- **전 트랙 롤아웃 완료(2026-07-10)**: 훅 자동 스크롤은 hookAsk.ask() 공용(27a9ba5), 랩은 이 세션이
+  전 과목·전 단원 스윕 완료 — ① 전 랩(수학 중1 Ⅰ~Ⅵ·중2 Ⅰ·Ⅱ + 과학 전 단원, 154파일 161지점)
+  `host.append`를 칩 → helper → 보드로 재배열(칩 없는 stage-first 랩은 helper 최상단, microscope는
+  조건부 appendChild 구조라 수동, plant 4랩은 다중 라인 append) ② `.pn-badges + .helper` 액센트 바를
+  base.css로 승격 — 색은 중립 `--n400` 기본 + `--helper-bar` 변수로 단원 톤 덮기 가능(math2.css의 틸
+  규칙은 제거) ③ 판정 질문·국면 버튼 등장 지점에 later 80ms scrollIntoView 보정(65파일 118지점 —
+  마운트 시 존재·제자리 스왑·rotateStage 내부·라벨만 변경은 제외) ④ e2e는 helper 위치를 참조하지
+  않음을 grep으로 확인(u5l1·u7의 textContent 로그 2건뿐 — 위치 무관), 검증은 tsc+build+대표 랩 8종
+  스크린샷(프리뷰 하니스 프리즈 시 playwright 직접 셧이 우회 경로 — 사고 17 문법).
+  **예외(이동 안 함)**: 훅 장면(scene→helper, hookAsk가 질문 복제)·pairMatch(연습 스텝, helper=즉답
+  리드아웃)·rotateStage 오버레이 내부(스크롤 개념 없음). curioCard는 여전히 랩 맨 아래.
 - **mdr-q(27px 드릴 카드) 재사용 시 날한글 금지**: 수식(.mx)·핀(.mcl-k)만 담거나, 문장이 들어가면
   카드에 본문 크기(15~17px)를 재정의한다(icl-q·fnl-title 27px 실사고 — Opus 감사로 전수 확인).
 - **e2e mq6 판단 질문 대기는 연출 체인 총 시간으로**: 선택 → 연출(스핀 등) → 칩 점등이 3.7초 체인인

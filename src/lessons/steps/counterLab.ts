@@ -64,7 +64,7 @@ export const counterLab: StepRenderer = (host, step, api) => {
   board.append(exprEl, tray, readEl, actions);
   const say = mtoast(board);
   const helper = el("div", { class: "helper" });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   api.setCTA("목표를 달성해 보세요", { enabled: false });
@@ -410,6 +410,7 @@ export const counterLab: StepRenderer = (host, step, api) => {
         if (k === 1) {
           helper.innerHTML = "사라질 짝이 없네요! 이번엔 <b>빨강뿐</b>이에요.";
           hero = showHero("그냥 세어 보기", onCountTap);
+          later(80, () => hero?.scrollIntoView({ behavior: "smooth", block: "nearest" })); // 화면 밖 등장 보정
         }
       });
     }

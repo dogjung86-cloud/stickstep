@@ -128,7 +128,7 @@ export const vertAngleLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "직선 <i>m</i>을 드래그로 돌리면 네 각이 함께 변해요. 마주 보는 각을 잘 봐요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = stage.querySelector("svg") as SVGSVGElement;
@@ -218,6 +218,7 @@ export const vertAngleLab: StepRenderer = (host, step, api) => {
     inst.innerHTML = "우연이 아니에요. 왜 항상 같은지, 비밀 장치를 켜 볼까요?";
     clear(ctl);
     ctl.appendChild(secretBtn);
+    later(() => secretBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     helper.innerHTML = "세 번 모두 <b>∠a = ∠c</b>! 비밀 보기를 누르면 이유가 보여요.";
   }
 

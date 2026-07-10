@@ -124,7 +124,7 @@ export const pairLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "x와 y를 고르고 <b>대입</b>! 좌변이 우변과 같아지면 그 (x, y)가 해예요. 자연수만 인정!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ── 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ──
@@ -320,6 +320,7 @@ export const pairLab: StepRenderer = (host, step, api) => {
     });
     clear(ctl);
     ctl.appendChild(row);
+    later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /** (2, 3)을 다이얼에 자동 장전하고 대입 검증(거짓 확인). */

@@ -90,7 +90,7 @@ export const powDivLab: StepRenderer = (host, step, api) => {
   board.append(eqEl, stage, fate, readEl, qEl, ctlEl);
   const toast = mtoast(board);
   const helper = el("div", { class: "helper" });
-  host.append(goals.el, board, helper);
+  host.append(goals.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   api.setCTA("목표 세 개를 모두 달성하면 열려요", { enabled: false });
@@ -293,6 +293,7 @@ export const powDivLab: StepRenderer = (host, step, api) => {
       row.appendChild(btn);
     });
     ctlEl.replaceChildren(row);
+    later(() => qEl.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   const choiceHtml = (main: string, sub: string): string => `<b>${main}</b><span class="pdl-chsub">${sub}</span>`;

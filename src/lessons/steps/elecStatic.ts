@@ -159,7 +159,7 @@ export const frictionLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "핀에 꽂아 둔 <b>빨간 빨대</b> — 파란 빨대와 함께 <b>같은 털가죽으로 문질러</b> 뒀어요. 먼저 <b>파란 빨대를 잡아</b> 빨간 빨대 끝 가까이 가져가면 어떻게 될까요?",
   });
-  host.append(goalChips, stage, seg, helper);
+  host.append(goalChips, helper, stage, seg); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
@@ -535,7 +535,7 @@ export const rubLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "털가죽도 빨대도 지금은 (+)4개·전자(−) 4개 — <b>중성</b>이에요. 빨대를 <b>잡아 털가죽 위로</b> 가져가 <b>좌우로 문질러</b> 보세요. 왕복 1회마다 전자가 한 개씩 넘어가요.",
   });
-  host.append(goalChips, stage, quizRow, pullRow, helper);
+  host.append(goalChips, helper, stage, quizRow, pullRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
@@ -727,6 +727,7 @@ export const rubLab: StepRenderer = (host, step, api) => {
       quizShown = true;
       quizRow.style.display = "";
       helper.innerHTML = "전자 3개가 이사를 마쳤어요. 그럼 퀴즈 — 전자를 얻은 <b>빨대는 어느 전기</b>를 띠게 됐을까요? 위에서 골라 보세요.";
+      window.setTimeout(() => quizRow.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     }
 
     // ---- 털가죽 ----

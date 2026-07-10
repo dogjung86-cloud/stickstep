@@ -116,7 +116,7 @@ export const matterShape: StepRenderer = (host, step, api) => {
     swapLabel,
   );
   const helper = el("div", { class: "helper" });
-  host.append(stage.el, seg, swapBtn, helper);
+  host.append(helper, stage.el, seg, swapBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let cur: StateKey = "sol";

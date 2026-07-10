@@ -103,7 +103,7 @@ export const distillLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "물과 에탄올을 섞은 <b>혼합물</b>이에요. 가열하면서 온도 곡선을 보고, 구간이 바뀌면 <b>시험관을 제때 바꿔</b> 주세요.",
   });
-  host.append(goalChips, stage, ctrls, helper);
+  host.append(goalChips, helper, stage, ctrls); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
@@ -258,6 +258,7 @@ export const distillLab: StepRenderer = (host, step, api) => {
     btnMain.classList.remove("pulse");
     mainLabel("(나) 냄새 맡기");
     btnB.style.display = "";
+    window.setTimeout(() => btnB.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     canvas.style.cursor = "pointer";
     tubePill.textContent = "증류 완료";
     capEl.textContent = "시험관 (나)와 (라)를 직접 탭해도 돼요";

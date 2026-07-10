@@ -132,7 +132,7 @@ export const substLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "식을 고르고 x 값을 정한 뒤 <b>대입!</b>, 문자 자리에 수가 들어가는 순간을 지켜봐요.",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ----

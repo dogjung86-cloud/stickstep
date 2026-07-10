@@ -50,7 +50,7 @@ export const lineLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "정비례 관계 <b>y=2x</b>를 만족하는 순서쌍부터 손으로 찍어 봐요. x가 −3이면 y는 2×(−3)=−6!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = svgWrap.querySelector("svg") as SVGSVGElement;
@@ -147,6 +147,7 @@ export const lineLab: StepRenderer = (host, step, api) => {
       }, 60 * i));
     });
     actions.appendChild(b);
+    later(() => b.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function wholeBtn(): void {
@@ -167,6 +168,7 @@ export const lineLab: StepRenderer = (host, step, api) => {
       later(steerUi, 1200);
     });
     actions.appendChild(b);
+    later(() => b.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ── a 조종 국면 ── */
@@ -220,6 +222,7 @@ export const lineLab: StepRenderer = (host, step, api) => {
     minus.addEventListener("click", () => stepA(-0.5));
     plus.addEventListener("click", () => stepA(0.5));
     actions.append(minus, read, plus);
+    later(() => actions.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     helper.innerHTML = "−와 +로 <b>a를 조종</b>해 보세요. 미션: ① a를 음수로 ② 절댓값을 3까지!";
     paintSteer();
   }

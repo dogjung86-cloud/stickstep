@@ -83,7 +83,7 @@ export const diagLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "오각형 마을에 새 다리를 놓아요. 단, <b>변(테두리)이 아닌 새 다리</b>만 인정! 어디와 어디를 이어야 할까요?",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = stage.querySelector("svg") as SVGSVGElement;
@@ -233,6 +233,7 @@ export const diagLab: StepRenderer = (host, step, api) => {
     const btn = el("button", { class: "mdg-btn pulse", text: "비밀 보기", attrs: { type: "button" } }) as HTMLButtonElement;
     clear(eqs);
     eqs.appendChild(btn);
+    later(() => btn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     helper.innerHTML = "10개를 예상했는데 5개만 나왔어요. 절반이 사라진 이유를 확인해 봐요!";
     btn.addEventListener("click", () => {
       btn.disabled = true;

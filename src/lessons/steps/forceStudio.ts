@@ -60,7 +60,7 @@ export const forceStudio: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "공 위에서 드래그해 <b>힘 화살표</b>를 그려 보세요. 놓는 순간, 그 힘이 진짜로 작용해요!",
   });
-  host.append(goalChips, stage, seg, helper);
+  host.append(goalChips, helper, stage, seg); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let W = 340;

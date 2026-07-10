@@ -278,7 +278,7 @@ export const streakLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "겉색만으로는 광물을 가려내기 어려워요. <b>흑운모와 자철석</b>은 겉이 둘 다 까맣죠 — 조흔판에 문질러 <b>가루색</b>을 비교해 보세요!",
   });
-  host.append(goalChips, tray, stage, ctrls, helper);
+  host.append(goalChips, helper, tray, stage, ctrls); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

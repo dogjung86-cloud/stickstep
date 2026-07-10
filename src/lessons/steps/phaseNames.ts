@@ -90,7 +90,7 @@ export const phaseNames: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "지금은 25℃ 물이에요. 먼저 온도를 <b>0℃ 아래로</b> 내려 보세요 — 액체가 고체로 변하는 순간, 첫 이름을 얻어요!",
   });
-  host.append(badges, stage.el, slider, helper);
+  host.append(badges, helper, stage.el, slider); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

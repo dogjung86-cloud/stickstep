@@ -79,7 +79,7 @@ export const latheLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "도자기 물레처럼, 평면도형을 <b>축에 붙여 돌리면</b> 입체가 태어나요. 무대를 좌우로 문질러 돌려 봐요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = stage.querySelector("svg") as SVGSVGElement;
@@ -225,6 +225,7 @@ export const latheLab: StepRenderer = (host, step, api) => {
     });
     clear(ctl);
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ── 국면 2: 단면 탐정(원뿔) ── */
@@ -291,11 +292,13 @@ export const latheLab: StepRenderer = (host, step, api) => {
           ask.appendChild(c);
         });
         ctl.appendChild(ask);
+        later(() => ask.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
       });
       row.appendChild(b);
     });
     clear(ctl);
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ── 국면 3: 원뿔대 ── */

@@ -41,7 +41,7 @@ export const shareLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "여행 사진으로 <b>딱 120초</b>짜리 브이로그를 만들어요. 사진이 x장이면 한 장의 재생 시간은 몇 초일까요? 장수를 바꿔 봐요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();
@@ -218,6 +218,7 @@ export const shareLab: StepRenderer = (host, step, api) => {
       api.enableCTA(s.cta ?? "다음");
     });
     actions.append(test, yes, no);
+    later(() => actions.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   drawScene();

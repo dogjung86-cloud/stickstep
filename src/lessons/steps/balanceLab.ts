@@ -53,7 +53,7 @@ export const balanceLab: StepRenderer = (host, step, api) => {
   board.appendChild(stage);
   const actions = el("div", { class: "ct-actions", style: "flex-wrap:wrap" });
   const helper = el("div", { class: "helper" });
-  host.append(goals.el, eqRead, board, actions, helper);
+  host.append(goals.el, helper, eqRead, board, actions); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();
@@ -305,6 +305,7 @@ export const balanceLab: StepRenderer = (host, step, api) => {
         busy = false;
       }, 1300);
     });
+    later(() => actions.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ---------- 2막: 3x = 12 ---------- */
@@ -331,6 +332,7 @@ export const balanceLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.select);
       later(() => reveal("m2", "x=4!", null), 550);
     });
+    later(() => actions.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ---------- 상자 공개 ---------- */

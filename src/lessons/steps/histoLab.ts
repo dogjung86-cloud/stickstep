@@ -70,7 +70,7 @@ export const histoLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "체급 랩의 도수분포표를 <b>그래프 도시</b>로 옮겨요. 표의 행과 같은 계급 자리를 탭하면 막대가 자라요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = stage.querySelector("svg") as SVGSVGElement;
@@ -200,6 +200,7 @@ export const histoLab: StepRenderer = (host, step, api) => {
     });
     clear(ctl);
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ── 국면 3: 읽기 ── */
@@ -231,6 +232,7 @@ export const histoLab: StepRenderer = (host, step, api) => {
       row.appendChild(b);
     });
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function finish(): void {

@@ -143,7 +143,7 @@ export const finchSim: StepRenderer = (host, step, api) => {
     attrs: { role: "status", "aria-live": "polite" },
   });
 
-  host.append(goalChips, environmentControl, stage, startButton, helper);
+  host.append(goalChips, helper, environmentControl, stage, startButton); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   renderPopulation();
   api.setCTA("씨앗 섬과 곤충 섬 실험을 모두 완료하세요", { enabled: false });
   listen(startButton, "click", runCompetition);

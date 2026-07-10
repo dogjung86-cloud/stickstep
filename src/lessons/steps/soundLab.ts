@@ -153,7 +153,7 @@ export const soundLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "먼저 <b>소리 켜기</b>! 그다음 슬라이더를 움직이면 <b>귀로 들리는 것</b>과 <b>화면의 파형</b>이 동시에 변해요.",
   });
-  host.append(goalChips, stage, soundBtn, sliders, helper);
+  host.append(goalChips, helper, stage, soundBtn, sliders); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   // 파형은 순식간에 지나가니 — 멈춘 그래프로 3요소를 붙잡아 두는 설명 카드
   host.appendChild(
     labExplain({

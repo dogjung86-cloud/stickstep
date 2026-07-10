@@ -153,10 +153,10 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
   });
   host.append(
     goalChips,
+    helper, // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
     stage,
     el("div", { class: "plant-controls three" }, lightBtn, carbonBtn, waterBtn),
     el("div", { class: "plant-controls two" }, reactionBtn, storageBtn),
-    helper,
   );
   if (s.curio) host.appendChild(curioCard(s.curio));
 

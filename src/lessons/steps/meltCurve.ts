@@ -102,7 +102,7 @@ export const meltCurve: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "시험관 속 <b>흰 고체</b>를 물중탕으로 천천히 데워요. 그래프의 온도 곡선 — 어딘가에서 <b>이상한 일</b>이 벌어져요.",
   });
-  host.append(goalChips, stage, ctrls, heatBtn, helper);
+  host.append(goalChips, helper, stage, ctrls, heatBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

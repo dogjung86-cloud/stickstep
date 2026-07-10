@@ -70,7 +70,7 @@ export const solidLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "입체의 세계에 왔어요! 첫 관문, <b>다각형 면으로만</b> 둘러싸인 입체를 골라내 봐요.",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const timers = new Set<number>();
@@ -200,6 +200,7 @@ export const solidLab: StepRenderer = (host, step, api) => {
       row.appendChild(b);
     });
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ── 국면 3: 각뿔대 공방 ── */
@@ -217,6 +218,7 @@ export const solidLab: StepRenderer = (host, step, api) => {
     helper.innerHTML = "뿔의 위쪽을 잘라 내면 무엇이 남을까요? 칼질 한 번!";
     const btn = el("button", { class: "msd-btn pulse", text: "평행하게 자르기", attrs: { type: "button" } }) as HTMLButtonElement;
     ctl.appendChild(btn);
+    later(() => btn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     btn.addEventListener("click", () => {
       btn.disabled = true;
       haptic(HAPTIC.tap);
@@ -275,6 +277,7 @@ export const solidLab: StepRenderer = (host, step, api) => {
         row.appendChild(b);
       });
       ctl.appendChild(row);
+      later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     }
   }
 

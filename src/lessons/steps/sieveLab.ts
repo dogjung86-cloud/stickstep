@@ -35,7 +35,7 @@ export const sieveLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "먼저 <b>1</b>부터 정리할게요, 1은 약수가 1개뿐이라 소수도 합성수도 아니에요.",
   });
-  host.append(goals.el, board, helper);
+  host.append(goals.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const alive = new Set<number>();

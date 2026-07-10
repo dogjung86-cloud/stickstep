@@ -109,7 +109,7 @@ export const sunLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "태양의 표면(<b>광구</b>)이에요. 쌀알을 뿌린 듯한 무늬 사이 <b>어두운 점</b>이 보이죠? 눌러 보세요!",
   });
-  host.append(goalChips, stage, slider, graph, helper);
+  host.append(goalChips, helper, stage, slider, graph); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

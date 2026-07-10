@@ -51,7 +51,7 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "달이 지구를 돌다 보면 <b>태양·지구와 일렬</b>이 되는 순간이 있어요 — 그때 무슨 일이 생기는지 직접 만들어 봐요!",
   });
-  host.append(goalChips, preview, enterBtn, helper);
+  host.append(goalChips, helper, preview, enterBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   const goals = new Set<string>();
   let finished = false;

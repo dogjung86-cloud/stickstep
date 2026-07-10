@@ -41,7 +41,7 @@ export const conduction: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "고체 막대 속 입자들은 <b>제자리에서</b> 가볍게 떨고 있어요. 왼쪽 끝을 가열하면 무슨 일이 생길까요?",
   });
-  host.append(stage, controls, helper);
+  host.append(helper, stage, controls); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
@@ -91,6 +91,7 @@ export const conduction: StepRenderer = (host, step, api) => {
       row.appendChild(b);
     });
     controls.appendChild(row);
+    window.setTimeout(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     helper.innerHTML =
       "이번엔 <b>구리·철·유리</b> 세 막대의 왼쪽 끝을 <b>동시에</b> 가열할 거예요. 어느 막대의 끝이 <b>가장 빨리</b> 뜨거워질까요? 하나를 골라 보세요.";
   }
@@ -242,6 +243,7 @@ export const conduction: StepRenderer = (host, step, api) => {
         toPick();
       });
       controls.appendChild(nextBtn);
+      window.setTimeout(() => nextBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     }
   }
 

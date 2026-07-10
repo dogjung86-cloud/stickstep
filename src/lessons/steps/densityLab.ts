@@ -128,7 +128,7 @@ export const densityLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "같은 물질이라도 조각 크기는 제각각이에요. <b>질량</b>(전자저울)과 <b>부피</b>(물이 늘어난 만큼)를 재서 <b>질량÷부피</b>를 비교해 봐요.",
   });
-  host.append(goalChips, stage, tbl, helper);
+  host.append(goalChips, helper, stage, tbl); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----

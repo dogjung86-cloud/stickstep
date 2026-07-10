@@ -69,7 +69,7 @@ export const triSumLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "삼각형의 세 각을 색종이처럼 <b>찢어서</b> 한 점에 모으면 무슨 모양이 될까요?",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = stage.querySelector("svg") as SVGSVGElement;
@@ -244,6 +244,7 @@ export const triSumLab: StepRenderer = (host, step, api) => {
     drawTriangle(); // 손잡이 제거
     const extBtn = el("button", { class: "mts-btn pulse", text: "변 BC 늘려 보기", attrs: { type: "button" } }) as HTMLButtonElement;
     ctl.appendChild(extBtn);
+    later(() => extBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     inst.innerHTML = "삼각형 <b>바깥</b>에도 각이 숨어 있어요. 변을 늘려 찾아봐요!";
     helper.innerHTML = "변 BC를 C 너머로 쭉 늘리면, 변과 연장선 사이에 새 각이 생겨요.";
     extBtn.addEventListener("click", () => {

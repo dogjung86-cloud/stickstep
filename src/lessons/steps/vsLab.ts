@@ -131,7 +131,7 @@ export const vsLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "인원(x)이 늘면 <b>개인 합계 막대만</b> 자라요. 단체 정액은 몇 명이든 80000원 그대로!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ── 타이머(모든 지연은 여기로, cleanup에서 일괄 해제) ──
@@ -325,6 +325,7 @@ export const vsLab: StepRenderer = (host, step, api) => {
     }
     clear(ctl);
     ctl.appendChild(row);
+    later(() => row.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function askFinal(): void {
@@ -370,6 +371,7 @@ export const vsLab: StepRenderer = (host, step, api) => {
     });
     clear(ctl);
     ctl.appendChild(row);
+    later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   paint();

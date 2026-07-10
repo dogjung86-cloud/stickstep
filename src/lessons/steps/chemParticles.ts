@@ -59,7 +59,7 @@ export const elementLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "구리를 원자 수준까지 확대했어요. 입자들을 잘 보고 — <b>몇 종류의 원자</b>로 이루어졌는지 아래에서 판정!",
   });
-  host.append(goalChips, stage, btnRow, helper);
+  host.append(goalChips, helper, stage, btnRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   let sample: Sample = "cu";
@@ -263,7 +263,7 @@ export const moleculeLab: StepRenderer = (host, step, api) => {
   const splitBtn = el("button", { class: "swapbtn", attrs: { type: "button" }, style: "display:none" }, el("span", { text: "완성한 물 분자 쪼개기" }));
   const row2 = el("div", { class: "gp-controls" }, undoBtn, splitBtn);
   const helper = el("div", { class: "helper" });
-  host.append(goalChips, stage, palette, row2, helper);
+  host.append(goalChips, helper, stage, palette, row2); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
@@ -324,6 +324,7 @@ export const moleculeLab: StepRenderer = (host, step, api) => {
           splitBtn.style.display = "";
           splitBtn.classList.add("pulse");
           helper.innerHTML += " 이제 이 분자를 <b>쪼개 볼까요</b>?";
+          window.setTimeout(() => splitBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
         } else if (ti < s.targets.length - 1) {
           ti++;
           pool = [];

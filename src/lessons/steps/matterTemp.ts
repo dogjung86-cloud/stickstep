@@ -78,7 +78,7 @@ export const matterTemp: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "슬라이더를 밀어 온도를 <b>끝까지 올려</b> 보세요. 지금은 입자들이 규칙적으로 붙은 채 <b>제자리에서 떨고만</b> 있어요.",
   });
-  host.append(stage.el, slider, helper);
+  host.append(helper, stage.el, slider); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
   // ---- 상태 ----
   let T = T_MIN;

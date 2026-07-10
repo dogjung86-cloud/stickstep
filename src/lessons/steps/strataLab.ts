@@ -147,7 +147,7 @@ export const strataLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "고요한 바다 밑바닥이에요. <b>퇴적물 4가지</b> 중 하나를 골라 뿌리면 가라앉아 한 층이 돼요 — 서로 다른 종류로 쌓아 보세요!",
   });
-  host.append(goalChips, stage, seg, compactBtn, helper);
+  host.append(goalChips, helper, stage, seg, compactBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   // ---- 상태 ----
