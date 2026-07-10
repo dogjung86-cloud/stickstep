@@ -451,8 +451,9 @@
 - QA: `PORT=<포트> node qa/e2e-m2u4.mjs`(10레슨 실플레이 — 접기·스테퍼 일치·복제 주문서·핀 등거리
   드래그·최대 원·회전 스냅·조건 생성기·대각선 토글·진화 계보·레일 등적 드래그, 훅은 hookPlay 공용
   루프(swapbtn 반복→선택지). 드래그 시작점은 DOM에서 실좌표를 읽는다(svgCircleAt — 핀·핸들이 움직이므로).
-  컷 발주: `bash qa/order-m2u4cuts.sh`(프롬프트 qa/m2u4cut_prompts.txt — **실행 전 다른 세션 codex
-  발주와 겹치지 않는지 확인**, 병렬 codex 금지).
+  컷 u4lN 10장은 발주·눈검수·webp 변환 완료(`bash qa/order-m2u4cuts.sh`, 프롬프트 qa/m2u4cut_prompts.txt).
+  u4l10(제빵사 저울)은 저울대가 기울어져 "등적=수평" 메시지가 깨져 "저울대 완전 수평" 강조로 1회 재발주함 —
+  발주 전 **다른 세션 codex 발주와 겹치지 않는지 확인**(병렬 codex 금지).
 
 ## 학년 언어 규칙 (수학 중1)
 

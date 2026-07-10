@@ -237,7 +237,7 @@ src/
   Ⅳ 그림 15종+proveMiniArt 15키. **SVG 그룹 회전·반전은 transform-box: view-box 명시**(접기
   scaleX(-1)·180° 회전 드래그 — 시계 바늘 사고의 SVG 그룹판 예방), 회전 드래그는 CSS(시계+)와
   수학 각(반시계+)의 부호 반전 주의. mathDrill에 **장문 자동 강등**(q 26자 초과 → .mdr-q.long 18px)
-  공용 개선. 컷 u4lN 10장은 미발주(qa/order-m2u4cuts.sh 대기 — 병렬 codex 금지).
+  공용 개선. 컷 u4lN 10장 발주·눈검수·webp 변환 완료(qa/order-m2u4cuts.sh, u4l10만 저울대 수평 1회 재발주).
   상세는 MATH_GUIDE.md 중2 Ⅳ 표. QA: `PORT=<포트> node qa/e2e-m2u4.mjs`.
 - **과목 차원**: `store.viewSubject`("sci"|"math") + `curriculum.ts`의 `CURRICULA_OF`/`subjectOfUnit`.
   과목 전환 창구는 **과목 허브뿐**(subject.ts) — main.ts `pickSubject()`가 setViewSubject 후 `goHome()`으로
