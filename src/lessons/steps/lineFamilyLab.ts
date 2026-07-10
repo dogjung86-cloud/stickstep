@@ -54,7 +54,7 @@ export const lineFamilyLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "스테퍼로 <b>a</b>와 <b>b</b>를 조종해 보세요. 먼저 a를 <b>음수까지</b> 내려 보면?",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const gLine = svgWrap.querySelector(".lfm-line") as SVGGElement;

@@ -66,7 +66,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "직선 위의 <b>두 손잡이</b>를 끌어 보세요. 오른쪽 손잡이를 <b>가로 2칸 이상</b> 벌리면 무슨 일이?",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = svgWrap.querySelector("svg") as SVGSVGElement;
@@ -169,6 +169,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
       helper.innerHTML = "이번 직선은 <b>y=−x+2</b>. 손잡이를 벌려서 비율을 재 보세요. 세로 증가량의 부호는?";
     });
     actions.appendChild(b);
+    later(() => b.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function askCoeff(): void {
@@ -219,6 +220,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
     }
     clear(ctl);
     ctl.appendChild(row);
+    later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /* ── 핸들 드래그(정수 x 스냅, 실시간) ── */

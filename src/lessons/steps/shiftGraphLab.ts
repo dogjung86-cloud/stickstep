@@ -66,7 +66,7 @@ export const shiftGraphLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "초록 직선을 <b>잡아서 위로</b> 끌어 보세요. 목표: 3칸 위, <b>y=2x+3</b>!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = svgWrap.querySelector("svg") as SVGSVGElement;
@@ -223,6 +223,7 @@ export const shiftGraphLab: StepRenderer = (host, step, api) => {
     }
     clear(ctl);
     ctl.appendChild(row);
+    later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   paint(0, false);

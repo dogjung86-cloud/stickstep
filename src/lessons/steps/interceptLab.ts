@@ -60,7 +60,7 @@ export const interceptLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "초록 직선이 <b>x축과 만나는 점</b>을 찾아서 탭해 보세요!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = svgWrap.querySelector("svg") as SVGSVGElement;
@@ -225,6 +225,7 @@ export const interceptLab: StepRenderer = (host, step, api) => {
     }
     clear(ctl);
     ctl.appendChild(row);
+    later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   /** 원점에 꽂힌 후보 직선들이 부채처럼 도는 연출, 점 하나로는 못 정한다. */

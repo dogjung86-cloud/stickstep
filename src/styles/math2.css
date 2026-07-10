@@ -1451,6 +1451,9 @@
    lfm(lineFamilyLab)·lbd(lineBuildLab)·lrv(lineRevealLab)·mel(meetLab — mtl은 math.css 선점)
    ============================================================ */
 .mq6-q.fnl-q, .mq6-q.m2u3q { background: #E7F8F1; border-color: rgba(12,166,120,.5); color: #067D57; }
+/* 지시(helper)를 보드 위로 올린 배치(칩 → helper → 보드) — 조작 요소 근처 지시 원칙.
+   min-height 2줄 예약으로 국면 전환 때 무대가 출렁이지 않게 한다. */
+.pn-badges + .helper { margin: 10px 0 2px; min-height: 46px; }
 
 /* ---------- funcLab(.fnl-) 대응 기계 검사소 ---------- */
 /* mdr-q(드릴용 27px) 상속 차단 — 이름 카드는 본문 크기로(Opus 4.8 감사 확실 2건 중 하나) */

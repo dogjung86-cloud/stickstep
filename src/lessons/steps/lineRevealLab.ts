@@ -54,7 +54,7 @@ export const lineRevealLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "이 방정식을 <b>참이 되게 하는 순서쌍 (x, y)</b>, 즉 해를 격자에서 찾아 탭! 예를 들어 x=1이면 y는?",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = svgWrap.querySelector("svg") as SVGSVGElement;
@@ -177,6 +177,7 @@ export const lineRevealLab: StepRenderer = (host, step, api) => {
       clear(actions);
     });
     actions.appendChild(b);
+    later(() => b.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function showMorph(): void {
@@ -259,6 +260,7 @@ export const lineRevealLab: StepRenderer = (host, step, api) => {
     }
     clear(ctl);
     ctl.appendChild(row);
+    later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   eqCard.innerHTML = `<span class="mcl-k">방정식</span> ${mfmt("x+y-3=0")} <span class="lrv-hint">해는 순서쌍 (x, y)!</span>`;

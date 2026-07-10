@@ -54,7 +54,7 @@ export const lineBuildLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "단서 카드를 읽고, 스테퍼로 직선을 복원해요. <b>기울기(a)부터</b> 맞추는 게 수사의 정석!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const gLine = svgWrap.querySelector(".lbd-line") as SVGGElement;
@@ -168,6 +168,7 @@ export const lineBuildLab: StepRenderer = (host, step, api) => {
     }
     clear(ctl);
     ctl.appendChild(row);
+    later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
   }
 
   function judgeCase2(): void {

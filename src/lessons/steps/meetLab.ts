@@ -62,7 +62,7 @@ export const meetLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "파란 직선(x−y=1)은 고정, <b>주황 직선(y=ax+b)</b>이 조종간이에요. 미션 1: 교점을 <b>과녁 (2, 1)</b>에!",
   });
-  host.append(chips.el, board, helper);
+  host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const gMove = svgWrap.querySelector(".mel-move") as SVGGElement;
