@@ -1452,8 +1452,15 @@
    ============================================================ */
 .mq6-q.fnl-q, .mq6-q.m2u3q { background: #E7F8F1; border-color: rgba(12,166,120,.5); color: #067D57; }
 /* 지시(helper)를 보드 위로 올린 배치(칩 → helper → 보드) — 조작 요소 근처 지시 원칙.
-   min-height 2줄 예약으로 국면 전환 때 무대가 출렁이지 않게 한다. */
-.pn-badges + .helper { margin: 10px 0 2px; min-height: 46px; }
+   빈 예약 공간이 간격 비대의 범인이라 min-height는 해제(기본 44px까지 0으로),
+   대신 가이드 줄 정체성은 단원 톤 왼쪽 바로 준다(태그 없이 지시·해설 양쪽에 어울리는 톤). */
+.pn-badges + .helper {
+  margin: 10px 2px 0; min-height: 0;
+  padding: 2px 0 2px 11px; border-left: 3px solid rgba(12,166,120,.55); border-radius: 2px;
+}
+/* 보드 안 상단 카드(지금 직선·임무 등)는 드릴용 mdr-q 크기(84px)를 버리고 내용에 맞게 —
+   드릴 진짜 질문 카드는 mboard 밖이라 영향 없다 */
+.mboard .mdr-q { min-height: 0; padding: 12px 16px; }
 
 /* ---------- funcLab(.fnl-) 대응 기계 검사소 ---------- */
 /* mdr-q(드릴용 27px) 상속 차단 — 이름 카드는 본문 크기로(Opus 4.8 감사 확실 2건 중 하나) */
