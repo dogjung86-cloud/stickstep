@@ -1559,8 +1559,11 @@
 /* ---------- lineFamilyLab(.lfm-) 직선 가족 조종실 + 공용 스테퍼 ---------- */
 .lfm-eq { margin-bottom: 6px; }
 .lfm-eq .mx { font-size: 18px; }
-.lfm-dir { display: flex; justify-content: center; gap: 8px; margin-bottom: 6px; }
+/* align-items 기본값(stretch)이면 |a|=1 필의 | 글리프 줄높이에 이웃 필이 늘어나
+   아래 여백이 생긴다(실사용 피드백) — center + line-height 고정으로 통일 */
+.lfm-dir { display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 6px; }
 .lfm-pill {
+  display: inline-flex; align-items: center; line-height: 1.15;
   padding: 5px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 800;
   border: 1.4px solid; transition: all .25s var(--ease-out);
 }
