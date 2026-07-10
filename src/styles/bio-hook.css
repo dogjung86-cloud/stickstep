@@ -1,0 +1,123 @@
+/* 중1 II 단원 훅 장면 전용 스타일. */
+.hk-bio,
+.hk-bio-stain,
+.hk-bio-body,
+.hk-fp,
+.hk-bio-night,
+.hk-bio-web {
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
+.hk-bio svg,
+.hk-bio-stain svg,
+.hk-bio-body svg,
+.hk-fp svg,
+.hk-bio-night svg,
+.hk-bio-web svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.hk-bio .cz-cells {
+  opacity: 0;
+  transition: opacity .48s var(--ease);
+}
+.hk-bio.zoomed .cz-cells { opacity: 1; }
+.hk-bio .cz-loupe {
+  transform-box: view-box;
+  transform-origin: 165px 72px;
+  transition: transform .5s var(--spring);
+}
+.hk-bio.zoomed .cz-loupe { transform: scale(1.035); }
+
+.hk-bio-stain .st-nuc {
+  opacity: 0;
+  transition: opacity .5s var(--ease);
+}
+.hk-bio-stain.stained .st-nuc { opacity: 1; }
+.hk-bio-stain .st-bead { opacity: 0; }
+.hk-bio-stain.stained .st-bead { animation: hookBioDrop .72s var(--ease) forwards; }
+@keyframes hookBioDrop {
+  0% { opacity: 1; transform: translateY(0); }
+  78% { opacity: 1; transform: translateY(34px); }
+  100% { opacity: 0; transform: translateY(39px); }
+}
+
+.hk-bio-body .bc-zoom {
+  opacity: 0;
+  transform: scale(.72);
+  transform-box: view-box;
+  transform-origin: 183px 67px;
+  transition: opacity .4s var(--ease), transform .5s var(--spring);
+}
+.hk-bio-body.reveal .bc-zoom { opacity: 1; transform: none; }
+
+.hk-fp .fp-card {
+  touch-action: manipulation;
+  transition: transform .18s var(--spring);
+}
+.hk-fp .fp-ridge { opacity: .25; transition: opacity .32s var(--ease); }
+.hk-fp .fp-card.on { transform: translateY(-3px); }
+.hk-fp .fp-card.on .fp-ridge { opacity: 1; }
+.hk-fp .fp-check {
+  opacity: 0;
+  transform: scale(.4);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity .26s var(--ease), transform .34s var(--spring);
+}
+.hk-fp .fp-card.on .fp-check { opacity: 1; transform: none; }
+.hk-fp .fp-scan { opacity: 0; transform-box: view-box; }
+.hk-fp .fp-card.on .fp-scan { animation: hookBioScan .5s var(--ease); }
+@keyframes hookBioScan {
+  0% { opacity: .95; transform: translateY(-20px); }
+  100% { opacity: 0; transform: translateY(20px); }
+}
+
+.hk-bio-night .bb-side { opacity: .94; }
+
+.hk-bio-web .fw-node,
+.hk-bio-web .fw-links path {
+  transition: opacity .6s var(--ease), transform .6s var(--ease);
+}
+.hk-bio-web.collapse .fw-hop {
+  opacity: 0;
+  transform: translateY(7px) scale(.64);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.hk-bio-web.collapse .fw-links path:nth-child(1),
+.hk-bio-web.collapse .fw-links path:nth-child(2) { opacity: .1; }
+.hk-bio-web.collapse .fw-frog {
+  opacity: .72;
+  transform: translateY(3px);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.hk-bio-web.collapse .fw-hawk { opacity: .82; }
+.hk-bio-web.collapse .fw-grass {
+  transform: scale(1.08);
+  transform-box: fill-box;
+  transform-origin: center bottom;
+}
+.hk-bio-web.collapse .fw-larva,
+.hk-bio-web.collapse .fw-mouse,
+.hk-bio-web.collapse .fw-bird,
+.hk-bio-web.collapse .fw-plant,
+.hk-bio-web.collapse .fw-berries { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hk-bio .cz-cells,
+  .hk-bio .cz-loupe,
+  .hk-bio-stain .st-nuc,
+  .hk-bio-body .bc-zoom,
+  .hk-fp .fp-card,
+  .hk-fp .fp-ridge,
+  .hk-fp .fp-check,
+  .hk-bio-web .fw-node,
+  .hk-bio-web .fw-links path { transition-duration: .01ms; }
+  .hk-bio-stain.stained .st-bead,
+  .hk-fp .fp-card.on .fp-scan { animation-duration: .01ms; }
+}

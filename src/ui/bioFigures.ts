@@ -143,6 +143,88 @@ export function classStagesFig(): string {
   </svg>`;
 }
 
+type CellTypeKey = "neuron" | "redBlood" | "epithelial" | "all";
+
+const cellTypeDefs = `
+  <linearGradient id="ct-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7FBFD"/><stop offset="1" stop-color="#EAF4F2"/></linearGradient>
+  <radialGradient id="ct-neuron" cx=".36" cy=".28" r=".82"><stop offset="0" stop-color="#FFD6A6"/><stop offset=".6" stop-color="#F2A66B"/><stop offset="1" stop-color="#CB7145"/></radialGradient>
+  <radialGradient id="ct-rbc" cx=".36" cy=".3" r=".82"><stop offset="0" stop-color="#FF8D98"/><stop offset=".62" stop-color="#E84F62"/><stop offset="1" stop-color="#B52842"/></radialGradient>
+  <radialGradient id="ct-epi" cx=".36" cy=".28" r=".9"><stop offset="0" stop-color="#BDECCF"/><stop offset=".62" stop-color="#75C99B"/><stop offset="1" stop-color="#39906A"/></radialGradient>
+  <radialGradient id="ct-nuc" cx=".34" cy=".26" r=".8"><stop offset="0" stop-color="#BCA9F7"/><stop offset="1" stop-color="#6752C9"/></radialGradient>`;
+
+const neuronScene = (x = 0, y = 0, scale = 1): string => `<g transform="translate(${x} ${y}) scale(${scale})">
+  <ellipse cx="124" cy="143" rx="90" ry="8" fill="#2A3A5E" opacity=".1"/>
+  <g fill="none" stroke="#B7623C" stroke-width="5" stroke-linecap="round">
+    <path d="M92 83C55 60 43 29 25 22M83 72C52 74 30 61 15 69M87 94C56 111 37 132 19 139M103 65C94 40 102 21 92 9"/>
+    <path d="M126 84C171 82 216 94 278 72"/>
+    <path d="M278 72c18-7 26-18 36-28M278 72c18 2 28 11 40 22M278 72c18 13 21 27 27 39"/>
+  </g>
+  <circle cx="104" cy="82" r="31" fill="url(#ct-neuron)" stroke="#A95534" stroke-width="2.2"/>
+  <circle cx="104" cy="82" r="12" fill="url(#ct-nuc)"/><ellipse cx="91" cy="67" rx="10" ry="6" fill="#fff" opacity=".42"/>
+  <g fill="#F4C08D" stroke="#B7623C" stroke-width="1.4">${[151,181,211,241].map((px) => `<path d="M${px} 78q11-10 22 3-11 11-22 0z"/>`).join("")}</g>
+</g>`;
+
+const redBloodScene = (x = 0, y = 0, scale = 1): string => {
+  const cells = [[68, 72, -18], [132, 58, 12], [195, 82, -8], [257, 61, 22], [105, 119, 15], [181, 126, -20], [250, 118, 8]];
+  return `<g transform="translate(${x} ${y}) scale(${scale})">
+    <ellipse cx="163" cy="145" rx="126" ry="9" fill="#2A3A5E" opacity=".1"/>
+    ${cells.map(([cx, cy, rot]) => `<g transform="rotate(${rot} ${cx} ${cy})"><ellipse cx="${cx}" cy="${cy}" rx="33" ry="20" fill="url(#ct-rbc)" stroke="#A91F36" stroke-width="2"/><ellipse cx="${cx}" cy="${cy}" rx="15" ry="7" fill="#A91F36" opacity=".46"/><ellipse cx="${cx - 9}" cy="${cy - 7}" rx="9" ry="5" fill="#FFD5D9" opacity=".38"/></g>`).join("")}
+  </g>`;
+};
+
+const epithelialScene = (x = 0, y = 0, scale = 1): string => {
+  const cells = Array.from({ length: 15 }, (_, i) => {
+    const row = Math.floor(i / 5), col = i % 5;
+    const px = 30 + col * 59 + (row % 2) * 8, py = 35 + row * 45;
+    return `<path d="M${px} ${py + 5}q23-15 43 0l7 25q-20 18-47 2z" fill="url(#ct-epi)" stroke="#2E7F5C" stroke-width="1.8"/><ellipse cx="${px + 24}" cy="${py + 18}" rx="8" ry="6" fill="url(#ct-nuc)"/><ellipse cx="${px + 14}" cy="${py + 7}" rx="10" ry="4" fill="#fff" opacity=".3"/>`;
+  }).join("");
+  return `<g transform="translate(${x} ${y}) scale(${scale})"><ellipse cx="163" cy="156" rx="139" ry="8" fill="#2A3A5E" opacity=".09"/>${cells}</g>`;
+};
+
+/** 신경세포·적혈구·상피세포의 모양과 기능 관계를 보여 주는 라이트 SVG. */
+export function cellTypeArt(kind: CellTypeKey): string {
+  if (kind === "all") {
+    return `<svg viewBox="0 0 360 190" ${NS} fill="none" role="img" aria-label="긴 돌기가 있는 신경세포, 가운데가 오목한 적혈구, 납작하게 이어진 상피세포">
+      <defs>${cellTypeDefs}</defs><rect x="2" y="2" width="356" height="186" rx="16" fill="url(#ct-bg)"/>
+      <g transform="translate(7 26) scale(.34)">${neuronScene()}</g>
+      <g transform="translate(121 34) scale(.34)">${redBloodScene()}</g>
+      <g transform="translate(237 32) scale(.34)">${epithelialScene()}</g>
+      <g font-family="Pretendard, sans-serif" font-size="12" font-weight="800" fill="#4E5968" text-anchor="middle">
+        <text x="62" y="174">신경세포</text><text x="180" y="174">적혈구</text><text x="298" y="174">상피세포</text>
+      </g>
+    </svg>`;
+  }
+  const scene = kind === "neuron" ? neuronScene() : kind === "redBlood" ? redBloodScene() : epithelialScene();
+  const alt = kind === "neuron" ? "가늘고 긴 돌기가 뻗은 신경세포" : kind === "redBlood" ? "가운데가 오목한 원반 모양 적혈구" : "납작한 세포가 빈틈없이 이어진 상피세포";
+  return `<svg viewBox="0 0 320 170" ${NS} fill="none" role="img" aria-label="${alt}"><defs>${cellTypeDefs}</defs><rect x="2" y="2" width="316" height="166" rx="16" fill="url(#ct-bg)"/>${scene}</svg>`;
+}
+
+type FoodWebKey = "simple" | "rich";
+
+/** 생물 종류와 먹이 관계가 적은 경우와 많은 경우를 비교하는 라벨 SVG. */
+export function foodWebArt(kind: FoodWebKey): string {
+  const rich = kind === "rich";
+  const marker = `fw-${kind}`;
+  const nodes = rich
+    ? [
+        [58, 164, "벼", "#75C96B"], [151, 166, "배추", "#68BE72"], [254, 164, "풀", "#52AE67"],
+        [45, 102, "메뚜기", "#D3B55E"], [132, 100, "나비", "#E79A62"], [218, 99, "참새", "#B58A66"],
+        [96, 48, "개구리", "#65B982"], [196, 47, "뱀", "#789C55"], [286, 42, "매", "#8B715E"],
+      ] as (string | number)[][]
+    : [
+        [62, 164, "벼", "#75C96B"], [145, 112, "메뚜기", "#D3B55E"], [228, 66, "개구리", "#65B982"], [304, 28, "매", "#8B715E"],
+      ] as (string | number)[][];
+  const links = rich
+    ? [[58,150,45,116],[151,151,132,114],[254,150,218,113],[58,150,218,113],[151,151,45,116],[45,88,96,62],[132,86,96,62],[45,88,218,113],[218,85,196,61],[96,34,196,61],[196,33,286,49],[218,85,286,49]]
+    : [[62,150,145,126],[145,98,228,80],[228,52,304,37]];
+  return `<svg viewBox="0 0 340 195" ${NS} fill="none" role="img" aria-label="${rich ? "여러 생물과 먹이 관계가 그물처럼 이어진 생태계" : "네 생물이 한 줄 먹이 관계로 이어진 생태계"}">
+    <defs><linearGradient id="${marker}-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2FAF6"/><stop offset="1" stop-color="#E5F2EA"/></linearGradient><marker id="${marker}-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7Z" fill="#709488"/></marker></defs>
+    <rect x="2" y="2" width="336" height="191" rx="16" fill="url(#${marker}-bg)"/>
+    <g stroke="#709488" stroke-width="2" opacity=".74" marker-end="url(#${marker}-arrow)">${links.map(([x1,y1,x2,y2]) => `<path d="M${x1} ${y1}L${x2} ${y2}"/>`).join("")}</g>
+    ${nodes.map(([cx, cy, label, color]) => `<g><ellipse cx="${cx}" cy="${Number(cy) + 6}" rx="29" ry="8" fill="#2A3A5E" opacity=".08"/><rect x="${Number(cx) - 31}" y="${Number(cy) - 15}" width="62" height="30" rx="15" fill="${color}" stroke="#385E4C" stroke-width="1.3"/><ellipse cx="${Number(cx) - 11}" cy="${Number(cy) - 7}" rx="9" ry="4" fill="#fff" opacity=".32"/><text x="${cx}" y="${Number(cy) + 4}" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11" font-weight="800" fill="#17372D">${label}</text></g>`).join("")}
+  </svg>`;
+}
+
 export function bioMiniArt(key: string): string {
   const wrap = (inner: string, defs = ""): string =>
     `<svg viewBox="0 0 96 96" ${NS} fill="none" stroke-linecap="round" aria-hidden="true">

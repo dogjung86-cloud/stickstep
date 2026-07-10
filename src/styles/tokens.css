@@ -85,6 +85,21 @@
   --subj-star-press: #232D73;
   --subj-star-tint: #EBEEFA;
   --subj-bio-deep: #0CA678;
+  /* II 생물다양성 랩의 생태계 삽화 팔레트 */
+  --bd-forest-sky-hi: #BEE7D3; --bd-forest-sky-lo: #77BCA1;
+  --bd-forest-ground-hi: #4D9367; --bd-forest-ground-lo: #245A43;
+  --bd-forest-trunk: #815F43; --bd-forest-trunk-edge: #523E31;
+  --bd-forest-leaf: #34865B; --bd-forest-leaf-edge: #236447; --bd-forest-fern: #A9D96D;
+  --bd-wetland-sky-hi: #C7EBEA; --bd-wetland-sky-lo: #7EBFC0;
+  --bd-wetland-ground-hi: #769A62; --bd-wetland-ground-lo: #496E4C;
+  --bd-wetland-water: #438FA3; --bd-wetland-water-line: #A3E5E8;
+  --bd-wetland-reed: #587B42; --bd-wetland-reed-tip: #7B5938;
+  --bd-wetland-frog: #6BB866; --bd-wetland-frog-edge: #315A3C; --bd-wetland-lily: #58A56E;
+  --bd-coast-sky-hi: #B8E1EF; --bd-coast-sky-lo: #6FB1CF;
+  --bd-coast-sea: #328EAD; --bd-coast-sand: #D9C68D; --bd-coast-foam: #EAFBFF;
+  --bd-coast-rock: #667988; --bd-coast-rock-edge: #3D505D;
+  --bd-coast-crab: #E56D55; --bd-coast-crab-edge: #8F3C31; --bd-coast-seaweed: #286E57;
+  --bd-bug-shell: #E95A50; --bd-bug-edge: #842D2A;
   --subj-num: #0DA5C6;     /* 수학 Ⅰ 수와 연산 — 수학 시안(과학 트랙과 동시 노출 없음) */
   --subj-num-press: #0A87A3;
   --subj-num-tint: #E6F7FB;

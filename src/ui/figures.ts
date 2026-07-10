@@ -44,11 +44,11 @@ const NAME_ICON: Record<string, string> = {
   우산이끼: "fern", 소나무: "pine", 진달래: "flower", 고사리: "fern",
   명아주: "grass", 강아지풀: "grass", 보리: "grass", 벚나무: "tree", 은행나무: "tree", 느티나무: "tree",
   말미잘: "anemone", 지렁이: "worm", 꿀벌: "bee", 박새: "bird", 까치: "bird", 갈매기: "bird",
-  개: "dog", 고래: "fish", 붕어: "fish", 금붕어: "fish", 오징어: "anemone",
-  개구리: "frog", 고양이: "cat", 들고양이: "cat", 박쥐: "bird", 다람쥐: "dog", 달팽이: "snail",
+  개: "dog", 붕어: "fish", 금붕어: "fish",
+  개구리: "frog", 고양이: "cat", 들고양이: "cat", 달팽이: "snail",
 };
 
-// 발주 실사 일러스트가 있는 아이콘 키(public/bio/<key>.png). 5계 분류 학습용 14종.
+// 발주 일러스트가 있는 아이콘 키(public/bio/<key>.webp). 5계 분류 학습용 13종.
 // 이 키는 실제 발주(codex)로 만든 밝은 교육 일러스트 — 조잡한 픽토그램 SVG를 대체한다.
 const BIO_PHOTO = new Set([
   "bacteria", "amoeba", "paramecium", "algae", "mushroom", "mold",
@@ -59,9 +59,9 @@ export function organism(name: string): string {
   const key = NAME_ICON[name];
   if (key && BIO_PHOTO.has(key)) {
     // 발주 일러스트 우선. 로드 실패 시 부드럽게 숨겨 깨진 이미지 아이콘을 피한다.
-    return `<img class="bio-ico" src="${base}bio/${key}.webp" alt="${name}" loading="lazy" onerror="this.classList.add('bio-ico-broken')"/>`;
+    return `<img class="bio-ico" src="${base}bio/${key}.webp" alt="${name}" onerror="this.classList.add('bio-ico-broken')"/>`;
   }
-  return (key && ART_BIO[key]) || ART_BIO.amoeba || "";
+  return (key && ART_BIO[key]) || "";
 }
 
 // ---------- 게임 지도 장식 ----------

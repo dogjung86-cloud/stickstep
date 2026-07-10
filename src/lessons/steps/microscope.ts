@@ -1,234 +1,664 @@
 // microscope — 세포 관찰 실험 시뮬레이터.
-// 염색 → 대물렌즈 배율(총배율 = 접안 10배 × 대물) → 초점 맞추기.
-// 고배율 + 초점 + 염색이 맞으면 핵이 뚜렷해지고 CTA가 켜진다.
+// 비교 모드: 입안 상피세포를 염색해 관찰한 뒤 검정말 잎세포와 나란히 비교한다.
+// 단일 표본 모드는 기존 specimen 옵션(onion·cheek·elodea)과 호환한다.
 
-import { el, clamp, afterPaint } from "../../core/dom";
+import { clamp, el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { fitCanvas } from "../../ui/canvas";
 import type { StepRenderer } from "../types";
 
 type Specimen = "onion" | "cheek" | "elodea";
+type CellShape = "onion" | "cheek" | "elodea";
+
+interface Preset {
+  name: string;
+  prepLabel: string;
+  preparedLabel: string;
+  stainColor: string;
+  shape: CellShape;
+  needsPrep: boolean;
+}
+
+interface SpecimenState {
+  prepared: boolean;
+  lowScanned: boolean;
+}
+
 interface MicroStep {
   title: string;
   lead?: string;
   specimen?: Specimen;
+  compare?: boolean;
   cta?: string;
   explainGood?: string;
 }
 
-const PRESET: Record<Specimen, { name: string; stain: string; stainColor: string; shape: "brick" | "blob" | "elodea"; needsStain: boolean }> = {
-  onion: { name: "양파 표피세포", stain: "아세트올세인", stainColor: "#C0356B", shape: "brick", needsStain: true },
-  cheek: { name: "입안 상피세포", stain: "메틸렌 블루", stainColor: "#2A5CC8", shape: "blob", needsStain: true },
-  elodea: { name: "검정말 잎세포", stain: "염색 안 함", stainColor: "#1F9E57", shape: "elodea", needsStain: false },
+const PRESET: Record<Specimen, Preset> = {
+  onion: {
+    name: "양파 표피세포",
+    prepLabel: "아세트올세인으로 염색하기",
+    preparedLabel: "아세트올세인 염색 완료",
+    stainColor: "#C0356B",
+    shape: "onion",
+    needsPrep: true,
+  },
+  cheek: {
+    name: "입안 상피세포",
+    prepLabel: "메틸렌 블루 한 방울 떨어뜨리기",
+    preparedLabel: "메틸렌 블루 염색 완료",
+    stainColor: "#2A5CC8",
+    shape: "cheek",
+    needsPrep: true,
+  },
+  elodea: {
+    name: "검정말 잎세포",
+    prepLabel: "물 한 방울로 표본 준비하기",
+    preparedLabel: "물 표본 준비 완료",
+    stainColor: "#1F9E57",
+    shape: "elodea",
+    needsPrep: false,
+  },
 };
+
+const OBJECTIVES = [4, 10, 40] as const;
+const SHARP_FOCUS = 70;
+const SHARP_RANGE = 8;
 
 export const microscope: StepRenderer = (host, step, api) => {
   const s = step as unknown as MicroStep;
-  const preset = PRESET[s.specimen ?? "onion"];
+  const compareMode = s.compare === true;
+  let specimen: Specimen = compareMode ? "cheek" : (s.specimen ?? "onion");
+  let objective: (typeof OBJECTIVES)[number] = 4;
+  let focus = 24;
+  let dragging = false;
+  let activePointer: number | null = null;
+  let disposed = false;
+  let drawRaf = 0;
+  let completed = false;
+
+  const states: Record<Specimen, SpecimenState> = {
+    onion: { prepared: !PRESET.onion.needsPrep, lowScanned: false },
+    cheek: { prepared: !PRESET.cheek.needsPrep, lowScanned: false },
+    // 비교 모드에서는 검정말 표본도 물 한 방울을 직접 떨어뜨려 준비한다.
+    elodea: { prepared: compareMode ? false : true, lowScanned: false },
+  };
+  const goals = new Set<"low" | "animal" | "plant">();
+
   host.appendChild(el("div", { class: "h1", html: s.title }));
   if (s.lead) host.appendChild(el("div", { class: "sub", html: s.lead }));
 
-  let objective = 4; // 대물렌즈 배율
-  let focus = 20; // 0~100, 선명 지점 70
-  let stained = !preset.needsStain;
-  let goalHit = false;
+  const goalChips = compareMode
+    ? el(
+        "div",
+        { class: "pn-badges force3 mic-goals", attrs: { "aria-label": "관찰 목표" } },
+        el(
+          "div",
+          { class: "pn-badge mic-goal", dataset: { g: "low" } },
+          el("b", { text: "저배율 찾기" }),
+          el("span", { text: "대물 4배" }),
+        ),
+        el(
+          "div",
+          { class: "pn-badge mic-goal", dataset: { g: "animal" } },
+          el("b", { text: "동물세포" }),
+          el("span", { text: "핵 관찰" }),
+        ),
+        el(
+          "div",
+          { class: "pn-badge mic-goal", dataset: { g: "plant" } },
+          el("b", { text: "식물세포" }),
+          el("span", { text: "벽·엽록체" }),
+        ),
+      )
+    : null;
 
-  const canvas = el("canvas", { class: "mic-canvas", style: "height:250px" });
+  const specimenSeg = el("div", {
+    class: "seg mic-specimens",
+    attrs: { role: "tablist", "aria-label": "관찰 표본" },
+  });
+  const specimenBtns = {} as Partial<Record<Specimen, HTMLButtonElement>>;
+  if (compareMode) {
+    (["cheek", "elodea"] as const).forEach((key) => {
+      const button = el("button", {
+        class: key === specimen ? "on" : "",
+        text: PRESET[key].name,
+        attrs: {
+          type: "button",
+          role: "tab",
+          "aria-selected": key === specimen ? "true" : "false",
+        },
+      });
+      button.disabled = key === "elodea";
+      if (key === "elodea") button.style.opacity = ".45";
+      button.addEventListener("click", () => selectSpecimen(key));
+      specimenBtns[key] = button;
+      specimenSeg.appendChild(button);
+    });
+  }
+
+  const canvas = el("canvas", {
+    class: "mic-canvas",
+    style: "height:250px",
+    attrs: { "aria-label": "현미경 시야" },
+  });
+  const specimenName = el("span", { class: "mic-specimen-name", text: PRESET[specimen].name });
+  const magValue = document.createTextNode("40");
+  const mag = el(
+    "div",
+    { class: "tempread mic-mag", style: "font-size:20px" },
+    magValue,
+    el("small", { text: "배" }),
+  );
   const hud = el(
     "div",
     { class: "stage-hud" },
-    el("div", { class: "pill" }, el("span", { class: "pdot" }), el("span", { text: preset.name })),
-    el("div", { class: "tempread mic-mag", style: "font-size:20px" }, "40", el("small", { text: "배" })),
+    el("div", { class: "pill" }, el("span", { class: "pdot" }), specimenName),
+    mag,
   );
   const stage = el("div", { class: "stage mic-stage" }, canvas, hud);
 
-  // 염색
-  const stainBtn = el("button", { class: "swapbtn", html: `<span>${preset.needsStain ? `${preset.stain}으로 염색하기` : "염색이 필요 없어요"}</span>` });
-  if (!preset.needsStain) stainBtn.classList.add("done-static");
+  const prepBtn = el("button", {
+    class: "swapbtn mic-prep",
+    attrs: { type: "button" },
+  }, el("span", { text: "" }));
 
-  // 대물렌즈 세그먼트
-  const seg = el("div", { class: "seg" });
-  const objBtns = [4, 10, 40].map((o) => {
-    const b = el("button", { class: o === objective ? "on" : "", text: `대물 ${o}배` });
-    b.addEventListener("click", () => {
-      objective = o;
-      seg.querySelectorAll("button").forEach((x) => x.classList.remove("on"));
-      b.classList.add("on");
-      haptic(HAPTIC.select);
-      redraw();
-    });
-    seg.appendChild(b);
-    return b;
+  const objectiveSeg = el("div", {
+    class: "seg mic-objectives",
+    attrs: { role: "group", "aria-label": "대물렌즈 배율" },
   });
-  void objBtns;
+  const objectiveBtns = {} as Record<(typeof OBJECTIVES)[number], HTMLButtonElement>;
+  OBJECTIVES.forEach((value) => {
+    const button = el("button", {
+      class: value === objective ? "on" : "",
+      text: `대물 ${value}배`,
+      attrs: { type: "button" },
+    });
+    button.addEventListener("click", () => setObjective(value));
+    objectiveBtns[value] = button;
+    objectiveSeg.appendChild(button);
+  });
 
-  // 초점 슬라이더
+  const fill = el("div", { class: "sl-fill" });
   const thumb = el("div", { class: "sl-thumb" }, el("i", {}));
-  const track = el("div", { class: "sl-track plain" }, el("div", { class: "sl-fill" }), thumb);
-  const slider = el("div", { class: "slider" }, track, el("div", { class: "sl-cap", text: "초점 손잡이" }));
+  const track = el("div", { class: "sl-track plain" }, fill, thumb);
+  const slider = el(
+    "div",
+    {
+      class: "slider mic-focus",
+      attrs: {
+        role: "slider",
+        tabindex: "0",
+        "aria-label": "초점 손잡이",
+        "aria-valuemin": "0",
+        "aria-valuemax": "100",
+        "aria-valuenow": String(focus),
+      },
+    },
+    track,
+    el("div", { class: "sl-cap", text: "초점 손잡이" }),
+  );
+  const helper = el("div", { class: "helper mic-helper", attrs: { "aria-live": "polite" } });
 
-  const helper = el("div", { class: "helper" });
-  host.append(stage, stainBtn, seg, slider, helper);
+  if (goalChips) host.appendChild(goalChips);
+  if (compareMode) host.appendChild(specimenSeg);
+  host.append(stage, prepBtn, objectiveSeg, slider, helper);
 
-  stainBtn.addEventListener("click", () => {
-    if (!preset.needsStain || stained) return;
-    stained = true;
-    stainBtn.innerHTML = "<span>염색 완료</span>";
-    stainBtn.classList.add("done-static");
+  function currentPreset(): Preset {
+    return PRESET[specimen];
+  }
+
+  function currentState(): SpecimenState {
+    return states[specimen];
+  }
+
+  function markGoal(goal: "low" | "animal" | "plant", detail: string): void {
+    if (goals.has(goal)) return;
+    goals.add(goal);
+    const chip = goalChips?.querySelector<HTMLElement>(`[data-g="${goal}"]`);
+    chip?.classList.add("on");
+    const label = chip?.querySelector("span");
+    if (label) label.textContent = detail;
+    haptic(HAPTIC.select);
+  }
+
+  function unlockPlantSpecimen(): void {
+    const plantButton = specimenBtns.elodea;
+    if (!plantButton) return;
+    plantButton.disabled = false;
+    plantButton.style.opacity = "";
+  }
+
+  function finishCompare(): void {
+    if (completed || goals.size < 3) return;
+    completed = true;
+    api.recordQuiz(true);
+    helper.innerHTML =
+      s.explainGood ??
+      "비교 완료! 입안 상피세포는 <b>모양이 불규칙하고 핵</b>이 보였고, 검정말 잎세포는 <b>네모난 세포벽과 초록색 엽록체</b>가 보였어요.";
+    api.enableCTA(s.cta ?? "두 세포 비교 완료");
+  }
+
+  function syncPrepButton(): void {
+    const preset = currentPreset();
+    const state = currentState();
+    const label = prepBtn.querySelector("span")!;
+    label.textContent = state.prepared ? preset.preparedLabel : preset.prepLabel;
+    prepBtn.classList.toggle("done-static", state.prepared);
+    prepBtn.disabled = state.prepared;
+  }
+
+  function syncObjectiveButtons(): void {
+    OBJECTIVES.forEach((value) => objectiveBtns[value].classList.toggle("on", value === objective));
+  }
+
+  function syncSlider(): void {
+    thumb.style.left = `${focus}%`;
+    fill.style.width = `${focus}%`;
+    slider.setAttribute("aria-valuenow", String(Math.round(focus)));
+    slider.setAttribute("aria-valuetext", Math.abs(focus - SHARP_FOCUS) <= SHARP_RANGE ? "초점이 선명해요" : "초점이 흐려요");
+  }
+
+  function selectSpecimen(next: Specimen): void {
+    if (!compareMode || next === specimen) return;
+    if (next === "elodea" && !goals.has("animal")) return;
+    specimen = next;
+    objective = 4;
+    focus = next === "elodea" ? 30 : 24;
+    specimenName.textContent = currentPreset().name;
+    (Object.keys(specimenBtns) as Specimen[]).forEach((key) => {
+      const button = specimenBtns[key];
+      if (!button) return;
+      const on = key === specimen;
+      button.classList.toggle("on", on);
+      button.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    syncObjectiveButtons();
+    syncSlider();
+    syncPrepButton();
+    haptic(HAPTIC.select);
+    redraw();
+  }
+
+  function setObjective(next: (typeof OBJECTIVES)[number]): void {
+    if (next === objective) return;
+    objective = next;
+    // 렌즈를 바꾸면 초점이 어긋난다. 특히 고배율에서는 다시 미세 조절해야 한다.
+    focus = next === 4 ? 34 : next === 10 ? 42 : 48;
+    syncObjectiveButtons();
+    syncSlider();
+    haptic(HAPTIC.select);
+    redraw();
+  }
+
+  prepBtn.addEventListener("click", () => {
+    const state = currentState();
+    if (state.prepared) return;
+    state.prepared = true;
+    syncPrepButton();
     haptic(HAPTIC.select);
     redraw();
   });
 
-  // 초점 드래그
-  let dragging = false;
-  function setFocusFromEvent(e: PointerEvent): void {
+  function setFocusFromPointer(event: PointerEvent): void {
     const rect = track.getBoundingClientRect();
-    focus = clamp(((e.clientX - rect.left) / rect.width) * 100, 0, 100);
-    thumb.style.left = `${focus}%`;
-    (track.querySelector(".sl-fill") as HTMLElement).style.width = `${focus}%`;
+    if (rect.width <= 0) return;
+    focus = clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100);
+    syncSlider();
     redraw();
   }
-  slider.addEventListener("pointerdown", (e) => {
+
+  slider.addEventListener("pointerdown", (event) => {
     dragging = true;
+    activePointer = event.pointerId;
     slider.classList.add("drag");
-    slider.setPointerCapture((e as PointerEvent).pointerId);
-    setFocusFromEvent(e as PointerEvent);
+    try {
+      slider.setPointerCapture(event.pointerId);
+    } catch {
+      // 합성 포인터 환경에서는 캡처가 실패할 수 있지만 같은 요소 안의 조작은 계속 처리한다.
+    }
+    setFocusFromPointer(event);
     haptic(HAPTIC.tap);
   });
-  slider.addEventListener("pointermove", (e) => { if (dragging) setFocusFromEvent(e as PointerEvent); });
-  const end = () => { dragging = false; slider.classList.remove("drag"); };
-  slider.addEventListener("pointerup", end);
-  slider.addEventListener("pointercancel", end);
-  thumb.style.left = `${focus}%`;
+  slider.addEventListener("pointermove", (event) => {
+    if (dragging && (activePointer == null || activePointer === event.pointerId)) setFocusFromPointer(event);
+  });
+
+  function endFocusDrag(event?: PointerEvent): void {
+    if (!dragging) return;
+    dragging = false;
+    slider.classList.remove("drag");
+    const pointerId = event?.pointerId ?? activePointer;
+    if (pointerId != null) {
+      try {
+        if (slider.hasPointerCapture(pointerId)) slider.releasePointerCapture(pointerId);
+      } catch {
+        // 이미 해제된 합성 포인터는 무시한다.
+      }
+    }
+    activePointer = null;
+  }
+  slider.addEventListener("pointerup", endFocusDrag);
+  slider.addEventListener("pointercancel", endFocusDrag);
+  slider.addEventListener("pointerleave", (event) => {
+    if (!dragging) return;
+    let captured = false;
+    try {
+      captured = slider.hasPointerCapture(event.pointerId);
+    } catch {
+      // 합성 포인터는 활성 포인터 목록에 없을 수 있다.
+    }
+    if (!captured) endFocusDrag(event);
+  });
+  slider.addEventListener("keydown", (event) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    focus = clamp(focus + (event.key === "ArrowRight" ? 3 : -3), 0, 100);
+    syncSlider();
+    redraw();
+  });
+
+  function compareInstruction(sharp: boolean): string {
+    const state = currentState();
+    if (!state.prepared) {
+      return specimen === "cheek"
+        ? "먼저 <b>메틸렌 블루</b>를 떨어뜨려 투명한 입안 상피세포의 <b>핵</b>을 드러내요."
+        : "검정말 잎을 물 한 방울에 올려 표본을 준비해요. <b>엽록체는 염색하지 않아도 초록색</b>으로 보여요.";
+    }
+
+    if (!state.lowScanned) {
+      if (objective !== 4) return "처음에는 <b>대물 4배 저배율</b>로 넓은 시야에서 세포를 찾아야 해요.";
+      if (!sharp) return "저배율 시야예요. <b>초점 손잡이</b>를 움직여 세포의 경계를 먼저 선명하게 맞춰요.";
+      state.lowScanned = true;
+      if (specimen === "cheek") markGoal("low", "넓은 시야 확인");
+      return specimen === "cheek"
+        ? "저배율로 세포를 찾았어요. 이제 <b>대물 40배</b>로 바꾸고 핵에 다시 초점을 맞춰요."
+        : "검정말 세포를 저배율로 찾았어요. 이제 <b>대물 40배</b>로 바꾸고 세포벽과 엽록체를 자세히 봐요.";
+    }
+
+    if (objective !== 40) {
+      return specimen === "cheek"
+        ? "세포를 찾았으니 <b>대물 40배</b>로 바꿔 염색된 핵을 자세히 관찰해요."
+        : "세포를 찾았으니 <b>대물 40배</b>로 바꿔 세포벽과 엽록체를 자세히 관찰해요.";
+    }
+    if (!sharp) return "고배율로 바꾸며 초점이 어긋났어요. <b>초점 손잡이</b>로 다시 또렷하게 맞춰요.";
+
+    if (specimen === "cheek" && !goals.has("animal")) {
+      markGoal("animal", "불규칙한 세포·핵");
+      unlockPlantSpecimen();
+      return "입안 상피세포 관찰 성공! <b>불규칙하고 납작한 세포</b> 안에 푸르게 염색된 <b>핵</b>이 보여요. 이제 검정말 잎세포로 바꿔요.";
+    }
+    if (specimen === "elodea" && !goals.has("plant")) {
+      markGoal("plant", "세포벽·엽록체");
+      finishCompare();
+      return helper.innerHTML;
+    }
+    return specimen === "cheek"
+      ? "푸르게 염색된 <b>핵</b>과 불규칙한 세포 경계를 관찰했어요."
+      : "네모난 <b>세포벽</b> 안쪽에 초록색 <b>엽록체</b>가 모여 있어요. 엽록체는 염색해서 생긴 색이 아니에요.";
+  }
 
   function redraw(): void {
+    if (disposed) return;
     const total = 10 * objective;
-    const magEl = host.querySelector(".mic-mag") as HTMLElement;
-    magEl.childNodes[0].nodeValue = String(total);
+    magValue.nodeValue = String(total);
+    const state = currentState();
+    const sharp = Math.abs(focus - SHARP_FOCUS) <= SHARP_RANGE;
+    drawField(canvas, currentPreset(), total, focus, state.prepared);
 
-    const sharp = Math.abs(focus - 70) < 12;
-    const highMag = objective === 40;
-    const ready = sharp && highMag && stained;
+    if (compareMode) {
+      const instruction = compareInstruction(sharp);
+      if (!completed) helper.innerHTML = instruction;
+      return;
+    }
 
-    helper.innerHTML = !stained
+    const ready = state.prepared && objective === 40 && sharp;
+    helper.innerHTML = !state.prepared
       ? "먼저 <b>염색액</b>으로 세포를 물들여요. 그래야 핵이 잘 보여요."
-      : !highMag
+      : objective !== 40
         ? "관찰은 <b>저배율에서 고배율로</b>. 대물렌즈를 <b>40배</b>까지 올려 보세요."
         : !sharp
-          ? "<b>초점 손잡이</b>를 돌려 상이 또렷해지는 지점을 찾아요."
-          : "핵이 <b>뚜렷하게</b> 보여요! 총배율 = 접안렌즈 10배 × 대물렌즈 배율이에요.";
-
-    drawField(total, focus, stained);
-
-    if (ready && !goalHit) {
-      goalHit = true;
+          ? "<b>초점 손잡이</b>를 움직여 상이 또렷해지는 지점을 찾아요."
+          : s.explainGood ?? "상이 또렷해요! 총배율은 <b>접안렌즈 10배 × 대물렌즈 배율</b>이에요.";
+    if (ready && !completed) {
+      completed = true;
       api.enableCTA(s.cta ?? "관찰 성공! 다음");
     }
   }
 
-  function drawField(total: number, foc: number, isStained: boolean): void {
-    const { ctx, w, h } = fitCanvas(canvas, 250);
-    ctx.clearRect(0, 0, w, h);
-    const cx = w / 2, cy = h / 2, R = Math.min(w, h) / 2 - 10;
-    // 시야 원 배경
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, cy, R, 0, Math.PI * 2);
-    ctx.clip();
-    ctx.fillStyle = preset.shape === "elodea" ? "#EAF7EE" : "#F6F0F5";
-    ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
-
-    const blur = (Math.abs(foc - 70) / 70) * 11;
-    ctx.filter = blur > 0.4 ? `blur(${blur.toFixed(1)}px)` : "none";
-
-    const cellW = 16 * (total / 40);
-    const cellH = cellW * (preset.shape === "brick" ? 0.62 : 0.9);
-    const cols = Math.ceil((R * 2) / cellW) + 2;
-    const rows = Math.ceil((R * 2) / cellH) + 2;
-    const cyto = isStained ? tint(preset.stainColor, 0.14) : "rgba(160,170,180,.10)";
-    const wall = preset.shape === "elodea" ? "#8FCBA1" : isStained ? tint(preset.stainColor, 0.5) : "#C7CDd4";
-    const nucleus = isStained ? preset.stainColor : "rgba(120,130,145,.5)";
-
-    for (let r = -1; r < rows; r++) {
-      for (let c = -1; c < cols; c++) {
-        const bx = cx - R + c * cellW + (r % 2 ? cellW / 2 : 0);
-        const by = cy - R + r * cellH;
-        ctx.fillStyle = cyto;
-        ctx.strokeStyle = wall;
-        ctx.lineWidth = Math.max(1, cellW * 0.05);
-        // 양파·검정말 같은 식물 표피는 벽이 각진 육각형으로 맞물린다(둥근 사각 금지).
-        if (preset.shape === "brick" || preset.shape === "elodea") {
-          hexCell(ctx, bx, by, cellW * 0.98, cellH * 0.98);
-        } else {
-          roundRect(ctx, bx, by, cellW * 0.94, cellH * 0.94, Math.min(8, cellW * 0.18));
-        }
-        ctx.fill();
-        ctx.stroke();
-        if (preset.shape === "elodea") {
-          // 엽록체 알갱이
-          ctx.fillStyle = "#2FA35F";
-          for (let k = 0; k < 6; k++) {
-            const gx = bx + cellW * (0.2 + 0.6 * ((k * 37) % 100) / 100);
-            const gy = by + cellH * (0.2 + 0.6 * ((k * 53) % 100) / 100);
-            ctx.beginPath();
-            ctx.arc(gx, gy, Math.max(1.5, cellW * 0.06), 0, Math.PI * 2);
-            ctx.fill();
-          }
-        } else {
-          // 핵
-          ctx.fillStyle = nucleus;
-          ctx.beginPath();
-          ctx.arc(bx + cellW * 0.5, by + cellH * 0.5, Math.max(2, cellW * 0.13), 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-    }
-    ctx.filter = "none";
-    ctx.restore();
-    // 시야 테두리 + 비네트
-    const g = ctx.createRadialGradient(cx, cy, R * 0.6, cx, cy, R);
-    g.addColorStop(0, "rgba(0,0,0,0)");
-    g.addColorStop(1, "rgba(10,16,26,.4)");
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.arc(cx, cy, R, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,.15)";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(cx, cy, R, 0, Math.PI * 2);
-    ctx.stroke();
+  function scheduleRedraw(): void {
+    window.cancelAnimationFrame(drawRaf);
+    drawRaf = window.requestAnimationFrame(() => {
+      drawRaf = 0;
+      redraw();
+    });
   }
 
-  api.setCTA("현미경을 조작해 관찰하세요", { enabled: false });
-  afterPaint(redraw);
+  api.setCTA(compareMode ? "두 표본을 모두 관찰하세요" : "현미경을 조작해 관찰하세요", { enabled: false });
+  syncPrepButton();
+  syncObjectiveButtons();
+  syncSlider();
+  scheduleRedraw();
+
+  const resizeObserver = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(scheduleRedraw);
+  resizeObserver?.observe(stage);
+
+  return () => {
+    disposed = true;
+    window.cancelAnimationFrame(drawRaf);
+    resizeObserver?.disconnect();
+    endFocusDrag();
+  };
 };
 
-// 각진 육각형 세포(식물 표피) — 위·아래 변은 평평하고 좌·우가 뾰족한 길쭉한 육각형.
-// 벽돌 오프셋(홀수 행 +w/2)과 맞물려 표피세포처럼 타일링된다.
-function hexCell(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number): void {
-  const ix = w * 0.22; // 좌우 뾰족한 정도
+function drawField(
+  canvas: HTMLCanvasElement,
+  preset: Preset,
+  total: number,
+  focus: number,
+  prepared: boolean,
+): void {
+  const { ctx, w, h } = fitCanvas(canvas, 250);
+  ctx.clearRect(0, 0, w, h);
+  const cx = w / 2;
+  const cy = h / 2;
+  const radius = Math.min(w, h) / 2 - 10;
+
+  ctx.save();
   ctx.beginPath();
-  ctx.moveTo(x + ix, y);
-  ctx.lineTo(x + w - ix, y);
-  ctx.lineTo(x + w, y + h / 2);
-  ctx.lineTo(x + w - ix, y + h);
-  ctx.lineTo(x + ix, y + h);
-  ctx.lineTo(x, y + h / 2);
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.fillStyle = preset.shape === "elodea" ? "#EAF7EE" : preset.shape === "cheek" ? "#F5F4F8" : "#F7F0F4";
+  ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+
+  const blur = (Math.abs(focus - SHARP_FOCUS) / SHARP_FOCUS) * 11;
+  ctx.filter = blur > 0.35 ? `blur(${blur.toFixed(1)}px)` : "none";
+  if (preset.shape === "cheek") drawCheekCells(ctx, cx, cy, radius, total, prepared, preset.stainColor);
+  else if (preset.shape === "elodea") drawElodeaCells(ctx, cx, cy, radius, total, prepared);
+  else drawOnionCells(ctx, cx, cy, radius, total, prepared, preset.stainColor);
+  ctx.filter = "none";
+  ctx.restore();
+
+  const vignette = ctx.createRadialGradient(cx, cy, radius * 0.58, cx, cy, radius);
+  vignette.addColorStop(0, "rgba(0,0,0,0)");
+  vignette.addColorStop(1, "rgba(10,16,26,.42)");
+  ctx.fillStyle = vignette;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,.2)";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.stroke();
+}
+
+function cellScale(total: number): number {
+  return Math.min(155, 28 * (total / 40));
+}
+
+function drawCheekCells(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  radius: number,
+  total: number,
+  stained: boolean,
+  stainColor: string,
+): void {
+  const size = cellScale(total);
+  const dx = size * 0.8;
+  const dy = size * 0.62;
+  const cols = Math.ceil((radius * 2) / dx) + 3;
+  const rows = Math.ceil((radius * 2) / dy) + 3;
+
+  for (let row = -1; row < rows; row++) {
+    for (let col = -1; col < cols; col++) {
+      const seed = row * 31 + col * 17;
+      const x = cx - radius - dx + col * dx + (row % 2 ? dx * 0.36 : 0) + Math.sin(seed) * size * 0.07;
+      const y = cy - radius - dy + row * dy + Math.cos(seed * 1.7) * size * 0.06;
+      const rx = size * (0.46 + 0.04 * Math.sin(seed * 0.9));
+      const ry = size * (0.32 + 0.04 * Math.cos(seed * 1.3));
+      irregularCell(ctx, x, y, rx, ry, seed);
+      ctx.fillStyle = stained ? tint(stainColor, 0.12) : "rgba(225,221,231,.34)";
+      ctx.strokeStyle = stained ? tint(stainColor, 0.48) : "rgba(143,148,163,.38)";
+      ctx.lineWidth = Math.max(1, size * 0.014);
+      ctx.fill();
+      ctx.stroke();
+
+      if (stained) {
+        ctx.fillStyle = tint(stainColor, 0.82);
+        ctx.beginPath();
+        ctx.ellipse(
+          x + Math.sin(seed * 2.1) * rx * 0.2,
+          y + Math.cos(seed * 1.4) * ry * 0.16,
+          Math.max(2.2, size * 0.07),
+          Math.max(1.8, size * 0.052),
+          seed * 0.12,
+          0,
+          Math.PI * 2,
+        );
+        ctx.fill();
+      }
+    }
+  }
+}
+
+function irregularCell(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  rx: number,
+  ry: number,
+  seed: number,
+): void {
+  const points = 11;
+  ctx.beginPath();
+  for (let i = 0; i < points; i++) {
+    const angle = (i / points) * Math.PI * 2;
+    const wobble = 1 + Math.sin(seed * 1.7 + i * 2.3) * 0.09 + Math.cos(seed * 0.7 + i * 1.4) * 0.04;
+    const x = cx + Math.cos(angle) * rx * wobble;
+    const y = cy + Math.sin(angle) * ry * wobble;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
   ctx.closePath();
 }
 
-function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number): void {
+function drawElodeaCells(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  radius: number,
+  total: number,
+  prepared: boolean,
+): void {
+  if (!prepared) {
+    drawUnpreparedField(ctx, cx, cy, radius, "rgba(102,174,120,.12)");
+    return;
+  }
+  const cellW = cellScale(total) * 0.88;
+  const cellH = cellW * 0.56;
+  const cols = Math.ceil((radius * 2) / cellW) + 3;
+  const rows = Math.ceil((radius * 2) / cellH) + 3;
+  for (let row = -1; row < rows; row++) {
+    for (let col = -1; col < cols; col++) {
+      const x = cx - radius - cellW + col * cellW;
+      const y = cy - radius - cellH + row * cellH;
+      ctx.fillStyle = "rgba(211,240,210,.54)";
+      ctx.strokeStyle = "#65A96F";
+      ctx.lineWidth = Math.max(1.2, cellW * 0.022);
+      ctx.fillRect(x, y, cellW, cellH);
+      ctx.strokeRect(x, y, cellW, cellH);
+
+      const dotR = Math.max(1.4, cellW * 0.025);
+      const count = 10;
+      for (let i = 0; i < count; i++) {
+        const side = i % 4;
+        const along = ((i * 37) % 83) / 100;
+        const gx = side < 2 ? x + cellW * (0.12 + along * 0.76) : x + cellW * (side === 2 ? 0.12 : 0.88);
+        const gy = side >= 2 ? y + cellH * (0.14 + along * 0.72) : y + cellH * (side === 0 ? 0.16 : 0.84);
+        ctx.fillStyle = i % 3 === 0 ? "#2C8C48" : "#45A85D";
+        ctx.beginPath();
+        ctx.ellipse(gx, gy, dotR * 1.35, dotR, (i % 5) * 0.34, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+}
+
+function drawOnionCells(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  radius: number,
+  total: number,
+  stained: boolean,
+  stainColor: string,
+): void {
+  const cellW = cellScale(total) * 0.92;
+  const cellH = cellW * 0.58;
+  const cols = Math.ceil((radius * 2) / cellW) + 3;
+  const rows = Math.ceil((radius * 2) / cellH) + 3;
+  for (let row = -1; row < rows; row++) {
+    for (let col = -1; col < cols; col++) {
+      const x = cx - radius - cellW + col * cellW + (row % 2 ? cellW * 0.5 : 0);
+      const y = cy - radius - cellH + row * cellH;
+      ctx.fillStyle = stained ? tint(stainColor, 0.12) : "rgba(225,221,231,.28)";
+      ctx.strokeStyle = stained ? tint(stainColor, 0.45) : "#C7CDD4";
+      ctx.lineWidth = Math.max(1, cellW * 0.02);
+      ctx.fillRect(x, y, cellW, cellH);
+      ctx.strokeRect(x, y, cellW, cellH);
+      if (stained) {
+        ctx.fillStyle = tint(stainColor, 0.78);
+        ctx.beginPath();
+        ctx.ellipse(x + cellW * 0.52, y + cellH * 0.5, Math.max(2, cellW * 0.06), Math.max(2, cellW * 0.05), 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+}
+
+function drawUnpreparedField(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  radius: number,
+  color: string,
+): void {
+  ctx.fillStyle = color;
   ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
+  ctx.arc(cx, cy, radius * 0.7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(105,135,116,.22)";
+  ctx.lineWidth = 2;
+  for (let i = 0; i < 5; i++) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius * (0.18 + i * 0.11), 0, Math.PI * 2);
+    ctx.stroke();
+  }
 }
 
 function tint(hex: string, alpha: number): string {
-  const n = parseInt(hex.slice(1), 16);
-  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`;
+  const value = Number.parseInt(hex.slice(1), 16);
+  return `rgba(${(value >> 16) & 255},${(value >> 8) & 255},${value & 255},${alpha})`;
 }

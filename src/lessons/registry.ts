@@ -14,6 +14,7 @@ import { orgLevels } from "./steps/orgLevels";
 import { finchSim } from "./steps/finchSim";
 import { microscope } from "./steps/microscope";
 import { dichotomKey } from "./steps/dichotomKey";
+import { biodiversityLab } from "./steps/biodiversityLab";
 import { comic } from "./steps/comic";
 import { hook } from "./steps/hook";
 import { recap } from "./steps/recap";
@@ -343,6 +344,7 @@ const R: Record<string, StepRenderer> = {
   finchSim,
   microscope,
   dichotomKey,
+  biodiversityLab,
 };
 
 export function getRenderer(type: string): StepRenderer | undefined {

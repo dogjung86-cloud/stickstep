@@ -31,6 +31,7 @@ export const figTabs: StepRenderer = (host, step, api) => {
 
   const seen = new Set<number>();
   const btns: HTMLButtonElement[] = [];
+  let swapTimer = 0;
 
   function show(i: number): void {
     btns.forEach((b, k) => {
@@ -39,7 +40,8 @@ export const figTabs: StepRenderer = (host, step, api) => {
     });
     // 짧은 페이드로 전환이 읽히게
     artBox.style.opacity = "0";
-    window.setTimeout(() => {
+    window.clearTimeout(swapTimer);
+    swapTimer = window.setTimeout(() => {
       clear(artBox);
       artBox.innerHTML = s.tabs[i].art;
       capBox.innerHTML = s.tabs[i].cap;
@@ -65,5 +67,7 @@ export const figTabs: StepRenderer = (host, step, api) => {
   artBox.innerHTML = s.tabs[0].art;
   capBox.innerHTML = s.tabs[0].cap;
   seen.add(0);
-  api.setCTA("세 장면을 모두 확인해요", { enabled: false });
+  const countLabel = s.tabs.length === 2 ? "두" : s.tabs.length === 3 ? "세" : String(s.tabs.length);
+  api.setCTA(`${countLabel} 장면을 모두 확인해요`, { enabled: false });
+  return () => window.clearTimeout(swapTimer);
 };
