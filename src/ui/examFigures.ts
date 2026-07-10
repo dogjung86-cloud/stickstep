@@ -642,3 +642,172 @@ export function expandScaleGraph(): string {
     <text x="338" y="218" text-anchor="end" font-size="11" fill="#4E5968">온도(℃)</text>
   </svg>`;
 }
+
+/* ══════════════ u5 힘의 작용 ══════════════ */
+// 규칙 계승: 값 읽기 정답 수치는 aria-label 금지(그림 속 조건 값 서술은 동등 접근이라 허용),
+// 힘 화살표 길이는 크기에 비례, 저울 표시창은 빈 패널, num 정답은 눈금선 위.
+
+/** 상자에 작용하는 두 힘(파라미터형, 라이트) — opposite=false면 같은 방향(오른쪽), true면 서로 반대. */
+export function forcePairFig(o: { a: number; b: number; opposite?: boolean }): string {
+  const maxN = Math.max(o.a, o.b);
+  const len = (n: number): number => 30 + (n / maxN) * 80;
+  const arrowR = (x: number, y: number, n: number): string =>
+    `<path d="M${x} ${y}h${len(n) - 12}" stroke="#5E6B7E" stroke-width="4" stroke-linecap="round"/>
+     <path d="M${x + len(n)} ${y}l-13-7v14z" fill="#5E6B7E"/>
+     <text x="${x + len(n) / 2}" y="${y - 10}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${n} N</text>`;
+  const arrowL = (x: number, y: number, n: number): string =>
+    `<path d="M${x} ${y}h-${len(n) - 12}" stroke="#5E6B7E" stroke-width="4" stroke-linecap="round"/>
+     <path d="M${x - len(n)} ${y}l13-7v14z" fill="#5E6B7E"/>
+     <text x="${x - len(n) / 2}" y="${y - 10}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${n} N</text>`;
+  const body = o.opposite
+    ? `${arrowR(202, 82, o.a)}${arrowL(142, 82, o.b)}`
+    : `${arrowR(202, 70, o.a)}${arrowR(202, 96, o.b)}`;
+  return `<svg viewBox="0 0 344 130" ${NS} role="img" aria-label="상자에 ${o.a} N과 ${o.b} N의 두 힘이 ${o.opposite ? "서로 반대 방향" : "같은 방향"}으로 작용하는 그림">
+    <line x1="24" y1="112" x2="320" y2="112" stroke="#D5DBE3" stroke-width="2"/>
+    <rect x="142" y="60" width="60" height="44" rx="7" fill="#EDF1F6" stroke="#B0B8C1" stroke-width="2"/>
+    ${body}
+  </svg>`;
+}
+
+/** 미는데도 정지한 상자(라이트) — 마찰력(정지) 문항용. 미는 힘 n N 화살표 + 거친 바닥 빗금. */
+export function pushStillFig(n: number): string {
+  let hatch = "";
+  for (let x = 30; x <= 314; x += 16) hatch += `<line x1="${x}" y1="118" x2="${x - 9}" y2="130" stroke="#C9B49A" stroke-width="2"/>`;
+  return `<svg viewBox="0 0 344 150" ${NS} role="img" aria-label="거친 바닥 위의 상자를 옆으로 ${n} N으로 밀고 있지만 상자는 정지해 있는 그림">
+    <line x1="20" y1="118" x2="324" y2="118" stroke="#B08D5E" stroke-width="3"/>
+    ${hatch}
+    <rect x="150" y="66" width="66" height="52" rx="7" fill="#EDF1F6" stroke="#B0B8C1" stroke-width="2"/>
+    <path d="M84 92h48" stroke="#F04452" stroke-width="4.6" stroke-linecap="round"/>
+    <path d="M146 92l-14-8v16z" fill="#F04452"/>
+    <text x="104" y="74" text-anchor="middle" font-size="13" font-weight="700" fill="#D6363F">${n} N</text>
+    <text x="183" y="52" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">정지 상태</text>
+  </svg>`;
+}
+
+/** 용수철 탄성력 그래프(파라미터형, 라이트) — slope N/cm 직선 + 안내선 점. 눈금 숫자 포함(값 읽기용). */
+export function springExamGraph(o: { slope: number; xMax: number; xStep: number; yMax: number; yStep: number; dots?: number[] }): string {
+  const gx = (cm: number): number => 48 + cm * (264 / o.xMax);
+  const gy = (n: number): number => 168 - (n / o.yMax) * 138;
+  let xt = "";
+  for (let c = 0; c <= o.xMax; c += o.xStep) {
+    xt += `<line x1="${gx(c)}" y1="168" x2="${gx(c)}" y2="26" stroke="#EDF0F4" stroke-width="1"/><text x="${gx(c)}" y="184" text-anchor="middle" font-size="10.5" fill="#8B95A1">${c}</text>`;
+  }
+  let yt = "";
+  for (let n = 0; n <= o.yMax; n += o.yStep) {
+    yt += `<line x1="48" y1="${gy(n)}" x2="320" y2="${gy(n)}" stroke="#EDF0F4" stroke-width="1"/><text x="40" y="${gy(n) + 4}" text-anchor="end" font-size="10.5" fill="#8B95A1">${n}</text>`;
+  }
+  const endCm = Math.min(o.xMax, o.yMax / o.slope);
+  const dots = (o.dots ?? [])
+    .map(
+      (cm) => `<circle cx="${gx(cm)}" cy="${gy(cm * o.slope)}" r="4.2" fill="#5E6B7E"/>
+    <line x1="${gx(cm)}" y1="${gy(cm * o.slope)}" x2="${gx(cm)}" y2="168" stroke="#B9C2CE" stroke-width="1.2" stroke-dasharray="3 4"/>
+    <line x1="48" y1="${gy(cm * o.slope)}" x2="${gx(cm)}" y2="${gy(cm * o.slope)}" stroke="#B9C2CE" stroke-width="1.2" stroke-dasharray="3 4"/>`,
+    )
+    .join("");
+  return `<svg viewBox="0 0 344 200" ${NS} role="img" aria-label="용수철이 늘어난 길이에 따른 탄성력 그래프. 원점을 지나는 직선이다">
+    ${yt}${xt}
+    <line x1="48" y1="26" x2="48" y2="168" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="48" y1="168" x2="320" y2="168" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="${gx(0)}" y1="${gy(0)}" x2="${gx(endCm)}" y2="${gy(endCm * o.slope)}" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
+    ${dots}
+    <text x="10" y="16" font-size="11" fill="#4E5968">탄성력(N)</text>
+    <text x="320" y="198" text-anchor="end" font-size="11" fill="#4E5968">늘어난 길이(cm)</text>
+  </svg>`;
+}
+
+/** 용수철저울 부력 3장면(라이트) — (가) 공기 중 / (나) 절반 잠김 / (다) 완전 잠김. 표시창은 빈 패널. */
+export function buoyThreeFig(): string {
+  const scene = (x: number, label: string, waterTop: number | null, sink: number): string => {
+    const wy = 92 + sink;
+    return `<g transform="translate(${x},0)">
+      <rect x="30" y="14" width="40" height="22" rx="5" fill="#EDF1F6" stroke="#8B95A1" stroke-width="1.8"/>
+      <rect x="38" y="19" width="24" height="12" rx="3" fill="#2A3442"/>
+      <path d="M50 36 v${wy - 58}" stroke="#8B95A1" stroke-width="2"/>
+      <rect x="36" y="${wy - 22}" width="28" height="26" rx="5" fill="#C9B49A" stroke="#8B7355" stroke-width="1.8"/>
+      ${waterTop != null ? `<rect x="14" y="${waterTop}" width="72" height="${142 - waterTop}" rx="6" fill="rgba(90,162,248,.22)"/><path d="M14 ${waterTop} h72" stroke="#5AA2F8" stroke-width="2"/>` : ""}
+      <path d="M14 142 h72" stroke="#8B95A1" stroke-width="2.4"/>
+      <path d="M14 108 v34 M86 108 v34" stroke="#8B95A1" stroke-width="2.4"/>
+      <text x="50" y="164" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">${label}</text>
+    </g>`;
+  };
+  return `<svg viewBox="0 0 344 176" ${NS} role="img" aria-label="용수철저울에 매단 추가 (가) 공기 중에 있을 때, (나) 물에 절반 잠겼을 때, (다) 완전히 잠겼을 때의 세 장면">
+    ${scene(18, "(가)", null, 0)}
+    ${scene(128, "(나)", 95, 12)}
+    ${scene(238, "(다)", 88, 22)}
+  </svg>`;
+}
+
+/** 물에 떠서 정지한 공(라이트) — 힘 화살표 없음(평형 판단은 문항 몫). */
+export function floatBallFig(): string {
+  return `<svg viewBox="0 0 344 170" ${NS} role="img" aria-label="수조의 물 위에 공이 반쯤 잠긴 채 떠서 가만히 있는 그림">
+    <path d="M40 42 v96 a10 10 0 0 0 10 10 h244 a10 10 0 0 0 10-10 V42" fill="none" stroke="#8B95A1" stroke-width="2.6"/>
+    <rect x="44" y="84" width="256" height="60" rx="6" fill="rgba(90,162,248,.22)"/>
+    <path d="M44 84 h256" stroke="#5AA2F8" stroke-width="2.2"/>
+    <circle cx="172" cy="84" r="26" fill="#FFD98A" stroke="#C9A96A" stroke-width="2.2"/>
+    <path d="M132 84 a40 14 0 0 0 80 0 z" fill="rgba(90,162,248,.28)"/>
+    <circle cx="163" cy="74" r="6" fill="rgba(255,255,255,.55)"/>
+    <text x="172" y="30" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">떠서 정지해 있음</text>
+  </svg>`;
+}
+
+/** 지구 주위 세 사과의 화살표 ㄱ·ㄴ·ㄷ(라이트) — ㄱ·ㄴ은 지구 중심 쪽, ㄷ은 먼 쪽(합답 판정용). */
+export function gravityAroundFig(): string {
+  const apple = (x: number, y: number): string =>
+    `<circle cx="${x}" cy="${y}" r="10" fill="#F8B4B4" stroke="#D66" stroke-width="2"/><path d="M${x} ${y - 10} q3 -6 7 -7" stroke="#7A9B5A" stroke-width="2" fill="none"/>`;
+  const arr = (x1: number, y1: number, x2: number, y2: number): string => {
+    const ang = Math.atan2(y2 - y1, x2 - x1);
+    const hx = (a: number): number => x2 - Math.cos(ang - a) * 10;
+    const hy = (a: number): number => y2 - Math.sin(ang - a) * 10;
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#5E6B7E" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M${x2} ${y2} L${hx(0.45).toFixed(1)} ${hy(0.45).toFixed(1)} M${x2} ${y2} L${hx(-0.45).toFixed(1)} ${hy(-0.45).toFixed(1)}" stroke="#5E6B7E" stroke-width="3.4" stroke-linecap="round" fill="none"/>`;
+  };
+  return `<svg viewBox="0 0 344 224" ${NS} role="img" aria-label="지구 주위 세 곳의 사과와 화살표 ㄱ, ㄴ, ㄷ. 지구 위쪽 사과의 ㄱ은 아래쪽을, 지구 오른쪽 사과의 ㄴ은 왼쪽을, 지구 아래쪽 사과의 ㄷ은 아래쪽을 향한다">
+    <circle cx="172" cy="112" r="44" fill="#EAF2FD" stroke="#8FB3E8" stroke-width="2.4"/>
+    <ellipse cx="156" cy="98" rx="17" ry="11" fill="#CBE4D2"/>
+    <ellipse cx="190" cy="126" rx="12" ry="8" fill="#CBE4D2"/>
+    <text x="172" y="116" text-anchor="middle" font-size="10.5" fill="#8B95A1">지구</text>
+    ${apple(172, 32)}${arr(172, 44, 172, 62)}
+    <text x="186" y="58" font-size="13" font-weight="700" fill="#4E5968">ㄱ</text>
+    ${apple(300, 112)}${arr(288, 112, 264, 112)}
+    <text x="270" y="98" font-size="13" font-weight="700" fill="#4E5968">ㄴ</text>
+    ${apple(172, 186)}${arr(172, 198, 172, 218)}
+    <text x="186" y="216" font-size="13" font-weight="700" fill="#4E5968">ㄷ</text>
+  </svg>`;
+}
+
+/** 운동 분류 순서도(라이트) — 속력·방향 두 질문, 결론 칸 ㉠·㉡·㉢은 비어 있다. */
+export function motionFlowFig(): string {
+  const boxStyle = `fill="#F7F8FA" stroke="#B0B8C1" stroke-width="1.5"`;
+  const ansBox = (x: number, y: number, lab: string): string =>
+    `<rect x="${x}" y="${y}" width="88" height="34" rx="10" fill="#EEF4FF" stroke="#3182F6" stroke-width="1.5"/>
+     <text x="${x + 44}" y="${y + 22}" text-anchor="middle" font-size="14" font-weight="800" fill="#1B64DA">${lab}</text>`;
+  const arrTo = (x: number, y: number): string =>
+    `<path d="M${x} ${y} l-5 -7 M${x} ${y} l5 -7" fill="none" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 344 268" ${NS} role="img" aria-label="운동을 나누는 순서도. 첫 질문은 속력이 변하는지이고, 예 갈래는 결론 칸 ㉢으로, 아니요 갈래는 운동 방향이 변하는지 물어 아니요면 ㉠, 예면 ㉡ 결론 칸으로 이어진다. 결론 칸은 모두 비어 있다">
+    <rect x="122" y="8" width="100" height="32" rx="10" ${boxStyle}/>
+    <text x="172" y="29" text-anchor="middle" font-size="13" font-weight="700" fill="#333D4B">물체의 운동</text>
+    <path d="M172 40 V58" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
+    ${arrTo(172, 58)}
+    <path d="M172 58 L288 88 L172 118 L56 88 Z" fill="#FFF6E6" stroke="#E8B04B" stroke-width="1.5"/>
+    <text x="172" y="83" text-anchor="middle" font-size="12" font-weight="700" fill="#8A5A00">속력이</text>
+    <text x="172" y="99" text-anchor="middle" font-size="12" font-weight="700" fill="#8A5A00">변하는가?</text>
+    <text x="300" y="80" font-size="11.5" font-weight="700" fill="#4E5968">예</text>
+    <path d="M288 88 H318 V212" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
+    ${arrTo(318, 212)}
+    ${ansBox(248, 214, "㉢")}
+    <text x="30" y="80" text-anchor="end" font-size="11.5" font-weight="700" fill="#4E5968">아니요</text>
+    <path d="M56 88 H34 V128" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
+    ${arrTo(34, 128)}
+    <path d="M108 130 L204 158 L108 186 L12 158 Z" fill="#FFF6E6" stroke="#E8B04B" stroke-width="1.5"/>
+    <text x="108" y="153" text-anchor="middle" font-size="12" font-weight="700" fill="#8A5A00">운동 방향이</text>
+    <text x="108" y="169" text-anchor="middle" font-size="12" font-weight="700" fill="#8A5A00">변하는가?</text>
+    <text x="10" y="206" font-size="11.5" font-weight="700" fill="#4E5968">아니요</text>
+    <path d="M12 158 H8 V212 H36" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M36 212 l-7 -5 M36 212 l-7 5" fill="none" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round"/>
+    ${ansBox(38, 195, "㉠")}
+    <text x="212" y="152" font-size="11.5" font-weight="700" fill="#4E5968">예</text>
+    <path d="M204 158 H224 V212" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
+    ${arrTo(224, 212)}
+    ${ansBox(154, 214, "㉡")}
+  </svg>`;
+}

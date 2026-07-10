@@ -80,6 +80,7 @@ function save(): void {
   } catch {
     /* 용량 초과 등은 무시 */
   }
+  onStateSaved?.(); // 동기화 훅(core/sync.ts) — 파일 끝 "동기화 훅" 섹션 참조
 }
 
 export function getState(): Readonly<AppState> {
@@ -245,5 +246,20 @@ export function submitScore(gameId: string, score: number): boolean {
 
 export function resetAll(): void {
   state = structuredClone(DEFAULT_STATE);
+  save();
+}
+
+// ── 동기화 훅(core/sync.ts 전용) ─────────────────────────────
+// store는 sync를 모른다(의존 방향: sync → store 단방향). save마다 알림만 쏜다.
+let onStateSaved: (() => void) | null = null;
+
+export function setOnStateSaved(fn: (() => void) | null): void {
+  onStateSaved = fn;
+}
+
+/** 서버와 병합된 상태를 반영(core/sync.ts 전용). reviewMode·viewGrade·viewSubject 같은
+ *  기기 설정은 patch에 포함하지 않는 것이 규약 — 병합 규칙은 sync.ts가 소유한다. */
+export function applySyncedState(patch: Partial<AppState>): void {
+  state = { ...state, ...patch };
   save();
 }

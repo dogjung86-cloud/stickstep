@@ -47,7 +47,8 @@ export interface ExamDef {
 }
 
 /** 응시 1회분 추출 — 레슨 균형(풀 등장 순서 = 교과 진도 순서) 랜덤.
- *  풀이 온전할 때(레슨당 20문항) 정확히 레슨당 pick/레슨수 문항씩 뽑히고,
+ *  레슨당 floor(pick/레슨수)개 + 잔여분은 랜덤하게 고른 서로 다른 레슨에 1개씩(파트 편중 방지 —
+ *  잔여를 전역 셔플로 채우면 7레슨 시험에서 한 파트가 5문항, 다른 파트가 2문항이 되는 사고가 난다).
  *  일부 레슨 풀이 모자라도 남은 문항에서 보충해 항상 pick개를 맞춘다.
  *  시험지 순서는 진도 순(같은 레슨 안에서는 랜덤). */
 export function drawExamItems(def: ExamDef): ExamItem[] {
@@ -59,12 +60,15 @@ export function drawExamItems(def: ExamDef): ExamItem[] {
   }
   const lessonIds = [...byLesson.keys()];
   const per = Math.floor(def.pick / Math.max(1, lessonIds.length));
+  const extra = def.pick - per * lessonIds.length;
+  const extraPicks = new Set(shuffle([...lessonIds]).slice(0, extra));
   const chosen: ExamItem[] = [];
   const leftovers: ExamItem[] = [];
   for (const lid of lessonIds) {
     const g = shuffle([...byLesson.get(lid)!]);
-    chosen.push(...g.slice(0, per));
-    leftovers.push(...g.slice(per));
+    const want = per + (extraPicks.has(lid) ? 1 : 0);
+    chosen.push(...g.slice(0, want));
+    leftovers.push(...g.slice(want));
   }
   shuffle(leftovers);
   while (chosen.length < def.pick && leftovers.length) chosen.push(leftovers.pop()!);

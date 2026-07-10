@@ -9,6 +9,7 @@ import { examForUnit } from "../content/exams";
 import { serpentine, smoothPath, pathUpTo } from "../ui/serpentine";
 import { mapDecorArt } from "../ui/mapDecor";
 import type { Screen } from "../core/router";
+import { onAuthChange } from "../core/auth";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
 const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice" };
@@ -48,6 +49,23 @@ export function homeScreen(
   profBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     nav2?.onLogin?.();
+  });
+  // 로그인하면 사람 아이콘 대신 프로필 사진(원형) — 로그인 여부가 홈에서 바로 보인다.
+  const offAuth = onAuthChange((u) => {
+    profBtn.setAttribute("aria-label", u ? "마이페이지" : "로그인");
+    if (u?.avatarUrl) {
+      const img = document.createElement("img");
+      img.className = "ab-avatar";
+      img.src = u.avatarUrl;
+      img.alt = "";
+      img.referrerPolicy = "no-referrer"; // 구글 아바타가 리퍼러 검사로 403 나는 것 방지
+      img.onerror = () => {
+        profBtn.innerHTML = icon("user", 19);
+      };
+      profBtn.replaceChildren(img);
+    } else {
+      profBtn.innerHTML = icon("user", 19);
+    }
   });
   const brandEl = el("div", { class: `brand ${isReviewMode() ? "review" : ""}`, text: BRAND.name });
   // 검토 모드 — 브랜드 7연타 토글(콘텐츠 검수용: 순차·프리미엄 잠금 전부 해제)
@@ -365,7 +383,7 @@ export function homeScreen(
   }
 
   renderAll();
-  return { el: elm };
+  return { el: elm, onExit: offAuth };
 }
 
 // 단원 특색 장식 — 트레일 문법(경로·메달리온)은 그대로, 소품이 단원의 이야기를 만든다.

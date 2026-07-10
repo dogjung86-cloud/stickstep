@@ -214,6 +214,13 @@ src/
   검사: shuffle:false && answer===0 조합은 커밋 전 스캔으로 잡는다(u4 저작 중 2건 적발 전례 — 독립 완결
   명제 보기면 shuffle:false를 제거하는 쪽이 원칙). u1·u2 시험 추가 시 이 관행 그대로.
   QA: `PORT=<포트> node qa/e2e-exam-u4.mjs`(47검증 — 사진 8장 로드·여섯 파트 문구·6레슨 진단 포함).
+- **u5(힘의 작용) 100문항 — 7레슨 확장**: 분포 15·15·15·14·14·14·13, 규격은 u4 관행 그대로.
+  **drawExamItems 잔여분 규칙 확립**: floor(pick/레슨수) 배분 후 잔여는 랜덤한 **서로 다른 레슨에
+  1개씩**(전역 셔플 보충이던 구현은 7레슨에서 한 파트 5문항·다른 파트 2문항 편중 — u5 e2e가 적발,
+  types.ts 수정으로 u3·u4에도 소급). 시험 수치는 레슨 수치 앵커(용수철 0.5N/cm·부력 20−14·3kg 29.4N)와
+  반드시 다르게. 힘 단원 언어 가드: 관성·작용반작용·수직항력·등속·훅의 법칙 금지("일정한 빠르기로 곧게"
+  서술), 등속 상태의 알짜힘 0은 정식 출제 범위(비상·천재 계승). 입자 모형 없는 단원이라 사진 비중↑(8장).
+  QA: `PORT=<포트> node qa/e2e-exam-u5.mjs`(47검증 — 일곱 파트 문구·2×1+3×6 균형 추출 포함).
 
 ## 수학 트랙 — 과목 차원 · 수학 레슨 문법 (상세는 MATH_GUIDE.md)
 - **중2 수학 Ⅰ(m2u1, 유리수의 표현과 식의 계산) 완성** — 10레슨(무료 3+프리미엄 7), 테마 `calc`
@@ -803,3 +810,19 @@ src/
   확인한다. 식물 호흡은 낮과 밤 모두 계속되고, 체관의 설탕은 필요한 기관을 향해 위·아래로 이동한다.
   온도는 높을수록 무조건 유리한 것이 아니라 알맞은 범위 뒤 광합성량이 감소한다.
 - QA는 DEV 서버에서 `PORT=<포트> node qa/e2e-g2u5.mjs`로 6레슨의 훅·랩·문제를 실플레이한다.
+
+## 로그인·동기화 (Supabase — 2026-07 구축)
+- **core/auth.ts**(OAuth·세션)와 **core/sync.ts**(진행도 병합·푸시)가 전부. **환경변수
+  (VITE_SUPABASE_URL·VITE_SUPABASE_ANON_KEY, .env.local)가 없으면 전원 no-op** — dev·e2e·기존
+  배포는 백엔드 없이 그대로 동작한다(스텁 모드: 로그인 버튼이 안내 스낵만). supabase-js는 three와
+  같은 규칙으로 **동적 import**(vite optimizeDeps에 등록) — 로그인 안 한 기기는 번들을 아예 받지 않는다.
+- 스키마·설정 절차: `supabase/schema.sql` + `SUPABASE_SETUP.md`(서울 리전, 구글·카카오 프로바이더).
+  **네이버는 Supabase 미지원**이라 준비 중 스낵 유지. 서버 컬럼명은 `total_stick`(XP→'스틱' 개명 선반영).
+- **병합 원칙 "학습은 잃지 않는다"**(sync.ts가 소유): lessons/exams/minigame은 항목별 max·OR,
+  스틱(totalXp)은 큰 쪽, 스트릭은 lastStudyDay가 최근인 쪽(같은 날이면 큰 쪽). 로그인 직후
+  pull→병합→push, 이후 save마다 2.5초 디바운스 push + pagehide 최선 노력 push.
+  **reviewMode·viewGrade·viewSubject는 기기 설정이라 동기화 금지.**
+- store.ts에는 `setOnStateSaved` 훅 + `applySyncedState`만 추가(의존 방향 sync→store 단방향).
+  로그아웃해도 기기의 학습 기록은 지우지 않는다(무로그인 정책과 동일한 결).
+- 리더보드·랭킹은 후속 기능: 채점이 전부 클라이언트라 **서버 검증 설계 전에는 붙이지 않는다**
+  (검토 모드 7연타가 공식 우회로인 것도 함께 해결할 것). profiles.nickname 컬럼은 그때 쓴다.

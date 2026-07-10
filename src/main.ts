@@ -18,6 +18,8 @@ import { paywallScreen } from "./screens/paywall";
 import { examScreen } from "./screens/exam";
 import { createLessonPlayer } from "./lessons/player";
 import { findLesson, isPremiumLocked } from "./content/curriculum";
+import { initAuth } from "./core/auth";
+import { initSync } from "./core/sync";
 
 const frame = document.getElementById("frame")!;
 nav.init(frame);
@@ -135,3 +137,8 @@ function start(): void {
 }
 
 start();
+
+// 로그인·동기화 부팅 — Supabase 환경변수(.env.local)가 없으면 둘 다 no-op(core/auth.ts 참조).
+// initSync가 먼저 리스너를 배선해야 initAuth의 세션 복원 이벤트를 놓치지 않는다.
+initSync();
+void initAuth();

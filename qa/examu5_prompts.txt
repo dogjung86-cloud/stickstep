@@ -1,0 +1,28 @@
+스타일 블록 A (모든 프롬프트 앞에 붙일 공통 스타일):
+Photorealistic photograph, natural lighting, shallow depth of field, clean composition, single clear subject.
+ABSOLUTELY NO text, NO numbers, NO letters, NO logos, NO watermarks anywhere in the image.
+No people, no hands, no faces, no body parts. Square 1:1 aspect ratio. High detail, realistic textures.
+
+[0] file=public/exam/u5/bowling-pins.png
+A bowling ball crashing into white bowling pins at the end of a glossy wooden lane, pins flying and toppling mid-air at the moment of impact, motion blur on the scattering pins. The ball is plain deep blue with no markings, pins are plain white with a single red neck stripe. Dramatic alley lighting.
+
+[1] file=public/exam/u5/waterfall.png
+A tall powerful waterfall pouring straight down a dark rocky cliff into a misty pool below, white water streaming vertically, spray and mist rising at the base, lush green foliage around the edges. Overcast soft daylight.
+
+[2] file=public/exam/u5/spring-coil.png
+Close-up of several shiny steel coil springs of different sizes lying on a clean light workbench, one spring compressed between the jaws of a small clamp to show it squeezed shorter. Metallic reflections, neutral background, product-photo style.
+
+[3] file=public/exam/u5/soccer-cleats.png
+Bottom view of a soccer cleat shoe sole showing its pattern of hard round studs, held at an angle on green artificial turf background, deep black sole with pronounced studs, a few grass blades. The sole is plain with no brand marks.
+
+[4] file=public/exam/u5/snow-chain.png
+A car tire wrapped with metal snow chains parked on a snow-covered road, chain links crossing over the tire tread, packed snow and ice visible on the ground, cold winter daylight. Plain tire with no lettering on the sidewall.
+
+[5] file=public/exam/u5/ice-hockey.png
+An ice hockey puck sliding fast across smooth glossy ice, leaving a faint spray of ice shavings behind it, a plain wooden hockey stick blade just behind the puck, arena lights reflecting off the ice surface. No players visible, only the stick blade and puck.
+
+[6] file=public/exam/u5/container-ship.png
+A huge fully loaded container ship floating on calm deep blue sea, viewed from the side at a distance, colorful stacked containers, hull sitting low in the water with waterline clearly visible, clear sky. Containers and hull are plain colored blocks without any letters or logos.
+
+[7] file=public/exam/u5/hot-air-balloon.png
+A single colorful striped hot air balloon rising high in a clear blue morning sky with a wicker basket hanging below, seen from slightly below, soft sunlight, a few distant clouds. The balloon envelope has only plain color stripes, no letters or symbols.
