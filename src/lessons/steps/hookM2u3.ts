@@ -107,6 +107,7 @@ export const renderVendbox: SceneFn = (scene, helper, finish, face, choices) => 
       face("surprised");
       helper.innerHTML =
         "자판기는 초록 버튼에서 늘 <b>같은 음료</b>, 랜덤박스는 매번 <b>다른 인형</b>이 나왔어요. 한 번 더 산다면, 결과를 확실히 아는 쪽은?";
+      window.setTimeout(() => box.scrollIntoView({ behavior: "smooth", block: "nearest" }), 140); // 예측 등장 자동 스크롤
       ask(box, helper, {
         choices: choices ?? [
           "자판기예요, 버튼 하나에 나오는 것이 하나로 딱 정해져 있으니까요",
@@ -179,7 +180,8 @@ export const renderBubbletea: SceneFn = (scene, helper, finish, face, choices) =
       window.setTimeout(() => {
         face("curious");
         helper.innerHTML = "3800 → 4300 → 4800 → 5300원. 토핑을 하나 올릴 때마다 가격은 <b>어떻게 변하고 있나요</b>?";
-        ask(box, helper, {
+        window.setTimeout(() => box.scrollIntoView({ behavior: "smooth", block: "nearest" }), 140); // 예측 등장 자동 스크롤
+      ask(box, helper, {
           choices: choices ?? [
             "늘 500원씩, 일정하게 계단처럼 올라요",
             "토핑이 많아질수록 점점 가파르게 뛰어요",
@@ -245,6 +247,7 @@ export const renderTwinlift: SceneFn = (scene, helper, finish, face, choices) =>
     window.setTimeout(() => {
       face("surprised");
       helper.innerHTML = "두 그래프가 그려졌어요! 시간이 아무리 지나도 두 엘리베이터의 <b>높이 차이</b>는 어떻게 될까요?";
+      window.setTimeout(() => box.scrollIntoView({ behavior: "smooth", block: "nearest" }), 140); // 예측 등장 자동 스크롤
       ask(box, helper, {
         choices: choices ?? [
           "처음 차이 그대로, 그래프도 나란히 가요",
@@ -321,6 +324,7 @@ export const renderGiftcard: SceneFn = (scene, helper, finish, face, choices) =>
     window.setTimeout(() => {
       face("curious");
       helper.innerHTML = "잔액 그래프가 쭉 내려와 <b>0원</b>이 됐어요. '잔액이 바닥나는 날'은 그래프의 <b>어디</b>에서 읽을까요?";
+      window.setTimeout(() => box.scrollIntoView({ behavior: "smooth", block: "nearest" }), 140); // 예측 등장 자동 스크롤
       ask(box, helper, {
         choices: choices ?? [
           "직선이 가로축(날짜축)과 만나는 곳이요",
@@ -391,6 +395,7 @@ export const renderSlide: SceneFn = (scene, helper, finish, face, choices) => {
       face("surprised");
       helper.innerHTML =
         "초록 공이 훨씬 빨리 떨어졌어요! 높이(세로)는 같은데, 왼쪽 미끄럼틀이 더 가파른 <b>진짜 이유</b>는 뭘까요?";
+      window.setTimeout(() => box.scrollIntoView({ behavior: "smooth", block: "nearest" }), 140); // 예측 등장 자동 스크롤
       ask(box, helper, {
         choices: choices ?? [
           "같은 세로 높이를 더 짧은 가로 거리로 내려가서요",
@@ -446,6 +451,7 @@ export const renderUpdown: SceneFn = (scene, helper, finish, face, choices) => {
       face("curious");
       helper.innerHTML =
         "결국 초록이 빨강을 앞질렀어요! 두 그래프의 운명을 가른 <b>단 하나</b>는 뭘까요?";
+      window.setTimeout(() => box.scrollIntoView({ behavior: "smooth", block: "nearest" }), 140); // 예측 등장 자동 스크롤
       ask(box, helper, {
         choices: choices ?? [
           "그래프의 방향이에요, 오른쪽 위로 가느냐 아래로 가느냐",
@@ -518,6 +524,7 @@ export const renderBonekey: SceneFn = (scene, helper, finish, face, choices) => 
     window.setTimeout(() => {
       face("surprised");
       helper.innerHTML = "뼈 46cm를 재니 키 약 173cm가 나왔어요. 뼈 하나로 키를 아는 <b>비밀</b>은 뭘까요?";
+      window.setTimeout(() => box.scrollIntoView({ behavior: "smooth", block: "nearest" }), 140); // 예측 등장 자동 스크롤
       ask(box, helper, {
         choices: choices ?? [
           "뼈 길이와 키를 잇는 관계식이 미리 구해져 있어서요",
@@ -580,6 +587,7 @@ export const renderStalactite: SceneFn = (scene, helper, finish, face, choices) 
       face("curious");
       helper.innerHTML =
         "100년에 겨우 손톱만큼! 그렇다면 <b>500년 뒤</b>의 길이를 알고 싶으면 어떻게 해야 할까요?";
+      window.setTimeout(() => box.scrollIntoView({ behavior: "smooth", block: "nearest" }), 140); // 예측 등장 자동 스크롤
       ask(box, helper, {
         choices: choices ?? [
           "지금 길이에 '늘어날 양'을 더하는 식을 세워 계산해요",
@@ -651,6 +659,7 @@ export const renderTwomask: SceneFn = (scene, helper, finish, face, choices) => 
       face("surprised");
       helper.innerHTML =
         "앞면은 방정식 <b>2x−y+1=0</b>, 뒷면은 함수 <b>y=2x+1</b>. 각각의 그래프를 그리면 어떻게 될까요?";
+      window.setTimeout(() => box.scrollIntoView({ behavior: "smooth", block: "nearest" }), 140); // 예측 등장 자동 스크롤
       ask(box, helper, {
         choices: choices ?? [
           "완전히 같은 직선 하나가 나와요",
@@ -724,6 +733,7 @@ export const renderChase: SceneFn = (scene, helper, finish, face, choices) => {
       face("surprised");
       helper.innerHTML =
         "따라잡았다! 그래프에서 <b>따라잡는 바로 그 순간</b>은 어디에 나타날까요?";
+      window.setTimeout(() => box.scrollIntoView({ behavior: "smooth", block: "nearest" }), 140); // 예측 등장 자동 스크롤
       ask(box, helper, {
         choices: choices ?? [
           "두 그래프가 만나는 점이요",
