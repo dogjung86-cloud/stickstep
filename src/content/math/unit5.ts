@@ -106,8 +106,9 @@ export const M1_UNIT5: Unit = {
         multi({
           prompt: "육각형에 표시한 ㉠~㉣ 중 <b>대각선인 것</b>을 모두 고르면?",
           figure: hexaDiagFig(),
-          options: ["㉡", "㉢", "㉠", "㉣"],
-          answer: [0, 1],
+          options: ["㉠", "㉡", "㉢", "㉣"],
+          answer: [1, 2],
+          shuffle: false,
           explainGood: "완벽해요! ㉡(B와 D)과 ㉢(A와 D)만 이웃하지 않는 꼭짓점끼리 이은 대각선이에요.",
           explainBad: "대각선의 조건 두 가지를 확인해요. ① <b>꼭짓점끼리</b> 이어야 하고 ② <b>이웃이 아니어야</b> 해요. ㉠은 이웃한 A와 B를 이은 변이고, ㉣은 끝점이 꼭짓점이 아니라 변 위의 점이라 탈락! 답은 ㉡과 ㉢이에요.",
         }),
@@ -531,8 +532,9 @@ export const M1_UNIT5: Unit = {
         mcq({
           prompt: "그림의 ㉠~㉣ 중 <b>현</b>은?",
           figure: circlePartsFig(),
-          options: ["㉡", "㉠", "㉢", "㉣", "없다"],
-          answer: 0,
+          options: ["㉠", "㉡", "㉢", "㉣", "없다"],
+          answer: 1,
+          shuffle: false,
           explainGood: "정확해요! 원 위의 두 점을 곧게 이은 선분, ㉡이 현이에요.",
           explainBad: "현은 <b>원 위의 두 점을 이은 선분</b>이에요. ㉠은 굽은 호, ㉢은 원을 뚫고 지나가는 직선(할선), ㉣은 중심과 원 위 점을 이은 반지름! 답은 <b>㉡</b>이에요.",
         }),
