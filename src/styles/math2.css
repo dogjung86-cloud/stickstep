@@ -1453,7 +1453,8 @@
 .mq6-q.fnl-q, .mq6-q.m2u3q { background: #E7F8F1; border-color: rgba(12,166,120,.5); color: #067D57; }
 
 /* ---------- funcLab(.fnl-) 대응 기계 검사소 ---------- */
-.fnl-title { margin-bottom: 10px; }
+/* mdr-q(드릴용 27px) 상속 차단 — 이름 카드는 본문 크기로(Opus 4.8 감사 확실 2건 중 하나) */
+.fnl-title { margin-bottom: 10px; font-size: 17px; padding: 14px 16px; min-height: 0; }
 .fnl-in { display: flex; justify-content: center; gap: 12px; padding: 2px 0 12px; }
 .fnl-chip {
   min-width: 64px; padding: 12px 14px; border-radius: 14px; border: 2px solid #0CA678;
@@ -1521,7 +1522,10 @@
 .sgl-eq .mx { font-size: 19px; }
 
 /* ---------- interceptLab(.icl-) 절편 수집 ---------- */
-.icl-q { margin-bottom: 8px; }
+/* mdr-q(드릴용 27px) 상속 차단 — 임무 카드는 문장이라 본문 크기로(Opus 4.8 감사 확실 2건 중 하나) */
+.icl-q { margin-bottom: 8px; font-size: 15px; line-height: 1.55; padding: 14px 16px; min-height: 0; flex-wrap: wrap; column-gap: 4px; }
+.icl-q .mx { font-size: 17px; }
+.icl-q b { font-size: 16px; }
 .icl-spin { animation: iclSpin 2.4s ease-in-out infinite alternate; }
 @keyframes iclSpin {
   0% { transform: rotate(18deg); }
