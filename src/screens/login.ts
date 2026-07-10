@@ -8,7 +8,7 @@ import { haptic, HAPTIC } from "../core/haptics";
 import { stickAvatar } from "../ui/avatar";
 import { getState, currentStreak } from "../core/store";
 import type { Screen } from "../core/router";
-import { currentUser, isAuthConfigured, onAuthChange, signInWith, signOut } from "../core/auth";
+import { consumeAuthError, currentUser, isAuthConfigured, onAuthChange, signInWith, signOut } from "../core/auth";
 import type { AuthUser, OAuthProvider } from "../core/auth";
 
 // 간이 소셜 마크 — 외부 이미지 없이 브랜드가 연상되는 최소 글리프
@@ -169,5 +169,8 @@ export function loginScreen(onClose: () => void): Screen {
   const elm = el("section", { class: "screen" }, head, body, footer, snackEl);
   // 등록 즉시 1회 렌더 + 이후 로그인/로그아웃에 반응. 해제는 leave()와 라우터 onExit 양쪽에서(중복 안전).
   offAuth = onAuthChange(() => render());
+  // OAuth 복귀가 에러였다면 원인을 보여 준다(조용한 실패 금지 — 실기기 디버깅의 유일한 창구)
+  const authErr = consumeAuthError();
+  if (authErr) window.setTimeout(() => snack(`로그인이 중단됐어요: ${authErr}`), 350);
   return { el: elm, onExit: unsub };
 }

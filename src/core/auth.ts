@@ -87,17 +87,64 @@ export async function getSupabase(): Promise<SupabaseClient> {
   return clientPromise;
 }
 
+// OAuth 복귀 URL에 실려 온 에러(사용자 거부·프로바이더 설정 문제 등) — 로그인 화면이 1회 소비해 표시한다.
+let lastAuthError: string | null = null;
+
+export function consumeAuthError(): string | null {
+  const e = lastAuthError;
+  lastAuthError = null;
+  return e;
+}
+
+function storageHasSession(): boolean {
+  try {
+    return !!localStorage.getItem(sessionStorageKey());
+  } catch {
+    return false; // 사생활 보호 모드 등 — 세션 없음으로 간주
+  }
+}
+
+/** 다른 컨텍스트(새 탭·카카오톡 인앱 브라우저 등)에서 완결된 로그인을 이 탭이 알아채게 한다.
+ *  안드로이드 소셜 로그인은 앱 전환 뒤 새 탭으로 돌아오는 일이 흔한데, 그 탭이 세션을 저장하면
+ *  원래 탭은 storage 이벤트/재노출 시점에 클라이언트를 깨워 세션을 집어 든다. */
+function watchExternalSession(): void {
+  const pickup = (): void => {
+    if (user || !storageHasSession()) return;
+    void getSupabase().then((c) => c.auth.getSession()); // getClient가 세션을 읽고 emit까지 처리
+  };
+  try {
+    window.addEventListener("storage", (e) => {
+      if (e.key === sessionStorageKey()) pickup();
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") pickup();
+    });
+  } catch {
+    /* 무시 */
+  }
+}
+
 /** 앱 시작 시 1회 — OAuth 리다이렉트 복귀이거나 세션 흔적이 있는 기기만 클라이언트를 깨운다. */
 export async function initAuth(): Promise<void> {
   if (!isAuthConfigured()) return;
-  const returning = location.search.includes("code=") || location.hash.includes("access_token=");
-  let hasSession = false;
-  try {
-    hasSession = !!localStorage.getItem(sessionStorageKey());
-  } catch {
-    /* 사생활 보호 모드 등 — 세션 없음으로 간주 */
+  watchExternalSession();
+
+  // OAuth 실패 복귀(?error=…) — 원인을 담아 두고 주소만 청소(성공 경로보다 먼저 확인)
+  const search = new URLSearchParams(location.search);
+  const hash = new URLSearchParams(location.hash.replace(/^#/, ""));
+  const errDesc =
+    search.get("error_description") ?? hash.get("error_description") ?? search.get("error") ?? hash.get("error");
+  if (errDesc) {
+    lastAuthError = errDesc.replace(/\+/g, " ");
+    try {
+      history.replaceState(null, "", location.pathname);
+    } catch {
+      /* 무시 */
+    }
   }
-  if (!returning && !hasSession) return;
+
+  const returning = location.search.includes("code=") || location.hash.includes("access_token=");
+  if (!returning && !storageHasSession()) return;
   await getSupabase(); // detectSessionInUrl(기본 켜짐)이 PKCE 코드 교환까지 처리
   if (returning) {
     try {
