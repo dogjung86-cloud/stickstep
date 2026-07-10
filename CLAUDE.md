@@ -239,6 +239,16 @@ src/
   수학 각(반시계+)의 부호 반전 주의. mathDrill에 **장문 자동 강등**(q 26자 초과 → .mdr-q.long 18px)
   공용 개선. 컷 u4lN 10장 발주·눈검수·webp 변환 완료(qa/order-m2u4cuts.sh, u4l10만 저울대 수평 1회 재발주).
   상세는 MATH_GUIDE.md 중2 Ⅳ 표. QA: `PORT=<포트> node qa/e2e-m2u4.mjs`.
+- **중2 수학 Ⅵ(m2u6, 확률) 완성** — 9레슨(무료 3+프리미엄 6), 테마 `dice`(주사위 레드 #C92A2A —
+  오답 레드 #F04452보다 어두운 크림슨). 신규: content/math/g2/unit6.ts·steps/hookM2u6.ts(9장면)+
+  랩 8종(caseLab·orLab·treeLab 기함·tossLab 기함·probBarLab·notLab·probAddLab·probMulLab —
+  전부 탭/버튼 구동, 드래그 없음)·mathFigures2에 Ⅵ 그림 11종(pairGridFig 6×6 순서쌍 표는 pick
+  콜백형)+probMiniArt 15키·icons에 dice·coin 추가. 어려운 단원 서사형(Ⅵ 통계 계승): 랩은 국면 3개
+  한 통찰, 판정은 mq6-q 문법 재사용. **언어 가드: '여사건'·'시행'·'수형도' 금지**(원 교재 본문
+  미도입 — "일어나지 않을 확률"·"실험이나 관찰"·"나뭇가지 그림"으로), 합은 "동시에 일어나지 않을
+  때"·곱은 "서로 영향을 끼치지 않을 때"로 서술 통일. tossLab의 Math.random은 목표 판정을 던진
+  횟수 기준으로 설계해 e2e 안전(값 무관). 컷 u6lN 9장(qa/order-m2u6cuts.sh). 상세는 MATH_GUIDE.md
+  중2 Ⅵ 표. QA: `PORT=<포트> node qa/e2e-m2u6.mjs`.
 - **과목 차원**: `store.viewSubject`("sci"|"math") + `curriculum.ts`의 `CURRICULA_OF`/`subjectOfUnit`.
   과목 전환 창구는 **과목 허브뿐**(subject.ts) — main.ts `pickSubject()`가 setViewSubject 후 `goHome()`으로
   홈을 재생성한다(nav.back은 이전 과목 홈을 보여주므로 금지). 이때 lastUnitId를 반드시 비운다.

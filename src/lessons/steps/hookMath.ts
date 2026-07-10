@@ -46,6 +46,10 @@ import {
   renderHanger, renderFoldstrip, renderPhonestand, renderFairspot, renderCookiecut,
   renderCardspin, renderChopstick, renderBookshelf, renderPickrect, renderBentfence,
 } from "./hookM2u4";
+import {
+  renderBoardgame, renderOttnight, renderAvatar, renderCointoss, renderSundaynight,
+  renderGacha, renderRoulette, renderDoublespin, renderUmbrella,
+} from "./hookM2u6";
 import type { StepRenderer } from "../types";
 
 type Face = (k: AvatarKind) => void;
@@ -201,6 +205,16 @@ export const mathHook: StepRenderer = (host, step, api) => {
     bookshelf: renderBookshelf,
     pickrect: renderPickrect,
     bentfence: renderBentfence,
+    // 중2 Ⅵ 확률(hookM2u6.ts)
+    boardgame: renderBoardgame,
+    ottnight: renderOttnight,
+    avatar: renderAvatar,
+    cointoss: renderCointoss,
+    sundaynight: renderSundaynight,
+    gacha: renderGacha,
+    roulette: renderRoulette,
+    doublespin: renderDoublespin,
+    umbrella: renderUmbrella,
   };
   const fn = fns[s.scene];
   if (fn) fn(scene, helper, finish, face, s.choices);

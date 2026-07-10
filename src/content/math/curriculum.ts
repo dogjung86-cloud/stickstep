@@ -11,6 +11,7 @@ import { M2_UNIT1 } from "./g2/unit1";
 import { M2_UNIT2 } from "./g2/unit2";
 import { M2_UNIT3 } from "./g2/unit3";
 import { M2_UNIT4 } from "./g2/unit4";
+import { M2_UNIT6 } from "./g2/unit6";
 
 /** 준비 중 단원 자리, 콘텐츠가 완성되면 실제 UNIT 모듈로 교체한다. */
 const soon = (id: string, roman: string, title: string, subtitle: string, icon: string): Unit => ({
@@ -41,7 +42,7 @@ export const MATH_G2: Unit[] = [
   M2_UNIT3,
   M2_UNIT4,
   soon("m2u5", "V", "도형의 닮음과 피타고라스 정리", "비율과 직각의 비밀", "target"),
-  soon("m2u6", "VI", "확률", "우연을 수로 재는 법", "sparkle"),
+  M2_UNIT6,
 ];
 
 export const MATH_CURRICULA: Record<GradeId, Unit[]> = { g1: MATH_G1, g2: MATH_G2 };

@@ -192,6 +192,14 @@ import { paraCondLab } from "./steps/paraCondLab";
 import { diagRigLab } from "./steps/diagRigLab";
 import { quadFamilyLab } from "./steps/quadFamilyLab";
 import { areaSlideLab } from "./steps/areaSlideLab";
+import { caseLab } from "./steps/caseLab";
+import { orLab } from "./steps/orLab";
+import { treeLab } from "./steps/treeLab";
+import { tossLab } from "./steps/tossLab";
+import { probBarLab } from "./steps/probBarLab";
+import { notLab } from "./steps/notLab";
+import { probAddLab } from "./steps/probAddLab";
+import { probMulLab } from "./steps/probMulLab";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -379,6 +387,14 @@ const R: Record<string, StepRenderer> = {
   diagRigLab,
   quadFamilyLab,
   areaSlideLab,
+  caseLab,
+  orLab,
+  treeLab,
+  tossLab,
+  probBarLab,
+  notLab,
+  probAddLab,
+  probMulLab,
   quiz,
   table,
   order,

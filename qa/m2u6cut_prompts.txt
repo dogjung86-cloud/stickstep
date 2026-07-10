@@ -1,0 +1,42 @@
+# 스틱맨 개념 컷 — 중2 수학 Ⅵ(확률) concept 9장 (전부 가로 4:3)
+# 폴더: public/math2/cuts (이름 = u6lM). 장면 규칙: 그 레슨의 훅·랩 소재 재활용 금지(새 각도),
+# 숫자·글자 대신 사물·개수·손짓으로. 주사위 눈(점)은 숫자가 아니므로 허용.
+#
+# ── 스타일 블록 A (전 컷 공용 — 스틱맨 만화) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels
+# anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital painting,
+# NOT anime. Landscape 4:3, single panel, generous white space.
+
+# ══ 중2 수학 Ⅵ 확률 → public/math2/cuts ══
+
+[0] file=public/math2/cuts/u6l1.png (landscape 4:3, 스타일 A)
+A stick figure is about to roll a single die, arm raised mid-shake, while a big round thought bubble above shows all six faces of the die laid out neatly in a row (each face showing only its dots/pips, from one pip to six pips). The figure's other hand points at the row inside the bubble as if counting. Only the die in the figure's hand is teal; everything else pure black and white.
+
+[1] file=public/math2/cuts/u6l2.png (landscape 4:3, 스타일 A)
+A stick figure stands in front of an open refrigerator drawn in cross-section: the upper shelf holds three identical juice bottles, the lower shelf holds two identical milk cartons. The figure holds its chin with one hand, eyes darting between the two shelves, clearly about to pick just one drink. Only the three juice bottles are teal; everything else pure black and white.
+
+[2] file=public/math2/cuts/u6l3.png (landscape 4:3, 스타일 A)
+A stick figure clerk behind a sandwich shop counter: on the counter, the top row displays two different bread shapes (a round bun and a long baguette), the bottom row displays three small filling bowls (drawn with different simple contents: leaf shapes, a fish shape, an egg shape). The clerk spreads both hands toward the display, and faint dotted lines connect each bread to each bowl like a fan of possibilities. Only the three filling bowls are teal; everything else pure black and white.
+
+[3] file=public/math2/cuts/u6l4.png (landscape 4:3, 스타일 A)
+A stick figure sits at a desk beside a tall pile of identical round coins, flipping one coin high in the air; on the desk lies a big clipboard with a simple dot chart: scattered dots on the left that settle into a nearly flat line of dots toward the right, approaching a dashed horizontal line. The figure's eyes sparkle with discovery. Only the single spinning coin in the air is teal; everything else pure black and white.
+
+[4] file=public/math2/cuts/u6l5.png (landscape 4:3, 스타일 A)
+A stick figure carefully walks along a long horizontal measuring bar drawn like a tightrope with small tick marks, arms out for balance. At the left end of the bar stands a completely empty basket; at the right end stands an identical basket completely full of round apples. The figure is somewhere between the two ends. Only the long bar is teal; everything else pure black and white.
+
+[5] file=public/math2/cuts/u6l6.png (landscape 4:3, 스타일 A)
+A stick figure lifts exactly one wedge-shaped slice out of a whole round cake with a cake server, holding the small slice up in one hand while the other hand points at the large remaining cake with a knowing smile. The removed slice's empty gap in the cake is clearly visible. Only the removed cake slice is teal; everything else pure black and white.
+
+[6] file=public/math2/cuts/u6l7.png (landscape 4:3, 스타일 A)
+A stick figure gathers pizza slices that sit scattered on three separate small plates across a table, sliding them one by one onto a single big plate in the center where two slices already sit together forming a growing fan. Happy focused face. Only the pizza slices are teal; everything else pure black and white.
+
+[7] file=public/math2/cuts/u6l8.png (landscape 4:3, 스타일 A)
+A stick figure holds up two large translucent rectangular film sheets toward a window light, overlapping them partially: where the two sheets overlap, the color is clearly darker than either single sheet. The figure points at the darker overlapping rectangle with wide surprised eyes. Both film sheets are teal (the overlap region darker teal); everything else pure black and white.
+
+[8] file=public/math2/cuts/u6l9.png (landscape 4:3, 스타일 A)
+A stick figure stands at a fork where a walking path splits into two: above the left path hangs a small drawn rain cloud with falling droplets, above the right path a small drawn sun. The figure looks down at a small open notebook showing a simple dot chart, and one foot already steps confidently onto the right sunny path. Only the notebook cover is teal; everything else pure black and white.

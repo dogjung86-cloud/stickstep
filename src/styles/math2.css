@@ -84,6 +84,27 @@
 .gm-node.prove:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px #1971C2; }
 .kicker.prove { background: #E7F1FB; color: #12579B; }
 
+/* ---------- 단원 테마: dice(중2 Ⅵ · 주사위 레드 — 우연·행운의 서사.
+   오답 레드(#F04452)보다 어둡고 깊은 크림슨, grph 로즈(#E8547E)·chem 로즈핑크와 계열 구분) ---------- */
+.unit-band.dice { background: linear-gradient(150deg, #E85A4E 0%, #C92A2A 55%, #9C1F1F 100%); }
+.gm-terrain.dice {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #FAE3DD, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #F8D9D2, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #F8DED6, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #F2C9BE, transparent 72%),
+    linear-gradient(180deg, #FEF7F4 0%, #FAEAE4 55%, #F4D8CE 100%);
+}
+.gm-path-glow.dice { stroke: rgba(201,42,42,.2); }
+.gm-path-done.dice { stroke: #C92A2A; }
+.gm-node.dice.now .gm-med, .gm-node.dice.done .gm-med {
+  background: radial-gradient(120% 120% at 32% 26%, #E85A4E 0%, #C92A2A 58%, #9C1F1F 100%);
+}
+.gm-node.dice .gm-ring { border-color: rgba(201,42,42,.55); }
+.gm-node.dice:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px #C92A2A; }
+.kicker.dice { background: #FBEBE7; color: #9C1F1F; }
+
 /* ============================================================
    Ⅰ 랩 공용(mq21-) — 패널·안내·판단 질문 줄(Ⅵ mq6- 문법 계승)
    ============================================================ */
@@ -1866,3 +1887,72 @@
   padding: 2.5px 9px; border-radius: 99px; background: #EDF9F0; color: #1E7A31;
   font-size: 11.5px; font-weight: 800; border: 1px solid rgba(47,158,68,.4);
 }
+
+/* ============================================================
+   Ⅵ 확률 랩 — treeLab(.trl-) 가지 뻗기 · tossLab(.tsl-) 던지기 실험실
+   ============================================================ */
+.trl-stage { padding: 14px 8px 4px; }
+.trl-stage svg { display: block; width: 100%; height: auto; }
+
+.tsl-stage { padding: 14px 10px 4px; display: flex; flex-direction: column; gap: 10px; }
+.tsl-stage svg { display: block; width: 100%; height: auto; }
+.tsl-coinrow { display: flex; align-items: center; gap: 12px; padding: 0 4px; }
+.tsl-coin {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: radial-gradient(120% 120% at 36% 30%, #FFE08A 0%, #E8B93E 60%, #C9962A 100%);
+  border: 2px solid #8C6A1E;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 8px rgba(42,58,94,.18);
+}
+.tsl-coin.flip { animation: tsl-flip .42s cubic-bezier(.22,1,.36,1); }
+@keyframes tsl-flip {
+  0% { transform: translateY(0) scaleY(1); }
+  45% { transform: translateY(-14px) scaleY(.14); }
+  100% { transform: translateY(0) scaleY(1); }
+}
+.tsl-face { font-size: 17px; font-weight: 900; color: #5A4A18; }
+.tsl-count { font-size: 13px; font-weight: 700; color: #5A6B7E; }
+.tsl-count b { color: #2A3648; }
+.tsl-btnrow { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ============================================================
+   Ⅵ 확률 소형 랩 6종 — caseLab(.csl-) 경우 수집대 · orLab(.orl-) 또는 검문소 ·
+   probBarLab(.pbl-) 확률 눈금 · notLab(.ntl-) 나머지 영역 ·
+   probAddLab(.adl-) 칸 나누기 · probMulLab(.mll-) 넓이 실험실
+   ============================================================ */
+.csl-stage, .orl-stage, .pbl-stage, .ntl-stage, .adl-stage, .mll-stage { padding: 14px 10px 4px; }
+.csl-stage svg, .orl-stage svg, .adl-stage svg, .mll-stage svg,
+.pbl-stage svg, .ntl-stage svg { display: block; width: 100%; height: auto; }
+
+/* probAddLab: 사건 카드 행(국면 2) + 조각 비행·연출 */
+.adl-cards { display: flex; gap: 8px; }
+.adl-cards:empty { display: none; }
+.adl-card {
+  flex: 1; border-radius: 12px; padding: 7px 10px; font-size: 12.5px; font-weight: 800;
+  background: #FBECE6; border: 1.5px solid #E4B9B2; color: #8F1D1D;
+  transition: transform .3s var(--ease-out), box-shadow .3s var(--ease-out);
+}
+.adl-card.blue { background: #EAF1FD; border-color: #B9C8E6; color: #1D4E8F; }
+.adl-card.on { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(42, 58, 94, .16); }
+.adl-fly { transition: transform .6s cubic-bezier(.22, 1, .36, 1); }
+.adl-pop { animation: adl-pop .45s cubic-bezier(.34, 1.35, .5, 1) both; transform-box: fill-box; transform-origin: center; }
+@keyframes adl-pop { 0% { opacity: 0; transform: scale(.6); } 100% { opacity: 1; transform: scale(1); } }
+.adl-shake { animation: adl-shake .5s var(--ease-out); transform-box: fill-box; transform-origin: center; }
+@keyframes adl-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 55% { transform: translateX(4px); } 80% { transform: translateX(-2px); } }
+.adl-blink { animation: adl-blink .55s ease-in-out 2; }
+@keyframes adl-blink { 50% { opacity: .25; } }
+
+/* probMulLab: 격자·라벨 서서히 등장 + 겹침 강조 + 비율 세그 */
+.mll-fade { animation: mll-fade .6s both; }
+@keyframes mll-fade { from { opacity: 0; } to { opacity: 1; } }
+.mll-glow { animation: mll-glow 1.3s ease-in-out infinite; }
+@keyframes mll-glow { 50% { opacity: .68; } }
+.mll-seg { display: flex; gap: 8px; }
+.mll-segbtn {
+  flex: 1; border-radius: 12px; padding: 9px 10px; font-size: 13.5px; font-weight: 800;
+  background: #fff; border: 1.5px solid var(--n300, #D9DEE7); color: var(--n700, #4A5568);
+  transition: transform .15s var(--ease-out), border-color .2s, background .2s;
+}
+.mll-segbtn:active { transform: scale(.96); }
+.mll-segbtn.on { border-color: #C92A2A; background: #FBEBE7; color: #9C1F1F; }
+.mll-segbtn[disabled] { opacity: .5; }
