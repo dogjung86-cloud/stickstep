@@ -69,7 +69,11 @@ export async function getSupabase(): Promise<SupabaseClient> {
   if (!clientPromise) {
     clientPromise = (async () => {
       const { createClient } = await import("@supabase/supabase-js");
-      const c = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { flowType: "pkce" } });
+      // detectSessionInUrl을 끄고 코드 교환을 initAuth가 직접 실행한다 — 자동 교환은 실패해도
+      // 원인을 밖으로 내주지 않아 실기기(안드로이드 소셜 복귀) 디버깅이 불가능했다.
+      const c = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { flowType: "pkce", detectSessionInUrl: false },
+      });
       c.auth.onAuthStateChange((_event, session) => {
         // supabase 규칙: 이 콜백 안에서 supabase 호출 금지(교착) — 다음 틱으로 미뤄 알린다.
         const next = toAuthUser(session?.user);
@@ -143,16 +147,24 @@ export async function initAuth(): Promise<void> {
     }
   }
 
-  const returning = location.search.includes("code=") || location.hash.includes("access_token=");
-  if (!returning && !storageHasSession()) return;
-  await getSupabase(); // detectSessionInUrl(기본 켜짐)이 PKCE 코드 교환까지 처리
-  if (returning) {
+  const code = search.get("code");
+  if (code) {
+    // OAuth 성공 복귀 — 코드 교환을 직접 실행하고, 실패 이유를 반드시 남긴다(조용한 실패 금지).
     try {
-      history.replaceState(null, "", location.pathname); // 주소창의 ?code=… 청소
+      history.replaceState(null, "", location.pathname); // 재시도·새로고침이 만료 코드를 재사용하지 않게 먼저 청소
     } catch {
       /* 무시 */
     }
+    try {
+      const c = await getSupabase();
+      const { error } = await c.auth.exchangeCodeForSession(code);
+      if (error) lastAuthError = error.message;
+    } catch (e) {
+      lastAuthError = e instanceof Error ? e.message : String(e);
+    }
+    return;
   }
+  if (storageHasSession()) await getSupabase(); // 세션 복원(getClient의 getSession이 emit까지 처리)
 }
 
 /** 소셜 로그인 시작 — 성공 시 공급자 페이지로 이동한다(이 페이지는 떠남). */
