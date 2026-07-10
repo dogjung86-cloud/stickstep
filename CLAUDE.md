@@ -372,7 +372,9 @@ src/
   재발주: `bash qa/order-splash2-tower.sh`(0..6+study+증류탑) / `bash qa/order-splash2b.sh`(7..13+study 상체 수정) →
   `node qa/process-loading2.mjs`(512 webp 경량화, 프레임당 11~33KB). 이미지 속 글자는 study 머리띠 단 하나만 예외
   (잠자는 컷의 Zzz도 금지 — 코 방울로, 음표·하트는 허용).
-- 앱 아이콘/파비콘 = `public/brand/icon.png`(512, 파란 라운드 사각 + 흰 스틱맨) — index.html에서 링크.
+- 앱 아이콘/파비콘 = `public/brand/icon.png`(512, 파란 라운드 사각 + **study.webp "공부하자!" 머리띠 스틱맨** 흰 라인아트
+  — 앱 상징, 사용자 확정 2026-07-10) — index.html에서 링크. 재생성: `node qa/make-icon.mjs`(study.webp 크롭→
+  흰 반전→선 두께 보정→블루 그라데이션 합성. 책상 모서리 선은 크롭으로 제외할 것).
 - 브랜드 이미지 재발주: `bash qa/order-brand-u1l3.sh`(프롬프트 qa/brand_imagen_prompts.txt),
   발주 원본은 1254px → `node qa/resize-brand.mjs`(512 png) + webp 변환으로 경량화(프레임당 ~20KB).
 
