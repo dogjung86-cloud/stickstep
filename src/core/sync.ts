@@ -3,7 +3,7 @@
 // 스틱(totalXp)은 큰 쪽, 스트릭은 더 최근에 공부한 기기 기준.
 // reviewMode·viewGrade·viewSubject 같은 기기 설정은 동기화하지 않는다.
 // 흐름: 로그인 직후 pull→병합→push, 이후 저장(save)마다 2.5초 디바운스 push.
-import type { AppState, ExamRecord, LessonProgress } from "./store";
+import type { AppState, ExamRecord, LessonProgress, WrongNote } from "./store";
 import { applySyncedState, getState, setOnStateSaved } from "./store";
 import { getSupabase, isAuthConfigured, onAuthChange } from "./auth";
 
@@ -19,6 +19,7 @@ interface ProgressRow {
   lessons: Record<string, LessonProgress>;
   exams: Record<string, ExamRecord>;
   minigame: Record<string, number>;
+  wrong_notes: Record<string, WrongNote>;
 }
 
 function rowOf(s: Readonly<AppState>, userId: string): ProgressRow {
@@ -34,6 +35,7 @@ function rowOf(s: Readonly<AppState>, userId: string): ProgressRow {
     lessons: s.lessons,
     exams: s.exams,
     minigame: s.minigame,
+    wrong_notes: s.wrongNotes ?? {},
   };
 }
 
@@ -78,6 +80,21 @@ function mergeMinigame(a: Record<string, number>, b: Record<string, number>): Re
   return out;
 }
 
+function mergeWrongNotes(a: Record<string, WrongNote>, b: Record<string, WrongNote>): Record<string, WrongNote> {
+  // 같은 키는 더 최근 기록이 상태(극복 여부·스냅샷)를 대표하고, 틀린 횟수는 큰 쪽을 남긴다.
+  const out: Record<string, WrongNote> = { ...a };
+  for (const [k, nb] of Object.entries(b ?? {})) {
+    const na = out[k];
+    if (!na) {
+      out[k] = nb;
+      continue;
+    }
+    const newer = nb.ts >= na.ts ? nb : na;
+    out[k] = { ...newer, wrongCount: Math.max(na.wrongCount, nb.wrongCount) };
+  }
+  return out;
+}
+
 /** 서버 행을 로컬 상태에 병합한 패치를 만든다(기기 설정 필드는 건드리지 않음). */
 function mergeIntoLocal(local: Readonly<AppState>, row: ProgressRow): Partial<AppState> {
   // 스트릭: 더 최근에 공부한 쪽이 진실. 같은 날이면 큰 쪽(둘 다 이어온 기록).
@@ -102,6 +119,7 @@ function mergeIntoLocal(local: Readonly<AppState>, row: ProgressRow): Partial<Ap
     lessons: mergeLessons(local.lessons, row.lessons),
     exams: mergeExams(local.exams ?? {}, row.exams),
     minigame: mergeMinigame(local.minigame ?? {}, row.minigame),
+    wrongNotes: mergeWrongNotes(local.wrongNotes ?? {}, row.wrong_notes ?? {}),
   };
 }
 

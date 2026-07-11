@@ -4,6 +4,7 @@
 import { el } from "../../core/dom";
 import { icon } from "../../core/icons";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { recordWrongNote, resolveWrongNote } from "../../core/store";
 import type { StepAPI, StepRenderer } from "../types";
 
 interface QuizStep {
@@ -43,7 +44,37 @@ export const quiz: StepRenderer = (host, step, api) => {
   return renderChoice(host, q, api, mode);
 };
 
+/** q 텍스트 해시 — 오답노트 키(스텝엔 id가 없어 문항 텍스트로 안정 키를 만든다). */
+function qhash(s: string): string {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+  return (h >>> 0).toString(36);
+}
+
+/** 오답노트 수집 — 틀리면 스냅샷 기록, (복습에서) 다시 맞히면 극복 처리. */
+function noteWrong(api: StepAPI, good: boolean, q: QuizStep): void {
+  const key = `l:${api.lesson.id}:${qhash(q.prompt)}`;
+  if (good) {
+    resolveWrongNote(key);
+    return;
+  }
+  const mode = q.mode ?? "mcq";
+  recordWrongNote({
+    key,
+    kind: "lesson",
+    srcId: api.lesson.id,
+    lessonId: api.lesson.id,
+    type: mode,
+    q: q.prompt,
+    opts: mode === "ox" ? ["O", "X"] : q.options,
+    answer: mode === "ox" ? [q.answer === true ? 0 : 1] : Array.isArray(q.answer) ? q.answer : [q.answer as number],
+    explain: q.explainBad ?? q.explainGood,
+    hasFigure: !!q.figure,
+  });
+}
+
 function feedback(api: StepAPI, good: boolean, q: QuizStep): void {
+  noteWrong(api, good, q);
   api.recordQuiz(good);
   window.setTimeout(() => {
     api.openSheet({

@@ -826,3 +826,16 @@ src/
   로그아웃해도 기기의 학습 기록은 지우지 않는다(무로그인 정책과 동일한 결).
 - 리더보드·랭킹은 후속 기능: 채점이 전부 클라이언트라 **서버 검증 설계 전에는 붙이지 않는다**
   (검토 모드 7연타가 공식 우회로인 것도 함께 해결할 것). profiles.nickname 컬럼은 그때 쓴다.
+
+## 오답노트 (2026-07 구축)
+- **데이터**: store.wrongNotes(Record<key, WrongNote>) — 채점 순간의 **문항 스냅샷**(q·보기·정답·해설)이라
+  콘텐츠가 바뀌어도 스스로 렌더된다. 키 = 레슨 `l:<lessonId>:<q해시>`(스텝에 id가 없어 프롬프트 djb2 해시) /
+  시험 `e:<examId>:<문항id>`. 상한 200(극복→오래된 순 정리). 동기화는 progress.wrong_notes jsonb
+  (병합: 최근 ts가 상태 대표, wrongCount는 max).
+- **수집 훅은 두 곳뿐**: quiz.ts feedback()(레슨 — 그 외 능동형 스텝(order·binSort·hotspot)은 미수집)과
+  exam.ts grade()(시험). **같은 문항을 다시 맞히면 자동 극복**(resolveWrongNote) — 레슨 재플레이·시험
+  재응시가 곧 복습이 되는 구조.
+- **UI**: 마이페이지(로그인 화면)의 .nb-entry 카드 → screens/notebook.ts. 다시 풀기: mcq/ox 탭 즉시
+  채점·multi 선택+확인·num/word는 정답 열람+자기 확인. 그림 문항은 스냅샷에 그림이 없어 "그림 문제" 칩
+  +원문 복습 안내. 맞히면 극복(초록·극복 섹션으로), 틀리면 해설 공개+횟수 누적. 비로그인도 동작(기기 저장).
+- QA: `PORT=<포트> node qa/e2e-notebook.mjs` — 시험 오답 수집→목록→극복→재오답→레슨 훅→빈 상태 21검증.

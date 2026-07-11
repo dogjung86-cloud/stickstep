@@ -10,6 +10,7 @@ import { splashScreen } from "./screens/splash";
 import { onboardingScreen } from "./screens/onboarding";
 import { subjectScreen } from "./screens/subject";
 import { loginScreen } from "./screens/login";
+import { notebookScreen } from "./screens/notebook";
 import { homeScreen } from "./screens/home";
 import { doneScreen } from "./screens/done";
 import { minigameScreen } from "./screens/minigame";
@@ -72,7 +73,11 @@ function pickSubject(s: "sci" | "math"): void {
 }
 
 function openLogin(): void {
-  nav.go(loginScreen(() => nav.back()));
+  nav.go(
+    loginScreen(() => nav.back(), {
+      onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson)),
+    }),
+  );
 }
 
 function openGame(unitId: string): void {

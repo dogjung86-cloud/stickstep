@@ -25,8 +25,10 @@ create table if not exists public.progress (
   lessons jsonb not null default '{}'::jsonb, -- Record<lessonId, {done,acc,bestXp}>
   exams jsonb not null default '{}'::jsonb, -- Record<examId, {attempts,best,conquered}>
   minigame jsonb not null default '{}'::jsonb, -- Record<gameId, bestScore>
+  wrong_notes jsonb not null default '{}'::jsonb, -- Record<key, WrongNote> 오답노트(store.ts 참조)
   updated_at timestamptz not null default now()
 );
+-- 기존 배포 프로젝트에 적용할 때: alter table public.progress add column if not exists wrong_notes jsonb not null default '{}'::jsonb;
 
 -- ── RLS: 본인 행만 읽고 쓴다 ───────────────────────────────────────────
 alter table public.profiles enable row level security;

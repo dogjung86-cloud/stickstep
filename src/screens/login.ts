@@ -6,7 +6,7 @@ import { el } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { stickAvatar } from "../ui/avatar";
-import { getState, currentStreak } from "../core/store";
+import { getState, currentStreak, wrongNoteCount } from "../core/store";
 import type { Screen } from "../core/router";
 import { consumeAuthError, currentUser, isAuthConfigured, onAuthChange, signInWith, signOut } from "../core/auth";
 import type { AuthUser, OAuthProvider } from "../core/auth";
@@ -44,7 +44,7 @@ function avatarEl(u: AuthUser): HTMLElement {
   return host;
 }
 
-export function loginScreen(onClose: () => void): Screen {
+export function loginScreen(onClose: () => void, extras?: { onOpenNotebook?: () => void }): Screen {
   let offAuth: (() => void) | null = null;
   const unsub = (): void => {
     offAuth?.();
@@ -85,6 +85,26 @@ export function loginScreen(onClose: () => void): Screen {
     return b;
   };
 
+  /** 오답노트 진입 카드 — 로그인 여부와 무관(기록은 기기 우선이라 비로그인도 쌓인다). */
+  const notebookCard = (): HTMLElement | null => {
+    if (!extras?.onOpenNotebook) return null;
+    const { open, overcome } = wrongNoteCount();
+    const label = open > 0 ? `${open}문제 대기 중` : overcome > 0 ? "전부 극복" : "아직 비어 있어요";
+    const c = el(
+      "button",
+      { class: "nb-entry" },
+      el("span", { class: "nb-entry-ic", html: icon("bulb", 18) }),
+      el("span", { class: "nb-entry-t", text: "오답노트" }),
+      el("span", { class: "nb-entry-n", text: label }),
+      el("span", { class: "nb-entry-go", html: icon("chevron", 16) }),
+    );
+    c.addEventListener("click", () => {
+      haptic(HAPTIC.tap);
+      extras.onOpenNotebook?.();
+    });
+    return c;
+  };
+
   const startOAuth = (provider: OAuthProvider, label: string): void => {
     if (busy) return;
     busy = true;
@@ -120,6 +140,8 @@ export function loginScreen(onClose: () => void): Screen {
     const note = el("div", { class: "login-note", text: "로그인 없이도 모든 학습을 할 수 있어요. 기록은 이 기기에 안전하게 저장돼요." });
     const ver = el("div", { class: "login-note", text: BUILD_TAG });
     body.replaceChildren(hero, buttons, note, ver);
+    const nb = notebookCard();
+    if (nb) body.insertBefore(nb, note);
 
     const later = el("button", { class: "btn-ghost", text: "나중에 할게요" });
     later.addEventListener("click", () => {
@@ -156,6 +178,8 @@ export function loginScreen(onClose: () => void): Screen {
     const note = el("div", { class: "login-note", text: "학습 기록이 자동으로 저장·동기화돼요. 다른 기기에서 같은 계정으로 로그인하면 기록이 이어져요." });
     const ver = el("div", { class: "login-note", text: BUILD_TAG });
     body.replaceChildren(hero, stats, note, ver);
+    const nb = notebookCard();
+    if (nb) body.insertBefore(nb, note);
 
     const out = el("button", { class: "btn-ghost", text: "로그아웃" });
     out.addEventListener("click", () => {

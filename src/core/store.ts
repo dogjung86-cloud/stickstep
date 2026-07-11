@@ -13,6 +13,25 @@ export interface ExamRecord {
   conquered: boolean; // 단원 100% 정복 상태로 응시해 얻은 인증 배지
 }
 
+/** 오답노트 한 항목 — 채점 순간의 문항 스냅샷(콘텐츠가 수정·삭제돼도 노트는 스스로 렌더 가능). */
+export interface WrongNote {
+  key: string; // "l:<lessonId>:<q해시>"(레슨 퀴즈) | "e:<examId>:<문항id>"(단원 평가)
+  kind: "lesson" | "exam";
+  srcId: string; // lessonId | examId
+  lessonId: string; // "레슨 복습하기" 바로가기의 근거(시험 문항도 lessonId를 가짐)
+  type: "mcq" | "ox" | "multi" | "num" | "word";
+  q: string; // 문항 프롬프트(HTML 허용)
+  bogi?: string[]; // ㄱㄴㄷ 보기 상자(합답형)
+  opts?: string[]; // 보기 텍스트(mcq/multi, ox는 ["O","X"])
+  answer: number[] | string; // 정답 — 저작 인덱스 배열(mcq/ox/multi) 또는 정규화 문자열(num/word)
+  explain?: string; // 해설 HTML(리뷰용)
+  core?: string; // 핵심 한 줄(시험 문항)
+  hasFigure: boolean; // 그림 문항 — 스냅샷에 그림은 없으니 원문 복습을 안내
+  wrongCount: number;
+  overcome: boolean; // 다시 풀어 맞힘(또는 스스로 확인)
+  ts: number; // 마지막 갱신 시각
+}
+
 export interface AppState {
   version: number;
   onboarded: boolean;
@@ -28,6 +47,7 @@ export interface AppState {
   lessons: Record<string, LessonProgress>;
   minigame: Record<string, number>; // gameId -> 최고 점수
   exams: Record<string, ExamRecord>; // examId -> 단원 종합 평가 기록
+  wrongNotes: Record<string, WrongNote>; // key -> 오답노트(마이페이지에서 복습)
 }
 
 const KEY = "science-app.v1";
@@ -47,6 +67,7 @@ const DEFAULT_STATE: AppState = {
   lessons: {},
   minigame: {},
   exams: {},
+  wrongNotes: {},
 };
 
 function dayKey(d = new Date()): string {
@@ -247,6 +268,57 @@ export function submitScore(gameId: string, score: number): boolean {
 export function resetAll(): void {
   state = structuredClone(DEFAULT_STATE);
   save();
+}
+
+// ── 오답노트 ────────────────────────────────────────────────
+const WRONG_NOTE_CAP = 200; // 저장 상한 — 넘치면 극복한 것 → 오래된 것 순으로 정리
+
+export function wrongNoteList(): WrongNote[] {
+  return Object.values(state.wrongNotes ?? {});
+}
+
+export function wrongNoteCount(): { open: number; overcome: number } {
+  let open = 0;
+  let overcome = 0;
+  for (const n of wrongNoteList()) {
+    if (n.overcome) overcome += 1;
+    else open += 1;
+  }
+  return { open, overcome };
+}
+
+/** 오답 기록(채점 지점에서 호출) — 같은 문항을 또 틀리면 횟수만 쌓이고 극복이 풀린다. */
+export function recordWrongNote(data: Omit<WrongNote, "wrongCount" | "overcome" | "ts">): void {
+  if (!state.wrongNotes) state.wrongNotes = {};
+  const prev = state.wrongNotes[data.key];
+  state.wrongNotes[data.key] = {
+    ...data,
+    wrongCount: (prev?.wrongCount ?? 0) + 1,
+    overcome: false,
+    ts: Date.now(),
+  };
+  capWrongNotes();
+  save();
+}
+
+/** 같은 문항을 다시 맞혔을 때 — 노트가 있으면 극복 처리(없으면 조용히 무시). */
+export function resolveWrongNote(key: string): boolean {
+  const n = state.wrongNotes?.[key];
+  if (!n || n.overcome) return false;
+  n.overcome = true;
+  n.ts = Date.now();
+  save();
+  return true;
+}
+
+function capWrongNotes(): void {
+  const keys = Object.keys(state.wrongNotes);
+  if (keys.length <= WRONG_NOTE_CAP) return;
+  const sorted = wrongNoteList().sort((a, b) => {
+    if (a.overcome !== b.overcome) return a.overcome ? -1 : 1; // 극복한 것부터 정리
+    return a.ts - b.ts; // 그다음 오래된 것부터
+  });
+  for (const n of sorted.slice(0, keys.length - WRONG_NOTE_CAP)) delete state.wrongNotes[n.key];
 }
 
 // ── 동기화 훅(core/sync.ts 전용) ─────────────────────────────

@@ -9,7 +9,7 @@ import { examForUnit, drawExamItems } from "../content/exams";
 import type { ExamDef, ExamItem } from "../content/exams";
 import { findUnit, unitProgress, findLesson } from "../content/curriculum";
 import type { Unit } from "../content/curriculum";
-import { examRecordOf, isExamRetakeLocked, recordExamResult } from "../core/store";
+import { examRecordOf, isExamRetakeLocked, recordExamResult, recordWrongNote, resolveWrongNote } from "../core/store";
 import type { Screen } from "../core/router";
 
 interface SessionQ {
@@ -378,6 +378,29 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
       ),
     );
     for (const q of session) q.good = isCorrect(q);
+    // 오답노트 수집 — 틀린 문항은 스냅샷 기록, 맞힌 문항은 (예전에 틀린 적 있으면) 극복 처리
+    for (const q of session) {
+      const it = q.item;
+      const key = `e:${def.id}:${it.id}`;
+      if (q.good) {
+        resolveWrongNote(key);
+        continue;
+      }
+      recordWrongNote({
+        key,
+        kind: "exam",
+        srcId: def.id,
+        lessonId: it.lessonId,
+        type: it.type,
+        q: it.prompt,
+        bogi: it.bogi,
+        opts: it.options,
+        answer: Array.isArray(it.answer) ? it.answer : typeof it.answer === "number" ? [it.answer] : String(it.answer),
+        explain: it.explain,
+        core: it.core,
+        hasFigure: !!it.figure,
+      });
+    }
     const correct = session.filter((q) => q.good).length;
     const score = Math.round((correct / session.length) * 100);
     const conqueredNow = unitProgress(unit) === 100;
