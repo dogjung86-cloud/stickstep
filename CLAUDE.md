@@ -608,7 +608,7 @@ src/
 - `comic` 스텝 = 스틱맨 쌤이 과학사 이야기를 만화 컷으로 들려주며 개념을 가르침. 하단 CTA로 컷을 한 장씩
   넘기다가 마지막 컷에서 다음 단계로. 각 컷: stage 배지 + 제목 + 이미지 + 캡션(+ 용어 카드).
 - **컷 이미지는 raster(Imagen 발주), SVG 아님.** 이미지 없거나 로드 실패 시 `figures.stickman()` SVG로 우아하게 폴백.
-  경로: `public/comics/<lesson>/<n>.png`, 렌더러가 `import.meta.env.BASE_URL` 접두.
+  경로: `public/comics/<lesson>/<n>.webp`, 렌더러가 `import.meta.env.BASE_URL` 접두.
 - 컷 전환은 rAF 아닌 reflow 기반(헤드리스에서도 항상 보이게). 스틱맨 캐릭터는 `stickman()`/`stickmanHead()`.
 
 ## 만화 컷 이미지 발주 (codex auth → ChatGPT 이미지 생성)
@@ -634,6 +634,9 @@ src/
   `qa/u4l6_imagen_prompts.txt`, 저장 `public/comics/u4l3/` `u4l6/`. 백그라운드 bash로 2편 연속 발주 검증됨.
 - 스타일(검증됨): 손그림 스틱맨(흑선 + teal 강조 하나), **이미지 안 글자 금지**(자막은 앱 UI), 캐릭터 일관.
   gpt-image가 이 스타일을 잘 뽑음(글자 없고, AI-glossy 아님). 저장 경로 `public/comics/u1l1/0..6.png`.
+- **발주 후 반드시 `node qa/process-comics.mjs`로 webp 변환**(비율 유지 960·q0.9, 원본 png 삭제) —
+  발주 원본(컷당 0.8~3MB)이 미변환으로 쌓여 comics만 98MB가 됐던 실사고의 재발 방지(2026-07 일괄 변환,
+  97.5MB→4.8MB). 콘텐츠 `img` 경로는 `.webp`로 저작한다(avatar/는 스플래시 폴백 png 유지 — 변환 제외).
 
 ## 3D 우주 랩 (대단원 VII — three.js)
 - 위상·일식처럼 **빛의 명암과 3차원 정렬이 개념 그 자체**인 주제만 three.js를 쓴다(장식용 3D 금지).
@@ -832,7 +835,7 @@ src/
   탭 = 태양계·은하 중심(**중심 탭 → 은하수 파노라마 카드** — "안에서 중심 방향을 보면"의 위치 논리),
   지름 10만·중심~태양 3만 광년 라벨을 씬에 상시 표기. **가로 랩 leave()는 반드시 rot.dispose()까지** —
   onLeave 콜백은 오버레이를 제거하지 않아, 빠뜨리면 fixed 오버레이가 남아 이후 모든 터치를 가로챈다(실사고).
-- **comic panels의 img는 상대 경로만**("comics/g2u8l7/0.png") — 렌더러가 BASE를 붙인다. spot.photo와
+- **comic panels의 img는 상대 경로만**("comics/g2u8l7/0.webp") — 렌더러가 BASE를 붙인다. spot.photo와
   같은 이중 접두 함정(만화가 전부 폴백 스틱맨으로 보인 실사고). concept term의 icon은 **core/icons.ts에
   있는 키만**(cloud는 이번에 추가) — 없는 키는 조용히 빈 아이콘이 된다.
 - starLight3d 카메라는 +x쪽으로 비튼 dir(0.62,0.4,1) — 정측면이면 격자 "면"이 안 보여 몇 칸 덮는지
