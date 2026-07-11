@@ -1,0 +1,34 @@
+스타일 블록 A (모든 프롬프트 앞에 붙일 공통 스타일):
+Photorealistic photograph, natural lighting, shallow depth of field, clean composition, single clear subject.
+ABSOLUTELY NO text, NO numbers, NO letters, NO logos, NO watermarks anywhere in the image.
+No people, no hands, no faces, no human body parts. Square 1:1 aspect ratio. High detail, realistic textures.
+
+[0] file=public/exam/g2u1/metal-scale.png
+A science lab tabletop scene: a small shiny silver metal block sitting on the weighing plate of a plain white digital laboratory scale whose display panel is completely blank and dark (no digits), and next to it a tall glass graduated cylinder filled with clear water. Clean bright laboratory background, soft daylight. The cylinder has only faint unmarked ticks, no printed numbers.
+
+[1] file=public/exam/g2u1/iceberg.png
+A large white-blue iceberg floating in calm dark arctic sea water, most of its huge body visible underwater below the surface line through the clear water, only a small tip above the waterline, cold overcast polar light, dramatic split view half above and half below the water surface.
+
+[2] file=public/exam/g2u1/hotair-balloon.png
+A single colorful hot-air balloon rising into a clear blue morning sky, the burner flame visibly firing hot air up into the huge round envelope, seen from below at a distance so the basket appears tiny and empty, soft clouds far away. Plain color panels on the balloon with no letters or logos.
+
+[3] file=public/exam/g2u1/aquarium-stone.png
+Close-up inside a clean freshwater home aquarium: a small air stone on the gravel bottom releasing a dense column of tiny air bubbles rising through the clear water toward the surface, green water plants softly blurred behind, bright aquarium lighting, no fish visible.
+
+[4] file=public/exam/g2u1/pot-stone.png
+A camping scene at a high rocky mountain summit: a small stainless steel camping pot on a compact portable gas stove, with a heavy flat gray stone placed on top of the pot lid pressing it down, faint steam escaping from under the lid, vast hazy mountain ridges far below in the background, bright clear high-altitude sunlight.
+
+[5] file=public/exam/g2u1/egg-sink.png
+A clear glass beaker filled with plain transparent water on a bright kitchen counter, a single brown chicken egg resting at the very bottom of the beaker, fully sunk, clean white background, soft window light. The beaker glass is plain with no printed scale.
+
+[6] file=public/exam/g2u1/egg-float.png
+A clear glass beaker filled with transparent water on a bright kitchen counter, a single brown chicken egg floating up near the water surface with its top slightly poking above the waterline, a small heap of white salt crystals and a teaspoon lying beside the beaker on the counter, clean white background, soft window light. The beaker glass is plain with no printed scale.
+
+[7] file=public/exam/g2u1/gold-pan.png
+A wide shallow dark metal gold-panning dish held at the edge of a clear mountain stream, wet gray sand and gravel spread thin inside the pan with a few tiny bright gold flakes glinting among the dark heavy sand at the bottom edge, sparkling river water and smooth stones blurred in the background, warm afternoon light.
+
+[8] file=public/exam/g2u1/salt-pond.png
+A wide view of coastal solar salt evaporation ponds at golden late afternoon: shallow rectangular fields of seawater divided by low earthen banks, white salt crystals piled in small bright heaps on the drying pond floor where the water has evaporated, a traditional wooden rake leaning against a bank, glowing reflections on the shallow brine.
+
+[9] file=public/exam/g2u1/soju-still.png
+A traditional Korean distillation still called sojutgori in a rustic hanok kitchen: a two-tiered rounded earthenware clay pot with a narrow waist, a small spout tube sticking out from its middle side dripping clear liquid into a small white porcelain bowl below, gentle steam rising, a low wood fire glowing under the pot, warm rustic lighting, aged clay texture.

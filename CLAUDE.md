@@ -231,6 +231,22 @@ src/
   "속 기체↓ → 대기압이 민다"로 서술(입자 수 변화 상황과 법칙 혼동 방지). 그림 눈검수는
   `PORT=<포트> node qa/shot-exam-figs-u6.mjs`. QA: `PORT=<포트> node qa/e2e-exam-u6.mjs`(47검증 —
   다섯 파트 문구·4×5 균형 추출·사진 8장 로드 포함).
+- **g2u1(물질의 특성) 150문항 — 첫 중2 트랙 시험(9레슨 증량 풀)**: 분포 17×6+16×3, 유형은 u3 규격
+  스케일 113(mcq+multi)/18(num)/19(word), pick 20 → 2×7+3×2 균형(전부 자동). 그림은 chemFigures 재사용
+  (solCurves3Fig·waterSaltBoilFig·crudeTowerFig — 레슨 퀴즈와 각도 교체 필수) + examFigures g2u1 섹션
+  파라미터형 6종(chemSolCurveExamFig 곡선·chemMassVolExamFig 원점 직선·chemBoilCurvesFig·chemColumnFig
+  층 기둥·chemFunnelABFig·chemDistillApparatusFig). 사진 10장(public/exam/g2u1 — 저울 표시창 빈 패널,
+  달걀 가라앉음/뜸 xpair 쌍, 소줏고리·염전·사금 접시 등). 새로 확립된 관행: ① **프리미엄 레슨(L4+)의
+  리뷰 "레슨 복습하기"는 페이월로 라우팅되는 게 정상** — 무료 응시 e2e는 오답을 무료 레슨 구간(시험지
+  앞쪽)에 배치해 레슨 점프를 검증한다(playExam이 pattern 콜백 지원). ② e2e의 num 소수 정답은 넘패드
+  소수점 키 라벨이 "·"(mathKit)라 "." → "·" 매핑 필수. ③ **공용 그림 킷의 aria-label도 시험 문항의
+  정오 단서가 되면 안 된다**(crudeTowerFig "위로 갈수록 끓는점 낮은" 문구가 합답형 ㄴ의 정오를 유출 →
+  중립 문구로 소급 수정). ④ 가열 곡선에서 '양이 많다' 단서는 기울기 완만 + 평평 구간 김을 세트로
+  그린다(chemBoilCurvesFig plen 파라미터 — 같은 색 곡선의 교차는 구간 '중간'에서 X자로). 검산 감사는
+  레슨 파일당 상위 모델 에이전트 9병렬(정답 재풀이·그림 대조·언어) — 심각 0·경미/제안만 수정으로 종결.
+  기계 검사는 `node qa/check-exam-g2u1.mjs`(유형 구성·셔플 위반·해설 길이·word bank 검증 — 부등호
+  "B < C"는 태그 아님에 주의). QA: `PORT=<포트> node qa/e2e-exam-g2u1.mjs`(47검증 — 아홉 파트 문구·
+  2×7+3×2 균형·사진 10장·중2 지도 시딩 viewGrade g2), 그림 눈검수 `qa/shot-exam-figs-g2u1.mjs`.
 - **u7(태양계) 120문항 — 천체 사진 3원칙 확립**: ① 기존 NASA 자산(public/photos/) 재사용이 1순위 —
   풀 파일 로컬 `pimg` 헬퍼(`photos/` 경로, ximg와 동형·lazy 금지). 레슨 hotspot이 쓴 사진이라도 문항
   각도가 새로우면 재사용 OK. ② 위상별 달·붉은 달·별 일주 궤적 같은 "정확한 모습이 채점 기준"인 실사는

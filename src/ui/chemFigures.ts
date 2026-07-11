@@ -252,7 +252,7 @@ export function crudeTowerFig(): string {
       <path d="M0 10 h38 v8 h-38z" fill="#4E5968"/>
       <path d="M4 14 h6 M16 14 h6 M28 14 h6" stroke="#FFD98A" stroke-width="1.8"/>
     </g>`;
-  return `<svg viewBox="0 0 344 260" ${NS} fill="none" role="img" aria-label="원유 증류탑. 아래에서 가열하며 위로 갈수록 끓는점이 낮은 물질이 분리되고, 층마다 쓰임새가 달라요">
+  return `<svg viewBox="0 0 344 260" ${NS} fill="none" role="img" aria-label="원유 증류탑. 아래에서 가열하며 여러 층에서 서로 다른 물질이 분리되고, 층마다 쓰임새가 달라요">
     <ellipse cx="172" cy="248" rx="96" ry="7" fill="#2A3A5E" opacity=".10"/>
     <path d="M126 42h92v186a12 12 0 0 1-12 12h-68a12 12 0 0 1-12-12z" fill="#F4E9D2" stroke="#C9A26A" stroke-width="2.2"/>
     <path d="M126 42a46 18 0 0 1 92 0" fill="#F4E9D2" stroke="#C9A26A" stroke-width="2.2"/>
