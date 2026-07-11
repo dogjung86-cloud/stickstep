@@ -13,7 +13,6 @@ import { loginScreen } from "./screens/login";
 import { notebookScreen } from "./screens/notebook";
 import { homeScreen } from "./screens/home";
 import { doneScreen } from "./screens/done";
-import { landingScreen } from "./screens/landing";
 import { reviewScreen } from "./screens/review";
 import { challengeScreen } from "./screens/challenge";
 import { myScreen } from "./screens/my";
@@ -143,8 +142,8 @@ function start(): void {
     goHome();
     return;
   }
-  // 첫 사용 플로우(2026-07-12 IA): 스플래시 → 랜딩(바로 시작하기/로그인) → 과목 선택 → 학년·목표 온보딩 → 홈.
-  // 프라이머리는 "바로 시작하기"(무로그인 둘러보기) — 가치 먼저, 로그인은 보조 진입이라는 정책 유지.
+  // 첫 사용 플로우(2026-07-12 IA): 스플래시(=랜딩 — 플립북 정착 후 버튼 3개가 나타남) → 과목 선택 →
+  // 학년·목표 온보딩 → 홈. 프라이머리는 "한번 둘러보기"(무로그인) — 가치 먼저, 로그인은 보조.
   const enterOnboarding = (): void => {
     if (getState().onboarded) {
       goHome(); // 랜딩에서 로그인해 서버 기록(onboarded)이 내려온 경우 — 온보딩 생략
@@ -165,23 +164,19 @@ function start(): void {
     );
   };
   nav.go(
-    splashScreen(() =>
-      nav.go(
-        landingScreen({
-          onStart: enterOnboarding,
-          onLogin: () =>
-            nav.go(
-              loginScreen(
-                () => {
-                  if (getState().onboarded) goHome();
-                  else nav.back();
-                },
-                { onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson)) },
-              ),
-            ),
-        }),
-      ),
-    ),
+    splashScreen({
+      onStart: enterOnboarding,
+      onLogin: () =>
+        nav.go(
+          loginScreen(
+            () => {
+              if (getState().onboarded) goHome();
+              else nav.back();
+            },
+            { onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson)) },
+          ),
+        ),
+    }),
   );
 }
 

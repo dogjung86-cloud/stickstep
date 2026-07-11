@@ -1,8 +1,8 @@
-// 스플래시 — 스틱맨 플립북 로딩 v2: "실컷 놀다가 → 공부하자!" 서사.
-// 노는 프레임(먹기·티비·게임·컴퓨터·친구·공놀이·아차, public/brand/loading/0..6.webp)이
-// 타다다닥 1바퀴 돌고, 머리띠("공부하자!")를 질끈 묶는 정착 컷(public/brand/study.webp)에서
-// 탁! 멈추며 워드마크가 떠오른다. 프레임이 없으면 아바타 5종으로 우아하게 폴백.
-// 탭하면 애니메이션을 건너뛰고 바로 완성 상태로.
+// 스플래시 = 랜딩(2026-07-12 통합, 사용자 확정) — 스틱맨 플립북 "실컷 놀다가 → 공부하자!" 서사가
+// 정착 컷에서 탁 멈추면, 워드마크에 이어 하단 버튼 3개(바로 시작하기·로그인·학부모/선생님)가
+// 같은 리듬으로 샥 나타난다. 별도 랜딩 화면을 두지 않는 게 결정 — 이 화면이 첫 관문이다.
+// 프라이머리는 "한번 둘러보기"(무로그인 — 가치 먼저 정책, 문구는 사용자 확정), 로그인은 보조.
+// 프레임이 없으면 아바타 5종으로 폴백, 탭하면 애니메이션 건너뛰고 바로 완성 상태로.
 
 import { el } from "../core/dom";
 import { haptic, HAPTIC } from "../core/haptics";
@@ -26,7 +26,7 @@ const FALLBACK_STUDY = `${base}comics/avatar/4.png`;
 const FRAME_MS = 125; // 타다다닥 속도(서사가 읽히는 최소 호흡)
 const LOOPS = 1;
 
-export function splashScreen(onStart: () => void): Screen {
+export function splashScreen(o: { onStart: () => void; onLogin: () => void }): Screen {
   const img = el("img", { class: "flip-img", attrs: { alt: "", "aria-hidden": "true" } }) as HTMLImageElement;
   const book = el("div", { class: "flipbook" }, img);
   const word = el("div", { class: "wordmark", text: BRAND.name });
@@ -34,13 +34,36 @@ export function splashScreen(onStart: () => void): Screen {
   const note = el("div", { class: "splash-note", text: BRAND.note });
   const mid = el("div", { class: "splash-mid splash-anim" }, book, word, tag, note);
 
-  const startBtn = el("button", { class: "btn", text: "시작하기" }) as HTMLButtonElement;
-  startBtn.disabled = true;
+  const startBtn = el("button", { class: "btn", text: "한번 둘러보기" }) as HTMLButtonElement;
   startBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
-    onStart();
+    o.onStart();
   });
-  const elm = el("section", { class: "screen", attrs: { id: "sc-splash" } }, mid, el("div", { class: "footer" }, startBtn));
+  const loginBtn = el("button", { class: "ld-login", text: "로그인" }) as HTMLButtonElement;
+  loginBtn.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    o.onLogin();
+  });
+  const teacherBtn = el("button", { class: "ld-teacher", text: "학부모·선생님이신가요?" }) as HTMLButtonElement;
+  teacherBtn.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    snack("선생님·학부모 공간은 준비 중이에요 — 곧 열려요");
+  });
+  const buttons = [startBtn, loginBtn, teacherBtn];
+  for (const b of buttons) b.disabled = true; // 정착(settle) 때 함께 열린다
+
+  const foot = el("div", { class: "footer splash-foot" }, startBtn, loginBtn, teacherBtn);
+  const elm = el("section", { class: "screen", attrs: { id: "sc-splash" } }, mid, foot);
+
+  let snackTimer = 0;
+  const snackEl = el("div", { class: "snack" });
+  elm.appendChild(snackEl);
+  function snack(msg: string): void {
+    snackEl.textContent = msg;
+    snackEl.classList.add("show");
+    window.clearTimeout(snackTimer);
+    snackTimer = window.setTimeout(() => snackEl.classList.remove("show"), 2000);
+  }
 
   // ---- 프레임 프리로드(발주본 → 폴백) ----
   let frames = FLIP_FRAMES;
@@ -69,8 +92,9 @@ export function splashScreen(onStart: () => void): Screen {
     img.src = study;
     book.classList.add("settled");
     mid.classList.add("done");
+    foot.classList.add("done"); // 버튼 3개가 워드마크에 이어 샥 나타난다
     haptic(HAPTIC.ctaUnlock);
-    startBtn.disabled = false;
+    for (const b of buttons) b.disabled = false;
   }
 
   function play(): void {
@@ -96,8 +120,9 @@ export function splashScreen(onStart: () => void): Screen {
         // 이미지가 전혀 없으면 애니메이션 없이 바로 완성 상태
         book.classList.add("noart");
         mid.classList.add("done");
+        foot.classList.add("done");
         settled = true;
-        startBtn.disabled = false;
+        for (const b of buttons) b.disabled = false;
         return;
       }
       frames = FALLBACK_FRAMES;
