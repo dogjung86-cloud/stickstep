@@ -1542,3 +1542,323 @@ export function geoCoastFitFig(): string {
     <text x="252" y="182" text-anchor="middle" font-size="11.5" font-weight="800" fill="#8E6A24">(나)</text>
   </svg>`;
 }
+
+// ── g2u3(빛과 파동) 시험 전용 ──────────────────────────────
+// 규칙 계승: 값 읽기 정답 수치는 aria-label 금지(그림 속 조건 값 서술은 동등 접근이라 허용),
+// 경로 후보는 전부 같은 색(색이 단서 금지), 라벨형 그림은 정답을 첫 칸에 두지 않게 그림 단계에서 설계.
+// 광학 기하는 정확한 계산으로(반사=미러링, 물→공기 굴절=법선에서 멀어짐 — 눈대중 좌표 금지).
+// 수치 앵커(레슨 35°·42°·12cm·파장 2m·진폭 20cm·주기 0.5s·50Hz 회피): 시험은 25°·40°·65°·
+// 3칸·파장 4m·진폭 15·30cm·주기 0.4s·40Hz 계열로 세팅.
+
+/** 광선 위 진행 방향 화살촉(V자) — lightFigures.rayArrow와 같은 문법(시험 그림 로컬판). */
+function lray(x1: number, y1: number, x2: number, y2: number, t: number, color: string, len = 9): string {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const n = Math.hypot(dx, dy) || 1;
+  const ux = dx / n;
+  const uy = dy / n;
+  const ax = x1 + dx * t;
+  const ay = y1 + dy * t;
+  const wing = (sign: number): [number, number] => {
+    const cos = Math.cos(0.45);
+    const sin = Math.sin(0.45) * sign;
+    const wx = -ux * cos + uy * sin;
+    const wy = -ux * sin - uy * cos;
+    return [ax + wx * len, ay + wy * len];
+  };
+  const [w1x, w1y] = wing(1);
+  const [w2x, w2y] = wing(-1);
+  return `<path d="M${w1x.toFixed(1)} ${w1y.toFixed(1)}L${ax.toFixed(1)} ${ay.toFixed(1)}L${w2x.toFixed(1)} ${w2y.toFixed(1)}" stroke="${color}" stroke-width="2.6" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
+}
+
+/** 반사 각도 그림(파라미터형) — 거울 수평, 입사 광선의 각을 거울 면 기준(mirror) 또는
+ *  법선 기준(normal)으로 표시한다. 표시 각은 문항의 조건 값(aria 서술 허용). */
+export function lightAngleExamFig(o: { mark: "mirror" | "normal"; deg: number }): string {
+  const P = { x: 172, y: 150 };
+  const elev = o.mark === "mirror" ? o.deg : 90 - o.deg; // 광선의 거울면 기준 고도각
+  const rad = (elev * Math.PI) / 180;
+  const L = 124;
+  const sx = P.x - Math.cos(rad) * L;
+  const sy = P.y - Math.sin(rad) * L;
+  const rx = P.x + Math.cos(rad) * L;
+  const ry = P.y - Math.sin(rad) * L;
+  const arc =
+    o.mark === "mirror"
+      ? `<path d="M${P.x - 52} 150 A52 52 0 0 1 ${(P.x - Math.cos(rad) * 52).toFixed(1)} ${(P.y - Math.sin(rad) * 52).toFixed(1)}" stroke="#E8961E" stroke-width="2.4" fill="none"/>
+         <text x="${P.x - 88}" y="136" font-size="13" font-weight="800" fill="#B26A00">${o.deg}°</text>`
+      : `<path d="M${P.x} ${P.y - 54} A54 54 0 0 0 ${(P.x - Math.cos(rad) * 54).toFixed(1)} ${(P.y - Math.sin(rad) * 54).toFixed(1)}" stroke="#E8961E" stroke-width="2.4" fill="none"/>
+         <text x="${P.x - 40}" y="${P.y - 62}" font-size="13" font-weight="800" fill="#B26A00">${o.deg}°</text>`;
+  return `<svg viewBox="0 0 344 196" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="수평으로 놓인 거울에 빛이 비스듬히 들어와 반사되는 그림. 들어오는 빛이 ${o.mark === "mirror" ? "거울 면" : "법선"}과 이루는 각이 ${o.deg}도로 표시되어 있어요">
+    <line x1="30" y1="150" x2="314" y2="150" stroke="#5E6B7E" stroke-width="3.4"/>
+    ${Array.from({ length: 14 }, (_, i) => `<line x1="${44 + i * 20}" y1="150" x2="${36 + i * 20}" y2="162" stroke="#B0B8C1" stroke-width="1.6"/>`).join("")}
+    <line x1="${P.x}" y1="150" x2="${P.x}" y2="34" stroke="#8B95A1" stroke-width="1.8" stroke-dasharray="6 6"/>
+    <text x="${P.x + 8}" y="30" font-size="11.5" fill="#8B95A1">법선</text>
+    ${arc}
+    <path d="M${sx.toFixed(1)} ${sy.toFixed(1)}L${P.x} ${P.y}" stroke="#4E5968" stroke-width="3" stroke-linecap="round"/>
+    <path d="M${P.x} ${P.y}L${rx.toFixed(1)} ${ry.toFixed(1)}" stroke="#4E5968" stroke-width="3" stroke-linecap="round"/>
+    ${lray(sx, sy, P.x, P.y, 0.55, "#4E5968")}
+    ${lray(P.x, P.y, rx, ry, 0.55, "#4E5968")}
+    <text x="${(sx - 6).toFixed(1)}" y="${(sy - 8).toFixed(1)}" font-size="11.5" fill="#4E5968">빛</text>
+    <text x="292" y="176" font-size="11.5" fill="#8B95A1">거울</text>
+  </svg>`;
+}
+
+/** 반원 각도기 반사 실험 장치(파라미터형) — 법선이 0°, 거울 면 쪽이 90°(10° 간격 눈금).
+ *  입사 광선이 눈금 inc°를 가리킨다(조건 값 — aria 서술 허용). 반사각 읽기 문항용. */
+export function lightProtractorFig(o: { inc: number }): string {
+  const C = { x: 172, y: 152 };
+  const R = 112;
+  let ticks = "";
+  for (let a = -90; a <= 90; a += 10) {
+    const rad = (a * Math.PI) / 180;
+    const inner = Math.abs(a) % 30 === 0 ? R - 14 : R - 8;
+    ticks += `<line x1="${(C.x + Math.sin(rad) * inner).toFixed(1)}" y1="${(C.y - Math.cos(rad) * inner).toFixed(1)}" x2="${(C.x + Math.sin(rad) * R).toFixed(1)}" y2="${(C.y - Math.cos(rad) * R).toFixed(1)}" stroke="#8B95A1" stroke-width="${Math.abs(a) % 30 === 0 ? 1.8 : 1.1}"/>`;
+    if (Math.abs(a) % 30 === 0) {
+      const tx = C.x + Math.sin(rad) * (R - 26);
+      const ty = C.y - Math.cos(rad) * (R - 26);
+      ticks += `<text x="${tx.toFixed(1)}" y="${(ty + 4).toFixed(1)}" text-anchor="middle" font-size="10" fill="#6B7684">${Math.abs(a)}</text>`;
+    }
+  }
+  const rad = (o.inc * Math.PI) / 180;
+  const bx = C.x - Math.sin(rad) * (R + 16);
+  const by = C.y - Math.cos(rad) * (R + 16);
+  const ex = C.x + Math.sin(rad) * (R + 16);
+  const ey = C.y - Math.cos(rad) * (R + 16);
+  return `<svg viewBox="0 0 344 210" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="반원 각도기의 중심에 거울이 수평으로 놓인 반사 실험 장치. 각도기 눈금은 법선 방향이 0도, 거울 면 쪽이 90도예요. 왼쪽 광원 장치에서 나온 빛이 눈금 ${o.inc}도를 따라 거울 중심에 들어와 오른쪽으로 반사되어 나가요">
+    <path d="M${C.x - R} ${C.y} A${R} ${R} 0 0 1 ${C.x + R} ${C.y}" fill="#F7F9FC" stroke="#B0B8C1" stroke-width="2"/>
+    ${ticks}
+    <line x1="${C.x}" y1="${C.y}" x2="${C.x}" y2="${C.y - R + 2}" stroke="#8B95A1" stroke-width="1.6" stroke-dasharray="5 5"/>
+    <rect x="${C.x - 46}" y="${C.y}" width="92" height="10" rx="2" fill="#DCE3EC" stroke="#5E6B7E" stroke-width="2"/>
+    <path d="M${bx.toFixed(1)} ${by.toFixed(1)}L${C.x} ${C.y}" stroke="#4E5968" stroke-width="3" stroke-linecap="round"/>
+    <path d="M${C.x} ${C.y}L${ex.toFixed(1)} ${ey.toFixed(1)}" stroke="#4E5968" stroke-width="3" stroke-linecap="round"/>
+    ${lray(bx, by, C.x, C.y, 0.5, "#4E5968")}
+    ${lray(C.x, C.y, ex, ey, 0.55, "#4E5968")}
+    <g transform="translate(${(bx - 4).toFixed(1)},${(by - 4).toFixed(1)}) rotate(${o.inc})">
+      <rect x="-30" y="-11" width="30" height="22" rx="5" fill="#5E6B7E"/>
+      <rect x="-2" y="-5" width="6" height="10" rx="2" fill="#37B6D8"/>
+    </g>
+    <text x="296" y="200" font-size="11.5" fill="#8B95A1">거울</text>
+    <text x="46" y="24" font-size="11.5" fill="#8B95A1">광원 장치</text>
+  </svg>`;
+}
+
+/** 물→공기 굴절 경로 고르기(①~⑤, 전부 같은 색) — 물속 30°(법선 기준) 입사.
+ *  ③이 스넬 실제 계산값(sin30×1.33=0.665 → 약 42°, 법선에서 멀어짐), ②는 직진 함정,
+ *  ①은 법선 쪽(공기→물 방향과 혼동) 함정, ④는 수면에 붙는 극단, ⑤는 반사 함정. 정답 ③(첫 칸 금지 설계). */
+export function lightRefractUpFig(): string {
+  const P = { x: 172, y: 100 };
+  const cands: [string, number, number, number, number][] = [
+    ["①", 200, 14, 0, -4],
+    ["②", 222, 14, 8, -4],
+    ["③", 249, 14, 10, -2],
+    ["④", 312, 49, 10, 6],
+    ["⑤", 221, 184, 8, 14],
+  ];
+  return `<svg viewBox="0 0 344 212" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="물속에서 비스듬히 올라온 빛이 물과 공기의 경계면에 도착한 그림. 경계면을 지난 뒤 빛이 나아갈 경로 후보 다섯 가지가 번호로 표시되어 있어요">
+    <rect x="20" y="100" width="304" height="94" rx="8" fill="#EAF3FE"/>
+    <line x1="20" y1="100" x2="324" y2="100" stroke="#7FB0E0" stroke-width="2.4"/>
+    <text x="30" y="92" font-size="11.5" fill="#8B95A1">공기</text>
+    <text x="30" y="120" font-size="11.5" fill="#5E86B4">물</text>
+    <line x1="${P.x}" y1="16" x2="${P.x}" y2="190" stroke="#B0B8C1" stroke-width="1.6" stroke-dasharray="5 6"/>
+    <path d="M123.5 184L${P.x} ${P.y}" stroke="#4E5968" stroke-width="3.2" stroke-linecap="round"/>
+    ${lray(123.5, 184, P.x, P.y, 0.55, "#4E5968")}
+    ${cands
+      .map(
+        ([lb, x, y, dx, dy]) =>
+          `<path d="M${P.x} ${P.y}L${x} ${y}" stroke="#8B95A1" stroke-width="2" stroke-dasharray="5 5"/>
+           <text x="${x + dx}" y="${y + dy}" text-anchor="middle" font-size="13" font-weight="800" fill="#4E5968">${lb}</text>`,
+      )
+      .join("")}
+  </svg>`;
+}
+
+/** 물체를 보는 경로 그림 — 스탠드(광원)→책 ㉠, 책→눈 ㉡ 화살표. */
+export function lightSeePathFig(): string {
+  return `<svg viewBox="0 0 344 190" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="책상 위 스탠드와 책, 오른쪽 위 사람 눈이 그려져 있어요. 스탠드에서 책으로 가는 화살표에 기호 ㉠, 책에서 눈으로 가는 화살표에 기호 ㉡이 붙어 있어요">
+    <line x1="16" y1="168" x2="328" y2="168" stroke="#B0B8C1" stroke-width="2.4"/>
+    <g>
+      <path d="M56 166v-84" stroke="#5E6B7E" stroke-width="5" stroke-linecap="round"/>
+      <path d="M56 82q30 -14 58 6" stroke="#5E6B7E" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <path d="M100 74l26 22-14 18-26-22z" fill="#3C4654"/>
+      <circle cx="112" cy="94" r="7" fill="#FFD978"/>
+      <rect x="38" y="164" width="36" height="7" rx="3.5" fill="#5E6B7E"/>
+    </g>
+    <g>
+      <path d="M148 168l14-26h44l14 26z" fill="#F9FBFD" stroke="#8B95A1" stroke-width="2"/>
+      <path d="M162 142q22 -8 44 0M184 142v26" stroke="#8B95A1" stroke-width="1.8" fill="none"/>
+    </g>
+    <g stroke="#3C4654" stroke-width="2.2" fill="none">
+      <path d="M282 52q12 -10 28 0q-12 10 -28 0z" fill="#fff"/>
+      <circle cx="296" cy="52" r="4.4" fill="#5E86B4" stroke="none"/>
+      <path d="M284 42l-4 -5M296 40v-6M308 42l4 -5"/>
+    </g>
+    <path d="M118 100L172 136" stroke="#F0A422" stroke-width="2.8"/>
+    ${lray(118, 100, 172, 136, 0.6, "#F0A422")}
+    <path d="M196 134L282 62" stroke="#F0A422" stroke-width="2.8"/>
+    ${lray(196, 134, 282, 62, 0.6, "#F0A422")}
+    <circle cx="138" cy="112" r="11" fill="#FFF" stroke="#E8961E" stroke-width="1.6"/>
+    <text x="138" y="116.5" text-anchor="middle" font-size="12" font-weight="800" fill="#B26A00">㉠</text>
+    <circle cx="244" cy="92" r="11" fill="#FFF" stroke="#E8961E" stroke-width="1.6"/>
+    <text x="244" y="96.5" text-anchor="middle" font-size="12" font-weight="800" fill="#B26A00">㉡</text>
+    <text x="56" y="184" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">스탠드</text>
+    <text x="184" y="184" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">책</text>
+    <text x="296" y="36" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">눈</text>
+  </svg>`;
+}
+
+/** 모눈 평면거울 상 위치 고르기 — 물체는 거울에서 3칸, 후보 ①~⑤(정답 ③ = 거울 뒤 3칸).
+ *  ①1칸·②2칸·③3칸·④4칸·⑤거울 면 위 — 라벨형 그림, 정답 첫 칸 금지 설계. */
+export function lightMirrorGridFig(): string {
+  const cell = 24;
+  let grid = "";
+  for (let c = 0; c <= 12; c++) grid += `<line x1="${28 + c * cell}" y1="24" x2="${28 + c * cell}" y2="192" stroke="#EDF0F4" stroke-width="1.2"/>`;
+  for (let r = 0; r <= 7; r++) grid += `<line x1="28" y1="${24 + r * cell}" x2="316" y2="${24 + r * cell}" stroke="#EDF0F4" stroke-width="1.2"/>`;
+  const cand = (x: number, t: string): string =>
+    `<circle cx="${x}" cy="108" r="10.5" fill="#FFF" stroke="#3182F6" stroke-width="1.6"/><text x="${x}" y="112.5" text-anchor="middle" font-size="11.5" font-weight="800" fill="#1B64DA">${t}</text>`;
+  return `<svg viewBox="0 0 344 216" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="모눈 위에 세로로 선 평면거울과 촛불 모양 물체가 그려져 있어요. 물체는 거울에서 모눈 3칸 떨어져 있고, 상이 생길 위치 후보 다섯 곳에 번호가 붙어 있어요. 번호 1부터 4는 거울 뒤 1칸부터 4칸 위치, 번호 5는 거울 면 위예요">
+    ${grid}
+    <line x1="172" y1="20" x2="172" y2="196" stroke="#5E6B7E" stroke-width="4"/>
+    ${Array.from({ length: 9 }, (_, i) => `<line x1="176" y1="${28 + i * 19}" x2="185" y2="${20 + i * 19}" stroke="#B0B8C1" stroke-width="1.5"/>`).join("")}
+    <g transform="translate(100,108)">
+      <path d="M-7 22h14v-24h-14z" fill="#F5C878" stroke="#C08A3E" stroke-width="1.8"/>
+      <path d="M0 -12q6 7 0 12q-6 -5 0 -12z" fill="#F0A422"/>
+    </g>
+    <path d="M100 138h72" stroke="#8B95A1" stroke-width="1.6" stroke-dasharray="4 4"/>
+    <path d="M100 133v10M172 133v10" stroke="#8B95A1" stroke-width="1.6"/>
+    <text x="136" y="154" text-anchor="middle" font-size="10.5" fill="#6B7684">3칸</text>
+    ${cand(196, "①")}${cand(220, "②")}${cand(244, "③")}${cand(268, "④")}${cand(172, "⑤")}
+    <text x="152" y="16" text-anchor="end" font-size="11" fill="#8B95A1">평면거울</text>
+    <text x="100" y="86" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">물체</text>
+  </svg>`;
+}
+
+/** 화면 확대 화소 그림(파라미터형) — R/G/B 화소의 켜짐/꺼짐을 문항마다 달리 쓴다. */
+export function lightPixelExamFig(o: { on: [boolean, boolean, boolean] }): string {
+  const bars: [string, string][] = [
+    ["#E5322E", "빨간색"],
+    ["#12A84E", "초록색"],
+    ["#3A6CFF", "파란색"],
+  ];
+  const cell = (x: number, y: number): string =>
+    bars.map(([c], k) => `<rect x="${x + k * 26}" y="${y}" width="18" height="52" rx="4" fill="${c}" opacity="${o.on[k] ? 1 : 0.24}"/>`).join("");
+  const onNames = bars.filter((_, k) => o.on[k]).map(([, n]) => n).join("과 ");
+  const offNames = bars.filter((_, k) => !o.on[k]).map(([, n]) => n).join("과 ");
+  return `<svg viewBox="0 0 344 190" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="화면 한 부분을 확대한 모습 — ${onNames} 화소는 켜져 있고 ${offNames} 화소는 꺼져 있어요">
+    <rect x="42" y="16" width="260" height="150" rx="12" fill="#10161F"/>
+    ${[0, 1].flatMap((r) => [0, 2].map((c) => cell(74 + c * 52, 32 + r * 66))).join("")}
+    <rect x="42" y="16" width="260" height="150" rx="12" stroke="#8B95A1" stroke-width="2"/>
+    <text x="52" y="182" font-size="11" fill="#8B95A1">확대한 모습</text>
+  </svg>`;
+}
+
+/** 조명 3색 아래 풍선(파라미터형) — 같은 풍선이 빨강/초록/파랑 조명에서 어떻게 보이는지.
+ *  seen: 각 조명 아래에서 보이는 색(fill·한글 이름) — 조건 값이라 aria 서술 허용. */
+export function lightBalloonFig(o: { seen: { fill: string; name: string }[] }): string {
+  const lampColors = ["#E5322E", "#12A84E", "#3A6CFF"];
+  const lampNames = ["빨간 조명", "초록 조명", "파란 조명"];
+  const one = (i: number): string => {
+    const x = 66 + i * 106;
+    return `<g transform="translate(${x},0)">
+      <circle cx="0" cy="26" r="12" fill="${lampColors[i]}" opacity=".92"/>
+      <path d="M-8 34 L-19 74 M8 34 L19 74" stroke="${lampColors[i]}" stroke-width="1.6" opacity=".4"/>
+      <ellipse cx="0" cy="94" rx="26" ry="32" fill="${o.seen[i].fill}" stroke="#3C4654" stroke-width="1.8"/>
+      <path d="M0 126l-5 8h10z" fill="${o.seen[i].fill}" stroke="#3C4654" stroke-width="1.6"/>
+      <path d="M0 134q-6 14 2 26" stroke="#8B95A1" stroke-width="1.6" fill="none"/>
+      <text x="0" y="178" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">${lampNames[i]}</text>
+    </g>`;
+  };
+  return `<svg viewBox="0 0 344 190" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="같은 풍선에 빨간 조명, 초록 조명, 파란 조명을 하나씩 비춘 모습이에요. 풍선은 차례대로 ${o.seen.map((s) => s.name).join(", ")}으로 보여요">
+    ${[0, 1, 2].map(one).join("")}
+  </svg>`;
+}
+
+/** 파동 그래프(파라미터형) — 가로 거리(m) 또는 시간(초) 축, 세로 변위 축.
+ *  amp·wavelength(가로축 단위 기준)는 반드시 눈금선 위 값으로 세팅한다(num 값 읽기 규칙). */
+export function lightWaveGraphFig(o: {
+  xMax: number;
+  xStep: number;
+  yMax: number;
+  yStep: number;
+  amp: number;
+  wavelength: number;
+  xLabel: string;
+  yLabel: string;
+}): string {
+  const L = 52;
+  const R = 324;
+  const T = 24;
+  const B = 172;
+  const mid = (T + B) / 2;
+  const px = (v: number): number => L + ((R - L) * v) / o.xMax;
+  const py = (v: number): number => mid - (v / o.yMax) * ((B - T) / 2);
+  const fmt = (v: number): string => String(Math.round(v * 1000) / 1000);
+  let grid = "";
+  for (let x = 0; x <= o.xMax + 1e-9; x += o.xStep) {
+    grid += `<line x1="${px(x).toFixed(1)}" y1="${T}" x2="${px(x).toFixed(1)}" y2="${B}" stroke="#EDF0F4" stroke-width="1.1"/>
+      <text x="${px(x).toFixed(1)}" y="${B + 16}" text-anchor="middle" font-size="10" fill="#8B95A1">${fmt(x)}</text>`;
+  }
+  for (let y = -o.yMax; y <= o.yMax + 1e-9; y += o.yStep) {
+    grid += `<line x1="${L}" y1="${py(y).toFixed(1)}" x2="${R}" y2="${py(y).toFixed(1)}" stroke="#EDF0F4" stroke-width="1.1"/>
+      <text x="${L - 6}" y="${(py(y) + 3.5).toFixed(1)}" text-anchor="end" font-size="10" fill="#8B95A1">${fmt(y)}</text>`;
+  }
+  let d = "";
+  for (let x = 0; x <= o.xMax + 1e-9; x += o.xMax / 140) {
+    const y = o.amp * Math.sin((2 * Math.PI * x) / o.wavelength);
+    d += `${d ? "L" : "M"}${px(x).toFixed(1)} ${py(y).toFixed(1)}`;
+  }
+  return `<svg viewBox="0 0 344 206" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="가로축이 ${o.xLabel}, 세로축이 ${o.yLabel}인 파동 그래프예요. 눈금을 따라 값을 읽어 보세요">
+    ${grid}
+    <line x1="${L}" y1="${mid}" x2="${R}" y2="${mid}" stroke="#C4CBD4" stroke-width="1.4"/>
+    <line x1="${L}" y1="${T}" x2="${L}" y2="${B}" stroke="#8B95A1" stroke-width="1.6"/>
+    <path d="${d}" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
+    <text x="10" y="14" font-size="10.5" fill="#4E5968">${o.yLabel}</text>
+    <text x="${R}" y="${B + 32}" text-anchor="end" font-size="10.5" fill="#4E5968">${o.xLabel}</text>
+  </svg>`;
+}
+
+/** 파형 비교 그림(파라미터형) — 같은 시간 동안 기록한 (가)~(라) 파형. 레슨 그림과
+ *  배치를 달리 쓰기 위한 시험판. aria는 중립(모양 서술 금지 — 비교가 곧 문항의 과제). */
+export function lightWave4Fig(o: { cells: { label: string; amp: number; cyc: number }[] }): string {
+  const cell = (x: number, y: number, c: { label: string; amp: number; cyc: number }): string => {
+    let d = "";
+    for (let i = 0; i <= 116; i += 2) {
+      const yy = 40 - Math.sin((i / 116) * Math.PI * 2 * c.cyc) * c.amp;
+      d += `${d ? "L" : "M"}${x + 18 + i} ${(y + yy).toFixed(1)}`;
+    }
+    return `<text x="${x}" y="${y + 12}" font-size="12.5" font-weight="800" fill="#4E5968">${c.label}</text>
+      <line x1="${x + 18}" y1="${y + 40}" x2="${x + 134}" y2="${y + 40}" stroke="#E2E6EC" stroke-width="1.2"/>
+      <path d="${d}" stroke="#5E6B7E" stroke-width="2.2" fill="none"/>`;
+  };
+  return `<svg viewBox="0 0 344 190" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="서로 다른 네 소리를 같은 시간 동안 기록한 파형 네 개예요. 파형의 키와 촘촘함을 비교해 보세요">
+    ${cell(14, 8, o.cells[0])}
+    ${cell(184, 8, o.cells[1])}
+    ${cell(14, 100, o.cells[2])}
+    ${cell(184, 100, o.cells[3])}
+  </svg>`;
+}
+
+/** 팬플루트 관 그림 — 길이가 다른 관 여섯에 ㉠㉡㉢ 기호(marks: 관 인덱스 0=가장 긴 관).
+ *  기호가 붙는 관을 문항마다 달리 쓴다(레슨 실로폰 ㉠긴~㉢짧 배열 회피). */
+export function lightPipesFig(o: { marks: [number, number, number] }): string {
+  const pipe = (i: number): string => {
+    const x = 58 + i * 40;
+    const h = 128 - i * 13;
+    return `<rect x="${x}" y="34" width="26" height="${h}" rx="7" fill="#EAF0F6" stroke="#5E6B7E" stroke-width="2"/>
+      <ellipse cx="${x + 13}" cy="36" rx="9" ry="3.4" fill="#C9D4E0" stroke="#5E6B7E" stroke-width="1.4"/>`;
+  };
+  const symbols = ["㉠", "㉡", "㉢"];
+  const marks = o.marks
+    .map((idx, k) => {
+      const cx = 58 + idx * 40 + 13;
+      const cy = 34 + (128 - idx * 13) - 16;
+      return `<circle cx="${cx}" cy="${cy}" r="10.5" fill="#EEF4FF" stroke="#3182F6" stroke-width="1.6"/>
+        <text x="${cx}" y="${cy + 4.5}" text-anchor="middle" font-size="11" font-weight="800" fill="#1B64DA">${symbols[k]}</text>`;
+    })
+    .join("");
+  // aria는 중립 — 기호가 붙은 관의 길이 서열을 말하지 않는다(길이 비교가 곧 문항의 과제, lightWave4Fig와 동일 문법)
+  return `<svg viewBox="0 0 344 200" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="길이가 서로 다른 관 여섯 개를 나란히 묶은 악기 그림. 세 관에 ㉠, ㉡, ㉢ 기호가 붙어 있어요 — 기호가 붙은 관의 길이를 비교해 보세요">
+    <path d="M48 44 L302 44" stroke="#B0846A" stroke-width="5" stroke-linecap="round" opacity=".55"/>
+    ${Array.from({ length: 6 }, (_, i) => pipe(i)).join("")}
+    ${marks}
+  </svg>`;
+}
