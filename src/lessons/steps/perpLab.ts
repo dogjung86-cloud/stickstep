@@ -58,7 +58,7 @@ export const perpLab: StepRenderer = (host, step, api) => {
   const terms = el("div", { class: "mpl-terms" });
   const helper = el("div", {
     class: "helper",
-    html: "주황 점 <b>H</b>를 좌우로 끌어 P에서 <i>l</i>까지 길을 놓아 보세요. 손을 떼면 레이저 거리계가 그 길이를 기록해요!",
+    html: "주황 점 <b>H</b>를 좌우로 끌어 P에서 <i class='mv'>l</i>까지 길을 놓아 보세요. 손을 떼면 레이저 거리계가 그 길이를 기록해요!",
   });
   host.append(chips.el, helper, board, terms); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -85,7 +85,7 @@ export const perpLab: StepRenderer = (host, step, api) => {
   const fmtLen = (x: number): string => `${lenAt(x).toFixed(1)} m`;
 
   /* ── 측정 장면 ── */
-  qCard.innerHTML = `<span class="mcl-k">레이저 거리계</span> P에서 <i>l</i>까지, 어떤 길이 가장 짧을까요?`;
+  qCard.innerHTML = `<span class="mcl-k">레이저 거리계</span> P에서 <i class='mv'>l</i>까지, 어떤 길이 가장 짧을까요?`;
   stage.innerHTML =
     `<svg viewBox="0 0 ${W} ${HGT}" xmlns="http://www.w3.org/2000/svg" fill="none">` +
     `<g class="mpl-ghosts"></g>` +
@@ -195,7 +195,7 @@ export const perpLab: StepRenderer = (host, step, api) => {
       () =>
         popTerm(
           "수직 ⊥",
-          `직각으로 만나는 두 선은 서로 <b>수직</b>이에요. 기호로 ${gsym("PH", "seg")} ⊥ <i>l</i> 이라고 써요.`,
+          `직각으로 만나는 두 선은 서로 <b>수직</b>이에요. 기호로 ${gsym("PH", "seg")} ⊥ <i class='mv'>l</i> 이라고 써요.`,
         ),
       420,
     );
@@ -203,7 +203,7 @@ export const perpLab: StepRenderer = (host, step, api) => {
       () =>
         popTerm(
           "수선의 발",
-          `점 P에서 <i>l</i>에 수직으로 그은 직선이 <b>수선</b>, 수선이 <i>l</i>과 만나는 점 H가 <b>수선의 발</b>이에요.`,
+          `점 P에서 <i class='mv'>l</i>에 수직으로 그은 직선이 <b>수선</b>, 수선이 <i class='mv'>l</i>과 만나는 점 H가 <b>수선의 발</b>이에요.`,
         ),
       1750,
     );
@@ -211,7 +211,7 @@ export const perpLab: StepRenderer = (host, step, api) => {
       () =>
         popTerm(
           "점과 직선 사이의 거리",
-          `이 최단 길이 <b>3.3 m</b>, 수선의 발까지의 길이가 점 P와 직선 <i>l</i> 사이의 <b>거리</b>예요.`,
+          `이 최단 길이 <b>3.3 m</b>, 수선의 발까지의 길이가 점 P와 직선 <i class='mv'>l</i> 사이의 <b>거리</b>예요.`,
         ),
       3080,
     );

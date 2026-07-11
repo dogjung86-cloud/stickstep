@@ -305,4 +305,8 @@
   --ease-out: cubic-bezier(.16, 1, .3, 1);
   --spring-soft: cubic-bezier(.34, 1.26, .64, 1);
   --spring-bounce: cubic-bezier(.34, 1.56, .5, 1);
+
+  /* 수학 변수 서체 — 라틴 문자·π만 STIX Two Text(교과서 세리프 이탤릭), 그 외는 Pretendard 폴백.
+     @font-face(unicode-range 서브셋)·적용 규칙은 math.css(수학 전용 시트) 소유. */
+  --font-mvar: "STIX Two Text", "Pretendard Variable", Pretendard, sans-serif;
 }

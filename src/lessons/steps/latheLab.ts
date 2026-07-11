@@ -171,7 +171,7 @@ export const latheLab: StepRenderer = (host, step, api) => {
 
   function startMission(): void {
     resetLathe();
-    inst.innerHTML = `<b>${prof().name}</b>을 축 <i>l</i>에 붙였어요. 무대를 문질러 <b>한 바퀴(360°)</b> 돌려 보세요`;
+    inst.innerHTML = `<b>${prof().name}</b>을 축 <i class='mv'>l</i>에 붙였어요. 무대를 문질러 <b>한 바퀴(360°)</b> 돌려 보세요`;
     clear(ctl);
   }
 

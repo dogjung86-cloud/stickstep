@@ -91,7 +91,7 @@ export const vertAngleLab: StepRenderer = (host, step, api) => {
     `<rect x="0" y="0" width="${W}" height="${H}" fill="transparent"/></svg>`;
 
   const panel = el("div", { class: "mvl-panel" });
-  const inst = el("div", { class: "mvl-inst", html: "직선 <i>m</i>을 돌려 보고, 멈출 때마다 기록을 남겨 보세요" });
+  const inst = el("div", { class: "mvl-inst", html: "직선 <i class='mv'>m</i>을 돌려 보고, 멈출 때마다 기록을 남겨 보세요" });
   const ctl = el("div", { class: "mvl-ctl" });
   const recBtn = el("button", { class: "mvl-btn", text: "기록하기", attrs: { type: "button" } }) as HTMLButtonElement;
   const secretBtn = el("button", { class: "mvl-btn", text: "비밀 보기", attrs: { type: "button" } }) as HTMLButtonElement;
@@ -126,7 +126,7 @@ export const vertAngleLab: StepRenderer = (host, step, api) => {
   const toast = mtoast(board);
   const helper = el("div", {
     class: "helper",
-    html: "직선 <i>m</i>을 드래그로 돌리면 네 각이 함께 변해요. 마주 보는 각을 잘 봐요!",
+    html: "직선 <i class='mv'>m</i>을 드래그로 돌리면 네 각이 함께 변해요. 마주 보는 각을 잘 봐요!",
   });
   host.append(chips.el, helper, board); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -275,7 +275,7 @@ export const vertAngleLab: StepRenderer = (host, step, api) => {
     ctl.appendChild(aimRead);
     render();
     inst.innerHTML = `미션: <b class="mvl-am">∠a</b>를 정확히 <b>50°</b>로 만들어 보세요`;
-    helper.innerHTML = "직선 <i>m</i>을 돌려 <b>∠a = 50°</b>에 맞추고 손을 떼면 판정돼요!";
+    helper.innerHTML = "직선 <i class='mv'>m</i>을 돌려 <b>∠a = 50°</b>에 맞추고 손을 떼면 판정돼요!";
   }
 
   function judgeAim(): void {

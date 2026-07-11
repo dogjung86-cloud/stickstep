@@ -195,7 +195,7 @@ export const ineqTruthLab: StepRenderer = (host, step, api) => {
       const row = el(
         "button",
         { class: "itl-row", attrs: { type: "button", "aria-label": `x=${x} 대입 판정` } },
-        el("span", { class: "itl-x", html: `<i>x</i>=${x}` }),
+        el("span", { class: "itl-x", html: `<i class='mv'>x</i>=${x}` }),
         lhs.cell,
         el("span", { class: "itl-op", text: def.rel }),
         rhs.cell,

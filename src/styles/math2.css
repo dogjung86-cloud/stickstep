@@ -430,7 +430,7 @@
   background: radial-gradient(120% 120% at 32% 26%, #FFC24D 0%, #F0A422 60%, #DE8F0D 100%);
   box-shadow: 0 3px 7px -2px rgba(222,143,13,.55), inset 0 1px 0 rgba(255,255,255,.45);
 }
-.pml-box.va .pml-chip, .pml-chip.va { font-style: italic; font-size: 15px; }
+.pml-box.va .pml-chip, .pml-chip.va { font-family: var(--font-mvar); font-style: italic; font-size: 15px; }
 .pml-chip.fly { position: absolute; left: 0; top: 0; z-index: 7; }
 .pml-chip.born { animation: pmlBorn .4s var(--spring-bounce); }
 @keyframes pmlBorn { 0% { transform: scale(.2); opacity: 0; } 55% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
@@ -1403,7 +1403,7 @@
   padding: 4px 9px; border-radius: 99px; font-size: 12.5px; font-weight: 800;
   background: #F8EEDD; color: #7F4A12; white-space: nowrap;
 }
-.itl-x i { font-style: italic; margin-right: 1px; }
+.itl-x i { font-family: var(--font-mvar); font-style: italic; margin-right: 1px; }
 .itl-cell { display: inline-flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 2px; }
 .itl-res {
   display: inline-flex; align-items: center; opacity: .38;
@@ -1631,7 +1631,7 @@
 .lfm-ctl { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; padding: 10px 0 4px; }
 .lfm-step { display: flex; align-items: center; gap: 8px; }
 .lfm-read { min-width: 74px; text-align: center; font-size: 16px; font-weight: 800; color: #334155; }
-.lfm-read i { font-style: italic; color: #067D57; margin-right: 2px; }
+.lfm-read i { font-family: var(--font-mvar); font-style: italic; color: #067D57; margin-right: 2px; }
 .lfm-read b { font-size: 18px; }
 
 /* ---------- lineBuildLab(.lbd-) 직선 복원 수사대 ---------- */
@@ -1771,7 +1771,7 @@
   font-size: 12.5px; font-weight: 700; color: var(--n600);
 }
 .icl-read .icl-rv { font-size: 20px; font-weight: 900; color: #1971C2; font-variant-numeric: tabular-nums; }
-.icl-read .icl-rv i { font-family: Georgia, serif; margin-right: 1px; }
+.icl-read .icl-rv i { font-family: var(--font-mvar); font-style: italic; margin-right: 1px; }
 .icl-read .icl-best, .icl-read .icl-max {
   font-size: 11.5px; font-weight: 800; border-radius: 99px; padding: 3px 10px;
   background: var(--n100); color: var(--n600); font-variant-numeric: tabular-nums;
@@ -1945,7 +1945,7 @@
   padding: 6px 10px; border-radius: 14px; background: #fff;
   border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
 }
-.pyl-slab { font-size: 13px; font-weight: 900; color: var(--n600); font-style: italic; }
+.pyl-slab { font-family: var(--font-mvar); font-size: 13px; font-weight: 900; color: var(--n600); font-style: italic; }
 .pyl-step {
   width: 38px; height: 38px; border-radius: 12px; border: 1.5px solid var(--n200);
   background: var(--n50); color: var(--n800); font-size: 19px; font-weight: 800;
@@ -2018,7 +2018,7 @@
   box-shadow: var(--sh-card); animation: lrvMorphIn .5s var(--spring-soft) both;
 }
 .sct-fpill { padding: 5px 12px; border-radius: 999px; font-size: 13px; font-weight: 800; border: 1.4px solid #DBE3EC; background: #F1F5F9; color: #334155; }
-.sct-fpill i { font-style: italic; }
+.sct-fpill i { font-family: var(--font-mvar); font-style: italic; }
 .sct-fpill.area { color: #12579B; background: #EAF3FC; border-color: rgba(25,113,194,.45); }
 .sct-fpill.vol { color: #C2255C; background: #FDF0F4; border-color: rgba(194,37,92,.45); }
 .sct-farr { font-weight: 900; color: #C2255C; font-size: 15px; }

@@ -4,6 +4,26 @@
    색·그림자는 tokens.css 변수만 참조한다.
    ============================================================ */
 
+/* ---------- 변수 서체: 교과서 세리프 이탤릭 (STIX Two Text 로컬 번들) ----------
+   변수 '문자'만 세리프 이탤릭(시험지·교과서 글자꼴). unicode-range를 라틴 문자·π로
+   좁혀 숫자·연산자·한글은 어떤 경로로도 Pretendard로 남는다(넘패드·본문과 통일).
+   쓰는 법: mfmt()는 자동, 콘텐츠 HTML은 <i class="mv">x</i>, SVG 텍스트는
+   font-style="italic"만 붙이면 아래 전역 룰이 서체를 입힌다(직접 font-family 금지). */
+@font-face {
+  font-family: "STIX Two Text";
+  src: url("./fonts/stix-two-italic-latin.woff2") format("woff2");
+  font-style: italic; font-weight: 400 700; font-display: swap;
+  unicode-range: U+0041-005A, U+0061-007A;
+}
+@font-face {
+  font-family: "STIX Two Text";
+  src: url("./fonts/stix-two-italic-greek.woff2") format("woff2");
+  font-style: italic; font-weight: 400 700; font-display: swap;
+  unicode-range: U+03C0;
+}
+.mv { font-family: var(--font-mvar); font-style: italic; font-weight: 700; padding: 0 .02em; }
+text[font-style="italic"] { font-family: var(--font-mvar); }
+
 /* ---------- 단원 테마: num(수와 연산 · 수학 시안) ---------- */
 .unit-band.num { background: var(--grad-num); }
 .gm-terrain.num {
@@ -154,12 +174,16 @@
 .mx .mx-pos { color: var(--m-pos); }
 .mx .mx-neg { color: var(--m-neg); }
 .mx .mx-par { color: var(--n500); font-weight: 600; }
-.mx sup { font-size: .62em; font-weight: 800; transform: translateY(-.18em); margin-left: .04em; }
+/* 지수 위치(교과서 조판: 지수 바닥이 본체 글자 키의 55~65% 지점).
+   .mx는 inline-flex라 sup이 플렉스 아이템 — vertical-align이 무시되고 align-items:center에
+   눌려 중간에 떠 있었다(실사고). 플렉스 문맥은 align-self, 인라인 문맥(분수 분자 등)은
+   vertical-align이 맡는다 — 서로 상대 문맥에서 무시되므로 병행이 안전하다. */
+.mx sup { font-size: .6em; font-weight: 800; line-height: 1; margin-left: .05em; align-self: flex-start; vertical-align: .66em; }
 .mx .mx-frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle;
   margin: 0 .1em; line-height: 1.12; }
 .mx .mx-frac > .fr-n { padding: 0 .28em .06em; font-size: .82em; }
 .mx .mx-frac > .fr-d { padding: .06em .28em 0; border-top: .09em solid currentColor; font-size: .82em; }
-.mx .mx-v { font-style: italic; font-weight: 800; padding: 0 .02em; }
+.mx .mx-v { font-family: var(--font-mvar); font-style: italic; font-weight: 700; font-size: 1.05em; padding: 0 .02em; }
 
 /* ---------- 항 칩(동류항·이항 랩 공용) ---------- */
 .tm-chip {
@@ -499,7 +523,7 @@
 }
 .mql-name { font-size: 18px; font-weight: 900; transition: color .2s; }
 .mql-signs { display: inline-flex; align-items: center; gap: 6px; }
-.mql-lab { font-size: 13px; font-weight: 800; font-style: italic; color: var(--n500); }
+.mql-lab { font-family: var(--font-mvar); font-size: 13px; font-weight: 700; font-style: italic; color: var(--n500); }
 .mql-sx, .mql-sy {
   min-width: 34px; text-align: center; padding: 5px 0; border-radius: 10px;
   font-size: 17px; font-weight: 900; background: var(--n100); color: var(--n500);
@@ -1057,7 +1081,7 @@
   background: var(--n0); border: 1.5px solid var(--n200); border-radius: 14px;
   padding: 8px 6px; text-align: center; box-shadow: var(--sh-card);
 }
-.mtb-shead i { font-style: italic; font-weight: 800; font-size: 16px; }
+.mtb-shead i { font-family: var(--font-mvar); font-style: italic; font-weight: 700; font-size: 16px; }
 .mtb-val { font-size: 14.5px; font-weight: 800; color: var(--n800); margin: 1px 0 6px; }
 .mtb-step { display: flex; justify-content: center; gap: 8px; }
 .mtb-sbtn {

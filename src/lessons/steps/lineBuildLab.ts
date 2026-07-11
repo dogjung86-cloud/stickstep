@@ -120,8 +120,8 @@ export const lineBuildLab: StepRenderer = (host, step, api) => {
   function setRead(): void {
     a = 1;
     b = 0;
-    reads.a.innerHTML = `<i>a</i> = <b>1</b>`;
-    reads.b.innerHTML = `<i>b</i> = <b>0</b>`;
+    reads.a.innerHTML = `<i class='mv'>a</i> = <b>1</b>`;
+    reads.b.innerHTML = `<i class='mv'>b</i> = <b>0</b>`;
     paint();
     clueCard.innerHTML = `<b class="lbd-k">사건 2</b> 단서: 두 점 <b>(−1, 4)</b>와 <b>(2, −2)</b>를 지나간 직선을 찾아라!`;
     gPts.innerHTML = star(-1, 4, "#8A6EE0", "#6A55F2") + star(2, -2, "#8A6EE0", "#6A55F2");

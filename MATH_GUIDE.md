@@ -82,6 +82,15 @@
 - 넘패드는 mathKit의 `numpad()` 하나만 쓴다. 답 종류(kind)별 프리셋:
   `int`(정수, ± 포함) · `frac`(분자/분모 슬롯 + ±) · `dec`(소수점). 시스템 키보드 금지.
 - 부호 색은 tokens.css의 `--m-pos`(+)/`--m-neg`(−)만 참조.
+- **변수 서체는 교과서 세리프 이탤릭(2026-07-12 도입)**: 토큰 `--font-mvar` = STIX Two Text 이탤릭
+  (math.css가 라틴 문자·π unicode-range 서브셋 woff2 2종을 로컬 번들, 총 ~47KB). 숫자·연산자·한글은
+  서브셋 밖이라 자동으로 Pretendard 유지(넘패드·본문과 통일된 하이브리드 — 전체 세리프 수식 금지).
+  적용 경로 3가지: ① mfmt() 변수는 자동(.mx-v) ② 콘텐츠 HTML 변수는 `<i class="mv">x</i>`
+  (맨몸 `<i>x</i>` 금지 — 39곳 소급 완료) ③ SVG 텍스트는 `font-style="italic"`만 붙이면 math.css
+  전역 룰(text[font-style="italic"])이 서체를 입힌다(직접 font-family 지정 금지).
+  **SVG text 안에 HTML `<i>` 금지**(파서가 svg를 깨는 실사고 — polyExtAngleFig에서 수정).
+- **지수 위치는 .mx sup이 vertical-align으로 올린다**: sup은 inline이라 transform이 조용히 무시되는
+  함정(구현 실사고) — 지수 바닥이 본체 글자 키의 55~65% 지점이 교과서 조판 기준.
 
 ## 중1 Ⅰ. 수와 연산 — 레슨 설계표 (책 10~61쪽, 12레슨: 무료 3 + 프리미엄 9)
 

@@ -1842,7 +1842,7 @@ export function polyExtXFig(): string {
     x: cx + r * Math.cos((a * Math.PI) / 180),
     y: cy - r * Math.sin((a * Math.PI) / 180),
   });
-  const LBL = ["<i>x</i>", "35°", "88°", "65°", "81°"]; // 도착 꼭짓점 V0 ~ V4 순
+  const LBL = ["x", "35°", "88°", "65°", "81°"]; // 도착 꼭짓점 V0 ~ V4 순 (x는 이탤릭 변수 — SVG text 안에 HTML <i>를 넣으면 파서가 svg를 깬다)
   let marks = "";
   for (let i = 0; i < n; i++) {
     const arrive = (i + 1) % n; // 변 i를 걸어 도착하는 꼭짓점
@@ -1859,7 +1859,7 @@ export function polyExtXFig(): string {
     marks +=
       `<line x1="${v.x}" y1="${v.y}" x2="${ext.x.toFixed(1)}" y2="${ext.y.toFixed(1)}" stroke="${FAINT}" stroke-width="1.8" stroke-dasharray="4 3"/>` +
       angleArc(v.x, v.y, 16, a0, a1, color, undefined, { fill: isX, width: 2.4 }) +
-      `<text x="${mid.x.toFixed(1)}" y="${(mid.y + 4).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="900" fill="${color}">${LBL[arrive]}</text>`;
+      `<text x="${mid.x.toFixed(1)}" y="${(mid.y + 4).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="900"${isX ? ' font-style="italic"' : ""} fill="${color}">${LBL[arrive]}</text>`;
   }
   return svg(
     "0 0 340 236",

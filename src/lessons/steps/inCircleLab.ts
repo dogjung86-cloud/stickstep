@@ -258,7 +258,7 @@ export const inCircleLab: StepRenderer = (host, step, api) => {
       lastRv = rv;
     }
     read.innerHTML =
-      `<span class="icl-rl">쿠키 반지름</span><b class="icl-rv"><i>r</i> = ${rv}</b>` +
+      `<span class="icl-rl">쿠키 반지름</span><b class="icl-rv"><i class='mv'>r</i> = ${rv}</b>` +
       (snapped ? `<span class="icl-max">최대 확정!</span>` : `<span class="icl-best">최고 기록 ${best}</span>`);
     judge(minD);
   }

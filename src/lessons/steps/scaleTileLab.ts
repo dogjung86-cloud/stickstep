@@ -435,13 +435,13 @@ export const scaleTileLab: StepRenderer = (host, step, api) => {
     chips.on("cube", "3×3×3=27배!");
     const fin = el("div", { class: "sct-final" });
     fin.innerHTML =
-      `<span class="sct-fpill">닮음비 1:<i>m</i></span><span class="sct-farr">→</span>` +
-      `<span class="sct-fpill area">넓이 1:<i>m</i><sup>2</sup></span><span class="sct-farr">→</span>` +
-      `<span class="sct-fpill vol">부피 1:<i>m</i><sup>3</sup></span>`;
+      `<span class="sct-fpill">닮음비 1:<i class='mv'>m</i></span><span class="sct-farr">→</span>` +
+      `<span class="sct-fpill area">넓이 1:<i class='mv'>m</i><sup>2</sup></span><span class="sct-farr">→</span>` +
+      `<span class="sct-fpill vol">부피 1:<i class='mv'>m</i><sup>3</sup></span>`;
     board.appendChild(fin);
     haptic(HAPTIC.done);
     helper.innerHTML =
-      "닮음비가 1:<i>m</i>이면 넓이의 비는 <b>제곱</b>(1:<i>m</i><sup>2</sup>), 부피의 비는 <b>세제곱</b>(1:<i>m</i><sup>3</sup>)! " +
+      "닮음비가 1:<i class='mv'>m</i>이면 넓이의 비는 <b>제곱</b>(1:<i class='mv'>m</i><sup>2</sup>), 부피의 비는 <b>세제곱</b>(1:<i class='mv'>m</i><sup>3</sup>)! " +
       "점보 곰인형이 그렇게 무거웠던 이유예요.";
     api.recordQuiz(true);
     api.enableCTA(s.cta ?? "정리하러 가기");

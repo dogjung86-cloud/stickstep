@@ -148,7 +148,7 @@ export const eqTruth: StepRenderer = (host, step, api) => {
           style: "grid-template-columns:auto 1fr 1fr auto; font-size:17px; gap:8px; padding:9px 10px; width:100%",
           attrs: { type: "button", "aria-label": `x=${x} 대입 검사` },
         },
-        el("span", { class: "pt-delta", style: "margin-left:0", html: `<i>x</i>=${x}` }),
+        el("span", { class: "pt-delta", style: "margin-left:0", html: `<i class='mv'>x</i>=${x}` }),
         lhs.cell,
         rhs.cell,
         verdict,

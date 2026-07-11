@@ -380,7 +380,7 @@ export const lineRelLab: StepRenderer = (host, step, api) => {
   /* ── 시작 ── */
   qCard.innerHTML = `<span class="mcl-k">미션 1</span> 두 직선을 한 점에서 만나게 해 보세요`;
   helper.innerHTML =
-    "가운데 <b>이동 손잡이</b>는 위아래로 옮기고, 오른쪽 <b>회전 손잡이</b>를 끌면 직선 <i>m</i>이 기울어요.";
+    "가운데 <b>이동 손잡이</b>는 위아래로 옮기고, 오른쪽 <b>회전 손잡이</b>를 끌면 직선 <i class='mv'>m</i>이 기울어요.";
   paintM();
   judge();
   api.setCTA("목표를 모두 달성하면 열려요", { enabled: false });

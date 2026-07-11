@@ -208,7 +208,7 @@ export const M1_UNIT5: Unit = {
           cta: "문제 풀기",
         }),
         mcq({
-          prompt: "그림의 삼각형에서 ∠<i>x</i>의 크기는?",
+          prompt: "그림의 삼각형에서 ∠<i class='mv'>x</i>의 크기는?",
           figure: triAngleXFig(),
           options: ["67°", "77°", "63°", "113°", "57°"],
           answer: 0,
@@ -216,7 +216,7 @@ export const M1_UNIT5: Unit = {
           explainBad: "세 내각의 합은 <b>180°</b>예요. 이미 65°+48°=113°를 썼으니 x=180−113=<b>67°</b>. 113°를 골랐다면 두 각의 합에서 멈춘 거예요, 180에서 빼는 한 걸음이 남았어요!",
         }),
         mcq({
-          prompt: "그림에서 ∠<i>x</i>(C의 외각)의 크기는?",
+          prompt: "그림에서 ∠<i class='mv'>x</i>(C의 외각)의 크기는?",
           figure: triExtXFig(),
           options: ["102°", "78°", "142°", "116°", "98°"],
           answer: 0,
@@ -427,7 +427,7 @@ export const M1_UNIT5: Unit = {
           cta: "문제 풀기",
         }),
         mcq({
-          prompt: "그림의 오각형에서 ∠<i>x</i>의 크기는?",
+          prompt: "그림의 오각형에서 ∠<i class='mv'>x</i>의 크기는?",
           figure: polyExtXFig(),
           options: ["91°", "89°", "101°", "71°", "81°"],
           answer: 0,
@@ -657,7 +657,7 @@ export const M1_UNIT5: Unit = {
           cta: "문제 풀기",
         }),
         mcq({
-          prompt: "그림의 원 O에서 <i>x</i>의 값은?",
+          prompt: "그림의 원 O에서 <i class='mv'>x</i>의 값은?",
           figure: sectorRatioFig(),
           options: ["3", "6", "4", "27", "12"],
           answer: 0,
@@ -1105,7 +1105,7 @@ export const M1_UNIT5: Unit = {
           cta: "문제 풀기",
         }),
         mcq({
-          prompt: "그림의 직각삼각형을 직선 <i>l</i>을 축으로 <b>1회전</b>시킬 때 생기는 입체는?",
+          prompt: "그림의 직각삼각형을 직선 <i class='mv'>l</i>을 축으로 <b>1회전</b>시킬 때 생기는 입체는?",
           figure: rotateProfileFig(),
           options: ["원뿔", "원기둥", "삼각기둥", "삼각뿔", "원뿔대"],
           answer: 0,
