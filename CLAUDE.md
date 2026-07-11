@@ -290,6 +290,27 @@ src/
   해설 속 오답 격파 수치가 그림 격자와 어긋난 1건). 기계 검사 `node qa/check-exam-g2u3.mjs`,
   QA `PORT=<포트> node qa/e2e-exam-g2u3.mjs`(47검증 — 여덟 파트 문구·2×4+3×4 균형·사진 10장),
   그림 눈검수 `qa/shot-exam-figs-g2u3.mjs`.
+- **g2u4(물질의 구성) 150문항 — 네 번째 중2 시험(첫 6레슨 풀, 25×6)**: 유형 113(mcq+multi)/18(num)/19(word),
+  word 4문항 레슨은 L6, pick 20 → 3×4+4×2 균형(전부 자동). 그림은 atomFigures 재사용(atomModelFig 새 값
+  7·2, fourModelFig 새 각도(분자 고르기) + **미사용 헬퍼 ionMoveFig 시험 데뷔**) + examFigures g2u4 섹션
+  파라미터형 10종(atomMolsFig 분자 모형(H2~HCl 9키)·atomStructQuizFig ㉠㉡㉢·atomPeriodicExamFig
+  단축형 뼈대+위치(기호판/A~E판)·atomCellQuizFig 칸 ㉠㉡㉢(cellAnatomyFig 유출 방지 시험판 —
+  geoCycleQuizFig 계보)·atomFlowFig 4결론 순서도·atomElectrolysisFig((가)=(−)극·기체 2배)·
+  atomIonMoveExamFig 번짐(색·방향·극 배치 파라미터)·atomPieFig(hide 숨김판)·atomCondFig·atomIonFormExamFig).
+  사진 10장(public/exam/g2u4 — 전기영동 파란 얼룩은 "왼쪽으로만 번짐"을 프롬프트에 명시하고 눈검수에서
+  그 조건을 판정, 물 전기 분해는 한쪽 기체가 두 배). 새로 확립된 관행: ① **시험지 내 교차 유출 스캔** —
+  한 문항의 문두·보기가 같은 풀 다른 문항의 정답(num 답 18·7, 물질의 정체, 숨긴 ㉠값)을 인쇄하면 랜덤
+  동시 추출에서 유출된다. num 정답 수치·word 정의문·"A는 B다" 선언을 이웃 문항과 대조해 저작·감사
+  양쪽에서 훑는다(8건 적발·수정 — e81↔e95·e99↔e96·e17↔e12·PIE 공개판↔숨김판 등). ② **공용 그림 킷
+  aria 전수 소급** — atomModelFig("+N·전자 N개")·fourModelFig("분자/원자/이온 배열")의 aria가 판독
+  과제 자체를 낭독 → 중립 문구로 수정(crudeTowerFig 선례의 IV판). ③ 파라미터 숨김판(atomPieFig hide)은
+  같은 데이터의 공개판 문항과 **조성 수치를 분리**한다. ④ 수치 빈곤 단원의 num 조달: 원자 개수 세기
+  (생략된 1 함정)·이온 전자 수(양성자수±잃/얻)·족 18/주기 7/원소 118 자연값·원그래프 산수(100−합·몇 배)·
+  목록 세기(원소/양이온 가짓수). ⑤ 병렬 codex 금지 하의 발주 대기열: qa/wait-order-g2u4.sh가 codex
+  90초 연속 부재를 확인한 뒤 자동 발주(다른 세션 배치 사이 공백 오인 방지). 검산 감사는 상위 모델
+  6병렬(정답 오류 0·심각 = 사진 발주 대기뿐, 경미/제안 반영으로 종결). 기계 검사
+  `node qa/check-exam-g2u4.mjs`, QA `PORT=<포트> node qa/e2e-exam-g2u4.mjs`(47검증 — 여섯 파트 문구·
+  3×4+4×2 균형·사진 10장), 그림 눈검수 `qa/shot-exam-figs-g2u4.mjs`.
 - **u7(태양계) 120문항 — 천체 사진 3원칙 확립**: ① 기존 NASA 자산(public/photos/) 재사용이 1순위 —
   풀 파일 로컬 `pimg` 헬퍼(`photos/` 경로, ximg와 동형·lazy 금지). 레슨 hotspot이 쓴 사진이라도 문항
   각도가 새로우면 재사용 OK. ② 위상별 달·붉은 달·별 일주 궤적 같은 "정확한 모습이 채점 기준"인 실사는
@@ -927,8 +948,8 @@ src/
   (splash.ts, `.splash-foot.done` 스태거 fadeUp). 둘러보기 → 과목 선택 → 온보딩 → 홈. 스플래시는 비온보딩
   첫 실행에만 뜨고, 재방문·e2e 시딩(onboarded=true)은 홈 직행 — 기존 e2e 플로우 불변.
 - **하단 탭바 4개**(ui/gnav.ts, main.ts goTab이 nav.reset으로 전환): 학습(기존 홈)·복습(review.ts —
-  오답노트 진입 + '취약 단원 문제 뽑기'/'질문하기' 준비 중 카드)·도전(challenge.ts — 랭킹·미니게임 전부
-  준비 중)·마이(my.ts — 아바타 픽커·장화 레벨·스텝 요약·계정/프리미엄/과제함 진입).
+  오답노트 진입 + '취약 단원 문제 뽑기'(프리미엄, screens/weakDrill.ts — 아래 전용 섹션) + '질문하기' 준비 중
+  카드)·도전(challenge.ts — 랭킹·미니게임 전부 준비 중)·마이(my.ts — 아바타 픽커·장화 레벨·스텝 요약·계정/프리미엄/과제함 진입).
 - **homeScreen 시그니처 변경**: onOpenGame 파라미터 제거, nav2.onTab 추가. UNIT_GAME·지도 게임 노드 삭제 —
   미니게임(단열 디펜스·별자리 한붓그리기)은 도전 탭 소속으로 이사(사용자 확정: 재단장 전까지 '준비 중'으로
   닫힘). 다시 열 때 challenge.ts에서 minigameScreen/starGameScreen을 연결한다(화면 파일·store 채점은 보존).
@@ -938,8 +959,11 @@ src/
   기준은 **store.lifeXp(누적 획득 스텝)** — spendXp로 줄지 않고, 레슨·시험·보상 적립 지점이 전부 함께 올린다.
   구버전 저장분은 load()가 totalXp를 하한으로 마이그레이션. 동기화 컬럼 life_step(max 병합)·avatar_id(local 우선).
 - **아바타**: 소셜 프로필 사진 금지(auth.ts가 avatar_url·picture를 아예 안 읽음 — 미성년 개인정보).
-  ui/avatar.ts AVATAR_KINDS 5종 픽커(store.avatarId, 마이 탭). 성별·헤어·안경 다양화는 후속 codex 발주로
-  avatar 발주본을 늘려 AVATAR_KINDS에만 추가하면 픽커·홈 앱바가 자동 확장.
+  ui/avatar.ts **PROFILE 섹션**이 픽커(마이 탭)·홈 앱바의 단일 진실 공급원 — store.avatarId = 배열 인덱스:
+  0..4 기존 선생님 발주본(하위 호환 — 순서 변경·삭제 금지), 5..16 **학생 캐릭터 12종**(public/avatars/*.webp,
+  상반신 버스트 — 성별·헤어·안경·주근깨·장신구·표정 다양화. 발주 qa/order-avatars.sh + avatar2_prompts.txt,
+  변환 node qa/process-avatars.mjs). 캐릭터 추가는 USER_FILES에 append만 — 픽커·앱바 자동 확장.
+  선생님 연출(comic·hook·recap의 stickAvatar/AvatarKind)은 프로필과 별개 체계로 불변.
 - **과제 배너**: 학급(코드) 소속 + 과제가 있을 때만 홈 상단에 렌더할 예정(후속 교사 기능) — 개별 유저에겐 안 뜬다.
 
 ## 오답노트 (2026-07 구축)
@@ -957,3 +981,25 @@ src/
   콘텐츠가 바뀌어 못 찾을 때만 "그림 문제" 칩+원문 복습 안내로 폴백. 맞히면 극복(초록·극복 섹션으로),
   틀리면 해설 공개+횟수 누적. 비로그인도 동작(기기 저장).
 - QA: `PORT=<포트> node qa/e2e-notebook.mjs` — 시험 오답 수집→목록→극복→재오답→레슨 훅→빈 상태 21검증.
+
+## 취약 단원 문제 뽑기 (2026-07-12 구축 — 복습 탭, 프리미엄)
+- **구조**: screens/weakDrill.ts 한 파일(피커→드릴→결과 3국면, 시험 화면 문법 재사용). 문항은
+  **단원 종합 평가 문제 은행(content/exams/)이 유일한 출처** — lessonId 태그·해설·그림이 완비된 풀이라
+  examForUnit이 있는 과학 단원만 피커에 뜨고, 새 시험 풀을 등록하면 자동으로 추가된다(별도 등록 없음).
+- **피커**: 소단원(레슨) 다중 선택 — 단원을 넘나들며 담을 수 있다. 소단원·단원에 미극복 오답 수 배지
+  (wrongNotes의 lessonId 집계, 극복분 제외), "오답 있는 소단원 자동 담기" 버튼, 문제 수 세그(5/10/15,
+  풀 부족 시 CTA가 실제 뽑는 수로 캡). 추출은 drawExamItems 재사용(선택 소단원끼리 균형+진도 순 —
+  합성 ExamDef에 필터한 풀을 넣으면 끝).
+- **드릴은 시험과 달리 문제마다 즉시 채점 + 해설**(복습 도구라서): mcq/multi는 카드 ok/no/dim(레슨 퀴즈
+  언어), num은 확인 후 패드 제거+내 답/정답 페어, word는 칩 ok/no/dim. **오답노트 키를 시험과 공유**
+  (`e:<원본 examId>:<문항id>`) — 드릴에서 틀리면 수집, 맞히면 시험에서 틀렸던 같은 문항도 자동 극복.
+  XP는 없다(파밍 방지) — 완주 시 touchStudyActivity()로 **학습일(스트릭)만 집계**. 결과 화면은 시험의
+  소단원별 진단 문법 재사용(weak 태그·복습 버튼, 이름은 "학년 로마자 · 소단원 라벨").
+- **프리미엄 게이트는 main.ts openWeakDrill이 소유**(isPremium()||isReviewMode() 아니면 전용 문구 페이월
+  → 구매 시 바로 드릴 진입). review.ts 카드는 잠금이면 골드 크라운 필(.prep-pill.gold)만 표시.
+- **운영 계정 프리미엄 겹층**: auth.ts PRIVILEGED_EMAILS(sciencegive@gmail.com·dogjung86@naver.com 카카오)
+  로 로그인하면 결제 없이 프리미엄 전체 권한 — main.ts가 onAuthChange로 store.setPremiumOverride 주입.
+  **state.premium과 분리된 런타임 플래그라 저장·동기화되지 않고 로그아웃하면 자동 해제**(isPremium()이
+  둘을 OR — 레슨 잠금·시험 재응시·드릴이 전부 함께 풀린다).
+- **저작 함정(실버그)**: makeAnswerPad의 onReady는 생성 직후 **동기 호출**된다 — 뒤에 선언한 const를
+  직접 넘기면 TDZ로 넘패드가 통째로 안 뜬다. 콜백에는 `() => confirm()`처럼 지연 참조로 넘길 것.
