@@ -26,7 +26,7 @@ export interface WrongNote {
   answer: number[] | string; // 정답 — 저작 인덱스 배열(mcq/ox/multi) 또는 정규화 문자열(num/word)
   explain?: string; // 해설 HTML(리뷰용)
   core?: string; // 핵심 한 줄(시험 문항)
-  hasFigure: boolean; // 그림 문항 — 스냅샷에 그림은 없으니 원문 복습을 안내
+  hasFigure: boolean; // 그림 문항 — 그림 자체는 스냅샷에 없고(용량), 오답노트가 원본 콘텐츠에서 역추적해 보여준다
   wrongCount: number;
   overcome: boolean; // 다시 풀어 맞힘(또는 스스로 확인)
   ts: number; // 마지막 갱신 시각

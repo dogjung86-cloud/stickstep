@@ -30,3 +30,9 @@ const EXAMS: Record<string, ExamDef> = {
 export function examForUnit(unitId: string): ExamDef | null {
   return EXAMS[unitId] ?? null;
 }
+
+/** 시험 id("u3exam")로 정의 찾기 — 오답노트가 문항 원본(그림)을 역추적하는 근거. */
+export function examById(id: string): ExamDef | null {
+  for (const def of Object.values(EXAMS)) if (def.id === id) return def;
+  return null;
+}

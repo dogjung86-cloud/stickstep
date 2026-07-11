@@ -1,13 +1,16 @@
 // 오답노트 — 틀린 문항을 다시 풀어 "극복"하는 복습 화면. 마이페이지(로그인 화면)에서 진입.
 // 데이터는 채점 순간의 스냅샷(store.wrongNotes)이라 콘텐츠가 바뀌어도 스스로 렌더된다.
 // 다시 풀기: mcq/ox 탭 즉시 채점 · multi 복수 선택+확인 · num/word는 정답 열람+자기 확인.
-// 맞히면 극복(초록), 또 틀리면 횟수 누적 + 해설 공개. 그림 문항은 원문 복습(레슨 이동)을 안내한다.
+// 맞히면 극복(초록), 또 틀리면 횟수 누적 + 해설 공개.
+// 그림 문항: 그림은 스냅샷에 없고(용량) 원본 콘텐츠에서 역추적해 그대로 보여준다 —
+// 콘텐츠가 바뀌어 못 찾을 때만 "그림 문제" 칩 + 원문 복습 안내로 폴백.
 import { el } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { wrongNoteList, wrongNoteCount, recordWrongNote, resolveWrongNote } from "../core/store";
 import type { WrongNote } from "../core/store";
 import { findLesson } from "../content/curriculum";
+import { examById } from "../content/exams";
 import { stickAvatar } from "../ui/avatar";
 import type { Screen } from "../core/router";
 
@@ -25,6 +28,23 @@ function sourceLabel(n: WrongNote): string {
   const kindLabel = n.kind === "exam" ? "단원 평가" : "레슨 퀴즈";
   if (!found) return kindLabel;
   return `${found.unit.roman}. ${found.lesson.title} · ${kindLabel}`;
+}
+
+/** 그림 원본 역추적 — 시험은 키의 문항 id로 풀에서, 레슨은 같은 프롬프트의 quiz 스텝에서.
+ *  콘텐츠가 바뀌어 못 찾으면 null(카드가 안내 문구로 폴백). */
+function figureOf(n: WrongNote): { html: string; dark: boolean } | null {
+  if (!n.hasFigure) return null;
+  if (n.kind === "exam") {
+    const prefix = `e:${n.srcId}:`;
+    if (!n.key.startsWith(prefix)) return null;
+    const itemId = n.key.slice(prefix.length);
+    const it = examById(n.srcId)?.pool.find((x) => x.id === itemId);
+    return it?.figure ? { html: it.figure, dark: !!it.figureDark } : null;
+  }
+  const step = findLesson(n.lessonId)?.lesson.steps.find((s) => s.type === "quiz" && s.prompt === n.q);
+  return step && typeof step.figure === "string" && step.figure
+    ? { html: step.figure, dark: !!step.figureDark }
+    : null;
 }
 
 export function notebookScreen(onClose: () => void, onOpenLesson?: (id: string) => void): Screen {
@@ -115,11 +135,13 @@ export function notebookScreen(onClose: () => void, onOpenLesson?: (id: string) 
 
   function noteCard(n: WrongNote): HTMLElement {
     const card = el("div", { class: `nb-card ${n.overcome ? "overcome" : ""}` });
+    const fig = figureOf(n);
+    const lessonAlive = !!(onOpenLesson && findLesson(n.lessonId));
 
     const meta = el("div", { class: "nb-meta" });
     meta.appendChild(el("span", { class: "nb-src", text: sourceLabel(n) }));
     meta.appendChild(el("span", { class: "nb-chip", text: TYPE_LABEL[n.type] ?? n.type }));
-    if (n.hasFigure) meta.appendChild(el("span", { class: "nb-chip fig", text: "그림 문제" }));
+    if (n.hasFigure && !fig) meta.appendChild(el("span", { class: "nb-chip fig", text: "그림 문제" }));
     if (n.wrongCount >= 2 && !n.overcome) meta.appendChild(el("span", { class: "nb-chip warn", text: `${n.wrongCount}번 틀림` }));
     if (n.overcome) meta.appendChild(el("span", { class: "nb-chip ok", text: "극복" }));
     card.appendChild(meta);
@@ -131,8 +153,20 @@ export function notebookScreen(onClose: () => void, onOpenLesson?: (id: string) 
       n.bogi.forEach((b, i) => box.appendChild(el("div", { class: "nb-bogi-row", html: `<b>${label[i] ?? i + 1}.</b> ${b}` })));
       card.appendChild(box);
     }
-    if (n.hasFigure) {
-      card.appendChild(el("div", { class: "nb-fignote", text: "그림이 있는 문제예요 — 원문은 아래 복습 버튼으로 볼 수 있어요." }));
+    if (fig) {
+      // 시험 리뷰와 같은 문법(q-figure) — 다시 풀 때 그림을 보며 풀 수 있어야 한다
+      card.appendChild(
+        el("div", { class: `q-figure ${fig.dark ? "dark" : ""}` }, el("div", { class: "q-figure-art", html: fig.html })),
+      );
+    } else if (n.hasFigure) {
+      card.appendChild(
+        el("div", {
+          class: "nb-fignote",
+          text: lessonAlive
+            ? "그림이 있는 문제예요 — 원문은 아래 복습 버튼으로 볼 수 있어요."
+            : "그림이 있는 문제예요 — 콘텐츠가 업데이트되어 그림을 불러올 수 없어요.",
+        }),
+      );
     }
 
     const zone = el("div", { class: "nb-zone" });
@@ -157,7 +191,7 @@ export function notebookScreen(onClose: () => void, onOpenLesson?: (id: string) 
     }
 
     // 원문 복습 — 콘텐츠가 살아 있을 때만
-    if (onOpenLesson && findLesson(n.lessonId)) {
+    if (lessonAlive) {
       const go = el("button", { class: "nb-lesson", html: `레슨 복습하기 ${icon("chevron", 13)}` });
       go.addEventListener("click", () => {
         haptic(HAPTIC.tap);
