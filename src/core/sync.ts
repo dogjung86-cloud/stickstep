@@ -13,6 +13,8 @@ interface ProgressRow {
   grade: string | null;
   goal_min: number;
   total_step: number; // 앱의 totalXp — 화폐 이름 '스텝'(사용자 확정)을 컬럼명에 반영
+  life_step: number; // 앱의 lifeXp — 누적 획득 스텝(장화 레벨·랭킹 기준, 소비로 줄지 않음)
+  avatar_id: number | null; // 스틱맨 아바타 선택(계정 정체성이라 동기화)
   streak: number;
   last_study_day: string | null;
   premium: boolean;
@@ -29,6 +31,8 @@ function rowOf(s: Readonly<AppState>, userId: string): ProgressRow {
     grade: s.grade,
     goal_min: s.goalMin,
     total_step: s.totalXp,
+    life_step: s.lifeXp,
+    avatar_id: s.avatarId,
     streak: s.streak,
     last_study_day: s.lastStudyDay,
     premium: s.premium,
@@ -114,6 +118,9 @@ function mergeIntoLocal(local: Readonly<AppState>, row: ProgressRow): Partial<Ap
     goalMin: local.onboarded ? local.goalMin : row.goal_min,
     premium: local.premium || row.premium,
     totalXp: Math.max(local.totalXp, row.total_step),
+    // 구버전 행에는 life_step이 없을 수 있다 — total_step이 하한.
+    lifeXp: Math.max(local.lifeXp, row.life_step ?? row.total_step ?? 0),
+    avatarId: local.avatarId ?? row.avatar_id ?? null,
     streak,
     lastStudyDay,
     lessons: mergeLessons(local.lessons, row.lessons),

@@ -13,8 +13,11 @@ import { loginScreen } from "./screens/login";
 import { notebookScreen } from "./screens/notebook";
 import { homeScreen } from "./screens/home";
 import { doneScreen } from "./screens/done";
-import { minigameScreen } from "./screens/minigame";
-import { starGameScreen } from "./screens/starGame";
+import { landingScreen } from "./screens/landing";
+import { reviewScreen } from "./screens/review";
+import { challengeScreen } from "./screens/challenge";
+import { myScreen } from "./screens/my";
+import type { GnavKey } from "./ui/gnav";
 import { paywallScreen } from "./screens/paywall";
 import { examScreen } from "./screens/exam";
 import { createLessonPlayer } from "./lessons/player";
@@ -29,7 +32,33 @@ nav.init(frame);
 let lastUnitId: string | undefined;
 
 function goHome(): void {
-  nav.reset(homeScreen(openLesson, openGame, lastUnitId, { onSubjects: openSubjects, onLogin: openLogin, onOpenExam: openExam }));
+  nav.reset(homeScreen(openLesson, lastUnitId, { onSubjects: openSubjects, onLogin: openLogin, onOpenExam: openExam, onTab: goTab }));
+}
+
+/** 하단 탭 전환(2026-07-12 IA 개편) — 탭은 스택을 쌓지 않고 reset으로 갈아끼운다. */
+function goTab(k: GnavKey): void {
+  if (k === "home") {
+    goHome();
+  } else if (k === "review") {
+    nav.reset(reviewScreen({ onTab: goTab, onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson)) }));
+  } else if (k === "challenge") {
+    nav.reset(challengeScreen({ onTab: goTab }));
+  } else {
+    nav.reset(
+      myScreen({
+        onTab: goTab,
+        onOpenAccount: openLogin,
+        onOpenPaywall: () =>
+          nav.go(
+            paywallScreen({
+              sub: "모든 프리미엄 레슨과 단원 평가 재응시를 평생 열 수 있어요.",
+              onUnlocked: () => nav.back(),
+              onClose: () => nav.back(),
+            }),
+          ),
+      }),
+    );
+  }
 }
 
 /** 단원 종합 평가 — 항상 열린 지도 노드에서 진입. 재응시 잠금은 화면 안에서 페이월로 안내한다. */
@@ -80,15 +109,8 @@ function openLogin(): void {
   );
 }
 
-function openGame(unitId: string): void {
-  lastUnitId = unitId;
-  // 단원별 보너스 게임 분기 — 수학 I은 별자리 한붓그리기, 과학 III은 단열 디펜스
-  if (unitId === "m1u1") {
-    nav.go(starGameScreen(goHome));
-    return;
-  }
-  nav.go(minigameScreen(goHome));
-}
+// 보너스 미니게임(단열 디펜스·별자리 한붓그리기)은 도전 탭으로 이사(2026-07-12) —
+// 재단장 후 challenge.ts에서 minigameScreen/starGameScreen을 다시 연결한다.
 
 function openLesson(id: string): void {
   const found = findLesson(id);
@@ -119,26 +141,48 @@ function openLesson(id: string): void {
 function start(): void {
   if (getState().onboarded) {
     goHome();
-  } else {
-    // 첫 사용 플로우: 스플래시 → 과목 선택(과학만 열림) → 학년·목표 온보딩 → 홈
-    nav.go(
-      splashScreen(() =>
-        nav.go(
-          subjectScreen({
-            mode: "onboard",
-            onPickScience: () => {
-              setViewSubject("sci");
-              nav.go(onboardingScreen(goHome));
-            },
-            onPickMath: () => {
-              setViewSubject("math");
-              nav.go(onboardingScreen(goHome));
-            },
-          }),
-        ),
-      ),
-    );
+    return;
   }
+  // 첫 사용 플로우(2026-07-12 IA): 스플래시 → 랜딩(바로 시작하기/로그인) → 과목 선택 → 학년·목표 온보딩 → 홈.
+  // 프라이머리는 "바로 시작하기"(무로그인 둘러보기) — 가치 먼저, 로그인은 보조 진입이라는 정책 유지.
+  const enterOnboarding = (): void => {
+    if (getState().onboarded) {
+      goHome(); // 랜딩에서 로그인해 서버 기록(onboarded)이 내려온 경우 — 온보딩 생략
+      return;
+    }
+    nav.go(
+      subjectScreen({
+        mode: "onboard",
+        onPickScience: () => {
+          setViewSubject("sci");
+          nav.go(onboardingScreen(goHome));
+        },
+        onPickMath: () => {
+          setViewSubject("math");
+          nav.go(onboardingScreen(goHome));
+        },
+      }),
+    );
+  };
+  nav.go(
+    splashScreen(() =>
+      nav.go(
+        landingScreen({
+          onStart: enterOnboarding,
+          onLogin: () =>
+            nav.go(
+              loginScreen(
+                () => {
+                  if (getState().onboarded) goHome();
+                  else nav.back();
+                },
+                { onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson)) },
+              ),
+            ),
+        }),
+      ),
+    ),
+  );
 }
 
 // [임시 프리뷰] 적용 랩 시제품 — DEV에서 ?preview=u3l1v2 로 진입. 폐기 시 이 분기를 지우고 start()만 남긴다.

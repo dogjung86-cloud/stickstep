@@ -18,7 +18,9 @@ create table if not exists public.progress (
   onboarded boolean not null default false,
   grade text, -- 온보딩 학년("g1"|"g2"|"g3")
   goal_min int not null default 10,
-  total_step int not null default 0, -- 앱의 totalXp(화폐 이름 '스텝')
+  total_step int not null default 0, -- 앱의 totalXp(화폐 이름 '스텝') — 보유 잔액(소비로 줄 수 있음)
+  life_step int not null default 0, -- 앱의 lifeXp — 누적 획득 스텝(장화 레벨·랭킹 기준, 소비로 줄지 않음)
+  avatar_id smallint, -- 스틱맨 아바타 선택(ui/avatar AVATAR_KINDS 인덱스, null=기본)
   streak int not null default 0,
   last_study_day date,
   premium boolean not null default false, -- 영수증 검증 전까지는 편의 동기화 값(진실 원천 아님)
@@ -28,7 +30,10 @@ create table if not exists public.progress (
   wrong_notes jsonb not null default '{}'::jsonb, -- Record<key, WrongNote> 오답노트(store.ts 참조)
   updated_at timestamptz not null default now()
 );
--- 기존 배포 프로젝트에 적용할 때: alter table public.progress add column if not exists wrong_notes jsonb not null default '{}'::jsonb;
+-- 기존 배포 프로젝트에 적용할 때:
+--   alter table public.progress add column if not exists wrong_notes jsonb not null default '{}'::jsonb;
+--   alter table public.progress add column if not exists life_step int not null default 0;
+--   alter table public.progress add column if not exists avatar_id smallint;
 
 -- ── RLS: 본인 행만 읽고 쓴다 ───────────────────────────────────────────
 alter table public.profiles enable row level security;

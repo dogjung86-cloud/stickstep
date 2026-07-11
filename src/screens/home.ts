@@ -10,18 +10,17 @@ import { serpentine, smoothPath, pathUpTo } from "../ui/serpentine";
 import { mapDecorArt } from "../ui/mapDecor";
 import type { Screen } from "../core/router";
 import { onAuthChange } from "../core/auth";
-import { stickAvatar } from "../ui/avatar";
+import { stickAvatar, avatarKindOf } from "../ui/avatar";
+import { gnav, type GnavKey } from "../ui/gnav";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
 const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice" };
-// 단원별 보너스 미니게임 — 모든 레슨을 완료하면 지도 끝에 열린다.
-const UNIT_GAME: Record<string, { title: string }> = { u3: { title: "단열 디펜스" }, m1u1: { title: "별자리 한붓그리기" } };
+// 보너스 미니게임은 도전 탭으로 이사(2026-07-12 IA 개편) — 지도는 학습 서사만 남긴다.
 
 export function homeScreen(
   onOpenLesson: (id: string) => void,
-  onOpenGame: (unitId: string) => void,
   focusUnitId?: string,
-  nav2?: { onSubjects?: () => void; onLogin?: () => void; onOpenExam?: (unitId: string) => void },
+  nav2?: { onSubjects?: () => void; onLogin?: () => void; onOpenExam?: (unitId: string) => void; onTab?: (k: GnavKey) => void },
 ): Screen {
   const st = getState();
   // 과목·학년 트랙 — 방금 학습한 단원이 있으면 그 단원의 과목·학년으로 따라간다.
@@ -56,7 +55,7 @@ export function homeScreen(
   const offAuth = onAuthChange((u) => {
     profBtn.setAttribute("aria-label", u ? "마이페이지" : "로그인");
     if (u) {
-      const ava = stickAvatar("wave");
+      const ava = stickAvatar(avatarKindOf(getState().avatarId));
       ava.classList.add("ab-avatar");
       profBtn.replaceChildren(ava);
     } else {
@@ -156,7 +155,7 @@ export function homeScreen(
   const bandHost = el("div", {});
   const mapHost = el("div", {});
   const scroll = el("div", { class: "scroll" }, gradeRow, tabs, bandHost, mapHost);
-  const elm = el("section", { class: "screen", attrs: { id: "sc-home" } }, appbar, scroll);
+  const elm = el("section", { class: "screen", attrs: { id: "sc-home" } }, appbar, scroll, gnav("home", (k) => nav2?.onTab?.(k)));
 
   let snackTimer = 0;
   const snackEl = el("div", { class: "snack" });
@@ -227,7 +226,6 @@ export function homeScreen(
     gm.append(terrain, decorLayer, nodesLayer);
     mapHost.appendChild(gm);
 
-    const game = UNIT_GAME[u.id];
     const started = u.lessons.some((l) => isDone(l.id));
     let premRibbon = false; // 첫 프리미엄 노드에만 리본을 달아 소음을 줄인다
     const nodeEls: HTMLElement[] = u.lessons.map((lesson, i) => {
@@ -311,37 +309,6 @@ export function homeScreen(
       node.addEventListener("click", () => {
         haptic(HAPTIC.tap);
         nav2?.onOpenExam?.(u.id);
-      });
-      nodesLayer.appendChild(node);
-      nodeEls.push(node);
-    }
-
-    // 보너스 미니게임 노드 — 단원 100% 정복 시 해제
-    if (game) {
-      const gameOpen = unitProgress(u) === 100;
-      const med = el("div", {
-        class: "gm-med",
-        attrs: { "aria-hidden": "true" },
-        html: gameOpen ? icon("trophy", 32) : icon("lock", 30),
-      });
-      const node = el("button", {
-        class: `gm-node game ${gameOpen ? "now" : "locked"}`,
-        attrs: gameOpen
-          ? { "aria-label": `${game.title} — 보너스 게임` }
-          : { "aria-label": `${game.title} — 잠김 · 모든 레슨을 완료하면 열려요`, "aria-disabled": "true" },
-      }, med);
-      if (gameOpen) {
-        med.appendChild(el("div", { class: "gm-ring" }));
-        node.appendChild(el("div", { class: "gm-ribbon", text: "보너스" }));
-      }
-      node.appendChild(el("div", { class: "gm-label", text: game.title }));
-      node.addEventListener("click", () => {
-        haptic(HAPTIC.tap);
-        if (!gameOpen) {
-          snack("모든 레슨을 완료하면 보너스 게임이 열려요");
-          return;
-        }
-        onOpenGame(u.id);
       });
       nodesLayer.appendChild(node);
       nodeEls.push(node);

@@ -44,10 +44,12 @@ export interface AppState {
   streak: number;
   lastStudyDay: string | null; // 'YYYY-MM-DD'
   totalXp: number;
+  lifeXp: number; // 누적 획득 스텝 — 소비(spendXp)로 줄지 않는다. 장화 레벨·랭킹의 기준(core/level.ts)
   lessons: Record<string, LessonProgress>;
   minigame: Record<string, number>; // gameId -> 최고 점수
   exams: Record<string, ExamRecord>; // examId -> 단원 종합 평가 기록
   wrongNotes: Record<string, WrongNote>; // key -> 오답노트(마이페이지에서 복습)
+  avatarId: number | null; // 스틱맨 아바타 선택(ui/avatar AVATAR_KINDS 인덱스) — null이면 기본
 }
 
 const KEY = "science-app.v1";
@@ -64,10 +66,12 @@ const DEFAULT_STATE: AppState = {
   streak: 0,
   lastStudyDay: null,
   totalXp: 0,
+  lifeXp: 0,
   lessons: {},
   minigame: {},
   exams: {},
   wrongNotes: {},
+  avatarId: null,
 };
 
 function dayKey(d = new Date()): string {
@@ -88,7 +92,12 @@ let state: AppState = load();
 function load(): AppState {
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) return { ...DEFAULT_STATE, ...JSON.parse(raw) } as AppState;
+    if (raw) {
+      const s = { ...DEFAULT_STATE, ...JSON.parse(raw) } as AppState;
+      // lifeXp 도입(2026-07-12) 전 저장분 마이그레이션 — 누적은 최소한 현 보유만큼은 쌓였다.
+      if (s.lifeXp < s.totalXp) s.lifeXp = s.totalXp;
+      return s;
+    }
   } catch {
     /* 손상된 저장소는 무시하고 기본값 */
   }
@@ -199,11 +208,13 @@ export function completeLesson(id: string, acc: number, xp: number): number {
 
   const gained = firstClear ? xp : Math.round(xp * 0.3); // 복습은 30%
   state.totalXp += gained;
+  state.lifeXp += gained;
   save();
   return gained;
 }
 
-/** XP를 소모(입장료 등). 부족하면 false를 반환하고 차감하지 않는다. */
+/** XP를 소모(입장료 등). 부족하면 false를 반환하고 차감하지 않는다.
+ *  잔액(totalXp)만 줄어든다 — 누적(lifeXp)·장화 레벨은 소비와 무관. */
 export function spendXp(n: number): boolean {
   if (state.totalXp < n) return false;
   state.totalXp -= n;
@@ -213,7 +224,15 @@ export function spendXp(n: number): boolean {
 
 /** XP 지급(미니게임 보상 등). */
 export function awardXp(n: number): void {
-  state.totalXp += Math.max(0, Math.round(n));
+  const v = Math.max(0, Math.round(n));
+  state.totalXp += v;
+  state.lifeXp += v;
+  save();
+}
+
+/** 스틱맨 아바타 선택(마이 탭 픽커). */
+export function setAvatarId(i: number): void {
+  state.avatarId = i;
   save();
 }
 
@@ -245,6 +264,7 @@ export function recordExamResult(
   };
   touchStudyDay();
   state.totalXp += gained;
+  state.lifeXp += gained;
   save();
   return { gained, newBest };
 }

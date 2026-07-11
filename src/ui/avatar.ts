@@ -12,6 +12,15 @@ export type AvatarKind = "smile" | "surprised" | "curious" | "wave" | "cheer";
 const FILE: Record<AvatarKind, number> = { smile: 0, surprised: 1, curious: 2, wave: 3, cheer: 4 };
 const FULL_BODY: AvatarKind[] = ["wave", "cheer"];
 
+/** 선택 가능한 아바타(마이 탭 픽커) — store.avatarId는 이 배열의 인덱스.
+ *  성별·헤어·안경 다양화는 후속 codex 발주로 여기에만 추가하면 된다. */
+export const AVATAR_KINDS: AvatarKind[] = ["smile", "surprised", "curious", "wave", "cheer"];
+
+/** store.avatarId → 아바타 kind. null·범위 밖은 기존 기본이던 wave(3). */
+export function avatarKindOf(id: number | null | undefined): AvatarKind {
+  return AVATAR_KINDS[id ?? 3] ?? "wave";
+}
+
 /** 아바타 요소 생성. setStickAvatar(el, kind)로 표정을 바꿀 수 있다. */
 export function stickAvatar(kind: AvatarKind = "smile"): HTMLElement {
   const wrap = el("span", { class: `stick-avatar ${FULL_BODY.includes(kind) ? "full" : ""}` });
