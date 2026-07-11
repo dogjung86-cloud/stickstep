@@ -19,6 +19,13 @@
 
 ## 인터랙션 원칙 (프로토타입에서 확정, 절대 바꾸지 말 것)
 - 버튼 프레스 `scale(.965)`; CTA 해제 시 `ctaPop` 애니메이션 + 햅틱 `[10,40,14]`.
+- **모션 격상 5종(2026-07-12 사용자 확정 — 에밀 코왈스키 스킬 검토에서 채택, base.css)**:
+  ① 피드백 시트 비대칭 — 열기 `.42s var(--spring)` / 닫기 `.22s var(--ease-out)`(닫힘은 응답이라 빠르게)
+  ② 퀴즈 보기 48ms 계단 등장 — `optIn` 키프레임(backwards 필 필수, forwards는 프레스를 죽임) + quiz.ts가 `--oi` 주입
+  ③ ctaPop = 젤리 스쿼시&스트레치 `.5s`(가로↔세로 교차 출렁, 프레스 .965는 불변)
+  ④ 슬라이더 러버밴딩 — `core/rubber.ts` 헬퍼가 경계 초과량→`--rb`(px) 주입, 릴리스 스냅백 `.28s var(--spring-soft)`.
+    파일럿 heatParticles·matterTemp — 새 슬라이더 랩도 같은 3줄(over 계산·--rb 주입·endDrag 리셋)로 적용 권장
+  ⑤ reduced-motion = "전부 끄기"가 아니라 이동 제거 + 200ms 페이드 유지(screen·sheet·scrim·snack·toast).
 - 햅틱(core/haptics.ts): 탭 8, 정답 `[12,60,16]`, 오답 24, 완료 `[12,80,12,80,20]`.
 - 퀴즈 플로우: **선택 → 확인하기 → 카드 채점(ok/no/dim) → 하단 시트 피드백 → 계속하기**.
 - 오답 피드백은 실제 오개념을 짚어 준다(그냥 "틀렸어요" 금지).
@@ -263,6 +270,25 @@ src/
   가짓수 셋(기준 2·결과 4·가족 3). 검산 감사는 상위 모델 9병렬(심각 2 = 순환 그림 유출·자체 검수와
   동일 건, 나머지 경미·제안 반영로 종결). 기계 검사 `node qa/check-exam-g2u2.mjs`,
   QA `PORT=<포트> node qa/e2e-exam-g2u2.mjs`(47검증), 그림 눈검수 `qa/shot-exam-figs-g2u2.mjs`.
+- **g2u3(빛과 파동) 150문항 — 첫 8레슨 풀(19×6+18×2, 18은 L3·L4)**: 유형 113(mcq+multi)/18(num)/19(word),
+  pick 20 → 2×4+3×4 균형(전부 자동). 그림은 lightFigures 재사용(coinCupFig ㄱㄴㄷ 각도 교체 +
+  **레슨 미사용 킷 twoMirrorsFig·twoLensFig가 시험에서 데뷔** — 재사용 1순위 탐색은 미사용 헬퍼부터) +
+  examFigures g2u3 섹션 파라미터형 10종(lightAngleExamFig 거울면/법선 기준·lightProtractorFig 반원
+  각도기(법선 0° 눈금 — 장치의 눈금 기준을 aria·문두에 명시)·lightRefractUpFig 물→공기 ①~⑤(레슨
+  공기→물과 **방향 교체**, 스넬 30°→42° 검산, 정답 ③ 설계)·lightSeePathFig ㉠㉡·lightMirrorGridFig
+  모눈 3칸·lightPixelExamFig on 플래그·lightBalloonFig seen 배열·lightWaveGraphFig(거리축/시간축 겸용 —
+  마루가 x=λ/4·5λ/4이므로 xStep·λ를 마루가 눈금선 위에 오게 세팅)·lightWave4Fig·lightPipesFig marks).
+  사진 10장(public/exam/g2u3 — 잔잔/물결 호수 xpair 쌍(정반사↔난반사 전환), 실험 장치 실사풍(레이저
+  유리 블록·소리굽쇠 물튀김·프리즘 분광), 유리구슬 속 풍경·국자 오목면 반사는 **"거꾸로" 방향을
+  프롬프트에 명시하고 눈검수에서 그 조건을 판정**(u7 천체 3원칙 ②의 광학판)). 수치 앵커 회피:
+  레슨 35°·42°·12cm·파장 2m·진폭 20cm·주기 0.5s·2Hz·50Hz ↔ 시험 25°·28°·40°·62°·65°·80°·3칸·파장 4m·
+  진폭 15/25cm·주기 0.4s·0.25s→4Hz·5Hz→0.2s·40Hz→0.025s. 언어 가드: '초점·실상·허상' 금지(벤치 UI
+  규칙의 시험판 — 뒤집힘은 "모인 빛이 교차"로), '분산·스펙트럼' 금지(프리즘은 "여러 색 빛으로 갈라짐").
+  전신 거울 절반(160→80cm)은 recap fun 소재의 num 승격 사례. 검산 감사는 상위 모델 8병렬(심각 0 —
+  경미·제안만 수정: 같은 풀 안 ㄱㄴㄷ 정답 조합 중복 완화, 레슨 OX와 동문인 표준 함정 문구 비틀기,
+  해설 속 오답 격파 수치가 그림 격자와 어긋난 1건). 기계 검사 `node qa/check-exam-g2u3.mjs`,
+  QA `PORT=<포트> node qa/e2e-exam-g2u3.mjs`(47검증 — 여덟 파트 문구·2×4+3×4 균형·사진 10장),
+  그림 눈검수 `qa/shot-exam-figs-g2u3.mjs`.
 - **u7(태양계) 120문항 — 천체 사진 3원칙 확립**: ① 기존 NASA 자산(public/photos/) 재사용이 1순위 —
   풀 파일 로컬 `pimg` 헬퍼(`photos/` 경로, ximg와 동형·lazy 금지). 레슨 hotspot이 쓴 사진이라도 문항
   각도가 새로우면 재사용 OK. ② 위상별 달·붉은 달·별 일주 궤적 같은 "정확한 모습이 채점 기준"인 실사는

@@ -3,6 +3,7 @@
 // "입자의 눈"으로는 입자 배열의 변화가 보인다. 끓이기 + 다시 얼리기(왕복)면 목표 달성.
 
 import { el, clamp } from "../../core/dom";
+import { rubber } from "../../core/rubber";
 import { createLoop, type Loop } from "../../core/anim";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { createMatterStage } from "../../ui/matterStage";
@@ -157,6 +158,8 @@ export const matterTemp: StepRenderer = (host, step, api) => {
     const prev = T;
     T = T_MIN + x * (T_MAX - T_MIN);
     thumb.style.left = `${x * 100}%`;
+    const over = cx < rect.left ? cx - rect.left : cx > rect.right ? cx - rect.right : 0;
+    thumb.style.setProperty("--rb", `${rubber(over, rect.width)}px`); // 경계 밖 러버밴딩
     refresh(prev);
   }
   thumb.style.left = "0%";
@@ -174,6 +177,7 @@ export const matterTemp: StepRenderer = (host, step, api) => {
   const endDrag = (): void => {
     dragging = false;
     slider.classList.remove("drag");
+    thumb.style.setProperty("--rb", "0px"); // 스냅백(.28s 스프링은 base.css .sl-thumb 몫)
   };
   slider.addEventListener("pointerup", endDrag);
   slider.addEventListener("pointercancel", endDrag);

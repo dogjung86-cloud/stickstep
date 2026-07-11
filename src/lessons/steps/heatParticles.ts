@@ -3,6 +3,7 @@
 // 뜨겁게 한 번 + 차갑게 한 번 탐험하면 CTA가 열린다. 입자 색·속도·잔상이 온도의 시각 언어.
 
 import { el, clamp } from "../../core/dom";
+import { rubber } from "../../core/rubber";
 import { createLoop, type Loop } from "../../core/anim";
 import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
@@ -97,6 +98,8 @@ export const heatParticles: StepRenderer = (host, step, api) => {
   function setTempFromClientX(cx: number): void {
     const rect = track.getBoundingClientRect();
     T = clamp(T_MIN + ((cx - rect.left) / rect.width) * (T_MAX - T_MIN), T_MIN, T_MAX);
+    const over = cx < rect.left ? cx - rect.left : cx > rect.right ? cx - rect.right : 0;
+    thumb.style.setProperty("--rb", `${rubber(over, rect.width)}px`); // 경계 밖 러버밴딩
     setSliderUI();
   }
 
@@ -113,6 +116,7 @@ export const heatParticles: StepRenderer = (host, step, api) => {
   const endDrag = (): void => {
     dragging = false;
     slider.classList.remove("drag");
+    thumb.style.setProperty("--rb", "0px"); // 스냅백(.28s 스프링은 base.css .sl-thumb 몫)
   };
   slider.addEventListener("pointerup", endDrag);
   slider.addEventListener("pointercancel", endDrag);

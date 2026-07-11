@@ -67,8 +67,16 @@ img { display: block; max-width: 100%; }
 }
 .btn:active { transform: scale(.965); background: var(--grad-blue-press); box-shadow: var(--sh-inset); }
 .btn:disabled { background: var(--n150); color: #BAC2CC; box-shadow: none; pointer-events: none; }
-.btn.pop { animation: ctaPop .42s var(--spring); }
-@keyframes ctaPop { 0% { transform: scale(1); } 45% { transform: scale(1.035); } 100% { transform: scale(1); } }
+/* ctaPop = 젤리 스쿼시&스트레치(2026-07-12 사용자 확정 격상 — 프레스 .965는 불변).
+   가로가 늘 때 세로가 줄며 출렁 — CTA 해제·정답 확인 같은 축하 순간에만 발동한다(빈도 규칙). */
+.btn.pop { animation: ctaPop .5s var(--ease); }
+@keyframes ctaPop {
+  0% { transform: scale(1, 1); }
+  30% { transform: scale(1.05, .96); }
+  58% { transform: scale(.975, 1.02); }
+  80% { transform: scale(1.015, .995); }
+  100% { transform: scale(1, 1); }
+}
 .btn.good { background: var(--grad-green); box-shadow: 0 1px 1px rgba(4,120,60,.25), 0 6px 16px -3px rgba(4,180,95,.4); }
 .btn.good:active { background: linear-gradient(180deg, #039E53, #028747); box-shadow: var(--sh-inset); }
 .btn.bad { background: var(--grad-red); box-shadow: 0 1px 1px rgba(180,30,45,.25), 0 6px 16px -3px rgba(240,68,82,.4); }
@@ -80,6 +88,11 @@ img { display: block; max-width: 100%; }
 
 /* ---------- 선택 카드(온보딩·퀴즈 공용) ---------- */
 .opts { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+/* 보기 계단 등장(48ms, 2026-07-12 사용자 확정) — --oi는 quiz.ts가 표시 순서로 주입(없으면 동시 페이드).
+   backwards 필이 지연 동안만 숨김 상태를 유지하고 종료 후엔 스타일에서 손을 떼므로
+   :active 프레스·shake와 충돌하지 않는다(forwards 금지 — transform을 영구 점유해 프레스가 죽는다). */
+.opts .opt { animation: optIn .3s var(--ease-out) backwards; animation-delay: calc(var(--oi, 0) * 48ms); }
+@keyframes optIn { from { opacity: 0; transform: translateY(8px); } }
 .opt {
   position: relative; text-align: left; background: #fff; border: 1.5px solid var(--line); border-radius: var(--r-md);
   padding: 17px 52px 17px 18px; font-size: 16px; font-weight: 600; line-height: 1.4; color: var(--ink); word-break: keep-all;
@@ -155,19 +168,23 @@ img { display: block; max-width: 100%; }
 .sl-track.plain .sl-fill { position: absolute; inset: 0 auto 0 0; border-radius: var(--r-pill); background: var(--blue); width: 0; }
 .sl-tick { position: absolute; top: -5px; width: 2px; height: 20px; background: rgba(255, 255, 255, .85); border-radius: 2px; box-shadow: 0 0 0 1px rgba(23, 32, 48, .12); }
 .sl-tick span { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; color: var(--ter); white-space: nowrap; }
+/* 러버밴딩(2026-07-12 사용자 확정): 경계 밖 저항은 --rb(px)로 — core/rubber.ts가 계산해 주입.
+   드래그 중엔 트랜지션 없이 1:1, 릴리스 때 .28s 스프링 스냅백. --rb 미사용 랩은 기존과 동일하게 동작. */
 .sl-thumb {
   position: absolute; top: 50%; width: 30px; height: 30px; border-radius: var(--r-pill); background: #fff;
-  transform: translate(-50%, -50%); box-shadow: var(--ring), 0 2px 4px hsl(var(--sh-c) / .12), 0 8px 18px -4px hsl(var(--sh-c) / .2);
-  display: grid; place-items: center; transition: transform .12s var(--ease);
+  transform: translate(calc(-50% + var(--rb, 0px)), -50%); box-shadow: var(--ring), 0 2px 4px hsl(var(--sh-c) / .12), 0 8px 18px -4px hsl(var(--sh-c) / .2);
+  display: grid; place-items: center; transition: transform .28s var(--spring-soft);
 }
-.slider.drag .sl-thumb { transform: translate(-50%, -50%) scale(1.22); }
+.slider.drag .sl-thumb { transform: translate(calc(-50% + var(--rb, 0px)), -50%) scale(1.22); transition: none; }
 .sl-thumb i { width: 12px; height: 12px; border-radius: var(--r-pill); background: var(--blue); transition: background .2s; }
 
-/* ---------- 피드백 시트 ---------- */
-.scrim { position: absolute; inset: 0; background: rgba(25, 31, 40, .3); opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 8; }
-.scrim.open { opacity: 1; }
-.sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 9; transform: translateY(105%); transition: transform .42s var(--spring); }
-.sheet.open { transform: none; }
+/* ---------- 피드백 시트 ----------
+   비대칭 타이밍(2026-07-12 사용자 확정): 여는 건 연출이라 스프링 유지,
+   닫는 건 "계속하기" 응답이라 빠르게 — 기본 트랜지션이 닫힘, .open이 열림을 정의한다. */
+.scrim { position: absolute; inset: 0; background: rgba(25, 31, 40, .3); opacity: 0; pointer-events: none; transition: opacity .18s; z-index: 8; }
+.scrim.open { opacity: 1; transition: opacity .25s; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 9; transform: translateY(105%); transition: transform .22s var(--ease-out); }
+.sheet.open { transform: none; transition: transform .42s var(--spring); }
 .sheet-card { background: #fff; border-radius: var(--r-2xl) var(--r-2xl) 0 0; padding: 22px 20px calc(16px + var(--safe-b)); box-shadow: var(--sh-sheet); }
 .sheet-head { display: flex; align-items: center; gap: 10px; }
 .sheet-ic { width: 34px; height: 34px; border-radius: var(--r-pill); display: grid; place-items: center; flex: none; }
@@ -186,7 +203,16 @@ img { display: block; max-width: 100%; }
 }
 .snack.show { opacity: 1; transform: none; }
 
+/* 동작 줄이기 = "전부 끄기"가 아니라 "부드럽게 줄이기"(2026-07-12 사용자 확정).
+   이동(transform)·연출은 제거하되, 상태 전환 단서는 200ms 페이드로 남긴다 —
+   시트가 예고 없이 '펑' 나타나면 동작을 줄인 의미가 없다. 랩·장식 애니메이션은 기존대로 즉시. */
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  .screen { transform: none !important; transition: opacity .2s ease !important; }
+  .scrim { transition: opacity .2s ease !important; }
+  .sheet { transform: none !important; opacity: 0; pointer-events: none; transition: opacity .2s ease !important; }
+  .sheet.open { opacity: 1; pointer-events: auto; }
+  .snack { transform: none !important; transition: opacity .2s ease !important; }
+  .toast { transform: translateX(-50%) !important; transition: opacity .2s ease !important; }
 }
 button:focus-visible { outline: 3px solid #9EC5FB; outline-offset: 2px; }

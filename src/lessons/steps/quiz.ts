@@ -107,6 +107,7 @@ function renderChoice(host: HTMLElement, q: QuizStep, api: StepAPI, mode: "mcq" 
   const cards: HTMLButtonElement[] = []; // 저작 인덱스 → 카드
   for (const oi of order) {
     const card = el("button", { class: "opt", html: `${opts[oi]}<span class="radio">${CHECK}</span>` });
+    card.style.setProperty("--oi", String(box.childElementCount)); // 표시 순서 — 등장 스태거(base.css optIn)
     if (import.meta.env.DEV) card.dataset.oi = String(oi); // e2e가 셔플 무관하게 보기를 집는 열쇠(dev 전용)
     card.addEventListener("click", () => {
       if (locked) return;
