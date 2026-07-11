@@ -49,7 +49,7 @@ export interface AppState {
   minigame: Record<string, number>; // gameId -> 최고 점수
   exams: Record<string, ExamRecord>; // examId -> 단원 종합 평가 기록
   wrongNotes: Record<string, WrongNote>; // key -> 오답노트(마이페이지에서 복습)
-  avatarId: number | null; // 스틱맨 아바타 선택(ui/avatar AVATAR_KINDS 인덱스) — null이면 기본
+  avatarId: number | null; // 스틱맨 아바타 선택(ui/avatar 프로필 아바타 인덱스) — null이면 기본
 }
 
 const KEY = "science-app.v1";

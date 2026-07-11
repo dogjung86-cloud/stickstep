@@ -2743,7 +2743,7 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .boot-prog { width: min(220px, 70%); height: 8px; margin-top: 4px; border-radius: 999px; background: var(--n100); overflow: hidden; }
 .boot-prog i { display: block; height: 100%; border-radius: 999px; background: var(--grad-blue); }
 .boot-cap { font-size: 12px; font-weight: 600; color: var(--n500); }
-.ava-pick { display: flex; gap: 9px; margin-top: 12px; }
+.ava-pick { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 12px; }
 .ava-opt { width: 52px; height: 52px; border-radius: 50%; background: var(--blue-tint); border: 2.5px solid transparent; overflow: hidden; padding: 0; transition: border-color .15s, transform .12s var(--ease); }
 .ava-opt:active { transform: scale(.92); }
 .ava-opt.sel { border-color: var(--blue); }

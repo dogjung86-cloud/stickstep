@@ -2,6 +2,7 @@
 // 만화·hook·recap 어디서든 같은 얼굴이 나오도록 여기서만 가져다 쓴다.
 // 이미지가 없거나 로드에 실패하면 기존 SVG(stickmanHead/stickman)로 우아하게 폴백.
 // 파일: public/comics/avatar/0..4.png (발주 프롬프트 qa/avatar_prompts.txt)
+// + 유저 프로필 아바타(선생님과 별개의 학생 캐릭터들)는 아래 PROFILE 섹션 — public/avatars/*.webp.
 
 import { el } from "../core/dom";
 import { stickman, stickmanHead } from "./figures";
@@ -12,13 +13,61 @@ export type AvatarKind = "smile" | "surprised" | "curious" | "wave" | "cheer";
 const FILE: Record<AvatarKind, number> = { smile: 0, surprised: 1, curious: 2, wave: 3, cheer: 4 };
 const FULL_BODY: AvatarKind[] = ["wave", "cheer"];
 
-/** 선택 가능한 아바타(마이 탭 픽커) — store.avatarId는 이 배열의 인덱스.
- *  성별·헤어·안경 다양화는 후속 codex 발주로 여기에만 추가하면 된다. */
+/** 선생님 아바타 5종 — comic·hook·recap 등 "쌤" 연출 전용(표정 교체용). */
 export const AVATAR_KINDS: AvatarKind[] = ["smile", "surprised", "curious", "wave", "cheer"];
 
-/** store.avatarId → 아바타 kind. null·범위 밖은 기존 기본이던 wave(3). */
-export function avatarKindOf(id: number | null | undefined): AvatarKind {
-  return AVATAR_KINDS[id ?? 3] ?? "wave";
+/* ============================================================
+   유저 프로필 아바타 — 마이 탭 픽커·홈 앱바가 사용(store.avatarId = 아래 배열 인덱스).
+   0..4 = 기존 선생님 발주본(하위 호환 — 저장된 avatarId가 살아 있도록 순서 변경·삭제 금지),
+   5..  = 학생 캐릭터 발주본(qa/avatar2_prompts.txt → public/avatars/*.webp).
+   새 캐릭터 추가는 항상 뒤에 append — 픽커·앱바는 자동 확장된다.
+   ============================================================ */
+const TEACHER_FILES = AVATAR_KINDS.map((k) => `comics/avatar/${FILE[k]}.png`);
+const USER_FILES = [
+  "ponytail", // 5 포니테일 소녀
+  "afro", // 6 곱슬 아프로 소년(주근깨)
+  "bob", // 7 단발 소녀(사각 안경)
+  "spiky", // 8 까치머리 소년(반창고)
+  "pigtails", // 9 양갈래 소녀(주근깨)
+  "beanie", // 10 니트 비니
+  "specs", // 11 뿔테 안경 소년
+  "longhair", // 12 긴 생머리 소녀(별핀)
+  "headset", // 13 헤드폰
+  "cap", // 14 야구모자 소년
+  "perm", // 15 뽀글 파마 소녀
+  "sprout", // 16 새싹 머리
+].map((n) => `avatars/${n}.webp`);
+const PROFILE_FILES = [...TEACHER_FILES, ...USER_FILES];
+/** 기존 선생님 전신 2종(wave·cheer)만 세로 크롭 보정이 필요하다. */
+const PROFILE_FULL = new Set(AVATAR_KINDS.map((k, i) => (FULL_BODY.includes(k) ? i : -1)).filter((i) => i >= 0));
+
+export const PROFILE_COUNT = PROFILE_FILES.length;
+
+/** null·범위 밖은 기존 기본이던 선생님 wave(3). */
+export function profileIdOf(id: number | null | undefined): number {
+  const i = id ?? 3;
+  return PROFILE_FILES[i] ? i : 3;
+}
+
+/** 프로필 아바타 요소 생성(원형 프레임 안에서 object-fit cover). */
+export function profileAvatar(id: number | null | undefined): HTMLElement {
+  const wrap = el("span", { class: "stick-avatar" });
+  setProfileAvatar(wrap, id);
+  return wrap;
+}
+
+/** 프로필 아바타 교체(마이 탭 픽커 선택 반영). */
+export function setProfileAvatar(wrap: HTMLElement, id: number | null | undefined): void {
+  const i = profileIdOf(id);
+  wrap.classList.toggle("full", PROFILE_FULL.has(i));
+  wrap.innerHTML = "";
+  const img = el("img", {
+    attrs: { src: `${base}${PROFILE_FILES[i]}`, alt: "", loading: "eager", "aria-hidden": "true" },
+  });
+  img.addEventListener("error", () => {
+    wrap.innerHTML = PROFILE_FULL.has(i) ? stickman() : stickmanHead();
+  });
+  wrap.appendChild(img);
 }
 
 /** 아바타 요소 생성. setStickAvatar(el, kind)로 표정을 바꿀 수 있다. */

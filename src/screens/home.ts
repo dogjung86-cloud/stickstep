@@ -10,7 +10,7 @@ import { serpentine, smoothPath, pathUpTo } from "../ui/serpentine";
 import { mapDecorArt } from "../ui/mapDecor";
 import type { Screen } from "../core/router";
 import { onAuthChange } from "../core/auth";
-import { stickAvatar, avatarKindOf } from "../ui/avatar";
+import { profileAvatar } from "../ui/avatar";
 import { gnav, type GnavKey } from "../ui/gnav";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
@@ -55,7 +55,7 @@ export function homeScreen(
   const offAuth = onAuthChange((u) => {
     profBtn.setAttribute("aria-label", u ? "마이페이지" : "로그인");
     if (u) {
-      const ava = stickAvatar(avatarKindOf(getState().avatarId));
+      const ava = profileAvatar(getState().avatarId);
       ava.classList.add("ab-avatar");
       profBtn.replaceChildren(ava);
     } else {

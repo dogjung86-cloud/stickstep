@@ -9,7 +9,7 @@ import { getState, currentStreak, setAvatarId } from "../core/store";
 import { onAuthChange } from "../core/auth";
 import { bootLevel, BOOT_TIERS } from "../core/level";
 import { bootArt } from "../ui/boots";
-import { stickAvatar, setStickAvatar, AVATAR_KINDS, avatarKindOf } from "../ui/avatar";
+import { profileAvatar, setProfileAvatar, profileIdOf, PROFILE_COUNT } from "../ui/avatar";
 import { gnav, type GnavKey } from "../ui/gnav";
 import type { Screen } from "../core/router";
 
@@ -22,7 +22,7 @@ export function myScreen(o: {
   const lv = bootLevel(st.lifeXp);
 
   // ---- 프로필 ----
-  const bigAva = stickAvatar(avatarKindOf(st.avatarId));
+  const bigAva = profileAvatar(st.avatarId);
   const nameEl = el("div", { class: "my-name", text: "게스트 스틱" });
   const badge = el("div", { class: "boot-badge" });
   badge.innerHTML = `${bootArt(lv.tier.id, 20)}<span>${lv.tier.name} · Lv.${lv.level}</span>`;
@@ -33,21 +33,21 @@ export function myScreen(o: {
   });
   const prof = el("div", { class: "my-prof" }, el("div", { class: "login-ava" }, bigAva), nameEl, badge, prog, progCap);
 
-  // ---- 아바타 고르기(발주 5종 — 성별·헤어·안경 다양화는 후속 발주로 확장) ----
+  // ---- 아바타 고르기(선생님 5종 + 학생 캐릭터 발주본 — ui/avatar PROFILE 섹션이 자동 확장) ----
   const pick = el("div", { class: "ava-pick" });
   function renderPick(): void {
     clear(pick);
-    const cur = getState().avatarId;
-    AVATAR_KINDS.forEach((k, i) => {
-      const b = el("button", { class: `ava-opt ${(cur ?? 3) === i ? "sel" : ""}`, attrs: { "aria-label": `아바타 ${i + 1}` } }, stickAvatar(k));
+    const cur = profileIdOf(getState().avatarId);
+    for (let i = 0; i < PROFILE_COUNT; i++) {
+      const b = el("button", { class: `ava-opt ${cur === i ? "sel" : ""}`, attrs: { "aria-label": `아바타 ${i + 1}` } }, profileAvatar(i));
       b.addEventListener("click", () => {
         haptic(HAPTIC.tap);
         setAvatarId(i);
-        setStickAvatar(bigAva, k);
+        setProfileAvatar(bigAva, i);
         renderPick();
       });
       pick.appendChild(b);
-    });
+    }
   }
   renderPick();
 
