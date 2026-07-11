@@ -19,7 +19,6 @@ export interface AuthUser {
   email: string | null;
   name: string | null;
   provider: string | null;
-  avatarUrl: string | null; // 구글·카카오 프로필 사진(없으면 스틱맨 아바타 폴백)
 }
 
 export function isAuthConfigured(): boolean {
@@ -35,9 +34,9 @@ function toAuthUser(u: User | null | undefined): AuthUser | null {
   const meta = (u.user_metadata ?? {}) as Record<string, unknown>;
   const name =
     typeof meta.name === "string" ? meta.name : typeof meta.full_name === "string" ? meta.full_name : null;
-  const avatarUrl =
-    typeof meta.avatar_url === "string" ? meta.avatar_url : typeof meta.picture === "string" ? meta.picture : null;
-  return { id: u.id, email: u.email ?? null, name, provider: u.app_metadata?.provider ?? null, avatarUrl };
+  // 소셜 프로필 사진(avatar_url·picture)은 의도적으로 읽지 않는다 — 미성년 사용자 개인정보라
+  // 화면 어디에도 쓰지 않는다(2026-07-12 결정). 아바타는 앱 자체 스틱맨으로 그린다.
+  return { id: u.id, email: u.email ?? null, name, provider: u.app_metadata?.provider ?? null };
 }
 
 function emit(): void {

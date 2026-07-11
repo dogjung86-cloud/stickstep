@@ -1729,7 +1729,7 @@
 .login-btn.kakao { background: #FEE500; color: #3C1E1E; }
 .login-note { margin-top: 16px; text-align: center; font-size: 12.5px; color: var(--n500); line-height: 1.55; word-break: keep-all; }
 /* 로그인 상태 — 앱바 프로필 사진 + 마이페이지 학습 요약 */
-.ab-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; display: block; }
+.ab-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; display: block; overflow: hidden; background: var(--blue-tint); }
 .login-ava img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
 .my-stats { display: flex; gap: 10px; padding: 2px 0 6px; }
 .my-stat {
@@ -1823,6 +1823,7 @@
 .rot-overlay { position: fixed; inset: 0; z-index: 80; background: #070D1A; opacity: 0; transition: opacity .24s var(--ease); }
 .rot-overlay.in { opacity: 1; }
 .rot-inner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(90deg); }
+.rot-inner.native { transform: translate(-50%, -50%); } /* 뷰포트가 이미 가로 — 회전 없이 그대로 */
 .rot-stage { position: absolute; inset: 0; overflow: hidden; background: #0B1524; }
 .rot-title {
   position: absolute; top: 10px; left: 50%; transform: translateX(-50%);

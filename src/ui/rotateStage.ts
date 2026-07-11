@@ -1,6 +1,9 @@
 // rotateStage — 가로 모드 오버레이(VII 단원 3D 랩용).
 //   · 화면 전체를 덮는 fixed 오버레이 안에 90° 회전한 무대를 만든다.
 //     폰을 돌리지 않아도 가로로 긴 장면(태양계 일렬, 일식 정렬)을 넓게 쓸 수 있다.
+//   · 뷰포트가 이미 가로면(폰을 실제로 돌림·태블릿·데스크톱) 회전을 걷어내고 그대로 채운다
+//     (native 모드). resize마다 재판정하므로 랩 도중 폰을 돌려도 무대가 따라간다 —
+//     랩들이 매 프레임 rot.size()로 캔버스를 맞추는 관례가 전제다.
 //   · 회전된 요소의 포인터 좌표는 mapPoint()로 무대 로컬 좌표(가로 기준)로 변환한다.
 //   · leave()/dispose()가 오버레이·스크롤 잠금을 원상 복구한다.
 
@@ -36,9 +39,12 @@ export function enterRotateStage(o: { title: string; onLeave: () => void }): Rot
 
   let W = window.innerHeight;
   let H = window.innerWidth;
+  let native = false; // 뷰포트가 이미 가로면 true — 90° 회전 없이 그대로 채운다
   function layout(): void {
-    W = window.innerHeight;
-    H = window.innerWidth;
+    native = window.innerWidth > window.innerHeight;
+    inner.classList.toggle("native", native);
+    W = native ? window.innerWidth : window.innerHeight;
+    H = native ? window.innerHeight : window.innerWidth;
     inner.style.width = `${W}px`;
     inner.style.height = `${H}px`;
   }
@@ -66,11 +72,13 @@ export function enterRotateStage(o: { title: string; onLeave: () => void }): Rot
   return {
     stage,
     size: () => ({ w: W, h: H }),
-    // inner가 90° 회전돼 있어 화면 AABB는 (innerWidth × innerHeight).
-    // 무대 로컬 x축은 화면 아래 방향, y축은 화면 왼쪽 방향이 된다.
+    // 세로 모드: inner가 90° 회전돼 있어 무대 로컬 x축은 화면 아래, y축은 화면 왼쪽 방향.
+    // native(이미 가로) 모드: 회전이 없으니 화면 좌표 그대로.
     mapPoint(e) {
       const r = overlay.getBoundingClientRect();
-      return { x: e.clientY - r.top, y: r.right - e.clientX };
+      return native
+        ? { x: e.clientX - r.left, y: e.clientY - r.top }
+        : { x: e.clientY - r.top, y: r.right - e.clientX };
     },
     leave,
     dispose,

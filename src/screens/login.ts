@@ -22,22 +22,10 @@ const KAKAO_MARK = `<svg viewBox="0 0 24 24" width="20" height="20" fill="#3C1E1
 
 const PROVIDER_LABEL: Record<string, string> = { google: "Google", kakao: "카카오" };
 
-/** 프로필 사진 원형(없거나 로드 실패 시 스틱맨 아바타 폴백). */
-function avatarEl(u: AuthUser): HTMLElement {
+/** 프로필 아바타 원형 — 소셜 프로필 사진은 개인정보라 쓰지 않는다. 스틱맨 고정. */
+function avatarEl(): HTMLElement {
   const host = el("div", { class: "login-ava" });
-  if (u.avatarUrl) {
-    const img = document.createElement("img");
-    img.src = u.avatarUrl;
-    img.alt = "";
-    img.referrerPolicy = "no-referrer"; // 구글 아바타 리퍼러 403 방지
-    img.onerror = () => {
-      img.remove();
-      host.appendChild(stickAvatar("wave"));
-    };
-    host.appendChild(img);
-  } else {
-    host.appendChild(stickAvatar("wave"));
-  }
+  host.appendChild(stickAvatar("wave"));
   return host;
 }
 
@@ -153,7 +141,7 @@ export function loginScreen(onClose: () => void, extras?: { onOpenNotebook?: () 
     const hero = el(
       "div",
       { class: "login-hero" },
-      avatarEl(u),
+      avatarEl(),
       el("div", { class: "pw-title", text: who }),
       el("div", { class: "pw-sub", text: u.email ? `${via} 계정 · ${u.email}` : `${via} 계정으로 로그인됨` }),
     );
