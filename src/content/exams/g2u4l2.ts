@@ -175,7 +175,7 @@ export const POOL_G2U4L2: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt: "그림은 어떤 분자의 모형이에요. 큰 빨간 공은 산소, 작은 흰 공은 수소 원자예요. 이 분자의 화학식으로 옳은 것은?",
-    figure: atomMolsFig([{ key: "H2O", label: "(가)" }]),
+    figure: atomMolsFig([{ key: "H2O", label: "" }]),
     options: ["H₂O", "HO₂", "H₂O₂", "HO", "H₃O"],
     answer: 0,
     explain:
