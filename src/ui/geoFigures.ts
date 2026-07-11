@@ -152,7 +152,7 @@ export function soilLayersFig(): string {
 
 /** 판의 구조 단면 — 대륙 지각 + 해양 지각 + 맨틀의 윗부분 = 판(두께 약 100 km) — 마무리 10번용. */
 export function plateSectionFig(): string {
-  return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="판의 구조 단면. 왼쪽 대륙 지각과 오른쪽 얇은 해양 지각, 그 아래 맨틀의 윗부분까지가 두께 약 100 킬로미터인 판이고, 더 아래는 맨틀이 이어져요">
+  return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="판의 구조 단면. 왼쪽 대륙 지각과 오른쪽 해양 지각, 그 아래 맨틀의 윗부분까지가 판이고, 더 아래는 맨틀이 이어져요">
     <!-- 바다(오른쪽 위) -->
     <path d="M188 40 h132 v26 h-132 z" fill="#BFE0F8"/>
     <path d="M196 46 q10 4 20 0 M250 52 q10 4 20 0" stroke="#8FBBF2" stroke-width="1.6"/>

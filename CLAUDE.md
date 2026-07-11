@@ -247,6 +247,22 @@ src/
   기계 검사는 `node qa/check-exam-g2u1.mjs`(유형 구성·셔플 위반·해설 길이·word bank 검증 — 부등호
   "B < C"는 태그 아님에 주의). QA: `PORT=<포트> node qa/e2e-exam-g2u1.mjs`(47검증 — 아홉 파트 문구·
   2×7+3×2 균형·사진 10장·중2 지도 시딩 viewGrade g2), 그림 눈검수 `qa/shot-exam-figs-g2u1.mjs`.
+- **g2u2(지권의 변화) 150문항 — 두 번째 중2 시험(9레슨, g2u1 규격 그대로)**: 분포 17×6+16×3,
+  유형 113(mcq+multi)/18(num)/19(word). 그림은 geoFigures 재사용 6종(earthLayersFig·igneousGridFig·
+  mineralFlowFig·soilLayersFig·plateSectionFig·driftStagesFig — 전부 레슨 문항과 각도 교체) +
+  examFigures g2u2 섹션 5종(geoQuakeBeltFig 지진 점 띠 지도·geoRockFlowFig 파라미터 순서도·
+  geoDriftRateFig 시간-거리 원점 직선·geoCoastFitFig 해안선 퍼즐·geoCycleQuizFig). 사진 10장
+  (public/exam/g2u2 — 조흔 가루 2색·염산 거품·석영 결정·유문암·반려암·물고기 화석·양파 풍화·
+  뿌리 쐐기·석회 동굴·토양 단면 절개지). 새로 확립된 관행: ① **recap용 다이어그램의 과정 라벨은
+  그 과정명을 묻는 시험 문항에 정답을 인쇄한다** — rockCycleFig(라벨 "잘게 부서짐"·"녹음")를 그대로
+  쓰면 유출이라, 라벨을 ㉠~㉤로 감춘 시험판 geoCycleQuizFig를 따로 만들었다(aria도 "과정 이름 대신
+  동그라미 기호" 중립). ② **값 읽기 그래프의 dot 가이드 점선은 축까지 잇지 않는다** — 점선이 정답
+  눈금을 바로 가리켜 읽기 과제가 무력화(검산 감사 적발, geoDriftRateFig는 점만 표시). ③ 수치 빈곤
+  단원의 num 18 조달 전략: 깊이 산수(외핵 5100−2900=2200·내핵 6400−5100=1300·대륙/해양 지각 7배),
+  판 이동 속도 계열(cm/년 곱셈·역산·양쪽 합산), 그래프 눈금 읽기(양방향 — 시간→거리·거리→시간),
+  가짓수 셋(기준 2·결과 4·가족 3). 검산 감사는 상위 모델 9병렬(심각 2 = 순환 그림 유출·자체 검수와
+  동일 건, 나머지 경미·제안 반영로 종결). 기계 검사 `node qa/check-exam-g2u2.mjs`,
+  QA `PORT=<포트> node qa/e2e-exam-g2u2.mjs`(47검증), 그림 눈검수 `qa/shot-exam-figs-g2u2.mjs`.
 - **u7(태양계) 120문항 — 천체 사진 3원칙 확립**: ① 기존 NASA 자산(public/photos/) 재사용이 1순위 —
   풀 파일 로컬 `pimg` 헬퍼(`photos/` 경로, ximg와 동형·lazy 금지). 레슨 hotspot이 쓴 사진이라도 문항
   각도가 새로우면 재사용 OK. ② 위상별 달·붉은 달·별 일주 궤적 같은 "정확한 모습이 채점 기준"인 실사는

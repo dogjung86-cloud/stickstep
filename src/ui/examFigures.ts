@@ -1386,3 +1386,159 @@ export function chemDistillApparatusFig(): string {
     <text x="46" y="212" text-anchor="end" font-size="10.5" fill="#8B95A1">가열</text>
   </svg>`;
 }
+
+// ── g2u2(지권의 변화) 시험 전용 ──────────────────────────────
+// aria-label에 정오 단서 금지 — 분포의 '모양'을 말하지 않는다.
+
+/** 세계 지진 발생 지점 점 지도 — 판 경계 띠를 따라 몰린 분포(라이트).
+ *  aria는 중립("점으로 나타냈다")로 — 띠 모양 여부가 문항 정답이다. */
+export function geoQuakeBeltFig(): string {
+  // 간이 대륙 실루엣(비율 왜곡한 교육용 지도) — 정밀 지도가 아니라 분포 파악용
+  const land = `fill="#E7DFC8" stroke="#C9BFA0" stroke-width="1"`;
+  // 환태평양 + 알프스-히말라야 + 대서양 중앙 해령 띠의 점들
+  const belts: [number, number][] = [
+    // 남북 아메리카 서해안(환태평양 동쪽)
+    [64, 54], [60, 66], [58, 78], [62, 90], [68, 102], [74, 114], [80, 128], [86, 142], [90, 156], [94, 170],
+    // 알류샨~일본~필리핀~뉴질랜드(환태평양 서쪽)
+    [116, 44], [136, 40], [158, 44], [176, 52], [186, 64], [192, 78], [198, 92], [206, 106], [214, 122], [222, 138], [230, 154], [238, 168],
+    // 알프스-히말라야 벨트
+    [128, 78], [142, 82], [156, 86], [170, 88], [184, 92],
+    // 대서양 중앙 해령
+    [96, 60], [100, 76], [104, 92], [102, 110], [106, 128], [110, 146],
+  ];
+  const dots = belts.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.3" fill="#F04452"/>`).join("");
+  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="세계 지도 위에 지진이 발생한 지점들이 점으로 찍혀 있어요. 점들이 어떻게 분포하는지 살펴보세요">
+    <rect x="8" y="8" width="328" height="184" rx="10" fill="#DDF0FB" stroke="#B8D6EC" stroke-width="1.4"/>
+    <!-- 북아메리카 -->
+    <path d="M42 36 q30 -10 52 4 q10 8 4 20 q-14 6 -12 18 q-2 14 -14 18 q-16 2 -22 -10 q-12 -22 -8 -50z" ${land}/>
+    <!-- 남아메리카 -->
+    <path d="M78 106 q16 -6 24 6 q6 14 0 30 q-4 20 -14 30 q-10 4 -14 -8 q-6 -30 4 -58z" ${land}/>
+    <!-- 유라시아 -->
+    <path d="M120 34 q46 -14 96 -2 q26 6 30 22 q2 14 -14 20 q-24 8 -48 6 q-30 -2 -52 -12 q-16 -10 -12 -34z" ${land}/>
+    <!-- 아프리카 -->
+    <path d="M124 92 q20 -8 34 2 q10 12 6 30 q-6 20 -20 26 q-14 2 -18 -12 q-8 -24 -2 -46z" ${land}/>
+    <!-- 오스트레일리아 -->
+    <path d="M226 134 q18 -8 32 2 q8 10 2 20 q-12 10 -26 6 q-12 -6 -8 -28z" ${land}/>
+    ${dots}
+  </svg>`;
+}
+
+/** 암석 분류 순서도 — 질문 2단 분기, 예/아니요가 각자의 결론 칸으로 갈라진다(수렴 금지).
+ *  시작 상자에 담을 암석 목록과 질문 2개를 파라미터로 — 문항마다 각도를 바꿔 재사용. */
+export function geoRockFlowFig(o: { start: string; q1: string; q2: string }): string {
+  const result = (x: number, y: number, label: string): string =>
+    `<rect x="${x}" y="${y}" width="76" height="38" rx="10" fill="#F8FAFC" stroke="#B0B8C1" stroke-width="1.4" stroke-dasharray="5 4"/>
+     <text x="${x + 38}" y="${y + 24}" text-anchor="middle" font-size="14.5" font-weight="800" fill="#4E5968">${label}</text>`;
+  const yes = (x: number, y: number): string => `<text x="${x}" y="${y}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#0CA678">예</text>`;
+  const no = (x: number, y: number): string => `<text x="${x}" y="${y}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#8B95A1">아니요</text>`;
+  return `<svg viewBox="0 0 344 252" ${NS} fill="none" role="img" aria-label="암석 분류 순서도. 시작 상자의 암석들을 두 가지 질문으로 차례로 갈라 가, 나, 다 세 칸으로 나눕니다">
+    <rect x="72" y="10" width="200" height="34" rx="17" fill="#F2F4F6" stroke="#C4CAD2" stroke-width="1.4"/>
+    <text x="172" y="31" text-anchor="middle" font-size="12" font-weight="800" fill="#333D4B">${o.start}</text>
+    <line x1="172" y1="44" x2="172" y2="64" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M172 66 l-4.5 -7 h9 z" fill="#8B95A1"/>
+    <rect x="62" y="68" width="220" height="38" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
+    <text x="172" y="91" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1B64DA">${o.q1}</text>
+    <line x1="282" y1="87" x2="308" y2="87" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M310 87 l-7 -4.5 v9 z" fill="#8B95A1"/>
+    ${yes(296, 80)}
+    ${result(258, 100, "(가)")}
+    <line x1="172" y1="106" x2="172" y2="132" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M172 134 l-4.5 -7 h9 z" fill="#8B95A1"/>
+    ${no(154, 124)}
+    <rect x="62" y="136" width="220" height="38" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
+    <text x="172" y="159" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1B64DA">${o.q2}</text>
+    <line x1="282" y1="155" x2="308" y2="155" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M310 155 l-7 -4.5 v9 z" fill="#8B95A1"/>
+    ${yes(296, 148)}
+    ${result(258, 168, "(나)")}
+    <line x1="172" y1="174" x2="172" y2="202" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M172 204 l-4.5 -7 h9 z" fill="#8B95A1"/>
+    ${no(154, 194)}
+    ${result(134, 206, "(다)")}
+  </svg>`;
+}
+
+/** 두 판 사이가 벌어진 거리-시간 그래프(원점 직선, 파라미터형) — num 값 읽기용.
+ *  정답 수치는 반드시 x·y 눈금선 교차점 위에 얹는다. aria에 수치·기울기 언급 금지. */
+export function geoDriftRateFig(o: { xMax: number; xStep: number; yMax: number; yStep: number; slope: number; dots?: [number, number][] }): string {
+  const L = 54, R = 328, T = 22, B = 176;
+  const px = (v: number): number => L + ((R - L) * v) / o.xMax;
+  const py = (v: number): number => B - ((B - T) * v) / o.yMax;
+  let grid = "";
+  for (let x = 0; x <= o.xMax; x += o.xStep) {
+    grid += `<line x1="${px(x)}" y1="${T}" x2="${px(x)}" y2="${B}" stroke="#EDF0F4" stroke-width="1.1"/>
+      <text x="${px(x)}" y="${B + 16}" text-anchor="middle" font-size="10.5" fill="#8B95A1">${x}</text>`;
+  }
+  for (let y = 0; y <= o.yMax; y += o.yStep) {
+    grid += `<line x1="${L}" y1="${py(y)}" x2="${R}" y2="${py(y)}" stroke="#EDF0F4" stroke-width="1.1"/>
+      <text x="${L - 6}" y="${py(y) + 3.5}" text-anchor="end" font-size="10.5" fill="#8B95A1">${y}</text>`;
+  }
+  const endX = Math.min(o.xMax, o.yMax / o.slope);
+  // 가이드 점선은 그리지 않는다 — 값 읽기(눈금 따라가기)가 문항의 과제라, 축까지 이어 주면 정답이 바로 읽힌다.
+  const dots = (o.dots ?? [])
+    .map(([x, y]) => `<circle cx="${px(x)}" cy="${py(y)}" r="3.4" fill="#FFF" stroke="#F04452" stroke-width="2"/>`)
+    .join("");
+  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="두 판 사이가 벌어진 거리를 시간에 따라 나타낸 그래프예요. 가로축은 시간, 세로축은 벌어진 거리이고 원점을 지나는 직선이 그려져 있어요">
+    ${grid}
+    <line x1="${L}" y1="${B}" x2="${R}" y2="${B}" stroke="#8B95A1" stroke-width="1.6"/>
+    <line x1="${L}" y1="${B}" x2="${L}" y2="${T}" stroke="#8B95A1" stroke-width="1.6"/>
+    <line x1="${L}" y1="${B}" x2="${px(endX)}" y2="${py(endX * o.slope)}" stroke="#3A7DDB" stroke-width="2.6"/>
+    ${dots}
+    <text x="10" y="14" font-size="10.5" fill="#4E5968">벌어진 거리(cm)</text>
+    <text x="${R}" y="${B + 32}" text-anchor="end" font-size="10.5" fill="#4E5968">시간(년)</text>
+  </svg>`;
+}
+
+/** 암석 순환 시험판 — recap용 rockCycleFig와 달리 과정 라벨을 ㉠~㉤로 감춘다
+ *  (과정명을 묻는 문항에서 라벨 문자가 정답을 유출하므로). 정거장 이름은 유지.
+ *  ㉠ 마그마→화성암 · ㉡ 화성암→퇴적물 · ㉢ 퇴적물→퇴적암 · ㉣ 퇴적암→변성암 · ㉤ 변성암→마그마 */
+export function geoCycleQuizFig(): string {
+  const node = (cx: number, cy: number, name: string, bg: string, line: string, ink: string): string =>
+    `<rect x="${cx - 42}" y="${cy - 17}" width="84" height="34" rx="17" fill="${bg}" stroke="${line}" stroke-width="1.5"/>
+     <text x="${cx}" y="${cy + 5}" text-anchor="middle" font-size="13" font-weight="800" fill="${ink}">${name}</text>`;
+  const arrow = (d: string, tip: [number, number, number]): string =>
+    `<path d="${d}" stroke="#8B95A1" stroke-width="1.9" fill="none"/>
+     <path d="M${tip[0]} ${tip[1]} l-8 -3 l2 8 z" fill="#8B95A1" transform="rotate(${tip[2]} ${tip[0]} ${tip[1]})"/>`;
+  const tag = (x: number, y: number, t: string): string =>
+    `<circle cx="${x}" cy="${y}" r="11" fill="#FFFFFF" stroke="#5AA2F8" stroke-width="1.6"/>
+     <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#1B64DA">${t}</text>`;
+  return `<svg viewBox="0 0 344 250" ${NS} fill="none" role="img" aria-label="암석의 순환 그림. 마그마, 화성암, 퇴적물, 퇴적암, 변성암 다섯 정거장이 화살표로 이어져 있고, 각 화살표에는 과정 이름 대신 동그라미 기호가 붙어 있어요">
+    ${arrow("M76 190 C56 160 48 148 46 134", [46, 134, -14])}
+    ${tag(42, 168, "㉠")}
+    ${arrow("M58 92 C70 68 94 52 126 44", [126, 44, 68])}
+    ${tag(84, 56, "㉡")}
+    ${arrow("M218 44 C250 52 274 68 286 92", [286, 92, 148])}
+    ${tag(262, 56, "㉢")}
+    ${arrow("M298 134 C296 148 288 160 268 190", [268, 190, 205])}
+    ${tag(302, 168, "㉣")}
+    ${arrow("M202 214 L144 214", [144, 214, 0])}
+    ${tag(173, 232, "㉤")}
+    ${node(100, 214, "마그마", "#FFE3E0", "#F25C54", "#C0362E")}
+    ${node(46, 110, "화성암", "#FDE7EE", "#E64980", "#B03668")}
+    ${node(172, 36, "퇴적물", "#F2F4F6", "#8B95A1", "#4E5968")}
+    ${node(298, 110, "퇴적암", "#FFF4E6", "#C9A26A", "#8E6A34")}
+    ${node(244, 214, "변성암", "#E6FCF5", "#12B886", "#087F5B")}
+  </svg>`;
+}
+
+/** 남아메리카-아프리카 해안선 맞물림 + 같은 화석 발견 띠 — 대륙 이동 증거 문항용.
+ *  두 대륙을 살짝 벌려 두고 화석 띠가 이어짐을 점선으로 표시. */
+export function geoCoastFitFig(): string {
+  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="바다를 사이에 둔 두 대륙이 그려져 있어요. 왼쪽 대륙의 오른쪽 해안과 오른쪽 대륙의 왼쪽 해안 모양이 서로 닮았고, 양쪽 해안의 같은 무늬 구역이 점선으로 이어져 있어요">
+    <rect x="8" y="8" width="328" height="194" rx="10" fill="#DDF0FB" stroke="#B8D6EC" stroke-width="1.4"/>
+    <!-- 왼쪽: 남아메리카풍 -->
+    <path d="M52 40 q28 -10 46 2 q14 10 10 26 q-4 12 4 22 q8 12 2 26 q-8 22 -24 34 q-14 8 -22 -4 q-10 -18 -8 -40 q2 -20 -4 -34 q-6 -18 -4 -32z" fill="#C9A26A" stroke="#8E6A34" stroke-width="1.6"/>
+    <!-- 오른쪽: 아프리카풍(서해안 굴곡이 왼쪽과 상보) -->
+    <path d="M206 44 q30 -14 58 -2 q18 8 16 28 q-2 18 -10 32 q-10 18 -26 26 q-16 6 -26 -6 q-8 -12 -2 -26 q6 -12 -2 -22 q-10 -14 -8 -30z" fill="#DDB868" stroke="#8E6A24" stroke-width="1.6"/>
+    <!-- 같은 화석 발견 구역(양 대륙 해안의 마주 보는 띠) -->
+    <path d="M96 96 q8 8 6 20 q-2 10 -8 16" stroke="#D6336C" stroke-width="7" opacity=".45" stroke-linecap="round"/>
+    <path d="M212 92 q-8 8 -6 20 q2 10 8 16" stroke="#D6336C" stroke-width="7" opacity=".45" stroke-linecap="round"/>
+    <path d="M104 112 h100" stroke="#D6336C" stroke-width="1.8" stroke-dasharray="5 4"/>
+    <circle cx="100" cy="112" r="3" fill="#D6336C"/>
+    <circle cx="208" cy="112" r="3" fill="#D6336C"/>
+    <!-- 바다 물결 -->
+    <path d="M140 60 q8 4 16 0 M150 160 q8 4 16 0 M136 132 q7 4 14 0" stroke="#8FBBF2" stroke-width="1.6"/>
+    <text x="70" y="182" text-anchor="middle" font-size="11.5" font-weight="800" fill="#8E6A34">(가)</text>
+    <text x="252" y="182" text-anchor="middle" font-size="11.5" font-weight="800" fill="#8E6A24">(나)</text>
+  </svg>`;
+}
