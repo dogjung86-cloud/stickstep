@@ -49,7 +49,8 @@ export function fourModelFig(): string {
   const fe = (x: number, y: number): string => ball(x, y, 10, "#A87858", "#6B4630");
   const na = (x: number, y: number): string => ball(x, y, 7.5, "#C0A2E8", "#7A54B0");
   const cl = (x: number, y: number): string => ball(x, y, 12, "#8ED0A0", "#3E8A54");
-  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="네 가지 물질의 입자 모형 — 산소 분자, 물 분자, 철 원자 배열, 염화 나트륨 이온 배열">
+  // aria는 중립 — 입자 종류(분자/원자/이온) 판정이 곧 문항의 과제라 종류를 말하지 않는다(시험 aria 유출 규칙 소급).
+  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="산소, 물, 철, 염화 나트륨 네 가지 물질의 입자 모형 — 각 모형에서 알갱이들이 어떻게 배열되어 있는지 살펴보세요">
     <g><line x1="66" y1="52" x2="94" y2="52" stroke="#9AA5B4" stroke-width="4"/>${O(60, 52)}${O(100, 52)}
       <text x="80" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">산소</text></g>
     <g><line x1="252" y1="44" x2="224" y2="66" stroke="#9AA5B4" stroke-width="4"/><line x1="252" y1="44" x2="280" y2="66" stroke="#9AA5B4" stroke-width="4"/>
