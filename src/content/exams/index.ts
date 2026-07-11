@@ -5,6 +5,7 @@ import { U3_EXAM } from "./u3";
 import { U4_EXAM } from "./u4";
 import { U5_EXAM } from "./u5";
 import { U6_EXAM } from "./u6";
+import { U7_EXAM } from "./u7";
 
 export type { ExamDef, ExamItem, ExamItemType } from "./types";
 export { drawExamItems } from "./types";
@@ -14,6 +15,7 @@ const EXAMS: Record<string, ExamDef> = {
   u4: U4_EXAM,
   u5: U5_EXAM,
   u6: U6_EXAM,
+  u7: U7_EXAM,
 };
 
 /** 단원에 종합 평가가 있으면 정의를 반환(홈 지도 노드·라우팅의 근거). */

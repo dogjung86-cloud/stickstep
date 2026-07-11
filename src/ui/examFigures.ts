@@ -1031,3 +1031,137 @@ export function gasSyringeDuoFig(): string {
     ${syringe(100, "(나)", 176, spread)}
   </svg>`;
 }
+
+/* ══════════════ u7 태양계 ══════════════ */
+// 다크 스테이지(figureDark) 전용 — spaceFigures 문법 계승: 달의 밝은 반구는 항상 태양(오른쪽) 쪽,
+// 공전·회전은 시계 반대 방향, 각도 값은 문항의 조건이라 그림에 표기(정답이 아닌 조건 수치).
+// 천체 실사는 그리지 않는다 — public/photos/(NASA)를 <img>로 임베드(풀 파일 pimg 헬퍼).
+
+/** 북쪽 하늘 일주 회전(파라미터형, 다크) — 북극성 중심, 별이 A에서 B로 시계 반대 deg도 회전.
+ *  각도는 문항의 조건(시간 계산용) — 그림에 표기한다. */
+export function starSpinFig(deg: number): string {
+  const cx = 172;
+  const cy = 118;
+  const R = 78;
+  const a0 = -18;
+  // 시계 반대 = 각도 증가 방향(수학 각). 시작 a0, 끝 a0+deg.
+  const pos = (d: number): [number, number] => [cx + Math.cos((d * Math.PI) / 180) * R, cy - Math.sin((d * Math.PI) / 180) * R];
+  const [ax, ay] = pos(a0);
+  const [bx, by] = pos(a0 + deg);
+  const large = deg > 180 ? 1 : 0;
+  const arcR = R - 16;
+  const [aax, aay] = [cx + Math.cos(((a0 + 8) * Math.PI) / 180) * arcR, cy - Math.sin(((a0 + 8) * Math.PI) / 180) * arcR];
+  const [abx, aby] = [cx + Math.cos(((a0 + deg - 8) * Math.PI) / 180) * arcR, cy - Math.sin(((a0 + deg - 8) * Math.PI) / 180) * arcR];
+  const mid = a0 + deg / 2;
+  const [mx, my] = [cx + Math.cos((mid * Math.PI) / 180) * (arcR - 20), cy - Math.sin((mid * Math.PI) / 180) * (arcR - 20)];
+  return `<svg viewBox="0 0 344 224" ${NS} fill="none" role="img" aria-label="북쪽 하늘 그림. 가운데 북극성이 있고, 별 A가 시계 반대 방향으로 ${deg}도 돌아 B 위치로 간 모습">
+    <circle cx="${cx}" cy="${cy}" r="${R}" stroke="#2C4066" stroke-width="1.4" stroke-dasharray="4 5"/>
+    <circle cx="${cx}" cy="${cy}" r="4.6" fill="#FFE9A8"/>
+    <circle cx="${cx}" cy="${cy}" r="8.5" stroke="rgba(255,233,168,.4)" stroke-width="1.4"/>
+    <text x="${cx}" y="${cy + 22}" text-anchor="middle" font-size="11" fill="#AFC3E3">북극성</text>
+    <path d="M${aax.toFixed(1)} ${aay.toFixed(1)}A${arcR} ${arcR} 0 ${large} 0 ${abx.toFixed(1)} ${aby.toFixed(1)}" stroke="#8FB3E8" stroke-width="2" stroke-dasharray="5 5"/>
+    <path d="M${abx.toFixed(1)} ${aby.toFixed(1)}l7 -9M${abx.toFixed(1)} ${aby.toFixed(1)}l10 3" stroke="#8FB3E8" stroke-width="2"/>
+    <text x="${mx.toFixed(1)}" y="${my.toFixed(1)}" text-anchor="middle" font-size="13" font-weight="700" fill="#DCE8FF">${deg}°</text>
+    <circle cx="${ax.toFixed(1)}" cy="${ay.toFixed(1)}" r="5.4" fill="#EDE2BE"/>
+    <text x="${(ax + 14).toFixed(1)}" y="${(ay + 4).toFixed(1)}" font-size="12.5" font-weight="700" fill="#DCE8FF">A</text>
+    <circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="5.4" fill="#EDE2BE"/>
+    <text x="${(bx - 16).toFixed(1)}" y="${(by + 4).toFixed(1)}" font-size="12.5" font-weight="700" fill="#DCE8FF">B</text>
+    <path d="M24 214h296" stroke="#3D5378" stroke-width="2"/>
+    <text x="322" y="208" text-anchor="end" font-size="10" fill="#7E93B8">지평선</text>
+  </svg>`;
+}
+
+/** 태양~여덟 행성 배열(다크) — 왼쪽 태양, 거리순 A~H. 크기는 개략 비례(문항은 특징 매칭). */
+export function planetOrderFig(): string {
+  const P: { r: number; c1: string; c2: string; ring?: boolean; vring?: boolean }[] = [
+    { r: 4, c1: "#B9AC9C", c2: "#8A7E6E" },
+    { r: 6, c1: "#F2D9A0", c2: "#C2A366" },
+    { r: 6.4, c1: "#9FC6F4", c2: "#2E6FD4" },
+    { r: 5, c1: "#E8927C", c2: "#B05B3C" },
+    { r: 15, c1: "#F0CFA0", c2: "#B98A54" },
+    { r: 13, c1: "#F0DFB2", c2: "#C0A56E", ring: true },
+    { r: 8.5, c1: "#BFEAEA", c2: "#5FA8B8", vring: true },
+    { r: 8.5, c1: "#9FB8F4", c2: "#3E5FD4" },
+  ];
+  const xs = [64, 96, 130, 163, 208, 254, 292, 322];
+  const labels = "ABCDEFGH";
+  const planets = P.map((p, i) => {
+    const x = xs[i];
+    const ring = p.ring ? `<ellipse cx="${x}" cy="96" rx="${p.r + 8}" ry="${p.r * 0.34}" stroke="#C9B98A" stroke-width="2" transform="rotate(-14 ${x} 96)"/>` : "";
+    const vring = p.vring ? `<ellipse cx="${x}" cy="96" rx="${p.r * 0.34}" ry="${p.r + 6}" stroke="#9CC4C4" stroke-width="1.6"/>` : "";
+    return `<circle cx="${x}" cy="96" r="${p.r}" fill="url(#exu7-p${i})"/>${ring}${vring}
+      <text x="${x}" y="${96 + p.r + 20}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#DCE8FF">${labels[i]}</text>`;
+  }).join("");
+  const defs = P.map((p, i) => `<radialGradient id="exu7-p${i}" cx=".33" cy=".3" r=".85"><stop offset="0" stop-color="${p.c1}"/><stop offset="1" stop-color="${p.c2}"/></radialGradient>`).join("");
+  return `<svg viewBox="0 0 344 168" ${NS} fill="none" role="img" aria-label="왼쪽의 태양에서 가까운 순서대로 늘어선 여덟 행성 A부터 H. 크기만 개략적으로 비례해 그린 그림">
+    <defs>${defs}
+      <radialGradient id="exu7-sun" cx=".8" cy=".5" r="1"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#F2A93B"/></radialGradient>
+    </defs>
+    <circle cx="-8" cy="96" r="42" fill="url(#exu7-sun)"/>
+    <text x="18" y="42" font-size="11" fill="#FFD79E">태양</text>
+    ${planets}
+  </svg>`;
+}
+
+/** 달 공전 8위치 ①~⑧(다크) — 햇빛 오른쪽, 밝은 반구는 항상 오른쪽, 반시계 공전.
+ *  ①=태양 쪽(삭 자리), ③=위(상현), ⑤=태양 반대(망), ⑦=아래(하현). */
+export function moonPhase8Fig(): string {
+  const cx = 156;
+  const cy = 104;
+  const R = 66;
+  const nums = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧"];
+  let moons = "";
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2;
+    const x = cx + Math.cos(a) * R;
+    const y = cy - Math.sin(a) * R * 0.88;
+    moons += `<g>
+      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" fill="#2E3A52"/>
+      <path d="M${x.toFixed(1)} ${(y - 8).toFixed(1)}a8 8 0 0 1 0 16z" fill="#EDE2BE"/>
+      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" stroke="#5A6C8E" stroke-width="1"/>
+    </g>`;
+    const lx = cx + Math.cos(a) * (R + 25);
+    const ly = cy - Math.sin(a) * (R * 0.88 + 23);
+    moons += `<text x="${lx.toFixed(1)}" y="${(ly + 4.5).toFixed(1)}" fill="#DCE8FF" font-size="13" font-weight="700" text-anchor="middle">${nums[i]}</text>`;
+  }
+  return `<svg viewBox="0 0 344 212" ${NS} fill="none" role="img" aria-label="지구를 중심으로 한 달의 공전 궤도 여덟 위치 그림. 햇빛은 오른쪽에서 들어오고, 각 위치의 달은 오른쪽 반구만 밝다. 1번이 태양 쪽이고 시계 반대 방향으로 8번까지 번호가 붙어 있다">
+    <ellipse cx="${cx}" cy="${cy}" rx="${R}" ry="${R * 0.88}" stroke="#3D5378" stroke-width="1.4" stroke-dasharray="4 5"/>
+    ${moons}
+    <circle cx="${cx}" cy="${cy}" r="12" fill="url(#exu7-earth)"/>
+    <path d="M${cx - 5} ${cy - 2}q3-3 6-1t6 0" stroke="#7CA65A" stroke-width="1.6"/>
+    <text x="${cx}" y="${cy + 28}" fill="#BFD8FF" font-size="9.5" text-anchor="middle">지구</text>
+    <defs><radialGradient id="exu7-earth" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#9FC6F4"/><stop offset="1" stop-color="#2E6FD4"/></radialGradient></defs>
+    <g stroke="#FFC24E" stroke-width="3">
+      <path d="M336 74l-16 0M336 104l-16 0M336 134l-16 0"/>
+    </g>
+    <path d="M320 74l7-4v8zM320 104l7-4v8zM320 134l7-4v8z" fill="#FFC24E"/>
+    <text x="328" y="156" fill="#FFD79E" font-size="9.5" text-anchor="middle">태양 빛</text>
+  </svg>`;
+}
+
+/** 일식 그림자 지역(다크) — 태양—달—지구 일렬. 달의 짙은 그림자(본영)가 닿는 좁은 A 지역과
+ *  옅은 그림자(반영)가 닿는 넓은 B 지역. 개기/부분일식 관측 지역 문항용. */
+export function eclipseShadowFig(): string {
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="태양, 달, 지구가 일렬로 늘어선 그림. 달의 짙은 그림자가 지구 표면의 좁은 A 지역에, 옅은 그림자가 그 둘레의 넓은 B 지역에 드리워 있다">
+    <defs>
+      <radialGradient id="exu7-sun2" cx=".5" cy=".5" r=".9"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#F2A93B"/></radialGradient>
+      <radialGradient id="exu7-earth2" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#9FC6F4"/><stop offset="1" stop-color="#2E6FD4"/></radialGradient>
+      <radialGradient id="exu7-moon2" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#D8D2C0"/><stop offset="1" stop-color="#8E8874"/></radialGradient>
+    </defs>
+    <circle cx="30" cy="95" r="34" fill="url(#exu7-sun2)"/>
+    <text x="30" y="146" text-anchor="middle" font-size="10.5" fill="#FFD79E">태양</text>
+    <path d="M34 61L292 84.5L292 105.5L34 129z" fill="rgba(255,228,150,.07)"/>
+    <path d="M158 84L292 63L292 127L158 106z" fill="rgba(10,16,32,.35)"/>
+    <path d="M158 84L292 63M158 106L292 127" stroke="#3D5378" stroke-width="1" stroke-dasharray="3 4"/>
+    <path d="M158 84L292 93.2L292 96.8L158 106z" fill="rgba(4,8,18,.85)"/>
+    <circle cx="150" cy="95" r="9" fill="url(#exu7-moon2)"/>
+    <text x="150" y="120" text-anchor="middle" font-size="10.5" fill="#BFD4F2">달</text>
+    <circle cx="298" cy="95" r="36" fill="url(#exu7-earth2)"/>
+    <path d="M285 72q6-4 12-2M280 108q8 5 16 3" stroke="#7CA65A" stroke-width="2"/>
+    <path d="M264 93.2a36 36 0 0 1 .4 3.6" stroke="#F25757" stroke-width="5" stroke-linecap="round"/>
+    <text x="252" y="92" text-anchor="end" font-size="12.5" font-weight="700" fill="#FF8A8A">A</text>
+    <path d="M266 74a36 36 0 0 0 -3.8 17M266 116a36 36 0 0 1 -3.6 -14" stroke="#FFC24E" stroke-width="3.4" stroke-linecap="round"/>
+    <text x="252" y="72" text-anchor="end" font-size="12.5" font-weight="700" fill="#FFD79E">B</text>
+    <text x="298" y="146" text-anchor="middle" font-size="10.5" fill="#BFD8FF">지구</text>
+  </svg>`;
+}

@@ -1,0 +1,28 @@
+스타일 블록 A (모든 프롬프트 앞에 붙일 공통 스타일):
+Photorealistic photograph, natural lighting, clean composition, single clear subject.
+ABSOLUTELY NO text, NO numbers, NO letters, NO logos, NO watermarks anywhere in the image.
+No people, no hands, no faces, no human body parts. Square 1:1 aspect ratio. High detail, realistic textures.
+
+[0] file=public/exam/u7/sundial.png
+A classical garden sundial on a stone pedestal in a sunny park lawn, the triangular metal gnomon casting one sharp clear shadow across the blank dial plate, low afternoon sunlight, grass and trees softly blurred behind. The dial plate is completely blank with no engraved numerals or letters.
+
+[1] file=public/exam/u7/star-trails.png
+Long-exposure night sky photograph of star trails above a dark mountain silhouette: hundreds of concentric circular arcs of stars all centered on one nearly stationary bright point high in the sky, crisp thin light arcs on a deep dark blue sky. No aurora, no text.
+
+[2] file=public/exam/u7/solar-projection.png
+A small telescope on a tripod pointed at the sun, projecting a bright white circular image of the sun onto a white cardboard screen held behind the eyepiece, a few tiny dark specks visible inside the projected bright disk, daytime outdoor setting. Safe solar projection method, no one looking through the telescope, no people.
+
+[3] file=public/exam/u7/crescent-moon.png
+A thin waxing crescent moon in a clear dark evening sky, ONLY the RIGHT edge of the moon is lit as a bright thin crescent curving like a closing parenthesis, the rest of the lunar disk faintly dark, crisp astrophotography detail, deep twilight blue-black sky.
+
+[4] file=public/exam/u7/first-quarter.png
+A first-quarter half moon high in a clear night sky: exactly the RIGHT half of the lunar disk is brightly lit and the LEFT half is dark, the straight terminator line running vertically down the middle, sharp craters visible along the terminator, black sky background, telescope-quality astrophotography.
+
+[5] file=public/exam/u7/red-moon.png
+A total lunar eclipse blood moon: the full moon glowing a deep coppery red-orange color against a black starry sky, the entire lunar disk evenly dim and reddish with faint surface markings visible, crisp astrophotography.
+
+[6] file=public/exam/u7/aurora.png
+Vivid green aurora curtains rippling across a dark starry arctic night sky above a snowy landscape, tall flowing curtains of green light with faint purple edges, stars visible between the curtains, wide dramatic view. No people, no buildings.
+
+[7] file=public/exam/u7/comet.png
+A bright comet in a dark starry night sky above a distant mountain horizon, with a clearly visible long glowing tail streaming away to one side, the coma bright and compact, the tail wide and fading with distance, deep blue-black sky full of faint stars.
