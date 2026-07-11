@@ -1,0 +1,95 @@
+/* ─────────────────────────────────────────────────────────────
+   프리미엄 페이월 v2 — 과목 선택형 정가(1/2/3과목 = 14,900/24,900/33,900원).
+   paywall.ts가 단독 import하는 전용 시트(공유 ui.css 불변 — 동시 세션 충돌 방지).
+   공용 조각(.pw-hero/.pw-crown/.pw-title/.pw-sub/.pw-amount/.pw-note/.pw-restore)은
+   ui.css 정의를 재사용하고, 새 요소만 pwx- 네임스페이스를 쓴다
+   (.pw-chip은 수학 powBuild 랩이 선점 — 여기서 사용 금지).
+   ───────────────────────────────────────────────────────────── */
+
+/* 혜택 묶음 — 낱개 카드 나열 대신 한 카드 안 5행(구분선) */
+.pwx-bens {
+  background: var(--n0);
+  border: 1px solid var(--n100);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-card);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.pwx-ben { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
+.pwx-ben + .pwx-ben { border-top: 1px solid var(--n100); }
+.pwx-bico {
+  width: 36px; height: 36px; flex: none;
+  border-radius: 12px; display: grid; place-items: center;
+  color: var(--gold-deep); background: var(--gold-tint);
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, .8);
+}
+.pwx-bt { font-size: 14.5px; font-weight: 800; color: var(--n900); letter-spacing: -.01em; }
+.pwx-bs { font-size: 12.5px; color: var(--n600); margin-top: 2px; line-height: 1.45; word-break: keep-all; }
+
+/* 과목 고르기 — 담은 개수가 곧 요금제 */
+.pwx-slabel { display: flex; align-items: baseline; justify-content: space-between; margin: 0 2px 10px; }
+.pwx-slabel b { font-size: 15.5px; font-weight: 800; color: var(--n900); letter-spacing: -.01em; }
+.pwx-scount { font-size: 12.5px; font-weight: 700; color: var(--blue); }
+.pwx-subs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pwx-sub {
+  display: flex; align-items: center; gap: 8px;
+  padding: 13px 12px; text-align: left;
+  background: var(--n0); border: 1.5px solid var(--n200); border-radius: var(--r-md);
+  box-shadow: var(--sh-card);
+  font-size: 14px; font-weight: 700; color: var(--n800); letter-spacing: -.01em;
+  transition: transform .12s var(--ease), border-color .16s, background .16s;
+}
+.pwx-sub:active { transform: scale(.965); }
+.pwx-sico { display: grid; place-items: center; color: var(--n400); }
+.pwx-ck {
+  margin-left: auto; width: 20px; height: 20px; flex: none;
+  border-radius: 50%; border: 1.8px solid var(--n200);
+  display: grid; place-items: center; color: transparent;
+  transition: background .16s, border-color .16s;
+}
+.pwx-sub.on { border-color: var(--blue); background: var(--blue-tint); color: var(--n900); }
+.pwx-sub.on .pwx-sico { color: var(--blue); }
+.pwx-sub.on .pwx-ck { background: var(--blue); border-color: var(--blue); color: #fff; }
+.pwx-hint { font-size: 12px; color: var(--n500); text-align: center; margin: 10px 0 18px; word-break: keep-all; }
+
+/* 요금 사다리 — 담은 과목 수 칸이 골드로 밝혀진다(정보 표시용) */
+.pwx-tiers { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.pwx-tier {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 10px 4px 11px;
+  background: var(--n0); border: 1.5px solid var(--n100); border-radius: var(--r-md);
+  transition: border-color .18s, background .18s;
+}
+.pwx-tier .tn { font-size: 11.5px; font-weight: 700; color: var(--n500); }
+.pwx-tier .tp { font-size: 13.5px; font-weight: 800; color: var(--n700); letter-spacing: -.02em; }
+.pwx-tier .ts { font-size: 10.5px; font-weight: 700; color: var(--n400); min-height: 15px; }
+.pwx-tier .ts.save { color: var(--green); }
+.pwx-tier.on { border-color: var(--gold); background: var(--gold-tint); }
+.pwx-tier.on .tn { color: var(--gold-deep); }
+.pwx-tier.on .tp { color: var(--n900); }
+
+/* 합계 카드 */
+.pwx-price {
+  position: relative; overflow: hidden;
+  background: var(--n0); border: 1px solid var(--n100); border-radius: var(--r-xl);
+  box-shadow: var(--sh-raise);
+  padding: 20px 16px 18px; text-align: center;
+  margin-bottom: 8px;
+}
+.pwx-price::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--grad-gold); }
+.pwx-pbadge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: 999px;
+  background: var(--grad-gold); color: #5C3D04;
+  font-size: 12px; font-weight: 800;
+  margin-bottom: 10px;
+}
+@keyframes pwxPop { 0% { transform: scale(.9); } 55% { transform: scale(1.05); } 100% { transform: scale(1); } }
+.pwx-pop { animation: pwxPop .32s var(--spring-soft); }
+.pwx-save {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 9px; padding: 4.5px 11px;
+  border-radius: 999px; background: var(--n50); border: 1px solid var(--n100);
+  font-size: 12px; font-weight: 800; color: var(--green);
+}
+.pwx-fine { font-size: 11.5px; color: var(--n500); text-align: center; line-height: 1.7; padding: 6px 10px 0; word-break: keep-all; }

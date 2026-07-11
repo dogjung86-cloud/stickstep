@@ -309,4 +309,8 @@
   /* 수학 변수 서체 — 라틴 문자·π만 STIX Two Text(교과서 세리프 이탤릭), 그 외는 Pretendard 폴백.
      @font-face(unicode-range 서브셋)·적용 규칙은 math.css(수학 전용 시트) 소유. */
   --font-mvar: "STIX Two Text", "Pretendard Variable", Pretendard, sans-serif;
+
+  /* 페이월(프리미엄) 골드 파생 — paywall.css 전용 */
+  --gold-tint: #FFF6E0;
+  --gold-deep: #B7791A;
 }
