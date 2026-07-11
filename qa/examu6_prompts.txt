@@ -1,0 +1,28 @@
+스타일 블록 A (모든 프롬프트 앞에 붙일 공통 스타일):
+Photorealistic photograph, natural lighting, shallow depth of field, clean composition, single clear subject.
+ABSOLUTELY NO text, NO numbers, NO letters, NO logos, NO watermarks anywhere in the image.
+No people, no hands, no faces, no human body parts. Square 1:1 aspect ratio. High detail, realistic textures.
+
+[0] file=public/exam/u6/heel-sole.png
+A single elegant stiletto high-heel shoe standing upright next to a flat casual sneaker on a smooth light wooden floor, low camera angle clearly showing the tiny sharp heel tip of the stiletto touching the floor and the wide flat rubber sole of the sneaker resting on the floor. Both shoes are plain solid colors with no patterns or marks.
+
+[1] file=public/exam/u6/camel-feet.png
+Close-up of a camel's legs and wide padded feet standing on soft golden desert sand, the broad flat two-toed foot pads spreading out on the sand surface, only very shallow footprints visible behind, warm afternoon desert light, dunes blurred in the background.
+
+[2] file=public/exam/u6/mudflat-plank.png
+A long flat wooden plank lying on a wet glossy tidal mudflat at low tide, the plank resting on top of the soft mud surface without sinking in, while a few deep narrow stick holes nearby have sunk into the mud, overcast coastal sky reflected in the wet mud.
+
+[3] file=public/exam/u6/vacuum-pack.png
+A vacuum-sealed transparent plastic pack of white rice grains on a clean kitchen counter, the clear plastic film shrunk extremely tight and wrinkled around the hard compressed brick-shaped contents, showing how firmly the pack is squeezed. Plain packaging with no printing.
+
+[4] file=public/exam/u6/snack-bag-mountain.png
+A plain shiny silver foil snack bag puffed up round and tight like a pillow, lying on a granite rock at a high mountain summit, a vast hazy valley landscape far below in the background, bright clear high-altitude sunlight. The bag is blank silver foil with no printing.
+
+[5] file=public/exam/u6/underwater-bubbles.png
+Underwater photograph looking up toward the bright surface: a single stream of air bubbles rising through deep clear blue water, the bubbles near the bottom are small and the bubbles get noticeably bigger as they rise closer to the sparkling surface above, sun rays filtering down through the water.
+
+[6] file=public/exam/u6/winter-ball.png
+A plain orange rubber playground ball partially deflated with a large dent caved into its side, lying on frost-covered grass in an early winter morning, white frost crystals coating the grass blades and the ball surface, cold pale blue morning light.
+
+[7] file=public/exam/u6/wrap-bowl.png
+A white ceramic bowl on a wooden kitchen table covered tightly with transparent plastic wrap, the wrap surface clearly dented and curved concave downward into the bowl as if sucked inward, soft window light reflecting off the curved plastic film.

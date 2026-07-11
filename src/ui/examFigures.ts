@@ -811,3 +811,223 @@ export function motionFlowFig(): string {
     ${ansBox(154, 214, "㉡")}
   </svg>`;
 }
+
+/* ══════════════ u6 기체의 성질 ══════════════ */
+// 규칙 계승: 값 읽기 정답 수치는 aria-label 금지(그림 속 조건 값 서술은 동등 접근이라 허용),
+// num 정답은 눈금선 위, 입자 개수는 어느 장면이든 동일하게 그린다(개수 함정 문항의 시각 근거).
+// 수치 앵커(레슨 24·30.0 회피): 보일 k=40/60/48, 샤를 0℃ 55.0 mL + 0.2 mL/℃(55/273≈0.2 자연 기울기).
+
+/** 압력-부피 반비례 곡선(파라미터형, 라이트) — 곱 k 일정. 눈금 숫자 포함(값 읽기용). */
+export function gasPvGraphFig(o: { k: number; pMax: number; pStep?: number; vMax: number; vStep: number; dots?: number[] }): string {
+  const pStep = o.pStep ?? 1;
+  const gx = (p: number): number => 48 + p * (264 / o.pMax);
+  const gy = (v: number): number => 168 - (v / o.vMax) * 138;
+  let xt = "";
+  for (let p = 0; p <= o.pMax; p += pStep) {
+    xt += `<line x1="${gx(p)}" y1="168" x2="${gx(p)}" y2="26" stroke="#EDF0F4" stroke-width="1"/><text x="${gx(p)}" y="184" text-anchor="middle" font-size="10.5" fill="#8B95A1">${p}</text>`;
+  }
+  let yt = "";
+  for (let v = 0; v <= o.vMax; v += o.vStep) {
+    yt += `<line x1="48" y1="${gy(v)}" x2="320" y2="${gy(v)}" stroke="#EDF0F4" stroke-width="1"/><text x="40" y="${gy(v) + 4}" text-anchor="end" font-size="10.5" fill="#8B95A1">${v}</text>`;
+  }
+  const pMin = Math.max(o.k / o.vMax, 0.4);
+  let d = "";
+  for (let p = pMin; p <= o.pMax; p += 0.03) d += `${d ? "L" : "M"}${gx(p).toFixed(1)} ${gy(o.k / p).toFixed(1)}`;
+  const dots = (o.dots ?? [])
+    .map(
+      (p) => `<circle cx="${gx(p)}" cy="${gy(o.k / p)}" r="4.2" fill="#5E6B7E"/>
+    <line x1="${gx(p)}" y1="${gy(o.k / p)}" x2="${gx(p)}" y2="168" stroke="#B9C2CE" stroke-width="1.2" stroke-dasharray="3 4"/>
+    <line x1="48" y1="${gy(o.k / p)}" x2="${gx(p)}" y2="${gy(o.k / p)}" stroke="#B9C2CE" stroke-width="1.2" stroke-dasharray="3 4"/>`,
+    )
+    .join("");
+  return `<svg viewBox="0 0 344 200" ${NS} role="img" aria-label="온도가 일정할 때 압력에 따른 기체의 부피 그래프. 휘어지며 내려가는 곡선이다">
+    ${yt}${xt}
+    <line x1="48" y1="26" x2="48" y2="168" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="48" y1="168" x2="320" y2="168" stroke="#B0B8C1" stroke-width="1.6"/>
+    <path d="${d}" fill="none" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
+    ${dots}
+    <text x="10" y="16" font-size="11" fill="#4E5968">부피(mL)</text>
+    <text x="320" y="198" text-anchor="end" font-size="11" fill="#4E5968">압력(기압)</text>
+  </svg>`;
+}
+
+/** 온도(℃)-부피 직선(파라미터형, 라이트) — 0℃ 절편 v0 > 0. 눈금 숫자 포함(값 읽기용).
+ *  marks를 주면 (가)(나)(다) 라벨 점, dots를 주면 안내선 점을 찍는다. */
+export function gasTvGraphFig(o: {
+  v0: number;
+  slope: number;
+  tMax: number;
+  tStep: number;
+  vMin: number;
+  vMax: number;
+  vStep: number;
+  dots?: number[];
+  marks?: { t: number; label: string }[];
+}): string {
+  const gx = (t: number): number => 48 + t * (264 / o.tMax);
+  const gy = (v: number): number => 168 - ((v - o.vMin) / (o.vMax - o.vMin)) * 138;
+  const vAt = (t: number): number => o.v0 + o.slope * t;
+  let xt = "";
+  for (let t = 0; t <= o.tMax; t += o.tStep) {
+    xt += `<line x1="${gx(t)}" y1="168" x2="${gx(t)}" y2="26" stroke="#EDF0F4" stroke-width="1"/><text x="${gx(t)}" y="184" text-anchor="middle" font-size="10.5" fill="#8B95A1">${t}</text>`;
+  }
+  let yt = "";
+  for (let v = o.vMin; v <= o.vMax; v += o.vStep) {
+    yt += `<line x1="48" y1="${gy(v)}" x2="320" y2="${gy(v)}" stroke="#EDF0F4" stroke-width="1"/><text x="40" y="${gy(v) + 4}" text-anchor="end" font-size="10.5" fill="#8B95A1">${v}</text>`;
+  }
+  const tEnd = Math.min(o.tMax, (o.vMax - o.v0) / o.slope);
+  const dots = (o.dots ?? [])
+    .map(
+      (t) => `<circle cx="${gx(t)}" cy="${gy(vAt(t))}" r="4.2" fill="#5E6B7E"/>
+    <line x1="${gx(t)}" y1="${gy(vAt(t))}" x2="${gx(t)}" y2="168" stroke="#B9C2CE" stroke-width="1.2" stroke-dasharray="3 4"/>
+    <line x1="48" y1="${gy(vAt(t))}" x2="${gx(t)}" y2="${gy(vAt(t))}" stroke="#B9C2CE" stroke-width="1.2" stroke-dasharray="3 4"/>`,
+    )
+    .join("");
+  const marks = (o.marks ?? [])
+    .map(
+      (m) => `<circle cx="${gx(m.t)}" cy="${gy(vAt(m.t))}" r="4.4" fill="#5E6B7E"/>
+    <text x="${gx(m.t)}" y="${gy(vAt(m.t)) - 11}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${m.label}</text>`,
+    )
+    .join("");
+  return `<svg viewBox="0 0 344 200" ${NS} role="img" aria-label="압력이 일정할 때 온도에 따른 기체의 부피 그래프. 오른쪽 위로 오르는 직선이다">
+    ${yt}${xt}
+    <line x1="48" y1="26" x2="48" y2="168" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="48" y1="168" x2="320" y2="168" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="${gx(0)}" y1="${gy(o.v0)}" x2="${gx(tEnd)}" y2="${gy(vAt(tEnd))}" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
+    ${dots}${marks}
+    <text x="10" y="16" font-size="11" fill="#4E5968">부피(mL)</text>
+    <text x="320" y="198" text-anchor="end" font-size="11" fill="#4E5968">온도(℃)</text>
+  </svg>`;
+}
+
+/** 온도-부피 그래프 모양 고르기 ①~⑤(라이트) — ②만 옳다(0℃ 부피>0에서 오르는 직선).
+ *  ①은 원점 통과 직선(0℃면 부피 0 함정), ③ 반비례 곡선, ④ 수평선, ⑤ 내려가는 직선.
+ *  (정답을 첫 보기 ①에 두지 않는 shuffle:false 규칙 준수용 배치.) */
+export function gasTvChoicesFig(): string {
+  const cell = (i: number, x: number, y: number, body: string): string =>
+    `<g transform="translate(${x},${y})">
+      <text x="0" y="10" font-size="12" font-weight="700" fill="#4E5968">${["①", "②", "③", "④", "⑤"][i]}</text>
+      <line x1="16" y1="14" x2="16" y2="66" stroke="#B0B8C1" stroke-width="1.4"/>
+      <line x1="16" y1="66" x2="92" y2="66" stroke="#B0B8C1" stroke-width="1.4"/>
+      ${body}
+      <text x="8" y="24" font-size="8.5" fill="#8B95A1">부피</text>
+      <text x="92" y="76" text-anchor="end" font-size="8.5" fill="#8B95A1">온도</text>
+    </g>`;
+  const line = (d: string): string => `<path d="${d}" stroke="#5E6B7E" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 344 180" ${NS} fill="none" role="img" aria-label="온도와 부피 그래프 보기 다섯 개">
+    ${cell(0, 8, 6, line("M16 66 L86 24"))}
+    ${cell(1, 122, 6, line("M16 44 L86 24"))}
+    ${cell(2, 236, 6, line("M20 20 C34 22 34 40 46 48 C58 56 74 58 88 59"))}
+    ${cell(3, 8, 96, line("M16 36h70"))}
+    ${cell(4, 122, 96, line("M16 24 L86 56"))}
+  </svg>`;
+}
+
+/** 밀폐 용기 세 개 (가)(나)(다) 입자 모형(라이트) — 입자 수는 셋 다 6개로 같다.
+ *  (나)는 부피가 절반(온도 같음 = 화살표 길이 같음), (다)는 부피 같고 화살표만 길다(온도 높음). */
+export function gasParticleTrioFig(): string {
+  const part = (x: number, y: number, ang: number, len: number): string => {
+    const dx = Math.cos(ang) * len;
+    const dy = Math.sin(ang) * len;
+    return `<circle cx="${x}" cy="${y}" r="5" fill="#7FB8F2" stroke="#4E86C4" stroke-width="1.4"/>
+      <path d="M${x + dx * 0.4} ${y + dy * 0.4}L${x + dx} ${y + dy}" stroke="#5E6B7E" stroke-width="2" stroke-linecap="round"/>
+      <path d="M${x + dx} ${y + dy}l${(-dx * 0.3 - dy * 0.18).toFixed(1)} ${(-dy * 0.3 + dx * 0.18).toFixed(1)}M${x + dx} ${y + dy}l${(-dx * 0.3 + dy * 0.18).toFixed(1)} ${(-dy * 0.3 - dx * 0.18).toFixed(1)}" stroke="#5E6B7E" stroke-width="1.8" stroke-linecap="round"/>`;
+  };
+  const box = (x: number, w: number, h: number, label: string, len: number, seed: number): string => {
+    const P: [number, number, number][] = [
+      [0.24, 0.3, -0.8 + seed], [0.72, 0.24, 0.5 + seed], [0.5, 0.56, 2.2 + seed],
+      [0.22, 0.76, 1.1 + seed], [0.78, 0.7, -2.4 + seed], [0.52, 0.9, -1.2 + seed],
+    ];
+    const inner = P.map(([fx, fy, a]) => part(x + 14 + fx * (w - 28), 40 + 14 + fy * (h - 28), a, len)).join("");
+    return `<rect x="${x}" y="40" width="${w}" height="${h}" rx="10" fill="#F7FAFE" stroke="#8B95A1" stroke-width="2.2"/>
+      ${inner}
+      <text x="${x + w / 2}" y="${40 + h + 20}" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">${label}</text>`;
+  };
+  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="밀폐 용기 세 개의 입자 모형. 입자 수는 셋 다 같다. 나는 가보다 부피가 절반이고 화살표 길이는 같으며, 다는 가와 부피가 같고 화살표가 더 길다">
+    ${box(8, 96, 120, "(가)", 11, 0)}
+    ${box(124, 96, 60, "(나)", 11, 0.7)}
+    ${box(240, 96, 120, "(다)", 19, 1.4)}
+  </svg>`;
+}
+
+/** 피스톤 실린더 (가)(나) 비교(파라미터형, 라이트) — 추 개수로 압력, 피스톤 높이로 부피를 표현.
+ *  입자는 양쪽 7개로 같다. wa/wb = 추 개수, va/vb = 기체 기둥 높이 비(0~1). */
+export function gasPistonDuoFig(o: { wa: number; wb: number; va: number; vb: number }): string {
+  const jar = (x: number, label: string, weights: number, vol: number): string => {
+    const w = 108;
+    const bot = 168;
+    const top = 56;
+    const pistonY = bot - (bot - top) * vol;
+    const P: [number, number][] = [
+      [0.22, 0.2], [0.6, 0.14], [0.85, 0.32], [0.3, 0.52], [0.7, 0.5], [0.18, 0.82], [0.62, 0.85],
+    ];
+    const parts = P.map(([fx, fy]) => `<circle cx="${x + 10 + fx * (w - 20)}" cy="${pistonY + 8 + fy * (bot - pistonY - 14)}" r="5.4" fill="#7FB8F2" stroke="#4E86C4" stroke-width="1.4"/>`).join("");
+    return `<g>
+      <path d="M${x} ${top - 14} V${bot} H${x + w} V${top - 14}" fill="#F4F8FC" stroke="#9DAABD" stroke-width="2"/>
+      <rect x="${x + 3}" y="${pistonY}" width="${w - 6}" height="9" rx="4" fill="#8B99AC"/>
+      <rect x="${x + w / 2 - 3}" y="${pistonY - 18}" width="6" height="18" fill="#8B99AC"/>
+      ${Array.from({ length: weights }, (_, i) => `<rect x="${x + w / 2 - 10 - (weights - 1) * 11 + i * 22}" y="${pistonY - 34}" width="20" height="15" rx="3" fill="#E8C06A" stroke="#B08D3E" stroke-width="1.6"/>`).join("")}
+      ${parts}
+      <text x="${x + w / 2}" y="${bot + 22}" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">${label}</text>
+    </g>`;
+  };
+  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="피스톤이 자유롭게 움직이는 실린더 두 개. 가에는 추 ${o.wa}개, 나에는 추 ${o.wb}개가 올려져 있고 입자 수는 같다">
+    ${jar(46, "(가)", o.wa, o.va)}
+    ${jar(196, "(나)", o.wb, o.vb)}
+  </svg>`;
+}
+
+/** 스펀지 위 병 세 개(라이트) — (가) 빈 병 바로 세움 / (나) 물 채운 병 바로 세움 / (다) 물 채운 병 거꾸로.
+ *  dents=true면 눌린 깊이 (가)<(나)<(다)를 그린다 — 눌림이 문항의 전제일 때만 켤 것.
+ *  (압력 크기를 "묻는" 문항이 눌림을 보여 주면 그림이 정답을 누설한다 — u6 감사 지적.) */
+export function gasBottleSpongeFig(o?: { dents?: boolean }): string {
+  const dents = o?.dents === true;
+  const sponge = (x: number, dent: number, mouth?: boolean): string => {
+    const w = 96;
+    const cx = x + w / 2;
+    const half = mouth ? 13 : 30;
+    return `<path d="M${x} 150 h${cx - half - x} q3 ${dent} ${half} ${dent} q${half - 3} 0 ${half} ${-dent} h${x + w - cx - half} v22 h-${w} z"
+      fill="#FFE3B3" stroke="#D9A85C" stroke-width="2"/>`;
+  };
+  const bottleUp = (x: number, filled: boolean): string =>
+    `<path d="M${x + 8} 70 q-8 10 -8 22 v56 h60 v-56 q0-12 -8-22 l-4-8 h-36 z" fill="${filled ? "rgba(90,162,248,.30)" : "#F7FAFE"}" stroke="#8B95A1" stroke-width="2.2"/>
+     <rect x="${x + 16}" y="48" width="28" height="14" rx="3" fill="#C4CAD2" stroke="#8B95A1" stroke-width="1.6"/>
+     ${filled ? `<path d="M${x + 2} 92 h56" stroke="#5AA2F8" stroke-width="1.8"/>` : ""}`;
+  const bottleDown = (x: number, dent: number): string =>
+    `<g transform="translate(${x + 60},${198 + dent}) rotate(180)">
+       <path d="M8 70 q-8 10 -8 22 v56 h60 v-56 q0-12 -8-22 l-4-8 h-36 z" fill="rgba(90,162,248,.30)" stroke="#8B95A1" stroke-width="2.2"/>
+       <rect x="16" y="48" width="28" height="14" rx="3" fill="#C4CAD2" stroke="#8B95A1" stroke-width="1.6"/>
+     </g>`;
+  return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="스펀지 위에 병 세 개를 올린 그림. 가는 빈 병을 바로 세웠고, 나는 물을 가득 채워 바로 세웠고, 다는 같은 병에 물을 가득 채워 좁은 뚜껑이 아래로 가게 거꾸로 세웠다">
+    ${sponge(18, dents ? 3 : 0)}${bottleUp(18, false)}
+    ${sponge(124, dents ? 8 : 0)}${bottleUp(124, true)}
+    ${sponge(230, dents ? 14 : 0, true)}${bottleDown(230, dents ? 14 : 0)}
+    <text x="66" y="190" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(가)</text>
+    <text x="172" y="190" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(나)</text>
+    <text x="278" y="190" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(다)</text>
+  </svg>`;
+}
+
+/** 끝 막은 주사기 (가)(나) 입자 모형(라이트) — (가) 피스톤 당김(공간 넓음) / (나) 누름(공간 좁음).
+ *  입자는 양쪽 6개로 같고 크기도 같다. */
+export function gasSyringeDuoFig(): string {
+  const syringe = (y: number, label: string, plungerX: number, parts: [number, number][]): string => {
+    const bodyX = 70;
+    const bodyW = 220;
+    return `<g>
+      <rect x="${bodyX}" y="${y}" width="${bodyW}" height="52" rx="10" fill="#F7FAFE" stroke="#8B95A1" stroke-width="2.2"/>
+      <path d="M${bodyX + bodyW} ${y + 18} h18 v16 h-18" fill="#F7FAFE" stroke="#8B95A1" stroke-width="2.2"/>
+      <rect x="${bodyX + bodyW + 18}" y="${y + 21}" width="12" height="10" rx="2" fill="#8B99AC"/>
+      <rect x="${plungerX}" y="${y + 4}" width="10" height="44" rx="3" fill="#8B99AC"/>
+      <path d="M${plungerX} ${y + 26} h-40" stroke="#8B99AC" stroke-width="6"/>
+      <rect x="${plungerX - 52}" y="${y + 14}" width="12" height="24" rx="3" fill="#8B99AC"/>
+      ${parts.map(([px, py]) => `<circle cx="${plungerX + 16 + px * (bodyX + bodyW - plungerX - 28)}" cy="${y + 10 + py * 34}" r="5.2" fill="#7FB8F2" stroke="#4E86C4" stroke-width="1.4"/>`).join("")}
+      <text x="6" y="${y + 32}" font-size="13" font-weight="700" fill="#4E5968">${label}</text>
+    </g>`;
+  };
+  const spread: [number, number][] = [[0.1, 0.2], [0.34, 0.7], [0.5, 0.15], [0.66, 0.55], [0.84, 0.25], [0.92, 0.8]];
+  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="끝을 막은 주사기 두 개의 입자 모형. 가는 피스톤이 당겨져 공간이 넓고, 나는 피스톤이 눌려 공간이 좁다. 입자 수와 크기는 서로 같다">
+    ${syringe(14, "(가)", 92, spread)}
+    ${syringe(100, "(나)", 176, spread)}
+  </svg>`;
+}

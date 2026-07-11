@@ -132,7 +132,7 @@ const resultA = await page.evaluate(() => {
 });
 ok(resultA.score === "70", "일괄 채점 점수 70점", JSON.stringify(resultA.score));
 ok(resultA.sub?.includes("14개 정답"), "정답 수 표기");
-ok(resultA.xp.includes("+70 XP"), "첫 응시 신기록 XP(+70)");
+ok(resultA.xp.includes("+70 스텝"), "첫 응시 신기록 스텝(+70)");
 ok(resultA.diag.length === 5, "진단 5개 레슨 전부 표시");
 ok(resultA.diag.reduce((s, d) => s + d.c, 0) === 14 && resultA.diag.reduce((s, d) => s + d.t, 0) === 20, "진단 정오 합계 = 14/20");
 ok(resultA.diag.every((d) => d.t === 4), "레슨 균형 추출(레슨당 4문항)");
@@ -223,7 +223,7 @@ const resultC = await page.evaluate(() => {
 });
 ok(resultC.score === "100", "만점 채점", resultC.score ?? "");
 ok(resultC.conqBadge && resultC.conqTitle.includes("정복 인증"), "정복 인증 배지");
-ok(resultC.xp.includes("+30 XP"), "신기록 갱신분만 XP(100−70=+30)", resultC.xp);
+ok(resultC.xp.includes("+30 스텝"), "신기록 갱신분만 스텝(100−70=+30)", resultC.xp);
 ok(resultC.perfect && resultC.weak === 0, "만점 진단(약점 태그 없음)");
 ok(resultC.retake.includes("다시 응시하기") && !resultC.retake.includes("프리미엄"), "프리미엄 재응시 버튼(게이트 없음)");
 const stC = await store();

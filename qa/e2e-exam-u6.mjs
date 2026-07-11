@@ -1,7 +1,7 @@
-// 단원 종합 평가(u4 물질의 상태 변화) E2E — 응시 → 일괄 채점 → 6파트 진단 → 리뷰 → 레슨 바로가기 →
+// 단원 종합 평가(u6 기체의 성질) E2E — 응시 → 일괄 채점 → 5파트 진단 → 리뷰 → 레슨 바로가기 →
 // 재응시 페이월 → (정복+프리미엄) 재응시 → 정복 인증 + 신기록 XP + 발주 사진 로드까지 실플레이.
-// PORT=<포트> node qa/e2e-exam-u4.mjs — dev 서버 필수(보기 선택이 dev 전용 data-oi/data-ans를 쓴다).
-// u3판과의 차이: 레슨 6개(추출은 3·3·3·3·3·3+잔여 2 = t가 3 또는 4), 인트로 "여섯 파트" 동적 문구, exam/u4 사진 8장 로드 검증.
+// PORT=<포트> node qa/e2e-exam-u6.mjs — dev 서버 필수(보기 선택이 dev 전용 data-oi/data-ans를 쓴다).
+// u5판과의 차이: 레슨 5개(추출은 딱 4×5 = 잔여 0), 인트로 "다섯 파트" 동적 문구, exam/u6 사진 8장 로드 검증.
 import { chromium } from "playwright-core";
 import fs from "node:fs";
 
@@ -34,9 +34,9 @@ async function seed(state) {
   await W(1500);
 }
 
-async function gotoU4ExamIntro() {
+async function gotoU6ExamIntro() {
   await page.waitForSelector(".unit-tab", { timeout: 12000 });
-  await page.evaluate(() => [...document.querySelectorAll(".unit-tab")].find((t) => t.textContent.includes("상태 변화"))?.click());
+  await page.evaluate(() => [...document.querySelectorAll(".unit-tab")].find((t) => t.textContent.includes("기체의 성질"))?.click());
   await W(650);
   await page.waitForSelector(".screen.active .gm-node.exam", { timeout: 8000 });
   await page.evaluate(() => document.querySelector(".screen.active .gm-node.exam").click());
@@ -91,10 +91,10 @@ async function playExam(correctCount) {
   return seen;
 }
 
-// ═══════════ 0. 발주 사진 8장 로드(exam/u4) ═══════════
+// ═══════════ 0. 발주 사진 8장 로드(exam/u6) ═══════════
 console.log("0. 발주 사진 로드");
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
-const PHOTOS = ["squid-dry", "dew-grass", "frost-leaf", "fog-mirror", "dryice-cup", "candle-wax", "window-frost", "kettle-steam"];
+const PHOTOS = ["heel-sole", "camel-feet", "mudflat-plank", "vacuum-pack", "snack-bag-mountain", "underwater-bubbles", "winter-ball", "wrap-bowl"];
 const photoRes = await page.evaluate(async (names) => {
   const out = [];
   for (const n of names) {
@@ -102,19 +102,19 @@ const photoRes = await page.evaluate(async (names) => {
       const im = new Image();
       im.onload = () => res(im.naturalWidth);
       im.onerror = () => res(0);
-      im.src = `/exam/u4/${n}.webp`;
+      im.src = `/exam/u6/${n}.webp`;
     });
     out.push({ n, w: r });
   }
   return out;
 }, PHOTOS);
-ok(photoRes.every((p) => p.w > 0), "exam/u4 사진 8장 전부 로드", JSON.stringify(photoRes.filter((p) => !p.w)));
+ok(photoRes.every((p) => p.w > 0), "exam/u6 사진 8장 전부 로드", JSON.stringify(photoRes.filter((p) => !p.w)));
 
 // ═══════════ A. 무료 첫 응시 — 레슨 진행 0%에서도 열려 있어야 한다 ═══════════
 console.log("A. 무료 첫 응시(진행 0%)");
 await seed(BASE);
 await page.waitForSelector(".unit-tab", { timeout: 12000 });
-await page.evaluate(() => [...document.querySelectorAll(".unit-tab")].find((t) => t.textContent.includes("상태 변화"))?.click());
+await page.evaluate(() => [...document.querySelectorAll(".unit-tab")].find((t) => t.textContent.includes("기체의 성질"))?.click());
 await W(650);
 const nodeInfo = await page.evaluate(() => {
   const n = document.querySelector(".screen.active .gm-node.exam");
@@ -126,9 +126,9 @@ await page.evaluate(() => document.querySelector(".screen.active .gm-node.exam")
 await W(850);
 ok((await page.evaluate(() => document.querySelector(".screen.active .ex-title")?.textContent)) === "단원 종합 평가", "인트로 진입");
 const ruleTxt = await page.evaluate(() => [...document.querySelectorAll(".screen.active .ex-rule-s")].map((x) => x.textContent).join(" | "));
-ok(ruleTxt.includes("여섯 파트"), "인트로 파트 수 동적 문구(여섯 파트)", ruleTxt);
+ok(ruleTxt.includes("다섯 파트"), "인트로 파트 수 동적 문구(다섯 파트)", ruleTxt);
 ok((await page.evaluate(() => document.querySelector(".screen.active .btn.cta")?.textContent)) === "시험 시작하기", "첫 응시 CTA = 시험 시작하기");
-await shot("exam-u4-a-intro");
+await shot("exam-u6-a-intro");
 await page.evaluate(() => document.querySelector(".screen.active .btn.cta").click());
 await W(650);
 
@@ -152,9 +152,9 @@ const resultA = await page.evaluate(() => {
 ok(resultA.score === "70", "일괄 채점 점수 70점", JSON.stringify(resultA.score));
 ok(resultA.sub?.includes("14개 정답"), "정답 수 표기");
 ok(resultA.xp.includes("+70 스텝"), "첫 응시 신기록 스텝(+70)");
-ok(resultA.diag.length === 6, "진단 6개 레슨 전부 표시", String(resultA.diag.length));
+ok(resultA.diag.length === 5, "진단 5개 레슨 전부 표시", String(resultA.diag.length));
 ok(resultA.diag.reduce((s, d) => s + d.c, 0) === 14 && resultA.diag.reduce((s, d) => s + d.t, 0) === 20, "진단 정오 합계 = 14/20");
-ok(resultA.diag.every((d) => d.t === 3 || d.t === 4) && resultA.diag.filter((d) => d.t === 4).length === 2, "레슨 균형 추출(6레슨 — 3문항×4 + 4문항×2)", JSON.stringify(resultA.diag.map((d) => d.t)));
+ok(resultA.diag.every((d) => d.t === 4), "레슨 균형 추출(5레슨 — 4문항×5, 잔여 0)", JSON.stringify(resultA.diag.map((d) => d.t)));
 const weakRows = resultA.diag.filter((d) => d.weak);
 const worstRatio = Math.min(...resultA.diag.map((d) => d.c / d.t));
 ok(weakRows.length > 0 && weakRows.every((d) => d.c / d.t === worstRatio), "최저 정답률 파트에 약점 태그");
@@ -162,9 +162,9 @@ ok(resultA.diag.filter((d) => d.c < d.t).every((d) => d.btn), "오답 있는 파
 ok(resultA.review === 20 && resultA.wrong === 6, "전 문항 리뷰 20행 · 오답 6행");
 ok(!resultA.conqBadge, "정복 전 응시라 인증 배지 없음");
 const stA = await store();
-ok(stA.exams?.u4exam?.attempts === 1 && stA.exams?.u4exam?.best === 70 && stA.exams?.u4exam?.conquered === false, "store 기록(1회·70점·미정복)", JSON.stringify(stA.exams));
+ok(stA.exams?.u6exam?.attempts === 1 && stA.exams?.u6exam?.best === 70 && stA.exams?.u6exam?.conquered === false, "store 기록(1회·70점·미정복)", JSON.stringify(stA.exams));
 ok(stA.totalXp === 70, "XP 지급 = 점수만큼(첫 신기록)", String(stA.totalXp));
-await shot("exam-u4-a-result");
+await shot("exam-u6-a-result");
 
 // 오답 리뷰 펼치기 — 해설·핵심 한 줄·레슨 바로가기 + 그림 재렌더
 await page.evaluate(() => document.querySelector(".screen.active .xr-row.bad .xr-head").click());
@@ -183,7 +183,7 @@ const reviewA = await page.evaluate(() => {
 ok(reviewA.open && reviewA.expl && reviewA.core, "오답 리뷰: 해설(150자+)·핵심 한 줄 렌더");
 ok(reviewA.marksOrPair, "오답 리뷰: 정답 표시(ok 마크/정답 카드)");
 ok(reviewA.lessonBtn.includes("복습하기"), "오답 리뷰: 레슨 바로가기 버튼");
-await shot("exam-u4-a-review");
+await shot("exam-u6-a-review");
 
 // 레슨 바로가기 → 레슨 플레이어 → 닫기 → 홈
 await page.evaluate(() => document.querySelector(".screen.active .xr-row.bad.open .xr-lesson-btn").click());
@@ -215,9 +215,9 @@ ok((await page.evaluate(() => document.querySelector(".screen.active .ex-title")
 // ═══════════ C. 정복 100% + 프리미엄 재응시 — 인증 배지·신기록 XP ═══════════
 console.log("C. 정복+프리미엄 재응시");
 const lessons = {};
-for (let i = 1; i <= 6; i++) lessons[`u4l${i}`] = { done: true, acc: 95, bestXp: 120 };
-await seed({ ...BASE, premium: true, lessons, totalXp: 70, exams: { u4exam: { attempts: 1, best: 70, conquered: false } } });
-await gotoU4ExamIntro();
+for (let i = 1; i <= 5; i++) lessons[`u6l${i}`] = { done: true, acc: 95, bestXp: 120 };
+await seed({ ...BASE, premium: true, lessons, totalXp: 70, exams: { u6exam: { attempts: 1, best: 70, conquered: false } } });
+await gotoU6ExamIntro();
 const introC = await page.evaluate(() => {
   const a = document.querySelector(".screen.active");
   return { cta: a.querySelector(".btn.cta")?.textContent, hint: a.querySelector(".ex-conq-hint")?.textContent ?? "" };
@@ -245,9 +245,9 @@ ok(resultC.xp.includes("+30 스텝"), "신기록 갱신분만 스텝(100−70=+3
 ok(resultC.perfect && resultC.weak === 0, "만점 진단(약점 태그 없음)");
 ok(resultC.retake.includes("다시 응시하기") && !resultC.retake.includes("프리미엄"), "프리미엄 재응시 버튼(게이트 없음)");
 const stC = await store();
-ok(stC.exams.u4exam.attempts === 2 && stC.exams.u4exam.best === 100 && stC.exams.u4exam.conquered === true, "store 기록(2회·100점·정복)", JSON.stringify(stC.exams));
+ok(stC.exams.u6exam.attempts === 2 && stC.exams.u6exam.best === 100 && stC.exams.u6exam.conquered === true, "store 기록(2회·100점·정복)", JSON.stringify(stC.exams));
 ok(stC.totalXp === 100, "누적 XP = 70 + 30", String(stC.totalXp));
-await shot("exam-u4-c-conquered");
+await shot("exam-u6-c-conquered");
 
 // 신기록 미갱신 재응시 — XP 0 확인(파밍 방지)
 await page.evaluate(() => document.querySelector(".screen.active .ex-retake").click());
@@ -260,7 +260,7 @@ const resultD = await page.evaluate(() => {
 const stD = await store();
 ok(resultD.score === "50", "재응시 채점 50점");
 ok(!resultD.xp.includes("신기록") && resultD.best.includes("최고 기록 100점"), "신기록 미갱신 시 XP 없음 + 최고 기록 표시");
-ok(stD.totalXp === 100 && stD.exams.u4exam.best === 100 && stD.exams.u4exam.attempts === 3, "store: XP 불변·최고점 유지·응시 3회");
+ok(stD.totalXp === 100 && stD.exams.u6exam.best === 100 && stD.exams.u6exam.attempts === 3, "store: XP 불변·최고점 유지·응시 3회");
 
 // 홈 복귀 — 정복 노드 골드 확인
 await page.evaluate(() => document.querySelector(".screen.active .btn.cta").click());
@@ -270,7 +270,7 @@ const nodeC = await page.evaluate(() => {
   return { conq: n?.classList.contains("conq"), ribbon: n?.querySelector(".gm-ribbon")?.textContent, best: n?.querySelector(".gm-exam-best")?.textContent };
 });
 ok(nodeC.conq && nodeC.ribbon === "정복 인증" && nodeC.best === "최고 100점", "지도 노드 정복 골드 + 리본 + 최고점", JSON.stringify(nodeC));
-await shot("exam-u4-c-map");
+await shot("exam-u6-c-map");
 
 console.log(`\n결과: PASS ${PASS} / FAIL ${FAIL} / pageErrors ${pageErrors}`);
 await browser.close();
