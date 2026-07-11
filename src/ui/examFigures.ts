@@ -1946,11 +1946,12 @@ export function atomStructQuizFig(o: { p: number; n: number; e: number } = { p: 
   const tag = (x: number, y: number, t: string): string =>
     `<circle cx="${x}" cy="${y}" r="11" fill="#FFFFFF" stroke="#5AA2F8" stroke-width="1.6"/>
      <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#1B64DA">${t}</text>`;
-  // ㉠→양성자(첫 밝은 알갱이) ㉡→중성자(첫 회색 알갱이) ㉢→전자(첫 알갱이)
+  // ㉠→양성자(첫 밝은 알갱이) ㉡→중성자(첫 회색 알갱이) ㉢→전자(표지에서 가장 가까운 것 —
+  // 첫 전자(꼭대기)로 이으면 표선이 그림을 가로질러 ㉡ 선과 X자로 교차한다(눈검수 적발))
   const pIdx = kinds.indexOf(true), nIdx = kinds.indexOf(false);
   const pT: [number, number] = [cx + spots[pIdx][0], cy + spots[pIdx][1]];
   const nT: [number, number] = [cx + spots[nIdx][0], cy + spots[nIdx][1]];
-  const eT = ePos[0];
+  const eT = ePos.reduce((best, p) => (Math.hypot(p[0] - 310, p[1] - 146) < Math.hypot(best[0] - 310, best[1] - 146) ? p : best), ePos[0]);
   return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="원자 모형 — 가운데 덩어리(원자핵) 속에 밝은 알갱이와 회색 알갱이가 섞여 있고, 주위 점선 궤도에 작은 알갱이들이 있어요. 세 종류의 알갱이에 ㉠, ㉡, ㉢ 기호가 붙어 있어요">
     <ellipse cx="${cx}" cy="${cy}" rx="112" ry="62" stroke="#C9D2DC" stroke-width="1.6" stroke-dasharray="5 6"/>
     <circle cx="${cx}" cy="${cy}" r="30" fill="#F6E3DC" stroke="#D8A08C" stroke-width="1.6"/>
