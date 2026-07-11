@@ -13,7 +13,8 @@ const electron = (x: number, y: number, r = 7): string =>
 /** 원자 모형(+p 핵, e개 전자 — 파라미터형, 전자 최대 8개) — 원자 구조 판독 문제용 */
 export function atomModelFig(p: number, e: number): string {
   const pos = [[-58, -26], [58, -20], [-30, 46], [44, 44], [0, -58], [-62, 22], [62, 22], [0, 58]].slice(0, e);
-  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="원자 모형 — 원자핵 +${p}, 전자 ${e}개">
+  // aria는 중립 — 핵 라벨 값·전자 수가 곧 문항의 판독 과제라 수치를 말하지 않는다(시험 aria 유출 규칙 소급).
+  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="원자 모형 — 가운데 원자핵에 전하 라벨이 적혀 있고, 주위 점선 궤도에 전자 알갱이들이 있어요. 라벨 값과 알갱이 수를 살펴보세요">
     <ellipse cx="172" cy="85" rx="96" ry="66" stroke="#C9D2DC" stroke-width="1.6" stroke-dasharray="5 6"/>
     ${nucleus(172, 85, p, 22)}
     ${pos.map(([dx, dy]) => electron(172 + dx, 85 + dy)).join("")}
