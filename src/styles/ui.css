@@ -269,15 +269,20 @@
 .tagline { margin-top: 10px; font-size: 16px; color: var(--sub); font-weight: 500; animation: fadeUp .7s .28s var(--ease) both; }
 .splash-note { margin-top: 18px; font-size: 12.5px; color: var(--faint); animation: fadeUp .7s .4s var(--ease) both; }
 
-/* 스플래시 플립북 — 스틱맨 포즈 타다다닥 → 공부 포즈 탁! */
+/* 스플래시 플립북 — 놀이 컷은 카드 없이 자유롭게 타다다닥, 정착 컷에서 카드에 탁! 갇힌다(사용자 확정). */
 .flipbook {
   width: 190px; height: 190px; border-radius: 30px; overflow: hidden;
-  background: #fff; border: 2px solid var(--n200); box-shadow: var(--sh-raise);
+  background: transparent; border: 2px solid transparent; box-shadow: none;
   display: grid; place-items: center;
 }
-.flip-img { width: 86%; height: 86%; object-fit: contain; display: block; }
-.flipbook.settled { animation: flipPop .55s var(--spring-bounce, var(--spring)); border-color: #B9D4FF; }
-.flipbook.noart { background: linear-gradient(145deg, #3D8DFF, #2A6FE8); border-color: transparent; }
+/* 놀이 중엔 크게(100%) + multiply로 흰 종이 배경을 스플래시 배경에 녹여 라인만 띄운다 */
+.flip-img { width: 100%; height: 100%; object-fit: contain; display: block; mix-blend-mode: multiply; }
+.flipbook.settled {
+  background: #fff; border-color: #B9D4FF; box-shadow: var(--sh-raise);
+  animation: flipPop .55s var(--spring-bounce, var(--spring));
+}
+.flipbook.settled .flip-img { width: 86%; height: 86%; mix-blend-mode: normal; } /* 카드 안으로 슉 */
+.flipbook.noart { background: linear-gradient(145deg, #3D8DFF, #2A6FE8); border-color: transparent; box-shadow: var(--sh-raise); }
 @keyframes flipPop { 0% { transform: scale(.86) rotate(-3deg); } 60% { transform: scale(1.06) rotate(1.2deg); } 100% { transform: none; } }
 /* 워드마크·태그라인은 공부 포즈가 자리 잡은 뒤에 떠오른다 */
 .splash-anim .wordmark, .splash-anim .tagline, .splash-anim .splash-note { opacity: 0; animation: none; }
