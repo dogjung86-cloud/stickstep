@@ -1,0 +1,51 @@
+/* 개인정보처리방침 화면 + 계정 관리(동의 고지·회원탈퇴) 전용 시트 — 공유 시트(ui.css)를 오염시키지 않는다.
+   문서 본문은 public/privacy.html의 #policy-body를 그대로 주입하므로, 여기 선택자는 그 마크업(h1·h2·
+   ul·table·.pol-summary…)을 앱 톤으로 다시 입힌다. */
+
+/* ── 방침 문서 화면 ─────────────────────────────────────────── */
+.pol-htitle { font-size: 15px; font-weight: 800; color: var(--ink); text-align: center; }
+.policy-doc .pol-loading { padding: 56px 0; text-align: center; color: var(--n500); font-size: 14px; }
+.policy-doc h1 { font-size: 19px; font-weight: 800; margin: 6px 0 4px; color: var(--ink); }
+.policy-doc .pol-updated { font-size: 12.5px; color: var(--n500); margin: 0 0 14px; }
+.policy-doc h2 { font-size: 15.5px; font-weight: 800; margin: 26px 0 8px; color: var(--ink); }
+.policy-doc h3 { font-size: 13.5px; font-weight: 700; margin: 14px 0 6px; color: var(--n800); }
+.policy-doc p, .policy-doc li { font-size: 13.5px; line-height: 1.7; color: var(--n700); }
+.policy-doc p { margin: 8px 0; }
+.policy-doc ul, .policy-doc ol { padding-left: 18px; margin: 6px 0; }
+.policy-doc li { margin: 4px 0; }
+.policy-doc .pol-summary { background: var(--blue-tint); border-radius: var(--r-lg); padding: 13px 16px; margin: 12px 0 4px; }
+.policy-doc .pol-summary b { color: var(--ink); }
+.policy-doc .pol-summary li { color: var(--n800); }
+.policy-doc table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; font-size: 12.5px; }
+.policy-doc caption { text-align: left; font-size: 12.5px; font-weight: 700; padding-bottom: 6px; color: var(--ink); }
+.policy-doc th, .policy-doc td { border: 1px solid var(--n200); padding: 7px 9px; text-align: left; vertical-align: top; line-height: 1.6; }
+.policy-doc th { background: var(--n50); font-weight: 700; white-space: nowrap; width: 92px; color: var(--n700); }
+.policy-doc .pol-foot { margin: 28px 0 10px; font-size: 12px; color: var(--n400); }
+
+/* ── 로그인 화면: 동의 고지 ─────────────────────────────────── */
+.login-legal { margin-top: 14px; text-align: center; font-size: 12px; line-height: 1.7; color: var(--n500); }
+.legal-link {
+  background: none; border: none; padding: 0; font: inherit; font-weight: 700;
+  color: var(--blue); text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+}
+
+/* ── 로그인 화면: 회원탈퇴(2단 확인) ────────────────────────── */
+.acct-danger { margin: 26px 0 6px; text-align: center; }
+.withdraw-open {
+  background: none; border: none; padding: 8px 10px; font-size: 12.5px;
+  color: var(--n400); text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+}
+.withdraw-card {
+  text-align: left; background: var(--red-tint); border: 1px solid rgba(240, 68, 82, 0.22);
+  border-radius: var(--r-lg); padding: 16px;
+}
+.wd-title { font-size: 15px; font-weight: 800; color: var(--ink); }
+.wd-desc { margin: 8px 0 14px; font-size: 13px; line-height: 1.65; color: var(--n600); }
+.btn-danger {
+  width: 100%; height: 48px; border: none; border-radius: 14px;
+  background: var(--red); color: #fff; font-size: 15px; font-weight: 800; cursor: pointer;
+  transition: transform 0.12s var(--ease-out), background 0.12s;
+}
+.btn-danger:active { transform: scale(0.965); background: var(--red-press); }
+.btn-danger[disabled] { opacity: 0.6; }
+.withdraw-card .btn-ghost { width: 100%; margin-top: 8px; }

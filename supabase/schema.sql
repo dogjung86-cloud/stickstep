@@ -86,3 +86,17 @@ drop trigger if exists progress_touch on public.progress;
 create trigger progress_touch
   before update on public.progress
   for each row execute function public.touch_updated_at();
+
+-- ── 회원탈퇴: 본인 계정 완전 삭제 ──────────────────────────────────────
+-- anon 키(클라이언트)는 auth.users를 지울 수 없으므로 security definer 함수로 제공한다.
+-- auth.users 삭제가 profiles·progress로 cascade — 앱의 auth.ts deleteAccount()가 호출.
+-- 이 파일보다 먼저 만든 프로젝트에는 이 블록만 SQL Editor에 다시 실행하면 된다.
+create or replace function public.delete_user()
+returns void
+language sql
+security definer set search_path = ''
+as $$
+  delete from auth.users where id = auth.uid();
+$$;
+revoke execute on function public.delete_user() from public, anon;
+grant execute on function public.delete_user() to authenticated;

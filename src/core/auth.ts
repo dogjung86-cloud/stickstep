@@ -196,3 +196,26 @@ export async function signOut(): Promise<void> {
   user = null;
   emit();
 }
+
+/** 회원탈퇴 — 서버의 계정과 학습 기록을 완전히 삭제한다(개인정보처리방침 7조의 구현).
+ *  anon 키로는 auth.users를 지울 수 없어 schema.sql의 delete_user RPC(security definer)를 호출한다 —
+ *  auth.users 삭제가 profiles·progress로 cascade. 기기의 학습 기록(store)은 지우지 않는다(무로그인 정책과 같은 결). */
+export async function deleteAccount(): Promise<{ ok: boolean; reason?: string }> {
+  if (!isAuthConfigured() || !user) return { ok: false, reason: "로그인 상태가 아니에요" };
+  try {
+    const c = await getSupabase();
+    const { error } = await c.rpc("delete_user");
+    if (error) return { ok: false, reason: error.message };
+    // 서버 계정은 이미 삭제됨 — 세션 토큰은 이 기기에서만 정리한다(서버 호출은 이미 무효).
+    try {
+      await c.auth.signOut({ scope: "local" });
+    } catch {
+      /* 무시 — 아래에서 상태는 로그아웃 처리 */
+    }
+    user = null;
+    emit();
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, reason: e instanceof Error ? e.message : String(e) };
+  }
+}

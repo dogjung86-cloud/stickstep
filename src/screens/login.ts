@@ -8,7 +8,7 @@ import { haptic, HAPTIC } from "../core/haptics";
 import { stickAvatar } from "../ui/avatar";
 import { getState, currentStreak, wrongNoteCount } from "../core/store";
 import type { Screen } from "../core/router";
-import { consumeAuthError, currentUser, isAuthConfigured, onAuthChange, signInWith, signOut } from "../core/auth";
+import { consumeAuthError, currentUser, deleteAccount, isAuthConfigured, onAuthChange, signInWith, signOut } from "../core/auth";
 import type { AuthUser, OAuthProvider } from "../core/auth";
 
 // 간이 소셜 마크 — 외부 이미지 없이 브랜드가 연상되는 최소 글리프
@@ -29,7 +29,10 @@ function avatarEl(): HTMLElement {
   return host;
 }
 
-export function loginScreen(onClose: () => void, extras?: { onOpenNotebook?: () => void }): Screen {
+export function loginScreen(
+  onClose: () => void,
+  extras?: { onOpenNotebook?: () => void; onOpenPolicy?: () => void },
+): Screen {
   let offAuth: (() => void) | null = null;
   const unsub = (): void => {
     offAuth?.();
@@ -90,6 +93,65 @@ export function loginScreen(onClose: () => void, extras?: { onOpenNotebook?: () 
     return c;
   };
 
+  /** 개인정보처리방침 링크(밑줄 텍스트 버튼) — 진입은 main.ts openPolicy가 연결한다. */
+  const policyLink = (): HTMLElement => {
+    const b = el("button", { class: "legal-link", text: "개인정보처리방침" });
+    b.addEventListener("click", () => {
+      haptic(HAPTIC.tap);
+      extras?.onOpenPolicy?.();
+    });
+    return b;
+  };
+
+  /** 회원탈퇴 — 밑줄 텍스트로 절제해 두고, 누르면 그 자리에서 경고 카드로 바뀌는 2단 확인. */
+  let withdrawBusy = false;
+  const withdrawArea = (): HTMLElement => {
+    const wrap = el("div", { class: "acct-danger" });
+    const openBtn = el("button", { class: "withdraw-open", text: "회원탈퇴" });
+    openBtn.addEventListener("click", () => {
+      haptic(HAPTIC.tap);
+      wrap.replaceChildren(confirmCard());
+    });
+    const confirmCard = (): HTMLElement => {
+      const go = el("button", { class: "btn-danger", text: "모두 삭제하고 탈퇴하기" });
+      const cancel = el("button", { class: "btn-ghost", text: "취소" });
+      cancel.addEventListener("click", () => {
+        haptic(HAPTIC.tap);
+        wrap.replaceChildren(openBtn);
+      });
+      go.addEventListener("click", () => {
+        if (withdrawBusy) return;
+        withdrawBusy = true;
+        go.textContent = "탈퇴 처리 중…";
+        go.setAttribute("disabled", "");
+        void deleteAccount().then((r) => {
+          withdrawBusy = false;
+          if (r.ok) {
+            // 성공 — onAuthChange가 화면을 비로그인 상태로 다시 그린다. 스낵만 남긴다.
+            snack("탈퇴가 끝났어요. 이 기기의 학습 기록은 그대로 남아 있어요.");
+          } else {
+            go.textContent = "모두 삭제하고 탈퇴하기";
+            go.removeAttribute("disabled");
+            snack(`탈퇴하지 못했어요: ${r.reason ?? "잠시 후 다시 시도해 주세요"}`);
+          }
+        });
+      });
+      return el(
+        "div",
+        { class: "withdraw-card" },
+        el("div", { class: "wd-title", text: "정말 탈퇴할까요?" }),
+        el("div", {
+          class: "wd-desc",
+          text: "서버에 저장된 계정·학습 기록·이용권 정보가 모두 삭제되고 되돌릴 수 없어요. 이 기기에 남아 있는 기록은 지워지지 않지만, 다른 기기에서 다시 이어받을 수는 없게 돼요.",
+        }),
+        go,
+        cancel,
+      );
+    };
+    wrap.appendChild(openBtn);
+    return wrap;
+  };
+
   const startOAuth = (provider: OAuthProvider, label: string): void => {
     if (busy) return;
     busy = true;
@@ -123,7 +185,17 @@ export function loginScreen(onClose: () => void, extras?: { onOpenNotebook?: () 
       ),
     );
     const note = el("div", { class: "login-note", text: "로그인 없이도 모든 학습을 할 수 있어요. 기록은 이 기기에 안전하게 저장돼요." });
-    body.replaceChildren(hero, buttons, note);
+    // 동의 고지 — 로그인은 방침 동의를 전제로 하고, 만 14세 미만은 보호자 동의가 필요하다(방침 6조).
+    const legal = el(
+      "div",
+      { class: "login-legal" },
+      el("span", { text: "로그인하면 " }),
+      policyLink(),
+      el("span", { text: "에 동의한 것으로 봐요." }),
+      el("br", {}),
+      el("span", { text: "만 14세 미만은 보호자(법정대리인) 동의가 필요해요." }),
+    );
+    body.replaceChildren(hero, buttons, note, legal);
     const nb = notebookCard();
     if (nb) body.insertBefore(nb, note);
 
@@ -160,7 +232,8 @@ export function loginScreen(onClose: () => void, extras?: { onOpenNotebook?: () 
     );
 
     const note = el("div", { class: "login-note", text: "학습 기록이 자동으로 저장·동기화돼요. 다른 기기에서 같은 계정으로 로그인하면 기록이 이어져요." });
-    body.replaceChildren(hero, stats, note);
+    const legal = el("div", { class: "login-legal" }, policyLink());
+    body.replaceChildren(hero, stats, note, legal, withdrawArea());
     const nb = notebookCard();
     if (nb) body.insertBefore(nb, note);
 

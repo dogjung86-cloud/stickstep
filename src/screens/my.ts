@@ -17,6 +17,7 @@ export function myScreen(o: {
   onTab: (k: GnavKey) => void;
   onOpenAccount: () => void;
   onOpenPaywall: () => void;
+  onOpenPolicy: () => void;
 }): Screen {
   const st = getState();
   const lv = bootLevel(st.lifeXp);
@@ -111,6 +112,7 @@ export function myScreen(o: {
         row("user", "계정 관리 · 로그인", o.onOpenAccount),
         row("crown", "프리미엄", o.onOpenPaywall),
         row("book", "과제함", () => snack("학급·과제 기능은 준비 중이에요")),
+        row("lock", "개인정보처리방침", o.onOpenPolicy),
       ),
     ),
     gnav("my", o.onTab),

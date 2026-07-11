@@ -909,6 +909,17 @@ src/
   로그아웃해도 기기의 학습 기록은 지우지 않는다(무로그인 정책과 동일한 결).
 - 리더보드·랭킹은 후속 기능: 채점이 전부 클라이언트라 **서버 검증 설계 전에는 붙이지 않는다**
   (검토 모드 7연타가 공식 우회로인 것도 함께 해결할 것). profiles.nickname 컬럼은 그때 쓴다.
+- **회원탈퇴(2026-07-12)**: auth.ts `deleteAccount()` → schema.sql의 `delete_user` RPC(security definer —
+  anon 키는 auth.users를 못 지워서. auth.users 삭제가 profiles·progress로 cascade). UI는 로그인 화면
+  하단 밑줄 "회원탈퇴" → 그 자리 경고 카드 2단 확인(styles/policy.css). 성공 시 로컬 세션만
+  signOut(scope: local)로 정리하고 onAuthChange 재렌더에 맡긴다. **기기 학습 기록은 지우지 않는다**
+  (무로그인 정책과 같은 결 — 탈퇴 문구에도 명시). 기존 Supabase 프로젝트는 함수 블록만 재실행(SETUP.md).
+- **개인정보처리방침(2026-07-12)**: 원본은 **public/privacy.html 단 하나** — 구글 OAuth 동의 화면·카카오
+  심사에 제출하는 단독 URL(`/privacy.html`) 겸용. 앱 안에서는 screens/policy.ts가 이 파일의 #policy-body를
+  fetch해 렌더(문서 두 벌 금지 — 내용 수정은 privacy.html만). 진입 2곳: 마이 탭 "더 보기" 행 + 로그인
+  화면 동의 고지("로그인하면 …에 동의" + 만 14세 미만 보호자 동의 안내 — 방침 6조와 세트). 조항에
+  만 14세 미만(로그인 없이 전 기능 = 미수집이 1차 방어)·국외 이전(Supabase·Vercel, 법 28조의8 1항 3호
+  공개 방식)·최소 수집(프로필 사진 미저장) 포함. 스타일은 styles/policy.css(공유 시트 오염 금지).
 
 ## IA·홈 구조 (2026-07-12 개편 — 사용자 확정)
 - **진입**: **스플래시 = 랜딩**(별도 랜딩 화면 없음 — 사용자 확정). 플립북 정착 후 하단 버튼 3개

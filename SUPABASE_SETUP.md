@@ -19,7 +19,11 @@
 ## 2. 테이블 만들기 (1분)
 
 대시보드 → **SQL Editor** → `supabase/schema.sql` 내용 전체를 붙여넣고 **Run**.
-(profiles·progress 테이블 + 본인 행만 접근하는 RLS + 가입 트리거가 만들어져요.)
+(profiles·progress 테이블 + 본인 행만 접근하는 RLS + 가입 트리거 + 회원탈퇴 함수가 만들어져요.)
+
+> **이미 만들어 둔 프로젝트라면**: schema.sql 맨 아래 "회원탈퇴" 블록(`delete_user` 함수)이
+> 나중에 추가됐어요 — 그 블록만 SQL Editor에 다시 실행하면 앱의 회원탈퇴 버튼이 동작해요.
+> (안 돌리면 탈퇴 버튼이 "탈퇴하지 못했어요" 스낵을 띄워요.)
 
 ## 3. 구글 로그인 (10분)
 
@@ -29,6 +33,9 @@
      (정확한 값은 Supabase 대시보드 → Authentication → Providers → Google 화면에 표시돼요)
 3. 발급된 Client ID·Client Secret을 Supabase → **Authentication → Providers → Google**에 붙여넣고 Enable.
 4. OAuth 동의 화면(브랜딩)에 앱 이름 "스틱스텝" 설정 — 심사 전까지는 테스트 사용자만 로그인돼요.
+   - 동의 화면의 **개인정보처리방침 링크** 칸에는 배포 주소 뒤에 `/privacy.html`을 붙여 넣어요
+     (예: `https://stickstep.vercel.app/privacy.html` — 앱에 포함된 방침 문서예요.
+     카카오 비즈 앱 전환·심사에서도 같은 URL을 쓰면 돼요).
 
 ## 4. 카카오 로그인 (10분)
 

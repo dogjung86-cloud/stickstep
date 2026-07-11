@@ -3,6 +3,7 @@ import "./styles/base.css";
 import "./styles/ui.css";
 import "./styles/math.css";
 import "./styles/math2.css";
+import "./styles/policy.css";
 
 import { nav } from "./core/router";
 import { getState, completeLesson, setViewSubject } from "./core/store";
@@ -18,6 +19,7 @@ import { challengeScreen } from "./screens/challenge";
 import { myScreen } from "./screens/my";
 import type { GnavKey } from "./ui/gnav";
 import { paywallScreen } from "./screens/paywall";
+import { policyScreen } from "./screens/policy";
 import { examScreen } from "./screens/exam";
 import { createLessonPlayer } from "./lessons/player";
 import { findLesson, isPremiumLocked } from "./content/curriculum";
@@ -55,6 +57,7 @@ function goTab(k: GnavKey): void {
               onClose: () => nav.back(),
             }),
           ),
+        onOpenPolicy: openPolicy,
       }),
     );
   }
@@ -104,8 +107,14 @@ function openLogin(): void {
   nav.go(
     loginScreen(() => nav.back(), {
       onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson)),
+      onOpenPolicy: openPolicy,
     }),
   );
+}
+
+/** 개인정보처리방침 — 마이 탭 행과 로그인 화면 동의 고지가 함께 쓴다(원본: public/privacy.html). */
+function openPolicy(): void {
+  nav.go(policyScreen(() => nav.back()));
 }
 
 // 보너스 미니게임(단열 디펜스·별자리 한붓그리기)은 도전 탭으로 이사(2026-07-12) —
@@ -173,7 +182,7 @@ function start(): void {
               if (getState().onboarded) goHome();
               else nav.back();
             },
-            { onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson)) },
+            { onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson)), onOpenPolicy: openPolicy },
           ),
         ),
     }),
