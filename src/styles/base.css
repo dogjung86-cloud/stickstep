@@ -67,16 +67,10 @@ img { display: block; max-width: 100%; }
 }
 .btn:active { transform: scale(.965); background: var(--grad-blue-press); box-shadow: var(--sh-inset); }
 .btn:disabled { background: var(--n150); color: #BAC2CC; box-shadow: none; pointer-events: none; }
-/* ctaPop = 젤리 스쿼시&스트레치(2026-07-12 사용자 확정 격상 — 프레스 .965는 불변).
-   가로가 늘 때 세로가 줄며 출렁 — CTA 해제·정답 확인 같은 축하 순간에만 발동한다(빈도 규칙). */
-.btn.pop { animation: ctaPop .5s var(--ease); }
-@keyframes ctaPop {
-  0% { transform: scale(1, 1); }
-  30% { transform: scale(1.05, .96); }
-  58% { transform: scale(.975, 1.02); }
-  80% { transform: scale(1.015, .995); }
-  100% { transform: scale(1, 1); }
-}
+/* 젤리(스쿼시&스트레치) ctaPop은 2026-07-12 시도 후 같은 날 원복 — CTA는 스텝마다 발동하는
+   고빈도 지점이라 실사용에서 멀미 유발(사용자 판정). 바운스 강화는 레슨 완료 같은 저빈도 순간이 아니면 금지. */
+.btn.pop { animation: ctaPop .42s var(--spring); }
+@keyframes ctaPop { 0% { transform: scale(1); } 45% { transform: scale(1.035); } 100% { transform: scale(1); } }
 .btn.good { background: var(--grad-green); box-shadow: 0 1px 1px rgba(4,120,60,.25), 0 6px 16px -3px rgba(4,180,95,.4); }
 .btn.good:active { background: linear-gradient(180deg, #039E53, #028747); box-shadow: var(--sh-inset); }
 .btn.bad { background: var(--grad-red); box-shadow: 0 1px 1px rgba(180,30,45,.25), 0 6px 16px -3px rgba(240,68,82,.4); }
