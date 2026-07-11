@@ -22,9 +22,6 @@ const KAKAO_MARK = `<svg viewBox="0 0 24 24" width="20" height="20" fill="#3C1E1
 
 const PROVIDER_LABEL: Record<string, string> = { google: "Google", kakao: "카카오" };
 
-// 실기기에서 "지금 어떤 빌드를 보고 있나"를 판별하는 표식 — 배포 때마다 올린다(캐시 디버깅용).
-const BUILD_TAG = "v5";
-
 /** 프로필 사진 원형(없거나 로드 실패 시 스틱맨 아바타 폴백). */
 function avatarEl(u: AuthUser): HTMLElement {
   const host = el("div", { class: "login-ava" });
@@ -138,8 +135,7 @@ export function loginScreen(onClose: () => void, extras?: { onOpenNotebook?: () 
       ),
     );
     const note = el("div", { class: "login-note", text: "로그인 없이도 모든 학습을 할 수 있어요. 기록은 이 기기에 안전하게 저장돼요." });
-    const ver = el("div", { class: "login-note", text: BUILD_TAG });
-    body.replaceChildren(hero, buttons, note, ver);
+    body.replaceChildren(hero, buttons, note);
     const nb = notebookCard();
     if (nb) body.insertBefore(nb, note);
 
@@ -171,13 +167,12 @@ export function loginScreen(onClose: () => void, extras?: { onOpenNotebook?: () 
       "div",
       { class: "my-stats" },
       stat(`${currentStreak()}일`, "연속 학습"),
-      stat(`${st.totalXp}`, "XP"),
+      stat(`${st.totalXp}`, "스텝"),
       stat(`${doneCount}개`, "완료한 레슨"),
     );
 
     const note = el("div", { class: "login-note", text: "학습 기록이 자동으로 저장·동기화돼요. 다른 기기에서 같은 계정으로 로그인하면 기록이 이어져요." });
-    const ver = el("div", { class: "login-note", text: BUILD_TAG });
-    body.replaceChildren(hero, stats, note, ver);
+    body.replaceChildren(hero, stats, note);
     const nb = notebookCard();
     if (nb) body.insertBefore(nb, note);
 

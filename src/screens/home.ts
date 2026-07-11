@@ -37,7 +37,7 @@ export function homeScreen(
     "div",
     { class: "chips" },
     el("div", { class: "chip streak" }, el("span", { html: icon("flame", 15) }), el("span", { text: `${currentStreak()}일` })),
-    el("div", { class: "chip gem" }, el("span", { html: icon("bolt", 15) }), el("span", { text: `${st.totalXp} XP` })),
+    el("div", { class: "chip gem" }, el("span", { html: icon("bolt", 15) }), el("span", { text: `${st.totalXp} 스텝` })),
   );
   // 과목 허브(그리드)·로그인(프로필) 진입 버튼
   const subjBtn = el("button", { class: "abtn", attrs: { "aria-label": "과목 선택" }, html: icon("grid", 19) });

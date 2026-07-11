@@ -154,11 +154,11 @@ export function minigameScreen(onExit: () => void): Screen {
     }
     rules.appendChild(table);
     const xp = getState().totalXp;
-    rules.appendChild(el("p", { class: "mg-card-p dim", html: `입장료 <b>${ENTRY_XP} XP</b> · 점수만큼 XP 보상(최대 ${MAX_REWARD}) · 보유 <b>${xp} XP</b>` }));
-    const startBtn = el("button", { class: "btn", text: `도전 시작 (-${ENTRY_XP} XP)` });
+    rules.appendChild(el("p", { class: "mg-card-p dim", html: `입장료 <b>${ENTRY_XP} 스텝</b> · 점수만큼 스텝 보상(최대 ${MAX_REWARD}) · 보유 <b>${xp} 스텝</b>` }));
+    const startBtn = el("button", { class: "btn", text: `도전 시작 (-${ENTRY_XP} 스텝)` });
     startBtn.addEventListener("click", () => {
       if (!spendXp(ENTRY_XP)) {
-        snack("XP가 부족해요. 레슨을 복습하면 XP를 모을 수 있어요!");
+        snack("스텝이 부족해요. 레슨을 복습하면 스텝을 모을 수 있어요!");
         return;
       }
       haptic(HAPTIC.ctaUnlock);
@@ -183,11 +183,11 @@ export function minigameScreen(onExit: () => void): Screen {
     card.appendChild(el("div", { class: "mg-card-title", text: "아이스크림이 다 녹았어요" }));
     card.appendChild(el("div", { class: "mg-score" }, el("b", { text: String(score) }), el("span", { text: "점" })));
     if (isBest) card.appendChild(el("div", { class: "mg-newbest", text: "새 기록!" }));
-    card.appendChild(el("p", { class: "mg-card-p", html: `보상 <b>+${reward} XP</b>` }));
-    const retry = el("button", { class: "btn", text: `다시 도전 (-${ENTRY_XP} XP)` });
+    card.appendChild(el("p", { class: "mg-card-p", html: `보상 <b>+${reward} 스텝</b>` }));
+    const retry = el("button", { class: "btn", text: `다시 도전 (-${ENTRY_XP} 스텝)` });
     retry.addEventListener("click", () => {
       if (!spendXp(ENTRY_XP)) {
-        snack("XP가 부족해요!");
+        snack("스텝이 부족해요!");
         return;
       }
       haptic(HAPTIC.ctaUnlock);

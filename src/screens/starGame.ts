@@ -295,7 +295,7 @@ export function starGameScreen(onExit: () => void): Screen {
       awardXp(5);
       paidBest = score;
       bestPill.textContent = `최고 ${score}/${DEX_TOTAL}`;
-      reward = " (+5 XP)";
+      reward = " (+5 스텝)";
     }
     snack(`${msg}, 도감 ${score}/${DEX_TOTAL}${reward}`);
     if (score === DEX_TOTAL) {

@@ -2,8 +2,8 @@
 -- Supabase 대시보드 → SQL Editor에 전체를 붙여넣고 Run 한 번이면 끝.
 -- 설계 원칙:
 --   · 사용자당 progress 1행(클라이언트 AppState의 서버 사본) — 동기화가 단순하고 RLS가 명확하다.
---   · 컬럼명은 XP→'스틱' 개명을 선반영해 total_stick.
---   · 리더보드/랭킹(후속 기능)은 total_stick 정수 컬럼과 exams jsonb로 조회 가능하게 준비만 해 둔다.
+--   · 컬럼명은 화폐 이름 '스텝'을 반영해 total_step.
+--   · 리더보드/랭킹(후속 기능)은 total_step 정수 컬럼과 exams jsonb로 조회 가능하게 준비만 해 둔다.
 
 -- ── 프로필: auth.users 1:1, 가입 시 트리거로 자동 생성 ─────────────────
 create table if not exists public.profiles (
@@ -18,7 +18,7 @@ create table if not exists public.progress (
   onboarded boolean not null default false,
   grade text, -- 온보딩 학년("g1"|"g2"|"g3")
   goal_min int not null default 10,
-  total_stick int not null default 0, -- 앱의 totalXp(개명 예정 '스틱')
+  total_step int not null default 0, -- 앱의 totalXp(화폐 이름 '스텝')
   streak int not null default 0,
   last_study_day date,
   premium boolean not null default false, -- 영수증 검증 전까지는 편의 동기화 값(진실 원천 아님)

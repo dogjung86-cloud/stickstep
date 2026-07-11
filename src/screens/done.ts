@@ -36,7 +36,7 @@ export function doneScreen(
       }),
       el("div", { class: "done-title", text: "레슨 완료!" }),
       el("div", { class: "done-sub", text: doneNote }),
-      el("div", { class: "xpline" }, "+", xpNum, el("small", { text: "XP" })),
+      el("div", { class: "xpline" }, "+", xpNum, el("small", { text: "스텝" })),
       el(
         "div",
         { class: "stats" },

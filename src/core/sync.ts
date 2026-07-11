@@ -12,7 +12,7 @@ interface ProgressRow {
   onboarded: boolean;
   grade: string | null;
   goal_min: number;
-  total_stick: number; // 앱의 totalXp — 서버 컬럼명은 '스틱' 개명 선반영
+  total_step: number; // 앱의 totalXp — 화폐 이름 '스텝'(사용자 확정)을 컬럼명에 반영
   streak: number;
   last_study_day: string | null;
   premium: boolean;
@@ -28,7 +28,7 @@ function rowOf(s: Readonly<AppState>, userId: string): ProgressRow {
     onboarded: s.onboarded,
     grade: s.grade,
     goal_min: s.goalMin,
-    total_stick: s.totalXp,
+    total_step: s.totalXp,
     streak: s.streak,
     last_study_day: s.lastStudyDay,
     premium: s.premium,
@@ -113,7 +113,7 @@ function mergeIntoLocal(local: Readonly<AppState>, row: ProgressRow): Partial<Ap
     grade: local.grade ?? row.grade,
     goalMin: local.onboarded ? local.goalMin : row.goal_min,
     premium: local.premium || row.premium,
-    totalXp: Math.max(local.totalXp, row.total_stick),
+    totalXp: Math.max(local.totalXp, row.total_step),
     streak,
     lastStudyDay,
     lessons: mergeLessons(local.lessons, row.lessons),
