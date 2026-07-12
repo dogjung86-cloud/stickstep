@@ -1,0 +1,962 @@
+<meta charset="utf-8">
+<title>스틱스텝 홈 — 스틱·스텝 디자인 4방향</title>
+<style>
+  :root{
+    --bg:#F4F7FA; --card:#FFFFFF; --ink:#1A2330; --sub:#5B6878; --line:#E2E8F0;
+    --accent:#3182F6; --accent-deep:#1B64DA; --tint:#EEF4FF; --gold:#E9A23B;
+    --shadow:0 1px 2px rgba(23,32,48,.05), 0 12px 32px -18px rgba(23,32,48,.22);
+    --r:18px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0E141D; --card:#161E2B; --ink:#EAF0F8; --sub:#93A0B2; --line:#273244;
+      --accent:#5C9DFF; --accent-deep:#8CBAFF; --tint:#1A2A44; --gold:#EDB25B;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 14px 34px -18px rgba(0,0,0,.6); }
+  }
+  :root[data-theme="dark"]{ --bg:#0E141D; --card:#161E2B; --ink:#EAF0F8; --sub:#93A0B2; --line:#273244;
+    --accent:#5C9DFF; --accent-deep:#8CBAFF; --tint:#1A2A44; --gold:#EDB25B;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 14px 34px -18px rgba(0,0,0,.6); }
+  :root[data-theme="light"]{ --bg:#F4F7FA; --card:#FFFFFF; --ink:#1A2330; --sub:#5B6878; --line:#E2E8F0;
+    --accent:#3182F6; --accent-deep:#1B64DA; --tint:#EEF4FF; --gold:#E9A23B;
+    --shadow:0 1px 2px rgba(23,32,48,.05), 0 12px 32px -18px rgba(23,32,48,.22); }
+
+  *{box-sizing:border-box; margin:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
+    letter-spacing:-.012em; line-height:1.6; padding:40px 20px 72px;
+  }
+  .wrap{max-width:1180px; margin:0 auto}
+
+  header{margin-bottom:40px}
+  .eyebrow{font-size:12.5px; font-weight:700; color:var(--accent); letter-spacing:.02em; margin-bottom:8px}
+  h1{font-size:clamp(23px,3.4vw,30px); font-weight:800; letter-spacing:-.022em; line-height:1.28; text-wrap:balance}
+  .lede{margin-top:10px; font-size:14.5px; color:var(--sub); max-width:62ch}
+  .lede b{color:var(--ink); font-weight:700}
+
+  h2{font-size:19px; font-weight:800; letter-spacing:-.018em; margin:0 0 4px}
+  .sec{margin-top:52px}
+  .sec > .cap{font-size:13.5px; color:var(--sub); margin-bottom:22px; max-width:66ch}
+
+  .board{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,430px),1fr)); gap:24px}
+  .vcard{background:var(--card); border:1px solid var(--line); border-radius:var(--r);
+    padding:22px 20px 20px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:14px}
+  .vhead .tag{display:inline-block; font-size:11.5px; font-weight:800; color:var(--accent);
+    background:var(--tint); border-radius:99px; padding:3px 10px; margin-bottom:8px; letter-spacing:.03em}
+  .vhead h3{font-size:16.5px; font-weight:800; letter-spacing:-.015em}
+  .vhead p{font-size:13px; color:var(--sub); margin-top:3px}
+  .meters{display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; color:var(--sub)}
+  .meter{display:flex; align-items:center; gap:6px}
+  .meter .dots{display:inline-flex; gap:3px}
+  .meter .dots i{width:7px; height:7px; border-radius:99px; background:var(--line)}
+  .meter .dots i.on{background:var(--accent)}
+  .vnotes{font-size:12.8px; color:var(--sub); padding-left:2px; display:grid; gap:5px}
+  .vnotes li{list-style:none; padding-left:14px; position:relative}
+  .vnotes li::before{content:""; position:absolute; left:0; top:8px; width:5px; height:5px; border-radius:99px; background:var(--accent); opacity:.55}
+  .vnotes li.warn::before{background:var(--gold); opacity:.9}
+
+  /* ---------- phone mock (앱은 라이트 전용 → 목업 내부는 항상 라이트) ---------- */
+  .phone-slot{display:flex; justify-content:center}
+  .phone{width:min(292px,100%); border-radius:28px; overflow:hidden; background:#F7F9FB;
+    border:1px solid rgba(20,30,45,.10); box-shadow:0 2px 6px rgba(15,25,40,.08), 0 18px 40px -20px rgba(15,25,40,.35);
+    color:#191F28; color-scheme:light; flex-shrink:0}
+  .p-top{padding:12px 13px 10px; display:grid; gap:9px; background:#F7F9FB}
+  .p-appbar{display:flex; align-items:center; gap:8px}
+  .p-appbar .sp{flex:1}
+  .p-brand{font-size:15px; font-weight:800; letter-spacing:-.02em; white-space:nowrap}
+  .p-iconbtn{width:28px; height:28px; border-radius:10px; background:#fff; border:1px solid #E5EAF0;
+    display:grid; place-items:center; color:#6B7684; flex-shrink:0}
+  .p-chip{display:inline-flex; align-items:center; gap:4px; background:#fff; border:1px solid #E5EAF0;
+    border-radius:99px; padding:3px 7px; font-size:10.5px; font-weight:700; color:#4E5968; white-space:nowrap; flex-shrink:0}
+  .p-chip svg{flex-shrink:0}
+  .subj-chip{display:inline-flex; align-items:center; gap:4px; background:#EEF4FF; color:#1B64DA;
+    border:1px solid #D6E5FF; border-radius:99px; padding:3px 9px; font-size:11px; font-weight:800; white-space:nowrap; flex-shrink:0}
+  .p-tabs{display:flex; gap:6px; overflow:hidden}
+  .p-tab{flex-shrink:0; border-radius:99px; padding:5px 11px; font-size:10.5px; font-weight:700;
+    background:#fff; border:1px solid #E5EAF0; color:#6B7684; white-space:nowrap}
+  .p-tab.on{background:#191F28; border-color:#191F28; color:#fff}
+  .p-tab.roman{padding:5px 12px; font-size:11px; display:inline-flex; align-items:center; gap:5px}
+  .p-hero{border-radius:16px; padding:12px 14px 13px; color:#fff;
+    background:linear-gradient(135deg,#3D8BFF 0%,#3182F6 55%,#2E6FE8 100%);
+    box-shadow:0 8px 18px -10px rgba(49,130,246,.55)}
+  .p-hero .he{font-size:9.5px; font-weight:700; opacity:.85; margin-bottom:2px}
+  .p-hero .ht{font-size:14.5px; font-weight:800; letter-spacing:-.02em; line-height:1.3}
+  .p-hero .hd{font-size:10px; opacity:.85; margin-top:2px}
+  .p-hero .hm{font-size:9.5px; font-weight:700; margin-top:7px; opacity:.95}
+  .p-hero .bar{height:5px; border-radius:99px; background:rgba(255,255,255,.28); margin-top:5px; overflow:hidden}
+  .p-hero .bar i{display:block; height:100%; width:12%; background:#fff; border-radius:99px}
+  .p-hero.slim{padding:10px 13px; display:grid; gap:5px}
+  .p-hero.slim .row{display:flex; align-items:baseline; gap:8px}
+  .p-hero.slim .ht{font-size:12.5px; flex:1}
+  .p-hero.slim .pct{font-size:10.5px; font-weight:800; opacity:.95}
+  .p-maplabel{font-size:11px; font-weight:800; color:#333D4B; padding:2px 2px 0}
+  .p-map{position:relative; height:398px; background:
+    radial-gradient(120% 60% at 20% 0%, #F0F7F0 0%, rgba(240,247,240,0) 55%),
+    linear-gradient(180deg,#EAF4EC 0%, #DFEDE2 100%)}
+  .p-map svg{position:absolute; inset:0; width:100%; height:100%}
+  .p-map.paper{background:
+    repeating-linear-gradient(0deg, rgba(120,150,190,.13) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(90deg, rgba(120,150,190,.13) 0 1px, transparent 1px 22px),
+    #FDFEFF}
+
+  /* svg 공통 */
+  .nlabel{font-size:10px; font-weight:700; fill:#33405A; paint-order:stroke; stroke:#F5FAF6; stroke-width:4px; stroke-linejoin:round; text-anchor:middle}
+  .paper .nlabel{stroke:#FDFEFF}
+  .fp-dark{fill:#31435C; opacity:.82}
+  .fp-faint{fill:#8FA1B5; opacity:.30}
+  .fp-blue{fill:#3182F6; opacity:.9}
+  @media (prefers-reduced-motion: no-preference){
+    .stamp{opacity:0; transform-box:fill-box; transform-origin:center; animation:stampIn .5s cubic-bezier(.22,1,.36,1) forwards}
+    @keyframes stampIn{from{opacity:0; transform:scale(1.6)} to{opacity:1; transform:scale(1)}}
+    .walker{animation:bob 2.6s ease-in-out infinite}
+    @keyframes bob{0%,100%{transform:translateY(0)} 50%{transform:translateY(-2.5px)}}
+  }
+
+  /* 추천 스트립 */
+  .reco{background:var(--card); border:1px solid var(--line); border-left:4px solid var(--accent);
+    border-radius:var(--r); box-shadow:var(--shadow); padding:20px 22px; margin-top:26px}
+  .reco h3{font-size:15px; font-weight:800; margin-bottom:6px}
+  .reco p{font-size:13.5px; color:var(--sub); max-width:78ch}
+  .reco p b{color:var(--ink)}
+
+  /* 상단 정리안 비교 */
+  .pair{display:flex; gap:26px; flex-wrap:wrap; justify-content:center}
+  .pair figure{display:flex; flex-direction:column; gap:12px; align-items:center}
+  .pair figcaption{font-size:12.5px; color:var(--sub); text-align:center; max-width:292px}
+  .pair figcaption b{color:var(--ink); display:block; font-size:13px; margin-bottom:2px}
+  .badge-now{display:inline-block; font-size:10.5px; font-weight:800; padding:2px 9px; border-radius:99px;
+    background:var(--line); color:var(--sub); margin-bottom:4px}
+  .badge-new{display:inline-block; font-size:10.5px; font-weight:800; padding:2px 9px; border-radius:99px;
+    background:var(--tint); color:var(--accent); margin-bottom:4px}
+
+  /* 아바타 파츠 데모 */
+  .ava-row{display:flex; gap:18px; flex-wrap:wrap; align-items:center}
+  .ava-demo{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px;
+    display:flex; flex-direction:column; align-items:center; gap:6px; box-shadow:var(--shadow)}
+  .ava-demo span{font-size:11px; color:var(--sub); font-weight:600}
+  .ava-demo svg{background:#F2F7FB; border-radius:14px}
+  .slotlist{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px}
+  .slot{font-size:12px; font-weight:700; color:var(--sub); background:var(--card); border:1px solid var(--line);
+    border-radius:99px; padding:4px 12px}
+  footer{margin-top:56px; font-size:12px; color:var(--sub); border-top:1px solid var(--line); padding-top:16px}
+
+  /* ---------- v2: 인터랙티브 격상 데모 ---------- */
+  .v2grid{display:grid; grid-template-columns:330px 1fr; gap:26px; align-items:start}
+  @media (max-width:820px){.v2grid{grid-template-columns:1fr}}
+  .v2grid .phone{width:292px; flex-shrink:0}
+  .demo-note{font-size:12px; color:var(--sub); text-align:center; margin-top:10px; max-width:292px}
+  .nlab{position:absolute; transform:translateX(-50%); font-size:10px; font-weight:700; color:#33405A;
+    text-shadow:0 1px 0 #F0F7F1,0 -1px 0 #F0F7F1,1px 0 0 #F0F7F1,-1px 0 0 #F0F7F1; white-space:nowrap; z-index:2}
+  .n3d{position:absolute; width:56px; height:58px; background:none; border:0; padding:0; cursor:pointer;
+    -webkit-tap-highlight-color:transparent; z-index:3; touch-action:manipulation}
+  .n3d .edge{position:absolute; left:0; top:7px; width:56px; height:51px; border-radius:50%; background:#1856C0}
+  .n3d .face{position:absolute; left:0; top:0; width:56px; height:51px; border-radius:50%;
+    background:linear-gradient(145deg,#4D93FF,#2570E8); color:#fff; display:grid; place-items:center;
+    transition:transform .08s ease; box-shadow:inset 0 3px 4px rgba(255,255,255,.35), inset 0 -3px 0 rgba(0,0,0,.10)}
+  .n3d:active .face, .n3d.pressed .face{transform:translateY(6px)}
+  .n3d:focus-visible .face{outline:3px solid #9EC5FF; outline-offset:2px}
+  .n3d.cur::after{content:""; position:absolute; left:-7px; top:-7px; width:70px; height:65px; border-radius:50%;
+    border:3px solid rgba(49,130,246,.30); pointer-events:none}
+  .n3d.done .edge{background:#C7D6E6}
+  .n3d.done .face{background:#fff; color:#3182F6; box-shadow:inset 0 0 0 1.5px #D9E5F2, inset 0 -3px 0 rgba(23,50,90,.06)}
+  .n3d.lock .edge{background:#C6CFD8}
+  .n3d.lock .face{background:#EDF1F4; color:#AEB9C4; box-shadow:inset 0 0 0 1px #E0E6EB, inset 0 -3px 0 rgba(23,50,90,.05)}
+  .n3d.exam .edge{background:#101A2C}
+  .n3d.exam .face{background:#26334D; color:#F5C864; box-shadow:inset 0 2px 3px rgba(255,255,255,.10), inset 0 -3px 0 rgba(0,0,0,.22)}
+  .n3d .ic{display:none; line-height:0}
+  .n3d.cur .ic-flask{display:block} .n3d.done .ic-check{display:block}
+  .n3d.lock .ic-lock{display:block} .n3d.exam .ic-exam{display:block}
+  .n3d .badge{display:none; position:absolute; right:-3px; top:-7px; width:20px; height:20px; border-radius:99px;
+    background:#F5B63E; place-items:center; box-shadow:0 2px 6px rgba(233,162,59,.5); z-index:2}
+  .n3d.done .badge{display:grid}
+  .n3d.stat{position:relative; display:inline-block}
+  .walker-wrap{position:absolute; left:0; top:0; z-index:4; pointer-events:none; will-change:transform}
+  /* .p-map svg{width:100%…} 전역 규칙이 0×0 부모에 걸리지 않게 명시 크기 + inset 해제 */
+  .walker-wrap svg{position:absolute; left:-23px; top:-62px; right:auto; bottom:auto;
+    width:46px; height:66px; overflow:visible}
+  .walker-wrap .pose{display:none} .walker-wrap .pose.on{display:block}
+  .demo-cta{position:absolute; left:50%; bottom:12px; transform:translateX(-50%); z-index:5;
+    background:#3182F6; color:#fff; font-weight:800; font-size:12.5px; border:0; border-radius:99px;
+    padding:9px 18px; box-shadow:0 6px 14px -6px rgba(49,130,246,.6); cursor:pointer; letter-spacing:-.01em}
+  .demo-cta:active{transform:translateX(-50%) scale(.96)}
+  .demo-cta:disabled{opacity:.55; cursor:default}
+  .demo-cta:focus-visible{outline:3px solid #9EC5FF; outline-offset:2px}
+  .trybox{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px;
+    box-shadow:var(--shadow)}
+  .trybox + .trybox{margin-top:16px}
+  .trybox h4{font-size:14px; font-weight:800; margin-bottom:4px}
+  .trybox .tcap{font-size:12.5px; color:var(--sub); margin-bottom:12px}
+  .tryrow{display:flex; gap:30px; align-items:flex-start; padding:4px 2px 2px; flex-wrap:wrap}
+  .tryitem{display:flex; flex-direction:column; align-items:center; gap:9px}
+  .tryitem > span{font-size:11.5px; font-weight:700; color:var(--sub)}
+  .strips{display:grid; gap:12px}
+  .strip-cap{font-size:11.5px; font-weight:700; color:var(--sub); margin-bottom:5px}
+  .strip-cap.rec{color:var(--accent)}
+  .strip{background:#F7F9FB; border:1px solid #E5EAF0; border-radius:14px; padding:8px; display:flex; gap:6px;
+    overflow:hidden; max-width:336px} /* 실기기 폭(360px+) 근사 */
+  .p-tab.kw{display:inline-flex; align-items:center; gap:4px}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">스틱스텝 디자인 상의 · 2026-07-12</div>
+  <h1>레슨 지도에 &lsquo;스틱&rsquo;과 &lsquo;스텝&rsquo;을 세우는 4가지 방향</h1>
+  <p class="lede">현재 홈은 짜임새는 좋지만 <b>이름이 화면에 안 보입니다</b>. 아래 4안은 모두 기존 트레일·메달리온
+  문법과 토스 블루 토큰을 유지한 채, 지도 위에 브랜드를 세우는 강도만 다르게 잡았어요. 목업 속 진행 상태는
+  비교를 위해 &lsquo;레슨 1개 완료&rsquo; 시점으로 통일했습니다. <b>v2 업데이트</b>: 스틱맨 퀄리티·버튼 촉감·탭 톤
+  피드백을 반영한 인터랙티브 데모를 바로 아래에 추가했어요.</p>
+</header>
+
+<!-- ================= v2 인터랙티브 격상 데모 ================= -->
+<section class="sec" style="margin-top:40px">
+  <h2>v2 — A+B 격상판: 스틱맨 선맛 · 눌리는 스텝 노드 · 순한 탭</h2>
+  <p class="cap">아래 폰은 <b>실제로 조작됩니다</b> — 파란 노드를 꾹 눌러 보고(3D 버튼), '레슨 완료!'를 누르면
+  스틱맨이 발자국을 남기며 다음 노드로 걸어가 깃발을 꽂아요. 스틱맨은 v1의 급조 선화가 아니라 발주본의
+  손그림 문법(머리칼·발끝·접촉 그림자·8fps 플립북 걸음 — 스플래시 125ms 리듬과 같은 박자)으로 다시 그렸습니다.</p>
+  <div class="v2grid">
+    <div class="phone-slot" style="flex-direction:column; align-items:center">
+      <div class="phone">
+        <div class="p-top">
+          <div class="p-appbar">
+            <span class="p-brand">스틱스텝</span>
+            <span class="subj-chip">과학 <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 9l7 7 7-7"/></svg></span>
+            <span class="sp"></span>
+            <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#F2994A"><path d="M12 2c1 4-3 5-3 9a5 5 0 0 0 10 0c0-2-1-3.5-2-5-.5 2-2 2.5-2 2.5C16 6 14 3 12 2z"/></svg>1일</span>
+            <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#3182F6"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>125 스텝</span>
+          </div>
+          <div class="p-tabs">
+            <span class="p-tab on">탐구</span><span class="p-tab">생물</span><span class="p-tab">열</span>
+            <span class="p-tab">물질</span><span class="p-tab">힘</span><span class="p-tab">기체</span><span class="p-tab">우주</span>
+          </div>
+          <div class="p-hero slim">
+            <div class="row"><span class="ht">과학과 인류의 지속가능한 삶</span><span class="pct">12%</span></div>
+            <div class="bar"><i></i></div>
+          </div>
+        </div>
+        <div class="p-map" id="v2map" style="height:430px">
+          <svg viewBox="0 0 290 430" aria-hidden="true">
+            <ellipse cx="238" cy="40" rx="26" ry="10" fill="#fff" opacity=".75"/>
+            <ellipse cx="44" cy="302" rx="22" ry="8" fill="#fff" opacity=".7"/>
+            <path class="trail walked" d="M150,58 C100,86 70,130 85,170" fill="none" stroke="none"/>
+            <path d="M85,170 C100,215 165,230 195,270 C222,305 160,330 110,372" fill="none" stroke="#C3D6C8" stroke-width="4" stroke-dasharray="1 10" stroke-linecap="round"/>
+            <path id="walkpath" d="M85,146 C115,178 160,208 195,246" fill="none" stroke="none"/>
+          </svg>
+          <button class="n3d done" style="left:122px; top:32px" aria-label="과학적 탐구 방법 — 완료">
+            <span class="edge"></span>
+            <span class="face"><span class="ic ic-check"><svg width="22" height="22" viewBox="-11 -11 22 22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M-6,.5 L-1.5,5 L6,-4"/></svg></span></span>
+            <span class="badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12,3.5 l2.4,5 5.4,.6 -4,3.7 1.1,5.4 -4.9,-2.8 -4.9,2.8 1.1,-5.4 -4,-3.7 5.4,-.6 z"/></svg></span>
+          </button>
+          <span class="nlab" style="left:150px; top:92px">과학적 탐구 방법</span>
+          <button class="n3d cur" id="nd-cur" style="left:57px; top:144px" aria-label="직접 탐구하기 — 진행 중, 눌러서 시작">
+            <span class="edge"></span>
+            <span class="face">
+              <span class="ic ic-flask"><svg width="22" height="22" viewBox="-12 -13 24 26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M-4,-9 h8 v6 l5,9 a3,3 0 0 1 -2.6,4.5 h-12.8 a3,3 0 0 1 -2.6,-4.5 l5,-9 z"/></svg></span>
+              <span class="ic ic-check"><svg width="22" height="22" viewBox="-11 -11 22 22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M-6,.5 L-1.5,5 L6,-4"/></svg></span>
+            </span>
+            <span class="badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12,3.5 l2.4,5 5.4,.6 -4,3.7 1.1,5.4 -4.9,-2.8 -4.9,2.8 1.1,-5.4 -4,-3.7 5.4,-.6 z"/></svg></span>
+          </button>
+          <span class="nlab" style="left:85px; top:204px">직접 탐구하기</span>
+          <button class="n3d lock" id="nd-next" style="left:167px; top:244px" aria-label="과학과 인류 문명 — 잠김">
+            <span class="edge"></span>
+            <span class="face">
+              <span class="ic ic-lock"><svg width="20" height="20" viewBox="-11 -11 22 22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><rect x="-6" y="-2.5" width="12" height="9" rx="2.5"/><path d="M-3.5,-2.5 v-3 a3.5,3.5 0 0 1 7,0 v3"/></svg></span>
+              <span class="ic ic-flask"><svg width="22" height="22" viewBox="-12 -13 24 26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M-4,-9 h8 v6 l5,9 a3,3 0 0 1 -2.6,4.5 h-12.8 a3,3 0 0 1 -2.6,-4.5 l5,-9 z"/></svg></span>
+            </span>
+          </button>
+          <span class="nlab" style="left:195px; top:304px">과학과 인류 문명</span>
+          <button class="n3d exam" style="left:82px; top:346px" aria-label="단원평가 — 항상 열림">
+            <span class="edge"></span>
+            <span class="face"><span class="ic ic-exam"><svg width="20" height="20" viewBox="-11 -11 22 22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M-3,-8 v16 M-3,-8 h10 l-3,4 3,4 h-10"/></svg></span></span>
+          </button>
+          <span class="nlab" style="left:110px; top:406px">단원평가</span>
+          <div class="walker-wrap" id="walker">
+            <svg width="46" height="66" viewBox="-23 -62 46 66" aria-hidden="true">
+              <g class="pose on" data-pose="idle">
+                <ellipse cx="0" cy="1" rx="9" ry="2.4" fill="#2A3A5E" opacity=".12"/>
+                <g fill="none" stroke="#243040" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M0,-13 C-1.5,-9 -3,-5 -4.5,-0.8 M-4.5,-0.8 L-8.2,-0.4"/>
+                  <path d="M0,-13 C1.5,-9 3,-4.6 4.2,-0.8 M4.2,-0.8 L7.8,-1.2"/>
+                  <path d="M0,-13 C.9,-19 .9,-24 0,-28.5"/>
+                  <path d="M0,-25.5 C-3.4,-23.6 -5.4,-19.8 -5.9,-16.2"/>
+                  <path d="M0,-25.5 C3.8,-27 6.9,-30 8.4,-33.4"/>
+                  <circle cx=".5" cy="-36" r="7" fill="#fff"/>
+                  <path d="M-3.4,-42.4 q1,-1.9 2.5,-1.7 M.3,-43.3 q1.2,-1.5 2.5,-1.1"/>
+                </g>
+                <path d="M8.4,-33.4 L8.4,-55" fill="none" stroke="#243040" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M8.4,-55.6 C12.4,-57.1 15.4,-54.1 20.4,-55.6 L19.5,-48.9 C15.5,-47.5 12.5,-50.5 8.4,-49.5 z" fill="#3182F6"/>
+                <circle cx="-1.6" cy="-36.8" r=".95" fill="#243040"/><circle cx="2.8" cy="-36.8" r=".95" fill="#243040"/>
+                <path d="M-.4,-33.3 q1.5,1.5 3.2,.3" fill="none" stroke="#243040" stroke-width="1.6" stroke-linecap="round"/>
+              </g>
+              <g class="pose" data-pose="a">
+                <ellipse cx="0" cy="1" rx="9.5" ry="2.4" fill="#2A3A5E" opacity=".11"/>
+                <g fill="none" stroke="#243040" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M0,-13 C2.2,-9.2 4.8,-5.2 7,-1.4 M7,-1.4 L10.6,-1.8"/>
+                  <path d="M0,-13 C-2.4,-9.8 -5.2,-6.8 -8,-3.6 M-8,-3.6 L-5.1,-2.7"/>
+                  <path d="M0,-13 C1.3,-19 1.3,-24 .5,-28.5"/>
+                  <path d="M.5,-25.5 C3.6,-24 5.8,-21.2 6.6,-18"/>
+                  <path d="M.5,-25.5 C-3.2,-24.6 -5.6,-22.3 -6.8,-19.4"/>
+                  <circle cx="1.2" cy="-36" r="7" fill="#fff"/>
+                  <path d="M-2.7,-42.4 q1,-1.9 2.5,-1.7 M1,-43.3 q1.2,-1.5 2.5,-1.1"/>
+                </g>
+                <circle cx="-.9" cy="-36.8" r=".95" fill="#243040"/><circle cx="3.5" cy="-36.8" r=".95" fill="#243040"/>
+                <path d="M.3,-33.3 q1.5,1.5 3.2,.3" fill="none" stroke="#243040" stroke-width="1.6" stroke-linecap="round"/>
+              </g>
+              <g class="pose" data-pose="b">
+                <ellipse cx="0" cy="1" rx="8.5" ry="2.3" fill="#2A3A5E" opacity=".12"/>
+                <g transform="translate(0,-1.5)">
+                  <g fill="none" stroke="#243040" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M0,-13 C.4,-8.8 1,-4.4 1.4,-.8 M1.4,-.8 L5,-1.2"/>
+                    <path d="M0,-13 C-1.2,-9.8 -2.6,-7.2 -3.2,-4.4 M-3.2,-4.4 L-.4,-3.6"/>
+                    <path d="M0,-13 C1,-19 1,-24 .3,-28.5"/>
+                    <path d="M.3,-25.5 C2.5,-23.8 3.7,-21.2 4.1,-18.6"/>
+                    <path d="M.3,-25.5 C-2,-23.8 -3.2,-21.4 -3.6,-18.8"/>
+                    <circle cx="1" cy="-36" r="7" fill="#fff"/>
+                    <path d="M-2.9,-42.4 q1,-1.9 2.5,-1.7 M.8,-43.3 q1.2,-1.5 2.5,-1.1"/>
+                  </g>
+                  <circle cx="-1.1" cy="-36.8" r=".95" fill="#243040"/><circle cx="3.3" cy="-36.8" r=".95" fill="#243040"/>
+                  <path d="M.1,-33.3 q1.5,1.5 3.2,.3" fill="none" stroke="#243040" stroke-width="1.6" stroke-linecap="round"/>
+                </g>
+              </g>
+            </svg>
+          </div>
+          <button class="demo-cta" id="walkBtn">레슨 완료!</button>
+        </div>
+      </div>
+      <p class="demo-note">지도 속 노드는 진짜 버튼이에요 — 꾹 눌러 보세요. 상단은 종합 정리안(과학 ▾ 칩 + 키워드 탭 + 슬림 카드)입니다.</p>
+    </div>
+    <div>
+      <div class="trybox">
+        <h4>노드 = 밟는 스텝 (듀오링고식 3D 버튼)</h4>
+        <p class="tcap">아랫단이 보이는 입체 버튼 — 누르면 윗면이 6px 내려앉아 '밟는' 촉감이 나요. 꾹 눌러 보세요.</p>
+        <div class="tryrow">
+          <div class="tryitem">
+            <button class="n3d stat cur" aria-label="열린 레슨 예시">
+              <span class="edge"></span>
+              <span class="face"><span class="ic ic-flask"><svg width="22" height="22" viewBox="-12 -13 24 26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M-4,-9 h8 v6 l5,9 a3,3 0 0 1 -2.6,4.5 h-12.8 a3,3 0 0 1 -2.6,-4.5 l5,-9 z"/></svg></span></span>
+            </button><span>열림</span>
+          </div>
+          <div class="tryitem">
+            <button class="n3d stat done" aria-label="완료 레슨 예시">
+              <span class="edge"></span>
+              <span class="face"><span class="ic ic-check"><svg width="22" height="22" viewBox="-11 -11 22 22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M-6,.5 L-1.5,5 L6,-4"/></svg></span></span>
+              <span class="badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12,3.5 l2.4,5 5.4,.6 -4,3.7 1.1,5.4 -4.9,-2.8 -4.9,2.8 1.1,-5.4 -4,-3.7 5.4,-.6 z"/></svg></span>
+            </button><span>완료</span>
+          </div>
+          <div class="tryitem">
+            <button class="n3d stat lock" aria-label="잠긴 레슨 예시">
+              <span class="edge"></span>
+              <span class="face"><span class="ic ic-lock"><svg width="20" height="20" viewBox="-11 -11 22 22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><rect x="-6" y="-2.5" width="12" height="9" rx="2.5"/><path d="M-3.5,-2.5 v-3 a3.5,3.5 0 0 1 7,0 v3"/></svg></span></span>
+            </button><span>잠금</span>
+          </div>
+        </div>
+        <ul class="vnotes" style="margin-top:12px">
+          <li>프레스는 저빈도(레슨 진입 순간)라 "고빈도 바운스 금지" 모션 규칙과 충돌하지 않아요 — 기존 프레스 문법(scale .965 + 햅틱 8)과 한 세트.</li>
+          <li>'스텝을 밟는다'는 C안의 감각을 노드 리스킨 없이 절반쯤 흡수합니다.</li>
+        </ul>
+      </div>
+      <div class="trybox">
+        <h4>대단원 탭 — 로마숫자 대신 순한 키워드</h4>
+        <p class="tcap">로마숫자는 목차·시험 범위 톤이라 부담이 맞아요. 실기기 폭(360px+) 기준으로 세 가지 비교:</p>
+        <div class="strips">
+          <div>
+            <div class="strip-cap">처음 검토안 — 로마숫자 (보류)</div>
+            <div class="strip">
+              <span class="p-tab roman on">I</span><span class="p-tab roman">II</span><span class="p-tab roman">III</span>
+              <span class="p-tab roman">IV</span><span class="p-tab roman">V</span><span class="p-tab roman">VI</span><span class="p-tab roman">VII</span>
+            </div>
+          </div>
+          <div>
+            <div class="strip-cap rec">추천 — 2글자 키워드: 7단원이 다 보이고, "우주"는 초대하는 말이에요</div>
+            <div class="strip">
+              <span class="p-tab on">탐구</span><span class="p-tab">생물</span><span class="p-tab">열</span>
+              <span class="p-tab">물질</span><span class="p-tab">힘</span><span class="p-tab">기체</span><span class="p-tab">우주</span>
+            </div>
+          </div>
+          <div>
+            <div class="strip-cap">대안 — 아이콘 + 키워드: 더 다정하지만 폭이 살짝 부족</div>
+            <div class="strip">
+              <span class="p-tab kw on"><svg width="11" height="11" viewBox="-12 -13 24 26" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"><path d="M-4,-9 h8 v6 l5,9 a3,3 0 0 1 -2.6,4.5 h-12.8 a3,3 0 0 1 -2.6,-4.5 l5,-9 z"/></svg>탐구</span>
+              <span class="p-tab kw"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5,9.5 C2.5,5 5,2.5 9.7,2.3 C9.7,7 7,9.5 2.5,9.5 z"/><path d="M3.5,8.5 C5,7 7,5 8.5,3.5"/></svg>생물</span>
+              <span class="p-tab kw"><svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M6,.8 C6.6,3.4 4.1,4.4 4.1,6.9 a2.7,2.7 0 0 0 5.4,0 c0,-1.2 -.6,-2 -1.2,-2.9 -.3,1.1 -1.3,1.4 -1.3,1.4 C7.9,3.9 7,2.4 6,.8 z"/></svg>열</span>
+              <span class="p-tab kw"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M6,1.4 C4.1,4 3.1,5.8 3.1,7.3 a2.9,2.9 0 0 0 5.8,0 C8.9,5.8 7.9,4 6,1.4 z"/></svg>물질</span>
+              <span class="p-tab kw"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="6" cy="7.2" r="3.6"/><path d="M6,3.6 q.5,-1.8 2,-2.2"/></svg>힘</span>
+              <span class="p-tab kw"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><ellipse cx="6" cy="4.6" rx="3.1" ry="3.7"/><path d="M6,8.3 q-.9,1.9 .3,3"/></svg>기체</span>
+              <span class="p-tab kw"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6" cy="6" r="2.7"/><ellipse cx="6" cy="6" rx="5.3" ry="1.7" transform="rotate(-18 6 6)"/></svg>우주</span>
+            </div>
+          </div>
+        </div>
+        <ul class="vnotes" style="margin-top:12px">
+          <li>전체 제목은 파란 카드가 소유(중복 해소는 유지) — 탭은 "어디로 갈까"만 담당해요.</li>
+          <li>키워드는 지도 장식 세계관(모닥불·행성·풍선…)과 같은 어휘라 톤이 맞습니다. 수학은 수·문자·좌표·도형·입체·통계.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <h2>참고 — 처음 비교한 4방향 (v1 아카이브)</h2>
+  <p class="cap">방향 감 잡기용으로 남겨 둡니다. B 카드의 스틱맨은 급조 선화라 캐릭터 퀄리티의 판단 기준이
+  아니에요 — 그 판단은 위 v2 데모 기준으로.</p>
+  <div class="board">
+
+    <!-- ============ A. 발자국 트레일 ============ -->
+    <div class="vcard">
+      <div class="vhead">
+        <span class="tag">방향 A</span>
+        <h3>발자국 트레일</h3>
+        <p>노드 사이 연결선을 발자국으로 교체 — 걸어온 길은 진하게, 갈 길은 옅게 남아요.</p>
+      </div>
+      <div class="meters">
+        <span class="meter">임팩트 <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></span>
+        <span class="meter">공수 <span class="dots"><i class="on"></i><i></i><i></i><i></i></span></span>
+      </div>
+      <div class="phone-slot"><div class="phone">
+        <div class="p-top">
+          <div class="p-appbar">
+            <span class="p-iconbtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span>
+            <span class="p-brand">스틱스텝</span><span class="sp"></span>
+            <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#F2994A"><path d="M12 2c1 4-3 5-3 9a5 5 0 0 0 10 0c0-2-1-3.5-2-5-.5 2-2 2.5-2 2.5C16 6 14 3 12 2z"/></svg>1일</span>
+            <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#3182F6"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>125 스텝</span>
+          </div>
+          <div class="p-hero"><div class="he">대단원 I</div><div class="ht">과학과 인류의 지속가능한 삶</div>
+            <div class="hm">단원 정복률 12%</div><div class="bar"><i></i></div></div>
+        </div>
+        <div class="p-map">
+          <svg viewBox="0 0 290 398" aria-hidden="true">
+            <ellipse cx="240" cy="42" rx="26" ry="10" fill="#fff" opacity=".75"/>
+            <ellipse cx="46" cy="252" rx="22" ry="8" fill="#fff" opacity=".7"/>
+            <path class="trail" d="M150,46 C100,74 70,104 85,144 C100,186 165,204 195,239 C222,272 175,304 110,334" fill="none" stroke="none"/>
+            <!-- 완료 노드 -->
+            <g transform="translate(150,46)">
+              <circle r="21" fill="#fff"/><circle r="21" fill="none" stroke="#CFE0D2" stroke-width="1.5"/>
+              <circle r="16.5" fill="#EAF4FF" stroke="#BFDBFF" stroke-width="1.5"/>
+              <path d="M-6,0 L-1.5,4.5 L6,-4" fill="none" stroke="#3182F6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="15" cy="-15" r="7" fill="#F5B63E"/><path d="M15,-18.5 L16.2,-16 L18.8,-15.7 L16.9,-13.9 L17.4,-11.3 L15,-12.6 L12.6,-11.3 L13.1,-13.9 L11.2,-15.7 L13.8,-16z" fill="#fff"/>
+            </g>
+            <text class="nlabel" x="150" y="82">과학적 탐구 방법</text>
+            <!-- 현재 노드 -->
+            <g transform="translate(85,144)">
+              <circle r="27" fill="rgba(49,130,246,.14)"/>
+              <circle r="22" fill="url(#gradB)"/><circle r="22" fill="none" stroke="#fff" stroke-width="3"/>
+              <path d="M-4,-9 h8 v6 l5,9 a3,3 0 0 1 -2.6,4.5 h-12.8 a3,3 0 0 1 -2.6,-4.5 l5,-9 z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/>
+              <rect x="-14" y="-40" width="28" height="14" rx="7" fill="#1E2A3C"/><text x="0" y="-29.5" font-size="9.5" font-weight="700" fill="#fff" text-anchor="middle">시작</text>
+            </g>
+            <text class="nlabel" x="85" y="184">직접 탐구하기</text>
+            <!-- 잠금 노드들 -->
+            <g transform="translate(195,239)"><circle r="19" fill="#EDF1F4" stroke="#DDE4EA" stroke-width="1.5"/>
+              <g stroke="#AEB9C4" stroke-width="2.2" fill="none"><rect x="-6" y="-3" width="12" height="9" rx="2.5"/><path d="M-3.5,-3 v-3 a3.5,3.5 0 0 1 7,0 v3"/></g></g>
+            <text class="nlabel" x="195" y="272">과학과 인류 문명</text>
+            <g transform="translate(110,334)"><circle r="19" fill="#26334D"/><circle r="19" fill="none" stroke="#3B4A66" stroke-width="1.5"/>
+              <path d="M-3,-8 v16 M-3,-8 h10 l-3,4 3,4 h-10" fill="none" stroke="#F5C864" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/></g>
+            <text class="nlabel" x="110" y="368">단원평가</text>
+            <defs><linearGradient id="gradB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4D93FF"/><stop offset="1" stop-color="#2570E8"/></linearGradient></defs>
+          </svg>
+        </div>
+      </div></div>
+      <ul class="vnotes">
+        <li>&lsquo;스텝&rsquo;이 화면 언어가 됩니다 — 재화 이름(125 스텝)·장화 레벨과 세계관이 이어져요.</li>
+        <li>구현: 기존 serpentine 경로를 따라 발자국 스탬프만 찍으면 됨(경로 수학 재사용, CSS 소량).</li>
+        <li class="warn">발자국만으로는 &lsquo;스틱(맨)&rsquo;이 아직 안 보여요 — B와 조합 권장.</li>
+      </ul>
+    </div>
+
+    <!-- ============ B. 스틱맨 워커 ============ -->
+    <div class="vcard">
+      <div class="vhead">
+        <span class="tag">방향 B</span>
+        <h3>내 스틱맨이 길 위에</h3>
+        <p>현재 위치 노드에 내 아바타 스틱맨이 깃발을 들고 서 있고, 레슨을 마치면 다음 노드로 걸어가요.</p>
+      </div>
+      <div class="meters">
+        <span class="meter">임팩트 <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></span>
+        <span class="meter">공수 <span class="dots"><i class="on"></i><i class="on"></i><i></i><i></i></span></span>
+      </div>
+      <div class="phone-slot"><div class="phone">
+        <div class="p-top">
+          <div class="p-appbar">
+            <span class="p-iconbtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span>
+            <span class="p-brand">스틱스텝</span><span class="sp"></span>
+            <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#F2994A"><path d="M12 2c1 4-3 5-3 9a5 5 0 0 0 10 0c0-2-1-3.5-2-5-.5 2-2 2.5-2 2.5C16 6 14 3 12 2z"/></svg>1일</span>
+            <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#3182F6"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>125 스텝</span>
+          </div>
+          <div class="p-hero"><div class="he">대단원 I</div><div class="ht">과학과 인류의 지속가능한 삶</div>
+            <div class="hm">단원 정복률 12%</div><div class="bar"><i></i></div></div>
+        </div>
+        <div class="p-map">
+          <svg viewBox="0 0 290 398" aria-hidden="true">
+            <ellipse cx="240" cy="42" rx="26" ry="10" fill="#fff" opacity=".75"/>
+            <ellipse cx="42" cy="260" rx="22" ry="8" fill="#fff" opacity=".7"/>
+            <path class="trail walked" d="M150,46 C100,74 70,104 85,144" fill="none" stroke="none"/>
+            <path d="M85,144 C100,186 165,204 195,239 C222,272 175,304 110,334" fill="none" stroke="#C3D6C8" stroke-width="4" stroke-dasharray="1 10" stroke-linecap="round"/>
+            <g transform="translate(150,46)">
+              <circle r="21" fill="#fff"/><circle r="21" fill="none" stroke="#CFE0D2" stroke-width="1.5"/>
+              <circle r="16.5" fill="#EAF4FF" stroke="#BFDBFF" stroke-width="1.5"/>
+              <path d="M-6,0 L-1.5,4.5 L6,-4" fill="none" stroke="#3182F6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <text class="nlabel" x="150" y="82">과학적 탐구 방법</text>
+            <g transform="translate(85,152)">
+              <circle r="27" fill="rgba(49,130,246,.14)"/>
+              <circle r="22" fill="url(#gradB2)"/><circle r="22" fill="none" stroke="#fff" stroke-width="3"/>
+              <path d="M-4,-9 h8 v6 l5,9 a3,3 0 0 1 -2.6,4.5 h-12.8 a3,3 0 0 1 -2.6,-4.5 l5,-9 z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/>
+            </g>
+            <!-- 스틱맨 워커: 노드 위에 선다 (위치 g와 애니메이션 g 분리 — CSS transform이 속성을 덮지 않게) -->
+            <g transform="translate(85,130)"><g class="walker">
+              <g fill="none" stroke="#22303F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="0" cy="-34" r="6.5" fill="#fff"/>
+                <path d="M0,-27.5 L0,-10"/>
+                <path d="M0,-22 L-8.5,-15"/>
+                <path d="M0,-22 L7,-30"/>
+                <path d="M0,-10 L-5.5,0"/>
+                <path d="M0,-10 L5.5,0"/>
+                <path d="M7,-30 L7,-47"/>
+              </g>
+              <path d="M7,-47 L23,-42.5 L7,-38 z" fill="#3182F6"/>
+              <circle cx="-2.2" cy="-35" r=".9" fill="#22303F"/><circle cx="2.2" cy="-35" r=".9" fill="#22303F"/>
+            </g></g>
+            <text class="nlabel" x="85" y="192">직접 탐구하기</text>
+            <g transform="translate(195,239)"><circle r="19" fill="#EDF1F4" stroke="#DDE4EA" stroke-width="1.5"/>
+              <g stroke="#AEB9C4" stroke-width="2.2" fill="none"><rect x="-6" y="-3" width="12" height="9" rx="2.5"/><path d="M-3.5,-3 v-3 a3.5,3.5 0 0 1 7,0 v3"/></g></g>
+            <text class="nlabel" x="195" y="272">과학과 인류 문명</text>
+            <g transform="translate(110,334)"><circle r="19" fill="#26334D"/><circle r="19" fill="none" stroke="#3B4A66" stroke-width="1.5"/>
+              <path d="M-3,-8 v16 M-3,-8 h10 l-3,4 3,4 h-10" fill="none" stroke="#F5C864" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/></g>
+            <text class="nlabel" x="110" y="368">단원평가</text>
+            <defs><linearGradient id="gradB2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4D93FF"/><stop offset="1" stop-color="#2570E8"/></linearGradient></defs>
+          </svg>
+        </div>
+      </div></div>
+      <ul class="vnotes">
+        <li>&lsquo;시작&rsquo; 배지를 캐릭터가 대체 — 이름의 두 축(스틱+스텝)이 한 화면에 서요.</li>
+        <li>레슨 완료 귀환 시 다음 노드까지 걸어가는 6~8걸음 애니가 최고의 보상 연출이 됩니다.</li>
+        <li>파츠 아바타(질문 5)와 직결 — 내가 꾸민 스틱맨이 내 진도 위에 서는 구조.</li>
+      </ul>
+    </div>
+
+    <!-- ============ C. 징검다리 스텝 ============ -->
+    <div class="vcard">
+      <div class="vhead">
+        <span class="tag">방향 C</span>
+        <h3>징검다리 스텝 등반</h3>
+        <p>원형 메달리온을 밟는 발판(스텝)으로 리스킨하고, 진행 방향을 아래→위 &lsquo;오르막&rsquo;으로 뒤집어요.</p>
+      </div>
+      <div class="meters">
+        <span class="meter">임팩트 <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></span>
+        <span class="meter">공수 <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></span>
+      </div>
+      <div class="phone-slot"><div class="phone">
+        <div class="p-top">
+          <div class="p-appbar">
+            <span class="p-iconbtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span>
+            <span class="p-brand">스틱스텝</span><span class="sp"></span>
+            <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#F2994A"><path d="M12 2c1 4-3 5-3 9a5 5 0 0 0 10 0c0-2-1-3.5-2-5-.5 2-2 2.5-2 2.5C16 6 14 3 12 2z"/></svg>1일</span>
+            <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#3182F6"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>125 스텝</span>
+          </div>
+          <div class="p-hero"><div class="he">대단원 I</div><div class="ht">과학과 인류의 지속가능한 삶</div>
+            <div class="hm">단원 정복률 12%</div><div class="bar"><i></i></div></div>
+        </div>
+        <div class="p-map">
+          <svg viewBox="0 0 290 398" aria-hidden="true">
+            <!-- 고도 등고선 -->
+            <path d="M-10,120 Q145,70 300,120" fill="none" stroke="#CFE3D4" stroke-width="1.5" opacity=".6"/>
+            <path d="M-10,210 Q145,160 300,210" fill="none" stroke="#CFE3D4" stroke-width="1.5" opacity=".55"/>
+            <path d="M-10,300 Q145,255 300,300" fill="none" stroke="#CFE3D4" stroke-width="1.5" opacity=".5"/>
+            <ellipse cx="236" cy="52" rx="26" ry="10" fill="#fff" opacity=".8"/>
+            <!-- 정상 깃발 -->
+            <g transform="translate(152,96)">
+              <ellipse cx="0" cy="16" rx="34" ry="10" fill="#D8EADC"/>
+              <path d="M0,16 V-24" stroke="#8A6B4D" stroke-width="3" stroke-linecap="round"/>
+              <path d="M0,-24 L30,-16.5 L0,-9 z" fill="#F5B63E"/>
+              <text class="nlabel" x="0" y="38">단원평가</text>
+            </g>
+            <path d="M110,330 L190,266 L108,196 L146,120" fill="none" stroke="#BFD4C4" stroke-width="3" stroke-dasharray="1 9" stroke-linecap="round"/>
+            <!-- 발판들: 아래에서 위로 -->
+            <g transform="translate(110,330) rotate(-3)">
+              <rect x="-30" y="-14" width="60" height="34" rx="14" fill="#B9CDB9"/>
+              <rect x="-30" y="-19" width="60" height="34" rx="14" fill="#E9F1E6" stroke="#C8D8C7" stroke-width="1.5"/>
+              <g class="fp-blue"><ellipse cx="-7" cy="-3" rx="3.4" ry="5.4" transform="rotate(-14 -7 -3)"/><ellipse cx="7" cy="0" rx="3.4" ry="5.4" transform="rotate(10 7 0)"/></g>
+              <circle cx="24" cy="-14" r="7.5" fill="#F5B63E"/><path d="M21,-14 l2.2,2.4 4-4.6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <text class="nlabel" x="110" y="366">과학적 탐구 방법</text>
+            <g transform="translate(190,266) rotate(2)">
+              <rect x="-32" y="-13" width="64" height="36" rx="15" fill="#2B67C9"/>
+              <rect x="-32" y="-19" width="64" height="36" rx="15" fill="url(#gradC)"/>
+              <rect x="-32" y="-19" width="64" height="36" rx="15" fill="none" stroke="#fff" stroke-width="2.5"/>
+              <path d="M-4,-11 h8 v5 l4.5,8 a3,3 0 0 1 -2.6,4.5 h-11.8 a3,3 0 0 1 -2.6,-4.5 l4.5,-8 z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>
+              <rect x="-14" y="-42" width="28" height="14" rx="7" fill="#1E2A3C"/><text x="0" y="-31.5" font-size="9.5" font-weight="700" fill="#fff" text-anchor="middle">시작</text>
+            </g>
+            <text class="nlabel" x="190" y="304">직접 탐구하기</text>
+            <g transform="translate(108,196) rotate(-2)">
+              <rect x="-28" y="-12" width="56" height="32" rx="13" fill="#C3CDD4"/>
+              <rect x="-28" y="-17" width="56" height="32" rx="13" fill="#EDF1F4" stroke="#DCE3E9" stroke-width="1.5"/>
+              <g stroke="#AEB9C4" stroke-width="2.2" fill="none"><rect x="-5.5" y="-6" width="11" height="8.5" rx="2.5"/><path d="M-3,-6 v-2.6 a3,3 0 0 1 6,0 v2.6"/></g>
+            </g>
+            <text class="nlabel" x="108" y="230">과학과 인류 문명</text>
+            <defs><linearGradient id="gradC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4D93FF"/><stop offset="1" stop-color="#2570E8"/></linearGradient></defs>
+          </svg>
+        </div>
+      </div></div>
+      <ul class="vnotes">
+        <li>&lsquo;스텝을 밟고 올라간다&rsquo;가 조작 그 자체가 됩니다 — 단원평가가 정상 깃발.</li>
+        <li>완료한 발판마다 발자국 도장 — 정복률이 지형으로 읽혀요.</li>
+        <li class="warn">노드 리스킨 + 진행 방향 반전이라 지도 CSS·좌표 손이 큼. 테마 10여 종 발판 색 재설계 필요.</li>
+      </ul>
+    </div>
+
+    <!-- ============ D. 공책 두들 세계관 ============ -->
+    <div class="vcard">
+      <div class="vhead">
+        <span class="tag">방향 D</span>
+        <h3>공책 두들 세계관</h3>
+        <p>지도가 학생의 공책이 됩니다 — 모눈 종이 위 연필 길, 손그림 동그라미, 여백의 스틱맨 낙서.</p>
+      </div>
+      <div class="meters">
+        <span class="meter">임팩트 <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></span>
+        <span class="meter">공수 <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></span>
+      </div>
+      <div class="phone-slot"><div class="phone">
+        <div class="p-top">
+          <div class="p-appbar">
+            <span class="p-iconbtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span>
+            <span class="p-brand">스틱스텝</span><span class="sp"></span>
+            <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#F2994A"><path d="M12 2c1 4-3 5-3 9a5 5 0 0 0 10 0c0-2-1-3.5-2-5-.5 2-2 2.5-2 2.5C16 6 14 3 12 2z"/></svg>1일</span>
+            <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#3182F6"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>125 스텝</span>
+          </div>
+          <div class="p-hero"><div class="he">대단원 I</div><div class="ht">과학과 인류의 지속가능한 삶</div>
+            <div class="hm">단원 정복률 12%</div><div class="bar"><i></i></div></div>
+        </div>
+        <div class="p-map paper">
+          <svg viewBox="0 0 290 398" aria-hidden="true">
+            <path d="M150,46 C96,76 70,106 86,146 C102,188 168,206 196,240 C224,274 176,306 112,336" fill="none" stroke="#9AA6B6" stroke-width="2.4" stroke-dasharray="7 8" stroke-linecap="round"/>
+            <!-- 완료: 크레용 채운 동그라미 -->
+            <g transform="translate(150,46)">
+              <ellipse rx="21" ry="19.5" fill="#EAF3FF" transform="rotate(-6)"/>
+              <ellipse rx="21" ry="20" fill="none" stroke="#3D6FB8" stroke-width="2.4" transform="rotate(-6)"/>
+              <ellipse rx="19.5" ry="21" fill="none" stroke="#3D6FB8" stroke-width="1.3" opacity=".55" transform="rotate(8)"/>
+              <path d="M-7,0 L-2,5 L7,-5" fill="none" stroke="#3D6FB8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14,-20 l2,-6 2,6 6,.8 -4.4,4 1,6 -4.6,-3 -4.6,3 1,-6 -4.4,-4 z" fill="none" stroke="#E9A23B" stroke-width="1.8" stroke-linejoin="round"/>
+            </g>
+            <text class="nlabel" x="150" y="82" style="fill:#41506B">과학적 탐구 방법</text>
+            <!-- 현재: 파란 스티커 -->
+            <g transform="translate(86,146)">
+              <ellipse rx="26" ry="24.5" fill="rgba(49,130,246,.13)" transform="rotate(4)"/>
+              <ellipse rx="22" ry="21" fill="#3182F6" transform="rotate(4)"/>
+              <ellipse rx="22" ry="21" fill="none" stroke="#1B64DA" stroke-width="2" transform="rotate(4)" opacity=".5"/>
+              <path d="M-4,-9 h8 v6 l5,9 a3,3 0 0 1 -2.6,4.5 h-12.8 a3,3 0 0 1 -2.6,-4.5 l5,-9 z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/>
+              <rect x="-14" y="-42" width="28" height="14" rx="4" fill="#22303F" transform="rotate(-3)"/>
+              <text x="-1" y="-31" font-size="9.5" font-weight="700" fill="#fff" text-anchor="middle" transform="rotate(-3)">시작</text>
+            </g>
+            <text class="nlabel" x="86" y="186" style="fill:#41506B">직접 탐구하기</text>
+            <!-- 잠금: 연필 동그라미 -->
+            <g transform="translate(196,240)">
+              <ellipse rx="19" ry="17.5" fill="#FFF" transform="rotate(5)"/>
+              <ellipse rx="19" ry="18" fill="none" stroke="#A7B2C2" stroke-width="2" transform="rotate(5)"/>
+              <ellipse rx="17.5" ry="19" fill="none" stroke="#A7B2C2" stroke-width="1" opacity=".6" transform="rotate(-7)"/>
+              <g stroke="#A7B2C2" stroke-width="2.2" fill="none"><rect x="-6" y="-3" width="12" height="9" rx="2.5"/><path d="M-3.5,-3 v-3 a3.5,3.5 0 0 1 7,0 v3"/></g>
+            </g>
+            <text class="nlabel" x="196" y="274" style="fill:#41506B">과학과 인류 문명</text>
+            <g transform="translate(112,336)">
+              <ellipse rx="19" ry="18" fill="#FFF" transform="rotate(-4)"/>
+              <ellipse rx="19" ry="18" fill="none" stroke="#41506B" stroke-width="2.2" transform="rotate(-4)"/>
+              <path d="M-3,-8 v16 M-3,-8 h10 l-3,4 3,4 h-10" fill="none" stroke="#E9A23B" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+            </g>
+            <text class="nlabel" x="112" y="370" style="fill:#41506B">단원평가</text>
+            <!-- 여백 낙서: 응원하는 스틱맨 + 별 + 스프링 화살표 -->
+            <g fill="none" stroke="#6E7C92" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(236,140)">
+              <circle cx="0" cy="-24" r="6"/>
+              <path d="M0,-18 L0,-2 M0,-13 L-9,-21 M0,-13 L9,-21 M0,-2 L-6,8 M0,-2 L6,8"/>
+            </g>
+            <path d="M228,96 l1.8,-5 1.8,5 5,.7 -3.6,3.4 .8,5 -4,-2.6 -4,2.6 .8,-5 -3.6,-3.4 z" fill="none" stroke="#E9A23B" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M36,86 c8,-10 16,2 8,8 c-8,6 -2,16 8,12 M52,106 l8,-2 -4,7 z" fill="none" stroke="#8B98AB" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M40,306 q6,-8 12,0 q6,8 12,0" fill="none" stroke="#8B98AB" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div></div>
+      <ul class="vnotes">
+        <li>브랜드 그래픽 언어 전체가 통일됩니다 — 스플래시 손그림·만화 스틱맨과 같은 세계.</li>
+        <li>과목 허브의 &lsquo;스틱맨 낙서 데코&rsquo;가 이미 이 방향의 씨앗이에요.</li>
+        <li class="warn">전면 리브랜딩: 프리미엄 그라데이션·유리 토큰과 톤 충돌 조정이 필요한 가장 큰 공사.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="reco">
+    <h3>추천: A + B + 눌리는 스텝 노드 (v2 묶음)를 1차로</h3>
+    <p><b>발자국(걸어온 길) + 현재 노드 위 내 스틱맨 + 3D 스텝 노드</b> 묶음이 비용 대비 정체성 효과가 가장
+    큽니다. 트레일·메달리온 문법과 단원 테마 색은 그대로 두고 &lsquo;길 위의 표현&rsquo;과 &lsquo;노드의 촉감&rsquo;만
+    더하는 것이라 기존 지도 규칙과 충돌하지 않고, 이름의 두 단어가 한 화면에서 동시에 보여요. C(징검다리)의
+    &lsquo;밟는다&rsquo; 감각은 노드 버튼화가 절반쯤 흡수하고, D는 앱 전체 아트 방향을 다시 정하는 별도 결정으로
+    분리하는 걸 권합니다. 탭은 로마숫자 대신 2글자 키워드 필로.</p>
+  </div>
+</section>
+
+<!-- ================= 상단 정리안 ================= -->
+<section class="sec">
+  <h2>상단 중복 · 과목 진입 정리안 (질문 2 &amp; 4)</h2>
+  <p class="cap">대단원 제목이 탭과 파란 카드에 두 번 적히는 문제와, 그리드 아이콘이 &lsquo;과목 선택&rsquo;으로
+  안 읽히는 문제를 한 번에: <b>탭은 짧은 키워드 필로 줄이고</b>(카드가 제목을 소유), <b>그리드 아이콘은
+  현재 과목명이 보이는 &lsquo;과학 ▾&rsquo; 칩으로 교체</b>합니다. 상단이 짧아진 만큼 지도가 더 올라와요.</p>
+  <div class="pair">
+    <figure>
+      <div class="phone">
+        <div class="p-top">
+          <div class="p-appbar">
+            <span class="p-iconbtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span>
+            <span class="p-brand">스틱스텝</span><span class="sp"></span>
+            <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#F2994A"><path d="M12 2c1 4-3 5-3 9a5 5 0 0 0 10 0c0-2-1-3.5-2-5-.5 2-2 2.5-2 2.5C16 6 14 3 12 2z"/></svg>1일</span>
+            <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#3182F6"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>125 스텝</span>
+          </div>
+          <div class="p-tabs">
+            <span class="p-tab on">I. 과학과 인류의 지속가능한 삶</span>
+            <span class="p-tab">II. 생물의 구성과 다양…</span>
+          </div>
+          <div class="p-hero"><div class="he">대단원 I</div><div class="ht">과학과 인류의 지속가능한 삶</div>
+            <div class="hd">탐구하는 법을 배우고, 과학으로 미래를 그려요</div>
+            <div class="hm">단원 정복률 0%</div><div class="bar"><i style="width:2%"></i></div></div>
+          <div class="p-maplabel">레슨 지도</div>
+        </div>
+        <div class="p-map" style="height:236px">
+          <svg viewBox="0 0 290 236" aria-hidden="true">
+            <ellipse cx="238" cy="34" rx="24" ry="9" fill="#fff" opacity=".75"/>
+            <path d="M150,42 C100,70 74,98 88,136 C100,170 150,184 178,208" fill="none" stroke="#C3D6C8" stroke-width="4" stroke-dasharray="1 10" stroke-linecap="round"/>
+            <g transform="translate(150,42)"><circle r="24" fill="rgba(49,130,246,.14)"/><circle r="20" fill="url(#gradE1)"/><circle r="20" fill="none" stroke="#fff" stroke-width="3"/>
+              <path d="M-4,-8 h8 v5 l4.5,8 a3,3 0 0 1 -2.6,4.5 h-11.8 a3,3 0 0 1 -2.6,-4.5 l4.5,-8 z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/></g>
+            <text class="nlabel" x="150" y="78">과학적 탐구 방법</text>
+            <g transform="translate(88,136)"><circle r="17" fill="#EDF1F4" stroke="#DDE4EA" stroke-width="1.5"/>
+              <g stroke="#AEB9C4" stroke-width="2" fill="none"><rect x="-5.5" y="-2.5" width="11" height="8" rx="2.5"/><path d="M-3,-2.5 v-2.8 a3,3 0 0 1 6,0 v2.8"/></g></g>
+            <text class="nlabel" x="88" y="166">직접 탐구하기</text>
+            <defs><linearGradient id="gradE1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4D93FF"/><stop offset="1" stop-color="#2570E8"/></linearGradient></defs>
+          </svg>
+        </div>
+      </div>
+      <figcaption><span class="badge-now">현재</span><b>제목이 두 번, 지도는 화면 40% 아래에서 시작</b>
+      탭이 긴 제목을 다 짊어져 옆 단원은 잘려 보입니다.</figcaption>
+    </figure>
+    <figure>
+      <div class="phone">
+        <div class="p-top">
+          <div class="p-appbar">
+            <span class="p-brand">스틱스텝</span>
+            <span class="subj-chip">과학 <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 9l7 7 7-7"/></svg></span>
+            <span class="sp"></span>
+            <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#F2994A"><path d="M12 2c1 4-3 5-3 9a5 5 0 0 0 10 0c0-2-1-3.5-2-5-.5 2-2 2.5-2 2.5C16 6 14 3 12 2z"/></svg>1일</span>
+            <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#3182F6"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>125 스텝</span>
+          </div>
+          <div class="p-tabs">
+            <span class="p-tab on">탐구</span><span class="p-tab">생물</span><span class="p-tab">열</span>
+            <span class="p-tab">물질</span><span class="p-tab">힘</span><span class="p-tab">기체</span><span class="p-tab">우주</span>
+          </div>
+          <div class="p-hero"><div class="he">대단원 I</div><div class="ht">과학과 인류의 지속가능한 삶</div>
+            <div class="hd">탐구하는 법을 배우고, 과학으로 미래를 그려요</div>
+            <div class="hm">단원 정복률 0%</div><div class="bar"><i style="width:2%"></i></div></div>
+          <div class="p-maplabel">레슨 지도</div>
+        </div>
+        <div class="p-map" style="height:262px">
+          <svg viewBox="0 0 290 262" aria-hidden="true">
+            <ellipse cx="238" cy="34" rx="24" ry="9" fill="#fff" opacity=".75"/>
+            <path d="M150,42 C100,70 74,98 88,136 C100,172 156,190 182,220 C200,242 190,254 178,262" fill="none" stroke="#C3D6C8" stroke-width="4" stroke-dasharray="1 10" stroke-linecap="round"/>
+            <g transform="translate(150,42)"><circle r="24" fill="rgba(49,130,246,.14)"/><circle r="20" fill="url(#gradE2)"/><circle r="20" fill="none" stroke="#fff" stroke-width="3"/>
+              <path d="M-4,-8 h8 v5 l4.5,8 a3,3 0 0 1 -2.6,4.5 h-11.8 a3,3 0 0 1 -2.6,-4.5 l4.5,-8 z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/></g>
+            <text class="nlabel" x="150" y="78">과학적 탐구 방법</text>
+            <g transform="translate(88,136)"><circle r="17" fill="#EDF1F4" stroke="#DDE4EA" stroke-width="1.5"/>
+              <g stroke="#AEB9C4" stroke-width="2" fill="none"><rect x="-5.5" y="-2.5" width="11" height="8" rx="2.5"/><path d="M-3,-2.5 v-2.8 a3,3 0 0 1 6,0 v2.8"/></g></g>
+            <text class="nlabel" x="88" y="166">직접 탐구하기</text>
+            <g transform="translate(182,220)"><circle r="17" fill="#EDF1F4" stroke="#DDE4EA" stroke-width="1.5"/>
+              <g stroke="#AEB9C4" stroke-width="2" fill="none"><rect x="-5.5" y="-2.5" width="11" height="8" rx="2.5"/><path d="M-3,-2.5 v-2.8 a3,3 0 0 1 6,0 v2.8"/></g></g>
+            <text class="nlabel" x="182" y="250">과학과 인류 문명</text>
+            <defs><linearGradient id="gradE2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4D93FF"/><stop offset="1" stop-color="#2570E8"/></linearGradient></defs>
+          </svg>
+        </div>
+      </div>
+      <figcaption><span class="badge-new">정리안</span><b>제목은 카드 한 곳, 탭은 키워드 내비로</b>
+      키워드 필은 7단원이 한 줄에 다 보이고, &lsquo;과학 ▾&rsquo; 칩이 현재 과목 표시 + 과목 전환 진입을 겸합니다.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================= 아바타 파츠 구조 ================= -->
+<section class="sec">
+  <h2>참고: 파츠 조합형 스틱맨 아바타 (질문 5)</h2>
+  <p class="cap">발주 래스터가 아니라 <b>코드 SVG 레이어</b>로 만들면 조합은 곱으로 늘지만 그려야 할 에셋은
+  합만큼만 필요해요. 아래 4개는 같은 기본 스틱맨에 파츠만 바꿔 얹은 예시 — 전부 이 문서 안에서 SVG로 그린 것들입니다.</p>
+  <div class="ava-row">
+    <div class="ava-demo">
+      <svg width="86" height="86" viewBox="0 0 86 86" aria-hidden="true">
+        <g fill="none" stroke="#22303F" stroke-width="2.6" stroke-linecap="round">
+          <circle cx="43" cy="46" r="20" fill="#fff"/>
+          <path d="M25,40 q4,-16 18,-16 q14,0 18,16 l-5,1 q-3,-11 -13,-11 q-10,0 -13,11 z" fill="#22303F" stroke="none"/>
+          <circle cx="36" cy="48" r="1.8" fill="#22303F" stroke="none"/><circle cx="50" cy="48" r="1.8" fill="#22303F" stroke="none"/>
+          <path d="M38,56 q5,4 10,0"/>
+        </g>
+      </svg><span>단발 + 미소</span>
+    </div>
+    <div class="ava-demo">
+      <svg width="86" height="86" viewBox="0 0 86 86" aria-hidden="true">
+        <g fill="none" stroke="#22303F" stroke-width="2.6" stroke-linecap="round">
+          <circle cx="43" cy="46" r="20" fill="#fff"/>
+          <g fill="#22303F" stroke="none"><circle cx="30" cy="30" r="7"/><circle cx="43" cy="26" r="8"/><circle cx="56" cy="30" r="7"/></g>
+          <circle cx="35" cy="48" r="5.5"/><circle cx="51" cy="48" r="5.5"/><path d="M40.5,48 h5"/>
+          <path d="M39,58 q4,3 8,0"/>
+          <circle cx="28" cy="55" r="1" fill="#D98D66" stroke="none"/><circle cx="58" cy="55" r="1" fill="#D98D66" stroke="none"/>
+        </g>
+      </svg><span>곱슬 + 안경 + 주근깨</span>
+    </div>
+    <div class="ava-demo">
+      <svg width="86" height="86" viewBox="0 0 86 86" aria-hidden="true">
+        <g fill="none" stroke="#22303F" stroke-width="2.6" stroke-linecap="round">
+          <circle cx="43" cy="46" r="20" fill="#fff"/>
+          <path d="M25,42 q2,-16 18,-16 q16,0 18,16" />
+          <g fill="#22303F" stroke="none"><ellipse cx="21" cy="44" rx="4.5" ry="8" transform="rotate(12 21 44)"/><ellipse cx="65" cy="44" rx="4.5" ry="8" transform="rotate(-12 65 44)"/></g>
+          <path d="M34,47 q2,3 4,0 M48,47 q2,3 4,0"/>
+          <ellipse cx="43" cy="58" rx="3.4" ry="4.2" fill="#22303F" stroke="none"/>
+        </g>
+      </svg><span>양갈래 + 웃는 눈 + 노래</span>
+    </div>
+    <div class="ava-demo">
+      <svg width="86" height="86" viewBox="0 0 86 86" aria-hidden="true">
+        <g fill="none" stroke="#22303F" stroke-width="2.6" stroke-linecap="round">
+          <circle cx="43" cy="46" r="20" fill="#fff"/>
+          <path d="M24,40 q0,-15 19,-15 q19,0 19,15 l0,3 l-38,0 z" fill="#3182F6" stroke="#1B64DA" stroke-width="2"/>
+          <path d="M24,42 h38" stroke="#1B64DA"/>
+          <rect x="30" y="44" width="11" height="9" rx="2.5"/><rect x="45" y="44" width="11" height="9" rx="2.5"/><path d="M41,48 h4"/>
+          <path d="M38,59 q5,-3.5 10,0"/>
+        </g>
+      </svg><span>비니 + 사각 안경 + 새침</span>
+    </div>
+  </div>
+  <div class="slotlist">
+    <span class="slot">얼굴형 4</span><span class="slot">머리 8</span><span class="slot">눈 6</span>
+    <span class="slot">입·표정 6</span><span class="slot">안경 4</span><span class="slot">소품 4</span>
+    <span class="slot" style="color:var(--accent); border-color:var(--accent)">= 에셋 32개로 조합 18,432가지</span>
+  </div>
+</section>
+
+<footer>방향 잡기용 시안입니다 — 실제 구현은 tokens.css의 프리미엄 토큰(그라데이션·다층 그림자) 기준으로 격상해서 제작.
+지도 발자국은 기존 serpentine 경로 좌표를 그대로 샘플링해 찍는 방식이라 리사이즈 규칙(%-left·non-scaling-stroke)과도 호환돼요.</footer>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="fp">
+      <ellipse cx="0" cy="0" rx="3" ry="4.8"/>
+      <circle cx="-2.3" cy="-4.4" r="1"/><circle cx="-0.3" cy="-5.4" r="1.1"/><circle cx="1.8" cy="-4.7" r="1"/>
+    </g>
+  </defs>
+</svg>
+
+<script>
+(function(){
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SVG = 'http://www.w3.org/2000/svg';
+  // 경로를 따라 좌/우 발자국을 번갈아 찍는다 — 실제 구현이라면 serpentine 좌표로 동일하게.
+  function stamp(path, from, to, step, cls, delayBase){
+    var svg = path.ownerSVGElement, L = path.getTotalLength();
+    var i = 0;
+    for (var d = from; d <= Math.min(to, L); d += step, i++){
+      var p = path.getPointAtLength(d);
+      var q = path.getPointAtLength(Math.min(d + 1.5, L));
+      var dx = q.x - p.x, dy = q.y - p.y, len = Math.hypot(dx, dy) || 1;
+      var nx = -dy / len, ny = dx / len;               // 진행 방향의 수직(발 좌우 간격)
+      var side = (i % 2 === 0) ? 1 : -1, off = 4.6;
+      var ang = Math.atan2(dy, dx) * 180 / Math.PI + 90; // 발끝이 진행 방향을 향하게
+      // 위치는 바깥 g의 transform 속성이, 도장 애니는 안쪽 use의 CSS transform이 맡는다(서로 덮지 않게 분리)
+      var g = document.createElementNS(SVG, 'g');
+      g.setAttribute('transform',
+        'translate(' + (p.x + nx * off * side).toFixed(1) + ',' + (p.y + ny * off * side).toFixed(1) + ') ' +
+        'rotate(' + ang.toFixed(1) + ') ' + (side < 0 ? 'scale(-1,1)' : ''));
+      var u = document.createElementNS(SVG, 'use');
+      u.setAttribute('href', '#fp');
+      u.setAttribute('class', cls + (reduce ? '' : ' stamp'));
+      if (!reduce) u.style.animationDelay = (delayBase + i * 90) + 'ms';
+      g.appendChild(u);
+      svg.insertBefore(g, svg.querySelector('g'));
+    }
+  }
+  document.querySelectorAll('.trail').forEach(function(path){
+    var L = path.getTotalLength();
+    if (path.classList.contains('walked')){       // B안: 지나온 구간만 진하게
+      stamp(path, 26, L - 30, 16, 'fp-dark', 200);
+    } else {                                       // A안: 지나온 길 진하게 + 갈 길 옅게
+      stamp(path, 26, L * 0.30, 16, 'fp-dark', 200);
+      stamp(path, L * 0.30 + 16, L - 26, 16, 'fp-faint', 900);
+    }
+  });
+})();
+</script>
+
+<script>
+// v2 걷기 데모 — 완료 → 스틱맨이 발자국을 남기며 다음 노드로 → 깃발 플랜팅
+(function(){
+  var map = document.getElementById('v2map'); if (!map) return;
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  var svg = map.querySelector('svg');
+  var wpath = document.getElementById('walkpath');
+  var walker = document.getElementById('walker');
+  var poses = walker.querySelectorAll('.pose');
+  var n2 = document.getElementById('nd-cur'), n3 = document.getElementById('nd-next');
+  var cta = document.getElementById('walkBtn');
+  var L = wpath.getTotalLength();
+  var START = { x: 85, y: 146 }, END = { x: 195, y: 246 };
+  var stamped = [], running = false, played = false, lastD = 0, side = 1, poseTimer = 0;
+
+  // 프레스 촉감 — :active만으로는 iOS·합성 이벤트에서 빠질 수 있어 pointerdown 클래스로 보강
+  document.querySelectorAll('.n3d').forEach(function(b){
+    var up = function(){ b.classList.remove('pressed'); };
+    b.addEventListener('pointerdown', function(){ b.classList.add('pressed'); });
+    b.addEventListener('pointerup', up);
+    b.addEventListener('pointerleave', up);
+    b.addEventListener('pointercancel', up);
+  });
+
+  function setPos(x, y){ walker.style.transform = 'translate(' + x + 'px,' + y + 'px)'; }
+  function pose(name){
+    poses.forEach(function(p){ p.classList.toggle('on', p.getAttribute('data-pose') === name); });
+  }
+  function stampAt(d){
+    var p = wpath.getPointAtLength(d), q = wpath.getPointAtLength(Math.min(d + 1.5, L));
+    var dx = q.x - p.x, dy = q.y - p.y, len = Math.hypot(dx, dy) || 1;
+    var nx = -dy / len, ny = dx / len, off = 3.4;
+    side = -side;
+    var g = document.createElementNS(SVGNS, 'g');
+    g.setAttribute('transform',
+      'translate(' + (p.x + nx * off * side).toFixed(1) + ',' + (p.y + ny * off * side + 2).toFixed(1) + ') ' +
+      'rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI + 90).toFixed(1) + ')' + (side < 0 ? ' scale(-1,1)' : ''));
+    var u = document.createElementNS(SVGNS, 'use');
+    u.setAttribute('href', '#fp'); u.setAttribute('class', 'fp-dark');
+    g.appendChild(u); svg.appendChild(g); stamped.push(g);
+  }
+  function reset(){
+    stamped.forEach(function(g){ g.remove(); }); stamped = []; lastD = 0; side = 1;
+    n2.classList.remove('done'); n2.classList.add('cur');
+    n3.classList.remove('cur'); n3.classList.add('lock');
+    setPos(START.x, START.y); pose('idle');
+    cta.textContent = '레슨 완료!'; cta.disabled = false; played = false;
+  }
+  function finish(){
+    clearInterval(poseTimer);
+    n3.classList.remove('lock'); n3.classList.add('cur');
+    pose('idle'); running = false; played = true;
+    cta.textContent = '처음부터 다시'; cta.disabled = false;
+  }
+  cta.addEventListener('click', function(){
+    if (running) return;
+    if (played){ reset(); return; }
+    n2.classList.remove('cur'); n2.classList.add('done');
+    if (reduce){ for (var d = 16; d < L - 8; d += 24) stampAt(d); setPos(END.x, END.y); finish(); return; }
+    running = true; cta.disabled = true;
+    var t0 = performance.now(), DUR = 2100;
+    pose('a');
+    poseTimer = setInterval(function(){
+      pose(Math.floor((performance.now() - t0) / 150) % 2 ? 'b' : 'a');
+    }, 150);
+    requestAnimationFrame(function step(now){
+      var t = Math.min(1, (now - t0) / DUR);
+      var e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      var d = e * L, p = wpath.getPointAtLength(d);
+      setPos(p.x, p.y);
+      while (d - lastD >= 24 && d < L - 8){ lastD += 24; stampAt(lastD); }
+      if (t < 1) requestAnimationFrame(step); else finish();
+    });
+  });
+  reset();
+})();
+</script>
