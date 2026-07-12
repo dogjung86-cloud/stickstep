@@ -2,6 +2,7 @@
 // 교과서에서는 표현 구조와 함정만 참고하고 수치·문구·소재 결합은 새로 설계했다.
 // 유형 13(mcq+multi)/7(num)/2(word), diff 1/2/3 = 9/9/4.
 import type { ExamItem } from "./types";
+import { mExamSquareChainFig } from "../../ui/examFiguresMath";
 
 const L = "m1u2l1";
 
@@ -89,6 +90,7 @@ export const POOL_M1U2L1: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt: "같은 길이의 막대로 정사각형을 가로로 이어 만들어요. 이웃한 정사각형은 한 변의 막대를 함께 사용하므로, 정사각형 한 개를 더 붙일 때마다 막대가 3개씩 늘어요. 정사각형 <i class='mv'>n</i>개에 필요한 막대 수는?",
+    figure: mExamSquareChainFig([1, 2, 3]),
     options: ["4<i class='mv'>n</i>", "3<i class='mv'>n</i>+1", "3<i class='mv'>n</i>−1", "<i class='mv'>n</i>+3", "4<i class='mv'>n</i>+1"],
     answer: 1,
     diff: 2,

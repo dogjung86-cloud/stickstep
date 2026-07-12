@@ -2,6 +2,7 @@
 // 교과서에서는 성질과 함정 구조만 참고하고 수치·문구·소재 결합은 새로 설계했다.
 // 유형 13(mcq+multi)/7(num)/2(word), diff 1/2/3 = 9/9/4.
 import type { ExamItem } from "./types";
+import { mExamBalanceFig } from "../../ui/examFiguresMath";
 
 const L = "m1u2l7";
 
@@ -95,6 +96,7 @@ export const POOL_M1U2L7: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt: "포장 상자 3개의 질량과 완충재 15 kg의 합이 72 kg라서 3<i class='mv'>x</i>+15=72라는 등식을 세웠어요. 양쪽에서 완충재 질량을 같은 만큼 빼어 얻은 식은?",
+    figure: mExamBalanceFig({ leftBoxes: 3, rightBoxes: 0, leftWeight: "15", rightWeight: "72", boxLabel: "x" }),
     options: ["3<i class='mv'>x</i>=72−3", "3<i class='mv'>x</i>=72−15", "3<i class='mv'>x</i>+15−15=72", "3<i class='mv'>x</i>=72+15", "<i class='mv'>x</i>=72−15"],
     answer: 1,
     diff: 2,
