@@ -1,0 +1,52 @@
+스타일 블록 A (모든 프롬프트 앞에 붙일 공통 스타일):
+Premium scientific-educational illustration for a Korean middle-school biology assessment, bright clean natural colors, highly legible subject separation, accurate anatomy and materials, polished textbook quality, square 1:1 composition.
+ABSOLUTELY NO text, NO numbers, NO letters, NO symbols, NO captions, NO logos, NO watermarks anywhere in the image.
+No decorative infographic labels. Do not add arrows or answer marks. Keep every requested biological distinction visually clear without written clues.
+
+[0] file=public/exam/u2/cell-shapes-observation.png
+A clean three-subject biological observation plate on a pale neutral laboratory background: at left one branching neuron with a round cell body, many short dendrites and one very long thin axon; in the center a small group of red blood cells shown as flexible biconcave discs with no nuclei; at right a contiguous sheet of flat polygonal epithelial cells, each with one visible nucleus. Three groups separated by generous whitespace, no panel borders, no labels. Scientifically accurate relative morphology, not cute characters, no extra cell types.
+
+[1] file=public/exam/u2/cheek-cells.png
+Microscope field photograph style view of human cheek epithelial cells prepared with a pale blue stain. A circular field contains several large, thin, irregular flat cells with soft cell membranes and exactly one dark blue round nucleus in each visible whole cell. Cells overlap only slightly. No rigid cell walls, no green chloroplasts, no brick-like grid, no scale bar or labels.
+
+[2] file=public/exam/u2/elodea-cells.png
+Microscope field photograph style view of a single thin Elodea leaf layer. A circular field contains a regular grid of elongated rectangular plant cells with clear rigid cell walls and many small green chloroplasts arranged near the cell edges. Cells are one layer, not a 3D tissue block. No animal cells, no scale bar, no labels, no written magnification.
+
+[3] file=public/exam/u2/coverslip-bubble.png
+Top-down macro photograph of a prepared microscope slide on a clean white laboratory table. A transparent coverslip lies flat over a pale blue liquid specimen, but one large clearly visible round air bubble is trapped beneath the coverslip near the center, with a bright circular rim. Plain glass only, no hands, no tools, no labels, no printed marks.
+
+[4] file=public/exam/u2/coverslip-clean.png
+Top-down macro photograph matching the exact camera angle, slide size, coverslip position, pale blue specimen color and white laboratory background of the paired bubble image. The coverslip is correctly seated and the liquid spreads evenly underneath with NO trapped air bubbles. Plain glass only, no hands, no labels, no printed marks.
+
+[5] file=public/exam/u2/ladybug-variation.png
+Five individuals of the SAME ladybug species standing in a row on one green leaf, with consistent body shape, size range, legs and antennae, but natural variation in the number and arrangement of black wing spots and slight red-orange shade. Make the individuals clearly the same species, not five different beetle species. No duplicated fused legs, no labels, no counting marks.
+
+[6] file=public/exam/u2/moth-variation.png
+Six individuals of the SAME peppered moth species resting separately on one broad tree trunk, all with the same body and wing shape but showing a continuous natural range from pale speckled gray to dark charcoal speckled wings. Same camera distance and lighting for all moths. Accurate six-legged insect anatomy, no labels, no selection arrows, no dead insects.
+
+[7] file=public/exam/u2/beetle-species-pair.png
+Natural-history specimen plate showing three clearly DIFFERENT beetle species, each isolated with equal scale and the same top-down view on a pale neutral background: one rounded glossy green beetle, one long narrow brown beetle with very long antennae, and one broad black beetle with a prominent horn. Accurate six legs per beetle, no pins, no labels, no letters, no decorative borders.
+
+[8] file=public/exam/u2/fungi-trio.png
+Three-part natural-history composition without borders: a cluster of brown cap mushrooms growing from forest litter, a close macro patch of blue-green fuzzy mold growing on plain bread, and a microscope-style cluster of oval budding yeast cells. Subjects separated by whitespace and equally prominent. Scientifically recognizable fungi, no plants, no chlorophyll green leaves, no labels or symbols.
+
+[9] file=public/exam/u2/protist-trio.png
+Three separate microscope-style circular fields arranged across one clean plate: an amoeba with an irregular changing outline and pseudopods, a slipper-shaped paramecium covered with fine cilia, and long green filamentous Spirogyra algae with visible spiral chloroplast bands. Accurate single-cell/filament morphology, no labels, no scale bars, no arrows, no other organisms.
+
+[10] file=public/exam/u2/five-kingdom-specimens.png
+Five isolated biological specimen vignettes arranged in one balanced row-and-arc composition on a pale neutral background: a tiny cluster of rod-shaped bacteria seen microscopically, one amoeba with pseudopods, one cap mushroom, one small fern plant, and one ground beetle. Each subject visually separate, equal prominence, scientifically recognizable, no text, no letters, no connecting lines, no labels.
+
+[11] file=public/exam/u2/forest-road.png
+Wide environmental scene adapted to a square frame: a mature Korean temperate forest split by a newly built two-lane road running horizontally through the exact center. The road creates a hard open gap with guardrails and no safe crossing; forest habitat on left and right is disconnected. A roe deer stands safely inside the forest on one side, unable to cross. No vehicles, no people, no signs, no road numbers, no bridge.
+
+[12] file=public/exam/u2/forest-corridor.png
+Exact paired version of the forest-road scene: same square camera position, same mature Korean forest, same horizontal two-lane road, same lighting and same roe deer. Add one broad planted wildlife overpass crossing above the road, densely covered with native shrubs and small trees, visibly connecting the forest on both sides. The deer is walking on the green overpass. No people, vehicles, signs, text or road numbers.
+
+[13] file=public/exam/u2/wetland-degraded.png
+Square landscape view of a degraded former wetland in late spring: mostly drained cracked mud, a narrow polluted trickle, sparse brown reeds, very few visible animals, and a drainage ditch. Keep a distinctive low hill, one bent willow tree and the camera position clear so a restoration image can match it. No construction machines, no people, no signs, no text.
+
+[14] file=public/exam/u2/wetland-restored.png
+Exact paired version of the degraded wetland: same square camera position, same low hill, same bent willow tree and same late-spring lighting. The wetland is now restored with broad clean shallow water, dense native reeds and aquatic plants, several frogs, dragonflies and water birds visibly using the habitat. Natural realistic abundance, no people, no signs, no text.
+
+[15] file=public/exam/u2/seed-bank.png
+Photorealistic clean seed-bank storage room with rows of plain transparent airtight jars containing visibly different seeds: rice grains, beans, corn kernels, sunflower seeds and tiny dark seeds. Cool dry storage shelves, organized scientific atmosphere, jars completely blank with no labels, numbers, barcodes or writing. No people, no hands, no computers or screens.

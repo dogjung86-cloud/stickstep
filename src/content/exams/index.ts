@@ -1,6 +1,7 @@
 // 단원 종합 평가 레지스트리 — 단원 id → 시험 정의.
 // 새 단원 시험을 추가하면 여기와 해당 단원 풀 파일(content/exams/<unit>*.ts)만 만들면 된다.
 import type { ExamDef } from "./types";
+import { U2_EXAM } from "./u2";
 import { U3_EXAM } from "./u3";
 import { U4_EXAM } from "./u4";
 import { U5_EXAM } from "./u5";
@@ -18,6 +19,7 @@ export type { ExamDef, ExamItem, ExamItemType } from "./types";
 export { drawExamItems } from "./types";
 
 const EXAMS: Record<string, ExamDef> = {
+  u2: U2_EXAM,
   u3: U3_EXAM,
   u4: U4_EXAM,
   u5: U5_EXAM,
