@@ -18,7 +18,8 @@ export const AVATAR_KINDS: AvatarKind[] = ["smile", "surprised", "curious", "wav
 
 /* ============================================================
    유저 프로필 아바타 — 마이 탭 픽커·홈 앱바가 사용(store.avatarId = 아래 배열 인덱스).
-   0..4 = 기존 선생님 발주본(하위 호환 — 저장된 avatarId가 살아 있도록 순서 변경·삭제 금지),
+   0..4 = 기존 선생님 발주본(하위 호환 — 저장된 avatarId가 살아 있도록 순서 변경·삭제 금지.
+          단 픽커에는 노출하지 않는다: 프로필은 학생 캐릭터만 — 사용자 확정 2026-07-12),
    5..  = 학생 캐릭터 발주본(qa/avatar2_prompts.txt → public/avatars/*.webp).
    새 캐릭터 추가는 항상 뒤에 append — 픽커·앱바는 자동 확장된다.
    ============================================================ */
@@ -42,11 +43,15 @@ const PROFILE_FILES = [...TEACHER_FILES, ...USER_FILES];
 const PROFILE_FULL = new Set(AVATAR_KINDS.map((k, i) => (FULL_BODY.includes(k) ? i : -1)).filter((i) => i >= 0));
 
 export const PROFILE_COUNT = PROFILE_FILES.length;
+/** 픽커에 노출하는 시작 인덱스 — 선생님 5종(0..4)은 저장 호환용으로만 남고 픽커에서 뺀다. */
+export const PROFILE_PICK_START = TEACHER_FILES.length;
+/** 고른 적 없는 기본 아바타 = 학생 '새싹 머리'(성별 중립) — 선생님 wave 기본은 픽커 미노출로 폐기. */
+const DEFAULT_PROFILE = PROFILE_FILES.indexOf("avatars/sprout.webp");
 
-/** null·범위 밖은 기존 기본이던 선생님 wave(3). */
+/** null·범위 밖은 기본 학생 캐릭터(새싹 머리). 저장된 선생님 인덱스(0..4)는 그대로 존중한다. */
 export function profileIdOf(id: number | null | undefined): number {
-  const i = id ?? 3;
-  return PROFILE_FILES[i] ? i : 3;
+  const i = id ?? DEFAULT_PROFILE;
+  return PROFILE_FILES[i] ? i : DEFAULT_PROFILE;
 }
 
 /** 프로필 아바타 요소 생성(원형 프레임 안에서 object-fit cover). */

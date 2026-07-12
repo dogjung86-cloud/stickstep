@@ -2758,6 +2758,24 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .bdex-name { font-size: 13.5px; font-weight: 800; color: var(--n800); }
 .bdex-need { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--n500); font-variant-numeric: tabular-nums; }
 
+/* 스텝 레벨 접이 — 단계표(bdex)는 기본 접힘, 헤더 버튼으로 펼친다 (2026-07-12 사용자 확정: '장화 도감' 명칭 폐기) */
+.bdex { display: none; }
+.bdex.open { display: block; }
+.bdex-toggle { display: flex; align-items: center; gap: 9px; width: 100%; margin-top: 18px; padding: 12px 14px; border-radius: var(--r-lg); background: var(--n0); border: 1px solid var(--n200); box-shadow: var(--sh-card); font: inherit; text-align: left; }
+.bdex-toggle:active { transform: scale(.985); }
+.bdex-toggle.open { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.bdex-toggle.open + .bdex { border-top-left-radius: 0; border-top-right-radius: 0; border-top: 0; margin-top: 0; }
+.bdex-tg-art { display: grid; place-items: center; width: 26px; flex: none; }
+.bdex-tg-t { font-size: 14px; font-weight: 800; color: var(--n800); }
+.bdex-tg-s { margin-left: auto; font-size: 12.5px; font-weight: 700; color: var(--n500); font-variant-numeric: tabular-nums; }
+.bdex-tg-chev { display: grid; place-items: center; color: var(--n400); transition: transform .24s var(--ease); }
+.bdex-toggle.open .bdex-tg-chev { transform: rotate(180deg); }
+
+/* 마이 탭 하단 법적 고지 — 방침 텍스트 링크 + 사업자 표기(brand.BIZ_INFO) 스몰 프린트 */
+.my-legal { margin: 22px 0 8px; text-align: center; }
+.my-legal .legal-link { display: inline-block; font-size: 12px; font-weight: 600; color: var(--n500); text-decoration: underline; text-underline-offset: 2px; background: none; border: 0; padding: 4px 6px; }
+.my-legal-line { margin-top: 4px; font-size: 11px; line-height: 1.5; color: var(--n400); }
+
 /* ---------- 취약 단원 문제 뽑기 (screens/weakDrill.ts — 복습 탭, 프리미엄) ---------- */
 /* 복습 탭 카드의 프리미엄 필 — 잠금 상태에서만 골드 크라운으로 표시 */
 .prep-pill.gold { display: inline-flex; align-items: center; gap: 3.5px; color: #8A5A00; background: linear-gradient(180deg, #FFF6E0, #FFEDC2); border: 1px solid #F0D48A; }

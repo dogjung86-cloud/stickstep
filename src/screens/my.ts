@@ -1,5 +1,7 @@
-// 마이 탭 — 프로필(스틱맨 아바타 + 장화 레벨)·스텝 요약·장화 도감·계정 진입(2026-07-12 IA 개편).
-// 소셜 프로필 사진은 쓰지 않는다(미성년 개인정보) — 아바타는 앱 스틱맨 중 선택(store.avatarId).
+// 마이 탭 — 프로필(스틱맨 아바타 + 장화 레벨)·스텝 요약·스텝 레벨(접이식 장화 단계표)·계정 진입(2026-07-12 IA 개편).
+// 소셜 프로필 사진은 쓰지 않는다(미성년 개인정보) — 아바타는 학생 캐릭터 중 선택(store.avatarId,
+// 선생님 5종은 저장 호환용일 뿐 픽커 미노출). 개인정보처리방침은 큰 행 대신 하단 스몰 프린트(계정
+// 관리 화면에도 진입이 있음), 사업자 표기는 brand.BIZ_INFO가 채워지면 같은 자리에 줄이 생긴다.
 // 장화 레벨은 누적 스텝(lifeXp) 기준이라 미니게임 입장료 소비로는 내려가지 않는다.
 
 import { el, clear } from "../core/dom";
@@ -7,9 +9,10 @@ import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { getState, currentStreak, setAvatarId } from "../core/store";
 import { onAuthChange } from "../core/auth";
+import { BIZ_INFO } from "../core/brand";
 import { bootLevel, BOOT_TIERS } from "../core/level";
 import { bootArt } from "../ui/boots";
-import { profileAvatar, setProfileAvatar, profileIdOf, PROFILE_COUNT } from "../ui/avatar";
+import { profileAvatar, setProfileAvatar, profileIdOf, PROFILE_COUNT, PROFILE_PICK_START } from "../ui/avatar";
 import { gnav, type GnavKey } from "../ui/gnav";
 import type { Screen } from "../core/router";
 
@@ -34,12 +37,12 @@ export function myScreen(o: {
   });
   const prof = el("div", { class: "my-prof" }, el("div", { class: "login-ava" }, bigAva), nameEl, badge, prog, progCap);
 
-  // ---- 아바타 고르기(선생님 5종 + 학생 캐릭터 발주본 — ui/avatar PROFILE 섹션이 자동 확장) ----
+  // ---- 아바타 고르기(학생 캐릭터 발주본만 — 선생님 5종은 저장 호환용이라 미노출, avatar PROFILE 자동 확장) ----
   const pick = el("div", { class: "ava-pick" });
   function renderPick(): void {
     clear(pick);
     const cur = profileIdOf(getState().avatarId);
-    for (let i = 0; i < PROFILE_COUNT; i++) {
+    for (let i = PROFILE_PICK_START; i < PROFILE_COUNT; i++) {
       const b = el("button", { class: `ava-opt ${cur === i ? "sel" : ""}`, attrs: { "aria-label": `아바타 ${i + 1}` } }, profileAvatar(i));
       b.addEventListener("click", () => {
         haptic(HAPTIC.tap);
@@ -61,7 +64,7 @@ export function myScreen(o: {
     el("div", { class: "my-stat" }, el("b", { text: `${currentStreak()}일` }), el("span", { text: "연속 학습" })),
   );
 
-  // ---- 장화 도감 ----
+  // ---- 스텝 레벨(장화 단계표) — 기본 접힘, 헤더 탭으로 펼치기 ----
   const dex = el("div", { class: "bdex" });
   BOOT_TIERS.forEach((t, i) => {
     const got = st.lifeXp >= t.need;
@@ -74,6 +77,20 @@ export function myScreen(o: {
         el("span", { class: "bdex-need", text: i === 0 ? "시작 장화" : `${t.need.toLocaleString()}스텝` }),
       ),
     );
+  });
+  const dexToggle = el(
+    "button",
+    { class: "bdex-toggle", attrs: { "aria-expanded": "false" } },
+    el("span", { class: "bdex-tg-art", html: bootArt(lv.tier.id, 22) }),
+    el("span", { class: "bdex-tg-t", text: "스텝 레벨" }),
+    el("span", { class: "bdex-tg-s", text: `Lv.${lv.level} / ${BOOT_TIERS.length}` }),
+    el("span", { class: "bdex-tg-chev", html: icon("chevronDown", 16) }),
+  );
+  dexToggle.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    const open = dex.classList.toggle("open");
+    dexToggle.classList.toggle("open", open);
+    dexToggle.setAttribute("aria-expanded", String(open));
   });
 
   // ---- 진입 행 ----
@@ -92,6 +109,15 @@ export function myScreen(o: {
     return r;
   }
 
+  // ---- 하단 법적 고지(스몰 프린트) — 방침 링크 + 사업자 표기(BIZ_INFO 채워지면 줄 생성) ----
+  const polBtn = el("button", { class: "legal-link", text: "개인정보처리방침" });
+  polBtn.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    o.onOpenPolicy();
+  });
+  const legal = el("div", { class: "my-legal" }, polBtn);
+  for (const line of BIZ_INFO) legal.appendChild(el("div", { class: "my-legal-line", text: line }));
+
   const elm = el(
     "section",
     { class: "screen tabscr", attrs: { id: "sc-my" } },
@@ -106,13 +132,13 @@ export function myScreen(o: {
         el("div", { class: "sec-head", text: "아바타 고르기" }),
         pick,
         stats,
-        el("div", { class: "sec-head", text: "장화 도감" }),
+        dexToggle,
         dex,
         el("div", { class: "sec-head", text: "더 보기" }),
         row("user", "계정 관리 · 로그인", o.onOpenAccount),
         row("crown", "프리미엄", o.onOpenPaywall),
         row("book", "과제함", () => snack("학급·과제 기능은 준비 중이에요")),
-        row("lock", "개인정보처리방침", o.onOpenPolicy),
+        legal,
       ),
     ),
     gnav("my", o.onTab),
