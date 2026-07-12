@@ -1,4 +1,4 @@
-// 마이 탭 — 프로필(스틱맨 아바타 + 장화 레벨)·스텝 요약·스텝 레벨(접이식 장화 단계표)·계정 진입(2026-07-12 IA 개편).
+// 마이 탭 — 프로필(스틱맨 아바타 + 장화 레벨)·스텝 요약·스텝 장화 레벨(접이식 단계표, 레벨 숫자 미표기)·계정 진입(2026-07-12 IA 개편).
 // 소셜 프로필 사진은 쓰지 않는다(미성년 개인정보) — 아바타는 학생 캐릭터 중 선택(store.avatarId,
 // 선생님 5종은 저장 호환용일 뿐 픽커 미노출). 개인정보처리방침은 큰 행 대신 하단 스몰 프린트(계정
 // 관리 화면에도 진입이 있음), 사업자 표기는 brand.BIZ_INFO가 채워지면 같은 자리에 줄이 생긴다.
@@ -29,7 +29,8 @@ export function myScreen(o: {
   const bigAva = profileAvatar(st.avatarId);
   const nameEl = el("div", { class: "my-name", text: "게스트 스틱" });
   const badge = el("div", { class: "boot-badge" });
-  badge.innerHTML = `${bootArt(lv.tier.id, 20)}<span>${lv.tier.name} · Lv.${lv.level}</span>`;
+  // 레벨 숫자는 쓰지 않는다(총 14단계라 숫자가 작아 심심 — 장화 이름이 곧 등급, 사용자 확정 2026-07-12)
+  badge.innerHTML = `${bootArt(lv.tier.id, 20)}<span>${lv.tier.name}</span>`;
   const prog = el("div", { class: "boot-prog" }, el("i", { style: `width:${Math.round(lv.progress * 100)}%` }));
   const progCap = el("div", {
     class: "boot-cap",
@@ -82,8 +83,8 @@ export function myScreen(o: {
     "button",
     { class: "bdex-toggle", attrs: { "aria-expanded": "false" } },
     el("span", { class: "bdex-tg-art", html: bootArt(lv.tier.id, 22) }),
-    el("span", { class: "bdex-tg-t", text: "스텝 레벨" }),
-    el("span", { class: "bdex-tg-s", text: `Lv.${lv.level} / ${BOOT_TIERS.length}` }),
+    el("span", { class: "bdex-tg-t", text: "스텝 장화 레벨" }),
+    el("span", { class: "bdex-tg-s", text: lv.tier.name }),
     el("span", { class: "bdex-tg-chev", html: icon("chevronDown", 16) }),
   );
   dexToggle.addEventListener("click", () => {
