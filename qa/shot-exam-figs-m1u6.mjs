@@ -23,13 +23,15 @@ const count = await page.evaluate(async () => {
   return figs.length;
 });
 await page.waitForTimeout(400);
-// 그림이 많아 세로가 길다 — fullPage 한 장 + 1/3씩 분할 확대 3장(slice-shot 계보)
+// 그림이 많아 세로가 길다 — fullPage 한 장 + 스크롤 분할 3장(slice-shot 계보, 클립은 뷰포트 밖이라 스크롤로)
 await page.screenshot({ path: "qa/shots/exam-m1u6-figs.png", fullPage: true });
 const total = await page.evaluate(() => document.body.scrollHeight);
+const sliceH = Math.ceil(total / 3);
+await page.setViewportSize({ width: 420, height: Math.min(sliceH, 6000) });
 for (let i = 0; i < 3; i++) {
-  const y = Math.floor((total / 3) * i);
-  const h = Math.min(Math.ceil(total / 3), total - y);
-  await page.screenshot({ path: `qa/shots/exam-m1u6-figs-${i + 1}.png`, clip: { x: 0, y, width: 420, height: h } });
+  await page.evaluate((y) => window.scrollTo(0, y), i * sliceH);
+  await page.waitForTimeout(150);
+  await page.screenshot({ path: `qa/shots/exam-m1u6-figs-${i + 1}.png` });
 }
 console.log(`SAVED qa/shots/exam-m1u6-figs.png (+분할 3장) — figure 문항 ${count}개`);
 await browser.close();
