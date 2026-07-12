@@ -9,6 +9,8 @@
 // 히스토그램·다각형 단독, 자료 칩, 점 그림은 mathFigures의 histoFig/statDataFig/dotPlotFig를 재사용한다
 // (파라미터형이라 레슨과 "수치·소재 교체"만 지키면 됨 — 레슨 앵커: histoFig [1,7,9,14,5]/20/20 회피).
 
+import { GEO, angleArc, angleOf, dot, polar, ptLabel, rightMark, tickMark } from "./geoKit";
+
 const INK = "#334155";
 const FAINT = "#94A3B8";
 const NAVY = "#364FC7";
@@ -235,4 +237,145 @@ export function mExamAxisPairFig(opts: {
     "같은 자료를 세로축 눈금만 다르게 그린 두 그래프",
     panel(6, opts.ta ?? "그래프 ㄱ", 0, opts.fullMax, NAVY) + panel(158, opts.tb ?? "그래프 ㄴ", opts.zoomLo, opts.zoomHi, ROSE),
   );
+}
+
+/* ── m1u4 기본 도형 시험 그림 ───────────────────────────────
+ * 모든 helper는 점 이름과 구조를 매개변수로 받고, 색·굵기로 정답을 강조하지 않는다.
+ * aria-label은 대상 종류만 말하며 점 이름, 수치, 정답 관계는 낭독하지 않는다. */
+
+export function m4AngleExamFig(opts: { left: string; vertex: string; right: string; degrees?: number }): string {
+  const cx = 150, cy = 118, r = 92;
+  const a0 = 18;
+  const a1 = a0 + (opts.degrees ?? 68);
+  const p0 = polar(cx, cy, r, a0);
+  const p1 = polar(cx, cy, r, a1);
+  let out = `<line x1="${cx}" y1="${cy}" x2="${p0.x.toFixed(1)}" y2="${p0.y.toFixed(1)}" stroke="${GEO.ink}" stroke-width="3" stroke-linecap="round"/>`;
+  out += `<line x1="${cx}" y1="${cy}" x2="${p1.x.toFixed(1)}" y2="${p1.y.toFixed(1)}" stroke="${GEO.ink}" stroke-width="3" stroke-linecap="round"/>`;
+  out += angleArc(cx, cy, 34, a0, a1, GEO.hlA, undefined, { fill: true });
+  out += dot(cx, cy) + dot(p0.x, p0.y) + dot(p1.x, p1.y);
+  out += ptLabel(p0.x, p0.y, opts.right, 10, 4) + ptLabel(cx, cy, opts.vertex, 0, 18) + ptLabel(p1.x, p1.y, opts.left, -8, -7);
+  return svg("0 0 300 165", "두 반직선이 한 점에서 만나는 각 그림", out);
+}
+
+export function m4PerpDistanceFig(opts: { point: string; foot: string; otherA: string; otherB: string }): string {
+  const py = 38, ly = 144;
+  const px = 82, hx = 82, jx = 174, kx = 252;
+  let out = `<line x1="28" y1="${ly}" x2="276" y2="${ly}" stroke="${GEO.ink}" stroke-width="3" stroke-linecap="round"/>`;
+  out += `<line x1="${px}" y1="${py}" x2="${hx}" y2="${ly}" stroke="${GEO.ink}" stroke-width="2.5"/>`;
+  out += `<line x1="${px}" y1="${py}" x2="${jx}" y2="${ly}" stroke="${GEO.soft}" stroke-width="2.2"/>`;
+  out += `<line x1="${px}" y1="${py}" x2="${kx}" y2="${ly}" stroke="${GEO.soft}" stroke-width="2.2"/>`;
+  out += rightMark(hx, ly, 0, 12, GEO.ink);
+  out += dot(px, py) + dot(hx, ly) + dot(jx, ly) + dot(kx, ly);
+  out += ptLabel(px, py, opts.point, 0, -10) + ptLabel(hx, ly, opts.foot, 0, 19) + ptLabel(jx, ly, opts.otherA, 0, 19) + ptLabel(kx, ly, opts.otherB, 0, 19);
+  out += `<text x="276" y="136" text-anchor="end" font-size="12" font-style="italic" fill="${GEO.soft}">l</text>`;
+  return svg("0 0 300 172", "한 점에서 직선 위 여러 점을 이은 선분 그림", out);
+}
+
+export function m4BoxRelationsFig(labels: [string, string, string, string, string, string, string, string]): string {
+  const [A, B, C, D, E, F, G, H] = labels;
+  const p = {
+    A: [112, 34], B: [58, 76], C: [168, 76], D: [220, 34],
+    E: [112, 142], F: [58, 184], G: [168, 184], H: [220, 142],
+  } as const;
+  const edge = (u: keyof typeof p, v: keyof typeof p, dash = false) =>
+    `<line x1="${p[u][0]}" y1="${p[u][1]}" x2="${p[v][0]}" y2="${p[v][1]}" stroke="${GEO.ink}" stroke-width="2.5"${dash ? ' stroke-dasharray="6 5"' : ""} stroke-linecap="round"/>`;
+  let out = edge("B", "C") + edge("C", "G") + edge("G", "F") + edge("F", "B");
+  out += edge("A", "B") + edge("D", "C") + edge("H", "G") + edge("E", "F");
+  out += edge("A", "D", true) + edge("A", "E", true) + edge("E", "H", true) + edge("D", "H", true);
+  const names = { A, B, C, D, E, F, G, H };
+  const offsets: Record<keyof typeof p, [number, number]> = { A: [0, -9], B: [-10, 2], C: [10, 2], D: [0, -9], E: [0, 18], F: [-10, 12], G: [10, 12], H: [10, 3] };
+  for (const key of Object.keys(p) as Array<keyof typeof p>) out += dot(p[key][0], p[key][1], GEO.pt, 3.2) + ptLabel(p[key][0], p[key][1], names[key], offsets[key][0], offsets[key][1]);
+  return svg("0 0 280 210", "보이는 모서리와 가려진 모서리가 있는 직육면체 그림", out);
+}
+
+export function m4TransversalExamFig(opts: { upper: string; lower: string; cross: string; labels: [string, string, string, string, string, string, string, string] }): string {
+  const [a, b, c, d, e, f, g, h] = opts.labels;
+  let out = `<line x1="24" y1="58" x2="278" y2="72" stroke="${GEO.ink}" stroke-width="2.8"/>`;
+  out += `<line x1="20" y1="150" x2="276" y2="136" stroke="${GEO.ink}" stroke-width="2.8"/>`;
+  out += `<line x1="116" y1="18" x2="190" y2="184" stroke="${GEO.ink}" stroke-width="2.8"/>`;
+  const txt = (x: number, y: number, s: string) => `<text x="${x}" y="${y}" text-anchor="middle" font-size="13" font-weight="800" fill="${GEO.ink}">${s}</text>`;
+  out += txt(128, 47, a) + txt(157, 49, b) + txt(163, 83, c) + txt(133, 82, d);
+  out += txt(165, 123, e) + txt(194, 122, f) + txt(199, 154, g) + txt(169, 157, h);
+  out += `<text x="278" y="61" text-anchor="end" font-size="12" font-style="italic" fill="${GEO.soft}">${opts.upper}</text>`;
+  out += `<text x="276" y="132" text-anchor="end" font-size="12" font-style="italic" fill="${GEO.soft}">${opts.lower}</text>`;
+  out += `<text x="194" y="182" font-size="12" font-style="italic" fill="${GEO.soft}">${opts.cross}</text>`;
+  return svg("0 0 300 194", "한 직선이 두 직선을 만날 때 생기는 여덟 각 그림", out);
+}
+
+export function m4ConstructionBisectorFig(opts: { a: string; b: string; m: string; n: string }): string {
+  const ax = 76, bx = 224, y = 104;
+  const mx = 150, my = 38, ny = 170;
+  const r = Math.hypot(mx - ax, my - y);
+  let out = `<line x1="${ax}" y1="${y}" x2="${bx}" y2="${y}" stroke="${GEO.ink}" stroke-width="3"/>`;
+  out += `<path d="M${mx} ${my} A${r} ${r} 0 0 1 ${mx} ${ny}" stroke="${GEO.hlB}" stroke-width="2" fill="none" stroke-dasharray="5 4"/>`;
+  out += `<path d="M${mx} ${my} A${r} ${r} 0 0 0 ${mx} ${ny}" stroke="${GEO.hlB}" stroke-width="2" fill="none" stroke-dasharray="5 4"/>`;
+  out += `<line x1="${mx}" y1="20" x2="${mx}" y2="188" stroke="${GEO.ink}" stroke-width="2.7"/>`;
+  out += rightMark(mx, y, 0, 11, GEO.ink);
+  out += dot(ax, y) + dot(bx, y) + dot(mx, my) + dot(mx, ny);
+  out += ptLabel(ax, y, opts.a, 0, 18) + ptLabel(bx, y, opts.b, 0, 18) + ptLabel(mx, my, opts.m, 13, 0) + ptLabel(mx, ny, opts.n, 13, 7);
+  return svg("0 0 300 202", "두 끝점을 중심으로 그린 원호와 두 교점을 이은 직선 그림", out);
+}
+
+export function m4TriangleConditionFig(opts: { a: string; b: string; c: string; mode: "sas" | "asa" }): string {
+  const A = { x: 146, y: 34 }, B = { x: 50, y: 164 }, C = { x: 252, y: 164 };
+  let out = `<path d="M${A.x} ${A.y} L${B.x} ${B.y} L${C.x} ${C.y} Z" stroke="${GEO.ink}" stroke-width="3" fill="#F8FAFC"/>`;
+  out += dot(A.x, A.y) + dot(B.x, B.y) + dot(C.x, C.y);
+  out += ptLabel(A.x, A.y, opts.a, 0, -10) + ptLabel(B.x, B.y, opts.b, -9, 14) + ptLabel(C.x, C.y, opts.c, 9, 14);
+  if (opts.mode === "sas") {
+    out += tickMark(A.x, A.y, B.x, B.y, 1, GEO.hlB) + tickMark(A.x, A.y, C.x, C.y, 2, GEO.hlB);
+    out += angleArc(A.x, A.y, 30, 233, 307, GEO.hlA, undefined, { fill: true });
+  } else {
+    out += tickMark(B.x, B.y, C.x, C.y, 1, GEO.hlB);
+    out += angleArc(B.x, B.y, 27, 0, 54, GEO.hlA, undefined, { fill: true }) + angleArc(C.x, C.y, 27, 126, 180, GEO.hlC, undefined, { fill: true });
+  }
+  return svg("0 0 300 194", "삼각형에 주어진 변과 각의 위치를 표시한 그림", out);
+}
+
+export function m4CongruenceExamFig(opts: { left: [string, string, string]; right: [string, string, string] }): string {
+  const tri = (ox: number, names: [string, string, string], flip = false) => {
+    const A = { x: ox + 58, y: 28 }, B = { x: ox + (flip ? 108 : 12), y: 142 }, C = { x: ox + (flip ? 12 : 108), y: 142 };
+    let s = `<path d="M${A.x} ${A.y} L${B.x} ${B.y} L${C.x} ${C.y} Z" stroke="${GEO.ink}" stroke-width="2.7" fill="#F8FAFC"/>`;
+    s += tickMark(A.x, A.y, B.x, B.y, 1, GEO.hlB) + tickMark(A.x, A.y, C.x, C.y, 2, GEO.hlB);
+    const a0 = angleOf(A.x, A.y, B.x, B.y);
+    const a1 = angleOf(A.x, A.y, C.x, C.y);
+    s += angleArc(A.x, A.y, 25, Math.min(a0, a1), Math.max(a0, a1), GEO.hlA, undefined, { fill: true });
+    s += ptLabel(A.x, A.y, names[0], 0, -9) + ptLabel(B.x, B.y, names[1], flip ? 9 : -9, 14) + ptLabel(C.x, C.y, names[2], flip ? -9 : 9, 14);
+    return s;
+  };
+  return svg("0 0 300 172", "두 삼각형에 대응하는 두 변과 끼인각을 표시한 그림", tri(14, opts.left) + tri(158, opts.right, true));
+}
+
+export function m4SurveyFig(opts: { mode: "reflect" | "cross" | "offset"; labels: string[] }): string {
+  if (opts.mode === "cross") {
+    const [A, B, O, C, D] = opts.labels;
+    const pA = { x: 48, y: 36 }, pB = { x: 54, y: 166 }, pO = { x: 150, y: 101 }, pC = { x: 246, y: 36 }, pD = { x: 240, y: 166 };
+    let out = `<line x1="${pA.x}" y1="${pA.y}" x2="${pD.x}" y2="${pD.y}" stroke="${GEO.ink}" stroke-width="2.8"/>`;
+    out += `<line x1="${pB.x}" y1="${pB.y}" x2="${pC.x}" y2="${pC.y}" stroke="${GEO.ink}" stroke-width="2.8"/>`;
+    out += tickMark(pA.x, pA.y, pO.x, pO.y, 1, GEO.hlB) + tickMark(pO.x, pO.y, pC.x, pC.y, 1, GEO.hlB);
+    out += tickMark(pB.x, pB.y, pO.x, pO.y, 2, GEO.hlC) + tickMark(pO.x, pO.y, pD.x, pD.y, 2, GEO.hlC);
+    out += angleArc(pO.x, pO.y, 25, 146, 214, GEO.hlA, undefined, { fill: true }) + angleArc(pO.x, pO.y, 25, 326, 34, GEO.hlA, undefined, { fill: true });
+    for (const [pt, name, dx, dy] of [[pA, A, -8, -6], [pB, B, -9, 14], [pO, O, 0, -10], [pC, C, 8, -6], [pD, D, 9, 14]] as const) out += dot(pt.x, pt.y) + ptLabel(pt.x, pt.y, name, dx, dy);
+    return svg("0 0 300 196", "두 직선이 만나 생긴 두 삼각형의 대응 표시 그림", out);
+  }
+  if (opts.mode === "reflect") {
+    const [P, Q, X, Y] = opts.labels;
+    const p = { x: 76, y: 104 }, q = { x: 224, y: 104 }, x = { x: 146, y: 24 }, y = { x: 154, y: 184 };
+    let out = `<path d="M${p.x} ${p.y} L${x.x} ${x.y} L${q.x} ${q.y} L${y.x} ${y.y} Z" stroke="${GEO.ink}" stroke-width="2.6" fill="none"/>`;
+    out += `<line x1="${p.x}" y1="${p.y}" x2="${q.x}" y2="${q.y}" stroke="${GEO.ink}" stroke-width="3"/>`;
+    out += angleArc(p.x, p.y, 24, 0, 48, GEO.hlA, undefined, { fill: true }) + angleArc(p.x, p.y, 24, 312, 360, GEO.hlA, undefined, { fill: true });
+    out += angleArc(q.x, q.y, 24, 132, 180, GEO.hlB, undefined, { fill: true }) + angleArc(q.x, q.y, 24, 180, 228, GEO.hlB, undefined, { fill: true });
+    for (const [pt, name, dx, dy] of [[p, P, -9, 4], [q, Q, 9, 4], [x, X, 0, -8], [y, Y, 0, 18]] as const) out += dot(pt.x, pt.y) + ptLabel(pt.x, pt.y, name, dx, dy);
+    return svg("0 0 300 208", "공통 선분의 양쪽에 놓인 두 삼각형의 대응각 표시 그림", out);
+  }
+  const [X, A, B, Y, C, D] = opts.labels;
+  const t1 = [{ x: 32, y: 154 }, { x: 84, y: 36 }, { x: 138, y: 154 }];
+  const t2 = [{ x: 166, y: 154 }, { x: 218, y: 36 }, { x: 272, y: 154 }];
+  let out = `<path d="M${t1[0].x} ${t1[0].y} L${t1[1].x} ${t1[1].y} L${t1[2].x} ${t1[2].y} Z" stroke="${GEO.ink}" stroke-width="2.6" fill="none"/>`;
+  out += `<path d="M${t2[0].x} ${t2[0].y} L${t2[1].x} ${t2[1].y} L${t2[2].x} ${t2[2].y} Z" stroke="${GEO.ink}" stroke-width="2.6" fill="none"/>`;
+  out += tickMark(t1[0].x, t1[0].y, t1[2].x, t1[2].y, 1, GEO.hlB) + tickMark(t2[0].x, t2[0].y, t2[2].x, t2[2].y, 1, GEO.hlB);
+  out += angleArc(t1[0].x, t1[0].y, 22, 0, 66, GEO.hlA, undefined, { fill: true }) + angleArc(t2[0].x, t2[0].y, 22, 0, 66, GEO.hlA, undefined, { fill: true });
+  out += angleArc(t1[2].x, t1[2].y, 22, 114, 180, GEO.hlC, undefined, { fill: true }) + angleArc(t2[2].x, t2[2].y, 22, 114, 180, GEO.hlC, undefined, { fill: true });
+  const names = [[t1[1], X], [t1[0], A], [t1[2], B], [t2[1], Y], [t2[0], C], [t2[2], D]] as const;
+  for (const [pt, name] of names) out += dot(pt.x, pt.y) + ptLabel(pt.x, pt.y, name, 0, pt.y < 100 ? -8 : 17);
+  return svg("0 0 300 182", "서로 떨어진 두 삼각형의 대응변과 대응각 표시 그림", out);
 }
