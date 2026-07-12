@@ -12,6 +12,7 @@ import { G2U3_EXAM } from "./g2u3";
 import { G2U4_EXAM } from "./g2u4";
 import { G2U7_EXAM } from "./g2u7";
 import { G2U8_EXAM } from "./g2u8";
+import { M1U3_EXAM } from "./m1u3";
 import { M1U6_EXAM } from "./m1u6";
 
 export type { ExamDef, ExamItem, ExamItemType } from "./types";
@@ -29,6 +30,7 @@ const EXAMS: Record<string, ExamDef> = {
   g2u4: G2U4_EXAM,
   g2u7: G2U7_EXAM,
   g2u8: G2U8_EXAM,
+  m1u3: M1U3_EXAM,
   m1u6: M1U6_EXAM, // 첫 수학 시험(수학 규격 60/30/10 — m1u6.ts 헤더 참조)
 };
 
