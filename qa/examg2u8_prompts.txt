@@ -1,0 +1,28 @@
+스타일 블록 A (모든 프롬프트 앞에 붙일 공통 스타일):
+Photorealistic photograph, natural lighting, clean composition, single clear subject.
+ABSOLUTELY NO text, NO numbers, NO letters, NO logos, NO watermarks anywhere in the image.
+Square 1:1 aspect ratio. High detail, realistic textures.
+
+[0] file=public/exam/g2u8/balloon-small.png
+A science demonstration photo: a pale blue rubber balloon inflated only a little (still small, about the size of a grapefruit), held by its knotted neck between two fingers entering from the bottom edge of the frame. Exactly six small round red dot stickers are stuck on the balloon surface, the dots sitting CLOSE TOGETHER because the balloon is small. Plain bright white tabletop background, soft daylight, balloon centered. No face, no person visible except the two fingers at the bottom.
+
+[1] file=public/exam/g2u8/balloon-big.png
+The SAME science demonstration, second stage: the same pale blue rubber balloon now inflated MUCH LARGER (watermelon size), held by its knotted neck between two fingers entering from the bottom edge of the frame. The same six small round red dot stickers are still on the surface, but now spread FAR APART from each other because the balloon has expanded — each sticker itself is still the same small size, only the gaps between stickers have grown. Same plain bright white background, same angle, balloon centered. No face, no person visible except the two fingers at the bottom.
+
+[2] file=public/exam/g2u8/thumb-eye.png
+A person seen from BEHIND over the shoulder, in a bright room, stretching one arm fully forward and holding a thumbs-up (thumb pointing upward) at arm's length, aligned toward a window. Through the window, a single leafy tree stands outside in the distance beyond the raised thumb. The back of the person's head is visible (no face). Focus on the outstretched arm, raised thumb, and the distant tree — a parallax observation pose. Soft daylight.
+
+[3] file=public/exam/g2u8/observatory.png
+A white astronomical observatory dome on a dark mountaintop at night, dome slit open showing a hint of the telescope inside, brilliant starry sky above with a faint band of the Milky Way, dark blue night tones, long-exposure feel, no people, no lights of any city, no text anywhere.
+
+[4] file=public/exam/g2u8/iron-red.png
+A blacksmith forge scene WITHOUT any people: a thick steel rod resting on a dark anvil, the tip of the rod glowing bright ORANGE-RED with heat, a few tiny sparks, dark moody workshop background with warm ember light from a forge behind, close-up, no tools with lettering, no text.
+
+[5] file=public/exam/g2u8/torch-blue.png
+Extreme close-up of a metal gas torch nozzle held by a clamp stand (no hands, no people), producing a steady sharply-defined BLUE flame cone, the flame clearly blue with a lighter blue inner cone, dark neutral background, high shutter clarity, no text anywhere.
+
+[6] file=public/exam/g2u8/star-colors.png
+A realistic deep-sky telescope photograph of a star field at night: in the UPPER LEFT area one bright BLUISH-WHITE star (clearly blue-white, the brightest object), and in the LOWER RIGHT area one bright ORANGE-RED star (clearly warm orange-red, second brightest), plus many small faint background stars scattered across a very dark sky. The two bright stars must show clearly DIFFERENT colors (cool blue-white vs warm orange-red). No nebula, no galaxy, no diffraction spikes with text, no text anywhere.
+
+[7] file=public/exam/g2u8/satellite-dish.png
+A gray parabolic satellite dish antenna mounted on the corner of a house rooftop, photographed from below against a clear blue sky with a few clouds, the dish's feed arm clearly visible, plain dish surface with absolutely no lettering or logos, bright daylight, no people.

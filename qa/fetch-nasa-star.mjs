@@ -22,6 +22,9 @@ const jobs = [
   { name: "hubble-telescope", url: "https://images-assets.nasa.gov/image/sts061-73-040/sts061-73-040~medium.jpg", credit: "NASA (STS-61)" },
   { name: "iss", url: "https://images-assets.nasa.gov/image/s134e010137/s134e010137~medium.jpg", credit: "NASA (STS-134)" },
   { name: "jwst", url: "https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000162/GSFC_20171208_Archive_e000162~medium.jpg", credit: "NASA/Chris Gunn" },
+  // g2u8 단원 종합 평가 추가분(외부 은하 문항용) — 정본 직링크만, 다운로드 후 눈검수 필수
+  { name: "andromeda", url: "https://noirlab.edu/public/media/archives/images/large/noao-m31.jpg", credit: "Bill Schoening, Vanessa Harvey/REU program/NOIRLab/NSF/AURA (CC BY 4.0)" },
+  { name: "whirlpool", url: "https://cdn.esahubble.org/archives/images/large/heic0506a.jpg", credit: "NASA, ESA, S. Beckwith (STScI), Hubble Heritage Team (CC BY 4.0)" },
 ];
 
 for (const j of jobs) {

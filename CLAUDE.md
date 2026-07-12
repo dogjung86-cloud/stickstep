@@ -336,6 +336,27 @@ src/
   ⭕ 잔존, 통일은 추후). 기계 검사 `node qa/check-exam-g2u7.mjs`, QA `PORT=<포트> node qa/e2e-exam-g2u7.mjs`
   (47검증 — 여덟 파트 문구·2×4+3×4 균형·사진 12장), 그림 눈검수 `qa/shot-exam-figs-g2u7.mjs`
   (+`qa/slice-shot.mjs`로 긴 샷 분할 확대 검수).
+- **g2u8(별과 우주) 150문항 — 다섯 번째 중2 시험(8레슨, 19×6+18×2 — 18은 L4·L8)**: 유형
+  113(mcq+multi)/18(num)/19(word), word 4문항 레슨은 L5·L6(용어 밀집), pick 20 → 2×4+3×4 자동.
+  그림: photos/star 실사 15장 재사용(레슨과 질문 각도 전부 교체) + **신규 NASA 2장**(andromeda
+  noao-m31·whirlpool heic0506a — fetch-nasa-star.mjs에 직링크 추가, 다운로드 후 눈검수·CREDITS 기재) +
+  examFigures g2u8 섹션 8종(starParallax3Fig 시차 부채꼴·starShiftPairFig 6개월 2패널(정답이 그림
+  간격 라벨과 같은 수치가 되지 않게 1.0″→0.4″ 세팅)·starBrightGridFig 1/4/9칸·starMagScatterFig
+  색×등급 산점도·colorTempTrioFig·starGalaxyQuizFig ㉠㉡㉢ 기호판(galaxySideFig 라벨판은 위치 문항
+  정답을 인쇄 — 시험 사용 금지, geoCycleQuizFig 계보)·starClusterMapFig(㉮㉯ 점 색 통일 — 색이 답의
+  단서 금지)·starExpandArrowFig) + svgTable 등급 표 3벌(같은 표를 두 문항이 쓰면 한쪽이 shuffle:false
+  answer=0이 되므로 **표를 벌수로 분리**). 사진 8장(exam/g2u8 — 풍선 팽창 전/후 xpair 쌍은 "같은
+  풍선·같은 스티커 여섯, 간격만 벌어짐" 프롬프트로 1발 성공, 엄지 시차는 뒷모습 구도로 사람 허용).
+  새로 확립된 관행: ① **word 정의문 ↔ mcq 문두·정답문 verbatim 전역 스캔을 저작 직후 메인이 1차로**
+  훑고 감사가 2차(파일 간 포함) — 13건 선제 수정. 대표 사고형: word '제곱'이 같은 레슨 mcq·bogi·multi
+  세 곳의 정답 보기에 그대로 인쇄된 허브형 유출(e38↔e28·e30·e33). ② **등급 수치 세트(2.5배·16배·
+  100배)는 num이 선점** — 종합 multi에는 수치 없는 서술만 담는다(수치 관계 인쇄 = num 정답 유출,
+  e52 재설계). ③ 수치 조합이 포화된 풀(L2: 2~6배·절반·1/25)은 보기 수치를 등록부처럼 관리해 남은
+  조합(10배→1/100)만 종합형에 배정. ④ 시험 해설에 "다음 레슨" 같은 레슨 순서 참조 금지(랜덤 추출·
+  복습 진입 모두 순서 무관). 검산 감사 상위 모델 8병렬(심각 1 = ①의 허브 유출, 경미 15 — 전부 수정
+  반영, 정답 오류 0). 기계 검사 `node qa/check-exam-g2u8.mjs`, QA `PORT=<포트> node qa/e2e-exam-g2u8.mjs`
+  (47검증 — 여덟 파트 문구·2×4+3×4 균형·발주 8장+NASA 2장 로드), 그림 눈검수 `qa/shot-exam-figs-g2u8.mjs`
+  (+`qa/slice-shot.mjs` 분할 확대).
 - **u7(태양계) 120문항 — 천체 사진 3원칙 확립**: ① 기존 NASA 자산(public/photos/) 재사용이 1순위 —
   풀 파일 로컬 `pimg` 헬퍼(`photos/` 경로, ximg와 동형·lazy 금지). 레슨 hotspot이 쓴 사진이라도 문항
   각도가 새로우면 재사용 OK. ② 위상별 달·붉은 달·별 일주 궤적 같은 "정확한 모습이 채점 기준"인 실사는

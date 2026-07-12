@@ -2459,6 +2459,222 @@ export function elecMotorExamFig(o?: { reverse?: boolean }): string {
   </svg>`;
 }
 
+// ── g2u8(별과 우주) 시험 전용 ──────────────────────────────
+// 다크 우주 스타일(u7 섹션 계승 — figureDark: true, 스트로크 #2C4066·텍스트 #DCE8FF).
+// aria는 판독 과제를 낭독하지 않는다(정답 유출 금지 — crudeTowerFig 선례).
+
+/** 발광 별(도해용) — starFigures.star와 같은 문법의 로컬 헬퍼 */
+function xstar(x: number, y: number, r: number, fill: string): string {
+  const spikes: string[] = [];
+  for (let i = 0; i < 4; i++) {
+    const a = (i * Math.PI) / 2;
+    spikes.push(
+      `<line x1="${(x + Math.cos(a) * r * 1.15).toFixed(1)}" y1="${(y + Math.sin(a) * r * 1.15).toFixed(1)}" x2="${(x + Math.cos(a) * r * 1.9).toFixed(1)}" y2="${(y + Math.sin(a) * r * 1.9).toFixed(1)}" stroke="${fill}" stroke-width="${Math.max(1.1, r * 0.16)}" opacity=".75"/>`,
+    );
+  }
+  return `<circle cx="${x}" cy="${y}" r="${r * 2.1}" fill="${fill}" opacity=".13"/><circle cx="${x}" cy="${y}" r="${r}" fill="${fill}"/>${spikes.join("")}`;
+}
+
+/** 지구 공전 궤도(왼쪽 세로 타원)에서 세 별 (가)(나)(다)를 본 시차각(다크) —
+ *  별이 멀수록 시선 부채꼴이 좁아진다. 각 값 라벨은 파라미터(기본 0.4″/0.2″/0.1″). */
+export function starParallax3Fig(o: { p: [string, string, string] } = { p: ["0.4″", "0.2″", "0.1″"] }): string {
+  const ex = 52; // 태양 x
+  const top: [number, number] = [ex, 56];
+  const bot: [number, number] = [ex, 148];
+  const stars: { x: number; label: string }[] = [
+    { x: 138, label: "(가)" },
+    { x: 216, label: "(나)" },
+    { x: 306, label: "(다)" },
+  ];
+  const rays = stars
+    .map(
+      (s) =>
+        `<line x1="${top[0]}" y1="${top[1]}" x2="${s.x}" y2="102" stroke="#5B7BB8" stroke-width="1.3" stroke-dasharray="4 4" opacity=".8"/>
+         <line x1="${bot[0]}" y1="${bot[1]}" x2="${s.x}" y2="102" stroke="#5B7BB8" stroke-width="1.3" stroke-dasharray="4 4" opacity=".8"/>`,
+    )
+    .join("");
+  const marks = stars
+    .map(
+      (s, i) =>
+        `${xstar(s.x, 102, 6 - i * 0.8, "#EDE2BE")}
+         <text x="${s.x}" y="74" text-anchor="middle" font-size="12.5" font-weight="700" fill="#DCE8FF">${s.label}</text>
+         <text x="${s.x}" y="136" text-anchor="middle" font-size="11.5" font-weight="800" fill="#8FB3E8">${o.p[i]}</text>`,
+    )
+    .join("");
+  return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="지구 공전 궤도의 양 끝에서 세 별 (가), (나), (다)를 바라본 시차각이 각각 표시된 그림">
+    <ellipse cx="${ex}" cy="102" rx="16" ry="46" stroke="#2C4066" stroke-width="1.4" stroke-dasharray="4 5"/>
+    <circle cx="${ex}" cy="102" r="7" fill="#FFC24D"/>
+    <text x="${ex}" y="185" text-anchor="middle" font-size="10.5" fill="#7E93B8">태양</text>
+    <circle cx="${top[0]}" cy="${top[1]}" r="5" fill="#3E8EE0"/>
+    <circle cx="${bot[0]}" cy="${bot[1]}" r="5" fill="#3E8EE0"/>
+    <text x="${ex - 24}" y="${top[1]}" text-anchor="middle" font-size="10.5" fill="#AFC3E3">지구</text>
+    <text x="${ex - 24}" y="${bot[1] + 8}" text-anchor="middle" font-size="10.5" fill="#AFC3E3">지구</text>
+    ${rays}${marks}
+    <text x="172" y="24" text-anchor="middle" font-size="10.5" fill="#7E93B8">6개월 간격으로 두 위치에서 관측</text>
+  </svg>`;
+}
+
+/** 6개월 간격 관측 두 장면(다크 2패널) — 배경별 ㉯는 고정, 별 ㉮가 ㉯ 쪽으로 다가와 보인다.
+ *  간격 라벨 g1(6개월 전)·g2(현재)는 파라미터 — 이동각 = g1−g2, 연주 시차는 그 절반. */
+export function starShiftPairFig(o: { g1: string; g2: string }): string {
+  const panel = (px: number, title: string, ax: number, gap: string): string => {
+    const bx = 118; // ㉯ 고정 위치(패널 좌표)
+    return `<g transform="translate(${px} 0)">
+      <rect x="8" y="30" width="152" height="128" rx="12" fill="#0C1526" stroke="#22304C" stroke-width="1.2"/>
+      <text x="84" y="20" text-anchor="middle" font-size="11.5" font-weight="700" fill="#AFC3E3">${title}</text>
+      <circle cx="34" cy="58" r="1.6" fill="#5B7BB8"/><circle cx="132" cy="52" r="1.4" fill="#5B7BB8"/>
+      <circle cx="52" cy="132" r="1.4" fill="#5B7BB8"/><circle cx="140" cy="120" r="1.6" fill="#5B7BB8"/>
+      ${xstar(bx, 88, 4, "#C9D6F0")}
+      <text x="${bx}" y="70" text-anchor="middle" font-size="12" font-weight="800" fill="#DCE8FF">㉯</text>
+      ${xstar(ax, 112, 6, "#FFE9A8")}
+      <text x="${ax}" y="140" text-anchor="middle" font-size="12" font-weight="800" fill="#FFE9A8">㉮</text>
+      <path d="M${ax} 96 L${ax} 88 L${bx} 88" stroke="#8FB3E8" stroke-width="1.2" stroke-dasharray="3 3" fill="none"/>
+      <text x="${(ax + bx) / 2}" y="82" text-anchor="middle" font-size="11" font-weight="800" fill="#8FB3E8">${gap}</text>
+    </g>`;
+  };
+  return `<svg viewBox="0 0 344 172" ${NS} fill="none" role="img" aria-label="6개월 간격으로 같은 하늘을 관측한 두 장면 — 배경별 ㉯에 대한 별 ㉮의 위치와 두 별 사이 각이 표시되어 있어요">
+    ${panel(6, "6개월 전", 44, o.g1)}
+    <path d="M166 94h12M174 90l6 4-6 4" stroke="#5E7398" stroke-width="1.6" fill="none"/>
+    ${panel(178, "현재", 88, o.g2)}
+  </svg>`;
+}
+
+/** 광원에서 나온 같은 빛다발이 거리 1·2·3배 지점에서 덮는 격자(다크) —
+ *  한 칸 크기는 같고 판이 1×1 → 2×2 → 3×3으로 커진다(면적 1:4:9). */
+export function starBrightGridFig(): string {
+  const grid = (x: number, n: number): string => {
+    const s = 26; // 한 칸 한 변
+    const half = (n * s) / 2;
+    const lines: string[] = [];
+    for (let i = 0; i <= n; i++) {
+      lines.push(`<line x1="${x + i * s - half}" y1="${102 - half}" x2="${x + i * s - half}" y2="${102 + half}" stroke="#4A6292" stroke-width="1.3"/>`);
+      lines.push(`<line x1="${x - half}" y1="${102 - half + i * s}" x2="${x + half}" y2="${102 - half + i * s}" stroke="#4A6292" stroke-width="1.3"/>`);
+    }
+    return `<rect x="${x - half}" y="${102 - half}" width="${n * s}" height="${n * s}" fill="#FFE9A8" opacity="${0.34 / n}"/>${lines.join("")}`;
+  };
+  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="광원에서 나온 한 빛다발이 거리가 1배, 2배, 3배인 지점에서 각각 덮는 격자판의 크기를 나타낸 그림">
+    ${xstar(26, 102, 8, "#FFE9A8")}
+    <line x1="34" y1="96" x2="316" y2="60" stroke="#8B6F3A" stroke-width="1.2" stroke-dasharray="5 4"/>
+    <line x1="34" y1="108" x2="316" y2="144" stroke="#8B6F3A" stroke-width="1.2" stroke-dasharray="5 4"/>
+    ${grid(112, 1)}${grid(196, 2)}${grid(292, 3)}
+    <text x="112" y="184" text-anchor="middle" font-size="11" font-weight="700" fill="#AFC3E3">거리 1배</text>
+    <text x="196" y="184" text-anchor="middle" font-size="11" font-weight="700" fill="#AFC3E3">거리 2배</text>
+    <text x="292" y="184" text-anchor="middle" font-size="11" font-weight="700" fill="#AFC3E3">거리 3배</text>
+  </svg>`;
+}
+
+/** 색(가로 7단) × 겉보기 등급(세로) 산점도(다크) — 별 점은 그 색으로 칠한다.
+ *  mag: 1(위, 밝음)~5(아래, 어둠). col: 0(청)~6(적). */
+export function starMagScatterFig(o: { pts: { label: string; col: number; mag: number }[] }): string {
+  const COLS = ["청색", "청백색", "백색", "황백색", "황색", "주황색", "적색"];
+  const HEX = ["#9CC4FF", "#BFD8FF", "#F0F4FA", "#FFF2D0", "#FFE9A8", "#FFC08A", "#FF9A66"];
+  const gx = (c: number): number => 66 + c * 42;
+  const gy = (m: number): number => 26 + (m - 1) * 32;
+  let axis = "";
+  for (let m = 1; m <= 5; m++)
+    axis += `<line x1="46" y1="${gy(m)}" x2="330" y2="${gy(m)}" stroke="#1E2C48" stroke-width="1"/>
+      <text x="38" y="${gy(m) + 4}" text-anchor="end" font-size="10.5" fill="#7E93B8">${m}</text>`;
+  const cols = COLS.map(
+    (c, i) => `<text x="${gx(i)}" y="184" text-anchor="middle" font-size="9.5" fill="#AFC3E3">${c}</text>`,
+  ).join("");
+  const pts = o.pts
+    .map(
+      (p) => `${xstar(gx(p.col), gy(p.mag), 6, HEX[p.col])}
+      <text x="${gx(p.col) + 15}" y="${gy(p.mag) - 8}" font-size="12" font-weight="800" fill="#DCE8FF">${p.label}</text>`,
+    )
+    .join("");
+  return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="가로축은 별의 색(청색에서 적색까지 일곱 단계), 세로축은 겉보기 등급인 그래프에 여러 별의 위치가 점으로 표시된 그림">
+    ${axis}
+    <line x1="46" y1="18" x2="46" y2="168" stroke="#3D5378" stroke-width="1.6"/>
+    <line x1="46" y1="168" x2="330" y2="168" stroke="#3D5378" stroke-width="1.6"/>
+    <text x="14" y="14" font-size="10" fill="#7E93B8">겉보기 등급</text>
+    <text x="330" y="196" text-anchor="end" font-size="10" fill="#7E93B8">← 표면 온도 높음 · 낮음 →</text>
+    ${cols}${pts}
+  </svg>`;
+}
+
+/** 색이 다른 별 셋(다크) — 레슨 colorTempFig의 시험판(라벨·색 구성 파라미터). */
+export function colorTempTrioFig(o: { stars: { label: string; name: string; hex: string }[] }): string {
+  const xs = [70, 172, 274];
+  const body = o.stars
+    .map(
+      (s, i) => `${xstar(xs[i], 66, 13, s.hex)}
+      <text x="${xs[i]}" y="112" text-anchor="middle" font-size="12.5" font-weight="800" fill="#DCE8FF">${s.label}</text>
+      <text x="${xs[i]}" y="132" text-anchor="middle" font-size="11" font-weight="700" fill="#AFC3E3">${s.name}</text>`,
+    )
+    .join("");
+  return `<svg viewBox="0 0 344 152" ${NS} fill="none" role="img" aria-label="색이 서로 다른 세 별과 각 별의 색 이름이 표시된 그림">${body}</svg>`;
+}
+
+/** 옆에서 본 우리은하(다크, 시험판) — 이름 라벨 대신 위치 기호 ㉠(중심부)·㉡(원반 위 한 점)·㉢(원반 바깥 공간).
+ *  galaxySideFig의 이름 라벨은 위치 문항의 정답을 인쇄하므로 시험판을 따로 둔다(geoCycleQuizFig 계보). */
+export function starGalaxyQuizFig(): string {
+  const halo: string[] = [];
+  const pts = [
+    [96, 44], [140, 30], [210, 28], [258, 60], [286, 88], [70, 66], [46, 96], [300, 118], [120, 140], [250, 140],
+  ];
+  for (const [hx, hy] of pts) halo.push(`<circle cx="${hx}" cy="${hy}" r="2.6" fill="#8FA0C8" opacity=".55"/>`);
+  const mark = (x: number, y: number, t: string, tx: number, ty: number): string =>
+    `<circle cx="${x}" cy="${y}" r="7" stroke="#FFE9A8" stroke-width="1.8" fill="none"/>
+     <circle cx="${x}" cy="${y}" r="2.2" fill="#FFE9A8"/>
+     <line x1="${x}" y1="${y}" x2="${tx}" y2="${ty}" stroke="#8B6F3A" stroke-width="1.1"/>
+     <text x="${tx}" y="${ty - 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#FFE9A8">${t}</text>`;
+  return `<svg viewBox="0 0 344 168" ${NS} fill="none" role="img" aria-label="옆에서 본 우리은하 그림 위에 세 위치 ㉠, ㉡, ㉢이 기호로만 표시되어 있어요">
+    ${halo.join("")}
+    <ellipse cx="172" cy="92" rx="118" ry="13" fill="#2A3C66"/>
+    <ellipse cx="172" cy="92" rx="118" ry="13" fill="none" stroke="#44598C" stroke-width="1.4"/>
+    <ellipse cx="172" cy="91" rx="106" ry="9" fill="#3A4E80" opacity=".8"/>
+    <ellipse cx="172" cy="90" rx="34" ry="20" fill="#FFE0B0"/>
+    <ellipse cx="172" cy="90" rx="20" ry="12" fill="#FFF2D8"/>
+    ${mark(172, 90, "㉠", 128, 46)}
+    ${mark(238, 93, "㉡", 262, 128)}
+    ${mark(96, 44, "㉢", 62, 30)}
+  </svg>`;
+}
+
+/** 옆에서 본 우리은하 + 두 별 무리의 분포(다크) — ㉮는 원반(나선팔)을 따라,
+ *  ㉯는 중심부 주위와 원반 바깥(헤일로)에 구형으로. 점 색은 같다(색이 답의 단서가 되지 않게). */
+export function starClusterMapFig(): string {
+  const dot = (x: number, y: number): string => `<circle cx="${x}" cy="${y}" r="3" fill="#C8D4E8"/><circle cx="${x}" cy="${y}" r="1.2" fill="#F0F4FA"/>`;
+  const disk = [[86, 92], [120, 95], [150, 89], [200, 95], [232, 90], [262, 93]].map(([x, y]) => dot(x, y)).join("");
+  const halo = [[100, 42], [150, 26], [216, 30], [262, 52], [292, 80], [66, 62], [48, 108], [296, 124], [128, 146], [236, 148], [172, 60], [172, 122]]
+    .map(([x, y]) => dot(x, y))
+    .join("");
+  return `<svg viewBox="0 0 344 176" ${NS} fill="none" role="img" aria-label="옆에서 본 우리은하에 두 별 무리 ㉮와 ㉯가 어디에 분포하는지 점으로 나타낸 그림">
+    <ellipse cx="172" cy="92" rx="120" ry="12" fill="#2A3C66"/>
+    <ellipse cx="172" cy="92" rx="120" ry="12" fill="none" stroke="#44598C" stroke-width="1.3"/>
+    <ellipse cx="172" cy="90" rx="30" ry="17" fill="#5A6DA0"/>
+    ${disk}${halo}
+    <text x="316" y="96" font-size="13" font-weight="800" fill="#7ED6FF">㉮</text>
+    <line x1="312" y1="93" x2="268" y2="93" stroke="#3D5378" stroke-width="1.1"/>
+    <text x="316" y="34" font-size="13" font-weight="800" fill="#FFC45A">㉯</text>
+    <line x1="312" y1="32" x2="268" y2="52" stroke="#3D5378" stroke-width="1.1"/>
+    <text x="60" y="168" font-size="10.5" fill="#7E93B8">㉮ 원반(나선팔) 위 · ㉯ 중심부 주위와 원반 바깥</text>
+  </svg>`;
+}
+
+/** 우주 팽창 화살표 그림(다크) — 은하 A에서 관측: 가까운 B는 짧은 화살표, 먼 C는 긴 화살표. */
+export function starExpandArrowFig(): string {
+  const gal = (x: number, tone: string): string =>
+    `<ellipse cx="${x}" cy="96" rx="17" ry="7" fill="${tone}" opacity=".85"/>
+     <ellipse cx="${x}" cy="96" rx="7" ry="4" fill="#FFF2D8"/>`;
+  const arrow = (x1: number, x2: number): string =>
+    `<line x1="${x1}" y1="72" x2="${x2}" y2="72" stroke="#F0A0B4" stroke-width="2.6"/>
+     <path d="M${x2} 72l-9 -5v10z" fill="#F0A0B4"/>`;
+  return `<svg viewBox="0 0 344 160" ${NS} fill="none" role="img" aria-label="은하 A에서 은하 B와 C를 관측한 그림 — 각 은하의 움직임이 화살표로 표시되어 있어요">
+    ${gal(56, "#4A5E92")}
+    <circle cx="56" cy="96" r="24" stroke="#FFE9A8" stroke-width="1.4" stroke-dasharray="4 4" fill="none"/>
+    <text x="56" y="140" text-anchor="middle" font-size="12.5" font-weight="800" fill="#DCE8FF">A</text>
+    <text x="56" y="156" text-anchor="middle" font-size="10" fill="#7E93B8">(관측 기준)</text>
+    ${gal(150, "#4A5E92")}
+    <text x="150" y="140" text-anchor="middle" font-size="12.5" font-weight="800" fill="#DCE8FF">B</text>
+    ${arrow(170, 196)}
+    ${gal(276, "#4A5E92")}
+    <text x="276" y="140" text-anchor="middle" font-size="12.5" font-weight="800" fill="#DCE8FF">C</text>
+    ${arrow(296, 338)}
+  </svg>`;
+}
+
 /** 코일 + 전지 + 열린 스위치 + 나침반 ㉠(코일 왼쪽 끝) 배치도 — 정성 관찰 문항용(바늘 방향은 채점 대상 아님). */
 export function elecCoilCompassFig(): string {
   const turns = [0, 1, 2, 3, 4]
