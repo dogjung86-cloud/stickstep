@@ -1,15 +1,15 @@
-// 복습 탭 — 오답노트(지금 동작) + 취약 단원 문제 뽑기·질문하기(준비 중 카드).
+// 복습 탭 — 오답노트 + 취약 단원 문제 뽑기(프리미엄, screens/weakDrill.ts) + 질문하기(준비 중 카드).
 // 취약 문제 뽑기는 오답노트의 lessonId·시험 진단과 같은 데이터가 근거라 오답노트와 한집에 산다
 // (2026-07-12 IA 개편 — 마이페이지에 묻으면 발견성이 죽는다는 결론).
 
 import { el } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
-import { wrongNoteCount } from "../core/store";
+import { wrongNoteCount, isPremium, isReviewMode } from "../core/store";
 import { gnav, type GnavKey } from "../ui/gnav";
 import type { Screen } from "../core/router";
 
-export function reviewScreen(o: { onTab: (k: GnavKey) => void; onOpenNotebook: () => void }): Screen {
+export function reviewScreen(o: { onTab: (k: GnavKey) => void; onOpenNotebook: () => void; onOpenDrill: () => void }): Screen {
   const { open, overcome } = wrongNoteCount();
 
   const nb = el(
@@ -23,6 +23,30 @@ export function reviewScreen(o: { onTab: (k: GnavKey) => void; onOpenNotebook: (
   nb.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     o.onOpenNotebook();
+  });
+
+  // 취약 단원 문제 뽑기 — 프리미엄 기능(잠금이면 골드 필, 게이트·페이월 안내는 main.ts가 담당)
+  const drillLocked = !isPremium() && !isReviewMode();
+  const drill = el(
+    "button",
+    { class: "prep-card accent" },
+    el("span", { class: "prep-ic", html: icon("target", 20) }),
+    el(
+      "span",
+      { class: "prep-tx" },
+      el(
+        "b",
+        {},
+        el("span", { text: "취약 단원 문제 뽑기" }),
+        drillLocked ? el("i", { class: "prep-pill gold", html: `${icon("crown", 11)}<span>프리미엄</span>` }) : null,
+      ),
+      el("span", { class: "prep-desc", text: "소단원을 직접 골라 나만의 맞춤 문제지를 만들어요" }),
+    ),
+    el("span", { class: "nb-entry-go", html: icon("chevron", 16) }),
+  );
+  drill.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    o.onOpenDrill();
   });
 
   function prepCard(ic: Parameters<typeof icon>[0], title: string, desc: string): HTMLElement {
@@ -60,7 +84,7 @@ export function reviewScreen(o: { onTab: (k: GnavKey) => void; onOpenNotebook: (
         "div",
         { class: "pad" },
         nb,
-        prepCard("target", "취약 단원 문제 뽑기", "많이 틀린 단원만 골라 맞춤 문제지를 만들어요"),
+        drill,
         prepCard("bulb", "질문하기", "막힌 문제를 사진과 함께 바로 물어봐요"),
         el("div", { class: "tab-footnote", text: "복습으로 다시 맞힌 문제는 오답노트에서 자동으로 극복 처리돼요." }),
       ),

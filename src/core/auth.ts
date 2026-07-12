@@ -25,6 +25,15 @@ export function isAuthConfigured(): boolean {
   return !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 }
 
+// 운영 계정 — 이 이메일로 로그인하면 결제 없이 프리미엄 전체 권한(콘텐츠 검수·운영용).
+// dogjung86@naver.com은 카카오 로그인 계정의 이메일. 결제 상태(store.premium)와 별개의
+// 겹층이라 서버에 저장하지 않는다 — main.ts가 onAuthChange로 store.setPremiumOverride에 주입.
+const PRIVILEGED_EMAILS = new Set(["sciencegive@gmail.com", "dogjung86@naver.com"]);
+
+export function isPrivilegedUser(u: AuthUser | null): boolean {
+  return !!u?.email && PRIVILEGED_EMAILS.has(u.email.trim().toLowerCase());
+}
+
 let clientPromise: Promise<SupabaseClient> | null = null;
 let user: AuthUser | null = null;
 const listeners = new Set<(u: AuthUser | null) => void>();

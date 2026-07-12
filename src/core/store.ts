@@ -145,8 +145,16 @@ export function setViewSubject(s: "sci" | "math"): void {
   save();
 }
 
+// 프리미엄 권한 겹층(운영 계정) — main.ts가 로그인 이메일에서 유도해 주입한다.
+// state.premium(결제)과 분리: 저장·동기화되지 않고, 로그아웃하면 자동으로 사라진다.
+let premiumOverride = false;
+
+export function setPremiumOverride(v: boolean): void {
+  premiumOverride = v;
+}
+
 export function isPremium(): boolean {
-  return state.premium;
+  return state.premium || premiumOverride;
 }
 
 export function isReviewMode(): boolean {
@@ -241,9 +249,9 @@ export function examRecordOf(examId: string): ExamRecord {
   return state.exams?.[examId] ?? { attempts: 0, best: 0, conquered: false };
 }
 
-/** 재응시 잠금 — 단원당 1회 무료, 두 번째부터 프리미엄(검토 모드는 해제). */
+/** 재응시 잠금 — 단원당 1회 무료, 두 번째부터 프리미엄(검토 모드·운영 계정은 해제). */
 export function isExamRetakeLocked(examId: string): boolean {
-  return examRecordOf(examId).attempts >= 1 && !state.premium && !state.reviewMode;
+  return examRecordOf(examId).attempts >= 1 && !isPremium() && !state.reviewMode;
 }
 
 /** 시험 제출 처리 — 응시 횟수·최고 점수·정복 인증 기록.
@@ -267,6 +275,12 @@ export function recordExamResult(
   state.lifeXp += gained;
   save();
   return { gained, newBest };
+}
+
+/** 학습일(스트릭)만 집계 — 취약 단원 문제 뽑기 완주 등 XP 없는 학습 활동용. */
+export function touchStudyActivity(): void {
+  touchStudyDay();
+  save();
 }
 
 export function bestScore(gameId: string): number {

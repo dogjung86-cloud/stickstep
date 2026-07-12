@@ -2757,3 +2757,58 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .bdex-art { display: grid; place-items: center; width: 30px; flex: none; }
 .bdex-name { font-size: 13.5px; font-weight: 800; color: var(--n800); }
 .bdex-need { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--n500); font-variant-numeric: tabular-nums; }
+
+/* ---------- 취약 단원 문제 뽑기 (screens/weakDrill.ts — 복습 탭, 프리미엄) ---------- */
+/* 복습 탭 카드의 프리미엄 필 — 잠금 상태에서만 골드 크라운으로 표시 */
+.prep-pill.gold { display: inline-flex; align-items: center; gap: 3.5px; color: #8A5A00; background: linear-gradient(180deg, #FFF6E0, #FFEDC2); border: 1px solid #F0D48A; }
+.prep-pill.gold svg { color: var(--gold); }
+
+/* 소단원 고르기 */
+.wd-pick .sub { margin-top: 6px; font-size: 13.5px; line-height: 1.55; color: var(--n600); word-break: keep-all; }
+.wd-pick .sec-head { padding: 18px 2px 8px; }
+.wd-auto { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; padding: 10px 15px; border-radius: 99px; background: linear-gradient(180deg, #FFF6E0, #FFEDC2); border: 1px solid #F0D48A; color: #8A5A00; font-size: 13px; font-weight: 800; box-shadow: var(--sh-card); transition: transform .12s var(--spring-soft); }
+.wd-auto:active { transform: scale(.96); }
+.wd-auto-ic { display: grid; place-items: center; color: var(--gold); }
+.wd-unit { background: var(--n0); border: 1px solid var(--n200); border-radius: var(--r-lg); box-shadow: var(--sh-card); overflow: hidden; }
+.wd-unit + .wd-unit { margin-top: 9px; }
+.wd-uhead { display: flex; align-items: center; gap: 7px; width: 100%; padding: 14px 13px 14px 15px; text-align: left; background: transparent; }
+.wd-uname { flex: 1; min-width: 0; font-size: 14.5px; font-weight: 800; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wd-chip { flex: none; font-size: 10.5px; font-weight: 800; border-radius: 99px; padding: 3px 8px; background: var(--n100); color: var(--n600); }
+.wd-chip.warn { color: #C23D2C; background: #FFE1DA; }
+.wd-chip.pick { color: #1B64DA; background: var(--blue-tint); }
+.wd-chev { flex: none; color: var(--n400); display: grid; place-items: center; transition: transform .2s var(--ease); }
+.wd-unit.open .wd-chev { transform: rotate(180deg); }
+.wd-lessons { display: none; border-top: 1px solid var(--n150); padding: 5px 9px 9px; }
+.wd-unit.open .wd-lessons { display: block; }
+.wd-lrow { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 8px; border-radius: var(--r-md); text-align: left; background: transparent; transition: background .14s; }
+.wd-lrow:active { background: var(--n50); }
+.wd-box { flex: none; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 8px; border: 1.6px solid var(--n300); background: #fff; color: #fff; transition: background .16s, border-color .16s; }
+.wd-box svg { opacity: 0; transform: scale(.5); transition: opacity .14s, transform .18s var(--spring-bounce); }
+.wd-lrow.sel .wd-box { background: var(--blue); border-color: var(--blue); }
+.wd-lrow.sel .wd-box svg { opacity: 1; transform: scale(1); }
+.wd-lname { flex: 1; min-width: 0; font-size: 13.5px; font-weight: 700; color: var(--n800); word-break: keep-all; }
+.wd-lrow.sel .wd-lname { color: var(--ink); font-weight: 800; }
+
+/* 푸터 — 문제 수 세그 + 뽑기 CTA */
+.wd-count { display: flex; align-items: center; gap: 7px; margin-bottom: 9px; }
+.wd-count-k { flex: 1; font-size: 12.5px; font-weight: 800; color: var(--n500); }
+.wd-seg { min-width: 58px; padding: 8px 0; border-radius: 99px; border: 1.5px solid var(--n300); background: #fff; font-size: 13px; font-weight: 800; color: var(--n600); transition: border-color .15s, background .15s, color .15s, transform .12s var(--spring-soft); }
+.wd-seg:active { transform: scale(.94); }
+.wd-seg.on { border-color: var(--blue); background: var(--blue-tint); color: #1B64DA; box-shadow: 0 0 0 1px var(--blue) inset; }
+
+/* 풀이 — 즉시 채점 해설 카드 · 워드뱅크 채점 상태 */
+.wd-q .xr-lesson-chip { margin-top: 10px; }
+.wd-fb { margin-top: 18px; border-radius: var(--r-lg); border: 1.5px solid var(--n200); background: #fff; padding: 14px 15px; box-shadow: var(--sh-card); animation: fadeUp .32s var(--ease-out) both; }
+.wd-fb.good { border-color: #A9E4C3; background: linear-gradient(180deg, #F4FDF8, #EAF9F1); }
+.wd-fb.bad { border-color: #F6C6BC; background: linear-gradient(180deg, #FFF8F6, #FFF1ED); }
+.wd-fb-head { display: flex; align-items: center; gap: 7px; font-size: 14.5px; font-weight: 800; margin-bottom: 8px; }
+.wd-fb.good .wd-fb-head { color: #036B3C; }
+.wd-fb.bad .wd-fb-head { color: #C23D2C; }
+.wd-fb-ic { flex: none; display: grid; place-items: center; width: 21px; height: 21px; border-radius: 50%; color: #fff; }
+.wd-fb.good .wd-fb-ic { background: var(--green); }
+.wd-fb.bad .wd-fb-ic { background: var(--red); }
+.wd-fb .xr-expl-body { font-size: 13.5px; }
+.wd-fb .xr-core { background: rgba(255, 255, 255, .72); }
+.wd-q .ex-chip.ok { border-color: var(--green); background: var(--green-tint); color: #036B3C; box-shadow: 0 0 0 1px var(--green) inset; }
+.wd-q .ex-chip.no { border-color: var(--red); background: var(--red-tint); color: #C23D2C; box-shadow: 0 0 0 1px var(--red) inset; }
+.wd-q .ex-chip.dim { opacity: .45; }

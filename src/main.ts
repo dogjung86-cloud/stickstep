@@ -6,7 +6,7 @@ import "./styles/math2.css";
 import "./styles/policy.css";
 
 import { nav } from "./core/router";
-import { getState, completeLesson, setViewSubject } from "./core/store";
+import { getState, completeLesson, setViewSubject, isPremium, isReviewMode, setPremiumOverride } from "./core/store";
 import { splashScreen } from "./screens/splash";
 import { onboardingScreen } from "./screens/onboarding";
 import { subjectScreen } from "./screens/subject";
@@ -21,9 +21,10 @@ import type { GnavKey } from "./ui/gnav";
 import { paywallScreen } from "./screens/paywall";
 import { policyScreen } from "./screens/policy";
 import { examScreen } from "./screens/exam";
+import { weakDrillScreen } from "./screens/weakDrill";
 import { createLessonPlayer } from "./lessons/player";
 import { findLesson, isPremiumLocked } from "./content/curriculum";
-import { initAuth } from "./core/auth";
+import { initAuth, onAuthChange, isPrivilegedUser } from "./core/auth";
 import { initSync } from "./core/sync";
 
 const frame = document.getElementById("frame")!;
@@ -41,7 +42,13 @@ function goTab(k: GnavKey): void {
   if (k === "home") {
     goHome();
   } else if (k === "review") {
-    nav.reset(reviewScreen({ onTab: goTab, onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson)) }));
+    nav.reset(
+      reviewScreen({
+        onTab: goTab,
+        onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson)),
+        onOpenDrill: openWeakDrill,
+      }),
+    );
   } else if (k === "challenge") {
     nav.reset(challengeScreen({ onTab: goTab }));
   } else {
@@ -61,6 +68,24 @@ function goTab(k: GnavKey): void {
       }),
     );
   }
+}
+
+/** 취약 단원 문제 뽑기(복습 탭) — 프리미엄 전용. 잠겨 있으면 페이월을 먼저 보여 준다. */
+function openWeakDrill(): void {
+  if (isPremium() || isReviewMode()) {
+    nav.go(weakDrillScreen({ onExit: () => goTab("review"), onOpenLesson: openLesson }));
+    return;
+  }
+  nav.go(
+    paywallScreen({
+      sub: "취약 단원 문제 뽑기로 원하는 소단원만 골라 맞춤 문제지를 만들 수 있어요.",
+      onUnlocked: () => {
+        nav.back();
+        openWeakDrill();
+      },
+      onClose: () => nav.back(),
+    }),
+  );
 }
 
 /** 단원 종합 평가 — 항상 열린 지도 노드에서 진입. 재응시 잠금은 화면 안에서 페이월로 안내한다. */
@@ -204,5 +229,7 @@ if (import.meta.env.DEV && new URLSearchParams(location.search).get("preview") =
 
 // 로그인·동기화 부팅 — Supabase 환경변수(.env.local)가 없으면 둘 다 no-op(core/auth.ts 참조).
 // initSync가 먼저 리스너를 배선해야 initAuth의 세션 복원 이벤트를 놓치지 않는다.
+// 운영 계정 프리미엄 겹층 — 지정 이메일 로그인 시 결제 없이 전 기능(로그아웃하면 자동 해제).
+onAuthChange((u) => setPremiumOverride(isPrivilegedUser(u)));
 initSync();
 void initAuth();
