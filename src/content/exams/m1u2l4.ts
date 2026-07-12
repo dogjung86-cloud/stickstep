@@ -154,7 +154,7 @@ export const POOL_M1U2L4: ExamItem[] = [
     id: "m1u2e079",
     lessonId: L,
     type: "multi",
-    prompt: "다음 중 <i class='mv'>q</i>에 대한 일차식을 <b>모두 고르세요.</b>",
+    prompt: "분모에 문자가 있는지 살펴볼 때, 다음 식 가운데 <i class='mv'>q</i>에 대한 일차식인 것을 <b>모두 고르세요.</b>",
     options: ["<i class='mv'>q</i>÷8+3", "8÷<i class='mv'>q</i>+3", "(<i class='mv'>q</i>+6)÷5", "4÷(<i class='mv'>q</i>−1)", "−0.7<i class='mv'>q</i>"],
     answer: [0, 2, 4],
     diff: 3,
