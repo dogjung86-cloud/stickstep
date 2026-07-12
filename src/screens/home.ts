@@ -55,7 +55,7 @@ export function homeScreen(
   const offAuth = onAuthChange((u) => {
     profBtn.setAttribute("aria-label", u ? "마이페이지" : "로그인");
     if (u) {
-      const ava = profileAvatar(getState().avatarId);
+      const ava = profileAvatar(getState().avatarId, getState().avatarCustom);
       ava.classList.add("ab-avatar");
       profBtn.replaceChildren(ava);
     } else {

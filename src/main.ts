@@ -4,6 +4,7 @@ import "./styles/ui.css";
 import "./styles/math.css";
 import "./styles/math2.css";
 import "./styles/policy.css";
+import "./styles/stickavatar.css";
 
 import { nav } from "./core/router";
 import { getState, completeLesson, setViewSubject, isPremium, isReviewMode, setPremiumOverride } from "./core/store";

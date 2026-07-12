@@ -32,6 +32,16 @@ export interface WrongNote {
   ts: number; // 마지막 갱신 시각
 }
 
+/** 파츠 조합형 스틱맨 아바타(ui/stickParts) — 슬롯별 선택 인덱스. */
+export interface StickAvatarCfg {
+  face: number;
+  hair: number;
+  eyes: number;
+  mouth: number;
+  glasses: number;
+  acc: number;
+}
+
 export interface AppState {
   version: number;
   onboarded: boolean;
@@ -50,6 +60,10 @@ export interface AppState {
   exams: Record<string, ExamRecord>; // examId -> 단원 종합 평가 기록
   wrongNotes: Record<string, WrongNote>; // key -> 오답노트(마이페이지에서 복습)
   avatarId: number | null; // 스틱맨 아바타 선택(ui/avatar 프로필 아바타 인덱스) — null이면 기본
+  // 직접 꾸민 스틱맨(null = 프리셋 avatarId 사용). 기기 저장 — progress 테이블에
+  // avatar_custom 컬럼을 추가하기 전까지 동기화에서 의도적으로 제외(없는 컬럼을 upsert에
+  // 넣으면 push 전체가 400으로 죽는다). 활성화 절차는 sync.ts 주석 참조.
+  avatarCustom: StickAvatarCfg | null;
 }
 
 const KEY = "science-app.v1";
@@ -72,6 +86,7 @@ const DEFAULT_STATE: AppState = {
   exams: {},
   wrongNotes: {},
   avatarId: null,
+  avatarCustom: null,
 };
 
 function dayKey(d = new Date()): string {
@@ -241,6 +256,12 @@ export function awardXp(n: number): void {
 /** 스틱맨 아바타 선택(마이 탭 픽커). */
 export function setAvatarId(i: number): void {
   state.avatarId = i;
+  save();
+}
+
+/** 파츠 조합 커스텀 아바타 저장(null = 프리셋으로 복귀). */
+export function setAvatarCustom(v: StickAvatarCfg | null): void {
+  state.avatarCustom = v;
   save();
 }
 

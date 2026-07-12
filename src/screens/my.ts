@@ -7,12 +7,13 @@
 import { el, clear } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
-import { getState, currentStreak, setAvatarId } from "../core/store";
+import { getState, currentStreak, setAvatarId, setAvatarCustom } from "../core/store";
 import { onAuthChange } from "../core/auth";
 import { BIZ_INFO } from "../core/brand";
 import { bootLevel, BOOT_TIERS } from "../core/level";
 import { bootArt } from "../ui/boots";
 import { profileAvatar, setProfileAvatar, profileIdOf, PROFILE_COUNT, PROFILE_PICK_START } from "../ui/avatar";
+import { STICK_SLOTS, DEFAULT_STICK, normStick, stickAvatarSvg } from "../ui/stickParts";
 import { gnav, type GnavKey } from "../ui/gnav";
 import type { Screen } from "../core/router";
 
@@ -26,7 +27,11 @@ export function myScreen(o: {
   const lv = bootLevel(st.lifeXp);
 
   // ---- 프로필 ----
-  const bigAva = profileAvatar(st.avatarId);
+  const bigAva = profileAvatar(st.avatarId, st.avatarCustom);
+  function refreshBig(): void {
+    const s = getState();
+    setProfileAvatar(bigAva, s.avatarId, s.avatarCustom);
+  }
   const nameEl = el("div", { class: "my-name", text: "게스트 스틱" });
   const badge = el("div", { class: "boot-badge" });
   // 레벨 숫자는 쓰지 않는다(총 14단계라 숫자가 작아 심심 — 장화 이름이 곧 등급, 사용자 확정 2026-07-12)
@@ -38,23 +43,93 @@ export function myScreen(o: {
   });
   const prof = el("div", { class: "my-prof" }, el("div", { class: "login-ava" }, bigAva), nameEl, badge, prog, progCap);
 
-  // ---- 아바타 고르기(학생 캐릭터 발주본만 — 선생님 5종은 저장 호환용이라 미노출, avatar PROFILE 자동 확장) ----
+  // ---- 아바타 고르기: 캐릭터(발주 프리셋) ⇄ 직접 꾸미기(파츠 조합 스틱맨) ----
+  // 프리셋을 고르면 커스텀이 풀리고(avatarCustom=null), 파츠를 만지면 커스텀이 대표가 된다.
   const pick = el("div", { class: "ava-pick" });
   function renderPick(): void {
     clear(pick);
-    const cur = profileIdOf(getState().avatarId);
+    const s = getState();
+    const cur = profileIdOf(s.avatarId);
+    const usingPreset = !s.avatarCustom;
     for (let i = PROFILE_PICK_START; i < PROFILE_COUNT; i++) {
-      const b = el("button", { class: `ava-opt ${cur === i ? "sel" : ""}`, attrs: { "aria-label": `아바타 ${i + 1}` } }, profileAvatar(i));
+      const b = el("button", { class: `ava-opt ${usingPreset && cur === i ? "sel" : ""}`, attrs: { "aria-label": `아바타 ${i + 1}` } }, profileAvatar(i));
       b.addEventListener("click", () => {
         haptic(HAPTIC.tap);
+        setAvatarCustom(null);
         setAvatarId(i);
-        setProfileAvatar(bigAva, i);
+        refreshBig();
         renderPick();
       });
       pick.appendChild(b);
     }
   }
   renderPick();
+
+  const custom = el("div", { class: "ava-custom" });
+  function renderCustom(): void {
+    // 슬롯 행의 가로 스크롤 위치를 보존하면서 통째로 다시 그린다(다른 슬롯 미리보기도 함께 갱신돼야 해서).
+    const scrolls = new Map<string, number>();
+    custom.querySelectorAll<HTMLElement>(".avc-opts").forEach((row) => {
+      scrolls.set(row.dataset.slot ?? "", row.scrollLeft);
+    });
+    clear(custom);
+    const cfg = normStick(getState().avatarCustom ?? DEFAULT_STICK);
+    for (const slot of STICK_SLOTS) {
+      const opts = el("div", { class: "avc-opts", attrs: { "data-slot": slot.key } });
+      slot.parts.forEach((p, i) => {
+        const b = el("button", {
+          class: `avc-opt ${cfg[slot.key] === i ? "sel" : ""}`,
+          attrs: { "aria-label": `${slot.label}: ${p.name}`, title: p.name },
+        });
+        b.innerHTML = stickAvatarSvg({ ...cfg, [slot.key]: i });
+        b.addEventListener("click", () => {
+          haptic(HAPTIC.tap);
+          setAvatarCustom({ ...normStick(getState().avatarCustom ?? DEFAULT_STICK), [slot.key]: i });
+          refreshBig();
+          renderCustom();
+        });
+        opts.appendChild(b);
+      });
+      custom.appendChild(el("div", { class: "avc-row" }, el("div", { class: "avc-label", text: slot.label }), opts));
+      opts.scrollLeft = scrolls.get(slot.key) ?? 0;
+    }
+  }
+
+  // 모드 세그 — 저장 상태가 진실(커스텀이 있으면 커스텀 탭에서 시작)
+  let mode: "preset" | "custom" = st.avatarCustom ? "custom" : "preset";
+  const presetBtn = el("button", { class: "avm", text: "캐릭터 고르기", attrs: { role: "tab" } });
+  const customBtn = el("button", { class: "avm", text: "직접 꾸미기", attrs: { role: "tab" } });
+  const modeSeg = el("div", { class: "ava-mode", attrs: { role: "tablist", "aria-label": "아바타 방식" } }, presetBtn, customBtn);
+  function applyMode(): void {
+    presetBtn.classList.toggle("on", mode === "preset");
+    customBtn.classList.toggle("on", mode === "custom");
+    presetBtn.setAttribute("aria-selected", String(mode === "preset"));
+    customBtn.setAttribute("aria-selected", String(mode === "custom"));
+    pick.classList.toggle("hidden", mode !== "preset");
+    custom.classList.toggle("hidden", mode !== "custom");
+  }
+  presetBtn.addEventListener("click", () => {
+    if (mode === "preset") return;
+    haptic(HAPTIC.tap);
+    mode = "preset";
+    renderPick();
+    applyMode();
+  });
+  customBtn.addEventListener("click", () => {
+    if (mode === "custom") return;
+    haptic(HAPTIC.tap);
+    mode = "custom";
+    // 처음 들어오면 기본 조합으로 시작 — 이 순간부터 커스텀이 대표 아바타가 된다.
+    if (!getState().avatarCustom) {
+      setAvatarCustom({ ...DEFAULT_STICK });
+      refreshBig();
+      renderPick();
+    }
+    renderCustom();
+    applyMode();
+  });
+  if (mode === "custom") renderCustom();
+  applyMode();
 
   // ---- 스텝 요약 ----
   const stats = el(
@@ -131,7 +206,9 @@ export function myScreen(o: {
         { class: "pad" },
         prof,
         el("div", { class: "sec-head", text: "아바타 고르기" }),
+        modeSeg,
         pick,
+        custom,
         stats,
         dexToggle,
         dex,

@@ -5,7 +5,9 @@
 // + 유저 프로필 아바타(선생님과 별개의 학생 캐릭터들)는 아래 PROFILE 섹션 — public/avatars/*.webp.
 
 import { el } from "../core/dom";
+import type { StickAvatarCfg } from "../core/store";
 import { stickman, stickmanHead } from "./figures";
+import { stickAvatarSvg } from "./stickParts";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
@@ -54,15 +56,21 @@ export function profileIdOf(id: number | null | undefined): number {
   return PROFILE_FILES[i] ? i : DEFAULT_PROFILE;
 }
 
-/** 프로필 아바타 요소 생성(원형 프레임 안에서 object-fit cover). */
-export function profileAvatar(id: number | null | undefined): HTMLElement {
+/** 프로필 아바타 요소 생성(원형 프레임 안에서 object-fit cover).
+ *  custom(파츠 조합 — store.avatarCustom)이 있으면 발주 래스터 대신 코드 SVG를 그린다. */
+export function profileAvatar(id: number | null | undefined, custom?: StickAvatarCfg | null): HTMLElement {
   const wrap = el("span", { class: "stick-avatar" });
-  setProfileAvatar(wrap, id);
+  setProfileAvatar(wrap, id, custom);
   return wrap;
 }
 
 /** 프로필 아바타 교체(마이 탭 픽커 선택 반영). */
-export function setProfileAvatar(wrap: HTMLElement, id: number | null | undefined): void {
+export function setProfileAvatar(wrap: HTMLElement, id: number | null | undefined, custom?: StickAvatarCfg | null): void {
+  if (custom) {
+    wrap.classList.remove("full");
+    wrap.innerHTML = stickAvatarSvg(custom);
+    return;
+  }
   const i = profileIdOf(id);
   wrap.classList.toggle("full", PROFILE_FULL.has(i));
   wrap.innerHTML = "";

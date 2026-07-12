@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QA · 파츠 조합 스틱맨 아바타</title>
+<style>
+  body { font-family: Pretendard, sans-serif; background: #F2F4F6; padding: 20px; margin: 0; }
+  h1 { font-size: 15px; color: #4E5968; margin: 18px 0 8px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .c { width: 84px; text-align: center; font-size: 10.5px; color: #556; }
+  .c .f { width: 84px; height: 84px; border-radius: 50%; background: #EEF4FF; overflow: hidden; }
+  .c svg { width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<div id="g"></div>
+<h1>조합 샘플 12</h1>
+<div class="row" id="r"></div>
+<script type="module">
+  import { STICK_SLOTS, DEFAULT_STICK, stickAvatarSvg } from "/src/ui/stickParts.ts";
+
+  const g = document.getElementById("g");
+  for (const s of STICK_SLOTS) {
+    const h = document.createElement("h1");
+    h.textContent = `${s.label} (${s.parts.length})`;
+    g.appendChild(h);
+    const row = document.createElement("div");
+    row.className = "row";
+    s.parts.forEach((p, i) => {
+      const c = document.createElement("div");
+      c.className = "c";
+      c.innerHTML = `<div class="f">${stickAvatarSvg({ ...DEFAULT_STICK, [s.key]: i })}</div>${p.name}`;
+      row.appendChild(c);
+    });
+    g.appendChild(row);
+  }
+
+  // 결정적 조합 샘플(face,hair,eyes,mouth,glasses,acc)
+  const combos = [
+    [1, 2, 1, 0, 1, 0], [2, 4, 2, 1, 0, 3], [0, 5, 3, 5, 0, 0], [3, 3, 0, 4, 2, 0],
+    [1, 7, 4, 3, 3, 0], [0, 6, 5, 0, 0, 2], [2, 0, 1, 1, 0, 1], [3, 4, 3, 2, 1, 0],
+    [0, 2, 0, 5, 0, 3], [1, 5, 2, 0, 2, 0], [2, 7, 3, 1, 0, 0], [0, 1, 0, 0, 0, 0],
+  ];
+  const r = document.getElementById("r");
+  for (const [face, hair, eyes, mouth, glasses, acc] of combos) {
+    const c = document.createElement("div");
+    c.className = "c";
+    c.innerHTML = `<div class="f">${stickAvatarSvg({ face, hair, eyes, mouth, glasses, acc })}</div>`;
+    r.appendChild(c);
+  }
+</script>
+</body>
+</html>
