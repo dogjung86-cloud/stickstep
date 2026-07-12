@@ -2171,3 +2171,311 @@ export function atomIonFormExamFig(o: { p: number; after: number; tell?: boolean
     <text x="258" y="122" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">변한 후</text>
   </svg>`;
 }
+
+// ── g2u7(전기와 자기) 시험 전용 ──────────────────────────────
+// 전하 알갱이는 elecFigures 톤((+) 붉은 원·(−) 파란 원)과 동조. 전류 화살표는 볼트 옐로+진갈색 테두리.
+// aria는 전부 중립 — 판독·계산 과제의 답(부호·수치·힘 방향)을 낭독하지 않는다.
+
+const eplus = (x: number, y: number, r = 6.5): string =>
+  `<circle cx="${x}" cy="${y}" r="${r}" fill="#E8836B" stroke="#A8442E" stroke-width="1.2"/><path d="M${x - r * 0.45} ${y}h${r * 0.9}M${x} ${y - r * 0.45}v${r * 0.9}" stroke="#FFF" stroke-width="1.5" stroke-linecap="round"/>`;
+const eminus = (x: number, y: number, r = 6.5): string =>
+  `<circle cx="${x}" cy="${y}" r="${r}" fill="#5A9AE0" stroke="#2A5AA0" stroke-width="1.2"/><path d="M${x - r * 0.45} ${y}h${r * 0.9}" stroke="#FFF" stroke-width="1.5" stroke-linecap="round"/>`;
+const ebattery = (x: number, y: number, w = 84, h = 26, flip = false): string =>
+  `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#AEBDD6" stroke="#4E5A70" stroke-width="1.8"/>
+   <text x="${x + w * 0.26}" y="${y + h * 0.68}" font-size="${h * 0.55}" font-weight="800" fill="#333D4B">${flip ? "−" : "+"}</text>
+   <text x="${x + w * 0.68}" y="${y + h * 0.68}" font-size="${h * 0.55}" font-weight="800" fill="#333D4B">${flip ? "+" : "−"}</text>`;
+const ebulb = (x: number, y: number, r = 14): string =>
+  `<circle cx="${x}" cy="${y}" r="${r}" fill="#FFF3C4" stroke="#C8A23E" stroke-width="1.8"/>
+   <path d="M${x - r * 0.45} ${y + r * 0.25}q${r * 0.22}-${r * 0.5} ${r * 0.45}-${r * 0.07}t${r * 0.45}-${r * 0.07}" stroke="#E8963E" stroke-width="1.7" fill="none"/>`;
+
+/** 마찰 전/후 두 물체 (가)(나)의 전하 분포(파라미터형) — moved = (가)→(나)로 이동한 전자 수.
+ *  전하 보존: (+)는 양쪽 3개 불변, (−)만 이동(마찰 전 각 3개). 위 줄이 마찰 전, 아래 줄이 마찰 후. */
+export function elecRubExamFig(o: { moved: number }): string {
+  const rod = (x: number, y: number): string =>
+    `<rect x="${x - 62}" y="${y - 15}" width="124" height="30" rx="14" fill="#C8DCEC" stroke="#7A94AC" stroke-width="1.8"/>
+     <path d="M${x - 48} ${y - 8}h34" stroke="#FFF" stroke-width="2" stroke-linecap="round" opacity=".8"/>`;
+  const cloth = (x: number, y: number): string =>
+    `<path d="M${x - 60} ${y - 17}q14 -8 30 0t30 0t30 0v30q-14 8 -30 0t-30 0t-30 0z" fill="#E8C9A0" stroke="#A87A44" stroke-width="1.8"/>
+     ${[0, 1, 2].map((i) => `<path d="M${x - 34 + i * 30} ${y - 10}v22" stroke="#C79A66" stroke-width="1.2"/>`).join("")}`;
+  const charges = (x: number, y: number, p: number, m: number): string => {
+    const both = [...Array.from({ length: p }, () => "p"), ...Array.from({ length: m }, () => "m")];
+    return both
+      .map((k, i) => {
+        const col = i % 4;
+        const row = Math.floor(i / 4);
+        const cx = x - 39 + col * 26;
+        const cy = y - 6 + row * 15;
+        return k === "p" ? eplus(cx, cy, 5.8) : eminus(cx, cy, 5.8);
+      })
+      .join("");
+  };
+  const P = 3;
+  const M0 = 3;
+  return `<svg viewBox="0 0 344 236" ${NS} fill="none" role="img" aria-label="서로 다른 두 물체 (가)와 (나)를 마찰하기 전과 후의 전하 분포 모형 — 알갱이의 종류와 개수를 비교해 읽어요">
+    <text x="30" y="42" font-size="12" font-weight="800" fill="#4E5968">마찰 전</text>
+    ${rod(120, 66)}${charges(120, 66, P, M0)}
+    ${cloth(258, 66)}${charges(258, 66, P, M0)}
+    <text x="120" y="26" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(가)</text>
+    <text x="258" y="26" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(나)</text>
+    <path d="M172 106v18M167 118l5 7 5-7" stroke="#8B95A1" stroke-width="2" fill="none"/>
+    <text x="30" y="170" font-size="12" font-weight="800" fill="#4E5968">마찰 후</text>
+    ${rod(120, 192)}${charges(120, 192, P, M0 - o.moved)}
+    ${cloth(258, 192)}${charges(258, 192, P, M0 + o.moved)}
+  </svg>`;
+}
+
+/** 대전 막대 × 눕힌 깡통 정전기 유도(시험판) — 레슨 그림과 좌우·부호·라벨 전부 교체:
+ *  막대가 오른쪽에서 접근, 기본 (−)대전. ㉠=막대와 가까운 쪽(오른쪽), ㉡=먼 쪽(왼쪽). */
+export function elecCanExamFig(o?: { pol?: "+" | "-" }): string {
+  const pol = o?.pol ?? "-";
+  const sign = pol === "-" ? eminus : eplus;
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="대전된 플라스틱 막대를 눕힌 알루미늄 깡통의 오른쪽에서 가까이 가져가는 그림 — ㉠은 막대와 가까운 쪽, ㉡은 먼 쪽">
+    <line x1="20" y1="158" x2="324" y2="158" stroke="#C9D2DC" stroke-width="2"/>
+    <g>
+      <rect x="46" y="88" width="128" height="66" rx="33" fill="#D8E2EE" stroke="#8B99AC" stroke-width="2"/>
+      <ellipse cx="168" cy="121" rx="12" ry="33" fill="#B8C6D8" stroke="#8B99AC" stroke-width="1.6"/>
+      <text x="104" y="80" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">알루미늄 깡통</text>
+      <text x="66" y="127" font-size="14" font-weight="800" fill="#4E5968">㉡</text>
+      <text x="140" y="127" font-size="14" font-weight="800" fill="#4E5968">㉠</text>
+    </g>
+    <g transform="rotate(28 254 74)">
+      <rect x="204" y="64" width="104" height="17" rx="8" fill="#D9C9EC" stroke="#8F78AC" stroke-width="1.6"/>
+      <path d="M214 68h32" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+      ${sign(224, 72.5, 6)}${sign(248, 72.5, 6)}${sign(272, 72.5, 6)}${sign(292, 72.5, 6)}
+    </g>
+    <text x="252" y="34" font-size="11.5" font-weight="700" fill="#4E5968">(${pol})대전 막대</text>
+    <path d="M196 120q10 8 0 16" stroke="#F0A422" stroke-width="2" fill="none"/>
+    <text x="172" y="180" text-anchor="middle" font-size="11" fill="#8B95A1">깡통은 잘 구르도록 눕혀 두었어요</text>
+  </svg>`;
+}
+
+/** 검전기(자기완결 문항용) — 금속판·금속박 구조 라벨 + 대전체 접근. 금속박은 접근 전 닫힌 상태. */
+export function elecScopeFig(): string {
+  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="금속판과 금속박으로 이루어진 검전기에 대전된 막대를 가까이 가져가는 그림 — 금속박은 아직 닫혀 있다">
+    <g transform="rotate(24 234 46)">
+      <rect x="188" y="38" width="96" height="16" rx="8" fill="#C8DCEC" stroke="#7A94AC" stroke-width="1.6"/>
+      ${eminus(206, 46, 5.5)}${eminus(228, 46, 5.5)}${eminus(250, 46, 5.5)}${eminus(268, 46, 5.5)}
+    </g>
+    <text x="266" y="22" font-size="11.5" font-weight="700" fill="#4E5968">(−)대전 막대</text>
+    <ellipse cx="150" cy="64" rx="34" ry="9" fill="#C9D4E0" stroke="#8C99A8" stroke-width="1.8"/>
+    <rect x="146" y="70" width="8" height="52" fill="#B7C2CE" stroke="#8C99A8" stroke-width="1.4"/>
+    <path d="M96 116h108a10 10 0 0 1 10 10v52a10 10 0 0 1-10 10H96a10 10 0 0 1-10-10v-52a10 10 0 0 1 10-10z" fill="rgba(224,238,250,.35)" stroke="#9DAABD" stroke-width="2.2"/>
+    <path d="M150 122l-7 42M150 122l7 42" stroke="#D9B44A" stroke-width="3.4" stroke-linecap="round"/>
+    <text x="52" y="66" text-anchor="end" font-size="11.5" font-weight="700" fill="#4E5968">금속판</text>
+    <path d="M56 62h56" stroke="#C4CAD2" stroke-width="1.3"/>
+    <text x="52" y="150" text-anchor="end" font-size="11.5" font-weight="700" fill="#4E5968">금속박</text>
+    <path d="M56 146h84" stroke="#C4CAD2" stroke-width="1.3"/>
+  </svg>`;
+}
+
+/** 전압-전류 그래프(파라미터형) — lines: 저항 r(Ω)의 원점 직선(I(mA) = V/r×1000).
+ *  dots는 점만 표시(가이드 점선 금지 — 값 읽기 과제 보존, g2u2 관행). 눈금은 vStep·iStep. */
+export function elecViExamFig(o: {
+  lines: { label: string; r: number }[];
+  vMax: number;
+  vStep: number;
+  iMax: number;
+  iStep: number;
+  dots?: [number, number][];
+}): string {
+  const gx = (v: number): number => 52 + v * (264 / o.vMax);
+  const gy = (ma: number): number => 178 - (ma / o.iMax) * 150;
+  let grid = "";
+  for (let v = o.vStep; v <= o.vMax; v += o.vStep)
+    grid += `<line x1="${gx(v)}" y1="178" x2="${gx(v)}" y2="26" stroke="#EDF0F4" stroke-width="1"/><text x="${gx(v)}" y="194" text-anchor="middle" font-size="10.5" fill="#8B95A1">${v}</text>`;
+  for (let ma = o.iStep; ma <= o.iMax; ma += o.iStep)
+    grid += `<line x1="52" y1="${gy(ma)}" x2="320" y2="${gy(ma)}" stroke="#EDF0F4" stroke-width="1"/><text x="46" y="${gy(ma) + 3.5}" text-anchor="end" font-size="10.5" fill="#8B95A1">${ma}</text>`;
+  const lines = o.lines
+    .map((l) => {
+      const iEndMa = Math.min(o.iMax, (o.vMax / l.r) * 1000);
+      const vEnd = (iEndMa / 1000) * l.r;
+      return `<line x1="${gx(0)}" y1="${gy(0)}" x2="${gx(vEnd)}" y2="${gy(iEndMa)}" stroke="#3182F6" stroke-width="2.6" stroke-linecap="round"/>
+      <text x="${gx(vEnd) + (vEnd >= o.vMax ? -4 : 6)}" y="${gy(iEndMa) - 8}" text-anchor="${vEnd >= o.vMax ? "end" : "start"}" font-size="12" font-weight="800" fill="#2E5AA8">${l.label}</text>`;
+    })
+    .join("");
+  const dots = (o.dots ?? []).map(([v, ma]) => `<circle cx="${gx(v)}" cy="${gy(ma)}" r="4.5" fill="#E8636B"/>`).join("");
+  return `<svg viewBox="0 0 344 214" ${NS} fill="none" role="img" aria-label="니크롬선에 걸어 준 전압에 따른 전류의 세기 그래프 — 축의 눈금 숫자로 값을 읽어요">
+    ${grid}
+    <line x1="52" y1="26" x2="52" y2="178" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="52" y1="178" x2="320" y2="178" stroke="#B0B8C1" stroke-width="1.6"/>
+    ${lines}${dots}
+    <text x="14" y="16" font-size="11" font-weight="700" fill="#4E5968">전류(mA)</text>
+    <text x="334" y="210" text-anchor="end" font-size="11" font-weight="700" fill="#4E5968">전압(V)</text>
+  </svg>`;
+}
+
+/** 전압-전류 그래프 모양 고르기 ①~⑤ — 정답(원점 직선)은 ②에 배치, ①은 원점을 지나지 않는 함정
+ *  (라벨형 그림의 정답 위치 설계 — u6 gasTvChoicesFig 관행). shuffle:false 전용. */
+export function elecViChoicesFig(): string {
+  const cell = (x: number, num: string, path: string): string =>
+    `<g transform="translate(${x} 0)">
+      <rect x="4" y="18" width="58" height="58" rx="8" fill="#F7F9FC" stroke="#D9DFE6" stroke-width="1.4"/>
+      <text x="33" y="13" text-anchor="middle" font-size="12" font-weight="800" fill="#4E5968">${num}</text>
+      <line x1="12" y1="68" x2="12" y2="24" stroke="#B0B8C1" stroke-width="1.3"/>
+      <line x1="12" y1="68" x2="58" y2="68" stroke="#B0B8C1" stroke-width="1.3"/>
+      <path d="${path}" stroke="#3182F6" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </g>`;
+  return `<svg viewBox="0 0 344 96" ${NS} fill="none" role="img" aria-label="전압에 따른 전류 그래프의 모양 다섯 가지 — 번호 ①부터 ⑤ 중에서 골라요">
+    ${cell(2, "①", "M12 46 L54 26")}
+    ${cell(70, "②", "M12 68 L54 28")}
+    ${cell(138, "③", "M12 64 Q20 34 54 30")}
+    ${cell(206, "④", "M12 40 H54")}
+    ${cell(274, "⑤", "M12 30 L54 62")}
+  </svg>`;
+}
+
+/** 전지 1개에 전구 1개(가) vs 전구 2개(나) 비교 회로 — right로 (나)의 연결(직렬/병렬)을 정한다.
+ *  전구 저항은 모두 같다는 전제의 밝기·전류 비교 문항용. */
+export function elecTwoCircuitFig(o: { right: "series" | "parallel" }): string {
+  const left = `
+    <path d="M46 150V56h100v94h-24" stroke="#8B95A1" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+    ${ebulb(96, 56, 13)}
+    ${ebattery(72, 138, 50, 22)}
+    <text x="96" y="26" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(가)</text>`;
+  const right =
+    o.right === "series"
+      ? `
+    <path d="M198 150V56h112v94h-30" stroke="#8B95A1" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+    ${ebulb(230, 56, 13)}
+    ${ebulb(278, 56, 13)}
+    ${ebattery(228, 138, 50, 22)}
+    <text x="254" y="26" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(나)</text>`
+      : `
+    <path d="M198 150V70h112v80h-30" stroke="#8B95A1" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+    <path d="M226 70v-34h58v34" stroke="#8B95A1" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+    ${ebulb(254, 70, 12)}
+    ${ebulb(254, 36, 12)}
+    ${ebattery(228, 138, 50, 22)}
+    <text x="254" y="14" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(나)</text>`;
+  return `<svg viewBox="0 0 344 172" ${NS} fill="none" role="img" aria-label="전지 한 개짜리 회로 두 개 — (가)는 전구 한 개, (나)는 전구 두 개가 연결되어 있다">
+    ${left}${right}
+  </svg>`;
+}
+
+/** 회로 위 세 지점 ㉠㉡㉢(전류 비교 문항용) — series: 한 줄 회로의 앞·사이·뒤 / parallel: 전체·두 갈래. */
+export function elecPointsFig(o: { mode: "series" | "parallel" }): string {
+  const dot = (x: number, y: number, t: string): string =>
+    `<circle cx="${x}" cy="${y}" r="5" fill="#F0A422" stroke="#B87700" stroke-width="1.6"/>
+     <text x="${x}" y="${y - 12}" text-anchor="middle" font-size="13.5" font-weight="800" fill="#4E5968">${t}</text>`;
+  if (o.mode === "series")
+    return `<svg viewBox="0 0 344 178" ${NS} fill="none" role="img" aria-label="전지에 전구 두 개가 한 줄로 연결된 회로 — 도선 위 세 지점에 ㉠㉡㉢ 표시가 있다">
+      <path d="M130 152H56V52h232v100h-100" stroke="#8B95A1" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+      ${ebulb(140, 52, 14)}
+      ${ebulb(216, 52, 14)}
+      ${ebattery(130, 140, 58, 24)}
+      ${dot(92, 52, "㉠")}
+      ${dot(178, 52, "㉡")}
+      ${dot(262, 52, "㉢")}
+    </svg>`;
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="전지에 전구 두 개가 두 갈래로 연결된 회로 — 갈라지기 전 도선에 ㉠, 두 갈래에 ㉡㉢ 표시가 있다">
+    <path d="M132 164H56V64h232v100h-100" stroke="#8B95A1" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+    <path d="M120 64v-34h104v34" stroke="#8B95A1" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+    ${ebulb(172, 64, 13)}
+    ${ebulb(172, 30, 13)}
+    ${ebattery(130, 152, 58, 24)}
+    ${dot(84, 64, "㉠")}
+    ${dot(216, 30, "㉡")}
+    ${dot(216, 64, "㉢")}
+  </svg>`;
+}
+
+/** 전기 기구 에너지 전환 분류 순서도(파라미터형) — 예/아니요가 각자의 결론 칸 A/B/C로 갈라진다
+ *  (한 칸 수렴 금지 — u3 관행). q1·q2는 판정 질문 문구. */
+export function elecFlowFig(o: { q1: string; q2: string }): string {
+  const dia = (x: number, y: number, w: number, h: number, t: string): string =>
+    `<path d="M${x} ${y - h / 2} L${x + w / 2} ${y} L${x} ${y + h / 2} L${x - w / 2} ${y} Z" fill="#FFF7E0" stroke="#D9B44A" stroke-width="1.8"/>
+     <text x="${x}" y="${y + 4}" text-anchor="middle" font-size="11" font-weight="700" fill="#4E5968">${t}</text>`;
+  const box = (x: number, y: number, t: string): string =>
+    `<rect x="${x - 26}" y="${y}" width="52" height="32" rx="8" fill="#EAF3FC" stroke="#9FB6CE" stroke-width="1.8"/>
+     <text x="${x}" y="${y + 21}" text-anchor="middle" font-size="14" font-weight="800" fill="#2E5AA8">${t}</text>`;
+  const headDown = (x: number, y: number): string => `<path d="M${x} ${y}l-4.2 -7.4h8.4z" fill="#8B95A1"/>`;
+  const lbl = (x: number, y: number, t: string): string =>
+    `<text x="${x}" y="${y}" font-size="10.5" font-weight="700" fill="#6B7684">${t}</text>`;
+  return `<svg viewBox="0 0 344 224" ${NS} fill="none" role="img" aria-label="전기 기구를 두 가지 질문으로 A, B, C 세 칸에 나누는 순서도">
+    <rect x="128" y="8" width="88" height="26" rx="13" fill="#F0F3F7" stroke="#C4CAD2" stroke-width="1.6"/>
+    <text x="172" y="26" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">전기 기구</text>
+    <path d="M172 34v20" stroke="#8B95A1" stroke-width="1.8"/>${headDown(172, 56)}
+    ${dia(172, 80, 192, 48, o.q1)}
+    <path d="M76 80H40v50" stroke="#8B95A1" stroke-width="1.8" fill="none"/>${headDown(40, 132)}${lbl(46, 72, "예")}
+    ${box(40, 134, "A")}
+    <path d="M172 104v22" stroke="#8B95A1" stroke-width="1.8"/>${headDown(172, 128)}${lbl(178, 122, "아니요")}
+    ${dia(172, 152, 192, 48, o.q2)}
+    <path d="M172 176v12" stroke="#8B95A1" stroke-width="1.8"/>${headDown(172, 190)}${lbl(148, 188, "예")}
+    ${box(172, 190, "B")}
+    <path d="M268 152h36v34" stroke="#8B95A1" stroke-width="1.8" fill="none"/>${headDown(304, 188)}${lbl(276, 144, "아니요")}
+    ${box(304, 190, "C")}
+  </svg>`;
+}
+
+/** 전기 기구 표시 라벨(명판) — 정격 전압·소비 전력 해석 문항용. aria는 수치를 낭독하지 않는다. */
+export function elecLabelFig(o: { volt: number; watt: number }): string {
+  return `<svg viewBox="0 0 344 140" ${NS} fill="none" role="img" aria-label="전기 기구 뒷면에 붙은 표시 라벨 — 적힌 값을 읽어 해석해요">
+    <rect x="70" y="18" width="204" height="104" rx="14" fill="#F4F6F9" stroke="#B7C2CE" stroke-width="2.2"/>
+    <rect x="84" y="32" width="176" height="44" rx="8" fill="#FFFFFF" stroke="#D9DFE6" stroke-width="1.4"/>
+    <text x="172" y="62" text-anchor="middle" font-size="24" font-weight="800" fill="#333D4B">${o.volt}V - ${o.watt}W</text>
+    <circle cx="104" cy="98" r="9" fill="none" stroke="#9DAABD" stroke-width="1.8"/>
+    <path d="M100 94l8 8M108 94l-8 8" stroke="#9DAABD" stroke-width="1.6"/>
+    <path d="M128 92h60M128 100h44" stroke="#C4CAD2" stroke-width="3" stroke-linecap="round"/>
+    <path d="M236 90a8 8 0 0 1 0 16M228 92v12" stroke="#9DAABD" stroke-width="1.8" fill="none"/>
+  </svg>`;
+}
+
+/** 전동기 사시도(시험판) — 힘 화살표 없음(질문 과제). (가)=코일 왼쪽 변, (나)=오른쪽 변.
+ *  물리 검산(기본 상태): 자기장 B = N(왼)→S(오른) = +x. 전류는 전지 (+)극(왼쪽 도선)에서 나와
+ *  (가) 변을 앞→뒤(−z)로 흐름 → F = IL×B ∝ (−ẑ)×x̂ = −ŷ = 아래. (나) 변은 뒤→앞(+z) → 힘 위.
+ *  즉 기본: (가) 아래·(나) 위. reverse면 전류·힘 모두 반대((가) 위·(나) 아래). */
+export function elecMotorExamFig(o?: { reverse?: boolean }): string {
+  const rev = o?.reverse ?? false;
+  // 코일 꼭짓점(사시): 앞변 (128,150)-(232,150), 뒷변 (152,108)-(256,108). 도선 x=162(+)·x=197(−).
+  const cur = (x1: number, y1: number, x2: number, y2: number): string => {
+    const [a1, b1, a2, b2] = rev ? [x2, y2, x1, y1] : [x1, y1, x2, y2];
+    const mx = a1 + (a2 - a1) * 0.6;
+    const my = b1 + (b2 - b1) * 0.6;
+    const ang = (Math.atan2(b2 - b1, a2 - a1) * 180) / Math.PI;
+    return `<g transform="rotate(${ang} ${mx} ${my})"><path d="M${mx + 6.5} ${my}l-9 -5.5v11z" fill="#FFD400" stroke="#6E3F16" stroke-width="1.1" stroke-linejoin="round"/></g>`;
+  };
+  return `<svg viewBox="0 0 344 214" ${NS} fill="none" role="img" aria-label="왼쪽 N극과 오른쪽 S극 자석 사이에 수평으로 놓인 사각 코일 — 전류의 방향이 화살표로 표시되어 있고 (가)는 왼쪽 변, (나)는 오른쪽 변이에요">
+    <path d="M30 58l16 -12h20v96l-16 12h-20z" fill="#E8836B" stroke="#A8442E" stroke-width="1.8"/>
+    <text x="58" y="100" text-anchor="middle" font-size="16" font-weight="800" fill="#FFF">N</text>
+    <path d="M278 58l16 -12h20v96l-16 12h-20z" fill="#7FA6E8" stroke="#2E5AA8" stroke-width="1.8"/>
+    <text x="306" y="100" text-anchor="middle" font-size="16" font-weight="800" fill="#FFF">S</text>
+    <path d="M92 96h156M238 90l10 6-10 6" stroke="#C9D2DC" stroke-width="1.8" fill="none" stroke-dasharray="6 5"/>
+    <text x="172" y="86" text-anchor="middle" font-size="10.5" fill="#8B95A1">자기장의 방향</text>
+    <g stroke="#C97F3A" stroke-width="5.5" fill="none" stroke-linecap="round">
+      <path d="M128 150 L152 108 M232 150 L256 108 M152 108 H256"/>
+      <path d="M128 150 H162 M197 150 H232"/>
+    </g>
+    ${cur(162, 150, 128, 150) /* 앞변 왼쪽: (+)도선 → 왼쪽으로 */}
+    ${cur(128, 150, 152, 108) /* (가) 변: 앞→뒤 */}
+    ${cur(152, 108, 256, 108) /* 뒷변: 왼→오 */}
+    ${cur(256, 108, 232, 150) /* (나) 변: 뒤→앞 */}
+    ${cur(232, 150, 197, 150) /* 앞변 오른쪽: (−)도선 쪽으로 */}
+    <text x="106" y="140" text-anchor="end" font-size="13" font-weight="800" fill="#4E5968">(가)</text>
+    <path d="M110 136l26 -12" stroke="#C4CAD2" stroke-width="1.3"/>
+    <text x="262" y="146" font-size="13" font-weight="800" fill="#4E5968">(나)</text>
+    <path d="M260 140l-14 -10" stroke="#C4CAD2" stroke-width="1.3"/>
+    <path d="M162 150 V178 M197 150 V178" stroke="#8B95A1" stroke-width="2.6"/>
+    ${ebattery(140, 178, 84, 24, rev) /* 전류 반전판은 전지를 거꾸로 끼운 그림(− 왼쪽) — 극과 전류 방향 일관 */}
+  </svg>`;
+}
+
+/** 코일 + 전지 + 열린 스위치 + 나침반 ㉠(코일 왼쪽 끝) 배치도 — 정성 관찰 문항용(바늘 방향은 채점 대상 아님). */
+export function elecCoilCompassFig(): string {
+  const turns = [0, 1, 2, 3, 4]
+    .map((i) => `<ellipse cx="${132 + i * 22}" cy="96" rx="11" ry="20" stroke="#C97F3A" stroke-width="4" fill="none"/>`)
+    .join("");
+  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="코일과 전지, 열린 스위치로 이루어진 회로 — 코일의 왼쪽 끝에 나침반 ㉠이 놓여 있다">
+    <path d="M121 96h-11v66h58M231 96h25v66h-30" stroke="#8B95A1" stroke-width="3" fill="none" stroke-linecap="round"/>
+    ${turns}
+    ${ebattery(168, 150, 58, 24)}
+    <circle cx="240" cy="162" r="4" fill="#5E6B7E"/>
+    <path d="M240 162l16 -10" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="258" cy="162" r="4" fill="#5E6B7E"/>
+    <text x="250" y="186" text-anchor="middle" font-size="10.5" fill="#8B95A1">스위치(열림)</text>
+    <circle cx="70" cy="96" r="24" fill="#F7F9FC" stroke="#8B95A1" stroke-width="2"/>
+    <path d="M70 78l7 18-7 18-7-18z" fill="#E0452E"/>
+    <path d="M70 114l-7-18h14z" fill="#B0B8C1"/>
+    <text x="70" y="46" text-anchor="middle" font-size="13.5" font-weight="800" fill="#4E5968">㉠</text>
+    <text x="196" y="66" text-anchor="middle" font-size="11" fill="#8B95A1">코일</text>
+  </svg>`;
+}

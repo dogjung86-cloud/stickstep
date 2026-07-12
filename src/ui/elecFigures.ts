@@ -87,9 +87,9 @@ export function viGraphFig(): string {
 export function electronFlowFig(): string {
   return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="전지와 전구가 연결된 회로 — (가)와 (나)는 전류가 흐르는 방향">
     <path d="M92 156h-40V44h240v112h-40" stroke="#8B95A1" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <rect x="92" y="140" width="120" height="32" rx="7" fill="#AEBDD6" stroke="#4E5A70" stroke-width="1.8"/>
-    <text x="122" y="161" font-size="15" font-weight="800" fill="#333D4B">+</text>
-    <text x="182" y="161" font-size="15" font-weight="800" fill="#333D4B">−</text>
+    <rect x="92" y="140" width="160" height="32" rx="7" fill="#AEBDD6" stroke="#4E5A70" stroke-width="1.8"/>
+    <text x="132" y="161" font-size="15" font-weight="800" fill="#333D4B">+</text>
+    <text x="212" y="161" font-size="15" font-weight="800" fill="#333D4B">−</text>
     <circle cx="172" cy="44" r="19" fill="#FFF3C4" stroke="#C8A23E" stroke-width="1.8"/>
     <path d="M164 50q4-8 8-1t8-1" stroke="#E8963E" stroke-width="2" fill="none"/>
     <path d="M52 116v-26M47 96l5-7 5 7" stroke="#2E5AA8" stroke-width="2.6" fill="none"/>

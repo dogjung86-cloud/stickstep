@@ -1,0 +1,40 @@
+스타일 블록 A (모든 프롬프트 앞에 붙일 공통 스타일):
+Photorealistic photograph, natural lighting, shallow depth of field, clean composition, single clear subject.
+ABSOLUTELY NO text, NO numbers, NO letters, NO logos, NO watermarks anywhere in the image.
+No people, no hands, no faces, no human body parts (including reflections). Square 1:1 aspect ratio. High detail, realistic textures.
+
+[0] file=public/exam/g2u7/balloon-wall.png
+A single plain bright yellow rubber balloon clinging to a smooth white painted wall by static electricity, the balloon resting flat against the wall and slightly tilted, casting a soft shadow, soft indoor daylight from a side window, simple clean composition, completely plain balloon with no prints.
+
+[1] file=public/exam/g2u7/water-bend.png
+A science demonstration in a bright clean sink: a thin steady stream of water falling from a stainless steel faucet, and a plain dark plastic comb held horizontally by a metal laboratory clamp stand right beside the stream. The falling water stream is CLEARLY BENT sideways toward the comb, curving noticeably away from vertical as it passes the comb. Bright even lighting, plain tiled background, no hands anywhere.
+
+[2] file=public/exam/g2u7/paper-bits.png
+Tiny torn white paper scraps clinging to the underside and edges of a completely plain transparent plastic strip (like a ruler blank with NO printed scale marks), the strip held by a metal laboratory clamp stand above a wooden desk, several paper bits hanging onto the plastic surface and a few scattered pieces remaining on the desk below, warm desk lighting, macro shot.
+
+[3] file=public/exam/g2u7/nichrome-circuit.png
+A middle school electricity experiment on a bright laboratory table: a small power supply box with a completely BLANK dark display panel and two plain knobs (no digits, no markings anywhere), connected by red and black wires with alligator clips to a thin straight metallic nichrome wire stretched between two metal binding posts on an insulated board, and a small analog meter with a plain blank white dial (no numbers, no scale marks, only a thin black needle), clean bright background, slightly angled top view.
+
+[4] file=public/exam/g2u7/multitap.png
+A plain white multi-socket power strip lying on a light wooden floor, three different appliance plugs plugged into it with their cables running out of frame in different directions, one socket left empty, absolutely no printed logos or letters on the strip or plugs, soft indoor lighting, slightly angled top-down view.
+
+[5] file=public/exam/g2u7/string-lights.png
+A single string of small miniature light bulbs on one dark green wire, laid in gentle waves across a dark wooden table, every small bulb lit with a cozy warm yellow glow, one continuous line of bulbs clearly connected one after another along the single wire, shallow depth of field, dark moody background, no decorations.
+
+[6] file=public/exam/g2u7/iron-steam.png
+A modern electric clothes iron standing upright on a gray ironing board, faint wisps of white steam rising from its polished metal soleplate, plain white and light-blue plastic body with absolutely no brand text or lettered buttons, a folded white shirt lying beside it, soft bright laundry-room lighting.
+
+[7] file=public/exam/g2u7/led-bulb.png
+A modern LED light bulb glowing cool bright white, standing upright in a simple black socket on a dark wooden table, smooth frosted white dome, the glow clean and even, dark neutral background, no packaging, no text anywhere.
+
+[8] file=public/exam/g2u7/filament-bulb.png
+A clear glass incandescent light bulb glowing warm orange, its thin coiled tungsten filament visibly glowing bright orange-hot inside the transparent glass, standing upright in a simple black socket on a dark wooden table, dark neutral background, warm cozy glow, no text anywhere.
+
+[9] file=public/exam/g2u7/coil-compass.png
+A science experiment on a bright desk: a coil of shiny copper enameled wire wound in many neat turns around a short cardboard tube lying horizontally, two wire ends running to a battery in a plain holder at the side, and a small magnetic compass placed right at one open end of the coil. The compass has a completely BLANK white dial with only a red-and-white pointed needle — absolutely no letters, no degree marks, no cardinal symbols on the dial. Bright even lighting.
+
+[10] file=public/exam/g2u7/scrap-crane.png
+A scrapyard electromagnet crane at work: a large round steel electromagnet disc hanging from a crane cable, a dense cluster of rusty scrap metal pieces clinging to its flat underside in mid-air, a blurred pile of scrap metal below, overcast industrial daylight, no visible signage or text anywhere in the yard.
+
+[11] file=public/exam/g2u7/speaker-coil.png
+A disassembled loudspeaker unit viewed from behind on a clean workbench: the black paper cone and its metal frame, and at the center a cylindrical voice coil of fine copper wire clearly visible sitting above a round dark gray ring magnet, macro photograph, shallow depth of field, neutral workshop lighting, no printed labels anywhere.

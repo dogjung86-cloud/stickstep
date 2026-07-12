@@ -10,6 +10,7 @@ import { G2U1_EXAM } from "./g2u1";
 import { G2U2_EXAM } from "./g2u2";
 import { G2U3_EXAM } from "./g2u3";
 import { G2U4_EXAM } from "./g2u4";
+import { G2U7_EXAM } from "./g2u7";
 
 export type { ExamDef, ExamItem, ExamItemType } from "./types";
 export { drawExamItems } from "./types";
@@ -24,6 +25,7 @@ const EXAMS: Record<string, ExamDef> = {
   g2u2: G2U2_EXAM,
   g2u3: G2U3_EXAM,
   g2u4: G2U4_EXAM,
+  g2u7: G2U7_EXAM,
 };
 
 /** 단원에 종합 평가가 있으면 정의를 반환(홈 지도 노드·라우팅의 근거). */

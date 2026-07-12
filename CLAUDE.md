@@ -313,6 +313,29 @@ src/
   6병렬(정답 오류 0·심각 = 사진 발주 대기뿐, 경미/제안 반영으로 종결). 기계 검사
   `node qa/check-exam-g2u4.mjs`, QA `PORT=<포트> node qa/e2e-exam-g2u4.mjs`(47검증 — 여섯 파트 문구·
   3×4+4×2 균형·사진 10장), 그림 눈검수 `qa/shot-exam-figs-g2u4.mjs`.
+- **g2u7(전기와 자기) 150문항 — 첫 8레슨 과학 시험(19×6+18×2, 18은 L2·L7 관찰 소단원)**: 유형
+  113(mcq+multi)/18(num)/19(word), word 3문항 레슨은 L1·L3·L7, pick 20 → 2×4+3×4 균형(전부 자동).
+  그림은 elecFigures **미사용 예비 electronFlowFig 시험 데뷔**(전지-도선 갭 버그를 데뷔 전 shot 눈검수로
+  적발·수정 — 미사용 헬퍼는 실렌더 이력이 없으니 데뷔 전 눈검수 필수) + examFigures g2u7 섹션 11종
+  (elecRubExamFig 전하 이동·elecCanExamFig (−)막대 ㉠㉡판(레슨 (+)·(가)(나)와 부호·방향·라벨 교체)·
+  elecScopeFig 검전기(자기완결 문두로 1문항만)·elecViExamFig 파라미터 V-I(dots는 점만 — 가이드 점선
+  금지 g2u2 관행 계승)·elecViChoicesFig(정답 ②·①은 원점 미통과 함정)·elecTwoCircuitFig·elecPointsFig
+  ㉠㉡㉢·elecFlowFig(예/아니요 각자 결론 칸 — A박스 관통 버그 눈검수 적발·수정)·elecLabelFig 명판·
+  elecMotorExamFig·elecCoilCompassFig). **전동기 힘 문항은 사시도가 유일한 정답** — 자기장·전류·힘
+  3벡터는 순수 평면 2D로 불가능(elecFigures motorFig의 힘↑↓ 표기는 코일 평면=화면 평면이라 부정확 —
+  시험 미사용), 평행사변형 코일 사시도에 F=IL×B 외적 검산을 주석으로 남긴다. **전류 반전판(reverse)은
+  전지 극까지 뒤집어 그린다**(화살표만 뒤집으면 극과 전류가 모순 — 눈검수 적발). 사진 12장
+  (public/exam/g2u7 — 실험 장치 실사(니크롬선 회로·코일 나침반)는 "계기 표시창·다이얼 빈 패널, 숫자·눈금
+  없음"을 프롬프트에 명시해 전 장 1발 합격, 물줄기 휨은 방향 조건 명시+눈검수 판정). 수치는 레슨 앵커
+  (10/20/30Ω·3V→300/150/100mA·4V·200mA·1800W·5W·30W·4V→2V+2V) 전면 회피(15/5/60/24/25/35Ω·600W·
+  40W×5초 등). word 유출 설계 원칙: **mcq 정의형과 word 같은 용어 금지**, 단원 중심어(전동기·전압)는
+  완전 회피가 불가능하므로 **verbatim 구절만 끊는다**(감사 결론). 검산 감사는 상위 모델 8병렬
+  (심각 1 = L6 '충전=화학' 5지가 레슨 퀴즈 보기 5개 직카피 + word와 기능 중복 → 에너지 효율 문항으로
+  교체, 경미 = 레슨 binSort/curio 문구 잔존·num 목록끼리 4/5 판정 공유(e126↔e127 — 목록 항목을 전면
+  분리)·판별 스킬 편중). **⭕ 판정 마커는 이모지라 시험 해설에선 ✓**(기존 시험 파일 관례 — 레슨 파일은
+  ⭕ 잔존, 통일은 추후). 기계 검사 `node qa/check-exam-g2u7.mjs`, QA `PORT=<포트> node qa/e2e-exam-g2u7.mjs`
+  (47검증 — 여덟 파트 문구·2×4+3×4 균형·사진 12장), 그림 눈검수 `qa/shot-exam-figs-g2u7.mjs`
+  (+`qa/slice-shot.mjs`로 긴 샷 분할 확대 검수).
 - **u7(태양계) 120문항 — 천체 사진 3원칙 확립**: ① 기존 NASA 자산(public/photos/) 재사용이 1순위 —
   풀 파일 로컬 `pimg` 헬퍼(`photos/` 경로, ximg와 동형·lazy 금지). 레슨 hotspot이 쓴 사진이라도 문항
   각도가 새로우면 재사용 OK. ② 위상별 달·붉은 달·별 일주 궤적 같은 "정확한 모습이 채점 기준"인 실사는
