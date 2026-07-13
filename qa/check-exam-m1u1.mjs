@@ -18,7 +18,7 @@ const say = (m) => { console.log("FAIL", m); bad++; };
 const warn = (m) => console.log("WARN", m);
 
 for (const f of files) {
-  const src = readFileSync(`src/content/exams/${f}.ts`, "utf8");
+  const src = readFileSync(`src/content/exams/${f}.ts`, "utf8").replace(/\r\n/g, "\n");
   // ⑨-a em대시는 파일 단위 검사(주석 포함 — 수학 텍스트 전면 금지)
   const em = [...src.matchAll(/—/g)].length;
   if (em > 0) say(`${f}: em대시(—) ${em}건, 수학 트랙 전면 금지(콜론·쉼표로)`);

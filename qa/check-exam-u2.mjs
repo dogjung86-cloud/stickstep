@@ -21,7 +21,7 @@ for (const file of files) {
     process.exitCode = 1;
     continue;
   }
-  const src = readFileSync(path, "utf8");
+  const src = readFileSync(path, "utf8").replace(/\r\n/g, "\n");
   sources += `\n${src}`;
   for (const block of src.split(/\n  \{\n/).slice(1)) {
     const id = block.match(/id: "([^"]+)"/)?.[1];

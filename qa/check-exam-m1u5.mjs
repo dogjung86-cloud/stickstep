@@ -56,7 +56,7 @@ function dice(a, b) {
 for (const file of files) {
   const path = `src/content/exams/${file}.ts`;
   if (!existsSync(path)) { fail(`${file}: 파일 없음`); continue; }
-  const src = readFileSync(path, "utf8");
+  const src = readFileSync(path, "utf8").replace(/\r\n/g, "\n");
   if (src.includes("—")) fail(`${file}: em대시 발견`);
   for (const word of bannedWords) if (src.includes(word)) fail(`${file}: 금지어 '${word}' 발견`);
   const blocks = src.split(/\n  \{\n/).slice(1);
