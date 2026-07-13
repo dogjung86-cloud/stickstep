@@ -4,6 +4,130 @@
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
 
+/* ══════════════ u2 생물의 구성과 다양성 ══════════════ */
+
+/** 이름을 숨긴 세포 세 종류의 모양 비교 — 기능 판별용. */
+export function bioCellRolesExamFig(): string {
+  return `<svg viewBox="0 0 344 174" ${NS} fill="none" role="img" aria-label="㉠부터 ㉢까지 서로 다른 모양의 세포 세 종류를 비교한 그림">
+    <defs>
+      <linearGradient id="bcr-bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#F7FBF9"/><stop offset="1" stop-color="#EAF5EF"/></linearGradient>
+      <radialGradient id="bcr-pink" cx="35%" cy="30%" r="75%"><stop stop-color="#FFA7B9"/><stop offset="1" stop-color="#D94C6A"/></radialGradient>
+    </defs>
+    <rect x="2" y="2" width="340" height="170" rx="18" fill="url(#bcr-bg)"/>
+    <g transform="translate(16 22)">
+      <text x="48" y="12" text-anchor="middle" font-size="13" font-weight="800" fill="#4E5968">㉠</text>
+      <path d="M48 64C24 52 19 35 6 31M48 64C25 71 18 89 5 97M48 64C65 43 80 30 95 18M48 64C70 68 86 77 101 91" stroke="#D2774C" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="48" cy="64" r="19" fill="#F4A375" stroke="#B65D3A" stroke-width="2"/>
+      <circle cx="48" cy="64" r="7" fill="#7967D8"/>
+      <path d="M68 61C82 56 94 57 108 62" stroke="#D2774C" stroke-width="5" stroke-linecap="round"/>
+      ${[80, 91, 102].map((x) => `<path d="M${x} 59q5-6 10 0" stroke="#B65D3A" stroke-width="1.4"/>`).join("")}
+    </g>
+    <g transform="translate(122 23)">
+      <text x="50" y="12" text-anchor="middle" font-size="13" font-weight="800" fill="#4E5968">㉡</text>
+      ${[[30,48,-14],[67,43,13],[49,79,-5],[83,76,18],[21,83,9]].map(([x,y,r]) => `<g transform="rotate(${r} ${x} ${y})"><ellipse cx="${x}" cy="${y}" rx="19" ry="12" fill="url(#bcr-pink)" stroke="#A92B49" stroke-width="1.8"/><ellipse cx="${x}" cy="${y}" rx="8" ry="4" fill="#A92B49" opacity=".5"/></g>`).join("")}
+    </g>
+    <g transform="translate(232 23)">
+      <text x="48" y="12" text-anchor="middle" font-size="13" font-weight="800" fill="#4E5968">㉢</text>
+      ${Array.from({length:12},(_,i)=>{const row=Math.floor(i/4),col=i%4,x=8+col*23+(row%2)*4,y=35+row*29;return `<path d="M${x} ${y}q9-7 18 0l3 16q-9 8-21 1z" fill="#76C69B" stroke="#367C5A" stroke-width="1.4"/><ellipse cx="${x+10}" cy="${y+9}" rx="4" ry="3" fill="#6D61C9"/>`;}).join("")}
+    </g>
+  </svg>`;
+}
+
+/** 프레파라트를 움직이는 방향만 제시하는 그림 — 시야 속 상의 이동 방향은 숨긴다. */
+export function bioSlideMoveFig(dir: "left" | "right" | "up" | "down"): string {
+  const d = { left: [-34, 0], right: [34, 0], up: [0, -28], down: [0, 28] }[dir];
+  const [dx, dy] = d;
+  const x2 = 172 + dx, y2 = 126 + dy;
+  const angle = Math.atan2(dy, dx), ah = 10;
+  const p1 = `${x2},${y2}`;
+  const p2 = `${x2 - ah * Math.cos(angle - .55)},${y2 - ah * Math.sin(angle - .55)}`;
+  const p3 = `${x2 - ah * Math.cos(angle + .55)},${y2 - ah * Math.sin(angle + .55)}`;
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="현미경 재물대 위 프레파라트를 화살표 방향으로 움직이는 그림">
+    <rect x="2" y="2" width="340" height="186" rx="18" fill="#F5F8FB"/>
+    <rect x="44" y="74" width="256" height="78" rx="12" fill="#465367"/>
+    <rect x="92" y="88" width="160" height="48" rx="6" fill="#EAF4F6" stroke="#8DAAB2" stroke-width="2"/>
+    <rect x="126" y="95" width="92" height="34" rx="3" fill="#BFE5E0" opacity=".72"/>
+    <circle cx="172" cy="112" r="7" fill="#7C6BFF" opacity=".9"/>
+    <line x1="172" y1="126" x2="${x2}" y2="${y2}" stroke="#F05A67" stroke-width="4" stroke-linecap="round"/>
+    <path d="M${p1}L${p2}L${p3}Z" fill="#F05A67"/>
+    <circle cx="172" cy="43" r="27" fill="#DDE7F2" stroke="#65758A" stroke-width="6"/>
+    <circle cx="172" cy="43" r="14" fill="#A9D9E8" opacity=".8"/>
+  </svg>`;
+}
+
+/** 같은 표본을 서로 다른 배율로 본 두 시야 — 수·크기 비교용. */
+export function bioFieldPairFig(aCount = 18, bCount = 6): string {
+  const field = (cx: number, count: number, label: string): string => {
+    const cols = Math.ceil(Math.sqrt(count));
+    const gap = count > 10 ? 18 : 28;
+    const r = count > 10 ? 6 : 10;
+    const sx = cx - ((cols - 1) * gap) / 2, rows = Math.ceil(count / cols), sy = 78 - ((rows - 1) * gap) / 2;
+    const cells = Array.from({ length: count }, (_, i) => {
+      const x = sx + (i % cols) * gap, y = sy + Math.floor(i / cols) * gap;
+      return `<rect x="${x-r}" y="${y-r*.72}" width="${r*2}" height="${r*1.44}" rx="${Math.max(2,r*.28)}" fill="#D9B7EE" stroke="#8065A5" stroke-width="1.2"/><circle cx="${x}" cy="${y}" r="${Math.max(1.6,r*.22)}" fill="#6D54A4"/>`;
+    }).join("");
+    return `<circle cx="${cx}" cy="82" r="66" fill="#F7F1FA" stroke="#4D596B" stroke-width="6"/>${cells}<text x="${cx}" y="166" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">${label}</text>`;
+  };
+  return `<svg viewBox="0 0 344 184" ${NS} fill="none" role="img" aria-label="같은 표본을 서로 다른 배율로 관찰한 두 원형 시야">
+    <rect x="2" y="2" width="340" height="180" rx="18" fill="#F7F9FC"/>${field(91,aCount,"(가)")}${field(253,bCount,"(나)")}
+  </svg>`;
+}
+
+/** 동물 또는 식물의 구성 단계 일부를 기호로 숨긴 흐름도. */
+export function bioOrgFlowExamFig(kind: "animal" | "plant", hidden: number[] = [1, 3]): string {
+  const steps = kind === "animal" ? ["세포", "조직", "기관", "기관계", "개체"] : ["세포", "조직", "조직계", "기관", "개체"];
+  const symbols = ["㉠", "㉡", "㉢", "㉣", "㉤"];
+  return `<svg viewBox="0 0 344 118" ${NS} fill="none" role="img" aria-label="${kind === "animal" ? "동물" : "식물"}의 구성 단계 다섯 칸 중 일부가 기호로 가려진 흐름도">
+    <defs><linearGradient id="bof-bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#F4FAF6"/><stop offset="1" stop-color="#E7F3EA"/></linearGradient></defs>
+    <rect x="2" y="2" width="340" height="114" rx="18" fill="url(#bof-bg)"/>
+    ${steps.map((s,i)=>{const x=13+i*66;return `${i?`<path d="M${x-12} 58h12" stroke="#7DA58C" stroke-width="2.4"/><path d="M${x-1} 54l7 4-7 4z" fill="#7DA58C"/>`:""}<rect x="${x}" y="36" width="56" height="44" rx="12" fill="${hidden.includes(i)?"#FFF3D7":"#FFFFFF"}" stroke="${hidden.includes(i)?"#E3A12F":"#86AD95"}" stroke-width="1.7"/><text x="${x+28}" y="62" text-anchor="middle" font-size="${hidden.includes(i)?16:11.5}" font-weight="800" fill="#344E42">${hidden.includes(i)?symbols[i]:s}</text>`;}).join("")}
+  </svg>`;
+}
+
+/** 두 지역의 생물 종류·개체 분포 비교 — 점 색은 종류, 점 개수는 개체 수. */
+export function bioDiversityGridFig(a: number[] = [5, 4, 3], b: number[] = [8, 2]): string {
+  const colors = ["#EF6B7A", "#4BAE82", "#4C83D5", "#E5A33F", "#8B6FD1"];
+  const panel = (x: number, counts: number[], label: string): string => {
+    let dots = "", i = 0;
+    counts.forEach((n,k)=>{for(let j=0;j<n;j++,i++){const dx=x+24+(i%5)*20,dy=53+Math.floor(i/5)*22;dots+=`<circle cx="${dx}" cy="${dy}" r="6.5" fill="${colors[k]}" stroke="#fff" stroke-width="1.4"/>`;}});
+    return `<rect x="${x}" y="28" width="140" height="108" rx="14" fill="#FFFFFF" stroke="#B9D6C4" stroke-width="1.7"/>${dots}<text x="${x+70}" y="158" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">${label}</text>`;
+  };
+  return `<svg viewBox="0 0 344 174" ${NS} fill="none" role="img" aria-label="색이 같은 점은 같은 종류를 뜻하는 두 지역 A와 B의 생물 분포도">
+    <rect x="2" y="2" width="340" height="170" rx="18" fill="#EEF7F1"/>${panel(22,a,"A 지역")}${panel(182,b,"B 지역")}
+  </svg>`;
+}
+
+/** 5계 후보 A~E의 특징표 — 행 이름은 숨겨 분류 근거만 판독한다. */
+export function bioKingdomClueTableFig(): string {
+  const rows = [
+    ["A", "×", "○", "×", "흡수"],
+    ["B", "○", "○", "○", "스스로 만듦"],
+    ["C", "○", "×", "×", "섭취"],
+    ["D", "○", "다양", "다양", "다양"],
+    ["E", "×", "○", "×", "흡수"],
+  ];
+  const cols = [42, 102, 162, 222, 288];
+  return `<svg viewBox="0 0 344 226" ${NS} fill="none" role="img" aria-label="A부터 E까지 다섯 생물 무리의 핵막, 세포벽, 광합성, 양분 획득 특징을 비교한 표">
+    <rect x="2" y="2" width="340" height="222" rx="18" fill="#F7FAF8"/>
+    <rect x="18" y="24" width="308" height="34" rx="10" fill="#DDEFE3"/>
+    ${["후보","핵막","세포벽","광합성","양분"].map((t,i)=>`<text x="${cols[i]}" y="46" text-anchor="middle" font-size="10.5" font-weight="800" fill="#355546">${t}</text>`).join("")}
+    ${rows.map((r,ri)=>{const y=58+ri*31;return `<rect x="18" y="${y}" width="308" height="29" rx="7" fill="${ri%2?"#F2F7F4":"#FFFFFF"}"/>${r.map((t,i)=>`<text x="${cols[i]}" y="${y+19}" text-anchor="middle" font-size="${i===4?9.5:11}" font-weight="${i===0?800:650}" fill="#4E5968">${t}</text>`).join("")}`;}).join("")}
+  </svg>`;
+}
+
+/** 연도별 개체 수 막대그래프 — 단위는 마리, 값은 파라미터형. */
+export function bioPopulationBarsFig(values: number[] = [48, 36, 24, 18], labels: string[] = ["1년", "2년", "3년", "4년"]): string {
+  const max = Math.max(10, ...values), top = Math.ceil(max / 10) * 10;
+  const gy = (v:number)=>176-v/top*138;
+  const grid = Array.from({length:5},(_,i)=>{const v=top*i/4,y=gy(v);return `<line x1="44" y1="${y}" x2="326" y2="${y}" stroke="#E3E8ED"/><text x="36" y="${y+4}" text-anchor="end" font-size="10" fill="#8B95A1">${v}</text>`;}).join("");
+  return `<svg viewBox="0 0 344 218" ${NS} fill="none" role="img" aria-label="여러 해에 걸친 한 생물의 개체 수를 나타낸 막대그래프">
+    <rect x="2" y="2" width="340" height="214" rx="18" fill="#FAFBFC"/>${grid}
+    <line x1="44" y1="38" x2="44" y2="176" stroke="#9CA7B4" stroke-width="1.6"/><line x1="44" y1="176" x2="326" y2="176" stroke="#9CA7B4" stroke-width="1.6"/>
+    ${values.map((v,i)=>{const x=65+i*65,y=gy(v);return `<rect x="${x}" y="${y}" width="38" height="${176-y}" rx="6" fill="#54B889"/><text x="${x+19}" y="${y-6}" text-anchor="middle" font-size="11" font-weight="800" fill="#347A5B">${v}</text><text x="${x+19}" y="196" text-anchor="middle" font-size="10.5" fill="#596574">${labels[i]??i+1}</text>`;}).join("")}
+    <text x="20" y="28" font-size="10" fill="#8B95A1">개체 수(마리)</text>
+  </svg>`;
+}
+
 /* ══════════════ u3 열 ══════════════ */
 
 /** 열평형 시간-온도 그래프(파라미터형) — 뜨거운 쪽·차가운 쪽이 tEq분에 eq℃로 만난다. (라이트) */
