@@ -70,6 +70,16 @@
   .p-chip svg{flex-shrink:0}
   .subj-chip{display:inline-flex; align-items:center; gap:4px; background:#EEF4FF; color:#1B64DA;
     border:1px solid #D6E5FF; border-radius:99px; padding:3px 9px; font-size:11px; font-weight:800; white-space:nowrap; flex-shrink:0}
+  /* 과목 진입 탐색안: 칩 박스를 벗긴 텍스트+셰브론(당근 '동네명 ▾' 문법) */
+  .subj-txt{display:inline-flex; align-items:center; gap:3px; background:none; border:0; border-radius:8px;
+    padding:4px 5px; margin-left:-3px; font-family:inherit; font-size:12px; font-weight:800; letter-spacing:-.01em;
+    color:#333D4B; white-space:nowrap; flex-shrink:0; cursor:pointer; -webkit-tap-highlight-color:transparent}
+  .subj-txt svg{color:#8B95A1}
+  .subj-txt:active{background:#EDF1F5}
+  /* 확정 방향 후보: 왼쪽 상자(전체 화면 허브 진입) + 현재 과목 아이콘+미니 ▾ */
+  .subj-box{width:auto; padding:0 7px; display:inline-flex; align-items:center; gap:3px; cursor:pointer;
+    -webkit-tap-highlight-color:transparent}
+  .subj-box:active{background:#EDF1F5}
   .p-tabs{display:flex; gap:6px; overflow:hidden}
   .p-tab{flex-shrink:0; border-radius:99px; padding:5px 11px; font-size:10.5px; font-weight:700;
     background:#fff; border:1px solid #E5EAF0; color:#6B7684; white-space:nowrap}
@@ -147,8 +157,11 @@
   @media (max-width:820px){.v2grid{grid-template-columns:1fr}}
   .v2grid .phone{width:292px; flex-shrink:0}
   .demo-note{font-size:12px; color:var(--sub); text-align:center; margin-top:10px; max-width:292px}
+  /* 레슨명 라벨: 기존 gm-label 문법 복귀(반투명 흰 필+블러) — 발끝 아래에 떠서 밑창을 가리지 않고, 겹쳐도 비친다 */
   .nlab{position:absolute; transform:translateX(-50%); font-size:10px; font-weight:700; color:#33405A;
-    text-shadow:0 1px 0 #F0F7F1,0 -1px 0 #F0F7F1,1px 0 0 #F0F7F1,-1px 0 0 #F0F7F1; white-space:nowrap; z-index:2}
+    background:rgba(255,255,255,.78); -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px);
+    padding:3px 9px; border-radius:99px; box-shadow:0 2px 8px -3px rgba(23,32,48,.25);
+    white-space:nowrap; z-index:2}
   .n3d{position:absolute; width:56px; height:58px; background:none; border:0; padding:0; cursor:pointer;
     -webkit-tap-highlight-color:transparent; z-index:3; touch-action:manipulation}
   .n3d .edge{position:absolute; left:0; top:7px; width:56px; height:51px; border-radius:50%; background:#1856C0}
@@ -196,6 +209,24 @@
   .bsn .bs-badge{display:none} .bsn.done .bs-badge{display:block}
   .bsn.exam .bs-edge{fill:#101A2C}
   .bsn.exam .bs-face{fill:#26334D}
+  /* 열림 노드는 단원 테마색을 따른다(실앱 UNIT_THEME/.gm-node.X 규칙) — 목업은 Ⅱ 생물(bio)만 견본 */
+  .bsn.bio .bs-edge{fill:#087F5B}
+  .bsn.bio .bs-face{fill:url(#bsGradBio)}
+  .bsn.bio .bs-halo{stroke:rgba(18,184,134,.55)}
+  /* 레슨 고유 아이콘: 열림=흰색, 잠금=회색 예고(+우상단 미니 자물쇠 배지). 완료는 체크가 우선 */
+  .bsn .ic-lesson{display:none}
+  .bsn.cur .ic-lesson{display:block; stroke:#fff}
+  .bsn.lock .ic-lesson{display:block; stroke:#AEB9C4}
+  .bsn .bs-lockbadge{display:none}
+  .bsn.lock .bs-lockbadge{display:block}
+  /* 골드 상태(프리미엄·정복 인증): 골드 밑창 + 말풍선 리본 — 기존 gm-ribbon.gold 문법 이식 */
+  .bsn.prem .bs-edge, .bsn.conq .bs-edge{fill:#C8821A}
+  .bsn.prem .bs-face, .bsn.conq .bs-face{fill:url(#bsGoldGrad)}
+  .bs-ribbon{position:absolute; top:-12px; left:50%; transform:translateX(-50%); z-index:4; line-height:1.4;
+    background:linear-gradient(180deg,#FFB937,#F5A623); color:#5C3D06; font-size:10px; font-weight:800;
+    padding:3px 9px; border-radius:99px; white-space:nowrap; box-shadow:0 3px 8px -2px rgba(212,138,22,.5)}
+  .bs-ribbon::after{content:""; position:absolute; bottom:-3px; left:50%; transform:translateX(-50%) rotate(45deg);
+    width:7px; height:7px; background:#F5A623; border-radius:1px}
   .walker-wrap{position:absolute; left:0; top:0; z-index:4; pointer-events:none; will-change:transform}
   /* .p-map svg{width:100%…} 전역 규칙이 0×0 부모에 걸리지 않게 명시 크기 + inset 해제 */
   .walker-wrap svg{position:absolute; left:-23px; top:-62px; right:auto; bottom:auto;
@@ -252,6 +283,8 @@
   .strip-cap.rec{color:var(--accent)}
   .strip{background:#F7F9FB; border:1px solid #E5EAF0; border-radius:14px; padding:8px; display:flex; gap:6px;
     overflow:hidden; max-width:336px} /* 실기기 폭(360px+) 근사 */
+  .strip.abar{align-items:center; gap:8px; padding:8px 10px}
+  .strip.abar .sp{flex:1}
   .p-tab.kw{display:inline-flex; align-items:center; gap:4px}
 </style>
 
@@ -284,6 +317,12 @@
       <linearGradient id="bsGrad" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0" stop-color="#4D93FF"/><stop offset="1" stop-color="#2570E8"/>
       </linearGradient>
+      <linearGradient id="bsGoldGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#FFCF4D"/><stop offset="1" stop-color="#EFA32B"/>
+      </linearGradient>
+      <linearGradient id="bsGradBio" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#2BC492"/><stop offset="1" stop-color="#0CA678"/>
+      </linearGradient>
       <g id="bsole"><g transform="rotate(180 24 35)">
         <path d="M24 2 C34.5 2 43 9 43 20 C43 30.5 38.5 39.5 34 43 C31 45.5 17 45.5 14 43 C9.5 39.5 5 30.5 5 20 C5 9 13.5 2 24 2 Z"/>
         <rect x="12" y="52" width="24" height="16" rx="8"/>
@@ -295,8 +334,9 @@
       <div class="phone">
         <div class="p-top">
           <div class="p-appbar">
+            <!-- 과목 진입: 기존 왼쪽 상자 동작 유지(탭 → 화면 전체 과목 허브) + 그리드 대신 현재 과목 아이콘(플라스크)+미니 ▾ -->
+            <button class="p-iconbtn subj-box" aria-label="과목 선택 — 현재 과학"><svg width="13" height="13" viewBox="-12 -13 24 26" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"><path d="M-4,-9 h8 v6 l5,9 a3,3 0 0 1 -2.6,4.5 h-12.8 a3,3 0 0 1 -2.6,-4.5 l5,-9 z"/></svg><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 9l7 7 7-7"/></svg></button>
             <span class="p-brand">스틱스텝</span>
-            <span class="subj-chip">과학 <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 9l7 7 7-7"/></svg></span>
             <span class="sp"></span>
             <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#F2994A"><path d="M12 2c1 4-3 5-3 9a5 5 0 0 0 10 0c0-2-1-3.5-2-5-.5 2-2 2.5-2 2.5C16 6 14 3 12 2z"/></svg>1일</span>
             <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#3182F6"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>125 스텝</span>
@@ -366,8 +406,10 @@
               <use href="#bsole" class="bs-halo"/>
               <use href="#bsole" class="bs-edge"/>
               <g class="bs-top">
-                <use href="#bsole" class="bs-face"/>                <g class="ic ic-lock" transform="translate(24,44) rotate(-8)" fill="none" stroke="#AEB9C4" stroke-width="2.4" stroke-linejoin="round"><rect x="-6" y="-2.5" width="12" height="9" rx="2.5"/><path d="M-3.5,-2.5 v-3 a3.5,3.5 0 0 1 7,0 v3"/></g>
-                <g class="ic ic-flask" transform="translate(24,45) rotate(-8) scale(.82)" fill="none" stroke="#fff" stroke-width="2.9" stroke-linejoin="round"><path d="M-4,-9 h8 v6 l5,9 a3,3 0 0 1 -2.6,4.5 h-12.8 a3,3 0 0 1 -2.6,-4.5 l5,-9 z"/></g>
+                <use href="#bsole" class="bs-face"/>
+                <!-- 레슨 고유 아이콘(전구 = 과학과 인류 문명): 잠금엔 회색 예고, 열리면 흰색 -->
+                <g class="ic ic-lesson" transform="translate(24,45) rotate(-8)" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M0,-9.5 a6.5,6.5 0 0 1 2.9,12.3 q-.4,1.5 -.4,2.7 h-5 q0,-1.2 -.4,-2.7 A6.5,6.5 0 0 1 0,-9.5 z M-2.4,9 h4.8"/></g>
+                <g class="bs-lockbadge" transform="translate(38,28) rotate(-8)"><circle r="9.5" fill="#fff" stroke="#DFE5EC" stroke-width="1"/><g fill="none" stroke="#AEB9C4" stroke-width="2" stroke-linejoin="round"><rect x="-4" y="-1.6" width="8" height="6.4" rx="2"/><path d="M-2.4,-1.6 v-2 a2.4,2.4 0 0 1 4.8,0 v2"/></g></g>
               </g>
             </svg>
           </button>
@@ -381,7 +423,7 @@
               </g>
             </svg>
           </button>
-          <span class="nlab" style="left:110px; top:412px">단원평가</span>
+          <span class="nlab" style="left:110px; top:409px">단원평가</span>
           <div class="walker-wrap" id="walker">
             <svg width="46" height="66" viewBox="-23 -62 46 66" aria-hidden="true">
               <!-- 귀여움 보강: 머리 r7→7.7(치비 비율)·눈 확대·둥근 미소·볼터치. 선은 2.6→2.4 — 1.13× 확대 후 실질 굵기가 비슷하게 -->
@@ -454,12 +496,14 @@
               <circle cx="-4" cy="-1" r=".7" fill="#7FA6C9" stroke="none"/>
             </g>
           </svg>
-          <button class="bsn map cur" style="left:126px; top:20px; transform:rotate(6deg)" aria-label="세포 속 세계 — 눌러서 시작">
+          <!-- 열림 노드는 단원 테마색(bio 그린) + 레슨 고유 아이콘(세포) -->
+          <button class="bsn map cur bio" style="left:126px; top:20px; transform:rotate(6deg)" aria-label="세포 속 세계 — 눌러서 시작">
             <svg viewBox="0 0 48 76" width="48" height="76" aria-hidden="true">
               <use href="#bsole" class="bs-halo"/>
               <use href="#bsole" class="bs-edge"/>
               <g class="bs-top">
-                <use href="#bsole" class="bs-face"/>                <g class="ic ic-flask" transform="translate(24,45) rotate(-6) scale(.82)" fill="none" stroke="#fff" stroke-width="2.9" stroke-linejoin="round"><path d="M-4,-9 h8 v6 l5,9 a3,3 0 0 1 -2.6,4.5 h-12.8 a3,3 0 0 1 -2.6,-4.5 l5,-9 z"/></g>
+                <use href="#bsole" class="bs-face"/>
+                <g class="ic ic-lesson" transform="translate(24,45) rotate(-6)" fill="none" stroke-width="2.5"><circle r="8"/><circle cx="2.2" cy="-1.5" r="2.8"/></g>
               </g>
             </svg>
           </button>
@@ -469,7 +513,8 @@
               <use href="#bsole" class="bs-edge"/>
               <g class="bs-top">
                 <use href="#bsole" class="bs-face"/>
-                <g class="ic ic-lock" transform="translate(24,44) rotate(8)" fill="none" stroke="#AEB9C4" stroke-width="2.4" stroke-linejoin="round"><rect x="-6" y="-2.5" width="12" height="9" rx="2.5"/><path d="M-3.5,-2.5 v-3 a3.5,3.5 0 0 1 7,0 v3"/></g>
+                <g class="ic ic-lesson" transform="translate(24,45) rotate(8)" fill="none" stroke-width="2.5" stroke-linecap="round"><circle cx="-1.8" cy="-2.2" r="6.2"/><path d="M2.6,2.2 L7.5,7"/></g>
+                <g class="bs-lockbadge" transform="translate(38,28) rotate(8)"><circle r="9.5" fill="#fff" stroke="#DFE5EC" stroke-width="1"/><g fill="none" stroke="#AEB9C4" stroke-width="2" stroke-linejoin="round"><rect x="-4" y="-1.6" width="8" height="6.4" rx="2"/><path d="M-2.4,-1.6 v-2 a2.4,2.4 0 0 1 4.8,0 v2"/></g></g>
               </g>
             </svg>
           </button>
@@ -479,7 +524,8 @@
               <use href="#bsole" class="bs-edge"/>
               <g class="bs-top">
                 <use href="#bsole" class="bs-face"/>
-                <g class="ic ic-lock" transform="translate(24,44) rotate(-8)" fill="none" stroke="#AEB9C4" stroke-width="2.4" stroke-linejoin="round"><rect x="-6" y="-2.5" width="12" height="9" rx="2.5"/><path d="M-3.5,-2.5 v-3 a3.5,3.5 0 0 1 7,0 v3"/></g>
+                <g class="ic ic-lesson" transform="translate(24,45) rotate(-8)" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M0,-9 V-2.5 M0,-2.5 C-5,-1 -6.5,2 -6.5,6.5 M0,-2.5 C5,-1 6.5,2 6.5,6.5 M0,-2.5 V6.5"/></g>
+                <g class="bs-lockbadge" transform="translate(38,28) rotate(-8)"><circle r="9.5" fill="#fff" stroke="#DFE5EC" stroke-width="1"/><g fill="none" stroke="#AEB9C4" stroke-width="2" stroke-linejoin="round"><rect x="-4" y="-1.6" width="8" height="6.4" rx="2"/><path d="M-2.4,-1.6 v-2 a2.4,2.4 0 0 1 4.8,0 v2"/></g></g>
               </g>
             </svg>
           </button>
@@ -493,7 +539,7 @@
               </g>
             </svg>
           </button>
-          <span class="nlab" style="left:110px; top:412px">단원평가</span>
+          <span class="nlab" style="left:110px; top:409px">단원평가</span>
           <!-- 이 단원의 내 스틱맨 — 첫 노드 위(깃발은 단원 테마색) -->
           <div class="walker-wrap" style="transform:translate(150px,66px)">
             <svg width="46" height="66" viewBox="-23 -62 46 66" aria-hidden="true">
@@ -599,18 +645,40 @@
             </button><span>완료</span>
           </div>
           <div class="tryitem">
-            <button class="bsn lock" aria-label="잠긴 레슨 예시 — 발자국 노드">
+            <button class="bsn lock" aria-label="잠긴 레슨 예시 — 회색 레슨 아이콘 + 자물쇠 배지">
               <svg viewBox="0 0 48 76" width="48" height="76" aria-hidden="true">
                 <use href="#bsole" class="bs-edge"/>
                 <g class="bs-top">
                   <use href="#bsole" class="bs-face"/>
-                  <g transform="translate(24,44)" fill="none" stroke="#AEB9C4" stroke-width="2.4" stroke-linejoin="round">
-                    <rect x="-6" y="-2.5" width="12" height="9" rx="2.5"/>
-                    <path d="M-3.5,-2.5 v-3 a3.5,3.5 0 0 1 7,0 v3"/>
-                  </g>
+                  <g transform="translate(24,45) scale(.82)" fill="none" stroke="#AEB9C4" stroke-width="2.9" stroke-linejoin="round"><path d="M-4,-9 h8 v6 l5,9 a3,3 0 0 1 -2.6,4.5 h-12.8 a3,3 0 0 1 -2.6,-4.5 l5,-9 z"/></g>
+                  <g transform="translate(38,28)"><circle r="9.5" fill="#fff" stroke="#DFE5EC" stroke-width="1"/><g fill="none" stroke="#AEB9C4" stroke-width="2" stroke-linejoin="round"><rect x="-4" y="-1.6" width="8" height="6.4" rx="2"/><path d="M-2.4,-1.6 v-2 a2.4,2.4 0 0 1 4.8,0 v2"/></g></g>
                 </g>
               </svg>
-            </button><span>잠금</span>
+            </button><span>잠금 (아이콘 예고)</span>
+          </div>
+          <div class="tryitem">
+            <button class="bsn prem" aria-label="프리미엄 잠금 예시 — 골드 밑창·크라운·리본">
+              <span class="bs-ribbon">프리미엄</span>
+              <svg viewBox="0 0 48 76" width="48" height="76" aria-hidden="true">
+                <use href="#bsole" class="bs-edge"/>
+                <g class="bs-top">
+                  <use href="#bsole" class="bs-face"/>
+                  <g transform="translate(24,45)"><path d="M-8.5,-6 L-4.5,-1.5 L0,-7.5 L4.5,-1.5 L8.5,-6 L7,4 L-7,4 z" fill="#fff"/></g>
+                </g>
+              </svg>
+            </button><span>프리미엄 (중2)</span>
+          </div>
+          <div class="tryitem">
+            <button class="bsn conq" aria-label="정복 인증 시험 노드 예시 — 골드 밑창·리본">
+              <span class="bs-ribbon">정복 인증</span>
+              <svg viewBox="0 0 48 76" width="48" height="76" aria-hidden="true">
+                <use href="#bsole" class="bs-edge"/>
+                <g class="bs-top">
+                  <use href="#bsole" class="bs-face"/>
+                  <g transform="translate(24,45)" fill="none" stroke="#7A4E08" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M-3,-8 v16 M-3,-8 h10 l-3,4 3,4 h-10"/></g>
+                </g>
+              </svg>
+            </button><span>정복 인증 (시험)</span>
           </div>
           <div class="tryitem">
             <span style="display:flex; gap:12px; align-items:flex-start">
@@ -633,7 +701,10 @@
         <ul class="vnotes" style="margin-top:12px">
           <li>'스틱스텝' 이름·장화 레벨·발자국 트레일과 한 세계관으로 묶여요 — 이 실루엣을 쓰는 학습 앱은 없어서 짭 인상이 원천 차단됩니다.</li>
           <li>맨발가락형이 아니라 장화 밑창(앞창+뒤꿈치 2조각)인 이유: 기하가 깔끔하고, 유아 톤을 피하고, 아이콘 자리(플라스크·체크·자물쇠)가 나옵니다.</li>
-          <li>2026-07-13 적용: 지도 노드에 걸음 스플레이 회전(지그재그 바깥쪽 ±6~8°, 아이콘·금별 배지는 counter-rotate로 정립 유지), 트레일 도장은 노드와 같은 밑창 실루엣의 미니 발자국으로 교체(보폭 21px·발 벌림 ±6~7°). 남은 확인: 프리미엄 크라운·시험 잉크 메달리온 등 기존 상태 문법 이식.</li>
+          <li>2026-07-13 적용: 지도 노드에 걸음 스플레이 회전(지그재그 바깥쪽 ±6~8°, 아이콘·금별 배지는 counter-rotate로 정립 유지), 트레일 도장은 노드와 같은 밑창 실루엣의 미니 발자국으로 교체(보폭 21px·발 벌림 ±6~7°).</li>
+          <li>2026-07-14 확정: 시험 노드는 잉크 밑창 유지, 현재 노드 "시작/학습" 리본은 제거(워커+펄스 링이 대체 — 신호 중복), 골드 리본 2종(프리미엄·정복 인증)은 골드 밑창+말풍선 리본으로 이식(위 견본 — 기존 gm-ribbon.gold 문법 그대로).</li>
+          <li>2026-07-14 2차: <b>열림 노드는 단원 테마색</b>(Ⅱ 생물 지도의 초록 노드·초록 펄스가 견본 — 실앱 UNIT_THEME 규칙 계승). <b>노드 아이콘 = 레슨 고유 아이콘</b>: 열림 흰색·잠금 회색 예고+우상단 미니 자물쇠 배지·완료 체크(완료 정보 우선)·시험 깃펜. 워커는 노드 위 유지 — 현재 노드 아이콘은 가려지지만 라벨·워커가 그 정보를 대신(밟는 서사 우선, 사용자 수용).</li>
+          <li>2026-07-14 3차(사용자 "모두 동의"+미세 조정): 자물쇠 배지 확대(r8→9.5), <b>프리미엄 노드는 레슨 아이콘 없이 골드+크라운 유지</b>, 레슨명 라벨은 기존 gm-label 문법(반투명 흰 필+블러)으로 복귀 — 발끝 아래에 떠서 밑창을 가리지 않고 겹쳐도 비침.</li>
           <li>간격·스크롤 걱정: 중심 좌표를 원형과 동일하게 쓰면 지도 높이·스크롤 총량은 <b>불변</b>이에요(왼쪽 폰이 그 증명). 노드가 세로로 길어 노드 사이 빈 여백만 18px쯤 줄어드는데, 그게 답답한지가 눈으로 판정할 유일한 항목.</li>
         </ul>
       </div>
@@ -672,6 +743,58 @@
         <ul class="vnotes" style="margin-top:12px">
           <li>전체 제목은 파란 카드가 소유(중복 해소는 유지) — 탭은 "어디로 갈까"만 담당해요.</li>
           <li>키워드는 지도 장식 세계관(모닥불·행성·풍선…)과 같은 어휘라 톤이 맞습니다. 수학은 수·문자·좌표·도형·입체·통계.</li>
+        </ul>
+      </div>
+      <div class="trybox">
+        <h4>앱바 과목 진입 — 칩이 답답하다면? <span class="badge-new">탐색 중</span></h4>
+        <p class="tcap">칩이 답답한 원인은 위치가 아니라 <b>박스</b>(한 줄에 필 셋). 그리고 <b>목적지는 기존처럼
+        화면 전체 과목 허브가 좋다</b>(사용자 판정 2026-07-14) — ▾ 텍스트/칩은 그 자리에서 드롭다운이 열릴
+        것 같은 신호라 목적지와 어긋나요. 네 가지 비교:</p>
+        <div class="strips">
+          <div>
+            <div class="strip-cap">기존 — 그리드 상자: 앱바는 시원했지만 '과목 선택'으로 안 읽히고, 현재 과목(과학/수학)이 안 보여요</div>
+            <div class="strip abar">
+              <span class="p-iconbtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span>
+              <span class="p-brand">스틱스텝</span>
+              <span class="sp"></span>
+              <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#F2994A"><path d="M12 2c1 4-3 5-3 9a5 5 0 0 0 10 0c0-2-1-3.5-2-5-.5 2-2 2.5-2 2.5C16 6 14 3 12 2z"/></svg>1일</span>
+              <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#3182F6"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>125 스텝</span>
+            </div>
+          </div>
+          <div>
+            <div class="strip-cap">지금 안 — 과목 칩: 정보는 맞는데 브랜드에 박스가 붙어 답답 (사용자 판정)</div>
+            <div class="strip abar">
+              <span class="p-brand">스틱스텝</span>
+              <span class="subj-chip">과학 <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 9l7 7 7-7"/></svg></span>
+              <span class="sp"></span>
+              <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#F2994A"><path d="M12 2c1 4-3 5-3 9a5 5 0 0 0 10 0c0-2-1-3.5-2-5-.5 2-2 2.5-2 2.5C16 6 14 3 12 2z"/></svg>1일</span>
+              <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#3182F6"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>125 스텝</span>
+            </div>
+          </div>
+          <div>
+            <div class="strip-cap">검토안 — 칩을 벗긴 텍스트 "과학 ▾": 앱바는 시원하지만 ▾가 제자리 드롭다운을 암시 — 전체 화면 허브와 신호 불일치 (폐기)</div>
+            <div class="strip abar">
+              <span class="p-brand">스틱스텝</span>
+              <button class="subj-txt">과학 <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 9l7 7 7-7"/></svg></button>
+              <span class="sp"></span>
+              <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#F2994A"><path d="M12 2c1 4-3 5-3 9a5 5 0 0 0 10 0c0-2-1-3.5-2-5-.5 2-2 2.5-2 2.5C16 6 14 3 12 2z"/></svg>1일</span>
+              <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#3182F6"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>125 스텝</span>
+            </div>
+          </div>
+          <div>
+            <div class="strip-cap rec">추천 — 왼쪽 상자 유지(탭 → 화면 전체 허브, 기존 동작 그대로) + 그리드 대신 현재 과목 아이콘+미니 ▾ (듀오링고 국기 패턴, 왼쪽 폰에 적용)</div>
+            <div class="strip abar">
+              <span class="p-iconbtn" style="width:auto; padding:0 7px; display:inline-flex; align-items:center; gap:3px"><svg width="12" height="12" viewBox="-12 -13 24 26" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"><path d="M-4,-9 h8 v6 l5,9 a3,3 0 0 1 -2.6,4.5 h-12.8 a3,3 0 0 1 -2.6,-4.5 l5,-9 z"/></svg><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 9l7 7 7-7"/></svg></span>
+              <span class="p-brand">스틱스텝</span>
+              <span class="sp"></span>
+              <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#F2994A"><path d="M12 2c1 4-3 5-3 9a5 5 0 0 0 10 0c0-2-1-3.5-2-5-.5 2-2 2.5-2 2.5C16 6 14 3 12 2z"/></svg>1일</span>
+              <span class="p-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="#3182F6"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>125 스텝</span>
+            </div>
+          </div>
+        </div>
+        <ul class="vnotes" style="margin-top:12px">
+          <li>목적지는 전체 화면 과목 허브 유지 — 저빈도·큰 컨텍스트 스위치라 전용 무대가 맞고, "준비 중" 과목(사회…) 노출 공간이자 이미 구현된 화면(스틱맨 데코) 재사용.</li>
+          <li>상자 속 아이콘은 과목 따라 교체(과학=플라스크·수학=π) — "현재 과목이 안 보인다"는 개편 동기를 그리드 복귀 없이 해결. 순수 그리드 유지도 허용 옵션.</li>
         </ul>
       </div>
     </div>
