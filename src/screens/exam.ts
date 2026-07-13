@@ -134,7 +134,7 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
 
     // 파트 수는 풀의 레슨 수에서 계산(u3는 다섯, u4는 여섯 파트 — 하드코딩 금지)
     const partCount = new Set(def.pool.map((it) => it.lessonId)).size;
-    const partWord = ["", "한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉", "열"][partCount] ?? String(partCount);
+    const partWord = ["", "한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉", "열", "열한", "열두"][partCount] ?? String(partCount);
     const rules = el(
       "div",
       { class: "ex-rules" },
