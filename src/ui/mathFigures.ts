@@ -1965,7 +1965,7 @@ export function sectorCalcFig(r: number, deg: number): string {
   const lab = pt(deg / 2, 40);
   const rl = pt(0, R / 2);
   return svg(
-    "0 0 250 190",
+    `0 0 250 ${deg > 180 ? 220 : 190}`,
     `<path d="M${cx} ${cy} L${p0.x.toFixed(1)} ${p0.y.toFixed(1)} A${R} ${R} 0 ${deg > 180 ? 1 : 0} 0 ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} Z" fill="${GREEN5}" opacity=".18"/>` +
       `<path d="M${p0.x.toFixed(1)} ${p0.y.toFixed(1)} A${R} ${R} 0 ${deg > 180 ? 1 : 0} 0 ${p1.x.toFixed(1)} ${p1.y.toFixed(1)}" stroke="${GREEN5}" stroke-width="4.6" fill="none" stroke-linecap="round"/>` +
       lineSvg(cx, cy, p0.x, p0.y, INK, 2.4) + lineSvg(cx, cy, p1.x, p1.y, INK, 2.4) +

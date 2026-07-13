@@ -15,6 +15,7 @@ import { G2U8_EXAM } from "./g2u8";
 import { M1U2_EXAM } from "./m1u2";
 import { M1U3_EXAM } from "./m1u3";
 import { M1U4_EXAM } from "./m1u4";
+import { M1U5_EXAM } from "./m1u5";
 import { M1U6_EXAM } from "./m1u6";
 import { M1U1_EXAM } from "./m1u1";
 
@@ -33,11 +34,12 @@ const EXAMS: Record<string, ExamDef> = {
   g2u4: G2U4_EXAM,
   g2u7: G2U7_EXAM,
   g2u8: G2U8_EXAM,
+  m1u1: M1U1_EXAM, // 첫 200제 풀(54/36/10 — m1u1.ts 헤더 참조)
   m1u2: M1U2_EXAM,
   m1u3: M1U3_EXAM,
   m1u4: M1U4_EXAM,
-  m1u6: M1U6_EXAM, // 첫 수학 시험(수학 규격 60/30/10 — m1u6.ts 헤더 참조)
-  m1u1: M1U1_EXAM, // 첫 200제 풀(54/36/10 — m1u1.ts 헤더 참조)
+  m1u5: M1U5_EXAM,
+  m1u6: M1U6_EXAM, // 수학 규격 60/30/10 — m1u6.ts 헤더 참조
 };
 
 /** 단원에 종합 평가가 있으면 정의를 반환(홈 지도 노드·라우팅의 근거). */
