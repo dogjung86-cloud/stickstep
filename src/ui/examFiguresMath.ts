@@ -463,3 +463,70 @@ export function mExamAbsArcsFig(neg: number, pos: number): string {
   out += `<circle cx="${x(-neg)}" cy="96" r="5" fill="${ROSE}"/><circle cx="${x(pos)}" cy="96" r="5" fill="${NAVY}"/>`;
   return svg("0 0 300 132", "원점에서 두 점까지의 거리를 나타낸 호", out);
 }
+
+ /* ── 문자와 식: 이어 붙인 정사각형 패턴 ─────────────────────
+ * steps는 각 묶음에 이어 붙일 정사각형 수다. 막대 개수는 표시하지 않아
+ * 일반항이나 정답을 그림 자체가 인쇄하지 않도록 한다. */
+export function mExamSquareChainFig(steps: number[]): string {
+  const safe = steps.slice(0, 4).map((n) => Math.max(1, Math.min(5, Math.trunc(n))));
+  const panelW = 82;
+  const gap = 8;
+  const W = safe.length * panelW + Math.max(0, safe.length - 1) * gap + 12;
+  let out = "";
+  safe.forEach((count, panelIndex) => {
+    const x0 = 6 + panelIndex * (panelW + gap);
+    const side = Math.min(26, 66 / count);
+    const chainW = side * count;
+    const start = x0 + (panelW - chainW) / 2;
+    for (let i = 0; i < count; i += 1) {
+      out += `<rect x="${(start + i * side).toFixed(1)}" y="24" width="${side.toFixed(1)}" height="${side.toFixed(1)}" fill="${NAVY_SOFT}" fill-opacity=".16" stroke="${NAVY}" stroke-width="2"/>`;
+    }
+    out += `<text x="${x0 + panelW / 2}" y="72" text-anchor="middle" font-size="10.5" font-weight="800" fill="${INK}">${count}개</text>`;
+  });
+  return svg(`0 0 ${W} 84`, "이어 붙인 정사각형 패턴", out);
+}
+
+/* ── 문자와 식: 항의 묶음을 올린 양팔저울 ───────────────────
+ * boxes는 문자 상자 수, weight는 수로 된 추의 라벨이다. 주어진 등식을
+ * 시각화할 뿐 해를 색이나 위치로 강조하지 않는다. */
+export function mExamBalanceFig(opts: {
+  leftBoxes: number;
+  rightBoxes: number;
+  leftWeight?: string;
+  rightWeight?: string;
+  boxLabel?: string;
+}): string {
+  const boxLabel = opts.boxLabel ?? "x";
+  const items = (cx: number, boxes: number, weight?: string): string => {
+    const parts: string[] = [];
+    const count = Math.max(0, Math.min(4, Math.trunc(boxes)));
+    const total = count + (weight ? 1 : 0);
+    const start = cx - ((Math.max(total, 1) - 1) * 25) / 2;
+    for (let i = 0; i < count; i += 1) {
+      const x = start + i * 25;
+      parts.push(`<rect x="${x - 10}" y="63" width="20" height="20" rx="4" fill="${NAVY_SOFT}" stroke="${NAVY}" stroke-width="1.4"/>`);
+      parts.push(`<text x="${x}" y="77" text-anchor="middle" font-size="11" font-weight="900" font-style="italic" fill="#FFFFFF">${boxLabel}</text>`);
+    }
+    if (weight) {
+      const x = start + count * 25;
+      parts.push(`<path d="M${x - 11} 83 L${x - 8} 65 Q${x} 58 ${x + 8} 65 L${x + 11} 83 Z" fill="#FFE4A8" stroke="#C88720" stroke-width="1.4"/>`);
+      parts.push(`<text x="${x}" y="77" text-anchor="middle" font-size="8.5" font-weight="900" fill="#7A4B00">${weight}</text>`);
+    }
+    return parts.join("");
+  };
+  const beamY = 43;
+  const out =
+    `<path d="M150 ${beamY} L138 126 L162 126 Z" fill="#D6A76A" stroke="#815B2C" stroke-width="1.4"/>` +
+    `<rect x="106" y="124" width="88" height="7" rx="3.5" fill="#C18D52"/>` +
+    `<rect x="54" y="${beamY - 3}" width="192" height="6" rx="3" fill="#9AA7B8" stroke="#526174" stroke-width="1.2"/>` +
+    `<circle cx="150" cy="${beamY}" r="5" fill="#526174"/>` +
+    `<line x1="60" y1="${beamY + 3}" x2="48" y2="88" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<line x1="60" y1="${beamY + 3}" x2="72" y2="88" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<line x1="240" y1="${beamY + 3}" x2="228" y2="88" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<line x1="240" y1="${beamY + 3}" x2="252" y2="88" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<ellipse cx="60" cy="91" rx="43" ry="7" fill="#E7ECF3" stroke="#718096" stroke-width="1.3"/>` +
+    `<ellipse cx="240" cy="91" rx="43" ry="7" fill="#E7ECF3" stroke="#718096" stroke-width="1.3"/>` +
+    items(60, opts.leftBoxes, opts.leftWeight) +
+    items(240, opts.rightBoxes, opts.rightWeight);
+  return svg("0 0 300 138", "수평을 이룬 양팔저울", out);
+}

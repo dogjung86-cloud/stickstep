@@ -1,0 +1,292 @@
+// 중1 수학 II 문자와 식, 레슨 2 곱셈·나눗셈 기호 생략 단원 종합 평가 풀(22문항).
+// 교과서에서는 표현 구조와 함정만 참고하고 수치·문구·소재 결합은 새로 설계했다.
+// 유형 14(mcq+multi)/6(num)/2(word), diff 1/2/3 = 9/8/5.
+import type { ExamItem } from "./types";
+import { mfmt } from "../../ui/mathKit";
+
+const L = "m1u2l2";
+
+export const POOL_M1U2L2: ExamItem[] = [
+  {
+    id: "m1u2e023",
+    lessonId: L,
+    type: "mcq",
+    prompt: "로봇 부품 라벨에 7×<i class='mv'>r</i>을 곱셈 기호를 생략하여 적으려고 해요. 바르게 적은 것은?",
+    options: ["<i class='mv'>r</i>7", "7+<i class='mv'>r</i>", "7<i class='mv'>r</i>", "<i class='mv'>r</i>÷7", "7−<i class='mv'>r</i>"],
+    answer: 2,
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>수와 문자의 곱에서는 곱셈 기호를 지우고 수를 문자 앞에 써요. 따라서 7×<i class='mv'>r</i>은 <b>7<i class='mv'>r</i></b>이에요.<span class='xh'>오답 하나씩 격파</span>'<i class='mv'>r</i>7'은 수를 문자 뒤에 둔 표기라 약속에 맞지 않아요. '7+<i class='mv'>r</i>'과 '7−<i class='mv'>r</i>'은 곱셈을 덧셈이나 뺄셈으로 바꾸었어요. 연산 기호를 생략한다고 연산 자체가 달라지는 것은 아니에요. '<i class='mv'>r</i>÷7'은 나눗셈이라 원래 식과 뜻이 반대예요. 생략한 식을 다시 7×<i class='mv'>r</i>로 펼칠 수 있는지 확인하면 안전해요. 라벨을 짧게 쓰더라도 곱한다는 뜻은 그대로 보존해야 해요.",
+    core: "수와 문자의 곱은 수를 앞에 두어 7r!",
+  },
+  {
+    id: "m1u2e024",
+    lessonId: L,
+    type: "mcq",
+    prompt: "악보에서 한 마디의 변화량을 <i class='mv'>m</i>이라 할 때, <i class='mv'>m</i>×(−6)을 곱셈 기호 없이 나타낸 것은?",
+    options: ["6<i class='mv'>m</i>", "−6+<i class='mv'>m</i>", "−<i class='mv'>m</i>6", "<i class='mv'>m</i>−6", "−6<i class='mv'>m</i>"],
+    answer: 4,
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>곱셈은 순서를 바꾸어도 결과가 같으므로 <i class='mv'>m</i>×(−6)=(−6)×<i class='mv'>m</i>이에요. 수를 문자 앞에 놓고 ×와 괄호를 정리하면 <b>−6<i class='mv'>m</i></b>이에요.<span class='xh'>오답 하나씩 격파</span>'6<i class='mv'>m</i>'은 음수 부호를 잃어 값의 부호가 달라져요. '−<i class='mv'>m</i>6'은 수 6을 문자 뒤에 두어 표기 순서가 어긋나요. '<i class='mv'>m</i>−6'은 두 양의 곱을 차로 바꾸었고, '−6+<i class='mv'>m</i>'도 곱셈을 덧셈으로 바꾼 식이에요. <i class='mv'>m</i>=2를 넣으면 원래 식과 정답은 모두 −12가 되는지 검산할 수 있어요. 음수 부호도 수에 딸린 일부로 함께 앞에 옮겨요.",
+    core: "음수도 수를 문자 앞에 두어 −6m!",
+  },
+  {
+    id: "m1u2e025",
+    lessonId: L,
+    type: "mcq",
+    prompt: "1×<i class='mv'>p</i>와 (−1)×<i class='mv'>q</i>를 각각 곱셈 기호를 생략하여 나타낸 것으로 옳은 것은?",
+    options: ["<i class='mv'>p</i>, −<i class='mv'>q</i>", "1<i class='mv'>p</i>, −1<i class='mv'>q</i>", "<i class='mv'>p</i>, <i class='mv'>q</i>", "−<i class='mv'>p</i>, <i class='mv'>q</i>", "<i class='mv'>p</i>+1, <i class='mv'>q</i>−1"],
+    answer: 0,
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>어떤 수에 1을 곱해도 그대로이고, −1을 곱하면 부호만 반대가 돼요. 그래서 1×<i class='mv'>p</i>=<i class='mv'>p</i>, (−1)×<i class='mv'>q</i>=<b>−<i class='mv'>q</i></b>로 1까지 함께 생략해요.<span class='xh'>오답 하나씩 격파</span>'1<i class='mv'>p</i>, −1<i class='mv'>q</i>'은 값은 통하지만 약속에 맞게 줄인 표기가 아니에요. '<i class='mv'>p</i>, <i class='mv'>q</i>'은 둘째 식의 음수 부호를 없앴어요. '−<i class='mv'>p</i>, <i class='mv'>q</i>'은 두 부호를 모두 뒤집었고요. '<i class='mv'>p</i>+1, <i class='mv'>q</i>−1'은 곱셈을 덧셈과 뺄셈으로 바꾼 식이에요. 생략 뒤에도 곱한 수 1의 부호는 반드시 남겨야 해요. 1은 지워도 음수 표시는 지우지 않아요.",
+    core: "1은 생략하고 −1은 1만 생략하여 부호를 남긴다!",
+  },
+  {
+    id: "m1u2e026",
+    lessonId: L,
+    type: "mcq",
+    prompt: "원단 재단표의 길이 식 8×<i class='mv'>b</i>×<i class='mv'>a</i>를 곱셈 기호 없이 바르게 나타낸 것은?",
+    options: ["8<i class='mv'>ba</i>", "<i class='mv'>ab</i>8", "8+<i class='mv'>a</i>+<i class='mv'>b</i>", "8<i class='mv'>ab</i>", "<i class='mv'>a</i>8<i class='mv'>b</i>"],
+    answer: 3,
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>수와 여러 문자의 곱은 수를 맨 앞에 놓고 문자는 보통 알파벳 순서로 써요. 8×<i class='mv'>b</i>×<i class='mv'>a</i>는 곱의 순서를 바꾸어 <b>8<i class='mv'>ab</i></b>로 나타내요.<span class='xh'>오답 하나씩 격파</span>'8<i class='mv'>ba</i>'는 값은 같지만 문자를 알파벳 순으로 정리한 표준적인 표기가 아니에요. '<i class='mv'>ab</i>8'과 '<i class='mv'>a</i>8<i class='mv'>b</i>'은 수 8을 문자 앞에 모으지 않았어요. '8+<i class='mv'>a</i>+<i class='mv'>b</i>'은 곱셈을 덧셈으로 바꿔 원래 관계를 잃었고요. 생략은 ×만 지우는 일이 아니라 수와 문자의 순서를 약속대로 정돈하는 일이에요. 인수가 많을수록 수와 문자를 따로 모아 정리해요.",
+    core: "수 먼저, 문자는 알파벳 순서로 8ab!",
+  },
+  {
+    id: "m1u2e027",
+    lessonId: L,
+    type: "multi",
+    prompt: "곱셈 기호를 생략하여 바르게 나타낸 것을 <b>모두 고르세요.</b>",
+    options: [
+      "<i class='mv'>d</i>×<i class='mv'>d</i>×<i class='mv'>d</i> = " + mfmt("d^3"),
+      "<i class='mv'>c</i>×5 = <i class='mv'>c</i>5",
+      "(−1)×<i class='mv'>w</i> = −<i class='mv'>w</i>",
+      "2×<i class='mv'>h</i>×<i class='mv'>h</i> = " + mfmt("2h^3"),
+      "<i class='mv'>g</i>×1 = <i class='mv'>g</i>",
+    ],
+    answer: [0, 2, 4],
+    diff: 2,
+    explain:
+      "<span class='xh'>보기 하나씩 판정</span><i class='mv'>d</i>를 세 번 곱하면 " + mfmt("d^3") + "이므로 첫째는 옳아요. (−1)×<i class='mv'>w</i>에서는 1을 생략하되 음수 부호를 남겨 −<i class='mv'>w</i>가 되고, <i class='mv'>g</i>×1도 <i class='mv'>g</i>로 써요. 둘째는 수 5를 문자 뒤에 둔 것이 문제예요. 바른 표기는 5<i class='mv'>c</i>예요. 넷째는 <i class='mv'>h</i>가 두 번만 곱해졌으므로 " + mfmt("2h^2") + "가 맞고 " + mfmt("2h^3") + "은 지수를 하나 크게 센 식이에요.<span class='xh'>함정 포인트</span>같은 문자의 개수가 지수가 되고, 1의 부호와 수를 쓰는 위치는 별개의 규칙이에요. 생략한 식을 다시 곱셈으로 펼쳐 원래 인자의 개수와 같은지 확인해요.",
+    core: "같은 문자의 곱은 개수만큼 지수로 나타낸다!",
+  },
+  {
+    id: "m1u2e028",
+    lessonId: L,
+    type: "mcq",
+    prompt: "화분 <i class='mv'>t</i>개를 11줄에 똑같이 놓을 때 한 줄의 화분 수를 나타내는 <i class='mv'>t</i>÷11을 나눗셈 기호 없이 나타낸 것은?",
+    options: [mfmt("{11/t}"), mfmt("{t/11}"), "11<i class='mv'>t</i>", "<i class='mv'>t</i>−11", "11−<i class='mv'>t</i>"],
+    answer: 1,
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>나눗셈 기호는 분수 꼴로 바꾸어 생략해요. 나누어지는 수 <i class='mv'>t</i>는 분자, 나누는 수 11은 분모가 되므로 <i class='mv'>t</i>÷11은 <b>" + mfmt("{t/11}") + "</b>이에요.<span class='xh'>오답 하나씩 격파</span>" + mfmt("{11/t}") + "는 11÷<i class='mv'>t</i>라 나눗셈의 순서가 뒤집혔어요. '11<i class='mv'>t</i>'는 11×<i class='mv'>t</i>를 줄여 쓴 곱셈이에요. '<i class='mv'>t</i>−11'과 '11−<i class='mv'>t</i>'은 화분 수의 차를 구하는 식이라 똑같이 나누는 상황을 나타내지 못해요. 분수에서는 먼저 나온 피제수가 위, 뒤의 제수가 아래로 간다고 기억해요. <i class='mv'>t</i>=22라면 한 줄에 2개인지 확인하면 방향도 검산돼요.",
+    core: "t÷11은 t가 분자, 11이 분모!",
+  },
+  {
+    id: "m1u2e029",
+    lessonId: L,
+    type: "mcq",
+    prompt: "배송 라벨 12장을 <i class='mv'>x</i>개 상자에 똑같이 나누는 식 12÷<i class='mv'>x</i>를 분수 꼴로 나타낸 것은?",
+    options: [mfmt("{x/12}"), "12<i class='mv'>x</i>", mfmt("{12/x}"), "12−<i class='mv'>x</i>", "<i class='mv'>x</i>−12"],
+    answer: 2,
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>12÷<i class='mv'>x</i>에서 나누어지는 수 12는 분자, 나누는 수 <i class='mv'>x</i>는 분모로 가요. 따라서 분수 꼴은 <b>" + mfmt("{12/x}") + "</b>예요.<span class='xh'>오답 하나씩 격파</span>" + mfmt("{x/12}") + "는 <i class='mv'>x</i>÷12를 뜻해서 한 상자에 들어갈 라벨 수의 관계가 반대예요. '12<i class='mv'>x</i>'는 상자마다 12장씩 있을 때 전체 수를 구하는 곱셈이고요. '12−<i class='mv'>x</i>'와 '<i class='mv'>x</i>−12'는 두 수의 차일 뿐 균등하게 나누는 뜻이 없어요. <i class='mv'>x</i>=3을 넣으면 원래 식과 정답은 4, 뒤집힌 분수는 0.25가 되어 차이가 분명해져요. 나눗셈의 순서는 분수에서도 바뀌지 않아요.",
+    core: "12÷x는 12가 위, x가 아래인 분수!",
+  },
+  {
+    id: "m1u2e030",
+    lessonId: L,
+    type: "multi",
+    prompt: "나눗셈 기호를 생략한 결과가 바른 것을 <b>모두 고르세요.</b>",
+    options: [
+      "<i class='mv'>h</i>÷9 = " + mfmt("{h/9}"),
+      "9÷<i class='mv'>h</i> = " + mfmt("{9/h}"),
+      "<i class='mv'>h</i>÷(9×<i class='mv'>k</i>) = " + mfmt("{h/9k}"),
+      "<i class='mv'>h</i>÷9×<i class='mv'>k</i> = " + mfmt("{h/9k}"),
+      "9×<i class='mv'>h</i>÷<i class='mv'>k</i> = " + mfmt("{9k/h}"),
+    ],
+    answer: [0, 1, 2],
+    diff: 2,
+    explain:
+      "<span class='xh'>보기 하나씩 판정</span><i class='mv'>h</i>÷9와 9÷<i class='mv'>h</i>는 피제수를 분자에 두어 각각 " + mfmt("{h/9}") + ", " + mfmt("{9/h}") + "로 쓰므로 옳아요. <i class='mv'>h</i>÷(9×<i class='mv'>k</i>)는 괄호 전체로 나누므로 분모가 9<i class='mv'>k</i>인 " + mfmt("{h/9k}") + "가 맞아요. 넷째는 앞에서부터 계산하면 (<i class='mv'>h</i>÷9)×<i class='mv'>k</i>이므로 " + mfmt("{hk/9}") + "예요. 다섯째는 9<i class='mv'>h</i>를 <i class='mv'>k</i>로 나누므로 " + mfmt("{9h/k}") + "가 맞고 분자와 분모가 뒤섞였어요.<span class='xh'>함정 포인트</span>괄호가 있으면 괄호 전체가 분모, 없으면 ×와 ÷를 앞에서부터 처리해요. 같은 문자와 수를 넣어 두 식의 값이 같은지 확인하면 분수 방향과 괄호 범위 오류를 함께 찾을 수 있어요.",
+    core: "피제수는 분자, 제수는 분모, 괄호 범위를 확인한다!",
+  },
+  {
+    id: "m1u2e031",
+    lessonId: L,
+    type: "mcq",
+    prompt: "<i class='mv'>p</i>÷7×<i class='mv'>q</i>를 곱셈·나눗셈 기호 없이 바르게 나타낸 것은?",
+    options: [mfmt("{p/7q}"), "7<i class='mv'>pq</i>", mfmt("{7p/q}"), mfmt("{7q/p}"), mfmt("{pq/7}")],
+    answer: 4,
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>곱셈과 나눗셈이 섞여 있고 괄호가 없으므로 앞에서부터 계산해요. <i class='mv'>p</i>÷7×<i class='mv'>q</i>=(<i class='mv'>p</i>÷7)×<i class='mv'>q</i>이므로 <b>" + mfmt("{pq/7}") + "</b>이에요.<span class='xh'>오답 하나씩 격파</span>" + mfmt("{p/7q}") + "는 <i class='mv'>p</i>÷(7×<i class='mv'>q</i>)처럼 괄호가 있을 때의 식이에요. " + mfmt("{7p/q}") + "와 " + mfmt("{7q/p}") + "는 7을 곱하거나 나눗셈 순서를 뒤집었어요. '7<i class='mv'>pq</i>'는 나누기 7을 곱하기 7로 바꾼 셈이고요. <i class='mv'>p</i>=14, <i class='mv'>q</i>=3을 넣으면 원래 식과 정답은 6이 되는지 확인할 수 있어요. 뒤의 <i class='mv'>q</i>는 분모에 새로 묶인 수가 아니라 앞선 몫에 곱해지는 인자예요.",
+    core: "p÷7×q는 앞에서부터 계산하여 pq/7!",
+  },
+  {
+    id: "m1u2e032",
+    lessonId: L,
+    type: "mcq",
+    prompt: "<i class='mv'>p</i>÷(7×<i class='mv'>q</i>)와 같은 식은?",
+    options: [mfmt("{p/7q}"), mfmt("{7p/q}"), mfmt("{pq/7}"), mfmt("{7q/p}"), "7<i class='mv'>pq</i>"],
+    answer: 0,
+    diff: 3,
+    explain:
+      "<span class='xh'>정답 풀이</span>괄호 안의 7×<i class='mv'>q</i> 전체가 나누는 수예요. 7×<i class='mv'>q</i>를 7<i class='mv'>q</i>로 줄이면 <i class='mv'>p</i>÷(7<i class='mv'>q</i>)이므로 <b>" + mfmt("{p/7q}") + "</b>예요.<span class='xh'>오답 하나씩 격파</span>" + mfmt("{pq/7}") + "는 괄호가 없는 <i class='mv'>p</i>÷7×<i class='mv'>q</i>를 앞에서부터 계산한 결과예요. " + mfmt("{7p/q}") + "는 7을 분자에 곱했고, " + mfmt("{7q/p}") + "는 나누는 수와 나누어지는 수를 통째로 뒤집었어요. '7<i class='mv'>pq</i>'는 나눗셈을 곱셈으로 바꾼 식이고요. 괄호 하나가 <i class='mv'>q</i>를 분모에 남길지 분자로 보낼지를 결정해요. <i class='mv'>p</i>=42, <i class='mv'>q</i>=2를 넣으면 정답은 3이어서 괄호 없는 식의 12와 다름도 확인돼요.",
+    core: "p÷(7q)는 괄호 전체가 분모인 p/(7q)!",
+  },
+  {
+    id: "m1u2e033",
+    lessonId: L,
+    type: "mcq",
+    prompt: "로봇 부품 번호식 24×<i class='mv'>a</i>÷6을 곱셈·나눗셈 기호 없이 가장 간단히 나타낸 것은?",
+    options: ["144<i class='mv'>a</i>", "18<i class='mv'>a</i>", mfmt("{a/4}"), "4<i class='mv'>a</i>", mfmt("{24/6a}")],
+    answer: 3,
+    diff: 3,
+    explain:
+      "<span class='xh'>정답 풀이</span>24×<i class='mv'>a</i>÷6은 24<i class='mv'>a</i>를 6으로 나누는 식이에요. 수끼리 24÷6=4를 계산하면 <b>4<i class='mv'>a</i></b>가 돼요.<span class='xh'>오답 하나씩 격파</span>'18<i class='mv'>a</i>'는 24−6을 한 뒤 문자에 곱해 나눗셈을 뺄셈으로 바꾼 값이에요. " + mfmt("{a/4}") + "는 6÷24를 계수로 삼아 나누는 방향을 뒤집었고요. '144<i class='mv'>a</i>'는 24와 6을 곱해 버린 결과예요. " + mfmt("{24/6a}") + "는 <i class='mv'>a</i>까지 분모에 넣었지만 원래 식은 24×<i class='mv'>a</i>를 만든 뒤 6으로 나눠요. 수로 된 계수는 서로 먼저 계산하고 문자는 그대로 붙여요. <i class='mv'>a</i>=5로 검산하면 두 식 모두 20이에요.",
+    core: "24a÷6은 계수 24÷6을 계산하여 4a!",
+  },
+  {
+    id: "m1u2e034",
+    lessonId: L,
+    type: "multi",
+    prompt: "곱셈 기호를 생략한 식으로 옳은 것을 <b>모두 고르세요.</b>",
+    options: [
+      "6×<i class='mv'>u</i>+<i class='mv'>v</i> = 6<i class='mv'>u</i>+<i class='mv'>v</i>",
+      "(<i class='mv'>x</i>+<i class='mv'>y</i>)×4 = 4(<i class='mv'>x</i>+<i class='mv'>y</i>)",
+      "2+<i class='mv'>x</i>×5 = 2+5<i class='mv'>x</i>",
+      "<i class='mv'>x</i>+<i class='mv'>x</i> = " + mfmt("x^2"),
+      "<i class='mv'>x</i>×<i class='mv'>x</i>×4 = " + mfmt("4x^2"),
+    ],
+    answer: [0, 1, 2, 4],
+    diff: 3,
+    explain:
+      "<span class='xh'>보기 하나씩 판정</span>6×<i class='mv'>u</i>는 6<i class='mv'>u</i>로 줄이되 뒤의 +<i class='mv'>v</i>는 남겨야 해요. 괄호식에 4를 곱하면 수를 앞에 놓아 4(<i class='mv'>x</i>+<i class='mv'>y</i>)로 쓰고, <i class='mv'>x</i>×5도 5<i class='mv'>x</i>로 정돈하므로 첫째부터 셋째까지 옳아요. <i class='mv'>x</i>×<i class='mv'>x</i>×4는 같은 문자 두 개와 수 4의 곱이라 " + mfmt("4x^2") + "가 맞아요. 넷째의 <i class='mv'>x</i>+<i class='mv'>x</i>는 덧셈이므로 2<i class='mv'>x</i>이지 " + mfmt("x^2") + "가 아니에요.<span class='xh'>함정 포인트</span>×는 생략할 수 있지만 +는 생략할 수 없고, 지수는 같은 문자를 곱했을 때만 생겨요. 괄호는 곱할 대상의 범위를 알려 주므로 ×를 지운 뒤에도 그대로 남겨야 해요.",
+    core: "곱셈은 생략해도 덧셈 기호와 괄호는 지킨다!",
+  },
+  {
+    id: "m1u2e035",
+    lessonId: L,
+    type: "mcq",
+    prompt: "화분 배열을 나타내는 <i class='mv'>z</i>×3×<i class='mv'>y</i>×2를 곱셈 기호 없이 가장 간단히 나타낸 것은?",
+    options: ["5<i class='mv'>yz</i>", "6<i class='mv'>yz</i>", "6<i class='mv'>zy</i>", "6+<i class='mv'>y</i>+<i class='mv'>z</i>", "3<i class='mv'>yz</i>2"],
+    answer: 1,
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>곱은 순서를 바꿀 수 있으므로 수끼리 3×2=6을 계산해 앞에 두고, 문자는 알파벳 순으로 <i class='mv'>y</i>, <i class='mv'>z</i>를 써요. 따라서 <b>6<i class='mv'>yz</i></b>예요.<span class='xh'>오답 하나씩 격파</span>'5<i class='mv'>yz</i>'는 3과 2를 곱하지 않고 더한 계수예요. '6<i class='mv'>zy</i>'는 값은 같지만 문자를 알파벳 순으로 정돈하지 않았어요. '6+<i class='mv'>y</i>+<i class='mv'>z</i>'은 모든 곱셈을 덧셈으로 바꿨고, '3<i class='mv'>yz</i>2'는 수 2를 문자 뒤에 남겨 표기 약속에 어긋나요. 여러 인수가 섞이면 수끼리 계산한 뒤 문자 순서를 정리해요. 정리 뒤 다시 펼치면 6×<i class='mv'>y</i>×<i class='mv'>z</i>예요.",
+    core: "수끼리 3×2=6, 문자는 알파벳 순으로 6yz!",
+  },
+  {
+    id: "m1u2e036",
+    lessonId: L,
+    type: "mcq",
+    prompt: "배송 라벨 식 <i class='mv'>s</i>÷4×<i class='mv'>t</i>×<i class='mv'>u</i>를 기호를 생략하여 나타낸 것은?",
+    options: [mfmt("{stu/4}"), mfmt("{s/4tu}"), mfmt("{4s/tu}"), mfmt("{st/4u}"), mfmt("4stu")],
+    answer: 0,
+    diff: 3,
+    explain:
+      "<span class='xh'>정답 풀이</span>괄호가 없으므로 <i class='mv'>s</i>÷4를 먼저 계산한 뒤 <i class='mv'>t</i>와 <i class='mv'>u</i>를 차례로 곱해요. 따라서 (<i class='mv'>s</i>÷4)×<i class='mv'>t</i>×<i class='mv'>u</i>이므로 결과는 <b>" + mfmt("{stu/4}") + "</b>예요.<span class='xh'>오답 하나씩 격파</span>" + mfmt("{s/4tu}") + "는 <i class='mv'>s</i>÷(4×<i class='mv'>t</i>×<i class='mv'>u</i>)처럼 뒤의 두 문자까지 나누는 식이에요. " + mfmt("{4s/tu}") + "는 4를 곱하고 두 문자로 나누어 연산을 뒤집었어요. " + mfmt("{st/4u}") + "는 <i class='mv'>t</i>는 곱하면서 <i class='mv'>u</i>만 분모에 잘못 넣었고, " + mfmt("4stu") + "는 나누기 4를 곱하기 4로 바꿨어요. 앞에서부터 처리한 인자가 분자의 곱인지 분모의 곱인지 구분하고, 문자는 알파벳 순으로 정리해요.",
+    core: "s÷4×t×u는 앞에서부터 계산하여 stu/4!",
+  },
+  {
+    id: "m1u2e037",
+    lessonId: L,
+    type: "num",
+    prompt: "□×<i class='mv'>x</i>×5를 곱셈 기호 없이 나타내면 35<i class='mv'>x</i>예요. □에 알맞은 수를 구하세요.",
+    answer: "7",
+    numKind: "int",
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>□×<i class='mv'>x</i>×5에서 수끼리 곱한 값이 35<i class='mv'>x</i>의 계수 35가 되어야 해요. 따라서 □×5=35이고 □=<b>7</b>이에요.<span class='xh'>오답 경로 격파</span>35를 그대로 쓰면 35×5=175가 되어 계수가 너무 커져요. 30은 35−5만 계산한 값이라 곱셈 관계를 따르지 않았고, 40은 35+5를 한 값이에요. 5는 보이는 수를 그대로 옮긴 것이라 5×5=25가 돼요. 답 7을 넣으면 7×<i class='mv'>x</i>×5=35<i class='mv'>x</i>로 정확히 돌아가요. 빈칸 계수는 문자 <i class='mv'>x</i>를 잠시 그대로 둔 채 수끼리의 곱셈만 역산해요.",
+    core: "빈칸×5=35이므로 빈칸은 7!",
+  },
+  {
+    id: "m1u2e038",
+    lessonId: L,
+    type: "num",
+    prompt: "<i class='mv'>q</i>×<i class='mv'>q</i>×<i class='mv'>q</i>×<i class='mv'>q</i>를 " + mfmt("q^□") + "로 나타낼 때 □에 알맞은 수를 구하세요.",
+    answer: "4",
+    numKind: "int",
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>지수는 같은 문자가 곱해진 횟수를 나타내요. 식에는 <i class='mv'>q</i>가 네 번 곱해져 있으므로 " + mfmt("q^4") + "가 되고 □=<b>4</b>예요.<span class='xh'>오답 경로 격파</span>1은 문자의 종류가 한 가지라는 사실만 센 값이고, 3은 곱셈 기호의 개수만 세어 문자 하나를 빠뜨린 값이에요. 5는 문자 수에 곱셈 기호 수를 잘못 보탠 결과일 수 있어요. " + mfmt("4q") + "처럼 앞에 4를 붙이면 <i class='mv'>q</i>를 네 번 더한 뜻이므로 같은 문자를 네 번 곱한 것과 달라요. 지수는 × 사이에 놓인 기호 수가 아니라 실제로 반복된 문자의 개수를 세어 정해요.",
+    core: "q가 네 번 곱해졌으므로 지수는 4!",
+  },
+  {
+    id: "m1u2e039",
+    lessonId: L,
+    type: "num",
+    prompt: "(−1)×<i class='mv'>n</i>을 −<i class='mv'>n</i>으로 나타낼 때 생략된 수를 부호까지 쓰세요.",
+    answer: "-1",
+    numKind: "int",
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>−<i class='mv'>n</i>은 (−1)×<i class='mv'>n</i>에서 곱셈 기호와 수 1을 생략한 표기예요. 음수 부호는 남아 있으므로 생략된 수는 <b>−1</b>이에요.<span class='xh'>오답 경로 격파</span>1이라고 쓰면 1×<i class='mv'>n</i>=<i class='mv'>n</i>이 되어 음수 부호를 설명할 수 없어요. 0을 곱하면 문자의 값과 상관없이 0이 되므로 −<i class='mv'>n</i>이 아니고, −<i class='mv'>n</i>에서 보이는 부호만 보고 답을 단순히 −로 쓰는 것도 수를 묻는 질문에 맞지 않아요. <i class='mv'>n</i>=6을 넣으면 −<i class='mv'>n</i>=−6이고, (−1)×6도 −6이 되어 생략된 수가 −1임을 확인할 수 있어요.",
+    core: "−n에서 생략된 계수는 부호를 포함한 −1!",
+  },
+  {
+    id: "m1u2e040",
+    lessonId: L,
+    type: "num",
+    prompt: "<i class='mv'>p</i>÷□를 분수 꼴로 나타내면 " + mfmt("{p/13}") + "이에요. □에 알맞은 수를 구하세요.",
+    answer: "13",
+    numKind: "int",
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>나눗셈을 분수 꼴로 바꾸면 나누는 수가 분모로 내려가요. " + mfmt("{p/13}") + "의 분모가 13이므로 <i class='mv'>p</i>를 나누는 □는 <b>13</b>이에요.<span class='xh'>오답 경로 격파</span><i class='mv'>p</i>는 나누어지는 문자이므로 빈칸에 들어갈 수가 아니에요. 1을 넣으면 <i class='mv'>p</i>÷1=<i class='mv'>p</i>가 되어 분모 13의 의미가 사라져요. −13을 넣으면 분수 전체의 부호가 음수가 되어 주어진 양의 분수와 달라지고, 26은 분모를 두 배로 만들어 값이 절반이 돼요. 분수의 위에는 피제수, 아래에는 제수가 놓인다는 방향을 거꾸로 읽지 않도록 해요.",
+    core: "분모 13은 p를 나누는 수 13!",
+  },
+  {
+    id: "m1u2e041",
+    lessonId: L,
+    type: "num",
+    prompt: "□×<i class='mv'>a</i>×<i class='mv'>b</i>를 곱셈 기호 없이 나타내면 −9<i class='mv'>ab</i>예요. □에 알맞은 수를 구하세요.",
+    answer: "-9",
+    numKind: "int",
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>문자 <i class='mv'>a</i>, <i class='mv'>b</i> 앞의 수는 두 문자의 곱에 함께 곱해지는 수예요. −9<i class='mv'>ab</i>를 다시 펼치면 (−9)×<i class='mv'>a</i>×<i class='mv'>b</i>이므로 □=<b>−9</b>예요.<span class='xh'>오답 경로 격파</span>9라고 쓰면 9<i class='mv'>ab</i>가 되어 부호가 반대예요. −1은 −<i class='mv'>ab</i>만 만들고 수 9를 복원하지 못해요. 18이나 −18은 계수의 절댓값을 두 배로 만들어 원래 식과 같지 않고요. <i class='mv'>a</i>=2, <i class='mv'>b</i>=3을 넣으면 정답은 (−9)×2×3=−54이고, −9<i class='mv'>ab</i>도 −54가 돼요. 숫자와 부호를 함께 하나의 수로 읽어야 해요.",
+    core: "−9ab를 펼치면 (−9)×a×b!",
+  },
+  {
+    id: "m1u2e042",
+    lessonId: L,
+    type: "num",
+    prompt: "18×<i class='mv'>r</i>÷□를 가장 간단히 나타내면 3<i class='mv'>r</i>예요. □에 알맞은 수를 구하세요.",
+    answer: "6",
+    numKind: "int",
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>18×<i class='mv'>r</i>÷□에서 문자 <i class='mv'>r</i>은 그대로이고 수로 된 계수 18을 □로 나눈 결과가 3이어야 해요. 18÷□=3이므로 □=<b>6</b>이에요.<span class='xh'>오답 경로 격파</span>3은 결과의 계수를 그대로 옮긴 값이라 18÷3=6이 되어 6<i class='mv'>r</i>가 나와요. 15는 18−3으로 구한 수라 나눗셈 관계와 맞지 않고, 21은 18+3을 한 값이에요. 54는 18×3을 계산해 나누는 수를 더 크게 잘못 잡은 값이죠. 답 6을 넣으면 18×<i class='mv'>r</i>÷6=3<i class='mv'>r</i>로 정확히 돌아가요. 빈칸은 3×□=18로 역산해도 구할 수 있어요.",
+    core: "18÷빈칸=3이므로 빈칸은 6!",
+  },
+  {
+    id: "m1u2e043",
+    lessonId: L,
+    type: "word",
+    prompt: "수와 문자의 곱에서 곱셈 기호를 생략할 때, 수는 문자의 어느 쪽에 쓰나요?",
+    answer: "앞",
+    bank: ["앞", "뒤", "위", "아래", "분모", "지수", "괄호 밖", "등호 뒤"],
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>수와 문자의 곱에서 ×를 생략하면 수를 문자의 <b>앞</b>에 써요. 예를 들어 <i class='mv'>c</i>×8은 곱의 순서를 바꾸어 8<i class='mv'>c</i>로 나타내요.<span class='xh'>오답 칩 격파</span>'뒤'는 <i class='mv'>c</i>8처럼 쓰게 되어 표기 약속에 맞지 않아요. '위'와 '아래', '분모'는 나눗셈을 분수로 나타낼 때 살피는 위치예요. '지수'는 같은 문자를 여러 번 곱한 횟수를 쓰는 자리이고요. '괄호 밖'은 괄호식과 수의 곱에서 관련될 수 있지만 모든 수와 문자의 곱을 설명하지 못해요. '등호 뒤'도 등식의 위치에 관한 말이라 기호 생략 약속과 무관해요. 수 먼저, 문자 나중 순서를 기억해요.",
+    core: "곱셈 기호를 생략하면 수는 문자 앞!",
+  },
+  {
+    id: "m1u2e044",
+    lessonId: L,
+    type: "word",
+    prompt: "<i class='mv'>a</i>÷<i class='mv'>b</i>를 분수 꼴로 나타낼 때, 나누는 수 <i class='mv'>b</i>가 놓이는 부분을 무엇이라고 하나요?",
+    answer: "분모",
+    bank: ["분모", "분자", "계수", "지수", "밑", "항", "상수항", "괄호"],
+    diff: 3,
+    explain:
+      "<span class='xh'>정답 풀이</span><i class='mv'>a</i>÷<i class='mv'>b</i>는 " + mfmt("{a/b}") + "로 나타내며, 나누는 수 <i class='mv'>b</i>가 놓이는 아래 부분을 <b>분모</b>라고 해요.<span class='xh'>오답 칩 격파</span>'분자'는 나누어지는 수 <i class='mv'>a</i>가 놓이는 위 부분이에요. '계수'는 문자에 곱해진 수이고, '지수'는 같은 인자를 곱한 횟수를 나타내요. '밑'은 거듭제곱에서 반복하여 곱하는 수나 문자이고요. '항'과 '상수항'은 덧셈으로 연결된 식을 구분할 때 쓰는 말이에요. '괄호'는 계산 범위를 묶는 기호이지 분수의 아래쪽 이름이 아니에요. 나눗셈에서는 제수가 분모로 간다고 연결해 기억해요.",
+    core: "a÷b에서 나누는 수 b는 분모!",
+  },
+];
