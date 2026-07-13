@@ -8,6 +8,7 @@
 //            mExamTornHistoFig(찢어진 히스토그램) · mExamAxisPairFig(눈금 조작 쌍).
 // 히스토그램·다각형 단독, 자료 칩, 점 그림은 mathFigures의 histoFig/statDataFig/dotPlotFig를 재사용한다
 // (파라미터형이라 레슨과 "수치·소재 교체"만 지키면 됨 — 레슨 앵커: histoFig [1,7,9,14,5]/20/20 회피).
+import { planeSpec } from "./mathKit";
 
 const INK = "#334155";
 const FAINT = "#94A3B8";
@@ -20,6 +21,159 @@ const LINE = "#DDE3EC";
 
 const svg = (vb: string, aria: string, inner: string): string =>
   `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="${aria}">${inner}</svg>`;
+
+export interface MExamPlanePoint {
+  label: string;
+  x: number;
+  y: number;
+  color?: string;
+  labelDx?: number;
+  labelDy?: number;
+  showCoordinate?: boolean;
+}
+
+export interface MExamPlaneSpec {
+  min: number;
+  max: number;
+  size?: number;
+  labelEvery?: number;
+  points: MExamPlanePoint[];
+}
+
+/**
+ * 좌표평면 시험용 점 그림. 전달한 spec이 좌표·축 범위·눈금·라벨의 단일 진실 공급원이다.
+ * aria-label에는 점 이름만 넣고 좌표값이나 사분면 판정은 넣지 않는다.
+ */
+export function mExamPlaneFig(spec: MExamPlaneSpec): string {
+  const p = planeSpec({ min: spec.min, max: spec.max, size: spec.size ?? 320, labelEvery: spec.labelEvery });
+  let inner = p.grid;
+  for (const point of spec.points) {
+    const cx = p.px(point.x);
+    const cy = p.py(point.y);
+    const color = point.color ?? NAVY;
+    const label = point.showCoordinate
+      ? `${point.label}(${String(point.x).replace("-", "−")}, ${String(point.y).replace("-", "−")})`
+      : point.label;
+    const dx = point.labelDx ?? 0;
+    const dy = point.labelDy ?? (cy > 34 ? -10 : 18);
+    inner +=
+      `<circle cx="${cx}" cy="${cy}" r="5" fill="${color}" stroke="#FFFFFF" stroke-width="1.5"/>` +
+      `<text x="${cx + dx}" y="${cy + dy}" text-anchor="middle" font-size="12" font-weight="900" fill="${INK}">${label}</text>`;
+  }
+  return svg(p.vb, `좌표평면에 표시된 점 ${spec.points.map((point) => point.label).join(", ")}`, inner);
+}
+
+export interface MExamGraphSeries {
+  points: Array<[number, number]>;
+  label?: string;
+  color?: string;
+  dashed?: boolean;
+  smooth?: boolean;
+}
+
+export interface MExamChangeGraphSpec {
+  xMin: number;
+  xMax: number;
+  yMin: number;
+  yMax: number;
+  xTicks: number[];
+  yTicks: number[];
+  xLabel: string;
+  yLabel: string;
+  series: MExamGraphSeries[];
+  width?: number;
+  height?: number;
+}
+
+/** 변화·활용 그래프. 축 범위·라벨·눈금·선의 실제 점을 한 spec에서 렌더한다. */
+export function mExamChangeGraphFig(spec: MExamChangeGraphSpec): string {
+  const width = spec.width ?? 340;
+  const height = spec.height ?? 220;
+  const left = 54;
+  const right = 18;
+  const top = 22;
+  const bottom = 42;
+  const X = (x: number): number => left + ((x - spec.xMin) / (spec.xMax - spec.xMin)) * (width - left - right);
+  const Y = (y: number): number => height - bottom - ((y - spec.yMin) / (spec.yMax - spec.yMin)) * (height - top - bottom);
+  let inner =
+    `<line x1="${left}" y1="${height - bottom}" x2="${width - right + 6}" y2="${height - bottom}" stroke="#64748B" stroke-width="1.8"/>` +
+    `<path d="M${width - right + 6} ${height - bottom} l-7 -4 v8 z" fill="#64748B"/>` +
+    `<line x1="${left}" y1="${height - bottom + 6}" x2="${left}" y2="${top - 6}" stroke="#64748B" stroke-width="1.8"/>` +
+    `<path d="M${left} ${top - 6} l-4 7 h8 z" fill="#64748B"/>`;
+  for (const x of spec.xTicks) {
+    const px = X(x);
+    inner +=
+      `<line x1="${px}" y1="${top}" x2="${px}" y2="${height - bottom}" stroke="${GRID}" stroke-width="1"/>` +
+      `<text x="${px}" y="${height - bottom + 16}" text-anchor="middle" font-size="9" font-weight="700" fill="#8093A8">${String(x).replace("-", "−")}</text>`;
+  }
+  for (const y of spec.yTicks) {
+    const py = Y(y);
+    inner +=
+      `<line x1="${left}" y1="${py}" x2="${width - right}" y2="${py}" stroke="${GRID}" stroke-width="1"/>` +
+      `<text x="${left - 7}" y="${py + 3}" text-anchor="end" font-size="9" font-weight="700" fill="#8093A8">${String(y).replace("-", "−")}</text>`;
+  }
+  inner +=
+    `<text x="${width - right}" y="${height - 8}" text-anchor="end" font-size="10.5" font-weight="800" fill="#64748B">${spec.xLabel}</text>` +
+    `<text x="8" y="14" font-size="10.5" font-weight="800" fill="#64748B">${spec.yLabel}</text>`;
+  spec.series.forEach((series, index) => {
+    const color = series.color ?? [NAVY, ROSE, GREEN, "#F08C2E"][index % 4];
+    const coords = series.points.map(([x, y]) => [X(x), Y(y)] as const);
+    const d = coords.map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
+    inner += `<path d="${d}" stroke="${color}" stroke-width="2.7" ${series.dashed ? 'stroke-dasharray="5 4"' : ""} fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+    for (const [x, y] of coords) inner += `<circle cx="${x}" cy="${y}" r="3.4" fill="#FFFFFF" stroke="${color}" stroke-width="1.8"/>`;
+    if (series.label && coords.length) {
+      const [x, y] = coords[coords.length - 1];
+      inner += `<text x="${x - 3}" y="${y - 8}" text-anchor="end" font-size="10" font-weight="900" fill="${color}">${series.label}</text>`;
+    }
+  });
+  return svg(`${0} ${0} ${width} ${height}`, `${spec.xLabel}과 ${spec.yLabel}의 관계를 나타낸 그래프`, inner);
+}
+
+export interface MExamRelationPlaneSpec extends Omit<MExamPlaneSpec, "points"> {
+  points?: MExamPlanePoint[];
+  lines?: Array<{ a: number; b?: number; label?: string; color?: string }>;
+  inverseCurves?: Array<{ a: number; label?: string; color?: string }>;
+}
+
+/** 정비례 직선·반비례 두 갈래 곡선·표시점을 같은 planeSpec 좌표계에 그린다. */
+export function mExamRelationPlaneFig(spec: MExamRelationPlaneSpec): string {
+  const p = planeSpec({ min: spec.min, max: spec.max, size: spec.size ?? 320, labelEvery: spec.labelEvery });
+  let inner = p.grid;
+  spec.lines?.forEach((line, index) => {
+    const color = line.color ?? [NAVY, ROSE, GREEN][index % 3];
+    const b = line.b ?? 0;
+    inner += `<line x1="${p.px(spec.min)}" y1="${p.py(line.a * spec.min + b)}" x2="${p.px(spec.max)}" y2="${p.py(line.a * spec.max + b)}" stroke="${color}" stroke-width="2.7" stroke-linecap="round"/>`;
+    if (line.label) inner += `<text x="${p.px(spec.max - 0.4)}" y="${p.py(line.a * (spec.max - 0.4) + b) - 7}" text-anchor="end" font-size="10.5" font-weight="900" fill="${color}">${line.label}</text>`;
+  });
+  spec.inverseCurves?.forEach((curve, index) => {
+    const color = curve.color ?? [NAVY, ROSE, GREEN][index % 3];
+    for (const sign of [-1, 1] as const) {
+      const closest = Math.max(Math.abs(curve.a) / Math.max(Math.abs(spec.min), Math.abs(spec.max)), 0.08);
+      let d = "";
+      for (let i = 0; i <= 64; i++) {
+        const absX = closest + (i / 64) * (Math.max(Math.abs(spec.min), Math.abs(spec.max)) - closest);
+        const x = sign * absX;
+        const y = curve.a / x;
+        d += `${i === 0 ? "M" : "L"}${p.px(x).toFixed(1)} ${p.py(y).toFixed(1)} `;
+      }
+      inner += `<path d="${d}" stroke="${color}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+    }
+    if (curve.label) inner += `<text x="${p.px(spec.max - 0.4)}" y="${p.py(curve.a / (spec.max - 0.4)) - 8}" text-anchor="end" font-size="10.5" font-weight="900" fill="${color}">${curve.label}</text>`;
+  });
+  for (const point of spec.points ?? []) {
+    const cx = p.px(point.x);
+    const cy = p.py(point.y);
+    const color = point.color ?? NAVY;
+    const label = point.showCoordinate
+      ? `${point.label}(${String(point.x).replace("-", "−")}, ${String(point.y).replace("-", "−")})`
+      : point.label;
+    inner +=
+      `<circle cx="${cx}" cy="${cy}" r="5" fill="${color}" stroke="#FFFFFF" stroke-width="1.5"/>` +
+      `<text x="${cx + (point.labelDx ?? 0)}" y="${cy + (point.labelDy ?? (cy > 34 ? -10 : 18))}" text-anchor="middle" font-size="12" font-weight="900" fill="${INK}">${label}</text>`;
+  }
+  const names = (spec.points ?? []).map((point) => point.label).join(", ");
+  return svg(p.vb, `좌표평면의 관계 그래프${names ? `와 점 ${names}` : ""}`, inner);
+}
 
 /* ── 줄기와 잎 그림 ─────────────────────────────────────────
  * stems: [줄기, 잎 배열] — 잎은 크기순 정렬해 넘긴다(그림은 받은 순서 그대로 그린다).
