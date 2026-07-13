@@ -22,7 +22,7 @@ type Point = { x: number; y: number };
 type Travel = { target: Target; p: number; done: boolean };
 type Rect = { x: number; y: number; w: number; h: number };
 
-const CVH = 460;
+const CVH = 390;
 
 function css(name: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -80,7 +80,7 @@ export const sugarJourneyLab: StepRenderer = (host, step, api) => {
   const stageCap = el("div", { class: "stage-cap", text: "잎에서 양분을 만든 뒤 밤으로 넘겨 보세요" });
   const stage = el(
     "div",
-    { class: "stage plant-stage" },
+    { class: "stage plant-stage journey-stage" },
     canvas,
     el(
       "div",
@@ -97,8 +97,8 @@ export const sugarJourneyLab: StepRenderer = (host, step, api) => {
   const fruitBtn = el("button", { class: "plant-btn", text: "열매로: 저장", attrs: { type: "button", disabled: true, "aria-disabled": "true" } });
   const rootBtn = el("button", { class: "plant-btn", text: "뿌리로: 호흡·저장", attrs: { type: "button", disabled: true, "aria-disabled": "true" } });
   const note = el("div", {
-    class: "plant-note",
-    html: "<b>파랑은 물관</b>: 뿌리에서 잎으로 물을 올려요. <b>자홍은 체관</b>: 설탕을 만드는 잎에서 필요한 기관으로 보내므로 위쪽과 아래쪽 모두 갈 수 있어요.",
+    class: "plant-note journey-note",
+    html: "<b>자홍색 체관 경로</b>를 따라 설탕이 잎에서 양분을 필요로 하는 어린잎·꽃·열매·뿌리로 이동해요.",
   });
   const helper = el("div", {
     class: "helper",
@@ -108,8 +108,8 @@ export const sugarJourneyLab: StepRenderer = (host, step, api) => {
     goals,
     helper, // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
     stage,
-    el("div", { class: "plant-controls two" }, makeBtn, nightBtn),
-    el("div", { class: "plant-controls three" }, topBtn, fruitBtn, rootBtn),
+    el("div", { class: "plant-controls two journey-controls" }, makeBtn, nightBtn),
+    el("div", { class: "plant-controls three journey-controls" }, topBtn, fruitBtn, rootBtn),
     note,
   );
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -145,7 +145,7 @@ export const sugarJourneyLab: StepRenderer = (host, step, api) => {
     if (done.size === 3 && !finished) {
       finished = true;
       phase = "done";
-      stageCap.textContent = "파랑: 물관의 물 ↑ · 자홍: 체관의 설탕 ↕";
+      stageCap.textContent = "자홍: 잎에서 필요한 기관으로 이어지는 체관의 설탕 이동";
       helper.innerHTML = "여행 완료! 잎의 포도당은 <b>녹말</b>로 잠시 저장되고, 주로 밤에 물에 녹는 <b>설탕</b>으로 바뀌어 <b>체관</b>을 따라 필요한 기관으로 이동해요. 도착한 양분은 호흡·성장에 쓰이거나 여러 형태로 저장돼요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
@@ -295,9 +295,12 @@ export const sugarJourneyLab: StepRenderer = (host, step, api) => {
     }
 
     const geo = plantGeometry(rect);
-    // 물관은 항상 뿌리→잎 위쪽. 체관은 설탕 준비 뒤 양방향 경로가 드러난다.
-    drawFlowArrow(ctx, geo.root.x - 6, geo.root.y, geo.stem.x - 6, geo.stem.y, plantColor("xylem"), 4.2);
-    drawFlowArrow(ctx, geo.stem.x - 6, geo.stem.y, geo.leaf.x, geo.leaf.y + 8, plantColor("xylem"), 4.2);
+    // 이 랩은 양분 배송만 다루므로 물관은 생략하고 체관 경로만 보여 준다.
+    if (phase === "shipping" || phase === "done") {
+      drawPath(ctx, geo.paths.top, plantColor("phloem"), delivered.has("top") ? 0.95 : 0.35);
+      drawPath(ctx, geo.paths.fruit, plantColor("phloem"), delivered.has("fruit") ? 0.95 : 0.35);
+      drawPath(ctx, geo.paths.root, plantColor("phloem"), delivered.has("root") ? 0.95 : 0.35);
+    }
     if (phase === "starch" || phase === "sugar" || phase === "shipping" || phase === "done") {
       const starchAlpha = phase === "sugar" ? 1 - process : phase === "starch" ? 1 : 0;
       const sugarAlpha = phase === "sugar" ? process : phase === "shipping" || phase === "done" ? 1 : 0;
@@ -320,14 +323,9 @@ export const sugarJourneyLab: StepRenderer = (host, step, api) => {
       ctx.restore();
     }
 
-    if (phase === "shipping" || phase === "done") {
-      drawPath(ctx, geo.paths.top, plantColor("phloem"), delivered.has("top") ? 0.95 : 0.35);
-      drawPath(ctx, geo.paths.fruit, plantColor("phloem"), delivered.has("fruit") ? 0.95 : 0.35);
-      drawPath(ctx, geo.paths.root, plantColor("phloem"), delivered.has("root") ? 0.95 : 0.35);
-    }
     for (const travel of travels) {
       const p = pathPoint(geo.paths[travel.target], travel.p);
-      drawMaterialToken(ctx, p.x, p.y, 8.5, "glucose", "설탕");
+      drawMaterialToken(ctx, p.x, p.y, 8.5, "glucose");
     }
     for (const target of delivered) {
       const p = target === "top" ? geo.top : target === "fruit" ? geo.fruit : geo.root;

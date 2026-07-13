@@ -64,7 +64,7 @@ export const POOL_U3L1: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt: "그림은 온도가 서로 다른 같은 종류의 물 (가)~(다)의 입자 운동 모형이에요. 온도가 가장 <b>높은</b> 것과 가장 <b>낮은</b> 것을 차례대로 고른 것은?",
-    figure: particleTrio(),
+    figure: particleTrio(false),
     figureDark: true,
     options: ["(가), (나)", "(가), (다)", "(나), (다)", "(다), (가)", "(다), (나)"],
     answer: 3,
@@ -78,7 +78,7 @@ export const POOL_U3L1: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt: "그림은 같은 종류의 물 (가)와 (나)의 입자 운동 모형이에요. 옳은 것을 <b>보기</b>에서 모두 고른 것은?",
-    figure: particleDuo(),
+    figure: particleDuo(false),
     figureDark: true,
     bogi: [
       "온도는 (나)가 (가)보다 높다.",
@@ -181,7 +181,7 @@ export const POOL_U3L1: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt: "그림은 같은 종류의 물 (가)와 (나)의 입자 모형이에요. <b>얼음물에 가까운 쪽</b>과 그렇게 판단한 <b>까닭</b>을 옳게 짝 지은 것은?",
-    figure: particleDuo(),
+    figure: particleDuo(false),
     figureDark: true,
     options: [
       "(가) — 입자 운동이 둔하고 간격이 좁아서",

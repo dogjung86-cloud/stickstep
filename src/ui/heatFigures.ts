@@ -5,7 +5,7 @@
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
 
 /** 온도가 서로 다른 물 (가)(나)(다) — 입자 운동 비교 (다크 그림) */
-export function particleTrio(): string {
+export function particleTrio(showMotionLines = true): string {
   // 상자 하나를 그리는 도우미: 입자 배치 + 운동 잔상(활발할수록 길게)
   const box = (bx: number, label: string, spread: number, trail: number): string => {
     const pts: [number, number][] = [];
@@ -23,7 +23,7 @@ export function particleTrio(): string {
       .map(([x, y], i) => {
         const a1 = (i * 137) % 360;
         const trails =
-          trail < 1
+          !showMotionLines || trail < 1
             ? ""
             : [0, 1]
                 .map((k) => {
@@ -81,6 +81,11 @@ export function equilibriumGraph(): string {
 
 /** 구리·철·유리 막대를 동시에 가열한 열화상 (다크 그림) */
 export function thermalRods(): string {
+  const flame = (y: number): string => `
+    <g transform="translate(51,${y + 8})">
+      <path d="M0 9 C 8 5 5 -3 0 -11 C -5 -3 -8 5 0 9 Z" fill="#FF9F43"/>
+      <path d="M0 5 C 4 3 3 -2 0 -6 C -3 -2 -4 3 0 5 Z" fill="#FFE9A8"/>
+    </g>`;
   const rod = (y: number, label: string, frac: number): string => {
     const w = 250 * frac;
     return `<g>
@@ -88,6 +93,7 @@ export function thermalRods(): string {
       <rect x="62" y="${y}" width="250" height="16" rx="8" fill="#22335C"/>
       ${w > 4 ? `<rect x="62" y="${y}" width="${w}" height="16" rx="8" fill="url(#heatGrad)"/>` : ""}
       <rect x="62" y="${y}" width="250" height="16" rx="8" fill="none" stroke="#31456F" stroke-width="1.2"/>
+      ${flame(y)}
     </g>`;
   };
   return `<svg viewBox="0 0 344 190" ${NS} role="img" aria-label="구리, 철, 유리 막대의 왼쪽 끝을 동시에 가열한 열화상 사진. 구리가 가장 멀리, 유리는 거의 데워지지 않았다">
@@ -102,14 +108,7 @@ export function thermalRods(): string {
     ${rod(44, "구리", 0.86)}
     ${rod(102, "철", 0.44)}
     ${rod(160, "유리", 0.1)}
-    <g>
-      <path d="M34 172 C 44 166 40 158 34 150 C 28 158 24 166 34 172 Z" fill="#FF9F43"/>
-      <path d="M34 168 C 40 164 38 158 34 153 C 30 158 28 164 34 168 Z" fill="#FFE9A8"/>
-      <text x="34" y="186" text-anchor="middle" font-size="11" fill="#7E93B3">가열</text>
-      <path d="M30 132 L30 60" stroke="#54719F" stroke-width="1.6" stroke-dasharray="3 4"/>
-      <path d="M34 140 C 44 134 40 126 34 118 C 28 126 24 134 34 140 Z" fill="#FF9F43" opacity=".9"/>
-      <path d="M34 76 C 44 70 40 62 34 54 C 28 62 24 70 34 76 Z" fill="#FF9F43" opacity=".9"/>
-    </g>
+    <text x="34" y="186" text-anchor="middle" font-size="11" fill="#7E93B3">가열</text>
   </svg>`;
 }
 

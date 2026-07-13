@@ -107,9 +107,8 @@ export function ionMoveFig(): string {
   return `<svg viewBox="0 0 344 160" ${NS} fill="none" role="img" aria-label="거름종이 양끝에 전극을 연결하고 가운데에 수용액을 떨어뜨린 실험 장치">
     <rect x="52" y="56" width="240" height="56" rx="8" fill="#F4F7FB" stroke="#B0B8C1" stroke-width="1.8"/>
     <rect x="40" y="46" width="14" height="76" rx="4" fill="#8B99AC"/><rect x="290" y="46" width="14" height="76" rx="4" fill="#8B99AC"/>
-    <path d="M47 46V26h100M297 46V26h-100" stroke="#8B95A1" stroke-width="2.2" fill="none"/>
-    <circle cx="47" cy="20" r="10" fill="#F0685A"/><text x="47" y="24.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">+</text>
-    <circle cx="297" cy="20" r="10" fill="#5A88D8"/><text x="297" y="24.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">−</text>
+    <circle cx="47" cy="34" r="10" fill="#F0685A"/><text x="47" y="38.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">+</text>
+    <circle cx="297" cy="34" r="10" fill="#5A88D8"/><text x="297" y="38.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">−</text>
     <circle cx="172" cy="84" r="15" fill="#7FB0E8" opacity=".75"/>
     <text x="172" y="132" text-anchor="middle" font-size="11" fill="#4E5968">황산 구리(Ⅱ) 수용액 한 방울</text>
   </svg>`;

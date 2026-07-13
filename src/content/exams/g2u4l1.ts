@@ -136,8 +136,8 @@ export const POOL_G2U4L1: ExamItem[] = [
     id: "g2u4e08",
     lessonId: L,
     type: "mcq",
-    prompt: "사진은 물을 전기로 분해하는 실험이에요. 물이 수소 기체와 산소 기체로 나누어진다는 사실이 말해 주는 것은?",
-    figure: ximg("electrolysis.webp", "물이 든 용기에 전극을 꽂고 그 위 두 시험관에 기체가 모이는 실험 장치 사진"),
+    prompt: "그림은 물을 전기로 분해하는 실험이에요. 물이 수소 기체와 산소 기체로 나누어진다는 사실이 말해 주는 것은?",
+    figure: atomElectrolysisFig(),
     options: [
       "물은 수소와 산소로 이루어진 화합물이다",
       "물은 더 이상 분해되지 않는 원소이다",

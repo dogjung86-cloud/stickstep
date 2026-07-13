@@ -116,12 +116,12 @@ export function starchTestFig(): string {
   return svg(
     `<rect x="8" y="8" width="344" height="204" rx="18" fill="var(--subj-plant-tint)"/>
      <g transform="translate(28 24)"><ellipse cx="70" cy="139" rx="70" ry="24" fill="var(--n0)" stroke="var(--n300)" stroke-width="2"/>
-     <path d="M18 125 C29 62 101 42 130 68 C119 125 74 150 18 125 Z" fill="var(--plant-leaf)" stroke="var(--plant-leaf-lo)" stroke-width="2.4"/>
-     <path d="M35 119 C48 75 94 68 116 85 C104 127 62 137 35 119 Z" fill="var(--stage)" opacity=".88"/>
-     <text x="70" y="181" text-anchor="middle" font-size="14" font-weight="850" fill="var(--n700)">햇빛을 받은 잎</text></g>
+     <path d="M18 125 C29 62 101 42 130 68 C119 125 74 150 18 125 Z" fill="var(--blue-press)" stroke="var(--blue-tint-2)" stroke-width="3"/>
+     <path d="M25 122 C55 108 78 91 116 73 M54 109 L46 88 M76 96 L88 76" fill="none" stroke="var(--blue-tint-2)" stroke-width="2.2" stroke-linecap="round" opacity=".86"/>
+     <text x="70" y="181" text-anchor="middle" font-size="14" font-weight="850" fill="var(--n700)">햇빛 받은 잎</text></g>
      <g transform="translate(192 24)"><ellipse cx="70" cy="139" rx="70" ry="24" fill="var(--n0)" stroke="var(--n300)" stroke-width="2"/>
      <path d="M18 125 C29 62 101 42 130 68 C119 125 74 150 18 125 Z" fill="var(--plant-leaf-hi)" stroke="var(--plant-leaf-lo)" stroke-width="2.4" opacity=".72"/>
-     <text x="70" y="181" text-anchor="middle" font-size="14" font-weight="850" fill="var(--n700)">빛을 가린 잎</text></g>`,
+     <text x="70" y="181" text-anchor="middle" font-size="14" font-weight="850" fill="var(--n700)">햇빛 가린 잎</text></g>`,
     "",
     "0 0 360 220",
     "빛을 받은 부분과 가린 부분의 아이오딘 녹말 반응 비교",

@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>과학 단원 종합평가 그림 문항 검수</title>
+    <style>
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--app-bg);
+        color: var(--n900);
+        font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+          "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+        letter-spacing: -.012em;
+        -webkit-font-smoothing: antialiased;
+      }
+      button, input { font: inherit; letter-spacing: inherit; }
+      button { color: inherit; }
+      .shell { width: min(1480px, 100%); margin: 0 auto; padding: 34px 28px 72px; }
+      .hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 22px; }
+      .eyebrow { margin: 0 0 8px; color: var(--blue); font-size: 13px; font-weight: 800; }
+      h1 { margin: 0; font-size: clamp(27px, 4vw, 42px); line-height: 1.15; letter-spacing: -.035em; }
+      .lead { margin: 12px 0 0; color: var(--n700); font-size: 15px; line-height: 1.55; }
+      .total {
+        flex: 0 0 auto;
+        min-width: 136px;
+        padding: 15px 18px;
+        border: 1px solid var(--n200);
+        border-radius: var(--r-lg);
+        background: var(--n0);
+        box-shadow: var(--sh-card);
+        text-align: right;
+      }
+      .total b { display: block; color: var(--blue); font-size: 25px; line-height: 1; }
+      .total span { display: block; margin-top: 6px; color: var(--n600); font-size: 12px; font-weight: 700; }
+      .toolbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        margin: 0 -12px 24px;
+        padding: 12px;
+        border: 1px solid var(--n200);
+        border-radius: var(--r-xl);
+        background: var(--glass-bg, var(--n0));
+        box-shadow: var(--sh-card);
+        backdrop-filter: blur(18px);
+      }
+      .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .row + .row { margin-top: 10px; }
+      .seg, .unit, .filter {
+        min-height: 40px;
+        border: 1px solid var(--n200);
+        border-radius: 999px;
+        background: var(--n0);
+        padding: 0 16px;
+        font-weight: 750;
+        cursor: pointer;
+        transition: transform .14s var(--spring), border-color .18s, background .18s, color .18s;
+      }
+      .seg:active, .unit:active, .filter:active { transform: scale(.965); }
+      .seg.active { border-color: var(--blue); background: var(--blue); color: var(--n0); }
+      .unit.active { border-color: var(--blue); background: var(--blue-tint); color: var(--blue); }
+      .filter.active { border-color: var(--n800); background: var(--n900); color: var(--n0); }
+      .unit small { margin-left: 6px; color: var(--n600); font-size: 11px; }
+      .unit.active small { color: inherit; }
+      .search {
+        flex: 1 1 240px;
+        min-height: 40px;
+        border: 1px solid var(--n200);
+        border-radius: 999px;
+        background: var(--n0);
+        padding: 0 16px;
+        color: var(--n900);
+        outline: none;
+      }
+      .search:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-tint); }
+      .status { margin-left: auto; color: var(--n700); font-size: 13px; font-weight: 750; }
+      .unit-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin: 30px 0 16px; }
+      .unit-kicker { margin: 0 0 4px; color: var(--blue); font-size: 12px; font-weight: 800; }
+      .unit-title { margin: 0; font-size: 25px; line-height: 1.25; letter-spacing: -.025em; }
+      .unit-summary { color: var(--n600); font-size: 13px; font-weight: 700; text-align: right; }
+      .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+      .card {
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid var(--n200);
+        border-radius: var(--r-xl);
+        background: var(--n0);
+        box-shadow: var(--sh-card);
+      }
+      .card-head { display: flex; align-items: center; gap: 8px; padding: 16px 18px 0; }
+      .qid { color: var(--n800); font-size: 13px; font-weight: 850; }
+      .lesson { color: var(--n600); font-size: 12px; font-weight: 700; }
+      .kind {
+        margin-left: auto;
+        border-radius: 999px;
+        background: var(--blue-tint);
+        color: var(--blue);
+        padding: 5px 9px;
+        font-size: 11px;
+        font-weight: 800;
+      }
+      .kind.image { background: var(--green-tint); color: var(--green); }
+      .prompt { padding: 13px 18px 0; font-size: 16px; font-weight: 750; line-height: 1.58; word-break: keep-all; }
+      .bogi { display: grid; gap: 7px; margin: 13px 18px 0; padding: 12px 14px; border-radius: var(--r-md); background: var(--n50); }
+      .bogi-row { display: grid; grid-template-columns: 24px 1fr; gap: 4px; color: var(--n800); font-size: 14px; line-height: 1.5; }
+      .bogi-row b { color: var(--blue); }
+      .figure {
+        margin: 15px 18px 0;
+        overflow: hidden;
+        border: 1px solid var(--n200);
+        border-radius: var(--r-lg);
+        background: var(--n0);
+        padding: 12px;
+      }
+      .figure.dark { border-color: var(--stage-line); background: var(--stage); }
+      .figure img { display: block; width: 100%; height: auto; max-height: 520px; object-fit: contain; }
+      .figure svg { display: block; width: 100%; max-width: 100%; height: auto; margin: 0 auto; }
+      .options { display: grid; gap: 8px; padding: 15px 18px 18px; }
+      .option { display: grid; grid-template-columns: 25px 1fr; gap: 6px; color: var(--n800); font-size: 14px; line-height: 1.48; }
+      .option b { display: grid; place-items: center; width: 21px; height: 21px; border-radius: 50%; background: var(--n100); color: var(--n700); font-size: 11px; }
+      details { border-top: 1px solid var(--n200); background: var(--n50); }
+      summary { padding: 13px 18px; color: var(--n700); font-size: 13px; font-weight: 800; cursor: pointer; }
+      .answer { padding: 0 18px 17px; color: var(--n800); font-size: 13px; line-height: 1.6; }
+      .answer b { color: var(--green); }
+      .empty { grid-column: 1 / -1; padding: 72px 24px; color: var(--n600); text-align: center; }
+      @media (max-width: 860px) {
+        .shell { padding: 24px 14px 56px; }
+        .hero { align-items: flex-start; flex-direction: column; }
+        .total { text-align: left; }
+        .toolbar { border-radius: var(--r-lg); }
+        .cards { grid-template-columns: 1fr; }
+        .unit-head { align-items: flex-start; flex-direction: column; }
+        .unit-summary { text-align: left; }
+        .status { width: 100%; margin: 2px 0 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">콘텐츠 검수</p>
+          <h1>과학 단원 종합평가 그림 문항</h1>
+          <p class="lead">발주 이미지 또는 SVG 도해가 들어간 문항만 학년별·단원별로 모았어요.</p>
+        </div>
+        <div class="total"><b id="grand-total">0</b><span>전체 그림 문항</span></div>
+      </header>
+
+      <nav class="toolbar" aria-label="그림 문항 필터">
+        <div class="row" id="grade-tabs"></div>
+        <div class="row" id="unit-tabs"></div>
+        <div class="row">
+          <button class="filter active" type="button" data-kind="all">전체 그림</button>
+          <button class="filter" type="button" data-kind="image">발주 이미지</button>
+          <button class="filter" type="button" data-kind="svg">SVG 도해</button>
+          <input class="search" id="search" type="search" placeholder="문항 ID나 본문으로 찾기" />
+          <span class="status" id="status"></span>
+        </div>
+      </nav>
+
+      <section>
+        <div class="unit-head">
+          <div>
+            <p class="unit-kicker" id="unit-kicker"></p>
+            <h2 class="unit-title" id="unit-title"></h2>
+          </div>
+          <div class="unit-summary" id="unit-summary"></div>
+        </div>
+        <div class="cards" id="cards"></div>
+      </section>
+    </main>
+
+    <script type="module">
+      import "/src/styles/tokens.css";
+      import { U2_EXAM } from "/src/content/exams/u2.ts";
+      import { U3_EXAM } from "/src/content/exams/u3.ts";
+      import { U4_EXAM } from "/src/content/exams/u4.ts";
+      import { U5_EXAM } from "/src/content/exams/u5.ts";
+      import { U6_EXAM } from "/src/content/exams/u6.ts";
+      import { U7_EXAM } from "/src/content/exams/u7.ts";
+      import { G2U1_EXAM } from "/src/content/exams/g2u1.ts";
+      import { G2U2_EXAM } from "/src/content/exams/g2u2.ts";
+      import { G2U3_EXAM } from "/src/content/exams/g2u3.ts";
+      import { G2U4_EXAM } from "/src/content/exams/g2u4.ts";
+      import { G2U7_EXAM } from "/src/content/exams/g2u7.ts";
+      import { G2U8_EXAM } from "/src/content/exams/g2u8.ts";
+
+      const grades = [
+        {
+          id: "g1",
+          label: "중1 과학",
+          units: [
+            { roman: "II", def: U2_EXAM },
+            { roman: "III", def: U3_EXAM },
+            { roman: "IV", def: U4_EXAM },
+            { roman: "V", def: U5_EXAM },
+            { roman: "VI", def: U6_EXAM },
+            { roman: "VII", def: U7_EXAM },
+          ],
+        },
+        {
+          id: "g2",
+          label: "중2 과학",
+          units: [
+            { roman: "I", def: G2U1_EXAM },
+            { roman: "II", def: G2U2_EXAM },
+            { roman: "III", def: G2U3_EXAM },
+            { roman: "IV", def: G2U4_EXAM },
+            { roman: "VII", def: G2U7_EXAM },
+            { roman: "VIII", def: G2U8_EXAM },
+          ],
+        },
+      ];
+
+      const gradeTabs = document.querySelector("#grade-tabs");
+      const unitTabs = document.querySelector("#unit-tabs");
+      const cards = document.querySelector("#cards");
+      const search = document.querySelector("#search");
+      const status = document.querySelector("#status");
+      const unitKicker = document.querySelector("#unit-kicker");
+      const unitTitle = document.querySelector("#unit-title");
+      const unitSummary = document.querySelector("#unit-summary");
+      const grandTotal = document.querySelector("#grand-total");
+
+      let activeGrade = 0;
+      let activeUnit = 0;
+      let activeKind = "all";
+      let query = "";
+
+      function visualKind(item) {
+        if (!item.figure) return null;
+        if (/<img\b/i.test(item.figure)) return "image";
+        if (/<svg\b/i.test(item.figure)) return "svg";
+        return null;
+      }
+
+      function visualItems(def) {
+        return def.pool.filter((item) => visualKind(item));
+      }
+
+      function unitForHash() {
+        const id = location.hash.slice(1);
+        if (!id) return;
+        for (let gi = 0; gi < grades.length; gi += 1) {
+          const ui = grades[gi].units.findIndex((unit) => unit.def.unitId === id);
+          if (ui >= 0) {
+            activeGrade = gi;
+            activeUnit = ui;
+            return;
+          }
+        }
+      }
+
+      function answerText(item) {
+        if (Array.isArray(item.answer)) return item.answer.map((v) => `${v + 1}번`).join(", ");
+        if (typeof item.answer === "number") return `${item.answer + 1}번`;
+        return `${item.answer}${item.unitLabel ? ` ${item.unitLabel}` : ""}`;
+      }
+
+      function figureHtml(item) {
+        return item.figure.replace(/<img\s/gi, '<img loading="lazy" decoding="async" ');
+      }
+
+      function bogiHtml(item) {
+        if (!item.bogi?.length) return "";
+        const labels = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ"];
+        return `<div class="bogi">${item.bogi.map((value, index) =>
+          `<div class="bogi-row"><b>${labels[index] ?? index + 1}</b><span>${value}</span></div>`
+        ).join("")}</div>`;
+      }
+
+      function optionsHtml(item) {
+        if (!item.options?.length) return "";
+        return `<div class="options">${item.options.map((value, index) =>
+          `<div class="option"><b>${index + 1}</b><span>${value}</span></div>`
+        ).join("")}</div>`;
+      }
+
+      function cardHtml(item) {
+        const kind = visualKind(item);
+        const lessonNo = item.lessonId.match(/l(\d+)$/)?.[1] ?? item.lessonId;
+        return `<article class="card" data-kind="${kind}">
+          <div class="card-head">
+            <span class="qid">${item.id}</span>
+            <span class="lesson">레슨 ${lessonNo}</span>
+            <span class="kind ${kind}">${kind === "image" ? "발주 이미지" : "SVG 도해"}</span>
+          </div>
+          <div class="prompt">${item.prompt}</div>
+          ${bogiHtml(item)}
+          <div class="figure ${item.figureDark ? "dark" : ""}">${figureHtml(item)}</div>
+          ${optionsHtml(item)}
+          <details>
+            <summary>정답과 해설 보기</summary>
+            <div class="answer"><b>정답 ${answerText(item)}</b><br />${item.explain}</div>
+          </details>
+        </article>`;
+      }
+
+      function renderGradeTabs() {
+        gradeTabs.innerHTML = grades.map((grade, index) => {
+          const count = grade.units.reduce((sum, unit) => sum + visualItems(unit.def).length, 0);
+          return `<button class="seg ${index === activeGrade ? "active" : ""}" type="button" data-grade="${index}">${grade.label} · ${count}문항</button>`;
+        }).join("");
+      }
+
+      function renderUnitTabs() {
+        const grade = grades[activeGrade];
+        unitTabs.innerHTML = grade.units.map((unit, index) => {
+          const count = visualItems(unit.def).length;
+          return `<button class="unit ${index === activeUnit ? "active" : ""}" type="button" data-unit="${index}">${unit.roman}. ${unit.def.title}<small>${count}</small></button>`;
+        }).join("");
+      }
+
+      function renderCards() {
+        const grade = grades[activeGrade];
+        const unit = grade.units[activeUnit];
+        const all = visualItems(unit.def);
+        const imageCount = all.filter((item) => visualKind(item) === "image").length;
+        const svgCount = all.length - imageCount;
+        const q = query.trim().toLocaleLowerCase("ko");
+        const shown = all.filter((item) => {
+          const kindMatches = activeKind === "all" || visualKind(item) === activeKind;
+          const text = `${item.id} ${item.lessonId} ${item.prompt}`.replace(/<[^>]+>/g, " ").toLocaleLowerCase("ko");
+          return kindMatches && (!q || text.includes(q));
+        });
+
+        unitKicker.textContent = grade.label;
+        unitTitle.textContent = `${unit.roman}. ${unit.def.title}`;
+        unitSummary.textContent = `발주 이미지 ${imageCount}문항 · SVG 도해 ${svgCount}문항`;
+        status.textContent = `${shown.length}문항 표시 중`;
+        cards.innerHTML = shown.length ? shown.map(cardHtml).join("") : '<div class="empty">조건에 맞는 그림 문항이 없어요.</div>';
+        history.replaceState(null, "", `#${unit.def.unitId}`);
+      }
+
+      function render() {
+        renderGradeTabs();
+        renderUnitTabs();
+        renderCards();
+      }
+
+      gradeTabs.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-grade]");
+        if (!button) return;
+        activeGrade = Number(button.dataset.grade);
+        activeUnit = 0;
+        render();
+        scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      unitTabs.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-unit]");
+        if (!button) return;
+        activeUnit = Number(button.dataset.unit);
+        render();
+        scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      document.querySelectorAll("[data-kind]").forEach((button) => {
+        button.addEventListener("click", () => {
+          activeKind = button.dataset.kind;
+          document.querySelectorAll("[data-kind]").forEach((candidate) => candidate.classList.toggle("active", candidate === button));
+          renderCards();
+        });
+      });
+
+      search.addEventListener("input", () => {
+        query = search.value;
+        renderCards();
+      });
+
+      const total = grades.reduce((gradeSum, grade) =>
+        gradeSum + grade.units.reduce((unitSum, unit) => unitSum + visualItems(unit.def).length, 0), 0);
+      grandTotal.textContent = total.toLocaleString("ko-KR");
+      unitForHash();
+      render();
+    </script>
+  </body>
+</html>

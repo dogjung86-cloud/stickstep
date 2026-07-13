@@ -3,12 +3,16 @@
 import type { ExamItem } from "./types";
 import { animalCell, plantCell } from "../../ui/figures";
 import { cellTypeArt } from "../../ui/bioFigures";
-import { bioCellRolesExamFig } from "../../ui/examFigures";
 
 const L = "u2l1";
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 const ximg = (file: string, alt: string): string =>
   `<img src="${IMG_BASE}exam/u2/${file}" alt="${alt}" style="display:block;width:100%;border-radius:14px" />`;
+const cellRolesFigure = (): string =>
+  `<div role="img" aria-label="㉠ 신경세포, ㉡ 적혈구, ㉢ 빈틈없이 이어진 상피세포" style="overflow:hidden;border-radius:14px;background:#FBF8F1">
+    <img src="${IMG_BASE}exam/u2/cell-roles-triptych.webp" alt="" style="display:block;width:100%" />
+    <div aria-hidden="true" style="display:grid;grid-template-columns:repeat(3,1fr);padding:6px 0 8px;text-align:center;font-weight:800;color:#4E5968"><span>㉠</span><span>㉡</span><span>㉢</span></div>
+  </div>`;
 
 export const POOL_U2L1: ExamItem[] = [
   {
@@ -58,7 +62,7 @@ export const POOL_U2L1: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt: "그림의 ㉠~㉢ 중 하나가 피부 표면에서 촘촘한 층을 이루고 있어요. 이 층에 틈이 많이 생겼을 때 가장 직접적으로 약해질 기능은?",
-    figure: bioCellRolesExamFig(),
+    figure: cellRolesFigure(),
     options: [
       "몸의 표면을 덮어 보호하는 기능",
       "산소를 온몸으로 운반하는 기능",
@@ -191,7 +195,7 @@ export const POOL_U2L1: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt: "그림의 ㉠~㉢ 세포에 변화가 생겼어요. 변화와 그 결과를 가장 타당하게 연결한 것은?",
-    figure: bioCellRolesExamFig(),
+    figure: cellRolesFigure(),
     options: [
       "㉠의 긴 돌기가 짧아짐 — 먼 곳까지 신호를 전달하기 어려워짐",
       "㉡의 가운데 오목한 부분이 넓어짐 — 광합성이 멈춤",
@@ -209,7 +213,7 @@ export const POOL_U2L1: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt: "그림과 같은 세포들이 기관의 안쪽 표면을 덮고 있어요. 이 세포들의 배열이 맡은 일에 알맞은 까닭은?",
-    figure: cellTypeArt("epithelial"),
+    figure: ximg("cell-shapes-observation-epithelial.webp", "u2e06의 오른쪽에 제시된 빈틈없이 이어진 상피세포"),
     options: [
       "납작한 세포가 촘촘히 이어져 경계를 만들 수 있어서",
       "각 세포에 긴 돌기가 있어 신호를 먼 곳으로 보내서",

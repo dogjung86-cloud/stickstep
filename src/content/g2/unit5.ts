@@ -7,13 +7,139 @@ import {
 } from "../dsl";
 import {
   plantMiniArt, leafRouteFig, sensorGraphFig, starchTestFig, factorCurvesFig,
-  respirationCycleFig, dayNightFlowFig, transportFig,
+  respirationCycleFig,
 } from "../../ui/plantFigures";
 
 const IMG_BASE = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/";
 
 const pimg = (path: string, alt: string): string =>
   `<img src="${IMG_BASE}plant/${path}" alt="${alt}" draggable="false" style="display:block;width:100%;border-radius:14px"/>`;
+
+const dayProcessOverlay = (id: string): string =>
+  `<svg class="dn-process-map dn-process-day" viewBox="0 0 300 200" role="img" aria-label="낮에는 이산화 탄소가 들어가고 산소가 나오는 광합성이 크게 일어나며 산소를 쓰고 이산화 탄소를 내보내는 호흡도 계속됨">
+    <defs>
+      <marker id="${id}-carbon-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path class="dn-marker-carbon" d="M0 0 L10 5 L0 10 Z"/></marker>
+      <marker id="${id}-oxygen-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path class="dn-marker-oxygen" d="M0 0 L10 5 L0 10 Z"/></marker>
+    </defs>
+    <path class="dn-gas-path dn-photo-path carbon" marker-end="url(#${id}-carbon-arrow)" d="M14 103 C54 103 94 103 126 103"/>
+    <path class="dn-gas-path dn-photo-path oxygen" marker-end="url(#${id}-oxygen-arrow)" d="M174 103 C210 103 250 103 286 103"/>
+    <g class="dn-process-label photosynthesis"><rect x="105" y="45" width="90" height="26" rx="13"/><text x="150" y="58">광합성</text></g>
+    <g class="dn-gas-chip carbon"><rect x="8" y="70" width="88" height="22" rx="11"/><text x="52" y="81">이산화 탄소</text></g>
+    <g class="dn-gas-chip oxygen"><rect x="214" y="70" width="58" height="22" rx="11"/><text x="243" y="81">산소</text></g>
+    <path class="dn-gas-path dn-resp-path oxygen" marker-end="url(#${id}-oxygen-arrow)" d="M286 164 C244 164 208 164 174 164"/>
+    <path class="dn-gas-path dn-resp-path carbon" marker-end="url(#${id}-carbon-arrow)" d="M126 164 C90 164 52 164 14 164"/>
+    <g class="dn-process-label respiration"><rect x="112" y="124" width="76" height="24" rx="12"/><text x="150" y="136">호흡</text></g>
+    <g class="dn-gas-chip carbon"><rect x="8" y="169" width="88" height="22" rx="11"/><text x="52" y="180">이산화 탄소</text></g>
+    <g class="dn-gas-chip oxygen"><rect x="214" y="169" width="58" height="22" rx="11"/><text x="243" y="180">산소</text></g>
+  </svg>`;
+
+const nightProcessOverlay = (id: string): string =>
+  `<svg class="dn-process-map dn-process-night" viewBox="0 0 300 200" role="img" aria-label="밤에는 산소가 식물로 들어가고 이산화 탄소가 나오는 호흡만 계속됨">
+    <defs>
+      <marker id="${id}-carbon-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path class="dn-marker-carbon" d="M0 0 L10 5 L0 10 Z"/></marker>
+      <marker id="${id}-oxygen-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path class="dn-marker-oxygen" d="M0 0 L10 5 L0 10 Z"/></marker>
+    </defs>
+    <path class="dn-gas-path dn-night-path oxygen" marker-end="url(#${id}-oxygen-arrow)" d="M14 132 C52 132 92 132 126 132"/>
+    <path class="dn-gas-path dn-night-path carbon" marker-end="url(#${id}-carbon-arrow)" d="M174 132 C210 132 250 132 286 132"/>
+    <g class="dn-process-label respiration"><rect x="112" y="76" width="76" height="26" rx="13"/><text x="150" y="89">호흡</text></g>
+    <g class="dn-gas-chip oxygen"><rect x="22" y="96" width="58" height="22" rx="11"/><text x="51" y="107">산소</text></g>
+    <g class="dn-gas-chip carbon"><rect x="204" y="96" width="88" height="22" rx="11"/><text x="248" y="107">이산화 탄소</text></g>
+  </svg>`;
+
+const dayNightToggleFig = (): string =>
+  `<div class="plant-day-night-toggle">
+    <input class="dn-choice" type="radio" id="g2u5-day-scene" name="g2u5-day-night-scene" checked/>
+    <input class="dn-choice" type="radio" id="g2u5-night-scene" name="g2u5-day-night-scene"/>
+    <div class="dn-tabs" role="tablist" aria-label="낮과 밤 장면 선택">
+      <label class="dn-tab dn-tab-day" for="g2u5-day-scene">낮</label>
+      <label class="dn-tab dn-tab-night" for="g2u5-night-scene">밤</label>
+    </div>
+    <div class="dn-scenes">
+      <section class="dn-scene dn-scene-day" aria-label="강한 낮의 식물">
+        <div class="dn-art">
+          <img src="${IMG_BASE}plant/figs/day-observatory.webp" alt="햇빛이 비치는 식물 관찰실의 화분 식물" draggable="false"/>
+          ${dayProcessOverlay("dn-toggle-day")}
+        </div>
+        <div class="dn-copy">
+          <div class="dn-head"><strong>강한 낮</strong><span>광합성 + 호흡</span></div>
+          <p>두 과정이 함께 일어나지만 광합성량이 더 커요.</p>
+        </div>
+      </section>
+      <section class="dn-scene dn-scene-night" aria-label="빛 없는 밤의 식물">
+        <div class="dn-art">
+          <img src="${IMG_BASE}plant/figs/night-observatory.webp" alt="달빛이 비치는 식물 관찰실의 같은 화분 식물" draggable="false"/>
+          ${nightProcessOverlay("dn-toggle-night")}
+        </div>
+        <div class="dn-copy">
+          <div class="dn-head"><strong>빛 없는 밤</strong><span>호흡만 진행</span></div>
+          <p>광합성은 멈추지만 호흡은 계속돼요.</p>
+        </div>
+      </section>
+    </div>
+  </div>`;
+
+const strongDayFig = (): string =>
+  `<div class="dn-question-card">
+    <div class="dn-art">
+      <img src="${IMG_BASE}plant/figs/day-observatory.webp" alt="강한 낮에 햇빛을 받는 화분 식물" draggable="false"/>
+      ${dayProcessOverlay("dn-question-day")}
+    </div>
+    <div class="dn-copy">
+      <div class="dn-head"><strong>강한 낮</strong><span>광합성 + 호흡</span></div>
+    </div>
+  </div>`;
+
+const transportToggleFig = (): string =>
+  `<div class="plant-transport-toggle">
+    <input class="pt-choice" type="radio" id="g2u5-transport-water" name="g2u5-transport-scene" checked/>
+    <input class="pt-choice" type="radio" id="g2u5-transport-food" name="g2u5-transport-scene"/>
+    <div class="pt-tabs" role="tablist" aria-label="물과 양분의 이동 선택">
+      <label class="pt-tab pt-tab-water" for="g2u5-transport-water">물의 이동</label>
+      <label class="pt-tab pt-tab-food" for="g2u5-transport-food">양분의 이동</label>
+    </div>
+    <div class="pt-scenes">
+      <section class="pt-scene pt-scene-water" aria-label="물관을 따른 물의 이동">
+        <div class="pt-art">
+          <img src="${IMG_BASE}plant/figs/whole-plant.webp" alt="뿌리와 줄기와 잎이 이어진 토마토 식물" draggable="false"/>
+          <svg class="pt-flow pt-flow-water" viewBox="0 0 100 100" aria-hidden="true">
+            <defs><marker id="pt-water-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path class="pt-arrow-head" d="M0 0 L10 5 L0 10 Z"/></marker></defs>
+            <path class="pt-path" marker-end="url(#pt-water-arrow)" d="M50 95 C50 78 50 42 50 10"/>
+            <path class="pt-path" marker-end="url(#pt-water-arrow)" d="M14 92 C28 87 39 80 49 71"/>
+            <path class="pt-path" marker-end="url(#pt-water-arrow)" d="M86 92 C72 87 61 80 51 71"/>
+            <path class="pt-path" marker-end="url(#pt-water-arrow)" d="M50 68 C41 61 31 51 23 38"/>
+            <path class="pt-path" marker-end="url(#pt-water-arrow)" d="M50 57 C62 50 72 38 80 27"/>
+            <path class="pt-path" marker-end="url(#pt-water-arrow)" d="M50 42 C43 35 39 27 35 19"/>
+            <circle class="pt-token" cx="14" cy="92" r="1.7"/><circle class="pt-token" cx="50" cy="95" r="1.7"/><circle class="pt-token" cx="86" cy="92" r="1.7"/>
+          </svg>
+        </div>
+        <div class="pt-copy">
+          <div class="pt-head"><strong>물의 이동</strong><span>물관</span></div>
+          <div class="pt-summary"><b>뿌리</b><span>위·위쪽 왼쪽·위쪽 오른쪽</span><b>잎</b></div>
+          <p>뿌리에서 흡수한 물은 물관을 따라 줄기와 가지를 지나 잎으로 올라가요.</p>
+        </div>
+      </section>
+      <section class="pt-scene pt-scene-food" aria-label="체관을 따른 양분의 이동">
+        <div class="pt-art">
+          <img src="${IMG_BASE}plant/figs/whole-plant.webp" alt="잎과 어린순과 열매와 뿌리가 이어진 토마토 식물" draggable="false"/>
+          <svg class="pt-flow pt-flow-food" viewBox="0 0 100 100" aria-hidden="true">
+            <defs><marker id="pt-food-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path class="pt-arrow-head" d="M0 0 L10 5 L0 10 Z"/></marker></defs>
+            <path class="pt-path" marker-end="url(#pt-food-arrow)" d="M25 38 C36 43 44 49 50 54"/>
+            <path class="pt-path" marker-end="url(#pt-food-arrow)" d="M50 54 C50 39 50 24 50 9"/>
+            <path class="pt-path" marker-end="url(#pt-food-arrow)" d="M50 53 C46 51 44 49 42 47"/>
+            <path class="pt-path" marker-end="url(#pt-food-arrow)" d="M50 53 C56 51 59 49 62 47"/>
+            <path class="pt-path" marker-end="url(#pt-food-arrow)" d="M50 54 C50 68 50 82 50 95"/>
+            <path class="pt-path" marker-end="url(#pt-food-arrow)" d="M50 43 C61 36 69 28 76 20"/>
+            <circle class="pt-token" cx="25" cy="38" r="1.7"/>
+          </svg>
+        </div>
+        <div class="pt-copy">
+          <div class="pt-head"><strong>양분의 이동</strong><span>체관</span></div>
+          <div class="pt-summary"><b>잎</b><span>위쪽과 아래쪽 모두</span><b>필요한 기관</b></div>
+          <p>잎에서 만든 당은 체관을 따라 어린순·열매·뿌리처럼 양분이 필요한 곳으로 이동해요.</p>
+        </div>
+      </section>
+    </div>
+  </div>`;
 
 const L1 = lesson({
   id: "g2u5l1",
@@ -51,11 +177,11 @@ const L1 = lesson({
     }),
     leafFactoryLab({
       title: "잎 속 공장을<br>직접 가동해요",
-      lead: "빛·이산화 탄소·물을 제 길로 보내고, 포도당을 녹말로 저장해 보세요.",
+      lead: "물·이산화 탄소·빛을 차례로 보내고, 만들어진 포도당이 녹말로 저장되는 모습까지 확인해 보세요.",
       cta: "정리 카드 보기",
       curio: {
         q: "잎에서 처음 만들어지는 양분은 왜 곧바로 <b>녹말</b>로 바뀔까요?",
-        a: "포도당은 물에 잘 녹아 세포 안 농도를 크게 바꿀 수 있어요. 물에 잘 녹지 않는 <b>녹말</b>로 바꾸면 잎 속에 비교적 안전하게 모아 둘 수 있답니다. 이동할 때는 다시 물에 잘 녹는 당으로 바뀌어요.",
+        a: "포도당은 물에 잘 녹아 세포 안 농도를 크게 바꿀 수 있어요. 물에 잘 녹지 않는 <b>녹말</b>로 바꾸면 잎 속에 비교적 안전하게 모아 둘 수 있답니다.",
       },
     }),
     recap({
@@ -200,7 +326,7 @@ const L2 = lesson({
       explainBad: "아이오딘 용액은 마지막에 써요. 먼저 잎을 처리하고 엽록소를 뺀 뒤 물로 헹겨야 색 변화를 잘 볼 수 있어요.",
     }),
     mcq({
-      prompt: "그림과 같은 결과로 가장 타당하게 알 수 있는 것은 무엇일까요?",
+      prompt: "같은 종류의 잎을 준비해 한쪽은 햇빛을 받게 하고 다른 쪽은 햇빛을 가렸어요. 두 잎을 에탄올로 탈색하고 물로 헹군 뒤 아이오딘 용액을 떨어뜨렸더니 그림처럼 나타났어요. 이 결과로 가장 타당하게 알 수 있는 것은 무엇일까요?",
       figure: starchTestFig(),
       options: ["빛을 받은 잎 부분에 녹말이 생겼어요", "빛을 가린 부분에 포도당이 더 많이 생겼어요", "아이오딘 용액이 엽록소를 만들었어요", "에탄올이 잎에서 녹말을 합성했어요", "빛을 받은 부분에서는 모든 생명 활동이 멈췄어요"],
       answer: 0,
@@ -267,7 +393,7 @@ const L3 = lesson({
     }),
     photoFactorLab({
       title: "스마트 온실<br>조건 하나씩 실험해요",
-      lead: "다른 조건은 고정하고 빛·이산화 탄소·온도를 낮음부터 높음까지 비교하세요.",
+      lead: "다른 조건은 고정하고 슬라이더로 빛·이산화 탄소·온도를 하나씩 비교하세요.",
       cta: "그래프 정리하기",
       curio: {
         q: "온실의 조명을 무조건 가장 밝게 켜면 수확량이 가장 클까요?",
@@ -484,9 +610,9 @@ const L5 = lesson({
       title: "광합성은 저장하고<br>호흡은 꺼내 써요",
       lead: "물질 이름만 반대로 외우기보다 에너지가 어디로 가는지 보세요.",
       blocks: [
-        { k: "figure", svg: cut("plant", "g2u5l5", "스틱맨이 태양 전지판에서 충전한 배터리로 전등을 켜는 장면", [{ text: "저장했다가 꺼내 쓰는구나", x: 27, y: 15 }]), cap: "광합성은 빛에너지를 양분에 저장하고, 호흡은 양분에 저장된 에너지를 생명활동에 쓸 수 있게 전달해요." },
-        { k: "figure", svg: dayNightFlowFig(), cap: "강한 낮에는 광합성량이 호흡량보다 커 순변화로 이산화 탄소가 들어가고 산소가 나가요. 밤에는 호흡만 계속돼 반대 방향이 보여요." },
-        { k: "list", items: ["광합성: 엽록체, 빛이 있을 때, 에너지를 포도당에 저장", "호흡: 마이토콘드리아, 낮과 밤 모두, 포도당에서 에너지를 꺼냄", "강한 낮: 광합성과 호흡이 함께 일어나지만 보통 광합성량이 더 큼"] },
+        { k: "figure", svg: cut("plant", "g2u5l5", "스틱맨이 태양 전지판에서 충전한 배터리로 전등을 켜는 장면", [{ text: "저장했다가 꺼내 쓰는구나", x: 55, y: 14 }]), cap: "광합성은 빛에너지를 양분에 저장하고, 호흡은 양분에 저장된 에너지를 생명활동에 쓸 수 있게 전달해요." },
+        { k: "figure", svg: dayNightToggleFig(), cap: "낮과 밤을 눌러 같은 식물에서 달라지는 과정과 기체의 순이동을 비교해요." },
+        { k: "list", items: ["<b>낮:</b> 광합성과 호흡이 함께 일어나지만, 강한 빛에서는 광합성량이 더 커요.", "<b>밤:</b> 빛이 없어 광합성은 멈추고 호흡만 계속돼요.", "<b>중요:</b> 낮에 산소가 나온다고 호흡이 멈춘 것은 아니에요. 두 과정을 합친 결과를 보는 거예요."] },
         { k: "callout", tone: "amber", title: "굵은 화살표는 순변화예요", html: "낮에 산소가 밖으로 나온다고 호흡이 멈춘 것은 아니에요. 광합성이 쓰고 만드는 양이 호흡보다 커서, 두 과정을 합친 <b>결과</b>가 그렇게 보이는 거예요." },
       ],
       cta: "하루 다이얼 돌리기",
@@ -531,8 +657,8 @@ const L5 = lesson({
       explainBad: "호흡이 먼저 양분을 만드는 것은 아니에요. 광합성이 에너지를 포도당에 저장하고, 호흡이 그 에너지를 꺼내 써요.",
     }),
     mcq({
-      prompt: "그림의 강한 낮에 산소가 순방출되는 까닭은 무엇일까요?",
-      figure: dayNightFlowFig(),
+      prompt: "그림의 강한 낮에 산소가 밖으로 나오는 까닭은 무엇일까요?",
+      figure: strongDayFig(),
       options: ["광합성량이 호흡량보다 커 두 과정을 합친 결과로 산소가 남기 때문이에요", "낮에는 식물의 호흡이 완전히 멈추기 때문이에요", "산소가 빛으로 바뀌어 잎 밖으로 밀려나기 때문이에요", "마이토콘드리아가 낮에 사라지기 때문이에요", "기공이 이산화 탄소만 내보내기 때문이에요"],
       answer: 0,
       explainGood: "맞아요. 낮에도 호흡은 하지만, 강한 빛에서는 광합성량이 더 커 산소가 순방출돼요.",
@@ -591,7 +717,7 @@ const L6 = lesson({
       blocks: [
         { k: "figure", svg: cut("plant", "g2u5l6", "작은 자전거 배달원이 설탕 상자를 싣고 식물 줄기를 따라 잎과 열매, 뿌리 사이를 달리는 장면", [{ text: "필요한 곳이면 위도 아래도!", x: 29, y: 15 }]), cap: "잎에서 만든 당은 체관을 따라 자라는 어린잎, 꽃, 열매, 뿌리 등 필요한 기관으로 이동할 수 있어요." },
         { k: "term", name: "광합성산물의 이동", def: "잎에서 만든 포도당은 녹말로 잠시 저장되었다가, 주로 밤에 물에 잘 녹는 <b>설탕</b>으로 바뀌어 <b>체관</b>을 따라 이동해요.", icon: "route" },
-        { k: "figure", svg: transportFig(), cap: "(가)는 물관의 물 이동, (나)는 체관의 당 이동, (다)는 양분을 받는 열매를 나타내요. 체관은 필요한 기관의 위치에 따라 위쪽과 아래쪽 모두로 운반할 수 있어요." },
+        { k: "figure", svg: transportToggleFig(), cap: "물의 이동과 양분의 이동을 눌러 같은 식물에서 각 경로를 크게 비교해요." },
         { k: "list", items: ["잎에서 만든 포도당 일부는 낮에 <b>녹말</b>로 잠시 저장돼요.", "녹말은 주로 밤에 <b>설탕</b>으로 바뀌어 체관으로 이동해요.", "도착한 양분은 호흡, 생장, 새로운 물질 만들기, 저장에 쓰여요."] },
         { k: "callout", tone: "amber", title: "단백질과 지방도 만들어요", html: "포도당은 여러 물질의 출발 재료가 될 수 있어요. 다만 단백질을 만들 때는 뿌리로 흡수한 질소 성분 같은 <b>무기 양분</b>도 함께 필요해요." },
       ],
@@ -637,13 +763,13 @@ const L6 = lesson({
       explainBad: "체관으로 이동하기 전에 물에 잘 녹는 설탕 형태가 돼요. 녹말은 잎의 임시 저장 형태예요.",
     }),
     mcq({
-      prompt: "그림의 (나)에 대한 설명으로 가장 알맞은 것은 무엇일까요?",
-      figure: transportFig(),
+      prompt: "그림의 물의 이동과 양분의 이동을 바르게 설명한 것은 무엇일까요?",
+      figure: transportToggleFig(),
       shuffle: false,
-      options: ["뿌리에서 흡수한 물만 위로 운반하는 물관이에요", "잎에서 만든 당을 필요한 기관으로 위아래 운반하는 체관이에요", "산소를 열매 안에 저장하는 기공이에요", "녹말 알갱이를 흙으로 내보내는 통로예요", "빛에너지만 아래로 운반하는 통로예요"],
-      answer: 1,
-      explainGood: "맞아요. (나)는 <b>체관</b>이고, 물에 녹는 당을 양분이 필요한 기관으로 운반해요.",
-      explainBad: "(가)가 물관, (나)가 체관이에요. 체관은 당을 위쪽이나 아래쪽의 필요한 기관으로 보낼 수 있어요.",
+      options: ["물은 물관을 따라 뿌리에서 잎으로 올라가고, 당은 체관을 따라 잎에서 필요한 기관으로 이동해요", "두 경로 모두 잎에서 만든 당을 뿌리로만 내려보내요", "물의 이동은 산소가 이동하는 기공이고, 양분의 이동은 빛이 이동하는 물관이에요", "물은 잎에서 뿌리로만 내려가고, 당은 위쪽으로만 이동해요", "두 경로 모두 녹말 알갱이가 관 속을 그대로 이동하는 모습이에요"],
+      answer: 0,
+      explainGood: "맞아요. 물은 <b>물관</b>을 따라 뿌리에서 잎으로 올라가고, 잎에서 만든 당은 <b>체관</b>을 따라 필요한 기관으로 이동해요.",
+      explainBad: "물은 뿌리에서 잎으로 이어지는 물관을 따라 올라가요. 잎에서 만든 당은 체관을 따라 어린순·열매·뿌리로 이동해요.",
     }),
     binSort({
       title: "식물의 저장 창고<br>대표 양분을 분류해요",

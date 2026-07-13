@@ -169,16 +169,15 @@ export function twoLensFig(): string {
   const lens = (x: number, convex: boolean, label: string, mag: number): string => `
     <g transform="translate(${x},0)">
       ${convex
-        ? `<path d="M0 26Q22 84 0 142Q-22 84 0 26z" fill="#EAF3FE" stroke="#7FA6CC" stroke-width="2.2"/>`
-        : `<path d="M-13 26h26Q4 84 13 142h-26Q-4 84 -13 26z" fill="#EAF3FE" stroke="#7FA6CC" stroke-width="2.2"/>`}
-      ${bug(0, 84, mag)}
+        ? `<path d="M0 24Q18 76 0 128Q-18 76 0 24z" fill="#EAF3FE" stroke="#7FA6CC" stroke-width="2.2"/>`
+        : `<path d="M-12 24h24Q4 76 12 128h-24Q-4 76 -12 24z" fill="#EAF3FE" stroke="#7FA6CC" stroke-width="2.2"/>`}
+      ${bug(50, 76, mag)}
+      <path d="M17 76h15" stroke="#A9B5C4" stroke-width="1.6" stroke-dasharray="3 3"/>
       <text x="0" y="166" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">${label}</text>
     </g>`;
   return `<svg viewBox="0 0 344 176" ${NS} fill="none" role="img" aria-label="렌즈 두 개로 가까운 무당벌레를 본 모습 — 가는 크게, 나는 작게 보인다">
-    ${bug(52, 84, 1)}
-    <text x="52" y="166" text-anchor="middle" font-size="11.5" fill="#8B95A1">실제 크기</text>
-    ${lens(172, true, "(가)", 1.75)}
-    ${lens(292, false, "(나)", 0.6)}
+    ${lens(70, true, "(가)", 1.75)}
+    ${lens(228, false, "(나)", 0.6)}
   </svg>`;
 }
 

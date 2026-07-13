@@ -99,6 +99,8 @@ const clickBtn = async (pattern, wait = 420, timeout = 12000) => {
   }, pattern);
   if (!clicked) throw new Error(`버튼을 찾지 못했어요: /${pattern}/`);
   await W(wait);
+  const lessonActive = await page.evaluate(() => document.querySelector(".lesson-screen.screen.active") !== null);
+  if (!lessonActive) throw new Error(`버튼 /${pattern}/ 조작 뒤 레슨 화면이 닫혔어요`);
 };
 
 const hook = async () => {
@@ -118,7 +120,30 @@ const sheetContinue = async (timeout = 10000) => {
   await W(520);
 };
 
+const checkTransportToggle = async (prefix) => {
+  const transportToggle = page.locator(`${active} .plant-transport-toggle`);
+  if (!await transportToggle.count()) return;
+  await transportToggle.scrollIntoViewIfNeeded();
+  await page.locator(`${active} label[for="g2u5-transport-food"]`).click();
+  await W(360);
+  const foodVisible = await page.locator(`${active} .pt-scene-food`).evaluate((node) => {
+    const image = node.querySelector("img");
+    return getComputedStyle(node).display !== "none" && image?.complete && image.naturalWidth > 0;
+  });
+  if (!foodVisible) throw new Error("양분의 이동 토글 장면이 표시되지 않아요");
+  await capture(`${prefix}-transport-food`);
+  await page.locator(`${active} label[for="g2u5-transport-water"]`).click();
+  await W(360);
+  const waterVisible = await page.locator(`${active} .pt-scene-water`).evaluate((node) => {
+    const image = node.querySelector("img");
+    return getComputedStyle(node).display !== "none" && image?.complete && image.naturalWidth > 0;
+  });
+  if (!waterVisible) throw new Error("물의 이동 토글 장면이 표시되지 않아요");
+  await capture(`${prefix}-transport-water`);
+};
+
 const quiz = async (step) => {
+  await checkTransportToggle("question");
   if (CAPTURE && !quiz.figureCaptured && await page.locator(`${active} .q-figure`).count()) {
     await capture("figure-question");
     quiz.figureCaptured = true;
@@ -198,10 +223,39 @@ const figTabs = async () => {
 };
 
 const leafFactory = async () => {
-  await clickBtn("빛 비추기", 80);
-  await clickBtn("이산화 탄소 넣기", 80);
-  await clickBtn("뿌리에 물 주기", 1000);
+  const metrics = await page.evaluate(() => {
+    const buttons = [...document.querySelectorAll(".screen.active .leaf-factory-inputs .plant-btn")];
+    return buttons.map((button) => {
+      const rect = button.getBoundingClientRect();
+      const style = getComputedStyle(button);
+      return { width: rect.width, height: rect.height, fontSize: style.fontSize, text: button.textContent?.trim() };
+    });
+  });
+  if (metrics.length !== 3 || metrics.some((item) => Math.abs(item.height - 48) > 0.5 || item.fontSize !== "13px")) {
+    throw new Error(`광합성 입력 버튼 규격 불일치: ${JSON.stringify(metrics)}`);
+  }
+  if (Math.max(...metrics.map((item) => item.width)) - Math.min(...metrics.map((item) => item.width)) > 1) {
+    throw new Error(`광합성 입력 버튼 너비가 같지 않아요: ${JSON.stringify(metrics)}`);
+  }
+  if (CAPTURE) {
+    await page.locator(`${active} .leaf-factory-inputs`).scrollIntoViewIfNeeded();
+    await capture("lab-input-buttons");
+  }
+  await clickBtn("^물$", CAPTURE ? 760 : 720);
+  if (CAPTURE) {
+    await page.locator(`${active} .plant-stage`).scrollIntoViewIfNeeded();
+    await capture("lab-water-route");
+  }
+  await clickBtn("^이산화 탄소$", CAPTURE ? 760 : 720);
+  if (CAPTURE) {
+    await capture("lab-carbon-route");
+  }
+  await clickBtn("^빛$", CAPTURE ? 760 : 720);
+  if (CAPTURE) {
+    await capture("lab-light-route");
+  }
   await clickBtn("광합성 시작", 1000);
+  await capture("lab-products");
   await clickBtn("포도당을 녹말로 저장", 1100);
   await capture("lab-goals-complete");
   await clickCTA();
@@ -213,18 +267,36 @@ const photoEvidence = async () => {
   await clickBtn("두 잎을 에탄올 물중탕으로 탈색", 1300);
   await clickBtn("탈색한 두 잎을 물로 헹구기", 1100);
   await clickBtn("아이오딘 용액 떨어뜨리기", 1300);
+  await capture("evidence-iodine-result");
   await clickCTA();
 };
 
 const photoFactor = async () => {
-  await clickBtn("^낮게$", 180);
-  await clickBtn("^매우 높게$", 180);
+  const slide = async (fraction) => {
+    await page.evaluate((value) => {
+      const slider = document.querySelector(".screen.active .plant-factor-slider");
+      const track = slider?.querySelector(".sl-track");
+      if (!(slider instanceof HTMLElement) || !(track instanceof HTMLElement)) throw new Error("환경요인 슬라이더 없음");
+      const rect = track.getBoundingClientRect();
+      const clientX = rect.left + rect.width * value;
+      const init = { bubbles: true, pointerId: 41, isPrimary: true, clientX, clientY: rect.top + rect.height / 2 };
+      slider.dispatchEvent(new PointerEvent("pointerdown", { ...init, buttons: 1 }));
+      slider.dispatchEvent(new PointerEvent("pointermove", { ...init, buttons: 1 }));
+      slider.dispatchEvent(new PointerEvent("pointerup", { ...init, buttons: 0 }));
+    }, fraction);
+    await W(220);
+  };
+  await slide(0.1);
+  await slide(0.96);
   await clickBtn("이산화 탄소 농도", 140);
-  await clickBtn("^낮게$", 180);
-  await clickBtn("^매우 높게$", 180);
+  await slide(0.1);
+  await slide(0.96);
   await clickBtn("^온도$", 140);
-  await clickBtn("^알맞게$", 180);
-  await clickBtn("^매우 높게$", 600);
+  await slide(0.5);
+  await slide(0.9);
+  await W(600);
+  await page.locator(`${active} .plant-factor-slider`).scrollIntoViewIfNeeded();
+  await capture("factor-slider-complete");
   await clickCTA();
 };
 
@@ -236,8 +308,10 @@ const plantRespire = async () => {
 };
 
 const dayNight = async () => {
-  await clickBtn("강한 낮으로", 300);
-  await clickBtn("빛 없는 밤으로", 500);
+  await clickBtn("강한 낮 보기", 300);
+  await capture("day-night-day");
+  await clickBtn("빛 없는 밤 보기", 500);
+  await capture("day-night-night");
   await clickCTA();
 };
 
@@ -248,6 +322,31 @@ const sugarJourney = async () => {
   await clickBtn("열매로: 저장", 80);
   await clickBtn("뿌리로: 호흡·저장", 1500);
   await capture("journey-complete");
+  await clickCTA();
+};
+
+const conceptStep = async () => {
+  const dayNightToggle = page.locator(`${active} .plant-day-night-toggle`);
+  if (await dayNightToggle.count()) {
+    await dayNightToggle.scrollIntoViewIfNeeded();
+    await page.locator(`${active} label[for="g2u5-night-scene"]`).click();
+    await W(360);
+    const nightVisible = await page.locator(`${active} .dn-scene-night`).evaluate((node) => {
+      const image = node.querySelector("img");
+      return getComputedStyle(node).display !== "none" && image?.complete && image.naturalWidth > 0;
+    });
+    if (!nightVisible) throw new Error("밤 토글 장면이 표시되지 않아요");
+    await capture("concept-night-toggle");
+    await page.locator(`${active} label[for="g2u5-day-scene"]`).click();
+    await W(360);
+    const dayVisible = await page.locator(`${active} .dn-scene-day`).evaluate((node) => {
+      const image = node.querySelector("img");
+      return getComputedStyle(node).display !== "none" && image?.complete && image.naturalWidth > 0;
+    });
+    if (!dayVisible) throw new Error("낮 토글 장면이 표시되지 않아요");
+    await capture("concept-day-toggle");
+  }
+  await checkTransportToggle("concept");
   await clickCTA();
 };
 
@@ -272,7 +371,8 @@ const playStep = async (step, index) => {
     await capture("recap-more-open");
     return clickCTA();
   }
-  if (["concept", "recap", "table"].includes(step.type)) return clickCTA();
+  if (step.type === "concept") return conceptStep();
+  if (["recap", "table"].includes(step.type)) return clickCTA();
   throw new Error(`E2E 조작이 정의되지 않은 스텝이에요: ${step.type}`);
 };
 

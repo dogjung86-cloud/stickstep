@@ -34,8 +34,8 @@ export const POOL_G2U7L7: ExamItem[] = [
     id: "g2u7e115",
     lessonId: L,
     type: "mcq",
-    prompt: "사진처럼 코일의 한쪽 끝에 나침반을 놓고 회로의 스위치를 <b>닫는 순간</b>, 나침반에서 관찰되는 일로 옳은 것은?",
-    figure: ximg("coil-compass.webp", "에나멜선을 감은 코일과 전지, 그리고 코일 끝에 놓인 나침반이 있는 실험 사진"),
+    prompt: "그림처럼 코일의 한쪽 끝에 나침반을 놓고 회로의 스위치를 <b>닫는 순간</b>, 나침반에서 관찰되는 일로 옳은 것은?",
+    figure: elecCoilCompassFig(),
     options: [
       "바늘이 돌아가 새로운 방향을 가리킨다",
       "바늘이 빙글빙글 멈추지 않고 계속 회전한다",

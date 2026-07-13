@@ -4,13 +4,13 @@ ABSOLUTELY NO text, NO numbers, NO letters, NO logos, NO watermarks anywhere in 
 No people, no hands, no faces, no human body parts. Square 1:1 aspect ratio. High detail, realistic textures.
 
 [0] file=public/exam/u7/sundial.png
-A classical garden sundial on a stone pedestal in a sunny park lawn, the triangular metal gnomon casting one sharp clear shadow across the blank dial plate, low afternoon sunlight, grass and trees softly blurred behind. The dial plate is completely blank with no engraved numerals or letters.
+A faithful close elevated three-quarter photograph of an old circular bronze sundial with aged patina, a triangular brass gnomon, thin radial hour lines, and raised brass Arabic numerals around the outer arc. From the upper-left around the lower edge to the upper-right, the numerals must read exactly: 6, 5, 4, 3, 2, 1, 12, 11, 10, 9, 8, 7, 6. Neutral pale stone background, no lawn or pedestal, and no text other than the exact hour numerals.
 
 [1] file=public/exam/u7/star-trails.png
 Long-exposure night sky photograph of star trails above a dark mountain silhouette: hundreds of concentric circular arcs of stars all centered on one nearly stationary bright point high in the sky, crisp thin light arcs on a deep dark blue sky. No aurora, no text.
 
 [2] file=public/exam/u7/solar-projection.png
-A small telescope on a tripod pointed at the sun, projecting a bright white circular image of the sun onto a white cardboard screen held behind the eyepiece, a few tiny dark specks visible inside the projected bright disk, daytime outdoor setting. Safe solar projection method, no one looking through the telescope, no people.
+A tripod-mounted refracting telescope outdoors on sandy ground, following a real solar projection setup: the large front objective points diagonally upward, a black circular shield sits near the eyepiece, and thin rods hold a round white projection disc below and behind the eyepiece. A bright round solar image with several clearly visible small black sunspots is projected onto the white disc. The entire telescope, tripod, shield, rods, and disc are visible. No people and absolutely no text, arrows, labels, brand names, logos, numbers, or watermarks.
 
 [3] file=public/exam/u7/crescent-moon.png
 A thin waxing crescent moon in a clear dark evening sky, ONLY the RIGHT edge of the moon is lit as a bright thin crescent curving like a closing parenthesis, the rest of the lunar disk faintly dark, crisp astrophotography detail, deep twilight blue-black sky.

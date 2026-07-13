@@ -453,10 +453,46 @@ const focusMicroscopeByKeyboard = async () => {
   await W(260);
 };
 
+const stressMicroscopeFocus = async () => {
+  const result = await page.evaluate(async (active) => {
+    const slider = document.querySelector(active)?.querySelector(".mic-focus");
+    const track = slider?.querySelector(".sl-track");
+    const canvas = document.querySelector(active)?.querySelector(".mic-canvas");
+    if (!(slider instanceof HTMLElement) || !(track instanceof HTMLElement) || !(canvas instanceof HTMLCanvasElement)) {
+      throw new Error("현미경 스트레스 테스트 요소 없음");
+    }
+    const rect = track.getBoundingClientRect();
+    const pointerId = 77;
+    const eventAt = (type, fraction, buttons) => slider.dispatchEvent(new PointerEvent(type, {
+      bubbles: true,
+      pointerId,
+      pointerType: "mouse",
+      isPrimary: true,
+      buttons,
+      clientX: rect.left + rect.width * fraction,
+      clientY: rect.top + rect.height / 2,
+    }));
+    const started = performance.now();
+    eventAt("pointerdown", 0.1, 1);
+    for (let i = 0; i < 480; i += 1) eventAt("pointermove", (i % 97) / 96, 1);
+    eventAt("pointerup", 0.2, 0);
+    const dispatchMs = performance.now() - started;
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    const cssWidth = canvas.getBoundingClientRect().width;
+    return { dispatchMs, cssWidth, bitmapWidth: canvas.width, bitmapHeight: canvas.height };
+  }, ACTIVE);
+  if (result.dispatchMs > 250) throw new Error(`현미경 초점 480회 입력이 너무 느려요: ${result.dispatchMs.toFixed(1)}ms`);
+  if (result.bitmapWidth > result.cssWidth * 1.55 + 2 || result.bitmapHeight > 380) {
+    throw new Error(`현미경 캔버스 DPR 상한 불일치: ${JSON.stringify(result)}`);
+  }
+  console.log(`  현미경 초점 스트레스 480회: ${result.dispatchMs.toFixed(1)}ms · ${result.bitmapWidth}×${result.bitmapHeight}px`);
+};
+
 const runCompareMicroscope = async () => {
   const title = await expectTitle(/두 세포를 같은 현미경으로 비교/);
   await assertCtaDisabled(title);
   await clickButtonText(/메틸렌 블루 한 방울/, 260);
+  await stressMicroscopeFocus();
   await focusMicroscopeByPointer(0.70, 41);
   let goals = await page.evaluate((active) => document.querySelectorAll(`${active} .mic-goal.on`).length, ACTIVE);
   if (goals !== 1) throw new Error(`현미경 저배율 목표 불일치: ${goals}/1`);

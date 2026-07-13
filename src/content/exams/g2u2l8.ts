@@ -5,10 +5,16 @@
 // 소재 회피: 퍼즐 지도 훅(드래그), 메소사우루스 사진 문항(레슨), gquad 사진 4단계 순서 문항(레슨 — 시험은
 // driftStagesFig SVG로 교체), 인도 남부 빙하 긁힘 문항(레슨 — 시험은 아프리카 남부·모임 각도), 'GPS는 증거 아님' 구성(레슨).
 import type { ExamItem } from "./types";
-import { driftStagesFig } from "../../ui/geoFigures";
 import { geoCoastFitFig, geoDriftRateFig } from "../../ui/examFigures";
 
 const L = "g2u2l8";
+const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+const driftPhotoFig = (): string =>
+  `<figure style="position:relative;margin:0"><img src="${IMG_BASE}exam/g2u2/continental-drift-4.webp" alt="판게아에서 현재까지 대륙이 갈라져 이동한 네 단계 지도" style="display:block;width:100%;border-radius:14px"/>
+    <b style="position:absolute;left:2.5%;top:2.5%;padding:2px 7px;border-radius:8px;background:rgba(255,255,255,.92);color:#191F28">(나)</b>
+    <b style="position:absolute;left:52.5%;top:2.5%;padding:2px 7px;border-radius:8px;background:rgba(255,255,255,.92);color:#191F28">(라)</b>
+    <b style="position:absolute;left:2.5%;top:52.5%;padding:2px 7px;border-radius:8px;background:rgba(255,255,255,.92);color:#191F28">(가)</b>
+    <b style="position:absolute;left:52.5%;top:52.5%;padding:2px 7px;border-radius:8px;background:rgba(255,255,255,.92);color:#191F28">(다)</b></figure>`;
 
 export const POOL_G2U2L8: ExamItem[] = [
   {
@@ -68,7 +74,7 @@ export const POOL_G2U2L8: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt: "그림은 대륙 분포가 변해 온 네 장면을 순서 없이 늘어놓은 거예요. <b>오래된 것부터</b> 순서대로 나열하면?",
-    figure: driftStagesFig(),
+    figure: driftPhotoFig(),
     options: [
       "(나) → (라) → (가) → (다)",
       "(다) → (가) → (라) → (나)",

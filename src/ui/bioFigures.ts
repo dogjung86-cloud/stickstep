@@ -117,7 +117,7 @@ export function orgArt(key: string): string {
 export function classStagesFig(): string {
   const RANK = ["계", "문", "강", "목", "과", "속", "종"];
   const DOG = ["동물계", "척삭동물문", "포유강", "식육목", "개과", "개속", "개"];
-  const cx = 150, topW = 250, botW = 60, y0 = 30, h = 24, gap = 3;
+  const cx = 165, topW = 230, botW = 60, y0 = 30, h = 24, gap = 3;
   const wAt = (i: number): number => topW + (botW - topW) * (i / 7);
   const lerp = (a: number, b: number, t: number): number => Math.round(a + (b - a) * t);
   let bars = "";
@@ -131,15 +131,15 @@ export function classStagesFig(): string {
       `<text x="${cx}" y="${yt + h / 2 + 4.5}" text-anchor="middle" font-size="13" font-weight="800" fill="${ink}" font-family="Pretendard, sans-serif">${RANK[i]}</text>` +
       `<text x="${cx + wt / 2 + 8}" y="${yt + h / 2 + 4}" font-size="10.5" font-weight="700" fill="#4E5968" font-family="Pretendard, sans-serif">${DOG[i]}</text>`;
   }
-  return `<svg viewBox="0 0 300 232" ${NS} fill="none" role="img" aria-label="개의 분류 단계 — 위 계에서 아래 종까지, 위로 갈수록 더 많은 생물을 포함해요">
-    <rect x="2" y="2" width="296" height="228" rx="14" fill="#F4FBF6"/>
+  return `<svg viewBox="0 0 360 232" ${NS} fill="none" role="img" aria-label="개의 분류 단계 — 위 계에서 아래 종까지, 위로 갈수록 더 많은 생물을 포함해요">
+    <rect x="2" y="2" width="356" height="228" rx="14" fill="#F4FBF6"/>
     <text x="12" y="20" font-size="11.5" font-weight="800" fill="#2E8C4A" font-family="Pretendard, sans-serif">개의 분류 단계</text>
     <path d="M14 32 V 214" stroke="#8FD0A6" stroke-width="1.5"/>
     <path d="M14 32 l-3 6 h6 z" fill="#2E8C4A"/>
     <text x="20" y="46" font-size="9.5" font-weight="700" fill="#2E8C4A" font-family="Pretendard, sans-serif">많은 생물</text>
     <text x="20" y="210" font-size="9.5" font-weight="700" fill="#2E8C4A" font-family="Pretendard, sans-serif">닮은 무리</text>
     ${bars}
-    <text x="150" y="226" text-anchor="middle" font-size="10.5" font-weight="700" fill="#4E5968" font-family="Pretendard, sans-serif">위(계)로 갈수록 더 많은 생물을 포함 · 종이 가장 작은 단위</text>
+    <text x="180" y="226" text-anchor="middle" font-size="10.5" font-weight="700" fill="#4E5968" font-family="Pretendard, sans-serif">위(계)로 갈수록 더 많은 생물을 포함 · 종이 가장 작은 단위</text>
   </svg>`;
 }
 
@@ -175,8 +175,8 @@ const redBloodScene = (x = 0, y = 0, scale = 1): string => {
 const epithelialScene = (x = 0, y = 0, scale = 1): string => {
   const cells = Array.from({ length: 15 }, (_, i) => {
     const row = Math.floor(i / 5), col = i % 5;
-    const px = 30 + col * 59 + (row % 2) * 8, py = 35 + row * 45;
-    return `<path d="M${px} ${py + 5}q23-15 43 0l7 25q-20 18-47 2z" fill="url(#ct-epi)" stroke="#2E7F5C" stroke-width="1.8"/><ellipse cx="${px + 24}" cy="${py + 18}" rx="8" ry="6" fill="url(#ct-nuc)"/><ellipse cx="${px + 14}" cy="${py + 7}" rx="10" ry="4" fill="#fff" opacity=".3"/>`;
+    const px = 28 + col * 52, py = 24 + row * 40;
+    return `<path d="M${px} ${py + 6}Q${px + 27} ${py - 5} ${px + 55} ${py + 6}L${px + 53} ${py + 33}Q${px + 28} ${py + 47} ${px + 2} ${py + 34}Z" fill="url(#ct-epi)" stroke="#2E7F5C" stroke-width="1.8"/><ellipse cx="${px + 28}" cy="${py + 20}" rx="8" ry="6" fill="url(#ct-nuc)"/><ellipse cx="${px + 16}" cy="${py + 7}" rx="10" ry="4" fill="#fff" opacity=".3"/>`;
   }).join("");
   return `<g transform="translate(${x} ${y}) scale(${scale})"><ellipse cx="163" cy="156" rx="139" ry="8" fill="#2A3A5E" opacity=".09"/>${cells}</g>`;
 };
@@ -217,10 +217,17 @@ export function foodWebArt(kind: FoodWebKey): string {
   const links = rich
     ? [[58,150,45,116],[151,151,132,114],[254,150,218,113],[58,150,218,113],[151,151,45,116],[45,88,96,62],[132,86,96,62],[45,88,218,113],[218,85,196,61],[96,34,196,61],[196,33,286,49],[218,85,286,49]]
     : [[62,150,145,126],[145,98,228,80],[228,52,304,37]];
+  const linkPaths = links.map(([x1, y1, x2, y2]) => {
+    const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1;
+    const sx = x1 + dx / len * 3, sy = y1 + dy / len * 3;
+    const ex = x2 - dx / len * 10, ey = y2 - dy / len * 10;
+    return `M${sx.toFixed(1)} ${sy.toFixed(1)}L${ex.toFixed(1)} ${ey.toFixed(1)}`;
+  });
   return `<svg viewBox="0 0 340 195" ${NS} fill="none" role="img" aria-label="${rich ? "여러 생물과 먹이 관계가 그물처럼 이어진 생태계" : "네 생물이 한 줄 먹이 관계로 이어진 생태계"}">
     <defs><linearGradient id="${marker}-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2FAF6"/><stop offset="1" stop-color="#E5F2EA"/></linearGradient><marker id="${marker}-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7Z" fill="#709488"/></marker></defs>
     <rect x="2" y="2" width="336" height="191" rx="16" fill="url(#${marker}-bg)"/>
-    <g stroke="#709488" stroke-width="2" opacity=".74" marker-end="url(#${marker}-arrow)">${links.map(([x1,y1,x2,y2]) => `<path d="M${x1} ${y1}L${x2} ${y2}"/>`).join("")}</g>
+    <g stroke="#F7FBF9" stroke-width="6" opacity=".92">${linkPaths.map((d) => `<path d="${d}"/>`).join("")}</g>
+    <g stroke="#4E7468" stroke-width="2.4" opacity=".96" marker-end="url(#${marker}-arrow)">${linkPaths.map((d) => `<path d="${d}"/>`).join("")}</g>
     ${nodes.map(([cx, cy, label, color]) => `<g><ellipse cx="${cx}" cy="${Number(cy) + 6}" rx="29" ry="8" fill="#2A3A5E" opacity=".08"/><rect x="${Number(cx) - 31}" y="${Number(cy) - 15}" width="62" height="30" rx="15" fill="${color}" stroke="#385E4C" stroke-width="1.3"/><ellipse cx="${Number(cx) - 11}" cy="${Number(cy) - 7}" rx="9" ry="4" fill="#fff" opacity=".32"/><text x="${cx}" y="${Number(cy) + 4}" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="11" font-weight="800" fill="#17372D">${label}</text></g>`).join("")}
   </svg>`;
 }

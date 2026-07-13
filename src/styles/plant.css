@@ -23,6 +23,21 @@
   background: var(--n0); box-shadow: var(--sh-card); color: var(--n700); font-size: 13px; font-weight: 700;
 }
 .plant-readout b { color: var(--subj-plant-press); }
+.leaf-factory-inputs { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.leaf-factory-inputs .plant-btn {
+  height: 48px; min-height: 48px; padding: 0 6px; border-width: 1.5px;
+  font-size: 13px; line-height: 1.2;
+}
+.leaf-factory-actions .plant-btn { font-size: 13px; line-height: 1.2; }
+.day-night-controls .plant-btn,
+.journey-controls .plant-btn,
+.plant-factor-controls .plant-btn { padding: 0 6px; font-size: 13px; line-height: 1.2; }
+.day-night-note,
+.journey-note,
+.plant-factor-note { font-size: 11.5px; line-height: 1.45; }
+.journey-stage .stage-cap { right: 14px; font-size: 10.5px; line-height: 1.35; }
+.plant-factor-slider { margin-top: 4px; }
+.plant-factor-slider .sl-fill { background: var(--subj-plant); }
 .plant-range { width: 100%; accent-color: var(--subj-plant); }
 .plant-note {
   padding: 12px 14px; border-radius: var(--r-md); background: var(--subj-plant-tint);
@@ -35,6 +50,140 @@
   background: color-mix(in srgb, var(--n0) 92%, transparent); color: var(--n800);
   box-shadow: var(--sh-card); font-size: 11px; font-weight: 850; white-space: nowrap;
 }
+.plant-transport-toggle {
+  position: relative; overflow: hidden; padding: 10px; border: 1px solid var(--n200);
+  border-radius: var(--r-lg); background: var(--n0); box-shadow: var(--sh-card);
+}
+.pt-choice {
+  position: absolute; width: 1px; height: 1px; margin: -1px; opacity: 0;
+  pointer-events: none;
+}
+.pt-tabs {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;
+  margin-bottom: 10px; padding: 4px; border-radius: 14px; background: var(--n100);
+}
+.pt-tab {
+  min-height: 42px; display: grid; place-items: center; border-radius: 11px;
+  color: var(--n600); font-size: 13.5px; font-weight: 850; text-align: center; cursor: pointer;
+  transition: transform .16s var(--ease), color .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease);
+}
+.pt-tab:active { transform: scale(.965); }
+#g2u5-transport-water:checked ~ .pt-tabs .pt-tab-water {
+  color: var(--n0); background: var(--plant-xylem); box-shadow: var(--sh-cta);
+}
+#g2u5-transport-food:checked ~ .pt-tabs .pt-tab-food {
+  color: var(--n0); background: var(--plant-phloem); box-shadow: var(--sh-cta);
+}
+#g2u5-transport-water:focus-visible ~ .pt-tabs .pt-tab-water,
+#g2u5-transport-food:focus-visible ~ .pt-tabs .pt-tab-food { outline: 3px solid var(--blue-tint-2); outline-offset: 2px; }
+.pt-scene { display: none; overflow: hidden; border-radius: 14px; background: var(--n0); animation: plantDnIn .3s var(--ease); }
+#g2u5-transport-water:checked ~ .pt-scenes .pt-scene-water,
+#g2u5-transport-food:checked ~ .pt-scenes .pt-scene-food { display: block; }
+.pt-art { position: relative; overflow: hidden; border-radius: 13px 13px 0 0; background: var(--plant-scene-hi); }
+.pt-art > img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+.q-figure .pt-art > img { height: auto; max-height: none; }
+.pt-flow { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.q-figure .pt-flow { height: 100%; max-height: none; }
+.pt-flow .pt-path {
+  fill: none; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 4.5 2.5; animation: plantTransportMove 1.25s linear infinite;
+}
+.pt-flow-water .pt-path { stroke: var(--plant-xylem); filter: drop-shadow(0 0 1px var(--plant-xylem)); }
+.pt-flow-food .pt-path { stroke: var(--plant-phloem); filter: drop-shadow(0 0 1px var(--plant-phloem)); }
+.pt-flow-water .pt-arrow-head,
+.pt-flow-water .pt-token { fill: var(--plant-xylem); }
+.pt-flow-food .pt-arrow-head,
+.pt-flow-food .pt-token { fill: var(--plant-phloem); }
+.pt-token { stroke: var(--n0); stroke-width: .7; }
+.pt-copy { padding: 12px; color: var(--n800); background: var(--n0); }
+.pt-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.pt-head strong { color: var(--n900); font-size: 16px; font-weight: 900; }
+.pt-head span { padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 850; }
+.pt-scene-water .pt-head span { color: var(--blue-press); background: var(--blue-tint); }
+.pt-scene-food .pt-head span { color: var(--plant-phloem); background: color-mix(in srgb, var(--plant-phloem) 13%, var(--n0)); }
+.pt-summary {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 7px;
+  margin-top: 10px; padding: 9px 10px; border-radius: 11px; background: var(--n100);
+}
+.pt-summary b { color: var(--n800); font-size: 12.5px; font-weight: 900; white-space: nowrap; }
+.pt-summary span { color: var(--n600); font-size: 10.5px; font-weight: 800; line-height: 1.25; text-align: center; }
+.pt-copy p { margin: 10px 0 0; color: var(--n700); font-size: 12.5px; font-weight: 700; line-height: 1.5; }
+@keyframes plantTransportMove { to { stroke-dashoffset: -14; } }
+.plant-day-night-toggle,
+.dn-question-card {
+  overflow: hidden; border: 1px solid var(--n200); border-radius: var(--r-lg);
+  background: var(--n0); box-shadow: var(--sh-card);
+}
+.plant-day-night-toggle { position: relative; padding: 10px; }
+.dn-choice {
+  position: absolute; width: 1px; height: 1px; margin: -1px; opacity: 0;
+  pointer-events: none;
+}
+.dn-tabs {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;
+  margin-bottom: 10px; padding: 4px; border-radius: 14px; background: var(--n100);
+}
+.dn-tab {
+  min-height: 40px; display: grid; place-items: center; border-radius: 11px;
+  color: var(--n600); font-size: 14px; font-weight: 850; cursor: pointer;
+  transition: transform .16s var(--ease), color .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease);
+}
+.dn-tab:active { transform: scale(.965); }
+#g2u5-day-scene:checked ~ .dn-tabs .dn-tab-day {
+  color: var(--n0); background: var(--subj-plant); box-shadow: var(--sh-cta);
+}
+#g2u5-night-scene:checked ~ .dn-tabs .dn-tab-night {
+  color: var(--n0); background: var(--plant-night-hi); box-shadow: var(--sh-cta);
+}
+#g2u5-day-scene:focus-visible ~ .dn-tabs .dn-tab-day,
+#g2u5-night-scene:focus-visible ~ .dn-tabs .dn-tab-night { outline: 3px solid var(--blue-tint-2); outline-offset: 2px; }
+.dn-scene { display: none; overflow: hidden; border-radius: 14px; background: var(--n0); animation: plantDnIn .3s var(--ease); }
+#g2u5-day-scene:checked ~ .dn-scenes .dn-scene-day,
+#g2u5-night-scene:checked ~ .dn-scenes .dn-scene-night { display: block; }
+.dn-art { position: relative; overflow: hidden; border-radius: 14px 14px 0 0; }
+.dn-art > img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.dn-process-map { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.q-figure .dn-art > img { height: auto; max-height: none; }
+.q-figure .dn-process-map { height: 100%; max-height: none; }
+.dn-gas-path {
+  fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 7 5;
+  animation: plantGasFlow 1.25s linear infinite;
+}
+.dn-photo-path { stroke-width: 5.5; }
+.dn-resp-path { stroke-width: 3.5; opacity: .95; }
+.dn-night-path { stroke-width: 5.5; }
+.dn-gas-path.carbon { stroke: var(--plant-carbon); filter: drop-shadow(0 0 2px var(--n0)); }
+.dn-gas-path.oxygen { stroke: var(--plant-oxygen); filter: drop-shadow(0 0 2px var(--n900)); }
+.dn-marker-carbon { fill: var(--plant-carbon); }
+.dn-marker-oxygen { fill: var(--plant-oxygen); }
+.dn-process-label rect,
+.dn-gas-chip rect { fill: color-mix(in srgb, var(--n0) 94%, transparent); stroke-width: 1.2; }
+.dn-process-label.photosynthesis rect { stroke: var(--subj-plant); }
+.dn-process-label.respiration rect { stroke: var(--plant-oxygen); }
+.dn-gas-chip.carbon rect { stroke: var(--plant-carbon); }
+.dn-gas-chip.oxygen rect { stroke: var(--plant-oxygen); }
+.dn-process-label text,
+.dn-gas-chip text {
+  fill: var(--n900); font-family: Pretendard, sans-serif; font-weight: 900;
+  text-anchor: middle; dominant-baseline: middle;
+}
+.dn-process-label text { font-size: 12px; }
+.dn-gas-chip text { font-size: 9.5px; }
+.dn-copy { padding: 12px; color: var(--n800); background: var(--n0); }
+.dn-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.dn-head strong { color: var(--n900); font-size: 16px; font-weight: 900; }
+.dn-head span {
+  padding: 4px 8px; border-radius: 999px; background: var(--subj-plant-tint);
+  color: var(--subj-plant-press); font-size: 11.5px; font-weight: 850;
+}
+.dn-copy p { margin: 10px 0 0; color: var(--n700); font-size: 12.5px; font-weight: 700; line-height: 1.5; }
+.dn-question-card .dn-copy { padding: 12px 14px 14px; }
+@keyframes plantDnIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+@keyframes plantGasFlow { to { stroke-dashoffset: -24; } }
+@media (prefers-reduced-motion: reduce) {
+  .pt-flow .pt-path,
+  .dn-gas-path { animation: none; }
+}
 @media (max-width: 390px) {
-  .plant-controls.three { grid-template-columns: 1fr; }
+  .plant-controls.three:not(.leaf-factory-inputs):not(.plant-factor-controls):not(.journey-controls) { grid-template-columns: 1fr; }
 }

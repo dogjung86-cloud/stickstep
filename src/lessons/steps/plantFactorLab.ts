@@ -3,6 +3,7 @@
 
 import "../../styles/plant.css";
 import { el, clamp } from "../../core/dom";
+import { rubber } from "../../core/rubber";
 import { createLoop, type Loop } from "../../core/anim";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { fitCanvas } from "../../ui/canvas";
@@ -63,11 +64,6 @@ function displayValue(factor: Factor, value: number): string {
   return `${Math.round(value)} ℃`;
 }
 
-function preset(factor: Factor, kind: "low" | "mid" | "high"): number {
-  if (factor === "temp") return kind === "low" ? 8 : kind === "mid" ? 25 : 45;
-  return kind === "low" ? 12 : kind === "mid" ? 55 : 96;
-}
-
 export const photoFactorLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as FactorStep;
   host.appendChild(el("div", { class: "h1", html: s.title }));
@@ -107,33 +103,40 @@ export const photoFactorLab: StepRenderer = (host, step, api) => {
   const factorButtons = (["light", "co2", "temp"] as Factor[]).map((f) =>
     el("button", { class: `plant-btn${f === "light" ? " on" : ""}`, text: LABEL[f], dataset: { factor: f }, attrs: { type: "button" } }),
   );
-  const range = el("input", {
-    class: "plant-range",
-    attrs: { type: "range", min: 0, max: 100, step: 1, value: 22, "aria-label": "빛의 세기" },
-  });
   const factorName = el("span", { text: "빛의 세기" });
   const factorValue = el("b", { text: "22 %" });
   const readout = el("div", { class: "plant-readout", attrs: { "aria-live": "polite" } }, factorName, factorValue);
-  const lowBtn = el("button", { class: "plant-btn", text: "낮게", attrs: { type: "button" } });
-  const midBtn = el("button", { class: "plant-btn", text: "알맞게", attrs: { type: "button" } });
-  const highBtn = el("button", { class: "plant-btn", text: "매우 높게", attrs: { type: "button" } });
+  const thumb = el("div", { class: "sl-thumb" }, el("i", {}));
+  const fill = el("div", { class: "sl-fill" });
+  const track = el("div", { class: "sl-track plain" }, fill, thumb);
+  const slider = el(
+    "div",
+    {
+      class: "slider hp-slider plant-factor-slider",
+      attrs: {
+        role: "slider", tabindex: "0", "aria-label": "빛의 세기",
+        "aria-valuemin": "0", "aria-valuemax": "100", "aria-valuenow": "22", "aria-valuetext": "22 퍼센트",
+      },
+    },
+    track,
+    el("div", { class: "hp-slider-caps" }, el("span", { text: "낮음" }), el("span", { text: "높음" })),
+  );
   const lockNote = el("div", {
-    class: "plant-note",
+    class: "plant-note plant-factor-note",
     html: "선택한 조건만 움직이고, 나머지 두 조건은 자동으로 <b>같게 고정</b>돼요. 그래야 결과가 달라진 까닭을 하나로 좁힐 수 있어요.",
   });
   const helper = el("div", {
     class: "helper",
-    html: "먼저 <b>빛의 세기</b>를 낮게와 매우 높게 바꿔 보세요. 그래프 점이 어디에서 더 이상 크게 오르지 않는지 찾아요.",
+    html: "먼저 <b>빛의 세기</b> 슬라이더를 왼쪽과 오른쪽 끝까지 움직여 보세요. 그래프가 어디에서 평평해지는지 찾아요.",
   });
 
   host.append(
     goals,
     helper, // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
     stage,
-    el("div", { class: "plant-controls three" }, ...factorButtons),
+    el("div", { class: "plant-controls three plant-factor-controls" }, ...factorButtons),
     readout,
-    range,
-    el("div", { class: "plant-controls three" }, lowBtn, midBtn, highBtn),
+    slider,
     lockNote,
   );
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -192,22 +195,27 @@ export const photoFactorLab: StepRenderer = (host, step, api) => {
 
   function guidance(): void {
     if (!visits.light.has("low") || !visits.light.has("high")) {
-      helper.innerHTML = "<b>빛의 세기</b>를 낮게와 매우 높게 모두 바꿔 곡선의 끝을 비교해 보세요.";
+      helper.innerHTML = "<b>빛의 세기</b> 슬라이더를 왼쪽과 오른쪽 끝까지 움직여 곡선의 처음과 끝을 비교해 보세요.";
     } else if (!visits.co2.has("low") || !visits.co2.has("high")) {
-      helper.innerHTML = "빛 곡선이 평평해졌어요. 이제 <b>이산화 탄소 농도</b>도 양 끝을 비교해 같은 모양인지 확인해요.";
+      helper.innerHTML = "빛 곡선이 평평해졌어요. 이제 <b>이산화 탄소 농도</b> 슬라이더도 양 끝까지 움직여 같은 모양인지 확인해요.";
     } else if (!visits.temp.has("mid") || !visits.temp.has("high")) {
-      helper.innerHTML = "마지막은 <b>온도</b>예요. 알맞게와 매우 높게를 비교하면 앞의 두 곡선과 다른 모양이 보여요.";
+      helper.innerHTML = "마지막은 <b>온도</b>예요. 그래프의 꼭대기 근처와 오른쪽 끝을 비교하면 앞의 두 곡선과 다른 모양이 보여요.";
     }
   }
 
   function syncControls(): void {
     const max = selected === "temp" ? 50 : 100;
-    range.max = String(max);
-    range.value = String(values[selected]);
-    range.setAttribute("aria-label", LABEL[selected]);
     factorName.textContent = LABEL[selected];
     factorValue.textContent = displayValue(selected, values[selected]);
     factorButtons.forEach((b) => b.classList.toggle("on", b.dataset.factor === selected));
+    const fraction = values[selected] / max;
+    thumb.style.left = `${fraction * 100}%`;
+    fill.style.width = `${fraction * 100}%`;
+    (thumb.firstChild as HTMLElement).style.background = plantColor(selected === "temp" ? "sun" : selected === "co2" ? "carbon" : "leafHi");
+    slider.setAttribute("aria-label", LABEL[selected]);
+    slider.setAttribute("aria-valuemax", String(max));
+    slider.setAttribute("aria-valuenow", String(Math.round(values[selected])));
+    slider.setAttribute("aria-valuetext", displayValue(selected, values[selected]));
     conditionText.textContent = selected === "light"
       ? "CO₂·온도 고정"
       : selected === "co2"
@@ -220,11 +228,14 @@ export const photoFactorLab: StepRenderer = (host, step, api) => {
     values[selected] = clamp(v, 0, max);
     if (fromUser) {
       userChanged = true;
-      haptic(HAPTIC.tap);
     }
     targetRate = rateFor(selected, values[selected]);
     factorValue.textContent = displayValue(selected, values[selected]);
-    range.value = String(values[selected]);
+    const fraction = values[selected] / max;
+    thumb.style.left = `${fraction * 100}%`;
+    fill.style.width = `${fraction * 100}%`;
+    slider.setAttribute("aria-valuenow", String(Math.round(values[selected])));
+    slider.setAttribute("aria-valuetext", displayValue(selected, values[selected]));
     const bucket = Math.round(values[selected] / (selected === "temp" ? 2.5 : 5));
     if (bucket !== lastSample) {
       lastSample = bucket;
@@ -239,6 +250,7 @@ export const photoFactorLab: StepRenderer = (host, step, api) => {
     const handler = (): void => {
       selected = button.dataset.factor as Factor;
       lastSample = -1;
+      targetRate = rateFor(selected, values[selected]);
       syncControls();
       guidance();
       haptic(HAPTIC.select);
@@ -246,14 +258,48 @@ export const photoFactorLab: StepRenderer = (host, step, api) => {
     button.addEventListener("click", handler);
     return handler;
   });
-  const onRange = (): void => setValue(Number(range.value));
-  const goLow = (): void => setValue(preset(selected, "low"));
-  const goMid = (): void => setValue(preset(selected, "mid"));
-  const goHigh = (): void => setValue(preset(selected, "high"));
-  range.addEventListener("input", onRange);
-  lowBtn.addEventListener("click", goLow);
-  midBtn.addEventListener("click", goMid);
-  highBtn.addEventListener("click", goHigh);
+
+  function setFromClientX(clientX: number): void {
+    const rect = track.getBoundingClientRect();
+    const max = selected === "temp" ? 50 : 100;
+    setValue(((clientX - rect.left) / Math.max(1, rect.width)) * max);
+    const over = clientX < rect.left ? clientX - rect.left : clientX > rect.right ? clientX - rect.right : 0;
+    thumb.style.setProperty("--rb", `${rubber(over, rect.width)}px`);
+  }
+
+  let sliderDrag = false;
+  const onSliderDown = (event: PointerEvent): void => {
+    sliderDrag = true;
+    slider.classList.add("drag");
+    try { slider.setPointerCapture(event.pointerId); } catch { /* 합성 포인터는 캡처가 없을 수 있다. */ }
+    setFromClientX(event.clientX);
+    haptic(HAPTIC.tap);
+  };
+  const onSliderMove = (event: PointerEvent): void => {
+    if (sliderDrag) setFromClientX(event.clientX);
+  };
+  const endSlider = (): void => {
+    sliderDrag = false;
+    slider.classList.remove("drag");
+    thumb.style.setProperty("--rb", "0px");
+  };
+  const onSliderKey = (event: KeyboardEvent): void => {
+    const max = selected === "temp" ? 50 : 100;
+    const step = selected === "temp" ? 1 : 3;
+    let next = values[selected];
+    if (event.key === "ArrowRight" || event.key === "ArrowUp") next += step;
+    else if (event.key === "ArrowLeft" || event.key === "ArrowDown") next -= step;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = max;
+    else return;
+    event.preventDefault();
+    setValue(next);
+  };
+  slider.addEventListener("pointerdown", onSliderDown);
+  slider.addEventListener("pointermove", onSliderMove);
+  slider.addEventListener("pointerup", endSlider);
+  slider.addEventListener("pointercancel", endSlider);
+  slider.addEventListener("keydown", onSliderKey);
 
   function drawCover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, w: number, h: number): void {
     const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
@@ -385,9 +431,10 @@ export const photoFactorLab: StepRenderer = (host, step, api) => {
     greenhouse.removeEventListener("load", onImageLoad);
     greenhouse.removeEventListener("error", onImageError);
     factorButtons.forEach((b, i) => b.removeEventListener("click", factorHandlers[i]));
-    range.removeEventListener("input", onRange);
-    lowBtn.removeEventListener("click", goLow);
-    midBtn.removeEventListener("click", goMid);
-    highBtn.removeEventListener("click", goHigh);
+    slider.removeEventListener("pointerdown", onSliderDown);
+    slider.removeEventListener("pointermove", onSliderMove);
+    slider.removeEventListener("pointerup", endSlider);
+    slider.removeEventListener("pointercancel", endSlider);
+    slider.removeEventListener("keydown", onSliderKey);
   };
 };

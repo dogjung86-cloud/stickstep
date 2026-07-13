@@ -48,7 +48,7 @@ export const POOL_U4L4: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt: "그림은 어떤 상태 변화의 입자 모형이에요. 옳은 것을 <b>보기</b>에서 모두 고른 것은?",
-    figure: particlePairFig("condense"),
+    figure: particlePairFig("condense", false),
     figureDark: true,
     bogi: [
       "물질의 부피가 크게 줄어든다.",

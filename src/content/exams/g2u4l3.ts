@@ -113,7 +113,7 @@ export const POOL_G2U4L3: ExamItem[] = [
     id: "g2u4e57",
     lessonId: L,
     type: "mcq",
-    prompt: "그림은 어떤 원자의 모형으로, 원자핵 속 밝은 알갱이는 ㉠, 회색 알갱이는 ㉡, 궤도의 알갱이는 ㉢이에요. 옳지 <b>않은</b> 것은?",
+    prompt: "그림은 어떤 원자의 모형이에요. 원자핵 속 <b>(+) 표시 알갱이는 ㉠</b>, <b>0 표시 알갱이는 ㉡</b>, 궤도의 <b>(−) 표시 알갱이는 ㉢</b>이에요. 옳지 <b>않은</b> 것은?",
     figure: atomStructQuizFig({ p: 3, n: 4, e: 3 }),
     options: [
       "㉠은 (+)전하를 띤다",

@@ -679,15 +679,14 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
     class: "plant-canvas",
     style: "height:" + String(CYCLE_H) + "px",
     attrs: {
-      tabindex: "0",
-      role: "application",
-      "aria-label": "화면을 좌우로 끌어 시간을 바꾸고 낮과 밤의 광합성, 호흡, 순기체 출입을 비교해요.",
+      role: "img",
+      "aria-label": "강한 낮과 빛 없는 밤의 광합성, 호흡, 순기체 출입을 비교해요.",
     },
   });
   const photoDot = el("span", { class: "pdot", style: "background:var(--plant-leaf-hi)" });
-  const photoPill = el("span", { text: "광합성 · 약하게 진행" });
+  const photoPill = el("span", { text: "광합성 · 호흡보다 강함" });
   const respPill = el("span", { text: "호흡 · 항상 진행" });
-  const cap = el("div", { class: "stage-cap", text: "해를 끌거나 아래 시간 슬라이더를 움직여요" });
+  const cap = el("div", { class: "stage-cap", text: "아래에서 강한 낮과 빛 없는 밤을 차례로 눌러요" });
   const stage = el(
     "div",
     { class: "stage plant-stage" },
@@ -709,34 +708,22 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
   const timeLabel = el("span", { html: "<b>오전 7시</b>" });
   const netLabel = el("span", { text: "두 과정의 차이를 계산하는 중" });
   const readout = el("div", { class: "plant-readout", attrs: { "aria-live": "polite" } }, timeLabel, netLabel);
-  const range = el("input", {
-    class: "plant-range",
-    attrs: {
-      type: "range",
-      min: 0,
-      max: 24,
-      step: 1,
-      value: 7,
-      "aria-label": "하루 시간",
-    },
-  });
-  const dayBtn = el("button", { class: "plant-btn", text: "강한 낮으로", attrs: { type: "button" } });
-  const nightBtn = el("button", { class: "plant-btn", text: "빛 없는 밤으로", attrs: { type: "button" } });
-  const quickControls = el("div", { class: "plant-controls two" }, dayBtn, nightBtn);
+  const dayBtn = el("button", { class: "plant-btn on", text: "강한 낮 보기", attrs: { type: "button" } });
+  const nightBtn = el("button", { class: "plant-btn", text: "빛 없는 밤 보기", attrs: { type: "button" } });
+  const quickControls = el("div", { class: "plant-controls two day-night-controls" }, dayBtn, nightBtn);
   const note = el("div", {
-    class: "plant-note",
-    html: "<b>굵은 화살표는 광합성과 호흡을 합친 순변화</b>예요. 낮에도 가는 호흡 화살표는 계속 움직여요. 낮에는 광합성이 더 강해 겉으로 반대 방향이 크게 보이는 거예요.",
+    class: "plant-note day-night-note",
+    html: "<b>낮:</b> 광합성과 호흡이 함께 진행되지만 광합성이 더 강해요.<br><b>밤:</b> 광합성은 멈추고 호흡만 계속돼요.",
   });
   const helper = el("div", {
     class: "helper",
-    html: "시간을 <b>강한 낮</b>과 <b>빛 없는 밤</b>으로 옮겨 보세요. 위 상태표에서 호흡이 한 번이라도 꺼지는지 확인해요.",
+    html: "<b>강한 낮 보기</b>와 <b>빛 없는 밤 보기</b>를 차례로 눌러 기체 출입 방향을 비교해 보세요.",
   });
-  host.append(goalChips, helper, stage, readout, range, quickControls, note); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
+  host.append(goalChips, helper, stage, readout, quickControls, note); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
-  let hour = 7;
+  let hour = 12;
   let userMoved = false;
-  let dragging = false;
   let canvasW = 340;
   const goals = new Set<string>();
   let finished = false;
@@ -765,7 +752,6 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
     const net = light * 1.55 - 0.34;
     const timeText = formatHour(hour);
     timeLabel.innerHTML = "<b>" + timeText + "</b>";
-    range.value = String(Math.round(hour));
     photoDot.style.opacity = String(0.28 + light * 0.72);
 
     if (light <= 0.01) {
@@ -815,7 +801,6 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
     updateStatus(userMoved);
   }
 
-  const onRange = (): void => setHour(Number(range.value), true);
   const goDay = (): void => {
     haptic(HAPTIC.select);
     setHour(12, true);
@@ -824,49 +809,8 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.select);
     setHour(23, true);
   };
-  range.addEventListener("input", onRange);
   dayBtn.addEventListener("click", goDay);
   nightBtn.addEventListener("click", goNight);
-
-  function hourFromPointer(event: PointerEvent): number {
-    const rect = canvas.getBoundingClientRect();
-    return clamp(((event.clientX - rect.left) / Math.max(1, rect.width)) * 24, 0, 24);
-  }
-  const onDialDown = (event: PointerEvent): void => {
-    safePointerCapture(canvas, event.pointerId);
-    dragging = true;
-    canvas.classList.add("dragging");
-    haptic(HAPTIC.tap);
-    setHour(hourFromPointer(event), true);
-  };
-  const onDialMove = (event: PointerEvent): void => {
-    if (!dragging) return;
-    setHour(hourFromPointer(event), true);
-  };
-  const onDialUp = (): void => {
-    dragging = false;
-    canvas.classList.remove("dragging");
-  };
-  const onDialKey = (event: KeyboardEvent): void => {
-    if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
-      setHour(hour - 1, true);
-      event.preventDefault();
-    } else if (event.key === "ArrowRight" || event.key === "ArrowUp") {
-      setHour(hour + 1, true);
-      event.preventDefault();
-    } else if (event.key === "Home") {
-      setHour(0, true);
-      event.preventDefault();
-    } else if (event.key === "End") {
-      setHour(24, true);
-      event.preventDefault();
-    }
-  };
-  canvas.addEventListener("pointerdown", onDialDown);
-  canvas.addEventListener("pointermove", onDialMove);
-  canvas.addEventListener("pointerup", onDialUp);
-  canvas.addEventListener("pointercancel", onDialUp);
-  canvas.addEventListener("keydown", onDialKey);
 
   function drawProcessLane(
     ctx: CanvasRenderingContext2D,
@@ -960,7 +904,15 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
     drawLeaf(ctx, cx - 42, 218, 88, 45, -0.58, 0.95);
     drawLeaf(ctx, cx + 43, 222, 84, 43, 0.58, 0.95);
 
-    drawTag(ctx, "굵은 화살표 = 순변화", cx, 113, cssVar("--n0"), cssVar("--subj-plant-press"), 174);
+    drawTag(
+      ctx,
+      light > 0 ? "낮: 광합성 > 호흡" : "밤: 호흡만 진행",
+      cx,
+      113,
+      cssVar("--n0"),
+      cssVar("--subj-plant-press"),
+      174,
+    );
 
     const left = 24;
     const right = w - 24;
@@ -1009,13 +961,7 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
   return () => {
     cancelAnimationFrame(startFrame);
     loop.stop();
-    range.removeEventListener("input", onRange);
     dayBtn.removeEventListener("click", goDay);
     nightBtn.removeEventListener("click", goNight);
-    canvas.removeEventListener("pointerdown", onDialDown);
-    canvas.removeEventListener("pointermove", onDialMove);
-    canvas.removeEventListener("pointerup", onDialUp);
-    canvas.removeEventListener("pointercancel", onDialUp);
-    canvas.removeEventListener("keydown", onDialKey);
   };
 };

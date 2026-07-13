@@ -35,7 +35,7 @@ export function bioCellRolesExamFig(): string {
 
 /** 프레파라트를 움직이는 방향만 제시하는 그림 — 시야 속 상의 이동 방향은 숨긴다. */
 export function bioSlideMoveFig(dir: "left" | "right" | "up" | "down"): string {
-  const d = { left: [-34, 0], right: [34, 0], up: [0, -28], down: [0, 28] }[dir];
+  const d = { left: [-34, 0], right: [58, 0], up: [0, -28], down: [0, 28] }[dir];
   const [dx, dy] = d;
   const x2 = 172 + dx, y2 = 126 + dy;
   const angle = Math.atan2(dy, dx), ah = 10;
@@ -242,7 +242,7 @@ export function svgTable(head: string[], rows: string[][], o?: { firstColHead?: 
 }
 
 /** 온도가 다른 물 (가)(나) — 입자 운동 2박스 모형 (다크) */
-export function particleDuo(): string {
+export function particleDuo(showMotionLines = true): string {
   const box = (bx: number, label: string, spread: number, trail: number): string => {
     const pts: [number, number][] = [];
     for (let i = 0; i < 9; i++) {
@@ -256,7 +256,7 @@ export function particleDuo(): string {
       .map(([x, y], i) => {
         const a1 = (i * 137) % 360;
         const trails =
-          trail < 1
+          !showMotionLines || trail < 1
             ? ""
             : [0, 1]
                 .map((k) => {
@@ -415,10 +415,10 @@ export function bimetalBend(): string {
     <text x="152" y="76" font-size="12" font-weight="700" fill="#5E7BA6">A(위)</text>
     <text x="152" y="104" font-size="12" font-weight="700" fill="#6B7684">B(아래)</text>
     <rect x="192" y="66" width="12" height="40" rx="2" fill="#C4CAD2"/>
-    <path d="M204 82 Q 258 44 310 40" fill="none" stroke="#8FA6C6" stroke-width="10" stroke-linecap="round"/>
-    <path d="M204 82 Q 258 44 310 40" fill="none" stroke="#AFC6E8" stroke-width="7" stroke-linecap="round"/>
-    <path d="M204 91 Q 262 52 312 48" fill="none" stroke="#7C8590" stroke-width="10" stroke-linecap="round"/>
-    <path d="M204 91 Q 262 52 312 48" fill="none" stroke="#9AA3AD" stroke-width="7" stroke-linecap="round"/>
+    <path d="M204 82.5 C246 82.5 280 68 312 47" fill="none" stroke="#8FA6C6" stroke-width="11.4" stroke-linecap="round"/>
+    <path d="M204 82.5 C246 82.5 280 68 312 47" fill="none" stroke="#AFC6E8" stroke-width="9" stroke-linecap="round"/>
+    <path d="M204 91.5 C246 91.5 280 77 312 56" fill="none" stroke="#7C8590" stroke-width="11.4" stroke-linecap="round"/>
+    <path d="M204 91.5 C246 91.5 280 77 312 56" fill="none" stroke="#9AA3AD" stroke-width="9" stroke-linecap="round"/>
     <path d="M250 148 c 6 -3 4.5 -8 0 -13 c -4.5 5 -6 10 0 13z" fill="#FF9F43"/>
     <path d="M268 148 c 6 -3 4.5 -8 0 -13 c -4.5 5 -6 10 0 13z" fill="#FF9F43"/>
     <text x="258" y="166" text-anchor="middle" font-size="11" fill="#8B95A1">아래에서 가열</text>
@@ -454,16 +454,16 @@ export function fireAlarm(): string {
 export function liquidExpand(): string {
   const flask = (x: number, label: string, rise: number): string => `
     <rect x="${x + 21}" y="${60 - rise}" width="8" height="${52 + rise}" fill="#7FAFE4"/>
-    <rect x="${x + 19}" y="36" width="12" height="78" rx="5" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
+    <rect x="${x + 19}" y="18" width="12" height="96" rx="5" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
     <path d="M${x + 19} 108 L${x + 4} 138 a8 8 0 0 0 8 10 h26 a8 8 0 0 0 8 -10 L${x + 31} 108" fill="#B7D3F2" stroke="#8B95A1" stroke-width="1.8"/>
-    <text x="${x + 25}" y="${52 - rise}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1B64DA">${label}</text>`;
+    <text x="${x + 25}" y="${Math.max(14, 52 - rise)}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1B64DA">${label}</text>`;
   return `<svg viewBox="0 0 344 208" ${NS} role="img" aria-label="같은 부피의 액체 A, B, C가 든 병을 뜨거운 물에 담근 모습. 유리관 속 액체 높이가 A, B, C 순으로 높다">
     <rect x="16" y="118" width="312" height="66" rx="12" fill="#FBE3DC" stroke="#E8B0A0" stroke-width="1.6"/>
     <path d="M40 130 q8 -5 16 0 t16 0" fill="none" stroke="#E8A08C" stroke-width="1.6"/>
     <path d="M262 130 q8 -5 16 0 t16 0" fill="none" stroke="#E8A08C" stroke-width="1.6"/>
     <text x="296" y="176" text-anchor="middle" font-size="11" fill="#B0705E">뜨거운 물</text>
     <line x1="36" y1="60" x2="308" y2="60" stroke="#8B95A1" stroke-width="1.4" stroke-dasharray="5 5"/>
-    <text x="36" y="52" font-size="10.5" fill="#8B95A1">처음 높이</text>
+    <text x="10" y="52" font-size="10.5" fill="#8B95A1">처음 높이</text>
     ${flask(52, "A", 34)}
     ${flask(148, "B", 18)}
     ${flask(244, "C", 6)}
@@ -516,19 +516,19 @@ const CLUMP4 = (): string => {
   const pts: [number, number][] = [[30, 30], [46, 24], [62, 32], [24, 46], [40, 42], [56, 48], [70, 44], [34, 60], [52, 62]];
   return pts.map(([x, y]) => trail4(x, y, (x + y) % 6, 3.2) + dot4(x, y, 6)).join("");
 };
-const SCATTER4 = (): string => {
+const SCATTER4 = (showMotionLines = true): string => {
   const pts: [number, number, number][] = [[20, 18, 0.7], [66, 14, 2.4], [44, 40, 4.1], [16, 60, 1.2], [74, 62, 5.3], [50, 72, 3.2]];
-  return pts.map(([x, y, a]) => trail4(x, y, a, 8.5) + dot4(x, y, 5.2)).join("");
+  return pts.map(([x, y, a]) => `${showMotionLines ? trail4(x, y, a, 8.5) : ""}${dot4(x, y, 5.2)}`).join("");
 };
 
 /** 상태 변화 전후 입자 모형(다크) — 왼쪽 상자가 화살표를 지나 오른쪽 상자로.
  *  melt: 규칙→붙은 불규칙 · freeze: 붙은 불규칙→규칙 · condense: 흩어짐→붙은 불규칙 · sublime: 규칙→흩어짐 */
-export function particlePairFig(kind: "melt" | "freeze" | "condense" | "sublime"): string {
+export function particlePairFig(kind: "melt" | "freeze" | "condense" | "sublime", showMotionLines = true): string {
   const inner: Record<string, [string, string, string]> = {
     melt: [GRID4(), CLUMP4(), "규칙적으로 늘어선 입자들이 화살표를 지나 서로 붙은 채 불규칙하게 흐트러진 배열로 변하는 모형"],
     freeze: [CLUMP4(), GRID4(), "서로 붙은 채 불규칙하게 배열된 입자들이 화살표를 지나 규칙적으로 늘어선 배열로 변하는 모형"],
-    condense: [SCATTER4(), CLUMP4(), "멀리 흩어져 날아다니던 입자들이 화살표를 지나 서로 붙은 불규칙한 배열로 변하는 모형"],
-    sublime: [GRID4(), SCATTER4(), "규칙적으로 늘어선 입자들이 화살표를 지나 멀리 흩어져 날아다니는 배열로 변하는 모형"],
+    condense: [SCATTER4(showMotionLines), CLUMP4(), "멀리 흩어져 날아다니던 입자들이 화살표를 지나 서로 붙은 불규칙한 배열로 변하는 모형"],
+    sublime: [GRID4(), SCATTER4(showMotionLines), "규칙적으로 늘어선 입자들이 화살표를 지나 멀리 흩어져 날아다니는 배열로 변하는 모형"],
   };
   const [a, b, aria] = inner[kind];
   return `<svg viewBox="0 0 344 124" ${NS} role="img" aria-label="${aria}">
@@ -566,10 +566,10 @@ export function phaseTriFig(): string {
     ${box(230, 180, "액체", miniLiquid)}
     ${arrow(122, 196, 222, 196, "A", 172, 182)}
     ${arrow(222, 222, 122, 222, "B", 172, 238)}
-    ${arrow(268, 172, 210, 76, "C", 252, 118)}
-    ${arrow(228, 66, 286, 162, "D", 292, 112)}
-    ${arrow(76, 172, 134, 76, "E", 92, 112)}
-    ${arrow(116, 66, 58, 162, "F", 52, 118)}
+    ${arrow(268, 172, 210, 76, "C", 234, 126)}
+    ${arrow(228, 66, 286, 162, "D", 278, 104)}
+    ${arrow(76, 172, 134, 76, "E", 110, 126)}
+    ${arrow(116, 66, 58, 162, "F", 66, 104)}
   </svg>`;
 }
 
@@ -667,9 +667,9 @@ export function sealedScaleFig(): string {
       <path d="M52 112h36a8 8 0 0 1 8 8v16a8 8 0 0 1-8 8H52a8 8 0 0 1-8-8v-16a8 8 0 0 1 8-8z" fill="#EDF1F6" stroke="#8B95A1" stroke-width="1.8"/>
       <rect x="56" y="120" width="28" height="14" rx="4" fill="#2A3442"/>
     </g>`;
-  const liquid = `<path d="M44 88 L96 88 a8 8 0 0 1 4 10 l-2 4 a8 8 0 0 1 -8 4 h-48 a8 8 0 0 1 -8 -4 l-2 -4 a8 8 0 0 1 4 -10z" fill="#B7D3F2" opacity=".9" transform="translate(0,0)"/>`;
+  const liquid = `<path d="M44 88 L96 88 a8 8 0 0 1 4 10 l-2 4 a8 8 0 0 1 -8 4 h-48 a8 8 0 0 1 -8 -4 l-2 -4 a8 8 0 0 1 4 -10z" fill="#B7D3F2" opacity=".9" transform="translate(3,0)"/>`;
   const gasDots = [[56, 60], [76, 52], [66, 76], [50, 88], [84, 84], [72, 96]]
-    .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3" fill="#9EC5FB" opacity=".85"/>`)
+    .map(([x, y]) => `<circle cx="${x + 4}" cy="${y + 4}" r="3" fill="#9EC5FB" opacity=".85"/>`)
     .join("");
   return `<svg viewBox="0 0 344 176" ${NS} role="img" aria-label="마개로 밀폐한 플라스크를 전자저울에 올린 두 장면. (가)는 바닥에 액체가 조금 있고, (나)는 액체가 모두 기체로 변한 뒤의 모습이다">
     ${flask(18, liquid)}
@@ -850,7 +850,7 @@ export function buoyThreeFig(): string {
       <rect x="36" y="${wy - 22}" width="28" height="26" rx="5" fill="#C9B49A" stroke="#8B7355" stroke-width="1.8"/>
       ${waterTop != null ? `<rect x="14" y="${waterTop}" width="72" height="${142 - waterTop}" rx="6" fill="rgba(90,162,248,.22)"/><path d="M14 ${waterTop} h72" stroke="#5AA2F8" stroke-width="2"/>` : ""}
       <path d="M14 142 h72" stroke="#8B95A1" stroke-width="2.4"/>
-      <path d="M14 108 v34 M86 108 v34" stroke="#8B95A1" stroke-width="2.4"/>
+      <path d="M14 74 v68 M86 74 v68" stroke="#8B95A1" stroke-width="2.4"/>
       <text x="50" y="164" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">${label}</text>
     </g>`;
   };
@@ -1034,7 +1034,7 @@ export function gasTvChoicesFig(): string {
       <line x1="16" y1="14" x2="16" y2="66" stroke="#B0B8C1" stroke-width="1.4"/>
       <line x1="16" y1="66" x2="92" y2="66" stroke="#B0B8C1" stroke-width="1.4"/>
       ${body}
-      <text x="8" y="24" font-size="8.5" fill="#8B95A1">부피</text>
+      <text x="12" y="24" text-anchor="end" font-size="8.5" fill="#8B95A1">부피</text>
       <text x="92" y="76" text-anchor="end" font-size="8.5" fill="#8B95A1">온도</text>
     </g>`;
   const line = (d: string): string => `<path d="${d}" stroke="#5E6B7E" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
@@ -1123,9 +1123,9 @@ export function gasBottleSpongeFig(o?: { dents?: boolean }): string {
        <rect x="16" y="48" width="28" height="14" rx="3" fill="#C4CAD2" stroke="#8B95A1" stroke-width="1.6"/>
      </g>`;
   return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="스펀지 위에 병 세 개를 올린 그림. 가는 빈 병을 바로 세웠고, 나는 물을 가득 채워 바로 세웠고, 다는 같은 병에 물을 가득 채워 좁은 뚜껑이 아래로 가게 거꾸로 세웠다">
-    ${sponge(18, dents ? 3 : 0)}${bottleUp(18, false)}
-    ${sponge(124, dents ? 8 : 0)}${bottleUp(124, true)}
-    ${sponge(230, dents ? 14 : 0, true)}${bottleDown(230, dents ? 14 : 0)}
+    ${sponge(18, dents ? 3 : 0)}${bottleUp(36, false)}
+    ${sponge(124, dents ? 8 : 0)}${bottleUp(142, true)}
+    ${sponge(230, dents ? 14 : 0, true)}${bottleDown(248, dents ? 14 : 0)}
     <text x="66" y="190" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(가)</text>
     <text x="172" y="190" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(나)</text>
     <text x="278" y="190" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(다)</text>
@@ -1175,16 +1175,16 @@ export function starSpinFig(deg: number): string {
   const large = deg > 180 ? 1 : 0;
   const arcR = R - 16;
   const [aax, aay] = [cx + Math.cos(((a0 + 8) * Math.PI) / 180) * arcR, cy - Math.sin(((a0 + 8) * Math.PI) / 180) * arcR];
-  const [abx, aby] = [cx + Math.cos(((a0 + deg - 8) * Math.PI) / 180) * arcR, cy - Math.sin(((a0 + deg - 8) * Math.PI) / 180) * arcR];
+  const [abx, aby] = [cx + Math.cos(((a0 + deg - 4) * Math.PI) / 180) * arcR, cy - Math.sin(((a0 + deg - 4) * Math.PI) / 180) * arcR];
   const mid = a0 + deg / 2;
   const [mx, my] = [cx + Math.cos((mid * Math.PI) / 180) * (arcR - 20), cy - Math.sin((mid * Math.PI) / 180) * (arcR - 20)];
   return `<svg viewBox="0 0 344 224" ${NS} fill="none" role="img" aria-label="북쪽 하늘 그림. 가운데 북극성이 있고, 별 A가 시계 반대 방향으로 ${deg}도 돌아 B 위치로 간 모습">
+    <defs><marker id="star-spin-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#8FB3E8"/></marker></defs>
     <circle cx="${cx}" cy="${cy}" r="${R}" stroke="#2C4066" stroke-width="1.4" stroke-dasharray="4 5"/>
     <circle cx="${cx}" cy="${cy}" r="4.6" fill="#FFE9A8"/>
     <circle cx="${cx}" cy="${cy}" r="8.5" stroke="rgba(255,233,168,.4)" stroke-width="1.4"/>
     <text x="${cx}" y="${cy + 22}" text-anchor="middle" font-size="11" fill="#AFC3E3">북극성</text>
-    <path d="M${aax.toFixed(1)} ${aay.toFixed(1)}A${arcR} ${arcR} 0 ${large} 0 ${abx.toFixed(1)} ${aby.toFixed(1)}" stroke="#8FB3E8" stroke-width="2" stroke-dasharray="5 5"/>
-    <path d="M${abx.toFixed(1)} ${aby.toFixed(1)}l7 -9M${abx.toFixed(1)} ${aby.toFixed(1)}l10 3" stroke="#8FB3E8" stroke-width="2"/>
+    <path d="M${aax.toFixed(1)} ${aay.toFixed(1)}A${arcR} ${arcR} 0 ${large} 0 ${abx.toFixed(1)} ${aby.toFixed(1)}" stroke="#8FB3E8" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#star-spin-arrow)"/>
     <text x="${mx.toFixed(1)}" y="${my.toFixed(1)}" text-anchor="middle" font-size="13" font-weight="700" fill="#DCE8FF">${deg}°</text>
     <circle cx="${ax.toFixed(1)}" cy="${ay.toFixed(1)}" r="5.4" fill="#EDE2BE"/>
     <text x="${(ax + 14).toFixed(1)}" y="${(ay + 4).toFixed(1)}" font-size="12.5" font-weight="700" fill="#DCE8FF">A</text>
@@ -1246,7 +1246,7 @@ export function moonPhase8Fig(): string {
     </g>`;
     const lx = cx + Math.cos(a) * (R + 25);
     const ly = cy - Math.sin(a) * (R * 0.88 + 23);
-    moons += `<text x="${lx.toFixed(1)}" y="${(ly + 4.5).toFixed(1)}" fill="#DCE8FF" font-size="13" font-weight="700" text-anchor="middle">${nums[i]}</text>`;
+    moons += `<text x="${lx.toFixed(1)}" y="${(ly + 5.5).toFixed(1)}" fill="#DCE8FF" font-size="17.5" font-weight="800" text-anchor="middle">${nums[i]}</text>`;
   }
   return `<svg viewBox="0 0 344 212" ${NS} fill="none" role="img" aria-label="지구를 중심으로 한 달의 공전 궤도 여덟 위치 그림. 햇빛은 오른쪽에서 들어오고, 각 위치의 달은 오른쪽 반구만 밝다. 1번이 태양 쪽이고 시계 반대 방향으로 8번까지 번호가 붙어 있다">
     <ellipse cx="${cx}" cy="${cy}" rx="${R}" ry="${R * 0.88}" stroke="#3D5378" stroke-width="1.4" stroke-dasharray="4 5"/>
@@ -1498,7 +1498,7 @@ export function chemDistillApparatusFig(): string {
     <path d="M243 150l-4-8M147 74l4 8" stroke="#7FB8DC" stroke-width="0"/>
     <path d="M218 154v22" stroke="#9DAABD" stroke-width="2.4"/>
     <path d="M198 178h44v28a8 8 0 0 1-8 8h-28a8 8 0 0 1-8-8z" fill="rgba(224,238,250,.4)" stroke="#9DAABD" stroke-width="1.8"/>
-    <path d="M62 196q-10-13 0-26 3 8 11 10-3-12 8-17 0 14 10 19 5 10-5 17-14 8-24-3z" fill="#FF9A4A" stroke="#D95F14" stroke-width="1.4"/>
+    <path d="M88 196q-10-13 0-26 3 8 11 10-3-12 8-17 0 14 10 19 5 10-5 17-14 8-24-3z" fill="#FF9A4A" stroke="#D95F14" stroke-width="1.4"/>
     <text x="120" y="34" font-size="12.5" font-weight="800" fill="#4E5968">A</text>
     <path d="M116 30h-14" stroke="#C4CAD2" stroke-width="1.4"/>
     <text x="34" y="120" text-anchor="end" font-size="12.5" font-weight="800" fill="#4E5968">B</text>
@@ -1507,7 +1507,7 @@ export function chemDistillApparatusFig(): string {
     <path d="M262 94l-32 14" stroke="#C4CAD2" stroke-width="1.4"/>
     <text x="258" y="204" font-size="12.5" font-weight="800" fill="#4E5968">D</text>
     <path d="M254 200h-12" stroke="#C4CAD2" stroke-width="1.4"/>
-    <text x="46" y="212" text-anchor="end" font-size="10.5" fill="#8B95A1">가열</text>
+    <text x="96" y="218" text-anchor="middle" font-size="10.5" fill="#8B95A1">가열</text>
   </svg>`;
 }
 
@@ -1838,7 +1838,7 @@ export function lightMirrorGridFig(): string {
   for (let c = 0; c <= 12; c++) grid += `<line x1="${28 + c * cell}" y1="24" x2="${28 + c * cell}" y2="192" stroke="#EDF0F4" stroke-width="1.2"/>`;
   for (let r = 0; r <= 7; r++) grid += `<line x1="28" y1="${24 + r * cell}" x2="316" y2="${24 + r * cell}" stroke="#EDF0F4" stroke-width="1.2"/>`;
   const cand = (x: number, t: string): string =>
-    `<circle cx="${x}" cy="108" r="10.5" fill="#FFF" stroke="#3182F6" stroke-width="1.6"/><text x="${x}" y="112.5" text-anchor="middle" font-size="11.5" font-weight="800" fill="#1B64DA">${t}</text>`;
+    `<circle cx="${x}" cy="108" r="12.5" fill="#FFF" stroke="#3182F6" stroke-width="1.8"/><text x="${x}" y="113.5" text-anchor="middle" font-size="16" font-weight="800" fill="#1B64DA">${t}</text>`;
   return `<svg viewBox="0 0 344 216" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="모눈 위에 세로로 선 평면거울과 촛불 모양 물체가 그려져 있어요. 물체는 거울에서 모눈 3칸 떨어져 있고, 상이 생길 위치 후보 다섯 곳에 번호가 붙어 있어요. 번호 1부터 4는 거울 뒤 1칸부터 4칸 위치, 번호 5는 거울 면 위예요">
     ${grid}
     <line x1="172" y1="20" x2="172" y2="196" stroke="#5E6B7E" stroke-width="4"/>
@@ -2030,12 +2030,15 @@ export function atomMolsFig(mols: { key: "H2" | "O2" | "O3" | "CO" | "CO2" | "H2
     }
   };
   const n = mols.length;
-  const pos: [number, number][] = n <= 2 ? [[94, 58], [250, 58]] : n === 3 ? [[60, 58], [172, 58], [284, 58]] : [[94, 54], [250, 54], [94, 146], [250, 146]];
-  const H = n <= 3 ? 132 : 222;
+  const pos: [number, number][] = n === 1 ? [[172, 54]] : n === 2 ? [[94, 58], [250, 58]] : n === 3 ? [[60, 58], [172, 58], [284, 58]] : [[94, 54], [250, 54], [94, 146], [250, 146]];
+  const H = n === 1 ? 124 : n <= 3 ? 132 : 222;
   const cells = mols
     .map((m, i) => {
       const [cx, cy] = pos[i];
-      return draw(m.key, cx, cy) + `<text x="${cx}" y="${cy + 56}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${m.label}</text>`;
+      const molecule = n === 1
+        ? `<g transform="translate(${cx} ${cy}) scale(1.55)">${draw(m.key, 0, 0)}</g>`
+        : draw(m.key, cx, cy);
+      return molecule + `<text x="${cx}" y="${cy + 56}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${m.label}</text>`;
     })
     .join("");
   return `<svg viewBox="0 0 344 ${H}" ${NS} fill="none" role="img" aria-label="분자 모형 ${mols.map((m) => m.label).join(", ")} — 각 모형을 이루는 공(원자)의 색깔 종류와 개수를 살펴보세요">${cells}</svg>`;
@@ -2061,8 +2064,8 @@ export function atomStructQuizFig(o: { p: number; n: number; e: number } = { p: 
   const grainSvg = spots
     .map(([dx, dy], idx) =>
       kinds[idx]
-        ? `<circle cx="${cx + dx}" cy="${cy + dy}" r="7.5" fill="#FFB49C" stroke="#C05038" stroke-width="1.5"/>`
-        : `<circle cx="${cx + dx}" cy="${cy + dy}" r="7.5" fill="#C2BBB6" stroke="#7A6E68" stroke-width="1.5"/>`,
+        ? `<circle cx="${cx + dx}" cy="${cy + dy}" r="7.5" fill="#FFB49C" stroke="#C05038" stroke-width="1.5"/><text x="${cx + dx}" y="${cy + dy + 3}" text-anchor="middle" font-size="8" font-weight="900" fill="#8E2B1D">+</text>`
+        : `<circle cx="${cx + dx}" cy="${cy + dy}" r="7.5" fill="#C2BBB6" stroke="#7A6E68" stroke-width="1.5"/><text x="${cx + dx}" y="${cy + dy + 3}" text-anchor="middle" font-size="7.5" font-weight="900" fill="#5F5651">0</text>`,
     )
     .join("");
   const eAngles = [-90, 150, 30, -30, -150, 90, 60, -120].slice(0, o.e);
@@ -2121,15 +2124,18 @@ export function atomPeriodicExamFig(o: { cells: { g: number; period: number; t: 
 /** 주기율표 한 칸 확대 ㉠㉡㉢ — 칸 속 세 자리(위 숫자·가운데 기호·아래 이름)의 뜻을 묻는 문항용.
  *  cellAnatomyFig(개념용)와 달리 정답 라벨을 전부 감춘 시험판. */
 export function atomCellQuizFig(): string {
-  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="주기율표의 한 칸을 확대한 그림 — 칸의 위 왼쪽 자리에 ㉠, 가운데 큰 자리에 ㉡, 아래 자리에 ㉢ 기호가 있어요">
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="수소의 주기율표 한 칸을 확대한 그림 — 위 왼쪽의 원자 번호 1을 ㉠이, 가운데 원소 기호 H를 ㉡이 가리켜요">
     <rect x="130" y="24" width="96" height="132" rx="10" fill="#F0F4F9"/>
     <rect x="124" y="18" width="96" height="132" rx="10" fill="#FAFCFF" stroke="#B8C2CE" stroke-width="1.6"/>
-    <rect x="132" y="28" width="30" height="22" rx="6" fill="#FDEBEA" stroke="#E8A09A" stroke-width="1.3"/>
-    <text x="147" y="43" text-anchor="middle" font-size="12" font-weight="800" fill="#C43A2E">㉠</text>
-    <rect x="146" y="62" width="52" height="44" rx="8" fill="#E8F1FD" stroke="#9CC2F0" stroke-width="1.3"/>
-    <text x="172" y="91" text-anchor="middle" font-size="19" font-weight="800" fill="#2E5AA8">㉡</text>
-    <rect x="140" y="116" width="64" height="24" rx="7" fill="#E6F6EC" stroke="#9AD4B0" stroke-width="1.3"/>
-    <text x="172" y="132" text-anchor="middle" font-size="12.5" font-weight="800" fill="#0B8A5E">㉢</text>
+    <text x="138" y="42" font-size="16" font-weight="800" fill="#C43A2E">1</text>
+    <text x="172" y="98" text-anchor="middle" font-family="Georgia, serif" font-size="44" font-weight="800" fill="#2E5AA8">H</text>
+    <text x="172" y="132" text-anchor="middle" font-size="14" font-weight="800" fill="#0B8A5E">수소</text>
+    <line x1="105" y1="38" x2="134" y2="38" stroke="#C43A2E" stroke-width="1.6"/>
+    <circle cx="94" cy="38" r="11" fill="#FFF" stroke="#E2695F" stroke-width="1.6"/>
+    <text x="94" y="42.5" text-anchor="middle" font-size="12" font-weight="800" fill="#C43A2E">㉠</text>
+    <line x1="239" y1="82" x2="197" y2="82" stroke="#2E5AA8" stroke-width="1.6"/>
+    <circle cx="250" cy="82" r="11" fill="#FFF" stroke="#5AA2F8" stroke-width="1.6"/>
+    <text x="250" y="86.5" text-anchor="middle" font-size="12" font-weight="800" fill="#1B64DA">㉡</text>
     <text x="172" y="176" text-anchor="middle" font-size="11" fill="#8B95A1">주기율표의 한 칸</text>
   </svg>`;
 }
@@ -2452,20 +2458,20 @@ export function elecViChoicesFig(): string {
  *  전구 저항은 모두 같다는 전제의 밝기·전류 비교 문항용. */
 export function elecTwoCircuitFig(o: { right: "series" | "parallel" }): string {
   const left = `
-    <path d="M46 150V56h100v94h-24" stroke="#8B95A1" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+    <path d="M72 150H46V56h100v94h-24" stroke="#8B95A1" stroke-width="3.4" fill="none" stroke-linecap="round"/>
     ${ebulb(96, 56, 13)}
     ${ebattery(72, 138, 50, 22)}
     <text x="96" y="26" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(가)</text>`;
   const right =
     o.right === "series"
       ? `
-    <path d="M198 150V56h112v94h-30" stroke="#8B95A1" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+    <path d="M228 150h-30V56h112v94h-30" stroke="#8B95A1" stroke-width="3.4" fill="none" stroke-linecap="round"/>
     ${ebulb(230, 56, 13)}
     ${ebulb(278, 56, 13)}
     ${ebattery(228, 138, 50, 22)}
     <text x="254" y="26" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(나)</text>`
       : `
-    <path d="M198 150V70h112v80h-30" stroke="#8B95A1" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+    <path d="M228 150h-30V70h112v80h-30" stroke="#8B95A1" stroke-width="3.4" fill="none" stroke-linecap="round"/>
     <path d="M226 70v-34h58v34" stroke="#8B95A1" stroke-width="3.4" fill="none" stroke-linecap="round"/>
     ${ebulb(254, 70, 12)}
     ${ebulb(254, 36, 12)}

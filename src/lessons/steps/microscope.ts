@@ -4,7 +4,6 @@
 
 import { clamp, el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
-import { fitCanvas } from "../../ui/canvas";
 import type { StepRenderer } from "../types";
 
 type Specimen = "onion" | "cheek" | "elodea";
@@ -75,6 +74,8 @@ export const microscope: StepRenderer = (host, step, api) => {
   let disposed = false;
   let drawRaf = 0;
   let completed = false;
+  const fieldCache = document.createElement("canvas");
+  let fieldCacheKey = "";
 
   const states: Record<Specimen, SpecimenState> = {
     onion: { prepared: !PRESET.onion.needsPrep, lowScanned: false },
@@ -277,7 +278,7 @@ export const microscope: StepRenderer = (host, step, api) => {
     syncSlider();
     syncPrepButton();
     haptic(HAPTIC.select);
-    redraw();
+    scheduleRedraw();
   }
 
   function setObjective(next: (typeof OBJECTIVES)[number]): void {
@@ -288,7 +289,7 @@ export const microscope: StepRenderer = (host, step, api) => {
     syncObjectiveButtons();
     syncSlider();
     haptic(HAPTIC.select);
-    redraw();
+    scheduleRedraw();
   }
 
   prepBtn.addEventListener("click", () => {
@@ -297,7 +298,7 @@ export const microscope: StepRenderer = (host, step, api) => {
     state.prepared = true;
     syncPrepButton();
     haptic(HAPTIC.select);
-    redraw();
+    scheduleRedraw();
   });
 
   function setFocusFromPointer(event: PointerEvent): void {
@@ -305,7 +306,7 @@ export const microscope: StepRenderer = (host, step, api) => {
     if (rect.width <= 0) return;
     focus = clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100);
     syncSlider();
-    redraw();
+    scheduleRedraw();
   }
 
   slider.addEventListener("pointerdown", (event) => {
@@ -355,7 +356,7 @@ export const microscope: StepRenderer = (host, step, api) => {
     event.preventDefault();
     focus = clamp(focus + (event.key === "ArrowRight" ? 3 : -3), 0, 100);
     syncSlider();
-    redraw();
+    scheduleRedraw();
   });
 
   function compareInstruction(sharp: boolean): string {
@@ -404,7 +405,7 @@ export const microscope: StepRenderer = (host, step, api) => {
     magValue.nodeValue = String(total);
     const state = currentState();
     const sharp = Math.abs(focus - SHARP_FOCUS) <= SHARP_RANGE;
-    drawField(canvas, currentPreset(), total, focus, state.prepared);
+    fieldCacheKey = drawField(canvas, fieldCache, fieldCacheKey, currentPreset(), total, focus, state.prepared);
 
     if (compareMode) {
       const instruction = compareInstruction(sharp);
@@ -427,7 +428,7 @@ export const microscope: StepRenderer = (host, step, api) => {
   }
 
   function scheduleRedraw(): void {
-    window.cancelAnimationFrame(drawRaf);
+    if (disposed || drawRaf) return;
     drawRaf = window.requestAnimationFrame(() => {
       drawRaf = 0;
       redraw();
@@ -448,34 +449,55 @@ export const microscope: StepRenderer = (host, step, api) => {
     window.cancelAnimationFrame(drawRaf);
     resizeObserver?.disconnect();
     endFocusDrag();
+    // 즉시 backing store를 줄여 레슨 왕복 때 큰 비트맵이 GC까지 남지 않게 한다.
+    fieldCache.width = 1;
+    fieldCache.height = 1;
+    canvas.width = 1;
+    canvas.height = 1;
   };
 };
 
 function drawField(
   canvas: HTMLCanvasElement,
+  cache: HTMLCanvasElement,
+  previousCacheKey: string,
   preset: Preset,
   total: number,
   focus: number,
   prepared: boolean,
-): void {
-  const { ctx, w, h } = fitCanvas(canvas, 250);
+): string {
+  const { ctx, w, h, dpr } = fitStableCanvas(canvas, 250, 1.5);
   ctx.clearRect(0, 0, w, h);
   const cx = w / 2;
   const cy = h / 2;
   const radius = Math.min(w, h) / 2 - 10;
 
+  const cacheKey = [preset.shape, total, prepared ? 1 : 0, canvas.width, canvas.height, dpr].join(":");
+  if (cacheKey !== previousCacheKey) {
+    cache.width = canvas.width;
+    cache.height = canvas.height;
+    const cacheCtx = cache.getContext("2d")!;
+    cacheCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cacheCtx.clearRect(0, 0, w, h);
+    cacheCtx.save();
+    cacheCtx.beginPath();
+    cacheCtx.arc(cx, cy, radius, 0, Math.PI * 2);
+    cacheCtx.clip();
+    cacheCtx.fillStyle = preset.shape === "elodea" ? "#EAF7EE" : preset.shape === "cheek" ? "#F5F4F8" : "#F7F0F4";
+    cacheCtx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+    if (preset.shape === "cheek") drawCheekCells(cacheCtx, cx, cy, radius, total, prepared, preset.stainColor);
+    else if (preset.shape === "elodea") drawElodeaCells(cacheCtx, cx, cy, radius, total, prepared);
+    else drawOnionCells(cacheCtx, cx, cy, radius, total, prepared, preset.stainColor);
+    cacheCtx.restore();
+  }
+
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
   ctx.clip();
-  ctx.fillStyle = preset.shape === "elodea" ? "#EAF7EE" : preset.shape === "cheek" ? "#F5F4F8" : "#F7F0F4";
-  ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
-
   const blur = (Math.abs(focus - SHARP_FOCUS) / SHARP_FOCUS) * 11;
   ctx.filter = blur > 0.35 ? `blur(${blur.toFixed(1)}px)` : "none";
-  if (preset.shape === "cheek") drawCheekCells(ctx, cx, cy, radius, total, prepared, preset.stainColor);
-  else if (preset.shape === "elodea") drawElodeaCells(ctx, cx, cy, radius, total, prepared);
-  else drawOnionCells(ctx, cx, cy, radius, total, prepared, preset.stainColor);
+  ctx.drawImage(cache, 0, 0, cache.width, cache.height, 0, 0, w, h);
   ctx.filter = "none";
   ctx.restore();
 
@@ -491,6 +513,25 @@ function drawField(
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
   ctx.stroke();
+  return cacheKey;
+}
+
+function fitStableCanvas(
+  canvas: HTMLCanvasElement,
+  cssHeight: number,
+  maxDpr: number,
+): { ctx: CanvasRenderingContext2D; w: number; h: number; dpr: number } {
+  const dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
+  const rect = canvas.getBoundingClientRect();
+  const w = rect.width || canvas.clientWidth || 320;
+  const h = cssHeight;
+  const pixelWidth = Math.max(1, Math.round(w * dpr));
+  const pixelHeight = Math.max(1, Math.round(h * dpr));
+  if (canvas.width !== pixelWidth) canvas.width = pixelWidth;
+  if (canvas.height !== pixelHeight) canvas.height = pixelHeight;
+  const ctx = canvas.getContext("2d")!;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, w, h, dpr };
 }
 
 function cellScale(total: number): number {

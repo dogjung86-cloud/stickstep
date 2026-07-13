@@ -360,7 +360,6 @@ export const photoEvidenceLab: StepRenderer = (host, step, api) => {
   }
 
   function drawEvidencePanel(ctx: CanvasRenderingContext2D, W: number, tMs: number): void {
-    const n0 = cssVar("--n0");
     const n100 = cssVar("--n100");
     const n300 = cssVar("--n300");
     const n700 = cssVar("--n700");
@@ -453,7 +452,7 @@ export const photoEvidenceLab: StepRenderer = (host, step, api) => {
     label(ctx, "뜨거운 물", bathX + bathW / 2, bathY + bathH - 11, plantColor("water"), "center", 9.5);
 
     const tubeXs = [bathX + bathW * 0.32, bathX + bathW * 0.69];
-    const names = ["햇빛 받은 잎", "가린 잎"];
+    const names = ["햇빛 받은 잎", "햇빛 가린 잎"];
     for (let i = 0; i < 2; i++) {
       const tx = tubeXs[i];
       const tubeTop = 282;
@@ -494,28 +493,33 @@ export const photoEvidenceLab: StepRenderer = (host, step, api) => {
     const dishY = 365;
     for (let i = 0; i < 2; i++) {
       const dx = dishXs[i];
-      ctx.fillStyle = alphaVar("--n0", 0.055);
+      ctx.fillStyle = alphaVar("--n0", 0.18);
       ctx.beginPath();
       ctx.ellipse(dx, dishY, Math.min(36, W * 0.095), 24, 0, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = alphaVar("--plant-glass-hi", 0.66);
+      ctx.strokeStyle = alphaVar("--plant-glass-hi", 0.86);
       ctx.lineWidth = 1.7;
       ctx.stroke();
       drawLeaf(ctx, dx, dishY, Math.min(55, W * 0.14), 28, i === 0 ? -0.12 : 0.12, 0.5);
       leafShape(ctx, dx, dishY, Math.min(55, W * 0.14), 28, i === 0 ? -0.12 : 0.12);
       ctx.save();
       ctx.globalAlpha = iodineP;
-      ctx.fillStyle = i === 0 ? cssVar("--stage") : plantColor("soil");
+      ctx.fillStyle = i === 0 ? cssVar("--blue-press") : plantColor("soil");
       ctx.fill();
+      if (i === 0) {
+        ctx.strokeStyle = cssVar("--blue-tint-2");
+        ctx.lineWidth = 2.2;
+        ctx.stroke();
+      }
       ctx.restore();
-      label(ctx, i === 0 ? "햇빛" : "가림", dx, dishY + 40, n300, "center", 9);
+      label(ctx, i === 0 ? "햇빛 받은 잎" : "햇빛 가린 잎", dx, dishY + 40, n300, "center", 7.8);
       if (iodineP > 0.82) {
         label(
           ctx,
           i === 0 ? "청람색" : "색 변화 거의 없음",
           dx,
           dishY + 57,
-          i === 0 ? n0 : plantColor("soil"),
+          i === 0 ? cssVar("--blue-tint-2") : plantColor("soil"),
           "center",
           i === 0 ? 9.3 : 8.4,
         );

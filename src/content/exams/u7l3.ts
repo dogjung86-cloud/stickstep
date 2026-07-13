@@ -2,7 +2,7 @@
 // 함정 계보: 흑점 많을 때 홍염이 뜸하다(아님 — 잦다) · 흑점=구멍(아님 — 저온부) · 채층/코로나는 일식 때
 // 생긴다(아님 — 그때만 보임) · 활발 시기 세트 중 하나만 뒤집기(코로나 작아짐 등) · 흑점·코로나 연동 —
 // 출판사 마무리 출제 의도만 계승, 문구·소재 자체 제작.
-// 그림: NASA 실사 5종(sun_whitelight·sunspot_hinode·sun_304·eclipse_corona·prominence — 레슨 hotspot과
+// 그림: NASA 실사 6종(sun_whitelight·sunspot_hinode·solar_granulation_orbiter·sun_304·eclipse_corona·prominence — 레슨 hotspot과
 // 같은 자산이지만 문항 각도 신규) + sunspotGraphFig(레슨 그림 재사용·질문 각도 교체) + aurora·solar-projection(codex).
 // 소재 회피: 고려사 만화, sunLab·hotspot 스텝, sunspotFig ㄱㄴㄷ 조합(구멍/온도/크기), "흑점↑ 홍염 뜸" 정답
 // 문구(각도 교체), 활발 시기 5지 multi 조합, (가)(나) 1996·2000 활발 비교(주기 각도로 교체), 11년 ox.
@@ -39,7 +39,7 @@ export const POOL_U7L3: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt: "사진은 태양 표면을 확대한 실제 관측 사진이에요. 표면을 가득 채운 쌀알 모양의 무늬가 생기는 까닭은?",
-    figure: pimg("sunspot_hinode.jpg", "어두운 흑점 주위로 쌀알을 뿌린 듯한 무늬가 가득한 태양 표면 확대 사진"),
+    figure: pimg("solar_granulation_orbiter.png", "흑점 없이 쌀알 무늬만 화면 가득 보이는 태양 광구 확대 관측 사진"),
     options: [
       "광구 아래에서 뜨거운 물질이 오르내리기(대류) 때문",
       "태양 표면에 실제로 쌀알 같은 알갱이가 떠 있기 때문",
@@ -210,7 +210,7 @@ export const POOL_U7L3: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt: "사진은 망원경으로 태양을 관측하는 모습이에요. 흰 판에 태양의 상이 비쳐 있고, 상 속에 작은 검은 점들이 보여요. 이에 대한 설명으로 옳은 것은?",
-    figure: ximg("solar-projection.webp", "망원경이 흰 판에 태양의 둥근 상을 비추고 있고, 상 안에 작은 검은 점들이 보이는 사진"),
+    figure: ximg("solar-projection.webp", "대물렌즈가 위쪽 태양을 향한 망원경 뒤 흰 원판에 작은 검은 흑점이 있는 태양의 둥근 상이 비치는 사진"),
     options: [
       "태양의 상을 판에 비추는 투영법으로, 흑점을 안전하게 관측할 수 있다",
       "망원경 렌즈에 낀 먼지가 판에 비친 것이다",

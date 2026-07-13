@@ -13,12 +13,10 @@ const L = "g2u8l7";
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 const pimg = (file: string, alt: string): string =>
   `<img src="${IMG_BASE}photos/star/${file}" alt="${alt}" style="display:block;width:100%;border-radius:14px" />`;
-const xpair = (a: string, altA: string, b: string, altB: string): string =>
-  `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <figure style="margin:0"><img src="${IMG_BASE}exam/g2u8/${a}" alt="${altA}" style="display:block;width:100%;border-radius:12px"/><figcaption style="text-align:center;font-size:12px;font-weight:700;color:#4E5968;margin-top:5px">(가)</figcaption></figure>
-    <figure style="margin:0"><img src="${IMG_BASE}exam/g2u8/${b}" alt="${altB}" style="display:block;width:100%;border-radius:12px"/><figcaption style="text-align:center;font-size:12px;font-weight:700;color:#4E5968;margin-top:5px">(나)</figcaption></figure>
-  </div>`;
-
+const balloonPhoto = (): string =>
+  `<figure style="position:relative;margin:0"><img src="${IMG_BASE}exam/g2u8/balloon-expansion.webp" alt="같은 빨간 점 스티커가 붙은 풍선을 조금 분 모습과 크게 분 모습을 나란히 비교한 NASA JPL 실험 사진" style="display:block;width:100%;border-radius:14px"/>
+    <b style="position:absolute;left:22%;bottom:3%;padding:2px 8px;border-radius:8px;background:rgba(255,255,255,.92);color:#191F28">(가)</b>
+    <b style="position:absolute;right:22%;bottom:3%;padding:2px 8px;border-radius:8px;background:rgba(255,255,255,.92);color:#191F28">(나)</b></figure>`;
 export const POOL_G2U8L7: ExamItem[] = [
   {
     id: "g2u8e114",
@@ -150,12 +148,7 @@ export const POOL_G2U8L7: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt: "사진은 풍선을 조금 분 모습(가)과 크게 분 모습(나)이에요. 풍선 표면의 점 스티커가 비유하는 것은?",
-    figure: xpair(
-      "balloon-small.webp",
-      "점 스티커들이 촘촘히 붙어 있는, 조금만 분 풍선",
-      "balloon-big.webp",
-      "같은 점 스티커들의 사이가 멀리 벌어진, 크게 분 풍선",
-    ),
+    figure: balloonPhoto(),
     options: ["은하", "별똥별", "행성", "달", "인공위성"],
     answer: 0,
     explain:
@@ -166,13 +159,8 @@ export const POOL_G2U8L7: ExamItem[] = [
     id: "g2u8e122",
     lessonId: L,
     type: "mcq",
-    prompt: "그림의 풍선 실험에서 풍선을 점점 크게 불 때 관찰되는 것으로 옳은 것을 <b>보기</b>에서 모두 고른 것은?",
-    figure: xpair(
-      "balloon-small.webp",
-      "점 스티커들이 촘촘히 붙어 있는, 조금만 분 풍선",
-      "balloon-big.webp",
-      "같은 점 스티커들의 사이가 멀리 벌어진, 크게 분 풍선",
-    ),
+    prompt: "사진의 풍선 실험에서 풍선을 점점 크게 불 때 관찰되는 것으로 옳은 것을 <b>보기</b>에서 모두 고른 것은?",
+    figure: balloonPhoto(),
     bogi: [
       "스티커 사이의 거리가 서로 멀어진다.",
       "스티커 자체의 크기가 풍선만큼 크게 부푼다.",

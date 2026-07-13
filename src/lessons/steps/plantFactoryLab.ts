@@ -8,12 +8,12 @@ import { haptic, HAPTIC } from "../../core/haptics";
 import { fitCanvas } from "../../ui/canvas";
 import { curioCard, type Curio } from "../../ui/curio";
 import {
-  drawChloroplast,
   drawFlowArrow,
   drawLeaf,
   drawMaterialToken,
   drawStoma,
   drawSun,
+  plantAsset,
   plantColor,
 } from "../../ui/plantKit";
 import type { StepRenderer } from "../types";
@@ -34,6 +34,12 @@ interface InputState {
 interface Point {
   x: number;
   y: number;
+}
+interface Rect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
 }
 
 const CVH = 430;
@@ -69,6 +75,22 @@ function pathPoint(points: Point[], tRaw: number): Point {
   return points[points.length - 1];
 }
 
+function diagramImageRect(width: number, image: HTMLImageElement): Rect {
+  const naturalW = image.naturalWidth || 960;
+  const naturalH = image.naturalHeight || 960;
+  const maxW = Math.min(356, Math.max(300, width - 12));
+  const maxH = 350;
+  const scale = Math.min(maxW / naturalW, maxH / naturalH);
+  const w = naturalW * scale;
+  const h = naturalH * scale;
+  return { x: (width - w) / 2, y: 38, w, h };
+}
+
+function smoothstep(value: number): number {
+  const t = clamp(value, 0, 1);
+  return t * t * (3 - 2 * t);
+}
+
 function roundRectPath(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -87,6 +109,61 @@ function roundRectPath(
   ctx.closePath();
 }
 
+function drawPathStroke(
+  ctx: CanvasRenderingContext2D,
+  points: Point[],
+  color: string,
+  width: number,
+  alpha: number,
+): void {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  points.forEach((point, index) => {
+    if (index === 0) ctx.moveTo(point.x, point.y);
+    else ctx.lineTo(point.x, point.y);
+  });
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawTextBox(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  cx: number,
+  cy: number,
+  width: number,
+  accent: string,
+  progress: number,
+): void {
+  const p = smoothstep(progress);
+  if (p <= 0) return;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(0.84 + p * 0.16, 0.84 + p * 0.16);
+  ctx.globalAlpha = p;
+  ctx.shadowColor = alphaVar("--n900", 0.2);
+  ctx.shadowBlur = 9;
+  ctx.shadowOffsetY = 3;
+  ctx.fillStyle = alphaVar("--n0", 0.94);
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = 1.4;
+  roundRectPath(ctx, -width / 2, -14, width, 28, 14);
+  ctx.fill();
+  ctx.shadowColor = "transparent";
+  ctx.stroke();
+  ctx.fillStyle = cssVar("--n800");
+  ctx.font = "800 10.5px Pretendard, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, 0, 0.5);
+  ctx.restore();
+}
+
 export const leafFactoryLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LeafFactoryStep;
 
@@ -98,13 +175,13 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
     style: `height:${CVH}px`,
     attrs: {
       role: "img",
-      "aria-label": "빛, 이산화 탄소, 물이 잎의 엽록체로 이동해 포도당과 산소를 만들고 녹말로 저장되는 모형",
+      "aria-label": "물과 이산화 탄소에 빛에너지가 더해져 포도당과 산소가 만들어지고, 포도당이 녹말로 저장되는 모형",
     },
   });
   const materialRead = el("span", { text: "재료 0/3" });
   const processRead = el("span", { text: "광합성 준비 중" });
   const toastEl = el("div", { class: "toast" });
-  const capEl = el("div", { class: "stage-cap", text: "세 재료가 들어오는 길을 하나씩 확인해 보세요" });
+  const capEl = el("div", { class: "stage-cap", text: "먼저 물을 눌러 물관을 따라가는 길을 확인해 보세요" });
   const stage = el(
     "div",
     { class: "stage plant-stage" },
@@ -122,16 +199,20 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
   const goalChips = el(
     "div",
     { class: "pn-badges force3" },
-    el("div", { class: "pn-badge plant", dataset: { g: "inputs" } }, el("b", { text: "재료 도착" }), el("span", { text: "빛·CO₂·물" })),
+    el("div", { class: "pn-badge plant", dataset: { g: "inputs" } }, el("b", { text: "재료 도착" }), el("span", { text: "물·CO₂·빛" })),
     el("div", { class: "pn-badge plant", dataset: { g: "products" } }, el("b", { text: "산물 만들기" }), el("span", { text: "무엇이 생길까?" })),
-    el("div", { class: "pn-badge plant", dataset: { g: "storage" } }, el("b", { text: "녹말 저장" }), el("span", { text: "포도당의 변신" })),
+    el("div", { class: "pn-badge plant", dataset: { g: "storage" } }, el("b", { text: "녹말 저장" }), el("span", { text: "포도당→녹말" })),
   );
 
   const makeInputButton = (kind: InputKind, label: string): HTMLButtonElement =>
     el("button", { class: "plant-btn", text: label, dataset: { act: kind }, attrs: { type: "button" } });
-  const lightBtn = makeInputButton("light", "빛 비추기");
-  const carbonBtn = makeInputButton("carbon", "이산화 탄소 넣기");
-  const waterBtn = makeInputButton("water", "뿌리에 물 주기");
+  const waterBtn = makeInputButton("water", "물");
+  const carbonBtn = makeInputButton("carbon", "이산화 탄소");
+  const lightBtn = makeInputButton("light", "빛");
+  carbonBtn.disabled = true;
+  carbonBtn.setAttribute("aria-disabled", "true");
+  lightBtn.disabled = true;
+  lightBtn.setAttribute("aria-disabled", "true");
   const reactionBtn = el("button", {
     class: "plant-btn",
     text: "광합성 시작",
@@ -149,14 +230,14 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
 
   const helper = el("div", {
     class: "helper",
-    html: "<b>빛</b>은 잎으로, <b>이산화 탄소</b>는 기공으로, <b>물</b>은 뿌리와 물관을 지나 엽록체로 들어가요. 버튼을 눌러 경로를 확인해 보세요.",
+    html: "<b>물 → 이산화 탄소 → 빛</b>의 차례로 재료와 에너지가 잎에 도착하는 모습을 확인해 보세요.",
   });
   host.append(
     goalChips,
     helper, // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
     stage,
-    el("div", { class: "plant-controls three" }, lightBtn, carbonBtn, waterBtn),
-    el("div", { class: "plant-controls two" }, reactionBtn, storageBtn),
+    el("div", { class: "plant-controls three leaf-factory-inputs" }, waterBtn, carbonBtn, lightBtn),
+    el("div", { class: "plant-controls two leaf-factory-actions" }, reactionBtn, storageBtn),
   );
   if (s.curio) host.appendChild(curioCard(s.curio));
 
@@ -174,6 +255,15 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
   let finished = false;
   let capHidden = false;
   let toastTimer = 0;
+  let plantReady = false;
+  let plantFailed = false;
+  let plantAlpha = 0.96;
+  const plantImage = new Image();
+  const onPlantLoad = (): void => { plantReady = true; };
+  const onPlantError = (): void => { plantFailed = true; };
+  plantImage.addEventListener("load", onPlantLoad);
+  plantImage.addEventListener("error", onPlantError);
+  plantImage.src = plantAsset("labs/leaf-factory-diagram-v2.webp");
 
   function toast(message: string): void {
     toastEl.textContent = message;
@@ -205,23 +295,25 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
     toast(message);
     if (goals.size === 3 && !finished) {
       finished = true;
-      processRead.textContent = "녹말로 저장 완료";
+      processRead.textContent = "녹말 저장 완료";
       helper.innerHTML =
-        "발견 완료! 엽록체는 <b>빛에너지</b>를 이용해 <b>이산화 탄소와 물</b>로 <b>포도당과 산소</b>를 만들어요. 포도당은 곧 <b>녹말</b>로 바뀌어 엽록체에 저장돼요.";
+        "발견 완료! 잎은 <b>빛에너지</b>로 <b>이산화 탄소와 물</b>을 이용해 <b>포도당과 산소</b>를 만들어요. 포도당 일부는 물에 잘 녹지 않는 <b>녹말</b>로 바뀌어 잎에 저장돼요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
   }
 
   function inputMessage(kind: InputKind): string {
-    if (kind === "light") return "빛이 잎에 닿아 엽록체로 전달돼요.";
-    if (kind === "carbon") return "이산화 탄소가 잎의 기공을 지나 엽록체로 들어가요.";
-    return "뿌리가 흡수한 물이 물관을 따라 잎의 엽록체로 올라가요.";
+    if (kind === "light") return "빛 알갱이가 반응 화살표 쪽으로 이동해 빛에너지를 전달해요.";
+    if (kind === "carbon") return "공기 중 이산화 탄소 알갱이가 기공을 지나 잎 안으로 들어가요.";
+    return "뿌리에서 올라온 물방울이 줄기의 물관을 따라 잎으로 이동해요.";
   }
 
   function startInput(kind: InputKind): void {
     const state = states[kind];
     if (state.started) return;
+    if (kind === "carbon" && !states.water.done) return;
+    if (kind === "light" && !states.carbon.done) return;
     state.started = true;
     setEnabled(buttons[kind], false);
     buttons[kind].classList.add("on");
@@ -251,21 +343,12 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
     storageState = 1;
     setEnabled(storageBtn, false);
     storageBtn.classList.add("on");
-    processRead.textContent = "포도당을 녹말로 바꾸는 중";
-    helper.innerHTML = "만들어진 포도당을 여러 개 이어 <b>물에 잘 녹지 않는 녹말</b>로 바꾸어 저장해요.";
+    processRead.textContent = "포도당을 녹말로 저장하는 중";
+    helper.innerHTML = "포도당 여러 개를 이어 물에 잘 녹지 않는 <b>녹말</b>로 바꾸어 잎에 저장해요.";
     haptic(HAPTIC.tap);
   };
   reactionBtn.addEventListener("click", onReaction);
   storageBtn.addEventListener("click", onStorage);
-
-  function drawRoute(ctx: CanvasRenderingContext2D, points: Point[], color: string, active: boolean): void {
-    ctx.save();
-    ctx.globalAlpha = active ? 0.72 : 0.16;
-    for (let i = 1; i < points.length; i++) {
-      drawFlowArrow(ctx, points[i - 1].x, points[i - 1].y, points[i].x, points[i].y, color, active ? 3.4 : 2.2);
-    }
-    ctx.restore();
-  }
 
   function label(
     ctx: CanvasRenderingContext2D,
@@ -295,11 +378,22 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
         if (state.p >= 1) {
           state.done = true;
           materialRead.textContent = `재료 ${Object.values(states).filter((x) => x.done).length}/3`;
+          if (kind === "water") {
+            setEnabled(carbonBtn, true);
+            processRead.textContent = "이산화 탄소 차례";
+            helper.innerHTML = "잎 안에 <b>물</b> 상자가 생겼어요. 이제 공기 중 <b>이산화 탄소</b>를 기공으로 보내 보세요.";
+            toast("물이 물관을 따라 잎에 도착했어요");
+          } else if (kind === "carbon") {
+            setEnabled(lightBtn, true);
+            processRead.textContent = "빛에너지 차례";
+            helper.innerHTML = "<b>이산화 탄소</b>도 잎 안에 모였어요. 마지막으로 <b>빛</b>을 반응 화살표 쪽으로 보내 보세요.";
+            toast("이산화 탄소가 기공을 지나 들어왔어요");
+          }
         }
       }
     }
     if (Object.values(states).every((x) => x.done) && !goals.has("inputs")) {
-      collect("inputs", "세 길 모두 확인", "빛, 이산화 탄소, 물이 엽록체에 도착했어요");
+      collect("inputs", "물·CO₂·빛 도착", "물, 이산화 탄소, 빛에너지가 모두 모였어요");
       setEnabled(reactionBtn, true);
       processRead.textContent = "광합성 시작 가능";
       helper.innerHTML = "재료가 모두 모였어요. 이제 <b>광합성 시작</b>을 눌러 포도당과 산소를 만들어 보세요.";
@@ -325,190 +419,193 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
     const n0 = cssVar("--n0");
     const n100 = cssVar("--n100");
     const n400 = cssVar("--n400");
-    const plantX = W * 0.27;
-    const leafX = W * 0.31;
-    const leafY = 154;
-    const soilY = 344;
-    const cpX = W * 0.75;
-    const cpY = 190;
-    const cpRx = Math.min(72, W * 0.19);
-    const cpRy = 50;
-    const stomaX = W * 0.49;
-    const stomaY = 108;
-    const sunX = Math.max(38, W * 0.12);
-    const sunY = 58;
-
-    // 무대 바닥과 식물 본체
-    const soilG = ctx.createLinearGradient(0, soilY, 0, CVH);
-    soilG.addColorStop(0, `${plantColor("soil")}CC`);
-    soilG.addColorStop(1, plantColor("soil"));
-    ctx.fillStyle = soilG;
-    ctx.fillRect(0, soilY, W, CVH - soilY);
-    ctx.fillStyle = alphaVar("--n0", 0.08);
-    for (let i = 0; i < 18; i++) {
-      const x = ((i * 47) % Math.max(1, W - 10)) + 5;
-      const y = soilY + 10 + ((i * 29) % 65);
-      ctx.beginPath();
-      ctx.arc(x, y, 1.4 + (i % 3) * 0.5, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.strokeStyle = plantColor("leafLo");
-    ctx.lineWidth = 12;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(plantX, soilY + 16);
-    ctx.quadraticCurveTo(plantX - 5, 245, leafX, leafY + 18);
-    ctx.stroke();
-    ctx.strokeStyle = plantColor("xylem");
-    ctx.globalAlpha = 0.78;
-    ctx.lineWidth = 3.2;
-    ctx.beginPath();
-    ctx.moveTo(plantX - 2, soilY + 12);
-    ctx.quadraticCurveTo(plantX - 7, 245, leafX - 2, leafY + 16);
-    ctx.stroke();
-    ctx.globalAlpha = 1;
-    for (const dir of [-1, 1]) {
-      ctx.strokeStyle = plantColor("leafLo");
-      ctx.lineWidth = 5;
-      ctx.beginPath();
-      ctx.moveTo(plantX, soilY + 4);
-      ctx.quadraticCurveTo(plantX + dir * 28, soilY + 28, plantX + dir * 55, soilY + 42);
-      ctx.stroke();
-    }
-    drawLeaf(ctx, leafX, leafY, Math.min(150, W * 0.42), 78, -0.12);
-    drawLeaf(ctx, plantX - 28, 238, Math.min(90, W * 0.26), 48, 0.35, 0.9);
-
-    // 확대된 기공과 엽록체
-    ctx.strokeStyle = alphaVar("--n0", 0.18);
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([5, 6]);
-    ctx.beginPath();
-    ctx.moveTo(leafX + 45, leafY - 24);
-    ctx.lineTo(stomaX - 17, stomaY + 12);
-    ctx.moveTo(leafX + 48, leafY + 8);
-    ctx.lineTo(cpX - cpRx, cpY);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = alphaVar("--n0", 0.06);
-    roundRectPath(ctx, stomaX - 38, stomaY - 38, 76, 76, 18);
-    ctx.fill();
-    drawStoma(ctx, stomaX, stomaY, 35, states.carbon.started ? 1 : 0.35);
-    label(ctx, "기공", stomaX, stomaY + 34, n100);
-    ctx.fillStyle = alphaVar("--n0", 0.06);
-    ctx.beginPath();
-    ctx.ellipse(cpX, cpY, cpRx + 17, cpRy + 17, -0.08, 0, Math.PI * 2);
-    ctx.fill();
-    drawChloroplast(ctx, cpX, cpY, cpRx, cpRy, -0.08);
-    label(ctx, "엽록체", cpX, cpY - cpRy - 24, n100);
-    label(ctx, "물관", plantX + 12, 274, plantColor("water"), "left");
-
-    // 세 재료의 경로
-    drawSun(ctx, sunX, sunY, 20, tMs / 5000);
-    const lightPath: Point[] = [
-      { x: sunX + 18, y: sunY + 20 },
-      { x: leafX - 35, y: leafY - 28 },
-      { x: cpX - cpRx * 0.55, y: cpY - cpRy * 0.48 },
+    const artRect = diagramImageRect(W, plantImage);
+    const stemX = artRect.x + artRect.w * 0.075;
+    const stemBottomY = artRect.y + artRect.h * 0.95;
+    const stemJointY = artRect.y + artRect.h * 0.58;
+    const leafBase: Point = { x: artRect.x + artRect.w * 0.2, y: artRect.y + artRect.h * 0.55 };
+    const reactionY = artRect.y + artRect.h * 0.43;
+    const waterBox: Point = { x: artRect.x + artRect.w * 0.35, y: reactionY };
+    const carbonBox: Point = { x: artRect.x + artRect.w * 0.58, y: reactionY };
+    const arrowStart: Point = { x: artRect.x + artRect.w * 0.69, y: reactionY };
+    const arrowEnd: Point = { x: artRect.x + artRect.w * 0.78, y: reactionY };
+    const outputX = artRect.x + artRect.w * 0.88;
+    const glucoseY = reactionY - 18;
+    const oxygenY = reactionY + 22;
+    const stomaX = artRect.x + artRect.w * 0.91;
+    const stomaY = artRect.y + artRect.h * 0.66;
+    const sunX = artRect.x + artRect.w * 0.58;
+    const sunY = 48;
+    const waterPath: Point[] = [
+      { x: stemX + 3, y: stemBottomY },
+      { x: stemX + 3, y: stemJointY },
+      leafBase,
+      { x: waterBox.x - 12, y: waterBox.y + 18 },
+      waterBox,
     ];
     const carbonPath: Point[] = [
-      { x: W - 14, y: 82 },
-      { x: stomaX + 7, y: stomaY },
-      { x: leafX + 40, y: leafY - 3 },
-      { x: cpX - cpRx * 0.72, y: cpY - 4 },
+      { x: W - 7, y: stomaY + 46 },
+      { x: stomaX + 3, y: stomaY },
+      { x: carbonBox.x + 24, y: carbonBox.y + 18 },
+      carbonBox,
     ];
-    const waterPath: Point[] = [
-      { x: plantX - 2, y: CVH - 19 },
-      { x: plantX - 2, y: soilY + 4 },
-      { x: plantX - 5, y: 248 },
-      { x: leafX + 5, y: leafY + 18 },
-      { x: cpX - cpRx * 0.6, y: cpY + cpRy * 0.45 },
+    const lightTarget: Point = { x: (arrowStart.x + arrowEnd.x) / 2, y: reactionY - 2 };
+    const lightPath: Point[] = [
+      { x: sunX, y: sunY + 20 },
+      { x: sunX + 7, y: artRect.y + artRect.h * 0.25 },
+      { x: lightTarget.x, y: lightTarget.y - 22 },
+      lightTarget,
     ];
-    drawRoute(ctx, lightPath, plantColor("sun"), states.light.started);
-    drawRoute(ctx, carbonPath, plantColor("carbon"), states.carbon.started);
-    drawRoute(ctx, waterPath, plantColor("water"), states.water.started);
+    const oxygenPath: Point[] = [
+      { x: outputX, y: oxygenY + 12 },
+      { x: stomaX, y: stomaY },
+      { x: W - 7, y: stomaY + 42 },
+    ];
+    const anyInputStarted = Object.values(states).some((state) => state.started);
+    const targetPlantAlpha = anyInputStarted ? 0.62 : 0.96;
+    plantAlpha += (targetPlantAlpha - plantAlpha) * Math.min(1, dt * 0.012);
 
-    if (states.light.started && reactionP === 0) {
-      const p = pathPoint(lightPath, states.light.done ? (0.75 + (tMs / 900) % 0.25) : states.light.p);
+    // 발주한 잎·줄기는 질감만 담당한다. 판정되는 경로와 라벨은 아래 코드 오버레이다.
+    if (plantReady) {
       ctx.save();
-      ctx.shadowColor = plantColor("sun");
-      ctx.shadowBlur = 12;
-      ctx.fillStyle = plantColor("sun");
+      ctx.globalAlpha = plantAlpha;
+      ctx.drawImage(plantImage, artRect.x, artRect.y, artRect.w, artRect.h);
+      ctx.restore();
+    } else {
+      ctx.save();
+      ctx.globalAlpha = plantFailed ? plantAlpha : plantAlpha * 0.72;
+      ctx.strokeStyle = plantColor("leafLo");
+      ctx.lineWidth = 14;
+      ctx.lineCap = "round";
       ctx.beginPath();
-      ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.moveTo(stemX, stemBottomY);
+      ctx.lineTo(stemX, stemJointY);
+      ctx.lineTo(leafBase.x, leafBase.y);
+      ctx.stroke();
+      drawLeaf(ctx, artRect.x + artRect.w * 0.62, artRect.y + artRect.h * 0.43, artRect.w * 0.72, artRect.h * 0.48, -0.03);
       ctx.restore();
     }
-    if (states.carbon.started && reactionP === 0) {
-      const p = pathPoint(carbonPath, states.carbon.done ? (0.76 + (tMs / 1050) % 0.24) : states.carbon.p);
-      drawMaterialToken(ctx, p.x, p.y, 7.5, "carbon", "CO₂");
-    }
-    if (states.water.started && reactionP === 0) {
-      const p = pathPoint(waterPath, states.water.done ? (0.74 + (tMs / 980) % 0.26) : states.water.p);
-      drawMaterialToken(ctx, p.x, p.y, 7.5, "water", "물");
-    }
-    label(ctx, "빛", sunX, sunY + 39, plantColor("sun"));
-    label(ctx, "이산화 탄소", W - 12, 61, plantColor("carbon"), "right");
-    label(ctx, "물", plantX + 15, CVH - 18, plantColor("water"), "left");
 
-    // 산물 생성: 포도당은 엽록체 안, 산소는 기공 밖으로 이동한다.
-    if (reactionP > 0) {
-      ctx.save();
-      ctx.globalAlpha = reactionP;
-      ctx.shadowColor = plantColor("glucose");
-      ctx.shadowBlur = 10 * reactionP;
-      drawMaterialToken(ctx, cpX - 18, cpY + 5, 12, "glucose", "당");
-      ctx.restore();
-      const oxygenOut: Point[] = [...carbonPath].reverse();
-      drawRoute(ctx, oxygenOut, plantColor("oxygen"), true);
-      for (let i = 0; i < 3; i++) {
-        const t = reactionState === 1
-          ? clamp(reactionP - i * 0.17, 0, 1)
-          : (tMs / 1500 + i * 0.31) % 1;
-        const p = pathPoint(oxygenOut, t);
-        drawMaterialToken(ctx, p.x, p.y, 7, "oxygen", "O₂");
-      }
-      label(ctx, "포도당", cpX - 18, cpY + 30, plantColor("glucose"));
-      label(ctx, "산소 방출", W - 12, 126, plantColor("oxygen"), "right");
-    }
-
-    // 녹말 저장: 포도당 한 알이 여러 포도당 단위가 이어진 녹말 사슬로 바뀌는 모형.
-    if (storageP > 0) {
-      const chainY = cpY + 14;
-      const count = Math.max(1, Math.round(storageP * 5));
-      ctx.save();
-      ctx.globalAlpha = storageP;
-      for (let i = 0; i < count; i++) {
-        const x = cpX - 34 + i * 17;
-        if (i > 0) {
-          ctx.strokeStyle = plantColor("starch");
-          ctx.lineWidth = 3;
-          ctx.beginPath();
-          ctx.moveTo(x - 12, chainY);
-          ctx.lineTo(x - 5, chainY);
-          ctx.stroke();
-        }
-        drawMaterialToken(ctx, x, chainY, 7, "starch");
-      }
-      ctx.restore();
-      label(ctx, "녹말로 저장", cpX, cpY + cpRy + 28, plantColor("starch"));
-    }
-
-    // 하단 반응식 띠
-    ctx.fillStyle = alphaVar("--n0", 0.07);
-    roundRectPath(ctx, 16, 378, W - 32, 35, 12);
+    // 잎 안 반응 영역과 물관 통로.
+    ctx.fillStyle = alphaVar("--n0", anyInputStarted ? 0.13 : 0.07);
+    ctx.strokeStyle = alphaVar("--n0", anyInputStarted ? 0.24 : 0.13);
+    ctx.lineWidth = 1.2;
+    roundRectPath(
+      ctx,
+      artRect.x + artRect.w * 0.26,
+      artRect.y + artRect.h * 0.31,
+      artRect.w * 0.7,
+      artRect.h * 0.43,
+      20,
+    );
     ctx.fill();
-    const equation = storageState === 2
-      ? "빛에너지: 이산화 탄소 + 물  →  포도당 + 산소  →  녹말 저장"
-      : reactionState === 2
-        ? "빛에너지: 이산화 탄소 + 물  →  포도당 + 산소"
-        : "빛에너지와 재료를 엽록체에 모아요";
-    label(ctx, equation, W / 2, 396, storageState === 2 ? plantColor("starch") : n0);
+    ctx.stroke();
 
-    // 무대를 너무 밝게 덮지 않는 얇은 안내선
+    drawPathStroke(ctx, waterPath.slice(0, 3), alphaVar("--n900", 0.5), 7, 0.42);
+    drawPathStroke(ctx, waterPath.slice(0, 3), plantColor("xylem"), 3.1, states.water.started ? 0.96 : 0.58);
+    label(ctx, "물관", stemX + 23, artRect.y + artRect.h * 0.79, plantColor("water"), "left");
+
+    ctx.fillStyle = alphaVar("--n0", 0.12);
+    roundRectPath(ctx, stomaX - 24, stomaY - 23, 48, 46, 15);
+    ctx.fill();
+    drawStoma(ctx, stomaX, stomaY, 22, states.carbon.started ? 1 : 0.34);
+    label(ctx, "기공", stomaX, stomaY + 29, n100);
+
+    // 1. 물: 물관을 따라 올라온 물방울이 잎 안의 같은 크기 상자로 바뀐다.
+    if (states.water.started) {
+      drawPathStroke(ctx, waterPath, plantColor("water"), 2.8, 0.82);
+      if (!states.water.done) {
+        const point = pathPoint(waterPath, states.water.p);
+        drawMaterialToken(ctx, point.x, point.y, 7.5, "water");
+      }
+    }
+    const waterBoxP = clamp((states.water.p - 0.68) / 0.32, 0, 1);
+    drawTextBox(ctx, "물", waterBox.x, waterBox.y, 42, plantColor("water"), waterBoxP);
+
+    // 2. 이산화 탄소: 여러 알갱이가 기공을 지나 잎 안으로 모인다.
+    if (states.carbon.started) {
+      drawPathStroke(ctx, carbonPath, plantColor("carbon"), 2.4, 0.66);
+      for (let i = 0; i < 6; i++) {
+        const particleP = clamp(states.carbon.p * 1.22 - i * 0.085, 0, 1);
+        if (particleP <= 0 || (states.carbon.done && particleP >= 1)) continue;
+        const point = pathPoint(carbonPath, particleP);
+        drawMaterialToken(ctx, point.x + ((i % 2) * 5 - 2.5), point.y + ((i % 3) - 1) * 4, 4.2, "carbon");
+      }
+    }
+    const carbonBoxP = clamp((states.carbon.p - 0.68) / 0.32, 0, 1);
+    drawTextBox(ctx, "이산화 탄소", carbonBox.x, carbonBox.y, 82, plantColor("carbon"), carbonBoxP);
+
+    const plusP = Math.min(waterBoxP, carbonBoxP);
+    if (plusP > 0) label(ctx, "+", (waterBox.x + carbonBox.x) / 2, reactionY, n0);
+    const reactionArrowP = states.carbon.done ? 1 : clamp((states.carbon.p - 0.74) / 0.26, 0, 1);
+    if (reactionArrowP > 0) {
+      ctx.save();
+      ctx.globalAlpha = smoothstep(reactionArrowP);
+      drawFlowArrow(ctx, arrowStart.x, arrowStart.y, arrowEnd.x, arrowEnd.y, n100, 3);
+      ctx.restore();
+    }
+
+    // 3. 빛: 태양에서 나온 빛 알갱이가 반응 화살표에 에너지를 공급한다.
+    drawSun(ctx, sunX, sunY, 17, tMs / 5000);
+    label(ctx, "빛", sunX, sunY + 31, plantColor("sun"));
+    if (states.light.started) {
+      drawPathStroke(ctx, lightPath, plantColor("sun"), 2.6, 0.72);
+      if (!states.light.done) {
+        for (let i = 0; i < 4; i++) {
+          const photonP = clamp(states.light.p * 1.2 - i * 0.12, 0, 1);
+          if (photonP <= 0) continue;
+          const point = pathPoint(lightPath, photonP);
+          ctx.save();
+          ctx.shadowColor = plantColor("sun");
+          ctx.shadowBlur = 10;
+          ctx.fillStyle = plantColor("sun");
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, 4.8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+    }
+    const lightBoxP = clamp((states.light.p - 0.68) / 0.32, 0, 1);
+    drawTextBox(ctx, "빛에너지", lightTarget.x, reactionY - 39, 64, plantColor("sun"), lightBoxP);
+
+    // 광합성 시작: 오른쪽에 산물 상자가 생기고 산소 알갱이는 기공 밖으로 나간다.
+    if (reactionP > 0) {
+      const productP = clamp(reactionP * 1.35, 0, 1);
+      const starchMorph = clamp((storageP - 0.08) / 0.42, 0, 1);
+      drawTextBox(ctx, "포도당", outputX, glucoseY, 60, plantColor("glucose"), productP * (1 - starchMorph));
+      drawTextBox(ctx, "녹말", outputX, glucoseY, 52, plantColor("starch"), starchMorph);
+      if (storageP > 0.08) label(ctx, "저장", outputX, glucoseY - 24, plantColor("starch"));
+      if (productP > 0) label(ctx, "+", outputX, reactionY + 1, n0);
+      drawTextBox(ctx, "산소", outputX, oxygenY, 46, plantColor("oxygen"), productP);
+      drawPathStroke(ctx, oxygenPath, plantColor("oxygen"), 2.5, 0.68 * productP);
+      for (let i = 0; i < 5; i++) {
+        const oxygenP = reactionState === 1
+          ? clamp(reactionP * 1.25 - i * 0.11, 0, 1)
+          : (tMs / 1500 + i * 0.19) % 1;
+        if (oxygenP <= 0) continue;
+        const point = pathPoint(oxygenPath, oxygenP);
+        drawMaterialToken(ctx, point.x, point.y, 4.6, "oxygen");
+      }
+    }
+
+    if (capHidden) {
+      ctx.fillStyle = alphaVar("--n0", 0.08);
+      roundRectPath(ctx, 16, 384, W - 32, 31, 12);
+      ctx.fill();
+      const equation = storageState === 2
+        ? "포도당 → 녹말로 저장"
+        : reactionState === 2
+          ? "빛에너지 + 이산화 탄소 + 물 → 포도당 + 산소"
+          : "물과 이산화 탄소에 빛에너지가 더해져요";
+      label(ctx, equation, W / 2, 400, storageState === 2 ? plantColor("starch") : n0);
+    }
+
     ctx.fillStyle = n400;
-    ctx.globalAlpha = 0.72;
+    ctx.globalAlpha = 0.66;
     ctx.font = "650 9.5px Pretendard, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("뿌리", plantX - 58, soilY + 47);
+    ctx.fillText("줄기", Math.max(8, stemX - 17), stemBottomY + 12);
     ctx.globalAlpha = 1;
   });
 
@@ -519,6 +616,9 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
     cancelAnimationFrame(startRaf);
     window.clearTimeout(toastTimer);
     loop.stop();
+    plantImage.removeEventListener("load", onPlantLoad);
+    plantImage.removeEventListener("error", onPlantError);
+    plantImage.src = "";
     for (const kind of Object.keys(buttons) as InputKind[]) buttons[kind].removeEventListener("click", inputHandlers[kind]);
     reactionBtn.removeEventListener("click", onReaction);
     storageBtn.removeEventListener("click", onStorage);

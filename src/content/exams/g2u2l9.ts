@@ -6,9 +6,12 @@
 // 지진·화산 분포 ㄱㄴㄷ 구성(레슨 — 시험은 geoQuakeBeltFig 단독 각도), 태평양vs대서양 문항(레슨 — 일본·우리나라 각도).
 import type { ExamItem } from "./types";
 import { plateSectionFig } from "../../ui/geoFigures";
-import { geoQuakeBeltFig, geoDriftRateFig } from "../../ui/examFigures";
+import { geoDriftRateFig } from "../../ui/examFigures";
 
 const L = "g2u2l9";
+const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+const ximg = (file: string, alt: string): string =>
+  `<img src="${IMG_BASE}exam/g2u2/${file}" alt="${alt}" style="display:block;width:100%;border-radius:14px" />`;
 
 export const POOL_G2U2L9: ExamItem[] = [
   {
@@ -50,8 +53,8 @@ export const POOL_G2U2L9: ExamItem[] = [
     id: "g2u2e137",
     lessonId: L,
     type: "mcq",
-    prompt: "그림은 전 세계에서 지진이 발생한 지점을 점으로 나타낸 거예요. 점들의 <b>분포 특징</b>으로 가장 옳은 것은?",
-    figure: geoQuakeBeltFig(),
+    prompt: "사진은 실제 관측 자료를 바탕으로 전 세계 지진 발생 지점을 점으로 나타낸 지도예요. 점들의 <b>분포 특징</b>으로 가장 옳은 것은?",
+    figure: ximg("earthquake-map.webp", "태평양을 중심으로 전 세계 지진 발생 지점이 흰 점으로 표시된 실제 관측 지도"),
     options: [
       "좁고 긴 띠 모양을 따라 몰려 있다",
       "지구 전체에 골고루 흩어져 있다",

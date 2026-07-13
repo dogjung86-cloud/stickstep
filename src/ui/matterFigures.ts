@@ -20,11 +20,11 @@ export function stateTrioFig(): string {
       ${inner}
       <text x="50" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#AFC3E3">${label}</text>
     </g>`;
-  // (가) 기체 — 멀리 흩어짐 + 긴 잔상
+  // (가) 기체 — 멀리 흩어진 위치와 개수만 보여 준다.
   const gasPts: [number, number, number][] = [
     [22, 24, 0.7], [72, 18, 2.4], [50, 50, 4.1], [16, 70, 1.2], [82, 66, 5.3], [58, 84, 3.2],
   ];
-  const gas = gasPts.map(([x, y, a]) => trail(x, y, a, 9) + dot(x, y, 5.4)).join("");
+  const gas = gasPts.map(([x, y]) => dot(x, y, 5.4)).join("");
   // (나) 고체 — 3×3 규칙 격자, 잔상 없음
   let solid = "";
   for (let i = 0; i < 9; i++) {

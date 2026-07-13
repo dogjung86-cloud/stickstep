@@ -7,12 +7,17 @@
 // 문구 — 시험은 버스 하차문 거울·전조등 반사판·트리 방울·외시경 등으로 교체. '초점·실상·허상' 용어 금지
 // (교과서 미도입 — 상의 겉모습(바로/거꾸로·크고/작음)으로만 서술).
 import type { ExamItem } from "./types";
-import { twoMirrorsFig, twoLensFig } from "../../ui/lightFigures";
+import { twoLensFig } from "../../ui/lightFigures";
 
 const L = "g2u3l5";
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 const ximg = (file: string, alt: string): string =>
   `<img src="${IMG_BASE}exam/g2u3/${file}" alt="${alt}" style="display:block;width:100%;border-radius:14px" />`;
+const xpair = (a: string, altA: string, b: string, altB: string): string =>
+  `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <figure style="margin:0"><img src="${IMG_BASE}exam/g2u3/${a}" alt="${altA}" style="display:block;width:100%;border-radius:12px"/><figcaption style="text-align:center;font-size:12px;font-weight:700;color:#4E5968;margin-top:5px">(가)</figcaption></figure>
+    <figure style="margin:0"><img src="${IMG_BASE}exam/g2u3/${b}" alt="${altB}" style="display:block;width:100%;border-radius:12px"/><figcaption style="text-align:center;font-size:12px;font-weight:700;color:#4E5968;margin-top:5px">(나)</figcaption></figure>
+  </div>`;
 
 export const POOL_G2U3L5: ExamItem[] = [
   {
@@ -53,8 +58,8 @@ export const POOL_G2U3L5: ExamItem[] = [
     id: "g2u3e77",
     lessonId: L,
     type: "mcq",
-    prompt: "그림은 두 거울의 단면이에요. 옳은 것을 <b>보기</b>에서 모두 고른 것은?",
-    figure: twoMirrorsFig(),
+    prompt: "사진의 (가)는 주차장 안전 거울, (나)는 등대에 쓰인 오목 반사경이에요. 옳은 것을 <b>보기</b>에서 모두 고른 것은?",
+    figure: xpair("convex-mirror.webp", "주차장 입구에 설치된 볼록 안전 거울", "concave-mirror.webp", "전구를 크게 비추는 등대의 오목 반사경"),
     bogi: [
       "(가)는 빛을 퍼뜨리며 반사해 넓은 범위를 한눈에 담는다.",
       "(나)에 얼굴을 바짝 가까이 대면 실물보다 크게 보인다.",
@@ -64,7 +69,7 @@ export const POOL_G2U3L5: ExamItem[] = [
     answer: 2,
     shuffle: false,
     explain:
-      "<span class='xh'>보기 하나씩 판정</span>ㄱ: 옳아요. 바깥으로 불룩한 (가) 볼록 거울은 빛을 퍼뜨리며 반사해서, 작은 거울 하나에 <b>넓은 풍경</b>을 담아요. ㄴ: 옳아요. 안으로 오목한 (나) 오목 거울은 가까운 물체를 <b>크고 바로 선</b> 모습으로 보여 주죠. ㄷ이 함정 — 볼록 거울은 물체가 어디에 있든 <b>축소된 상만</b> 보여 줘요. 확대는 볼록 거울의 사전에 없는 단어랍니다.<span class='xh'>함정 포인트</span>단면 그림에서는 반사면이 어느 쪽으로 휘었는지부터 확인 — 바깥으로 불룩하면 퍼뜨리고(축소), 안으로 오목하면 모아요(가까이 확대).",
+      "<span class='xh'>보기 하나씩 판정</span>ㄱ: 옳아요. 바깥으로 불룩한 (가) 볼록 거울은 빛을 퍼뜨리며 반사해서, 작은 거울 하나에 <b>넓은 풍경</b>을 담아요. ㄴ: 옳아요. 안으로 오목한 (나) 오목 거울은 가까운 물체를 <b>크고 바로 선</b> 모습으로 보여 주죠. ㄷ이 함정 — 볼록 거울은 물체가 어디에 있든 <b>축소된 상만</b> 보여 줘요. 확대는 볼록 거울의 사전에 없는 단어랍니다.<span class='xh'>함정 포인트</span>실제 사진에서도 안전 거울은 넓은 범위를, 오목 반사경은 가까운 전구를 크게 비추는 모습을 확인할 수 있어요.",
     core: "불룩=퍼뜨려 넓게(축소), 오목=모아서 가까이 크게!",
   },
   {
