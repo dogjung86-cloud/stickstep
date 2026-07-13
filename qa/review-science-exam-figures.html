@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>과학 단원 종합평가 그림 문항 검수</title>
+    <title>과학 단원 종합평가 수정 문항 검수</title>
     <style>
       * { box-sizing: border-box; }
       html { scroll-behavior: smooth; }
@@ -143,10 +143,10 @@
       <header class="hero">
         <div>
           <p class="eyebrow">콘텐츠 검수</p>
-          <h1>과학 단원 종합평가 그림 문항</h1>
-          <p class="lead">발주 이미지 또는 SVG 도해가 들어간 문항만 학년별·단원별로 모았어요.</p>
+          <h1>과학 단원 종합평가 수정 문항</h1>
+          <p class="lead">회사 작업 커밋에서 문항 내용·이미지·공용 도해가 수정된 문항만 다시 모았어요.</p>
         </div>
-        <div class="total"><b id="grand-total">0</b><span>전체 그림 문항</span></div>
+        <div class="total"><b id="grand-total">0</b><span>수정 영향 문항</span></div>
       </header>
 
       <nav class="toolbar" aria-label="그림 문항 필터">
@@ -187,6 +187,22 @@
       import { G2U4_EXAM } from "/src/content/exams/g2u4.ts";
       import { G2U7_EXAM } from "/src/content/exams/g2u7.ts";
       import { G2U8_EXAM } from "/src/content/exams/g2u8.ts";
+
+      const TARGET_IDS = new Set([
+        "g2u1e136", "g2u1e137",
+        "g2u2e104", "g2u2e106", "g2u2e107", "g2u2e122", "g2u2e137",
+        "g2u3e58", "g2u3e77", "g2u3e78", "g2u3e101", "g2u3e132",
+        "g2u4e06", "g2u4e08", "g2u4e32", "g2u4e36", "g2u4e37", "g2u4e57",
+        "g2u4e86", "g2u4e87", "g2u4e112", "g2u4e113", "g2u4e138",
+        "g2u7e24", "g2u7e33", "g2u7e69", "g2u7e76", "g2u7e77", "g2u7e115",
+        "g2u8e121", "g2u8e122", "g2u8e143",
+        "u2e04", "u2e12", "u2e13", "u2e26", "u2e85", "u2e97", "u2e105",
+        "u3e04", "u3e05", "u3e11", "u3e42", "u3e85", "u3e86", "u3e94", "u3e95",
+        "u4e21", "u4e35", "u4e36", "u4e37", "u4e53", "u4e54", "u4e58",
+        "u5e47", "u5e75",
+        "u6e04", "u6e05", "u6e75",
+        "u7e42", "u7e52", "u7e62", "u7e74", "u7e83", "u7e84", "u7e85",
+      ]);
 
       const grades = [
         {
@@ -238,7 +254,7 @@
       }
 
       function visualItems(def) {
-        return def.pool.filter((item) => visualKind(item));
+        return def.pool.filter((item) => TARGET_IDS.has(item.id) && visualKind(item));
       }
 
       function unitForHash() {
@@ -261,7 +277,7 @@
       }
 
       function figureHtml(item) {
-        return item.figure.replace(/<img\s/gi, '<img loading="lazy" decoding="async" ');
+        return item.figure.replace(/<img\s/gi, '<img decoding="async" ');
       }
 
       function bogiHtml(item) {
