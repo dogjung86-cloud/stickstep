@@ -2830,3 +2830,83 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .wd-q .ex-chip.ok { border-color: var(--green); background: var(--green-tint); color: #036B3C; box-shadow: 0 0 0 1px var(--green) inset; }
 .wd-q .ex-chip.no { border-color: var(--red); background: var(--red-tint); color: #C23D2C; box-shadow: 0 0 0 1px var(--red) inset; }
 .wd-q .ex-chip.dim { opacity: .45; }
+
+/* ============================================================
+   홈 리디자인(2026-07-14 확정) — 밑창 스텝 노드 · 발자국 트레일 · 스틱맨 워커 · 카드 캐러셀 · 과목 상자
+   스펙: design/README.md("확정된 방향"+탐색 1~7차) / 참고 구현: design/home-redesign-mockup-v2.html
+   e2e 계약(.gm-node/.gm-med/.gm-label/.gm-ribbon/.gm-exam-best/.unit-tab)은 그대로 두고
+   스킨 클래스(.bsn·.ucard 등)만 얹는다. 이 섹션은 파일 끝(같은 특이도 타이 시 우선)에 둔다.
+   ============================================================ */
+
+/* ---------- 앱바: 과목 상자(현재 과목 아이콘 + 미니 ▾ — 탭하면 기존 전체 화면 과목 허브) ---------- */
+.abtn.subj-box { width: auto; padding: 0 9px; display: inline-flex; align-items: center; gap: 3px; }
+.abtn.subj-box .sb-chev { color: var(--n500); }
+
+/* ---------- 탭 줄만 세로 sticky(탭=목차, 카드=표지) — 가로 스와이프 스크롤은 유지 ---------- */
+.scroll .unit-tabs { position: sticky; top: 0; z-index: 30; background: var(--app-bg); padding-top: 6px; padding-bottom: 8px; }
+
+/* ---------- 대단원 카드 캐러셀: 이웃 카드가 양옆에서 살짝 보이고(피크) 손가락을 1:1로 따라온다 ---------- */
+.ucar-wrap { margin: 4px 0 6px; }
+.ucar { overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
+.ucar:active { cursor: grabbing; }
+.ustrip { display: flex; gap: 10px; align-items: stretch; will-change: transform; transition: transform .34s var(--ease); }
+.ustrip.drag { transition: none; }
+.ustrip .unit-band.ucard { margin: 0; flex: 0 0 calc(100% - 60px); display: flex; flex-direction: column; transition: transform .3s var(--ease), opacity .3s ease; }
+.ustrip .unit-band.ucard .ub-meta { margin-top: auto; padding-top: 12px; }
+.ucard:not(.on) { transform: scale(.955); opacity: .72; }
+.udots { display: flex; justify-content: center; gap: 4px; margin-top: 9px; }
+.udots i { width: 5px; height: 5px; border-radius: 99px; background: var(--n300); transition: background .2s, width .2s; }
+.udots i.on { background: var(--blue); width: 13px; }
+@media (prefers-reduced-motion: reduce) {
+  .ustrip { transition: none; }
+  .ustrip .unit-band.ucard { transition: opacity .2s ease; }
+}
+
+/* ---------- 밑창(장화) 스텝 노드 스킨 — 실루엣 자체가 '밟는 스텝', 중심 좌표는 기존과 동일(스크롤 총량 불변) ---------- */
+.gm-node.bsn { width: 48px; height: 76px; }
+.gm-node.bsn .gm-med {
+  width: 48px; height: 76px; border-radius: 0; background: none !important; box-shadow: none;
+  transition: none; transform: rotate(var(--splay, 0deg)); /* 보행 스플레이 — 아이콘·배지 정립은 svg 안 counter-rotate가 소유 */
+}
+.gm-node.bsn .gm-med::after { display: none; }
+/* 전역 .gm-med svg 크기(33px) 규칙 해제 — 0×0/축소 함정 방지(목업 실측 함정 ①) */
+.gm-node.bsn .gm-med svg { width: 48px; height: 76px; overflow: visible; filter: none; }
+.gm-node.bsn:active .gm-med { transform: rotate(var(--splay, 0deg)); } /* 기존 메달리온 프레스 무력화 */
+.gm-node.bsn .bs-edge { transform: translateY(6px); }
+.gm-node.bsn .bs-top { transition: transform .08s ease; }
+/* 프레스 6px 침하 — transform은 .bs-top CSS만 소유(use attribute transform과 섞으면 덮어씀) */
+.gm-node.bsn:active .bs-top, .gm-node.bsn.pressed .bs-top { transform: translateY(6px); }
+.gm-node.bsn .bs-halo { opacity: .5; }
+.gm-node.bsn:focus-visible { outline: 3px solid #9EC5FF; outline-offset: 2px; border-radius: 18px; }
+.gm-node.bsn:focus-visible .gm-med { box-shadow: none !important; }
+/* 레슨명 라벨 — 발끝 아래 반투명 필(기존 gm-label 문법 복귀: 밑창을 가리지 않고 겹쳐도 비친다) */
+.gm-node.bsn .gm-label { position: absolute; top: 78px; left: 50%; transform: translateX(-50%); margin: 0; width: max-content; max-width: 168px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gm-node.bsn.exam .gm-label { top: 75px; } /* 시험 라벨만 3px 올려 지도 하단 클리핑 방지 */
+.gm-node.bsn .gm-exam-best { position: absolute; top: 103px; left: 50%; transform: translateX(-50%); margin: 0; white-space: nowrap; }
+.bs-defs { position: absolute; width: 0; height: 0; }
+
+/* ---------- 스틱맨 워커(정적 1차 — 걷기 플립북·파츠 아바타 연동은 품질 게이트 뒤) ---------- */
+.gm-walker { position: absolute; z-index: 4; width: 0; height: 0; pointer-events: none; }
+/* 0×0 부모 함정 방지: 명시 크기 + 발 앵커(viewBox 0,0) 고정 확대(1.13×) */
+.gm-walker svg { position: absolute; left: -23px; top: -62px; width: 46px; height: 66px; overflow: visible; transform: scale(1.13); transform-origin: 23px 62px; }
+
+/* ---------- 발자국 도장·펄스·바운스 — reduced-motion은 정지 상태 유지 ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .gm-stamp { opacity: 0; transform-box: fill-box; transform-origin: center; animation: gmStampIn .5s var(--ease) forwards; }
+  .gm-node.bsn.now .bs-halo { transform-box: fill-box; transform-origin: center; animation: gmHaloPulse 1.9s ease-in-out infinite; }
+  .gm-walker .wk-bob { animation: gmWalkerBob 2.6s ease-in-out infinite; }
+}
+@keyframes gmStampIn { from { opacity: 0; transform: scale(1.6); } to { opacity: 1; transform: scale(1); } }
+@keyframes gmHaloPulse { 0%, 100% { opacity: .32; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+@keyframes gmWalkerBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); } }
+
+/* ---------- 걷기 연출(레슨 첫 완료 귀환 — 2026-07-14 구현) ---------- */
+/* 워커 포즈 플립북: idle(깃발·bob) ⇄ pa/pb(8fps 걷기) — 걷는 동안 깃발이 없고 도착이 곧 플랜팅 */
+.gm-walker .pose { display: none; }
+.gm-walker .pose.on { display: block; }
+/* 도착 전 해금 대기 — 도착 순간 arriving 제거로 테마색 점등(잠금 회색 → 테마 면·흰 아이콘·펄스) */
+.gm-node.bsn .bs-face, .gm-node.bsn .bs-edge { transition: fill .35s ease; }
+.gm-node.bsn.now.arriving .bs-edge { fill: #C6CFD8; }
+.gm-node.bsn.now.arriving .bs-face { fill: #EDF1F4; stroke: #E0E6EB; stroke-width: 1.5; }
+.gm-node.bsn.now.arriving .bs-halo { display: none; }
+.gm-node.bsn.now.arriving .bs-lic { color: #AEB9C4 !important; }

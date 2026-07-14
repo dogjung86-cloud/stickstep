@@ -7,7 +7,7 @@ import "./styles/policy.css";
 import "./styles/stickavatar.css";
 
 import { nav } from "./core/router";
-import { getState, completeLesson, setViewSubject, isPremium, isReviewMode, setPremiumOverride } from "./core/store";
+import { getState, completeLesson, setViewSubject, isPremium, isReviewMode, setPremiumOverride, isDone } from "./core/store";
 import { splashScreen } from "./screens/splash";
 import { onboardingScreen } from "./screens/onboarding";
 import { subjectScreen } from "./screens/subject";
@@ -33,9 +33,13 @@ nav.init(frame);
 
 // 마지막으로 연 단원 — 레슨 완료·X 이탈 후 홈이 그 단원 지도로 돌아가게 한다.
 let lastUnitId: string | undefined;
+// 새 레슨 첫 완료 귀환 시 홈 걷기 연출(README design/ "걷기 트리거 확정") — goHome이 1회 소비한다.
+let walkFromLessonId: string | undefined;
 
 function goHome(): void {
-  nav.reset(homeScreen(openLesson, lastUnitId, { onSubjects: openSubjects, onLogin: openLogin, onOpenExam: openExam, onTab: goTab }));
+  const walkFrom = walkFromLessonId;
+  walkFromLessonId = undefined;
+  nav.reset(homeScreen(openLesson, lastUnitId, { onSubjects: openSubjects, onLogin: openLogin, onOpenExam: openExam, onTab: goTab }, { walkFrom }));
 }
 
 /** 하단 탭 전환(2026-07-12 IA 개편) — 탭은 스택을 쌓지 않고 reset으로 갈아끼운다. */
@@ -161,10 +165,12 @@ function openLesson(id: string): void {
     );
     return;
   }
+  const wasDone = isDone(id); // 첫 완료 판정 — 복습 재플레이 귀환에는 걷기 연출이 없다
   const player = createLessonPlayer(found.lesson, {
     onExit: goHome,
     onComplete: (r) => {
       const gained = completeLesson(r.lessonId, r.acc, r.xp);
+      if (!wasDone) walkFromLessonId = r.lessonId; // 완료 화면 "홈으로" 귀환과 동시에 자동 재생
       const note = found.lesson.doneNote ?? found.lesson.subtitle ?? "한 걸음 더 나아갔어요!";
       nav.go(doneScreen(r, gained, note, goHome));
     },
@@ -226,6 +232,18 @@ if (import.meta.env.DEV && new URLSearchParams(location.search).get("preview") =
   });
 } else {
   start();
+}
+
+// [DEV 전용] 걷기 연출 눈검수 트리거 — 콘솔에서 __walkHome("u1l2")처럼 방금 완료한 레슨 id를 넘기면
+// 실제 완료 귀환과 같은 경로(goHome 1회 소비)로 재생된다. 프로덕션 번들에는 포함되지 않는다.
+if (import.meta.env.DEV) {
+  (window as unknown as Record<string, unknown>).__walkHome = (id: string) => {
+    const found = findLesson(id);
+    if (!found) return;
+    lastUnitId = found.unit.id;
+    walkFromLessonId = id;
+    goHome();
+  };
 }
 
 // 로그인·동기화 부팅 — Supabase 환경변수(.env.local)가 없으면 둘 다 no-op(core/auth.ts 참조).

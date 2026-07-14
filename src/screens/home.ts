@@ -1,13 +1,17 @@
-// 홈 — 단원을 게임 정복 지도(모험 트레일)로. 지형·구불구불 경로·메달리온 노드·장식.
+// 홈 — 단원을 게임 정복 지도(모험 트레일)로. 지형·발자국 트레일·밑창 스텝 노드·스틱맨 워커·카드 캐러셀.
+// 리디자인(2026-07-14 확정): 스펙 정본 = design/README.md("확정된 방향"+탐색 1~7차).
+// e2e 계약: .gm-node(.now/.done/.exam/.conq)·.gm-med·.gm-label·.gm-ribbon·.gm-exam-best·.unit-tab의
+// 클래스·DOM 소속을 유지하고, 스킨 클래스(.bsn·.ucard)만 얹는다 — qa/ 15개+ 스크립트가 이 셀렉터를 쓴다.
 import { el, clear, afterPaint } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { BRAND } from "../core/brand";
-import { getState, currentStreak, isDone, lessonOf, getViewGrade, setViewGrade, getViewSubject, toggleReviewMode, isReviewMode, examRecordOf } from "../core/store";
+import { getState, currentStreak, isDone, getViewGrade, setViewGrade, getViewSubject, toggleReviewMode, isReviewMode, examRecordOf } from "../core/store";
 import { CURRICULA_OF, GRADE_LABEL, gradeOfUnit, subjectOfUnit, isUnlocked, isPremiumLocked, unitProgress, type Unit, type GradeId, type SubjectId } from "../content/curriculum";
 import { examForUnit } from "../content/exams";
-import { serpentine, smoothPath, pathUpTo } from "../ui/serpentine";
+import { serpentine, smoothPath } from "../ui/serpentine";
 import { mapDecorArt } from "../ui/mapDecor";
+import { soleDefs, soleSvg, stampTrail, stampOne, walkerSvg, themeInk, type SoleState } from "../ui/soleMap";
 import type { Screen } from "../core/router";
 import { onAuthChange } from "../core/auth";
 import { profileAvatar } from "../ui/avatar";
@@ -17,12 +21,30 @@ import { gnav, type GnavKey } from "../ui/gnav";
 const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice" };
 // 보너스 미니게임은 도전 탭으로 이사(2026-07-12 IA 개편) — 지도는 학습 서사만 남긴다.
 
+// 노드 배치 = 완만한 곡선 중심선 + 발걸음 지그재그(2026-07-14 사용자 지시, 발자국 사진 레퍼런스).
+// sin 파도+교대 합성은 파도 상승 구간에서 가로 이동이 24px까지 상쇄돼 노드가 세로로 늘어서 보였다
+// (사용자 적발) → 손튜닝 패턴으로 교체: S 중심선(우 볼록 → 좌 볼록)을 유지하되 이웃 노드의 가로
+// 간격을 항상 |Δ| ≥ 0.36(≈33px, 밑창 폭 48px 대비 뚜렷한 어긋남)으로 보장. 부호는 매 걸음 교대.
+// serpentine pattern 옵션 주입 — 경로 수학(serpentine.ts)은 불변.
+const STEP_PATTERN = [0.24, -0.12, 0.66, 0.1, 0.46, -0.36, 0, -0.62];
+// 발끝 벌림(스플레이) — 목업 확정 시퀀스 +6/−8/+8/−6 계승(오른발 시계+, 왼발 반시계−).
+const SPLAY_SEQ = [6, -8, 8, -6];
+function splayOf(i: number): number {
+  return SPLAY_SEQ[i % SPLAY_SEQ.length];
+}
+
 export function homeScreen(
   onOpenLesson: (id: string) => void,
   focusUnitId?: string,
   nav2?: { onSubjects?: () => void; onLogin?: () => void; onOpenExam?: (unitId: string) => void; onTab?: (k: GnavKey) => void },
+  opts?: { walkFrom?: string },
 ): Screen {
   const st = getState();
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // 걷기 연출(새 레슨 첫 완료 귀환) — 첫 지도 렌더가 한 번만 소비. reduced-motion은 도장만 즉시(연출 생략).
+  let pendingWalkFrom = reduceMotion ? undefined : opts?.walkFrom;
+  let cancelWalk: (() => void) | null = null; // 지도 재렌더·화면 이탈 시 타이머/rAF 정리
+  let finishWalk: (() => void) | null = null; // 걷는 중 노드 탭 = 즉시 완주 처리(인터랙션 차단 금지)
   // 과목·학년 트랙 — 방금 학습한 단원이 있으면 그 단원의 과목·학년으로 따라간다.
   const subject: SubjectId = focusUnitId ? subjectOfUnit(focusUnitId) : getViewSubject();
   const CURRICULA = CURRICULA_OF[subject];
@@ -37,23 +59,29 @@ export function homeScreen(
     "div",
     { class: "chips" },
     el("div", { class: "chip streak" }, el("span", { html: icon("flame", 15) }), el("span", { text: `${currentStreak()}일` })),
-    el("div", { class: "chip gem" }, el("span", { html: icon("bolt", 15) }), el("span", { text: `${st.totalXp} 스텝` })),
+    el("div", { class: "chip gem" }, el("span", { html: icon("footstep", 15) }), el("span", { text: `${st.totalXp} 스텝` })),
   );
-  // 과목 허브(그리드)·로그인(프로필) 진입 버튼
-  const subjBtn = el("button", { class: "abtn", attrs: { "aria-label": "과목 선택" }, html: icon("grid", 19) });
+  // 과목 상자 — 그리드 대신 현재 과목 아이콘(과학 플라스크·수학 연산)+미니 ▾. 탭 동작은 기존 전체 화면 과목 허브.
+  const subjName = subject === "math" ? "수학" : "과학";
+  const subjBtn = el("button", {
+    class: "abtn subj-box",
+    attrs: { "aria-label": `과목 선택 — 현재 ${subjName}` },
+    html: icon(subject === "math" ? "mathop" : "flask", 15) + icon("chevronDown", 9, { cls: "sb-chev" }),
+  });
   subjBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     nav2?.onSubjects?.();
   });
-  const profBtn = el("button", { class: "abtn", attrs: { "aria-label": "로그인" }, html: icon("user", 19) });
+  // 우상단 프로필 버튼 = 마이 탭(goTab("my"))으로 통일 — 로그인 화면행은 개편 전 잔재.
+  const profBtn = el("button", { class: "abtn", attrs: { "aria-label": "마이페이지" }, html: icon("user", 19) });
   profBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
-    nav2?.onLogin?.();
+    if (nav2?.onTab) nav2.onTab("my");
+    else nav2?.onLogin?.();
   });
   // 로그인하면 사람 아이콘 대신 스틱맨 아바타(원형) — 로그인 여부가 홈에서 바로 보인다.
-  // 소셜 프로필 사진은 미성년 사용자 개인정보라 쓰지 않는다(auth.ts에서 아예 읽지 않음).
+  // 소셜 프로필 사진은 미성년 사용자 개인정보라 쓰지 않는다(auth.ts에서 아예 안 읽음).
   const offAuth = onAuthChange((u) => {
-    profBtn.setAttribute("aria-label", u ? "마이페이지" : "로그인");
     if (u) {
       const ava = profileAvatar(getState().avatarId, getState().avatarCustom);
       ava.classList.add("ab-avatar");
@@ -78,7 +106,7 @@ export function homeScreen(
       haptic(HAPTIC.done);
       brandEl.classList.toggle("review", on);
       snack(on ? "검토 모드 ON — 모든 레슨이 열렸어요" : "검토 모드 OFF — 잠금이 되돌아왔어요");
-      renderAll();
+      rebuild();
     }
   });
   const appbar = el(
@@ -146,15 +174,19 @@ export function homeScreen(
         x.classList.toggle("on", on);
         x.setAttribute("aria-selected", on ? "true" : "false");
       });
-      renderAll();
+      rebuild();
     });
     gradeSeg.appendChild(b);
   });
   const gradeRow = el("div", { class: "grade-row" }, gradeSeg, el("div", { class: "grade-hint", text: "최신 개정 교육과정 반영" }));
 
-  const bandHost = el("div", {});
+  // 대단원 카드 캐러셀 — 카드가 실제로 늘어서고 이웃 카드가 양옆에서 살짝 보인다(피크).
+  const strip = el("div", { class: "ustrip" });
+  const carEl = el("div", { class: "ucar" }, strip);
+  const dotsEl = el("div", { class: "udots", attrs: { "aria-hidden": "true" } });
+  const carWrap = el("div", { class: "ucar-wrap" }, carEl, dotsEl);
   const mapHost = el("div", {});
-  const scroll = el("div", { class: "scroll" }, gradeRow, tabs, bandHost, mapHost);
+  const scroll = el("div", { class: "scroll" }, gradeRow, tabs, carWrap, mapHost);
   const elm = el("section", { class: "screen", attrs: { id: "sc-home" } }, appbar, scroll, gnav("home", (k) => nav2?.onTab?.(k)));
 
   let snackTimer = 0;
@@ -172,22 +204,49 @@ export function homeScreen(
     cur.forEach((u, i) => {
       const t = el("button", { class: `unit-tab ${i === sel ? "on" : ""} ${u.comingSoon ? "soon" : ""}`, text: `${u.roman}. ${u.title}` });
       t.addEventListener("click", () => {
-        sel = i;
+        if (i === sel) return;
         haptic(HAPTIC.tap);
-        renderAll();
+        go(i);
       });
       tabs.appendChild(t);
     });
   }
 
-  function renderBand(u: Unit): void {
-    clear(bandHost);
-    const theme = UNIT_THEME[u.id] ?? "";
-    const pct = unitProgress(u);
-    bandHost.appendChild(
-      el(
+  // ---------- 카드 캐러셀 ----------
+  const GAP = 10;
+  let cards: HTMLElement[] = [];
+  let dots: HTMLElement[] = [];
+  let tx = 0; // 스트립 현재 translateX
+  let dMoved = 0; // 마지막 드래그 이동량 — 드래그 직후 click 오발 방지
+
+  function snapX(i: number): number {
+    const item = cards[0]?.offsetWidth || 0;
+    return (carEl.clientWidth - item) / 2 - i * (item + GAP);
+  }
+  function setStrip(x: number): void {
+    tx = x;
+    strip.style.transform = `translateX(${x}px)`;
+  }
+  function snapStrip(instant = false): void {
+    if (instant) {
+      strip.classList.add("drag");
+      setStrip(snapX(sel));
+      void strip.offsetWidth;
+      strip.classList.remove("drag");
+    } else {
+      setStrip(snapX(sel));
+    }
+  }
+
+  function buildCards(): void {
+    clear(strip);
+    clear(dotsEl);
+    cards = cur.map((u, i) => {
+      const theme = UNIT_THEME[u.id] ?? "";
+      const pct = unitProgress(u);
+      const card = el(
         "div",
-        { class: `unit-band ${theme}` },
+        { class: `unit-band ucard ${theme} ${i === sel ? "on" : ""}` },
         el("div", { class: "ub-glow" }),
         el("div", { class: "ub-eyebrow", text: `대단원 ${u.roman}` }),
         el("div", { class: "ub-title", text: u.title }),
@@ -197,11 +256,105 @@ export function homeScreen(
           ? el("div", { class: "ub-meta" }, el("span", { html: icon("clock", 13) }), el("span", { text: "다음 업데이트에서 열려요" }))
           : el("div", { class: "ub-meta" }, el("span", { html: icon("check", 13) }), el("span", { text: `단원 정복률 ${pct}%` })),
         el("div", { class: "ub-prog" }, el("i", { style: `width:${pct}%` })),
-      ),
-    );
+      );
+      // 살짝 보이는 옆 카드를 탭하면 그 단원으로 점프
+      card.addEventListener("click", () => {
+        if (Math.abs(dMoved) > 8 || i === sel) return;
+        haptic(HAPTIC.tap);
+        go(i);
+      });
+      strip.appendChild(card);
+      return card;
+    });
+    dots = cur.map((_, i) => {
+      const d = el("i", { class: i === sel ? "on" : "" });
+      dotsEl.appendChild(d);
+      return d;
+    });
+  }
+
+  // 드래그: 스트립이 손가락을 그대로 따라온다(가로축 잠금 — 세로는 페이지 스크롤에 양보)
+  let dSx = 0;
+  let dSy = 0;
+  let dX0 = 0;
+  let dragging = false;
+  let dAxis = 0;
+  carEl.addEventListener("pointerdown", (e) => {
+    dSx = e.clientX;
+    dSy = e.clientY;
+    dragging = true;
+    dAxis = 0;
+    dMoved = 0;
+    dX0 = tx;
+    // 전환 중 그랩도 현재 위치에서 이어받는다
+    try {
+      dX0 = new DOMMatrixReadOnly(getComputedStyle(strip).transform).m41;
+    } catch {
+      /* transform: none 등 — tx 유지 */
+    }
+  });
+  carEl.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - dSx;
+    const dy = e.clientY - dSy;
+    if (!dAxis) {
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+      dAxis = Math.abs(dx) >= Math.abs(dy) ? 1 : -1;
+      if (dAxis < 0) {
+        dragging = false;
+        return;
+      }
+      strip.classList.add("drag");
+      // 캡처는 가로축 확정 순간에만 — pointerdown에서 걸면 click이 캡처 대상으로 디스패치돼 피크 카드 탭이 죽는다
+      try {
+        carEl.setPointerCapture(e.pointerId);
+      } catch {
+        /* 합성 포인터 id — 실기기 정상(binSort 선례) */
+      }
+    }
+    dMoved = dx;
+    const over = (dx > 0 && sel === 0) || (dx < 0 && sel === cur.length - 1);
+    setStrip(dX0 + dx * (over ? 0.32 : 1)); // 끝 단원은 러버밴딩
+  });
+  const endDrag = (e: PointerEvent): void => {
+    if (!dragging) return;
+    dragging = false;
+    strip.classList.remove("drag");
+    if (dAxis < 1) return;
+    const dx = e.clientX - dSx;
+    let n = sel;
+    if (dx < -48 && sel < cur.length - 1) n = sel + 1;
+    else if (dx > 48 && sel > 0) n = sel - 1;
+    if (n !== sel) {
+      haptic(HAPTIC.tap);
+      go(n);
+    } else {
+      snapStrip();
+    }
+  };
+  carEl.addEventListener("pointerup", endDrag);
+  carEl.addEventListener("pointercancel", endDrag);
+
+  /** 단원 전환 — 탭·카드·dots 동기화 + 활성 탭 스크롤-인 + 지도 재렌더. */
+  function go(i: number, opts: { instant?: boolean } = {}): void {
+    sel = i;
+    Array.from(tabs.children).forEach((t, ti) => t.classList.toggle("on", ti === i));
+    cards.forEach((c, ci) => c.classList.toggle("on", ci === i));
+    dots.forEach((d, di) => d.classList.toggle("on", di === i));
+    snapStrip(!!opts.instant);
+    // 긴 탭은 가로 스크롤 — 활성 탭을 화면 안으로
+    try {
+      (tabs.children[i] as HTMLElement | undefined)?.scrollIntoView({ behavior: opts.instant ? "auto" : "smooth", inline: "center", block: "nearest" });
+    } catch {
+      /* jsdom 등 미지원 환경 */
+    }
+    renderMap(cur[i]);
   }
 
   function renderMap(u: Unit): void {
+    cancelWalk?.();
+    cancelWalk = null;
+    finishWalk = null;
     clear(mapHost);
     // 준비 중 단원 — 지도 대신 안내 카드
     if (u.comingSoon) {
@@ -217,6 +370,7 @@ export function homeScreen(
       return;
     }
     const theme = UNIT_THEME[u.id] ?? "";
+    const ink = themeInk(theme);
     mapHost.appendChild(el("div", { class: "sec-head", text: "레슨 지도" }));
 
     const gm = el("div", { class: "gamemap" });
@@ -224,29 +378,38 @@ export function homeScreen(
     const decorLayer = el("div", { class: "gm-decor" });
     const nodesLayer = el("div", { class: "gm-nodes" });
     gm.append(terrain, decorLayer, nodesLayer);
+    // 밑창 실루엣·미니 발자국·면 그라데이션 defs(0×0)
+    gm.insertAdjacentHTML("afterbegin", soleDefs(theme));
     mapHost.appendChild(gm);
 
-    const started = u.lessons.some((l) => isDone(l.id));
+    // 프레스 촉감 보강 — :active만으로는 iOS·합성 이벤트에서 빠질 수 있어 pressed 클래스 병행(목업 검증)
+    const unpress = (): void => nodesLayer.querySelectorAll(".gm-node.pressed").forEach((b) => b.classList.remove("pressed"));
+    nodesLayer.addEventListener("pointerdown", (e) => {
+      const b = (e.target as HTMLElement).closest?.(".gm-node");
+      if (b) b.classList.add("pressed");
+    });
+    nodesLayer.addEventListener("pointerup", unpress);
+    nodesLayer.addEventListener("pointercancel", unpress);
+    nodesLayer.addEventListener("pointerleave", unpress);
+    // 걷는 중 노드 탭 = 즉시 완주 처리 후 진입 — 캡처 단계에서 걷기를 마저 끝내고 원래 클릭이 이어진다
+    nodesLayer.addEventListener("click", () => finishWalk?.(), true);
+
     let premRibbon = false; // 첫 프리미엄 노드에만 리본을 달아 소음을 줄인다
     const nodeEls: HTMLElement[] = u.lessons.map((lesson, i) => {
       const unlocked = isUnlocked(u, i);
       const done = isDone(lesson.id);
       const prem = !done && isPremiumLocked(lesson); // 완료된 레슨은 그대로 훈장
       const now = unlocked && !done && !prem;
-      const cls = ["gm-node"];
+      const state: SoleState = done ? "done" : prem ? "prem" : now ? "now" : "locked";
+      const splay = splayOf(i);
+      const cls = ["gm-node", "bsn"];
       if (theme) cls.push(theme);
       cls.push(done ? "done" : prem ? "prem" : now ? "now" : "locked");
 
       const med = el("div", {
         class: "gm-med",
         attrs: { "aria-hidden": "true" },
-        html: done
-          ? icon("check", 34, { sw: 3.4 })
-          : prem
-            ? icon("crown", 30)
-            : unlocked
-              ? icon(lesson.icon ?? "book", 34)
-              : icon("lock", 30),
+        html: soleSvg(state, { theme, splay, lessonIcon: lesson.icon }),
       });
       const stateLabel = done
         ? "완료"
@@ -257,24 +420,15 @@ export function homeScreen(
             : "잠김 · 이전 레슨을 먼저 완료해요";
       const node = el("button", {
         class: cls.join(" "),
+        style: `--splay:${splay}deg`,
         attrs: now || done || prem
           ? { "aria-label": `${lesson.label ?? lesson.title} — ${stateLabel}` }
           : { "aria-label": `${lesson.label ?? lesson.title} — ${stateLabel}`, "aria-disabled": "true" },
       }, med);
-      if (now) {
-        med.appendChild(el("div", { class: "gm-ring" }));
-        node.appendChild(el("div", { class: "gm-ribbon", text: started ? "학습" : "시작" }));
-      }
+      // 현재 노드 "시작/학습" 리본은 제거(5차 확정) — 워커+펄스 링이 같은 신호를 준다.
       if (prem && !premRibbon) {
         premRibbon = true;
         node.appendChild(el("div", { class: "gm-ribbon gold", text: "프리미엄" }));
-      }
-      if (done) {
-        const acc = lessonOf(lesson.id).acc ?? 0;
-        const stars = acc >= 90 ? 3 : acc >= 70 ? 2 : 1;
-        const sb = el("div", { class: "gm-stars" });
-        for (let k = 0; k < 3; k++) sb.innerHTML += icon("star", 15, { cls: k < stars ? "" : "empty" });
-        node.appendChild(sb);
       }
       node.appendChild(el("div", { class: "gm-label", text: lesson.label ?? lesson.title }));
       node.addEventListener("click", () => {
@@ -294,13 +448,19 @@ export function homeScreen(
       return node;
     });
 
-    // 단원 종합 평가 노드 — 레슨 진행과 무관하게 항상 열려 있다(레슨 뒤·보너스 게임 앞)
+    // 단원 종합 평가 노드 — 레슨 진행과 무관하게 항상 열려 있다(레슨 뒤). 잉크 밑창+깃펜, 정복 인증은 골드.
     const exam = examForUnit(u.id);
     if (exam) {
       const rec = examRecordOf(exam.id);
-      const med = el("div", { class: "gm-med", attrs: { "aria-hidden": "true" }, html: icon("target", 32) });
+      const splay = splayOf(u.lessons.length);
+      const med = el("div", {
+        class: "gm-med",
+        attrs: { "aria-hidden": "true" },
+        html: soleSvg(rec.conquered ? "conq" : "exam", { theme, splay }),
+      });
       const node = el("button", {
-        class: `gm-node exam ${theme} ${rec.conquered ? "conq" : ""}`,
+        class: `gm-node exam bsn ${theme} ${rec.conquered ? "conq" : ""}`,
+        style: `--splay:${splay}deg`,
         attrs: { "aria-label": `단원 종합 평가 — ${rec.best > 0 ? `최고 ${rec.best}점` : "언제든 도전 가능"}` },
       }, med);
       if (rec.conquered) node.appendChild(el("div", { class: "gm-ribbon gold", text: "정복 인증" }));
@@ -314,42 +474,207 @@ export function homeScreen(
       nodeEls.push(node);
     }
 
-    const doneCount = u.lessons.findIndex((l) => !isDone(l.id));
-    const conquered = doneCount < 0 ? u.lessons.length : doneCount;
+    // 워커가 서 있는 노드 = 첫 미완료 레슨(프리미엄 잠금 포함 — 관문 앞에 선다), 전부 완료면 시험 노드.
+    const firstUndone = u.lessons.findIndex((l) => !isDone(l.id));
+    const lessonsDone = firstUndone < 0 ? u.lessons.length : firstUndone;
+    const walkIdx = Math.min(lessonsDone, nodeEls.length - 1);
+    const walker = el("div", { class: "gm-walker", attrs: { "aria-hidden": "true" }, html: walkerSvg(ink) });
+    nodesLayer.appendChild(walker);
+
+    // 걷기 연출 판정 — 방금 첫 완료한 레슨 노드에서 다음 노드로(자연 진행일 때만). 1회 소비.
+    const walkFromId = pendingWalkFrom;
+    pendingWalkFrom = undefined;
+    const fromIdx = walkFromId ? u.lessons.findIndex((l) => l.id === walkFromId) : -1;
+    const walking = fromIdx >= 0 && walkIdx === fromIdx + 1;
+    // 걷기 전엔 이전 상태(출발 노드 기준)로 그리고, 진한 도장은 걸으면서 찍는다
+    const anchorIdx = walking ? fromIdx : walkIdx;
+    // 이제 막 열리는 레슨은 걷는 동안 잠금색으로 두고 도착 순간 해금(테마색 점등) — .now 클래스 계약은 유지
+    const destNode = walking ? nodeEls[walkIdx] : null;
+    if (destNode?.classList.contains("now")) destNode.classList.add("arriving");
 
     afterPaint(() => {
       const W = gm.clientWidth || 340;
       const amp = Math.min(102, W * 0.25);
-      const { points, height } = serpentine(nodeEls.length, { width: W, gap: 122, top: 66, bottom: 100, amp });
+      const { points, height } = serpentine(nodeEls.length, { width: W, gap: 122, top: 66, bottom: 100, amp, pattern: STEP_PATTERN });
       gm.style.height = `${height}px`;
-      // 노드는 폭 대비 %로 배치 → SVG 경로(폭 100%로 신축)와 함께 스케일되어 회전/리사이즈에 강함.
+      // 노드는 폭 대비 %로 배치 → SVG(폭 100%로 신축)와 함께 스케일되어 회전/리사이즈에 강함.
       points.forEach((p, i) => {
         nodeEls[i].style.left = `${(p.x / W) * 100}%`;
         nodeEls[i].style.top = `${p.y}px`;
       });
-      const full = smoothPath(points);
-      const donePath = pathUpTo(points, conquered);
-      const svg =
+      // 발자국 트레일 — 연결선·점선 폐기: 걸어온 길은 진한 잉크, 갈 길은 옅은 발자국(확정안 A).
+      const walkedD = anchorIdx > 0 ? smoothPath(points.slice(0, anchorIdx + 1)) : "";
+      const futureD = anchorIdx < points.length - 1 ? smoothPath(points.slice(anchorIdx)) : "";
+      const holder = el("div", {});
+      holder.innerHTML =
         `<svg class="gm-path" viewBox="0 0 ${W} ${height}" width="${W}" height="${height}" preserveAspectRatio="none">` +
-        `<path class="gm-path-base" d="${full}"/>` +
-        (conquered > 0 ? `<path class="gm-path-glow ${theme}" d="${donePath}"/><path class="gm-path-done ${theme}" d="${donePath}"/>` : "") +
+        (walkedD ? `<path class="gm-tr-walked" d="${walkedD}" fill="none" stroke="none"/>` : "") +
+        (futureD ? `<path class="gm-tr-future" d="${futureD}" fill="none" stroke="none"/>` : "") +
         `</svg>`;
-      terrain.insertAdjacentHTML("afterend", svg);
+      const svgEl = holder.firstElementChild as SVGSVGElement;
+      terrain.insertAdjacentElement("afterend", svgEl);
+      const walked = svgEl.querySelector<SVGPathElement>(".gm-tr-walked");
+      // 시작 42 = 밑창 반높이(±36)+여유 — 목업(26)보다 큰 이유: 실앱 밑창은 노드 중심 기준 ±36px.
+      // 걸어온 트레일 끝은 노드 앞 55px에서 멈춘다(노드 위에 선 워커 머리·깃발과 도장 겹침 방지)
+      if (walked) stampTrail(svgEl, walked, { from: 42, endGap: 55, fill: "rgba(49,67,92,.82)", delayBase: 120, delayStep: 24, reduce: reduceMotion });
+      const future = svgEl.querySelector<SVGPathElement>(".gm-tr-future");
+      const futureStamps = future
+        ? stampTrail(svgEl, future, { from: 42, endGap: 40, fill: "rgba(143,161,181,.30)", delayBase: 340, delayStep: 18, reduce: reduceMotion })
+        : [];
+      // 스틱맨 워커 — 발 앵커 = 노드 중심 +8px(패드 중심). 깃발은 단원 테마색.
+      const wp = points[anchorIdx];
+      walker.style.left = `${((wp.x / W) * 100).toFixed(3)}%`;
+      walker.style.top = `${wp.y + 8}px`;
       placeDecor(decorLayer, points, W, u.id);
+      if (walking && destNode && futureD) {
+        startWalk({ svgEl, futureD, walker, destNode, dest: points[walkIdx], W, futureStamps });
+      }
     });
   }
 
-  function renderAll(): void {
-    renderTabs();
-    renderBand(cur[sel]);
-    renderMap(cur[sel]);
+  /**
+   * 걷기 연출(레슨 첫 완료 귀환의 보상) — 홈 안착 ~300ms 뒤, 도착 노드가 화면 밖이면 스크롤-인 후 시작.
+   * 8fps 두 포즈 플립북(125ms — 스플래시 리듬) + 24px마다 진한 도장 + 도착 시 idle 복귀(=깃발 플랜팅)와
+   * arriving 해제(테마색 점등). 고정 2.1s: 경로 길이(125~148px)와 무관하게 보상 시간이 일정하다.
+   */
+  function startWalk(o: {
+    svgEl: SVGSVGElement;
+    futureD: string;
+    walker: HTMLElement;
+    destNode: HTMLElement;
+    dest: { x: number; y: number };
+    W: number;
+    futureStamps: { g: SVGGElement; d: number }[];
+  }): void {
+    // 걷기 구간 = 갈 길 경로의 첫 베지어(출발 노드 → 다음 노드) — 트레일 도장과 같은 곡선을 밟는다
+    const parts = o.futureD.split(" C ");
+    if (parts.length < 2) return;
+    const wp = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    wp.setAttribute("d", `${parts[0]} C ${parts[1]}`);
+    wp.setAttribute("fill", "none");
+    wp.setAttribute("stroke", "none");
+    o.svgEl.appendChild(wp);
+    const L = wp.getTotalLength();
+
+    let raf = 0;
+    let poseTimer = 0;
+    let startTimer = 0;
+    let done = false;
+    let lastD = 0;
+    let side = 1;
+    const poses = o.walker.querySelectorAll<SVGGElement>(".pose");
+    const pose = (k: string): void => poses.forEach((p) => p.classList.toggle("on", p.dataset.pose === k));
+    const stampNext = (): void => {
+      side = -side;
+      stampOne(o.svgEl, wp, lastD, side, "rgba(49,67,92,.82)");
+    };
+    const land = (): void => {
+      // 도착: idle 복귀(깃발 플랜팅) + 워커를 %-left로 재고정(리사이즈 안전) + 도착 노드 해금 점등
+      pose("idle");
+      o.walker.style.left = `${((o.dest.x / o.W) * 100).toFixed(3)}%`;
+      o.walker.style.top = `${o.dest.y + 8}px`;
+      o.destNode.classList.remove("arriving");
+      cancelWalk = null;
+      finishWalk = null;
+    };
+    const stop = (): void => {
+      done = true;
+      window.clearInterval(poseTimer);
+      window.clearTimeout(startTimer);
+      cancelAnimationFrame(raf);
+    };
+    cancelWalk = stop; // 지도 재렌더·화면 이탈 — 조용히 정리(요소도 함께 버려진다)
+    finishWalk = () => {
+      // 걷는 중 노드 탭 — 남은 도장을 즉시 찍고 완주 처리
+      stop();
+      while (lastD + 24 < L - 8) {
+        lastD += 24;
+        stampNext();
+      }
+      land();
+    };
+
+    const begin = (): void => {
+      if (done) return;
+      // 걷기 시작 — 이 구간의 옅은 발자국은 물러나고 진한 잉크가 덮는다
+      o.futureStamps.forEach(({ g, d }) => {
+        if (d < L - 28) {
+          g.style.transition = "opacity .5s ease";
+          g.style.opacity = "0";
+        }
+      });
+      const t0 = performance.now();
+      const DUR = 2100;
+      pose("pa");
+      poseTimer = window.setInterval(() => pose(Math.floor((performance.now() - t0) / 125) % 2 ? "pb" : "pa"), 125);
+      const step = (now: number): void => {
+        if (done) return;
+        const t = Math.min(1, (now - t0) / DUR);
+        const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        const d = e * L;
+        const p = wp.getPointAtLength(d);
+        o.walker.style.left = `${p.x.toFixed(1)}px`;
+        o.walker.style.top = `${(p.y + 8).toFixed(1)}px`; // 걷기 경로도 패드 중심(+8px)을 밟는다
+        while (d - lastD >= 24 && d < L - 8) {
+          lastD += 24;
+          stampNext();
+        }
+        if (t < 1) raf = requestAnimationFrame(step);
+        else {
+          stop();
+          land();
+        }
+      };
+      raf = requestAnimationFrame(step);
+    };
+
+    // 홈 안착 ~300ms 뒤 시작 — 도착 노드가 화면 밖이면 먼저 스크롤-인
+    startTimer = window.setTimeout(() => {
+      const r = o.destNode.getBoundingClientRect();
+      const sr = scroll.getBoundingClientRect();
+      if (r.top < sr.top + 56 || r.bottom > sr.bottom - 32) {
+        try {
+          o.destNode.scrollIntoView({ behavior: "smooth", block: "center" });
+        } catch {
+          /* noop */
+        }
+        startTimer = window.setTimeout(begin, 430);
+      } else {
+        begin();
+      }
+    }, 300);
   }
 
-  renderAll();
-  return { el: elm, onExit: offAuth };
+  /** 전체 재구성 — 학년/과목 전환·검토 모드 토글 등 데이터가 바뀔 때. */
+  function rebuild(): void {
+    renderTabs();
+    buildCards();
+    renderMap(cur[sel]);
+    afterPaint(() => {
+      snapStrip(true);
+      try {
+        (tabs.children[sel] as HTMLElement | undefined)?.scrollIntoView({ behavior: "auto", inline: "center", block: "nearest" });
+      } catch {
+        /* noop */
+      }
+    });
+  }
+
+  const onResize = (): void => snapStrip(true);
+  window.addEventListener("resize", onResize);
+
+  rebuild();
+  return {
+    el: elm,
+    onExit: () => {
+      cancelWalk?.();
+      offAuth();
+      window.removeEventListener("resize", onResize);
+    },
+  };
 }
 
-// 단원 특색 장식 — 트레일 문법(경로·메달리온)은 그대로, 소품이 단원의 이야기를 만든다.
+// 단원 특색 장식 — 트레일 문법(경로·발자국·밑창 노드)은 그대로, 소품이 단원의 이야기를 만든다.
 // seq: 노드 사이 슬롯에 순서대로(순서 자체가 서사 — IV는 고→액→기, VII은 태양에서 먼 행성 순).
 // sky: 지도 위쪽 앰비언트 2개(하늘 소품). 등록 안 된 단원은 기본 자연 세트.
 const UNIT_DECOR: Record<string, { seq: string[]; sky: [string, string] }> = {
@@ -417,12 +742,27 @@ function placeDecor(layer: HTMLElement, points: { x: number; y: number }[], W: n
       el("div", { class: `gm-deco ${key === "cloud" ? "cloud" : ""}`, style: `left:${((x / W) * 100).toFixed(2)}%;top:${y}px;width:${w}px;height:${h}px`, html: mapDecorArt(key) }),
     );
   };
+  // 장식은 경로 반대편 여백이 기본 — 단, S 중심선이 반 주기 내내 한쪽에 머무는 배치에선 장식이
+  // 한쪽 열로 몰린다(2026-07-15 사용자 적발). 같은 쪽 3연속이면 반대쪽으로 꺾고 가로에 지터를 줘
+  // 양쪽 여백을 함께 쓴다. 손튜닝 STEP_PATTERN의 노드 최대 진폭(≈0.73W)에서 반대쪽 0.82W+ 열은
+  // 항상 비어 있어 경로·노드와 충돌하지 않는다.
+  const JIT = [0, 0.05, -0.035, 0.02, -0.05];
+  let side = 0; // -1 왼쪽 · 1 오른쪽
+  let run = 0;
   for (let i = 0; i < points.length - 1; i++) {
     const mid = { x: (points[i].x + points[i + 1].x) / 2, y: (points[i].y + points[i + 1].y) / 2 };
-    const x = mid.x > W / 2 ? W * 0.13 : W * 0.87;
+    let s = mid.x > W / 2 ? -1 : 1;
+    if (s === side && run >= 2) {
+      s = -s;
+      run = 1;
+    } else {
+      run = s === side ? run + 1 : 1;
+    }
+    side = s;
     const key = conf.seq[i % conf.seq.length];
     const size = DECOR_SIZE[key] ?? 42;
-    add(key, x, mid.y + (i % 2 ? 12 : -8), size, size);
+    const xf = s < 0 ? 0.13 + JIT[i % JIT.length] : 0.87 - JIT[i % JIT.length];
+    add(key, W * xf, mid.y + (i % 2 ? 12 : -8), size, size);
   }
   const [skyA, skyB] = conf.sky;
   const skySize = (k: string, big: boolean): [number, number] =>

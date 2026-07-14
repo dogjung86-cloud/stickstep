@@ -449,7 +449,7 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
     // XP — 신기록 갱신분만(스타 게임 문법)
     if (gained > 0) {
       wrap.appendChild(
-        el("div", { class: "ex-xp" }, el("span", { html: icon("bolt", 15) }), el("span", { html: `신기록! <b>+${gained} 스텝</b>` })),
+        el("div", { class: "ex-xp" }, el("span", { html: icon("footstep", 15) }), el("span", { html: `신기록! <b>+${gained} 스텝</b>` })),
       );
     } else if (rec.attempts > 1) {
       wrap.appendChild(

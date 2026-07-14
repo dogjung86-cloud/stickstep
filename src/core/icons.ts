@@ -26,6 +26,9 @@ const ICONS: Record<string, IconDef> = {
   star: { v: '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8-4.3-4.1 5.9-.9z"/>', fill: true },
   sparkle: { v: '<path d="M12 2l1.7 6.1L20 10l-6.3 1.9L12 18l-1.7-6.1L4 10l6.3-1.9z"/>', fill: true },
   bolt: { v: '<path d="M13 2L5 13h5l-1 9 8-11h-5z"/>', fill: true },
+  // 스텝(발자국) — 홈 지도 밑창 노드·트레일 도장(soleMap #bsfp)과 같은 장화 밑창 실루엣(앞창+뒤꿈치).
+  // '스텝' 수치 표시 전용(홈 칩·시험 신기록). 발끝 위 + 살짝 기울여 방금 찍은 도장 느낌.
+  footstep: { v: '<g transform="translate(12 12) rotate(-12) scale(1.75)"><path d="M0,-5.6 C1.8,-5.6 3.2,-4.4 3.2,-2.6 C3.2,-0.8 2.5,0.8 1.7,1.4 C1.2,1.8 -1.2,1.8 -1.7,1.4 C-2.5,0.8 -3.2,-0.8 -3.2,-2.6 C-3.2,-4.4 -1.8,-5.6 0,-5.6 Z"/><rect x="-2" y="2.9" width="4" height="2.7" rx="1.35"/></g>', fill: true },
   target: { v: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/>', sw: 2 },
   bulb: { v: '<path d="M9.5 18h5"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 4 10.5c-.7.7-1 1.5-1 2.5H9c0-1-.3-1.8-1-2.5A6 6 0 0 1 12 3z"/>', sw: 2 },
   flask: { v: '<path d="M9 3h6"/><path d="M10 3v6.5l-4.6 8A2 2 0 0 0 7.2 20.5h9.6a2 2 0 0 0 1.8-3l-4.6-8V3"/><path d="M7.5 15h9"/>', sw: 2 },
