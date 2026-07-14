@@ -14,6 +14,8 @@ export const SELLABLE_SUBJECTS: SellableSubject[] = [
 ];
 
 /** 과목 수별 정가(부가세 포함 표시가) — 2026-07-12 확정: 14,900/24,900/33,900원.
+ *  선택 개수 제한 없음 + 할인 사다리는 3과목에서 끝(2026-07-15 사용자 확정):
+ *  4과목째부터는 과목당 가격이 3과목 수준(11,300원)에 고정 — n과목 = 11,300 × n원.
  *  얼리버드 할인은 아직 미적용(도입 시 여기에 salePrice를 더해 페이월이 함께 그리게 한다). */
 export const PLAN_TIERS = [
   { n: 1, price: 14900 },
@@ -21,12 +23,17 @@ export const PLAN_TIERS = [
   { n: 3, price: 33900 },
 ] as const;
 
-/** 한 번에 담을 수 있는 최대 과목 수(전과목 이용권은 추후 별도 상품). */
-export const MAX_PLAN = PLAN_TIERS.length;
+/** 3과목 이후 과목당 고정 단가(= 3과목 정가 ÷ 3 = 11,300원 — 더 내려가지 않는다). */
+export const PER_SUBJECT_FLOOR = PLAN_TIERS[2].price / 3;
 
-export const tierOf = (n: number) => PLAN_TIERS[Math.min(Math.max(n, 1), MAX_PLAN) - 1];
+/** n과목 합계 정가. */
+export function priceOf(n: number): number {
+  const k = Math.max(n, 1);
+  return k <= PLAN_TIERS.length ? PLAN_TIERS[k - 1].price : Math.round(PER_SUBJECT_FLOOR * k);
+}
+
 /** 낱개(1과목 정가 × n) 대비 절약액. */
-export const saveOf = (n: number) => tierOf(1).price * n - tierOf(n).price;
+export const saveOf = (n: number) => PLAN_TIERS[0].price * Math.max(n, 1) - priceOf(n);
 export const won = (v: number) => v.toLocaleString("ko-KR") + "원";
 
 export type PurchaseResult = "ok" | "unavailable";

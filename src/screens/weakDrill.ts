@@ -610,7 +610,7 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
       );
     } else {
       wrap.appendChild(
-        el("div", { class: "ex-xp" }, el("span", { html: icon("check", 15) }), el("span", { html: "<b>전부 정답!</b> 다시 맞힌 문제는 오답노트에서 극복 처리됐어요" })),
+        el("div", { class: "ex-xp" }, el("span", { html: icon("check", 15) }), el("span", { html: "<b>전부 정답!</b> 다시 맞힌 문제는 오답노트에서 해결 처리됐어요" })),
       );
     }
 
@@ -670,7 +670,7 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
     }
     if (worst === 1) diag.appendChild(el("div", { class: "ex-diag-perfect", text: "고른 소단원을 전부 완벽하게 해냈어요!" }));
     wrap.appendChild(diag);
-    wrap.appendChild(el("div", { class: "tab-footnote", text: "복습으로 다시 맞힌 문제는 오답노트에서 자동으로 극복 처리돼요." }));
+    wrap.appendChild(el("div", { class: "tab-footnote", text: "복습으로 다시 맞힌 문제는 오답노트에서 자동으로 해결 처리돼요." }));
 
     // 푸터: 더 뽑기(주) + 복습 탭으로(부)
     const back = el("button", { class: "ex-retake" }, el("span", { text: "복습 탭으로 돌아가기" }));

@@ -1,95 +1,111 @@
 /* ─────────────────────────────────────────────────────────────
-   프리미엄 페이월 v2 — 과목 선택형 정가(1/2/3과목 = 14,900/24,900/33,900원).
+   프리미엄 페이월 v3 — "결제 구조가 곧 신뢰" 리디자인(2026-07-15 사용자 목업 확정).
    paywall.ts가 단독 import하는 전용 시트(공유 ui.css 불변 — 동시 세션 충돌 방지).
-   공용 조각(.pw-hero/.pw-crown/.pw-title/.pw-sub/.pw-amount/.pw-note/.pw-restore)은
-   ui.css 정의를 재사용하고, 새 요소만 pwx- 네임스페이스를 쓴다
-   (.pw-chip은 수학 powBuild 랩이 선점 — 여기서 사용 금지).
+   색 역할: 파랑 = 행동/신뢰(과목 선택·CTA), 골드 = 브랜드 포인트(발자국 마크·플라스크·1회 결제 배지).
+   공용 재사용: .pw-title(e2e 계약 — 여기선 아이브로로 강등: .pw-title.pwx-eyebrow가 덮는다) ·
+   .pw-restore · .btn.cta. (.pw-chip은 수학 powBuild 랩이 선점 — 신뢰 칩은 .pwx-chip.)
    ───────────────────────────────────────────────────────────── */
 
-/* 혜택 묶음 — 낱개 카드 나열 대신 한 카드 안 5행(구분선) */
-.pwx-bens {
-  background: var(--n0);
-  border: 1px solid var(--n100);
-  border-radius: var(--r-lg);
-  box-shadow: var(--sh-card);
-  overflow: hidden;
-  margin-bottom: 22px;
+/* ── 히어로: 발자국 마크 + 결제 구조 헤드라인 ── */
+.pwx-hero { text-align: center; padding: 6px 0 20px; }
+.pwx-markwrap { width: 178px; height: 52px; margin: 0 auto 12px; }
+.pwx-mark { width: 100%; height: 100%; display: block; }
+.pwx-fp { transform-box: fill-box; transform-origin: center; }
+.pwx-flag { transform-box: fill-box; transform-origin: left bottom; }
+.pw-title.pwx-eyebrow {
+  font-size: 11.5px; font-weight: 800; letter-spacing: .13em;
+  color: var(--gold-deep); margin-bottom: 8px;
 }
-.pwx-ben { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
-.pwx-ben + .pwx-ben { border-top: 1px solid var(--n100); }
-.pwx-bico {
-  width: 36px; height: 36px; flex: none;
-  border-radius: 12px; display: grid; place-items: center;
-  color: var(--gold-deep); background: var(--gold-tint);
-  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, .8);
+/* h1은 한 줄 확정(2026-07-15) — 25px 두 줄 대신 22px 한 줄, 좁은 기기에서만 keep-all 줄바꿈 허용 */
+.pwx-h1 { margin: 0; font-size: 22px; font-weight: 800; line-height: 1.35; letter-spacing: -.02em; color: var(--n900); word-break: keep-all; }
+.pwx-lead { margin: 10px auto 0; max-width: 300px; font-size: 14px; line-height: 1.6; color: var(--n600); word-break: keep-all; }
+.pwx-chips { list-style: none; display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin: 15px 0 0; padding: 0; }
+.pwx-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700; color: var(--n800);
+  background: var(--n0); border: 1px solid var(--n200); border-radius: 999px; padding: 6px 11px;
 }
-.pwx-bt { font-size: 14.5px; font-weight: 800; color: var(--n900); letter-spacing: -.01em; }
-.pwx-bs { font-size: 12.5px; color: var(--n600); margin-top: 2px; line-height: 1.45; word-break: keep-all; }
+.pwx-chip-ic { display: grid; place-items: center; color: var(--blue); }
 
-/* 과목 고르기 — 담은 개수가 곧 요금제 */
-.pwx-slabel { display: flex; align-items: baseline; justify-content: space-between; margin: 0 2px 10px; }
-.pwx-slabel b { font-size: 15.5px; font-weight: 800; color: var(--n900); letter-spacing: -.01em; }
+/* ── 혜택: 핵심 2행 + 오답 케어 묶음 박스 ── */
+.pwx-bens { margin-bottom: 20px; }
+.pwx-ben { display: flex; gap: 13px; align-items: flex-start; padding: 10px 4px; }
+.pwx-bico { flex: none; width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; }
+.pwx-bico.gold { background: var(--gold-tint); color: var(--gold-deep); }
+.pwx-bico.blue { background: var(--blue-tint); color: var(--blue); }
+.pwx-bt { margin: 0; font-size: 15px; font-weight: 800; color: var(--n900); letter-spacing: -.015em; }
+.pwx-bs { margin: 3px 0 0; font-size: 13px; color: var(--n600); line-height: 1.5; word-break: keep-all; }
+.pwx-minibox { margin-top: 8px; padding: 13px 15px; background: var(--n50); border: 1px solid var(--n100); border-radius: var(--r-md); }
+.pwx-minilabel { font-size: 12px; font-weight: 800; letter-spacing: .05em; color: var(--n600); margin-bottom: 9px; } /* n400은 흐려서 안 읽힘(사용자 피드백) */
+.pwx-mini { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--n800); }
+.pwx-mini + .pwx-mini { margin-top: 8px; }
+.pwx-mini-ic { display: grid; place-items: center; color: var(--blue); flex: none; }
+.pwx-mini em { font-style: normal; color: var(--n500); font-weight: 500; }
+
+/* ── 과목 선택 — 다중 선택 체크 카드 ── */
+.pwx-shead { display: flex; align-items: baseline; justify-content: space-between; margin: 0 2px 10px; }
+.pwx-shead h2 { margin: 0; font-size: 15.5px; font-weight: 800; color: var(--n900); letter-spacing: -.01em; }
 .pwx-scount { font-size: 12.5px; font-weight: 700; color: var(--blue); }
-.pwx-subs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pwx-subs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .pwx-sub {
-  display: flex; align-items: center; gap: 8px;
-  padding: 13px 12px; text-align: left;
-  background: var(--n0); border: 1.5px solid var(--n200); border-radius: var(--r-md);
+  display: flex; align-items: center; gap: 9px; padding: 13px; text-align: left;
+  background: var(--n0); border: 1.5px solid var(--n200); border-radius: 13px;
   box-shadow: var(--sh-card);
-  font-size: 14px; font-weight: 700; color: var(--n800); letter-spacing: -.01em;
-  transition: transform .12s var(--ease), border-color .16s, background .16s;
+  font-size: 14.5px; font-weight: 700; color: var(--n800); letter-spacing: -.01em;
+  transition: transform .12s var(--ease), border-color .16s, background .16s, box-shadow .16s;
 }
 .pwx-sub:active { transform: scale(.965); }
-.pwx-sico { display: grid; place-items: center; color: var(--n400); }
-.pwx-ck {
-  margin-left: auto; width: 20px; height: 20px; flex: none;
-  border-radius: 50%; border: 1.8px solid var(--n200);
+.pwx-dot {
+  flex: none; width: 19px; height: 19px; border-radius: 50%;
+  border: 1.6px solid var(--n300); background: var(--n0);
   display: grid; place-items: center; color: transparent;
-  transition: background .16s, border-color .16s;
+  transition: background .16s, border-color .16s, color .16s;
 }
-.pwx-sub.on { border-color: var(--blue); background: var(--blue-tint); color: var(--n900); }
-.pwx-sub.on .pwx-sico { color: var(--blue); }
-.pwx-sub.on .pwx-ck { background: var(--blue); border-color: var(--blue); color: #fff; }
+.pwx-sub.on { border-color: var(--blue); background: var(--blue-tint); color: var(--n900); box-shadow: 0 0 0 3px rgba(49, 130, 246, .10); }
+.pwx-sub.on .pwx-dot { background: var(--blue); border-color: var(--blue); color: #fff; }
 .pwx-hint { font-size: 12px; color: var(--n500); text-align: center; margin: 10px 0 18px; word-break: keep-all; }
 
-/* 요금 사다리 — 담은 과목 수 칸이 골드로 밝혀진다(정보 표시용) */
-.pwx-tiers { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-.pwx-tier {
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 10px 4px 11px;
-  background: var(--n0); border: 1.5px solid var(--n100); border-radius: var(--r-md);
-  transition: border-color .18s, background .18s;
-}
-.pwx-tier .tn { font-size: 11.5px; font-weight: 700; color: var(--n500); }
-.pwx-tier .tp { font-size: 13.5px; font-weight: 800; color: var(--n700); letter-spacing: -.02em; }
-.pwx-tier .ts { font-size: 10.5px; font-weight: 700; color: var(--n400); min-height: 15px; }
-.pwx-tier .ts.save { color: var(--green); }
-.pwx-tier.on { border-color: var(--gold); background: var(--gold-tint); }
-.pwx-tier.on .tn { color: var(--gold-deep); }
-.pwx-tier.on .tp { color: var(--n900); }
+/* ── 가격 카드: 영수증처럼 명확하게 ── */
+.pwx-card { border: 1px solid var(--n200); border-radius: var(--r-lg); overflow: hidden; background: var(--n0); box-shadow: var(--sh-card); margin-bottom: 10px; }
+.pwx-cmain { padding: 17px 17px 15px; }
+.pwx-prow { display: flex; align-items: center; gap: 6px; }
+.pwx-pname { font-size: 13px; font-weight: 700; color: var(--n600); }
+.pwx-badge { font-size: 10.5px; font-weight: 800; letter-spacing: .04em; color: var(--gold-deep); background: var(--gold-tint); border-radius: 6px; padding: 3px 7px; }
+.pwx-arow { display: flex; align-items: baseline; gap: 8px; margin-top: 7px; }
+.pwx-amount { font-size: 32px; font-weight: 800; letter-spacing: -.03em; color: var(--n900); font-variant-numeric: tabular-nums; }
+.pwx-per { font-size: 13.5px; font-weight: 700; color: var(--n600); }
+.pwx-pernote { margin-top: 4px; font-size: 12.5px; color: var(--n500); }
+.pwx-save { display: inline-flex; align-items: center; margin-top: 9px; padding: 4.5px 11px; border-radius: 999px; background: #E9F9F0; font-size: 12px; font-weight: 800; color: var(--green); }
+.pwx-cinc { border-top: 1px dashed var(--n200); padding: 12px 17px 14px; background: var(--n50); }
+.pwx-inc { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: var(--n600); line-height: 1.5; word-break: keep-all; }
+.pwx-inc + .pwx-inc { margin-top: 7px; }
+.pwx-inc-ic { color: var(--blue); flex: none; display: grid; place-items: center; margin-top: 1px; }
+.pwx-inc strong { color: var(--n900); font-weight: 700; }
 
-/* 합계 카드 */
-.pwx-price {
-  position: relative; overflow: hidden;
-  background: var(--n0); border: 1px solid var(--n100); border-radius: var(--r-xl);
-  box-shadow: var(--sh-raise);
-  padding: 20px 16px 18px; text-align: center;
-  margin-bottom: 8px;
+/* ── 파인프린트 · CTA 보조 줄 ── */
+.pwx-fine { font-size: 11.5px; color: var(--n500); text-align: center; line-height: 1.7; padding: 4px 8px 0; word-break: keep-all; }
+.pwx-secure { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 9px; font-size: 11.5px; font-weight: 600; color: var(--n500); }
+.pwx-secure-ic { display: grid; place-items: center; }
+
+@keyframes pwxPop { 0% { transform: scale(.92); } 55% { transform: scale(1.05); } 100% { transform: scale(1); } }
+.pwx-pop { animation: pwxPop .32s var(--spring-soft); display: inline-block; }
+
+/* ── 등장 연출 — 섹션 라이즈 + 발자국 도장 스태거 + 깃발 팝.
+   reduced-motion에서는 애니를 걸지 않아 즉시 완성 상태(이동 제거 원칙과 합). ── */
+@media (prefers-reduced-motion: no-preference) {
+  .pwx-rise { animation: pwxRise .5s var(--ease-out) both; }
+  .pwx-rise.r2 { animation-delay: .06s; }
+  .pwx-rise.r3 { animation-delay: .12s; }
+  .pwx-rise.r4 { animation-delay: .18s; }
+
+  .pwx-fp { animation: pwxStamp .34s var(--spring-soft) both; }
+  .pwx-fp.f2 { animation-delay: .11s; }
+  .pwx-fp.f3 { animation-delay: .22s; }
+  .pwx-fp.f4 { animation-delay: .33s; }
+  .pwx-fp.f5 { animation-delay: .44s; }
+  .pwx-fp.f6 { animation-delay: .55s; }
+  .pwx-flag { animation: pwxFlagIn .34s var(--spring-bounce) .72s both; }
 }
-.pwx-price::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--grad-gold); }
-.pwx-pbadge {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 5px 12px; border-radius: 999px;
-  background: var(--grad-gold); color: #5C3D04;
-  font-size: 12px; font-weight: 800;
-  margin-bottom: 10px;
-}
-@keyframes pwxPop { 0% { transform: scale(.9); } 55% { transform: scale(1.05); } 100% { transform: scale(1); } }
-.pwx-pop { animation: pwxPop .32s var(--spring-soft); }
-.pwx-save {
-  display: inline-flex; align-items: center; gap: 4px;
-  margin-top: 9px; padding: 4.5px 11px;
-  border-radius: 999px; background: var(--n50); border: 1px solid var(--n100);
-  font-size: 12px; font-weight: 800; color: var(--green);
-}
-.pwx-fine { font-size: 11.5px; color: var(--n500); text-align: center; line-height: 1.7; padding: 6px 10px 0; word-break: keep-all; }
+@keyframes pwxRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes pwxStamp { from { opacity: 0; transform: scale(1.55); } to { transform: scale(1); } }
+@keyframes pwxFlagIn { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: scale(1); } }

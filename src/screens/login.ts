@@ -77,7 +77,7 @@ export function loginScreen(
   const notebookCard = (): HTMLElement | null => {
     if (!extras?.onOpenNotebook) return null;
     const { open, overcome } = wrongNoteCount();
-    const label = open > 0 ? `${open}문제 대기 중` : overcome > 0 ? "전부 극복" : "아직 비어 있어요";
+    const label = open > 0 ? `${open}문제 대기 중` : overcome > 0 ? "전부 해결" : "아직 비어 있어요";
     const c = el(
       "button",
       { class: "nb-entry" },

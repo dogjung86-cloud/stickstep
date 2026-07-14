@@ -17,7 +17,7 @@ export function reviewScreen(o: { onTab: (k: GnavKey) => void; onOpenNotebook: (
     { class: "nb-entry" },
     el("span", { class: "nb-entry-ic", html: icon("book", 18) }),
     el("span", { class: "nb-entry-t", text: "오답노트" }),
-    el("span", { class: "nb-entry-n", text: open > 0 ? `${open}문항 대기` : overcome > 0 ? "전부 극복!" : "아직 비어 있어요" }),
+    el("span", { class: "nb-entry-n", text: open > 0 ? `${open}문항 대기` : overcome > 0 ? "전부 해결!" : "아직 비어 있어요" }),
     el("span", { class: "nb-entry-go", html: icon("chevron", 16) }),
   );
   nb.addEventListener("click", () => {
@@ -86,7 +86,7 @@ export function reviewScreen(o: { onTab: (k: GnavKey) => void; onOpenNotebook: (
         nb,
         drill,
         prepCard("bulb", "질문하기", "막힌 문제를 사진과 함께 바로 물어봐요"),
-        el("div", { class: "tab-footnote", text: "복습으로 다시 맞힌 문제는 오답노트에서 자동으로 극복 처리돼요." }),
+        el("div", { class: "tab-footnote", text: "복습으로 다시 맞힌 문제는 오답노트에서 자동으로 해결 처리돼요." }),
       ),
     ),
     gnav("review", o.onTab),
