@@ -18,9 +18,23 @@
 <h1>조합 샘플 12</h1>
 <div class="row" id="r"></div>
 <script type="module">
-  import { STICK_SLOTS, DEFAULT_STICK, stickAvatarSvg } from "/src/ui/stickParts.ts";
+  import { STICK_SLOTS, STICK_PRESETS, DEFAULT_STICK, stickAvatarSvg } from "/src/ui/stickParts.ts";
 
   const g = document.getElementById("g");
+  {
+    const h = document.createElement("h1");
+    h.textContent = `캐릭터 프리셋 (${STICK_PRESETS.length})`;
+    g.appendChild(h);
+    const row = document.createElement("div");
+    row.className = "row";
+    for (const p of STICK_PRESETS) {
+      const c = document.createElement("div");
+      c.className = "c";
+      c.innerHTML = `<div class="f">${stickAvatarSvg(p.cfg)}</div>${p.name}`;
+      row.appendChild(c);
+    }
+    g.appendChild(row);
+  }
   for (const s of STICK_SLOTS) {
     const h = document.createElement("h1");
     h.textContent = `${s.label} (${s.parts.length})`;

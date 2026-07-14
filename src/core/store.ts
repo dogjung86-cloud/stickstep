@@ -59,11 +59,15 @@ export interface AppState {
   minigame: Record<string, number>; // gameId -> 최고 점수
   exams: Record<string, ExamRecord>; // examId -> 단원 종합 평가 기록
   wrongNotes: Record<string, WrongNote>; // key -> 오답노트(마이페이지에서 복습)
-  avatarId: number | null; // 스틱맨 아바타 선택(ui/avatar 프로필 아바타 인덱스) — null이면 기본
-  // 직접 꾸민 스틱맨(null = 프리셋 avatarId 사용). 기기 저장 — progress 테이블에
+  avatarId: number | null; // 발주 래스터 아바타 선택(ui/avatar 인덱스) — 구버전 저장 호환용, null이면 기본
+  // 직접 꾸민 스틱맨(마이 탭 '직접 꾸미기'). 기기 저장 — progress 테이블에
   // avatar_custom 컬럼을 추가하기 전까지 동기화에서 의도적으로 제외(없는 컬럼을 upsert에
   // 넣으면 push 전체가 400으로 죽는다). 활성화 절차는 sync.ts 주석 참조.
   avatarCustom: StickAvatarCfg | null;
+  // 캐릭터 프리셋 선택(ui/stickParts STICK_PRESETS 인덱스, 마이 탭 '캐릭터 고르기').
+  // null = 프리셋 아님. 직접 꾸미기와 완전 분리: 프리셋을 골라도 avatarCustom은 남고,
+  // 파츠를 만지면(setAvatarCustom) 프리셋이 풀린다. avatarCustom과 같은 이유로 동기화 제외.
+  avatarPreset: number | null;
 }
 
 const KEY = "science-app.v1";
@@ -87,6 +91,7 @@ const DEFAULT_STATE: AppState = {
   wrongNotes: {},
   avatarId: null,
   avatarCustom: null,
+  avatarPreset: null,
 };
 
 function dayKey(d = new Date()): string {
@@ -253,15 +258,22 @@ export function awardXp(n: number): void {
   save();
 }
 
-/** 스틱맨 아바타 선택(마이 탭 픽커). */
+/** 발주 래스터 아바타 선택 — 구버전 픽커 호환용(현 픽커는 프리셋·커스텀만 쓴다). */
 export function setAvatarId(i: number): void {
   state.avatarId = i;
   save();
 }
 
-/** 파츠 조합 커스텀 아바타 저장(null = 프리셋으로 복귀). */
+/** 캐릭터 프리셋 선택(마이 탭 '캐릭터 고르기') — 내가 꾸민 조합(avatarCustom)은 건드리지 않는다. */
+export function setAvatarPreset(i: number | null): void {
+  state.avatarPreset = i;
+  save();
+}
+
+/** 파츠 조합 커스텀 아바타 저장(마이 탭 '직접 꾸미기') — 만지는 순간 커스텀이 대표(프리셋 해제). */
 export function setAvatarCustom(v: StickAvatarCfg | null): void {
   state.avatarCustom = v;
+  if (v) state.avatarPreset = null;
   save();
 }
 

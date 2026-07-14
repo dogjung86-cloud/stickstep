@@ -1,7 +1,12 @@
-/* 파츠 조합형 스틱맨 아바타 — 마이 탭 '직접 꾸미기' 픽커 전용 시트(공유 시트 오염 금지 원칙).
-   프리셋 픽커(.ava-pick/.ava-opt)는 ui.css 소유 — 여기는 모드 세그와 커스텀 픽커만. */
+/* 파츠 조합형 스틱맨 아바타 — 마이 탭 '아바타 꾸미기' 시트 내부 전용(공유 시트 오염 금지 원칙).
+   시트 껍데기(.mysheet-*)·스크림 전환은 ui.css 마이 탭 섹션과 base.css 소유 — 여기는
+   미리보기·모드 세그·캐릭터 프리셋 그리드·직접 꾸미기(카테고리 칩 + 파츠 그리드)만.
+   캐릭터 고르기와 직접 꾸미기는 상태가 완전 분리(2026-07-15 사용자 확정) — 스타일도 패널별로 나눈다. */
 
-.ava-mode { display: flex; gap: 8px; margin-top: 12px; }
+.avs-preview { width: 92px; height: 92px; margin: 2px auto 12px; border-radius: 50%; background: var(--blue-tint, #EEF4FF); border: 1.5px solid #DCE6FA; overflow: hidden; }
+.avs-preview .stick-avatar svg { width: 100%; height: 100%; }
+
+.ava-mode { display: flex; gap: 8px; }
 .avm {
   flex: 1; padding: 9px 0; border-radius: 12px;
   border: 1.5px solid var(--n200, #E5EAF0); background: #fff;
@@ -11,19 +16,41 @@
 .avm:active { transform: scale(.97); }
 .avm.on { background: var(--ink, #191F28); border-color: var(--ink, #191F28); color: #fff; }
 
-.ava-pick.hidden, .ava-custom.hidden { display: none; }
+.avp-grid.hidden, .avc-panel.hidden { display: none; }
 
-.ava-custom { display: grid; gap: 13px; margin-top: 14px; }
-.avc-label { font-size: 12px; font-weight: 800; color: var(--n600, #6B7684); margin-bottom: 6px; }
-.avc-opts { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 4px; scrollbar-width: none; }
-.avc-opts::-webkit-scrollbar { display: none; }
-.avc-opt {
-  width: 52px; height: 52px; flex: 0 0 52px; border-radius: 50%;
-  background: var(--blue-tint, #EEF4FF); border: 2.5px solid transparent; padding: 0; overflow: hidden;
-  transition: border-color .15s, transform .12s var(--ease);
+/* 캐릭터 고르기 — 완성 캐릭터 프리셋 카드(3열, 이름 병기) */
+.avp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+.avp {
+  border: 1.5px solid var(--n200, #E5EAF0); background: var(--n50, #F9FAFB);
+  border-radius: 14px; padding: 9px 4px 8px;
+  transition: border-color .15s, background .15s, box-shadow .15s, transform .12s var(--ease);
 }
-.avc-opt:active { transform: scale(.92); }
-.avc-opt.sel { border-color: var(--blue, #3182F6); }
+.avp:active { transform: scale(.95); }
+.avp.sel { border-color: var(--blue, #3182F6); background: var(--blue-tint, #EEF4FF); box-shadow: 0 0 0 3px rgba(49, 130, 246, .13); }
+.avp svg { width: 56px; height: 56px; display: block; margin: 0 auto; }
+.avp-name { display: block; margin-top: 4px; text-align: center; font-size: 11.5px; font-weight: 700; color: var(--n600, #6B7684); }
+.avp.sel .avp-name { color: var(--blue, #3182F6); }
+
+/* 직접 꾸미기 — 카테고리 칩 한 줄 + 해당 파츠 그리드(4열).
+   썸네일 = 현재 조합에서 그 파츠만 바꾼 모습(효과가 문맥 속에서 바로 보인다). */
+.avc-cats { display: flex; gap: 6px; overflow-x: auto; margin: 14px -18px 0; padding: 0 18px 4px; scrollbar-width: none; }
+.avc-cats::-webkit-scrollbar { display: none; }
+.avc-cat {
+  flex: none; border: 1.5px solid var(--n200, #E5EAF0); background: #fff;
+  font-size: 13px; font-weight: 700; color: var(--n600, #6B7684);
+  border-radius: 999px; padding: 7px 13px;
+  transition: transform .12s var(--ease), background .15s, color .15s, border-color .15s;
+}
+.avc-cat:active { transform: scale(.96); }
+.avc-cat.on { background: var(--ink, #191F28); border-color: var(--ink, #191F28); color: #fff; }
+.avc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+.avc-opt {
+  aspect-ratio: 1; border-radius: 14px; padding: 4px; overflow: hidden;
+  background: var(--n50, #F9FAFB); border: 1.5px solid var(--n200, #E5EAF0);
+  transition: border-color .15s, background .15s, box-shadow .15s, transform .12s var(--ease);
+}
+.avc-opt:active { transform: scale(.93); }
+.avc-opt.sel { border-color: var(--blue, #3182F6); background: var(--blue-tint, #EEF4FF); box-shadow: 0 0 0 3px rgba(49, 130, 246, .13); }
 .avc-opt svg { width: 100%; height: 100%; display: block; }
 
 /* 커스텀 아바타 SVG가 원형 프레임을 꽉 채우도록 — .login-ava svg(62px 고정, 폴백 스틱맨용)보다 우선 */

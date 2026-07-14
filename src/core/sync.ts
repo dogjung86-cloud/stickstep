@@ -15,9 +15,10 @@ interface ProgressRow {
   total_step: number; // 앱의 totalXp — 화폐 이름 '스텝'(사용자 확정)을 컬럼명에 반영
   life_step: number; // 앱의 lifeXp — 누적 획득 스텝(장화 레벨·랭킹 기준, 소비로 줄지 않음)
   avatar_id: number | null; // 스틱맨 아바타 선택(계정 정체성이라 동기화)
-  // 주의: store.avatarCustom(파츠 조합 아바타)은 아직 동기화하지 않는다 — progress에 없는
-  // 컬럼을 upsert 페이로드에 넣으면 PostgREST가 400을 반환해 push 전체가 죽는다.
-  // 활성화 절차: ① supabase/schema.sql에 avatar_custom jsonb 추가 후 운영 DB에 재실행
+  // 주의: store.avatarCustom(파츠 조합)·avatarPreset(캐릭터 프리셋)은 아직 동기화하지
+  // 않는다 — progress에 없는 컬럼을 upsert 페이로드에 넣으면 PostgREST가 400을 반환해
+  // push 전체가 죽는다. 활성화 절차: ① supabase/schema.sql에 avatar_custom jsonb·
+  // avatar_preset int 추가 후 운영 DB에 재실행
   // ② 이 인터페이스·rowOf·mergeIntoLocal(로컬 우선 — avatar_id와 같은 규칙)에 필드 추가.
   streak: number;
   last_study_day: string | null;

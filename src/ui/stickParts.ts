@@ -42,7 +42,8 @@ const HAIRS: StickPart[] = [
       `<path d="M48,16 C50,10.5 55.5,8.5 60.5,10 C58.5,15.5 53,17.8 48,16 z" fill="${GREEN}"/>`,
   },
   {
-    name: "단발",
+    // 옛 이름 '단발' — 진짜 단발(옆머리 가닥)이 8번으로 들어오며 개명(이름은 저장에 안 실려 자유).
+    name: "바가지",
     front: `<path d="M27,50 C24,28 35,17 48,17 C61,17 72,28 69,50 C67,32 59,26 48,26 C37,26 29,32 27,50 z" fill="${INK}"/>`,
   },
   {
@@ -69,6 +70,14 @@ const HAIRS: StickPart[] = [
       `<path d="M26.5,33 C21,45 20,62 21.5,79 L33.5,79 C29.5,62 29.5,46 32,35 z" fill="${INK}"/>` +
       `<path d="M69.5,33 C75,45 76,62 74.5,79 L62.5,79 C66.5,62 66.5,46 64,35 z" fill="${INK}"/>`,
     front: CROWN,
+  },
+  {
+    // 마이페이지 리디자인 목업에서 차용(2026-07-15) — 바가지 크라운 + 턱선까지 내려오는 옆머리 가닥.
+    name: "단발",
+    front:
+      `<path d="M27,50 C24,28 35,17 48,17 C61,17 72,28 69,50 C67,32 59,26 48,26 C37,26 29,32 27,50 z" fill="${INK}"/>` +
+      `<path d="M26.2,37.5 C23.2,45 22.8,54.5 24.8,62 C26.6,64 30.4,64.3 32.2,62.8 C30,53.5 29.9,45.5 30.8,40 z" fill="${INK}"/>` +
+      `<path d="M69.8,37.5 C72.8,45 73.2,54.5 71.2,62 C69.4,64 65.6,64.3 63.8,62.8 C66,53.5 66.1,45.5 65.2,40 z" fill="${INK}"/>`,
   },
 ];
 
@@ -137,6 +146,13 @@ const GLASSES: StickPart[] = [
       `<rect x="30.5" y="38" width="16" height="13" rx="4.5" fill="none" stroke="${INK}" stroke-width="3.5"/><rect x="49.5" y="38" width="16" height="13" rx="4.5" fill="none" stroke="${INK}" stroke-width="3.5"/>` +
       `<path d="M46.5,43 h3" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`,
   },
+  {
+    // 마이페이지 리디자인 목업에서 차용(2026-07-15) — 뿔테 지오메트리를 잉크로 채운 렌즈.
+    name: "선글라스",
+    front:
+      `<rect x="30.5" y="38" width="16" height="13" rx="4.5" fill="${INK}"/><rect x="49.5" y="38" width="16" height="13" rx="4.5" fill="${INK}"/>` +
+      `<path d="M46.5,43 h3 M30.5,42.5 L26,41.5 M65.5,42.5 L70,41.5" fill="none" stroke="${INK}" stroke-width="2.5" stroke-linecap="round"/>`,
+  },
 ];
 
 /* ── 소품(머리에 쓰는 것 — 머리카락 위에 얹힌다) ─────────── */
@@ -204,6 +220,30 @@ export function normStick(raw: Partial<StickAvatarCfg> | null | undefined): Stic
     glasses: clampIdx(GLASSES, r.glasses ?? 0),
     acc: clampIdx(ACCS, r.acc ?? 0),
   };
+}
+
+/* ── 캐릭터 프리셋(마이 탭 '캐릭터 고르기') ──────────────────
+   직접 꾸미기와 완전히 분리된 "완성 캐릭터"(2026-07-15 사용자 확정 — 고른 캐릭터를
+   이어서 꾸미게 하지 않는다). 고르면 store.avatarPreset만 바뀌고 내가 꾸민 조합
+   (store.avatarCustom)은 그대로 남는다. 추가는 배열 끝에 append만(저장 인덱스 보존). */
+export interface StickPreset {
+  name: string;
+  cfg: StickAvatarCfg;
+}
+
+export const STICK_PRESETS: StickPreset[] = [
+  { name: "기본", cfg: { face: 0, hair: 2, eyes: 0, mouth: 0, glasses: 0, acc: 0 } },
+  { name: "새싹", cfg: { face: 0, hair: 1, eyes: 1, mouth: 1, glasses: 0, acc: 0 } },
+  { name: "모범생", cfg: { face: 1, hair: 8, eyes: 0, mouth: 3, glasses: 2, acc: 0 } },
+  { name: "힙스터", cfg: { face: 2, hair: 4, eyes: 0, mouth: 4, glasses: 4, acc: 0 } },
+  { name: "게이머", cfg: { face: 0, hair: 3, eyes: 2, mouth: 2, glasses: 0, acc: 3 } },
+  { name: "캡틴", cfg: { face: 3, hair: 0, eyes: 1, mouth: 5, glasses: 0, acc: 2 } },
+];
+
+/** 저장된 프리셋 인덱스 정규화 — 범위 밖(손상 저장분)은 null(프리셋 아님)로. */
+export function normPreset(i: number | null | undefined): number | null {
+  const n = Math.floor(Number(i));
+  return Number.isFinite(n) && n >= 0 && n < STICK_PRESETS.length ? n : null;
 }
 
 /** 조합을 SVG 마크업으로 합성 — .stick-avatar 프레임이 100%로 채워 쓴다. */

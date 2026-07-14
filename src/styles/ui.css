@@ -2743,21 +2743,51 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .prep-pill { font-style: normal; font-size: 10.5px; font-weight: 800; padding: 3px 8px; border-radius: 999px; background: var(--n100); color: var(--n500); flex: none; }
 .prep-desc { font-size: 12.5px; color: var(--n500); line-height: 1.5; word-break: keep-all; }
 
-/* 마이 탭 — 프로필·장화 레벨·아바타 픽커·도감 */
-.my-prof { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 0 4px; text-align: center; }
-.my-name { font-size: 17px; font-weight: 800; color: var(--ink); }
-.boot-badge { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px 6px 9px; border-radius: 999px; background: var(--n50); border: 1px solid var(--n200); font-size: 12.5px; font-weight: 800; color: var(--n700); }
+/* 마이 탭 — 리디자인(2026-07-15): "프로필 카드 → 스텝 요약 → 메뉴" 한 화면.
+   아바타 편집·장화 단계표는 바텀시트(.mysheet)로 분리 — 시트 전환·스크림은 base.css
+   .scrim/.sheet 공용 규칙(reduced-motion 포함)을 그대로 탄다. */
+.my-prof { margin-top: 10px; padding: 16px 16px 15px; background: var(--n0); border: 1px solid var(--n200); border-radius: var(--r-lg); box-shadow: var(--sh-card); }
+.mypf-top { display: flex; align-items: center; gap: 14px; }
+.mypf-avawrap { position: relative; flex: none; }
+.mypf-ava { width: 72px; height: 72px; border-radius: 50%; background: var(--blue-tint); border: 1.5px solid #DCE6FA; overflow: hidden; }
+.mypf-edit { position: absolute; right: -4px; bottom: -3px; width: 27px; height: 27px; border-radius: 50%; background: var(--ink); color: #fff; border: 2.5px solid var(--n0); display: grid; place-items: center; box-shadow: var(--sh-card); transition: transform .12s var(--spring-soft); }
+.mypf-edit:active { transform: scale(.88); }
+.mypf-who { min-width: 0; display: grid; gap: 7px; justify-items: start; }
+.my-name { font-size: 17.5px; font-weight: 800; color: var(--ink); }
+.boot-badge { display: inline-flex; align-items: center; gap: 7px; padding: 5.5px 11px 5.5px 8px; border-radius: 999px; background: var(--n50); border: 1px solid var(--n200); font-size: 12.5px; font-weight: 800; color: var(--n700); }
 .boot-badge svg { display: block; }
-.boot-prog { width: min(220px, 70%); height: 8px; margin-top: 4px; border-radius: 999px; background: var(--n100); overflow: hidden; }
+.boot-prog { height: 7px; margin-top: 15px; border-radius: 999px; background: var(--n100); overflow: hidden; }
 .boot-prog i { display: block; height: 100%; border-radius: 999px; background: var(--grad-blue); }
-.boot-cap { font-size: 12px; font-weight: 600; color: var(--n500); }
-.ava-pick { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 12px; }
-.ava-opt { width: 52px; height: 52px; border-radius: 50%; background: var(--blue-tint); border: 2.5px solid transparent; overflow: hidden; padding: 0; transition: border-color .15s, transform .12s var(--ease); }
-.ava-opt:active { transform: scale(.92); }
-.ava-opt.sel { border-color: var(--blue); }
-.my-stats { margin-top: 16px; } /* 기본 .my-stats(마이페이지) 재사용 — 탭 배치 마진만 보정 */
-.bdex { margin-top: 4px; padding: 4px 14px; background: var(--n0); border: 1px solid var(--n200); border-radius: var(--r-lg); box-shadow: var(--sh-card); }
-.bdex-row { display: flex; align-items: center; gap: 11px; padding: 9px 0; border-bottom: 1px solid var(--n100); }
+.boot-cap { display: flex; justify-content: space-between; gap: 10px; margin-top: 8px; font-size: 12px; font-weight: 600; color: var(--n500); }
+.boot-cap b { font-weight: 700; color: var(--n600); font-variant-numeric: tabular-nums; }
+.my-stats { margin-top: 10px; } /* 기본 .my-stats(스텝 요약 카드) 재사용 — 배치 마진만 보정 */
+
+/* 메뉴 — 흰 카드 하나에 행 목록(틴트 아이콘 박스 + 라벨 + 값 + 셰브런) */
+.my-menu { margin-top: 10px; background: var(--n0); border: 1px solid var(--n200); border-radius: var(--r-lg); box-shadow: var(--sh-card); overflow: hidden; }
+.my-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 14px; text-align: left; background: none; transition: background .12s; }
+.my-row + .my-row { border-top: 1px solid var(--n100); }
+.my-row:active { background: var(--n50); }
+.my-row-ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 12px; background: var(--blue-tint); color: var(--blue); flex: none; }
+.my-row-ic.gold { background: #FFF4DB; color: #B8860B; }
+.my-row-t { font-size: 14.5px; font-weight: 700; color: var(--ink); }
+.my-row-v { margin-left: auto; font-size: 13px; font-weight: 700; color: var(--n500); }
+.my-row-go { display: grid; place-items: center; color: var(--n300); flex: none; }
+
+/* 마이 탭 바텀시트 껍데기 — 카드·헤더·스크롤 본문·풋(아바타 꾸미기/장화 단계표 공용) */
+.mysheet-card { display: flex; flex-direction: column; max-height: min(600px, calc(100vh - 84px)); max-height: min(600px, calc(100dvh - 84px)); background: var(--n0); border-radius: var(--r-2xl) var(--r-2xl) 0 0; box-shadow: var(--sh-sheet); padding-top: 8px; }
+.mysheet-grip { flex: none; width: 40px; height: 4px; margin: 0 auto 10px; border-radius: 999px; background: var(--n200); }
+.mysheet-head { flex: none; position: relative; display: flex; align-items: center; justify-content: center; padding: 0 52px 6px; }
+.mysheet-title { font-size: 16.5px; font-weight: 800; color: var(--ink); }
+.mysheet-x { position: absolute; right: 12px; top: -7px; width: 34px; height: 34px; border-radius: 50%; background: var(--n50); color: var(--n600); display: grid; place-items: center; transition: transform .12s var(--spring-soft), background .15s; }
+.mysheet-x:active { transform: scale(.9); background: var(--n100); }
+.mysheet-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 4px 18px 14px; }
+.mysheet-foot { flex: none; padding: 10px 18px calc(12px + var(--safe-b)); border-top: 1px solid var(--n100); background: var(--n0); }
+.mysheet-done { width: 100%; padding: 14px; border-radius: 14px; background: var(--blue); color: #fff; font-size: 15.5px; font-weight: 800; box-shadow: var(--sh-cta); transition: transform .12s var(--spring-soft), background .15s; }
+.mysheet-done:active { transform: scale(.985); background: var(--blue-press); }
+
+/* 장화 단계표(시트 본문) — 구 인라인 접이(bdex-toggle)는 폐기, 행 문법만 유지 */
+.bdex { padding: 2px 2px 0; }
+.bdex-row { display: flex; align-items: center; gap: 11px; padding: 9.5px 0; border-bottom: 1px solid var(--n100); }
 .bdex-row:last-child { border-bottom: 0; }
 .bdex-row.locked .bdex-art { opacity: .38; filter: grayscale(.55); }
 .bdex-row.locked .bdex-name { color: var(--n400); }
@@ -2765,19 +2795,6 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .bdex-art { display: grid; place-items: center; width: 30px; flex: none; }
 .bdex-name { font-size: 13.5px; font-weight: 800; color: var(--n800); }
 .bdex-need { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--n500); font-variant-numeric: tabular-nums; }
-
-/* 스텝 레벨 접이 — 단계표(bdex)는 기본 접힘, 헤더 버튼으로 펼친다 (2026-07-12 사용자 확정: '장화 도감' 명칭 폐기) */
-.bdex { display: none; }
-.bdex.open { display: block; }
-.bdex-toggle { display: flex; align-items: center; gap: 9px; width: 100%; margin-top: 18px; padding: 12px 14px; border-radius: var(--r-lg); background: var(--n0); border: 1px solid var(--n200); box-shadow: var(--sh-card); font: inherit; text-align: left; }
-.bdex-toggle:active { transform: scale(.985); }
-.bdex-toggle.open { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
-.bdex-toggle.open + .bdex { border-top-left-radius: 0; border-top-right-radius: 0; border-top: 0; margin-top: 0; }
-.bdex-tg-art { display: grid; place-items: center; width: 26px; flex: none; }
-.bdex-tg-t { font-size: 14px; font-weight: 800; color: var(--n800); }
-.bdex-tg-s { margin-left: auto; font-size: 12.5px; font-weight: 700; color: var(--n500); font-variant-numeric: tabular-nums; }
-.bdex-tg-chev { display: grid; place-items: center; color: var(--n400); transition: transform .24s var(--ease); }
-.bdex-toggle.open .bdex-tg-chev { transform: rotate(180deg); }
 
 /* 마이 탭 하단 법적 고지 — 방침 텍스트 링크 + 사업자 표기(brand.BIZ_INFO) 스몰 프린트 */
 .my-legal { margin: 22px 0 8px; text-align: center; }

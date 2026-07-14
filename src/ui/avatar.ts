@@ -7,7 +7,7 @@
 import { el } from "../core/dom";
 import type { StickAvatarCfg } from "../core/store";
 import { stickman, stickmanHead } from "./figures";
-import { stickAvatarSvg } from "./stickParts";
+import { normPreset, STICK_PRESETS, stickAvatarSvg } from "./stickParts";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
@@ -57,15 +57,30 @@ export function profileIdOf(id: number | null | undefined): number {
 }
 
 /** 프로필 아바타 요소 생성(원형 프레임 안에서 object-fit cover).
- *  custom(파츠 조합 — store.avatarCustom)이 있으면 발주 래스터 대신 코드 SVG를 그린다. */
-export function profileAvatar(id: number | null | undefined, custom?: StickAvatarCfg | null): HTMLElement {
+ *  우선순위: preset(캐릭터 프리셋) → custom(직접 꾸민 조합) → 래스터 avatarId(구버전 저장 호환). */
+export function profileAvatar(
+  id: number | null | undefined,
+  custom?: StickAvatarCfg | null,
+  preset?: number | null,
+): HTMLElement {
   const wrap = el("span", { class: "stick-avatar" });
-  setProfileAvatar(wrap, id, custom);
+  setProfileAvatar(wrap, id, custom, preset);
   return wrap;
 }
 
 /** 프로필 아바타 교체(마이 탭 픽커 선택 반영). */
-export function setProfileAvatar(wrap: HTMLElement, id: number | null | undefined, custom?: StickAvatarCfg | null): void {
+export function setProfileAvatar(
+  wrap: HTMLElement,
+  id: number | null | undefined,
+  custom?: StickAvatarCfg | null,
+  preset?: number | null,
+): void {
+  const p = normPreset(preset);
+  if (p != null) {
+    wrap.classList.remove("full");
+    wrap.innerHTML = stickAvatarSvg(STICK_PRESETS[p].cfg);
+    return;
+  }
   if (custom) {
     wrap.classList.remove("full");
     wrap.innerHTML = stickAvatarSvg(custom);

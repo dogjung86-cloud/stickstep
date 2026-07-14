@@ -83,7 +83,7 @@ export function homeScreen(
   // 소셜 프로필 사진은 미성년 사용자 개인정보라 쓰지 않는다(auth.ts에서 아예 안 읽음).
   const offAuth = onAuthChange((u) => {
     if (u) {
-      const ava = profileAvatar(getState().avatarId, getState().avatarCustom);
+      const ava = profileAvatar(getState().avatarId, getState().avatarCustom, getState().avatarPreset);
       ava.classList.add("ab-avatar");
       profBtn.replaceChildren(ava);
     } else {
