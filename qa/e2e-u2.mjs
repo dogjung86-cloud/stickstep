@@ -665,43 +665,65 @@ const runClassificationConcept = async () => {
   await clickCTA();
 };
 
-const runKingdomTable = async () => {
-  const title = await expectTitle(/지구의 생물을 다섯 계로/);
-  const rows = await page.evaluate((active) => document.querySelectorAll(`${active} .tbl .trow`).length, ACTIVE);
-  if (rows !== 6) throw new Error(`${title}: 5계 표 행 수 불일치 (${rows})`);
-  await clickCTA();
-};
-
-const runDichotomKey = async () => {
-  const title = await expectTitle(/특징 검색표로 5계 분류/);
+const runKingdomLab = async () => {
+  // 0b05f77 개편: 표(table) + 검색표 두 스텝 → 대표 생물 5종을 특징 O/X로 확인해 5계로 보내는 dichotomKey 한 스텝.
+  const title = await expectTitle(/대표 생물을 만나며/);
   await assertCtaDisabled(title);
+  // 각 대표 생물의 근거 확인(O/X) 정답 순서 — src/content/unit2.ts u2l5 checks[].answer 기준.
   const paths = {
-    대장균: [false],
+    대장균: [false, false],
     아메바: [true, true],
-    송이버섯: [true, false, false, false],
-    소나무: [true, false, true],
-    붕어: [true, false, false, true],
+    송이버섯: [false, true],
+    소나무: [true, true],
+    붕어: [false, true],
   };
   const completed = new Set();
-  for (let guard = 0; guard < 7; guard += 1) {
-    const sheetOpen = await page.evaluate((active) => document.querySelector(`${active} .sheet.open`) !== null, ACTIVE);
-    if (sheetOpen) break;
-    await page.waitForSelector(`${ACTIVE} .dk-name`, { timeout: 9000 });
-    const name = normalize(await page.evaluate((active) => document.querySelector(`${active} .dk-name`)?.textContent, ACTIVE));
-    if (!paths[name]) throw new Error(`${title}: 알 수 없는 생물 ${name}`);
+  for (let guard = 0; guard < 8; guard += 1) {
+    // 다음 대표 생물 카드가 준비됐거나(시작 버튼 노출) 랩이 끝났으면(CTA 해제) 진행한다.
+    await page.waitForFunction(({ active, doneNames }) => {
+      const cta = document.querySelector(`${active} button.cta`);
+      if (cta instanceof HTMLButtonElement && !cta.disabled) return true;
+      const start = document.querySelector(`${active} .dk5-start`);
+      const nameEl = document.querySelector(`${active} .dk5-hero-name`);
+      const name = nameEl instanceof HTMLElement ? nameEl.textContent.replace(/\s+/g, " ").trim() : "";
+      return start instanceof HTMLElement && !start.hidden && name.length > 0 && !doneNames.includes(name);
+    }, { active: ACTIVE, doneNames: [...completed] }, { timeout: 12000 });
+
+    const finished = await page.evaluate((active) => {
+      const cta = document.querySelector(`${active} button.cta`);
+      return cta instanceof HTMLButtonElement && !cta.disabled;
+    }, ACTIVE);
+    if (finished) break;
+
+    const name = normalize(await page.evaluate((active) => document.querySelector(`${active} .dk5-hero-name`)?.textContent, ACTIVE));
+    if (!paths[name]) throw new Error(`${title}: 알 수 없는 대표 생물 ${name}`);
     if (completed.has(name)) throw new Error(`${title}: ${name} 분류 뒤 다음 생물로 넘어가지 않았습니다`);
+
+    await page.evaluate((active) => {
+      const start = document.querySelector(`${active} .dk5-start`);
+      if (!(start instanceof HTMLButtonElement)) throw new Error("특징으로 분류 시작 버튼 없음");
+      start.click();
+    }, ACTIVE);
+
     for (const yes of paths[name]) {
+      await page.waitForFunction((active) => {
+        const panel = document.querySelector(`${active} .dk5-question-panel`);
+        const button = document.querySelector(`${active} .dk5-answer-btn.yes`);
+        return panel instanceof HTMLElement && !panel.hidden && button instanceof HTMLButtonElement && !button.disabled;
+      }, ACTIVE, { timeout: 9000 });
       await page.evaluate(({ active, answer }) => {
-        const button = document.querySelector(`${active} .dk-btn.${answer ? "yes" : "no"}`);
-        if (!(button instanceof HTMLButtonElement)) throw new Error("검색표 예/아니요 버튼 없음");
+        const button = document.querySelector(`${active} .dk5-answer-btn.${answer ? "yes" : "no"}`);
+        if (!(button instanceof HTMLButtonElement)) throw new Error("O/X 근거 확인 버튼 없음");
         button.click();
       }, { active: ACTIVE, answer: yes });
-      await W(150);
+      await W(160);
     }
+
     completed.add(name);
-    await W(900);
   }
-  if (completed.size !== 5) throw new Error(`${title}: 분류 완료 ${completed.size}/5`);
+  if (completed.size !== 5) throw new Error(`${title}: 대표 생물 분류 완료 ${completed.size}/5`);
+  await assertCtaEnabled(title);
+  await clickCTA();
   await sheetContinue();
 };
 
@@ -783,8 +805,7 @@ try {
   await openNextLesson("생물의 분류");
   await runBatBirdHook();
   await runClassificationConcept();
-  await runKingdomTable();
-  await runDichotomKey();
+  await runKingdomLab();
   await binSortAuto(/학교 주변 생물을 5계 서랍/, [
     ["젖산균", "원핵생물계"],
     ["해캄", "원생생물계"],
