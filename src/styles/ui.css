@@ -1734,7 +1734,7 @@
 .login-btn.kakao { background: #FEE500; color: #3C1E1E; }
 .login-note { margin-top: 16px; text-align: center; font-size: 12.5px; color: var(--n500); line-height: 1.55; word-break: keep-all; }
 /* 로그인 상태 — 앱바 프로필 사진 + 마이페이지 학습 요약 */
-.ab-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; display: block; overflow: hidden; background: var(--blue-tint); }
+/* .ab-avatar 폐기(2026-07-16) — 우상단 프로필 버튼 제거(프로필 진입 단일화), 아바타 노출은 탭바 .gnav-ava가 승계 */
 .login-ava img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
 .my-stats { display: flex; gap: 10px; padding: 2px 0 6px; }
 .my-stat {
@@ -2720,6 +2720,9 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .gnav-item.on { color: var(--blue); }
 .gnav-ic { display: grid; place-items: center; }
 .gnav-tx { font-size: 11px; font-weight: 800; letter-spacing: -.01em; }
+/* 마이 탭 = 로그인 시 내 아바타 원형 미니(프로필 진입 단일화 2026-07-16) — 활성 탭은 파란 링 */
+.gnav-ava { width: 21px; height: 21px; border-radius: 50%; overflow: hidden; background: var(--blue-tint); box-shadow: 0 0 0 1.5px var(--n200); }
+.gnav-item.on .gnav-ava { box-shadow: 0 0 0 1.5px var(--blue); }
 
 /* 스플래시 푸터(=랜딩 버튼) — 정착(done) 후 워드마크 리듬에 이어 샥 나타난다 */
 .splash-foot { display: flex; flex-direction: column; gap: 12px; }
@@ -2904,10 +2907,15 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .gm-node.bsn .bs-halo { opacity: .5; }
 .gm-node.bsn:focus-visible { outline: 3px solid #9EC5FF; outline-offset: 2px; border-radius: 18px; }
 .gm-node.bsn:focus-visible .gm-med { box-shadow: none !important; }
-/* 레슨명 라벨 — 발끝 아래 반투명 필(기존 gm-label 문법 복귀: 밑창을 가리지 않고 겹쳐도 비친다) */
+/* 레슨명 라벨 — 밑창 옆 지그재그 배치(지도 단순화 ①, 2026-07-16): 왼쪽 치우침 노드는 오른쪽(lab-r),
+   오른쪽 치우침은 왼쪽(lab-l)에 반투명 필. 라벨이 항상 지도 안쪽을 향해 화면 잘림이 구조적으로 불가능.
+   발끝 아래 배치(top:78px)는 lab-* 클래스가 없을 때의 폴백으로만 남는다. */
 .gm-node.bsn .gm-label { position: absolute; top: 78px; left: 50%; transform: translateX(-50%); margin: 0; width: max-content; max-width: 168px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.gm-node.bsn.exam .gm-label { top: 75px; } /* 시험 라벨만 3px 올려 지도 하단 클리핑 방지 */
+.gm-node.bsn.lab-r .gm-label { top: 50%; left: calc(100% + 8px); right: auto; transform: translateY(-50%); }
+.gm-node.bsn.lab-l .gm-label { top: 50%; right: calc(100% + 8px); left: auto; transform: translateY(-50%); }
 .gm-node.bsn .gm-exam-best { position: absolute; top: 103px; left: 50%; transform: translateX(-50%); margin: 0; white-space: nowrap; }
+.gm-node.bsn.lab-r .gm-exam-best { top: calc(50% + 15px); left: calc(100% + 8px); right: auto; transform: none; }
+.gm-node.bsn.lab-l .gm-exam-best { top: calc(50% + 15px); right: calc(100% + 8px); left: auto; transform: none; }
 .bs-defs { position: absolute; width: 0; height: 0; }
 
 /* ---------- 스틱맨 워커(정적 1차 — 걷기 플립북·파츠 아바타 연동은 품질 게이트 뒤) ---------- */
@@ -2929,9 +2937,14 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 /* 워커 포즈 플립북: idle(깃발·bob) ⇄ pa/pb(8fps 걷기) — 걷는 동안 깃발이 없고 도착이 곧 플랜팅 */
 .gm-walker .pose { display: none; }
 .gm-walker .pose.on { display: block; }
-/* 도착 전 해금 대기 — 도착 순간 arriving 제거로 테마색 점등(잠금 회색 → 테마 면·흰 아이콘·펄스) */
+/* 도착 전 해금 대기 — 도착 순간 arriving 제거로 테마색 점등(잠금 회색 → 테마 면·흰 아이콘·펄스).
+   잠금이 자물쇠 단독안이 되며(지도 단순화 ②) 아이콘 회색 점등 대신 자물쇠 → 레슨 아이콘 교체 점등:
+   열림 노드 SVG가 숨은 .bs-lock을 품고, arriving 동안만 자물쇠가 보였다가 도착에 아이콘과 스왑된다. */
 .gm-node.bsn .bs-face, .gm-node.bsn .bs-edge { transition: fill .35s ease; }
 .gm-node.bsn.now.arriving .bs-edge { fill: #C6CFD8; }
 .gm-node.bsn.now.arriving .bs-face { fill: #EDF1F4; stroke: #E0E6EB; stroke-width: 1.5; }
 .gm-node.bsn.now.arriving .bs-halo { display: none; }
-.gm-node.bsn.now.arriving .bs-lic { color: #AEB9C4 !important; }
+.gm-node.bsn.now .bs-lock { opacity: 0; }
+.gm-node.bsn.now .bs-lic, .gm-node.bsn.now .bs-lock { transition: opacity .35s ease; }
+.gm-node.bsn.now.arriving .bs-lic { opacity: 0; }
+.gm-node.bsn.now.arriving .bs-lock { opacity: 1; }

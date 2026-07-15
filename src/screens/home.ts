@@ -13,8 +13,6 @@ import { serpentine, smoothPath } from "../ui/serpentine";
 import { mapDecorArt } from "../ui/mapDecor";
 import { soleDefs, soleSvg, stampTrail, stampOne, walkerSvg, themeInk, type SoleState } from "../ui/soleMap";
 import type { Screen } from "../core/router";
-import { onAuthChange } from "../core/auth";
-import { profileAvatar } from "../ui/avatar";
 import { gnav, type GnavKey } from "../ui/gnav";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
@@ -36,7 +34,7 @@ function splayOf(i: number): number {
 export function homeScreen(
   onOpenLesson: (id: string) => void,
   focusUnitId?: string,
-  nav2?: { onSubjects?: () => void; onLogin?: () => void; onOpenExam?: (unitId: string) => void; onTab?: (k: GnavKey) => void },
+  nav2?: { onSubjects?: () => void; onOpenExam?: (unitId: string) => void; onTab?: (k: GnavKey) => void },
   opts?: { walkFrom?: string },
 ): Screen {
   const st = getState();
@@ -72,24 +70,9 @@ export function homeScreen(
     haptic(HAPTIC.tap);
     nav2?.onSubjects?.();
   });
-  // 우상단 프로필 버튼 = 마이 탭(goTab("my"))으로 통일 — 로그인 화면행은 개편 전 잔재.
-  const profBtn = el("button", { class: "abtn", attrs: { "aria-label": "마이페이지" }, html: icon("user", 19) });
-  profBtn.addEventListener("click", () => {
-    haptic(HAPTIC.tap);
-    if (nav2?.onTab) nav2.onTab("my");
-    else nav2?.onLogin?.();
-  });
-  // 로그인하면 사람 아이콘 대신 스틱맨 아바타(원형) — 로그인 여부가 홈에서 바로 보인다.
-  // 소셜 프로필 사진은 미성년 사용자 개인정보라 쓰지 않는다(auth.ts에서 아예 안 읽음).
-  const offAuth = onAuthChange((u) => {
-    if (u) {
-      const ava = profileAvatar(getState().avatarId, getState().avatarCustom, getState().avatarPreset);
-      ava.classList.add("ab-avatar");
-      profBtn.replaceChildren(ava);
-    } else {
-      profBtn.innerHTML = icon("user", 19);
-    }
-  });
+  // 우상단 프로필 버튼은 제거(2026-07-16, 프로필 진입 단일화) — 같은 목적지(마이 탭)의 진입이
+  // 둘일 이유가 없다. 로그인 상태 표시·아바타 노출은 탭바 마이 아이콘(ui/gnav.ts)이 흡수했고,
+  // 로그인 화면 진입은 마이 > "계정 관리 · 로그인"이 유일 경로다.
   const brandEl = el("div", { class: `brand ${isReviewMode() ? "review" : ""}`, text: BRAND.name });
   // 검토 모드 — 브랜드 7연타 토글(콘텐츠 검수용: 순차·프리미엄 잠금 전부 해제)
   let brandTaps = 0;
@@ -113,7 +96,7 @@ export function homeScreen(
     "div",
     { class: "appbar" },
     el("div", { class: "ab-side" }, subjBtn, brandEl),
-    el("div", { class: "ab-side" }, chips, profBtn),
+    el("div", { class: "ab-side" }, chips),
   );
 
   const tabs = el("div", { class: "unit-tabs" });
@@ -501,6 +484,12 @@ export function homeScreen(
       points.forEach((p, i) => {
         nodeEls[i].style.left = `${(p.x / W) * 100}%`;
         nodeEls[i].style.top = `${p.y}px`;
+        // 라벨 지그재그(지도 단순화 ①): 왼쪽 치우침 노드 → 라벨 오른쪽(lab-r), 오른쪽 → 왼쪽(lab-l).
+        // 판정은 화면 중앙선이 아니라 이웃 노드 평균 = 국소 진행선 기준(중앙 부근 노드의 임의성 제거).
+        // 라벨이 항상 지도 안쪽을 향해 화면 잘림이 구조적으로 불가능(규칙의 부수 효과 — 유지).
+        const nb = [points[i - 1], points[i + 1]].filter(Boolean);
+        const ref = nb.length ? nb.reduce((a, q) => a + q.x, 0) / nb.length : p.x + 1;
+        nodeEls[i].classList.add(p.x <= ref ? "lab-r" : "lab-l");
       });
       // 발자국 트레일 — 연결선·점선 폐기: 걸어온 길은 진한 잉크, 갈 길은 옅은 발자국(확정안 A).
       const walkedD = anchorIdx > 0 ? smoothPath(points.slice(0, anchorIdx + 1)) : "";
@@ -668,7 +657,6 @@ export function homeScreen(
     el: elm,
     onExit: () => {
       cancelWalk?.();
-      offAuth();
       window.removeEventListener("resize", onResize);
     },
   };
@@ -746,10 +734,13 @@ function placeDecor(layer: HTMLElement, points: { x: number; y: number }[], W: n
   // 한쪽 열로 몰린다(2026-07-15 사용자 적발). 같은 쪽 3연속이면 반대쪽으로 꺾고 가로에 지터를 줘
   // 양쪽 여백을 함께 쓴다. 손튜닝 STEP_PATTERN의 노드 최대 진폭(≈0.73W)에서 반대쪽 0.82W+ 열은
   // 항상 비어 있어 경로·노드와 충돌하지 않는다.
+  // 밀도 절반(지도 단순화 ④): 노드 사이 슬롯을 한 칸 걸러 채운다 — seq 키는 "찍힌 순서"로
+  // 전진해(placed) 서사 순서가 끊기지 않고, 반복 채움만 줄어든다(seq 자체 개편 금지).
   const JIT = [0, 0.05, -0.035, 0.02, -0.05];
   let side = 0; // -1 왼쪽 · 1 오른쪽
   let run = 0;
-  for (let i = 0; i < points.length - 1; i++) {
+  let placed = 0;
+  for (let i = 0; i < points.length - 1; i += 2) {
     const mid = { x: (points[i].x + points[i + 1].x) / 2, y: (points[i].y + points[i + 1].y) / 2 };
     let s = mid.x > W / 2 ? -1 : 1;
     if (s === side && run >= 2) {
@@ -759,10 +750,11 @@ function placeDecor(layer: HTMLElement, points: { x: number; y: number }[], W: n
       run = s === side ? run + 1 : 1;
     }
     side = s;
-    const key = conf.seq[i % conf.seq.length];
+    const key = conf.seq[placed % conf.seq.length];
     const size = DECOR_SIZE[key] ?? 42;
-    const xf = s < 0 ? 0.13 + JIT[i % JIT.length] : 0.87 - JIT[i % JIT.length];
-    add(key, W * xf, mid.y + (i % 2 ? 12 : -8), size, size);
+    const xf = s < 0 ? 0.13 + JIT[placed % JIT.length] : 0.87 - JIT[placed % JIT.length];
+    add(key, W * xf, mid.y + (placed % 2 ? 12 : -8), size, size);
+    placed += 1;
   }
   const [skyA, skyB] = conf.sky;
   const skySize = (k: string, big: boolean): [number, number] =>

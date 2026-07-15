@@ -43,7 +43,7 @@ let walkFromLessonId: string | undefined;
 function goHome(): void {
   const walkFrom = walkFromLessonId;
   walkFromLessonId = undefined;
-  nav.reset(homeScreen(openLesson, lastUnitId, { onSubjects: openSubjects, onLogin: openLogin, onOpenExam: openExam, onTab: goTab }, { walkFrom }));
+  nav.reset(homeScreen(openLesson, lastUnitId, { onSubjects: openSubjects, onOpenExam: openExam, onTab: goTab }, { walkFrom }));
 }
 
 /** 하단 탭 전환(2026-07-12 IA 개편) — 탭은 스택을 쌓지 않고 reset으로 갈아끼운다. */

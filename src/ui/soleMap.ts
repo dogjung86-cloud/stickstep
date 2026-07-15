@@ -71,10 +71,12 @@ export interface SoleOpts {
 }
 
 /**
- * 밑창 노드 내부 SVG(viewBox 0 0 48 76). 상태 문법(목업 확정):
- * 열림=테마 그라데이션+흰 레슨 아이콘+펄스 라인, 완료=흰 면+테마 체크+금별 배지,
- * 잠금=회색 면+회색 아이콘 예고+자물쇠 배지(r9.5), 프리미엄=골드+흰 크라운(레슨 아이콘 규칙의 예외),
+ * 밑창 노드 내부 SVG(viewBox 0 0 48 76). 상태 문법(지도 단순화 2026-07-16 — design/README "지도 단순화 4항목"):
+ * 열림=테마 그라데이션+흰 레슨 아이콘+펄스 라인, 완료=흰 면+테마 체크(금별 배지 제거 — 별은 시험 정복 인증 전용),
+ * 잠금=회색 면+중앙 자물쇠 하나(아이콘 예고·모서리 배지 폐기), 프리미엄=골드+흰 크라운(레슨 아이콘 규칙의 예외),
  * 시험=잉크 네이비+금 깃펜, 정복 인증=골드+갈색 깃펜.
+ * 열림 노드는 숨은 자물쇠(.bs-lock)를 함께 품는다 — 걷기 도착 연출(arriving)이
+ * "자물쇠 → 레슨 아이콘 교체 점등"으로 해금을 그리는 훅(ui.css가 opacity 스왑 소유).
  */
 export function soleSvg(state: SoleState, o: SoleOpts): string {
   const ink = themeInk(o.theme);
@@ -96,14 +98,22 @@ export function soleSvg(state: SoleState, o: SoleOpts): string {
     ? `<use href="#bsole" class="bs-halo" fill="none" stroke="${rgba(ink, 0.55)}" stroke-width="5"/>`
     : "";
 
+  // 중앙 자물쇠 글리프(시안값: 스트로크 #9AA7B5·sw 2.4·scale 1.15·counter-rotate) —
+  // 잠금 노드의 유일한 글리프이자, 열림 노드에선 숨어 있다가 arriving 동안만 보이는 해금 연출 소품.
+  const lockGlyph =
+    `<g class="bs-lock" transform="translate(24 45) rotate(${r}) scale(1.15)" style="color:#9AA7B5">` +
+    `<g transform="translate(-11 -11)">${icon("lock", 22, { sw: 2.4 })}</g></g>`;
+
   let glyph = "";
-  if (state === "now" || state === "locked") {
-    // 레슨 고유 아이콘: 열림 흰색, 잠금 회색 예고 — "다음에 뭘 배우나"를 잠금 상태에서도 보여 준다.
-    // .bs-lic: 걷기 도착 전(arriving) CSS가 회색으로 덮는 훅(도착 순간 흰색 점등 = 해금 전환).
-    const color = state === "now" ? "#fff" : "#AEB9C4";
+  if (state === "now") {
+    // 열림 = 흰 레슨 아이콘. .bs-lic/.bs-lock: arriving CSS가 opacity로 자물쇠↔아이콘을 스왑한다.
     glyph =
-      `<g class="bs-lic" transform="translate(24 45) rotate(${r})" style="color:${color}">` +
-      `<g transform="translate(-11 -11)">${icon(o.lessonIcon ?? "flask", 22, { sw: 2.5 })}</g></g>`;
+      `<g class="bs-lic" transform="translate(24 45) rotate(${r})" style="color:#fff">` +
+      `<g transform="translate(-11 -11)">${icon(o.lessonIcon ?? "flask", 22, { sw: 2.5 })}</g></g>` +
+      lockGlyph;
+  } else if (state === "locked") {
+    // 잠금 = 자물쇠 하나만(레슨 아이콘 예고 폐기 — "복잡해 보인다" 단순화 확정)
+    glyph = lockGlyph;
   } else if (state === "done") {
     glyph =
       `<g transform="translate(24 45) rotate(${r})" fill="none" stroke="${ink}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">` +
@@ -118,20 +128,13 @@ export function soleSvg(state: SoleState, o: SoleOpts): string {
       `<path d="M-3,-8 v16 M-3,-8 h10 l-3,4 3,4 h-10"/></g>`;
   }
 
-  const badge = state === "done"
-    ? `<g transform="translate(38 28) rotate(${r})"><circle r="9.5" fill="#F5B63E"/>` +
-      `<path d="M0,-4.4 l1.25,2.6 2.85,.32 -2.1,1.95 .58,2.8 -2.58,-1.47 -2.58,1.47 .58,-2.8 -2.1,-1.95 2.85,-.32 z" fill="#fff"/></g>`
-    : state === "locked"
-      ? `<g transform="translate(38 28) rotate(${r})"><circle r="9.5" fill="#fff" stroke="#DFE5EC" stroke-width="1"/>` +
-        `<g fill="none" stroke="#AEB9C4" stroke-width="2" stroke-linejoin="round">` +
-        `<rect x="-4" y="-1.6" width="8" height="6.4" rx="2"/><path d="M-2.4,-1.6 v-2 a2.4,2.4 0 0 1 4.8,0 v2"/></g></g>`
-      : "";
+  // 모서리 배지(완료 금별·잠금 자물쇠 원)는 지도 단순화로 폐기 — 완료는 체크만, 잠금은 중앙 자물쇠만.
 
   // 프레스 6px 침하 transform은 .bs-top CSS만 소유(use의 attribute transform과 섞지 않는다)
   return (
     `<svg viewBox="0 0 48 76" aria-hidden="true">${halo}` +
     `<use href="#bsole" class="bs-edge" fill="${edge}"/>` +
-    `<g class="bs-top"><use href="#bsole" class="bs-face" ${face}/>${glyph}${badge}</g></svg>`
+    `<g class="bs-top"><use href="#bsole" class="bs-face" ${face}/>${glyph}</g></svg>`
   );
 }
 

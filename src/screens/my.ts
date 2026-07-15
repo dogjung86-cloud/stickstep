@@ -17,7 +17,7 @@ import { bootLevel, BOOT_TIERS } from "../core/level";
 import { bootArt } from "../ui/boots";
 import { profileAvatar, setProfileAvatar } from "../ui/avatar";
 import { STICK_SLOTS, STICK_PRESETS, DEFAULT_STICK, normStick, stickAvatarSvg } from "../ui/stickParts";
-import { gnav, type GnavKey } from "../ui/gnav";
+import { gnav, refreshGnavMyIcon, type GnavKey } from "../ui/gnav";
 import type { Screen } from "../core/router";
 
 export function myScreen(o: {
@@ -29,13 +29,15 @@ export function myScreen(o: {
   const st = getState();
   const lv = bootLevel(st.lifeXp);
 
-  // ---- 아바타(프로필 카드 + 시트 미리보기가 함께 갱신) ----
+  // ---- 아바타(프로필 카드 + 시트 미리보기 + 탭바 마이 아이콘이 함께 갱신) ----
   const bigAva = profileAvatar(st.avatarId, st.avatarCustom, st.avatarPreset);
   const preview = profileAvatar(st.avatarId, st.avatarCustom, st.avatarPreset);
+  const bar = gnav("my", o.onTab);
   function refreshAvatars(): void {
     const s = getState();
     setProfileAvatar(bigAva, s.avatarId, s.avatarCustom, s.avatarPreset);
     setProfileAvatar(preview, s.avatarId, s.avatarCustom, s.avatarPreset);
+    refreshGnavMyIcon(bar); // 로그인 상태면 탭바 아바타도 그 자리에서 바뀐다(재렌더 없이)
   }
 
   // ---- 프로필 카드 ----
@@ -297,7 +299,7 @@ export function myScreen(o: {
     { class: "screen tabscr", attrs: { id: "sc-my" } },
     el("div", { class: "tab-head" }, el("div", { class: "h1 sm", text: "마이" })),
     el("div", { class: "scroll" }, el("div", { class: "pad" }, prof, stats, menu, legal)),
-    gnav("my", o.onTab),
+    bar,
     scrim,
     avaSheet,
     bootSheet,
@@ -315,6 +317,7 @@ export function myScreen(o: {
 
   const offAuth = onAuthChange((u) => {
     nameEl.textContent = u ? (u.name ?? "스틱스텝 친구") : "게스트 스틱";
+    refreshGnavMyIcon(bar); // 로그인·로그아웃 즉시 탭바 아이콘도 아바타 ⇄ user로 전환
   });
 
   return {

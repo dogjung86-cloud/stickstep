@@ -240,8 +240,11 @@ export const STICK_PRESETS: StickPreset[] = [
   { name: "캡틴", cfg: { face: 3, hair: 0, eyes: 1, mouth: 5, glasses: 0, acc: 2 } },
 ];
 
-/** 저장된 프리셋 인덱스 정규화 — 범위 밖(손상 저장분)은 null(프리셋 아님)로. */
+/** 저장된 프리셋 인덱스 정규화 — 범위 밖(손상 저장분)은 null(프리셋 아님)로.
+ *  주의: null 가드가 먼저다 — Number(null)은 0이라 가드 없이는 "프리셋 아님"이
+ *  프리셋 0번("기본")으로 둔갑해 커스텀·기본 아바타가 영영 안 보인다(실사고 2026-07-16). */
 export function normPreset(i: number | null | undefined): number | null {
+  if (i == null) return null;
   const n = Math.floor(Number(i));
   return Number.isFinite(n) && n >= 0 && n < STICK_PRESETS.length ? n : null;
 }
