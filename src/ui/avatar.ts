@@ -7,7 +7,7 @@
 import { el } from "../core/dom";
 import type { StickAvatarCfg } from "../core/store";
 import { stickman, stickmanHead } from "./figures";
-import { normPreset, STICK_PRESETS, stickAvatarSvg } from "./stickParts";
+import { DEFAULT_STICK, normPreset, STICK_PRESETS, stickAvatarSvg } from "./stickParts";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
@@ -19,7 +19,7 @@ const FULL_BODY: AvatarKind[] = ["wave", "cheer"];
 export const AVATAR_KINDS: AvatarKind[] = ["smile", "surprised", "curious", "wave", "cheer"];
 
 /* ============================================================
-   유저 프로필 아바타 — 마이 탭 픽커·홈 앱바가 사용(store.avatarId = 아래 배열 인덱스).
+   유저 프로필 아바타 — 마이 탭 픽커·탭바 마이 아이콘이 사용(store.avatarId = 아래 배열 인덱스).
    0..4 = 기존 선생님 발주본(하위 호환 — 저장된 avatarId가 살아 있도록 순서 변경·삭제 금지.
           단 픽커에는 노출하지 않는다: 프로필은 학생 캐릭터만 — 사용자 확정 2026-07-12),
    5..  = 학생 캐릭터 발주본(qa/avatar2_prompts.txt → public/avatars/*.webp).
@@ -47,17 +47,20 @@ const PROFILE_FULL = new Set(AVATAR_KINDS.map((k, i) => (FULL_BODY.includes(k) ?
 export const PROFILE_COUNT = PROFILE_FILES.length;
 /** 픽커에 노출하는 시작 인덱스 — 선생님 5종(0..4)은 저장 호환용으로만 남고 픽커에서 뺀다. */
 export const PROFILE_PICK_START = TEACHER_FILES.length;
-/** 고른 적 없는 기본 아바타 = 학생 '새싹 머리'(성별 중립) — 선생님 wave 기본은 픽커 미노출로 폐기. */
+/** 범위 밖 저장분의 래스터 폴백 = 학생 '새싹 머리'(성별 중립). "고른 적 없음(null)"은 래스터가 아니라
+ *  게스트 스틱 벡터가 기본(setProfileAvatar — 2026-07-16, 픽커의 '기본' 프리셋과 같은 캐릭터). */
 const DEFAULT_PROFILE = PROFILE_FILES.indexOf("avatars/sprout.webp");
 
-/** null·범위 밖은 기본 학생 캐릭터(새싹 머리). 저장된 선생님 인덱스(0..4)는 그대로 존중한다. */
+/** 범위 밖(손상 저장분)은 새싹 래스터로. 저장된 선생님 인덱스(0..4)는 그대로 존중한다. */
 export function profileIdOf(id: number | null | undefined): number {
   const i = id ?? DEFAULT_PROFILE;
   return PROFILE_FILES[i] ? i : DEFAULT_PROFILE;
 }
 
 /** 프로필 아바타 요소 생성(원형 프레임 안에서 object-fit cover).
- *  우선순위: preset(캐릭터 프리셋) → custom(직접 꾸민 조합) → 래스터 avatarId(구버전 저장 호환). */
+ *  우선순위: preset(캐릭터 프리셋) → custom(직접 꾸민 조합) → 래스터 avatarId(구버전 저장 호환)
+ *  → 게스트 스틱(DEFAULT_STICK 벡터 — 프리셋 '기본'과 같은 캐릭터. 사용자 확정 2026-07-16:
+ *  처음 아바타와 픽커의 '기본'이 같은 캐릭터여야 "기본으로 되돌리기"가 성립한다). */
 export function profileAvatar(
   id: number | null | undefined,
   custom?: StickAvatarCfg | null,
@@ -84,6 +87,12 @@ export function setProfileAvatar(
   if (custom) {
     wrap.classList.remove("full");
     wrap.innerHTML = stickAvatarSvg(custom);
+    return;
+  }
+  // 아무것도 고른 적 없음 = 게스트 스틱(프리셋 '기본'과 동일 벡터). 래스터는 저장된 avatarId 전용.
+  if (id == null) {
+    wrap.classList.remove("full");
+    wrap.innerHTML = stickAvatarSvg(DEFAULT_STICK);
     return;
   }
   const i = profileIdOf(id);

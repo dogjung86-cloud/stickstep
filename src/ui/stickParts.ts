@@ -232,8 +232,10 @@ export interface StickPreset {
 }
 
 export const STICK_PRESETS: StickPreset[] = [
-  { name: "기본", cfg: { face: 0, hair: 2, eyes: 0, mouth: 0, glasses: 0, acc: 0 } },
-  { name: "새싹", cfg: { face: 0, hair: 1, eyes: 1, mouth: 1, glasses: 0, acc: 0 } },
+  // 0 기본 = 게스트 스틱(DEFAULT_STICK와 동일 조합) — 아무것도 안 고른 첫 아바타가 곧 이 캐릭터라
+  // '기본'을 누르면 처음 모습으로 돌아간다(사용자 확정 2026-07-16). 구 '기본'(바가지)은 1번이 승계.
+  { name: "기본", cfg: { face: 0, hair: 1, eyes: 0, mouth: 0, glasses: 0, acc: 0 } },
+  { name: "방글", cfg: { face: 0, hair: 2, eyes: 1, mouth: 1, glasses: 0, acc: 0 } },
   { name: "모범생", cfg: { face: 1, hair: 8, eyes: 0, mouth: 3, glasses: 2, acc: 0 } },
   { name: "힙스터", cfg: { face: 2, hair: 4, eyes: 0, mouth: 4, glasses: 4, acc: 0 } },
   { name: "게이머", cfg: { face: 0, hair: 3, eyes: 2, mouth: 2, glasses: 0, acc: 3 } },

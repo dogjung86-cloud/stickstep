@@ -193,6 +193,19 @@ export async function signInWith(provider: OAuthProvider): Promise<boolean> {
   }
 }
 
+/** 닉네임 서버 반영(profiles.nickname — 가입 트리거가 행을 만들므로 update만) —
+ *  미로그인·미설정 환경에선 조용히 no-op. 성공 여부만 반환(실패해도 기기 저장이 진실). */
+export async function pushNickname(nickname: string | null): Promise<boolean> {
+  if (!isAuthConfigured() || !user) return false;
+  try {
+    const c = await getSupabase();
+    const { error } = await c.from("profiles").update({ nickname }).eq("id", user.id);
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
 /** 로그아웃 — 서버 세션만 정리한다. 기기의 학습 기록(store)은 그대로 둔다(정책). */
 export async function signOut(): Promise<void> {
   if (!clientPromise) return;

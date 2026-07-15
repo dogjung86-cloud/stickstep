@@ -1073,7 +1073,11 @@ src/
 - store.ts에는 `setOnStateSaved` 훅 + `applySyncedState`만 추가(의존 방향 sync→store 단방향).
   로그아웃해도 기기의 학습 기록은 지우지 않는다(무로그인 정책과 동일한 결).
 - 리더보드·랭킹은 후속 기능: 채점이 전부 클라이언트라 **서버 검증 설계 전에는 붙이지 않는다**
-  (검토 모드 7연타가 공식 우회로인 것도 함께 해결할 것). profiles.nickname 컬럼은 그때 쓴다.
+  (검토 모드 7연타가 공식 우회로인 것도 함께 해결할 것).
+- **닉네임(2026-07-16)**: store.nickname(기기 저장, 공백 정리+12자 컷, null=기본 이름) — 마이 탭 이름 옆
+  연필 → 닉네임 시트(비우면 게스트 스틱/스틱스텝 친구/소셜 이름 순 폴백). 서버는 profiles.nickname
+  (progress가 아님 — **rowOf에 넣으면 400**, avatarCustom과 같은 함정): 저장 시 auth.ts pushNickname,
+  로그인 직후엔 sync.ts fullSync가 기기 값 우선으로 밀고 기기에 없으면 서버 값 채택. 리더보드 표시명도 이 값.
 - **회원탈퇴(2026-07-12)**: auth.ts `deleteAccount()` → schema.sql의 `delete_user` RPC(security definer —
   anon 키는 auth.users를 못 지워서. auth.users 삭제가 profiles·progress로 cascade). UI는 로그인 화면
   하단 밑줄 "회원탈퇴" → 그 자리 경고 카드 2단 확인(styles/policy.css). 성공 시 로컬 세션만
@@ -1092,7 +1096,7 @@ src/
   (splash.ts, `.splash-foot.done` 스태거 fadeUp). 둘러보기 → 과목 선택 → 온보딩 → 홈. 스플래시는 비온보딩
   첫 실행에만 뜨고, 재방문·e2e 시딩(onboarded=true)은 홈 직행 — 기존 e2e 플로우 불변.
 - **하단 탭바 4개**(ui/gnav.ts, main.ts goTab이 nav.reset으로 전환): 학습(기존 홈)·복습(review.ts)·
-  도전(challenge.ts — 랭킹 준비 중·미니게임 준비 중+프리미엄 크라운)·마이(my.ts — 아바타 픽커·장화 레벨·스텝 요약·계정/프리미엄/과제함 진입).
+  도전(challenge.ts — 랭킹 준비 중·미니게임 준비 중+프리미엄 크라운)·마이(my.ts — 아바타 픽커·닉네임 바꾸기·장화 레벨·스텝 요약·계정/프리미엄/과제함 진입).
 - **복습 탭 콘텐츠는 전면 프리미엄(2026-07-15 사용자 확정)**: 오답노트·취약 단원 문제 뽑기·질문하기(AI 튜터)
   셋 다 잠금 시 골드 크라운 필 표시(review.ts `locked`), 게이트·페이월은 main.ts의
   openNotebook/openWeakDrill/openTutor가 소유(잠금 → 전용 문구 페이월 → 구매 시 바로 진입).
@@ -1108,7 +1112,9 @@ src/
   기준은 **store.lifeXp(누적 획득 스텝)** — spendXp로 줄지 않고, 레슨·시험·보상 적립 지점이 전부 함께 올린다.
   구버전 저장분은 load()가 totalXp를 하한으로 마이그레이션. 동기화 컬럼 life_step(max 병합)·avatar_id(local 우선).
 - **아바타**: 소셜 프로필 사진 금지(auth.ts가 avatar_url·picture를 아예 안 읽음 — 미성년 개인정보).
-  ui/avatar.ts **PROFILE 섹션**이 픽커(마이 탭)·홈 앱바의 단일 진실 공급원 — store.avatarId = 배열 인덱스:
+  ui/avatar.ts **PROFILE 섹션**이 프로필 아바타(마이 탭·탭바 마이 아이콘)의 단일 진실 공급원 — 우선순위
+  프리셋 → 커스텀 → 래스터 avatarId(구버전 저장) → **게스트 스틱 벡터**(미선택 기본 = 프리셋 '기본'과
+  같은 캐릭터, 2026-07-16 — "기본을 고르면 처음 모습으로"가 성립). store.avatarId = 배열 인덱스:
   0..4 기존 선생님 발주본(하위 호환 — 순서 변경·삭제 금지), 5..16 **학생 캐릭터 12종**(public/avatars/*.webp,
   상반신 버스트 — 성별·헤어·안경·주근깨·장신구·표정 다양화. 발주 qa/order-avatars.sh + avatar2_prompts.txt,
   변환 node qa/process-avatars.mjs). 캐릭터 추가는 USER_FILES에 append만 — 픽커·앱바 자동 확장.

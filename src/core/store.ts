@@ -68,6 +68,10 @@ export interface AppState {
   // null = 프리셋 아님. 직접 꾸미기와 완전 분리: 프리셋을 골라도 avatarCustom은 남고,
   // 파츠를 만지면(setAvatarCustom) 프리셋이 풀린다. avatarCustom과 같은 이유로 동기화 제외.
   avatarPreset: number | null;
+  // 닉네임(마이 탭 '닉네임 바꾸기') — null이면 기본 이름(게스트 스틱/스틱스텝 친구/소셜 이름).
+  // progress 테이블 컬럼이 아니라 profiles.nickname에 실린다(sync.ts fullSync가 채택·푸시 —
+  // rowOf에 넣으면 400으로 push 전체가 죽는 avatarCustom과 같은 함정 주의).
+  nickname: string | null;
 }
 
 const KEY = "science-app.v1";
@@ -92,6 +96,7 @@ const DEFAULT_STATE: AppState = {
   avatarId: null,
   avatarCustom: null,
   avatarPreset: null,
+  nickname: null,
 };
 
 function dayKey(d = new Date()): string {
@@ -274,6 +279,13 @@ export function setAvatarPreset(i: number | null): void {
 export function setAvatarCustom(v: StickAvatarCfg | null): void {
   state.avatarCustom = v;
   if (v) state.avatarPreset = null;
+  save();
+}
+
+/** 닉네임 저장(마이 탭) — 공백 정리 + 12자 컷, 비우면 null(기본 이름으로 복귀). */
+export function setNickname(v: string | null): void {
+  const t = v?.replace(/\s+/g, " ").trim().slice(0, 12) ?? "";
+  state.nickname = t || null;
   save();
 }
 

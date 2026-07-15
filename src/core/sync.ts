@@ -166,6 +166,13 @@ async function fullSync(userId: string): Promise<void> {
     const { data } = await sb.from("progress").select("*").eq("user_id", userId).maybeSingle();
     if (data) applySyncedState(mergeIntoLocal(getState(), data as ProgressRow));
     await pushNow();
+    // 닉네임(profiles.nickname — progress와 별개 테이블이라 rowOf에 안 싣는다): 기기 값이 있으면
+    // 서버로 밀고, 없으면 서버 값을 채택 — "학습은 잃지 않는다"의 닉네임판(기기 우선).
+    const { data: prof } = await sb.from("profiles").select("nickname").eq("id", userId).maybeSingle();
+    const localNick = getState().nickname;
+    const serverNick = (prof?.nickname as string | null | undefined) ?? null;
+    if (localNick && localNick !== serverNick) await sb.from("profiles").update({ nickname: localNick }).eq("id", userId);
+    else if (!localNick && serverNick) applySyncedState({ nickname: serverNick });
   } catch {
     /* 실패해도 학습은 로컬로 계속 — 다음 저장 push가 재시도 역할 */
   }

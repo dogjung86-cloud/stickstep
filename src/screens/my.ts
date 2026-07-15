@@ -10,8 +10,8 @@
 import { el, clear } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
-import { getState, currentStreak, setAvatarPreset, setAvatarCustom } from "../core/store";
-import { onAuthChange } from "../core/auth";
+import { getState, currentStreak, setAvatarPreset, setAvatarCustom, setNickname } from "../core/store";
+import { onAuthChange, currentUser, pushNickname } from "../core/auth";
 import { BIZ_INFO } from "../core/brand";
 import { bootLevel, BOOT_TIERS } from "../core/level";
 import { bootArt } from "../ui/boots";
@@ -46,7 +46,18 @@ export function myScreen(o: {
     attrs: { "aria-label": "아바타 꾸미기", "aria-haspopup": "dialog" },
     html: icon("pencil", 13),
   });
-  const nameEl = el("div", { class: "my-name", text: "게스트 스틱" });
+  // 이름 = 닉네임 우선(기기 저장) → 소셜 이름 → 기본(게스트 스틱). 연필 탭 → 닉네임 시트.
+  const displayName = (): string => {
+    const s = getState();
+    const u = currentUser();
+    return s.nickname ?? (u ? (u.name ?? "스틱스텝 친구") : "게스트 스틱");
+  };
+  const nameEl = el("div", { class: "my-name", text: displayName() });
+  const nickBtn = el("button", {
+    class: "mypf-nick-edit",
+    attrs: { "aria-label": "닉네임 바꾸기", "aria-haspopup": "dialog" },
+    html: icon("pencil", 11),
+  });
   const badge = el("div", { class: "boot-badge" });
   // 레벨 숫자는 쓰지 않는다(총 14단계라 숫자가 작아 심심 — 장화 이름이 곧 등급, 사용자 확정 2026-07-12)
   badge.innerHTML = `${bootArt(lv.tier.id, 20)}<span>${lv.tier.name}</span>`;
@@ -67,7 +78,7 @@ export function myScreen(o: {
       "div",
       { class: "mypf-top" },
       el("div", { class: "mypf-avawrap" }, el("div", { class: "mypf-ava" }, bigAva), editBtn),
-      el("div", { class: "mypf-who" }, nameEl, badge),
+      el("div", { class: "mypf-who" }, el("div", { class: "mypf-name-row" }, nameEl, nickBtn), badge),
     ),
     prog,
     progCap,
@@ -260,6 +271,41 @@ export function myScreen(o: {
   });
   const bootSheet = sheetShell("스텝 장화 레벨", el("div", { class: "mysheet-body" }, dex));
 
+  // ---- 닉네임 시트 ----
+  const nickInput = el("input", {
+    class: "nick-input",
+    attrs: { type: "text", maxlength: "12", placeholder: "별명을 입력해 주세요", "aria-label": "닉네임", autocomplete: "off", enterkeyhint: "done" },
+  }) as HTMLInputElement;
+  const nickSave = el("button", { class: "mysheet-done", text: "저장" });
+  function saveNick(): void {
+    haptic(HAPTIC.tap);
+    setNickname(nickInput.value);
+    void pushNickname(getState().nickname); // 로그인 상태면 profiles.nickname에도 반영(아니면 no-op)
+    nameEl.textContent = displayName();
+    closeSheet();
+    snack("이름을 바꿨어요");
+  }
+  nickSave.addEventListener("click", saveNick);
+  nickInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") saveNick();
+  });
+  const nickSheet = sheetShell(
+    "닉네임 바꾸기",
+    el(
+      "div",
+      { class: "mysheet-body" },
+      nickInput,
+      el("div", { class: "nick-hint", text: "실명 대신 별명을 추천해요 · 최대 12자 · 비우면 기본 이름으로 돌아가요" }),
+    ),
+    el("div", { class: "mysheet-foot" }, nickSave),
+  );
+  nickBtn.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    nickInput.value = getState().nickname ?? "";
+    openSheet(nickSheet, nickBtn);
+    nickInput.focus({ preventScroll: true }); // openSheet의 X 포커스를 입력으로 재지정(입력이 본론)
+  });
+
   // ---- 메뉴(흰 카드 하나에 행 목록) ----
   function row(opts: { ic: string; gold?: boolean; title: string; value?: string; onClick: (btn: HTMLElement) => void }): HTMLElement {
     const r = el(
@@ -303,6 +349,7 @@ export function myScreen(o: {
     scrim,
     avaSheet,
     bootSheet,
+    nickSheet,
   );
 
   let snackTimer = 0;
@@ -315,8 +362,8 @@ export function myScreen(o: {
     snackTimer = window.setTimeout(() => snackEl.classList.remove("show"), 2000);
   }
 
-  const offAuth = onAuthChange((u) => {
-    nameEl.textContent = u ? (u.name ?? "스틱스텝 친구") : "게스트 스틱";
+  const offAuth = onAuthChange(() => {
+    nameEl.textContent = displayName();
     refreshGnavMyIcon(bar); // 로그인·로그아웃 즉시 탭바 아이콘도 아바타 ⇄ user로 전환
   });
 
