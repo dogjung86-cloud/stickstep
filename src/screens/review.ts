@@ -85,7 +85,7 @@ export function reviewScreen(o: {
         "span",
         { class: "prep-tx" },
         el("b", {}, el("span", { text: "질문하기" }), el("i", { class: "prep-pill ai", text: "AI 베타" })),
-        el("span", { class: "prep-desc", text: "막힌 개념·문제를 AI 튜터 스틱쌤에게 바로 물어봐요" }),
+        el("span", { class: "prep-desc", text: "막힌 문제를 사진 찍어 AI 튜터 스틱쌤에게 바로 물어봐요" }),
       ),
       el("span", { class: "nb-entry-go", html: icon("chevron", 16) }),
     );

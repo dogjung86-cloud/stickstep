@@ -32,6 +32,7 @@ const ICONS: Record<string, IconDef> = {
   footstep: { v: '<g transform="translate(12 12) rotate(-12) scale(1.75)"><path d="M0,-5.6 C1.8,-5.6 3.2,-4.4 3.2,-2.6 C3.2,-0.8 2.5,0.8 1.7,1.4 C1.2,1.8 -1.2,1.8 -1.7,1.4 C-2.5,0.8 -3.2,-0.8 -3.2,-2.6 C-3.2,-4.4 -1.8,-5.6 0,-5.6 Z"/><rect x="-2" y="2.9" width="4" height="2.7" rx="1.35"/></g>', fill: true },
   target: { v: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/>', sw: 2 },
   bulb: { v: '<path d="M9.5 18h5"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 4 10.5c-.7.7-1 1.5-1 2.5H9c0-1-.3-1.8-1-2.5A6 6 0 0 1 12 3z"/>', sw: 2 },
+  camera: { v: '<rect x="3" y="6.5" width="18" height="13.5" rx="2.5"/><path d="M8.5 6.5L10 4h4l1.5 2.5"/><circle cx="12" cy="13" r="3.6"/>', sw: 2 },
   flask: { v: '<path d="M9 3h6"/><path d="M10 3v6.5l-4.6 8A2 2 0 0 0 7.2 20.5h9.6a2 2 0 0 0 1.8-3l-4.6-8V3"/><path d="M7.5 15h9"/>', sw: 2 },
   book: { v: '<path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H19v15H7.5A2.5 2.5 0 0 0 5 20.5z"/><path d="M5 20.5A2.5 2.5 0 0 1 7.5 18H19v3H7.5"/>', sw: 2 },
   trophy: { v: '<path d="M8 4h8v4.5a4 4 0 0 1-8 0z"/><path d="M8 6H5.5v1a3 3 0 0 0 3 3M16 6h2.5v1a3 3 0 0 1-3 3"/><path d="M10.5 13.5h3V17h-3z"/><path d="M8 20h8M9 20l.5-3M15 20l-.5-3"/>', sw: 2 },

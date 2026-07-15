@@ -6,7 +6,7 @@
 import { el } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
-import { askTutor, type TutorTurn } from "../core/tutor";
+import { askTutor, type TutorImage, type TutorTurn } from "../core/tutor";
 import type { WrongNote } from "../core/store";
 import { findLesson } from "../content/curriculum";
 import { stickAvatar } from "../ui/avatar";
@@ -50,6 +50,34 @@ function noteContext(n: WrongNote): string {
   if (n.core) lines.push(`핵심: ${plain(n.core)}`);
   if (n.hasFigure) lines.push("(그림이 있는 문제지만 그림은 전달되지 않았어요. 필요하면 그림에 무엇이 보이는지 학생에게 물어보세요.)");
   return lines.join("\n");
+}
+
+/** 첨부 사진 → 최대 1280px JPEG base64(전송량 절약). 한 장 정책.
+ *  input[type=file] accept="image/*"라 모바일에선 네이티브 선택창이 카메라 촬영·갤러리를 함께 연다
+ *  (iOS는 HEIC을 픽커 단계에서 JPEG으로 변환해 준다). */
+async function toTutorImage(f: File): Promise<{ img: TutorImage; preview: string }> {
+  const url = URL.createObjectURL(f);
+  try {
+    const im = await new Promise<HTMLImageElement>((res, rej) => {
+      const i = new Image();
+      i.onload = () => res(i);
+      i.onerror = () => rej(new Error("image-decode"));
+      i.src = url;
+    });
+    const scale = Math.min(1, 1280 / Math.max(im.naturalWidth, im.naturalHeight, 1));
+    const w = Math.max(1, Math.round(im.naturalWidth * scale));
+    const h = Math.max(1, Math.round(im.naturalHeight * scale));
+    const cv = document.createElement("canvas");
+    cv.width = w;
+    cv.height = h;
+    const ctx = cv.getContext("2d");
+    if (!ctx) throw new Error("no-canvas");
+    ctx.drawImage(im, 0, 0, w, h);
+    const dataUrl = cv.toDataURL("image/jpeg", 0.82);
+    return { img: { mimeType: "image/jpeg", dataB64: dataUrl.slice(dataUrl.indexOf(",") + 1) }, preview: dataUrl };
+  } finally {
+    URL.revokeObjectURL(url);
+  }
 }
 
 export function tutorScreen(o: { onClose: () => void; note?: WrongNote }): Screen {
@@ -121,13 +149,61 @@ export function tutorScreen(o: { onClose: () => void; note?: WrongNote }): Scree
   }
   feed.appendChild(chips);
 
+  // ── 사진 첨부(한 장) — 숨은 파일 입력 + 미리보기 트레이. 스낵은 오류 안내 전용.
+  let snackTimer = 0;
+  const snackEl = el("div", { class: "snack" });
+  function flash(msg: string): void {
+    snackEl.textContent = msg;
+    snackEl.classList.add("show");
+    window.clearTimeout(snackTimer);
+    snackTimer = window.setTimeout(() => snackEl.classList.remove("show"), 2200);
+  }
+
+  let pendingImg: { img: TutorImage; preview: string } | null = null;
+  const tray = el("div", { class: "qt-tray" });
+  function setPending(p: { img: TutorImage; preview: string } | null): void {
+    pendingImg = p;
+    tray.replaceChildren();
+    if (!p) return;
+    const x = el("button", { class: "qt-tray-x", attrs: { type: "button", "aria-label": "사진 빼기" }, html: icon("x", 13) });
+    x.addEventListener("click", () => {
+      haptic(HAPTIC.tap);
+      setPending(null);
+    });
+    tray.appendChild(el("span", { class: "qt-tray-thumb" }, el("img", { attrs: { src: p.preview, alt: "첨부한 사진" } }), x));
+  }
+
+  const file = el("input", { class: "qt-file", attrs: { type: "file", accept: "image/*", tabindex: "-1", "aria-hidden": "true" } });
+  file.addEventListener("change", () => {
+    const f = file.files?.[0];
+    file.value = ""; // 같은 파일을 다시 골라도 change가 뜨게 초기화
+    if (!f) return;
+    if (!f.type.startsWith("image/")) {
+      flash("사진 파일만 올릴 수 있어요.");
+      return;
+    }
+    void toTutorImage(f).then(
+      (p) => setPending(p),
+      () => flash("사진을 불러오지 못했어요. 다른 사진으로 다시 시도해 주세요."),
+    );
+  });
+  const attach = el("button", {
+    class: "qt-attach",
+    attrs: { type: "button", "aria-label": "문제 사진 올리기(카메라·갤러리)" },
+    html: icon("camera", 20),
+  });
+  attach.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    file.click();
+  });
+
   // ── 입력 바
   const input = el("input", {
     class: "qt-input",
     attrs: { type: "text", placeholder: "궁금한 걸 물어봐요", maxlength: 500, enterkeyhint: "send", autocomplete: "off" },
   });
   const send = el("button", { class: "qt-send", attrs: { type: "submit", "aria-label": "질문 보내기" }, html: icon("chevron", 18) });
-  const bar = el("form", { class: "qt-bar" }, input, send);
+  const bar = el("form", { class: "qt-bar" }, attach, file, input, send);
   bar.addEventListener("submit", (e) => {
     e.preventDefault();
     void submit();
@@ -135,15 +211,20 @@ export function tutorScreen(o: { onClose: () => void; note?: WrongNote }): Scree
 
   async function submit(preset?: string): Promise<void> {
     const text = (preset ?? input.value).trim();
-    if (!text || busy) return;
+    const img = pendingImg; // 칩으로 시작해도 트레이에 사진이 있으면 함께 보낸다
+    if ((!text && !img) || busy) return;
     haptic(HAPTIC.tap);
     input.value = "";
+    setPending(null);
     if (chips) {
       chips.remove();
       chips = null;
     }
-    feed.appendChild(el("div", { class: "qt-row me" }, el("div", { class: "qt-bub me", text })));
-    turns.push({ role: "user", text });
+    const mine = el("div", { class: "qt-bub me" });
+    if (img) mine.appendChild(el("img", { class: "qt-photo", attrs: { src: img.preview, alt: "보낸 사진" } }));
+    if (text) mine.appendChild(el("span", { text }));
+    feed.appendChild(el("div", { class: "qt-row me" }, mine));
+    turns.push({ role: "user", text, image: img?.img });
 
     busy = true;
     send.disabled = true;
@@ -179,7 +260,7 @@ export function tutorScreen(o: { onClose: () => void; note?: WrongNote }): Scree
     }
   }
 
-  const elm = el("section", { class: "screen", attrs: { id: "sc-tutor" } }, head, notice, scroll, bar);
+  const elm = el("section", { class: "screen", attrs: { id: "sc-tutor" } }, head, notice, scroll, tray, bar, snackEl);
   return {
     el: elm,
     onExit: () => pending?.abort(), // 화면 이탈 시 스트림 중단(응답 유실보다 누수 방지가 우선)
