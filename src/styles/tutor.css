@@ -1,0 +1,56 @@
+/* 질문하기(AI 튜터 '스틱쌤') 전용 시트 — qt- 네임스페이스. 공유 시트(ui.css)는 건드리지 않는다.
+   색·그림자·라운드는 전부 tokens.css 변수만 참조(하드코딩 금지). */
+
+#sc-tutor { background: var(--app-bg); }
+
+/* 헤더 타이틀 옆 베타 배지 + 복습 탭 카드용 파랑 필 */
+.qt-beta { margin-left: 7px; font-style: normal; font-size: 10.5px; font-weight: 800; padding: 3px 8px; border-radius: 999px; background: var(--blue-tint); color: var(--blue); }
+.prep-pill.ai { color: var(--blue); background: var(--blue-tint); }
+
+/* AI 고지 — 헤더 바로 아래 상시 노출(미성년 세이프가드: AI 사용 사실 고지) */
+.qt-notice { margin: 2px 22px 0; padding: 9px 13px; border-radius: 12px; background: var(--n100); color: var(--n500); font-size: 11.5px; line-height: 1.5; word-break: keep-all; text-align: center; }
+
+.qt-pad { padding-top: 14px; padding-bottom: 18px; }
+.qt-feed { display: flex; flex-direction: column; gap: 10px; }
+
+/* 오답노트에서 넘어온 문제 카드 — 대화의 그라운딩을 눈에 보이게 */
+.qt-ctx { padding: 12px 14px; border-radius: var(--r-md); background: var(--n0); border: 1px solid var(--n200); box-shadow: var(--sh-card); }
+.qt-ctx-k { display: inline-flex; font-size: 10.5px; font-weight: 800; color: var(--blue); background: var(--blue-tint); padding: 3px 8px; border-radius: 999px; }
+.qt-ctx-q { margin-top: 8px; font-size: 13.5px; line-height: 1.6; color: var(--ink); word-break: keep-all; }
+
+/* 말풍선 — 튜터는 왼쪽 흰 카드, 나는 오른쪽 파랑 */
+.qt-row { display: flex; align-items: flex-end; gap: 8px; }
+.qt-row.me { justify-content: flex-end; }
+.qt-ava { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--n0); border: 1px solid var(--n200); overflow: hidden; display: grid; place-items: center; }
+.qt-ava img, .qt-ava svg { width: 24px; height: 24px; object-fit: contain; }
+.qt-bub { max-width: 80%; padding: 11px 14px; border-radius: 16px 16px 16px 6px; background: var(--n0); border: 1px solid var(--n200); box-shadow: var(--sh-card); font-size: 14px; line-height: 1.62; color: var(--ink); white-space: pre-wrap; word-break: keep-all; overflow-wrap: anywhere; }
+.qt-bub.me { border-radius: 16px 16px 6px 16px; background: var(--grad-blue); border: none; color: #fff; box-shadow: var(--sh-raise); }
+.qt-bub.err { color: var(--n500); }
+
+/* 시작 질문 칩 */
+.qt-chips { display: flex; flex-wrap: wrap; gap: 8px; padding-left: 38px; }
+.qt-chip { padding: 8px 13px; border-radius: 999px; background: var(--n0); border: 1px solid var(--n300); color: var(--blue); font-size: 13px; font-weight: 700; box-shadow: var(--sh-card); transition: transform .12s var(--spring-soft); }
+.qt-chip:active { transform: scale(.95); }
+
+/* 생각 중 점 3개 */
+.qt-dots { display: inline-flex; gap: 4px; padding: 4px 2px; }
+.qt-dots i { width: 6px; height: 6px; border-radius: 99px; background: var(--n400); animation: qtDot 1s infinite var(--ease); }
+.qt-dots i:nth-child(2) { animation-delay: .15s; }
+.qt-dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes qtDot { 0%, 60%, 100% { transform: translateY(0); opacity: .55; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+/* 입력 바 — 스크롤 밖 하단 고정(safe-area 포함) */
+.qt-bar { display: flex; gap: 8px; padding: 10px 16px calc(12px + var(--safe-b)); background: #fff; border-top: 1px solid var(--n200); }
+.qt-input { flex: 1; min-width: 0; height: 46px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--n200); background: var(--n50); font-size: 14.5px; color: var(--ink); }
+.qt-input::placeholder { color: var(--n400); }
+.qt-input:focus { outline: none; border-color: var(--blue); background: #fff; }
+.qt-send { flex: none; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--grad-blue); color: #fff; box-shadow: var(--sh-cta); transition: transform .12s var(--spring-soft), opacity .15s ease; }
+.qt-send:active { transform: scale(.92); }
+.qt-send:disabled { opacity: .4; }
+
+/* 오답노트 카드의 질문 버튼 — 복습 버튼과 한 줄 */
+.nb-ask { margin-right: 14px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .qt-dots i { animation: none; }
+}

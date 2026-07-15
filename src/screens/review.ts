@@ -6,10 +6,16 @@ import { el } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { wrongNoteCount, isPremium, isReviewMode } from "../core/store";
+import { isTutorConfigured } from "../core/tutor";
 import { gnav, type GnavKey } from "../ui/gnav";
 import type { Screen } from "../core/router";
 
-export function reviewScreen(o: { onTab: (k: GnavKey) => void; onOpenNotebook: () => void; onOpenDrill: () => void }): Screen {
+export function reviewScreen(o: {
+  onTab: (k: GnavKey) => void;
+  onOpenNotebook: () => void;
+  onOpenDrill: () => void;
+  onOpenTutor: () => void;
+}): Screen {
   const { open, overcome } = wrongNoteCount();
 
   const nb = el(
@@ -68,6 +74,29 @@ export function reviewScreen(o: { onTab: (k: GnavKey) => void; onOpenNotebook: (
     return card;
   }
 
+  // 질문하기 — AI 튜터 키가 있으면 활성 카드(스틱쌤 채팅), 없으면 기존 "준비 중" 카드 그대로.
+  let tutorCard: HTMLElement;
+  if (isTutorConfigured()) {
+    tutorCard = el(
+      "button",
+      { class: "prep-card accent" },
+      el("span", { class: "prep-ic", html: icon("bulb", 20) }),
+      el(
+        "span",
+        { class: "prep-tx" },
+        el("b", {}, el("span", { text: "질문하기" }), el("i", { class: "prep-pill ai", text: "AI 베타" })),
+        el("span", { class: "prep-desc", text: "막힌 개념·문제를 AI 튜터 스틱쌤에게 바로 물어봐요" }),
+      ),
+      el("span", { class: "nb-entry-go", html: icon("chevron", 16) }),
+    );
+    tutorCard.addEventListener("click", () => {
+      haptic(HAPTIC.tap);
+      o.onOpenTutor();
+    });
+  } else {
+    tutorCard = prepCard("bulb", "질문하기", "막힌 문제를 사진과 함께 바로 물어봐요");
+  }
+
   const elm = el(
     "section",
     { class: "screen tabscr", attrs: { id: "sc-review" } },
@@ -85,7 +114,7 @@ export function reviewScreen(o: { onTab: (k: GnavKey) => void; onOpenNotebook: (
         { class: "pad" },
         nb,
         drill,
-        prepCard("bulb", "질문하기", "막힌 문제를 사진과 함께 바로 물어봐요"),
+        tutorCard,
         el("div", { class: "tab-footnote", text: "복습으로 다시 맞힌 문제는 오답노트에서 자동으로 해결 처리돼요." }),
       ),
     ),

@@ -5,9 +5,13 @@ import "./styles/math.css";
 import "./styles/math2.css";
 import "./styles/policy.css";
 import "./styles/stickavatar.css";
+import "./styles/tutor.css";
 
 import { nav } from "./core/router";
 import { getState, completeLesson, setViewSubject, isPremium, isReviewMode, setPremiumOverride, isDone } from "./core/store";
+import type { WrongNote } from "./core/store";
+import { isTutorConfigured } from "./core/tutor";
+import { tutorScreen } from "./screens/tutor";
 import { splashScreen } from "./screens/splash";
 import { onboardingScreen } from "./screens/onboarding";
 import { subjectScreen } from "./screens/subject";
@@ -50,8 +54,9 @@ function goTab(k: GnavKey): void {
     nav.reset(
       reviewScreen({
         onTab: goTab,
-        onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson)),
+        onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson, isTutorConfigured() ? openTutor : undefined)),
         onOpenDrill: openWeakDrill,
+        onOpenTutor: () => openTutor(),
       }),
     );
   } else if (k === "challenge") {
@@ -73,6 +78,12 @@ function goTab(k: GnavKey): void {
       }),
     );
   }
+}
+
+/** 질문하기(AI 튜터 '스틱쌤') — 복습 탭 카드(일반) · 오답노트 카드(문항 그라운딩).
+ *  키(.env.local) 없으면 isTutorConfigured()가 false — 복습 탭은 "준비 중" 카드, 오답노트 버튼은 미노출. */
+function openTutor(note?: WrongNote): void {
+  nav.go(tutorScreen({ onClose: () => nav.back(), note }));
 }
 
 /** 취약 단원 문제 뽑기(복습 탭) — 프리미엄 전용. 잠겨 있으면 페이월을 먼저 보여 준다. */
@@ -136,7 +147,7 @@ function pickSubject(s: "sci" | "math"): void {
 function openLogin(): void {
   nav.go(
     loginScreen(() => nav.back(), {
-      onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson)),
+      onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson, isTutorConfigured() ? openTutor : undefined)),
       onOpenPolicy: openPolicy,
     }),
   );
@@ -214,7 +225,7 @@ function start(): void {
               if (getState().onboarded) goHome();
               else nav.back();
             },
-            { onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson)), onOpenPolicy: openPolicy },
+            { onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson, isTutorConfigured() ? openTutor : undefined)), onOpenPolicy: openPolicy },
           ),
         ),
     }),

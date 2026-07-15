@@ -55,7 +55,11 @@ function figureOf(n: WrongNote): { html: string; dark: boolean } | null {
     : null;
 }
 
-export function notebookScreen(onClose: () => void, onOpenLesson?: (id: string) => void): Screen {
+export function notebookScreen(
+  onClose: () => void,
+  onOpenLesson?: (id: string) => void,
+  onAskTutor?: (n: WrongNote) => void, // AI 튜터 활성 시에만 전달(main.ts가 게이트) — 카드에 질문 버튼이 생긴다
+): Screen {
   const close = el("button", { class: "backbtn", attrs: { "aria-label": "닫기" }, html: icon("x", 22) });
   close.addEventListener("click", () => {
     haptic(HAPTIC.tap);
@@ -262,6 +266,16 @@ export function notebookScreen(onClose: () => void, onOpenLesson?: (id: string) 
         zone.appendChild(explainBox(n));
       });
       zone.appendChild(show);
+    }
+
+    // 스틱쌤에게 질문 — 이 문항 스냅샷을 그라운딩으로 AI 튜터 채팅을 연다
+    if (onAskTutor) {
+      const ask = el("button", { class: "nb-lesson nb-ask", html: `스틱쌤에게 질문하기 ${icon("bulb", 13)}` });
+      ask.addEventListener("click", () => {
+        haptic(HAPTIC.tap);
+        onAskTutor(n);
+      });
+      card.appendChild(ask);
     }
 
     // 원문 복습 — 콘텐츠가 살아 있을 때만
