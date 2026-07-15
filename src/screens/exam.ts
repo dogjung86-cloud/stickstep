@@ -10,6 +10,7 @@ import type { ExamDef, ExamItem } from "../content/exams";
 import { findUnit, unitProgress, findLesson } from "../content/curriculum";
 import type { Unit } from "../content/curriculum";
 import { examRecordOf, isExamRetakeLocked, recordExamResult, recordWrongNote, resolveWrongNote } from "../core/store";
+import { soleDefs, soleSvg } from "../ui/soleMap";
 import type { Screen } from "../core/router";
 
 interface SessionQ {
@@ -126,7 +127,12 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
     const hero = el(
       "div",
       { class: "ex-hero" },
-      el("div", { class: "ex-med", html: icon("target", 40) }),
+      // 히어로 = 지도에서 방금 밟은 그 시험 밑창(잉크+금 깃펜, 정복 시 골드) — 원형 메달리온 폐기(2026-07-16)
+      el("div", {
+        class: "ex-med",
+        attrs: { "aria-hidden": "true" },
+        html: soleDefs("") + soleSvg(rec.conquered ? "conq" : "exam", { theme: "", splay: 6 }),
+      }),
       el("div", { class: "ex-eyebrow", text: `대단원 ${unit.roman} · ${unit.title}` }),
       el("div", { class: "ex-title", text: "단원 종합 평가" }),
       el("div", { class: "ex-sub", text: "레슨 진행과 상관없이 언제든 도전할 수 있어요. 실전처럼 풀고, 약한 부분을 찾아요." }),
