@@ -54,7 +54,7 @@ function goTab(k: GnavKey): void {
     nav.reset(
       reviewScreen({
         onTab: goTab,
-        onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson, isTutorConfigured() ? openTutor : undefined)),
+        onOpenNotebook: openNotebook,
         onOpenDrill: openWeakDrill,
         onOpenTutor: () => openTutor(),
       }),
@@ -80,10 +80,42 @@ function goTab(k: GnavKey): void {
   }
 }
 
-/** 질문하기(AI 튜터 '스틱쌤') — 복습 탭 카드(일반) · 오답노트 카드(문항 그라운딩).
+/** 오답노트 — 프리미엄 전용(복습 탭 콘텐츠 전면 프리미엄, 2026-07-15 사용자 확정).
+ *  오답 "수집"은 무료 사용자도 계속된다(구매 순간 과거 오답이 이미 쌓여 있게) — 잠긴 건 열람·다시 풀기. */
+function openNotebook(): void {
+  if (isPremium() || isReviewMode()) {
+    nav.go(notebookScreen(() => nav.back(), openLesson, isTutorConfigured() ? openTutor : undefined));
+    return;
+  }
+  nav.go(
+    paywallScreen({
+      sub: "틀린 문제가 오답노트에 차곡차곡 모여 있어요. 다시 풀어 완전히 내 것으로 만들 수 있어요.",
+      onUnlocked: () => {
+        nav.back();
+        openNotebook();
+      },
+      onClose: () => nav.back(),
+    }),
+  );
+}
+
+/** 질문하기(AI 튜터 '스틱쌤') — 프리미엄 전용. 복습 탭 카드(일반) · 오답노트 카드(문항 그라운딩).
  *  키(.env.local) 없으면 isTutorConfigured()가 false — 복습 탭은 "준비 중" 카드, 오답노트 버튼은 미노출. */
 function openTutor(note?: WrongNote): void {
-  nav.go(tutorScreen({ onClose: () => nav.back(), note }));
+  if (isPremium() || isReviewMode()) {
+    nav.go(tutorScreen({ onClose: () => nav.back(), note }));
+    return;
+  }
+  nav.go(
+    paywallScreen({
+      sub: "AI 튜터 스틱쌤에게 막힌 문제를 사진과 함께 바로 물어볼 수 있어요.",
+      onUnlocked: () => {
+        nav.back();
+        openTutor(note);
+      },
+      onClose: () => nav.back(),
+    }),
+  );
 }
 
 /** 취약 단원 문제 뽑기(복습 탭) — 프리미엄 전용. 잠겨 있으면 페이월을 먼저 보여 준다. */
@@ -147,7 +179,7 @@ function pickSubject(s: "sci" | "math"): void {
 function openLogin(): void {
   nav.go(
     loginScreen(() => nav.back(), {
-      onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson, isTutorConfigured() ? openTutor : undefined)),
+      onOpenNotebook: openNotebook,
       onOpenPolicy: openPolicy,
     }),
   );
@@ -225,7 +257,7 @@ function start(): void {
               if (getState().onboarded) goHome();
               else nav.back();
             },
-            { onOpenNotebook: () => nav.go(notebookScreen(() => nav.back(), openLesson, isTutorConfigured() ? openTutor : undefined)), onOpenPolicy: openPolicy },
+            { onOpenNotebook: openNotebook, onOpenPolicy: openPolicy },
           ),
         ),
     }),

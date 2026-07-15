@@ -22,7 +22,7 @@ const store = () => page.evaluate(() => JSON.parse(localStorage.getItem("science
 
 const BASE = {
   version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci",
-  premium: false, reviewMode: false, goalMin: 10, streak: 0, lastStudyDay: null,
+  premium: true, reviewMode: false, goalMin: 10, streak: 0, lastStudyDay: null, // 오답노트 프리미엄 전환(2026-07-15) — 게이트 통과용
   totalXp: 0, lessons: {}, minigame: {}, exams: {}, wrongNotes: {},
 };
 

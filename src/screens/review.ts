@@ -17,12 +17,17 @@ export function reviewScreen(o: {
   onOpenTutor: () => void;
 }): Screen {
   const { open, overcome } = wrongNoteCount();
+  // 복습 탭 콘텐츠는 전부 프리미엄(2026-07-15 사용자 확정) — 잠금이면 골드 크라운 필만 표시하고
+  // 게이트·페이월 안내는 main.ts(openNotebook·openWeakDrill·openTutor)가 담당한다.
+  const locked = !isPremium() && !isReviewMode();
+  const crown = (): HTMLElement => el("i", { class: "prep-pill gold", html: `${icon("crown", 11)}<span>프리미엄</span>` });
 
   const nb = el(
     "button",
     { class: "nb-entry" },
     el("span", { class: "nb-entry-ic", html: icon("book", 18) }),
     el("span", { class: "nb-entry-t", text: "오답노트" }),
+    locked ? crown() : null,
     el("span", { class: "nb-entry-n", text: open > 0 ? `${open}문항 대기` : overcome > 0 ? "전부 해결!" : "아직 비어 있어요" }),
     el("span", { class: "nb-entry-go", html: icon("chevron", 16) }),
   );
@@ -31,8 +36,8 @@ export function reviewScreen(o: {
     o.onOpenNotebook();
   });
 
-  // 취약 단원 문제 뽑기 — 프리미엄 기능(잠금이면 골드 필, 게이트·페이월 안내는 main.ts가 담당)
-  const drillLocked = !isPremium() && !isReviewMode();
+  // 취약 단원 문제 뽑기
+  const drillLocked = locked;
   const drill = el(
     "button",
     { class: "prep-card accent" },
@@ -84,7 +89,7 @@ export function reviewScreen(o: {
       el(
         "span",
         { class: "prep-tx" },
-        el("b", {}, el("span", { text: "질문하기" }), el("i", { class: "prep-pill ai", text: "AI 베타" })),
+        el("b", {}, el("span", { text: "질문하기" }), locked ? crown() : el("i", { class: "prep-pill ai", text: "AI 베타" })),
         el("span", { class: "prep-desc", text: "막힌 문제를 사진 찍어 AI 튜터 스틱쌤에게 바로 물어봐요" }),
       ),
       el("span", { class: "nb-entry-go", html: icon("chevron", 16) }),

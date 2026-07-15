@@ -1089,12 +1089,17 @@ src/
   (프라이머리 **"한번 둘러보기"**(무로그인)/로그인/학부모·선생님 준비 중 스낵)가 워드마크 리듬으로 샥 나타난다
   (splash.ts, `.splash-foot.done` 스태거 fadeUp). 둘러보기 → 과목 선택 → 온보딩 → 홈. 스플래시는 비온보딩
   첫 실행에만 뜨고, 재방문·e2e 시딩(onboarded=true)은 홈 직행 — 기존 e2e 플로우 불변.
-- **하단 탭바 4개**(ui/gnav.ts, main.ts goTab이 nav.reset으로 전환): 학습(기존 홈)·복습(review.ts —
-  오답노트 진입 + '취약 단원 문제 뽑기'(프리미엄, screens/weakDrill.ts — 아래 전용 섹션) + '질문하기' 준비 중
-  카드)·도전(challenge.ts — 랭킹·미니게임 전부 준비 중)·마이(my.ts — 아바타 픽커·장화 레벨·스텝 요약·계정/프리미엄/과제함 진입).
+- **하단 탭바 4개**(ui/gnav.ts, main.ts goTab이 nav.reset으로 전환): 학습(기존 홈)·복습(review.ts)·
+  도전(challenge.ts — 랭킹 준비 중·미니게임 준비 중+프리미엄 크라운)·마이(my.ts — 아바타 픽커·장화 레벨·스텝 요약·계정/프리미엄/과제함 진입).
+- **복습 탭 콘텐츠는 전면 프리미엄(2026-07-15 사용자 확정)**: 오답노트·취약 단원 문제 뽑기·질문하기(AI 튜터)
+  셋 다 잠금 시 골드 크라운 필 표시(review.ts `locked`), 게이트·페이월은 main.ts의
+  openNotebook/openWeakDrill/openTutor가 소유(잠금 → 전용 문구 페이월 → 구매 시 바로 진입).
+  **오답 "수집"(recordWrongNote)은 무료 사용자도 계속** — 구매 순간 과거 오답이 이미 쌓여 있게. 잠긴 건 열람·다시 풀기.
+  e2e-notebook.mjs 시드는 premium: true로 게이트를 통과한다.
 - **homeScreen 시그니처 변경**: onOpenGame 파라미터 제거, nav2.onTab 추가. UNIT_GAME·지도 게임 노드 삭제 —
   미니게임(단열 디펜스·별자리 한붓그리기)은 도전 탭 소속으로 이사(사용자 확정: 재단장 전까지 '준비 중'으로
-  닫힘). 다시 열 때 challenge.ts에서 minigameScreen/starGameScreen을 연결한다(화면 파일·store 채점은 보존).
+  닫힘). **재오픈 시 프리미엄 콘텐츠**(2026-07-15 사용자 확정 — 카드에 크라운 병기, 열 때 main.ts 게이트
+  필수). 다시 열 때 challenge.ts에서 minigameScreen/starGameScreen을 연결한다(화면 파일·store 채점은 보존).
 - **장화 레벨**: core/level.ts BOOT_TIERS 14단계(노랑 0 → 초록 300 → 파랑 1,000 → 빨강 2,500 → 무지개 5,000 →
   별노랑 8,500 → 별초록 13,000 → 별파랑 19,000 → 별빨강 26,000 → 별무지개 35,000 → 은 46,000 → 금 60,000 →
   다이아 78,000 → 은하 100,000) × ui/boots.ts SVG 글리프. **'흙장화' 금지**(위화감 리스크 — 사용자 확정).
@@ -1116,6 +1121,8 @@ src/
 - **수집 훅은 두 곳뿐**: quiz.ts feedback()(레슨 — 그 외 능동형 스텝(order·binSort·hotspot)은 미수집)과
   exam.ts grade()(시험). **같은 문항을 다시 맞히면 자동 극복**(resolveWrongNote) — 레슨 재플레이·시험
   재응시가 곧 복습이 되는 구조.
+- **열람은 프리미엄 전용(2026-07-15)**: 모든 진입(복습 탭·로그인 화면)이 main.ts `openNotebook()` 게이트를
+  지난다(잠금 → 페이월). 수집은 무료 유지 — "IA·홈 구조"의 복습 탭 프리미엄 항목 참조.
 - **UI**: 복습 탭·마이페이지의 .nb-entry 카드 → screens/notebook.ts. 다시 풀기: mcq/ox 탭 즉시
   채점·multi 선택+확인·num/word는 정답 열람+자기 확인. **그림 문항은 원본 콘텐츠에서 그림을 역추적해
   카드에 그대로 렌더**(2026-07-12 — 스냅샷엔 여전히 그림 없음): 시험은 examById(srcId)+키의 문항 id로
@@ -1164,7 +1171,8 @@ src/
   채점·XP·store 기록 없음(순수 채팅), 대화는 저장하지 않는다(화면 이탈 = 휘발).
 - **활성 조건**: `.env.local`의 `VITE_GEMINI_API_KEY` — 없으면 전부 no-op(복습 탭 "준비 중" 카드,
   오답노트 버튼 미노출, auth.ts와 같은 스텁 문법). 현재 공급자 Google `gemini-3.5-flash`
-  (v1beta streamGenerateContent, alt=sse).
+  (v1beta streamGenerateContent, alt=sse). **프리미엄 전용(2026-07-15)** — main.ts `openTutor()`가
+  게이트(잠금 → 페이월), 복습 탭 카드는 잠금 시 크라운/해금 시 "AI 베타" 필.
 - **⚠️ 프로토타입 한계(출시 전 필수 교체)**: 브라우저에서 키로 직접 호출 → 빌드 번들에 키가 들어간다.
   **이 키를 Vercel 등 배포 환경변수에 절대 넣지 말 것**(로컬 dev 검증 전용). 정식 오픈 전에
   ① 서버 프록시(Supabase Edge Function)로 키 은닉 ② 공급자 약관 재검토(2026-07-15 조사: AI Studio

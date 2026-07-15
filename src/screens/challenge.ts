@@ -10,15 +10,23 @@ import { gnav, type GnavKey } from "../ui/gnav";
 import type { Screen } from "../core/router";
 
 export function challengeScreen(o: { onTab: (k: GnavKey) => void }): Screen {
-  function prepCard(ic: Parameters<typeof icon>[0], title: string, desc: string, accent = false): HTMLElement {
+  // premium: 미니게임은 프리미엄 콘텐츠로 재오픈 예정(2026-07-15 사용자 확정) — 닫힌 지금도
+  // 골드 크라운을 함께 달아 가격 정책을 미리 알린다. 열 때 main.ts 게이트(openWeakDrill 문법)를 붙일 것.
+  function prepCard(ic: Parameters<typeof icon>[0], title: string, desc: string, o2: { accent?: boolean; premium?: boolean } = {}): HTMLElement {
     const card = el(
       "button",
-      { class: `prep-card ${accent ? "accent" : ""}` },
+      { class: `prep-card ${o2.accent ? "accent" : ""}` },
       el("span", { class: "prep-ic", html: icon(ic, 20) }),
       el(
         "span",
         { class: "prep-tx" },
-        el("b", {}, el("span", { text: title }), el("i", { class: "prep-pill", text: "준비 중" })),
+        el(
+          "b",
+          {},
+          el("span", { text: title }),
+          o2.premium ? el("i", { class: "prep-pill gold", html: `${icon("crown", 11)}<span>프리미엄</span>` }) : null,
+          el("i", { class: "prep-pill", text: "준비 중" }),
+        ),
         el("span", { class: "prep-desc", text: desc }),
       ),
     );
@@ -44,10 +52,10 @@ export function challengeScreen(o: { onTab: (k: GnavKey) => void }): Screen {
       el(
         "div",
         { class: "pad" },
-        prepCard("trophy", "친구·우리 학교 랭킹", "같은 학교 친구들과 스텝으로 겨루는 주간 랭킹", true),
+        prepCard("trophy", "친구·우리 학교 랭킹", "같은 학교 친구들과 스텝으로 겨루는 주간 랭킹", { accent: true }),
         el("div", { class: "sec-head", text: "미니게임" }),
-        prepCard("flame", "단열 디펜스", "아이스크림을 지켜라! 열 차단 반사신경 게임"),
-        prepCard("star", "별자리 한붓그리기", "서로소의 비밀로 별을 긋는 퍼즐"),
+        prepCard("flame", "단열 디펜스", "아이스크림을 지켜라! 열 차단 반사신경 게임", { premium: true }),
+        prepCard("star", "별자리 한붓그리기", "서로소의 비밀로 별을 긋는 퍼즐", { premium: true }),
         el("div", { class: "tab-footnote", text: "미니게임은 새 단장 중이에요. 스텝을 걸고 더 재미있게 돌아올게요." }),
       ),
     ),
