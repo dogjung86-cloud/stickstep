@@ -827,3 +827,175 @@ export function m4SurveyFig(opts: { mode: "reflect" | "cross" | "offset"; labels
   for (const [pt, name] of names) out += dot(pt.x, pt.y) + ptLabel(pt.x, pt.y, name, 0, pt.y < 100 ? -8 : 17);
   return svg("0 0 300 182", "서로 떨어진 두 삼각형의 대응변과 대응각 표시 그림", out);
 }
+
+/* ══════════════ m2u1 유리수의 표현과 식의 계산 ══════════════
+ * 문자 라벨은 font-style="italic"만 붙인다(math.css 전역 룰이 세리프를 입힘 — font-family 직접 지정 금지).
+ * 판정 결과·구할 값(높이·넓이 식 등)은 그림에 인쇄하지 않는다 — 빈칸은 ㉠·㉡·? 기호만.
+ * SVG 텍스트는 mfmt 밖이므로 지수는 위첨자 유니코드(a²·10³)로 적는다. */
+
+const ital = (s: string): string => (/[a-z]/.test(s) ? ' font-style="italic"' : "");
+
+/** 소수점 아래 자릿수 띠(파라미터형) — int.digits… 를 한 칸씩, 자리 번호 눈금 포함.
+ *  마디 표시·강조는 하지 않는다(마디 찾기가 과제인 문항의 정오 단서 방지). digits ≤ 8 권장. */
+export function m2ExamDigitStripFig(int: string, digits: string): string {
+  const pre = `${int}.`;
+  const xC = 18 + pre.length * 10 + 4;
+  const n = digits.length;
+  let out = `<text x="18" y="61" font-size="15" font-weight="800" fill="${INK}">${pre}</text>`;
+  for (let i = 0; i < n; i++) {
+    const x = xC + i * 32;
+    out +=
+      `<rect x="${x}" y="38" width="26" height="34" rx="7" fill="#FFFFFF" stroke="#C9D3E0" stroke-width="1.4"/>` +
+      `<text x="${x + 13}" y="61" text-anchor="middle" font-size="15" font-weight="900" fill="${INK}">${digits[i]}</text>` +
+      `<text x="${x + 13}" y="88" text-anchor="middle" font-size="8.5" font-weight="700" fill="${FAINT}">${i + 1}</text>`;
+  }
+  out += `<text x="${xC + n * 32 + 4}" y="61" font-size="15" font-weight="800" fill="${FAINT}">…</text>`;
+  return svg(`0 0 ${xC + n * 32 + 30} 96`, "소수점 아래 자릿수를 차례로 적은 띠", out);
+}
+
+/** 유한소수 판별 순서도(파라미터형) — 분수 → 기약분수 → 분모 소인수 → 갈림 ㉠/㉡.
+ *  결론 칸은 ㉠·㉡ 기호만(정오 미인쇄, geoCycleQuizFig 계보). fac 예: "2²×3". */
+export function m2ExamJudgeFlowFig(o: { n1: string; d1: string; n2: string; d2: string; fac: string }): string {
+  const frac = (n: string, d: string, top: number): string => {
+    const bw = Math.max(26, Math.max(n.length, d.length) * 8.5 + 8);
+    return (
+      `<text x="155" y="${top + 20}" text-anchor="middle" font-size="12.5" font-weight="900" fill="${INK}">${n}</text>` +
+      `<line x1="${155 - bw / 2}" y1="${top + 26}" x2="${155 + bw / 2}" y2="${top + 26}" stroke="${INK}" stroke-width="1.5"/>` +
+      `<text x="155" y="${top + 42}" text-anchor="middle" font-size="12.5" font-weight="900" fill="${INK}">${d}</text>`
+    );
+  };
+  const box = (top: number, h: number): string =>
+    `<rect x="110" y="${top}" width="90" height="${h}" rx="9" fill="#FFFFFF" stroke="#C4CEDC" stroke-width="1.4"/>`;
+  const cap = (label: string, midY: number): string =>
+    `<text x="102" y="${midY}" text-anchor="end" font-size="9.5" font-weight="800" fill="${FAINT}">${label}</text>`;
+  const arrow = (y1: number, y2: number): string =>
+    `<line x1="155" y1="${y1}" x2="155" y2="${y2 - 4}" stroke="${FAINT}" stroke-width="1.6"/><path d="M150 ${y2 - 7} L155 ${y2} L160 ${y2 - 7}" fill="none" stroke="${FAINT}" stroke-width="1.6"/>`;
+  let out = box(20, 52) + cap("주어진 분수", 48) + frac(o.n1, o.d1, 20) + arrow(72, 90);
+  out += box(90, 52) + cap("기약분수로", 118) + frac(o.n2, o.d2, 90) + arrow(142, 160);
+  out += box(160, 36) + cap("분모의 소인수", 184) + `<text x="155" y="184" text-anchor="middle" font-size="13" font-weight="900" fill="${NAVY}">${o.fac}</text>` + arrow(196, 212);
+  out +=
+    `<path d="M155 214 L237 240 L155 266 L73 240 Z" fill="#FDFBF3" stroke="#D9B44A" stroke-width="1.5"/>` +
+    `<text x="155" y="244" text-anchor="middle" font-size="10.5" font-weight="800" fill="${INK}">소인수가 2, 5뿐?</text>`;
+  out +=
+    `<path d="M73 240 L44 240 L44 272" fill="none" stroke="${GREEN}" stroke-width="1.6"/><path d="M39 267 L44 274 L49 267" fill="none" stroke="${GREEN}" stroke-width="1.6"/>` +
+    `<text x="56" y="233" text-anchor="middle" font-size="10" font-weight="900" fill="${GREEN}">예</text>` +
+    `<path d="M237 240 L266 240 L266 272" fill="none" stroke="${ROSE}" stroke-width="1.6"/><path d="M261 267 L266 274 L271 267" fill="none" stroke="${ROSE}" stroke-width="1.6"/>` +
+    `<text x="252" y="233" text-anchor="middle" font-size="10" font-weight="900" fill="${ROSE}">아니요</text>`;
+  out +=
+    `<rect x="14" y="278" width="120" height="40" rx="10" fill="#F4F7FE" stroke="${NAVY}" stroke-width="1.5" stroke-dasharray="4 3"/>` +
+    `<text x="74" y="303" text-anchor="middle" font-size="14" font-weight="900" fill="${NAVY}">㉠</text>` +
+    `<rect x="166" y="278" width="120" height="40" rx="10" fill="#FEF5F7" stroke="${ROSE}" stroke-width="1.5" stroke-dasharray="4 3"/>` +
+    `<text x="226" y="303" text-anchor="middle" font-size="14" font-weight="900" fill="${ROSE}">㉡</text>`;
+  return svg("0 0 300 330", "분수를 소수로 나타낼 때의 판별 순서도(결론 칸은 기호로 가림)", out);
+}
+
+/** 곱 나열 칩 스트립(파라미터형) — top 칩들을 ×로 잇고, bot이 있으면 분수 꼴(가로줄 아래).
+ *  칩 라벨은 문자·수 혼용("2"·"a"). 각 줄 6칩 이하. */
+export function m2ExamPowStripFig(o: { top: string[]; bot?: string[] }): string {
+  const row = (arr: string[], cy: number, col: string): string => {
+    const w = arr.length * 40 - 12;
+    const x0 = 150 - w / 2 + 14;
+    let g = "";
+    arr.forEach((s, i) => {
+      const cx = x0 + i * 40;
+      g +=
+        `<circle cx="${cx}" cy="${cy}" r="14" fill="#FFFFFF" stroke="${col}" stroke-width="1.8"/>` +
+        `<text x="${cx}" y="${cy + 4.5}" text-anchor="middle" font-size="13.5" font-weight="900"${ital(s)} fill="${col}">${s}</text>`;
+      if (i < arr.length - 1) g += `<text x="${cx + 20}" y="${cy + 4}" text-anchor="middle" font-size="11" font-weight="800" fill="${FAINT}">×</text>`;
+    });
+    return g;
+  };
+  if (!o.bot) return svg("0 0 300 88", "칩으로 나열한 곱", row(o.top, 44, NAVY));
+  const out =
+    row(o.top, 36, NAVY) +
+    `<line x1="48" y1="78" x2="252" y2="78" stroke="${INK}" stroke-width="1.8"/>` +
+    row(o.bot, 120, ROSE);
+  return svg("0 0 300 156", "위아래로 나열한 칩 곱을 분수 꼴로 나타낸 그림", out);
+}
+
+/** 문자 치수 분배 넓이 그림(파라미터형) — 세로 h, 가로 (w1+w2) 직사각형을 점선으로 가른다.
+ *  넓이 식은 인쇄하지 않는다(정답 유출 방지) — 변 라벨만. */
+export function m2ExamRectSplitFig(o: { h: string; w1: string; w2: string }): string {
+  const W1 = 140;
+  const W2 = 92;
+  const HT = 92;
+  const x0 = 36;
+  const y0 = 40;
+  const out =
+    `<rect x="${x0}" y="${y0}" width="${W1}" height="${HT}" fill="#F1F5FF" stroke="${NAVY}" stroke-width="1.8"/>` +
+    `<rect x="${x0 + W1}" y="${y0}" width="${W2}" height="${HT}" fill="#FFF7ED" stroke="#F08C00" stroke-width="1.8"/>` +
+    `<line x1="${x0 + W1}" y1="${y0 - 6}" x2="${x0 + W1}" y2="${y0 + HT + 6}" stroke="${INK}" stroke-width="1.4" stroke-dasharray="5 4"/>` +
+    `<text x="${x0 - 13}" y="${y0 + HT / 2 + 4}" text-anchor="middle" font-size="13" font-weight="800"${ital(o.h)} fill="${INK}">${o.h}</text>` +
+    `<text x="${x0 + W1 / 2}" y="${y0 - 10}" text-anchor="middle" font-size="13" font-weight="800"${ital(o.w1)} fill="${NAVY}">${o.w1}</text>` +
+    `<text x="${x0 + W1 + W2 / 2}" y="${y0 - 10}" text-anchor="middle" font-size="13" font-weight="800"${ital(o.w2)} fill="#F08C00">${o.w2}</text>` +
+    `<path d="M ${x0} ${y0 + HT + 14} L ${x0 + W1 + W2} ${y0 + HT + 14}" stroke="${FAINT}" stroke-width="1.3"/>` +
+    `<text x="${x0 + (W1 + W2) / 2}" y="${y0 + HT + 31}" text-anchor="middle" font-size="11.5" font-weight="800" font-style="italic" fill="${FAINT}">${o.w1}+${o.w2}</text>`;
+  return svg("0 0 300 186", "직사각형을 두 조각으로 가른 넓이 그림", out);
+}
+
+/** 넓이가 주어진 직사각형(파라미터형) — 넓이·가로는 인쇄(주어진 값), 세로는 ㉠ 기호로 가린다.
+ *  (다항식)÷(단항식) 거꾸로 재기 문항용. area 예: "12a²+8ab". */
+export function m2ExamRectAreaFig(o: { area: string; w: string; hLabel?: string }): string {
+  const hl = o.hLabel ?? "㉠";
+  const out =
+    `<rect x="52" y="44" width="208" height="96" fill="#F6F9FF" stroke="${NAVY}" stroke-width="1.8"/>` +
+    `<text x="156" y="84" text-anchor="middle" font-size="10.5" font-weight="700" fill="${FAINT}">넓이</text>` +
+    `<text x="156" y="106" text-anchor="middle" font-size="14.5" font-weight="900" font-style="italic" fill="${NAVY}">${o.area}</text>` +
+    `<path d="M52 150 h208 M52 144 v12 M260 144 v12" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<text x="156" y="170" text-anchor="middle" font-size="13" font-weight="800"${ital(o.w)} fill="${INK}">${o.w}</text>` +
+    `<rect x="14" y="80" width="30" height="24" rx="8" fill="#FDF0F1" stroke="#E8434F" stroke-width="1.4" stroke-dasharray="4 3"/>` +
+    `<text x="29" y="97" text-anchor="middle" font-size="13" font-weight="900" fill="#C4303C">${hl}</text>`;
+  return svg("0 0 300 182", "넓이와 가로가 적힌 직사각형(세로는 기호로 가림)", out);
+}
+
+/** 직육면체(파라미터형) — 가로 w·세로(깊이) d·높이 h 문자 라벨, vol을 주면 부피 카드.
+ *  구하는 값의 자리에는 "㉠"·"?"를 넣어 호출한다(식 인쇄 금지). */
+export function m2ExamBoxFig(o: { w: string; d: string; h: string; vol?: string }): string {
+  let out =
+    `<path d="M46 72 L96 42 L246 42 L196 72 Z" fill="#E7EEFB" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/>` +
+    `<path d="M196 72 L246 42 L246 142 L196 172 Z" fill="#DCE6F8" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/>` +
+    `<rect x="46" y="72" width="150" height="100" fill="#F1F5FF" stroke="${INK}" stroke-width="1.8"/>` +
+    `<path d="M46 182 h150 M46 176 v12 M196 176 v12" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<text x="121" y="201" text-anchor="middle" font-size="13" font-weight="800"${ital(o.w)} fill="${INK}">${o.w}</text>` +
+    `<path d="M204 178 L254 148" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<text x="242" y="174" text-anchor="middle" font-size="13" font-weight="800"${ital(o.d)} fill="${INK}">${o.d}</text>` +
+    `<path d="M32 72 v100 M26 72 h12 M26 172 h12" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<text x="16" y="126" text-anchor="middle" font-size="13" font-weight="800"${ital(o.h)} fill="${o.h === "㉠" || o.h === "?" ? "#C4303C" : INK}">${o.h}</text>`;
+  if (o.vol)
+    out +=
+      `<rect x="250" y="86" width="88" height="40" rx="10" fill="#FFFFFF" stroke="#D6DEEA" stroke-width="1.3"/>` +
+      `<text x="294" y="102" text-anchor="middle" font-size="10.5" font-weight="700" fill="${FAINT}">부피</text>` +
+      `<text x="294" y="119" text-anchor="middle" font-size="13" font-weight="900" font-style="italic" fill="${NAVY}">${o.vol}</text>`;
+  return svg("0 0 344 212", "가로·세로·높이가 문자로 적힌 직육면체", out);
+}
+
+/** 원기둥(파라미터형) — 밑면 반지름 r·높이 h 문자 라벨, vol을 주면 부피 카드. */
+export function m2ExamCylFig(o: { r: string; h: string; vol?: string }): string {
+  let out =
+    `<path d="M58 54 L58 152 A62 17 0 0 0 182 152 L182 54" fill="#F1F5FF" stroke="${INK}" stroke-width="1.8"/>` +
+    `<path d="M58 152 A62 17 0 0 1 182 152" fill="none" stroke="${FAINT}" stroke-width="1.3" stroke-dasharray="5 4"/>` +
+    `<ellipse cx="120" cy="54" rx="62" ry="17" fill="#EAF1FC" stroke="${INK}" stroke-width="1.6"/>` +
+    `<circle cx="120" cy="54" r="2.2" fill="${INK}"/>` +
+    `<line x1="120" y1="54" x2="182" y2="54" stroke="${NAVY}" stroke-width="1.6"/>` +
+    `<text x="151" y="46" text-anchor="middle" font-size="13" font-weight="800"${ital(o.r)} fill="${NAVY}">${o.r}</text>` +
+    `<path d="M198 54 v98 M192 54 h12 M192 152 h12" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<text x="216" y="108" text-anchor="middle" font-size="13" font-weight="800"${ital(o.h)} fill="${INK}">${o.h}</text>`;
+  if (o.vol)
+    out +=
+      `<rect x="230" y="84" width="86" height="40" rx="10" fill="#FFFFFF" stroke="#D6DEEA" stroke-width="1.3"/>` +
+      `<text x="273" y="100" text-anchor="middle" font-size="10.5" font-weight="700" fill="${FAINT}">부피</text>` +
+      `<text x="273" y="117" text-anchor="middle" font-size="13" font-weight="900" font-style="italic" fill="${NAVY}">${o.vol}</text>`;
+  return svg("0 0 322 192", "밑면의 반지름과 높이가 문자로 적힌 원기둥", out);
+}
+
+/** 사다리꼴(파라미터형) — 윗변·아랫변·높이 문자 라벨(높이는 오른쪽 점선). */
+export function m2ExamTrapFig(o: { top: string; bot: string; h: string }): string {
+  const out =
+    `<path d="M96 48 L210 48 L258 152 L46 152 Z" fill="#F4F8FF" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/>` +
+    `<line x1="210" y1="48" x2="210" y2="152" stroke="${FAINT}" stroke-width="1.5" stroke-dasharray="5 4"/>` +
+    `<path d="M204 152 L204 146 L210 146" fill="none" stroke="${FAINT}" stroke-width="1.3"/>` +
+    `<text x="153" y="38" text-anchor="middle" font-size="13" font-weight="800"${ital(o.top)} fill="${NAVY}">${o.top}</text>` +
+    `<text x="152" y="173" text-anchor="middle" font-size="13" font-weight="800"${ital(o.bot)} fill="${INK}">${o.bot}</text>` +
+    `<text x="224" y="104" text-anchor="middle" font-size="13" font-weight="800"${ital(o.h)} fill="${ROSE}">${o.h}</text>`;
+  return svg("0 0 300 188", "윗변·아랫변·높이가 문자로 적힌 사다리꼴", out);
+}
