@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QA · 워커 파츠 아바타 샘플 (품질 게이트 판정용)</title>
+<style>
+  body { font-family: Pretendard, sans-serif; background: #F2F4F6; padding: 20px; margin: 0; color: #333D4B; }
+  h1 { font-size: 16px; margin: 0 0 4px; }
+  .note { font-size: 12px; color: #6B7684; margin: 0 0 18px; line-height: 1.6; }
+  h2 { font-size: 13.5px; color: #4E5968; margin: 22px 0 8px; }
+  .row { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; }
+  .cell { text-align: center; }
+  .cap { font-size: 10.5px; color: #556; margin-top: 4px; word-break: keep-all; max-width: 110px; }
+  /* 실제 지도 문맥 패널 — 열 단원 지형 톤 */
+  .map { display: flex; gap: 26px; align-items: flex-end; padding: 26px 22px 30px; border-radius: 16px;
+         background: linear-gradient(180deg, #FBEFE6, #F9E3D2); }
+  .spot { position: relative; width: 48px; height: 76px; }
+  .spot > svg.node { position: absolute; left: 0; top: 0; width: 48px; height: 76px; overflow: visible; }
+  .spot > .wk { position: absolute; left: 24px; top: 46px; width: 0; height: 0; }
+  .wk > svg { position: absolute; left: -23px; top: -62px; width: 46px; height: 66px; overflow: visible;
+              transform: scale(1.13); transform-origin: 23px 62px; }
+  /* 확대 셀 */
+  .z svg { display: block; }
+  .frame { background: #fff; border-radius: 12px; padding: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+</style>
+</head>
+<body>
+<h1>워커 파츠 아바타 — 이식 샘플</h1>
+<p class="note">
+  파츠 머리(96×96 좌표계)를 워커 몸통(머리 r7.7) 위치에 축소 이식. <b>보정</b> = 축소로 가늘어진
+  파츠 선을 워커 몸통 굵기(2.4)에 맞춰 되굵힘(0.8/scale 배 — 실구현에서도 같은 방식).
+  src 무수정 — 이 페이지 안에서만 합성.
+</p>
+<div id="out"></div>
+
+<script type="module">
+  import { DEFAULT_STICK, STICK_PRESETS, stickAvatarSvg } from "/src/ui/stickParts.ts";
+  import { soleDefs, soleSvg } from "/src/ui/soleMap.ts";
+
+  const FLAG = "#FF6B4A"; // 열 단원 테마(스크린샷 문맥과 동일)
+  const INK = "#243040";
+
+  /* ── 워커 몸통(머리·이목구비 제거판) — soleMap.ts walkerSvg 실측 좌표 복사 ── */
+  const BODY = {
+    idle: {
+      head: [-0.3, -35.6],
+      pre:
+        `<ellipse cx="0" cy="1" rx="9" ry="2.4" fill="#2A3A5E" opacity=".12"/>` +
+        `<g fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">` +
+        `<path d="M0,-13 C-1.5,-9 -3,-5 -4.5,-0.8 M-4.5,-0.8 L-8.2,-0.4"/>` +
+        `<path d="M0,-13 C1.5,-9 3,-4.6 4.2,-0.8 M4.2,-0.8 L7.8,-1.2"/>` +
+        `<path d="M0,-13 C.9,-19 .9,-24 0,-28.5"/>` +
+        `<path d="M0,-25.5 C-3.4,-23.6 -5.4,-19.8 -5.9,-16.2"/>` +
+        `<path d="M0,-25.5 C3.8,-27 6.9,-30 8.4,-33.4"/>` +
+        `</g>` +
+        `<path d="M8.4,-33.4 L8.4,-55" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>` +
+        `<path d="M8.4,-55.6 C12.4,-57.1 15.4,-54.1 20.4,-55.6 L19.5,-48.9 C15.5,-47.5 12.5,-50.5 8.4,-49.5 z" fill="${FLAG}"/>`,
+    },
+    pa: {
+      head: [1, -35.6],
+      pre:
+        `<ellipse cx="0" cy="1" rx="9.5" ry="2.4" fill="#2A3A5E" opacity=".11"/>` +
+        `<g fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">` +
+        `<path d="M0,-13 C2.2,-9.2 4.8,-5.2 7,-1.4 M7,-1.4 L10.6,-1.8"/>` +
+        `<path d="M0,-13 C-2.4,-9.8 -5.2,-6.8 -8,-3.6 M-8,-3.6 L-5.1,-2.7"/>` +
+        `<path d="M0,-13 C1.3,-19 1.3,-24 .5,-28.5"/>` +
+        `<path d="M.5,-25.5 C3.6,-24 5.8,-21.2 6.6,-18"/>` +
+        `<path d="M.5,-25.5 C-3.2,-24.6 -5.6,-22.3 -6.8,-19.4"/>` +
+        `</g>`,
+    },
+    pb: {
+      head: [0.8, -37.1], // 그룹 translate(0,-1.5) 평탄화
+      pre:
+        `<ellipse cx="0" cy="1" rx="8.5" ry="2.3" fill="#2A3A5E" opacity=".12"/>` +
+        `<g transform="translate(0,-1.5)">` +
+        `<g fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">` +
+        `<path d="M0,-13 C.4,-8.8 1,-4.4 1.4,-.8 M1.4,-.8 L5,-1.2"/>` +
+        `<path d="M0,-13 C-1.2,-9.8 -2.6,-7.2 -3.2,-4.4 M-3.2,-4.4 L-.4,-3.6"/>` +
+        `<path d="M0,-13 C1,-19 1,-24 .3,-28.5"/>` +
+        `<path d="M.3,-25.5 C2.5,-23.8 3.7,-21.2 4.1,-18.6"/>` +
+        `<path d="M.3,-25.5 C-2,-23.8 -3.2,-21.4 -3.6,-18.8"/>` +
+        `</g></g>`,
+    },
+  };
+
+  /* 현 워커(기준선) — 머리 포함 원본 idle(soleMap.ts walkerSvg 그대로) */
+  const CURRENT_IDLE = (
+      `<ellipse cx="0" cy="1" rx="9" ry="2.4" fill="#2A3A5E" opacity=".12"/>` +
+      `<g fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">` +
+      `<path d="M0,-13 C-1.5,-9 -3,-5 -4.5,-0.8 M-4.5,-0.8 L-8.2,-0.4"/>` +
+      `<path d="M0,-13 C1.5,-9 3,-4.6 4.2,-0.8 M4.2,-0.8 L7.8,-1.2"/>` +
+      `<path d="M0,-13 C.9,-19 .9,-24 0,-28.5"/>` +
+      `<path d="M0,-25.5 C-3.4,-23.6 -5.4,-19.8 -5.9,-16.2"/>` +
+      `<path d="M0,-25.5 C3.8,-27 6.9,-30 8.4,-33.4"/>` +
+      `<circle cx="-.3" cy="-35.6" r="7.7" fill="#fff"/>` +
+      `<path d="M-3.7,-42.7 q1,-2 2.6,-1.8 M.1,-43.7 q1.3,-1.6 2.7,-1.1"/>` +
+      `</g>` +
+      `<path d="M8.4,-33.4 L8.4,-55" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>` +
+      `<path d="M8.4,-55.6 C12.4,-57.1 15.4,-54.1 20.4,-55.6 L19.5,-48.9 C15.5,-47.5 12.5,-50.5 8.4,-49.5 z" fill="${FLAG}"/>` +
+      `<circle cx="-2.5" cy="-35.9" r="1.1" fill="${INK}"/><circle cx="1.9" cy="-35.9" r="1.1" fill="${INK}"/>` +
+      `<circle cx="-5.1" cy="-33.6" r="1.05" fill="#FF9D94" opacity=".5"/><circle cx="4.5" cy="-33.6" r="1.05" fill="#FF9D94" opacity=".5"/>` +
+      `<path d="M-2.1,-33.2 q1.8,1.9 3.6,0" fill="none" stroke="${INK}" stroke-width="1.7" stroke-linecap="round"/>`
+    );
+
+  /* ── 파츠 머리만 추출: stickAvatarSvg 출력에서 svg 래퍼·어깨(BUST)·옷깃 제거 ── */
+  const BUST_A = `<path d="M21.5,97 C23.5,79 33,71.5 48,71.5 C63,71.5 72.5,79 74.5,97" fill="#fff" stroke="#2A3542" stroke-width="3" stroke-linejoin="round"/>`;
+  const BUST_B = `<path d="M42.5,73.5 L48,79 L53.5,73.5" fill="none" stroke="#2A3542" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  function headOnly(cfg) {
+    return stickAvatarSvg(cfg)
+      .replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "")
+      .replace(BUST_A, "").replace(BUST_B, "");
+  }
+  /* 선 두께 보정 — 축소로 가늘어진 스트로크를 워커 몸통 무게(2.4)에 맞춤 */
+  function bolden(markup, factor) {
+    return markup.replace(/stroke-width="([\d.]+)"/g, (_, n) => `stroke-width="${(parseFloat(n) * factor).toFixed(2)}"`);
+  }
+  /* 워커 합성: 몸통 → (뒷머리 포함) 파츠 머리 이식. scale s, 머리 중심 = 파츠 (48,45).
+     T = 목표 외곽선 화면 굵기(px) — 파츠 기준선 sw3이 화면에서 T가 되게 보정(0 = 보정 없음). */
+  function graftWalker(pose, cfg, s, T) {
+    const b = BODY[pose];
+    let head = headOnly(cfg);
+    if (T) head = bolden(head, T / (3 * s));
+    const [hx, hy] = b.head;
+    return (
+      `<svg width="46" height="66" viewBox="-23 -62 46 66">` + b.pre +
+      `<g transform="translate(${hx} ${hy}) scale(${s}) translate(-48 -45)">${head}</g>` +
+      `</svg>`
+    );
+  }
+  const currentWalker = () => `<svg width="46" height="66" viewBox="-23 -62 46 66">${CURRENT_IDLE}</svg>`;
+
+  /* ── 조합 세트 ── */
+  const COMBOS = [
+    ["곱슬+선글라스+헤드폰(직접 꾸민 예)", { face: 2, hair: 4, eyes: 3, mouth: 3, glasses: 4, acc: 3 }],
+    ["양갈래+또랑눈", { face: 0, hair: 5, eyes: 2, mouth: 1, glasses: 0, acc: 0 }],
+    ["비니+메롱", { face: 3, hair: 0, eyes: 1, mouth: 5, glasses: 0, acc: 1 }],
+    ["모범생(단발+사각 안경)", STICK_PRESETS[2].cfg],
+    ["긴 생머리(스트레스 케이스)", { face: 1, hair: 7, eyes: 3, mouth: 0, glasses: 0, acc: 0 }],
+    ["게스트 스틱(기본 파츠)", DEFAULT_STICK],
+  ];
+
+  const out = document.getElementById("out");
+  const h2 = (t) => { const h = document.createElement("h2"); h.textContent = t; out.appendChild(h); };
+  const rowEl = (cls = "row") => { const d = document.createElement("div"); d.className = cls; out.appendChild(d); return d; };
+  const cell = (parent, html, cap, w) => {
+    const c = document.createElement("div"); c.className = "cell";
+    const f = document.createElement("div"); f.className = "z frame"; f.innerHTML = html;
+    if (w) { const svg = f.querySelector("svg"); svg.setAttribute("width", w); svg.setAttribute("height", Math.round(w * 66 / 46)); }
+    const p = document.createElement("div"); p.className = "cap"; p.textContent = cap;
+    c.append(f, p); parent.appendChild(c);
+  };
+
+  /* A. 실제 지도 크기 — 밑창 노드 위에 세워서 */
+  h2("A. 실제 지도 크기(워커 ≈52px) — 현 워커 vs 파츠 이식(보정 중간 T=1.8, s=0.36)");
+  const map = rowEl("map");
+  map.insertAdjacentHTML("afterbegin", soleDefs("heat"));
+  const spot = (walkerHtml, cap) => {
+    const s = document.createElement("div"); s.className = "spot";
+    s.innerHTML = `<svg class="node" viewBox="0 0 48 76">${soleSvg("done", { theme: "heat", splay: 6 }).replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "")}</svg>` +
+      `<div class="wk">${walkerHtml}</div>` +
+      `<div class="cap" style="position:absolute;top:80px;left:50%;transform:translateX(-50%);width:90px">${cap}</div>`;
+    map.appendChild(s);
+  };
+  spot(currentWalker(), "현 워커(기준)");
+  for (const [name, cfg] of COMBOS.slice(0, 5)) spot(graftWalker("idle", cfg, 0.36, 1.8), name.split("(")[0]);
+
+  /* B. 3× 확대 — 보정 강도 3단 */
+  h2("B. 3× 확대 — 보정 없음(위) / 중간 T=1.8(가운데) / 몸통 동일 T=2.4(아래)");
+  for (const T of [0, 1.8, 2.4]) {
+    const row = rowEl();
+    cell(row, currentWalker(), "현 워커(기준)", 138);
+    for (const [name, cfg] of COMBOS) cell(row, graftWalker("idle", cfg, 0.36, T), `${name.split("(")[0]} · ${T ? `T=${T}` : "보정 없음"}`, 138);
+  }
+
+  /* C. 걷기 포즈 pa/pb — 파츠가 걷기에서도 사는지 */
+  h2("C. 걷기 플립북 포즈(pa/pb) — T=1.8, s=0.36");
+  const walkRow = rowEl();
+  for (const [name, cfg] of [COMBOS[0], COMBOS[1], COMBOS[5]]) {
+    cell(walkRow, graftWalker("pa", cfg, 0.36, 1.8), name.split("(")[0] + " · pa", 120);
+    cell(walkRow, graftWalker("pb", cfg, 0.36, 1.8), name.split("(")[0] + " · pb", 120);
+  }
+
+  /* D. 머리 크기 실험 — 잘 보이려면 얼마나 키워야 하나 */
+  h2("D. 머리 크기 실험(T=1.8) — 실제 크기와 3×");
+  const sizeRow = rowEl();
+  for (const s of [0.32, 0.36, 0.4, 0.44]) {
+    const combo = COMBOS[1][1]; // 양갈래 — 중간 명도 조합이 크기 판정에 적합
+    const wrap = document.createElement("div"); wrap.className = "cell";
+    wrap.innerHTML = `<div class="z frame" style="display:flex;gap:10px;align-items:flex-end">` +
+      `<div>${graftWalker("idle", combo, s, 1.8)}</div>` +
+      `<div>${graftWalker("idle", combo, s, 1.8).replace('width="46" height="66"', 'width="129" height="185"')}</div>` +
+      `</div><div class="cap">s=${s} (머리 r≈${Math.round(26 * s * 10) / 10})</div>`;
+    sizeRow.appendChild(wrap);
+  }
+</script>
+</body>
+</html>
