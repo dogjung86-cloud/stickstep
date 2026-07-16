@@ -202,10 +202,11 @@ export function mExamStemFig(stems: Array<[number, number[]]>, opts: { title: st
 }
 
 /* ── 통계 표(도수분포표 · 상대도수 분포표 겸용) ────────────────
- * cols: 헤더 행(예 ["기록(회)", "학생 수(명)", "상대도수"]), rows: 셀 문자열 행렬.
- * A~E 한 글자 셀은 빈칸(미지수)으로 간주해 네이비 강조. "합계" 행은 위 경계선을 굵게.
- * colw: 열 폭 비율(합 100) — 생략 시 첫 열 40, 나머지 균등. */
-export function mExamTableFig(cols: string[], rows: string[][], opts: { title?: string; colw?: number[] } = {}): string {
+ * cols: 헤더 행(예 ["기록(회)", "학생 수(명)", "상대도수"]) — 전부 빈 문자열이면 헤더 행을 생략
+ * (m2u1 마방진처럼 헤더 없는 표). A~E·㉠·㉡ 한 글자 셀은 빈칸(미지수)으로 간주해 네이비 강조.
+ * "합계" 행은 위 경계선을 굵게. colw: 열 폭 비율(합 100) — 생략 시 첫 열 40, 나머지 균등.
+ * aria: 용도별 중립 서술(기본 "통계 표" — 마방진 등 비통계 용도는 반드시 지정). */
+export function mExamTableFig(cols: string[], rows: string[][], opts: { title?: string; colw?: number[]; aria?: string } = {}): string {
   const W = 300;
   const X0 = 10;
   const TW = W - 20;
@@ -215,31 +216,34 @@ export function mExamTableFig(cols: string[], rows: string[][], opts: { title?: 
   for (const w of colw) xs.push(xs[xs.length - 1] + (w / 100) * TW);
   const cx = (c: number): number => (xs[c] + xs[c + 1]) / 2;
   const titleH = opts.title ? 22 : 0;
-  const headH = 26;
+  const hasHead = cols.some((c) => c);
+  const headH = hasHead ? 26 : 0;
   const rowH = 24;
   const H = titleH + headH + rows.length * rowH + 14;
   let out = "";
   if (opts.title) out += `<text x="150" y="16" text-anchor="middle" font-size="11.5" font-weight="900" fill="${INK}">${opts.title}</text>`;
   const gy0 = titleH + 6;
-  out += `<rect x="${X0}" y="${gy0}" width="${TW}" height="${headH}" rx="0" fill="#EEF1FB"/>`;
-  cols.forEach((c, i) => {
-    out += `<text x="${cx(i)}" y="${gy0 + 17}" text-anchor="middle" font-size="10" font-weight="800" fill="${INK}">${c}</text>`;
-  });
+  if (hasHead) {
+    out += `<rect x="${X0}" y="${gy0}" width="${TW}" height="${headH}" rx="0" fill="#EEF1FB"/>`;
+    cols.forEach((c, i) => {
+      out += `<text x="${cx(i)}" y="${gy0 + 17}" text-anchor="middle" font-size="10" font-weight="800" fill="${INK}">${c}</text>`;
+    });
+  }
   rows.forEach((row, r) => {
     const y = gy0 + headH + r * rowH;
     const isTotal = row[0].includes("합계");
     if (r % 2 === 1 && !isTotal) out += `<rect x="${X0}" y="${y}" width="${TW}" height="${rowH}" fill="#F8FAFC"/>`;
     if (isTotal) out += `<line x1="${X0}" y1="${y}" x2="${X0 + TW}" y2="${y}" stroke="${INK}" stroke-width="1.6"/>`;
     row.forEach((cell, c) => {
-      const blank = /^[A-E]$/.test(cell);
+      const blank = /^([A-E]|㉠|㉡)$/.test(cell);
       out += `<text x="${cx(c)}" y="${y + 16}" text-anchor="middle" font-size="10.5" font-weight="${blank || isTotal ? 900 : 700}" fill="${blank ? NAVY : INK}">${cell}</text>`;
     });
   });
   const gy1 = gy0 + headH + rows.length * rowH;
   out += `<rect x="${X0}" y="${gy0}" width="${TW}" height="${gy1 - gy0}" stroke="${LINE}" stroke-width="1.4"/>`;
   for (let c = 1; c < nc; c++) out += `<line x1="${xs[c]}" y1="${gy0}" x2="${xs[c]}" y2="${gy1}" stroke="${LINE}" stroke-width="1.2"/>`;
-  out += `<line x1="${X0}" y1="${gy0 + headH}" x2="${X0 + TW}" y2="${gy0 + headH}" stroke="${LINE}" stroke-width="1.2"/>`;
-  return svg(`0 0 ${W} ${H}`, "통계 표", out);
+  if (hasHead) out += `<line x1="${X0}" y1="${gy0 + headH}" x2="${X0 + TW}" y2="${gy0 + headH}" stroke="${LINE}" stroke-width="1.2"/>`;
+  return svg(`0 0 ${W} ${H}`, opts.aria ?? "통계 표", out);
 }
 
 /* ── 상대도수 다각형 두 집단 비교(파라미터형 — 레슨 relCompareFig의 시험판) ──

@@ -24,9 +24,11 @@ for (const f of files) {
   const em = [...src.matchAll(/—/g)].length;
   if (em > 0) say(`${f}: em대시(—) ${em}건, 수학 트랙 전면 금지(콜론·쉼표로)`);
   // ⑨-b 중2 Ⅰ 금지어(중3·고교 선행 + 타 단원 선점 용어)
-  for (const w of ["무리수", "인수분해", "곱셈 공식", "곱셈공식", "기울기", "항등식"]) {
+  for (const w of ["무리수", "곱셈 공식", "곱셈공식", "기울기", "항등식"]) {
     if (src.includes(w)) say(`${f}: 금지어 "${w}" 발견`);
   }
+  // '인수분해'는 단독만 금지 — '소인수분해'는 중1 정식 어휘(교집합 lookbehind 선례)
+  if (/(?<!소)인수분해/.test(src)) say(`${f}: 금지어 "인수분해"(소인수분해 제외) 발견`);
   // ⑨-c 변수는 mv 클래스 필수 — 맨몸 <i> 금지
   if (/<i>(?!<)/.test(src)) say(`${f}: 맨몸 <i> 발견 — 변수는 <i class='mv'>x</i>로`);
 
@@ -42,7 +44,8 @@ for (const f of files) {
     const numKind = b.match(/numKind: "(\w+)"/)?.[1];
     const diff = b.match(/diff: (\d)/)?.[1];
     const hasFigure = /figure: /.test(b);
-    const explain = b.match(/explain:\s*\n?\s*"([\s\S]*?)",\n    core/)?.[1] ?? "";
+    // 해설은 큰따옴표 연결식("…" + mfmt(…) + "…")과 백틱 템플릿(`…${mfmt(…)}…`) 두 저작 스타일 모두 지원
+    const explain = b.match(/explain:\s*\n?\s*["`]([\s\S]*?)["`],\n    core/)?.[1] ?? "";
     const optsRaw = b.match(/options: \[([\s\S]*?)\],\n/)?.[1] ?? "";
     all.push({ file: f, id, type, shuffle, ansRaw, bank, unitLabel, numKind, diff, hasFigure, explain, optsRaw });
   }
