@@ -680,9 +680,15 @@ src/
   재발주: `bash qa/order-splash2-tower.sh`(0..6+study+증류탑) / `bash qa/order-splash2b.sh`(7..13+study 상체 수정) →
   `node qa/process-loading2.mjs`(512 webp 경량화, 프레임당 11~33KB). 이미지 속 글자는 study 머리띠 단 하나만 예외
   (잠자는 컷의 Zzz도 금지 — 코 방울로, 음표·하트는 허용).
-- 앱 아이콘/파비콘 = `public/brand/icon.png`(512, 파란 라운드 사각 + **study.webp "공부하자!" 머리띠 스틱맨** 흰 라인아트
-  — 앱 상징, 사용자 확정 2026-07-10) — index.html에서 링크. 재생성: `node qa/make-icon.mjs`(study.webp 크롭→
-  흰 반전→선 두께 보정→블루 그라데이션 합성. 책상 모서리 선은 크롭으로 제외할 것).
+- **파비콘 = 발자국 마크(사용자 확정 2026-07-16)**: 블루 그라데이션 라운드 사각 + 흰 발자국 2개
+  지그재그(홈 트레일 도장 #bsfp 실루엣) + 입체 옆면(#175BC4 — 지도 스텝 노드 문법) + 키라이트.
+  재생성 `node qa/make-favicon.mjs` → public/favicon.ico(16·32·48 PNG-in-ICO)+brand/favicon-{크기}.png,
+  index.html 링크(180 apple-touch는 풀블리드 — iOS가 자체 마스크). 각 크기 벡터 직접 렌더(축소 금지).
+  스틱맨이 아니라 마크인 이유: 16px에서 라인아트는 뭉갬 — 시안 5라운드 비교로 확정(단순 마크 승).
+- 앱 아이콘 원본 = `public/brand/icon.png`(512, 파란 라운드 사각 + **study.webp "공부하자!" 머리띠 스틱맨**
+  흰 라인아트 — 앱 상징, 사용자 확정 2026-07-10)은 **Capacitor 포장·스토어 아이콘용으로 보존**(파비콘
+  링크에선 해제). 재생성: `node qa/make-icon.mjs`(study.webp 크롭→흰 반전→선 두께 보정→블루 그라데이션
+  합성. 책상 모서리 선은 크롭으로 제외할 것).
 - 브랜드 이미지 재발주: `bash qa/order-brand-u1l3.sh`(프롬프트 qa/brand_imagen_prompts.txt),
   발주 원본은 1254px → `node qa/resize-brand.mjs`(512 png) + webp 변환으로 경량화(프레임당 ~20KB).
 
