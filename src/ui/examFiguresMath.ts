@@ -1185,3 +1185,312 @@ export function m2ExamRectXYFig(o: { w: string; h: string; cap?: string }): stri
       `<text x="298" y="103" text-anchor="middle" font-size="11.5" font-weight="800" fill="${NAVY}">${o.cap}</text>`;
   return svg("0 0 360 194", "가로와 세로가 문자로 적힌 직사각형", out);
 }
+
+/* ════════════════════════════════════════════════════════════
+   m2u3(중2 Ⅲ 일차함수) 시험 전용 — 직선 그림 자체는 mathFigures2 lineFig 재사용이 1순위
+   (좌표평면 직선·점·계단 세모·x=m 세로선 전부 lineFig 파라미터로, 레슨과 수치 교체 필수).
+   여기엔 lineFig가 못 그리는 3종만: 대응 화살표 · 미니 그래프 고르기 · 선분 좌표평면.
+   구할 값·판정 결과는 ㉠·?만 인쇄, aria는 중립 서술(값·정오 낭독 금지). 뺄셈·음수는 U+2212.
+   ════════════════════════════════════════════════════════════ */
+
+const FUNC_PAL = ["#0CA678", "#E8608A", "#3D5BC0", "#E8A93E"] as const;
+
+/** 두 모둠 사이 대응 화살표 그림(파라미터형) — 함수 판별용. arrows는 [왼쪽 인덱스, 오른쪽 인덱스] 쌍.
+ *  한 원소에서 화살표 0개(대응 없음)·2개(두 값 대응)도 그대로 그린다(함수가 아닌 사례).
+ *  원소는 4개 이하 권장(세로 공간), 라벨 기본값 X·Y. */
+export function m2ExamArrowMapFig(o: {
+  xs: string[];
+  ys: string[];
+  arrows: Array<[number, number]>;
+  la?: string;
+  lb?: string;
+}): string {
+  const n = Math.max(o.xs.length, o.ys.length);
+  const yAt = (i: number): number => 62 + i * 40;
+  const H = yAt(n - 1) + 46;
+  const cyL = 62 + ((o.xs.length - 1) * 40) / 2;
+  const cyR = 62 + ((o.ys.length - 1) * 40) / 2;
+  let out =
+    `<ellipse cx="96" cy="${cyL}" rx="52" ry="${((o.xs.length - 1) * 40) / 2 + 27}" fill="#F2FBF7" stroke="#0CA678" stroke-width="1.6"/>` +
+    `<ellipse cx="264" cy="${cyR}" rx="52" ry="${((o.ys.length - 1) * 40) / 2 + 27}" fill="#F6F9FF" stroke="${NAVY}" stroke-width="1.6"/>` +
+    `<text x="96" y="24" text-anchor="middle" font-size="12.5" font-weight="900"${ital(o.la ?? "X")} fill="#087F5B">${o.la ?? "X"}</text>` +
+    `<text x="264" y="24" text-anchor="middle" font-size="12.5" font-weight="900"${ital(o.lb ?? "Y")} fill="#243B96">${o.lb ?? "Y"}</text>`;
+  o.xs.forEach((v, i) => {
+    out += `<text x="96" y="${yAt(i) + 4.5}" text-anchor="middle" font-size="13" font-weight="800" fill="${INK}">${v}</text>`;
+  });
+  o.ys.forEach((v, i) => {
+    out += `<text x="264" y="${yAt(i) + 4.5}" text-anchor="middle" font-size="13" font-weight="800" fill="${INK}">${v}</text>`;
+  });
+  for (const [xi, yi] of o.arrows) {
+    const x1 = 152;
+    const y1 = yAt(xi);
+    const x2 = 208;
+    const y2 = yAt(yi);
+    const ang = Math.atan2(y2 - y1, x2 - x1);
+    const w1 = ang + 2.65;
+    const w2 = ang - 2.65;
+    out +=
+      `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#5C7080" stroke-width="1.9" stroke-linecap="round"/>` +
+      `<path d="M${x2} ${y2} L${(x2 + 8.5 * Math.cos(w1)).toFixed(1)} ${(y2 + 8.5 * Math.sin(w1)).toFixed(1)} M${x2} ${y2} L${(x2 + 8.5 * Math.cos(w2)).toFixed(1)} ${(y2 + 8.5 * Math.sin(w2)).toFixed(1)}" stroke="#5C7080" stroke-width="1.9" stroke-linecap="round"/>`;
+  }
+  return svg(`0 0 360 ${H}`, "두 모둠 사이의 대응을 화살표로 나타낸 그림", out);
+}
+
+/** 미니 그래프 고르기(①~⑤ 고정 라벨) — 눈금 없는 작은 좌표축에 직선 하나씩(방향·절편 부호·가파름만
+ *  판독하는 모양 고르기 전용). vert를 주면 x=vert 세로선. |a|≤3·|b|≤2.5 권장(칸 밖 이탈 방지).
+ *  shuffle:false와 세트 — 정답을 ①에 두지 않는다(그림 단계에서 정답 위치 설계, u6 관행). */
+export function m2ExamLineChoicesFig(items: Array<{ a?: number; b?: number; vert?: number }>): string {
+  const U = 12;
+  const HW = 46;
+  const HH = 40;
+  let out = "";
+  items.forEach((it, i) => {
+    const row = i < 3 ? 0 : 1;
+    const col = i < 3 ? i : i - 3;
+    const x0 = (items.length <= 3 || row === 0 ? 4 : 64) + col * 120;
+    const y0 = 4 + row * 108;
+    const cx = x0 + 56;
+    const cy = y0 + 58;
+    out +=
+      `<rect x="${x0}" y="${y0}" width="112" height="102" rx="10" fill="#FFFFFF" stroke="${LINE}" stroke-width="1.3"/>` +
+      `<text x="${x0 + 13}" y="${y0 + 19}" font-size="12.5" font-weight="900" fill="${INK}">${"①②③④⑤⑥"[i]}</text>` +
+      `<line x1="${cx - HW}" y1="${cy}" x2="${cx + HW}" y2="${cy}" stroke="#94A3B8" stroke-width="1.3"/>` +
+      `<path d="M${cx + HW} ${cy} l-5 -2.8 v5.6 z" fill="#94A3B8"/>` +
+      `<line x1="${cx}" y1="${cy + HH}" x2="${cx}" y2="${cy - HH}" stroke="#94A3B8" stroke-width="1.3"/>` +
+      `<path d="M${cx} ${cy - HH} l-2.8 5 h5.6 z" fill="#94A3B8"/>`;
+    if (it.vert != null) {
+      const lx = it.vert * U;
+      out += `<line x1="${cx + lx}" y1="${cy - HH + 4}" x2="${cx + lx}" y2="${cy + HH - 4}" stroke="${FUNC_PAL[0]}" stroke-width="2.6" stroke-linecap="round"/>`;
+      return;
+    }
+    const a = it.a ?? 1;
+    const b = it.b ?? 0;
+    // 로컬 px 공간에서 직선 ly = −a·lx − b·U 를 칸 상자(|lx|≤HW−4, |ly|≤HH−4)로 클리핑
+    const bw = HW - 4;
+    const bh = HH - 4;
+    const cand: Array<[number, number]> = [];
+    if (a === 0) {
+      const ly = -b * U;
+      if (Math.abs(ly) <= bh) cand.push([-bw, ly], [bw, ly]);
+    } else {
+      for (const lx of [-bw, bw]) {
+        const ly = -a * lx - b * U;
+        if (Math.abs(ly) <= bh + 0.01) cand.push([lx, ly]);
+      }
+      for (const ly of [-bh, bh]) {
+        const lx = (-ly - b * U) / a;
+        if (Math.abs(lx) <= bw + 0.01) cand.push([lx, ly]);
+      }
+    }
+    const uniq: Array<[number, number]> = [];
+    for (const p of cand) if (!uniq.some((q) => Math.abs(q[0] - p[0]) < 0.5 && Math.abs(q[1] - p[1]) < 0.5)) uniq.push(p);
+    if (uniq.length >= 2)
+      out += `<line x1="${(cx + uniq[0][0]).toFixed(1)}" y1="${(cy + uniq[0][1]).toFixed(1)}" x2="${(cx + uniq[1][0]).toFixed(1)}" y2="${(cy + uniq[1][1]).toFixed(1)}" stroke="${FUNC_PAL[0]}" stroke-width="2.6" stroke-linecap="round"/>`;
+  });
+  const H = items.length <= 3 ? 114 : 222;
+  return svg(`0 0 360 ${H}`, "작은 좌표평면에 그린 직선 그래프 보기들", out);
+}
+
+/** 좌표평면 위 선분·점·직선 혼합(파라미터형) — 선분과 만나는 직선의 범위·움직이는 점·도형 넓이용.
+ *  좌표계는 lineFig와 동일한 planeSpec(격자 전 눈금 라벨) — 선분 끝점엔 점을 함께 찍는다.
+ *  직선은 lineFig 문법(a·b 또는 vert), 라벨 lx 위치의 직선 위에 얹는다. */
+export function m2ExamSegPlaneFig(o: {
+  min?: number;
+  max?: number;
+  lines?: Array<{ a?: number; b?: number; vert?: number; color?: string; dash?: boolean; label?: string; lx?: number }>;
+  segs?: Array<{ x1: number; y1: number; x2: number; y2: number; color?: string; label?: string }>;
+  dots?: Array<{ x: number; y: number; color?: string; label?: string; below?: boolean; left?: boolean }>;
+}): string {
+  const p = planeSpec({ min: o.min ?? -5, max: o.max ?? 5, size: 260 });
+  let g = "";
+  (o.lines ?? []).forEach((ln, i) => {
+    const color = ln.color ?? FUNC_PAL[i % FUNC_PAL.length];
+    if (ln.vert != null) {
+      g += `<line x1="${p.px(ln.vert)}" y1="${p.py(p.min - 0.6)}" x2="${p.px(ln.vert)}" y2="${p.py(p.max + 0.6)}" stroke="${color}" stroke-width="3"${ln.dash ? ' stroke-dasharray="7 5"' : ""} stroke-linecap="round"/>`;
+      if (ln.label) g += `<text x="${p.px(ln.vert) + 7}" y="${p.py(p.max - 0.8)}" font-size="11" font-weight="800" font-style="italic" fill="${color}">${ln.label}</text>`;
+      return;
+    }
+    const a = ln.a ?? 1;
+    const b = ln.b ?? 0;
+    const t = p.max + 1.2;
+    g += `<line x1="${p.px(-t)}" y1="${p.py(a * -t + b)}" x2="${p.px(t)}" y2="${p.py(a * t + b)}" stroke="${color}" stroke-width="3"${ln.dash ? ' stroke-dasharray="7 5"' : ""} stroke-linecap="round"/>`;
+    if (ln.label) {
+      const lx = ln.lx ?? 2.6;
+      g += `<text x="${p.px(lx)}" y="${p.py(a * lx + b) + (a >= 0 ? -9 : 15)}" font-size="11" font-weight="800" font-style="italic" fill="${color}">${ln.label}</text>`;
+    }
+  });
+  for (const s of o.segs ?? []) {
+    const color = s.color ?? "#3D5BC0";
+    g +=
+      `<line x1="${p.px(s.x1)}" y1="${p.py(s.y1)}" x2="${p.px(s.x2)}" y2="${p.py(s.y2)}" stroke="${color}" stroke-width="3.4" stroke-linecap="round"/>` +
+      `<circle cx="${p.px(s.x1)}" cy="${p.py(s.y1)}" r="4.6" fill="${color}" stroke="#FFFFFF" stroke-width="1.4"/>` +
+      `<circle cx="${p.px(s.x2)}" cy="${p.py(s.y2)}" r="4.6" fill="${color}" stroke="#FFFFFF" stroke-width="1.4"/>`;
+    if (s.label)
+      g += `<text x="${(p.px(s.x1) + p.px(s.x2)) / 2 + 9}" y="${(p.py(s.y1) + p.py(s.y2)) / 2 - 8}" font-size="11" font-weight="900" fill="${color}">${s.label}</text>`;
+  }
+  for (const d of o.dots ?? []) {
+    const color = d.color ?? "#E8A93E";
+    g += `<circle cx="${p.px(d.x)}" cy="${p.py(d.y)}" r="5" fill="${color}" stroke="#4A3208" stroke-width="1.2" opacity=".95"/>`;
+    if (d.label)
+      g += `<text x="${p.px(d.x) + (d.left ? -8 : 8)}"${d.left ? ' text-anchor="end"' : ""} y="${p.py(d.y) + (d.below ? 15 : -8)}" font-size="10.5" font-weight="900" fill="#334155">${d.label}</text>`;
+  }
+  return svg(p.vb, "좌표평면 위의 선분과 직선을 나타낸 그림", p.grid + g);
+}
+
+/* ════════════════════════════════════════════════════════════
+   m1u2(중1 Ⅱ 문자와 식) 시험 전용 — 2026-07 개보수(그림 17문항 확충)에서 신설.
+   재사용이 1순위: 저울 mExamBalanceFig(상자 ≤4 제약) · 표 mExamTableFig ·
+   직사각형 m2ExamRectXYFig · 정사각형 사슬 mExamSquareChainFig. 여기엔 그 넷이
+   못 그리는 6종만 추가한다. 규칙 동일: 정답·판정을 색이나 위치로 강조하지 않고,
+   aria는 중립 서술만(개수·수치·정답 낭독 금지). 뺄셈·음수는 호출부가 U+2212로 넘긴다.
+   ════════════════════════════════════════════════════════════ */
+
+/** SVG text 안 라틴 문자만 이탤릭 tspan으로 — 한글·수 혼합 라벨용(ital은 통짜 이탤릭이라 부적합). */
+const fxv = (s: string): string => s.replace(/[a-z]/g, (ch) => `<tspan font-style="italic">${ch}</tspan>`);
+
+/** 단계마다 커지는 타일 배열(파라미터형) — 규칙 찾기용. stages는 [가로 칸, 세로 칸] 쌍 최대 4개.
+ *  개수 라벨은 찍지 않는다(개수 나열은 문두 몫 — 그림은 "어떻게 늘어나는지" 구조만 보여 준다). */
+export function mExamTileStagesFig(stages: Array<[number, number]>): string {
+  const safe = stages.slice(0, 4).map(([c, r]) => [Math.max(1, Math.min(9, Math.trunc(c))), Math.max(1, Math.min(4, Math.trunc(r)))] as [number, number]);
+  const maxCols = Math.max(...safe.map((s) => s[0]));
+  const maxRows = Math.max(...safe.map((s) => s[1]));
+  const side = Math.min(16, 80 / maxCols);
+  const panelW = Math.max(84, maxCols * side + 12);
+  const gap = 10;
+  const W = safe.length * panelW + (safe.length - 1) * gap + 12;
+  const gridH = maxRows * side;
+  let out = "";
+  safe.forEach(([cols, rows], pi) => {
+    const x0 = 6 + pi * (panelW + gap);
+    const sx = x0 + (panelW - cols * side) / 2;
+    const sy = 12 + (gridH - rows * side) / 2;
+    for (let r = 0; r < rows; r += 1)
+      for (let c = 0; c < cols; c += 1)
+        out += `<rect x="${(sx + c * side).toFixed(1)}" y="${(sy + r * side).toFixed(1)}" width="${side.toFixed(1)}" height="${side.toFixed(1)}" fill="${NAVY_SOFT}" fill-opacity=".16" stroke="${NAVY}" stroke-width="1.6"/>`;
+    out += `<text x="${x0 + panelW / 2}" y="${12 + gridH + 20}" text-anchor="middle" font-size="10.5" font-weight="800" fill="${INK}">${pi + 1}단계</text>`;
+  });
+  return svg(`0 0 ${W} ${12 + gridH + 30}`, "단계마다 규칙적으로 커지는 타일 배열", out);
+}
+
+/** 정사각형 테두리 바둑돌(파라미터형) — 한 변 n개짜리 빈 정사각형 배치를 나란히 보여 준다.
+ *  sizes는 한 변의 돌 개수(2~6) 최대 3개. 돌 개수 라벨은 "한 변 n개"만 적는다. */
+export function mExamBorderDotsFig(sizes: number[]): string {
+  const safe = sizes.slice(0, 3).map((n) => Math.max(2, Math.min(6, Math.trunc(n))));
+  const maxN = Math.max(...safe);
+  const pitch = Math.min(17, 74 / (maxN - 1));
+  const panelW = 96;
+  const gap = 10;
+  const W = safe.length * panelW + (safe.length - 1) * gap + 12;
+  const gridH = (maxN - 1) * pitch;
+  let out = "";
+  safe.forEach((n, pi) => {
+    const x0 = 6 + pi * (panelW + gap);
+    const span = (n - 1) * pitch;
+    const sx = x0 + (panelW - span) / 2;
+    const sy = 15 + (gridH - span) / 2;
+    for (let i = 0; i < n; i += 1)
+      for (let j = 0; j < n; j += 1) {
+        if (i !== 0 && j !== 0 && i !== n - 1 && j !== n - 1) continue;
+        out += `<circle cx="${(sx + j * pitch).toFixed(1)}" cy="${(sy + i * pitch).toFixed(1)}" r="5" fill="#4A463F" stroke="#23211D" stroke-width="1"/>`;
+      }
+    out += `<text x="${x0 + panelW / 2}" y="${15 + gridH + 22}" text-anchor="middle" font-size="10.5" font-weight="800" fill="${INK}">한 변 ${n}개</text>`;
+  });
+  return svg(`0 0 ${W} ${15 + gridH + 32}`, "정사각형 테두리를 따라 놓은 바둑돌 배치", out);
+}
+
+/** ㄱ자(요철) 도형 — 위 가로·왼쪽 세로 전체 길이와 파인 안쪽 세로 한 변의 라벨.
+ *  모서리를 직각으로 잘라낸 도형이라 둘레는 감싸는 직사각형과 같다(그 통찰이 출제 의도). */
+export function mExamLShapeFig(o: { top: string; left: string; notch?: string }): string {
+  let out =
+    `<polygon points="64,40 252,40 252,98 182,98 182,150 64,150" fill="#F6F9FF" stroke="${NAVY}" stroke-width="2"/>` +
+    `<path d="M64 53 L77 53 L77 40" fill="none" stroke="${FAINT}" stroke-width="1.2"/>` +
+    `<path d="M182 111 L195 111 L195 98" fill="none" stroke="${FAINT}" stroke-width="1.2"/>` +
+    `<path d="M64 26 h188 M64 20 v12 M252 20 v12" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<text x="158" y="16" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">${fxv(o.top)}</text>` +
+    `<path d="M48 40 v110 M42 40 h12 M42 150 h12" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<text x="30" y="99" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">${fxv(o.left)}</text>`;
+  if (o.notch)
+    out += `<text x="192" y="130" text-anchor="start" font-size="11.5" font-weight="800" fill="${INK}">${fxv(o.notch)}</text>`;
+  return svg("0 0 320 168", "모서리가 직각으로 파인 도형", out);
+}
+
+/** 세 변에 길이 라벨이 붙은 삼각형(파라미터형). */
+export function mExamTriSidesFig(o: { left: string; right: string; bottom: string }): string {
+  const out =
+    `<polygon points="150,26 46,138 262,138" fill="#F6F9FF" stroke="${NAVY}" stroke-width="2"/>` +
+    `<text x="88" y="76" text-anchor="end" font-size="12" font-weight="800" fill="${INK}">${fxv(o.left)}</text>` +
+    `<text x="216" y="76" text-anchor="start" font-size="12" font-weight="800" fill="${INK}">${fxv(o.right)}</text>` +
+    `<text x="154" y="158" text-anchor="middle" font-size="12" font-weight="800" fill="${INK}">${fxv(o.bottom)}</text>`;
+  return svg("0 0 300 172", "세 변에 길이가 적힌 삼각형", out);
+}
+
+/** 거리 구간 띠(파라미터형) — 구간 분할·왕복 이동을 띠로 보여 준다.
+ *  행마다 note(갈 때·올 때 등)를 왼쪽에, 구간마다 top(거리)·bot(속력) 라벨. total은 전체 거리 괄호. */
+export function mExamDistBandFig(o: {
+  rows: Array<{ note?: string; segs: Array<{ top?: string; bot?: string; w?: number }> }>;
+  total?: string;
+}): string {
+  const X0 = 74;
+  const X1 = 326;
+  const topPad = o.total ? 40 : 14;
+  const rowH = 60;
+  const H = topPad + o.rows.length * rowH;
+  let out = "";
+  if (o.total)
+    out +=
+      `<path d="M${X0} ${topPad - 18} h${X1 - X0} M${X0} ${topPad - 24} v12 M${X1} ${topPad - 24} v12" stroke="${FAINT}" stroke-width="1.4"/>` +
+      `<text x="${(X0 + X1) / 2}" y="${topPad - 26}" text-anchor="middle" font-size="11.5" font-weight="900" fill="${INK}">${fxv(o.total)}</text>`;
+  o.rows.forEach((row, ri) => {
+    const y = topPad + ri * rowH + 14;
+    if (row.note)
+      out += `<text x="${X0 - 10}" y="${y + 12}" text-anchor="end" font-size="11" font-weight="900" fill="${NAVY}">${row.note}</text>`;
+    const weights = row.segs.map((s) => s.w ?? 1);
+    const wsum = weights.reduce((a, b) => a + b, 0);
+    let x = X0;
+    row.segs.forEach((seg, si) => {
+      const w = ((X1 - X0) * (seg.w ?? 1)) / wsum;
+      out += `<rect x="${x.toFixed(1)}" y="${y}" width="${w.toFixed(1)}" height="16" rx="3" fill="${si % 2 ? "#FDF1E2" : "#EAF1FE"}" stroke="${si % 2 ? "#E8A93E" : NAVY}" stroke-width="1.5"/>`;
+      if (seg.top)
+        out += `<text x="${(x + w / 2).toFixed(1)}" y="${y - 6}" text-anchor="middle" font-size="10.5" font-weight="800" fill="${INK}">${fxv(seg.top)}</text>`;
+      if (seg.bot)
+        out += `<text x="${(x + w / 2).toFixed(1)}" y="${y + 30}" text-anchor="middle" font-size="10" font-weight="700" fill="#64748B">${fxv(seg.bot)}</text>`;
+      x += w;
+    });
+  });
+  return svg(`0 0 340 ${H}`, "이동 거리를 구간으로 나눈 띠 그림", out);
+}
+
+/** 등식의 성질 풀이 과정 상자 — 등식들을 세로로 나열하고 사이마다 조작 설명을 단다.
+ *  notes에는 ㉮·㉯ 같은 빈칸 원문자를 그대로 넣는다(어떤 수·연산인지 채우는 게 과제). */
+export function mExamEqStepsFig(o: { eqs: string[]; notes: string[] }): string {
+  const n = o.eqs.length;
+  const H = 34 + (n - 1) * 66 + 22;
+  let out = `<rect x="10" y="6" width="300" height="${H - 12}" rx="14" fill="#FFFFFF" stroke="${LINE}" stroke-width="1.4"/>`;
+  o.eqs.forEach((eq, i) => {
+    const y = 34 + i * 66;
+    out += `<text x="120" y="${y}" text-anchor="middle" font-size="15.5" font-weight="900" fill="${INK}">${fxv(eq)}</text>`;
+    if (i < n - 1 && o.notes[i]) {
+      out +=
+        `<path d="M92 ${y + 10} v34 m0 0 l-5 -8 m5 8 l5 -8" fill="none" stroke="${NAVY}" stroke-width="1.8" stroke-linecap="round"/>` +
+        `<text x="106" y="${y + 32}" text-anchor="start" font-size="10.5" font-weight="800" fill="${NAVY}">${fxv(o.notes[i])}</text>`;
+    }
+  });
+  return svg(`0 0 320 ${H}`, "등식을 한 단계씩 바꾸어 가는 풀이 과정", out);
+}
+
+/** 정사각형을 늘이고 줄여 만든 직사각형 — 원래 정사각형은 점선, 새 직사각형은 실선.
+ *  side는 정사각형 한 변, ext는 가로로 늘인 길이, cut은 세로로 줄인 길이 라벨(x cm 등). */
+export function mExamAreaMorphFig(o: { side: string; ext: string; cut: string }): string {
+  const out =
+    `<rect x="64" y="40" width="108" height="108" fill="none" stroke="${FAINT}" stroke-width="1.8" stroke-dasharray="6 4"/>` +
+    `<rect x="64" y="40" width="144" height="74" fill="#F6F9FF" fill-opacity=".85" stroke="${NAVY}" stroke-width="2"/>` +
+    `<path d="M64 26 h108 M64 20 v12 M172 20 v12" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<text x="118" y="16" text-anchor="middle" font-size="11.5" font-weight="800" fill="${INK}">${fxv(o.side)}</text>` +
+    `<path d="M172 26 h36 M208 20 v12" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<text x="196" y="16" text-anchor="middle" font-size="11.5" font-weight="800" fill="${INK}">${fxv(o.ext)}</text>` +
+    `<path d="M48 40 v108 M42 40 h12 M42 148 h12" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<text x="30" y="98" text-anchor="middle" font-size="11.5" font-weight="800" fill="${INK}">${fxv(o.side)}</text>` +
+    `<path d="M220 114 v34 M214 114 h12 M214 148 h12" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<text x="238" y="135" text-anchor="start" font-size="11.5" font-weight="800" fill="${INK}">${fxv(o.cut)}</text>`;
+  return svg("0 0 300 168", "정사각형을 가로로 늘이고 세로로 줄여 만든 직사각형", out);
+}
