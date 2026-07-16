@@ -1003,3 +1003,185 @@ export function m2ExamTrapFig(o: { top: string; bot: string; h: string }): strin
     `<text x="224" y="104" text-anchor="middle" font-size="13" font-weight="800"${ital(o.h)} fill="${ROSE}">${o.h}</text>`;
   return svg("0 0 300 188", "윗변·아랫변·높이가 문자로 적힌 사다리꼴", out);
 }
+
+/* ══════════════ m2u2 부등식과 연립방정식 ══════════════
+ * 격자 그림에 직선을 긋지 않는다(일차함수는 중2 Ⅲ 선행 — crossLab 점 관행). 해 점은 점·고리만.
+ * 수직선 해 표시(○●+방향 화살)는 mathFigures2 solLineFig(kind, v)를 재사용한다(v는 정수).
+ * 구할 값·판정 결과는 ㉠·?만 인쇄, aria는 중립 서술(값·정오 낭독 금지). 식 문자열의 뺄셈은 U+2212. */
+
+/** 수직선 구간 띠(파라미터형) — lo~hi를 step 간격 눈금으로 깔고, 그 위에 반열린 구간 띠를 얹는다.
+ *  to가 null이면 오른쪽 끝까지(이상~). mark는 띠 판독용 값 점(정오 문구 없이 위치만). */
+export function m2ExamRangeBandFig(o: {
+  lo: number;
+  hi: number;
+  step: number;
+  bands: Array<{ from: number; to: number | null; label: string }>;
+  unit: string;
+  mark?: { v: number; label: string };
+}): string {
+  const X0 = 30;
+  const X1 = 330;
+  const x = (v: number): number => X0 + ((v - o.lo) / (o.hi - o.lo)) * (X1 - X0);
+  const PAL = [
+    ["#F1F5FF", NAVY],
+    ["#FFF7ED", "#F08C00"],
+    ["#F2FBF6", GREEN],
+    ["#FEF5F7", ROSE],
+  ] as const;
+  let out = "";
+  o.bands.forEach((b, i) => {
+    const [fillC, strokeC] = PAL[i % PAL.length];
+    const xa = x(b.from);
+    const xb = b.to === null ? X1 + 8 : x(b.to);
+    out +=
+      `<rect x="${xa}" y="64" width="${xb - xa}" height="32" rx="8" fill="${fillC}" stroke="${strokeC}" stroke-width="1.4"/>` +
+      `<text x="${(xa + xb) / 2}" y="85" text-anchor="middle" font-size="11.5" font-weight="800" fill="${strokeC}">${b.label}</text>` +
+      `<line x1="${xa}" y1="60" x2="${xa}" y2="118" stroke="${strokeC}" stroke-width="1.3" stroke-dasharray="3 3"/>`;
+  });
+  out += `<line x1="${X0 - 8}" y1="114" x2="${X1 + 10}" y2="114" stroke="${INK}" stroke-width="1.8"/><path d="M${X1 + 10} 114 l-6 -3.4 v6.8 z" fill="${INK}"/>`;
+  for (let v = o.lo; v <= o.hi; v += o.step)
+    out +=
+      `<line x1="${x(v)}" y1="110" x2="${x(v)}" y2="118" stroke="${FAINT}" stroke-width="1.4"/>` +
+      `<text x="${x(v)}" y="134" text-anchor="middle" font-size="10.5" font-weight="800" fill="${INK}">${String(v).replace("-", "−")}</text>`;
+  out += `<text x="${X1 + 22}" y="26" text-anchor="end" font-size="9.5" font-weight="700" fill="${FAINT}">(${o.unit})</text>`;
+  if (o.mark)
+    out +=
+      `<circle cx="${x(o.mark.v)}" cy="114" r="5" fill="${GREEN}" stroke="#1E7A34" stroke-width="1.4"/>` +
+      `<text x="${x(o.mark.v)}" y="50" text-anchor="middle" font-size="11" font-weight="800" fill="${GREEN}">${o.mark.label}</text>` +
+      `<line x1="${x(o.mark.v)}" y1="54" x2="${x(o.mark.v)}" y2="106" stroke="${GREEN}" stroke-width="1.2" stroke-dasharray="3 3"/>`;
+  return svg("0 0 360 142", "수직선 위에 구간을 띠로 나타낸 그림", out);
+}
+
+/** 기운 양팔 저울(파라미터형) — 접시 라벨은 짧은 식 문자열(뺄셈은 U+2212), heavier 쪽이 내려간다.
+ *  부등식의 뜻·대소 비교 문항용. 정오·부등호는 인쇄하지 않는다. */
+export function m2ExamTiltScaleFig(o: { left: string; right: string; heavier: "left" | "right" }): string {
+  const down = o.heavier === "left" ? -1 : 1;
+  const ANG = 9 * down;
+  const rad = (ANG * Math.PI) / 180;
+  const cx = 150;
+  const cy = 96;
+  const L = 96;
+  const lx = cx - L * Math.cos(rad);
+  const ly = cy - L * Math.sin(rad);
+  const rx = cx + L * Math.cos(rad);
+  const ry = cy + L * Math.sin(rad);
+  const pan = (px: number, py: number, label: string, col: string): string =>
+    `<line x1="${px}" y1="${py}" x2="${px - 26}" y2="${py + 26}" stroke="${FAINT}" stroke-width="1.5"/>` +
+    `<line x1="${px}" y1="${py}" x2="${px + 26}" y2="${py + 26}" stroke="${FAINT}" stroke-width="1.5"/>` +
+    `<path d="M${px - 32} ${py + 26} A32 13 0 0 0 ${px + 32} ${py + 26}" fill="#FFFFFF" stroke="${col}" stroke-width="1.8"/>` +
+    `<text x="${px}" y="${py + 52}" text-anchor="middle" font-size="13.5" font-weight="900"${ital(label)} fill="${col}">${label}</text>`;
+  const out =
+    `<path d="M${cx - 16} 176 h32 l-8 -14 h-16 z" fill="#E2E8F2" stroke="${INK}" stroke-width="1.5"/>` +
+    `<path d="M${cx} 162 L${cx} ${cy}" stroke="${INK}" stroke-width="2.4"/>` +
+    `<line x1="${lx}" y1="${ly}" x2="${rx}" y2="${ry}" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>` +
+    `<circle cx="${cx}" cy="${cy}" r="4.6" fill="#FFFFFF" stroke="${INK}" stroke-width="2"/>` +
+    pan(lx, ly, o.left, NAVY) +
+    pan(rx, ry, o.right, "#F08C00");
+  return svg("0 0 300 196", "양쪽 접시에 식이 놓인 양팔 저울 그림", out);
+}
+
+/** 수직선 위 문자 점(파라미터형) — 0 눈금 하나만 라벨, 나머지 점은 문자 라벨(이탤릭).
+ *  pos는 -5~5 논리 좌표(등간격 아님을 허용 — 위치 관계 추론용, 값 눈금 없음). */
+export function m2ExamNumPtsFig(o: { pts: Array<{ label: string; pos: number }>; zeroPos?: number }): string {
+  const x = (p: number): number => 165 + p * 29;
+  let out = `<line x1="20" y1="66" x2="340" y2="66" stroke="${INK}" stroke-width="1.8"/><path d="M340 66 l-6 -3.4 v6.8 z" fill="${INK}"/>`;
+  const zp = o.zeroPos ?? 0;
+  out +=
+    `<line x1="${x(zp)}" y1="58" x2="${x(zp)}" y2="74" stroke="${INK}" stroke-width="1.6"/>` +
+    `<text x="${x(zp)}" y="92" text-anchor="middle" font-size="11.5" font-weight="800" fill="${INK}">0</text>`;
+  for (const p of o.pts)
+    out +=
+      `<circle cx="${x(p.pos)}" cy="66" r="5.2" fill="${NAVY}" stroke="#243B96" stroke-width="1.4"/>` +
+      `<text x="${x(p.pos)}" y="46" text-anchor="middle" font-size="13.5" font-weight="900" font-style="italic" fill="${NAVY}">${p.label}</text>`;
+  return svg("0 0 360 100", "수직선 위에 문자로 이름 붙인 점들을 나타낸 그림", out);
+}
+
+/** 모눈 해 점 그림(파라미터형) — 두 방정식의 해를 점(파랑 ●)과 고리(주황 ○)로만 찍는다.
+ *  직선 금지(중2 Ⅲ 선행). mark를 주면 그 자리에 점선 원+기호만(결론 문구 인쇄 금지). max ≤ 8. */
+export function m2ExamGridPairFig(o: {
+  max: number;
+  a: { label: string; pts: Array<[number, number]> };
+  b: { label: string; pts: Array<[number, number]> };
+  mark?: { at: [number, number]; label: string };
+}): string {
+  const S = 216;
+  const P = 26;
+  const U = (S - P * 2) / o.max;
+  const gx = (v: number): number => 44 + P + (v - 0) * U;
+  const gy = (v: number): number => S - P - (v - 0) * U + 10;
+  let grid = "";
+  for (let v = 0; v <= o.max; v++) {
+    grid += `<line x1="${gx(0)}" y1="${gy(v)}" x2="${gx(o.max)}" y2="${gy(v)}" stroke="${GRID}" stroke-width="1"/>`;
+    grid += `<line x1="${gx(v)}" y1="${gy(0)}" x2="${gx(v)}" y2="${gy(o.max)}" stroke="${GRID}" stroke-width="1"/>`;
+    if (v > 0) {
+      grid += `<text x="${gx(v)}" y="${gy(0) + 15}" text-anchor="middle" font-size="9.5" font-weight="700" fill="${FAINT}">${v}</text>`;
+      grid += `<text x="${gx(0) - 7}" y="${gy(v) + 3.4}" text-anchor="end" font-size="9.5" font-weight="700" fill="${FAINT}">${v}</text>`;
+    }
+  }
+  let out =
+    grid +
+    `<line x1="${gx(0)}" y1="${gy(0)}" x2="${gx(o.max) + 7}" y2="${gy(0)}" stroke="${INK}" stroke-width="1.7"/>` +
+    `<line x1="${gx(0)}" y1="${gy(0)}" x2="${gx(0)}" y2="${gy(o.max) - 7}" stroke="${INK}" stroke-width="1.7"/>` +
+    `<text x="${gx(0) - 7}" y="${gy(0) + 15}" text-anchor="end" font-size="10" font-weight="800" fill="${INK}">O</text>` +
+    `<text x="${gx(o.max) + 12}" y="${gy(0) + 4}" font-size="11" font-weight="800" font-style="italic" fill="${INK}">x</text>` +
+    `<text x="${gx(0)}" y="${gy(o.max) - 12}" text-anchor="middle" font-size="11" font-weight="800" font-style="italic" fill="${INK}">y</text>`;
+  for (const [px, py] of o.a.pts) out += `<circle cx="${gx(px)}" cy="${gy(py)}" r="5.6" fill="rgba(54,79,199,.9)" stroke="#243B96" stroke-width="1.6"/>`;
+  for (const [px, py] of o.b.pts) out += `<circle cx="${gx(px)}" cy="${gy(py)}" r="9.4" fill="none" stroke="#F08C00" stroke-width="2.8"/>`;
+  if (o.mark)
+    out +=
+      `<circle cx="${gx(o.mark.at[0])}" cy="${gy(o.mark.at[1])}" r="14" fill="none" stroke="${ROSE}" stroke-width="1.8" stroke-dasharray="4 3"/>` +
+      `<text x="${gx(o.mark.at[0]) + 20}" y="${gy(o.mark.at[1]) - 12}" font-size="12.5" font-weight="900" fill="${ROSE}">${o.mark.label}</text>`;
+  out +=
+    `<rect x="252" y="46" width="100" height="24" rx="12" fill="#FFFFFF" stroke="#243B96" stroke-width="1.2"/>` +
+    `<circle cx="266" cy="58" r="4.6" fill="rgba(54,79,199,.9)"/>` +
+    `<text x="276" y="62" font-size="9.8" font-weight="800" font-style="italic" fill="${NAVY}">${o.a.label}</text>` +
+    `<rect x="252" y="78" width="100" height="24" rx="12" fill="#FFFFFF" stroke="#B36200" stroke-width="1.2"/>` +
+    `<circle cx="266" cy="90" r="5.2" fill="none" stroke="#F08C00" stroke-width="2.4"/>` +
+    `<text x="276" y="94" font-size="9.8" font-weight="800" font-style="italic" fill="#B36200">${o.b.label}</text>`;
+  return svg("0 0 360 236", "모눈 위에 두 방정식의 해를 점과 고리로 나타낸 그림", out);
+}
+
+/** 가감법 세로 정렬(파라미터형) — 두 식을 = 기준으로 줄 맞추고 연산 배지(＋/−), 결과 행은
+ *  res 생략 시 ㉠로 가린다. 식은 "4x+2y=26" 꼴 문자열(뺄셈·음수는 U+2212). */
+export function m2ExamElimFig(o: { top: string; bot: string; op: "+" | "−"; res?: string }): string {
+  const split = (eq: string): [string, string] => {
+    const i = eq.indexOf("=");
+    return i < 0 ? [eq, ""] : [eq.slice(0, i), eq.slice(i + 1)];
+  };
+  const row = (eq: string, y: number, col: string): string => {
+    const [lhs, rhs] = split(eq);
+    return (
+      `<text x="168" y="${y}" text-anchor="end" font-size="17" font-weight="800"${ital(lhs)} fill="${col}">${lhs}</text>` +
+      `<text x="184" y="${y}" text-anchor="middle" font-size="15" font-weight="700" fill="${FAINT}">=</text>` +
+      `<text x="202" y="${y}" font-size="17" font-weight="800"${ital(rhs)} fill="${col}">${rhs}</text>`
+    );
+  };
+  let out =
+    `<rect x="36" y="12" width="288" height="146" rx="14" fill="#FFFFFF" stroke="${LINE}" stroke-width="1.4"/>` +
+    row(o.top, 52, INK) +
+    `<circle cx="66" cy="80" r="13" fill="#FDF4E7" stroke="#F08C00" stroke-width="1.6"/>` +
+    `<text x="66" y="85.5" text-anchor="middle" font-size="15" font-weight="900" fill="#B36200">${o.op}</text>` +
+    row(o.bot, 86, INK) +
+    `<line x1="56" y1="100" x2="304" y2="100" stroke="${INK}" stroke-width="2"/>`;
+  if (o.res) out += row(o.res, 132, NAVY);
+  else
+    out +=
+      `<rect x="150" y="112" width="60" height="30" rx="9" fill="#F4F7FE" stroke="${NAVY}" stroke-width="1.5" stroke-dasharray="4 3"/>` +
+      `<text x="180" y="133" text-anchor="middle" font-size="14" font-weight="900" fill="${NAVY}">㉠</text>`;
+  return svg("0 0 360 170", "두 방정식을 세로로 나란히 적어 더하거나 빼는 그림", out);
+}
+
+/** 가로·세로 문자 직사각형(파라미터형) — 연립 활용(둘레·길이 관계)용. cap은 조건 배지 문구. */
+export function m2ExamRectXYFig(o: { w: string; h: string; cap?: string }): string {
+  let out =
+    `<rect x="64" y="46" width="180" height="104" fill="#F6F9FF" stroke="${NAVY}" stroke-width="2"/>` +
+    `<path d="M64 160 h180 M64 154 v12 M244 154 v12" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<text x="154" y="180" text-anchor="middle" font-size="13" font-weight="800"${ital(o.w)} fill="${INK}">${o.w}</text>` +
+    `<path d="M50 46 v104 M44 46 h12 M44 150 h12" stroke="${FAINT}" stroke-width="1.4"/>` +
+    `<text x="32" y="102" text-anchor="middle" font-size="13" font-weight="800"${ital(o.h)} fill="${INK}">${o.h}</text>`;
+  if (o.cap)
+    out +=
+      `<rect x="250" y="82" width="96" height="32" rx="10" fill="#FFFFFF" stroke="#D6DEEA" stroke-width="1.3"/>` +
+      `<text x="298" y="103" text-anchor="middle" font-size="11.5" font-weight="800" fill="${NAVY}">${o.cap}</text>`;
+  return svg("0 0 360 194", "가로와 세로가 문자로 적힌 직사각형", out);
+}
