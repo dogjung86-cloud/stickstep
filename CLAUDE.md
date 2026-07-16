@@ -462,6 +462,30 @@ src/
   노출 수식은 U+2212를 쓴다. 계수·해처럼 무단위인 값은 `unitLabel`을 생략한다. 교차 유출 감사에서는
   같은 정의형 word, 숫자만 바꾼 방정식, 다른 문항 정답 용어의 문두 노출을 고가치 후보로 본다.
   QA는 `qa/check-exam-m1u2.mjs`, `qa/e2e-exam-m1u2.mjs`, `qa/shot-exam-figs-m1u2.mjs`를 사용한다.
+- **m2u1(수학 중2 Ⅰ 유리수의 표현과 식의 계산) 200문항 — 첫 중2 수학 시험(20×10 균일)**:
+  ① **유형 60/30/10 회귀** = 120(mcq+multi)/60(num)/20(word), 레슨당 12(mcq 9~10+multi 2~3)/6/2,
+  diff 8/8/4. m1u1의 54/36/10을 따르지 않은 근거: L5~L10은 답이 "식"이라 넘패드(int/dec) 불가 문항이
+  많고, num 30%는 지수·계수·차수·대입값 부품 규약으로 유지(조정 근거 기록 의무의 2호 사례).
+  ② **그림은 examFiguresMath m2u1 섹션 7종 신작**(m2ExamDigitStripFig 자릿수 띠(자리 번호 포함,
+  마디 강조 금지)·m2ExamJudgeFlowFig 판별 순서도(결론 ㉠㉡ 숨김, geoCycleQuizFig 계보)·
+  m2ExamPowStripFig 곱 나열 칩(bot 주면 분수 꼴)·m2ExamRectSplitFig·m2ExamRectAreaFig(거꾸로 재기)·
+  m2ExamBoxFig·m2ExamCylFig·m2ExamTrapFig — 문자 라벨은 font-style italic, 구할 값은 ㉠/?만) +
+  mExamTableFig 재사용(마방진 용도로 헤더 생략·aria 옵션·㉠㉡ 강조 추가, 표 2벌 분리 관행 유지).
+  ③ **mfmt 미지원 표기 3종의 수기 조립 표준**: 분모가 소인수 곱/지수 꼴인 분수는 mx-frac 구조 복제
+  (fracDen·frac1 로컬 헬퍼, 분모에 <sup>), 빈칸 지수는 mx span, 순환소수 점은 cyc() 재사용 + 잘못된
+  표기 함정 보기는 combining dot(U+0307) 직접 조합. ④ **검산 = codex exec 3병렬 묶음(read-only,
+  레슨 3·3·4, `-o` 보고서는 리포 밖)**: 200/200 정답 재도출 일치·정답 오류 0, 실질 결함 16건 전부
+  해설·중의성(대표: word bank에 정답의 상위 개념 칩 금지 — 단항식↔'다항식'·소인수↔'약수'가 문장을
+  참으로 만듦 / "나올 수 있는 나머지" 문항은 실제 종류=이론 상한인 수(1/17)로 설계 — 1/13은 실제 6종
+  ≠ 상한 12종 중의성). 검산 지시문에 mfmt·cyc 읽는 법을 포함해야 가짜 불일치가 없다(레슨당 Opus
+  병렬 대비 고정비 절감, 전수 판정표(OK/불일치/의심+사유) 강제로 품질 유지). ⑤ **분업 사고 기록**:
+  에이전트 3개(60/60/80) 중 2개가 세션 사용량 한도로 사망(1개는 64k 출력 한도) → 잔여 65문항 메인
+  직접 저작. 64k 예방은 "응답당 도구 1개·호출당 문항 5개"(파일당 Write 1+Edit 3). 백틱 템플릿 해설은
+  check 스크립트 explain 정규식이 ["`] 둘 다 받아야 한다. em대시는 메인 저작분에서도 재발(74건 일괄
+  sed) — 저작 직후 파일 단위 grep이 정석. 기계 검사 `node qa/check-exam-m2u1.mjs`((?<!소)인수분해
+  lookbehind 포함), QA `PORT=<포트> node qa/e2e-exam-m2u1.mjs`(47검증 — 열 파트 문구·2×10 균형·
+  수학 지도 시딩 viewSubject "math"+viewGrade "g2"·무료 응시 오답은 L1~L3 구간 앞 6문항),
+  그림 눈검수 `qa/shot-exam-figs-m2u1.mjs`(figure 문항 21개 자동 수집).
 
 ## 수학 트랙 — 과목 차원 · 수학 레슨 문법 (상세는 MATH_GUIDE.md)
 - **중2 수학 Ⅰ(m2u1, 유리수의 표현과 식의 계산) 완성** — 10레슨(무료 3+프리미엄 7), 테마 `calc`
