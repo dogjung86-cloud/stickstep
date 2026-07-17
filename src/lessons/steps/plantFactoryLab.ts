@@ -28,7 +28,6 @@ interface LeafFactoryStep {
 type InputKind = "light" | "carbon" | "water";
 interface InputState {
   started: boolean;
-  done: boolean;
   p: number;
 }
 interface Point {
@@ -199,23 +198,24 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
   const goalChips = el(
     "div",
     { class: "pn-badges force3" },
-    el("div", { class: "pn-badge plant", dataset: { g: "inputs" } }, el("b", { text: "재료 도착" }), el("span", { text: "물·CO₂·빛" })),
-    el("div", { class: "pn-badge plant", dataset: { g: "products" } }, el("b", { text: "산물 만들기" }), el("span", { text: "무엇이 생길까?" })),
+    el("div", { class: "pn-badge plant", dataset: { g: "products" } }, el("b", { text: "반응로 가동" }), el("span", { text: "물·CO₂+빛" })),
+    el("div", { class: "pn-badge plant", dataset: { g: "lightOnly" } }, el("b", { text: "빛만 켜기" }), el("span", { text: "재료일까?" })),
     el("div", { class: "pn-badge plant", dataset: { g: "storage" } }, el("b", { text: "녹말 저장" }), el("span", { text: "포도당→녹말" })),
   );
 
   const makeInputButton = (kind: InputKind, label: string): HTMLButtonElement =>
-    el("button", { class: "plant-btn", text: label, dataset: { act: kind }, attrs: { type: "button" } });
-  const waterBtn = makeInputButton("water", "물");
-  const carbonBtn = makeInputButton("carbon", "이산화 탄소");
+    el("button", {
+      class: "plant-btn",
+      text: label + " · 닫힘",
+      dataset: { act: kind, label },
+      attrs: { type: "button", "aria-pressed": "false" },
+    });
+  const waterBtn = makeInputButton("water", "물관");
+  const carbonBtn = makeInputButton("carbon", "기공 CO₂");
   const lightBtn = makeInputButton("light", "빛");
-  carbonBtn.disabled = true;
-  carbonBtn.setAttribute("aria-disabled", "true");
-  lightBtn.disabled = true;
-  lightBtn.setAttribute("aria-disabled", "true");
   const reactionBtn = el("button", {
     class: "plant-btn",
-    text: "광합성 시작",
+    text: "반응로 · 재료를 감지해 자동 작동",
     dataset: { act: "reaction" },
     attrs: { type: "button", disabled: true, "aria-disabled": "true" },
   });
@@ -230,7 +230,7 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
 
   const helper = el("div", {
     class: "helper",
-    html: "<b>물 → 이산화 탄소 → 빛</b>의 차례로 재료와 에너지가 잎에 도착하는 모습을 확인해 보세요.",
+    html: "<b>물관·기공 CO₂ 밸브</b>와 <b>빛 스위치</b>를 자유롭게 열고 닫아 보세요. 무엇을 끊으면 생성이 멈추는지 반응로에서 바로 확인할 수 있어요.",
   });
   host.append(
     goalChips,
@@ -242,14 +242,14 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const states: Record<InputKind, InputState> = {
-    light: { started: false, done: false, p: 0 },
-    carbon: { started: false, done: false, p: 0 },
-    water: { started: false, done: false, p: 0 },
+    light: { started: false, p: 0 },
+    carbon: { started: false, p: 0 },
+    water: { started: false, p: 0 },
   };
   const buttons: Record<InputKind, HTMLButtonElement> = { light: lightBtn, carbon: carbonBtn, water: waterBtn };
   const goals = new Set<string>();
-  let reactionState: 0 | 1 | 2 = 0;
   let reactionP = 0;
+  let lightOnlyMs = 0;
   let storageState: 0 | 1 | 2 = 0;
   let storageP = 0;
   let finished = false;
@@ -297,49 +297,45 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
       finished = true;
       processRead.textContent = "녹말 저장 완료";
       helper.innerHTML =
-        "발견 완료! 잎은 <b>빛에너지</b>로 <b>이산화 탄소와 물</b>을 이용해 <b>포도당과 산소</b>를 만들어요. 포도당 일부는 물에 잘 녹지 않는 <b>녹말</b>로 바뀌어 잎에 저장돼요.";
+        "발견 완료! <b>빛은 반응을 움직이는 에너지</b>이고, 실제 재료는 <b>이산화 탄소와 물</b>이에요. 셋이 함께 있을 때만 포도당과 산소가 생기며, 포도당 일부는 물에 잘 녹지 않는 <b>녹말</b>로 바뀌어 잎에 저장돼요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
   }
 
-  function inputMessage(kind: InputKind): string {
-    if (kind === "light") return "빛 알갱이가 반응 화살표 쪽으로 이동해 빛에너지를 전달해요.";
-    if (kind === "carbon") return "공기 중 이산화 탄소 알갱이가 기공을 지나 잎 안으로 들어가요.";
-    return "뿌리에서 올라온 물방울이 줄기의 물관을 따라 잎으로 이동해요.";
-  }
-
-  function startInput(kind: InputKind): void {
+  function toggleInput(kind: InputKind): void {
     const state = states[kind];
-    if (state.started) return;
-    if (kind === "carbon" && !states.water.done) return;
-    if (kind === "light" && !states.carbon.done) return;
-    state.started = true;
-    setEnabled(buttons[kind], false);
-    buttons[kind].classList.add("on");
-    helper.innerHTML = inputMessage(kind);
+    state.started = !state.started;
+    state.p = state.started ? 1 : 0;
+    const button = buttons[kind];
+    const label = button.dataset.label ?? "공급";
+    button.textContent = label + (state.started ? " · 열림" : " · 닫힘");
+    button.classList.toggle("on", state.started);
+    button.setAttribute("aria-pressed", String(state.started));
+    const activeCount = Object.values(states).filter((item) => item.started).length;
+    materialRead.textContent = "공급 " + String(activeCount) + "/3";
+    if (state.started) {
+      helper.innerHTML = kind === "light"
+        ? "빛에너지가 반응로에 닿아요. 이제 <b>물과 이산화 탄소가 실제 재료인지</b> 밸브를 열고 닫아 확인해 보세요."
+        : kind === "carbon"
+          ? "기공이 열려 이산화 탄소가 들어와요. 반응이 시작되려면 <b>물과 빛에너지</b>도 함께 필요해요."
+          : "물관이 열려 물이 들어와요. 반응이 시작되려면 <b>이산화 탄소와 빛에너지</b>도 함께 필요해요.";
+    } else {
+      helper.innerHTML = label + " 공급을 끊었어요. <b>반응로의 생성이 멈추는지</b> 바로 확인해 보세요.";
+    }
     hideCap();
     haptic(HAPTIC.tap);
   }
 
   const inputHandlers: Record<InputKind, () => void> = {
-    light: () => startInput("light"),
-    carbon: () => startInput("carbon"),
-    water: () => startInput("water"),
+    light: () => toggleInput("light"),
+    carbon: () => toggleInput("carbon"),
+    water: () => toggleInput("water"),
   };
   for (const kind of Object.keys(buttons) as InputKind[]) buttons[kind].addEventListener("click", inputHandlers[kind]);
 
-  const onReaction = (): void => {
-    if (reactionState !== 0 || !Object.values(states).every((x) => x.done)) return;
-    reactionState = 1;
-    setEnabled(reactionBtn, false);
-    reactionBtn.classList.add("on");
-    processRead.textContent = "포도당·산소 만드는 중";
-    helper.innerHTML = "세 재료가 모였어요. 엽록체에서 <b>빛에너지</b>를 이용해 어떤 산물이 생기는지 지켜보세요.";
-    haptic(HAPTIC.tap);
-  };
   const onStorage = (): void => {
-    if (storageState !== 0 || reactionState !== 2) return;
+    if (storageState !== 0 || reactionP < 0.62) return;
     storageState = 1;
     setEnabled(storageBtn, false);
     storageBtn.classList.add("on");
@@ -347,7 +343,6 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
     helper.innerHTML = "포도당 여러 개를 이어 물에 잘 녹지 않는 <b>녹말</b>로 바꾸어 잎에 저장해요.";
     haptic(HAPTIC.tap);
   };
-  reactionBtn.addEventListener("click", onReaction);
   storageBtn.addEventListener("click", onStorage);
 
   function label(
@@ -371,43 +366,28 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
     const ctx = fit.ctx;
     W = fit.w;
 
-    for (const kind of Object.keys(states) as InputKind[]) {
-      const state = states[kind];
-      if (state.started && !state.done) {
-        state.p = clamp(state.p + dt * 0.026, 0, 1);
-        if (state.p >= 1) {
-          state.done = true;
-          materialRead.textContent = `재료 ${Object.values(states).filter((x) => x.done).length}/3`;
-          if (kind === "water") {
-            setEnabled(carbonBtn, true);
-            processRead.textContent = "이산화 탄소 차례";
-            helper.innerHTML = "잎 안에 <b>물</b> 상자가 생겼어요. 이제 공기 중 <b>이산화 탄소</b>를 기공으로 보내 보세요.";
-            toast("물이 물관을 따라 잎에 도착했어요");
-          } else if (kind === "carbon") {
-            setEnabled(lightBtn, true);
-            processRead.textContent = "빛에너지 차례";
-            helper.innerHTML = "<b>이산화 탄소</b>도 잎 안에 모였어요. 마지막으로 <b>빛</b>을 반응 화살표 쪽으로 보내 보세요.";
-            toast("이산화 탄소가 기공을 지나 들어왔어요");
-          }
-        }
-      }
-    }
-    if (Object.values(states).every((x) => x.done) && !goals.has("inputs")) {
-      collect("inputs", "물·CO₂·빛 도착", "물, 이산화 탄소, 빛에너지가 모두 모였어요");
-      setEnabled(reactionBtn, true);
-      processRead.textContent = "광합성 시작 가능";
-      helper.innerHTML = "재료가 모두 모였어요. 이제 <b>광합성 시작</b>을 눌러 포도당과 산소를 만들어 보세요.";
-    }
-    if (reactionState === 1) {
-      reactionP = clamp(reactionP + dt * 0.021, 0, 1);
-      if (reactionP >= 1) {
-        reactionState = 2;
-        processRead.textContent = "포도당·산소 생성";
-        collect("products", "포도당·산소", "포도당과 산소가 만들어졌어요");
+    const allOn = states.water.started && states.carbon.started && states.light.started;
+    const lightOnly = goals.has("products") && states.light.started && !states.water.started && !states.carbon.started;
+    reactionBtn.classList.toggle("on", allOn);
+    reactionBtn.textContent = allOn ? "반응로 · 포도당과 산소 생성 중" : "반응로 · 재료가 부족해 멈춤";
+    if (allOn) {
+      reactionP = clamp(reactionP + dt * 0.016, 0, 1);
+      processRead.textContent = "포도당·산소 생성 중";
+      if (reactionP >= 0.62 && !goals.has("products")) {
+        collect("products", "포도당·산소 생성", "물과 이산화 탄소에 빛에너지가 더해져 산물이 생겼어요");
         setEnabled(storageBtn, true);
-        helper.innerHTML = "광합성으로 <b>포도당과 산소</b>가 만들어졌어요. 마지막으로 포도당을 저장하기 알맞은 형태로 바꿔 보세요.";
+        helper.innerHTML = "반응로가 가동됐어요. 이제 <b>물관과 기공 CO₂를 모두 닫고 빛만 남겨</b> 빛이 재료인지 확인해 보세요.";
       }
+    } else {
+      processRead.textContent = states.light.started ? "생성 멈춤 · 재료 부족" : "생성 멈춤 · 빛 꺼짐";
     }
+    if (lightOnly) {
+      lightOnlyMs += dt * 16.7;
+      if (lightOnlyMs > 420) {
+        collect("lightOnly", "생성 0 · 빛은 에너지", "빛만으로는 산물이 생기지 않아요");
+        helper.innerHTML = "확인했어요. <b>빛은 재료가 아니라 에너지</b>예요. 만들어 둔 포도당을 녹말로 저장해 보세요.";
+      }
+    } else lightOnlyMs = 0;
     if (storageState === 1) {
       storageP = clamp(storageP + dt * 0.022, 0, 1);
       if (storageP >= 1) {
@@ -514,8 +494,8 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
     // 1. 물: 물관을 따라 올라온 물방울이 잎 안의 같은 크기 상자로 바뀐다.
     if (states.water.started) {
       drawPathStroke(ctx, waterPath, plantColor("water"), 2.8, 0.82);
-      if (!states.water.done) {
-        const point = pathPoint(waterPath, states.water.p);
+      for (let i = 0; i < 3; i++) {
+        const point = pathPoint(waterPath, (tMs / 1650 + i * 0.32) % 1);
         drawMaterialToken(ctx, point.x, point.y, 7.5, "water");
       }
     }
@@ -526,8 +506,7 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
     if (states.carbon.started) {
       drawPathStroke(ctx, carbonPath, plantColor("carbon"), 2.4, 0.66);
       for (let i = 0; i < 6; i++) {
-        const particleP = clamp(states.carbon.p * 1.22 - i * 0.085, 0, 1);
-        if (particleP <= 0 || (states.carbon.done && particleP >= 1)) continue;
+        const particleP = (tMs / 1500 + i * 0.16) % 1;
         const point = pathPoint(carbonPath, particleP);
         drawMaterialToken(ctx, point.x + ((i % 2) * 5 - 2.5), point.y + ((i % 3) - 1) * 4, 4.2, "carbon");
       }
@@ -537,7 +516,7 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
 
     const plusP = Math.min(waterBoxP, carbonBoxP);
     if (plusP > 0) label(ctx, "+", (waterBox.x + carbonBox.x) / 2, reactionY, n0);
-    const reactionArrowP = states.carbon.done ? 1 : clamp((states.carbon.p - 0.74) / 0.26, 0, 1);
+    const reactionArrowP = allOn ? 1 : 0;
     if (reactionArrowP > 0) {
       ctx.save();
       ctx.globalAlpha = smoothstep(reactionArrowP);
@@ -550,20 +529,16 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
     label(ctx, "빛", sunX, sunY + 31, plantColor("sun"));
     if (states.light.started) {
       drawPathStroke(ctx, lightPath, plantColor("sun"), 2.6, 0.72);
-      if (!states.light.done) {
-        for (let i = 0; i < 4; i++) {
-          const photonP = clamp(states.light.p * 1.2 - i * 0.12, 0, 1);
-          if (photonP <= 0) continue;
-          const point = pathPoint(lightPath, photonP);
-          ctx.save();
-          ctx.shadowColor = plantColor("sun");
-          ctx.shadowBlur = 10;
-          ctx.fillStyle = plantColor("sun");
-          ctx.beginPath();
-          ctx.arc(point.x, point.y, 4.8, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
-        }
+      for (let i = 0; i < 4; i++) {
+        const point = pathPoint(lightPath, (tMs / 1250 + i * 0.23) % 1);
+        ctx.save();
+        ctx.shadowColor = plantColor("sun");
+        ctx.shadowBlur = 10;
+        ctx.fillStyle = plantColor("sun");
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 4.8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
       }
     }
     const lightBoxP = clamp((states.light.p - 0.68) / 0.32, 0, 1);
@@ -578,14 +553,12 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
       if (storageP > 0.08) label(ctx, "저장", outputX, glucoseY - 24, plantColor("starch"));
       if (productP > 0) label(ctx, "+", outputX, reactionY + 1, n0);
       drawTextBox(ctx, "산소", outputX, oxygenY, 46, plantColor("oxygen"), productP);
-      drawPathStroke(ctx, oxygenPath, plantColor("oxygen"), 2.5, 0.68 * productP);
-      for (let i = 0; i < 5; i++) {
-        const oxygenP = reactionState === 1
-          ? clamp(reactionP * 1.25 - i * 0.11, 0, 1)
-          : (tMs / 1500 + i * 0.19) % 1;
-        if (oxygenP <= 0) continue;
-        const point = pathPoint(oxygenPath, oxygenP);
-        drawMaterialToken(ctx, point.x, point.y, 4.6, "oxygen");
+      drawPathStroke(ctx, oxygenPath, plantColor("oxygen"), 2.5, (allOn ? 0.68 : 0.08) * productP);
+      if (allOn) {
+        for (let i = 0; i < 5; i++) {
+          const point = pathPoint(oxygenPath, (tMs / 1500 + i * 0.19) % 1);
+          drawMaterialToken(ctx, point.x, point.y, 4.6, "oxygen");
+        }
       }
     }
 
@@ -595,9 +568,11 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
       ctx.fill();
       const equation = storageState === 2
         ? "포도당 → 녹말로 저장"
-        : reactionState === 2
+        : allOn
           ? "빛에너지 + 이산화 탄소 + 물 → 포도당 + 산소"
-          : "물과 이산화 탄소에 빛에너지가 더해져요";
+          : states.light.started && !states.water.started && !states.carbon.started
+            ? "빛만으로는 포도당과 산소가 생기지 않아요"
+            : "물·이산화 탄소·빛이 모두 있어야 해요";
       label(ctx, equation, W / 2, 400, storageState === 2 ? plantColor("starch") : n0);
     }
 
@@ -609,7 +584,7 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
     ctx.globalAlpha = 1;
   });
 
-  api.setCTA("재료를 넣고 광합성을 완성해요", { enabled: false });
+  api.setCTA("밸브와 빛을 조작해 세 목표를 완성해요", { enabled: false });
   const startRaf = requestAnimationFrame(() => loop.start());
 
   return () => {
@@ -620,7 +595,6 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
     plantImage.removeEventListener("error", onPlantError);
     plantImage.src = "";
     for (const kind of Object.keys(buttons) as InputKind[]) buttons[kind].removeEventListener("click", inputHandlers[kind]);
-    reactionBtn.removeEventListener("click", onReaction);
     storageBtn.removeEventListener("click", onStorage);
   };
 };

@@ -29,7 +29,7 @@ type RespireInput = "glucose" | "oxygen";
 type RespirePhase = "loading" | "running" | "done";
 
 const RESP_H = 360;
-const CYCLE_H = 350;
+const CYCLE_H = 360;
 const TAU = Math.PI * 2;
 
 function cssVar(name: string): string {
@@ -201,21 +201,21 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
     { class: "pn-badges force3" },
     el(
       "div",
-      { class: "pn-badge plant", dataset: { g: "glucose" } },
-      el("b", { text: "포도당 넣기" }),
-      el("span", { text: "양분을 가져와요" }),
-    ),
-    el(
-      "div",
-      { class: "pn-badge plant", dataset: { g: "oxygen" } },
-      el("b", { text: "산소 넣기" }),
-      el("span", { text: "공기에서 가져와요" }),
-    ),
-    el(
-      "div",
       { class: "pn-badge plant", dataset: { g: "energy" } },
-      el("b", { text: "호흡 작동" }),
-      el("span", { text: "산물과 에너지 확인" }),
+      el("b", { text: "에너지 꺼내기" }),
+      el("span", { text: "당+O₂ → 에너지" }),
+    ),
+    el(
+      "div",
+      { class: "pn-badge plant", dataset: { g: "use" } },
+      el("b", { text: "에너지 쓰기" }),
+      el("span", { text: "생장·운반" }),
+    ),
+    el(
+      "div",
+      { class: "pn-badge plant", dataset: { g: "night" } },
+      el("b", { text: "밤에도 호흡" }),
+      el("span", { text: "빛 없이도 작동" }),
     ),
   );
 
@@ -225,7 +225,7 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
     attrs: {
       tabindex: "0",
       role: "application",
-      "aria-label": "포도당과 산소를 마이토콘드리아로 끌어 넣고 호흡 시작 버튼을 누르는 실험",
+      "aria-label": "포도당과 산소로 에너지를 꺼내 생장과 물질 운반에 쓰고, 밤에도 호흡이 계속되는지 확인하는 실험",
     },
   });
   const statePill = el("span", { text: "재료를 기다려요" });
@@ -271,6 +271,15 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
     attrs: { type: "button", disabled: true },
     style: "width:100%;opacity:.5",
   });
+  const dayNightBtn = el("button", {
+    class: "plant-btn",
+    text: "빛 끄기 · 밤으로",
+    attrs: { type: "button", "aria-pressed": "false" },
+  });
+  const growBtn = el("button", { class: "plant-btn", text: "어린싹 키우기 · 30", attrs: { type: "button", disabled: true } });
+  const transportBtn = el("button", { class: "plant-btn", text: "물질 운반하기 · 30", attrs: { type: "button", disabled: true } });
+  const fruitBtn = el("button", { class: "plant-btn", text: "꽃·열매 만들기 · 30", attrs: { type: "button", disabled: true } });
+  const activityControls = el("div", { class: "plant-controls three" }, growBtn, transportBtn, fruitBtn);
   const equation = el(
     "div",
     { class: "plant-readout", attrs: { "aria-live": "polite" } },
@@ -281,7 +290,15 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
     class: "helper",
     html: "식물은 <b>포도당에 저장된 에너지를 생명활동에 바로 쓸 수는 없어요</b>. 포도당과 산소를 마이토콘드리아에 넣어 생명활동에 쓸 에너지를 꺼내 보세요.",
   });
-  host.append(goalChips, helper, stage, inputControls, startBtn, equation); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
+  host.append(
+    goalChips,
+    helper,
+    stage,
+    inputControls,
+    el("div", { class: "plant-controls two" }, startBtn, dayNightBtn),
+    activityControls,
+    equation,
+  ); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const loaded: Record<RespireInput, boolean> = { glucose: false, oxygen: false };
@@ -289,12 +306,15 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
   let finished = false;
   let phase: RespirePhase = "loading";
   let reaction = 0;
+  let energyReserve = 0;
+  let night = false;
+  const usedActivities = new Set<"grow" | "transport" | "fruit">();
   let canvasW = 340;
   let drag: { kind: RespireInput; x: number; y: number; moved: boolean; sx: number; sy: number } | null = null;
   let selected: RespireInput = "glucose";
   let a11yTick = 0;
 
-  function collect(id: "glucose" | "oxygen" | "energy", sub: string): void {
+  function collect(id: "energy" | "use" | "night", sub: string): void {
     if (goals.has(id)) return;
     goals.add(id);
     const chip = goalChips.querySelector('[data-g="' + id + '"]') as HTMLElement | null;
@@ -305,9 +325,9 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "<b>식물의 호흡</b>은 포도당과 산소를 이용하면 이산화 탄소와 물이 생기고, 그 과정에서 생명활동에 쓸 에너지를 얻는 과정이에요.";
+        "발견 완료! <b>식물의 호흡</b>은 포도당과 산소로 이산화 탄소와 물을 만들면서 생명활동 에너지를 꺼내는 과정이에요. 그 에너지는 생장과 물질 운반 등에 쓰이고, <b>빛이 없는 밤에도 모든 살아 있는 기관에서 계속</b>돼요.";
       api.recordQuiz(true);
-      api.enableCTA(s.cta ?? "낮과 밤 비교하기");
+      api.enableCTA(s.cta ?? "호흡 정리하기");
     }
   }
 
@@ -319,16 +339,26 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
     const ready = loaded.glucose && loaded.oxygen && phase === "loading";
     startBtn.disabled = !ready;
     startBtn.style.opacity = ready ? "1" : ".5";
+    dayNightBtn.textContent = night ? "빛 켜기 · 낮으로" : "빛 끄기 · 밤으로";
+    dayNightBtn.classList.toggle("on", night);
+    dayNightBtn.setAttribute("aria-pressed", String(night));
+    const activityButtons: Array<["grow" | "transport" | "fruit", HTMLButtonElement]> = [
+      ["grow", growBtn], ["transport", transportBtn], ["fruit", fruitBtn],
+    ];
+    for (const [id, button] of activityButtons) {
+      button.disabled = energyReserve < 30 || usedActivities.has(id);
+      button.classList.toggle("on", usedActivities.has(id));
+    }
 
     if (phase === "done") {
-      statePill.textContent = "호흡 완료";
-      energyPill.textContent = "생명활동 에너지 확보";
+      statePill.textContent = night ? "밤 · 호흡 계속" : "낮 · 호흡 계속";
+      energyPill.textContent = "남은 에너지 " + String(energyReserve);
       equation.innerHTML =
         "<span><b>포도당 + 산소</b></span><span><b>이산화 탄소 + 물 + 에너지</b></span>";
       return;
     }
     if (phase === "running") {
-      statePill.textContent = "호흡 진행 중";
+      statePill.textContent = night ? "밤 · 호흡 진행 중" : "낮 · 호흡 진행 중";
       energyPill.textContent = "에너지를 꺼내는 중";
       equation.innerHTML = "<span><b>마이토콘드리아 작동 중</b></span><span>재료를 분해하고 있어요</span>";
       return;
@@ -345,7 +375,6 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
   function addInput(kind: RespireInput): void {
     if (phase !== "loading" || loaded[kind]) return;
     loaded[kind] = true;
-    collect(kind, "마이토콘드리아 안");
     haptic(HAPTIC.select);
     cap.style.opacity = "0";
     if (kind === "glucose") {
@@ -357,6 +386,31 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
         ? "재료가 모두 모였어요. <b>호흡 시작</b>을 눌러 산물과 에너지를 확인해요."
         : "산소가 들어왔어요. 이번에는 잎에서 만든 양분인 <b>포도당</b>을 넣어 보세요.";
     }
+    updateControls();
+  }
+
+  function toggleNight(): void {
+    night = !night;
+    haptic(HAPTIC.select);
+    cap.style.opacity = "0";
+    helper.innerHTML = night
+      ? "빛을 껐어요. 광합성과 달리 <b>호흡 발전소는 밤에도 계속</b> 작동하는지 지켜보세요."
+      : "낮으로 돌아왔어요. 호흡은 빛의 유무와 관계없이 계속돼요.";
+    if (night && (phase === "running" || phase === "done")) collect("night", "빛 없이도 발전소 작동");
+    updateControls();
+  }
+
+  function spendEnergy(id: "grow" | "transport" | "fruit"): void {
+    if (phase !== "done" || energyReserve < 30 || usedActivities.has(id)) return;
+    usedActivities.add(id);
+    energyReserve -= 30;
+    haptic(HAPTIC.tap);
+    helper.innerHTML = id === "grow"
+      ? "에너지를 써서 <b>어린싹을 자라게</b> 했어요."
+      : id === "transport"
+        ? "에너지를 써서 물과 양분을 <b>필요한 곳으로 운반</b>했어요."
+        : "에너지를 써서 <b>꽃과 열매를 만드는 활동</b>을 했어요.";
+    if (usedActivities.has("grow") && usedActivities.has("transport")) collect("use", "생장·운반에 소비");
     updateControls();
   }
 
@@ -375,6 +429,13 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
   glucoseBtn.addEventListener("click", glucoseClick);
   oxygenBtn.addEventListener("click", oxygenClick);
   startBtn.addEventListener("click", startRespiration);
+  dayNightBtn.addEventListener("click", toggleNight);
+  const growClick = (): void => spendEnergy("grow");
+  const transportClick = (): void => spendEnergy("transport");
+  const fruitClick = (): void => spendEnergy("fruit");
+  growBtn.addEventListener("click", growClick);
+  transportBtn.addEventListener("click", transportClick);
+  fruitBtn.addEventListener("click", fruitClick);
 
   function sourcePos(kind: RespireInput): { x: number; y: number } {
     return kind === "glucose"
@@ -461,6 +522,11 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
     bg.addColorStop(1, cssVar("--stage"));
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, w, RESP_H);
+    ctx.save();
+    ctx.globalAlpha = night ? 0.72 : 0.9;
+    if (night) drawMoon(ctx, w - 30, 32, 13);
+    else drawSun(ctx, w - 30, 32, 12, tMs * 0.00025);
+    ctx.restore();
 
     ctx.save();
     ctx.globalAlpha = 0.12;
@@ -554,6 +620,28 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
         ctx.restore();
       }
     }
+
+    if (phase === "done") {
+      const gx0 = 28;
+      const gx1 = w - 28;
+      const gy = RESP_H - 10;
+      ctx.strokeStyle = cssVar("--stage-line");
+      ctx.lineWidth = 7;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(gx0, gy);
+      ctx.lineTo(gx1, gy);
+      ctx.stroke();
+      const energyG = ctx.createLinearGradient(gx0, 0, gx1, 0);
+      energyG.addColorStop(0, plantColor("glucose"));
+      energyG.addColorStop(0.55, plantColor("sun"));
+      energyG.addColorStop(1, cssVar("--n0"));
+      ctx.strokeStyle = energyG;
+      ctx.beginPath();
+      ctx.moveTo(gx0, gy);
+      ctx.lineTo(gx0 + (gx1 - gx0) * (energyReserve / 100), gy);
+      ctx.stroke();
+    }
   }
 
   const loop = createLoop((dt, tMs) => {
@@ -562,7 +650,10 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
       energyPill.textContent = "생명활동 에너지 " + String(Math.round(reaction * 100));
       if (reaction >= 1) {
         phase = "done";
-        collect("energy", "CO₂·물·에너지 확인");
+        energyReserve = 100;
+        collect("energy", "CO₂·물+에너지 확보");
+        if (night) collect("night", "빛 없이도 발전소 작동");
+        helper.innerHTML = "에너지를 꺼냈어요. 아래에서 <b>어린싹 키우기와 물질 운반</b>에 에너지를 직접 배분해 보세요.";
         updateControls();
       }
     }
@@ -573,14 +664,14 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
       canvas.setAttribute(
         "aria-label",
         phase === "done"
-          ? "호흡 완료. 포도당과 산소로 이산화 탄소, 물, 생명활동 에너지를 얻었어요."
+          ? (night ? "밤에도 " : "낮에 ") + "호흡 중. 남은 에너지 " + String(energyReserve) + "."
           : "포도당 " + (loaded.glucose ? "투입됨" : "대기 중") + ", 산소 " + (loaded.oxygen ? "투입됨" : "대기 중"),
       );
     }
   });
   const startFrame = requestAnimationFrame(() => loop.start());
   updateControls();
-  api.setCTA("호흡 재료와 산물을 모두 확인해요", { enabled: false });
+  api.setCTA("에너지를 꺼내 쓰고 밤 호흡을 확인해요", { enabled: false });
 
   return () => {
     cancelAnimationFrame(startFrame);
@@ -588,6 +679,10 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
     glucoseBtn.removeEventListener("click", glucoseClick);
     oxygenBtn.removeEventListener("click", oxygenClick);
     startBtn.removeEventListener("click", startRespiration);
+    dayNightBtn.removeEventListener("click", toggleNight);
+    growBtn.removeEventListener("click", growClick);
+    transportBtn.removeEventListener("click", transportClick);
+    fruitBtn.removeEventListener("click", fruitClick);
     canvas.removeEventListener("pointerdown", onPointerDown);
     canvas.removeEventListener("pointermove", onPointerMove);
     canvas.removeEventListener("pointerup", onPointerUp);
@@ -596,19 +691,10 @@ export const plantRespireLab: StepRenderer = (host, step, api) => {
   };
 };
 
-function lightAt(hour: number): number {
-  if (hour <= 6 || hour >= 18) return 0;
-  return Math.sin(((hour - 6) / 12) * Math.PI);
-}
-
-function formatHour(hour: number): string {
-  const rounded = Math.round(hour) % 24;
-  if (rounded === 0) return "밤 12시";
-  if (rounded < 6) return "새벽 " + String(rounded) + "시";
-  if (rounded < 12) return "오전 " + String(rounded) + "시";
-  if (rounded === 12) return "낮 12시";
-  if (rounded < 18) return "오후 " + String(rounded - 12) + "시";
-  return "밤 " + String(rounded - 12) + "시";
+function photosynthesisRate(light: number): number {
+  const max = 1.26;
+  const k = 2.35;
+  return max * (1 - Math.exp(-k * light)) / (1 - Math.exp(-k));
 }
 
 function drawMoon(ctx: CanvasRenderingContext2D, x: number, y: number, r: number): void {
@@ -659,19 +745,19 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
       "div",
       { class: "pn-badge plant", dataset: { g: "day" } },
       el("b", { text: "강한 낮" }),
-      el("span", { text: "순기체 출입 관찰" }),
+      el("span", { text: "순 O₂ 방출" }),
     ),
     el(
       "div",
       { class: "pn-badge plant", dataset: { g: "night" } },
-      el("b", { text: "빛 없는 밤" }),
-      el("span", { text: "순기체 출입 관찰" }),
+      el("b", { text: "한밤" }),
+      el("span", { text: "순 CO₂ 방출" }),
     ),
     el(
       "div",
-      { class: "pn-badge plant", dataset: { g: "always" } },
-      el("b", { text: "호흡은 항상" }),
-      el("span", { text: "낮·밤 모두 확인" }),
+      { class: "pn-badge plant", dataset: { g: "zero" } },
+      el("b", { text: "순이동 0" }),
+      el("span", { text: "두 양이 같을 때" }),
     ),
   );
 
@@ -679,14 +765,18 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
     class: "plant-canvas",
     style: "height:" + String(CYCLE_H) + "px",
     attrs: {
-      role: "img",
-      "aria-label": "강한 낮과 빛 없는 밤의 광합성, 호흡, 순기체 출입을 비교해요.",
+      tabindex: "0",
+      role: "slider",
+      "aria-label": "빛의 세기를 조절해 광합성량과 호흡량의 차이를 관찰해요.",
+      "aria-valuemin": "0",
+      "aria-valuemax": "100",
+      "aria-valuenow": "55",
     },
   });
   const photoDot = el("span", { class: "pdot", style: "background:var(--plant-leaf-hi)" });
-  const photoPill = el("span", { text: "광합성 · 호흡보다 강함" });
-  const respPill = el("span", { text: "호흡 · 항상 진행" });
-  const cap = el("div", { class: "stage-cap", text: "아래에서 강한 낮과 빛 없는 밤을 차례로 눌러요" });
+  const photoPill = el("span", { text: "광합성량 계산 중" });
+  const respPill = el("span", { text: "호흡량 · 일정" });
+  const cap = el("div", { class: "stage-cap", text: "오른쪽 빛 다이얼을 위아래로 끌어 보세요" });
   const stage = el(
     "div",
     { class: "stage plant-stage" },
@@ -705,30 +795,33 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
     cap,
   );
 
-  const timeLabel = el("span", { html: "<b>오전 7시</b>" });
-  const netLabel = el("span", { text: "두 과정의 차이를 계산하는 중" });
-  const readout = el("div", { class: "plant-readout", attrs: { "aria-live": "polite" } }, timeLabel, netLabel);
+  const lightLabel = el("span", { html: "<b>빛의 세기 55%</b>" });
+  const netLabel = el("span", { text: "순 기체 이동 계산 중" });
+  const readout = el("div", { class: "plant-readout", attrs: { "aria-live": "polite" } }, lightLabel, netLabel);
   const dayBtn = el("button", { class: "plant-btn on", text: "강한 낮 보기", attrs: { type: "button" } });
   const nightBtn = el("button", { class: "plant-btn", text: "빛 없는 밤 보기", attrs: { type: "button" } });
   const quickControls = el("div", { class: "plant-controls two day-night-controls" }, dayBtn, nightBtn);
   const note = el("div", {
     class: "plant-note day-night-note",
-    html: "<b>낮:</b> 광합성과 호흡이 함께 진행되지만 광합성이 더 강해요.<br><b>밤:</b> 광합성은 멈추고 호흡만 계속돼요.",
+    html: "두 과정은 동시에 더해져요. <b>굵은 화살표</b>는 광합성량에서 호흡량을 뺀 <b>순 기체 이동</b>을 나타내요.",
   });
   const helper = el("div", {
     class: "helper",
-    html: "<b>강한 낮 보기</b>와 <b>빛 없는 밤 보기</b>를 차례로 눌러 기체 출입 방향을 비교해 보세요.",
+    html: "오른쪽 <b>빛 다이얼</b>을 끌어 강한 낮과 한밤을 만든 뒤, 두 속도 막대가 같아져 <b>순 기체 화살표가 사라지는 세기</b>를 찾아보세요.",
   });
   host.append(goalChips, helper, stage, readout, quickControls, note); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
 
-  let hour = 12;
-  let userMoved = false;
+  const RESP_RATE = 0.46;
+  let light = 0.55;
+  let dragging = false;
+  let pointerOver = 0;
+  let zeroHoldMs = 0;
   let canvasW = 340;
   const goals = new Set<string>();
   let finished = false;
 
-  function collect(id: "day" | "night" | "always", sub: string): void {
+  function collect(id: "day" | "night" | "zero", sub: string): void {
     if (goals.has(id)) return;
     goals.add(id);
     const chip = goalChips.querySelector('[data-g="' + id + '"]') as HTMLElement | null;
@@ -739,78 +832,104 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "<b>호흡은 낮과 밤에 항상 진행</b>하고, 광합성은 빛이 있을 때만 진행해요. 강한 낮에는 이산화 탄소를 순흡수하고 산소를 순방출하지만, 밤에는 그 방향이 뒤집혀요.";
+        "발견 완료! <b>호흡량은 빛과 관계없이 계속</b>되고, 광합성량은 빛이 강해질수록 커져요. 그래서 강한 낮에는 CO₂를 순흡수하고 O₂를 순방출하지만, 한밤에는 방향이 뒤집혀요. 두 양이 같으면 <b>순 기체 이동은 0</b>이 돼요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
   }
 
-  function updateStatus(allowGoals: boolean): void {
-    const light = lightAt(hour);
-    const strongDay = hour >= 10 && hour <= 14;
-    const deepNight = hour <= 4 || hour >= 20;
-    const net = light * 1.55 - 0.34;
-    const timeText = formatHour(hour);
-    timeLabel.innerHTML = "<b>" + timeText + "</b>";
+  function updateStatus(): void {
+    const photo = photosynthesisRate(light);
+    const net = photo - RESP_RATE;
+    const pct = Math.round(light * 100);
+    const strongDay = light >= 0.93;
+    const deepNight = light <= 0.025;
+    lightLabel.innerHTML = "<b>빛의 세기 " + String(pct) + "%</b>";
     photoDot.style.opacity = String(0.28 + light * 0.72);
 
-    if (light <= 0.01) {
-      photoPill.textContent = "광합성 · 빛이 없어 멈춤";
-    } else if (strongDay) {
-      photoPill.textContent = "광합성 · 호흡보다 강함";
-    } else {
-      photoPill.textContent = "광합성 · 빛에 따라 진행";
-    }
-    respPill.textContent = "호흡 · 낮·밤 항상 진행";
+    photoPill.textContent = light <= 0.01
+      ? "광합성량 · 0"
+      : "광합성량 · " + String(Math.round(photo * 100));
+    respPill.textContent = "호흡량 · " + String(Math.round(RESP_RATE * 100)) + "로 일정";
 
     dayBtn.classList.toggle("on", strongDay);
     nightBtn.classList.toggle("on", deepNight);
-    if (strongDay) {
+    if (net > 0.055) {
       netLabel.innerHTML = "<b>순변화</b> CO₂ 흡수 · O₂ 방출";
-      helper.innerHTML =
-        "굵은 낮 화살표는 <b>순변화</b>예요. 호흡도 진행하지만, 광합성이 더 강해서 이산화 탄소 순흡수·산소 순방출로 보여요.";
-    } else if (deepNight) {
+    } else if (net < -0.055) {
       netLabel.innerHTML = "<b>순변화</b> O₂ 흡수 · CO₂ 방출";
-      helper.innerHTML =
-        "빛이 없어 광합성은 멈췄지만 <b>호흡은 계속</b>돼요. 그래서 산소를 흡수하고 이산화 탄소를 방출해요.";
-    } else if (net > 0.08) {
-      netLabel.innerHTML = "<b>순변화</b> 광합성 쪽이 조금 큼";
-      helper.innerHTML = "빛이 약해지면 광합성과 호흡의 차이가 작아져 <b>순기체 출입</b>도 약해져요.";
     } else {
-      netLabel.innerHTML = "<b>순변화</b> 호흡 쪽이 조금 큼";
-      helper.innerHTML = "해 뜨기 전이나 해 질 무렵에는 광합성이 약해 <b>호흡의 영향</b>이 더 크게 보여요.";
+      netLabel.innerHTML = "<b>순 기체 이동 0</b> · 두 양이 같아요";
     }
 
     canvas.setAttribute(
       "aria-label",
-      timeText + ". 광합성 " + (light > 0 ? "진행 중" : "멈춤") + ", 호흡은 항상 진행 중. " + netLabel.textContent,
+      "빛의 세기 " + String(pct) + "퍼센트. " + (netLabel.textContent ?? ""),
     );
-
-    if (!allowGoals) return;
-    if (strongDay) collect("day", "CO₂ 순흡수·O₂ 순방출");
-    if (deepNight) collect("night", "O₂ 흡수·CO₂ 방출");
-    if (goals.has("day") && goals.has("night")) collect("always", "낮에도 밤에도 켜짐");
+    canvas.setAttribute("aria-valuenow", String(pct));
+    canvas.setAttribute("aria-valuetext", "빛의 세기 " + String(pct) + "퍼센트");
   }
 
-  function setHour(next: number, fromUser: boolean): void {
-    hour = clamp(next, 0, 24);
-    if (fromUser) {
-      userMoved = true;
-      cap.style.opacity = "0";
-    }
-    updateStatus(userMoved);
+  function setLight(next: number): void {
+    light = clamp(next, 0, 1);
+    cap.style.opacity = "0";
+    updateStatus();
   }
 
   const goDay = (): void => {
     haptic(HAPTIC.select);
-    setHour(12, true);
+    setLight(1);
   };
   const goNight = (): void => {
     haptic(HAPTIC.select);
-    setHour(23, true);
+    setLight(0);
   };
   dayBtn.addEventListener("click", goDay);
   nightBtn.addEventListener("click", goNight);
+
+  function sliderBox(w: number): { x: number; y: number; h: number } {
+    return { x: w - 47, y: 67, h: 190 };
+  }
+  function setLightFromClientY(clientY: number): void {
+    const rect = canvas.getBoundingClientRect();
+    const box = sliderBox(rect.width);
+    const py = clientY - rect.top;
+    pointerOver = py < box.y ? py - box.y : py > box.y + box.h ? py - box.y - box.h : 0;
+    setLight(1 - (py - box.y) / box.h);
+  }
+  const onPointerDown = (event: PointerEvent): void => {
+    const rect = canvas.getBoundingClientRect();
+    const box = sliderBox(rect.width);
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    if (x < box.x - 28 || x > box.x + 28 || y < box.y - 24 || y > box.y + box.h + 24) return;
+    dragging = true;
+    safePointerCapture(canvas, event.pointerId);
+    canvas.classList.add("dragging");
+    setLightFromClientY(event.clientY);
+    haptic(HAPTIC.tap);
+  };
+  const onPointerMove = (event: PointerEvent): void => {
+    if (dragging) setLightFromClientY(event.clientY);
+  };
+  const endPointer = (): void => {
+    dragging = false;
+    pointerOver = 0;
+    canvas.classList.remove("dragging");
+  };
+  const onKeyDown = (event: KeyboardEvent): void => {
+    if (event.key === "ArrowUp" || event.key === "ArrowRight") setLight(light + 0.025);
+    else if (event.key === "ArrowDown" || event.key === "ArrowLeft") setLight(light - 0.025);
+    else if (event.key === "Home") setLight(0);
+    else if (event.key === "End") setLight(1);
+    else return;
+    event.preventDefault();
+  };
+  canvas.addEventListener("pointerdown", onPointerDown);
+  canvas.addEventListener("pointermove", onPointerMove);
+  canvas.addEventListener("pointerup", endPointer);
+  canvas.addEventListener("pointercancel", endPointer);
+  canvas.addEventListener("keydown", onKeyDown);
 
   function drawProcessLane(
     ctx: CanvasRenderingContext2D,
@@ -821,15 +940,19 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
     alpha: number,
   ): void {
     const x = 18;
-    const width = canvasW - 36;
+    const width = canvasW - 108;
     ctx.save();
-    ctx.globalAlpha = 0.64 + alpha * 0.24;
-    roundedRect(ctx, x, y - 14, width, 28, 14);
+    ctx.globalAlpha = 0.74;
+    roundedRect(ctx, x, y - 16, width, 32, 14);
     ctx.fillStyle = cssVar("--stage-2");
     ctx.fill();
     ctx.strokeStyle = color;
     ctx.lineWidth = 1.5;
     ctx.stroke();
+    ctx.globalAlpha = 0.28;
+    roundedRect(ctx, x + 6, y + 7, Math.max(8, (width - 12) * clamp(alpha, 0, 1)), 5, 2.5);
+    ctx.fillStyle = color;
+    ctx.fill();
     ctx.globalAlpha = 1;
     ctx.fillStyle = color;
     ctx.beginPath();
@@ -851,9 +974,9 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
     const ctx = fit.ctx;
     const w = fit.w;
     canvasW = w;
-    const light = lightAt(hour);
-    const net = light * 1.55 - 0.34;
-    const cx = w * 0.5;
+    const photo = photosynthesisRate(light);
+    const net = photo - RESP_RATE;
+    const cx = w * 0.5 - 7;
     const leafY = 181;
 
     ctx.fillStyle = cssVar("--stage");
@@ -878,17 +1001,10 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
     }
     ctx.restore();
 
-    if (light > 0) {
-      const a = Math.PI - ((hour - 6) / 12) * Math.PI;
-      const sx = cx + Math.cos(a) * w * 0.38;
-      const sy = 122 - Math.sin(a) * 86;
-      drawSun(ctx, sx, sy, 18 + light * 4, tMs * 0.0003);
+    if (light > 0.04) {
+      drawSun(ctx, cx, 57, 18 + light * 5, tMs * 0.0003);
     } else {
-      const nt = hour >= 18 ? (hour - 18) / 12 : (hour + 6) / 12;
-      const a = Math.PI - nt * Math.PI;
-      const mx = cx + Math.cos(a) * w * 0.35;
-      const my = 122 - Math.sin(a) * 72;
-      drawMoon(ctx, mx, my, 19);
+      drawMoon(ctx, cx, 57, 19);
     }
 
     ctx.save();
@@ -906,7 +1022,7 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
 
     drawTag(
       ctx,
-      light > 0 ? "낮: 광합성 > 호흡" : "밤: 호흡만 진행",
+      net > 0.055 ? "광합성량 > 호흡량" : net < -0.055 ? "광합성량 < 호흡량" : "광합성량 = 호흡량",
       cx,
       113,
       cssVar("--n0"),
@@ -915,36 +1031,71 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
     );
 
     const left = 24;
-    const right = w - 24;
-    if (net > 0.08) {
-      const alpha = clamp(net / 1.21, 0.32, 1);
+    const right = w - 78;
+    if (net > 0.055) {
+      const alpha = clamp(net / (1.26 - RESP_RATE), 0.32, 1);
+      const arrowW = 2.8 + alpha * 6.2;
       ctx.save();
       ctx.globalAlpha = alpha;
-      drawFlowArrow(ctx, left, 154, cx - 84, 166, plantColor("carbon"), 7);
-      drawFlowArrow(ctx, cx + 84, 166, right, 154, plantColor("oxygen"), 7);
+      drawFlowArrow(ctx, left, 154, cx - 84, 166, plantColor("carbon"), arrowW);
+      drawFlowArrow(ctx, cx + 84, 166, right, 154, plantColor("oxygen"), arrowW);
       drawMovingMaterial(ctx, "carbon", left, 154, cx - 84, 166, tMs, 0, alpha);
       drawMovingMaterial(ctx, "oxygen", cx + 84, 166, right, 154, tMs, 0.45, alpha);
       ctx.restore();
       drawTag(ctx, "CO₂ 순흡수", Math.max(62, cx - 117), 137, cssVar("--n0"), plantColor("carbon"), 92);
       drawTag(ctx, "O₂ 순방출", Math.min(w - 62, cx + 117), 137, cssVar("--n0"), plantColor("oxygen"), 92);
-    } else if (net < -0.06) {
-      const alpha = clamp(Math.abs(net) / 0.34, 0.42, 1);
+    } else if (net < -0.055) {
+      const alpha = clamp(Math.abs(net) / RESP_RATE, 0.42, 1);
+      const arrowW = 2.8 + alpha * 6.2;
       ctx.save();
       ctx.globalAlpha = alpha;
-      drawFlowArrow(ctx, right, 154, cx + 84, 166, plantColor("oxygen"), 7);
-      drawFlowArrow(ctx, cx - 84, 166, left, 154, plantColor("carbon"), 7);
+      drawFlowArrow(ctx, right, 154, cx + 84, 166, plantColor("oxygen"), arrowW);
+      drawFlowArrow(ctx, cx - 84, 166, left, 154, plantColor("carbon"), arrowW);
       drawMovingMaterial(ctx, "oxygen", right, 154, cx + 84, 166, tMs, 0.1, alpha);
       drawMovingMaterial(ctx, "carbon", cx - 84, 166, left, 154, tMs, 0.55, alpha);
       ctx.restore();
       drawTag(ctx, "O₂ 흡수", Math.min(w - 62, cx + 117), 137, cssVar("--n0"), plantColor("oxygen"), 84);
       drawTag(ctx, "CO₂ 방출", Math.max(62, cx - 117), 137, cssVar("--n0"), plantColor("carbon"), 84);
     } else {
-      drawTag(ctx, "두 과정의 크기가 비슷해요", cx, 151, cssVar("--n0"), cssVar("--subj-plant-press"), 176);
+      drawTag(ctx, "순 기체 이동 0", cx, 151, cssVar("--n0"), cssVar("--subj-plant-press"), 132);
     }
 
-    const photoStatus = light <= 0.01 ? "빛 없음 · 멈춤" : "빛 세기 " + String(Math.round(light * 100)) + "%";
-    drawProcessLane(ctx, 281, "광합성", photoStatus, plantColor("leafHi"), light);
-    drawProcessLane(ctx, 318, "호흡", "낮·밤 항상 진행", plantColor("glucose"), 1);
+    const box = sliderBox(w);
+    ctx.strokeStyle = cssVar("--n500");
+    ctx.lineWidth = 7;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(box.x, box.y);
+    ctx.lineTo(box.x, box.y + box.h);
+    ctx.stroke();
+    const dialFill = ctx.createLinearGradient(0, box.y + box.h, 0, box.y);
+    dialFill.addColorStop(0, cssVar("--stage-line"));
+    dialFill.addColorStop(0.58, plantColor("sun"));
+    dialFill.addColorStop(1, cssVar("--n0"));
+    ctx.strokeStyle = dialFill;
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(box.x, box.y + box.h);
+    ctx.lineTo(box.x, box.y + box.h * (1 - light));
+    ctx.stroke();
+    const knobY = box.y + box.h * (1 - light) + pointerOver * 0.16;
+    const knob = ctx.createRadialGradient(box.x - 4, knobY - 5, 1, box.x, knobY, 13);
+    knob.addColorStop(0, cssVar("--n0"));
+    knob.addColorStop(0.48, plantColor("sun"));
+    knob.addColorStop(1, cssVar("--n700"));
+    ctx.fillStyle = knob;
+    ctx.beginPath();
+    ctx.arc(box.x, knobY, 13, 0, TAU);
+    ctx.fill();
+    ctx.strokeStyle = cssVar("--n0");
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    drawCenteredText(ctx, "쨍한 낮", box.x, box.y - 20, 9.5, cssVar("--n200"));
+    drawCenteredText(ctx, "한밤", box.x, box.y + box.h + 20, 9.5, cssVar("--n400"));
+
+    const photoStatus = light <= 0.01 ? "빛 없음 · 0" : String(Math.round(photo * 100));
+    drawProcessLane(ctx, 286, "광합성량", photoStatus, plantColor("leafHi"), photo / 1.26);
+    drawProcessLane(ctx, 326, "호흡량", String(Math.round(RESP_RATE * 100)) + " · 일정", plantColor("glucose"), RESP_RATE / 1.26);
 
     ctx.save();
     ctx.globalAlpha = 0.42 + 0.3 * Math.sin(tMs * 0.006) * Math.sin(tMs * 0.006);
@@ -953,15 +1104,30 @@ export const dayNightLab: StepRenderer = (host, step, api) => {
     ctx.restore();
   }
 
-  const loop = createLoop((_dt, tMs) => drawDayNight(tMs));
+  const loop = createLoop((dt, tMs) => {
+    const photo = photosynthesisRate(light);
+    const net = photo - RESP_RATE;
+    if (light >= 0.93 && net > 0.45) collect("day", "CO₂ 흡수·O₂ 방출");
+    if (light <= 0.025 && net < -0.4) collect("night", "O₂ 흡수·CO₂ 방출");
+    if (Math.abs(net) < 0.045) {
+      zeroHoldMs += dt * 16.7;
+      if (zeroHoldMs > 320) collect("zero", "화살표가 사라짐");
+    } else zeroHoldMs = 0;
+    drawDayNight(tMs);
+  });
   const startFrame = requestAnimationFrame(() => loop.start());
-  updateStatus(false);
-  api.setCTA("낮과 밤의 순기체 출입을 모두 관찰해요", { enabled: false });
+  updateStatus();
+  api.setCTA("빛 다이얼로 세 상태를 모두 찾아요", { enabled: false });
 
   return () => {
     cancelAnimationFrame(startFrame);
     loop.stop();
     dayBtn.removeEventListener("click", goDay);
     nightBtn.removeEventListener("click", goNight);
+    canvas.removeEventListener("pointerdown", onPointerDown);
+    canvas.removeEventListener("pointermove", onPointerMove);
+    canvas.removeEventListener("pointerup", endPointer);
+    canvas.removeEventListener("pointercancel", endPointer);
+    canvas.removeEventListener("keydown", onKeyDown);
   };
 };

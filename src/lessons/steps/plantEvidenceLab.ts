@@ -1,12 +1,10 @@
-// photoEvidenceLab — 중2 V 광합성 증거 랩.
-// ① 빛을 비춘 상추의 이산화 탄소 감소·산소 증가를 센서로 관찰하고
-// ② 한 개체를 어둠에 두어 기존 녹말을 줄이는 사전 암처리를 하고
-// ③ 잎을 에탄올 물중탕으로 안전하게 탈색한 뒤 물로 헹구고
-// ④ 아이오딘-아이오딘화 칼륨 용액으로 녹말을 검출한다.
+// photoEvidenceLab — 중2 V 광합성 증거 조작 랩.
+// 빛 세기에 따른 기체 센서 변화와, 사전 암처리·부분 가리기를 직접 설계해 녹말 증거를 비교한다.
 
 import { el, clamp } from "../../core/dom";
 import { createLoop, type Loop } from "../../core/anim";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { rubber } from "../../core/rubber";
 import { fitCanvas } from "../../ui/canvas";
 import { curioCard, type Curio } from "../../ui/curio";
 import {
@@ -15,6 +13,7 @@ import {
   drawMaterialToken,
   drawSun,
   plantColor,
+  safePointerCapture,
 } from "../../ui/plantKit";
 import type { StepRenderer } from "../types";
 
@@ -25,20 +24,10 @@ interface PhotoEvidenceStep {
   curio?: Curio;
 }
 
-type Phase =
-  | "readySensor"
-  | "sensorRunning"
-  | "readyDark"
-  | "darkRunning"
-  | "readyDecolor"
-  | "decolorRunning"
-  | "readyRinse"
-  | "rinseRunning"
-  | "readyIodine"
-  | "iodineRunning"
-  | "done";
+type ResultKind = "none" | "controlled" | "confused";
 
-const CVH = 485;
+const CVH = 430;
+const SENSOR_BOTTOM = 205;
 
 function cssVar(name: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -56,53 +45,54 @@ function roundedRect(
   h: number,
   r: number,
 ): void {
-  const rr = Math.min(r, w / 2, h / 2);
+  const rr = Math.min(r, w * 0.5, h * 0.5);
   ctx.beginPath();
   ctx.moveTo(x + rr, y);
-  ctx.arcTo(x + w, y, x + w, y + h, rr);
-  ctx.arcTo(x + w, y + h, x, y + h, rr);
-  ctx.arcTo(x, y + h, x, y, rr);
-  ctx.arcTo(x, y, x + w, y, rr);
+  ctx.lineTo(x + w - rr, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + rr);
+  ctx.lineTo(x + w, y + h - rr);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - rr, y + h);
+  ctx.lineTo(x + rr, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - rr);
+  ctx.lineTo(x, y + rr);
+  ctx.quadraticCurveTo(x, y, x + rr, y);
   ctx.closePath();
 }
 
-function leafShape(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  rot: number,
-): void {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(rot);
+function leafPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number): void {
   ctx.beginPath();
-  ctx.moveTo(-w * 0.5, 0);
-  ctx.bezierCurveTo(-w * 0.22, -h * 0.62, w * 0.28, -h * 0.62, w * 0.52, 0);
-  ctx.bezierCurveTo(w * 0.26, h * 0.58, -w * 0.24, h * 0.58, -w * 0.5, 0);
+  ctx.moveTo(x - w * 0.5, y);
+  ctx.bezierCurveTo(x - w * 0.2, y - h * 0.62, x + w * 0.3, y - h * 0.62, x + w * 0.52, y);
+  ctx.bezierCurveTo(x + w * 0.27, y + h * 0.58, x - w * 0.24, y + h * 0.58, x - w * 0.5, y);
   ctx.closePath();
-  ctx.restore();
 }
 
 export const photoEvidenceLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as PhotoEvidenceStep;
-
   host.appendChild(el("div", { class: "h1", html: s.title }));
   if (s.lead) host.appendChild(el("div", { class: "sub", html: s.lead }));
+
+  const goalChips = el(
+    "div",
+    { class: "pn-badges force3" },
+    el("div", { class: "pn-badge plant", dataset: { g: "sensor" } }, el("b", { text: "센서 갈라짐" }), el("span", { text: "빛 약→강" })),
+    el("div", { class: "pn-badge plant", dataset: { g: "leaf" } }, el("b", { text: "빛 부분 녹말" }), el("span", { text: "가리개 비교" })),
+    el("div", { class: "pn-badge plant", dataset: { g: "confused" } }, el("b", { text: "암처리의 까닭" }), el("span", { text: "생략하면?" })),
+  );
 
   const canvas = el("canvas", {
     class: "plant-canvas",
     style: `height:${CVH}px`,
     attrs: {
-      role: "img",
-      "aria-label": "빛을 비춘 상추의 기체 센서 변화와 사전 암처리, 에탄올 물중탕 탈색, 물 헹굼, 아이오딘 녹말 검출 실험",
+      tabindex: "0",
+      role: "application",
+      "aria-label": "빛 센서 그래프와 잎 가리개를 조작해 광합성 증거를 찾는 실험",
     },
   });
-  const carbonRead = el("span", { text: "이산화 탄소 관찰 전" });
-  const oxygenRead = el("span", { text: "산소 관찰 전" });
+  const carbonRead = el("span", { text: "CO₂ 변화 거의 없음" });
+  const oxygenRead = el("span", { text: "O₂ 변화 거의 없음" });
   const toastEl = el("div", { class: "toast" });
-  const capEl = el("div", { class: "stage-cap", text: "센서 관찰부터 차례대로 실험해 보세요" });
+  const capEl = el("div", { class: "stage-cap", text: "센서 슬라이더와 잎 가리개를 직접 움직여 보세요" });
   const stage = el(
     "div",
     { class: "stage plant-stage" },
@@ -117,65 +107,78 @@ export const photoEvidenceLab: StepRenderer = (host, step, api) => {
     capEl,
   );
 
-  const goalChips = el(
+  const thumb = el("div", { class: "sl-thumb" }, el("i", { style: "background:var(--plant-sun)" }));
+  const fill = el("div", { class: "sl-fill", style: "background:var(--subj-plant)" });
+  const track = el("div", { class: "sl-track" }, fill, thumb);
+  const slider = el(
     "div",
-    { class: "pn-badges force3" },
-    el("div", { class: "pn-badge plant", dataset: { g: "gas" } }, el("b", { text: "기체 센서" }), el("span", { text: "무엇이 변할까?" })),
-    el("div", { class: "pn-badge plant", dataset: { g: "decolor" } }, el("b", { text: "잎 준비" }), el("span", { text: "암처리·탈색·헹굼" })),
-    el("div", { class: "pn-badge plant", dataset: { g: "starch" } }, el("b", { text: "녹말 검출" }), el("span", { text: "어느 잎만?" })),
+    {
+      class: "slider plant-evidence-slider",
+      attrs: {
+        role: "slider",
+        tabindex: "0",
+        "aria-label": "센서 실험의 빛 세기",
+        "aria-valuemin": "0",
+        "aria-valuemax": "100",
+        "aria-valuenow": "8",
+      },
+    },
+    track,
+    el("div", { class: "hp-slider-caps" }, el("span", { text: "빛 없음" }), el("span", { text: "강한 빛" })),
   );
-  const actionBtn = el("button", {
+
+  const darkBtn = el("button", {
+    class: "plant-btn on",
+    text: "사전 암처리 · 함",
+    attrs: { type: "button", "aria-pressed": "true" },
+  });
+  const detectBtn = el("button", {
     class: "plant-btn",
-    text: "빛 비추고 센서 관찰하기",
-    dataset: { act: "evidence", phase: "readySensor" },
+    text: "탈색·헹굼 뒤 아이오딘 검출",
     attrs: { type: "button" },
   });
-  const statusRead = el(
-    "div",
-    { class: "plant-readout" },
-    el("span", { text: "현재 단계" }),
-    el("b", { text: "기체 센서 관찰" }),
-  );
-  const statusValue = statusRead.querySelector("b") as HTMLElement;
   const helper = el("div", {
     class: "helper",
-    html: "먼저 상추에 빛을 비추고 센서 그래프를 관찰해요. 광합성이 활발하면 용기 안의 <b>이산화 탄소는 줄고 산소는 늘어요</b>.",
+    html: "먼저 센서의 <b>빛 세기</b>를 약하게, 강하게 바꿔 두 곡선이 어떻게 갈라지는지 보세요. 이어서 검은 <b>잎 가리개</b>를 옮겨 비교를 설계해요.",
+  });
+  const note = el("div", {
+    class: "plant-note",
+    html: "검출 전에는 잎을 에탄올 물중탕으로 <b>탈색</b>하고 물로 <b>헹군 뒤</b> 아이오딘 용액을 써요. 아이오딘 반응이 찾는 것은 포도당이 아니라 <b>녹말</b>이에요.",
   });
   host.append(
     goalChips,
-    helper, // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
+    helper,
     stage,
-    el("div", { class: "plant-controls" }, actionBtn),
-    statusRead,
+    slider,
+    el("div", { class: "plant-controls two" }, darkBtn, detectBtn),
+    note,
   );
   if (s.curio) host.appendChild(curioCard(s.curio));
 
-  let phase: Phase = "readySensor";
-  let sensorP = 0;
-  let darkP = 0;
-  let decolorP = 0;
-  let rinseP = 0;
-  let iodineP = 0;
-  let finished = false;
+  let light = 0.08;
+  let sliderDragging = false;
+  let seenLow = false;
+  let seenHigh = false;
+  let darkTreated = true;
+  let result: ResultKind = "none";
+  let resultMix = 0;
+  let canvasW = 340;
+  let coverNorm = 0;
+  let coverStartNorm = 0;
+  let coverDragging = false;
+  let coverMoved = false;
   let toastTimer = 0;
-  let capHidden = false;
   const goals = new Set<string>();
+  let finished = false;
 
   function toast(message: string): void {
     toastEl.textContent = message;
     toastEl.classList.add("show");
     window.clearTimeout(toastTimer);
-    toastTimer = window.setTimeout(() => toastEl.classList.remove("show"), 1900);
+    toastTimer = window.setTimeout(() => toastEl.classList.remove("show"), 1800);
   }
 
-  function hideCap(): void {
-    if (capHidden) return;
-    capHidden = true;
-    capEl.style.transition = "opacity .35s var(--ease)";
-    capEl.style.opacity = "0";
-  }
-
-  function collect(id: string, subText: string, message: string): void {
+  function collect(id: "sensor" | "leaf" | "confused", subText: string, message: string): void {
     if (goals.has(id)) return;
     goals.add(id);
     const chip = goalChips.querySelector<HTMLElement>(`[data-g="${id}"]`);
@@ -186,444 +189,316 @@ export const photoEvidenceLab: StepRenderer = (host, step, api) => {
     toast(message);
     if (goals.size === 3 && !finished) {
       finished = true;
-      helper.innerHTML =
-        "증거를 모두 모았어요. 사전 암처리로 기존 녹말을 줄이고, 탈색한 잎을 물로 헹군 뒤 비교했어요. 빛을 비추면 <b>이산화 탄소가 줄고 산소가 늘었고</b>, 햇빛 받은 잎만 아이오딘-아이오딘화 칼륨 용액에 <b>청람색</b>으로 변했어요. 아이오딘 용액이 검출한 것은 포도당이 아니라 <b>녹말</b>이에요.";
+      helper.innerHTML = "증거를 직접 설계했어요. 빛이 강할수록 <b>CO₂는 더 줄고 O₂는 더 늘었고</b>, 사전 암처리한 잎에서는 <b>빛을 받은 부분만 녹말</b>이 검출됐어요. 암처리를 생략하면 기존 녹말까지 반응해 공정한 비교가 흐려져요.";
       api.recordQuiz(true);
-      api.enableCTA(s.cta ?? "개념 정리하기");
+      api.enableCTA(s.cta ?? "증거 정리하기");
     }
   }
 
-  function setButton(label: string, enabled: boolean, nextPhase: Phase, status: string): void {
-    actionBtn.textContent = label;
-    actionBtn.disabled = !enabled;
-    actionBtn.setAttribute("aria-disabled", String(!enabled));
-    actionBtn.dataset.phase = nextPhase;
-    statusValue.textContent = status;
+  function updateSlider(fromUser: boolean): void {
+    const pct = light * 100;
+    thumb.style.left = `${pct}%`;
+    fill.style.width = `${pct}%`;
+    slider.setAttribute("aria-valuenow", String(Math.round(pct)));
+    slider.setAttribute("aria-valuetext", `빛의 세기 ${Math.round(pct)}퍼센트`);
+    carbonRead.textContent = light < 0.05 ? "CO₂ 변화 거의 없음" : `CO₂ 감소 ${Math.round(light * 100)}`;
+    oxygenRead.textContent = light < 0.05 ? "O₂ 변화 거의 없음" : `O₂ 증가 ${Math.round(light * 100)}`;
+    if (!fromUser) return;
+    capEl.style.opacity = "0";
+    if (light < 0.14) seenLow = true;
+    if (light > 0.82) seenHigh = true;
+    if (seenLow && seenHigh) {
+      collect("sensor", "빛 강할수록 더 갈라짐", "센서 두 곡선의 간격이 빛에 따라 달라졌어요");
+      helper.innerHTML = "센서 증거를 찾았어요. 이제 아래 잎의 <b>검은 가리개를 좌우로 끌어</b> 일부만 가린 뒤 아이오딘 검출을 해 보세요.";
+    }
   }
 
-  const onAction = (): void => {
-    hideCap();
-    if (phase === "readySensor") {
-      phase = "sensorRunning";
-      setButton("센서 그래프 관찰 중", false, phase, "빛을 비추는 중");
-      helper.innerHTML = "두 선을 함께 보세요. 광합성이 활발해지면서 <b>이산화 탄소는 감소</b>하고 <b>산소는 증가</b>해요.";
-      haptic(HAPTIC.tap);
-    } else if (phase === "readyDark") {
-      phase = "darkRunning";
-      setButton("어둠 상자에서 사전 암처리 중", false, phase, "기존 녹말 줄이기");
-      helper.innerHTML = "공정하게 비교하려면 잎에 이미 들어 있던 녹말을 먼저 줄여야 해요. 상추 한 개체를 <b>어둠에 두어 사전 암처리</b>해요.";
-      haptic(HAPTIC.tap);
-    } else if (phase === "readyDecolor") {
-      phase = "decolorRunning";
-      setButton("에탄올 물중탕으로 탈색 중", false, phase, "잎의 초록색 빼기");
-      helper.innerHTML = "에탄올은 불이 잘 붙어요. 시험관 속 에탄올을 불로 직접 가열하지 않고 <b>뜨거운 물에 담가 물중탕</b>해요.";
-      haptic(HAPTIC.tap);
-    } else if (phase === "readyRinse") {
-      phase = "rinseRunning";
-      setButton("탈색한 잎을 물로 헹구는 중", false, phase, "에탄올 씻어 내기");
-      helper.innerHTML = "에탄올로 탈색한 잎을 꺼내 <b>물로 충분히 헹궈</b> 남은 에탄올을 씻어 내요. 헹군 뒤 아이오딘 용액을 떨어뜨려야 해요.";
-      haptic(HAPTIC.tap);
-    } else if (phase === "readyIodine") {
-      phase = "iodineRunning";
-      setButton("아이오딘 용액 반응 관찰 중", false, phase, "녹말 검출하기");
-      helper.innerHTML = "탈색한 두 잎에 <b>아이오딘-아이오딘화 칼륨 용액</b>을 떨어뜨려요. 청람색으로 변하는 잎을 찾아보세요.";
-      haptic(HAPTIC.tap);
+  function setLightFromClientX(clientX: number): void {
+    const rect = track.getBoundingClientRect();
+    light = clamp((clientX - rect.left) / Math.max(1, rect.width), 0, 1);
+    const over = clientX < rect.left ? clientX - rect.left : clientX > rect.right ? clientX - rect.right : 0;
+    thumb.style.setProperty("--rb", `${rubber(over, rect.width)}px`);
+    updateSlider(true);
+  }
+  const onSliderDown = (event: PointerEvent): void => {
+    sliderDragging = true;
+    safePointerCapture(slider, event.pointerId);
+    slider.classList.add("drag");
+    setLightFromClientX(event.clientX);
+  };
+  const onSliderMove = (event: PointerEvent): void => {
+    if (sliderDragging) setLightFromClientX(event.clientX);
+  };
+  const endSlider = (): void => {
+    sliderDragging = false;
+    slider.classList.remove("drag");
+    thumb.style.setProperty("--rb", "0px");
+  };
+  const onSliderKey = (event: KeyboardEvent): void => {
+    if (event.key === "ArrowRight" || event.key === "ArrowUp") light = clamp(light + 0.05, 0, 1);
+    else if (event.key === "ArrowLeft" || event.key === "ArrowDown") light = clamp(light - 0.05, 0, 1);
+    else if (event.key === "Home") light = 0;
+    else if (event.key === "End") light = 1;
+    else return;
+    event.preventDefault();
+    updateSlider(true);
+  };
+  slider.addEventListener("pointerdown", onSliderDown);
+  slider.addEventListener("pointermove", onSliderMove);
+  slider.addEventListener("pointerup", endSlider);
+  slider.addEventListener("pointercancel", endSlider);
+  slider.addEventListener("keydown", onSliderKey);
+
+  function coverGeometry(w: number): { cx: number; cy: number; leafW: number; leafH: number; coverW: number; coverX: number } {
+    const leafW = Math.min(286, w - 54);
+    const leafH = 102;
+    const cx = w * 0.5;
+    const cy = 316;
+    const coverW = Math.min(72, leafW * 0.28);
+    return { cx, cy, leafW, leafH, coverW, coverX: cx + coverNorm * leafW * 0.31 };
+  }
+  function canvasPoint(event: PointerEvent): { x: number; y: number } {
+    const rect = canvas.getBoundingClientRect();
+    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  }
+  const onCanvasDown = (event: PointerEvent): void => {
+    if (result !== "none") return;
+    const p = canvasPoint(event);
+    const geo = coverGeometry(canvasW);
+    if (Math.abs(p.x - geo.coverX) > geo.coverW * 0.7 || Math.abs(p.y - geo.cy) > geo.leafH * 0.72) return;
+    coverDragging = true;
+    coverStartNorm = coverNorm;
+    safePointerCapture(canvas, event.pointerId);
+    canvas.classList.add("dragging");
+    haptic(HAPTIC.tap);
+  };
+  const onCanvasMove = (event: PointerEvent): void => {
+    if (!coverDragging) return;
+    const p = canvasPoint(event);
+    const geo = coverGeometry(canvasW);
+    coverNorm = clamp((p.x - geo.cx) / (geo.leafW * 0.31), -0.72, 0.72);
+    if (Math.abs(coverNorm - coverStartNorm) > 0.12) coverMoved = true;
+  };
+  const endCanvas = (): void => {
+    coverDragging = false;
+    canvas.classList.remove("dragging");
+  };
+  const onCanvasKey = (event: KeyboardEvent): void => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    coverNorm = clamp(coverNorm + (event.key === "ArrowRight" ? 0.1 : -0.1), -0.72, 0.72);
+    coverMoved = true;
+    event.preventDefault();
+  };
+  canvas.addEventListener("pointerdown", onCanvasDown);
+  canvas.addEventListener("pointermove", onCanvasMove);
+  canvas.addEventListener("pointerup", endCanvas);
+  canvas.addEventListener("pointercancel", endCanvas);
+  canvas.addEventListener("keydown", onCanvasKey);
+
+  const toggleDark = (): void => {
+    darkTreated = !darkTreated;
+    darkBtn.classList.toggle("on", darkTreated);
+    darkBtn.textContent = darkTreated ? "사전 암처리 · 함" : "사전 암처리 · 안 함";
+    darkBtn.setAttribute("aria-pressed", String(darkTreated));
+    result = "none";
+    resultMix = 0;
+    helper.innerHTML = darkTreated
+      ? "기존 녹말을 줄이는 <b>사전 암처리</b>를 켰어요. 가리개를 놓고 검출해 보세요."
+      : "사전 암처리를 끈 조건이에요. 잎에 이미 있던 녹말이 비교를 어떻게 흐리는지 검출해 보세요.";
+    haptic(HAPTIC.select);
+  };
+  const detect = (): void => {
+    capEl.style.opacity = "0";
+    if (!coverMoved) {
+      helper.innerHTML = "먼저 검은 <b>잎 가리개를 좌우로 옮겨</b> 잎 일부만 빛을 받게 해 주세요.";
+      haptic(HAPTIC.wrong);
+      return;
+    }
+    result = darkTreated ? "controlled" : "confused";
+    resultMix = 0;
+    haptic(HAPTIC.tap);
+    if (darkTreated) {
+      collect("leaf", "빛 부분만 청람색", "빛을 받은 부분에서만 녹말이 검출됐어요");
+      helper.innerHTML = "빛을 받은 부분만 청람색으로 변했어요. 이제 <b>사전 암처리를 끄고</b> 같은 검출을 해 비교해 보세요.";
+    } else {
+      collect("confused", "기존 녹말까지 반응", "암처리를 생략하니 가린 부분도 반응해 비교가 흐려졌어요");
+      helper.innerHTML = "가린 부분까지 청람색으로 변해 버렸어요. <b>기존 녹말을 먼저 줄여야</b> 빛 때문에 새로 생긴 녹말만 공정하게 비교할 수 있어요.";
     }
   };
-  actionBtn.addEventListener("click", onAction);
+  darkBtn.addEventListener("click", toggleDark);
+  detectBtn.addEventListener("click", detect);
 
-  function label(
-    ctx: CanvasRenderingContext2D,
-    text: string,
-    x: number,
-    y: number,
-    color = cssVar("--n0"),
-    align: CanvasTextAlign = "center",
-    size = 10.5,
-  ): void {
-    ctx.fillStyle = color;
-    ctx.font = `750 ${size}px Pretendard, sans-serif`;
-    ctx.textAlign = align;
-    ctx.textBaseline = "middle";
-    ctx.fillText(text, x, y);
-  }
-
-  function drawSensorPanel(ctx: CanvasRenderingContext2D, W: number, tMs: number): void {
-    const n0 = cssVar("--n0");
-    const n300 = cssVar("--n300");
-    const panelTop = 56;
-    const panelBottom = 220;
-    const splitX = W * 0.53;
-
-    // 센서 전용 투명 용기와 상추
-    const jarX = 24;
-    const jarY = 91;
-    const jarW = Math.max(118, splitX - 44);
-    const jarH = 111;
-    ctx.fillStyle = alphaVar("--n0", 0.055);
-    roundedRect(ctx, jarX, jarY, jarW, jarH, 22);
+  function drawSensor(ctx: CanvasRenderingContext2D, w: number, tMs: number): void {
+    const jarX = 18;
+    const jarY = 61;
+    const jarW = Math.max(104, w * 0.34);
+    const jarH = 119;
+    ctx.fillStyle = alphaVar("--n0", 0.06);
+    roundedRect(ctx, jarX, jarY, jarW, jarH, 20);
     ctx.fill();
-    ctx.strokeStyle = alphaVar("--plant-glass-hi", 0.62);
-    ctx.lineWidth = 2.1;
+    ctx.strokeStyle = alphaVar("--plant-glass-hi", 0.66);
+    ctx.lineWidth = 2;
     ctx.stroke();
-    ctx.fillStyle = alphaVar("--plant-water", 0.1);
-    roundedRect(ctx, jarX + 5, jarY + jarH - 24, jarW - 10, 19, 10);
-    ctx.fill();
-    const stemX = jarX + jarW * 0.5;
+    const plantX = jarX + jarW * 0.52;
     ctx.strokeStyle = plantColor("leafLo");
     ctx.lineWidth = 5;
     ctx.beginPath();
-    ctx.moveTo(stemX, jarY + jarH - 12);
-    ctx.lineTo(stemX, jarY + 42);
+    ctx.moveTo(plantX, jarY + jarH - 10);
+    ctx.lineTo(plantX, jarY + 44);
     ctx.stroke();
-    drawLeaf(ctx, stemX - 20, jarY + 58, Math.min(66, jarW * 0.42), 33, 0.22);
-    drawLeaf(ctx, stemX + 20, jarY + 43, Math.min(61, jarW * 0.39), 31, -0.25);
-    drawLeaf(ctx, stemX - 3, jarY + 28, Math.min(55, jarW * 0.34), 29, -0.02);
-
-    // 센서 탐침 두 개
-    for (const [x, color, short] of [
-      [jarX + jarW * 0.27, plantColor("carbon"), "이산화 탄소"],
-      [jarX + jarW * 0.73, plantColor("oxygen"), "산소"],
-    ] as [number, string, string][]) {
-      ctx.fillStyle = color;
-      roundedRect(ctx, x - 9, jarY - 17, 18, 40, 5);
-      ctx.fill();
-      ctx.strokeStyle = n0;
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(x, jarY + 22);
-      ctx.lineTo(x, jarY + 50);
-      ctx.stroke();
-      label(ctx, short, x, jarY - 25, color, "center", 9.5);
+    drawLeaf(ctx, plantX - 16, jarY + 70, Math.min(58, jarW * 0.42), 29, 0.22);
+    drawLeaf(ctx, plantX + 18, jarY + 50, Math.min(55, jarW * 0.4), 28, -0.24);
+    drawSun(ctx, 38, 43, 13 + light * 4, tMs / 5000);
+    drawFlowArrow(ctx, 50, 51, jarX + 23, jarY + 18, plantColor("sun"), 2.3 + light * 2.2);
+    for (let i = 0; i < 6; i++) {
+      const a = tMs / 820 + i * 1.13;
+      const x = jarX + 16 + ((Math.sin(a * 0.71) + 1) * 0.5) * (jarW - 32);
+      const y = jarY + 25 + ((Math.cos(a) + 1) * 0.5) * (jarH - 47);
+      drawMaterialToken(ctx, x, y, 4.4, i < Math.round(2 + light * 3) ? "oxygen" : "carbon");
     }
 
-    // 빛과 용기 안의 기체 알갱이
-    drawSun(ctx, 35, 65, 13, tMs / 5200);
-    drawFlowArrow(ctx, 49, 73, jarX + 28, jarY + 18, plantColor("sun"), 2.5);
-    const gasAnim = phase === "sensorRunning" || sensorP >= 1;
-    if (gasAnim) {
-      for (let i = 0; i < 5; i++) {
-        const a = tMs / 870 + i * 1.27;
-        const x = jarX + 18 + ((Math.sin(a * 0.73) + 1) / 2) * (jarW - 36);
-        const y = jarY + 23 + ((Math.cos(a) + 1) / 2) * (jarH - 50);
-        // 변화의 방향만 보이되 어느 기체도 0이 되는 것처럼 그리지 않는다.
-        const isOxygen = i < Math.round(2 + sensorP);
-        drawMaterialToken(ctx, x, y, 4.8, isOxygen ? "oxygen" : "carbon");
-      }
-    }
-    label(ctx, "빛을 비춘 상추", jarX + jarW / 2, panelBottom + 10, n300);
-
-    // 정량 대신 방향을 읽는 센서 그래프
-    const gx0 = splitX + 17;
-    const gx1 = W - 17;
-    const gy0 = panelTop + 26;
-    const gy1 = panelBottom - 13;
-    ctx.strokeStyle = alphaVar("--plant-glass", 0.42);
-    ctx.lineWidth = 1.3;
+    const gx0 = jarX + jarW + 25;
+    const gx1 = w - 18;
+    const gy0 = 72;
+    const gy1 = 177;
+    ctx.strokeStyle = cssVar("--stage-line");
+    ctx.lineWidth = 1.4;
     ctx.beginPath();
     ctx.moveTo(gx0, gy0);
     ctx.lineTo(gx0, gy1);
     ctx.lineTo(gx1, gy1);
     ctx.stroke();
-    ctx.fillStyle = alphaVar("--plant-glass", 0.12);
-    for (let k = 1; k <= 3; k++) {
-      const y = gy0 + ((gy1 - gy0) * k) / 4;
-      ctx.fillRect(gx0, y, gx1 - gx0, 1);
-    }
-    const drawLine = (color: string, rising: boolean): void => {
+    const graphLine = (color: string, direction: -1 | 1): void => {
       ctx.strokeStyle = color;
       ctx.lineWidth = 3.2;
       ctx.lineCap = "round";
-      ctx.lineJoin = "round";
       ctx.beginPath();
-      const steps = 42;
-      for (let i = 0; i <= steps; i++) {
-        const q = i / steps;
-        if (q > sensorP) break;
-        const eased = 1 - Math.pow(1 - q, 2.2);
-        const yStart = rising ? gy1 - 24 : gy0 + 23;
-        const yEnd = rising ? gy0 + 31 : gy1 - 31;
+      for (let i = 0; i <= 36; i++) {
+        const q = i / 36;
         const x = gx0 + q * (gx1 - gx0);
-        const y = yStart + (yEnd - yStart) * eased;
+        const y = (gy0 + gy1) * 0.5 - direction * light * 43 * (1 - Math.pow(1 - q, 1.8));
         if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
       ctx.stroke();
     };
-    drawLine(plantColor("carbon"), false);
-    drawLine(plantColor("oxygen"), true);
-    label(ctx, "이산화 탄소", gx0 + 8, gy0 + 8, plantColor("carbon"), "left", 9.3);
-    label(ctx, "산소", gx0 + 8, gy1 - 7, plantColor("oxygen"), "left", 9.3);
-    label(ctx, "시간", gx1, gy1 + 13, n300, "right", 9.2);
+    graphLine(plantColor("oxygen"), 1);
+    graphLine(plantColor("carbon"), -1);
+    ctx.font = "750 9.5px Pretendard, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillStyle = plantColor("oxygen");
+    ctx.fillText("산소", gx0 + 6, gy0 + 9);
+    ctx.fillStyle = plantColor("carbon");
+    ctx.fillText("이산화 탄소", gx0 + 6, gy1 - 7);
+    ctx.fillStyle = cssVar("--n400");
+    ctx.textAlign = "right";
+    ctx.fillText("시간", gx1, gy1 + 15);
   }
 
-  function drawEvidencePanel(ctx: CanvasRenderingContext2D, W: number, tMs: number): void {
-    const n100 = cssVar("--n100");
-    const n300 = cssVar("--n300");
-    const n700 = cssVar("--n700");
-    const active = sensorP >= 1;
-    ctx.save();
-    ctx.globalAlpha = active ? 1 : 0.38;
-
-    // 구분선과 단계 이름
-    ctx.strokeStyle = alphaVar("--plant-glass", 0.2);
-    ctx.lineWidth = 1.2;
+  function drawLeafTest(ctx: CanvasRenderingContext2D, w: number): void {
+    const geo = coverGeometry(w);
+    ctx.strokeStyle = alphaVar("--plant-glass", 0.24);
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(16, 247);
-    ctx.lineTo(W - 16, 247);
+    ctx.moveTo(16, SENSOR_BOTTOM + 10);
+    ctx.lineTo(w - 16, SENSOR_BOTTOM + 10);
     ctx.stroke();
-    label(ctx, "햇빛 받은 잎과 가린 잎을 비교해요", 18, 262, n300, "left", 10.5);
+    ctx.font = "750 10.5px Pretendard, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillStyle = cssVar("--n300");
+    ctx.fillText("잎 일부 가리기 · 사전 암처리 비교", 18, SENSOR_BOTTOM + 30);
 
-    // 실제 잎 비교 전, 한 개체를 어둠에 두어 이미 있던 녹말을 줄이는 사전 암처리.
-    // 완료 화면을 한 번 더 볼 수 있게 readyDecolor에서도 이 장면을 유지한다.
-    const showDarkPrep = phase === "readyDark" || phase === "darkRunning" || phase === "readyDecolor";
-    if (showDarkPrep) {
-      const plantXs = [W * 0.31, W * 0.69];
-      const baseY = 411;
-      for (let i = 0; i < 2; i++) {
-        const x = plantXs[i];
-        ctx.fillStyle = plantColor("soil");
-        roundedRect(ctx, x - 31, baseY - 27, 62, 28, 9);
-        ctx.fill();
-        ctx.strokeStyle = plantColor("leafLo");
-        ctx.lineWidth = 5;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(x, baseY - 26);
-        ctx.lineTo(x, baseY - 92);
-        ctx.stroke();
-        drawLeaf(ctx, x - 21, baseY - 74, 60, 31, 0.24);
-        drawLeaf(ctx, x + 19, baseY - 94, 58, 30, -0.22);
-        drawLeaf(ctx, x - 2, baseY - 116, 54, 28, 0.02);
-      }
-      drawSun(ctx, plantXs[0] - 50, 296, 15, tMs / 5000);
-      drawFlowArrow(ctx, plantXs[0] - 36, 306, plantXs[0] - 10, 329, plantColor("sun"), 2.5);
-      label(ctx, "햇빛", plantXs[0], 429, plantColor("sun"), "center", 9.5);
-
-      // 어둠 상자가 내려오며 두 번째 개체를 가린다.
-      const boxX = plantXs[1] - 52;
-      const boxY = 286 + darkP * 19;
+    drawLeaf(ctx, geo.cx, geo.cy, geo.leafW, geo.leafH, 0);
+    if (result !== "none") {
       ctx.save();
-      ctx.globalAlpha *= 0.34 + darkP * 0.62;
-      ctx.fillStyle = cssVar("--stage-2");
-      roundedRect(ctx, boxX, boxY, 104, 121, 12);
-      ctx.fill();
-      ctx.strokeStyle = n700;
-      ctx.lineWidth = 2.2;
-      ctx.stroke();
-      ctx.fillStyle = alphaVar("--n0", 0.08);
-      roundedRect(ctx, boxX + 8, boxY + 9, 88, 19, 6);
-      ctx.fill();
-      ctx.restore();
-      label(ctx, "어둠 상자", plantXs[1], boxY + 19, n100, "center", 9.5);
-      label(ctx, "사전 암처리", plantXs[1], 429, n300, "center", 9.5);
-
-      ctx.fillStyle = alphaVar("--n0", 0.065);
-      roundedRect(ctx, 15, 456, W - 30, 22, 8);
-      ctx.fill();
-      label(ctx, "한 개체를 어둠에 두어 잎에 남아 있던 기존 녹말을 줄여요", W / 2, 467, n100, "center", 9.1);
-      ctx.restore();
-      return;
-    }
-
-    // 왼쪽: 에탄올 시험관을 뜨거운 물에 담근 물중탕 장치
-    const bathX = 18;
-    const bathW = W * 0.47 - 26;
-    const bathY = 315;
-    const bathH = 104;
-    const waterY = bathY + 32;
-    ctx.fillStyle = alphaVar("--plant-water", 0.16);
-    roundedRect(ctx, bathX, bathY, bathW, bathH, 13);
-    ctx.fill();
-    ctx.strokeStyle = alphaVar("--plant-glass-hi", 0.55);
-    ctx.lineWidth = 1.8;
-    ctx.stroke();
-    ctx.fillStyle = alphaVar("--plant-water", 0.24);
-    ctx.fillRect(bathX + 4, waterY, bathW - 8, bathH - 36);
-    ctx.strokeStyle = alphaVar("--plant-glass-hi", 0.6);
-    ctx.beginPath();
-    ctx.moveTo(bathX + 4, waterY);
-    for (let x = bathX + 4; x < bathX + bathW - 4; x += 8) {
-      ctx.lineTo(x, waterY + Math.sin(x / 13 + tMs / 360) * (decolorP > 0 && decolorP < 1 ? 1.8 : 0.5));
-    }
-    ctx.stroke();
-    label(ctx, "뜨거운 물", bathX + bathW / 2, bathY + bathH - 11, plantColor("water"), "center", 9.5);
-
-    const tubeXs = [bathX + bathW * 0.32, bathX + bathW * 0.69];
-    const names = ["햇빛 받은 잎", "햇빛 가린 잎"];
-    for (let i = 0; i < 2; i++) {
-      const tx = tubeXs[i];
-      const tubeTop = 282;
-      const tubeBottom = bathY + bathH - 20;
-      ctx.fillStyle = alphaVar("--n0", 0.055);
-      roundedRect(ctx, tx - 18, tubeTop, 36, tubeBottom - tubeTop, 15);
-      ctx.fill();
-      ctx.strokeStyle = alphaVar("--plant-glass-hi", 0.72);
-      ctx.lineWidth = 1.7;
-      ctx.stroke();
-      ctx.fillStyle = alphaVar("--n0", 0.1);
-      ctx.fillRect(tx - 15, tubeTop + 24, 30, tubeBottom - tubeTop - 28);
-      label(ctx, "에탄올", tx, tubeTop + 17, n100, "center", 8.8);
-      const leafY = 340 + Math.min(1, decolorP * 2) * 16;
-      drawLeaf(ctx, tx, leafY, Math.min(48, bathW * 0.34), 25, i === 0 ? -0.18 : 0.18);
-      if (i === 1 && decolorP < 0.15) {
-        ctx.fillStyle = n700;
-        ctx.globalAlpha *= 0.82;
-        ctx.fillRect(tx - 5, leafY - 16, 10, 32);
-        ctx.globalAlpha = active ? 1 : 0.38;
+      leafPath(ctx, geo.cx, geo.cy, geo.leafW, geo.leafH);
+      ctx.clip();
+      ctx.globalAlpha = resultMix;
+      ctx.fillStyle = cssVar("--blue-press");
+      if (result === "confused") {
+        ctx.fillRect(geo.cx - geo.leafW * 0.55, geo.cy - geo.leafH, geo.leafW * 1.1, geo.leafH * 2);
+      } else {
+        const left = geo.coverX - geo.coverW * 0.5;
+        const right = geo.coverX + geo.coverW * 0.5;
+        ctx.fillRect(geo.cx - geo.leafW * 0.55, geo.cy - geo.leafH, left - (geo.cx - geo.leafW * 0.55), geo.leafH * 2);
+        ctx.fillRect(right, geo.cy - geo.leafH, geo.cx + geo.leafW * 0.55 - right, geo.leafH * 2);
+        ctx.fillStyle = alphaVar("--n100", 0.7);
+        ctx.fillRect(left, geo.cy - geo.leafH, geo.coverW, geo.leafH * 2);
       }
-      if (decolorP > 0) {
-        ctx.save();
-        ctx.globalAlpha = Math.min(0.94, decolorP * 0.94);
-        leafShape(ctx, tx, leafY, Math.min(48, bathW * 0.34), 25, i === 0 ? -0.18 : 0.18);
-        ctx.fillStyle = n100;
-        ctx.fill();
-        ctx.restore();
-      }
-      label(ctx, names[i], tx, 432, n300, "center", 8.8);
+      ctx.restore();
     }
 
-    // 오른쪽: 탈색한 잎에 아이오딘 용액을 떨어뜨리는 페트리 접시
-    const resultAlpha = clamp((decolorP - 0.55) / 0.45, 0, 1);
     ctx.save();
-    ctx.globalAlpha *= resultAlpha;
-    const dishXs = [W * 0.63, W * 0.85];
-    const dishY = 365;
-    for (let i = 0; i < 2; i++) {
-      const dx = dishXs[i];
-      ctx.fillStyle = alphaVar("--n0", 0.18);
+    if (result === "none") {
+      const coverG = ctx.createLinearGradient(geo.coverX - geo.coverW * 0.5, geo.cy - 50, geo.coverX + geo.coverW * 0.5, geo.cy + 50);
+      coverG.addColorStop(0, cssVar("--n500"));
+      coverG.addColorStop(0.45, cssVar("--n800"));
+      coverG.addColorStop(1, cssVar("--n900"));
+      ctx.fillStyle = coverG;
+      ctx.strokeStyle = cssVar("--n400");
+      ctx.lineWidth = 1.5;
+      roundedRect(ctx, geo.coverX - geo.coverW * 0.5, geo.cy - 63, geo.coverW, 126, 9);
+      ctx.fill();
+      ctx.stroke();
+      ctx.strokeStyle = alphaVar("--n0", 0.34);
       ctx.beginPath();
-      ctx.ellipse(dx, dishY, Math.min(36, W * 0.095), 24, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = alphaVar("--plant-glass-hi", 0.86);
-      ctx.lineWidth = 1.7;
+      ctx.moveTo(geo.coverX - geo.coverW * 0.34, geo.cy - 55);
+      ctx.lineTo(geo.coverX + geo.coverW * 0.27, geo.cy - 55);
       ctx.stroke();
-      drawLeaf(ctx, dx, dishY, Math.min(55, W * 0.14), 28, i === 0 ? -0.12 : 0.12, 0.5);
-      leafShape(ctx, dx, dishY, Math.min(55, W * 0.14), 28, i === 0 ? -0.12 : 0.12);
-      ctx.save();
-      ctx.globalAlpha = iodineP;
-      ctx.fillStyle = i === 0 ? cssVar("--blue-press") : plantColor("soil");
-      ctx.fill();
-      if (i === 0) {
-        ctx.strokeStyle = cssVar("--blue-tint-2");
-        ctx.lineWidth = 2.2;
-        ctx.stroke();
-      }
-      ctx.restore();
-      label(ctx, i === 0 ? "햇빛 받은 잎" : "햇빛 가린 잎", dx, dishY + 40, n300, "center", 7.8);
-      if (iodineP > 0.82) {
-        label(
-          ctx,
-          i === 0 ? "청람색" : "색 변화 거의 없음",
-          dx,
-          dishY + 57,
-          i === 0 ? cssVar("--blue-tint-2") : plantColor("soil"),
-          "center",
-          i === 0 ? 9.3 : 8.4,
-        );
-      }
-      if (phase === "iodineRunning") {
-        const dropY = 286 + clamp(iodineP * 1.7 - i * 0.12, 0, 1) * 54;
-        ctx.fillStyle = plantColor("soil");
-        ctx.beginPath();
-        ctx.arc(dx, dropY, 4.2, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      if (phase === "readyRinse" || phase === "rinseRunning") {
-        const q = phase === "readyRinse" ? i * 0.18 : (rinseP * 1.45 + i * 0.21) % 1;
-        drawMaterialToken(ctx, dx, 290 + q * 49, 5.2, "water");
-        ctx.save();
-        ctx.globalAlpha = 0.12 + rinseP * 0.13;
-        leafShape(ctx, dx, dishY, Math.min(55, W * 0.14), 28, i === 0 ? -0.12 : 0.12);
-        ctx.fillStyle = plantColor("water");
-        ctx.fill();
-        ctx.restore();
-      }
-    }
-    if (phase === "readyRinse" || phase === "rinseRunning") {
-      label(ctx, "탈색한 잎을 물로 헹궈요", W * 0.74, 275, plantColor("water"), "center", 9.3);
-    }
-    if (phase === "readyIodine" || phase === "iodineRunning" || phase === "done") {
-      ctx.strokeStyle = plantColor("soil");
-      ctx.lineWidth = 5;
-      ctx.lineCap = "round";
-      for (const dx of dishXs) {
-        ctx.beginPath();
-        ctx.moveTo(dx - 10, 283);
-        ctx.lineTo(dx + 3, 303);
-        ctx.stroke();
-      }
-      label(ctx, "아이오딘 용액", W * 0.74, 275, plantColor("soil"), "center", 9.3);
+      ctx.fillStyle = cssVar("--n100");
+      ctx.font = "800 10px Pretendard, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("가리개", geo.coverX, geo.cy + 4);
+    } else {
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = cssVar("--n300");
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(geo.coverX - geo.coverW * 0.5, geo.cy - 58, geo.coverW, 116);
+      ctx.setLineDash([]);
     }
     ctx.restore();
 
-    // 안전 띠: 에탄올 직접 가열 오개념을 실험 화면에 고정한다.
-    ctx.fillStyle = alphaVar("--n0", 0.065);
-    roundedRect(ctx, 15, 456, W - 30, 22, 8);
-    ctx.fill();
-    label(ctx, "에탄올은 뜨거운 물로 물중탕하고, 탈색한 잎은 물로 헹궈요", W / 2, 467, n100, "center", 9.1);
-    ctx.restore();
+    const resultText = result === "none"
+      ? (darkTreated ? "암처리 뒤 일부를 가린 잎" : "암처리 없이 일부를 가린 잎")
+      : result === "controlled"
+        ? "빛 받은 부분만 청람색 · 가린 부분은 변화 없음"
+        : "가린 부분까지 청람색 · 기존 녹말 때문에 비교 흐림";
+    ctx.fillStyle = result === "confused" ? cssVar("--red") : cssVar("--n100");
+    ctx.font = "800 10.5px Pretendard, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(resultText, geo.cx, 407);
   }
 
   const loop: Loop = createLoop((dt, tMs) => {
     const fit = fitCanvas(canvas, CVH, 1.75);
     const ctx = fit.ctx;
-    const W = fit.w;
-
-    if (phase === "sensorRunning") {
-      sensorP = clamp(sensorP + dt * 0.012, 0, 1);
-      if (sensorP >= 1) {
-        phase = "readyDark";
-        carbonRead.textContent = "이산화 탄소 감소";
-        oxygenRead.textContent = "산소 증가";
-        collect("gas", "CO₂ 감소·산소 증가", "센서가 광합성에 따른 기체 변화를 잡았어요");
-        setButton("상추 한 개체 사전 암처리하기", true, phase, "기존 녹말 줄이기");
-        helper.innerHTML = "센서 관찰 완료! 잎 비교 전에는 한 개체를 <b>어둠에 두어 사전 암처리</b>해요. 그래야 잎에 이미 있던 녹말을 줄이고 빛을 받은 뒤 생긴 녹말을 비교하기 쉬워요.";
-      }
-    } else if (phase === "darkRunning") {
-      darkP = clamp(darkP + dt * 0.016, 0, 1);
-      if (darkP >= 1) {
-        phase = "readyDecolor";
-        setButton("두 잎을 에탄올 물중탕으로 탈색", true, phase, "에탄올 물중탕");
-        helper.innerHTML = "사전 암처리로 기존 녹말을 줄였어요. 이제 잎을 에탄올이 든 시험관에 넣고, 시험관을 <b>뜨거운 물에 담가 물중탕</b>해 초록색을 빼요.";
-      }
-    } else if (phase === "decolorRunning") {
-      decolorP = clamp(decolorP + dt * 0.016, 0, 1);
-      if (decolorP >= 1) {
-        phase = "readyRinse";
-        setButton("탈색한 두 잎을 물로 헹구기", true, phase, "에탄올 씻어 내기");
-        helper.innerHTML = "두 잎의 초록색을 뺐어요. 아직 아이오딘 용액을 떨어뜨리면 안 돼요. 먼저 탈색한 잎을 꺼내 <b>물로 헹궈</b> 남은 에탄올을 씻어 내요.";
-      }
-    } else if (phase === "rinseRunning") {
-      rinseP = clamp(rinseP + dt * 0.02, 0, 1);
-      if (rinseP >= 1) {
-        phase = "readyIodine";
-        collect("decolor", "암처리·탈색·헹굼", "사전 암처리, 물중탕 탈색, 물 헹굼을 마쳤어요");
-        setButton("아이오딘 용액 떨어뜨리기", true, phase, "녹말 검출 준비");
-        helper.innerHTML = "물로 헹군 두 잎을 나란히 놓았어요. 이제 <b>아이오딘-아이오딘화 칼륨 용액</b>을 떨어뜨려 녹말이 있는 잎을 찾아보세요.";
-      }
-    } else if (phase === "iodineRunning") {
-      iodineP = clamp(iodineP + dt * 0.018, 0, 1);
-      if (iodineP >= 1) {
-        phase = "done";
-        collect("starch", "햇빛 잎만 청람색", "햇빛 받은 잎에서 녹말이 검출됐어요");
-        setButton("실험 관찰 완료", false, phase, "녹말 증거 확인");
-      }
-    }
-
-    drawSensorPanel(ctx, W, tMs);
-    drawEvidencePanel(ctx, W, tMs);
+    const w = fit.w;
+    canvasW = w;
+    ctx.fillStyle = cssVar("--stage");
+    ctx.fillRect(0, 0, w, CVH);
+    if (result !== "none") resultMix = clamp(resultMix + dt * 0.025, 0, 1);
+    drawSensor(ctx, w, tMs);
+    drawLeafTest(ctx, w);
   });
 
-  api.setCTA("센서와 잎 실험을 순서대로 마쳐요", { enabled: false });
-  const startRaf = requestAnimationFrame(() => loop.start());
+  updateSlider(false);
+  const startFrame = requestAnimationFrame(() => loop.start());
+  api.setCTA("센서와 잎 비교의 세 목표를 완성해요", { enabled: false });
 
   return () => {
-    cancelAnimationFrame(startRaf);
+    cancelAnimationFrame(startFrame);
     window.clearTimeout(toastTimer);
     loop.stop();
-    actionBtn.removeEventListener("click", onAction);
+    slider.removeEventListener("pointerdown", onSliderDown);
+    slider.removeEventListener("pointermove", onSliderMove);
+    slider.removeEventListener("pointerup", endSlider);
+    slider.removeEventListener("pointercancel", endSlider);
+    slider.removeEventListener("keydown", onSliderKey);
+    canvas.removeEventListener("pointerdown", onCanvasDown);
+    canvas.removeEventListener("pointermove", onCanvasMove);
+    canvas.removeEventListener("pointerup", endCanvas);
+    canvas.removeEventListener("pointercancel", endCanvas);
+    canvas.removeEventListener("keydown", onCanvasKey);
+    darkBtn.removeEventListener("click", toggleDark);
+    detectBtn.removeEventListener("click", detect);
   };
 };
