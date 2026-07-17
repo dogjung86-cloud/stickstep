@@ -1,6 +1,7 @@
-// 중1 수학 Ⅴ 평면도형과 입체도형: 단원 종합 평가 풀, 레슨 5 원과 부채꼴(m1u5e057~e070)
+// 중1 수학 Ⅴ 평면도형과 입체도형: 단원 종합 평가 풀, 레슨 5 원과 부채꼴(m1u5e057~e070) 2026-07 개보수: 원 부품 3문항 ㉠ 판독형(m5CirclePartsFig).
 // 유형 9 objective / 4 num / 1 word, diff 6/6/2. 교과서와 레슨의 수치·문구·도형 배치를 재사용하지 않는다.
 import type { ExamItem } from "./types";
+import { m5CirclePartsFig } from "../../ui/examFiguresMath";
 
 const L = "m1u5l5";
 
@@ -9,7 +10,8 @@ export const POOL_M1U5L5: ExamItem[] = [
     id: "m1u5e057",
     lessonId: L,
     type: "mcq",
-    prompt: "원의 중심이 O이고 A가 원 위의 점일 때, 선분 OA를 바르게 부른 것은?",
+    prompt: "그림의 원 O에서 ㉠으로 표시한 선분 OA의 이름은?",
+    figure: m5CirclePartsFig({ radii: true, mark: { target: "radius", text: "㉠" } }),
     options: ["반지름", "지름", "현", "호", "중심각"],
     answer: 0,
     diff: 1,
@@ -51,7 +53,8 @@ export const POOL_M1U5L5: ExamItem[] = [
     id: "m1u5e060",
     lessonId: L,
     type: "mcq",
-    prompt: "둥근 창의 테두리 위에 A, B 두 점을 표시했어요. A에서 B까지 <b>테두리를 따라간 굽은 부분</b>의 이름은?",
+    prompt: "그림의 원 위에 두 점 A, B가 있어요. ㉠으로 표시한, A에서 B까지 원을 따라 이어진 <b>굽은 부분</b>의 이름은?",
+    figure: m5CirclePartsFig({ arcBold: true, mark: { target: "arc", text: "㉠" } }),
     options: ["반지름", "지름", "현", "할선", "호"],
     answer: 4,
     diff: 1,
@@ -63,12 +66,13 @@ export const POOL_M1U5L5: ExamItem[] = [
     id: "m1u5e061",
     lessonId: L,
     type: "mcq",
-    prompt: "원 위의 두 점 A, B와 중심 O가 있어요. 호 AB와 두 반지름 OA, OB로 둘러싸인 도형은?",
+    prompt: "그림의 원 O에서 색칠한 ㉠ 부분의 이름은?",
+    figure: m5CirclePartsFig({ radii: true, shade: "sector", mark: { target: "region", text: "㉠" } }),
     options: ["활꼴", "부채꼴", "현", "지름", "할선"],
     answer: 1,
     diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span>호 AB와 두 반지름 OA, OB가 경계를 이루는 영역은 <b>부채꼴</b>이에요. 중심 O가 영역의 뾰족한 꼭짓점이 되고, 두 반지름 사이에는 중심각 ∠AOB가 생겨요.<span class='xh'>오답 선지 하나씩 격파</span>'활꼴'은 두 반지름이 아니라 현 AB와 호 AB로 둘러싸여요. '현'은 원 위의 두 점을 이은 선분 하나이며 영역이 아니에요. '지름'은 중심을 지나는 특별한 현이에요. '할선'은 원과 두 점에서 만난 뒤 원 밖으로도 뻗는 직선이에요. 부채꼴과 활꼴이 헷갈리면 경계에 반지름 두 개가 있는지, 현 한 개가 있는지 확인하세요.",
+      "<span class='xh'>정답 풀이</span>색칠한 ㉠은 호 AB와 두 반지름 OA, OB가 경계를 이루는 영역이므로 <b>부채꼴</b>이에요. 중심 O가 영역의 뾰족한 꼭짓점이 되고, 두 반지름 사이에는 중심각 ∠AOB가 생겨요.<span class='xh'>오답 선지 하나씩 격파</span>'활꼴'은 두 반지름이 아니라 현 AB와 호 AB로 둘러싸여요. '현'은 원 위의 두 점을 이은 선분 하나이며 영역이 아니에요. '지름'은 중심을 지나는 특별한 현이에요. '할선'은 원과 두 점에서 만난 뒤 원 밖으로도 뻗는 직선이에요. 부채꼴과 활꼴이 헷갈리면 경계에 반지름 두 개가 있는지, 현 한 개가 있는지 확인하세요.",
     core: "호와 두 반지름으로 둘러싸인 영역이 부채꼴이에요!",
   },
   {

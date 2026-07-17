@@ -1,4 +1,4 @@
-// 중1 수학 III. 좌표평면과 그래프: 단원 종합 평가 풀, 레슨 7 반비례(m1u3e134~m1u3e155).
+// 중1 수학 III. 좌표평면과 그래프: 단원 종합 평가 풀, 레슨 7 반비례(m1u3e134~m1u3e155). 2026-07 개보수: e147 물탱크 채우기(비상 계승)·e150 주스 소재 교체.
 // 13(mcq+multi)/7(num)/2(word), diff 9/9/4. 관계표 4개만 사용해 L8의 그래프 범위와 겹치지 않는다.
 import type { ExamItem } from "./types";
 import { mExamTableFig } from "../../ui/examFiguresMath";
@@ -209,14 +209,14 @@ export const POOL_M1U3L7: ExamItem[] = [
     id: "m1u3e147",
     lessonId: L,
     type: "num",
-    prompt: `같은 속도로 일하는 사람 수와 필요한 날수가 반비례해요. 일의 양이 <b>${WORK_AMOUNT}사람·일</b>일 때 ${12}명이 일하면 며칠이 필요한지 구하세요.`,
+    prompt: `빈 물탱크에 1분에 <b>6 L</b>씩 물을 넣으면 가득 채우는 데 <b>14분</b>이 걸려요. 1분에 넣는 물의 양을 ${withVars("x")} L, 가득 채우는 데 걸리는 시간을 ${withVars("y")}분이라 할 때, 1분에 12 L씩 넣으면 몇 분이 걸리는지 구하세요.`,
     answer: String(WORK_AMOUNT / 12),
     numKind: "int",
-    unitLabel: "일",
+    unitLabel: "분",
     diff: 2,
     explain:
-      `<span class='xh'>정답 풀이</span>사람 수를 ${withVars("x")}, 날수를 ${withVars("y")}라고 하면 전체 일의 양이 ${WORK_AMOUNT}사람·일로 일정하므로 ${withVars(`xy=${WORK_AMOUNT}`)}예요. ${withVars("x=12")}를 넣으면 ${withVars("y")}=${WORK_AMOUNT}÷12=<b>${WORK_AMOUNT / 12}</b>일이에요. <span class='xh'>계산 함정 격파</span>${WORK_AMOUNT}−12=72처럼 빼면 사람 수와 날수를 같은 종류의 양처럼 다룬 셈이에요. 12÷${WORK_AMOUNT}로 순서를 뒤집으면 필요한 날수가 되지 않고, ${WORK_AMOUNT}×12는 사람이 많을수록 날수도 늘어난다는 잘못된 관계를 만들어요. 검산하면 12명×${WORK_AMOUNT / 12}일=${WORK_AMOUNT}사람·일로 원래의 전체 일의 양과 같고 상황에도 맞아요.`,
-    core: `고정된 ${WORK_AMOUNT}사람·일을 12명으로 나누면 ${WORK_AMOUNT / 12}일이에요.`,
+      `<span class='xh'>정답 풀이</span>물탱크에 들어가는 전체 물의 양은 6×14=${WORK_AMOUNT} L로 일정해요. 1분에 넣는 양과 걸리는 시간의 곱이 항상 전체 양이므로 ${withVars(`xy=${WORK_AMOUNT}`)}이고, ${withVars("x=12")}를 넣으면 ${withVars("y")}=${WORK_AMOUNT}÷12=<b>${WORK_AMOUNT / 12}</b>분이에요. <span class='xh'>계산 함정 격파</span>14−6=8이나 12+2처럼 더하고 빼는 계산은 전체 양이 일정하다는 구조를 쓰지 못해요. 1분에 넣는 양이 6에서 12로 2배가 되었으므로 시간은 14분의 절반인 7분이라는 배수 풀이와도 일치해요. 검산하면 12×${WORK_AMOUNT / 12}=${WORK_AMOUNT} L로 처음 계산한 물탱크의 전체 양과 정확히 같아요.`,
+    core: `전체 양 ${WORK_AMOUNT} L가 일정하므로 xy=${WORK_AMOUNT}에서 y=7분이에요.`,
   },
   {
     id: "m1u3e148",
@@ -258,13 +258,13 @@ export const POOL_M1U3L7: ExamItem[] = [
     id: "m1u3e150",
     lessonId: L,
     type: "mcq",
-    prompt: `크기가 ${FILE_TOTAL} GB인 파일 묶음을 5대가 아니라 <b>15대</b>의 기기에 똑같이 나누면 한 기기가 받는 크기는?`,
-    options: ["15 GB", "45 GB", "9 GB", "1 GB", "3 GB"],
+    prompt: `주스 ${FILE_TOTAL} L를 5개가 아니라 <b>15개</b>의 병에 똑같이 나누어 담으면 한 병에 담기는 양은?`,
+    options: ["15 L", "45 L", "9 L", "1 L", "3 L"],
     answer: 4,
     diff: 2,
     explain:
-      `<span class='xh'>정답 풀이</span>전체 크기 ${FILE_TOTAL} GB는 그대로이고 이를 15대에 똑같이 나누므로 한 기기의 몫은 ${FILE_TOTAL}÷15=<b>3 GB</b>예요. 5대일 때는 9 GB였고 기기 수가 3배가 되자 한 기기의 몫이 1/3배가 되어 반비례의 변화와도 맞아요.<span class='xh'>오답 하나씩 격파</span>'15 GB'는 기기 수를 파일 크기로 옮긴 값이고, '45 GB'는 전체량이라 한 기기의 몫이 아니에요. '9 GB'는 5대에 나눌 때의 이전 몫을 그대로 썼어요. '1 GB'는 기기 수가 3배가 된 뒤 9를 다시 9로 나눈 값이에요. 마지막에 15×3=45로 전체량이 보존되는지 확인해요.`,
-    core: "45 GB를 15대에 나누면 한 기기당 3 GB예요.",
+      `<span class='xh'>정답 풀이</span>주스의 전체 양 ${FILE_TOTAL} L는 그대로이고 이를 15개의 병에 똑같이 나누므로 한 병의 몫은 ${FILE_TOTAL}÷15=<b>3 L</b>예요. 5개일 때는 9 L였고 병의 수가 3배가 되자 한 병의 몫이 1/3배가 되어 반비례의 변화와도 맞아요.<span class='xh'>오답 하나씩 격파</span>'15 L'는 병의 수를 주스 양으로 옮긴 값이고, '45 L'는 전체량이라 한 병의 몫이 아니에요. '9 L'는 5개의 병에 나눌 때의 이전 몫을 그대로 썼어요. '1 L'는 병이 3배가 된 뒤 9를 다시 9로 나눈 값이에요. 마지막에 15×3=45로 전체량이 보존되는지 확인해요.`,
+    core: "45 L를 15개의 병에 나누면 한 병에 3 L예요.",
   },
   {
     id: "m1u3e151",

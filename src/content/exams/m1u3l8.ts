@@ -1,7 +1,7 @@
-// 중1 수학 Ⅲ. 좌표평면과 그래프: 단원 종합 평가 풀, 레슨 8 반비례 그래프 (m1u3e156~m1u3e177).
+// 중1 수학 Ⅲ. 좌표평면과 그래프: 단원 종합 평가 풀, 레슨 8 반비례 그래프 (m1u3e156~m1u3e177). 2026-07 개보수: e162 개형 ①~⑤·e175 교점·e177 정수 점 개수 신작, e166 조어 제거.
 // 유형 14(mcq+multi)/6(num)/2(word), diff 8/9/5. 곡선·점·문항 수치는 관계 그래프 spec에서 함께 가져온다.
 import type { ExamItem } from "./types";
-import { mExamRelationPlaneFig, type MExamRelationPlaneSpec } from "../../ui/examFiguresMath";
+import { mExamRelChoicesFig, mExamRelationPlaneFig, type MExamRelationPlaneSpec } from "../../ui/examFiguresMath";
 
 const L = "m1u3l8";
 const minus = (value: number): string => String(value).replace("-", "−");
@@ -50,6 +50,17 @@ const PLANE_169: MExamRelationPlaneSpec = {
   labelEvery: 2,
   inverseCurves: [CURVES_169.inverse],
   lines: [CURVES_169.line],
+};
+
+const MEET_175 = { label: "P", x: 3, y: 9, color: "#E8547E", labelDx: 14 };
+const A_175 = MEET_175.x * MEET_175.y;
+const PLANE_175: MExamRelationPlaneSpec = {
+  min: -10,
+  max: 10,
+  labelEvery: 2,
+  lines: [{ a: MEET_175.y / MEET_175.x, color: "#2F9E44" }],
+  inverseCurves: [{ a: A_175, color: "#364FC7" }],
+  points: [MEET_175],
 };
 
 const POINT_173 = { label: "R", x: -8, y: -4, color: "#E8547E", labelDx: 12 };
@@ -160,19 +171,21 @@ export const POOL_M1U3L8: ExamItem[] = [
     id: "m1u3e162",
     lessonId: L,
     type: "mcq",
-    prompt: `${inverse(45)}의 그래프를 그린 설명 중 옳은 것은?`,
-    options: [
-      "제1사분면의 곡선 한 갈래만 그린다",
-      "제3사분면의 곡선 한 갈래만 그린다",
-      "제2사분면과 제4사분면에 한 갈래씩 그린다",
-      "원점을 통과하도록 두 곡선을 이어 그린다",
-      "제1사분면과 제3사분면에 서로 떨어진 한 갈래씩 그린다",
-    ],
+    prompt: `다음 ①~⑤ 중 반비례 관계 ${inverse(-12)}의 그래프는?`,
+    figure: mExamRelChoicesFig([
+      { line: { a: 1 } },
+      { inv: 1 },
+      { line: { a: -1 } },
+      { inv: -1, single: true },
+      { inv: -1 },
+    ]),
+    options: ["①", "②", "③", "④", "⑤"],
     answer: 4,
+    shuffle: false,
     diff: 1,
     explain:
-      `<span class='xh'>정답 풀이</span>${inverse(45)}에서 두 좌표의 곱은 45로 양수이므로 두 좌표의 부호가 같아요. 그래서 제1사분면과 제3사분면에 서로 떨어진 곡선을 한 갈래씩 그려야 해요. 두 갈래 모두 축에 가까워지지만 축과 만나지는 않아요.<span class='xh'>오답 하나씩 격파</span>제1사분면이나 제3사분면 중 한 갈래만 그리면 그래프의 절반을 빠뜨린 셈이에요. 제2·4사분면은 곱이 음수일 때의 위치예요. 원점을 통과하도록 곡선을 잇는 방법도 틀려요. 원점에서는 ${variable("x")}=0이라 식을 사용할 수 없고, 반비례 그래프는 한 줄로 이어지는 직선이 아니에요. 부호와 두 갈래를 함께 확인해요.`,
-    core: "양수 a의 그래프는 제1·제3사분면의 두 갈래를 모두 그려야 해요.",
+      `<span class='xh'>정답 풀이</span>${inverse(-12)}는 반비례 관계이므로 그래프는 서로 떨어진 <b>두 갈래의 매끄러운 곡선</b>이에요. 두 좌표의 곱이 −12로 음수라 두 좌표의 부호가 달라야 하므로 곡선은 제2사분면과 제4사분면에 나타나요. 두 조건을 모두 만족하는 그림은 <b>⑤</b>예요.<span class='xh'>오답 하나씩 격파</span>①과 ③은 원점을 지나는 직선이라 정비례 그래프의 모양이에요. ②는 두 갈래 곡선이지만 제1·3사분면에 있어 곱이 양수인 관계의 그래프예요. ④는 제4사분면 쪽 한 갈래만 그려서 그래프의 절반을 빠뜨렸어요. 반비례 그래프는 곡선인지, 어느 사분면 짝인지, 두 갈래가 모두 있는지를 차례로 확인해요.`,
+    core: "a<0인 반비례 그래프는 제2·제4사분면의 두 갈래 곡선이에요.",
   },
   {
     id: "m1u3e163",
@@ -221,7 +234,7 @@ export const POOL_M1U3L8: ExamItem[] = [
     id: "m1u3e166",
     lessonId: L,
     type: "num",
-    prompt: `센서의 두 측정값 ${variable("x")}, ${variable("y")}가 반비례하고 한 측정점이 ${coord(8, -4)}예요. ${variable("x")}가 16이 되면 ${variable("y")}의 값을 쓰세요.`,
+    prompt: `${variable("y")}가 ${variable("x")}에 반비례하고 그 그래프가 점 ${coord(8, -4)}를 지나요. ${variable("x")}=16일 때 ${variable("y")}의 값을 쓰세요.`,
     answer: "-2",
     numKind: "int",
     diff: 2,
@@ -349,19 +362,14 @@ export const POOL_M1U3L8: ExamItem[] = [
     id: "m1u3e175",
     lessonId: L,
     type: "mcq",
-    prompt: `${inverse(-20)} 위의 점 ${coord(4, -5)}에서 좌표의 부호를 바꾸어 만든 점에 대한 설명으로 옳은 것은?`,
-    options: [
-      `${coord(-4, -5)}도 같은 그래프 위에 있다`,
-      `${coord(4, 5)}도 같은 그래프 위에 있다`,
-      `${coord(-4, 5)}는 같은 그래프의 반대쪽 갈래에 있다`,
-      "어느 좌표의 부호를 바꾸어도 항상 같은 그래프 위에 있다",
-      "두 좌표의 부호를 함께 바꾸면 원점이 된다",
-    ],
+    prompt: `그림과 같이 정비례 관계 ${variable("y")}=3${variable("x")}의 그래프와 반비례 관계 ${variable("y")}=${variable("a")}/${variable("x")}의 그래프가 점 P에서 만나요. 점 P의 ${variable("x")}좌표가 ${MEET_175.x}일 때, ${variable("a")}의 값은?`,
+    figure: mExamRelationPlaneFig(PLANE_175),
+    options: [`${MEET_175.y}`, `${MEET_175.x + MEET_175.y}`, `${A_175}`, `${MEET_175.x}`, `${MEET_175.y * MEET_175.y}`],
     answer: 2,
     diff: 3,
     explain:
-      `<span class='xh'>정답 풀이</span>${coord(4, -5)}의 두 좌표를 모두 반대로 바꾸면 ${coord(-4, 5)}가 되고, 곱은 (−4)×5=−20으로 그대로예요. 따라서 이 점은 같은 그래프의 제2사분면 쪽 갈래에 있어요.<span class='xh'>오답 하나씩 격파</span>${coord(-4, -5)}는 곱이 20이고 ${coord(4, 5)}도 곱이 20이라 다른 관계를 나타내요. 어느 한 좌표의 부호만 바꾸면 곱의 부호가 달라져요. 두 좌표의 부호를 함께 바꾸어도 좌표의 크기는 그대로이므로 원점이 되지 않아요. 바뀐 좌표를 실제로 곱해 분자의 수와 비교해요.`,
-    core: "두 좌표의 부호를 동시에 바꾸면 xy가 유지되어 반대쪽 갈래로 옮겨가요.",
+      `<span class='xh'>정답 풀이</span>① 점 P는 ${variable("y")}=3${variable("x")}의 그래프 위에 있으므로 ${variable("x")}좌표 ${MEET_175.x}을 넣으면 ${variable("y")}좌표는 3×${MEET_175.x}=${MEET_175.y}예요. 곧 P(${MEET_175.x}, ${MEET_175.y})예요.<br>② P는 ${variable("y")}=${variable("a")}/${variable("x")}의 그래프 위에도 있으므로 ${variable("a")}=${variable("x")}${variable("y")}=${MEET_175.x}×${MEET_175.y}=<b>${A_175}</b>이에요.<span class='xh'>오답 하나씩 격파</span>'${MEET_175.y}'는 P의 ${variable("y")}좌표를 구하고 멈춘 값이고, '${MEET_175.x + MEET_175.y}'는 두 좌표를 곱하지 않고 더한 값이에요. '${MEET_175.x}'은 주어진 ${variable("x")}좌표를 그대로 옮겼고, '${MEET_175.y * MEET_175.y}'은 ${variable("y")}좌표를 두 번 곱한 값이에요. 만나는 점은 두 그래프 위에 동시에 있으므로 두 식을 차례로 사용해요.`,
+    core: "교점은 두 그래프 위에 동시에 있어 P(3, 9)에서 a=27이에요.",
   },
   {
     id: "m1u3e176",
@@ -385,18 +393,12 @@ export const POOL_M1U3L8: ExamItem[] = [
     id: "m1u3e177",
     lessonId: L,
     type: "mcq",
-    prompt: `곡선 ㉠은 점 ${coord(7, 4)}를 지나고, 곡선 ㉡은 점 ${coord(-4, 8)}을 지나는 ${variable("y")}=${variable("a")}/${variable("x")} 꼴의 그래프예요. 옳은 설명은?`,
-    options: [
-      "㉠은 제1·제3사분면에, ㉡은 제2·제4사분면에 나타난다",
-      "㉠과 ㉡은 모두 제1·제3사분면에 나타난다",
-      "㉠과 ㉡은 모두 제2·제4사분면에 나타난다",
-      "㉠은 좌표축과 만나지만 ㉡은 만나지 않는다",
-      "㉡은 원점을 지나고 ㉠은 원점을 지나지 않는다",
-    ],
+    prompt: `반비례 관계 ${inverse(-18)}의 그래프 위의 점 중에서 ${variable("x")}좌표와 ${variable("y")}좌표가 모두 정수인 점은 모두 몇 개인가요?`,
+    options: ["12개", "6개", "24개", "8개", "10개"],
     answer: 0,
     diff: 3,
     explain:
-      `<span class='xh'>정답 풀이</span>㉠의 ${variable("a")}는 7×4=28로 양수이므로 제1·3사분면에 나타나요. ㉡의 ${variable("a")}는 (−4)×8=−32로 음수이므로 제2·4사분면에 나타나요. 한 점의 두 좌표를 곱하면 각 곡선의 위치를 모두 정할 수 있어요.<span class='xh'>오답 하나씩 격파</span>두 곡선이 같은 사분면 쌍에 나타난다는 설명들은 ${variable("a")}의 부호가 서로 다르다는 사실을 놓쳤어요. 반비례 그래프는 ${variable("a")}의 부호와 관계없이 좌표축과 만나지 않으므로 ㉠만 만난다는 말도 틀려요. ㉡만 원점을 지난다는 설명도 틀려요. 두 곡선 모두 ${variable("x")}=0을 사용할 수 없어 원점을 지나지 않아요.`,
-    core: "각 곡선의 한 점에서 a의 부호를 구하면 나타나는 사분면 쌍을 비교할 수 있어요.",
+      `<span class='xh'>정답 풀이</span>① 그래프 위의 점은 ${variable("x")}${variable("y")}=−18을 만족해요. ${variable("y")}=−18÷${variable("x")}가 정수가 되려면 ${variable("x")}는 18을 나누어떨어뜨리는 정수여야 해요.<br>② 18의 약수는 1, 2, 3, 6, 9, 18의 6개이고, ${variable("x")}는 음수도 될 수 있으므로 ±1, ±2, ±3, ±6, ±9, ±18의 12개예요.<br>③ 각 ${variable("x")}마다 ${variable("y")}가 하나씩 정해지므로 정수 점은 모두 <b>12개</b>예요.<span class='xh'>오답 하나씩 격파</span>'6개'는 양의 약수만 세고 음수 쪽 갈래를 빠뜨린 값이에요. '24개'는 각 점의 두 좌표를 따로 세어 한 점을 두 번 센 값이고, '8개'와 '10개'는 약수 1과 18이나 2와 9 같은 짝을 빠뜨리고 센 값이에요. 약수를 짝으로 늘어놓고 부호까지 곱해 세면 빠짐이 없어요.`,
+    core: "x는 ±(18의 약수)여야 하므로 정수 점은 6×2=12개예요.",
   },
 ];

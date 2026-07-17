@@ -1,8 +1,8 @@
 // 중1 수학 Ⅳ. 기본 도형: 단원 종합 평가 풀, 레슨 7 공간에서의 위치 관계 (m1u4e091~m1u4e105).
-// 유형 9(mcq+multi)/5(num)/1(word), diff 6/6/3. 교과서의 문장·수치·도형 배치는 복제하지 않았다.
+// 유형 9(mcq+multi)/5(num)/1(word), diff 6/5/4(개보수: 전개도·절단 입체 신작). 교과서의 문장·수치·도형 배치는 복제하지 않았다.
 import type { ExamItem } from "./types";
 import { gsym } from "../../ui/geoKit";
-import { m4BoxRelationsFig } from "../../ui/examFiguresMath";
+import { m4BoxRelationsFig, mExamCubeNetFig, mExamCutBoxFig, mExamSolidFig } from "../../ui/examFiguresMath";
 
 const L = "m1u4l7";
 
@@ -78,7 +78,8 @@ export const POOL_M1U4L7: ExamItem[] = [
     id: "m1u4e096",
     lessonId: L,
     type: "mcq",
-    prompt: "정육면체 PQRS-TUVW에서 윗면은 PQRS, 아랫면은 TUVW이고 세로 모서리는 PT, QU, RV, SW입니다. 모서리 PT와 꼬인 위치에 있는 모서리는?",
+    prompt: "그림의 정육면체에서 모서리 PT와 꼬인 위치에 있는 모서리는?",
+    figure: m4BoxRelationsFig(["P", "Q", "R", "S", "T", "U", "V", "W"]),
     options: ["모서리 QR", "모서리 PQ", "모서리 TU", "모서리 QU", "모서리 SW"],
     answer: 0,
     diff: 2,
@@ -108,19 +109,28 @@ export const POOL_M1U4L7: ExamItem[] = [
     id: "m1u4e098",
     lessonId: L,
     type: "mcq",
-    prompt: "곧은 기둥의 중심을 나타내는 직선 <i class='mv'>l</i>이 바닥을 나타내는 평면 P와 점 O에서만 만납니다. 직선 <i class='mv'>l</i>과 평면 P의 위치 관계는?",
-    options: ["직선 l이 평면 P에 포함된다", "직선 l과 평면 P가 평행하다", "직선 l과 평면 P가 한 점에서 만난다", "직선 l과 평면 P가 꼬인 위치에 있다", "직선 l과 평면 P가 일치한다"],
+    prompt: "그림의 전개도를 접어 정육면체를 만들 때, 모서리 AB와 <b>꼬인 위치</b>에 있는 모서리는?",
+    figure: mExamCubeNetFig([
+      { c: 0, r: 0, s: "A" }, { c: 1, r: 0, s: "B", dx: 8 },
+      { c: 0, r: 2, s: "C" }, { c: 1, r: 2, s: "K", dx: 8 },
+      { c: 0, r: 3, s: "D" },
+      { c: -1, r: 1, s: "E" }, { c: -1, r: 2, s: "F", dy: 12 },
+      { c: 2, r: 1, s: "G", dx: 8 }, { c: 2, r: 2, s: "H", dx: 8, dy: 12 },
+      { c: 0, r: 4, s: "I", dy: 12 }, { c: 1, r: 4, s: "J", dx: 8, dy: 12 },
+    ]),
+    options: ["모서리 EF", "모서리 GH", "모서리 CD", "모서리 IJ", "모서리 CK"],
     answer: 2,
-    diff: 2,
+    diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>직선 <i class='mv'>l</i>과 평면 P의 공통점이 O 하나뿐이라고 했으므로 두 대상은 <b>한 점에서 만나는 관계</b>예요. 기둥이 바닥과 수직인지 여부를 따로 알려 주지 않아도, 공통점의 개수만으로 이 위치 관계를 정할 수 있어요.<span class='xh'>오답 하나씩 격파</span>'평면 P에 포함된다'면 직선 위의 모든 점이 바닥 평면 위에 있어야 해요. '평행하다'면 공통점이 하나도 없어야 하므로 O가 있다는 조건과 어긋나요. 직선과 평면 사이에는 '꼬인 위치'를 쓰지 않아요. '일치한다'도 차원이 다른 직선과 평면 전체가 같은 대상이 될 수 없으므로 알맞지 않아요. 수직 표시는 특별한 만남을 알려 줄 뿐, 한 점에서 만난다는 기본 분류가 먼저예요.",
-    core: "직선과 평면의 공통점이 하나이면 한 점에서 만난다.",
+      "<span class='xh'>정답 풀이</span>가운데 세로줄의 둘째 칸을 앞면으로 두고 접어 보세요. 위 칸이 뒤로 넘어가면서 A와 B는 정육면체 <b>뒷면의 위 모서리</b> 양 끝이 돼요. C와 D가 이루는 모서리는 아래 왼쪽에서 앞뒤 방향으로 놓이므로, AB와 만나지도 않고 평행하지도 않은 <b>꼬인 위치</b>예요.<span class='xh'>오답 하나씩 격파</span>'모서리 EF'와 '모서리 GH'는 접으면 뒷면의 왼쪽·오른쪽 세로 모서리가 되어 AB와 각각 한 끝점에서 만나요. '모서리 IJ'는 맨 아래 칸이 뒤로 올라와 AB와 <b>완전히 겹치는</b> 같은 모서리가 되죠. '모서리 CK'는 앞면의 아래 모서리라 AB와 나란한 평행 관계예요. 전개도 문제는 어느 칸이 어느 면이 되는지 한 칸씩 접어 표시하면 실수가 없어요.",
+    core: "접었을 때의 방향까지 따라가면 CD가 꼬인 위치!",
   },
   {
     id: "m1u4e099",
     lessonId: L,
     type: "mcq",
-    prompt: "직육면체 ABCD-EFGH에서 윗면은 ABCD, 아랫면은 EFGH이고 세로 모서리는 AE, BF, CG, DH입니다. 평면 BCGF와 평면 DCGH의 교선은?",
+    prompt: "그림의 직육면체에서 평면 BCGF와 평면 DCGH의 교선은?",
+    figure: m4BoxRelationsFig(["A", "B", "C", "D", "E", "F", "G", "H"]),
     options: [gsym("BF", "line"), gsym("BC", "line"), gsym("GH", "line"), gsym("CG", "line"), gsym("DH", "line")],
     answer: 3,
     diff: 3,
@@ -142,7 +152,8 @@ export const POOL_M1U4L7: ExamItem[] = [
     id: "m1u4e100",
     lessonId: L,
     type: "num",
-    prompt: "직육면체 ABCD-EFGH에서 모서리 AB와 만나지도 않고 평행하지도 않은 모서리는 모두 몇 개인가요? 정답은 숫자만 입력하세요.",
+    prompt: "그림의 직육면체에서 모서리 AB와 만나지도 않고 평행하지도 않은 모서리는 모두 몇 개인가요? 정답은 숫자만 입력하세요.",
+    figure: m4BoxRelationsFig(["A", "B", "C", "D", "E", "F", "G", "H"]),
     answer: "4",
     numKind: "int",
     unitLabel: "개",
@@ -168,20 +179,22 @@ export const POOL_M1U4L7: ExamItem[] = [
     id: "m1u4e102",
     lessonId: L,
     type: "num",
-    prompt: "공간에서 한 직선과 한 평면의 위치 관계는 포함되는 경우, 한 점에서 만나는 경우, 평행한 경우로 나눌 수 있습니다. 모두 몇 가지인가요? 정답은 숫자만 입력하세요.",
-    answer: "3",
+    prompt: "그림은 직육면체에서 삼각기둥을 잘라 내고 남은 입체예요. 경사면인 면 ABCD와 평행한 모서리는 모두 몇 개인가요? 정답은 숫자만 입력하세요.",
+    figure: mExamCutBoxFig(["A", "D", "B", "C", "E", "F", "G", "H"]),
+    answer: "2",
     numKind: "int",
-    unitLabel: "가지",
-    diff: 1,
+    unitLabel: "개",
+    diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span>문제에 제시된 관계를 세면 ① 직선이 평면에 포함되는 경우, ② 직선과 평면이 한 점에서 만나는 경우, ③ 직선과 평면이 평행한 경우의 <b>3가지</b>예요.<span class='xh'>헷갈림 격파</span>수직은 한 점에서 만나는 경우 가운데 각이 특별한 경우이므로 새로운 네 번째 위치 관계로 따로 세지 않아요. 꼬인 위치는 두 직선 사이에서 쓰는 관계라 직선과 평면의 목록에 넣지 않고요. 일치한다는 말도 차원이 다른 직선 전체와 평면 전체에는 적용하지 않아요. 대상이 무엇인지에 따라 가능한 관계의 목록이 달라져요. 문제에 나열된 세 경우가 서로 겹치지 않는지도 확인한 뒤 입력칸에는 3만 적어요.",
-    core: "직선과 평면의 위치 관계는 포함, 한 점에서 만남, 평행의 3가지다.",
+      "<span class='xh'>정답 풀이</span>면과 모서리가 평행하려면 모서리를 아무리 연장해도 그 면과 만나지 않아야 해요. 경사면 ABCD와 나란한 방향은 모서리 AD와 같은 가로 방향이에요.<br>① 모서리 FG: 앞쪽 아래 가로 모서리, 면과 만나지 않고 AD와 평행 → 평행<br>② 모서리 EH: 뒤쪽 아래 가로 모서리 → 평행<br>따라서 <b>2개</b>예요.<span class='xh'>헷갈림 격파</span>4는 아래쪽 모서리 EF, GH까지 센 값인데, 이 둘은 앞뒤 방향이라 연장하면 기울어진 경사면과 결국 만나요. 잘린 입체에서는 '아래에 있으니 평행하겠지'라는 눈짐작이 위험해요. 6이나 3도 세로·경사 모서리를 섞어 센 값이죠. 면과 평행한 모서리를 찾을 때는 그 면 위에 있는 방향(여기서는 AD 방향)과 같은 방향의 모서리만 남기고, 만나는 것과 연장하면 만나는 것을 차례로 지워요.",
+    core: "경사면과 평행한 모서리는 FG와 EH의 2개!",
   },
   {
     id: "m1u4e103",
     lessonId: L,
     type: "num",
-    prompt: "삼각기둥 JKL-MNO에서 두 밑면은 JKL, MNO이고 옆모서리는 JM, KN, LO입니다. 모서리 JK와 꼬인 위치에 있는 모서리는 모두 몇 개인가요? 정답은 숫자만 입력하세요.",
+    prompt: "그림의 삼각기둥에서 모서리 JK와 꼬인 위치에 있는 모서리는 모두 몇 개인가요? 정답은 숫자만 입력하세요.",
+    figure: mExamSolidFig("prism3", ["J", "K", "L", "M", "N", "O"]),
     answer: "3",
     numKind: "int",
     unitLabel: "개",
@@ -194,7 +207,8 @@ export const POOL_M1U4L7: ExamItem[] = [
     id: "m1u4e104",
     lessonId: L,
     type: "num",
-    prompt: "직육면체 ABCD-EFGH에서 윗면은 ABCD, 아랫면은 EFGH이고 세로 모서리는 AE, BF, CG, DH입니다. 모서리 CG와 한 점에서 만나는 다른 모서리는 모두 몇 개인가요? 정답은 숫자만 입력하세요.",
+    prompt: "그림의 직육면체에서 모서리 CG와 한 점에서 만나는 다른 모서리는 모두 몇 개인가요? 정답은 숫자만 입력하세요.",
+    figure: m4BoxRelationsFig(["A", "B", "C", "D", "E", "F", "G", "H"]),
     answer: "4",
     numKind: "int",
     unitLabel: "개",
@@ -210,7 +224,7 @@ export const POOL_M1U4L7: ExamItem[] = [
     prompt: "공간에서 두 직선을 한 평면 위에 함께 놓을 수 없을 때, 두 직선의 위치 관계를 무엇이라고 하나요? 알맞은 말을 고르세요.",
     answer: "꼬인 위치",
     bank: ["꼬인 위치", "평행한 위치", "한 점에서 만나는 위치", "일치하는 위치", "수직", "교선", "수선의 발", "중점"],
-    diff: 2,
+    diff: 1,
     explain:
       "<span class='xh'>정답 풀이</span>공간에서 두 직선을 한 평면 위에 함께 놓을 수 없을 때 두 직선은 <b>꼬인 위치</b>에 있다고 해요. 이런 두 직선은 만나지 않고 평행하지도 않아요.<span class='xh'>오답 하나씩 격파</span>'평행한 위치'의 두 직선은 만나지 않지만 한 평면 위에 함께 놓을 수 있어요. '한 점에서 만나는 위치'라면 교점을 지나 두 직선을 담는 평면을 만들 수 있고, '일치하는 위치'라면 두 직선이 같은 자리를 차지해요. '수직'은 만나서 직각을 이루는 특별한 관계예요. '교선'은 두 평면이 만나 생기는 직선, '수선의 발'은 수선과 직선 또는 평면이 만나는 점, '중점'은 선분을 같은 길이로 나누는 점이라 두 직선의 위치 관계 이름이 아니에요.",
     core: "한 평면에 함께 놓을 수 없는 두 직선은 꼬인 위치에 있다.",

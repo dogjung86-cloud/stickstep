@@ -1,6 +1,7 @@
 // 중1 수학 II 문자와 식, 레슨 2 곱셈·나눗셈 기호 생략 단원 종합 평가 풀(22문항).
 // 교과서에서는 표현 구조와 함정만 참고하고 수치·문구·소재 결합은 새로 설계했다.
-// 유형 14(mcq+multi)/6(num)/2(word), diff 1/2/3 = 9/8/5.
+// 유형 14(mcq+multi)/6(num)/2(word), diff 1/2/3 = 10/8/4 (2026-07 개보수:
+// 괄호식 분자·괄호 분모 약분 신작 2, diff는 내용 기준 재캘리브레이션).
 import type { ExamItem } from "./types";
 import { mfmt } from "../../ui/mathKit";
 
@@ -11,19 +12,19 @@ export const POOL_M1U2L2: ExamItem[] = [
     id: "m1u2e023",
     lessonId: L,
     type: "mcq",
-    prompt: "로봇 부품 라벨에 7×<i class='mv'>r</i>을 곱셈 기호를 생략하여 적으려고 해요. 바르게 적은 것은?",
+    prompt: "7×<i class='mv'>r</i>을 곱셈 기호를 생략하여 나타낸 것은?",
     options: ["<i class='mv'>r</i>7", "7+<i class='mv'>r</i>", "7<i class='mv'>r</i>", "<i class='mv'>r</i>÷7", "7−<i class='mv'>r</i>"],
     answer: 2,
     diff: 1,
     explain:
-      "<span class='xh'>정답 풀이</span>수와 문자의 곱에서는 곱셈 기호를 지우고 수를 문자 앞에 써요. 따라서 7×<i class='mv'>r</i>은 <b>7<i class='mv'>r</i></b>이에요.<span class='xh'>오답 하나씩 격파</span>'<i class='mv'>r</i>7'은 수를 문자 뒤에 둔 표기라 약속에 맞지 않아요. '7+<i class='mv'>r</i>'과 '7−<i class='mv'>r</i>'은 곱셈을 덧셈이나 뺄셈으로 바꾸었어요. 연산 기호를 생략한다고 연산 자체가 달라지는 것은 아니에요. '<i class='mv'>r</i>÷7'은 나눗셈이라 원래 식과 뜻이 반대예요. 생략한 식을 다시 7×<i class='mv'>r</i>로 펼칠 수 있는지 확인하면 안전해요. 라벨을 짧게 쓰더라도 곱한다는 뜻은 그대로 보존해야 해요.",
+      "<span class='xh'>정답 풀이</span>수와 문자의 곱에서는 곱셈 기호를 지우고 수를 문자 앞에 써요. 따라서 7×<i class='mv'>r</i>은 <b>7<i class='mv'>r</i></b>이에요.<span class='xh'>오답 하나씩 격파</span>'<i class='mv'>r</i>7'은 수를 문자 뒤에 둔 표기라 약속에 맞지 않아요. '7+<i class='mv'>r</i>'과 '7−<i class='mv'>r</i>'은 곱셈을 덧셈이나 뺄셈으로 바꾸었어요. 연산 기호를 생략한다고 연산 자체가 달라지는 것은 아니에요. '<i class='mv'>r</i>÷7'은 나눗셈이라 원래 식과 뜻이 반대예요. 생략한 식을 다시 7×<i class='mv'>r</i>로 펼칠 수 있는지 확인하면 안전해요. 식을 짧게 쓰더라도 곱한다는 뜻은 그대로 보존해야 해요.",
     core: "수와 문자의 곱은 수를 앞에 두어 7r!",
   },
   {
     id: "m1u2e024",
     lessonId: L,
     type: "mcq",
-    prompt: "악보에서 한 마디의 변화량을 <i class='mv'>m</i>이라 할 때, <i class='mv'>m</i>×(−6)을 곱셈 기호 없이 나타낸 것은?",
+    prompt: "<i class='mv'>m</i>×(−6)을 곱셈 기호 없이 나타낸 것은?",
     options: ["6<i class='mv'>m</i>", "−6+<i class='mv'>m</i>", "−<i class='mv'>m</i>6", "<i class='mv'>m</i>−6", "−6<i class='mv'>m</i>"],
     answer: 4,
     diff: 1,
@@ -47,13 +48,13 @@ export const POOL_M1U2L2: ExamItem[] = [
     id: "m1u2e026",
     lessonId: L,
     type: "mcq",
-    prompt: "원단 재단표의 길이 식 8×<i class='mv'>b</i>×<i class='mv'>a</i>를 곱셈 기호 없이 바르게 나타낸 것은?",
-    options: ["8<i class='mv'>ba</i>", "<i class='mv'>ab</i>8", "8+<i class='mv'>a</i>+<i class='mv'>b</i>", "8<i class='mv'>ab</i>", "<i class='mv'>a</i>8<i class='mv'>b</i>"],
+    prompt: "(<i class='mv'>a</i>−<i class='mv'>b</i>)÷9를 나눗셈 기호를 생략하여 나타낸 것은?",
+    options: ["<i class='mv'>a</i>−" + mfmt("{b/9}"), mfmt("{a/9}") + "−<i class='mv'>b</i>", "9(<i class='mv'>a</i>−<i class='mv'>b</i>)", mfmt("{a-b/9}"), "(<i class='mv'>a</i>−<i class='mv'>b</i>)−9"],
     answer: 3,
-    diff: 1,
+    diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span>수와 여러 문자의 곱은 수를 맨 앞에 놓고 문자는 보통 알파벳 순서로 써요. 8×<i class='mv'>b</i>×<i class='mv'>a</i>는 곱의 순서를 바꾸어 <b>8<i class='mv'>ab</i></b>로 나타내요.<span class='xh'>오답 하나씩 격파</span>'8<i class='mv'>ba</i>'는 값은 같지만 문자를 알파벳 순으로 정리한 표준적인 표기가 아니에요. '<i class='mv'>ab</i>8'과 '<i class='mv'>a</i>8<i class='mv'>b</i>'은 수 8을 문자 앞에 모으지 않았어요. '8+<i class='mv'>a</i>+<i class='mv'>b</i>'은 곱셈을 덧셈으로 바꿔 원래 관계를 잃었고요. 생략은 ×만 지우는 일이 아니라 수와 문자의 순서를 약속대로 정돈하는 일이에요. 인수가 많을수록 수와 문자를 따로 모아 정리해요.",
-    core: "수 먼저, 문자는 알파벳 순서로 8ab!",
+      "<span class='xh'>정답 풀이</span>괄호로 묶인 <i class='mv'>a</i>−<i class='mv'>b</i> 전체가 9로 나뉘어요. 나누어지는 식이 통째로 분자가 되므로 <b>" + mfmt("{a-b/9}") + "</b>로 써요.<span class='xh'>오답 하나씩 격파</span><i class='mv'>a</i>=19, <i class='mv'>b</i>=1이면 원래 식은 (19−1)÷9=2예요. '<i class='mv'>a</i>−" + mfmt("{b/9}") + "'는 <i class='mv'>b</i>만 9로 나눠 약 18.9가 되고, '" + mfmt("{a/9}") + "−<i class='mv'>b</i>'는 <i class='mv'>a</i>만 나눠 약 1.1이 돼요. 둘 다 괄호를 무시한 결과죠. '9(<i class='mv'>a</i>−<i class='mv'>b</i>)'는 나눗셈을 곱셈으로 바꿔 162가 되고, '(<i class='mv'>a</i>−<i class='mv'>b</i>)−9'는 나누기를 빼기로 바꿔 9가 돼요. 괄호가 있으면 그 전체를 분자에 올려요.",
+    core: "괄호 전체를 나누면 괄호째 분자로!",
   },
   {
     id: "m1u2e027",
@@ -92,7 +93,7 @@ export const POOL_M1U2L2: ExamItem[] = [
     prompt: "배송 라벨 12장을 <i class='mv'>x</i>개 상자에 똑같이 나누는 식 12÷<i class='mv'>x</i>를 분수 꼴로 나타낸 것은?",
     options: [mfmt("{x/12}"), "12<i class='mv'>x</i>", mfmt("{12/x}"), "12−<i class='mv'>x</i>", "<i class='mv'>x</i>−12"],
     answer: 2,
-    diff: 2,
+    diff: 1,
     explain:
       "<span class='xh'>정답 풀이</span>12÷<i class='mv'>x</i>에서 나누어지는 수 12는 분자, 나누는 수 <i class='mv'>x</i>는 분모로 가요. 따라서 분수 꼴은 <b>" + mfmt("{12/x}") + "</b>예요.<span class='xh'>오답 하나씩 격파</span>" + mfmt("{x/12}") + "는 <i class='mv'>x</i>÷12를 뜻해서 한 상자에 들어갈 라벨 수의 관계가 반대예요. '12<i class='mv'>x</i>'는 상자마다 12장씩 있을 때 전체 수를 구하는 곱셈이고요. '12−<i class='mv'>x</i>'와 '<i class='mv'>x</i>−12'는 두 수의 차일 뿐 균등하게 나누는 뜻이 없어요. <i class='mv'>x</i>=3을 넣으면 원래 식과 정답은 4, 뒤집힌 분수는 0.25가 되어 차이가 분명해져요. 나눗셈의 순서는 분수에서도 바뀌지 않아요.",
     core: "12÷x는 12가 위, x가 아래인 분수!",
@@ -143,13 +144,13 @@ export const POOL_M1U2L2: ExamItem[] = [
     id: "m1u2e033",
     lessonId: L,
     type: "mcq",
-    prompt: "로봇 부품 번호식 24×<i class='mv'>a</i>÷6을 곱셈·나눗셈 기호 없이 가장 간단히 나타낸 것은?",
-    options: ["144<i class='mv'>a</i>", "18<i class='mv'>a</i>", mfmt("{a/4}"), "4<i class='mv'>a</i>", mfmt("{24/6a}")],
+    prompt: "20×<i class='mv'>b</i>÷(4×<i class='mv'>c</i>)를 곱셈·나눗셈 기호 없이 가장 간단히 나타낸 것은?",
+    options: ["80<i class='mv'>bc</i>", mfmt("{b/5c}"), "5<i class='mv'>bc</i>", mfmt("{5b/c}"), mfmt("{c/5b}")],
     answer: 3,
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>24×<i class='mv'>a</i>÷6은 24<i class='mv'>a</i>를 6으로 나누는 식이에요. 수끼리 24÷6=4를 계산하면 <b>4<i class='mv'>a</i></b>가 돼요.<span class='xh'>오답 하나씩 격파</span>'18<i class='mv'>a</i>'는 24−6을 한 뒤 문자에 곱해 나눗셈을 뺄셈으로 바꾼 값이에요. " + mfmt("{a/4}") + "는 6÷24를 계수로 삼아 나누는 방향을 뒤집었고요. '144<i class='mv'>a</i>'는 24와 6을 곱해 버린 결과예요. " + mfmt("{24/6a}") + "는 <i class='mv'>a</i>까지 분모에 넣었지만 원래 식은 24×<i class='mv'>a</i>를 만든 뒤 6으로 나눠요. 수로 된 계수는 서로 먼저 계산하고 문자는 그대로 붙여요. <i class='mv'>a</i>=5로 검산하면 두 식 모두 20이에요.",
-    core: "24a÷6은 계수 24÷6을 계산하여 4a!",
+      "<span class='xh'>정답 풀이</span>괄호 안 4×<i class='mv'>c</i> 전체가 나누는 수예요. 20<i class='mv'>b</i>를 4<i class='mv'>c</i>로 나누면 " + mfmt("{20b/4c}") + "이고, 수끼리 20÷4=5를 약분하면 <b>" + mfmt("{5b/c}") + "</b>가 돼요.<span class='xh'>오답 하나씩 격파</span><i class='mv'>b</i>=1, <i class='mv'>c</i>=5를 넣으면 원래 식은 20÷20=1이에요. '80<i class='mv'>bc</i>'는 나누기 4<i class='mv'>c</i>를 곱하기로 바꿔 400이 되고, '5<i class='mv'>bc</i>'는 <i class='mv'>c</i>가 분모라는 사실을 잃어 25가 돼요. '" + mfmt("{b/5c}") + "'는 수의 약분을 4÷20으로 뒤집은 값이고, '" + mfmt("{c/5b}") + "'는 분자와 분모를 통째로 바꾼 식이에요. 괄호 범위를 표시한 뒤 수끼리 약분해요.",
+    core: "괄호 분모 4c로 나누고 20÷4를 약분해 5b/c!",
   },
   {
     id: "m1u2e034",
@@ -173,7 +174,7 @@ export const POOL_M1U2L2: ExamItem[] = [
     id: "m1u2e035",
     lessonId: L,
     type: "mcq",
-    prompt: "화분 배열을 나타내는 <i class='mv'>z</i>×3×<i class='mv'>y</i>×2를 곱셈 기호 없이 가장 간단히 나타낸 것은?",
+    prompt: "<i class='mv'>z</i>×3×<i class='mv'>y</i>×2를 곱셈 기호 없이 가장 간단히 나타낸 것은?",
     options: ["5<i class='mv'>yz</i>", "6<i class='mv'>yz</i>", "6<i class='mv'>zy</i>", "6+<i class='mv'>y</i>+<i class='mv'>z</i>", "3<i class='mv'>yz</i>2"],
     answer: 1,
     diff: 2,
@@ -185,7 +186,7 @@ export const POOL_M1U2L2: ExamItem[] = [
     id: "m1u2e036",
     lessonId: L,
     type: "mcq",
-    prompt: "배송 라벨 식 <i class='mv'>s</i>÷4×<i class='mv'>t</i>×<i class='mv'>u</i>를 기호를 생략하여 나타낸 것은?",
+    prompt: "<i class='mv'>s</i>÷4×<i class='mv'>t</i>×<i class='mv'>u</i>를 기호를 생략하여 나타낸 것은?",
     options: [mfmt("{stu/4}"), mfmt("{s/4tu}"), mfmt("{4s/tu}"), mfmt("{st/4u}"), mfmt("4stu")],
     answer: 0,
     diff: 3,
@@ -272,7 +273,7 @@ export const POOL_M1U2L2: ExamItem[] = [
     prompt: "수와 문자의 곱에서 곱셈 기호를 생략할 때, 수는 문자의 어느 쪽에 쓰나요?",
     answer: "앞",
     bank: ["앞", "뒤", "위", "아래", "분모", "지수", "괄호 밖", "등호 뒤"],
-    diff: 2,
+    diff: 1,
     explain:
       "<span class='xh'>정답 풀이</span>수와 문자의 곱에서 ×를 생략하면 수를 문자의 <b>앞</b>에 써요. 예를 들어 <i class='mv'>c</i>×8은 곱의 순서를 바꾸어 8<i class='mv'>c</i>로 나타내요.<span class='xh'>오답 칩 격파</span>'뒤'는 <i class='mv'>c</i>8처럼 쓰게 되어 표기 약속에 맞지 않아요. '위'와 '아래', '분모'는 나눗셈을 분수로 나타낼 때 살피는 위치예요. '지수'는 같은 문자를 여러 번 곱한 횟수를 쓰는 자리이고요. '괄호 밖'은 괄호식과 수의 곱에서 관련될 수 있지만 모든 수와 문자의 곱을 설명하지 못해요. '등호 뒤'도 등식의 위치에 관한 말이라 기호 생략 약속과 무관해요. 수 먼저, 문자 나중 순서를 기억해요.",
     core: "곱셈 기호를 생략하면 수는 문자 앞!",
@@ -284,7 +285,7 @@ export const POOL_M1U2L2: ExamItem[] = [
     prompt: "<i class='mv'>a</i>÷<i class='mv'>b</i>를 분수 꼴로 나타낼 때, 나누는 수 <i class='mv'>b</i>가 놓이는 부분을 무엇이라고 하나요?",
     answer: "분모",
     bank: ["분모", "분자", "계수", "지수", "밑", "항", "상수항", "괄호"],
-    diff: 3,
+    diff: 2,
     explain:
       "<span class='xh'>정답 풀이</span><i class='mv'>a</i>÷<i class='mv'>b</i>는 " + mfmt("{a/b}") + "로 나타내며, 나누는 수 <i class='mv'>b</i>가 놓이는 아래 부분을 <b>분모</b>라고 해요.<span class='xh'>오답 칩 격파</span>'분자'는 나누어지는 수 <i class='mv'>a</i>가 놓이는 위 부분이에요. '계수'는 문자에 곱해진 수이고, '지수'는 같은 인자를 곱한 횟수를 나타내요. '밑'은 거듭제곱에서 반복하여 곱하는 수나 문자이고요. '항'과 '상수항'은 덧셈으로 연결된 식을 구분할 때 쓰는 말이에요. '괄호'는 계산 범위를 묶는 기호이지 분수의 아래쪽 이름이 아니에요. 나눗셈에서는 제수가 분모로 간다고 연결해 기억해요.",
     core: "a÷b에서 나누는 수 b는 분모!",

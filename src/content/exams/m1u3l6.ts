@@ -1,7 +1,7 @@
-// 중1 수학 Ⅲ. 좌표평면과 그래프: 단원 종합 평가 풀, 레슨 6 정비례 그래프 (m1u3e112~m1u3e133).
+// 중1 수학 Ⅲ. 좌표평면과 그래프: 단원 종합 평가 풀, 레슨 6 정비례 그래프 (m1u3e112~m1u3e133). 2026-07 개보수: e129 y=ax 개형 ①~⑤(mExamRelChoicesFig), e125 조어 제거.
 // 유형 14(mcq+multi)/6(num)/2(word), diff 9/8/5. 관계 그래프는 spec 한 곳에서 직선·점·문항 수치를 함께 만든다.
 import type { ExamItem } from "./types";
-import { mExamRelationPlaneFig, type MExamRelationPlaneSpec } from "../../ui/examFiguresMath";
+import { mExamRelChoicesFig, mExamRelationPlaneFig, type MExamRelationPlaneSpec } from "../../ui/examFiguresMath";
 
 const L = "m1u3l6";
 const minus = (value: number): string => String(value).replace("-", "−");
@@ -267,7 +267,7 @@ export const POOL_M1U3L6: ExamItem[] = [
     id: "m1u3e125",
     lessonId: L,
     type: "num",
-    prompt: `센서 보정값의 정비례 그래프가 점 ${coord(5, -2)}를 지나요. 이 그래프에서 ${variable("x")}=−10일 때, ${variable("y")}의 값을 쓰세요.`,
+    prompt: `한 정비례 관계의 그래프가 점 ${coord(5, -2)}를 지나요. 이 그래프에서 ${variable("x")}=−10일 때, ${variable("y")}의 값을 쓰세요.`,
     answer: "4",
     numKind: "int",
     diff: 2,
@@ -327,19 +327,21 @@ export const POOL_M1U3L6: ExamItem[] = [
     id: "m1u3e129",
     lessonId: L,
     type: "mcq",
-    prompt: `로봇의 가로 이동량을 ${variable("x")}, 세로 이동량을 ${variable("y")}라 할 때 ${relation(-2)}예요. ${variable("x")}=3을 넣어 구한 결과를 다시 ${variable("x")}칸에 적은 실수는?`,
-    options: [
-      `${variable("y")}=(−2)×3=−6`,
-      `${variable("x")}=(−2)×3=−6`,
-      `${variable("y")}=(−2)×(−3)=6`,
-      `${variable("y")}=3÷(−2)=−1.5`,
-      `${variable("x")}=3, ${variable("y")}=−6`,
-    ],
+    prompt: `다음 ①~⑤ 중 정비례 관계 ${relation(-2)}의 그래프는?`,
+    figure: mExamRelChoicesFig([
+      { line: { a: 1 } },
+      { line: { a: -1 } },
+      { inv: 1 },
+      { line: { a: -1, bPx: -16 } },
+      { inv: -1 },
+    ]),
+    options: ["①", "②", "③", "④", "⑤"],
     answer: 1,
+    shuffle: false,
     diff: 2,
     explain:
-      `<span class='xh'>정답 풀이</span>가로 이동량 3은 ${variable("x")}값이에요. 올바른 계산은 ${variable("y")}=(−2)×3=−6인데, <b>${variable("x")}=(−2)×3=−6</b>은 결과를 다시 ${variable("x")}칸에 적어 ${variable("x")}와 ${variable("y")}의 역할을 뒤집은 실수예요.<span class='xh'>오답 하나씩 격파</span>'${variable("y")}=(−2)×3'과 '${variable("x")}=3, ${variable("y")}=−6'은 올바른 계산이에요. '${variable("y")}=(−2)×(−3)'은 ${variable("x")}의 부호까지 바꾼 다른 실수이고, '${variable("y")}=3÷(−2)'는 주어진 ${variable("x")}를 비례상수로 나누는 실수예요. 식에서는 오른쪽에 ${variable("x")}를 넣고 왼쪽의 ${variable("y")}를 구해요. 문장 속 양의 역할도 먼저 표시해 두어요.`,
-    core: "주어진 가로값은 x에 넣고 계산 결과를 y로 읽어요.",
+      `<span class='xh'>정답 풀이</span>${relation(-2)}는 정비례 관계이므로 그래프는 <b>원점을 지나는 직선</b>이고, 비례상수가 음수라 오른쪽으로 갈수록 아래로 향해요. 두 조건을 모두 만족하는 그림은 <b>②</b>예요.<span class='xh'>오답 하나씩 격파</span>①은 원점을 지나는 직선이지만 오른쪽 위로 향하므로 비례상수가 양수인 그래프예요. ③과 ⑤는 서로 떨어진 두 갈래의 매끄러운 곡선이라 반비례 그래프의 모양이에요. ④는 오른쪽 아래로 향하는 직선이지만 원점을 지나지 않아 ${variable("y")}=${variable("a")}${variable("x")} 꼴의 그래프가 될 수 없어요. 곧은 선인지, 원점을 지나는지, 어느 쪽으로 향하는지 세 가지를 차례로 확인하면 돼요.`,
+    core: "정비례 그래프는 원점을 지나는 직선이고 a<0이면 오른쪽 아래로 향해요.",
   },
   {
     id: "m1u3e130",

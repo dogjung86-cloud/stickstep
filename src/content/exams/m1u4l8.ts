@@ -37,15 +37,10 @@ export const POOL_M1U4L8: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
-      "A, B, C는 " +
-      gsym("AC", "line") +
-      " 위에 왼쪽부터, D, E, F는 " +
-      gsym("DF", "line") +
-      " 위에 왼쪽부터 놓여 있어요. 횡단선 " +
-      gsym("GH", "line") +
-      " 위에는 G, B, E, H가 위쪽부터 이 순서로 있고, 두 직선의 평행 여부는 주어지지 않았어요. " +
+      "그림과 같이 두 직선이 한 횡단선과 만나요. 두 직선의 평행 여부는 주어지지 않았을 때, " +
       gsym("ABG", "angle") +
       "의 동위각은?",
+    figure: m4TransversalExamFig({ upper: "", lower: "", cross: "", labels: ["", "", "", "", "", "", "", ""], pts: { ul: "A", ui: "B", ur: "C", ll: "D", li: "E", lr: "F", ct: "G", cb: "H" } }),
     options: [gsym("BEF", "angle"), gsym("FEH", "angle"), gsym("HED", "angle"), gsym("CBE", "angle"), gsym("DEB", "angle")],
     answer: 4,
     diff: 1,
@@ -70,15 +65,10 @@ export const POOL_M1U4L8: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
-      "A, B, C는 " +
-      gsym("AC", "line") +
-      " 위에 왼쪽부터, D, E, F는 " +
-      gsym("DF", "line") +
-      " 위에 왼쪽부터 놓여 있어요. 횡단선 " +
-      gsym("GH", "line") +
-      " 위에는 G, B, E, H가 위쪽부터 이 순서로 있어요. 두 직선 사이에서 " +
+      "그림과 같이 두 직선이 한 횡단선과 만나요. 두 직선 사이에서 " +
       gsym("EBA", "angle") +
       "와 엇갈린 위치의 각은?",
+    figure: m4TransversalExamFig({ upper: "", lower: "", cross: "", labels: ["", "", "", "", "", "", "", ""], pts: { ul: "A", ui: "B", ur: "C", ll: "D", li: "E", lr: "F", ct: "G", cb: "H" } }),
     options: [gsym("DEB", "angle"), gsym("BEF", "angle"), gsym("FEH", "angle"), gsym("GBC", "angle"), gsym("ABG", "angle")],
     answer: 1,
     diff: 2,
@@ -103,13 +93,8 @@ export const POOL_M1U4L8: ExamItem[] = [
     lessonId: L,
     type: "multi",
     prompt:
-      "A, B, C는 " +
-      gsym("AC", "line") +
-      " 위에 왼쪽부터, D, E, F는 " +
-      gsym("DF", "line") +
-      " 위에 왼쪽부터 있어요. 횡단선 " +
-      gsym("GH", "line") +
-      " 위에는 G, B, E, H가 위쪽부터 이 순서로 있습니다. 각 쌍에 붙인 이름이 옳은 것을 <b>모두 고르세요.</b>",
+      "그림과 같이 두 직선이 한 횡단선과 만나요. 각 쌍에 붙인 이름이 옳은 것을 <b>모두 고르세요.</b>",
+    figure: m4TransversalExamFig({ upper: "", lower: "", cross: "", labels: ["", "", "", "", "", "", "", ""], pts: { ul: "A", ui: "B", ur: "C", ll: "D", li: "E", lr: "F", ct: "G", cb: "H" } }),
     options: [
       gsym("GBC", "angle") + "와 " + gsym("BEF", "angle") + ": 동위각",
       gsym("CBE", "angle") + "와 " + gsym("BEF", "angle") + ": 엇각",
@@ -166,7 +151,8 @@ export const POOL_M1U4L8: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
-      "두 직선을 한 횡단선이 위 교점과 아래 교점에서 만나요. 각 교점의 네 모퉁이를 왼쪽 위, 오른쪽 위, 오른쪽 아래, 왼쪽 아래로 부를 때, 위 교점의 오른쪽 위 각과 아래 교점의 오른쪽 위 각의 관계는?",
+      "그림과 같이 두 직선을 한 횡단선이 위 교점과 아래 교점에서 만나요. 표시한 두 각 ㉮와 ㉯의 관계는?",
+    figure: m4TransversalExamFig({ upper: "", lower: "", cross: "", labels: ["", "㉮", "", "", "", "㉯", "", ""] }),
     options: ["동위각", "엇각", "맞꼭지각", "평각", "관계를 정할 수 없음"],
     answer: 0,
     diff: 2,
@@ -215,13 +201,8 @@ export const POOL_M1U4L8: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
-      "U, V, W는 " +
-      gsym("UW", "line") +
-      " 위에 왼쪽부터, X, Y, Z는 " +
-      gsym("XZ", "line") +
-      " 위에 왼쪽부터 있어요. 횡단선 " +
-      gsym("RS", "line") +
-      " 위에는 R, V, Y, S가 위쪽부터 이 순서로 있습니다. <b>첫째 각 쌍은 동위각이고, 둘째 각 쌍은 엇각</b>인 것은?",
+      "그림과 같이 두 직선이 한 횡단선과 만나요. <b>첫째 각 쌍은 동위각이고, 둘째 각 쌍은 엇각</b>인 것은?",
+    figure: m4TransversalExamFig({ upper: "", lower: "", cross: "", labels: ["", "", "", "", "", "", "", ""], pts: { ul: "U", ui: "V", ur: "W", ll: "X", li: "Y", lr: "Z", ct: "R", cb: "S" } }),
     options: [
       "첫째: " + gsym("UVR", "angle") + "와 " + gsym("VYZ", "angle") + "<br>둘째: " + gsym("WVY", "angle") + "와 " + gsym("ZYS", "angle"),
       "첫째: " + gsym("YVU", "angle") + "와 " + gsym("XYV", "angle") + "<br>둘째: " + gsym("UVR", "angle") + "와 " + gsym("ZYS", "angle"),
@@ -294,7 +275,8 @@ export const POOL_M1U4L8: ExamItem[] = [
     id: "m1u4e118",
     lessonId: L,
     type: "num",
-    prompt: "두 직선을 한 횡단선이 만납니다. 위 교점의 네 각을 왼쪽 위부터 시계 방향으로 1, 2, 3, 4번, 아래 교점도 같은 방식으로 5, 6, 7, 8번이라 했어요. 3번 각의 동위각 번호를 입력하세요.",
+    prompt: "그림과 같이 두 직선을 한 횡단선이 만나고, 여덟 각에 1번부터 8번까지 번호를 붙였어요. 3번 각의 동위각 번호를 입력하세요.",
+    figure: m4TransversalExamFig({ upper: "", lower: "", cross: "", labels: ["1", "2", "3", "4", "5", "6", "7", "8"] }),
     answer: "7",
     numKind: "int",
     unitLabel: "번",
@@ -308,12 +290,12 @@ export const POOL_M1U4L8: ExamItem[] = [
     lessonId: L,
     type: "word",
     prompt: "빈칸에 알맞은 말을 고르세요.<br><br>동위각을 찾을 때에는 두 교점에서 각이 놓인 ( )가 같은지 비교해요.",
-    answer: "모퉁이",
-    bank: ["모퉁이", "각의 크기", "변의 길이", "교점의 이름", "선의 굵기", "색", "넓이", "둘레"],
+    answer: "위치",
+    bank: ["위치", "각의 크기", "변의 길이", "교점의 이름", "선의 굵기", "색", "넓이", "둘레"],
     diff: 1,
     explain:
-      "<span class='xh'>정답 풀이</span>동위각은 두 교점에서 왼쪽 위끼리, 오른쪽 아래끼리처럼 같은 <b>모퉁이</b>에 놓인 각의 짝이에요. 각의 크기가 같은지는 평행 조건이 있어야 따로 판단해요.<span class='xh'>오답 하나씩 격파</span>'각의 크기'와 '변의 길이'는 자리 이름을 찾는 기준이 아니고, 교점의 문자가 달라도 같은 모퉁이를 비교할 수 있어요. 선의 굵기나 색은 그림을 보기 쉽게 하는 표시일 뿐 수학적 조건이 아니에요. 넓이와 둘레도 각이 놓인 자리를 정하지 않아요. 두 교점을 같은 방향으로 바라보고 네 모퉁이를 하나씩 대응시키세요.",
-    core: "동위각은 두 교점에서 같은 모퉁이에 놓인 각의 짝이다.",
+      "<span class='xh'>정답 풀이</span>동위각은 두 교점에서 왼쪽 위끼리, 오른쪽 아래끼리처럼 같은 <b>위치</b>, 곧 같은 모퉁이에 놓인 각의 짝이에요. 각의 크기가 같은지는 평행 조건이 있어야 따로 판단해요.<span class='xh'>오답 하나씩 격파</span>'각의 크기'와 '변의 길이'는 자리 이름을 찾는 기준이 아니고, 교점의 문자가 달라도 같은 모퉁이를 비교할 수 있어요. 선의 굵기나 색은 그림을 보기 쉽게 하는 표시일 뿐 수학적 조건이 아니에요. 넓이와 둘레도 각이 놓인 자리를 정하지 않아요. 두 교점을 같은 방향으로 바라보고 네 모퉁이를 하나씩 대응시키세요.",
+    core: "동위각은 두 교점에서 같은 위치(모퉁이)에 놓인 각의 짝이다.",
   },
   {
     id: "m1u4e120",

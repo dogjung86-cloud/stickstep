@@ -1,6 +1,7 @@
-// 중1 수학 Ⅴ. 평면도형과 입체도형: 단원 종합 평가 풀, 레슨 13 구의 겉넓이와 부피(m1u5e172~e186)
+// 중1 수학 Ⅴ. 평면도형과 입체도형: 단원 종합 평가 풀, 레슨 13 구의 겉넓이와 부피(m1u5e172~e186) 2026-07 개보수: 구·반구 그림 3문항, 저장구 조어 제거(어항).
 // 유형 8 objective / 6 num / 1 word, diff 6/6/3. 반구는 곡면만인지 밑면을 포함하는지 문두에 명시한다.
 import type { ExamItem } from "./types";
+import { m5SolidDimFig } from "../../ui/examFiguresMath";
 
 const L = "m1u5l13";
 
@@ -9,12 +10,13 @@ export const POOL_M1U5L13: ExamItem[] = [
     id: "m1u5e172",
     lessonId: L,
     type: "mcq",
-    prompt: "반지름이 <b>5cm</b>인 구 모양의 유리 장식 전체를 코팅하려고 해요. 코팅할 겉넓이는?",
+    prompt: "그림과 같은 구의 겉넓이는?",
+    figure: m5SolidDimFig({ kind: "sphere", rLabel: "5 cm" }),
     options: ["25πcm²", "100πcm²", "125πcm²", "20πcm²", "500πcm²"],
     answer: 1,
     diff: 1,
     explain:
-      "<span class='xh'>정답 풀이</span>구의 겉넓이는 4π×반지름²이에요.<br>① 반지름 제곱: 5² = 25<br>② 4π×25 = <b>100πcm²</b><br>따라서 유리 장식 전체를 코팅하는 넓이는 100πcm²예요.<span class='xh'>오답 하나씩 격파</span>'25πcm²'는 반지름 5cm인 원 한 개의 넓이만 구한 값이에요. '125πcm²'는 5³을 써서 부피 계산과 섞었고요. '20πcm²'는 반지름을 제곱하지 않고 4π×5만 계산한 값이에요. '500πcm²'는 겉넓이 100π에 반지름 5를 다시 곱한 값이라 넓이 공식과 맞지 않아요. 구의 겉은 같은 반지름인 원 네 개의 넓이와 같다고 기억해요.",
+      "<span class='xh'>정답 풀이</span>구의 겉넓이는 4π×반지름²이에요.<br>① 반지름 제곱: 5² = 25<br>② 4π×25 = <b>100πcm²</b><br>따라서 이 구의 겉넓이는 100πcm²예요.<span class='xh'>오답 하나씩 격파</span>'25πcm²'는 반지름 5cm인 원 한 개의 넓이만 구한 값이에요. '125πcm²'는 5³을 써서 부피 계산과 섞었고요. '20πcm²'는 반지름을 제곱하지 않고 4π×5만 계산한 값이에요. '500πcm²'는 겉넓이 100π에 반지름 5를 다시 곱한 값이라 넓이 공식과 맞지 않아요. 구의 겉은 같은 반지름인 원 네 개의 넓이와 같다고 기억해요.",
     core: "구의 겉넓이 = 4π×5² = 100πcm²!",
   },
   {
@@ -63,12 +65,13 @@ export const POOL_M1U5L13: ExamItem[] = [
     id: "m1u5e176",
     lessonId: L,
     type: "mcq",
-    prompt: "반지름이 <b>8cm</b>인 반구 모양의 문진에서 <b>둥근 곡면과 평평한 원 모양 밑면을 모두 포함한</b> 겉넓이는?",
+    prompt: "그림과 같은 반구에서 <b>둥근 곡면과 평평한 원 모양 밑면을 모두 포함한</b> 겉넓이는?",
+    figure: m5SolidDimFig({ kind: "hemi", rLabel: "8 cm" }),
     options: ["128πcm²", "64πcm²", "256πcm²", "384πcm²", "192πcm²"],
     answer: 4,
     diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span>이 문진은 둥근 곡면뿐 아니라 평평한 밑면도 겉으로 드러나요.<br>① 반구의 곡면: 2π×8² = 128πcm²<br>② 원 모양 밑면: π×8² = 64πcm²<br>③ 전체 겉넓이: 128π+64π = <b>192πcm²</b><span class='xh'>오답 하나씩 격파</span>'128πcm²'은 곡면만 세어 밑면을 빠뜨렸어요. '64πcm²'은 밑면 원만 구한 값이고요. '256πcm²'은 반지름 8cm인 구 전체의 겉넓이예요. '384πcm²'은 반구 전체 겉넓이 192π를 다시 두 배 했어요. 밑면을 포함한 반구의 겉넓이는 3π<i class='mv'>r</i>²으로 한 번에 계산해도 같아요.",
+      "<span class='xh'>정답 풀이</span>이 반구는 둥근 곡면뿐 아니라 평평한 밑면도 겉으로 드러나요.<br>① 반구의 곡면: 2π×8² = 128πcm²<br>② 원 모양 밑면: π×8² = 64πcm²<br>③ 전체 겉넓이: 128π+64π = <b>192πcm²</b><span class='xh'>오답 하나씩 격파</span>'128πcm²'은 곡면만 세어 밑면을 빠뜨렸어요. '64πcm²'은 밑면 원만 구한 값이고요. '256πcm²'은 반지름 8cm인 구 전체의 겉넓이예요. '384πcm²'은 반구 전체 겉넓이 192π를 다시 두 배 했어요. 밑면을 포함한 반구의 겉넓이는 3π<i class='mv'>r</i>²으로 한 번에 계산해도 같아요.",
     core: "밑면 포함 반구의 겉넓이 = 3π×8² = 192πcm²!",
   },
   {
@@ -130,7 +133,7 @@ export const POOL_M1U5L13: ExamItem[] = [
     id: "m1u5e181",
     lessonId: L,
     type: "num",
-    prompt: "구 모양 저장구의 반지름은 <b>15cm</b>예요. 이 저장구의 부피를 <b><i class='mv'>k</i>πcm³</b>라 할 때, <i class='mv'>k</i>를 입력하세요.",
+    prompt: "반지름이 <b>15cm</b>인 구 모양 어항에 물을 가득 채웠어요. 물의 부피를 <b><i class='mv'>k</i>πcm³</b>라 할 때, <i class='mv'>k</i>를 입력하세요. 어항의 두께는 생각하지 않아요.",
     answer: "4500",
     numKind: "int",
     unitLabel: "πcm³의 계수",
@@ -156,7 +159,8 @@ export const POOL_M1U5L13: ExamItem[] = [
     id: "m1u5e183",
     lessonId: L,
     type: "num",
-    prompt: "반지름이 <b>9cm</b>인 반구 모양 그릇의 안쪽에 물을 가득 채웠어요. 물의 부피가 <b><i class='mv'>k</i>πcm³</b>일 때, <i class='mv'>k</i>를 입력하세요. 그릇의 두께는 생각하지 않아요.",
+    prompt: "그림과 같은 반구 모양 그릇의 안쪽에 물을 가득 채웠어요. 물의 부피가 <b><i class='mv'>k</i>πcm³</b>일 때, <i class='mv'>k</i>를 입력하세요. 그릇의 두께는 생각하지 않아요.",
+    figure: m5SolidDimFig({ kind: "hemi", rLabel: "9 cm" }),
     answer: "486",
     numKind: "int",
     unitLabel: "πcm³의 계수",

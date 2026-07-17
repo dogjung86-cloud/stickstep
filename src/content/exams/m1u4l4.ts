@@ -2,6 +2,7 @@
 // 유형 9(mcq+multi)/4(num)/2(word), diff 6/6/3. 교과서의 문장·수치·도형 배치는 복제하지 않았다.
 import type { ExamItem } from "./types";
 import { gsym } from "../../ui/geoKit";
+import { mExamAngleFanFig, mExamXAnglesFig } from "../../ui/examFiguresMath";
 
 const L = "m1u4l4";
 
@@ -23,11 +24,12 @@ export const POOL_M1U4L4: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
-      "두 직선 " +
+      "그림과 같이 두 직선 " +
       gsym("AC", "line") +
       "와 " +
       gsym("BD", "line") +
-      "가 점 O에서 만나요. A, O, C와 B, O, D는 각각 이 순서로 한 직선 위에 있을 때, 맞꼭지각인 한 쌍은?",
+      "가 점 O에서 만나요. 맞꼭지각인 한 쌍은?",
+    figure: mExamXAnglesFig({ ends: ["C", "B", "A", "D"], vertex: "O" }),
     options: [
       gsym("AOB", "angle") + "와 " + gsym("COD", "angle"),
       gsym("AOB", "angle") + "와 " + gsym("BOC", "angle"),
@@ -66,7 +68,7 @@ export const POOL_M1U4L4: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
-      "A, O, C가 이 순서로 한 직선 위에 있고, " +
+      "그림과 같이 A, O, C가 한 직선 위에 있고, " +
       gsym("OB", "ray") +
       "가 " +
       gsym("AOC", "angle") +
@@ -75,6 +77,7 @@ export const POOL_M1U4L4: ExamItem[] = [
       "=37°일 때 " +
       gsym("BOC", "angle") +
       "의 크기는?",
+    figure: mExamAngleFanFig({ left: "A", vertex: "O", right: "C", rays: [{ deg: 143, label: "B" }], arcs: [{ a: 143, b: 180, label: "37°" }, { a: 0, b: 143, label: "?" }] }),
     options: ["37°", "143°", "53°", "180°", "323°"],
     answer: 1,
     diff: 1,
@@ -146,9 +149,10 @@ export const POOL_M1U4L4: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
-      "두 교차 산책로의 중심을 O라 해요. P, O, R과 Q, O, S가 각각 한 직선 위에 이 순서로 있고, " +
+      "그림과 같이 두 직선 모양 산책로가 점 O에서 만나요. " +
       gsym("POQ", "angle") +
       "=64°일 때 옳은 것은?",
+    figure: mExamXAnglesFig({ ends: ["R", "Q", "P", "S"], vertex: "O", angles: ["", "64°", "", ""] }),
     options: [
       gsym("ROS", "angle") + "=64°, " + gsym("QOR", "angle") + "=116°",
       gsym("ROS", "angle") + "=116°, " + gsym("QOR", "angle") + "=64°",
@@ -237,7 +241,8 @@ export const POOL_M1U4L4: ExamItem[] = [
     id: "m1u4e055",
     lessonId: L,
     type: "num",
-    prompt: "두 직선이 만나 생긴 한 쌍의 맞꼭지각을 각각 (4x+7)°, (7x−56)°로 나타냈어요. x의 값을 구하세요. 정답은 숫자만 입력하세요.",
+    prompt: "그림과 같이 두 직선이 만나 생긴 한 쌍의 맞꼭지각의 크기가 각각 (4<i class='mv'>x</i>+7)°, (7<i class='mv'>x</i>−56)°예요. <i class='mv'>x</i>의 값을 구하세요. 정답은 숫자만 입력하세요.",
+    figure: mExamXAnglesFig({ angles: ["(4x+7)°", "", "(7x−56)°", ""] }),
     answer: "21",
     numKind: "int",
     unitLabel: "°",

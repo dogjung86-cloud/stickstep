@@ -1,6 +1,7 @@
-// 중1 수학 Ⅴ. 평면도형과 입체도형: 단원 종합 평가 풀, 레슨 12 뿔의 겉넓이와 부피(m1u5e157~e171)
+// 중1 수학 Ⅴ. 평면도형과 입체도형: 단원 종합 평가 풀, 레슨 12 뿔의 겉넓이와 부피(m1u5e157~e171) 2026-07 개보수: 원뿔 치수·전개도 그림 4문항.
 // 유형 8 objective / 5 num / 2 word, diff 6/6/3. 계산에 필요한 높이와 모선은 각각 직접 제시한다.
 import type { ExamItem } from "./types";
+import { m5SectorXFig, m5SolidDimFig } from "../../ui/examFiguresMath";
 
 const L = "m1u5l12";
 
@@ -39,7 +40,8 @@ export const POOL_M1U5L12: ExamItem[] = [
     id: "m1u5e159",
     lessonId: L,
     type: "mcq",
-    prompt: "원뿔의 옆면을 한 선을 따라 잘라 펼치려 해요. 접기 전 밑면의 반지름은 <b>6cm</b>, 모선은 <b>11cm</b>일 때 펼쳐진 부채꼴의 넓이는?",
+    prompt: "그림과 같은 원뿔의 옆면을 한 선을 따라 잘라 펼쳤어요. 펼쳐진 부채꼴의 넓이는?",
+    figure: m5SolidDimFig({ kind: "cone", rLabel: "6 cm", lLabel: "11 cm" }),
     options: ["36πcm²", "121πcm²", "102πcm²", "17πcm²", "66πcm²"],
     answer: 4,
     diff: 2,
@@ -69,7 +71,8 @@ export const POOL_M1U5L12: ExamItem[] = [
     id: "m1u5e161",
     lessonId: L,
     type: "mcq",
-    prompt: "원뿔 모양 모래 틀의 바닥 원은 반지름이 <b>10cm</b>이고, 꼭짓점에서 바닥 둘레까지의 모선은 <b>17cm</b>예요. 바닥을 포함한 전체 <b>겉넓이</b>는?",
+    prompt: "그림과 같은 원뿔의 밑면을 포함한 전체 <b>겉넓이</b>는?",
+    figure: m5SolidDimFig({ kind: "cone", rLabel: "10 cm", lLabel: "17 cm" }),
     options: ["170πcm²", "270πcm²", "370πcm²", "100πcm²", "440πcm²"],
     answer: 1,
     diff: 2,
@@ -82,7 +85,8 @@ export const POOL_M1U5L12: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
-      "원뿔의 옆면을 펼쳤더니 반지름이 <b>13cm</b>이고 호의 길이가 <b>12πcm</b>인 부채꼴이 되었어요. 이 원뿔의 밑면의 반지름은?",
+      "그림은 어떤 원뿔의 옆면을 펼친 부채꼴이에요. 이 원뿔의 밑면의 반지름은?",
+    figure: m5SectorXFig({ deg: 166, rLabel: "13 cm", arcLabel: "12π cm" }),
     options: ["반지름 13cm", "반지름 12cm", "반지름 26cm", "반지름 6cm", "반지름 3cm"],
     answer: 3,
     diff: 3,
@@ -133,7 +137,8 @@ export const POOL_M1U5L12: ExamItem[] = [
     lessonId: L,
     type: "num",
     prompt:
-      "밑면의 반지름이 <b>4cm</b>, 높이가 <b>9cm</b>인 원뿔의 부피가 <b><i class='mv'>k</i>πcm³</b>일 때, <i class='mv'>k</i>의 값을 입력하세요.",
+      "그림과 같은 원뿔의 부피가 <b><i class='mv'>k</i>πcm³</b>일 때, <i class='mv'>k</i>의 값을 입력하세요.",
+    figure: m5SolidDimFig({ kind: "cone", rLabel: "4 cm", hLabel: "9 cm" }),
     answer: "48",
     numKind: "int",
     unitLabel: "πcm³",

@@ -2,7 +2,7 @@
 // 유형 10(mcq+multi)/5(num)/1(word), diff 7/6/3. 교과서의 문장·수치·도형 배치는 복제하지 않았다.
 import type { ExamItem } from "./types";
 import { gsym } from "../../ui/geoKit";
-import { m4CongruenceExamFig } from "../../ui/examFiguresMath";
+import { m4CongruenceExamFig, mExamTwinEquiFig } from "../../ui/examFiguresMath";
 
 const L = "m1u4l12";
 const T = (letters: string): string => gsym(letters, "tri");
@@ -95,7 +95,8 @@ export const POOL_M1U4L12: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
-      "두 삼각형에서 A와 L, B와 J, C와 K가 각각 대응해요. 이 대응 순서를 바르게 나타낸 합동식은?",
+      "그림의 두 삼각형에서 A와 L, B와 J, C와 K가 각각 대응해요. 이 대응 순서를 바르게 나타낸 합동식은?",
+    figure: m4CongruenceExamFig({ left: ["A", "B", "C"], right: ["L", "J", "K"] }),
     options: [
       T("ABC") + "≡" + T("JKL"),
       T("ABC") + "≡" + T("KLJ"),
@@ -367,27 +368,57 @@ export const POOL_M1U4L12: ExamItem[] = [
     lessonId: L,
     type: "num",
     prompt:
-      T("UVW") +
-      "≡" +
-      T("XYZ") +
-      "이고 " +
-      A("Z") +
-      "의 크기가 76°일 때, " +
-      A("W") +
-      "의 크기는 몇 도일까요? <b>숫자만 입력하세요.</b>",
-    answer: "76",
+      "그림과 같이 정삼각형 ABC의 변 BC 위에 점 D, 변 CA 위에 점 E가 있고 " +
+      gsym("BD", "seg") +
+      "=" +
+      gsym("CE", "seg") +
+      "예요. " +
+      gsym("AD", "seg") +
+      "와 " +
+      gsym("BE", "seg") +
+      "의 교점에 표시한 각 ㉮의 크기는 몇 도일까요? <b>숫자만 입력하세요.</b>",
+    figure: mExamTwinEquiFig("in"),
+    answer: "60",
     numKind: "int",
     unitLabel: "°",
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>합동식에서 U와 X, V와 Y, W와 Z가 각각 대응하므로 " +
-      A("W") +
-      "의 대응각은 " +
-      A("Z") +
-      "이에요. 합동인 두 삼각형의 대응각 크기는 같으므로 " +
-      A("W") +
-      "의 크기는 <b>76°</b>예요.<span class='xh'>계산 실수 격파</span>세 각의 크기를 더하거나 76을 다른 수에서 빼는 문제가 아니에요. 이 단원에서는 합동의 대응 관계만으로 바로 값을 옮겨 와요. 또한 W와 세 번째 자리에서 대응하는 점은 Z이지 Y가 아니에요. 도형이 서로 다른 방향으로 놓였다고 가정해도 대응각의 크기는 바뀌지 않으므로, 그림의 방향을 상상해 값을 바꾸면 안 돼요.",
-    core: "합동식의 같은 순서에 놓인 대응각은 크기가 같다.",
+      "<span class='xh'>정답 풀이</span>" +
+      T("ABD") +
+      "와 " +
+      T("BCE") +
+      "를 비교해요.<br>① " +
+      gsym("AB", "seg") +
+      "=" +
+      gsym("BC", "seg") +
+      "(정삼각형의 변), " +
+      gsym("BD", "seg") +
+      "=" +
+      gsym("CE", "seg") +
+      "(조건), " +
+      A("ABD") +
+      "=" +
+      A("BCE") +
+      "=60°<br>② 두 변과 끼인각이 같으므로 SAS 합동, 따라서 " +
+      A("BAD") +
+      "=" +
+      A("CBE") +
+      "<br>③ ㉮는 삼각형 ABP(P는 교점)에서 " +
+      A("PAB") +
+      "와 " +
+      A("ABP") +
+      "의 바깥쪽 각이므로 ㉮=" +
+      A("BAD") +
+      "+" +
+      A("ABE") +
+      "=" +
+      A("CBE") +
+      "+" +
+      A("ABE") +
+      "=" +
+      A("ABC") +
+      "=<b>60°</b><span class='xh'>계산 실수 격파</span>90이나 120을 넣기 쉽지만, ㉮가 어떤 두 각의 합으로 바뀌는지 따라가면 결국 정삼각형의 한 각과 같아져요. 두 선분을 아무 곳에나 그은 게 아니라 BD=CE라는 조건이 합동을 만들고, 그 합동이 각을 옮겨 주는 구조예요. 대응하는 꼭짓점 순서(A↔B, B↔C, D↔E)를 정확히 쓰는 것도 잊지 마세요.",
+    core: "SAS 합동으로 각을 옮기면 ㉮는 정삼각형의 한 각 60°!",
   },
   {
     id: "m1u4e184",

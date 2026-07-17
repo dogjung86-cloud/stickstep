@@ -1,8 +1,16 @@
 // 중1 수학 II 문자와 식, 레슨 1 문자 사용 단원 종합 평가 풀(22문항).
 // 교과서에서는 표현 구조와 함정만 참고하고 수치·문구·소재 결합은 새로 설계했다.
-// 유형 13(mcq+multi)/7(num)/2(word), diff 1/2/3 = 9/9/4.
+// 유형 13(mcq+multi)/7(num)/2(word), diff 1/2/3 = 9/11/2 (2026-07 개보수: 자릿수·문자 2개·
+// ㄱ자 도형·표·바둑돌 패턴 신작 + 그림 4문항, diff는 내용 기준 재캘리브레이션).
 import type { ExamItem } from "./types";
-import { mExamSquareChainFig } from "../../ui/examFiguresMath";
+import {
+  mExamBorderDotsFig,
+  mExamLShapeFig,
+  mExamSquareChainFig,
+  mExamTableFig,
+  mExamTileStagesFig,
+  m2ExamRectXYFig,
+} from "../../ui/examFiguresMath";
 
 const L = "m1u2l1";
 
@@ -35,25 +43,25 @@ export const POOL_M1U2L1: ExamItem[] = [
     id: "m1u2e003",
     lessonId: L,
     type: "mcq",
-    prompt: "사진 파일이 <i class='mv'>p</i>장 들어 있는 폴더를 6개 만들었어요. 모든 폴더에 들어 있는 사진 수를 나타낸 식은?",
-    options: ["<i class='mv'>p</i>+6", "<i class='mv'>p</i>−6", "6÷<i class='mv'>p</i>", "<i class='mv'>p</i>÷6", "6×<i class='mv'>p</i>"],
+    prompt: "십의 자리 숫자가 <i class='mv'>a</i>, 일의 자리 숫자가 <i class='mv'>b</i>인 두 자리 자연수를 문자를 사용한 식으로 나타낸 것은?",
+    options: ["<i class='mv'>a</i>+<i class='mv'>b</i>", "<i class='mv'>ab</i>", "<i class='mv'>a</i>+10<i class='mv'>b</i>", "100<i class='mv'>a</i>+10<i class='mv'>b</i>", "10<i class='mv'>a</i>+<i class='mv'>b</i>"],
     answer: 4,
-    diff: 1,
+    diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span>각 폴더에 <i class='mv'>p</i>장씩 있고 폴더가 6개이므로 전체 사진 수는 <b>6×<i class='mv'>p</i></b>장이에요. <i class='mv'>p</i>=10으로 작게 확인하면 폴더 여섯 개에 10장씩, 60장이 나와요.<span class='xh'>오답 하나씩 격파</span>'<i class='mv'>p</i>+6'은 사진 수와 폴더 수처럼 단위가 다른 양을 더해서 전체 사진을 구할 수 없어요. '<i class='mv'>p</i>−6'도 폴더가 늘수록 사진이 줄어드는 식이고요. '6÷<i class='mv'>p</i>'는 폴더 수를 사진 수로, '<i class='mv'>p</i>÷6'은 한 폴더의 사진을 다시 여섯으로 나누는 뜻이에요. 반복되는 같은 양은 곱셈으로 묶어요.",
-    core: "p장짜리 폴더 6개는 6×p장!",
+      "<span class='xh'>정답 풀이</span>십의 자리 숫자는 실제로 10배의 값을 나타내요. 십의 자리가 <i class='mv'>a</i>이면 그 값은 10×<i class='mv'>a</i>이고, 일의 자리 <i class='mv'>b</i>는 그대로 <i class='mv'>b</i>이므로 두 자리 수는 <b>10<i class='mv'>a</i>+<i class='mv'>b</i></b>예요. <i class='mv'>a</i>=3, <i class='mv'>b</i>=7을 넣으면 37이 되어 맞아요.<span class='xh'>오답 하나씩 격파</span>'<i class='mv'>a</i>+<i class='mv'>b</i>'는 자리 숫자의 합이라 3+7=10이 되어 37과 달라요. '<i class='mv'>ab</i>'는 숫자를 이어 쓴 것처럼 보여도 실제로는 <i class='mv'>a</i>×<i class='mv'>b</i>=21이라는 곱셈이에요. '<i class='mv'>a</i>+10<i class='mv'>b</i>'는 자릿값을 반대로 붙여 73이 되고, '100<i class='mv'>a</i>+10<i class='mv'>b</i>'는 두 숫자를 한 자리씩 밀어 370을 만들어요. 자리마다 값이 몇 배인지부터 확인해요.",
+    core: "십의 자리는 10배라서 10a+b!",
   },
   {
     id: "m1u2e004",
     lessonId: L,
     type: "mcq",
-    prompt: "스티커 450장 가운데 <i class='mv'>a</i>장을 사용했어요. 남은 스티커 수를 나타낸 식은?",
-    options: ["450−<i class='mv'>a</i>", "<i class='mv'>a</i>−450", "450+<i class='mv'>a</i>", "450<i class='mv'>a</i>", "450÷<i class='mv'>a</i>"],
+    prompt: "한 자루에 <i class='mv'>x</i>원인 연필 3자루와 한 권에 <i class='mv'>y</i>원인 공책 2권을 살 때, 전체 가격을 나타낸 식은?",
+    options: ["3<i class='mv'>x</i>+2<i class='mv'>y</i>", "2<i class='mv'>x</i>+3<i class='mv'>y</i>", "5<i class='mv'>xy</i>", "6<i class='mv'>xy</i>", "3<i class='mv'>x</i>−2<i class='mv'>y</i>"],
     answer: 0,
     diff: 1,
     explain:
-      "<span class='xh'>정답 풀이</span>처음 가진 450장에서 사용한 <i class='mv'>a</i>장을 빼면 남은 수는 <b>450−<i class='mv'>a</i></b>장이에요. '남은 것=전체−사용한 것'이라는 관계를 그대로 식으로 옮긴 결과예요.<span class='xh'>오답 하나씩 격파</span>'<i class='mv'>a</i>−450'은 빼는 순서가 뒤집혀 사용량이 전체보다 작을 때 음수가 돼요. '450+<i class='mv'>a</i>'는 스티커를 더 받은 상황의 식이고, '450<i class='mv'>a</i>'는 450장짜리 묶음이 <i class='mv'>a</i>개라는 곱셈이에요. '450÷<i class='mv'>a</i>'는 전체를 <i class='mv'>a</i>묶음으로 나눌 때 한 묶음의 수죠. '남았다'는 말 앞에서는 전체와 사용량의 순서를 확인해요.",
-    core: "남은 양은 전체에서 사용한 양을 뺀다!",
+      "<span class='xh'>정답 풀이</span>연필값과 공책값을 따로 구해 더해요. 연필은 <i class='mv'>x</i>원짜리 3자루라 3<i class='mv'>x</i>원, 공책은 <i class='mv'>y</i>원짜리 2권이라 2<i class='mv'>y</i>원이므로 전체는 <b>3<i class='mv'>x</i>+2<i class='mv'>y</i></b>원이에요.<span class='xh'>오답 하나씩 격파</span>'2<i class='mv'>x</i>+3<i class='mv'>y</i>'는 자루 수와 권수를 서로 바꿔 붙였어요. '5<i class='mv'>xy</i>'는 개수 3+2만 남기고 두 가격을 곱해 버린 식이고, '6<i class='mv'>xy</i>'도 3×2처럼 개수끼리 곱한 오류예요. '3<i class='mv'>x</i>−2<i class='mv'>y</i>'는 공책값을 빼는 식이라 사는 상황과 반대죠. 서로 다른 물건의 가격은 서로 다른 문자로 두고, 각 묶음의 값을 만든 뒤 더해야 해요.",
+    core: "가격이 다른 두 물건은 3x+2y처럼 따로 곱해 더한다!",
   },
   {
     id: "m1u2e005",
@@ -89,26 +97,27 @@ export const POOL_M1U2L1: ExamItem[] = [
     id: "m1u2e007",
     lessonId: L,
     type: "mcq",
-    prompt: "같은 길이의 막대로 정사각형을 가로로 이어 만들어요. 이웃한 정사각형은 한 변의 막대를 함께 사용하므로, 정사각형 한 개를 더 붙일 때마다 막대가 3개씩 늘어요. 정사각형 <i class='mv'>n</i>개에 필요한 막대 수는?",
+    prompt: "같은 길이의 막대로 정사각형을 가로로 이어 만들어요. 그림처럼 이웃한 정사각형은 한 변의 막대를 함께 사용해요. 정사각형 <i class='mv'>n</i>개를 만드는 데 필요한 막대 수를 나타낸 식은?",
     figure: mExamSquareChainFig([1, 2, 3]),
     options: ["4<i class='mv'>n</i>", "3<i class='mv'>n</i>+1", "3<i class='mv'>n</i>−1", "<i class='mv'>n</i>+3", "4<i class='mv'>n</i>+1"],
     answer: 1,
     diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span>첫 정사각형에는 막대 4개가 필요하고, 이후에는 이미 놓인 한 변을 함께 쓰므로 새 막대가 3개씩 늘어요. 따라서 4+3(<i class='mv'>n</i>−1)=<b>3<i class='mv'>n</i>+1</b>이에요. <i class='mv'>n</i>=1을 넣으면 4가 되어 처음 조건과 맞아요.<span class='xh'>오답 하나씩 격파</span>'4<i class='mv'>n</i>'은 정사각형마다 막대 네 개를 따로 써서 공유하는 한 변을 두 번 센 값이에요. '3<i class='mv'>n</i>−1'은 첫째 값의 보정 방향을 반대로 잡았고요. '<i class='mv'>n</i>+3'은 증가량을 1로 잘못 본 식이에요. '4<i class='mv'>n</i>+1'도 공유 변을 처리하지 못했어요. 패턴식은 첫째 값과 한 단계 증가량을 모두 만족해야 해요.",
+      "<span class='xh'>정답 풀이</span>첫 정사각형에는 막대 4개가 필요하고, 이후에는 이미 놓인 한 변을 함께 쓰므로 새 막대가 3개씩 늘어요. 따라서 4+3(<i class='mv'>n</i>−1)=<b>3<i class='mv'>n</i>+1</b>이에요. <i class='mv'>n</i>=1을 넣으면 4가 되어 처음 조건과 맞아요.<span class='xh'>오답 하나씩 격파</span>'4<i class='mv'>n</i>'은 정사각형마다 막대 네 개를 따로 써서 공유하는 한 변을 두 번 센 값이에요. '3<i class='mv'>n</i>−1'은 <i class='mv'>n</i>=1에서 2가 되어 첫째 값 4와 맞지 않아요. '<i class='mv'>n</i>+3'은 증가량을 1로 잘못 본 식이에요. '4<i class='mv'>n</i>+1'도 공유 변을 처리하지 못했어요. 패턴식은 첫째 값과 한 단계 증가량을 모두 만족해야 해요.",
     core: "첫째 값 4, 증가량 3이면 3n+1!",
   },
   {
     id: "m1u2e008",
     lessonId: L,
     type: "mcq",
-    prompt: "어떤 수 <i class='mv'>k</i>에 대해 세 학생이 문장을 식으로 옮겼어요. '어떤 수의 5배에서 8을 뺀 수'를 바르게 나타낸 학생은?",
-    options: ["도윤: 5(<i class='mv'>k</i>−8)", "서아: 8−5<i class='mv'>k</i>", "민재: 5+<i class='mv'>k</i>−8", "하린: 5<i class='mv'>k</i>−8", "유나: (<i class='mv'>k</i>−8)÷5"],
+    prompt: "그림과 같이 모서리가 직각으로 파인 도형의 둘레를 <i class='mv'>a</i>를 사용한 식으로 나타낸 것은?",
+    figure: mExamLShapeFig({ top: "(2a+3) cm", left: "(a+4) cm", notch: "(a−1) cm" }),
+    options: ["3<i class='mv'>a</i>+7", "6<i class='mv'>a</i>+8", "4<i class='mv'>a</i>+14", "6<i class='mv'>a</i>+14", "5<i class='mv'>a</i>+13"],
     answer: 3,
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>'어떤 수의 5배'를 먼저 만들면 5<i class='mv'>k</i>이고, 그 결과에서 8을 빼므로 <b>5<i class='mv'>k</i>−8</b>이에요. 따라서 하린의 식이 문장의 계산 순서를 정확히 담았어요.<span class='xh'>오답 하나씩 격파</span>도윤의 5(<i class='mv'>k</i>−8)은 <i class='mv'>k</i>에서 8을 먼저 뺀 뒤 전체를 5배 한 식이에요. 서아는 5배한 수를 8에서 빼서 기준과 순서가 뒤집혔고요. 민재는 '5배'를 곱셈이 아니라 5를 더하는 것으로 읽었어요. 유나는 <i class='mv'>k</i>−8을 5로 나눠 배와 나눗셈을 바꿨어요. 'A의 5배에서 B를 뺀다'는 5A−B 순서로 묶어 읽어요.",
-    core: "5배를 먼저 만든 뒤 8을 빼면 5k−8!",
+      "<span class='xh'>정답 풀이</span>파인 부분의 가로 변을 위로, 세로 변을 오른쪽으로 밀어 붙이면 가로 (2<i class='mv'>a</i>+3) cm, 세로 (<i class='mv'>a</i>+4) cm인 직사각형의 둘레와 정확히 같아져요. 따라서 둘레는 2×{(2<i class='mv'>a</i>+3)+(<i class='mv'>a</i>+4)}=<b>6<i class='mv'>a</i>+14</b>예요.<span class='xh'>오답 하나씩 격파</span><i class='mv'>a</i>=2를 넣어 검산하면 가로 7, 세로 6이라 둘레는 26이어야 해요. '3<i class='mv'>a</i>+7'은 13으로 가로·세로를 한 번씩만 더한 절반이고, '6<i class='mv'>a</i>+8'은 20, '4<i class='mv'>a</i>+14'는 22, '5<i class='mv'>a</i>+13'은 23이라 모두 26에 못 미쳐요. 파인 도형이라고 둘레가 줄어드는 게 아니라, 잘린 변이 밖으로 밀려 나온 것과 길이가 같다는 점이 핵심이에요.",
+    core: "직각으로 판 도형의 둘레는 감싸는 직사각형과 같다!",
   },
   {
     id: "m1u2e009",
@@ -123,7 +132,7 @@ export const POOL_M1U2L1: ExamItem[] = [
       "문자가 들어간 식에는 구체적인 수를 넣어 계산할 수 없다",
     ],
     answer: [1, 3],
-    diff: 3,
+    diff: 2,
     explain:
       "<span class='xh'>정답 풀이</span>같은 수량이 여러 번 나오면 같은 문자를 사용해 그 동일함을 드러낼 수 있어요. 또 문자는 바뀌는 수의 자리표이므로 수량이 달라져도 관계가 같다면 식 하나로 모든 경우를 나타낼 수 있죠.<span class='xh'>오답 하나씩 격파</span>문자는 <i class='mv'>x</i>만 써야 하는 게 아니며 <i class='mv'>a</i>, <i class='mv'>n</i>, <i class='mv'>p</i> 등 어떤 글자도 가능해요. 서로 다른 두 수량을 억지로 같은 문자로 쓰면 둘이 항상 같다는 잘못된 조건이 생겨요. 문자가 든 식에도 구체적인 수를 넣을 수 있고, 그렇게 얻은 결과로 실제 상황을 예측할 수 있어요. 같은 양과 다른 양을 구별해 문자 이름을 정하는 것이 핵심이에요.",
     core: "같은 양은 같은 문자, 다른 양은 다른 문자!",
@@ -132,7 +141,8 @@ export const POOL_M1U2L1: ExamItem[] = [
     id: "m1u2e010",
     lessonId: L,
     type: "mcq",
-    prompt: "가로가 <i class='mv'>x</i> cm이고 세로가 12 cm인 직사각형의 둘레를 나타낸 식은?",
+    prompt: "그림과 같이 가로가 <i class='mv'>x</i> cm이고 세로가 12 cm인 직사각형의 둘레를 나타낸 식은?",
+    figure: m2ExamRectXYFig({ w: "x cm", h: "12 cm" }),
     options: ["12<i class='mv'>x</i>", "<i class='mv'>x</i>+12", "2(<i class='mv'>x</i>+12)", "2<i class='mv'>x</i>+12", "<i class='mv'>x</i>÷12"],
     answer: 2,
     diff: 2,
@@ -174,26 +184,28 @@ export const POOL_M1U2L1: ExamItem[] = [
     id: "m1u2e013",
     lessonId: L,
     type: "mcq",
-    prompt: "어떤 장식의 조각 수를 세었더니 1단계 6개, 2단계 10개, 3단계 14개였어요. 단계가 하나 늘 때마다 같은 수만큼 증가할 때, <i class='mv'>n</i>단계의 조각 수를 나타낸 식은?",
+    prompt: "그림과 같이 타일을 붙여 나가면 조각 수는 1단계 6개, 2단계 10개, 3단계 14개예요. 단계가 하나 늘 때마다 같은 수만큼 증가할 때, <i class='mv'>n</i>단계의 조각 수를 나타낸 식은?",
+    figure: mExamTileStagesFig([[3, 2], [5, 2], [7, 2]]),
     options: ["4<i class='mv'>n</i>−2", "4<i class='mv'>n</i>+2", "6<i class='mv'>n</i>", "6<i class='mv'>n</i>+4", "<i class='mv'>n</i>+5"],
     answer: 1,
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>단계가 하나 늘 때 조각 수는 4개씩 증가해요. 증가량 4를 이용해 4<i class='mv'>n</i>에 보정값을 붙이고, <i class='mv'>n</i>=1일 때 6이 되려면 2를 더해야 하므로 식은 <b>4<i class='mv'>n</i>+2</b>예요. 2단계에서도 8+2=10으로 맞아요.<span class='xh'>오답 하나씩 격파</span>'4<i class='mv'>n</i>−2'는 1단계에서 2가 되어 첫째 값을 만족하지 못해요. '6<i class='mv'>n</i>'은 첫째 값 6만 보고 증가량을 6으로 착각한 식이고요. '6<i class='mv'>n</i>+4'는 첫째 값과 증가량을 모두 잘못 결합했어요. '<i class='mv'>n</i>+5'는 1단계에서는 우연히 6이지만 단계마다 1씩만 늘어요. 패턴식은 적어도 두 단계에 넣어 검산해요.",
+      "<span class='xh'>정답 풀이</span>단계가 하나 늘 때 조각 수는 4개씩 증가해요. 증가량이 4이므로 4<i class='mv'>n</i>을 기본으로 두고, <i class='mv'>n</i>=1일 때 6이 되려면 2를 더해야 하므로 식은 <b>4<i class='mv'>n</i>+2</b>예요. 2단계에서도 8+2=10으로 맞아요.<span class='xh'>오답 하나씩 격파</span>'4<i class='mv'>n</i>−2'는 1단계에서 2가 되어 첫째 값을 만족하지 못해요. '6<i class='mv'>n</i>'은 첫째 값 6만 보고 증가량을 6으로 착각한 식이고요. '6<i class='mv'>n</i>+4'는 첫째 값과 증가량을 모두 잘못 결합했어요. '<i class='mv'>n</i>+5'는 1단계에서는 우연히 6이지만 단계마다 1씩만 늘어요. 패턴식은 적어도 두 단계에 넣어 검산해요.",
     core: "증가량 4와 첫째 값 6을 함께 만족하면 4n+2!",
   },
   {
     id: "m1u2e014",
     lessonId: L,
     type: "num",
-    prompt: "<i class='mv'>n</i>번째 줄의 구슬 수가 7<i class='mv'>n</i>+3개인 장식이 있어요. 5번째 줄의 구슬 수를 구하세요.",
-    answer: "38",
+    prompt: "그림은 학교 축제 매점의 가격표예요. 주스를 <i class='mv'>u</i>컵 사고, 쿠키는 주스보다 4개 많게 (<i class='mv'>u</i>+4)개 샀어요. <i class='mv'>u</i>=5일 때 전체 값이 몇 원인지 구하세요.",
+    figure: mExamTableFig(["품목", "가격"], [["주스 한 컵", "900원"], ["쿠키 한 개", "500원"]], { title: "매점 가격표", aria: "품목과 가격이 적힌 매점 가격표" }),
+    answer: "9000",
     numKind: "int",
-    unitLabel: "개",
-    diff: 1,
+    unitLabel: "원",
+    diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span><i class='mv'>n</i>번째 줄이라는 말에서 <i class='mv'>n</i>=5를 식 7<i class='mv'>n</i>+3에 넣어요.<br>① 7×5=35<br>② 35+3=<b>38</b><br>따라서 5번째 줄에는 38개가 있어요.<span class='xh'>오답 경로 격파</span>7+5+3=15로 계산하면 7<i class='mv'>n</i>을 7+<i class='mv'>n</i>으로 잘못 읽은 거예요. 7×5=35에서 멈추면 식의 +3을 빠뜨린 것이고, 7×(5+3)=56은 괄호가 없는 식에 마음대로 괄호를 만든 계산이에요. 문자 앞의 7은 <i class='mv'>n</i>에 곱해지는 수이고, 덧셈 3은 곱셈을 마친 뒤 처리해요. 마지막에는 1번째 값 10과 규칙의 흐름도 함께 확인해요.",
-    core: "n=5를 7n+3에 넣어 38개!",
+      "<span class='xh'>정답 풀이</span>표의 가격을 식에 옮기면 전체 값은 900<i class='mv'>u</i>+500(<i class='mv'>u</i>+4)원이에요.<br>① 주스: 900×5=4,500원<br>② 쿠키: <i class='mv'>u</i>+4=9개라서 500×9=4,500원<br>③ 합: <b>9,000원</b><span class='xh'>오답 경로 격파</span>7,000원은 쿠키도 5개로 계산해 (<i class='mv'>u</i>+4)의 +4를 빠뜨린 값이에요. 6,500원은 쿠키를 4개로 세어 <i class='mv'>u</i>를 지운 값이고, 4,500원은 주스 값만 구하고 멈춘 경우죠. 1,400원은 두 가격만 더하고 개수를 안 곱한 값이에요. 표에서 단가를 읽고, 개수 식에 대입한 뒤, 품목별 값을 더하는 세 단계를 지켜요.",
+    core: "표의 단가×개수를 품목별로 더하면 9,000원!",
   },
   {
     id: "m1u2e015",
@@ -225,14 +237,15 @@ export const POOL_M1U2L1: ExamItem[] = [
     id: "m1u2e017",
     lessonId: L,
     type: "num",
-    prompt: "독서 기록 한 편마다 15점씩 받을 때, <i class='mv'>p</i>편의 점수는 15<i class='mv'>p</i>점이에요. <i class='mv'>p</i>=6일 때 총점을 구하세요.",
-    answer: "90",
+    prompt: "그림과 같이 바둑돌을 한 변에 <i class='mv'>n</i>개씩 정사각형 테두리 모양으로 놓으면 필요한 바둑돌은 (4<i class='mv'>n</i>−4)개예요. 한 변에 9개씩 놓을 때 필요한 바둑돌 수를 구하세요.",
+    figure: mExamBorderDotsFig([3, 4, 5]),
+    answer: "32",
     numKind: "int",
-    unitLabel: "점",
-    diff: 1,
+    unitLabel: "개",
+    diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span>기록 수 <i class='mv'>p</i>=6을 총점 식 15<i class='mv'>p</i>에 넣어요. 15<i class='mv'>p</i>는 15×<i class='mv'>p</i>의 곱셈을 줄여 쓴 것이므로 15×6=<b>90</b>점이에요.<span class='xh'>오답 경로 격파</span>15+6=21은 한 편당 점수와 편수를 더한 값이라 총점이 아니에요. 156처럼 두 숫자를 이어 붙이는 것도 곱셈을 복원하지 않은 오류예요. 15÷6은 15점을 여섯 편에 나누는 반대 상황이고, 6×6=36은 한 편당 점수 15를 잃어버린 계산이에요. 같은 점수가 여섯 번 반복되므로 곱셈이며, 90÷6=15로 되돌아가는지 확인하면 관계까지 검산할 수 있어요.",
-    core: "15p는 15×p, p=6이면 90점!",
+      "<span class='xh'>정답 풀이</span>한 변에 9개이므로 <i class='mv'>n</i>=9를 4<i class='mv'>n</i>−4에 넣어요.<br>① 4×9=36<br>② 36−4=<b>32</b><br>따라서 바둑돌은 32개 필요해요.<span class='xh'>오답 경로 격파</span>36은 네 변에 9개씩 4×9로 세고 멈춘 값인데, 이러면 네 꼭짓점의 돌을 두 번씩 세게 돼요. 식의 −4가 바로 그 중복을 덜어 내는 부분이에요. 40은 −4를 +4로 바꾼 값이고, 5는 9−4처럼 곱셈을 빠뜨린 값이에요. 81은 테두리가 아니라 9×9로 속까지 꽉 채운 개수죠. 그림의 작은 배치(한 변 3개일 때 8개)에 식을 넣어 4×3−4=8이 맞는지 확인하면 대입 방향도 검산돼요.",
+    core: "n=9를 4n−4에 넣어 32개, −4는 꼭짓점 중복 제거!",
   },
   {
     id: "m1u2e018",
@@ -242,7 +255,7 @@ export const POOL_M1U2L1: ExamItem[] = [
     answer: "46",
     numKind: "int",
     unitLabel: "cm",
-    diff: 2,
+    diff: 1,
     explain:
       "<span class='xh'>정답 풀이</span><i class='mv'>x</i>=9를 둘레 식 2(<i class='mv'>x</i>+14)에 넣어요.<br>① 괄호 안: 9+14=23<br>② 2×23=<b>46</b><br>따라서 둘레는 46 cm예요.<span class='xh'>오답 경로 격파</span>23은 가로와 세로를 한 번씩만 더한 값이라 둘레의 절반이에요. 2×9+14=32는 2가 괄호 전체가 아니라 가로에만 곱해진 것으로 계산한 오류고요. 9×14=126은 넓이를 구한 값이에요. 2×9×14는 둘레식의 덧셈을 곱셈으로 바꾼 계산이죠. 실제로 9+14+9+14를 더해도 46이 되어 식과 같은지 확인하면 도형 관계까지 검산돼요.",
     core: "둘레 2(9+14)=46 cm!",
@@ -268,7 +281,7 @@ export const POOL_M1U2L1: ExamItem[] = [
     answer: "37",
     numKind: "int",
     unitLabel: "개",
-    diff: 2,
+    diff: 1,
     explain:
       "<span class='xh'>정답 풀이</span><i class='mv'>k</i>=296을 <i class='mv'>k</i>÷8에 넣으면 296÷8이에요. 8×37=296이므로 한 상자에는 <b>37개</b>가 들어가요.<span class='xh'>오답 경로 격파</span>288은 전체에서 상자 수 8만 뺀 값이라 똑같이 나눈 수가 아니에요. 304는 296에 8을 더했고, 2,368은 296×8로 상자 수만큼 전체를 다시 늘린 값이에요. 36은 8×36=288에서 나머지 8을 놓친 몫이고요. 똑같이 나누는 상황에서는 전체를 상자 수로 나눠요. 답 37을 상자 8개에 다시 곱해 296이 되는지 확인하면 나눗셈 방향과 계산을 함께 검산할 수 있어요.",
     core: "k=296을 k÷8에 넣어 한 상자당 37개!",
@@ -280,7 +293,7 @@ export const POOL_M1U2L1: ExamItem[] = [
     prompt: "아직 정해지지 않은 수나 변할 수 있는 수를 대신하여 쓰는 <b>글자</b>를 무엇이라고 하나요?",
     answer: "문자",
     bank: ["문자", "계수", "상수항", "항", "식의 값", "등식", "방정식", "차수"],
-    diff: 2,
+    diff: 1,
     explain:
       "<span class='xh'>정답 풀이</span>아직 정해지지 않았거나 상황에 따라 달라지는 수를 대신해 쓰는 글자는 <b>문자</b>예요. <i class='mv'>x</i>, <i class='mv'>a</i>, <i class='mv'>n</i>처럼 어떤 글자도 수의 자리표가 될 수 있어요.<span class='xh'>오답 칩 격파</span>'계수'는 문자에 곱해진 수이고, '상수항'은 문자 없이 수만으로 된 항이에요. '항'은 식을 이루는 덧셈 단위, '식의 값'은 문자에 수를 넣어 계산한 결과예요. '등식'은 등호로 두 양이 같음을 나타낸 식이고 '방정식'은 특정한 수에서 참이 되는 등식이에요. '차수'는 문자가 곱해진 횟수를 가리켜요. 수를 대신하는 글자 자체의 이름은 문자예요.",
     core: "수를 대신하는 글자의 이름은 문자!",
@@ -292,7 +305,7 @@ export const POOL_M1U2L1: ExamItem[] = [
     prompt: "수량이나 수량 사이의 관계를 수 대신 <i class='mv'>x</i>, <i class='mv'>a</i> 같은 문자를 사용하여 나타낸 식을 무엇이라고 하나요?",
     answer: "문자를 사용한 식",
     bank: ["문자를 사용한 식", "수직선", "등식의 성질", "소인수분해", "최대공약수", "식의 값", "항등식", "일차방정식"],
-    diff: 3,
+    diff: 2,
     explain:
       "<span class='xh'>정답 풀이</span>수량이나 관계를 정해진 수 대신 문자로 나타낸 것은 <b>문자를 사용한 식</b>이에요. 예를 들어 한 개에 9점인 표 <i class='mv'>n</i>개의 총점은 9<i class='mv'>n</i>처럼 나타내며, <i class='mv'>n</i>이 달라져도 관계 하나를 계속 쓸 수 있어요.<span class='xh'>오답 칩 격파</span>'식의 값'은 문자에 특정 수를 넣어 계산한 결과이고, '항등식'과 '일차방정식'은 등호가 있는 식의 종류예요. '등식의 성질'은 양변에 같은 연산을 해도 같음이 유지되는 규칙이고요. '수직선', '소인수분해', '최대공약수'는 수와 연산 단원의 다른 개념이에요. 질문은 문자를 이용해 관계 전체를 표현한 식의 이름을 묻고 있어요.",
     core: "관계를 문자로 나타낸 식은 문자를 사용한 식!",

@@ -144,11 +144,12 @@ export const POOL_M1U4L5: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
-      "직선 l 밖의 점 P와 l 위의 서로 다른 점 H, K가 있습니다. " +
+      "그림과 같이 직선 l 밖의 점 P와 l 위의 서로 다른 점 H, K가 있습니다. " +
       gsym("PH", "seg") +
       "는 l에 수직이고 " +
       gsym("PK", "seg") +
       "는 l에 수직이 아닙니다. 두 선분의 길이를 비교한 것으로 옳은 것은?",
+    figure: m4PerpDistanceFig({ point: "P", foot: "H", otherA: "K" }),
     options: ["PH=PK", "PH>PK", "K가 수선의 발이므로 비교할 수 없다", "PK가 점 P와 l 사이의 거리이다", "PH<PK"],
     answer: 4,
     diff: 2,

@@ -1,8 +1,10 @@
 // 중1 수학 II 문자와 식, 레슨 7 등식의 성질 단원 종합 평가 풀(22문항).
 // 교과서에서는 성질과 함정 구조만 참고하고 수치·문구·소재 결합은 새로 설계했다.
-// 유형 13(mcq+multi)/7(num)/2(word), diff 1/2/3 = 9/9/4.
+// 유형 13(mcq+multi)/7(num)/2(word), diff 1/2/3 = 9/9/4 (2026-07 개보수:
+// 분수 등식 성질·풀이 과정 상자 신작 + 저울 그림 2, diff는 내용 기준 재캘리브레이션).
 import type { ExamItem } from "./types";
-import { mExamBalanceFig } from "../../ui/examFiguresMath";
+import { mfmt } from "../../ui/mathKit";
+import { mExamBalanceFig, mExamEqStepsFig } from "../../ui/examFiguresMath";
 
 const L = "m1u2l7";
 
@@ -11,13 +13,13 @@ export const POOL_M1U2L7: ExamItem[] = [
     id: "m1u2e133",
     lessonId: L,
     type: "mcq",
-    prompt: "등식 <i class='mv'>a</i>=<i class='mv'>b</i>의 양변에 9를 더해 얻은 등식은?",
-    options: ["<i class='mv'>a</i>+9=<i class='mv'>b</i>", "<i class='mv'>a</i>=<i class='mv'>b</i>+9", "<i class='mv'>a</i>+9=<i class='mv'>b</i>+9", "<i class='mv'>a</i>+9=<i class='mv'>b</i>−9", "9<i class='mv'>a</i>=9+<i class='mv'>b</i>"],
+    prompt: mfmt("{a/4}") + "=" + mfmt("{b/6}") + "일 때, 항상 성립하는 등식은?",
+    options: [mfmt("2a=3b"), mfmt("a=b"), mfmt("3a=2b"), mfmt("12a=12b"), mfmt("a-4=b-6")],
     answer: 2,
-    diff: 1,
+    diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span><i class='mv'>a</i>=<i class='mv'>b</i>에서 양변에 같은 수 9를 더하면 <b><i class='mv'>a</i>+9=<i class='mv'>b</i>+9</b>가 되어 같음이 유지돼요.<span class='xh'>오답 하나씩 격파</span><i class='mv'>a</i>+9=<i class='mv'>b</i>와 <i class='mv'>a</i>=<i class='mv'>b</i>+9는 한쪽에만 9를 더해 균형을 깨뜨렸어요. <i class='mv'>a</i>+9=<i class='mv'>b</i>−9는 왼쪽에는 더하고 오른쪽에서는 빼서 같은 조작이 아니고요. 9<i class='mv'>a</i>=9+<i class='mv'>b</i>는 왼쪽에는 9를 곱하고 오른쪽에는 9를 더했어요. 예를 들어 <i class='mv'>a</i>=<i class='mv'>b</i>=4를 넣으면 정답 식은 13=13이지만 한쪽만 바꾼 식은 13=4가 돼요. 연산 기호와 수가 양쪽에서 모두 같은지 한 항씩 짝지어 확인해야 해요.",
-    core: "양변에 9를 더하면 a+9=b+9!",
+      "<span class='xh'>정답 풀이</span>분모 4와 6의 최소공배수 12를 양변에 곱해요. 왼쪽은 12×" + mfmt("{a/4}") + "=3<i class='mv'>a</i>, 오른쪽은 12×" + mfmt("{b/6}") + "=2<i class='mv'>b</i>이므로 <b>" + mfmt("3a=2b") + "</b>가 항상 성립해요.<span class='xh'>오답 하나씩 격파</span><i class='mv'>a</i>=2, <i class='mv'>b</i>=3이면 원래 등식은 0.5=0.5로 참이에요. 이때 " + mfmt("2a=3b") + "는 4=9, " + mfmt("a=b") + "는 2=3, " + mfmt("12a=12b") + "는 24=36, " + mfmt("a-4=b-6") + "은 −2=−3이 되어 전부 거짓이죠. 특히 " + mfmt("2a=3b") + "는 분모 숫자를 그대로 반대편 분자에 붙인 함정이에요. 같은 수를 곱한 뒤 각 변에 실제로 남는 식을 계산해서 확인해요.",
+    core: "양변에 12를 곱하면 3a=2b!",
   },
   {
     id: "m1u2e134",
@@ -108,13 +110,14 @@ export const POOL_M1U2L7: ExamItem[] = [
     id: "m1u2e141",
     lessonId: L,
     type: "mcq",
-    prompt: "팀 점수 관계를 나타낸 등식 <i class='mv'>y</i>−16=27에서 <i class='mv'>y</i>를 구한 과정으로 옳은 것은?",
-    options: ["왼쪽에만 16을 더해 <i class='mv'>y</i>=27", "양변에서 16을 빼서 <i class='mv'>y</i>=11", "양변을 16으로 나누어 <i class='mv'>y</i>=27÷16", "양변에 16을 더해 <i class='mv'>y</i>=43", "양변에 27을 더해 <i class='mv'>y</i>=70"],
+    prompt: "그림은 등식의 성질로 방정식 " + mfmt("-4x+3=15") + "의 해를 구하는 과정이에요. ㉮와 ㉯에 알맞은 수를 차례대로 짝 지은 것은?",
+    figure: mExamEqStepsFig({ eqs: ["−4x+3=15", "−4x=12", "x=−3"], notes: ["양변에서 ㉮을 뺀다", "양변을 ㉯로 나눈다"] }),
+    options: ["㉮ 3, ㉯ 4", "㉮ −3, ㉯ −4", "㉮ 15, ㉯ −4", "㉮ 3, ㉯ −4", "㉮ −3, ㉯ 4"],
     answer: 3,
     diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span><i class='mv'>y</i>−16에서 −16을 없애기 위해 양변에 16을 더해요. <i class='mv'>y</i>−16+16=27+16이므로 <b><i class='mv'>y</i>=43</b>이에요.<span class='xh'>오답 하나씩 격파</span>왼쪽에만 16을 더하면 오른쪽도 함께 변해야 한다는 성질을 어겨요. 양변에서 16을 빼면 왼쪽은 <i class='mv'>y</i>−32가 되어 <i class='mv'>y</i>가 홀로 남지 않고요. 16으로 나누는 것은 뺄셈을 없애는 반대 연산이 아니에요. 27을 양변에 더해도 −16이 그대로 남아요. 구한 43을 원래 식에 넣어 43−16=27이 되는지 확인하면 조작과 계산을 함께 검산할 수 있어요.",
-    core: "y−16=27의 양변에 16을 더하면 y=43!",
+      "<span class='xh'>정답 풀이</span>첫 단계에서 좌변의 +3이 사라졌으므로 양변에서 <b>3</b>을 뺀 거예요(㉮=3). 다음 단계에서 −4<i class='mv'>x</i>=12가 <i class='mv'>x</i>=−3이 되었으므로 양변을 계수 <b>−4</b>로 나눈 거죠(㉯=−4). 실제로 12÷(−4)=−3이에요.<span class='xh'>오답 하나씩 격파</span>㉯를 4로 두면 12÷4=3이라 그림의 결과 <i class='mv'>x</i>=−3과 어긋나요. 계수가 음수이면 나누는 수도 부호까지 같은 −4여야 해요. ㉮를 −3으로 두면 '−3을 뺀다'는 3을 더한다는 뜻이라 좌변이 −4<i class='mv'>x</i>+6으로 변해요. ㉮=15는 우변의 수를 옮겨 적은 것일 뿐이고요. 각 줄이 바로 윗줄에서 어떻게 나왔는지 연산을 역추적해요.",
+    core: "㉮는 없앤 +3, ㉯는 계수 그대로 −4!",
   },
   {
     id: "m1u2e142",
@@ -156,7 +159,7 @@ export const POOL_M1U2L7: ExamItem[] = [
     id: "m1u2e145",
     lessonId: L,
     type: "multi",
-    prompt: "자원 상자 A 6개의 가치와 자원 상자 B 9개의 가치가 같아 6<i class='mv'>a</i>=9<i class='mv'>b</i>라고 했어요. 항상 성립하는 등식을 <b>모두 고르세요.</b>",
+    prompt: "6<i class='mv'>a</i>=9<i class='mv'>b</i>일 때, 항상 성립하는 등식을 <b>모두 고르세요.</b>",
     options: ["2<i class='mv'>a</i>=3<i class='mv'>b</i>", "6(<i class='mv'>a</i>+5)=9(<i class='mv'>b</i>+5)", "12<i class='mv'>a</i>=18<i class='mv'>b</i>", "6<i class='mv'>a</i>−4=9<i class='mv'>b</i>+4", "−2<i class='mv'>a</i>=−3<i class='mv'>b</i>"],
     answer: [0, 2, 4],
     diff: 3,
@@ -168,39 +171,37 @@ export const POOL_M1U2L7: ExamItem[] = [
     id: "m1u2e146",
     lessonId: L,
     type: "num",
-    prompt: "장비 대여 수량의 관계식 <i class='mv'>x</i>+27=45에서 양변에 같은 수를 빼 <i class='mv'>x</i>의 값을 구하세요.",
+    prompt: "그림의 양팔저울은 수평이에요. 등식 <i class='mv'>x</i>+27=45에서 양변에 같은 수를 빼 <i class='mv'>x</i>의 값을 구하세요.",
+    figure: mExamBalanceFig({ leftBoxes: 1, rightBoxes: 0, leftWeight: "27", rightWeight: "45", boxLabel: "x" }),
     answer: "18",
     numKind: "int",
-    unitLabel: "대",
     diff: 1,
     explain:
-      "<span class='xh'>정답 풀이</span><i class='mv'>x</i>에 더해진 27을 없애기 위해 양변에서 27을 빼요.<br>① <i class='mv'>x</i>+27−27=45−27<br>② <i class='mv'>x</i>=<b>18</b><br>따라서 대여 수량은 18대예요.<span class='xh'>오답 경로 격파</span>72는 45에 27을 더해 반대 연산을 한 값이에요. 27은 오른쪽에서만 18을 뺀 것처럼 원래 식을 이용하지 않은 값이고요. 45÷27처럼 나누면 덧셈 27을 없애지 못해요. 한쪽에서만 27을 빼서 <i class='mv'>x</i>=45로 만드는 것도 등식의 성질을 어겨요. 답을 원래 식에 넣으면 18+27=45가 되어 양변이 정확히 같아져요.",
+      "<span class='xh'>정답 풀이</span><i class='mv'>x</i>에 더해진 27을 없애기 위해 양변에서 27을 빼요.<br>① <i class='mv'>x</i>+27−27=45−27<br>② <i class='mv'>x</i>=<b>18</b><br>따라서 <i class='mv'>x</i>의 값은 18이에요.<span class='xh'>오답 경로 격파</span>72는 45에 27을 더해 반대 연산을 한 값이에요. 27은 오른쪽에서만 18을 뺀 것처럼 원래 식을 이용하지 않은 값이고요. 45÷27처럼 나누면 덧셈 27을 없애지 못해요. 한쪽에서만 27을 빼서 <i class='mv'>x</i>=45로 만드는 것도 등식의 성질을 어겨요. 답을 원래 식에 넣으면 18+27=45가 되어 양변이 정확히 같아져요.",
     core: "x+27=45의 양변에서 27을 빼면 x=18!",
   },
   {
     id: "m1u2e147",
     lessonId: L,
     type: "num",
-    prompt: "팀 점수 관계식 <i class='mv'>x</i>−19=34에서 양변에 같은 수를 더해 <i class='mv'>x</i>의 값을 구하세요.",
+    prompt: "등식 <i class='mv'>x</i>−19=34에서 양변에 같은 수를 더해 <i class='mv'>x</i>의 값을 구하세요.",
     answer: "53",
     numKind: "int",
-    unitLabel: "점",
     diff: 1,
     explain:
-      "<span class='xh'>정답 풀이</span><i class='mv'>x</i>에서 빠진 19를 되돌리려면 양변에 19를 더해요.<br>① <i class='mv'>x</i>−19+19=34+19<br>② <i class='mv'>x</i>=<b>53</b><br>따라서 원래 점수는 53점이에요.<span class='xh'>오답 경로 격파</span>15는 34에서 19를 한 번 더 뺀 값이라 −19를 없애지 못해요. 34나 19를 그대로 답하면 문자와 수의 관계를 계산하지 않은 것이고요. 34×19는 덧셈 관계를 곱셈으로 바꾼 오류예요. 왼쪽에만 19를 더하면 오른쪽도 같은 만큼 변해야 한다는 조건을 놓쳐요. 검산하면 53−19=34로 원래 등식이 참이 돼요.",
+      "<span class='xh'>정답 풀이</span><i class='mv'>x</i>에서 빠진 19를 되돌리려면 양변에 19를 더해요.<br>① <i class='mv'>x</i>−19+19=34+19<br>② <i class='mv'>x</i>=<b>53</b><br>따라서 <i class='mv'>x</i>의 값은 53이에요.<span class='xh'>오답 경로 격파</span>15는 34에서 19를 한 번 더 뺀 값이라 −19를 없애지 못해요. 34나 19를 그대로 답하면 문자와 수의 관계를 계산하지 않은 것이고요. 34×19는 덧셈 관계를 곱셈으로 바꾼 오류예요. 왼쪽에만 19를 더하면 오른쪽도 같은 만큼 변해야 한다는 조건을 놓쳐요. 검산하면 53−19=34로 원래 등식이 참이 돼요.",
     core: "x−19=34의 양변에 19를 더하면 x=53!",
   },
   {
     id: "m1u2e148",
     lessonId: L,
     type: "num",
-    prompt: "자원 묶음 수의 관계식 <i class='mv'>x</i>÷6=13에서 양변에 같은 수를 곱해 <i class='mv'>x</i>의 값을 구하세요.",
+    prompt: "등식 <i class='mv'>x</i>÷6=13에서 양변에 같은 수를 곱해 <i class='mv'>x</i>의 값을 구하세요.",
     answer: "78",
     numKind: "int",
-    unitLabel: "개",
     diff: 1,
     explain:
-      "<span class='xh'>정답 풀이</span><i class='mv'>x</i>를 6으로 나눈 연산을 없애려면 양변에 6을 곱해요.<br>① (<i class='mv'>x</i>÷6)×6=13×6<br>② <i class='mv'>x</i>=<b>78</b><br>자원은 78개예요.<span class='xh'>오답 경로 격파</span>19는 13에 6을 더한 값이라 나누기 6의 반대 연산을 사용하지 않았어요. 7은 13에서 6을 뺀 값이고, 13÷6은 오른쪽을 다시 나누어 문자와 더 멀어진 계산이에요. 13을 그대로 답하면 묶음 한 단위의 결과만 본 셈이고요. 78을 다시 6으로 나누면 13이 되므로 원래 관계로 되돌아가는지 곱셈과 나눗셈으로 검산할 수 있어요.",
+      "<span class='xh'>정답 풀이</span><i class='mv'>x</i>를 6으로 나눈 연산을 없애려면 양변에 6을 곱해요.<br>① (<i class='mv'>x</i>÷6)×6=13×6<br>② <i class='mv'>x</i>=<b>78</b><br>따라서 <i class='mv'>x</i>의 값은 78이에요.<span class='xh'>오답 경로 격파</span>19는 13에 6을 더한 값이라 나누기 6의 반대 연산을 사용하지 않았어요. 7은 13에서 6을 뺀 값이고, 13÷6은 오른쪽을 다시 나누어 문자와 더 멀어진 계산이에요. 13을 그대로 답하면 우변을 그대로 옮겨 적은 셈이고요. 78을 다시 6으로 나누면 13이 되므로 원래 관계로 되돌아가는지 곱셈과 나눗셈으로 검산할 수 있어요.",
     core: "x÷6=13의 양변에 6을 곱하면 x=78!",
   },
   {
@@ -244,7 +245,8 @@ export const POOL_M1U2L7: ExamItem[] = [
     id: "m1u2e152",
     lessonId: L,
     type: "num",
-    prompt: "포장 상자 4개의 질량과 받침 20 kg의 합이 76 kg라서 4<i class='mv'>x</i>+20=76이에요. 등식의 성질을 차례로 사용해 <i class='mv'>x</i>를 구하세요.",
+    prompt: "그림처럼 포장 상자 4개의 질량과 받침 20 kg의 합이 76 kg와 저울 위에서 수평을 이뤄 4<i class='mv'>x</i>+20=76이에요. 등식의 성질을 차례로 사용해 <i class='mv'>x</i>를 구하세요.",
+    figure: mExamBalanceFig({ leftBoxes: 4, rightBoxes: 0, leftWeight: "20", rightWeight: "76", boxLabel: "x" }),
     answer: "14",
     numKind: "int",
     unitLabel: "kg",
@@ -260,7 +262,7 @@ export const POOL_M1U2L7: ExamItem[] = [
     prompt: "등식의 양변에 같은 수를 더하거나 빼고, 같은 수를 곱하거나 0이 아닌 같은 수로 나누어도 등식이 성립하는 규칙을 무엇이라고 하나요?",
     answer: "등식의 성질",
     bank: ["등식의 성질", "교환법칙", "결합법칙", "분배법칙", "이항", "대입", "동류항", "식의 값"],
-    diff: 2,
+    diff: 1,
     explain:
       "<span class='xh'>정답 풀이</span>등식의 양변에 같은 연산을 해도 같음이 유지되는 규칙을 <b>등식의 성질</b>이라고 해요. 더하기·빼기·곱하기는 같은 수, 나누기는 0이 아닌 같은 수를 사용해요.<span class='xh'>오답 칩 격파</span>'교환법칙'과 '결합법칙'은 계산 순서나 묶는 방법을 바꾸는 규칙이고, '분배법칙'은 괄호 밖의 수를 안의 각 항에 곱하는 규칙이에요. '이항'은 등식의 성질을 바탕으로 항을 옮겨 쓰는 방법이고요. '대입'은 문자에 수를 넣는 것, '동류항'은 문자와 차수가 같은 항, '식의 값'은 대입하여 계산한 결과예요. 질문은 등호의 양쪽에 같은 조작을 적용하는 규칙의 이름을 묻고 있어요.",
     core: "양변에 같은 조작을 해도 같음이 유지되는 규칙은 등식의 성질!",
@@ -272,7 +274,7 @@ export const POOL_M1U2L7: ExamItem[] = [
     prompt: "등식에서 등호 왼쪽의 식과 오른쪽의 식을 한꺼번에 이르는 말을 무엇이라고 하나요?",
     answer: "양변",
     bank: ["양변", "좌변", "우변", "항", "계수", "상수항", "해", "차수"],
-    diff: 3,
+    diff: 2,
     explain:
       "<span class='xh'>정답 풀이</span>등호 왼쪽의 식은 좌변, 오른쪽의 식은 우변이고, 이 둘을 한꺼번에 <b>양변</b>이라고 해요. 등식의 성질에서 '양변에 같은 수를 더한다'고 할 때 바로 이 두 식을 함께 가리켜요.<span class='xh'>오답 칩 격파</span>'좌변'은 왼쪽 식 하나만, '우변'은 오른쪽 식 하나만 뜻해요. '항'은 식을 이루는 덧셈의 한 덩어리이고, '계수'는 문자에 곱해진 수, '상수항'은 문자 없는 항이에요. '해'는 방정식을 참이 되게 하는 수이고 '차수'는 문자가 곱해진 횟수예요. 질문은 어느 한쪽이나 식의 부품이 아니라 등호 양쪽을 모두 묶어 부르는 말을 찾고 있어요.",
     core: "좌변과 우변을 합쳐 양변이라고 해요!",

@@ -1,4 +1,4 @@
-// 중1 수학 Ⅲ. 좌표평면과 그래프: 단원 종합 평가 풀, 레슨 1 좌표와 순서쌍 (m1u3e001~m1u3e022).
+// 중1 수학 Ⅲ. 좌표평면과 그래프: 단원 종합 평가 풀, 레슨 1 좌표와 순서쌍 (m1u3e001~m1u3e022). 2026-07 개보수: e020 삼각형 넓이(교과서 대조 신작).
 // 유형 13(mcq+multi)/7(num)/2(word), diff 9/9/4. 좌표는 planeSpec 기반 MExamPlaneSpec 한 곳에서 그림과 문항을 함께 만든다.
 import type { ExamItem } from "./types";
 import { mExamPlaneFig, type MExamPlaneSpec } from "../../ui/examFiguresMath";
@@ -61,9 +61,9 @@ const PLANE_020: MExamPlaneSpec = {
   max: 7,
   labelEvery: 1,
   points: [
-    { label: "N", x: 6, y: -3, color: "#364FC7" },
-    { label: "R", x: -1, y: 7, color: "#E8547E", labelDy: 18 },
-    { label: "S", x: 0, y: -6, color: "#2F9E44", labelDx: 12 },
+    { label: "A", x: -2, y: 3, color: "#E8547E" },
+    { label: "B", x: -2, y: -2, color: "#364FC7", labelDx: -13, labelDy: 18 },
+    { label: "C", x: 4, y: -2, color: "#2F9E44", labelDx: 13, labelDy: 18 },
   ],
 };
 
@@ -73,7 +73,12 @@ const G010 = pointOf(PLANE_010, "G");
 const H010 = pointOf(PLANE_010, "H");
 const J010 = pointOf(PLANE_010, "J");
 const K013 = pointOf(PLANE_013, "K");
-const N020 = pointOf(PLANE_020, "N");
+const A020 = pointOf(PLANE_020, "A");
+const B020 = pointOf(PLANE_020, "B");
+const C020 = pointOf(PLANE_020, "C");
+const TRI_BASE = C020.x - B020.x;
+const TRI_HEIGHT = A020.y - B020.y;
+const TRI_AREA = (TRI_BASE * TRI_HEIGHT) / 2;
 
 export const POOL_M1U3L1: ExamItem[] = [
   {
@@ -258,7 +263,7 @@ export const POOL_M1U3L1: ExamItem[] = [
     diff: 2,
     explain:
       "<span class='xh'>정답 풀이</span>먼저 가로 위치 −2를 따라 원점에서 왼쪽으로 2칸 가고, 거기서 세로 위치 6만큼 위로 올라가요. 그 자리에 붙은 이름은 <b>점 K</b>예요. 같은 spec에서 K의 좌표는 (−2, 6)으로 정해져 있어요.<span class='xh'>오답 하나씩 격파</span>점 L은 (4, −5)라 두 좌표가 모두 다르고, 점 M은 (−6, 0)이라 <i class='mv'>x</i>축 위에 있어요. 원점 O는 (0, 0)이므로 조건과 맞지 않아요. '그림에 없는 점'도 K가 정확히 조건을 만족하므로 틀려요. 좌표를 찾을 때는 가로선을 먼저 고르고 세로선과 만나는 점의 이름을 확인해요.",
-    core: "x=-2 세로선과 y=6 가로선의 교점이 K예요.",
+    core: "x=−2 세로선과 y=6 가로선의 교점이 K예요.",
   },
   {
     id: "m1u3e014",
@@ -342,14 +347,14 @@ export const POOL_M1U3L1: ExamItem[] = [
     id: "m1u3e020",
     lessonId: L,
     type: "num",
-    prompt: "그림에서 점 N의 <i class='mv'>y</i>좌표를 쓰세요.",
+    prompt: "그림의 세 점 A, B, C를 꼭짓점으로 하는 삼각형 ABC의 넓이를 구하세요.",
     figure: mExamPlaneFig(PLANE_020),
-    answer: String(N020.y),
+    answer: String(TRI_AREA),
     numKind: "int",
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>점 N에서 세로로 <i class='mv'>y</i>축의 눈금을 따라가면 −3에 닿아요. N은 <i class='mv'>x</i>축보다 아래에 있으므로 부호는 음수이고, 따라서 <i class='mv'>y</i>좌표는 <b>−3</b>이에요. N의 전체 좌표는 (6, −3)이지만 이 문제는 둘째 성분만 물어요.<span class='xh'>헷갈림 격파</span>'6'은 N의 <i class='mv'>x</i>좌표라 질문과 다른 성분이에요. '3'은 세로 눈금의 크기만 읽고 아래쪽의 음수 부호를 놓친 값이고요. 점의 전체 좌표를 마음속으로 가로, 세로 순서로 만든 뒤 요구한 성분만 떼어 쓰면 순서 실수를 줄일 수 있어요. 입력에는 -3을 사용해요.",
-    core: "N은 x축 아래 3칸이므로 y좌표가 −3이에요.",
+      "<span class='xh'>정답 풀이</span>① 그림에서 세 점의 좌표를 읽으면 A(−2, 3), B(−2, −2), C(4, −2)예요.<br>② A와 B는 <i class='mv'>x</i>좌표가 같아 변 AB는 세로 선분이고 길이는 3−(−2)=5예요. B와 C는 <i class='mv'>y</i>좌표가 같아 변 BC는 가로 선분이고 길이는 4−(−2)=6이에요.<br>③ 두 변이 서로 수직이므로 넓이는 (밑변×높이)÷2=6×5÷2=<b>15</b>예요.<span class='xh'>헷갈림 격파</span>'30'은 2로 나누는 마지막 단계를 빠뜨린 값이고, '11'은 두 길이를 곱하지 않고 더한 값이에요. 길이를 셀 때 4−2=2, 3−2=1처럼 음수 부호를 버리면 변의 길이가 짧아져요. 0을 건너가는 변은 그림의 눈금 칸 수를 직접 세어 검산해요.",
+    core: "축과 나란한 두 변의 길이를 좌표 차로 구해 넓이를 계산해요.",
   },
   {
     id: "m1u3e021",

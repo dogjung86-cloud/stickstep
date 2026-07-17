@@ -1,6 +1,7 @@
-// 중1 수학 Ⅴ. 평면도형과 입체도형: 단원 종합 평가 풀, 레슨 8 다면체(m1u5e100~e113)
+// 중1 수학 Ⅴ. 평면도형과 입체도형: 단원 종합 평가 풀, 레슨 8 다면체(m1u5e100~e113) 2026-07 개보수: e107 겨냥도 판독형(mExamSolidFig 재사용).
 // 유형 9 objective / 4 num / 1 word, diff 6/5/3. 곡면 함정, 각기둥·각뿔 부품 수, 오일러 관계를 독립 구조로 다룬다.
 import type { ExamItem } from "./types";
+import { mExamSolidFig } from "../../ui/examFiguresMath";
 
 const L = "m1u5l8";
 
@@ -105,7 +106,8 @@ export const POOL_M1U5L8: ExamItem[] = [
     id: "m1u5e107",
     lessonId: L,
     type: "mcq",
-    prompt: "사각뿔의 <b>면의 수와 꼭짓점의 수를 더한 값</b>은?",
+    prompt: "그림과 같은 사각뿔에서 <b>면의 수와 꼭짓점의 수를 더한 값</b>은?",
+    figure: mExamSolidFig("pyr4"),
     options: ["10", "8", "9", "12", "5"],
     answer: 0,
     diff: 2,

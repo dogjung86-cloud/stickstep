@@ -1,7 +1,8 @@
 // 중1 수학 Ⅳ. 기본 도형: 단원 종합 평가 풀, 레슨 2 직선·반직선·선분 (m1u4e016~m1u4e030).
-// 유형 9(mcq+multi)/5(num)/1(word), diff 6/6/3. 교과서의 문장·수치·도형 배치는 복제하지 않았다.
+// 유형 9(mcq+multi)/5(num)/1(word), diff 7/5/3(개보수 재캘리브레이션). 교과서의 문장·수치·도형 배치는 복제하지 않았다.
 import type { ExamItem } from "./types";
 import { gsym } from "../../ui/geoKit";
+import { mExamPointsLineFig } from "../../ui/examFiguresMath";
 
 const L = "m1u4l2";
 
@@ -38,7 +39,8 @@ export const POOL_M1U4L2: ExamItem[] = [
     id: "m1u4e017",
     lessonId: L,
     type: "mcq",
-    prompt: "서로 다른 네 점 A, C, E, G가 한 직선 위에 있어요. 다음 중 " + gsym("CG", "line") + "와 같은 도형은?",
+    prompt: "그림과 같이 서로 다른 네 점 A, C, E, G가 한 직선 위에 있어요. 다음 중 " + gsym("CG", "line") + "와 같은 도형은?",
+    figure: mExamPointsLineFig({ pts: ["A", "C", "E", "G"] }),
     options: [
       gsym("GC", "ray") + " (반직선 GC)",
       gsym("CE", "seg") + " (선분 CE)",
@@ -68,7 +70,8 @@ export const POOL_M1U4L2: ExamItem[] = [
     id: "m1u4e018",
     lessonId: L,
     type: "mcq",
-    prompt: "울타리의 네 표지 H, J, K, L이 한 직선 위에 이 순서로 있어요. 다음 중 " + gsym("JK", "ray") + "와 같은 도형은?",
+    prompt: "그림과 같이 울타리의 네 표지 H, J, K, L이 한 직선 위에 있어요. 다음 중 " + gsym("JK", "ray") + "와 같은 도형은?",
+    figure: mExamPointsLineFig({ pts: ["H", "J", "K", "L"] }),
     options: [
       gsym("KJ", "ray") + " (반직선 KJ)",
       gsym("JH", "ray") + " (반직선 JH)",
@@ -184,7 +187,8 @@ export const POOL_M1U4L2: ExamItem[] = [
     id: "m1u4e023",
     lessonId: L,
     type: "mcq",
-    prompt: "세 점 H, J, K가 한 직선 위에 이 순서로 있고, " + gsym("HJ", "seg") + "=4 cm, " + gsym("JK", "seg") + "=6 cm예요. 옳은 것은?",
+    prompt: "그림과 같이 세 점 H, J, K가 한 직선 위에 있고, " + gsym("HJ", "seg") + "=4 cm, " + gsym("JK", "seg") + "=6 cm예요. 옳은 것은?",
+    figure: mExamPointsLineFig({ pts: ["H", "J", "K"], segs: [{ from: 0, to: 1, label: "4 cm" }, { from: 1, to: 2, label: "6 cm" }] }),
     options: [
       gsym("HK", "seg") + "=10 cm",
       gsym("HK", "seg") + "=2 cm",
@@ -263,7 +267,8 @@ export const POOL_M1U4L2: ExamItem[] = [
     id: "m1u4e028",
     lessonId: L,
     type: "num",
-    prompt: "한 직선 위에 A, C, E, G가 이 순서로 있습니다. C는 " + gsym("AE", "seg") + "의 중점이고, E는 " + gsym("CG", "seg") + "의 중점입니다. " + gsym("AG", "seg") + "=21 cm일 때, " + gsym("AE", "seg") + "의 길이를 구하세요. 정답은 숫자만 입력하세요.",
+    prompt: "그림과 같이 한 직선 위에 A, C, E, G가 있습니다. C는 " + gsym("AE", "seg") + "의 중점이고, E는 " + gsym("CG", "seg") + "의 중점입니다. " + gsym("AG", "seg") + "=21 cm일 때, " + gsym("AE", "seg") + "의 길이를 구하세요. 정답은 숫자만 입력하세요.",
+    figure: mExamPointsLineFig({ pts: ["A", "C", "E", "G"], segs: [{ from: 0, to: 3, label: "21 cm" }] }),
     answer: "14",
     numKind: "int",
     unitLabel: "cm",
@@ -280,7 +285,8 @@ export const POOL_M1U4L2: ExamItem[] = [
     id: "m1u4e029",
     lessonId: L,
     type: "num",
-    prompt: "점 M은 " + gsym("AG", "seg") + "의 중점이고, 점 N은 " + gsym("MG", "seg") + "의 중점입니다. " + gsym("NG", "seg") + "=9 cm일 때, " + gsym("AM", "seg") + "의 길이를 구하세요. 정답은 숫자만 입력하세요.",
+    prompt: "그림과 같이 점 M은 " + gsym("AG", "seg") + "의 중점이고, 점 N은 " + gsym("MG", "seg") + "의 중점입니다. " + gsym("NG", "seg") + "=9 cm일 때, " + gsym("AM", "seg") + "의 길이를 구하세요. 정답은 숫자만 입력하세요.",
+    figure: mExamPointsLineFig({ pts: ["A", "M", "N", "G"], segs: [{ from: 2, to: 3, label: "9 cm" }] }),
     answer: "18",
     numKind: "int",
     unitLabel: "cm",
@@ -302,7 +308,7 @@ export const POOL_M1U4L2: ExamItem[] = [
     prompt: "선분을 길이가 같은 두 선분으로 나누는 점을 무엇이라고 하나요? 알맞은 말을 고르세요.",
     answer: "중점",
     bank: ["중점", "교점", "수선의 발", "꼭짓점", "시작점", "교선", "직선", "평면"],
-    diff: 2,
+    diff: 1,
     explain:
       "<span class='xh'>정답 풀이</span>한 선분 위에서 양 끝점까지의 거리가 같아지도록 선분을 두 부분으로 나누는 점을 <b>중점</b>이라고 해요. 점 M이 선분 AB의 중점이면 M은 AB 위에 있고 AM=MB예요.<span class='xh'>오답 하나씩 격파</span>'교점'은 두 선이 만나는 점이고, '수선의 발'은 한 점에서 직선에 내린 수선과 그 직선이 만나는 점이에요. '꼭짓점'은 변이나 모서리가 만나는 점, '시작점'은 반직선이 출발하는 점이에요. '교선'은 두 면이 만나 생기는 선이라 점이 아니고, '직선'과 '평면'도 점의 이름이 아니에요. 중점은 반드시 어느 선분의 중점인지와 양쪽 길이가 같은지를 함께 확인해요.",
     core: "선분을 길이가 같은 두 부분으로 나누는 점은 중점이다.",

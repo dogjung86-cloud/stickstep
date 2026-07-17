@@ -1,4 +1,4 @@
-// 중1 수학 Ⅲ. 좌표평면과 그래프: 단원 종합 평가 풀, 레슨 2 사분면 (m1u3e023~m1u3e044).
+// 중1 수학 Ⅲ. 좌표평면과 그래프: 단원 종합 평가 풀, 레슨 2 사분면 (m1u3e023~m1u3e044). 2026-07 개보수: 장비 맥락(레이더·드론·비콘·관측소) 전량 무맥락화, e041 ab 곱 부호형 신작.
 // 유형 14(mcq+multi)/6(num)/2(word), diff 9/9/4. 좌표평면은 MExamPlaneSpec 한 곳을 그림 데이터의 정본으로 사용한다.
 import type { ExamItem } from "./types";
 import { mExamPlaneFig, type MExamPlaneSpec } from "../../ui/examFiguresMath";
@@ -32,10 +32,10 @@ const PLANE_023: MExamPlaneSpec = {
   max: 9,
   labelEvery: 3,
   points: [
-    { label: "신호 R", x: -8, y: 4, color: "#E8547E" },
-    { label: "신호 S", x: 6, y: 5, color: "#2F9E44" },
-    { label: "신호 T", x: -8, y: -3, color: "#364FC7", labelDy: 18 },
-    { label: "신호 U", x: 4, y: -8, color: "#F08C2E" },
+    { label: "A", x: -8, y: 4, color: "#E8547E" },
+    { label: "B", x: 6, y: 5, color: "#2F9E44" },
+    { label: "C", x: -8, y: -3, color: "#364FC7", labelDy: 18 },
+    { label: "D", x: 4, y: -8, color: "#F08C2E" },
   ],
 };
 
@@ -44,9 +44,9 @@ const PLANE_027: MExamPlaneSpec = {
   max: 9,
   labelEvery: 3,
   points: [
-    { label: "드론 V", x: 0, y: 8, color: "#2F9E44", labelDx: 18 },
-    { label: "드론 W", x: -9, y: 0, color: "#E8547E", labelDx: 22, labelDy: -10 },
-    { label: "드론 X", x: 7, y: -5, color: "#364FC7" },
+    { label: "V", x: 0, y: 8, color: "#2F9E44", labelDx: 18 },
+    { label: "W", x: -9, y: 0, color: "#E8547E", labelDx: 22, labelDy: -10 },
+    { label: "X", x: 7, y: -5, color: "#364FC7" },
   ],
 };
 
@@ -55,10 +55,10 @@ const PLANE_032: MExamPlaneSpec = {
   max: 9,
   labelEvery: 3,
   points: [
-    { label: "관측소 A", x: 8, y: 3, color: "#364FC7" },
-    { label: "관측소 B", x: -5, y: 7, color: "#2F9E44" },
-    { label: "관측소 C", x: -7, y: -6, color: "#E8547E", labelDy: 18 },
-    { label: "관측소 D", x: 3, y: -9, color: "#F08C2E" },
+    { label: "A", x: 8, y: 3, color: "#364FC7" },
+    { label: "B", x: -5, y: 7, color: "#2F9E44" },
+    { label: "C", x: -7, y: -6, color: "#E8547E", labelDy: 18 },
+    { label: "D", x: 3, y: -9, color: "#F08C2E" },
   ],
 };
 
@@ -67,10 +67,10 @@ const PLANE_037: MExamPlaneSpec = {
   max: 9,
   labelEvery: 3,
   points: [
-    { label: "물체 E", x: -9, y: 5, color: "#E8547E", labelDx: 20 },
-    { label: "물체 F", x: 8, y: -4, color: "#364FC7" },
-    { label: "물체 G", x: 5, y: 8, color: "#2F9E44" },
-    { label: "물체 H", x: -6, y: -7, color: "#F08C2E", labelDy: 18 },
+    { label: "E", x: -9, y: 5, color: "#E8547E", labelDx: 20 },
+    { label: "F", x: 8, y: -4, color: "#364FC7" },
+    { label: "G", x: 5, y: 8, color: "#2F9E44" },
+    { label: "H", x: -6, y: -7, color: "#F08C2E", labelDy: 18 },
   ],
 };
 
@@ -79,10 +79,10 @@ const PLANE_043: MExamPlaneSpec = {
   max: 9,
   labelEvery: 3,
   points: [
-    { label: "비콘 P", x: -8, y: 6, color: "#E8547E" },
-    { label: "비콘 Q", x: 6, y: 8, color: "#2F9E44" },
-    { label: "비콘 R", x: 8, y: -6, color: "#364FC7" },
-    { label: "비콘 S", x: -6, y: -8, color: "#F08C2E", labelDy: 18 },
+    { label: "P", x: -8, y: 6, color: "#E8547E" },
+    { label: "Q", x: 6, y: 8, color: "#2F9E44" },
+    { label: "R", x: 8, y: -6, color: "#364FC7" },
+    { label: "S", x: -6, y: -8, color: "#F08C2E", labelDy: 18 },
   ],
 };
 
@@ -91,26 +91,26 @@ export const POOL_M1U3L2: ExamItem[] = [
     id: "m1u3e023",
     lessonId: L,
     type: "mcq",
-    prompt: "구조 레이더에서 <b>제2사분면</b>에 있는 신호는?",
+    prompt: "그림의 네 점 중 <b>제2사분면</b> 위에 있는 점은?",
     figure: mExamPlaneFig(PLANE_023),
     options: [
-      pointInQuadrant(PLANE_023, 2).label,
-      pointInQuadrant(PLANE_023, 4).label,
-      pointInQuadrant(PLANE_023, 1).label,
-      "좌표축 위의 신호",
-      pointInQuadrant(PLANE_023, 3).label,
+      `점 ${pointInQuadrant(PLANE_023, 2).label}`,
+      `점 ${pointInQuadrant(PLANE_023, 4).label}`,
+      `점 ${pointInQuadrant(PLANE_023, 1).label}`,
+      "좌표축 위의 점",
+      `점 ${pointInQuadrant(PLANE_023, 3).label}`,
     ],
     answer: 0,
     diff: 1,
     explain:
-      "<span class='xh'>정답 풀이</span>제2사분면은 <i class='mv'>x</i>좌표가 음수이고 <i class='mv'>y</i>좌표가 양수인 왼쪽 위 구역이에요. 그림에서 왼쪽 위에 놓인 것은 <b>신호 R</b>이므로 정답이에요.<span class='xh'>오답 하나씩 격파</span>'신호 U'는 오른쪽 아래라 제4사분면, '신호 S'는 오른쪽 위라 제1사분면이에요. '좌표축 위의 신호'는 그림에 없을 뿐 아니라 축 위의 점은 어느 사분면에도 속하지 않아요. '신호 T'는 왼쪽 아래라 제3사분면이에요. 점 이름보다 먼저 오른쪽과 왼쪽으로 <i class='mv'>x</i>의 부호를, 위와 아래로 <i class='mv'>y</i>의 부호를 정하면 안전해요.",
+      "<span class='xh'>정답 풀이</span>제2사분면은 <i class='mv'>x</i>좌표가 음수이고 <i class='mv'>y</i>좌표가 양수인 왼쪽 위 구역이에요. 그림에서 왼쪽 위에 놓인 것은 <b>점 A</b>이므로 정답이에요.<span class='xh'>오답 하나씩 격파</span>'점 D'는 오른쪽 아래라 제4사분면, '점 B'는 오른쪽 위라 제1사분면이에요. '좌표축 위의 점'은 그림에 없을 뿐 아니라 축 위의 점은 어느 사분면에도 속하지 않아요. '점 C'는 왼쪽 아래라 제3사분면이에요. 점 이름보다 먼저 오른쪽과 왼쪽으로 <i class='mv'>x</i>의 부호를, 위와 아래로 <i class='mv'>y</i>의 부호를 정하면 안전해요.",
     core: "제2사분면은 왼쪽 위, 부호는 (−, +)예요.",
   },
   {
     id: "m1u3e024",
     lessonId: L,
     type: "num",
-    prompt: "배송 드론의 위치가 <b>(7, −8)</b>일 때, 이 점이 속한 사분면의 번호를 쓰세요.",
+    prompt: "점 <b>(7, −8)</b>이 속한 사분면의 번호를 쓰세요.",
     answer: "4",
     numKind: "int",
     diff: 1,
@@ -122,7 +122,7 @@ export const POOL_M1U3L2: ExamItem[] = [
     id: "m1u3e025",
     lessonId: L,
     type: "mcq",
-    prompt: "게임 지도에서 제3사분면에 있는 비콘의 좌표 부호를 옳게 나타낸 것은?",
+    prompt: "제3사분면 위의 점의 좌표 부호를 옳게 나타낸 것은?",
     options: ["(+, +)", "(−, +)", "(+, −)", "(0, −)", "(−, −)"],
     answer: 4,
     diff: 1,
@@ -146,19 +146,19 @@ export const POOL_M1U3L2: ExamItem[] = [
     id: "m1u3e027",
     lessonId: L,
     type: "mcq",
-    prompt: "레이더의 점 중 <b><i class='mv'>x</i>축 위</b>에 있어 어느 사분면에도 속하지 않는 드론은?",
+    prompt: "그림의 세 점 중 <b><i class='mv'>x</i>축 위</b>에 있어 어느 사분면에도 속하지 않는 점은?",
     figure: mExamPlaneFig(PLANE_027),
     options: [
-      PLANE_027.points.find((point) => point.x !== 0 && point.y !== 0)!.label,
-      `${pointOnAxis(PLANE_027, "y").label}와 ${PLANE_027.points.find((point) => point.x !== 0 && point.y !== 0)!.label}`,
-      pointOnAxis(PLANE_027, "y").label,
-      "세 드론 모두",
-      pointOnAxis(PLANE_027, "x").label,
+      `점 ${PLANE_027.points.find((point) => point.x !== 0 && point.y !== 0)!.label}`,
+      `점 ${pointOnAxis(PLANE_027, "y").label}와 점 ${PLANE_027.points.find((point) => point.x !== 0 && point.y !== 0)!.label}`,
+      `점 ${pointOnAxis(PLANE_027, "y").label}`,
+      "세 점 모두",
+      `점 ${pointOnAxis(PLANE_027, "x").label}`,
     ],
     answer: 4,
     diff: 1,
     explain:
-      "<span class='xh'>정답 풀이</span><i class='mv'>x</i>축은 가로축이고, 그 위의 점은 <i class='mv'>y</i>좌표가 0이에요. 그림에서 가로축 위에 놓인 점은 <b>드론 W</b>예요. 좌표축은 사분면을 나누는 경계이므로 W는 어느 사분면에도 속하지 않아요.<span class='xh'>오답 하나씩 격파</span>'드론 X'는 오른쪽 아래의 제4사분면 안쪽에 있어요. '드론 V와 드론 X'는 축 위 점과 사분면 안쪽 점을 함께 묶었고, '드론 V'는 세로축인 <i class='mv'>y</i>축 위에 있어요. '세 드론 모두'도 X가 사분면 안쪽이므로 틀려요. 축 위라는 말과 축 가까이라는 말을 구별하고, 점이 선에 정확히 놓였는지 확인해요.",
+      "<span class='xh'>정답 풀이</span><i class='mv'>x</i>축은 가로축이고, 그 위의 점은 <i class='mv'>y</i>좌표가 0이에요. 그림에서 가로축 위에 놓인 점은 <b>점 W</b>예요. 좌표축은 사분면을 나누는 경계이므로 W는 어느 사분면에도 속하지 않아요.<span class='xh'>오답 하나씩 격파</span>'점 X'는 오른쪽 아래의 제4사분면 안쪽에 있어요. '점 V와 점 X'는 축 위 점과 사분면 안쪽 점을 함께 묶었고, '점 V'는 세로축인 <i class='mv'>y</i>축 위에 있어요. '세 점 모두'도 X가 사분면 안쪽이므로 틀려요. 축 위라는 말과 축 가까이라는 말을 구별하고, 점이 선에 정확히 놓였는지 확인해요.",
     core: "x축 위의 점은 y좌표가 0이며 어느 사분면에도 속하지 않아요.",
   },
   {
@@ -225,19 +225,19 @@ export const POOL_M1U3L2: ExamItem[] = [
     id: "m1u3e032",
     lessonId: L,
     type: "mcq",
-    prompt: "기상 지도에서 <b><i class='mv'>x</i>좌표는 양수, <i class='mv'>y</i>좌표는 음수</b>인 관측소는?",
+    prompt: "그림의 네 점 중 <b><i class='mv'>x</i>좌표는 양수, <i class='mv'>y</i>좌표는 음수</b>인 점은?",
     figure: mExamPlaneFig(PLANE_032),
     options: [
-      pointInQuadrant(PLANE_032, 4).label,
-      pointInQuadrant(PLANE_032, 3).label,
-      pointInQuadrant(PLANE_032, 2).label,
-      "좌표축 위의 관측소",
-      pointInQuadrant(PLANE_032, 1).label,
+      `점 ${pointInQuadrant(PLANE_032, 4).label}`,
+      `점 ${pointInQuadrant(PLANE_032, 3).label}`,
+      `점 ${pointInQuadrant(PLANE_032, 2).label}`,
+      "좌표축 위의 점",
+      `점 ${pointInQuadrant(PLANE_032, 1).label}`,
     ],
     answer: 0,
     diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span><i class='mv'>x</i>좌표가 양수이면 원점 오른쪽, <i class='mv'>y</i>좌표가 음수이면 원점 아래쪽이에요. 그림에서 오른쪽 아래에 놓인 <b>관측소 D</b>가 조건을 만족해요.<span class='xh'>오답 하나씩 격파</span>'관측소 C'는 왼쪽 아래라 두 좌표가 모두 음수예요. '관측소 B'는 왼쪽 위라 (−, +), '관측소 A'는 오른쪽 위라 (+, +)예요. '좌표축 위의 관측소'는 그림에 없고, 축 위 점에는 한 좌표가 0이므로 양수와 음수라는 조건을 동시에 만족할 수 없어요. 부호를 먼저 방향으로 번역한 뒤 해당 구역의 점을 찾아요.",
+      "<span class='xh'>정답 풀이</span><i class='mv'>x</i>좌표가 양수이면 원점 오른쪽, <i class='mv'>y</i>좌표가 음수이면 원점 아래쪽이에요. 그림에서 오른쪽 아래에 놓인 <b>점 D</b>가 조건을 만족해요.<span class='xh'>오답 하나씩 격파</span>'점 C'는 왼쪽 아래라 두 좌표가 모두 음수예요. '점 B'는 왼쪽 위라 (−, +), '점 A'는 오른쪽 위라 (+, +)예요. '좌표축 위의 점'은 그림에 없고, 축 위 점에는 한 좌표가 0이므로 양수와 음수라는 조건을 동시에 만족할 수 없어요. 부호를 먼저 방향으로 번역한 뒤 해당 구역의 점을 찾아요.",
     core: "x가 양수이고 y가 음수인 점은 오른쪽 아래에 있어요.",
   },
   {
@@ -301,19 +301,19 @@ export const POOL_M1U3L2: ExamItem[] = [
     id: "m1u3e037",
     lessonId: L,
     type: "mcq",
-    prompt: "잠수함이 물체 E의 <i class='mv'>x</i>좌표 부호만 바꾼 위치로 이동했어요. 이동한 위치와 <b>같은 사분면</b>에 있는 물체는?",
+    prompt: "그림의 점 E의 <i class='mv'>x</i>좌표 부호만 바꾼 점을 새로 찍을 때, 새 점과 <b>같은 사분면</b>에 있는 점은?",
     figure: mExamPlaneFig(PLANE_037),
     options: [
-      pointInQuadrant(PLANE_037, 2).label,
-      pointInQuadrant(PLANE_037, 3).label,
-      pointInQuadrant(PLANE_037, 4).label,
-      "좌표축 위의 물체",
-      pointInQuadrant(PLANE_037, quadrantOf(-pointInQuadrant(PLANE_037, 2).x, pointInQuadrant(PLANE_037, 2).y) as 1).label,
+      `점 ${pointInQuadrant(PLANE_037, 2).label}`,
+      `점 ${pointInQuadrant(PLANE_037, 3).label}`,
+      `점 ${pointInQuadrant(PLANE_037, 4).label}`,
+      "좌표축 위의 점",
+      `점 ${pointInQuadrant(PLANE_037, quadrantOf(-pointInQuadrant(PLANE_037, 2).x, pointInQuadrant(PLANE_037, 2).y) as 1).label}`,
     ],
     answer: 4,
     diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span>물체 E는 왼쪽 위인 제2사분면에 있어 부호가 (−, +)예요. <i class='mv'>x</i>좌표 부호만 바꾸면 (+, +)가 되어 오른쪽 위인 제1사분면으로 이동해요. 그림에서 같은 제1사분면에 있는 것은 <b>물체 G</b>예요.<span class='xh'>오답 하나씩 격파</span>'물체 E'는 이동 전 제2사분면, '물체 H'는 왼쪽 아래인 제3사분면, '물체 F'는 오른쪽 아래인 제4사분면에 있어요. '좌표축 위의 물체'는 그림에 없고, 부호만 바꾼 좌표에는 0이 생기지 않아요. 좌표의 크기를 새로 계산하지 않아도 부호 변화만 추적하면 풀 수 있어요.",
+      "<span class='xh'>정답 풀이</span>점 E는 왼쪽 위인 제2사분면에 있어 부호가 (−, +)예요. <i class='mv'>x</i>좌표 부호만 바꾸면 (+, +)가 되어 오른쪽 위인 제1사분면으로 이동해요. 그림에서 같은 제1사분면에 있는 것은 <b>점 G</b>예요.<span class='xh'>오답 하나씩 격파</span>'점 E'는 부호를 바꾸기 전 자리라 제2사분면이고, '점 H'는 왼쪽 아래인 제3사분면, '점 F'는 오른쪽 아래인 제4사분면에 있어요. '좌표축 위의 점'은 그림에 없고, 부호만 바꾼 좌표에는 0이 생기지 않아요. 좌표의 크기를 새로 계산하지 않아도 부호 변화만 추적하면 풀 수 있어요.",
     core: "제2사분면에서 x 부호만 바꾸면 제1사분면으로 이동해요.",
   },
   {
@@ -338,8 +338,8 @@ export const POOL_M1U3L2: ExamItem[] = [
     id: "m1u3e039",
     lessonId: L,
     type: "mcq",
-    prompt: "게임 비콘 K(−7, −4)의 두 좌표의 부호를 모두 바꾼 점과 같은 사분면에 있는 비콘은?",
-    options: ["L(−2, 8)", "M(9, 3)", "N(−5, −6)", "O(0, 7)", "R(4, −9)"],
+    prompt: "점 K(−7, −4)의 두 좌표의 부호를 모두 바꾼 점과 같은 사분면에 있는 점은?",
+    options: ["점 L(−2, 8)", "점 M(9, 3)", "점 N(−5, −6)", "점 O(0, 7)", "점 R(4, −9)"],
     answer: 1,
     diff: 2,
     explain:
@@ -362,13 +362,13 @@ export const POOL_M1U3L2: ExamItem[] = [
     id: "m1u3e041",
     lessonId: L,
     type: "mcq",
-    prompt: "점 P(<i class='mv'>a</i>, <i class='mv'>b</i>)가 제4사분면에 있을 때, 점 Q(−<i class='mv'>b</i>, −<i class='mv'>a</i>)가 속한 사분면은?",
-    options: ["제1사분면", "어느 사분면에도 속하지 않는다", "제3사분면", "제4사분면", "제2사분면"],
+    prompt: "점 P(<i class='mv'>a</i>, <i class='mv'>b</i>)가 제4사분면 위의 점일 때, 점 Q(<i class='mv'>a</i><i class='mv'>b</i>, <i class='mv'>a</i>−<i class='mv'>b</i>)가 속한 사분면은?",
+    options: ["제1사분면", "어느 사분면에도 속하지 않는다", "제3사분면", "제2사분면", "제4사분면"],
     answer: 3,
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>P가 제4사분면에 있으므로 <i class='mv'>a</i>&gt;0, <i class='mv'>b</i>&lt;0이에요. Q의 첫째 좌표 −<i class='mv'>b</i>는 음수 <i class='mv'>b</i>의 반대라 양수이고, 둘째 좌표 −<i class='mv'>a</i>는 양수 <i class='mv'>a</i>의 반대라 음수예요. 따라서 Q는 (+, −)인 <b>제4사분면</b>이에요.<span class='xh'>오답 하나씩 격파</span>'제1사분면'은 −<i class='mv'>a</i>까지 양수라고 착각한 답, '어느 사분면에도 속하지 않는다'는 문자의 값이 0이라고 잘못 본 답이에요. '제3사분면'은 −<i class='mv'>b</i>를 음수로 오해했고, '제2사분면'은 두 성분의 부호를 모두 거꾸로 판정한 경우예요. 각 문자의 원래 부호부터 적어요.",
-    core: "<i class='mv'>b</i>&lt;0이면 −<i class='mv'>b</i>&gt;0, <i class='mv'>a</i>&gt;0이면 −<i class='mv'>a</i>&lt;0이라 Q는 제4사분면이에요.",
+      "<span class='xh'>정답 풀이</span>① P가 제4사분면에 있으므로 <i class='mv'>a</i>&gt;0, <i class='mv'>b</i>&lt;0이에요.<br>② Q의 첫째 좌표 <i class='mv'>a</i><i class='mv'>b</i>는 양수와 음수의 곱이라 음수예요.<br>③ 둘째 좌표 <i class='mv'>a</i>−<i class='mv'>b</i>는 양수에서 음수를 빼는 계산이라 <i class='mv'>a</i>에 양수를 더한 셈이 되어 양수예요. 그러므로 Q의 부호는 (−, +)이고 <b>제2사분면</b>이에요. 예를 들어 <i class='mv'>a</i>=3, <i class='mv'>b</i>=−2이면 Q(−6, 5)로 확인돼요.<span class='xh'>오답 하나씩 격파</span>'제1사분면'은 곱 <i class='mv'>a</i><i class='mv'>b</i>를 양수로 잘못 정한 답이고, '제3사분면'은 음수를 빼는 계산을 값이 작아지는 쪽으로 오해한 답이에요. '제4사분면'은 P의 자리를 그대로 옮긴 것이고, 두 좌표가 0이 될 수 없으므로 무소속도 아니에요.",
+    core: "a>0, b<0이면 ab<0, a−b>0이므로 Q는 제2사분면이에요.",
   },
   {
     id: "m1u3e042",
@@ -386,19 +386,19 @@ export const POOL_M1U3L2: ExamItem[] = [
     id: "m1u3e043",
     lessonId: L,
     type: "mcq",
-    prompt: "게임 지도에서 비콘 P의 두 좌표의 부호를 모두 바꾸었을 때 도착하는 위치에 있는 비콘은?",
+    prompt: "그림의 점 P의 두 좌표의 부호를 모두 바꾼 점의 위치에 놓여 있는 점은?",
     figure: mExamPlaneFig(PLANE_043),
     options: [
-      pointAt(PLANE_043, -pointInQuadrant(PLANE_043, 2).x, -pointInQuadrant(PLANE_043, 2).y).label,
-      pointInQuadrant(PLANE_043, 2).label,
-      pointInQuadrant(PLANE_043, 3).label,
-      pointInQuadrant(PLANE_043, 1).label,
-      "해당 위치의 비콘이 없다",
+      `점 ${pointAt(PLANE_043, -pointInQuadrant(PLANE_043, 2).x, -pointInQuadrant(PLANE_043, 2).y).label}`,
+      `점 ${pointInQuadrant(PLANE_043, 2).label}`,
+      `점 ${pointInQuadrant(PLANE_043, 3).label}`,
+      `점 ${pointInQuadrant(PLANE_043, 1).label}`,
+      "해당 위치에 점이 없다",
     ],
     answer: 0,
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>비콘 P는 왼쪽 위인 제2사분면에 있어요. 두 좌표의 부호를 모두 바꾸면 원점을 사이에 둔 오른쪽 아래, 제4사분면의 맞은편 위치로 이동해요. 그림에서 그 위치에 정확히 놓인 것은 <b>비콘 R</b>이에요.<span class='xh'>오답 하나씩 격파</span>'비콘 P'는 부호를 바꾸기 전의 점이고, '비콘 S'는 왼쪽 아래에 있어 두 부호 변화 결과와 달라요. '비콘 Q'는 오른쪽 위라 <i class='mv'>x</i>좌표 부호만 바꾼 구역에 해당해요. '해당 위치의 비콘이 없다'도 R이 이동 결과와 정확히 겹치므로 틀려요. 두 부호를 바꾸면 좌표의 크기는 그대로이고 방향만 반대가 돼요.",
+      "<span class='xh'>정답 풀이</span>점 P는 왼쪽 위인 제2사분면에 있어요. 두 좌표의 부호를 모두 바꾸면 원점을 사이에 둔 오른쪽 아래, 제4사분면의 맞은편 위치로 이동해요. 그림에서 그 위치에 정확히 놓인 것은 <b>점 R</b>이에요.<span class='xh'>오답 하나씩 격파</span>'점 P'는 부호를 바꾸기 전의 점이고, '점 S'는 왼쪽 아래에 있어 두 부호 변화 결과와 달라요. '점 Q'는 오른쪽 위라 <i class='mv'>x</i>좌표 부호만 바꾼 구역에 해당해요. '해당 위치에 점이 없다'도 R가 이동 결과와 정확히 겹치므로 틀려요. 두 부호를 바꾸면 좌표의 크기는 그대로이고 방향만 반대가 돼요.",
     core: "두 좌표의 부호를 모두 바꾸면 원점을 사이에 둔 맞은편 점으로 가요.",
   },
   {

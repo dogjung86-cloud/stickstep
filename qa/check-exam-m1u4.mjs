@@ -9,9 +9,11 @@ const typeQuota = [
   [9, 5, 1], [9, 5, 1], [9, 4, 2], [9, 4, 2], [9, 5, 1], [9, 4, 2], [9, 5, 1],
   [9, 4, 2], [9, 5, 2], [10, 5, 1], [10, 4, 2], [10, 5, 1], [9, 5, 2],
 ];
+// diff 배분(2026.07 개보수): 균일 쿼터를 폐기하고 내용 기준으로 재캘리브레이션(MATH_GUIDE 규격 항목 참조).
+// 전체 합 80/80/40 불변 — 아래 배열이 레슨별 확정값이다(L7·L9·L11은 공간·평행선·결정조건이라 심화 4).
 const diffQuota = [
-  [6, 6, 3], [6, 6, 3], [6, 6, 3], [6, 6, 3], [6, 6, 3], [6, 6, 3], [6, 6, 3],
-  [6, 6, 3], [7, 6, 3], [6, 7, 3], [6, 6, 4], [7, 6, 3], [6, 7, 3],
+  [6, 7, 2], [7, 5, 3], [6, 7, 2], [6, 6, 3], [6, 6, 3], [6, 6, 3], [6, 5, 4],
+  [6, 6, 3], [6, 6, 4], [6, 7, 3], [6, 6, 4], [7, 6, 3], [6, 7, 3],
 ];
 let bad = 0;
 const warnings = [];
@@ -104,7 +106,8 @@ for (const it of all) {
     if (!['int', 'dec'].includes(kind)) fail(`${it.id}: numKind ${kind}`);
     if (kind === "int" && !/^\d+$/.test(String(it.answer))) fail(`${it.id}: int 형식 ${it.answer}`);
     if (kind === "dec" && !/^\d+\.\d+$/.test(String(it.answer))) fail(`${it.id}: dec 형식 ${it.answer}`);
-    if (!it.unitLabel) fail(`${it.id}: num unitLabel 없음`);
+    // MATH_GUIDE: x의 값처럼 무단위인 답은 unitLabel 생략(2026-07 개보수 — 각도 방정식 신작 2건).
+    if (!it.unitLabel && !/의 값을 구하세요/.test(strip(it.prompt))) fail(`${it.id}: num unitLabel 없음`);
   }
   if (it.type === "word") {
     if (!Array.isArray(it.bank) || it.bank.length < 8 || it.bank.length > 10) fail(`${it.id}: bank 8~10 위반`);

@@ -1,7 +1,7 @@
 // 중1 수학 Ⅳ. 기본 도형: 단원 종합 평가 풀, 레슨 3 각 (m1u4e031~m1u4e045).
-// 유형 9(mcq+multi)/4(num)/2(word), diff 6/6/3. 교과서의 문장·수치·도형 배치는 복제하지 않았다.
+// 유형 9(mcq+multi)/4(num)/2(word), diff 6/7/2(개보수 재캘리브레이션). 교과서의 문장·수치·도형 배치는 복제하지 않았다.
 import type { ExamItem } from "./types";
-import { m4AngleExamFig } from "../../ui/examFiguresMath";
+import { m4AngleExamFig, mExamAngleFanFig } from "../../ui/examFiguresMath";
 import { gsym } from "../../ui/geoKit";
 
 const L = "m1u4l3";
@@ -171,19 +171,16 @@ export const POOL_M1U4L3: ExamItem[] = [
     lessonId: L,
     type: "num",
     prompt:
-      "꼭짓점 M인 평각 " +
+      "그림과 같이 꼭짓점 M인 평각 " +
       gsym("LMN", "angle") +
       " 안에 " +
       gsym("MP", "ray") +
-      "를 그어, 겹치지 않는 " +
-      gsym("LMP", "angle") +
-      "와 " +
-      gsym("PMN", "angle") +
-      "으로 나눴어요. " +
+      "를 그었어요. " +
       gsym("LMP", "angle") +
       "=133°일 때 " +
       gsym("PMN", "angle") +
       "의 크기를 ° 단위로 구하세요. 정답은 숫자만 입력하세요.",
+    figure: mExamAngleFanFig({ left: "L", vertex: "M", right: "N", rays: [{ deg: 47, label: "P" }], arcs: [{ a: 47, b: 180, label: "133°" }, { a: 0, b: 47, label: "?" }] }),
     answer: "47",
     numKind: "int",
     unitLabel: "°",
@@ -239,28 +236,28 @@ export const POOL_M1U4L3: ExamItem[] = [
     lessonId: L,
     type: "num",
     prompt:
-      "처음에 포개져 있던 두 방향 표시 중 하나를 고정했어요. 다른 표시를 시계 방향으로 200° 돌린 뒤 반대 방향으로 55° 되돌렸을 때, 처음 방향과 마지막 방향이 이루는 작은 쪽 각의 크기를 ° 단위로 구하세요. 정답은 숫자만 입력하세요.",
-    answer: "145",
+      "그림에서 " + gsym("AOB", "angle") + "는 평각이에요. <i class='mv'>x</i>의 값을 구하세요. 정답은 숫자만 입력하세요.",
+    figure: mExamAngleFanFig({ left: "A", vertex: "O", right: "B", rays: [{ deg: 21 }, { deg: 111 }], arcs: [{ a: 0, b: 21, label: "(x−6)°" }, { a: 21, b: 111, label: "90°" }, { a: 111, b: 180, label: "(2x+15)°" }] }),
+    answer: "27",
     numKind: "int",
-    unitLabel: "°",
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>처음에는 두 표시가 포개져 있었어요. 시계 방향으로 200° 돌린 뒤 반대 방향으로 55° 되돌렸으므로 처음 방향에서 남은 회전량은 200°−55° = <b>145°</b>예요. 145°는 180°보다 작으므로 그대로 작은 쪽 각의 크기가 돼요.<span class='xh'>헷갈림 격파</span>200°+55° = 255°는 되돌림을 같은 방향의 추가 회전으로 잘못 본 계산이에요. 55°만 적으면 되돌린 양을 답으로 바꾼 것이고요. 처음 200°만 적으면 두 번째 움직임을 빠뜨렸어요. 또 360°−145° = 215°는 반대쪽 큰 회전량이므로 문두에서 요구한 작은 쪽 각이 아니에요. 두 회전의 방향을 먼저 비교하고, 마지막에 180°보다 작은지 확인해요.",
-    core: "반대 방향으로 되돌린 양은 빼므로 200°−55°=145°다.",
+      "<span class='xh'>정답 풀이</span>세 각이 평각을 겹치지 않게 채우므로 합이 180°예요.<br>① (<i class='mv'>x</i>−6)+90+(2<i class='mv'>x</i>+15)=180<br>② 3<i class='mv'>x</i>+99=180, 3<i class='mv'>x</i>=81<br>③ <i class='mv'>x</i>=<b>27</b><br>검산: 21°+90°+69°=180°로 정확히 평각이 돼요.<span class='xh'>헷갈림 격파</span>57은 가운데 90°를 빠뜨리고 (<i class='mv'>x</i>−6)+(2<i class='mv'>x</i>+15)=180으로 계산한 값이에요. 33은 −6과 +15의 부호를 반대로 합쳐 3<i class='mv'>x</i>+81=180으로 만든 값이고, 21은 <i class='mv'>x</i>가 아니라 가장 작은 각의 크기죠. 각 식을 세울 때는 그림의 세 부분이 어떤 각을 채우는지(평각 180°인지 직각 90°인지)부터 확인하고, 구한 <i class='mv'>x</i>를 각 식에 되넣어 음수 각이 없는지도 살펴요.",
+    core: "평각을 채운 세 각의 합 180°로 방정식을 세워 x=27!",
   },
   {
     id: "m1u4e044",
     lessonId: L,
     type: "num",
     prompt:
-      "원형 손잡이를 처음 방향에서 같은 방향으로 한 바퀴의 4분의 3만큼 돌렸어요. 손잡이가 실제로 회전한 양을 ° 단위로 구하세요. 정답은 숫자만 입력하세요.",
-    answer: "270",
+      "그림과 같이 점 O는 직선 AB 위에 있고, " + gsym("OC", "ray") + "는 " + gsym("AB", "line") + "에 수직이에요. <i class='mv'>x</i>의 값을 구하세요. 정답은 숫자만 입력하세요.",
+    figure: mExamAngleFanFig({ left: "A", vertex: "O", right: "B", rays: [{ deg: 40, label: "D" }, { deg: 90, label: "C" }], arcs: [{ a: 0, b: 40, label: "x°" }, { a: 40, b: 90, label: "(2x−30)°" }], perpAt: 90 }),
+    answer: "40",
     numKind: "int",
-    unitLabel: "°",
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>한 바퀴는 360°예요. 이를 같은 크기 네 부분으로 나누면 한 부분은 360°÷4 = 90°이고, 그중 세 부분만큼 돌렸으므로 90°×3 = <b>270°</b>예요. 이 문항은 두 방향 사이의 작은 각이 아니라 손잡이가 실제로 이동한 회전량을 묻고 있어요.<span class='xh'>헷갈림 격파</span>'90°'는 네 부분 중 한 부분만 계산한 값이자 회전 뒤 처음 방향까지 남은 양이에요. '180°'는 반 바퀴라 4분의 2에 해당하고요. 360°를 답하면 한 바퀴를 모두 돈 것으로 조건보다 많아요. 회전 뒤 두 방향 사이의 작은 각만 찾으면 90°가 되지만, 문두의 '실제로 회전한 양'을 끝까지 읽어 270°를 적어야 해요.",
-    core: "한 바퀴의 4분의 3 회전량은 360°÷4×3 = 270°다.",
+      "<span class='xh'>정답 풀이</span>" + gsym("OC", "ray") + "가 " + gsym("AB", "line") + "에 수직이므로 " + gsym("BOC", "angle") + "=90°이고, 그 안의 두 각의 합도 90°예요.<br>① <i class='mv'>x</i>+(2<i class='mv'>x</i>−30)=90<br>② 3<i class='mv'>x</i>=120<br>③ <i class='mv'>x</i>=<b>40</b><br>검산: 40°+50°=90°로 직각을 정확히 채워요.<span class='xh'>헷갈림 격파</span>70은 두 각의 합을 평각 180°로 잘못 놓아 3<i class='mv'>x</i>−30=180으로 계산한 값이에요. 수직 기호가 있으면 기준은 90°죠. 30은 2<i class='mv'>x</i>−30=<i class='mv'>x</i>처럼 두 각을 같다고 가정한 값이고, 50은 <i class='mv'>x</i>가 아니라 위쪽 각 (2<i class='mv'>x</i>−30)°의 크기예요. 20은 이항할 때 30의 부호를 바꾸지 않은 값이죠. 마지막에 각 부분이 0°보다 큰지도 확인해요.",
+    core: "직각을 나눈 두 각의 합 90°로 x=40!",
   },
   {
     id: "m1u4e045",
@@ -280,7 +277,7 @@ export const POOL_M1U4L3: ExamItem[] = [
       "각의 변",
       "반직선",
     ],
-    diff: 3,
+    diff: 2,
     explain:
       "<span class='xh'>정답 풀이</span>공통된 시작점에서 두 반직선이 서로 반대 방향으로 뻗으면 한 변에서 다른 변까지 반 바퀴를 돌아요. 그 크기는 180°이고, 이런 각을 <b>평각</b>이라고 해요. 두 변이 한 직선처럼 보여도 각이 사라진 것은 아니에요.<span class='xh'>헷갈림 격파</span>'예각'은 90°보다 작고, '직각'은 90°, '둔각'은 90°보다 크고 180°보다 작은 각이라 180° 자체를 포함하지 않아요. '맞꼭지각'과 '교각'은 두 직선이 만날 때의 관계를 나타내는 말이고, 크기 180°의 분류 이름이 아니에요. '꼭짓점', '각의 변', '반직선'은 각을 이루는 점이나 선을 가리킬 뿐 완성된 각의 이름이 아니에요.",
     core: "180°이며 두 변이 한 직선을 이루는 각은 평각이다.",

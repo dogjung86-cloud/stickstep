@@ -1,7 +1,10 @@
 // 중1 수학 II 문자와 식, 레슨 8 이항과 일차방정식 풀이 단원 종합 평가 풀(23문항).
 // 교과서에서는 풀이 순서와 함정 구조만 참고하고 수치·문구·소재 결합은 새로 설계했다.
-// 유형 13(mcq+multi)/7(num)/3(word), diff 1/2/3 = 9/9/5.
+// 유형 13(mcq+multi)/7(num)/3(word), diff 1/2/3 = 9/7/7 (2026-07 개보수: 두 방정식 같은 해·
+// 소수/분수 혼합·분수 방정식·해의 조건 매개변수 신작 + 저울 그림, diff는 내용 기준 재캘리브레이션).
 import type { ExamItem } from "./types";
+import { mfmt } from "../../ui/mathKit";
+import { mExamBalanceFig } from "../../ui/examFiguresMath";
 
 const L = "m1u2l8";
 
@@ -10,7 +13,8 @@ export const POOL_M1U2L8: ExamItem[] = [
     id: "m1u2e155",
     lessonId: L,
     type: "mcq",
-    prompt: "공정 단계 보정식 3<i class='mv'>x</i>+8=29에서 상수항 8을 바르게 이항한 식은?",
+    prompt: "그림의 양팔저울이 나타내는 등식 3<i class='mv'>x</i>+8=29에서 상수항 8을 바르게 이항한 식은?",
+    figure: mExamBalanceFig({ leftBoxes: 3, rightBoxes: 0, leftWeight: "8", rightWeight: "29", boxLabel: "x" }),
     options: ["3<i class='mv'>x</i>=29+8", "3<i class='mv'>x</i>+8−8=29", "3<i class='mv'>x</i>=29−8", "<i class='mv'>x</i>=29−8", "3<i class='mv'>x</i>−8=29"],
     answer: 2,
     diff: 1,
@@ -22,7 +26,7 @@ export const POOL_M1U2L8: ExamItem[] = [
     id: "m1u2e156",
     lessonId: L,
     type: "mcq",
-    prompt: "좌석 구역 배치식 7<i class='mv'>x</i>=2<i class='mv'>x</i>+25에서 <i class='mv'>x</i>항을 왼쪽에 모아 정리한 식은?",
+    prompt: "방정식 7<i class='mv'>x</i>=2<i class='mv'>x</i>+25에서 <i class='mv'>x</i>항을 왼쪽에 모아 정리한 식은?",
     options: ["9<i class='mv'>x</i>=25", "5<i class='mv'>x</i>=−25", "2<i class='mv'>x</i>−7<i class='mv'>x</i>=25", "7<i class='mv'>x</i>−2=25", "5<i class='mv'>x</i>=25"],
     answer: 4,
     diff: 1,
@@ -58,19 +62,19 @@ export const POOL_M1U2L8: ExamItem[] = [
     id: "m1u2e159",
     lessonId: L,
     type: "mcq",
-    prompt: "퍼즐 코드 방정식 2(<i class='mv'>x</i>−5)=<i class='mv'>x</i>+7의 해는?",
-    options: ["17", "12", "−17", "7", "22"],
+    prompt: "방정식 " + mfmt("2x+7=x+9") + "의 해가 <i class='mv'>x</i>에 대한 방정식 <i class='mv'>a</i><i class='mv'>x</i>−3=<i class='mv'>x</i>+7의 해와 같을 때, 수 <i class='mv'>a</i>의 값은?",
+    options: ["6", "5", "3", "−6", "9"],
     answer: 0,
-    diff: 2,
+    diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>괄호를 먼저 풀면 2<i class='mv'>x</i>−10=<i class='mv'>x</i>+7이에요. <i class='mv'>x</i>항은 왼쪽, 상수항은 오른쪽으로 이항하면 2<i class='mv'>x</i>−<i class='mv'>x</i>=7+10이므로 <b><i class='mv'>x</i>=17</b>이에요.<span class='xh'>오답 하나씩 격파</span>12는 2를 <i class='mv'>x</i>에만 곱하고 −5에는 곱하지 않았을 때 나올 수 있어요. −17은 두 상수를 −10−7처럼 모두 음수로 모아 계산한 값이에요. 7은 우변 상수만 답한 값이고, 22는 정답 17에 괄호 안의 5를 다시 더한 값이에요. 분배법칙으로 괄호의 모든 항에 2를 곱한 뒤 이항하고, 원식 양변이 24인지 확인해요.",
-    core: "괄호를 풀어 2x−10=x+7, 이항하면 x=17!",
+      "<span class='xh'>정답 풀이</span>두 단계로 풀어요.<br>① " + mfmt("2x+7=x+9") + "를 풀면 <i class='mv'>x</i>=2<br>② 이 해를 둘째 방정식에 대입해 2<i class='mv'>a</i>−3=2+7=9, 2<i class='mv'>a</i>=12이므로 <b><i class='mv'>a</i>=6</b><br>검산: 6×2−3=9이고 2+7=9로 양변이 같아요.<span class='xh'>오답 하나씩 격파</span>'5'는 대입할 때 우변의 <i class='mv'>x</i>를 빠뜨려 2<i class='mv'>a</i>−3=7로 계산한 값이에요. '3'은 −3을 이항하며 부호를 바꾸지 않아 2<i class='mv'>a</i>=9−3으로 만든 값이고, '9'는 우변 값에서 멈춘 중간값이에요. '−6'은 마지막 나눗셈의 부호를 잘못 붙였어요. '해가 같다'는 조건은 첫 방정식의 해를 구해 둘째 식의 <i class='mv'>x</i> 자리에 넣으라는 신호예요.",
+    core: "해 x=2를 먼저 구해 둘째 식에 대입, a=6!",
   },
   {
     id: "m1u2e160",
     lessonId: L,
     type: "mcq",
-    prompt: "측정값 보정 방정식 −3(<i class='mv'>x</i>+4)=2<i class='mv'>x</i>−7의 해는?",
+    prompt: "일차방정식 −3(<i class='mv'>x</i>+4)=2<i class='mv'>x</i>−7의 해는?",
     options: ["−5", "5", "1", "−7", "−1"],
     answer: 4,
     diff: 2,
@@ -82,13 +86,13 @@ export const POOL_M1U2L8: ExamItem[] = [
     id: "m1u2e161",
     lessonId: L,
     type: "mcq",
-    prompt: "소수 계수가 양변에 있는 방정식 0.4<i class='mv'>x</i>+1.2=0.1<i class='mv'>x</i>+3의 해는?",
-    options: ["4", "6", "18", "30", "60"],
+    prompt: "소수와 분수가 섞인 방정식 0.3(<i class='mv'>x</i>+2)=" + mfmt("{x-1/5}") + "의 해는?",
+    options: ["8", "−8", "−7", "4", "−2"],
     answer: 1,
-    diff: 2,
+    diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>양변에 10을 곱하면 4<i class='mv'>x</i>+12=<i class='mv'>x</i>+30이에요. 문자항과 상수항을 각각 모으면 3<i class='mv'>x</i>=18이므로 <b><i class='mv'>x</i>=6</b>이에요.<span class='xh'>오답 하나씩 격파</span>4는 정수화한 왼쪽 계수를 해로 착각한 값이에요. 18은 3<i class='mv'>x</i>의 값에서 멈춘 중간값이고, 30은 오른쪽 상수항을 그대로 답했어요. 60은 정수화한 상수 18을 원래 계수 차 0.3으로 나누어 계산 단계를 뒤섞은 값이에요. 양변에 10을 곱할 때는 모든 항에 적용하고 0.1<i class='mv'>x</i>도 빠뜨리지 않아야 해요. 검산하면 왼쪽 3.6, 오른쪽 0.6+3=3.6이에요.",
-    core: "×10으로 4x+12=x+30, 정리하면 x=6!",
+      "<span class='xh'>정답 풀이</span>소수 0.3과 분모 5를 한 번에 없애도록 양변에 10을 곱해요.<br>① 왼쪽: 3(<i class='mv'>x</i>+2)=3<i class='mv'>x</i>+6<br>② 오른쪽: 10÷5=2배라서 2(<i class='mv'>x</i>−1)=2<i class='mv'>x</i>−2<br>③ 3<i class='mv'>x</i>+6=2<i class='mv'>x</i>−2에서 <b><i class='mv'>x</i>=−8</b><br>검산: 0.3×(−6)=−1.8, (−9)÷5=−1.8로 같아요.<span class='xh'>오답 하나씩 격파</span>'8'을 넣으면 왼쪽 3, 오른쪽 1.4로 다르고, '−7'은 왼쪽 −1.5, 오른쪽 −1.6으로 미세하게 어긋나요(오른쪽에 2를 분배하지 않으면 이 값이 나와요). '4'와 '−2'도 대입하면 양변이 달라요. 10을 곱하면 분수 쪽은 10÷5=2가 분자 전체에 곱해진다는 점, 그리고 괄호 분배를 잊지 않는 게 핵심이에요.",
+    core: "×10이면 분수 쪽은 2(x−1), 해는 −8!",
   },
   {
     id: "m1u2e162",
@@ -119,8 +123,9 @@ export const POOL_M1U2L8: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt: "방정식 3(2<i class='mv'>x</i>−1)=4<i class='mv'>x</i>+9의 풀이에서 처음으로 잘못된 줄은?<br>첫째 줄: 6<i class='mv'>x</i>−3=4<i class='mv'>x</i>+9<br>둘째 줄: 6<i class='mv'>x</i>−4<i class='mv'>x</i>=9−3<br>셋째 줄: 2<i class='mv'>x</i>=6<br>넷째 줄: <i class='mv'>x</i>=3",
-    options: ["둘째 줄", "첫째 줄", "셋째 줄", "넷째 줄", "잘못된 줄이 없다"],
-    answer: 0,
+    options: ["첫째 줄", "둘째 줄", "셋째 줄", "넷째 줄", "잘못된 줄이 없다"],
+    answer: 1,
+    shuffle: false,
     diff: 3,
     explain:
       "<span class='xh'>정답 풀이</span>첫째 줄의 분배는 맞아요. 둘째 줄에서 좌변의 −3을 우변으로 이항하면 +3이 되어야 하므로 6<i class='mv'>x</i>−4<i class='mv'>x</i>=9+3이 맞아요. 따라서 <b>둘째 줄</b>이 처음 틀렸어요.<span class='xh'>오답 하나씩 격파</span>첫째 줄은 3×2<i class='mv'>x</i>=6<i class='mv'>x</i>, 3×(−1)=−3으로 정확해요. 셋째·넷째 줄은 이미 잘못된 둘째 줄을 계산한 결과라 숫자 계산만 보면 이어지지만, 최초 오류는 아니에요. '잘못된 줄이 없다'고 하면 이항 때 부호 반전을 놓친 거예요. 풀이 오류는 각 줄이 바로 윗줄에서 올바르게 나왔는지 순서대로 확인해야 원인을 정확히 찾을 수 있어요.",
@@ -142,7 +147,7 @@ export const POOL_M1U2L8: ExamItem[] = [
     id: "m1u2e166",
     lessonId: L,
     type: "mcq",
-    prompt: "퍼즐 코드 방정식 2(<i class='mv'>x</i>+<i class='mv'>k</i>)=18의 해가 <i class='mv'>x</i>=4일 때, <i class='mv'>k</i>의 값은?",
+    prompt: "<i class='mv'>x</i>에 대한 방정식 2(<i class='mv'>x</i>+<i class='mv'>k</i>)=18의 해가 <i class='mv'>x</i>=4일 때, <i class='mv'>k</i>의 값은?",
     options: ["−5", "1", "5", "7", "13"],
     answer: 2,
     diff: 3,
@@ -166,7 +171,7 @@ export const POOL_M1U2L8: ExamItem[] = [
     id: "m1u2e168",
     lessonId: L,
     type: "num",
-    prompt: "공정 단계 보정식 3(<i class='mv'>x</i>−2)=2<i class='mv'>x</i>+9를 풀어 <i class='mv'>x</i>의 값을 구하세요.",
+    prompt: "일차방정식 3(<i class='mv'>x</i>−2)=2<i class='mv'>x</i>+9를 풀어 <i class='mv'>x</i>의 값을 구하세요.",
     answer: "15",
     numKind: "int",
     diff: 1,
@@ -178,7 +183,7 @@ export const POOL_M1U2L8: ExamItem[] = [
     id: "m1u2e169",
     lessonId: L,
     type: "num",
-    prompt: "좌석 구역 보정식 9−3<i class='mv'>x</i>=30을 풀어 <i class='mv'>x</i>의 값을 구하세요.",
+    prompt: "일차방정식 9−3<i class='mv'>x</i>=30을 풀어 <i class='mv'>x</i>의 값을 구하세요.",
     answer: "-7",
     numKind: "int",
     diff: 1,
@@ -190,7 +195,7 @@ export const POOL_M1U2L8: ExamItem[] = [
     id: "m1u2e170",
     lessonId: L,
     type: "num",
-    prompt: "퍼즐 코드 방정식 4(<i class='mv'>x</i>+3)=44를 풀어 <i class='mv'>x</i>의 값을 구하세요.",
+    prompt: "일차방정식 4(<i class='mv'>x</i>+3)=44를 풀어 <i class='mv'>x</i>의 값을 구하세요.",
     answer: "8",
     numKind: "int",
     diff: 1,
@@ -202,13 +207,13 @@ export const POOL_M1U2L8: ExamItem[] = [
     id: "m1u2e171",
     lessonId: L,
     type: "num",
-    prompt: "측정값 보정식 0.6<i class='mv'>x</i>−1.8=4.2를 풀어 <i class='mv'>x</i>의 값을 구하세요.",
-    answer: "10",
+    prompt: "분수 계수 방정식 " + mfmt("{x/3}") + "−" + mfmt("{1/2}") + "=" + mfmt("{x/6}") + "+1을 풀어 <i class='mv'>x</i>의 값을 구하세요.",
+    answer: "9",
     numKind: "int",
-    diff: 1,
+    diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span>양변에 10을 곱하면 6<i class='mv'>x</i>−18=42예요. −18을 이항해 6<i class='mv'>x</i>=60으로 만든 뒤 6으로 나누면 <b><i class='mv'>x</i>=10</b>이에요.<span class='xh'>오답 경로 격파</span>1은 소수점을 없앤 뒤 결과도 다시 10으로 나누어 버린 값일 수 있어요. 4는 −1.8을 이항하면서 부호를 바꾸지 않아 (4.2−1.8)÷0.6으로 계산한 값이에요. 7은 4.2÷0.6만 계산해 상수항 −1.8을 빠뜨렸고요. 60은 6<i class='mv'>x</i>의 값에서 멈춘 중간값이에요. 10은 모든 항에 곱해야 해요. 0.6×10−1.8=6−1.8=4.2로 검산해요.",
-    core: "×10으로 6x−18=42, 정리하면 x=10!",
+      "<span class='xh'>정답 풀이</span>분모 3, 2, 6의 최소공배수 6을 모든 항에 곱해요.<br>① 6×" + mfmt("{x/3}") + "=2<i class='mv'>x</i>, 6×" + mfmt("{1/2}") + "=3, 6×" + mfmt("{x/6}") + "=<i class='mv'>x</i>, 6×1=6<br>② 2<i class='mv'>x</i>−3=<i class='mv'>x</i>+6<br>③ 이항하면 <b><i class='mv'>x</i>=9</b><br>검산: 9÷3−0.5=2.5이고 9÷6+1=2.5로 같아요.<span class='xh'>오답 경로 격파</span>3은 우변의 1에 6을 곱하지 않아 2<i class='mv'>x</i>−3=<i class='mv'>x</i>+1로 만든 값이에요. −9는 상수항을 이항하며 부호를 반대로 붙였고, 6은 곱한 최소공배수를 답으로 옮긴 값이에요. 18은 6 대신 12를 곱하고 일부 항을 빠뜨린 계산에서 나와요. 최소공배수는 분수든 정수든 '모든' 항에 곱해요.",
+    core: "×6으로 2x−3=x+6, 해는 9!",
   },
   {
     id: "m1u2e172",
@@ -238,13 +243,13 @@ export const POOL_M1U2L8: ExamItem[] = [
     id: "m1u2e174",
     lessonId: L,
     type: "num",
-    prompt: "소수 계수가 있는 방정식 0.25<i class='mv'>x</i>+1.5=4.25를 풀어 <i class='mv'>x</i>의 값을 구하세요.",
-    answer: "11",
+    prompt: "<i class='mv'>x</i>에 대한 방정식 " + mfmt("2x+a=6x+14") + "의 해가 <b>음의 정수</b>가 되도록 하는 자연수 <i class='mv'>a</i>를 모두 더한 값을 구하세요.",
+    answer: "18",
     numKind: "int",
-    diff: 2,
+    diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>양변에 100을 곱하면 25<i class='mv'>x</i>+150=425예요. 150을 이항해 25<i class='mv'>x</i>=275로 만든 뒤 25로 나누면 <b><i class='mv'>x</i>=11</b>이에요.<span class='xh'>오답 경로 격파</span>1.1은 정수화한 뒤 답을 다시 10으로 나눈 값일 수 있어요. 2.75는 4.25−1.5까지만 계산한 0.25<i class='mv'>x</i>의 값이에요. 17은 4.25÷0.25를 먼저 하여 +1.5를 빠뜨린 결과고요. 275는 25<i class='mv'>x</i>의 값에서 멈춘 중간값이에요. 모든 항에 100을 곱해야 해요. 검산하면 0.25×11+1.5=2.75+1.5=4.25예요.",
-    core: "×100으로 25x+150=425, 정리하면 x=11!",
+      "<span class='xh'>정답 풀이</span>문자 <i class='mv'>a</i>를 수처럼 두고 <i class='mv'>x</i>를 정리해요.<br>① <i class='mv'>a</i>−14=4<i class='mv'>x</i>, 곧 <i class='mv'>x</i>=(<i class='mv'>a</i>−14)÷4<br>② <i class='mv'>x</i>가 정수이려면 <i class='mv'>a</i>−14가 4의 배수, 음수이려면 <i class='mv'>a</i><14<br>③ 조건에 맞는 자연수는 <i class='mv'>a</i>=2, 6, 10(<i class='mv'>x</i>=−3, −2, −1)이라 합은 <b>18</b><span class='xh'>오답 경로 격파</span>3은 <i class='mv'>a</i>의 개수를 답한 값이고, 10은 가장 큰 <i class='mv'>a</i> 하나만 답한 값이에요. 32는 <i class='mv'>a</i>=14까지 넣은 값인데, 그때 해는 0이라 음의 정수가 아니에요. 후보 <i class='mv'>a</i>를 하나씩 원식에 되돌려 해가 정말 음의 정수인지 확인하는 습관이 안전해요.",
+    core: "x=(a−14)/4가 음의 정수, a=2+6+10=18!",
   },
   {
     id: "m1u2e175",
@@ -253,7 +258,7 @@ export const POOL_M1U2L8: ExamItem[] = [
     prompt: "등식의 한 변에 있는 항을 부호를 바꾸어 다른 변으로 옮겨 쓰는 것을 무엇이라고 하나요?",
     answer: "이항",
     bank: ["이항", "대입", "검산", "전개", "동류항", "상수항", "등식의 성질", "식의 값"],
-    diff: 2,
+    diff: 1,
     explain:
       "<span class='xh'>정답 풀이</span>등식의 한 변에 있는 항을 부호를 바꾸어 다른 변으로 옮겨 쓰는 것을 <b>이항</b>이라고 해요. 실제로는 양변에 같은 수를 더하거나 빼는 등식의 성질을 짧게 나타낸 방법이에요.<span class='xh'>오답 칩 격파</span>'대입'은 문자 자리에 수를 넣는 것, '검산'은 구한 해를 원래 식에 넣어 확인하는 것이에요. '전개'는 분배법칙으로 괄호를 푸는 과정이고 '동류항'은 문자와 차수가 같은 항이에요. '상수항'은 문자 없는 항, '등식의 성질'은 양변에 같은 조작을 해도 같음이 유지되는 규칙, '식의 값'은 대입해 계산한 결과예요. 질문은 항을 등호 건너편으로 옮겨 쓰는 풀이 방법의 이름을 묻고 있어요.",
     core: "항이 등호를 건너며 부호가 바뀌는 것은 이항!",
@@ -264,7 +269,7 @@ export const POOL_M1U2L8: ExamItem[] = [
     type: "word",
     prompt: "문자 <i class='mv'>x</i>에 대한 일차식 두 개를 등호로 연결하고, 해를 구하도록 만든 방정식을 무엇이라고 하나요?",
     answer: "일차방정식",
-    bank: ["일차방정식", "항등식", "부등식", "일차식", "등식", "방정식의 해", "좌변", "우변"],
+    bank: ["일차방정식", "항등식", "부등식", "일차식", "차수", "방정식의 해", "좌변", "우변"],
     diff: 2,
     explain:
       "<span class='xh'>정답 풀이</span>등호 양쪽이 미지수에 대한 일차식이고 특정한 해를 구하는 식을 <b>일차방정식</b>이라고 해요. 정리했을 때 미지수의 가장 높은 차수가 1이어야 해요.<span class='xh'>오답 칩 격파</span>'일차식'은 등호 없이도 존재하는 식이고, '등식'은 등호로 연결된 식 전체를 넓게 이르는 말이에요. '항등식'은 모든 값에서 항상 참이고 '부등식'은 크기를 비교해요. '방정식의 해'는 방정식을 참으로 만드는 값이에요. '좌변'과 '우변'은 등호의 왼쪽 식과 오른쪽 식을 가리킬 뿐 식의 종류가 아니고요. 차수와 등호, 해를 함께 확인해 이름을 정해요.",
@@ -277,7 +282,7 @@ export const POOL_M1U2L8: ExamItem[] = [
     prompt: "분모가 4와 6인 항이 들어 있는 방정식에서 분모를 한 번에 없애려면 양변에 어떤 수를 곱하는 것이 가장 간단한가요?",
     answer: "분모의 최소공배수",
     bank: ["분모의 최소공배수", "분자의 합", "분모의 합", "계수의 합", "항의 개수", "분배법칙", "대입", "검산"],
-    diff: 3,
+    diff: 2,
     explain:
       "<span class='xh'>정답 풀이</span>분수 계수를 정수로 만들 때는 각 분모가 모두 나누어떨어지는 가장 작은 수인 <b>분모의 최소공배수</b>를 양변에 곱해요. 분모가 4와 6이면 최소공배수 12를 모든 항에 곱하면 돼요.<span class='xh'>오답 칩 격파</span>'분자의 합'과 '분모의 합'은 분모를 없애는 기준이 아니에요. '계수의 합'이나 '항의 개수'도 분모들과 나누어떨어지는지 보장하지 않고요. '분배법칙'은 정한 수를 각 항에 빠짐없이 곱할 때 사용하는 계산 규칙이에요. '대입'과 '검산'은 해를 넣는 과정이라 분모 제거와 다르고요. 가장 작은 공통배수를 쓰면 수가 불필요하게 커지지 않아 계산이 간단해져요.",
     core: "분수 방정식은 분모의 최소공배수를 모든 항에 곱해요!",

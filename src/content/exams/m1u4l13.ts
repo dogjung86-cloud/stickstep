@@ -3,7 +3,7 @@
 // 교과서의 문장·수치·도형 배치는 복제하지 않았고, 모든 위치 관계는 지문에서 완전히 명시했다.
 import type { ExamItem } from "./types";
 import { gsym } from "../../ui/geoKit";
-import { m4SurveyFig } from "../../ui/examFiguresMath";
+import { m4SurveyFig, mExamTwinEquiFig } from "../../ui/examFiguresMath";
 
 const L = "m1u4l13";
 
@@ -172,7 +172,7 @@ export const POOL_M1U4L13: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
-      "접근할 수 없는 구간을 포함한 " +
+      "그림과 같이 접근할 수 없는 구간을 포함한 " +
       gsym("APB", "tri") +
       "와 통로에 만든 " +
       gsym("CQD", "tri") +
@@ -183,6 +183,7 @@ export const POOL_M1U4L13: ExamItem[] = [
       "예요. 직접 잴 수 없는 " +
       gsym("AB", "seg") +
       "의 길이를 알려면 어느 선분을 재어야 할까요?",
+    figure: m4SurveyFig({ mode: "offset", labels: ["P", "A", "B", "Q", "C", "D"] }),
     options: [gsym("CQ", "seg"), gsym("QD", "seg"), gsym("AP", "seg"), gsym("PB", "seg"), gsym("CD", "seg")],
     answer: 4,
     diff: 2,
@@ -267,21 +268,48 @@ export const POOL_M1U4L13: ExamItem[] = [
     lessonId: L,
     type: "num",
     prompt:
-      "산책로 밖의 " + gsym("KLM", "tri") + "과 안전 구역의 " + gsym("RST", "tri") + "가 SSS 합동이고 K와 R, L과 S, M과 T가 각각 대응해요. 안전 구역의 삼각형 RST의 둘레가 74 m이고 RS=19 m, RT=23 m일 때 접근하기 어려운 " + gsym("LM", "seg") + "의 길이를 구하세요.",
-    answer: "32",
+      "그림과 같이 정삼각형 ABC와, " + gsym("BC", "seg") + "의 연장선 위의 점 D를 한 변으로 하는 정삼각형 ECD가 있어요. " + gsym("AD", "seg") + "와 " + gsym("BE", "seg") + "의 교점을 F라 할 때, " + gsym("AFE", "angle") + "의 크기를 구하세요. 정답은 숫자만 입력하세요.",
+    figure: mExamTwinEquiFig("twin"),
+    answer: "120",
     numKind: "int",
-    unitLabel: "m",
+    unitLabel: "°",
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>안전 구역의 삼각형에서 ST=74−19−23=<b>32 m</b>예요. L과 S, M과 T가 각각 대응하므로 접근하기 어려운 LM은 안전 구역의 ST와 대응하고, SSS 합동의 대응변 길이는 같아 LM=32 m예요.<span class='xh'>이런 실수를 조심해요</span>19+23=42는 이미 아는 두 변의 합이고, 74−42를 해야 남은 변이 나와요. 안전 구역에서 구한 ST를 그대로 답하려면 먼저 LM과 ST가 대응한다는 근거를 확인해야 해요. 합동이라고 해서 둘레를 둘로 나누거나 세 변이 모두 같다고 볼 수도 없어요. 계산과 대응을 차례로 적용하세요.",
-    core: "안전 구역에서 ST=32를 구하고 SSS 합동의 대응변 LM에 옮긴다.",
+      "<span class='xh'>정답 풀이</span>" +
+      gsym("ACD", "tri") +
+      "와 " +
+      gsym("BCE", "tri") +
+      "를 비교해요.<br>① AC=BC, CD=CE(두 정삼각형의 변), " +
+      gsym("ACD", "angle") +
+      "=" +
+      gsym("BCE", "angle") +
+      "=180°−60°=120°<br>② SAS 합동이므로 " +
+      gsym("DAC", "angle") +
+      "=" +
+      gsym("EBC", "angle") +
+      "<br>③ 삼각형 FBD에서 " +
+      gsym("AFB", "angle") +
+      "는 바깥쪽 각이라 " +
+      gsym("EBC", "angle") +
+      "+" +
+      gsym("ADC", "angle") +
+      "와 같고, ②로 바꾸면 " +
+      gsym("DAC", "angle") +
+      "+" +
+      gsym("ADC", "angle") +
+      "=180°−120°=60°<br>④ " +
+      gsym("AFE", "angle") +
+      "는 그 이웃각이므로 180°−60°=<b>120°</b><span class='xh'>이런 실수를 조심해요</span>60을 넣으면 한 단계 전의 " +
+      gsym("AFB", "angle") +
+      "에서 멈춘 거예요. 문제가 묻는 각이 어느 것인지 그림에서 F 둘레의 네 각을 구분하세요. 90은 두 선분이 수직으로 보이는 착시에서 나온 값이에요. 합동으로 옮긴 각을 한 삼각형의 바깥 각으로 모으는 것이 이 유형의 핵심 기술이에요.",
+    core: "∠AFB=60°를 먼저 만들고 이웃각 ∠AFE=120°!",
   },
   {
     id: "m1u4e195",
     lessonId: L,
     type: "multi",
     prompt:
-      "점 X와 Y가 직선 PQ의 서로 반대쪽에 있어요. " +
+      "그림과 같이 점 X와 Y가 직선 PQ의 서로 반대쪽에 있어요. " +
       gsym("XPQ", "angle") +
       "=" +
       gsym("YPQ", "angle") +
@@ -292,6 +320,7 @@ export const POOL_M1U4L13: ExamItem[] = [
       "와 " +
       gsym("YPQ", "tri") +
       "의 합동을 확정할 수 있는 추가 정보를 <b>모두</b> 고르세요.",
+    figure: m4SurveyFig({ mode: "reflect", labels: ["P", "Q", "X", "Y"] }),
     options: [
       gsym("XQP", "angle") + "=" + gsym("YQP", "angle"),
       gsym("PX", "seg") + "=" + gsym("PY", "seg"),

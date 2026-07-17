@@ -123,6 +123,7 @@ export const POOL_M1U4L11: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
+      "그림과 같이 " +
       gsym("PQR", "tri") +
       "에서 " +
       gsym("QR", "seg") +
@@ -131,6 +132,7 @@ export const POOL_M1U4L11: ExamItem[] = [
       "=38°, " +
       gsym("R", "angle") +
       "=67°예요. 이 삼각형에 대한 설명으로 옳은 것은?",
+    figure: m4TriangleConditionFig({ a: "P", b: "Q", c: "R", mode: "asa" }),
     options: [
       "세 각만 주어졌으므로 크기가 다른 삼각형이 여러 개 생긴다",
       "두 변과 끼인각이 주어졌으므로 SAS 결정조건이다",

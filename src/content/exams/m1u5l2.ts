@@ -1,6 +1,7 @@
-// 중1 수학 Ⅴ. 평면도형과 입체도형: 단원 종합 평가 풀, 레슨 2 삼각형의 내각과 외각(m1u5e015~e028)
+// 중1 수학 Ⅴ. 평면도형과 입체도형: 단원 종합 평가 풀, 레슨 2 삼각형의 내각과 외각(m1u5e015~e028) 2026-07 개보수: 좌표 서술 9문항 그림 판독형(m5TriAngleFig).
 // 유형 9 objective / 3 num / 2 word, diff 5/6/3. 레슨 랩·드릴과 교과서의 수치·문구·배치를 재사용하지 않는다.
 import type { ExamItem } from "./types";
+import { m5TriAngleFig } from "../../ui/examFiguresMath";
 
 const L = "m1u5l2";
 
@@ -9,7 +10,8 @@ export const POOL_M1U5L2: ExamItem[] = [
     id: "m1u5e015",
     lessonId: L,
     type: "mcq",
-    prompt: "삼각형 ABC에서 ∠A = 68°, ∠B = 69°일 때, ∠C의 크기는?",
+    prompt: "그림과 같은 삼각형 ABC에서 ∠<i class='mv'>x</i>의 크기는?",
+    figure: m5TriAngleFig({ bDeg: 69, cDeg: 43, labels: { A: "68°", B: "69°", C: "x" } }),
     options: ["137°", "112°", "43°", "69°", "111°"],
     answer: 2,
     diff: 1,
@@ -22,7 +24,8 @@ export const POOL_M1U5L2: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
-      "삼각형 PQR에서 변 QR를 R 너머의 점 S까지 연장했어요. 이때 꼭짓점 R에서 생기는 외각은?",
+      "그림과 같이 삼각형 PQR의 변 QR를 R 너머의 점 S까지 연장했어요. 이때 꼭짓점 R에서 생기는 외각은?",
+    figure: m5TriAngleFig({ bDeg: 62, cDeg: 55, names: ["P", "Q", "R"], ext: [{ at: "C", name: "S" }] }),
     options: ["∠PQR", "∠QRP", "∠RPS", "∠QPR", "∠PRS"],
     answer: 4,
     diff: 1,
@@ -35,7 +38,8 @@ export const POOL_M1U5L2: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
-      "삼각형 XYZ에서 변 YZ를 Z 너머의 점 T까지 연장했어요. ∠X = 46°, ∠Y = 59°일 때, 외각 ∠XZT의 크기는?",
+      "그림과 같이 삼각형 XYZ의 변 YZ를 Z 너머의 점 T까지 연장했어요. 외각 ∠<i class='mv'>x</i>의 크기는?",
+    figure: m5TriAngleFig({ bDeg: 59, cDeg: 75, names: ["X", "Y", "Z"], labels: { A: "46°", B: "59°" }, ext: [{ at: "C", label: "x", name: "T" }] }),
     options: ["75°", "105°", "121°", "134°", "95°"],
     answer: 1,
     diff: 2,
@@ -47,7 +51,8 @@ export const POOL_M1U5L2: ExamItem[] = [
     id: "m1u5e018",
     lessonId: L,
     type: "mcq",
-    prompt: "삼각형 PQR의 꼭짓점 Q에서 한 변을 연장해 만든 외각이 121°예요. 이 외각과 바로 붙은 내각 ∠PQR의 크기는?",
+    prompt: "그림과 같이 삼각형 PQR의 꼭짓점 Q에서 한 변을 연장해 만든 외각이 121°예요. 이 외각과 바로 붙은 내각 ∠<i class='mv'>x</i>의 크기는?",
+    figure: m5TriAngleFig({ bDeg: 59, cDeg: 70, names: ["P", "Q", "R"], labels: { B: "x" }, ext: [{ at: "B", label: "121°" }] }),
     options: ["59°", "121°", "68°", "61°", "239°"],
     answer: 0,
     diff: 2,
@@ -60,12 +65,13 @@ export const POOL_M1U5L2: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
-      "삼각형 ABC에서 변 AB를 B 너머의 점 D까지 연장했더니 ∠CBD = 143°였어요. ∠A = 46°이고, 다시 변 AC를 C 너머의 점 E까지 연장할 때 외각 ∠BCE의 크기는?",
+      "그림과 같이 삼각형 ABC의 변 BC를 양쪽으로 연장했어요. B에서 생긴 외각이 143°이고 ∠A = 46°일 때, C에서 생긴 외각 ∠<i class='mv'>x</i>의 크기는?",
+    figure: m5TriAngleFig({ bDeg: 37, cDeg: 97, labels: { A: "46°" }, ext: [{ at: "B", label: "143°" }, { at: "C", label: "x" }] }),
     options: ["97°", "143°", "134°", "83°", "37°"],
     answer: 3,
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>두 외각을 차례로 구분해야 해요.<br>① B의 내각: 180−143 = 37°<br>② C의 외각 ∠BCE는 A와 B의 내각의 합: 46+37 = <b>83°</b><br>검산하면 C의 내각은 180−(46+37) = 97°이고, 97+83 = 180이에요.<span class='xh'>오답 하나씩 격파</span>'97°'은 C의 내각이에요. '143°'은 처음 주어진 B의 외각을 그대로 옮긴 값이고요. '134°'는 46+143에서 180을 잘못 처리한 결과예요. '37°'은 첫 단계에서 구한 B의 내각이라 마지막 질문까지 가지 못했어요. 연장선이 두 번 등장하면 각 꼭짓점에서 안쪽과 바깥쪽을 따로 표시해요.",
+      "<span class='xh'>정답 풀이</span>두 외각을 차례로 구분해야 해요.<br>① B의 내각: 143°와 평각을 이루므로 180−143 = 37°<br>② C의 외각 ∠<i class='mv'>x</i>는 그 외각과 이웃하지 않는 두 내각의 합: 46+37 = <b>83°</b><br>검산하면 C의 내각은 180−(46+37) = 97°이고, 97+83 = 180이에요.<span class='xh'>오답 하나씩 격파</span>'97°'은 C의 내각이에요. '143°'은 처음 주어진 B의 외각을 그대로 옮긴 값이고요. '134°'는 46+143에서 180을 잘못 처리한 결과예요. '37°'은 첫 단계에서 구한 B의 내각이라 마지막 질문까지 가지 못했어요. 연장선이 두 곳에 있으면 각 꼭짓점에서 안쪽과 바깥쪽을 따로 표시해요.",
     core: "첫 외각에서 B의 내각을 찾고, 두 번째 외각은 A와 B를 더한다!",
   },
   {
@@ -90,7 +96,8 @@ export const POOL_M1U5L2: ExamItem[] = [
     id: "m1u5e021",
     lessonId: L,
     type: "mcq",
-    prompt: "삼각형 PQR에서 ∠P와 ∠Q의 크기가 같고 ∠R = 52°예요. ∠P의 크기는?",
+    prompt: "그림과 같은 삼각형에서 ∠<i class='mv'>x</i>의 크기는?",
+    figure: m5TriAngleFig({ bDeg: 64, cDeg: 64, names: ["R", "P", "Q"], labels: { A: "52°", B: "x", C: "x" } }),
     options: ["52°", "128°", "76°", "104°", "64°"],
     answer: 4,
     diff: 1,
@@ -103,7 +110,8 @@ export const POOL_M1U5L2: ExamItem[] = [
     lessonId: L,
     type: "mcq",
     prompt:
-      "삼각형 모양 지붕 골조 PQR에서 ∠P = 41°, ∠Q = (<i class='mv'>x</i>+13)°, ∠R = 2<i class='mv'>x</i>°예요. ∠R의 크기는?",
+      "그림과 같은 삼각형 PQR에서 ∠R의 크기는?",
+    figure: m5TriAngleFig({ bDeg: 55, cDeg: 84, names: ["P", "Q", "R"], labels: { A: "41°", B: "(x+13)°", C: "2x°" } }),
     options: ["42°", "126°", "84°", "139°", "97°"],
     answer: 2,
     diff: 3,
@@ -148,7 +156,8 @@ export const POOL_M1U5L2: ExamItem[] = [
     lessonId: L,
     type: "num",
     prompt:
-      "삼각형 ABC에서 C의 외각이 118°이고, 이 외각과 이웃하지 않는 한 내각인 ∠A가 47°예요. ∠B는 몇 <b>도</b>인가요? 정답에는 수만 입력하세요.",
+      "그림과 같이 삼각형 ABC의 변 BC를 C 너머로 연장했어요. ∠<i class='mv'>x</i>는 몇 <b>도</b>인가요? 정답에는 수만 입력하세요.",
+    figure: m5TriAngleFig({ bDeg: 71, cDeg: 62, labels: { A: "47°", B: "x" }, ext: [{ at: "C", label: "118°" }] }),
     answer: "71",
     numKind: "int",
     unitLabel: "°",
@@ -162,13 +171,14 @@ export const POOL_M1U5L2: ExamItem[] = [
     lessonId: L,
     type: "num",
     prompt:
-      "삼각형 ABC에서 C의 외각이 133°이고 ∠A = 57°예요. 변 AB를 B 너머로 연장해 만든 B의 외각은 몇 <b>도</b>인가요? 정답에는 수만 입력하세요.",
+      "그림에서 ∠<i class='mv'>x</i>는 몇 <b>도</b>인가요? 정답에는 수만 입력하세요.",
+    figure: m5TriAngleFig({ bDeg: 76, cDeg: 47, labels: { A: "57°" }, ext: [{ at: "B", label: "x" }, { at: "C", label: "133°" }] }),
     answer: "104",
     numKind: "int",
     unitLabel: "°",
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>서로 다른 두 꼭짓점의 외각을 차례로 처리해요.<br>① C의 내각 = 180−133 = 47°<br>② B의 외각은 A와 C의 내각의 합이므로 57+47 = <b>104°</b><br>③ 검산: B의 내각 = 180−104 = 76°, 따라서 57+76+47 = 180°예요.<span class='xh'>이런 실수를 조심해요</span>133은 처음 주어진 C의 외각이고, 47은 첫 단계에서 구한 C의 내각이에요. 76은 B의 내각이라 모두 마지막 질문과 달라요. 57+133을 하면 서로 다른 종류의 각을 한 합에 섞는 오류가 생겨요. 꼭짓점마다 안쪽과 바깥쪽을 따로 정리한 뒤 답 칸에는 104만 입력해요.",
+      "<span class='xh'>정답 풀이</span>서로 다른 두 꼭짓점의 외각을 차례로 처리해요.<br>① C의 내각 = 180−133 = 47°<br>② B의 외각 ∠<i class='mv'>x</i>는 그 외각과 이웃하지 않는 A와 C의 내각의 합이므로 57+47 = <b>104°</b><br>③ 검산: B의 내각 = 180−104 = 76°, 따라서 57+76+47 = 180°예요.<span class='xh'>이런 실수를 조심해요</span>133은 처음 주어진 C의 외각이고, 47은 첫 단계에서 구한 C의 내각이에요. 76은 B의 내각이라 모두 마지막 질문과 달라요. 57+133을 하면 서로 다른 종류의 각을 한 합에 섞는 오류가 생겨요. 꼭짓점마다 안쪽과 바깥쪽을 따로 정리한 뒤 답 칸에는 104만 입력해요.",
     core: "C의 내각 47°를 거쳐 B의 외각은 57°+47° = 104°!",
   },
   {

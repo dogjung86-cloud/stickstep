@@ -1,6 +1,7 @@
-// 중1 수학 Ⅴ. 평면도형과 입체도형: 단원 종합 평가 풀, 레슨 11 기둥의 겉넓이와 부피(m1u5e142~e156)
+// 중1 수학 Ⅴ. 평면도형과 입체도형: 단원 종합 평가 풀, 레슨 11 기둥의 겉넓이와 부피(m1u5e142~e156) 2026-07 개보수: 치수 겨냥도 4문항(m5SolidDimFig).
 // 유형 8 objective / 5 num / 2 word, diff 6/6/3. 레슨 랩·드릴과 교과서의 수치·문구·배치를 재사용하지 않는다.
 import type { ExamItem } from "./types";
+import { m5SolidDimFig } from "../../ui/examFiguresMath";
 
 const L = "m1u5l11";
 
@@ -21,7 +22,8 @@ export const POOL_M1U5L11: ExamItem[] = [
     id: "m1u5e143",
     lessonId: L,
     type: "mcq",
-    prompt: "반지름이 8cm이고 높이가 11cm인 원기둥 모양 포스터 통의 옆면에만 종이를 붙여요. 필요한 종이의 넓이는?",
+    prompt: "그림과 같은 원기둥 모양 포스터 통의 <b>옆면에만</b> 종이를 붙여요. 필요한 종이의 넓이는?",
+    figure: m5SolidDimFig({ kind: "cyl", rLabel: "8 cm", hLabel: "11 cm" }),
     options: ["704πcm²", "176πcm²", "128πcm²", "64πcm²", "304πcm²"],
     answer: 1,
     diff: 1,
@@ -45,7 +47,8 @@ export const POOL_M1U5L11: ExamItem[] = [
     id: "m1u5e145",
     lessonId: L,
     type: "mcq",
-    prompt: "밑면의 반지름이 6cm이고 높이가 7cm인 <b>닫힌 원기둥</b>의 겉넓이는?",
+    prompt: "그림과 같은 <b>닫힌 원기둥</b>의 겉넓이는?",
+    figure: m5SolidDimFig({ kind: "cyl", rLabel: "6 cm", hLabel: "7 cm" }),
     options: ["252πcm²", "84πcm²", "72πcm²", "156πcm²", "120πcm²"],
     answer: 3,
     diff: 2,
@@ -111,7 +114,8 @@ export const POOL_M1U5L11: ExamItem[] = [
     id: "m1u5e150",
     lessonId: L,
     type: "num",
-    prompt: "가로 5cm, 세로 8cm, 높이 9cm인 직육면체의 부피는 몇 <b>cm³</b>인가요? 정답에는 수만 입력하세요.",
+    prompt: "그림과 같은 직육면체의 부피는 몇 <b>cm³</b>인가요? 정답에는 수만 입력하세요.",
+    figure: m5SolidDimFig({ kind: "box", wLabel: "5 cm", dLabel: "8 cm", hLabel: "9 cm" }),
     answer: "360",
     numKind: "int",
     unitLabel: "cm³",
@@ -150,7 +154,8 @@ export const POOL_M1U5L11: ExamItem[] = [
     id: "m1u5e153",
     lessonId: L,
     type: "num",
-    prompt: "밑면의 반지름이 5cm인 닫힌 원기둥의 겉넓이가 130πcm²예요. 이 원기둥의 높이는 몇 <b>cm</b>인가요? 정답에는 수만 입력하세요.",
+    prompt: "그림과 같이 밑면의 반지름이 5cm인 닫힌 원기둥의 겉넓이가 <b>130πcm²</b>예요. <i class='mv'>x</i>의 값을 구하세요.",
+    figure: m5SolidDimFig({ kind: "cyl", rLabel: "5 cm", hLabel: "x cm" }),
     answer: "8",
     numKind: "int",
     unitLabel: "cm",
