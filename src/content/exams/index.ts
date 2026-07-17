@@ -22,6 +22,7 @@ import { M1U1_EXAM } from "./m1u1";
 import { M2U1_EXAM } from "./m2u1";
 import { M2U2_EXAM } from "./m2u2";
 import { M2U3_EXAM } from "./m2u3";
+import { M2U4_EXAM } from "./m2u4";
 
 export type { ExamDef, ExamItem, ExamItemType } from "./types";
 export { drawExamItems } from "./types";
@@ -48,6 +49,7 @@ const EXAMS: Record<string, ExamDef> = {
   m2u1: M2U1_EXAM, // 첫 중2 수학 200제(60/30/10 회귀 근거 — m2u1.ts 헤더 참조)
   m2u2: M2U2_EXAM, // 9레슨 200제 — 22×7+23×2(m1u2 배분 계승, m2u2.ts 헤더 참조)
   m2u3: M2U3_EXAM, // 10레슨 200제 — 20×10 균일(m2u1 배분 계승, m2u3.ts 헤더 참조)
+  m2u4: M2U4_EXAM, // 10레슨 200제 — 20×10 균일, 기하 첫 중2 시험(gsym·mfmt 미사용, m2u4.ts 헤더 참조)
 };
 
 /** 단원에 종합 평가가 있으면 정의를 반환(홈 지도 노드·라우팅의 근거). */

@@ -10,7 +10,7 @@
 // (파라미터형이라 레슨과 "수치·소재 교체"만 지키면 됨 — 레슨 앵커: histoFig [1,7,9,14,5]/20/20 회피).
 import { planeSpec } from "./mathKit";
 
-import { GEO, angleArc, angleOf, dot, polar, ptLabel, rightMark, tickMark } from "./geoKit";
+import { GEO, angleArc, angleOf, arrowHead, dot, lineSvg, normDeg, polar, ptLabel, rightMark, tickMark } from "./geoKit";
 
 const INK = "#334155";
 const FAINT = "#94A3B8";
@@ -1894,6 +1894,969 @@ export function mExamRelChoicesFig(items: MExamRelChoiceCell[]): string {
   const height = items.length <= 3 ? 112 : 222;
   const width = items.length <= 3 ? items.length * 120 + 8 : 364;
   return svg(`0 0 ${width} ${height}`, "번호가 붙은 작은 좌표평면들에 서로 다른 모양의 그래프가 그려진 그림", out);
+}
+
+/* ════════════════════════════════════════════════════════════
+   m2u4(중2 Ⅳ 삼각형과 사각형의 성질) — 시험 전용 파라미터형 신작 13종.
+   레슨 그림(mathFigures2 Ⅳ 15종)은 수치 고정형이라 시험 재사용 금지가 원칙이고,
+   여기 헬퍼는 실제 각도(도)를 인자로 받아 좌표를 "계산"하므로 라벨과 기하가 항상 일치한다.
+   저작 규약: ① 실각 인자(apexDeg·B·C·angleB·th·phi)와 인쇄 라벨을 반드시 일치시킨다(기하 검산 의무)
+   ② 구할 각·길이는 그림에 인쇄하지 않는다(x°·㉠·? 라벨만) ③ aria는 중립 서술만.
+   각 호 색: 조건 각은 앰버(hlA)→시안(hlB)→그린(hlD) 순, 라벨에 x·㉠·?가 들어가면 로즈(hlC) 자동.
+   ════════════════════════════════════════════════════════════ */
+
+type GPt = { x: number; y: number };
+const F4 = "#F6F9FF"; // 도형 면 채움
+const F4B = "#DCEAFB"; // 보조 면(음영)
+const isAskLabel = (s: string): boolean => /[x㉠㉡㉢?]/.test(s);
+const g4line = (a: GPt, b: GPt, color: string = GEO.ink, w = 2.5, dash = ""): string =>
+  lineSvg(a.x, a.y, b.x, b.y, color, w, dash);
+const g4poly = (pts: GPt[], fill = F4, w = 2.5): string =>
+  `<path d="M${pts.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" L")} Z" fill="${fill}" stroke="${GEO.ink}" stroke-width="${w}" stroke-linejoin="round"/>`;
+const g4text = (x: number, y: number, s: string, fs = 12.5, color: string = GEO.ink, anchor = "middle"): string =>
+  `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${anchor}" font-size="${fs}" font-weight="800" fill="${color}">${fxv(s)}</text>`;
+const g4cen = (pts: GPt[]): GPt => ({
+  x: pts.reduce((s, p) => s + p.x, 0) / pts.length,
+  y: pts.reduce((s, p) => s + p.y, 0) / pts.length,
+});
+/** 꼭짓점 v에서 p1→p2로 벌어진 내각 호(항상 짧은 쪽) + 잉크 라벨. 라벨에 x·㉠·?가 있으면 로즈 호. */
+const g4arc = (v: GPt, p1: GPt, p2: GPt, color: string, label?: string, r = 22, labelR?: number, fs = 12): string => {
+  let a0 = angleOf(v.x, v.y, p1.x, p1.y);
+  let a1 = angleOf(v.x, v.y, p2.x, p2.y);
+  if (normDeg(a1 - a0) > 180) [a0, a1] = [a1, a0];
+  const c = label && isAskLabel(label) ? GEO.hlC : color;
+  let out = angleArc(v.x, v.y, r, a0, a1, c);
+  if (label) {
+    const mid = polar(v.x, v.y, labelR ?? r + 15, a0 + normDeg(a1 - a0) / 2);
+    out += g4text(mid.x, mid.y + 4.2, label, fs);
+  }
+  return out;
+};
+/** 이등분 표시 — 반각 호 중간에 작은 ●○× 기호. */
+const g4bisMark = (v: GPt, p1: GPt, p2: GPt, sym: string, r = 30): string => {
+  let a0 = angleOf(v.x, v.y, p1.x, p1.y);
+  let a1 = angleOf(v.x, v.y, p2.x, p2.y);
+  if (normDeg(a1 - a0) > 180) [a0, a1] = [a1, a0];
+  const mid = polar(v.x, v.y, r, a0 + normDeg(a1 - a0) / 2);
+  return g4text(mid.x, mid.y + 3.6, sym, 10, GEO.soft);
+};
+/** 꼭짓점 v의 직각 표시 — 두 변(v→p1, v→p2)이 90°일 때 안쪽 꺾쇠. */
+const g4right = (v: GPt, p1: GPt, p2: GPt, size = 10): string => {
+  const a1 = angleOf(v.x, v.y, p1.x, p1.y);
+  const a2 = angleOf(v.x, v.y, p2.x, p2.y);
+  return Math.abs(normDeg(a2 - a1) - 90) < 2 ? rightMark(v.x, v.y, a1, size) : rightMark(v.x, v.y, a2, size);
+};
+/** 변 라벨 — 도형 무게중심 반대쪽(바깥)에 배치. inside면 안쪽. */
+const g4side = (a: GPt, b: GPt, label: string, cen: GPt, distance = 15, inside = false, fs = 11.5): string => {
+  const mx = (a.x + b.x) / 2;
+  const my = (a.y + b.y) / 2;
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const nx = dy / len;
+  const ny = -dx / len;
+  const toCen = (cen.x - mx) * nx + (cen.y - my) * ny;
+  const s = (toCen > 0 ? -1 : 1) * (inside ? -1 : 1);
+  return g4text(mx + nx * s * distance, my + ny * s * distance + 4, label, fs, INK);
+};
+
+/** 이등변삼각형 범용 — apexDeg가 "실제" 꼭지각(도)이라 그림과 라벨이 늘 일치한다.
+ *  apex/baseL/baseR: 각 라벨(생략 시 미표시) · ext: 밑변 오른쪽 연장 위 외각 라벨 ·
+ *  foot: 꼭지각 이등분선의 발 D(+직각 표시), tickBase: BD=DC 틱(2개) ·
+ *  tickSides: AB=AC 틱(기본 true) · sideL/sideR/base: 변 길이 라벨. */
+export function m2ExamIsoFig(o: {
+  apexDeg: number;
+  apex?: string;
+  baseL?: string;
+  baseR?: string;
+  ext?: string;
+  foot?: boolean;
+  footLabel?: string;
+  footRight?: boolean;
+  tickBase?: boolean;
+  tickSides?: boolean;
+  sideL?: string;
+  sideR?: string;
+  base?: string;
+  names?: [string, string, string];
+}): string {
+  const beta = (o.apexDeg / 2) * (Math.PI / 180);
+  const extW = o.ext ? 62 : 0;
+  const L = Math.min(158, 122 / Math.sin(beta), 172 / Math.cos(beta));
+  const w = L * Math.sin(beta);
+  const h = L * Math.cos(beta);
+  const H = Math.round(h) + 86;
+  const cx = 180 - extW / 2;
+  const gy = H - 44;
+  const A = { x: cx, y: gy - h };
+  const B = { x: cx - w, y: gy };
+  const C = { x: cx + w, y: gy };
+  const E = { x: C.x + extW, y: gy };
+  const cen = g4cen([A, B, C]);
+  const [nA, nB, nC] = o.names ?? ["A", "B", "C"];
+  let out = "";
+  if (o.ext) out += g4line(C, E, GEO.ink, 2.2);
+  out += g4poly([A, B, C]);
+  if (o.tickSides !== false) out += tickMark(A.x, A.y, B.x, B.y, 1) + tickMark(A.x, A.y, C.x, C.y, 1);
+  if (o.foot) {
+    const D = { x: cx, y: gy };
+    out += g4line(A, D, GEO.ink, 2.2);
+    if (o.footRight !== false) out += g4right(D, C, A);
+    out += dot(D.x, D.y, GEO.pt, 3) + ptLabel(D.x, D.y, o.footLabel ?? "D", 0, 17);
+    if (o.tickBase) out += tickMark(B.x, B.y, D.x, D.y, 2) + tickMark(D.x, D.y, C.x, C.y, 2);
+  }
+  if (o.apex) out += g4arc(A, B, C, GEO.hlA, o.apex, 24);
+  if (o.baseL) out += g4arc(B, A, C, GEO.hlB, o.baseL, 22);
+  if (o.baseR) out += g4arc(C, A, B, GEO.hlB, o.baseR, 22);
+  if (o.ext) out += g4arc(C, A, E, GEO.hlD, o.ext, 20);
+  if (o.sideL) out += g4side(A, B, o.sideL, cen, 20);
+  if (o.sideR) out += g4side(A, C, o.sideR, cen, 20);
+  if (o.base) out += g4side(B, C, o.base, cen, o.foot ? 32 : 15);
+  out += ptLabel(A.x, A.y, nA, 0, -10) + ptLabel(B.x, B.y, nB, -7, 17) + ptLabel(C.x, C.y, nC, 7, 17);
+  return svg(`0 0 360 ${H}`, "이등변삼각형 그림", out);
+}
+
+/** 이등변 이어붙이기 — 바닥 반직선 B→C→D 위에서 AB=AC=CD(각 1틱).
+ *  ∠B=th(실각)이면 ∠ACB=th, △ACD가 이등변이라 ∠ADC=∠CAD=th/2(짝수 th로 설계).
+ *  askAt: 물음표 각 위치("D"=∠ADC · "CAD" · "ACD"). */
+export function m2ExamIsoChainFig(o: {
+  th: number;
+  thLabel?: string;
+  ask?: string;
+  askAt?: "D" | "CAD" | "ACD";
+  names?: [string, string, string, string];
+}): string {
+  const t = (o.th * Math.PI) / 180;
+  const L = Math.min(128, 250 / (2 * Math.cos(t) + 1));
+  const H = Math.round(L * Math.sin(t)) + 84;
+  const gy = H - 42;
+  const B = { x: 50, y: gy };
+  const A = { x: 50 + L * Math.cos(t), y: gy - L * Math.sin(t) };
+  const C = { x: 50 + 2 * L * Math.cos(t), y: gy };
+  const D = { x: C.x + L, y: gy };
+  const [nA, nB, nC, nD] = o.names ?? ["A", "B", "C", "D"];
+  let out = g4line(B, { x: D.x + 24, y: gy }, GEO.ink, 2.2);
+  out += g4poly([A, B, C], F4) + g4line(A, D, GEO.ink, 2.5);
+  out += tickMark(A.x, A.y, B.x, B.y, 1) + tickMark(A.x, A.y, C.x, C.y, 1) + tickMark(C.x, C.y, D.x, D.y, 1);
+  if (o.thLabel) out += g4arc(B, A, C, GEO.hlA, o.thLabel, 24);
+  const at = o.askAt ?? "D";
+  if (o.ask) {
+    if (at === "D") out += g4arc(D, A, C, GEO.hlB, o.ask, 24);
+    else if (at === "CAD") out += g4arc(A, C, D, GEO.hlB, o.ask, 20);
+    else out += g4arc(C, A, D, GEO.hlB, o.ask, 20);
+  }
+  out +=
+    ptLabel(A.x, A.y, nA, 0, -10) +
+    ptLabel(B.x, B.y, nB, -6, 17) +
+    ptLabel(C.x, C.y, nC, 0, 17) +
+    ptLabel(D.x, D.y, nD, 5, 17);
+  return svg(`0 0 360 ${H}`, "길이가 같은 선분 세 개로 이어 붙인 삼각형 그림", out);
+}
+
+/** 이등변삼각형(AB=AC) + 밑변 연장 위 점 D와 선분 AD — 외각 관계 유형.
+ *  th=∠B(실각), phi=∠ADC(실각). 라벨은 인쇄할 것만 넘긴다(∠ACB=th, ∠CAD=th−phi가 실제 값). */
+export function m2ExamExtIsoFig(o: {
+  th: number;
+  phi: number;
+  labelB?: string;
+  labelD?: string;
+  labelCAD?: string;
+  labelACB?: string;
+  names?: [string, string, string, string];
+}): string {
+  const tt = Math.tan((o.th * Math.PI) / 180);
+  const tp = Math.tan((o.phi * Math.PI) / 180);
+  const w = Math.min(96, 262 / (1 + tt / tp), 156 / tt);
+  const h = w * tt;
+  const H = Math.round(h) + 86;
+  const gy = H - 44;
+  const B = { x: 46, y: gy };
+  const C = { x: 46 + 2 * w, y: gy };
+  const A = { x: 46 + w, y: gy - h };
+  const D = { x: A.x + h / tp, y: gy };
+  const [nA, nB, nC, nD] = o.names ?? ["A", "B", "C", "D"];
+  let out = g4line(B, { x: D.x + 20, y: gy }, GEO.ink, 2.2);
+  out += g4poly([A, B, C], F4) + g4line(A, D, GEO.ink, 2.5);
+  out += tickMark(A.x, A.y, B.x, B.y, 1) + tickMark(A.x, A.y, C.x, C.y, 1);
+  if (o.labelB) out += g4arc(B, A, C, GEO.hlA, o.labelB, 23);
+  if (o.labelD) out += g4arc(D, A, B, GEO.hlB, o.labelD, 24);
+  if (o.labelCAD) out += g4arc(A, C, D, GEO.hlD, o.labelCAD, 20);
+  if (o.labelACB) out += g4arc(C, A, B, GEO.hlD, o.labelACB, 18);
+  out +=
+    ptLabel(A.x, A.y, nA, 0, -10) +
+    ptLabel(B.x, B.y, nB, -6, 17) +
+    ptLabel(C.x, C.y, nC, -2, 17) +
+    ptLabel(D.x, D.y, nD, 6, 17);
+  return svg(`0 0 360 ${H}`, "이등변삼각형과 밑변의 연장선 위 점을 이은 그림", out);
+}
+
+/** 직각삼각형 카드 나열((가)(나)(다)(라)) — RHA·RHS 판별용.
+ *  acute: 실제 예각(도, ∠C=밑변 오른쪽 각 기준), hyp/leg(밑변)/vleg(세로 변)/ang(각 라벨).
+ *  angAt "C"(밑각)·"A"(꼭대기 각 — 라벨은 90−acute와 일치시킬 것), flip: 좌우 반전. */
+export function m2ExamRhPairsFig(items: Array<{
+  acute: number;
+  name?: string;
+  hyp?: string;
+  leg?: string;
+  vleg?: string;
+  ang?: string;
+  angAt?: "C" | "A";
+  flip?: boolean;
+}>): string {
+  const n = items.length;
+  const cols = n <= 2 ? n : 2;
+  const rows = Math.ceil(n / cols);
+  const cw = 360 / cols;
+  const ch = 138;
+  let out = "";
+  items.forEach((it, i) => {
+    const ox = (i % cols) * cw;
+    const oy = Math.floor(i / cols) * ch;
+    const ac = (it.acute * Math.PI) / 180;
+    const Hh = Math.min(96, 88 / Math.sin(ac), (cw - 66) / Math.cos(ac));
+    const legW = Hh * Math.cos(ac);
+    const legH = Hh * Math.sin(ac);
+    const s = it.flip ? -1 : 1;
+    const bx = it.flip ? ox + cw / 2 + legW / 2 : ox + cw / 2 - legW / 2;
+    const by = oy + 118;
+    const B = { x: bx, y: by };
+    const C = { x: bx + s * legW, y: by };
+    const A = { x: bx, y: by - legH };
+    const cen = g4cen([A, B, C]);
+    out += g4poly([A, B, C]);
+    out += g4right(B, C, A);
+    if (it.name) out += g4text(ox + cw / 2, oy + 16, it.name, 12.5, GEO.soft);
+    if (it.hyp) out += g4side(A, C, it.hyp, cen, 15);
+    if (it.leg) out += g4side(B, C, it.leg, cen, 13);
+    if (it.vleg) out += g4side(A, B, it.vleg, cen, 13);
+    if (it.ang) {
+      if ((it.angAt ?? "C") === "C") out += g4arc(C, A, B, GEO.hlA, it.ang, 20, 33, 11.5);
+      else out += g4arc(A, B, C, GEO.hlA, it.ang, 18, 30, 11.5);
+    }
+  });
+  const H = rows * ch + 6;
+  return svg(`0 0 360 ${H}`, "직각삼각형 여러 개를 나란히 놓은 그림", out);
+}
+
+/** 삼각형 밑각 B·C(실각, 도)로 좌표를 만든다 — m2u4 삼각형 헬퍼 공용. */
+const g4tri = (Bdeg: number, Cdeg: number, W0 = 232): { A: GPt; B: GPt; C: GPt; gy: number; H: number } => {
+  const tb = Math.tan((Bdeg * Math.PI) / 180);
+  const tc = Math.tan((Cdeg * Math.PI) / 180);
+  const invb = Bdeg === 90 ? 0 : 1 / tb;
+  const invc = Cdeg === 90 ? 0 : 1 / tc;
+  let W = W0;
+  let h = W / (invb + invc || 1);
+  if (h > 168) {
+    W = (W * 168) / h;
+    h = 168;
+  }
+  const lx = (360 - W) / 2;
+  const H = Math.round(h) + 88;
+  const gy = H - 46;
+  return { A: { x: lx + h * invb, y: gy - h }, B: { x: lx, y: gy }, C: { x: lx + W, y: gy }, gy, H };
+};
+/** 세 글자 각 키("OBC"류 — 가운데 글자가 꼭짓점) 라벨들을 그린다. 색은 hlA→hlB→hlD 순환.
+ *  같은 꼭짓점에 호가 여러 개면 좁은 각을 안쪽(작은 반지름), 넓은 각을 바깥쪽으로 스태거해
+ *  같은 반지름 겹침을 막는다(전체 내각+반각을 함께 표시하는 문항용). */
+const g4marks = (pts: Record<string, GPt>, marks: Array<{ at: string; label: string }>, adj: Record<string, [string, string]>): string => {
+  const rot = [GEO.hlA, GEO.hlB, GEO.hlD];
+  const resolved = marks.map((m, i) => {
+    const v = m.at.length === 1 ? m.at : m.at[1];
+    const [p1, p2] = m.at.length === 1 ? adj[m.at] : [m.at[0], m.at[2]];
+    const a0 = angleOf(pts[v].x, pts[v].y, pts[p1].x, pts[p1].y);
+    const a1 = angleOf(pts[v].x, pts[v].y, pts[p2].x, pts[p2].y);
+    const span = Math.min(normDeg(a1 - a0), normDeg(a0 - a1));
+    return { m, i, v, p1, p2, span };
+  });
+  const byVertex: Record<string, number> = {};
+  for (const r of resolved) byVertex[r.v] = (byVertex[r.v] ?? 0) + 1;
+  const rank: Record<string, number> = {};
+  let out = "";
+  for (const r of [...resolved].sort((x, y) => (x.v === y.v ? x.span - y.span : x.v < y.v ? -1 : 1))) {
+    const bump = byVertex[r.v] > 1 ? (rank[r.v] = (rank[r.v] ?? -1) + 1) : 0;
+    out += g4arc(pts[r.v], pts[r.p1], pts[r.p2], rot[r.i % 3], r.m.label, 21 + bump * 9, 21 + bump * 9 + 15);
+  }
+  return out;
+};
+
+/** 일반 삼각형 + 꼭짓점 A에서 밑변 BC로 내린 선(cev: 수선·각 이등분선·중선).
+ *  B·C가 실제 밑각(도) — ∠A=180−B−C. marks의 at은 "A"|"B"|"C"(내각)나
+ *  세 글자 각 키("BAD"·"DAC"·"ADB"·"ADC"). rightAt: 직각 꺾쇠 위치. bisMark: 반각 ● 표시. */
+export function m2ExamTriCevFig(o: {
+  B: number;
+  C: number;
+  cev?: "perp" | "bisect" | "median" | null;
+  footLabel?: string;
+  marks?: Array<{ at: string; label: string }>;
+  sides?: Partial<Record<"AB" | "AC" | "BC" | "BD" | "DC" | "AD", string>>;
+  tickAB_AC?: boolean;
+  tickBD_DC?: boolean;
+  rightAt?: "A" | "B" | "C" | "D";
+  bisMark?: boolean;
+  names?: [string, string, string];
+}): string {
+  const { A, B, C, gy, H } = g4tri(o.B, o.C);
+  const cen = g4cen([A, B, C]);
+  const [nA, nB, nC] = o.names ?? ["A", "B", "C"];
+  let D: GPt | null = null;
+  if (o.cev === "perp") D = { x: A.x, y: gy };
+  else if (o.cev === "median") D = { x: (B.x + C.x) / 2, y: gy };
+  else if (o.cev === "bisect") {
+    const ab = Math.hypot(A.x - B.x, A.y - B.y);
+    const ac = Math.hypot(A.x - C.x, A.y - C.y);
+    D = { x: B.x + ((C.x - B.x) * ab) / (ab + ac), y: gy };
+  }
+  let out = g4poly([A, B, C]);
+  if (D) {
+    out += g4line(A, D, GEO.ink, 2.2);
+    out += dot(D.x, D.y, GEO.pt, 3) + ptLabel(D.x, D.y, o.footLabel ?? "D", 0, 17);
+    if (o.cev === "perp") out += g4right(D, C, A);
+    if (o.cev === "median") out += tickMark(B.x, B.y, D.x, D.y, 2) + tickMark(D.x, D.y, C.x, C.y, 2);
+    if (o.tickBD_DC) out += tickMark(B.x, B.y, D.x, D.y, 2) + tickMark(D.x, D.y, C.x, C.y, 2);
+    if (o.cev === "bisect" && o.bisMark !== false) out += g4bisMark(A, B, D, "●", 26) + g4bisMark(A, D, C, "●", 26);
+  }
+  if (o.tickAB_AC) out += tickMark(A.x, A.y, B.x, B.y, 1) + tickMark(A.x, A.y, C.x, C.y, 1);
+  if (o.rightAt) {
+    if (o.rightAt === "A") out += g4right(A, B, C);
+    else if (o.rightAt === "B") out += g4right(B, C, A);
+    else if (o.rightAt === "C") out += g4right(C, A, B);
+    else if (D) out += g4right(D, C, A);
+  }
+  const pts: Record<string, GPt> = { A, B, C, ...(D ? { D } : {}) };
+  const adj: Record<string, [string, string]> = { A: ["B", "C"], B: ["A", "C"], C: ["A", "B"] };
+  if (o.marks) out += g4marks(pts, o.marks, adj);
+  const sidePairs: Record<string, [GPt, GPt] | null> = {
+    AB: [A, B],
+    AC: [A, C],
+    BC: [B, C],
+    BD: D ? [B, D] : null,
+    DC: D ? [D, C] : null,
+    AD: D ? [A, D] : null,
+  };
+  for (const [key, lab] of Object.entries(o.sides ?? {})) {
+    const pair = sidePairs[key];
+    if (pair && lab) out += key === "AD" ? g4side(pair[0], pair[1], lab, { x: cen.x + 200, y: cen.y }, 13) : g4side(pair[0], pair[1], lab, cen);
+  }
+  out += ptLabel(A.x, A.y, nA, 0, -10) + ptLabel(B.x, B.y, nB, -7, 17) + ptLabel(C.x, C.y, nC, 7, 17);
+  return svg(`0 0 360 ${H}`, "삼각형 그림", out);
+}
+
+/** 삼각형의 외심(O)·내심(I) — B·C(실각)로 삼각형·중심·원·접점이 전부 계산된다.
+ *  segs: 중심→꼭짓점 선분, feet: 수선의 발(O=변 중점)/접점(I) D·E·F(+직각 표시),
+ *  circle: 외접원/내접원, marks: 각 라벨(세 글자 키 — "OBC"=꼭짓점 B, "BIC"=꼭짓점 I),
+ *  rLabel: 중심→BC 수직 반지름 + 라벨, tickR: 중심→꼭짓점 같은 거리 틱(외심),
+ *  tickFeet: 발 조각 틱(수직이등분선 강조, 외심). */
+export function m2ExamCenterFig(o: {
+  kind: "O" | "I";
+  B: number;
+  C: number;
+  segs?: Array<"A" | "B" | "C">;
+  feet?: boolean;
+  feetLabels?: [string, string, string];
+  circle?: boolean;
+  marks?: Array<{ at: string; label: string }>;
+  sideLabels?: Partial<Record<"AB" | "BC" | "CA", string>>;
+  rLabel?: string;
+  tickR?: boolean;
+  tickFeet?: boolean;
+  names?: [string, string, string];
+  centerName?: string;
+}): string {
+  const { A, B, C, gy, H } = g4tri(o.B, o.C, 244);
+  const cen = g4cen([A, B, C]);
+  let ctr: GPt;
+  let r = 0;
+  if (o.kind === "O") {
+    const ox = (B.x + C.x) / 2;
+    const oy = ((A.x - ox) * (A.x - ox) + A.y * A.y - (B.x - ox) * (B.x - ox) - B.y * B.y) / (2 * (A.y - B.y));
+    ctr = { x: ox, y: oy };
+    r = Math.hypot(ctr.x - B.x, ctr.y - B.y);
+  } else {
+    const a = Math.hypot(B.x - C.x, B.y - C.y);
+    const b = Math.hypot(A.x - C.x, A.y - C.y);
+    const c = Math.hypot(A.x - B.x, A.y - B.y);
+    ctr = { x: (a * A.x + b * B.x + c * C.x) / (a + b + c), y: (a * A.y + b * B.y + c * C.y) / (a + b + c) };
+    r = gy - ctr.y;
+  }
+  const [nA, nB, nC] = o.names ?? ["A", "B", "C"];
+  const cName = o.centerName ?? o.kind;
+  let out = "";
+  if (o.circle)
+    out += `<circle cx="${ctr.x.toFixed(1)}" cy="${ctr.y.toFixed(1)}" r="${r.toFixed(1)}" fill="none" stroke="${o.kind === "O" ? GEO.soft : GEO.hlB}" stroke-width="1.8"/>`;
+  out += g4poly([A, B, C], o.kind === "I" && o.circle ? "none" : F4);
+  const proj = (P: GPt, Q: GPt): GPt => {
+    const dx = Q.x - P.x;
+    const dy = Q.y - P.y;
+    const t = ((ctr.x - P.x) * dx + (ctr.y - P.y) * dy) / (dx * dx + dy * dy);
+    return { x: P.x + t * dx, y: P.y + t * dy };
+  };
+  if (o.feet) {
+    const fAB = o.kind === "O" ? { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 } : proj(A, B);
+    const fBC = o.kind === "O" ? { x: (B.x + C.x) / 2, y: (B.y + C.y) / 2 } : proj(B, C);
+    const fCA = o.kind === "O" ? { x: (C.x + A.x) / 2, y: (C.y + A.y) / 2 } : proj(C, A);
+    const [lD, lE, lF] = o.feetLabels ?? ["D", "E", "F"];
+    out += g4line(ctr, fAB, GEO.ink, 1.8, "5 4") + g4line(ctr, fBC, GEO.ink, 1.8, "5 4") + g4line(ctr, fCA, GEO.ink, 1.8, "5 4");
+    out += g4right(fAB, B, ctr, 8) + g4right(fBC, C, ctr, 8) + g4right(fCA, A, ctr, 8);
+    out += dot(fAB.x, fAB.y, GEO.pt, 3) + dot(fBC.x, fBC.y, GEO.pt, 3) + dot(fCA.x, fCA.y, GEO.pt, 3);
+    out += ptLabel(fAB.x, fAB.y, lD, -13, 2) + ptLabel(fBC.x, fBC.y, lE, 0, 18) + ptLabel(fCA.x, fCA.y, lF, 14, 2);
+    if (o.tickFeet && o.kind === "O")
+      out +=
+        tickMark(A.x, A.y, fAB.x, fAB.y, 1) +
+        tickMark(fAB.x, fAB.y, B.x, B.y, 1) +
+        tickMark(B.x, B.y, fBC.x, fBC.y, 2) +
+        tickMark(fBC.x, fBC.y, C.x, C.y, 2) +
+        tickMark(C.x, C.y, fCA.x, fCA.y, 3) +
+        tickMark(fCA.x, fCA.y, A.x, A.y, 3);
+  }
+  for (const v of o.segs ?? []) {
+    const P = v === "A" ? A : v === "B" ? B : C;
+    out += g4line(ctr, P, GEO.ink, 2.2);
+    if (o.tickR && o.kind === "O") out += tickMark(ctr.x, ctr.y, P.x, P.y, 1);
+  }
+  if (o.rLabel) {
+    const f = { x: ctr.x, y: gy };
+    out += g4line(ctr, f, GEO.hlB, 2.2) + g4right(f, C, ctr, 8);
+    out += g4text(ctr.x + 16, (ctr.y + gy) / 2 + 4, o.rLabel, 12, GEO.hlB);
+  }
+  const pts: Record<string, GPt> = { A, B, C, O: ctr, I: ctr };
+  const adj: Record<string, [string, string]> = { A: ["B", "C"], B: ["A", "C"], C: ["A", "B"] };
+  if (o.marks) out += g4marks(pts, o.marks, adj);
+  for (const [key, lab] of Object.entries(o.sideLabels ?? {})) {
+    if (!lab) continue;
+    const pair = key === "AB" ? [A, B] : key === "BC" ? [B, C] : [C, A];
+    out += g4side(pair[0], pair[1], lab, cen);
+  }
+  out += dot(ctr.x, ctr.y, GEO.pt, 3.4) + ptLabel(ctr.x, ctr.y, cName, 12, -5);
+  out += ptLabel(A.x, A.y, nA, 0, -10) + ptLabel(B.x, B.y, nB, -8, 16) + ptLabel(C.x, C.y, nC, 8, 16);
+  return svg(`0 0 360 ${H}`, o.kind === "O" ? "삼각형과 한 점 O를 나타낸 그림" : "삼각형과 한 점 I를 나타낸 그림", out);
+}
+
+/** 직각삼각형(∠B=90°)과 빗변 AC의 중점 O — 외접원 반지름·빗변 유형.
+ *  acute: 실제 ∠A(도, 그리기용), hyp: 빗변 라벨, obLabel: OB 라벨, ticks: OA·OB·OC 틱. */
+export function m2ExamCircumRightFig(o: {
+  acute?: number;
+  hyp?: string;
+  obLabel?: string;
+  circle?: boolean;
+  ticks?: boolean;
+  names?: [string, string, string];
+  oName?: string;
+}): string {
+  const ac = ((o.acute ?? 47) * Math.PI) / 180;
+  const ab = Math.min(138, 236 / Math.tan(ac));
+  const bc = ab * Math.tan(ac);
+  const H = Math.round(ab) + 90;
+  const gy = H - 46;
+  const B = { x: (360 - bc) / 2, y: gy };
+  const A = { x: B.x, y: gy - ab };
+  const C = { x: B.x + bc, y: gy };
+  const O = { x: (A.x + C.x) / 2, y: (A.y + C.y) / 2 };
+  const cen = g4cen([A, B, C]);
+  const [nA, nB, nC] = o.names ?? ["A", "B", "C"];
+  let out = "";
+  if (o.circle) {
+    const r = Math.hypot(O.x - A.x, O.y - A.y);
+    out += `<circle cx="${O.x.toFixed(1)}" cy="${O.y.toFixed(1)}" r="${r.toFixed(1)}" fill="none" stroke="${GEO.soft}" stroke-width="1.8"/>`;
+  }
+  out += g4poly([A, B, C]) + g4right(B, C, A);
+  out += g4line(O, B, GEO.ink, 2.2);
+  if (o.ticks !== false) out += tickMark(O.x, O.y, A.x, A.y, 1) + tickMark(O.x, O.y, C.x, C.y, 1) + tickMark(O.x, O.y, B.x, B.y, 1);
+  if (o.hyp) out += g4side(A, O, o.hyp, cen, 17);
+  if (o.obLabel) out += g4side(O, B, o.obLabel, { x: cen.x - 200, y: cen.y }, 13);
+  out += dot(O.x, O.y, GEO.pt, 3.4) + ptLabel(O.x, O.y, o.oName ?? "O", 10, -8);
+  out += ptLabel(A.x, A.y, nA, -8, -4) + ptLabel(B.x, B.y, nB, -8, 16) + ptLabel(C.x, C.y, nC, 8, 16);
+  return svg(`0 0 360 ${H}`, "직각삼각형과 빗변 위의 점 O를 나타낸 그림", out);
+}
+
+/** 평행사변형 ▱ABCD 좌표(A 좌상 → B 좌하 → C 우하 → D 우상). angleB가 실제 ∠B(도). */
+const g4para = (angleB = 61, w = 208, h = 116): { A: GPt; B: GPt; C: GPt; D: GPt; O: GPt; H: number } => {
+  const off = h / Math.tan((angleB * Math.PI) / 180);
+  const lx = (360 - w - off) / 2;
+  const H = h + 96;
+  const gy = H - 48;
+  const B = { x: lx, y: gy };
+  const C = { x: lx + w, y: gy };
+  const A = { x: lx + off, y: gy - h };
+  const D = { x: lx + off + w, y: gy - h };
+  return { A, B, C, D, O: { x: (A.x + C.x) / 2, y: (A.y + C.y) / 2 }, H };
+};
+
+/** 평행사변형 범용 — angles/sides 라벨, diag: 대각선, oLabels: 교점 조각 라벨,
+ *  ticksOpp: 대변 틱(AD·BC 1, AB·DC 2) · ticksDiag: OA=OC(1)·OB=OD(2) · arrows: 평행 화살표. */
+export function m2ExamParaFig(o: {
+  angleB?: number;
+  w?: number;
+  h?: number;
+  angles?: Partial<Record<"A" | "B" | "C" | "D", string>>;
+  sides?: Partial<Record<"AB" | "BC" | "CD" | "DA", string>>;
+  diag?: "AC" | "BD" | "both";
+  oName?: string;
+  oLabels?: Partial<Record<"OA" | "OB" | "OC" | "OD", string>>;
+  ticksOpp?: boolean;
+  ticksDiag?: boolean;
+  arrows?: boolean;
+  names?: [string, string, string, string];
+}): string {
+  const { A, B, C, D, O, H } = g4para(o.angleB, o.w, o.h);
+  const cen = O;
+  const [nA, nB, nC, nD] = o.names ?? ["A", "B", "C", "D"];
+  let out = g4poly([A, B, C, D]);
+  if (o.diag === "AC" || o.diag === "both") out += g4line(A, C, GEO.ink, 2.2);
+  if (o.diag === "BD" || o.diag === "both") out += g4line(B, D, GEO.ink, 2.2);
+  if (o.diag) {
+    out += dot(O.x, O.y, GEO.pt, 3.2);
+    if (o.oName !== "") out += ptLabel(O.x, O.y, o.oName ?? "O", 0, -9);
+  }
+  if (o.ticksOpp)
+    out +=
+      tickMark(A.x, A.y, D.x, D.y, 1) +
+      tickMark(B.x, B.y, C.x, C.y, 1) +
+      tickMark(A.x, A.y, B.x, B.y, 2) +
+      tickMark(D.x, D.y, C.x, C.y, 2);
+  if (o.ticksDiag)
+    out +=
+      tickMark(A.x, A.y, O.x, O.y, 1) +
+      tickMark(O.x, O.y, C.x, C.y, 1) +
+      tickMark(B.x, B.y, O.x, O.y, 2) +
+      tickMark(O.x, O.y, D.x, D.y, 2);
+  if (o.arrows) {
+    const mAD = { x: (A.x + D.x) / 2, y: A.y };
+    const mBC = { x: (B.x + C.x) / 2, y: B.y };
+    out += arrowHead(mAD.x + 5, mAD.y, 0) + arrowHead(mBC.x + 5, mBC.y, 0);
+    const dirAB = angleOf(A.x, A.y, B.x, B.y);
+    const mAB = { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 };
+    const mDC = { x: (D.x + C.x) / 2, y: (D.y + C.y) / 2 };
+    const off2 = polar(0, 0, 5, dirAB);
+    out += arrowHead(mAB.x, mAB.y, dirAB) + arrowHead(mAB.x + off2.x, mAB.y + off2.y, dirAB);
+    out += arrowHead(mDC.x, mDC.y, dirAB) + arrowHead(mDC.x + off2.x, mDC.y + off2.y, dirAB);
+  }
+  const angDefs: Record<string, [GPt, GPt, GPt]> = { A: [A, B, D], B: [B, A, C], C: [C, B, D], D: [D, C, A] };
+  const rot = [GEO.hlA, GEO.hlB, GEO.hlD, GEO.hlA];
+  let k = 0;
+  for (const [key, lab] of Object.entries(o.angles ?? {})) {
+    if (!lab) continue;
+    const [v, p1, p2] = angDefs[key];
+    out += g4arc(v, p1, p2, rot[k % 4], lab, 20);
+    k += 1;
+  }
+  const sideDefs: Record<string, [GPt, GPt]> = { AB: [A, B], BC: [B, C], CD: [C, D], DA: [D, A] };
+  for (const [key, lab] of Object.entries(o.sides ?? {})) {
+    if (lab) out += g4side(sideDefs[key][0], sideDefs[key][1], lab, cen);
+  }
+  const oSegDefs: Record<string, [GPt, GPt]> = { OA: [O, A], OB: [O, B], OC: [O, C], OD: [O, D] };
+  for (const [key, lab] of Object.entries(o.oLabels ?? {})) {
+    if (lab) out += g4side(oSegDefs[key][0], oSegDefs[key][1], lab, cen, 12);
+  }
+  out +=
+    ptLabel(A.x, A.y, nA, -6, -8) +
+    ptLabel(B.x, B.y, nB, -7, 17) +
+    ptLabel(C.x, C.y, nC, 7, 17) +
+    ptLabel(D.x, D.y, nD, 7, -8);
+  return svg(`0 0 360 ${H}`, "평행사변형 그림", out);
+}
+
+/** 평행사변형 + 각의 이등분선 — mode "A"(∠A의 이등분선이 BC와 만나는 점 E) ·
+ *  "AD"(∠A→E, ∠D→F 둘 다 BC 위) · "Bext"(∠B의 이등분선이 DC의 연장과 만나는 점 E).
+ *  angleB(실제 ∠B)·ratio(BC÷AB 실제 비)로 좌표 계산 — 길이 라벨은 labels로. */
+export function m2ExamParaBisectFig(o: {
+  mode: "A" | "AD" | "Bext";
+  angleB?: number;
+  ratio?: number;
+  labels?: Array<{ on: string; label: string }>;
+  eName?: string;
+  fName?: string;
+  names?: [string, string, string, string];
+}): string {
+  const beta = o.angleB ?? 62;
+  const h = o.mode === "Bext" ? 96 : 112;
+  const s = h / Math.sin((beta * Math.PI) / 180);
+  const w = (o.ratio ?? 1.55) * s;
+  const off = h / Math.tan((beta * Math.PI) / 180);
+  const extra = o.mode === "Bext" ? 54 : 0;
+  const lx = (360 - w - off) / 2 - extra / 2;
+  const H = h + 100 + extra;
+  const gy = H - 50;
+  const B = { x: lx, y: gy };
+  const C = { x: lx + w, y: gy };
+  const A = { x: lx + off, y: gy - h };
+  const D = { x: lx + off + w, y: gy - h };
+  const cen = { x: (A.x + C.x) / 2, y: (A.y + C.y) / 2 };
+  const [nA, nB, nC, nD] = o.names ?? ["A", "B", "C", "D"];
+  const unit = (p: GPt, q: GPt): GPt => {
+    const d = Math.hypot(q.x - p.x, q.y - p.y) || 1;
+    return { x: (q.x - p.x) / d, y: (q.y - p.y) / d };
+  };
+  const bisFoot = (v: GPt, e1: GPt, e2: GPt, lineP: GPt, lineQ: GPt): GPt => {
+    const u1 = unit(v, e1);
+    const u2 = unit(v, e2);
+    const dir = { x: u1.x + u2.x, y: u1.y + u2.y };
+    const dx = lineQ.x - lineP.x;
+    const dy = lineQ.y - lineP.y;
+    const den = dir.x * dy - dir.y * dx;
+    const t = ((lineP.x - v.x) * dy - (lineP.y - v.y) * dx) / den;
+    return { x: v.x + dir.x * t, y: v.y + dir.y * t };
+  };
+  let out = g4poly([A, B, C, D]);
+  const pts: Record<string, GPt> = { A, B, C, D };
+  if (o.mode === "A" || o.mode === "AD") {
+    const E = bisFoot(A, B, D, B, C);
+    pts[o.eName ?? "E"] = E;
+    out += g4line(A, E, GEO.ink, 2.2);
+    out += g4bisMark(A, B, E, "●", 24) + g4bisMark(A, E, D, "●", 24);
+    out += g4arc(A, B, E, GEO.hlA, undefined, 16) + g4arc(A, E, D, GEO.hlA, undefined, 16);
+    out += dot(E.x, E.y, GEO.pt, 3) + ptLabel(E.x, E.y, o.eName ?? "E", 0, 17);
+    if (o.mode === "AD") {
+      const F = bisFoot(D, A, C, B, C);
+      pts[o.fName ?? "F"] = F;
+      out += g4line(D, F, GEO.ink, 2.2);
+      out += g4bisMark(D, A, F, "○", 24) + g4bisMark(D, F, C, "○", 24);
+      out += g4arc(D, C, F, GEO.hlB, undefined, 16) + g4arc(D, F, A, GEO.hlB, undefined, 16);
+      out += dot(F.x, F.y, GEO.pt, 3) + ptLabel(F.x, F.y, o.fName ?? "F", 0, 17);
+    }
+  } else {
+    const E = bisFoot(B, A, C, D, C);
+    pts[o.eName ?? "E"] = E;
+    out += g4line(D, E, GEO.ink, 1.8, "6 5");
+    out += g4line(B, E, GEO.ink, 2.2);
+    out += g4bisMark(B, A, E, "●", 24) + g4bisMark(B, E, C, "●", 24);
+    out += g4arc(B, C, E, GEO.hlA, undefined, 16) + g4arc(B, E, A, GEO.hlA, undefined, 16);
+    out += dot(E.x, E.y, GEO.pt, 3) + ptLabel(E.x, E.y, o.eName ?? "E", 8, -6);
+  }
+  const segMap = (key: string): [GPt, GPt] | null => {
+    if (key.length !== 2) return null;
+    const p = pts[key[0]];
+    const q = pts[key[1]];
+    return p && q ? [p, q] : null;
+  };
+  for (const item of o.labels ?? []) {
+    const pair = segMap(item.on);
+    if (pair) out += g4side(pair[0], pair[1], item.label, cen, 13);
+  }
+  out +=
+    ptLabel(A.x, A.y, nA, -6, -8) +
+    ptLabel(B.x, B.y, nB, -7, 17) +
+    ptLabel(C.x, C.y, nC, 7, 17) +
+    ptLabel(D.x, D.y, nD, 7, -8);
+  return svg(`0 0 360 ${H}`, "평행사변형과 각의 이등분선 그림", out);
+}
+
+/** 직사각형·마름모·정사각형 대각선 그림 — 표준 배치(직사 A좌상→B좌하→C우하→D우상 ·
+ *  마름모 A위→B왼→C아래→D오른). marks: 세 글자 각 키(가운데가 꼭짓점, O·P 포함).
+ *  pt: 대각선 위 점 P(t는 0~1 위치, segTo로 꼭짓점 연결). */
+export function m2ExamQuadDiagFig(o: {
+  kind: "rect" | "rhom" | "sq";
+  diag?: boolean | "AC" | "BD";
+  marks?: Array<{ at: string; label: string }>;
+  sides?: Partial<Record<"AB" | "BC" | "CD" | "DA", string>>;
+  oSegs?: Partial<Record<"OA" | "OB" | "OC" | "OD" | "AC" | "BD", string>>;
+  rightO?: boolean;
+  tickSides?: boolean;
+  tickDiag?: "all" | "pairs" | null;
+  pt?: { on: "AC" | "BD"; t: number; name?: string; segTo?: Array<"A" | "B" | "C" | "D"> };
+  oName?: string;
+  names?: [string, string, string, string];
+  /** 라벨-실각 일치용 실제 비율: rect는 w·h(∠OAD=atan(h/w)), rhom은 d1(가로)·d2(세로) — atan(d2/d1)=∠OBC. */
+  shape?: { w?: number; h?: number; d1?: number; d2?: number };
+}): string {
+  let A: GPt;
+  let B: GPt;
+  let C: GPt;
+  let D: GPt;
+  let H: number;
+  if (o.kind === "rect") {
+    const w = Math.min(o.shape?.w ?? 222, 288);
+    const h = Math.min(o.shape?.h ?? 126, 210);
+    A = { x: 181 - w / 2, y: 52 };
+    B = { x: 181 - w / 2, y: 52 + h };
+    C = { x: 181 + w / 2, y: 52 + h };
+    D = { x: 181 + w / 2, y: 52 };
+    H = 52 + h + 44;
+  } else if (o.kind === "sq") {
+    A = { x: 98, y: 46 };
+    B = { x: 98, y: 214 };
+    C = { x: 266, y: 214 };
+    D = { x: 266, y: 46 };
+    H = 258;
+  } else {
+    const d1 = Math.min(o.shape?.d1 ?? 228, 300);
+    const d2 = Math.min(o.shape?.d2 ?? 164, 210);
+    A = { x: 180, y: 120 - d2 / 2 };
+    B = { x: 180 - d1 / 2, y: 120 };
+    C = { x: 180, y: 120 + d2 / 2 };
+    D = { x: 180 + d1 / 2, y: 120 };
+    H = 120 + d2 / 2 + 40;
+  }
+  const O = { x: (A.x + C.x) / 2, y: (A.y + C.y) / 2 };
+  const cen = O;
+  const [nA, nB, nC, nD] = o.names ?? ["A", "B", "C", "D"];
+  let out = g4poly([A, B, C, D]);
+  const dm = o.diag ?? true;
+  const dAC = dm === true || dm === "AC";
+  const dBD = dm === true || dm === "BD";
+  if (dAC) out += g4line(A, C, GEO.ink, 2.2);
+  if (dBD) out += g4line(B, D, GEO.ink, 2.2);
+  if (dAC && dBD) {
+    out += dot(O.x, O.y, GEO.pt, 3.2);
+    if (o.oName !== "") out += ptLabel(O.x, O.y, o.oName ?? "O", o.kind === "rhom" ? 0 : 12, o.kind === "rhom" ? -9 : -7);
+    if (o.rightO !== false && (o.kind === "rhom" || o.kind === "sq")) out += g4right(O, D, A, 9);
+  }
+  if (o.tickSides) out += tickMark(A.x, A.y, B.x, B.y, 1) + tickMark(B.x, B.y, C.x, C.y, 1) + tickMark(C.x, C.y, D.x, D.y, 1) + tickMark(D.x, D.y, A.x, A.y, 1);
+  if (o.tickDiag === "all")
+    out += tickMark(O.x, O.y, A.x, A.y, 1) + tickMark(O.x, O.y, B.x, B.y, 1) + tickMark(O.x, O.y, C.x, C.y, 1) + tickMark(O.x, O.y, D.x, D.y, 1);
+  else if (o.tickDiag === "pairs")
+    out += tickMark(O.x, O.y, A.x, A.y, 1) + tickMark(O.x, O.y, C.x, C.y, 1) + tickMark(O.x, O.y, B.x, B.y, 2) + tickMark(O.x, O.y, D.x, D.y, 2);
+  const pts: Record<string, GPt> = { A, B, C, D, O };
+  if (o.pt) {
+    const [p, q] = o.pt.on === "AC" ? [A, C] : [B, D];
+    const P = { x: p.x + (q.x - p.x) * o.pt.t, y: p.y + (q.y - p.y) * o.pt.t };
+    pts[o.pt.name ?? "P"] = P;
+    for (const v of o.pt.segTo ?? []) out += g4line(P, pts[v], GEO.ink, 2.2);
+    out += dot(P.x, P.y, GEO.pt, 3.2) + ptLabel(P.x, P.y, o.pt.name ?? "P", 12, -4);
+  }
+  const adj: Record<string, [string, string]> = { A: ["B", "D"], B: ["A", "C"], C: ["B", "D"], D: ["C", "A"] };
+  if (o.marks) out += g4marks(pts, o.marks, adj);
+  const sideDefs: Record<string, [GPt, GPt]> = { AB: [A, B], BC: [B, C], CD: [C, D], DA: [D, A] };
+  for (const [key, lab] of Object.entries(o.sides ?? {})) {
+    if (lab) out += g4side(sideDefs[key][0], sideDefs[key][1], lab, cen);
+  }
+  const oSegDefs: Record<string, [GPt, GPt]> = { OA: [O, A], OB: [O, B], OC: [O, C], OD: [O, D], AC: [A, C], BD: [B, D] };
+  for (const [key, lab] of Object.entries(o.oSegs ?? {})) {
+    if (lab) out += g4side(oSegDefs[key][0], oSegDefs[key][1], lab, cen, 12);
+  }
+  if (o.kind === "rhom")
+    out += ptLabel(A.x, A.y, nA, 0, -9) + ptLabel(B.x, B.y, nB, -14, 4) + ptLabel(C.x, C.y, nC, 0, 18) + ptLabel(D.x, D.y, nD, 14, 4);
+  else
+    out += ptLabel(A.x, A.y, nA, -8, -7) + ptLabel(B.x, B.y, nB, -8, 16) + ptLabel(C.x, C.y, nC, 8, 16) + ptLabel(D.x, D.y, nD, 8, -7);
+  const kindName = o.kind === "rect" ? "직사각형" : o.kind === "sq" ? "정사각형" : "마름모";
+  return svg(`0 0 360 ${H}`, `${kindName} 그림`, out);
+}
+
+/** 사각형 가족 관계도(조건의 계단) — 화살표 조건 라벨을 hide 순서대로 ㉠㉡㉢로 가리고,
+ *  hideNode의 노드 이름은 ㉮㉯로 가린다. variant: "angleSide"(내각·변 조건)·"diag"(대각선 조건).
+ *  edge 키: q2t(사각형→사다리꼴) t2p(→평행사변형) p2r(→직사각형) p2m(→마름모) r2s·m2s(→정사각형). */
+export function m2ExamFamilyFig(o: {
+  hide?: Array<"q2t" | "t2p" | "p2r" | "p2m" | "r2s" | "m2s">;
+  hideNode?: Array<"trap" | "para" | "rect" | "rhom" | "sq">;
+  variant?: "angleSide" | "diag";
+}): string {
+  const labelsAS: Record<string, string> = {
+    q2t: "한 쌍의 대변이 평행",
+    t2p: "다른 한 쌍의 대변도 평행",
+    p2r: "한 내각이 직각",
+    p2m: "이웃하는 두 변의\n길이가 같음",
+    r2s: "이웃하는 두 변의\n길이가 같음",
+    m2s: "한 내각이 직각",
+  };
+  const labelsDG: Record<string, string> = {
+    q2t: "한 쌍의 대변이 평행",
+    t2p: "다른 한 쌍의 대변도 평행",
+    p2r: "두 대각선의\n길이가 같음",
+    p2m: "두 대각선이\n서로 수직",
+    r2s: "두 대각선이\n서로 수직",
+    m2s: "두 대각선의\n길이가 같음",
+  };
+  const base = o.variant === "diag" ? labelsDG : labelsAS;
+  const gname = ["㉠", "㉡", "㉢", "㉣"];
+  const nname = ["㉮", "㉯"];
+  const lab: Record<string, string> = { ...base };
+  (o.hide ?? []).forEach((key, i) => {
+    lab[key] = gname[i] ?? "㉠";
+  });
+  const nodeName: Record<string, string> = { quad: "사각형", trap: "사다리꼴", para: "평행사변형", rect: "직사각형", rhom: "마름모", sq: "정사각형" };
+  (o.hideNode ?? []).forEach((key, i) => {
+    nodeName[key] = nname[i] ?? "㉮";
+  });
+  const pos: Record<string, { x: number; y: number }> = {
+    quad: { x: 180, y: 26 },
+    trap: { x: 180, y: 86 },
+    para: { x: 180, y: 146 },
+    rect: { x: 84, y: 224 },
+    rhom: { x: 276, y: 224 },
+    sq: { x: 180, y: 306 },
+  };
+  const node = (key: string): string => {
+    const p = pos[key];
+    const hidden = (o.hideNode ?? []).includes(key as "trap");
+    const w = nodeName[key].length * 13 + 26;
+    return (
+      `<rect x="${p.x - w / 2}" y="${p.y - 15}" width="${w}" height="30" rx="10" fill="${hidden ? "#FFF4E0" : "#FFFFFF"}" stroke="${hidden ? GEO.hlA : GEO.ink}" stroke-width="1.8"/>` +
+      g4text(p.x, p.y + 4.5, nodeName[key], 13)
+    );
+  };
+  const edge = (from: string, to: string, key: string, side: "L" | "R" | "C"): string => {
+    const p = pos[from];
+    const q = pos[to];
+    const P = { x: p.x, y: p.y + 15 };
+    const Q = { x: q.x, y: q.y - 15 };
+    const dx = Q.x - P.x;
+    const shift = side === "C" ? 0 : side === "L" ? -4 : 4;
+    let out2 =
+      `<line x1="${P.x + shift}" y1="${P.y + 2}" x2="${Q.x - (dx === 0 ? -shift : 0)}" y2="${Q.y - 4}" stroke="${GEO.soft}" stroke-width="2"/>` +
+      arrowHead(Q.x - (dx === 0 ? -shift : 0), Q.y - 3, angleOf(P.x, P.y, Q.x, Q.y + 6), GEO.soft, 6);
+    const mx = (P.x + Q.x) / 2;
+    const my = (P.y + Q.y) / 2 + 3;
+    const text = lab[key];
+    const hidden = isAskLabel(text);
+    const lines = text.split("\n");
+    const tw = Math.max(...lines.map((l) => l.length)) * 10.2 + 14;
+    const bh = lines.length * 14 + 6;
+    const tx = side === "C" ? mx + 12 : side === "L" ? mx - 10 : mx + 10;
+    const anchor = side === "L" ? "end" : "start";
+    const bx = anchor === "end" ? tx - tw + 3 : tx - 7;
+    out2 += `<rect x="${bx}" y="${my - bh / 2}" width="${tw}" height="${bh}" rx="7" fill="${hidden ? "#FFF4E0" : "#F4F7FE"}" stroke="${hidden ? GEO.hlA : "#D5DEF0"}" stroke-width="1.2"/>`;
+    lines.forEach((ln, i) => {
+      out2 += `<text x="${tx}" y="${my - bh / 2 + 14 * i + 14}" text-anchor="${anchor}" font-size="10.5" font-weight="700" fill="${GEO.ink}">${ln}</text>`;
+    });
+    return out2;
+  };
+  let out = "";
+  out += edge("quad", "trap", "q2t", "C");
+  out += edge("trap", "para", "t2p", "C");
+  out += edge("para", "rect", "p2r", "L");
+  out += edge("para", "rhom", "p2m", "R");
+  out += edge("rect", "sq", "r2s", "L");
+  out += edge("rhom", "sq", "m2s", "R");
+  out += node("quad") + node("trap") + node("para") + node("rect") + node("rhom") + node("sq");
+  return svg("0 0 360 334", "사각형 가족의 관계를 조건 화살표로 이은 그림", out);
+}
+
+/** 사각형 미니 카드 나열(ㄱ~ㅁ) — kinds 순서대로. diag: 두 대각선(가는 남색).
+ *  trap은 좌우 기울기가 다른 "삐딱한" 사다리꼴로 그린다(특수 사다리꼴 명명 금지 원칙). */
+export function m2ExamQuadRowFig(o: {
+  kinds: Array<"trap" | "para" | "rect" | "rhom" | "sq" | "kite" | "quad">;
+  labels?: string[];
+  diag?: boolean;
+}): string {
+  const n = o.kinds.length;
+  const cw = 360 / n;
+  const SH: Record<string, Array<[number, number]>> = {
+    trap: [[4, 50], [60, 50], [46, 10], [22, 10]],
+    para: [[2, 50], [46, 50], [60, 10], [16, 10]],
+    rect: [[4, 50], [60, 50], [60, 12], [4, 12]],
+    rhom: [[31, 4], [6, 29], [31, 54], [56, 29]],
+    sq: [[12, 50], [52, 50], [52, 10], [12, 10]],
+    kite: [[31, 4], [12, 26], [31, 56], [50, 26]],
+    quad: [[6, 44], [32, 54], [58, 24], [22, 8]],
+  };
+  const sc = n === 1 ? 1.9 : n === 2 ? 1.45 : 1;
+  let out = "";
+  o.kinds.forEach((kind, i) => {
+    const ox = i * cw + (cw - 64 * sc) / 2;
+    const oy = 12;
+    const pts = SH[kind].map(([x, y]) => ({ x: ox + x * sc, y: oy + y * sc }));
+    out += g4poly(pts, F4, 2.2);
+    if (o.diag) {
+      out += g4line(pts[0], pts[2], NAVY, 1.6) + g4line(pts[1], pts[3], NAVY, 1.6);
+    }
+    const label = (o.labels ?? ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ"])[i] ?? "";
+    if (label) out += g4text(i * cw + cw / 2, 12 + 56 * sc + 22, label, 12.5, GEO.soft);
+  });
+  const H = Math.round(12 + 56 * sc + 30);
+  return svg(`0 0 360 ${H}`, "여러 가지 사각형을 나란히 놓은 그림", out);
+}
+
+/** 평행선과 넓이 — mode "twin"(평행선 l·m 사이 같은 밑변 BC의 두 삼각형) ·
+ *  "trap"(AD∥BC 사다리꼴 + 두 대각선·교점 O) · "para"(평행사변형 + 대각선 음영) ·
+ *  "bent"(꺾인 경계 밭 ABCD + AC와 평행한 보조선 D→E, 경계 펴기).
+ *  shade: 음영 도형(꼭짓점 문자열, twin·trap·para) · areaLabel: 음영 안 조건 넓이 라벨. */
+export function m2ExamEqAreaFig(o: {
+  mode: "twin" | "trap" | "para" | "bent";
+  shade?: string;
+  areaLabel?: { in: string; label: string };
+  diag?: "AC" | "both";
+  aX?: number;
+  dX?: number;
+  segAD?: boolean;
+  lineNames?: [string, string];
+  names?: string[];
+}): string {
+  let out = "";
+  let H = 240;
+  const pts: Record<string, GPt> = {};
+  const shadePoly = (letters: string, fill = F4B): string => {
+    const ps = letters.split("").map((ch) => pts[ch]).filter(Boolean);
+    return ps.length >= 3 ? `<path d="M${ps.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" L")} Z" fill="${fill}" stroke="none"/>` : "";
+  };
+  if (o.mode === "twin") {
+    H = 238;
+    const yT = 52;
+    const yB = 190;
+    const [lnT, lnB] = o.lineNames ?? ["l", "m"];
+    pts.B = { x: 118, y: yB };
+    pts.C = { x: 262, y: yB };
+    pts.A = { x: o.aX ?? 92, y: yT };
+    pts.D = { x: o.dX ?? 234, y: yT };
+    out += lineSvg(24, yT, 336, yT, GEO.ink, 2.2) + lineSvg(24, yB, 336, yB, GEO.ink, 2.2);
+    out += `<text x="344" y="${yT + 4}" text-anchor="middle" font-size="12.5" font-weight="800" font-style="italic" fill="${GEO.ink}">${lnT}</text>`;
+    out += `<text x="344" y="${yB + 4}" text-anchor="middle" font-size="12.5" font-weight="800" font-style="italic" fill="${GEO.ink}">${lnB}</text>`;
+    if (o.shade) out += shadePoly(o.shade);
+    out += g4line(pts.A, pts.B, GEO.ink, 2.4) + g4line(pts.A, pts.C, GEO.ink, 2.4);
+    out += g4line(pts.D, pts.B, GEO.ink, 2.4) + g4line(pts.D, pts.C, GEO.ink, 2.4);
+    if (o.segAD) out += g4line(pts.A, pts.D, GEO.ink, 2.4);
+    out += ptLabel(pts.A.x, pts.A.y, "A", 0, -10) + ptLabel(pts.D.x, pts.D.y, "D", 0, -10);
+    out += ptLabel(pts.B.x, pts.B.y, "B", -6, 18) + ptLabel(pts.C.x, pts.C.y, "C", 6, 18);
+    out += dot(pts.A.x, pts.A.y, GEO.pt, 3) + dot(pts.D.x, pts.D.y, GEO.pt, 3) + dot(pts.B.x, pts.B.y, GEO.pt, 3) + dot(pts.C.x, pts.C.y, GEO.pt, 3);
+  } else if (o.mode === "trap") {
+    H = 244;
+    pts.A = { x: 128, y: 56 };
+    pts.D = { x: 258, y: 56 };
+    pts.B = { x: 72, y: 196 };
+    pts.C = { x: 306, y: 196 };
+    pts.O = (() => {
+      const d1 = { x: pts.C.x - pts.A.x, y: pts.C.y - pts.A.y };
+      const d2 = { x: pts.D.x - pts.B.x, y: pts.D.y - pts.B.y };
+      const den = d1.x * d2.y - d1.y * d2.x;
+      const t = ((pts.B.x - pts.A.x) * d2.y - (pts.B.y - pts.A.y) * d2.x) / den;
+      return { x: pts.A.x + d1.x * t, y: pts.A.y + d1.y * t };
+    })();
+    if (o.shade) out += shadePoly(o.shade);
+    out += g4poly([pts.A, pts.B, pts.C, pts.D], "none", 2.5);
+    out += g4line(pts.A, pts.C, GEO.ink, 2.2) + g4line(pts.B, pts.D, GEO.ink, 2.2);
+    out += arrowHead((pts.A.x + pts.D.x) / 2 + 5, 56, 0) + arrowHead((pts.B.x + pts.C.x) / 2 + 5, 196, 0);
+    out += dot(pts.O.x, pts.O.y, GEO.pt, 3.2) + ptLabel(pts.O.x, pts.O.y, "O", 12, -4);
+    out += ptLabel(pts.A.x, pts.A.y, "A", -6, -8) + ptLabel(pts.D.x, pts.D.y, "D", 6, -8);
+    out += ptLabel(pts.B.x, pts.B.y, "B", -7, 17) + ptLabel(pts.C.x, pts.C.y, "C", 7, 17);
+  } else if (o.mode === "para") {
+    const g = g4para(63, 214, 118);
+    H = g.H;
+    pts.A = g.A;
+    pts.B = g.B;
+    pts.C = g.C;
+    pts.D = g.D;
+    pts.O = g.O;
+    if (o.shade) out += shadePoly(o.shade);
+    out += g4poly([g.A, g.B, g.C, g.D], "none", 2.5);
+    if (o.diag === "AC" || o.diag === "both") out += g4line(g.A, g.C, GEO.ink, 2.2);
+    if (o.diag === "both") out += g4line(g.B, g.D, GEO.ink, 2.2);
+    if (o.diag === "both") out += dot(g.O.x, g.O.y, GEO.pt, 3.2) + ptLabel(g.O.x, g.O.y, "O", 0, -9);
+    out += ptLabel(g.A.x, g.A.y, "A", -6, -8) + ptLabel(g.B.x, g.B.y, "B", -7, 17) + ptLabel(g.C.x, g.C.y, "C", 7, 17) + ptLabel(g.D.x, g.D.y, "D", 7, -8);
+  } else {
+    H = 246;
+    pts.A = { x: 102, y: 76 };
+    pts.B = { x: 58, y: 204 };
+    pts.C = { x: 240, y: 204 };
+    pts.D = { x: 192, y: 76 };
+    const dir = { x: pts.C.x - pts.A.x, y: pts.C.y - pts.A.y };
+    const t = (204 - pts.D.y) / dir.y;
+    pts.E = { x: pts.D.x + dir.x * t, y: 204 };
+    out += lineSvg(pts.B.x - 14, 204, pts.E.x + 22, 204, GEO.ink, 2.2);
+    if (o.shade) out += shadePoly(o.shade);
+    out += g4poly([pts.A, pts.B, pts.C, pts.D], F4, 2.5);
+    out += g4line(pts.A, pts.C, NAVY, 1.8, "6 5");
+    out += g4line(pts.D, pts.E, NAVY, 1.8, "6 5");
+    out += g4line(pts.A, pts.E, GEO.ink, 2.4);
+    out += dot(pts.E.x, pts.E.y, GEO.pt, 3.2) + ptLabel(pts.E.x, pts.E.y, "E", 6, 18);
+    out += ptLabel(pts.A.x, pts.A.y, "A", -4, -9) + ptLabel(pts.B.x, pts.B.y, "B", -7, 17) + ptLabel(pts.C.x, pts.C.y, "C", -6, 18) + ptLabel(pts.D.x, pts.D.y, "D", 5, -9);
+  }
+  if (o.areaLabel) {
+    const ps = o.areaLabel.in.split("").map((ch) => pts[ch]).filter(Boolean);
+    if (ps.length) {
+      const cx = ps.reduce((s, p) => s + p.x, 0) / ps.length;
+      const cy = ps.reduce((s, p) => s + p.y, 0) / ps.length;
+      out += g4text(cx, cy + 4, o.areaLabel.label, 12, NAVY);
+    }
+  }
+  return svg(`0 0 360 ${H}`, "평행선과 도형의 넓이 관계 그림", out);
 }
 
 /* ── m1u5 개보수(2026-07) 신작 — Ⅴ 평면도형·입체도형 시험 그림 ─────────────
