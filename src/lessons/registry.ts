@@ -71,6 +71,12 @@ import { photoEvidenceLab } from "./steps/plantEvidenceLab";
 import { photoFactorLab } from "./steps/plantFactorLab";
 import { plantRespireLab, dayNightLab } from "./steps/plantRespirationLab";
 import { sugarJourneyLab } from "./steps/sugarJourneyLab";
+import { nutrientTestLab } from "./steps/nutrientTestLab";
+import { digestJourneyLab } from "./steps/digestJourneyLab";
+import { circulationLab } from "./steps/circulationLab";
+import { breathModelLab } from "./steps/breathModelLab";
+import { nephronLab } from "./steps/nephronLab";
+import { bodyIntegrateLab } from "./steps/bodyIntegrateLab";
 import { pairMatch } from "./steps/pairMatch";
 import { formulaLab } from "./steps/formulaLab";
 import { frictionLab, rubLab } from "./steps/elecStatic";
@@ -278,6 +284,12 @@ const R: Record<string, StepRenderer> = {
   plantRespireLab,
   dayNightLab,
   sugarJourneyLab,
+  nutrientTestLab,
+  digestJourneyLab,
+  circulationLab,
+  breathModelLab,
+  nephronLab,
+  bodyIntegrateLab,
   pairMatch,
   formulaLab,
   frictionLab,

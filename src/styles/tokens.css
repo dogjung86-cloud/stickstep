@@ -81,6 +81,37 @@
   --subj-plant: #27864B;   /* 중2 V 식물과 에너지 — 엽록소 포레스트 */
   --subj-plant-press: #1D6B3B;
   --subj-plant-tint: #EAF7EF;
+  --subj-body: #E23B4B;    /* 중2 VI 동물과 에너지 — 심장 근육 카민 */
+  --subj-body-press: #C42A3C;
+  --subj-body-tint: #FDECEE;
+  /* 중2 VI 인체 물질·기관 팔레트 — bodyKit·bodyFigures·지도 장식의 단일 색 원천. */
+  --body-oxygenated: #E23B4B;
+  --body-deoxygenated: #7C3048;
+  --body-oxygen: #4FB0E8;
+  --body-carbon: #8A7CA8;
+  --body-nutrient: #F2A93B;
+  --body-protein: #8D6CCB;
+  --body-fat: #F2D56B;
+  --body-urea: #92964F;
+  --body-tissue-hi: #FFD4CE;
+  --body-tissue: #F28B82;
+  --body-tissue-lo: #A93A45;
+  --body-organ-hi: #FF8A92;
+  --body-organ: #E75A64;
+  --body-organ-lo: #9F2333;
+  --body-vessel-hi: #FF737E;
+  --body-vessel: #D83B4B;
+  --body-vessel-lo: #84263A;
+  --body-airway-hi: #EAF7FC;
+  --body-airway: #A9D8E7;
+  --body-airway-lo: #527F91;
+  --body-kidney-hi: #DF7783;
+  --body-kidney: #B84759;
+  --body-kidney-lo: #742A3B;
+  --body-cell-hi: #FFE2B4;
+  --body-cell: #F2B85B;
+  --body-cell-lo: #A66B22;
+  --body-shadow: #2A3A5E;
   --plant-leaf-hi: #7FD66D;
   --plant-leaf: #39A85A;
   --plant-leaf-lo: #17643A;
@@ -271,6 +302,7 @@
   --grad-light: linear-gradient(150deg, #E15FC4 0%, #C838A6 50%, #A62B8C 100%);
   --grad-atom: linear-gradient(150deg, #A2D13F 0%, #7CB024 50%, #5E9310 100%);
   --grad-plant: linear-gradient(150deg, #5FCB72 0%, #27864B 52%, #17643A 100%);
+  --grad-body: linear-gradient(150deg, #FF7782 0%, #E23B4B 52%, #B92136 100%);
   --grad-elec: linear-gradient(150deg, #FFD44A 0%, #EFB800 50%, #CE9600 100%);
   --grad-star: linear-gradient(150deg, #4B5AC4 0%, #2E3A8C 55%, #1B2258 100%);
   --grad-num: linear-gradient(150deg, #3FC6E0 0%, #0DA5C6 50%, #0884A2 100%);
@@ -287,6 +319,7 @@
   --grad-medallion-light: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #E86FCE 0%, #C838A6 50%, #A02B87 100%);
   --grad-medallion-atom: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #AEDA52 0%, #7CB024 50%, #5A8E0E 100%);
   --grad-medallion-plant: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #6DD77D 0%, #27864B 52%, #155B34 100%);
+  --grad-medallion-body: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.88) 0%, rgba(255,255,255,.17) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #FF818B 0%, #E23B4B 52%, #B52236 100%);
   --grad-medallion-num: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #52CCE4 0%, #0DA5C6 50%, #077E9C 100%);
   --grad-medallion-elec: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #FFDF6E 0%, #EFB800 50%, #C08E00 100%);
   --grad-medallion-star: radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.85) 0%, rgba(255,255,255,.16) 24%, rgba(255,255,255,0) 47%), linear-gradient(160deg, #5E6BD8 0%, #2E3A8C 55%, #1D2560 100%);

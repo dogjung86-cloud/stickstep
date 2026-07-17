@@ -1343,6 +1343,35 @@ src/
   온도는 높을수록 무조건 유리한 것이 아니라 알맞은 범위 뒤 광합성량이 감소한다.
 - QA는 DEV 서버에서 `PORT=<포트> node qa/e2e-g2u5.mjs`로 6레슨의 훅·랩·문제를 실플레이한다.
 
+## 중2 과학 VI 동물과 에너지 제작 관례
+- `g2u6`은 6레슨(L1 영양소·L2 소화·L3 순환·L4 호흡·L5 배설·L6 세포호흡/통합), L1~L3 무료·L4~L6 프리미엄.
+  훅은 `hookBody.ts` 6종(breadonly·chewrice·pulse·deepbreath·peecolor·afterrun, `.body-action` 버튼→hookAsk).
+  콘텐츠 `content/g2/unit6.ts`(752줄) + 공용 `ui/bodyKit.ts`(혈액·기체·영양소 색·`safePointerCapture`·`drawValve` 등) +
+  `ui/bodyFigures.ts`(퀴즈·recap 도해). 테마 `body`(--subj-body #E23B4B), 지도 소품 stomach/heart/lung/kidney/cellDeco.
+- **랩 6종은 전부 캔버스 드래그 조작형**(codex 1차본이 "버튼→CSS 클래스" 감상형 5종이라 재작성 — 플레이북 §0.1
+  "개념을 손으로 조작" 기준). nutrientTestLab(시약병→시험관 드롭·가열), digestJourneyLab(영양소 토큰을 소화관
+  DUCT 경로로 완주), circulationLab(적혈구를 두 순환 경로로 끌기+심장 탭), breathModelLab(고무막 SVG 드래그+버튼 3),
+  nephronLab(알갱이를 여과→재흡수→분비 3단계로 끌기), bodyIntegrateLab(물질 토큰을 순환계 허브 경유 목적지로).
+  규격은 circulationLab/nutrientTestLab 계승: `createLoop`+`fitCanvas`(DPR 1.75)·논리좌표 BASE_W=360·목표 3개
+  `collect()`→`recordQuiz(true)`+`enableCTA()`·cleanup에서 loop·리스너·타이머 해제·`safePointerCapture` 필수.
+- 과학 정확성: 여과막은 **혈구·단백질을 크기로 막고**(작은 물질만 통과), 포도당·아미노산은 **전부 재흡수**, 요소는
+  분비/배설(정상 오줌에 포도당·단백질 없음). 소화효소 특이성(녹말=입·작은창자, 단백질=위·작은창자, 지방=작은창자).
+  순환계가 모든 물질 운반(영양소=소화계·산소=호흡계→조직세포, 노폐물=조직세포→CO₂는 호흡계·요소는 배설계).
+- **`.body-lab-canvas`에 `touch-action:none` 필수**(body.css) — 없으면 실기기에서 드래그가 페이지 스크롤로 샌다
+  (기존 circulation·nutrientTest도 놓쳤던 공용 버그, 한 규칙으로 세 랩 동시 수정).
+- **어두운 무대 위 상자·토큰 라벨 대비 규칙**(bodyIntegrateLab 교훈): 밝은 hi 스톱을 몸통에 쓰면 흰 글자가 묻힌다
+  → 몸통은 `mid→lo`(진한 톤), hi는 얇은 상단 키라이트로만, 라벨은 흰 글자+어두운 그림자. **heart 계열은
+  `heartHi`/`heartLo` 색키가 없으니 `organHi`/`organLo`로 매핑**(빠뜨리면 fallback 회색).
+- **e2e는 `qa/e2e-g2u6.mjs`**(6레슨 실플레이): 캔버스 랩은 논리좌표(360)를 `rect.width/360`로 화면좌표 변환해
+  canvas에 `PointerEvent`를 직접 dispatch(합성 포인터라 setPointerCapture가 흘려도 리스너가 canvas에 있어 동작),
+  목표 칩 `.pn-badge.body.on` 수로 `expectGoals` 결정 판정. nephron은 여과→재흡수→분비 순서 강제로 슬롯 좌표 예측
+  가능. **동시 세션 codex가 파일을 쓰면 HMR 풀리로드로 `window.__g2u6E2E`가 증발(사고 #12)·vite가 특정 모듈만
+  스테일 캐시** → 검수 캡처는 **워크트리 격리(별도 포트 dev 서버)**로 돌리거나 codex exec 부재를 확인하고 실행.
+- **이미지 발주(준비 완료·미실행)**: `qa/body_prompts.txt`(스틱맨 개념 컷 6장 public/body/cuts + 해부 교육
+  일러스트 6장 public/body/figs — 둘 다 글자 금지) + `qa/order-body.sh`(codex exec 순차 3배치, **병렬 금지**).
+  `process-geo.mjs` ASPECT_DIRS에 두 폴더 등록됨. **하이브리드 방침**: 해부 구조(소화계·심장·콩팥단위·허파꽈리)는
+  발주 일러스트로, 경로도·화살표·모식도(이중순환·여과 방향·통합)는 라벨이 본질이라 SVG 유지.
+
 ## 로그인·동기화 (Supabase — 2026-07 구축)
 - **core/auth.ts**(OAuth·세션)와 **core/sync.ts**(진행도 병합·푸시)가 전부. **환경변수
   (VITE_SUPABASE_URL·VITE_SUPABASE_ANON_KEY, .env.local)가 없으면 전원 no-op** — dev·e2e·기존

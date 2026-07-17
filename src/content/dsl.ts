@@ -35,7 +35,7 @@ export const cut = (theme: string, name: string, alt: string, bubbles?: CutBubbl
 
 export const concept = (o: {
   kicker?: string;
-  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "plant" | "elec" | "num" | "star" | "alge" | "grph" | "geom" | "solid" | "data" | "calc" | "ineq" | "func" | "prove" | "sim" | "dice";
+  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "plant" | "body" | "elec" | "num" | "star" | "alge" | "grph" | "geom" | "solid" | "data" | "calc" | "ineq" | "func" | "prove" | "sim" | "dice";
   title: string;
   lead?: string;
   blocks?: Block[];
@@ -121,7 +121,8 @@ export const hook = (o: {
     | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull"
     | "potmass" | "waterweed" | "windowplant" | "bedroomplant" | "germinating" | "fruitthinning"
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
-    | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar";
+    | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
+    | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
@@ -297,6 +298,20 @@ export const dayNightLab = (o: { title: string; lead?: string; cta?: string; cur
   ({ type: "dayNightLab", ...o });
 export const sugarJourneyLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "sugarJourneyLab", ...o });
+// ── 중2 VI 동물과 에너지 랩 ─────────────────────────────────
+export const nutrientTestLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "nutrientTestLab", ...o });
+export const digestJourneyLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "digestJourneyLab", ...o });
+export const circulationLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "circulationLab", ...o });
+export const breathModelLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "breathModelLab", ...o });
+export const nephronLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "nephronLab", ...o });
+export const bodyIntegrateLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "bodyIntegrateLab", ...o });
+
 // ── 중2 전기와 자기 단원(g2 VII) 랩 ─────────────────────────
 export const frictionLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "frictionLab", ...o });

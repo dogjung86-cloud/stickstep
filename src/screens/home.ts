@@ -16,7 +16,7 @@ import type { Screen } from "../core/router";
 import { gnav, type GnavKey } from "../ui/gnav";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
-const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice" };
+const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u6: "body", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice" };
 // 보너스 미니게임은 도전 탭으로 이사(2026-07-12 IA 개편) — 지도는 학습 서사만 남긴다.
 
 // 노드 배치 = 완만한 곡선 중심선 + 발걸음 지그재그(2026-07-14 사용자 지시, 발자국 사진 레퍼런스).
@@ -678,6 +678,7 @@ const UNIT_DECOR: Record<string, { seq: string[]; sky: [string, string] }> = {
   g2u3: { seq: ["flashlightDeco", "mirrorDeco", "prismDeco", "rgbDeco", "noteDeco"], sky: ["rainbowDeco", "cloud"] }, // 빛의 여행 → 소리의 여행
   g2u4: { seq: ["beakerDeco", "atomDeco", "tableDeco", "moleculeDeco", "ionDeco"], sky: ["atomDeco", "cloud"] }, // 성분에서 입자로 — 원소→원자→주기율표→분자→이온
   g2u5: { seq: ["leafDeco", "stomaDeco", "chloroplastDeco", "flowerDeco", "fruitDeco"], sky: ["sunDeco", "leafDeco"] }, // 잎→기공→엽록체→꽃→열매, 광합성산물의 여정
+  g2u6: { seq: ["stomachDeco", "heartDeco", "lungDeco", "kidneyDeco", "cellDeco"], sky: ["cloud", "sparkle"] }, // 소화→순환→호흡→배설→세포 에너지
   g2u7: { seq: ["boltDeco", "batteryDeco", "bulbDeco", "coilDeco", "magnetDeco"], sky: ["boltDeco", "cloud"] }, // 전기 순례: 스파크→전지→전구→코일→자석
   g2u8: { seq: ["starsDeco", "clusterDeco", "galaxyDeco", "telescopeDeco", "rocketDeco"], sky: ["starsDeco", "sparkle"] }, // 별빛 순항: 별→성단→은하→망원경→로켓
   m1u1: { seq: ["pmDeco", "fracDeco", "primeDeco", "opsDeco", "numlineDeco"], sky: ["sparkle", "cloud"] }, // 수와 연산: 부호 타일, 분수 카드, 소수 7 배지, 연산 타일, 수직선 팻말
@@ -711,6 +712,7 @@ const DECOR_SIZE: Record<string, number> = {
   flashlightDeco: 48, mirrorDeco: 44, prismDeco: 50, rgbDeco: 44, noteDeco: 38, rainbowDeco: 58,
   beakerDeco: 46, atomDeco: 46, tableDeco: 46, moleculeDeco: 46, ionDeco: 42,
   leafDeco: 46, stomaDeco: 42, chloroplastDeco: 46, flowerDeco: 46, fruitDeco: 44,
+  stomachDeco: 46, heartDeco: 44, lungDeco: 48, kidneyDeco: 46, cellDeco: 44,
   pebblesDeco: 44, sieveDeco: 48, numTreeDeco: 46, vennDeco: 48, numlineDeco: 44,
   pmDeco: 42, fracDeco: 42, primeDeco: 44, opsDeco: 46, xDeco: 44, aDeco: 40, eqDeco: 42, scaleDeco: 46, boxDeco: 44,
   pointDeco: 38, segmentDeco: 46, protracDeco: 48, compassDeco: 46, trisqDeco: 48,

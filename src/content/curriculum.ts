@@ -14,6 +14,7 @@ import { G2_UNIT2 } from "./g2/unit2";
 import { G2_UNIT3 } from "./g2/unit3";
 import { G2_UNIT4 } from "./g2/unit4";
 import { G2_UNIT5 } from "./g2/unit5";
+import { G2_UNIT6 } from "./g2/unit6";
 import { G2_UNIT7 } from "./g2/unit7";
 import { G2_UNIT8 } from "./g2/unit8";
 import { MATH_CURRICULA } from "./math/curriculum";
@@ -35,26 +36,14 @@ export const GRADE_LABEL: Record<GradeId, string> = { g1: "중1", g2: "중2" };
 
 export const CURRICULUM: Unit[] = [UNIT1, UNIT2, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7];
 
-/** 준비 중 단원 자리 — 콘텐츠가 완성되면 실제 UNIT 모듈로 교체한다. */
-const soon = (id: string, roman: string, title: string, subtitle: string, icon: string): Unit => ({
-  id,
-  roman,
-  title,
-  subtitle,
-  color: "#3182F6",
-  icon,
-  lessons: [],
-  comingSoon: true,
-});
-
-// 중2 — 대단원 8개. V·VI(식물·동물과 에너지)은 의도적으로 뒤 순번 제작(자리만 유지).
+// 중2 — 대단원 8개.
 export const CURRICULUM_G2: Unit[] = [
   G2_UNIT1,
   G2_UNIT2,
   G2_UNIT3,
   G2_UNIT4,
   G2_UNIT5,
-  soon("g2u6", "VI", "동물과 에너지", "소화·순환·호흡·배설의 협동", "heart"),
+  G2_UNIT6,
   G2_UNIT7,
   G2_UNIT8,
 ];

@@ -54,6 +54,9 @@ import {
   renderThumbJump, renderNightRoad, renderBrightLie, renderGasFlame,
   renderMilkyBand, renderOrionBlur, renderMovingStar,
 } from "./hookStar";
+import {
+  renderBreadOnly, renderChewRice, renderPulse, renderDeepBreath, renderPeeColor, renderAfterRun,
+} from "./hookBody";
 import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -94,7 +97,8 @@ interface HookStep {
     | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull"
     | "potmass" | "waterweed" | "windowplant" | "bedroomplant" | "germinating" | "fruitthinning"
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
-    | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar";
+    | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
+    | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
 }
@@ -180,6 +184,12 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "milkyband") sceneCleanup = renderMilkyBand(scene, helper, finish, face);
   else if (s.scene === "orionblur") sceneCleanup = renderOrionBlur(scene, helper, finish, face);
   else if (s.scene === "movingstar") sceneCleanup = renderMovingStar(scene, helper, finish, face);
+  else if (s.scene === "breadonly") sceneCleanup = renderBreadOnly(scene, helper, s, finish, face);
+  else if (s.scene === "chewrice") sceneCleanup = renderChewRice(scene, helper, s, finish, face);
+  else if (s.scene === "pulse") sceneCleanup = renderPulse(scene, helper, s, finish, face);
+  else if (s.scene === "deepbreath") sceneCleanup = renderDeepBreath(scene, helper, s, finish, face);
+  else if (s.scene === "peecolor") sceneCleanup = renderPeeColor(scene, helper, s, finish, face);
+  else if (s.scene === "afterrun") sceneCleanup = renderAfterRun(scene, helper, s, finish, face);
   else if (s.scene === "mirrortown") sceneCleanup = renderMirrorTown(scene, helper, finish, face);
   else if (s.scene === "coinmagic") sceneCleanup = renderCoinMagic(scene, helper, s, finish, face);
   else if (s.scene === "darkroom") sceneCleanup = renderDarkroom(scene, helper, s, finish, face);

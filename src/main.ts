@@ -3,6 +3,8 @@ import "./styles/base.css";
 import "./styles/ui.css";
 import "./styles/math.css";
 import "./styles/math2.css";
+import "./styles/body-hook.css";
+import "./styles/body.css";
 import "./styles/policy.css";
 import "./styles/stickavatar.css";
 import "./styles/tutor.css";
