@@ -23,8 +23,9 @@ export interface ExamItem {
   answer: number | number[] | string;
   /** false = 표시 순서 고정(ㄱㄴㄷ 조합·(가)(나) 라벨형 보기 — 퀴즈 셔플 규칙과 동일). */
   shuffle?: boolean;
-  /** num 전용 — 넘패드 종류(기본 int). */
-  numKind?: "int" | "dec";
+  /** num 전용 — 넘패드 종류(기본 int). frac은 m2u6 확률부터(값 동치 채점 — 3/6도 정답,
+   *  answer 저장은 기약 "a/b" ASCII + 문두 "기약분수로" 명시가 저작 표준). */
+  numKind?: "int" | "dec" | "frac";
   /** num 전용 — 입력 칸 옆 단위 라벨(℃·kcal·분·배…). 문두 명시와 병행. */
   unitLabel?: string;
   /** word 전용 — 워드뱅크 칩(정답 포함 8~10개). */

@@ -3279,3 +3279,141 @@ export function m5LensFig(sideLabel: string): string {
   out += m5text(150, 207, sideLabel);
   return svg("0 0 300 214", "정사각형 안에 두 원의 일부로 색칠된 부분을 나타낸 그림", out);
 }
+
+/* ══════════════ m2u6 확률 ══════════════
+ * 실비 인자 원칙(200제 8호 ③의 확률판): 원판 칸은 확률값 그대로 중심각을 계산해 그리고(1/4 칸=90°),
+ * 넓이 모델은 p×q 실비율 직사각형, 나뭇가지는 가지 수를 실제 경우와 정확히 일치시킨다.
+ * 곱 결과·경우의 수 합계·확률값 같은 "구할 값"은 인쇄하지 않는다(㉠·?만). 순서쌍 표는
+ * mathFigures2 pairGridFig를 pick=()=>false 빈 상태로 재사용한다(강조 칸은 세기 과제 유출 —
+ * 200제 7호 ② 계보). aria는 중립 서술만(가짓수·확률·정오 낭독 금지). */
+
+/** 나뭇가지 그림 시험판(파라미터형) — 첫 가지(first[i])마다 둘째 가지 second[i]가 벌어진다.
+ *  레슨 branchFig와 달리 곱 결과 상자·잎 순서쌍 목록을 인쇄하지 않는다(세기·계산 과제 유출 방지).
+ *  fold에 담긴 첫 가지 인덱스는 둘째 가지 대신 점선 상자(foldLabel, 기본 ㉠)로 접는다 —
+ *  "일부를 나타낸 그림" 문항용. 가지 수는 실제 경우의 수와 일치시켜 저작한다(재사용 금지 반영은
+ *  호출자가 second 배열로 직접). */
+export function m2ExamBranchFig(o: {
+  head1: string;
+  head2: string;
+  first: string[];
+  second: string[][];
+  fold?: number[];
+  foldLabel?: string;
+}): string {
+  const rowH = 26;
+  const gapG = 8;
+  const counts = o.first.map((_, i) => (o.fold?.includes(i) ? 1 : Math.max(1, (o.second[i] ?? []).length)));
+  const leafY: number[][] = [];
+  let y = 40;
+  counts.forEach((n) => {
+    const ys: number[] = [];
+    for (let k = 0; k < n; k++) {
+      ys.push(y);
+      y += rowH;
+    }
+    y += gapG;
+    leafY.push(ys);
+  });
+  const H = y + 4;
+  const mids = leafY.map((ys) => (ys[0] + ys[ys.length - 1]) / 2);
+  const rootY = (mids[0] + mids[mids.length - 1]) / 2;
+  let out = "";
+  out += `<text x="106" y="20" text-anchor="middle" font-size="11" font-weight="900" fill="${ROSE}">${o.head1}</text>`;
+  out += `<text x="226" y="20" text-anchor="middle" font-size="11" font-weight="900" fill="${NAVY}">${o.head2}</text>`;
+  out += `<circle cx="34" cy="${rootY.toFixed(1)}" r="4.6" fill="${ROSE}" stroke="#B93A5E" stroke-width="1.3"/>`;
+  o.first.forEach((f, i) => {
+    const my = mids[i];
+    out += `<path d="M39 ${rootY.toFixed(1)} C 58 ${rootY.toFixed(1)} 58 ${my.toFixed(1)} 78 ${my.toFixed(1)}" stroke="${ROSE}" stroke-width="1.7" fill="none"/>`;
+    out += `<rect x="78" y="${(my - 12.5).toFixed(1)}" width="56" height="25" rx="8" fill="#FEF5F7" stroke="${ROSE}" stroke-width="1.4"/>`;
+    out += `<text x="106" y="${(my + 4).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="800" fill="#B93A5E">${f}</text>`;
+    if (o.fold?.includes(i)) {
+      const ly = leafY[i][0];
+      out += `<path d="M134 ${my.toFixed(1)} C 156 ${my.toFixed(1)} 156 ${ly} 178 ${ly}" stroke="${FAINT}" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>`;
+      out += `<rect x="178" y="${ly - 12.5}" width="96" height="25" rx="8" fill="#FFFFFF" stroke="${FAINT}" stroke-width="1.4" stroke-dasharray="5 4"/>`;
+      out += `<text x="226" y="${ly + 4}" text-anchor="middle" font-size="11.5" font-weight="900" fill="${NAVY}">${o.foldLabel ?? "㉠"}</text>`;
+    } else {
+      (o.second[i] ?? []).forEach((s, k) => {
+        const ly = leafY[i][k];
+        out += `<path d="M134 ${my.toFixed(1)} C 156 ${my.toFixed(1)} 156 ${ly} 178 ${ly}" stroke="${NAVY}" stroke-width="1.5" fill="none"/>`;
+        out += `<rect x="178" y="${ly - 12}" width="56" height="24" rx="8" fill="#F1F5FF" stroke="${NAVY}" stroke-width="1.3"/>`;
+        out += `<text x="206" y="${ly + 4}" text-anchor="middle" font-size="10.5" font-weight="800" fill="${NAVY}">${s}</text>`;
+      });
+    }
+  });
+  return svg(`0 0 320 ${H}`, "나뭇가지 그림", out);
+}
+
+/** 원판 시험판(파라미터형) — 각 칸을 deg(중심각)로 실각 렌더한다. slices의 deg 합이 360인지
+ *  저작 단계에서 검산할 것(확률 1/4 칸 = 90°). 칸 안에는 라벨만 인쇄(칸 수·확률·등분 수 미인쇄) —
+ *  "칸 수가 아니라 중심각(넓이) 비율" 함정 문항은 넓은 칸·좁은 칸이 실각으로 그려져야 성립한다.
+ *  균등 등분 원판은 mathFigures2 spinnerFig 재사용이 1순위(이건 불균등·라벨 자유형). */
+export function m2ExamSpinnerFig(o: { slices: Array<{ deg: number; label: string; win?: boolean }>; startDeg?: number }): string {
+  const CX = 150;
+  const CY = 106;
+  const R = 82;
+  let a = o.startDeg ?? -90;
+  let out = `<ellipse cx="${CX}" cy="${CY + R + 10}" rx="70" ry="5" fill="#2A3A5E" opacity=".07"/>`;
+  for (const sl of o.slices) {
+    const a0 = (a * Math.PI) / 180;
+    const a1 = ((a + sl.deg) * Math.PI) / 180;
+    const x0 = CX + R * Math.cos(a0);
+    const y0 = CY + R * Math.sin(a0);
+    const x1 = CX + R * Math.cos(a1);
+    const y1 = CY + R * Math.sin(a1);
+    const large = sl.deg > 180 ? 1 : 0;
+    out += `<path d="M${CX} ${CY} L${x0.toFixed(1)} ${y0.toFixed(1)} A${R} ${R} 0 ${large} 1 ${x1.toFixed(1)} ${y1.toFixed(1)} Z" fill="${sl.win ? "#F9D6E0" : "#FFFFFF"}" stroke="${sl.win ? ROSE : "#B9C2D2"}" stroke-width="1.6"/>`;
+    const am = ((a + sl.deg / 2) * Math.PI) / 180;
+    const lr = R * 0.62;
+    out += `<text x="${(CX + lr * Math.cos(am)).toFixed(1)}" y="${(CY + lr * Math.sin(am) + 4).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="800" fill="${sl.win ? "#B93A5E" : INK}">${sl.label}</text>`;
+    a += sl.deg;
+  }
+  out += `<circle cx="${CX}" cy="${CY}" r="7" fill="#FFFFFF" stroke="${INK}" stroke-width="1.8"/>`;
+  out += `<path d="M${CX} ${CY - R - 8} l-7 -11 h14 z" fill="${INK}"/>`;
+  return svg("0 0 300 208", "부채꼴 칸으로 나뉜 원판 그림", out);
+}
+
+/** 넓이 모델 시험판(파라미터형) — 가로를 pd등분해 pn만큼(사건 A 세로 띠), 세로를 qd등분해
+ *  qn만큼(사건 B 가로 띠), 겹침은 진한 칸. 레슨 areaModelFig와 달리 겹침 칸수/전체 칸수(=정답
+ *  분수)를 인쇄하지 않는다. mark를 주면 겹침 중앙에 그 기호만. aLabel·bLabel은 호출자 문자열
+ *  그대로(확률값을 조건으로 보여줄지 여부도 호출자 몫, bLabel은 8자 이내 권장 — 왼쪽 여백 66px). */
+export function m2ExamAreaFig(o: { pn: number; pd: number; qn: number; qd: number; aLabel: string; bLabel: string; mark?: string }): string {
+  const S = 150;
+  const X0 = 76;
+  const Y0 = 26;
+  const cw = S / o.pd;
+  const rh = S / o.qd;
+  let out = `<rect x="${X0}" y="${Y0}" width="${S}" height="${S}" fill="#FFFFFF" stroke="#B9C2D2" stroke-width="1.6"/>`;
+  out += `<rect x="${X0}" y="${Y0}" width="${(cw * o.pn).toFixed(1)}" height="${S}" fill="#F9D6E0" opacity=".85"/>`;
+  out += `<rect x="${X0}" y="${(Y0 + S - rh * o.qn).toFixed(1)}" width="${S}" height="${(rh * o.qn).toFixed(1)}" fill="#DBE6FB" opacity=".8"/>`;
+  out += `<rect x="${X0}" y="${(Y0 + S - rh * o.qn).toFixed(1)}" width="${(cw * o.pn).toFixed(1)}" height="${(rh * o.qn).toFixed(1)}" fill="${ROSE}" opacity=".72"/>`;
+  for (let i = 1; i < o.pd; i++) out += `<line x1="${(X0 + i * cw).toFixed(1)}" y1="${Y0}" x2="${(X0 + i * cw).toFixed(1)}" y2="${Y0 + S}" stroke="#C9D2E0" stroke-width="1"/>`;
+  for (let j = 1; j < o.qd; j++) out += `<line x1="${X0}" y1="${(Y0 + j * rh).toFixed(1)}" x2="${X0 + S}" y2="${(Y0 + j * rh).toFixed(1)}" stroke="#C9D2E0" stroke-width="1"/>`;
+  out += `<text x="${(X0 + (cw * o.pn) / 2).toFixed(1)}" y="${Y0 + S + 20}" text-anchor="middle" font-size="11" font-weight="900" fill="#B93A5E">${o.aLabel}</text>`;
+  out += `<text x="${X0 - 10}" y="${(Y0 + S - (rh * o.qn) / 2 + 4).toFixed(1)}" text-anchor="end" font-size="11" font-weight="900" fill="${NAVY}">${o.bLabel}</text>`;
+  if (o.mark)
+    out += `<text x="${(X0 + (cw * o.pn) / 2).toFixed(1)}" y="${(Y0 + S - (rh * o.qn) / 2 + 5).toFixed(1)}" text-anchor="middle" font-size="14" font-weight="900" fill="#8F1D3D">${o.mark}</text>`;
+  return svg(`0 0 300 ${Y0 + S + 34}`, "가로세로 띠가 겹치는 정사각형 넓이 모델", out);
+}
+
+/** 갈림길 그림(파라미터형) — 지점(stops) 사이 구간마다 counts[i]개의 길 곡선을 그린다
+ *  (실비 원칙 — 길 수 정확, 구간당 4개 이하). 길 개수·곱 결과는 텍스트로 인쇄하지 않는다.
+ *  stops 2개 = 한 구간, 3개 = 두 구간(경유 세기 문항). */
+export function m2ExamRoadsFig(o: { stops: string[]; counts: number[] }): string {
+  const H = 168;
+  const cy = 84;
+  const xs = o.stops.length === 2 ? [58, 262] : [40, 160, 280];
+  let out = "";
+  o.counts.forEach((n, seg) => {
+    const xa = xs[seg] + 26;
+    const xb = xs[seg + 1] - 26;
+    for (let k = 0; k < n; k++) {
+      const off = (k - (n - 1) / 2) * 30;
+      out += `<path d="M${xa} ${cy} C ${xa + 34} ${cy + off * 1.5} ${xb - 34} ${cy + off * 1.5} ${xb} ${cy}" stroke="${seg === 0 ? ROSE : NAVY}" stroke-width="2" fill="none" opacity=".85"/>`;
+    }
+  });
+  o.stops.forEach((s, i) => {
+    out += `<circle cx="${xs[i]}" cy="${cy}" r="21" fill="#FFFFFF" stroke="${INK}" stroke-width="1.7"/>`;
+    out += `<text x="${xs[i]}" y="${cy + 4}" text-anchor="middle" font-size="10.5" font-weight="900" fill="${INK}">${s}</text>`;
+  });
+  return svg(`0 0 320 ${H}`, "지점 사이의 길을 나타낸 그림", out);
+}
