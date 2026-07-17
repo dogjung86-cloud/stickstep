@@ -800,64 +800,11 @@
 .rc-more img { display: block; width: 100%; border-radius: 10px; margin: 8px 0 2px; }
 
 /* ============================================================
-   보너스 미니게임 — 지도 노드 + 단열 디펜스 화면
+   보너스 게임 공용 헤더 필(별자리 한붓그리기가 사용)
+   — 단열 디펜스는 폐기(2026-07-17), 전용 스타일도 함께 제거됨
    ============================================================ */
-.gm-node.game.now .gm-med { background: var(--grad-gold); }
-.gm-node.game .gm-ring { border-color: rgba(245, 166, 35, .55); }
-.gm-node.game:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px var(--gold); }
-
-.mg-screen { background: #fff; }
 .mg-title { flex: 1; text-align: center; font-size: 16px; font-weight: 800; letter-spacing: -.02em; }
 .mg-best { color: var(--n700); background: var(--n100); border: 1px solid var(--n200); -webkit-backdrop-filter: none; backdrop-filter: none; }
-.mg-stage { flex: 1; margin: 0 16px 10px; border-radius: var(--r-xl); position: relative; min-height: 240px; }
-.mg-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.mg-combo { color: #FFD873; font-weight: 800; }
-
-.mg-coach { min-height: 20px; font-size: 13px; color: var(--sub); text-align: center; margin-bottom: 10px; word-break: keep-all; }
-.mg-coach b { color: var(--ink); }
-.mg-defs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.mg-def {
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 10px 4px 9px; border-radius: var(--r-md);
-  background: var(--grad-card); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
-  transition: transform .12s var(--spring-soft), border-color .15s;
-}
-.mg-def:active { transform: scale(.95); }
-.mg-def-ic { width: 26px; height: 26px; color: var(--n700); }
-.mg-def-ic svg { width: 100%; height: 100%; }
-.mg-def-name { font-size: 12.5px; font-weight: 800; color: var(--ink); }
-.mg-def-sub { font-size: 10px; font-weight: 600; color: var(--ter); }
-.mg-def.miss { animation: shake .4s; border-color: var(--red); }
-
-.mg-overlay {
-  position: absolute; inset: 0; z-index: 20; display: none;
-  align-items: center; justify-content: center; padding: 24px;
-  background: rgba(25, 31, 40, .45);
-  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
-}
-.mg-overlay.show { display: flex; }
-.mg-card {
-  width: 100%; background: #fff; border-radius: var(--r-xl); box-shadow: var(--sh-raise);
-  padding: 20px 18px; display: flex; flex-direction: column; gap: 12px;
-  animation: rcIn .3s var(--ease-out);
-}
-.mg-card-title { font-size: 19px; font-weight: 800; letter-spacing: -.02em; }
-.mg-card-p { font-size: 13.5px; line-height: 1.55; color: var(--sub); word-break: keep-all; margin: 0; }
-.mg-card-p b { color: var(--ink); }
-.mg-card-p.dim { color: var(--ter); font-size: 12.5px; }
-.mg-rules { display: flex; flex-direction: column; gap: 6px; }
-.mg-rule {
-  display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center;
-  background: var(--n50); border-radius: var(--r-sm); padding: 9px 11px;
-  font-size: 12px; color: var(--sub);
-}
-.mg-rule b { color: var(--blue-press); font-size: 12px; }
-.mg-rule-mid { color: var(--ter); font-size: 11px; }
-.mg-score { display: flex; align-items: baseline; gap: 4px; }
-.mg-score b { font-size: 44px; font-weight: 800; letter-spacing: -.03em; }
-.mg-score span { font-size: 16px; font-weight: 700; color: var(--ter); }
-.mg-newbest { align-self: flex-start; font-size: 11.5px; font-weight: 800; color: #fff; background: var(--grad-gold); padding: 4px 11px; border-radius: var(--r-pill); }
-.mg-footer { position: relative; }
 
 /* 펼친 recap 카드에서는 아트를 위쪽에 정렬 */
 .rc-card.open { align-items: flex-start; }

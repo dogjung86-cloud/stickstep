@@ -190,8 +190,8 @@ function openPolicy(): void {
   nav.go(policyScreen(() => nav.back()));
 }
 
-// 보너스 미니게임(단열 디펜스·별자리 한붓그리기)은 도전 탭으로 이사(2026-07-12) —
-// 재단장 후 challenge.ts에서 minigameScreen/starGameScreen을 다시 연결한다.
+// 보너스 미니게임은 도전 탭으로 이사(2026-07-12). 단열 디펜스는 폐기(2026-07-17 — minigame.ts 삭제),
+// 별자리 한붓그리기는 재단장 후 challenge.ts에서 starGameScreen을 다시 연결한다.
 
 function openLesson(id: string): void {
   const found = findLesson(id);
