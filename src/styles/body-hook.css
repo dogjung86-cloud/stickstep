@@ -1,0 +1,72 @@
+/* 중2 VI 동물과 에너지 훅. SVG는 재질을, 이 파일은 상태·모션·배치를 맡는다. */
+.hk-body {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--n200);
+  border-radius: var(--r-md);
+  background: var(--n25);
+  box-shadow: var(--sh-inset);
+}
+.hk-body svg { display: block; width: 100%; height: auto; }
+.body-action { border-color: var(--subj-body); color: var(--subj-body-press); background: var(--subj-body-tint); }
+.body-action:focus-visible { outline: 3px solid var(--blue-tint); outline-offset: 2px; }
+.body-choices { margin-top: 10px; }
+
+.hb-breadonly .hb-day-tags > g { opacity: .24; transition: opacity .2s var(--ease-out), transform .35s var(--spring-soft); transform: translateY(5px); }
+.hb-breadonly.observed .hb-day-tags > g { opacity: 1; transform: translateY(0); }
+.hb-breadonly.observed .hb-day-tags > g:nth-child(2) { transition-delay: .08s; }
+.hb-breadonly.observed .hb-day-tags > g:nth-child(3) { transition-delay: .16s; }
+.hb-breadonly.observed .hb-day-tags > g:nth-child(4) { transition-delay: .24s; }
+.hb-breadonly.observed .hb-day-tags > g:nth-child(5) { transition-delay: .32s; }
+.hb-breadonly .hb-bread-stack { transform-box: view-box; transform-origin: 120px 115px; transition: transform .65s var(--spring-soft); }
+.hb-breadonly.observed .hb-bread-stack { transform: scale(1.08); }
+.hb-breadonly.observed .hb-alert { animation: hbPop .45s .36s var(--spring-soft) both; }
+
+.hb-chewrice .hb-jaw { transform-box: view-box; transform-origin: 175px 78px; }
+.hb-chewrice.chewed .hb-jaw { animation: hbChew .28s ease-in-out 4; }
+.hb-chewrice.chewed .hb-sweet { animation: hbFadePop .5s .58s var(--spring-soft) both; }
+.hb-chewrice.chewed .hb-chews { animation: hbFadePop .42s .72s var(--spring-soft) both; }
+
+.hb-pulse .hb-heart { transform-box: view-box; transform-origin: 63px 48px; }
+.hb-pulse.felt .hb-heart { animation: hbBeat .62s ease-in-out 4; }
+.hb-pulse.felt .hb-pulse-rings { animation: hbPulseRing 1.2s .15s ease-out 2; }
+.hb-pulse.felt .hb-wave { animation: hbDraw .8s .12s var(--ease-out) forwards; }
+
+.hb-deepbreath .hb-chest, .hb-deepbreath .hb-lungs, .hb-deepbreath .hb-diaphragm { transform-box: view-box; transition: transform .72s var(--spring-soft); }
+.hb-deepbreath .hb-chest { transform-origin: 120px 105px; }
+.hb-deepbreath .hb-lungs { transform-origin: 120px 96px; }
+.hb-deepbreath.breathed .hb-chest { transform: scaleX(1.06); }
+.hb-deepbreath.breathed .hb-lungs { transform: scale(1.08, 1.14); }
+.hb-deepbreath.breathed .hb-diaphragm { transform: translateY(12px); }
+.hb-deepbreath.breathed .hb-air-in { animation: hbAir .8s ease-out 2; }
+
+.hb-peecolor .hb-water, .hb-peecolor .hb-urine { transition: opacity .7s var(--ease-out), fill .7s var(--ease-out); }
+.hb-peecolor.drank .hb-water { opacity: .24; }
+.hb-peecolor.drank .hb-urine { fill: var(--body-fat); opacity: .58; }
+.hb-peecolor.drank .hb-pour { animation: hbDraw .9s var(--ease-out) forwards; }
+
+.hb-afterrun .hb-runner { transform-box: view-box; transform-origin: 120px 92px; }
+.hb-afterrun.ran .hb-runner { animation: hbRecover .65s var(--spring-soft) both; }
+.hb-afterrun.ran .hb-sweat, .hb-afterrun.ran .hb-breath-lines { animation: hbFadePop .45s .35s var(--ease-out) both; }
+.hb-afterrun.ran .hb-heart-run { transform-box: fill-box; transform-origin: center; animation: hbBeat .48s ease-in-out 5; }
+.hb-afterrun.ran .hb-pulse-line { animation: hbDraw .75s .12s var(--ease-out) forwards; }
+
+@keyframes hbPop { from { opacity: 0; transform: scale(.65); } to { opacity: 1; transform: scale(1); } }
+@keyframes hbFadePop { from { opacity: 0; transform: translateY(5px) scale(.8); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes hbChew { 50% { transform: translateY(-6px); } }
+@keyframes hbBeat { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.16); } }
+@keyframes hbPulseRing { 0% { opacity: 0; transform: scale(.6); } 28% { opacity: .9; } 100% { opacity: 0; transform: scale(1.35); } }
+@keyframes hbDraw { to { stroke-dashoffset: 0; } }
+@keyframes hbAir { 0% { opacity: 0; transform: translateY(-8px); } 35% { opacity: 1; } 100% { opacity: 0; transform: translateY(8px); } }
+@keyframes hbRecover { from { transform: translateX(-18px) rotate(-4deg); } to { transform: translateX(0) rotate(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .hk-body *, .hk-body *::before, .hk-body *::after {
+    animation-name: none !important;
+    transition-duration: .2s !important;
+    transition-property: opacity, filter !important;
+  }
+}

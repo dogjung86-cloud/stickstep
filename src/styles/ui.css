@@ -1194,6 +1194,22 @@
 /* 물 비유 랩(가로) — 하단 중앙 펌프 세기 슬라이더 */
 .wc-slider { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); width: min(46%, 340px); margin: 0; }
 
+/* ---------- 중2 VI 동물과 에너지 단원 테마(body · 심장 카민) ---------- */
+.unit-band.body { background: var(--grad-body); }
+.gm-terrain.body {
+  background:
+    radial-gradient(85% 30% at 18% 8%, color-mix(in srgb, var(--n0) 66%, transparent), transparent 62%),
+    radial-gradient(60% 24% at 86% 30%, color-mix(in srgb, var(--subj-body-tint) 82%, var(--n0)), transparent 72%),
+    linear-gradient(180deg, var(--subj-body-tint) 0%, color-mix(in srgb, var(--subj-body-tint) 66%, var(--n0)) 50%, color-mix(in srgb, var(--subj-body) 15%, var(--n0)) 100%);
+}
+.gm-path-glow.body { stroke: color-mix(in srgb, var(--subj-body) 24%, transparent); }
+.gm-path-done.body { stroke: var(--subj-body); }
+.gm-node.body.now .gm-med, .gm-node.body.done .gm-med { background: var(--grad-medallion-body); }
+.gm-node.body .gm-ring { border-color: color-mix(in srgb, var(--subj-body) 56%, transparent); }
+.gm-node.body:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px var(--n0), 0 0 0 6px var(--subj-body); }
+.kicker.body { background: var(--subj-body-tint); color: var(--subj-body-press); }
+.pn-badge.body.on { border-color: var(--subj-body); background: var(--subj-body-tint); color: var(--subj-body-press); }
+
 /* ---------- 중2 VII 전기와 자기 단원 테마(elec · 볼트 옐로) ---------- */
 .unit-band.elec { background: var(--grad-elec); }
 .gm-terrain.elec {

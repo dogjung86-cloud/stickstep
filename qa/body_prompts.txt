@@ -1,0 +1,62 @@
+# 중2 VI 동물과 에너지(g2u6) 발주 프롬프트 — 2종류
+#  · 스타일 A: 스틱맨 개념 컷 6장 → public/body/cuts (기존 전 단원 표준, 손그림 스틱맨, 글자 금지)
+#  · 스타일 B: 인체 해부 교육 일러스트 6장 → public/body/figs (권장 화풍, 라벨은 앱이 SVG로 얹으므로 글자 금지)
+# 전부 이미지 안 글자·숫자·알파벳·기호 절대 금지. 라벨이 필요한 도해는 앱이 오버레이한다.
+
+# ══════════════════════════════════════════════════════════════════
+# ── 스타일 블록 A (스틱맨 개념 컷 — 6장, public/body/cuts) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, warm crimson red, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+
+[0] file=public/body/cuts/g2u6l1.png (landscape 4:3, 스타일 A)
+A stick figure sits at a table facing a plate piled high with only round bread rolls, looking a bit worried and holding its stomach with one hand. Beside the plate, small doodled icons of varied foods (a fish, a leafy vegetable, an egg) sit ignored. The bread pile is the only crimson element; everything else pure black and white.
+
+[1] file=public/body/cuts/g2u6l2.png (landscape 4:3, 스타일 A)
+A close side profile of a stick figure's head chewing, one hand raised to its cheek with a delighted surprised expression (eyebrows up), as if noticing a sweet taste while chewing for a long time. A few small motion marks show active chewing. Only a small sparkle mark near the mouth is crimson; everything else pure black and white.
+
+[2] file=public/body/cuts/g2u6l3.png (landscape 4:3, 스타일 A)
+A stick figure presses two fingers to the side of its neck to feel a pulse, eyes closed in concentration, other hand raised as if counting. A simple heartbeat throb mark radiates from the neck. Only the throb mark is crimson; everything else pure black and white.
+
+[3] file=public/body/cuts/g2u6l4.png (landscape 4:3, 스타일 A)
+A stick figure stands taking a big deep breath, chest puffed out large and round, arms pulled back, chin up. Simple curved airflow lines stream in toward its open mouth. Only the airflow lines are crimson; everything else pure black and white.
+
+[4] file=public/body/cuts/g2u6l5.png (landscape 4:3, 스타일 A)
+A stick figure stands holding a clear drinking glass of water, having just gulped it, with a small puzzled tilt of the head and a thought-dot above. A simple downward arrow doodle suggests water passing through the body. Only the water in the glass is crimson-tinted; everything else pure black and white.
+
+[5] file=public/body/cuts/g2u6l6.png (landscape 4:3, 스타일 A)
+A stick figure has just finished running (small motion lines behind it), now bent slightly forward with hands on knees, panting hard with an open mouth and a few sweat droplets flying off. Only the sweat droplets are crimson; everything else pure black and white.
+
+# ══════════════════════════════════════════════════════════════════
+# ── 스타일 블록 B (인체 해부 교육 일러스트 — 6장, public/body/figs) ──
+# clean modern educational anatomy illustration, textbook diagram style, soft flat vector shading
+# with gentle 3-stop gradients and a soft top-left key light, smooth rounded organic forms, clear
+# separation between parts, muted anatomically-plausible palette (warm reds and pinks for organs,
+# soft blue for oxygen-poor structures), gentle contact shadow, thin darker outline per material.
+# Friendly and simple enough for a 14-year-old science app, not gory, not hyper-realistic, not
+# clinical-photo. Centered subject on a plain very-light background with generous margins so labels
+# can be added later. ABSOLUTELY NO text, no letters, no numbers, no labels, no arrows, no symbols,
+# no measurement marks anywhere. NOT a photograph, NOT anime, NOT a stick figure.
+
+[6] file=public/body/figs/digestive.png (portrait 3:4, 스타일 B)
+A single simplified human digestive system shown inside a faint torso outline: mouth, a tube (esophagus) leading down to a J-shaped stomach on the upper left, a long coiled small intestine in the center framed by the larger intestine around it, ending at the bottom. The liver (large, upper right), gallbladder (small, tucked under liver), and pancreas (behind the stomach) are shown as distinct attached organs in slightly different warm tones. Clean flat educational shading, each organ clearly separable. No text anywhere.
+
+[7] file=public/body/figs/heart.png (square 1:1, 스타일 B)
+A simplified anatomical human heart cross-section, front view, showing the four chambers as clear open cavities: two upper chambers (atria) with thinner walls and two lower chambers (ventricles) with visibly thicker muscular walls, the left-side ventricle wall clearly thickest. Simple flap valves drawn between upper and lower chambers and at the vessel exits. Large vessels stubbed at the top (aorta arching, pulmonary trunk, and the vena cava). Warm red muscle tone with a soft blue tint on the right-side chambers and a warm red tint on the left-side chambers to hint oxygen difference. Clean flat educational shading. No text, no letters, no arrows.
+
+[8] file=public/body/figs/nephron.png (landscape 4:3, 스타일 B)
+A simplified single nephron (kidney functional unit) diagram: on the left a tight ball of coiled capillaries (glomerulus) cupped inside a round capsule (Bowman's capsule), leading into a long winding tubule that snakes to the right, wrapped by a mesh of thin capillaries running alongside it, and emptying into a collecting duct at the far right. Glomerulus and capillaries in warm red, the capsule and tubule in soft translucent tones. Clean flat educational shading, smooth organic curves. No text, no numbers, no arrows.
+
+[9] file=public/body/figs/alveoli.png (square 1:1, 스타일 B)
+A close-up of a cluster of lung alveoli drawn like a bunch of translucent round grapes at the end of a small branching airway, each little air sac wrapped in a net of very thin blood capillaries hugging its surface. A couple of alveoli shown in gentle cutaway to suggest hollow air space inside. Capillaries in warm red and soft blue to hint gas exchange, air sacs pale and translucent. Clean flat educational shading. No text, no arrows, no symbols.
+
+[10] file=public/body/figs/respiratory.png (portrait 3:4, 스타일 B)
+A simplified human respiratory system inside a faint torso outline: nose and mouth at top, a single windpipe (trachea) running down and splitting into two bronchi, each entering a large soft lung on either side, the lungs filled with fine branching airways. Below the lungs, a broad dome-shaped diaphragm muscle spans the base of the chest, and simple curved rib arcs wrap around the outside. Soft pink lungs, muted tones. Clean flat educational shading. No text, no labels.
+
+[11] file=public/body/figs/urinary.png (portrait 3:4, 스타일 B)
+A simplified human urinary system inside a faint torso outline: two bean-shaped kidneys positioned left and right in the mid-back, each connected by a long thin tube (ureter) running down to a single rounded bladder at the bottom center, with a short tube (urethra) exiting below. One kidney shown in gentle cutaway revealing an inner region and a branching collecting space. Warm red-brown kidneys, soft tones. Clean flat educational shading. No text, no numbers.

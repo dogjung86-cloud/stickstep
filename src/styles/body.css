@@ -1,0 +1,80 @@
+/* 중2 VI 동물과 에너지 랩 공용. */
+.body-lab-stage { margin-top: 0; --helper-bar: var(--subj-body); }
+.body-lab-art { width: 100%; }
+.body-lab-art svg { display: block; width: 100%; height: auto; }
+.body-lab-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 12px; }
+.body-lab-btn {
+  min-height: 48px; padding: 10px 9px; border-radius: var(--r-md);
+  border: 1.5px solid var(--n200); background: var(--grad-card); color: var(--n800);
+  box-shadow: var(--sh-card); font: inherit; font-size: 12px; font-weight: 800;
+  transition: transform .12s var(--spring-soft), border-color .2s, background .2s, color .2s;
+}
+.body-lab-btn:active { transform: scale(.965); }
+.body-lab-btn:focus-visible { outline: none; box-shadow: var(--focus-ring), var(--sh-card); }
+.body-lab-btn.done { border-color: var(--subj-body); background: var(--subj-body-tint); color: var(--subj-body-press); }
+
+.ntl-tube .ntl-liquid { transition: fill .48s var(--ease-out), opacity .3s; }
+.ntl-tube .ntl-drop { transform-box: fill-box; transform-origin: center; }
+.ntl-art.tested-starch .ntl-tube.starch .ntl-liquid { fill: var(--blue-press); }
+.ntl-art.tested-protein .ntl-tube.protein .ntl-liquid { fill: var(--body-protein); }
+.ntl-art.tested-fat .ntl-tube.fat .ntl-liquid { fill: var(--body-oxygenated); }
+.ntl-art.tested-sugar .ntl-tube.sugar .ntl-liquid { fill: var(--body-nutrient); }
+.ntl-art.tested-sugar .ntl-heat { opacity: 1; }
+.ntl-art.tested-starch .ntl-tube.starch .ntl-drop,
+.ntl-art.tested-protein .ntl-tube.protein .ntl-drop,
+.ntl-art.tested-fat .ntl-tube.fat .ntl-drop,
+.ntl-art.tested-sugar .ntl-tube.sugar .ntl-drop { animation: bodyDrop .55s var(--ease-out) both; }
+@keyframes bodyDrop { 0% { opacity: 0; transform: translateY(-7px) scale(.7); } 45% { opacity: 1; } 100% { opacity: 0; transform: translateY(45px) scale(.55); } }
+
+.djl-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 12px; }
+.djl-organs { grid-template-columns: repeat(3, 1fr); }
+.djl-result { min-height: 48px; margin-top: 10px; padding: 12px 14px; border-radius: var(--r-md); background: var(--subj-body-tint); color: var(--subj-body-press); font-size: 12.5px; font-weight: 750; line-height: 1.45; }
+.djl-token { transition: transform .6s var(--spring-soft); transform-box: view-box; }
+.djl-product { transition: opacity .35s var(--ease-out); }
+.djl-station { transition: filter .2s, transform .35s var(--spring-soft); transform-box: fill-box; transform-origin: center; }
+.djl-station.active { filter: drop-shadow(0 0 8px color-mix(in srgb, var(--subj-body) 65%, transparent)); transform: scale(1.06); }
+
+.cl-controls { grid-template-columns: 1fr; }
+.cl-art .cl-lung-flow, .cl-art .cl-body-flow { stroke-dasharray: 230; stroke-dashoffset: 230; opacity: .25; transition: opacity .25s; }
+.cl-art.show-lung .cl-lung-flow { animation: clFlow 1s var(--ease-out) forwards; opacity: 1; }
+.cl-art.show-body .cl-body-flow { animation: clFlow 1s var(--ease-out) forwards; opacity: 1; }
+.cl-art .cl-chamber-labels, .cl-art .cl-valves, .cl-art .cl-inner-arrow, .cl-art .cl-lung-tags { transition: opacity .4s var(--ease-out); }
+.cl-art.show-heart .cl-chamber-labels, .cl-art.show-heart .cl-valves, .cl-art.show-heart .cl-inner-arrow { opacity: 1; }
+.cl-art.show-lung .cl-lung-tags { opacity: 1; }
+.cl-art.show-heart .cl-heart { filter: drop-shadow(0 0 8px color-mix(in srgb, var(--subj-body) 48%, transparent)); }
+@keyframes clFlow { to { stroke-dashoffset: 0; } }
+
+.bml-controls { grid-template-columns: 1fr 1fr; }
+.bml-controls [data-action="match"] { grid-column: 1 / -1; }
+.bml-membrane { transform: translateY(var(--bml-y, 0)); transform-box: view-box; cursor: ns-resize; touch-action: none; transition: transform .45s var(--spring-soft); }
+.bml-art.dragging .bml-membrane { transition: none; }
+.bml-lung { transform-box: fill-box; transform-origin: center; transform: scale(var(--bml-lung-scale, 1)); transition: transform .45s var(--spring-soft); }
+.bml-air { opacity: .35; transition: opacity .25s; }
+.bml-art.inhale .bml-air { opacity: 1; animation: bmlAirIn .8s ease-out infinite; }
+.bml-art.exhale .bml-air { opacity: 1; transform-box: view-box; transform-origin: 180px 27px; transform: rotate(180deg); animation: bmlAirOut .8s ease-out infinite; }
+.bml-labels { transition: opacity .35s var(--ease-out); }
+.bml-art.matched .bml-labels { opacity: 1; }
+@keyframes bmlAirIn { from { stroke-dasharray: 8 8; stroke-dashoffset: 16; } to { stroke-dasharray: 8 8; stroke-dashoffset: 0; } }
+@keyframes bmlAirOut { from { stroke-dasharray: 8 8; stroke-dashoffset: 0; } to { stroke-dasharray: 8 8; stroke-dashoffset: 16; } }
+
+.nl-answers { grid-template-columns: 1fr; }
+.nl-art .nl-filter, .nl-art .nl-reabsorb, .nl-art .nl-secrete { transition: opacity .35s var(--ease-out); }
+.nl-art.show-filter .nl-filter, .nl-art.show-reabsorb .nl-reabsorb, .nl-art.show-secrete .nl-secrete { opacity: 1; animation: nlPulse .8s var(--ease-out) both; }
+.nl-answers .body-lab-btn.no { border-color: var(--red); color: var(--red); animation: shake .38s; }
+@keyframes nlPulse { from { filter: drop-shadow(0 0 0 transparent); } to { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--subj-body) 45%, transparent)); } }
+
+.bil-art .bil-route { transition: opacity .3s var(--ease-out); }
+.bil-art.show-nutrient .bil-nutrient,
+.bil-art.show-oxygen .bil-oxygen,
+.bil-art.show-waste .bil-waste { opacity: 1; animation: bilRoute .75s var(--ease-out) both; }
+.bil-art .bil-organ, .bil-art .bil-heart { transition: filter .25s, transform .35s var(--spring-soft); transform-box: fill-box; transform-origin: center; }
+.bil-art.show-nutrient .bil-heart,
+.bil-art.show-oxygen .bil-heart,
+.bil-art.show-waste .bil-heart { filter: drop-shadow(0 0 7px color-mix(in srgb, var(--subj-body) 42%, transparent)); }
+.bil-answers { grid-template-columns: 1fr; }
+.bil-answers .body-lab-btn.no { border-color: var(--red); color: var(--red); animation: shake .38s; }
+@keyframes bilRoute { from { stroke-dasharray: 12 12; stroke-dashoffset: 48; } to { stroke-dasharray: 12 12; stroke-dashoffset: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .body-lab-art *, .body-lab-controls * { animation-name: none !important; transition-duration: .2s !important; transition-property: opacity, fill, background, color, border-color !important; }
+}

@@ -1005,6 +1005,50 @@ const MAP_DECOR: Record<string, string> = {
     <ellipse cx="23" cy="28" rx="5" ry="8" fill="var(--n0)" opacity=".32" transform="rotate(28 23 28)"/>`,
     `<radialGradient id="pl-fruit" cx=".32" cy=".25" r=".9"><stop offset="0" stop-color="var(--plant-sun)"/><stop offset=".32" stop-color="var(--red)"/><stop offset="1" stop-color="var(--red-press)"/></radialGradient>`,
   ),
+  // ── 중2 VI. 동물과 에너지 — 소화 → 순환 → 호흡 → 배설 → 세포 ──
+  stomachDeco: S(
+    `${shadow(32, 56, 18, 0.12)}
+    <path d="M27 10 C23 20 26 28 20 34 C14 40 15 51 24 54 C36 58 50 49 48 36 C46 27 39 29 36 21 C34 16 35 12 36 8 Z" fill="url(#bd-stomach)" stroke="var(--body-organ-lo)" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M35 12 C30 24 36 32 28 39 C24 43 25 49 30 51" fill="none" stroke="var(--body-tissue-hi)" stroke-width="2.2" stroke-linecap="round" opacity=".72"/>
+    <ellipse cx="27" cy="25" rx="6" ry="3" fill="var(--n0)" opacity=".34" transform="rotate(-34 27 25)"/>`,
+    `<radialGradient id="bd-stomach" cx=".3" cy=".24" r=".92"><stop offset="0" stop-color="var(--body-organ-hi)"/><stop offset=".56" stop-color="var(--body-organ)"/><stop offset="1" stop-color="var(--body-organ-lo)"/></radialGradient>`,
+  ),
+  heartDeco: S(
+    `${shadow(32, 56, 18, 0.13)}
+    <path d="M31 54 C25 46 12 38 12 25 C12 15 25 11 32 21 C39 10 53 15 52 26 C51 38 40 46 31 54 Z" fill="url(#bd-heart)" stroke="var(--body-organ-lo)" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M31 22 C33 31 34 41 31 52" fill="none" stroke="var(--body-organ-lo)" stroke-width="1.2" opacity=".48"/>
+    <path d="M31 21 C28 13 29 8 35 6 M39 18 C42 12 44 9 49 9" fill="none" stroke="var(--body-vessel-lo)" stroke-width="4.4" stroke-linecap="round"/>
+    <path d="M18 22 C20 17 25 16 28 20" fill="none" stroke="var(--n0)" stroke-width="2.4" stroke-linecap="round" opacity=".48"/>`,
+    `<radialGradient id="bd-heart" cx=".3" cy=".22" r=".94"><stop offset="0" stop-color="var(--body-organ-hi)"/><stop offset=".52" stop-color="var(--body-oxygenated)"/><stop offset="1" stop-color="var(--body-organ-lo)"/></radialGradient>`,
+  ),
+  lungDeco: S(
+    `${shadow(32, 56, 20, 0.11)}
+    <path d="M30 18 C25 16 18 18 14 26 C10 35 10 49 19 53 C27 56 30 48 30 40 Z" fill="url(#bd-lung-l)" stroke="var(--body-airway-lo)" stroke-width="1.5"/>
+    <path d="M34 18 C39 16 46 18 50 26 C54 35 54 49 45 53 C37 56 34 48 34 40 Z" fill="url(#bd-lung-r)" stroke="var(--body-airway-lo)" stroke-width="1.5"/>
+    <path d="M32 7 V25 M32 20 L23 30 M32 20 L41 30" fill="none" stroke="var(--body-airway-lo)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M18 27 C20 22 24 21 27 22" fill="none" stroke="var(--n0)" stroke-width="2.3" stroke-linecap="round" opacity=".52"/>`,
+    `<linearGradient id="bd-lung-l" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--body-airway-hi)"/><stop offset=".55" stop-color="var(--body-tissue-hi)"/><stop offset="1" stop-color="var(--body-tissue)"/></linearGradient>
+    <linearGradient id="bd-lung-r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--body-tissue-hi)"/><stop offset=".58" stop-color="var(--body-tissue)"/><stop offset="1" stop-color="var(--body-tissue-lo)"/></linearGradient>`,
+  ),
+  kidneyDeco: S(
+    `${shadow(32, 56, 20, 0.12)}
+    <path d="M27 13 C14 10 9 22 12 36 C14 48 23 54 30 47 C35 42 30 35 28 31 C24 24 35 18 27 13 Z" fill="url(#bd-kidney-l)" stroke="var(--body-kidney-lo)" stroke-width="1.6"/>
+    <path d="M37 13 C50 10 55 22 52 36 C50 48 41 54 34 47 C29 42 34 35 36 31 C40 24 29 18 37 13 Z" fill="url(#bd-kidney-r)" stroke="var(--body-kidney-lo)" stroke-width="1.6"/>
+    <path d="M27 37 C28 43 29 49 29 56 M37 37 C36 43 35 49 35 56" fill="none" stroke="var(--body-urea)" stroke-width="2.4" stroke-linecap="round"/>
+    <ellipse cx="19" cy="22" rx="5" ry="2.5" fill="var(--n0)" opacity=".36" transform="rotate(-25 19 22)"/>`,
+    `<radialGradient id="bd-kidney-l" cx=".28" cy=".23" r=".94"><stop offset="0" stop-color="var(--body-kidney-hi)"/><stop offset=".58" stop-color="var(--body-kidney)"/><stop offset="1" stop-color="var(--body-kidney-lo)"/></radialGradient>
+    <linearGradient id="bd-kidney-r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--body-kidney-hi)"/><stop offset=".55" stop-color="var(--body-kidney)"/><stop offset="1" stop-color="var(--body-kidney-lo)"/></linearGradient>`,
+  ),
+  cellDeco: S(
+    `${shadow(32, 56, 20, 0.11)}
+    <path d="M10 31 C9 18 19 9 32 10 C47 8 56 20 54 34 C56 47 44 55 31 53 C18 55 8 45 10 31 Z" fill="url(#bd-cell)" stroke="var(--body-cell-lo)" stroke-width="1.6"/>
+    <circle cx="29" cy="31" r="8.5" fill="url(#bd-nucleus)" stroke="var(--body-organ-lo)" stroke-width="1.4"/>
+    <path d="M39 21 C47 18 50 27 44 30 C38 33 35 25 39 21 Z M39 39 C46 35 50 43 44 47 C38 49 34 43 39 39 Z" fill="var(--body-organ)" stroke="var(--body-organ-lo)" stroke-width="1.2"/>
+    <path d="M40 23 C42 25 45 25 47 23 M39 41 C42 43 45 42 47 40" fill="none" stroke="var(--body-tissue-hi)" stroke-width="1" opacity=".72"/>
+    <ellipse cx="21" cy="18" rx="7" ry="3" fill="var(--n0)" opacity=".38" transform="rotate(-16 21 18)"/>`,
+    `<radialGradient id="bd-cell" cx=".3" cy=".24" r=".95"><stop offset="0" stop-color="var(--body-cell-hi)"/><stop offset=".58" stop-color="var(--body-cell)"/><stop offset="1" stop-color="var(--body-cell-lo)"/></radialGradient>
+    <radialGradient id="bd-nucleus" cx=".32" cy=".26" r=".92"><stop offset="0" stop-color="var(--body-protein)"/><stop offset="1" stop-color="var(--body-deoxygenated)"/></radialGradient>`,
+  ),
   // ── 중2 수학 Ⅱ. 부등식과 연립방정식 — 제한 표지판 → 기운 저울 → 수직선 범위 → x·y 상자 쌍 → 꿩과 토끼 ──
   signDeco: S(
     `${shadow(32, 57, 14, 0.13)}
