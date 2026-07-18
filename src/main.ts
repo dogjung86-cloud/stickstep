@@ -65,7 +65,14 @@ function goTab(k: GnavKey): void {
     );
   } else if (k === "challenge") {
     nav.reset(
-      challengeScreen({ onTab: goTab, onPlayStepRush: openStepRush, onPlayStarGame: openStarGame, onPlayCosmo: openCosmoMerge, onPlayOneStroke: openOneStroke }),
+      challengeScreen({
+        onTab: goTab,
+        onPlayStepRush: openStepRush,
+        onPlayStarGame: openStarGame,
+        onPlayCosmo: openCosmoMerge,
+        onPlayOneStroke: openOneStroke,
+        onPlayLaserMaze: openLaserMaze,
+      }),
     );
   } else {
     nav.reset(
@@ -198,6 +205,26 @@ function openStarGame(): void {
       onUnlocked: () => {
         nav.back();
         openStarGame();
+      },
+      onClose: () => nav.back(),
+    }),
+  );
+}
+
+/** 레이저 미로(도전 탭 미니게임 — 거울 반사·빛의 합성 격자 퍼즐) — 프리미엄 전용, 동적 import(스텝 러시 문법). */
+function openLaserMaze(): void {
+  if (isPremium() || isReviewMode()) {
+    void import("./game/laserMaze/index").then(({ laserMazeScreen }) => {
+      nav.go(laserMazeScreen({ onExit: () => goTab("challenge") }));
+    });
+    return;
+  }
+  nav.go(
+    paywallScreen({
+      sub: "도전 탭 미니게임 레이저 미로가 프리미엄에 포함돼 있어요. 거울을 돌려 레이저를 보석까지 보내 보세요.",
+      onUnlocked: () => {
+        nav.back();
+        openLaserMaze();
       },
       onClose: () => nav.back(),
     }),

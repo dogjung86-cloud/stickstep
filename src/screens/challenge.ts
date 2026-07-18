@@ -18,6 +18,7 @@ export function challengeScreen(o: {
   onPlayStarGame?: () => void;
   onPlayCosmo?: () => void;
   onPlayOneStroke?: () => void;
+  onPlayLaserMaze?: () => void;
 }): Screen {
   // premium: 미니게임은 프리미엄 콘텐츠로 재오픈 예정(2026-07-15 사용자 확정) — 닫힌 지금도
   // 골드 크라운을 함께 달아 가격 정책을 미리 알린다. 열 때 main.ts 게이트(openWeakDrill 문법)를 붙일 것.
@@ -92,6 +93,7 @@ export function challengeScreen(o: {
         gameCard("btn-steprush", "footstep", "스텝 러시", "두 버튼으로 무한 계단을 오르는 반사신경 게임", o.onPlayStepRush, true),
         gameCard("btn-cosmo", "globe", "코스모 머지", "우주먼지부터 태양까지, 같은 천체를 합쳐 키우는 낙하 퍼즐", o.onPlayCosmo, true),
         gameCard("btn-onestroke", "route", "네온 한붓그리기", "네온사인을 손 떼지 않고 한 붓에 켜는 퍼즐, 판이 오를수록 어려워요", o.onPlayOneStroke),
+        gameCard("btn-lasermaze", "reflect", "레이저 미로", "거울을 돌려 레이저를 보석까지 — 반사와 빛의 합성 퍼즐", o.onPlayLaserMaze),
         gameCard("btn-stargame", "star", "별자리 한붓그리기", "서로소의 비밀로 별을 한 붓에 긋는 퍼즐", o.onPlayStarGame),
       ),
     ),

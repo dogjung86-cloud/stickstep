@@ -261,6 +261,24 @@ export class Sfx {
     this.beep(1568, 210, { type: "triangle", gain: 0.32, delayMs: 175 });
   }
 
+  /** 레이저 미로 — 거울 회전 클릭(짧은 기계음 더블 틱). 고빈도라 신스 고정(지연 0). */
+  flip(): void {
+    this.beep(640, 45, { type: "square", gain: 0.22 });
+    this.beep(880, 35, { type: "square", gain: 0.14, delayMs: 42 });
+  }
+
+  /** 레이저 미로 — 보석 점등(유리 차임). 샘플 우선, 폴백은 골드 두 음. */
+  gemLit(): void {
+    if (this.sample("gem", 0.85)) return;
+    this.gold();
+  }
+
+  /** 레이저 미로 — 처음 배치로 리셋(되감기 휘릭). */
+  resetWhoosh(): void {
+    if (this.sample("reset", 0.7)) return;
+    this.beep(700, 180, { type: "triangle", gain: 0.28, slideTo: 230 });
+  }
+
   // ── 코스모 머지(천체 합체 퍼즐) 전용 — 전부 신스(샘플 발주는 추후) ──
   /** 드롭 — 짧은 톡. */
   drop(): void {
