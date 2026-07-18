@@ -35,7 +35,7 @@ export const cut = (theme: string, name: string, alt: string, bubbles?: CutBubbl
 
 export const concept = (o: {
   kicker?: string;
-  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "plant" | "body" | "elec" | "num" | "star" | "alge" | "grph" | "geom" | "solid" | "data" | "calc" | "ineq" | "func" | "prove" | "sim" | "dice";
+  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "plant" | "body" | "elec" | "num" | "star" | "alge" | "grph" | "geom" | "solid" | "data" | "calc" | "ineq" | "func" | "prove" | "sim" | "dice" | "world";
   title: string;
   lead?: string;
   blocks?: Block[];
@@ -122,7 +122,8 @@ export const hook = (o: {
     | "potmass" | "waterweed" | "windowplant" | "bedroomplant" | "germinating" | "fruitthinning"
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
-    | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun";
+    | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
+    | "threecities" | "stilthouse" | "skyroute" | "avocado" | "maasai" | "ilovenyc";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
@@ -372,6 +373,16 @@ export const driftLab = (o: { title: string; lead?: string; cta?: string; curio?
   ({ type: "driftLab", ...o });
 export const plateMap = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "plateMap", ...o });
+
+// ── 사회 Ⅰ 세계화 시대, 지리의 힘 랩 ────────────────────────
+export const worldPlaceLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "worldPlaceLab", ...o });
+export const latSunLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "latSunLab", ...o });
+export const connectLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "connectLab", ...o });
+export const tableLinkLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "tableLinkLab", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

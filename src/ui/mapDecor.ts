@@ -1373,6 +1373,63 @@ const MAP_DECOR: Record<string, string> = {
     `<linearGradient id="cp6-top" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F98C7E"/><stop offset=".6" stop-color="#E85A4E"/><stop offset="1" stop-color="#D8443C"/></linearGradient>
     <linearGradient id="cp6-bot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDFEFF"/><stop offset="1" stop-color="#D9DFEA"/></linearGradient>`,
   ),
+
+  // ── 사회 Ⅰ. 세계화 시대, 지리의 힘 — 세계 여행 준비물(트래블 오렌지) ──
+  globeDeco: S(
+    `${shadow(32, 57, 15, 0.13)}
+    <path d="M22 52 h20 M32 46 v6" stroke="#8A6A3E" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M46 14 a21 21 0 0 1 -1 32" fill="none" stroke="#B58335" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="31" cy="29" r="17" fill="url(#wg1-sea)" stroke="#1E5FA8" stroke-width="1.8"/>
+    <path d="M20 21 q5 -5 10 -2 q2 3 -2 5 q-6 1 -8 -3 z M36 17 q6 -1 8 4 q-1 5 -6 4 q-4 -3 -2 -8 z M24 34 q6 -2 9 2 q2 5 -3 7 q-7 0 -6 -9 z" fill="url(#wg1-land)" stroke="#1E7A46" stroke-width="1"/>
+    <ellipse cx="24" cy="20" rx="6" ry="3" fill="#fff" opacity=".45" transform="rotate(-24 24 20)"/>`,
+    `<radialGradient id="wg1-sea" cx=".34" cy=".28" r="1"><stop offset="0" stop-color="#9CD2FF"/><stop offset=".55" stop-color="#4E9AE8"/><stop offset="1" stop-color="#2B6CC0"/></radialGradient>
+    <linearGradient id="wg1-land" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8EDB8E"/><stop offset="1" stop-color="#3E9E5C"/></linearGradient>`,
+  ),
+  passportDeco: S(
+    `${shadow(32, 56, 14, 0.12)}
+    <rect x="17" y="10" width="30" height="42" rx="5" fill="url(#wp1-cov)" stroke="#9E3D08" stroke-width="1.8"/>
+    <rect x="20" y="10" width="3" height="42" fill="#B24A0E" opacity=".55"/>
+    <circle cx="33" cy="27" r="7.5" fill="none" stroke="#FFD8A8" stroke-width="1.8"/>
+    <path d="M25.5 27 h15 M33 19.5 a11 11 0 0 1 0 15 M33 19.5 a11 11 0 0 0 0 15" fill="none" stroke="#FFD8A8" stroke-width="1.3"/>
+    <rect x="27" y="40" width="12" height="3" rx="1.5" fill="#FFD8A8" opacity=".85"/>
+    <ellipse cx="24" cy="15" rx="5" ry="2.2" fill="#fff" opacity=".35" transform="rotate(-30 24 15)"/>`,
+    `<linearGradient id="wp1-cov" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F5854A"/><stop offset=".55" stop-color="#E8590C"/><stop offset="1" stop-color="#C2490A"/></linearGradient>`,
+  ),
+  planeDeco: S(
+    `${shadow(32, 55, 17, 0.11)}
+    <path d="M8 36 q20 -6 34 -8 l12 -10 q2 -1 3 1 l-7 12 q-2 3 -6 4 l-30 6 q-4 1 -6 -5 z" fill="url(#wa1-body)" stroke="#7A8698" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M30 30 l-6 -9 q-1 -2 2 -2 l10 8 z" fill="url(#wa1-wing)" stroke="#7A8698" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M26 35 l-4 7 q0 2 2 1 l8 -6 z" fill="url(#wa1-wing)" stroke="#7A8698" stroke-width="1.4" stroke-linejoin="round"/>
+    <circle cx="45" cy="24" r="1.6" fill="#4E7CB8"/><circle cx="40" cy="27" r="1.6" fill="#4E7CB8"/><circle cx="35" cy="29.5" r="1.6" fill="#4E7CB8"/>
+    <path d="M12 41 q-4 3 -8 3" fill="none" stroke="#C4CFDC" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+    <ellipse cx="46" cy="21" rx="5" ry="2" fill="#fff" opacity=".55" transform="rotate(-24 46 21)"/>`,
+    `<linearGradient id="wa1-body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".6" stop-color="#E8EEF6"/><stop offset="1" stop-color="#C6D2E0"/></linearGradient>
+    <linearGradient id="wa1-wing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F5854A"/><stop offset="1" stop-color="#D8500B"/></linearGradient>`,
+  ),
+  compassRoseDeco: S(
+    `${shadow(32, 56, 14, 0.12)}
+    <circle cx="32" cy="31" r="18" fill="url(#wc1-face)" stroke="#8A6A3E" stroke-width="2.2"/>
+    <circle cx="32" cy="31" r="13.5" fill="#FDFCF7" stroke="#C9B98E" stroke-width="1.2"/>
+    <path d="M32 21 l3.2 10 -3.2 -2.4 -3.2 2.4 z" fill="url(#wc1-n)" stroke="#8F1D1D" stroke-width="1"/>
+    <path d="M32 41 l-3.2 -10 3.2 2.4 3.2 -2.4 z" fill="#E8EEF6" stroke="#8A93A6" stroke-width="1"/>
+    <circle cx="32" cy="31" r="2" fill="#5A4A22"/>
+    <path d="M32 15.5 v3 M32 43.5 v3 M16.5 31 h3 M44.5 31 h3" stroke="#8A6A3E" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="25" cy="22" rx="5.5" ry="2.4" fill="#fff" opacity=".5" transform="rotate(-30 25 22)"/>`,
+    `<radialGradient id="wc1-face" cx=".36" cy=".3" r="1"><stop offset="0" stop-color="#F7E9C4"/><stop offset="1" stop-color="#D9BF84"/></radialGradient>
+    <linearGradient id="wc1-n" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F98C7E"/><stop offset="1" stop-color="#D8443C"/></linearGradient>`,
+  ),
+  suitcaseDeco: S(
+    `${shadow(32, 58, 14, 0.13)}
+    <path d="M26 14 v-3 a6 6 0 0 1 12 0 v3" fill="none" stroke="#9E5A18" stroke-width="2.4" stroke-linecap="round"/>
+    <rect x="16" y="14" width="32" height="38" rx="7" fill="url(#ws1-body)" stroke="#9E4A08" stroke-width="1.8"/>
+    <path d="M23 14 v38 M41 14 v38" stroke="#C2490A" stroke-width="2" opacity=".55"/>
+    <circle cx="34" cy="33" r="6.5" fill="url(#ws1-stkr)" stroke="#1E5FA8" stroke-width="1.2" transform="rotate(-12 34 33)"/>
+    <path d="M30.5 33 q3.5 -3.5 7 0 M30.5 33.6 q3.5 3.2 7 0" fill="none" stroke="#DCEFFF" stroke-width="1.1"/>
+    <circle cx="22" cy="55" r="3" fill="#5A6270"/><circle cx="42" cy="55" r="3" fill="#5A6270"/>
+    <ellipse cx="22" cy="19" rx="5" ry="2.2" fill="#fff" opacity=".4" transform="rotate(-26 22 19)"/>`,
+    `<linearGradient id="ws1-body" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F5A05C"/><stop offset=".55" stop-color="#E8590C"/><stop offset="1" stop-color="#C2490A"/></linearGradient>
+    <radialGradient id="ws1-stkr" cx=".35" cy=".3" r="1"><stop offset="0" stop-color="#9CD2FF"/><stop offset="1" stop-color="#3D7FD0"/></radialGradient>`,
+  ),
 };
 
 /** 지도 장식 아트 — 단원 특색 세트 → 생물 아이콘(ART_BIO) → 공용(ART_DECOR) 순서로 찾는다. */

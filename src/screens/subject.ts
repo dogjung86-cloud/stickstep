@@ -30,6 +30,7 @@ export function subjectScreen(opts: {
   mode: "onboard" | "hub";
   onPickScience: () => void;
   onPickMath?: () => void;
+  onPickSoc?: () => void;
   onBack?: () => void;
 }): Screen {
   const st = getState();
@@ -45,18 +46,8 @@ export function subjectScreen(opts: {
     head.append(el("div", { class: "subj-brand", text: BRAND.name }), el("div", {}));
   }
 
-  // 스낵(준비 중 안내)
-  let snackTimer = 0;
-  const snackEl = el("div", { class: "snack" });
-  function snack(msg: string): void {
-    snackEl.textContent = msg;
-    snackEl.classList.add("show");
-    window.clearTimeout(snackTimer);
-    snackTimer = window.setTimeout(() => snackEl.classList.remove("show"), 2000);
-  }
-
   const h1 = el("div", { class: "h1", html: opts.mode === "onboard" ? "무엇을<br>배워 볼까요?" : "과목 고르기" });
-  const sub = el("div", { class: "sub", text: "과학과 수학이 열려 있어요. 사회도 곧 만나요!" });
+  const sub = el("div", { class: "sub", text: "과학·수학·사회가 열려 있어요. 골라 볼까요?" });
 
   // ── 과학 카드(활성), 스틱맨 쌤이 손을 흔든다 ──
   const prog = subjectProgress("sci");
@@ -104,26 +95,28 @@ export function subjectScreen(opts: {
     opts.onPickMath?.();
   });
 
-  // ── 준비 중 카드(수학·사회) ──
-  const soonCard = (name: string, ico: string, desc: string): HTMLElement => {
-    const c = el(
-      "button",
-      { class: "subj-card soon", attrs: { "aria-label": `${name}, 준비 중`, "aria-disabled": "true" } },
-      el("div", { class: "subj-ico", html: icon(ico, 24) }),
-      el(
-        "div",
-        { class: "subj-body" },
-        el("div", { class: "subj-name" }, el("span", { text: name }), el("span", { class: "subj-soon-pill", text: "준비 중" })),
-        el("div", { class: "subj-desc", text: desc }),
-      ),
-      el("div", { class: "subj-go", html: icon("lock", 18) }),
-    );
-    c.addEventListener("click", () => {
-      haptic(HAPTIC.tap);
-      snack(`${name}은 열심히 만들고 있어요, 곧 만나요!`);
-    });
-    return c;
-  };
+  // ── 사회 카드(활성), 지도 위 세계 여행 트랙 ──
+  const sprog = subjectProgress("soc");
+  const sstarted = sprog.done > 0;
+  const soc = el(
+    "button",
+    { class: "subj-card soc", attrs: { "aria-label": "사회 시작하기" } },
+    el("div", { class: "subj-ava" }, stickAvatar(sstarted ? "cheer" : "wave")),
+    el(
+      "div",
+      { class: "subj-body" },
+      el("div", { class: "subj-name" }, el("span", { html: icon("globe", 18) }), el("span", { text: "사회" })),
+      el("div", { class: "subj-desc", text: "중1, 지도 위에서 배우는 세상" }),
+      sstarted
+        ? el("div", { class: "subj-meta", text: `레슨 ${sprog.done}개 완료 · ${currentStreak()}일 연속` })
+        : el("div", { class: "subj-meta", text: "세계 지리부터, 배치 랩 + 추론 게임" }),
+    ),
+    el("div", { class: "subj-go", html: icon("chevron", 20) }),
+  );
+  soc.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    opts.onPickSoc?.();
+  });
 
   // ── 배경 데코, 스틱맨 낙서 소품(연하게, 콘텐츠 방해 금지) ──
   const doodles = el("div", { class: "subj-doodles", attrs: { "aria-hidden": "true" } });
@@ -149,11 +142,11 @@ export function subjectScreen(opts: {
     { class: "scroll pad subj-body-wrap" },
     h1,
     sub,
-    el("div", { class: "subj-list" }, sci, mth, soonCard("사회", "globe", "지도 위에서 배우는 세상")),
+    el("div", { class: "subj-list" }, sci, mth, soc),
     el("div", { class: "subj-note", text: st.onboarded ? "과목은 언제든 여기서 바꿀 수 있어요." : "지금은 과학부터! 다른 과목도 준비되는 대로 열려요." },
     ),
   );
 
-  const elm = el("section", { class: "screen subj-screen" }, head, doodles, body, snackEl);
+  const elm = el("section", { class: "screen subj-screen" }, head, doodles, body);
   return { el: elm };
 }

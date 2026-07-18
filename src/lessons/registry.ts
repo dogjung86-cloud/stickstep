@@ -218,6 +218,10 @@ import { probBarLab } from "./steps/probBarLab";
 import { notLab } from "./steps/notLab";
 import { probAddLab } from "./steps/probAddLab";
 import { probMulLab } from "./steps/probMulLab";
+import { worldPlaceLab } from "./steps/worldPlaceLab";
+import { latSunLab } from "./steps/latSunLab";
+import { connectLab } from "./steps/connectLab";
+import { tableLinkLab } from "./steps/tableLinkLab";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -432,6 +436,10 @@ const R: Record<string, StepRenderer> = {
   notLab,
   probAddLab,
   probMulLab,
+  worldPlaceLab,
+  latSunLab,
+  connectLab,
+  tableLinkLab,
   quiz,
   table,
   order,

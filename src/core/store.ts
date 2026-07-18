@@ -161,11 +161,11 @@ export function setViewGrade(g: "g1" | "g2"): void {
 }
 
 /** 홈 지도가 보여줄 과목 — 전환한 적이 없으면 과학(기존 사용자 그대로). */
-export function getViewSubject(): "sci" | "math" {
-  return state.viewSubject === "math" ? "math" : "sci";
+export function getViewSubject(): "sci" | "math" | "soc" {
+  return state.viewSubject === "math" ? "math" : state.viewSubject === "soc" ? "soc" : "sci";
 }
 
-export function setViewSubject(s: "sci" | "math"): void {
+export function setViewSubject(s: "sci" | "math" | "soc"): void {
   state.viewSubject = s;
   save();
 }

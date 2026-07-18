@@ -8,6 +8,7 @@ import "./styles/body.css";
 import "./styles/policy.css";
 import "./styles/stickavatar.css";
 import "./styles/tutor.css";
+import "./styles/soc.css";
 
 import { nav } from "./core/router";
 import { getState, completeLesson, setViewSubject, isPremium, isReviewMode, setPremiumOverride, isDone } from "./core/store";
@@ -167,12 +168,13 @@ function openSubjects(): void {
       mode: "hub",
       onPickScience: () => pickSubject("sci"),
       onPickMath: () => pickSubject("math"),
+      onPickSoc: () => pickSubject("soc"),
       onBack: () => nav.back(),
     }),
   );
 }
 
-function pickSubject(s: "sci" | "math"): void {
+function pickSubject(s: "sci" | "math" | "soc"): void {
   setViewSubject(s);
   lastUnitId = undefined; // 직전 과목의 단원 포커스를 버리고 새 과목 지도로
   goHome();
@@ -244,6 +246,10 @@ function start(): void {
         },
         onPickMath: () => {
           setViewSubject("math");
+          nav.go(onboardingScreen(goHome));
+        },
+        onPickSoc: () => {
+          setViewSubject("soc");
           nav.go(onboardingScreen(goHome));
         },
       }),

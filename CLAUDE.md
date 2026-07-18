@@ -1372,6 +1372,41 @@ src/
   `process-geo.mjs` ASPECT_DIRS에 두 폴더 등록됨. **하이브리드 방침**: 해부 구조(소화계·심장·콩팥단위·허파꽈리)는
   발주 일러스트로, 경로도·화살표·모식도(이중순환·여과 방향·통합)는 라벨이 본질이라 SVG 유지.
 
+## 사회 트랙 — 사회 Ⅰ(세계화 시대, 지리의 힘) 제작 관례 (2026-07-18 구축)
+- **과목 배선**: SubjectId "soc"(과학 sci·수학 math와 병렬), 단원 id `s1uN`/`s2uN`(레슨 `s1uNlM`) —
+  subjectOfUnit은 접두사 s로 판별. content/soc/(curriculum·unit1), 테마 `world`(트래블 오렌지 #E8590C),
+  **styles/soc.css**(사회 전용 시트 — 훅 hs1-·기함 wpl-·connectLab cnl-·tableLinkLab tll-, latSunLab은 공용
+  클래스만). 지도 데코 = 세계 여행 준비물 5종(globeDeco·passportDeco·planeDeco·compassRoseDeco·suitcaseDeco).
+  과목 허브(subject.ts)는 3과목 활성, 홈 앱바 과목 상자 아이콘은 soc → globe.
+- **상호작용 문법(사회 정체성)**: 자연법칙 시뮬레이션이 없으므로 **배치·판독·추론·분류**가 랩 문법이다
+  (성취기준 동사 = 추론·파악·조사). 서사형+작은 판단 상호작용이 기본값(수학 Ⅵ 통계 노선의 사회판) —
+  기함 worldPlaceLab(배치)·latSunLab(유일한 인과 랩)·connectLab(시대 비교)·tableLinkLab(규모 판독)이 기준.
+- **세계지도는 실데이터만(대륙 손그리기 금지)**: `qa/gen-worldmap.mjs`가 Natural Earth 110m(unpkg
+  world-atlas topojson 직다운·자체 디코드)+쾨펜 Kottek 2006 ASCII 0.5°(VU Wien zip)를 →
+  `src/ui/worldMap.generated.ts`(육지 path·1° 기후 판정 격자 digits 문자열·climateAt/lonLatOf)와
+  `public/soc/climate.webp`(기후 색 오버레이 — Chrome 캔버스로 셀 페인트)로 굽는다. 오버레이는 SVG에서
+  **육지 path로 클립**해 해안선이 벡터로 떨어진다(래스터 경계 숨김). **날짜변경선을 넘는 링(유라시아
+  본토 축치·남극·피지)은 경도 언랩 후 ±360° 복제**가 정답 — 버리면 대륙이 통째로 사라진다(실사고).
+  기후 6분류 = 쾨펜 A~E→열대~한대 + 고산 규칙(|위도|≤25의 Cfb/Cwb/ET/EF + 티베트 상자의 ET/EF).
+  출처는 photos/CREDITS.md(Natural Earth PD·Kottek 인용 조건).
+- **worldPlaceLab(기함) 판정**: 좌표→기후는 데이터 그대로가 진실이되, **근접 스냅(snapDeg — 순록 6°·
+  기타 3°)** 필수. 쾨펜 냉대선이 중앙 시베리아에서 북위 75°까지 올라와 툰드라 띠가 손가락보다 얇다
+  (plateMap 판정 폭 관행의 기후판). 스냅 실패 시에만 기후별 오답 코미디 토스트(WRONG 표 — 오개념 교정형).
+  바다 = 풍덩 스플래시. 데이터가 통념과 어긋나는 지점 메모: 마드리드 내륙 = BSk 건조, 서울 = Dwa 냉대
+  (쾨펜 지도 관행 — 사회과부도와 일치, 남부 해안만 온대), 남극은 지도 크롭(y 14~414)으로 제외.
+- **사회 훅 6종**은 hookSoc.ts(threecities·stilthouse·skyroute·avocado·maasai·ilovenyc) — 실지도가
+  필요한 장면(skyroute)은 WORLD_LAND_PATH를 재사용한다. 스틱맨 개념 컷은 public/soc/cuts(u1lN 6장,
+  qa/order-soccuts.sh·soccuts_prompts.txt — 스타일 블록 A 공용).
+- **e2e**: `PORT=<포트> node qa/e2e-soc1.mjs`(43검증 — 홈 지도·훅 6장면 실조작·latSunLab 원호 드래그·
+  기함 가로 배치(오답 코미디+스냅 포함)·connectLab 세 시대·tableLinkLab 접시 탭·recap 미니아트+more·
+  컷 로드·전 퀴즈). 함정: SVG `<g>` 탭 대상은 `.click()`이 없다 — MouseEvent 디스패치로(사고 기록).
+  figTabs의 `.seg`는 `.figtabs` 카드의 형제, pairMatch는 CTA 없이 완주 시트(onContinue)로 진행.
+  눈검수 `PORT=<포트> node qa/shot-soc1.mjs`(홈·훅·기함 세로/가로·개념 컷·recap 펼침·그림 문제 7샷).
+  프리뷰 하니스 rAF 프리즈 환경에서 캔버스 랩(latSunLab) 검증은 이 e2e(실 Chromium)가 확정 경로.
+- **다음 배치 백로그**: Ⅱ~Ⅵ 대륙 지리(soon 등록됨 — 대륙 크롭 지도는 세로에 넉넉), Ⅶ~Ⅻ 일반사회
+  (사례 판단·시나리오 문법 별도 설계), 단원 종합 평가(과학 규격 계승 여부 결정), 발주 실사(경관·가옥)로
+  퀴즈 그림 보강, "세계 어디게?" 거리 점수 게임(도전 탭 후보 — 탐정 문법은 본선이 아니라 응용).
+
 ## 로그인·동기화 (Supabase — 2026-07 구축)
 - **core/auth.ts**(OAuth·세션)와 **core/sync.ts**(진행도 병합·푸시)가 전부. **환경변수
   (VITE_SUPABASE_URL·VITE_SUPABASE_ANON_KEY, .env.local)가 없으면 전원 no-op** — dev·e2e·기존

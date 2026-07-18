@@ -18,6 +18,7 @@ import { G2_UNIT6 } from "./g2/unit6";
 import { G2_UNIT7 } from "./g2/unit7";
 import { G2_UNIT8 } from "./g2/unit8";
 import { MATH_CURRICULA } from "./math/curriculum";
+import { SOC_CURRICULA } from "./soc/curriculum";
 
 export interface Unit {
   id: string;
@@ -50,17 +51,20 @@ export const CURRICULUM_G2: Unit[] = [
 
 export const CURRICULA: Record<GradeId, Unit[]> = { g1: CURRICULUM, g2: CURRICULUM_G2 };
 
-// ── 과목 트랙 — 과학(CURRICULA)·수학(MATH_CURRICULA, content/math/) ──
-export type SubjectId = "sci" | "math";
-export const SUBJECT_LABEL: Record<SubjectId, string> = { sci: "과학", math: "수학" };
+// ── 과목 트랙 — 과학(CURRICULA)·수학(MATH_CURRICULA)·사회(SOC_CURRICULA) ──
+export type SubjectId = "sci" | "math" | "soc";
+export const SUBJECT_LABEL: Record<SubjectId, string> = { sci: "과학", math: "수학", soc: "사회" };
 export const CURRICULA_OF: Record<SubjectId, Record<GradeId, Unit[]>> = {
   sci: CURRICULA,
   math: MATH_CURRICULA,
+  soc: SOC_CURRICULA,
 };
 
-/** 단원이 속한 과목 — 수학 단원 id는 m으로 시작(m1uN·m2uN). */
+/** 단원이 속한 과목 — 수학 단원 id는 m(m1uN·m2uN), 사회는 s(s1uN·s2uN)로 시작. */
 export function subjectOfUnit(unitId: string): SubjectId {
-  return unitId.startsWith("m") ? "math" : "sci";
+  if (unitId.startsWith("m")) return "math";
+  if (unitId.startsWith("s")) return "soc";
+  return "sci";
 }
 
 // 퀴즈 스텝 자동 번호 — "문제 n / of" 헤더용. 이미 n/of를 명시한 스텝은 그대로 둔다.
@@ -75,7 +79,7 @@ for (const u of [...CURRICULUM, ...CURRICULUM_G2]) {
 }
 
 export function findLesson(id: string): { unit: Unit; lesson: Lesson; index: number } | null {
-  for (const cur of [CURRICULUM, CURRICULUM_G2, MATH_CURRICULA.g1, MATH_CURRICULA.g2]) {
+  for (const cur of [CURRICULUM, CURRICULUM_G2, MATH_CURRICULA.g1, MATH_CURRICULA.g2, SOC_CURRICULA.g1, SOC_CURRICULA.g2]) {
     for (const unit of cur) {
       const index = unit.lessons.findIndex((l) => l.id === id);
       if (index >= 0) return { unit, lesson: unit.lessons[index], index };
@@ -86,7 +90,7 @@ export function findLesson(id: string): { unit: Unit; lesson: Lesson; index: num
 
 /** 단원 찾기 — 단원 종합 평가 화면 등 unitId만 아는 곳에서 쓴다. */
 export function findUnit(unitId: string): Unit | null {
-  for (const cur of [CURRICULUM, CURRICULUM_G2, MATH_CURRICULA.g1, MATH_CURRICULA.g2]) {
+  for (const cur of [CURRICULUM, CURRICULUM_G2, MATH_CURRICULA.g1, MATH_CURRICULA.g2, SOC_CURRICULA.g1, SOC_CURRICULA.g2]) {
     const u = cur.find((x) => x.id === unitId);
     if (u) return u;
   }
@@ -95,7 +99,9 @@ export function findUnit(unitId: string): Unit | null {
 
 /** 단원이 속한 학년 — 레슨 완료 후 홈이 올바른 학년 지도로 복귀할 때 쓴다. */
 export function gradeOfUnit(unitId: string): GradeId {
-  if (subjectOfUnit(unitId) === "math") return MATH_CURRICULA.g2.some((u) => u.id === unitId) ? "g2" : "g1";
+  const subj = subjectOfUnit(unitId);
+  if (subj === "math") return MATH_CURRICULA.g2.some((u) => u.id === unitId) ? "g2" : "g1";
+  if (subj === "soc") return SOC_CURRICULA.g2.some((u) => u.id === unitId) ? "g2" : "g1";
   return CURRICULUM_G2.some((u) => u.id === unitId) ? "g2" : "g1";
 }
 

@@ -9,6 +9,7 @@ const THEME_INK: Record<string, string> = {
   chem: "#E64980", geo: "#A9713B", light: "#C838A6", atom: "#7CB024", plant: "#27864B", elec: "#EFB800", star: "#2E3A8C",
   num: "#0DA5C6", alge: "#7C5CE8", grph: "#E8547E", geom: "#F08C00", solid: "#2F9E44", data: "#364FC7",
   calc: "#9C36B5", ineq: "#A9631B", func: "#0CA678", prove: "#1971C2", sim: "#C2255C", dice: "#C92A2A",
+  world: "#E8590C",
 };
 
 /** 테마 원색(미등록 단원은 토스 블루). */

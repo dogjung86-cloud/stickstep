@@ -16,7 +16,7 @@ import type { Screen } from "../core/router";
 import { gnav, type GnavKey } from "../ui/gnav";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
-const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u6: "body", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice" };
+const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u6: "body", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice", s1u1: "world" };
 // 보너스 미니게임은 도전 탭으로 이사(2026-07-12 IA 개편) — 지도는 학습 서사만 남긴다.
 
 // 노드 배치 = 완만한 곡선 중심선 + 발걸음 지그재그(2026-07-14 사용자 지시, 발자국 사진 레퍼런스).
@@ -64,7 +64,7 @@ export function homeScreen(
   const subjBtn = el("button", {
     class: "abtn subj-box",
     attrs: { "aria-label": `과목 선택 — 현재 ${subjName}` },
-    html: icon(subject === "math" ? "mathop" : "flask", 15) + icon("chevronDown", 9, { cls: "sb-chev" }),
+    html: icon(subject === "math" ? "mathop" : subject === "soc" ? "globe" : "flask", 15) + icon("chevronDown", 9, { cls: "sb-chev" }),
   });
   subjBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
@@ -693,6 +693,7 @@ const UNIT_DECOR: Record<string, { seq: string[]; sky: [string, string] }> = {
   m2u4: { seq: ["hangerDeco", "sealDeco", "circumDeco", "paraliftDeco", "kiteDeco"], sky: ["sparkle", "cloud"] }, // 중2 Ⅳ: 이등변 옷걸이 → 증명 도장 → 외접원 → 평행사변형 리프트 → 마름모 연(삼각형에서 사각형으로)
   m2u5: { seq: ["matryoDeco", "trirulerDeco", "foldletterDeco", "trayDeco", "knotropeDeco"], sky: ["sparkle", "cloud"] }, // 중2 Ⅴ: 마트료시카 → 삼각자 → 3단 접기 편지 → 균형 쟁반 → 3·4·5 매듭 밧줄(닮음에서 피타고라스로)
   m2u6: { seq: ["coinDeco", "branchDeco", "spinnerDeco", "chanceDeco", "capsuleDeco"], sky: ["sparkle", "cloud"] }, // 중2 Ⅵ: 동전 → 가지 그림 → 원판 → 확률 눈금 → 뽑기 캡슐(세기에서 확률로)
+  s1u1: { seq: ["globeDeco", "passportDeco", "planeDeco", "compassRoseDeco", "suitcaseDeco"], sky: ["planeDeco", "cloud"] }, // 사회 Ⅰ: 지구본 → 여권 → 비행기 → 나침반 → 캐리어(세계 여행을 떠나는 준비물 순)
 };
 const DEFAULT_DECOR: { seq: string[]; sky: [string, string] } = {
   seq: ["tree1", "tree2", "bush", "rock", "grassTuft"],
@@ -723,6 +724,7 @@ const DECOR_SIZE: Record<string, number> = {
   funcboxDeco: 46, duolineDeco: 48, axisdotDeco: 44, slopetriDeco: 46, crosspointDeco: 48,
   hangerDeco: 46, sealDeco: 42, circumDeco: 48, paraliftDeco: 48, kiteDeco: 46,
   matryoDeco: 46, trirulerDeco: 46, foldletterDeco: 44, trayDeco: 48, knotropeDeco: 48,
+  globeDeco: 48, passportDeco: 44, planeDeco: 54, compassRoseDeco: 46, suitcaseDeco: 46,
 };
 
 function placeDecor(layer: HTMLElement, points: { x: number; y: number }[], W: number, unitId: string): void {

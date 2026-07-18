@@ -1,0 +1,30 @@
+# 사회 Ⅰ 스틱맨 개념 컷 6장 — concept 첫 블록 표준(전부 가로 4:3) → public/soc/cuts
+# 스타일은 qa/cuts_prompts.txt의 스타일 블록 A와 동일(아래 재수록).
+#
+# ── 스타일 블록 A (전 컷 공용 — 스틱맨 만화) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+
+[0] file=public/soc/cuts/u1l1.png (landscape 4:3, 스타일 A)
+A stick figure hiker stands on a mountain summit looking through binoculars at a sweeping panorama that clearly shows three kinds of land in one view: jagged mountain peaks on the left, a wide flat plain with tiny crop rows in the middle, and a coastline with sea waves and a tiny sailboat on the right. The figure's scarf flutters in the wind. Only the sea on the right is teal; everything else pure black and white.
+
+[1] file=public/soc/cuts/u1l2.png (landscape 4:3, 스타일 A)
+A stick figure stands in front of an open wardrobe, one hand on chin, choosing between two outfits held up on hangers: a thick puffy padded coat in one hand and a short-sleeve t-shirt in the other. Through a window beside the wardrobe, a snowstorm with wind streaks and snowflakes is visible outside. Only the puffy padded coat is teal; everything else pure black and white.
+
+[2] file=public/soc/cuts/u1l3.png (landscape 4:3, 스타일 A)
+A stick figure sits happily on the floor surrounded by many delivery boxes of different sizes, hugging a desktop globe. Above and behind, a small doodled airplane flies one way and a small cargo ship sails the other way along dotted travel paths that curve toward the boxes. Only the globe's ocean areas are teal; everything else pure black and white.
+
+[3] file=public/soc/cuts/u1l4.png (landscape 4:3, 스타일 A)
+Two stick figures face each other playing cat's cradle, holding a loop of string stretched between their raised hands — but the string weaves into a wide net, and resting safely in the middle of the net sits a desktop globe. Both figures grin at each other. Only the woven string net is teal; everything else pure black and white.
+
+[4] file=public/soc/cuts/u1l5.png (landscape 4:3, 스타일 A)
+A stick figure holds up a pair of jeans by the waistband, eyes wide with surprise, inspecting them closely. From different parts of the jeans (the fabric, a button, the zipper, a pocket, the hem) several curved dotted arrows fan outward toward the edges of the panel in different directions, as if pointing to faraway origins. Only the jeans are teal; everything else pure black and white.
+
+[5] file=public/soc/cuts/u1l6.png (landscape 4:3, 스타일 A)
+A stick figure market vendor proudly holds up a large heart-shaped badge above a small market stall. The stall table displays local specialty goods: a teapot with tea leaves, a basket of potatoes, and a jar of berries. A second stick figure customer claps with delight. Only the heart-shaped badge is teal; everything else pure black and white.

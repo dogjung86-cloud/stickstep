@@ -1,0 +1,414 @@
+/* ============================================================
+   soc.css — 사회 트랙 전용 스타일 (병합 충돌 회피를 위해 ui.css와 분리)
+   과학=다크 실험 무대(.stage), 사회=지도 위 여행. 색·그림자는 tokens.css 변수만 참조.
+   단원 테마: world(Ⅰ 세계화 시대, 지리의 힘 · 트래블 오렌지 #E8590C)
+   ============================================================ */
+
+/* ---------- 과목 허브: 사회 카드 액센트 ---------- */
+.subj-card.soc { border-color: rgba(232, 89, 12, .35); }
+
+/* ---------- 단원 테마: world(세계화 시대, 지리의 힘) ---------- */
+.unit-band.world { background: linear-gradient(150deg, #F5915A 0%, #E8590C 55%, #C2490A 100%); }
+.gm-terrain.world {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #FDE3CE, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #FBD9BE, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #FCDEC6, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #F8CFAE, transparent 72%),
+    linear-gradient(180deg, #FEF7F1 0%, #FCEBDD 55%, #F8DCC5 100%);
+}
+.gm-path-glow.world { stroke: rgba(232, 89, 12, .22); }
+.gm-path-done.world { stroke: #E8590C; }
+.gm-node.world.now .gm-med, .gm-node.world.done .gm-med {
+  background: radial-gradient(120% 120% at 32% 26%, #F8A671 0%, #E8590C 58%, #C2490A 100%);
+}
+.gm-node.world .gm-ring { border-color: rgba(232, 89, 12, .55); }
+.gm-node.world:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px #E8590C; }
+.kicker.world { background: #FDEEE3; color: #B0450A; }
+.pn-badge.world.on {
+  border-style: solid; border-color: transparent; color: #fff;
+  background: linear-gradient(150deg, #F5915A 0%, #E8590C 55%, #C2490A 100%);
+  box-shadow: 0 6px 14px -4px rgba(232, 89, 12, .55);
+}
+
+/* ---------- worldPlaceLab(기함) — 가로 무대 "지구에 살아 보기" ---------- */
+.wpl-stage { touch-action: none; }
+.wpl-map {
+  position: absolute; z-index: 1;
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, .55), 0 0 0 1px rgba(130, 152, 200, .22);
+}
+.wpl-svg { display: block; width: 100%; height: 100%; }
+.wpl-clim { transition: opacity .35s var(--ease); }
+.wpl-gratlab { font: 700 11px Pretendard, sans-serif; fill: #5A7A96; }
+.wpl-pill { max-width: 46%; }
+
+/* 정착 마커 — 도장 팝 */
+.wpl-mark { animation: wplStamp .5s var(--spring-bounce) backwards; }
+@keyframes wplStamp {
+  0% { opacity: 0; transform: scale(2.2); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.wpl-mark { transform-box: fill-box; transform-origin: center; }
+.wpl-splash { animation: wplSplash .7s var(--ease-out) forwards; transform-box: fill-box; transform-origin: center; }
+@keyframes wplSplash {
+  0% { opacity: 1; transform: scale(.4); }
+  100% { opacity: 0; transform: scale(1.7); }
+}
+
+/* 토큰 트레이 */
+.wpl-tray {
+  position: absolute; left: 0; right: 0; bottom: 6px; z-index: 4;
+  display: flex; justify-content: center; align-items: stretch; gap: 8px; padding: 0 10px;
+}
+.wpl-token {
+  appearance: none; cursor: grab; font-family: inherit;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  min-width: 86px; padding: 7px 10px 6px; border-radius: 14px;
+  background: rgba(20, 32, 58, .85); border: 1.5px solid rgba(140, 165, 215, .32);
+  color: #EAF1FF; font-size: 11.5px; font-weight: 800; letter-spacing: -.012em;
+  transition: transform .14s var(--spring-soft), border-color .16s, opacity .2s;
+  touch-action: none;
+}
+.wpl-token:active { transform: scale(.96); }
+.wpl-token .wpl-token-art { width: 30px; height: 30px; }
+.wpl-token .wpl-token-art svg { width: 100%; height: 100%; }
+.wpl-token.lift { opacity: .4; }
+.wpl-token.armed { border-color: #F5915A; box-shadow: 0 0 0 3px rgba(232, 89, 12, .28); }
+.wpl-token.done { opacity: .45; cursor: default; border-color: rgba(30, 158, 80, .55); }
+.wpl-token.done .wpl-token-name::after { content: " ✓"; color: #6BDA96; }
+.wpl-token.shake { animation: wplShake .4s var(--ease); }
+@keyframes wplShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  55% { transform: translateX(5px); }
+  80% { transform: translateX(-2px); }
+}
+
+/* 기후 안경(트레이 첫 슬롯) */
+.wpl-lens {
+  appearance: none; cursor: pointer; font-family: inherit;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  min-width: 74px; padding: 7px 10px 6px; border-radius: 14px;
+  background: rgba(20, 32, 58, .85); border: 1.5px solid rgba(140, 165, 215, .32);
+  color: #C8D6F2; font-size: 11.5px; font-weight: 800; letter-spacing: -.012em;
+  transition: transform .14s var(--spring-soft), border-color .16s, background .2s;
+}
+.wpl-lens:active { transform: scale(.96); }
+.wpl-lens .wpl-lens-ico { width: 26px; height: 26px; }
+.wpl-lens .wpl-lens-ico svg { width: 100%; height: 100%; }
+.wpl-lens.on {
+  background: linear-gradient(150deg, #F5915A 0%, #E8590C 60%, #C2490A 100%);
+  border-color: transparent; color: #fff;
+  box-shadow: 0 6px 14px -4px rgba(232, 89, 12, .55);
+}
+
+/* 범례 — 안경을 켰을 때만 */
+.wpl-legend {
+  position: absolute; left: 50%; transform: translateX(-50%) translateY(6px); z-index: 3;
+  display: flex; gap: 7px; padding: 6px 12px; border-radius: var(--r-pill);
+  background: rgba(14, 24, 46, .86); border: 1px solid rgba(140, 165, 215, .3);
+  opacity: 0; pointer-events: none; transition: opacity .25s var(--ease), transform .25s var(--ease);
+  white-space: nowrap;
+}
+.wpl-legend.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.wpl-leg { display: inline-flex; align-items: center; gap: 4px; color: #DCE6FA; font-size: 10.5px; font-weight: 700; }
+.wpl-leg i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+/* 드래그 고스트 */
+.wpl-ghost {
+  position: absolute; left: 0; top: 0; z-index: 6; width: 44px; height: 44px;
+  pointer-events: none; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .45));
+}
+.wpl-ghost svg { width: 100%; height: 100%; }
+.wpl-toast { bottom: 88px; }
+
+/* ---------- 사회 Ⅰ 훅 장면(hs1-) ---------- */
+.hs1-cities, .hs1-stilt, .hs1-avoc, .hs1-maasai, .hs1-nyc, .hs1-skymap {
+  position: relative; margin: 4px auto 0; max-width: 320px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.hs1-cities svg, .hs1-stilt svg, .hs1-avoc svg, .hs1-maasai svg, .hs1-nyc svg, .hs1-skymap svg { display: block; width: 100%; }
+
+/* L1 세 도시 라이브 캠 */
+.hs1-cam { border-radius: 14px; overflow: hidden; }
+.hs1-cities.flip .hs1-cam { animation: hs1CamIn .4s var(--ease-out); }
+@keyframes hs1CamIn {
+  0% { opacity: .3; transform: translateX(10px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+.hs1-camtag {
+  position: absolute; left: 14px; top: 12px; display: flex; align-items: center; gap: 6px;
+  padding: 5px 10px; border-radius: var(--r-pill);
+  background: rgba(14, 24, 46, .78); color: #fff; font-size: 12px; font-weight: 800;
+}
+.hs1-camtag span { color: #FFD98A; }
+.hs1-camtag i {
+  font-style: normal; font-size: 9.5px; font-weight: 900; letter-spacing: .04em;
+  color: #fff; background: #E23B4B; border-radius: 5px; padding: 1.5px 5px;
+  animation: hs1Live 1.4s ease-in-out infinite;
+}
+@keyframes hs1Live { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+.hs1-camdots { position: absolute; right: 14px; top: 16px; display: flex; gap: 4px; }
+.hs1-camdots i { width: 6px; height: 6px; border-radius: 99px; background: rgba(255, 255, 255, .45); }
+.hs1-camdots i.on { background: #fff; }
+
+/* L2 고상 가옥 — 마루 밑 들여다보기 */
+.hs1-stilt .hs1-under { transition: opacity .4s var(--ease); }
+.hs1-stilt.peek .hs1-snake { animation: hs1Snake 1.6s ease-in-out infinite; }
+@keyframes hs1Snake {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(7px); }
+}
+.hs1-stilt.peek svg { animation: hs1Zoom .5s var(--ease-out); }
+@keyframes hs1Zoom {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.04) translateY(-3px); }
+  100% { transform: scale(1); }
+}
+
+/* L3 하늘길 지도 */
+.hs1-skymap { cursor: default; }
+.hs1-route { opacity: 0; transition: opacity .3s var(--ease); }
+.hs1-route.on { opacity: 1; }
+.hs1-route.on .hs1-arc { stroke-dasharray: 5 5; animation: hs1Dash 1.2s linear infinite; }
+@keyframes hs1Dash { to { stroke-dashoffset: -20; } }
+.hs1-routebtns { display: flex; gap: 8px; margin-top: 10px; }
+.hs1-routebtn {
+  flex: 1; appearance: none; font-family: inherit; cursor: pointer;
+  padding: 10px 6px; border-radius: var(--r-md);
+  background: var(--grad-card); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 12.5px; font-weight: 800; color: var(--sub); letter-spacing: -.012em;
+  transition: transform .12s var(--ease), border-color .16s, color .16s;
+}
+.hs1-routebtn:active { transform: scale(.965); }
+.hs1-routebtn.seen { border-color: rgba(232, 89, 12, .5); color: #B0450A; }
+
+/* L4 아보카도 가격표 플립 */
+.hs1-tag { transform-box: fill-box; transform-origin: center; transition: transform .45s var(--spring); transform-style: preserve-3d; }
+.hs1-tagface { transition: opacity .2s .12s; }
+.hs1-tagback2 { opacity: 0; }
+.hs1-avoc.flip .hs1-tag { animation: hs1TagFlip .5s var(--ease-out) forwards; }
+.hs1-avoc.flip .hs1-tagfront { opacity: 0; }
+.hs1-avoc.flip .hs1-tagback2 { opacity: 1; }
+@keyframes hs1TagFlip {
+  0% { transform: scaleY(1); }
+  50% { transform: scaleY(.08); }
+  100% { transform: scaleY(1); }
+}
+
+/* L5 마사이 스마트폰 */
+.hs1-maasai .hs1-mscreen, .hs1-maasai .hs1-mwave { transition: opacity .35s var(--ease); }
+.hs1-maasai.on .hs1-mphone { animation: hs1PhonePop .45s var(--spring-bounce); transform-box: fill-box; transform-origin: center; }
+@keyframes hs1PhonePop {
+  0% { transform: scale(1); }
+  55% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+/* L6 I♥NY 머그 플립 */
+.hs1-nyc .hs1-mugface { transition: opacity .25s .14s; }
+.hs1-nyc .hs1-mugback { opacity: 0; }
+.hs1-nyc.flip .hs1-mugfront { opacity: 0; }
+.hs1-nyc.flip .hs1-mugback { opacity: 1; }
+.hs1-nyc.flip svg { animation: hs1MugSpin .5s var(--ease-out); }
+@keyframes hs1MugSpin {
+  0% { transform: rotateY(0); }
+  50% { transform: rotateY(86deg); }
+  100% { transform: rotateY(0); }
+}
+
+/* ---------- connectLab(L3) — 세 시대 연결 랩 "지구 반대편에 안부 전하기" ---------- */
+.cnl-stage {
+  position: relative; margin-top: 12px;
+  border-radius: var(--r-lg); overflow: hidden;
+  background: #0A1424; box-shadow: var(--sh-card);
+}
+.cnl-stage > svg { display: block; width: 100%; height: auto; }
+
+/* 시대 소품 전환 — data-era가 장면을 갈아입힌다 */
+.cnl-g-boat, .cnl-g-cable, .cnl-g-cable2, .cnl-g-phone {
+  opacity: 0; transition: opacity .4s var(--ease); pointer-events: none;
+}
+.cnl-stage[data-era="sail"] .cnl-g-boat { opacity: 1; }
+.cnl-stage[data-era="tel"] .cnl-g-cable, .cnl-stage[data-era="tel"] .cnl-g-cable2 { opacity: 1; }
+.cnl-stage[data-era="phone"] .cnl-g-phone { opacity: 1; }
+
+/* 하늘 잔반짝임(별·타워 비콘) */
+.cnl-tw { animation: cnlTw 2.8s ease-in-out infinite; }
+.cnl-tw2 { animation: cnlTw 2.8s ease-in-out 1.4s infinite; }
+.cnl-beacon { animation: cnlTw 2.2s ease-in-out infinite; }
+@keyframes cnlTw { 0%, 100% { opacity: .3; } 50% { opacity: .95; } }
+
+/* 아치 경로 — 전파 편 비행 중 밝아진다 */
+.cnl-arch { opacity: .3; transition: opacity .25s var(--ease); }
+.cnl-stage.flying .cnl-arch { opacity: .8; }
+
+/* 돛단배 — 잔물결 일렁임 + 항해 물결 */
+.cnl-boat-bob {
+  animation: cnlBob 2.4s ease-in-out infinite;
+  transform-box: fill-box; transform-origin: center;
+}
+@keyframes cnlBob {
+  0%, 100% { transform: translateY(0) rotate(-1.4deg); }
+  50% { transform: translateY(-2px) rotate(1.4deg); }
+}
+.cnl-wake { opacity: 0; transition: opacity .3s var(--ease); }
+.cnl-stage.going .cnl-wake { opacity: .6; }
+.cnl-boat-mail { transition: opacity .3s var(--ease); }
+
+/* 전신 램프 점멸 */
+.cnl-lamp { opacity: .35; }
+.cnl-lamp.blink { animation: cnlBlink .3s linear 4; }
+@keyframes cnlBlink { 0%, 48% { opacity: 1; } 52%, 100% { opacity: .12; } }
+
+/* 전파 아크 번쩍(0.25초) */
+.cnl-arcs path { opacity: 0; }
+.cnl-arcs.zap path { animation: cnlArc .3s var(--ease) both; }
+.cnl-arcs.zap path:nth-of-type(2) { animation-delay: .06s; }
+.cnl-arcs.zap path:nth-of-type(3) { animation-delay: .12s; }
+@keyframes cnlArc { 0% { opacity: 0; } 35% { opacity: 1; } 100% { opacity: 0; } }
+
+/* 수신 링 핑 */
+.cnl-ringFr { opacity: 0; transform-box: fill-box; transform-origin: center; }
+.cnl-ringFr.ping { animation: cnlPing .5s var(--ease-out) both; }
+@keyframes cnlPing {
+  0% { opacity: .9; transform: scale(.4); }
+  100% { opacity: 0; transform: scale(2.2); }
+}
+
+/* 팝 등장(말풍선·봉투·전보) */
+.cnl-pop {
+  opacity: 0; transform: scale(.5);
+  transition: transform .32s var(--spring-bounce), opacity .16s var(--ease);
+  transform-box: fill-box; transform-origin: center;
+}
+.cnl-pop.show { opacity: 1; transform: scale(1); }
+.cnl-spark { opacity: 0; }
+.cnl-pop.show .cnl-spark { animation: cnlSpark .6s var(--ease-out) .12s both; }
+@keyframes cnlSpark { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
+
+/* 전파 편(아치를 나는 봉투) */
+.cnl-fly { opacity: 0; transition: opacity .14s var(--ease); }
+
+/* 달력(항해 중 날짜 카운트) — HTML 오버레이 */
+.cnl-cal {
+  position: absolute; top: 8px; left: 50%; z-index: 3; width: 74px;
+  transform: translate(-50%, -8px); opacity: 0; pointer-events: none;
+  border-radius: 10px; overflow: hidden; perspective: 220px;
+  box-shadow: 0 10px 22px -8px rgba(0, 0, 0, .65), 0 0 0 1px rgba(140, 165, 215, .25);
+  transition: opacity .25s var(--ease), transform .25s var(--ease);
+}
+.cnl-cal.show { opacity: 1; transform: translate(-50%, 0); }
+.cnl-cal-head { height: 13px; background: linear-gradient(160deg, #F06860, #D8443E); position: relative; }
+.cnl-cal-head::before, .cnl-cal-head::after {
+  content: ""; position: absolute; top: 4px; width: 5px; height: 5px;
+  border-radius: 50%; background: rgba(255, 255, 255, .85);
+}
+.cnl-cal-head::before { left: 16px; }
+.cnl-cal-head::after { right: 16px; }
+.cnl-cal-page { background: #FBF8F0; text-align: center; padding: 5px 4px 6px; transform-origin: center top; }
+.cnl-cal-page.flip { animation: cnlFlip .18s ease-out; }
+@keyframes cnlFlip { 0% { transform: rotateX(0); } 55% { transform: rotateX(-70deg); } 100% { transform: rotateX(0); } }
+.cnl-cal-day { font-size: 19px; font-weight: 800; color: #26313E; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.cnl-cal-cap { margin-top: 2px; font-size: 9.5px; font-weight: 700; color: #8A94A2; letter-spacing: -.01em; }
+
+/* 결과 필 — 걸린 시간 */
+.cnl-result {
+  position: absolute; left: 50%; bottom: 9px; z-index: 3; transform: translateX(-50%);
+  display: flex; align-items: baseline; gap: 8px; padding: 6px 14px 7px;
+  border-radius: var(--r-pill); white-space: nowrap;
+  background: rgba(9, 18, 34, .82); border: 1px solid rgba(140, 165, 215, .3);
+}
+.cnl-result-k { font-size: 11px; font-weight: 700; color: #9FB2D2; }
+.cnl-result-v {
+  display: inline-block; font-size: 15px; font-weight: 800;
+  color: #FFC24D; letter-spacing: -.01em;
+}
+.cnl-result-v.pop { animation: cnlVPop .45s var(--spring-bounce); }
+@keyframes cnlVPop { 0% { transform: scale(.55); } 100% { transform: scale(1); } }
+
+/* 시대 세그 3버튼 */
+.cnl-eras { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+.cnl-era {
+  appearance: none; cursor: pointer; font-family: inherit;
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  padding: 9px 4px 8px; border-radius: 14px;
+  background: #fff; border: 1.5px solid var(--n200);
+  transition: transform .14s var(--spring-soft), border-color .16s var(--ease),
+    background .2s var(--ease), box-shadow .2s var(--ease);
+}
+.cnl-era:active { transform: scale(.965); }
+.cnl-era b { font-size: 13.5px; font-weight: 800; color: var(--ink); letter-spacing: -.012em; }
+.cnl-era span { font-size: 11px; font-weight: 700; color: var(--n600); }
+.cnl-era.on {
+  border-color: transparent;
+  background: linear-gradient(150deg, #F5915A 0%, #E8590C 55%, #C2490A 100%);
+  box-shadow: 0 6px 14px -4px rgba(232, 89, 12, .5);
+}
+.cnl-era.on b, .cnl-era.on span { color: #fff; }
+.cnl-era:disabled { opacity: .55; pointer-events: none; }
+
+/* 안부 전하기 */
+.cnl-send {
+  appearance: none; cursor: pointer; font-family: inherit; border: none;
+  width: 100%; margin-top: 10px; padding: 13px 16px; border-radius: 16px;
+  font-size: 15.5px; font-weight: 800; letter-spacing: -.012em; color: #fff;
+  background: linear-gradient(150deg, #F5915A 0%, #E8590C 55%, #C2490A 100%);
+  box-shadow: 0 8px 18px -6px rgba(232, 89, 12, .5);
+  transition: transform .14s var(--spring-soft), opacity .2s var(--ease);
+}
+.cnl-send:active { transform: scale(.965); }
+.cnl-send:disabled { opacity: .55; pointer-events: none; }
+
+/* ---------- tableLinkLab — 식탁 연결 랩(사회 Ⅰ L4) ---------- */
+.tll-stage { touch-action: manipulation; }
+.tll-svg { display: block; width: 100%; height: auto; }
+.tll-plate, .tll-dlab, .tll-spark { transform-box: fill-box; transform-origin: center; }
+.tll-ringlab-t { font: 800 11px/1 Pretendard, sans-serif; letter-spacing: -.02em; }
+.tll-dlab-t { font: 800 12px/1 Pretendard, sans-serif; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+
+/* 접시 = 버튼 */
+.tll-plate { cursor: pointer; outline: none; }
+.tll-plate:focus-visible .tll-plate-rim { stroke: #FFC24D; stroke-width: 2.6; }
+.tll-plate.hit { animation: tllPlatePop .5s var(--spring-bounce); }
+@keyframes tllPlatePop { 0% { transform: scale(1); } 35% { transform: scale(1.13); } 100% { transform: scale(1); } }
+
+/* 동심원 링 — 평소 흐릿한 점선 → 점등 시 발광 */
+.tll-ring-glow { opacity: 0; transition: opacity .6s var(--ease); }
+.tll-ring-line { opacity: .32; transition: opacity .5s var(--ease); }
+.tll-ringlab { opacity: .55; transition: opacity .5s var(--ease); }
+.tll-ring.on .tll-ring-line { opacity: .95; }
+.tll-ring.on .tll-ring-glow { opacity: .38; }
+.tll-ring.on .tll-ringlab { opacity: 1; }
+.tll-ring.flash .tll-ring-glow { animation: tllRingFlash .8s var(--ease); }
+@keyframes tllRingFlash { 0%, 100% { opacity: .38; } 35% { opacity: .8; } }
+
+/* 여정 점선 — 스포크 안 마스크 선이 자라며 출발지→접시로 그려진다(0.9s).
+   base가 transition:none이라 .go 제거 = 즉시 리셋 → 재탭 리플레이가 값싸다. */
+.tll-mline { stroke-dashoffset: 100; transition: none; }
+.tll-spoke.go .tll-mline { stroke-dashoffset: 0; transition: stroke-dashoffset .9s var(--ease); }
+.tll-journey { opacity: 0; transition: none; }
+.tll-spoke.go .tll-journey { opacity: 1; transition: opacity .2s var(--ease); }
+
+/* 출발지 퍽 — 여정이 시작되면 밝아진 채 유지(.go가 남는다) */
+.tll-origin { opacity: .62; transition: opacity .45s var(--ease); }
+.tll-spoke.go .tll-origin { opacity: 1; }
+
+/* 거리 라벨 필 — 여정이 닿을 무렵(0.6s 지연) 팝 */
+.tll-dlab { opacity: 0; transform: scale(.55); transition: none; }
+.tll-spoke.go .tll-dlab {
+  opacity: 1; transform: scale(1);
+  transition: opacity .25s var(--ease) .6s, transform .4s var(--spring-bounce) .6s;
+}
+
+/* 피날레 — 세 링 동시 반짝 + 스파클(iteration 유한, 클래스 제거는 정리용) */
+.tll-svg.finale .tll-ring.on .tll-ring-glow { animation: tllFinaleGlow 1.5s var(--ease) 2; }
+@keyframes tllFinaleGlow { 0%, 100% { opacity: .38; } 45% { opacity: .9; } }
+.tll-spark { opacity: 0; }
+.tll-svg.finale .tll-spark { animation: tllSpark 1.3s ease-in-out var(--d, 0s) 2 backwards; }
+@keyframes tllSpark {
+  0%, 100% { opacity: 0; transform: scale(.3) rotate(0deg); }
+  45% { opacity: 1; transform: scale(1.15) rotate(90deg); }
+}
