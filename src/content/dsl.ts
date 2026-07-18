@@ -123,7 +123,8 @@ export const hook = (o: {
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
     | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
-    | "threecities" | "stilthouse" | "skyroute" | "avocado" | "maasai" | "ilovenyc";
+    | "threecities" | "stilthouse" | "skyroute" | "avocado" | "maasai" | "ilovenyc"
+    | "asiangames" | "monsoonrain" | "templetrip" | "halalmark" | "trainride" | "emptyclass" | "madein" | "fanchant";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
@@ -383,6 +384,12 @@ export const connectLab = (o: { title: string; lead?: string; cta?: string; curi
   ({ type: "connectLab", ...o });
 export const tableLinkLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "tableLinkLab", ...o });
+export const regionPlaceLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt; continent?: string }): Step =>
+  ({ type: "regionPlaceLab", ...o });
+export const monsoonLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "monsoonLab", ...o });
+export const pyramidLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "pyramidLab", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

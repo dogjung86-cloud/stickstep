@@ -60,6 +60,10 @@ import {
 import {
   renderThreeCities, renderStiltHouse, renderSkyRoute, renderAvocado, renderMaasai, renderIloveNyc,
 } from "./hookSoc";
+import {
+  renderAsianGames, renderMonsoonRain, renderTempleTrip, renderHalalMark,
+  renderTrainRide, renderEmptyClass, renderMadeIn, renderFanchant,
+} from "./hookSoc2";
 import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -102,7 +106,8 @@ interface HookStep {
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
     | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
-    | "threecities" | "stilthouse" | "skyroute" | "avocado" | "maasai" | "ilovenyc";
+    | "threecities" | "stilthouse" | "skyroute" | "avocado" | "maasai" | "ilovenyc"
+    | "asiangames" | "monsoonrain" | "templetrip" | "halalmark" | "trainride" | "emptyclass" | "madein" | "fanchant";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
 }
@@ -232,6 +237,14 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "puzzlemap") sceneCleanup = renderPuzzlemap(scene, helper, s, finish, face);
   else if (s.scene === "quakenews") sceneCleanup = renderQuakenews(scene, helper, s, finish, face);
   else if (s.scene === "eggearth") sceneCleanup = renderEggearth(scene, helper, s, finish, face);
+  else if (s.scene === "asiangames") sceneCleanup = renderAsianGames(scene, helper, s, finish, face);
+  else if (s.scene === "monsoonrain") sceneCleanup = renderMonsoonRain(scene, helper, s, finish, face);
+  else if (s.scene === "templetrip") sceneCleanup = renderTempleTrip(scene, helper, s, finish, face);
+  else if (s.scene === "halalmark") sceneCleanup = renderHalalMark(scene, helper, s, finish, face);
+  else if (s.scene === "trainride") sceneCleanup = renderTrainRide(scene, helper, s, finish, face);
+  else if (s.scene === "emptyclass") sceneCleanup = renderEmptyClass(scene, helper, s, finish, face);
+  else if (s.scene === "madein") sceneCleanup = renderMadeIn(scene, helper, s, finish, face);
+  else if (s.scene === "fanchant") sceneCleanup = renderFanchant(scene, helper, s, finish, face);
   else sceneCleanup = renderEgg(scene, helper, s, finish, api, face);
 
   api.setCTA("스틱맨 쌤과 먼저 관찰해요", { enabled: false });

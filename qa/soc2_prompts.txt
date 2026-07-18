@@ -1,0 +1,74 @@
+# 사회 Ⅱ(아시아) 발주 — 스틱맨 개념 컷 8장(public/soc/cuts) + 문화경관 실사풍 10장(public/soc/asia)
+# 컷은 qa/soccuts_prompts.txt와 같은 스타일 블록 A. 실사풍은 스타일 블록 P(아래).
+#
+# ── 스타일 블록 A (스틱맨 컷 공용) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 P (문화경관 실사풍 공용) ──
+# photorealistic educational reference photograph, natural daylight, eye-level or slightly low
+# wide-angle view, crisp focus, realistic colors, clean composition centered on the landmark type.
+# Generic archetype of the building style — NOT a specific famous landmark, no recognizable
+# real-world monument. Absolutely no text, no letters, no numbers, no signs, no banners, no flags
+# with writing anywhere in the image. No watermark. People allowed only small and distant,
+# faces not recognizable. Landscape 4:3.
+
+[0] file=public/soc/cuts/u2l1.png (landscape 4:3, 스타일 A)
+A stick figure kneels on the floor happily assembling a giant five-piece jigsaw puzzle shaped like one big continent; each puzzle piece has a different simple doodle pattern (tiny mountains, tiny palm trees, tiny waves, tiny dunes, tiny grass tufts). One piece is still in the figure's raised hand, about to be placed. Only that hand-held puzzle piece is teal; everything else pure black and white.
+
+[1] file=public/soc/cuts/u2l2.png (landscape 4:3, 스타일 A)
+A stick figure farmer stands calf-deep in a flooded rice paddy planting a small seedling, body leaning against a strong steady wind drawn as long curved streamlines coming from the sea on one side of the panel; the wind streamlines carry three tiny puffy rain clouds with small rain drops. A tiny sailboat sits on the sea. Only the rain drops falling from the clouds are teal; everything else pure black and white.
+
+[2] file=public/soc/cuts/u2l3.png (landscape 4:3, 스타일 A)
+A stick figure tourist with a small backpack stands in the foreground looking up amazed at a skyline of four different rooftops side by side: a tiered pagoda roof, an onion dome with a thin tower beside it, a stepped pyramid tower covered in tiny carved figures, and a pointed steeple with a small cross on top. Only the onion dome is teal; everything else pure black and white.
+
+[3] file=public/soc/cuts/u2l4.png (landscape 4:3, 스타일 A)
+Four stick figures of slightly different heights and hairstyles hold hands in a circle, viewed from a slight overhead angle, around a small desktop globe standing on the floor in the middle; all four are smiling. Only the globe's ocean areas are teal; everything else pure black and white.
+
+[4] file=public/soc/cuts/u2l5.png (landscape 4:3, 스타일 A)
+A stick figure tilts a big glass jar and pours a stream of beans onto a large flat map spread on the floor; the beans pile up into one tall heap on one part of the map while other parts get only a few scattered beans. The figure watches with wide surprised eyes. Only the tallest bean heap is teal; everything else pure black and white.
+
+[5] file=public/soc/cuts/u2l6.png (landscape 4:3, 스타일 A)
+Two stick figures each build a tower of toy blocks side by side: the left tower is wide at the bottom and narrow at the top like a stable pyramid, the right tower is narrow at the bottom and wide at the top, wobbling, and its builder stretches both arms to steady it with a worried face. Only the single topmost block of the wobbling right tower is teal; everything else pure black and white.
+
+[6] file=public/soc/cuts/u2l7.png (landscape 4:3, 스타일 A)
+Three stick figures work at three small workbenches in a row: the first cranks a nodding-donkey oil pump, the second sews cloth at a hand-crank sewing machine, the third proudly holds up a tiny square chip with tweezers and a magnifying glass. Only the tiny chip is teal; everything else pure black and white.
+
+[7] file=public/soc/cuts/u2l8.png (landscape 4:3, 스타일 A)
+A small factory building with a sawtooth roof and one chimney sits on a wheeled trailer being pulled along a road by a rope; one stick figure pulls the rope leaning forward while another stick figure walks behind pushing the trailer, both cheerful. A dotted path curves ahead toward the panel edge. Only the factory's sawtooth roof is teal; everything else pure black and white.
+
+[8] file=public/soc/asia/temple-sea.png (landscape 4:3, 스타일 P)
+A Southeast Asian Theravada Buddhist temple complex: a steep multi-tiered golden roof with pointed gable finials, and beside it a tall golden bell-shaped stupa (chedi) tapering to a thin spire, white washed walls, tropical blue sky. Generic archetype, not a specific famous temple.
+
+[9] file=public/soc/asia/buddha.png (landscape 4:3, 스타일 P)
+A large serene seated Buddha statue in meditation pose (cross-legged, hands resting in lap), gilded bronze surface, inside an open temple hall with columns, soft warm light, a few small offering flowers in front, no people close up.
+
+[10] file=public/soc/asia/gopuram.png (landscape 4:3, 스타일 P)
+A South Indian Hindu temple gopuram: a tall stepped pyramid gate tower densely covered with hundreds of small colorful carved deity figures on every tier, vividly painted, blue sky background. Generic archetype, not a specific famous temple.
+
+[11] file=public/soc/asia/mosque.png (landscape 4:3, 스타일 P)
+A grand white marble mosque: one large central onion dome flanked by smaller domes, and two tall slender minaret towers with balconies, wide arched colonnade courtyard in front, clear sky. The crescent finials on top are tiny and simple. Generic archetype, not a specific famous mosque.
+
+[12] file=public/soc/asia/cathedral.png (landscape 4:3, 스타일 P)
+A Spanish-colonial style stone cathedral in a tropical Asian city: weathered beige stone facade, twin bell towers, a rose window, a cross on the central pediment, palm trees at the sides, warm daylight. Generic archetype, not a specific famous cathedral.
+
+[13] file=public/soc/asia/ganges.png (landscape 4:3, 스타일 P)
+A wide sacred river at dawn seen from the water: long stone stair embankments (ghats) descending into the river along the far bank, old multi-story buildings and small tower shrines above the stairs, a few small wooden rowboats on calm golden water, tiny distant figures bathing waist-deep near the steps, soft misty morning light.
+
+[14] file=public/soc/asia/terrace.png (landscape 4:3, 스타일 P)
+Emerald green rice terraces carved into steep mountain slopes, many curved stepped paddy fields filled with young rice and thin water lines reflecting the sky, morning mist in the valley, no buildings.
+
+[15] file=public/soc/asia/himalaya.png (landscape 4:3, 스타일 P)
+A colossal snow-covered Himalayan mountain range under deep blue sky: jagged rock-and-ice peaks with wind-blown snow plumes at the summits, dramatic glaciers below, seen from a high vantage point, no people.
+
+[16] file=public/soc/asia/dubai.png (landscape 4:3, 스타일 P)
+An ultramodern desert city skyline rising directly out of golden sand dunes: a cluster of futuristic glass skyscrapers of varied shapes shimmering in the heat, one dune with ripple patterns in the foreground, late afternoon light. Generic archetype, not a specific famous city.
+
+[17] file=public/soc/asia/samarkand.png (landscape 4:3, 스타일 P)
+A Central Asian Silk Road madrasa square: monumental portal arches (iwans) covered in intricate turquoise-and-cobalt geometric tilework, ribbed azure domes, sand-colored brick walls, wide empty stone plaza in front, golden afternoon light. Generic archetype, not a specific famous square.

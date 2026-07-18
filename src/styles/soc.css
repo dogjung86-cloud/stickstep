@@ -413,3 +413,204 @@
   0%, 100% { opacity: 0; transform: scale(.3) rotate(0deg); }
   45% { opacity: 1; transform: scale(1.15) rotate(90deg); }
 }
+
+/* ============================================================
+   사회 Ⅱ(아시아) — regionPlaceLab(rpl-) · monsoonLab(msn-) ·
+   pyramidLab(pyr-) · 훅 장면(hs2-)
+   ============================================================ */
+
+/* ---------- regionPlaceLab(기함) — 세로 지역 배치 랩 ---------- */
+.rpl-stage {
+  position: relative; margin-top: 12px;
+  touch-action: none; -webkit-user-select: none; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.rpl-map {
+  border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh-card);
+  background: #CFE3F2; border: 1px solid var(--n200);
+}
+.rpl-svg { display: block; width: 100%; height: auto; touch-action: none; }
+.rpl-gratlab { font: 700 10px Pretendard, sans-serif; fill: #5A7A96; }
+.rpl-fill { transition: opacity .4s var(--ease); }
+.rpl-hint { transition: opacity .3s var(--ease); pointer-events: none; }
+.rpl-pill {
+  position: absolute; left: 10px; top: 10px; max-width: 62%;
+  background: rgba(255, 255, 255, .92); box-shadow: var(--sh-card);
+}
+.rpl-toast {
+  position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%) translateY(8px);
+  width: max-content; max-width: 88%;
+  background: rgba(20, 30, 52, .92); color: #F2F6FF;
+  font-size: 12.5px; font-weight: 700; line-height: 1.45;
+  padding: 9px 14px; border-radius: 13px; opacity: 0; pointer-events: none;
+  transition: opacity .25s var(--ease), transform .25s var(--ease);
+}
+.rpl-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.rpl-mark { animation: rplStamp .5s var(--spring-bounce) backwards; transform-box: fill-box; transform-origin: center; }
+@keyframes rplStamp {
+  0% { opacity: 0; transform: scale(1.5); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.rpl-name { font: 900 14px Pretendard, sans-serif; text-anchor: middle; }
+.rpl-name-stroke {
+  font: 900 14px Pretendard, sans-serif; text-anchor: middle;
+  fill: none; stroke: #FFFFFF; stroke-width: 3.4; stroke-linejoin: round; opacity: .85;
+}
+.rpl-city { font: 700 8.5px Pretendard, sans-serif; text-anchor: middle; fill: #3A4658; paint-order: stroke; stroke: #FFFFFF; stroke-width: 2.4; stroke-linejoin: round; }
+.rpl-splash { animation: rplSplash .7s var(--ease-out) forwards; transform-box: fill-box; transform-origin: center; }
+@keyframes rplSplash {
+  0% { opacity: 1; transform: scale(.4); }
+  100% { opacity: 0; transform: scale(1.7); }
+}
+
+/* 트레이 — 특징 안경 + 지역 이름표 */
+.rpl-tray { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; touch-action: none; }
+.rpl-token {
+  appearance: none; font-family: inherit; cursor: grab;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 11px; border-radius: var(--r-pill);
+  background: var(--grad-card); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 13px; font-weight: 800; color: var(--ink); letter-spacing: -.012em;
+  transition: transform .12s var(--ease), border-color .16s, opacity .2s;
+  touch-action: none; -webkit-user-select: none; user-select: none;
+}
+.rpl-token:active { transform: scale(.96); cursor: grabbing; }
+.rpl-token .rpl-token-ico { width: 24px; height: 24px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; }
+.rpl-token .rpl-token-ico svg { width: 19px; height: 19px; }
+.rpl-token.lift { opacity: .4; }
+.rpl-token.armed { border-color: #F5915A; box-shadow: 0 0 0 3px rgba(232, 89, 12, .28); }
+.rpl-token.done { opacity: .5; cursor: default; border-color: rgba(30, 158, 80, .55); }
+.rpl-token.done .rpl-token-name::after { content: " ✓"; color: #1E9E50; }
+.rpl-token.shake { animation: rplShake .4s var(--ease); }
+@keyframes rplShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  60% { transform: translateX(4px); }
+}
+.rpl-lens {
+  appearance: none; font-family: inherit; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 11px; border-radius: var(--r-pill);
+  background: var(--grad-card); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 13px; font-weight: 800; color: var(--sub);
+  transition: transform .12s var(--ease), border-color .16s, color .16s;
+}
+.rpl-lens:active { transform: scale(.96); }
+.rpl-lens .rpl-lens-ico { width: 22px; height: 22px; }
+.rpl-lens .rpl-lens-ico svg { width: 100%; height: 100%; }
+.rpl-lens.on { border-color: rgba(232, 89, 12, .55); color: #B0450A; background: #FDEEE3; }
+.rpl-ghost {
+  position: fixed; left: 0; top: 0; z-index: 60; pointer-events: none;
+  padding: 7px 12px; border-radius: var(--r-pill); color: #fff;
+  font-size: 13px; font-weight: 900; box-shadow: var(--sh-raise); opacity: .93;
+}
+
+/* ---------- monsoonLab — 판정 카드 ---------- */
+.msn-quiz {
+  display: none; margin-top: 12px; padding: 14px;
+  border-radius: var(--r-lg); background: var(--grad-card);
+  border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+}
+.msn-quiz.show { display: block; animation: msnIn .4s var(--ease-out); }
+@keyframes msnIn {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.msn-q { font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.55; margin-bottom: 10px; }
+.msn-opt {
+  appearance: none; font-family: inherit; cursor: pointer; display: block; width: 100%;
+  text-align: left; padding: 12px 14px; margin-top: 8px; border-radius: var(--r-md);
+  background: #fff; border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 13.5px; font-weight: 700; color: var(--ink); letter-spacing: -.012em;
+  transition: transform .12s var(--ease), border-color .16s, background .16s, opacity .2s;
+}
+.msn-opt:active { transform: scale(.98); }
+.msn-opt.ok { border-color: var(--green); background: #E9F9F0; }
+.msn-opt.no { border-color: var(--red); background: #FDEEEF; }
+.msn-opt.dim { opacity: .45; }
+
+/* ---------- pyramidLab — 피라미드 판독 ---------- */
+.pyr-board {
+  margin-top: 10px; padding: 10px 6px 4px;
+  border-radius: var(--r-lg); background: var(--grad-card);
+  border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+}
+.pyr-board svg { display: block; width: 100%; height: auto; }
+.pyr-bar {
+  animation: pyrIn .45s var(--ease-out) backwards;
+  animation-delay: calc(var(--i) * 26ms);
+  transform-box: fill-box;
+}
+.pyr-bar.m { transform-origin: right center; }
+.pyr-bar.f { transform-origin: left center; }
+@keyframes pyrIn {
+  0% { opacity: 0; transform: scaleX(0); }
+  100% { opacity: 1; transform: scaleX(1); }
+}
+.pyr-band { font: 800 9.5px Pretendard, sans-serif; fill: #8A93A6; }
+.pyr-axis { font: 700 9.5px Pretendard, sans-serif; fill: #6B7684; }
+.pyr-zone { fill: rgba(232, 89, 12, 0); cursor: pointer; transition: fill .18s var(--ease); }
+.pyr-zone:active { fill: rgba(232, 89, 12, .12); }
+.pyr-q {
+  margin-top: 10px; padding: 12px 14px; border-radius: var(--r-md);
+  background: #FDEEE3; border: 1.5px solid rgba(232, 89, 12, .3);
+  font-size: 13.5px; font-weight: 700; color: var(--ink); line-height: 1.55;
+}
+.pyr-q.ok { background: #E9F9F0; border-color: rgba(4, 180, 95, .35); }
+
+/* ---------- 사회 Ⅱ 훅 장면(hs2-) ---------- */
+.hs2-games, .hs2-calendar, .hs2-trip, .hs2-snackwrap, .hs2-train, .hs2-class, .hs2-closet, .hs2-concert {
+  position: relative; margin: 4px auto 0; max-width: 320px;
+  -webkit-tap-highlight-color: transparent;
+}
+.hs2-games, .hs2-trip, .hs2-train { cursor: pointer; }
+.hs2-games svg, .hs2-calendar svg, .hs2-trip svg, .hs2-snackwrap svg, .hs2-train svg, .hs2-class svg, .hs2-closet svg, .hs2-concert svg { display: block; width: 100%; }
+.hs2-games.flip, .hs2-calendar.flip, .hs2-snackwrap.flip, .hs2-train.flip, .hs2-class.flip, .hs2-concert.flip { animation: hs2In .4s var(--ease-out); }
+@keyframes hs2In {
+  0% { opacity: .35; transform: translateX(8px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+.hs2-gamestag, .hs2-classtag {
+  margin: 8px auto 0; width: max-content; max-width: 92%;
+  padding: 5px 12px; border-radius: var(--r-pill);
+  background: var(--n100); color: var(--sub); font-size: 12.5px; font-weight: 800;
+}
+.hs2-gamestag b { color: #B0450A; }
+.hs2-cam { border-radius: 14px; overflow: hidden; }
+.hs2-trip.flip .hs2-cam { animation: hs2In .4s var(--ease-out); }
+.hs2-camtag {
+  position: absolute; left: 14px; top: 12px; display: flex; align-items: center; gap: 6px;
+  padding: 5px 10px; border-radius: var(--r-pill);
+  background: rgba(14, 24, 46, .78); color: #fff; font-size: 12px; font-weight: 800;
+}
+.hs2-camtag i {
+  font-style: normal; font-size: 9.5px; font-weight: 900; letter-spacing: .04em;
+  color: #fff; background: #E8590C; border-radius: 5px; padding: 1.5px 5px;
+}
+.hs2-camdots { position: absolute; right: 14px; top: 16px; display: flex; gap: 4px; }
+.hs2-camdots i { width: 6px; height: 6px; border-radius: 99px; background: rgba(255, 255, 255, .45); }
+.hs2-camdots i.on { background: #fff; }
+.hs2-flipbtn {
+  appearance: none; font-family: inherit; cursor: pointer;
+  display: block; margin: 10px auto 0; padding: 10px 18px; border-radius: var(--r-pill);
+  background: var(--grad-card); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 13px; font-weight: 800; color: var(--ink); letter-spacing: -.012em;
+  transition: transform .12s var(--ease), opacity .2s;
+}
+.hs2-flipbtn:active { transform: scale(.96); }
+.hs2-flipbtn.off { opacity: .4; cursor: default; }
+.hs2-halal { animation: hs2Pop .5s var(--spring-bounce) .15s backwards; transform-box: fill-box; transform-origin: center; }
+@keyframes hs2Pop {
+  0% { opacity: 0; transform: scale(.4); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.hs2-play { animation: hs2Pulse 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes hs2Pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+.hs2-shirt { cursor: pointer; }
+.hs2-label { animation: hs2Pop .4s var(--spring-bounce) backwards; transform-box: fill-box; transform-origin: center; }
+.hs2-chant { animation: hs2Pop .5s var(--spring-bounce) .2s backwards; transform-box: fill-box; transform-origin: center; }
+.hs2-team { animation: hs2March .45s var(--ease-out); }
+@keyframes hs2March {
+  0% { transform: translateX(26px); opacity: .4; }
+  100% { transform: translateX(0); opacity: 1; }
+}

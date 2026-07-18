@@ -3,6 +3,7 @@
 // 2022 개정 교육과정: 중1 = 지리(Ⅰ~Ⅵ) + 일반사회(Ⅶ~Ⅻ). 지금은 Ⅰ + 지리 대륙 단원(soon)만 노출.
 import type { Unit, GradeId } from "../curriculum";
 import { S1_UNIT1 } from "./unit1";
+import { S1_UNIT2 } from "./unit2";
 
 /** 준비 중 단원 — 탭·밴드는 노출하되 지도 대신 안내 카드(comingSoon). */
 const soon = (id: string, roman: string, title: string, subtitle: string, color: string, icon: string): Unit => ({
@@ -12,7 +13,7 @@ const soon = (id: string, roman: string, title: string, subtitle: string, color:
 // 중1 사회 — 교과서 대단원 순서 그대로. Ⅱ~Ⅵ 대륙 지리는 다음 배치.
 export const SOC_G1: Unit[] = [
   S1_UNIT1,
-  soon("s1u2", "II", "아시아", "우리가 사는 대륙, 다양성의 최대치", "#D9480F", "globe"),
+  S1_UNIT2,
   soon("s1u3", "III", "유럽", "작은 대륙이 만든 큰 이야기", "#1971C2", "globe"),
   soon("s1u4", "IV", "아프리카", "인류의 고향, 가장 젊은 대륙", "#E8A104", "globe"),
   soon("s1u5", "V", "아메리카", "두 대륙을 잇는 신대륙 이야기", "#2F9E44", "globe"),

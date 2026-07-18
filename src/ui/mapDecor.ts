@@ -1430,6 +1430,58 @@ const MAP_DECOR: Record<string, string> = {
     `<linearGradient id="ws1-body" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F5A05C"/><stop offset=".55" stop-color="#E8590C"/><stop offset="1" stop-color="#C2490A"/></linearGradient>
     <radialGradient id="ws1-stkr" cx=".35" cy=".3" r="1"><stop offset="0" stop-color="#9CD2FF"/><stop offset="1" stop-color="#3D7FD0"/></radialGradient>`,
   ),
+
+  // ── 사회 Ⅱ. 아시아 — 대륙 횡단 여행(설산 → 벼논 → 낙타 → 홍등 → 돛단배) ──
+  asiaMountDeco: S(
+    `${shadow(32, 56, 16, 0.12)}
+    <path d="M8 52 L24 20 l8 14 8-18 16 36 z" fill="url(#as2-mt)" stroke="#54708C" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M20 28 24 20 l4 7 q-4 4 -8 1 z M36 24 40 16 l4 8 q-4 4 -8 0 z" fill="#F4F8FC"/>
+    <path d="M44 12 q3 -4 8 -3" fill="none" stroke="#C4CFDC" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+    <ellipse cx="24" cy="30" rx="5" ry="2.2" fill="#fff" opacity=".4" transform="rotate(-30 24 30)"/>`,
+    `<linearGradient id="as2-mt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#AEC4DA"/><stop offset=".6" stop-color="#7E9AB8"/><stop offset="1" stop-color="#5A7896"/></linearGradient>`,
+  ),
+  asiaRiceDeco: S(
+    `${shadow(32, 57, 15, 0.12)}
+    <ellipse cx="32" cy="50" rx="19" ry="7" fill="url(#as2-paddy)" stroke="#3E7EA6" stroke-width="1.6"/>
+    <path d="M24 50 c-1 -8 -1 -14 2 -20 M32 51 c-1 -9 -1 -16 2 -23 M40 50 c-1 -8 -1 -14 2 -20" stroke="#5A9E2E" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M27 30 q-4 -2 -5 -6 4 0 5 6 z M35 28 q-4 -3 -4 -8 4 1 4 8 z M43 30 q4 -3 8 -2 -2 4 -8 2 z" fill="url(#as2-leaf)"/>
+    <ellipse cx="34" cy="26" rx="2.4" ry="3.4" fill="#EAD98A" transform="rotate(14 34 26)"/>
+    <ellipse cx="26" cy="28" rx="2.1" ry="3" fill="#EAD98A" transform="rotate(-12 26 28)"/>
+    <ellipse cx="26" cy="47" rx="6" ry="2" fill="#fff" opacity=".4"/>`,
+    `<linearGradient id="as2-paddy" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8ED2F5"/><stop offset="1" stop-color="#4E9AD0"/></linearGradient>
+    <linearGradient id="as2-leaf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A8D66E"/><stop offset="1" stop-color="#5A9E2E"/></linearGradient>`,
+  ),
+  asiaCamelDeco: S(
+    `${shadow(32, 57, 15, 0.13)}
+    <path d="M12 54 q0 -10 6 -12 q1 -8 7 -9 q2 -5 7 -5 q5 0 7 5 q6 1 7 9 q6 2 6 12 h-5 l-2 -8 -3 8 h-4 l-1 -7 -3 7 h-4 l-1 -7 -3 7 h-4 l-2 -8 -2 8 z" fill="url(#as2-cam)" stroke="#8A5A26" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M46 34 q5 -1 6 -6 q2 -1 2 -4 -3 -1 -4 1 -4 0 -5 5" fill="url(#as2-cam)" stroke="#8A5A26" stroke-width="1.6"/>
+    <circle cx="50" cy="26" r="1" fill="#4A3010"/>
+    <ellipse cx="26" cy="34" rx="5" ry="2.2" fill="#fff" opacity=".35" transform="rotate(-20 26 34)"/>`,
+    `<linearGradient id="as2-cam" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E8B978"/><stop offset=".6" stop-color="#C2843A"/><stop offset="1" stop-color="#9A6528"/></linearGradient>`,
+  ),
+  asiaLanternDeco: S(
+    `${shadow(32, 58, 12, 0.12)}
+    <path d="M32 8 v6" stroke="#8A5A26" stroke-width="2.2" stroke-linecap="round"/>
+    <rect x="24" y="13" width="16" height="4" rx="2" fill="url(#as2-lidg)"/>
+    <path d="M32 17 q-14 0 -14 16 t14 16 q14 0 14 -16 t-14 -16 z" fill="url(#as2-lan)" stroke="#8F1D1D" stroke-width="1.8"/>
+    <path d="M24 20 q-3 6 -3 13 t3 13 M40 20 q3 6 3 13 t-3 13 M32 17 v32" stroke="#B02020" stroke-width="1.2" opacity=".6"/>
+    <rect x="26" y="49" width="12" height="3.4" rx="1.7" fill="url(#as2-lidg)"/>
+    <path d="M30 52.5 v5 M34 52.5 v5" stroke="#D8A020" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="26" cy="24" rx="4.5" ry="2.4" fill="#fff" opacity=".45" transform="rotate(-30 26 24)"/>`,
+    `<radialGradient id="as2-lan" cx=".38" cy=".32" r="1"><stop offset="0" stop-color="#FF9A6E"/><stop offset=".55" stop-color="#E84A3A"/><stop offset="1" stop-color="#B82020"/></radialGradient>
+    <linearGradient id="as2-lidg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2C879"/><stop offset="1" stop-color="#C89A2E"/></linearGradient>`,
+  ),
+  asiaDhowDeco: S(
+    `${shadow(32, 57, 16, 0.12)}
+    <path d="M14 46 h34 l-6 8 h-22 z" fill="url(#as2-hull)" stroke="#6E4630" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M30 46 V16" stroke="#5A4326" stroke-width="2.2"/>
+    <path d="M30 16 q16 8 12 30 z" fill="url(#as2-sail)" stroke="#B09858" stroke-width="1.4"/>
+    <path d="M30 20 q-10 8 -8 26 z" fill="#FDFCF5" stroke="#B09858" stroke-width="1.2" opacity=".9"/>
+    <path d="M10 57 q6 -3 12 0 M40 58 q6 -3 12 0" stroke="#5BB8E8" stroke-width="2.2" stroke-linecap="round"/>
+    <ellipse cx="36" cy="26" rx="4" ry="2" fill="#fff" opacity=".5" transform="rotate(-40 36 26)"/>`,
+    `<linearGradient id="as2-hull" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B0764A"/><stop offset="1" stop-color="#7A4E2E"/></linearGradient>
+    <linearGradient id="as2-sail" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFDF5"/><stop offset="1" stop-color="#E8D9B0"/></linearGradient>`,
+  ),
 };
 
 /** 지도 장식 아트 — 단원 특색 세트 → 생물 아이콘(ART_BIO) → 공용(ART_DECOR) 순서로 찾는다. */
