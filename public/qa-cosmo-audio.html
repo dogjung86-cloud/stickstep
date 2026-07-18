@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>코스모 머지 오디오 검수</title>
+<style>
+  body { font-family: Pretendard, system-ui, sans-serif; background: #0b1524; color: #e8eef8; margin: 0; padding: 28px 20px 60px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  p.sub { color: #93a3bd; font-size: 13px; margin: 0 0 24px; }
+  h2 { font-size: 15px; margin: 28px 0 10px; color: #ffd98a; }
+  .row { background: #101b33; border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; }
+  .row b { display: block; font-size: 14px; margin-bottom: 2px; }
+  .row span { display: block; color: #93a3bd; font-size: 12px; margin-bottom: 8px; }
+  audio { width: 100%; height: 34px; }
+</style>
+</head>
+<body>
+<h1>코스모 머지 오디오 검수</h1>
+<p class="sub">재발주: 해당 mp3 삭제 후 <code>XI_KEY=&lt;키&gt; node qa/gen-cosmo-audio.mjs</code> (전체 --force)</p>
+
+<h2>BGM — 판의 성장 3존(32s 심리스 루프)</h2>
+<div class="row"><b>bgm-nebula · 성운(시작)</b><span>몽환·잔잔한 우주 치프튠 — 기본 존</span><audio controls loop src="game/cosmo/bgm-nebula.mp3"></audio></div>
+<div class="row"><b>bgm-planets · 행성 시대(금성 이상 달성)</b><span>따뜻하게 차오르는 무드</span><audio controls loop src="game/cosmo/bgm-planets.mp3"></audio></div>
+<div class="row"><b>bgm-star · 별의 시대(태양 탄생)</b><span>장엄한 반짝임</span><audio controls loop src="game/cosmo/bgm-star.mp3"></audio></div>
+
+<h2>효과음 — 굵직한 순간 4종(합체 팝·콤보는 신스 유지)</h2>
+<div class="row"><b>sfx-sun · 태양 탄생</b><audio controls src="game/cosmo/sfx-sun.mp3"></audio></div>
+<div class="row"><b>sfx-nova · 초신성 폭발</b><audio controls src="game/cosmo/sfx-nova.mp3"></audio></div>
+<div class="row"><b>sfx-best · 신기록</b><audio controls src="game/cosmo/sfx-best.mp3"></audio></div>
+<div class="row"><b>sfx-over · 게임오버(우주 가득 참)</b><audio controls src="game/cosmo/sfx-over.mp3"></audio></div>
+</body>
+</html>

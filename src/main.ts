@@ -8,6 +8,7 @@ import "./styles/body.css";
 import "./styles/policy.css";
 import "./styles/stickavatar.css";
 import "./styles/tutor.css";
+import "./styles/game.css";
 import "./styles/soc.css";
 
 import { nav } from "./core/router";
@@ -63,7 +64,9 @@ function goTab(k: GnavKey): void {
       }),
     );
   } else if (k === "challenge") {
-    nav.reset(challengeScreen({ onTab: goTab }));
+    nav.reset(
+      challengeScreen({ onTab: goTab, onPlayStepRush: openStepRush, onPlayStarGame: openStarGame, onPlayCosmo: openCosmoMerge, onPlayOneStroke: openOneStroke }),
+    );
   } else {
     nav.reset(
       myScreen({
@@ -139,6 +142,88 @@ function openWeakDrill(): void {
   );
 }
 
+/** 스텝 러시(도전 탭 간판 미니게임) — 프리미엄 전용. 게임 코드는 동적 import(three 규칙)로
+ *  플레이 순간에만 받는다. 나가기는 도전 탭으로 복귀. */
+function openStepRush(): void {
+  if (isPremium() || isReviewMode()) {
+    void import("./game/stepRush/index").then(({ stepRushScreen }) => {
+      nav.go(stepRushScreen({ onExit: () => goTab("challenge") }));
+    });
+    return;
+  }
+  nav.go(
+    paywallScreen({
+      sub: "도전 탭 미니게임 스텝 러시가 프리미엄에 포함돼 있어요. 무한 계단을 오르며 최고 기록에 도전해 보세요.",
+      onUnlocked: () => {
+        nav.back();
+        openStepRush();
+      },
+      onClose: () => nav.back(),
+    }),
+  );
+}
+
+/** 코스모 머지(도전 탭 미니게임 2호 — 수박게임 문법의 천체 합체) — 프리미엄 전용.
+ *  게임 코드는 동적 import(three 규칙) — matter-js 물리까지 이 청크에 실려 초기 번들 무영향. */
+function openCosmoMerge(): void {
+  if (isPremium() || isReviewMode()) {
+    void import("./game/cosmoMerge/index").then(({ cosmoScreen }) => {
+      nav.go(cosmoScreen({ onExit: () => goTab("challenge") }));
+    });
+    return;
+  }
+  nav.go(
+    paywallScreen({
+      sub: "도전 탭 미니게임 코스모 머지가 프리미엄에 포함돼 있어요. 우주먼지를 합쳐 태양까지 키워 보세요.",
+      onUnlocked: () => {
+        nav.back();
+        openCosmoMerge();
+      },
+      onClose: () => nav.back(),
+    }),
+  );
+}
+
+/** 별자리 한붓그리기(도전 탭 보너스 게임, 2026-07-18 재연결) — 프리미엄 전용, 동적 import(스텝 러시 문법). */
+function openStarGame(): void {
+  if (isPremium() || isReviewMode()) {
+    void import("./screens/starGame").then(({ starGameScreen }) => {
+      nav.go(starGameScreen(() => goTab("challenge")));
+    });
+    return;
+  }
+  nav.go(
+    paywallScreen({
+      sub: "도전 탭 미니게임이 프리미엄에 포함돼 있어요. 서로소의 비밀로 별자리를 한 붓에 그려 보세요.",
+      onUnlocked: () => {
+        nav.back();
+        openStarGame();
+      },
+      onClose: () => nav.back(),
+    }),
+  );
+}
+
+/** 네온 한붓그리기(도전 탭 미니게임 — 오일러 도형 스테이지 퍼즐) — 프리미엄 전용, 동적 import(스텝 러시 문법). */
+function openOneStroke(): void {
+  if (isPremium() || isReviewMode()) {
+    void import("./game/oneStroke/index").then(({ oneStrokeScreen }) => {
+      nav.go(oneStrokeScreen({ onExit: () => goTab("challenge") }));
+    });
+    return;
+  }
+  nav.go(
+    paywallScreen({
+      sub: "도전 탭 미니게임 네온 한붓그리기가 프리미엄에 포함돼 있어요. 네온사인을 한 붓에 켜며 몇 판까지 가는지 도전해 보세요.",
+      onUnlocked: () => {
+        nav.back();
+        openOneStroke();
+      },
+      onClose: () => nav.back(),
+    }),
+  );
+}
+
 /** 단원 종합 평가 — 항상 열린 지도 노드에서 진입. 재응시 잠금은 화면 안에서 페이월로 안내한다. */
 function openExam(unitId: string): void {
   lastUnitId = unitId;
@@ -194,8 +279,11 @@ function openPolicy(): void {
   nav.go(policyScreen(() => nav.back()));
 }
 
-// 보너스 미니게임은 도전 탭으로 이사(2026-07-12). 단열 디펜스는 폐기(2026-07-17 — minigame.ts 삭제),
-// 별자리 한붓그리기는 재단장 후 challenge.ts에서 starGameScreen을 다시 연결한다.
+// 보너스 미니게임은 도전 탭으로 이사(2026-07-12). 단열 디펜스는 폐기(2026-07-17 — minigame.ts 삭제).
+// 스텝 러시 = openStepRush(2026-07-17 M1), 별자리 한붓그리기 = openStarGame(2026-07-18 재연결),
+// 코스모 머지 = openCosmoMerge(2026-07-18 신작 — matter-js 물리 수박게임 문법 천체 합체),
+// 네온 한붓그리기 = openOneStroke(2026-07-18 신작 — 오일러 도형 스테이지 퍼즐, src/game/oneStroke) —
+// 넷 다 프리미엄 게이트 + 동적 import, 나가기는 도전 탭 복귀.
 
 function openLesson(id: string): void {
   const found = findLesson(id);

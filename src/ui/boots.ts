@@ -80,3 +80,12 @@ export function bootArt(tierId: string, size = 24): string {
 
   return `<svg viewBox="0 0 44 38" width="${size}" height="${h}" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${parts.join("")}</svg>`;
 }
+
+/** 러너 실착용 대표색(스텝 러시 — 캔버스는 단색만 그린다). 무지개 계열은 rainbow 플래그로
+ *  순환 연출을 맡기고, 그라데이션 계열은 밝은 쪽을 대표색으로 쓴다. LOOK이 단일 진실 공급원. */
+export function bootColor(tierId: string): { color: string; rainbow: boolean } {
+  const lk = LOOK[tierId] ?? LOOK.yellow;
+  return { color: lk.body ?? lk.grad?.[0] ?? "#FFC531", rainbow: !!lk.rainbow };
+}
+
+export const BOOT_RAINBOW = RAINBOW;

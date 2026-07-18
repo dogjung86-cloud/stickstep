@@ -1,0 +1,838 @@
+/* 게임 전용 시트 — 도전 탭 미니게임(스텝 러시). ui.css를 건드리지 않는 격리 시트(math.css 문법).
+   srx- 네임스페이스. 다크 무대 위 HUD의 흰 rgba는 .stage HUD 관례를 따른다. */
+
+.srx-scr {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── 무대 ───────────────────────────────────────── */
+.srx-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin: 4px 14px 10px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--stage);
+  touch-action: none;
+}
+.srx-cv {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.srx-stage.shake {
+  animation: srxShake 0.32s var(--ease);
+}
+@keyframes srxShake {
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+
+/* ── HUD ───────────────────────────────────────── */
+.srx-score {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #ffffff;
+  pointer-events: none;
+}
+.srx-score b {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.srx-score span {
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0.68;
+  margin-left: 4px;
+}
+.srx-stam {
+  position: absolute;
+  top: 62px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 46%;
+  height: 8px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.16);
+  overflow: hidden;
+  pointer-events: none;
+}
+/* 낮 구간(120계단 미만) — 밝은 하늘 위에서 HUD를 잉크색으로 */
+.srx-stage.day .srx-score {
+  color: var(--ink);
+}
+.srx-stage.day .srx-stam {
+  background: rgba(25, 31, 40, 0.16);
+}
+.srx-stam-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: 99px;
+  background: var(--green);
+  transition: width 0.1s linear;
+}
+.srx-stam.low .srx-stam-fill {
+  background: var(--red);
+  animation: srxPulse 0.5s infinite alternate;
+}
+.srx-stam.frozen {
+  box-shadow: 0 0 0 1.5px rgba(150, 220, 255, 0.4);
+}
+.srx-stam.frozen .srx-stam-fill {
+  background: linear-gradient(90deg, #9be8ff, #56c8f5);
+  animation: none;
+}
+@keyframes srxPulse {
+  from { opacity: 1; }
+  to { opacity: 0.55; }
+}
+
+.srx-helper {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  display: grid;
+  gap: 3px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  text-align: center;
+  background: rgba(11, 21, 36, 0.58); /* 어두운 필 — 낮 하늘 위에서도 흰 글자가 산다 */
+  pointer-events: none;
+  transition: opacity 0.24s var(--ease-out), transform 0.24s var(--ease-out);
+}
+.srx-helper b {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #ffffff;
+}
+.srx-helper span {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.72);
+}
+.srx-helper.off {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.srx-helper .daily {
+  color: #ffd98a;
+  font-weight: 800;
+}
+
+/* 무대 토스트 — 피버 시작·"지난 나" 추월 안내(2초 자동 소멸) */
+.srx-toast {
+  position: absolute;
+  top: 92px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  max-width: 86%;
+  padding: 8px 14px;
+  border-radius: 99px;
+  background: rgba(11, 21, 36, 0.78);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+}
+.srx-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── 조작부(2버튼) ─────────────────────────────── */
+.srx-ctrl {
+  display: flex;
+  gap: 10px;
+  padding: 0 14px calc(14px + env(safe-area-inset-bottom, 0px));
+}
+.srx-btn {
+  flex: 1;
+  height: 64px;
+  border: none;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.012em;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  transition: transform 0.09s var(--ease);
+}
+.srx-btn:active,
+.srx-btn.pressed {
+  transform: scale(0.965);
+  filter: brightness(0.96);
+}
+.srx-btn.up {
+  background: var(--grad-blue);
+  color: #ffffff;
+  box-shadow: var(--sh-cta);
+}
+.srx-btn.turn {
+  background: var(--n0);
+  color: var(--ink);
+  box-shadow: var(--sh-card);
+}
+.srx-bi {
+  display: inline-flex;
+}
+
+/* ── 게임오버 시트 ─────────────────────────────── */
+.srx-over {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(11, 21, 36, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s var(--ease-out);
+}
+.srx-over.on {
+  opacity: 1;
+  pointer-events: auto;
+}
+.srx-card {
+  width: min(320px, 86%);
+  background: var(--n0);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-sheet);
+  padding: 20px 18px;
+  text-align: center;
+  transform: translateY(12px) scale(0.97);
+  transition: transform 0.42s var(--spring);
+}
+.srx-over.on .srx-card {
+  transform: none;
+}
+.srx-ov-reason {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--red);
+  margin-bottom: 8px;
+}
+.srx-ov-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--n500);
+}
+.srx-ov-score b {
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.srx-ov-score span {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--n500);
+  margin-left: 4px;
+}
+.srx-ov-best {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--n600);
+  margin-top: 4px;
+}
+.srx-ov-unlock {
+  display: none;
+  margin-top: 10px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.srx-ov-unlock.on {
+  display: flex;
+}
+.srx-ov-new {
+  display: none;
+  margin-top: 12px;
+  padding: 7px 13px;
+  border-radius: 99px;
+  align-items: center;
+  gap: 5px;
+  background: var(--grad-gold);
+  color: #5c3d00;
+  font-size: 13px;
+  font-weight: 800;
+}
+.srx-ov-new.on {
+  display: inline-flex;
+}
+.srx-ov-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+.srx-abtn {
+  flex: 1;
+  height: 48px;
+  border: none;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  background: var(--n100);
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.09s var(--ease);
+}
+.srx-abtn:active {
+  transform: scale(0.97);
+}
+.srx-abtn.primary {
+  background: var(--grad-blue);
+  color: #ffffff;
+  box-shadow: var(--sh-cta);
+}
+
+/* 헤더 효과음 토글 — xbtn 골격 재사용, 꺼짐은 흐림 표시 */
+.srx-snd.off {
+  opacity: 0.32;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .srx-stage.shake,
+  .srx-stam.low .srx-stam-fill {
+    animation: none;
+  }
+  .srx-helper {
+    transition: opacity 0.2s linear;
+    transform: none;
+  }
+  .srx-card {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ═══ 코스모 머지(cmx-) — 수박게임 문법의 천체 합체 퍼즐 ═══
+   무대는 심우주 캔버스(렌더러가 소유), HUD는 srx 관례 클론. 체인 스트립은 무대 "아래" 별도 행 —
+   보드 오버레이와 충돌 없이 "실제 크기 순서"를 상시 노출하는 교육 레이어다. */
+.cmx-scr {
+  display: flex;
+  flex-direction: column;
+}
+.cmx-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin: 4px 14px 6px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: #070d1a;
+  touch-action: none;
+}
+.cmx-cv {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.cmx-stage.shake {
+  animation: srxShake 0.32s var(--ease);
+}
+.cmx-score {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #ffffff;
+  pointer-events: none;
+}
+.cmx-score b {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.cmx-score span {
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0.68;
+  margin-left: 4px;
+}
+.cmx-galaxy {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 99px;
+  background: rgba(255, 217, 138, 0.14);
+  color: #ffd98a;
+  font-size: 12px;
+  font-weight: 800;
+  pointer-events: none;
+}
+.cmx-next {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  padding: 6px 8px 4px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 10px;
+  font-weight: 700;
+  pointer-events: none;
+}
+.cmx-next-cv {
+  width: 30px;
+  height: 30px;
+  display: block;
+}
+/* 든 천체 개념 한 줄 — 점수 아래, 천체가 바뀔 때 잠깐 표시 */
+.cmx-desc {
+  position: absolute;
+  top: 54px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 90%;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(223, 234, 255, 0.74);
+  text-shadow: 0 1px 6px rgba(5, 9, 20, 0.8);
+  opacity: 0;
+  transition: opacity 0.25s var(--ease-out);
+  pointer-events: none;
+}
+.cmx-desc.show {
+  opacity: 1;
+}
+.cmx-helper {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  display: grid;
+  gap: 3px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  text-align: center;
+  background: rgba(11, 21, 36, 0.62);
+  pointer-events: none;
+  transition: opacity 0.24s var(--ease-out), transform 0.24s var(--ease-out);
+}
+.cmx-helper b {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #ffffff;
+}
+.cmx-helper span {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.72);
+}
+.cmx-helper.off {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.cmx-helper .daily {
+  color: #ffd98a;
+  font-weight: 800;
+}
+.cmx-toast {
+  position: absolute;
+  top: 118px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  max-width: 88%;
+  padding: 8px 14px;
+  border-radius: 99px;
+  background: rgba(11, 21, 36, 0.78);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+}
+.cmx-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.cmx-chain {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 14px calc(12px + env(safe-area-inset-bottom, 0px));
+}
+.cmx-ci {
+  width: 26px;
+  height: 26px;
+  border: none;
+  padding: 0;
+  border-radius: 9px;
+  background: #0e1830;
+  display: grid;
+  place-items: center;
+  opacity: 0.32;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.3s var(--ease-out), transform 0.3s var(--spring-soft);
+}
+.cmx-ci:active {
+  transform: scale(0.9);
+}
+.cmx-ci canvas {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+.cmx-ci.on {
+  opacity: 1;
+}
+.cmx-ci.pulse {
+  transform: scale(1.3);
+}
+.cmx-over {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 9, 20, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s var(--ease-out);
+}
+.cmx-over.on {
+  opacity: 1;
+  pointer-events: auto;
+}
+.cmx-card {
+  width: min(320px, 86%);
+  background: var(--n0);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-sheet);
+  padding: 20px 18px;
+  text-align: center;
+  transform: translateY(12px) scale(0.97);
+  transition: transform 0.42s var(--spring);
+}
+.cmx-over.on .cmx-card {
+  transform: none;
+}
+.cmx-ov-reason {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--red);
+  margin-bottom: 8px;
+}
+.cmx-ov-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--n500);
+}
+.cmx-ov-score b {
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.cmx-ov-score span {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--n500);
+  margin-left: 4px;
+}
+.cmx-ov-best {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--n600);
+  margin-top: 4px;
+}
+.cmx-ov-max {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--n700);
+  margin-top: 8px;
+}
+.cmx-ov-new {
+  display: none;
+  margin-top: 12px;
+  padding: 7px 13px;
+  border-radius: 99px;
+  align-items: center;
+  gap: 5px;
+  background: var(--grad-gold);
+  color: #5c3d00;
+  font-size: 13px;
+  font-weight: 800;
+}
+.cmx-ov-new.on {
+  display: inline-flex;
+}
+.cmx-ov-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+.cmx-abtn {
+  flex: 1;
+  height: 48px;
+  border: none;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  background: var(--n100);
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.09s var(--ease);
+}
+.cmx-abtn:active {
+  transform: scale(0.97);
+}
+.cmx-abtn.primary {
+  background: var(--grad-blue);
+  color: #ffffff;
+  box-shadow: var(--sh-cta);
+}
+.cmx-snd.off {
+  opacity: 0.32;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cmx-stage.shake {
+    animation: none;
+  }
+  .cmx-helper {
+    transition: opacity 0.2s linear;
+    transform: none;
+  }
+  .cmx-card,
+  .cmx-ci {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ── 네온 한붓그리기(ost-) — 도전 탭 미니게임. srx- 문법 계승, 격리 네임스페이스 ── */
+.ost-scr {
+  display: flex;
+  flex-direction: column;
+}
+.ost-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin: 4px 14px 10px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--stage);
+  touch-action: none;
+}
+.ost-cv {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.ost-stage.shake {
+  animation: srxShake 0.32s var(--ease);
+}
+
+/* HUD — 판 스테퍼 + 선 카운터(포인터는 버튼만 받는다) */
+.ost-hud {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  pointer-events: none;
+}
+.ost-stagerow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ost-stagerow b {
+  min-width: 72px;
+  text-align: center;
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+.ost-nav {
+  pointer-events: auto;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.09s var(--ease), opacity 0.2s;
+}
+.ost-nav:active {
+  transform: scale(0.92);
+}
+.ost-nav:disabled {
+  opacity: 0.22;
+}
+.ost-edges {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.ost-helper {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  display: grid;
+  gap: 3px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  text-align: center;
+  background: rgba(11, 21, 36, 0.58);
+  pointer-events: none;
+}
+.ost-helper b {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #ffffff;
+}
+.ost-helper span {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.ost-toast {
+  position: absolute;
+  top: 84px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  max-width: 86%;
+  padding: 8px 14px;
+  border-radius: 99px;
+  background: rgba(11, 21, 36, 0.78);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s var(--ease-out), transform 0.22s var(--ease-out);
+}
+.ost-toast.on {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* 완성 배너 — 중앙 팝(자동 다음 판) */
+.ost-banner {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  transform: translate(-50%, -50%) scale(0.9);
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  padding: 18px 28px;
+  border-radius: var(--r-lg);
+  background: rgba(11, 21, 36, 0.84);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s var(--ease-out), transform 0.3s var(--spring);
+}
+.ost-banner.on {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.ost-banner b {
+  font-size: 25px;
+  font-weight: 800;
+  color: #ffffff;
+}
+.ost-ban-sub {
+  font-size: 13px;
+  font-weight: 800;
+  color: #ffc53d;
+}
+
+.ost-ctrl {
+  display: flex;
+  gap: 10px;
+  padding: 0 14px calc(14px + env(safe-area-inset-bottom, 0px));
+}
+.ost-abtn {
+  flex: 1;
+  height: 48px;
+  border: none;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  background: var(--n100);
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.09s var(--ease);
+}
+.ost-abtn:active {
+  transform: scale(0.97);
+}
+.ost-bi {
+  display: grid;
+  place-items: center;
+}
+.ost-snd.off {
+  opacity: 0.32;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ost-stage.shake {
+    animation: none;
+  }
+  .ost-toast,
+  .ost-banner {
+    transition: opacity 0.2s linear;
+  }
+}

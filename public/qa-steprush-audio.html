@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>스텝 러시 — 오디오 검수</title>
+<style>
+  body { margin: 0; padding: 20px 16px 48px; background: #0b1524; color: #eaf2ff; font-family: Pretendard, system-ui, sans-serif; }
+  h1 { font-size: 17px; margin: 0 0 4px; }
+  h2 { font-size: 14px; margin: 22px 0 10px; color: #9fb2cc; font-weight: 700; }
+  p.note { font-size: 12.5px; color: #9fb2cc; margin: 0 0 14px; }
+  .card { background: rgba(255,255,255,.05); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; }
+  .card b { font-size: 14px; }
+  .card .zone { font-size: 12px; color: #86d3ff; margin-left: 8px; font-weight: 700; }
+  .card .desc { font-size: 12.5px; color: #9fb2cc; margin: 3px 0 8px; }
+  audio { width: 100%; height: 36px; display: block; }
+</style>
+</head>
+<body>
+<h1>스텝 러시 — 오디오 검수 (일레븐랩스 발주 11종)</h1>
+<p class="note">BGM은 루프 재생이라 이음매(끝→처음)도 그대로 들립니다. 게임 안에서는 존 경계에서 2.4초 크로스페이드로 전환돼요.</p>
+
+<h2>배경음악 5곡 (존 전환)</h2>
+<div class="card">
+  <b>낮 도시</b><span class="zone">0~64계단</span>
+  <div class="desc">경쾌한 치프튠 팝 · 맑은 아침 도시</div>
+  <audio controls loop preload="metadata" src="/game/steprush/bgm-day.mp3"></audio>
+</div>
+<div class="card">
+  <b>노을</b><span class="zone">65~174계단</span>
+  <div class="desc">따뜻하고 느긋한 8비트 · 황금빛 해질녘</div>
+  <audio controls loop preload="metadata" src="/game/steprush/bgm-sunset.mp3?v=2"></audio>
+</div>
+<div class="card">
+  <b>밤</b><span class="zone">175~519계단</span>
+  <div class="desc">잔잔한 8비트 자장가 아르페지오 · 달빛과 구름 바다</div>
+  <audio controls loop preload="metadata" src="/game/steprush/bgm-night.mp3?v=2"></audio>
+</div>
+<div class="card">
+  <b>오로라</b><span class="zone">520~949계단</span>
+  <div class="desc">신비롭게 일렁이는 8비트 · 오로라 커튼</div>
+  <audio controls loop preload="metadata" src="/game/steprush/bgm-aurora.mp3?v=2"></audio>
+</div>
+<div class="card">
+  <b>우주</b><span class="zone">950계단~</span>
+  <div class="desc">성긴 8비트 우주 앰비언트 · 지구를 내려다보며</div>
+  <audio controls loop preload="metadata" src="/game/steprush/bgm-space.mp3?v=2"></audio>
+</div>
+
+<h2>효과음 6종 (이벤트 샘플)</h2>
+<div class="card">
+  <b>낙하</b>
+  <div class="desc">헛디딤·탈진 추락 — 슬라이드 휘슬 + 쿵</div>
+  <audio controls preload="metadata" src="/game/steprush/sfx-fall.mp3"></audio>
+</div>
+<div class="card">
+  <b>신기록</b>
+  <div class="desc">게임오버 시트에 신기록 뜰 때 — 승리 팡파레</div>
+  <audio controls preload="metadata" src="/game/steprush/sfx-best.mp3"></audio>
+</div>
+<div class="card">
+  <b>피버</b>
+  <div class="desc">별 계단 밟는 순간 — 반짝이는 상승 버스트</div>
+  <audio controls preload="metadata" src="/game/steprush/sfx-fever.mp3"></audio>
+</div>
+<div class="card">
+  <b>방패 세이브</b>
+  <div class="desc">헛디딤을 방패가 막는 순간 — 버블 팝</div>
+  <audio controls preload="metadata" src="/game/steprush/sfx-save.mp3"></audio>
+</div>
+<div class="card">
+  <b>모래시계</b>
+  <div class="desc">픽업 = 5초 프리즈 시작 — 얼음 크랙</div>
+  <audio controls preload="metadata" src="/game/steprush/sfx-freeze.mp3"></audio>
+</div>
+<div class="card">
+  <b>장비 장착</b>
+  <div class="desc">목도리(80)·고글(300)·헬멧(800) — 휙 + 스냅</div>
+  <audio controls preload="metadata" src="/game/steprush/sfx-gear.mp3"></audio>
+</div>
+</body>
+</html>
