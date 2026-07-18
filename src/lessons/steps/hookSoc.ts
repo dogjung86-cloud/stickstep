@@ -14,6 +14,8 @@ import { ask } from "./hookAsk";
 import { WORLD_LAND_PATH } from "../../ui/worldMap.generated";
 import type { AvatarKind } from "../../ui/avatar";
 
+const BASE = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/";
+
 type Face = (k: AvatarKind) => void;
 
 // ── L1: 1월의 세 도시 ───────────────────────────────────────
@@ -469,7 +471,7 @@ function nycSvg(): string {
     <defs>
       <linearGradient id="hs1-shop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2F4F8"/><stop offset="1" stop-color="#DDE2EA"/></linearGradient>
       <linearGradient id="hs1-mug" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".6" stop-color="#F2F4F8"/><stop offset="1" stop-color="#D5DBE6"/></linearGradient>
-      <linearGradient id="hs1-oldsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A93A6"/><stop offset="1" stop-color="#B8BECC"/></linearGradient>
+      <clipPath id="hs1-nycclip"><rect x="30" y="24" width="180" height="100" rx="8"/></clipPath>
     </defs>
     <rect x="6" y="8" width="228" height="130" rx="12" fill="url(#hs1-shop)"/>
     <g class="hs1-mugface hs1-mugfront">
@@ -482,14 +484,11 @@ function nycSvg(): string {
       <ellipse cx="100" cy="60" rx="7" ry="3" fill="#fff" opacity=".7" transform="rotate(-24 100 60)"/>
     </g>
     <g class="hs1-mugface hs1-mugback">
-      <rect x="30" y="24" width="180" height="100" rx="8" fill="url(#hs1-oldsky)" stroke="#5A6270" stroke-width="1.6"/>
-      <path d="M46 124V72h18v52M76 124V56h22v68M110 124V80h16v44M138 124V64h20v60M170 124V86h18v38" fill="#6E7684" stroke="#4E5560" stroke-width="1.4"/>
-      <g stroke="#3C4654" stroke-width="2">
-        <path d="M52 92h6M82 70h8M84 84h8M144 78h8M144 94h8" stroke="#8A93A6"/>
-      </g>
-      <path d="M58 116q10-6 22-2M120 112q12-8 26-3" stroke="#C24A3E" stroke-width="2.6" opacity=".8"/>
-      <path d="M64 40l6 10h-12zM150 34l5 9h-10z" fill="#4E5560"/>
-      <text x="120" y="145" text-anchor="middle" font-size="10.5" font-weight="800" fill="#5A6270">1970년대의 뉴욕 — 불황과 낙서</text>
+      <!-- 실물 기록 사진(DOCUMERICA 1973, PD — photos/CREDITS.md): 낙서 뒤덮인 타임스스퀘어 지하철.
+           손그림 스카이라인은 "불황과 낙서"로 안 읽힌다는 실사용 피드백으로 교체. -->
+      <image href="${BASE}soc/figs/nyc1970.webp" x="30" y="24" width="180" height="100" preserveAspectRatio="xMidYMid slice" clip-path="url(#hs1-nycclip)"/>
+      <rect x="30" y="24" width="180" height="100" rx="8" fill="none" stroke="#5A6270" stroke-width="1.6"/>
+      <text x="120" y="145" text-anchor="middle" font-size="10.5" font-weight="800" fill="#5A6270">1970년대의 뉴욕 — 낙서로 뒤덮인 지하철(실제 기록 사진)</text>
     </g>
   </svg>`;
 }
