@@ -1,11 +1,17 @@
-// 레이저 미로 — 도전 탭 미니게임(프리미엄). 거울을 탭해 돌려서 레이저를 모든 보석까지
-// 보내는 격자 퍼즐. 판 생성은 gen.ts가 정답 역산으로 보장(불가능 판 0%), 이 파일은
-// 화면 조립·탭 입력·캔버스 렌더(빔 글로우·광자 흐름·입사각=반사각 호)·보상만 담당.
-// main.ts openLaserMaze가 프리미엄 게이트 소유. 보상은 새 판 첫 클리어만 +3 스틱.
+// 레이저 미로 v2 — 도전 탭 미니게임(프리미엄). 사각 블록을 끌어 옮겨 45° 레이저를 모든
+// 보석까지 보내는 배치 퍼즐(2026-07-19 사용자 확정 — v1 탭 토글 회전은 연타로 몇 초에
+// 풀리는 마찰 0 게임이라 폐기). 판 생성은 gen.ts가 정답 역산으로 보장(불가능 판 0%),
+// 이 파일은 화면 조립·드래그/탭-탭 입력·캔버스 렌더(대각 빔 글로우·광자 흐름·반사면
+// 법선+입사각=반사각 호)·보상만 담당. main.ts openLaserMaze가 프리미엄 게이트 소유.
+// 보상은 새 판 첫 클리어만 +3 스틱.
 //
-// 교육 장치(중2 III 연결): 거울 접점마다 입사각=반사각 쌍둥이 호를 상시 표시(reflectLab
-// 시각 언어), 합성 보석 판은 코치 한 줄로 가산혼합을 짚는다(colorMixLab 문법 — R+G=노랑).
-// 빔끼리는 서로 통과한다(빛은 부딪히지 않는다) — 규칙이 곧 물리.
+// 교육 장치(중2 III 연결): 반사점마다 법선 점선 + 입사각=반사각 쌍둥이 호(reflectLab 시각
+// 언어 — 평평한 면+법선이라 교과서 도해 그대로), 합성 보석 판은 코치 한 줄로 가산혼합을
+// 짚는다(colorMixLab 문법 — R+G=노랑). 빔끼리는 서로 통과한다(빛은 부딪히지 않는다).
+//
+// 입력 문법(연타 방지의 핵심): 드래그로 든 조각은 판에서 '들려' 빔이 그 칸을 지나가고,
+// 빔 갱신은 내려놓는 순간(커밋)에만 — 끌고 다니며 빔을 훑는 스크럽 풀이를 차단해
+// "예측→배치→확인" 리듬을 지킨다. 탭-탭(선택→목적지)은 폴백 겸 e2e 경로.
 import { el } from "../../core/dom";
 import { icon } from "../../core/icons";
 import { haptic, HAPTIC } from "../../core/haptics";
@@ -14,17 +20,17 @@ import { awardXp, bestScore, submitScore } from "../../core/store";
 import type { Screen } from "../../core/router";
 import { fitCanvas } from "../../ui/canvas";
 import { Bgm, Particles, Sfx } from "../gameKit";
-import { COLOR_HEX, COLOR_NAME, DX, DY, inspect, puzzleFor, trace, type Dir, type LaserPuzzle, type Traced } from "./gen";
+import { COLOR_HEX, COLOR_NAME, DDX, DDY, REV, inspect, puzzleFor, trace, type DDir, type LaserPuzzle, type Traced } from "./gen";
 
 export const LASER_MAZE_ID = "lasermaze";
 const SND_KEY = "lzm.sound"; // 기기 설정(동기화 대상 아님) — "0"이면 끔
 const REWARD_XP = 3; // 새 판 첫 클리어 보상(한붓그리기와 통일)
 
-const DIR_ANG: Record<Dir, number> = { 0: -Math.PI / 2, 1: 0, 2: Math.PI / 2, 3: Math.PI };
+const angOf = (d: DDir): number => Math.atan2(DDY[d], DDX[d]);
 
 // ── 오디오 에셋(일레븐랩스 발주 — qa/gen-lasermaze-audio.mjs) ──
 // BGM 존 2개 = 판 1~6(기초 반사)/판 7+(색 합성 시대). 파일이 없거나 로드 실패면
-// Bgm 무음·Sfx 신스 폴백으로 무해(스텝 러시 문법). 회전 틱은 신스 고정.
+// Bgm 무음·Sfx 신스 폴백으로 무해(스텝 러시 문법). 이동 틱은 신스 고정.
 const AUDIO_BASE = `${import.meta.env.BASE_URL}game/lasermaze/`;
 const BGM_TRACKS = [`${AUDIO_BASE}bgm-laser-focus.mp3`, `${AUDIO_BASE}bgm-laser-prism.mp3`];
 const SFX_SAMPLES: Record<string, string> = {
@@ -54,7 +60,7 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
   const gemLbl = el("div", { class: "lzm-gems", attrs: { "aria-label": "켜진 보석 수" }, text: "보석 0/0" });
   const hud = el("div", { class: "lzm-hud" }, el("div", { class: "lzm-stagerow" }, prevBtn, stageLbl, nextBtn), gemLbl);
   const toast = el("div", { class: "lzm-toast", attrs: { role: "status" } });
-  const coachMain = el("b", { text: "거울을 톡 누르면 돌아가요. 레이저를 모든 보석에!" });
+  const coachMain = el("b", { text: "블록을 끌어 옮기면 빛이 튕겨요. 레이저를 모든 보석에!" });
   const coachSub = el("span", { text: "" });
   const helper = el("div", { class: "lzm-helper" }, coachMain, coachSub);
   const banNum = el("b", { text: "" });
@@ -100,13 +106,15 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
   const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
   let stageNo = bestScore(LASER_MAZE_ID) + 1;
   let pz: LaserPuzzle = puzzleFor(stageNo);
-  let curO: (0 | 1)[] = [];
-  let dispA: number[] = []; // 거울 표시 각(도) — 탭 시 목표각으로 스프링
+  let cur: { x: number; y: number }[] = []; // 조각 현재 칸
+  let disp: { x: number; y: number }[] = []; // 표시 위치(칸 단위 float — cur로 스프링)
   let tr: Traced;
   let litPrev = new Set<number>();
   let phase: "idle" | "clear" = "idle";
-  let taps = 0;
-  let nowMs = 0;
+  let moves = 0;
+  let selIdx = -1; // 탭-탭 선택 조각
+  interface DragSt { idx: number; pid: number; sx: number; sy: number; px: number; py: number; moved: boolean; }
+  let drag: DragSt | null = null;
   const particles = new Particles();
 
   // ---- 캔버스 좌표계(격자 → 화면 맞춤) ----
@@ -129,9 +137,10 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
   const px = (u: number): number => gx0 + u * cellPx; // 칸 단위 → px (x)
   const py = (u: number): number => gy0 + u * cellPx;
 
-  const orient = (i: number): 0 | 1 => curO[i] ?? 0;
+  // 드래그로 든 조각은 판에서 '들려' 빔이 그 칸을 지나간다 — 커밋 순간에만 빔 갱신
+  const posOf = (i: number): { x: number; y: number } => (drag && drag.moved && drag.idx === i ? { x: -99, y: -99 } : cur[i]);
   const retrace = (): void => {
-    tr = trace(pz, orient);
+    tr = trace(pz, posOf);
   };
 
   let toastTimer = 0;
@@ -142,26 +151,30 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
     toastTimer = window.setTimeout(() => toast.classList.remove("on"), 1700);
   }
 
+  const rockAt = (x: number, y: number): boolean => pz.rocks.some((r) => r.x === x && r.y === y);
+  const pieceAt = (x: number, y: number, excl = -1): number => cur.findIndex((c, i) => i !== excl && c.x === x && c.y === y);
+  const isFree = (x: number, y: number, excl = -1): boolean =>
+    x >= 0 && y >= 0 && x < pz.grid && y < pz.grid && !rockAt(x, y) && pieceAt(x, y, excl) < 0;
+
   function litCount(): number {
     let n = 0;
-    pz.cells.forEach((c, i) => {
-      if (c.kind === "target" && (tr.arrived.get(i) ?? 0) === c.req) n++;
+    pz.gems.forEach((gm, i) => {
+      if ((tr.arrived.get(i) ?? 0) === gm.req) n++;
     });
     return n;
   }
-  const targetTotal = (): number => pz.cells.filter((c) => c.kind === "target").length;
 
   function updateHud(): void {
     stageLbl.textContent = `${stageNo}판`;
-    gemLbl.textContent = `보석 ${litCount()}/${targetTotal()}`;
+    gemLbl.textContent = `보석 ${litCount()}/${pz.gems.length}`;
     const maxStage = bestScore(LASER_MAZE_ID) + 1;
     prevBtn.disabled = stageNo <= 1;
     nextBtn.disabled = stageNo >= maxStage;
     if (import.meta.env.DEV) {
       host.dataset.lzmStage = String(stageNo);
       host.dataset.lzmPhase = phase;
-      host.dataset.lzmGems = `${litCount()}/${targetTotal()}`;
-      host.dataset.lzmTaps = String(taps);
+      host.dataset.lzmGems = `${litCount()}/${pz.gems.length}`;
+      host.dataset.lzmMoves = String(moves);
       host.dataset.lzmKind = pz.kind;
     }
   }
@@ -172,9 +185,16 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
       const parts = [1, 2, 4].filter((b) => (pz.pairReq! & b) !== 0).map((b) => COLOR_NAME[b]);
       return `${parts[0]} 빛과 ${parts[1]} 빛이 한 보석에 모이면 ${COLOR_NAME[pz.pairReq]}빛이 돼요!`;
     }
-    if (pz.cells.some((c) => c.kind === "splitter")) return "반거울은 빛을 반은 통과, 반은 반사시켜 둘로 나눠요.";
-    if (stageNo < 5) return "입사각과 반사각은 언제나 같아요 — 거울 옆 작은 호를 봐요.";
-    return "거울 방향을 잘 조합해 보세요. 몇 번을 돌려도 괜찮아요.";
+    if (pz.pieces.some((p) => p.kind === "glass")) return "유리 블록은 빛을 반은 통과, 반은 반사시켜 둘로 나눠요.";
+    if (stageNo < 5) return "빛은 블록 면에 부딪혀 튕겨요 — 입사각과 반사각이 언제나 같아요.";
+    return "블록 자리를 잘 골라 보세요. 몇 번을 옮겨도 괜찮아요.";
+  }
+
+  function seedLit(): void {
+    litPrev = new Set();
+    pz.gems.forEach((gm, i) => {
+      if ((tr.arrived.get(i) ?? 0) === gm.req) litPrev.add(i);
+    });
   }
 
   function setStage(n: number): void {
@@ -182,23 +202,22 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
     pz = puzzleFor(n);
     bgm.setZone(n <= 6 ? 0 : 1); // 미기동 시에도 무해 — init이 밀린 존을 이어받는다
     bgm.duck(false);
-    curO = pz.cells.map((c) => (c.scrO ?? c.solO ?? 0) as 0 | 1);
-    dispA = pz.cells.map((_, i) => (curO[i] === 0 ? -45 : 45));
-    taps = 0;
+    cur = pz.pieces.map((p) => ({ x: p.scrX, y: p.scrY }));
+    disp = pz.pieces.map((p) => ({ x: p.scrX, y: p.scrY }));
+    moves = 0;
+    selIdx = -1;
+    drag = null;
     phase = "idle";
     banner.classList.remove("on");
     particles.clear();
     retrace();
-    litPrev = new Set();
-    pz.cells.forEach((c, i) => {
-      if (c.kind === "target" && (tr.arrived.get(i) ?? 0) === c.req) litPrev.add(i);
-    });
+    seedLit();
     coachSub.textContent = coachFor();
     resize(); // 격자 크기가 판마다 달라질 수 있다
     updateHud();
   }
 
-  // ---- 진행: 회전·점등·완성 ----
+  // ---- 진행: 이동·점등·완성 ----
   function onClear(): void {
     phase = "clear";
     const isNew = submitScore(LASER_MAZE_ID, stageNo);
@@ -213,59 +232,118 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
     sfx.best();
     haptic(HAPTIC.done);
     if (!reduced)
-      pz.cells.forEach((c, i) => {
-        if (c.kind !== "target") return;
-        later(() => particles.burst(px(c.x + 0.5), py(c.y + 0.5), { n: 14, color: COLOR_HEX[c.req ?? 1], speed: 95, up: 30, life: 520, size: 2.6 }), i * 40);
+      pz.gems.forEach((gm, i) => {
+        later(() => particles.burst(px(gm.ex / 2), py(gm.ey / 2), { n: 14, color: COLOR_HEX[gm.req], speed: 95, up: 30, life: 520, size: 2.6 }), i * 40);
       });
     later(() => setStage(stageNo + 1), 1500);
     updateHud();
   }
 
-  function toggleAt(cx: number, cy: number): void {
-    const i = pz.cells.findIndex((c) => c.x === cx && c.y === cy && (c.kind === "mirror" || c.kind === "splitter"));
-    if (i < 0) return;
-    curO[i] = (curO[i] ^ 1) as 0 | 1;
-    taps++;
-    sfx.flip();
-    haptic(HAPTIC.tap);
-    retrace();
-    // 새로 켜진 보석 — 반짝 + 골드음
-    pz.cells.forEach((c, ti) => {
-      if (c.kind !== "target") return;
-      const lit = (tr.arrived.get(ti) ?? 0) === c.req;
-      if (lit && !litPrev.has(ti)) {
-        litPrev.add(ti);
+  function gemFx(): void {
+    pz.gems.forEach((gm, gi) => {
+      const lit = (tr.arrived.get(gi) ?? 0) === gm.req;
+      if (lit && !litPrev.has(gi)) {
+        litPrev.add(gi);
         sfx.gemLit();
         haptic(HAPTIC.correct);
-        if (!reduced) particles.burst(px(c.x + 0.5), py(c.y + 0.5), { n: 10, color: COLOR_HEX[c.req ?? 1], speed: 80, up: 20, life: 420, size: 2.2 });
+        if (!reduced) particles.burst(px(gm.ex / 2), py(gm.ey / 2), { n: 10, color: COLOR_HEX[gm.req], speed: 80, up: 20, life: 420, size: 2.2 });
       } else if (!lit) {
-        litPrev.delete(ti);
+        litPrev.delete(gi);
       }
     });
-    updateHud();
-    if (tr.won) onClear();
   }
+
+  /** 조각을 (x,y) 칸으로 — 같은 칸이면 무이동 정착, 막힌 칸이면 false. */
+  function commitMove(idx: number, x: number, y: number): boolean {
+    const same = cur[idx].x === x && cur[idx].y === y;
+    if (!same && !isFree(x, y, idx)) return false;
+    if (!same) {
+      cur[idx] = { x, y };
+      moves++;
+      sfx.flip();
+      haptic(HAPTIC.tap);
+    }
+    retrace();
+    gemFx();
+    updateHud();
+    if (tr.won && phase === "idle") onClear();
+    return true;
+  }
+
+  // ---- 입력: 드래그(고스트+스냅) + 탭-탭 폴백 ----
+  const cvPt = (e: PointerEvent): { x: number; y: number } => {
+    const r = cv.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  };
+  const cellOf = (p: { x: number; y: number }): { x: number; y: number; inside: boolean } => {
+    const x = Math.floor((p.x - gx0) / cellPx);
+    const y = Math.floor((p.y - gy0) / cellPx);
+    return { x, y, inside: x >= 0 && y >= 0 && x < pz.grid && y < pz.grid };
+  };
 
   cv.addEventListener("pointerdown", (e) => {
     audioBoot();
     if (phase !== "idle") return;
-    const r = cv.getBoundingClientRect();
-    const cx = Math.floor((e.clientX - r.left - gx0) / cellPx);
-    const cy = Math.floor((e.clientY - r.top - gy0) / cellPx);
-    if (cx < 0 || cy < 0 || cx >= pz.grid || cy >= pz.grid) return;
-    toggleAt(cx, cy);
+    const p = cvPt(e);
+    const c = cellOf(p);
+    const idx = c.inside ? pieceAt(c.x, c.y) : -1;
+    if (idx >= 0) {
+      drag = { idx, pid: e.pointerId, sx: p.x, sy: p.y, px: p.x, py: p.y, moved: false };
+      try {
+        cv.setPointerCapture(e.pointerId);
+      } catch {
+        /* 합성 포인터 id에서 throw — 리스너는 cv에 있어 캡처 없이도 동작(capturePointer 관례) */
+      }
+    } else if (selIdx >= 0 && c.inside) {
+      if (commitMove(selIdx, c.x, c.y)) selIdx = -1;
+      else showToast("그 칸엔 놓을 수 없어요");
+    } else {
+      selIdx = -1;
+    }
   });
+  cv.addEventListener("pointermove", (e) => {
+    if (!drag || e.pointerId !== drag.pid) return;
+    const p = cvPt(e);
+    drag.px = p.x;
+    drag.py = p.y;
+    if (!drag.moved) {
+      const dx = p.x - drag.sx;
+      const dy = p.y - drag.sy;
+      if (dx * dx + dy * dy > 49) {
+        drag.moved = true; // 들어올림 — 빔이 이 조각 없이 다시 그려진다
+        selIdx = -1;
+        retrace();
+      }
+    }
+  });
+  const endDrag = (e: PointerEvent, cancelled: boolean): void => {
+    if (!drag || e.pointerId !== drag.pid) return;
+    const d = drag;
+    drag = null;
+    if (phase !== "idle") return;
+    if (!d.moved) {
+      selIdx = selIdx === d.idx ? -1 : d.idx; // 탭 — 선택 토글
+      haptic(HAPTIC.select);
+      return;
+    }
+    const drop = { x: (d.px - gx0) / cellPx - 0.5, y: (d.py - gy0) / cellPx - 0.5 };
+    disp[d.idx] = drop; // 내려놓은 자리에서 목적지(성공)나 원래 칸(실패)으로 정착
+    const c = cellOf({ x: d.px, y: d.py });
+    if (cancelled || !c.inside || !commitMove(d.idx, c.x, c.y)) retrace(); // 스냅백 — 든 것 해제
+  };
+  cv.addEventListener("pointerup", (e) => endDrag(e, false));
+  cv.addEventListener("pointercancel", (e) => endDrag(e, true));
 
   resetBtn.addEventListener("click", () => {
     audioBoot();
     if (phase !== "idle") return;
-    curO = pz.cells.map((c) => (c.scrO ?? c.solO ?? 0) as 0 | 1);
-    taps = 0;
+    cur = pz.pieces.map((p) => ({ x: p.scrX, y: p.scrY }));
+    disp = pz.pieces.map((p) => ({ x: p.scrX, y: p.scrY }));
+    moves = 0;
+    selIdx = -1;
+    drag = null;
     retrace();
-    litPrev = new Set();
-    pz.cells.forEach((c, i) => {
-      if (c.kind === "target" && (tr.arrived.get(i) ?? 0) === c.req) litPrev.add(i);
-    });
+    seedLit();
     sfx.resetWhoosh();
     haptic(HAPTIC.tap);
     showToast("처음 배치로 되돌렸어요");
@@ -307,6 +385,85 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
     if (dashOff !== undefined) g.setLineDash([]);
   }
 
+  function roundRect(g: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number): void {
+    g.beginPath();
+    g.moveTo(x + r, y);
+    g.arcTo(x + w, y, x + w, y + h, r);
+    g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r);
+    g.arcTo(x, y, x + w, y, r);
+    g.closePath();
+  }
+
+  /** 조각 그리기 — 파운드리 재질 문법(3스톱 면·키라이트·최암색 테두리). */
+  function drawPiece(g: CanvasRenderingContext2D, cx: number, cy: number, kind: "box" | "glass", size: number, lifted: boolean, selected: boolean, tMs: number): void {
+    const s = size;
+    const x = cx - s / 2;
+    const y = cy - s / 2;
+    const r = Math.max(6, s * 0.17);
+    if (lifted) {
+      g.save();
+      g.shadowColor = "rgba(2,8,18,0.5)";
+      g.shadowBlur = 16;
+      g.shadowOffsetY = 7;
+    }
+    if (kind === "box") {
+      const grad = g.createLinearGradient(0, y, 0, y + s);
+      grad.addColorStop(0, "#2B4064");
+      grad.addColorStop(0.55, "#182741");
+      grad.addColorStop(1, "#0F1B2E");
+      roundRect(g, x, y, s, s, r);
+      g.fillStyle = grad;
+      g.fill();
+      if (lifted) g.restore();
+      g.strokeStyle = "#0A1322";
+      g.lineWidth = 1.6;
+      roundRect(g, x, y, s, s, r);
+      g.stroke();
+      // 좌상단 키라이트 + 상단 모서리 하이라이트
+      g.strokeStyle = "rgba(212,232,255,0.16)";
+      g.lineWidth = 2;
+      g.beginPath();
+      g.moveTo(x + r, y + 2.2);
+      g.lineTo(x + s - r, y + 2.2);
+      g.stroke();
+      g.strokeStyle = "rgba(255,255,255,0.10)";
+      g.lineWidth = 2.4;
+      g.beginPath();
+      g.arc(x + r + 1, y + r + 1, r * 0.9, Math.PI, Math.PI * 1.5);
+      g.stroke();
+    } else {
+      roundRect(g, x, y, s, s, r);
+      g.fillStyle = "rgba(150,205,255,0.13)";
+      g.fill();
+      if (lifted) g.restore();
+      g.strokeStyle = "rgba(140,200,255,0.30)";
+      g.lineWidth = 4;
+      roundRect(g, x + 1.5, y + 1.5, s - 3, s - 3, Math.max(4, r - 2));
+      g.stroke();
+      g.strokeStyle = "rgba(238,249,255,0.78)";
+      g.lineWidth = 1.5;
+      roundRect(g, x, y, s, s, r);
+      g.stroke();
+      // 유리 광택 — 대각 광선 두 줄
+      g.strokeStyle = "rgba(255,255,255,0.25)";
+      g.lineWidth = 2;
+      g.beginPath();
+      g.moveTo(x + s * 0.24, y + s * 0.7);
+      g.lineTo(x + s * 0.52, y + s * 0.24);
+      g.moveTo(x + s * 0.46, y + s * 0.8);
+      g.lineTo(x + s * 0.74, y + s * 0.34);
+      g.stroke();
+    }
+    if (selected) {
+      const pul = 0.42 + Math.sin(tMs / 210) * 0.16;
+      g.strokeStyle = `rgba(255,255,255,${pul})`;
+      g.lineWidth = 2;
+      roundRect(g, x - 4, y - 4, s + 8, s + 8, r + 4);
+      g.stroke();
+    }
+  }
+
   function draw(tMs: number, dtNorm: number): void {
     if (!ctx) return;
     const g = ctx;
@@ -318,8 +475,14 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
     g.fillRect(0, 0, vw, vh);
     g.lineCap = "round";
 
-    // 격자
-    g.strokeStyle = "rgba(190,210,240,0.07)";
+    // 격자 타일(레퍼런스의 희미한 칸) + 선
+    g.fillStyle = "rgba(190,210,240,0.03)";
+    for (let x = 0; x < pz.grid; x++)
+      for (let y = 0; y < pz.grid; y++) {
+        roundRect(g, px(x) + 2, py(y) + 2, cellPx - 4, cellPx - 4, 6);
+        g.fill();
+      }
+    g.strokeStyle = "rgba(190,210,240,0.06)";
     g.lineWidth = 1;
     for (let i = 0; i <= pz.grid; i++) {
       g.beginPath();
@@ -332,9 +495,61 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
       g.stroke();
     }
 
-    // 빔 — 색별 3겹 글로우 + 광자 흐름(대시가 빔 방향으로 흐른다)
-    const byColor = new Map<number, typeof tr.segs>();
-    for (const s of tr.segs) {
+    // 바위(고정) — 자갈 실루엣. 사각 블록과 실루엣부터 달라 "옮기는 조각이 아님"이 즉시 읽힌다
+    const ROCK_R = [0.98, 0.84, 1, 0.88, 0.96, 0.82, 1, 0.9];
+    for (const r of pz.rocks) {
+      const cx = px(r.x + 0.5);
+      const cy = py(r.y + 0.5);
+      const R = cellPx * 0.4;
+      const rot = ((r.x * 5 + r.y * 3) % 8) * (Math.PI / 16); // 칸마다 살짝 다른 결(결정적)
+      g.beginPath();
+      for (let k = 0; k < 8; k++) {
+        const a = rot + (k / 8) * Math.PI * 2;
+        const rr = R * ROCK_R[k];
+        const vx = cx + Math.cos(a) * rr;
+        const vy = cy + Math.sin(a) * rr * 0.92;
+        if (k === 0) g.moveTo(vx, vy);
+        else g.lineTo(vx, vy);
+      }
+      g.closePath();
+      g.fillStyle = "#0B1626";
+      g.fill();
+      g.lineJoin = "round";
+      g.strokeStyle = "rgba(3,9,18,0.9)";
+      g.lineWidth = 3;
+      g.stroke();
+      g.lineJoin = "miter";
+      g.strokeStyle = "rgba(200,220,250,0.1)";
+      g.lineWidth = 1.4;
+      g.beginPath();
+      g.arc(cx - R * 0.22, cy - R * 0.26, R * 0.5, Math.PI * 0.95, Math.PI * 1.45);
+      g.stroke();
+      g.strokeStyle = "rgba(0,0,0,0.55)";
+      g.lineWidth = 1.4;
+      g.beginPath();
+      g.moveTo(cx - R * 0.34, cy - R * 0.1);
+      g.lineTo(cx - R * 0.02, cy + R * 0.16);
+      g.lineTo(cx - R * 0.24, cy + R * 0.48);
+      g.moveTo(cx + R * 0.2, cy - R * 0.42);
+      g.lineTo(cx + R * 0.4, cy - R * 0.08);
+      g.stroke();
+    }
+
+    // 조각(스프링 정착) — 드래그로 든 조각은 고스트로 따로
+    for (let i = 0; i < pz.pieces.length; i++) {
+      const lifted = !!(drag && drag.moved && drag.idx === i);
+      const t = cur[i];
+      disp[i].x += (t.x - disp[i].x) * Math.min(1, 0.3 * dtNorm);
+      disp[i].y += (t.y - disp[i].y) * Math.min(1, 0.3 * dtNorm);
+      if (lifted) continue;
+      drawPiece(g, px(disp[i].x + 0.5), py(disp[i].y + 0.5), pz.pieces[i].kind, cellPx * 0.84, false, selIdx === i, tMs);
+    }
+
+    // 빔 — 색별 3겹 글로우 + 광자 흐름 + 판 밖 꼬리
+    const BIG = (vw + vh) / cellPx;
+    const allSegs = tr.segs.concat(tr.exits.map((x) => ({ x1: x.x, y1: x.y, x2: x.x + DDX[x.dir] * BIG, y2: x.y + DDY[x.dir] * BIG, color: x.color })));
+    const byColor = new Map<number, { x1: number; y1: number; x2: number; y2: number }[]>();
+    for (const s of allSegs) {
       if (!byColor.has(s.color)) byColor.set(s.color, []);
       byColor.get(s.color)!.push(s);
     }
@@ -347,18 +562,26 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
       strokeSegs(list, 3.2, "rgba(255,255,255,0.75)", flow);
     }
 
-    // 입사각=반사각 쌍둥이 호(교육 장치 — 두 호의 크기가 항상 같다)
-    g.lineWidth = 1.6;
+    // 반사점 — 플레어 + 법선 점선 + 입사각=반사각 쌍둥이 호(교육 장치)
     for (const h of tr.hits) {
-      const cx = px(h.x + 0.5);
-      const cy = py(h.y + 0.5);
-      const a1 = DIR_ANG[((h.din + 2) % 4) as Dir]; // 들어온 빛 쪽
-      const a2 = DIR_ANG[h.dout];
+      const cx = px(h.x);
+      const cy = py(h.y);
+      const a1 = angOf(REV[h.din] as DDir); // 들어온 빛 쪽
+      const a2 = angOf(h.dout);
       const v1 = { x: Math.cos(a1), y: Math.sin(a1) };
       const v2 = { x: Math.cos(a2), y: Math.sin(a2) };
-      const bis = Math.atan2(v1.y + v2.y, v1.x + v2.x);
-      const r = cellPx * 0.34;
-      g.strokeStyle = hexA(COLOR_HEX[h.color], 0.4);
+      const bis = Math.atan2(v1.y + v2.y, v1.x + v2.x); // = 면 법선(바깥쪽)
+      g.strokeStyle = "rgba(255,255,255,0.3)";
+      g.lineWidth = 1;
+      g.setLineDash([2.5, 4]);
+      g.beginPath();
+      g.moveTo(cx, cy);
+      g.lineTo(cx + Math.cos(bis) * cellPx * 0.5, cy + Math.sin(bis) * cellPx * 0.5);
+      g.stroke();
+      g.setLineDash([]);
+      g.lineWidth = 1.6;
+      g.strokeStyle = hexA(COLOR_HEX[h.color], 0.45);
+      const r = cellPx * 0.3;
       const ccw1 = ((bis - a1 + Math.PI * 3) % (Math.PI * 2)) - Math.PI > 0;
       g.beginPath();
       g.arc(cx, cy, r, a1, bis, !ccw1);
@@ -366,136 +589,116 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
       g.beginPath();
       g.arc(cx, cy, r * 0.8, bis, a2, !ccw1);
       g.stroke();
+      // 면 위 플레어
+      g.fillStyle = hexA(COLOR_HEX[h.color], 0.22);
+      g.beginPath();
+      g.arc(cx, cy, 5.5, 0, Math.PI * 2);
+      g.fill();
+      g.fillStyle = "rgba(255,255,255,0.92)";
+      g.beginPath();
+      g.arc(cx, cy, 2.4, 0, Math.PI * 2);
+      g.fill();
     }
 
-    // 셀
-    for (let i = 0; i < pz.cells.length; i++) {
-      const c = pz.cells[i];
-      const cx = px(c.x + 0.5);
-      const cy = py(c.y + 0.5);
-      const half = cellPx * 0.5;
-      if (c.kind === "block") {
-        g.fillStyle = "#17263D";
-        g.strokeStyle = "rgba(220,232,250,0.14)";
-        g.lineWidth = 1.5;
-        roundRect(g, cx - half * 0.72, cy - half * 0.72, half * 1.44, half * 1.44, 6);
-        g.fill();
-        g.stroke();
-      } else if (c.kind === "emitter") {
-        // 몸통 + 방향 포신 + 색 LED
-        g.fillStyle = "#101F35";
-        g.strokeStyle = "rgba(220,232,250,0.3)";
-        g.lineWidth = 1.6;
-        roundRect(g, cx - half * 0.62, cy - half * 0.62, half * 1.24, half * 1.24, 7);
-        g.fill();
-        g.stroke();
-        const d = c.dir!;
-        g.fillStyle = "#2A3D5C";
-        const bw = half * 0.34;
-        g.fillRect(cx + DX[d] * half * 0.62 - bw / 2 + DX[d] * bw * 0.5, cy + DY[d] * half * 0.62 - bw / 2 + DY[d] * bw * 0.5, bw, bw);
-        const hex = COLOR_HEX[c.color!];
+    // 보석 — 통과형 링(노드 위)
+    for (let i = 0; i < pz.gems.length; i++) {
+      const gm = pz.gems[i];
+      const cx = px(gm.ex / 2);
+      const cy = py(gm.ey / 2);
+      const hex = COLOR_HEX[gm.req];
+      const arrived = tr.arrived.get(i) ?? 0;
+      const lit = arrived === gm.req;
+      const rr = cellPx * 0.22 + (lit && !reduced ? Math.sin(tMs / 240) * 1.5 : 0);
+      if (lit) {
         g.beginPath();
-        g.arc(cx, cy, half * 0.24, 0, Math.PI * 2);
-        g.fillStyle = hex;
+        g.arc(cx, cy, rr + 5, 0, Math.PI * 2);
+        g.fillStyle = hexA(hex, 0.2);
         g.fill();
-        g.strokeStyle = hexA(hex, 0.35);
-        g.lineWidth = 4;
-        g.stroke();
-      } else if (c.kind === "target") {
-        const req = c.req ?? 1;
-        const hex = COLOR_HEX[req];
-        const arrived = tr.arrived.get(i) ?? 0;
-        const lit = arrived === req;
-        const rr = half * 0.52 + (lit && !reduced ? Math.sin(tMs / 240) * 1.6 : 0);
-        g.beginPath();
-        g.moveTo(cx, cy - rr);
-        g.lineTo(cx + rr, cy);
-        g.lineTo(cx, cy + rr);
-        g.lineTo(cx - rr, cy);
-        g.closePath();
-        if (lit) {
-          g.fillStyle = hexA(hex, 0.9);
-          g.fill();
-          g.lineWidth = 6;
-          g.strokeStyle = hexA(hex, 0.28);
-          g.stroke();
-        } else {
-          g.fillStyle = "#0E1B2E";
-          g.fill();
-        }
-        g.lineWidth = 2.2;
-        g.strokeStyle = lit ? "rgba(255,255,255,0.92)" : hexA(hex, 0.85);
-        g.stroke();
-        // 일부 색만 도착 — 안쪽 점으로 피드백("빨강만 오고 있어요")
-        if (!lit && arrived) {
-          const bits = [1, 2, 4].filter((b) => (arrived & b) !== 0);
-          bits.forEach((b, bi) => {
-            g.beginPath();
-            g.arc(cx + (bi - (bits.length - 1) / 2) * 7, cy, 2.6, 0, Math.PI * 2);
-            g.fillStyle = COLOR_HEX[b];
-            g.fill();
-          });
-        }
-      } else {
-        // 거울·반거울 — 탭 가능 어포던스 링 + 회전 애니메이션
-        const tgt = curO[i] === 0 ? -45 : 45;
-        dispA[i] += (tgt - dispA[i]) * Math.min(1, 0.3 * dtNorm);
-        const ang = (dispA[i] * Math.PI) / 180;
-        g.beginPath();
-        g.arc(cx, cy, half * 0.74, 0, Math.PI * 2);
-        g.strokeStyle = "rgba(220,232,250,0.1)";
-        g.lineWidth = 1.4;
-        g.stroke();
-        const len = half * 0.66;
-        const ex = Math.cos(ang) * len;
-        const ey = Math.sin(ang) * len;
-        if (c.kind === "splitter") {
-          g.lineWidth = 7;
-          g.strokeStyle = "rgba(140,200,255,0.3)";
-          g.beginPath();
-          g.moveTo(cx - ex, cy - ey);
-          g.lineTo(cx + ex, cy + ey);
-          g.stroke();
-          g.lineWidth = 1.6;
-          g.strokeStyle = "rgba(240,250,255,0.85)";
-          g.beginPath();
-          g.moveTo(cx - ex, cy - ey);
-          g.lineTo(cx + ex, cy + ey);
-          g.stroke();
-        } else {
-          g.lineWidth = 6;
-          g.strokeStyle = "rgba(150,170,200,0.35)";
-          g.beginPath();
-          g.moveTo(cx - ex, cy - ey);
-          g.lineTo(cx + ex, cy + ey);
-          g.stroke();
-          g.lineWidth = 2.6;
-          g.strokeStyle = "#DCE7F5";
-          g.beginPath();
-          g.moveTo(cx - ex, cy - ey);
-          g.lineTo(cx + ex, cy + ey);
-          g.stroke();
-        }
       }
+      g.beginPath();
+      g.arc(cx, cy, rr, 0, Math.PI * 2);
+      g.fillStyle = lit ? hexA(hex, 0.92) : "rgba(10,20,36,0.85)";
+      g.fill();
+      g.lineWidth = 2.2;
+      g.strokeStyle = lit ? "rgba(255,255,255,0.92)" : hexA(hex, 0.85);
+      g.stroke();
+      if (!lit && !arrived) {
+        g.beginPath();
+        g.arc(cx, cy, 2, 0, Math.PI * 2);
+        g.fillStyle = hexA(hex, 0.55);
+        g.fill();
+      }
+      // 일부 색만 도착 — 안쪽 점으로 피드백("빨강만 오고 있어요")
+      if (!lit && arrived) {
+        const bits = [1, 2, 4].filter((b) => (arrived & b) !== 0);
+        bits.forEach((b, bi) => {
+          g.beginPath();
+          g.arc(cx + (bi - (bits.length - 1) / 2) * 6, cy, 2.3, 0, Math.PI * 2);
+          g.fillStyle = COLOR_HEX[b];
+          g.fill();
+        });
+      }
+    }
+
+    // 광원 — 노드 위 발사 장치(방향 포신 + 색 LED)
+    for (const e of pz.emitters) {
+      const cx = px(e.ex / 2);
+      const cy = py(e.ey / 2);
+      const ang = angOf(e.dir);
+      const hex = COLOR_HEX[e.color];
+      g.strokeStyle = "#2A3D5C";
+      g.lineWidth = 9;
+      g.beginPath();
+      g.moveTo(cx, cy);
+      g.lineTo(cx + Math.cos(ang) * cellPx * 0.26, cy + Math.sin(ang) * cellPx * 0.26);
+      g.stroke();
+      g.beginPath();
+      g.arc(cx, cy, cellPx * 0.19, 0, Math.PI * 2);
+      g.fillStyle = "#101F35";
+      g.fill();
+      g.strokeStyle = "rgba(220,232,250,0.35)";
+      g.lineWidth = 1.6;
+      g.stroke();
+      g.beginPath();
+      g.arc(cx, cy, cellPx * 0.1, 0, Math.PI * 2);
+      g.fillStyle = hex;
+      g.fill();
+      g.strokeStyle = hexA(hex, 0.35);
+      g.lineWidth = 4;
+      g.stroke();
+      g.beginPath();
+      g.arc(cx, cy, 2.2, 0, Math.PI * 2);
+      g.fillStyle = "rgba(255,255,255,0.9)";
+      g.fill();
+    }
+
+    // 드래그 고스트 + 목적지 하이라이트
+    if (drag && drag.moved) {
+      const c = cellOf({ x: drag.px, y: drag.py });
+      const org = cur[drag.idx];
+      g.setLineDash([5, 5]);
+      g.strokeStyle = "rgba(255,255,255,0.2)";
+      g.lineWidth = 1.6;
+      roundRect(g, px(org.x) + 3, py(org.y) + 3, cellPx - 6, cellPx - 6, 7);
+      g.stroke();
+      g.setLineDash([]);
+      if (c.inside) {
+        const okDrop = (c.x === org.x && c.y === org.y) || isFree(c.x, c.y, drag.idx);
+        g.strokeStyle = okDrop ? "rgba(122,220,160,0.7)" : "rgba(242,92,105,0.6)";
+        g.fillStyle = okDrop ? "rgba(122,220,160,0.08)" : "rgba(242,92,105,0.07)";
+        roundRect(g, px(c.x) + 2, py(c.y) + 2, cellPx - 4, cellPx - 4, 7);
+        g.fill();
+        g.lineWidth = 2;
+        g.stroke();
+      }
+      drawPiece(g, drag.px, drag.py - cellPx * 0.18, pz.pieces[drag.idx].kind, cellPx * 0.92, true, false, tMs);
     }
 
     particles.draw(g);
   }
 
-  function roundRect(g: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number): void {
-    g.beginPath();
-    g.moveTo(x + r, y);
-    g.arcTo(x + w, y, x + w, y + h, r);
-    g.arcTo(x + w, y + h, x, y + h, r);
-    g.arcTo(x, y + h, x, y, r);
-    g.arcTo(x, y, x + w, y, r);
-    g.closePath();
-  }
-
   // ---- 루프(mount 뒤 시작 — 스텝 러시 함정 계승) ----
   const loop = createLoop((dtNorm, tMs) => {
-    nowMs = tMs;
-    void nowMs;
     particles.update(dtNorm * 16.7);
     draw(tMs, dtNorm);
   });
@@ -511,18 +714,17 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
     (window as unknown as { __lzmDev?: unknown }).__lzmDev = {
       inspect,
       stage: (): number => stageNo,
-      wrongCells: (): { x: number; y: number }[] =>
-        pz.cells.filter((c, i) => (c.kind === "mirror" || c.kind === "splitter") && curO[i] !== c.solO).map((c) => ({ x: c.x, y: c.y })),
-      rot: (): { x: number; y: number; wrong: boolean }[] =>
-        pz.cells
-          .map((c, i) => ({ c, i }))
-          .filter(({ c }) => c.kind === "mirror" || c.kind === "splitter")
-          .map(({ c, i }) => ({ x: c.x, y: c.y, wrong: curO[i] !== c.solO })),
-      pos: (x: number, y: number): { x: number; y: number } => {
+      won: (): boolean => tr.won,
+      moves: (): number => moves,
+      grid: (): number => pz.grid,
+      pieces: (): { kind: string; x: number; y: number; sx: number; sy: number; wrong: boolean }[] =>
+        pz.pieces.map((p, i) => ({ kind: p.kind, x: cur[i].x, y: cur[i].y, sx: p.solX, sy: p.solY, wrong: cur[i].x !== p.solX || cur[i].y !== p.solY })),
+      rocks: (): { x: number; y: number }[] => pz.rocks.map((r) => ({ x: r.x, y: r.y })),
+      free: (x: number, y: number): boolean => isFree(x, y),
+      cellPos: (x: number, y: number): { x: number; y: number } => {
         const r = cv.getBoundingClientRect();
         return { x: r.left + px(x + 0.5), y: r.top + py(y + 0.5) };
       },
-      won: (): boolean => tr.won,
     };
   }
 
