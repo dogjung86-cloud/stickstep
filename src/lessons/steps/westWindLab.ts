@@ -199,15 +199,17 @@ export const westWindLab: StepRenderer = (host, step, api) => {
     p.y = CY0 + 8 + Math.random() * (CH - 20);
     p.warm = 0;
     p.life = 0;
-    p.max = 7 + Math.random() * 3;
+    p.max = 10 + Math.random() * 4; // 감속된 바람이 지도를 다 건널 수 있는 수명(약 13초 횡단)
   }
   for (let i = 0; i < 64; i++) {
     const p: WindP = { x: 0, y: 0, warm: 0, life: 0, max: 1 };
     spawnWind(p, true);
     winds.push(p);
   }
+  // 난류 입자 속도 — 바닷물은 바람보다 훨씬 느리다(사용자 피드백 캘리브레이션).
+  // t=0→1이 채널 전체(경도 약 65°)라 0.02~0.032/s = 편도 30~50초의 유유한 흐름.
   for (let i = 0; i < 90; i++) {
-    curs.push({ t: Math.random(), off: (Math.random() - 0.5) * 7, spd: 0.055 + Math.random() * 0.035 });
+    curs.push({ t: Math.random(), off: (Math.random() - 0.5) * 7, spd: 0.02 + Math.random() * 0.012 });
   }
 
   // ---- 렌더 ----
@@ -227,10 +229,10 @@ export const westWindLab: StepRenderer = (host, step, api) => {
     if (!finished && runMs > 2600) collect("wind", "완료!");
     if (!currentOn && !goals.has("exp")) {
       offMs += dt * 1000;
-      if (offMs > 1800) collect("exp", "확인!");
+      if (offMs > 2200) collect("exp", "확인!");
     }
-    coldF = clamp(coldF + (currentOn ? -dt : dt) * 1.4, 0, 1);
-    londonT += ((currentOn ? LONDON_ON : LONDON_OFF) - londonT) * Math.min(1, dt * 2.4);
+    coldF = clamp(coldF + (currentOn ? -dt : dt) * 0.9, 0, 1);
+    londonT += ((currentOn ? LONDON_ON : LONDON_OFF) - londonT) * Math.min(1, dt * 1.3); // 스르르 식는 온도계
 
     // 지도 배치(상단) + 온도계 패널(하단)
     const mapW = Math.min(W - 20, 336);
@@ -297,7 +299,7 @@ export const westWindLab: StepRenderer = (host, step, api) => {
         const py = toCY(cv.y + perpY * c.off * (500 / 180) * 0.36);
         if (px < mapX || px > mapX + mapW || py < mapY || py > mapY + mapH) continue;
         const fade = Math.min(1, c.t * 6, (1 - c.t) * 3);
-        ctx.strokeStyle = `rgba(255,${150 - 40 * Math.abs(c.off) / 4},94,${(0.55 + 0.25 * Math.sin(phase * 3 + c.t * 20)) * fade})`;
+        ctx.strokeStyle = `rgba(255,${150 - 40 * Math.abs(c.off) / 4},94,${(0.5 + 0.22 * Math.sin(phase * 1.1 + c.t * 14)) * fade})`;
         ctx.lineWidth = 2;
         ctx.lineCap = "round";
         ctx.beginPath();
@@ -307,13 +309,14 @@ export const westWindLab: StepRenderer = (host, step, api) => {
       }
     }
 
-    // 편서풍 입자 — 서→동, 난류 위를 지나면 온기를 머금는다
-    const wspd = 30;
+    // 편서풍 입자 — 서→동, 난류 위를 지나면 온기를 머금는다.
+    // 속도는 난류보다 뚜렷이 빠르되 차분하게(svg 16px/s ≈ 화면 26px/s — 사용자 피드백 감속).
+    const wspd = 16;
     for (const p of winds) {
       p.life += dt;
       if (p.life > p.max || p.x > CX0 + CW + 6) spawnWind(p);
-      p.x += wspd * dt * (1 + 0.15 * Math.sin(phase * 1.6 + p.y));
-      p.y += Math.sin(phase * 0.9 + p.x * 0.08) * 1.1 * dt - 0.55 * dt; // 살짝 북동진
+      p.x += wspd * dt * (1 + 0.12 * Math.sin(phase * 1.1 + p.y));
+      p.y += Math.sin(phase * 0.7 + p.x * 0.08) * 0.8 * dt - 0.4 * dt; // 살짝 북동진
       // 난류와의 거리 → 온기 흡수(ON일 때만)
       if (currentOn) {
         let dmin = Infinity;
@@ -350,8 +353,8 @@ export const westWindLab: StepRenderer = (host, step, api) => {
       ctx.stroke();
     }
 
-    // 요약 화살표(서→동) — 항상 표시(편서풍은 연중)
-    const aOp = 0.5 + 0.2 * Math.sin(phase * 2.4);
+    // 요약 화살표(서→동) — 항상 표시(편서풍은 연중), 호흡도 차분하게
+    const aOp = 0.5 + 0.16 * Math.sin(phase * 1.5);
     ctx.strokeStyle = `rgba(210,228,250,${aOp})`;
     ctx.fillStyle = ctx.strokeStyle;
     ctx.lineWidth = 3;
