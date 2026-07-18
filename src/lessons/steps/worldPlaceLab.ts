@@ -410,11 +410,12 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
       g.setAttribute("transform", `translate(${sx.toFixed(1)} ${sy.toFixed(1)})`);
       // 중첩 svg는 width/height가 없으면 부모 뷰포트의 100%로 커진다(지도만 한 순록 실사고) —
       // 명시 크기를 박아 24×24 유저 단위로 고정한 뒤 스케일한다.
+      // 크기 감각: 지도 1000유저단위 ≈ 폰 화면 700~800px — 링 지름 42유닛 ≈ 33px 도장.
       const artSized = t.art.replace("<svg ", '<svg width="24" height="24" ');
       g.innerHTML = `
-        <circle r="17" fill="rgba(232,89,12,.16)"/>
-        <circle r="13" fill="#FFFDF8" stroke="#E8590C" stroke-width="2"/>
-        <g transform="translate(-9 -9) scale(0.75)">${artSized}</g>`;
+        <circle r="27" fill="rgba(232,89,12,.16)"/>
+        <circle r="21" fill="#FFFDF8" stroke="#E8590C" stroke-width="2.4"/>
+        <g transform="translate(-15.6 -15.6) scale(1.3)">${artSized}</g>`;
       marks.appendChild(g);
       const tok = tokenEls.get(t.id)!;
       tok.classList.add("done");
