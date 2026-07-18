@@ -210,7 +210,14 @@ ok(sun.cxSun === "1", "목성+목성=태양 탄생", JSON.stringify({ sun: sun.c
 ok(sun.cxMaxTier === "10", "최고 티어 = 태양");
 await shot("cosmo-sun");
 ok(await page.evaluate(() => localStorage.getItem("cmx.galaxy")) === "1", "은하에 별 1 적립(기기 누적)");
-ok(await page.evaluate(() => document.querySelector("#sc-cosmo .cmx-galaxy span").textContent) === "1", "은하 필 갱신");
+// 필·나선 갱신은 별 비행 착지 순간(합체 +260ms 대기 +780ms 비행) — 폴링으로 잡는다
+let pillTxt = null;
+for (let g = 0; g < 30; g++) {
+  pillTxt = await page.evaluate(() => document.querySelector("#sc-cosmo .cmx-galaxy span").textContent);
+  if (pillTxt === "1") break;
+  await W(120);
+}
+ok(pillTxt === "1", "은하 필 갱신(별 비행 착지 후)", String(pillTxt));
 
 // ── 태양×2 = 초신성(보드 소거 + 먼지 비) ───────────────────────
 await spawn(9, 262, 430);

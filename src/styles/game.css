@@ -377,20 +377,43 @@
   opacity: 0.68;
   margin-left: 4px;
 }
+/* 은하 필 — "다음" 칩 아래, 캔버스 나선과 한 스택(탭 = 설명 토스트) */
 .cmx-galaxy {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 70px;
+  right: 10px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
   padding: 5px 10px;
+  border: 0;
   border-radius: 99px;
   background: rgba(255, 217, 138, 0.14);
   color: #ffd98a;
+  font-family: inherit;
   font-size: 12px;
   font-weight: 800;
-  pointer-events: none;
+  cursor: pointer;
+}
+.cmx-galaxy:active {
+  transform: scale(0.95);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cmx-galaxy.pulse {
+    animation: cmxStarGain 0.72s var(--spring);
+  }
+}
+@keyframes cmxStarGain {
+  0% {
+    transform: scale(1);
+  }
+  32% {
+    transform: scale(1.26);
+    background: rgba(255, 217, 138, 0.42);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 .cmx-next {
   position: absolute;

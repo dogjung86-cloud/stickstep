@@ -92,7 +92,12 @@ export function cosmoScreen(o: { onExit: () => void }): Screen {
   const cv = el("canvas", { class: "cmx-cv", attrs: { "aria-hidden": "true" } }) as unknown as HTMLCanvasElement;
   const scoreNum = el("b", { text: "0" });
   const scoreBox = el("div", { class: "cmx-score", attrs: { "aria-label": "점수" } }, scoreNum, el("span", { text: "점" }));
-  const galaxyPill = el("div", { class: "cmx-galaxy", attrs: { "aria-label": "내 은하의 별" }, html: `${icon("star", 11)}<span>0</span>` });
+  // 은하 필 — 우상단 "다음" 칩 아래(캔버스 나선과 한 스택), 탭하면 설명 토스트
+  const galaxyPill = el("button", {
+    class: "cmx-galaxy",
+    attrs: { type: "button", "aria-label": "내 은하의 별" },
+    html: `${icon("star", 11)}<span>0</span>`,
+  });
   const nextCv = el("canvas", { class: "cmx-next-cv", attrs: { "data-size": "30", "aria-hidden": "true" } }) as unknown as HTMLCanvasElement;
   const nextChip = el("div", { class: "cmx-next", attrs: { "aria-label": "다음 천체" } }, nextCv, el("span", { text: "다음" }));
   // 든 천체의 간단 개념 한 줄(상단, 천체가 바뀔 때 2.6초 표시 — 이름 라벨은 렌더러가 천체 위에)
@@ -188,6 +193,11 @@ export function cosmoScreen(o: { onExit: () => void }): Screen {
     if (sp) sp.textContent = String(renderer.galaxyN);
   }
   syncGalaxy();
+  galaxyPill.addEventListener("click", () => {
+    const n = galaxyCount();
+    showToast(n === 0 ? "내 은하 — 태양을 만들면 별이 하나씩 박혀요" : `내 은하 — 지금까지 태양 ${n}개를 만들었어요`);
+    haptic(HAPTIC.tap);
+  });
 
   function syncChain(): void {
     for (let t = 0; t < TIERS.length; t++) {
@@ -235,9 +245,15 @@ export function cosmoScreen(o: { onExit: () => void }): Screen {
           renderer.onSun(ev.x, ev.y, tMs);
           sfx.sunborn();
           haptic(HAPTIC.done);
-          const n = renderer.galaxyN + 1;
+          // renderer.galaxyN은 착지까지 구값 — 연속 태양도 정확히 세게 저장소 기준으로 +1
+          const n = galaxyCount() + 1;
           window.localStorage.setItem(GALAXY_KEY, String(n));
-          syncGalaxy();
+          // 나선·필 갱신은 별이 은하에 착지하는 순간(비행 done) — "어디에 쌓이는지"가 시선으로 학습된다
+          renderer.flyStar(ev.x, ev.y, tMs, () => {
+            syncGalaxy();
+            galaxyPill.classList.add("pulse");
+            later(() => galaxyPill.classList.remove("pulse"), 760);
+          });
           showToast(n === 1 ? "태양 탄생! 내 은하에 첫 별이 떴어요" : "태양 탄생! 은하에 별이 하나 늘었어요");
           const ci = chainItems[ev.tier];
           ci.classList.add("pulse");
@@ -370,7 +386,7 @@ export function cosmoScreen(o: { onExit: () => void }): Screen {
   stage.addEventListener("pointerdown", (e) => {
     if (e.button > 0) return;
     const t = e.target as HTMLElement;
-    if (t.closest(".cmx-over")) return;
+    if (t.closest(".cmx-over") || t.closest(".cmx-galaxy")) return; // 은하 필 탭은 조준·드롭이 아니다
     e.preventDefault();
     audioBoot(); // 첫 사용자 제스처에서 오디오 기동(soundLab 규율 — BGM·샘플 포함)
     pressing = true;

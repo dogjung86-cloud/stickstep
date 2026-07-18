@@ -40,6 +40,15 @@ interface Star {
   sp: number;
 }
 
+/** 태양 → 은하 별 비행(적립 연출). 시작점은 월드 좌표, 목적지는 은하(화면 좌표). */
+interface Flight {
+  x0: number;
+  y0: number;
+  t0: number;
+  done?: () => void;
+}
+const FLIGHT_MS = 780;
+
 function rng32(seed: number): () => number {
   let a = seed >>> 0;
   return () => {
@@ -77,6 +86,13 @@ export class CosmoRenderer {
   private novaY = CMX_H / 2;
   /** 착지 스쿼시&스트레치(id → 시작 tMs) — 반발 물리 대신 '보이는 탄성'이 손맛을 만든다. */
   private readonly squash = new Map<number, number>();
+  /** 내 은하 중심(화면 좌표) — 매 프레임 drawGalaxy가 갱신, 별 비행의 목적지. */
+  private gx = 0;
+  private gy = 0;
+  private galaxyPopT = -1e9;
+  private galaxyNewT = -1e9;
+  /** 진행 중인 별 비행 — retry로도 비우지 않는다(은하는 판과 무관한 영구 메타). */
+  private flights: Flight[] = [];
 
   constructor(cv: HTMLCanvasElement) {
     this.cv = cv;
@@ -151,6 +167,17 @@ export class CosmoRenderer {
     this.shake.kick(7);
   }
 
+  /** 태양 탄생 → 은하로 별 하나 비행. 카운트 반영은 착지 시 done 콜백(index가 이때 동기화). */
+  flyStar(x: number, y: number, tMs: number, done?: () => void): void {
+    if (this.reducedMotion) {
+      this.galaxyPopT = tMs;
+      this.galaxyNewT = tMs;
+      done?.();
+      return;
+    }
+    this.flights.push({ x0: x, y0: y, t0: tMs + 260, done }); // 탄생 버스트가 먼저 읽히게 잠깐 대기
+  }
+
   onNova(x: number, y: number, victims: Array<{ x: number; y: number; tier: number }>, tMs: number): void {
     this.novaT = tMs;
     this.novaX = x;
@@ -199,12 +226,14 @@ export class CosmoRenderer {
     ctx.fillRect(jr, 0, this.cw - jr, this.ch);
     ctx.fillRect(jl, jb, jr - jl, this.ch - jb);
 
+    // 은하는 화면 좌표 — 통·셰이크와 분리된 "먼 하늘"(영구 메타는 초신성에도 흔들리지 않는다)
+    this.drawGalaxy(tMs);
+
     const off = this.shake.offset(dtNorm);
     ctx.save();
     ctx.translate(this.ox + off.x, this.oy + off.y);
     ctx.scale(this.s, this.s);
 
-    this.drawGalaxy(tMs);
     this.drawFrame(eng);
 
     // 조준 가이드 + 착지 고스트(놓으면 어디서 멈추는지)
@@ -297,6 +326,40 @@ export class CosmoRenderer {
     }
     ctx.globalAlpha = 1;
     ctx.restore();
+
+    // 태양 → 은하 별 비행(화면 좌표, 모든 것 위로) — 착지 순간 팝·카운트 갱신(done)
+    if (this.flights.length > 0) {
+      const keep: Flight[] = [];
+      for (const f of this.flights) {
+        const k = (tMs - f.t0) / FLIGHT_MS;
+        if (k >= 1) {
+          this.galaxyPopT = tMs;
+          this.galaxyNewT = tMs;
+          f.done?.();
+          continue;
+        }
+        keep.push(f);
+        if (k < 0) continue;
+        const sx = this.ox + f.x0 * this.s;
+        const sy = this.oy + f.y0 * this.s;
+        const mx = (sx + this.gx) / 2 - 30;
+        const my = Math.min(sy, this.gy) - 64;
+        for (let j = 4; j >= 0; j--) {
+          const kk = Math.max(0, k - j * 0.035);
+          const e = kk * kk * (3 - 2 * kk);
+          const u = 1 - e;
+          const px = u * u * sx + 2 * u * e * mx + e * e * this.gx;
+          const py = u * u * sy + 2 * u * e * my + e * e * this.gy;
+          ctx.globalAlpha = j === 0 ? 1 : Math.max(0.08, 0.5 - j * 0.1);
+          ctx.fillStyle = "#FFE9A8";
+          ctx.beginPath();
+          ctx.arc(px, py, j === 0 ? 2.8 : Math.max(0.7, 2.2 - j * 0.35), 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+      this.flights = keep;
+    }
 
     // 초신성 섬광(화면 좌표) — 흰 플래시 + 충격파 링
     const nk = (tMs - this.novaT) / 760;
@@ -430,21 +493,36 @@ export class CosmoRenderer {
     ctx.setLineDash([]);
   }
 
-  /** 내 은하 — 우상단 나선. 태양 하나 = 별 하나(기기 누적, 장기 목표). */
+  /** 내 은하 — 우상단 나선. 태양 하나 = 별 하나(기기 누적, 장기 목표).
+   *  화면 좌표: "다음" 칩·★ 필 아래 스택(y178)이 기본, 무대가 짧으면 통 위 하늘(월드 y44)로 클램프.
+   *  크기·팝 스케일을 바꿀 땐 만렙(48별) 원반이 통 입구(라인 y96)와 토스트 밴드를 침범하지 않는지 검산. */
   private drawGalaxy(tMs: number): void {
     const { ctx } = this;
-    const cx = CMX_W - 52;
-    const cy = 44;
+    this.gx = this.cw - 66;
+    this.gy = Math.min(this.oy + 44 * this.s, 178);
     ctx.save();
-    ctx.translate(cx, cy);
+    ctx.translate(this.gx, this.gy);
+    // 별 착지 팝 — 스케일 바운스 + 확산 링(적립 순간을 시선으로 학습)
+    const pk = (tMs - this.galaxyPopT) / 460;
+    if (pk >= 0 && pk < 1) {
+      const w = Math.sin(Math.min(1, pk) * Math.PI);
+      ctx.scale(1 + 0.26 * w, 1 + 0.26 * w);
+      ctx.globalAlpha = (1 - pk) * 0.7;
+      ctx.strokeStyle = "#FFE9A8";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 16 + pk * 40, (16 + pk * 40) * 0.52, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
     ctx.rotate(this.reducedMotion ? 0 : tMs / 26000);
     // 중심 벌지
-    const core = ctx.createRadialGradient(0, 0, 0.5, 0, 0, 9);
-    core.addColorStop(0, "rgba(255,238,190,0.85)");
+    const core = ctx.createRadialGradient(0, 0, 0.5, 0, 0, 13);
+    core.addColorStop(0, "rgba(255,238,190,0.9)");
     core.addColorStop(1, "rgba(255,220,150,0)");
     ctx.fillStyle = core;
     ctx.beginPath();
-    ctx.arc(0, 0, 9, 0, Math.PI * 2);
+    ctx.arc(0, 0, 13, 0, Math.PI * 2);
     ctx.fill();
     const n = Math.min(this.galaxyN, 48);
     if (n === 0) {
@@ -453,21 +531,36 @@ export class CosmoRenderer {
       ctx.strokeStyle = "#9FB4DC";
       ctx.setLineDash([3, 5]);
       ctx.beginPath();
-      ctx.ellipse(0, 0, 26, 13, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 0, 32, 16, 0, 0, Math.PI * 2);
       ctx.stroke();
       ctx.setLineDash([]);
     } else {
+      const fresh = tMs - this.galaxyNewT < 1600;
       for (let i = 0; i < n; i++) {
         const t = i * 0.5;
         const ang = (i % 2) * Math.PI + t * 0.62;
-        const rr = 4.5 + t * 2.1;
+        // 성장은 로그형 캡 — 별이 늘수록 원반이 커지되 48별에서도 반경 46을 넘지 않는다
+        const rr = 9 + 37 * (1 - Math.exp(-i / 13));
         const x = Math.cos(ang) * rr;
         const y = Math.sin(ang) * rr * 0.52;
-        ctx.globalAlpha = 0.45 + 0.45 * Math.abs(Math.sin(i * 1.7 + tMs / 900));
+        const isNew = fresh && i === n - 1;
+        ctx.globalAlpha = isNew ? 1 : 0.45 + 0.45 * Math.abs(Math.sin(i * 1.7 + tMs / 900));
         ctx.fillStyle = i % 3 === 0 ? "#FFE9A8" : "#DCE9FF";
         ctx.beginPath();
-        ctx.arc(x, y, 1.1, 0, Math.PI * 2);
+        ctx.arc(x, y, (i % 3 === 0 ? 2.1 : 1.7) + (isNew ? 1.3 : 0), 0, Math.PI * 2);
         ctx.fill();
+        if (isNew) {
+          // 갓 박힌 별 — 십자 스파클
+          const sp = 6 + 2 * Math.sin(tMs / 120);
+          ctx.strokeStyle = "#FFF6DC";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(x - sp, y);
+          ctx.lineTo(x + sp, y);
+          ctx.moveTo(x, y - sp);
+          ctx.lineTo(x, y + sp);
+          ctx.stroke();
+        }
       }
     }
     ctx.globalAlpha = 1;
