@@ -37,7 +37,7 @@ function mapShell(inner: string, opts?: { h?: number; legend?: string; aria?: st
         <stop offset="0" stop-color="#D9EDF8"/><stop offset="1" stop-color="#BCDCEF"/>
       </radialGradient>
     </defs>
-    <rect x="${vx}" y="${vy}" width="${vw}" height="${vh}" rx="12" fill="url(#s2-sea)"/>
+    <rect x="${vx}" y="${vy}" width="${vw}" height="${vh + legendH}" rx="12" fill="url(#s2-sea)"/>
     <line x1="${vx}" y1="250" x2="${vx + vw}" y2="250" stroke="#7FA8C8" stroke-width="1" opacity=".55"/>
     <text x="${vx + 5}" y="246" font-size="10" font-weight="700" fill="#5A7A96">적도</text>
     <path d="${WORLD_LAND_PATH}" fill="#F2ECDE" fill-rule="evenodd"/>
@@ -258,12 +258,14 @@ export function asiaIndustryFig(): string {
     ${badge(128.5, 34, film, "#E2574C")}
     ${badge(101, 15, rice2, "#5A8A2E")}${badge(110, -7, rice2, "#5A8A2E")}
   `;
+  // 범례에도 지도와 같은 아이콘을 넣는다 — 빈 원만 있으면 "모양이 안 보인다"(실사용 피드백)
+  const legIcon = (cx: number, icon: string): string => `<g transform="translate(${cx - 6} -10) scale(.5)">${icon}</g>`;
   const legend = `<g font-size="9.5" font-weight="800" fill="#4E5968">
     <g transform="translate(${CROP.x + 8} ${CROP.y + CROP.h + 24})">
-      <circle cx="6" cy="-4" r="6" fill="#fff" stroke="#5A6B7E" stroke-width="1.4"/><text x="16" y="0">석유·천연자원</text>
-      <circle cx="106" cy="-4" r="6" fill="#fff" stroke="#8A5AC2" stroke-width="1.4"/><text x="116" y="0">의류·제조 공장</text>
-      <circle cx="208" cy="-4" r="6" fill="#fff" stroke="#3F8FC8" stroke-width="1.4"/><text x="218" y="0">첨단·문화</text>
-      <circle cx="292" cy="-4" r="6" fill="#fff" stroke="#5A8A2E" stroke-width="1.4"/><text x="302" y="0">벼농사</text>
+      <circle cx="6" cy="-4" r="8" fill="#fff" stroke="#5A6B7E" stroke-width="1.4"/>${legIcon(6, oil)}<text x="18" y="0">석유·천연자원</text>
+      <circle cx="106" cy="-4" r="8" fill="#fff" stroke="#8A5AC2" stroke-width="1.4"/>${legIcon(106, sew)}<text x="118" y="0">의류·제조 공장</text>
+      <circle cx="208" cy="-4" r="8" fill="#fff" stroke="#3F8FC8" stroke-width="1.4"/>${legIcon(208, chip)}<text x="220" y="0">첨단·문화</text>
+      <circle cx="292" cy="-4" r="8" fill="#fff" stroke="#5A8A2E" stroke-width="1.4"/>${legIcon(292, rice2)}<text x="304" y="0">벼농사</text>
     </g>
   </g>`;
   return mapShell(inner, { legend, aria: "아시아의 주요 산업 분포 지도" });
@@ -311,8 +313,9 @@ export function singaporeFig(): string {
     <g>
       <rect x="22" y="26" width="130" height="140" rx="10" fill="#FFFFFF" stroke="#C4CFDC" stroke-width="1.6"/>
       <rect x="22" y="26" width="130" height="30" rx="10" fill="#E8590C"/>
-      <rect x="22" y="46" width="130" height="10" fill="#FFFFFF"/>
-      <text x="87" y="47" text-anchor="middle" font-size="14" font-weight="900" fill="#fff">공휴일 달력</text>
+      <!-- 헤더 아래 라운드만 가리는 패치 — 넓게 잡으면 흰 글자 밑이 잘린다(달력 훅과 같은 실사고) -->
+      <rect x="23.5" y="46" width="127" height="10" fill="#FFFFFF"/>
+      <text x="87" y="41" text-anchor="middle" font-size="14" font-weight="900" fill="#fff">공휴일 달력</text>
       <g>${[0, 1, 2, 3].map((r2) => [0, 1, 2, 3, 4, 5, 6].map((c) => `<rect x="${32 + c * 16}" y="${66 + r2 * 24}" width="11" height="11" rx="2.4" fill="#E8ECF2"/>`).join("")).join("")}</g>
       <circle cx="53.5" cy="71.5" r="9" fill="none" stroke="#E8B93C" stroke-width="2.6"/>
       <circle cx="117.5" cy="95.5" r="9" fill="none" stroke="#E8590C" stroke-width="2.6"/>

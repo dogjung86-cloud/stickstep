@@ -39,8 +39,9 @@ export interface ContinentDef {
   name: string;
   /** worldMap.generated 좌표계(1000×500)의 크롭 뷰박스. */
   crop: { x: number; y: number; w: number; h: number };
-  /** 크롭 종횡비가 2:1을 넘는 넓은 대륙은 true — regionPlaceLab이 가로 모드(rotateStage)로 연다.
-   *  세로 인라인(아시아 1.83:1)은 생략. 유럽(2.26:1)이 첫 적용, 오세아니아도 후보. */
+  /** 가로 모드 플래그 — true면 regionPlaceLab이 rotateStage 가로 무대로 연다(세로 인라인은
+   *  지도가 작게 보인다는 실사용 피드백으로 아시아·유럽 모두 wide 전환). 세로 인라인 경로는
+   *  세로로 긴 대륙(아프리카·아메리카 후보)을 위해 유지한다. */
   wide?: boolean;
   regions: ContinentRegion[];
   /** 어느 지역 폴리곤에도 없는 육지에 놓았을 때의 안내(대륙별 이웃 지리로 분기). */
@@ -154,6 +155,7 @@ const ASIA: ContinentDef = {
   name: "아시아",
   // lon 25~150 · lat 56~-12 크롭 — 시베리아 남단 띠(러시아)는 "다섯 지역 밖" 안내용으로 남긴다.
   crop: { x: 569, y: 94, w: 348, h: 190 },
+  wide: true, // 세로 인라인에선 지도가 작다는 실사용 피드백 — 유럽과 같이 가로 모드로
   regions: [
     {
       id: "east",

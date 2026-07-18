@@ -73,7 +73,7 @@ export const monsoonLab: StepRenderer = (host, step, api) => {
   const pillTxt = el("span", { text: "여름 — 바다에서 육지로, 습한 바람" });
   const seasonRead = el("div", { class: "tempread" }, el("span", { text: "여름" }));
   const stage = el("div", { class: "stage" }, canvas, el("div", { class: "stage-hud" }, el("div", { class: "pill" }, pdot, pillTxt), seasonRead));
-  const capEl = el("div", { class: "stage-cap", text: "화살표 = 바람의 방향 · 파란 점 = 습한 공기" });
+  const capEl = el("div", { class: "stage-cap", text: "화살표 = 바람의 방향 · 여름 파란 점 = 습한 공기 · 겨울 흰 줄 = 건조한 바람" });
   stage.appendChild(capEl);
 
   const seg = el("div", { class: "seg", style: "margin-top:12px" });
@@ -159,7 +159,7 @@ export const monsoonLab: StepRenderer = (host, step, api) => {
       pillTxt.textContent = "여름 — 바다에서 육지로, 습한 바람";
       (seasonRead.firstChild as HTMLElement).textContent = "여름";
     } else {
-      pdot.style.background = "#C8A26E";
+      pdot.style.background = "#B8C6DA";
       pillTxt.textContent = "겨울 — 대륙에서 바다로, 건조한 바람";
       (seasonRead.firstChild as HTMLElement).textContent = "겨울";
     }
@@ -309,10 +309,16 @@ export const monsoonLab: StepRenderer = (host, step, api) => {
           ctx.fill();
         }
       } else {
-        ctx.fillStyle = `rgba(216,182,130,${0.75 * fade})`;
+        // 겨울 건조풍 — 낙하하는 점(비·눈으로 오독, 실사용 피드백)이 아니라
+        // 흐름 방향으로 누운 바람 줄무늬로: 화살표와 같은 결의 연출.
+        const wv = flow(p);
+        ctx.strokeStyle = `rgba(206,216,232,${0.66 * fade})`;
+        ctx.lineWidth = 1.5;
+        ctx.lineCap = "round";
         ctx.beginPath();
-        ctx.arc(px, py, 1.6, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.moveTo(px - wv.vx * 4.2, py - wv.vy * 4.2);
+        ctx.lineTo(px + wv.vx * 4.2, py + wv.vy * 4.2);
+        ctx.stroke();
       }
     }
 
