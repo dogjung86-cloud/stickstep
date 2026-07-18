@@ -408,10 +408,13 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
       const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
       g.setAttribute("class", "wpl-mark");
       g.setAttribute("transform", `translate(${sx.toFixed(1)} ${sy.toFixed(1)})`);
+      // 중첩 svg는 width/height가 없으면 부모 뷰포트의 100%로 커진다(지도만 한 순록 실사고) —
+      // 명시 크기를 박아 24×24 유저 단위로 고정한 뒤 스케일한다.
+      const artSized = t.art.replace("<svg ", '<svg width="24" height="24" ');
       g.innerHTML = `
         <circle r="17" fill="rgba(232,89,12,.16)"/>
         <circle r="13" fill="#FFFDF8" stroke="#E8590C" stroke-width="2"/>
-        <g transform="translate(-9 -9) scale(0.75)">${t.art}</g>`;
+        <g transform="translate(-9 -9) scale(0.75)">${artSized}</g>`;
       marks.appendChild(g);
       const tok = tokenEls.get(t.id)!;
       tok.classList.add("done");
