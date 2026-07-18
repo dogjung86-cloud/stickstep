@@ -1495,6 +1495,18 @@ src/
     qa/soc3_prompts.txt·order-soc3.sh, public/soc/europe → process-geo ASPECT_DIRS 등록).
   - QA: `PORT=<포트> node qa/e2e-soc3.mjs`(ONLY= 부분 실행 지원) · 실입력 `qa/probe-rpl3.mjs`(유럽
     크롭판) · 눈검수 `qa/shot-soc3.mjs`(9샷).
+  - **전면 감사(2026-07-19, Ⅱ 오류 클래스 4종 소급 점검 — 심각 0·경미 4 수정)**: 감사 문법 =
+    ① 전 스텝 샷 `qa/audit-shots-soc3.mjs`(훅 상태별·기함 오답/완료·figTabs 전 탭·recap 카드별 more·
+    그림 문제 전부, 173샷) ② 좌표·라벨 기계 검산 `qa/audit-soc3-geo.mjs`(도시 in-poly·앵커 육지·겹침 0·
+    스팟%↔그림 소품 교차 + **라벨 상자 근접 추정**) ③ 교과서 대조는 텍스트(pymupdf 추출)만이 아니라
+    **지도 페이지를 pymupdf 렌더로 눈대조**(기후 채색처럼 본문 문장에 없는 사실은 지도가 정본)
+    ④ 발주 이미지 전수 임베드 대조(prompts.txt 발주 목록 ↔ 소스 grep — whitehouse·tram 2장 임베드 누락을
+    이걸로 적발). 수정 4건: 남부 앵커 이베리아→그리스+바르셀로나·바르샤바 labelDy(도시 라벨끼리도
+    위/아래 층을 나눈다 — 같은 높이 인접 라벨은 한 단어처럼 읽힘), euroClimateFig 한대 띠(스칸디나비아
+    산줄기+북극해 연안) 추가·한대색 진하게(#7E8EB4 — 바다색과 혼동)·노르웨이 해안 서안 해양성 연장,
+    해설 속 제작자 시점 문구("두 책의 공통 서술") 제거, 발주 2장 recap more 뒤 eimg 임베드.
+    동시 세션 충돌 시 검증은 **워크트리 격리**(HEAD+감사 수정만 적용, node_modules 정션+전용 포트)가
+    확정 경로 — 혼합 트리 dev 서버는 다른 세션 WIP에 라우터가 깨질 수 있다.
 - **다음 배치 백로그**: Ⅳ~Ⅵ 대륙 지리(soon 등록됨 — continentMap ContinentDef 추가 방식), Ⅶ~Ⅻ 일반사회
   (사례 판단·시나리오 문법 별도 설계), 단원 종합 평가(과학 규격 계승 여부 결정), "세계 어디게?" 거리
   점수 게임(도전 탭 후보 — 탐정 문법은 본선이 아니라 응용).

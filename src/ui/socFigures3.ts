@@ -104,8 +104,10 @@ export function euroTerrainFig(): string {
 
 /* ---------- L3: 기후 분포 지도(교과서식 러프 재현) ---------- */
 export function euroClimateFig(opts?: { letters?: { lon: number; lat: number; t: string }[] }): string {
+  // 노르웨이 해안은 서안 해양성 띠가 북극권 부근까지 이어진다(두 교과서 지도 공통 — 2026-07-19 감사 보강).
   const oceanic: [number, number][] = [
-    [-11, 50.5], [-11, 56], [-5, 59.5], [0, 63], [5, 63], [7, 60], [9, 58.5], [12.5, 57],
+    [-11, 50.5], [-11, 56], [-5, 59.5], [-1, 63], [3, 66.5], [8, 69.3], [13, 70], [17, 70],
+    [19, 69.8], [16, 68.2], [12, 66], [9, 63.5], [7.5, 61], [9, 58.5], [12.5, 57],
     [13, 54.6], [15, 53], [15, 49], [10, 47], [5, 45.5], [-2, 43.2], [-9.5, 43.5], [-10, 45],
   ];
   const med: [number, number][] = [
@@ -117,16 +119,29 @@ export function euroClimateFig(opts?: { letters?: { lon: number; lat: number; t:
     [50, 46.5], [40, 47], [30, 47.5], [20, 48], [15, 49], [15, 53], [12.5, 57], [9, 58.5],
     [7, 60], [5, 63],
   ];
+  // 한대 = 아이슬란드 + 스칸디나비아 산줄기 띠 + 러시아 북극해 연안(두 교과서 지도 공통 표현 —
+  // 아이슬란드만 칠하던 것을 2026-07-19 감사에서 보강). 색도 바다와 헷갈리지 않게 한 단계 진하게.
   const polar: [number, number][] = [[-25, 62.8], [-25, 67], [-13, 67], [-13.5, 63]];
+  const polarScand: [number, number][] = [
+    [5, 60.2], [7.5, 62.5], [11, 65.2], [15, 67.6], [19, 69.4], [24, 70.8], [29, 71.3],
+    [31.5, 70.3], [26, 69.6], [21, 68.6], [16, 66.8], [12, 64.3], [8.5, 61.6], [6.5, 59.6],
+  ];
+  const polarArctic: [number, number][] = [
+    [34, 68.8], [40, 67.8], [47, 68], [54, 68.6], [60, 69.3], [60, 67.4], [53, 66.8],
+    [46, 66.2], [39, 66], [33, 67.2],
+  ];
+  const POLAR_C = "#7E8EB4";
   const inner = `
     <g clip-path="url(#s3-lclip)">
       <path d="${polyPath(cold)}" fill="#8FA2C8" opacity=".72"/>
       <path d="${polyPath(oceanic)}" fill="#4EA84E" opacity=".72"/>
       <path d="${polyPath(med)}" fill="#E8B93C" opacity=".78"/>
-      <path d="${polyPath(polar)}" fill="#B8C6DE" opacity=".85"/>
+      <path d="${polyPath(polar)}" fill="${POLAR_C}" opacity=".85"/>
+      <path d="${polyPath(polarScand)}" fill="${POLAR_C}" opacity=".85"/>
+      <path d="${polyPath(polarArctic)}" fill="${POLAR_C}" opacity=".85"/>
     </g>
     ${letterMarks(opts?.letters)}`;
-  const pal: [string, string][] = [["#4EA84E", "서안 해양성"], ["#E8B93C", "지중해성"], ["#8FA2C8", "냉대"], ["#B8C6DE", "한대"]];
+  const pal: [string, string][] = [["#4EA84E", "서안 해양성"], ["#E8B93C", "지중해성"], ["#8FA2C8", "냉대"], [POLAR_C, "한대"]];
   const legend = `<g font-size="8.5" font-weight="800">
     ${pal.map(([c, n], i) => `<g transform="translate(${CROP.x + 10 + i * 62} ${CROP.y + CROP.h + 22})">
       <rect x="0" y="-8" width="10" height="10" rx="3" fill="${c}"/><text x="13" y="1" fill="#4E5968">${n}</text></g>`).join("")}
