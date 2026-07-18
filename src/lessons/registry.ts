@@ -227,6 +227,7 @@ import { monsoonLab } from "./steps/monsoonLab";
 import { pyramidLab } from "./steps/pyramidLab";
 import { westWindLab } from "./steps/westWindLab";
 import { rainBeltLab } from "./steps/rainBeltLab";
+import { timelineLab } from "./steps/timelineLab";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -450,6 +451,7 @@ const R: Record<string, StepRenderer> = {
   pyramidLab,
   westWindLab,
   rainBeltLab,
+  timelineLab,
   quiz,
   table,
   order,

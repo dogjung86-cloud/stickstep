@@ -35,7 +35,7 @@ export const cut = (theme: string, name: string, alt: string, bubbles?: CutBubbl
 
 export const concept = (o: {
   kicker?: string;
-  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "plant" | "body" | "elec" | "num" | "star" | "alge" | "grph" | "geom" | "solid" | "data" | "calc" | "ineq" | "func" | "prove" | "sim" | "dice" | "world";
+  kickerTone?: "blue" | "bio" | "heat" | "matter" | "force" | "gas" | "space" | "chem" | "geo" | "plant" | "body" | "elec" | "num" | "star" | "alge" | "grph" | "geom" | "solid" | "data" | "calc" | "ineq" | "func" | "prove" | "sim" | "dice" | "world" | "his";
   title: string;
   lead?: string;
   blocks?: Block[];
@@ -126,7 +126,8 @@ export const hook = (o: {
     | "threecities" | "stilthouse" | "skyroute" | "avocado" | "maasai" | "ilovenyc"
     | "asiangames" | "monsoonrain" | "templetrip" | "halalmark" | "trainride" | "emptyclass" | "madein" | "fanchant"
     | "dawnsoccer" | "peakhike" | "frozenriver" | "cityfeed" | "skislope" | "trainborder" | "fourshirts"
-    | "mappuzzle" | "satnile" | "herdmove" | "shadelane" | "movienight" | "classphoto" | "flagstars" | "greenline";
+    | "mappuzzle" | "satnile" | "herdmove" | "shadelane" | "movienight" | "classphoto" | "flagstars" | "greenline"
+    | "saveicon" | "gamechar" | "timecapsule" | "dangi" | "milmyeon";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
@@ -137,9 +138,11 @@ export const recap = (o: {
   outro?: string; cta?: string;
 }): Step => ({ type: "recap", ...o });
 
+// comic panels[].bubbles = CutBubble 하이브리드(발주 컷엔 연기만, 앱이 한글 말풍선을 얹는다).
+// 컷당 1~2개·한 풍선 20자 안쪽, 사건 설명은 캡션 몫 — 역사 트랙이 파일럿(하위 호환: 없으면 기존 그대로).
 export const comic = (o: {
   title?: string; lead?: string; narrator?: string; cta?: string;
-  panels: { img?: string; stage: string; title: string; caption: string; term?: { name: string; def: string } }[];
+  panels: { img?: string; stage: string; title: string; caption: string; term?: { name: string; def: string }; bubbles?: CutBubble[] }[];
 }): Step => ({ type: "comic", ...o });
 
 // ── 열 단원(III) 랩 ──────────────────────────────────────────
@@ -394,6 +397,10 @@ export const pyramidLab = (o: { title: string; lead?: string; cta?: string; curi
   ({ type: "pyramidLab", ...o });
 export const westWindLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "westWindLab", ...o });
+
+// ── 역사 트랙 랩 — 연표 문법 1호(timelineLab, 파라미터형: Ⅱ~Ⅶ이 defId만 바꿔 재사용) ──
+export const timelineLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt; defId: string }): Step =>
+  ({ type: "timelineLab", ...o });
 export const rainBeltLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "rainBeltLab", ...o });
 

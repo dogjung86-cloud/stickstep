@@ -72,6 +72,9 @@ import {
   renderMapPuzzle, renderSatNile, renderHerdMove, renderShadeLane,
   renderMovieNight, renderClassPhoto, renderFlagStars, renderGreenLine,
 } from "./hookSoc4";
+import {
+  renderSaveIcon, renderGameChar, renderTimeCapsule, renderDangi, renderMilmyeon,
+} from "./hookHis";
 import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -117,7 +120,8 @@ interface HookStep {
     | "threecities" | "stilthouse" | "skyroute" | "avocado" | "maasai" | "ilovenyc"
     | "asiangames" | "monsoonrain" | "templetrip" | "halalmark" | "trainride" | "emptyclass" | "madein" | "fanchant"
     | "dawnsoccer" | "peakhike" | "frozenriver" | "cityfeed" | "skislope" | "trainborder" | "fourshirts"
-    | "mappuzzle" | "satnile" | "herdmove" | "shadelane" | "movienight" | "classphoto" | "flagstars" | "greenline";
+    | "mappuzzle" | "satnile" | "herdmove" | "shadelane" | "movienight" | "classphoto" | "flagstars" | "greenline"
+    | "saveicon" | "gamechar" | "timecapsule" | "dangi" | "milmyeon";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
 }
@@ -270,6 +274,11 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "classphoto") sceneCleanup = renderClassPhoto(scene, helper, s, finish, face);
   else if (s.scene === "flagstars") sceneCleanup = renderFlagStars(scene, helper, s, finish, face);
   else if (s.scene === "greenline") sceneCleanup = renderGreenLine(scene, helper, s, finish, face);
+  else if (s.scene === "saveicon") sceneCleanup = renderSaveIcon(scene, helper, s, finish, face);
+  else if (s.scene === "gamechar") sceneCleanup = renderGameChar(scene, helper, s, finish, face);
+  else if (s.scene === "timecapsule") sceneCleanup = renderTimeCapsule(scene, helper, s, finish, face);
+  else if (s.scene === "dangi") sceneCleanup = renderDangi(scene, helper, s, finish, face);
+  else if (s.scene === "milmyeon") sceneCleanup = renderMilmyeon(scene, helper, s, finish, face);
   else sceneCleanup = renderEgg(scene, helper, s, finish, api, face);
 
   api.setCTA("스틱맨 쌤과 먼저 관찰해요", { enabled: false });

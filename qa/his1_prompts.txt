@@ -1,0 +1,87 @@
+# 역사① Ⅰ(h1u1) 발주 — 스틱맨 개념 컷 5장(public/his/cuts) + 만화 2편(public/comics/h1u1l1 7컷 · h1u1l5 6컷)
+# 컷·만화 모두 "이미지 안 글자 절대 금지". 만화 컷은 앱이 한글 말풍선을 얹는 하이브리드라
+# 인물이 입을 벌리고 손짓하는 "말하는 연기"만 그리고, 인물 머리 위쪽에 여백을 넉넉히 남긴다.
+# 표시 프레임이 정사각(1:1 cover 크롭)이므로 주인공은 가운데 배치, 좌우 가장자리엔 핵심 요소 금지.
+#
+# ── 스타일 블록 A (스틱맨 컷 공용 — soc2와 동일) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 C (만화 컷 공용 — 말풍선 하이브리드용) ──
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal, used sparingly where the prompt says.
+# Absolutely NO text, NO letters, NO numbers, NO speech bubbles, NO captions anywhere.
+# Characters ACT like they are talking: open mouth (small oval), expressive hand gestures.
+# Keep the upper third of the panel mostly empty white space above the characters' heads
+# (the app overlays Korean speech bubbles there). Main subjects centered horizontally.
+# Simple, charming, educational middle-school history comic. Consistent recurring characters:
+#   HISTORIAN L = stick figure with round spectacles and a small bow tie (19th-century scholar).
+#   HISTORIAN C = stick figure with a flat newsboy cap and a scarf (20th-century scholar).
+#   STUDENT = plain stick figure student, slightly shorter.
+# 4:3 landscape panel.
+
+## ── 개념 컷 5장 (스타일 A) ──
+
+[0] file=public/his/cuts/u1l1.png (landscape 4:3, 스타일 A)
+A stick figure holds two pairs of large eyeglasses, one in each raised hand, and looks at the same single old vase placed on a pedestal in front of them; from one pair of glasses a wide view-cone of tiny hearts radiates toward the vase, from the other pair a view-cone of tiny storm clouds radiates toward the same vase. Only one pair of glasses and its view-cone is teal; everything else pure black and white.
+
+[1] file=public/his/cuts/u1l2.png (landscape 4:3, 스타일 A)
+A stick figure walks along a winding path following a trail of big old footprints left by someone before; ahead of the figure the footprints visibly step AROUND a deep pit drawn in the path, and the stick figure, noticing this, happily takes the same detour with one leg mid-step. A tiny signpost-shaped bare wooden stake (no letters) stands by the pit. Only the trail of old footprints is teal; everything else pure black and white.
+
+[2] file=public/his/cuts/u1l3.png (landscape 4:3, 스타일 A)
+A stick figure detective with a magnifying glass leans over a table examining three objects in a row: an old stitched book, a round clay pot with comb-line patterns, and a small ruined stone temple with columns drawn as a miniature on the table. The magnifying glass lens hovers over the middle object. Only the magnifying glass rim and handle are teal; everything else pure black and white.
+
+[3] file=public/his/cuts/u1l4.png (landscape 4:3, 스타일 A)
+A stick figure walks to the right while unrolling a very long measuring tape that stretches across the whole panel behind them; the tape has evenly spaced blank tick marks (plain short lines only, no numbers), and exactly one full segment between two bigger ticks is shaded. A tiny flag stands at the far starting end of the tape. Only the shaded tape segment is teal; everything else pure black and white.
+
+[4] file=public/his/cuts/u1l5.png (landscape 4:3, 스타일 A)
+A stick figure with a small notepad and pencil sniffs a delicious steam trail drifting from a tiny noodle shop with a bowl-shaped sign (plain bowl shape, no letters); the steam curls draw a winding path from the shop to the figure's nose, and dotted footsteps show the figure has been following it. Only the steam trail is teal; everything else pure black and white.
+
+## ── 만화 h1u1l1 「역사가의 대결」 7컷 (스타일 C) ──
+
+[c0] file=public/comics/h1u1l1/0.png (landscape 4:3, 스타일 C)
+Library reading room: HISTORIAN L (spectacles, bow tie) and HISTORIAN C (flat cap, scarf) sit facing each other across a small desk, one thick closed old book lying between them; both lean in and place one palm on the same book at the same time, eyes locked, sparks of rivalry drawn as tiny zigzag lines between their foreheads. Tall bookshelves sketched lightly in the background. Teal accent: the book's ribbon bookmark. Upper third empty.
+
+[c1] file=public/comics/h1u1l1/1.png (landscape 4:3, 스타일 C)
+HISTORIAN L wearing white gloves carefully lifts an old document sheet from an open glass display case with both hands, mouth open mid-sentence, standing very straight and proud; rays of careful attention drawn as short lines around the document. Teal accent: the glove fingertips. Upper third empty for a speech bubble.
+
+[c2] file=public/comics/h1u1l1/2.png (landscape 4:3, 스타일 C)
+HISTORIAN L at a desk covered with neat document stacks gently pushes his own gray shadow-silhouette (drawn as a soft gray copy of himself) off to the side behind a curtain with one hand, while his other hand keeps writing with a quill on paper; his face is calm and determined, mouth open slightly. Teal accent: the curtain. Upper third empty.
+
+[c3] file=public/comics/h1u1l1/3.png (landscape 4:3, 스타일 C)
+HISTORIAN C (flat cap, scarf) kneels on the floor beside a big scattered pile of old photographs and picks up exactly one photo with a delighted open-mouth expression, holding it up to the light; several other photos lie rejected around his knees. An open scrapbook album waits next to him. Teal accent: the one chosen photo's border. Upper third empty.
+
+[c4] file=public/comics/h1u1l1/4.png (landscape 4:3, 스타일 C)
+Two stick figure painters stand at two easels side by side, both looking out the same big window at the same landscape (a mountain and a river); on the left canvas the mountain is drawn huge and centered, on the right canvas the river is drawn huge and centered — clearly different pictures of the same view. HISTORIAN C stands behind them gesturing at both canvases with open arms and an open mouth. Teal accent: the river on the right canvas. Upper third empty.
+
+[c5] file=public/comics/h1u1l1/5.png (landscape 4:3, 스타일 C)
+A stone statue of an ancient king wearing a crown stands on a pedestal in the center; on the left HISTORIAN L writes on a scroll while looking up at the statue with an admiring smile, on the right HISTORIAN C writes on his own scroll while frowning skeptically at the same statue; their two scrolls curl in opposite directions. Teal accent: the king's crown. Upper third empty for two speech bubbles.
+
+[c6] file=public/comics/h1u1l1/6.png (landscape 4:3, 스타일 C)
+HISTORIAN L and HISTORIAN C stand shoulder to shoulder, each holding one side of the same big open book, offering it together toward STUDENT who reaches for it with both hands and a happy open mouth; above the book a small rising sparkle. Teal accent: half of the book cover. Upper third empty.
+
+## ── 만화 h1u1l5 「밀면 한 그릇의 역사 탐구」 6컷 (스타일 C) ──
+
+[m0] file=public/comics/h1u1l5/0.png (landscape 4:3, 스타일 C)
+Inside a small noodle shop: STUDENT sits at a table before a steaming bowl of noodles, chopsticks in one hand, twisting around to stare at an old framed picture hanging on the wall; a curly puff of steam rises from the bowl. The frame contains only faint scribble lines (no letters). Teal accent: the steam curls. Upper third empty.
+
+[m1] file=public/comics/h1u1l5/1.png (landscape 4:3, 스타일 C)
+STUDENT holds a small notepad and pencil, interviewing an elderly stick figure shop owner with a headscarf and apron behind the counter; the owner gestures warmly with both hands mid-story, mouth open, eyes crinkled happy. A pot steams on the counter. Teal accent: the owner's apron. Upper third empty for a speech bubble.
+
+[m2] file=public/comics/h1u1l5/2.png (landscape 4:3, 스타일 C)
+Museum corner: STUDENT leans toward a glass display case containing a big plump cloth sack (flour sack shape, plain, no letters) and points at it excitedly with an open mouth; beside the student a laptop on a bench shows a simple grid of small blank rectangles on screen (image search results, all blank). Teal accent: the glow around the display case. Upper third empty.
+
+[m3] file=public/comics/h1u1l5/3.png (landscape 4:3, 스타일 C)
+STUDENT stands at a big corkboard connecting three pinned picture cards with strings like a detective: one card shows a tiny ship sketch, one shows a tiny tent camp sketch, one shows the plump sack sketch; the student pins the last string with one hand, other hand on chin, thinking hard with slightly open mouth. Teal accent: the connecting strings. Upper third empty.
+
+[m4] file=public/comics/h1u1l5/4.png (landscape 4:3, 스타일 C)
+Three stick figure students sit around a round table in discussion; STUDENT holds up one picture card while a friend leans in comparing it against another card held side by side, both mouths open mid-debate, the third friend taps the table thoughtfully. Papers spread on the table. Teal accent: the two cards being compared. Upper third empty for two speech bubbles.
+
+[m5] file=public/comics/h1u1l5/5.png (landscape 4:3, 스타일 C)
+Classroom front: STUDENT stands proudly beside a blackboard presenting; on the board a long horizontal timeline line with evenly spaced blank tick marks and three small circle dots is drawn in chalk style (no letters, no numbers), with a tiny noodle-bowl doodle chalked at the far right end. Two seated classmates clap with raised hands. Teal accent: the three circle dots on the timeline. Upper third empty.

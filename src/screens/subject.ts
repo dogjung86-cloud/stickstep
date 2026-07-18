@@ -31,6 +31,7 @@ export function subjectScreen(opts: {
   onPickScience: () => void;
   onPickMath?: () => void;
   onPickSoc?: () => void;
+  onPickHis?: () => void;
   onBack?: () => void;
 }): Screen {
   const st = getState();
@@ -47,7 +48,7 @@ export function subjectScreen(opts: {
   }
 
   const h1 = el("div", { class: "h1", html: opts.mode === "onboard" ? "무엇을<br>배워 볼까요?" : "과목 고르기" });
-  const sub = el("div", { class: "sub", text: "과학·수학·사회가 열려 있어요. 골라 볼까요?" });
+  const sub = el("div", { class: "sub", text: "과학·수학·사회·역사가 열려 있어요. 골라 볼까요?" });
 
   // ── 과학 카드(활성), 스틱맨 쌤이 손을 흔든다 ──
   const prog = subjectProgress("sci");
@@ -118,6 +119,29 @@ export function subjectScreen(opts: {
     opts.onPickSoc?.();
   });
 
+  // ── 역사 카드(활성), 만화로 시간 여행을 떠나는 트랙 ──
+  const hprog = subjectProgress("his");
+  const hstarted = hprog.done > 0;
+  const his = el(
+    "button",
+    { class: "subj-card his", attrs: { "aria-label": "역사 시작하기" } },
+    el("div", { class: "subj-ava" }, stickAvatar(hstarted ? "cheer" : "curious")),
+    el(
+      "div",
+      { class: "subj-body" },
+      el("div", { class: "subj-name" }, el("span", { html: icon("book", 18) }), el("span", { text: "역사" })),
+      el("div", { class: "subj-desc", text: "중1, 만화로 떠나는 시간 여행" }),
+      hstarted
+        ? el("div", { class: "subj-meta", text: `레슨 ${hprog.done}개 완료 · ${currentStreak()}일 연속` })
+        : el("div", { class: "subj-meta", text: "역사 탐정의 기초부터, 만화 + 연표 랩" }),
+    ),
+    el("div", { class: "subj-go", html: icon("chevron", 20) }),
+  );
+  his.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    opts.onPickHis?.();
+  });
+
   // ── 배경 데코, 스틱맨 낙서 소품(연하게, 콘텐츠 방해 금지) ──
   const doodles = el("div", { class: "subj-doodles", attrs: { "aria-hidden": "true" } });
   const doodle = (svg: string, style: string): void => {
@@ -142,7 +166,7 @@ export function subjectScreen(opts: {
     { class: "scroll pad subj-body-wrap" },
     h1,
     sub,
-    el("div", { class: "subj-list" }, sci, mth, soc),
+    el("div", { class: "subj-list" }, sci, mth, soc, his),
     el("div", { class: "subj-note", text: st.onboarded ? "과목은 언제든 여기서 바꿀 수 있어요." : "지금은 과학부터! 다른 과목도 준비되는 대로 열려요." },
     ),
   );

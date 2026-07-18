@@ -16,7 +16,7 @@ import type { Screen } from "../core/router";
 import { gnav, type GnavKey } from "../ui/gnav";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
-const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u6: "body", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice", s1u1: "world", s1u2: "world", s1u3: "world", s1u4: "world" };
+const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u6: "body", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice", s1u1: "world", s1u2: "world", s1u3: "world", s1u4: "world", h1u1: "his" };
 // 보너스 미니게임은 도전 탭으로 이사(2026-07-12 IA 개편) — 지도는 학습 서사만 남긴다.
 
 // 노드 배치 = 완만한 곡선 중심선 + 발걸음 지그재그(2026-07-14 사용자 지시, 발자국 사진 레퍼런스).
@@ -60,11 +60,11 @@ export function homeScreen(
     el("div", { class: "chip gem" }, el("span", { html: icon("footstep", 15) }), el("span", { text: `${st.totalXp} 스텝` })),
   );
   // 과목 상자 — 그리드 대신 현재 과목 아이콘(과학 플라스크·수학 연산)+미니 ▾. 탭 동작은 기존 전체 화면 과목 허브.
-  const subjName = subject === "math" ? "수학" : "과학";
+  const subjName = subject === "math" ? "수학" : subject === "soc" ? "사회" : subject === "his" ? "역사" : "과학";
   const subjBtn = el("button", {
     class: "abtn subj-box",
     attrs: { "aria-label": `과목 선택 — 현재 ${subjName}` },
-    html: icon(subject === "math" ? "mathop" : subject === "soc" ? "globe" : "flask", 15) + icon("chevronDown", 9, { cls: "sb-chev" }),
+    html: icon(subject === "math" ? "mathop" : subject === "soc" ? "globe" : subject === "his" ? "book" : "flask", 15) + icon("chevronDown", 9, { cls: "sb-chev" }),
   });
   subjBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
@@ -697,6 +697,7 @@ const UNIT_DECOR: Record<string, { seq: string[]; sky: [string, string] }> = {
   s1u2: { seq: ["asiaMountDeco", "asiaRiceDeco", "asiaCamelDeco", "asiaLanternDeco", "asiaDhowDeco"], sky: ["planeDeco", "cloud"] }, // 사회 Ⅱ: 설산 → 벼논 → 낙타 → 홍등 → 돛단배(아시아 대륙 횡단 여행 순)
   s1u3: { seq: ["euroAlpsDeco", "euroBrollyDeco", "euroOliveDeco", "euroTramDeco", "euroStarsDeco"], sky: ["planeDeco", "cloud"] }, // 사회 Ⅲ: 알프스 → 비 우산 → 올리브 → 트램 → 별 깃발(유럽 종단 여행 순)
   s1u4: { seq: ["afrPyramidDeco", "afrBaobabDeco", "afrGiraffeDeco", "afrDrumDeco", "afrSolarDeco"], sky: ["planeDeco", "cloud"] }, // 사회 Ⅳ: 피라미드 → 바오바브 → 기린 → 젬베 → 태양광(문명에서 미래로)
+  h1u1: { seq: ["scrollDeco", "magnifyDeco", "inkbrushDeco", "hourglassDeco", "relicjarDeco"], sky: ["cloud", "sparkle"] }, // 역사 Ⅰ: 두루마리 → 돋보기 → 붓 → 모래시계 → 항아리(기록을 만나 살피고, 쓰고, 시간을 재고, 유물을 캐는 탐구 순)
 };
 const DEFAULT_DECOR: { seq: string[]; sky: [string, string] } = {
   seq: ["tree1", "tree2", "bush", "rock", "grassTuft"],
@@ -729,6 +730,7 @@ const DECOR_SIZE: Record<string, number> = {
   matryoDeco: 46, trirulerDeco: 46, foldletterDeco: 44, trayDeco: 48, knotropeDeco: 48,
   globeDeco: 48, passportDeco: 44, planeDeco: 54, compassRoseDeco: 46, suitcaseDeco: 46,
   afrPyramidDeco: 50, afrBaobabDeco: 48, afrGiraffeDeco: 46, afrDrumDeco: 42, afrSolarDeco: 48,
+  scrollDeco: 46, magnifyDeco: 44, inkbrushDeco: 40, hourglassDeco: 42, relicjarDeco: 46,
 };
 
 function placeDecor(layer: HTMLElement, points: { x: number; y: number }[], W: number, unitId: string): void {

@@ -1,0 +1,235 @@
+/* ============================================================
+   his.css — 역사 트랙 전용 스타일 (병합 충돌 회피를 위해 ui.css와 분리)
+   과학=실험 무대, 사회=지도 여행, 역사=만화 서사+연표. 색·그림자는 tokens.css 변수만 참조.
+   단원 테마: his(Ⅰ 역사 학습의 기초 · 청동 녹청 #0E7C8A — 유물 청동기의 녹빛)
+   ============================================================ */
+
+/* ---------- 과목 허브: 역사 카드 액센트 ---------- */
+.subj-card.his { border-color: rgba(14, 124, 138, .35); }
+
+/* ---------- 단원 테마: his(역사 학습의 기초) ---------- */
+.unit-band.his { background: linear-gradient(150deg, #3FA3AE 0%, #0E7C8A 55%, #0A5F6B 100%); }
+.gm-terrain.his {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #D9EEF0, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #CFE9EB, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #D4ECEE, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #C2E2E5, transparent 72%),
+    linear-gradient(180deg, #F3FAFA 0%, #E4F2F3 55%, #D2E9EB 100%);
+}
+.gm-path-glow.his { stroke: rgba(14, 124, 138, .22); }
+.gm-path-done.his { stroke: #0E7C8A; }
+.gm-node.his.now .gm-med, .gm-node.his.done .gm-med {
+  background: radial-gradient(120% 120% at 32% 26%, #4FB0BA 0%, #0E7C8A 58%, #0A5F6B 100%);
+}
+.gm-node.his .gm-ring { border-color: rgba(14, 124, 138, .55); }
+.gm-node.his:focus-visible .gm-med { box-shadow: var(--sh-medallion), 0 0 0 3px #fff, 0 0 0 6px #0E7C8A; }
+.kicker.his { background: #E2F1F3; color: #0A5964; }
+.pn-badge.his.on {
+  border-style: solid; border-color: transparent; color: #fff;
+  background: linear-gradient(150deg, #3FA3AE 0%, #0E7C8A 55%, #0A5F6B 100%);
+  box-shadow: 0 6px 14px -4px rgba(14, 124, 138, .55);
+}
+
+/* ---------- timelineLab(연표 문법 1호) — 다크 무대 위 양피지 연표 띠 ---------- */
+.htl-stage { padding: 18px 14px 20px; }
+.htl-wrap { position: relative; }
+.htl-eras { display: flex; margin: 0 2px 6px; }
+.htl-eras span {
+  font-size: 11px; font-weight: 900; letter-spacing: .04em; text-align: center;
+  padding: 3px 0 4px; border-radius: 8px 8px 0 0;
+}
+.htl-eras .bc { color: #E8C48A; background: linear-gradient(180deg, rgba(168, 122, 62, .34), rgba(168, 122, 62, .10)); margin-right: 2px; }
+.htl-eras .ad { flex: 1; color: #7FD6E2; background: linear-gradient(180deg, rgba(14, 124, 138, .38), rgba(14, 124, 138, .12)); }
+.htl-strip {
+  position: relative; display: flex; height: 92px; border-radius: 10px; overflow: visible;
+  background: linear-gradient(180deg, #FBF3DC 0%, #F0DFB4 62%, #DCC48E 100%);
+  box-shadow: 0 10px 26px -10px rgba(0, 0, 0, .6), 0 0 0 1px rgba(138, 106, 62, .55), inset 0 1px 0 rgba(255, 255, 255, .65);
+}
+.htl-cell {
+  flex: 1; position: relative; border: 0; background: transparent; cursor: pointer; padding: 0;
+  border-right: 1.4px solid rgba(110, 78, 38, .38);
+  display: grid; place-content: center; gap: 1px; font-family: inherit;
+  -webkit-tap-highlight-color: transparent; transition: background .22s var(--ease);
+}
+.htl-cell:last-of-type { border-right: 0; }
+.htl-cell.bc { background: rgba(168, 122, 62, .10); }
+.htl-cell:active { background: rgba(14, 124, 138, .16); }
+.htl-cell em { font-style: normal; font-size: 7.5px; font-weight: 800; color: #8A6534; letter-spacing: -.02em; }
+.htl-cell b { font-size: 19px; font-weight: 900; color: #5E4626; line-height: 1; }
+.htl-cell i { font-style: normal; font-size: 8.5px; font-weight: 800; color: #8A6534; }
+.htl-cell.solved { background: linear-gradient(180deg, rgba(63, 163, 174, .28), rgba(14, 124, 138, .18)); }
+.htl-cell.solved em, .htl-cell.solved i { color: #0A5964; }
+.htl-cell.solved b { color: #083F47; }
+.htl-cell.pop { animation: htlPop .5s var(--spring-bounce); }
+@keyframes htlPop { 0% { transform: scale(.82); } 60% { transform: scale(1.08); } 100% { transform: scale(1); } }
+.htl-cell.shake { animation: htlShake .42s var(--ease); }
+@keyframes htlShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 55% { transform: translateX(4px); } 80% { transform: translateX(-2px); } }
+/* 원년 마커 — 서기의 기준선(금색) */
+.htl-origin { position: absolute; top: -7px; bottom: -7px; width: 0; pointer-events: none; z-index: 2; }
+.htl-origin i { position: absolute; top: 0; bottom: 0; left: -1px; width: 2.4px; background: linear-gradient(180deg, #FFD98A, #E0A72E); border-radius: 2px; box-shadow: 0 0 8px rgba(255, 217, 138, .8); display: block; }
+.htl-origin b {
+  position: absolute; top: -13px; left: 0; transform: translateX(-50%);
+  font-size: 8.5px; font-weight: 900; color: #3A2C10; background: linear-gradient(180deg, #FFE1A0, #F2C24E);
+  padding: 1.5px 6px 2px; border-radius: 99px; border: 1px solid #C89A2E; white-space: nowrap;
+}
+/* 경계 눈금 라벨 — 숫자만(시대 띠가 기원전/기원후를 말한다) */
+.htl-ticks { position: relative; height: 18px; margin-top: 5px; }
+.htl-tick { position: absolute; transform: translateX(-50%); font-size: 9.5px; font-weight: 800; color: #9FB4CE; font-variant-numeric: tabular-nums; }
+.htl-tick.one { color: #FFD98A; font-weight: 900; }
+.htl-tick.first { transform: translateX(-20%); }
+.htl-tick.last { transform: translateX(-80%); }
+/* 구간 안내 필(탭한 칸의 연도 범위) */
+.htl-pill {
+  position: absolute; top: -34px; transform: translate(-50%, 6px); z-index: 3; opacity: 0; pointer-events: none;
+  background: rgba(13, 24, 38, .95); color: #EAF4FF; font-size: 11.5px; font-weight: 800;
+  padding: 5px 11px 6px; border-radius: 99px; border: 1px solid rgba(127, 214, 226, .4); white-space: nowrap;
+  transition: opacity .3s var(--ease), transform .3s var(--ease);
+}
+.htl-pill.show { opacity: 1; transform: translate(-50%, 0); }
+/* 사건 도장 — 연도 점 + 라벨(위/아래 교차) */
+.htl-events { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+.htl-event { position: absolute; top: 50%; width: 0; }
+.htl-event i {
+  position: absolute; left: -5px; top: -5px; width: 10px; height: 10px; border-radius: 50%;
+  background: radial-gradient(120% 120% at 34% 28%, #4FB0BA, #0E7C8A 70%); border: 1.6px solid #073E46;
+  box-shadow: 0 0 8px rgba(14, 124, 138, .7); display: block; animation: htlStamp .5s var(--spring-bounce) backwards;
+}
+@keyframes htlStamp { 0% { transform: scale(2.4); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.htl-event b {
+  position: absolute; left: 0; bottom: 12px; transform: translateX(-50%);
+  min-width: 64px; max-width: 96px; text-align: center;
+  font-size: 9px; font-weight: 900; color: #073E46; line-height: 1.3;
+  background: linear-gradient(180deg, #EAF9FB, #C9ECF0); border: 1px solid #0E7C8A; border-radius: 8px;
+  padding: 3px 5px; word-break: keep-all; animation: htlStamp .5s var(--spring-bounce) .1s backwards;
+}
+.htl-event b span { display: block; font-size: 8px; font-weight: 800; color: #0A5964; }
+.htl-event.low b { bottom: auto; top: 12px; }
+/* 임무 카드 */
+.htl-task { margin-top: 14px; text-align: center; opacity: 0; transform: translateY(6px); transition: opacity .3s var(--ease-out), transform .3s var(--ease-out); }
+.htl-task.in { opacity: 1; transform: none; }
+.htl-quest {
+  display: inline-block; font-size: 10.5px; font-weight: 900; letter-spacing: .06em; color: #7FD6E2;
+  border: 1px solid rgba(127, 214, 226, .45); border-radius: 99px; padding: 2px 9px 3px; margin-bottom: 6px;
+}
+.htl-target { display: block; font-size: 24px; font-weight: 900; color: #fff; letter-spacing: -.01em; }
+.htl-ask { display: block; margin-top: 3px; font-size: 12px; font-weight: 700; color: #AFC4DE; }
+.htl-card {
+  display: inline-grid; gap: 2px; margin: 2px 0 3px; padding: 9px 16px 10px; border-radius: 12px;
+  background: linear-gradient(160deg, #FBF3DC, #E8D4A4); border: 1.6px solid #8A6A3E;
+  box-shadow: 0 8px 18px -8px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .7);
+}
+.htl-card b { font-size: 20px; font-weight: 900; color: #4A3410; line-height: 1.05; }
+.htl-card span { font-size: 11px; font-weight: 800; color: #7A5A2E; }
+.htl-stage.finale .htl-strip { animation: htlGlow 1.1s var(--ease) 2; }
+@keyframes htlGlow {
+  0%, 100% { box-shadow: 0 10px 26px -10px rgba(0, 0, 0, .6), 0 0 0 1px rgba(138, 106, 62, .55); }
+  50% { box-shadow: 0 10px 30px -8px rgba(14, 124, 138, .55), 0 0 0 2px rgba(127, 214, 226, .8), 0 0 24px rgba(127, 214, 226, .45); }
+}
+
+/* ---------- 훅 장면(hookHis) ---------- */
+/* L1 saveicon — 문서 앱 목업 */
+.hh1-doc {
+  position: relative; margin: 4px auto 0; max-width: 320px; border-radius: 16px; overflow: hidden;
+  background: #fff; border: 1.5px solid var(--n300); box-shadow: var(--sh-card);
+}
+.hh1-appbar { display: flex; align-items: center; gap: 5px; padding: 9px 12px; background: var(--n100); border-bottom: 1px solid var(--n200); }
+.hh1-appbar i { width: 8px; height: 8px; border-radius: 50%; background: var(--n300); }
+.hh1-appbar i:nth-child(1) { background: #F08A80; }
+.hh1-appbar i:nth-child(2) { background: #F2C24E; }
+.hh1-appbar i:nth-child(3) { background: #7FC98E; }
+.hh1-appbar span { margin-left: 6px; font-size: 11.5px; font-weight: 800; color: var(--n600); }
+.hh1-page { position: relative; padding: 16px 16px 12px; min-height: 96px; }
+.hh1-line { height: 9px; border-radius: 5px; background: var(--n200); margin-bottom: 9px; }
+.hh1-line.w80 { width: 80%; } .hh1-line.w96 { width: 96%; } .hh1-line.w62 { width: 62%; }
+.hh1-line.w88 { width: 88%; } .hh1-line.w40 { width: 40%; }
+.hh1-caret { position: absolute; left: calc(16px + 42%); bottom: 14px; width: 2px; height: 14px; background: var(--brand); animation: hh1Blink 1s steps(2) infinite; }
+@keyframes hh1Blink { 0% { opacity: 1; } 50% { opacity: 0; } }
+.hh1-toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 12px 12px; border-top: 1px solid var(--n200); }
+.hh1-save {
+  width: 44px; height: 40px; border-radius: 12px; border: 1.5px solid var(--n300); cursor: pointer;
+  background: linear-gradient(180deg, #fff, var(--n100)); color: var(--n600);
+  display: grid; place-items: center; transition: transform .14s var(--ease);
+}
+.hh1-save svg { width: 22px; height: 22px; }
+.hh1-save:active { transform: scale(.94); }
+.hh1-doc.saved .hh1-save { color: #fff; background: linear-gradient(150deg, #3FA3AE, #0E7C8A 60%, #0A5F6B); border-color: transparent; animation: hh1SavePulse .8s var(--spring-bounce); }
+@keyframes hh1SavePulse { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+.hh1-savetip { font-size: 12px; font-weight: 800; color: var(--n500); }
+.hh1-toast {
+  position: absolute; right: 12px; bottom: 12px; opacity: 0; transform: translateY(6px);
+  font-size: 12px; font-weight: 900; color: #fff; background: var(--ink); padding: 6px 12px 7px; border-radius: 99px;
+  transition: opacity .3s var(--ease), transform .3s var(--ease); pointer-events: none;
+}
+.hh1-doc.saved .hh1-toast { opacity: 1; transform: none; }
+.hh1-floppy {
+  display: flex; align-items: center; gap: 12px; max-width: 320px; margin: 12px auto 0; padding: 12px 14px;
+  border-radius: 16px; background: linear-gradient(160deg, #FBF3DC, #EDDDB4); border: 1.6px solid #8A6A3E;
+  box-shadow: var(--sh-card); opacity: 0; transform: translateY(14px) scale(.94);
+  transition: opacity .45s var(--spring-soft), transform .45s var(--spring-soft);
+}
+.hh1-floppy.in { opacity: 1; transform: none; }
+.hh1-floppy svg { width: 84px; height: 84px; flex: 0 0 auto; }
+.hh1-floppy b { font-size: 15px; font-weight: 900; color: #4A3410; line-height: 1.3; }
+.hh1-floppy b span { display: block; font-size: 12px; font-weight: 700; color: #7A5A2E; margin-top: 2px; }
+
+/* L2 gamechar — 카드 3D 플립 */
+.hh1-game { max-width: 300px; margin: 4px auto 0; }
+.hh1-hud {
+  display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; margin-bottom: 10px;
+  border-radius: 12px; background: linear-gradient(150deg, #2E3A8C, #141C4E); color: #fff;
+  font-size: 12.5px; font-weight: 900; letter-spacing: .02em; box-shadow: var(--sh-card);
+}
+.hh1-hud i { font-style: normal; font-size: 10px; font-weight: 900; color: #141C4E; background: #FFD98A; padding: 2px 8px 3px; border-radius: 99px; }
+.hh1-cardflip {
+  position: relative; display: block; width: 190px; aspect-ratio: 150 / 190; margin: 0 auto;
+  border: 0; background: transparent; padding: 0; cursor: pointer; perspective: 900px; -webkit-tap-highlight-color: transparent;
+}
+.hh1-cardface {
+  position: absolute; inset: 0; border-radius: 14px; overflow: hidden; backface-visibility: hidden;
+  transition: transform .7s var(--spring-soft); box-shadow: var(--sh-raise);
+}
+.hh1-cardface svg { display: block; width: 100%; height: 100%; }
+.hh1-cardface.front { transform: rotateY(0deg); }
+.hh1-cardface.back { transform: rotateY(-180deg); }
+.hh1-cardflip.flip .hh1-cardface.front { transform: rotateY(180deg); }
+.hh1-cardflip.flip .hh1-cardface.back { transform: rotateY(0deg); }
+.hh1-cardflip:active { transform: scale(.97); }
+
+/* L3 timecapsule — 뚜껑 열림 + 물건 팝 */
+.hh1-capsule svg, .hh1-cal svg, .hh1-noodle svg { display: block; width: 100%; height: auto; }
+.hh1-capsule, .hh1-cal, .hh1-noodle { max-width: 340px; margin: 4px auto 0; }
+.hh1-tc-boxg { cursor: pointer; }
+.hh1-tc-lid { transform-box: fill-box; transform-origin: 88% 50%; transition: transform .55s var(--spring-soft); }
+.hh1-capsule.open .hh1-tc-lid { transform: rotate(38deg) translate(10px, -14px); }
+.hh1-tc-items .it { opacity: 0; transform: translateY(16px); transition: opacity .5s var(--ease-out), transform .5s var(--spring-soft); transform-box: fill-box; }
+.hh1-capsule.open .it.a { opacity: 1; transform: none; transition-delay: .12s; }
+.hh1-capsule.open .it.b { opacity: 1; transform: none; transition-delay: .26s; }
+.hh1-capsule.open .it.c { opacity: 1; transform: none; transition-delay: .4s; }
+
+/* L4 dangi — 작은 글씨 → 돋보기 확대 */
+.hh1-ca-small { cursor: pointer; }
+.hh1-ca-zoom { opacity: 0; transform: scale(.5); transform-box: fill-box; transform-origin: center; transition: opacity .4s var(--ease-out), transform .45s var(--spring-soft); pointer-events: none; }
+.hh1-cal.zoom .hh1-ca-zoom { opacity: 1; transform: scale(1); }
+.hh1-ca-body { transition: opacity .4s var(--ease); }
+.hh1-cal.zoom .hh1-ca-body { opacity: .3; }
+
+/* L5 milmyeon — 액자 확대 + 김 */
+.hh1-nd-frameg { cursor: pointer; }
+.hh1-nd-zoomf { opacity: 0; transform: scale(.55); transform-box: fill-box; transform-origin: center; transition: opacity .4s var(--ease-out), transform .45s var(--spring-soft); pointer-events: none; }
+.hh1-noodle.zoom .hh1-nd-zoomf { opacity: 1; transform: scale(1); }
+.hh1-noodle.zoom .hh1-nd-frameg { opacity: .25; }
+.hh1-nd-frameg { transition: opacity .4s var(--ease); }
+.hh1-nd-steam { opacity: .8; animation: hh1Steam 2.4s var(--ease) infinite; transform-box: fill-box; }
+.hh1-nd-steam.s2 { animation-delay: .5s; }
+.hh1-nd-steam.s3 { animation-delay: 1.1s; }
+@keyframes hh1Steam {
+  0% { opacity: 0; transform: translateY(4px); }
+  30% { opacity: .8; }
+  100% { opacity: 0; transform: translateY(-7px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hh1-nd-steam { animation: none; opacity: .5; }
+  .hh1-caret { animation: none; }
+}

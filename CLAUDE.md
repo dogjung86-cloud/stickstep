@@ -1541,6 +1541,62 @@ src/
   (사례 판단·시나리오 문법 별도 설계), 단원 종합 평가(과학 규격 계승 여부 결정), "세계 어디게?" 거리
   점수 게임(도전 탭 후보 — 탐정 문법은 본선이 아니라 응용).
 
+## 역사 트랙 — 역사① Ⅰ(역사 학습의 기초) 제작 관례 (2026-07-19 구축)
+- **과목 배선**: SubjectId "his"(sci·math·soc와 병렬 — 4과목째), 단원 id `h1uN`(역사①)·`h2uN`(역사②) —
+  subjectOfUnit은 접두사 h로 판별(u/g2u/m/s와 충돌 없음). content/his/(curriculum·unit1), 테마 `his`
+  (**청동 녹청 #0E7C8A** — 유물 청동기의 녹빛. 세피아 후보는 ineq 캐러멜 #A9631B와 hue가 같아 기각,
+  녹청은 func 틸 #0CA678과 hue 30°+명도차로 구분 — dice/sim 선례보다 넓다), **styles/his.css**(전용 시트 —
+  훅 hh1-·연표 랩 htl-). 지도 데코 = "역사 탐정의 도구" 5종(scrollDeco 두루마리→magnifyDeco 돋보기→
+  inkbrushDeco 붓→hourglassDeco 모래시계→relicjarDeco 항아리 — 기록을 만나 살피고, 쓰고, 시간을 재고,
+  유물을 캐는 탐구 서사 순). 허브 4과목 활성, 홈 subj-box 아이콘 his → book, purchase.ts 카탈로그에
+  his-g1(중1 역사) 등록. 교과서 PDF는 **pymupdf(fitz)로 추출**(poppler 한글 깨짐 — 역사도 동일).
+- **역사 트랙 문법 = "서사(만화)로 넣고 드릴로 굳힌다"**: 랩이 척추인 과학·수학과 달리 **comic이 척추**다.
+  기함은 상호작용 랩이 아니라 만화 서사(L1 랑케vs카 논쟁 7컷·L5 밀면 탐구 5단계 6컷)이고, 소형 랩
+  (연표)·binSort(사료)·드릴이 개념을 굳힌다. 상호작용 과잉 금지(Ⅵ 통계 서사형 원칙의 역사판).
+- **comic 말풍선 하이브리드 표준(파일럿 완료)**: comic panels[].bubbles = dsl.ts CutBubble 재사용 —
+  발주 컷엔 **글자·말풍선 없이 인물 연기만**(입 벌림·손짓, 상단 1/3 여백 지시), 앱이 이미지 % 좌표에
+  한글 말풍선을 얹는다(comic.ts가 `.cut-bubble.wrap` — nowrap인 cut()과 달리 2줄 줄바꿈 허용, ui.css).
+  컷당 1~2개·한 풍선 20자 안쪽·사건 설명은 캡션 몫. 좌표는 표시 프레임(1:1 cover 크롭) 기준이므로
+  발주는 주인공 가로 중앙 + 눈검수 샷(폰 폭 390)으로 겹침·잘림 판정 후 확정. 하위 호환: bubbles 없으면
+  기존 과학 만화 그대로.
+- **연표 문법 1호(timelineLab — Ⅱ~Ⅶ 전 단원 재사용)**: `ui/timelineKit.ts`의 `TimelineDef`가 단일 진실
+  공급원(눈금 범위 startCentury~endCentury·과제 배열이 전부 데이터 — continentMap ContinentDef 계보).
+  과제 2종 = 세기 칸 탭(century)·연도 카드 배치(place), 목표 칩은 과제 묶음(기원후 읽기/기원전 역방향/
+  사건 배치)별 자동 생성. **기원전 역방향(기원전 2세기 = 기원전 200~101년)이 핵심 함정** — 오답 탭은
+  그 칸의 실제 구간을 알려 주는 교정 helper + 구간 필. 원년 금색 기준선(0년 없음), 해금된 칸만 세기
+  이름 공개(처음엔 눈금만 — 연도↔세기 변환이 학습 과제라서). 새 단원 = TIMELINES에 def 추가 +
+  timelineLab({ defId }). 검산 공식: 세기 c>0 → [(c−1)·100+1, c·100], c<0 → [c·100, (c+1)·100−1].
+- **세기 드릴 = mathDrill 재사용(역사 드릴의 파일럿)**: 역사 콘텐츠가 mathKit 넘패드(int) 드릴을 그대로
+  쓴다 — unit1.ts 로컬 `drill()` 헬퍼(type: "mathDrill"). 수학 컴포넌트 위 텍스트라 **드릴 카드 안에서만
+  em대시(—) 회피**(− 혼동 — 본문 recap 등 역사 일반 텍스트는 해당 없음). 연호 계산은 "1년부터 세니
+  +n−1"(영락 1년=391 → 9년=399).
+- **유물 실사 소스 구도(역사 트랙 전체 표준)**: **한국 유물 = 국립박물관 계열 공공누리 제1유형만**
+  (출처표시·상업·변형 가능 — 항목마다 유형이 달라 소장품 페이지에서 **개별 확인 필수**, 제2·4유형
+  (비상업)·제3유형(변경 금지 — webp 크롭과 충돌) 수집 금지. 국가유산포털도 같은 규칙). **세계 유물 =
+  Met Open Access CC0 1순위, 위키미디어 커먼스 CC0/PD 보조**(개별 파일 extmetadata 확인 — CC BY 4.0은
+  photos/star의 ESO/NOIRLab 선례 급까지 허용). **대영박물관 자체 사진은 CC BY-NC-SA(비상업)라 금지** —
+  로제타석은 위키미디어로. 파이프라인: `node qa/fetch-his.mjs`(정본 직링크만 — API 자동 검색 매칭 금지,
+  매직 바이트 ffd8ff/89504e47 검사) → `node qa/process-his.mjs`(1200px webp) → Read 눈검수 →
+  photos/CREDITS.md 기재(기관명·유물명·라이선스 유형). 직링크 패턴: 국박 www.museum.go.kr/relic_image/…jpg,
+  경주박물관 gyeongju.museum.go.kr/_prog/download/?…mng_no=N, 고궁박물관 gogung.go.kr/cmmn/file/imageSrc.do.
+  1차분 9종(실록·수막새·빗살토기·비파형동검·광개토대왕비 탁본·임신서기석·폼페이·마추픽추·로제타석) —
+  binSort 실사 칩은 gitem 56px 규격(unit1.ts hitem), concept figure는 pimg(lazy 금지).
+- **저작 가드(사회 중립 가드의 역사판)**: ① 교과서 번역 발췌문(네루·플루타르코스류) 전재 금지 —
+  "서로 다르게 평가했다" 사실로 자체 재구성(랑케·카의 한 줄 명언은 관용구 수준만). ② **사관 문제에서
+  특정 평가(영웅/침략자)를 정답 처리하지 않는다** — "관점에 따라 다르게 평가될 수 있다"가 정답.
+  ③ 근현대 소재(총독부·6·25 밀면)는 교과서 서술 범위의 사실만 중립 서술. ④ 만화 대사는 연출·말투만
+  창작 — 실존 인물에게 없는 발언을 단정형으로 지어내지 않는다(견해 요약 수준).
+- **h1u1 구성(5레슨 = 무료 3+프리미엄 2)**: L1 역사의 의미(만화 기함+사실/기록 binSort) · L2 학습 목적
+  (목적 4통 binSort) · L3 사료(실사 binSort+사료 비판) · L4 시간 읽기(timelineLab 기함+세기 드릴, prem) ·
+  L5 탐구 절차(만화+order, prem). 훅 5종 hookHis.ts(saveicon 저장 아이콘=플로피·gamechar 게임 속 실존
+  인물·timecapsule 2394 개봉·dangi 달력의 단기 4359·milmyeon 밀면집 유래 액자). 그림은 ui/hisFigures.ts
+  (sagwanFig 두 기록·centuryStripFig 연표 띠 파라미터형(㉮ 칸 — names 옵션은 개념 전용)·tamguFlowFig
+  순서도(hide ㉠ 가림판)·yeonhoFig + hisMiniArt ~20키). QA: `PORT=<포트> node qa/e2e-his1.mjs`(허브
+  4과목·his 지도·훅 5장면·말풍선 렌더 개수 대조·연표 오답 교정+실조작·드릴 넘패드·유물 실사 로드·recap
+  more·전 퀴즈, `ONLY=h1u1l4` 부분 실행) · 눈검수 `qa/shot-his1.mjs`(10샷 — 말풍선 가독성은 폰 폭 390 샷).
+  발주는 qa/his1_prompts.txt(스타일 A 컷 + **스타일 C 만화**(연기·상단 여백 지시)) + order-his1.sh
+  (3배치 순차) + wait-order-his1.sh(" exec " 판별 대기).
+
 ## 로그인·동기화 (Supabase — 2026-07 구축)
 - **core/auth.ts**(OAuth·세션)와 **core/sync.ts**(진행도 병합·푸시)가 전부. **환경변수
   (VITE_SUPABASE_URL·VITE_SUPABASE_ANON_KEY, .env.local)가 없으면 전원 no-op** — dev·e2e·기존

@@ -2521,6 +2521,8 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
   bottom: auto; top: -6.5px;
   border: 0; border-left: 1.6px solid #39424E; border-top: 1.6px solid #39424E;
 }
+/* comic 말풍선 변형 — 만화 대사는 2줄까지 줄바꿈 허용(cut()의 nowrap 한 줄과 구분) */
+.cut-bubble.wrap { white-space: normal; word-break: keep-all; text-align: center; min-width: 84px; max-width: 52%; }
 
 /* ---------- 단원 종합 평가 (screens/exam.ts) ---------- */
 /* 지도 노드 — 항상 열려 있는 시험 노드: 잉크 다크 메달리온(감독관 톤), 정복 인증 시 골드 */

@@ -9,6 +9,7 @@ export type SellableSubject = { id: string; name: string; icon: string };
 export const SELLABLE_SUBJECTS: SellableSubject[] = [
   { id: "sci-g1", name: "중1 과학", icon: "flask" },
   { id: "math-g1", name: "중1 수학", icon: "mathop" },
+  { id: "his-g1", name: "중1 역사", icon: "book" },
   { id: "sci-g2", name: "중2 과학", icon: "flask" },
   { id: "math-g2", name: "중2 수학", icon: "mathop" },
 ];
