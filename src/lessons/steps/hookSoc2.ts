@@ -137,8 +137,9 @@ function calendarSvg(month: 5 | 6 | 7): string {
     <g>
       <rect x="24" y="22" width="104" height="118" rx="8" fill="#FFFFFF" stroke="#B8AE96" stroke-width="1.6"/>
       <rect x="24" y="22" width="104" height="30" rx="8" fill="#E8590C"/>
-      <rect x="24" y="40" width="104" height="12" fill="#FFFFFF"/>
-      <text x="76" y="44" text-anchor="middle" font-size="15" font-weight="900" fill="#FFFFFF">${month}월</text>
+      <!-- 헤더 아래 라운드만 가리는 패치(rx 8 = y44~52) — 넓게 잡으면 흰 글자를 덮는다(실사고) -->
+      <rect x="25.5" y="44" width="101" height="8" fill="#FFFFFF"/>
+      <text x="76" y="39.5" text-anchor="middle" font-size="15" font-weight="900" fill="#FFFFFF">${month}월</text>
       <g fill="#C4BCA6">${[0, 1, 2, 3].map((r) => [0, 1, 2, 3, 4, 5, 6].map((c) => `<rect x="${32 + c * 13}" y="${60 + r * 18}" width="9" height="9" rx="2"/>`).join("")).join("")}</g>
       ${month >= 6 ? `<g><circle cx="${32 + 4 * 13 + 4.5}" cy="${60 + 2 * 18 + 4.5}" r="8.5" fill="none" stroke="#E8590C" stroke-width="2.2"/><path d="M${32 + 4 * 13 + 1} ${60 + 2 * 18 + 14}q3.5 3 7 0" stroke="#4E9AE8" stroke-width="1.8" fill="none"/></g>` : ""}
       <ellipse cx="76" cy="146" rx="46" ry="4" fill="#2A3A5E" opacity=".1"/>
