@@ -125,7 +125,8 @@ export const hook = (o: {
     | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
     | "threecities" | "stilthouse" | "skyroute" | "avocado" | "maasai" | "ilovenyc"
     | "asiangames" | "monsoonrain" | "templetrip" | "halalmark" | "trainride" | "emptyclass" | "madein" | "fanchant"
-    | "dawnsoccer" | "peakhike" | "frozenriver" | "cityfeed" | "skislope" | "trainborder" | "fourshirts";
+    | "dawnsoccer" | "peakhike" | "frozenriver" | "cityfeed" | "skislope" | "trainborder" | "fourshirts"
+    | "mappuzzle" | "satnile" | "herdmove" | "shadelane" | "movienight" | "classphoto" | "flagstars" | "greenline";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 
@@ -393,6 +394,8 @@ export const pyramidLab = (o: { title: string; lead?: string; cta?: string; curi
   ({ type: "pyramidLab", ...o });
 export const westWindLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "westWindLab", ...o });
+export const rainBeltLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "rainBeltLab", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

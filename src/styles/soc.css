@@ -434,7 +434,9 @@
 .rpl-fill { transition: opacity .4s var(--ease); }
 .rpl-hint { transition: opacity .3s var(--ease); pointer-events: none; }
 .rpl-pill {
-  position: absolute; left: 10px; top: 10px; max-width: 62%;
+  /* 세로 인라인 필은 우상단 — 좌상단은 크롭 좌상단 도시 도장(카사블랑카)을 덮는다(Ⅳ 눈검수).
+     현재 세로 인라인 대륙은 아프리카뿐이라 소급 무해(아시아·유럽은 wide → sp3-pill). */
+  position: absolute; right: 10px; top: 10px; max-width: 62%;
   /* 밝은 지도 위 흰 필은 안 읽힌다(사용자 피드백) — 토스트와 같은 다크 네이비 대비 */
   background: rgba(16, 24, 44, .86); color: #F2F6FF; box-shadow: var(--sh-card);
 }
@@ -645,3 +647,22 @@
 .hs3-flipbtn:disabled, .hs3-flipbtn.done { opacity: .4; cursor: default; }
 .hs3-shirt-on { animation: hs2Pop .45s var(--spring-bounce) backwards; transform-box: fill-box; transform-origin: center; }
 .hs3-trainbody { transition: transform .5s var(--ease-out); }
+
+/* ---------- 사회 Ⅳ 훅 장면(hs4-) — hs3 문법 계승 ---------- */
+.hs4-puzzle, .hs4-sat, .hs4-herd, .hs4-lane, .hs4-ott, .hs4-class, .hs4-flag, .hs4-green {
+  position: relative; margin: 4px auto 0; max-width: 320px;
+  -webkit-tap-highlight-color: transparent;
+}
+.hs4-puzzle, .hs4-ott, .hs4-class { cursor: pointer; }
+.hs4-puzzle svg, .hs4-sat svg, .hs4-herd svg, .hs4-lane svg, .hs4-ott svg, .hs4-class svg, .hs4-flag svg, .hs4-green svg { display: block; width: 100%; }
+.hs4-puzzle.flip, .hs4-sat.flip, .hs4-herd.flip, .hs4-lane.flip, .hs4-ott.flip, .hs4-class.flip, .hs4-flag.flip, .hs4-green.flip { animation: hs2In .4s var(--ease-out); }
+.hs4-flipbtn {
+  appearance: none; font-family: inherit; cursor: pointer;
+  display: block; margin: 10px auto 0; padding: 10px 18px; border-radius: var(--r-pill);
+  background: var(--grad-card); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 13px; font-weight: 800; color: var(--ink); letter-spacing: -.012em;
+  transition: transform .12s var(--ease), opacity .2s;
+}
+.hs4-flipbtn:active { transform: scale(.96); }
+.hs4-flipbtn:disabled, .hs4-flipbtn.done { opacity: .4; cursor: default; }
+.hs4-pop { animation: hs2Pop .45s var(--spring-bounce) backwards; transform-box: fill-box; transform-origin: center; }

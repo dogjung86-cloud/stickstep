@@ -1,0 +1,81 @@
+# 사회 Ⅳ(아프리카) 발주 — 스틱맨 개념 컷 8장(public/soc/cuts) + 문화경관 실사풍 11장(public/soc/africa)
+# 컷은 스타일 블록 A(soc 공용). 실사풍은 스타일 블록 P — 인물은 원경·비식별(존엄 눈검수 항목).
+# 대륙 실루엣이 들어가는 컷([0]·[2]·[5])은 아프리카 모양 특징을 문장으로 명시(Ⅱ 실루엣 실사고 예방):
+# "북쪽이 넓고 남쪽으로 좁아지는, 서쪽에 기니만이 파인" — NOT Asia, NOT South America.
+# 실물이 정답인 소재(피라미드·킬리만자로·빅토리아 폭포·나일·사하라·지구대·세렝게티·젠네 모스크·
+# 젬베·칼림바·나이로비 등)는 발주하지 않는다 — qa/fetch-soc4-africa.mjs 위키미디어 파이프라인.
+#
+# ── 스타일 블록 A (스틱맨 컷 공용) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 P (문화경관 실사풍 공용) ──
+# photorealistic educational reference photograph, natural daylight, eye-level or slightly low
+# wide-angle view, crisp focus, realistic colors, clean composition centered on the subject type.
+# Generic archetype of the scene — NOT a specific famous landmark, no recognizable real-world
+# monument. Absolutely no text, no letters, no numbers, no signs, no banners, no flags with
+# writing anywhere in the image. No watermark. People allowed only small and distant, faces not
+# recognizable, shown with dignity in everyday activity. Landscape 4:3.
+
+[0] file=public/soc/cuts/u4l1.png (landscape 4:3, 스타일 A)
+A stick figure kneels on a huge floor map showing the Africa continent silhouette — wide across the north and tapering to a point in the south, with the Gulf of Guinea notch cut into its west side, plus a small offshore island at the lower right (NOT Asia, NOT South America, NOT a plain rectangle). The figure fits five jigsaw-puzzle pieces onto the continent: one broad piece across the wide north, and four pieces below it filling the west bulge, the center, the pointed east horn, and the southern taper. Only the broad northern puzzle piece is teal; everything else pure black and white.
+
+[1] file=public/soc/cuts/u4l2.png (landscape 4:3, 스타일 A)
+Two stick figures stand on top of a giant table-flat plateau that rises from flat ground with steep cliff edges, its top surface wide and level like a tabletop; far away on the plateau one lone cone-shaped mountain with a snowy cap rises alone. One figure shades its eyes with a hand, gazing at the distant snowy cone; the other points at it. Only the snow cap of the cone mountain is teal; everything else pure black and white.
+
+[2] file=public/soc/cuts/u4l3.png (landscape 4:3, 스타일 A)
+A stick figure stands beside a floor map of the Africa continent silhouette (wide north, tapering south, Gulf of Guinea notch on the west) and lays a long ruler-straight horizontal line across the middle of the continent; above and below that center line the same doodle stripe pattern repeats like a mirror reflection — a dense little-trees stripe nearest the line on both sides, then a grass-tufts stripe on both sides, then a bare-dots desert stripe on both sides. The figure taps two matching stripes with both index fingers. Only the two dense tree stripes nearest the center line are teal; everything else pure black and white.
+
+[3] file=public/soc/cuts/u4l4.png (landscape 4:3, 스타일 A)
+In a sun-blasted lane between thick-walled flat-roofed boxy houses drawn close together, one stick figure relaxes on a low bench deep in the cool shaded strip between the buildings, holding a small cup; outside the lane, another stick figure under a huge blazing sun fans itself with a big leaf, sweat drops flying. Only the shaded strip of ground inside the lane is teal; everything else pure black and white.
+
+[4] file=public/soc/cuts/u4l5.png (landscape 4:3, 스타일 A)
+A stick figure joyfully plays a goblet-shaped hand drum held between its knees; big music notes fly out in a wide arc over a small doodle world map on the floor, and on the far continents of that map three tiny stick figures dance with raised arms. Only the flying music notes are teal; everything else pure black and white.
+
+[5] file=public/soc/cuts/u4l6.png (landscape 4:3, 스타일 A)
+A stick figure happily waters a large flowerpot shaped like the Africa continent silhouette (wide rim at the top-north, tapering toward the bottom-south, a notch on the west side); from the pot a thick burst of young seedling sprouts shoots up tall and lively, so many they crowd the pot. Only the young sprouts are teal; everything else pure black and white.
+
+[6] file=public/soc/cuts/u4l7.png (landscape 4:3, 스타일 A)
+Three stick figures together unroll and hold up a large blueprint sheet; on the sheet simple doodles show a dam with falling water lines, a small train on rails, and a schoolhouse with a flag. Above the group a ring of small stars floats in a neat circle like a shared crown. Only the ring of stars is teal; everything else pure black and white.
+
+[7] file=public/soc/cuts/u4l8.png (landscape 4:3, 스타일 A)
+A long line of stick figures passes small potted tree saplings from hand to hand and plants them in a straight row stretching to the horizon across cracked dry ground; behind the freshly planted row, grass and leaves sprout from the ground, while in front of the row the ground is still bare. Only the planted saplings and the sprouting green strip behind them are teal; everything else pure black and white.
+
+[8] file=public/soc/africa/mudtown.png (landscape 4:3, 스타일 P)
+A narrow lane in a desert old town: thick earthen mud-brick walls, flat roofs, small high windows, houses packed so tightly the lane lies in deep cool shade while harsh sunlight blazes on the wall tops, warm ochre and sand tones. Generic North-African desert-town archetype, NOT a specific famous city, no people, no signs.
+
+[9] file=public/soc/africa/desertrobe.png (landscape 4:3, 스타일 P)
+Two people seen small and far away from behind, walking along a sand dune ridge in loose flowing full-body robes and wrapped head coverings that shield them from sun and blowing sand, late golden light, long shadows on rippled sand. Faces not visible, dignified calm posture. Generic Sahara-travel archetype.
+
+[10] file=public/soc/africa/fabric.png (landscape 4:3, 스타일 P)
+A vibrant open-air textile stall: stacked bolts and hanging sheets of boldly patterned wax-print fabric in saturated reds, yellows, greens and blues with geometric and floral motifs, sunlight filtering through the awning. Generic West-African market archetype, no people close up, absolutely no lettering on any fabric.
+
+[11] file=public/soc/africa/fufu.png (landscape 4:3, 스타일 P)
+A rustic wooden table with a traditional West African meal: a smooth round ball of pounded white cassava dough in a dark clay bowl beside a rich reddish peanut stew, a tall wooden mortar and pestle standing behind, warm natural light. Appetizing educational food photograph, no text, no people.
+
+[12] file=public/soc/africa/rainhut.png (landscape 4:3, 스타일 P)
+A traditional homestead in a lush green tropical clearing: houses built of wood poles, woven plant walls and earth, each with a steeply pitched thick thatched roof made to shed heavy rain, banana plants and tall forest around, soft bright light after rain. Generic equatorial-village archetype, no people, no text.
+
+[13] file=public/soc/africa/filmset.png (landscape 4:3, 스타일 P)
+An outdoor movie shoot on a lively city street corner: a film camera on a tripod in the foreground, a boom microphone reaching over, a clapperboard with a completely blank slate held by a crew member, actors and crew only small and distant with faces not recognizable, bright daylight. Generic film-production archetype, no readable text anywhere including the clapperboard.
+
+[14] file=public/soc/africa/solarfarm.png (landscape 4:3, 스타일 P)
+A vast solar power plant on a sunny semi-arid plain: long rows of photovoltaic panels stretching toward distant dry hills under a deep blue sky, one tiny distant worker in a hard hat for scale, heat shimmer above the ground. Generic solar-farm archetype, no logos, no text.
+
+[15] file=public/soc/africa/dam.png (landscape 4:3, 스타일 P)
+A massive concrete hydroelectric dam across a wide river gorge, white water thundering from open spillways, mist rising from the plunge pool, power transmission towers and a small powerhouse below showing huge scale. Generic hydro-dam archetype, NOT a specific famous dam, no text.
+
+[16] file=public/soc/africa/irrigation.png (landscape 4:3, 스타일 P)
+A thriving green vegetable field in a dry region watered by drip irrigation: neat crop rows with thin dark hoses laid along each row dripping at the plant bases, sharp contrast between the lush green field and the dusty dry ground beyond its edge, bright daylight. Generic smart-farming archetype, no people close up, no text.
+
+[17] file=public/soc/africa/saplings.png (landscape 4:3, 스타일 P)
+A long straight row of young tree saplings, each protected by a small woven guard, freshly planted across dry sandy savanna stretching to the horizon; two workers very far in the distance watering the line, sparse new grass returning near the older trees at one end. Generic reforestation archetype, faces not visible, no text.
+
+[18] file=public/soc/africa/cacao.png (landscape 4:3, 스타일 P)
+Ripe orange-yellow cacao pods growing directly from a tree trunk, one pod split open showing pale beans inside, a woven basket of harvested pods on the ground below, tropical foliage in the background, warm light. Generic cacao-farm archetype, no people, no text.

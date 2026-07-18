@@ -1535,6 +1535,69 @@ const MAP_DECOR: Record<string, string> = {
     <ellipse cx="24" cy="14" rx="8" ry="2.2" fill="#fff" opacity=".28"/>`,
     `<linearGradient id="eu3-flag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3E62B8"/><stop offset=".6" stop-color="#2E4E9E"/><stop offset="1" stop-color="#22397A"/></linearGradient>`,
   ),
+  // ── 사회 Ⅳ. 아프리카 — 문명에서 미래로(피라미드 → 바오바브 → 기린 → 젬베 → 태양광) ──
+  afrPyramidDeco: S(
+    `${shadow(32, 57, 19, 0.13)}
+    <path d="M6 54q26 4 52 0" stroke="#D8B86E" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M8 52 26 18l18 34z" fill="url(#af4-pyr)" stroke="#8A6A2E" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M26 18 44 52H30z" fill="#B8842E" opacity=".4"/>
+    <path d="M36 52 48 31l10 21z" fill="url(#af4-pyr)" stroke="#8A6A2E" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M48 31 58 52h-8z" fill="#B8842E" opacity=".35"/>
+    <circle cx="53" cy="12" r="5" fill="url(#af4-sun)"/>
+    <ellipse cx="20" cy="30" rx="5" ry="2" fill="#fff" opacity=".35" transform="rotate(-58 20 30)"/>`,
+    `<linearGradient id="af4-pyr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2D08A"/><stop offset=".55" stop-color="#DBA84E"/><stop offset="1" stop-color="#B8842E"/></linearGradient>
+    <radialGradient id="af4-sun" cx=".4" cy=".35" r=".9"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#F2B33E"/></radialGradient>`,
+  ),
+  afrBaobabDeco: S(
+    `${shadow(32, 57, 17, 0.13)}
+    <path d="M23 56q3-13 1-22l-3-8h22l-3 8q-2 9 1 22z" fill="url(#af4-bao)" stroke="#5E4326" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M25 27 15 17M30 26l-3-12M35 26l4-12M40 27l10-10" stroke="#7A5A34" stroke-width="2.6" stroke-linecap="round"/>
+    <ellipse cx="13" cy="14" rx="6" ry="3.6" fill="url(#af4-leaf)"/>
+    <ellipse cx="26" cy="10" rx="7" ry="4" fill="url(#af4-leaf)"/>
+    <ellipse cx="40" cy="10" rx="7" ry="4" fill="url(#af4-leaf)"/>
+    <ellipse cx="52" cy="14" rx="6" ry="3.6" fill="url(#af4-leaf)"/>
+    <ellipse cx="28" cy="34" rx="3.4" ry="6" fill="#fff" opacity=".22"/>`,
+    `<linearGradient id="af4-bao" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B08050"/><stop offset=".55" stop-color="#8F6438"/><stop offset="1" stop-color="#6E4A26"/></linearGradient>
+    <linearGradient id="af4-leaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7FC98E"/><stop offset="1" stop-color="#3F9A5C"/></linearGradient>`,
+  ),
+  afrGiraffeDeco: S(
+    `${shadow(34, 57, 16, 0.13)}
+    <path d="M22 56l2-16 18-2 2 18h-5l-1.6-12-9.6 1.2L26 56z" fill="url(#af4-gir)" stroke="#9A6E22" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M25 41 39 15" stroke="url(#af4-gir)" stroke-width="6" stroke-linecap="round"/>
+    <path d="M25 41 39 15" stroke="#9A6E22" stroke-width="0"/>
+    <circle cx="41.5" cy="12" r="5" fill="url(#af4-gir)" stroke="#9A6E22" stroke-width="1.6"/>
+    <path d="M39 8 38 4.6M44 8l1-3.4" stroke="#8A5E1E" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="38.5" cy="4" r="1.5" fill="#8A5E1E"/><circle cx="45.5" cy="4" r="1.5" fill="#8A5E1E"/>
+    <circle cx="30" cy="30" r="2" fill="#A87A2A"/><circle cx="35" cy="23" r="1.8" fill="#A87A2A"/>
+    <circle cx="28" cy="46" r="2.2" fill="#A87A2A"/><circle cx="36" cy="44" r="2" fill="#A87A2A"/>
+    <ellipse cx="43" cy="10" rx="2" ry="1" fill="#fff" opacity=".4" transform="rotate(-30 43 10)"/>`,
+    `<linearGradient id="af4-gir" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2C878"/><stop offset=".55" stop-color="#E0A94E"/><stop offset="1" stop-color="#C08A32"/></linearGradient>`,
+  ),
+  afrDrumDeco: S(
+    `${shadow(32, 57, 15, 0.13)}
+    <ellipse cx="32" cy="16" rx="15" ry="5.5" fill="url(#af4-skin)" stroke="#8A5E2E" stroke-width="1.8"/>
+    <path d="M17 16q0 10 8 15-3 14 0 22 3 3 7 3t7-3q3-8 0-22 8-5 8-15z" fill="url(#af4-drum)" stroke="#5E3A1E" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M20 20l6 12M44 20l-6 12M26 21l10 10M38 21 28 31" stroke="#E8D8B8" stroke-width="1.4" stroke-linecap="round" opacity=".85"/>
+    <path d="M25 40h14M24 46h16" stroke="#8F6434" stroke-width="1.6" stroke-linecap="round"/>
+    <ellipse cx="26" cy="14.5" rx="6" ry="1.8" fill="#fff" opacity=".45"/>`,
+    `<linearGradient id="af4-skin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5E8CE"/><stop offset="1" stop-color="#DCC49A"/></linearGradient>
+    <linearGradient id="af4-drum" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A87244"/><stop offset=".55" stop-color="#8A5630"/><stop offset="1" stop-color="#66401E"/></linearGradient>`,
+  ),
+  afrSolarDeco: S(
+    `${shadow(32, 57, 18, 0.13)}
+    <circle cx="50" cy="12" r="6" fill="url(#af4-sun)"/>
+    <path d="M50 3v-2M57 7l1.6-1.6M59 12h2.4" stroke="#E8A104" stroke-width="1.8" stroke-linecap="round"/>
+    <g transform="rotate(-12 28 34)">
+      <rect x="10" y="24" width="36" height="20" rx="2.6" fill="url(#af4-pan)" stroke="#22397A" stroke-width="1.8"/>
+      <path d="M10 34h36M22 24v20M34 24v20" stroke="#5A7CC0" stroke-width="1.2"/>
+      <ellipse cx="18" cy="28" rx="5" ry="1.8" fill="#fff" opacity=".4" transform="rotate(-14 18 28)"/>
+    </g>
+    <path d="M22 46v8M40 42v12" stroke="#5A6B7E" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M14 56h36" stroke="#8A93A6" stroke-width="2" stroke-linecap="round"/>`,
+    `<linearGradient id="af4-pan" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4E74C8"/><stop offset=".6" stop-color="#2E4E9E"/><stop offset="1" stop-color="#1E3670"/></linearGradient>`,
+  ),
+
+  // ── 역사 Ⅰ. 역사 학습의 기초 — 역사 탐정의 도구(두루마리 → 돋보기 → 붓 → 모래시계 → 항아리) ──
 };
 
 /** 지도 장식 아트 — 단원 특색 세트 → 생물 아이콘(ART_BIO) → 공용(ART_DECOR) 순서로 찾는다. */
