@@ -49,26 +49,38 @@ await page.screenshot({ path: "qa/shots/soc3-hook.png" });
 await fwd(1); // concept(컷)
 await page.waitForTimeout(400);
 await page.screenshot({ path: "qa/shots/soc3-concept-cut.png" });
-await fwd(1); // 랩
-await page.waitForSelector(".screen.active .rpl-token", { timeout: 9000 });
-await page.evaluate(() => document.querySelector(".screen.active .rpl-lens").click());
+await fwd(1); // 랩(세로 진입 카드)
+await page.waitForSelector(".screen.active .swapbtn", { timeout: 9000 });
+await page.screenshot({ path: "qa/shots/soc3-lab-enter.png" });
+await page.evaluate(() => document.querySelector(".screen.active .swapbtn").click());
+await page.waitForSelector(".rot-overlay .rpl-stage-wide", { timeout: 9000 });
+await page.waitForTimeout(700);
+await page.evaluate(() => document.querySelector(".rot-overlay .rpl-lens").click());
 await page.waitForTimeout(400);
 await page.screenshot({ path: "qa/shots/soc3-lab-lens.png" });
+// 가로 무대 배치 — 논리 지도 좌표 → 화면 좌표 역변환 후 포인터 드래그(합성)
 const place = async (id, lon, lat) => {
   await page.evaluate(({ tid, LON, LAT }) => {
-    document.querySelector(`.screen.active .rpl-token[data-r="${tid}"]`).click();
-    const svg = document.querySelector(".screen.active .rpl-svg");
-    const r = svg.getBoundingClientRect();
     const crop = { x: 430, y: 50, w: 244, h: 108 };
+    const stage = document.querySelector(".rot-overlay .rpl-stage-wide");
+    const ov = document.querySelector(".rot-overlay").getBoundingClientRect();
+    const mapBox = document.querySelector(".rot-overlay .rpl-map");
+    const native = document.querySelector(".rot-inner").classList.contains("native");
+    const L = parseFloat(mapBox.style.left);
+    const T = parseFloat(mapBox.style.top);
+    const MW = parseFloat(mapBox.style.width);
+    const MH = parseFloat(mapBox.style.height);
     const sx = ((LON + 180) / 360) * 1000;
     const sy = ((90 - LAT) / 180) * 500;
-    document.querySelector(".screen.active .rpl-map").dispatchEvent(
-      new MouseEvent("click", {
-        bubbles: true,
-        clientX: r.left + ((sx - crop.x) / crop.w) * r.width,
-        clientY: r.top + ((sy - crop.y) / crop.h) * r.height,
-      }),
-    );
+    const lx = L + ((sx - crop.x) / crop.w) * MW;
+    const ly = T + ((sy - crop.y) / crop.h) * MH;
+    const p = native ? { x: ov.left + lx, y: ov.top + ly } : { x: ov.right - ly, y: ov.top + lx };
+    const tok = document.querySelector(`.rot-overlay .rpl-token[data-r="${tid}"]`);
+    const tr = tok.getBoundingClientRect();
+    const pe = (type, x, y, target) => target.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId: 7, clientX: x, clientY: y, isPrimary: true }));
+    pe("pointerdown", tr.left + tr.width / 2, tr.top + tr.height / 2, tok);
+    pe("pointermove", p.x, p.y, stage);
+    pe("pointerup", p.x, p.y, stage);
   }, { tid: id, LON: lon, LAT: lat });
   await page.waitForTimeout(380);
 };
@@ -76,8 +88,10 @@ await place("west", 2, 47);
 await place("north", 15, 63);
 await place("south", -4, 40);
 await place("east", 31, 52);
-await page.waitForTimeout(400);
+await page.waitForTimeout(3600); // 토스트 사라진 뒤 지도만
 await page.screenshot({ path: "qa/shots/soc3-lab-complete.png" });
+await page.evaluate(() => document.querySelector(".rot-exit").click());
+await page.waitForTimeout(700);
 await fwd(1); // recap
 await page.evaluate(() => document.querySelector(".screen.active .rc-card")?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
 await page.waitForTimeout(500);

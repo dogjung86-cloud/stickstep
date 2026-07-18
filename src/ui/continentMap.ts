@@ -39,6 +39,9 @@ export interface ContinentDef {
   name: string;
   /** worldMap.generated 좌표계(1000×500)의 크롭 뷰박스. */
   crop: { x: number; y: number; w: number; h: number };
+  /** 크롭 종횡비가 2:1을 넘는 넓은 대륙은 true — regionPlaceLab이 가로 모드(rotateStage)로 연다.
+   *  세로 인라인(아시아 1.83:1)은 생략. 유럽(2.26:1)이 첫 적용, 오세아니아도 후보. */
+  wide?: boolean;
   regions: ContinentRegion[];
   /** 어느 지역 폴리곤에도 없는 육지에 놓았을 때의 안내(대륙별 이웃 지리로 분기). */
   outsideMsg: (lon: number, lat: number) => string;
@@ -276,6 +279,7 @@ const EUROPE: ContinentDef = {
   // lon -25~62.9 · lat 72~33.1 크롭 — 아이슬란드(북부 관광 도시 레이캬비크)까지 포함,
   // 지중해 남안(북아프리카)·아나톨리아(튀르키예) 가장자리는 outsideMsg 안내용으로 남긴다.
   crop: { x: 430, y: 50, w: 244, h: 108 },
+  wide: true, // 2.26:1 — 세로 인라인에선 지도가 납작해 가로 모드로 배치한다(사용자 피드백)
   regions: [
     {
       id: "west",

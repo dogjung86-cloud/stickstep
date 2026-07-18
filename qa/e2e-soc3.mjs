@@ -243,57 +243,78 @@ const recapStep = async () => {
 };
 
 // ── 사회 Ⅲ 전용 랩 ───────────────────────────────────────────
-// 기함(재사용 1차 검증): 유럽 4지역 배치 — 탭-탭 문법(토큰 click detail 0 = 무장 → 지도 click 판정)
+// 기함(재사용 1차 검증): 유럽 4지역 배치 — **가로 모드(rotateStage)**. 진입 버튼 → 회전 무대에서
+// 드래그 문법(pointerdown 토큰 → move/up 무대, e2e-soc1 worldPlace의 역변환 문법 계승).
 const EU_CROP = { x: 430, y: 50, w: 244, h: 108 };
 const regionPlace = async () => {
-  await page.waitForSelector(`${active} .rpl-token`, { timeout: 9000 });
-  const armAndTap = async (regionId, lon, lat) => {
+  // 세로 화면: 목표 칩 라벨 동적화 확인("네 지역" — 다섯 지역 하드코딩 소급 수정 검증)
+  await page.waitForSelector(`${active} .swapbtn`, { timeout: 9000 });
+  const chipLabel = await page.evaluate(() => document.querySelector('.screen.active .pn-badge[data-g="all"] b')?.textContent ?? "");
+  check(chipLabel === "네 지역", `목표 칩 라벨 동적("${chipLabel}")`);
+  // 가로 진입
+  await page.evaluate(() => document.querySelector(".screen.active .swapbtn").click());
+  await page.waitForSelector(".rot-overlay .rpl-stage-wide", { timeout: 9000 });
+  await W(700);
+  const native = await page.evaluate(() => document.querySelector(".rot-inner").classList.contains("native"));
+  check(!native, "regionPlaceLab(유럽) 세로 기기 = 회전 모드");
+  // 특징 안경(목표 ②) — 유럽은 힌트 아이콘 4개
+  await page.evaluate(() => document.querySelector(".rot-overlay .rpl-lens").click());
+  await W(400);
+  const lensOn = await page.evaluate(() => ({
+    on: document.querySelector(".rot-overlay .rpl-lens").classList.contains("on"),
+    hints: [...document.querySelectorAll(".rot-overlay .rpl-hint")].filter((h) => h.getAttribute("opacity") === "1").length,
+  }));
+  check(lensOn.on && lensOn.hints === 4, `특징 안경 켜짐 + 힌트 아이콘 4개 (실제 ${lensOn.hints})`);
+  // 드래그 배치 — 논리 지도 좌표 → 화면 좌표 역변환(native면 그대로, 회전이면 x=right-ly, y=top+lx)
+  const place = async (regionId, lon, lat) => {
     await page.evaluate(({ id, LON, LAT, crop }) => {
-      const tok = document.querySelector(`.screen.active .rpl-token[data-r="${id}"]`);
-      tok.click(); // detail 0 → 무장
-      const svg = document.querySelector(".screen.active .rpl-svg");
-      const r = svg.getBoundingClientRect();
+      const stage = document.querySelector(".rot-overlay .rpl-stage-wide");
+      const ov = document.querySelector(".rot-overlay").getBoundingClientRect();
+      const mapBox = document.querySelector(".rot-overlay .rpl-map");
+      const native2 = document.querySelector(".rot-inner").classList.contains("native");
+      const L = parseFloat(mapBox.style.left);
+      const T = parseFloat(mapBox.style.top);
+      const MW = parseFloat(mapBox.style.width);
+      const MH = parseFloat(mapBox.style.height);
       const sx = ((LON + 180) / 360) * 1000;
       const sy = ((90 - LAT) / 180) * 500;
-      const cx = r.left + ((sx - crop.x) / crop.w) * r.width;
-      const cy = r.top + ((sy - crop.y) / crop.h) * r.height;
-      const map = document.querySelector(".screen.active .rpl-map");
-      map.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX: cx, clientY: cy }));
+      const lx = L + ((sx - crop.x) / crop.w) * MW;
+      const ly = T + ((sy - crop.y) / crop.h) * MH;
+      const p = native2 ? { x: ov.left + lx, y: ov.top + ly } : { x: ov.right - ly, y: ov.top + lx };
+      const tok = document.querySelector(`.rot-overlay .rpl-token[data-r="${id}"]`);
+      const tr = tok.getBoundingClientRect();
+      const pe = (type, x, y, target) => target.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId: 7, clientX: x, clientY: y, isPrimary: true }));
+      pe("pointerdown", tr.left + tr.width / 2, tr.top + tr.height / 2, tok);
+      pe("pointermove", p.x, p.y, stage);
+      pe("pointerup", p.x, p.y, stage);
     }, { id: regionId, LON: lon, LAT: lat, crop: EU_CROP });
     await W(360);
   };
-  // 목표 칩 라벨 동적화 확인("네 지역" — 다섯 지역 하드코딩 소급 수정 검증)
-  const chipLabel = await page.evaluate(() => document.querySelector('.screen.active .pn-badge[data-g="all"] b')?.textContent ?? "");
-  check(chipLabel === "네 지역", `목표 칩 라벨 동적("${chipLabel}")`);
-  // 특징 안경(목표 ②) — 유럽은 힌트 아이콘 4개
-  await page.evaluate(() => document.querySelector(".screen.active .rpl-lens").click());
-  await W(400);
-  const lensOn = await page.evaluate(() => ({
-    on: document.querySelector(".screen.active .rpl-lens").classList.contains("on"),
-    hints: [...document.querySelectorAll(".screen.active .rpl-hint")].filter((h) => h.getAttribute("opacity") === "1").length,
-  }));
-  check(lensOn.on && lensOn.hints === 4, `특징 안경 켜짐 + 힌트 아이콘 4개 (실제 ${lensOn.hints})`);
+  const toastText = () => page.evaluate(() => document.querySelector(".rot-overlay .wpl-toast")?.textContent ?? "");
   // 오답 코미디: 서부 유럽 이름표를 러시아(동부)에
-  await armAndTap("west", 38, 56);
-  const wrongToast = await page.evaluate(() => document.querySelector(".screen.active .rpl-toast")?.textContent ?? "");
+  await place("west", 38, 56);
+  const wrongToast = await toastText();
   check(wrongToast.includes("동부 유럽"), `오답 코미디 토스트 (${wrongToast.slice(0, 20)}…)`);
   // 바다 풍덩: 북부 유럽 이름표를 대서양 한복판에
-  await armAndTap("north", -20, 50);
-  const seaToast = await page.evaluate(() => document.querySelector(".screen.active .rpl-toast")?.textContent ?? "");
+  await place("north", -20, 50);
+  const seaToast = await toastText();
   check(seaToast.includes("풍덩") || seaToast.includes("바다"), `바다 풍덩 토스트 (${seaToast.slice(0, 14)}…)`);
   // 지역 밖 육지: 남부 유럽 이름표를 튀르키예에 → outsideMsg 분기
-  await armAndTap("south", 35, 39);
-  const outToast = await page.evaluate(() => document.querySelector(".screen.active .rpl-toast")?.textContent ?? "");
+  await place("south", 35, 39);
+  const outToast = await toastText();
   check(outToast.includes("튀르키예"), `outsideMsg 튀르키예 분기 (${outToast.slice(0, 16)}…)`);
   // 정답 4연속(프랑스 중부·스웨덴 북부·에스파냐 중부·벨라루스)
-  await armAndTap("west", 2, 47);
-  await armAndTap("north", 15, 63);
-  await armAndTap("south", -4, 40);
-  await armAndTap("east", 31, 52);
-  const marks = await page.evaluate(() => document.querySelectorAll(".screen.active .rpl-mark").length);
+  await place("west", 2, 47);
+  await place("north", 15, 63);
+  await place("south", -4, 40);
+  await place("east", 31, 52);
+  const marks = await page.evaluate(() => document.querySelectorAll(".rot-overlay .rpl-mark").length);
   check(marks === 4, `지역 라벨 도장 4개 (실제 ${marks})`);
-  const chips = await page.evaluate(() => document.querySelectorAll(".screen.active .pn-badge.on").length);
+  const chips = await page.evaluate(() => document.querySelectorAll(".pn-badge.on").length);
   check(chips === 3, `regionPlaceLab 목표 3/3 (실제 ${chips})`);
+  // 세로 복귀 → CTA
+  await page.evaluate(() => document.querySelector(".rot-exit").click());
+  await W(600);
   await clickCTA();
 };
 

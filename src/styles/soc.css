@@ -435,7 +435,8 @@
 .rpl-hint { transition: opacity .3s var(--ease); pointer-events: none; }
 .rpl-pill {
   position: absolute; left: 10px; top: 10px; max-width: 62%;
-  background: rgba(255, 255, 255, .92); box-shadow: var(--sh-card);
+  /* 밝은 지도 위 흰 필은 안 읽힌다(사용자 피드백) — 토스트와 같은 다크 네이비 대비 */
+  background: rgba(16, 24, 44, .86); color: #F2F6FF; box-shadow: var(--sh-card);
 }
 .rpl-toast {
   position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%) translateY(8px);
@@ -504,6 +505,16 @@
   padding: 7px 12px; border-radius: var(--r-pill); color: #fff;
   font-size: 13px; font-weight: 900; box-shadow: var(--sh-raise); opacity: .93;
 }
+.rpl-ghost.in-stage { position: absolute; } /* 가로 무대 안 — 회전을 따라가 글자도 바로 선다 */
+
+/* ---------- regionPlaceLab — 가로 모드(wide 대륙: 유럽) ---------- */
+.rpl-stage-wide { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+.rpl-stage-wide .rpl-map { position: absolute; }
+.rpl-stage-wide .rpl-tray {
+  position: absolute; left: 8px; right: 8px; bottom: 6px; margin: 0;
+  flex-wrap: nowrap; justify-content: center; overflow-x: auto; padding-bottom: 2px;
+}
+.rpl-stage-wide .rpl-token { flex: 0 0 auto; }
 
 /* ---------- monsoonLab — 판정 카드 ---------- */
 .msn-quiz {
