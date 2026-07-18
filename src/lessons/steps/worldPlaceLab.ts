@@ -213,10 +213,15 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
     if (rot) return;
     haptic(HAPTIC.select);
     void (async () => {
-      const { enterRotateStage } = await import("../../ui/rotateStage");
-      if (disposed) return;
-      rot = enterRotateStage({ title: "지구에 살아 보기 — 네 친구의 보금자리 찾기", onLeave: () => leave() });
-      buildStage(rot);
+      try {
+        const { enterRotateStage } = await import("../../ui/rotateStage");
+        if (disposed) return;
+        rot = enterRotateStage({ title: "지구에 살아 보기 — 네 친구의 보금자리 찾기", onLeave: () => leave() });
+        buildStage(rot);
+      } catch {
+        // 개발 서버 스테일 캐시 등으로 동적 import가 실패하면 버튼이 조용히 죽는다 — 안내로 살린다
+        helper.innerHTML = "화면을 여는 데 실패했어요. <b>새로고침</b> 후 다시 눌러 주세요!";
+      }
     })();
   }
 
@@ -453,6 +458,8 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
     function onDown(e: PointerEvent): void {
       const tokBtn = (e.target as HTMLElement).closest?.(".wpl-token") as HTMLElement | null;
       if (!tokBtn || tokBtn.classList.contains("done")) return;
+      // 토큰 드래그는 포인터 문법만 쓴다 — 브라우저 기본 동작(선택·마우스 호환 이벤트)을 끈다(iOS 보강)
+      e.preventDefault();
       const id = tokBtn.dataset.t!;
       try {
         stage.setPointerCapture(e.pointerId);
@@ -474,14 +481,18 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
     }
     function onUp(e: PointerEvent): void {
       if (!drag) {
-        // 탭-탭 배치: 무장된 토큰이 있고 지도(버튼이 아닌 곳)를 탭했다면 그 자리에 배치
-        if (armed && !(e.target as HTMLElement).closest?.("button")) {
+        if (!(e.target as HTMLElement).closest?.("button")) {
           const p = rt.mapPoint(e);
           const c = svgCoordOf(p.x, p.y);
-          if (c) {
+          if (c && armed) {
+            // 탭-탭 배치: 무장된 토큰이 있고 지도를 탭했다면 그 자리에 배치
             const id = armed;
             disarm();
             judge(id, c.sx, c.sy);
+          } else if (c && !finished) {
+            // 무응답 방지 — 토큰 없이 지도를 먼저 탭하는 것이 첫 사용자의 자연스러운 조작이다
+            haptic(HAPTIC.tap);
+            showToast("먼저 아래에서 친구를 골라 주세요 — 끌어 놓거나, 탭한 뒤 지도를 탭!");
           }
         }
         return;
@@ -501,6 +512,14 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
         else arm(id);
       }
     }
+    // 시스템 제스처 등으로 포인터가 취소되면 판정 없이 드래그만 되돌린다(유령 배치 방지)
+    function onCancel(): void {
+      if (!drag) return;
+      const { id, ghost } = drag;
+      drag = null;
+      ghost.remove();
+      tokenEls.get(id)?.classList.remove("lift");
+    }
     function arm(id: string): void {
       disarm();
       armed = id;
@@ -517,7 +536,16 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
     stage.addEventListener("pointerdown", onDown);
     stage.addEventListener("pointermove", onMove);
     stage.addEventListener("pointerup", onUp);
-    stage.addEventListener("pointercancel", onUp);
+    stage.addEventListener("pointercancel", onCancel);
+    // 키보드 접근: 토큰 버튼에서 Enter/Space = click(detail 0) → 무장 토글(포인터 경로와 별개)
+    tray.addEventListener("click", (e) => {
+      if ((e as MouseEvent).detail !== 0) return;
+      const tokBtn = (e.target as HTMLElement).closest?.(".wpl-token") as HTMLElement | null;
+      if (!tokBtn || tokBtn.classList.contains("done")) return;
+      const id = tokBtn.dataset.t!;
+      if (armed === id) disarm();
+      else arm(id);
+    });
 
     // 정리 — rotateStage dispose와 함께
     const origDispose = rt.dispose.bind(rt);
@@ -528,7 +556,7 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
       stage.removeEventListener("pointerdown", onDown);
       stage.removeEventListener("pointermove", onMove);
       stage.removeEventListener("pointerup", onUp);
-      stage.removeEventListener("pointercancel", onUp);
+      stage.removeEventListener("pointercancel", onCancel);
       origDispose();
     };
   }

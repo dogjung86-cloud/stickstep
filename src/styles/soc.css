@@ -33,13 +33,14 @@
 }
 
 /* ---------- worldPlaceLab(기함) — 가로 무대 "지구에 살아 보기" ---------- */
-.wpl-stage { touch-action: none; }
+/* touch-action·선택 방지는 iOS 계열까지 겹겹이 — 스크롤 탈취·롱프레스 선택이 드래그를 죽인다 */
+.wpl-stage { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
 .wpl-map {
-  position: absolute; z-index: 1;
+  position: absolute; z-index: 1; touch-action: none;
   border-radius: 14px; overflow: hidden;
   box-shadow: 0 10px 30px -8px rgba(0, 0, 0, .55), 0 0 0 1px rgba(130, 152, 200, .22);
 }
-.wpl-svg { display: block; width: 100%; height: 100%; }
+.wpl-svg { display: block; width: 100%; height: 100%; touch-action: none; }
 .wpl-clim { transition: opacity .35s var(--ease); }
 .wpl-gratlab { font: 700 11px Pretendard, sans-serif; fill: #5A7A96; }
 .wpl-pill { max-width: 46%; }
