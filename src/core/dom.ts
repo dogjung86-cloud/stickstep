@@ -53,6 +53,12 @@ export function el<K extends keyof HTMLElementTagNameMap>(
       (node as unknown as Record<string, unknown>)[key] = value;
     }
   }
+  // 제목(.h1)의 저작용 <br>은 표시에서 공백으로 편다(2026-07-19 사용자 확정 — 짧은 제목이
+  // 두 줄로 강제되며 오른쪽 여백이 크게 남던 것). 줄바꿈은 CSS(text-wrap: balance)가 자연 폭
+  // 기준으로 담당하고, word-break: keep-all이 단어 중간 끊김을 막는다. 전 과목 공통.
+  if (node.classList.contains("h1") && props.html && node.innerHTML.includes("<br")) {
+    node.innerHTML = node.innerHTML.replace(/\s*<br\s*\/?>\s*/gi, " ");
+  }
   appendChildren(node, children);
   return node;
 }

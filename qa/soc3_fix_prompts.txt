@@ -1,0 +1,27 @@
+# 사회 Ⅲ u3l1 개념 컷 재발주(2026-07-19 사용자 피드백) — "유럽은 아시아와 한 덩어리 땅"
+# 텍스트인데 그림이 정사각 추상 지도라 안 맞음 → 유라시아 대륙 실루엣이 실제로 보이게.
+# 규칙(CLAUDE.md Ⅱ ②): 발주 컷의 대륙·지도 실루엣은 모양 특징을 문장으로 명시한다.
+# 스타일 블록 A(스틱맨 컷 공용) 그대로.
+#
+# ── 스타일 블록 A ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+
+[0] file=public/soc/cuts/u3l1.png (landscape 4:3, 스타일 A)
+A stick figure kneels on a huge floor map and draws a dividing line with a giant pencil along a
+bumpy vertical mountain ridge. The floor map shows ONE single wide connected landmass shaped like
+the real Eurasian continent, drawn as a simple doodle outline with sea around it: the LEFT roughly
+one-fifth is Europe — small and intricate, with a long peninsula poking up toward the top-left
+(Scandinavia) and two or three little peninsulas dangling into the sea at the bottom (Iberia,
+Italy); the RIGHT four-fifths is Asia — one much larger, wider mass with two big triangular
+peninsulas hanging from its southern edge (Arabia, India) and a small arc of islands at its far
+right. The bumpy mountain ridge the figure traces runs top-to-bottom exactly at the seam between
+the small left part and the huge right part (the Ural mountains). It must clearly read as ONE
+continuous continent — NOT two separate continents, NOT Africa, NOT the Americas. Only the small
+intricate left (Europe) part of the landmass is teal; everything else pure black and white.

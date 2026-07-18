@@ -47,7 +47,7 @@ img { display: block; max-width: 100%; }
 .footer { padding: 12px 20px calc(16px + var(--safe-b)); background: linear-gradient(#ffffff00, #fff 34%); }
 
 /* ---------- 타이포 ---------- */
-.h1 { font-size: 25px; line-height: 1.32; font-weight: 800; letter-spacing: -.03em; word-break: keep-all; }
+.h1 { font-size: 25px; line-height: 1.32; font-weight: 800; letter-spacing: -.03em; word-break: keep-all; text-wrap: balance; }
 .h1 em { font-style: normal; color: var(--blue); }
 .h1.sm { font-size: 21px; }
 .sub { margin-top: 10px; font-size: 15.5px; line-height: 1.55; color: var(--sub); word-break: keep-all; }
