@@ -1482,6 +1482,59 @@ const MAP_DECOR: Record<string, string> = {
     `<linearGradient id="as2-hull" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B0764A"/><stop offset="1" stop-color="#7A4E2E"/></linearGradient>
     <linearGradient id="as2-sail" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFDF5"/><stop offset="1" stop-color="#E8D9B0"/></linearGradient>`,
   ),
+
+  // ── 사회 Ⅲ. 유럽 — 대륙 종단 여행(알프스 → 비의 서쪽 → 올리브 남쪽 → 트램 도시 → 연합 광장) ──
+  euroAlpsDeco: S(
+    `${shadow(32, 56, 17, 0.12)}
+    <path d="M6 52 L20 16 l7 12 9-20 8 16 6-9 8 33 z" fill="url(#eu3-alp)" stroke="#4E6A88" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M16 26 20 16 l4 8 q-4 4 -8 2 z M32 16 36 8 l4 9 q-4 4 -8 0 z M48 24 50 19 l4 8 q-4 3 -6 -3 z" fill="#F6FAFD"/>
+    <path d="M40 8 q4 -4 9 -2" fill="none" stroke="#C4CFDC" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+    <ellipse cx="22" cy="30" rx="5" ry="2" fill="#fff" opacity=".4" transform="rotate(-38 22 30)"/>`,
+    `<linearGradient id="eu3-alp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B8CCE0"/><stop offset=".55" stop-color="#7E9AB8"/><stop offset="1" stop-color="#54708E"/></linearGradient>`,
+  ),
+  euroBrollyDeco: S(
+    `${shadow(32, 57, 15, 0.12)}
+    <path d="M10 30 q22 -22 44 0 l-4 1 q-4 -3 -8 0 -3 -3 -7 -1 -4 -3 -7 0 -4 -2 -8 0 -4 -3 -8 1 z" fill="url(#eu3-umb)" stroke="#8F2D1D" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M32 12 v-4" stroke="#5A4326" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M32 31 v18 q0 6 -6 6 -5 0 -5 -5" stroke="#5A4326" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+    <path d="M14 40 l-2 6 M24 44 l-2 6 M46 40 l-2 6 M54 34 l-2 6" stroke="#5BB8E8" stroke-width="2.2" stroke-linecap="round"/>
+    <ellipse cx="22" cy="20" rx="6" ry="2.4" fill="#fff" opacity=".4" transform="rotate(-24 22 20)"/>`,
+    `<radialGradient id="eu3-umb" cx=".38" cy=".2" r="1.1"><stop offset="0" stop-color="#FF8A6E"/><stop offset=".6" stop-color="#E2574C"/><stop offset="1" stop-color="#B23428"/></radialGradient>`,
+  ),
+  euroOliveDeco: S(
+    `${shadow(32, 57, 15, 0.11)}
+    <path d="M12 52 q16 -22 40 -34" stroke="#7A5A32" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <path d="M24 40 q-8 -1 -11 -8 8 -2 11 8 z M33 32 q-2 -9 4 -14 4 7 -4 14 z M40 27 q9 -3 14 2 -6 6 -14 -2 z M28 36 q9 1 11 8 -9 2 -11 -8 z" fill="url(#eu3-leaf)"/>
+    <ellipse cx="22" cy="47" rx="4" ry="5" fill="url(#eu3-oliv)" stroke="#3E5220" stroke-width="1.3"/>
+    <ellipse cx="31" cy="44" rx="3.6" ry="4.6" fill="url(#eu3-oliv)" stroke="#3E5220" stroke-width="1.3"/>
+    <ellipse cx="20.6" cy="45" rx="1.3" ry="1.8" fill="#fff" opacity=".45"/>`,
+    `<linearGradient id="eu3-leaf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A8C08A"/><stop offset="1" stop-color="#6E8E4E"/></linearGradient>
+    <radialGradient id="eu3-oliv" cx=".36" cy=".3" r="1"><stop offset="0" stop-color="#8FAE4E"/><stop offset="1" stop-color="#4E6A28"/></radialGradient>`,
+  ),
+  euroTramDeco: S(
+    `${shadow(32, 58, 17, 0.13)}
+    <path d="M26 10 l6 -4 6 4" stroke="#5A6B7E" stroke-width="1.8" fill="none"/>
+    <path d="M32 6 v6" stroke="#5A6B7E" stroke-width="1.8"/>
+    <rect x="14" y="12" width="36" height="34" rx="7" fill="url(#eu3-tram)" stroke="#8F2D1D" stroke-width="1.8"/>
+    <rect x="19" y="18" width="11" height="12" rx="3" fill="url(#eu3-win)" stroke="#8F2D1D" stroke-width="1.2"/>
+    <rect x="34" y="18" width="11" height="12" rx="3" fill="url(#eu3-win)" stroke="#8F2D1D" stroke-width="1.2"/>
+    <rect x="19" y="35" width="26" height="4" rx="2" fill="#F2D998"/>
+    <circle cx="23" cy="50" r="4" fill="#2E3A50" stroke="#101820" stroke-width="1.2"/>
+    <circle cx="41" cy="50" r="4" fill="#2E3A50" stroke="#101820" stroke-width="1.2"/>
+    <path d="M8 56 h48" stroke="#8A93A6" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="24" cy="15" rx="7" ry="2" fill="#fff" opacity=".4"/>`,
+    `<linearGradient id="eu3-tram" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F08A5E"/><stop offset=".55" stop-color="#D9480F"/><stop offset="1" stop-color="#A83410"/></linearGradient>
+    <linearGradient id="eu3-win" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D8ECF8"/><stop offset="1" stop-color="#9CC2DE"/></linearGradient>`,
+  ),
+  euroStarsDeco: S(
+    `${shadow(30, 57, 15, 0.12)}
+    <path d="M14 8 v48" stroke="#5A4326" stroke-width="2.6" stroke-linecap="round"/>
+    <circle cx="14" cy="7" r="2.2" fill="#C2933A"/>
+    <path d="M16 10 h34 q3 0 3 3 v22 q0 3 -3 3 h-34 z" fill="url(#eu3-flag)" stroke="#1E3670" stroke-width="1.8"/>
+    ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => `<circle cx="${(34 + 9.5 * Math.cos((i * Math.PI) / 6)).toFixed(1)}" cy="${(24 + 9.5 * Math.sin((i * Math.PI) / 6)).toFixed(1)}" r="1.5" fill="#F2C24E"/>`).join("")}
+    <ellipse cx="24" cy="14" rx="8" ry="2.2" fill="#fff" opacity=".28"/>`,
+    `<linearGradient id="eu3-flag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3E62B8"/><stop offset=".6" stop-color="#2E4E9E"/><stop offset="1" stop-color="#22397A"/></linearGradient>`,
+  ),
 };
 
 /** 지도 장식 아트 — 단원 특색 세트 → 생물 아이콘(ART_BIO) → 공용(ART_DECOR) 순서로 찾는다. */

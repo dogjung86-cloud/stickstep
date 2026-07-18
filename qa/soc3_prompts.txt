@@ -1,0 +1,84 @@
+# 사회 Ⅲ(유럽) 발주 — 스틱맨 개념 컷 7장(public/soc/cuts) + 문화경관 실사풍 14장(public/soc/europe)
+# 컷은 soc2와 같은 스타일 블록 A. 실사풍은 스타일 블록 P — 유럽은 에펠탑·빅벤 같은 실존
+# 랜드마크의 유혹이 크므로 "generic archetype, NOT a specific famous landmark"를 반드시 유지.
+#
+# ── 스타일 블록 A (스틱맨 컷 공용) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 P (문화경관 실사풍 공용) ──
+# photorealistic educational reference photograph, natural daylight, eye-level or slightly low
+# wide-angle view, crisp focus, realistic colors, clean composition centered on the landmark type.
+# Generic archetype of the building style — NOT a specific famous landmark, no recognizable
+# real-world monument. Absolutely no text, no letters, no numbers, no signs, no banners, no flags
+# with writing anywhere in the image. No watermark. People allowed only small and distant,
+# faces not recognizable. Landscape 4:3.
+
+[0] file=public/soc/cuts/u3l1.png (landscape 4:3, 스타일 A)
+A stick figure kneels on a big floor map and lays a long ruler along a bumpy mountain ridge running from top to bottom of the map, drawing a dividing line with a giant pencil; left of the line the land is small and crowded with many tiny different doodle patches, right of the line one huge plain patch stretches away. Only the small crowded left part of the map is teal; everything else pure black and white.
+
+[1] file=public/soc/cuts/u3l2.png (landscape 4:3, 스타일 A)
+Two stick figures compare two mountains standing side by side: the left mountain is low, smooth and rounded like an old worn hill with a tiny walking cane leaning against it, the right mountain is tall, sharp and jagged. The left figure gently pats the old hill, the right figure cranes its neck far back to look up. Only the snow caps on the tall jagged mountain are teal; everything else pure black and white.
+
+[2] file=public/soc/cuts/u3l3.png (landscape 4:3, 스타일 A)
+A stick figure sits cozy in an armchair holding a warm mug; next to the armchair a big bathtub full of steaming water sends up wavy heat lines, and a small desk fan on the far side of the tub blows those wavy heat lines sideways toward the sitting figure. Only the wavy heat lines are teal; everything else pure black and white.
+
+[3] file=public/soc/cuts/u3l4.png (landscape 4:3, 스타일 A)
+Four stick figures stand around a small round table politely exchanging name cards with both hands; each held card shows one tiny doodle icon: a coin, a classical column, a leaf, a snowflake. Only the leaf on its card is teal; everything else pure black and white.
+
+[4] file=public/soc/cuts/u3l5.png (landscape 4:3, 스타일 A)
+On the flat rooftop of a boxy building, a stick figure plants a small leafy tree in a large pot while tilted solar panels lean along the rooftop railing; on the street below another stick figure happily pedals a bicycle past the building entrance. Only the leaves of the small tree are teal; everything else pure black and white.
+
+[5] file=public/soc/cuts/u3l6.png (landscape 4:3, 스타일 A)
+Two stick figures reach over a low dotted fence line drawn on the ground and shake hands, while a third stick figure cheerfully rubs out part of the dotted line with a giant eraser; a tiny toy train runs on rails straight through the erased gap. Only the giant eraser is teal; everything else pure black and white.
+
+[6] file=public/soc/cuts/u3l7.png (landscape 4:3, 스타일 A)
+Five stick figures hold hands in a ring inside one large chalk circle drawn on the ground; a sixth stick figure stands exactly on the circle's edge with one foot inside and one foot outside, hand on chin, thinking hard with a neutral face. Only the chalk circle line is teal; everything else pure black and white.
+
+[7] file=public/soc/europe/alps.png (landscape 4:3, 스타일 P)
+A dramatic sharp pyramid-shaped snow-covered alpine peak rising above green summer mountain meadows dotted with wildflowers, a small wooden hut on the slope, crisp deep-blue sky. Generic high-alps archetype, NOT a specific famous mountain.
+
+[8] file=public/soc/europe/fjord.png (landscape 4:3, 스타일 P)
+A deep narrow sea inlet winding between towering steep cliff walls of grey rock and green moss, calm dark-blue water reflecting the cliffs, one tiny white ferry far below showing the huge scale, seen from a high viewpoint, cool northern light. Generic Nordic fjord archetype.
+
+[9] file=public/soc/europe/plain.png (landscape 4:3, 스타일 P)
+A vast flat golden wheat plain stretching to the horizon under a wide sky with soft clouds, gentle tractor lines in the fields, a thin line of poplar trees and a tiny distant village with one slim church spire. Generic European great-plain archetype.
+
+[10] file=public/soc/europe/barge.png (landscape 4:3, 스타일 P)
+A long low cargo barge without any markings gliding up a wide calm river, grassy banks in front, terraced vineyard hills and a small round medieval tower in the far distance, soft afternoon light. Generic European navigable-river archetype.
+
+[11] file=public/soc/europe/olive.png (landscape 4:3, 스타일 P)
+Rows of silvery-green olive trees with gnarled trunks on dry reddish-brown soil, a low rough stone wall in the foreground, intense summer sun and a deep blue cloudless sky. Generic Mediterranean olive-grove archetype.
+
+[12] file=public/soc/europe/whitehouse.png (landscape 4:3, 스타일 P)
+A hillside village of cube-shaped whitewashed houses with small dark windows stacked above a deep blue sea, narrow stone stairs climbing between the houses, brilliant sunlight, one bougainvillea bush. Generic Mediterranean white-village archetype, NOT a specific famous island town.
+
+[13] file=public/soc/europe/skyline.png (landscape 4:3, 스타일 P)
+A modern financial district of varied glass skyscrapers rising behind a wide river, an old stone arch bridge crossing the river in the foreground for old-meets-new contrast, late golden afternoon light. Generic European world-city archetype, NO recognizable real towers, no text anywhere.
+
+[14] file=public/soc/europe/ruins.png (landscape 4:3, 스타일 P)
+Ancient Greek temple ruins on a rocky hilltop: tall fluted marble columns partially standing, fallen column drums scattered in dry grass, warm golden late light, distant hazy hills. Generic classical-ruins archetype, NOT a specific famous temple.
+
+[15] file=public/soc/europe/geyser.png (landscape 4:3, 스타일 P)
+A tall white geyser column erupting from a steaming pale geothermal field with mineral-crusted ground and small turquoise hot pools, distant snow-dusted volcanic mountains, cool crisp light. Generic Nordic geothermal archetype.
+
+[16] file=public/soc/europe/canal.png (landscape 4:3, 스타일 P)
+A calm tree-lined city canal reflecting a row of tall narrow brick townhouses with varied gables, many bicycles parked along an iron railing, one small open boat passing, soft daylight. Generic canal-city archetype, no text on boats or houses.
+
+[17] file=public/soc/europe/oldtown.png (landscape 4:3, 스타일 P)
+A cobblestone old-town square surrounded by pastel baroque facades, a gothic church with two dark pointed spires rising behind the rooftops, ornate street lamps, morning light, a few tiny distant pedestrians. Generic Central-European old-town archetype, no storefront signs, no text.
+
+[18] file=public/soc/europe/techpark.png (landscape 4:3, 스타일 P)
+A modern glass-and-timber research campus of low elegant buildings scattered among pine trees, a curved path with two tiny distant cyclists between the labs, clean bright light. Generic science-park archetype, no logos, no text.
+
+[19] file=public/soc/europe/solarroof.png (landscape 4:3, 스타일 P)
+A cheerful residential eco-district: colorful terraced houses each with rooftop solar panels, small green front gardens, bicycles leaning by doors, big leafy trees between buildings, bright daylight. Generic eco-city archetype, no text.
+
+[20] file=public/soc/europe/tram.png (landscape 4:3, 스타일 P)
+A sleek modern low-floor tram without any markings gliding through a clean pedestrian-friendly street, leafy plane trees, cyclists riding beside the tracks, cafe chairs with plain blank parasols, soft daylight. Generic European tram-street archetype, no text on the tram, signs or parasols.

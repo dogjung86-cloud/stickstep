@@ -4,6 +4,7 @@
 import type { Unit, GradeId } from "../curriculum";
 import { S1_UNIT1 } from "./unit1";
 import { S1_UNIT2 } from "./unit2";
+import { S1_UNIT3 } from "./unit3";
 
 /** 준비 중 단원 — 탭·밴드는 노출하되 지도 대신 안내 카드(comingSoon). */
 const soon = (id: string, roman: string, title: string, subtitle: string, color: string, icon: string): Unit => ({
@@ -14,7 +15,7 @@ const soon = (id: string, roman: string, title: string, subtitle: string, color:
 export const SOC_G1: Unit[] = [
   S1_UNIT1,
   S1_UNIT2,
-  soon("s1u3", "III", "유럽", "작은 대륙이 만든 큰 이야기", "#1971C2", "globe"),
+  S1_UNIT3,
   soon("s1u4", "IV", "아프리카", "인류의 고향, 가장 젊은 대륙", "#E8A104", "globe"),
   soon("s1u5", "V", "아메리카", "두 대륙을 잇는 신대륙 이야기", "#2F9E44", "globe"),
   soon("s1u6", "VI", "오세아니아와 극지방", "가장 멀리, 가장 추운 곳까지", "#0B7285", "globe"),

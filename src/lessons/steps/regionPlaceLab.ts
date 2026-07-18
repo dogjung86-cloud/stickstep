@@ -27,6 +27,16 @@ interface RegionPlaceStep {
 
 const SNAP_DEG = 3; // 경계 근접 스냅(도) — 러프 폴리곤의 오차를 흡수한다
 
+/** 지역 수 → 순우리말 수관형사(목표 칩·완주 문구용 — "다섯 지역" 하드코딩이던 것을 동적으로). */
+const KO_COUNT = ["", "한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉", "열"];
+const koCount = (n: number): string => KO_COUNT[n] ?? String(n);
+/** 받침 유무에 따른 은/는 — "아시아는"·"유럽은"(대륙 이름이 파라미터라 조사도 계산). */
+const topicJosa = (w: string): string => {
+  const code = w.charCodeAt(w.length - 1);
+  if (code < 0xac00 || code > 0xd7a3) return "는";
+  return (code - 0xac00) % 28 ? "은" : "는";
+};
+
 /** 방위 문구 — 오답 코미디의 "어느 쪽으로 가야 하나" 안내. */
 function dirWord(fromLon: number, fromLat: number, toLon: number, toLat: number): string {
   const dLon = toLon - fromLon;
@@ -43,6 +53,12 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as RegionPlaceStep;
   const cont: ContinentDef = CONTINENTS[s.continent ?? "asia"] ?? CONTINENTS.asia;
   const { crop } = cont;
+  // 라벨 스케일 — 크롭 폭이 대륙마다 달라(아시아 348 기준) svg px 고정 폰트가 화면에서
+  // 제각각 커진다(유럽 244 크롭에서 도시·지역명 겹침 실사고). 뷰박스 폭 비례로 보정.
+  const LS = crop.w / 348;
+  const nameFs = (14 * LS).toFixed(1);
+  const cityFs = (8.5 * LS).toFixed(1);
+  const cityR = (2.6 * Math.max(LS, 0.75)).toFixed(2);
 
   host.appendChild(el("div", { class: "h1", html: s.title }));
   if (s.lead) host.appendChild(el("div", { class: "sub", html: s.lead }));
@@ -52,11 +68,11 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
     { class: "pn-badges force3" },
     el("div", { class: "pn-badge world", dataset: { g: "first" } }, el("b", { text: "첫 지역" }), el("span", { text: "한 곳" })),
     el("div", { class: "pn-badge world", dataset: { g: "lens" } }, el("b", { text: "특징 안경" }), el("span", { text: "써 보기" })),
-    el("div", { class: "pn-badge world", dataset: { g: "all" } }, el("b", { text: "다섯 지역" }), el("span", { text: "모두 배치" })),
+    el("div", { class: "pn-badge world", dataset: { g: "all" } }, el("b", { text: `${koCount(cont.regions.length)} 지역` }), el("span", { text: "모두 배치" })),
   );
   const helper = el("div", {
     class: "helper",
-    html: `${cont.name}는 자연환경과 문화에 따라 <b>${cont.regions.length}개 지역</b>으로 나눠요. 아래 <b>지역 이름표를 끌어서</b>(또는 탭한 뒤 지도를 탭) 알맞은 자리에 붙여 보세요. 막히면 <b>특징 안경</b>!`,
+    html: `${cont.name}${topicJosa(cont.name)} 자연환경과 문화에 따라 <b>${cont.regions.length}개 지역</b>으로 나눠요. 아래 <b>지역 이름표를 끌어서</b>(또는 탭한 뒤 지도를 탭) 알맞은 자리에 붙여 보세요. 막히면 <b>특징 안경</b>!`,
   });
   host.append(goalChips, helper);
 
@@ -137,7 +153,7 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        `${cont.name}의 지역 지도가 완성됐어요! <b>자연환경과 문화</b>가 지역을 나누는 기준이었죠 — 이 다섯 조각이 앞으로 배울 모든 이야기의 무대예요.`;
+        `${cont.name}의 지역 지도가 완성됐어요! <b>자연환경과 문화</b>가 지역을 나누는 기준이었죠 — 이 ${koCount(cont.regions.length)} 조각이 앞으로 배울 모든 이야기의 무대예요.`;
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }
@@ -235,14 +251,14 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
       .map((c) => {
         const cx = lonToX(c.lon).toFixed(1);
         const cy = latToY(c.lat).toFixed(1);
-        return `<circle cx="${cx}" cy="${cy}" r="2.6" fill="#FFFFFF" stroke="${darken(r.color)}" stroke-width="1.6"/>
-          <text x="${cx}" y="${(latToY(c.lat) - 4.4).toFixed(1)}" class="rpl-city">${c.name}</text>`;
+        return `<circle cx="${cx}" cy="${cy}" r="${cityR}" fill="#FFFFFF" stroke="${darken(r.color)}" stroke-width="${(1.6 * Math.max(LS, 0.75)).toFixed(2)}"/>
+          <text x="${cx}" y="${(latToY(c.lat) + (-4.4 + (c.labelDy ?? 0)) * LS).toFixed(1)}" class="rpl-city" style="font-size:${cityFs}px">${c.name}</text>`;
       })
       .join("");
     g.innerHTML = `
       <g class="rpl-regname">
-        <text x="${ax.toFixed(1)}" y="${(ay + 4).toFixed(1)}" class="rpl-name-stroke">${r.name}</text>
-        <text x="${ax.toFixed(1)}" y="${(ay + 4).toFixed(1)}" class="rpl-name" fill="${darken(r.color)}">${r.name}</text>
+        <text x="${ax.toFixed(1)}" y="${(ay + 4 * LS).toFixed(1)}" class="rpl-name-stroke" style="font-size:${nameFs}px">${r.name}</text>
+        <text x="${ax.toFixed(1)}" y="${(ay + 4 * LS).toFixed(1)}" class="rpl-name" fill="${darken(r.color)}" style="font-size:${nameFs}px">${r.name}</text>
       </g>
       ${cityDots}`;
     marks.appendChild(g);

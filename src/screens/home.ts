@@ -16,7 +16,7 @@ import type { Screen } from "../core/router";
 import { gnav, type GnavKey } from "../ui/gnav";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
-const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u6: "body", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice", s1u1: "world", s1u2: "world" };
+const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u6: "body", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice", s1u1: "world", s1u2: "world", s1u3: "world" };
 // 보너스 미니게임은 도전 탭으로 이사(2026-07-12 IA 개편) — 지도는 학습 서사만 남긴다.
 
 // 노드 배치 = 완만한 곡선 중심선 + 발걸음 지그재그(2026-07-14 사용자 지시, 발자국 사진 레퍼런스).
@@ -695,6 +695,7 @@ const UNIT_DECOR: Record<string, { seq: string[]; sky: [string, string] }> = {
   m2u6: { seq: ["coinDeco", "branchDeco", "spinnerDeco", "chanceDeco", "capsuleDeco"], sky: ["sparkle", "cloud"] }, // 중2 Ⅵ: 동전 → 가지 그림 → 원판 → 확률 눈금 → 뽑기 캡슐(세기에서 확률로)
   s1u1: { seq: ["globeDeco", "passportDeco", "planeDeco", "compassRoseDeco", "suitcaseDeco"], sky: ["planeDeco", "cloud"] }, // 사회 Ⅰ: 지구본 → 여권 → 비행기 → 나침반 → 캐리어(세계 여행을 떠나는 준비물 순)
   s1u2: { seq: ["asiaMountDeco", "asiaRiceDeco", "asiaCamelDeco", "asiaLanternDeco", "asiaDhowDeco"], sky: ["planeDeco", "cloud"] }, // 사회 Ⅱ: 설산 → 벼논 → 낙타 → 홍등 → 돛단배(아시아 대륙 횡단 여행 순)
+  s1u3: { seq: ["euroAlpsDeco", "euroBrollyDeco", "euroOliveDeco", "euroTramDeco", "euroStarsDeco"], sky: ["planeDeco", "cloud"] }, // 사회 Ⅲ: 알프스 → 비 우산 → 올리브 → 트램 → 별 깃발(유럽 종단 여행 순)
 };
 const DEFAULT_DECOR: { seq: string[]; sky: [string, string] } = {
   seq: ["tree1", "tree2", "bush", "rock", "grassTuft"],

@@ -64,6 +64,10 @@ import {
   renderAsianGames, renderMonsoonRain, renderTempleTrip, renderHalalMark,
   renderTrainRide, renderEmptyClass, renderMadeIn, renderFanchant,
 } from "./hookSoc2";
+import {
+  renderDawnSoccer, renderPeakHike, renderFrozenRiver, renderCityFeed,
+  renderSkiSlope, renderTrainBorder, renderFourShirts,
+} from "./hookSoc3";
 import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -107,7 +111,8 @@ interface HookStep {
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
     | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
     | "threecities" | "stilthouse" | "skyroute" | "avocado" | "maasai" | "ilovenyc"
-    | "asiangames" | "monsoonrain" | "templetrip" | "halalmark" | "trainride" | "emptyclass" | "madein" | "fanchant";
+    | "asiangames" | "monsoonrain" | "templetrip" | "halalmark" | "trainride" | "emptyclass" | "madein" | "fanchant"
+    | "dawnsoccer" | "peakhike" | "frozenriver" | "cityfeed" | "skislope" | "trainborder" | "fourshirts";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
 }
@@ -245,6 +250,13 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "emptyclass") sceneCleanup = renderEmptyClass(scene, helper, s, finish, face);
   else if (s.scene === "madein") sceneCleanup = renderMadeIn(scene, helper, s, finish, face);
   else if (s.scene === "fanchant") sceneCleanup = renderFanchant(scene, helper, s, finish, face);
+  else if (s.scene === "dawnsoccer") sceneCleanup = renderDawnSoccer(scene, helper, s, finish, face);
+  else if (s.scene === "peakhike") sceneCleanup = renderPeakHike(scene, helper, s, finish, face);
+  else if (s.scene === "frozenriver") sceneCleanup = renderFrozenRiver(scene, helper, s, finish, face);
+  else if (s.scene === "cityfeed") sceneCleanup = renderCityFeed(scene, helper, s, finish, face);
+  else if (s.scene === "skislope") sceneCleanup = renderSkiSlope(scene, helper, s, finish, face);
+  else if (s.scene === "trainborder") sceneCleanup = renderTrainBorder(scene, helper, s, finish, face);
+  else if (s.scene === "fourshirts") sceneCleanup = renderFourShirts(scene, helper, s, finish, face);
   else sceneCleanup = renderEgg(scene, helper, s, finish, api, face);
 
   api.setCTA("스틱맨 쌤과 먼저 관찰해요", { enabled: false });

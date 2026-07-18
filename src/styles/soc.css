@@ -614,3 +614,23 @@
   0% { transform: translateX(26px); opacity: .4; }
   100% { transform: translateX(0); opacity: 1; }
 }
+
+/* ---------- 사회 Ⅲ 훅 장면(hs3-) — hs2 문법 계승 ---------- */
+.hs3-dawn, .hs3-peak, .hs3-river, .hs3-feed, .hs3-slope, .hs3-train, .hs3-shirts {
+  position: relative; margin: 4px auto 0; max-width: 320px;
+  -webkit-tap-highlight-color: transparent;
+}
+.hs3-dawn, .hs3-feed, .hs3-shirts { cursor: pointer; }
+.hs3-dawn svg, .hs3-peak svg, .hs3-river svg, .hs3-feed svg, .hs3-slope svg, .hs3-train svg, .hs3-shirts svg { display: block; width: 100%; }
+.hs3-dawn.flip, .hs3-peak.flip, .hs3-river.flip, .hs3-feed.flip, .hs3-slope.flip, .hs3-train.flip, .hs3-shirts.flip { animation: hs2In .4s var(--ease-out); }
+.hs3-flipbtn {
+  appearance: none; font-family: inherit; cursor: pointer;
+  display: block; margin: 10px auto 0; padding: 10px 18px; border-radius: var(--r-pill);
+  background: var(--grad-card); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 13px; font-weight: 800; color: var(--ink); letter-spacing: -.012em;
+  transition: transform .12s var(--ease), opacity .2s;
+}
+.hs3-flipbtn:active { transform: scale(.96); }
+.hs3-flipbtn:disabled, .hs3-flipbtn.done { opacity: .4; cursor: default; }
+.hs3-shirt-on { animation: hs2Pop .45s var(--spring-bounce) backwards; transform-box: fill-box; transform-origin: center; }
+.hs3-trainbody { transition: transform .5s var(--ease-out); }

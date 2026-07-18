@@ -10,6 +10,8 @@ export interface ContinentCity {
   name: string;
   lon: number;
   lat: number;
+  /** 도시 라벨 세로 오프셋(svg px, 라벨 스케일 곱해 적용) — 이웃 도시와 겹칠 때 도트 아래로 내린다(+). */
+  labelDy?: number;
 }
 
 export interface ContinentRegion {
@@ -114,6 +116,29 @@ const ICON = {
     <path d="M4 20q0-5 3-6 1-4 4-4t4 4q3 1 3 6h-2.4l-.6-4-1.6 4h-1.6l-.4-3.6L10 20H8.2l-.6-4-1.2 4z" fill="#C2843A"/>
     <path d="M17.6 13q2.2-.4 2.6-3 .8-.4 1-1.6-1.2-.6-2 .2-1.6.2-2 2" stroke="#A06828" stroke-width="1.8" stroke-linecap="round" fill="none"/>
     <path d="M9 10q1.4-1.6 3-1.6 1.6 0 3 1.6" stroke="#A06828" stroke-width="1.6"/>
+  </svg>`,
+  factory: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M4 20v-8l5 3v-3l5 3v-3l6 3.6V20z" fill="#8A5A5A" stroke="#6E4444" stroke-width="1.4" stroke-linejoin="round"/>
+    <rect x="5.5" y="6" width="3.2" height="6.5" rx="0.8" fill="#A06060"/>
+    <path d="M6 5q-.6-2 1.1-2.6M8.4 4.6q2-.9 3 .8" stroke="#B8C4D2" stroke-width="1.7" stroke-linecap="round"/>
+    <rect x="12.5" y="16" width="2.2" height="2.2" rx="0.5" fill="#F2D998"/>
+    <rect x="16.6" y="16.4" width="2.2" height="2.2" rx="0.5" fill="#F2D998"/>
+  </svg>`,
+  hearthome: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M4 11 12 4l8 7v9H4z" fill="#E8EEF6" stroke="#5A7896" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M12 17.6q-3.6-2.3-3.6-4.4 0-1.7 1.7-1.7 1.2 0 1.9 1.1.7-1.1 1.9-1.1 1.7 0 1.7 1.7 0 2.1-3.6 4.4z" fill="#E2574C"/>
+  </svg>`,
+  sunwave: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <circle cx="12" cy="10" r="4.2" fill="#F2C24E"/>
+    <path d="M12 2.6v2M4.9 5.5l1.5 1.4M19.1 5.5l-1.5 1.4M2.6 11.4h2.2M19.2 11.4h2.2" stroke="#E8A104" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M3 18q2.2-2.2 4.5 0t4.5 0q2.2-2.2 4.5 0t4.5 0" stroke="#3F8FC8" stroke-width="2" stroke-linecap="round"/>
+    <path d="M5 21q2.2-2.2 4.5 0t4.5 0q2.2-2.2 4.5 0" stroke="#6FB2DE" stroke-width="2" stroke-linecap="round"/>
+  </svg>`,
+  sprout: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M3 19h18" stroke="#8A6A3E" stroke-width="2" stroke-linecap="round"/>
+    <path d="M12 19v-7" stroke="#4E8A2E" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M12 12q-.6-4.4-5-4.8 0 4.6 5 4.8zM12 10q.4-4 4.6-4.4 .2 4.2-4.6 4.4z" fill="#6FB24E"/>
+    <path d="M6 19q0-2.4 1.6-2.4T9.2 19M15 19q0-2.4 1.6-2.4T18.2 19" stroke="#C2A54E" stroke-width="1.6" stroke-linecap="round"/>
   </svg>`,
 };
 
@@ -239,4 +264,109 @@ const ASIA: ContinentDef = {
   },
 };
 
-export const CONTINENTS: Record<string, ContinentDef> = { asia: ASIA };
+/* ---------- 유럽(사회 Ⅲ) — 네 지역 ---------- */
+// 지역 구분·대표 도시는 미래엔 판서 표(비상 필기 노트와 일치): 서부(근대화·산업화 주도) ·
+// 북부(사회 복지 제도) · 남부(연중 따뜻한 기후) · 동부(러시아·새로운 시장).
+// 러시아 경계: 두 교과서 모두 러시아(모스크바)를 동부 유럽에 포함 — 동부 폴리곤을 우랄(60°E)
+// 서쪽까지 덮고, 우랄 너머·튀르키예·캅카스는 outsideMsg 분기(아시아 안내)로 처리한다.
+// 덴마크는 북부, 발트 3국은 동부 폴리곤에 두되(교과서 미명시 — 러프 경계 재량) 스냅이 흡수.
+const EUROPE: ContinentDef = {
+  id: "europe",
+  name: "유럽",
+  // lon -25~62.9 · lat 72~33.1 크롭 — 아이슬란드(북부 관광 도시 레이캬비크)까지 포함,
+  // 지중해 남안(북아프리카)·아나톨리아(튀르키예) 가장자리는 outsideMsg 안내용으로 남긴다.
+  crop: { x: 430, y: 50, w: 244, h: 108 },
+  regions: [
+    {
+      id: "west",
+      name: "서부 유럽",
+      color: "#E2574C",
+      poly: [
+        [-11, 50.5], [-11, 55.8], [-5, 59], [1.5, 58.8], [2, 55.5], [5.5, 55], [9, 55],
+        [15, 54.5], [14.5, 51.5], [12, 50], [13.5, 48.8], [16.9, 48.6], [17, 46.6],
+        [13, 45.8], [9, 45.6], [6.5, 45.8], [6.8, 44], [7.5, 43.6], [3, 42.2],
+        [-2, 43.2], [-5, 48], [-6, 49.5],
+      ],
+      anchor: [0.8, 45.2],
+      cities: [
+        { name: "런던", lon: -0.13, lat: 51.51 },
+        { name: "파리", lon: 2.35, lat: 48.86 },
+        { name: "베를린", lon: 13.41, lat: 52.52 },
+      ],
+      hintIcon: ICON.factory,
+      hint: "세계의 근대화와 산업화를 이끈 지역이에요.",
+      success: "서부 유럽 완성! 근대화와 산업화를 이끈 심장 — 런던·파리·베를린이 그 무대예요.",
+      trait: "세계의 근대화와 산업화를 이끈",
+    },
+    {
+      id: "north",
+      name: "북부 유럽",
+      color: "#3F8FC8",
+      poly: [
+        [-25, 62.5], [-25, 67.5], [-16, 68], [-8, 66], [10, 71.5], [26, 71.5], [31.5, 70],
+        [31, 66], [30, 61], [26, 60], [22, 59], [17, 58.5], [12.5, 57], [13, 54.6],
+        [10.5, 54.5], [8, 55], [7.5, 57.5], [4.8, 58], [-2, 62],
+      ],
+      anchor: [17, 66.2],
+      cities: [
+        { name: "오슬로", lon: 10.75, lat: 59.91 },
+        { name: "스톡홀름", lon: 18.07, lat: 59.33, labelDy: 14 },
+        { name: "헬싱키", lon: 24.94, lat: 60.17 },
+      ],
+      hintIcon: ICON.hearthome,
+      hint: "사회 복지 제도가 잘 갖춰진 지역이에요.",
+      success: "북부 유럽 완성! 복지 제도가 잘 갖춰진 나라들 — 수도는 온화한 남부 해안을 따라 모여 있어요.",
+      trait: "사회 복지 제도가 잘 갖춰진",
+    },
+    {
+      id: "south",
+      name: "남부 유럽",
+      color: "#F2A72E",
+      poly: [
+        [-10, 36.8], [-9.5, 43], [-2, 43.2], [3, 42.2], [7.5, 43.6], [6.8, 44], [9, 45.6],
+        [13, 45.8], [17, 46.6], [19, 46], [21, 44.8], [26, 43.8], [28.5, 43.6], [28.5, 41.5],
+        [26, 40], [24, 38], [26.5, 36.2], [24, 34.6], [19, 36.5], [15, 36.2], [12, 37.5],
+        [8, 38.5], [-6, 35.8],
+      ],
+      anchor: [-3.8, 39.2],
+      cities: [
+        { name: "바르셀로나", lon: 2.17, lat: 41.38 },
+        { name: "로마", lon: 12.5, lat: 41.9 },
+      ],
+      hintIcon: ICON.sunwave,
+      hint: "연중 따뜻한 기후 — 지중해와 맞닿은 지역이에요.",
+      success: "남부 유럽 완성! 연중 따뜻한 지중해의 땅 — 로마·바르셀로나가 관광객을 부르죠.",
+      trait: "연중 따뜻한 지중해의",
+    },
+    {
+      id: "east",
+      name: "동부 유럽",
+      color: "#2E9E5B",
+      poly: [
+        [14.2, 54], [19, 54.8], [21, 56], [24, 58.5], [27.5, 59.7], [31, 60.5], [36, 61.5],
+        [44, 62], [50, 63], [56, 63], [60, 62], [60, 55], [59, 50], [55, 48], [50, 46],
+        [48, 44], [44, 43], [40, 43.5], [36.5, 45], [33, 44.3], [30, 45], [28.5, 43.6],
+        [26, 43.8], [21, 44.8], [19, 46], [17, 46.6], [16.9, 48.6], [13.5, 48.8], [12, 50],
+        [14.5, 51.5], [15, 54.5],
+      ],
+      anchor: [33, 50.5],
+      cities: [
+        { name: "모스크바", lon: 37.62, lat: 55.75 },
+        { name: "바르샤바", lon: 21.01, lat: 52.23 },
+        { name: "프라하", lon: 14.42, lat: 50.08, labelDy: 14 },
+      ],
+      hintIcon: ICON.sprout,
+      hint: "가장 넓은 나라 러시아가 있는, 새로운 시장으로 떠오르는 지역이에요.",
+      success: "동부 유럽 완성! 세계에서 가장 넓은 러시아, 그리고 새 시장으로 떠오르는 폴란드·체코의 땅이에요.",
+      trait: "새로운 시장으로 떠오르는",
+    },
+  ],
+  outsideMsg: (lon, lat) => {
+    if (lon > 58 && lat > 44) return "여긴 우랄산맥 너머 — 아시아(시베리아)로 넘어갔어요. 유럽은 서쪽!";
+    if (lat < 37.5 && lon < 20) return "바다 건너 여긴 아프리카 — 유럽으로 돌아와요!";
+    if (lon > 25 && lat < 42.5) return "여긴 튀르키예 부근 — 두 대륙에 걸친 땅으로, 보통 아시아로 다뤄요. 유럽은 북서쪽!";
+    return "네 지역의 경계 어디쯤이네요 — 지역 한가운데를 노려 봐요!";
+  },
+};
+
+export const CONTINENTS: Record<string, ContinentDef> = { asia: ASIA, europe: EUROPE };

@@ -225,6 +225,7 @@ import { tableLinkLab } from "./steps/tableLinkLab";
 import { regionPlaceLab } from "./steps/regionPlaceLab";
 import { monsoonLab } from "./steps/monsoonLab";
 import { pyramidLab } from "./steps/pyramidLab";
+import { westWindLab } from "./steps/westWindLab";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -446,6 +447,7 @@ const R: Record<string, StepRenderer> = {
   regionPlaceLab,
   monsoonLab,
   pyramidLab,
+  westWindLab,
   quiz,
   table,
   order,
