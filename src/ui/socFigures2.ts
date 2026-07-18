@@ -22,18 +22,24 @@ function rng(seed: number): () => number {
   };
 }
 
-function mapShell(inner: string, opts?: { h?: number; legend?: string; aria?: string }): string {
+function mapShell(inner: string, opts?: { h?: number; legend?: string; aria?: string; pad?: number }): string {
   const legendH = opts?.legend ? 40 : 0;
-  return `<svg viewBox="${CROP.x} ${CROP.y - 6} ${CROP.w} ${CROP.h + 10 + legendH}" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="${opts?.aria ?? "아시아 지도"}">
+  // pad — 크롭을 사방으로 넓혀 가장자리 요소(조산대 남단·카스피해 서안)에 여백을 준다(지형도 전용).
+  const p = opts?.pad ?? 0;
+  const vx = CROP.x - p;
+  const vy = CROP.y - 6 - p;
+  const vw = CROP.w + p * 2;
+  const vh = CROP.h + 10 + p * 2;
+  return `<svg viewBox="${vx} ${vy} ${vw} ${vh + legendH}" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="${opts?.aria ?? "아시아 지도"}">
     <defs>
       <clipPath id="s2-lclip"><path d="${WORLD_LAND_PATH}" fill-rule="evenodd"/></clipPath>
       <radialGradient id="s2-sea" cx=".5" cy=".4" r=".95">
         <stop offset="0" stop-color="#D9EDF8"/><stop offset="1" stop-color="#BCDCEF"/>
       </radialGradient>
     </defs>
-    <rect x="${CROP.x}" y="${CROP.y - 6}" width="${CROP.w}" height="${CROP.h + 10}" rx="12" fill="url(#s2-sea)"/>
-    <line x1="${CROP.x}" y1="250" x2="${CROP.x + CROP.w}" y2="250" stroke="#7FA8C8" stroke-width="1" opacity=".55"/>
-    <text x="${CROP.x + 5}" y="246" font-size="10" font-weight="700" fill="#5A7A96">적도</text>
+    <rect x="${vx}" y="${vy}" width="${vw}" height="${vh}" rx="12" fill="url(#s2-sea)"/>
+    <line x1="${vx}" y1="250" x2="${vx + vw}" y2="250" stroke="#7FA8C8" stroke-width="1" opacity=".55"/>
+    <text x="${vx + 5}" y="246" font-size="10" font-weight="700" fill="#5A7A96">적도</text>
     <path d="${WORLD_LAND_PATH}" fill="#F2ECDE" fill-rule="evenodd"/>
     ${inner}
     <path d="${WORLD_LAND_PATH}" stroke="rgba(74,88,110,.5)" stroke-width=".7" fill="none" fill-rule="evenodd"/>
@@ -78,7 +84,9 @@ export function asiaRegionsFig(opts?: { labels?: boolean; letters?: { lon: numbe
 
 /* ---------- L2: 지형 지도(hotspot 배경·pad0) ---------- */
 export function asiaTerrainFig(): string {
-  // 지형 소품 — 좌표는 hotspot 스팟과 함께 검산(spot % = (x-CROP.x)/CROP.w).
+  // 지형 소품은 전부 lon/lat → lonToX/latToY로 그린다(지리적 진실). pad 12로 사방을 넓혀
+  // 가장자리 요소(조산대 남단·카스피해)에 여백 확보 — 뷰박스 "557 76 372 224".
+  // hotspot 스팟 % 검산 공식(pad0): x% = (svgX−557)/372·100, y% = (svgY−76)/224·100 (눈대중 금지).
   const mtn = (lon: number, lat: number, s: number): string => {
     const x = lonToX(lon);
     const y = latToY(lat);
@@ -111,7 +119,7 @@ export function asiaTerrainFig(): string {
     ${volcano(138.5, 36)}${volcano(121, 13.5)}${volcano(110, -7.5)}
     <ellipse cx="${lonToX(50.5)}" cy="${latToY(41.5)}" rx="9" ry="16" fill="#9CCBE8" stroke="#5A94BE" stroke-width=".8" opacity=".95" transform="rotate(-12 ${lonToX(50.5)} ${latToY(41.5)})"/>
   `;
-  return mapShell(inner, { aria: "아시아의 주요 지형 지도 — 산맥, 고원, 사막, 강, 화산대" });
+  return mapShell(inner, { pad: 12, aria: "아시아의 주요 지형 지도 — 산맥, 고원, 사막, 강, 화산대" });
 }
 
 /* ---------- L2: 아시아 기후 지도(퀴즈) ---------- */
