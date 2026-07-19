@@ -114,14 +114,14 @@ export const zoomLab: StepRenderer = (host, step, api) => {
       dot(t.a.x, t.a.y, INK_O, 3.4) + dot(t.b.x, t.b.y, INK_O, 3.4) + dot(t.c.x, t.c.y, INK_O, 3.4) +
       ptLabel(t.a.x, t.a.y, "A", 0, -10, INK_O) + ptLabel(t.b.x, t.b.y, "B", -10, 13, INK_O) +
       ptLabel(t.c.x, t.c.y, "C", 10, 13, INK_O) +
-      `<text x="${ORG.x + 30}" y="257" text-anchor="middle" font-size="10" font-weight="800" fill="#64748B">원본</text>`;
+      `<text x="${ORG.x + 30}" y="256" text-anchor="middle" font-size="12" font-weight="800" fill="#64748B">원본</text>`;
   }
 
   function paintGhost(t: number): void {
     const g = tri(TGT, t, t);
     gGhost.innerHTML =
       `<path d="${triPath(g)}" fill="${INK_C}" fill-opacity=".05" stroke="${INK_C}" stroke-width="2" stroke-dasharray="7 5" opacity=".55" stroke-linejoin="round"/>` +
-      `<text x="${n1(TGT.x + (SHP.base * t) / 2)}" y="257" text-anchor="middle" font-size="10" font-weight="800" fill="${INK_C}" opacity=".7">목표</text>`;
+      `<text x="${n1(TGT.x + (SHP.base * t) / 2)}" y="256" text-anchor="middle" font-size="12" font-weight="800" fill="${INK_C}" opacity=".7">목표</text>`;
   }
 
   function paintCopy(kx: number, ky: number): void {

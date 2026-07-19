@@ -420,18 +420,18 @@ const LAB = {
       const dx = (t % 3) * 6 - 6;
       await svgTap(110 + dx, 131, 500);
       await svgTap(230 + dx, 131, 700);
-    }, 6, "mpl-link");
+    }, 6, "mdp-link");
     await untilChip("morph", async () => {
       await labDrag([[170, 44], [235, 92]], 900);
       await labDrag([[235, 92], [130, 58]], 900);
       await labDrag([[130, 58], [170, 44]], 900);
-    }, 5, "mpl-morph");
+    }, 5, "mdp-morph");
     await untilChip("quad", async () => {
       for (const [x, y] of [[165, 62], [284, 122], [193, 216], [74, 156]]) await svgTap(x, y, 560);
       await labDrag([[296, 200], [246, 172]], 900);
       await labDrag([[246, 172], [296, 200]], 900);
       await clickBtnIf("대각선", 1600);
-    }, 6, "mpl-quad");
+    }, 6, "mdp-quad");
     await clickCTA();
   },
 

@@ -6,7 +6,10 @@
 // ③ 함정: 변 비 2개 + 끼인각 아닌 각(∠C) → SSA 두 해가 모두 살아남는 확정 실패 연출 →
 //    판정 mq6 → CA 비를 마저 열어 변 비 3개로 확정(칩 trap) → recordQuiz + CTA.
 // SSS·SAS·AA 명칭은 다음 concept 몫이라 이 랩에서 금지("변 비 3개/변 비 2개와 끼인각/
-// 각 2개"로만 서술, '닮음'은 L1 기왕이라 허용). 후보 기하는 전부 생성기 계산(눈대중 금지):
+// 각 2개"로만 서술, '닮음'은 L1 기왕이라 허용). 길이 카드는 "1:2"가 아니라 "2배"로 표기
+// (원본 대비임이 표기 자체로 읽혀야 — 2026-07-20 실사용 피드백, 그림 마크는 ×2 흰 할로,
+// 비 1:2 표기는 CA 해금 대사에서 "원본 : 제작 = 1 : 2"로 한 번 다리를 놓는다).
+// 후보 기하는 전부 생성기 계산(눈대중 금지):
 // 밑각 쌍(triBase)·SAS(triSAS)·SSA 두 해(triSSA — 국면 ③의 "정보 3개인데 2모양"이
 // 수학적으로 진짜인 모호한 경우 그 자체다).
 // rAF 금지: CSS 트랜지션/키프레임 + setTimeout 체인(타이머 Set → cleanup). CSS: math2.css .slk-*.
@@ -110,9 +113,9 @@ function phase1(): PhaseCfg {
     cards: [
       { id: "angB", label: "∠B", value: "40°", state: "ready", kills: [2, 3] },
       { id: "angC", label: "∠C", value: "65°", state: "ready", kills: [1, 3] },
-      { id: "ab", label: "AB 비", value: "?", state: "none", kills: [] },
-      { id: "bc", label: "BC 비", value: "?", state: "none", kills: [] },
-      { id: "ca", label: "CA 비", value: "?", state: "none", kills: [] },
+      { id: "ab", label: "AB", value: "?", state: "none", kills: [] },
+      { id: "bc", label: "BC", value: "?", state: "none", kills: [] },
+      { id: "ca", label: "CA", value: "?", state: "none", kills: [] },
     ],
   };
 }
@@ -120,7 +123,7 @@ function phase1(): PhaseCfg {
 function phase2(): PhaseCfg {
   return {
     tag: "의뢰 ②",
-    brief: "이번 의뢰는 <b>2배 확대 제작</b>이에요. 길이 정보 카드 2장부터 열어 보세요!",
+    brief: "이번 의뢰는 <b>2배 확대 제작</b>이에요. 카드의 <b>2배</b>는 원본 변을 2배로 만들라는 뜻! 길이 카드 2장부터 열어 보세요.",
     req: triSAS({ x: 26, y: 198 }, 56, 55, 66),
     cands: [
       { pts: triSAS({ x: 166, y: 206 }, 112, 55, 132), rot: -4, fill: FILLS[2] },
@@ -131,9 +134,9 @@ function phase2(): PhaseCfg {
     cards: [
       { id: "angB", label: "∠B", value: "55°", state: "locked", kills: [1] },
       { id: "angC", label: "∠C", value: "?", state: "none", kills: [] },
-      { id: "ab", label: "AB 비", value: "1:2", state: "ready", kills: [3] },
-      { id: "bc", label: "BC 비", value: "1:2", state: "ready", kills: [2] },
-      { id: "ca", label: "CA 비", value: "?", state: "none", kills: [] },
+      { id: "ab", label: "AB", value: "2배", state: "ready", kills: [3] },
+      { id: "bc", label: "BC", value: "2배", state: "ready", kills: [2] },
+      { id: "ca", label: "CA", value: "?", state: "none", kills: [] },
     ],
   };
 }
@@ -152,9 +155,9 @@ function phase3(): PhaseCfg {
     cards: [
       { id: "angB", label: "∠B", value: "?", state: "none", kills: [] },
       { id: "angC", label: "∠C", value: "38°", state: "locked", kills: [] },
-      { id: "ab", label: "AB 비", value: "1:2", state: "ready", kills: [3] },
-      { id: "bc", label: "BC 비", value: "1:2", state: "ready", kills: [2] },
-      { id: "ca", label: "CA 비", value: "?", state: "none", kills: [1] },
+      { id: "ab", label: "AB", value: "2배", state: "ready", kills: [3] },
+      { id: "bc", label: "BC", value: "2배", state: "ready", kills: [2] },
+      { id: "ca", label: "CA", value: "?", state: "none", kills: [1] },
     ],
   };
 }
@@ -222,15 +225,15 @@ export const shapeLockLab: StepRenderer = (host, step, api) => {
   function paintReq(): void {
     const [A, B, C] = cur.req;
     gReq.innerHTML =
-      `<text x="18" y="22" font-size="11.5" font-weight="900" fill="${SIM}">${cur.tag}</text>` +
+      `<text x="18" y="24" font-size="13" font-weight="900" fill="${SIM}">${cur.tag}</text>` +
       `<path d="M${A.x.toFixed(1)} ${A.y.toFixed(1)} L${B.x.toFixed(1)} ${B.y.toFixed(1)} L${C.x.toFixed(1)} ${C.y.toFixed(1)} Z" fill="rgba(194,37,92,.06)"/>` +
       lineSvg(A.x, A.y, B.x, B.y, C_AB, 2.6) +
       lineSvg(B.x, B.y, C.x, C.y, C_BC, 2.6) +
       lineSvg(C.x, C.y, A.x, A.y, C_CA, 2.6) +
       dot(A.x, A.y, GEO.ink, 3) + dot(B.x, B.y, GEO.ink, 3) + dot(C.x, C.y, GEO.ink, 3) +
       ptLabel(A.x, A.y, "A", 0, -9) + ptLabel(B.x, B.y, "B", -10, 13) + ptLabel(C.x, C.y, "C", 10, 13) +
-      `<text x="${((B.x + C.x) / 2).toFixed(1)}" y="232" text-anchor="middle" font-size="9.5" font-weight="700" fill="${GEO.soft}">의뢰서 원본</text>` +
-      `<text x="245" y="244" text-anchor="middle" font-size="9.5" font-weight="700" fill="${GEO.soft}">후보 실루엣</text>`;
+      `<text x="${((B.x + C.x) / 2).toFixed(1)}" y="233" text-anchor="middle" font-size="12" font-weight="700" fill="${GEO.soft}">의뢰서 원본</text>` +
+      `<text x="245" y="246" text-anchor="middle" font-size="12" font-weight="700" fill="${GEO.soft}">후보 실루엣</text>`;
   }
 
   function paintCands(): void {
@@ -258,32 +261,35 @@ export const shapeLockLab: StepRenderer = (host, step, api) => {
     });
   }
 
-  /** 카드가 준 정보를 의뢰 삼각형 위에 하이라이트(각 호·변 할로). */
-  function paintGiven(id: CardId, value: string): void {
+  /** 카드가 준 정보를 의뢰 삼각형 위에 하이라이트(각 호·변 할로).
+   *  길이 카드는 "×2" 마크(원본 변을 2배로 만들라는 주문 — "1:2" 단독 표기는 무엇 대 무엇인지
+   *  안 읽히던 실사용 피드백)를 흰 할로로 얹는다. */
+  function paintGiven(id: CardId): void {
     const [A, B, C] = cur.req;
+    const cd = cur.cards.find((c) => c.id === id)!;
     if (id === "angB") {
       gMarks.insertAdjacentHTML(
         "beforeend",
-        angleArc(B.x, B.y, 13, 0, angleOf(B.x, B.y, A.x, A.y), C_ANGB, value, { labelR: 26, fontSize: 9.5, fill: true }),
+        angleArc(B.x, B.y, 13, 0, angleOf(B.x, B.y, A.x, A.y), C_ANGB, cd.value, { labelR: 28, fontSize: 11.5, fill: true }),
       );
     } else if (id === "angC") {
       gMarks.insertAdjacentHTML(
         "beforeend",
-        angleArc(C.x, C.y, 13, angleOf(C.x, C.y, A.x, A.y), 180, C_ANGC, value, { labelR: 26, fontSize: 9.5, fill: true }),
+        angleArc(C.x, C.y, 13, angleOf(C.x, C.y, A.x, A.y), 180, C_ANGC, cd.value, { labelR: 28, fontSize: 11.5, fill: true }),
       );
     } else {
       const seg: [Pt, Pt, string, string, number, number] =
         id === "ab"
-          ? [A, B, C_AB, "rgba(232,84,126,.24)", -15, -2]
+          ? [A, B, C_AB, "rgba(232,84,126,.24)", -17, -2]
           : id === "bc"
-            ? [B, C, C_BC, "rgba(13,165,198,.22)", 0, 15]
-            : [C, A, C_CA, "rgba(240,140,0,.22)", 15, -2];
+            ? [B, C, C_BC, "rgba(13,165,198,.22)", 0, 17]
+            : [C, A, C_CA, "rgba(240,140,0,.22)", 17, -2];
       const [P, Q, color, halo, dx, dy] = seg;
       const mid = { x: (P.x + Q.x) / 2, y: (P.y + Q.y) / 2 };
       gMarks.insertAdjacentHTML(
         "beforeend",
         lineSvg(P.x, P.y, Q.x, Q.y, halo, 9) +
-          `<text x="${(mid.x + dx).toFixed(1)}" y="${(mid.y + dy).toFixed(1)}" text-anchor="middle" font-size="9.5" font-weight="900" fill="${color}">${value}</text>`,
+          `<text x="${(mid.x + dx).toFixed(1)}" y="${(mid.y + dy).toFixed(1)}" text-anchor="middle" font-size="12.5" font-weight="900" fill="${color}" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">×2</text>`,
       );
     }
   }
@@ -342,9 +348,9 @@ export const shapeLockLab: StepRenderer = (host, step, api) => {
     const bx = Math.min(Math.max(apex.x, 100), 270);
     const by = Math.max(apex.y - 20, 16);
     gBadge.innerHTML =
-      `<g class="slk-pill" style="transform-origin:${bx}px ${by + 10}px">` +
-      `<rect x="${bx - 43}" y="${by}" width="86" height="20" rx="10" fill="#FFFFFF" stroke="#04B45F" stroke-width="1.8"/>` +
-      `<text x="${bx}" y="${by + 14}" text-anchor="middle" font-size="11" font-weight="900" fill="#1E7A31">모양 확정!</text>` +
+      `<g class="slk-pill" style="transform-origin:${bx}px ${by + 11}px">` +
+      `<rect x="${bx - 49}" y="${by}" width="98" height="22" rx="11" fill="#FFFFFF" stroke="#04B45F" stroke-width="1.8"/>` +
+      `<text x="${bx}" y="${by + 15.5}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#1E7A31">모양 확정!</text>` +
       `</g>`;
     counter.innerHTML = `남은 후보 모양 <b>1</b>개, 확정!`;
     haptic(HAPTIC.correct);
@@ -378,7 +384,7 @@ export const shapeLockLab: StepRenderer = (host, step, api) => {
     b.classList.remove("pulse");
     b.classList.add("on");
     haptic(HAPTIC.select);
-    paintGiven(cd.id, cd.value);
+    paintGiven(cd.id);
     const killed = cd.kills.filter((k) => alive.has(k));
     for (const k of killed) killCand(k);
     if (killed.length) later(updateCount, 420);
@@ -406,7 +412,7 @@ export const shapeLockLab: StepRenderer = (host, step, api) => {
           helper.innerHTML = "변 비 2개로는 아직 두 모양이에요. <b>두 변 사이에 낀 ∠B 카드</b>가 열렸어요!";
           unlockCard("angB");
         } else {
-          toast(`${cd.label.slice(0, 2)} 길이가 2배가 아닌 후보 탈락! ${alive.size}개 남았어요.`);
+          toast(`${cd.label} 길이가 원본의 2배가 아닌 후보 탈락! ${alive.size}개 남았어요.`);
         }
       } else if (id === "angB") {
         busy = true;
@@ -427,7 +433,7 @@ export const shapeLockLab: StepRenderer = (host, step, api) => {
         helper.innerHTML = "온 각은 <b>∠C</b>, 그런데 ∠C는 AB와 BC <b>사이에 낀 각이 아니에요</b>. 과연 잠길까요?";
         unlockCard("angC");
       } else {
-        toast(`${cd.label.slice(0, 2)} 길이가 2배가 아닌 후보 탈락! ${alive.size}개 남았어요.`);
+        toast(`${cd.label} 길이가 원본의 2배가 아닌 후보 탈락! ${alive.size}개 남았어요.`);
       }
     } else if (id === "angC") {
       busy = true;
@@ -477,9 +483,9 @@ export const shapeLockLab: StepRenderer = (host, step, api) => {
     }, 500);
     later(() => {
       gBadge.innerHTML =
-        `<g class="slk-pill" style="transform-origin:245px 91px">` +
-        `<rect x="150" y="78" width="184" height="26" rx="13" fill="#FFFFFF" stroke="${SIM}" stroke-width="1.8"/>` +
-        `<text x="242" y="95" text-anchor="middle" font-size="11.5" font-weight="900" fill="${SIM}">크기는 여러 개, 모양은 하나!</text>` +
+        `<g class="slk-pill" style="transform-origin:238px 90px">` +
+        `<rect x="140" y="76" width="196" height="28" rx="14" fill="#FFFFFF" stroke="${SIM}" stroke-width="1.8"/>` +
+        `<text x="238" y="95" text-anchor="middle" font-size="12.5" font-weight="900" fill="${SIM}">크기는 여러 개, 모양은 하나!</text>` +
         `</g>`;
       counter.innerHTML = `모양 <b>1</b>가지 · 크기 <b>무한</b>`;
       toast("각 2개만 맞으면 크기가 달라도 전부 서로 닮음! 모양이 잠겨요.");
@@ -530,8 +536,9 @@ export const shapeLockLab: StepRenderer = (host, step, api) => {
           qline.innerHTML = "";
           clear(ctl);
           busy = false;
-          helper.innerHTML = "의뢰인에게 물어 <b>CA의 비</b>를 받아냈어요! 마지막 카드를 열어 변 비 3개로 확정해요.";
-          unlockCard("ca", "1:2");
+          helper.innerHTML =
+            "의뢰인에게 물어 <b>CA도 원본의 2배</b>임을 받아냈어요! 세 변 모두 원본 : 제작 = 1 : 2, 마지막 카드를 열어 변 비 3개로 확정해요.";
+          unlockCard("ca", "2배");
         }, 2600);
       });
       btns.push({ bt, good: it.good });

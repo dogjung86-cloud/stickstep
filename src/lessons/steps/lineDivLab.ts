@@ -177,7 +177,7 @@ export const lineDivLab: StepRenderer = (host, step, api) => {
     for (let k = 0; k < lines.length; k++) {
       sv +=
         `<line x1="44" y1="${lines[k]}" x2="326" y2="${lines[k]}" stroke="#A9C7E8" stroke-width="1.8"/>` +
-        `<text x="24" y="${lines[k] + 4}" text-anchor="middle" font-size="10" font-weight="800" fill="#9AA8BC">${k + 1}</text>`;
+        `<text x="24" y="${lines[k] + 4}" text-anchor="middle" font-size="12" font-weight="800" fill="#9AA8BC">${k + 1}</text>`;
     }
     gPaper.innerHTML = sv;
   }

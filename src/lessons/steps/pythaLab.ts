@@ -173,10 +173,10 @@ export const pythaLab: StepRenderer = (host, step, api) => {
         `<path d="M210 30 L290 30 L290 90 Z" fill="#41566E" opacity=".16"/>` +
         `<path d="M290 90 L290 170 L230 170 Z" fill="#41566E" opacity=".16"/>` +
         `<path d="M150 110 L230 170 L150 170 Z" fill="#41566E" opacity=".16"/>` +
-        `<text x="196" y="56" font-size="11" font-weight="800" fill="#41566E">6</text>` +
-        `<text x="266" y="52" font-size="11" font-weight="800" fill="#41566E">6</text>` +
-        `<text x="268" y="152" font-size="11" font-weight="800" fill="#41566E">6</text>` +
-        `<text x="164" y="152" font-size="11" font-weight="800" fill="#41566E">6</text>`;
+        `<text x="196" y="56" font-size="12.5" font-weight="800" fill="#41566E">6</text>` +
+        `<text x="266" y="52" font-size="12.5" font-weight="800" fill="#41566E">6</text>` +
+        `<text x="268" y="152" font-size="12.5" font-weight="800" fill="#41566E">6</text>` +
+        `<text x="164" y="152" font-size="12.5" font-weight="800" fill="#41566E">6</text>`;
       strip.innerHTML = `<span class="pyl-eq">7×7 − 6×4 = 49 − 24 = <b class="pyl-ro">25</b></span>`;
       haptic(HAPTIC.tap);
     }, 700);
@@ -282,9 +282,18 @@ export const pythaLab: StepRenderer = (host, step, api) => {
     for (let i = 0; i < 4; i++) {
       const p = arranged ? P.B[i] : P.A[i];
       const off = arranged ? FR : FL;
+      // i=0 삼각형은 두 배치 모두 회전 0이라 여기에만 a·b 변 라벨을 단다(글자가 안 돈다).
+      // 스테퍼의 a·b가 도형 어느 변인지 그림에 표기가 없다는 실사용 피드백(2026-07-20).
+      // c는 배치 ①의 c² 구멍 라벨이 담당(별도 c 라벨은 배치 ②에서 이웃 조각 위로 넘어감).
+      const lbl =
+        i === 0
+          ? `<text x="${(a / 2).toFixed(1)}" y="14" text-anchor="middle" font-size="12.5" font-weight="900" font-style="italic" fill="${TRI.edge}">a</text>` +
+            `<text x="12" y="${(b / 2 + 4).toFixed(1)}" text-anchor="middle" font-size="12.5" font-weight="900" font-style="italic" fill="${TRI.edge}">b</text>`
+          : "";
       tris +=
         `<g class="pyl-tri" data-i="${i}" style="transform: translate(${off.x + p.tx}px, ${off.y + p.ty}px); transition: transform .9s var(--ease, cubic-bezier(.22,1,.36,1))">` +
         `<g transform="rotate(${p.rot})"><path d="M0 0 L${a} 0 L0 ${b} Z" fill="${TRI.face}" stroke="${TRI.edge}" stroke-width="2" stroke-linejoin="round"/></g>` +
+        lbl +
         `</g>`;
     }
     svgWrap.innerHTML =
@@ -303,7 +312,7 @@ export const pythaLab: StepRenderer = (host, step, api) => {
     strip.innerHTML = "";
     paintPhase2();
     helper.innerHTML =
-      "같은 크기의 틀 두 개와 <b>똑같은 직각삼각형 4개</b>예요. 지금 왼쪽 틀의 구멍(빈 곳)은 빗변의 정사각형 <b>c²</b>. 삼각형들을 오른쪽 틀로 옮겨 담아 봐요!";
+      "같은 크기의 틀 두 개와 <b>똑같은 직각삼각형 4개</b>예요. 직각을 낀 두 변이 <b>a와 b</b>, 빗변이 <b>c</b>(라벨 참고). 왼쪽 틀의 구멍(빈 곳)은 빗변의 정사각형 <b>c²</b>이죠. 삼각형들을 오른쪽 틀로 옮겨 담아 봐요!";
     const b = el("button", { class: "ct-btn hero", attrs: { type: "button" } }, el("span", { text: "삼각형 옮겨 담기" })) as HTMLButtonElement;
     b.addEventListener("click", () => {
       if (b.disabled) return;

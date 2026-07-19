@@ -2047,25 +2047,25 @@
 .tsl-read.bad { border-color: var(--red); background: #FEF3F4; }
 .tsl-read.bad b, .tsl-read.bad .tsl-eq { color: #E03131; }
 
-/* ---------- midpointLab(.mpl-) 중점 잇기(L7) ---------- */
-.mpl-read {
+/* ---------- midpointLab(.mdp-) 중점 잇기(L7) ---------- */
+.mdp-read {
   margin: 10px auto 0; width: fit-content; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
   justify-content: center; padding: 7px 16px; border-radius: 99px; background: var(--n0);
   border: 1.5px solid var(--n200); box-shadow: var(--sh-card); font-size: 13px; font-weight: 800;
   color: var(--n700); font-variant-numeric: tabular-nums;
 }
-.mpl-read:empty { display: none; }
-.mpl-read b { font-size: 16px; color: #C2255C; }
-.mpl-para {
+.mdp-read:empty { display: none; }
+.mdp-read b { font-size: 16px; color: #C2255C; }
+.mdp-para {
   padding: 2.5px 10px; border-radius: 99px; background: #E7F8F1; color: #067D57;
-  font-size: 11.5px; font-weight: 800; border: 1px solid rgba(18,184,134,.45);
+  font-size: 12px; font-weight: 800; border: 1px solid rgba(18,184,134,.45);
 }
-.mpl-half {
+.mdp-half {
   padding: 2.5px 9px; border-radius: 99px; background: #EDF9F0; color: #1E7A31;
-  font-size: 11.5px; font-weight: 800; border: 1px solid rgba(47,158,68,.4);
+  font-size: 12px; font-weight: 800; border: 1px solid rgba(47,158,68,.4);
 }
-.mpl-seg { animation: m5Pop .45s var(--ease-out); transform-box: fill-box; transform-origin: center; }
-.mpl-badge.pop { animation: m5Pop .45s var(--spring-bounce); transform-box: fill-box; transform-origin: center; }
+.mdp-seg { animation: m5Pop .45s var(--ease-out); transform-box: fill-box; transform-origin: center; }
+.mdp-badge.pop { animation: m5Pop .45s var(--spring-bounce); transform-box: fill-box; transform-origin: center; }
 
 /* ---------- lineDivLab(.ldv-) 공책 줄 등분기(L8) ---------- */
 .ldv-read {
@@ -2123,7 +2123,7 @@
   font-family: inherit; transition: transform .15s var(--ease), border-color .25s, background .25s, opacity .25s;
 }
 .slk-card:active { transform: scale(.94); }
-.slk-card b { font-size: 12px; font-weight: 900; color: #0B7285; }
+.slk-card b { font-size: 12.5px; font-weight: 900; color: #0B7285; }
 .slk-card span { font-size: 13.5px; font-weight: 900; color: var(--n800); font-variant-numeric: tabular-nums; }
 .slk-card.ang { border-color: rgba(240,140,0,.5); background: #FDF6E9; }
 .slk-card.ang b { color: #B26200; }
@@ -2155,13 +2155,13 @@
 
 /* ---------- rightCheckLab(.rck-) 직각 판정소(L11) ---------- */
 .rck-cards { display: flex; justify-content: center; align-items: stretch; gap: 7px; margin: 0 14px 10px; flex-wrap: wrap; }
-.rck-tag { align-self: center; padding: 4px 11px; border-radius: 999px; background: #C2255C; color: #fff; font-size: 11.5px; font-weight: 900; }
+.rck-tag { align-self: center; padding: 4px 11px; border-radius: 999px; background: #C2255C; color: #fff; font-size: 12.5px; font-weight: 900; }
 .rck-card {
   display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 58px;
   padding: 6px 10px; border-radius: 12px; background: #FFFFFF; border: 1.6px solid;
 }
 .rck-card b { font-size: 18px; font-weight: 900; font-variant-numeric: tabular-nums; }
-.rck-card span { font-size: 10px; font-weight: 700; color: var(--n500); }
+.rck-card span { font-size: 11.5px; font-weight: 700; color: var(--n500); }
 .rck-card.ca { border-color: rgba(240,140,0,.5); } .rck-card.ca b { color: #C87414; }
 .rck-card.cb { border-color: rgba(13,165,198,.5); } .rck-card.cb b { color: #0B7285; }
 .rck-card.cc { border-color: rgba(194,37,92,.5); } .rck-card.cc b { color: #C2255C; }
@@ -2169,9 +2169,8 @@
 .rck-arc.show { opacity: .6; }
 .rck-apex { transform-box: view-box; transform: scale(0); transition: transform .45s var(--spring-bounce); }
 .rck-apex.pop { transform: scale(1); }
-.rck-beam { transform-box: view-box; transition: transform .8s var(--spring-soft); }
-.rck-beam.level { animation: rckWeigh .9s var(--ease) both; }
-@keyframes rckWeigh { 0% { transform: rotate(0deg); } 30% { transform: rotate(-2.2deg); } 65% { transform: rotate(1.4deg); } 100% { transform: rotate(0deg); } }
+.rck-cmp { transform-box: fill-box; transform-origin: center; }
+.rck-cmp.pop { animation: m5Pop .5s var(--spring-bounce); }
 .rck-ang { animation: rckFadeUp .4s var(--ease) both; transform-box: view-box; }
 @keyframes rckFadeUp { 0% { opacity: 0; transform: translateY(4px); } 100% { opacity: 1; transform: translateY(0); } }
    Ⅵ 확률 랩 — treeLab(.trl-) 가지 뻗기 · tossLab(.tsl-) 던지기 실험실

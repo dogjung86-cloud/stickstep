@@ -293,7 +293,7 @@ export const peelLab: StepRenderer = (host, step, api) => {
     gSlotBase.innerHTML =
       `<rect x="202" y="42" width="132" height="180" rx="12" fill="rgba(194,37,92,.035)" stroke="${GEO.faint}" stroke-width="1.8" stroke-dasharray="7 6"/>` +
       (withCap
-        ? `<text x="268" y="238" text-anchor="middle" font-size="9.5" font-weight="700" fill="${GEO.soft}">여기로 끌어요</text>`
+        ? `<text x="268" y="239" text-anchor="middle" font-size="12" font-weight="700" fill="${GEO.soft}">여기로 끌어요</text>`
         : "");
   }
 

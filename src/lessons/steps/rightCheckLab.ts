@@ -1,8 +1,12 @@
 // rightCheckLab, "직각 판정소"(중2 수학 Ⅴ L11, 직각삼각형이 되는 조건 — 책 221쪽).
 // 피타고라스 정리(L10 기왕)를 거꾸로 방향으로 쓰는 판정 랩. 세 변 길이 카드 세트를
 // 순차 조립한다: 가장 긴 변을 바닥에 깔고 두 원호의 교점에서 삼각형이 서는 애니 →
-// 꼭대기 각 대략 리드아웃 → 양팔 저울(왼쪽 a²+b², 오른쪽 c²)이 실제 계산값으로 판정.
-// ① 3·4·5 수평 직각(칩 first) ② 6·8·10 직각 ③ 4·5·6은 16+25=41 ≠ 36 기울어짐(칩 both)
+// 꼭대기 각 대략 리드아웃 → 값 비교 패널(왼쪽 "짧은 두 변의 제곱 합", 오른쪽 "가장 긴 변의
+// 제곱")이 실제 계산값을 나란히 놓고 = 또는 ≠로 판정한다.
+// 초판의 양팔 저울은 폐기(2026-07-20 사용자 피드백 "너무 어렵다" — 교과서 장치가 아닌 창작
+// 은유인 데다 조작 없이 표시만 하는 저울이라 인지 부담만 얹었다. 판정의 본질은 두 값의
+// 등식 검사이므로 비교 기호가 정답).
+// ① 3·4·5 직각(칩 first) ② 6·8·10 직각 ③ 4·5·6은 16+25=41 ≠ 36(칩 both)
 // ④ 5·12·13은 조립 전 "혼자 둘 변" 판정 mq6(가장 긴 변이 빗변 후보) 후 25+144=169 확정
 //    (칩 key) → recordQuiz + CTA. √ 금지(중3): 수치는 전부 자연수 트리플, 제곱 비교는
 //    넓이 값(제곱값)으로만 서술한다. 기하는 전부 계산(교점 좌표·각도 acos)이며 눈대중 금지.
@@ -36,17 +40,17 @@ interface SetDef {
 }
 
 const SETS: SetDef[] = [
-  { a: 3, b: 4, c: 5, s: 28, toast: "9+16=25, 5²과 똑같아요! 저울이 수평, 꼭대기는 직각이에요." },
+  { a: 3, b: 4, c: 5, s: 28, toast: "9+16=25, 5²과 똑같아요! 두 값이 같으면 꼭대기는 직각이에요." },
   { a: 6, b: 8, c: 10, s: 14, toast: "36+64=100=10². 6·8·10은 3·4·5를 2배로 늘린 모양, 역시 직각!" },
-  { a: 4, b: 5, c: 6, s: 23.3, toast: "빗나감! 16+25=41인데 6²은 36. 저울이 기울면 직각이 아니에요." },
+  { a: 4, b: 5, c: 6, s: 23.3, toast: "빗나감! 16+25=41인데 6²은 36. 두 값이 다르면 직각이 아니에요." },
   { a: 5, b: 12, c: 13, s: 10.8, toast: "25+144=169=13². 가장 긴 변을 혼자 뒀더니 등식이 딱 맞아요!" },
 ];
 const TAGS = ["세트 ①", "세트 ②", "세트 ③", "세트 ④"];
 const HELPERS = [
   "세 변이 3, 4, 5인 삼각형이에요. <b>조립하기</b>를 누르면 가장 긴 변 5를 바닥에 깔고 세워 볼게요!",
-  "이번엔 6, 8, 10. 조립해서 저울로 판정해 봐요!",
+  "이번엔 6, 8, 10. 조립해서 제곱 값을 비교해 봐요!",
   "4, 5, 6은 직각일까요? 예감을 걸고 조립!",
-  "마지막 세트 5, 12, 13. 조립 전에 <b>저울에 올릴 자리</b>부터 정해요!",
+  "마지막 세트 5, 12, 13. 조립 전에 <b>혼자 둘 변</b>부터 정해요!",
 ];
 
 export const rightCheckLab: StepRenderer = (host, step, api) => {
@@ -63,10 +67,10 @@ export const rightCheckLab: StepRenderer = (host, step, api) => {
   const board = mboard(560);
   const svgWrap = el("div", {
     class: "mcl-plane",
-    attrs: { role: "img", "aria-label": "세 변으로 삼각형을 조립하고 양팔 저울로 판정하는 무대" },
+    attrs: { role: "img", "aria-label": "세 변으로 삼각형을 조립하고 제곱 값 비교로 판정하는 무대" },
   });
   svgWrap.innerHTML =
-    `<svg viewBox="0 0 340 260" xmlns="${NS}" fill="none">` +
+    `<svg viewBox="0 0 340 272" xmlns="${NS}" fill="none">` +
     `<g class="rck-dyn"></g><g class="rck-scale"></g>` +
     `</svg>`;
   const cards = el("div", { class: "rck-cards", attrs: { "aria-live": "polite" } });
@@ -84,27 +88,23 @@ export const rightCheckLab: StepRenderer = (host, step, api) => {
   const gDyn = svg.querySelector(".rck-dyn") as SVGGElement;
   const gScale = svg.querySelector(".rck-scale") as SVGGElement;
 
-  /* ── 저울(정적 골격 1회 조립) ── */
+  /* ── 값 비교 패널(정적 골격 1회 조립): 접시 대신 이름 붙은 값 카드 두 장 + 비교 기호 ── */
   gScale.innerHTML =
-    `<polygon points="170,212 156,246 184,246" fill="#D3DDE8"/>` +
-    `<g class="rck-beam" style="transform-origin:170px 210px">` +
-    `<line x1="58" y1="210" x2="282" y2="210" stroke="#64748B" stroke-width="3" stroke-linecap="round"/>` +
-    `<line x1="84" y1="210" x2="84" y2="224" stroke="#8093A8" stroke-width="1.6"/>` +
-    `<line x1="256" y1="210" x2="256" y2="224" stroke="#8093A8" stroke-width="1.6"/>` +
-    `<rect x="52" y="224" width="64" height="22" rx="9" fill="#FFFFFF" stroke="#C6D2DE" stroke-width="1.6"/>` +
-    `<rect x="224" y="224" width="64" height="22" rx="9" fill="#FFFFFF" stroke="#C6D2DE" stroke-width="1.6"/>` +
-    `<text class="rck-pvl" x="84" y="240" text-anchor="middle" font-size="13" font-weight="900" fill="#B26200">?</text>` +
-    `<text class="rck-pvr" x="256" y="240" text-anchor="middle" font-size="13" font-weight="900" fill="${SIM}">?</text>` +
-    `</g>` +
-    `<circle cx="170" cy="210" r="4" fill="#64748B"/>` +
-    `<text class="rck-fl" x="100" y="180" text-anchor="middle" font-size="11.5" font-weight="800" fill="#B26200"></text>` +
-    `<text class="rck-fr" x="252" y="180" text-anchor="middle" font-size="11.5" font-weight="800" fill="${SIM}"></text>` +
+    `<text x="103" y="184" text-anchor="middle" font-size="11" font-weight="800" fill="#8093A8">짧은 두 변의 제곱 합</text>` +
+    `<text x="237" y="184" text-anchor="middle" font-size="11" font-weight="800" fill="#8093A8">가장 긴 변의 제곱</text>` +
+    `<rect x="46" y="190" width="114" height="52" rx="12" fill="#FFFFFF" stroke="rgba(240,140,0,.55)" stroke-width="1.8"/>` +
+    `<rect x="180" y="190" width="114" height="52" rx="12" fill="#FFFFFF" stroke="rgba(194,37,92,.55)" stroke-width="1.8"/>` +
+    `<text class="rck-fl" x="103" y="208" text-anchor="middle" font-size="12" font-weight="800" fill="#B26200"></text>` +
+    `<text class="rck-fr" x="237" y="208" text-anchor="middle" font-size="12" font-weight="800" fill="${SIM}"></text>` +
+    `<text class="rck-pvl" x="103" y="233" text-anchor="middle" font-size="17" font-weight="900" fill="#B26200">?</text>` +
+    `<text class="rck-pvr" x="237" y="233" text-anchor="middle" font-size="17" font-weight="900" fill="${SIM}">?</text>` +
+    `<text class="rck-cmp" x="170" y="223" text-anchor="middle" font-size="15" font-weight="900" fill="#B9C4D0">vs</text>` +
     `<g class="rck-verdict"></g>`;
-  const beamG = gScale.querySelector(".rck-beam") as SVGGElement;
   const pvL = gScale.querySelector(".rck-pvl") as SVGTextElement;
   const pvR = gScale.querySelector(".rck-pvr") as SVGTextElement;
   const fL = gScale.querySelector(".rck-fl") as SVGTextElement;
   const fR = gScale.querySelector(".rck-fr") as SVGTextElement;
+  const cmp = gScale.querySelector(".rck-cmp") as SVGTextElement;
   const gVerdict = gScale.querySelector(".rck-verdict") as SVGGElement;
 
   const timers = new Set<number>();
@@ -152,15 +152,14 @@ export const rightCheckLab: StepRenderer = (host, step, api) => {
   }
 
   function resetScale(): void {
-    beamG.style.transition = "none";
-    beamG.style.transform = "rotate(0deg)";
-    beamG.getBoundingClientRect();
-    beamG.style.transition = "";
-    beamG.classList.remove("level");
     pvL.textContent = "?";
     pvR.textContent = "?";
     fL.textContent = "";
     fR.textContent = "";
+    cmp.textContent = "vs";
+    cmp.setAttribute("fill", "#B9C4D0");
+    cmp.setAttribute("font-size", "15");
+    cmp.classList.remove("pop");
     gVerdict.innerHTML = "";
   }
 
@@ -226,7 +225,7 @@ export const rightCheckLab: StepRenderer = (host, step, api) => {
     growLine(L.x, L.y, R.x, R.y, SIM, 3);
     later(() => {
       gDyn.insertAdjacentHTML("beforeend", dot(L.x, L.y, GEO.ink, 3.4) + dot(R.x, R.y, GEO.ink, 3.4));
-      txt((L.x + R.x) / 2, BASE_Y + 17, String(st.c), SIM, 11.5);
+      txt((L.x + R.x) / 2, BASE_Y + 18, String(st.c), SIM, 13);
     }, 480);
 
     // 2) 원호 2개(컴퍼스) + 교점
@@ -259,8 +258,8 @@ export const rightCheckLab: StepRenderer = (host, step, api) => {
       const mL = { x: (L.x + P.x) / 2 - 11, y: (L.y + P.y) / 2 - 3 };
       const mR = { x: (R.x + P.x) / 2 + 11, y: (R.y + P.y) / 2 - 3 };
       later(() => {
-        txt(mL.x, mL.y, String(st.b), C_B, 11);
-        txt(mR.x, mR.y, String(st.a), C_A, 11);
+        txt(mL.x, mL.y, String(st.b), C_B, 12.5);
+        txt(mR.x, mR.y, String(st.a), C_A, 12.5);
       }, 460);
     }, 1250);
 
@@ -270,28 +269,31 @@ export const rightCheckLab: StepRenderer = (host, step, api) => {
       let a2 = angleOf(P.x, P.y, R.x, R.y);
       if (normDeg(a2 - a1) > 180) [a1, a2] = [a2, a1];
       gDyn.insertAdjacentHTML("beforeend", angleArc(P.x, P.y, 14, a1, a2, "#8093A8", undefined, { width: 2 }));
-      txt(P.x, P.y - 24, `약 ${Math.round(gam)}°`, "#5A6B7E", 11.5, "rck-ang");
+      txt(P.x, P.y - 24, `약 ${Math.round(gam)}°`, "#5A6B7E", 13, "rck-ang");
       haptic(HAPTIC.tap);
     }, 1850);
 
-    // 5) 저울에 올리기(실제 계산값)
+    // 5) 값 카드 채우기(실제 계산값 — 식은 윗줄, 값은 큰 아랫줄)
     later(() => {
       const sum = st.a * st.a + st.b * st.b;
-      fL.textContent = `${st.a}²+${st.b}²=${st.a * st.a}+${st.b * st.b}=${sum}`;
-      fR.textContent = `${st.c}²=${st.c * st.c}`;
+      fL.textContent = `${st.a}²+${st.b}²=${st.a * st.a}+${st.b * st.b}`;
+      fR.textContent = `${st.c}²`;
       pvL.textContent = String(sum);
       pvR.textContent = String(st.c * st.c);
       haptic(HAPTIC.select);
     }, 2400);
 
-    // 6) 판정
+    // 6) 판정: 비교 기호가 = 또는 ≠로 확정
     later(() => {
+      cmp.textContent = right ? "=" : "≠";
+      cmp.setAttribute("fill", right ? "#04B45F" : "#F04452");
+      cmp.setAttribute("font-size", right ? "24" : "22");
+      cmp.classList.add("pop");
       if (right) {
-        beamG.classList.add("level"); // 살짝 출렁이고 수평 정착
         gVerdict.innerHTML =
-          `<g class="rck-pill" style="transform-origin:170px 196px">` +
-          `<rect x="122" y="186" width="96" height="20" rx="10" fill="#F0FBF5" stroke="#04B45F" stroke-width="1.8"/>` +
-          `<text x="170" y="200" text-anchor="middle" font-size="11" font-weight="900" fill="#1E7A31">직각!</text>` +
+          `<g class="rck-pill" style="transform-origin:170px 258px">` +
+          `<rect x="116" y="248" width="108" height="20" rx="10" fill="#F0FBF5" stroke="#04B45F" stroke-width="1.8"/>` +
+          `<text x="170" y="262.5" text-anchor="middle" font-size="12.5" font-weight="900" fill="#1E7A31">직각!</text>` +
           `</g>`;
         const a1 = angleOf(P.x, P.y, L.x, L.y);
         const a2 = angleOf(P.x, P.y, R.x, R.y);
@@ -301,11 +303,10 @@ export const rightCheckLab: StepRenderer = (host, step, api) => {
         );
         haptic(HAPTIC.correct);
       } else {
-        beamG.style.transform = "rotate(-5deg)"; // 왼쪽(41)이 무거워 내려감
         gVerdict.innerHTML =
-          `<g class="rck-pill" style="transform-origin:170px 196px">` +
-          `<rect x="118" y="186" width="104" height="20" rx="10" fill="#F1F4F7" stroke="#B9C4D0" stroke-width="1.8"/>` +
-          `<text x="170" y="200" text-anchor="middle" font-size="11" font-weight="900" fill="#5A6B7E">직각 아님</text>` +
+          `<g class="rck-pill" style="transform-origin:170px 258px">` +
+          `<rect x="112" y="248" width="116" height="20" rx="10" fill="#F1F4F7" stroke="#B9C4D0" stroke-width="1.8"/>` +
+          `<text x="170" y="262.5" text-anchor="middle" font-size="12.5" font-weight="900" fill="#5A6B7E">직각 아님</text>` +
           `</g>`;
         haptic(HAPTIC.wrong);
       }
@@ -351,20 +352,20 @@ export const rightCheckLab: StepRenderer = (host, step, api) => {
   /* ── 세트 ④ 사전 판정: 혼자 둘 변은? ── */
 
   function askHyp(): void {
-    qline.innerHTML = "5, 12, 13에서 저울 <b>오른쪽 접시</b>(혼자 두는 변)에 올릴 변은?";
+    qline.innerHTML = "5, 12, 13에서 <b>혼자 둘 변</b>(나머지 두 변의 제곱 합과 맞비교할 변)은?";
     const items = [
       {
         t: "12요, 두 번째로 크니까 균형이 맞아요",
         good: false,
-        fb: "12를 혼자 두면 5²+13²=194인데 12²=144라 저울이 왕창 기울어요. 혼자 두는 자리는 가장 긴 변의 몫이에요.",
+        fb: "12를 혼자 두면 5²+13²=194인데 12²=144라 두 값이 크게 어긋나요. 혼자 두는 자리는 가장 긴 변의 몫이에요.",
       },
       {
         t: "13이요, 가장 긴 변이 직각과 마주 보는 빗변 후보예요",
         good: true,
-        fb: "맞아요! 직각과 마주 보는 변은 가장 긴 변이죠. 그래서 혼자 두는 c 자리엔 13을 올려야 해요.",
+        fb: "맞아요! 직각과 마주 보는 변은 가장 긴 변이죠. 그래서 혼자 두는 c 자리는 13의 몫이에요.",
       },
       {
-        t: "아무 변이나 올려도 결과는 같아요",
+        t: "아무 변이나 골라도 결과는 같아요",
         good: false,
         fb: "자리를 바꾸면 값이 달라져요. 25+144=169, 25+169=194, 144+169=313. 등식이 성립하는 배치는 하나뿐이에요.",
       },
@@ -392,7 +393,7 @@ export const rightCheckLab: StepRenderer = (host, step, api) => {
             go.disabled = false;
             go.classList.add("pulse");
           }
-          helper.innerHTML = "이제 조립! 저울이 <b>25+144</b>와 <b>169</b>를 비교해 판정해 줘요.";
+          helper.innerHTML = "이제 조립! <b>25+144</b>와 <b>169</b>를 나란히 놓고 비교해 판정해요.";
           later(() => actions.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80);
         }, 2600);
       });

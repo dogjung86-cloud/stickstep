@@ -9,7 +9,10 @@
 //   대각선 보기 토글이 위·아래 삼각형 힌트(중점 연결선 ∥ 대각선 AC)를 보여 준다.
 // 좌표 검산: BC 238px = 14칸(1칸 17px) → MN 119px = 7칸 정확. C 이동 상자(x 200~330, y 140~250)는
 //   네 코너 모두 대각선 BD 기준 외적 부호가 같아 변 교차(자기 교차)가 없다.
-// rAF 금지(CSS 트랜지션 + setTimeout 체인, 타이머 Set). 스타일: math2.css .mpl- 섹션.
+// 클래스 접두사는 .mdp-(2026-07-20 개명): 처음 쓰던 .mpl-은 중1 시트 math.css의 랩(.mpl-read가
+//   absolute+::before "거리")이 선점한 접두사라, 리드아웃 필이 무대 위에 떠 꼭짓점 A를 덮는
+//   실사고가 났다. 새 랩 접두사는 math.css·math2.css 양쪽 grep으로 선점 검사부터(테마명 규칙의 클래스판).
+// rAF 금지(CSS 트랜지션 + setTimeout 체인, 타이머 Set). 스타일: math2.css .mdp- 섹션.
 import { el, clear, clamp } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { mboard, mtoast, goalChips } from "../../ui/mathKit";
@@ -75,11 +78,11 @@ export const midpointLab: StepRenderer = (host, step, api) => {
   ]);
 
   const board = mboard(520);
-  const readout = el("div", { class: "mpl-read", attrs: { "aria-live": "polite" } });
+  const readout = el("div", { class: "mdp-read", attrs: { "aria-live": "polite" } });
   const svgWrap = el("div", { class: "mcl-plane" });
   svgWrap.innerHTML =
     `<svg viewBox="0 0 340 260" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="중점 잇기 실험 무대">` +
-    `<g class="mpl-base"></g><g class="mpl-link"></g><g class="mpl-mid"></g><g class="mpl-mark"></g>` +
+    `<g class="mdp-base"></g><g class="mdp-link"></g><g class="mdp-mid"></g><g class="mdp-mark"></g>` +
     `</svg>`;
   const actions = el("div", { class: "lk-actions" });
   board.append(readout, svgWrap, actions);
@@ -92,10 +95,10 @@ export const midpointLab: StepRenderer = (host, step, api) => {
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   const svg = svgWrap.querySelector("svg") as SVGSVGElement;
-  const gBase = svg.querySelector(".mpl-base") as SVGGElement;
-  const gLink = svg.querySelector(".mpl-link") as SVGGElement;
-  const gMid = svg.querySelector(".mpl-mid") as SVGGElement;
-  const gMark = svg.querySelector(".mpl-mark") as SVGGElement;
+  const gBase = svg.querySelector(".mdp-base") as SVGGElement;
+  const gLink = svg.querySelector(".mdp-link") as SVGGElement;
+  const gMid = svg.querySelector(".mdp-mid") as SVGGElement;
+  const gMark = svg.querySelector(".mdp-mark") as SVGGElement;
 
   const timers = new Set<number>();
   const later = (fn: () => void, ms: number): void => {
@@ -175,9 +178,9 @@ export const midpointLab: StepRenderer = (host, step, api) => {
         tickMark(ax, ay, N.x, N.y, 2, GEO.hlB) +
         tickMark(N.x, N.y, TC.x, TC.y, 2, GEO.hlB);
       readout.innerHTML =
-        `<span class="mpl-para">MN ∥ BC</span>` +
+        `<span class="mdp-para">MN ∥ BC</span>` +
         `<span>MN <b>${fmtU(dist(M, N))}</b> · BC <b>${fmtU(dist(TB, TC))}</b></span>` +
-        `<span class="mpl-half">딱 절반!</span>`;
+        `<span class="mdp-half">딱 절반!</span>`;
     }
   }
 
@@ -248,7 +251,7 @@ export const midpointLab: StepRenderer = (host, step, api) => {
         const a = m[k];
         const b = m[(k + 1) % 4];
         if (lit.has(k) && lit.has((k + 1) % 4)) {
-          segs += `<line x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke="${RB}" stroke-width="3.2" stroke-linecap="round"${animSegs ? ` class="mpl-seg"` : ""}/>`;
+          segs += `<line x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke="${RB}" stroke-width="3.2" stroke-linecap="round"${animSegs ? ` class="mdp-seg"` : ""}/>`;
         }
       }
       gLink.innerHTML = segs;
@@ -263,7 +266,7 @@ export const midpointLab: StepRenderer = (host, step, api) => {
     }
     if (innerDone) {
       mk +=
-        `<g class="mpl-badge${badgePop ? " pop" : ""}"><rect x="78" y="6" width="184" height="27" rx="9" fill="#F0FBF5" stroke="#04B45F" stroke-width="2"/>` +
+        `<g class="mdp-badge${badgePop ? " pop" : ""}"><rect x="78" y="6" width="184" height="27" rx="9" fill="#F0FBF5" stroke="#04B45F" stroke-width="2"/>` +
         `<text x="170" y="24.5" text-anchor="middle" font-size="12.5" font-weight="900" fill="#1E7A31">마주 보는 변이 평행!</text></g>`;
     }
     gMark.innerHTML = mk;

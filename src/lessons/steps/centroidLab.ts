@@ -112,7 +112,7 @@ export const centroidLab: StepRenderer = (host, step, api) => {
       `</g>` +
       (level
         ? `<g><rect x="${pin.x - 30}" y="${pin.y - 36}" width="60" height="19" rx="9" fill="#F0FBF5" stroke="#04B45F" stroke-width="1.6"/>` +
-          `<text x="${pin.x}" y="${pin.y - 23}" text-anchor="middle" font-size="11" font-weight="900" fill="#1E7A31">수평!</text></g>`
+          `<text x="${pin.x}" y="${pin.y - 23}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#1E7A31">수평!</text></g>`
         : "");
   }
 
@@ -258,9 +258,9 @@ export const centroidLab: StepRenderer = (host, step, api) => {
       `<line x1="${from.x}" y1="${from.y}" x2="${g.x}" y2="${g.y}" stroke="#F08C00" stroke-width="5" stroke-linecap="round" opacity=".85"/>` +
       `<line x1="${g.x}" y1="${g.y}" x2="${to.x}" y2="${to.y}" stroke="#0DA5C6" stroke-width="5" stroke-linecap="round" opacity=".85"/>` +
       `<rect x="${(from.x + g.x) / 2 - 13}" y="${(from.y + g.y) / 2 - 11}" width="26" height="18" rx="7" fill="#FFF4E3" stroke="#F08C00" stroke-width="1.4"/>` +
-      `<text x="${(from.x + g.x) / 2}" y="${(from.y + g.y) / 2 + 3}" text-anchor="middle" font-size="11.5" font-weight="900" fill="#9C5A10">2</text>` +
+      `<text x="${(from.x + g.x) / 2}" y="${(from.y + g.y) / 2 + 3}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#9C5A10">2</text>` +
       `<rect x="${(g.x + to.x) / 2 - 13}" y="${(g.y + to.y) / 2 - 11}" width="26" height="18" rx="7" fill="#E9FAFF" stroke="#0DA5C6" stroke-width="1.4"/>` +
-      `<text x="${(g.x + to.x) / 2}" y="${(g.y + to.y) / 2 + 3}" text-anchor="middle" font-size="11.5" font-weight="900" fill="#0B7285">1</text>`;
+      `<text x="${(g.x + to.x) / 2}" y="${(g.y + to.y) / 2 + 3}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#0B7285">1</text>`;
     readout.innerHTML =
       `<span class="ctd-ratio">꼭짓점~교점 : 교점~한가운데 = <b>2 : 1</b></span>` +
       (phase === "ratio" && moves < 2 ? `<span class="ctd-hint">A를 끌어 보세요 (${moves}/2)</span>` : "");

@@ -152,8 +152,8 @@ export const triSliceLab: StepRenderer = (host, step, api) => {
       `<circle cx="${gx.toFixed(1)}" cy="${gy.toFixed(1)}" r="7.5" fill="#FFFFFF" stroke="${RB}" stroke-width="2.8"/>` +
       `<line x1="${(gx - 3.5).toFixed(1)}" y1="${gy.toFixed(1)}" x2="${(gx + 3.5).toFixed(1)}" y2="${gy.toFixed(1)}" stroke="${RB}" stroke-width="1.6"/></g>`;
     gMark.innerHTML = lengthsOn
-      ? `<text x="${gx.toFixed(1)}" y="${(gy - 22).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="900" fill="${RB}">DE = ${Math.round(BC_LEN * t)}</text>` +
-        `<text x="175" y="247" text-anchor="middle" font-size="11.5" font-weight="900" fill="#B87708">BC = ${BC_LEN}</text>`
+      ? `<text x="${gx.toFixed(1)}" y="${(gy - 22).toFixed(1)}" text-anchor="middle" font-size="13" font-weight="900" fill="${RB}">DE = ${Math.round(BC_LEN * t)}</text>` +
+        `<text x="175" y="248" text-anchor="middle" font-size="13" font-weight="900" fill="#B87708">BC = ${BC_LEN}</text>`
       : "";
     readout.classList.toggle("bad", !same);
     readout.innerHTML =

@@ -127,7 +127,7 @@ export const scaleTileLab: StepRenderer = (host, step, api) => {
 
   /* ── 무대 그리기 ── */
   function ghostTag(x: number, y: number, label: string): string {
-    return `<text x="${n1(x)}" y="${n1(y)}" text-anchor="end" font-size="10.5" font-weight="800" fill="${INK_C}" opacity=".75">${label}</text>`;
+    return `<text x="${n1(x)}" y="${n1(y)}" text-anchor="end" font-size="12" font-weight="800" fill="${INK_C}" opacity=".8">${label}</text>`;
   }
 
   function paintBaseSquare(scale: 2 | 3): void {
@@ -135,7 +135,7 @@ export const scaleTileLab: StepRenderer = (host, step, api) => {
     const side = U * scale;
     gBase.innerHTML =
       `<rect x="${SQ1.x}" y="${SQ1.y}" width="${U}" height="${U}" rx="3" fill="url(#sctGO)" stroke="${INK_O}" stroke-width="2.2"/>` +
-      `<text x="${SQ1.x + U / 2}" y="${Y0 + 16}" text-anchor="middle" font-size="10" font-weight="800" fill="#64748B">원본</text>` +
+      `<text x="${SQ1.x + U / 2}" y="${Y0 + 16}" text-anchor="middle" font-size="12" font-weight="800" fill="#64748B">원본</text>` +
       `<rect x="${g.x}" y="${g.y}" width="${side}" height="${side}" rx="4" fill="${INK_C}" fill-opacity=".04" stroke="${INK_C}" stroke-width="2" stroke-dasharray="7 5" opacity=".55"/>` +
       ghostTag(g.x + side, g.y - 7, `×${scale}`);
   }
@@ -146,7 +146,7 @@ export const scaleTileLab: StepRenderer = (host, step, api) => {
   function paintBaseTri(): void {
     gBase.innerHTML =
       `<path d="${triPath(TRI_O)}" fill="url(#sctGO)" stroke="${INK_O}" stroke-width="2.2" stroke-linejoin="round"/>` +
-      `<text x="48" y="${Y0 + 16}" text-anchor="middle" font-size="10" font-weight="800" fill="#64748B">원본</text>` +
+      `<text x="48" y="${Y0 + 16}" text-anchor="middle" font-size="12" font-weight="800" fill="#64748B">원본</text>` +
       `<path d="${triPath(TRI_G)}" fill="${INK_C}" fill-opacity=".04" stroke="${INK_C}" stroke-width="2" stroke-dasharray="7 5" opacity=".55" stroke-linejoin="round"/>` +
       ghostTag(252, 116, "×2");
   }
@@ -164,7 +164,7 @@ export const scaleTileLab: StepRenderer = (host, step, api) => {
       `M${n1(CB.x)} ${n1(CB.y - UB)} L${n1(CB.x - dxB)} ${n1(CB.y - dyB - UB)}`;
     gBase.innerHTML =
       cubeSvg(CO.x, CO.y, CU, TONE_CO, 2) +
-      `<text x="${CO.x}" y="${CO.y + 22}" text-anchor="middle" font-size="10" font-weight="800" fill="#64748B">원본</text>` +
+      `<text x="${CO.x}" y="${CO.y + 22}" text-anchor="middle" font-size="12" font-weight="800" fill="#64748B">원본</text>` +
       `<path d="${hex}" fill="${INK_C}" fill-opacity=".04" stroke="${INK_C}" stroke-width="2" stroke-dasharray="7 5" opacity=".55" stroke-linejoin="round"/>` +
       `<path d="${inner}" stroke="${INK_C}" stroke-width="1.6" stroke-dasharray="4 4" opacity=".4"/>` +
       ghostTag(CB.x + dxB + 4, CB.y - dyB - UB - 8, "×2");

@@ -786,7 +786,16 @@ src/
   "제곱해서 N이 되는 양수는 □" 서술이 표준. pythaLab 퍼즐 이동은 바깥 g CSS translate+안쪽 g SVG
   rotate 합성(배치 전환에도 회전값 불변 = 순수 슬라이드) — SVG 퍼즐 이동의 공용 문법. 훅 traytrick만
   swapbtn이 아니라 `.tt5-spot` 3곳 탭(e2e 주의). 컷 u5lN 11장(qa/order-m2u5cuts.sh — 발주는 병렬
-  codex 금지 확인 후). 상세는 MATH_GUIDE.md 중2 Ⅴ 표. QA: `PORT=<포트> node qa/e2e-m2u5.mjs`.
+  codex 금지 확인 후). **실사용 피드백 4건 반영(2026-07-20)**: ① 중2 midpointLab 접두사는 `.mdp-`
+  (초판 .mpl-이 중1 시트 math.css의 랩과 충돌 — absolute .mpl-read+::before "거리"를 물려받아 거리
+  필이 무대 위에 떠 꼭짓점을 덮은 실사고. **새 랩 접두사는 math.css·math2.css 양쪽 grep 선점 검사
+  의무** — 테마명 규칙의 클래스판) ② shapeLock 길이 카드는 "1:2"가 아니라 "2배"(원본 대비가 표기
+  자체로 읽히게, 그림 마크 ×2 흰 할로, 비 1:2 다리는 CA 해금 대사에서) ③ pythaLab 퍼즐은 회전 0인
+  i=0 삼각형에 a·b·c 변 라벨(스테퍼와 도형 연결) ④ rightCheckLab **양팔 저울 폐기** → 이름 붙은 값
+  카드 2장+= / ≠ 비교 기호 패널(저울은 교과서 장치가 아닌 창작 은유 + 조작 없는 표시 전용이라 인지
+  부담만 — "조작 없는 은유는 장식" 판정). m2u5 랩 SVG 텍스트 12px 미만 전량 소급(m2u4 규칙 확장),
+  눈검수 `qa/shot-m2u5-fixfeedback.mjs`. 상세는 MATH_GUIDE.md 중2 Ⅴ 표.
+  QA: `PORT=<포트> node qa/e2e-m2u5.mjs`.
 - **중2 수학 Ⅵ(m2u6, 확률) 완성** — 9레슨(무료 3+프리미엄 6), 테마 `dice`(주사위 레드 #C92A2A —
   오답 레드 #F04452보다 어두운 크림슨. Ⅴ sim 라즈베리와 같은 지도에 인접하지만 핑크vs레드로
   구분된다고 사용자 확정(2026-07-10 통합 시) — 색 교정 시도 금지). 신규: content/math/g2/unit6.ts·steps/hookM2u6.ts(9장면)+
