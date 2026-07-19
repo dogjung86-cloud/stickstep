@@ -5,7 +5,7 @@
 //   satnile    L2 — 위성 지도 앱 확대: 사막 한가운데 초록 리본 → 적도에서 온 강(나일)
 //   herdmove   L3 — 세렝게티 다큐: 같은 곳이 반년 만에 초록↔갈색 → 비를 따라가는 대이동
 //   shadelane  L4 — 여행 골목: 다닥다닥 흙집 골목이 한낮에 시원 → 환경에 맞춘 지혜
-//   movienight L5 — OTT 밤: 영화 편수 세계 2위 나라는? → 놀리우드(인식 뒤집기 2)
+//   movienight L5 — 다큐 밤: 영화 편수 TOP 3 순위표, 가려진 2위의 정체 → 놀리우드(인식 뒤집기 2)
 //   classphoto L6 — 대륙 학급 사진: 반 나이 한가운데가 가장 어린 반은? → 가장 젊은 대륙(뒤집기 3)
 //   flagstars  L7 — 뉴스 속 초록 깃발: 별들의 정체 → 아프리카연합 55개 회원국
 //   greenline  L8 — 위성 전후: 사막 남쪽의 초록 선 → 그레이트 그린 월
@@ -399,56 +399,61 @@ export function renderShadeLane(
   return () => window.clearTimeout(timer);
 }
 
-/* ══════════ L5: OTT 밤 — 영화 편수 2위의 나라 ══════════ */
-function ottSvg(state: 0 | 1 | 2): string {
-  const poster = (x: number, y: number, art: string, hot = false): string => `
-    <g transform="translate(${x} ${y})">
-      <rect width="38" height="52" rx="4" fill="#28324A" stroke="${hot ? "#F2C24E" : "#3A4658"}" stroke-width="${hot ? 2.4 : 1.4}"/>
-      ${art}
-    </g>`;
-  const arts = [
-    `<circle cx="19" cy="20" r="9" fill="#E8B93C"/><path d="M10 38q9-8 18 0" stroke="#C8965E" stroke-width="3" fill="none"/>`,
-    `<circle cx="12" cy="14" r="3" fill="#8ED2F5"/><circle cx="26" cy="24" r="5" fill="#5A82B8"/><path d="M8 40l22-18" stroke="#8ED2F5" stroke-width="1.4"/>`,
-    `<rect x="10" y="12" width="18" height="24" rx="3" fill="#8A93A6"/><circle cx="19" cy="20" r="4" fill="#2E3A50"/><path d="M14 40h10" stroke="#8A93A6" stroke-width="2"/>`,
-    `<path d="M8 38l10-16 6 8 6-12v20z" fill="#5EA84E"/><circle cx="28" cy="14" r="4" fill="#FFC24D"/>`,
-    `<path d="M19 10q8 6 8 16t-8 16q-8-6-8-16t8-16z" fill="#C86ECB"/>`,
-    `<path d="M10 36q4-14 9-14t9 14z" fill="#C8965E"/><circle cx="19" cy="16" r="5" fill="#F2C24E"/>`,
-  ];
-  if (state < 2) {
-    const row = state === 0 ? [0, 1, 2] : [3, 4, 5];
-    return `<svg viewBox="0 0 240 168" fill="none" aria-hidden="true">
-      <defs><linearGradient id="hs4-ott" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141C30"/><stop offset="1" stop-color="#1E2840"/></linearGradient></defs>
-      <rect x="6" y="6" width="228" height="156" rx="12" fill="url(#hs4-ott)"/>
-      <rect x="18" y="18" width="70" height="9" rx="4.5" fill="#3A4658"/>
-      ${poster(24, 40, arts[row[0]])}${poster(78, 40, arts[row[1]], state === 1)}${poster(132, 40, arts[row[2]])}
-      <rect x="186" y="40" width="32" height="52" rx="4" fill="#222C42"/>
-      <rect x="24" y="104" width="70" height="7" rx="3.5" fill="#2E3A50"/>
-      <ellipse cx="120" cy="150" rx="70" ry="5" fill="#0A1020" opacity=".5"/>
-      <g stroke="#5A6880" stroke-width="2.2" fill="none">
-        <circle cx="196" cy="122" r="7" fill="#2E3A54"/>
-        <path d="M196 129v13M196 133l-9 3M196 133l8-4M196 142l-7 11M196 142l7 11"/>
-      </g>
-      <rect x="212" y="124" width="12" height="20" rx="3" fill="#0C1220" stroke="#3E4E70" stroke-width="1.6"/>
-    </svg>`;
-  }
+/* ══════════ L5: 다큐 밤 — 한 해 영화 편수 TOP 3 ══════════ */
+function docuSvg(state: 0 | 1 | 2 | 3): string {
+  // 순위표 다큐 화면. 막대 길이는 편수 비례의 느낌만(인도 ≥ 가려진 2위 ≫ 미국) — 수치 라벨은
+  // 싣지 않는다(2,500편은 레슨 몫). 미공개 행은 균일 폭 슬레이트: 막대 대비(2위 ≫ 3위)는 공개
+  // 순간의 반전으로 아낀다. "내가 보는 영화 어디서 만들까" 전제는 거짓(한국 OTT엔 아프리카 영화가
+  // 드묾)이라 폐기 — 놀라움은 순위 통계 그 자체에서 온다(눈검수 재설계, 2026-07-19).
+  const medal = (cy: number, n: number, on: boolean): string => {
+    const face = ["#F2C24E", "#C8D2DE", "#D9925E"][n - 1];
+    const edge = ["#A8801E", "#8A98AC", "#9C6030"][n - 1];
+    const ink = ["#4A340E", "#2E3A50", "#4A2410"][n - 1];
+    return `<circle cx="34" cy="${cy}" r="10" fill="${on ? face : "#2E3A50"}" stroke="${on ? edge : "#3A4658"}" stroke-width="1.4"/>
+      <text x="34" y="${cy + 3.8}" text-anchor="middle" font-size="10.5" font-weight="900" fill="${on ? ink : "#5A6880"}">${n}</text>`;
+  };
+  const slate = (y: number): string => `
+    <rect x="52" y="${y}" width="112" height="20" rx="6" fill="#202A40" stroke="#34405A" stroke-width="1.2"/>
+    <text x="108" y="${y + 14}" text-anchor="middle" font-size="10" font-weight="800" fill="#48566E">? ? ?</text>`;
+  const india = state >= 2
+    ? `<g class="hs4-pop"><rect x="52" y="48" width="150" height="20" rx="6" fill="url(#hs4-rk1)" stroke="#8A6418" stroke-width="1.2"/>
+       <text x="60" y="62.5" font-size="11" font-weight="900" fill="#4A340E">인도</text></g>`
+    : slate(48);
+  const mystery = state < 2
+    ? slate(80)
+    : state === 2
+      ? `<g class="hs4-pop"><rect x="52" y="80" width="138" height="20" rx="6" fill="url(#hs4-rk2)" stroke="#8F3A10" stroke-width="1.2"/>
+         <text x="60" y="95" font-size="13" font-weight="900" fill="#FFF7EA">?<animate attributeName="opacity" values="1;.3;1" dur="1.1s" repeatCount="indefinite"/></text></g>`
+      : `<g class="hs4-pop"><rect x="52" y="80" width="138" height="20" rx="6" fill="url(#hs4-rk2)" stroke="#8F3A10" stroke-width="1.2"/>
+         <text x="60" y="94.5" font-size="11" font-weight="900" fill="#FFF7EA">나이지리아</text>
+         <path d="M196 78l1.8 4.2 4.2 1.8-4.2 1.8-1.8 4.2-1.8-4.2-4.2-1.8 4.2-1.8z" fill="#F2C24E"/>
+         <path d="M204 96l1.3 3 3 1.3-3 1.3-1.3 3-1.3-3-3-1.3 3-1.3z" fill="#F2C24E" opacity=".8"/></g>`;
+  const usa = state >= 1
+    ? `<g class="hs4-pop"><rect x="52" y="112" width="58" height="20" rx="6" fill="url(#hs4-rk3)" stroke="#4E5E80" stroke-width="1.2"/>
+       <text x="60" y="126.5" font-size="11" font-weight="900" fill="#1E2840">미국</text></g>`
+    : slate(112);
   return `<svg viewBox="0 0 240 168" fill="none" aria-hidden="true">
     <defs>
-      <linearGradient id="hs4-ott2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141C30"/><stop offset="1" stop-color="#1E2840"/></linearGradient>
-      <linearGradient id="hs4-post" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5A55E"/><stop offset=".6" stop-color="#D9622E"/><stop offset="1" stop-color="#8F2D1D"/></linearGradient>
+      <linearGradient id="hs4-docu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141C30"/><stop offset="1" stop-color="#1E2840"/></linearGradient>
+      <linearGradient id="hs4-rk1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F0C464"/><stop offset=".55" stop-color="#D9A23C"/><stop offset="1" stop-color="#A87820"/></linearGradient>
+      <linearGradient id="hs4-rk2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5A55E"/><stop offset=".55" stop-color="#E8590C"/><stop offset="1" stop-color="#B04A16"/></linearGradient>
+      <linearGradient id="hs4-rk3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A8B4CC"/><stop offset=".55" stop-color="#8E9EC8"/><stop offset="1" stop-color="#66789C"/></linearGradient>
     </defs>
-    <rect x="6" y="6" width="228" height="156" rx="12" fill="url(#hs4-ott2)"/>
-    <g transform="translate(78 22)">
-      <rect width="84" height="118" rx="6" fill="url(#hs4-post)" stroke="#F2C24E" stroke-width="2.6" class="hs4-pop"/>
-      <circle cx="42" cy="34" r="14" fill="#FFE9B8"/>
-      <path d="M14 96q10-26 18-26t10 12q4-18 12-18t14 32z" fill="#4E2A1E"/>
-      <path d="M42 62v-14M36 54q6-8 12 0" stroke="#4E2A1E" stroke-width="2.6" fill="none" stroke-linecap="round"/>
-      <rect x="10" y="102" width="64" height="8" rx="4" fill="#FFE9B8" opacity=".5"/>
+    <rect x="6" y="6" width="228" height="156" rx="12" fill="url(#hs4-docu)"/>
+    <circle cx="27" cy="29" r="8" fill="#28324A" stroke="#5A6880" stroke-width="1.4"/>
+    <circle cx="27" cy="29" r="2.2" fill="#5A6880"/>
+    <circle cx="27" cy="24.4" r="1.6" fill="#5A6880"/><circle cx="27" cy="33.6" r="1.6" fill="#5A6880"/>
+    <circle cx="22.4" cy="29" r="1.6" fill="#5A6880"/><circle cx="31.6" cy="29" r="1.6" fill="#5A6880"/>
+    <text x="42" y="33" font-size="11" font-weight="800" fill="#C8D2E8">한 해 영화 편수 TOP 3</text>
+    <rect x="42" y="38" width="118" height="2" rx="1" fill="#F2C24E" opacity=".45"/>
+    ${medal(58, 1, state >= 2)}${medal(90, 2, state >= 2)}${medal(122, 3, state >= 1)}
+    ${india}${mystery}${usa}
+    <ellipse cx="112" cy="152" rx="78" ry="5" fill="#0A1020" opacity=".5"/>
+    <g stroke="#5A6880" stroke-width="2.2" fill="none">
+      <circle cx="196" cy="122" r="7" fill="#2E3A54"/>
+      <path d="M196 129v13M196 133l-9 3M196 133l8-4M196 142l-7 11M196 142l7 11"/>
     </g>
-    <text x="120" y="158" text-anchor="middle" font-size="0" fill="none"> </text>
-    <g transform="translate(44 96)">
-      <circle r="13" fill="#28324A" stroke="#F2C24E" stroke-width="2"/>
-      <text x="0" y="4.6" text-anchor="middle" font-size="13" font-weight="900" fill="#F2C24E">?</text>
-    </g>
+    <rect x="212" y="124" width="12" height="20" rx="3" fill="#0C1220" stroke="#3E4E70" stroke-width="1.6"/>
   </svg>`;
 }
 
@@ -459,15 +464,15 @@ export function renderMovieNight(
   finish: () => void,
   face: Face,
 ): () => void {
-  const fig = el("div", { class: "hs4-ott", attrs: { role: "button", tabindex: "0", "aria-label": "탭해서 다음 영화 보기" } });
+  const fig = el("div", { class: "hs4-ott", attrs: { role: "button", tabindex: "0", "aria-label": "탭해서 다음 순위 공개하기" } });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "불 끄고 영화 고르는 밤! 뭘 볼지 몰라 포스터만 구경 중 — <b>화면을 탭</b>해서 넘겨 봐요.";
+  helper.innerHTML = "자기 전 영화 다큐 시청 중 — 화면에 <b>한 해 영화 편수 TOP 3</b> 순위표가 떴어요! <b>화면을 탭</b>해서 3위부터 공개해요.";
 
-  let state: 0 | 1 | 2 = 0;
+  let state: 0 | 1 | 2 | 3 = 0;
   let timer = 0;
   const show = (): void => {
-    fig.innerHTML = ottSvg(state);
+    fig.innerHTML = docuSvg(state);
     fig.classList.remove("flip");
     void fig.offsetWidth;
     fig.classList.add("flip");
@@ -479,16 +484,20 @@ export function renderMovieNight(
     haptic(HAPTIC.tap);
     show();
     if (state === 1) {
-      helper.innerHTML = "볼 게 진짜 많네요. 그런데 문득 궁금해져요 — <b>이 많은 영화, 다 어디서 만들까?</b> 한 번 더 탭!";
+      helper.innerHTML = "3위가 <b>미국</b>?! 영화 하면 할리우드인데, 1위가 아니었어요. 한 번 더 탭!";
     } else {
       face("curious");
-      helper.innerHTML = "영화를 <b>가장 많이</b> 만드는 나라는 인도(볼리우드)래요. 그럼 <b>두 번째로 많이</b> 만드는 나라는 어디일까요?";
+      helper.innerHTML = "1위는 노래와 춤의 영화 왕국 <b>인도</b>! 그런데 <b>가려진 2위</b>, 막대가 미국보다 훨씬 길어요 — 어느 나라일까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
-          choices: s.choices ?? ["나이지리아", "미국", "프랑스"],
-          good: "놀랍죠? 정답은 <b>나이지리아</b> — '놀리우드'라 불리며 한 해 2,500편 넘게 만들어요. 세계로 흘러간 아프리카 예술의 힘을 만나러 가요!",
-          bad: "할리우드나 유럽을 떠올렸다면 반전! 편수 2위는 <b>나이지리아</b>예요 — '놀리우드'라 불리며 한 해 2,500편 넘게 만들죠. 세계로 흘러간 아프리카 예술의 힘을 만나러 가요!",
-          onDone: finish,
+          choices: s.choices ?? ["나이지리아", "중국", "프랑스"],
+          good: "정답! <b>나이지리아</b>예요 — 적은 예산으로 빠르게, 한 해 2,500편 넘게 만들죠. 우리에게 낯설다고 없는 게 아니에요. 세계로 흐른 아프리카 예술을 만나러 가요!",
+          bad: "이름난 영화 강국을 떠올렸다면 반전! 2위는 <b>나이지리아</b> — 한 해 2,500편 넘게 만들어 미국을 제쳤어요. 우리에게 낯설다고 없는 게 아니죠. 세계로 흐른 아프리카 예술을 만나러 가요!",
+          onDone: () => {
+            state = 3;
+            show();
+            finish();
+          },
         });
       }, 750);
     }
