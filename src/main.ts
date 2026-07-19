@@ -69,7 +69,6 @@ function goTab(k: GnavKey): void {
       challengeScreen({
         onTab: goTab,
         onPlayStepRush: openStepRush,
-        onPlayStarGame: openStarGame,
         onPlayCosmo: openCosmoMerge,
         onPlayOneStroke: openOneStroke,
         onPlayLaserMaze: openLaserMaze,
@@ -192,26 +191,6 @@ function openCosmoMerge(): void {
   );
 }
 
-/** 별자리 한붓그리기(도전 탭 보너스 게임, 2026-07-18 재연결) — 프리미엄 전용, 동적 import(스텝 러시 문법). */
-function openStarGame(): void {
-  if (isPremium() || isReviewMode()) {
-    void import("./screens/starGame").then(({ starGameScreen }) => {
-      nav.go(starGameScreen(() => goTab("challenge")));
-    });
-    return;
-  }
-  nav.go(
-    paywallScreen({
-      sub: "도전 탭 미니게임이 프리미엄에 포함돼 있어요. 서로소의 비밀로 별자리를 한 붓에 그려 보세요.",
-      onUnlocked: () => {
-        nav.back();
-        openStarGame();
-      },
-      onClose: () => nav.back(),
-    }),
-  );
-}
-
 /** 레이저 미로(도전 탭 미니게임 — 거울 반사·빛의 합성 격자 퍼즐) — 프리미엄 전용, 동적 import(스텝 러시 문법). */
 function openLaserMaze(): void {
   if (isPremium() || isReviewMode()) {
@@ -308,10 +287,10 @@ function openPolicy(): void {
   nav.go(policyScreen(() => nav.back()));
 }
 
-// 보너스 미니게임은 도전 탭으로 이사(2026-07-12). 단열 디펜스는 폐기(2026-07-17 — minigame.ts 삭제).
-// 스텝 러시 = openStepRush(2026-07-17 M1), 별자리 한붓그리기 = openStarGame(2026-07-18 재연결),
-// 코스모 머지 = openCosmoMerge(2026-07-18 신작 — matter-js 물리 수박게임 문법 천체 합체),
-// 네온 한붓그리기 = openOneStroke(2026-07-18 신작 — 오일러 도형 스테이지 퍼즐, src/game/oneStroke) —
+// 보너스 미니게임은 도전 탭으로 이사(2026-07-12). 단열 디펜스는 폐기(2026-07-17 — minigame.ts 삭제),
+// 별자리 한붓그리기도 폐기(2026-07-19 사용자 확정 — starGame.ts 삭제, 서로소 학습은 vennFactor 몫).
+// 스텝 러시 = openStepRush(간판), 코스모 머지 = openCosmoMerge(matter-js 천체 합체),
+// 네온 한붓그리기 = openOneStroke(오일러 스테이지 퍼즐), 레이저 미로 = openLaserMaze(빛 반사 퍼즐) —
 // 넷 다 프리미엄 게이트 + 동적 import, 나가기는 도전 탭 복귀.
 
 function openLesson(id: string): void {

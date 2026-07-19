@@ -639,29 +639,8 @@ await shot("math-l12-done");
 await clickBtn("홈으로", 900).catch(() => {});
 log("L12 완료");
 
-/* ================= 보너스: 별자리 한붓그리기(단원 정복 보상) ================= */
-await page.waitForSelector(".gm-node.game", { timeout: 9000 });
-await page.evaluate(() => document.querySelector(".gm-node.game").click());
-await W(1100);
-await page.waitForSelector(".stg-screen .sd-stage svg", { timeout: 9000 });
-const starTap = async (i, nPts) => {
-  const a = -Math.PI / 2 + (i * 2 * Math.PI) / nPts;
-  await clickSvgAt(".stg-screen .sd-stage svg", (180 + 90 * Math.cos(a)) / 360, (126 + 90 * Math.sin(a)) / 240);
-  await W(220);
-};
-for (const i of [2, 4, 1, 3, 0]) await starTap(i, 5); // 5점 보폭 2 → 별 발견
-await W(1000);
-const dexOn = await page.evaluate(() => document.querySelectorAll(".stg-slot.on").length);
-if (dexOn < 1) throw new Error("별 도감이 갱신되지 않음");
-await clickBtn("^6점$", 800);
-for (const i of [2, 4, 0]) await starTap(i, 6); // 6점 보폭 2 → 비밀(별 없음) 수집
-await W(1000);
-const dexOn2 = await page.evaluate(() => document.querySelectorAll(".stg-slot.on").length);
-if (dexOn2 < 2) throw new Error("6점의 비밀이 수집되지 않음");
-log(`보너스 게임: 도감 ${dexOn2}칸 수집`);
-await shot("math-stargame");
-await page.evaluate(() => document.querySelector('.stg-screen .xbtn[aria-label="나가기"]').click());
-await W(1000);
+// 별자리 한붓그리기 검증 구간은 제거(2026-07-19) — 게임 폐기(starGame.ts 삭제).
+// (지도 게임 노드 자체도 2026-07-12 IA 개편에서 사라져 이 구간은 어차피 실행 불가였다.)
 
 // 최종 지도 상태
 await W(800);

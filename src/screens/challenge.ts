@@ -1,9 +1,10 @@
-// 도전 탭 — 랭킹(준비 중)과 미니게임 코너(2026-07-12 IA 개편).
-// 미니게임은 지도 노드에서 이사 왔다(단원 지도는 학습 서사만). 단열 디펜스는 폐기(2026-07-17 사용자
-// 확정 — minigame.ts 삭제). 열린 게임 = 스텝 러시(간판)·코스모 머지(수박게임 문법 천체 합체,
-// 2026-07-18 신작)·네온 한붓그리기(오일러 도형 스테이지 퍼즐, 2026-07-18 신작)·별자리
-// 한붓그리기(2026-07-18 재연결) — 프리미엄 게이트는 main.ts openStepRush/openCosmoMerge/
-// openOneStroke/openStarGame이 소유하고 이 카드는 콜백만 부른다.
+// 도전 탭 — 랭킹(준비 중)과 게임 섹션 "쉬는 시간"(2026-07-19 사용자 확정 — '미니게임' 라벨 폐기,
+// 탭 부제 "게임으로 쉬어 가는 곳"과 맞물리는 학교 어휘).
+// 게임은 지도 노드에서 이사 왔다(단원 지도는 학습 서사만). 단열 디펜스는 폐기(2026-07-17 사용자
+// 확정 — minigame.ts 삭제), 별자리 한붓그리기도 폐기(2026-07-19 사용자 확정 — starGame.ts 삭제).
+// 열린 게임 = 스텝 러시(간판)·코스모 머지·네온 한붓그리기·레이저 미로 — 프리미엄 게이트는
+// main.ts openStepRush/openCosmoMerge/openOneStroke/openLaserMaze가 소유하고 이 카드는 콜백만
+// 부른다. 카드 설명은 스텝 러시 문형("…하는 ~게임/퍼즐" 한 줄)으로 통일(2026-07-19).
 // 랭킹은 서버 검증 채점(+검토 모드 우회 제거)이 선행 조건이라 자리만 잡는다.
 
 import { el } from "../core/dom";
@@ -15,7 +16,6 @@ import type { Screen } from "../core/router";
 export function challengeScreen(o: {
   onTab: (k: GnavKey) => void;
   onPlayStepRush?: () => void;
-  onPlayStarGame?: () => void;
   onPlayCosmo?: () => void;
   onPlayOneStroke?: () => void;
   onPlayLaserMaze?: () => void;
@@ -89,12 +89,11 @@ export function challengeScreen(o: {
         "div",
         { class: "pad" },
         prepCard("trophy", "친구·우리 학교 랭킹", "같은 학교 친구들과 스텝으로 겨루는 주간 랭킹", { accent: true }),
-        el("div", { class: "sec-head", text: "미니게임" }),
+        el("div", { class: "sec-head", text: "쉬는 시간" }),
         gameCard("btn-steprush", "footstep", "스텝 러시", "두 버튼으로 무한 계단을 오르는 반사신경 게임", o.onPlayStepRush, true),
-        gameCard("btn-cosmo", "globe", "코스모 머지", "우주먼지부터 태양까지, 같은 천체를 합쳐 키우는 낙하 퍼즐", o.onPlayCosmo, true),
-        gameCard("btn-onestroke", "route", "네온 한붓그리기", "네온사인을 손 떼지 않고 한 붓에 켜는 퍼즐, 판이 오를수록 어려워요", o.onPlayOneStroke),
-        gameCard("btn-lasermaze", "reflect", "레이저 미로", "거울을 돌려 레이저를 보석까지 — 반사와 빛의 합성 퍼즐", o.onPlayLaserMaze),
-        gameCard("btn-stargame", "star", "별자리 한붓그리기", "서로소의 비밀로 별을 한 붓에 긋는 퍼즐", o.onPlayStarGame),
+        gameCard("btn-cosmo", "globe", "코스모 머지", "같은 천체를 합쳐 태양까지 키우는 낙하 퍼즐", o.onPlayCosmo, true),
+        gameCard("btn-onestroke", "route", "네온 한붓그리기", "네온사인을 손 떼지 않고 한 붓에 켜는 퍼즐", o.onPlayOneStroke),
+        gameCard("btn-lasermaze", "reflect", "레이저 미로", "블록을 옮겨 레이저를 보석까지 보내는 반사 퍼즐", o.onPlayLaserMaze),
       ),
     ),
     gnav("challenge", o.onTab),

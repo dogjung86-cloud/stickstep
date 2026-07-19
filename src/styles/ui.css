@@ -801,8 +801,10 @@
 .rc-more img { display: block; width: 100%; border-radius: 10px; margin: 8px 0 2px; }
 
 /* ============================================================
-   보너스 게임 공용 헤더 필(별자리 한붓그리기가 사용)
-   — 단열 디펜스는 폐기(2026-07-17), 전용 스타일도 함께 제거됨
+   미니게임 공용 헤더 필(도전 탭 게임 4종 — 스텝 러시·코스모 머지·
+   네온 한붓그리기·레이저 미로가 사용)
+   — 단열 디펜스 폐기(2026-07-17)·별자리 한붓그리기 폐기(2026-07-19),
+     전용 스타일도 함께 제거됨
    ============================================================ */
 .mg-title { flex: 1; text-align: center; font-size: 16px; font-weight: 800; letter-spacing: -.02em; }
 .mg-best { color: var(--n700); background: var(--n100); border: 1px solid var(--n200); -webkit-backdrop-filter: none; backdrop-filter: none; }
