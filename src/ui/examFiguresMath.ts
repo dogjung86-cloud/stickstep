@@ -1652,7 +1652,9 @@ export function mExamFoldFig(o: { fold: number; given: string; x: string }): str
     `<path d="M24 ${top} L${E.x} ${E.y} L${F.x.toFixed(1)} ${F.y} L24 ${bot} Z" fill="#F8FAFC" stroke="${GEO.ink}" stroke-width="2.4"/>` +
     `<path d="M${E.x} ${E.y} L${R1.x} ${R1.y} L${R2.x} ${R2.y} L${F.x.toFixed(1)} ${F.y}" fill="none" stroke="${FAINT}" stroke-width="1.6" stroke-dasharray="6 4"/>` +
     `<path d="M${E.x} ${E.y} L${R1p.x.toFixed(1)} ${R1p.y.toFixed(1)} L${R2p.x.toFixed(1)} ${R2p.y.toFixed(1)} L${F.x.toFixed(1)} ${F.y} Z" fill="#EAF1FE" fill-opacity=".8" stroke="${GEO.ink}" stroke-width="2.4"/>`;
-  const foldDirDeg = -(180 - o.fold);
+  // 접는 선 E→F의 수학 각도는 -fold. 주어진 각 호는 접는 선~원래 윗변(동쪽 점선) 사이의
+  // 실각 fold°만 감싸야 한다(-(180-fold)로 잡으면 호가 접는 선을 가로지르는 실사고).
+  const foldDirDeg = -o.fold;
   const east = 0;
   const reflDeg = (Math.atan2(-(R1p.y - E.y), R1p.x - E.x) * 180) / Math.PI;
   out += angleArc(E.x, E.y, 26, foldDirDeg, east, GEO.hlA);
@@ -2698,14 +2700,15 @@ export function m2ExamFamilyFig(o: {
     const text = lab[key];
     const hidden = isAskLabel(text);
     const lines = text.split("\n");
-    const tw = Math.max(...lines.map((l) => l.length)) * 10.2 + 14;
-    const bh = lines.length * 14 + 6;
-    const tx = side === "C" ? mx + 12 : side === "L" ? mx - 10 : mx + 10;
-    const anchor = side === "L" ? "end" : "start";
-    const bx = anchor === "end" ? tx - tw + 3 : tx - 7;
-    out2 += `<rect x="${bx}" y="${my - bh / 2}" width="${tw}" height="${bh}" rx="7" fill="${hidden ? "#FFF4E0" : "#F4F7FE"}" stroke="${hidden ? GEO.hlA : "#D5DEF0"}" stroke-width="1.2"/>`;
+    const tw = Math.max(...lines.map((l) => l.length)) * 11.8 + 14;
+    const bh = lines.length * 15.5 + 6;
+    // 세로 화살표(C)는 필을 화살표 위 중앙 정렬(폰트 12 확대 후 우측 밀기는 카드 끝까지 닿음)
+    const tx = side === "C" ? mx : side === "L" ? mx - 10 : mx + 10;
+    const anchor = side === "L" ? "end" : side === "R" ? "start" : "middle";
+    const bx = anchor === "end" ? tx - tw + 3 : anchor === "middle" ? tx - tw / 2 : tx - 7;
+    out2 += `<rect x="${bx.toFixed(1)}" y="${my - bh / 2}" width="${tw.toFixed(1)}" height="${bh}" rx="7" fill="${hidden ? "#FFF4E0" : "#F4F7FE"}" stroke="${hidden ? GEO.hlA : "#D5DEF0"}" stroke-width="1.2"/>`;
     lines.forEach((ln, i) => {
-      out2 += `<text x="${tx}" y="${my - bh / 2 + 14 * i + 14}" text-anchor="${anchor}" font-size="10.5" font-weight="700" fill="${GEO.ink}">${ln}</text>`;
+      out2 += `<text x="${tx}" y="${my - bh / 2 + 15.5 * i + 15}" text-anchor="${anchor}" font-size="12" font-weight="700" fill="${GEO.ink}">${ln}</text>`;
     });
     return out2;
   };

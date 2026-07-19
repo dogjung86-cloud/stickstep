@@ -64,9 +64,9 @@ function refSvg(): string {
     ptLabel(B.x, B.y, "B", 9, 14) +
     ptLabel(C.x, C.y, "C", -9, 14) +
     // 빗변 곁 라벨(허용된 자연 소개 — 정식 명명은 다음 concept 몫)
-    `<text x="106" y="62" text-anchor="middle" font-size="11.5" font-weight="900" fill="${PROVE}">빗변</text>` +
-    `<text x="106" y="75" text-anchor="middle" font-size="9" font-weight="700" fill="#5A7FA6">(가장 긴 변)</text>` +
-    `<text x="84" y="154" text-anchor="middle" font-size="9.5" font-weight="700" fill="${GEO.soft}">기준 삼각형</text>`
+    `<text x="106" y="60" text-anchor="middle" font-size="13" font-weight="900" fill="${PROVE}">빗변</text>` +
+    `<text x="106" y="74" text-anchor="middle" font-size="10.5" font-weight="700" fill="#5A7FA6">(가장 긴 변)</text>` +
+    `<text x="84" y="156" text-anchor="middle" font-size="12" font-weight="700" fill="${GEO.soft}">기준 삼각형</text>`
   );
 }
 
@@ -91,7 +91,7 @@ export const rhCongLab: StepRenderer = (host, step, api) => {
     `<g class="rhc-ref">${refSvg()}</g>` +
     `<g class="rhc-givens"></g>` +
     `<rect x="196" y="34" width="140" height="110" rx="12" fill="rgba(25,113,194,.04)" stroke="${GEO.faint}" stroke-width="1.8" stroke-dasharray="7 6"/>` +
-    `<text x="266" y="154" text-anchor="middle" font-size="9.5" font-weight="700" fill="${GEO.soft}">복제 슬롯</text>` +
+    `<text x="266" y="156" text-anchor="middle" font-size="12" font-weight="700" fill="${GEO.soft}">복제 슬롯</text>` +
     `<g class="rhc-slot"></g>` +
     `</svg>`;
   const card = el("div", { class: "rhc-order enter" });

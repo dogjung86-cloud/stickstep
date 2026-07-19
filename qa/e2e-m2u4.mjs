@@ -272,7 +272,8 @@ const mq6Card = async (re, wait = 500) => {
 /* ══════════ 랩 드라이버 ══════════ */
 
 const LAB = {
-  /* isoFoldLab: 접기×3(모양 3종) → 한계 판정 → 보조선 → 근거 3개(가짜 회피) → 도장·피날레 */
+  /* isoFoldLab: 접기×3(모양 3종) → 한계 판정 → 보조선 → 근거 3개(가짜 회피) →
+     도장·대응각·피날레는 걸음 버튼 3개(자동 진행 폐기, 2026-07-19 실사용 피드백) */
   async isoFoldLab() {
     await page.waitForSelector(".ifl-counter", { timeout: 9000 });
     for (let i = 0; i < 3; i++) {
@@ -283,6 +284,9 @@ const LAB = {
     await mq6("아무리 접어도", 2900);
     await waitBtn("가르는 선 긋기", 1500);
     for (const re of ["AB = AC", "BAD", "AD는 공통"]) await mq6Card(re, 380);
+    await waitBtn("합동 도장 찍기", 1300);
+    await waitBtn("확인하기", 1800);
+    await waitBtn("모양 바꿔서 시험하기", 700);
     await waitChip("prove", 16000);
     await shot("m2u4-lab"); // 목표 칩 3/3 + 피날레 배지 증거
     await clickCTA();

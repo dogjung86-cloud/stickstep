@@ -1000,29 +1000,52 @@ export function isoExtFig(): string {
   );
 }
 
-/* ── L2 foldIsoFig: 종이 띠 접기 → 겹침 삼각형(접은 각 ●=엇각 ● → 이등변) ── */
+/* ── L2 foldIsoFig: 종이 띠 접기 → 겹침 삼각형(접은 각 ●=엇각 ○ → 이등변)
+   접기 기하는 전부 계산(훅 foldstrip과 같은 구성, 실사용 피드백로 재작도): 접는 선이
+   밑변과 이루는 각 th=64°로 접으면 아래 변이 방향 2·th로 복사된다. 겹침 삼각형
+   P(접는 선 아래 끝)·S(접힌 변과 위 변의 교점)·Q(접는 선 위 끝)의 P·Q 두 각이 th로 같은
+   이등변. ● 두 개(원래 각·접힌 복사본)는 P에, ○(엇각)은 Q에 꼭짓점 정박. ── */
 export function foldIsoFig(): string {
-  const x0 = 96;
-  const spread = 128;
-  const x1 = x0 + spread;
+  const T = 64;
+  const BO = 118;
+  const H = BO - T;
+  const th = 64;
+  const pX = 236;
+  const rd = (d: number): number => (d * Math.PI) / 180;
+  const qx = pX + H / Math.tan(rd(th));
+  const sx = pX + H / Math.tan(rd(2 * th));
+  const ux = Math.cos(rd(2 * th));
+  const uy = Math.sin(rd(2 * th));
+  const tCut = (T - 18) / uy; // 접힌 꼬리는 y=18에서 잘라 프레임 밖으로 이어지는 연출
+  const spx = sx + ux * tCut;
+  const qpx = qx + ux * tCut;
   return svg(
     "0 0 360 200",
     `<ellipse cx="180" cy="184" rx="130" ry="6" fill="#2A3A5E" opacity=".08"/>` +
-      `<rect x="24" y="66" width="312" height="54" rx="6" fill="url(#fi-strip)" stroke="#B8925C" stroke-width="1.6"/>` +
-      `<rect x="24" y="70" width="312" height="7" fill="#fff" opacity=".35"/>` +
-      `<path d="M${x0} 66 L${x0} 120 L${x1} 120 Z" fill="url(#fi-fold)" stroke="#0F4674" stroke-width="2" stroke-linejoin="round" opacity=".94"/>` +
-      `<path d="M${x0} 66 L${x1} 120" stroke="#0F4674" stroke-width="1.4" stroke-dasharray="4 3" opacity=".5"/>` +
-      angleArc(x0, 120, 17, 0, Math.round((Math.atan2(54, spread) * 180) / Math.PI) + 90 - 90 + 23, P4.amber, "●", { labelR: 26 }) +
-      angleArc(x1, 120, 17, 180 - 23, 180, P4.cyan, "○", { labelR: 26 }) +
-      angleArc(x1, 120, 30, 157, 180, P4.cyan) +
-      `<text x="${x0 + spread / 2}" y="152" text-anchor="middle" font-size="12" font-weight="800" fill="#12579B">접은 각 ● 와 엇갈린 위치의 각 ○</text>`,
+      `<path d="M${qx.toFixed(1)} ${T} L336 ${T} L336 ${BO} L${pX} ${BO} Z" fill="url(#fi-strip)" opacity=".35" stroke="#B8925C" stroke-width="1.3" stroke-dasharray="5 4"/>` +
+      `<path d="M24 ${T} L${qx.toFixed(1)} ${T} L${pX} ${BO} L24 ${BO} Z" fill="url(#fi-strip)" stroke="#B8925C" stroke-width="1.6"/>` +
+      `<rect x="24" y="${T + 4}" width="164" height="7" fill="#fff" opacity=".35"/>` +
+      `<path d="M${sx.toFixed(1)} ${T} L${spx.toFixed(1)} 18 L${qpx.toFixed(1)} 18 L${qx.toFixed(1)} ${T}" fill="url(#fi-fold)" opacity=".8"/>` +
+      `<line x1="${sx.toFixed(1)}" y1="${T}" x2="${spx.toFixed(1)}" y2="18" stroke="#0F4674" stroke-width="1.6"/>` +
+      `<line x1="${qx.toFixed(1)}" y1="${T}" x2="${qpx.toFixed(1)}" y2="18" stroke="#0F4674" stroke-width="1.6"/>` +
+      `<path d="M${pX} ${BO} L${sx.toFixed(1)} ${T} L${qx.toFixed(1)} ${T} Z" fill="url(#fi-fold)" stroke="#0F4674" stroke-width="2" stroke-linejoin="round" opacity=".94"/>` +
+      tickMark(pX, BO, sx, T, 1, P4.deep) +
+      tickMark(sx, T, qx, T, 1, P4.deep) +
+      angleArc(pX, BO, 17, 0, th, P4.amber, "●", { labelR: 27 }) +
+      angleArc(pX, BO, 17, th, 2 * th, P4.amber, "●", { labelR: 27 }) +
+      angleArc(qx, T, 17, 180, 180 + th, P4.cyan, "○", { labelR: 27 }) +
+      `<text x="180" y="156" text-anchor="middle" font-size="12.5" font-weight="800" fill="#12579B">접은 각 ● 와 엇갈린 위치의 각 ○</text>`,
     `<linearGradient id="fi-strip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCEFD8"/><stop offset=".5" stop-color="#F2DDB4"/><stop offset="1" stop-color="#E3C68E"/></linearGradient>
     <linearGradient id="fi-fold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A9CDF2"/><stop offset=".55" stop-color="#5CA4E8"/><stop offset="1" stop-color="#2B79C0"/></linearGradient>`,
   );
 }
 
-/* ── L3 rhaRhsFig: 직각삼각형 합동 조건 2종 도해(빗변+예각 / 빗변+다른 한 변) ── */
+/* ── L3 rhaRhsFig: 직각삼각형 합동 조건 2종 도해(빗변+예각 / 빗변+다른 한 변)
+   R·H·A·S 문자 배지를 각 부위 곁에 붙인다(제목의 알파벳이 그림 어디인지 실사용 피드백). ── */
 export function rhaRhsFig(): string {
+  const letter = (x: number, y: number, ch: string, color: string): string =>
+    `<circle cx="${x}" cy="${y}" r="8.5" fill="#FFFFFF" stroke="${color}" stroke-width="1.6"/>` +
+    `<text x="${x}" y="${y + 4}" text-anchor="middle" font-size="11" font-weight="900" fill="${color}">${ch}</text>`;
   const one = (ox: number, kind: "rha" | "rhs"): string => {
     const C: [number, number] = [ox, 150];
     const B: [number, number] = [ox + 118, 150];
@@ -1031,19 +1054,24 @@ export function rhaRhsFig(): string {
       triPath(A, B, C) +
       rightMark(C[0], C[1], 0, 11, P4.ink) +
       `<line x1="${A[0]}" y1="${A[1]}" x2="${B[0]}" y2="${B[1]}" stroke="${P4.main}" stroke-width="3.4" stroke-linecap="round"/>` +
-      `<text x="${(A[0] + B[0]) / 2 + 10}" y="${(A[1] + B[1]) / 2 - 8}" font-size="10.5" font-weight="900" fill="${P4.deep}">빗변</text>` +
+      letter(ox + 21, 130, "R", P4.ink) +
+      letter(ox + 68.8, 94, "H", P4.deep) +
+      `<text x="${ox + 80}" y="98.5" font-size="12" font-weight="900" fill="${P4.deep}">빗변</text>` +
       (kind === "rha"
-        ? arcIn(B, A, C, P4.amber, "예각")
+        ? arcIn(B, A, C, P4.amber) +
+          letter(ox + 84, 164, "A", "#B87708") +
+          `<text x="${ox + 95}" y="168.5" font-size="12" font-weight="900" fill="#B87708">예각</text>`
         : `<line x1="${C[0]}" y1="${C[1]}" x2="${B[0]}" y2="${B[1]}" stroke="${P4.cyan}" stroke-width="3.4" stroke-linecap="round"/>` +
-          `<text x="${(C[0] + B[0]) / 2}" y="${C[1] + 16}" text-anchor="middle" font-size="10.5" font-weight="900" fill="#0B7285">다른 한 변</text>`)
+          letter(ox + 26, 164, "S", "#0B7285") +
+          `<text x="${ox + 37}" y="168.5" font-size="12" font-weight="900" fill="#0B7285">다른 한 변</text>`)
     );
   };
   return svg(
     "0 0 360 200",
     `<ellipse cx="180" cy="184" rx="130" ry="6" fill="#2A3A5E" opacity=".08"/>` +
       one(36, "rha") + one(206, "rhs") +
-      `<text x="95" y="38" text-anchor="middle" font-size="12.5" font-weight="900" fill="#12579B">RHA: 빗변 + 한 예각</text>` +
-      `<text x="265" y="38" text-anchor="middle" font-size="12.5" font-weight="900" fill="#0B7285">RHS: 빗변 + 다른 한 변</text>`,
+      `<text x="95" y="38" text-anchor="middle" font-size="13.5" font-weight="900" fill="#12579B">RHA: 빗변 + 한 예각</text>` +
+      `<text x="265" y="38" text-anchor="middle" font-size="13.5" font-weight="900" fill="#0B7285">RHS: 빗변 + 다른 한 변</text>`,
   );
 }
 
@@ -1225,34 +1253,35 @@ export function rhombusDiagFig(): string {
 /* ── L9 quadTreeFig: 사각형 가족 관계 계단(빈칸 퀴즈 겸용: blank ㉠=평사→직사 조건) ── */
 export function quadTreeFig(blank = false): string {
   const node = (x: number, y: number, w: number, label: string): string =>
-    `<rect x="${x - w / 2}" y="${y - 15}" width="${w}" height="30" rx="10" fill="url(#qt-node)" stroke="#12579B" stroke-width="1.6"/>` +
-    `<text x="${x}" y="${y + 5}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#12579B">${label}</text>`;
-  const arrow = (x1: number, y1: number, x2: number, y2: number, label: string, hi = false): string => {
-    const mx = (x1 + x2) / 2;
-    const my = (y1 + y2) / 2;
+    `<rect x="${x - w / 2}" y="${y - 16}" width="${w}" height="32" rx="10" fill="url(#qt-node)" stroke="#12579B" stroke-width="1.6"/>` +
+    `<text x="${x}" y="${y + 5}" text-anchor="middle" font-size="13.5" font-weight="900" fill="#12579B">${label}</text>`;
+  const arrow = (x1: number, y1: number, x2: number, y2: number, hi = false): string =>
+    `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${hi ? "#C2255C" : "#8FB6DC"}" stroke-width="2"/>` +
+    `<path d="M${x2} ${y2} l-5 -8 l9 -1 z" fill="${hi ? "#C2255C" : "#8FB6DC"}"/>`;
+  // 조건 필은 텍스트 길이로 폭 계산, 아래 두 갈래는 화살표 바깥쪽으로 벌린 위치를 직접 받는다
+  // (중앙 자동 배치는 "이웃하는 두 변이 같음"·"한 내각이 직각" 필이 서로 겹치던 실사용 피드백).
+  const pill = (cx: number, cy: number, label: string, hi = false): string => {
+    const glyphs = label.replace(/ /g, "").length;
+    const w = glyphs * 12 + (label.length - glyphs) * 5 + 16;
     return (
-      `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${hi ? "#C2255C" : "#8FB6DC"}" stroke-width="2"/>` +
-      `<path d="M${x2} ${y2} l-5 -8 l9 -1 z" fill="${hi ? "#C2255C" : "#8FB6DC"}"/>` +
-      (label
-        ? `<rect x="${mx - 52}" y="${my - 12}" width="104" height="21" rx="8" fill="#FFFFFF" stroke="${hi ? "#C2255C" : "#C9DCEF"}" stroke-width="1.2"/>` +
-          `<text x="${mx}" y="${my + 3}" text-anchor="middle" font-size="10" font-weight="800" fill="${hi ? "#C2255C" : "#5A6B7E"}">${label}</text>`
-        : "")
+      `<rect x="${(cx - w / 2).toFixed(1)}" y="${cy - 12}" width="${w.toFixed(1)}" height="24" rx="8" fill="#FFFFFF" stroke="${hi ? "#C2255C" : "#C9DCEF"}" stroke-width="1.2"/>` +
+      `<text x="${cx}" y="${cy + 4}" text-anchor="middle" font-size="12" font-weight="800" fill="${hi ? "#C2255C" : "#5A6B7E"}">${label}</text>`
     );
   };
   return svg(
-    "0 0 360 322",
-    node(180, 24, 96, "사각형") +
-      arrow(180, 39, 180, 74, "한 쌍의 대변이 평행") +
-      node(180, 90, 104, "사다리꼴") +
-      arrow(180, 105, 180, 140, "다른 쌍도 평행") +
-      node(180, 156, 124, "평행사변형") +
-      arrow(126, 168, 92, 216, blank ? "㉠ ?" : "한 내각이 직각", blank) +
-      arrow(234, 168, 268, 216, "이웃하는 두 변이 같음") +
-      node(92, 232, 104, "직사각형") +
-      node(268, 232, 96, "마름모") +
-      arrow(112, 247, 158, 288, "이웃하는 두 변이 같음") +
-      arrow(248, 247, 202, 288, "한 내각이 직각") +
-      node(180, 304, 104, "정사각형"),
+    "0 0 360 338",
+    arrow(180, 42, 180, 74) + pill(180, 58, "한 쌍의 대변이 평행") +
+      arrow(180, 108, 180, 140) + pill(180, 124, "다른 쌍도 평행") +
+      arrow(128, 174, 88, 218, blank) + pill(96, 196, blank ? "㉠ ?" : "한 내각이 직각", blank) +
+      arrow(232, 174, 272, 218) + pill(256, 196, "이웃하는 두 변이 같음") +
+      arrow(106, 252, 156, 302) + pill(96, 278, "이웃하는 두 변이 같음") +
+      arrow(254, 252, 204, 302) + pill(260, 278, "한 내각이 직각") +
+      node(180, 26, 96, "사각형") +
+      node(180, 92, 104, "사다리꼴") +
+      node(180, 158, 124, "평행사변형") +
+      node(86, 234, 104, "직사각형") +
+      node(274, 234, 96, "마름모") +
+      node(180, 318, 104, "정사각형"),
     `<linearGradient id="qt-node" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E7F1FB"/></linearGradient>`,
   );
 }

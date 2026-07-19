@@ -3,12 +3,15 @@
 // ② 모양을 바꿔 또 접기 → "세상의 이등변삼각형은 무한개, 전부는 못 접는다" 판정
 // ③ 증명 조립: 각 A의 이등분선 → 합동 근거 3개 수집(순환 논법 함정 카드 포함) → SAS 도장 →
 //    ∠B=∠C 확정 → 모양이 계속 바뀌어도 결론이 유지되는 피날레(관찰은 유한, 증명은 무한을 한 방에).
+//    도장·대응각·피날레는 자동 진행이 아니라 걸음마다 유저 버튼으로 확인한다(실사용 피드백).
 // '증명' 단어는 국면 ② 판정의 답에서 처음 등장, 정식 정의는 다음 concept 몫.
+// 접기 순간 ∠B·∠C 라벨은 페이드 아웃(포개짐 라벨과 겹쳐 안 읽히던 실사용 피드백),
+// "포개짐!"은 접은 선 위 중앙에 흰 할로 텍스트로 얹는다.
 // rAF 금지(CSS 트랜지션 + setTimeout 체인, 타이머 Set). 스타일: math2.css .ifl-* 섹션.
 import { el, clear } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { mboard, mtoast, goalChips } from "../../ui/mathKit";
-import { angleArc, dot, ptLabel, rightMark, tickMark } from "../../ui/geoKit";
+import { angleArc, dot, polar, ptLabel, rightMark, tickMark } from "../../ui/geoKit";
 import { curioCard, type Curio } from "../../ui/curio";
 import type { StepRenderer } from "../types";
 
@@ -85,31 +88,38 @@ export const isoFoldLab: StepRenderer = (host, step, api) => {
   let confirms = 0; // 접어서 확인한 모양 수
   let phase: "fold" | "vary" | "limit" | "prove" | "done" = "fold";
 
-  /** 국면 1·2의 삼각형(왼쪽 반 고정 + 오른쪽 반 접힘 그룹)을 그린다. */
+  /** 국면 1·2의 삼각형(왼쪽 반 고정 + 오른쪽 반 접힘 그룹)을 그린다.
+   *  각 이름 라벨(∠B·∠C)은 접는 순간 페이드 아웃할 수 있게 호와 분리해 둔다.
+   *  ∠C 라벨을 접힘 그룹 안에 두면 scaleX(-1)로 글자가 거울상이 되는 함정도 함께 피한다. */
   function paintTriangle(): void {
     const { hw, h, bAng } = geom(SHAPES[shapeIdx].apex);
     const A = { x: CX, y: BASE_Y - h };
     const B = { x: CX - hw, y: BASE_Y };
     const C = { x: CX + hw, y: BASE_Y };
+    const lbB = polar(B.x, B.y, 39, bAng / 2);
+    const lbC = polar(C.x, C.y, 39, 180 - bAng / 2);
     gStatic.innerHTML =
       `<path d="M${A.x} ${A.y} L${B.x} ${B.y} L${CX} ${BASE_Y} Z" fill="#D9E9F9" stroke="#12579B" stroke-width="2.2" stroke-linejoin="round"/>` +
-      angleArc(B.x, B.y, 26, 0, bAng, "#F08C00", "∠B") +
+      angleArc(B.x, B.y, 26, 0, bAng, "#F08C00") +
+      `<text class="ifl-lbB" x="${lbB.x.toFixed(1)}" y="${(lbB.y + 4).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#F08C00" style="transition: opacity .3s">∠B</text>` +
       dot(A.x, A.y, "#12579B") + dot(B.x, B.y, "#12579B") + dot(C.x, C.y, "#12579B") +
       ptLabel(A.x, A.y, "A", 0, -10) + ptLabel(B.x, B.y, "B", -11, 13) + ptLabel(C.x, C.y, "C", 11, 13);
     gHalf.innerHTML =
       `<g class="ifl-flap" style="transform-box: view-box; transform-origin:${CX}px ${BASE_Y}px; transition: transform .85s var(--ease, cubic-bezier(.22,1,.36,1))">` +
       `<path d="M${A.x} ${A.y} L${C.x} ${C.y} L${CX} ${BASE_Y} Z" fill="#BBD7F2" stroke="#12579B" stroke-width="2.2" stroke-linejoin="round"/>` +
-      angleArc(C.x, C.y, 26, 180 - bAng, 180, "#0DA5C6", "∠C") +
-      `</g>`;
+      angleArc(C.x, C.y, 26, 180 - bAng, 180, "#0DA5C6") +
+      `</g>` +
+      `<text class="ifl-lbC" x="${lbC.x.toFixed(1)}" y="${(lbC.y + 4).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#0DA5C6" style="transition: opacity .3s">∠C</text>`;
     gMarks.innerHTML = "";
     gBadge.innerHTML = "";
   }
 
-  /** 접기: 오른쪽 반을 접는 선(x=CX 수직선) 기준으로 반전. */
+  /** 접기: 오른쪽 반을 접는 선(x=CX 수직선) 기준으로 반전. 각 이름 라벨은 겹치기 전에 끈다. */
   function fold(): void {
     if (folded) return;
     folded = true;
     haptic(HAPTIC.select);
+    for (const lb of Array.from(svg.querySelectorAll<SVGTextElement>(".ifl-lbB, .ifl-lbC"))) lb.style.opacity = "0";
     const flap = gHalf.querySelector(".ifl-flap") as SVGGElement;
     flap.style.transform = "scaleX(-1)";
     later(() => {
@@ -119,7 +129,8 @@ export const isoFoldLab: StepRenderer = (host, step, api) => {
         rightMark(CX, BASE_Y, 90, 11, "#C2255C") +
         tickMark(CX - hw, BASE_Y, CX, BASE_Y, 1, "#C2255C") +
         tickMark(CX, BASE_Y, CX + hw, BASE_Y, 1, "#C2255C") +
-        angleArc(CX - hw, BASE_Y, 33, 0, bAng, "#04B45F", "포개짐!", { width: 3.2, labelR: 48 });
+        angleArc(CX - hw, BASE_Y, 33, 0, bAng, "#04B45F", undefined, { width: 3.2 }) +
+        `<text x="${CX}" y="172" text-anchor="middle" font-size="13.5" font-weight="900" fill="#04B45F" stroke="#FFFFFF" stroke-width="3.5" paint-order="stroke" stroke-linejoin="round">포개짐!</text>`;
       haptic(HAPTIC.correct);
       toast("∠C가 ∠B 위에 딱 포개져요. 두 밑각의 크기가 같아요!");
       if (confirms === 0) {
@@ -317,7 +328,8 @@ export const isoFoldLab: StepRenderer = (host, step, api) => {
         gotCount += 1;
         if (gotCount === 3) {
           toast("근거 완성: 변, 그 사이 각, 변. 중1에서 배운 SAS 합동 조건 그대로예요!");
-          later(stamp, 1500);
+          helper.innerHTML = "근거 3개가 전부 모였어요. 변·끼인각·변! 이제 직접 <b>합동 도장</b>을 찍어 확정하세요.";
+          offerStep("SAS 합동 도장 찍기", stamp);
         }
       });
       row.appendChild(bt);
@@ -325,6 +337,20 @@ export const isoFoldLab: StepRenderer = (host, step, api) => {
     clear(ctl);
     ctl.appendChild(row);
     later(() => qline.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80);
+  }
+
+  /** 국면 3의 걸음 버튼: 결론이 저절로 흐르지 않게 한 걸음씩 유저가 확인한다(실사용 피드백). */
+  function offerStep(label: string, fn: () => void): void {
+    clear(actions);
+    const b = el("button", { class: "ct-btn hero", attrs: { type: "button" } }, el("span", { text: label })) as HTMLButtonElement;
+    b.addEventListener("click", () => {
+      if (b.disabled) return;
+      b.disabled = true;
+      haptic(HAPTIC.select);
+      fn();
+    });
+    actions.appendChild(b);
+    later(() => actions.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80);
   }
 
   function stamp(): void {
@@ -344,37 +370,72 @@ export const isoFoldLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.done);
     }, 40);
     later(() => {
-      const { hw, bAng } = geom(SHAPES[0].apex);
-      gBadge.innerHTML +=
-        angleArc(CX - hw, BASE_Y, 30, 0, bAng, "#04B45F", "", { width: 3.4 }) +
-        angleArc(CX + hw, BASE_Y, 30, 180 - bAng, 180, "#04B45F", "", { width: 3.4 }) +
-        `<text x="170" y="242" text-anchor="middle" font-size="13.5" font-weight="900" fill="#04B45F">그러므로 ∠B = ∠C</text>`;
-      toast("합동인 두 삼각형의 대응각이니까요. 접지 않고도 확정!");
-    }, 1250);
-    later(finaleMorph, 3000);
+      helper.innerHTML = "<b>△ABD ≡ △ACD</b> 도장 완료! 합동인 두 삼각형에서 ∠B와 ∠C는 어떤 사이가 됐을까요?";
+      offerStep("∠B와 ∠C 확인하기", conclude);
+    }, 950);
   }
 
-  /** 피날레: 모양이 계속 바뀌어도 결론이 유지 — 증명은 무한을 한 방에. */
+  function conclude(): void {
+    clear(actions);
+    const { hw, bAng } = geom(SHAPES[0].apex);
+    gBadge.innerHTML +=
+      angleArc(CX - hw, BASE_Y, 30, 0, bAng, "#04B45F", "", { width: 3.4 }) +
+      angleArc(CX + hw, BASE_Y, 30, 180 - bAng, 180, "#04B45F", "", { width: 3.4 }) +
+      `<text x="170" y="242" text-anchor="middle" font-size="13.5" font-weight="900" fill="#04B45F">그러므로 ∠B = ∠C</text>`;
+    haptic(HAPTIC.correct);
+    toast("합동인 두 삼각형의 대응각이니까요. 접지 않고도 확정!");
+    later(() => {
+      helper.innerHTML = "∠B = ∠C 확정! 그런데 이 논리, <b>모양이 달라도</b> 통할까요? 마지막 시험이에요.";
+      offerStep("모양 바꿔서 시험하기", finaleMorph);
+    }, 1400);
+  }
+
+  /** 피날레: 꼭지각이 연속으로 변해도(뾰족↔넓적) 결론 유지 — 증명은 무한을 한 방에.
+   *  도장·결론 배지를 먼저 걷어낸다(배지가 삼각형을 가려 "마지막 모양만 보이던" 실사용 피드백).
+   *  모양 전환은 하드 컷이 아니라 setTimeout 체인 보간(rAF 금지 — chopstick 트윈 문법)으로
+   *  삼각형·꼭짓점 라벨·이등분선·초록 두 각이 실제로 "변하면서" 지나간다. */
   function finaleMorph(): void {
-    const seq = [1, 2, 0];
-    seq.forEach((idx, i) => {
-      later(() => {
-        const { hw, h, bAng } = geom(SHAPES[idx].apex);
-        const A = { x: CX, y: BASE_Y - h };
-        gStatic.innerHTML =
-          `<path d="M${A.x} ${A.y} L${CX - hw} ${BASE_Y} L${CX + hw} ${BASE_Y} Z" fill="#EAF3FC" stroke="#12579B" stroke-width="2.4" stroke-linejoin="round"/>`;
-        gMarks.innerHTML =
-          `<line x1="${A.x}" y1="${A.y}" x2="${CX}" y2="${BASE_Y}" stroke="#C2255C" stroke-width="2" stroke-dasharray="5 4" opacity=".6"/>` +
-          angleArc(CX - hw, BASE_Y, 26, 0, bAng, "#04B45F", "", { width: 3 }) +
-          angleArc(CX + hw, BASE_Y, 26, 180 - bAng, 180, "#04B45F", "", { width: 3 });
-        haptic(HAPTIC.tap);
-        if (i === seq.length - 1) {
-          gBadge.innerHTML =
-            `<rect x="70" y="14" width="200" height="30" rx="10" fill="#F0FBF5" stroke="#04B45F" stroke-width="2"/>` +
-            `<text x="170" y="34" text-anchor="middle" font-size="12.5" font-weight="900" fill="#1E7A31">어떤 모양이든 이 논리는 통해요!</text>`;
-        }
-      }, 700 * (i + 1));
+    clear(actions);
+    gBadge.style.transition = "opacity .3s";
+    gBadge.style.opacity = "0";
+    later(() => {
+      gBadge.innerHTML = "";
+      gBadge.style.opacity = "1";
+    }, 320);
+    const paintMorph = (apex: number): void => {
+      const { hw, h, bAng } = geom(apex);
+      const A = { x: CX, y: BASE_Y - h };
+      const bx = CX - hw;
+      const cx = CX + hw;
+      gStatic.innerHTML =
+        `<path d="M${A.x} ${A.y.toFixed(1)} L${bx.toFixed(1)} ${BASE_Y} L${cx.toFixed(1)} ${BASE_Y} Z" fill="#EAF3FC" stroke="#12579B" stroke-width="2.4" stroke-linejoin="round"/>` +
+        dot(A.x, A.y, "#12579B") + dot(bx, BASE_Y, "#12579B") + dot(cx, BASE_Y, "#12579B") +
+        ptLabel(A.x, A.y, "A", 0, -10) + ptLabel(bx, BASE_Y, "B", -11, 13) + ptLabel(cx, BASE_Y, "C", 11, 13);
+      gMarks.innerHTML =
+        `<line x1="${A.x}" y1="${A.y.toFixed(1)}" x2="${CX}" y2="${BASE_Y}" stroke="#C2255C" stroke-width="2" stroke-dasharray="5 4" opacity=".6"/>` +
+        angleArc(bx, BASE_Y, 26, 0, bAng, "#04B45F", "", { width: 3 }) +
+        angleArc(cx, BASE_Y, 26, 180 - bAng, 180, "#04B45F", "", { width: 3 });
+    };
+    const legs: [number, number][] = [[52, 32], [32, 84], [84, 52]];
+    const STEP = 36;
+    const FRAMES = 18;
+    const PAUSE = 300;
+    const ease = (t: number): number => (t < 0.5 ? 2 * t * t : 1 - 2 * (1 - t) * (1 - t));
+    legs.forEach(([from, to], li) => {
+      const base = 380 + li * (FRAMES * STEP + PAUSE);
+      for (let f = 1; f <= FRAMES; f++) {
+        later(() => {
+          paintMorph(from + (to - from) * ease(f / FRAMES));
+          if (f === FRAMES) haptic(HAPTIC.tap);
+        }, base + f * STEP);
+      }
     });
+    const settled = 380 + legs.length * (FRAMES * STEP + PAUSE);
+    later(() => {
+      gBadge.innerHTML =
+        `<rect x="70" y="14" width="200" height="30" rx="10" fill="#F0FBF5" stroke="#04B45F" stroke-width="2"/>` +
+        `<text x="170" y="34" text-anchor="middle" font-size="12.5" font-weight="900" fill="#1E7A31">어떤 모양이든 이 논리는 통해요!</text>`;
+    }, settled + 150);
     later(() => {
       phase = "done";
       chips.on("prove", "무한을 한 방에");
@@ -383,7 +444,7 @@ export const isoFoldLab: StepRenderer = (host, step, api) => {
         "접기(관찰)는 <b>하나씩</b>, 논리는 <b>모든 이등변삼각형을 한 방에</b> 해치워요. 이 무기의 정식 이름을 배우러 가요!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "이름 붙이러 가기");
-    }, 700 * 3 + 900);
+    }, settled + 800);
   }
 
   paintTriangle();

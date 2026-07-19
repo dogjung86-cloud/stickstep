@@ -776,6 +776,17 @@ src/
   scaleX(-1)·180° 회전 드래그 — 시계 바늘 사고의 SVG 그룹판 예방), 회전 드래그는 CSS(시계+)와
   수학 각(반시계+)의 부호 반전 주의. mathDrill에 **장문 자동 강등**(q 26자 초과 → .mdr-q.long 18px)
   공용 개선. 컷 u4lN 10장 발주·눈검수·webp 변환 완료(qa/order-m2u4cuts.sh, u4l10만 저울대 수평 1회 재발주).
+  **실사용 피드백 10건 반영(2026-07-19)**: ① 랩·훅 SVG 안내 텍스트는 12px 이상(9~10px 실격 —
+  rhCong·inCircle·areaSlide·fairspot 소급), 겹침 위험 라벨은 흰 할로(stroke #fff+paint-order:stroke —
+  isoFold 포개짐·inCircle 이등분선·areaSlide 높이), 변 곁 길이 라벨은 변 방향 회전(가로쓰기 고정은
+  비스듬한 변을 가로지름) ② 종이 띠 접기 그림은 계산 기하로만: 접는 각 th → 접힌 변 방향 2·th,
+  겹침 삼각형 = 접는 선 양 끝 두 각이 th인 이등변(눈대중 호·직각삼각형 겹침은 실격 — foldstrip 훅·
+  foldIsoFig·mExamFoldFig(-(180-fold) 시작각 버그, m1u4 공용) 3곳 재작도) ③ isoFoldLab 증명 조립은
+  자동 진행 금지, 걸음 버튼 3개(도장→대응각→모양 시험)로 유저가 확인하며 전진 + 피날레는 도장
+  배지를 먼저 걷어내고(삼각형을 가림) 꼭지각 52→32→84→52 setTimeout 보간 모프(하드 컷 3연타는
+  "마지막 모양만 보임" 실사용 피드백 — 트윈은 chopstick 문법) ④ 훅 접이식 소품은
+  "접힌 상태에서 시작해 펴진다"(phonestand 64°→38° 역방향 실사고) ⑤ rhaRhsFig·quadTreeFig·
+  m2ExamFamilyFig는 라벨 배지·필 폭 계산·겹침 해소판이 정본. 눈검수 `qa/shot-m2u4-fixfeedback.mjs`.
   상세는 MATH_GUIDE.md 중2 Ⅳ 표. QA: `PORT=<포트> node qa/e2e-m2u4.mjs`.
 - **중2 수학 Ⅴ(m2u5, 도형의 닮음과 피타고라스 정리) 완성** — 11레슨(무료 3+프리미엄 8), 테마 `sim`
   (마트료시카 라즈베리 #C2255C — 중2 수학 내 유일한 붉은 계열, 오답 red보다 깊은 자줏빛).

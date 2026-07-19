@@ -179,20 +179,26 @@ export const areaSlideLab: StepRenderer = (host, step, api) => {
       `<text x="350" y="${RB + 4}" font-size="12.5" font-weight="800" font-style="italic" fill="#64748B">m</text>`;
   }
 
-  /** 변 길이 라벨(삼각형 바깥쪽으로 밀어 배치), "변은 변하는데 넓이는 그대로"의 대비 장치. */
+  /** 변 길이 라벨(삼각형 바깥쪽, 변과 나란히 눕힘), "변은 변하는데 넓이는 그대로"의 대비 장치.
+   *  가로쓰기 고정이면 비스듬한 변을 가로질러 안 읽힌다(실사용 피드백) — 변 방향 회전이 정답. */
   function edgeLen(P: Pt, Q: Pt, other: Pt, name: string): string {
     const mx = (P.x + Q.x) / 2;
     const my = (P.y + Q.y) / 2;
     const dx = Q.x - P.x;
     const dy = Q.y - P.y;
     const L = Math.hypot(dx, dy) || 1;
-    let nx = (-dy / L) * 13;
-    let ny = (dx / L) * 13;
+    let nx = (-dy / L) * 14;
+    let ny = (dx / L) * 14;
     if (nx * (mx - other.x) + ny * (my - other.y) < 0) {
       nx = -nx;
       ny = -ny;
     }
-    return `<text x="${(mx + nx).toFixed(1)}" y="${(my + ny + 3).toFixed(1)}" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8093A8">${name} ${cellFmt(L / U)}칸</text>`;
+    let rot = (Math.atan2(dy, dx) * 180) / Math.PI;
+    if (rot > 90) rot -= 180;
+    if (rot < -90) rot += 180;
+    const tx = (mx + nx).toFixed(1);
+    const ty = (my + ny + 4).toFixed(1);
+    return `<text transform="rotate(${rot.toFixed(1)} ${tx} ${ty})" x="${tx}" y="${ty}" text-anchor="middle" font-size="12" font-weight="700" fill="#7B8FA6">${name} ${cellFmt(L / U)}칸</text>`;
   }
 
   function paintTri(): void {
@@ -202,8 +208,8 @@ export const areaSlideLab: StepRenderer = (host, step, api) => {
     gTop.innerHTML =
       lineSvg(ax, RT, ax, RB, GEO.hlB, 2.2, "5 4") +
       rightMark(ax, RB, 0, 9, GEO.hlB) +
-      `<text x="${(flipLbl ? ax - 9 : ax + 9).toFixed(1)}" y="174" text-anchor="${flipLbl ? "end" : "start"}" font-size="11" font-weight="900" fill="#0B7285">높이 7칸</text>` +
-      `<text x="${(B1.x + C1.x) / 2}" y="${RB + 19}" text-anchor="middle" font-size="11" font-weight="900" fill="#B87708">밑변 8칸</text>` +
+      `<text x="${(flipLbl ? ax - 11 : ax + 11).toFixed(1)}" y="175" text-anchor="${flipLbl ? "end" : "start"}" font-size="13" font-weight="900" fill="#0B7285" stroke="#FFFFFF" stroke-width="3.2" paint-order="stroke" stroke-linejoin="round">높이 7칸</text>` +
+      `<text x="${(B1.x + C1.x) / 2}" y="${RB + 20}" text-anchor="middle" font-size="13" font-weight="900" fill="#B87708">밑변 8칸</text>` +
       edgeLen(A, B1, C1, "AB") +
       edgeLen(A, C1, B1, "AC") +
       dot(B1.x, B1.y) +
@@ -310,11 +316,11 @@ export const areaSlideLab: StepRenderer = (host, step, api) => {
     let str =
       lineSvg(p0.x, p0.y, p1.x, p1.y, "#94A3B8", 2.2) +
       arrowHead(m.x, m.y, aAC, GEO.hlA, 7) +
-      `<text x="152" y="50" text-anchor="middle" font-size="10" font-weight="700" fill="#64748B">AC와 평행한 레일</text>`;
+      `<text x="150" y="48" text-anchor="middle" font-size="12.5" font-weight="700" fill="#64748B">AC와 평행한 레일</text>`;
     if (withGhost) {
       str +=
         `<line x1="${FC.x}" y1="${FC.y}" x2="352" y2="${FC.y}" stroke="#94A3B8" stroke-width="1.8" stroke-dasharray="4 4"/>` +
-        `<text x="296" y="257" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8093A8">BC의 연장선</text>` +
+        `<text x="292" y="259" text-anchor="middle" font-size="12" font-weight="700" fill="#7B8FA6">BC의 연장선</text>` +
         `<g><circle cx="${FE.x}" cy="${FE.y}" r="8.5" fill="rgba(18,184,134,.10)" stroke="#12B886" stroke-width="2" stroke-dasharray="4 3">` +
         `<animate attributeName="stroke-opacity" values="1;.3;1" dur="1.5s" repeatCount="indefinite"/></circle>` +
         `<text x="${FE.x}" y="${FE.y - 14}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#0CA678">E</text></g>`;
@@ -334,8 +340,8 @@ export const areaSlideLab: StepRenderer = (host, step, api) => {
         `<path d="M${FA.x} ${FA.y} L${FE.x} ${FE.y}" stroke="${GEO.hlC}" stroke-width="3.6" stroke-linecap="round"/>` +
         lineSvg(FA.x, FA.y, FA.x, RB, GEO.hlB, 2.2, "5 4") +
         rightMark(FA.x, RB, 0, 9, GEO.hlB) +
-        `<text x="${FA.x + 9}" y="174" font-size="11" font-weight="900" fill="#0B7285">높이 7칸</text>` +
-        `<text x="200" y="${RB + 19}" text-anchor="middle" font-size="11" font-weight="900" fill="#B87708">밑변 14칸</text>` +
+        `<text x="${FA.x + 11}" y="175" font-size="13" font-weight="900" fill="#0B7285" stroke="#FFFFFF" stroke-width="3.2" paint-order="stroke" stroke-linejoin="round">높이 7칸</text>` +
+        `<text x="150" y="${RB + 20}" text-anchor="middle" font-size="13" font-weight="900" fill="#B87708">밑변 14칸</text>` +
         dot(FA.x, FA.y) +
         dot(FB.x, FB.y) +
         dot(FC.x, FC.y) +

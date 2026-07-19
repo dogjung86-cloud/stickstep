@@ -202,7 +202,10 @@ const untilChip = async (id, fn, tries = 8, label = "") => {
     await fn(t);
     await W(700);
   }
-  if (!(await chipOn(id))) throw new Error(`untilChip 실패: ${id} ${label} @ ${await h1()}`);
+  if (!(await chipOn(id))) {
+    await shot(`fail-${label || id}`); // 실패 순간 화면 증거(진단용)
+    throw new Error(`untilChip 실패: ${id} ${label} @ ${await h1()}`);
+  }
 };
 const waitChip = (id, timeout = 16000) =>
   page.waitForFunction((id) => document.querySelector(`[data-g="${id}"]`)?.classList.contains("on"), id, { timeout });

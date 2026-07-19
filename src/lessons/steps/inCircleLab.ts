@@ -129,17 +129,18 @@ function bisectorSvg(V: Pt, P1: Pt, P2: Pt, color: string, dark: string, ticks: 
     }
   }
   if (labelLines) {
-    // 꼭짓점과 내심의 중간에, 선을 따라 눕힌 2줄 라벨(뒤집힘 방지로 ±90° 안으로 보정)
+    // 꼭짓점과 내심의 중간에, 선을 따라 눕힌 2줄 라벨(뒤집힘 방지로 ±90° 안으로 보정).
+    // 원·점선 위에서도 읽히게 흰 할로, 문구는 짧게·크게(9.5px 장문이 안 읽히던 실사용 피드백).
     const lm = { x: (V.x + IC.x) / 2, y: (V.y + IC.y) / 2 };
     let rot = deg(Math.atan2(b.d.y, b.d.x));
     if (rot > 90) rot -= 180;
     if (rot < -90) rot += 180;
     const tsp = labelLines
-      .map((tx, i) => `<tspan x="${lm.x.toFixed(1)}" dy="${i === 0 ? -6 - (labelLines.length - 1) * 11 : 11}">${tx}</tspan>`)
+      .map((tx, i) => `<tspan x="${lm.x.toFixed(1)}" dy="${i === 0 ? -7 - (labelLines.length - 1) * 13.5 : 13.5}">${tx}</tspan>`)
       .join("");
     s +=
       `<text transform="rotate(${rot.toFixed(1)} ${lm.x.toFixed(1)} ${lm.y.toFixed(1)})" x="${lm.x.toFixed(1)}" y="${lm.y.toFixed(1)}"` +
-      ` text-anchor="middle" font-size="9.5" font-weight="800" fill="${dark}">${tsp}</text>`;
+      ` text-anchor="middle" font-size="12" font-weight="800" fill="${dark}" stroke="#FFFFFF" stroke-width="3.2" paint-order="stroke" stroke-linejoin="round">${tsp}</text>`;
   }
   return s;
 }
@@ -304,10 +305,10 @@ export const inCircleLab: StepRenderer = (host, step, api) => {
     const g = which === "B" ? gBB : gBC;
     if (which === "B") {
       bisB = true;
-      g.innerHTML = bisectorSvg(TB, TA, TC, GEO.hlA, "#B87708", 1, ["B의 두 변에서", "같은 거리인 점들의 길"]);
+      g.innerHTML = bisectorSvg(TB, TA, TC, GEO.hlA, "#B87708", 1, ["각 B의 두 변에서", "같은 거리인 길"]);
     } else {
       bisC = true;
-      g.innerHTML = bisectorSvg(TC, TA, TB, GEO.hlB, "#0B7285", 2, ["C의 두 변에서", "같은 거리인 점들의 길"]);
+      g.innerHTML = bisectorSvg(TC, TA, TB, GEO.hlB, "#0B7285", 2, ["각 C의 두 변에서", "같은 거리인 길"]);
     }
     void g.getBoundingClientRect(); // reflow로 페이드 트랜지션 발동(rAF 금지)
     g.style.opacity = "1";

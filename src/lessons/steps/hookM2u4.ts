@@ -8,6 +8,7 @@
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { ask } from "./hookAsk";
+import { angleArc } from "../../ui/geoKit";
 import type { AvatarKind } from "../../ui/avatar";
 
 type Face = (k: AvatarKind) => void;
@@ -97,31 +98,49 @@ export const renderHanger: SceneFn = (scene, helper, finish, face, choices) => {
   });
 };
 
-/* 2 foldstrip: 종이 띠를 비스듬히 접으면 겹침 삼각형이 늘 이등변(되는 조건의 예고) */
+/* 2 foldstrip: 종이 띠를 비스듬히 접으면 겹침 삼각형이 늘 이등변(되는 조건의 예고)
+   접기 기하는 전부 계산(눈대중 금지, 실사용 피드백로 재작도): 접는 선이 밑변과 이루는 각을
+   th라 하면 접힌 아래 변은 방향 2·th로 복사된다. 겹침 삼각형 = P(접는 선 아래 끝, pX)·
+   Q(접는 선 위 끝)·S(접힌 변과 위 변의 교점)이고 P·Q의 두 각이 th로 같은 이등변.
+   각 호는 geoKit angleArc로 꼭짓점에 정박, 접혀 나간 원래 자리는 점선 유령으로 남긴다. */
 export const renderFoldstrip: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
-  // 띠(y 84~132) 위에 접힘 결과를 두 가지 각도로 미리 그려 두고 크로스페이드
-  const foldScene = (id: string, x0: number, spread: number, hidden: boolean): string => {
-    // 접선 x0에서 시작하는 겹침 삼각형(밑변 spread, 띠 폭 48 고정)
-    const x1 = x0 + spread;
-    return `<g id="${id}" style="opacity:${hidden ? 0 : 1}; transition: opacity .55s">
-      <path d="M${x0} 132 L${x1} 132 L${x0 + spread / 2} 132 Z" fill="none"/>
-      <path d="M${x0} 84 L${x0} 132 L${x1} 132 Z" fill="url(#fs4-fold)" stroke="#0F4674" stroke-width="1.8" stroke-linejoin="round" opacity=".92"/>
-      <path d="M${x0} 84 L${x1} 132" stroke="#0F4674" stroke-width="1.4" stroke-dasharray="4 3" opacity=".55"/>
-      <path d="M${x0} 118 A14 14 0 0 1 ${x0 + 11.2} 122.6" stroke="#E8A93E" stroke-width="2.6" stroke-linecap="round" fill="none"/>
-      <path d="M${x1 - 13} 132 A13 13 0 0 1 ${x1 - 2.4} 124.4" stroke="#E8A93E" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+  const T = 84;
+  const BO = 132;
+  const H = BO - T;
+  const foldScene = (id: string, pX: number, th: number): string => {
+    const rd = (d: number): number => (d * Math.PI) / 180;
+    const qx = pX + H / Math.tan(rd(th));
+    const sx = pX + H / Math.tan(rd(2 * th));
+    const ux = Math.cos(rd(2 * th));
+    const uy = Math.sin(rd(2 * th));
+    const tCut = (T - 26) / uy; // 꼬리는 카드 위 y=26에서 잘라 프레임 밖으로 이어지는 연출
+    const spx = sx + ux * tCut;
+    const qpx = qx + ux * tCut;
+    return `<g id="${id}" style="opacity:0; transition: opacity .55s">
+      <path d="M${qx.toFixed(1)} ${T} L332 ${T} L332 ${BO} L${pX} ${BO} Z" fill="#F2DDB4" opacity=".3" stroke="#B8925C" stroke-width="1.3" stroke-dasharray="5 4"/>
+      <path d="M28 ${T} L${qx.toFixed(1)} ${T} L${pX} ${BO} L28 ${BO} Z" fill="url(#fs4-strip)" stroke="#B8925C" stroke-width="1.6"/>
+      <rect x="28" y="${T + 4}" width="${(Math.min(qx, pX) - 36).toFixed(1)}" height="7" fill="#fff" opacity=".35"/>
+      <path d="M${sx.toFixed(1)} ${T} L${spx.toFixed(1)} 26 L${qpx.toFixed(1)} 26 L${qx.toFixed(1)} ${T}" fill="url(#fs4-fold)" opacity=".8"/>
+      <line x1="${sx.toFixed(1)}" y1="${T}" x2="${spx.toFixed(1)}" y2="26" stroke="#0F4674" stroke-width="1.6"/>
+      <line x1="${qx.toFixed(1)}" y1="${T}" x2="${qpx.toFixed(1)}" y2="26" stroke="#0F4674" stroke-width="1.6"/>
+      <path d="M${pX} ${BO} L${sx.toFixed(1)} ${T} L${qx.toFixed(1)} ${T} Z" fill="url(#fs4-fold)" stroke="#0F4674" stroke-width="2" stroke-linejoin="round"/>
+      ${angleArc(pX, BO, 15, th, 2 * th, "#E8A93E", undefined, { width: 2.6 })}
+      ${angleArc(qx, T, 15, 180, 180 + th, "#E8A93E", undefined, { width: 2.6 })}
     </g>`;
   };
   fig.innerHTML = wrapSvg(
     `${CARD}
     ${SHADOW(180, 168, 110, 0.1)}
-    <rect x="28" y="84" width="304" height="48" rx="6" fill="url(#fs4-strip)" stroke="#B8925C" stroke-width="1.6"/>
-    <rect x="28" y="88" width="304" height="7" fill="#fff" opacity=".35"/>
-    ${foldScene("fs4-a", 118, 76, true)}
-    ${foldScene("fs4-b", 150, 116, true)}
+    <g id="fs4-flat" style="transition: opacity .5s">
+      <rect x="28" y="${T}" width="304" height="${H}" rx="6" fill="url(#fs4-strip)" stroke="#B8925C" stroke-width="1.6"/>
+      <rect x="28" y="${T + 4}" width="304" height="7" fill="#fff" opacity=".35"/>
+    </g>
+    ${foldScene("fs4-a", 150, 64)}
+    ${foldScene("fs4-b", 190, 38)}
     <g id="fs4-tag" style="opacity:0; transition: opacity .5s">
-      <rect x="236" y="40" width="96" height="30" rx="10" fill="#FFFFFF" stroke="#C8D8E8" stroke-width="1.4"/>
-      <text x="284" y="59" text-anchor="middle" font-size="12" font-weight="900" fill="#12579B">두 각이 같다!</text>
+      <rect x="122" y="140" width="116" height="28" rx="10" fill="#FFFFFF" stroke="#C8D8E8" stroke-width="1.4"/>
+      <text x="180" y="159" text-anchor="middle" font-size="12.5" font-weight="900" fill="#12579B">두 각이 같다!</text>
     </g>`,
     `${BG}
     <linearGradient id="fs4-strip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCEFD8"/><stop offset=".5" stop-color="#F2DDB4"/><stop offset="1" stop-color="#E3C68E"/></linearGradient>
@@ -137,10 +156,11 @@ export const renderFoldstrip: SceneFn = (scene, helper, finish, face, choices) =
     haptic(HAPTIC.select);
     if (stage === 0) {
       stage = 1;
+      q<SVGGElement>(fig, "#fs4-flat").style.opacity = "0";
       q<SVGGElement>(fig, "#fs4-a").style.opacity = "1";
       window.setTimeout(() => { q<SVGGElement>(fig, "#fs4-tag").style.opacity = "1"; }, 550);
       btn.querySelector("span")!.textContent = "다른 각도로 접기";
-      helper.innerHTML = "겹침 삼각형이 나왔어요! 아래 두 각(주황)이 <b>같은 크기</b>로 보이죠? 이번엔 <b>다른 각도</b>로 접어 봐요.";
+      helper.innerHTML = "겹침 삼각형이 나왔어요! 접은 선 양 끝의 두 각(주황)이 <b>같은 크기</b>로 보이죠? 이번엔 <b>다른 각도</b>로 접어 봐요.";
       return;
     }
     if (stage === 1) {
@@ -151,7 +171,7 @@ export const renderFoldstrip: SceneFn = (scene, helper, finish, face, choices) =
       window.setTimeout(() => { q<SVGGElement>(fig, "#fs4-b").style.opacity = "1"; haptic(HAPTIC.tap); }, 420);
       window.setTimeout(() => {
         face("surprised");
-        helper.innerHTML = "각도를 바꿔 접어도 아래 두 각은 또 같아 보여요. 그렇다면 이 겹침 삼각형의 <b>두 변</b>은 어떨까요?";
+        helper.innerHTML = "각도를 바꿔 접어도 주황 두 각은 또 같아 보여요. 그렇다면 이 겹침 삼각형의 <b>두 변</b>은 어떨까요?";
         ask(box, helper, {
           choices: choices ?? [
             "두 변의 길이도 같은 이등변삼각형이에요, 어떻게 접어도요",
@@ -174,7 +194,7 @@ export const renderPhonestand: SceneFn = (scene, helper, finish, face, choices) 
     `<g id="${id}">
       ${SHADOW(ox + 52, 166, 52, 0.12)}
       <rect x="${ox}" y="158" width="104" height="8" rx="4" fill="url(#ps4-base${tone})" stroke="#0F4674" stroke-width="1.5"/>
-      <g id="${id}-leg" style="transform-box: view-box; transform-origin:${ox + 92}px 160px; transform: rotate(64deg); transition: transform .8s ${SPRING}">
+      <g id="${id}-leg" style="transform-box: view-box; transform-origin:${ox + 92}px 160px; transform: rotate(0deg); transition: transform .8s ${SPRING}">
         <rect x="${ox + 24}" y="156" width="70" height="7" rx="3.5" fill="url(#ps4-leg${tone})" stroke="#0F4674" stroke-width="1.4"/>
       </g>
       <g id="${id}-phone" style="opacity:0; transition: opacity .5s .55s">
@@ -211,7 +231,8 @@ export const renderPhonestand: SceneFn = (scene, helper, finish, face, choices) 
     btn.classList.remove("pulse");
     haptic(HAPTIC.select);
     for (const id of ["ps4-L", "ps4-R"]) {
-      q<SVGGElement>(fig, `#${id}-leg`).style.transform = "rotate(38deg)";
+      // 접힌 다리(0°)가 위로 펴진다. 64°에서 폰 상단 모서리와 다리 끝이 만난다(각 호도 이 각).
+      q<SVGGElement>(fig, `#${id}-leg`).style.transform = "rotate(64deg)";
       window.setTimeout(() => { q<SVGGElement>(fig, `#${id}-phone`).style.opacity = "1"; }, 620);
       window.setTimeout(() => { q<SVGPathElement>(fig, `#${id}-arc`).style.opacity = "1"; }, 350);
     }
@@ -242,7 +263,7 @@ export const renderFairspot: SceneFn = (scene, helper, finish, face, choices) =>
       <rect x="${x - 12}" y="${y - 2}" width="24" height="20" rx="3" fill="url(#${hue})" stroke="${dark}" stroke-width="1.5"/>
       <path d="M${x - 16} ${y} L${x} ${y - 14} L${x + 16} ${y} Z" fill="url(#fp4-roof)" stroke="#8C3A2A" stroke-width="1.5" stroke-linejoin="round"/>
       <rect x="${x - 4}" y="${y + 8}" width="8" height="10" rx="1.5" fill="#5A3A22"/>
-      <text x="${x}" y="${y + 34}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#5A6B7E">${name}</text>
+      <text x="${x}" y="${y + 36}" text-anchor="middle" font-size="13" font-weight="800" fill="#5A6B7E">${name}</text>
     </g>`;
   // 세 집: A(70,58) B(96,150) C(292,120), "가운데쯤" 핀 = 평균점(152.7, 109.3) → 실제 등거리점과 다름
   fig.innerHTML = wrapSvg(
@@ -260,12 +281,12 @@ export const renderFairspot: SceneFn = (scene, helper, finish, face, choices) =>
       <line x1="76" y1="66" x2="150" y2="100" stroke="#1971C2" stroke-width="2" stroke-dasharray="5 4"/>
       <line x1="102" y1="144" x2="150" y2="112" stroke="#1971C2" stroke-width="2" stroke-dasharray="5 4"/>
       <line x1="284" y1="118" x2="158" y2="106" stroke="#E8547E" stroke-width="2.4" stroke-dasharray="5 4"/>
-      <rect x="88" y="72" width="44" height="20" rx="7" fill="#fff" stroke="#C8D8E8" stroke-width="1.2"/>
-      <text x="110" y="86" text-anchor="middle" font-size="10.5" font-weight="900" fill="#12579B">9분</text>
-      <rect x="106" y="122" width="44" height="20" rx="7" fill="#fff" stroke="#C8D8E8" stroke-width="1.2"/>
-      <text x="128" y="136" text-anchor="middle" font-size="10.5" font-weight="900" fill="#12579B">7분</text>
-      <rect x="196" y="90" width="52" height="20" rx="7" fill="#fff" stroke="#F2B7C6" stroke-width="1.2"/>
-      <text x="222" y="104" text-anchor="middle" font-size="10.5" font-weight="900" fill="#C2255C">15분!</text>
+      <rect x="92" y="70" width="54" height="24" rx="9" fill="#fff" stroke="#C8D8E8" stroke-width="1.2"/>
+      <text x="119" y="87" text-anchor="middle" font-size="13" font-weight="900" fill="#12579B">9분</text>
+      <rect x="106" y="120" width="54" height="24" rx="9" fill="#fff" stroke="#C8D8E8" stroke-width="1.2"/>
+      <text x="133" y="137" text-anchor="middle" font-size="13" font-weight="900" fill="#12579B">7분</text>
+      <rect x="196" y="88" width="64" height="24" rx="9" fill="#fff" stroke="#F2B7C6" stroke-width="1.2"/>
+      <text x="228" y="105" text-anchor="middle" font-size="13" font-weight="900" fill="#C2255C">15분!</text>
     </g>`,
     `${BG}
     <linearGradient id="fp4-h1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A9CDF2"/><stop offset="1" stop-color="#5795D2"/></linearGradient>
