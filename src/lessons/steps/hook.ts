@@ -73,6 +73,10 @@ import {
   renderMovieNight, renderClassPhoto, renderFlagStars, renderGreenLine,
 } from "./hookSoc4";
 import {
+  renderSearchAmerica, renderPanRoad, renderQuitoPack, renderTeamRoster,
+  renderDinnerTable, renderFruitLogo, renderMotorCity,
+} from "./hookSoc5";
+import {
   renderSaveIcon, renderGameChar, renderTimeCapsule, renderDangi, renderMilmyeon,
 } from "./hookHis";
 import type { StepAPI, StepRenderer } from "../types";
@@ -121,6 +125,7 @@ interface HookStep {
     | "asiangames" | "monsoonrain" | "templetrip" | "halalmark" | "trainride" | "emptyclass" | "madein" | "fanchant"
     | "dawnsoccer" | "peakhike" | "frozenriver" | "cityfeed" | "skislope" | "trainborder" | "fourshirts"
     | "mappuzzle" | "satnile" | "herdmove" | "shadelane" | "movienight" | "classphoto" | "flagstars" | "greenline"
+    | "searchamerica" | "panroad" | "quitopack" | "teamroster" | "dinnertable" | "fruitlogo" | "motorcity"
     | "saveicon" | "gamechar" | "timecapsule" | "dangi" | "milmyeon";
   choices?: string[]; // egg·wire·smell·wrap·ramen 예측 선택지
   cta?: string;
@@ -274,6 +279,13 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "classphoto") sceneCleanup = renderClassPhoto(scene, helper, s, finish, face);
   else if (s.scene === "flagstars") sceneCleanup = renderFlagStars(scene, helper, s, finish, face);
   else if (s.scene === "greenline") sceneCleanup = renderGreenLine(scene, helper, s, finish, face);
+  else if (s.scene === "searchamerica") sceneCleanup = renderSearchAmerica(scene, helper, s, finish, face);
+  else if (s.scene === "panroad") sceneCleanup = renderPanRoad(scene, helper, s, finish, face);
+  else if (s.scene === "quitopack") sceneCleanup = renderQuitoPack(scene, helper, s, finish, face);
+  else if (s.scene === "teamroster") sceneCleanup = renderTeamRoster(scene, helper, s, finish, face);
+  else if (s.scene === "dinnertable") sceneCleanup = renderDinnerTable(scene, helper, s, finish, face);
+  else if (s.scene === "fruitlogo") sceneCleanup = renderFruitLogo(scene, helper, s, finish, face);
+  else if (s.scene === "motorcity") sceneCleanup = renderMotorCity(scene, helper, s, finish, face);
   else if (s.scene === "saveicon") sceneCleanup = renderSaveIcon(scene, helper, s, finish, face);
   else if (s.scene === "gamechar") sceneCleanup = renderGameChar(scene, helper, s, finish, face);
   else if (s.scene === "timecapsule") sceneCleanup = renderTimeCapsule(scene, helper, s, finish, face);

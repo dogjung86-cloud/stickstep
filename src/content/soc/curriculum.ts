@@ -6,6 +6,7 @@ import { S1_UNIT1 } from "./unit1";
 import { S1_UNIT2 } from "./unit2";
 import { S1_UNIT3 } from "./unit3";
 import { S1_UNIT4 } from "./unit4";
+import { S1_UNIT5 } from "./unit5";
 
 /** 준비 중 단원 — 탭·밴드는 노출하되 지도 대신 안내 카드(comingSoon). */
 const soon = (id: string, roman: string, title: string, subtitle: string, color: string, icon: string): Unit => ({
@@ -18,7 +19,7 @@ export const SOC_G1: Unit[] = [
   S1_UNIT2,
   S1_UNIT3,
   S1_UNIT4,
-  soon("s1u5", "V", "아메리카", "두 대륙을 잇는 신대륙 이야기", "#2F9E44", "globe"),
+  S1_UNIT5,
   soon("s1u6", "VI", "오세아니아와 극지방", "가장 멀리, 가장 추운 곳까지", "#0B7285", "globe"),
 ];
 

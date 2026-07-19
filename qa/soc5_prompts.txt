@@ -1,0 +1,70 @@
+# 사회 Ⅴ(아메리카) 발주 — 스틱맨 개념 컷 7장(public/soc/cuts) + 문화경관 실사풍 8장(public/soc/america)
+# 컷은 스타일 블록 A(soc 공용). 실사풍은 스타일 블록 P — 인물은 원경·비식별(존엄 눈검수 항목).
+# 대륙 실루엣이 들어가는 컷([0])은 아메리카 모양 특징을 문장으로 명시(Ⅱ 실루엣 실사고 예방):
+# "북쪽의 넓은 덩어리가 남동쪽으로 좁아져 가느다란 지협이 되고, 남쪽의 아래로 길게 뻗은
+# 세모 덩어리로 이어진다" — NOT Africa, NOT a single blob.
+# 실물이 정답인 소재(그랜드캐니언·나이아가라·이구아수·로키·안데스·아마존·마추픽추·테오티우아칸·
+# 키토·뉴욕·파나마 운하 등)는 발주하지 않는다 — qa/fetch-soc5-america.mjs 위키미디어 파이프라인.
+#
+# ── 스타일 블록 A (스틱맨 컷 공용) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 P (문화경관 실사풍 공용) ──
+# photorealistic educational reference photograph, natural daylight, eye-level or slightly low
+# wide-angle view, crisp focus, realistic colors, clean composition centered on the subject type.
+# Generic archetype of the scene — NOT a specific famous landmark, no recognizable real-world
+# monument. Absolutely no text, no letters, no numbers, no signs, no banners, no logos, no flags
+# with writing anywhere in the image. No watermark. People allowed only small and distant, faces
+# not recognizable, shown with dignity in everyday activity. Landscape 4:3.
+
+[0] file=public/soc/cuts/u5l1.png (landscape 4:3, 스타일 A)
+A stick figure kneels on a huge floor map showing the America continents silhouette: a wide northern landmass that narrows toward the southeast into a very thin land bridge, connected to a southern landmass shaped like a long triangle pointing straight down (NOT Africa, NOT a single blob, NOT two side-by-side circles). The figure fits the two big puzzle pieces together so they meet exactly at the thin land bridge, pressing the joint with one finger. Only the thin land-bridge joint piece is teal; everything else pure black and white.
+
+[1] file=public/soc/cuts/u5l2.png (landscape 4:3, 스타일 A)
+Side view of a long straight road running from the left edge to the right edge of the panel; a stick figure drives a tiny doodle car along it. Behind the road an unbroken wall of tall jagged mountain peaks stretches the full width of the panel to the horizon; in front of the road lies completely flat open plain with a few grass tufts. Only the small snow caps on the tallest peaks are teal; everything else pure black and white.
+
+[2] file=public/soc/cuts/u5l3.png (landscape 4:3, 스타일 A)
+One giant mountain drawn as three huge stair steps. On the bottom step a stick figure fans itself with a big leaf, wavy heat lines rising around it; on the middle step another stick figure stands relaxed with hands on hips; on the top step a third stick figure wears a winter scarf and stands beside a small snowman. Only the scarf is teal; everything else pure black and white.
+
+[3] file=public/soc/cuts/u5l4.png (landscape 4:3, 스타일 A)
+A shoreline on the right where three stick figures stand waving in welcome; from the left, three little sailboats approach across doodle waves, each boat carrying one waving stick figure. On the shore behind the greeters, one long shared footprint trail leads inland where a small village of simple doodle houses stands. Only the shared footprint trail is teal; everything else pure black and white.
+
+[4] file=public/soc/cuts/u5l5.png (landscape 4:3, 스타일 A)
+Two stick figures each hold a differently patterned small bowl (one striped, one dotted) and pour ingredients together into one huge shared mixing bowl at the center; out of the big bowl rises a single swirling ribbon that turns into music notes and a steaming new dish held up by a third delighted stick figure. Only the swirling ribbon is teal; everything else pure black and white.
+
+[5] file=public/soc/cuts/u5l6.png (landscape 4:3, 스타일 A)
+A tall office building drawn in cutaway on the left with one stick figure at a desk on the top floor; on the right half of the panel a large doodle world map hangs on the wall, and dotted lines fan out from the figure's desk across the map to three tiny factory doodles on three different continents, each factory with a tiny chimney. Only the dotted fan-out lines are teal; everything else pure black and white.
+
+[6] file=public/soc/cuts/u5l7.png (landscape 4:3, 스타일 A)
+A small factory building with a chimney sits strapped on the flatbed of a big moving truck that drives toward the right edge of the panel; dust puffs behind the wheels. On the left, a stick figure stands beside an empty rectangular lot outline scratching its head, a single leaf blowing across the empty lot. Only the strap holding the factory onto the truck is teal; everything else pure black and white.
+
+[7] file=public/soc/america/tacos.png (landscape 4:3, 스타일 P)
+A rustic wooden table with a tex-mex meal: three folded flour tortilla tacos filled with seasoned beef, shredded yellow cheese, lettuce and diced tomato on a clay plate, lime wedges and a small bowl of red salsa beside, warm natural light. Appetizing educational food photograph, no text, no people.
+
+[8] file=public/soc/america/tango.png (landscape 4:3, 스타일 P)
+An evening plaza scene: one couple dancing tango seen small and far away in near-silhouette under warm string lights, elegant dramatic pose, old lamp posts and cafe tables softly blurred around. Faces not visible, dignified. Generic South-American plaza archetype, no text anywhere.
+
+[9] file=public/soc/america/carnival.png (landscape 4:3, 스타일 P)
+A daytime street carnival parade seen from afar: dancers in huge colorful feather costumes on and around a decorated float, confetti in the air, spectators only as a distant colorful blur. Faces not recognizable. Generic carnival-festival archetype, NOT a specific city's carnival, no lettering on any banner or float.
+
+[10] file=public/soc/america/ranch.png (landscape 4:3, 스타일 P)
+A vast flat grassland plain under a huge sky: a large herd of cattle grazing, one rider on horseback tiny on the far horizon, golden grass, scattered clouds. Generic pampas-ranch archetype, faces not visible, no text.
+
+[11] file=public/soc/america/coffeefarm.png (landscape 4:3, 스타일 P)
+Steep green highland slopes covered with rows of coffee shrubs, a branch heavy with ripe red coffee cherries in sharp focus in the foreground, misty blue mountains layered behind, cool fresh morning light. Generic tropical-highland coffee-farm archetype, no people, no text.
+
+[12] file=public/soc/america/carfactory.png (landscape 4:3, 스타일 P)
+A modern automobile assembly line inside a bright factory hall: robotic arms welding a silver car body with small sparks, more car bodies lined up receding into the distance, clean industrial lighting. Generic car-plant archetype, no logos, no badges, no text anywhere.
+
+[13] file=public/soc/america/container.png (landscape 4:3, 스타일 P)
+A large container port at golden hour: stacks of colorful shipping containers, tall gantry cranes, and a big container ship at the quay, calm water in the foreground. Generic trade-port archetype, containers and ship completely free of any readable text or logos.
+
+[14] file=public/soc/america/pineapplefarm.png (landscape 4:3, 스타일 P)
+A tropical pineapple plantation: neat rows of spiky pineapple plants stretching toward distant green volcanic hills, one ripe pineapple prominent in the foreground row, bright humid daylight, two workers only as tiny specks very far away. Generic Central-American plantation archetype, faces not visible, no text.

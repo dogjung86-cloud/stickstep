@@ -127,6 +127,7 @@ export const hook = (o: {
     | "asiangames" | "monsoonrain" | "templetrip" | "halalmark" | "trainride" | "emptyclass" | "madein" | "fanchant"
     | "dawnsoccer" | "peakhike" | "frozenriver" | "cityfeed" | "skislope" | "trainborder" | "fourshirts"
     | "mappuzzle" | "satnile" | "herdmove" | "shadelane" | "movienight" | "classphoto" | "flagstars" | "greenline"
+    | "searchamerica" | "panroad" | "quitopack" | "teamroster" | "dinnertable" | "fruitlogo" | "motorcity"
     | "saveicon" | "gamechar" | "timecapsule" | "dangi" | "milmyeon";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
@@ -403,6 +404,8 @@ export const timelineLab = (o: { title: string; lead?: string; cta?: string; cur
   ({ type: "timelineLab", ...o });
 export const rainBeltLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "rainBeltLab", ...o });
+export const highlandLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "highlandLab", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

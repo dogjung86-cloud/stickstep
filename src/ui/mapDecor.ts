@@ -1598,6 +1598,70 @@ const MAP_DECOR: Record<string, string> = {
     `<linearGradient id="af4-pan" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4E74C8"/><stop offset=".6" stop-color="#2E4E9E"/><stop offset="1" stop-color="#1E3670"/></linearGradient>`,
   ),
 
+  // ── 사회 Ⅴ. 아메리카 — 대륙 종단 여행(단풍 숲 → 마천루 → 선인장 사막 → 앵무새 우림 → 라마 고산) ──
+  amMapleDeco: S(
+    `${shadow(32, 57, 15, 0.12)}
+    <path d="M32 54V38" stroke="#8A5E2E" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M32 40 26 30l4 1-6-9 5 1-3-9 6 4 0-8 4 7 4-7 0 8 6-4-3 9 5-1-6 9 4-1z" fill="url(#am5-maple)" stroke="#A83418" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M20 54q12 4 24 0" stroke="#C2A54E" stroke-width="2.6" stroke-linecap="round"/>
+    <ellipse cx="27" cy="22" rx="4" ry="2" fill="#fff" opacity=".35" transform="rotate(-30 27 22)"/>`,
+    `<linearGradient id="am5-maple" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF9A5E"/><stop offset=".55" stop-color="#E2574C"/><stop offset="1" stop-color="#B23428"/></linearGradient>`,
+  ),
+  amSkylineDeco: S(
+    `${shadow(32, 57, 18, 0.13)}
+    <rect x="10" y="26" width="13" height="30" rx="1.6" fill="url(#am5-b1)" stroke="#3E4A5C" stroke-width="1.4"/>
+    <rect x="26" y="12" width="14" height="44" rx="1.6" fill="url(#am5-b2)" stroke="#28324A" stroke-width="1.4"/>
+    <path d="M33 12V6" stroke="#28324A" stroke-width="1.8" stroke-linecap="round"/>
+    <rect x="43" y="32" width="12" height="24" rx="1.6" fill="url(#am5-b3)" stroke="#3E4A5C" stroke-width="1.4"/>
+    <path d="M13 32h7M13 38h7M13 44h7M29 18h8M29 25h8M29 32h8M29 39h8M46 38h6M46 44h6" stroke="#F2D998" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M8 56h48" stroke="#8A93A6" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="30" cy="15" rx="3.6" ry="1.6" fill="#fff" opacity=".4"/>`,
+    `<linearGradient id="am5-b1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8FA8C8"/><stop offset="1" stop-color="#5E7896"/></linearGradient>
+    <linearGradient id="am5-b2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5E7896"/><stop offset="1" stop-color="#3E5470"/></linearGradient>
+    <linearGradient id="am5-b3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A8BCD4"/><stop offset="1" stop-color="#7A93AC"/></linearGradient>`,
+  ),
+  amCactusDeco: S(
+    `${shadow(30, 57, 14, 0.13)}
+    <path d="M26 54V22q0-7 5-7t5 7v32z" fill="url(#am5-cac)" stroke="#3E7E36" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M26 40q-9 0-9-8v-5q0-4 3.5-4t3.5 4v5q0 3 2 3zM36 34q9 0 9-9v-3q0-4-3.5-4T38 22v3q0 4-2 4z" fill="url(#am5-cac)" stroke="#3E7E36" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M29 22v26M33 26v22" stroke="#3E7E36" stroke-width="1" opacity=".55"/>
+    <circle cx="49" cy="13" r="5.6" fill="url(#am5-dsun)"/>
+    <path d="M12 54q20 5 40 0" stroke="#D8B86E" stroke-width="2.6" stroke-linecap="round"/>
+    <ellipse cx="28.6" cy="20" rx="1.8" ry="3" fill="#fff" opacity=".3"/>`,
+    `<linearGradient id="am5-cac" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8FCE6E"/><stop offset=".55" stop-color="#5EA84E"/><stop offset="1" stop-color="#3E8E3E"/></linearGradient>
+    <radialGradient id="am5-dsun" cx=".4" cy=".35" r=".9"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#F2B33E"/></radialGradient>`,
+  ),
+  amParrotDeco: S(
+    `${shadow(32, 57, 13, 0.12)}
+    <path d="M14 8q0 40 8 46" stroke="#6E8E4E" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+    <path d="M14 16q-8-2-10-8 8-2 10 8zM15 26q-9 0-12-7 9-3 12 7z" fill="url(#am5-leafy)"/>
+    <path d="M30 20q10-6 16 2 4 6 0 14l-6 10q-4 6-10 3t-4-10l2-10q-2-6 2-9z" fill="url(#am5-parr)" stroke="#B23428" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M34 44q-2 8 2 12M40 42q2 8 8 10" stroke="#2E6EA8" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+    <circle cx="40" cy="22" r="6.5" fill="#F5EEDF" stroke="#B23428" stroke-width="1.4"/>
+    <circle cx="41.6" cy="21" r="1.6" fill="#2E2118"/>
+    <path d="M46 22q6 1 5 6-4 2-7-2z" fill="#F2C24E" stroke="#C2861E" stroke-width="1.2"/>
+    <path d="M28 32q-6 4-4 10" stroke="#2E9E5B" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+    <ellipse cx="36" cy="24" rx="2.4" ry="4" fill="#fff" opacity=".25" transform="rotate(-16 36 24)"/>`,
+    `<radialGradient id="am5-parr" cx=".4" cy=".3" r="1"><stop offset="0" stop-color="#FF8A6E"/><stop offset=".6" stop-color="#E2574C"/><stop offset="1" stop-color="#B02E22"/></radialGradient>
+    <linearGradient id="am5-leafy" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7FC98E"/><stop offset="1" stop-color="#3F9A5C"/></linearGradient>`,
+  ),
+  amLlamaDeco: S(
+    `${shadow(33, 57, 16, 0.13)}
+    <path d="M4 54 14 34l8 12 8-16 10 20z" fill="url(#am5-andes)" stroke="#54708E" stroke-width="1.6" stroke-linejoin="round" opacity=".9"/>
+    <path d="M12 38 14 34l3 6q-3 2-5 0zM28 34l2-4 3 6q-3 2-5-2z" fill="#F6FAFD"/>
+    <path d="M30 54l2-12 14-1 2 13h-4l-1-9-8 1-1 8z" fill="url(#am5-llam)" stroke="#8A6A3E" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M44 42q-2-8 2-14" stroke="url(#am5-llam)" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="47.5" cy="25" r="4.6" fill="url(#am5-llam)" stroke="#8A6A3E" stroke-width="1.4"/>
+    <path d="M45 21.5 44.4 18M50 21.5l.6-3.5" stroke="#8A6A3E" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="46.4" cy="24.6" r=".9" fill="#4E3A26"/>
+    <path d="M33 46h10" stroke="#C0471C" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M33 48.5h10" stroke="#E8A104" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M10 56h44" stroke="#C2A54E" stroke-width="2.4" stroke-linecap="round"/>
+    <ellipse cx="49" cy="23.4" rx="1.8" ry="1" fill="#fff" opacity=".4" transform="rotate(-24 49 23.4)"/>`,
+    `<linearGradient id="am5-andes" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B8CCE0"/><stop offset=".6" stop-color="#7E9AB8"/><stop offset="1" stop-color="#54708E"/></linearGradient>
+    <linearGradient id="am5-llam" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F5EEDF"/><stop offset=".6" stop-color="#E0CCA8"/><stop offset="1" stop-color="#C2A87E"/></linearGradient>`,
+  ),
+
   // ── 역사 Ⅰ. 역사 학습의 기초 — 역사 탐정의 도구(두루마리 → 돋보기 → 붓 → 모래시계 → 항아리) ──
   scrollDeco: S(
     `${shadow(32, 56, 16, 0.12)}
