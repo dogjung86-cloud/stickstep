@@ -129,7 +129,8 @@ export const hook = (o: {
     | "mappuzzle" | "satnile" | "herdmove" | "shadelane" | "movienight" | "classphoto" | "flagstars" | "greenline"
     | "searchamerica" | "panroad" | "quitopack" | "teamroster" | "dinnertable" | "fruitlogo" | "motorcity"
     | "saveicon" | "gamechar" | "timecapsule" | "dangi" | "milmyeon"
-    | "sprout" | "receipt" | "aptmap" | "parcel" | "olympic" | "romanclock" | "silkscarf";
+    | "sprout" | "receipt" | "aptmap" | "parcel" | "olympic" | "romanclock" | "silkscarf"
+    | "lambskewer" | "examnotice" | "kanasign" | "hanjahw" | "zeroscore" | "chessmate" | "arabnum" | "francejersey" | "pepper";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 

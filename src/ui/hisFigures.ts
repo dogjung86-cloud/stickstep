@@ -359,6 +359,192 @@ export function silkroadFig(): string {
   </svg>`;
 }
 
+/* ══════════ Ⅲ. 세계 종교의 확산과 지역 문화의 발전 ══════════ */
+
+/* ---------- 세계 종교 유산 지도(파라미터형 — Ⅲ 기함 hotspot 무대) ----------
+   fourRiversFig의 검산된 해안선을 계승하되 유럽을 실제 반도꼴로 확장(이베리아·이탈리아 장화·발칸).
+   다섯 유산 자리에 미니 건물 글리프만 그린다(이름은 hotspot 스팟/문제 보기 몫 — aria에도 정답 유출 금지).
+   marks=true면 (가)~(마) 기호를 인쇄(라벨형 문제는 shuffle:false 규약).
+   글리프 검산 메모: 샤르트르(52,26 북프랑스)·코르도바(24,52 이베리아 남부)·콘스탄티노폴리스(120,52
+   발칸 동남끝)·룽먼(330,72 황허 중류 남쪽)·앙코르(310,148 동남아 반도) — 좌표는 아래 해안선 기준. */
+export function worldReligionsFig(o?: { marks?: boolean }): string {
+  const mk = (x: number, y: number, t: string): string =>
+    o?.marks ? `<circle cx="${x}" cy="${y}" r="10" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="11" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${t}</text>` : "";
+  return `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+    aria-label="유럽과 아프리카, 아시아를 단순하게 그린 지도 위 다섯 곳에 서로 다른 종교 건축물이 작게 그려진 그림">
+    <rect x="0" y="0" width="400" height="220" rx="16" fill="#DCEFF6"/>
+    <path d="M10 64 L16 44 L28 34 L20 22 L34 10 L74 10 L96 20 L112 14 L134 22 L128 36 L112 40 L120 50 L132 46 L142 52 L134 60 L118 58 L108 66 L96 60 L84 68 L96 44 L76 40 L62 48 L66 60 L54 66 L40 58 L30 64 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M394 12 L394 44 L380 66 L368 88 L358 92 L354 104 L344 116 L330 126 L318 142 L314 168 L304 172 L300 156 L296 138 L286 128 L282 146 L272 170 L262 186 L252 168 L246 140 L240 122 L232 112 L222 108 L214 110 L206 104 L198 96 L190 100 L182 112 L174 138 L162 118 L150 98 L144 82 L140 70 L134 62 L126 60 L116 64 L106 62 L96 66 L84 62 L70 66 L54 74 L42 88 L34 106 L30 128 L36 146 L48 152 L60 148 L72 156 L84 176 L92 196 L100 208 L110 200 L114 178 L118 156 L126 142 L136 134 L146 132 L152 128 L148 116 L144 100 L148 88 L154 78 L160 72 L168 66 L178 60 L190 54 L204 50 L220 44 L238 38 L256 30 L276 24 L298 18 L322 14 L348 10 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
+    <g stroke="#6E5426" stroke-width="1.5" stroke-linejoin="round">
+      <path d="M44 32 l8 -9 8 9 z M49 32 h6 v7 h-6 z" fill="#E4EAF2"/>
+      <path d="M16 56 h16 v-6 h-16 z M19 50 a5 5 0 0 1 10 0 z" fill="#F2D9A4"/>
+      <path d="M112 56 h16 M114 56 v-5 a6 6 0 0 1 12 0 v5 M111 51 v-8 M129 51 v-8" fill="#E4EAF2"/>
+      <path d="M322 78 h16 v-6 h-16 z M325 72 v-5 h10 v5 M328 67 v-4 h4 v4" fill="#C9B48A"/>
+      <path d="M302 154 l8 -12 8 12 z M306 146 l4 -7 4 7" fill="#C9A05E"/>
+    </g>
+    ${mk(70, 22, "(가)")}${mk(28, 74, "(나)")}${mk(134, 74, "(다)")}${mk(348, 66, "(라)")}${mk(334, 156, "(마)")}
+  </svg>`;
+}
+
+/* ---------- 봉건제 구조도(파라미터형) ----------
+   casteFig 계보의 4단 + 주종 계약 쌍방향 화살표(왼쪽 내려가는 토지, 오른쪽 올라가는 충성)가 심장.
+   hide 인덱스(0=왕 … 3=농노)는 ㉠으로 가린다. 성직자("기도하는 자")는 오른쪽 별동 카드. */
+export function feudalFig(o?: { hide?: number }): string {
+  const rows = [
+    { name: "왕", role: "가장 높은 주군", w: 88 },
+    { name: "제후", role: "왕의 봉신 · 기사의 주군", w: 152 },
+    { name: "기사", role: "장원을 다스리는 영주", w: 216 },
+    { name: "농노", role: "장원의 농민", w: 280 },
+  ];
+  const cx = 172;
+  const els = rows.map((r, i) => {
+    const y = 26 + i * 44;
+    const x = cx - r.w / 2;
+    const hidden = o?.hide === i;
+    const label = hidden
+      ? `<text x="${cx}" y="${y + 21}" text-anchor="middle" font-size="15" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
+      : `<text x="${cx}" y="${y + 16}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${r.name}</text>
+         <text x="${cx}" y="${y + 30}" text-anchor="middle" font-size="9" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${r.role}</text>`;
+    return `<rect x="${x}" y="${y}" width="${r.w}" height="36" rx="7" fill="${hidden ? "#FBF0DA" : ["#E8D4A4", "#EFDDB8", "#F5E7CB", "#FBF1DC"][i]}" stroke="${hidden ? "#C2843A" : "#8A6A3E"}" stroke-width="1.6"/>${label}`;
+  }).join("");
+  return `<svg viewBox="0 0 400 216" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+    aria-label="위로 갈수록 좁아지는 네 단의 피라미드 양옆으로 내려가는 화살표와 올라가는 화살표가 그려진 구조도. 일부 칸은 동그라미 기호로 가려져 있을 수 있다">
+    <rect x="0" y="0" width="400" height="216" rx="16" fill="#F7FAFC"/>
+    ${els}
+    <path d="M52 40 q-16 52 0 104 m-5 -8 l5 8 6 -7" stroke="#3D5BC0" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="34" y="86" text-anchor="middle" font-size="9.5" font-weight="800" fill="#3D5BC0" font-family="Pretendard, sans-serif">보호와</text>
+    <text x="34" y="98" text-anchor="middle" font-size="9.5" font-weight="800" fill="#3D5BC0" font-family="Pretendard, sans-serif">토지(봉토)</text>
+    <path d="M292 144 q16 -52 0 -104 m-6 8 l6 -8 5 8" stroke="#C2843A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="312" y="86" text-anchor="middle" font-size="9.5" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">충성과</text>
+    <text x="312" y="98" text-anchor="middle" font-size="9.5" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">군사 봉사</text>
+    <rect x="330" y="140" width="62" height="40" rx="8" fill="#FFFFFF" stroke="#B9C4D4" stroke-width="1.6"/>
+    <text x="361" y="157" text-anchor="middle" font-size="10.5" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">성직자</text>
+    <text x="361" y="171" text-anchor="middle" font-size="8.6" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">기도하는 자</text>
+    <text x="172" y="206" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">주종 관계는 서로 의무를 지키는 계약!</text>
+  </svg>`;
+}
+
+/* ---------- 당 3성 6부 구조도(파라미터형) ----------
+   중서성(정책 수립)→문하성(심의)→상서성(집행) 순서 화살표 + 상서성 아래 6부.
+   hide 인덱스(0=중서성 1=문하성 2=상서성)는 ㉠으로 가린다(성 이름을 묻는 문제용). */
+export function threeSixFig(o?: { hide?: number }): string {
+  const seong = [
+    { name: "중서성", sub: "정책 수립" },
+    { name: "문하성", sub: "정책 심의" },
+    { name: "상서성", sub: "정책 집행" },
+  ];
+  const bw = 104;
+  const gap = 26;
+  const x0 = (400 - bw * 3 - gap * 2) / 2;
+  const boxes = seong.map((s, i) => {
+    const x = x0 + i * (bw + gap);
+    const hidden = o?.hide === i;
+    const label = hidden
+      ? `<text x="${x + bw / 2}" y="90" text-anchor="middle" font-size="16" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
+      : `<text x="${x + bw / 2}" y="84" text-anchor="middle" font-size="12.5" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">${s.name}</text>
+         <text x="${x + bw / 2}" y="100" text-anchor="middle" font-size="9" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">${s.sub}</text>`;
+    const arrow = i < 2 ? `<path d="M${x + bw + 4} 82 h${gap - 9} m-6 -5 l6 5 -6 5" stroke="#8B95A1" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` : "";
+    return `<rect x="${x}" y="58" width="${bw}" height="52" rx="10" fill="${hidden ? "#FBF0DA" : "#FFFFFF"}" stroke="${hidden ? "#C2843A" : "#B9C4D4"}" stroke-width="1.8"/>${label}${arrow}`;
+  }).join("");
+  const bu = ["이부", "호부", "예부", "병부", "형부", "공부"];
+  const bw2 = 52;
+  const bx0 = (400 - bw2 * 6 - 10 * 5) / 2;
+  const buEls = bu.map((b, i) => {
+    const x = bx0 + i * (bw2 + 10);
+    return `<rect x="${x}" y="150" width="${bw2}" height="30" rx="7" fill="#F5EFE2" stroke="#C4B28E" stroke-width="1.4"/>
+      <text x="${x + bw2 / 2}" y="169" text-anchor="middle" font-size="11" font-weight="800" fill="#5E4626" font-family="Pretendard, sans-serif">${b}</text>`;
+  }).join("");
+  return `<svg viewBox="0 0 400 196" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+    aria-label="황제 아래 세 개의 성이 화살표로 이어지고 마지막 성 아래에 여섯 개의 부가 달린 구조도. 일부 칸은 동그라미 기호로 가려져 있을 수 있다">
+    <rect x="0" y="0" width="400" height="196" rx="16" fill="#F7FAFC"/>
+    <rect x="164" y="12" width="72" height="30" rx="9" fill="#33405A"/>
+    <text x="200" y="32" text-anchor="middle" font-size="12.5" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">황제</text>
+    <path d="M200 42 v12 m-5 -6 l5 6 5 -6" stroke="#8B95A1" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    ${boxes}
+    <path d="M${x0 + bw * 2 + gap * 2 + bw / 2} 110 v14 M${bx0 + bw2 / 2} 138 h${bw2 * 6 + 50 - bw2} M${bx0 + bw2 / 2} 138 v6 m${bw2 + 10} -6 v6 m${bw2 + 10} -6 v6 m${bw2 + 10} -6 v6 m${bw2 + 10} -6 v6 m${bw2 + 10} -6 v6" stroke="#C4B28E" stroke-width="1.6" fill="none"/>
+    ${buEls}
+  </svg>`;
+}
+
+/* ---------- 동아시아 문화권 지도(파라미터형) ----------
+   당·발해·신라·일본 + 사신(견당사) 왕래 화살표 + 공통 요소 4칩. labels=false면 나라 이름 대신
+   (가)~(라) 기호(그 나라를 묻는 문제용 — 라벨형은 shuffle:false).
+   해안 검산 메모: 대륙 동해안(190,16)→산둥(216,58)→황해 홈(196,84)→남해안(150,170), 한반도는
+   (232,44)에서 남쪽 꼬리(246,118), 일본 열도는 (300,74)~(346,132) 사선 호. */
+export function eastAsiaFig(o?: { labels?: boolean }): string {
+  const lab = o?.labels ?? true;
+  const name = (x: number, y: number, t: string, tag: string): string =>
+    lab
+      ? `<text x="${x}" y="${y}" text-anchor="middle" font-size="12" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${t}</text>`
+      : `<circle cx="${x}" cy="${y - 4}" r="10" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x}" y="${y}" text-anchor="middle" font-size="11" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${tag}</text>`;
+  return `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+    aria-label="동아시아의 네 나라 사이를 화살표가 오가고 아래에 네 개의 공통 요소 칩이 놓인 지도">
+    <rect x="0" y="0" width="400" height="220" rx="16" fill="#DCEFF6"/>
+    <path d="M8 10 L190 16 L204 40 L216 58 L206 72 L196 84 L200 102 L192 122 L178 138 L164 154 L150 170 L128 178 L102 172 L84 178 L60 172 L36 176 L8 170 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M204 40 L232 44 L252 40 L262 52 L256 66 L250 82 L252 98 L246 118 L234 122 L224 110 L218 92 L214 72 L206 72 L216 58 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M262 52 L282 40 L302 34 L312 44 L298 54 L278 58 z" fill="#EFE6D2" stroke="#C4B28E" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M300 74 L316 66 L330 74 L322 86 L306 86 z M312 92 L336 84 L352 94 L340 110 L318 104 z M336 116 L352 108 L360 120 L348 132 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M236 90 q-24 4 -44 0 m7 -4 l-7 4 7 4" stroke="#0E7C8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
+    <path d="M318 96 q-40 20 -110 26 m8 -5 l-8 5 9 3" stroke="#0E7C8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
+    <path d="M282 52 q-30 -6 -66 -2 m8 -4 l-8 4 8 4" stroke="#0E7C8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
+    ${name(120, 96, "당", "(가)")}${name(284, 30, "발해", "(나)")}${name(238, 76, "신라", "(다)")}${name(342, 146, "일본", "(라)")}
+    ${lab ? `<text x="196" y="130" text-anchor="middle" font-size="8.6" font-weight="700" fill="#0A5964" font-family="Pretendard, sans-serif">사신 · 유학생 · 승려</text>` : ""}
+    <g font-family="Pretendard, sans-serif" font-size="10.5" font-weight="900" text-anchor="middle">
+      <rect x="24" y="186" width="80" height="24" rx="12" fill="#FBF3DC" stroke="#8A6A3E" stroke-width="1.4"/><text x="64" y="202" fill="#5E4626">한자</text>
+      <rect x="116" y="186" width="80" height="24" rx="12" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="1.4"/><text x="156" y="202" fill="#0A5964">유교</text>
+      <rect x="208" y="186" width="80" height="24" rx="12" fill="#EDEAFA" stroke="#5B4AC0" stroke-width="1.4"/><text x="248" y="202" fill="#3D2E86">율령</text>
+      <rect x="300" y="186" width="80" height="24" rx="12" fill="#FBEFDA" stroke="#C2843A" stroke-width="1.4"/><text x="340" y="202" fill="#8F5A1D">불교</text>
+    </g>
+  </svg>`;
+}
+
+/* ---------- 이슬람 세계 변천 흐름(파라미터형) ----------
+   본류 4칸(무함마드 시대→정통 칼리프→우마이야→아바스) + 아래 갈래 3칸(후우마이야·파티마·셀주크).
+   hide 인덱스(본류 0~3)는 ㉠으로 가린다(romeFlowFig 계보). */
+export function islamFlowFig(o?: { hide?: number }): string {
+  const steps = [
+    { name: "무함마드 시대", sub: "이슬람교 성립" },
+    { name: "정통 칼리프", sub: "칼리프를 선출" },
+    { name: "우마이야 왕조", sub: "칼리프 세습" },
+    { name: "아바스 왕조", sub: "차별 정책 폐지" },
+  ];
+  const W = 400;
+  const bw = 88;
+  const gap = (W - 24 - bw * 4) / 3;
+  const boxes = steps.map((s, i) => {
+    const x = 12 + i * (bw + gap);
+    const hidden = o?.hide === i;
+    const label = hidden
+      ? `<text x="${x + bw / 2}" y="60" text-anchor="middle" font-size="16" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
+      : `<text x="${x + bw / 2}" y="54" text-anchor="middle" font-size="11" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">${s.name}</text>
+         <text x="${x + bw / 2}" y="70" text-anchor="middle" font-size="8.4" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">${s.sub}</text>`;
+    const arrow = i < 3 ? `<path d="M${x + bw + 4} 52 h${gap - 9} m-6 -5 l6 5 -6 5" stroke="#8B95A1" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` : "";
+    return `<rect x="${x}" y="26" width="${bw}" height="56" rx="10" fill="${hidden ? "#FBF0DA" : "#FFFFFF"}" stroke="${hidden ? "#C2843A" : "#B9C4D4"}" stroke-width="1.8"/>${label}${arrow}
+      <circle cx="${x + 12}" cy="36" r="7" fill="#0E7C8A"/><text x="${x + 12}" y="39.4" text-anchor="middle" font-size="9" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">${i + 1}</text>`;
+  }).join("");
+  const branches = [
+    { name: "후우마이야 왕조", sub: "이베리아반도" },
+    { name: "파티마 왕조", sub: "북아프리카" },
+    { name: "셀주크 튀르크", sub: "지배자가 술탄 칭호" },
+  ];
+  const bw2 = 118;
+  const bx0 = (W - bw2 * 3 - 14 * 2) / 2;
+  const brEls = branches.map((b, i) => {
+    const x = bx0 + i * (bw2 + 14);
+    return `<rect x="${x}" y="128" width="${bw2}" height="46" rx="9" fill="#F5EFE2" stroke="#C4B28E" stroke-width="1.5"/>
+      <text x="${x + bw2 / 2}" y="148" text-anchor="middle" font-size="10.5" font-weight="900" fill="#5E4626" font-family="Pretendard, sans-serif">${b.name}</text>
+      <text x="${x + bw2 / 2}" y="164" text-anchor="middle" font-size="8.4" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${b.sub}</text>`;
+  }).join("");
+  return `<svg viewBox="0 0 ${W} 188" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+    aria-label="이슬람 세계가 차례로 이어지는 네 칸의 순서도와 그 아래에 갈라져 나온 세 칸. 일부 칸은 동그라미 기호로 가려져 있을 수 있다">
+    <rect x="0" y="0" width="${W}" height="188" rx="16" fill="#F7FAFC"/>
+    ${boxes}
+    <path d="M200 88 v14 M${bx0 + bw2 / 2} 116 h${bw2 * 2 + 28} M${bx0 + bw2 / 2} 116 v8 m${bw2 + 14} -8 v8 m${bw2 + 14} -8 v8" stroke="#C4B28E" stroke-width="1.6" fill="none"/>
+    ${brEls}
+    <text x="200" y="16" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">이슬람 세계의 변천</text>
+  </svg>`;
+}
+
 /* ---------- recap 미니아트(64×64 플랫) ---------- */
 const M = (inner: string): string =>
   `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none">${inner}</svg>`;
@@ -742,6 +928,270 @@ export function hisMiniArt(key: string): string {
         <path d="M40 42q-8-4-6-12 6 2 6 8 0-8 6-12 4 8-2 14 6-2 10 2-6 4-14 0z" fill="#F2A0B6" stroke="#C25A7A" stroke-width="1.6"/>
         <path d="M10 44h44" stroke="#8A93A6" stroke-width="2.4" stroke-linecap="round"/>
         <path d="M28 30h8m-4-4v8" stroke="#3FA3AE" stroke-width="2.2" stroke-linecap="round"/>`,
+      );
+    /* ── Ⅲ. 세계 종교의 확산과 지역 문화의 발전 ── */
+    case "splitmap": // 분열의 연대기 — 갈라진 두 땅
+      return M(
+        `<path d="M10 20q14-6 22 2t20 0v14q-12 6-22-2t-20 2z" fill="#E8D4A4" stroke="#8A6534" stroke-width="2"/>
+        <path d="M12 44q14-6 22 2t18-2v10q-10 6-20-2t-20 2z" fill="#CDE4E8" stroke="#0E7C8A" stroke-width="2"/>
+        <path d="M18 36h28" stroke="#AAB4C4" stroke-width="2" stroke-dasharray="3 4"/>`,
+      );
+    case "fusion": // 호한 융합 — 의자와 붓의 만남
+      return M(
+        `<rect x="10" y="30" width="16" height="4" rx="2" fill="#C2843A"/><path d="M12 34v14M24 34v14M10 24v6h16v-6" stroke="#8A6534" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <path d="M44 46 54 26" stroke="#5E4626" stroke-width="4" stroke-linecap="round"/><path d="M42 50l4-5 3 2z" fill="#141C26"/>
+        <path d="M30 38h6m-3-3v6" stroke="#0E7C8A" stroke-width="2.4" stroke-linecap="round"/>`,
+      );
+    case "ninerank": // 문벌 귀족 — 도장 찍힌 추천장
+      return M(
+        `<rect x="14" y="12" width="32" height="40" rx="4" fill="#FBF3DC" stroke="#8A6A3E" stroke-width="2"/>
+        <path d="M20 22h20M20 30h20M20 38h12" stroke="#B99B66" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="40" cy="44" r="7" fill="rgba(192,57,43,.25)" stroke="#C0392B" stroke-width="2.2"/>`,
+      );
+    case "grotto": // 석굴 — 아치 속 불상 실루엣
+      return M(
+        `<path d="M14 52v-20q0-16 18-16t18 16v20z" fill="#C9B394" stroke="#8A6534" stroke-width="2.2"/>
+        <path d="M20 52v-16q0-11 12-11t12 11v16z" fill="#6E583E"/>
+        <circle cx="32" cy="36" r="4" fill="#E8C48A"/><path d="M26 50q0-8 6-8t6 8z" fill="#E8C48A"/>`,
+      );
+    case "examseal": // 과거제 — 합격 도장 찍힌 두루마리
+      return M(
+        `<rect x="16" y="10" width="32" height="44" rx="4" fill="#FFFFFF" stroke="#B9C4D4" stroke-width="2.2"/>
+        <path d="M22 20h20M22 28h20M22 36h14" stroke="#C9D2DE" stroke-width="2.6" stroke-linecap="round"/>
+        <circle cx="40" cy="44" r="8" fill="none" stroke="#0E7C8A" stroke-width="2.4"/>
+        <path d="M36 44l3 3 5-6" stroke="#0E7C8A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`,
+      );
+    case "canal": // 대운하 — 물길 위의 배
+      return M(
+        `<path d="M8 40q12-6 24 0t24 0" stroke="#3FA3AE" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+        <path d="M22 38h20l-4 8h-12z" fill="#C89A5E" stroke="#84582A" stroke-width="2"/>
+        <path d="M32 38v-14l10 10h-10" fill="#F2D9A4" stroke="#84582A" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M10 52q22 6 44 0" stroke="#AAB4C4" stroke-width="2.6" stroke-linecap="round"/>`,
+      );
+    case "threesix": // 3성 6부 — 세 칸과 여섯 점
+      return M(
+        `<rect x="8" y="18" width="14" height="12" rx="3" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="2"/>
+        <rect x="25" y="18" width="14" height="12" rx="3" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="2"/>
+        <rect x="42" y="18" width="14" height="12" rx="3" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="2"/>
+        <path d="M49 30v8" stroke="#8A96A6" stroke-width="2"/>
+        <circle cx="14" cy="46" r="3.4" fill="#C2843A"/><circle cx="28" cy="46" r="3.4" fill="#C2843A"/><circle cx="42" cy="46" r="3.4" fill="#C2843A"/>
+        <circle cx="21" cy="54" r="3.4" fill="#C2843A"/><circle cx="35" cy="54" r="3.4" fill="#C2843A"/><circle cx="49" cy="54" r="3.4" fill="#C2843A"/>`,
+      );
+    case "sancai": // 당삼채 — 세 색 유약의 낙타
+      return M(
+        `<path d="M18 46q4-10 10-10 3-6 8 0 6 0 9 10l-3 8h-4l-1-6h-9l-1 6h-4z" fill="#F0DCB0" stroke="#6E4626" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M22 34q-4-2-4-8 0-5 4-6 3-1 4 2" fill="#F0DCB0" stroke="#6E4626" stroke-width="2"/>
+        <path d="M28 40q5 4 10 0" stroke="#3FA36E" stroke-width="3" stroke-linecap="round"/>
+        <path d="M30 32q4 2 8 0" stroke="#C2843A" stroke-width="3" stroke-linecap="round"/>`,
+      );
+    case "buddhaship": // 불교 전래 — 바다 건너는 배와 탑
+      return M(
+        `<path d="M8 46q14-6 24 0t24 0" stroke="#3FA3AE" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M20 44h24l-5 8h-14z" fill="#C89A5E" stroke="#84582A" stroke-width="2"/>
+        <path d="M30 24h8l-4-8zM28 32h12M30 40h8M32 24v16" stroke="#C2843A" stroke-width="2.4" stroke-linecap="round" fill="none"/>`,
+      );
+    case "namkuk": // 남북국 — 두 개의 궁궐 지붕
+      return M(
+        `<path d="M10 30h20l-10-10z" fill="#0E7C8A" stroke="#0A5964" stroke-width="1.8" stroke-linejoin="round"/>
+        <rect x="14" y="30" width="12" height="14" fill="#E2F1F3" stroke="#0A5964" stroke-width="1.8"/>
+        <path d="M34 44h20l-10-10z" fill="#C2843A" stroke="#8F5A1D" stroke-width="1.8" stroke-linejoin="round"/>
+        <rect x="38" y="44" width="12" height="12" fill="#FBEFDA" stroke="#8F5A1D" stroke-width="1.8"/>`,
+      );
+    case "daika": // 다이카 개신 — 개혁 두루마리와 화살표
+      return M(
+        `<rect x="12" y="16" width="26" height="34" rx="4" fill="#FBF3DC" stroke="#8A6A3E" stroke-width="2"/>
+        <path d="M18 26h14M18 34h14M18 42h10" stroke="#B99B66" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M42 32h12m-5-5 5 5-5 5" stroke="#0E7C8A" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+      );
+    case "kana": // 가나 — 변형되는 글자 붓질
+      return M(
+        `<path d="M16 20h14M23 20v22q0 6-6 6" stroke="#33405A" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M40 24q8 4 6 12t-10 8" stroke="#0E7C8A" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+        <path d="M32 32h4" stroke="#AAB4C4" stroke-width="2.4" stroke-linecap="round"/>`,
+      );
+    case "envoyship": // 견당사 — 사신의 배와 깃발
+      return M(
+        `<path d="M8 44q14-6 24 0t24 0" stroke="#3FA3AE" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M18 42h28l-6 9h-16z" fill="#C89A5E" stroke="#84582A" stroke-width="2"/>
+        <path d="M32 42v-20" stroke="#84582A" stroke-width="2.4"/>
+        <path d="M32 22h12l-3 4 3 4h-12z" fill="#0E7C8A"/>`,
+      );
+    case "fourkeys": // 4요소 — 네 개의 칩
+      return M(
+        `<rect x="10" y="14" width="20" height="14" rx="7" fill="#FBF3DC" stroke="#8A6A3E" stroke-width="2"/>
+        <rect x="34" y="14" width="20" height="14" rx="7" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="2"/>
+        <rect x="10" y="36" width="20" height="14" rx="7" fill="#EDEAFA" stroke="#5B4AC0" stroke-width="2"/>
+        <rect x="34" y="36" width="20" height="14" rx="7" fill="#FBEFDA" stroke="#C2843A" stroke-width="2"/>`,
+      );
+    case "localize": // 같은 재료 다른 요리 — 한 그릇 두 맛
+      return M(
+        `<circle cx="22" cy="30" r="11" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="2.4"/>
+        <circle cx="42" cy="30" r="11" fill="#FBEFDA" stroke="#C2843A" stroke-width="2.4"/>
+        <path d="M18 30q4-4 8 0M38 26v8m-4-4h8" stroke="#5B6570" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <path d="M16 52q16 6 32 0" stroke="#AAB4C4" stroke-width="3" stroke-linecap="round"/>`,
+      );
+    case "hanjaword": // 오늘까지의 한자 — 말풍선 속 三
+      return M(
+        `<path d="M12 14h40v28h-18l-8 10v-10h-14z" fill="#FFFFFF" stroke="#B9C4D4" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M24 22h16M22 28h20M20 34h24" stroke="#33405A" stroke-width="3" stroke-linecap="round"/>`,
+      );
+    case "guptacrown": // 굽타 왕조 — 왕관과 물결
+      return M(
+        `<path d="M16 34l4-12 8 8 4-12 4 12 8-8 4 12z" fill="#F2CE86" stroke="#C2843A" stroke-width="2.2" stroke-linejoin="round"/>
+        <rect x="16" y="34" width="32" height="8" rx="3" fill="#E8B45E" stroke="#C2843A" stroke-width="2"/>
+        <path d="M12 52q10-5 20 0t20 0" stroke="#3FA3AE" stroke-width="2.8" stroke-linecap="round" fill="none"/>`,
+      );
+    case "floweroffer": // 힌두교 확산 — 꽃 공양
+      return M(
+        `<circle cx="32" cy="26" r="4" fill="#E8883E"/>
+        <path d="M32 14q4 4 0 8-4-4 0-8zM44 26q-4 4-8 0 4-4 8 0zM32 38q-4-4 0-8 4 4 0 8zM20 26q4-4 8 0-4 4-8 0z" fill="#F2A0B6" stroke="#C25A7A" stroke-width="1.6"/>
+        <path d="M18 50q14-8 28 0l-4 6h-20z" fill="#C9B48A" stroke="#8A6A3E" stroke-width="2"/>`,
+      );
+    case "zeroten": // 0과 10진법 — 빈 원과 구슬
+      return M(
+        `<circle cx="24" cy="30" r="12" fill="none" stroke="#3D5BC0" stroke-width="3.4"/>
+        <circle cx="46" cy="22" r="4" fill="#C2843A"/><circle cx="46" cy="34" r="4" fill="#C2843A"/><circle cx="46" cy="46" r="4" fill="#C2843A"/>
+        <path d="M14 52q18 6 36 0" stroke="#AAB4C4" stroke-width="2.8" stroke-linecap="round"/>`,
+      );
+    case "angkormini": // 앙코르 와트 — 다섯 탑과 반영
+      return M(
+        `<path d="M28 18l4-8 4 8zM16 34l4-10 4 10zM40 34l4-10 4 10zM28 34h8v-12h-8z" fill="#C9A05E" stroke="#8A5A26" stroke-width="1.8" stroke-linejoin="round"/>
+        <rect x="12" y="34" width="40" height="6" fill="#C9A05E" stroke="#8A5A26" stroke-width="1.8"/>
+        <path d="M12 48q10-4 20 0t20 0" stroke="#3FA3AE" stroke-width="2.8" stroke-linecap="round" fill="none"/>`,
+      );
+    case "persiaglass": // 사산 왕조 — 유리병
+      return M(
+        `<path d="M28 12h8v6q8 4 8 14 0 16-12 16t-12-16q0-10 8-14z" fill="rgba(63,163,174,.28)" stroke="#0E7C8A" stroke-width="2.4" stroke-linejoin="round"/>
+        <circle cx="32" cy="32" r="4" fill="none" stroke="#0E7C8A" stroke-width="2"/>
+        <ellipse cx="27" cy="24" rx="2.4" ry="5" fill="#fff" opacity=".6"/>`,
+      );
+    case "hejira": // 헤지라 — 사막 위의 발자국과 초승달
+      return M(
+        `<path d="M44 12a10 10 0 1 0 4 16 8 8 0 1 1-4-16z" fill="#F2CE86" stroke="#C2843A" stroke-width="2"/>
+        <path d="M10 48q22-8 44-2" stroke="#E0B25E" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M18 42l3-2M26 39l3-2M34 37l3-2M42 36l3-2" stroke="#8A6534" stroke-width="2.6" stroke-linecap="round"/>`,
+      );
+    case "taxfree": // 관용 정책 — 저울 위의 화합
+      return M(
+        `<path d="M32 12v32M18 20h28" stroke="#5B6570" stroke-width="2.6" stroke-linecap="round"/>
+        <path d="M18 20l-6 12q6 5 12 0zM46 20l-6 12q6 5 12 0z" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="2"/>
+        <path d="M22 52h20" stroke="#8A96A6" stroke-width="3" stroke-linecap="round"/>`,
+      );
+    case "caliphflow": // 왕조 교체 — 이어지는 화살 칩
+      return M(
+        `<rect x="8" y="26" width="13" height="12" rx="3" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="2"/>
+        <rect x="26" y="26" width="13" height="12" rx="3" fill="#FBEFDA" stroke="#C2843A" stroke-width="2"/>
+        <rect x="44" y="26" width="13" height="12" rx="3" fill="#EDEAFA" stroke="#5B4AC0" stroke-width="2"/>
+        <path d="M21 32h4m14 0h4" stroke="#8A96A6" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M50 38v8h-24m4-4-4 4 4 4" stroke="#AAB4C4" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+      );
+    case "dhow": // 다우선 — 삼각돛과 계절풍
+      return M(
+        `<path d="M8 46q14-6 24 0t24 0" stroke="#3FA3AE" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M18 44h28l-6 8h-16z" fill="#C89A5E" stroke="#84582A" stroke-width="2"/>
+        <path d="M34 44V16L18 40z" fill="#F7FAFC" stroke="#5C677D" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M44 22q6 2 10-2M44 30q6 2 10-2" stroke="#7FB4D6" stroke-width="2.4" stroke-linecap="round" fill="none"/>`,
+      );
+    case "quranlang": // 쿠란과 아랍어 — 펼친 책과 무늬
+      return M(
+        `<path d="M32 18q-10-6-22-2v32q12-4 22 2 10-6 22-2V16q-12-4-22 2z" fill="#FBF3DC" stroke="#8A6A3E" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M32 18v32" stroke="#8A6A3E" stroke-width="1.8"/>
+        <path d="M16 28q4-3 8 0M16 36q4-3 8 0M40 28q4-3 8 0M40 36q4-3 8 0" stroke="#0E7C8A" stroke-width="2" stroke-linecap="round" fill="none"/>`,
+      );
+    case "mosquemini": // 모스크 — 돔과 미너렛
+      return M(
+        `<rect x="20" y="34" width="24" height="18" fill="#F2D9A4" stroke="#8A6534" stroke-width="2"/>
+        <path d="M20 34q12-16 24 0" fill="#3FA3AE" stroke="#0A5964" stroke-width="2"/>
+        <rect x="8" y="22" width="6" height="30" fill="#F2D9A4" stroke="#8A6534" stroke-width="1.8"/>
+        <rect x="50" y="22" width="6" height="30" fill="#F2D9A4" stroke="#8A6534" stroke-width="1.8"/>
+        <path d="M11 22l0-4M53 22l0-4M30 26a5 5 0 1 1 2 6" stroke="#8A6534" stroke-width="1.8" fill="none" stroke-linecap="round"/>`,
+      );
+    case "knowrelay": // 지식의 릴레이 — 바통이 된 책
+      return M(
+        `<rect x="24" y="24" width="16" height="12" rx="2" fill="#F7FAFC" stroke="#5C677D" stroke-width="2.2" transform="rotate(-12 32 30)"/>
+        <path d="M8 34h12m-4-4 4 4-4 4M44 30h12m-4-4 4 4-4 4" stroke="#C2843A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 52q16 6 32 0" stroke="#AAB4C4" stroke-width="2.8" stroke-linecap="round"/>`,
+      );
+    case "germanmove": // 게르만 이동 — 남하하는 화살들
+      return M(
+        `<path d="M18 12q-2 14 4 26m-5-6 5 6 6-4" stroke="#8A6534" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M40 14q4 12 0 24m-5-5 5 5 6-3" stroke="#C2843A" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 50h40" stroke="#AAB4C4" stroke-width="3" stroke-linecap="round"/>
+        <path d="M26 50l3-6h6l3 6" stroke="#5C677D" stroke-width="2.2" fill="none" stroke-linejoin="round"/>`,
+      );
+    case "crownpope": // 카롤루스 대관 — 관을 씌우는 손
+      return M(
+        `<path d="M20 30l3-9 6 6 3-9 3 9 6-6 3 9z" fill="#F2CE86" stroke="#C2843A" stroke-width="2" stroke-linejoin="round"/>
+        <rect x="20" y="30" width="24" height="6" rx="2.4" fill="#E8B45E" stroke="#C2843A" stroke-width="1.8"/>
+        <path d="M46 16q6 4 6 10M18 16q-6 4-6 10" stroke="#8A96A6" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <circle cx="32" cy="48" r="8" fill="#FFE8CE" stroke="#3C4654" stroke-width="2.2"/>`,
+      );
+    case "sophiadome": // 성 소피아 — 큰 돔
+      return M(
+        `<rect x="14" y="36" width="36" height="16" fill="#E4EAF2" stroke="#5C677D" stroke-width="2"/>
+        <path d="M14 36q18-20 36 0" fill="#9AA6B6" stroke="#5C677D" stroke-width="2"/>
+        <path d="M32 16v-6" stroke="#5C677D" stroke-width="2" stroke-linecap="round"/>
+        <rect x="22" y="42" width="6" height="10" fill="#5C677D"/><rect x="36" y="42" width="6" height="10" fill="#5C677D"/>`,
+      );
+    case "twochurch": // 동서 교회 — 두 갈래 성당
+      return M(
+        `<path d="M16 28q6-10 12 0v22h-12z" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="2"/>
+        <path d="M36 28l6-8 6 8v22h-12z" fill="#FBEFDA" stroke="#C2843A" stroke-width="2"/>
+        <path d="M32 22v20" stroke="#AAB4C4" stroke-width="2" stroke-dasharray="3 4"/>`,
+      );
+    case "vassal": // 주종 서약 — 맞잡은 손과 검
+      return M(
+        `<circle cx="22" cy="18" r="7" fill="#FFE8CE" stroke="#3C4654" stroke-width="2.2"/>
+        <path d="M22 25v14l10 6M42 20v18l-10 7" stroke="#3C4654" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <circle cx="42" cy="13" r="7" fill="#FFE8CE" stroke="#3C4654" stroke-width="2.2"/>
+        <path d="M50 34v14M46 38h8" stroke="#5C677D" stroke-width="2.6" stroke-linecap="round"/>`,
+      );
+    case "manor": // 장원 — 성과 밭
+      return M(
+        `<rect x="24" y="18" width="16" height="18" fill="#E4EAF2" stroke="#5C677D" stroke-width="2"/>
+        <path d="M24 18h4v-4h3v4h4v-4h3v4h2" fill="none" stroke="#5C677D" stroke-width="2"/>
+        <path d="M10 52q6-8 12 0M26 52q6-8 12 0M42 52q6-8 12 0" stroke="#3FA36E" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+        <path d="M8 44h48" stroke="#8A6534" stroke-width="2.4" stroke-linecap="round"/>`,
+      );
+    case "canossa": // 카노사 — 눈 내리는 성문
+      return M(
+        `<rect x="18" y="20" width="28" height="32" fill="#9AA6B6" stroke="#5C677D" stroke-width="2.2"/>
+        <path d="M18 20h5v-4h4v4h5v-4h5v4h5v-4h4v4" fill="none" stroke="#5C677D" stroke-width="2"/>
+        <path d="M27 52v-12q5-6 10 0v12" fill="#4E5968"/>
+        <circle cx="12" cy="16" r="1.8" fill="#DCE8F0"/><circle cx="52" cy="12" r="1.8" fill="#DCE8F0"/><circle cx="10" cy="34" r="1.8" fill="#DCE8F0"/><circle cx="54" cy="30" r="1.8" fill="#DCE8F0"/>`,
+      );
+    case "gothicrose": // 고딕 — 첨탑과 장미창
+      return M(
+        `<path d="M20 24l6-14 6 14v28h-12z" fill="#E4EAF2" stroke="#5C677D" stroke-width="2"/>
+        <circle cx="44" cy="30" r="10" fill="#3D2E86" stroke="#5C677D" stroke-width="2"/>
+        <path d="M44 22v16M36 30h16M38 24l12 12M50 24l-12 12" stroke="#F2A0B6" stroke-width="1.6"/>`,
+      );
+    case "crusadegate": // 십자군 이후 — 열린 성문과 배
+      return M(
+        `<path d="M12 26h16v26H12z" fill="#C9B394" stroke="#8A6534" stroke-width="2"/>
+        <path d="M14 26v-4h4v4m2 0v-4h4v4" fill="none" stroke="#8A6534" stroke-width="1.8"/>
+        <path d="M34 46q8-4 14 0t8 0" stroke="#3FA3AE" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+        <path d="M40 44h12l-3 6h-7z" fill="#C89A5E" stroke="#84582A" stroke-width="1.8"/>
+        <path d="M46 44V32l8 8h-8" fill="#F7FAFC" stroke="#5C677D" stroke-width="1.8" stroke-linejoin="round"/>`,
+      );
+    case "guildtown": // 길드 도시 — 연장 문장 방패
+      return M(
+        `<path d="M32 10l18 6v14q0 16-18 24-18-8-18-24V16z" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="M24 28l16 12M40 28L24 40" stroke="#0A5964" stroke-width="2.8" stroke-linecap="round"/>
+        <circle cx="32" cy="34" r="3.4" fill="#C2843A"/>`,
+      );
+    case "fadingmanor": // 장원 해체 — 기우는 담장과 새싹
+      return M(
+        `<path d="M10 44l24-6" stroke="#8A6534" stroke-width="3" stroke-linecap="round"/>
+        <path d="M14 44v-8m8 6v-8m8 6v-8" stroke="#8A6534" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M46 52v-14" stroke="#3FA36E" stroke-width="2.8" stroke-linecap="round"/>
+        <path d="M46 42q-8-2-8-10 8 0 8 10zM46 38q8-2 8-10-8 0-8 10z" fill="#8FCE6E" stroke="#3FA36E" stroke-width="1.8"/>`,
+      );
+    case "renartist": // 르네상스 — 이젤과 팔레트
+      return M(
+        `<path d="M20 14h24v26H20zM18 40h28M24 40l-4 12M40 40l4 12" stroke="#8A6534" stroke-width="2.4" fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="32" cy="26" r="6" fill="#FFE8CE" stroke="#3C4654" stroke-width="2"/>
+        <path d="M46 16q8 2 6 9-4-1-6-4z" fill="#F2A0B6" stroke="#C25A7A" stroke-width="1.6"/>`,
       );
     case "camelroad": // 비단길 — 사막의 낙타
       return M(

@@ -16,7 +16,7 @@ import type { Screen } from "../core/router";
 import { gnav, type GnavKey } from "../ui/gnav";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
-const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u6: "body", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice", s1u1: "world", s1u2: "world", s1u3: "world", s1u4: "world", s1u5: "world", h1u1: "his", h1u2: "his" };
+const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u6: "body", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice", s1u1: "world", s1u2: "world", s1u3: "world", s1u4: "world", s1u5: "world", h1u1: "his", h1u2: "his", h1u3: "his" };
 // 보너스 미니게임은 도전 탭으로 이사(2026-07-12 IA 개편) — 지도는 학습 서사만 남긴다.
 
 // 노드 배치 = 완만한 곡선 중심선 + 발걸음 지그재그(2026-07-14 사용자 지시, 발자국 사진 레퍼런스).
@@ -700,6 +700,7 @@ const UNIT_DECOR: Record<string, { seq: string[]; sky: [string, string] }> = {
   s1u5: { seq: ["amMapleDeco", "amSkylineDeco", "amCactusDeco", "amParrotDeco", "amLlamaDeco"], sky: ["planeDeco", "cloud"] }, // 사회 Ⅴ: 단풍 → 마천루 → 선인장 → 앵무새 → 라마(북에서 남으로 대륙 종단)
   h1u1: { seq: ["scrollDeco", "magnifyDeco", "inkbrushDeco", "hourglassDeco", "relicjarDeco"], sky: ["cloud", "sparkle"] }, // 역사 Ⅰ: 두루마리 → 돋보기 → 붓 → 모래시계 → 항아리(기록을 만나 살피고, 쓰고, 시간을 재고, 유물을 캐는 탐구 순)
   h1u2: { seq: ["handaxeDeco", "combjarDeco", "zigguratDeco", "columnDeco", "greatwallDeco"], sky: ["sparkle", "cloud"] }, // 역사 Ⅱ: 주먹도끼 → 빗살 토기 → 지구라트 → 그리스 기둥 → 만리장성(문명 순례 — 선사에서 고대 제국까지 걷는 순)
+  h1u3: { seq: ["grottoDeco", "camelDeco", "lanternDeco", "mosaicDeco", "spireDeco"], sky: ["sparkle", "cloud"] }, // 역사 Ⅲ: 석굴 불상 → 당삼채 낙타 → 초승달 등불 → 모자이크 조각 → 첨탑 스테인드글라스("믿음의 길" — 동아시아에서 서유럽까지 종교 문화 순례 순)
 };
 const DEFAULT_DECOR: { seq: string[]; sky: [string, string] } = {
   seq: ["tree1", "tree2", "bush", "rock", "grassTuft"],
@@ -734,6 +735,7 @@ const DECOR_SIZE: Record<string, number> = {
   afrPyramidDeco: 50, afrBaobabDeco: 48, afrGiraffeDeco: 46, afrDrumDeco: 42, afrSolarDeco: 48,
   scrollDeco: 46, magnifyDeco: 44, inkbrushDeco: 40, hourglassDeco: 42, relicjarDeco: 46,
   handaxeDeco: 42, combjarDeco: 46, zigguratDeco: 48, columnDeco: 44, greatwallDeco: 48,
+  grottoDeco: 46, camelDeco: 46, lanternDeco: 42, mosaicDeco: 44, spireDeco: 48,
 };
 
 function placeDecor(layer: HTMLElement, points: { x: number; y: number }[], W: number, unitId: string): void {

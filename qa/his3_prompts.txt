@@ -1,0 +1,188 @@
+# 역사① Ⅲ(h1u3) 발주 — 스틱맨 개념 컷 10장(public/his/cuts) + 만화 4편 28컷
+#   (public/comics/h1u3l2 · h1u3l4 · h1u3l7 · h1u3l9, 각 7컷)
+# 컷·만화 모두 "이미지 안 글자 절대 금지". 만화 컷은 앱이 한글 말풍선을 얹는 하이브리드라
+# 인물이 입을 벌리고 손짓하는 "말하는 연기"만 그리고, 인물 머리 위쪽에 여백을 넉넉히 남긴다.
+# 표시 프레임이 정사각(1:1 cover 크롭)이므로 주인공은 가운데 배치, 좌우 가장자리엔 핵심 요소 금지.
+# ★ 코믹 격상 표준(h1u2 계승): 코믹 컷은 "GAG:" 문장으로 무엇이 웃긴지 명시, 죽음·신분·종교 의례
+#   컷은 DIGNIFIED 표기(개그 금지). 실존 인물(현장·교황·황제)은 존엄 유지 — 개그는 주변 인물 몫.
+# ★★ 종교 존중 가드(이 단원 제1원칙): 종교 창시자와 신앙 대상(무함마드·부처·예수·힌두 신 등)은
+#   어떤 형태로도 그리지 않는다. 특히 무함마드는 절대 묘사 금지(실루엣·뒷모습·상징 인물화 전부 금지).
+#   이슬람 관련 장면은 상인·학자·건물(돔·미너렛)·문물로만, 불교 장면은 사원 건물·탑·승려로만 구성.
+#
+# ── 스타일 블록 A (스틱맨 개념 컷 공용 — his1·his2와 동일) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 C (만화 컷 공용 — 말풍선 하이브리드 + 코믹 연기) ──
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal, used sparingly where the prompt says.
+# Absolutely NO text, NO letters, NO numbers, NO speech bubbles, NO captions anywhere.
+# Characters ACT like they are talking: open mouth (small oval), expressive hand gestures.
+# Comedic acting is allowed and encouraged where the prompt marks GAG: exaggerated poses,
+# big reactions, falling over backwards, sweat drops, bulging wide eyes, jaw dropping —
+# but all historical objects, clothing and facts must stay accurate; never make the scene
+# absurd beyond what the prompt describes, and NO anachronistic props (no phones, no modern
+# items) inside historical scenes.
+# RELIGION RULE (absolute): never depict founders or objects of worship of any religion —
+# no Muhammad in any form whatsoever, no Buddha statues or Buddha figures, no Jesus, no Hindu
+# deities. Religious scenes show only ordinary people (merchants, scholars, monks), buildings
+# (domes, minarets, pagodas, temple halls, cathedrals) and everyday objects.
+# Keep the upper third of the panel mostly empty white space above the characters' heads
+# (the app overlays Korean speech bubbles there). Main subjects centered horizontally.
+# Simple, charming, educational middle-school history comic. 4:3 landscape panel.
+
+## ── 개념 컷 10장 (스타일 A) ──
+
+[0] file=public/his/cuts/u3l1.png (landscape 4:3, 스타일 A)
+Two stick figures happily swapping lifestyles in one panel: the left figure sits comfortably on a raised wooden chair chewing a skewer of grilled meat, while the right figure kneels on a floor cushion at a low desk gracefully writing with a brush; each gives the other a cheerful thumbs-up, small hearts of friendship NOT included (no symbols) — just smiling dot eyes. Only the wooden chair is teal; everything else pure black and white.
+
+[1] file=public/his/cuts/u3l2.png (landscape 4:3, 스타일 A)
+A stick figure student proudly hands a rolled-up exam scroll to a seated stick figure examiner behind a desk; the examiner stamps the scroll with a big round seal stamp, arm raised mid-stamp; behind the student a small line of other hopeful stick figures wait, each hugging their own scroll. A tall stack of scrolls sits beside the desk. Only the ribbon tied around the student's scroll is teal; everything else pure black and white.
+
+[2] file=public/his/cuts/u3l3.png (landscape 4:3, 스타일 A)
+A calm sea crossing scene: a wooden sailing ship carries three stick figures between two coastlines drawn at the left and right edges of the panel; one figure points forward eagerly at the far coast, another holds a bundle of rolled scrolls, the third rows. Simple wave lines below, a seagull above. Only the ship's single square sail is teal; everything else pure black and white.
+
+[3] file=public/his/cuts/u3l4.png (landscape 4:3, 스타일 A)
+Four stick figures, each wearing a clearly different hat (a rounded cap, a flat wide hat, a pointed hood, a simple topknot), sit around one huge open book laid flat in the middle, all leaning in and reading it together, one tracing a line with a finger, all mouths open in delighted discussion. The pages show only blank lines (no letters). Only the big book's cover edge is teal; everything else pure black and white.
+
+[4] file=public/his/cuts/u3l5.png (landscape 4:3, 스타일 A)
+A stick figure storyteller dramatically reads from an enormous scroll that unrolls past their feet, across the floor, out over a hill and toward the horizon like an endless ribbon; two listener stick figures sit cross-legged, one leaning way over to peek where the scroll ends, eyes wide. Only the long unrolled scroll ribbon is teal; everything else pure black and white.
+
+[5] file=public/his/cuts/u3l6.png (landscape 4:3, 스타일 A)
+A desert caravan at dusk: three stick figure merchants lead two loaded two-humped camels in a line over a smooth sand dune, the front merchant holding up a small hanging oil lamp on a short pole; a few stars and a crescent moon high in the sky, rolling dunes behind. Only the glowing oil lamp is teal; everything else pure black and white.
+
+[6] file=public/his/cuts/u3l7.png (landscape 4:3, 스타일 A)
+A lively market stall scene: a stick figure merchant stands behind a balance scale, placing a small heap of spice onto one pan while a customer stick figure watches the pans level out, leaning in closely; behind them a simple skyline silhouette with one rounded dome and one slim tower. Sacks of goods around the stall. Only the heap of spice on the scale pan is teal; everything else pure black and white.
+
+[7] file=public/his/cuts/u3l8.png (landscape 4:3, 스타일 A)
+Three stick figure brothers stand around a large map sheet spread on a table, carefully folding it into three parts; each brother holds one folded section to his chest and steps slightly apart toward three different directions, waving a friendly goodbye to the others. Only the map section held by the middle brother is teal; everything else pure black and white.
+
+[8] file=public/his/cuts/u3l9.png (landscape 4:3, 스타일 A)
+A vow scene in front of a small stone castle tower: one stick figure knight kneels on one knee with both hands placed together, held between the standing lord stick figure's two hands (the medieval homage gesture); the lord wears a simple cloak, the knight has a sword resting on the ground beside him. A small banner pole stands by the tower (blank banner, no symbols). Only the lord's cloak trim is teal; everything else pure black and white.
+
+[9] file=public/his/cuts/u3l10.png (landscape 4:3, 스타일 A)
+A stick figure painter stands at an easel painting a portrait of a stick figure model who poses with a gentle smile; on the canvas the same model appears again (a stick figure drawing within the drawing, clearly matching the pose); two spectator stick figures behind the painter clasp their cheeks in admiration. Only the painter's palette is teal; everything else pure black and white.
+
+## ── 만화 h1u3l2 「현장의 서역 유학기」 7컷 (스타일 C) ──
+## 등장인물 고정: MONK = 삭발한 승려 스틱맨(긴 장삼, 등에 짐 지게 프레임 배낭) — 존경받는 주인공,
+## 항상 품위 있게(개그는 고생 상황과 주변 인물 몫). 부처상·불상은 어느 컷에도 그리지 않는다(사원 건물·탑만).
+
+[a0] file=public/comics/h1u3l2/0.png (landscape 4:3, 스타일 C)
+Night scene at a great city gate under a crescent moon: MONK, a young monk stick figure with a tall backpack frame stacked with scroll boxes, quietly slips through the half-open giant wooden gate, one finger raised to his lips toward the viewer (shhh gesture), tiptoeing with exaggerated careful steps; a sleeping guard stick figure dozes sitting against the wall, a little snore bubble shape (plain round bubble, no letters) above the guard. Teal accent: the crescent moon. Upper third empty for a speech bubble.
+
+[a1] file=public/comics/h1u3l2/1.png (landscape 4:3, 스타일 C)
+GAG: in the middle of an endless desert the monk accidentally tips over his water skin — the last drops fall in slow motion and he lunges for them dramatically, mouth open in a silent cry, while his shadow stretches long over the dunes. MONK on hands and knees on a vast sand dune reaching desperately toward a leather water skin lying on its side, a tiny wet patch and three falling drops beside it; his backpack of scrolls sits behind him; huge sun above, wavy heat lines rising. Teal accent: the falling water drops. Upper third empty for a speech bubble.
+
+[a2] file=public/comics/h1u3l2/2.png (landscape 4:3, 스타일 C)
+DIGNIFIED — no gag: MONK climbs a steep snowy mountain pass leaning into driving snow, one arm shielding his face, robe and pack fluttering hard in the wind; jagged white peaks tower behind, his footprints trail up the slope below him. His posture is determined, not comical. Teal accent: the tassel hanging from his backpack frame. Upper third empty for a speech bubble.
+
+[a3] file=public/comics/h1u3l2/3.png (landscape 4:3, 스타일 C)
+Arrival scene: MONK stands at the bottom of wide steps looking up at a grand ancient Indian monastery complex — long brick buildings with rows of arched doorways and a tall rounded stupa tower (buildings only, no statues); his arms hang loose in awe, backpack slightly slipping; two resident monk stick figures descend the steps to welcome him with open arms and open mouths. Teal accent: the rounded top of the stupa tower. Upper third empty for a speech bubble.
+
+[a4] file=public/comics/h1u3l2/4.png (landscape 4:3, 스타일 C)
+Study hall scene inside the monastery courtyard: MONK sits at the center of a semicircle of six seated monk stick figures, holding up one palm mid-argument while the others lean in, some nodding vigorously, one clapping; palm-leaf manuscript bundles (plain rectangles tied with string, no letters) are stacked beside each monk. Teal accent: the manuscript bundle in front of MONK. Upper third empty for a speech bubble.
+
+[a5] file=public/comics/h1u3l2/5.png (landscape 4:3, 스타일 C)
+GAG: the welcome crowd is so huge and excited that one small spectator at the front tumbles over backwards from cheering too hard, legs in the air. Grand return scene at the same great city gate, now in daylight: MONK walks in leading a horse loaded with towering neat stacks of scroll boxes roped like a pyramid; a dense crowd of stick figures lines both sides cheering with raised arms and open mouths; one small spectator at the front has toppled backwards, feet up; MONK bows his head modestly, composed and dignified. Teal accent: the rope tying the scroll stacks. Upper third empty for a speech bubble.
+
+[a6] file=public/comics/h1u3l2/6.png (landscape 4:3, 스타일 C)
+GAG: centuries later his travel diary grows a monkey — inside an imagination cloud a mischievous monkey character strikes a hero pose on a somersault cloud, and MONK (writing at his desk) side-eyes the cloud with a flat, unimpressed dot-eye stare. MONK sits at a low desk before a tall multi-story brick pagoda tower in the background, brush in hand over an open scroll (blank lines only); above and to the side floats a big thought-cloud outline containing a cheerful monkey stick-animal balancing on a tiny cloud holding a thin staff. Teal accent: the monkey's tiny cloud. Upper third empty for a speech bubble.
+
+## ── 만화 h1u3l4 「장안 24시」 7컷 (스타일 C) ──
+## 등장인물 고정: SILLA = 둥근 챙 모자를 쓴 유학생 스틱맨(어깨 봇짐). WA = 납작한 사각 모자를 쓴
+## 유학생 스틱맨(두루마리 통). PERSIAN = 곱슬 수염과 둥글게 감은 터번의 상인 스틱맨. 배경은 당의
+## 장안성(격자 거리·큰 성문·기와 건물). 종교 인물·신상은 그리지 않는다(건물 실루엣만).
+
+[b0] file=public/comics/h1u3l4/0.png (landscape 4:3, 스타일 C)
+GAG: the entry line at dawn is so long it zigzags back and forth across the whole panel and disappears over the horizon — and SILLA at the very back stands on tiptoe trying to see the gate, jaw dropped. Dawn at a colossal city gate with a tiered tower roof: a winding queue of dozens of stick figures with bundles, horses and two camels zigzags from the gate into the far distance; SILLA (round-brim hat, shoulder bundle) at the back stretches tall on tiptoes, one hand shading his eyes, mouth wide open; WA (flat square hat, scroll tube) beside him slumps with drooping shoulders. Teal accent: the gate tower's roof tiles. Upper third empty for two speech bubbles.
+
+[b1] file=public/comics/h1u3l4/1.png (landscape 4:3, 스타일 C)
+GAG: mouths fail but brushes succeed — SILLA and WA, unable to understand each other's speech, gleefully "talk" by passing one sheet of paper back and forth, writing with brushes, and both burst out laughing at the paper. Classroom scene with low desks: SILLA and WA kneel facing each other across one desk, one holding a brush over a shared paper sheet (abstract squiggle marks only, no real letters), both mouths open in delighted laughter; a teacher stick figure with a thin beard watches warmly, hands behind back; scroll racks along the wall. Teal accent: the shared paper sheet's edge. Upper third empty for two speech bubbles.
+
+[b2] file=public/comics/h1u3l4/2.png (landscape 4:3, 스타일 C)
+Bustling market street: PERSIAN (curly beard, round turban) proudly presents a small three-color glazed camel figurine on his palm to SILLA and WA who lean in fascinated; around the stall stand a real two-humped camel with cargo, hanging strings of round goods, and jars; other merchant stick figures with different hats haggle in the background. Teal accent: the glazed camel figurine. Upper third empty for a speech bubble.
+
+[b3] file=public/comics/h1u3l4/3.png (landscape 4:3, 스타일 C)
+Quiet temple courtyard in the afternoon: a tall multi-tiered pagoda tower rises at the center-back (building only, no statues); SILLA, WA and three monk stick figures sit in a circle on the courtyard stones around a low table stacked with scroll bundles, one monk gesturing mid-explanation with an open mouth, SILLA taking notes with a brush on a small tablet (abstract marks only); a broom leans against the pagoda base, two birds on the roof. Teal accent: the pagoda's top finial. Upper third empty for a speech bubble.
+
+[b4] file=public/comics/h1u3l4/4.png (landscape 4:3, 스타일 C)
+Evening street of many faiths: three different house-of-worship buildings stand side by side along one street — one with a small dome and slim tower, one with a fire altar bowl on its roof, one with a simple cross-topped gable — each with a different-hatted keeper stick figure sweeping or lighting a lamp at its door; SILLA and WA stroll past in the foreground, heads turning from one building to the next, mouths open in wonder, pointing politely. Teal accent: the small dome. Upper third empty for a speech bubble.
+
+[b5] file=public/comics/h1u3l4/5.png (landscape 4:3, 스타일 C)
+Night dormitory scene lit by one oil lamp: SILLA sits at a low desk writing a letter home with a brush (paper shows only abstract wavy lines), WA already asleep on a mat behind, one leg flopped out of the blanket; through the round window a crescent moon and the dark silhouette of tiled roofs; SILLA's face is fond and a little homesick, small smile. Teal accent: the oil lamp's flame. Upper third empty for a speech bubble.
+
+[b6] file=public/comics/h1u3l4/6.png (landscape 4:3, 스타일 C)
+GAG: their farewell bundles are comically overstuffed — WA's backpack towers over his head with scroll boxes and a bell, and he wobbles under it while waving. Harbor farewell at sunrise: a wooden ship waits at the dock; SILLA and WA, each loaded with enormous towering bundles of scroll boxes strapped to their backs, wave big goodbyes to the teacher and PERSIAN on the dock; WA tilts dangerously under his load, one leg lifted for balance, sweat drop; seagulls above. Teal accent: the ship's square sail. Upper third empty for two speech bubbles.
+
+## ── 만화 h1u3l7 「이슬람 상인의 배낭」 7컷 (스타일 C) ──
+## 등장인물 고정: TRADER = 둥글게 감은 터번과 짧은 수염의 상인 스틱맨(허리띠 주머니). CAMEL =
+## 짐을 진 쌍봉낙타(떨떠름한 반쯤 감긴 눈 — 리액션 담당). 종교 창시자·신앙 대상 절대 금지 —
+## 모든 장면은 상인·학자·건물·물건으로만 구성한다.
+
+[c0] file=public/comics/h1u3l7/0.png (landscape 4:3, 스타일 C)
+GAG: the camel eyes the mountain of cargo being stacked on its back and lets out a visible sigh (small puff cloud from its nostrils), ears drooping flat. Departure scene in a city of domes and slim towers at dawn: TRADER cheerfully stacks yet another bundle onto CAMEL whose back already carries a comic tower of rolled carpets, jars and sacks; CAMEL's half-lidded eyes stare at the viewer, a small sigh puff at its nose, knees slightly bent under the weight; city skyline with one dome and two slim towers behind. Teal accent: the topmost bundle. Upper third empty for a speech bubble.
+
+[c1] file=public/comics/h1u3l7/1.png (landscape 4:3, 스타일 C)
+GAG: the trader holds up a single sheet of paper to the light like a priceless jewel, eyes sparkling wide, while the paper seller nods proudly — and CAMEL peeks from panel edge, unimpressed. Chinese market stall stacked with paper: TRADER holds one white sheet up with both hands toward the light, head tilted back, mouth open in awe, tiny sparkle marks around the sheet; the seller stick figure in a crossed-collar robe gestures at neat stacks of paper sheets and a hanging brush; CAMEL's head pokes in from the panel edge with flat half-lidded eyes. Teal accent: the held-up paper sheet's glow edge. Upper third empty for a speech bubble.
+
+[c2] file=public/comics/h1u3l7/2.png (landscape 4:3, 스타일 C)
+Indian courtyard scene: a scholar stick figure in a simple wrap kneels beside a flat sand tray on the ground, drawing with a stick while explaining with an open mouth; TRADER squats opposite, chin on fist, leaning so far forward his turban tips; between them sits an empty clay bowl the scholar points at with his free hand (teaching "nothing can be counted too"). Abstract dots and open circles in the sand tray only — NO real numerals or letters. Teal accent: the empty clay bowl. Upper third empty for a speech bubble.
+
+[c3] file=public/comics/h1u3l7/3.png (landscape 4:3, 스타일 C)
+Paper workshop scene: two worker stick figures lift a screen frame dripping from a wide pulp vat while a third hangs fresh sheets on a line like laundry; TRADER stands by with his arms full of finished paper stacks, grinning wide; CAMEL waits outside the doorway, one new paper sheet balanced flat on its head between the humps, eyes half-lidded. Teal accent: the wet sheet on the lifted screen frame. Upper third empty for a speech bubble.
+
+[c4] file=public/comics/h1u3l7/4.png (landscape 4:3, 스타일 C)
+Sea voyage scene: a wooden ship with one large triangular sail leans forward over rolling waves, wind lines streaming from behind; TRADER stands at the bow holding his turban with one hand, coat flapping, pointing ahead with the other; two sailor stick figures haul ropes; crates and jars lashed on deck; a compass-like round dish on a barrel (plain circle with a needle shape, no letters). Teal accent: the big triangular sail. Upper third empty for a speech bubble.
+
+[c5] file=public/comics/h1u3l7/5.png (landscape 4:3, 스타일 C)
+GAG: a scholar hugs a newly arrived book to his chest and faints backwards with happiness, caught by two colleagues, legs stiff in the air. Arrival courtyard with horseshoe arches on striped columns: TRADER opens a crate of books and scrolls before a group of European scholar stick figures in long robes; one scholar clutches a book and tips over backwards in bliss, caught under the arms by two others; another scholar flips pages with huge sparkling eyes. Teal accent: the book hugged by the fainting scholar. Upper third empty for a speech bubble.
+
+[c6] file=public/comics/h1u3l7/6.png (landscape 4:3, 스타일 C)
+Campfire inventory scene under a starry sky with a crescent moon: TRADER sits cross-legged proudly arranging his remaining treasures on a spread cloth — a silk roll, a small spice sack spilling tiny grains, a neat stack of paper, a rolled scroll; he holds up the paper stack with both hands like a trophy, chest puffed, mouth open mid-boast; CAMEL lies folded beside him, finally content, eyes softly closed. Teal accent: the spilling spice grains. Upper third empty for a speech bubble.
+
+## ── 만화 h1u3l9 「카노사의 굴욕」 7컷 (스타일 C) ──
+## 등장인물 고정: POPE = 높은 뾰족 모자(주교관)와 긴 제의를 입은 교황 스틱맨 — 항상 근엄하고
+## 품위 있게. EMPEROR = 테두리 관을 쓰고 망토를 두른 황제 스틱맨 — 분노하거나 좌절해도 위엄 유지
+## (절대 우스꽝스럽게 그리지 말 것). 개그는 제후·시종 스틱맨 몫. 예수·십자가상 등 신앙 대상은
+## 그리지 않는다(건물 외관·문·눈보라 등 상황으로만).
+
+[d0] file=public/comics/h1u3l9/0.png (landscape 4:3, 스타일 C)
+GAG: the deal is so blatant it happens over a table — a lord slides a fat coin pouch across while the other hand plops a tall clergy hat onto a shrugging relative's head; a shocked onlooker in the back drops his broom. Stone hall scene: a lord stick figure in a fur-trimmed cloak pushes a bulging coin pouch across a wooden table toward a robed official while simultaneously placing a tall pointed clergy hat on the head of a smug younger stick figure standing beside him; in the background a servant stick figure drops a broom, both hands on cheeks, mouth a huge O. Teal accent: the coin pouch. Upper third empty for a speech bubble.
+
+[d1] file=public/comics/h1u3l9/1.png (landscape 4:3, 스타일 C)
+DIGNIFIED — no gag on POPE: POPE stands tall at a stone balcony lectern, one arm raised in a firm declaration, mitre high, robe falling in long straight folds; below the balcony a small crowd of clergy stick figures looks up, some nodding gravely, one clasping his hands; morning light rays behind the tower. POPE's bearing is calm, resolute, authoritative. Teal accent: the trim line of POPE's tall mitre. Upper third empty for a speech bubble.
+
+[d2] file=public/comics/h1u3l9/2.png (landscape 4:3, 스타일 C)
+Palace council scene: EMPEROR stands behind a heavy wooden table, one fist planted on the tabletop, the other arm sweeping wide mid-proclamation, cloak flaring, crown firm — angry but regal, jaw set, dignified; around the table six advisor stick figures react: two lean back with raised hands, one grips his own hat, one hides half behind another; a knocked-over goblet rolls on the table. EMPEROR himself is NOT comical. Teal accent: the lining of EMPEROR's cloak. Upper third empty for a speech bubble.
+
+[d3] file=public/comics/h1u3l9/3.png (landscape 4:3, 스타일 C)
+GAG: the nobles abandon ship in the most obvious way — a whole row of them tiptoes backwards out of the hall in perfect synchronized sneaking pose, one still waving an awkward little goodbye. Throne hall: EMPEROR sits upright on his throne, composed but with clenched fists on the armrests, staring ahead; to the side a line of five noble stick figures tiptoes backwards toward the door in identical exaggerated sneak poses, knees high, one waving a tiny sheepish goodbye, another peeking back over his shoulder with a sweat drop. EMPEROR remains dignified. Teal accent: the throne's back cushion. Upper third empty for a speech bubble.
+
+[d4] file=public/comics/h1u3l9/4.png (landscape 4:3, 스타일 C)
+GAG: the servants have turned into shivering snowmen — two attendants behind the emperor are buried to the waist, one with a snow pile on his head like a hat, teeth-chattering lines around their heads — while the EMPEROR himself strides on unbowed. Blizzard mountain pass: EMPEROR, wrapped in a snow-dusted cloak, leans into the storm climbing a steep alpine path, face set with determination, crown visible under a hood — dignified; behind him two servant stick figures flounder waist-deep in snow, one balancing a snow lump on his head, both with wavy shiver lines; jagged peaks and swirling snow lines fill the background. Teal accent: EMPEROR's crown band. Upper third empty for a speech bubble.
+
+[d5] file=public/comics/h1u3l9/5.png (landscape 4:3, 스타일 C)
+DIGNIFIED — no gag in this panel: solemn, quiet scene. EMPEROR stands barefoot in deep snow before a massive closed castle gate, stripped of his crown and cloak, wearing only a plain rough robe, head bowed, hands clasped low; snow falls softly around him; his crown and cloak lie folded on a rock beside him; high above, a small lit window glows in the dark castle wall. The mood is heavy, respectful, historic. Teal accent: the tiny glowing window. Upper third empty for a speech bubble.
+
+[d6] file=public/comics/h1u3l9/6.png (landscape 4:3, 스타일 C)
+Resolution scene: the great gate now stands open; POPE, tall and composed on the threshold, extends one hand in a formal gesture of pardon; EMPEROR, robe still plain, bows his head with restrained relief, one hand over his chest — both figures dignified; two onlooker monk stick figures peek from behind the gate; in the sky above the castle a large sun and a small pale moon are drawn side by side. Teal accent: the large sun. Upper third empty for a speech bubble.
+
+## ── 재발주 (1차본 기각 사유 기록) ──
+# [7] u3l8 1차본 기각: "지도를 셋으로 나눈다"가 책 세 권을 든 세 사람으로 나와 분할 개념이 안 읽힘.
+#     지도임이 보이도록 대륙 낙서·찢긴 선을 명시하고 테이블 위 한 장의 큰 지도를 강제한다.
+[7r] file=public/his/cuts/u3l8.png (landscape 4:3, 스타일 A)
+One single LARGE MAP sheet lies on a table, drawn as a map: a simple continent outline doodle with a winding river line and two tiny mountain triangles inside. The map is being torn into THREE pieces along two jagged tear lines. Three stick figure brothers each pull one piece toward themselves: the left brother holds the left piece, the middle brother lifts the middle piece to his chest, the right brother holds the right piece. Torn paper zigzag edges clearly visible between the pieces. Each brother smiles and waves goodbye to the others. Only the middle map piece is teal; everything else pure black and white.
+
+# [7r] 2차본도 기각: 같은 실패(책 세 권·테이블 인사) — image_gen이 "지도 찢기" 구도를 두 번 못 그림.
+#     구도 자체를 교체: 삼거리 이정표(세 갈래 길) — 분할·제 갈 길 개념이 즉시 읽히는 안전 구도.
+[7rr] file=public/his/cuts/u3l8.png (landscape 4:3, 스타일 A)
+A country road splits into THREE diverging paths (left, middle, right) at a fork. At the fork stands one tall wooden signpost with three blank arrow-shaped boards pointing toward the three paths (blank boards, no letters). Three stick figure brothers walk away from the fork, one down each path, each carrying a small travel bundle on a stick over the shoulder, each looking back and waving a friendly goodbye to the others. Simple rolling hills around the paths. Only the middle path's road surface is teal; everything else pure black and white. NO table, NO books, NO map.
+
+# [7rr] 3차 발주는 codex 사용량 한도(2026-07-25 해제)로 미실행 — 2차본을 '베르됭 조약 문서를 나눠 안고
+#      헤어지는 삼형제'로 캡션을 정합시켜 확정(그림-텍스트 일치). 한도 해제 후 삼거리 이정표 구도 재발주는 선택.

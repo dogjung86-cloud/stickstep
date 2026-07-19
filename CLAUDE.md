@@ -1673,6 +1673,40 @@ src/
   qa/e2e-his2.mjs`(홈 노드 14·훅 7·말풍선 대조·hotspot 실사 카드·연표 5임무·드릴·전 퀴즈, ONLY= 지원 —
   Ⅱ 실물화로 e2e-his1 홈 노드 검증도 14로 소급) · 눈검수 shot-his2.mjs + **shot-his2-bubbles.mjs(28컷
   크롭 — 말풍선 정렬+코믹 비트 전달 판정)**.
+- **종교 존중 가드 운용(h1u3에서 확립 — 종교 단원의 제1원칙)**: ① 불교·힌두교·이슬람교·크리스트교
+  (가톨릭·그리스 정교)는 교과서 범위의 사실만 동등 존중 — 퀴즈 오답 보기에도 우열·희화화 금지.
+  ② 교리 문제(성상 숭배·동서 교회 분열·시아/수니)는 정오 부여 금지 — "입장이 갈렸다" 사실로만 서술하고
+  문제도 그 사실 관계만 묻는다. ③ **종교 창시자·신앙 대상은 그림 전면 금지**: 발주 프롬프트 스타일
+  블록에 RELIGION RULE 명문 라인(무함마드는 실루엣·뒷모습 포함 절대 금지, 부처상·불상·신상도 금지 —
+  사원은 건물·탑·승려만)을 넣고 실행 프롬프트에도 반복한다. 지도 데코·miniArt의 작은 불상 실루엣은
+  존중 톤 유물 묘사로 허용(교과서 도판과 같은 지위 — 개그·연기 맥락만 금지). ④ 십자군은 전쟁 컷 개그
+  금지 + "충돌과 교류의 양면" 균형 서술. 카스트제·농노제·흑사병은 중립·존중 서술(개그 소재 금지).
+- **Ⅲ 연표 결정(게이트 ① 기록) — 전부 기원후 def의 축 보정**: TIMELINES h1u3 = 5~11세기(7칸,
+  century 6·10 + place 476·622·1077) — 확정 연도가 전부 기원후라 **역방향 과제 없음**(목표 칩이
+  자동으로 "세기 읽기·사건 배치" 2종이 된다 — 굳이 기원전을 끼워 넣지 않는다). timelineKit에
+  **axisMinYear** 도입: 양수 시작 def의 축 왼쪽 끝 = (startCentury−1)×100(5세기 → 400년 —
+  기존 startCentury×100은 음수 전용 논리라 사건 도장·눈금이 한 칸 밀리는 버그), posOf·눈금이 이를
+  공유하고 bcCount=0이면 기원전 띠·원년 마커를 생략한다. 음수 시작(h1u1·h1u2)은 값 불변 —
+  e2e-his1 40/40·e2e-his2 69/69 회귀로 확증. 세기 드릴 6문은 Ⅲ 앵커 신작(622·1077·800(8세기의
+  마지막 해 함정)·6세기 첫해 501·907·1453 — Ⅰ·Ⅱ 문항 재탕 금지 이행).
+- **h1u3 구성(10레슨 = 무료 3+프리미엄 7, 만화 4편 — 소단원 9개 중 이슬람(2-02)을 성립/문화로 분할)**:
+  L1 위진 남북조(lambskewer 훅+binSort 호한 융합 양방향) · L2 수·당(examnotice+만화「현장의 서역
+  유학기」— 만화가 concept 뒤 문화 파트 슬롯에 오는 첫 사례) · L3 한반도·일본(kanasign+order 일본
+  4계단) · L4 동아시아 문화권(hanjahw+만화「장안 24시」+binSort 4요소) · L5 굽타·힌두교(zeroscore+
+  binSort 고전 문화 3분류+간다라vs굽타 hpair 비교 문제) · L6 사산·이슬람(chessmate+order 왕조 변천) ·
+  L7 이슬람 상인·문화(arabnum+만화「이슬람 상인의 배낭」+binSort 지식의 고향) · L8 유럽 형성
+  (francejersey+세기 드릴) · L9 봉건·교황(만화 직행「카노사의 굴욕」+hotspot 종교 유산 지도 5스팟 기함) ·
+  L10 십자군~르네상스(pepper+order 인과 사슬+timelineLab h1u3). 훅 9종은 hookHis3.ts renderHis3
+  서브 디스패처(hook.ts 2줄 append — Ⅱ 문법), 그림은 hisFigures Ⅲ 섹션 5종(worldReligionsFig 유라시아
+  유산 지도·feudalFig 주종 쌍방향 화살표·threeSixFig·eastAsiaFig·islamFlowFig — 전부 파라미터형
+  hide/marks)+miniArt 40키. 실사 3차분 15종(fetch-his.mjs — Met 5종은 objectID·medium 검산, 당삼채는
+  Met 흑백 아카이브 사진을 기각하고 컬러 낙타 악단(Gary Todd CC0)으로 교체한 기각 기록 참조).
+  UNIT_DECOR h1u3 = "믿음의 길"(grotto→camel→lantern→mosaic→spire). QA: `PORT=<포트> node
+  qa/e2e-his3.mjs`(홈 Ⅲ 탭 노드 10·훅 9장면·말풍선 대조·hotspot 실사 카드·연표 축 보정 검증(첫 눈금
+  400·기원전 띠 생략·칩 2종)·드릴·전 퀴즈, ONLY= 지원) · 눈검수 shot-his3.mjs(신작 그림 독립 렌더
+  시트 포함) + shot-his3-bubbles.mjs(28컷 크롭). 발주는 order-his3.sh 5배치 — **재발주(u3l8 fix)는
+  로그의 "HIS3 ORDER DONE" 종료 마커를 tail로 확인한 뒤 order-his3-fix.sh 실행**(Ⅱ 병렬 codex
+  실사고의 재발 방지 절차 그대로).
 
 ## 로그인·동기화 (Supabase — 2026-07 구축)
 - **core/auth.ts**(OAuth·세션)와 **core/sync.ts**(진행도 병합·푸시)가 전부. **환경변수

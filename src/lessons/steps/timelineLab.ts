@@ -6,7 +6,7 @@ import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { curioCard, type Curio } from "../../ui/curio";
 import {
-  TIMELINES, centuriesOf, centuryOf, fmtCentury, fmtRange, fmtYear, posOf,
+  TIMELINES, axisMinYear, centuriesOf, centuryOf, fmtCentury, fmtRange, fmtYear, posOf,
   type TimelineDef, type TimelineTask,
 } from "../../ui/timelineKit";
 import type { StepRenderer } from "../types";
@@ -60,10 +60,11 @@ export const timelineLab: StepRenderer = (host, step, api) => {
   const wrap = el("div", { class: "htl-wrap" });
   const bcCount = cents.filter((c) => c < 0).length;
   const bcPct = (bcCount / cents.length) * 100;
+  // 전부 기원후인 def(h1u3)는 기원전 띠를 아예 그리지 않는다 — 0폭 스팬은 글자가 흘러넘친다.
   const eras = el(
     "div",
     { class: "htl-eras" },
-    el("span", { class: "bc", style: `width:${bcPct}%`, text: "기원전" }),
+    ...(bcCount > 0 ? [el("span", { class: "bc", style: `width:${bcPct}%`, text: "기원전" })] : []),
     el("span", { class: "ad", text: "기원후" }),
   );
   const strip = el("div", { class: "htl-strip" });
@@ -77,9 +78,10 @@ export const timelineLab: StepRenderer = (host, step, api) => {
     strip.appendChild(cell);
     cellEls.set(c, cell);
   }
-  // 원년(기원전↔기원후 경계) 마커 — 서기의 기준점
-  const originLeft = bcPct;
-  strip.appendChild(el("div", { class: "htl-origin", style: `left:${originLeft}%`, attrs: { "aria-hidden": "true" } }, el("i", {}), el("b", { text: "원년" })));
+  // 원년(기원전↔기원후 경계) 마커 — 서기의 기준점. 원년이 축 안에 없으면(전부 기원후) 생략.
+  if (bcCount > 0) {
+    strip.appendChild(el("div", { class: "htl-origin", style: `left:${bcPct}%`, attrs: { "aria-hidden": "true" } }, el("i", {}), el("b", { text: "원년" })));
+  }
   const events = el("div", { class: "htl-events", attrs: { "aria-hidden": "true" } });
   strip.appendChild(events);
   const pill = el("div", { class: "htl-pill", attrs: { "aria-hidden": "true" } });
@@ -87,7 +89,8 @@ export const timelineLab: StepRenderer = (host, step, api) => {
 
   // 경계 눈금 라벨 — 숫자만(기원전/기원후는 시대 띠가 말한다). 원년 눈금은 금색.
   const ticks = el("div", { class: "htl-ticks", attrs: { "aria-hidden": "true" } });
-  const minY = def.startCentury * 100;
+  const minY = axisMinYear(def); // 양수 시작 def는 (c-1)*100 — 5세기 왼쪽 끝 = 400년
+
   for (let i = 0; i <= cents.length; i += 1) {
     const y = minY + i * 100;
     const label = y === 0 || (minY < 0 && i === bcCount) ? "1" : String(Math.abs(y));

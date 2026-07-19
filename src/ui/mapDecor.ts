@@ -1774,6 +1774,67 @@ const MAP_DECOR: Record<string, string> = {
     `<linearGradient id="hi2-wallb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C2BC9E"/><stop offset=".55" stop-color="#A29C7C"/><stop offset="1" stop-color="#7E7858"/></linearGradient>
     <linearGradient id="hi2-tower" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#CEC8AA"/><stop offset=".6" stop-color="#A8A284"/><stop offset="1" stop-color="#847E60"/></linearGradient>`,
   ),
+
+  // ── 역사 Ⅲ. 세계 종교 — "믿음의 길" 세트(석굴→당삼채 낙타→초승달 등불→모자이크→첨탑) ──
+  grottoDeco: S(
+    `${shadow(32, 57, 16, 0.13)}
+    <path d="M12 55 v-26 q0 -20 20 -20 q20 0 20 20 v26 z" fill="url(#hi3-rock)" stroke="#5E4A36" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M19 55 v-20 q0 -14 13 -14 q13 0 13 14 v20 z" fill="url(#hi3-cave)" stroke="#4A3826" stroke-width="1.5"/>
+    <circle cx="32" cy="33" r="4.6" fill="#E8C48A" stroke="#8A6534" stroke-width="1.3"/>
+    <path d="M25 50 q0 -10 7 -10 q7 0 7 10 z" fill="#E8C48A" stroke="#8A6534" stroke-width="1.3" stroke-linejoin="round"/>
+    <path d="M24 26 q8 -5 16 0" stroke="#8A7050" stroke-width="1.2" fill="none" opacity=".6"/>
+    <ellipse cx="22" cy="14" rx="5" ry="2" fill="#fff" opacity=".35" transform="rotate(-24 22 14)"/>`,
+    `<linearGradient id="hi3-rock" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C9B394"/><stop offset=".55" stop-color="#A08662"/><stop offset="1" stop-color="#78603F"/></linearGradient>
+    <linearGradient id="hi3-cave" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6E583E"/><stop offset="1" stop-color="#41301E"/></linearGradient>`,
+  ),
+  camelDeco: S(
+    `${shadow(32, 57, 17, 0.13)}
+    <path d="M14 52 l2 -12 q1 -6 6 -7 q2 -6 7 -6 q3 0 4 3 q1 -3 4 -3 q5 0 7 6 q5 1 6 8 l2 11 h-5 l-2 -9 q-6 4 -12 4 q-6 0 -12 -4 l-2 9 z" fill="url(#hi3-sancai)" stroke="#6E4626" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M20 30 q-4 -2 -4 -8 q0 -5 4 -7 q3 -1.6 4 1 l1 3" fill="url(#hi3-sancai)" stroke="#6E4626" stroke-width="1.8" stroke-linejoin="round"/>
+    <circle cx="21" cy="16" r="1.2" fill="#4A3010"/>
+    <path d="M26 36 q6 5 12 0 l-1 5 q-5 3 -10 0 z" fill="#4E8E6E" opacity=".85"/>
+    <path d="M29 27 q3 2 6 0" stroke="#3FA36E" stroke-width="2.2" stroke-linecap="round" opacity=".8"/>
+    <ellipse cx="26" cy="24" rx="3.4" ry="1.4" fill="#fff" opacity=".4"/>`,
+    `<linearGradient id="hi3-sancai" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F0DCB0"/><stop offset=".5" stop-color="#D8A25E"/><stop offset="1" stop-color="#A86A2E"/></linearGradient>`,
+  ),
+  lanternDeco: S(
+    `${shadow(32, 58, 12, 0.13)}
+    <path d="M40 10 a9 9 0 1 0 4 17 a7.4 7.4 0 1 1 -4 -17 z" fill="url(#hi3-moon)" stroke="#B08A2E" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M28 22 h8 M32 22 v4" stroke="#6E5426" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M26 30 q-4 1 -4 5 l2 14 q1 5 8 5 q7 0 8 -5 l2 -14 q0 -4 -4 -5 q-6 -2 -12 0 z" fill="url(#hi3-lamp)" stroke="#6E5426" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M24 34 h16 M23 40 h18 M24 46 h16" stroke="#8A6A2E" stroke-width="1.1" opacity=".65"/>
+    <path d="M27 30 v22 M32 29 v25 M37 30 v22" stroke="#8A6A2E" stroke-width="1.1" opacity=".5"/>
+    <circle cx="32" cy="41" r="4" fill="#FFE8B0" opacity=".9"/>
+    <path d="M29 54 q3 3 6 0" stroke="#6E5426" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <ellipse cx="28" cy="33" rx="3" ry="1.4" fill="#fff" opacity=".5"/>`,
+    `<linearGradient id="hi3-moon" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE8B0"/><stop offset="1" stop-color="#E0B45E"/></linearGradient>
+    <radialGradient id="hi3-lamp" cx=".4" cy=".35" r=".9"><stop offset="0" stop-color="#FFD98A"/><stop offset=".55" stop-color="#E8A94E"/><stop offset="1" stop-color="#B4762A"/></radialGradient>`,
+  ),
+  mosaicDeco: S(
+    `${shadow(32, 56, 16, 0.13)}
+    <path d="M14 16 h36 v32 h-36 z" fill="url(#hi3-gold)" stroke="#8A6A2E" stroke-width="1.8" stroke-linejoin="round" transform="rotate(-4 32 32)"/>
+    <g transform="rotate(-4 32 32)" opacity=".92">
+      <path d="M18 20 h6 v6 h-6 z M26 20 h6 v6 h-6 z M34 20 h6 v6 h-6 z M42 20 h5 v6 h-5 z" fill="#3D5BC0" stroke="#2A3E86" stroke-width=".9"/>
+      <path d="M18 28 h6 v6 h-6 z M42 28 h5 v6 h-5 z" fill="#3FA36E" stroke="#2A7048" stroke-width=".9"/>
+      <path d="M26 28 h6 v6 h-6 z M34 28 h6 v6 h-6 z" fill="#F2D9A4" stroke="#B08A2E" stroke-width=".9"/>
+      <path d="M18 36 h6 v6 h-6 z M26 36 h6 v6 h-6 z M34 36 h6 v6 h-6 z M42 36 h5 v6 h-5 z" fill="#C0392B" stroke="#84281E" stroke-width=".9"/>
+    </g>
+    <ellipse cx="22" cy="19" rx="5" ry="1.8" fill="#fff" opacity=".4" transform="rotate(-14 22 19)"/>`,
+    `<linearGradient id="hi3-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F6E2B0"/><stop offset=".55" stop-color="#E0B45E"/><stop offset="1" stop-color="#B0842E"/></linearGradient>`,
+  ),
+  spireDeco: S(
+    `${shadow(32, 58, 14, 0.13)}
+    <path d="M32 4 l7 16 v10 h-14 v-10 z" fill="url(#hi3-stone)" stroke="#5E6A7A" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M32 4 l-7 16 h14 z" fill="url(#hi3-stone2)" stroke="#5E6A7A" stroke-width="1.6" stroke-linejoin="round"/>
+    <rect x="20" y="30" width="24" height="26" rx="2" fill="url(#hi3-stone)" stroke="#5E6A7A" stroke-width="1.6"/>
+    <circle cx="32" cy="39" r="6.4" fill="url(#hi3-rose)" stroke="#4A5668" stroke-width="1.4"/>
+    <path d="M32 33.4 v11.2 M26.6 39 h10.8 M28.2 35.2 l7.6 7.6 M35.8 35.2 l-7.6 7.6" stroke="#F2E6C0" stroke-width="1" opacity=".9"/>
+    <path d="M28 56 v-7 q0 -4 4 -4 q4 0 4 4 v7 z" fill="#3D2E60" stroke="#4A5668" stroke-width="1.4"/>
+    <ellipse cx="26" cy="33" rx="3.4" ry="1.4" fill="#fff" opacity=".45"/>`,
+    `<linearGradient id="hi3-stone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E8EEF4"/><stop offset=".6" stop-color="#C4D0DC"/><stop offset="1" stop-color="#9AAABA"/></linearGradient>
+    <linearGradient id="hi3-stone2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4F8FC"/><stop offset="1" stop-color="#D0DAE4"/></linearGradient>
+    <radialGradient id="hi3-rose" cx=".5" cy=".5" r=".65"><stop offset="0" stop-color="#8A6BFF"/><stop offset=".55" stop-color="#5B4AC0"/><stop offset="1" stop-color="#3D2E86"/></radialGradient>`,
+  ),
 };
 
 /** 지도 장식 아트 — 단원 특색 세트 → 생물 아이콘(ART_BIO) → 공용(ART_DECOR) 순서로 찾는다. */

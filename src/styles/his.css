@@ -303,3 +303,74 @@
   .hh2-tv-torch { animation: none; }
   .hh2-garden.watered .hh2-gd-drops { animation: none; opacity: 0; }
 }
+
+/* ════════════════════════════════════════════════════════════
+   역사 Ⅲ 훅 장면(hookHis3) — 접두사 hh3-
+   ════════════════════════════════════════════════════════════ */
+.hh3-skewer, .hh3-exam, .hh3-kana, .hh3-hanja, .hh3-zero, .hh3-chess, .hh3-num, .hh3-jersey, .hh3-pepper { max-width: 340px; margin: 4px auto 0; }
+.hh3-skewer svg, .hh3-exam svg, .hh3-kana svg, .hh3-hanja svg, .hh3-zero svg, .hh3-chess svg, .hh3-num svg, .hh3-jersey svg, .hh3-pepper svg { display: block; width: 100%; height: auto; }
+
+/* L1 lambskewer — 버튼 굽기 → 김 오름 */
+.hh3-sk-btn {
+  display: block; margin: 10px auto 0; padding: 10px 22px; border: 0; border-radius: 999px;
+  background: linear-gradient(180deg, #C2564A, #A03A30); color: #FFE8CE; font-size: 14px; font-weight: 800;
+  font-family: inherit; box-shadow: var(--sh-raise); cursor: pointer; transition: transform .16s var(--ease);
+}
+.hh3-sk-btn:active { transform: scale(.95); }
+.hh3-skewer.grilled .hh3-sk-btn { opacity: .45; pointer-events: none; }
+.hh3-sk-set { transition: transform .5s var(--spring-soft); transform-box: fill-box; transform-origin: center; }
+.hh3-skewer.grilled .hh3-sk-set { transform: translateY(-6px); }
+.hh3-sk-steam { transition: opacity .5s var(--ease-out) .25s; }
+.hh3-skewer.grilled .hh3-sk-steam { opacity: 1; animation: hh3Steam 1.5s var(--ease) infinite; }
+@keyframes hh3Steam { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+/* L2 examnotice — 안내문 확대 */
+.hh3-ex-note { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform .5s var(--spring-soft); }
+.hh3-exam.zoom .hh3-ex-note { transform: scale(1.16) translateY(6px); }
+
+/* L3 kanasign — 간판 탭 → 宇→う 카드 등장 */
+.hh3-kn-sign { cursor: pointer; transition: opacity .4s var(--ease); }
+.hh3-kana.zoom .hh3-kn-sign { opacity: .45; }
+.hh3-kn-zoom { opacity: 0; transform: translateY(14px) scale(.7); transform-box: fill-box; transform-origin: center; transition: opacity .4s var(--ease-out) .1s, transform .5s var(--spring-soft) .1s; pointer-events: none; }
+.hh3-kana.zoom .hh3-kn-zoom { opacity: 1; transform: none; }
+
+/* L4 hanjahw — 공책 탭 → 요리책·만화책 등장 */
+.hh3-hj-note { cursor: pointer; transition: transform .45s var(--spring-soft); transform-box: fill-box; transform-origin: center; }
+.hh3-hanja.zoom .hh3-hj-note { transform: translateY(-8px) scale(.96); }
+.hh3-hj-books { opacity: 0; transform: translateY(16px); transform-box: fill-box; transform-origin: center; transition: opacity .4s var(--ease-out) .12s, transform .5s var(--spring-soft) .12s; }
+.hh3-hanja.zoom .hh3-hj-books { opacity: 1; transform: none; }
+
+/* L5 zeroscore — 전광판 확대 + 0 깜빡 강조 */
+.hh3-zr-board { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform .5s var(--spring-soft); }
+.hh3-zero.zoom .hh3-zr-board { transform: scale(1.1) translateY(6px); }
+.hh3-zero.zoom .hh3-zr-n1, .hh3-zero.zoom .hh3-zr-n2 { animation: hh3Blink 1.1s var(--ease) 3; }
+@keyframes hh3Blink { 0%, 100% { fill: #FFD98A; } 50% { fill: #FF6B5E; } }
+
+/* L6 chessmate — 킹 쓰러뜨리기 */
+.hh3-ch-king { cursor: pointer; transform-box: fill-box; transform-origin: 50% 90%; transition: transform .55s var(--spring-soft); }
+.hh3-chess.mate .hh3-ch-king { transform: rotate(74deg) translateY(2px); }
+.hh3-ch-queen { transform-box: fill-box; transform-origin: center; transition: transform .5s var(--spring-soft) .1s; }
+.hh3-chess.mate .hh3-ch-queen { transform: translateY(-6px); }
+
+/* L7 arabnum — 수학책 탭 → 고향 태그 등장 */
+.hh3-nm-book { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform .5s var(--spring-soft); }
+.hh3-num.zoom .hh3-nm-book { transform: translateY(-8px); }
+.hh3-nm-tag { opacity: 0; transform: translateY(10px) scale(.7); transform-box: fill-box; transform-origin: center; transition: opacity .4s var(--ease-out) .12s, transform .5s var(--spring-soft) .12s; }
+.hh3-num.zoom .hh3-nm-tag { opacity: 1; transform: none; }
+
+/* L8 francejersey — 유니폼 확대 */
+.hh3-js-shirt { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform .5s var(--spring-soft); }
+.hh3-jersey.zoom .hh3-js-shirt { transform: scale(1.12) translateY(4px); }
+
+/* L10 pepper — 후추 갈기 → 알갱이 낙하 */
+.hh3-pp-mill { cursor: pointer; transform-box: fill-box; transform-origin: 50% 20%; transition: transform .4s var(--spring-soft); }
+.hh3-pepper.ground .hh3-pp-mill { transform: rotate(-18deg) translate(-14px, -6px); }
+.hh3-pp-flakes { transition: opacity .4s var(--ease-out) .18s; }
+.hh3-pepper.ground .hh3-pp-flakes { opacity: 1; animation: hh3Fall .7s var(--ease-out); }
+@keyframes hh3Fall { from { transform: translateY(-16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .hh3-skewer.grilled .hh3-sk-steam { animation: none; }
+  .hh3-zero.zoom .hh3-zr-n1, .hh3-zero.zoom .hh3-zr-n2 { animation: none; }
+  .hh3-pepper.ground .hh3-pp-flakes { animation: none; }
+}

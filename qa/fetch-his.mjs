@@ -53,6 +53,27 @@ const jobs = [
   { name: "terracotta", url: "https://upload.wikimedia.org/wikipedia/commons/8/83/Terracotta_Soldier_Panorama_%285258589290%29.jpg", credit: "Walter-Wilhelm, Terracotta Soldier Panorama, via Wikimedia Commons (CC BY 2.0)" },
   { name: "greatwall", url: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Great_Wall_of_China_July_2006.JPG", credit: "Great Wall of China at Mutianyu, via Wikimedia Commons (CC0)" },
   { name: "hammurabi", url: "https://upload.wikimedia.org/wikipedia/commons/6/64/P1050763_Louvre_code_Hammurabi_face_rwk.JPG", credit: "Mbzt, Code of Hammurabi stele (Louvre), via Wikimedia Commons (CC BY 3.0)" },
+
+  // ── 3차분: 역사① Ⅲ(h1u3 — 세계 종교·지역 문화) 15종 (2026-07-19) ──
+  // Met Open Access CC0 — objectID별 isPublicDomain=true + medium 검산 완료(괄호 안 = objectID | medium)
+  { name: "weibuddha", url: "https://images.metmuseum.org/CRDImages/as/original/DP170102.jpg", credit: "Metropolitan Museum of Art, Buddha Maitreya (Mile), dated 486, Northern Wei (42733 | gilt bronze, CC0)" },
+  // 1차 후보(Met 49368 67_43_1)는 구식 흑백 아카이브 사진이라 기각 — 당삼채는 "세 가지 색 유약"이 핵심.
+  // 컬러 낙타+서역 악단 당삼채(중국국가박물관 소장, Gary Todd CC0)로 교체 — 미래엔 도판과 같은 주제.
+  { name: "sancaicamel", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Tang%20Dynasty%20musicians%20on%20camel%2C%20723%20ad.jpg", credit: "Gary Todd, Tang sancai camel with musicians (723), via Wikimedia Commons (CC0)" },
+  { name: "guptabuddha", url: "https://images.metmuseum.org/CRDImages/as/original/DT237.jpg", credit: "Metropolitan Museum of Art, Standing Buddha Offering Protection, Gupta late 5th c. (38198 | red sandstone, CC0)" },
+  { name: "mihrab", url: "https://images.metmuseum.org/CRDImages/is/original/DP235035.jpg", credit: "Metropolitan Museum of Art, Mihrab (Prayer Niche), 1354-55, Isfahan (449537 | mosaic of polychrome-glazed tiles, CC0)" },
+  { name: "knightarmor", url: "https://images.metmuseum.org/CRDImages/aa/original/DP-46028-001.jpg", credit: "Metropolitan Museum of Art, Armor, ca. 1400-1450, Italian (23205 | steel, CC0)" },
+  // 위키미디어 커먼스 — extmetadata 라이선스 개별 확인 완료(CC0/PD/CC BY만, CC BY-SA 후보는 전부 기각)
+  { name: "longmen", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Ancient%20Buddhist%20Grottoes%20at%20Longmen-%20Fengxian%20Temple%2C%20Vairocana%20Buddha.jpg", credit: "Gary Todd, Longmen Grottoes Fengxian Temple Vairocana Buddha, via Wikimedia Commons (CC0)" },
+  { name: "todaiji", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Daibutsu-den%20in%20Todaiji%20Nara02bs3200.jpg", credit: "663highland, Todai-ji Daibutsuden (Nara), via Wikimedia Commons (CC BY 2.5)" },
+  { name: "ajanta", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Ajanta%20%2863%29.jpg", credit: "Ajanta Caves, via Wikimedia Commons (CC BY 2.5)" },
+  { name: "angkor", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Angkor%20Wat%20Reflection%20%2846810498612%29.jpg", credit: "Amaury Laporte, Angkor Wat Reflection, via Wikimedia Commons (CC BY 2.0)" },
+  { name: "astrolabe", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Planispheric%20Astrolabe%20MET%20DP170383.jpg", credit: "Metropolitan Museum of Art, Planispheric Astrolabe, via Wikimedia Commons (CC0)" },
+  { name: "cordoba", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Great%20Mosque%20of%20Cordoba%2C%20interior%2C%208th%20-%2010th%20centuries%20%287%29%20%2829523855420%29.jpg", credit: "Richard Mortel, Great Mosque of Cordoba interior, via Wikimedia Commons (CC BY 2.0)" },
+  { name: "sophia", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Hagia%20Sophia%20exterior%202007%20002.jpg", credit: "Gryffindor, Hagia Sophia exterior, via Wikimedia Commons (Public domain)" },
+  { name: "sanvitale", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Justinian%20mosaic%2C%20San%20Vitale%2C%20consecrated%20547%2C%20Ravenna%2C%20Italy.jpg", credit: "Richard Mortel, Justinian mosaic San Vitale (Ravenna), via Wikimedia Commons (CC BY 2.0)" },
+  { name: "chartres", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Chartres%20Cathedral.jpg", credit: "Tony Hisgett, Chartres Cathedral, via Wikimedia Commons (CC BY 2.0)" },
+  { name: "rosewindow", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Chartres%20-%20cath%C3%A9drale%20-%20rosace%20nord.jpg", credit: "Eusebius, Chartres north rose window, via Wikimedia Commons (Public domain)" },
 ];
 
 for (const j of jobs) {

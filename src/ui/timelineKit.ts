@@ -41,11 +41,17 @@ export function centuriesOf(def: TimelineDef): number[] {
   return out;
 }
 
+/** 연표 왼쪽 끝(축 원점) 연도. 기원전 c세기의 왼쪽 끝 = c*100(-3 → -300)이지만,
+ *  기원후 c세기의 왼쪽 끝은 (c-1)*100(5세기 → 400)이다 — 양수 시작 def(h1u3 전부 기원후)의
+ *  사건 도장·눈금이 한 칸 밀리는 것을 막는 보정(음수 시작 h1u1·h1u2는 기존 값 그대로 = 무회귀). */
+export const axisMinYear = (def: TimelineDef): number =>
+  def.startCentury < 0 ? def.startCentury * 100 : (def.startCentury - 1) * 100;
+
 /** 연도 → 연표 가로 위치 %(0~100). 축은 연도 값의 선형 매핑(세기 폭 = 균일). */
 export function posOf(def: TimelineDef, year: number): number {
-  const min = def.startCentury * 100;
-  const max = def.endCentury * 100;
-  return ((year - min) / (max - min)) * 100;
+  const min = axisMinYear(def);
+  const span = centuriesOf(def).length * 100;
+  return ((year - min) / span) * 100;
 }
 
 // ── 단원별 연표 정의 ─────────────────────────────────────────
@@ -76,6 +82,21 @@ export const TIMELINES: Record<string, TimelineDef> = {
       { kind: "place", year: -221, label: "진, 중국 통일" },
       { kind: "place", year: -27, label: "로마, 제정 시작" },
       { kind: "place", year: 313, label: "크리스트교 공인" },
+    ],
+  },
+  // h1u3: 세계 종교의 시대 — 확정 연도가 전부 기원후라 역방향 과제 없음(게이트 ① 결정 —
+  // 목표 칩은 자동으로 "세기 읽기·사건 배치" 2종이 된다. 기원전을 억지로 끼워 넣지 않는다).
+  // 검산: 476=5세기(401~500) · 622=7세기(601~700) · 1077=11세기(1001~1100). 축 왼쪽 끝 = 400년(axisMinYear).
+  h1u3: {
+    id: "h1u3",
+    startCentury: 5,
+    endCentury: 11,
+    tasks: [
+      { kind: "century", century: 6 },
+      { kind: "century", century: 10 },
+      { kind: "place", year: 476, label: "서로마 제국 멸망" },
+      { kind: "place", year: 622, label: "헤지라" },
+      { kind: "place", year: 1077, label: "카노사의 굴욕" },
     ],
   },
 };

@@ -80,6 +80,7 @@ import {
   renderSaveIcon, renderGameChar, renderTimeCapsule, renderDangi, renderMilmyeon,
 } from "./hookHis";
 import { renderHis2 } from "./hookHis2";
+import { renderHis3 } from "./hookHis3";
 import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -294,6 +295,8 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "milmyeon") sceneCleanup = renderMilmyeon(scene, helper, s, finish, face);
   // 역사 Ⅱ 훅 7종은 hookHis2의 서브 디스패처가 처리(모르는 장면이면 null → 아래 체인 계속)
   else if ((sceneCleanup = renderHis2(s.scene, scene, helper, s, finish, face) ?? undefined)) { /* handled */ }
+  // 역사 Ⅲ 훅 9종은 hookHis3의 서브 디스패처가 처리
+  else if ((sceneCleanup = renderHis3(s.scene, scene, helper, s, finish, face) ?? undefined)) { /* handled */ }
   else sceneCleanup = renderEgg(scene, helper, s, finish, api, face);
 
   api.setCTA("스틱맨 쌤과 먼저 관찰해요", { enabled: false });
