@@ -1,9 +1,85 @@
 /* 중2 VI 동물과 에너지 랩 공용. */
 .body-lab-stage { margin-top: 0; --helper-bar: var(--subj-body); }
+.body-lab-stage .toast {
+  width: max-content;
+  max-width: calc(100% - 24px);
+  box-sizing: border-box;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.35;
+}
 .body-lab-art { width: 100%; }
 .body-lab-art svg { display: block; width: 100%; height: auto; }
 .body-lab-canvas { display: block; width: 100%; touch-action: none; cursor: grab; }
 .body-lab-canvas:active { cursor: grabbing; }
+
+/* 발주 교과 도해: 이미지는 재질을, HTML은 정확한 한글 라벨과 경로를 맡는다. */
+.body-generated { display: grid; gap: 9px; }
+.body-generated-frame {
+  position: relative; overflow: hidden; border-radius: 16px; background: #fffaf5;
+  border: 1px solid color-mix(in srgb, var(--subj-body) 12%, var(--n200));
+}
+.body-generated-frame > img { display: block; width: 100%; height: auto; }
+.body-img-pin {
+  position: absolute; z-index: 3; transform: translate(-50%, -50%); padding: 4px 9px;
+  border: 1px solid var(--n200); border-radius: 999px; background: rgba(255,255,255,.94);
+  color: var(--n800); box-shadow: 0 2px 8px rgba(24,35,54,.16); white-space: nowrap;
+  font-size: clamp(9px, 2.7vw, 11.5px); font-weight: 900; line-height: 1.1;
+}
+.body-img-pin.red { color: #B42335; border-color: rgba(226,59,75,.35); }
+.body-img-pin.blue { color: #1763A6; border-color: rgba(47,128,237,.35); }
+.body-img-pin.green { color: #087F5B; border-color: rgba(18,184,134,.35); }
+.body-img-pin.amber, .body-img-pin.orange { color: #9A5B00; border-color: rgba(245,159,0,.42); }
+.body-route-overlay { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; pointer-events: none; }
+.body-route-overlay path[class^="route-"] { fill: none; stroke-width: 12; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 2px 2px rgba(255,255,255,.9)); }
+.body-route-overlay .route-blue { stroke: #2F80ED; }
+.body-route-overlay .route-red { stroke: #E23B4B; }
+.body-route-overlay.nephron path[class^="route-"] { stroke-width: 10; }
+.body-route-overlay.nephron .route-filter { stroke: #F08C00; }
+.body-route-overlay.nephron .route-reabsorb { stroke: #37A446; }
+.body-route-overlay.nephron .route-secrete { stroke: #9A5B31; }
+.body-nephron-card {
+  position: absolute; z-index: 4; top: 4%; width: 28%; min-height: 22%; padding: 8px 7px;
+  border-radius: 15px; border: 1px solid var(--n200); background: rgba(255,255,255,.94);
+  box-shadow: 0 3px 10px rgba(20,30,48,.12); text-align: center; color: var(--n700);
+  font-size: clamp(8.5px,2.5vw,10.5px); font-weight: 750; line-height: 1.25;
+}
+.body-nephron-card.filter { left: 3%; background: rgba(255,243,224,.96); border-color: rgba(240,140,0,.32); }
+.body-nephron-card.reabsorb { left: 36%; background: rgba(240,249,232,.96); border-color: rgba(55,164,70,.32); }
+.body-nephron-card.secrete { left: 69%; background: rgba(255,249,219,.96); border-color: rgba(154,91,49,.32); }
+.body-nephron-card b { display: block; margin-bottom: 3px; font-size: 11.5px; font-weight: 950; }
+.body-nephron-card.filter b { color: #D66B00; }
+.body-nephron-card.reabsorb b { color: #2B8A3E; }
+.body-nephron-card.secrete b { color: #8C4A25; }
+.body-nephron-note { padding: 9px 11px; border-radius: 12px; background: var(--subj-body-tint); color: var(--n700); font-size: 10.5px; font-weight: 750; line-height: 1.4; }
+.body-flow-legend, .body-cycle-paths { display: grid; gap: 7px; }
+.body-flow-legend.two { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.body-flow-legend.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.body-flow-legend span, .body-cycle-paths span {
+  min-width: 0; padding: 8px 9px; border-radius: 12px; border: 1px solid var(--n200);
+  background: var(--n0); color: var(--n700); font-size: 10.5px; font-weight: 750; line-height: 1.35;
+}
+.body-flow-legend b, .body-cycle-paths b { display: block; margin-bottom: 2px; font-size: 11.5px; font-weight: 900; }
+.body-flow-legend .red b, .body-cycle-paths .red b { color: #C92A3B; }
+.body-flow-legend .blue b, .body-cycle-paths .blue b { color: #1763A6; }
+.body-flow-legend .green b { color: #087F5B; }
+.body-flow-legend .amber b, .body-flow-legend .orange b { color: #9A5B00; }
+.body-flow-legend .purple b { color: #6741A5; }
+.body-cycle-paths { grid-template-columns: 1fr; }
+
+.cl-color-key, .bil-system-key { display: flex; flex-wrap: wrap; gap: 7px; margin: 9px 0 10px; }
+.cl-color-key span, .bil-system-key span {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 9px; border: 1px solid var(--n200);
+  border-radius: 999px; background: var(--n0); color: var(--n700); font-size: 10.5px; font-weight: 850;
+}
+.cl-color-key i { width: 11px; height: 11px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.1); }
+.cl-color-key .low i { background: #2F80ED; }
+.cl-color-key .high i { background: #E23B4B; }
+.bil-system-key .digest { color: #087F5B; }
+.bil-system-key .resp { color: #1763A6; }
+.bil-system-key .circ { color: #C92A3B; }
+.bil-system-key .excr { color: #9A5B00; }
+.bil-system-key .cell { color: #6741A5; }
 .body-lab-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 12px; }
 .body-lab-btn {
   min-height: 48px; padding: 10px 9px; border-radius: var(--r-md);
@@ -79,4 +155,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .body-lab-art *, .body-lab-controls * { animation-name: none !important; transition-duration: .2s !important; transition-property: opacity, fill, background, color, border-color !important; }
+}
+
+@media (max-width: 390px) {
+  .body-flow-legend.three { grid-template-columns: 1fr; }
+  .body-img-pin { padding: 3px 6px; }
 }

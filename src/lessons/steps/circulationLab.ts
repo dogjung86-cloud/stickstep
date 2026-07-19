@@ -16,20 +16,22 @@ import type { StepRenderer } from "../types";
 interface CirculationStep { title: string; lead?: string; cta?: string; curio?: Curio }
 type Mission = "heart" | "lung" | "body";
 
-const CVH = 300;
+const CVH = 340;
+const BLOOD_LOW = "#2F80ED";
+const BLOOD_HIGH = "#E23B4B";
 // 논리 좌표(캔버스 CSS 크기에 맞춰 스케일). 심장은 가운데, 허파는 위, 온몸은 오른쪽.
 // 경로는 화면 좌표계(가로 360 기준)에서 설계하고 실제 폭에 비례 배치한다.
 const BASE_W = 360;
 
 // 허파순환 경로: 우심실(아래중앙 좌) → 폐동맥(왼 위로) → 허파 → 폐정맥(오 위) → 좌심방(중앙 우)
 const LUNG_PATH: [number, number][] = [
-  [163, 190], [120, 150], [110, 96], [150, 70], [180, 62],
-  [210, 70], [250, 96], [240, 150], [197, 150],
+  [163, 224], [120, 184], [110, 130], [150, 104], [180, 96],
+  [210, 104], [250, 130], [240, 184], [197, 184],
 ];
 // 온몸순환 경로: 좌심실(아래중앙 우) → 대동맥(오른쪽 아래로) → 온몸 → 대정맥(되돌아) → 우심방
 const BODY_PATH: [number, number][] = [
-  [197, 190], [250, 200], [300, 210], [316, 238], [300, 262],
-  [240, 268], [170, 250], [163, 205],
+  [197, 224], [250, 234], [300, 244], [316, 272], [300, 296],
+  [240, 302], [170, 284], [163, 239],
 ];
 
 function pathLen(pts: [number, number][]): number {
@@ -85,8 +87,13 @@ export const circulationLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "먼저 <b>심장을 탭</b>해 네 방과 판막을 확인하고, <b>적혈구를 끌어</b> 파란(산소 적은) 길과 빨간(산소 많은) 길을 완주해 보세요.",
+    html: "먼저 <b>심장을 탭</b>해 네 방과 판막을 확인하고, <b>적혈구를 끌어</b> 두 순환을 완주해 보세요. 혈액이 산소를 얻고 내놓는 순간 길의 색도 바뀌어요.",
   });
+  const colorKey = el(
+    "div", { class: "cl-color-key", attrs: { "aria-label": "혈액 색 범례" } },
+    el("span", { class: "low" }, el("i"), el("b", { text: "파랑" }), document.createTextNode(" 산소가 적은 혈액")),
+    el("span", { class: "high" }, el("i"), el("b", { text: "빨강" }), document.createTextNode(" 산소가 많은 혈액")),
+  );
   const canvas = el("canvas", {
     class: "body-lab-canvas",
     style: `height:${CVH}px`,
@@ -100,7 +107,7 @@ export const circulationLab: StepRenderer = (host, step, api) => {
     el("div", { class: "stage-hud" }, el("div", { class: "pill" }, el("span", { class: "pdot", style: `background:${"#E23B4B"}` }), readPill)),
     toast,
   );
-  host.append(goalsEl, helper, stage);
+  host.append(goalsEl, helper, colorKey, stage);
   if (s.curio) host.appendChild(curioCard(s.curio));
 
   let W = BASE_W;
@@ -116,6 +123,8 @@ export const circulationLab: StepRenderer = (host, step, api) => {
   let bodyT = 0;
   let dragging = false;
   let heartPulse = 0;
+  let lungColorNotified = false;
+  let bodyColorNotified = false;
 
   const toastMsg = (msg: string): void => {
     toast.textContent = msg;
@@ -144,8 +153,8 @@ export const circulationLab: StepRenderer = (host, step, api) => {
   const sy = (y: number): number => y * scale();
 
   const heartHit = (px: number, py: number): boolean => {
-    // 심장 중심 (180, 165) 반경 60 논리
-    return Math.hypot(px - 180, py - 165) < 62;
+    // 심장 중심 (180, 199) 반경 60 논리
+    return Math.hypot(px - 180, py - 199) < 62;
   };
 
   const onDown = (e: PointerEvent): void => {
@@ -187,6 +196,16 @@ export const circulationLab: StepRenderer = (host, step, api) => {
     if (active === "lung") lungT = clamp(Math.max(lungT, hit.t), 0, 1);
     else bodyT = clamp(Math.max(bodyT, hit.t), 0, 1);
     const prog = active === "lung" ? lungT : bodyT;
+    if (active === "lung" && prog >= 0.5 && !lungColorNotified) {
+      lungColorNotified = true;
+      toastMsg("허파에서 이산화 탄소를 내보내고 산소를 받아 혈액이 빨간색으로 변했어요");
+      readPill.textContent = "허파에서 산소를 받아 빨간색으로 변했어요";
+    }
+    if (active === "body" && prog >= 0.5 && !bodyColorNotified) {
+      bodyColorNotified = true;
+      toastMsg("온몸 조직에 산소를 주고 이산화 탄소를 받아 혈액이 파란색으로 변했어요");
+      readPill.textContent = "조직에 산소를 주어 파란색으로 변했어요";
+    }
     if (prog > 0.985) {
       if (active === "lung") collect("lung", "허파순환 완주 — 허파에서 산소를 얻어 선홍색이 됐어요");
       else collect("body", "온몸순환 완주 — 조직에 산소를 주고 암적색이 됐어요");
@@ -201,7 +220,7 @@ export const circulationLab: StepRenderer = (host, step, api) => {
 
   function drawHeart(ctx: CanvasRenderingContext2D): void {
     const cx = sx(180);
-    const cy = sy(165);
+    const cy = sy(199);
     const rx = sx(58);
     const ry = sy(60);
     // 심장 외곽(부드러운 하트형 대신 해부적 4방 상자)
@@ -277,7 +296,7 @@ export const circulationLab: StepRenderer = (host, step, api) => {
         let oxygenated: boolean;
         if (kind === "lung") oxygenated = t1 > mid;
         else oxygenated = t1 < mid;
-        ctx.strokeStyle = oxygenated ? bodyColor("oxygenated") : bodyColor("deoxygenated");
+        ctx.strokeStyle = oxygenated ? BLOOD_HIGH : BLOOD_LOW;
         ctx.lineWidth = 11 * scale();
         ctx.beginPath();
         ctx.moveTo(sx(x0), sy(y0));
@@ -295,8 +314,8 @@ export const circulationLab: StepRenderer = (host, step, api) => {
       const rr = 10 * scale();
       const g = ctx.createRadialGradient(-rr * 0.3, -rr * 0.35, rr * 0.1, 0, 0, rr);
       g.addColorStop(0, "rgba(255,255,255,.85)");
-      g.addColorStop(0.4, oxy ? bodyColor("oxygenated") : bodyColor("deoxygenated"));
-      g.addColorStop(1, oxy ? bodyColor("oxygenated") : bodyColor("deoxygenated"));
+      g.addColorStop(0.4, oxy ? BLOOD_HIGH : BLOOD_LOW);
+      g.addColorStop(1, oxy ? BLOOD_HIGH : BLOOD_LOW);
       ctx.fillStyle = g;
       ctx.strokeStyle = bodyColor("organLo");
       ctx.lineWidth = 1.4;
@@ -326,15 +345,27 @@ export const circulationLab: StepRenderer = (host, step, api) => {
   }
 
   function drawLungBadge(ctx: CanvasRenderingContext2D): void {
-    // 허파 실루엣(위쪽), 온몸 조직(오른쪽 아래) 힌트
+    // HUD와 혈관에 가리지 않는 흰 배경 라벨.
+    const badge = (x: number, y: number, text: string, color: string): void => {
+      ctx.font = `900 ${11 * scale()}px Pretendard, sans-serif`;
+      const width = ctx.measureText(text).width + 20 * scale();
+      const height = 25 * scale();
+      ctx.fillStyle = "rgba(255,255,255,.95)";
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.4 * scale();
+      ctx.beginPath();
+      (ctx as CanvasRenderingContext2D & { roundRect(x: number, y: number, w: number, h: number, r: number): void })
+        .roundRect(sx(x) - width / 2, sy(y) - height / 2, width, height, 12 * scale());
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = color;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, sx(x), sy(y));
+    };
     ctx.save();
-    ctx.globalAlpha = 0.5;
-    ctx.fillStyle = bodyColor("airway");
-    ctx.font = `800 ${11 * scale()}px Pretendard, sans-serif`;
-    ctx.textAlign = "center";
-    ctx.fillText("허파", sx(180), sy(40));
-    ctx.fillStyle = bodyColor("cell");
-    ctx.fillText("온몸 조직", sx(300), sy(240));
+    badge(180, 63, "허파(폐)", "#1763A6");
+    badge(294, 323, "온몸 조직", "#7A4E18");
     ctx.restore();
   }
 
@@ -346,10 +377,11 @@ export const circulationLab: StepRenderer = (host, step, api) => {
     void H;
     heartPulse = heartSeen ? (Math.sin(tMs / 380) * 0.5 + 0.5) : 0;
     ctx.clearRect(0, 0, W, fit.h);
-    drawLungBadge(ctx);
     drawPath(ctx, LUNG_PATH, lungT, "lung");
     drawPath(ctx, BODY_PATH, bodyT, "body");
     drawHeart(ctx);
+    // 경로와 심장을 모두 그린 뒤 라벨을 올려 혈관에 가리지 않게 한다.
+    drawLungBadge(ctx);
   });
 
   const onResize = (): void => { fitCanvas(canvas, CVH); };

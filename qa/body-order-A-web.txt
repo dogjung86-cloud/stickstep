@@ -1,0 +1,85 @@
+# 중2 과학 VI. 동물과 에너지 — 이미지 발주안 A
+# 스틱맨 개념 컷 6장
+
+아래 명세에 따라 다운로드 가능한 독립 이미지 6개를 생성해 주세요.
+
+## 작업 방식
+
+- A-01부터 A-06까지 순서대로 각각 별도의 이미지로 생성합니다.
+- 6칸짜리 콜라주, 컨택트 시트, 만화 페이지로 합치지 마세요.
+- 한 이미지에는 지정된 장면 하나만 넣으세요.
+- 여섯 장 모두 동일한 캐릭터 디자인, 선 굵기, 여백, 붉은 포인트 색을 유지하세요.
+- 이미지 안에는 파일명, 제목, 설명을 포함한 어떤 글자도 넣지 마세요.
+- 파일명은 이미지 바깥의 응답 텍스트로만 표시하세요.
+- 각 이미지는 가로 4:3 비율로 생성하세요.
+- 중간에 확인 질문을 하지 말고 6개를 모두 생성하세요.
+- 한 응답에서 생성 가능한 이미지 수에 제한이 있으면 가능한 만큼 생성한 뒤, 다음 응답에서 완료되지 않은 번호부터 계속하세요.
+- 이미 완료한 번호를 중복 생성하지 마세요.
+- 마지막에 A-01~A-06 완료 체크리스트와 대응 파일명을 적어 주세요.
+
+## 공통 시각 스타일
+
+Hand-drawn stick figure comic panel in black ink on clean white paper. Thin, smooth, uniform line weight. Minimalist whiteboard-marker doodle aesthetic, flat and charming educational illustration. No shading, no gradients, no texture, and no realistic rendering.
+
+The same recurring stick-figure character must appear throughout the set: plain circular head, simple dot eyes, expressive eyebrows when required, stick arms and legs, and exactly five fingers wherever a hand is clearly drawn.
+
+Use exactly one restrained accent color: warm crimson red, approximately #C92A3A. Use it only on the element explicitly designated in each scene. Everything else must be pure black and white.
+
+Absolutely no written text, letters, numbers, words, captions, labels, speech bubbles, logos, watermarks, or typographic symbols. Simple pictorial motion marks, airflow lines, heartbeat marks, sparkles, thought dots, and arrows are allowed only when explicitly requested by the scene description.
+
+Not 3D, not photorealistic, not glossy, not digitally painted, not anime, and not a detailed cartoon. Landscape 4:3, single panel, centered subject, generous white space, clear silhouette, mobile-screen readability.
+
+## 개별 이미지 명세
+
+### A-01 — g2u6l1.png
+
+A stick figure sits at a table facing a plate piled high with only round bread rolls. The character looks slightly worried and holds its stomach with one hand. Beside the plate are three small, simple food drawings—a fish, a leafy vegetable, and an egg—which are being ignored. The pile of bread rolls is the only crimson-colored element. Everything else is pure black and white. No text.
+
+Output filename: g2u6l1.png
+Aspect ratio: landscape 4:3
+
+### A-02 — g2u6l2.png
+
+A close side-profile view of the same stick figure's head while chewing. One hand is raised to the cheek. The character has a delighted, surprised expression with raised eyebrows, as if it has noticed a sweet taste after chewing for a long time. Add a few small black motion marks near the jaw to show active chewing. Add one small crimson sparkle near the mouth; this sparkle is the only crimson element. Everything else is pure black and white. No text.
+
+Output filename: g2u6l2.png
+Aspect ratio: landscape 4:3
+
+### A-03 — g2u6l3.png
+
+The same stick figure presses two fingers to the side of its neck to feel a pulse. Its eyes are closed in concentration, and its other hand is raised as if silently counting. A simple heartbeat throb mark radiates from the neck. The heartbeat mark is the only crimson element. Everything else is pure black and white. No text or numbers.
+
+Output filename: g2u6l3.png
+Aspect ratio: landscape 4:3
+
+### A-04 — g2u6l4.png
+
+The same stick figure stands while taking a large, deep breath. Its chest is visibly puffed out and rounded, its arms are pulled slightly back, and its chin is raised. Simple curved airflow lines stream inward toward the open mouth. The airflow lines are the only crimson elements. Everything else is pure black and white. No text.
+
+Output filename: g2u6l4.png
+Aspect ratio: landscape 4:3
+
+### A-05 — g2u6l5.png
+
+The same stick figure stands holding a clear drinking glass immediately after gulping water. The character tilts its head slightly with a puzzled expression. A small thought dot appears above the head, and a simple downward pictorial arrow suggests water passing through the body. Only the water inside the glass is lightly tinted crimson. The arrow and everything else remain black and white. No text.
+
+Output filename: g2u6l5.png
+Aspect ratio: landscape 4:3
+
+### A-06 — g2u6l6.png
+
+The same stick figure has just finished running. Add a few small black motion lines behind it. The character is bent slightly forward with both hands on its knees, panting with an open mouth. A few sweat droplets fly away from its face. The sweat droplets are the only crimson elements. Everything else is pure black and white. No text.
+
+Output filename: g2u6l6.png
+Aspect ratio: landscape 4:3
+
+## 최종 자체 점검
+
+생성한 각 이미지에 대해 다음을 확인하세요.
+
+1. 독립 이미지 6개이며 콜라주가 아닌가?
+2. 전부 가로 4:3인가?
+3. 동일한 스틱맨과 동일한 선 스타일을 유지했는가?
+4. 지정된 요소 하나만 따뜻한 진홍색인가?
+5. 이미지 내부에 글자, 숫자, 파일명, 로고, 워터마크가 전혀 없는가?
+

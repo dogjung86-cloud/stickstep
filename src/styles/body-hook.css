@@ -11,6 +11,13 @@
   box-shadow: var(--sh-inset);
 }
 .hk-body svg { display: block; width: 100%; height: auto; }
+.hb-raster-frame { position: relative; aspect-ratio: 3 / 2; overflow: hidden; background: #fffaf5; }
+.hb-raster-frame > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hb-raster-note, .hb-diaphragm-state, .hb-air-stream {
+  position: absolute; z-index: 4; padding: 6px 9px; border: 1px solid rgba(226,59,75,.22);
+  border-radius: 12px; background: rgba(255,255,255,.92); box-shadow: 0 2px 8px rgba(20,30,48,.14);
+  color: var(--n700); font-size: clamp(9px,2.7vw,11.5px); font-weight: 750; line-height: 1.25;
+}
 .body-action { border-color: var(--subj-body); color: var(--subj-body-press); background: var(--subj-body-tint); }
 .body-action:focus-visible { outline: 3px solid var(--blue-tint); outline-offset: 2px; }
 .body-choices { margin-top: 10px; }
@@ -30,38 +37,59 @@
 .hb-chewrice.chewed .hb-sweet { animation: hbFadePop .5s .58s var(--spring-soft) both; }
 .hb-chewrice.chewed .hb-chews { animation: hbFadePop .42s .72s var(--spring-soft) both; }
 
-.hb-pulse .hb-heart { transform-box: view-box; transform-origin: 63px 48px; }
-.hb-pulse.felt .hb-heart { animation: hbBeat .62s ease-in-out 4; }
-.hb-pulse.felt .hb-pulse-rings { animation: hbPulseRing 1.2s .15s ease-out 2; }
-.hb-pulse.felt .hb-wave { animation: hbDraw .8s .12s var(--ease-out) forwards; }
+.hb-pulse-frame .hb-raster-note { left: 3%; top: 6%; }
+.hb-pulse-frame .hb-pulse-rings { position: absolute; left: 38.2%; top: 40.2%; width: 1px; height: 1px; }
+.hb-pulse-frame .hb-pulse-rings i { position: absolute; inset: 0; border: 3px solid var(--subj-body); border-radius: 50%; opacity: 0; transform: translate(-50%,-50%) scale(.35); }
+.hb-pulse.felt .hb-pulse-rings i { animation: hbPulseRaster 1.15s ease-out 2; }
+.hb-pulse.felt .hb-pulse-rings i:nth-child(2) { animation-delay: .16s; }
+.hb-pulse.felt .hb-pulse-rings i:nth-child(3) { animation-delay: .32s; }
 
-.hb-deepbreath .hb-chest, .hb-deepbreath .hb-lungs, .hb-deepbreath .hb-diaphragm { transform-box: view-box; transition: transform .72s var(--spring-soft); }
-.hb-deepbreath .hb-chest { transform-origin: 120px 105px; }
-.hb-deepbreath .hb-lungs { transform-origin: 120px 96px; }
-.hb-deepbreath.breathed .hb-chest { transform: scaleX(1.06); }
-.hb-deepbreath.breathed .hb-lungs { transform: scale(1.08, 1.14); }
-.hb-deepbreath.breathed .hb-diaphragm { transform: translateY(12px); }
-.hb-deepbreath.breathed .hb-air-in { animation: hbAir .8s ease-out 2; }
+.hb-breath-frames > img { position: absolute; inset: 0; transition: opacity .88s var(--ease-out); }
+.hb-breath-frames .hb-breath-rest { opacity: 1; }
+.hb-breath-frames .hb-breath-inhale { opacity: 0; }
+.hb-breath-frames .hb-diaphragm-state { right: 4%; bottom: 5%; display: grid; gap: 1px; color: #8D2945; }
+.hb-breath-frames .hb-diaphragm-state i { font-style: normal; font-size: .9em; color: var(--n600); }
+.hb-breath-frames .hb-air-stream { left: 50%; top: 4%; transform: translateX(-50%); color: #1763A6; opacity: 0; }
+.hb-deepbreath.breathed .hb-breath-rest { opacity: 0; }
+.hb-deepbreath.breathed .hb-breath-inhale { opacity: 1; }
+.hb-deepbreath.breathed .hb-air-stream { animation: hbAirRaster .9s .16s var(--ease-out) 2; }
+.hb-deepbreath.breathed .hb-diaphragm-state i { font-size: 0; }
+.hb-deepbreath.breathed .hb-diaphragm-state i::after { content: "아래로 내려감"; font-size: 10px; color: #1763A6; }
 
 .hb-peecolor .hb-water, .hb-peecolor .hb-urine { transition: opacity .7s var(--ease-out), fill .7s var(--ease-out); }
 .hb-peecolor.drank .hb-water { opacity: .24; }
 .hb-peecolor.drank .hb-urine { fill: var(--body-fat); opacity: .58; }
 .hb-peecolor.drank .hb-pour { animation: hbDraw .9s var(--ease-out) forwards; }
 
-.hb-afterrun .hb-runner { transform-box: view-box; transform-origin: 120px 92px; }
-.hb-afterrun.ran .hb-runner { animation: hbRecover .65s var(--spring-soft) both; }
-.hb-afterrun.ran .hb-sweat, .hb-afterrun.ran .hb-breath-lines { animation: hbFadePop .45s .35s var(--ease-out) both; }
-.hb-afterrun.ran .hb-heart-run { transform-box: fill-box; transform-origin: center; animation: hbBeat .48s ease-in-out 5; }
-.hb-afterrun.ran .hb-pulse-line { animation: hbDraw .75s .12s var(--ease-out) forwards; }
+.hb-run-track { position: relative; aspect-ratio: 240 / 170; overflow: hidden; }
+.hb-run-track > svg { position: absolute; inset: 0; }
+.hb-lap-runner {
+  position: absolute; left: 0; top: 0; width: 34px; height: 34px; z-index: 3;
+  offset-path: ellipse(40% 31% at 50% 52%); offset-distance: 0%; offset-rotate: auto; offset-anchor: center;
+  filter: drop-shadow(0 3px 2px rgba(20,30,48,.22));
+}
+.hb-afterrun.ran .hb-lap-runner { animation: hbLap 2.2s cubic-bezier(.3,.05,.2,1) forwards; }
+.hb-lap-status { position: absolute; left: 50%; top: 51%; transform: translate(-50%,-50%); display: grid; place-items: center; color: #285B36; font-size: 11px; font-weight: 900; }
+.hb-lap-status b { display: none; color: var(--subj-body-press); }
+.hb-afterrun.ran .hb-lap-status i { animation: hbStatusOut .18s 1.95s forwards; }
+.hb-afterrun.ran .hb-lap-status b { display: block; opacity: 0; animation: hbFadePop .35s 2.02s forwards; }
+.hb-run-track > svg text { transition: opacity .18s ease; }
+.hb-afterrun.ran .hb-run-track > svg text { opacity: 0; transition-delay: 1.95s; }
+.hb-run-vitals { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,.93); border: 1px solid var(--n200); color: var(--subj-body-press); font-size: 10.5px; font-weight: 900; white-space: nowrap; opacity: 0; }
+.hb-afterrun.ran .hb-run-vitals { animation: hbFadePop .35s 2.05s forwards; }
 
 @keyframes hbPop { from { opacity: 0; transform: scale(.65); } to { opacity: 1; transform: scale(1); } }
 @keyframes hbFadePop { from { opacity: 0; transform: translateY(5px) scale(.8); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes hbChew { 50% { transform: translateY(-6px); } }
 @keyframes hbBeat { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.16); } }
 @keyframes hbPulseRing { 0% { opacity: 0; transform: scale(.6); } 28% { opacity: .9; } 100% { opacity: 0; transform: scale(1.35); } }
+@keyframes hbPulseRaster { 0% { width: 0; height: 0; opacity: .9; } 100% { width: 76px; height: 76px; opacity: 0; } }
 @keyframes hbDraw { to { stroke-dashoffset: 0; } }
 @keyframes hbAir { 0% { opacity: 0; transform: translateY(-8px); } 35% { opacity: 1; } 100% { opacity: 0; transform: translateY(8px); } }
 @keyframes hbRecover { from { transform: translateX(-18px) rotate(-4deg); } to { transform: translateX(0) rotate(0); } }
+@keyframes hbAirRaster { 0% { opacity: 0; transform: translate(-50%,-6px); } 35% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%,8px); } }
+@keyframes hbLap { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+@keyframes hbStatusOut { to { opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
   .hk-body *, .hk-body *::before, .hk-body *::after {

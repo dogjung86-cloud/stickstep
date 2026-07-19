@@ -51,6 +51,8 @@ function hookLife(choiceBox: HTMLElement): HookLife {
   };
 }
 
+const BODY_ASSET_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+
 function mountScene(scene: HTMLElement, className: string, svgArt: string, actionLabel: string): {
   art: HTMLElement;
   action: HTMLButtonElement;
@@ -95,23 +97,37 @@ const CHEW_RICE_SVG = `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/
 <g filter="url(#hb-shadow)"><path d="M32 86 H136 L127 134 Q84 151 41 134Z" fill="url(#hb-glass)" stroke="var(--body-airway-lo)" stroke-width="1.6"/><ellipse cx="84" cy="86" rx="52" ry="17" fill="var(--n0)" stroke="var(--body-airway-lo)" stroke-width="1.4"/><g fill="url(#hb-rice)" stroke="var(--body-airway-lo)" stroke-width=".6">${[[54,82],[68,77],[84,81],[99,76],[113,83],[62,91],[79,91],[95,91]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="11" ry="4" transform="rotate(-12 ${x} ${y})"/>`).join("")}</g></g>
 <g class="hb-mouth" transform="translate(175 66)"><circle cx="0" cy="12" r="34" fill="url(#hb-organ)" stroke="var(--body-organ-lo)" stroke-width="1.6"/><path class="hb-jaw" d="M-16 12 Q0 28 18 11" stroke="var(--n800)" stroke-width="3"/><path d="M-12 15 Q0 20 12 14" stroke="var(--body-organ-lo)" stroke-width="2"/></g><g class="hb-sweet" opacity="0" fill="var(--body-nutrient)" stroke="var(--body-cell-lo)" stroke-width="1">${[[149,37],[179,24],[205,43],[201,93]].map(([x,y])=>`<path d="M${x} ${y-6} l2 4 5 1 -4 3 1 5 -4-2 -5 2 1-5 -4-3 5-1Z"/>`).join("")}</g><g class="hb-chews" opacity="0"><rect x="142" y="119" width="68" height="27" rx="13.5" fill="var(--n0)" stroke="var(--n200)"/><text x="176" y="137" text-anchor="middle" font-size="12" font-weight="900" fill="var(--subj-body-press)">오래 씹기</text></g></svg>`;
 
-const PULSE_SVG = `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs>${COMMON_DEFS}</defs><rect x="4" y="4" width="232" height="162" rx="16" fill="url(#hb-bg)"/><ellipse cx="120" cy="148" rx="88" ry="7" fill="var(--body-shadow)" opacity=".1"/>
-<path d="M28 113 C57 87 95 80 126 91 C151 100 174 104 211 94" stroke="url(#hb-organ)" stroke-width="34" stroke-linecap="round"/><path d="M35 102 C67 84 102 85 126 94" stroke="var(--n0)" stroke-width="4" opacity=".32"/>
-<path d="M48 111 C82 94 113 100 145 103 C169 106 186 102 207 96" stroke="var(--body-deoxygenated)" stroke-width="8"/><g class="hb-pulse-rings" opacity="0"><circle cx="142" cy="103" r="10" stroke="var(--subj-body)" stroke-width="3"/><circle cx="142" cy="103" r="19" stroke="var(--subj-body)" stroke-width="2" opacity=".58"/><circle cx="142" cy="103" r="29" stroke="var(--subj-body)" stroke-width="1.5" opacity=".28"/></g>
-<g class="hb-heart" transform="translate(63 48)" filter="url(#hb-shadow)"><path d="M0 25 C-8 15 -21 8 -20-5 C-19-16 -7-18 0-8 C7-19 21-15 20-4 C19 8 8 17 0 25Z" fill="url(#hb-organ)" stroke="var(--body-organ-lo)" stroke-width="1.5"/></g><path class="hb-wave" d="M101 48h18l8-17 11 35 10-23 8 5h37" stroke="var(--subj-body)" stroke-width="3" stroke-dasharray="100" stroke-dashoffset="100"/></svg>`;
+const PULSE_SVG = `<div class="hb-raster-frame hb-pulse-frame" aria-hidden="true">
+  <img src="${BODY_ASSET_BASE}body/figs/v2/pulse-wrist.webp" alt=""/>
+  <span class="hb-pulse-rings"><i></i><i></i><i></i></span>
+  <span class="hb-raster-note">검지와 중지로<br><b>엄지손가락 쪽 손목</b>을 짚어요</span>
+</div>`;
 
-const DEEP_BREATH_SVG = `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs>${COMMON_DEFS}</defs><rect x="4" y="4" width="232" height="162" rx="16" fill="url(#hb-bg)"/><ellipse cx="120" cy="153" rx="62" ry="7" fill="var(--body-shadow)" opacity=".11"/>
-<g class="hb-chest"><path d="M78 33 C56 57 55 118 71 147 H169 C186 116 184 56 160 33Z" fill="var(--n0)" stroke="var(--body-tissue-lo)" stroke-width="1.6"/><g stroke="var(--body-cell-lo)" stroke-width="3" opacity=".58">${[0,1,2,3,4].map(i=>`<path d="M78 ${58+i*14} Q120 ${44+i*14} 162 ${58+i*14}"/>`).join("")}</g>
-<g class="hb-lungs"><path d="M115 58 C92 45 77 66 80 102 C81 128 97 139 111 126 C116 116 115 83 115 58Z" fill="url(#hb-organ)" stroke="var(--body-airway-lo)" stroke-width="1.5"/><path d="M125 58 C148 45 163 66 160 102 C159 128 143 139 129 126 C124 116 125 83 125 58Z" fill="url(#hb-organ)" stroke="var(--body-airway-lo)" stroke-width="1.5"/></g><path d="M120 26V72M120 57L99 77M120 57L141 77" stroke="var(--body-airway-lo)" stroke-width="6"/><path class="hb-diaphragm" d="M73 128 Q120 101 167 128" stroke="var(--body-protein)" stroke-width="5"/>
-<path class="hb-air-in" d="M120 8V37" stroke="var(--body-oxygen)" stroke-width="4" marker-end="url(#hb-in)" opacity="0"/></g></svg>`.replace("</defs>", `<marker id="hb-in" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L9 5L1 9Z" fill="var(--body-oxygen)"/></marker></defs>`);
+const DEEP_BREATH_SVG = `<div class="hb-raster-frame hb-breath-frames" aria-hidden="true">
+  <img class="hb-breath-rest" src="${BODY_ASSET_BASE}body/figs/v2/breath-exhale.webp" alt=""/>
+  <img class="hb-breath-inhale" src="${BODY_ASSET_BASE}body/figs/v2/breath-inhale.webp" alt=""/>
+  <span class="hb-air-stream">공기 ↓</span>
+  <span class="hb-diaphragm-state"><b>가로막</b><i>위로 볼록</i></span>
+</div>`;
 
 const PEE_COLOR_SVG = `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs>${COMMON_DEFS}<linearGradient id="hb-urine" x1="0" y1="0" x2="0" y2="1"><stop stop-color="var(--body-fat)"/><stop offset=".55" stop-color="var(--body-nutrient)"/><stop offset="1" stop-color="var(--body-cell-lo)"/></linearGradient></defs><rect x="4" y="4" width="232" height="162" rx="16" fill="url(#hb-bg)"/><path d="M4 132H236V166H4Z" fill="url(#hb-wood)"/><ellipse cx="120" cy="144" rx="76" ry="7" fill="var(--body-shadow)" opacity=".11"/>
 <g filter="url(#hb-shadow)"><path d="M39 39H91L84 125Q65 138 46 125Z" fill="url(#hb-glass)" stroke="var(--body-airway-lo)" stroke-width="1.6"/><path class="hb-water" d="M43 62H87L82 122Q65 132 48 122Z" fill="var(--body-oxygen)" opacity=".66"/><path d="M48 48 C57 43 66 43 72 45" stroke="var(--n0)" stroke-width="3" opacity=".62"/>
 <path d="M145 47H202L196 128Q174 140 152 128Z" fill="url(#hb-glass)" stroke="var(--body-airway-lo)" stroke-width="1.6"/><path class="hb-urine" d="M149 82H198L194 125Q174 135 154 125Z" fill="url(#hb-urine)"/><path d="M154 54 C163 49 174 49 182 51" stroke="var(--n0)" stroke-width="3" opacity=".62"/></g><path class="hb-pour" d="M92 67 C116 76 130 84 146 99" stroke="var(--body-oxygen)" stroke-width="5" stroke-dasharray="75" stroke-dashoffset="75"/><text x="65" y="153" text-anchor="middle" font-size="12" font-weight="850" fill="var(--n700)">물</text><text x="174" y="153" text-anchor="middle" font-size="12" font-weight="850" fill="var(--n700)">오줌 표본</text></svg>`;
 
-const AFTER_RUN_SVG = `<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs>${COMMON_DEFS}</defs><rect x="4" y="4" width="232" height="162" rx="16" fill="url(#hb-bg)"/><path d="M4 132H236V166H4Z" fill="var(--body-cell-hi)"/><path d="M4 143 C51 133 90 151 132 141 C175 130 207 146 236 138V166H4Z" fill="var(--body-cell)" opacity=".45"/><ellipse cx="121" cy="145" rx="43" ry="6" fill="var(--body-shadow)" opacity=".12"/>
-<g class="hb-runner" stroke="var(--n800)" stroke-width="4" fill="none"><circle cx="116" cy="39" r="15" fill="var(--n0)"/><path d="M115 55L118 94M117 68L90 82M117 69L145 82M117 94L95 126M118 94L144 123"/></g><path class="hb-heart-run" d="M0 18 C-7 9 -18 5 -17-5 C-16-14 -6-15 0-7 C6-15 17-12 17-3 C16 7 7 14 0 18Z" transform="translate(116 73) scale(.45)" fill="url(#hb-organ)" stroke="var(--body-organ-lo)" stroke-width="2"/>
-<g class="hb-sweat" opacity="0" fill="var(--body-oxygen)" stroke="var(--body-airway-lo)" stroke-width="1">${[[94,38],[142,33],[88,61]].map(([x,y])=>`<path d="M${x} ${y-7} C${x+6} ${y} ${x+4} ${y+7} ${x} ${y+7} C${x-4} ${y+7} ${x-6} ${y} ${x} ${y-7}Z"/>`).join("")}</g><g class="hb-breath-lines" opacity="0" stroke="var(--body-carbon)" stroke-width="3">${[0,1,2].map(i=>`<path d="M145 ${48+i*10} C168 ${43+i*10} 186 ${46+i*10} 207 ${40+i*10}"/>`).join("")}</g><path class="hb-pulse-line" d="M31 42h34l8-14 9 30 10-20 8 4h22" stroke="var(--subj-body)" stroke-width="3" stroke-dasharray="110" stroke-dashoffset="110"/></svg>`;
+const AFTER_RUN_SVG = `<div class="hb-run-track" aria-hidden="true">
+  <svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="hb-track" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#E9856E"/><stop offset="1" stop-color="#C84B43"/></linearGradient></defs>
+    <rect x="4" y="4" width="232" height="162" rx="16" fill="#EAF5E5"/>
+    <ellipse cx="120" cy="88" rx="99" ry="63" fill="url(#hb-track)" stroke="#A63734" stroke-width="2"/>
+    <ellipse cx="120" cy="88" rx="73" ry="40" fill="#79B85D" stroke="#F8D6C8" stroke-width="2"/>
+    <ellipse cx="120" cy="88" rx="86" ry="51" fill="none" stroke="#FFF3EA" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <path d="M198 39V68" stroke="#26364A" stroke-width="2.5"/><path d="M200 40h22l-7 8 7 8h-22Z" fill="#FFF" stroke="#26364A"/><path d="M200 40h11v8h-11M211 48h11v8h-11" fill="#E23B4B"/>
+    <text x="120" y="91" text-anchor="middle" font-size="13" font-weight="900" fill="#285B36">운동장 1바퀴</text>
+  </svg>
+  <span class="hb-lap-runner"><svg viewBox="0 0 36 36"><circle cx="22" cy="6" r="4" fill="#FFD2AE"/><path d="M19 11l-6 9 8 4 6-9Z" fill="#2F80ED"/><path d="M13 20L5 27M20 24l-4 9M18 14l-8 1M25 15l6 5" stroke="#26364A" stroke-width="3.2" stroke-linecap="round"/></svg></span>
+  <span class="hb-lap-status"><i>출발</i><b>1바퀴 완주!</b></span>
+  <span class="hb-run-vitals">숨 ↑ &nbsp; 맥박 ↑ &nbsp; 체온 ↑</span>
+</div>`;
 
 function runHook(
   scene: HTMLElement,
@@ -196,7 +212,7 @@ export const renderPeeColor: BodyHookRenderer = (scene, helper, step, finish, fa
 });
 
 export const renderAfterRun: BodyHookRenderer = (scene, helper, step, finish, face) => runHook(scene, helper, step, finish, face, {
-  className: "hb-afterrun", svg: AFTER_RUN_SVG, action: "운동장 한 바퀴 달리기", state: "ran", wait: 760,
+  className: "hb-afterrun", svg: AFTER_RUN_SVG, action: "운동장 한 바퀴 달리기", state: "ran", wait: 2550,
   intro: "출발 전에는 숨도 맥박도 잔잔해요. 운동장을 힘껏 달리고 나면 몸은 왜 동시에 <b>헥헥대고 땀</b>을 흘릴까요?",
   changed: "숨과 맥박이 빨라지고 몸이 뜨거워졌어요. 근육세포에서 에너지를 더 많이 얻을 때 네 기관계는 어떻게 반응할까요?",
   choices: ["산소와 영양소 공급, 이산화 탄소와 노폐물 배출을 함께 늘려요", "소화계 하나만 빨라지고 다른 기관계는 모두 쉬어요", "근육세포가 산소 없이 영양소를 그대로 힘으로 바꾸어요"],

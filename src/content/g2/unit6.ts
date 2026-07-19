@@ -2,15 +2,157 @@
 // 영양소 → 소화·흡수 → 순환 → 호흡 → 배설 → 세포호흡과 기관계의 통합.
 import type { Unit } from "../curriculum";
 import {
-  lesson, hook, concept, recap, mcq, ox, multi, order, binSort,
+  lesson, hook, concept, recap, mcq, ox, multi, order, binSort, cut,
   nutrientTestLab, digestJourneyLab, circulationLab, breathModelLab, nephronLab, bodyIntegrateLab,
 } from "../dsl";
 import {
-  bodyMiniArt, nutrientTestFig, digestiveSystemFig, enzymeFlowFig, villusAbsorptionFig,
-  heartFourChamberFig, vesselCompareFig, bloodComponentsFig, doubleCirculationFig,
-  respiratorySystemFig, breathCompareFig, alveoliExchangeFig,
-  excretorySystemFig, nephronProcessFig, cellRespirationFig, bodySystemsIntegrationFig,
+  bodyMiniArt, nutrientTestFig, enzymeFlowFig,
+  heartFourChamberFig, bloodComponentsFig,
+  breathCompareFig,
+  cellRespirationFig, bodySystemsIntegrationFig,
 } from "../../ui/bodyFigures";
+
+const BODY_IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+
+/** 발주 해부 그림 + 한글 라벨 오버레이 — 이미지 안 글자 금지 규칙과 양립하고 lazy 로딩은 쓰지 않아요. */
+const bodyLabeled = (
+  file: string,
+  alt: string,
+  labels: { x: number; y: number; t: string; c?: string }[],
+): string =>
+  `<div style="position:relative">
+    <img src="${BODY_IMG_BASE}body/figs/${file}" alt="${alt}" style="display:block;width:100%;border-radius:14px"/>
+    ${labels
+      .map(
+        (l) =>
+          `<span style="position:absolute;left:${l.x}%;top:${l.y}%;transform:translate(-50%,-50%);background:rgba(255,255,255,.94);border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:800;color:${l.c ?? "#333D4B"};box-shadow:0 1px 4px rgba(10,20,40,.2);white-space:nowrap">${l.t}</span>`,
+      )
+      .join("")}
+  </div>`;
+
+const bodyPin = (x: number, y: number, text: string, tone = ""):
+  string => `<span class="body-img-pin${tone ? ` ${tone}` : ""}" style="left:${x}%;top:${y}%">${text}</span>`;
+
+const bodyGenerated = (
+  file: string,
+  alt: string,
+  pins = "",
+  legend = "",
+): string => `<div class="body-generated">
+  <div class="body-generated-frame">
+    <img src="${BODY_IMG_BASE}body/figs/v2/${file}" alt="${alt}"/>
+    ${pins}
+  </div>
+  ${legend}
+</div>`;
+
+const villusAbsorptionArt = (): string => bodyGenerated(
+  "villus-absorption.webp",
+  "작은창자 융털의 얇은 벽 안에 모세혈관망과 중앙 암죽관이 있고 영양소가 서로 다른 통로로 흡수되는 모습",
+  `${bodyPin(24, 18, "포도당·아미노산", "green")}${bodyPin(50, 46, "암죽관", "amber")}${bodyPin(72, 26, "모세혈관", "red")}${bodyPin(82, 72, "지방산·모노글리세라이드", "amber")}`,
+  `<div class="body-flow-legend two"><span class="green"><b>포도당·아미노산</b> → 모세혈관</span><span class="amber"><b>지방산·모노글리세라이드</b> → 암죽관</span></div>`,
+);
+
+const vesselCompareArt = (): string => bodyGenerated(
+  "vessel-compare.webp",
+  "두꺼운 벽과 좁은 속공간의 동맥, 한 겹 벽의 모세혈관, 얇은 벽과 넓은 속공간 및 판막을 가진 정맥 비교",
+  `${bodyPin(16.5, 87, "동맥", "red")}${bodyPin(50, 87, "모세혈관", "green")}${bodyPin(83.5, 87, "정맥", "blue")}`,
+  `<div class="body-flow-legend three"><span class="red"><b>동맥</b> 두껍고 탄력 있는 벽</span><span class="green"><b>모세혈관</b> 한 겹의 얇은 벽</span><span class="blue"><b>정맥</b> 넓은 속공간·판막</span></div>`,
+);
+
+const doubleCirculationArt = (): string => bodyGenerated(
+  "double-circulation-base.webp",
+  "허파와 네 방의 심장, 온몸 조직세포를 배치하고 파란색과 빨간색 혈액 경로를 정확한 방향으로 나타낸 두 순환 모식도",
+  `<svg class="body-route-overlay" viewBox="0 0 960 640" aria-hidden="true">
+    <defs>
+      <marker id="dc-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9Z" fill="#2F80ED"/></marker>
+      <marker id="dc-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9Z" fill="#E23B4B"/></marker>
+    </defs>
+    <path class="route-blue" d="M425 342 C370 323 332 287 286 248" marker-end="url(#dc-blue)"/>
+    <path class="route-red" d="M305 210 C365 204 412 226 448 270" marker-end="url(#dc-red)"/>
+    <path class="route-red" d="M554 354 C642 367 704 405 757 454" marker-end="url(#dc-red)"/>
+    <path class="route-blue" d="M750 531 C661 531 592 482 535 422" marker-end="url(#dc-blue)"/>
+  </svg>${bodyPin(20, 55, "허파순환", "blue")}${bodyPin(77, 54, "온몸순환", "red")}`,
+  `<div class="body-cycle-paths"><span class="blue"><b>허파순환</b> 우심실 → 폐동맥 → 허파 → 폐정맥 → 좌심방</span><span class="red"><b>온몸순환</b> 좌심실 → 대동맥 → 온몸 → 대정맥 → 우심방</span></div>`,
+);
+
+const alveoliExchangeArt = (): string => bodyGenerated(
+  "alveoli-exchange.webp",
+  "허파꽈리의 산소는 모세혈관으로, 모세혈관의 이산화 탄소는 허파꽈리로 이동하는 기체 교환",
+  `${bodyPin(24, 13, "허파꽈리 안", "red")}${bodyPin(82, 15, "모세혈관", "blue")}`,
+  `<div class="body-flow-legend two"><span class="blue"><b>산소</b> 허파꽈리 → 모세혈관</span><span class="purple"><b>이산화 탄소</b> 모세혈관 → 허파꽈리</span></div>`,
+);
+
+const nephronProcessArt = (): string => bodyGenerated(
+  "nephron-process.webp",
+  "토리와 보먼주머니, 세뇨관과 모세혈관 사이에서 여과, 재흡수, 분비가 서로 다른 방향으로 일어나는 모식도",
+  `<div class="body-nephron-card filter"><b>여과</b><span>작은 물질이<br>토리 → 보먼주머니</span></div>
+   <div class="body-nephron-card reabsorb"><b>재흡수</b><span>필요한 물질이<br>세뇨관 → 모세혈관</span></div>
+   <div class="body-nephron-card secrete"><b>분비</b><span>남은 노폐물이<br>모세혈관 → 세뇨관</span></div>
+   <svg class="body-route-overlay nephron" viewBox="0 0 960 640" aria-hidden="true">
+     <defs>
+       <marker id="np-orange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9Z" fill="#F08C00"/></marker>
+       <marker id="np-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9Z" fill="#37A446"/></marker>
+       <marker id="np-brown" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9Z" fill="#9A5B31"/></marker>
+     </defs>
+     <path class="route-filter" d="M205 425 C232 425 249 431 275 441" marker-end="url(#np-orange)"/>
+     <path class="route-reabsorb" d="M535 452 V365" marker-end="url(#np-green)"/>
+     <path class="route-secrete" d="M728 352 V440" marker-end="url(#np-brown)"/>
+   </svg>${bodyPin(16, 69, "토리", "red")}${bodyPin(27, 76, "보먼주머니", "amber")}${bodyPin(66, 49, "모세혈관", "red")}${bodyPin(66, 76, "세뇨관", "amber")}`,
+  `<div class="body-nephron-note">혈구와 큰 단백질은 여과되지 않고 혈액에 남아요. 포도당·아미노산은 정상 상태에서 모두 재흡수돼요.</div>`,
+);
+
+const digestiveSystemArt = (): string =>
+  bodyLabeled("digestive.webp", "입에서 항문까지 이어진 소화관과 간, 위, 이자 등 소화 기관", [
+    { x: 31, y: 14, t: "입" },
+    { x: 56, y: 30, t: "식도" },
+    { x: 33, y: 49, t: "간" },
+    { x: 66, y: 50, t: "위" },
+    { x: 48, y: 73, t: "작은창자" },
+    { x: 30, y: 68, t: "큰창자" },
+  ]);
+
+const heartAnatomyArt = (): string =>
+  bodyLabeled("heart.webp", "네 개의 방과 판막, 굵은 혈관이 드러난 심장 단면", [
+    { x: 30, y: 38, t: "우심방", c: "#245B9B" },
+    { x: 34, y: 63, t: "우심실", c: "#245B9B" },
+    { x: 72, y: 36, t: "좌심방", c: "#B7353E" },
+    { x: 66, y: 64, t: "좌심실", c: "#B7353E" },
+  ]);
+
+const respiratorySystemArt = (): string =>
+  bodyLabeled("respiratory.webp", "코와 숨관, 숨관가지, 양쪽 허파와 가로막이 보이는 호흡계", [
+    { x: 34, y: 12, t: "코" },
+    { x: 51, y: 34, t: "숨관" },
+    { x: 50, y: 51, t: "숨관가지" },
+    { x: 74, y: 67, t: "허파" },
+    { x: 50, y: 86, t: "가로막" },
+  ]);
+
+const alveoliAnatomyArt = (): string =>
+  bodyLabeled("alveoli.webp", "가는 숨관가지 끝의 허파꽈리 무리와 이를 촘촘히 둘러싼 모세혈관", [
+    { x: 14, y: 15, t: "가는 숨관가지" },
+    { x: 73, y: 24, t: "허파꽈리" },
+    { x: 48, y: 78, t: "모세혈관망" },
+  ]);
+
+const urinarySystemArt = (): string =>
+  bodyLabeled("urinary.webp", "두 콩팥과 오줌관, 방광, 요도로 이어진 배설계", [
+    { x: 27, y: 28, t: "콩팥" },
+    { x: 72, y: 27, t: "콩팥 단면" },
+    { x: 63, y: 53, t: "오줌관" },
+    { x: 50, y: 79, t: "방광" },
+    { x: 50, y: 91, t: "요도" },
+  ]);
+
+const nephronAnatomyArt = (): string =>
+  bodyLabeled("nephron.webp", "토리와 보먼주머니, 세뇨관, 모세혈관과 집합관으로 이루어진 콩팥단위", [
+    { x: 17, y: 25, t: "토리" },
+    { x: 19, y: 40, t: "보먼주머니" },
+    { x: 50, y: 75, t: "세뇨관" },
+    { x: 50, y: 51, t: "모세혈관" },
+    { x: 88, y: 38, t: "집합관" },
+  ]);
 
 const L1 = lesson({
   id: "g2u6l1",
@@ -38,6 +180,7 @@ const L1 = lesson({
       title: "영양소는 기능이 다르고<br>검출 반응도 달라요",
       lead: "에너지원, 몸의 구성 성분, 몸의 기능 조절이라는 세 역할과 대표 검출 반응을 연결해요.",
       blocks: [
+        { k: "figure", svg: cut("body", "g2u6l1", "한 가지 음식만 가득 쌓인 식탁과 여러 식품을 비교하며 고민하는 스틱맨"), cap: "한 가지 음식만 산처럼 쌓아도 영양 균형은 저절로 채워지지 않아요." },
         { k: "figure", svg: nutrientTestFig(), cap: "검출 용액을 넣었을 때 나타나는 고유한 색 변화는 음식 속 영양소를 판정하는 증거가 돼요." },
         { k: "term", name: "영양소", def: "음식물에 들어 있으며 몸을 구성하거나 에너지를 내고, 몸의 기능을 조절하는 물질이에요.", icon: "sparkle" },
         { k: "list", items: ["<b>탄수화물·단백질·지방</b>은 에너지원으로 쓰이는 3대 영양소예요.", "단백질은 몸의 주된 구성 성분이고, 지방은 몸을 구성하며 남으면 저장돼요.", "바이타민과 무기염류는 몸의 기능을 조절하고, 물은 몸을 가장 많이 이루며 물질 운반과 체온 조절에 관여해요."] },
@@ -157,11 +300,12 @@ const L2 = lesson({
       title: "소화는 잘게 나누고<br>흡수는 몸 안으로 들여요",
       lead: "소화관의 순서, 소화액과 효소의 작용, 작은창자에서의 흡수를 한 흐름으로 살펴봐요.",
       blocks: [
-        { k: "figure", svg: digestiveSystemFig(), cap: "음식물은 입에서 항문까지 이어진 소화관을 따라 이동하고, 여러 소화샘의 소화액이 작용해요." },
+        { k: "figure", svg: cut("body", "g2u6l2", "밥을 오래 씹다가 단맛을 느끼고 놀란 스틱맨"), cap: "오래 씹을수록 단맛이 난다면, 입에서도 소화가 시작됐다는 단서예요." },
+        { k: "figure", svg: digestiveSystemArt(), cap: "음식물은 입에서 항문까지 이어진 소화관을 따라 이동하고, 간과 이자 같은 소화샘이 옆에서 소화액을 보태요." },
         { k: "term", name: "소화", def: "크기가 큰 영양소를 소화관에서 흡수할 수 있는 작은 영양소로 분해하는 과정이에요.", icon: "route" },
         { k: "figure", svg: enzymeFlowFig(), cap: "탄수화물은 포도당, 단백질은 아미노산, 지방은 지방산과 모노글리세라이드로 최종 분해돼요." },
         { k: "list", items: ["아밀레이스는 침과 이자액에 들어 있으며 녹말을 엿당으로 분해해요.", "위액의 펩신은 염산의 도움을 받아 단백질을 분해하고, 이자액의 트립신도 단백질에 작용해요.", "이자액의 라이페이스는 지방을 분해해요. 쓸개즙은 간에서 만들어져 쓸개에 저장되며 소화효소는 없지만 지방 소화를 도와요."] },
-        { k: "figure", svg: villusAbsorptionFig(), cap: "작은창자 안쪽의 융털은 표면적을 넓혀 영양소를 효율적으로 흡수해요. 이동하는 관은 영양소에 따라 달라요." },
+        { k: "figure", svg: villusAbsorptionArt(), cap: "융털의 얇은 벽 바로 안쪽에는 모세혈관망과 암죽관이 있어요. 포도당·아미노산은 모세혈관으로, 지방산·모노글리세라이드는 암죽관으로 흡수돼요." },
         { k: "callout", tone: "amber", title: "소화효소의 특이성", html: "한 소화효소가 모든 영양소를 분해하지 않아요. 아밀레이스는 녹말에, 펩신은 단백질에 작용하는 것처럼 <b>특정 영양소</b>에만 작용해요." },
       ],
       cta: "소화 여행 시작하기",
@@ -237,7 +381,7 @@ const L2 = lesson({
     }),
     multi({
       prompt: "작은창자의 융털이 영양소 흡수에 유리한 까닭을 모두 골라 보세요.",
-      figure: villusAbsorptionFig(),
+      figure: villusAbsorptionArt(),
       options: ["표면적이 넓어요", "벽이 얇아요", "모세혈관과 암죽관이 가까이 있어요", "모든 소화효소를 혈액 속에서 만들어요", "음식물을 입으로 되돌려 보내요"],
       answer: [0, 1, 2],
       explainGood: "맞아요. 넓은 표면적, 얇은 벽, 가까운 운반 통로가 효율적인 흡수를 도와요.",
@@ -278,11 +422,12 @@ const L3 = lesson({
       title: "심장은 두 펌프처럼<br>혈액을 두 길로 보내요",
       lead: "심장의 네 방, 세 종류의 혈관, 혈액 성분, 허파순환과 온몸 순환을 하나의 운반망으로 연결해요.",
       blocks: [
-        { k: "figure", svg: heartFourChamberFig(), cap: "심방은 혈액을 받아들이고 심실은 혈액을 내보내요. 판막은 혈액이 거꾸로 흐르는 것을 막아요." },
-        { k: "figure", svg: vesselCompareFig(), cap: "동맥·정맥·모세혈관은 혈액이 흐르는 방향과 벽의 구조, 판막 유무가 달라요." },
+        { k: "figure", svg: cut("body", "g2u6l3", "손목에서 맥박을 느끼며 심장박동을 확인하는 스틱맨"), cap: "손목의 두근거림은 심장이 보낸 혈액의 파동이에요." },
+        { k: "figure", svg: heartAnatomyArt(), cap: "심방은 혈액을 받아들이고 심실은 혈액을 내보내요. 판막은 혈액이 거꾸로 흐르는 것을 막아요." },
+        { k: "figure", svg: vesselCompareArt(), cap: "동맥은 두껍고 탄력 있는 벽, 모세혈관은 한 겹의 얇은 벽, 정맥은 넓은 속공간과 판막이 특징이에요." },
         { k: "figure", svg: bloodComponentsFig(), cap: "혈장은 녹은 물질을 운반하고, 적혈구·백혈구·혈소판은 각각 기체 운반·방어·혈액응고를 맡아요." },
         { k: "list", items: ["적혈구는 핵이 없고 가운데가 오목하며 혈구 가운데 수가 가장 많아요.", "백혈구는 핵이 있고 혈구 가운데 크기가 가장 크며 병원체를 제거해 몸을 보호해요.", "혈소판은 핵이 없고 혈구 가운데 가장 작으며 혈액응고에 관여해요."] },
-        { k: "figure", svg: doubleCirculationFig(), cap: "허파순환은 심장과 허파 사이, 온몸 순환은 심장과 온몸 사이를 이어요. 한 바퀴에 심장을 두 번 지나가요." },
+        { k: "figure", svg: doubleCirculationArt(), cap: "파란색은 산소가 적은 혈액, 빨간색은 산소가 많은 혈액이에요. 허파순환과 온몸순환은 심장에서 연속해서 이어져요." },
         { k: "callout", tone: "amber", title: "동맥혈과 동맥은 다른 기준", html: "동맥은 <b>심장에서 나가는 혈관</b>, 정맥은 <b>심장으로 들어오는 혈관</b>이에요. 그래서 폐동맥에는 산소가 적은 혈액, 폐정맥에는 산소가 많은 혈액이 흘러요." },
       ],
       cta: "두 순환 연결하기",
@@ -360,7 +505,7 @@ const L3 = lesson({
     }),
     multi({
       prompt: "혈관에 대한 설명으로 옳은 것을 모두 골라 보세요.",
-      figure: vesselCompareFig(),
+      figure: vesselCompareArt(),
       options: ["동맥은 심장에서 나가는 혈액이 흘러요", "정맥에는 역류를 막는 판막이 있을 수 있어요", "모세혈관의 얇은 벽은 물질 교환에 유리해요", "폐동맥에는 항상 산소가 가장 많은 혈액이 흘러요", "정맥은 모두 동맥보다 산소가 많아요"],
       answer: [0, 1, 2],
       explainGood: "정확해요. 혈관 이름은 산소량이 아니라 심장을 기준으로 한 흐름 방향과 관련 있어요.",
@@ -402,9 +547,11 @@ const L4 = lesson({
       title: "가슴우리의 움직임이<br>공기의 방향을 정해요",
       lead: "호흡 기관의 길, 들숨과 날숨의 부피·압력 변화, 허파꽈리의 기체 교환을 이어 봐요.",
       blocks: [
-        { k: "figure", svg: respiratorySystemFig(), cap: "공기는 코에서 숨관과 숨관가지를 지나 허파 속 허파꽈리에 도착해요." },
+        { k: "figure", svg: cut("body", "g2u6l4", "들이마시는 공기의 방향을 화살표로 보여 주는 스틱맨"), cap: "숨은 보이지 않아도 압력 차를 따라 분명한 방향으로 움직여요." },
+        { k: "figure", svg: respiratorySystemArt(), cap: "공기는 코에서 숨관과 숨관가지를 지나 허파 속 허파꽈리에 도착해요." },
         { k: "figure", svg: breathCompareFig(), cap: "들숨에는 가슴우리 부피가 커져 압력이 낮아지고, 날숨에는 부피가 작아져 압력이 높아져요." },
-        { k: "figure", svg: alveoliExchangeFig(), cap: "허파꽈리와 모세혈관 사이에서 산소와 이산화 탄소가 서로 반대 방향으로 확산해요." },
+        { k: "figure", svg: alveoliAnatomyArt(), cap: "수많은 허파꽈리와 이를 둘러싼 촘촘한 모세혈관은 기체가 오갈 넓고 얇은 경계를 만들어요." },
+        { k: "figure", svg: alveoliExchangeArt(), cap: "산소는 허파꽈리에서 모세혈관으로, 이산화 탄소는 모세혈관에서 허파꽈리로 서로 반대 방향으로 확산해요." },
         { k: "callout", tone: "amber", title: "허파가 먼저 움직이는 것이 아니에요", html: "갈비뼈 사이 근육과 가로막이 가슴우리의 부피를 바꾸면 허파가 함께 늘거나 줄고, 안팎의 <b>압력 차</b>를 따라 공기가 이동해요." },
       ],
       cta: "호흡 모형 움직이기",
@@ -479,7 +626,7 @@ const L4 = lesson({
     }),
     multi({
       prompt: "허파꽈리가 기체 교환에 유리한 구조인 까닭을 모두 골라 보세요.",
-      figure: alveoliExchangeFig(),
+      figure: alveoliExchangeArt(),
       options: ["수가 많아 표면적이 넓어요", "벽이 얇아요", "모세혈관이 촘촘히 둘러싸요", "두꺼운 뼈로 둘러싸 기체를 막아요", "소화효소를 분비해 산소를 만들어요"],
       answer: [0, 1, 2],
       explainGood: "정확해요. 넓은 표면적, 얇은 벽, 풍부한 모세혈관이 빠른 기체 교환을 도와요.",
@@ -521,18 +668,20 @@ const L5 = lesson({
       title: "콩팥은 무조건 버리지 않고<br>거르고 되돌리고 더 내보내요",
       lead: "배설 기관의 길과 콩팥단위에서 일어나는 여과·재흡수·분비를 방향 중심으로 이해해요.",
       blocks: [
-        { k: "figure", svg: excretorySystemFig(), cap: "콩팥에서 만들어진 오줌은 오줌관을 지나 방광에 저장되었다가 요도로 몸 밖에 나가요." },
+        { k: "figure", svg: cut("body", "g2u6l5", "마신 물이 몸 안에서 어디로 가는지 궁금해하는 스틱맨"), cap: "몸은 마신 물을 그대로 버리지 않고 필요한 만큼 되돌려 써요." },
+        { k: "figure", svg: urinarySystemArt(), cap: "콩팥에서 만들어진 오줌은 오줌관을 지나 방광에 저장되었다가 요도로 몸 밖에 나가요." },
         { k: "list", items: ["콩팥은 <b>콩팥겉질·콩팥속질·콩팥깔때기</b>로 구분돼요.", "콩팥겉질과 콩팥속질에는 오줌 생성의 기본 단위인 콩팥단위가 분포해요.", "콩팥단위에서 만들어진 오줌은 콩팥깔때기에 모인 뒤 오줌관으로 이동해요."] },
         { k: "term", name: "배설", def: "세포의 물질대사에서 생긴 노폐물을 몸 밖으로 내보내는 과정이에요.", icon: "drop" },
-        { k: "figure", svg: nephronProcessFig(), cap: "토리와 보먼주머니에서 여과하고, 세뇨관에서 필요한 물질을 재흡수하며 남은 노폐물을 분비해 오줌을 만들어요." },
+        { k: "figure", svg: nephronAnatomyArt(), cap: "콩팥단위는 토리와 보먼주머니에서 시작해 긴 세뇨관과 주변 모세혈관이 나란히 이어진 미세한 처리 장치예요." },
+        { k: "figure", svg: nephronProcessArt(), cap: "여과는 토리에서 보먼주머니로, 재흡수는 세뇨관에서 모세혈관으로, 분비는 모세혈관에서 세뇨관으로 일어나요." },
         { k: "list", items: ["단백질이 분해될 때 생긴 독성 있는 암모니아는 간에서 독성이 약한 <b>요소</b>로 바뀌어요.", "혈구와 큰 단백질은 여과되지 않고, 물·포도당·아미노산·무기염류·요소 같은 작은 물질은 여과될 수 있어요.", "정상 상태에서는 포도당과 아미노산이 모두 재흡수되고, 대부분의 물과 필요한 무기염류도 혈액으로 돌아가요."] },
         { k: "callout", tone: "amber", title: "배출과 배설", html: "소화되지 않은 음식물 찌꺼기를 항문으로 내보내는 것은 <b>배출</b>이고, 세포의 물질대사에서 생긴 요소나 이산화 탄소를 내보내는 것은 <b>배설</b>이에요." },
       ],
       cta: "오줌 생성 과정 풀기",
     }),
     nephronLab({
-      title: "콩팥단위에서<br>물질의 방향을 찾아요",
-      lead: "여과·재흡수·분비 단계마다 어느 물질이 혈액과 세뇨관 사이에서 이동하는지 판정하세요.",
+      title: "오줌이 만들어지는<br>세 방향을 따라가요",
+      lead: "새 콩팥단위 모식도에서 여과·재흡수·분비가 일어나는 방향으로 물질을 직접 옮겨 보세요.",
       cta: "배설 정리하기",
       curio: {
         q: "건강한 사람의 오줌에는 왜 포도당이 거의 없을까요?",
@@ -593,7 +742,7 @@ const L5 = lesson({
     }),
     mcq({
       prompt: "그림의 세 과정 중 포도당이 정상 상태에서 혈액으로 모두 돌아가는 과정은 무엇일까요?",
-      figure: nephronProcessFig(),
+      figure: nephronProcessArt(),
       options: ["세뇨관에서 모세혈관으로 이동하는 재흡수", "토리에서 보먼주머니로 이동하는 여과", "모세혈관에서 세뇨관으로 이동하는 분비", "방광에서 오줌관으로 이동하는 역류", "요도에서 콩팥으로 이동하는 흡수"],
       answer: 0,
       explainGood: "맞아요. 포도당은 여과되지만 정상 상태에서는 세뇨관에서 모세혈관으로 모두 재흡수돼요.",
@@ -642,6 +791,7 @@ const L6 = lesson({
       title: "세포호흡이 에너지를 꺼내고<br>기관계가 재료와 결과를 운반해요",
       lead: "영양소와 산소가 조직세포에 도착해 에너지를 내고, 생성된 노폐물이 몸 밖으로 나가기까지를 연결해요.",
       blocks: [
+        { k: "figure", svg: cut("body", "g2u6l6", "달린 뒤 숨을 몰아쉬며 맥박도 빨라진 스틱맨"), cap: "숨과 맥박이 함께 바빠진 건 근육 세포의 주문이 늘었기 때문이에요." },
         { k: "figure", svg: cellRespirationFig(), cap: "조직세포는 영양소와 산소를 이용해 생명 활동에 필요한 에너지를 얻고 이산화 탄소와 물을 만들어요." },
         { k: "term", name: "세포호흡", def: "세포에서 영양소가 산소와 반응해 분해되면서 생명 활동에 필요한 에너지를 얻는 과정이에요.", icon: "bolt" },
         { k: "figure", svg: bodySystemsIntegrationFig(), cap: "소화계와 호흡계가 재료를 받아들이고, 순환계가 조직세포와 각 기관계를 연결하며, 호흡계와 배설계가 노폐물을 내보내요." },

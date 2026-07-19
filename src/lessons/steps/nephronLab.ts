@@ -20,21 +20,23 @@ type PartId = "glucose" | "water" | "urea" | "cell" | "protein" | "waste";
 
 const CVH = 320;
 const BASE_W = 360;
+const NEPHRON_IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
-// 관 레인(논리 좌표). 여과 목표=세뇨관, 재흡수 목표=모세혈관, 분비 목표=세뇨관.
-const TUBULE = { x0: 92, x1: 322, y0: 119, y1: 171, cy: 145 };
-const CAPIL = { x0: 60, x1: 322, y0: 226, y1: 276, cy: 251 };
-const TUBULE_SLOTS: [number, number][] = [[152, 145], [206, 145], [260, 145], [302, 145]];
-const CAPIL_SLOTS: [number, number][] = [[152, 251], [210, 251]];
+// 새 모식도 좌표. 여과는 보먼주머니 입구, 재흡수·분비는 세뇨관과 주변 모세혈관 사이에서 판정한다.
+const FILTER_ZONE = { x0: 58, x1: 118, y0: 180, y1: 225, cy: 203 };
+const TUBULE = { x0: 102, x1: 334, y0: 182, y1: 225, cy: 204 };
+const CAPIL = { x0: 132, x1: 334, y0: 116, y1: 166, cy: 142 };
+const TUBULE_SLOTS: [number, number][] = [[162, 204], [214, 204], [266, 204], [310, 204]];
+const CAPIL_SLOTS: [number, number][] = [[190, 142], [246, 142]];
 
 interface PartDef { id: PartId; label: string; small: boolean; key: string; home: [number, number] }
 const PART_DEFS: PartDef[] = [
-  { id: "glucose", label: "포도당", small: true, key: "nutrient", home: [44, 62] },
-  { id: "water", label: "물", small: true, key: "water", home: [96, 60] },
-  { id: "urea", label: "요소", small: true, key: "urea", home: [148, 62] },
-  { id: "cell", label: "혈구", small: false, key: "cell", home: [66, 90] },
-  { id: "protein", label: "단백질", small: false, key: "protein", home: [130, 90] },
-  { id: "waste", label: "노폐물", small: true, key: "waste", home: [288, 251] },
+  { id: "glucose", label: "포도당", small: true, key: "nutrient", home: [44, 70] },
+  { id: "water", label: "물", small: true, key: "water", home: [98, 70] },
+  { id: "urea", label: "요소", small: true, key: "urea", home: [150, 70] },
+  { id: "cell", label: "혈구", small: false, key: "cell", home: [62, 120] },
+  { id: "protein", label: "단백질", small: false, key: "protein", home: [132, 120] },
+  { id: "waste", label: "노폐물", small: true, key: "waste", home: [300, 142] },
 ];
 
 interface Part { id: PartId; label: string; small: boolean; color: string; x: number; y: number; zone: Zone }
@@ -46,20 +48,20 @@ export const nephronLab: StepRenderer = (host, step, api) => {
 
   const goalsEl = el(
     "div", { class: "pn-badges force3" },
-    el("div", { class: "pn-badge body", dataset: { g: "filter" } }, el("b", { text: "여과" }), el("span", { text: "세뇨관으로" })),
+    el("div", { class: "pn-badge body", dataset: { g: "filter" } }, el("b", { text: "여과" }), el("span", { text: "보먼주머니로" })),
     el("div", { class: "pn-badge body", dataset: { g: "reabsorb" } }, el("b", { text: "재흡수" }), el("span", { text: "혈관으로" })),
     el("div", { class: "pn-badge body", dataset: { g: "secrete" } }, el("b", { text: "분비" }), el("span", { text: "세뇨관으로" })),
   );
   const helper = el("div", {
     class: "helper",
-    html: "<b>토리의 물질을 세뇨관으로 끌어내려</b> 여과해 보세요. 혈구와 단백질도 끌어 크기 때문에 어떻게 되는지 확인해요.",
+    html: "위 물질을 <b>토리 옆 보먼주머니 입구로 끌어</b> 여과해 보세요. 혈구와 단백질도 끌어 크기에 따라 어떻게 되는지 확인해요.",
   });
   const canvas = el("canvas", {
     class: "body-lab-canvas",
     style: `height:${CVH}px`,
     attrs: { tabindex: "0", role: "img", "aria-label": "토리·보먼주머니와 세뇨관, 모세혈관 사이에서 물질 알갱이를 끌어 옮기는 콩팥단위 무대" },
   });
-  const readPill = el("span", { text: "토리의 물질을 세뇨관으로 끌어내려요" });
+  const readPill = el("span", { text: "작은 물질을 보먼주머니로 여과해요" });
   const toast = el("div", { class: "toast" });
   const stage = el(
     "div", { class: "stage body-lab-stage" },
@@ -69,6 +71,9 @@ export const nephronLab: StepRenderer = (host, step, api) => {
   );
   host.append(goalsEl, helper, stage);
   if (s.curio) host.appendChild(curioCard(s.curio));
+
+  const diagram = new Image();
+  diagram.src = `${NEPHRON_IMG_BASE}body/figs/v2/nephron-process.webp`;
 
   const COLOR: Record<PartId, string> = {
     glucose: bodyColor("nutrient") || "#12B886",
@@ -178,12 +183,12 @@ export const nephronLab: StepRenderer = (host, step, api) => {
     dragId = null;
 
     if (phase === "filter") {
-      if (laneHit(dragX, dragY, TUBULE)) {
+      if (laneHit(dragX, dragY, FILTER_ZONE)) {
         if (p.small) {
           const [sx0, sy0] = TUBULE_SLOTS[tubuleCount++];
           p.x = sx0; p.y = sy0; p.zone = "tubule"; filtered.add(p.id);
           haptic(HAPTIC.select);
-          toastMsg(`${p.label}은 작아서 여과막을 통과해 세뇨관으로 가요`);
+          toastMsg(`${p.label}은 작아서 토리에서 보먼주머니로 여과돼요`);
           if (filtered.has("glucose") && filtered.has("water") && filtered.has("urea")) {
             collect("filter", "통과 확인");
             advanceToReabsorb();
@@ -228,70 +233,26 @@ export const nephronLab: StepRenderer = (host, step, api) => {
   canvas.addEventListener("pointercancel", onUp);
 
   // ── 그리기 ────────────────────────────────────────────────
-  function drawGlomerulus(ctx: CanvasRenderingContext2D): void {
-    // 보먼주머니 상자
+  function drawBaseDiagram(ctx: CanvasRenderingContext2D, tMs: number): void {
     ctx.save();
-    ctx.fillStyle = "rgba(210,228,255,.08)";
-    ctx.strokeStyle = "rgba(160,190,230,.5)";
-    ctx.lineWidth = 1.4 * scale();
-    (ctx as CanvasRenderingContext2D & { roundRect(x: number, y: number, w: number, h: number, r: number): void })
-      .roundRect(sx(20), sy(22), sx(158), sy(84), 14 * scale());
-    ctx.fill();
-    ctx.stroke();
-    // 토리(사구체) 붉은 실타래
-    const cx = sx(100);
-    const cy = sy(64);
-    ctx.strokeStyle = bodyColor("deoxygenated") || "#8E1F2B";
-    ctx.globalAlpha = 0.5;
-    ctx.lineWidth = 4 * scale();
-    ctx.lineCap = "round";
-    for (let i = 0; i < 5; i++) {
-      const a = (i / 5) * Math.PI * 2;
-      ctx.beginPath();
-      ctx.arc(cx + Math.cos(a) * sx(12), cy + Math.sin(a) * sy(11), sx(15), a, a + Math.PI * 1.4);
-      ctx.stroke();
+    if (diagram.complete && diagram.naturalWidth > 0) {
+      ctx.drawImage(diagram, 0, sy(40), W, sy(240));
+    } else {
+      ctx.fillStyle = "rgba(255,255,255,.06)";
+      ctx.fillRect(0, sy(40), W, sy(240));
     }
-    ctx.globalAlpha = 1;
-    // 여과막(점선)
-    ctx.strokeStyle = "rgba(180,205,240,.6)";
-    ctx.setLineDash([5 * scale(), 5 * scale()]);
-    ctx.lineWidth = 1.5 * scale();
-    ctx.beginPath();
-    ctx.moveTo(sx(28), sy(102));
-    ctx.lineTo(sx(170), sy(102));
-    ctx.stroke();
-    ctx.setLineDash([]);
+    if (phase === "filter" && !finished) highlightLane(ctx, FILTER_ZONE, tMs);
     ctx.restore();
   }
 
   function drawTubule(ctx: CanvasRenderingContext2D, tMs: number): void {
     ctx.save();
-    const g = ctx.createLinearGradient(0, sy(TUBULE.y0), 0, sy(TUBULE.y1));
-    g.addColorStop(0, "rgba(240,214,150,.22)");
-    g.addColorStop(1, "rgba(210,170,90,.18)");
-    ctx.fillStyle = g;
-    ctx.strokeStyle = "rgba(230,200,140,.7)";
-    ctx.lineWidth = 1.6 * scale();
-    (ctx as CanvasRenderingContext2D & { roundRect(x: number, y: number, w: number, h: number, r: number): void })
-      .roundRect(sx(TUBULE.x0), sy(TUBULE.y0), sx(TUBULE.x1 - TUBULE.x0), sy(TUBULE.y1 - TUBULE.y0), 22 * scale());
-    ctx.fill();
-    ctx.stroke();
-    if ((phase === "filter" || phase === "secrete") && !finished) highlightLane(ctx, TUBULE, tMs);
+    if (phase === "secrete" && !finished) highlightLane(ctx, TUBULE, tMs);
     ctx.restore();
   }
 
   function drawCapillary(ctx: CanvasRenderingContext2D, tMs: number): void {
     ctx.save();
-    const g = ctx.createLinearGradient(0, sy(CAPIL.y0), 0, sy(CAPIL.y1));
-    g.addColorStop(0, "rgba(224,90,110,.24)");
-    g.addColorStop(1, "rgba(180,55,75,.2)");
-    ctx.fillStyle = g;
-    ctx.strokeStyle = bodyColor("vesselLo") || "rgba(200,90,110,.7)";
-    ctx.lineWidth = 1.6 * scale();
-    (ctx as CanvasRenderingContext2D & { roundRect(x: number, y: number, w: number, h: number, r: number): void })
-      .roundRect(sx(CAPIL.x0), sy(CAPIL.y0), sx(CAPIL.x1 - CAPIL.x0), sy(CAPIL.y1 - CAPIL.y0), 24 * scale());
-    ctx.fill();
-    ctx.stroke();
     if (phase === "reabsorb" && !finished) highlightLane(ctx, CAPIL, tMs);
     ctx.restore();
   }
@@ -302,6 +263,7 @@ export const nephronLab: StepRenderer = (host, step, api) => {
     ctx.strokeStyle = `rgba(226,59,75,${0.35 + pulse * 0.4})`;
     ctx.setLineDash([8 * scale(), 6 * scale()]);
     ctx.lineWidth = 2.4 * scale();
+    ctx.beginPath();
     (ctx as CanvasRenderingContext2D & { roundRect(x: number, y: number, w: number, h: number, r: number): void })
       .roundRect(sx(lane.x0) - 3, sy(lane.y0) - 3, sx(lane.x1 - lane.x0) + 6, sy(lane.y1 - lane.y0) + 6, 24 * scale());
     ctx.stroke();
@@ -309,17 +271,27 @@ export const nephronLab: StepRenderer = (host, step, api) => {
   }
 
   function drawLabels(ctx: CanvasRenderingContext2D): void {
+    const pill = (x: number, y: number, text: string, color: string): void => {
+      ctx.font = `850 ${10.5 * scale()}px Pretendard, sans-serif`;
+      const width = ctx.measureText(text).width + 16 * scale();
+      const height = 22 * scale();
+      ctx.fillStyle = "rgba(255,255,255,.94)";
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1 * scale();
+      ctx.beginPath();
+      (ctx as CanvasRenderingContext2D & { roundRect(x: number, y: number, w: number, h: number, r: number): void })
+        .roundRect(sx(x) - width / 2, sy(y) - height / 2, width, height, 11 * scale());
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#172033";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, sx(x), sy(y));
+    };
     ctx.save();
-    ctx.fillStyle = "rgba(255,255,255,.92)";
-    ctx.shadowColor = "rgba(10,16,28,.85)";
-    ctx.shadowBlur = 3 * scale();
-    ctx.font = `800 ${10.5 * scale()}px Pretendard, sans-serif`;
-    ctx.textAlign = "left";
-    ctx.textBaseline = "middle";
-    // 상단 라벨은 상태 pill을 피해 보먼주머니 상자 안쪽에, 레인 라벨은 레인 안 왼쪽 빈 칸(토큰 슬롯 앞)에 둔다.
-    ctx.fillText("토리·보먼주머니", sx(28), sy(40));
-    ctx.fillText("세뇨관", sx(TUBULE.x0 + 8), sy(TUBULE.cy));
-    ctx.fillText("모세혈관", sx(CAPIL.x0 + 8), sy(CAPIL.cy));
+    pill(64, 266, "토리·보먼주머니", "#F08C00");
+    pill(257, 104, "주변 모세혈관", "#E23B4B");
+    pill(274, 262, "세뇨관", "#C08A18");
     ctx.restore();
   }
 
@@ -348,11 +320,21 @@ export const nephronLab: StepRenderer = (host, step, api) => {
       ctx.arc(x, y, r + 3 * scale(), 0, Math.PI * 2);
       ctx.stroke();
     }
-    ctx.fillStyle = "rgba(255,255,255,.9)";
-    ctx.font = `800 ${9.5 * scale()}px Pretendard, sans-serif`;
+    ctx.font = `850 ${9.5 * scale()}px Pretendard, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(p.label, x, y + r + 9 * scale());
+    const labelY = y + r + 9 * scale();
+    const labelW = ctx.measureText(p.label).width + 10 * scale();
+    ctx.fillStyle = "rgba(255,255,255,.95)";
+    ctx.strokeStyle = "rgba(23,32,51,.18)";
+    ctx.lineWidth = 1 * scale();
+    ctx.beginPath();
+    (ctx as CanvasRenderingContext2D & { roundRect(x: number, y: number, w: number, h: number, r: number): void })
+      .roundRect(x - labelW / 2, labelY - 8 * scale(), labelW, 16 * scale(), 8 * scale());
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#172033";
+    ctx.fillText(p.label, x, labelY);
     ctx.restore();
   }
 
@@ -361,7 +343,7 @@ export const nephronLab: StepRenderer = (host, step, api) => {
     const ctx = fit.ctx;
     W = fit.w;
     ctx.clearRect(0, 0, W, fit.h);
-    drawGlomerulus(ctx);
+    drawBaseDiagram(ctx, tMs);
     drawTubule(ctx, tMs);
     drawCapillary(ctx, tMs);
     drawLabels(ctx);

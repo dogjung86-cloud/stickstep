@@ -1,0 +1,96 @@
+# 중2 과학 VI. 동물과 에너지 — 이미지 발주안 B
+# 인체 해부 교육 일러스트 6장
+
+아래 명세에 따라 다운로드 가능한 독립 이미지 6개를 생성해 주세요.
+
+## 작업 방식
+
+- B-01부터 B-06까지 순서대로 각각 별도의 이미지로 생성합니다.
+- 6칸짜리 콜라주, 컨택트 시트, 포스터, 인포그래픽으로 합치지 마세요.
+- 한 이미지에는 지정된 해부 구조 하나만 넣으세요.
+- 여섯 장 모두 동일한 교육용 일러스트 화풍, 팔레트, 조명, 외곽선 굵기를 유지하세요.
+- 이미지 안에는 파일명, 기관명, 설명, 범례를 포함한 어떤 글자도 넣지 마세요.
+- 구조를 가리키는 화살표, 번호, 리더선, 라벨 박스를 넣지 마세요. 라벨은 앱에서 나중에 오버레이합니다.
+- 파일명은 이미지 바깥의 응답 텍스트로만 표시하세요.
+- 각 이미지의 지정 비율을 정확히 지키세요.
+- 중간에 확인 질문을 하지 말고 6개를 모두 생성하세요.
+- 한 응답에서 생성 가능한 이미지 수에 제한이 있으면 가능한 만큼 생성한 뒤, 다음 응답에서 완료되지 않은 번호부터 계속하세요.
+- 이미 완료한 번호를 중복 생성하지 마세요.
+- 마지막에 B-01~B-06 완료 체크리스트와 대응 파일명을 적어 주세요.
+
+## 공통 시각 스타일
+
+Clean modern educational anatomy illustration for a 14-year-old middle-school science learning app. Textbook-diagram style with soft flat-vector shading, gentle three-step gradients, a soft top-left key light, smooth rounded organic forms, and clear separation between anatomical parts.
+
+Use a muted, anatomically plausible palette: warm reds, muted pinks, and red-browns for organs; soft blue only where oxygen-poor blood structures are implied; pale translucent tones for delicate membranes and air spaces. Add restrained contact shadows and thin, slightly darker outlines appropriate to each material.
+
+Friendly, precise, and scientifically recognizable without being gory, hyper-realistic, or clinical. Center the subject on a plain white or very light warm-gray background. Leave generous clean margins on all sides so Korean labels can be overlaid later without covering important structures.
+
+Absolutely no text, letters, numbers, labels, arrows, leader lines, legends, symbols, measurement marks, logos, signatures, or watermarks anywhere in the image. Not a photograph, not anime, not a stick figure, not a medical scan, and not a poster layout.
+
+## 개별 이미지 명세
+
+### B-01 — digestive.png
+
+A single simplified human digestive system shown inside a faint, unobtrusive front-facing torso outline. Include the mouth and a continuous esophagus leading down to a clearly J-shaped stomach on the subject's left side. Show a long coiled small intestine in the center, surrounded and framed by the thicker large intestine, continuing toward the bottom.
+
+Show the liver as a large organ on the subject's right upper abdomen, with a small gallbladder tucked beneath it. Show the pancreas as a distinct elongated organ positioned behind and slightly below the stomach. Make every organ visually separable using related but distinct warm tones. Maintain correct left-right anatomical relationships. Do not include labels, arrows, or text.
+
+Output filename: digestive.png
+Aspect ratio: portrait 3:4
+
+### B-02 — heart.png
+
+A simplified anatomical cross-section of a human heart viewed from the front. Clearly show four open cavities: two upper atria with thinner walls and two lower ventricles with visibly thicker muscular walls. The anatomical left ventricle must have the thickest wall of all chambers.
+
+Include recognizable flap valves between the atria and ventricles and simple semilunar valves at the major vessel exits. At the top, show recognizable stubs of the major vessels, including an arching aorta, pulmonary trunk, and vena cava. Use a warm red muscular wall, a soft blue tint for the right-heart blood spaces, and a warm red tint for the left-heart blood spaces. Keep the chamber boundaries clear. Do not include labels, arrows, letters, or text.
+
+Output filename: heart.png
+Aspect ratio: square 1:1
+
+### B-03 — nephron.png
+
+A simplified diagram of one complete nephron, the functional unit of the kidney. On the left, show a tight ball of coiled capillaries representing the glomerulus, clearly cupped inside a rounded Bowman's capsule. From the capsule, show a continuous winding renal tubule that travels across the image toward the right, with a visible looped section, and finally empties into a straighter collecting duct at the far right.
+
+Wrap the tubule with a delicate network of thin capillaries running close alongside it. Use warm red for the glomerulus and capillaries, and pale translucent warm tones for the capsule and tubule. Preserve clear spatial separation where structures cross. Do not include arrows, flow marks, labels, numbers, or text.
+
+Output filename: nephron.png
+Aspect ratio: landscape 4:3
+
+### B-04 — alveoli.png
+
+A close-up educational view of a cluster of lung alveoli shaped like a bunch of soft, translucent rounded grapes at the end of a small branching bronchiole. Each air sac should be individually recognizable and wrapped by a fine network of very thin blood capillaries closely hugging its outer surface.
+
+Show one or two alveoli in a gentle cutaway view so the hollow air space and very thin wall are understandable. Use pale translucent pink for the air sacs and a restrained mixture of warm red and soft blue for the surrounding capillary network to imply gas exchange. Do not add gas molecules, arrows, letters, labels, or symbols.
+
+Output filename: alveoli.png
+Aspect ratio: square 1:1
+
+### B-05 — respiratory.png
+
+A simplified human respiratory system shown inside a faint, unobtrusive front-facing torso outline. Include the nose and mouth at the top, a single trachea descending through the neck, and a clear split into the left and right bronchi. Each bronchus enters a large soft lung containing fine, branching airways that become thinner toward the edges.
+
+Below the lungs, show a broad dome-shaped diaphragm spanning the base of the chest. Add simple curved rib arcs around the outside without obscuring the lungs. Use soft muted pink lungs and restrained anatomical tones. Keep the airway continuity and diaphragm shape immediately recognizable. Do not include labels, arrows, or text.
+
+Output filename: respiratory.png
+Aspect ratio: portrait 3:4
+
+### B-06 — urinary.png
+
+A simplified human urinary system shown inside a faint, unobtrusive front-facing torso outline. Include two bean-shaped kidneys placed symmetrically in the upper rear abdominal region, with the subject's right kidney positioned slightly lower than the left. Connect each kidney to a single rounded bladder at the bottom center using a long, thin ureter. Show a short urethra exiting below the bladder.
+
+Show one kidney in a gentle cutaway view, revealing an outer region, an inner region, and a branching central collecting space without excessive microscopic detail. Use warm red-brown tones for the kidneys and soft muted tones for the ureters and bladder. Keep both ureters continuous and clearly connected. Do not include labels, arrows, numbers, or text.
+
+Output filename: urinary.png
+Aspect ratio: portrait 3:4
+
+## 최종 자체 점검
+
+생성한 각 이미지에 대해 다음을 확인하세요.
+
+1. 독립 이미지 6개이며 콜라주나 인포그래픽이 아닌가?
+2. 지정된 가로세로 비율을 지켰는가?
+3. 여섯 장의 화풍, 팔레트, 조명과 외곽선이 일관적인가?
+4. 중요한 해부 구조와 연결 관계가 과학적으로 알아볼 수 있는가?
+5. 라벨용 여백이 충분한가?
+6. 이미지 내부에 글자, 숫자, 화살표, 파일명, 로고, 워터마크가 전혀 없는가?

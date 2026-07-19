@@ -1388,10 +1388,12 @@ src/
   목표 칩 `.pn-badge.body.on` 수로 `expectGoals` 결정 판정. nephron은 여과→재흡수→분비 순서 강제로 슬롯 좌표 예측
   가능. **동시 세션 codex가 파일을 쓰면 HMR 풀리로드로 `window.__g2u6E2E`가 증발(사고 #12)·vite가 특정 모듈만
   스테일 캐시** → 검수 캡처는 **워크트리 격리(별도 포트 dev 서버)**로 돌리거나 codex exec 부재를 확인하고 실행.
-- **이미지 발주(준비 완료·미실행)**: `qa/body_prompts.txt`(스틱맨 개념 컷 6장 public/body/cuts + 해부 교육
-  일러스트 6장 public/body/figs — 둘 다 글자 금지) + `qa/order-body.sh`(codex exec 순차 3배치, **병렬 금지**).
-  `process-geo.mjs` ASPECT_DIRS에 두 폴더 등록됨. **하이브리드 방침**: 해부 구조(소화계·심장·콩팥단위·허파꽈리)는
-  발주 일러스트로, 경로도·화살표·모식도(이중순환·여과 방향·통합)는 라벨이 본질이라 SVG 유지.
+- **이미지 발주·임베드 완료(2026-07-20, codex)**: 스틱맨 개념 컷 6장(public/body/cuts g2u6l1~l6, concept
+  첫 블록 cut("body", …)) + 해부 일러스트 6장(figs — 소화계·심장·콩팥단위·허파꽈리·호흡계·배설계) +
+  2차분 8장(figs/v2 — 융털 흡수·혈관 비교·들숨/날숨·이중순환 베이스·콩팥단위 과정·맥박·기체 교환).
+  발주안은 `qa/body-order-A-web.txt`/`-B-web.txt`, 실행은 `qa/order-body.sh`(codex exec 순차, **병렬 금지**).
+  **하이브리드 방침 유지**: 발주 라스터 위에 한글 라벨·화살표는 unit6.ts/bodyFigures의 SVG 오버레이가 얹는다
+  (경로도·모식도는 라벨이 본질이라 벡터 유지).
 
 ## 사회 트랙 — 사회 Ⅰ(세계화 시대, 지리의 힘) 제작 관례 (2026-07-18 구축)
 - **과목 배선**: SubjectId "soc"(과학 sci·수학 math와 병렬), 단원 id `s1uN`/`s2uN`(레슨 `s1uNlM`) —

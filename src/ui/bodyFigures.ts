@@ -287,22 +287,49 @@ export function nephronProcessFig(): string {
 
 export function cellRespirationFig(): string {
   return svg(
-    `${panel()}${bodyMatterSvg("glucose", 45, 75, 15,"포도당")}${bodyMatterSvg("oxygen", 45, 145, 12,"산소")}<path d="M70 76 C96 82 107 93 122 104 M70 144 C96 136 107 126 122 116" stroke="var(--subj-body)" stroke-width="4" marker-end="url(#cr-in)"/>
-     ${organSilhouette("cell", 180, 110, 1.25, "cr")}<path d="M232 104 C253 91 267 82 286 78 M232 116 C254 130 268 139 286 144" stroke="var(--body-carbon)" stroke-width="4" marker-end="url(#cr-out)"/>
-     ${bodyMatterSvg("carbon", 311, 75, 12,"이산화 탄소")}${bodyMatterSvg("water", 311, 145, 12,"물")}<g transform="translate(151 25)"><path d="M29 0 L37 18 L56 21 L41 34 L45 54 L29 43 L12 54 L16 34 L1 21 L21 18Z" fill="var(--body-nutrient)" stroke="var(--body-cell-lo)" stroke-width="1.5"/><text x="29" y="31" text-anchor="middle" font-size="10" font-weight="900" fill="var(--n800)">에너지</text></g>
-     <text x="180" y="206" text-anchor="middle" font-size="12" font-weight="850" fill="var(--n700)">세포의 마이토콘드리아에서 주로 일어나요</text>`,
+    `<rect x="8" y="8" width="344" height="234" rx="18" fill="var(--subj-body-tint)"/>
+     <g transform="translate(18 49)"><rect width="94" height="126" rx="15" fill="var(--n0)" stroke="var(--n200)"/><text x="47" y="23" text-anchor="middle" font-size="12" font-weight="900" fill="var(--n800)">필요한 물질</text>
+       <g transform="translate(10 37)"><rect width="74" height="31" rx="10" fill="var(--body-cell-hi)"/><circle cx="16" cy="15.5" r="7" fill="var(--body-nutrient)"/><text x="48" y="20" text-anchor="middle" font-size="12" font-weight="850" fill="var(--n800)">영양소</text></g>
+       <g transform="translate(10 78)"><rect width="74" height="31" rx="10" fill="var(--body-airway-hi)"/><circle cx="16" cy="15.5" r="7" fill="var(--body-oxygen)"/><text x="48" y="20" text-anchor="middle" font-size="12" font-weight="850" fill="var(--n800)">산소</text></g>
+     </g>
+     <path d="M116 101 H137 M116 143 H137" stroke="var(--subj-body)" stroke-width="4" marker-end="url(#cr-in)"/>
+     <g><circle cx="180" cy="117" r="55" fill="var(--body-tissue-hi)" stroke="var(--body-tissue-lo)" stroke-width="2"/><circle cx="180" cy="117" r="46" fill="var(--n0)" opacity=".42"/>
+       <path d="M155 109 C165 88 197 89 205 108 C211 127 190 146 165 138 C148 133 145 120 155 109Z" fill="var(--body-cell)" stroke="var(--body-cell-lo)" stroke-width="1.8"/>
+       <path d="M163 112 C173 103 185 126 197 113 M161 128 C174 116 184 138 199 125" stroke="var(--body-cell-lo)" stroke-width="2"/>
+       <text x="180" y="171" text-anchor="middle" font-size="12" font-weight="900" fill="var(--n800)">조직세포</text><text x="180" y="187" text-anchor="middle" font-size="10.5" font-weight="800" fill="var(--n600)">마이토콘드리아</text>
+     </g>
+     <g transform="translate(151 16)"><path d="M29 0 L37 17 L55 20 L41 32 L45 50 L29 40 L13 50 L17 32 L3 20 L21 17Z" fill="var(--body-nutrient)" stroke="var(--body-cell-lo)" stroke-width="1.4"/><text x="29" y="29" text-anchor="middle" font-size="10" font-weight="900" fill="var(--n800)">에너지</text></g>
+     <path d="M223 101 H244 M223 143 H244" stroke="var(--body-carbon)" stroke-width="4" marker-end="url(#cr-out)"/>
+     <g transform="translate(248 49)"><rect width="94" height="126" rx="15" fill="var(--n0)" stroke="var(--n200)"/><text x="47" y="23" text-anchor="middle" font-size="12" font-weight="900" fill="var(--n800)">생긴 물질</text>
+       <g transform="translate(8 37)"><rect width="78" height="31" rx="10" fill="#EEE9FA"/><circle cx="14" cy="15.5" r="7" fill="var(--body-carbon)"/><text x="51" y="20" text-anchor="middle" font-size="11" font-weight="850" fill="var(--n800)">이산화 탄소</text></g>
+       <g transform="translate(8 78)"><rect width="78" height="31" rx="10" fill="var(--body-airway-hi)"/><path d="M14 7 C23 18 20 25 14 25 C8 25 5 18 14 7Z" fill="var(--body-oxygen)"/><text x="51" y="20" text-anchor="middle" font-size="12" font-weight="850" fill="var(--n800)">물</text></g>
+     </g>
+     <g transform="translate(21 204)"><rect width="318" height="28" rx="14" fill="var(--n0)" stroke="var(--n200)"/><text x="159" y="18.5" text-anchor="middle" font-size="11.3" font-weight="900" fill="var(--n700)">영양소 + 산소 → 에너지 + 이산화 탄소 + 물</text></g>`,
     `${bodyDefs("cr")}${bodyArrow("cr-in", "var(--subj-body)")}${bodyArrow("cr-out", "var(--body-carbon)")}`,
-    "포도당과 산소로 물과 이산화 탄소, 에너지를 만드는 세포호흡 도해",
+    "조직세포의 마이토콘드리아에서 영양소와 산소로 에너지, 이산화 탄소, 물을 만드는 세포호흡 도해",
+    "0 0 360 250",
   );
 }
 
 export function bodySystemsIntegrationFig(): string {
+  const row = (y: number, matter: string, color: string, source: string, target: string, id: string): string => `
+    <g transform="translate(0 ${y})">
+      <rect x="14" y="5" width="63" height="30" rx="15" fill="${color}" opacity=".16" stroke="${color}"/><text x="45.5" y="24.5" text-anchor="middle" font-size="10.5" font-weight="900" fill="${color}">${matter}</text>
+      <rect x="84" y="0" width="72" height="40" rx="12" fill="var(--n0)" stroke="var(--n300)"/><text x="120" y="25" text-anchor="middle" font-size="12" font-weight="900" fill="var(--n800)">${source}</text>
+      <path d="M159 20 H173" stroke="${color}" stroke-width="4" marker-end="url(#${id})"/>
+      <rect x="176" y="0" width="72" height="40" rx="12" fill="var(--subj-body-tint)" stroke="var(--subj-body)"/><text x="212" y="25" text-anchor="middle" font-size="12" font-weight="900" fill="var(--subj-body-press)">순환계</text>
+      <path d="M251 20 H265" stroke="${color}" stroke-width="4" marker-end="url(#${id})"/>
+      <rect x="268" y="0" width="78" height="40" rx="12" fill="var(--n0)" stroke="var(--n300)"/><text x="307" y="25" text-anchor="middle" font-size="12" font-weight="900" fill="var(--n800)">${target}</text>
+    </g>`;
   return svg(
-    `${panel("var(--n0)")}${organSilhouette("stomach", 60, 66, 0.62, "bi")}${organSilhouette("lungs", 180, 52, 0.62, "bi")}${organSilhouette("kidneys", 300, 67, 0.62, "bi")}${organSilhouette("heart", 180, 127, 0.58, "bi")}${organSilhouette("cell", 180, 190, 0.48, "bi")}
-     <path d="M78 78 C112 89 126 108 153 122" stroke="var(--body-nutrient)" stroke-width="5" marker-end="url(#bi-n)"/><path d="M180 76 V104" stroke="var(--body-oxygen)" stroke-width="5" marker-end="url(#bi-o)"/><path d="M196 144 V166" stroke="var(--body-oxygenated)" stroke-width="5" marker-end="url(#bi-r)"/>
-     <path d="M202 127 C236 112 265 91 282 78" stroke="var(--body-urea)" stroke-width="5" marker-end="url(#bi-u)"/><path d="M167 166 C144 145 134 117 144 93 C151 77 162 70 173 75" stroke="var(--body-carbon)" stroke-width="4" marker-end="url(#bi-c)"/>
-     ${labelBox(17,103,86,"소화계")}${labelBox(137,13,86,"호흡계")}${labelBox(257,103,86,"배설계")}${labelBox(137,145,86,"순환계")}<text x="180" y="216" text-anchor="middle" font-size="11" font-weight="800" fill="var(--n600)">조직세포를 중심으로 네 기관계가 물질을 주고받아요</text>`,
-    `${bodyDefs("bi")}${bodyArrow("bi-n", "var(--body-nutrient)")}${bodyArrow("bi-o", "var(--body-oxygen)")}${bodyArrow("bi-r", "var(--body-oxygenated)")}${bodyArrow("bi-u", "var(--body-urea)")}${bodyArrow("bi-c", "var(--body-carbon)")}`,
+    `<rect x="8" y="8" width="344" height="264" rx="18" fill="var(--n0)" stroke="var(--n200)"/>
+     <text x="180" y="29" text-anchor="middle" font-size="13" font-weight="900" fill="var(--n800)">네 기관계와 조직세포 사이 물질의 길</text>
+     ${row(42,"영양소","var(--body-nutrient)","소화계","조직세포","bi-n")}
+     ${row(101,"산소","var(--body-oxygen)","호흡계","조직세포","bi-o")}
+     ${row(160,"이산화 탄소","var(--body-carbon)","조직세포","호흡계","bi-c")}
+     ${row(219,"요소","var(--body-urea)","조직세포","배설계","bi-u")}`,
+    `${bodyArrow("bi-n", "var(--body-nutrient)")}${bodyArrow("bi-o", "var(--body-oxygen)")}${bodyArrow("bi-u", "var(--body-urea)")}${bodyArrow("bi-c", "var(--body-carbon)")}`,
     "소화계와 순환계, 호흡계, 배설계가 조직세포와 연결된 통합 도해",
+    "0 0 360 280",
   );
 }
