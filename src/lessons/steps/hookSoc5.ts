@@ -2,7 +2,7 @@
 // 파운드리 SVG 문법(근-동조 그라데이션+키라이트+접촉 그림자+최암색 외곽선) 준수,
 // 스틱맨만 손그림 라인(#3C4654). CSS 상태 클래스 접두사는 hs5-.
 //   searchamerica L1 — "아메리카"를 검색했더니: 나라가 아니라 두 덩어리 대륙(인식 뒤집기 1)
-//   panroad       L2 — 팬 아메리칸 고속 도로 종단: 서쪽 창밖엔 내내 산맥(미래엔 생각열기 계승)
+//   panroad       L2 — 팬 아메리칸 고속 도로 종단: 실지도 위 자동차 남하 + 차창 산맥 루프(미래엔 생각열기 계승)
 //   quitopack     L3 — 적도 도시 키토 여행 짐: 반팔만 챙겼는데 13℃?! → 고도의 비밀
 //   teamroster    L4 — 대표팀 명단의 성씨가 세계 여행: 이주가 만든 사람들
 //   dinnertable   L5 — 저녁 밥상 원산지 태그: 김치의 고추까지 아메리카산(인식 뒤집기 2)
@@ -15,6 +15,8 @@ import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
+import { CONTINENTS, lonToX, latToY } from "../../ui/continentMap";
+import { WORLD_LAND_PATH } from "../../ui/worldMap.generated";
 
 type Face = (k: AvatarKind) => void;
 type HookOpt = { choices?: string[] };
@@ -115,48 +117,170 @@ export function renderSearchAmerica(
 }
 
 /* ══════════ L2: 팬 아메리칸 고속 도로 — 서쪽의 등뼈 ══════════ */
-function roadSvg(state: 0 | 1 | 2): string {
-  // state 0: 출발(알래스카 — 침엽수·설산) · 1: 중미(야자·화산) · 2: 남미(안데스 — 설산 더 높이).
-  // 공통 구도: 왼쪽(서쪽) 창밖 산맥 실루엣 + 가운데 도로 + 오른쪽 평탄한 땅.
-  const west =
-    state === 0
-      ? `<path d="M16 96 34 58l10 16 12-24 12 22 8-12 10 36z" fill="url(#hs5-mtn)" stroke="#4E6A88" stroke-width="1.8" stroke-linejoin="round"/>
-        <path d="M30 66 34 58l4 8q-4 3-8 0zM54 60l4-10 5 11q-5 4-9-1z" fill="#F6FAFD"/>
-        <path d="M20 108q4-10 3-18M32 110q4-10 3-18" stroke="#3E6E4E" stroke-width="3" stroke-linecap="round"/>`
-      : state === 1
-        ? `<path d="M16 100 40 62l14 20 10-16 18 34z" fill="url(#hs5-mtn2)" stroke="#6E5A42" stroke-width="1.8" stroke-linejoin="round"/>
-          <path d="M38 66l2-4 2 4q-2 2-4 0z" fill="#F5C86E"/>
-          <path d="M24 104q0-10-2-16 6 2 8 8M30 106q2-10 8-14" stroke="#3E8E3E" stroke-width="2.6" stroke-linecap="round" fill="none"/>`
-        : `<path d="M14 98 30 42l12 22 10-34 12 30 10-16 12 44z" fill="url(#hs5-mtn)" stroke="#4E6A88" stroke-width="1.8" stroke-linejoin="round"/>
-          <path d="M28 50 30 42l4 10q-4 3-6-2zM50 38l2-8 4 10q-4 3-6-2zM72 52l2-8 4 9q-4 3-6-1z" fill="#F6FAFD"/>
-          <path d="M20 106h10M24 100h8" stroke="#C8A468" stroke-width="2" stroke-linecap="round"/>`;
+// 실데이터 지도(WORLD_LAND_PATH + AMERICA 크롭) 위에서 자동차가 경로를 따라 남하하고,
+// 좌하단 차창 인셋(서쪽 창밖)엔 산맥 파노라마가 무한 루프로 흐른다 —
+// "지도 위 위치는 계속 바뀌는데 창밖은 늘 산맥"이 장면의 심장. 지도 좌표는 전부
+// lon/lat → mx/my 계산(눈대중 금지 — audit-soc5-geo 문법), 경유지는 서쪽 corridor 개략.
+const AM_CROP = CONTINENTS.america.crop; // equirect 1000×500 기준 { x:28, y:47, w:392, h:361 }
+const MAP_S = 148 / AM_CROP.h; // 카드 세로 148px에 맞춘 축척
+const MAP_X = 8;
+const MAP_Y = 9;
+const MAP_W = AM_CROP.w * MAP_S;
+const mx = (lon: number): number => (lonToX(lon) - AM_CROP.x) * MAP_S + MAP_X;
+const my = (lat: number): number => (latToY(lat) - AM_CROP.y) * MAP_S + MAP_Y;
+// 팬 아메리칸 고속 도로 경유지(서쪽 산줄기 corridor 개략) — 북부·남부 두 구간.
+const PAN_N: [number, number][] = [
+  [-149.9, 62.5], // 알래스카 출발
+  [-135, 60], // 유콘
+  [-122.5, 51], // 캐나다 서부
+  [-111, 41], // 미국 로키 서쪽
+  [-106.5, 31.7], // 멕시코 국경
+  [-99.1, 19.4], // 멕시코시티
+  [-90.5, 14.6], // 과테말라
+  [-79.5, 9], // 파나마
+];
+const PAN_S: [number, number][] = [
+  [-79.5, 9], // 파나마
+  [-78.5, -0.2], // 키토
+  [-77, -12], // 리마
+  [-70.6, -33.4], // 산티아고
+  [-68.3, -54.8], // 우수아이아(아르헨티나 남쪽 끝)
+];
+const legD = (pts: [number, number][]): string =>
+  pts.map(([lo, la], i) => `${i === 0 ? "M" : "L"}${mx(lo).toFixed(1)} ${my(la).toFixed(1)}`).join(" ");
+const DRIVE_MS = 1500; // 구간 주행 시간 — SMIL 자동차·경로 그리기(hs5-legdraw)가 공유
+const REDUCED = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function carSvg(): string {
+  // 원점 = 바퀴 바닥 중앙(경로 위에 착지). 기존 장면의 자동차 아트 축소 재사용.
+  return `<g transform="translate(-7.5 -13.5) scale(.5)">
+    <ellipse cx="15" cy="25.5" rx="15" ry="3.4" fill="#2A3A5E" opacity=".16"/>
+    <rect x="0" y="8" width="30" height="14" rx="5" fill="url(#hs5-car)" stroke="#8F2D1D" stroke-width="1.6"/>
+    <path d="M5 8q4-8 11-8t10 8z" fill="url(#hs5-car)" stroke="#8F2D1D" stroke-width="1.6"/>
+    <path d="M8 7q3-5 7-5v5z" fill="#D8ECF8"/>
+    <circle cx="7" cy="23" r="4" fill="#2E3A50" stroke="#101820" stroke-width="1.2"/>
+    <circle cx="23" cy="23" r="4" fill="#2E3A50" stroke="#101820" stroke-width="1.2"/>
+    <ellipse cx="6" cy="12" rx="4" ry="1.6" fill="#fff" opacity=".4"/>
+  </g>`;
+}
+
+const mlabel = (x: number, y: number, t: string, anchor = "start", size = 7, color = "#2E3A50"): string =>
+  `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${anchor}" font-size="${size}" font-weight="900" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linejoin="round" opacity=".9">${t}</text><text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${anchor}" font-size="${size}" font-weight="900" fill="${color}">${t}</text>`;
+
+/** 차창 파노라마 한 타일(로컬 90×56, 좌우 끝 높이 동일 = 이어 붙여도 이음매 없음). */
+function winTile(state: 0 | 1 | 2): string {
+  if (state === 0) {
+    // 알래스카 — 침엽수·설산
+    return `<path d="M0 34 L10 22 L18 30 L28 14 L36 28 L46 20 L54 32 L64 18 L74 30 L82 24 L90 34 L90 56 L0 56 Z" fill="url(#hs5-mtn)" stroke="#4E6A88" stroke-width="1.3" stroke-linejoin="round"/>
+      <path d="M24.5 18.5 28 14l3.5 4.5q-3.5 2.6-7 0z" fill="#F6FAFD"/>
+      <path d="M43.5 23 46 20l2.5 3q-2.5 2-5 0z" fill="#F6FAFD"/>
+      <path d="M61 21.8 64 18l3 3.8q-3 2.4-6 0z" fill="#F6FAFD"/>
+      <path d="M14 36l4 8h-8zM14 32l3.4 6.8h-6.8z" fill="#2E6E4E"/>
+      <rect x="13.3" y="44" width="1.4" height="2.6" fill="#6E4E2E"/>
+      <path d="M76 38l3.4 7h-6.8zM76 35l2.9 5.8h-5.8z" fill="#2E6E4E"/>
+      <rect x="75.4" y="45" width="1.2" height="2" fill="#6E4E2E"/>`;
+  }
+  if (state === 1) {
+    // 중미 — 화산·야자
+    return `<path d="M0 36 L12 30 Q18 26 24 30 L36 18 L40 15 L43 16.5 L46 15 L50 18 L60 29 Q68 26 76 31 L90 36 L90 56 L0 56 Z" fill="url(#hs5-mtn2)" stroke="#6E5A42" stroke-width="1.3" stroke-linejoin="round"/>
+      <path d="M40 15l3 1.5 3-1.5" stroke="#F5C86E" stroke-width="1.2" fill="none"/>
+      <circle cx="45" cy="10" r="2.7" fill="#E6EBF2" opacity=".9"/>
+      <circle cx="48.5" cy="6.2" r="2" fill="#EDF1F7" opacity=".75"/>
+      <path d="M12 46q1.5-5 4.5-8" stroke="#8F6438" stroke-width="1.5" fill="none"/>
+      <path d="M16.5 38q4-3 7.5-1M16.5 38q-4-3-7.5-1M16.5 38q.5-4 3.5-6M16.5 38q-1.5-4-4.5-5" stroke="#3F9A5C" stroke-width="1.3" fill="none"/>
+      <path d="M70 44q1-4 3.5-6" stroke="#8F6438" stroke-width="1.3" fill="none"/>
+      <path d="M73.5 38q3-2.4 6-1M73.5 38q-3-2.4-6-1M73.5 38q.4-3.4 2.6-4.6" stroke="#3F9A5C" stroke-width="1.1" fill="none"/>`;
+  }
+  // 안데스 — 더 높은 설산·마른 풀
+  return `<path d="M0 38 L8 20 L14 28 L22 8 L30 24 L38 12 L46 28 L56 10 L64 26 L72 16 L80 30 L90 38 L90 56 L0 56 Z" fill="url(#hs5-mtn)" stroke="#4E6A88" stroke-width="1.3" stroke-linejoin="round"/>
+    <path d="M17.5 13.5 22 8l4.5 5.5q-4.5 3.2-9 0z" fill="#F6FAFD"/>
+    <path d="M34 17 38 12l4 5q-4 2.8-8 0z" fill="#F6FAFD"/>
+    <path d="M51.5 15.5 56 10l4.5 5.5q-4.5 3.2-9 0z" fill="#F6FAFD"/>
+    <path d="M69 19.8 72 16l3 3.8q-3 2.2-6 0z" fill="#F6FAFD"/>
+    <path d="M20 45q2-4.5 4 0M58 45.5q2-4 4 0M78 44q2-4 4 0" stroke="#C8A468" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
+}
+
+/** 차창 인셋 — 산맥·구름·차선이 각기 다른 속도로 흐르는 패럴랙스 루프(서쪽 창). */
+function windowInset(state: 0 | 1 | 2): string {
   const sky = state === 0 ? "#BFE0F2" : state === 1 ? "#FFE2A8" : "#CFE7F5";
+  const sun =
+    state === 1
+      ? `<circle cx="75" cy="11" r="6" fill="#FFC24D"/>`
+      : `<circle cx="76" cy="9.5" r="4.8" fill="${state === 0 ? "#FFF3C8" : "#FFEBAE"}" opacity=".92"/>`;
+  const clouds = `<g fill="#FFFFFF" opacity=".85"><ellipse cx="20" cy="10" rx="8" ry="3"/><ellipse cx="26" cy="8.4" rx="5" ry="2.4"/><ellipse cx="58" cy="15" rx="7" ry="2.6"/></g>`;
+  const tile = winTile(state);
+  return `<rect x="12" y="94" width="96" height="62" rx="10" fill="#333D4B" stroke="#1E2634" stroke-width="1.6"/>
+    <svg x="15" y="97" width="90" height="56" viewBox="0 0 90 56" aria-hidden="true">
+      <g clip-path="url(#hs5-wclip)">
+        <rect width="90" height="56" fill="${sky}"/>
+        ${sun}
+        <g class="hs5-cloudloop">${clouds}<g transform="translate(90 0)">${clouds}</g></g>
+        <g class="hs5-mtnloop"><g>${tile}</g><g transform="translate(90 0)">${tile}</g></g>
+        <rect x="0" y="47" width="90" height="9" fill="url(#hs5-road)"/>
+        <g class="hs5-roadloop"><path d="M-20 51.5H112" stroke="#F2D998" stroke-width="1.7" stroke-dasharray="8 8"/></g>
+        <g class="hs5-streakloop" opacity=".5" stroke="#FFFFFF" stroke-width="1.3" stroke-linecap="round">
+          <path d="M28 12h11M60 7h9"/><path d="M118 12h11M150 7h9"/>
+        </g>
+      </g>
+      <rect x=".5" y=".5" width="89" height="55" rx="6" fill="none" stroke="#101820" stroke-width="1" opacity=".3"/>
+    </svg>
+    <g transform="translate(16 88)">
+      <rect width="52" height="13" rx="6.5" fill="#2E3A50"/>
+      <path d="M7 6.5l4.5-3v6z" fill="#FFC24D"/>
+      <text x="15" y="9.7" font-size="7.5" font-weight="800" fill="#FFFFFF">서쪽 창밖</text>
+    </g>`;
+}
+
+function roadSvg(state: 0 | 1 | 2): string {
+  // state 0: 알래스카 출발 대기 · 1: 북부 구간 주행(→파나마) · 2: 남부 구간 주행(→아르헨티나).
+  const dN = legD(PAN_N);
+  const dS = legD(PAN_S);
+  const start = { x: mx(PAN_N[0][0]), y: my(PAN_N[0][1]) };
+  const mid = { x: mx(PAN_S[0][0]), y: my(PAN_S[0][1]) };
+  const end = { x: mx(PAN_S[PAN_S.length - 1][0]), y: my(PAN_S[PAN_S.length - 1][1]) };
+  const here = state === 0 ? start : state === 1 ? mid : end;
+  const car =
+    state === 0 || REDUCED
+      ? `<g transform="translate(${here.x.toFixed(1)} ${here.y.toFixed(1)})">${carSvg()}</g>`
+      : `<g><animateMotion dur="${DRIVE_MS / 1000}s" fill="freeze" path="${state === 1 ? dN : dS}"/>${carSvg()}</g>`;
+  const planPath = (d: string): string =>
+    `<path d="${d}" stroke="#FFFFFF" stroke-width="3.4" opacity=".6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" stroke="#5A6B7E" stroke-width="1.7" stroke-dasharray="4 4" fill="none" stroke-linejoin="round"/>`;
+  const traveled = (d: string, drawing: boolean): string =>
+    `<path d="${d}" pathLength="100"${drawing && !REDUCED ? ` class="hs5-legdraw"` : ""} stroke="#E8590C" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
   return `<svg viewBox="0 0 240 168" fill="none" aria-hidden="true">
     <defs>
+      <radialGradient id="hs5-sea3" cx=".5" cy=".4" r=".95"><stop offset="0" stop-color="#D9EDF8"/><stop offset="1" stop-color="#BCDCEF"/></radialGradient>
       <linearGradient id="hs5-mtn" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B8CCE0"/><stop offset=".55" stop-color="#7E9AB8"/><stop offset="1" stop-color="#54708E"/></linearGradient>
       <linearGradient id="hs5-mtn2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C8A87E"/><stop offset=".6" stop-color="#A8825A"/><stop offset="1" stop-color="#84603E"/></linearGradient>
       <linearGradient id="hs5-road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6E7A8E"/><stop offset="1" stop-color="#4A566A"/></linearGradient>
       <linearGradient id="hs5-car" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8A5E"/><stop offset=".55" stop-color="#E8590C"/><stop offset="1" stop-color="#B8420A"/></linearGradient>
+      <clipPath id="hs5-mclip"><rect x="${MAP_X}" y="${MAP_Y}" width="${MAP_W.toFixed(1)}" height="148" rx="8"/></clipPath>
+      <clipPath id="hs5-wclip"><rect width="90" height="56" rx="6"/></clipPath>
     </defs>
-    <rect x="6" y="6" width="228" height="156" rx="12" fill="${sky}"/>
-    <rect x="6" y="96" width="228" height="66" rx="12" fill="#E8DCC2"/>
-    ${west}
-    <path d="M120 162q6-46 22-104l6 2q-12 56-14 102z" fill="url(#hs5-road)"/>
-    <path d="M133 156q4-38 12-92" stroke="#F2D998" stroke-width="2" stroke-dasharray="7 8" fill="none"/>
-    <ellipse cx="132" cy="146" rx="20" ry="4.5" fill="#2A3A5E" opacity=".16"/>
-    <g transform="translate(118 122)">
-      <rect x="0" y="8" width="30" height="14" rx="5" fill="url(#hs5-car)" stroke="#8F2D1D" stroke-width="1.6"/>
-      <path d="M5 8q4-8 11-8t10 8z" fill="url(#hs5-car)" stroke="#8F2D1D" stroke-width="1.6"/>
-      <path d="M8 7q3-5 7-5v5z" fill="#D8ECF8"/>
-      <circle cx="7" cy="23" r="4" fill="#2E3A50" stroke="#101820" stroke-width="1.2"/>
-      <circle cx="23" cy="23" r="4" fill="#2E3A50" stroke="#101820" stroke-width="1.2"/>
-      <ellipse cx="6" cy="12" rx="4" ry="1.6" fill="#fff" opacity=".4"/>
+    <rect x="6" y="6" width="228" height="156" rx="12" fill="url(#hs5-sea3)"/>
+    <g clip-path="url(#hs5-mclip)">
+      <g transform="translate(${(MAP_X - AM_CROP.x * MAP_S).toFixed(2)} ${(MAP_Y - AM_CROP.y * MAP_S).toFixed(2)}) scale(${MAP_S.toFixed(4)})">
+        <path d="${WORLD_LAND_PATH}" fill="#F2ECDE" fill-rule="evenodd" stroke="rgba(74,88,110,.5)" stroke-width=".7" vector-effect="non-scaling-stroke"/>
+      </g>
+      <line x1="${MAP_X}" y1="${my(0).toFixed(1)}" x2="${(MAP_X + MAP_W).toFixed(1)}" y2="${my(0).toFixed(1)}" stroke="#7FA8C8" stroke-width="1" stroke-dasharray="4 5" opacity=".55"/>
     </g>
+    ${mlabel(164, my(0) - 3, "적도", "end", 6.5, "#5A7A96")}
+    ${planPath(dN)}${planPath(dS)}
+    ${state >= 1 ? traveled(dN, state === 1) : ""}
+    ${state >= 2 ? traveled(dS, true) : ""}
+    <circle cx="${start.x.toFixed(1)}" cy="${start.y.toFixed(1)}" r="2.8" fill="#FFFFFF" stroke="#2E3A50" stroke-width="1.4"/>
+    <circle cx="${mid.x.toFixed(1)}" cy="${mid.y.toFixed(1)}" r="2.3" fill="#FFFFFF" stroke="#2E3A50" stroke-width="1.3"/>
+    <circle cx="${end.x.toFixed(1)}" cy="${end.y.toFixed(1)}" r="2.8" fill="#FFFFFF" stroke="#2E3A50" stroke-width="1.4"/>
+    ${mlabel(24, 31.5, "알래스카", "middle")}
+    ${mlabel(mid.x + 8, mid.y + 4.5, "파나마")}
+    ${mlabel(end.x + 9, end.y + 3.5, "아르헨티나")}
+    ${car}
     <g transform="translate(196 26)">
-      <rect x="-26" y="-12" width="52" height="24" rx="6" fill="#FFFFFF" opacity=".85" stroke="#8A93A6" stroke-width="1.2"/>
+      <rect x="-26" y="-12" width="52" height="24" rx="6" fill="#FFFFFF" opacity=".9" stroke="#8A93A6" stroke-width="1.2"/>
       <text x="0" y="-1" text-anchor="middle" font-size="7.5" font-weight="800" fill="#4E5968">${state === 0 ? "출발 · 북쪽 끝" : state === 1 ? "중간 · 지협" : "도착 · 남쪽 끝"}</text>
       <text x="0" y="8.5" text-anchor="middle" font-size="7" font-weight="700" fill="#8A94A6">${state === 0 ? "알래스카" : state === 1 ? "파나마 부근" : "아르헨티나"}</text>
     </g>
+    ${windowInset(state)}
   </svg>`;
 }
 
@@ -194,6 +318,7 @@ export function renderPanRoad(
       btn.disabled = true;
       face("curious");
       helper.innerHTML = "남쪽 끝까지 왔는데도 <b>서쪽 창밖은 여전히 산맥</b>! 북쪽 끝부터 남쪽 끝까지 서쪽 가장자리에 산줄기가 이어져요. 북쪽의 산맥과 남쪽의 산맥은 어떤 사이일까요?";
+      // 자동차가 남쪽 끝에 도착(DRIVE_MS)한 뒤 예측 선택지를 연다.
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
@@ -205,7 +330,7 @@ export function renderPanRoad(
           bad: "착시도 오류도 아니에요 — 진짜로 산이 이어져요! 북쪽은 <b>로키산맥</b>, 남쪽은 <b>안데스산맥</b>. 둘 다 서쪽 가장자리를 따라 높고 험준하죠. 아메리카의 등뼈를 훑으러 가요!",
           onDone: finish,
         });
-      }, 750);
+      }, REDUCED ? 750 : DRIVE_MS + 350);
     }
   });
   return () => window.clearTimeout(timer);

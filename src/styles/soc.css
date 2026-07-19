@@ -694,6 +694,20 @@
 .hs5-flipbtn:disabled, .hs5-flipbtn.done { opacity: .4; cursor: default; }
 .hs5-pop { animation: hs2Pop .45s var(--spring-bounce) backwards; transform-box: fill-box; transform-origin: center; }
 
+/* L2 팬 아메리칸 — 지도 경로 그리기(자동차 주행과 동일 1.5s·linear로 동기) + 차창 패럴랙스 루프 */
+.hs5-legdraw { stroke-dasharray: 100; stroke-dashoffset: 100; animation: hs5LegDraw 1.5s linear forwards; }
+@keyframes hs5LegDraw { to { stroke-dashoffset: 0; } }
+.hs5-mtnloop { animation: hs5WinSlide 7s linear infinite; }
+.hs5-cloudloop { animation: hs5WinSlide 13s linear infinite; }
+.hs5-roadloop { animation: hs5RoadSlide .34s linear infinite; }
+.hs5-streakloop { animation: hs5WinSlide 1.15s linear infinite; }
+@keyframes hs5WinSlide { to { transform: translateX(-90px); } }
+@keyframes hs5RoadSlide { to { transform: translateX(-16px); } }
+@media (prefers-reduced-motion: reduce) {
+  .hs5-mtnloop, .hs5-cloudloop, .hs5-roadloop, .hs5-streakloop { animation: none; }
+  .hs5-legdraw { animation: none; stroke-dashoffset: 0; }
+}
+
 /* ══════════════════ 사회 Ⅵ(오세아니아와 극지방) — 훅 hs6- · 배 경주 shr- ══════════════════ */
 .hs6-frame {
   position: relative; margin: 4px auto 0; max-width: 320px;
