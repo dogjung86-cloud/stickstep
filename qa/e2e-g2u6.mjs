@@ -160,11 +160,12 @@ const digestJourney = async () => {
 };
 
 // circulationLab — 심장 탭 → 허파순환 경로 → 온몸순환 경로.
-const LUNG_PATH = [[163, 190], [120, 150], [110, 96], [150, 70], [180, 62], [210, 70], [250, 96], [240, 150], [197, 150]];
-const BODY_PATH = [[197, 190], [250, 200], [300, 210], [316, 238], [300, 262], [240, 268], [170, 250], [163, 205]];
+// 좌표는 랩 재배치(CVH 300→340, 심장 165→199) 반영(2026-07-20 codex 개편).
+const LUNG_PATH = [[163, 224], [120, 184], [110, 130], [150, 104], [180, 96], [210, 104], [250, 130], [240, 184], [197, 184]];
+const BODY_PATH = [[197, 224], [250, 234], [300, 244], [316, 272], [300, 296], [240, 302], [170, 284], [163, 239]];
 const circulation = async () => {
   await page.waitForSelector(`${active} .body-lab-canvas`, { timeout: 9000 });
-  await canvasTap(180, 165);
+  await canvasTap(180, 199);
   await canvasDrag(LUNG_PATH);
   await canvasDrag(BODY_PATH);
   await expectGoals(3, "circulationLab");
@@ -184,37 +185,40 @@ const breathModel = async () => {
   await clickCTA();
 };
 
-// nephronLab — 여과(작은 물질을 세뇨관) → 재흡수(포도당·물을 모세혈관) → 분비(노폐물을 세뇨관).
+// nephronLab — 여과(작은 물질을 보먼주머니) → 재흡수(포도당·물을 모세혈관) → 분비(노폐물을 세뇨관).
+// 좌표는 랩 재배치(FILTER_ZONE 신설·세뇨관 아래·모세혈관 위) 반영(2026-07-20 codex 개편).
 const nephron = async () => {
   await page.waitForSelector(`${active} .body-lab-canvas`, { timeout: 9000 });
-  const TUBULE = [207, 145];
-  const CAPIL = [191, 251];
-  // 여과: glucose[40,46]·water[96,40]·urea[146,48] 순서로 세뇨관에
-  for (const home of [[40, 46], [96, 40], [146, 48]]) await canvasDrag([home, TUBULE]);
+  const FILTER = [88, 203];  // 보먼주머니 입구 존
+  const CAPIL = [233, 142];  // 모세혈관 레인
+  const TUBULE = [214, 204]; // 세뇨관 레인
+  // 여과: 혈액 존 glucose[44,70]·water[98,70]·urea[150,70]를 보먼주머니로(→세뇨관 슬롯 0·1·2 정착)
+  for (const home of [[44, 70], [98, 70], [150, 70]]) await canvasDrag([home, FILTER]);
   await expectGoals(1, "nephronLab 여과");
-  // 재흡수: 세뇨관 슬롯의 glucose(slot0)·water(slot1)를 모세혈관으로
-  for (const slot of [[152, 145], [206, 145]]) await canvasDrag([slot, CAPIL]);
+  // 재흡수: 세뇨관 슬롯의 glucose(slot0=[162,204])·water(slot1=[214,204])를 모세혈관으로
+  for (const slot of [[162, 204], [214, 204]]) await canvasDrag([slot, CAPIL]);
   await expectGoals(2, "nephronLab 재흡수");
-  // 분비: 모세혈관의 노폐물[288,251]을 세뇨관으로
-  await canvasDrag([[288, 251], TUBULE]);
+  // 분비: 모세혈관의 노폐물[300,142]을 세뇨관으로
+  await canvasDrag([[300, 142], TUBULE]);
   await expectGoals(3, "nephronLab 분비");
   await capture("l5-lab");
   await clickCTA();
 };
 
 // bodyIntegrateLab — 토큰을 순환계(hub) 경유로 목적지까지 2단계 드래그.
-const HUB = [180, 168];
+// 좌표는 랩 재배치(SYS 박스 좌표계·기관계 위아래 재배열) 반영(2026-07-20 codex 개편).
+// start=토큰 초기 위치(기관계 center+stationOffset), hub=hub 드롭 후 정착 위치, dest=목적지 SYS center.
+const HUB_C = [180, 182];
 const bodyIntegrate = async () => {
   await page.waitForSelector(`${active} .body-lab-canvas`, { timeout: 9000 });
-  // 시작점(기관계+off)과 hub 도착 위치(hub+off), 최종 목적지
   const plan = [
-    { start: [42, 60], hub: [164, 166], dest: [302, 274] },   // 영양소: 소화계→hub→조직세포
-    { start: [318, 60], hub: [196, 166], dest: [302, 274] },  // 산소: 호흡계→hub→조직세포
-    { start: [286, 286], hub: [164, 180], dest: [302, 62] },  // 이산화 탄소: 조직세포→hub→호흡계
-    { start: [318, 286], hub: [196, 180], dest: [58, 274] },  // 요소: 조직세포→hub→배설계
+    { start: [60, 230],  hub: [136, 234], dest: [180, 316] }, // 영양소: 소화계→순환계→조직세포
+    { start: [180, 108], hub: [224, 234], dest: [180, 316] }, // 산소: 호흡계→순환계→조직세포
+    { start: [110, 316], hub: [136, 130], dest: [180, 58] },  // 이산화 탄소: 조직세포→순환계→호흡계
+    { start: [250, 316], hub: [224, 130], dest: [300, 182] }, // 요소: 조직세포→순환계→배설계
   ];
   for (const m of plan) {
-    await canvasDrag([m.start, HUB]);
+    await canvasDrag([m.start, HUB_C]);
     await canvasDrag([m.hub, m.dest]);
   }
   await expectGoals(3, "bodyIntegrateLab");
