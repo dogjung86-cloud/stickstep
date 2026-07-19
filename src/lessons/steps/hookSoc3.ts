@@ -15,6 +15,8 @@ import { haptic, HAPTIC } from "../../core/haptics";
 import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
 
+const BASE = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/";
+
 type Face = (k: AvatarKind) => void;
 type HookOpt = { choices?: string[] };
 
@@ -404,43 +406,19 @@ export function renderCityFeed(
 }
 
 /* ══════════ L5: 도시 한복판 스키 언덕 ══════════ */
-function slopeSvg(zoomOut: boolean): string {
-  return `<svg viewBox="0 0 240 168" fill="none" aria-hidden="true">
-    <defs>
-      <linearGradient id="hs3-ssky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9CD2F5"/><stop offset="1" stop-color="#E2F2FB"/></linearGradient>
-      <linearGradient id="hs3-slope" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8ED28A"/><stop offset="1" stop-color="#4E9E5A"/></linearGradient>
-      <linearGradient id="hs3-plant" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D8E2EE"/><stop offset="1" stop-color="#A8B8CC"/></linearGradient>
-    </defs>
-    <rect x="6" y="6" width="228" height="156" rx="12" fill="url(#hs3-ssky)"/>
-    ${zoomOut
-      ? `
-      <g opacity=".75"><rect x="16" y="96" width="18" height="48" fill="#B8C6D8"/><rect x="204" y="90" width="20" height="54" fill="#B8C6D8"/><rect x="38" y="108" width="14" height="36" fill="#C8D4E2"/></g>
-      <ellipse cx="124" cy="148" rx="92" ry="6" fill="#2A3A5E" opacity=".12"/>
-      <rect x="58" y="70" width="120" height="74" rx="6" fill="url(#hs3-plant)" stroke="#7E92AC" stroke-width="1.8"/>
-      <g fill="#93A6BE"><rect x="70" y="86" width="12" height="16" rx="2"/><rect x="90" y="86" width="12" height="16" rx="2"/><rect x="110" y="86" width="12" height="16" rx="2"/></g>
-      <rect x="164" y="30" width="12" height="46" rx="5" fill="#C8D4E2" stroke="#7E92AC" stroke-width="1.6"/>
-      <path d="M166 26q4-4 8 0" stroke="#B8C6D8" stroke-width="2" stroke-linecap="round" fill="none" opacity=".0"/>
-      <path d="M56 76 170 28l8 10 -114 52z" fill="url(#hs3-slope)" stroke="#3E7E4E" stroke-width="1.6"/>
-      <path d="M64 78 166 35" stroke="#E8F6E8" stroke-width="1.2" stroke-dasharray="4 6" opacity=".8"/>
-      <g stroke="#3C4654" stroke-width="2.2" fill="none" transform="translate(118 52) rotate(-22)">
-        <circle cx="0" cy="-14" r="6" fill="#FFE8CE"/>
-        <path d="M0 -8v12M0 -5l-7 5M0 -5l7 3M0 4l-6 8M0 4l7 7"/>
-        <path d="M-10 14h20M-8 17h20" stroke-width="1.8"/>
-      </g>
-      <text x="120" y="158" text-anchor="middle" font-size="8.5" font-weight="800" fill="#4E6A8E">도시 한복판의 거대한 건물 + 초록 슬로프</text>`
-      : `
-      <path d="M-10 150 210 44l40 0 -240 118z" fill="url(#hs3-slope)"/>
-      <path d="M6 138 214 46" stroke="#E8F6E8" stroke-width="1.6" stroke-dasharray="5 7" opacity=".85"/>
-      <g stroke="#3C4654" stroke-width="2.6" fill="none" transform="translate(120 84) rotate(-24)">
-        <circle cx="0" cy="-16" r="7.5" fill="#FFE8CE"/>
-        <path d="M0 -8v14M0 -4l-9 6M0 -4l9 4M0 6l-7 10M0 6l8 9"/>
-        <path d="M-12 18h24M-10 22h24" stroke-width="2.2"/>
-        <path d="M-9 2l-5 12M9 0l5 12" stroke-width="1.8"/>
-      </g>
-      <path d="M96 66q-8-2-8-9M150 96q8 2 8 9" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity=".8"/>
-      <g fill="#F2A7C8" opacity=".9"><circle cx="36" cy="140" r="2"/><circle cx="60" cy="150" r="2"/></g>
-      <text x="120" y="24" text-anchor="middle" font-size="8.5" font-weight="800" fill="#4E6A8E">친구가 보낸 영상 — 도시에서 스키를?</text>`}
-  </svg>`;
+// 실물 사진 2장(위키미디어 — 덴마크 코펜하겐 아마게르 바케/코펜힐, photos/CREDITS.md)으로
+// 줌인(지붕 슬로프가 초록 언덕처럼 보임) → 줌아웃(굴뚝 달린 거대한 건물) 반전을 연출한다
+// (2026-07-19 사용자 확정 — 실물이 정본, 손그림 SVG 장면 대체. Ⅱ 종교 4탭 실물 교체 계보).
+function slopePhoto(zoomOut: boolean): string {
+  return zoomOut
+    ? `<div class="hs3-cam">
+        <img src="${BASE}soc/europe/copenhill-far.webp" alt="유리 외벽에 매끈한 굴뚝이 솟은 거대한 건물 — 지붕을 따라 초록 슬로프가 비스듬히 내려온다" draggable="false"/>
+        <div class="hs3-camtag">줌 아웃 — 언덕이 아니라 거대한 건물!</div>
+      </div>`
+    : `<div class="hs3-cam">
+        <img src="${BASE}soc/europe/copenhill-near.webp" alt="풀이 자란 비탈에 초록 슬로프 매트가 깔린 언덕 — 너머로 항구 도시가 내려다보인다" draggable="false"/>
+        <div class="hs3-camtag">친구가 보낸 영상 — 도시 한복판의 초록 언덕?</div>
+      </div>`;
 }
 
 export function renderSkiSlope(
@@ -458,12 +436,12 @@ export function renderSkiSlope(
 
   let out = false;
   let timer = 0;
-  fig.innerHTML = slopeSvg(false);
+  fig.innerHTML = slopePhoto(false);
   btn.addEventListener("click", () => {
     if (out) return;
     out = true;
     haptic(HAPTIC.tap);
-    fig.innerHTML = slopeSvg(true);
+    fig.innerHTML = slopePhoto(true);
     fig.classList.remove("flip");
     void fig.offsetWidth;
     fig.classList.add("flip");
@@ -595,12 +573,18 @@ function shirtsSvg(count: number): string {
   const shirt = (x: number, i: number): string => {
     const sh = SHIRTS[i];
     const on = i < count;
-    return `<g transform="translate(${x} 74)" opacity="${on ? 1 : 0.16}" class="${on ? "hs3-shirt-on" : ""}">
-      <path d="M-16 -12l7-6q9 5 18 0l7 6-5 7-3-2v21h-16v-21l-3 2z" fill="${sh.body}" stroke="#2E3A50" stroke-width="1.5" stroke-linejoin="round"/>
-      <path d="M-9 -18q9 5 18 0" stroke="${sh.trim}" stroke-width="2.4" fill="none"/>
-      <path d="M-8 12h16" stroke="${sh.trim}" stroke-width="2.2"/>
-      <ellipse cx="-6" cy="-8" rx="4.6" ry="1.8" fill="#fff" opacity=".35"/>
-      <text x="0" y="28" text-anchor="middle" font-size="7.6" font-weight="800" fill="#3E4A5A">${on ? sh.name : "?"}</text>
+    // 팝 애니는 transform 속성이 없는 안쪽 g에만 — 바깥 g에 걸면 CSS transform이 translate
+    // 속성을 대체해 팝 동안 유니폼이 SVG 원점(왼쪽 위)에서 그려진다(실사용 피드백 버그).
+    // 재렌더마다 전체가 다시 튀지 않게 방금 공개된 유니폼만 팝.
+    const pop = on && i === count - 1;
+    return `<g transform="translate(${x} 74)" opacity="${on ? 1 : 0.16}">
+      <g class="${pop ? "hs3-shirt-on" : ""}">
+        <path d="M-16 -12l7-6q9 5 18 0l7 6-5 7-3-2v21h-16v-21l-3 2z" fill="${sh.body}" stroke="#2E3A50" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M-9 -18q9 5 18 0" stroke="${sh.trim}" stroke-width="2.4" fill="none"/>
+        <path d="M-8 12h16" stroke="${sh.trim}" stroke-width="2.2"/>
+        <ellipse cx="-6" cy="-8" rx="4.6" ry="1.8" fill="#fff" opacity=".35"/>
+        <text x="0" y="28" text-anchor="middle" font-size="7.6" font-weight="800" fill="#3E4A5A">${on ? sh.name : "?"}</text>
+      </g>
     </g>`;
   };
   return `<svg viewBox="0 0 240 168" fill="none" aria-hidden="true">

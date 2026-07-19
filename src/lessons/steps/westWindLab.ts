@@ -199,7 +199,7 @@ export const westWindLab: StepRenderer = (host, step, api) => {
     p.y = CY0 + 8 + Math.random() * (CH - 20);
     p.warm = 0;
     p.life = 0;
-    p.max = 10 + Math.random() * 4; // 감속된 바람이 지도를 다 건널 수 있는 수명(약 13초 횡단)
+    p.max = 24 + Math.random() * 6; // 감속된 바람이 지도를 다 건널 수 있는 수명(약 23초 횡단)
   }
   for (let i = 0; i < 64; i++) {
     const p: WindP = { x: 0, y: 0, warm: 0, life: 0, max: 1 };
@@ -207,9 +207,10 @@ export const westWindLab: StepRenderer = (host, step, api) => {
     winds.push(p);
   }
   // 난류 입자 속도 — 바닷물은 바람보다 훨씬 느리다(사용자 피드백 캘리브레이션).
-  // t=0→1이 채널 전체(경도 약 65°)라 0.02~0.032/s = 편도 30~50초의 유유한 흐름.
+  // t=0→1이 채널 전체(경도 약 65°)라 0.011~0.017/s = 편도 60~90초, 화면 약 3~5px/s
+  // (2026-07-19 "너무 빠르다" 재감속 — 검산은 svg가 아니라 화면 px/s 기준).
   for (let i = 0; i < 90; i++) {
-    curs.push({ t: Math.random(), off: (Math.random() - 0.5) * 7, spd: 0.02 + Math.random() * 0.012 });
+    curs.push({ t: Math.random(), off: (Math.random() - 0.5) * 7, spd: 0.011 + Math.random() * 0.006 });
   }
 
   // ---- 렌더 ----
@@ -310,8 +311,9 @@ export const westWindLab: StepRenderer = (host, step, api) => {
     }
 
     // 편서풍 입자 — 서→동, 난류 위를 지나면 온기를 머금는다.
-    // 속도는 난류보다 뚜렷이 빠르되 차분하게(svg 16px/s ≈ 화면 26px/s — 사용자 피드백 감속).
-    const wspd = 16;
+    // 속도는 난류보다 뚜렷이 빠르되 차분하게(svg 9px/s ≈ 화면 14.5px/s —
+    // 2026-07-19 "너무 빠르다" 재감속, 난류 대비 약 1:3 위계 유지).
+    const wspd = 9;
     for (const p of winds) {
       p.life += dt;
       if (p.life > p.max || p.x > CX0 + CW + 6) spawnWind(p);
