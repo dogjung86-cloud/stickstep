@@ -3,6 +3,7 @@
 //   {a/b}   분수(가로줄 스택, a에 부호 허용: {-3/4})
 //   x^n     지수(숫자 뒤 또는 닫는 괄호 뒤: 2^3, (-2)^2)
 //   (+3)    부호 수, 괄호는 회색, 부호+수는 색(+파랑 −빨강). (-{3/4})도 지원.
+//   [135]   순환마디(양 끝 숫자 위에 점, 한 글자면 점 하나): 0.[7], 2.[135]
 //   그 외   문자 그대로(× ÷ = □ | | 등). '-'는 −(U+2212)로 표시.
 import { el } from "../core/dom";
 import { haptic, HAPTIC } from "../core/haptics";
@@ -11,6 +12,21 @@ import { haptic, HAPTIC } from "../core/haptics";
 
 const esc = (s: string): string => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const pretty = (s: string): string => esc(s).replace(/-/g, "−");
+
+/* ── 순환소수 점 표기 ─────────────────────────────────────────────
+   combining dot(U+0307)은 폰트에 따라 숫자와 합성되지 않고 뒤로 밀린다
+   (윈도우 크롬 실사고) — CSS 점(.cyd::after)으로 숫자 위에 직접 그린다. */
+
+/** 숫자(글자) 하나 위에 순환점을 얹은 HTML. 잘못된 표기 함정 조립에도 쓴다. */
+export function cyd(d: string): string {
+  return `<span class="cyd">${esc(d)}</span>`;
+}
+
+/** 순환마디 문자열의 양 끝 숫자에 점(한 글자면 점 하나). */
+export function cycDigits(cycle: string): string {
+  if (cycle.length <= 1) return cyd(cycle);
+  return cyd(cycle[0]) + esc(cycle.slice(1, -1)) + cyd(cycle[cycle.length - 1]);
+}
 
 /** 분수 HTML, sign은 분수 앞에 색 부호로. 분자·분모는 재귀 렌더(문자 지원). */
 function fracHtml(num: string, den: string, signCls?: string): string {
@@ -83,6 +99,15 @@ function fmtCore(src: string): string {
           out += `<span class="mx-par">{</span>${fmtCore(body)}<span class="mx-par">}</span>`;
         }
         i = close + 1;
+        continue;
+      }
+    }
+    // 순환마디: [135] → 양 끝 숫자 위에 점(0.[7]·2.[135]·0.1[38] 꼴)
+    if (ch === "[") {
+      const m = src.slice(i).match(/^\[(\d+)\]/);
+      if (m) {
+        out += `<span class="cyc">${cycDigits(m[1])}</span>`;
+        i += m[0].length;
         continue;
       }
     }
@@ -357,7 +382,8 @@ export function mtoast(board: HTMLElement): (msg: string) => void {
     t.textContent = msg;
     t.classList.add("show");
     window.clearTimeout(timer);
-    const dur = Math.min(4800, 1800 + msg.length * 35);
+    // 읽기 속도 여유: 설명이 다 읽히기 전에 사라진다는 실사용 피드백(2026-07-19)로 상향
+    const dur = Math.min(6000, 2200 + msg.length * 45);
     timer = window.setTimeout(() => t.classList.remove("show"), dur);
   };
 }

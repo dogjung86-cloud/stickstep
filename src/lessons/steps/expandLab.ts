@@ -122,10 +122,11 @@ interface CutScene {
 }
 
 const SCENE1: CutScene = {
+  // 그림 기하 검산: a=32px → 세로 3a=96, 가로 4a=128(4:3 정확)+b=62
   h: 96,
   hLabel: "3a",
   segs: [
-    { w: 132, label: "4a", mat: "grape", mul: "3a×4a", out: "12a^2" },
+    { w: 128, label: "4a", mat: "grape", mul: "3a×4a", out: "12a^2" },
     { w: 62, label: "b", mat: "cyan", mul: "3a×b", out: "3ab" },
   ],
   total: "3a(4a+b)",
@@ -133,10 +134,11 @@ const SCENE1: CutScene = {
   aria: "세로 3a, 가로 4a 더하기 b인 직사각형. 경계에서 아래로 드래그하거나 경계를 탭해 자르기",
 };
 const SCENE2: CutScene = {
+  // 그림 기하 검산: a=34px → 세로 2a=68, 가로 3a=102(3:2 정확)−5 구간 56
   h: 68,
   hLabel: "2a",
   segs: [
-    { w: 124, label: "3a", mat: "grape", mul: "2a×3a", out: "6a^2" },
+    { w: 102, label: "3a", mat: "grape", mul: "2a×3a", out: "6a^2" },
     { w: 56, label: "-5", mat: "red", mul: "2a×5", out: "-10a", tag: "빼는 넓이" },
   ],
   total: "2a(3a-5)",
@@ -276,7 +278,7 @@ export const expandLab: StepRenderer = (host, step, api) => {
     g.appendChild(sv("line", { x1: x, y1: y0, x2: x, y2: y0 + h, stroke: C_AXIS, "stroke-width": 1.6 }));
     g.appendChild(sv("line", { x1: x - 3.5, y1: y0, x2: x + 3.5, y2: y0, stroke: C_AXIS, "stroke-width": 1.6 }));
     g.appendChild(sv("line", { x1: x - 3.5, y1: y0 + h, x2: x + 3.5, y2: y0 + h, stroke: C_AXIS, "stroke-width": 1.6 }));
-    g.appendChild(fml(x - 7, y0 + h / 2 + 4, label, "#475569", 12, "end"));
+    g.appendChild(fml(x - 7, y0 + h / 2 + 4, label, "#475569", 13, "end"));
     return g;
   }
 
@@ -344,17 +346,17 @@ export const expandLab: StepRenderer = (host, step, api) => {
     sc.segs.forEach((seg, i) => {
       const pk = makePiece(segX, y0, seg.w, sc.h, seg.mat);
       // 구간 폭 눈금 라벨(위)
-      pk.g.appendChild(fml(segX + seg.w / 2, y0 - 8, seg.label, seg.mat === "red" ? INK.red : C_DIM, 12));
-      // 절단 뒤 등장하는 조각 라벨(2줄 + 태그)
+      pk.g.appendChild(fml(segX + seg.w / 2, y0 - 8, seg.label, seg.mat === "red" ? INK.red : C_DIM, 13));
+      // 절단 뒤 등장하는 조각 라벨(2줄 + 태그) — 작아서 안 읽히는 실사용 피드백로 격상(10.5/15 → 13/19)
       const cy = y0 + sc.h / 2;
-      const lm = fml(segX + seg.w / 2, cy - 7, seg.mul, INK[seg.mat], 10.5, "middle", 700);
-      const lo = fml(segX + seg.w / 2, cy + 14, seg.out, INK[seg.mat], 15);
+      const lm = fml(segX + seg.w / 2, cy - 9, seg.mul, INK[seg.mat], 13, "middle", 700);
+      const lo = fml(segX + seg.w / 2, cy + 16, seg.out, INK[seg.mat], 19);
       prepPop(lm);
       prepPop(lo);
       pk.g.append(lm, lo);
       popEls.push(lm, lo);
       if (seg.tag) {
-        const tg = fml(segX + seg.w / 2, cy + 28, seg.tag, INK.red, 9);
+        const tg = fml(segX + seg.w / 2, cy + 30, seg.tag, INK.red, 10.5);
         prepPop(tg);
         pk.g.appendChild(tg);
         popEls.push(tg);
@@ -649,9 +651,9 @@ export const expandLab: StepRenderer = (host, step, api) => {
     divPieces = [];
     DIV_PIECES.forEach((pc, i) => {
       const pk = makePiece(pc.x, DIV_Y0, pc.w, DIV_H, pc.mat);
-      const lblArea = fml(pc.x + pc.w / 2, DIV_Y0 + DIV_H / 2 + 5, pc.area, INK[pc.mat], 16);
+      const lblArea = fml(pc.x + pc.w / 2, DIV_Y0 + DIV_H / 2 + 6, pc.area, INK[pc.mat], 19);
       pk.g.appendChild(lblArea);
-      const lblQuot = fml(pc.x + pc.w / 2, DIV_Y0 + DIV_H - 22, pc.quot, INK[pc.mat], 15);
+      const lblQuot = fml(pc.x + pc.w / 2, DIV_Y0 + DIV_H - 22, pc.quot, INK[pc.mat], 18);
       prepPop(lblQuot);
       pk.g.appendChild(lblQuot);
       svg.appendChild(pk.g);

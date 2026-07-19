@@ -3,19 +3,19 @@
 // 파운드리 문법(3스톱 그라데이션·키라이트·접촉 그림자·재질별 최암색 외곽선)을 지킨다.
 // 단원 Ⅰ 팔레트: 그레이프 #9C36B5(진한 #7D2A93·연한 #C77BD6), 보조 앰버 #E8A93E.
 
+import { cycDigits } from "./mathKit";
+
 const svg = (vb: string, inner: string, defs = ""): string =>
   `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" fill="none"><defs>${defs}</defs>${inner}</svg>`;
 
 /* ── 순환소수 점 표기 헬퍼 ─────────────────────────────────────
-   cyc("2", "1", "35") → "2.13̇5̇"가 아니라 마디 양 끝 위에 점: 2.1 3̇ 5̇ …
-   combining dot above(U+0307)로 숫자 위 점을 얹는다(폰트 렌더, SVG 불필요).
+   cyc("2", "1", "35") → 마디 양 끝 숫자 위에 점: 2.1 3̇ 5̇ 꼴의 HTML.
+   combining dot(U+0307)은 폰트가 숫자와 합성하지 못해 점이 뒤로 밀린다(윈도우 실사고)
+   — mathKit cycDigits(.cyd CSS 점)로 그린다. 반환값은 HTML이라 innerHTML 문맥 전용
+   (recap examples는 recap.ts가 "<span" 감지로 html 렌더 전환).
    int=정수부, pre=소수점 아래 비순환부(없으면 ""), cycle=순환마디. */
 export function cyc(int: string, pre: string, cycle: string): string {
-  const dot = "̇";
-  let marked: string;
-  if (cycle.length === 1) marked = cycle + dot;
-  else marked = cycle[0] + dot + cycle.slice(1, -1) + cycle[cycle.length - 1] + dot;
-  return `${int}.${pre}${marked}`;
+  return `<span class="cyc">${int}.${pre}${cycDigits(cycle)}</span>`;
 }
 
 /* ── L1 divStopFig: 나눗셈 기계가 멈추는 순간(나머지 0) ──────────
@@ -153,7 +153,7 @@ export function numMapFig(): string {
     <text x="259" y="74" text-anchor="middle" font-size="14" font-weight="800" fill="#5E2470">무한소수</text>
     <rect x="198" y="84" width="122" height="48" rx="10" fill="url(#nm-cyc)" stroke="#9C36B5" stroke-width="1.4"/>
     <text x="259" y="104" text-anchor="middle" font-size="13" font-weight="800" fill="#7D2A93">순환소수</text>
-    <text x="259" y="122" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8A4E9E">0.333…, 1.2̇5̇</text>
+    <text x="259" y="122" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8A4E9E">0.333…, 1.2525…</text>
     <rect x="198" y="140" width="122" height="42" rx="10" fill="#F2F4F8" stroke="#94A3B8" stroke-width="1.3" stroke-dasharray="4 3"/>
     <text x="259" y="158" text-anchor="middle" font-size="12" font-weight="800" fill="#64748B">순환하지 않는</text>
     <text x="259" y="174" text-anchor="middle" font-size="11.5" font-weight="700" fill="#64748B">무한소수 (π 등)</text>
@@ -198,22 +198,22 @@ export function panelFig(): string {
 
 /* ── L9 expandFig: 3a(4a+b) 직사각형 절단(전개의 넓이 모델) ── */
 export function expandFig(): string {
-  // 세로 3a=90px, 가로 4a=176px + b=68px, 원점(52,54)
+  // 그림 기하 검산: a=32px → 세로 3a=96, 가로 4a=128 + b=52 (4a:3a = 4:3 정확), 원점(64,54)
   return svg(
     "0 0 360 210",
     `<ellipse cx="180" cy="186" rx="130" ry="7" fill="#2A3A5E" opacity=".09"/>
-    <rect x="52" y="54" width="176" height="90" fill="url(#ex-a)" stroke="#7D2A93" stroke-width="1.6"/>
-    <rect x="232" y="54" width="68" height="90" fill="url(#ex-b)" stroke="#8C5A12" stroke-width="1.6"/>
-    <line x1="230" y1="46" x2="230" y2="152" stroke="#E8434F" stroke-width="2.4" stroke-dasharray="6 4"/>
-    <path d="M224 40 l6 8 6 -8" fill="none" stroke="#E8434F" stroke-width="2"/>
-    <text x="140" y="104" text-anchor="middle" font-size="15" font-weight="800" fill="#5E2470">3a×4a</text>
-    <text x="266" y="104" text-anchor="middle" font-size="15" font-weight="800" fill="#7A4A0E">3a×b</text>
-    <path d="M52 160 h176 M52 154 v12 M228 154 v12" stroke="#8A6E96" stroke-width="1.5"/>
-    <text x="140" y="177" text-anchor="middle" font-size="13" font-weight="800" font-style="italic" fill="#5E2470">4a</text>
-    <path d="M232 160 h68 M300 154 v12" stroke="#8A6E96" stroke-width="1.5"/>
-    <text x="266" y="177" text-anchor="middle" font-size="13" font-weight="800" font-style="italic" fill="#7A4A0E">b</text>
-    <path d="M40 54 v90 M34 54 h12 M34 144 h12" stroke="#8A6E96" stroke-width="1.5"/>
-    <text x="26" y="104" text-anchor="middle" font-size="13" font-weight="800" font-style="italic" fill="#5E2470">3a</text>
+    <rect x="64" y="54" width="128" height="96" fill="url(#ex-a)" stroke="#7D2A93" stroke-width="1.6"/>
+    <rect x="196" y="54" width="52" height="96" fill="url(#ex-b)" stroke="#8C5A12" stroke-width="1.6"/>
+    <line x1="194" y1="46" x2="194" y2="158" stroke="#E8434F" stroke-width="2.4" stroke-dasharray="6 4"/>
+    <path d="M188 40 l6 8 6 -8" fill="none" stroke="#E8434F" stroke-width="2"/>
+    <text x="128" y="107" text-anchor="middle" font-size="15" font-weight="800" fill="#5E2470">3a×4a</text>
+    <text x="222" y="107" text-anchor="middle" font-size="13.5" font-weight="800" fill="#7A4A0E">3a×b</text>
+    <path d="M64 164 h128 M64 158 v12 M192 158 v12" stroke="#8A6E96" stroke-width="1.5"/>
+    <text x="128" y="181" text-anchor="middle" font-size="13" font-weight="800" font-style="italic" fill="#5E2470">4a</text>
+    <path d="M196 164 h52 M248 158 v12" stroke="#8A6E96" stroke-width="1.5"/>
+    <text x="222" y="181" text-anchor="middle" font-size="13" font-weight="800" font-style="italic" fill="#7A4A0E">b</text>
+    <path d="M52 54 v96 M46 54 h12 M46 150 h12" stroke="#8A6E96" stroke-width="1.5"/>
+    <text x="36" y="107" text-anchor="middle" font-size="13" font-weight="800" font-style="italic" fill="#5E2470">3a</text>
     <rect x="88" y="14" width="184" height="24" rx="12" fill="url(#ex-tag)"/>
     <text x="180" y="31" text-anchor="middle" font-size="13" font-weight="800" fill="#FFFFFF">잘라도 넓이의 합은 그대로</text>`,
     `<linearGradient id="ex-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EBD6F2"/><stop offset="1" stop-color="#D9B5E4"/></linearGradient>

@@ -11,14 +11,14 @@
 //   230769·117·2·20·42·23·19512·74·38·925·906·583·245·504 신작.
 // word 정답: 순환소수(e39)·무한소수 칩 배제(부분집합 서술이라 중의성)·순환마디(e40), e37 성질 multi에
 //   순환마디 정의문을 넣지 않아 e40과 유출 고리를 끊었다.
-// 표기: 점 표기는 cyc(), 잘못된 표기 보기는 combining dot(U+0307) 직접 조합, em대시 금지, U+2212, num answer만 ASCII.
+// 표기: 점 표기는 cyc(), 잘못된 표기 함정 보기는 cyd()로 점 찍을 숫자만 감싸 조립
+//   (combining dot U+0307은 폰트가 합성 못 해 점이 밀리는 실사고, CSS 점 .cyd로 전환), em대시 금지, U+2212, num answer만 ASCII.
 import type { ExamItem } from "./types";
-import { mfmt } from "../../ui/mathKit";
+import { mfmt, cyd } from "../../ui/mathKit";
 import { cyc } from "../../ui/mathFigures2";
 import { m2ExamDigitStripFig } from "../../ui/examFiguresMath";
 
 const L = "m2u1l2";
-const D = "̇"; // combining dot above, 잘못된 표기 함정 조립용
 
 export const POOL_M2U1L2: ExamItem[] = [
   // 마디 기초: 0.275275275… → 275 (최단 토막, 시작은 첫 자리부터) · diff1
@@ -54,7 +54,7 @@ export const POOL_M2U1L2: ExamItem[] = [
     type: "mcq",
     prompt: "순환소수의 표기로 <b>옳지 않은</b> 것은?",
     options: [
-      `5.727272… = 5${D}.7${D}2${D}`,
+      `5.727272… = ${cyd("5")}.${cyd("7")}${cyd("2")}`,
       `0.815815… = ${cyc("0", "", "815")}`,
       `3.1444… = ${cyc("3", "1", "4")}`,
       `0.046046… = ${cyc("0", "", "046")}`,

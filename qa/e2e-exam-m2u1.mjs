@@ -15,6 +15,18 @@ const page = await browser.newPage({ viewport: { width: 420, height: 900 }, devi
 let pageErrors = 0;
 page.on("pageerror", (e) => { pageErrors++; console.log("PAGEERROR:", e.message); });
 
+// HMR 면역(동시 세션 src 편집 대비): 웹소켓 제거·updateStyle 유지 — 스텝 러시 e2e 확정 문법
+await page.route("**/@vite/client", (route) =>
+  route.fulfill({
+    contentType: "application/javascript",
+    body: `export function createHotContext(){return{accept(){},dispose(){},on(){},off(){},send(){},prune(){},invalidate(){},data:{}}}
+const sheets=new Map();
+export function updateStyle(id,css){let s=sheets.get(id);if(!s){s=document.createElement("style");s.setAttribute("data-vite-dev-id",id);document.head.appendChild(s);sheets.set(id,s)}s.textContent=css}
+export function removeStyle(id){const s=sheets.get(id);if(s){s.remove();sheets.delete(id)}}
+export function injectQuery(u){return u}`,
+  }),
+);
+
 let PASS = 0, FAIL = 0;
 const ok = (cond, name, extra = "") => {
   if (cond) { PASS++; console.log("  ok  ", name); }

@@ -61,7 +61,8 @@ export const recap: StepRenderer = (host, step, api) => {
     body.appendChild(el("div", { class: "rc-text", html: c.text }));
     if (c.examples?.length) {
       const ex = el("div", { class: "rc-ex" });
-      for (const e of c.examples) ex.appendChild(el("span", { text: e }));
+      // 기본은 textContent(부등식 예시의 raw < 안전) — 순환점(.cyd) 같은 span 마크업만 html로
+      for (const e of c.examples) ex.appendChild(e.includes("<span") ? el("span", { html: e }) : el("span", { text: e }));
       body.appendChild(ex);
     }
     const card = el(

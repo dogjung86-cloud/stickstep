@@ -295,8 +295,13 @@
   steps/hookM2u1.ts(훅 10장면)+랩 9종(divLab·cycleLab·denomLab·shiftLab·powMulLab·powDivLab·
   monoLab·polyAddLab·expandLab), styles/math2.css(테마+랩 스타일, main.ts import).
   스틱맨 컷 폴더는 **math2**(public/math2/cuts, 이름 u1lN — 중1 math/cuts의 uNlM과 학년 충돌 방지).
-- **순환소수 점 표기는 mathFigures2의 cyc(int, pre, cycle)** — combining dot(U+0307)로 마디 양 끝
-  숫자 위에 점(0.7̇, 1.45̇8̇). mfmt·플레인 텍스트 어디서나 통하고 SVG가 필요 없다.
+- **순환소수 점 표기는 mathFigures2의 cyc(int, pre, cycle)** — 마디 양 끝 숫자 위에 점(0.7̇, 1.45̇8̇).
+  ⚠️ **combining dot(U+0307)은 금지**(2026-07-19 소급): 폰트가 숫자와 합성하지 못해 점이 숫자 뒤로
+  밀리는 실사고(윈도우 크롬) — cyc()는 CSS 점(.cyd::after, math.css) HTML을 반환한다. 따라서
+  **innerHTML 문맥 전용**(퀴즈 보기·concept·해설·시험 전부 해당, recap examples는 recap.ts가
+  "<span" 감지로 html 렌더 전환). 점 찍을 숫자 하나만 감쌀 땐 mathKit cyd(d)(잘못된 표기 함정 조립).
+  **mfmt를 거치는 텍스트(드릴 q 등)는 태그가 이스케이프되므로 cyc() 대신 `[마디]` 마이크로 마크업**
+  ("0.[7]", "2.[135]" — fmtCore가 양 끝 점 처리). SVG `<text>` 안에는 어느 쪽도 못 쓴다(0.4545… 서술로 우회).
 - **mfmt가 `)^n`(괄호 뒤 지수)을 지원**한다(중2 Ⅰ에서 추가) — (a^2)^3, (2a^3)^2 꼴을 드릴·퀴즈에
   그대로 쓸 수 있다. 단, 위첨자 유니코드(2³⁵)는 narrator 등 mfmt 밖 텍스트에서만.
 - **지수·계수 드릴 규약**: 넘패드는 숫자만 되므로 "x^3×x^4 = x^□, □는?"처럼 지수·계수 부품만 받는다

@@ -45,8 +45,8 @@ export const renderCalculator: SceneFn = (scene, helper, finish, face, choices) 
     <rect x="96" y="22" width="168" height="160" rx="16" fill="url(#cal-bd)" stroke="#5E2470" stroke-width="1.6"/>
     <rect x="108" y="34" width="144" height="46" rx="9" fill="url(#cal-sc)" stroke="#5E2470" stroke-width="1.2"/>
     <ellipse cx="126" cy="30" rx="16" ry="4" fill="#fff" opacity=".45"/>
-    <text id="cal-disp" x="244" y="64" text-anchor="end" font-size="19" font-weight="800" fill="#2A3648" letter-spacing="1"></text>
-    <text id="cal-ell" x="250" y="64" font-size="18" font-weight="900" fill="#9C36B5" opacity="0">…</text>
+    <text id="cal-disp" x="244" y="63" text-anchor="end" font-size="15" font-weight="800" fill="#2A3648" letter-spacing=".5"></text>
+    <text id="cal-ell" x="248" y="63" font-size="15" font-weight="900" fill="#9C36B5" opacity="0">…</text>
     ${keys}`,
     `${BG}
     <linearGradient id="cal-bd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C77BD6"/><stop offset=".5" stop-color="#9C36B5"/><stop offset="1" stop-color="#7D2A93"/></linearGradient>
@@ -64,7 +64,8 @@ export const renderCalculator: SceneFn = (scene, helper, finish, face, choices) 
     haptic(HAPTIC.select);
     const disp = q<SVGTextElement>(fig, "#cal-disp");
     const ell = q<SVGTextElement>(fig, "#cal-ell");
-    const target = "0.3333333333";
+    // 화면(x 108~252) 안에 끝까지 차되 넘치지 않는 자릿수: 15px×13자+점 ≈ 128px, 시작 x≈116
+    const target = "0.333333333333";
     let i = 0;
     const type = (): void => {
       i += 1;
@@ -406,28 +407,28 @@ export const renderGerms: SceneFn = (scene, helper, finish, face, choices) => {
 export const renderStorage: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
   fig.innerHTML = wrapSvg(
-    `${CARD}${SHADOW(180, 186, 70, 0.13)}
-    <rect x="118" y="14" width="124" height="176" rx="18" fill="url(#st-ph)" stroke="#2A3648" stroke-width="1.8"/>
-    <rect x="126" y="30" width="108" height="152" rx="10" fill="url(#st-sc)"/>
-    <rect x="150" y="20" width="60" height="5" rx="2.5" fill="#3A4A66"/>
-    <ellipse cx="140" cy="36" rx="10" ry="3.4" fill="#fff" opacity=".5"/>
-    <text x="180" y="52" text-anchor="middle" font-size="11" font-weight="800" fill="#5E2470">저장 공간</text>
-    <rect x="136" y="60" width="88" height="12" rx="6" fill="#E4D8EC"/>
-    <rect x="136" y="60" width="30" height="12" rx="6" fill="url(#st-used)"/>
+    `${CARD}${SHADOW(180, 188, 92, 0.13)}
+    <rect x="92" y="12" width="176" height="180" rx="20" fill="url(#st-ph)" stroke="#2A3648" stroke-width="1.8"/>
+    <rect x="100" y="28" width="160" height="158" rx="11" fill="url(#st-sc)"/>
+    <rect x="150" y="18" width="60" height="5" rx="2.5" fill="#3A4A66"/>
+    <ellipse cx="116" cy="34" rx="12" ry="3.6" fill="#fff" opacity=".5"/>
+    <text x="180" y="52" text-anchor="middle" font-size="13.5" font-weight="800" fill="#5E2470">저장 공간</text>
+    <rect x="112" y="61" width="136" height="13" rx="6.5" fill="#E4D8EC"/>
+    <rect x="112" y="61" width="46" height="13" rx="6.5" fill="url(#st-used)"/>
     <g id="st-free" opacity="0" style="transition: opacity .5s">
-      <rect x="140" y="80" width="80" height="22" rx="11" fill="#F7ECFA" stroke="#9C36B5" stroke-width="1.3"/>
-      <text x="180" y="95" text-anchor="middle" font-size="12.5" font-weight="900" fill="#7D2A93">남은 칸 2<tspan dy="-4.5" font-size="9">35</tspan></text>
+      <rect x="116" y="84" width="128" height="29" rx="14.5" fill="#F7ECFA" stroke="#9C36B5" stroke-width="1.3"/>
+      <text x="180" y="104" text-anchor="middle" font-size="16" font-weight="900" fill="#7D2A93">남은 칸 2<tspan dy="-6" font-size="11.5">35</tspan></text>
     </g>
     <g id="st-video" opacity="0" style="transition: opacity .5s">
-      <rect x="136" y="112" width="88" height="46" rx="9" fill="url(#st-vid)" stroke="#27408B" stroke-width="1.3"/>
-      <path d="M172 128 l14 7 -14 7 z" fill="#FFFFFF"/>
-      <rect x="142" y="146" width="52" height="15" rx="7.5" fill="#FFFFFF" stroke="#C9B2D6" stroke-width="1"/>
-      <text x="168" y="157" text-anchor="middle" font-size="10" font-weight="900" fill="#27408B">한 편 2<tspan dy="-3.6" font-size="7.5">28</tspan></text>
+      <rect x="112" y="122" width="136" height="56" rx="10" fill="url(#st-vid)" stroke="#27408B" stroke-width="1.3"/>
+      <path d="M172 132 l17 9 -17 9 z" fill="#FFFFFF"/>
+      <rect x="134" y="152" width="92" height="20" rx="10" fill="#FFFFFF" stroke="#C9B2D6" stroke-width="1"/>
+      <text x="180" y="166" text-anchor="middle" font-size="13" font-weight="900" fill="#27408B">한 편 2<tspan dy="-4.8" font-size="9.5">28</tspan></text>
     </g>
-    <g id="st-q" opacity="0" style="transition: opacity .5s, transform .5s var(--spring, cubic-bezier(.34,1.35,.5,1)); transform-origin: 288px 96px">
-      <circle cx="288" cy="96" r="22" fill="url(#st-qb)" stroke="#8C5A12" stroke-width="1.5"/>
-      <text x="288" y="104" text-anchor="middle" font-size="22" font-weight="900" fill="#7A4A0E">?</text>
-      <text x="288" y="136" text-anchor="middle" font-size="11.5" font-weight="800" fill="#7A4A0E">몇 편 더?</text>
+    <g id="st-q" opacity="0" style="transition: opacity .5s, transform .5s var(--spring, cubic-bezier(.34,1.35,.5,1)); transform-origin: 306px 92px">
+      <circle cx="306" cy="92" r="24" fill="url(#st-qb)" stroke="#8C5A12" stroke-width="1.5"/>
+      <text x="306" y="101" text-anchor="middle" font-size="24" font-weight="900" fill="#7A4A0E">?</text>
+      <text x="306" y="134" text-anchor="middle" font-size="12.5" font-weight="800" fill="#7A4A0E">몇 편 더?</text>
     </g>`,
     `${BG}
     <linearGradient id="st-ph" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A5A78"/><stop offset="1" stop-color="#2E3C55"/></linearGradient>
@@ -603,38 +604,42 @@ export const renderReceipt: SceneFn = (scene, helper, finish, face, choices) => 
 /* ── 9 kiosk: 키오스크 화면 두 구역, 잘라도 넓이 그대로 ─────────── */
 export const renderKiosk: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
+  // 그림 기하 검산: a=30px로 세로 3a=90, 가로 = 4a(120, 메뉴)+b(45, 결제) — 4a가 3a보다 길어야 한다
   let menu = "";
   for (let r = 0; r < 3; r++)
-    for (let c = 0; c < 2; c++)
-      menu += `<rect x="${104 + c * 44}" y="${52 + r * 32}" width="38" height="26" rx="5" fill="url(#ki-tile)" stroke="#7D2A93" stroke-width="1"/>
-        <circle cx="${115 + c * 44}" cy="${62 + r * 32}" r="4.5" fill="#E8A93E" opacity=".85"/>
-        <rect x="${123 + c * 44}" y="${59 + r * 32}" width="14" height="3" rx="1.5" fill="#B79BC7"/>
-        <rect x="${123 + c * 44}" y="${66 + r * 32}" width="10" height="3" rx="1.5" fill="#D9C7E4"/>`;
+    for (let c = 0; c < 2; c++) {
+      const tx = 106 + c * 52;
+      const ty = 50 + r * 28;
+      menu += `<rect x="${tx}" y="${ty}" width="44" height="24" rx="5" fill="url(#ki-tile)" stroke="#7D2A93" stroke-width="1"/>
+        <circle cx="${tx + 11}" cy="${ty + 12}" r="4.5" fill="#E8A93E" opacity=".85"/>
+        <rect x="${tx + 20}" y="${ty + 7}" width="16" height="3" rx="1.5" fill="#B79BC7"/>
+        <rect x="${tx + 20}" y="${ty + 14.5}" width="11" height="3" rx="1.5" fill="#D9C7E4"/>`;
+    }
   fig.innerHTML = wrapSvg(
     `${CARD}${SHADOW(180, 188, 60, 0.14)}
-    <rect x="168" y="156" width="24" height="26" fill="url(#ki-stand)" stroke="#2A3648" stroke-width="1.4"/>
+    <rect x="168" y="146" width="24" height="36" fill="url(#ki-stand)" stroke="#2A3648" stroke-width="1.4"/>
     <rect x="140" y="180" width="80" height="8" rx="4" fill="url(#ki-stand)" stroke="#2A3648" stroke-width="1.4"/>
-    <rect x="88" y="30" width="184" height="130" rx="12" fill="url(#ki-body)" stroke="#2A3648" stroke-width="1.8"/>
-    <ellipse cx="112" cy="40" rx="14" ry="4" fill="#fff" opacity=".4"/>
+    <rect x="88" y="30" width="184" height="118" rx="12" fill="url(#ki-body)" stroke="#2A3648" stroke-width="1.8"/>
+    <ellipse cx="112" cy="38" rx="14" ry="4" fill="#fff" opacity=".4"/>
     <g id="ki-left" style="transition: transform .45s var(--spring, cubic-bezier(.34,1.35,.5,1))">
-      <rect x="96" y="44" width="102" height="102" rx="7" fill="url(#ki-scr)" stroke="#5E2470" stroke-width="1.2"/>
+      <rect x="96" y="44" width="120" height="90" rx="7" fill="url(#ki-scr)" stroke="#5E2470" stroke-width="1.2"/>
       ${menu}
     </g>
     <g id="ki-right" style="transition: transform .45s var(--spring, cubic-bezier(.34,1.35,.5,1))">
-      <rect x="202" y="44" width="60" height="102" rx="7" fill="url(#ki-pay)" stroke="#8C5A12" stroke-width="1.2"/>
-      <rect x="209" y="54" width="46" height="10" rx="5" fill="#FFFFFF" opacity=".85"/>
-      <rect x="209" y="70" width="46" height="10" rx="5" fill="#FFFFFF" opacity=".65"/>
-      <rect x="209" y="120" width="46" height="18" rx="9" fill="url(#ki-paybtn)" stroke="#7D2A93" stroke-width="1"/>
-      <text x="232" y="133" text-anchor="middle" font-size="10" font-weight="900" fill="#FFFFFF">결제</text>
+      <rect x="220" y="44" width="45" height="90" rx="7" fill="url(#ki-pay)" stroke="#8C5A12" stroke-width="1.2"/>
+      <rect x="226" y="53" width="33" height="9" rx="4.5" fill="#FFFFFF" opacity=".85"/>
+      <rect x="226" y="68" width="33" height="9" rx="4.5" fill="#FFFFFF" opacity=".65"/>
+      <rect x="225" y="110" width="35" height="17" rx="8.5" fill="url(#ki-paybtn)" stroke="#7D2A93" stroke-width="1"/>
+      <text x="242.5" y="122" text-anchor="middle" font-size="10" font-weight="900" fill="#FFFFFF">결제</text>
     </g>
-    <line id="ki-cut" x1="200" y1="40" x2="200" y2="150" stroke="#E8434F" stroke-width="2.2" stroke-dasharray="6 4" opacity="0" style="transition: opacity .4s"/>
+    <line id="ki-cut" x1="218" y1="40" x2="218" y2="138" stroke="#E8434F" stroke-width="2.2" stroke-dasharray="6 4" opacity="0" style="transition: opacity .4s"/>
     <g id="ki-dims" opacity="0" style="transition: opacity .5s">
-      <rect x="126" y="152" width="42" height="17" rx="8.5" fill="#FFFFFF" stroke="#C9B2D6" stroke-width="1"/>
-      <text x="147" y="164" text-anchor="middle" font-size="10.5" font-weight="800" font-style="italic" fill="#5E2470">4a</text>
-      <rect x="212" y="152" width="38" height="17" rx="8.5" fill="#FFFFFF" stroke="#C9B2D6" stroke-width="1"/>
-      <text x="231" y="164" text-anchor="middle" font-size="10.5" font-weight="800" font-style="italic" fill="#7A4A0E">b</text>
-      <rect x="60" y="86" width="38" height="17" rx="8.5" fill="#FFFFFF" stroke="#C9B2D6" stroke-width="1"/>
-      <text x="79" y="98" text-anchor="middle" font-size="10.5" font-weight="800" font-style="italic" fill="#5E2470">3a</text>
+      <rect x="134" y="150" width="44" height="18" rx="9" fill="#FFFFFF" stroke="#C9B2D6" stroke-width="1"/>
+      <text x="156" y="163" text-anchor="middle" font-size="11.5" font-weight="800" font-style="italic" fill="#5E2470">4a</text>
+      <rect x="224" y="150" width="38" height="18" rx="9" fill="#FFFFFF" stroke="#C9B2D6" stroke-width="1"/>
+      <text x="243" y="163" text-anchor="middle" font-size="11.5" font-weight="800" font-style="italic" fill="#7A4A0E">b</text>
+      <rect x="58" y="80" width="38" height="18" rx="9" fill="#FFFFFF" stroke="#C9B2D6" stroke-width="1"/>
+      <text x="77" y="93" text-anchor="middle" font-size="11.5" font-weight="800" font-style="italic" fill="#5E2470">3a</text>
     </g>`,
     `${BG}
     <linearGradient id="ki-body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A5A78"/><stop offset="1" stop-color="#2E3C55"/></linearGradient>
@@ -715,8 +720,9 @@ export const renderTangram: SceneFn = (scene, helper, finish, face, choices) => 
       </g>`,
     )
     .join("");
+  // 문자 딱지는 시작부터 보인다(도입 문구 "변마다 딱지가 붙어 있어요"와 일치) — 완성 후엔 펄스 강조만
   const tag = (x: number, y: number, t: string, id: string): string =>
-    `<g id="${id}" opacity="0" style="transition: opacity .4s, transform .4s var(--spring, cubic-bezier(.34,1.35,.5,1)); transform-origin: ${x}px ${y}px">
+    `<g id="${id}" style="transition: transform .4s var(--spring, cubic-bezier(.34,1.35,.5,1)); transform-origin: ${x}px ${y}px">
       <rect x="${x - 17}" y="${y - 10}" width="34" height="20" rx="10" fill="#FFFFFF" stroke="#9C36B5" stroke-width="1.3"/>
       <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="11.5" font-weight="800" font-style="italic" fill="#7D2A93">${t}</text>
     </g>`;
@@ -740,7 +746,7 @@ export const renderTangram: SceneFn = (scene, helper, finish, face, choices) => 
   const btn = mkBtn("조각 맞추기");
   const box = el("div", { class: "hook-choices" });
   scene.append(fig, btn, box);
-  helper.innerHTML = "일곱 조각 <b>칠교</b>가 흩어져 있어요. 조각을 다 맞추면 큰 정사각형이 되는데, 변마다 <b>2a 같은 문자 딱지</b>가 붙는대요.";
+  helper.innerHTML = "일곱 조각 <b>칠교</b>가 흩어져 있어요. 완성될 큰 정사각형의 틀에는 변마다 <b>2a 같은 문자 딱지</b>가 붙어 있죠.";
 
   btn.addEventListener("click", () => {
     btn.disabled = true;
@@ -755,8 +761,8 @@ export const renderTangram: SceneFn = (scene, helper, finish, face, choices) => 
     ["tg-t1", "tg-t2", "tg-t3", "tg-t4"].forEach((id, k) =>
       window.setTimeout(() => {
         const t = q<SVGGElement>(fig, `#${id}`);
-        t.style.opacity = "1";
-        t.style.transform = "scale(1)";
+        t.style.transform = "scale(1.22)";
+        window.setTimeout(() => (t.style.transform = "scale(1)"), 240);
       }, 150 + 7 * 190 + 200 + k * 160),
     );
     window.setTimeout(() => {

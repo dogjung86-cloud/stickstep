@@ -275,6 +275,25 @@ export const denomLab: StepRenderer = (host, step, api) => {
     }, 330);
   }
 
+  /** 국면 전환 버튼: 결론 카드를 학생이 다 읽고 직접 넘어간다(자동 전환은 읽기 전에 사라지는 실사용 피드백). */
+  function offerNext(label: string, go: () => void): void {
+    later(() => {
+      const b = el("button", {
+        class: "dnl-go dnl-pop pulse",
+        text: label,
+        attrs: { type: "button" },
+      });
+      b.addEventListener("click", () => {
+        b.disabled = true;
+        b.classList.remove("pulse");
+        haptic(HAPTIC.tap);
+        go();
+      });
+      ctl.appendChild(b);
+      later(() => b.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
+    }, 700);
+  }
+
   /* ================= 국면 1: 10 만들기(7/20) ================= */
   function phase1(): void {
     const fr = buildFrac(7, 20);
@@ -372,7 +391,7 @@ export const denomLab: StepRenderer = (host, step, api) => {
             goals.on("ten", "35/100!");
             helper.innerHTML =
               "분모의 소인수가 <b>2와 5뿐</b>이면 짝을 채워 10의 거듭제곱으로 바꿀 수 있어요. 그런데 다른 수가 끼어 있다면요?";
-            later(() => swapStage(phase2), 2500);
+            offerNext("다음 손님 받기", () => swapStage(phase2));
           }, 330);
         }, 380);
       }, 300);
@@ -501,7 +520,7 @@ export const denomLab: StepRenderer = (host, step, api) => {
       goals.on("curse", "순환 판정!");
       helper.innerHTML =
         "판별법 완성! 기약분수의 분모에 <b>2와 5 외의 소인수</b>가 남으면 순환소수예요. 그런데 왜 하필 같은 숫자가 되풀이될까요? 마지막 방에서 확인해요.";
-      later(() => swapStage(phase3), 2600);
+      offerNext("마지막 방으로", () => swapStage(phase3));
     }
   }
 

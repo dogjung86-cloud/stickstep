@@ -12,6 +12,18 @@ const page = await browser.newPage({ viewport: { width: 420, height: 900 }, devi
 let pageErrors = 0;
 page.on("pageerror", (e) => { pageErrors++; console.log("PAGEERROR:", e.message); });
 
+// HMR 면역(동시 세션 src 편집 대비): 웹소켓 제거·updateStyle 유지 — 스텝 러시 e2e 확정 문법
+await page.route("**/@vite/client", (route) =>
+  route.fulfill({
+    contentType: "application/javascript",
+    body: `export function createHotContext(){return{accept(){},dispose(){},on(){},off(){},send(){},prune(){},invalidate(){},data:{}}}
+const sheets=new Map();
+export function updateStyle(id,css){let s=sheets.get(id);if(!s){s=document.createElement("style");s.setAttribute("data-vite-dev-id",id);document.head.appendChild(s);sheets.set(id,s)}s.textContent=css}
+export function removeStyle(id){const s=sheets.get(id);if(s){s.remove();sheets.delete(id)}}
+export function injectQuery(u){return u}`,
+  }),
+);
+
 await page.addInitScript(() => {
   const KEY = "science-app.v1";
   localStorage.setItem(KEY, JSON.stringify({
@@ -271,7 +283,8 @@ const LAB = {
     await W(1100);
     await untilChip("late", () => seg(1, 2), 4, "마디 58");
   },
-  /* denomLab: 분모 탭 → ×5 → 저주 → 룰렛 (ten·curse·wheel) */
+  /* denomLab: 분모 탭 → ×5 → 저주 → 룰렛 (ten·curse·wheel)
+     국면 전환은 자동이 아니라 진행 버튼(다음 손님/마지막 방) — 결론 읽기 게이트(2026-07-19) */
   async denomLab() {
     await page.waitForSelector(".dnl-frac", { timeout: 9000 });
     await tapIf(".dnl-dnum.hint", 1600); // 분모 열기(첫 합체 자동 연출)
@@ -279,20 +292,21 @@ const LAB = {
       await tapIf(".dnl-dnum.hint", 1200);
       await clickBtnIf("×5", 1500);
     }, 8, "10 변신");
-    await W(1400);
-    await tapIf(".dnl-dnum.hint", 1600);
+    await W(900);
     await untilChip("curse", async () => {
+      await clickBtnIf("다음 손님", 1300); // 국면 1 결론 게이트
       await tapIf(".dnl-dnum.hint", 900);
       await clickBtnIf("×2", 1000);
       await clickBtnIf("×5", 1000);
       await clickBtnIf("순환소수 판정", 1200);
-    }, 8, "3의 저주");
-    await W(1400);
+    }, 10, "3의 저주");
+    await W(900);
     await untilChip("wheel", async () => {
+      await clickBtnIf("마지막 방", 1300); // 국면 2 결론 게이트
       await clickBtnIf("다음 자리", 1300);
       // 여섯 자리 뒤 예측은 정답을 골라야 진행이 풀린다(비둘기집)
       if (!(await clickBtnIf("밟았던 자리", 1700))) await W(200);
-    }, 18, "나머지 룰렛");
+    }, 20, "나머지 룰렛");
   },
   /* shiftLab: ×10 → 빼기 → 나누기 → 다음 판 → ×10(함정) → ×100 → 완주 (shift·erase·frac) */
   async shiftLab() {
@@ -442,15 +456,15 @@ const LAB = {
   async expandLab() {
     await page.waitForSelector(".exl-stage svg", { timeout: 9000 });
     const VW = 360, VH = 162;
-    // 국면 1: 경계(bx=223, y 중앙 88) 탭 → 자동 절단
+    // 국면 1: 경계(bx=221 — 4a=128·b=62 기하 검산판, y 중앙 88) 탭 → 자동 절단
     await untilChip("cutk", async () => {
-      await svgPtE(".exl-stage svg", 223, 88, VW, VH);
+      await svgPtE(".exl-stage svg", 221, 88, VW, VH);
     }, 6, "쪼개기");
     await W(1400);
-    // 국면 2: 예측 후 경계(bx=222, h=68 중앙 74) 탭
+    // 국면 2: 예측 후 경계(bx=211 — 3a=102 기하 검산판, h=68 중앙 74) 탭
     await untilChip("minus", async () => {
       await tapIf(".mq6-choice", 900);
-      await svgPtE(".exl-stage svg", 222, 74, VW, VH);
+      await svgPtE(".exl-stage svg", 211, 74, VW, VH);
     }, 8, "음수 분배");
     await W(1400);
     // 국면 3: ÷2a 버튼 2개 → 선언

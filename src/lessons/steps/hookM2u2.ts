@@ -350,8 +350,8 @@ export const renderGroupticket: SceneFn = (scene, helper, finish, face, choices)
     <ellipse cx="52" cy="40" rx="16" ry="2.2" fill="#fff" opacity=".4"/>
     ${card(160, 84, "개인", "4000원", false)}
     ${card(252, 92, "단체", "80000원", true)}
-    <rect x="263" y="78" width="70" height="13" rx="6.5" fill="#F7E7CE" stroke="#C9A76F" stroke-width="1"/>
-    <text x="298" y="87.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="#7F4A12">25명분 20% 할인</text>
+    <rect x="254" y="76" width="88" height="17" rx="8.5" fill="#F7E7CE" stroke="#C9A76F" stroke-width="1"/>
+    <text x="298" y="88" text-anchor="middle" font-size="10" font-weight="800" fill="#7F4A12">25명분 20% 할인</text>
     ${[0, 1, 2, 3, 4, 5, 6, 7, 8].map((k) => person(168 + k * 18, k)).join("")}
     <text id="gt-dots" x="332" y="160" text-anchor="middle" font-size="13" font-weight="900" fill="#8C6E4A" opacity="0" style="transition: opacity .4s">…</text>
     <g id="gt-q" opacity="0" style="transition: opacity .4s, transform .45s ${SPRING}; transform: scale(.4); transform-origin: 310px 118px">
@@ -518,8 +518,8 @@ export const renderBoats: SceneFn = (scene, helper, finish, face, choices) => {
     `<circle cx="${x}" cy="${y}" r="3.5" fill="#FFFFFF" stroke="#2A3648" stroke-width="1.6"/>`;
   const sample = (id: string, cx: number, label: string, heads: number[]): string =>
     `<g id="${id}" style="transition: opacity .45s">
-      <rect x="${cx - 21}" y="96" width="42" height="15" rx="7.5" fill="#FFFFFF" stroke="#C9A76F" stroke-width="1.2"/>
-      <text x="${cx}" y="107" text-anchor="middle" font-size="8.5" font-weight="800" fill="#7F4A12">${label}</text>
+      <rect x="${cx - 29}" y="92" width="58" height="20" rx="10" fill="#FFFFFF" stroke="#C9A76F" stroke-width="1.2"/>
+      <text x="${cx}" y="106" text-anchor="middle" font-size="12" font-weight="800" fill="#7F4A12">${label}</text>
       ${heads.map((dx) => head(cx + dx, 126)).join("")}
       ${hull(cx, 130, 26)}
     </g>`;
@@ -540,18 +540,18 @@ export const renderBoats: SceneFn = (scene, helper, finish, face, choices) => {
     ${sample("bt-ex2", 245, "3인용", [-12, 0, 12])}
     ${mystery("bt-m0", 80, 132)}${mystery("bt-m1", 180, 132)}${mystery("bt-m2", 280, 132)}
     ${mystery("bt-m3", 80, 164)}${mystery("bt-m4", 180, 164)}${mystery("bt-m5", 280, 164)}
-    <g id="bt-b6" opacity="0" style="transition: opacity .4s, transform .4s ${SPRING}; transform: scale(.5); transform-origin: 56px 108px">
-      <rect x="30" y="98" width="52" height="20" rx="10" fill="url(#bt-badge)" stroke="#7F4A12" stroke-width="1.3"/>
-      <text x="56" y="112" text-anchor="middle" font-size="10.5" font-weight="900" fill="#FFFFFF">6대</text>
-      <ellipse cx="42" cy="101.5" rx="6" ry="1.6" fill="#fff" opacity=".5"/>
+    <g id="bt-b6" opacity="0" style="transition: opacity .4s, transform .4s ${SPRING}; transform: scale(.5); transform-origin: 58px 106px">
+      <rect x="28" y="94" width="60" height="24" rx="12" fill="url(#bt-badge)" stroke="#7F4A12" stroke-width="1.3"/>
+      <text x="58" y="111" text-anchor="middle" font-size="13.5" font-weight="900" fill="#FFFFFF">6대</text>
+      <ellipse cx="42" cy="98" rx="7" ry="1.8" fill="#fff" opacity=".5"/>
     </g>
     <g id="bt-b14" opacity="0" style="transition: opacity .4s, transform .45s ${SPRING}; transform: scale(.4); transform-origin: 267px 104px">
-      ${SHADOW(267, 128, 46, 0.09)}
-      <rect x="204" y="84" width="126" height="40" rx="12" fill="url(#bt-card)" stroke="#C9A76F" stroke-width="1.4"/>
-      ${[0, 1, 2, 3, 4, 5, 6].map((j) => `<circle cx="${217 + j * 13.5}" cy="97" r="2.9" fill="#4E5E74"/>`).join("")}
-      ${[0, 1, 2, 3, 4, 5, 6].map((j) => `<circle cx="${217 + j * 13.5}" cy="110" r="2.9" fill="#4E5E74"/>`).join("")}
-      <text x="313" y="108" text-anchor="middle" font-size="10.5" font-weight="900" fill="#7F4A12">14명</text>
-      <ellipse cx="218" cy="87.5" rx="9" ry="1.8" fill="#fff" opacity=".6"/>
+      ${SHADOW(267, 130, 48, 0.09)}
+      <rect x="200" y="82" width="134" height="44" rx="12" fill="url(#bt-card)" stroke="#C9A76F" stroke-width="1.4"/>
+      ${[0, 1, 2, 3, 4, 5, 6].map((j) => `<circle cx="${213 + j * 13.5}" cy="96" r="2.9" fill="#4E5E74"/>`).join("")}
+      ${[0, 1, 2, 3, 4, 5, 6].map((j) => `<circle cx="${213 + j * 13.5}" cy="110" r="2.9" fill="#4E5E74"/>`).join("")}
+      <text x="314" y="108" text-anchor="middle" font-size="13.5" font-weight="900" fill="#7F4A12">14명</text>
+      <ellipse cx="214" cy="85.5" rx="9" ry="1.8" fill="#fff" opacity=".6"/>
     </g>`,
     `${BG}
     <linearGradient id="bt-water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9CCBEE"/><stop offset=".5" stop-color="#6FA8DC"/><stop offset="1" stop-color="#4E86BC"/></linearGradient>
@@ -639,8 +639,8 @@ export const renderBingsu: SceneFn = (scene, helper, finish, face, choices) => {
     <ellipse cx="62" cy="38" rx="18" ry="3" fill="#fff" opacity=".12"/>
     ${bowl(72, 96, 1.4, false)}
     ${bowl(160, 96, 1.4, true)}
-    <text x="72" y="118" text-anchor="middle" font-size="9.5" font-weight="800" fill="#F4E8D4">팥빙수</text>
-    <text x="160" y="118" text-anchor="middle" font-size="9.5" font-weight="800" fill="#F4E8D4">과일빙수</text>
+    <text x="72" y="119" text-anchor="middle" font-size="11" font-weight="800" fill="#F4E8D4">팥빙수</text>
+    <text x="160" y="119" text-anchor="middle" font-size="11" font-weight="800" fill="#F4E8D4">과일빙수</text>
     ${smudge(72, 138)}
     ${smudge(160, 138)}
     <g id="bs-h1" opacity="0" style="transition: opacity .45s, transform .55s ${SPRING}; transform: translate(26px, -20px) rotate(10deg); transform-origin: 277px 64px">
@@ -650,10 +650,10 @@ export const renderBingsu: SceneFn = (scene, helper, finish, face, choices) => {
         <ellipse cx="230" cy="40" rx="10" ry="1.8" fill="#fff" opacity=".6"/>
         ${bowl(238, 78, 0.8, false)}
         ${bowl(316, 78, 0.8, true)}
-        <path d="M258 62 Q277 48 294 58" stroke="#7F4A12" stroke-width="2" fill="none"/>
-        <path d="M294 58 l-7 -3.5 l1.6 6 z" fill="#7F4A12"/>
-        <rect x="254" y="40" width="46" height="15" rx="7.5" fill="url(#bs-pill)" stroke="#7F4A12" stroke-width="1.1"/>
-        <text x="277" y="51" text-anchor="middle" font-size="8.5" font-weight="900" fill="#FFFFFF">+3000원</text>
+        <path d="M258 64 Q277 52 294 60" stroke="#7F4A12" stroke-width="2" fill="none"/>
+        <path d="M294 60 l-7 -3.5 l1.6 6 z" fill="#7F4A12"/>
+        <rect x="244" y="38" width="66" height="19" rx="9.5" fill="url(#bs-pill)" stroke="#7F4A12" stroke-width="1.1"/>
+        <text x="277" y="51.5" text-anchor="middle" font-size="11.5" font-weight="900" fill="#FFFFFF">+3000원</text>
       </g>
     </g>
     <g id="bs-h2" opacity="0" style="transition: opacity .45s, transform .55s ${SPRING}; transform: translate(30px, -12px) rotate(-9deg); transform-origin: 277px 132px">
@@ -661,12 +661,12 @@ export const renderBingsu: SceneFn = (scene, helper, finish, face, choices) => {
         ${SHADOW(277, 164, 56, 0.1)}
         <rect x="214" y="104" width="126" height="56" rx="10" fill="url(#bs-card)" stroke="#C9A76F" stroke-width="1.4"/>
         <ellipse cx="230" cy="108" rx="10" ry="1.8" fill="#fff" opacity=".6"/>
-        ${bowl(232, 136, 0.7, false)}
-        <text x="246" y="140" font-size="9.5" font-weight="900" fill="#2A3648">×2</text>
-        <text x="260" y="140" font-size="9.5" font-weight="900" fill="#8C6E4A">+</text>
-        ${bowl(280, 136, 0.7, true)}
-        <text x="293" y="140" font-size="9.5" font-weight="900" fill="#2A3648">×1</text>
-        <text x="327" y="154" text-anchor="end" font-size="10.5" font-weight="900" fill="#7F4A12">= 30000원</text>
+        ${bowl(230, 136, 0.7, false)}
+        <text x="246" y="140" font-size="11.5" font-weight="900" fill="#2A3648">×2</text>
+        <text x="263" y="140" font-size="11.5" font-weight="900" fill="#8C6E4A">+</text>
+        ${bowl(285, 136, 0.7, true)}
+        <text x="301" y="140" font-size="11.5" font-weight="900" fill="#2A3648">×1</text>
+        <text x="330" y="156" text-anchor="end" font-size="13" font-weight="900" fill="#7F4A12">= 30000원</text>
       </g>
     </g>`,
     `${BG}
@@ -736,11 +736,11 @@ export const renderCombo: SceneFn = (scene, helper, finish, face, choices) => {
     `<g id="${id}" style="transition: transform .6s ${SPRING}">
       ${SHADOW(180, y + 62, 62, 0.11)}
       <rect x="110" y="${y}" width="140" height="58" rx="10" fill="url(#cb-card)" stroke="#C9A76F" stroke-width="1.4"/>
-      <circle cx="124" cy="${y + 13}" r="8" fill="url(#cb-badge${hot ? "2" : "1"})" stroke="#7F4A12" stroke-width="1.2"/>
-      <text x="124" y="${y + 16.8}" text-anchor="middle" font-size="9.5" font-weight="900" fill="#FFFFFF">${name}</text>
+      <circle cx="124" cy="${y + 13}" r="9.5" fill="url(#cb-badge${hot ? "2" : "1"})" stroke="#7F4A12" stroke-width="1.2"/>
+      <text x="124" y="${y + 17}" text-anchor="middle" font-size="11" font-weight="900" fill="#FFFFFF">${name}</text>
       <ellipse cx="146" cy="${y + 4}" rx="12" ry="1.8" fill="#fff" opacity=".6"/>
       ${rows}
-      <text x="242" y="${y + 50}" text-anchor="end" font-size="11.5" font-weight="900" fill="#2A3648">${price}</text>
+      <text x="243" y="${y + 51}" text-anchor="end" font-size="14" font-weight="900" fill="#2A3648">${price}</text>
     </g>`;
   fig.innerHTML = wrapSvg(
     `${CARD}
@@ -750,13 +750,13 @@ export const renderCombo: SceneFn = (scene, helper, finish, face, choices) => {
       <line x1="196" y1="76" x2="196" y2="114" stroke="#0B7A4A" stroke-width="2" stroke-dasharray="5 4"/>
       <circle cx="196" cy="58" r="13" fill="none" stroke="#0B7A4A" stroke-width="1.8" stroke-dasharray="4 3"/>
       <circle cx="196" cy="132" r="13" fill="none" stroke="#0B7A4A" stroke-width="1.8" stroke-dasharray="4 3"/>
-      <rect x="212" y="88" width="52" height="15" rx="7.5" fill="#E9F8F0" stroke="#57C793" stroke-width="1.2"/>
-      <text x="238" y="99" text-anchor="middle" font-size="8.5" font-weight="900" fill="#0B7A4A">같은 어묵</text>
+      <rect x="210" y="87" width="70" height="19" rx="9.5" fill="#E9F8F0" stroke="#57C793" stroke-width="1.2"/>
+      <text x="245" y="100.5" text-anchor="middle" font-size="11.5" font-weight="900" fill="#0B7A4A">같은 어묵</text>
     </g>
     <g id="cb-gap" opacity="0" style="transition: opacity .5s, transform .45s ${SPRING}; transform: scale(.5); transform-origin: 156px 58px">
       <circle cx="156" cy="58" r="12" fill="none" stroke="#A9631B" stroke-width="1.8" stroke-dasharray="4 3"/>
-      <rect x="120" y="76" width="72" height="15" rx="7.5" fill="#F7E7CE" stroke="#C9A76F" stroke-width="1.1"/>
-      <text x="156" y="87" text-anchor="middle" font-size="8.5" font-weight="900" fill="#7F4A12">차이는 김밥 한 줄</text>
+      <rect x="106" y="88" width="100" height="19" rx="9.5" fill="#F7E7CE" stroke="#C9A76F" stroke-width="1.1"/>
+      <text x="156" y="101.5" text-anchor="middle" font-size="11.5" font-weight="900" fill="#7F4A12">차이는 김밥 한 줄</text>
     </g>`,
     `${BG}
     <linearGradient id="cb-card" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".6" stop-color="#FBF3E6"/><stop offset="1" stop-color="#F5EAD8"/></linearGradient>

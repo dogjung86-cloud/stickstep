@@ -726,7 +726,8 @@
 .rc-text { margin-top: 4px; font-size: 13.5px; line-height: 1.5; color: var(--sub); word-break: keep-all; }
 .rc-text b { color: var(--ink); }
 .rc-ex { margin-top: 7px; display: flex; flex-wrap: wrap; gap: 5px; }
-.rc-ex span { font-size: 11px; font-weight: 700; color: var(--n600); background: var(--n100); padding: 3px 9px; border-radius: var(--r-pill); }
+/* 직계 자식만 알약 — 안쪽 마크업(순환점 .cyd 등)이 알약 패딩을 상속받지 않게 */
+.rc-ex > span { font-size: 11px; font-weight: 700; color: var(--n600); background: var(--n100); padding: 3px 9px; border-radius: var(--r-pill); }
 .rc-outro { margin-top: 18px; display: flex; align-items: flex-end; gap: 10px; }
 .rc-outro-man { width: 54px; flex: none; }
 .rc-outro-man svg { display: block; width: 100%; height: auto; }

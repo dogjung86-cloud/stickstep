@@ -180,10 +180,24 @@ text[font-style="italic"] { font-family: var(--font-mvar); }
    vertical-align이 맡는다 — 서로 상대 문맥에서 무시되므로 병행이 안전하다. */
 .mx sup { font-size: .6em; font-weight: 800; line-height: 1; margin-left: .05em; align-self: flex-start; vertical-align: .66em; }
 .mx .mx-frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle;
-  margin: 0 .1em; line-height: 1.12; }
+  margin: 0 .1em; line-height: 1.12;
+  /* 광학 보정: middle 정렬은 가로줄이 한글 글자 중심보다 낮게 앉아 분수가 아래로
+     처져 보인다(실사용 피드백 2026-07-19) — 반 칸 올려 시각 중심을 맞춘다 */
+  position: relative; top: -.09em; }
 .mx .mx-frac > .fr-n { padding: 0 .28em .06em; font-size: .82em; }
 .mx .mx-frac > .fr-d { padding: .06em .28em 0; border-top: .09em solid currentColor; font-size: .82em; }
 .mx .mx-v { font-family: var(--font-mvar); font-style: italic; font-weight: 700; font-size: 1.05em; padding: 0 .02em; }
+
+/* ---------- 순환소수 점 표기(.cyd — 숫자 위 CSS 점) ----------
+   combining dot(U+0307)은 폰트가 숫자와 합성하지 못해 점이 뒤로 밀린다(윈도우 실사고)
+   — 점을 ::after로 숫자 가운데 위에 직접 그린다. mx 안팎(퀴즈 보기·해설·시험) 공용. */
+.cyc { white-space: nowrap; }
+.cyd { position: relative; display: inline-block; line-height: 1; }
+.cyd::after {
+  content: ""; position: absolute; left: 50%; top: -.14em;
+  width: .14em; height: .14em; border-radius: 50%;
+  background: currentColor; transform: translateX(-50%);
+}
 
 /* ---------- 항 칩(동류항·이항 랩 공용) ---------- */
 .tm-chip {
@@ -465,28 +479,7 @@ text[font-style="italic"] { font-family: var(--font-mvar); }
 @keyframes rwSwingA { 0%, 100% { transform: rotate(24deg); } 50% { transform: rotate(-20deg); } }
 @keyframes rwSwingB { 0%, 100% { transform: rotate(-20deg); } 50% { transform: rotate(24deg); } }
 
-/* ---------- 별자리 한붓그리기(보너스 게임 화면) ---------- */
-.stg-screen { display: flex; flex-direction: column; }
-.stg-screen .scroll { flex: 1; overflow-y: auto; }
-.stg-wrap { display: grid; gap: 12px; padding: 12px 16px 28px; }
-.stg-dex { display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px; }
-.stg-slot {
-  aspect-ratio: 1; border-radius: 10px; border: 1.6px dashed var(--n300);
-  display: grid; place-items: center; font-size: 11px; font-weight: 800;
-  color: var(--n400); background: var(--n0); transition: transform .25s var(--spring-soft);
-}
-.stg-slot.on {
-  border: none; color: #fff; transform: scale(1.06);
-  background: radial-gradient(120% 120% at 32% 26%, #33BCD8 0%, #0DA5C6 58%, #0A87A3 100%);
-  box-shadow: var(--sh-raise);
-}
-.stg-slot.secret { border-color: #E8C56A; color: #C79400; background: #FFFBEE; }
-.stg-slot.secret.on {
-  background: radial-gradient(120% 120% at 32% 26%, #FFD44A 0%, #F2B430 62%, #DA9A18 100%);
-  color: #7A5800;
-}
-.stg-segs { flex-wrap: wrap; }
-.stg-segs .ct-btn { padding: 8px 13px; }
+/* 별자리 한붓그리기(보너스 게임)는 폐기(2026-07-19) — stg- 스타일도 함께 제거됨 */
 
 /* ============================================================
    Ⅲ 좌표평면과 그래프
