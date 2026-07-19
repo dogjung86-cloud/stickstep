@@ -5,6 +5,7 @@ import type { Unit, GradeId } from "../curriculum";
 import { H1_UNIT1 } from "./unit1";
 import { H1_UNIT2 } from "./unit2";
 import { H1_UNIT3 } from "./unit3";
+import { H1_UNIT4 } from "./unit4";
 
 /** 준비 중 단원 — 탭·밴드는 노출하되 지도 대신 안내 카드(comingSoon). */
 const soon = (id: string, roman: string, title: string, subtitle: string, color: string, icon: string): Unit => ({
@@ -16,7 +17,7 @@ export const HIS_G1: Unit[] = [
   H1_UNIT1,
   H1_UNIT2,
   H1_UNIT3,
-  soon("h1u4", "IV", "지역 세계의 교류와 변화", "길로 이어진 세계", "#6C757D", "book"),
+  H1_UNIT4,
   soon("h1u5", "V", "제국주의와 국민 국가 건설 운동", "격동의 시대를 읽는 법", "#5C677D", "book"),
   soon("h1u6", "VI", "세계 대전과 사회 변동", "두 번의 전쟁, 달라진 세계", "#495867", "book"),
   soon("h1u7", "VII", "현대 세계의 전개와 과제", "지금 이 순간도 역사", "#3E5C76", "book"),

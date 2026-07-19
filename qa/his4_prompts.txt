@@ -1,0 +1,150 @@
+# 역사① Ⅳ(h1u4) 발주 — 스틱맨 개념 컷 10장(public/his/cuts) + 만화 3편 21컷
+#   (public/comics/h1u4l3 · h1u4l4 · h1u4l8, 각 7컷)
+# 컷·만화 모두 "이미지 안 글자 절대 금지". 만화 컷은 앱이 한글 말풍선을 얹는 하이브리드라
+# 인물이 입을 벌리고 손짓하는 "말하는 연기"만 그리고, 인물 머리 위쪽에 여백을 넉넉히 남긴다.
+# 표시 프레임이 정사각(1:1 cover 크롭)이므로 주인공은 가운데 배치, 좌우 가장자리엔 핵심 요소 금지.
+# ★ 코믹 격상 표준(h1u2·h1u3 계승): 코믹 컷은 "GAG:" 문장으로 무엇이 웃긴지 명시, 죽음·전쟁·정복
+#   컷은 DIGNIFIED 표기(개그 금지). 실존 인물(쿠빌라이 칸·영락제·정화·메흐메트 2세)은 존엄 유지 —
+#   개그는 주변 인물·동물(기린) 몫.
+# ★★ 정복·수탈 존중 가드(Ⅳ 제1원칙): 전투·유혈·죽음 장면은 그리지 않는다 — 1453 함락 컷은 성문과
+#   깃발·행렬로만 상징. 종교 존중 가드(Ⅲ 계승): 종교 창시자와 신앙 대상(무함마드·부처·예수·힌두 신
+#   등)은 어떤 형태로도 그리지 않는다. 사원·모스크는 건물 외관(돔·미너렛·탑)만.
+#
+# ── 스타일 블록 A (스틱맨 개념 컷 공용 — his1·his2·his3와 동일) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 C (만화 컷 공용 — 말풍선 하이브리드 + 코믹 연기) ──
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal, used sparingly where the prompt says.
+# Absolutely NO text, NO letters, NO numbers, NO speech bubbles, NO captions anywhere.
+# Characters ACT like they are talking: open mouth (small oval), expressive hand gestures.
+# Comedic acting is allowed and encouraged where the prompt marks GAG: exaggerated poses,
+# big reactions, falling over backwards, sweat drops, bulging wide eyes, jaw dropping —
+# but all historical objects, clothing and facts must stay accurate; never make the scene
+# absurd beyond what the prompt describes, and NO anachronistic props (no phones, no modern
+# items) inside historical scenes.
+# CONQUEST RULE (absolute): never draw battle, blood, weapons striking people, or death.
+# Conquest scenes are shown only through gates, flags, marching lines and architecture.
+# RELIGION RULE (absolute): never depict founders or objects of worship of any religion —
+# no Muhammad in any form whatsoever, no Buddha statues or Buddha figures, no Jesus, no Hindu
+# deities. Religious buildings appear as exteriors only (domes, minarets, towers).
+# Keep the upper third of the panel mostly empty white space above the characters' heads
+# (the app overlays Korean speech bubbles there). Main subjects centered horizontally.
+# Simple, charming, educational middle-school history comic. 4:3 landscape panel.
+
+## ── 개념 컷 10장 (스타일 A) ──
+
+[0] file=public/his/cuts/u4l1.png (landscape 4:3, 스타일 A)
+An official stick figure ceremonially placing a sword up onto a high wall shelf with one hand while proudly holding up a writing brush with the other; beside him, two student stick figures kneel at low desks writing on paper sheets (blank lines only), one with a focused face; a tall stack of papers beside the desks. Only the raised writing brush's tuft is teal; everything else pure black and white.
+
+[1] file=public/his/cuts/u4l2.png (landscape 4:3, 스타일 A)
+Split scene of prosperity: on the left a farmer stick figure bends over a flooded paddy field planting small rice seedlings in a neat row; on the right, at a market stall, one merchant stick figure hands a thin paper note to a customer stick figure who holds a heavy sack of coins with a relieved smile; a scale and stacked goods on the stall. Only the paper banknote is teal; everything else pure black and white.
+
+[2] file=public/his/cuts/u4l3.png (landscape 4:3, 스타일 A)
+A rider stick figure on a galloping horse carrying a tall banner pole, dashing along a path that passes three round felt tents (gers) spread over rolling grassland; figures beside each tent raise their arms cheering the rider on; motion lines behind the horse. Only the banner flag is teal; everything else pure black and white.
+
+[3] file=public/his/cuts/u4l4.png (landscape 4:3, 스타일 A)
+An emperor stick figure with a simple flat-top crown sits on a raised throne platform unrolling a long scroll (blank lines only) that drapes down the steps; below the platform, one farmer stick figure tills a small field with a hoe and one student stick figure reads a book cross-legged; both glance up at the scroll respectfully. Only the emperor's crown band is teal; everything else pure black and white.
+
+[4] file=public/his/cuts/u4l5.png (landscape 4:3, 스타일 A)
+A trader stick figure proudly carrying a big basket overflowing with chili peppers and corn cobs walks toward the center; opposite, a weaver stick figure sits at a simple loom pulling a shuttle, a roll of finished cloth beside the loom; between them a small pile of round silver ingots on the ground. Only the chili peppers in the basket are teal; everything else pure black and white.
+
+[5] file=public/his/cuts/u4l6.png (landscape 4:3, 스타일 A)
+A samurai stick figure with a topknot and a sheathed sword at his belt kneels on one knee before a castle gate, respectfully receiving a rolled order scroll with both hands from a standing lord stick figure; two banner poles flank the gate (blank banners). Only the sheathed sword's handle wrap is teal; everything else pure black and white.
+
+[6] file=public/his/cuts/u4l7.png (landscape 4:3, 스타일 A)
+Four stick figures each wearing a clearly different headdress (a wrapped turban, a small round cap, a pointed cap, bare head with a topknot) sit around one round table in lively friendly conversation, hands gesturing openly; at the head of the table a king stick figure with a simple crown leans forward listening with a hand cupped to his ear, smiling. Only the round table's rim is teal; everything else pure black and white.
+
+[7] file=public/his/cuts/u4l8.png (landscape 4:3, 스타일 A)
+Three small hills across the panel, each topped with the same waving flag; a simple arched bridge chain connects the hills, and merchant stick figures walk along it in both directions carrying sacks, rolled carpets and jars; a tiny sailboat in the water gap below the bridges. Only the three flags are teal; everything else pure black and white.
+
+[8] file=public/his/cuts/u4l9.png (landscape 4:3, 스타일 A)
+A navigator stick figure stands at a harbor holding a large unrolled map sheet (abstract coastline squiggles only, no letters), pointing dramatically toward a three-masted sailing ship at the dock; two sailor stick figures carry crates and roll a barrel up the gangplank; a round compass dish on a barrel beside the navigator. Only the ship's main sail is teal; everything else pure black and white.
+
+[9] file=public/his/cuts/u4l10.png (landscape 4:3, 스타일 A)
+One stick figure on a small stool nails a large paper sheet (blank lines only) onto a tall wooden double door; behind him, a printing press machine operated by a second stick figure turns out copies, and a third stick figure hurries away hugging a stack of printed sheets, one sheet flying loose in the air. Only the flying sheet is teal; everything else pure black and white.
+
+## ── 만화 h1u4l3 「백만이라 불린 사나이」 7컷 (스타일 C) ──
+## 등장인물 고정: MARCO = 짧은 곱슬머리에 챙 좁은 여행 모자를 쓴 청년 스틱맨(컷이 진행되며 나이 들어
+## 마지막 두 컷은 턱수염) — 호기심 가득·품위 유지. ELDER = 긴 수염의 아버지 스틱맨. KHAN = 술 달린
+## 관과 긴 수염의 황제 스틱맨(존엄 유지 — 개그 금지, 온화한 위엄). 전투·유혈 금지.
+
+[a0] file=public/comics/h1u4l3/0.png (landscape 4:3, 스타일 C)
+Harbor departure scene: young MARCO (small travel hat) eagerly climbs the gangplank of a moored merchant sailing ship, one arm flung forward toward the horizon, mouth open in excitement; ELDER (long beard) follows carrying a shoulder bundle, and a second bearded uncle checks a cargo list of stacked crates and jars on the dock; canal water and simple arched buildings behind. Teal accent: MARCO's travel hat band. Upper third empty for a speech bubble.
+
+[a1] file=public/comics/h1u4l3/1.png (landscape 4:3, 스타일 C)
+Relay station on a vast grassland road: MARCO holds up a small rectangular pass tablet to a station keeper stick figure who salutes and leads out a fresh saddled horse; a tired horse drinks from a trough behind; a simple station hut with a hitching post, distant mountains. MARCO's mouth open mid-request, cheerful. Teal accent: the pass tablet. Upper third empty for a speech bubble.
+
+[a2] file=public/comics/h1u4l3/2.png (landscape 4:3, 스타일 C)
+Grand palace hall scene, dignified: KHAN (tasseled crown, long beard) sits on a wide throne platform with calm majesty, one hand raised in gentle welcome, mouth open mid-greeting; young MARCO stands below the steps bowing politely, hat pressed to his chest, eyes wide with awe; two attendant stick figures with tall fans flank the throne. No gag in this panel — warm and stately. Teal accent: the tassel on KHAN's crown. Upper third empty for a speech bubble.
+
+[a3] file=public/comics/h1u4l3/3.png (landscape 4:3, 스타일 C)
+GAG: MARCO's first paper money shock — his eyes bulge huge and his jaw drops to his chest as a shopkeeper casually hands him a thin paper note, while MARCO still hugs a bulging sack of heavy coins he no longer needs; a nearby customer pays for a roll of silk with just two light paper notes, breezy and relaxed. Market stall with silk rolls and jars. Teal accent: the paper banknotes. Upper third empty for a speech bubble.
+
+[a4] file=public/comics/h1u4l3/4.png (landscape 4:3, 스타일 C)
+GAG: homecoming nobody believes — at a house doorway, a neighbor stick figure squints suspiciously at three travel-worn figures in patched cloaks (MARCO now with a short beard, and two elder companions), scratching his head with a big question-mark-free puzzled face; MARCO spreads his arms wide in a "it's really me!" gesture, one seam of his ragged coat popping open with tiny sparkling gems spilling out. Teal accent: the spilling gems. Upper third empty for two speech bubbles.
+
+[a5] file=public/comics/h1u4l3/5.png (landscape 4:3, 스타일 C)
+Prison cell at night, warm not grim: MARCO (short beard) sits on a bench gesturing grandly with both hands as he tells his story, mouth wide open mid-tale; across a small table a writer stick figure scribbles furiously on stacked sheets (blank squiggle lines only), quill flying, ink pot beside a single candle; a small barred window shows a crescent moon. Teal accent: the candle flame. Upper third empty for a speech bubble.
+
+[a6] file=public/comics/h1u4l3/6.png (landscape 4:3, 스타일 C)
+GAG: nobody believes the numbers — older MARCO (fuller beard) sits in an armchair telling stories with arms flung wide, while two listener stick figures exchange flat skeptical side-eyes and one waves a dismissive hand; above MARCO a big imagination cloud shows tiny sketches of endless city rooftops, ships and camel lines stretching to a horizon. MARCO stays serene and sincere. Teal accent: the imagination cloud outline. Upper third empty for two speech bubbles.
+
+## ── 만화 h1u4l4 「기린을 실은 보물선」 7컷 (스타일 C) ──
+## 등장인물 고정: ZHENGHE = 사령관 관모와 긴 겉옷의 스틱맨(위엄+따뜻함, 존엄 유지). EMPEROR = 면류관
+## 스타일 관을 쓴 황제 스틱맨(존엄 유지 — 개그 금지). GIRAFFE = 목이 아주 긴 기린(순한 반쯤 감긴 눈 —
+## 리액션 담당). 개그는 선원·구경꾼 몫. 전투·유혈 금지.
+
+[b0] file=public/comics/h1u4l4/0.png (landscape 4:3, 스타일 C)
+GAG: scale shock at the shipyard — a worker stick figure stands beside a tiny ordinary boat and cranes his neck all the way back, hat falling off behind him, jaw dropped, to see the towering wooden hull of a treasure ship under construction that fills the background with scaffolding; other workers look like ants on the scaffolds; EMPEROR (ceremonial crown) stands to the side on a platform, dignified, one arm extended in command, mouth open mid-order. Teal accent: the command flag beside the emperor. Upper third empty for a speech bubble.
+
+[b1] file=public/comics/h1u4l4/1.png (landscape 4:3, 스타일 C)
+Majestic departure, no gag: ZHENGHE (commander's hat, long coat) stands tall at the bow of the lead treasure ship, one arm raised forward in a dignified command, mouth open mid-call; behind and around, a fleet of sailing ships with layered sails stretches to the horizon like a floating city; tiny sailor stick figures haul ropes on deck; seabirds above. Teal accent: the lead ship's tallest sail. Upper third empty for a speech bubble.
+
+[b2] file=public/comics/h1u4l4/2.png (landscape 4:3, 스타일 C)
+Port exchange scene: ZHENGHE bows slightly with open arms offering a tray of silk rolls and porcelain jars to a local envoy stick figure in a wrapped garment who bows back offering a basket of fruits and spices; behind them a tropical harbor with palm trees and both ships at anchor; crew members carry chests between the groups, all friendly, mouths open in polite talk. Teal accent: the silk rolls on the tray. Upper third empty for a speech bubble.
+
+[b3] file=public/comics/h1u4l4/3.png (landscape 4:3, 스타일 C)
+GAG: first giraffe encounter — a sailor stick figure tilts his head so far back to see GIRAFFE's distant face that his hat falls and he stumbles backward onto his bottom, legs up; GIRAFFE (very long neck, half-lidded calm eyes) placidly chews a leafy branch and looks down sideways at the tiny human; ZHENGHE stands composed nearby, hands behind back, intrigued; savanna trees behind. Teal accent: the leafy branch in the giraffe's mouth. Upper third empty for two speech bubbles.
+
+[b4] file=public/comics/h1u4l4/4.png (landscape 4:3, 스타일 C)
+GAG: giraffe on board — the ship sails with GIRAFFE's long neck sticking up through an opening beside the deck roof, head poking far above the sails' lower edge, calmly chewing; one sailor balances on a tall ladder leaning against the neck to offer a bundle of leaves, wobbling with one leg out; another sailor below holds the ladder with a sweat drop. Sea and clouds behind. Teal accent: the bundle of leaves. Upper third empty for a speech bubble.
+
+[b5] file=public/comics/h1u4l4/5.png (landscape 4:3, 스타일 C)
+Palace courtyard presentation, warm and stately: GIRAFFE stands tall in the center of a palace courtyard as EMPEROR (ceremonial crown, dignified posture) gazes up with calm wonder, hands folded; around the edges, minister stick figures whisper excitedly to each other, some on tiptoe, one adjusting his hat to see better; palace roofs with upturned eaves behind. EMPEROR stays composed — the excitement belongs to the ministers. Teal accent: the ribbon lead rope on the giraffe. Upper third empty for a speech bubble.
+
+[b6] file=public/comics/h1u4l4/6.png (landscape 4:3, 스타일 C)
+Quiet aftermath at sunset, wistful: a harbor full of great treasure ships at anchor with sails furled, gangplanks raised, no crowds — only ZHENGHE standing alone on the dock looking out at the calm empty sea horizon, hands behind his back; a single seabird flies far out. Gentle, reflective mood. Teal accent: the low sun on the horizon. Upper third empty for a speech bubble.
+
+## ── 만화 h1u4l8 「배가 산을 넘은 날」 7컷 (스타일 C) ──
+## 등장인물 고정: SULTAN = 큰 터번에 깃털 장식을 단 젊은 술탄 스틱맨(존엄 유지 — 개그 금지, 결의와
+## 지략). 개그·리액션은 병사 몫. CONQUEST RULE 최우선: 전투·유혈·무기 충돌 장면 전면 금지 —
+## 함락 컷([c5])은 열린 성문과 깃발·행렬로만 상징하고 무겁고 존중하는 톤(DIGNIFIED)으로.
+
+[c0] file=public/comics/h1u4l8/0.png (landscape 4:3, 스타일 C)
+DIGNIFIED — no gag: SULTAN (large turban with feather) stands on a low hill with hands clasped behind his back, gazing at a distant walled city with triple rings of high walls and towers by the sea; two aide stick figures behind him hold a rolled map and a banner; determined, calm atmosphere, evening sky. Teal accent: the feather on SULTAN's turban. Upper third empty for a speech bubble.
+
+[c1] file=public/comics/h1u4l8/1.png (landscape 4:3, 스타일 C)
+GAG: cannon scale shock — a soldier stick figure stands beside a gigantic bombard cannon as long as a house, slowly leaning back to take in its full length until he tips over backwards, feet in the air; a long line of oxen harnessed to the cannon cart stretches off-panel; another soldier pats the cannon barrel proudly; SULTAN inspects composed in the background. Teal accent: the cannon's lifting ropes. Upper third empty for a speech bubble.
+
+[c2] file=public/comics/h1u4l8/2.png (landscape 4:3, 스타일 C)
+Blocked waterway scene, no gag: a massive chain of huge links stretches across the mouth of a harbor inlet from tower to tower, drawn taut above the water; three sailing ships wait outside the chain, sails slack; on the lead ship's deck sailor stick figures lean over the rail staring at the chain, shoulders drooped; SULTAN watches from the shore, hand on chin, thinking hard. Teal accent: the water inside the blocked harbor. Upper third empty for a speech bubble.
+
+[c3] file=public/comics/h1u4l8/3.png (landscape 4:3, 스타일 C)
+GAG: the impossible order — SULTAN points calmly from the shore up over a hill ridge, mouth open mid-command, perfectly composed; around him five soldier stick figures react in cascading disbelief: one cups both ears, one's jaw drops, one looks at the ships then at the hill then back with swirl eyes, one whispers to another behind his hand. Ships bob in the bay behind, the hill rises ahead. Teal accent: the path line SULTAN traces over the hill. Upper third empty for two speech bubbles.
+
+[c4] file=public/comics/h1u4l8/4.png (landscape 4:3, 스타일 C)
+The wonder panel, epic not comic: under a starry night sky, a line of sailing ships with sails still raised slides uphill over a track of round greased logs, hauled by long teams of soldier and oxen stick figures pulling ropes in rhythm; torches light the path winding over the ridge; one tiny soldier at the side wipes sweat but grins with pride. The scene reads as awe — ships climbing a mountain. Teal accent: the torch flames along the path. Upper third empty for a speech bubble.
+
+[c5] file=public/comics/h1u4l8/5.png (landscape 4:3, 스타일 C)
+DIGNIFIED — no gag, solemn: the great city gate stands open at dawn; SULTAN rides through slowly on horseback with quiet dignity, head slightly bowed, followed by an orderly column of soldiers on foot carrying furled banners — no weapons raised, no fighting, no people harmed anywhere; the tall walls and towers frame the scene, a few fallen leaves drift. Heavy, respectful mood marking the end of an era. Teal accent: SULTAN's cloak trim. Upper third empty for a speech bubble.
+
+[c6] file=public/comics/h1u4l8/6.png (landscape 4:3, 스타일 C)
+New capital skyline, hopeful: SULTAN stands on a terrace gesturing proudly across a city panorama where a grand domed building now bears four slim minarets at its corners, with market streets, ships in the harbor and birds circling; an aide stick figure beside him spreads a city plan scroll (blank lines only); warm morning light. Teal accent: the great dome. Upper third empty for a speech bubble.

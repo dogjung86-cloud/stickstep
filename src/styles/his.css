@@ -374,3 +374,70 @@
   .hh3-zero.zoom .hh3-zr-n1, .hh3-zero.zoom .hh3-zr-n2 { animation: none; }
   .hh3-pepper.ground .hh3-pp-flakes { animation: none; }
 }
+
+/* ============================================================
+   역사 Ⅳ 훅 장면(hookHis4) — 접두사 hh4-
+   ============================================================ */
+.hh4-motto, .hh4-note, .hh4-ger, .hh4-kimchi, .hh4-shogun, .hh4-taj, .hh4-coffee, .hh4-fry, .hh4-assembly { max-width: 340px; margin: 4px auto 0; }
+.hh4-motto svg, .hh4-note svg, .hh4-ger svg, .hh4-kimchi svg, .hh4-shogun svg, .hh4-taj svg, .hh4-coffee svg, .hh4-fry svg, .hh4-assembly svg { display: block; width: 100%; height: auto; }
+
+/* L1 penmotto — 급훈 액자 확대 + 붓vs칼 등장 */
+.hh4-mt-frame { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform .5s var(--spring-soft); }
+.hh4-motto.zoom .hh4-mt-frame { transform: scale(1.22) translateY(10px); }
+.hh4-mt-duo { transition: opacity .45s var(--ease-out) .22s; }
+.hh4-motto.zoom .hh4-mt-duo { opacity: 1; }
+
+/* L2 banknote — 지갑에서 지폐가 쏙 */
+.hh4-bn-wallet { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform .4s var(--spring-soft); }
+.hh4-note.open .hh4-bn-wallet { transform: translateY(6px); }
+.hh4-bn-bill { opacity: 0; transform: translateY(26px) scale(.8); transform-box: fill-box; transform-origin: 50% 100%; transition: opacity .4s var(--ease-out) .1s, transform .55s var(--spring-soft) .1s; pointer-events: none; }
+.hh4-note.open .hh4-bn-bill { opacity: 1; transform: none; }
+
+/* L3 gercamp — 게르 불 켜짐 + 연기 */
+.hh4-gr-tent { cursor: pointer; }
+.hh4-gr-glow { transition: opacity .5s var(--ease-out); }
+.hh4-ger.lit .hh4-gr-glow { opacity: .9; }
+.hh4-gr-smoke { transition: opacity .5s var(--ease-out) .2s; }
+.hh4-ger.lit .hh4-gr-smoke { opacity: .8; animation: hh4Smoke 1.6s var(--ease) infinite; }
+@keyframes hh4Smoke { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+
+/* L5 chilikimchi — 고추 클로즈업 원 등장 */
+.hh4-km-bowl { cursor: pointer; transition: transform .45s var(--spring-soft); transform-box: fill-box; transform-origin: center; }
+.hh4-kimchi.zoom .hh4-km-bowl { transform: translateY(4px) scale(.96); }
+.hh4-km-zoom { transform: scale(.5); transform-box: fill-box; transform-origin: center; transition: opacity .4s var(--ease-out) .1s, transform .5s var(--spring-soft) .1s; }
+.hh4-kimchi.zoom .hh4-km-zoom { opacity: 1; transform: none; }
+
+/* L6 shogungame — 게임 화면 확대 */
+.hh4-sg-tv { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform .5s var(--spring-soft); }
+.hh4-shogun.zoom .hh4-sg-tv { transform: scale(1.08) translateY(6px); }
+.hh4-sg-man { transform-box: fill-box; transform-origin: center; transition: transform .5s var(--spring-soft) .12s; }
+.hh4-shogun.zoom .hh4-sg-man { transform: scale(1.12); }
+
+/* L7 tajphoto — 여행 사진 확대 */
+.hh4-tj-photo { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform .5s var(--spring-soft); }
+.hh4-taj.zoom .hh4-tj-photo { transform: scale(1.14) translateY(8px); }
+
+/* L8 coffeesign — 간판 확대 + 김 */
+.hh4-cf-sign { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform .5s var(--spring-soft); }
+.hh4-coffee.zoom .hh4-cf-sign { transform: scale(1.3) translate(14px, 14px); }
+.hh4-cf-steam { transition: opacity .5s var(--ease-out) .22s; }
+.hh4-coffee.zoom .hh4-cf-steam { opacity: 1; animation: hh4Steam 1.5s var(--ease) infinite; }
+@keyframes hh4Steam { 0%, 100% { transform: translateY(0); opacity: .9; } 50% { transform: translateY(-3px); opacity: .5; } }
+
+/* L9 frychoco — 간식이 원재료로 변신 */
+.hh4-fr-tray { cursor: pointer; }
+.hh4-fr-snack { transition: opacity .4s var(--ease); }
+.hh4-fry.origin .hh4-fr-snack { opacity: .22; }
+.hh4-fr-origin { transform: translateY(14px) scale(.8); transform-box: fill-box; transform-origin: center; transition: opacity .45s var(--ease-out) .12s, transform .55s var(--spring-soft) .12s; }
+.hh4-fry.origin .hh4-fr-origin { opacity: 1; transform: none; }
+
+/* L10 assembly — 뉴스 화면 확대 */
+.hh4-as-tv { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform .5s var(--spring-soft); }
+.hh4-assembly.zoom .hh4-as-tv { transform: scale(1.08) translateY(8px); }
+.hh4-as-hall { transform-box: fill-box; transform-origin: center; transition: transform .5s var(--spring-soft) .12s; }
+.hh4-assembly.zoom .hh4-as-hall { transform: scale(1.1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hh4-ger.lit .hh4-gr-smoke { animation: none; }
+  .hh4-coffee.zoom .hh4-cf-steam { animation: none; }
+}

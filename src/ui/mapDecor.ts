@@ -1960,6 +1960,72 @@ const MAP_DECOR: Record<string, string> = {
     <linearGradient id="hi3-stone2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4F8FC"/><stop offset="1" stop-color="#D0DAE4"/></linearGradient>
     <radialGradient id="hi3-rose" cx=".5" cy=".5" r=".65"><stop offset="0" stop-color="#8A6BFF"/><stop offset=".55" stop-color="#5B4AC0"/><stop offset="1" stop-color="#3D2E86"/></radialGradient>`,
   ),
+
+  // ── 역사 Ⅳ. 교류와 변화 — "교역의 길" 세트(나침반→지폐 꾸러미→범선→향신료 자루→왕관) ──
+  luopanDeco: S(
+    `${shadow(32, 57, 15, 0.13)}
+    <circle cx="32" cy="34" r="21" fill="url(#hi4-luopan)" stroke="#6E4A1E" stroke-width="1.8"/>
+    <circle cx="32" cy="34" r="14.5" fill="#FBF3DC" stroke="#8A6534" stroke-width="1.3"/>
+    <path d="M32 16 v5 M32 51 v-5 M14 34 h5 M50 34 h-5 M19.5 21.5 l3.4 3.4 M44.5 46.5 l-3.4 -3.4 M44.5 21.5 l-3.4 3.4 M19.5 46.5 l3.4 -3.4" stroke="#8A6534" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M32 22 l4.4 12 l-4.4 -3 l-4.4 3 z" fill="#C0392B" stroke="#84281E" stroke-width="1.1" stroke-linejoin="round"/>
+    <path d="M32 46 l-4.4 -12 l4.4 3 l4.4 -3 z" fill="#E4EAF2" stroke="#5E6A7A" stroke-width="1.1" stroke-linejoin="round"/>
+    <circle cx="32" cy="34" r="2.4" fill="#33405A"/>
+    <ellipse cx="24" cy="22" rx="6" ry="2.4" fill="#fff" opacity=".4" transform="rotate(-30 24 22)"/>`,
+    `<radialGradient id="hi4-luopan" cx=".4" cy=".35" r=".9"><stop offset="0" stop-color="#F0DCB0"/><stop offset=".55" stop-color="#D8A25E"/><stop offset="1" stop-color="#A86A2E"/></radialGradient>`,
+  ),
+  jiaoziDeco: S(
+    `${shadow(32, 57, 15, 0.13)}
+    <rect x="14" y="26" width="30" height="18" rx="2.4" fill="url(#hi4-bill)" stroke="#5E7A4E" stroke-width="1.5" transform="rotate(-7 29 35)"/>
+    <rect x="18" y="22" width="30" height="18" rx="2.4" fill="url(#hi4-bill)" stroke="#5E7A4E" stroke-width="1.5" transform="rotate(4 33 31)"/>
+    <rect x="17" y="32" width="32" height="19" rx="2.4" fill="url(#hi4-bill2)" stroke="#5E7A4E" stroke-width="1.6"/>
+    <circle cx="33" cy="41.5" r="6" fill="none" stroke="#5E7A4E" stroke-width="1.3"/>
+    <path d="M21 37 h6 M39 46 h6" stroke="#5E7A4E" stroke-width="1.3" stroke-linecap="round"/>
+    <path d="M26 51 q7 4 14 0" stroke="#8A6534" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+    <ellipse cx="24" cy="35" rx="5" ry="1.8" fill="#fff" opacity=".5"/>`,
+    `<linearGradient id="hi4-bill" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E4EED8"/><stop offset="1" stop-color="#C6D8B4"/></linearGradient>
+    <linearGradient id="hi4-bill2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#DCE8CE"/><stop offset=".55" stop-color="#C2D4AC"/><stop offset="1" stop-color="#A4BC8C"/></linearGradient>`,
+  ),
+  galleonDeco: S(
+    `${shadow(32, 58, 17, 0.13)}
+    <path d="M12 44 h40 l-7 10 h-26 z" fill="url(#hi4-hull)" stroke="#42280F" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M12 44 q-3 -4 -1 -8 l5 8 z" fill="#5E3E22" stroke="#42280F" stroke-width="1.4"/>
+    <path d="M30 12 v32 M44 20 v24" stroke="#5E3E22" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M30 14 q-12 6 -12 15 q6 -3 12 -1 z" fill="url(#hi4-sail)" stroke="#8A7A56" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M30 14 q13 7 13 16 q-7 -3 -13 -2 z" fill="url(#hi4-sail)" stroke="#8A7A56" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M44 22 q9 5 9 12 q-5 -2 -9 -1 z" fill="url(#hi4-sail)" stroke="#8A7A56" stroke-width="1.3" stroke-linejoin="round"/>
+    <path d="M30 12 l7 2.6 -7 2.6 z" fill="#C0392B"/>
+    <path d="M8 54 q6 -4 12 0 q6 4 12 0 q6 -4 12 0 q6 4 12 0" stroke="#4E7694" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".8"/>
+    <ellipse cx="22" cy="46" rx="6" ry="1.8" fill="#fff" opacity=".3"/>`,
+    `<linearGradient id="hi4-hull" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A6034"/><stop offset=".55" stop-color="#6E4A26"/><stop offset="1" stop-color="#4A2E12"/></linearGradient>
+    <linearGradient id="hi4-sail" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFDF6"/><stop offset=".6" stop-color="#EFE6D2"/><stop offset="1" stop-color="#D4C8AC"/></linearGradient>`,
+  ),
+  spiceDeco: S(
+    `${shadow(32, 57, 16, 0.13)}
+    <path d="M16 30 q0 -8 8 -9 q8 -8 16 0 q8 1 8 9 l-2 18 q-1 8 -14 8 q-13 0 -14 -8 z" fill="url(#hi4-sack)" stroke="#6E4A26" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M22 24 q10 -5 20 0" stroke="#6E4A26" stroke-width="1.5" fill="none"/>
+    <path d="M24 21 l-2 -6 M32 19 v-6 M40 21 l2 -6" stroke="#8A6034" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M20 30 q12 6 24 0" stroke="#8A6034" stroke-width="1.3" fill="none" opacity=".7"/>
+    <ellipse cx="32" cy="27" rx="10" ry="4" fill="url(#hi4-spice)" stroke="#84281E" stroke-width="1.2"/>
+    <circle cx="27" cy="26" r="1.3" fill="#84281E"/><circle cx="33" cy="28" r="1.3" fill="#A83220"/><circle cx="38" cy="26" r="1.3" fill="#84281E"/>
+    <circle cx="49" cy="44" r="1.6" fill="#C0392B"/><circle cx="52" cy="49" r="1.3" fill="#C0392B"/>
+    <ellipse cx="23" cy="33" rx="4" ry="1.6" fill="#fff" opacity=".35"/>`,
+    `<linearGradient id="hi4-sack" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E8D0A4"/><stop offset=".55" stop-color="#C9A870"/><stop offset="1" stop-color="#9A7A44"/></linearGradient>
+    <linearGradient id="hi4-spice" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E86A50"/><stop offset="1" stop-color="#B43A2A"/></linearGradient>`,
+  ),
+  crownDeco: S(
+    `${shadow(32, 56, 15, 0.13)}
+    <path d="M15 26 l7 9 l10 -13 l10 13 l7 -9 l-3 22 h-28 z" fill="url(#hi4-crown)" stroke="#8A6218" stroke-width="1.8" stroke-linejoin="round"/>
+    <rect x="17" y="46" width="30" height="7" rx="3" fill="url(#hi4-crownband)" stroke="#8A6218" stroke-width="1.6"/>
+    <circle cx="15" cy="25" r="2.6" fill="#FFE8B0" stroke="#8A6218" stroke-width="1.2"/>
+    <circle cx="32" cy="21" r="2.8" fill="#FFE8B0" stroke="#8A6218" stroke-width="1.2"/>
+    <circle cx="49" cy="25" r="2.6" fill="#FFE8B0" stroke="#8A6218" stroke-width="1.2"/>
+    <circle cx="25" cy="42" r="2.2" fill="#C0392B" stroke="#84281E" stroke-width="1"/>
+    <circle cx="32" cy="49.5" r="2" fill="#3D5BC0" stroke="#2A3E86" stroke-width="1"/>
+    <circle cx="39" cy="42" r="2.2" fill="#3FA36E" stroke="#2A7048" stroke-width="1"/>
+    <ellipse cx="24" cy="30" rx="5" ry="2" fill="#fff" opacity=".5" transform="rotate(-18 24 30)"/>`,
+    `<linearGradient id="hi4-crown" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6E2B0"/><stop offset=".55" stop-color="#E0B45E"/><stop offset="1" stop-color="#B0842E"/></linearGradient>
+    <linearGradient id="hi4-crownband" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EFCB84"/><stop offset="1" stop-color="#B88A34"/></linearGradient>`,
+  ),
 };
 
 /** 지도 장식 아트 — 단원 특색 세트 → 생물 아이콘(ART_BIO) → 공용(ART_DECOR) 순서로 찾는다. */

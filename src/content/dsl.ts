@@ -132,7 +132,8 @@ export const hook = (o: {
     | "twinstory" | "hiddenteacher" | "profileme" | "nametags" | "doubleday" | "vinestangle" | "dollshelf"
     | "saveicon" | "gamechar" | "timecapsule" | "dangi" | "milmyeon"
     | "sprout" | "receipt" | "aptmap" | "parcel" | "olympic" | "romanclock" | "silkscarf"
-    | "lambskewer" | "examnotice" | "kanasign" | "hanjahw" | "zeroscore" | "chessmate" | "arabnum" | "francejersey" | "pepper";
+    | "lambskewer" | "examnotice" | "kanasign" | "hanjahw" | "zeroscore" | "chessmate" | "arabnum" | "francejersey" | "pepper"
+    | "penmotto" | "banknote" | "gercamp" | "chilikimchi" | "shogungame" | "tajphoto" | "coffeesign" | "frychoco" | "assembly";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 

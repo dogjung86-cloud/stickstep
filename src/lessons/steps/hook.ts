@@ -81,6 +81,7 @@ import {
 } from "./hookHis";
 import { renderHis2 } from "./hookHis2";
 import { renderHis3 } from "./hookHis3";
+import { renderHis4 } from "./hookHis4";
 import { renderSoc6 } from "./hookSoc6";
 import { renderSoc7 } from "./hookSoc7";
 import type { StepAPI, StepRenderer } from "../types";
@@ -299,6 +300,8 @@ export const hook: StepRenderer = (host, step, api) => {
   else if ((sceneCleanup = renderHis2(s.scene, scene, helper, s, finish, face) ?? undefined)) { /* handled */ }
   // 역사 Ⅲ 훅 9종은 hookHis3의 서브 디스패처가 처리
   else if ((sceneCleanup = renderHis3(s.scene, scene, helper, s, finish, face) ?? undefined)) { /* handled */ }
+  // 역사 Ⅳ 훅 9종은 hookHis4의 서브 디스패처가 처리
+  else if ((sceneCleanup = renderHis4(s.scene, scene, helper, s, finish, face) ?? undefined)) { /* handled */ }
   // 사회 Ⅵ 훅 8종은 hookSoc6의 서브 디스패처가 처리
   else if ((sceneCleanup = renderSoc6(s.scene, scene, helper, s, finish, face) ?? undefined)) { /* handled */ }
   // 사회 Ⅶ 훅 7종은 hookSoc7의 서브 디스패처가 처리

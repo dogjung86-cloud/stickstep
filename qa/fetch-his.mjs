@@ -74,6 +74,34 @@ const jobs = [
   { name: "sanvitale", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Justinian%20mosaic%2C%20San%20Vitale%2C%20consecrated%20547%2C%20Ravenna%2C%20Italy.jpg", credit: "Richard Mortel, Justinian mosaic San Vitale (Ravenna), via Wikimedia Commons (CC BY 2.0)" },
   { name: "chartres", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Chartres%20Cathedral.jpg", credit: "Tony Hisgett, Chartres Cathedral, via Wikimedia Commons (CC BY 2.0)" },
   { name: "rosewindow", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Chartres%20-%20cath%C3%A9drale%20-%20rosace%20nord.jpg", credit: "Eusebius, Chartres north rose window, via Wikimedia Commons (Public domain)" },
+
+  // ── 4차분: 역사① Ⅳ(h1u4 — 지역 세계의 교류와 변화) 14종 (2026-07-20) ──
+  // Met Open Access CC0 — objectID별 isPublicDomain=true + medium 검산 완료(괄호 안 = objectID | medium).
+  // 1차 후보(450418 "Longquan celadon" 검색 1위)는 stonepaste 이슬람 도기라 재질 검산으로 기각 → 51050 교체.
+  { name: "songware", url: "https://images.metmuseum.org/CRDImages/as/original/DP-18151-001.jpg", credit: "Metropolitan Museum of Art, Vase, Longquan celadon, 13th c. (51050 | stoneware with celadon glaze, CC0)" },
+  { name: "wave", url: "https://images.metmuseum.org/CRDImages/as/original/DP130155.jpg", credit: "Metropolitan Museum of Art, Under the Wave off Kanagawa (Hokusai) (45434 | woodblock print, CC0)" },
+  { name: "mughalart", url: "https://images.metmuseum.org/CRDImages/is/original/DP246547.jpg", credit: "Metropolitan Museum of Art, Shah Jahan on a Terrace, Shah Jahan Album (451270 | ink, opaque watercolor, gold on paper, CC0)" },
+  { name: "aztec", url: "https://images.metmuseum.org/CRDImages/ao/original/DP-28118-001.jpg", credit: "Metropolitan Museum of Art, Tlaltecuhtli relief, Mexica(Aztec) 1450-1521 (307636 | stone, CC0)" },
+  // 한국 유물(공공누리 제1유형 — relicId=1965 페이지에서 유형 확인 완료).
+  // 원본은 회색 아카이브 대지+컬러바가 그대로 찍힌 스캔 — 눈검수 후 채색 스크롤 영역만 캔버스 크롭해
+  // tongsinsa.webp로 저장했다(크롭 비율 l .0167 / t .2711 / w .9667 / h .4666 — 재수급 시 같은 크롭 적용).
+  { name: "tongsinsa", url: "https://www.museum.go.kr/relic_image/PS01001001/ssu001/2018/0228145227546/ssu001195-00-05.JPG", credit: "국립중앙박물관, 조선 통신사 행렬도(1636년 4차 통신사) (공공누리 제1유형)" },
+  // 위키미디어 커먼스 — extmetadata 라이선스 개별 확인 완료(CC0/PD/CC BY만, CC BY-SA 후보는 전부 기각)
+  { name: "qingming", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Along%20the%20River%20During%20the%20Qingming%20Festival%20(detail%20of%20original).jpg", credit: "Zhang Zeduan, Along the River During the Qingming Festival (detail), via Wikimedia Commons (Public domain)" },
+  { name: "qingmingbridge", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Qingming%20shanghe%20tu%20bridge.jpg", credit: "Zhang Zeduan, Qingming scroll rainbow bridge section, via Wikimedia Commons (Public domain)" },
+  // (기각 기록) 자금성 1차 CC BY 2.0(4934661191)은 청동 사자상+현대 현수막이 주인공, 2차(6170352582)는
+  // 뿌연 필름 사진, 3차(Xiquinho Silva)는 워터마크 — 전부 기각. 교과서 대단원 도입 그대로 오문(午門)
+  // 정면 CC0 컷으로 확정(현판 午門 눈검수 — 베트남 후에 오문과 혼동 금지).
+  { name: "forbidden", url: "https://commons.wikimedia.org/wiki/Special:FilePath/20200110%20Meridian%20Gate-2.jpg", credit: "Meridian Gate (Wumen), Forbidden City, via Wikimedia Commons (CC0)" },
+  { name: "konyeo", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Kunyu%20Wanguo%20Quantu%20(%E5%9D%A4%E8%BC%BF%E8%90%AC%E5%9C%8B%E5%85%A8%E5%9C%96).jpg", credit: "Matteo Ricci, Kunyu Wanguo Quantu, via Wikimedia Commons (Public domain)" },
+  { name: "tajmahal", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Taj%20Mahal%20in%20the%20morning%202023.jpg", credit: "Taj Mahal in the morning, via Wikimedia Commons (CC0)" },
+  { name: "blumosque", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Sultanahmet%20Mosque%20(3892554473).jpg", credit: "Sultan Ahmed Mosque, via Wikimedia Commons (CC BY 2.0)" },
+  // (기각 기록) 컬러 대안 "Réplica de Carabela ... Santa Teresita"(CC0)는 관광지 조형물 + 대형 간판(La
+  // Costa 2025)이 주인공이라 기각 — 흑백이지만 바르셀로나 산타마리아호 복원선(PD)이 자료 사진으로 정확.
+  { name: "caravel", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Barcelona%20-%20Replica%20of%20Santa%20Maria%20Caravel.jpg", credit: "Replica of Santa Maria, Barcelona, via Wikimedia Commons (Public domain)" },
+  { name: "goodhope", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Cape%20of%20Good%20Hope%20(Zaian%202008).JPG", credit: "Zaian, Cape of Good Hope, via Wikimedia Commons (Public domain)" },
+  { name: "pepper2", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Tellicherry%20Black%20Peppercorns.jpg", credit: "Tellicherry Black Peppercorns, via Wikimedia Commons (CC0)" },
+  { name: "versailles", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Garden%20facade%20of%20the%20Palace%20of%20Versailles%202.jpg", credit: "Garden facade of the Palace of Versailles, via Wikimedia Commons (CC BY 2.0)" },
 ];
 
 for (const j of jobs) {

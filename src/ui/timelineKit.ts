@@ -99,4 +99,19 @@ export const TIMELINES: Record<string, TimelineDef> = {
       { kind: "place", year: 1077, label: "카노사의 굴욕" },
     ],
   },
+  // h1u4: 교류와 변화의 시대(10~17세기 8칸) — Ⅲ과 같은 전부 기원후 def(axisMinYear 보정 공용).
+  // 검산: 1206=13세기(1201~1300) · 1492=15세기(1401~1500) · 1603=17세기(1601~1700). 축 왼쪽 끝 = 900년.
+  // 1453은 Ⅲ 드릴이 선점 — Ⅳ는 재사용하지 않는다(게이트 ① 결정).
+  h1u4: {
+    id: "h1u4",
+    startCentury: 10,
+    endCentury: 17,
+    tasks: [
+      { kind: "century", century: 10 },
+      { kind: "century", century: 16 },
+      { kind: "place", year: 1206, label: "칭기즈 칸, 몽골 통일" },
+      { kind: "place", year: 1492, label: "콜럼버스, 서인도 제도 도착" },
+      { kind: "place", year: 1603, label: "에도 막부 수립" },
+    ],
+  },
 };

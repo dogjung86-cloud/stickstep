@@ -1828,6 +1828,44 @@ src/
   시트 포함) + shot-his3-bubbles.mjs(28컷 크롭). 발주는 order-his3.sh 5배치 — **재발주(u3l8 fix)는
   로그의 "HIS3 ORDER DONE" 종료 마커를 tail로 확인한 뒤 order-his3-fix.sh 실행**(Ⅱ 병렬 codex
   실사고의 재발 방지 절차 그대로).
+- **정복·수탈 존중 가드 운용(h1u4에서 확립 — Ⅲ 종교 가드의 확장, 정복·식민 단원의 제1원칙)**:
+  ① 아메리카 문명 파괴·원주민 급감·노예 무역은 교과서 범위의 사실을 **중립·존중(DIGNIFIED)으로
+  정확히** 서술 — 만화·컷 개그 전면 금지, 아스테카·잉카는 "독자적 문명·유산"으로 존중(마추픽추
+  machu.webp 재사용 + Met 아스테카 유물, 신항로 레슨은 만화 없이 hotspot 기함). 노예 무역 서술은
+  "노예가 된 사람들" 같은 사람 중심 표현으로, 삼각 무역 그림(triangleTradeFig)도 도식·중립.
+  ② 발주 프롬프트에 **CONQUEST RULE 명문 라인**(전투·유혈·죽음 묘사 전면 금지 — 함락은 성문·깃발·
+  행렬로만 상징, qa/his4_prompts.txt 스타일 C가 원전) — RELIGION RULE과 세트로 이후 단원 상속.
+  ③ 임진왜란·병자호란·몽골 정복 전쟁은 교과서 사실만 중립 서술(전쟁 컷 개그 금지). ④ 콜럼버스의
+  날 vs 원주민 저항의 날(미래엔 토론)은 정오 부여 없이 "관점에 따라 다른 기억"으로 — Ⅰ단원 사관
+  문제 회수. ⑤ 종교 개혁은 Ⅲ 종교 가드 그대로(구교·신교 정오 부여 금지 — "입장이 갈렸다",
+  베스트팔렌 = 공존의 타협, 루터·칼뱅 존엄, 신앙 대상 그림 금지).
+- **Ⅳ 연표 결정(게이트 ① 기록) + centuryStripFig 축 보정 소급**: TIMELINES h1u4 = 10~17세기(8칸,
+  century 10·16 + place 1206·1492·1603 — 1453은 Ⅲ이 선점이라 재사용 안 함, 축 왼쪽 끝 900). 세기
+  드릴 6문은 l6에 배치(960·1115·1206·1368·1592·1644 — **드릴 시점까지 학습된 사건만** 앵커로, 미래
+  레슨 사건은 연표 랩·퀴즈 몫). **centuryStripFig에 timelineKit axisMinYear와 같은 축 보정 적용**
+  (2026-07-20): 양수 시작 띠에서 눈금 전체가 +100 밀리고 첫 눈금이 "1"로 찍히던 버그 — Ⅲ이 출하한
+  h1u3l10 퀴즈 그림(start 8)도 이 병을 앓고 있어 소급 치유됨(음수 시작 띠는 값 불변, 원년 금선은
+  기원전 구간이 있을 때만). 새 세기 띠·연표류 그림은 "기원후 c세기의 왼쪽 끝 = (c-1)×100" 검산 필수.
+- **h1u4 구성(10레슨 = 무료 3+프리미엄 7, 만화 3편 — 미래엔 8소단원 중 1-01·1-02·2-01을 2레슨씩 분할)**:
+  L1 송·북방 민족(penmotto 훅 "펜은 칼보다 강하다"+order 흥망 사슬+songPressFig) · L2 송 경제·문화
+  (banknote+**「청명상하도」 실사 hotspot**(위키 PD 부분 크롭, 사진 카드 없는 스팟 — 실물 그림 위
+  스팟은 이미지 %로 눈정렬)+songware 청자 퀴즈) · L3 몽골·원(gercamp+만화 「백만이라 불린 사나이」
+  +binSort 문물 방향+yuanClassFig) · L4 명과 청(만화 직행 「기린을 실은 보물선」+binSort 강경·회유+
+  오문 실사) · L5 명·청 경제(chilikimchi+order 은의 여행+silverFlowFig 태평양 중심 은 흐름도+곤여만국전도)
+  · L6 일본 막부(shogungame+order 막부 변천+bakufuFig+세기 드릴+가나가와 파도(Met)·통신사 행렬도
+  (국박 1965, 공공누리 1유형 — 아카이브 스캔은 채색 영역 크롭)) · L7 무굴(tajphoto+binSort 두 황제
+  정책+타지마할·무굴 세밀화) · L8 오스만(coffeesign+만화 「배가 산을 넘은 날」+hpair 성 소피아vs
+  블루모스크) · L9 신항로(frychoco+searoutesFig hotspot 기함 — DIGNIFIED 최전선) · L10 종교 개혁·
+  재정 군사 국가(assembly+timelineLab h1u4+centuryStrip 퀴즈+베르사유). 훅 9종은 hookHis4.ts
+  renderHis4(hook.ts 2줄 append), UNIT_DECOR h1u4 = "교역의 길"(luopan→jiaozi→galleon→spice→crown).
+  **지도류 신작 그림은 항로·화살표가 대륙을 관통하지 않는지 눈검수**(searoutesFig 다 가마·마젤란
+  경로가 내륙을 지나던 것을 shot에서 적발·베지어 검산으로 교정 — 경로는 해안 밖 제어점으로).
+  실사 4차분 15종(fetch-his.mjs — Met 4종 medium 검산·기각 기록 주석, 위키 검색은 CC BY-SA 지배적이라
+  쿼리를 바꿔 가며 CC0/CC BY/PD만 채집, 관광 조형물·워터마크·현대 현수막 컷 기각). QA:
+  `PORT=<포트> node qa/e2e-his4.mjs`(69검증 — 만화 말풍선 검증은 실이미지 로드 컷만 대조, 전 컷
+  폴백이면 SKIP 로그 후 발주 후 잔여, ONLY= 지원) · 눈검수 shot-his4.mjs(그림 시트는 fixed 오버레이
+  +fullPage 캡처가 충돌(스크롤 구간 반복 캡처) — body 교체+문서 흐름으로) + shot-his4-bubbles.mjs
+  (21컷 크롭). 발주는 order-his4.sh 4배치 — 종료 마커 "HIS4 ORDER DONE".
 
 ## 로그인·동기화 (Supabase — 2026-07 구축)
 - **core/auth.ts**(OAuth·세션)와 **core/sync.ts**(진행도 병합·푸시)가 전부. **환경변수

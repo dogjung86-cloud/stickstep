@@ -69,9 +69,13 @@ export function centuryStripFig(o: { start: number; end: number; mark?: number; 
       return `<rect x="${x}" y="${top}" width="${bw}" height="${h}" fill="${fill}" stroke="#8A6A3E" stroke-width="1.2"/>${name}${mk}`;
     })
     .join("");
+  // 축 왼쪽 끝: 기원전 c세기의 왼쪽 끝 = c*100이지만, 기원후 c세기의 왼쪽 끝은 (c-1)*100 —
+  // timelineKit axisMinYear와 같은 보정(양수 시작 띠에서 눈금 전체가 +100 밀리고 첫 눈금이 "1"로
+  // 찍히던 버그 수정, 2026-07-20. 음수 시작 띠는 값 불변).
+  const axisMin = o.start < 0 ? o.start * 100 : (o.start - 1) * 100;
   const ticks = Array.from({ length: cents.length + 1 }, (_, i) => {
-    const y = o.start * 100 + i * 100;
-    const isOne = i === bcCount;
+    const y = axisMin + i * 100;
+    const isOne = bcCount > 0 && y === 0;
     const label = isOne ? "1" : String(Math.abs(y));
     const x = L + i * bw;
     return `<line x1="${x}" y1="${top + h}" x2="${x}" y2="${top + h + 6}" stroke="#8A6A3E" stroke-width="1.4"/>
@@ -79,7 +83,7 @@ export function centuryStripFig(o: { start: number; end: number; mark?: number; 
   }).join("");
   const evts = (o.events ?? [])
     .map((e, i) => {
-      const min = o.start * 100;
+      const min = axisMin;
       const max = o.end * 100;
       const x = L + ((e.year - min) / (max - min)) * (W - L - R);
       const ly = i % 2 ? top + h + 34 : top - 26;
@@ -97,7 +101,7 @@ export function centuryStripFig(o: { start: number; end: number; mark?: number; 
     <rect x="${L + bcW}" y="${top - 24}" width="${W - R - L - bcW}" height="18" rx="6" fill="rgba(14,124,138,.14)"/>
     <text x="${L + bcW + (W - R - L - bcW) / 2}" y="${top - 11}" text-anchor="middle" font-size="10.5" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">기원후</text>
     ${cells}
-    <line x1="${L + bcW}" y1="${top - 4}" x2="${L + bcW}" y2="${top + h + 4}" stroke="#E0A72E" stroke-width="2.6"/>
+    ${bcCount ? `<line x1="${L + bcW}" y1="${top - 4}" x2="${L + bcW}" y2="${top + h + 4}" stroke="#E0A72E" stroke-width="2.6"/>` : ""}
     ${ticks}${evts}
   </svg>`;
 }
@@ -542,6 +546,204 @@ export function islamFlowFig(o?: { hide?: number }): string {
     <path d="M200 88 v14 M${bx0 + bw2 / 2} 116 h${bw2 * 2 + 28} M${bx0 + bw2 / 2} 116 v8 m${bw2 + 14} -8 v8 m${bw2 + 14} -8 v8" stroke="#C4B28E" stroke-width="1.6" fill="none"/>
     ${brEls}
     <text x="200" y="16" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">이슬람 세계의 변천</text>
+  </svg>`;
+}
+
+/* ══════════ Ⅳ. 지역 세계의 교류와 변화 ══════════ */
+
+/* ---------- 송과 북방 민족의 관계(파라미터형) ----------
+   가운데 송, 북쪽 요·서북 서하 카드 + 송에서 올라가는 "비단·은(물자)" 화살표(세폐 관계).
+   hide: "yo" | "seoha" | "song"이면 그 카드를 ㉠으로 가린다(나라 이름을 묻는 문제용). */
+export function songPressFig(o?: { hide?: "yo" | "seoha" | "song" }): string {
+  const name = (key: "yo" | "seoha" | "song", x: number, y: number, t: string, sub: string): string =>
+    o?.hide === key
+      ? `<text x="${x}" y="${y + 5}" text-anchor="middle" font-size="16" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
+      : `<text x="${x}" y="${y}" text-anchor="middle" font-size="13" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${t}</text>
+         <text x="${x}" y="${y + 15}" text-anchor="middle" font-size="8.8" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${sub}</text>`;
+  const box = (key: "yo" | "seoha" | "song", x: number, y: number, w: number): string =>
+    `<rect x="${x}" y="${y}" width="${w}" height="46" rx="10" fill="${o?.hide === key ? "#FBF0DA" : "#FFFFFF"}" stroke="${o?.hide === key ? "#C2843A" : "#B9C4D4"}" stroke-width="1.8"/>`;
+  return `<svg viewBox="0 0 400 210" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+    aria-label="가운데 나라에서 위쪽의 두 나라로 물자 화살표가 올라가는 관계도. 일부 칸은 동그라미 기호로 가려져 있을 수 있다">
+    <rect x="0" y="0" width="400" height="210" rx="16" fill="#F7FAFC"/>
+    <text x="200" y="20" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">지나친 문치주의 → 군사력 약화 → 물자로 지킨 평화</text>
+    ${box("yo", 236, 34, 120)}${name("yo", 296, 54, "요(거란)", "발해를 멸망시킴 · 송과 대립")}
+    ${box("seoha", 44, 34, 120)}${name("seoha", 104, 54, "서하(탕구트)", "비단길 무역의 이익 차지")}
+    ${box("song", 140, 140, 120)}${name("song", 200, 160, "송", "문치주의의 나라")}
+    <path d="M172 136 Q 128 110 108 86 m2 10 l-2 -10 10 3" stroke="#C2843A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M228 136 Q 272 110 292 86 m-2 10 l2 -10 -10 3" stroke="#C2843A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="142" y="96" width="116" height="22" rx="11" fill="#FBEFDA" stroke="#C2843A" stroke-width="1.6"/>
+    <text x="200" y="111" text-anchor="middle" font-size="10.5" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">비단 · 은 등 물자</text>
+    <text x="200" y="200" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">평화의 값은 송의 재정을 무겁게 했어요</text>
+  </svg>`;
+}
+
+/* ---------- 원의 사회 구성(파라미터형) ----------
+   casteFig·feudalFig 계보의 4단 + 지배/피지배 브래킷. hide 인덱스(0=몽골인 … 3=남인)는 ㉠으로
+   가린다(그 계층 이름을 묻는 문제용 — aria에도 계층 이름 대신 중립 문구만). */
+export function yuanClassFig(o?: { hide?: number }): string {
+  const rows = [
+    { name: "몽골인", role: "주요 관직 차지", w: 96 },
+    { name: "색목인", role: "주로 재정 업무 담당 · 서역 출신", w: 168 },
+    { name: "한인", role: "하급 관리 · 생산 활동(금의 지배를 받던 한족 등)", w: 240 },
+    { name: "남인", role: "생산 활동 담당(남송 출신의 한족)", w: 300 },
+  ];
+  const cx = 186;
+  const els = rows.map((r, i) => {
+    const y = 22 + i * 44;
+    const x = cx - r.w / 2;
+    const hidden = o?.hide === i;
+    const label = hidden
+      ? `<text x="${cx}" y="${y + 22}" text-anchor="middle" font-size="15" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
+      : `<text x="${cx}" y="${y + 16}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${r.name}</text>
+         <text x="${cx}" y="${y + 30}" text-anchor="middle" font-size="8.6" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${r.role}</text>`;
+    return `<rect x="${x}" y="${y}" width="${r.w}" height="36" rx="7" fill="${hidden ? "#FBF0DA" : ["#E8D4A4", "#EFDDB8", "#F5E7CB", "#FBF1DC"][i]}" stroke="${hidden ? "#C2843A" : "#8A6A3E"}" stroke-width="1.6"/>${label}`;
+  }).join("");
+  return `<svg viewBox="0 0 400 216" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+    aria-label="위로 갈수록 좁아지는 네 단의 계층 구조도. 위 두 단과 아래 두 단이 묶여 있고, 일부 칸은 동그라미 기호로 가려져 있을 수 있다">
+    <rect x="0" y="0" width="400" height="216" rx="16" fill="#F7FAFC"/>
+    ${els}
+    <path d="M352 26 v72 M348 26 h8 M348 98 h8" stroke="#0E7C8A" stroke-width="2" fill="none"/>
+    <text x="366" y="56" text-anchor="middle" font-size="9.5" font-weight="800" fill="#0A5964" font-family="Pretendard, sans-serif">지배</text>
+    <text x="366" y="68" text-anchor="middle" font-size="9.5" font-weight="800" fill="#0A5964" font-family="Pretendard, sans-serif">계층</text>
+    <path d="M352 110 v72 M348 110 h8 M348 182 h8" stroke="#C2843A" stroke-width="2" fill="none"/>
+    <text x="368" y="140" text-anchor="middle" font-size="9.5" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">피지배</text>
+    <text x="368" y="152" text-anchor="middle" font-size="9.5" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">계층</text>
+    <text x="186" y="206" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">실무에 능한 사람은 출신과 상관없이 등용했어요</text>
+  </svg>`;
+}
+
+/* ---------- 일본 막부의 봉건제(파라미터형) ----------
+   쇼군→다이묘→사무라이 3단 + 내려가는 보호·토지, 올라가는 충성·복종(feudalFig 계보).
+   hide 인덱스(0=쇼군 1=다이묘 2=사무라이)는 ㉠으로 가린다. 천황은 오른쪽 별동 카드(형식상의 지위). */
+export function bakufuFig(o?: { hide?: number }): string {
+  const rows = [
+    { name: "쇼군", role: "막부의 우두머리 · 실질적 지배자", w: 104 },
+    { name: "다이묘", role: "번(영지)을 다스리는 영주", w: 180 },
+    { name: "사무라이", role: "하급 무사", w: 256 },
+  ];
+  const cx = 172;
+  const els = rows.map((r, i) => {
+    const y = 34 + i * 52;
+    const x = cx - r.w / 2;
+    const hidden = o?.hide === i;
+    const label = hidden
+      ? `<text x="${cx}" y="${y + 24}" text-anchor="middle" font-size="15" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
+      : `<text x="${cx}" y="${y + 18}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${r.name}</text>
+         <text x="${cx}" y="${y + 32}" text-anchor="middle" font-size="8.8" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${r.role}</text>`;
+    return `<rect x="${x}" y="${y}" width="${r.w}" height="40" rx="8" fill="${hidden ? "#FBF0DA" : ["#E8D4A4", "#F0DFBC", "#F8ECD2"][i]}" stroke="${hidden ? "#C2843A" : "#8A6A3E"}" stroke-width="1.6"/>${label}`;
+  }).join("");
+  return `<svg viewBox="0 0 400 216" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+    aria-label="세 단의 피라미드 양옆으로 내려가는 화살표와 올라가는 화살표가 있고 오른쪽 위에 별도의 작은 카드가 있는 구조도. 일부 칸은 동그라미 기호로 가려져 있을 수 있다">
+    <rect x="0" y="0" width="400" height="216" rx="16" fill="#F7FAFC"/>
+    ${els}
+    <path d="M52 48 q-14 42 0 84 m-5 -8 l5 8 6 -7" stroke="#3D5BC0" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="32" y="86" text-anchor="middle" font-size="9.5" font-weight="800" fill="#3D5BC0" font-family="Pretendard, sans-serif">보호와</text>
+    <text x="32" y="98" text-anchor="middle" font-size="9.5" font-weight="800" fill="#3D5BC0" font-family="Pretendard, sans-serif">토지 분배</text>
+    <path d="M292 132 q14 -42 0 -84 m-6 8 l6 -8 5 8" stroke="#C2843A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="312" y="86" text-anchor="middle" font-size="9.5" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">충성과</text>
+    <text x="312" y="98" text-anchor="middle" font-size="9.5" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">복종</text>
+    <rect x="326" y="150" width="64" height="42" rx="8" fill="#FFFFFF" stroke="#B9C4D4" stroke-width="1.6"/>
+    <text x="358" y="168" text-anchor="middle" font-size="10.5" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">천황</text>
+    <text x="358" y="182" text-anchor="middle" font-size="8.4" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">형식상의 지위</text>
+    <text x="172" y="204" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">막부의 우두머리가 실질적인 지배권을 행사해요!</text>
+  </svg>`;
+}
+
+/* ---------- 16~17세기 은의 이동(태평양 중심 지도) ----------
+   미래엔 113쪽 「16~17세기 세계 은의 유통」 구도 계승 — 왼쪽 유라시아·오른쪽 아메리카 사이의
+   태평양을 은이 건넌다. 화살표: 포토시→마닐라→중국(태평양) · 이와미→중국 · 유럽→중국(바닷길) +
+   중국→유럽으로 나가는 비단·도자기·차. 해안선은 단순화 러프(정확 지도가 아니라 흐름도). */
+export function silverFlowFig(): string {
+  return `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+    aria-label="왼쪽 대륙과 오른쪽 대륙 사이의 바다를 가로질러 여러 방향의 화살표가 오가는 교역 흐름 지도">
+    <rect x="0" y="0" width="400" height="220" rx="16" fill="#DCEFF6"/>
+    <path d="M6 26 L60 18 L96 26 L128 22 L150 34 L158 52 L150 72 L140 90 L128 104 L112 96 L100 108 L92 128 L80 138 L64 130 L48 136 L28 128 L14 132 L6 120 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M96 26 l10 -12 M60 18 l-8 -8" stroke="#C4B28E" stroke-width="1.6"/>
+    <path d="M168 58 L178 48 L186 60 L178 72 z M172 84 L182 78 L188 90 L178 96 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M150 118 L160 112 L166 122 L156 130 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M394 16 L342 22 L310 34 L296 52 L302 72 L312 84 L306 100 L316 112 L330 124 L322 142 L328 162 L318 184 L308 196 L300 178 L296 156 L302 136 L292 122 L286 104 L294 88 L286 72 L292 52 L286 38 L318 26 L358 16 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round" transform="translate(0 2)"/>
+    <text x="52" y="66" text-anchor="middle" font-size="11" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">유럽 방면</text>
+    <text x="128" y="66" text-anchor="middle" font-size="11.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">명 · 청</text>
+    <text x="192" y="42" text-anchor="middle" font-size="9.5" font-weight="800" fill="#5E4626" font-family="Pretendard, sans-serif">이와미 은광</text>
+    <circle cx="180" cy="58" r="3.4" fill="#8A96A6" stroke="#4A5668" stroke-width="1.4"/>
+    <text x="150" y="146" text-anchor="middle" font-size="9.5" font-weight="800" fill="#5E4626" font-family="Pretendard, sans-serif">마닐라</text>
+    <circle cx="157" cy="122" r="3.4" fill="#8A96A6" stroke="#4A5668" stroke-width="1.4"/>
+    <text x="330" y="70" text-anchor="middle" font-size="10.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">아메리카</text>
+    <circle cx="318" cy="168" r="4" fill="#8A96A6" stroke="#4A5668" stroke-width="1.6"/>
+    <text x="352" y="176" text-anchor="middle" font-size="9.5" font-weight="800" fill="#5E4626" font-family="Pretendard, sans-serif">포토시 은광</text>
+    <path d="M310 164 Q 230 178 168 130 m10 8 l-10 -8 12 -3" stroke="#5E6A7A" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="238" y="184" text-anchor="middle" font-size="10" font-weight="900" fill="#3E4864" font-family="Pretendard, sans-serif">은</text>
+    <path d="M150 116 Q 142 104 138 96 m1 9 l-1 -9 8 3" stroke="#5E6A7A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M174 62 q-14 10 -26 16 m9 -1 l-9 1 4 -8" stroke="#5E6A7A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="176" y="80" text-anchor="middle" font-size="10" font-weight="900" fill="#3E4864" font-family="Pretendard, sans-serif">은</text>
+    <path d="M44 90 Q 84 178 128 116 m-1 10 l1 -10 -9 4" stroke="#5E6A7A" stroke-width="2.6" fill="none" stroke-dasharray="6 5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="76" y="160" text-anchor="middle" font-size="10" font-weight="900" fill="#3E4864" font-family="Pretendard, sans-serif">은</text>
+    <path d="M112 40 Q 80 30 52 38 m8 -5 l-8 5 9 4" stroke="#C2843A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="82" y="24" text-anchor="middle" font-size="9.5" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">비단 · 도자기 · 차</text>
+    <text x="200" y="210" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">세계의 은이 상품값으로 오간 16~17세기의 바닷길</text>
+  </svg>`;
+}
+
+/* ---------- 신항로 개척 지도(파라미터형 — Ⅳ 기함 hotspot 무대) ----------
+   worldReligionsFig 계보를 아메리카까지 확장한 러프 세계 지도 + 항로 3(콜럼버스·바스쿠 다 가마·
+   마젤란). 마젤란 항로는 교과서처럼 왼쪽 가장자리로 나가 오른쪽 가장자리로 이어진다(태평양 분할).
+   marks=true면 항로에 (가)(나)(다) 배지 인쇄(라벨형 문제는 shuffle:false — 항로 이름은 문제 몫).
+   hotspot 스팟 % 검산(viewBox 400×220): 서인도 제도(104,102)=26,46.4 · 멕시코 고원(84,88)=21,40 ·
+   안데스(97,164)=24.3,74.5 · 희망봉(203,186)=50.8,84.5 · 캘리컷(287,120)=71.8,54.5. */
+export function searoutesFig(o?: { marks?: boolean }): string {
+  const mk = (x: number, y: number, t: string): string =>
+    o?.marks ? `<circle cx="${x}" cy="${y}" r="10" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="11" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${t}</text>` : "";
+  return `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+    aria-label="여러 대륙을 단순하게 그린 세계 지도 위로 서로 다른 색의 항로 세 개가 그려진 그림">
+    <rect x="0" y="0" width="400" height="220" rx="16" fill="#DCEFF6"/>
+    <path d="M8 22 L48 14 L84 20 L112 30 L118 46 L106 60 L96 74 L104 86 L96 100 L84 96 L74 84 L58 78 L40 70 L22 62 L8 52 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M96 100 L110 108 L118 124 L112 146 L104 166 L96 186 L88 200 L82 184 L78 162 L82 140 L88 120 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M170 62 L176 44 L188 34 L182 24 L196 14 L232 12 L252 20 L268 16 L288 22 L282 34 L268 38 L276 46 L292 42 L302 48 L294 56 L278 56 L266 62 L256 58 L246 64 L256 44 L238 40 L226 48 L230 58 L218 64 L204 58 L192 64 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M170 64 L186 68 L196 78 L204 92 L212 108 L216 128 L212 150 L206 170 L200 186 L192 178 L184 158 L178 136 L174 112 L168 90 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M266 62 L282 60 L296 66 L302 78 L296 94 L288 108 L284 122 L278 112 L272 96 L268 80 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M302 48 L330 40 L358 36 L384 40 L394 52 L390 70 L378 84 L362 92 L344 96 L330 104 L318 96 L308 84 L304 68 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M330 104 L342 112 L352 124 L344 134 L332 126 z M356 108 L368 104 L376 114 L366 122 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M346 118 L352 112 L358 120 L352 126 z" fill="#EFE6D2" stroke="#C4B28E" stroke-width="1.4" stroke-linejoin="round"/>
+    <text x="196" y="52" text-anchor="middle" font-size="10" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">유럽</text>
+    <text x="196" y="120" text-anchor="middle" font-size="10" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">아프리카</text>
+    <text x="344" y="66" text-anchor="middle" font-size="10" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">아시아</text>
+    <text x="58" y="48" text-anchor="middle" font-size="9.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">북아메리카</text>
+    <text x="118" y="170" text-anchor="middle" font-size="9.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">남아메리카</text>
+    <path d="M182 70 Q 140 84 108 100 m9 -6 l-9 6 10 3" stroke="#C2843A" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M186 74 Q 142 128 198 190 Q 213 200 232 186 Q 264 162 284 128 m-2 10 l2 -10 -10 4" stroke="#0E7C8A" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M182 76 Q 148 150 122 186 Q 108 206 66 208 L 10 200 M 394 150 Q 372 132 352 122 m4 9 l-4 -9 10 1" stroke="#7C6BFF" stroke-width="2.6" fill="none" stroke-dasharray="7 5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${mk(126, 92, "(가)")}${mk(232, 152, "(나)")}${mk(60, 200, "(다)")}
+    <circle cx="104" cy="102" r="4" fill="#C0392B" stroke="#84281E" stroke-width="1.4"/>
+    <circle cx="203" cy="186" r="4" fill="#0E7C8A" stroke="#0A5964" stroke-width="1.4"/>
+    <circle cx="287" cy="120" r="4" fill="#0E7C8A" stroke="#0A5964" stroke-width="1.4"/>
+    <circle cx="352" cy="120" r="4" fill="#7C6BFF" stroke="#4A3EA8" stroke-width="1.4"/>
+  </svg>`;
+}
+
+/* ---------- 삼각 무역 순환도(파라미터형) ----------
+   유럽·아프리카·아메리카 세 꼭짓점과 품목 화살표 3개 — 교과서 지도(127쪽)의 구조도판.
+   노예 무역은 "노예가 된 사람들"로 중립·존중 서술(정복·수탈 가드). hide 인덱스(0=유럽→아프리카
+   1=아프리카→아메리카 2=아메리카→유럽)의 품목을 ㉠으로 가린다. */
+export function triangleTradeFig(o?: { hide?: number }): string {
+  const goods = ["총 · 직물 · 일용품", "노예가 된 사람들", "은 · 설탕 · 담배"];
+  const g = (i: number): string => (o?.hide === i ? "㉠" : goods[i]);
+  return `<svg viewBox="0 0 400 232" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+    aria-label="세 대륙 이름이 적힌 세 개의 상자 사이를 화살표가 한 방향으로 도는 무역 구조도. 일부 품목은 동그라미 기호로 가려져 있을 수 있다">
+    <rect x="0" y="0" width="400" height="232" rx="16" fill="#F7FAFC"/>
+    <path d="M96 138 q64 74 208 0" stroke="#4E7694" stroke-width="2" fill="none" opacity=".25"/>
+    <rect x="152" y="18" width="96" height="40" rx="10" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="1.8"/>
+    <text x="200" y="43" text-anchor="middle" font-size="13" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">유럽</text>
+    <rect x="278" y="140" width="102" height="40" rx="10" fill="#FBEFDA" stroke="#C2843A" stroke-width="1.8"/>
+    <text x="329" y="165" text-anchor="middle" font-size="13" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">아프리카</text>
+    <rect x="20" y="140" width="102" height="40" rx="10" fill="#EDEAFA" stroke="#5B4AC0" stroke-width="1.8"/>
+    <text x="71" y="165" text-anchor="middle" font-size="13" font-weight="900" fill="#3D2E86" font-family="Pretendard, sans-serif">아메리카</text>
+    <path d="M242 62 Q 300 88 322 134 m1 -10 l-1 10 -9 -4" stroke="#0E7C8A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="308" y="92" text-anchor="middle" font-size="10" font-weight="800" fill="#0A5964" font-family="Pretendard, sans-serif">${g(0)}</text>
+    <path d="M274 172 Q 200 200 128 172 m10 6 l-10 -6 11 -3" stroke="#8F5A1D" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="200" y="216" text-anchor="middle" font-size="10" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">${g(1)}</text>
+    <path d="M80 134 Q 110 84 158 60 m-10 1 l10 -1 -4 10" stroke="#5B4AC0" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="92" y="88" text-anchor="middle" font-size="10" font-weight="800" fill="#3D2E86" font-family="Pretendard, sans-serif">${g(2)}</text>
+    <text x="200" y="140" text-anchor="middle" font-size="10.5" font-weight="800" fill="#4E7694" font-family="Pretendard, sans-serif">대서양</text>
   </svg>`;
 }
 
@@ -1192,6 +1394,358 @@ export function hisMiniArt(key: string): string {
         `<path d="M20 14h24v26H20zM18 40h28M24 40l-4 12M40 40l4 12" stroke="#8A6534" stroke-width="2.4" fill="#FFFFFF" stroke-linecap="round" stroke-linejoin="round"/>
         <circle cx="32" cy="26" r="6" fill="#FFE8CE" stroke="#3C4654" stroke-width="2"/>
         <path d="M46 16q8 2 6 9-4-1-6-4z" fill="#F2A0B6" stroke="#C25A7A" stroke-width="1.6"/>`,
+      );
+    /* ── Ⅳ. 지역 세계의 교류와 변화 ── */
+    case "brushrule": // 문치주의 — 붓이 칼보다 위
+      return M(
+        `<path d="M12 40h40" stroke="#8A6534" stroke-width="2.6" stroke-linecap="round"/>
+        <path d="M32 40V22" stroke="#8A6534" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M18 40v-8l14-14 4 4-12 14z" fill="#33405A" stroke="#1E2838" stroke-width="1.6" stroke-linejoin="round" transform="translate(0 -10) scale(.8) translate(6 8)"/>
+        <path d="M40 48h10v5H40z" fill="#B9C4D4" stroke="#5E6A7A" stroke-width="1.6"/>
+        <path d="M44 48v-9" stroke="#5E6A7A" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M14 22l10-8 3 4-9 9z" fill="#3FA3AE" stroke="#0A5964" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M15 46q17 6 34 0" stroke="#C2843A" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+      );
+    case "sepae": // 세폐 — 비단 두루마리와 은 꾸러미
+      return M(
+        `<rect x="10" y="26" width="26" height="12" rx="6" fill="#3FA3AE" stroke="#0A5964" stroke-width="2"/>
+        <circle cx="36" cy="32" r="6" fill="#E2F1F3" stroke="#0A5964" stroke-width="1.8"/>
+        <path d="M40 42q-2-8 6-9 8-1 8 7 0 8-7 8t-7-6z" fill="#E4EAF2" stroke="#5E6A7A" stroke-width="2"/>
+        <path d="M44 33l3-4 3 4" stroke="#5E6A7A" stroke-width="1.8" fill="none"/>
+        <path d="M14 48h36m-30-4l-6 4 6 4" stroke="#C2843A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+      );
+    case "wanggaehyeok": // 왕안석 개혁 — 접힌 개혁안 문서
+      return M(
+        `<path d="M18 12h22l8 8v32H18z" fill="#FFFFFF" stroke="#5C677D" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M40 12v8h8" fill="none" stroke="#5C677D" stroke-width="2"/>
+        <path d="M24 28h16M24 36h16M24 44h10" stroke="#B9C4D4" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M42 44l8-8 4 4-8 8-5 1z" fill="#3FA3AE" stroke="#0A5964" stroke-width="1.6" stroke-linejoin="round"/>`,
+      );
+    case "northword": // 북방 민족의 독자 문자 — 새 글자를 새긴 패
+      return M(
+        `<rect x="16" y="10" width="32" height="44" rx="6" fill="#C9B394" stroke="#6E4E26" stroke-width="2.2"/>
+        <path d="M26 20h12M32 20v10m-8 6h16m-14 8h12" stroke="#4A3410" stroke-width="2.6" stroke-linecap="round"/>
+        <path d="M24 44l6 4m4-4l6 4" stroke="#4A3410" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="48" cy="14" r="5" fill="#C0392B" stroke="#84281E" stroke-width="1.6"/>`,
+      );
+    case "ricegrow": // 모내기 — 물 댄 논의 모 두 줌
+      return M(
+        `<path d="M8 44h48v8H8z" fill="#7EA6C4" stroke="#4E7694" stroke-width="2"/>
+        <path d="M22 44V32m0 0q-6-2-6-10 6 0 6 10zm0 0q6-2 6-10-6 0-6 10z" stroke="#3FA36E" stroke-width="2.4" fill="#8FCE6E" stroke-linejoin="round"/>
+        <path d="M42 44V34m0 0q-5-2-5-9 5 0 5 9zm0 0q5-2 5-9-5 0-5 9z" stroke="#3FA36E" stroke-width="2.2" fill="#8FCE6E" stroke-linejoin="round"/>
+        <path d="M12 48h8m6 0h8m6 0h8" stroke="#5E8EAE" stroke-width="1.8" stroke-linecap="round"/>`,
+      );
+    case "jiaozi": // 교자 — 세계 최초의 지폐
+      return M(
+        `<rect x="12" y="18" width="40" height="26" rx="4" fill="#DCE8CE" stroke="#5E7A4E" stroke-width="2.2"/>
+        <circle cx="32" cy="31" r="7" fill="none" stroke="#5E7A4E" stroke-width="2"/>
+        <path d="M17 24h8M39 38h8" stroke="#5E7A4E" stroke-width="2" stroke-linecap="round"/>
+        <path d="M20 50q12 6 24 0" stroke="#C2843A" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
+      );
+    case "sadaebu": // 사대부와 성리학 — 책 위의 붓
+      return M(
+        `<path d="M12 40q10-6 20-2 10 4 20-2v10q-10 6-20 2-10-4-20 2z" fill="#F2E7CE" stroke="#8A6534" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M32 38V48" stroke="#8A6534" stroke-width="1.6"/>
+        <path d="M28 34l12-18 4 3-12 18-5 2z" fill="#3FA3AE" stroke="#0A5964" stroke-width="1.8" stroke-linejoin="round"/>
+        <circle cx="45" cy="13" r="3" fill="#C2843A"/>`,
+      );
+    case "threeinvent": // 3대 발명 — 화약·나침반·활자
+      return M(
+        `<rect x="10" y="34" width="12" height="16" rx="3" fill="#C0392B" stroke="#84281E" stroke-width="1.8"/>
+        <path d="M16 34v-6m0 0l-3-4m3 4l3-4" stroke="#E0A72E" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="38" cy="42" r="9" fill="#F0DCB0" stroke="#8A6534" stroke-width="2"/>
+        <path d="M38 36l3 8-3-2-3 2z" fill="#C0392B" stroke="#84281E" stroke-width="1.2" stroke-linejoin="round"/>
+        <rect x="50" y="34" width="7" height="7" rx="1.5" fill="#8A96A6" stroke="#4A5668" stroke-width="1.4"/>
+        <rect x="50" y="43" width="7" height="7" rx="1.5" fill="#8A96A6" stroke="#4A5668" stroke-width="1.4"/>
+        <path d="M20 18q12-8 24 0" stroke="#3FA3AE" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="2 5"/>`,
+      );
+    case "khanflag": // 칭기즈 칸 — 초원의 깃발과 천호 대열
+      return M(
+        `<path d="M20 54V14" stroke="#6E4E26" stroke-width="2.6" stroke-linecap="round"/>
+        <path d="M20 14h22l-6 7 6 7H20z" fill="#3FA3AE" stroke="#0A5964" stroke-width="2" stroke-linejoin="round"/>
+        <circle cx="30" cy="46" r="2.4" fill="#8A6534"/><circle cx="38" cy="46" r="2.4" fill="#8A6534"/><circle cx="46" cy="46" r="2.4" fill="#8A6534"/>
+        <circle cx="34" cy="53" r="2.4" fill="#8A6534"/><circle cx="42" cy="53" r="2.4" fill="#8A6534"/>`,
+      );
+    case "yuanrule": // 원의 통치 — 대도 성문과 교초
+      return M(
+        `<path d="M12 50V30h40v20" stroke="#6E4E26" stroke-width="2.2" fill="#C9B394"/>
+        <path d="M8 30h48l-6-9H14z" fill="#8A6534" stroke="#5E4626" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M26 50v-12h12v12" fill="#4A3410" stroke="#4A3410" stroke-width="1.6"/>
+        <rect x="40" y="12" width="14" height="18" rx="2" fill="#DCE8CE" stroke="#5E7A4E" stroke-width="1.8"/>
+        <path d="M43 17h8m-8 5h8" stroke="#5E7A4E" stroke-width="1.4" stroke-linecap="round"/>`,
+      );
+    case "colorppl": // 색목인 — 여러 빛깔의 사람들
+      return M(
+        `<circle cx="20" cy="24" r="6" fill="#3FA3AE" stroke="#0A5964" stroke-width="1.8"/>
+        <path d="M12 46q0-10 8-10t8 10z" fill="#3FA3AE" stroke="#0A5964" stroke-width="1.8"/>
+        <circle cx="42" cy="24" r="6" fill="#C2843A" stroke="#8F5A1D" stroke-width="1.8"/>
+        <path d="M34 46q0-10 8-10t8 10z" fill="#C2843A" stroke="#8F5A1D" stroke-width="1.8"/>
+        <path d="M24 52h16" stroke="#5B4AC0" stroke-width="2.4" stroke-linecap="round"/>`,
+      );
+    case "paiza": // 역참 패자 — 통행증 패
+      return M(
+        `<circle cx="32" cy="18" r="6" fill="none" stroke="#5E6A7A" stroke-width="2.4"/>
+        <rect x="20" y="22" width="24" height="32" rx="8" fill="#E4EAF2" stroke="#5E6A7A" stroke-width="2.2"/>
+        <path d="M26 32h12m-12 7h12m-12 7h8" stroke="#8A96A6" stroke-width="2.2" stroke-linecap="round"/>`,
+      );
+    case "eastwest": // 동서 교류 — 마주 오가는 화살표와 낙타
+      return M(
+        `<path d="M10 22h36m-8-5l8 5-8 5" stroke="#C2843A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M54 34H18m8-5l-8 5 8 5" stroke="#3FA3AE" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M24 52q3-7 8-7 3-4 6 0 5 0 7 7z" fill="#C9A05E" stroke="#6E4E26" stroke-width="1.8" stroke-linejoin="round"/>
+        <circle cx="45" cy="42" r="2.4" fill="#C9A05E"/>`,
+      );
+    case "hongmu": // 홍무제 — 한족 왕조의 회복(관모와 육유 두루마리)
+      return M(
+        `<path d="M18 26h28v10q0 6-14 6t-14-6z" fill="#33405A" stroke="#1E2838" stroke-width="2"/>
+        <path d="M14 26h36" stroke="#1E2838" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M10 20l8 6M54 20l-8 6" stroke="#1E2838" stroke-width="2" stroke-linecap="round"/>
+        <rect x="22" y="44" width="20" height="10" rx="4" fill="#F2E7CE" stroke="#8A6534" stroke-width="1.8"/>
+        <path d="M27 49h10" stroke="#8A6534" stroke-width="1.6" stroke-linecap="round"/>`,
+      );
+    case "treasureship": // 정화의 보물선
+      return M(
+        `<path d="M10 42h44l-8 10H18z" fill="#8A6034" stroke="#42280F" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M22 42V22q8 4 8 10v10M42 42V26q6 3 6 8v8" fill="#EFE6D2" stroke="#8A7A56" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M22 20l6 2-6 2z" fill="#C0392B"/>
+        <path d="M6 56q6-4 12 0t12 0 12 0 12 0" stroke="#4E7694" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+      );
+    case "qingrise": // 청 — 팔기의 깃발 두 폭
+      return M(
+        `<path d="M22 54V14" stroke="#6E4E26" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M22 14l20 4-20 8z" fill="#E0B45E" stroke="#8A6218" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M42 54V24" stroke="#6E4E26" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M42 24l14 3-14 6z" fill="#C0392B" stroke="#84281E" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M14 54h40" stroke="#8A6534" stroke-width="2.2" stroke-linecap="round"/>`,
+      );
+    case "fistshake": // 강경책과 회유책 — 주먹과 악수
+      return M(
+        `<rect x="10" y="22" width="18" height="16" rx="6" fill="#C0392B" stroke="#84281E" stroke-width="2"/>
+        <path d="M13 28h12M13 33h12" stroke="#84281E" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M36 30l8-4 6 4 4-2v10l-6 4-8-2-6-4z" fill="#F6C89A" stroke="#B4763A" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M40 34l6 3" stroke="#B4763A" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M18 48q14 8 28-2" stroke="#8B95A1" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="2 5"/>`,
+      );
+    case "newcrops": // 새 작물 — 고추와 옥수수
+      return M(
+        `<path d="M22 22q8-4 12 4 4 9-3 16-7 6-12 0-5-7 3-20z" fill="#D04A34" stroke="#84281E" stroke-width="2"/>
+        <path d="M24 20q2-5 8-5" stroke="#3E6844" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <path d="M44 26q7 10 3 22-7-2-9-10t6-12z" fill="#F2D07E" stroke="#B4863A" stroke-width="2"/>
+        <path d="M42 30l6 2m-7 5l7 2m-6 5l6 2" stroke="#B4863A" stroke-width="1.4" stroke-linecap="round"/>`,
+      );
+    case "silverflow": // 은 유입 — 말굽 은과 지구 화살
+      return M(
+        `<path d="M18 36q-3-10 8-11 10-1 10 8 0 10-9 10t-9-7z" fill="#E4EAF2" stroke="#5E6A7A" stroke-width="2.2"/>
+        <path d="M24 28l4-5 4 5" stroke="#5E6A7A" stroke-width="1.8" fill="none"/>
+        <circle cx="46" cy="44" r="10" fill="#DCEFF6" stroke="#4E7694" stroke-width="2"/>
+        <path d="M40 41q6-4 12 0M40 47q6 4 12 0M46 34v20" stroke="#4E7694" stroke-width="1.4" fill="none"/>
+        <path d="M12 50q14 8 24-2m-9-1l9 1-2 9" stroke="#C2843A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+      );
+    case "sinsa": // 신사 — 유교적 소양의 향촌 지도층
+      return M(
+        `<circle cx="32" cy="22" r="8" fill="#FFE8CE" stroke="#3C4654" stroke-width="2.2"/>
+        <path d="M22 16h20l-4-6H26z" fill="#33405A" stroke="#1E2838" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M20 52q0-14 12-14t12 14z" fill="#3FA3AE" stroke="#0A5964" stroke-width="2.2"/>
+        <path d="M46 40h8m-4-4v8" stroke="#C2843A" stroke-width="2" stroke-linecap="round"/>`,
+      );
+    case "operamask": // 경극 — 무대의 가면
+      return M(
+        `<path d="M18 16q14-8 28 0 4 16-4 28-10 10-20 0-8-12-4-28z" fill="#F7FAFC" stroke="#5C677D" stroke-width="2.2"/>
+        <path d="M24 28q4-3 7 0M40 28q-4-3-7 0" stroke="#C0392B" stroke-width="2.2" fill="none" stroke-linecap="round" transform="translate(-1.5 0)"/>
+        <path d="M26 40q6 5 12 0" stroke="#33405A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <path d="M32 14v8M22 18l4 6M42 18l-4 6" stroke="#C2843A" stroke-width="2" stroke-linecap="round"/>`,
+      );
+    case "worldmapkr": // 곤여만국전도 — 타원 세계 지도
+      return M(
+        `<ellipse cx="32" cy="32" rx="24" ry="17" fill="#DCEFF6" stroke="#4E7694" stroke-width="2.2"/>
+        <path d="M18 26q6-6 12-2 5 4 2 9-6 3-10-1t-4-6zM40 24q6 0 8 6-2 6-8 4t0-10zM30 42q6-2 10 2-4 4-10 2z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="1.4"/>
+        <path d="M32 15v34" stroke="#4E7694" stroke-width="1" opacity=".5"/>`,
+      );
+    case "samurai": // 무사의 등장 — 투구와 칼
+      return M(
+        `<path d="M18 30q0-12 14-12t14 12v6H18z" fill="#5E6A8C" stroke="#3E4864" stroke-width="2.2"/>
+        <path d="M14 24l8 6M50 24l-8 6M32 18v-6" stroke="#3E4864" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="32" cy="12" r="2.6" fill="#E0B45E"/>
+        <path d="M20 52l20-12 4 3-20 12z" fill="#B9C4D4" stroke="#5E6A7A" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M42 42l6-2" stroke="#8A6534" stroke-width="3" stroke-linecap="round"/>`,
+      );
+    case "sankin": // 산킨코타이 — 에도로 향하는 행렬
+      return M(
+        `<path d="M8 46q24-8 48 0" stroke="#B99B66" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="1 8"/>
+        <circle cx="18" cy="38" r="3" fill="#33405A"/><circle cx="28" cy="36" r="3" fill="#33405A"/><circle cx="38" cy="36" r="3" fill="#33405A"/>
+        <path d="M46 38V22" stroke="#6E4E26" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M46 22l12 3-12 5z" fill="#3FA3AE" stroke="#0A5964" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M8 22h14v8H8zM11 22v-4h8v4" fill="#C9B394" stroke="#6E4E26" stroke-width="1.8" stroke-linejoin="round"/>`,
+      );
+    case "chonin": // 조닌 문화 — 가부키 부채와 목판
+      return M(
+        `<path d="M14 40l10-20q8-6 16 0l10 20q-18 8-36 0z" fill="#F2A0B6" stroke="#C25A7A" stroke-width="2" stroke-linejoin="round" transform="rotate(-8 32 32)"/>
+        <path d="M24 22l8 16M40 22l-8 16M32 18v20" stroke="#C25A7A" stroke-width="1.6" transform="rotate(-8 32 32)"/>
+        <rect x="38" y="42" width="16" height="12" rx="2" fill="#C9B394" stroke="#6E4E26" stroke-width="1.8"/>
+        <path d="M42 46h8m-8 4h5" stroke="#6E4E26" stroke-width="1.4" stroke-linecap="round"/>`,
+      );
+    case "tongsinsa": // 통신사 — 바다를 건너는 사절의 배
+      return M(
+        `<path d="M12 42h40l-7 9H19z" fill="#C9B394" stroke="#6E4E26" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M32 42V18" stroke="#6E4E26" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M32 18h14l-4 6 4 6H32z" fill="#3FA3AE" stroke="#0A5964" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M8 56q6-4 12 0t12 0 12 0 12 0" stroke="#4E7694" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <rect x="18" y="34" width="10" height="8" rx="2" fill="#F2E7CE" stroke="#8A6534" stroke-width="1.6"/>`,
+      );
+    case "mughaldome": // 무굴 제국 — 돔과 초승달
+      return M(
+        `<path d="M32 14q14 8 14 22v6H18v-6q0-14 14-22z" fill="#E8F0F6" stroke="#5E6A7A" stroke-width="2.2"/>
+        <path d="M32 14v-4" stroke="#5E6A7A" stroke-width="2" stroke-linecap="round"/>
+        <path d="M14 42h36v8H14z" fill="#C9B394" stroke="#6E4E26" stroke-width="2"/>
+        <path d="M28 50v-8q4-4 8 0v8" fill="#5E6A7A"/>
+        <path d="M52 16a6 6 0 1 0 3 11 4.8 4.8 0 1 1-3-11z" fill="#E0B45E" stroke="#8A6218" stroke-width="1.4"/>`,
+      );
+    case "akbartol": // 아크바르의 관용 — 맞잡은 두 손
+      return M(
+        `<path d="M10 30q8-8 18 0l4 4" stroke="#B4763A" stroke-width="2.4" fill="#F6C89A" stroke-linejoin="round"/>
+        <path d="M54 30q-8-8-18 0l-4 4" stroke="#8F5A1D" stroke-width="2.4" fill="#E8B478" stroke-linejoin="round"/>
+        <path d="M26 34l6 4 6-4" stroke="#8F5A1D" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <path d="M20 52q12 6 24 0" stroke="#3FA36E" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <circle cx="32" cy="16" r="4" fill="#FFE8B0" stroke="#C2843A" stroke-width="1.6"/>`,
+      );
+    case "taxback": // 아우랑제브 — 다시 걷는 세금 문서
+      return M(
+        `<rect x="16" y="14" width="28" height="36" rx="4" fill="#FFFFFF" stroke="#5C677D" stroke-width="2.2"/>
+        <path d="M22 24h16m-16 8h16m-16 8h10" stroke="#B9C4D4" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="44" cy="44" r="9" fill="#FBEFDA" stroke="#C2843A" stroke-width="2"/>
+        <path d="M44 39v10m-3-7h6" stroke="#8F5A1D" stroke-width="2" stroke-linecap="round"/>`,
+      );
+    case "tajmahal": // 타지마할 — 돔과 네 첨탑
+      return M(
+        `<path d="M32 20q10 6 10 16v6H22v-6q0-10 10-16z" fill="#F7FAFC" stroke="#8A96A6" stroke-width="2.2"/>
+        <path d="M32 20v-5" stroke="#8A96A6" stroke-width="2" stroke-linecap="round"/>
+        <rect x="14" y="42" width="36" height="8" rx="2" fill="#F0ECE2" stroke="#8A96A6" stroke-width="1.8"/>
+        <path d="M12 42V24m40 18V24" stroke="#8A96A6" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="12" cy="21" r="2.4" fill="#F7FAFC" stroke="#8A96A6" stroke-width="1.4"/>
+        <circle cx="52" cy="21" r="2.4" fill="#F7FAFC" stroke="#8A96A6" stroke-width="1.4"/>
+        <path d="M10 56q22-6 44 0" stroke="#7EA6C4" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+      );
+    case "indoislam": // 인도·이슬람 문화 — 아치와 연꽃
+      return M(
+        `<path d="M16 50V32q0-14 16-14t16 14v18h-8V34q0-8-8-8t-8 8v16z" fill="#E8D4A4" stroke="#8A6A3E" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M32 54q-8-8 0-14 8 6 0 14z" fill="#F2A0B6" stroke="#C25A7A" stroke-width="1.8"/>
+        <path d="M24 54q2-5 6-6m10 6q-2-5-6-6" stroke="#C25A7A" stroke-width="1.6" fill="none" stroke-linecap="round"/>`,
+      );
+    case "osmanmoon": // 오스만 제국 — 초승달과 별의 깃발
+      return M(
+        `<path d="M18 54V12" stroke="#6E4E26" stroke-width="2.6" stroke-linecap="round"/>
+        <path d="M18 12h30v22H18z" fill="#C0392B" stroke="#84281E" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M30 17a7 7 0 1 0 4 12 5.6 5.6 0 1 1-4-12z" fill="#FFFFFF"/>
+        <path d="M39 21l1.6 3.4 3.6.4-2.7 2.5.8 3.6-3.3-1.9-3.3 1.9.8-3.6-2.7-2.5 3.6-.4z" fill="#FFFFFF"/>`,
+      );
+    case "shipoverhill": // 1453 — 산을 넘는 배
+      return M(
+        `<path d="M6 50q14-22 28-10 12-14 24 4" stroke="#8A6534" stroke-width="2.4" fill="#D8C8A4" stroke-linejoin="round"/>
+        <path d="M22 34h20l-4 6H26z" fill="#8A6034" stroke="#42280F" stroke-width="1.8" stroke-linejoin="round" transform="rotate(-9 32 37)"/>
+        <path d="M32 33V20" stroke="#42280F" stroke-width="2" stroke-linecap="round" transform="rotate(-9 32 30)"/>
+        <path d="M32 20l9 2-9 5z" fill="#EFE6D2" stroke="#8A7A56" stroke-width="1.4" transform="rotate(-9 32 24)"/>
+        <path d="M14 44l6 2m24-8l6 2" stroke="#5E4626" stroke-width="1.8" stroke-linecap="round"/>`,
+      );
+    case "milletring": // 밀레트 — 서로 다른 공동체의 원
+      return M(
+        `<circle cx="22" cy="26" r="10" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="2"/>
+        <circle cx="42" cy="26" r="10" fill="#FBEFDA" stroke="#C2843A" stroke-width="2"/>
+        <circle cx="32" cy="44" r="10" fill="#EDEAFA" stroke="#5B4AC0" stroke-width="2"/>
+        <circle cx="22" cy="26" r="3" fill="#0E7C8A"/><circle cx="42" cy="26" r="3" fill="#C2843A"/><circle cx="32" cy="44" r="3" fill="#5B4AC0"/>`,
+      );
+    case "yeniceri": // 예니체리 — 술탄 친위대의 모자와 창
+      return M(
+        `<path d="M22 30q0-10 10-10t10 10v6H22z" fill="#F7FAFC" stroke="#5C677D" stroke-width="2.2"/>
+        <path d="M22 36h20l-4 16H26z" fill="#C0392B" stroke="#84281E" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M50 54V16m0 0l-4 8h8z" stroke="#5E6A7A" stroke-width="2.2" fill="#8A96A6" stroke-linecap="round" stroke-linejoin="round"/>`,
+      );
+    case "coffeecup": // 커피 하우스 — 김 오르는 잔
+      return M(
+        `<path d="M16 30h26v12q0 10-13 10T16 42z" fill="#F7FAFC" stroke="#5C677D" stroke-width="2.2"/>
+        <path d="M42 33q8 0 8 6t-8 6" stroke="#5C677D" stroke-width="2" fill="none"/>
+        <path d="M20 34q9 4 18 0v6q-9 4-18 0z" fill="#6E4A26" opacity=".85"/>
+        <path d="M24 24q3-5 0-9M33 24q3-5 0-9" stroke="#8B95A1" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+      );
+    case "caravel": // 신항로 — 대양을 건너는 범선
+      return M(
+        `<path d="M10 44h44l-8 9H18z" fill="#8A6034" stroke="#42280F" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M28 44V16" stroke="#42280F" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M28 18q-11 6-11 15 6-3 11-1zM28 18q12 7 12 16-6-3-12-2z" fill="#EFE6D2" stroke="#8A7A56" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M28 16l7 2-7 3z" fill="#C0392B"/>
+        <path d="M6 58q6-4 12 0t12 0 12 0 12 0" stroke="#4E7694" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
+      );
+    case "routes3": // 세 항로 — 갈라지는 세 화살
+      return M(
+        `<circle cx="32" cy="14" r="5" fill="#F2E7CE" stroke="#C4B28E" stroke-width="1.8"/>
+        <path d="M28 20Q16 34 12 50m1-9l-1 9 9-2" stroke="#C2843A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M32 21V50m-4-8l4 8 4-8" stroke="#0E7C8A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M36 20q12 14 16 30m-1-9l1 9-9-2" stroke="#7C6BFF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+      );
+    case "andes": // 잉카의 유산 — 산 위 돌계단 도시
+      return M(
+        `<path d="M8 54L26 20l12 20 8-12 10 26z" fill="#8FA68E" stroke="#4E6E4E" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M20 44h12m-14 5h16m-18 5h20" stroke="#F2E7CE" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="48" cy="14" r="4" fill="#FFD98A" stroke="#E0A72E" stroke-width="1.6"/>`,
+      );
+    case "triangle": // 삼각 무역 — 세 꼭짓점의 순환
+      return M(
+        `<circle cx="32" cy="14" r="6" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="2"/>
+        <circle cx="14" cy="46" r="6" fill="#EDEAFA" stroke="#5B4AC0" stroke-width="2"/>
+        <circle cx="50" cy="46" r="6" fill="#FBEFDA" stroke="#C2843A" stroke-width="2"/>
+        <path d="M37 19l10 20m-25-20l-10 20m8 27" stroke="#8B95A1" stroke-width="2" stroke-linecap="round"/>
+        <path d="M22 48h20m-6-4l6 4-6 4" stroke="#8B95A1" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+      );
+    case "pricecoin": // 가격 혁명 — 치솟는 동전 그래프
+      return M(
+        `<path d="M12 52V16M12 52h40" stroke="#5C677D" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M16 46q12 0 20-10t14-16" stroke="#C0392B" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <path d="M46 16l6 1-3 6z" fill="#C0392B"/>
+        <circle cx="22" cy="40" r="4" fill="#E0B45E" stroke="#8A6218" stroke-width="1.6"/>
+        <circle cx="30" cy="34" r="4" fill="#E0B45E" stroke="#8A6218" stroke-width="1.6"/>`,
+      );
+    case "theses95": // 루터 — 문에 붙은 반박문
+      return M(
+        `<rect x="14" y="10" width="36" height="44" rx="4" fill="#C9B394" stroke="#6E4E26" stroke-width="2.2"/>
+        <path d="M32 10v44" stroke="#6E4E26" stroke-width="1.6" opacity=".6"/>
+        <rect x="20" y="18" width="20" height="26" rx="2" fill="#FFFFFF" stroke="#5C677D" stroke-width="1.8" transform="rotate(-3 30 31)"/>
+        <path d="M24 25h12m-12 5h12m-12 5h8" stroke="#B9C4D4" stroke-width="1.8" stroke-linecap="round" transform="rotate(-3 30 31)"/>
+        <circle cx="30" cy="18" r="1.8" fill="#C0392B"/>`,
+      );
+    case "predest": // 칼뱅 — 책과 곧게 뻗은 빛
+      return M(
+        `<path d="M12 44q10-5 20-1 10 4 20-1v9q-10 5-20 1-10-4-20 1z" fill="#F2E7CE" stroke="#8A6534" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M32 42v10" stroke="#8A6534" stroke-width="1.6"/>
+        <circle cx="32" cy="18" r="6" fill="#FFE8B0" stroke="#C2843A" stroke-width="1.8"/>
+        <path d="M32 26v12M24 22l-8-6M40 22l8-6" stroke="#C2843A" stroke-width="2" stroke-linecap="round"/>`,
+      );
+    case "westfalen": // 베스트팔렌 — 조약 문서 위 악수
+      return M(
+        `<rect x="14" y="30" width="36" height="24" rx="4" fill="#FFFFFF" stroke="#5C677D" stroke-width="2.2"/>
+        <path d="M20 40h24m-24 6h16" stroke="#B9C4D4" stroke-width="2" stroke-linecap="round"/>
+        <path d="M14 20q8-6 14 0l4 3 4-3q6-6 14 0" stroke="#B4763A" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+        <path d="M28 23l4 3 4-3" stroke="#8F5A1D" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+      );
+    case "taxarmy": // 재정·군사 국가 — 대포와 동전
+      return M(
+        `<path d="M14 40l26-14 6 10-24 14z" fill="#5E6A7A" stroke="#3E4864" stroke-width="2.2" stroke-linejoin="round"/>
+        <circle cx="22" cy="48" r="7" fill="#33405A" stroke="#1E2838" stroke-width="2"/>
+        <circle cx="48" cy="20" r="6" fill="#E0B45E" stroke="#8A6218" stroke-width="1.8"/>
+        <circle cx="54" cy="32" r="5" fill="#E0B45E" stroke="#8A6218" stroke-width="1.8"/>`,
+      );
+    case "gloriousrev": // 명예혁명 — 의회와 권리 장전
+      return M(
+        `<path d="M12 30h40v22H12z" fill="#E8EEF4" stroke="#5E6A7A" stroke-width="2.2"/>
+        <path d="M18 30v22m9-22v22m10 0V30m9 22V30" stroke="#9AAABA" stroke-width="1.8"/>
+        <path d="M12 30l20-12 20 12z" fill="#C4D0DC" stroke="#5E6A7A" stroke-width="2" stroke-linejoin="round"/>
+        <rect x="40" y="38" width="16" height="20" rx="2" fill="#FFFFFF" stroke="#C2843A" stroke-width="1.8" transform="rotate(6 48 48)"/>
+        <path d="M44 44h8m-8 5h8" stroke="#C2843A" stroke-width="1.6" stroke-linecap="round" transform="rotate(6 48 48)"/>`,
+      );
+    case "sunking": // 루이 14세 — 태양과 왕관
+      return M(
+        `<circle cx="32" cy="28" r="10" fill="#FFD98A" stroke="#E0A72E" stroke-width="2"/>
+        <path d="M32 12v-4M32 48v-4M16 28h-4M52 28h-4M20 16l-3-3M44 16l3-3M20 40l-3 3M44 40l3 3" stroke="#E0A72E" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M22 50l4-8 6 5 6-5 4 8z" fill="#E0B45E" stroke="#8A6218" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M22 50h20v4H22z" fill="#B88A34" stroke="#8A6218" stroke-width="1.6"/>`,
       );
     case "camelroad": // 비단길 — 사막의 낙타
       return M(
