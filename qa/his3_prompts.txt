@@ -184,5 +184,6 @@ One single LARGE MAP sheet lies on a table, drawn as a map: a simple continent o
 [7rr] file=public/his/cuts/u3l8.png (landscape 4:3, 스타일 A)
 A country road splits into THREE diverging paths (left, middle, right) at a fork. At the fork stands one tall wooden signpost with three blank arrow-shaped boards pointing toward the three paths (blank boards, no letters). Three stick figure brothers walk away from the fork, one down each path, each carrying a small travel bundle on a stick over the shoulder, each looking back and waving a friendly goodbye to the others. Simple rolling hills around the paths. Only the middle path's road surface is teal; everything else pure black and white. NO table, NO books, NO map.
 
-# [7rr] 3차 발주는 codex 사용량 한도(2026-07-25 해제)로 미실행 — 2차본을 '베르됭 조약 문서를 나눠 안고
-#      헤어지는 삼형제'로 캡션을 정합시켜 확정(그림-텍스트 일치). 한도 해제 후 삼거리 이정표 구도 재발주는 선택.
+# [7rr] 3차 발주 완료(2026-07-20, h1u4 세션 — 한도가 예상보다 이르게 부분 회복된 것을 probe로 확인):
+#      삼거리 이정표 구도가 1발 성공(빈 팻말 3·세 갈래 길·teal 가운데 길) → u3l8.webp 교체,
+#      unit3.ts 캡션·alt를 새 구도("삼거리에서 각자의 길로")로 정합. 잔여 없음.
