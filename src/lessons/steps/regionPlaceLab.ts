@@ -134,7 +134,9 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
     if (pillText) pillText.textContent = msg;
   }
 
-  /** 지도 svg 마크업(모드 공용) — 육지 클립·지역 채움·경계·힌트 아이콘·마커 레이어. */
+  /** 지도 svg 마크업(모드 공용) — 육지 클립·지역 채움·경계·힌트 아이콘·마커 레이어.
+   *  oceanRegions(오세아니아)면 채움·경계를 육지 클립 없이 바다 위에 그린다 — 산호섬 지역은
+   *  클립하면 채움이 안 보인다(교과서 지도도 바다 위 색면·글자로 도서 지역을 표시). */
   function mapSvgMarkup(): string {
     const regionFills = cont.regions
       .map((r) => `<path class="rpl-fill" data-r="${r.id}" d="${polyPath(r.poly)}" fill="${r.color}" opacity="0"/>`)
@@ -149,6 +151,13 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
           <circle cx="13" cy="13" r="16" fill="#FFFFFF" opacity=".85"/>${sized}</g>`;
       })
       .join("");
+    // 날짜 변경선(경도 180° = x 1000) — 오세아니아 정본 표기(미래엔 지도·생각열기 소재)
+    // 라벨은 선 중간의 빈 바다(y 340 부근) — 상단은 rpl-pill이, 하단은 뉴질랜드 라벨이 있다(눈검수 2회 교정)
+    const dateline = cont.dateline
+      ? `<line x1="1000" y1="${crop.y}" x2="1000" y2="${crop.y + crop.h}" stroke="#D8484C" stroke-width="1.1" stroke-dasharray="5 4" opacity=".75"/>
+        <text x="997" y="${Math.min(crop.y + crop.h - 6, 340)}" class="rpl-gratlab" text-anchor="end" style="fill:#B04046">날짜 변경선</text>`
+      : "";
+    const clip = cont.oceanRegions ? "" : ` clip-path="url(#rpl-landclip)"`;
     return `
     <svg class="rpl-svg" viewBox="${crop.x} ${crop.y} ${crop.w} ${crop.h}" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${cont.name} 지역 구분 지도">
       <defs>
@@ -160,9 +169,10 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
       <rect x="${crop.x}" y="${crop.y}" width="${crop.w}" height="${crop.h}" rx="12" fill="url(#rpl-sea)"/>
       <line x1="${crop.x}" y1="250" x2="${crop.x + crop.w}" y2="250" stroke="#7FA8C8" stroke-width="1" opacity=".55"/>
       <text x="${crop.x + 5}" y="246" class="rpl-gratlab">적도</text>
+      ${dateline}
       <path d="${WORLD_LAND_PATH}" fill="#F2ECDE" fill-rule="evenodd"/>
-      <g clip-path="url(#rpl-landclip)">${regionFills}</g>
-      <g clip-path="url(#rpl-landclip)">${regionEdges}</g>
+      <g${clip}>${regionFills}</g>
+      <g${clip}>${regionEdges}</g>
       <path d="${WORLD_LAND_PATH}" stroke="rgba(74,88,110,.5)" stroke-width=".7" fill="none" fill-rule="evenodd"/>
       <g class="rpl-hints">${hintIcons}</g>
       <g class="rpl-marks"></g>
@@ -215,11 +225,15 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
       const hintG = svgEl.querySelector(`.rpl-hint[data-r="${r.id}"]`) as SVGGElement | null;
       hintG?.setAttribute("opacity", lensOn && !placed.has(r.id) ? "1" : "0");
       const fill = svgEl.querySelector(`.rpl-fill[data-r="${r.id}"]`) as SVGPathElement | null;
-      if (!placed.has(r.id)) fill?.setAttribute("opacity", lensOn ? "0.2" : "0");
+      if (!placed.has(r.id)) fill?.setAttribute("opacity", lensOn ? (cont.oceanRegions ? "0.16" : "0.2") : "0");
     }
   }
 
   // ---- 판정·연출(모드 공용) ----
+  // 순서(기본): 목표 pip → 스냅 → 바다 풍덩 → 타 지역 코미디 → outsideMsg.
+  // oceanRegions(오세아니아)는 "타 지역 코미디 → 바다"로 뒤집는다 — 도서 지역은 정답 자리도
+  // 바다라 풍덩이 먼저면 피드백이 전부 풍덩이 되고 방위 안내(코미디)가 죽는다. 좌표는 언랩
+  // 경도 그대로(climateAt 내부 wrap) — dirWord도 언랩이어야 날짜변경선 건너 방위가 옳다.
   function judge(regionId: string, sx: number, sy: number): void {
     const target = cont.regions.find((r) => r.id === regionId)!;
     const lon = xToLon(sx);
@@ -232,28 +246,41 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
       settle(target);
       return;
     }
+    const dropped = cont.oceanRegions ? cont.regions.find((r) => pointInPoly(lon, lat, r.poly)) : undefined;
+    if (dropped) {
+      comedy(dropped, target, regionId);
+      return;
+    }
     if (climateAt(lon, lat) === 0) {
       haptic(HAPTIC.wrong);
       splashAt(sx, sy);
-      showToast("풍덩! 바다에 빠졌어요 — 육지에 붙여 주세요.");
+      showToast(cont.seaMsg ?? "풍덩! 바다에 빠졌어요 — 육지에 붙여 주세요.");
       return;
     }
-    const dropped = cont.regions.find((r) => pointInPoly(lon, lat, r.poly));
+    const droppedLand = cont.oceanRegions ? undefined : cont.regions.find((r) => pointInPoly(lon, lat, r.poly));
+    if (droppedLand) {
+      comedy(droppedLand, target, regionId);
+      return;
+    }
     haptic(HAPTIC.wrong);
     shakeToken(tokenEls.get(regionId));
-    if (dropped) {
-      const dir = dirWord(dropped.anchor[0], dropped.anchor[1], target.anchor[0], target.anchor[1]);
-      showToast(`여긴 ${dropped.name} — ${dropped.trait} 땅이에요. ${target.name}은 여기서 ${dir}!`);
-    } else {
-      showToast(cont.outsideMsg(lon, lat));
-    }
+    showToast(cont.outsideMsg(lon, lat));
+  }
+
+  function comedy(dropped: ContinentRegion, target: ContinentRegion, regionId: string): void {
+    haptic(HAPTIC.wrong);
+    shakeToken(tokenEls.get(regionId));
+    const dir = dirWord(dropped.anchor[0], dropped.anchor[1], target.anchor[0], target.anchor[1]);
+    // 지역명 조사도 계산(topicJosa) — "동아시아은"으로 깨지던 하드코딩을 소급 교정.
+    showToast(`여긴 ${dropped.name} — ${dropped.trait} 땅이에요. ${target.name}${topicJosa(target.name)} 여기서 ${dir}!`);
   }
 
   /** 지역 채움·도장(라벨+도시)을 그린다 — settle과 재진입 복원이 공용. */
   function paintRegion(r: ContinentRegion): void {
     if (!svgEl || !marks) return;
+    // 바다 위 비클립 채움(oceanRegions)은 0.5가 무거워 한 단계 연하게
     const fill = svgEl.querySelector(`.rpl-fill[data-r="${r.id}"]`) as SVGPathElement | null;
-    fill?.setAttribute("opacity", "0.5");
+    fill?.setAttribute("opacity", cont.oceanRegions ? "0.38" : "0.5");
     const hintG = svgEl.querySelector(`.rpl-hint[data-r="${r.id}"]`) as SVGGElement | null;
     hintG?.setAttribute("opacity", "0");
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");

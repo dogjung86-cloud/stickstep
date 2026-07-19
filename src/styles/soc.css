@@ -693,3 +693,63 @@
 .hs5-flipbtn:active { transform: scale(.96); }
 .hs5-flipbtn:disabled, .hs5-flipbtn.done { opacity: .4; cursor: default; }
 .hs5-pop { animation: hs2Pop .45s var(--spring-bounce) backwards; transform-box: fill-box; transform-origin: center; }
+
+/* ══════════════════ 사회 Ⅵ(오세아니아와 극지방) — 훅 hs6- · 배 경주 shr- ══════════════════ */
+.hs6-frame {
+  position: relative; margin: 4px auto 0; max-width: 320px;
+  border-radius: 16px; overflow: hidden; box-shadow: var(--sh-card);
+}
+.hs6-frame svg { display: block; width: 100%; height: auto; }
+.hs6-frame.flip svg { animation: hs2In .4s var(--ease-out); }
+.hs6-frame.hs6-tap { cursor: pointer; }
+.hs6-btn {
+  appearance: none; font-family: inherit; cursor: pointer;
+  display: block; margin: 10px auto 0; padding: 10px 18px; border-radius: var(--r-pill);
+  background: var(--grad-card); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 13px; font-weight: 800; color: var(--ink); letter-spacing: -.012em;
+  transition: transform .12s var(--ease), opacity .2s;
+}
+.hs6-btn:active { transform: scale(.96); }
+.hs6-btn:disabled, .hs6-btn.done { opacity: .4; cursor: default; }
+.hs6-pop { animation: hs2Pop .45s var(--spring-bounce) backwards; transform-box: fill-box; transform-origin: center; }
+.hs6-burst { animation: hs6Burst .9s var(--ease-out) backwards; transform-box: fill-box; transform-origin: center; }
+.hs6-burst.big { animation-delay: .55s; }
+@keyframes hs6Burst {
+  0% { opacity: 0; transform: scale(.2); }
+  55% { opacity: 1; transform: scale(1.15); }
+  100% { opacity: .9; transform: scale(1); }
+}
+.hs6-spin { animation: hs6Spin 2.2s linear infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes hs6Spin { to { transform: rotate(360deg); } }
+.hs6-litter { cursor: pointer; }
+@media (prefers-reduced-motion: reduce) {
+  .hs6-spin { animation: none; }
+  .hs6-burst { animation-duration: .2s; }
+}
+
+/* 배 경주 랩(shipRaceLab) — 세로 인라인 지도 카드 + 팩트 카드 + 경주 버튼 */
+.shr-map { position: relative; margin-top: 4px; border-radius: 14px; overflow: hidden; box-shadow: var(--sh-card); }
+.shr-map svg { display: block; width: 100%; height: auto; }
+.shr-go { margin-top: 10px; }
+.shr-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.shr-fact {
+  position: relative; display: flex; flex-direction: column; gap: 2px;
+  padding: 10px 12px; border-radius: 14px; background: var(--grad-card);
+  border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  transition: border-color .25s, box-shadow .25s, transform .25s var(--spring-soft);
+}
+.shr-fact b { font-size: 12.5px; font-weight: 900; color: var(--ink); letter-spacing: -.012em; }
+.shr-fact.ne b { color: #C2440A; }
+.shr-fact.s b { color: #2E6E9E; }
+.shr-fact .shr-dist { font-size: 15px; font-weight: 900; color: var(--ink); font-variant-numeric: tabular-nums; }
+.shr-fact .shr-days { font-size: 12px; font-weight: 800; color: var(--n600); }
+.shr-fact .shr-tag {
+  margin-top: 3px; width: max-content; padding: 2.5px 8px; border-radius: var(--r-pill);
+  background: var(--n100); font-size: 10.5px; font-weight: 800; color: var(--n600);
+}
+.shr-fact.win { border-color: #E8590C; box-shadow: 0 0 0 3px rgba(232, 89, 12, .14), var(--sh-card); transform: translateY(-2px); }
+.shr-fact.win::after {
+  content: "먼저 도착!"; position: absolute; top: -9px; right: 8px;
+  padding: 2px 8px; border-radius: var(--r-pill); background: #E8590C; color: #fff;
+  font-size: 10px; font-weight: 900; letter-spacing: -.01em;
+}

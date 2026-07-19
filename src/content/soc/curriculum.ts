@@ -7,20 +7,21 @@ import { S1_UNIT2 } from "./unit2";
 import { S1_UNIT3 } from "./unit3";
 import { S1_UNIT4 } from "./unit4";
 import { S1_UNIT5 } from "./unit5";
+import { S1_UNIT6 } from "./unit6";
 
 /** 준비 중 단원 — 탭·밴드는 노출하되 지도 대신 안내 카드(comingSoon). */
 const soon = (id: string, roman: string, title: string, subtitle: string, color: string, icon: string): Unit => ({
   id, roman, title, subtitle, color, icon, comingSoon: true, lessons: [],
 });
 
-// 중1 사회 — 교과서 대단원 순서 그대로. Ⅱ~Ⅵ 대륙 지리는 다음 배치.
+// 중1 사회 — 교과서 대단원 순서 그대로. 지리 영역(Ⅰ~Ⅵ) 완성, Ⅶ~ 일반사회는 다음 배치.
 export const SOC_G1: Unit[] = [
   S1_UNIT1,
   S1_UNIT2,
   S1_UNIT3,
   S1_UNIT4,
   S1_UNIT5,
-  soon("s1u6", "VI", "오세아니아와 극지방", "가장 멀리, 가장 추운 곳까지", "#0B7285", "globe"),
+  S1_UNIT6,
 ];
 
 // 중2 사회 — 다음 배치에서 제작(자리만 유지).

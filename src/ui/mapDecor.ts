@@ -1662,6 +1662,71 @@ const MAP_DECOR: Record<string, string> = {
     <linearGradient id="am5-llam" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F5EEDF"/><stop offset=".6" stop-color="#E0CCA8"/><stop offset="1" stop-color="#C2A87E"/></linearGradient>`,
   ),
 
+  // ── 사회 Ⅵ. 오세아니아와 극지방 — "가장 멀리, 가장 추운 곳까지"(산호초 → 울루루 → 캥거루 → 쇄빙선 → 펭귄) ──
+  ocnReefDeco: S(
+    `<path d="M6 50q13-4 26 0t26 0" stroke="#5BB8E8" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M10 56q13-4 22 0t22 0" stroke="#8ED2F0" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M18 50V36q-6-2-6-9 4 0 6 4 0-7 5-10 3 4 1 10 4-4 8-3-1 6-8 8v14z" fill="url(#oc6-coral)" stroke="#B23E5E" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M42 50V40q-5-1-5-7 6 0 7 5 1-6 6-7 1 6-4 9v10z" fill="url(#oc6-coral2)" stroke="#B8862E" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M31 46q4-3 7 0l-2 4h-3z" fill="#F2A72E"/>
+    <circle cx="33.5" cy="47.6" r=".9" fill="#5E3A10"/>
+    <ellipse cx="16" cy="28" rx="3" ry="1.4" fill="#fff" opacity=".4" transform="rotate(-40 16 28)"/>`,
+    `<linearGradient id="oc6-coral" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF9AA8"/><stop offset=".55" stop-color="#E85D7A"/><stop offset="1" stop-color="#C23E5E"/></linearGradient>
+    <linearGradient id="oc6-coral2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFD98E"/><stop offset=".6" stop-color="#F2A72E"/><stop offset="1" stop-color="#C8862E"/></linearGradient>`,
+  ),
+  ocnUluruDeco: S(
+    `${shadow(32, 55, 19, 0.13)}
+    <path d="M6 52q26 4 52 0" stroke="#D8B86E" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M10 50q3-20 22-20t22 20z" fill="url(#oc6-rock)" stroke="#7E2A0C" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M22 48q2-11 6-14M34 48q1-12 4-15" stroke="#8E3210" stroke-width="1.5" stroke-linecap="round" opacity=".6"/>
+    <circle cx="53" cy="13" r="5" fill="url(#oc6-sun)"/>
+    <path d="M10 55q4-2 8 0M46 56q4-2 8 0" stroke="#C2A54E" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="22" cy="35" rx="6" ry="2.2" fill="#fff" opacity=".3" transform="rotate(-22 22 35)"/>`,
+    `<linearGradient id="oc6-rock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F08A5E"/><stop offset=".55" stop-color="#C0471C"/><stop offset="1" stop-color="#8E3210"/></linearGradient>
+    <radialGradient id="oc6-sun" cx=".4" cy=".35" r=".9"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#F2B33E"/></radialGradient>`,
+  ),
+  ocnRooDeco: S(
+    `${shadow(32, 57, 15, 0.13)}
+    <path d="M14 56q10 2 20 0" stroke="#C2A54E" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M22 54q-4-8 2-15t14-6q6 1 8 6l3 6-4 2-4-4q-5 8-7 15h-4l1-8-5 6z" fill="url(#oc6-roo)" stroke="#8A5E1E" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M44 35q3-3 3-7l3-4 2 5-3 5z" fill="url(#oc6-roo)" stroke="#8A5E1E" stroke-width="1.5" stroke-linejoin="round"/>
+    <circle cx="48.6" cy="27.6" r=".9" fill="#3A2810"/>
+    <path d="M46 24l-1-4M50 23l1.6-3.6" stroke="#8A5E1E" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M22 54q-8-2-8-10" stroke="#8A5E1E" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+    <path d="M28 44q3-2 6-1" stroke="#B8842E" stroke-width="1.4" stroke-linecap="round" opacity=".8"/>
+    <ellipse cx="34" cy="38" rx="4" ry="1.8" fill="#fff" opacity=".28" transform="rotate(-30 34 38)"/>`,
+    `<linearGradient id="oc6-roo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E8A96E"/><stop offset=".55" stop-color="#C9803E"/><stop offset="1" stop-color="#A05E28"/></linearGradient>`,
+  ),
+  ocnIcebreakerDeco: S(
+    `<path d="M6 48q8-4 14 0l4-3 6 3 6-3 6 3 5-2 6 2" stroke="#8ED2F0" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <path d="M8 44l6-5 5 5zM47 45l5-4 5 4z" fill="url(#oc6-floe)" stroke="#9CC2DE" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M14 40h34l-4 9H20z" fill="url(#oc6-hull)" stroke="#7E2418" stroke-width="1.8" stroke-linejoin="round"/>
+    <rect x="24" y="30" width="17" height="10" rx="2" fill="url(#oc6-deck)" stroke="#3A4658" stroke-width="1.5"/>
+    <rect x="27" y="33" width="4" height="3.4" rx="1" fill="#8ED2F0"/><rect x="34" y="33" width="4" height="3.4" rx="1" fill="#8ED2F0"/>
+    <path d="M43 30v-6" stroke="#3A4658" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M43 24q4-2 6 1" stroke="#8A93A6" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M20 36l-6 4" stroke="#7E2418" stroke-width="0"/>
+    <ellipse cx="22" cy="42" rx="6" ry="1.6" fill="#fff" opacity=".3"/>`,
+    `<linearGradient id="oc6-hull" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F26E5E"/><stop offset=".55" stop-color="#D9480F"/><stop offset="1" stop-color="#A83410"/></linearGradient>
+    <linearGradient id="oc6-deck" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBFDFF"/><stop offset="1" stop-color="#D8E4EE"/></linearGradient>
+    <linearGradient id="oc6-floe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDFEFF"/><stop offset="1" stop-color="#CCE2F2"/></linearGradient>`,
+  ),
+  ocnPenguinDeco: S(
+    `${shadow(30, 57, 15, 0.12)}
+    <path d="M10 56q10-3 20 0M34 57q9-2.6 18 0" stroke="#B8D4E8" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M26 14q11 3 10 21t-10 21q-11-3-10-21t10-14z" fill="url(#oc6-peng)" stroke="#0E1620" stroke-width="1.6"/>
+    <path d="M26 20q6.4 2.4 6 15t-6 16q-6.4-2.6-6-15t6-16z" fill="url(#oc6-belly)"/>
+    <circle cx="29" cy="19" r="1.3" fill="#0E1620"/>
+    <path d="M32 22q3.6.6 3.6 2.8-2.4 1-3.8-.6z" fill="url(#oc6-beak)" stroke="#B8742E" stroke-width=".9"/>
+    <path d="M17 30q-3 5 0 11" stroke="#1C2836" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+    <path d="M24 52l-2 4M30 52l2 4" stroke="#E8A104" stroke-width="2.2" stroke-linecap="round"/>
+    <circle cx="44" cy="20" r="1.2" fill="#fff" opacity=".8"/><circle cx="50" cy="30" r="1" fill="#fff" opacity=".7"/><circle cx="12" cy="22" r="1" fill="#fff" opacity=".7"/>
+    <ellipse cx="23" cy="22" rx="2.6" ry="1.2" fill="#fff" opacity=".35" transform="rotate(-40 23 22)"/>`,
+    `<linearGradient id="oc6-peng" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3E4E62"/><stop offset=".55" stop-color="#222E3E"/><stop offset="1" stop-color="#101822"/></linearGradient>
+    <linearGradient id="oc6-belly" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDFEFF"/><stop offset="1" stop-color="#D8E4EE"/></linearGradient>
+    <linearGradient id="oc6-beak" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2C24E"/><stop offset="1" stop-color="#E8940A"/></linearGradient>`,
+  ),
+
   // ── 역사 Ⅰ. 역사 학습의 기초 — 역사 탐정의 도구(두루마리 → 돋보기 → 붓 → 모래시계 → 항아리) ──
   scrollDeco: S(
     `${shadow(32, 56, 16, 0.12)}

@@ -37,12 +37,24 @@ export interface ContinentRegion {
 export interface ContinentDef {
   id: string;
   name: string;
-  /** worldMap.generated 좌표계(1000×500)의 크롭 뷰박스. */
+  /** worldMap.generated 좌표계(1000×500)의 크롭 뷰박스. 날짜변경선을 넘는 크롭(오세아니아)은
+   *  x가 1000을 넘고, 그 구간의 폴리곤·앵커·도시는 **언랩 경도(lon>180)** 로 적는다 —
+   *  기후 판정은 climateAt이 내부 wrap하므로 호출부는 언랩 좌표를 그대로 쓴다(전 체인 규약). */
   crop: { x: number; y: number; w: number; h: number };
   /** 가로 모드 플래그 — true면 regionPlaceLab이 rotateStage 가로 무대로 연다(세로 인라인은
    *  지도가 작게 보인다는 실사용 피드백으로 아시아·유럽 모두 wide 전환). 세로 인라인 경로는
    *  세로로 긴 대륙(아프리카·아메리카 후보)을 위해 유지한다. */
   wide?: boolean;
+  /** 대양 지역 플래그(오세아니아) — 지역 대부분이 바다인 대륙: ① 지역 채움·경계를 육지
+   *  클립 없이 바다 위에 그린다(산호섬 지역은 클립하면 채움이 안 보인다 — 교과서 지도도
+   *  바다 위 색면) ② 판정 순서를 "타 지역 코미디 → 바다 풍덩"으로 바꾼다(바다 비중이
+   *  압도적이라 풍덩이 먼저면 오답 피드백이 전부 풍덩이 되고 "육지에 붙여 주세요"가
+   *  거짓말이 된다 — 정답 자리도 바다라서). 다른 대륙은 기존 순서 그대로(소급 0). */
+  oceanRegions?: boolean;
+  /** 바다(어느 지역 폴리곤에도 없는) 풍덩 문구 — 대륙별 교체(기본: "육지에 붙여 주세요"). */
+  seaMsg?: string;
+  /** 날짜 변경선(경도 180°) 표시 — 오세아니아(미래엔 지도 정본·생각열기 소재). */
+  dateline?: boolean;
   regions: ContinentRegion[];
   /** 어느 지역 폴리곤에도 없는 육지에 놓았을 때의 안내(대륙별 이웃 지리로 분기). */
   outsideMsg: (lon: number, lat: number) => string;
@@ -204,6 +216,42 @@ const ICON = {
     <path d="M6.6 9.8 8 7l1.5 3q-1.5 1.1-2.9-.2zM14.1 11.2l1.3-2.4 1.4 2.5q-1.4 1-2.7-.1z" fill="#F2F7FB"/>
     <path d="M12 21q3-2.4 6 0" stroke="#3F9A5C" stroke-width="1.8" stroke-linecap="round"/>
     <path d="M3.4 21.4q2-1.4 4 0" stroke="#3F9A5C" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>`,
+  uluru: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M3.5 16q1.6-7.5 8.5-7.5T20.5 16z" fill="#C0471C"/>
+    <path d="M7 15.2q.9-4.2 3-5.4M11 15.2q.5-4.6 2-5.8" stroke="#8E3210" stroke-width="1" stroke-linecap="round" opacity=".65"/>
+    <path d="M2 16.2h20" stroke="#C2A54E" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M5 19.6h6M14 19.6h5" stroke="#D8B86E" stroke-width="1.4" stroke-linecap="round" opacity=".8"/>
+    <circle cx="19.2" cy="4.8" r="2" fill="#F2C24E"/>
+  </svg>`,
+  sheep: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <circle cx="6.6" cy="9.8" r="2" fill="#F2F0E6"/><circle cx="9.8" cy="8.4" r="2.2" fill="#F2F0E6"/>
+    <circle cx="13.4" cy="8.8" r="2" fill="#F2F0E6"/><circle cx="15.8" cy="10.4" r="1.9" fill="#F2F0E6"/>
+    <ellipse cx="10.8" cy="12.8" rx="6.6" ry="4.6" fill="#F2F0E6" stroke="#B8B0A0" stroke-width="1.1"/>
+    <circle cx="17.2" cy="10.8" r="2.5" fill="#4A4038"/>
+    <path d="M19 9.6q1.5-.9 1.3 1.1" stroke="#4A4038" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M7.4 16.8v3.2M10.6 17.2v2.8M13.6 17.2v2.8" stroke="#8A7A66" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M3 20.8h18" stroke="#7FB24E" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>`,
+  volcisle: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M4 17 9.6 7.5h4.8L20 17z" fill="#6E5A48" stroke="#4E3E30" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M9.6 7.5q1.2 1.8 2.4 1.8t2.4-1.8" stroke="#E2574C" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M11 5.4q.6-2.4 2.4-2.2M13.6 4.6q1.8-.4 2.2 1.2" stroke="#B0AEB8" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M2 18.6q2.4-1.8 4.8 0t4.8 0q2.4-1.8 4.8 0t4.6 0" stroke="#3F8FC8" stroke-width="2" stroke-linecap="round"/>
+    <path d="M4.5 21.4q2.4-1.8 4.8 0t4.8 0q2.4-1.8 4.8 0" stroke="#6FB2DE" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>`,
+  atoll: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <ellipse cx="12" cy="13.5" rx="9.2" ry="6.4" fill="#3F8FC8" opacity=".3"/>
+    <ellipse cx="12" cy="13.5" rx="5.6" ry="3.6" fill="#7ED8D0"/>
+    <path d="M4.6 10.6q3-3.8 7.4-3.8t7.4 3.8" stroke="#E8D8A0" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M4.2 16.2q1.8 2.6 5 3.4M19.8 16q-1.8 2.8-5.2 3.6" stroke="#E8D8A0" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M12 6.6V4.4M12 4.4q1.3.3 2-.9M12 4.4q-1.3.3-2-.9" stroke="#4E8A2E" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>`,
+  canoe: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M3 15.5q9 3.4 18 0l-2.8 3.5H5.8z" fill="#8A6A3E" stroke="#6E5228" stroke-width="1" stroke-linejoin="round"/>
+    <path d="M11.6 14.5V3.5" stroke="#6E5228" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M11.6 3.5q6.2 3.2 5.8 10.2l-5.8.8z" fill="#F2E8D2" stroke="#C8B896" stroke-width="1"/>
+    <path d="M3.2 21q2.4-1.7 4.8 0t4.8 0q2.4-1.7 4.8 0t3.4 0" stroke="#3F8FC8" stroke-width="1.8" stroke-linecap="round"/>
   </svg>`,
 };
 
@@ -683,4 +731,146 @@ const AMERICA: ContinentDef = {
   },
 };
 
-export const CONTINENTS: Record<string, ContinentDef> = { asia: ASIA, europe: EUROPE, africa: AFRICA, america: AMERICA };
+/* ---------- 오세아니아(사회 Ⅵ) — 다섯 지역(대륙 두 나라 + 태평양 도서 3구분) ---------- */
+// 지역 구분 정본 = 비상 108쪽 지도(멜라네시아·미크로네시아·폴리네시아 라벨 — 뉴질랜드는 세 라벨
+// 어디에도 안 속함) + 두 책 공통 판서(오스트레일리아·뉴질랜드·태평양의 섬 국가). 미래엔 지도는
+// 국가만 표기(3구분 없음)라 3구분 암기 퀴즈는 최소화하고 랩·개념 수준으로만 다룬다.
+// 날짜변경선을 넘는 크롭: lon 110~192(비상·미래엔 모두 사모아·통가에서 끊음 — 타히티·하와이 밖,
+// Ⅴ의 하와이 outsideMsg는 회수하지 않는 게 교과서 정본). 서경 좌표는 언랩(+360)으로 적는다 —
+// 사모아 아피아 −171.76→188.24, 통가 누쿠알로파 −175.2→184.8(climateAt은 내부 wrap).
+// 도장 관례: 대륙 두 나라(오스트레일리아·뉴질랜드)는 도시, 태평양 도서 3지역은 **나라**를 찍는다
+// (수도가 픽셀 미만 산호섬이라 나라가 교과서 판서 단위 — "키리바시, 투발루 등").
+// 서뉴기니(인도네시아령, lon<141)는 멜라네시아 폴리곤 밖 — Ⅱ 동남아시아 구분과 일관되게
+// outsideMsg가 안내한다(파푸아뉴기니 국경 141°E가 서쪽 경계).
+// 크롭 1.24:1 — 두 모드 실표시 계산(390px 뷰포트, 지도 폭 344 기준): 세로 인라인 약 344×276 vs
+// 가로(rotateStage, 무대 390×~844) 약 329×264 — 세로가 면적 ~10% 큼 → 세로 인라인 확정
+// (아프리카 1.01·아메리카 1.09 계보. 실스크린샷 실측은 shot-soc6 눈검수에서 재확인).
+// 크롭 상단을 lat 18까지 올린 이유: 세로 rpl-pill(우상단)·좌상단 모두에서 도서 도장
+// (마셜 제도 lat 7.1·팔라우 7.5)을 상단 12% 밴드 밖으로 밀어내는 여백 확보(아프리카 pill 사고 계보).
+const OCEANIA: ContinentDef = {
+  id: "oceania",
+  name: "오세아니아",
+  // lon 110~192.2 · lat 18~-48.2 크롭 — 왼쪽 가장자리 동남아시아(인니·필리핀)는 outsideMsg
+  // 안내용, 위쪽은 괌·마셜 제도까지(마리아나 사이판 포함), 아래는 뉴질랜드 남단까지.
+  crop: { x: 805, y: 200, w: 229, h: 184 },
+  oceanRegions: true,
+  seaMsg: "여긴 넓은 태평양 한가운데 — 이름표는 섬이나 나라가 모여 있는 자리에! 막히면 특징 안경을 써 봐요.",
+  dateline: true,
+  regions: [
+    {
+      id: "australia",
+      name: "오스트레일리아",
+      color: "#E2574C",
+      poly: [
+        [113, -21.5], [113.5, -26], [112.5, -30], [114, -36], [119, -35.5], [124, -34.5],
+        [129, -33], [135, -36.2], [140, -39], [143.5, -40], [144, -42], [145, -44.5],
+        [149, -44.3], [148.8, -41.5], [146.5, -40], [150, -38.5], [151.5, -35], [153.5, -31],
+        [154.5, -27], [153, -24], [151, -21.5], [147, -17.5], [145.5, -13.5], [142.4, -10.5],
+        [141.5, -13], [139, -15.5], [136.5, -11.2], [133, -10.9], [130, -11.5], [126.5, -13.2],
+        [122, -16], [119, -19], [115.5, -20.5],
+      ],
+      anchor: [133.5, -25],
+      cities: [
+        { name: "캔버라", lon: 149.13, lat: -35.28 },
+        { name: "시드니", lon: 151.21, lat: -33.87, labelDy: -8 },
+        { name: "멜버른", lon: 144.96, lat: -37.81, labelDy: 14 },
+      ],
+      hintIcon: ICON.uluru,
+      hint: "낮고 평평한, 오세아니아에서 가장 넓은 나라 — 사막 한가운데 울루루가 있어요.",
+      success: "오스트레일리아 완성! 수도 캔버라, 인구 최대 시드니, 옛 수도 멜버른 — 오세아니아에서 가장 넓은 나라예요.",
+      trait: "낮고 평평한, 사막과 지하자원의",
+    },
+    {
+      id: "newzealand",
+      name: "뉴질랜드",
+      color: "#2E9E5B",
+      poly: [
+        [165.5, -46.5], [167, -47.8], [171, -47.5], [175, -44.5], [178.5, -41.5],
+        [179.5, -37.5], [178, -34.5], [174.5, -33.5], [172, -34], [170.5, -37.5],
+        [171.5, -40.5], [166.5, -44],
+      ],
+      anchor: [170.6, -43.6],
+      cities: [
+        { name: "웰링턴", lon: 174.78, lat: -41.29 },
+        { name: "오클랜드", lon: 174.76, lat: -36.85 },
+      ],
+      hintIcon: ICON.sheep,
+      hint: "북섬과 남섬, 두 섬의 나라 — 사람보다 양이 훨씬 많아요.",
+      success: "뉴질랜드 완성! 북섬의 수도 웰링턴, 인구 최대 오클랜드 — 깨끗한 자연이 잘 보존된 두 섬나라예요.",
+      trait: "화산과 빙하, 양 떼의",
+    },
+    {
+      id: "melanesia",
+      name: "멜라네시아",
+      color: "#8A5AC2",
+      poly: [
+        [141, -1.5], [144, -2.5], [148, -2], [152, -2], [154.5, -3.5], [157, -5],
+        [160, -6], [163, -8.5], [167, -11.5], [170, -13.5], [174, -14.7], [178, -15],
+        [181.5, -15.5], [182, -18.5], [180, -20.5], [176.5, -19.8], [172.5, -20.3],
+        [169.8, -21.2], [168.8, -23], [165.5, -23.5], [162.5, -21.8], [159.5, -18.5],
+        [156, -13.5], [152.5, -12], [149.5, -11], [146, -10.3], [143.2, -10.4], [141, -10.2],
+      ],
+      anchor: [155, -7.2],
+      cities: [
+        // 긴 나라 라벨은 도트 아래로 — 지역명 라벨(멜라네시아)과 층 분리(audit 라벨 상자 검산)
+        { name: "파푸아뉴기니", lon: 147.19, lat: -9.48, labelDy: 14 },
+        { name: "피지", lon: 178.44, lat: -18.14 },
+      ],
+      hintIcon: ICON.volcisle,
+      hint: "적도 남쪽, 뉴기니에서 피지까지 — 화산 활동으로 만들어진 섬이 많아요.",
+      success: "멜라네시아 완성! 파푸아뉴기니부터 피지까지 — 화산 활동과 지진이 잦은 화산섬의 줄이에요.",
+      trait: "뉴기니에서 피지까지 화산섬이 이어지는",
+    },
+    {
+      id: "micronesia",
+      name: "미크로네시아",
+      color: "#F2A72E",
+      poly: [
+        [131, 3.5], [133, 7], [136, 9.5], [140, 10.5], [143.5, 12], [144.2, 14.2],
+        [146.2, 14.4], [147.5, 12], [152, 11], [158, 11], [163, 11.5], [168, 11.8],
+        [172, 10.5], [174.5, 8], [175.5, 5], [175.5, 2], [174.5, -0.5], [172.5, -1.8],
+        [169.8, -1.8], [167, -1.5], [163, 0], [158, 1.5], [152, 1], [146, 1.5],
+        [141, 0.5], [136, 0.5], [132.5, 1.5],
+      ],
+      anchor: [153, 6],
+      cities: [
+        { name: "팔라우", lon: 134.58, lat: 7.5 },
+        // 우상단 상태 pill이 위 라벨을 살짝 덮는다(눈검수) — 마셜·키리바시는 도트 아래층으로
+        { name: "마셜 제도", lon: 171.38, lat: 7.09, labelDy: 14 },
+        { name: "키리바시", lon: 172.98, lat: 1.33, labelDy: 14 },
+      ],
+      hintIcon: ICON.atoll,
+      hint: "적도 북쪽, '작은 섬들'이라는 뜻 — 산호섬이 점점이 흩어져 있어요.",
+      success: "미크로네시아 완성! 팔라우·마셜 제도·키리바시 — 작은 산호섬들이 점점이 흩어진 바다예요.",
+      trait: "적도 북쪽 작은 산호섬들의",
+    },
+    {
+      id: "polynesia",
+      name: "폴리네시아",
+      color: "#3F8FC8",
+      poly: [
+        [176, -5], [180, -4.2], [184, -5], [187.5, -7], [190, -9.5], [191.5, -12.5],
+        [191.3, -16], [190.5, -19], [188.5, -22.5], [185.5, -23.2], [183, -22.3],
+        [182, -19.5], [182.3, -16.8], [182, -15.6], [180.5, -14.6], [178.6, -13.8],
+        [177.2, -11.5], [176.2, -8.5],
+      ],
+      anchor: [184, -11],
+      cities: [
+        { name: "투발루", lon: 179.19, lat: -8.52 },
+        // 사모아 라벨은 도트 아래로 — 지역명 라벨(폴리네시아)과 층 분리
+        { name: "사모아", lon: 188.24, lat: -13.83, labelDy: 14 },
+        { name: "통가", lon: 184.8, lat: -21.14 },
+      ],
+      hintIcon: ICON.canoe,
+      hint: "'많은 섬들'이라는 뜻 — 날짜 변경선 너머까지 넓게 흩어져 있어요.",
+      success: "폴리네시아 완성! 투발루·사모아·통가 — 날짜 변경선 곁이라 새해를 가장 먼저 맞는 동네예요.",
+      trait: "날짜 변경선 너머까지 섬이 흩어진",
+    },
+  ],
+  outsideMsg: (lon, lat) => {
+    if (lon < 141 && lat > -11) return "여긴 동남아시아 — Ⅱ단원에서 만난 벼농사와 다양한 문화의 땅이에요! 오세아니아는 남동쪽!";
+    return "다섯 지역의 경계 어디쯤이네요 — 지역 한가운데를 노려 봐요!";
+  },
+};
+
+export const CONTINENTS: Record<string, ContinentDef> = { asia: ASIA, europe: EUROPE, africa: AFRICA, america: AMERICA, oceania: OCEANIA };

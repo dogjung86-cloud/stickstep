@@ -128,6 +128,7 @@ export const hook = (o: {
     | "dawnsoccer" | "peakhike" | "frozenriver" | "cityfeed" | "skislope" | "trainborder" | "fourshirts"
     | "mappuzzle" | "satnile" | "herdmove" | "shadelane" | "movienight" | "classphoto" | "flagstars" | "greenline"
     | "searchamerica" | "panroad" | "quitopack" | "teamroster" | "dinnertable" | "fruitlogo" | "motorcity"
+    | "newyearfirst" | "ulurumystery" | "santasurf" | "martorigin" | "trashisland" | "ploggingrun" | "stationwhy" | "arcticflags"
     | "saveicon" | "gamechar" | "timecapsule" | "dangi" | "milmyeon"
     | "sprout" | "receipt" | "aptmap" | "parcel" | "olympic" | "romanclock" | "silkscarf"
     | "lambskewer" | "examnotice" | "kanasign" | "hanjahw" | "zeroscore" | "chessmate" | "arabnum" | "francejersey" | "pepper";
@@ -408,6 +409,10 @@ export const rainBeltLab = (o: { title: string; lead?: string; cta?: string; cur
   ({ type: "rainBeltLab", ...o });
 export const highlandLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "highlandLab", ...o });
+export const seasonLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "seasonLab", ...o });
+export const shipRaceLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "shipRaceLab", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

@@ -1,0 +1,61 @@
+# 사회 Ⅵ(오세아니아와 극지방) 발주 — 스틱맨 개념 컷 8장(public/soc/cuts) + 실사풍 3장(public/soc/oceania)
+# 컷은 스타일 블록 A(soc 공용). 실사풍은 스타일 블록 P — 인물은 원경·비식별(존엄 눈검수 항목).
+# 대륙 실루엣이 들어가는 컷([0])은 오세아니아 모양 특징을 문장으로 명시(Ⅱ 실루엣 실사고 예방):
+# "크고 평평한 한 덩어리(오스트레일리아) + 남동쪽에 길쭉한 두 조각 섬(뉴질랜드) + 주변에
+# 점점이 흩어진 작은 섬들" — NOT Africa, NOT America, NOT a single blob.
+# 실물이 정답인 소재(울루루·대보초·오페라하우스·빙산·오로라·펭귄·북극곰·쇄빙선·기지·캥거루 등)는
+# 발주하지 않는다 — qa/fetch-soc6-oceania.mjs 위키미디어 파이프라인.
+#
+# ── 스타일 블록 A (스틱맨 컷 공용) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 P (실사풍 공용) ──
+# photorealistic educational reference photograph, natural daylight, eye-level or slightly low
+# wide-angle view, crisp focus, realistic colors, clean composition centered on the subject type.
+# Generic archetype of the scene — NOT a specific famous landmark, no recognizable real-world
+# monument. Absolutely no text, no letters, no numbers, no signs, no banners, no logos, no flags
+# with writing anywhere in the image. No watermark. People allowed only small and distant, faces
+# not recognizable, shown with dignity in everyday activity. Landscape 4:3.
+
+[0] file=public/soc/cuts/u6l1.png (landscape 4:3, 스타일 A)
+A stick figure kneels on a huge floor map and assembles the Oceania continent as a puzzle: one big wide flat rounded landmass (Australia) in the center-left, two long slim island pieces placed together to its southeast (New Zealand), and many tiny dot-sized island pieces the figure sprinkles from one hand across the wide empty ocean to the upper right (NOT Africa, NOT America, NOT a single blob — one big flat piece plus two slim islands plus scattered specks). Only the two slim New Zealand pieces are teal; everything else pure black and white.
+
+[1] file=public/soc/cuts/u6l2.png (landscape 4:3, 스타일 A)
+A completely flat horizon line runs across the panel; in the middle of the flat desert plain rises one single enormous smooth dome-shaped rock monolith with gently rounded top, and a tiny stick figure stands at its base looking up in awe, its little hat flying off. A couple of small dry grass tufts on the plain. Only the monolith is teal; everything else pure black and white.
+
+[2] file=public/soc/cuts/u6l3.png (landscape 4:3, 스타일 A)
+Split panel divided by a vertical wavy line into two halves of the same moment: on the left half a stick figure in a thick puffy coat and scarf shivers beside a small snowman under falling snowflakes; on the right half another stick figure in swim shorts rides a surfboard on a doodle wave under a big blazing sun, wearing a tiny party hat. Each figure waves happily toward the other across the divide. Only the two waving arms are teal; everything else pure black and white.
+
+[3] file=public/soc/cuts/u6l4.png (landscape 4:3, 스타일 A)
+A harbor scene: on the left a stick figure pushes a wheelbarrow of rock chunks up a ramp onto a big cargo ship that sails toward the right edge, its hold full of rock chunks; from the right edge another cargo ship arrives carrying neat boxes, and a second stick figure on the dock happily receives one box. Two ships passing in opposite directions, simple doodle waves. Only the rock chunks are teal; everything else pure black and white.
+
+[4] file=public/soc/cuts/u6l5.png (landscape 4:3, 스타일 A)
+A stick figure in a small sailboat looks through a telescope at what seems like an island ahead — but the island is drawn as a floating pile of bottles, bags and containers bobbing on the waves. The figure's eyebrows rise in surprise, a single drop of sweat on its head. A seagull circles above the pile. Only the floating pile is teal; everything else pure black and white.
+
+[5] file=public/soc/cuts/u6l6.png (landscape 4:3, 스타일 A)
+A proud stick figure stands on a clean beach holding a reusable tumbler cup in one hand and a folded cloth shopping bag in the other; at its feet sits one tied garbage bag it has just filled, with a small grabber stick leaning on it. Behind, the sea sparkles with three little doodle sparkle stars. Only the tumbler cup is teal; everything else pure black and white.
+
+[6] file=public/soc/cuts/u6l7.png (landscape 4:3, 스타일 A)
+On a vast flat ice field, a stick figure in a hooded parka pulls a very long thin cylinder of ice straight up out of a narrow drill hole, like pulling a giant noodle; the cylinder shows faint horizontal layer lines. Beside the hole, one small penguin tilts its head watching curiously. A tiny dome research hut in the far background. Only the ice cylinder's layer lines are teal; everything else pure black and white.
+
+[7] file=public/soc/cuts/u6l8.png (landscape 4:3, 스타일 A)
+A big balance scale stands on ice; on the left pan sits a doodle oil drum and a pickaxe, on the right pan sits a small iceberg with a tiny seal lying on it. Two stick figures stand on either side, each gently placing one hand under its own pan as if to weigh carefully — both pans hang at exactly the same height, perfectly level. Only the balance beam is teal; everything else pure black and white.
+
+[8] file=public/soc/oceania/wheatharvest.png (landscape 4:3, 스타일 P)
+A vast golden wheat plain stretching flat to the horizon under a huge blue sky; one large combine harvester works through the field kicking up a light dust cloud, cut swath lines curving across the foreground. Generic mechanized broadacre-farm archetype, machine free of any readable text or logos, no people visible.
+
+[9] file=public/soc/oceania/beachcleanup.png (landscape 4:3, 스타일 P)
+A wide sandy beach in morning light: several volunteers seen small and far away picking up litter into large bags along the waterline, one filled transparent bag standing in the near foreground with assorted plastic bottles inside. Faces not recognizable, dignified everyday activity. Generic coastal-cleanup archetype, no text on bags or clothing.
+
+[10] file=public/soc/oceania/artesianbore.png (landscape 4:3, 스타일 P)
+A dry reddish outback plain with sparse shrubs: a tall old-fashioned metal windmill water pump stands over a small round water trough where a few cattle drink, heat haze on the horizon, late afternoon light. Generic dryland artesian-bore archetype, no text, no people.
+
+[11] file=public/soc/oceania/kiwiorchard.png (landscape 4:3, 스타일 P)
+A kiwifruit orchard under a pergola trellis: rows of vines forming a green leafy ceiling, clusters of fuzzy brown kiwifruits hanging down in sharp focus in the foreground, soft daylight filtering through leaves, gentle green hills in the far background. Generic temperate-orchard archetype, no people, no text.

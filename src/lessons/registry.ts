@@ -228,6 +228,8 @@ import { pyramidLab } from "./steps/pyramidLab";
 import { westWindLab } from "./steps/westWindLab";
 import { rainBeltLab } from "./steps/rainBeltLab";
 import { highlandLab } from "./steps/highlandLab";
+import { seasonLab } from "./steps/seasonLab";
+import { shipRaceLab } from "./steps/shipRaceLab";
 import { timelineLab } from "./steps/timelineLab";
 
 const R: Record<string, StepRenderer> = {
@@ -453,6 +455,8 @@ const R: Record<string, StepRenderer> = {
   westWindLab,
   rainBeltLab,
   highlandLab,
+  seasonLab,
+  shipRaceLab,
   timelineLab,
   quiz,
   table,

@@ -5,7 +5,7 @@ import { chromium } from "playwright-core";
 import { readFileSync, writeFileSync, readdirSync, unlinkSync, existsSync } from "node:fs";
 
 const SQUARE_DIRS = ["public/geo/rocks", "public/geo/minerals", "public/geo/evid", "public/light/quiz", "public/atom/hook", "public/elec/hook", "public/exam/u2", "public/exam/u4", "public/exam/u5", "public/exam/u6", "public/exam/u7", "public/exam/g2u1", "public/exam/g2u2", "public/exam/g2u3", "public/exam/g2u4", "public/exam/g2u7", "public/exam/g2u8"];
-const ASPECT_DIRS = ["public/geo/drift", "public/geo/figs", "public/recap", "public/bio2/cells", "public/bio2/quiz", "public/atom/quiz", "public/elec/figs", "public/elec/cuts", "public/bio2/cuts", "public/chem/cuts", "public/geo/cuts", "public/atom/cuts", "public/star/cuts", "public/math/cuts", "public/math2/cuts", "public/body/cuts", "public/body/figs", "public/soc/cuts", "public/soc/asia", "public/soc/europe", "public/soc/africa", "public/soc/america", "public/his/cuts"];
+const ASPECT_DIRS = ["public/geo/drift", "public/geo/figs", "public/recap", "public/bio2/cells", "public/bio2/quiz", "public/atom/quiz", "public/elec/figs", "public/elec/cuts", "public/bio2/cuts", "public/chem/cuts", "public/geo/cuts", "public/atom/cuts", "public/star/cuts", "public/math/cuts", "public/math2/cuts", "public/body/cuts", "public/body/figs", "public/soc/cuts", "public/soc/asia", "public/soc/europe", "public/soc/africa", "public/soc/america", "public/soc/oceania", "public/his/cuts"];
 // 투명 배경(누끼) 보존 — 흰 배경을 깔지 않고 알파를 그대로 webp로. 구성단계 개체 아트 등.
 const TRANSPARENT_DIRS = ["public/bio2/levels"];
 
