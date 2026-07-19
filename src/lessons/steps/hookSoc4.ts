@@ -16,6 +16,8 @@ import { haptic, HAPTIC } from "../../core/haptics";
 import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
 
+const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+
 type Face = (k: AvatarKind) => void;
 type HookOpt = { choices?: string[] };
 
@@ -607,21 +609,12 @@ function flagSvg(zoom: boolean): string {
       <rect x="88" y="146" width="64" height="5" rx="2.5" fill="#2E3A50"/>
     </svg>`;
   }
-  const stars = Array.from({ length: 14 }, (_, i) => {
-    const a = (i / 14) * Math.PI * 2 - Math.PI / 2;
-    return `<circle cx="${(120 + 62 * Math.cos(a)).toFixed(1)}" cy="${(82 + 44 * Math.sin(a)).toFixed(1)}" r="3.4" fill="#F2C24E" class="hs4-pop" style="animation-delay:${i * 40}ms"/>`;
-  }).join("");
+  // 줌 상태 = 실물 깃발(위키미디어 PD, 아프리카연합 공식 도안) — 손그림 도식은 어색하다는 눈검수 교체.
   return `<svg viewBox="0 0 240 168" fill="none" aria-hidden="true">
-    <defs>
-      <linearGradient id="hs4-flag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3E7E56"/><stop offset=".55" stop-color="#2E6E46"/><stop offset="1" stop-color="#1E5636"/></linearGradient>
-    </defs>
+    <defs><clipPath id="hs4-fclip"><rect x="18" y="18" width="204" height="132" rx="10"/></clipPath></defs>
     <rect x="6" y="6" width="228" height="156" rx="12" fill="#1C2436"/>
-    <rect x="18" y="18" width="204" height="128" rx="10" fill="url(#hs4-flag)" stroke="#F2C24E" stroke-width="2"/>
-    <g transform="translate(86 44) scale(.94)">
-      <path d="${AFR_SIL}" fill="#F5EEDF" stroke="#D8C8A0" stroke-width="1.6"/>
-    </g>
-    ${stars}
-    <path d="M40 32q10-4 18 2" stroke="#F5EEDF" stroke-width="1.4" opacity=".35" fill="none"/>
+    <image href="${base}soc/africa/auflag.webp" x="18" y="18" width="204" height="132" preserveAspectRatio="xMidYMid slice" clip-path="url(#hs4-fclip)" class="hs4-pop"/>
+    <rect x="18" y="18" width="204" height="132" rx="10" fill="none" stroke="#F2C24E" stroke-width="2"/>
   </svg>`;
 }
 
@@ -655,7 +648,7 @@ export function renderFlagStars(
     btn.classList.add("done");
     btn.disabled = true;
     face("curious");
-    helper.innerHTML = "초록 바탕에 아프리카 대륙, 그리고 대륙을 둘러싼 <b>별들의 원</b>! 이 별들은 무엇을 뜻할까요?";
+    helper.innerHTML = "초록 바탕의 아프리카 대륙에 빛이 쏟아지고, 대륙을 둘러싼 <b>별들의 원</b>! 이 별들은 무엇을 뜻할까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [

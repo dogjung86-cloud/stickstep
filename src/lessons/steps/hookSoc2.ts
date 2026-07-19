@@ -15,6 +15,8 @@ import { haptic, HAPTIC } from "../../core/haptics";
 import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
 
+const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+
 type Face = (k: AvatarKind) => void;
 type HookOpt = { choices?: string[] };
 
@@ -367,10 +369,10 @@ function snackSvg(back: boolean): string {
       <path d="M70 36q50 8 100 0M70 134q50 8 100 0" stroke="#B0A488" stroke-width="1.4" opacity=".5"/>
       <path d="M82 52h56M82 62h64M82 72h48M82 82h60" stroke="#8A8270" stroke-width="2.4" stroke-linecap="round" opacity=".55"/>
       <g class="hs2-halal">
-        <circle cx="138" cy="112" r="19" fill="#FFFFFF" stroke="#1E9E50" stroke-width="2.6"/>
-        <path d="M130 104v16M130 112h9M139 104v16" stroke="#1E9E50" stroke-width="2.4" stroke-linecap="round"/>
-        <path d="M147 120q-3-1.5-3-5t3-6q1.6-1 3 .4" stroke="#1E9E50" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-        <path d="M124 98q14-6 28 0" stroke="#1E9E50" stroke-width="1.4" fill="none" opacity=".6"/>
+        <!-- 실물 할랄 인증 마크(위키미디어 PD) — 손그림 아랍 문자 흉내는 어색·오기 리스크(눈검수 교체) -->
+        <clipPath id="hs2-halclip"><circle cx="138" cy="112" r="19"/></clipPath>
+        <image href="${base}soc/asia/halal.webp" x="118.5" y="92.5" width="39" height="39" preserveAspectRatio="xMidYMid slice" clip-path="url(#hs2-halclip)"/>
+        <circle cx="138" cy="112" r="19" fill="none" stroke="#1E9E50" stroke-width="1.4"/>
       </g>
       <path d="M82 96h28" stroke="#8A8270" stroke-width="2.4" stroke-linecap="round" opacity=".55"/>
     </g>`;

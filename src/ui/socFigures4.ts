@@ -292,25 +292,6 @@ export function afResourceRankFig(): string {
   </svg>`;
 }
 
-/* ---------- L7: 아프리카연합 상징 도식(concept figure — 훅 회수) ---------- */
-export function afAuFig(): string {
-  const stars = Array.from({ length: 14 }, (_, i) => {
-    const a = (i / 14) * Math.PI * 2 - Math.PI / 2;
-    return `<circle cx="${(172 + 92 * Math.cos(a)).toFixed(1)}" cy="${(84 + 62 * Math.sin(a)).toFixed(1)}" r="3" fill="#F2C24E"/>`;
-  }).join("");
-  return `<svg viewBox="0 0 344 168" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="아프리카 대륙을 별들이 원으로 둘러싼 그림 — 아프리카연합의 상징을 본뜬 도식">
-    <rect x="0" y="0" width="344" height="168" rx="14" fill="#2E5E3E"/>
-    <g transform="translate(172 84)">
-      <g transform="scale(0.62) translate(-548.5 -247)">
-        <path d="${WORLD_LAND_PATH}" fill="#F2ECDE" fill-rule="evenodd" clip-path="url(#s4au-clip)"/>
-      </g>
-    </g>
-    <defs><clipPath id="s4au-clip"><rect x="${CROP.x}" y="${CROP.y}" width="${CROP.w}" height="${CROP.h}"/></clipPath></defs>
-    ${stars}
-    <text x="172" y="158" text-anchor="middle" font-size="8.5" font-weight="700" fill="#CDE8CE">별들이 손잡은 원 — 회원국들의 연합을 뜻해요 (모형 도식)</text>
-  </svg>`;
-}
-
 /* ---------- L8: 그레이트 그린 월 지도(concept figure) ---------- */
 // 사헬 경로(세네갈~지부티) — 러프 경로도 lon/lat 계산 좌표만. 총길이 약 8,000km는 캡션 몫.
 export function afGgwFig(): string {

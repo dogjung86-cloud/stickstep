@@ -18,7 +18,7 @@ import {
 } from "../dsl";
 import {
   afRegionsFig, afTerrainFig, afClimateFig, afClimateGraphFig, afMirrorFig,
-  afMedianBarFig, afPopRiseFig, afResourceRankFig, afAuFig, afGgwFig, afFairFig, soc4MiniArt,
+  afMedianBarFig, afPopRiseFig, afResourceRankFig, afGgwFig, afFairFig, soc4MiniArt,
 } from "../../ui/socFigures4";
 
 const BASE = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/";
@@ -852,7 +852,7 @@ export const S1_UNIT4: Unit = {
             { k: "figure", svg: cut("soc", "u4l7", "큰 설계도를 함께 펼쳐 든 세 스틱맨과 그 위에 뜬 별들의 원"), cap: "혼자가 아니라 함께 그리는 설계도예요" },
             { k: "term", name: "지속가능한 발전", def: "자연과 인간이 조화를 이루는 개발로 <b>현세대의 필요를 채우면서 미래 세대의 삶의 질까지 보장</b>하는 발전이에요." },
             { k: "term", name: "아프리카연합(AU)", def: "아프리카의 <b>사회적·경제적 통합</b>을 위해 <b>55개국</b>이 만든 기구 — 평화, 질병 퇴치, 경제 발전을 위해 협력해요. 2063년까지의 장기 계획 <b>'어젠다 2063'</b>도 세웠죠." },
-            { k: "figure", svg: afAuFig(), cap: "대륙을 둘러싼 별들의 원 — 훅에서 만난 그 깃발의 뜻이에요" },
+            { k: "figure", svg: afimg("auflag.webp", "초록 바탕의 아프리카 대륙에 빛이 쏟아지고 그 둘레를 별들이 원으로 둘러싼 아프리카연합의 깃발"), cap: "아프리카연합의 깃발 — 빛이 비추는 대륙을 55개의 별이 둘러싸요" },
             { k: "term", name: "그랜드 잉가 프로젝트", def: "콩고 민주 공화국이 <b>콩고강</b> 잉가 지역에 짓는 <b>아프리카 최대의 수력 발전 댐</b> 계획 — 성공하면 사하라 이남 전체에 전기를 공급할 수 있을 것으로 기대돼요." },
             { k: "figure", svg: afimg("dam.webp", "협곡을 가로막은 거대한 콘크리트 댐에서 물줄기가 쏟아지는 모습"), cap: "강의 힘을 전기로 — 수력 발전 댐" },
             { k: "term", name: "잠비아의 농업 혁신", def: "일하는 사람의 약 70%가 농업에 종사하는 잠비아는 <b>물을 아껴 주는 새로운 관개 기술</b>을 개발하고 <b>작물을 다양화</b>하며 농업 생산력을 키우고 있어요." },
@@ -915,7 +915,7 @@ export const S1_UNIT4: Unit = {
         }),
         ox({
           prompt: "아프리카연합(AU)은 아프리카의 사회적·경제적 통합을 촉진하기 위해 아프리카 국가들이 만든 기구이다.",
-          figure: afAuFig(),
+          figure: afimg("auflag.webp", "아프리카연합의 깃발"),
           answer: true,
           explainGood: "맞아요! 대륙을 둘러싼 55개의 별 — 회원국은 모두 아프리카의 나라들이에요.",
           explainBad: "훅의 깃발을 떠올려요 — 별 하나가 아프리카의 나라 하나였죠. 아프리카연합(AU)은 아프리카 55개국이 사회적·경제적 통합을 위해 만든 기구랍니다. 세계 여러 대륙의 나라가 섞인 기구가 아니에요.",
