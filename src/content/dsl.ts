@@ -129,6 +129,7 @@ export const hook = (o: {
     | "mappuzzle" | "satnile" | "herdmove" | "shadelane" | "movienight" | "classphoto" | "flagstars" | "greenline"
     | "searchamerica" | "panroad" | "quitopack" | "teamroster" | "dinnertable" | "fruitlogo" | "motorcity"
     | "newyearfirst" | "ulurumystery" | "santasurf" | "martorigin" | "trashisland" | "ploggingrun" | "stationwhy" | "arcticflags"
+    | "twinstory" | "hiddenteacher" | "profileme" | "nametags" | "doubleday" | "vinestangle" | "dollshelf"
     | "saveicon" | "gamechar" | "timecapsule" | "dangi" | "milmyeon"
     | "sprout" | "receipt" | "aptmap" | "parcel" | "olympic" | "romanclock" | "silkscarf"
     | "lambskewer" | "examnotice" | "kanasign" | "hanjahw" | "zeroscore" | "chessmate" | "arabnum" | "francejersey" | "pepper";
@@ -413,6 +414,14 @@ export const seasonLab = (o: { title: string; lead?: string; cta?: string; curio
   ({ type: "seasonLab", ...o });
 export const shipRaceLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "shipRaceLab", ...o });
+
+// ── 사회 일반사회 문법(Ⅶ에서 확립 — Ⅷ~Ⅻ 재사용): 데이터는 ui/judgeKit.ts가 단일 진실 공급원 ──
+export const judgeLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt; judge: string }): Step =>
+  ({ type: "judgeLab", ...o });
+export const dilemmaLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt; dilemma: string }): Step =>
+  ({ type: "dilemmaLab", ...o });
+export const lifePathLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "lifePathLab", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

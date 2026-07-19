@@ -1,0 +1,73 @@
+# 사회 Ⅶ(s1u7 인간과 사회생활) 발주 — 스틱맨 개념 컷 7장(public/soc/cuts) + 만화 「장영실의 두 이름표」 4컷(public/comics/s1u7l4)
+# 일반사회 첫 단원: 실사풍 발주 0장(사람 중심 단원 — 스타일 P의 "인물 원경" 규칙과 정면 충돌, 전부 컷·벡터).
+# 컷·만화 모두 "이미지 안 글자 절대 금지". 만화 컷은 앱이 한글 말풍선을 얹는 하이브리드라
+# 인물이 입을 벌리고 손짓하는 "말하는 연기"만 그리고, 인물 머리 위쪽 1/3 여백을 넉넉히 남긴다.
+# ★ 이 단원 눈검수 특칙(민감 가드 연동): 기존 항목(글자 0·의미 정확·손가락 5개·인물 존엄)에 더해
+#   **성역할·집단 고정관념 무(無) 검수** — 스틱맨은 무성별 기본형 유지(머리카락·치마 등 성별 표지 금지),
+#   가사·직업 장면에 성별 클리셰가 나오면 재발주. 장영실 만화는 실존 인물 존엄 유지(개그는 주변 스틱맨 몫),
+#   신분(관노비) 컷은 DIGNIFIED — 비참 연출 금지, 재능 장면으로.
+#
+# ── 스타일 블록 A (스틱맨 개념 컷 공용 — soc 공용) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 C (만화 컷 공용 — 말풍선 하이브리드 + 코믹 연기, his2 원전) ──
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal, used sparingly where the prompt says.
+# Absolutely NO text, NO letters, NO numbers, NO speech bubbles, NO captions anywhere.
+# Characters ACT like they are talking: open mouth (small oval), expressive hand gestures.
+# Comedic acting is allowed and encouraged where the prompt marks GAG: exaggerated poses,
+# big reactions, falling over backwards, sweat drops, bulging wide eyes, jaw dropping —
+# but all historical objects, clothing and facts must stay accurate; never make the scene
+# absurd beyond what the prompt describes, and NO anachronistic props (no phones, no modern
+# items) inside historical scenes.
+# Keep the upper third of the panel mostly empty white space above the characters' heads
+# (the app overlays Korean speech bubbles there). Main subjects centered horizontally.
+# Simple, charming, educational middle-school comic. 4:3 landscape panel.
+
+## ── 개념 컷 7장 (스타일 A) ──
+
+[0] file=public/soc/cuts/u7l1.png (landscape 4:3, 스타일 A)
+A baby stick figure with a proportionally bigger round head takes wobbly first steps, tiny motion wobble lines at its feet; two adult stick figures kneel a little ahead with open welcoming arms encouraging it forward. Floating gently in the air between them: a spoon, an open book, and a toothbrush — things the baby will one day learn to use. Only the spoon is teal; everything else pure black and white.
+
+[1] file=public/soc/cuts/u7l2.png (landscape 4:3, 스타일 A)
+A gently winding path runs from the lower left to the upper right of the panel, passing through five simple free-standing gateways in order: first a gateway shaped like a small house roof, then one shaped like a playground seesaw arch, then one shaped like a school building with a tiny flag on top (blank flag), then one shaped like a desk with a chair, and last one shaped like a big rounded television screen frame. One stick figure walks the path between the gates, already past the first two. Only the winding path line is teal; everything else pure black and white.
+
+[2] file=public/soc/cuts/u7l3.png (landscape 4:3, 스타일 A)
+A stick figure stands before a tall standing mirror, resting its chin on one hand in gentle thought; the reflection inside the mirror shows the same stick figure standing a bit straighter and more confident with hands on hips. Around the thinking figure's head float three small objects it loves: a soccer ball, a paintbrush, and an open book. Only the mirror frame is teal; everything else pure black and white.
+
+[3] file=public/soc/cuts/u7l4.png (landscape 4:3, 스타일 A)
+A stick figure stands proudly in the center with three blank rectangular name tags clipped on its chest in a neat column; three thin dotted lines run outward from the tags to three small scenes in the corners: a simple house, a school desk with an open notebook shape, and a soccer goal with a ball. The figure points at its own tags with one hand, smiling. Only the three blank tags are teal; everything else pure black and white.
+
+[4] file=public/soc/cuts/u7l5.png (landscape 4:3, 스타일 A)
+A stick figure stands at a fork where one path curves left toward a small round table with a candle cake on it and two stick figures waving beside it, and the other path curves right toward a small stage with open curtains and a standing microphone. The figure in the middle leans slightly toward both directions at once, one big drop of sweat on its head, arms stretched a little toward each side. Only the two forking path lines are teal; everything else pure black and white.
+
+[5] file=public/soc/cuts/u7l6.png (landscape 4:3, 스타일 A)
+One tall simple wooden pole stands in the center of the panel; two leafy vines climb it from opposite sides — the left vine spirals up clockwise, the right vine spirals up counterclockwise — and in the middle of the pole they meet and tangle into one visible thick knot. Two stick figures stand at the base on either side, each gently holding the lower end of one vine, looking up at the knot with puzzled tilted heads. Only the left vine is teal; everything else pure black and white.
+
+[6] file=public/soc/cuts/u7l7.png (landscape 4:3, 스타일 A)
+A long tug-of-war rope lies dropped on the ground in a relaxed gentle S-curve across the panel floor; right above the middle of the rope, two stick figures walk toward each other and shake hands warmly, with three tiny sparkle lines around their joined hands. Each figure's other hand is open and relaxed at its side. Only their joined shaking hands are teal; everything else pure black and white.
+
+## ── 만화 s1u7l4 「장영실의 두 이름표」 4컷 (스타일 C) ──
+## 등장인물 고정: YOUNG JANG = 간결한 한복(저고리+헐렁한 바지)의 어린 스틱맨.
+## ADULT JANG = 같은 얼굴의 어른 스틱맨(뒤 컷에서 조선 관복+검은 사모).
+## OFFICIAL = 넓은 챙의 갓을 쓰고 두루마리를 든 관리 스틱맨.
+## 실존 인물 존엄: 장영실 본인은 개그 연기 금지 — 개그는 주변 스틱맨 몫.
+
+[c0] file=public/comics/s1u7l4/0.png (landscape 4:3, 스타일 C)
+DIGNIFIED (no gag — calm, warm and respectful): In a simple Joseon-era courtyard with a low tile-roofed wall in the background, YOUNG JANG, a child stick figure in simple hanbok (short jacket and baggy pants), kneels intently fixing a broken wooden plow with a small hand tool, tiny careful repair motion lines at the joint; two adult stick figures in hanbok stand behind watching with amazed raised hands and warm smiles. Teal accent: the freshly mended joint of the plow. Upper third of the panel empty white space for speech bubbles.
+
+[c1] file=public/comics/s1u7l4/1.png (landscape 4:3, 스타일 C)
+GAG: the royal messenger rushes in so fast that his wide-brimmed hat flies off behind him and his long scroll unrolls across the ground like a carpet. OFFICIAL, a stick figure in a Joseon official robe, dashes in from the left waving a long unrolling blank scroll, his wide-brimmed gat hat flying off in the air behind him, speed lines trailing; YOUNG JANG stands at the right, turning around in surprise and dropping a small wooden tool; beside him one neighbor stick figure falls straight over backwards with legs in the air. Teal accent: the unrolled scroll. Upper third empty for speech bubbles.
+
+[c2] file=public/comics/s1u7l4/2.png (landscape 4:3, 스타일 C)
+GAG: the water clock strikes its bell all by itself and one watching scholar leaps backward in shock with arms flailing. Night workshop scene in a Joseon palace yard with a crescent moon: ADULT JANG, now a grown stick figure in a neat robe, proudly gestures with open palm toward a tall tiered water clock — stacked vessels connected by thin pipes with a small bell at the top ringing by itself, three small ring lines around the bell; one scholar stick figure jumps backward in astonishment, robe flapping, while another claps with delight. A simple armillary sphere (nested rings on a small stand) sits at the side. Teal accent: the water line flowing through the clock's thin pipes. Upper third empty for speech bubbles.
+
+[c3] file=public/comics/s1u7l4/3.png (landscape 4:3, 스타일 C)
+DIGNIFIED (no gag — quiet, proud afterglow): ADULT JANG stands upright at the center in a Joseon official robe and stiff black samo cap, holding the same small wooden hand tool from his childhood in his open palm, looking down at it with a gentle fond smile; behind him, faint simple outlines of the tall water clock and the armillary sphere. Soft warm composition. Teal accent: the small wooden tool in his palm. Upper third empty for speech bubbles.

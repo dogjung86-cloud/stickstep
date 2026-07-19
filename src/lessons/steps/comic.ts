@@ -43,6 +43,8 @@ const STAGE_COLOR: Record<string, string> = {
   // 역사 트랙 — 탐구 5단계 + 서사 배지
   "주제 선정": "#3182F6", "자료 수집": "#E8850C", "분석·해석": "#8A6BFF", 검증: "#0CA6C0", "정리·발표": "#04B45F",
   랑케: "#3D5BC0", "카의 생각": "#0E7C8A", 사관: "#8A6BFF", 대결: "#E8590C",
+  // 사회 Ⅶ — 장영실 서사(귀속→성취)
+  "타고난 자리": "#8A6A3E", "재능의 부름": "#E8850C", "스스로 얻은 자리": "#0E7C8A", "두 이름표": "#862E9C",
 };
 function stageColor(stage: string): string {
   for (const key of Object.keys(STAGE_COLOR)) if (stage.includes(key)) return STAGE_COLOR[key];

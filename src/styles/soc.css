@@ -767,3 +767,196 @@
   padding: 2px 8px; border-radius: var(--r-pill); background: #E8590C; color: #fff;
   font-size: 10px; font-weight: 900; letter-spacing: -.01em;
 }
+
+/* ═════════ 사회 Ⅶ 인간과 사회생활 — 일반사회 첫 단원 ═════════ */
+/* 훅 장면(hs7- — hs6 문법 복제) */
+.hs7-frame {
+  position: relative; margin: 4px auto 0; max-width: 320px;
+  border-radius: 16px; overflow: hidden; box-shadow: var(--sh-card);
+}
+.hs7-frame svg { display: block; width: 100%; height: auto; }
+.hs7-btn {
+  appearance: none; font-family: inherit; cursor: pointer;
+  display: block; margin: 10px auto 0; padding: 10px 18px; border-radius: var(--r-pill);
+  background: var(--grad-card); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 13px; font-weight: 800; color: var(--ink); letter-spacing: -.012em;
+  transition: transform .12s var(--ease), opacity .2s;
+}
+.hs7-btn:active { transform: scale(.96); }
+.hs7-btn:disabled, .hs7-btn.done { opacity: .4; cursor: default; }
+.hs7-caret { animation: hs7Blink 1s steps(2) infinite; }
+@keyframes hs7Blink { 50% { opacity: 0; } }
+.hs7-thought { animation: hs7In .5s var(--ease-out) backwards; }
+.hs7-noti { animation: hs7Pop .5s var(--spring-bounce) backwards; transform-box: fill-box; transform-origin: center; }
+.hs7-noti.d2 { animation-delay: .55s; }
+@keyframes hs7Pop { 0% { opacity: 0; transform: scale(.4); } 70% { transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes hs7In { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.hs7-vine { stroke-dasharray: 240; stroke-dashoffset: 240; animation: hs7Vine 1.4s var(--ease-out) forwards; }
+.hs7-vine.d2 { animation-delay: .15s; }
+@keyframes hs7Vine { to { stroke-dashoffset: 0; } }
+.hs7-knot { animation: hs7Pop .6s var(--spring-bounce) 1.2s backwards; transform-box: fill-box; transform-origin: center; }
+.hs7-hanja { animation: hs7In .6s var(--ease-out) 1.5s backwards; }
+.hs7-newdolls { animation: hs7In .6s var(--ease-out) backwards; }
+.hs7-tag.on { animation: hs7Pop .5s var(--spring-bounce) backwards; transform-box: fill-box; transform-origin: center; }
+@media (prefers-reduced-motion: reduce) {
+  .hs7-vine { animation-duration: .2s; }
+  .hs7-noti, .hs7-knot, .hs7-hanja { animation-duration: .2s; animation-delay: 0s; }
+}
+
+/* 사례 판단 랩(judgeLab — 일반사회 공통 엔진 1호) */
+.jdg-stage { padding: 12px 12px 14px; }
+.jdg-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.jdg-deck { font-size: 11px; font-weight: 800; color: #9CB2D4; letter-spacing: -.01em; }
+.jdg-progress { font-size: 11px; font-weight: 800; color: #E8EDF6; background: rgba(255,255,255,.1); padding: 3px 10px; border-radius: var(--r-pill); }
+.jdg-zone { min-height: 88px; display: grid; place-items: center; }
+.jdg-card {
+  max-width: 264px; width: 100%; background: linear-gradient(180deg, #FFFFFF, #EDF1F8);
+  border-radius: 14px; padding: 14px 14px 12px; box-shadow: 0 8px 20px rgba(0,0,0,.35);
+  border: 1.5px solid #C6D2E4; position: relative;
+}
+.jdg-card::before {
+  content: ""; position: absolute; top: -5px; left: 50%; transform: translateX(-50%);
+  width: 40px; height: 10px; border-radius: 5px; background: rgba(134,46,156,.35);
+}
+.jdg-card.in { animation: jdgIn .4s var(--ease-out); }
+.jdg-card.fly { transform: translateY(52px) scale(.5); opacity: 0; transition: transform .4s var(--ease), opacity .4s; }
+.jdg-card.shake { animation: jdgShake .4s; }
+.jdg-card.done { background: linear-gradient(180deg, #EDFBF2, #D9F3E4); border-color: #7ED0A0; }
+.jdg-card.done .jdg-card-t { color: #1E7E46; text-align: center; }
+.jdg-card-t { font-size: 14px; font-weight: 800; color: var(--ink); line-height: 1.5; letter-spacing: -.012em; }
+@keyframes jdgIn { from { opacity: 0; transform: translateY(-14px) rotate(-1.2deg); } to { opacity: 1; transform: none; } }
+@keyframes jdgShake { 0%,100% { transform: none; } 25% { transform: translateX(-6px); } 55% { transform: translateX(5px); } 80% { transform: translateX(-3px); } }
+.jdg-shelves { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.jdg-shelf {
+  appearance: none; font-family: inherit; cursor: pointer; text-align: left;
+  background: rgba(255,255,255,.06); border: 1.5px solid rgba(136,158,196,.35);
+  border-radius: 14px; padding: 10px 10px 8px; color: #E8EDF6;
+  transition: transform .12s var(--ease), border-color .2s;
+}
+.jdg-shelf:active { transform: scale(.97); }
+.jdg-shelf.pop { animation: hs7Pop .42s var(--spring-bounce); }
+.jdg-shelf-head { display: flex; align-items: center; gap: 6px; font-size: 13px; letter-spacing: -.012em; }
+.jdg-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--jc); box-shadow: 0 0 8px var(--jc); flex: none; }
+.jdg-count { margin-left: auto; font-size: 10.5px; font-weight: 800; color: #0B1524; background: var(--jc); min-width: 18px; text-align: center; border-radius: 9px; padding: 1px 5px; }
+.jdg-hint { font-size: 10.5px; color: #9CB2D4; margin-top: 3px; letter-spacing: -.01em; }
+.jdg-drop { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; min-height: 16px; }
+.jdg-mini {
+  font-size: 9.5px; line-height: 1.35; color: #D6E2F6; background: rgba(11,21,36,.55);
+  border-left: 3px solid var(--jc); border-radius: 7px; padding: 3px 7px;
+  animation: hs7In .35s var(--ease-out); letter-spacing: -.01em;
+}
+
+/* 시나리오 갈림길 랩(dilemmaLab — 일반사회 문법 2호) */
+.dlm-stage { padding: 12px 12px 14px; }
+.dlm-when {
+  width: fit-content; margin: 0 auto 8px; padding: 4px 14px; border-radius: var(--r-pill);
+  background: rgba(232,148,10,.16); border: 1.2px solid rgba(232,148,10,.55);
+  color: #FFD98E; font-size: 11.5px; font-weight: 900; letter-spacing: -.01em;
+}
+.dlm-stakes { display: flex; justify-content: space-between; gap: 8px; }
+.dlm-stake {
+  flex: 1; background: rgba(255,255,255,.06); border: 1.5px solid rgba(136,158,196,.35);
+  border-radius: 12px; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px;
+}
+.dlm-stake b { font-size: 12.5px; color: #E8EDF6; letter-spacing: -.012em; }
+.dlm-stake span { font-size: 10px; color: #9CB2D4; line-height: 1.4; }
+.dlm-stake.l { border-left: 3px solid #3F8FC8; }
+.dlm-stake.r { border-right: 3px solid #E8940A; text-align: right; align-items: flex-end; }
+.dlm-man { max-width: 232px; margin: 2px auto; }
+.dlm-man svg { display: block; width: 100%; height: auto; }
+.dlm-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.dlm-choice {
+  appearance: none; font-family: inherit; cursor: pointer;
+  background: linear-gradient(180deg, #FFFFFF, #EDF1F8); border: 1.5px solid #C6D2E4;
+  border-radius: 14px; padding: 12px 10px; display: flex; flex-direction: column; gap: 3px;
+  align-items: center; transition: transform .12s var(--ease);
+}
+.dlm-choice:active { transform: scale(.97); }
+.dlm-choice b { font-size: 13.5px; color: var(--ink); letter-spacing: -.012em; }
+.dlm-choice .dlm-check { font-size: 10px; font-weight: 800; color: #1E7E46; min-height: 13px; }
+.dlm-choice.walked { border-color: #7ED0A0; background: linear-gradient(180deg, #F2FBF5, #DFF3E7); }
+.dlm-stage.chosen .dlm-choices, .dlm-stage.chosen .dlm-man { display: none; }
+.dlm-result { display: none; }
+.dlm-result.show { display: block; animation: hs7In .45s var(--ease-out); }
+.dlm-scene {
+  font-size: 13px; line-height: 1.6; color: #E8EDF6; letter-spacing: -.012em;
+  background: rgba(255,255,255,.07); border-radius: 12px; padding: 10px 12px;
+}
+.dlm-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.dlm-col { display: flex; flex-direction: column; gap: 6px; }
+.dlm-col-h { font-size: 11px; font-weight: 900; letter-spacing: -.01em; }
+.dlm-col.gain .dlm-col-h { color: #6BDA96; }
+.dlm-col.loss .dlm-col-h { color: #FF9E9E; }
+.dlm-item {
+  font-size: 11.5px; line-height: 1.45; color: #EAF1FB; letter-spacing: -.012em;
+  background: rgba(107,218,150,.12); border-left: 3px solid #4CB878; border-radius: 9px; padding: 7px 9px;
+  animation: hs7In .4s var(--ease-out) backwards; animation-delay: var(--d, 0s);
+}
+.dlm-item.bad { background: rgba(240,110,110,.1); border-left-color: #D06060; color: #E8D2D2; }
+.dlm-rewind {
+  appearance: none; font-family: inherit; cursor: pointer; display: block; margin: 12px auto 0;
+  padding: 9px 16px; border-radius: var(--r-pill); background: rgba(255,255,255,.1);
+  border: 1.5px solid rgba(136,158,196,.4); color: #D6E2F6; font-size: 12px; font-weight: 800;
+  transition: transform .12s var(--ease);
+}
+.dlm-rewind:active { transform: scale(.96); }
+.dlm-rewind.hide { display: none; }
+.dlm-term { display: none; }
+.dlm-term.show {
+  display: block; margin-top: 10px; border-radius: var(--r-lg); padding: 14px 16px;
+  background: linear-gradient(135deg, #F6EDFB, #EDE1F6); border: 1.5px solid #C9A2DC;
+  animation: hs7In .5s var(--ease-out);
+}
+.dlm-term-k { font-size: 10.5px; font-weight: 900; color: #862E9C; letter-spacing: .02em; margin-bottom: 3px; }
+.dlm-term b { display: block; font-size: 17px; color: #4A1458; letter-spacing: -.012em; margin-bottom: 4px; }
+.dlm-term p { margin: 0; font-size: 12.5px; line-height: 1.6; color: #5E3A6E; letter-spacing: -.012em; }
+
+/* 생애 트랙 배치 랩(lifePathLab — Ⅶ 전용 기함) */
+.lfp-stage { padding: 12px 10px 16px; position: relative; }
+.lfp-band {
+  border: 1.6px dashed rgba(126,200,255,.55); border-radius: 12px; padding: 8px 10px;
+  text-align: center; cursor: pointer; margin-bottom: 10px; transition: background .2s, border-color .2s;
+}
+.lfp-band-t { font-size: 11px; font-weight: 800; color: #9CC8EE; letter-spacing: .04em; }
+.lfp-band.on { border-style: solid; border-color: #7EC8FF; background: rgba(126,200,255,.14); }
+.lfp-band.on .lfp-band-t { color: #E2F2FF; letter-spacing: -.01em; }
+.lfp-band.hover { background: rgba(126,200,255,.2); }
+.lfp-band.pulse { animation: lfpPulse .9s var(--ease-out); }
+@keyframes lfpPulse { 0%,100% { box-shadow: none; } 40% { box-shadow: 0 0 0 5px rgba(126,200,255,.25); } }
+.lfp-track { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.lfp-slot {
+  position: relative; background: rgba(255,255,255,.05); border: 1.5px solid rgba(136,158,196,.32);
+  border-radius: 12px; padding: 8px 3px 7px; text-align: center; cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.lfp-slot.hover { border-color: #7EC8FF; background: rgba(126,200,255,.1); }
+.lfp-slot.on { border-color: #4CB878; background: rgba(107,218,150,.1); }
+.lfp-slot.shake { animation: jdgShake .4s; }
+.lfp-fig svg { display: block; width: 46px; height: 46px; margin: 0 auto; }
+.lfp-name { display: block; color: #E8EDF6; font-size: 12px; font-weight: 800; letter-spacing: -.012em; }
+.lfp-sub { display: block; color: #8FA2C4; font-size: 9.5px; margin-top: 1px; }
+.lfp-badge {
+  display: inline-block; margin-top: 5px; font-size: 10px; font-weight: 800;
+  padding: 2px 8px; border-radius: 8px; background: rgba(255,255,255,.12); color: #B9C6DC;
+}
+.lfp-slot.on .lfp-badge { background: #2E8A4C; color: #fff; animation: hs7Pop .45s var(--spring-bounce); }
+.lfp-road { height: 3px; border-radius: 2px; margin: 10px 6px 0; background: linear-gradient(90deg, #3F5C86, #6E86AE 50%, #3F5C86); opacity: .7; }
+.lfp-dev { display: none; }
+.lfp-dev.show { display: block; width: 56px; margin: 8px 10px 0 auto; animation: hs7Pop .55s var(--spring-bounce); }
+.lfp-dev svg { display: block; width: 100%; height: auto; }
+.lfp-tray { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; justify-content: center; }
+.lfp-card {
+  appearance: none; font-family: inherit; cursor: pointer;
+  background: linear-gradient(180deg, #FFFFFF, #EEF2F8); border: 1.5px solid #C6D2E4;
+  border-radius: var(--r-pill); padding: 9px 16px; box-shadow: var(--sh-card);
+  transition: transform .12s var(--ease), border-color .2s, opacity .2s;
+  touch-action: none;
+}
+.lfp-card b { font-size: 13px; color: var(--ink); letter-spacing: -.012em; }
+.lfp-card:active { transform: scale(.96); }
+.lfp-card.picked { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-tint); transform: scale(1.04); }
+.lfp-card.ghost { opacity: .35; }
+.lfp-card.gone { display: none; }
+
+/* Ⅶ 신규 랩 텍스트 줄바꿈 — 한글 음절 단위 개행 방지(시각 감사 경미 교정: "지켰어/요") */
+.jdg-card-t, .jdg-mini, .jdg-hint, .dlm-scene, .dlm-item, .dlm-stake span, .dlm-term p, .lfp-name { word-break: keep-all; }
