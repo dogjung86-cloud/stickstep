@@ -128,7 +128,8 @@ export const hook = (o: {
     | "dawnsoccer" | "peakhike" | "frozenriver" | "cityfeed" | "skislope" | "trainborder" | "fourshirts"
     | "mappuzzle" | "satnile" | "herdmove" | "shadelane" | "movienight" | "classphoto" | "flagstars" | "greenline"
     | "searchamerica" | "panroad" | "quitopack" | "teamroster" | "dinnertable" | "fruitlogo" | "motorcity"
-    | "saveicon" | "gamechar" | "timecapsule" | "dangi" | "milmyeon";
+    | "saveicon" | "gamechar" | "timecapsule" | "dangi" | "milmyeon"
+    | "sprout" | "receipt" | "aptmap" | "parcel" | "olympic" | "romanclock" | "silkscarf";
   choices?: string[]; cta?: string;
 }): Step => ({ type: "hook", ...o });
 

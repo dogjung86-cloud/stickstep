@@ -233,3 +233,73 @@
   .hh1-nd-steam { animation: none; opacity: .5; }
   .hh1-caret { animation: none; }
 }
+
+/* ============================================================
+   역사 Ⅱ 훅 장면(hookHis2) — 접두사 hh2-
+   ============================================================ */
+.hh2-garden, .hh2-receipt, .hh2-apt, .hh2-parcel, .hh2-tv, .hh2-clock, .hh2-scarf { max-width: 340px; margin: 4px auto 0; }
+.hh2-garden svg, .hh2-receipt svg, .hh2-apt svg, .hh2-parcel svg, .hh2-tv svg, .hh2-clock svg, .hh2-scarf svg { display: block; width: 100%; height: auto; }
+
+/* L2 sprout — 물뿌리개 탭 → 물방울 + 새싹 팝 */
+.hh2-gd-can {
+  display: flex; align-items: center; justify-content: center; gap: 8px; margin: 12px auto 0; padding: 10px 22px 11px;
+  border-radius: 99px; border: 1.6px solid #0A5964; cursor: pointer;
+  background: linear-gradient(160deg, #EAF9FB, #C9ECF0); color: #0A5964;
+  font-size: 14px; font-weight: 900; font-family: inherit; letter-spacing: -.01em;
+  box-shadow: var(--sh-card); transition: transform .14s var(--ease); -webkit-tap-highlight-color: transparent;
+}
+.hh2-gd-can svg { width: 44px; height: 30px; }
+.hh2-gd-can:active { transform: scale(.95); }
+.hh2-garden.watered .hh2-gd-can { opacity: .45; pointer-events: none; }
+.hh2-gd-plant { opacity: 0; transform: translateY(10px) scale(.6); transform-box: fill-box; transform-origin: 50% 100%; transition: opacity .5s var(--ease-out) .55s, transform .6s var(--spring-soft) .55s; }
+.hh2-garden.watered .hh2-gd-plant { opacity: 1; transform: none; }
+.hh2-gd-seed { transition: opacity .4s var(--ease) .4s; }
+.hh2-garden.watered .hh2-gd-seed { opacity: 0; }
+.hh2-garden.watered .hh2-gd-drops { animation: hh2Drops 1s var(--ease-out); }
+@keyframes hh2Drops {
+  0% { opacity: 0; transform: translateY(-10px); }
+  25% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(26px); }
+}
+
+/* L3 receipt — 접힌 영수증 → 펼침 */
+.hh2-rc-folded { cursor: pointer; transition: opacity .35s var(--ease); }
+.hh2-receipt.open .hh2-rc-folded { opacity: 0; pointer-events: none; }
+.hh2-rc-open { opacity: 0; transform: scale(.6) rotate(-4deg); transform-box: fill-box; transform-origin: center; transition: opacity .4s var(--ease-out) .12s, transform .5s var(--spring-soft) .12s; pointer-events: none; }
+.hh2-receipt.open .hh2-rc-open { opacity: 1; transform: none; }
+
+/* L4 aptmap — 안내판 줌 */
+.hh2-ap-board { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform .5s var(--spring-soft); }
+.hh2-apt.zoom .hh2-ap-board { transform: scale(1.12) translateY(4px); }
+
+/* L5 parcel — 상자 탭 → 배송 조회 카드 */
+.hh2-pc-boxg { cursor: pointer; transition: opacity .4s var(--ease); }
+.hh2-parcel.zoom .hh2-pc-boxg { opacity: .3; }
+.hh2-pc-zoom { opacity: 0; transform: translateY(16px) scale(.7); transform-box: fill-box; transform-origin: center; transition: opacity .4s var(--ease-out) .1s, transform .5s var(--spring-soft) .1s; pointer-events: none; }
+.hh2-parcel.zoom .hh2-pc-zoom { opacity: 1; transform: none; }
+
+/* L6 olympic — 화면 줌 + 성화 일렁임 */
+.hh2-tv-scrg { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform .5s var(--spring-soft); }
+.hh2-tv.zoom .hh2-tv-scrg { transform: scale(1.07); }
+.hh2-tv-torch { transform-box: fill-box; transform-origin: 50% 90%; animation: hh2Flame 1.6s var(--ease) infinite; }
+@keyframes hh2Flame {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.06) rotate(-2.4deg); }
+}
+
+/* L7 romanclock — 시계 → 돋보기 확대 */
+.hh2-ck-body { cursor: pointer; transition: opacity .4s var(--ease); }
+.hh2-clock.zoom .hh2-ck-body { opacity: .25; }
+.hh2-ck-zoom { opacity: 0; transform: scale(.5); transform-box: fill-box; transform-origin: center; transition: opacity .4s var(--ease-out), transform .45s var(--spring-soft); pointer-events: none; }
+.hh2-clock.zoom .hh2-ck-zoom { opacity: 1; transform: scale(1); }
+
+/* L9 silkscarf — 라벨 → 확대 */
+.hh2-sc-tagg { cursor: pointer; transition: opacity .4s var(--ease); }
+.hh2-scarf.zoom .hh2-sc-tagg { opacity: .25; }
+.hh2-sc-zoom { opacity: 0; transform: translateY(12px) scale(.6); transform-box: fill-box; transform-origin: center; transition: opacity .4s var(--ease-out) .08s, transform .5s var(--spring-soft) .08s; pointer-events: none; }
+.hh2-scarf.zoom .hh2-sc-zoom { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hh2-tv-torch { animation: none; }
+  .hh2-garden.watered .hh2-gd-drops { animation: none; opacity: 0; }
+}

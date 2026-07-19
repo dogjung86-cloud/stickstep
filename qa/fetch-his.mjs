@@ -25,6 +25,34 @@ const jobs = [
   // 1차 후보(CC0, Rosetta-stone-display-in-1985.jpg)는 눈검수 불합격 — 돌이 누워 있고 관람객 얼굴이 주인공.
   // CC BY 4.0 정면 사진으로 교체(ESO·NOIRLab CC BY 4.0을 쓰는 photos/star 선례와 같은 라이선스 급).
   { name: "rosetta", url: "https://upload.wikimedia.org/wikipedia/commons/3/35/Rosetta_Stone%2C_British_Museum.jpg", credit: "APK, Rosetta Stone, via Wikimedia Commons (CC BY 4.0)" },
+
+  // ── 2차분: 역사① Ⅱ(h1u2 — 문명·고대 세계) 16종 (2026-07-19) ──
+  // 한국 유물(공공누리 제1유형 — 소장품 페이지에서 개별 확인 완료)
+  { name: "handaxe", url: "https://www.museum.go.kr/relic_image/PS01001001/ssu000/2019/0925123406433/ssu019143-000-90000.jpg", credit: "국립중앙박물관, 주먹도끼 (공공누리 제1유형)" },
+  // Met Open Access CC0 — collectionapi로 objectID별 isPublicDomain=true 확인 완료(괄호 안 = objectID)
+  { name: "cuneiform", url: "https://images.metmuseum.org/CRDImages/an/original/DP293243.jpg", credit: "Metropolitan Museum of Art, Proto-Cuneiform tablet: administrative account of barley distribution (329081, CC0)" },
+  { name: "mummycoffin", url: "https://images.metmuseum.org/CRDImages/eg/original/LC-86_1_2_EGDP026785-Stitched.jpg", credit: "Metropolitan Museum of Art, Inner coffin of Khonsu (544705, CC0)" },
+  { name: "persia", url: "https://images.metmuseum.org/CRDImages/an/original/DP-19135-003.jpg", credit: "Metropolitan Museum of Art, Vessel terminating in the forepart of a leonine creature, Achaemenid (324291, CC0)" },
+  { name: "augustus", url: "https://images.metmuseum.org/CRDImages/gr/original/DP337220.jpg", credit: "Metropolitan Museum of Art, Marble portrait of the emperor Augustus (247993, CC0)" },
+  { name: "gandhara", url: "https://images.metmuseum.org/CRDImages/as/original/DP328363.jpg", credit: "Metropolitan Museum of Art, Buddha (Gandhara, 3rd century) (646117, CC0)" },
+  { name: "mohenjoseal", url: "https://images.metmuseum.org/CRDImages/an/original/DP23101.jpg", credit: "Metropolitan Museum of Art, Stamp seal and modern impression: unicorn and incense burner, Indus valley (324062, CC0)" },
+  // (기각 기록) 고전 쐐기 점토판 별도 수급 시도 — 321739는 흑백 저해상, 324238은 청동판(재질 불일치),
+  // 323243은 인장 자국이 주인공이라 전부 기각. 퀴즈도 cuneiform(원시 쐐기)을 재사용하고 문구를 재질·기법
+  // 중심으로 저작하는 것으로 확정(같은 사진의 concept+퀴즈 재사용은 h1u1 gwanggaeto 선례).
+  // 위키미디어 커먼스 — imageinfo extmetadata로 개별 라이선스 확인 완료(CC0/PD/CC BY 계열만)
+  { name: "pyramid", url: "https://upload.wikimedia.org/wikipedia/commons/b/bd/Giza_Sphinx_and_Pyramids_of_Khafre_%26_Khufu_%289793874844%29.jpg", credit: "Gary Todd, Giza Sphinx and Pyramids, via Wikimedia Commons (CC0)" },
+  { name: "ziggurat", url: "https://upload.wikimedia.org/wikipedia/commons/9/93/Ancient_ziggurat_at_Ali_Air_Base_Iraq_2005.jpg", credit: "Hardnfast, Ancient ziggurat of Ur, via Wikimedia Commons (CC BY 3.0)" },
+  // 1차 후보(Shang Tortoise Plastron 10197433513)는 눈검수 불합격 — 균열만 보이고 글자 새김이 안 보임(전시 유리 반사도).
+  { name: "oracle", url: "https://upload.wikimedia.org/wikipedia/commons/0/00/Ancient_Chinese_Writing_on_Tortoise_Plastron%2C_Shang_Dynasty_Oracle_Bone%2C_Yinxu.jpg", credit: "Gary Todd, Ancient Chinese Writing on Tortoise Plastron (Yinxu), via Wikimedia Commons (CC0)" },
+  { name: "parthenon", url: "https://upload.wikimedia.org/wikipedia/commons/b/bc/Parthenon_east_Acropolis%2C_Athens%2C_Greece.jpg", credit: "Jebulon, Parthenon east facade, via Wikimedia Commons (CC0)" },
+  { name: "colosseum", url: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Colosseum_of_Rome_and_Roman_forum.jpg", credit: "Wilfredor, Colosseum of Rome, via Wikimedia Commons (CC0)" },
+  { name: "aqueduct", url: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Pont_du_Gard_004.jpg", credit: "Marc Ryckaert, Pont du Gard, via Wikimedia Commons (CC BY 2.5)" },
+  // 병마용 1차(Pit 1 16 — 2인 클로즈업)는 "줄지어 선 군대" 캡션과 불일치, 만리장성 1차(Badaling 9863411783)는
+  // 전경의 관광 슬라이드 구조물이 주인공이라 각각 기각 — 갱도 와이드 컷·능선 성벽 컷으로 교체.
+  // 2차 후보(Pit 1 18)도 2인 클로즈업이라 기각 — "줄지어 선 군대"가 보이는 파노라마로 최종 확정.
+  { name: "terracotta", url: "https://upload.wikimedia.org/wikipedia/commons/8/83/Terracotta_Soldier_Panorama_%285258589290%29.jpg", credit: "Walter-Wilhelm, Terracotta Soldier Panorama, via Wikimedia Commons (CC BY 2.0)" },
+  { name: "greatwall", url: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Great_Wall_of_China_July_2006.JPG", credit: "Great Wall of China at Mutianyu, via Wikimedia Commons (CC0)" },
+  { name: "hammurabi", url: "https://upload.wikimedia.org/wikipedia/commons/6/64/P1050763_Louvre_code_Hammurabi_face_rwk.JPG", credit: "Mbzt, Code of Hammurabi stele (Louvre), via Wikimedia Commons (CC BY 3.0)" },
 ];
 
 for (const j of jobs) {
@@ -35,7 +63,7 @@ for (const j of jobs) {
     continue;
   }
   try {
-    const res = await fetch(j.url, { headers: { "user-agent": "Mozilla/5.0 (StickStep edu app asset fetch)" } });
+    const res = await fetch(j.url, { headers: { "user-agent": "StickStepEduAssetFetch/1.0 (edu app; contact: sciencegive@naver.com)" } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const buf = Buffer.from(await res.arrayBuffer());
     if (!isJpg(buf) && !isPng(buf)) throw new Error(`not an image (magic ${buf.slice(0, 4).toString("hex")} — HTML page?)`);

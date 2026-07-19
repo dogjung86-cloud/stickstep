@@ -1,8 +1,8 @@
-// 역사① Ⅰ(h1u1) 5레슨 실플레이 E2E — e2e-soc2 문법 복제 + 역사 신규 문법 3종.
-// DEV 서버 필요(data-oi 사용). PORT=<포트> node qa/e2e-his1.mjs  ·  ONLY=h1u1l4 부분 실행 지원.
-// 검증: 과목 허브 4과목·홈 역사 지도(his 테마) · 훅 5장면 실조작 · comic 말풍선 렌더(하이브리드 파일럿) ·
-// timelineLab 실조작(오답 교정 → 세기 2 + 사건 배치 2) · 세기 드릴 넘패드 입력 · 유물 실사 로드
-// (naturalWidth>0) · binSort 실사 칩 · order · recap more · 전 퀴즈.
+// 역사① Ⅱ(h1u2) 9레슨 실플레이 E2E — e2e-his1 문법 계승 + Ⅱ 신규 검증 4종.
+// DEV 서버 필요(data-oi 사용). PORT=<포트> node qa/e2e-his2.mjs  ·  ONLY=h1u2l4 부분 실행 지원.
+// 검증: 홈 Ⅱ 지도(밴드 7·노드 14·프리미엄 크라운 6) · 훅 7장면 실조작 · comic 4편 말풍선 렌더 ·
+// hotspot 4문명(실사 카드 로드) · timelineLab h1u2 def 실조작(오답 교정 + 세기 2 + 사건 배치 3) ·
+// 세기 드릴 넘패드 · 유물 실사 로드(concept/binSort 칩/퀴즈 그림 naturalWidth>0) · recap more · 전 퀴즈.
 import { chromium } from "playwright-core";
 
 const PORT = process.env.PORT || "5173";
@@ -57,32 +57,32 @@ const check = (ok, msg) => {
 const heading = () =>
   page.evaluate(() => document.querySelector(".screen.active .h1")?.textContent?.trim().replace(/\s+/g, " ").slice(0, 44));
 
-// ── 홈 지도 + 과목 허브(4과목) ───────────────────────────────
+// ── 홈 지도 — Ⅱ 실물 전환(밴드 7 · Ⅱ 탭 선택 시 노드 9 · 프리미엄 크라운 6) ──
+// 지도는 선택된 밴드의 노드만 렌더한다(his1 회귀에서 확인된 문법) — Ⅱ 탭을 눌러 검증.
 if (!ONLY.length) {
-  const home = await page.evaluate(() => ({
-    bands: document.querySelectorAll(".unit-band").length,
-    nodes: document.querySelectorAll(".gm-node").length,
-    his: !!document.querySelector(".gm-terrain.his"),
-  }));
-  check(home.bands === 7, `홈 밴드 7개 — Ⅰ·Ⅱ 실물 + soon Ⅲ~Ⅶ (실제 ${home.bands})`);
-  check(home.nodes === 5, `Ⅰ단원 레슨 노드 5개 — 지도는 선택 밴드만 렌더 (실제 ${home.nodes})`);
-  check(home.his, "Ⅰ단원 his 테마 지형 적용");
-
-  await page.evaluate(() => document.querySelector(".subj-box").click());
-  await page.waitForSelector(`${active} .subj-card`, { timeout: 9000 });
-  const hub = await page.evaluate(() => ({
-    cards: document.querySelectorAll(".screen.active .subj-card").length,
-    his: !!document.querySelector(".screen.active .subj-card.his"),
-  }));
-  check(hub.cards === 4, `과목 허브 카드 4과목 (실제 ${hub.cards})`);
-  check(hub.his, "역사 카드 활성");
-  await page.evaluate(() => document.querySelector(".screen.active .subj-card.his").click());
+  const bands = await page.evaluate(() => document.querySelectorAll(".unit-band").length);
+  check(bands === 7, `홈 밴드 7개 — Ⅰ·Ⅱ 실물 + soon Ⅲ~Ⅶ (실제 ${bands})`);
+  await page.evaluate(() => document.querySelectorAll(".unit-tab")[1]?.click());
   await W(900);
-  const back = await page.evaluate(() => !!document.querySelector(".gm-terrain.his"));
-  check(back, "역사 카드 → 역사 지도 복귀");
+  const home = await page.evaluate(async () => {
+    const { findLesson } = await import("/src/content/curriculum.ts");
+    const premData = ["h1u2l4", "h1u2l5", "h1u2l6", "h1u2l7", "h1u2l8", "h1u2l9"]
+      .filter((id) => findLesson(id)?.lesson.premium).length;
+    return {
+      nodes: document.querySelectorAll(".gm-node").length,
+      premCrown: document.querySelectorAll(".gm-node.prem").length,
+      premData,
+      his: !!document.querySelector(".gm-terrain.his"),
+      soon: !!document.querySelector(".coming-card"),
+    };
+  });
+  check(home.nodes === 9, `Ⅱ단원 레슨 노드 9개 (실제 ${home.nodes})`);
+  check(home.premData === 6 && home.premCrown === 0, `프리미엄 레슨 6개(L4~L9) + 구매 시딩 상태라 크라운 숨김 (데이터 ${home.premData} · 크라운 ${home.premCrown})`);
+  check(home.his, "Ⅱ his 테마 지형 적용");
+  check(!home.soon, "Ⅱ가 준비 중 카드가 아니라 실물 지도");
 }
 
-// ── 레슨 열기(플레이어 직진입 — soc2 문법) ───────────────────
+// ── 레슨 열기(플레이어 직진입 — his1 문법) ───────────────────
 const openLesson = async (id) => {
   const count = await page.evaluate(async (lessonId) => {
     const { nav } = await import("/src/core/router.ts");
@@ -103,7 +103,7 @@ const stepData = (i) =>
   page.evaluate((idx) => {
     const st = window.__hisE2E?.steps?.[idx];
     return st
-      ? { type: st.type, mode: st.mode, answer: st.answer, items: st.items, bins: st.bins, scene: st.scene, panels: st.panels?.map((p) => ({ bubbles: p.bubbles?.length ?? 0 })), defId: st.defId }
+      ? { type: st.type, mode: st.mode, answer: st.answer, items: st.items, bins: st.bins, scene: st.scene, panels: st.panels?.map((p) => ({ bubbles: p.bubbles?.length ?? 0 })), defId: st.defId, spots: st.spots?.length, figure: typeof st.figure === "string" && st.figure.includes("photos/his") }
       : null;
   }, i);
 
@@ -123,16 +123,18 @@ const sheetContinue = async (timeout = 10000) => {
   await W(520);
 };
 
-// ── 훅 5장면(조작 → 예측 → CTA) — SVG g 대상은 MouseEvent 디스패치 ──
+// ── 훅 7장면(조작 → 예측 → CTA) — SVG g 대상은 MouseEvent 디스패치 ──
 const hookStep = async (scene) => {
   const tapHtml = async (sel) => page.evaluate((s) => document.querySelector(`.screen.active ${s}`).click(), sel);
   const tapSvg = async (sel) =>
     page.evaluate((s) => document.querySelector(`.screen.active ${s}`).dispatchEvent(new MouseEvent("click", { bubbles: true })), sel);
-  if (scene === "saveicon") await tapHtml(".hh1-save");
-  else if (scene === "gamechar") await tapHtml(".hh1-cardflip");
-  else if (scene === "timecapsule") await tapSvg(".hh1-tc-boxg");
-  else if (scene === "dangi") await tapSvg(".hh1-ca-small");
-  else if (scene === "milmyeon") await tapSvg(".hh1-nd-frameg");
+  if (scene === "sprout") await tapHtml(".hh2-gd-can");
+  else if (scene === "receipt") await tapSvg(".hh2-rc-folded");
+  else if (scene === "aptmap") await tapSvg(".hh2-ap-board");
+  else if (scene === "parcel") await tapSvg(".hh2-pc-boxg");
+  else if (scene === "olympic") await tapSvg(".hh2-tv-scrg");
+  else if (scene === "romanclock") await tapSvg(".hh2-ck-body");
+  else if (scene === "silkscarf") await tapSvg(".hh2-sc-tagg");
   await page.waitForSelector(`${active} .hook-choices.show .hook-choice`, { timeout: 12000 });
   const q = await page.evaluate(() => !!document.querySelector(".screen.active .hook-q"));
   check(q, `[${scene}] 예측 질문이 선택지 위에 표시`);
@@ -169,7 +171,15 @@ const comicStep = async (step, lessonId) => {
 };
 
 // ── 퀴즈·능동형 ──────────────────────────────────────────────
-const quiz = async (step) => {
+const quiz = async (step, lessonId) => {
+  if (step.figure) {
+    await W(260);
+    const fig = await page.evaluate(() => {
+      const ims = [...document.querySelectorAll('.screen.active .q-figure img[src*="photos/his"], .screen.active img[src*="photos/his"]')];
+      return { n: ims.length, ok: ims.every((im) => im.complete && im.naturalWidth > 0) };
+    });
+    if (fig.n) check(fig.ok, `[${lessonId}] 퀴즈 그림 실사 로드(${fig.n}장)`);
+  }
   if (step.mode === "ox") {
     await page.waitForSelector(`${active} .ox-btn`, { timeout: 9000 });
     await page.evaluate((ans) => document.querySelector(ans ? ".screen.active .ox-btn.o" : ".screen.active .ox-btn.x").click(), step.answer);
@@ -206,7 +216,6 @@ const orderStep = async (step) => {
 
 const binSortStep = async (step, lessonId) => {
   await page.waitForSelector(`${active} .bin-tray .bin-chip`, { timeout: 9000 });
-  // 실사 칩(L3)이면 칩 이미지 로드 검증 — gitem 규격
   const chipImg = await page.evaluate(() => {
     const im = document.querySelector('.screen.active .bin-tray .bin-chip img[src*="photos/his"]');
     return im ? { loaded: im.complete && im.naturalWidth > 0 } : null;
@@ -257,7 +266,28 @@ const conceptStep = async (lessonId) => {
   await clickCTA();
 };
 
-// ── timelineLab 실조작 — 오답 교정 → 세기 2 + 사건 배치 2 ────
+// ── hotspot — 4문명 지도(reveal 모드: 전 스팟 탭 + 실사 카드 로드) ──
+const hotspotStep = async (step, lessonId) => {
+  await page.waitForSelector(`${active} .hs-dot`, { timeout: 9000 });
+  const n = step.spots ?? 0;
+  let photoOk = false;
+  for (let i = 0; i < n; i += 1) {
+    await page.evaluate((idx) => {
+      const dots = document.querySelectorAll(".screen.active .hs-dot");
+      dots[idx]?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    }, i);
+    await W(700);
+    const ph = await page.evaluate(() => {
+      const im = document.querySelector(".screen.active .hs-photo.show img");
+      return !!im && im.complete && im.naturalWidth > 0;
+    });
+    if (ph) photoOk = true;
+  }
+  check(photoOk, `[${lessonId}] hotspot 실사 카드 로드(스팟 탭)`);
+  await clickCTA();
+};
+
+// ── timelineLab 실조작 — 오답 교정 → 세기 2 + 사건 배치 3 ────
 const timelineStep = async (step) => {
   await page.waitForSelector(`${active} .htl-cell`, { timeout: 9000 });
   const def = await page.evaluate(async (defId) => {
@@ -284,8 +314,8 @@ const timelineStep = async (step) => {
     solved: document.querySelectorAll(".screen.active .htl-cell.solved").length,
   }));
   check(done.on === 3, `연표 목표 칩 3개 점등 (실제 ${done.on})`);
-  check(done.events === 2, `사건 도장 2개 배치 (실제 ${done.events})`);
-  check(done.solved >= 3, `세기 칸 해금 ${done.solved}개(이름 공개)`);
+  check(done.events === 3, `사건 도장 3개 배치 — 진 통일·로마 제정·크리스트교 공인 (실제 ${done.events})`);
+  check(done.solved >= 4, `세기 칸 해금 ${done.solved}개(이름 공개)`);
   await clickCTA();
 };
 
@@ -311,7 +341,7 @@ const drillStep = async (step) => {
 };
 
 // ── 레슨 주행 ────────────────────────────────────────────────
-const LESSONS = ["h1u1l1", "h1u1l2", "h1u1l3", "h1u1l4", "h1u1l5"];
+const LESSONS = ["h1u2l1", "h1u2l2", "h1u2l3", "h1u2l4", "h1u2l5", "h1u2l6", "h1u2l7", "h1u2l8", "h1u2l9"];
 for (const id of LESSONS) {
   if (ONLY.length && !ONLY.includes(id)) continue;
   const n = await openLesson(id);
@@ -324,9 +354,10 @@ for (const id of LESSONS) {
     else if (st.type === "binSort") await binSortStep(st, id);
     else if (st.type === "order") await orderStep(st);
     else if (st.type === "recap") await recapStep(id);
+    else if (st.type === "hotspot") await hotspotStep(st, id);
     else if (st.type === "timelineLab") await timelineStep(st);
     else if (st.type === "mathDrill") await drillStep(st);
-    else if (st.type === "quiz") await quiz(st);
+    else if (st.type === "quiz") await quiz(st, id);
     else await clickCTA();
   }
   const done = await page.evaluate(() => window.__hisE2E?.done);

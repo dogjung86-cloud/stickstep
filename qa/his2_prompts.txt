@@ -1,0 +1,170 @@
+# 역사① Ⅱ(h1u2) 발주 — 스틱맨 개념 컷 9장(public/his/cuts) + 만화 4편 28컷
+#   (public/comics/h1u2l1 · h1u2l3 · h1u2l6 · h1u2l8, 각 7컷)
+# 컷·만화 모두 "이미지 안 글자 절대 금지". 만화 컷은 앱이 한글 말풍선을 얹는 하이브리드라
+# 인물이 입을 벌리고 손짓하는 "말하는 연기"만 그리고, 인물 머리 위쪽에 여백을 넉넉히 남긴다.
+# 표시 프레임이 정사각(1:1 cover 크롭)이므로 주인공은 가운데 배치, 좌우 가장자리엔 핵심 요소 금지.
+# ★ 만화 코믹 격상(h1u2 신규 표준): 코믹 컷은 프롬프트에 "GAG:" 문장으로 무엇이 웃긴지 명시했다.
+#   과장 연기(자빠짐·땀방울·눈 튀어나옴)는 허용하되 유물·복장 등 사실 요소는 정확히 그린다.
+#   죽음·매장·신분 차별을 다루는 컷은 개그 금지(프롬프트에 DIGNIFIED 표기) — 차분하고 존중하는 톤.
+#
+# ── 스타일 블록 A (스틱맨 개념 컷 공용 — his1과 동일) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 C (만화 컷 공용 — 말풍선 하이브리드 + 코믹 연기) ──
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal, used sparingly where the prompt says.
+# Absolutely NO text, NO letters, NO numbers, NO speech bubbles, NO captions anywhere.
+# Characters ACT like they are talking: open mouth (small oval), expressive hand gestures.
+# Comedic acting is allowed and encouraged where the prompt marks GAG: exaggerated poses,
+# big reactions, falling over backwards, sweat drops, bulging wide eyes, jaw dropping —
+# but all historical objects, clothing and facts must stay accurate; never make the scene
+# absurd beyond what the prompt describes, and NO anachronistic props (no phones, no modern
+# items) inside historical scenes.
+# Keep the upper third of the panel mostly empty white space above the characters' heads
+# (the app overlays Korean speech bubbles there). Main subjects centered horizontally.
+# Simple, charming, educational middle-school history comic. 4:3 landscape panel.
+
+## ── 개념 컷 9장 (스타일 A) ──
+
+[0] file=public/his/cuts/u2l1.png (landscape 4:3, 스타일 A)
+A stick figure shown twice in one panel as a before-and-after: on the left the figure walks on all fours with both hands planted on the ground, unable to hold anything; on the right the same figure stands fully upright and delighted, holding a round fruit in one raised hand and a simple wooden stick tool in the other raised hand. A small arrow-like curved line (plain curve, no arrowhead symbols beyond a simple V tip) connects left to right. Only the fruit is teal; everything else pure black and white.
+
+[1] file=public/his/cuts/u2l2.png (landscape 4:3, 스타일 A)
+A stick figure kneels beside a flat grinding slab, carefully sharpening a small stone axe head by rubbing it on the slab with both hands; tiny motion lines show the back-and-forth polish, and a finished smooth polished stone axe rests nearby on a cloth, gleaming with two small sparkle marks. In the background a rougher chipped stone with jagged edges sits on the ground for contrast. Only the polished axe head is teal; everything else pure black and white.
+
+[2] file=public/his/cuts/u2l3.png (landscape 4:3, 스타일 A)
+A stick figure chef stirs a huge round cooking pot with a long ladle, and four ingredients float above the pot about to drop in: a wavy river-water squiggle, a bundle of grain stalks, a small metal ingot bar, and a little brick house shape. Steam curls rise from the pot. Only the wavy river squiggle is teal; everything else pure black and white.
+
+[3] file=public/his/cuts/u2l4.png (landscape 4:3, 스타일 A)
+A stick figure stands on a large unrolled floor map that fills the panel, planting small flags onto four separate winding river lines drawn across the map; one flag is already planted, the figure leans forward planting another, two more flags wait in their arm. No country outlines, just four distinct winding rivers. Only the four river lines are teal; everything else pure black and white.
+
+[4] file=public/his/cuts/u2l5.png (landscape 4:3, 스타일 A)
+A kind stick figure king wearing a simple crown stands with open welcoming arms in front of a line of four stick figures, each wearing a clearly different hat (a pointed hood, a flat turban-like wrap, a brimmed hat, a small round cap); all four keep their own hats on and smile. The king makes a warm "as you are" gesture with both palms up. Only the king's crown is teal; everything else pure black and white.
+
+[5] file=public/his/cuts/u2l6.png (landscape 4:3, 스타일 A)
+An open-air assembly of stick figures seated in a wide semicircle on simple stone steps, many raising one arm high to vote; one stick figure stands on a small speaker's platform in the middle gesturing mid-speech. A simple hill with a small temple silhouette sits far in the background. Only the raised voting arms are teal; everything else pure black and white.
+
+[6] file=public/his/cuts/u2l7.png (landscape 4:3, 스타일 A)
+A stick figure holds out a cup under a tall aqueduct with two rows of arches that crosses the whole panel; a thin stream of water flows along the top channel and pours down at the near end into the figure's cup, the figure looking up amazed. Only the flowing water is teal; everything else pure black and white.
+
+[7] file=public/his/cuts/u2l8.png (landscape 4:3, 스타일 A)
+One puzzled stick figure student stands in the middle while four advisor stick figures around them each strike a completely different pose: one bows politely with a hand on heart, one lies back relaxed on a grassy mound with arms behind head, one holds up a big heart shape with both hands, one stands stiff and stern pointing at a thick rulebook-shaped block (plain block, no letters). Only the heart shape is teal; everything else pure black and white.
+
+[8] file=public/his/cuts/u2l9.png (landscape 4:3, 스타일 A)
+Two stick figure merchants meet in the middle of a wide desert dune path: one arrives from the left leading a two-humped camel loaded with rolled fabric bolts, the other arrives from the right carrying a small glass bottle; they happily hold out their goods toward each other in mid-exchange. A long winding path stretches to both horizons behind them. Only the rolled fabric bolts are teal; everything else pure black and white.
+
+## ── 만화 h1u2l1 「인류 진화 릴레이」 7컷 (스타일 C) ──
+## 등장인물 고정: RUNNER1 = 작고 살짝 구부정한 스틱맨(첫 주자). RUNNER2 = 곧게 선 스틱맨(횃불).
+## RUNNER3 = 어깨가 다부진 스틱맨. RUNNER4 = 가는 붓을 든 스틱맨. HOST = 메가폰을 든 진행자 스틱맨.
+
+[a0] file=public/comics/h1u2l1/0.png (landscape 4:3, 스타일 C)
+GAG: the running track is so absurdly long it disappears over the horizon, and the two spectator stick figures are already yawning hugely before the race even starts. HOST stick figure with a simple cone megaphone stands at a starting line of a running track that stretches away over rolling hills to the horizon; two seated spectator stick figures yawn with wide open mouths, one slumping sideways. A small starting flag on a pole. Teal accent: the starting flag. Upper third empty for a speech bubble.
+
+[a1] file=public/comics/h1u2l1/1.png (landscape 4:3, 스타일 C)
+RUNNER1, a small slightly stooped stick figure, proudly stands upright on two legs at the starting line, holding one round fruit in one free hand and a simple stone in the other free hand, showing off both palms; HOST leans in amazed, megaphone half lowered, mouth open. Motion lines around RUNNER1's straightened knees. Teal accent: the round fruit. Upper third empty for a speech bubble.
+
+[a2] file=public/comics/h1u2l1/2.png (landscape 4:3, 스타일 C)
+RUNNER1 jogs away leaving a trail of clear footprints pressed into a wide band of soft volcanic ash across the ground; HOST kneels beside the fresh footprint trail, examining one footprint closely with delight, one hand hovering above it. Small puffs of ash. Teal accent: the footprint trail. Upper third empty.
+
+[a3] file=public/comics/h1u2l1/3.png (landscape 4:3, 스타일 C)
+GAG: the referee is so distracted by the smell of roasting meat that he drools and drops his signal flag mid-race. RUNNER2 stands tall by a small campfire holding a stick with a skewer of meat over the flames, chatting mid-sentence with another stick figure who warms their hands; between them a referee stick figure with a tiny flag stares at the meat with bulging eyes, a drop of drool, his flag slipping out of his loosened hand. Wavy scent lines drift from the meat to the referee's nose. Teal accent: the campfire flames. Upper third empty for a speech bubble.
+
+[a4] file=public/comics/h1u2l1/4.png (landscape 4:3, 스타일 C)
+A simple large world-continents outline drawn on the ground like a giant floor map; RUNNER2 jogs with a torch held high, crossing from one continent shape onto another, footprint dots trailing behind across the map; HOST runs alongside at panel edge cheering with megaphone raised. Teal accent: the torch flame. Upper third empty.
+
+[a4r] file=public/comics/h1u2l1/4.png (landscape 4:3, 스타일 C) — 재발주(1차본은 발자국이 아메리카에서
+시작하는 것으로 읽혀 사실 오류: 호모 에렉투스는 아프리카에서 출발해 유럽·아시아로만 이동했다)
+A simple large floor map drawn on the ground showing ONLY Africa and Eurasia (NO Americas, NO Australia
+anywhere in the panel); a clear dotted footprint trail STARTS in the middle of Africa and leads up across
+to Europe and then far into Asia; RUNNER2 jogs along the trail on the Asia part holding a torch held high;
+HOST runs alongside at the panel edge cheering with megaphone raised. Teal accent: the torch flame.
+Upper third empty for a speech bubble.
+
+[a5] file=public/comics/h1u2l1/5.png (landscape 4:3, 스타일 C)
+DIGNIFIED — no gag in this panel: a calm, respectful scene. RUNNER3, a sturdy stick figure, stands with head gently bowed beside a small smooth earth mound with a single standing stone at its head; two companion stick figures also bow their heads, one softly placing a hand on the mound. Quiet dusk hills in the background. Teal accent: a tiny sprig of grass growing on the mound. Upper third empty.
+
+[a6] file=public/comics/h1u2l1/6.png (landscape 4:3, 스타일 C)
+GAG: the final runner casually hands the relay baton out of the last panel toward a startled modern student, whose eyes bulge as if to say "me?!". RUNNER4 stands inside a cave wall frame having just drawn a lively ox doodle on the rock with a thin brush, and with the other hand holds out a relay baton toward a separate small framed corner of the panel where a student stick figure at a school desk points at their own chest, eyes huge, jaw dropped. Teal accent: the relay baton. Upper third empty for two speech bubbles.
+
+## ── 만화 h1u2l3 「인류 최초의 영수증」 7컷 (스타일 C) ──
+## 등장인물 고정: SELLER = 앞치마를 두른 판매상 스틱맨. BUYER = 어깨끈 가방을 멘 구매상 스틱맨.
+## SCRIBE = 갈대 펜을 든 서기 스틱맨(단정한 자세). 배경은 수메르 시장(흙벽돌 담·야자수 한 그루).
+
+[b0] file=public/comics/h1u2l3/0.png (landscape 4:3, 스타일 C)
+GAG: counting sheep keeps failing because the sheep will not stay still — the counter's pointing finger wobbles between woolly sheep that wander, swap places and hop, and his eyes spiral in confusion. SELLER stick figure in an apron stands in a mud-brick market pen pointing at a small flock of about ten fluffy sheep plus one large ox; the sheep are mid-mischief, two swapping places with little motion arcs, one hopping over another; SELLER's head tilts, mouth open, a big sweat drop on his brow. BUYER with a shoulder bag watches, scratching his head. Teal accent: the ox's horns. Upper third empty for a speech bubble.
+
+[b1] file=public/comics/h1u2l3/1.png (landscape 4:3, 스타일 C)
+SELLER and BUYER face each other arguing across a small wooden table, both mouths wide open mid-shout, each holding up spread fingers at the other (one shows all ten fingers, the other holds up eight); above the table between them float two small thought-cloud outlines each containing a different number of tiny sheep doodles (one cloud crowded, one sparse). Teal accent: one thought cloud outline. Upper third empty for two speech bubbles.
+
+[b2] file=public/comics/h1u2l3/2.png (landscape 4:3, 스타일 C)
+SCRIBE stick figure sits cross-legged holding a soft clay tablet in one palm and a cut reed stylus in the other, calmly pressing neat rows of small wedge-shaped dents into the clay (abstract wedge dents only, NOT real letters); SELLER and BUYER lean in from both sides watching closely, mouths small ovals of awe. A water jar and spare reeds beside SCRIBE. Teal accent: the reed stylus. Upper third empty for a speech bubble.
+
+[b3] file=public/comics/h1u2l3/3.png (landscape 4:3, 스타일 C)
+SCRIBE holds up the finished clay tablet covered in tidy wedge-dent rows (abstract marks, no letters) while pointing at the sheep pen with the stylus; the ten sheep now sit obediently in a neat row as if posing for a photo, the ox at the end; SELLER claps, BUYER nods vigorously. Teal accent: the clay tablet's edge. Upper third empty for a speech bubble.
+
+[b4] file=public/comics/h1u2l3/4.png (landscape 4:3, 스타일 C)
+GAG: the buyer tries to argue with the record itself and loses — he falls flat backwards, legs in the air, defeated by a small clay slab that just sits there. BUYER lies tipped over backwards on the ground with swirl eyes and legs up, one arm weakly pointing at the clay tablet which SCRIBE holds out flat and unbothered; a few tiny pebbles bounce from the fall; SELLER covers his mouth chuckling. The tablet's wedge-dent rows face the viewer (abstract marks only). Teal accent: the tablet's wedge dents. Upper third empty for a speech bubble.
+
+[b5] file=public/comics/h1u2l3/5.png (landscape 4:3, 스타일 C)
+A stepped ziggurat temple rises in the background; in front, three stick figures each hold a clay tablet busily walking different directions like clerks on duty — one balances a tall stack of tablets that leans slightly, one reads a tablet while walking, one hands a tablet to a robed official. Teal accent: the top level of the ziggurat. Upper third empty for a speech bubble.
+
+[b6] file=public/comics/h1u2l3/6.png (landscape 4:3, 스타일 C)
+GAG: five thousand years later, the humble shopping record sits under museum glass like a superstar treasure, and a student's jaw drops to the floor. Museum interior: the same small clay tablet with wedge dents rests grandly on a lit pedestal inside a glass case with a velvet rope in front; a student stick figure leans in so close their nose almost touches the glass, jaw dropped comically low, hands pressed on knees; a guard stick figure raises one finger politely. Teal accent: the glow inside the display case. Upper third empty for a speech bubble.
+
+## ── 만화 h1u2l6 「도자기 조각 투표」 7컷 (스타일 C) ──
+## 등장인물 고정: CITIZEN A = 수염 스틱맨. CITIZEN B = 곱슬머리 스틱맨. POLITICIAN = 화려한 망토를
+## 두른 스틱맨. 배경은 아테네 아고라(기둥 회랑·언덕 위 신전 실루엣).
+
+[c0] file=public/comics/h1u2l6/0.png (landscape 4:3, 스타일 C)
+Athens agora square with a columned stoa and a small temple on a hill behind; a loose crowd of stick figure citizens buzzes in small clusters, several talking at once with open mouths and raised hands; CITIZEN A (bearded) and CITIZEN B (curly hair) stand front center mid-conversation, A spreading both arms wide in disbelief. Teal accent: the temple roof on the hill. Upper third empty for a speech bubble.
+
+[c1] file=public/comics/h1u2l6/1.png (landscape 4:3, 스타일 C)
+POLITICIAN in a fancy long cloak struts across the agora with his chin very high, followed by two nodding attendant stick figures; behind a column CITIZEN A and CITIZEN B lean out watching him, whispering behind raised hands with narrowed dot eyes. Teal accent: the politician's cloak trim. Upper third empty for a speech bubble.
+
+[c2] file=public/comics/h1u2l6/2.png (landscape 4:3, 스타일 C)
+GAG: the official ballot paper turns out to be... broken pottery shards from a basket, and a citizen holds his shard up to the light squinting as if it were a precious gem. An official stick figure holds out a big basket full of broken pottery shards to a line of citizens; CITIZEN B holds one jagged shard up high with both hands, one eye squinted, inspecting it like treasure; CITIZEN A pats his own shard, puzzled, head tilted with a small sweat drop. Teal accent: the shard CITIZEN B holds up. Upper third empty for two speech bubbles.
+
+[c3] file=public/comics/h1u2l6/3.png (landscape 4:3, 스타일 C)
+Citizens crouch and kneel around the square scratching marks onto their pottery shards with pointed sticks (abstract scratch squiggles only, NOT real letters); CITIZEN A carves very carefully with his tongue sticking out in concentration; a tall amphora-like collection urn stands centre with an official beside it, one citizen dropping a shard in with a small plink motion lines. Teal accent: the collection urn's band pattern. Upper third empty for a speech bubble.
+
+[c4] file=public/comics/h1u2l6/4.png (landscape 4:3, 스타일 C)
+GAG: the mighty politician trudges away comically deflated — huge bundle on a stick over his shoulder, shoulders drooping to his knees, one giant tear drop — while citizens wave him goodbye almost cheerfully. POLITICIAN, cloak now wrinkled, walks toward the city gate with an oversized cloth bundle on a shoulder stick, hunched impossibly low, a single big tear flying off his cheek; behind him a small crowd of citizens waves with open mouths; one citizen holds up a counted pile of shards. Teal accent: the cloth bundle. Upper third empty for two speech bubbles.
+
+[c5] file=public/comics/h1u2l6/5.png (landscape 4:3, 스타일 C)
+GAG: officials are chosen by drawing lots — a citizen pulls his own name-token out of a big jar and freezes mid-celebration, half thrilled half terrified, hair standing up. Assembly hill scene: many citizens seated in a wide arc raise arms to vote; at the front an official tips a big lottery jar and one astonished citizen holds up a small token pulled from it, eyes bulging, mouth a huge O, tiny sparks around his head; neighbors pat his back laughing. Teal accent: the small token. Upper third empty for a speech bubble.
+
+[c6] file=public/comics/h1u2l6/6.png (landscape 4:3, 스타일 C)
+DIGNIFIED — no gag in this panel: a calm, thoughtful closing scene. Outside a low fence at the edge of the assembly ground, a woman stick figure with long hair holding a water jar, a foreign trader stick figure with a travel pack, and a laborer stick figure with a heavy sack stand together quietly watching the distant assembly from beyond the fence; inside the fence raised voting arms are visible far away. Soft evening light lines. Teal accent: the distant raised arms inside the assembly. Upper third empty for a speech bubble.
+
+## ── 만화 h1u2l8 「통일 3종 세트」 7컷 (스타일 C) ──
+## 등장인물 고정: MERCHANT = 봇짐을 멘 상인 스틱맨(주인공·리액션 담당). EMPEROR = 구슬 발이 달린
+## 평평한 관(면류관)을 쓴 위엄 있는 스틱맨 — 항상 근엄하고 품위 있게(절대 우스꽝스럽게 그리지 말 것).
+## OFFICIAL = 두루마리를 든 관리 스틱맨. 배경은 전국 시대~진나라 저잣거리.
+
+[d0] file=public/comics/h1u2l8/0.png (landscape 4:3, 스타일 C)
+GAG: the merchant is paid in "money" shaped like a tiny knife and a tiny shovel, and he holds them up bewildered, checking them against a real knife and a real farming spade lying nearby — they match, and his face says "seriously?". Market stall scene: MERCHANT with a big backpack bundle holds up a small knife-shaped bronze coin in one hand and a small spade-shaped bronze coin in the other, eyes wide, jaw ajar, sweat drop; on the ground next to the stall lean an actual full-size knife and an actual full-size spade for comparison; the customer stick figure shrugs with palms up. Teal accent: the two odd-shaped coins. Upper third empty for a speech bubble.
+
+[d1] file=public/comics/h1u2l8/1.png (landscape 4:3, 스타일 C)
+GAG: two cloth sellers measure the same bolt of fabric with two very different-length ruler sticks and both proudly declare their measurement — the customer's eyes ping-pong between the two rulers, utterly lost. Two vendor stick figures stretch the same long cloth bolt between two market stalls; each holds a clearly different-length measuring stick against it (one long, one short), both gesturing confidently with open mouths; MERCHANT in the middle looks back and forth, eyes as swirls, head steaming slightly. Teal accent: the cloth bolt. Upper third empty for two speech bubbles.
+
+[d2] file=public/comics/h1u2l8/2.png (landscape 4:3, 스타일 C)
+MERCHANT holds a wooden slip letter and turns it every direction — sideways, upside down — squinting hard; around him three signboards above different stalls each show a differently-styled abstract squiggle glyph (clearly different scribble shapes, NOT real characters); a helpful local stick figure points at one sign explaining with an open mouth. Teal accent: one signboard border. Upper third empty for a speech bubble.
+
+[d3] file=public/comics/h1u2l8/3.png (landscape 4:3, 스타일 C)
+Palace terrace scene, dignified: EMPEROR in a flat ceremonial crown with hanging bead strings stands tall and composed on a raised stone platform, one arm calmly extended over a wide map spread on a low table; below the platform OFFICIAL bows deeply holding a scroll with both hands, and two guards stand straight with spears. Rays of morning light behind the palace roof. EMPEROR's posture is powerful and serene — no comedy on him. Teal accent: the bead strings of the crown. Upper third empty for a speech bubble.
+
+[d4] file=public/comics/h1u2l8/4.png (landscape 4:3, 스타일 C)
+GAG: the merchant hugs a neat string of identical round coins like a long-lost friend, one joyful tear flying, while he waves an exaggerated farewell to his old knife-coin and spade-coin lying in a retirement basket. Market scene: MERCHANT clutches a corded string of round coins with square holes to his chest, eyes closed happy, one tear of joy; his other hand waves a big goodbye toward a small basket where the old knife-shaped and spade-shaped coins rest; OFFICIAL beside him holds up one standard measuring cup and one standard ruler stick, chest out proud. Teal accent: the string of round coins. Upper third empty for a speech bubble.
+
+[d5] file=public/comics/h1u2l8/5.png (landscape 4:3, 스타일 C)
+GAG: even the cart wheels must match now — a carter whose wheels fit the road ruts perfectly zips along whistling, while his friend gawks at how smooth the ride is. A long straight imperial road with two worn parallel wheel ruts stretches to the horizon; a happy carter stick figure rolls a loaded cart whose wheels drop perfectly into the ruts, speed lines behind, one hand raised carefree; MERCHANT jogs alongside pointing at the perfectly fitting wheels with an amazed open mouth. A road-side milestone post (plain, no letters). Teal accent: the cart's cargo bundle. Upper third empty for a speech bubble.
+
+[d6] file=public/comics/h1u2l8/6.png (landscape 4:3, 스타일 C)
+GAG: the student comes face to face with an underground army of thousands of life-size clay soldiers — and the only living person in the frame is the tiny student whose jaw hits the floor. Excavation pit scene viewed slightly from above: dense ranks of terracotta clay soldier figures (simple stick-doll style but clearly armored torsos and topknots) stand in long trenches stretching back; at the front edge a modern student stick figure stands tiny against the ranks, leaning back, arms flung up, jaw dropped hugely; a small museum rail in front. Teal accent: one soldier's shoulder armor trim. Upper third empty for a speech bubble.

@@ -63,4 +63,19 @@ export const TIMELINES: Record<string, TimelineDef> = {
       { kind: "place", year: -108, label: "고조선 멸망" },
     ],
   },
+  // h1u2: 고대 제국 구간(확정 연도가 있는 사건만) — 문명 발생(기원전 3500~2500, 천 년 스케일)은
+  // 세기 균일 칸 문법에 맞지 않아 hisFigures.millenniumFig(500년 칸 정적 띠)가 담당한다(게이트 ① 결정).
+  // 검산: BC221=기원전 3세기(-300~-201) · BC27=기원전 1세기(-100~-1) · 313=4세기(301~400).
+  h1u2: {
+    id: "h1u2",
+    startCentury: -4,
+    endCentury: 4,
+    tasks: [
+      { kind: "century", century: 2 },
+      { kind: "century", century: -4 },
+      { kind: "place", year: -221, label: "진, 중국 통일" },
+      { kind: "place", year: -27, label: "로마, 제정 시작" },
+      { kind: "place", year: 313, label: "크리스트교 공인" },
+    ],
+  },
 };
