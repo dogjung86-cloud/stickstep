@@ -183,30 +183,25 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
 
     // 과목·학년 세그(2026-07-20) — 문제 은행이 있는 과목·학년만 뜬다(사회·역사는 풀 등록 시 자동).
     // 필터는 보기만 바꾼다 — 담아 둔 소단원(sel)은 과목을 오가도 유지되고 전부 함께 뽑힌다
-    // (과학+수학 혼합 문제지가 이 설계의 의도). 세그 라벨의 담은 수 배지 + 아래 요약 필이
-    // "과목 경계를 넘어 담는 중"을 실시간으로 보여 준다(각주 한 줄로는 안 보인다는 피드백).
+    // (과학+수학 혼합 문제지가 이 설계의 의도). 아래 요약 필이 "과목 경계를 넘어 담는 중"을
+    // 실시간으로 보여 준다 — 세그 라벨 숫자 배지는 요약 필과 중복이라 뺐다(사용자 확정 2026-07-20).
     const subjectsAvail = [...new Set(UNITS.map((d) => d.subject))];
     if (subjectsAvail.length && !subjectsAvail.includes(subj)) subj = subjectsAvail[0];
     const gradesAvail = [...new Set(UNITS.filter((d) => d.subject === subj).map((d) => d.grade))];
     if (gradesAvail.length && !gradesAvail.includes(pickGrade)) pickGrade = gradesAvail[0];
     const selCountOfSubj = (s: SubjectId): number =>
       UNITS.filter((d) => d.subject === s).reduce((a, du) => a + du.lessons.filter((l) => sel.has(l.id)).length, 0);
-    const selCountOfGrade = (g: GradeId): number =>
-      UNITS.filter((d) => d.subject === subj && d.grade === g).reduce((a, du) => a + du.lessons.filter((l) => sel.has(l.id)).length, 0);
-    const subjBtns: { b: HTMLButtonElement; s: SubjectId }[] = [];
-    const gradeBtns: { b: HTMLButtonElement; g: GradeId }[] = [];
     const filters = el("div", { class: "wd-filters" });
     if (subjectsAvail.length > 1) {
       const seg = el("div", { class: "grade-seg" });
       for (const s of subjectsAvail) {
-        const b = el("button", { class: `gseg ${s === subj ? "on" : ""}` });
+        const b = el("button", { class: `gseg ${s === subj ? "on" : ""}`, text: SUBJECT_LABEL[s] });
         b.addEventListener("click", () => {
           if (s === subj) return;
           haptic(HAPTIC.tap);
           subj = s;
           renderPick();
         });
-        subjBtns.push({ b, s });
         seg.appendChild(b);
       }
       filters.appendChild(seg);
@@ -214,14 +209,13 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
     if (gradesAvail.length > 1) {
       const seg = el("div", { class: "grade-seg" });
       for (const g of gradesAvail) {
-        const b = el("button", { class: `gseg ${g === pickGrade ? "on" : ""}` });
+        const b = el("button", { class: `gseg ${g === pickGrade ? "on" : ""}`, text: GRADE_LABEL[g] });
         b.addEventListener("click", () => {
           if (g === pickGrade) return;
           haptic(HAPTIC.tap);
           pickGrade = g;
           renderPick();
         });
-        gradeBtns.push({ b, g });
         seg.appendChild(b);
       }
       filters.appendChild(seg);
@@ -231,14 +225,6 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
     const selSummary = el("div", { class: "wd-selsum" });
     wrap.appendChild(selSummary);
     const paintPicked = (): void => {
-      for (const { b, s } of subjBtns) {
-        const n = selCountOfSubj(s);
-        b.textContent = n ? `${SUBJECT_LABEL[s]} ${n}` : SUBJECT_LABEL[s];
-      }
-      for (const { b, g } of gradeBtns) {
-        const n = selCountOfGrade(g);
-        b.textContent = n ? `${GRADE_LABEL[g]} ${n}` : GRADE_LABEL[g];
-      }
       if (!sel.size) {
         selSummary.style.display = "none";
         return;

@@ -2790,20 +2790,23 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .prep-pill.gold svg { color: var(--gold); }
 
 /* 도전 탭 "쉬는 시간" — 강조 헤더(배지형 타이틀 + 보유 스텝 잔고) + 입장 스텝 필(2026-07-20) */
-.play-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 22px 2px 0; }
+.play-head { display: flex; align-items: center; justify-content: space-between; gap: 8px 10px; flex-wrap: wrap; margin: 22px 2px 0; }
 .play-title {
   display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px;
   background: var(--grad-blue, linear-gradient(135deg, #3182F6, #5B9DF9)); color: #fff;
   font-size: 14px; font-weight: 900; letter-spacing: -.012em; box-shadow: var(--sh-card);
 }
 .play-title-ic { display: grid; place-items: center; color: #FFE9B8; }
-.play-bal {
+.play-chips { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.play-bal, .play-cnt {
   display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 999px;
   background: var(--n0); border: 1px solid var(--n200); font-size: 12px; font-weight: 700; color: var(--n600);
   box-shadow: var(--sh-card); white-space: nowrap;
 }
 .play-bal b { font-weight: 900; color: var(--ink); }
 .play-bal svg { color: var(--blue); }
+/* 오늘 판수 소진 — 어두운 필로 "닫힘"을 표시(내일 자정 리셋) */
+.play-cnt.done { background: var(--n700); border-color: var(--n700); color: #fff; }
 .play-note { margin: 9px 4px 0; font-size: 12px; line-height: 1.55; color: var(--n500); word-break: keep-all; }
 .prep-pill.fee { display: inline-flex; align-items: center; gap: 3px; color: #1B64DA; background: var(--blue-tint); border: 1px solid #C9DCFB; }
 .prep-pill.fee svg { color: var(--blue); }

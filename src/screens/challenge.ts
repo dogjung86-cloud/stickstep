@@ -7,9 +7,11 @@
 // **입장료(2026-07-20 사용자 확정)**: 게임을 열 때마다 보유 스텝(totalXp)에서 GAME_FEE를 차감 —
 // 학습으로 번 스텝이 쉬는 시간의 입장권이 되는 루프. 잔고에서만 빠지고 누적 스텝(장화 레벨)은
 // 그대로다(spendXp 규약). 검토 모드는 면제(잠금 전부 해제와 같은 결 — QA·e2e 경로).
-// 순서: ① 페이월 게이트(비프리미엄 → main.ts가 페이월) ② 입장료 차감 ③ 게임 오픈 —
-// 요금을 게이트보다 먼저 걷으면 페이월행 유저의 스텝을 훔치게 되니 순서를 바꾸지 말 것.
-// 판수 하드캡은 두지 않는다(입장료·잔고가 자연 제한 — 필요해지면 여기 상수 하나로 조절).
+// **일일 상한(2026-07-20 사용자 확정 15판)**: 전 게임 합산 하루 PLAY_CAP회 입장 — 학교 쉬는 시간이
+// 끝나듯 앱이 스스로 멈춰 주는 장치(잔고 부자의 폭식 방지 + 학부모 신뢰). 기기 저장(game.dailyPlays,
+// srx.daily 문법)·자정 리셋. 검토 모드 면제, 소진 시 스낵 + 헤더 카운터가 done 스타일로 전환.
+// 순서: ① 페이월 게이트(비프리미엄 → main.ts가 페이월) ② 상한 확인 ③ 입장료 차감 ④ 판수 기록 —
+// 요금을 게이트·상한보다 먼저 걷으면 못 들어갈 유저의 스텝을 훔치게 되니 순서를 바꾸지 말 것.
 // 랭킹은 서버 검증 채점(+검토 모드 우회 제거)이 선행 조건이라 자리만 잡는다.
 
 import { el } from "../core/dom";
@@ -21,6 +23,29 @@ import type { Screen } from "../core/router";
 
 /** 게임 1회 입장 스텝 — 레슨 한 번(약 100~160스텝)으로 5~8판 놀 수 있는 수준. */
 export const GAME_FEE = 20;
+/** 하루 입장 상한(전 게임 합산) — 쉬는 시간은 끝나는 시간이 있다. */
+export const PLAY_CAP = 15;
+
+const PLAYS_KEY = "game.dailyPlays"; // { d: "YYYY-MM-DD", n } — 기기 저장, 날짜가 바뀌면 자동 0
+function dayKey(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+function playsToday(): number {
+  try {
+    const v = JSON.parse(localStorage.getItem(PLAYS_KEY) ?? "null") as { d?: string; n?: number } | null;
+    return v && v.d === dayKey() ? Math.max(0, v.n ?? 0) : 0;
+  } catch {
+    return 0;
+  }
+}
+function countPlay(): void {
+  try {
+    localStorage.setItem(PLAYS_KEY, JSON.stringify({ d: dayKey(), n: playsToday() + 1 }));
+  } catch {
+    /* 저장 실패는 무시 — 다음 판에 다시 센다 */
+  }
+}
 
 export function challengeScreen(o: {
   onTab: (k: GnavKey) => void;
@@ -84,10 +109,18 @@ export function challengeScreen(o: {
         onPlay();
         return;
       }
-      // ② 검토 모드 면제 → ③ 입장료 차감 후 오픈(부족하면 학습 유도 스낵)
-      if (!isReviewMode() && !spendXp(GAME_FEE)) {
-        snack(`스텝이 ${GAME_FEE} 필요해요 — 레슨을 완주하면 스텝이 쌓여요!`);
-        return;
+      // ② 검토 모드 면제 → ③ 일일 상한 → ④ 입장료 차감 + 판수 기록(상한을 요금보다 먼저 —
+      //    막힐 판에 스텝부터 걷지 않는다)
+      if (!isReviewMode()) {
+        if (playsToday() >= PLAY_CAP) {
+          snack("오늘 쉬는 시간은 끝났어요 — 내일 다시 열려요!");
+          return;
+        }
+        if (!spendXp(GAME_FEE)) {
+          snack(`스텝이 ${GAME_FEE} 필요해요 — 레슨을 완주하면 스텝이 쌓여요!`);
+          return;
+        }
+        countPlay();
       }
       onPlay();
     });
@@ -95,7 +128,9 @@ export function challengeScreen(o: {
   }
 
   // 쉬는 시간 헤더 — 섹션 제목 강조판(2026-07-20 사용자 피드백): 배지형 타이틀 + 보유 스텝 잔고 +
-  // 입장료 규칙 한 줄. 잔고는 화면이 탭 전환마다 새로 그려져 항상 최신이다.
+  // 오늘 판수 카운터 + 입장 규칙 한 줄. 화면이 탭 전환마다 새로 그려져 잔고·판수는 항상 최신이다.
+  const played = Math.min(playsToday(), PLAY_CAP);
+  const capLeft = played < PLAY_CAP;
   const playHead = el(
     "div",
     { class: "play-head" },
@@ -105,11 +140,18 @@ export function challengeScreen(o: {
       el("span", { class: "play-title-ic", html: icon("sparkle", 14) }),
       el("span", { text: "쉬는 시간" }),
     ),
-    el("span", { class: "play-bal", html: `${icon("footstep", 12)}<span>내 스텝 <b>${getState().totalXp.toLocaleString()}</b></span>` }),
+    el(
+      "span",
+      { class: "play-chips" },
+      el("span", { class: "play-bal", html: `${icon("footstep", 12)}<span>내 스텝 <b>${getState().totalXp.toLocaleString()}</b></span>` }),
+      el("span", { class: `play-cnt ${capLeft ? "" : "done"}`, text: `오늘 ${played}/${PLAY_CAP}판` }),
+    ),
   );
   const playNote = el("div", {
     class: "play-note",
-    text: `레슨·시험에서 모은 스텝 ${GAME_FEE}으로 한 번 입장해요. 잔고에서만 빠지고, 장화 레벨(누적 스텝)은 줄지 않아요.`,
+    text: capLeft
+      ? `레슨·시험에서 모은 스텝 ${GAME_FEE}으로 한 번 입장해요(하루 ${PLAY_CAP}판까지). 잔고에서만 빠지고, 장화 레벨(누적 스텝)은 줄지 않아요.`
+      : "오늘 쉬는 시간은 끝났어요 — 내일 다시 열려요! 남은 시간엔 레슨으로 스텝을 모아 두면 좋아요.",
   });
 
   const elm = el(

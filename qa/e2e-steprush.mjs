@@ -202,6 +202,7 @@ await page.evaluate(() => {
 });
 await W(600);
 ok(await page.evaluate(() => !!document.querySelector("#sc-challenge") && !document.querySelector("#sc-steprush")), "그만하기 → 도전 탭 복귀·화면 정리");
+ok(await page.evaluate(() => document.querySelector(".play-cnt")?.textContent) === "오늘 1/15판", "일일 판수 카운터(1/15)");
 
 // ── [M3] 최고기록 60 시딩 → 별 계단 해금·피버·"지난 나" 고스트 ─────
 await page.evaluate(() => {
@@ -372,6 +373,27 @@ await W(800);
 ok(await page.evaluate(() => !document.querySelector("#sc-steprush") && !!document.querySelector("#sc-challenge")), "스텝 부족 — 게임이 열리지 않음");
 ok(await page.evaluate(() => document.querySelector("#sc-challenge .snack")?.classList.contains("show")), "부족 안내 스낵 표시");
 ok((await store()).totalXp === 5, "부족 시 차감 없음");
+
+// ── 일일 15판 소진 — 카드 탭 차단 + 헤더 카운터 done + 안내 문구(2026-07-20 상한 도입) ──
+await page.evaluate(() => {
+  const s = JSON.parse(localStorage.getItem("science-app.v1"));
+  s.totalXp = 500;
+  localStorage.setItem("science-app.v1", JSON.stringify(s));
+  const d = new Date();
+  const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  localStorage.setItem("game.dailyPlays", JSON.stringify({ d: k, n: 15 }));
+});
+await page.reload({ waitUntil: "networkidle" });
+await W(1200);
+await page.evaluate(() => document.querySelectorAll(".screen.active nav button")[2].click());
+await W(400);
+ok(await page.evaluate(() => document.querySelector(".play-cnt")?.textContent) === "오늘 15/15판", "소진 카운터(15/15)");
+ok(await page.evaluate(() => document.querySelector(".play-cnt")?.classList.contains("done")), "카운터 done 스타일");
+ok(await page.evaluate(() => document.querySelector(".play-note")?.textContent.includes("쉬는 시간은 끝났어요")), "소진 안내 문구(내일 다시)");
+await page.evaluate(() => document.getElementById("btn-steprush").click());
+await W(800);
+ok(await page.evaluate(() => !document.querySelector("#sc-steprush") && !!document.querySelector("#sc-challenge")), "일일 상한 — 게임이 열리지 않음");
+ok((await store()).totalXp === 500, "상한 차단 시 스텝 차감 없음");
 
 ok(pageErrors === 0, "페이지 에러 0", String(pageErrors));
 
