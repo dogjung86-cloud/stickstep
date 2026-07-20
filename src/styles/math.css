@@ -136,7 +136,7 @@ text[font-style="italic"] { font-family: var(--font-mvar); }
 }
 
 /* ---------- 과목 허브: 수학 카드 ---------- */
-.subj-card.mth { border-color: rgba(13,165,198,.35); }
+/* 테두리는 ui.css 통일(2026-07-21) — 과목색은 아이콘·메타·아바타 필이 담당 */
 .subj-card.mth .subj-ava { background: var(--subj-num-tint); }
 .subj-card.mth .subj-name svg { color: var(--subj-num); }
 .subj-card.mth .subj-meta { color: var(--subj-num-press); }

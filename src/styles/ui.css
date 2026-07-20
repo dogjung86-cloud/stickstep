@@ -1665,11 +1665,32 @@
 .subj-card {
   display: flex; align-items: center; gap: 14px; text-align: left; width: 100%;
   padding: 16px; border-radius: var(--r-lg); background: var(--grad-card);
-  box-shadow: var(--sh-raise); border: 1.5px solid transparent;
-  transition: transform .16s var(--spring-soft), box-shadow .2s var(--ease-out);
+  box-shadow: var(--sh-raise); border: 1.5px solid var(--n200); /* 테두리 통일(2026-07-21 — 과목색 틴트 4종 폐기) */
+  transition: transform .16s var(--spring-soft), box-shadow .2s var(--ease-out), border-color .18s var(--ease-out);
 }
+/* 탭/클릭 = 눌림 + 과목색 테두리 점등(터치 피드백), 호버(포인터 기기만) = 살짝 떠오르며 과목색 테두리 */
 .subj-card:active { transform: scale(.982); }
-.subj-card.sci { border-color: rgba(49,130,246,.35); }
+.subj-card.sci:active { border-color: color-mix(in srgb, var(--blue) 55%, transparent); }
+.subj-card.mth:active { border-color: color-mix(in srgb, var(--subj-num) 55%, transparent); }
+.subj-card.soc:active { border-color: color-mix(in srgb, var(--subj-soc) 55%, transparent); }
+.subj-card.his:active { border-color: color-mix(in srgb, var(--subj-his) 55%, transparent); }
+@media (hover: hover) {
+  .subj-card:hover { transform: translateY(-1px); }
+  .subj-card:active { transform: scale(.982); } /* 호버 떠오름보다 눌림이 이긴다(선언 순서) */
+  .subj-card.sci:hover { border-color: color-mix(in srgb, var(--blue) 55%, transparent); }
+  .subj-card.mth:hover { border-color: color-mix(in srgb, var(--subj-num) 55%, transparent); }
+  .subj-card.soc:hover { border-color: color-mix(in srgb, var(--subj-soc) 55%, transparent); }
+  .subj-card.his:hover { border-color: color-mix(in srgb, var(--subj-his) 55%, transparent); }
+}
+/* 과목 액센트(2026-07-21): 이름 아이콘 = 과목색, 메타 = 과목색 press, 아바타 필 = 과목색 tint
+   (과학=블루 기본값 유지, 수학은 math.css .subj-card.mth 규칙이 선점 — 여기선 사회·역사만) */
+.subj-card.sci .subj-meta { color: var(--blue-press); }
+.subj-card.soc .subj-ava { background: var(--subj-soc-tint); }
+.subj-card.soc .subj-name svg { color: var(--subj-soc); }
+.subj-card.soc .subj-meta { color: var(--subj-soc-press); }
+.subj-card.his .subj-ava { background: var(--subj-his-tint); }
+.subj-card.his .subj-name svg { color: var(--subj-his); }
+.subj-card.his .subj-meta { color: var(--subj-his-press); }
 .subj-card.soon { background: var(--n25); box-shadow: var(--sh-card); }
 .subj-card.soon .subj-body, .subj-card.soon .subj-ico { opacity: .55; }
 /* 아바타 64px(2026-07-21 사용자 확정 — 56 원안에서 소폭 격상, 80 2단 재배치안은 과대로 기각) */
