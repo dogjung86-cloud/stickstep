@@ -2820,6 +2820,11 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .wd-pick .sub { margin-top: 6px; font-size: 13.5px; line-height: 1.55; color: var(--n600); word-break: keep-all; }
 .wd-pick .sec-head { padding: 18px 2px 8px; }
 .wd-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 2px; }
+.wd-selsum {
+  margin: 12px 0 0; padding: 9px 13px; border-radius: 12px;
+  background: var(--blue-tint); color: #1B64DA; font-size: 12.5px; font-weight: 700;
+  line-height: 1.5; word-break: keep-all;
+}
 .wd-auto { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; padding: 10px 15px; border-radius: 99px; background: linear-gradient(180deg, #FFF6E0, #FFEDC2); border: 1px solid #F0D48A; color: #8A5A00; font-size: 13px; font-weight: 800; box-shadow: var(--sh-card); transition: transform .12s var(--spring-soft); }
 .wd-auto:active { transform: scale(.96); }
 .wd-auto-ic { display: grid; place-items: center; color: var(--gold); }

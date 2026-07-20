@@ -182,22 +182,31 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
     );
 
     // 과목·학년 세그(2026-07-20) — 문제 은행이 있는 과목·학년만 뜬다(사회·역사는 풀 등록 시 자동).
-    // 필터는 보기만 바꾼다 — 담아 둔 소단원(sel)은 과목을 오가도 유지되고 전부 함께 뽑힌다.
+    // 필터는 보기만 바꾼다 — 담아 둔 소단원(sel)은 과목을 오가도 유지되고 전부 함께 뽑힌다
+    // (과학+수학 혼합 문제지가 이 설계의 의도). 세그 라벨의 담은 수 배지 + 아래 요약 필이
+    // "과목 경계를 넘어 담는 중"을 실시간으로 보여 준다(각주 한 줄로는 안 보인다는 피드백).
     const subjectsAvail = [...new Set(UNITS.map((d) => d.subject))];
     if (subjectsAvail.length && !subjectsAvail.includes(subj)) subj = subjectsAvail[0];
     const gradesAvail = [...new Set(UNITS.filter((d) => d.subject === subj).map((d) => d.grade))];
     if (gradesAvail.length && !gradesAvail.includes(pickGrade)) pickGrade = gradesAvail[0];
+    const selCountOfSubj = (s: SubjectId): number =>
+      UNITS.filter((d) => d.subject === s).reduce((a, du) => a + du.lessons.filter((l) => sel.has(l.id)).length, 0);
+    const selCountOfGrade = (g: GradeId): number =>
+      UNITS.filter((d) => d.subject === subj && d.grade === g).reduce((a, du) => a + du.lessons.filter((l) => sel.has(l.id)).length, 0);
+    const subjBtns: { b: HTMLButtonElement; s: SubjectId }[] = [];
+    const gradeBtns: { b: HTMLButtonElement; g: GradeId }[] = [];
     const filters = el("div", { class: "wd-filters" });
     if (subjectsAvail.length > 1) {
       const seg = el("div", { class: "grade-seg" });
       for (const s of subjectsAvail) {
-        const b = el("button", { class: `gseg ${s === subj ? "on" : ""}`, text: SUBJECT_LABEL[s] });
+        const b = el("button", { class: `gseg ${s === subj ? "on" : ""}` });
         b.addEventListener("click", () => {
           if (s === subj) return;
           haptic(HAPTIC.tap);
           subj = s;
           renderPick();
         });
+        subjBtns.push({ b, s });
         seg.appendChild(b);
       }
       filters.appendChild(seg);
@@ -205,18 +214,44 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
     if (gradesAvail.length > 1) {
       const seg = el("div", { class: "grade-seg" });
       for (const g of gradesAvail) {
-        const b = el("button", { class: `gseg ${g === pickGrade ? "on" : ""}`, text: GRADE_LABEL[g] });
+        const b = el("button", { class: `gseg ${g === pickGrade ? "on" : ""}` });
         b.addEventListener("click", () => {
           if (g === pickGrade) return;
           haptic(HAPTIC.tap);
           pickGrade = g;
           renderPick();
         });
+        gradeBtns.push({ b, g });
         seg.appendChild(b);
       }
       filters.appendChild(seg);
     }
     if (filters.childElementCount) wrap.appendChild(filters);
+    // 담기 요약 필 — 무엇을 몇 개 담았는지(과목별 내역 포함). 담기 전에는 숨김.
+    const selSummary = el("div", { class: "wd-selsum" });
+    wrap.appendChild(selSummary);
+    const paintPicked = (): void => {
+      for (const { b, s } of subjBtns) {
+        const n = selCountOfSubj(s);
+        b.textContent = n ? `${SUBJECT_LABEL[s]} ${n}` : SUBJECT_LABEL[s];
+      }
+      for (const { b, g } of gradeBtns) {
+        const n = selCountOfGrade(g);
+        b.textContent = n ? `${GRADE_LABEL[g]} ${n}` : GRADE_LABEL[g];
+      }
+      if (!sel.size) {
+        selSummary.style.display = "none";
+        return;
+      }
+      const parts: string[] = [];
+      for (const s of subjectsAvail) {
+        const n = selCountOfSubj(s);
+        if (n) parts.push(`${SUBJECT_LABEL[s]} ${n}`);
+      }
+      selSummary.style.display = "";
+      // em대시 금지(수학 단원 곁 텍스트 — 수학 트랙 규칙의 결): 내역은 괄호로 묶는다
+      selSummary.textContent = `담은 소단원 ${sel.size}곳(${parts.join(" · ")}) 전부 한 문제지로 뽑아요`;
+    };
 
     // 오답 있는 소단원 자동 담기 — 취약한 곳을 한 번에
     const weakIds: string[] = [];
@@ -243,6 +278,7 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
     wrap.appendChild(auto);
 
     const paintCta = (): void => {
+      paintPicked(); // 세그 담은 수 배지·요약 필도 체크 토글마다 함께 갱신
       if (!sel.size) {
         setCTA("소단원을 골라 주세요", false, null);
         return;
