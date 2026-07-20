@@ -36,7 +36,7 @@ function splayOf(i: number): number {
 export function homeScreen(
   onOpenLesson: (id: string) => void,
   focusUnitId?: string,
-  nav2?: { onSubjects?: () => void; onOpenExam?: (unitId: string) => void; onTab?: (k: GnavKey) => void; onOpenNotebook?: () => void },
+  nav2?: { onOpenExam?: (unitId: string) => void; onTab?: (k: GnavKey) => void; onOpenNotebook?: () => void },
   opts?: { walkFrom?: string },
 ): Screen {
   const st = getState();
@@ -61,17 +61,7 @@ export function homeScreen(
     el("div", { class: "chip streak" }, el("span", { html: icon("flame", 15) }), el("span", { text: `${currentStreak()}일` })),
     el("div", { class: "chip gem" }, el("span", { html: icon("footstep", 15) }), el("span", { text: `${st.totalXp} 스텝` })),
   );
-  // 과목 상자 — 그리드 대신 현재 과목 아이콘(과학 플라스크·수학 연산)+미니 ▾. 탭 동작은 기존 전체 화면 과목 허브.
-  const subjName = subject === "math" ? "수학" : subject === "soc" ? "사회" : subject === "his" ? "역사" : "과학";
-  const subjBtn = el("button", {
-    class: "abtn subj-box",
-    attrs: { "aria-label": `과목 선택 — 현재 ${subjName}` },
-    html: icon(subject === "math" ? "mathop" : subject === "soc" ? "globe" : subject === "his" ? "book" : "flask", 15) + icon("chevronDown", 9, { cls: "sb-chev" }),
-  });
-  subjBtn.addEventListener("click", () => {
-    haptic(HAPTIC.tap);
-    nav2?.onSubjects?.();
-  });
+  // 과목 상자(subj-box)는 폐기(2026-07-20 사용자 확정) — 과목 허브 진입은 하단 과목 탭이 담당.
   // 우상단 프로필 버튼은 제거(2026-07-16, 프로필 진입 단일화) — 같은 목적지(마이 탭)의 진입이
   // 둘일 이유가 없다. 로그인 상태 표시·아바타 노출은 탭바 마이 아이콘(ui/gnav.ts)이 흡수했고,
   // 로그인 화면 진입은 마이 > "계정 관리 · 로그인"이 유일 경로다.
@@ -97,7 +87,7 @@ export function homeScreen(
   const appbar = el(
     "div",
     { class: "appbar" },
-    el("div", { class: "ab-side" }, subjBtn, brandEl),
+    el("div", { class: "ab-side" }, brandEl),
     el("div", { class: "ab-side" }, chips),
   );
 

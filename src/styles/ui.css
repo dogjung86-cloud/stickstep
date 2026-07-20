@@ -1654,6 +1654,9 @@
 
 /* ---------- 과목 허브 ---------- */
 .subj-screen { position: relative; }
+/* 과목 탭 모드(2026-07-20) — relative 오버라이드가 화면 높이를 콘텐츠 높이로 만들어 gnav가 바닥에
+   안 붙는다 → 탭 화면은 base .screen의 absolute inset 복원(scroll flex:1 + 탭바 고정) */
+.subj-screen.tabscr { position: absolute; }
 .subj-brand { font-size: 20px; font-weight: 800; letter-spacing: -.04em; }
 .subj-body-wrap { position: relative; z-index: 1; padding-top: 10px; }
 .subj-doodles { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
@@ -2882,9 +2885,7 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
    스킨 클래스(.bsn·.ucard 등)만 얹는다. 이 섹션은 파일 끝(같은 특이도 타이 시 우선)에 둔다.
    ============================================================ */
 
-/* ---------- 앱바: 과목 상자(현재 과목 아이콘 + 미니 ▾ — 탭하면 기존 전체 화면 과목 허브) ---------- */
-.abtn.subj-box { width: auto; padding: 0 9px; display: inline-flex; align-items: center; gap: 3px; }
-.abtn.subj-box .sb-chev { color: var(--n500); }
+/* 앱바 과목 상자(subj-box)는 폐기(2026-07-20) — 과목 허브 진입은 하단 과목 탭(gnav)이 담당 */
 
 /* ---------- 탭 줄만 세로 sticky(탭=목차, 카드=표지) — 가로 스와이프 스크롤은 유지 ---------- */
 .scroll .unit-tabs { position: sticky; top: 0; z-index: 30; background: var(--app-bg); padding-top: 6px; padding-bottom: 8px; }

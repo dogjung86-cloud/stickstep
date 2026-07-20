@@ -72,6 +72,13 @@
     margin-left: auto;
     margin-right: auto;
   }
+  /* 과목 탭(2026-07-20) — 허브 scroll은 .pad가 자식이 아니라 자기 클래스라 위 규칙이 못 잡는다 */
+  html.dt #sc-subjects > .scroll.pad {
+    width: 100%;
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
   /* ---------- 풀스크린 화면(레슨·시험·페이월·오답노트 등): 중앙 칼럼 집중 모드 ---------- */
   html.dt .screen:not(.tabscr):not(#sc-home) > .lheader,

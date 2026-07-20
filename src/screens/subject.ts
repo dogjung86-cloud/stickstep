@@ -1,6 +1,7 @@
 // 과목 허브, "무엇을 배워 볼까요?" 과목 선택 화면.
-// 온보딩 진입(mode "onboard": 스플래시 다음)과 홈 재진입(mode "hub": 앱바 과목 버튼) 겸용.
-// 과학만 열려 있고 수학·사회는 준비 중 카드. 배경엔 스틱맨·스틱 소품 데코(브랜드 정체성).
+// 온보딩 진입(mode "onboard": 스플래시 다음)과 하단 과목 탭(onTab — 2026-07-20 신설, 런처형:
+// 과목을 고르면 main.ts pickSubject가 학습 탭으로 점프) 겸용. 구 홈 앱바 subj-box 진입은 폐기.
+// 배경엔 스틱맨·스틱 소품 데코(브랜드 정체성).
 import { el } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
@@ -9,6 +10,7 @@ import { stickAvatar } from "../ui/avatar";
 import { getState, currentStreak } from "../core/store";
 import { CURRICULA_OF, type SubjectId } from "../content/curriculum";
 import { isDone } from "../core/store";
+import { gnav, type GnavKey } from "../ui/gnav";
 import type { Screen } from "../core/router";
 
 function subjectProgress(subject: SubjectId): { done: number; total: number } {
@@ -33,18 +35,32 @@ export function subjectScreen(opts: {
   onPickSoc?: () => void;
   onPickHis?: () => void;
   onBack?: () => void;
+  /** 하단 과목 탭 모드 — 주면 탭바(gnav)·tab-head 뒤로가기 장착(복습·도전·마이 탭과 공통 문법). */
+  onTab?: (k: GnavKey) => void;
 }): Screen {
   const st = getState();
-  const head = el("div", { class: "obhead" });
-  if (opts.mode === "hub" && opts.onBack) {
-    const back = el("button", { class: "backbtn", attrs: { "aria-label": "뒤로" }, html: icon("back", 22) });
-    back.addEventListener("click", () => {
+  const tabMode = !!opts.onTab;
+  let head: HTMLElement;
+  if (tabMode) {
+    // 탭 문법(2026-07-20): 상단 뒤로가기 = 학습 탭 복귀 — 복습·도전·마이와 동일
+    const backToHome = el("button", { class: "tab-back", attrs: { "aria-label": "학습 탭으로 돌아가기" }, html: icon("back", 19) });
+    backToHome.addEventListener("click", () => {
       haptic(HAPTIC.tap);
-      opts.onBack?.();
+      opts.onTab?.("home");
     });
-    head.append(back, el("div", {}), el("div", { style: "width:38px" }));
+    head = el("div", { class: "tab-head" }, el("div", { class: "tab-head-row" }, backToHome, el("div", { class: "h1 sm", text: "과목" })));
   } else {
-    head.append(el("div", { class: "subj-brand", text: BRAND.name }), el("div", {}));
+    head = el("div", { class: "obhead" });
+    if (opts.mode === "hub" && opts.onBack) {
+      const back = el("button", { class: "backbtn", attrs: { "aria-label": "뒤로" }, html: icon("back", 22) });
+      back.addEventListener("click", () => {
+        haptic(HAPTIC.tap);
+        opts.onBack?.();
+      });
+      head.append(back, el("div", {}), el("div", { style: "width:38px" }));
+    } else {
+      head.append(el("div", { class: "subj-brand", text: BRAND.name }), el("div", {}));
+    }
   }
 
   const h1 = el("div", { class: "h1", html: opts.mode === "onboard" ? "무엇을<br>배워 볼까요?" : "과목 고르기" });
@@ -171,6 +187,13 @@ export function subjectScreen(opts: {
     ),
   );
 
-  const elm = el("section", { class: "screen subj-screen" }, head, doodles, body);
+  const elm = el(
+    "section",
+    { class: `screen subj-screen ${tabMode ? "tabscr" : ""}`, attrs: tabMode ? { id: "sc-subjects" } : {} },
+    head,
+    doodles,
+    body,
+  );
+  if (tabMode && opts.onTab) elm.appendChild(gnav("subjects", opts.onTab));
   return { el: elm };
 }

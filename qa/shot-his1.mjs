@@ -38,7 +38,8 @@ const clickCTA = async () => {
 
 // 1) 홈 역사 지도 → 2) 과목 허브
 await shot("home");
-await page.evaluate(() => document.querySelector(".subj-box").click());
+// 허브 진입 = 하단 과목 탭(2026-07-20 — 구 앱바 subj-box 폐기)
+await page.evaluate(() => [...document.querySelectorAll(".screen.active .gnav-item")].find((b) => b.textContent.includes("과목"))?.click());
 await page.waitForSelector(".screen.active .subj-card", { timeout: 9000 });
 await W(400);
 await shot("hub");

@@ -68,7 +68,8 @@ if (!ONLY.length) {
   check(home.nodes === 5, `Ⅰ단원 레슨 노드 5개 — 지도는 선택 밴드만 렌더 (실제 ${home.nodes})`);
   check(home.his, "Ⅰ단원 his 테마 지형 적용");
 
-  await page.evaluate(() => document.querySelector(".subj-box").click());
+  // 허브 진입 = 하단 과목 탭(2026-07-20 — 구 앱바 subj-box 폐기)
+  await page.evaluate(() => [...document.querySelectorAll(".screen.active .gnav-item")].find((b) => b.textContent.includes("과목"))?.click());
   await page.waitForSelector(`${active} .subj-card`, { timeout: 9000 });
   const hub = await page.evaluate(() => ({
     cards: document.querySelectorAll(".screen.active .subj-card").length,

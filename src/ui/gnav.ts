@@ -1,4 +1,5 @@
-// 하단 글로벌 탭바 — 학습(홈)·복습·도전·마이 4개 최상위 화면 공용(2026-07-12 IA 개편).
+// 하단 글로벌 탭바 — 학습(홈)·과목·복습·도전·마이 5개 최상위 화면 공용(2026-07-12 IA 개편,
+// 과목 탭 신설 2026-07-20 사용자 확정 — 홈 앱바 좌상단 subj-box 단독 진입은 발견성이 나빠 폐기).
 // 탭 전환은 main.ts의 goTab(nav.reset)이 담당 — 여기서는 콜백만 쏜다. 활성 탭 재탭은 무시.
 // 마이 탭 아이콘 = 로그인 시 내 아바타 원형 미니(2026-07-16 프로필 진입 단일화 — 우상단
 // 프로필 버튼이 하던 로그인 상태 표시·아바타 노출을 이 아이콘이 흡수, 인스타·유튜브 You 탭 패턴).
@@ -12,10 +13,11 @@ import { getState } from "../core/store";
 import { currentUser } from "../core/auth";
 import { profileAvatar } from "./avatar";
 
-export type GnavKey = "home" | "review" | "challenge" | "my";
+export type GnavKey = "home" | "subjects" | "review" | "challenge" | "my";
 
 const ITEMS: { key: GnavKey; label: string; ic: Parameters<typeof icon>[0] }[] = [
   { key: "home", label: "학습", ic: "route" },
+  { key: "subjects", label: "과목", ic: "grid" }, // 런처형 탭 — 과목을 고르면 학습 탭으로 점프(main.ts pickSubject)
   { key: "review", label: "복습", ic: "book" },
   { key: "challenge", label: "도전", ic: "trophy" },
   { key: "my", label: "마이", ic: "user" },

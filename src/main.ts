@@ -56,7 +56,7 @@ function goHome(): void {
   currentTab = "home";
   const walkFrom = walkFromLessonId;
   walkFromLessonId = undefined;
-  nav.reset(homeScreen(openLesson, lastUnitId, { onSubjects: openSubjects, onOpenExam: openExam, onTab: goTab, onOpenNotebook: openNotebook }, { walkFrom }));
+  nav.reset(homeScreen(openLesson, lastUnitId, { onOpenExam: openExam, onTab: goTab, onOpenNotebook: openNotebook }, { walkFrom }));
 }
 
 /** 하단 탭 전환(2026-07-12 IA 개편) — 탭은 스택을 쌓지 않고 reset으로 갈아끼운다. */
@@ -64,6 +64,18 @@ function goTab(k: GnavKey): void {
   currentTab = k;
   if (k === "home") {
     goHome();
+  } else if (k === "subjects") {
+    // 과목 탭(2026-07-20 신설) — 허브를 탭 화면으로. 과목을 고르면 pickSubject가 학습 탭으로 점프(런처형).
+    nav.reset(
+      subjectScreen({
+        mode: "hub",
+        onTab: goTab,
+        onPickScience: () => pickSubject("sci"),
+        onPickMath: () => pickSubject("math"),
+        onPickSoc: () => pickSubject("soc"),
+        onPickHis: () => pickSubject("his"),
+      }),
+    );
   } else if (k === "review") {
     nav.reset(
       reviewScreen({
@@ -297,20 +309,8 @@ function openExam(unitId: string): void {
   );
 }
 
-/** 과목 허브(홈에서 재진입) — 과목을 고르면 그 과목 지도로 홈을 다시 그린다. */
-function openSubjects(): void {
-  nav.go(
-    subjectScreen({
-      mode: "hub",
-      onPickScience: () => pickSubject("sci"),
-      onPickMath: () => pickSubject("math"),
-      onPickSoc: () => pickSubject("soc"),
-      onPickHis: () => pickSubject("his"),
-      onBack: () => nav.back(),
-    }),
-  );
-}
-
+// 과목 허브 진입은 하단 과목 탭(goTab "subjects")뿐 — 구 홈 앱바 subj-box 진입(openSubjects)은
+// 폐기(2026-07-20 사용자 확정). 과목을 고르면 그 과목 지도로 홈을 다시 그린다.
 function pickSubject(s: "sci" | "math" | "soc" | "his"): void {
   setViewSubject(s);
   lastUnitId = undefined; // 직전 과목의 단원 포커스를 버리고 새 과목 지도로
