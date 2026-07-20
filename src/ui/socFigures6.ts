@@ -361,7 +361,9 @@ function polarDisc(south: boolean, cx: number, cy: number, R: number, opts?: { b
     const p = polarXY(lon, lat, south);
     return { x: cx + p.x * s, y: cy + p.y * s };
   };
-  const id = south ? "ps" : "pn";
+  // 클립 id에 기하(cx·cy·R)를 새긴다 — "both"판과 확대 단독판이 한 DOM에 공존하면(검수 시트·
+  // 오답노트 목록) 고정 id가 첫 번째 클립을 집어 대륙이 초승달로 잘리던 실사고(2026-07-20).
+  const id = `${south ? "ps" : "pn"}-${cx}-${cy}-${R}`;
   const circleAt = (deg: number): number => (90 - deg) * 4 * s; // 위도 deg 원의 화면 반지름
   const meridians = Array.from({ length: 12 }, (_, i) => {
     const a = (i * 30 * Math.PI) / 180;

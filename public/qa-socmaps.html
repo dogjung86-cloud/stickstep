@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>사회·역사 지도 그림 검수 시트</title>
+<style>
+  body { margin: 0; padding: 16px; background: #edf1f5; font-family: Pretendard, -apple-system, sans-serif; }
+  .col { width: 372px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+  .card { background: #fff; border-radius: 16px; border: 1px solid #e3e9f0; padding: 16px; }
+  .card h3 { margin: 0 0 8px; font-size: 12px; font-weight: 700; color: #8b95a1; }
+  .card h2 { margin: 4px 0; font-size: 15px; font-weight: 900; color: #33405a; }
+  .card svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="col" id="root"></div>
+<script type="module">
+import { climateMapFig, terrainFig } from "/src/ui/socFigures.ts";
+import { asiaRegionsFig, asiaTerrainFig, asiaClimateFig, religionMapFig, asiaPopFig, asiaIndustryFig, factoryMoveFig } from "/src/ui/socFigures2.ts";
+import { euroRegionsFig, euroTerrainFig, euroClimateFig, euroUnionFig, euroSepFig } from "/src/ui/socFigures3.ts";
+import { afRegionsFig, afTerrainFig, afClimateFig, afMirrorFig, afGgwFig } from "/src/ui/socFigures4.ts";
+import { amRegionsFig, amTerrainFig, amClimateFig, amEthnicFig, amDivisionFig, amDetroitFig } from "/src/ui/socFigures5.ts";
+import { ocRegionsFig, ocTerrainFig, ocClimateFig, gpgpFig, sealevelFig, polarFig } from "/src/ui/socFigures6.ts";
+import { fourRiversFig, worldReligionsFig, eastAsiaFig, silverFlowFig, searoutesFig, silkroadFig } from "/src/ui/hisFigures.ts";
+
+const F = [
+  ["— 사회 Ⅰ 세계 —", null],
+  ["climateMapFig (기후 지도)", climateMapFig()],
+  ["terrainFig (세계 지형)", terrainFig()],
+  ["— 사회 Ⅱ 아시아 —", null],
+  ["asiaRegionsFig labels", asiaRegionsFig({ labels: true })],
+  ["asiaTerrainFig", asiaTerrainFig()],
+  ["asiaClimateFig", asiaClimateFig()],
+  ["religionMapFig", religionMapFig()],
+  ["asiaPopFig", asiaPopFig()],
+  ["asiaIndustryFig", asiaIndustryFig()],
+  ["factoryMoveFig", factoryMoveFig()],
+  ["— 사회 Ⅲ 유럽 —", null],
+  ["euroRegionsFig labels", euroRegionsFig({ labels: true })],
+  ["euroTerrainFig", euroTerrainFig()],
+  ["euroClimateFig", euroClimateFig()],
+  ["euroUnionFig", euroUnionFig()],
+  ["euroSepFig labels", euroSepFig({ labels: true })],
+  ["— 사회 Ⅳ 아프리카 —", null],
+  ["afRegionsFig labels", afRegionsFig({ labels: true })],
+  ["afTerrainFig", afTerrainFig()],
+  ["afClimateFig", afClimateFig()],
+  ["afMirrorFig", afMirrorFig()],
+  ["afGgwFig", afGgwFig()],
+  ["— 사회 Ⅴ 아메리카 —", null],
+  ["amRegionsFig", amRegionsFig()],
+  ["amTerrainFig", amTerrainFig()],
+  ["amClimateFig", amClimateFig()],
+  ["amEthnicFig", amEthnicFig()],
+  ["amDivisionFig", amDivisionFig()],
+  ["amDetroitFig", amDetroitFig()],
+  ["— 사회 Ⅵ 오세아니아·극지방 —", null],
+  ["ocRegionsFig", ocRegionsFig()],
+  ["ocTerrainFig", ocTerrainFig()],
+  ["ocClimateFig", ocClimateFig()],
+  ["gpgpFig", gpgpFig()],
+  ["sealevelFig", sealevelFig()],
+  ["polarFig both", polarFig("both")],
+  ["polarFig south bases", polarFig("south", { bases: true })],
+  ["— 역사 —", null],
+  ["fourRiversFig labels", fourRiversFig({ labels: true })],
+  ["worldReligionsFig", worldReligionsFig()],
+  ["eastAsiaFig", eastAsiaFig()],
+  ["silverFlowFig", silverFlowFig()],
+  ["searoutesFig marks", searoutesFig({ marks: true })],
+  ["silkroadFig (장면화)", silkroadFig()],
+];
+
+const root = document.getElementById("root");
+let count = 0;
+for (const [name, svg] of F) {
+  const d = document.createElement("div");
+  d.className = "card";
+  if (svg === null) {
+    d.innerHTML = `<h2>${name}</h2>`;
+  } else {
+    d.innerHTML = `<h3>${name}</h3>${svg}`;
+    count += 1;
+  }
+  root.appendChild(d);
+}
+document.title = `사회·역사 지도 검수 시트 (${count}렌더)`;
+</script>
+</body>
+</html>

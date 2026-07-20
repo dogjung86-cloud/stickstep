@@ -20,20 +20,23 @@ function mapShell(inner: string, opts?: { legend?: string; aria?: string }): str
   return `<svg viewBox="${CROP.x} ${CROP.y - 6} ${CROP.w} ${CROP.h + 10 + legendH}" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="${opts?.aria ?? "아메리카 지도"}">
     <defs>
       <clipPath id="s5-lclip"><path d="${WORLD_LAND_PATH}" fill-rule="evenodd"/></clipPath>
+      <clipPath id="s5-mapclip"><rect x="${CROP.x}" y="${CROP.y - 6}" width="${CROP.w}" height="${CROP.h + 10}" rx="12"/></clipPath>
       <radialGradient id="s5-sea" cx=".5" cy=".4" r=".95">
         <stop offset="0" stop-color="#D9EDF8"/><stop offset="1" stop-color="#BCDCEF"/>
       </radialGradient>
     </defs>
     <rect x="${CROP.x}" y="${CROP.y - 6}" width="${CROP.w}" height="${CROP.h + 10}" rx="12" fill="url(#s5-sea)"/>
-    <line x1="${CROP.x}" y1="${latToY(23.4).toFixed(1)}" x2="${CROP.x + CROP.w}" y2="${latToY(23.4).toFixed(1)}" stroke="#7FA8C8" stroke-width="1" stroke-dasharray="4 5" opacity=".5"/>
-    <text x="${CROP.x + 5}" y="${(latToY(23.4) - 3).toFixed(1)}" font-size="9.5" font-weight="700" fill="#5A7A96">북회귀선</text>
-    <line x1="${CROP.x}" y1="250" x2="${CROP.x + CROP.w}" y2="250" stroke="#7FA8C8" stroke-width="1.1" opacity=".6"/>
-    <text x="${CROP.x + 5}" y="247" font-size="9.5" font-weight="700" fill="#5A7A96">적도</text>
-    <line x1="${CROP.x}" y1="${latToY(-23.4).toFixed(1)}" x2="${CROP.x + CROP.w}" y2="${latToY(-23.4).toFixed(1)}" stroke="#7FA8C8" stroke-width="1" stroke-dasharray="4 5" opacity=".5"/>
-    <text x="${CROP.x + 5}" y="${(latToY(-23.4) - 3).toFixed(1)}" font-size="9.5" font-weight="700" fill="#5A7A96">남회귀선</text>
-    <path d="${WORLD_LAND_PATH}" fill="#F2ECDE" fill-rule="evenodd"/>
-    ${inner}
-    <path d="${WORLD_LAND_PATH}" stroke="rgba(74,88,110,.5)" stroke-width=".7" fill="none" fill-rule="evenodd"/>
+    <g clip-path="url(#s5-mapclip)">
+      <line x1="${CROP.x}" y1="${latToY(23.4).toFixed(1)}" x2="${CROP.x + CROP.w}" y2="${latToY(23.4).toFixed(1)}" stroke="#7FA8C8" stroke-width="1" stroke-dasharray="4 5" opacity=".5"/>
+      <text x="${CROP.x + 5}" y="${(latToY(23.4) - 3).toFixed(1)}" font-size="9.5" font-weight="700" fill="#5A7A96">북회귀선</text>
+      <line x1="${CROP.x}" y1="250" x2="${CROP.x + CROP.w}" y2="250" stroke="#7FA8C8" stroke-width="1.1" opacity=".6"/>
+      <text x="${CROP.x + 5}" y="247" font-size="9.5" font-weight="700" fill="#5A7A96">적도</text>
+      <line x1="${CROP.x}" y1="${latToY(-23.4).toFixed(1)}" x2="${CROP.x + CROP.w}" y2="${latToY(-23.4).toFixed(1)}" stroke="#7FA8C8" stroke-width="1" stroke-dasharray="4 5" opacity=".5"/>
+      <text x="${CROP.x + 5}" y="${(latToY(-23.4) - 3).toFixed(1)}" font-size="9.5" font-weight="700" fill="#5A7A96">남회귀선</text>
+      <path d="${WORLD_LAND_PATH}" fill="#F2ECDE" fill-rule="evenodd"/>
+      ${inner}
+      <path d="${WORLD_LAND_PATH}" stroke="rgba(74,88,110,.5)" stroke-width=".7" fill="none" fill-rule="evenodd"/>
+    </g>
     ${opts?.legend ?? ""}
   </svg>`;
 }

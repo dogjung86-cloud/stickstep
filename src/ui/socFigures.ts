@@ -25,36 +25,44 @@ export function climateMapFig(opts?: {
   legend?: boolean;
 }): string {
   const legend = opts?.legend !== false;
+  // 텍스트 격상판(2026-07-20 갤러리 검수): 뷰박스 1000은 폰에서 ~0.34배 — 범례 12.5·마크 17은
+  // 실표시 4~6px라 실격. 범례 30(" 기후" 접미 생략)·적도 24·㉠ 마크 r30/30으로 소급, 지도층은
+  // 지도 사각으로 클립해 남극 실루엣이 범례 존에 배어들던 겹침을 제거.
   const marks = (opts?.letters ?? [])
     .map(
       (m) => `<g>
-        <circle cx="${mx(m.lon).toFixed(1)}" cy="${my(m.lat).toFixed(1)}" r="17" fill="#FFFFFF" stroke="#333D4B" stroke-width="2.6"/>
-        <text x="${mx(m.lon).toFixed(1)}" y="${(my(m.lat) + 6).toFixed(1)}" text-anchor="middle" font-size="17" font-weight="900" fill="#333D4B">${m.t}</text>
+        <circle cx="${mx(m.lon).toFixed(1)}" cy="${my(m.lat).toFixed(1)}" r="30" fill="#FFFFFF" stroke="#333D4B" stroke-width="3.4"/>
+        <text x="${mx(m.lon).toFixed(1)}" y="${(my(m.lat) + 10).toFixed(1)}" text-anchor="middle" font-size="30" font-weight="900" fill="#333D4B">${m.t}</text>
       </g>`,
     )
     .join("");
   const legendRow = legend
-    ? `<g font-size="12.5" font-weight="800">
+    ? `<g font-size="30" font-weight="800">
         ${[1, 2, 3, 4, 5, 6]
           .map(
-            (c, i) => `<g transform="translate(${118 + i * 130} 446)">
-              <rect x="0" y="-12" width="16" height="16" rx="4" fill="${CLIM_PAL[c]}"/>
-              <text x="22" y="1" fill="#4E5968">${CLIM_NAME[c]} 기후</text>
+            (c, i) => `<g transform="translate(${110 + i * 136} 447)">
+              <rect x="0" y="-23" width="26" height="26" rx="6" fill="${CLIM_PAL[c]}"/>
+              <text x="34" y="0" fill="#4E5968">${CLIM_NAME[c]}</text>
             </g>`,
           )
           .join("")}
       </g>`
     : "";
   return `<svg viewBox="0 14 1000 ${legend ? 452 : 400}" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="세계의 기후 구분 지도">
-    <defs><clipPath id="soc-lclip"><path d="${WORLD_LAND_PATH}" fill-rule="evenodd"/></clipPath></defs>
+    <defs>
+      <clipPath id="soc-lclip"><path d="${WORLD_LAND_PATH}" fill-rule="evenodd"/></clipPath>
+      <clipPath id="soc-mapclip"><rect x="0" y="14" width="1000" height="400" rx="12"/></clipPath>
+    </defs>
     <rect x="0" y="14" width="1000" height="400" rx="12" fill="#D6EAF6"/>
-    <line x1="0" y1="250" x2="1000" y2="250" stroke="#7FA8C8" stroke-width="1"/>
-    <line x1="0" y1="184.7" x2="1000" y2="184.7" stroke="#7FA8C8" stroke-width="1" stroke-dasharray="6 6" opacity=".6"/>
-    <line x1="0" y1="315.3" x2="1000" y2="315.3" stroke="#7FA8C8" stroke-width="1" stroke-dasharray="6 6" opacity=".6"/>
-    <text x="8" y="244" font-size="12" font-weight="700" fill="#5A7A96">적도</text>
-    <path d="${WORLD_LAND_PATH}" fill="#F2ECDE" fill-rule="evenodd"/>
-    <image href="${BASE}soc/climate.webp" x="0" y="0" width="1000" height="500" preserveAspectRatio="none" clip-path="url(#soc-lclip)" opacity=".92"/>
-    <path d="${WORLD_LAND_PATH}" stroke="rgba(74,88,110,.45)" stroke-width=".8" fill="none" fill-rule="evenodd"/>
+    <g clip-path="url(#soc-mapclip)">
+      <line x1="0" y1="250" x2="1000" y2="250" stroke="#7FA8C8" stroke-width="1"/>
+      <line x1="0" y1="184.7" x2="1000" y2="184.7" stroke="#7FA8C8" stroke-width="1" stroke-dasharray="6 6" opacity=".6"/>
+      <line x1="0" y1="315.3" x2="1000" y2="315.3" stroke="#7FA8C8" stroke-width="1" stroke-dasharray="6 6" opacity=".6"/>
+      <path d="${WORLD_LAND_PATH}" fill="#F2ECDE" fill-rule="evenodd"/>
+      <image href="${BASE}soc/climate.webp" x="0" y="0" width="1000" height="500" preserveAspectRatio="none" clip-path="url(#soc-lclip)" opacity=".92"/>
+      <path d="${WORLD_LAND_PATH}" stroke="rgba(74,88,110,.45)" stroke-width=".8" fill="none" fill-rule="evenodd"/>
+    </g>
+    <text x="10" y="242" font-size="24" font-weight="700" fill="#5A7A96" stroke="#D6EAF6" stroke-width="6" paint-order="stroke">적도</text>
     ${marks}
     ${legendRow}
   </svg>`;
