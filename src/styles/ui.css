@@ -1672,16 +1672,19 @@
 .subj-card.sci { border-color: rgba(49,130,246,.35); }
 .subj-card.soon { background: var(--n25); box-shadow: var(--sh-card); }
 .subj-card.soon .subj-body, .subj-card.soon .subj-ico { opacity: .55; }
-.subj-ava { flex: none; width: 56px; height: 56px; border-radius: 18px; background: var(--blue-tint, #EEF4FF); display: grid; place-items: center; overflow: hidden; }
-.subj-ava svg { width: 44px; height: 44px; }
+/* 카드 = flex-wrap 2단(2026-07-21 사용자 "스틱맨 더 크게"): 1행 아바타 80px+과목명+셰브론,
+   설명·메타는 width:100% 전체 폭 행 — 큰 아바타 옆 좁은 칼럼에서 문구가 줄갈이되던 것의 구조 해소 */
+.subj-card { flex-wrap: wrap; row-gap: 7px; }
+.subj-ava { flex: none; width: 80px; height: 80px; border-radius: 22px; background: var(--blue-tint, #EEF4FF); display: grid; place-items: center; overflow: hidden; }
+.subj-ava svg { width: 60px; height: 60px; }
 /* 발주 과목 스틱맨(brand/subj — 2026-07-21): 슬롯을 꽉 채우는 커버 크롭, 실패 시 svg 폴백이 대신 선다 */
 .subj-ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .subj-ico { flex: none; width: 56px; height: 56px; border-radius: 18px; background: var(--n100); display: grid; place-items: center; color: var(--n600); }
 .subj-body { flex: 1; min-width: 0; }
 .subj-name { display: flex; align-items: center; gap: 7px; font-size: 17px; font-weight: 800; color: var(--n900); }
 .subj-name svg { color: var(--blue); }
-.subj-desc { margin-top: 3px; font-size: 13px; color: var(--n600); }
-.subj-meta { margin-top: 5px; font-size: 11.5px; font-weight: 700; color: var(--blue); }
+.subj-desc { width: 100%; margin-top: 0; font-size: 13px; color: var(--n600); word-break: keep-all; }
+.subj-meta { width: 100%; margin-top: -3px; font-size: 11.5px; font-weight: 700; color: var(--blue); word-break: keep-all; }
 .subj-go { flex: none; color: var(--n400); }
 .subj-soon-pill {
   font-size: 10.5px; font-weight: 800; padding: 3px 9px; border-radius: 99px;

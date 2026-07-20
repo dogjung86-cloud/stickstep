@@ -83,16 +83,13 @@ export function subjectScreen(opts: {
     "button",
     { class: "subj-card sci", attrs: { "aria-label": "과학 시작하기" } },
     el("div", { class: "subj-ava" }, subjArt("sci", started ? "cheer" : "wave")),
-    el(
-      "div",
-      { class: "subj-body" },
-      el("div", { class: "subj-name" }, el("span", { html: icon("flask", 18) }), el("span", { text: "과학" })),
-      el("div", { class: "subj-desc", text: "중1·중2 — 모바일에서 실험하며 배우는 개념" }),
-      started
-        ? el("div", { class: "subj-meta", text: `레슨 ${prog.done}개 완료 · ${currentStreak()}일 연속` })
-        : el("div", { class: "subj-meta", text: "손끝 실험 랩 + 3D 우주 탐험" }),
-    ),
+    el("div", { class: "subj-body" }, el("div", { class: "subj-name" }, el("span", { html: icon("flask", 18) }), el("span", { text: "과학" }))),
     el("div", { class: "subj-go", html: icon("chevron", 20) }),
+    // 설명·메타는 카드 전체 폭 행(flex-wrap) — 큰 아바타(80px) 옆 좁은 칼럼에서 줄갈이되던 것 해소
+    el("div", { class: "subj-desc", text: "중1·중2 — 실험하며 배우는 개념" }),
+    started
+      ? el("div", { class: "subj-meta", text: `레슨 ${prog.done}개 완료 · ${currentStreak()}일 연속` })
+      : el("div", { class: "subj-meta", text: "손끝 실험 랩 + 3D 우주 탐험" }),
   );
   sci.addEventListener("click", () => {
     haptic(HAPTIC.tap);
@@ -106,16 +103,12 @@ export function subjectScreen(opts: {
     "button",
     { class: "subj-card mth", attrs: { "aria-label": "수학 시작하기" } },
     el("div", { class: "subj-ava" }, subjArt("math", mstarted ? "cheer" : "curious")),
-    el(
-      "div",
-      { class: "subj-body" },
-      el("div", { class: "subj-name" }, el("span", { html: icon("mathop", 18) }), el("span", { text: "수학" })),
-      el("div", { class: "subj-desc", text: "중1·중2 — 단순 계산이 아닌, 감각으로" }),
-      mstarted
-        ? el("div", { class: "subj-meta", text: `레슨 ${mprog.done}개 완료 · ${currentStreak()}일 연속` })
-        : el("div", { class: "subj-meta", text: "수학의 원리를 발견하는 랩 + 스피드 퀴즈" }),
-    ),
+    el("div", { class: "subj-body" }, el("div", { class: "subj-name" }, el("span", { html: icon("mathop", 18) }), el("span", { text: "수학" }))),
     el("div", { class: "subj-go", html: icon("chevron", 20) }),
+    el("div", { class: "subj-desc", text: "중1·중2 — 단순 계산이 아닌, 감각으로" }),
+    mstarted
+      ? el("div", { class: "subj-meta", text: `레슨 ${mprog.done}개 완료 · ${currentStreak()}일 연속` })
+      : el("div", { class: "subj-meta", text: "수학의 원리를 발견하는 랩 + 스피드 퀴즈" }),
   );
   mth.addEventListener("click", () => {
     haptic(HAPTIC.tap);
@@ -129,16 +122,12 @@ export function subjectScreen(opts: {
     "button",
     { class: "subj-card soc", attrs: { "aria-label": "사회 시작하기" } },
     el("div", { class: "subj-ava" }, subjArt("soc", sstarted ? "cheer" : "wave")),
-    el(
-      "div",
-      { class: "subj-body" },
-      el("div", { class: "subj-name" }, el("span", { html: icon("globe", 18) }), el("span", { text: "사회" })),
-      el("div", { class: "subj-desc", text: "중1 — 지도 위에서 배우는 세상" }),
-      sstarted
-        ? el("div", { class: "subj-meta", text: `레슨 ${sprog.done}개 완료 · ${currentStreak()}일 연속` })
-        : el("div", { class: "subj-meta", text: "진짜 세계지도 배치 랩 + 생활 사례 판정" }),
-    ),
+    el("div", { class: "subj-body" }, el("div", { class: "subj-name" }, el("span", { html: icon("globe", 18) }), el("span", { text: "사회" }))),
     el("div", { class: "subj-go", html: icon("chevron", 20) }),
+    el("div", { class: "subj-desc", text: "중1 — 지도 위에서 배우는 세상" }),
+    sstarted
+      ? el("div", { class: "subj-meta", text: `레슨 ${sprog.done}개 완료 · ${currentStreak()}일 연속` })
+      : el("div", { class: "subj-meta", text: "진짜 세계지도 배치 랩 + 생활 사례 판정" }),
   );
   soc.addEventListener("click", () => {
     haptic(HAPTIC.tap);
@@ -152,16 +141,12 @@ export function subjectScreen(opts: {
     "button",
     { class: "subj-card his", attrs: { "aria-label": "역사 시작하기" } },
     el("div", { class: "subj-ava" }, subjArt("his", hstarted ? "cheer" : "curious")),
-    el(
-      "div",
-      { class: "subj-body" },
-      el("div", { class: "subj-name" }, el("span", { html: icon("book", 18) }), el("span", { text: "역사" })),
-      el("div", { class: "subj-desc", text: "중1 — 만화로 떠나는 시간 여행" }),
-      hstarted
-        ? el("div", { class: "subj-meta", text: `레슨 ${hprog.done}개 완료 · ${currentStreak()}일 연속` })
-        : el("div", { class: "subj-meta", text: "웃으며 읽는 스틱맨 만화 + 단원별 요약 정리" }),
-    ),
+    el("div", { class: "subj-body" }, el("div", { class: "subj-name" }, el("span", { html: icon("book", 18) }), el("span", { text: "역사" }))),
     el("div", { class: "subj-go", html: icon("chevron", 20) }),
+    el("div", { class: "subj-desc", text: "중1 — 만화로 떠나는 시간 여행" }),
+    hstarted
+      ? el("div", { class: "subj-meta", text: `레슨 ${hprog.done}개 완료 · ${currentStreak()}일 연속` })
+      : el("div", { class: "subj-meta", text: "웃으며 읽는 스틱맨 만화 + 단원별 요약 정리" }),
   );
   his.addEventListener("click", () => {
     haptic(HAPTIC.tap);
