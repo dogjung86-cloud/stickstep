@@ -68,11 +68,11 @@ const heading = () =>
   await W(800);
   const u6map = await page.evaluate(() => ({
     nodes: document.querySelectorAll(".gm-node").length,
-    world: !!document.querySelector(".gm-terrain.world"),
+    ocea: !!document.querySelector(".gm-terrain.ocea"),
     coming: !!document.querySelector(".coming-card"),
   }));
   check(u6map.nodes === 8, `Ⅵ단원 레슨 노드 8개 (실제 ${u6map.nodes})`);
-  check(u6map.world, "Ⅵ단원 world 테마 지형 적용");
+  check(u6map.ocea, "Ⅵ단원 ocea 테마 지형 적용(단원별 색 분리)");
   check(!u6map.coming, "comingSoon 카드가 사라짐(실제 단원 교체)");
 }
 

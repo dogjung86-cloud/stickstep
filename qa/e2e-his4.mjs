@@ -71,13 +71,13 @@ if (!ONLY.length) {
     return {
       nodes: document.querySelectorAll(".gm-node").length,
       premData,
-      his: !!document.querySelector(".gm-terrain.his"),
+      silk: !!document.querySelector(".gm-terrain.silk"),
       soon: !!document.querySelector(".coming-card"),
     };
   });
   check(home.nodes === 10, `Ⅳ단원 레슨 노드 10개 (실제 ${home.nodes})`);
   check(home.premData === 7, `프리미엄 레슨 7개(L4~L10) 데이터 확인 (실제 ${home.premData})`);
-  check(home.his, "Ⅳ his 테마 지형 적용");
+  check(home.silk, "Ⅳ silk 테마 지형 적용(단원별 색 분리)");
   check(!home.soon, "Ⅳ가 준비 중 카드가 아니라 실물 지도");
 }
 

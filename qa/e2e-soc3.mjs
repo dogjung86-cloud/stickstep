@@ -66,11 +66,11 @@ const heading = () =>
   await W(800);
   const u3map = await page.evaluate(() => ({
     nodes: document.querySelectorAll(".gm-node").length,
-    world: !!document.querySelector(".gm-terrain.world"),
+    euro: !!document.querySelector(".gm-terrain.euro"),
     coming: !!document.querySelector(".coming-card"),
   }));
   check(u3map.nodes === 7, `Ⅲ단원 레슨 노드 7개 (실제 ${u3map.nodes})`);
-  check(u3map.world, "Ⅲ단원 world 테마 지형 적용");
+  check(u3map.euro, "Ⅲ단원 euro 테마 지형 적용(단원별 색 분리)");
   check(!u3map.coming, "comingSoon 카드가 사라짐(실제 단원 교체)");
 }
 

@@ -8,6 +8,13 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
 ## 사회 트랙 — 사회 Ⅰ(세계화 시대, 지리의 힘) 제작 관례 (2026-07-18 구축)
 - **과목 배선**: SubjectId "soc"(과학 sci·수학 math와 병렬), 단원 id `s1uN`/`s2uN`(레슨 `s1uNlM`) —
   subjectOfUnit은 접두사 s로 판별. content/soc/(curriculum·unit1), 테마 `world`(트래블 오렌지 #E8590C),
+  **지도·카드 테마는 단원별 분리(2026-07-21 사용자 지시 — "카드·발바닥이 전부 같은 색" 수정)**:
+  Ⅰ world 유지 · Ⅱ asia 몬순 그린 #2B8A3E · Ⅲ euro 로열 블루 #3B5BDB · Ⅳ afri 사바나 골드 #E8A20C ·
+  Ⅴ amer 카리브 틸 #0C8599 · Ⅵ ocea 오로라 바이올렛 #7048E8 · Ⅶ civic 시민 로즈 #D6336C(대륙 여행
+  팔레트). 등록 = home.ts UNIT_THEME + soleMap.ts THEME_INK + soc.css(.unit-band/.gm-terrain — gm-node·
+  gm-ring 라디얼은 bsn 이후 죽은 선택자라 안 쓴다). **레슨 내부 톤(kicker·pn-badge)은 트랙 공통 world
+  유지** — 새 단원(Ⅷ~Ⅻ)도 지도 테마만 단원별로 추가하고 콘텐츠 kickerTone은 world를 쓴다.
+  e2e-soc2~7이 단원별 .gm-terrain.<테마>를 검증한다.
   **styles/soc.css**(사회 전용 시트 — 훅 hs1-·기함 wpl-·connectLab cnl-·tableLinkLab tll-, latSunLab은 공용
   클래스만). 지도 데코 = 세계 여행 준비물 5종(globeDeco·passportDeco·planeDeco·compassRoseDeco·suitcaseDeco).
   과목 허브(subject.ts)는 3과목 활성, 홈 앱바 과목 상자 아이콘은 soc → globe.

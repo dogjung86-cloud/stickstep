@@ -66,11 +66,11 @@ const heading = () =>
   await W(800);
   const u7map = await page.evaluate(() => ({
     nodes: document.querySelectorAll(".gm-node").length,
-    world: !!document.querySelector(".gm-terrain.world"),
+    civic: !!document.querySelector(".gm-terrain.civic"),
     coming: !!document.querySelector(".coming-card"),
   }));
   check(u7map.nodes === 7, `Ⅶ단원 레슨 노드 7개 (실제 ${u7map.nodes})`);
-  check(u7map.world, "Ⅶ단원 world 테마 지형 적용");
+  check(u7map.civic, "Ⅶ단원 civic 테마 지형 적용(단원별 색 분리)");
   check(!u7map.coming, "comingSoon 카드 없음(신규 append 단원)");
 }
 

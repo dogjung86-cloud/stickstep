@@ -2935,6 +2935,11 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .ucar:active { cursor: grabbing; }
 .ustrip { display: flex; gap: 10px; align-items: stretch; will-change: transform; transition: transform .34s var(--ease); }
 .ustrip.drag { transition: none; }
+/* 정복 지도 방향 동조 전환(2026-07-21) — 드래그 중 카드의 0.35배 패럴랙스로 따라 밀리고(홈.ts 인라인),
+   커밋 순간 새 지도가 같은 방향에서 슬라이드-인. 피크 캐러셀은 기각(높이 불일치·렌더 3배·
+   .gm-node 전역 셀렉터 계약) — DOM엔 항상 지도 1장. reduced-motion은 base.css 전역 규칙이 즉시 컷. */
+.map-swap { transition: transform .28s var(--ease-out), opacity .24s ease; }
+.map-swap.drag { transition: none; }
 .ustrip .unit-band.ucard { margin: 0; flex: 0 0 calc(100% - 60px); display: flex; flex-direction: column; transition: transform .3s var(--ease), opacity .3s ease; }
 .ustrip .unit-band.ucard .ub-meta { margin-top: auto; padding-top: 12px; }
 /* 카드 제목은 한 줄 고정 — 긴 단원명(역사 Ⅲ 등)이 마지막 글자만 줄갈이되는 것 방지.

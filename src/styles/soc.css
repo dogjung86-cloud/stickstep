@@ -1,7 +1,9 @@
 /* ============================================================
    soc.css — 사회 트랙 전용 스타일 (병합 충돌 회피를 위해 ui.css와 분리)
    과학=다크 실험 무대(.stage), 사회=지도 위 여행. 색·그림자는 tokens.css 변수만 참조.
-   단원 테마: world(Ⅰ 세계화 시대, 지리의 힘 · 트래블 오렌지 #E8590C)
+   단원 테마(2026-07-21 단원별 분리): world(Ⅰ 트래블 오렌지 #E8590C) · asia(Ⅱ 몬순 그린 #2B8A3E) ·
+   euro(Ⅲ 로열 블루 #3B5BDB) · afri(Ⅳ 사바나 골드 #E8A20C) · amer(Ⅴ 카리브 틸 #0C8599) ·
+   ocea(Ⅵ 오로라 바이올렛 #7048E8) · civic(Ⅶ 시민 로즈 #D6336C) — 잉크는 ui/soleMap.ts THEME_INK와 동기
    ============================================================ */
 
 /* ---------- 과목 허브: 사회 카드 액센트 ---------- */
@@ -31,6 +33,94 @@
   background: linear-gradient(150deg, #F5915A 0%, #E8590C 55%, #C2490A 100%);
   box-shadow: 0 6px 14px -4px rgba(232, 89, 12, .55);
 }
+
+/* ---------- 단원별 지도 테마(2026-07-21 색 분리 — 카드·지형·발바닥 잉크만 단원별) ----------
+   레슨 내부 톤(kicker·pn-badge)은 트랙 공통 world 유지라 여기엔 없다.
+   발바닥·워커 깃발·지도 헤더 칩 색은 ui/soleMap.ts THEME_INK가 소유 — 아래 gm-path-done 값과 항상 같게. */
+
+/* Ⅱ 아시아 — 몬순 그린 #2B8A3E(계절풍·벼농사의 대륙) */
+.unit-band.asia { background: linear-gradient(150deg, #6FAF7C 0%, #2B8A3E 55%, #247434 100%); }
+.gm-terrain.asia {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #D5E8D8, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #CCE3D1, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #D0E5D5, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #BFDCC5, transparent 72%),
+    linear-gradient(180deg, #F2F8F3 0%, #E3F0E6 55%, #D0E5D5 100%);
+}
+.gm-path-glow.asia { stroke: rgba(43,138,62,.22); }
+.gm-path-done.asia { stroke: #2B8A3E; }
+
+/* Ⅲ 유럽 — 로열 블루 #3B5BDB(작은 대륙이 만든 큰 이야기) */
+.unit-band.euro { background: linear-gradient(150deg, #7A8FE7 0%, #3B5BDB 55%, #324CB8 100%); }
+.gm-terrain.euro {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #D8DEF8, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #D0D8F6, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #D4DBF7, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #C4CEF4, transparent 72%),
+    linear-gradient(180deg, #F3F5FD 0%, #E6EAFA 55%, #D4DBF7 100%);
+}
+.gm-path-glow.euro { stroke: rgba(59,91,219,.22); }
+.gm-path-done.euro { stroke: #3B5BDB; }
+
+/* Ⅳ 아프리카 — 사바나 골드 #E8A20C(사바나의 태양, Ⅰ 오렌지보다 노랑 쪽) */
+.unit-band.afri { background: linear-gradient(150deg, #EFC05A 0%, #E8A20C 55%, #C3880A 100%); }
+.gm-terrain.afri {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #FAECCE, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #F9E9C5, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #FAEBCA, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #F8E3B6, transparent 72%),
+    linear-gradient(180deg, #FEF9F0 0%, #FCF3DF 55%, #FAEBCA 100%);
+}
+.gm-path-glow.afri { stroke: rgba(232,162,12,.22); }
+.gm-path-done.afri { stroke: #E8A20C; }
+
+/* Ⅴ 아메리카 — 카리브 틸 #0C8599(두 대륙 사이의 바다) */
+.unit-band.amer { background: linear-gradient(150deg, #5AACBA 0%, #0C8599 55%, #0A7081 100%); }
+.gm-terrain.amer {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #CEE7EB, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #C5E2E7, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #CAE4E9, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #B6DAE0, transparent 72%),
+    linear-gradient(180deg, #F0F8F9 0%, #DFEFF2 55%, #CAE4E9 100%);
+}
+.gm-path-glow.amer { stroke: rgba(12,133,153,.22); }
+.gm-path-done.amer { stroke: #0C8599; }
+
+/* Ⅵ 오세아니아와 극지방 — 오로라 바이올렛 #7048E8(가장 멀리, 극지의 오로라) */
+.unit-band.ocea { background: linear-gradient(150deg, #9E83EF 0%, #7048E8 55%, #5E3CC3 100%); }
+.gm-terrain.ocea {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #E2DAFA, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #DDD3F9, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #E0D7FA, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #D4C8F8, transparent 72%),
+    linear-gradient(180deg, #F6F4FE 0%, #ECE7FC 55%, #E0D7FA 100%);
+}
+.gm-path-glow.ocea { stroke: rgba(112,72,232,.22); }
+.gm-path-done.ocea { stroke: #7048E8; }
+
+/* Ⅶ 인간과 사회생활 — 시민 로즈 #D6336C(사람과 사람 사이의 온기) */
+.unit-band.civic { background: linear-gradient(150deg, #E3749B 0%, #D6336C 55%, #B42B5B 100%); }
+.gm-terrain.civic {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #F7D6E2, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #F5CEDC, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #F6D2DF, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #F3C2D3, transparent 72%),
+    linear-gradient(180deg, #FDF3F6 0%, #FAE4EC 55%, #F6D2DF 100%);
+}
+.gm-path-glow.civic { stroke: rgba(214,51,108,.22); }
+.gm-path-done.civic { stroke: #D6336C; }
 
 /* ---------- worldPlaceLab(기함) — 가로 무대 "지구에 살아 보기" ---------- */
 /* touch-action·선택 방지는 iOS 계열까지 겹겹이 — 스크롤 탈취·롱프레스 선택이 드래그를 죽인다 */

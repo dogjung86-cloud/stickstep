@@ -10,7 +10,12 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
   subjectOfUnit은 접두사 h로 판별(u/g2u/m/s와 충돌 없음). content/his/(curriculum·unit1), 테마 `his`
   (**청동 녹청 #0E7C8A** — 유물 청동기의 녹빛. 세피아 후보는 ineq 캐러멜 #A9631B와 hue가 같아 기각,
   녹청은 func 틸 #0CA678과 hue 30°+명도차로 구분 — dice/sim 선례보다 넓다), **styles/his.css**(전용 시트 —
-  훅 hh1-·연표 랩 htl-). 지도 데코 = "역사 탐정의 도구" 5종(scrollDeco 두루마리→magnifyDeco 돋보기→
+  훅 hh1-·연표 랩 htl-). **지도·카드 테마는 단원별 분리(2026-07-21 사용자 지시 — 유물 재질 팔레트)**:
+  Ⅰ his 유지 · Ⅱ civ 점토 테라코타 #C05621 · Ⅲ faith 경전 바이올렛 #6741D9 · Ⅳ silk 비단길 크림슨
+  #C2273D. 등록 = home.ts UNIT_THEME + soleMap.ts THEME_INK + his.css(.unit-band/.gm-terrain). 이때
+  **THEME_INK에 his가 빠져 역사 발바닥·헤더 칩이 전부 토스 블루 폴백이던 버그도 수정**(2026-07-21).
+  레슨 내부 톤(kicker·pn-badge)은 트랙 공통 his 유지 — Ⅴ~Ⅶ 제작 시에도 지도 테마만 단원별 추가.
+  e2e-his2~4가 단원별 .gm-terrain.<테마>를 검증한다. 지도 데코 = "역사 탐정의 도구" 5종(scrollDeco 두루마리→magnifyDeco 돋보기→
   inkbrushDeco 붓→hourglassDeco 모래시계→relicjarDeco 항아리 — 기록을 만나 살피고, 쓰고, 시간을 재고,
   유물을 캐는 탐구 서사 순). 허브 4과목 활성, 홈 subj-box 아이콘 his → book, purchase.ts 카탈로그에
   his-g1(중1 역사) 등록. 교과서 PDF는 **pymupdf(fitz)로 추출**(poppler 한글 깨짐 — 역사도 동일).

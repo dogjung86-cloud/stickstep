@@ -72,13 +72,13 @@ if (!ONLY.length) {
       nodes: document.querySelectorAll(".gm-node").length,
       premCrown: document.querySelectorAll(".gm-node.prem").length,
       premData,
-      his: !!document.querySelector(".gm-terrain.his"),
+      civ: !!document.querySelector(".gm-terrain.civ"),
       soon: !!document.querySelector(".coming-card"),
     };
   });
   check(home.nodes === 9, `Ⅱ단원 레슨 노드 9개 (실제 ${home.nodes})`);
   check(home.premData === 6 && home.premCrown === 0, `프리미엄 레슨 6개(L4~L9) + 구매 시딩 상태라 크라운 숨김 (데이터 ${home.premData} · 크라운 ${home.premCrown})`);
-  check(home.his, "Ⅱ his 테마 지형 적용");
+  check(home.civ, "Ⅱ civ 테마 지형 적용(단원별 색 분리)");
   check(!home.soon, "Ⅱ가 준비 중 카드가 아니라 실물 지도");
 }
 

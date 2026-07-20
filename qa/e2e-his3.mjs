@@ -70,13 +70,13 @@ if (!ONLY.length) {
     return {
       nodes: document.querySelectorAll(".gm-node").length,
       premData,
-      his: !!document.querySelector(".gm-terrain.his"),
+      faith: !!document.querySelector(".gm-terrain.faith"),
       soon: !!document.querySelector(".coming-card"),
     };
   });
   check(home.nodes === 10, `Ⅲ단원 레슨 노드 10개 (실제 ${home.nodes})`);
   check(home.premData === 7, `프리미엄 레슨 7개(L4~L10) 데이터 확인 (실제 ${home.premData})`);
-  check(home.his, "Ⅲ his 테마 지형 적용");
+  check(home.faith, "Ⅲ faith 테마 지형 적용(단원별 색 분리)");
   check(!home.soon, "Ⅲ이 준비 중 카드가 아니라 실물 지도");
 }
 

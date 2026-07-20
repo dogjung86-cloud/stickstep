@@ -1,7 +1,9 @@
 /* ============================================================
    his.css — 역사 트랙 전용 스타일 (병합 충돌 회피를 위해 ui.css와 분리)
    과학=실험 무대, 사회=지도 여행, 역사=만화 서사+연표. 색·그림자는 tokens.css 변수만 참조.
-   단원 테마: his(Ⅰ 역사 학습의 기초 · 청동 녹청 #0E7C8A — 유물 청동기의 녹빛)
+   단원 테마(2026-07-21 단원별 분리 — 유물 재질 팔레트): his(Ⅰ 청동 녹청 #0E7C8A) ·
+   civ(Ⅱ 점토 테라코타 #C05621) · faith(Ⅲ 경전 바이올렛 #6741D9) · silk(Ⅳ 비단길 크림슨 #C2273D)
+   — 발바닥·깃발·헤더 칩 잉크는 ui/soleMap.ts THEME_INK와 동기
    ============================================================ */
 
 /* ---------- 과목 허브: 역사 카드 액센트 ---------- */
@@ -31,6 +33,52 @@
   background: linear-gradient(150deg, #3FA3AE 0%, #0E7C8A 55%, #0A5F6B 100%);
   box-shadow: 0 6px 14px -4px rgba(14, 124, 138, .55);
 }
+
+/* ---------- 단원별 지도 테마(2026-07-21 색 분리 — 카드·지형·발바닥 잉크만 단원별) ----------
+   레슨 내부 톤(kicker·pn-badge)은 트랙 공통 his 유지라 여기엔 없다.
+   발바닥·워커 깃발·지도 헤더 칩 색은 ui/soleMap.ts THEME_INK가 소유 — 아래 gm-path-done 값과 항상 같게. */
+
+/* Ⅱ 문명의 발생과 고대 세계의 형성 — 점토 테라코타 #C05621(점토판·토기의 흙빛) */
+.unit-band.civ { background: linear-gradient(150deg, #D48C68 0%, #C05621 55%, #A1481C 100%); }
+.gm-terrain.civ {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #F2DDD3, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #F0D6CA, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #F1DACE, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #ECCCBC, transparent 72%),
+    linear-gradient(180deg, #FBF5F2 0%, #F7E9E2 55%, #F1DACE 100%);
+}
+.gm-path-glow.civ { stroke: rgba(192,86,33,.22); }
+.gm-path-done.civ { stroke: #C05621; }
+
+/* Ⅲ 세계 종교의 확산과 지역 문화의 발전 — 경전 바이올렛 #6741D9(믿음·경전의 보랏빛) */
+.unit-band.faith { background: linear-gradient(150deg, #987EE5 0%, #6741D9 55%, #5737B6 100%); }
+.gm-terrain.faith {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #E1D9F7, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #DBD1F6, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #DED5F7, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #D1C6F4, transparent 72%),
+    linear-gradient(180deg, #F6F4FD 0%, #EBE6FA 55%, #DED5F7 100%);
+}
+.gm-path-glow.faith { stroke: rgba(103,65,217,.22); }
+.gm-path-done.faith { stroke: #6741D9; }
+
+/* Ⅳ 지역 세계의 교류와 변화 — 비단길 크림슨 #C2273D(대상 행렬의 비단빛) */
+.unit-band.silk { background: linear-gradient(150deg, #D66C7B 0%, #C2273D 55%, #A32133 100%); }
+.gm-terrain.silk {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #F3D4D8, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #F0CBD0, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #F2CFD4, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #EDBEC5, transparent 72%),
+    linear-gradient(180deg, #FBF2F3 0%, #F7E3E6 55%, #F2CFD4 100%);
+}
+.gm-path-glow.silk { stroke: rgba(194,39,61,.22); }
+.gm-path-done.silk { stroke: #C2273D; }
 
 /* ---------- timelineLab(연표 문법 1호) — 다크 무대 위 양피지 연표 띠 ---------- */
 .htl-stage { padding: 18px 14px 20px; }

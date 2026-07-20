@@ -67,10 +67,10 @@ const heading = () =>
   await W(800);
   const u2map = await page.evaluate(() => ({
     nodes: document.querySelectorAll(".gm-node").length,
-    world: !!document.querySelector(".gm-terrain.world"),
+    asia: !!document.querySelector(".gm-terrain.asia"),
   }));
   check(u2map.nodes === 8, `Ⅱ단원 레슨 노드 8개 (실제 ${u2map.nodes})`);
-  check(u2map.world, "Ⅱ단원 world 테마 지형 적용");
+  check(u2map.asia, "Ⅱ단원 asia 테마 지형 적용(단원별 색 분리)");
 }
 
 const openLesson = async (id) => {

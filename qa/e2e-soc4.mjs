@@ -67,11 +67,11 @@ const heading = () =>
   await W(800);
   const u4map = await page.evaluate(() => ({
     nodes: document.querySelectorAll(".gm-node").length,
-    world: !!document.querySelector(".gm-terrain.world"),
+    afri: !!document.querySelector(".gm-terrain.afri"),
     coming: !!document.querySelector(".coming-card"),
   }));
   check(u4map.nodes === 8, `Ⅳ단원 레슨 노드 8개 (실제 ${u4map.nodes})`);
-  check(u4map.world, "Ⅳ단원 world 테마 지형 적용");
+  check(u4map.afri, "Ⅳ단원 afri 테마 지형 적용(단원별 색 분리)");
   check(!u4map.coming, "comingSoon 카드가 사라짐(실제 단원 교체)");
 }
 

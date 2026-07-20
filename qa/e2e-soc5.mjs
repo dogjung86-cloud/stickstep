@@ -67,11 +67,11 @@ const heading = () =>
   await W(800);
   const u5map = await page.evaluate(() => ({
     nodes: document.querySelectorAll(".gm-node").length,
-    world: !!document.querySelector(".gm-terrain.world"),
+    amer: !!document.querySelector(".gm-terrain.amer"),
     coming: !!document.querySelector(".coming-card"),
   }));
   check(u5map.nodes === 7, `Ⅴ단원 레슨 노드 7개 (실제 ${u5map.nodes})`);
-  check(u5map.world, "Ⅴ단원 world 테마 지형 적용");
+  check(u5map.amer, "Ⅴ단원 amer 테마 지형 적용(단원별 색 분리)");
   check(!u5map.coming, "comingSoon 카드가 사라짐(실제 단원 교체)");
 }
 

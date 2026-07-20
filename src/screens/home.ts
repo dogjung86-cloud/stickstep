@@ -18,7 +18,12 @@ import type { Screen } from "../core/router";
 import { gnav, type GnavKey } from "../ui/gnav";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
-const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u6: "body", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice", s1u1: "world", s1u2: "world", s1u3: "world", s1u4: "world", s1u5: "world", s1u6: "world", s1u7: "world", h1u1: "his", h1u2: "his", h1u3: "his", h1u4: "his" };
+const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u6: "body", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice", s1u1: "world", s1u2: "asia", s1u3: "euro", s1u4: "afri", s1u5: "amer", s1u6: "ocea", s1u7: "civic", h1u1: "his", h1u2: "civ", h1u3: "faith", h1u4: "silk" };
+// 사회·역사도 단원별 색 분리(2026-07-21 사용자 지시 — 카드·발바닥이 전부 같은 색이던 것 수정):
+// 사회 = 대륙 여행 팔레트(Ⅰ 트래블 오렌지 유지 · Ⅱ 몬순 그린 · Ⅲ 로열 블루 · Ⅳ 사바나 골드 ·
+// Ⅴ 카리브 틸 · Ⅵ 오로라 바이올렛 · Ⅶ 시민 로즈), 역사 = 유물 재질 팔레트(Ⅰ 청동 녹청 유지 ·
+// Ⅱ 점토 테라코타 · Ⅲ 경전 바이올렛 · Ⅳ 비단길 크림슨). 잉크는 soleMap THEME_INK, 시트는 soc/his.css.
+// 레슨 내부 톤(kicker·pn-badge)은 트랙 공통 world/his 유지 — 지도·카드만 단원별이다.
 // 보너스 미니게임은 도전 탭으로 이사(2026-07-12 IA 개편) — 지도는 학습 서사만 남긴다.
 
 // 노드 배치 = 완만한 곡선 중심선 + 발걸음 지그재그(2026-07-14 사용자 지시, 발자국 사진 레퍼런스).
@@ -168,7 +173,11 @@ export function homeScreen(
   const carEl = el("div", { class: "ucar" }, strip);
   const dotsEl = el("div", { class: "udots", attrs: { "aria-hidden": "true" } });
   const carWrap = el("div", { class: "ucar-wrap" }, carEl, dotsEl);
-  const mapHost = el("div", {});
+  // 지도 방향 동조 전환(2026-07-21 사용자 확정 — "피크 캐러셀"은 기각: 단원마다 지도 높이가 달라
+  // 잘린 화면으로 읽히고, 이웃 지도 상시 렌더는 비용 3배 + .gm-node 전역 셀렉터(qa 15개+) 계약 위반).
+  // 대신 드래그 중 지도가 카드를 0.35배 패럴랙스로 따라 밀리고, 커밋 순간 새 지도가 같은 방향에서
+  // 슬라이드-인 — DOM엔 항상 지도 1장이라 e2e·성능·걷기 연출 전부 무해하다.
+  const mapHost = el("div", { class: "map-swap" });
   const scroll = el("div", { class: "scroll" }, gradeRow, tabs, carWrap, mapHost);
   const elm = el("section", { class: "screen", attrs: { id: "sc-home" } }, appbar, scroll, gnav("home", (k) => nav2?.onTab?.(k)));
 
@@ -398,6 +407,7 @@ export function homeScreen(
         return;
       }
       strip.classList.add("drag");
+      mapHost.classList.add("drag");
       // 캡처는 가로축 확정 순간에만 — pointerdown에서 걸면 click이 캡처 대상으로 디스패치돼 피크 카드 탭이 죽는다
       try {
         carEl.setPointerCapture(e.pointerId);
@@ -407,12 +417,19 @@ export function homeScreen(
     }
     dMoved = dx;
     const over = (dx > 0 && sel === 0) || (dx < 0 && sel === cur.length - 1);
-    setStrip(dX0 + dx * (over ? 0.32 : 1)); // 끝 단원은 러버밴딩
+    const eff = dx * (over ? 0.32 : 1); // 끝 단원은 러버밴딩
+    setStrip(dX0 + eff);
+    // 지도 패럴랙스 — 손가락(카드)의 0.35배로 따라 밀리며 살짝 물러난다(놓으면 CSS 전이가 복귀 담당)
+    if (!reduceMotion) {
+      mapHost.style.transform = `translateX(${(eff * 0.35).toFixed(1)}px)`;
+      mapHost.style.opacity = String(Math.max(0.72, 1 - Math.abs(eff) / 900));
+    }
   });
   const endDrag = (e: PointerEvent): void => {
     if (!dragging) return;
     dragging = false;
     strip.classList.remove("drag");
+    mapHost.classList.remove("drag");
     if (dAxis < 1) return;
     const dx = e.clientX - dSx;
     let n = sel;
@@ -423,13 +440,17 @@ export function homeScreen(
       go(n);
     } else {
       snapStrip();
+      // 전환 취소 — 밀려 있던 지도를 제자리로(인라인 해제 → .map-swap 전이가 스냅백)
+      mapHost.style.transform = "";
+      mapHost.style.opacity = "";
     }
   };
   carEl.addEventListener("pointerup", endDrag);
   carEl.addEventListener("pointercancel", endDrag);
 
-  /** 단원 전환 — 탭·카드·dots 동기화 + 활성 탭 스크롤-인 + 지도 재렌더. */
+  /** 단원 전환 — 탭·카드·dots 동기화 + 활성 탭 스크롤-인 + 지도 재렌더(방향 슬라이드-인). */
   function go(i: number, opts: { instant?: boolean } = {}): void {
+    const dir = opts.instant || reduceMotion ? 0 : Math.sign(i - sel); // 새 지도가 들어오는 방향(스와이프·탭 공통)
     sel = i;
     Array.from(tabs.children).forEach((t, ti) => t.classList.toggle("on", ti === i));
     cards.forEach((c, ci) => c.classList.toggle("on", ci === i));
@@ -442,6 +463,16 @@ export function homeScreen(
       /* jsdom 등 미지원 환경 */
     }
     renderMap(cur[i]);
+    // 방향 동조 슬라이드-인 — 오프셋을 심고 리플로 후 해제(CSS 전이만으로 연출, 노드는 즉시 존재해 e2e 무해)
+    if (dir) {
+      mapHost.classList.add("drag");
+      mapHost.style.transform = `translateX(${dir * 34}px)`;
+      mapHost.style.opacity = "0";
+      void mapHost.offsetWidth;
+      mapHost.classList.remove("drag");
+    }
+    mapHost.style.transform = "";
+    mapHost.style.opacity = "";
   }
 
   function renderMap(u: Unit): void {
