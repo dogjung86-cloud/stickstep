@@ -15,7 +15,7 @@ import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
-import { POLAR_NORTH_PATH } from "../../ui/worldMap.generated";
+import { POLAR_NORTH_PATH, WORLD_LAND_PATH } from "../../ui/worldMap.generated";
 
 type Face = (k: AvatarKind) => void;
 type HookOpt = { choices?: string[] };
@@ -27,29 +27,72 @@ const NZ_SIL = "M96 58q6-2 8 4l-4 10q-4 6-8 2l2-8zM104 44q6-4 10 2l-4 8q-6 4-8-2
 
 /* ══════════ L1: 새해 1등 나라 — 카운트다운 생중계 ══════════ */
 function newyearSvg(fired: boolean): string {
-  // 불꽃 점은 전부 날짜 변경선(x=182)의 **서쪽** — "선 바로 서쪽이 새해 1등" 서사와 일치(눈검수 교정)
+  // 실데이터 TV 지도(2026-07-20): WORLD_LAND_PATH 남서태평양 크롭 110~216°E × 12~−44°N —
+  // 화면(212×112)에 정확히 2px/°(hx=14+(lon−110)×2 · hy=16+(12−lat)×2), 언랩 180° 초과분은
+  // +1000 사본이 담당(soc6 wrap 문법). 날짜 변경선 = 실경도 180°(x=154).
+  // 불꽃 점은 전부 변경선 **서쪽**의 실좌표(길버트 제도·투발루·피지·오클랜드) — "선 바로 서쪽이
+  // 새해 1등" 서사와 일치(구판 눈검수 교정의 실좌표 승격).
+  const hx = (lon: number): number => 14 + (lon - 110) * 2;
+  const hy = (lat: number): number => 16 + (12 - lat) * 2;
+  // 국화형 불꽃 한 송이 — 방사 궤적(끝이 중력으로 살짝 처짐) + 꼬리 스파크 + 사이 잔불 + 코어 글로우.
+  // 지터는 고정 표(렌더 결정성) — 실제 축제 불꽃처럼 가닥 길이가 고르지 않게.
+  const JIT = [1, 0.82, 0.94, 0.76, 1, 0.88, 0.97, 0.8, 0.92, 1, 0.84, 0.95, 0.9, 0.78, 0.98, 0.86];
+  const fw = (cx: number, cy: number, r: number, tone: [string, string], rays: number): string => {
+    const [main, spark] = tone;
+    const parts: string[] = [];
+    for (let i = 0; i < rays; i += 1) {
+      const a = (i / rays) * Math.PI * 2 - Math.PI / 2;
+      const L = r * JIT[i % JIT.length];
+      const droop = r * 0.14;
+      const mx = cx + Math.cos(a) * L * 0.7;
+      const my = cy + Math.sin(a) * L * 0.7;
+      const tx = cx + Math.cos(a) * L;
+      const ty = cy + Math.sin(a) * L + droop;
+      parts.push(
+        `<path d="M${cx} ${cy} Q${mx.toFixed(1)} ${my.toFixed(1)} ${tx.toFixed(1)} ${ty.toFixed(1)}" stroke="${main}" stroke-width="1.1" stroke-linecap="round" fill="none" opacity=".85"/>`,
+        `<circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="1.1" fill="${spark}"/>`,
+      );
+      if (i % 2 === 0) {
+        const b = ((i + 0.5) / rays) * Math.PI * 2 - Math.PI / 2;
+        parts.push(`<circle cx="${(cx + Math.cos(b) * L * 0.55).toFixed(1)}" cy="${(cy + Math.sin(b) * L * 0.55 + droop * 0.5).toFixed(1)}" r=".7" fill="${spark}" opacity=".7"/>`);
+      }
+    }
+    parts.push(
+      `<circle cx="${cx}" cy="${cy}" r="${(r * 0.32).toFixed(1)}" fill="${spark}" opacity=".28"/>`,
+      `<circle cx="${cx}" cy="${cy}" r="1.8" fill="#FFF6E0"/>`,
+    );
+    return parts.join("");
+  };
+  // 도시별 색 — 실제 축제처럼 송이마다 한 색(금·산호·민트·라벤더)
+  const TONES: [string, string][] = [["#F2C24E", "#FFE9AE"], ["#F2836E", "#FFC4B0"], ["#7ED8B4", "#CFF5E4"], ["#A99EF2", "#DCD6FF"]];
   const dots = [
-    [176, 66], [166, 84], [173, 92], [160, 74],
+    [172.98, 1.35], [179.2, -8.5], [178.44, -18.14], [174.76, -36.85],
   ]
-    .map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="1.6" fill="#F2ECDE" opacity=".9"><title></title></circle>${
-      fired ? `<g class="hs6-burst" style="animation-delay:${i * 0.18}s"><circle cx="${x}" cy="${y}" r="6" fill="none" stroke="#F2C24E" stroke-width="1.6"/><circle cx="${x}" cy="${y}" r="2.4" fill="#FFD98E"/></g>` : ""
-    }`)
+    .map(([lon, lat], i) => {
+      const x = hx(lon);
+      const y = hy(lat);
+      return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.6" fill="#F2ECDE" opacity=".9"><title></title></circle>${
+        fired ? `<g class="hs6-burst" style="animation-delay:${i * 0.18}s">${fw(x, y, 8.5, TONES[i], 12)}</g>` : ""
+      }`;
+    })
     .join("");
   return `<svg viewBox="0 0 240 168" fill="none" aria-hidden="true">
     <defs>
       <linearGradient id="hs6-tv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1C2436"/><stop offset="1" stop-color="#28324A"/></linearGradient>
       <radialGradient id="hs6-night" cx=".5" cy=".4" r=".9"><stop offset="0" stop-color="#20365E"/><stop offset="1" stop-color="#141F3C"/></radialGradient>
+      <clipPath id="hs6-nymap"><rect x="14" y="16" width="212" height="112" rx="8"/></clipPath>
     </defs>
     <rect x="6" y="8" width="228" height="140" rx="12" fill="url(#hs6-tv)"/>
     <rect x="14" y="16" width="212" height="112" rx="8" fill="url(#hs6-night)" stroke="#101828" stroke-width="1.6"/>
-    <g opacity=".85">
-      <path d="M28 58q14-10 30-6l12 8 16-4 12 6-4 12-16 8-22-2-18-8q-12-6-10-14z" fill="#33507E"/>
-      <path d="M150 96q10-8 24-6l16 6-2 10-14 8-20-4q-8-6-4-14z" fill="#33507E"/>
-      <path d="M60 100l10 4 8-2 6 6-8 6-14-4z" fill="#33507E"/>
+    <g clip-path="url(#hs6-nymap)" opacity=".9">
+      <g transform="scale(0.72) translate(-786.111 -194.444)">
+        <path d="${WORLD_LAND_PATH}" fill="#33507E" fill-rule="evenodd"/>
+        <path d="${WORLD_LAND_PATH}" transform="translate(1000 0)" fill="#33507E" fill-rule="evenodd"/>
+      </g>
     </g>
-    <line x1="182" y1="16" x2="182" y2="128" stroke="#E86E6E" stroke-width="1.4" stroke-dasharray="5 4" opacity=".8"/>
+    <line x1="154" y1="16" x2="154" y2="128" stroke="#E86E6E" stroke-width="1.4" stroke-dasharray="5 4" opacity=".8"/>
     ${dots}
-    ${fired ? `<g class="hs6-burst big"><circle cx="176" cy="78" r="11" fill="none" stroke="#FFD98E" stroke-width="2"/><path d="M176 66v-6M176 90v6M164 78h-6M188 78h6M167 69l-4-4M185 69l4-4M167 87l-4 4M185 87l4 4" stroke="#F2C24E" stroke-width="1.8" stroke-linecap="round"/></g>` : ""}
+    ${fired ? `<g class="hs6-burst big">${fw(151, 76, 17, ["#FFD98E", "#FFF1CE"], 16)}${fw(151, 76, 9, ["#F2836E", "#FFC4B0"], 10)}</g>` : ""}
     <rect x="14" y="16" width="212" height="18" rx="8" fill="rgba(10,16,30,.55)"/>
     <circle cx="26" cy="25" r="4" fill="#E2574C"/>
     <rect x="34" y="21.5" width="52" height="7" rx="3.5" fill="#C8D4E8" opacity=".8"/>
