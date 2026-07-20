@@ -391,21 +391,20 @@ export function renderCityFeed(
   return () => window.clearTimeout(timer);
 }
 
-/* ══════════ L5: 도시 한복판 스키 언덕 ══════════ */
-// 실물 사진 2장(위키미디어 — 덴마크 코펜하겐 아마게르 바케/코펜힐, photos/CREDITS.md)으로
-// 줌인(지붕 슬로프가 초록 언덕처럼 보임) → 줌아웃(굴뚝 달린 거대한 건물) 반전을 연출한다
-// (2026-07-19 사용자 확정 — 실물이 정본, 손그림 SVG 장면 대체. Ⅱ 종교 4탭 실물 교체 계보).
-function slopePhoto(zoomOut: boolean): string {
-  return zoomOut
-    ? `<div class="hs3-cam">
-        <img src="${BASE}soc/europe/copenhill-far.webp" alt="유리 외벽에 매끈한 굴뚝이 솟은 거대한 건물 — 지붕을 따라 초록 슬로프가 비스듬히 내려온다" draggable="false"/>
-        <div class="hs3-camtag">줌 아웃 — 언덕이 아니라 거대한 건물!</div>
-      </div>`
-    : `<div class="hs3-cam">
-        <img src="${BASE}soc/europe/copenhill-near.webp" alt="풀이 자란 비탈에 초록 슬로프 매트가 깔린 언덕 — 너머로 항구 도시가 내려다보인다" draggable="false"/>
-        <div class="hs3-camtag">친구가 보낸 영상 — 도시 한복판의 초록 언덕?</div>
-      </div>`;
-}
+/* ══════════ L5: 한여름 스키장의 수상한 꼭대기 ══════════ */
+// v2(2026-07-20 사용자 피드백 재설계): 구 훅의 "도시 한복판 초록 언덕" 프레임은 미스터리가 성립하지
+// 않고(도시에 언덕은 흔하다 — near 사진은 스키도 사람도 없는 맨 풀언덕), 구도가 다른 두 사진의
+// 스왑을 '줌 아웃'이라 부르는 것도 어색하다는 지적. 재설계 = **단서 축적 3박자**:
+//   ① 초록 매트 스키장(눈 없는 여름 스키 — 성립하는 첫 미스터리) ② 꼭대기의 거대 굴뚝+발밑
+//   공장·항구(산이 아니라는 단서) ③ 항공 사진 한 장 위 **진짜 CSS 줌 아웃**(scale 2.6→1 카메라
+//   풀백, transform-origin = 초록 지붕 띠)으로 "언덕 = 건물 지붕" 공개 → 정체 예측.
+// 다른 사진 스왑을 줌이라 부르지 않는다 — 줌 연출은 반드시 같은 사진 위 scale 전환으로.
+// 사진 3장 전부 위키미디어 실물(photos/CREDITS.md), 후보 눈검수·탈락 기록은 qa/fetch-soc3-skislope.mjs.
+const SLOPE_BEATS = [
+  { img: "copenhill-mat.webp", tag: "여름 스키장 — 눈 대신 초록 매트", alt: "잔디 비탈에 초록 스키 매트가 깔린 여름 슬로프와 리프트 기둥" },
+  { img: "copenhill-peak.webp", tag: "꼭대기 — 벤치 옆에 웬 굴뚝?!", alt: "슬로프 꼭대기 쉼터 — 거대한 굴뚝이 솟아 있고 발아래로 공장과 항구가 펼쳐진다", zoom: false },
+  { img: "copenhill-aerial.webp", tag: "하늘에서 그 언덕을 다시 보면…", alt: "하늘에서 내려다본 언덕 — 초록 지붕을 얹은 거대한 건물과 김이 나는 굴뚝, 항구 도시", zoom: true },
+];
 
 export function renderSkiSlope(
   scene: HTMLElement,
@@ -415,40 +414,69 @@ export function renderSkiSlope(
   face: Face,
 ): () => void {
   const fig = el("div", { class: "hs3-slope" });
-  const btn = el("button", { class: "hs3-flipbtn", attrs: { type: "button" }, text: "줌 아웃" });
+  const btn = el("button", { class: "hs3-flipbtn", attrs: { type: "button" }, text: "리프트 타고 꼭대기로" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "유럽에 사는 친구가 영상을 보냈어요 — 도시 한복판 언덕에서 스키를! 이 언덕, 어딘가 이상해요. <b>줌 아웃</b>!";
+  helper.innerHTML = "유럽 친구가 여름 스키장 영상을 보냈어요 — 눈 대신 <b>초록 매트</b> 위로 슝! 그런데 이 스키장, 오를수록 수상해요. <b>리프트</b>를 타 봐요.";
+  for (const b of SLOPE_BEATS) new Image().src = `${BASE}soc/europe/${b.img}`; // 탭 전 프리로드
 
-  let out = false;
-  let timer = 0;
-  fig.innerHTML = slopePhoto(false);
-  btn.addEventListener("click", () => {
-    if (out) return;
-    out = true;
-    haptic(HAPTIC.tap);
-    fig.innerHTML = slopePhoto(true);
+  const timers = new Set<number>();
+  const later = (fn: () => void, ms: number): void => {
+    const t = window.setTimeout(() => {
+      timers.delete(t);
+      fn();
+    }, ms);
+    timers.add(t);
+  };
+  let idx = 0;
+  const showBeat = (): void => {
+    const b = SLOPE_BEATS[idx];
+    // 줌 박자는 초록 지붕 띠(원점 34% 46%)에 확대된 채 등장 → 잠시 뒤 scale 1로 풀백(전환은 soc.css).
+    fig.innerHTML = `<div class="hs3-cam">
+        <img${b.zoom ? ' class="hs3-zoom" style="transform:scale(2.6);transform-origin:34% 46%"' : ""} src="${BASE}soc/europe/${b.img}" alt="${b.alt}" draggable="false"/>
+        <div class="hs3-camtag">${b.tag}</div>
+      </div>`;
     fig.classList.remove("flip");
     void fig.offsetWidth;
     fig.classList.add("flip");
-    btn.disabled = true;
-    btn.classList.add("done");
-    face("surprised");
-    helper.innerHTML = "언덕이 아니라 <b>거대한 건물의 지붕</b>이었어요! 매끈한 굴뚝까지 달린 이 건물의 정체는 뭘까요?";
-    timer = window.setTimeout(() => {
-      ask(choicesBox, helper, {
-        choices: s.choices ?? [
-          "쓰레기를 태워 전기와 난방열을 만드는 발전소",
-          "흙을 쌓아 만든 진짜 잔디 언덕",
-          "쓰지 않는 낡은 창고 건물",
-        ],
-        good: "믿기 어렵지만 정답! 덴마크 코펜하겐의 <b>쓰레기 소각장</b>은 지붕이 스키장이에요. 쓰레기를 태운 열로 전기·난방을 공급하고, 시민의 놀이터가 됐죠 — 이런 상상력이 모이는 곳이 지속가능한 도시예요!",
-        bad: "매끈한 벽과 굴뚝을 봐요 — 흙 언덕도, 버려진 창고도 아니에요. 이 건물은 <b>쓰레기를 태워 전기와 난방열을 만드는 발전소</b>! 기피 시설을 놀이터로 바꾼 상상력, 지속가능한 도시의 이야기예요.",
-        onDone: finish,
-      });
-    }, 750);
+    if (b.zoom) {
+      const im = fig.querySelector("img") as HTMLImageElement;
+      later(() => {
+        im.style.transform = "scale(1)";
+      }, 120);
+    }
+  };
+  showBeat();
+  btn.addEventListener("click", () => {
+    if (idx >= SLOPE_BEATS.length - 1) return;
+    idx += 1;
+    haptic(HAPTIC.tap);
+    showBeat();
+    if (idx === 1) {
+      btn.textContent = "하늘에서 보기";
+      helper.innerHTML = "꼭대기에 도착! 그런데 벤치 옆에 <b>거대한 굴뚝</b>, 발아래엔 공장과 항구… 산 위 스키장이 아니에요. 이 언덕의 정체, <b>하늘에서</b> 확인해요.";
+    } else {
+      btn.disabled = true;
+      btn.classList.add("done");
+      face("surprised");
+      helper.innerHTML = "카메라가 물러날수록 드러나요 — 언덕이 아니라 <b>거대한 건물의 지붕</b>! 김이 솟는 굴뚝까지 달린 이 건물의 정체는 뭘까요?";
+      later(() => {
+        ask(choicesBox, helper, {
+          choices: s.choices ?? [
+            "도시의 쓰레기를 태워 전기와 난방열을 만드는 발전소",
+            "스키장으로 쓰려고 지은 초대형 실내 스키 돔",
+            "곡식을 쌓아 두는 항구의 거대한 창고",
+          ],
+          good: "믿기 어렵지만 정답! 덴마크 코펜하겐의 <b>쓰레기 소각장</b>은 지붕이 통째로 스키장이에요. 쓰레기를 태운 열로 전기·난방을 공급하고, 굴뚝에선 연기 대신 김이 나죠. 기피 시설을 놀이터로 바꾼 상상력 — 지속가능한 도시예요!",
+          bad: "지붕의 스키장은 덤이에요 — 스키 돔도 창고도 아니라, 도시의 <b>쓰레기를 태워 전기와 난방열을 만드는 발전소</b>(소각장)랍니다. 기피 시설을 시민의 놀이터로 바꾼 상상력, 지속가능한 도시의 이야기예요!",
+          onDone: finish,
+        });
+      }, 1800);
+    }
   });
-  return () => window.clearTimeout(timer);
+  return () => {
+    for (const t of timers) window.clearTimeout(t);
+  };
 }
 
 /* ══════════ L6: 기차 국경 통과 ══════════ */

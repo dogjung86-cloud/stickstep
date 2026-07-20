@@ -113,7 +113,7 @@ const stepData = (i) =>
 const hookStep = async (L, scene) => {
   await SHOT(`${L}-hook-${scene}-0`);
   const tapSel = { dawnsoccer: ".hs3-dawn", cityfeed: ".hs3-feed", fourshirts: ".hs3-shirts" }[scene] ?? ".hs3-flipbtn";
-  const times = { dawnsoccer: 2, peakhike: 2, frozenriver: 2, cityfeed: 2, skislope: 1, trainborder: 2, fourshirts: 3 }[scene];
+  const times = { dawnsoccer: 2, peakhike: 2, frozenriver: 2, cityfeed: 2, skislope: 2, trainborder: 2, fourshirts: 3 }[scene];
   for (let i = 1; i <= times; i += 1) {
     await page.evaluate((s) => document.querySelector(`.screen.active ${s}`).click(), tapSel);
     await W(560);

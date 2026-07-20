@@ -650,10 +650,15 @@
 /* 실물 사진 프레임(스키장 훅 줌인/줌아웃 — hs2-cam 문법의 Ⅲ판) */
 .hs3-cam { position: relative; border-radius: 14px; overflow: hidden; }
 .hs3-cam img { display: block; width: 100%; }
+/* 스키장 훅 3박자 — 항공 사진 위 진짜 줌 아웃(같은 사진의 scale 2.6→1 카메라 풀백, JS가 transform 해제) */
+.hs3-cam img.hs3-zoom { will-change: transform; transition: transform 1.7s var(--ease); }
 .hs3-camtag {
   position: absolute; left: 12px; top: 12px; max-width: 88%;
   padding: 5px 10px; border-radius: var(--r-pill);
   background: rgba(14, 24, 46, .78); color: #fff; font-size: 12px; font-weight: 800;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hs3-cam img.hs3-zoom { transition: none; }
 }
 
 /* ---------- 사회 Ⅳ 훅 장면(hs4-) — hs3 문법 계승 ---------- */

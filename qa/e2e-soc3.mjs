@@ -124,7 +124,7 @@ const hookStep = async (scene) => {
   else if (scene === "peakhike") await tapFig(".hs3-flipbtn", 2, 520);
   else if (scene === "frozenriver") await tapFig(".hs3-flipbtn", 2, 520);
   else if (scene === "cityfeed") await tapFig(".hs3-feed", 2, 480);
-  else if (scene === "skislope") await tapFig(".hs3-flipbtn", 1, 600);
+  else if (scene === "skislope") await tapFig(".hs3-flipbtn", 2, 1000); // v2: 꼭대기 → 하늘(줌 아웃) 2탭
   else if (scene === "trainborder") await tapFig(".hs3-flipbtn", 2, 560);
   else if (scene === "fourshirts") await tapFig(".hs3-shirts", 3, 440);
   await page.waitForSelector(`${active} .hook-choices.show .hook-choice`, { timeout: 12000 });

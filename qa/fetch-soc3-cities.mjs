@@ -15,8 +15,8 @@ const TARGETS = [
   { article: "Acropolis_of_Athens", out: "ruins", note: "역사·문화 도시 — 그리스 아테네 아크로폴리스" },
   { article: "Strokkur", out: "geyser", note: "관광 도시 — 아이슬란드 스트로퀴르 간헐천" },
   { article: "Sophia_Antipolis", out: "techpark", note: "첨단 도시 — 프랑스 소피아 앙티폴리스" },
-  { file: "Grüne Wiesen auf dem Copenhill (51494009835).jpg", out: "copenhill-near", note: "스키장 훅 줌인 — 덴마크 코펜하겐 아마게르 바케(코펜힐) 지붕 슬로프" },
-  { file: "COPENHILL.jpg", out: "copenhill-far", note: "스키장 훅 줌아웃 — 아마게르 바케(코펜힐) 전경" },
+  // 스키장 훅 사진 2장(copenhill-near/far)은 훅 v2 재설계(2026-07-20)로 폐기 —
+  // 현행 3장은 qa/fetch-soc3-skislope.mjs가 담당한다(near는 미스터리 불성립·far는 줌 관계 없음).
 ];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
