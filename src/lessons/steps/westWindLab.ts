@@ -3,8 +3,9 @@
 // 바다의 온기를 유럽에 실어 나른다 → 같은 위도 대륙 동안·우리나라보다 온화한 겨울.
 //   · 세로 캔버스(createLoop+fitCanvas, monsoonLab 규격). 대륙은 WORLD_LAND_PATH Path2D 크롭
 //     (실데이터 지도 원칙). 크롭은 북대서양~서유럽(난류가 "먼바다에서 흘러오는" 감각).
-//   · 난류 = 채널 곡선을 따라 흐르는 주황 입자 띠. 편서풍 = 서→동 입자(난류 위를 지나며
-//     온기를 머금어 따뜻한 색으로 물들고, 육지에 온기를 부린다).
+//   · 난류 = 노르웨이 앞바다로 향하는 굵은 해류 화살표 띠(교과서 해류도 문법 — 2겹 스트로크+
+//     화살촉+느린 셰브론 컨베이어). 채널은 전 구간 바다 좌표 검산(아일랜드·영국 서쪽 우회)이고
+//     육지 fill보다 먼저 그려 바다에만 흐른다. 편서풍 = 서→동 입자(난류 위에서 온기를 머금는다).
 //   · 핵심 조작 = "난류가 없다면?" 가상 실험 토글: 난류가 멈추면 바람이 온기를 못 싣고
 //     런던 온도계(1월)가 뚝 떨어진다(같은 위도 대륙 동안 수준의 모형값 — '모형' 명시).
 //   · 판정: 관찰·실험 후 "북쪽인데 왜 따뜻한가" 2지선다(훅의 위도 오개념 회수).
@@ -30,9 +31,12 @@ const CX0 = 347; // lon -55.1°
 const CY0 = 67; // lat 65.9°
 const CW = 208; // → lon 19.8°
 const CH = 89; // → lat 33.9°
-// 북대서양 난류 채널(멕시코만류의 연장) — 남서 먼바다에서 영국·노르웨이 앞바다로. 교육 모형 경로.
+// 북대서양 난류 채널(멕시코만류의 연장) — 남서 먼바다에서 아일랜드·영국 서쪽을 크게 돌아
+// 노르웨이 앞바다(페로·셰틀랜드 사이 해협)로. 전 구간 바다 좌표 검산 필수 — 구 경로는
+// [-11,54.5]→[-1,58.5] 구간이 스코틀랜드를 관통해 "바닷물로 안 읽힌다"(2026-07-20 사용자 피드백).
 const CURRENT: [number, number][] = [
-  [-58, 35], [-46, 41], [-34, 46.5], [-22, 50.5], [-11, 54.5], [-1, 58.5], [7, 62],
+  [-58, 35], [-46, 41], [-34, 46.5], [-23, 51], [-15, 54.5],
+  [-11, 57.5], [-4, 61.2], [0, 62.3],
 ];
 // 1월 평균 기온 모형값 — 서울(북위 37.5°) 약 -2℃ · 런던(북위 51.5°) 약 5℃.
 // "난류가 없다면"의 런던은 같은 위도 대륙 동안 수준으로 떨어지는 모형값(-12℃, '모형' 라벨 명시).
@@ -50,28 +54,39 @@ interface WindP {
   life: number;
   max: number;
 }
-interface CurP {
-  t: number; // 채널 곡선 파라미터 0~1
-  off: number; // 채널 수직 오프셋(도)
-  spd: number;
+// 채널 아크 길이 사전 계산(svg px) — 셰브론을 등간격·등속(px/s) 컨베이어로 흘리기 위해.
+const CPTS = CURRENT.map(([lo, la]) => [sx(lo), sy(la)] as [number, number]);
+const CUML: number[] = [0];
+for (let i = 1; i < CPTS.length; i++) {
+  CUML.push(CUML[i - 1] + Math.hypot(CPTS[i][0] - CPTS[i - 1][0], CPTS[i][1] - CPTS[i - 1][1]));
+}
+const CLEN = CUML[CUML.length - 1];
+
+// 흐름 속도(2026-07-20 사용자 피드백 3차 캘리브레이션 — "난류가 여전히 빠르다, 바람도 느리게").
+// 검산은 svg가 아니라 화면 px/s(× mapW/CW ≈ 1.615) 기준: 난류 1.25svg ≈ 화면 2px/s(채널
+// 약 179svg px 편도 140초 안팎 — 2차 3~5px/s의 절반, 실제 해류의 "기는" 감각), 편서풍
+// 6svg ≈ 화면 9.7px/s(2차 14.5px/s 재감속). 위계 난류:바람 ≈ 1:5 — 바닷물이 뚜렷이 느리다.
+const CUR_SPD = 1.25; // 난류 셰브론(svg px/s)
+const WIND_SPD = 6; // 편서풍 입자(svg px/s)
+const CHEV_N = 13; // 셰브론 수 — 등간격 컨베이어(간격 화면 약 22px)
+
+/** 채널 위 아크 길이 s(svg px) 지점의 위치·단위 방향. */
+function curveAtS(s: number): { x: number; y: number; dx: number; dy: number } {
+  const cs = clamp(s, 0, CLEN - 0.001);
+  let i = 0;
+  while (i < CPTS.length - 2 && CUML[i + 1] <= cs) i++;
+  const segL = CUML[i + 1] - CUML[i] || 1;
+  const u = (cs - CUML[i]) / segL;
+  const [x1, y1] = CPTS[i];
+  const [x2, y2] = CPTS[i + 1];
+  return { x: x1 + (x2 - x1) * u, y: y1 + (y2 - y1) * u, dx: (x2 - x1) / segL, dy: (y2 - y1) / segL };
 }
 
-/** 채널 폴리라인 위 파라미터 t(0~1) 위치·방향. */
-function curveAt(t: number): { x: number; y: number; dx: number; dy: number } {
-  const segs = CURRENT.length - 1;
-  const ft = clamp(t, 0, 0.9999) * segs;
-  const i = Math.floor(ft);
-  const u = ft - i;
-  const [lo1, la1] = CURRENT[i];
-  const [lo2, la2] = CURRENT[i + 1];
-  const x1 = sx(lo1);
-  const y1 = sy(la1);
-  const x2 = sx(lo2);
-  const y2 = sy(la2);
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const d = Math.hypot(dx, dy) || 1;
-  return { x: x1 + dx * u, y: y1 + dy * u, dx: dx / d, dy: dy / d };
+/** 폴리라인 스트로크(현재 스타일로). */
+function strokePts(ctx: CanvasRenderingContext2D, pts: [number, number][]): void {
+  ctx.beginPath();
+  pts.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
+  ctx.stroke();
 }
 
 export const westWindLab: StepRenderer = (host, step, api) => {
@@ -95,7 +110,8 @@ export const westWindLab: StepRenderer = (host, step, api) => {
 
   const canvas = el("canvas", { class: "spring-canvas", style: `height:${CVH}px` });
   const pdot = el("span", { class: "pdot", style: "background:#FF9A5E" });
-  const pillTxt = el("span", { text: "난류 흐르는 중 — 바람이 온기를 실어요" });
+  // ON 필 문구는 짧게 유지 — 길면 필 오른끝이 캔버스 화살촉(화면 x≈263~)을 덮는다(HUD 가림 실사고).
+  const pillTxt = el("span", { text: "난류 흐르는 중 — 온기를 실어요" });
   const monthRead = el("div", { class: "tempread" }, el("span", { text: "1월" }));
   const stage = el("div", { class: "stage" }, canvas, el("div", { class: "stage-hud" }, el("div", { class: "pill" }, pdot, pillTxt), monthRead));
   const capEl = el("div", { class: "stage-cap", text: "주황 띠 = 따뜻한 바닷물(난류) · 흰 줄 = 편서풍 · 아래 = 1월 온도계" });
@@ -181,7 +197,7 @@ export const westWindLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.select);
     if (on) {
       pdot.style.background = "#FF9A5E";
-      pillTxt.textContent = "난류 흐르는 중 — 바람이 온기를 실어요";
+      pillTxt.textContent = "난류 흐르는 중 — 온기를 실어요";
     } else {
       pdot.style.background = "#8FB6D8";
       pillTxt.textContent = "난류 정지(모형) — 바람이 빈손이에요";
@@ -192,31 +208,25 @@ export const westWindLab: StepRenderer = (host, step, api) => {
 
   // ---- 입자 ----
   const winds: WindP[] = [];
-  const curs: CurP[] = [];
   const landPath = new Path2D(WORLD_LAND_PATH);
   function spawnWind(p: WindP, first = false): void {
     p.x = CX0 + (first ? Math.random() * CW : Math.random() * 14);
     p.y = CY0 + 8 + Math.random() * (CH - 20);
     p.warm = 0;
     p.life = 0;
-    p.max = 24 + Math.random() * 6; // 감속된 바람이 지도를 다 건널 수 있는 수명(약 23초 횡단)
+    p.max = 40 + Math.random() * 8; // 감속된 바람(6svg px/s)이 크롭 208px을 다 건너는 수명(약 35초 횡단)
   }
   for (let i = 0; i < 64; i++) {
     const p: WindP = { x: 0, y: 0, warm: 0, life: 0, max: 1 };
     spawnWind(p, true);
     winds.push(p);
   }
-  // 난류 입자 속도 — 바닷물은 바람보다 훨씬 느리다(사용자 피드백 캘리브레이션).
-  // t=0→1이 채널 전체(경도 약 65°)라 0.011~0.017/s = 편도 60~90초, 화면 약 3~5px/s
-  // (2026-07-19 "너무 빠르다" 재감속 — 검산은 svg가 아니라 화면 px/s 기준).
-  for (let i = 0; i < 90; i++) {
-    curs.push({ t: Math.random(), off: (Math.random() - 0.5) * 7, spd: 0.011 + Math.random() * 0.006 });
-  }
 
   // ---- 렌더 ----
   let W = 340;
   let H = CVH;
   let phase = 0;
+  let flowS = 0; // 난류 셰브론 컨베이어 오프셋(svg px) — 난류 OFF면 정지
   let runMs = 0;
   let londonT = LONDON_ON;
   let coldF = 0; // 0(난류 세계)~1(난류 없는 세계) — 색·온도 보간
@@ -255,21 +265,51 @@ export const westWindLab: StepRenderer = (host, step, api) => {
     ctx.fillStyle = seaG;
     ctx.fillRect(mapX, mapY, mapW, mapH);
 
-    // 난류 띠(바닥 글로우) — ON일 때만
-    if (coldF < 0.98) {
+    // 난류 = 굵은 해류 화살표 띠(교과서 해류도 문법 — "굵은 화살표가 흐르는 느낌" 피드백).
+    // 반드시 대륙 fill보다 먼저 그린다 — 가장자리 겹침을 육지가 덮어 "바다에만 흐르는 물"로 읽힌다.
+    const curA = 1 - coldF;
+    if (curA > 0.02) {
+      if (currentOn) flowS = (flowS + CUR_SPD * dt) % (CLEN / CHEV_N);
+      const pts = CPTS.map(([x, y]) => [toCX(x), toCY(y)] as [number, number]);
+      const bandW = mapW * 0.044; // 굵은 띠 — 화면 ~15px(경도 3.4°, 과장 모형)
       ctx.save();
-      ctx.globalAlpha = 0.16 * (1 - coldF);
-      ctx.strokeStyle = "#FF8A4E";
-      ctx.lineWidth = (7 / CW) * mapW * 0.16;
+      ctx.lineJoin = "round";
       ctx.lineCap = "round";
+      ctx.strokeStyle = `rgba(226,102,42,${0.52 * curA})`; // 바깥(진한 주황)
+      ctx.lineWidth = bandW;
+      strokePts(ctx, pts);
+      ctx.strokeStyle = `rgba(255,152,88,${0.6 * curA})`; // 안쪽(밝은 주황) — 2겹 깊이감
+      ctx.lineWidth = bandW * 0.62;
+      strokePts(ctx, pts);
+      // 진행 방향 화살촉(노르웨이 앞바다 쪽) — 끝점·방향은 채널 데이터에서 파생
+      const end = curveAtS(CLEN);
+      const ex = toCX(end.x);
+      const ey = toCY(end.y);
+      const hL = bandW * 1.4;
+      const hW = bandW * 0.8;
+      ctx.fillStyle = `rgba(255,152,88,${0.8 * curA})`;
       ctx.beginPath();
-      CURRENT.forEach(([lo, la], i) => {
-        const px = toCX(sx(lo));
-        const py = toCY(sy(la));
-        if (i === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      });
-      ctx.stroke();
+      ctx.moveTo(ex + end.dx * hL, ey + end.dy * hL);
+      ctx.lineTo(ex - end.dy * hW, ey + end.dx * hW);
+      ctx.lineTo(ex + end.dy * hW, ey - end.dx * hW);
+      ctx.closePath();
+      ctx.fill();
+      // 흐름 셰브론(〉〉〉) 컨베이어 — 실제 해류처럼 아주 느리게 긴다(난류 OFF면 정지+페이드)
+      ctx.lineWidth = 2.4;
+      for (let i = 0; i < CHEV_N; i++) {
+        const s = i * (CLEN / CHEV_N) + flowS;
+        const cv = curveAtS(s);
+        const px = toCX(cv.x);
+        const py = toCY(cv.y);
+        const chs = bandW * 0.24;
+        const fade = Math.min(1, ((CLEN - s) / CLEN) * 7); // 화살촉 앞에서 스르르
+        ctx.strokeStyle = `rgba(255,226,198,${0.85 * curA * fade})`;
+        ctx.beginPath();
+        ctx.moveTo(px - cv.dx * chs - cv.dy * chs * 1.5, py - cv.dy * chs + cv.dx * chs * 1.5);
+        ctx.lineTo(px + cv.dx * chs, py + cv.dy * chs);
+        ctx.lineTo(px - cv.dx * chs + cv.dy * chs * 1.5, py - cv.dy * chs - cv.dx * chs * 1.5);
+        ctx.stroke();
+      }
       ctx.restore();
     }
 
@@ -285,35 +325,9 @@ export const westWindLab: StepRenderer = (host, step, api) => {
     ctx.stroke(landPath);
     ctx.restore();
 
-    // 난류 입자
-    if (currentOn) {
-      for (const c of curs) {
-        c.t += c.spd * dt;
-        if (c.t >= 1) {
-          c.t = 0;
-          c.off = (Math.random() - 0.5) * 7;
-        }
-        const cv = curveAt(c.t);
-        const perpX = -cv.dy;
-        const perpY = cv.dx;
-        const px = toCX(cv.x + perpX * c.off * (1000 / 360) * 0.36);
-        const py = toCY(cv.y + perpY * c.off * (500 / 180) * 0.36);
-        if (px < mapX || px > mapX + mapW || py < mapY || py > mapY + mapH) continue;
-        const fade = Math.min(1, c.t * 6, (1 - c.t) * 3);
-        ctx.strokeStyle = `rgba(255,${150 - 40 * Math.abs(c.off) / 4},94,${(0.5 + 0.22 * Math.sin(phase * 1.1 + c.t * 14)) * fade})`;
-        ctx.lineWidth = 2;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(px - cv.dx * 4, py - cv.dy * 4);
-        ctx.lineTo(px + cv.dx * 4, py + cv.dy * 4);
-        ctx.stroke();
-      }
-    }
-
-    // 편서풍 입자 — 서→동, 난류 위를 지나면 온기를 머금는다.
-    // 속도는 난류보다 뚜렷이 빠르되 차분하게(svg 9px/s ≈ 화면 14.5px/s —
-    // 2026-07-19 "너무 빠르다" 재감속, 난류 대비 약 1:3 위계 유지).
-    const wspd = 9;
+    // 편서풍 입자 — 서→동, 난류 위를 지나면 온기를 머금는다. 속도는 WIND_SPD(파일 상단
+    // 캘리브레이션 주석) — 난류 셰브론보다 뚜렷이 빠르되 산들바람처럼 차분하게.
+    const wspd = WIND_SPD;
     for (const p of winds) {
       p.life += dt;
       if (p.life > p.max || p.x > CX0 + CW + 6) spawnWind(p);

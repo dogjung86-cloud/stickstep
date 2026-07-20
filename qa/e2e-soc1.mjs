@@ -63,7 +63,7 @@ const heading = () =>
     terrain: !!document.querySelector(".gm-terrain.world"),
     nodes: document.querySelectorAll(".gm-node").length,
   }));
-  check(home.bands === 6, `홈 밴드 6개 (실제 ${home.bands})`);
+  check(home.bands === 7, `홈 밴드 7개 (실제 ${home.bands})`);
   check(home.worldBand && home.terrain, "world 테마(밴드+지형) 적용");
   check(home.nodes === 6, `레슨 노드 6개 (실제 ${home.nodes})`);
 }

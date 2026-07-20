@@ -63,7 +63,7 @@ const heading = () =>
   const home = await page.evaluate(() => ({
     bands: document.querySelectorAll(".unit-band").length,
   }));
-  check(home.bands === 6, `홈 밴드 6개 (실제 ${home.bands})`);
+  check(home.bands === 7, `홈 밴드 7개 (실제 ${home.bands})`);
   await page.evaluate(() => document.querySelectorAll(".unit-tab")[5].click());
   await W(800);
   const u6map = await page.evaluate(() => ({

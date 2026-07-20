@@ -61,7 +61,7 @@ const heading = () =>
     bands: document.querySelectorAll(".unit-band").length,
     nodes: document.querySelectorAll(".gm-node").length,
   }));
-  check(home.bands === 6, `홈 밴드 6개 (실제 ${home.bands})`);
+  check(home.bands === 7, `홈 밴드 7개 (실제 ${home.bands})`);
   // Ⅱ 탭으로 전환 → 8레슨 노드 + world 테마 지형
   await page.evaluate(() => document.querySelectorAll(".unit-tab")[1].click());
   await W(800);
