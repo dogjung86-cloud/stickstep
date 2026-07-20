@@ -11,7 +11,7 @@ import "./styles/tutor.css";
 import "./styles/game.css";
 import "./styles/soc.css";
 import "./styles/his.css";
-import "./styles/desktop.css"; // 데스크톱 셸(≥1024px) — 캐스케이드 최후순위로 모바일 규칙을 덮는다
+import "./styles/desktop.css"; // 데스크톱 셸(옵트인·≥1024px) — html.dt 게이트, 캐스케이드 최후순위
 
 import { nav } from "./core/router";
 import { getState, completeLesson, setViewSubject, isPremium, isReviewMode, setPremiumOverride, isDone } from "./core/store";
@@ -41,6 +41,10 @@ import { initSync } from "./core/sync";
 const frame = document.getElementById("frame")!;
 nav.init(frame);
 
+// 데스크톱 셸은 옵트인(사용자 확정 2026-07-20) — 기본은 넓은 화면에서도 폰 프레임.
+// 마이 탭 "넓은 화면 레이아웃" 토글이 저장(store.desktopMode)·클래스 갱신을 함께 수행한다.
+document.documentElement.classList.toggle("dt", getState().desktopMode);
+
 // 마지막으로 연 단원 — 레슨 완료·X 이탈 후 홈이 그 단원 지도로 돌아가게 한다.
 let lastUnitId: string | undefined;
 // 새 레슨 첫 완료 귀환 시 홈 걷기 연출(README design/ "걷기 트리거 확정") — goHome이 1회 소비한다.
@@ -52,7 +56,7 @@ function goHome(): void {
   currentTab = "home";
   const walkFrom = walkFromLessonId;
   walkFromLessonId = undefined;
-  nav.reset(homeScreen(openLesson, lastUnitId, { onSubjects: openSubjects, onOpenExam: openExam, onTab: goTab }, { walkFrom }));
+  nav.reset(homeScreen(openLesson, lastUnitId, { onSubjects: openSubjects, onOpenExam: openExam, onTab: goTab, onOpenNotebook: openNotebook }, { walkFrom }));
 }
 
 /** 하단 탭 전환(2026-07-12 IA 개편) — 탭은 스택을 쌓지 않고 reset으로 갈아끼운다. */

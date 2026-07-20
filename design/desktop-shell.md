@@ -18,10 +18,18 @@
     퀴즈·recap 같은 텍스트 스텝은 칼럼이 오히려 낫다.
   - E 폰 프레임 + 컴패니언 위젯 — 기각: 공수 최소지만 "가로 화면인데 모바일 크기" 인상을 해소 못 함.
 
-## 현재 상태 = B의 1단계(시안 A) 구현 완료
+## 현재 상태 = B의 1단계(시안 A) 구현 완료 + **옵트인 전환(2026-07-20 사용자 확정)**
 
-- **파일 2개가 전부**: `src/styles/desktop.css`(단일 시트, `@media (min-width: 1024px)`) +
-  `src/main.ts` import 한 줄(캐스케이드 최후순위). 콘텐츠·스텝 렌더러 코드 무수정.
+- **옵트인**: 자동 반응형(≥1024px 즉시 적용)은 폐기 — 웹 접속 시 메인 디자인이 저절로 바뀌는 것을
+  원치 않음(사용자). 기본은 넓은 화면에서도 폰 프레임, `store.desktopMode`(기기 설정, 동기화 제외) →
+  **`html.dt` 클래스**(main.ts 부트 부착 + 마이 탭 토글이 갱신)로만 켜진다. desktop.css 전 규칙이
+  `html.dt` + ≥1024px 이중 게이트. 토글 UI = 마이 탭 "넓은 화면 레이아웃" 행(≥1024px 뷰포트에서만
+  노출, monitor 아이콘·값 켜짐/꺼짐·스낵 피드백). **이후 데스크톱 규칙(위젯 레일 포함)은 반드시
+  html.dt 아래에 쓴다.** QA로 셸을 보려면 localStorage 시드에 `desktopMode: true`를 넣거나
+  `document.documentElement.classList.add("dt")`.
+- **파일**: `src/styles/desktop.css`(단일 시트, `html.dt` 게이트 + `@media (min-width: 1024px)`) +
+  `src/main.ts` import·클래스 부착 + `core/store.ts` desktopMode + `screens/my.ts` 토글 행 +
+  `core/icons.ts` monitor. 콘텐츠·스텝 렌더러 코드 무수정.
 - 내용:
   - 기기 프레임 해제(풀블리드) / gnav → 좌측 사이드바 224px(`::before`로 워드마크 — DOM 무수정 트릭)
   - 홈(#sc-home)·탭 화면(.tabscr): `padding-left: 224px` + 내부 중앙 칼럼 660~680px
@@ -31,21 +39,26 @@
 - 검증: 1440×900 실캡처(홈·도전 탭·레슨 hook→heatParticles 랩→recap→퀴즈) 눈검수 통과.
   **모바일(<1024px)·e2e(뷰포트 420px = 브레이크포인트 아래)·Capacitor 포장 완전 불변.**
 
-## 다음 세션 작업 = 우측 위젯 레일(B 완성)
+## 우측 위젯 레일(B 완성) — **구현 완료(2026-07-20)**
 
-- 레이아웃(홈 #sc-home에만): 사이드바 224 | 중앙 지도 칼럼 ~620 | 우측 레일 ~300.
-  뷰포트가 애매한 구간(1024~1279px)은 레일 자동 숨김 권장(`@media (min-width: 1280px)`에서만 표시).
-- 위젯 4종(시안 vB 목업 참조 — design/desktop-variants.html #vB):
-  1. **연속 학습** — `currentStreak()`(core/store), 요일 도트 줄
-  2. **보유 스텝·장화** — `getState().totalXp`·`lifeXp`, `bootLevel()`(core/level.ts), `bootArt`(ui/boots)
-  3. **오답노트 대기** — `wrongNoteCount().open`, 버튼은 main.ts `openNotebook` 게이트로(프리미엄 페이월 포함)
-  4. **이어서 학습** — 현재 단원의 다음 미완료 레슨(홈 지도 '현재 노드' 판정 로직 재사용), `openLesson(id)`
-- 구현 형태 제안(선택은 구현 세션 몫):
-  - home.ts에 레일 DOM을 항상 렌더하고 CSS로 <1280 숨김(분기 코드 최소, 모바일 DOM에 몇 노드 추가됨), 또는
-  - `matchMedia("(min-width:1280px)")` 분기 렌더(모바일 DOM 완전 청정, 리스너 정리 필요).
-  - 어느 쪽이든 **e2e(420px)에서 절대 안 보이거나 존재하지 않아야** 기존 셀렉터 계약이 안전.
-- 이후 후보(우선순위 낮음): "폰 화면으로 보기" 수동 토글(html 클래스 + store 기기 설정 — 자동 반응형
-  위에 얹는 옵션), 랩 스텝 한정 D식 투페인, 게임·시험·rotateStage 가로 랩의 데스크톱 폭 개별 검수.
+- 레이아웃(홈 #sc-home에만): 사이드바 224 | 중앙 지도 칼럼(660 캡 센터링) | 우측 레일 300 고정
+  (`position: fixed; right: 24px`, `#sc-home { padding-right: 348px }`). 1024~1279px 애매 구간은
+  레일 숨김(`@media (min-width: 1280px)`에서만 표시) — 그 구간은 시안 A로 동작.
+- 위젯 4종(시안 vB 목업 그대로, home.ts `.home-rail`/`.hr-*`):
+  1. **연속 학습** — `currentStreak()` + 최근 7일 도트(오른쪽 끝 = 오늘). 학습일 판정은 스트릭 정의
+     역산([lastStudyDay−(streak−1), lastStudyDay] 창) — 별도 기록 없이 정확, 지어낸 데이터 0.
+  2. **보유 스텝·장화** — totalXp(파랑 강조)·lifeXp 누적·`bootLevel()`+`bootArt` 글리프.
+  3. **오답노트 대기** — `wrongNoteCount().open` + 단원별 상위 2 브레이크다운(findLesson으로 lessonId→
+     단원 집계), 버튼 → main.ts `openNotebook` 게이트(프리미엄 페이월 포함, nav2.onOpenNotebook).
+  4. **이어서 학습** — 현재 단원 첫 `isUnlocked && !isDone` 레슨(프리미엄이면 라벨 병기, openLesson
+     게이트가 페이월 안내). **renderMap()이 단원·학년 전환마다 `updateRailNext()`로 갱신** —
+     comingSoon 조기 return보다 앞이라 준비 중 단원도 카드가 산다.
+- 구현 형태 = **desktopMode 분기 렌더**(제안 ②의 옵트인판): `getState().desktopMode`일 때만 레일
+  DOM을 만든다 — 모바일·e2e(420px)는 DOM이 아예 없어 셀렉터 계약이 구조적으로 안전하고, 옵트인
+  토글은 마이 탭에서만 바뀌므로 홈은 항상 새로 그려져 리스너 정리 불요.
+- ~~"폰 화면으로 보기" 수동 토글~~ → **역방향으로 이행 완료(2026-07-20)**: 데스크톱 셸 자체가
+  옵트인 토글이 됐다(기본 = 폰 프레임, 위 "현재 상태" 참조). 남은 후보: 랩 스텝 한정 D식 투페인,
+  게임·시험·rotateStage 가로 랩의 데스크톱 폭 개별 검수.
 
 ## 함정 기록(이번 구현에서 실제로 밟은 것)
 

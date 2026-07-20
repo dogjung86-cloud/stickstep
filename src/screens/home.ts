@@ -6,8 +6,10 @@ import { el, clear, afterPaint } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { BRAND } from "../core/brand";
-import { getState, currentStreak, isDone, getViewGrade, setViewGrade, getViewSubject, toggleReviewMode, isReviewMode, examRecordOf } from "../core/store";
-import { CURRICULA_OF, GRADE_LABEL, gradeOfUnit, subjectOfUnit, isUnlocked, isPremiumLocked, unitProgress, type Unit, type GradeId, type SubjectId } from "../content/curriculum";
+import { getState, currentStreak, isDone, getViewGrade, setViewGrade, getViewSubject, toggleReviewMode, isReviewMode, examRecordOf, wrongNoteCount } from "../core/store";
+import { CURRICULA_OF, GRADE_LABEL, gradeOfUnit, subjectOfUnit, isUnlocked, isPremiumLocked, unitProgress, findLesson, findUnit, type Unit, type GradeId, type SubjectId } from "../content/curriculum";
+import { bootLevel } from "../core/level";
+import { bootArt } from "../ui/boots";
 import { examForUnit } from "../content/exams";
 import { serpentine, smoothPath } from "../ui/serpentine";
 import { mapDecorArt } from "../ui/mapDecor";
@@ -34,7 +36,7 @@ function splayOf(i: number): number {
 export function homeScreen(
   onOpenLesson: (id: string) => void,
   focusUnitId?: string,
-  nav2?: { onSubjects?: () => void; onOpenExam?: (unitId: string) => void; onTab?: (k: GnavKey) => void },
+  nav2?: { onSubjects?: () => void; onOpenExam?: (unitId: string) => void; onTab?: (k: GnavKey) => void; onOpenNotebook?: () => void },
   opts?: { walkFrom?: string },
 ): Screen {
   const st = getState();
@@ -182,6 +184,100 @@ export function homeScreen(
     snackTimer = window.setTimeout(() => snackEl.classList.remove("show"), 2000);
   }
 
+  // ---- 우측 위젯 레일(데스크톱 셸 시안 B 완성 — 스트릭·스텝·오답·이어하기) ----
+  // DOM 자체를 desktopMode(옵트인)일 때만 만든다 — 모바일·e2e(420px)는 DOM이 아예 없어 셀렉터 계약 안전.
+  // 표시 게이트는 desktop.css(html.dt + min-width:1280px)가 소유 — 1024~1279px 애매 구간은 자동 숨김.
+  let updateRailNext: ((u: Unit) => void) | null = null;
+  if (getState().desktopMode) {
+    const railDay = (d: Date): string => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const dayDiff = (a: string, b: string): number => Math.round((new Date(b + "T00:00:00").getTime() - new Date(a + "T00:00:00").getTime()) / 86400000);
+    // ① 연속 학습 — 최근 7일 도트(오른쪽 끝 = 오늘). 스트릭 정의(연속 학습일)를 그대로 역산:
+    //    d가 학습일 ⇔ [lastStudyDay−(streak−1), lastStudyDay] 창 안 — 없는 기록을 지어내지 않는다.
+    const stk = currentStreak();
+    const dotsRow = el("div", { class: "hr-dots", attrs: { "aria-hidden": "true" } });
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const off = st.lastStudyDay ? dayDiff(railDay(d), st.lastStudyDay) : -1;
+      dotsRow.appendChild(el("i", { class: stk > 0 && off >= 0 && off <= stk - 1 ? "on" : "" }));
+    }
+    const streakCard = el(
+      "div",
+      { class: "hr-card" },
+      el("div", { class: "hr-k", text: "연속 학습" }),
+      el("div", { class: "hr-v" }, el("span", { class: "hr-flame", html: icon("flame", 19) }), el("span", { text: `${stk}일째` })),
+      dotsRow,
+    );
+    // ② 보유 스텝 · 장화 레벨
+    const lvR = bootLevel(st.lifeXp);
+    const stepCard = el(
+      "div",
+      { class: "hr-card" },
+      el("div", { class: "hr-k", text: "보유 스텝" }),
+      el("div", { class: "hr-v blue" }, el("span", { html: icon("footstep", 18) }), el("span", { text: `${st.totalXp.toLocaleString()} 스텝` })),
+      el("div", { class: "hr-s" }, el("span", { html: bootArt(lvR.tier.id, 15) }), el("span", { text: `누적 ${st.lifeXp.toLocaleString()} · ${lvR.tier.name}` })),
+    );
+    // ③ 오답노트 대기 — 열람 게이트(프리미엄 페이월 포함)는 main.ts openNotebook이 소유
+    const open = wrongNoteCount().open;
+    const byUnit = new Map<string, number>();
+    for (const w of Object.values(st.wrongNotes)) {
+      if (w.overcome) continue;
+      const f = findLesson(w.lessonId);
+      if (f) byUnit.set(f.unit.id, (byUnit.get(f.unit.id) ?? 0) + 1);
+    }
+    const top = [...byUnit.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 2)
+      .map(([uid, n]) => {
+        const wu = findUnit(uid);
+        return wu ? `${wu.roman}. ${wu.title} ${n}문항` : "";
+      })
+      .filter(Boolean);
+    const nbCard = el(
+      "div",
+      { class: "hr-card" },
+      el("div", { class: "hr-k", text: "오답노트" }),
+      el("div", { class: "hr-v", text: open > 0 ? `${open}문항 대기` : "모두 해결!" }),
+      el("div", { class: "hr-s", text: open > 0 ? top.join(" · ") + (byUnit.size > 2 ? " 외" : "") : "지금은 다시 풀 문제가 없어요" }),
+    );
+    if (nav2?.onOpenNotebook) {
+      const nbBtn = el("button", { class: "hr-btn", text: open > 0 ? "다시 풀러 가기" : "오답노트 열기" });
+      nbBtn.addEventListener("click", () => {
+        haptic(HAPTIC.tap);
+        nav2.onOpenNotebook?.();
+      });
+      nbCard.appendChild(nbBtn);
+    }
+    // ④ 이어서 학습 — 지도 '현재 노드' 판정(unlocked·미완료) 재사용, renderMap이 단원 전환마다 갱신
+    const nextBody = el("div", { class: "hr-next" });
+    const nextCard = el("div", { class: "hr-card" }, el("div", { class: "hr-k", text: "이어서 학습" }), nextBody);
+    updateRailNext = (u: Unit): void => {
+      clear(nextBody);
+      if (u.comingSoon) {
+        nextBody.append(el("div", { class: "hr-v", text: "준비 중 단원" }), el("div", { class: "hr-s", text: `${u.title} 단원은 다음 업데이트에서 만나요` }));
+        return;
+      }
+      const idx = u.lessons.findIndex((l, li) => isUnlocked(u, li) && !isDone(l.id));
+      if (idx < 0) {
+        nextBody.append(el("div", { class: "hr-v", text: "이 단원 완주!" }), el("div", { class: "hr-s", text: "다른 단원 지도도 걸어 보세요" }));
+        return;
+      }
+      const lesson = u.lessons[idx];
+      const prem = isPremiumLocked(lesson);
+      nextBody.append(
+        el("div", { class: "hr-v", text: lesson.label ?? lesson.title }),
+        el("div", { class: "hr-s", text: `${u.roman}. ${u.title} · 레슨 ${idx + 1}${prem ? " · 프리미엄" : ""}` }),
+      );
+      const goBtn = el("button", { class: "hr-btn", text: prem ? "프리미엄으로 열기" : "이어서 하기" });
+      goBtn.addEventListener("click", () => {
+        haptic(HAPTIC.tap);
+        onOpenLesson(lesson.id); // 프리미엄 잠금은 main.ts openLesson 게이트가 페이월로 안내
+      });
+      nextBody.appendChild(goBtn);
+    };
+    elm.appendChild(el("aside", { class: "home-rail", attrs: { "aria-label": "학습 요약" } }, streakCard, stepCard, nbCard, nextCard));
+  }
+
   function renderTabs(): void {
     clear(tabs);
     cur.forEach((u, i) => {
@@ -254,6 +350,22 @@ export function homeScreen(
       dotsEl.appendChild(d);
       return d;
     });
+    // 긴 단원명(역사 Ⅲ "세계 종교의 확산과 지역 문화의 발전" 등)이 마지막 글자만 줄갈이되는 것 방지 —
+    // 제목은 한 줄 고정(nowrap, ui.css)이고 넘치면 22→14px 범위에서 자동 강등(mathDrill 장문 강등의
+    // 카드판, 사용자 피드백 2026-07-20). rAF 프리즈 환경(사고 17)에서도 돌도록 setTimeout(0) 사용 —
+    // homeScreen 팩토리는 nav 마운트와 같은 동기 태스크라 타이머 시점엔 카드가 레이아웃돼 있다.
+    window.setTimeout(() => {
+      for (const c of cards) {
+        const t = c.querySelector<HTMLElement>(".ub-title");
+        if (!t || !t.isConnected) continue;
+        t.style.fontSize = "";
+        let size = parseFloat(getComputedStyle(t).fontSize) || 22; // 기본 크기에서 출발(하드코딩 금지)
+        while (t.scrollWidth > t.clientWidth && size > 14) {
+          size -= 0.5;
+          t.style.fontSize = `${size}px`;
+        }
+      }
+    }, 0);
   }
 
   // 드래그: 스트립이 손가락을 그대로 따라온다(가로축 잠금 — 세로는 페이지 스크롤에 양보)
@@ -339,6 +451,7 @@ export function homeScreen(
     cancelWalk = null;
     finishWalk = null;
     clear(mapHost);
+    updateRailNext?.(u); // 데스크톱 레일 '이어서 학습' — 단원 전환·학년 전환·rebuild 전부 이 길을 지난다
     // 준비 중 단원 — 지도 대신 안내 카드
     if (u.comingSoon) {
       mapHost.appendChild(

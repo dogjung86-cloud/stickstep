@@ -2897,6 +2897,9 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .ustrip.drag { transition: none; }
 .ustrip .unit-band.ucard { margin: 0; flex: 0 0 calc(100% - 60px); display: flex; flex-direction: column; transition: transform .3s var(--ease), opacity .3s ease; }
 .ustrip .unit-band.ucard .ub-meta { margin-top: auto; padding-top: 12px; }
+/* 카드 제목은 한 줄 고정 — 긴 단원명(역사 Ⅲ 등)이 마지막 글자만 줄갈이되는 것 방지.
+   넘치는 제목은 home.ts buildCards의 자동 강등(22→14px)이 크기를 맞춘다(사용자 피드백 2026-07-20). */
+.ustrip .unit-band.ucard .ub-title { white-space: nowrap; }
 .ucard:not(.on) { transform: scale(.955); opacity: .72; }
 .udots { display: flex; justify-content: center; gap: 4px; margin-top: 9px; }
 .udots i { width: 5px; height: 5px; border-radius: 99px; background: var(--n300); transition: background .2s, width .2s; }

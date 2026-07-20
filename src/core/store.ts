@@ -50,6 +50,7 @@ export interface AppState {
   viewSubject: string | null; // 홈이 보여주는 과목("sci"|"math"|"soc"|"his") — 과목 허브에서 전환·저장
   premium: boolean; // 프리미엄 구매 여부 — premium 레슨 잠금 해제
   reviewMode: boolean; // 검토 모드(브랜드 7연타) — 순차·프리미엄 잠금 전부 해제(콘텐츠 검수용)
+  desktopMode: boolean; // 데스크톱 셸 옵트인(마이 탭 토글) — 기본 false = 넓은 화면에서도 폰 프레임. 기기 설정이라 동기화 제외
   goalMin: number;
   streak: number;
   lastStudyDay: string | null; // 'YYYY-MM-DD'
@@ -84,6 +85,7 @@ const DEFAULT_STATE: AppState = {
   viewSubject: null,
   premium: false,
   reviewMode: false,
+  desktopMode: false,
   goalMin: 10,
   streak: 0,
   lastStudyDay: null,
@@ -191,6 +193,18 @@ export function toggleReviewMode(): boolean {
   state.reviewMode = !state.reviewMode;
   save();
   return state.reviewMode;
+}
+
+/** 데스크톱 셸(넓은 화면 레이아웃) 옵트인 — 기본은 폰 프레임(사용자 확정 2026-07-20).
+ *  styles/desktop.css가 html.dt 클래스에만 반응하고, ≥1024px 미디어 쿼리가 이중 게이트라
+ *  폰에선 켜도 효력이 없다. 클래스 부착은 main.ts(부트)·마이 탭 토글이 수행. */
+export function isDesktopMode(): boolean {
+  return state.desktopMode;
+}
+
+export function setDesktopMode(v: boolean): void {
+  state.desktopMode = v;
+  save();
 }
 
 /** 결제 성공/복원 시 core/purchase.ts가 호출한다. */

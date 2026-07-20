@@ -24,6 +24,7 @@ const ICONS: Record<string, IconDef> = {
   flame: { v: '<path fill-rule="evenodd" d="M12 1.8c1.1 3.2 3.1 5.1 4.7 7.1 1.5 1.9 2.3 3.7 2.3 5.7 0 4-3.1 7.2-7 7.2s-7-3.2-7-7.2c0-2 .8-3.8 2.3-5.7C8.9 6.9 10.9 5 12 1.8z M12 11c.7 1.5 1.9 2.4 1.9 4 0 1.4-.85 2.4-1.9 2.4s-1.9-1-1.9-2.4c0-1.6 1.2-2.5 1.9-4z"/>', fill: true },
   thermo: { v: '<path d="M10 4.5a2 2 0 0 1 4 0v8.6a4.6 4.6 0 1 1-4 0z"/><path d="M12 10.5v6.5"/><circle cx="12" cy="17" r="1.2"/>', sw: 2 },
   expand: { v: '<path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/><path d="M4 4l5.5 5.5M20 4l-5.5 5.5M4 20l5.5-5.5M20 20l-5.5-5.5"/>', sw: 2 },
+  monitor: { v: '<rect x="3" y="4.5" width="18" height="13" rx="2.5"/><path d="M9 20.5h6M12 17.5v3"/>', sw: 2 },
   clock: { v: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', sw: 2 },
   star: { v: '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8-4.3-4.1 5.9-.9z"/>', fill: true },
   sparkle: { v: '<path d="M12 2l1.7 6.1L20 10l-6.3 1.9L12 18l-1.7-6.1L4 10l6.3-1.9z"/>', fill: true },

@@ -10,7 +10,7 @@
 import { el, clear } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
-import { getState, currentStreak, setAvatarPreset, setAvatarCustom, setNickname } from "../core/store";
+import { getState, currentStreak, setAvatarPreset, setAvatarCustom, setNickname, isDesktopMode, setDesktopMode } from "../core/store";
 import { onAuthChange, currentUser, pushNickname } from "../core/auth";
 import { BIZ_INFO } from "../core/brand";
 import { bootLevel, BOOT_TIERS } from "../core/level";
@@ -322,14 +322,32 @@ export function myScreen(o: {
     });
     return r;
   }
-  const menu = el(
-    "nav",
-    { class: "my-menu", attrs: { "aria-label": "더 보기" } },
+  const menuRows: HTMLElement[] = [
     row({ ic: bootArt(lv.tier.id, 19), title: "스텝 장화 레벨", value: lv.tier.name, onClick: (b) => openSheet(bootSheet, b) }),
     row({ ic: icon("footstep", 17), gold: true, title: "프리미엄", onClick: () => o.onOpenPaywall() }),
     row({ ic: icon("book", 17), title: "과제함", onClick: () => snack("학급·과제 기능은 준비 중이에요") }),
-    row({ ic: icon("user", 17), title: "계정 관리 · 로그인", onClick: () => o.onOpenAccount() }),
-  );
+  ];
+  // 넓은 화면 레이아웃(데스크톱 셸) 토글 — 옵트인(사용자 확정 2026-07-20), 기본은 폰 프레임.
+  // ≥1024px에서만 행을 노출한다: 폰에선 켜도 효력이 없어(desktop.css 미디어 쿼리 게이트) 죽은 토글이 된다.
+  if (window.matchMedia("(min-width: 1024px)").matches) {
+    menuRows.push(
+      row({
+        ic: icon("monitor", 17),
+        title: "넓은 화면 레이아웃(PC, 태블릿용)",
+        value: isDesktopMode() ? "켜짐" : "꺼짐",
+        onClick: (b) => {
+          const on = !isDesktopMode();
+          setDesktopMode(on);
+          document.documentElement.classList.toggle("dt", on); // 저장 + 즉시 반영(재렌더 불필요 — 순수 CSS 재배치)
+          const v = b.querySelector<HTMLElement>(".my-row-v");
+          if (v) v.textContent = on ? "켜짐" : "꺼짐";
+          snack(on ? "넓은 화면 레이아웃을 켰어요" : "폰 화면 보기로 돌아왔어요");
+        },
+      }),
+    );
+  }
+  menuRows.push(row({ ic: icon("user", 17), title: "계정 관리 · 로그인", onClick: () => o.onOpenAccount() }));
+  const menu = el("nav", { class: "my-menu", attrs: { "aria-label": "더 보기" } }, ...menuRows);
 
   // ---- 상단 뒤로가기(학습 탭 복귀, 2026-07-20 — 복습·도전 탭과 공통 문법) ----
   const backToHome = el("button", { class: "tab-back", attrs: { "aria-label": "학습 탭으로 돌아가기" }, html: icon("back", 19) });
