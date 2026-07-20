@@ -8,7 +8,7 @@ const page = await browser.newPage({ viewport: { width: 404, height: 900 }, devi
 await page.goto(`http://localhost:${PORT}/qa-hisfigs.html`, { waitUntil: "networkidle" });
 await page.waitForFunction(() => document.querySelectorAll(".card svg").length >= 35, undefined, { timeout: 15000 });
 await page.waitForTimeout(500);
-for (const label of ["yeonhoFig", "eastAsiaFig", "eastAsiaFig 기호판", "silverFlowFig", "searoutesFig marks", "triangleTradeFig"]) {
+for (const label of ["yeonhoFig", "eastAsiaFig", "eastAsiaFig 기호판", "silverFlowFig", "searoutesFig marks", "fourRiversFig labels", "fourRiversFig marks"]) {
   const card = page.locator(".card", { has: page.locator("h3", { hasText: new RegExp(`^${label}$`) }) }).first();
   await card.scrollIntoViewIfNeeded();
   await page.waitForTimeout(150);

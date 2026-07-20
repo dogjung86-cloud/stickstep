@@ -229,31 +229,40 @@ export function millenniumFig(): string {
 }
 
 /* ---------- 4대 문명 지도(파라미터형) ----------
-   단순화한 아프리카·유라시아 해안선 + 큰 강 4곳. hotspot 무대(labels=false)와
-   퀴즈 (가)~(라) 지목(marks=true)을 겸한다 — 라벨형 (가)(나) 문제는 shuffle:false 규약. */
+   실데이터판(2026-07-20 사용자 피드백 "강 위치를 더 정확히"): WORLD_LAND_PATH를 5~125°E × 52~−14°N
+   크롭(120:66 = 400:220 풀블리드, S=1.2)으로 임베드하고, 네 강을 실좌표 폴리라인으로 그린다 —
+   나일(수단 하르툼~델타 북류)·티그리스와 유프라테스(튀르키예 발원~샤트알아랍 합류)·
+   인더스(펀자브~카라치 남서류)·황허(오르도스 ㄇ자 대굽이~보하이). fx=(lon−5)×3.3333 · fy=(52−lat)×3.3333.
+   hotspot 무대(기본)와 퀴즈 (가)~(라) 지목(marks)을 겸한다 — 라벨형 문제는 shuffle:false 규약.
+   스팟·배지 % 검산(실좌표→%): 이집트(31.3,27.5)=(87.7,81.7)=21.9,37.1 · 메소포타미아(44,33)=(130,63.3)=32.5,28.8 ·
+   인더스(69,27)=(213.3,83.3)=53.3,37.9 · 황허(112,36.5)=(356.7,51.7)=89.2,23.5. */
 export function fourRiversFig(o?: { marks?: boolean; labels?: boolean }): string {
   const marks = o?.marks ?? false;
   const labels = o?.labels ?? false;
-  const name = (x: number, y: number, t: string): string =>
-    labels ? `<text x="${x}" y="${y}" text-anchor="middle" font-size="12" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">${t}</text>` : "";
-  const mk = (x: number, y: number, t: string): string =>
-    marks ? `<circle cx="${x}" cy="${y}" r="11" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="12" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${t}</text>` : "";
-  // 해안선 검산 메모(시각 감사 재발 방지): 아프리카 서쪽 불룩·기니만 홈·희망봉·아프리카의 뿔(152,128) →
-  // 수에즈(140,70)로 아시아와 연결, 홍해 사선 슬릿이 아라비아 반도(아덴 뾰족 174,138)를 가르고,
-  // 페르시아만 홈(206,104) 위가 메소포타미아 스팟(196,92), 인도 반도 삼각형 끝(262,186),
-  // 벵골만 홈 → 동남아 꼬리(310,168) → 중국 해안 → 황해 홈(354,96) → 북동 대륙. 유럽은 좌상단 부분만.
+  const fx = (lon: number): number => (lon - 5) * 3.3333;
+  const fy = (lat: number): number => (52 - lat) * 3.3333;
+  const river = (pts: [number, number][], w = 2.6): string =>
+    `<path d="M${pts.map(([ln, lt]) => `${fx(ln).toFixed(1)} ${fy(lt).toFixed(1)}`).join(" L")}" stroke="#3FA3AE" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
+  const name = (lon: number, lat: number, t: string): string =>
+    labels ? `<text x="${fx(lon).toFixed(1)}" y="${fy(lat).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="900" fill="#0A5964" stroke="#F2E7CE" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">${t}</text>` : "";
+  const mk = (lon: number, lat: number, t: string): string =>
+    marks ? `<circle cx="${fx(lon).toFixed(1)}" cy="${fy(lat).toFixed(1)}" r="11" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${fx(lon).toFixed(1)}" y="${(fy(lat) + 4).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${t}</text>` : "";
   return `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
-    aria-label="아프리카와 유라시아를 단순하게 그린 지도 위에 네 개의 큰 강 유역이 표시된 그림">
+    aria-label="아프리카와 아시아가 그려진 지도 위에 네 개의 큰 강이 표시된 그림">
+    <defs><clipPath id="hf-fr-clip"><rect x="0" y="0" width="400" height="220" rx="16"/></clipPath></defs>
     <rect x="0" y="0" width="400" height="220" rx="16" fill="#DCEFF6"/>
-    <path d="M20 10 L104 10 L118 26 L112 40 L84 48 L56 44 L34 46 L20 32 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M394 12 L394 44 L380 66 L368 88 L358 92 L354 104 L344 116 L330 126 L318 142 L314 168 L304 172 L300 156 L296 138 L286 128 L282 146 L272 170 L262 186 L252 168 L246 140 L240 122 L232 112 L222 108 L214 110 L206 104 L198 96 L190 100 L182 112 L174 138 L162 118 L150 98 L144 82 L140 70 L134 62 L126 60 L116 64 L106 62 L96 66 L84 62 L70 66 L54 74 L42 88 L34 106 L30 128 L36 146 L48 152 L60 148 L72 156 L84 176 L92 196 L100 208 L110 200 L114 178 L118 156 L126 142 L136 134 L146 132 L152 128 L148 116 L144 100 L148 88 L154 78 L160 72 L168 66 L178 60 L190 54 L204 50 L220 44 L238 38 L256 30 L276 24 L298 18 L322 14 L348 10 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M356 100 L366 106 L364 116 L356 112 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="1.6" stroke-linejoin="round"/>
-    <path d="M98 145 L100 118 L102 92 L104 62" stroke="#3FA3AE" stroke-width="4.5" stroke-linecap="round" fill="none"/>
-    <path d="M178 72 Q186 86 200 98 M190 64 Q196 82 206 98" stroke="#3FA3AE" stroke-width="4" stroke-linecap="round" fill="none"/>
-    <path d="M240 84 Q244 102 250 118" stroke="#3FA3AE" stroke-width="4.5" stroke-linecap="round" fill="none"/>
-    <path d="M316 74 Q334 70 340 82 Q332 90 344 94 L352 98" stroke="#3FA3AE" stroke-width="4.5" stroke-linecap="round" fill="none"/>
-    ${name(86, 158, "나일강")}${name(193, 130, "티그리스·유프라테스강")}${name(252, 200, "인더스강")}${name(310, 62, "황허강")}
-    ${mk(100, 76, "(가)")}${mk(194, 84, "(나)")}${mk(262, 150, "(다)")}${mk(346, 84, "(라)")}
+    <g clip-path="url(#hf-fr-clip)">
+      <path d="${WORLD_LAND_PATH}" transform="scale(1.2) translate(-513.889 -105.556)" fill="#F2E7CE" fill-rule="evenodd" stroke="#C4B28E" stroke-width="1.1" stroke-linejoin="round"/>
+    </g>
+    ${river([[32.5, 15.6], [33.6, 19.5], [32.9, 22.5], [32.9, 25], [31.3, 27.5], [31.2, 29.8], [30.4, 31.4]])}
+    ${river([[31.2, 29.8], [31.9, 31.3]], 2.2)}
+    ${river([[38.3, 38.5], [38, 36.2], [40.5, 35.5], [43.5, 34], [46, 31.9], [47.6, 31]])}
+    ${river([[41.2, 38.1], [43, 35.5], [45.5, 33.2], [47.6, 31]])}
+    ${river([[47.6, 31], [48.6, 29.9]])}
+    ${river([[76, 34.5], [73, 33.2], [71.3, 31], [70.5, 28.5], [68.3, 26], [67.4, 24.2]])}
+    ${river([[96.5, 35.2], [99.5, 35.8], [103, 36], [103.8, 38.5], [106.5, 39.5], [109.5, 40.4], [110.4, 38], [110.6, 35.2], [113.5, 34.9], [114.8, 35.8], [117.5, 36.9], [119, 37.7]])}
+    ${name(27, 20, "나일강")}${name(44.5, 26.8, "티그리스·")}${name(44.5, 22.6, "유프라테스강")}${name(78, 28, "인더스강")}${name(105, 31.5, "황허강")}
+    ${mk(31.3, 27.5, "(가)")}${mk(44, 33, "(나)")}${mk(69, 27, "(다)")}${mk(112, 36.5, "(라)")}
   </svg>`;
 }
 

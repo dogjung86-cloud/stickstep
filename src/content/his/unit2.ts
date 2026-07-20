@@ -651,10 +651,11 @@ export const H1_UNIT2: Unit = {
           lead: "지도의 반짝이는 곳을 탭하면 그 문명의 진짜 유산이 나타나요!",
           svg: fourRiversFig(),
           spots: [
-            { x: 25, y: 52, label: "이집트 문명", desc: "나일강 유역 · 기원전 3000년경. 폐쇄적 지형, 파라오의 신권 정치, 피라미드와 미라, 태양력·상형 문자.", photo: "photos/his/pyramid.webp", photoCredit: "위키미디어 커먼스", photoCap: "기자의 피라미드와 스핑크스" },
-            { x: 49, y: 42, label: "메소포타미아 문명", desc: "티그리스·유프라테스강 · 기원전 3500년경, 세계 최초. 개방적 지형, 지구라트, 쐐기 문자, 함무라비 법전.", photo: "photos/his/ziggurat.webp", photoCredit: "위키미디어 커먼스", photoCap: "우르의 지구라트" },
-            { x: 65, y: 55, label: "인도 문명", desc: "인더스강 유역 · 기원전 2500년경. 모헨조다로 계획 도시, 해독되지 않은 그림 문자, 뒷날 카스트제·브라만교.", photo: "photos/his/mohenjoseal.webp", photoCredit: "메트로폴리탄미술관, CC0", photoCap: "인더스 인장 — 그림 문자는 미해독" },
-            { x: 86, y: 42, label: "중국 문명", desc: "황허강 유역 · 기원전 2500년경. 상의 갑골문(한자의 기원), 청동 제사 도구, 주의 봉건제.", photo: "photos/his/oracle.webp", photoCredit: "위키미디어 커먼스", photoCap: "점친 내용을 새긴 갑골" },
+            // 스팟 % = fourRiversFig 실좌표 검산(hisFigures 주석 정본): x=(lon−5)×3.3333/4 · y=(52−lat)×3.3333/2.2
+            { x: 21.9, y: 37.1, label: "이집트 문명", desc: "나일강 유역 · 기원전 3000년경. 폐쇄적 지형, 파라오의 신권 정치, 피라미드와 미라, 태양력·상형 문자.", photo: "photos/his/pyramid.webp", photoCredit: "위키미디어 커먼스", photoCap: "기자의 피라미드와 스핑크스" },
+            { x: 32.5, y: 28.8, label: "메소포타미아 문명", desc: "티그리스·유프라테스강 · 기원전 3500년경, 세계 최초. 개방적 지형, 지구라트, 쐐기 문자, 함무라비 법전.", photo: "photos/his/ziggurat.webp", photoCredit: "위키미디어 커먼스", photoCap: "우르의 지구라트" },
+            { x: 53.3, y: 37.9, label: "인도 문명", desc: "인더스강 유역 · 기원전 2500년경. 모헨조다로 계획 도시, 해독되지 않은 그림 문자, 뒷날 카스트제·브라만교.", photo: "photos/his/mohenjoseal.webp", photoCredit: "메트로폴리탄미술관, CC0", photoCap: "인더스 인장 — 그림 문자는 미해독" },
+            { x: 89.2, y: 23.5, label: "중국 문명", desc: "황허강 유역 · 기원전 2500년경. 상의 갑골문(한자의 기원), 청동 제사 도구, 주의 봉건제.", photo: "photos/his/oracle.webp", photoCredit: "위키미디어 커먼스", photoCap: "점친 내용을 새긴 갑골" },
           ],
           explainGood: "네 문명 완주! 강 이름과 개성이 지도 위에서 딱 연결됐어요.",
           explainBad: "반짝이는 지점을 모두 탭해 네 문명의 자리와 개성을 확인해요 — 나일강, 티그리스·유프라테스강, 인더스강, 황허강!",
