@@ -12,10 +12,10 @@
 import { el } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
-import { wrongNoteList, recordWrongNote, resolveWrongNote, getViewSubject } from "../core/store";
+import { wrongNoteList, recordWrongNote, resolveWrongNote, getViewSubject, getViewGrade } from "../core/store";
 import type { WrongNote } from "../core/store";
-import { CURRICULA_OF, SUBJECT_LABEL, findLesson, subjectOfUnit } from "../content/curriculum";
-import type { SubjectId } from "../content/curriculum";
+import { CURRICULA_OF, SUBJECT_LABEL, GRADE_LABEL, findLesson, subjectOfUnit, gradeOfUnit } from "../content/curriculum";
+import type { SubjectId, GradeId } from "../content/curriculum";
 import { examById } from "../content/exams";
 import { stickAvatar } from "../ui/avatar";
 import type { Screen } from "../core/router";
@@ -84,6 +84,7 @@ export function notebookScreen(
 
   const body = el("div", { class: "scroll pad" });
   let subj: SubjectId = getViewSubject(); // 과목 필터 — 기본은 지금 학습 중인 과목
+  let grade: GradeId = getViewGrade(); // 학년 필터(2026-07-20 사용자 피드백) — 기본은 지금 보는 학년
   let tab: "open" | "done" = "open"; // 상태 탭 — 다시 풀 문제 ⇄ 해결한 문제(라이브러리)
   let unitSel = "all"; // 단원 필터 — "all"(전체) | unitId | ""(지난 콘텐츠)
 
@@ -122,7 +123,15 @@ export function notebookScreen(
     const subjects = (Object.keys(SUBJECT_LABEL) as SubjectId[]).filter((s) => bySubj.has(s));
     if (!subjects.includes(subj)) subj = subjects[0]; // 선택 과목에 오답이 없으면 있는 쪽으로
 
-    // ① 과목 세그 — 두 과목 모두 오답이 있을 때만(하나뿐이면 구분할 게 없다). 홈 학년 세그 스타일 재사용.
+    const units = bySubj.get(subj)!;
+    // 학년 후보 — 이 과목에서 오답이 있는 학년만. 원문 소실 노트("")는 학년을 모르니 학년 무관 항상 포함.
+    const gradesHere = (["g1", "g2"] as GradeId[]).filter((g) =>
+      [...units.entries()].some(([uid, arr]) => uid !== "" && gradeOfUnit(uid) === g && arr.length > 0),
+    );
+    if (gradesHere.length && !gradesHere.includes(grade)) grade = gradesHere[0];
+
+    // ① 필터 행 — 과목 세그(과목이 둘 이상) + 학년 세그(학년이 둘 다 있을 때). 홈 학년 세그 스타일 재사용.
+    const filters = el("div", { class: "nb-filters" });
     if (subjects.length > 1) {
       const seg = el("div", { class: "grade-seg nb-subjseg" });
       for (const s of subjects) {
@@ -137,11 +146,35 @@ export function notebookScreen(
         });
         seg.appendChild(b);
       }
-      body.appendChild(seg);
+      filters.appendChild(seg);
     }
+    if (gradesHere.length > 1) {
+      const gseg = el("div", { class: "grade-seg nb-subjseg" });
+      for (const g of gradesHere) {
+        const openN = [...units.entries()]
+          .filter(([uid]) => uid !== "" && gradeOfUnit(uid) === g)
+          .flatMap(([, arr]) => arr)
+          .filter((n) => !n.overcome).length;
+        const b = el("button", { class: `gseg ${g === grade ? "on" : ""}`, text: openN ? `${GRADE_LABEL[g]} ${openN}` : GRADE_LABEL[g] });
+        b.addEventListener("click", () => {
+          if (g === grade) return;
+          haptic(HAPTIC.tap);
+          grade = g;
+          unitSel = "all";
+          render();
+        });
+        gseg.appendChild(b);
+      }
+      filters.appendChild(gseg);
+    }
+    if (filters.childElementCount) body.appendChild(filters);
 
-    const units = bySubj.get(subj)!;
-    const mine = [...units.values()].flat();
+    // 현재 과목+학년 범위의 노트(소실 노트는 항상 포함)
+    const inGrade = (n: WrongNote): boolean => {
+      const uid = unitOf.get(n.key) ?? "";
+      return uid === "" || gradeOfUnit(uid) === grade;
+    };
+    const mine = [...units.values()].flat().filter(inGrade);
     const openAll = mine.filter((n) => !n.overcome);
     const doneAll = mine.filter((n) => n.overcome);
 
@@ -164,7 +197,7 @@ export function notebookScreen(
     //    단원이 하나뿐이면 고를 게 없으니 칩 행을 생략한다(전체 = 그 단원).
     const inTab = (n: WrongNote): boolean => (tab === "open" ? !n.overcome : n.overcome);
     const pool = mine.filter(inTab);
-    const unitsInTab = [...CURRICULA_OF[subj].g1, ...CURRICULA_OF[subj].g2].filter((u) => (units.get(u.id) ?? []).some(inTab));
+    const unitsInTab = CURRICULA_OF[subj][grade].filter((u) => (units.get(u.id) ?? []).some(inTab));
     const lostN = (units.get("") ?? []).filter(inTab).length;
     const avail = ["all", ...unitsInTab.map((u) => u.id), ...(lostN ? [""] : [])];
     if (!avail.includes(unitSel)) unitSel = "all";

@@ -4,12 +4,12 @@
 // 페이월 UI는 아래 카탈로그·요금표만 읽으므로 결제 수단이 바뀌어도 그대로 동작한다.
 import { setPremium } from "./store";
 
-/** 판매 과목 카탈로그 — 이용권 단위 = 학년×과목. icon은 core/icons.ts 키. */
+/** 판매 과목 카탈로그 — 이용권 단위 = 학년×과목. icon은 core/icons.ts 키.
+ *  중1 사회·역사는 콘텐츠가 있어도 판매 목록에서 일단 제외(2026-07-20 사용자 지시 — 추후 재추가). */
 export type SellableSubject = { id: string; name: string; icon: string };
 export const SELLABLE_SUBJECTS: SellableSubject[] = [
   { id: "sci-g1", name: "중1 과학", icon: "flask" },
   { id: "math-g1", name: "중1 수학", icon: "mathop" },
-  { id: "his-g1", name: "중1 역사", icon: "book" },
   { id: "sci-g2", name: "중2 과학", icon: "flask" },
   { id: "math-g2", name: "중2 수학", icon: "mathop" },
 ];

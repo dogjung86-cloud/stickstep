@@ -39,7 +39,7 @@ const attr = (name) => page.evaluate((n) => document.getElementById("sc-onestrok
 const BASE = {
   version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci",
   premium: true, reviewMode: false, goalMin: 10, streak: 0, lastStudyDay: null,
-  totalXp: 0, lifeXp: 0, lessons: {}, minigame: {}, exams: {}, wrongNotes: {},
+  totalXp: 100, lifeXp: 100, lessons: {}, minigame: {}, exams: {}, wrongNotes: {}, // 입장 20스텝 감당분(2026-07-20 입장료)
 };
 
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
@@ -147,12 +147,12 @@ const solvedPath = () => page.evaluate(() => window.__ostDev.path());
 await tracePath(await solvedPath());
 ok((await attr("ostPhase")) === "clear", "1판 클리어 판정");
 ok(await page.evaluate(() => document.querySelector("#sc-onestroke .ost-banner").classList.contains("on")), "완성 배너 표시");
-ok(await page.evaluate(() => document.querySelector("#sc-onestroke .ost-ban-sub").textContent.includes("+3 스틱")), "첫 클리어 보상 문구");
+ok(await page.evaluate(() => document.querySelector("#sc-onestroke .ost-ban-sub").textContent.includes("+3 스텝")), "첫 클리어 보상 문구");
 await shot("onestroke-clear1");
 await W(1700); // 자동 다음 판
 ok((await attr("ostStage")) === "2", "자동으로 2판 진입", await attr("ostStage"));
 let st = await store();
-ok(st.minigame.onestroke === 1 && st.totalXp === 3, "저장: 최고 1판·+3 스틱", JSON.stringify([st.minigame, st.totalXp]));
+ok(st.minigame.onestroke === 1 && st.totalXp === 83, "저장: 최고 1판·+3 스텝(입장 20 차감분 반영)", JSON.stringify([st.minigame, st.totalXp]));
 ok(await page.evaluate(() => document.querySelector("#sc-onestroke .mg-best").textContent.includes("최고 1판")), "최고 기록 필 갱신");
 
 // ── 2판(별): 떼고 이어 그리기 + 오시작 토스트 ────────────────
@@ -208,7 +208,7 @@ ok((await attr("ostPhase")) === "clear", "홀수점 시작으로 4판 클리어"
 await W(1700);
 ok((await attr("ostStage")) === "5", "5판 진입");
 st = await store();
-ok(st.minigame.onestroke === 4 && st.totalXp === 12, "저장: 최고 4판·스틱 12(3×4)", JSON.stringify([st.minigame, st.totalXp]));
+ok(st.minigame.onestroke === 4 && st.totalXp === 92, "저장: 최고 4판·스텝 12(3×4) 누적", JSON.stringify([st.minigame, st.totalXp]));
 
 // ── 스테퍼: 이전 판 재플레이는 보상 없음 ────────────────────
 await page.evaluate(() => document.querySelectorAll("#sc-onestroke .ost-nav")[0].click());
@@ -218,7 +218,7 @@ await tracePath(await solvedPath());
 ok(await page.evaluate(() => document.querySelector("#sc-onestroke .ost-ban-sub").textContent.includes("이미 깬")), "재플레이 배너 — 보상 없음 문구");
 await W(1700);
 st = await store();
-ok(st.minigame.onestroke === 4 && st.totalXp === 12, "재플레이는 스틱·기록 불변", JSON.stringify([st.minigame, st.totalXp]));
+ok(st.minigame.onestroke === 4 && st.totalXp === 92, "재플레이는 스텝·기록 불변", JSON.stringify([st.minigame, st.totalXp]));
 ok((await attr("ostStage")) === "5", "재플레이 후 다시 5판");
 
 // ── 나가기 → 도전 탭 복귀 ───────────────────────────────────

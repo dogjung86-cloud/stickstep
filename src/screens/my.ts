@@ -331,6 +331,13 @@ export function myScreen(o: {
     row({ ic: icon("user", 17), title: "계정 관리 · 로그인", onClick: () => o.onOpenAccount() }),
   );
 
+  // ---- 상단 뒤로가기(학습 탭 복귀, 2026-07-20 — 복습·도전 탭과 공통 문법) ----
+  const backToHome = el("button", { class: "tab-back", attrs: { "aria-label": "학습 탭으로 돌아가기" }, html: icon("back", 19) });
+  backToHome.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    o.onTab("home");
+  });
+
   // ---- 하단 법적 고지(스몰 프린트) — 방침 링크 + 사업자 표기(BIZ_INFO 채워지면 줄 생성) ----
   const polBtn = el("button", { class: "legal-link", text: "개인정보처리방침" });
   polBtn.addEventListener("click", () => {
@@ -343,7 +350,11 @@ export function myScreen(o: {
   const elm = el(
     "section",
     { class: "screen tabscr", attrs: { id: "sc-my" } },
-    el("div", { class: "tab-head" }, el("div", { class: "h1 sm", text: "마이" })),
+    el(
+      "div",
+      { class: "tab-head" },
+      el("div", { class: "tab-head-row" }, backToHome, el("div", { class: "h1 sm", text: "마이" })),
+    ),
     el("div", { class: "scroll" }, el("div", { class: "pad" }, prof, stats, menu, legal)),
     bar,
     scrim,

@@ -311,6 +311,25 @@ const mathView = await page.evaluate(() => ({
 ok(mathView.tabs[0] === "다시 풀 문제 1" && mathView.cards === 1 && mathView.src.includes("수와 연산"), "수학 = 1장(수와 연산 병기)", JSON.stringify(mathView));
 await shot("notebook-filter-math");
 
+// ═══════════ H. 학년 세그(2026-07-20) — 같은 과목의 중1+중2 오답 ═══════════
+console.log("H. 학년 세그 필터");
+await seed({
+  ...BASE,
+  wrongNotes: {
+    "l:u3l1:h1": note("l:u3l1:h1", "u3l1"), // 과학 · 중1 III 열
+    "l:g2u1l1:h2": note("l:g2u1l1:h2", "g2u1l1"), // 과학 · 중2 I 물질의 특성
+  },
+});
+await openNotebook();
+ok(await page.evaluate(() => document.querySelectorAll(".screen.active .nb-filters .grade-seg").length) === 1, "학년 세그 표시(과목 세그는 단일 과목이라 생략)");
+const gradeSeg = await page.evaluate(() => [...document.querySelectorAll(".screen.active .nb-subjseg .gseg")].map((b) => b.textContent));
+ok(gradeSeg[0] === "중1 1" && gradeSeg[1] === "중2 1", "학년 세그 라벨(중1 1 · 중2 1)", JSON.stringify(gradeSeg));
+ok(await page.evaluate(() => (document.querySelector(".screen.active .nb-card .nb-src")?.textContent ?? "").includes("열")), "기본 중1 — 열 단원 카드");
+await page.evaluate(() => [...document.querySelectorAll(".screen.active .nb-subjseg .gseg")].find((b) => b.textContent.startsWith("중2"))?.click());
+await W(350);
+ok(await page.evaluate(() => (document.querySelector(".screen.active .nb-card .nb-src")?.textContent ?? "").includes("물질의 특성")), "중2 전환 — 중2 단원 카드만");
+await shot("notebook-filter-grade");
+
 console.log(`\n결과: PASS ${PASS} / FAIL ${FAIL} / pageError ${pageErrors}`);
 await browser.close();
 process.exit(FAIL > 0 || pageErrors > 0 ? 1 : 0);

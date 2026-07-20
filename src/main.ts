@@ -34,7 +34,7 @@ import { examScreen } from "./screens/exam";
 import { weakDrillScreen } from "./screens/weakDrill";
 import { createLessonPlayer } from "./lessons/player";
 import { findLesson, isPremiumLocked } from "./content/curriculum";
-import { initAuth, onAuthChange, isPrivilegedUser } from "./core/auth";
+import { initAuth, onAuthChange, isPrivilegedUser, currentUser, isAuthConfigured } from "./core/auth";
 import { initSync } from "./core/sync";
 
 const frame = document.getElementById("frame")!;
@@ -44,8 +44,11 @@ nav.init(frame);
 let lastUnitId: string | undefined;
 // 새 레슨 첫 완료 귀환 시 홈 걷기 연출(README design/ "걷기 트리거 확정") — goHome이 1회 소비한다.
 let walkFromLessonId: string | undefined;
+// 현재 탭(하드웨어 뒤로가기 판단 근거) — goHome/goTab이 갱신한다.
+let currentTab: GnavKey = "home";
 
 function goHome(): void {
+  currentTab = "home";
   const walkFrom = walkFromLessonId;
   walkFromLessonId = undefined;
   nav.reset(homeScreen(openLesson, lastUnitId, { onSubjects: openSubjects, onOpenExam: openExam, onTab: goTab }, { walkFrom }));
@@ -53,6 +56,7 @@ function goHome(): void {
 
 /** 하단 탭 전환(2026-07-12 IA 개편) — 탭은 스택을 쌓지 않고 reset으로 갈아끼운다. */
 function goTab(k: GnavKey): void {
+  currentTab = k;
   if (k === "home") {
     goHome();
   } else if (k === "review") {
@@ -90,8 +94,43 @@ function goTab(k: GnavKey): void {
         onOpenPolicy: openPolicy,
       }),
     );
+    // 비로그인 유저의 마이 탭 = 로그인 유도 창구(2026-07-20 사용자 확정) — 마이 화면 위에
+    // 로그인 화면을 얹는다(닫으면 마이 화면). 스텁 모드(env 없음 — dev·e2e)는 로그인이 불가하니 생략.
+    if (isAuthConfigured() && !currentUser()) openLogin();
   }
 }
+
+// ── 안드로이드 하드웨어(브라우저) 뒤로가기 = 앱 내 뒤로가기(2026-07-20 사용자 피드백) ──
+// 가드 히스토리 상태 1개를 유지: 루트(학습 탭 홈)가 아니면 pushState로 back을 가로채 두고,
+// popstate가 오면 앱 내 이전 화면으로 이동한다. 루트에선 무장하지 않아(가드도 반납) 다음
+// back이 자연스럽게 사이트를 떠난다. Capacitor WebView의 하드웨어 back도 같은 경로를 탄다.
+let historyArmed = false;
+function armHistory(): void {
+  if (!historyArmed) {
+    history.pushState({ stickstep: true }, "");
+    historyArmed = true;
+  }
+}
+/** 앱 내 뒤로가기 — 스택이 쌓였으면 pop, 루트의 비홈 탭이면 학습 탭으로. 처리했으면 true. */
+function appBack(): boolean {
+  if (nav.depth > 1) {
+    nav.back();
+    return true;
+  }
+  if (getState().onboarded && currentTab !== "home") {
+    goTab("home");
+    return true;
+  }
+  return false;
+}
+window.addEventListener("popstate", () => {
+  historyArmed = false;
+  appBack(); // 이동이 일어나면 nav 변경 훅이 필요 시 다시 무장한다
+});
+nav.setOnChange(() => {
+  if (nav.depth > 1 || currentTab !== "home") armHistory();
+  else if (historyArmed) history.back(); // 루트 복귀 — 가드 상태를 조용히 반납(popstate는 루트라 no-op)
+});
 
 /** 오답노트 — 프리미엄 전용(복습 탭 콘텐츠 전면 프리미엄, 2026-07-15 사용자 확정).
  *  오답 "수집"은 무료 사용자도 계속된다(구매 순간 과거 오답이 이미 쌓여 있게) — 잠긴 건 열람·다시 풀기. */

@@ -102,13 +102,20 @@ export function reviewScreen(o: {
     tutorCard = prepCard("bulb", "질문하기", "막힌 문제를 사진과 함께 바로 물어봐요");
   }
 
+  // 상단 뒤로가기(학습 탭 복귀, 2026-07-20 — 도전·마이 탭과 공통 문법)
+  const backToHome = el("button", { class: "tab-back", attrs: { "aria-label": "학습 탭으로 돌아가기" }, html: icon("back", 19) });
+  backToHome.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    o.onTab("home");
+  });
+
   const elm = el(
     "section",
     { class: "screen tabscr", attrs: { id: "sc-review" } },
     el(
       "div",
       { class: "tab-head" },
-      el("div", { class: "h1 sm", text: "복습" }),
+      el("div", { class: "tab-head-row" }, backToHome, el("div", { class: "h1 sm", text: "복습" })),
       el("div", { class: "sub", text: "틀린 문제를 내 것으로 만드는 곳이에요." }),
     ),
     el(

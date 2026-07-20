@@ -42,7 +42,7 @@ const spawn = (t, x, y, still) =>
 const BASE = {
   version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci",
   premium: true, reviewMode: false, goalMin: 10, streak: 0, lastStudyDay: null,
-  totalXp: 0, lifeXp: 0, lessons: {}, minigame: {}, exams: {}, wrongNotes: {},
+  totalXp: 100, lifeXp: 100, lessons: {}, minigame: {}, exams: {}, wrongNotes: {}, // 입장 20스텝 감당분(2026-07-20 입장료)
 };
 // 시딩은 addInitScript(페이지 스크립트보다 먼저 — goto 후 evaluate+reload는 부팅 저장과 경합, 함정 ④)
 await page.addInitScript((s) => {
@@ -276,11 +276,11 @@ const sheet = await page.evaluate(() => {
 ok(sheet.on && sheet.reason === "우주가 가득 찼어요!", "게임오버 시트·사유", JSON.stringify(sheet.reason));
 ok(sheet.num === String(finalScore), "결과 점수 일치", `${sheet.num}/${finalScore}`);
 ok(sheet.max.includes("태양"), "이번 판 최고 천체 = 태양", sheet.max);
-ok(sheet.newOn && sheet.newText === `신기록! +${sticks} 스틱 · 첫 도전 2배`, "신기록·데일리 2배 스틱", `${sheet.newText} (기대 +${sticks})`);
+ok(sheet.newOn && sheet.newText === `신기록! +${sticks} 스텝 · 첫 도전 2배`, "신기록·데일리 2배 스텝", `${sheet.newText} (기대 +${sticks})`);
 ok(sheet.bestPill === `최고 ${finalScore}점`, "헤더 최고 기록 갱신", sheet.bestPill);
 const st1 = await store();
 ok(st1.minigame?.cosmo === finalScore, "store 최고 기록 저장", JSON.stringify(st1.minigame));
-ok(st1.totalXp === sticks && st1.lifeXp === sticks, "스틱 지급(갱신분/10 × 데일리 2배)", `${st1.totalXp}/${sticks}`);
+ok(st1.totalXp === 80 + sticks && st1.lifeXp === 100 + sticks, "입장 20 차감 + 스텝 지급(갱신분/10 × 데일리 2배)", `${st1.totalXp}/${80 + sticks}`);
 ok(await page.evaluate(() => localStorage.getItem("cmx.daily") !== null), "데일리 소진 기록");
 await shot("cosmo-over");
 
@@ -307,7 +307,7 @@ await page.evaluate(() => document.querySelector("#sc-cosmo .xbtn").click()); //
 await W(600);
 ok(await page.evaluate(() => !!document.querySelector("#sc-challenge") && !document.querySelector("#sc-cosmo")), "나가기 → 도전 탭 복귀·화면 정리");
 const st2 = await store();
-ok(st2.minigame?.cosmo === finalScore && st2.totalXp === sticks, "미갱신 이탈 시 기록·스틱 불변", `${st2.minigame?.cosmo}/${st2.totalXp}`);
+ok(st2.minigame?.cosmo === finalScore && st2.totalXp === 80 + sticks, "미갱신 이탈 시 기록·스텝 불변", `${st2.minigame?.cosmo}/${st2.totalXp}`);
 
 ok(pageErrors === 0, "페이지 에러 0", String(pageErrors));
 

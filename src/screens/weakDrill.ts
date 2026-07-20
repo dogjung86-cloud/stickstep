@@ -8,13 +8,14 @@ import { haptic, HAPTIC } from "../core/haptics";
 import { makeAnswerPad, checkAnswer } from "../ui/mathKit";
 import { examForUnit, drawExamItems } from "../content/exams";
 import type { ExamDef, ExamItem } from "../content/exams";
-import { CURRICULA, GRADE_LABEL, findLesson, gradeOfUnit } from "../content/curriculum";
-import type { Unit, GradeId } from "../content/curriculum";
+import { CURRICULA_OF, SUBJECT_LABEL, GRADE_LABEL, findLesson, gradeOfUnit } from "../content/curriculum";
+import type { Unit, GradeId, SubjectId } from "../content/curriculum";
 import type { Lesson } from "../lessons/types";
-import { wrongNoteList, recordWrongNote, resolveWrongNote, touchStudyActivity } from "../core/store";
+import { wrongNoteList, recordWrongNote, resolveWrongNote, touchStudyActivity, getViewSubject, getViewGrade } from "../core/store";
 import type { Screen } from "../core/router";
 
 interface DrillUnit {
+  subject: SubjectId;
   grade: GradeId;
   unit: Unit;
   def: ExamDef;
@@ -32,16 +33,19 @@ interface DrillQ {
 const CHECK = icon("check", 12);
 const GANADA = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ"];
 
-/** 문제 은행이 있는 과학 단원만 — 여기 없는 단원은 풀이 열리는 대로 자동 추가된다. */
+/** 문제 은행이 있는 단원만(전 과목·전 학년 스캔 — 2026-07-20 과목·학년 선택 도입).
+ *  여기 없는 과목·단원은 시험 풀이 열리는 대로 자동 추가된다(사회·역사도 등록만 하면 뜬다). */
 function drillUnits(): DrillUnit[] {
   const out: DrillUnit[] = [];
-  for (const grade of ["g1", "g2"] as GradeId[]) {
-    for (const unit of CURRICULA[grade]) {
-      const def = examForUnit(unit.id);
-      if (!def || def.pool.length === 0) continue;
-      const has = new Set(def.pool.map((it) => it.lessonId));
-      const lessons = unit.lessons.filter((l) => has.has(l.id));
-      if (lessons.length) out.push({ grade, unit, def, lessons });
+  for (const subject of Object.keys(CURRICULA_OF) as SubjectId[]) {
+    for (const grade of ["g1", "g2"] as GradeId[]) {
+      for (const unit of CURRICULA_OF[subject][grade]) {
+        const def = examForUnit(unit.id);
+        if (!def || def.pool.length === 0) continue;
+        const has = new Set(def.pool.map((it) => it.lessonId));
+        const lessons = unit.lessons.filter((l) => has.has(l.id));
+        if (lessons.length) out.push({ subject, grade, unit, def, lessons });
+      }
     }
   }
   return out;
@@ -147,9 +151,12 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
   }
 
   // ---- 소단원 고르기 ────────────────────────────────────────
-  const sel = new Set<string>(); // 담은 소단원(lessonId) — 단원을 넘나들며 담을 수 있다
+  const sel = new Set<string>(); // 담은 소단원(lessonId) — 과목·단원을 넘나들며 담을 수 있다(필터는 보기만 바꾼다)
   const openUnits = new Set<string>(); // 아코디언 펼침 상태(재렌더에도 유지)
   let count = 10; // 뽑을 문제 수(5·10·15)
+  // 과목·학년 필터(2026-07-20 사용자 피드백) — 기본은 지금 학습 중인 과목·학년
+  let subj: SubjectId = getViewSubject();
+  let pickGrade: GradeId = getViewGrade();
 
   function poolCountOfSel(): number {
     let n = 0;
@@ -173,6 +180,43 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
     wrap.appendChild(
       el("div", { class: "sub", text: "복습하고 싶은 소단원을 직접 골라 보세요. 고른 곳에서만 문제를 뽑아 나만의 문제지를 만들어요." }),
     );
+
+    // 과목·학년 세그(2026-07-20) — 문제 은행이 있는 과목·학년만 뜬다(사회·역사는 풀 등록 시 자동).
+    // 필터는 보기만 바꾼다 — 담아 둔 소단원(sel)은 과목을 오가도 유지되고 전부 함께 뽑힌다.
+    const subjectsAvail = [...new Set(UNITS.map((d) => d.subject))];
+    if (subjectsAvail.length && !subjectsAvail.includes(subj)) subj = subjectsAvail[0];
+    const gradesAvail = [...new Set(UNITS.filter((d) => d.subject === subj).map((d) => d.grade))];
+    if (gradesAvail.length && !gradesAvail.includes(pickGrade)) pickGrade = gradesAvail[0];
+    const filters = el("div", { class: "wd-filters" });
+    if (subjectsAvail.length > 1) {
+      const seg = el("div", { class: "grade-seg" });
+      for (const s of subjectsAvail) {
+        const b = el("button", { class: `gseg ${s === subj ? "on" : ""}`, text: SUBJECT_LABEL[s] });
+        b.addEventListener("click", () => {
+          if (s === subj) return;
+          haptic(HAPTIC.tap);
+          subj = s;
+          renderPick();
+        });
+        seg.appendChild(b);
+      }
+      filters.appendChild(seg);
+    }
+    if (gradesAvail.length > 1) {
+      const seg = el("div", { class: "grade-seg" });
+      for (const g of gradesAvail) {
+        const b = el("button", { class: `gseg ${g === pickGrade ? "on" : ""}`, text: GRADE_LABEL[g] });
+        b.addEventListener("click", () => {
+          if (g === pickGrade) return;
+          haptic(HAPTIC.tap);
+          pickGrade = g;
+          renderPick();
+        });
+        seg.appendChild(b);
+      }
+      filters.appendChild(seg);
+    }
+    if (filters.childElementCount) wrap.appendChild(filters);
 
     // 오답 있는 소단원 자동 담기 — 취약한 곳을 한 번에
     const weakIds: string[] = [];
@@ -207,15 +251,11 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
       setCTA(`문제 ${n}개 뽑기`, n > 0, () => startDrill(n));
     };
 
-    let lastGrade: GradeId | null = null;
-    for (const du of UNITS) {
-      if (du.grade !== lastGrade) {
-        lastGrade = du.grade;
-        wrap.appendChild(el("div", { class: "sec-head wd-sec", text: `${GRADE_LABEL[du.grade]} 과학` }));
-      }
-      wrap.appendChild(unitCard(du, wrong, paintCta));
-    }
-    wrap.appendChild(el("div", { class: "tab-footnote", text: "여기 없는 단원은 문제 은행이 준비되는 대로 추가돼요." }));
+    const shown = UNITS.filter((du) => du.subject === subj && du.grade === pickGrade);
+    wrap.appendChild(el("div", { class: "sec-head wd-sec", text: `${GRADE_LABEL[pickGrade]} ${SUBJECT_LABEL[subj]}` }));
+    for (const du of shown) wrap.appendChild(unitCard(du, wrong, paintCta));
+    if (!shown.length) wrap.appendChild(el("div", { class: "tab-footnote", text: "이 과목·학년은 문제 은행이 준비되는 대로 열려요." }));
+    wrap.appendChild(el("div", { class: "tab-footnote", text: "여기 없는 단원은 문제 은행이 준비되는 대로 추가돼요. 담아 둔 소단원은 과목을 오가도 유지돼요." }));
 
     // 푸터 — 문제 수 선택 + 뽑기
     const segRow = el("div", { class: "wd-count" }, el("span", { class: "wd-count-k", text: "문제 수" }));

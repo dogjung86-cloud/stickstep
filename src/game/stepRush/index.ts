@@ -121,7 +121,7 @@ export function stepRushScreen(o: { onExit: () => void }): Screen {
     { class: "srx-helper" },
     el("b", { text: "다음 계단이 앞이면 오르기, 반대쪽이면 방향 전환!" }),
     el("span", { text: "화면 왼쪽·오른쪽 반을 눌러도 돼요. 잘못 밟으면 추락!" }),
-    dailyAvail ? el("span", { class: "daily", text: "오늘 첫 기록 갱신은 스틱 2배!" }) : null,
+    dailyAvail ? el("span", { class: "daily", text: "오늘 첫 기록 갱신은 스텝 2배!" }) : null,
   );
   const toast = el("div", { class: "srx-toast", attrs: { role: "status" } });
 
@@ -254,7 +254,7 @@ export function stepRushScreen(o: { onExit: () => void }): Screen {
         window.localStorage.setItem(DAILY_KEY, todayStr());
       }
       awardXp(granted);
-      (ovNew.querySelector("span") as HTMLElement).textContent = `신기록! +${granted} 스틱${doubled ? " · 첫 도전 2배" : ""}`;
+      (ovNew.querySelector("span") as HTMLElement).textContent = `신기록! +${granted} 스텝${doubled ? " · 첫 도전 2배" : ""}`;
       ovNew.classList.add("on");
       sfx.best();
       haptic(HAPTIC.done);

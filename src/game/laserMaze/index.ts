@@ -226,7 +226,7 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
       bestPill.textContent = `최고 ${stageNo}판`;
     }
     banNum.textContent = `${stageNo}판 완성!`;
-    banSub.textContent = isNew ? `+${REWARD_XP} 스틱` : "이미 깬 판이에요";
+    banSub.textContent = isNew ? `+${REWARD_XP} 스텝` : "이미 깬 판이에요";
     banner.classList.add("on");
     bgm.duck(true); // 팬페어 동안 살짝 가라앉힘 — 다음 판 setStage가 복귀시킨다
     sfx.best();

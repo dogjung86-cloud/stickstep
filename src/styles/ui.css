@@ -1724,12 +1724,13 @@
 .nb-entry-go { color: var(--n400); display: grid; place-items: center; }
 
 .nb-htitle { font-size: 16px; font-weight: 800; color: var(--ink); text-align: center; }
-/* 필터형 탐색(2026-07-15) — 과목 세그(.grade-seg 재사용) → 상태 탭(다시 풀/해결) → 단원 칩 → 카드 */
-.nb-subjseg { margin: 0 0 10px; }
+/* 필터형 탐색(2026-07-15) — 과목·학년 세그(.grade-seg 재사용) → 상태 탭(다시 풀/해결) → 단원 칩 → 카드 */
+.nb-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 10px; }
+.nb-subjseg { margin: 0; }
 .nb-tabs { margin: 0 0 12px; }
 .nb-tabs button { height: 40px; font-size: 13.5px; }
-.nb-uchips { display: flex; gap: 7px; overflow-x: auto; padding: 2px 2px 12px; scrollbar-width: none; }
-.nb-uchips::-webkit-scrollbar { display: none; }
+/* 단원 칩은 줄바꿈 나열(2026-07-20) — 가로 스크롤은 데스크톱에서 굴릴 수단이 없어 "안 된다"로 읽힌다 */
+.nb-uchips { display: flex; flex-wrap: wrap; gap: 7px; padding: 2px 2px 12px; }
 .nb-uchip {
   flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 8px 13px; border-radius: 999px;
   background: var(--n0); border: 1px solid var(--n200); font-size: 13px; font-weight: 700; color: var(--n600);
@@ -2788,9 +2789,37 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .prep-pill.gold { display: inline-flex; align-items: center; gap: 3.5px; color: #8A5A00; background: linear-gradient(180deg, #FFF6E0, #FFEDC2); border: 1px solid #F0D48A; }
 .prep-pill.gold svg { color: var(--gold); }
 
+/* 도전 탭 "쉬는 시간" — 강조 헤더(배지형 타이틀 + 보유 스텝 잔고) + 입장 스텝 필(2026-07-20) */
+.play-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 22px 2px 0; }
+.play-title {
+  display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px;
+  background: var(--grad-blue, linear-gradient(135deg, #3182F6, #5B9DF9)); color: #fff;
+  font-size: 14px; font-weight: 900; letter-spacing: -.012em; box-shadow: var(--sh-card);
+}
+.play-title-ic { display: grid; place-items: center; color: #FFE9B8; }
+.play-bal {
+  display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 999px;
+  background: var(--n0); border: 1px solid var(--n200); font-size: 12px; font-weight: 700; color: var(--n600);
+  box-shadow: var(--sh-card); white-space: nowrap;
+}
+.play-bal b { font-weight: 900; color: var(--ink); }
+.play-bal svg { color: var(--blue); }
+.play-note { margin: 9px 4px 0; font-size: 12px; line-height: 1.55; color: var(--n500); word-break: keep-all; }
+.prep-pill.fee { display: inline-flex; align-items: center; gap: 3px; color: #1B64DA; background: var(--blue-tint); border: 1px solid #C9DCFB; }
+.prep-pill.fee svg { color: var(--blue); }
+
+/* 탭 상단 뒤로가기(복습·도전·마이 — 학습 탭 복귀, 2026-07-20) */
+.tab-head-row { display: flex; align-items: center; gap: 10px; }
+.tab-back {
+  display: grid; place-items: center; width: 34px; height: 34px; border-radius: 12px;
+  background: var(--n100); color: var(--n600); flex: none; transition: transform .12s var(--ease);
+}
+.tab-back:active { transform: scale(.92); }
+
 /* 소단원 고르기 */
 .wd-pick .sub { margin-top: 6px; font-size: 13.5px; line-height: 1.55; color: var(--n600); word-break: keep-all; }
 .wd-pick .sec-head { padding: 18px 2px 8px; }
+.wd-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 2px; }
 .wd-auto { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; padding: 10px 15px; border-radius: 99px; background: linear-gradient(180deg, #FFF6E0, #FFEDC2); border: 1px solid #F0D48A; color: #8A5A00; font-size: 13px; font-weight: 800; box-shadow: var(--sh-card); transition: transform .12s var(--spring-soft); }
 .wd-auto:active { transform: scale(.96); }
 .wd-auto-ic { display: grid; place-items: center; color: var(--gold); }

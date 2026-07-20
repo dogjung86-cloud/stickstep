@@ -13,6 +13,8 @@ const TRANSITION = 360;
 class Nav {
   private frame!: HTMLElement;
   private stack: Screen[] = [];
+  // 화면 전환 알림(main.ts 하드웨어 뒤로가기 히스토리 무장용) — go/replace/back/reset 후 호출.
+  private onChange: (() => void) | null = null;
 
   init(frame: HTMLElement): void {
     this.frame = frame;
@@ -22,6 +24,15 @@ class Nav {
     return this.stack[this.stack.length - 1];
   }
 
+  /** 스택 깊이 — 1이면 루트 화면(하드웨어 뒤로가기 판단 근거). */
+  get depth(): number {
+    return this.stack.length;
+  }
+
+  setOnChange(fn: (() => void) | null): void {
+    this.onChange = fn;
+  }
+
   /** 새 화면으로 이동(뒤로가기 스택에 쌓음). */
   go(screen: Screen): void {
     stopAllLoops();
@@ -29,6 +40,7 @@ class Nav {
     this.mountEnter(screen, false);
     if (prev) this.hide(prev.el); // 스택에 남기되 숨김
     this.stack.push(screen);
+    this.onChange?.();
   }
 
   /** 현재 화면을 교체(스택 크기 유지). */
@@ -38,6 +50,7 @@ class Nav {
     this.mountEnter(screen, false);
     if (prev) this.leave(prev, false);
     this.stack.push(screen);
+    this.onChange?.();
   }
 
   /** 뒤로가기. */
@@ -51,6 +64,7 @@ class Nav {
     void prev.el.offsetWidth;
     prev.el.classList.add("active");
     this.leave(cur, true);
+    this.onChange?.();
   }
 
   /** 스택을 비우고 단일 화면으로 리셋(홈 복귀 등). */
@@ -63,6 +77,7 @@ class Nav {
     this.stack = [];
     this.mountEnter(screen, false);
     this.stack.push(screen);
+    this.onChange?.();
   }
 
   private mountEnter(screen: Screen, rev: boolean): void {

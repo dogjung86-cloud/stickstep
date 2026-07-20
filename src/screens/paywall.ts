@@ -157,7 +157,7 @@ export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlo
     el(
       "div",
       { class: "pwx-cinc" },
-      inc("<strong>새 단원이 나오면 무료로 열려요</strong> · 업데이트 비용 없음"),
+      inc("<strong>새로운 콘텐츠가 추가되어도 모두 무료</strong> · 업데이트 비용 없음"),
       inc("로그인하면 어느 기기에서나 이어서 이용해요"),
     ),
   );

@@ -41,7 +41,7 @@ const store = () => page.evaluate(() => JSON.parse(localStorage.getItem("science
 const BASE = {
   version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci",
   premium: true, reviewMode: false, goalMin: 10, streak: 0, lastStudyDay: null,
-  totalXp: 0, lifeXp: 0, lessons: {}, minigame: {}, exams: {}, wrongNotes: {},
+  totalXp: 100, lifeXp: 100, lessons: {}, minigame: {}, exams: {}, wrongNotes: {}, // 입장 20스텝 × 3회 진입 감당분
 };
 
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
@@ -62,6 +62,7 @@ ok(await page.$("#btn-steprush"), "스텝 러시 카드 존재");
 await page.evaluate(() => document.getElementById("btn-steprush").click());
 await page.waitForSelector("#sc-steprush", { timeout: 4000 });
 await W(600); // 동적 import + 루프 시작(setTimeout 0) 여유
+ok((await store()).totalXp === 80, "입장 스텝 20 차감(100 → 80)", String((await store()).totalXp));
 const boot = await page.evaluate(() => {
   const h = document.getElementById("sc-steprush");
   const cv = h.querySelector(".srx-cv");
@@ -150,11 +151,11 @@ const over = await page.evaluate(() => {
 ok(over.phase === "over" && over.sheetOn, "낙하 → 게임오버 시트", JSON.stringify(over));
 ok(over.reason === "발을 헛디뎠어요!", "낙하 사유(방향 실수)", over.reason);
 ok(over.num === "16", "결과 점수 16");
-ok(over.newOn && over.newText === "신기록! +32 스틱 · 첫 도전 2배", "신기록·데일리 2배 문구", over.newText);
+ok(over.newOn && over.newText === "신기록! +32 스텝 · 첫 도전 2배", "신기록·데일리 2배 문구", over.newText);
 ok(over.bestPill === "최고 16계단", "헤더 최고 기록 갱신", over.bestPill);
 const st1 = await store();
 ok(st1.minigame?.steprush === 16, "store 최고 기록 저장", JSON.stringify(st1.minigame));
-ok(st1.totalXp === 32 && st1.lifeXp === 32, "갱신분 16 × 데일리 2배 = 32 스틱", `${st1.totalXp}/${st1.lifeXp}`);
+ok(st1.totalXp === 112 && st1.lifeXp === 132, "입장 20 차감 + 갱신분 16×2배 지급(잔고 112·누적 132)", `${st1.totalXp}/${st1.lifeXp}`);
 ok(await page.evaluate(() => localStorage.getItem("srx.daily") !== null), "데일리 소진 기록");
 await shot("steprush-over-newbest");
 
@@ -190,9 +191,9 @@ const tired = await page.evaluate(() => {
   };
 });
 ok(tired.phase === "over" && tired.reason === "숨이 다 찼어요!", "스태미나 소진 낙하", JSON.stringify(tired));
-ok(!tired.newOn, "기록 미갱신이면 스틱 없음");
+ok(!tired.newOn, "기록 미갱신이면 스텝 없음");
 const st2 = await store();
-ok(st2.minigame?.steprush === 16 && st2.totalXp === 32, "미갱신 시 기록·스틱 불변(1차 판 32 유지)", `${st2.minigame?.steprush}/${st2.totalXp}`);
+ok(st2.minigame?.steprush === 16 && st2.totalXp === 112, "미갱신 시 기록·스텝 불변(재도전은 무료 — 잔고 112 유지)", `${st2.minigame?.steprush}/${st2.totalXp}`);
 
 // ── 나가기 → 도전 탭 복귀 ──────────────────────────────────
 await page.evaluate(() => {
@@ -265,10 +266,10 @@ const m3over = await page.evaluate(() => {
   };
 });
 ok(m3over.num === lastState.score, "정산 점수 일치", JSON.stringify(m3over));
-ok(m3over.newText === `신기록! +${lastState.score - 60} 스틱`, "갱신분만 지급(2배 없음 — 데일리 소진됨)", m3over.newText);
+ok(m3over.newText === `신기록! +${lastState.score - 60} 스텝`, "갱신분만 지급(2배 없음 — 데일리 소진됨)", m3over.newText);
 ok(!m3over.unlockOn, "해금 배너는 문턱 통과 판에만");
 const st3 = await store();
-ok(st3.minigame?.steprush === lastState.score && st3.totalXp === 32 + (lastState.score - 60), "store 정합(기록·스틱)", `${st3.minigame?.steprush}/${st3.totalXp}`);
+ok(st3.minigame?.steprush === lastState.score && st3.totalXp === 92 + (lastState.score - 60), "store 정합(재진입 입장료 20 차감 + 갱신분)", `${st3.minigame?.steprush}/${st3.totalXp}`);
 await shot("steprush-m3-over");
 
 // ── [M4] 최고 250 시딩 → 방패·모래시계 픽업/세이브/프리즈 ──────
@@ -347,13 +348,30 @@ const m4over = await page.evaluate(() => {
   };
 });
 ok(m4over.phase === "over" && m4over.sheetOn, "M4 판 정산 시트", JSON.stringify(m4over));
-ok(!m4over.newOn, "최고 250 미달이라 스틱 없음");
+ok(!m4over.newOn, "최고 250 미달이라 스텝 없음");
 await page.evaluate(() => {
   const btns = document.querySelectorAll("#sc-steprush .srx-abtn");
   btns[btns.length - 1].click();
 });
 await W(600);
 ok(await page.evaluate(() => !!document.querySelector("#sc-challenge") && !document.querySelector("#sc-steprush")), "M4 종료 → 도전 탭 복귀");
+
+// ── 입장 스텝 부족 — 카드 탭이 게임을 열지 않고 안내 스낵(2026-07-20 입장료 도입) ──
+await page.evaluate(() => {
+  const s = JSON.parse(localStorage.getItem("science-app.v1"));
+  s.totalXp = 5;
+  localStorage.setItem("science-app.v1", JSON.stringify(s));
+});
+await page.reload({ waitUntil: "networkidle" });
+await W(1200);
+await page.evaluate(() => document.querySelectorAll(".screen.active nav button")[2].click());
+await W(400);
+ok(await page.evaluate(() => document.querySelector(".play-bal b")?.textContent) === "5", "쉬는 시간 헤더 잔고 표시(5)");
+await page.evaluate(() => document.getElementById("btn-steprush").click());
+await W(800);
+ok(await page.evaluate(() => !document.querySelector("#sc-steprush") && !!document.querySelector("#sc-challenge")), "스텝 부족 — 게임이 열리지 않음");
+ok(await page.evaluate(() => document.querySelector("#sc-challenge .snack")?.classList.contains("show")), "부족 안내 스낵 표시");
+ok((await store()).totalXp === 5, "부족 시 차감 없음");
 
 ok(pageErrors === 0, "페이지 에러 0", String(pageErrors));
 

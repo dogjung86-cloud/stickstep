@@ -108,7 +108,7 @@ export function cosmoScreen(o: { onExit: () => void }): Screen {
     { class: "cmx-helper" },
     el("b", { text: "같은 천체끼리 만나면 더 큰 천체로 합체!" }),
     el("span", { text: "끌어서 겨누고, 놓으면 떨어져요. 위 점선을 넘치면 끝!" }),
-    dailyAvail ? el("span", { class: "daily", text: "오늘 첫 기록 갱신은 스틱 2배!" }) : null,
+    dailyAvail ? el("span", { class: "daily", text: "오늘 첫 기록 갱신은 스텝 2배!" }) : null,
   );
   const toast = el("div", { class: "cmx-toast", attrs: { role: "status" } });
 
@@ -299,7 +299,7 @@ export function cosmoScreen(o: { onExit: () => void }): Screen {
       }
       awardXp(sticks);
       const sp = ovNew.querySelector("span") as HTMLElement;
-      sp.textContent = `신기록! +${sticks} 스틱${doubled ? " · 첫 도전 2배" : ""}`;
+      sp.textContent = `신기록! +${sticks} 스텝${doubled ? " · 첫 도전 2배" : ""}`;
       ovNew.classList.add("on");
       sfx.best();
       haptic(HAPTIC.done);
