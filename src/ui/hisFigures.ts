@@ -5,6 +5,19 @@
 
 import { WORLD_LAND_PATH } from "./worldMap.generated";
 
+/* ---------- 곡선 화살표 공용 ----------
+   머리를 곡선 끝 접선(tip−마지막 제어점)에 정렬하고, 대시와 분리된 "실선 별도 패스"로 그린다 —
+   대시 패턴이 머리 획까지 조각내 회전된 것처럼 보이던 실사고의 재발 방지(2026-07-20 사용자 피드백). */
+function arrowHead(tipX: number, tipY: number, fromX: number, fromY: number, color: string, w: number, len = 8.5): string {
+  const back = Math.atan2(tipY - fromY, tipX - fromX) + Math.PI;
+  const p = (a: number): string => `${(tipX + len * Math.cos(a)).toFixed(1)} ${(tipY + len * Math.sin(a)).toFixed(1)}`;
+  return `<path d="M${p(back - 0.44)} L${tipX} ${tipY} L${p(back + 0.44)}" stroke="${color}" stroke-width="${w}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+function qArrow(x0: number, y0: number, cx: number, cy: number, x1: number, y1: number, color: string, o?: { w?: number; dash?: string; head?: number }): string {
+  const w = o?.w ?? 2.6;
+  return `<path d="M${x0} ${y0} Q ${cx} ${cy} ${x1} ${y1}" stroke="${color}" stroke-width="${w}" fill="none" stroke-linecap="round"${o?.dash ? ` stroke-dasharray="${o.dash}"` : ""}/>${arrowHead(x1, y1, cx, cy, color, w, o?.head)}`;
+}
+
 /* ---------- 사관 그림 — 같은 인물, 서로 다른 두 기록 ---------- */
 export function sagwanFig(): string {
   return `<svg viewBox="0 0 400 210" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
@@ -503,9 +516,9 @@ export function eastAsiaFig(o?: { labels?: boolean }): string {
     <g clip-path="url(#hf-ea-clip)">
       <path d="${WORLD_LAND_PATH}" transform="scale(${S.toFixed(4)}) translate(-766.667 -105.556)" fill="#F2E7CE" fill-rule="evenodd" stroke="#C4B28E" stroke-width="0.65" stroke-linejoin="round"/>
     </g>
-    <path d="M207 107 Q 160 99 114 118 m9 -6 l-9 6 10 3" stroke="#0E7C8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
-    <path d="M200 55 Q 152 70 110 104 m10 -4 l-10 4 10 5" stroke="#0E7C8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
-    <path d="M266 123 Q 207 164 148 141 m10 -2 l-10 2 8 6" stroke="#0E7C8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
+    ${qArrow(207, 107, 160, 99, 114, 118, "#0E7C8A", { w: 2.2, dash: "5 4" })}
+    ${qArrow(200, 55, 152, 70, 110, 104, "#0E7C8A", { w: 2.2, dash: "5 4" })}
+    ${qArrow(266, 123, 207, 164, 148, 141, "#0E7C8A", { w: 2.2, dash: "5 4" })}
     ${name(108.9, 34.3, "당", "(가)")}${name(126.5, 45.5, "발해", "(나)")}${name(127.6, 35.8, "신라", "(다)")}${name(138.6, 36.4, "일본", "(라)")}
     ${lab ? `<text x="${ex(122.8).toFixed(1)}" y="${ey(38.6).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0A5964" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">사신 · 유학생 · 승려</text>` : ""}
     <g font-family="Pretendard, sans-serif" font-size="12.5" font-weight="900" text-anchor="middle">
@@ -675,74 +688,86 @@ export function bakufuFig(o?: { hide?: number }): string {
   </svg>`;
 }
 
-/* ---------- 16~17세기 은의 이동(태평양 중심 지도) ----------
-   미래엔 113쪽 「16~17세기 세계 은의 유통」 구도 계승 — 왼쪽 유라시아·오른쪽 아메리카 사이의
-   태평양을 은이 건넌다. 화살표: 포토시→마닐라→중국(태평양) · 이와미→중국 · 유럽→중국(바닷길) +
-   중국→유럽으로 나가는 비단·도자기·차. 해안선은 단순화 러프(정확 지도가 아니라 흐름도). */
+/* ---------- 16~17세기 은의 이동(태평양 중심 실세계지도) ----------
+   미래엔 113쪽 「16~17세기 세계 은의 유통」 구도 — 실데이터판(2026-07-20): WORLD_LAND_PATH 360° 전폭을
+   경도 −10°(대서양) 절단 태평양 중심으로 임베드(+1000 사본 합성 = gpgpFig 문법. 아메리카·그린란드는
+   사본에서, 유라시아·아프리카는 원본에서 온다). px/°=1.1111 · x=(lonU+10)×1.1111(lonU: −10 미만은
+   +360) · y=(90−lat)×1.1111+10, 남극은 클립 안 바다색 덮개(y172~)로 생략. 화살표: 포토시→마닐라→
+   명·청(태평양 갈레온) · 이와미→명·청 · 유럽→아시아 바닷길(대시) + 명·청→유럽 비단·도자기·차 —
+   전부 arrowHead 접선 정렬. 라벨 실좌표 앵커: 포토시(−65.75,−19.6)·마닐라(121,14.6)·이와미(132.3,35.2). */
 export function silverFlowFig(): string {
+  const px = (lon: number): number => ((lon < -10 ? lon + 360 : lon) + 10) * 1.1111;
+  const py = (lat: number): number => (90 - lat) * 1.1111 + 10;
+  const dot = (lon: number, lat: number, r: number): string =>
+    `<circle cx="${px(lon).toFixed(1)}" cy="${py(lat).toFixed(1)}" r="${r}" fill="#8A96A6" stroke="#4A5668" stroke-width="1.4"/>`;
   return `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
-    aria-label="왼쪽 대륙과 오른쪽 대륙 사이의 바다를 가로질러 여러 방향의 화살표가 오가는 교역 흐름 지도">
+    aria-label="태평양을 가운데 둔 세계 지도 위로 여러 방향의 화살표가 오가는 교역 흐름 지도">
+    <defs><clipPath id="hf-sv-clip"><rect x="0" y="0" width="400" height="220" rx="16"/></clipPath></defs>
     <rect x="0" y="0" width="400" height="220" rx="16" fill="#DCEFF6"/>
-    <path d="M6 26 L60 18 L96 26 L128 22 L150 34 L158 52 L150 72 L140 90 L128 104 L112 96 L100 108 L92 128 L80 138 L64 130 L48 136 L28 128 L14 132 L6 120 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M96 26 l10 -12 M60 18 l-8 -8" stroke="#C4B28E" stroke-width="1.6"/>
-    <path d="M168 58 L178 48 L186 60 L178 72 z M172 84 L182 78 L188 90 L178 96 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="1.8" stroke-linejoin="round"/>
-    <path d="M150 118 L160 112 L166 122 L156 130 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="1.8" stroke-linejoin="round"/>
-    <path d="M394 16 L342 22 L310 34 L296 52 L302 72 L312 84 L306 100 L316 112 L330 124 L322 142 L328 162 L318 184 L308 196 L300 178 L296 156 L302 136 L292 122 L286 104 L294 88 L286 72 L292 52 L286 38 L318 26 L358 16 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round" transform="translate(0 2)"/>
-    <text x="52" y="66" text-anchor="middle" font-size="12" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">유럽 방면</text>
-    <text x="128" y="66" text-anchor="middle" font-size="13" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">명 · 청</text>
-    <text x="192" y="42" text-anchor="middle" font-size="11" font-weight="800" fill="#5E4626" font-family="Pretendard, sans-serif">이와미 은광</text>
-    <circle cx="180" cy="58" r="3.4" fill="#8A96A6" stroke="#4A5668" stroke-width="1.4"/>
-    <text x="150" y="146" text-anchor="middle" font-size="11" font-weight="800" fill="#5E4626" font-family="Pretendard, sans-serif">마닐라</text>
-    <circle cx="157" cy="122" r="3.4" fill="#8A96A6" stroke="#4A5668" stroke-width="1.4"/>
-    <text x="330" y="70" text-anchor="middle" font-size="12" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">아메리카</text>
-    <circle cx="318" cy="168" r="4" fill="#8A96A6" stroke="#4A5668" stroke-width="1.6"/>
-    <text x="352" y="180" text-anchor="middle" font-size="11" font-weight="800" fill="#5E4626" font-family="Pretendard, sans-serif">포토시 은광</text>
-    <path d="M310 164 Q 230 178 168 130 m10 8 l-10 -8 12 -3" stroke="#5E6A7A" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="238" y="184" text-anchor="middle" font-size="12.5" font-weight="900" fill="#3E4864" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">은</text>
-    <path d="M150 116 Q 142 104 138 96 m1 9 l-1 -9 8 3" stroke="#5E6A7A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M174 62 q-14 10 -26 16 m9 -1 l-9 1 4 -8" stroke="#5E6A7A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="176" y="80" text-anchor="middle" font-size="12.5" font-weight="900" fill="#3E4864" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">은</text>
-    <path d="M44 90 Q 84 178 128 116 m-1 10 l1 -10 -9 4" stroke="#5E6A7A" stroke-width="2.6" fill="none" stroke-dasharray="6 5" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="76" y="160" text-anchor="middle" font-size="12.5" font-weight="900" fill="#3E4864" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">은</text>
-    <path d="M112 40 Q 80 30 52 38 m8 -5 l-8 5 9 4" stroke="#C2843A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="82" y="24" text-anchor="middle" font-size="11" font-weight="800" fill="#8F5A1D" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">비단 · 도자기 · 차</text>
-    <text x="200" y="212" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">세계의 은이 상품값으로 오간 16~17세기의 바닷길</text>
+    <g clip-path="url(#hf-sv-clip)">
+      <g transform="scale(0.4) translate(-472.222 25)">
+        <path d="${WORLD_LAND_PATH}" fill="#F2E7CE" fill-rule="evenodd" stroke="#C4B28E" stroke-width="1.1" stroke-linejoin="round"/>
+        <path d="${WORLD_LAND_PATH}" transform="translate(1000 0)" fill="#F2E7CE" fill-rule="evenodd" stroke="#C4B28E" stroke-width="1.1" stroke-linejoin="round"/>
+      </g>
+      <rect x="0" y="172" width="400" height="48" fill="#DCEFF6"/>
+    </g>
+    ${qArrow(334, 130, 240, 158, 152, 98, "#5E6A7A", { w: 2.8 })}
+    ${qArrow(143, 91, 139, 87, 134, 83, "#5E6A7A", { w: 2.4, head: 6.5 })}
+    ${qArrow(156, 73, 150, 80, 143, 79, "#5E6A7A", { w: 2.4, head: 6.5 })}
+    <path d="M28 68 Q 20 110 28 146 Q 40 176 84 130 Q 110 100 134 84" stroke="#5E6A7A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-dasharray="6 5"/>
+    ${arrowHead(134, 84, 110, 100, "#5E6A7A", 2.4, 7.5)}
+    <path d="M136 80 Q 104 92 78 122 Q 48 160 24 138 Q 15 110 23 66" stroke="#C2843A" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    ${arrowHead(23, 66, 15, 110, "#C2843A", 2.4, 7.5)}
+    ${dot(132.3, 35.2, 3.4)}${dot(121, 14.6, 3.4)}${dot(-65.75, -19.6, 4)}
+    <text x="34" y="60" text-anchor="middle" font-size="12" font-weight="900" fill="#4A3410" stroke="#F2E7CE" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">유럽 방면</text>
+    <text x="133" y="73" text-anchor="middle" font-size="13" font-weight="900" fill="#4A3410" stroke="#F2E7CE" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">명 · 청</text>
+    <text x="196" y="66" text-anchor="middle" font-size="11" font-weight="800" fill="#5E4626" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">이와미 은광</text>
+    <text x="140" y="109" text-anchor="middle" font-size="11" font-weight="800" fill="#5E4626" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">마닐라</text>
+    <text x="300" y="63" text-anchor="middle" font-size="12" font-weight="900" fill="#4A3410" stroke="#F2E7CE" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">아메리카</text>
+    <text x="322" y="150" text-anchor="middle" font-size="11" font-weight="800" fill="#5E4626" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">포토시 은광</text>
+    <text x="238" y="152" text-anchor="middle" font-size="12.5" font-weight="900" fill="#3E4864" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">은</text>
+    <text x="56" y="158" text-anchor="middle" font-size="12.5" font-weight="900" fill="#3E4864" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">은</text>
+    <text x="162" y="92" text-anchor="middle" font-size="12.5" font-weight="900" fill="#3E4864" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">은</text>
+    <text x="88" y="148" text-anchor="middle" font-size="11" font-weight="800" fill="#8F5A1D" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">비단 · 도자기 · 차</text>
+    <text x="200" y="210" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">세계의 은이 상품값으로 오간 16~17세기의 바닷길</text>
   </svg>`;
 }
 
 /* ---------- 신항로 개척 지도(파라미터형 — Ⅳ 기함 hotspot 무대) ----------
-   worldReligionsFig 계보를 아메리카까지 확장한 러프 세계 지도 + 항로 3(콜럼버스·바스쿠 다 가마·
-   마젤란). 마젤란 항로는 교과서처럼 왼쪽 가장자리로 나가 오른쪽 가장자리로 이어진다(태평양 분할).
-   marks=true면 항로에 (가)(나)(다) 배지 인쇄(라벨형 문제는 shuffle:false — 항로 이름은 문제 몫).
-   hotspot 스팟 % 검산(viewBox 400×220): 서인도 제도(104,102)=26,46.4 · 멕시코 고원(84,88)=21,40 ·
-   안데스(97,164)=24.3,74.5 · 희망봉(203,186)=50.8,84.5 · 캘리컷(287,120)=71.8,54.5. */
+   실데이터판(2026-07-20): WORLD_LAND_PATH를 대서양 중심 크롭(−120~100°E × 66~−55°N — 220:121 =
+   400:220 풀블리드, 사본 불요)으로 임베드. px/°=1.81818 · x=(lon+120)×1.81818 · y=(66−lat)×1.81818.
+   항로 3: 콜럼버스(앰버)·바스쿠 다 가마(틸)·마젤란 일행(바이올렛 대시 — 왼쪽 가장자리로 나가
+   오른쪽 가장자리로 재진입, 귀환로가 희망봉을 돌아 출발지로 닿는 세계 일주 루프). 경유점은 전부
+   해안 밖 좌표 검산(대륙 관통 금지), 머리는 arrowHead 접선 정렬.
+   marks=true면 (가)(나)(다) 배지 — (가)=콜럼버스·(나)=다 가마·(다)=마젤란(퀴즈 정답 결합 유지).
+   hotspot 스팟 % 검산(실좌표→%): 서인도 제도(−72,19)=(87.3,85.5)=21.8,38.9 ·
+   멕시코 고원(−99.1,19.4)=(38.0,84.7)=9.5,38.5 · 잉카/쿠스코(−71.97,−13.53)=(87.3,144.6)=21.8,65.7 ·
+   희망봉(18.5,−34.5)=(251.8,182.7)=63.0,83.0 · 캘리컷(75.8,11.25)=(356.0,99.5)=89.0,45.2. */
 export function searoutesFig(o?: { marks?: boolean }): string {
   const mk = (x: number, y: number, t: string): string =>
     o?.marks ? `<circle cx="${x}" cy="${y}" r="11" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="12" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${t}</text>` : "";
   return `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
-    aria-label="여러 대륙을 단순하게 그린 세계 지도 위로 서로 다른 색의 항로 세 개가 그려진 그림">
+    aria-label="여러 대륙이 그려진 세계 지도 위로 서로 다른 색의 항로 세 개가 그려진 그림">
+    <defs><clipPath id="hf-sr-clip"><rect x="0" y="0" width="400" height="220" rx="16"/></clipPath></defs>
     <rect x="0" y="0" width="400" height="220" rx="16" fill="#DCEFF6"/>
-    <path d="M8 22 L48 14 L84 20 L112 30 L118 46 L106 60 L96 74 L104 86 L96 100 L84 96 L74 84 L58 78 L40 70 L22 62 L8 52 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M96 100 L110 108 L118 124 L112 146 L104 166 L96 186 L88 200 L82 184 L78 162 L82 140 L88 120 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M170 62 L176 44 L188 34 L182 24 L196 14 L232 12 L252 20 L268 16 L288 22 L282 34 L268 38 L276 46 L292 42 L302 48 L294 56 L278 56 L266 62 L256 58 L246 64 L256 44 L238 40 L226 48 L230 58 L218 64 L204 58 L192 64 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M170 64 L186 68 L196 78 L204 92 L212 108 L216 128 L212 150 L206 170 L200 186 L192 178 L184 158 L178 136 L174 112 L168 90 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M266 62 L282 60 L296 66 L302 78 L296 94 L288 108 L284 122 L278 112 L272 96 L268 80 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M302 48 L330 40 L358 36 L384 40 L394 52 L390 70 L378 84 L362 92 L344 96 L330 104 L318 96 L308 84 L304 68 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M330 104 L342 112 L352 124 L344 134 L332 126 z M356 108 L368 104 L376 114 L366 122 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="1.8" stroke-linejoin="round"/>
-    <path d="M346 118 L352 112 L358 120 L352 126 z" fill="#EFE6D2" stroke="#C4B28E" stroke-width="1.4" stroke-linejoin="round"/>
-    <text x="196" y="52" text-anchor="middle" font-size="11.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">유럽</text>
-    <text x="196" y="120" text-anchor="middle" font-size="11.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">아프리카</text>
-    <text x="344" y="66" text-anchor="middle" font-size="11.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">아시아</text>
-    <text x="58" y="48" text-anchor="middle" font-size="11" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">북아메리카</text>
-    <text x="118" y="170" text-anchor="middle" font-size="11" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">남아메리카</text>
-    <path d="M182 70 Q 140 84 108 100 m9 -6 l-9 6 10 3" stroke="#C2843A" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M186 74 Q 142 128 198 190 Q 213 200 232 186 Q 264 162 284 128 m-2 10 l2 -10 -10 4" stroke="#0E7C8A" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M182 76 Q 148 150 122 186 Q 108 206 66 208 L 10 200 M 394 150 Q 372 132 352 122 m4 9 l-4 -9 10 1" stroke="#7C6BFF" stroke-width="2.6" fill="none" stroke-dasharray="7 5" stroke-linecap="round" stroke-linejoin="round"/>
-    ${mk(126, 92, "(가)")}${mk(232, 152, "(나)")}${mk(60, 200, "(다)")}
-    <circle cx="104" cy="102" r="4" fill="#C0392B" stroke="#84281E" stroke-width="1.4"/>
-    <circle cx="203" cy="186" r="4" fill="#0E7C8A" stroke="#0A5964" stroke-width="1.4"/>
-    <circle cx="287" cy="120" r="4" fill="#0E7C8A" stroke="#0A5964" stroke-width="1.4"/>
-    <circle cx="352" cy="120" r="4" fill="#7C6BFF" stroke="#4A3EA8" stroke-width="1.4"/>
+    <g clip-path="url(#hf-sr-clip)">
+      <path d="${WORLD_LAND_PATH}" transform="scale(0.6545) translate(-166.667 -66.667)" fill="#F2E7CE" fill-rule="evenodd" stroke="#C4B28E" stroke-width="0.8" stroke-linejoin="round"/>
+    </g>
+    <text x="236" y="33" text-anchor="middle" font-size="11.5" font-weight="900" fill="#4A3410" stroke="#F2E7CE" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">유럽</text>
+    <text x="254" y="102" text-anchor="middle" font-size="11.5" font-weight="900" fill="#4A3410" stroke="#F2E7CE" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">아프리카</text>
+    <text x="364" y="56" text-anchor="middle" font-size="11.5" font-weight="900" fill="#4A3410" stroke="#F2E7CE" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">아시아</text>
+    <text x="36" y="38" text-anchor="middle" font-size="11" font-weight="900" fill="#4A3410" stroke="#F2E7CE" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">북아메리카</text>
+    <text x="105" y="150" text-anchor="middle" font-size="11" font-weight="900" fill="#4A3410" stroke="#F2E7CE" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">남아메리카</text>
+    ${qArrow(206, 54, 150, 64, 96, 82, "#C2843A", { w: 2.8 })}
+    <path d="M202 51 Q 178 78 190 108 Q 205 148 250 179 Q 296 186 326 146 Q 348 116 355 104" stroke="#0E7C8A" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+    ${arrowHead(355, 104, 348, 116, "#0E7C8A", 2.8)}
+    <path d="M207 56 Q 172 100 156 140 Q 143 172 120 196 Q 104 212 91 216 Q 50 214 0 196" stroke="#7C6BFF" stroke-width="2.6" fill="none" stroke-dasharray="7 5" stroke-linecap="round"/>
+    <path d="M400 150 Q 344 172 300 194 Q 256 210 226 178 Q 202 152 202 116 Q 198 78 205 60" stroke="#7C6BFF" stroke-width="2.6" fill="none" stroke-dasharray="7 5" stroke-linecap="round"/>
+    ${arrowHead(205, 60, 198, 78, "#7C6BFF", 2.6)}
+    ${mk(150, 64, "(가)")}${mk(312, 160, "(나)")}${mk(138, 170, "(다)")}
+    <circle cx="87.3" cy="85.5" r="4" fill="#C0392B" stroke="#84281E" stroke-width="1.4"/>
+    <circle cx="251.8" cy="182.7" r="4" fill="#0E7C8A" stroke="#0A5964" stroke-width="1.4"/>
+    <circle cx="356" cy="99.5" r="4" fill="#0E7C8A" stroke="#0A5964" stroke-width="1.4"/>
   </svg>`;
 }
 

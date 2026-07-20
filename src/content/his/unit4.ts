@@ -1640,11 +1640,12 @@ export const H1_UNIT4: Unit = {
           lead: "세 항해가 지난 자리들을 탭해 새 뱃길의 세계를 탐험해요!",
           svg: searoutesFig(),
           spots: [
-            { x: 26, y: 46.4, label: "서인도 제도", desc: "1492년 콜럼버스가 도착한 곳 — 인도라고 믿었지만 유럽인이 몰랐던 대륙, 아메리카의 문턱이었어요.", photo: "photos/his/caravel.webp", photoCredit: "위키미디어 커먼스", photoCap: "콜럼버스의 기함 산타마리아호를 복원한 배예요" },
-            { x: 21, y: 40, label: "아스테카 문명", desc: "멕시코 고원의 아스테카 제국 — 호수 위 계획 도시 테노치티틀란을 세운 독자적 문명이에요.", photo: "photos/his/aztec.webp", photoCredit: "메트로폴리탄미술관, CC0", photoCap: "아스테카의 유물 — 독자적 문명의 솜씨예요" },
-            { x: 24.3, y: 74.5, label: "잉카 문명", desc: "안데스산맥의 잉카 제국 — 해발 2,430m에 돌로 지은 도시 마추픽추가 그 유산이에요.", photo: "photos/his/machu.webp", photoCredit: "Tomas Sobek, CC0", photoCap: "마추픽추 — 잉카의 뛰어난 건축 기술" },
-            { x: 50.8, y: 84.5, label: "희망봉", desc: "아프리카의 남쪽 끝 — 바스쿠 다 가마는 이곳을 돌아 인도로 가는 동쪽 항로를 열었어요.", photo: "photos/his/goodhope.webp", photoCredit: "위키미디어 커먼스", photoCap: "대서양과 인도양이 만나는 길목이에요" },
-            { x: 71.8, y: 54.5, label: "캘리컷", desc: "인도의 향신료 무역항 — 유럽인들이 그토록 원하던 후추의 고향에 뱃길이 닿았어요.", photo: "photos/his/pepper2.webp", photoCredit: "위키미디어 커먼스", photoCap: "은값이던 검은 알갱이, 후추" },
+            // 스팟 % = searoutesFig 실좌표 검산(hisFigures 주석 정본): x=(lon+120)×1.81818/4 · y=(66−lat)×1.81818/2.2
+            { x: 21.8, y: 38.9, label: "서인도 제도", desc: "1492년 콜럼버스가 도착한 곳 — 인도라고 믿었지만 유럽인이 몰랐던 대륙, 아메리카의 문턱이었어요.", photo: "photos/his/caravel.webp", photoCredit: "위키미디어 커먼스", photoCap: "콜럼버스의 기함 산타마리아호를 복원한 배예요" },
+            { x: 9.5, y: 38.5, label: "아스테카 문명", desc: "멕시코 고원의 아스테카 제국 — 호수 위 계획 도시 테노치티틀란을 세운 독자적 문명이에요.", photo: "photos/his/aztec.webp", photoCredit: "메트로폴리탄미술관, CC0", photoCap: "아스테카의 유물 — 독자적 문명의 솜씨예요" },
+            { x: 21.8, y: 65.7, label: "잉카 문명", desc: "안데스산맥의 잉카 제국 — 해발 2,430m에 돌로 지은 도시 마추픽추가 그 유산이에요.", photo: "photos/his/machu.webp", photoCredit: "Tomas Sobek, CC0", photoCap: "마추픽추 — 잉카의 뛰어난 건축 기술" },
+            { x: 63, y: 83, label: "희망봉", desc: "아프리카의 남쪽 끝 — 바스쿠 다 가마는 이곳을 돌아 인도로 가는 동쪽 항로를 열었어요.", photo: "photos/his/goodhope.webp", photoCredit: "위키미디어 커먼스", photoCap: "대서양과 인도양이 만나는 길목이에요" },
+            { x: 89, y: 45.2, label: "캘리컷", desc: "인도의 향신료 무역항 — 유럽인들이 그토록 원하던 후추의 고향에 뱃길이 닿았어요.", photo: "photos/his/pepper2.webp", photoCredit: "위키미디어 커먼스", photoCap: "은값이던 검은 알갱이, 후추" },
           ],
           explainGood: "탐험 완료! 서인도 제도부터 캘리컷까지 — 대서양과 인도양이 하나의 뱃길로 이어진 세계를 확인했어요.",
           explainBad: "반짝이는 다섯 곳을 모두 탭해 봐요 — 콜럼버스의 서인도 제도, 아스테카·잉카 문명, 희망봉, 그리고 후추의 캘리컷까지!",

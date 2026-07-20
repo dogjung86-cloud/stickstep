@@ -1748,12 +1748,18 @@ src/
   지도류는 바다색 #DCEFF6 할로). 눈검수는 public/qa-hisfigs.html(전 그림 렌더 시트) +
   `PORT=<포트> node qa/shot-hisfigs.mjs`(스크롤 분할 샷, 요소 확대는 shot-hisfigs-zoom.mjs) —
   새 역사 그림도 이 시트에 등록 후 검수.
-- **나라 단위 지도는 실데이터(2026-07-20 사용자 피드백 "당·신라·발해가 뭉뚝하다")**: eastAsiaFig가
-  WORLD_LAND_PATH(Natural Earth 110m equirect) 동아시아 크롭(96~154°E × 20~52°N, ex=(lon−96)×6.8966 ·
-  ey=(52−lat)×6.8966)으로 전환 — 사회 트랙 "대륙 손그리기 금지" 원칙의 역사판 첫 사례. 나라 라벨은
-  실좌표 앵커(당=장안·발해=상경 일대·신라=경주권·일본=혼슈)로 계산 배치. 이후 역사 지도 신작도
-  나라·반도가 식별돼야 하면 이 문법(크롭+clipPath+실좌표 라벨)을 쓴다 — 대륙 스케일 러프 개념도
-  (silkroad·searoutes·silverFlow류)는 흐름도라 기존 유지.
+- **역사 지도는 실데이터(2026-07-20 사용자 피드백 "당·신라·발해가 뭉뚝하다" — 확장 전환 완료)**:
+  eastAsiaFig(동아시아 크롭 96~154°E × 20~52°N, ex=(lon−96)×6.8966) · silverFlowFig(태평양 중심 —
+  경도 −10° 대서양 절단 + WORLD_LAND_PATH translate(1000 0) 사본 합성 = gpgpFig 문법, 남극은 클립 안
+  바다색 덮개로 생략) · searoutesFig(대서양 중심 −120~100°E × 66~−55°N 풀블리드 — 220:121이 400:220과
+  일치해 사본 불요)가 전부 WORLD_LAND_PATH(Natural Earth 110m equirect)로 전환 — 사회 트랙 "대륙
+  손그리기 금지" 원칙의 역사판. 라벨·항구 점은 실좌표 앵커 계산 배치(눈대중 금지), 항로 경유점은
+  해안 밖 좌표 검산. **searoutesFig 개편 시 unit4 hotspot 스팟 %를 실좌표 검산으로 반드시 동기화**
+  (hisFigures 주석의 스팟 검산표가 정본). 남은 러프 개념도는 fourRivers·worldReligions(위치 개념도)와
+  silkroad(장면화)뿐 — 이후 지도 신작은 실데이터 문법이 기본. **곡선 화살표는 arrowHead/qArrow 공용
+  헬퍼**: 머리를 끝 접선(tip−마지막 제어점)에 정렬하고 대시와 분리된 실선 별도 패스로 — 대시 패턴이
+  머리 획까지 조각내 회전돼 보이던 실사고(2026-07-20)의 재발 방지. 인라인 `m.. l..` 수제 화살촉을
+  대시 패스에 잇는 저작은 금지.
 - **h1u1 구성(5레슨 = 무료 3+프리미엄 2)**: L1 역사의 의미(만화 기함+사실/기록 binSort) · L2 학습 목적
   (목적 4통 binSort) · L3 사료(실사 binSort+사료 비판) · L4 시간 읽기(timelineLab 기함+세기 드릴, prem) ·
   L5 탐구 절차(만화+order, prem). 훅 5종 hookHis.ts(saveicon 저장 아이콘=플로피·gamechar 게임 속 실존
