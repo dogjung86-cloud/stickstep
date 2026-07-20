@@ -1996,6 +1996,18 @@ src/
   선생님 연출(comic·hook·recap의 stickAvatar/AvatarKind)은 프로필과 별개 체계로 불변.
 - **과제 배너**: 학급(코드) 소속 + 과제가 있을 때만 홈 상단에 렌더할 예정(후속 교사 기능) — 개별 유저에겐 안 뜬다.
 
+## 데스크톱 셸 (≥1024px — 2026-07-20 방향 확정 B, 1단계 완료·레일 미작업)
+- **방향 = B 대시보드 3칼럼**(사용자 확정): 좌측 사이드바 + 중앙 콘텐츠 칼럼 + 홈 우측 위젯 레일.
+  1단계(집중 칼럼형)는 구현 완료 — **styles/desktop.css 단일 시트 + main.ts import 한 줄**이 전부
+  (기기 프레임 해제, gnav → 좌측 사이드바 224px, 홈·탭 중앙 칼럼 660, 레슨·시험 풀스크린은 집중 모드
+  칼럼 760 + .stepWrap 660). 콘텐츠 코드 무수정, 모바일(<1024px)·e2e(420px 뷰포트)·Capacitor 불변.
+- **다음 작업 = 홈 우측 위젯 레일**(스트릭·보유 스텝·오답 대기·이어서 학습, ≥1280px에서만) —
+  위젯 데이터 소스·구현 형태·함정 기록은 **design/desktop-shell.md**(인수인계 문서)가 정본,
+  시안 목업 5종은 design/desktop-variants.html(브라우저로 열면 렌더. C 상단 GNB·E 폰 프레임 기각,
+  D 투페인은 랩 스텝 한정 후속 후보).
+- 함정: .btn은 inline-block이라 auto 마진 중앙 정렬 불가(display:block 명시), 무대만 캡하면 아래
+  컨트롤과 축이 어긋남(.stepWrap 통칼럼 캡이 정답).
+
 ## 미니게임 (도전 탭 "쉬는 시간" — 스텝 러시·코스모 머지·네온 한붓그리기·레이저 미로)
 - **구조**: 게임 코드는 같은 리포 **동적 import**(iframe 기각 — three 규칙과 동일). 진입·프리미엄
   게이트는 main.ts `openStepRush`/`openCosmoMerge`/`openOneStroke`/`openLaserMaze`가 소유(잠금 →

@@ -1,0 +1,104 @@
+/* ---------- 데스크톱 셸(≥1024px) — 2026-07-20 샘플 ----------
+ * 원칙: 콘텐츠(스텝 렌더러·랩·퀴즈)는 무수정, 껍데기만 재배치한다.
+ *  · 기기 프레임(402px 폰 목업) 해제 → 풀블리드 앱
+ *  · 하단 탭바(gnav) → 좌측 세로 사이드바(워드마크 + 4탭)
+ *  · 홈·탭 화면 = 사이드바 + 중앙 콘텐츠 칼럼(~660px)
+ *  · 레슨·시험 등 풀스크린 화면 = 사이드바 없는 집중 모드, 중앙 칼럼(~760px)
+ *  · 다크 무대(.stage)·CTA·시트는 모바일 설계 폭을 캡으로 유지(늘리면 튜닝이 깨진다)
+ * e2e(420px 뷰포트)는 브레이크포인트 아래라 무영향. */
+@media (min-width: 1024px) {
+  /* 기기 프레임 해제 */
+  #frame {
+    max-width: none;
+    height: 100dvh;
+    border-radius: 0;
+    border: 0;
+    box-shadow: none;
+  }
+
+  /* ---------- 좌측 사이드바(gnav 재배치) ---------- */
+  .gnav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 224px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 4px;
+    padding: 26px 16px;
+    border-top: 0;
+    border-right: 1px solid var(--n200);
+    background: var(--n0);
+  }
+  .gnav::before {
+    content: "스틱스텝";
+    display: block;
+    padding: 4px 14px 26px;
+    font-size: 21px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--blue);
+  }
+  .gnav-item {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    flex: none;
+  }
+  .gnav-item.on { background: var(--blue-tint); }
+  .gnav-tx { font-size: 14.5px; font-weight: 800; }
+
+  /* ---------- 사이드바가 있는 화면(홈·복습·도전·마이): 본문을 오른쪽으로 + 중앙 칼럼 ---------- */
+  #sc-home,
+  .tabscr { padding-left: 224px; }
+  #sc-home .appbar,
+  #sc-home .scroll > * {
+    width: 100%;
+    max-width: 660px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .tabscr .tab-head,
+  .tabscr .scroll > .pad {
+    width: 100%;
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ---------- 풀스크린 화면(레슨·시험·페이월·오답노트 등): 중앙 칼럼 집중 모드 ---------- */
+  .screen:not(.tabscr):not(#sc-home) > .lheader,
+  .screen:not(.tabscr):not(#sc-home) > .obhead,
+  .screen:not(.tabscr):not(#sc-home) > .scroll,
+  .screen:not(.tabscr):not(#sc-home) > .footer {
+    width: 100%;
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* 스텝 콘텐츠는 한 칼럼(660)로 통일 — 무대·슬라이더·보기·본문이 같은 축에 정렬된다.
+   * 랩 무대는 이 칼럼 폭(패딩 제외 ~620)까지만 커져 모바일 튜닝이 유지된다. */
+  .stepWrap { width: 100%; max-width: 660px; margin-left: auto; margin-right: auto; }
+
+  /* CTA는 손가락 폭이 아니라 시선 폭 — 칼럼 안에서 적당한 너비로.
+   * button 기본 display는 inline-block이라 auto 마진이 안 먹는다 → block 명시. */
+  .footer .btn.cta { display: block; max-width: 520px; margin-left: auto; margin-right: auto; }
+
+  /* 바텀 시트·스낵 — 데스크톱에선 중앙 플로팅 카드로 */
+  .sheet {
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .sheet-card { border-radius: var(--r-2xl); margin-bottom: 20px; }
+  .snack {
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

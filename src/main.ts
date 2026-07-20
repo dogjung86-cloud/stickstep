@@ -11,6 +11,7 @@ import "./styles/tutor.css";
 import "./styles/game.css";
 import "./styles/soc.css";
 import "./styles/his.css";
+import "./styles/desktop.css"; // 데스크톱 셸(≥1024px) — 캐스케이드 최후순위로 모바일 규칙을 덮는다
 
 import { nav } from "./core/router";
 import { getState, completeLesson, setViewSubject, isPremium, isReviewMode, setPremiumOverride, isDone } from "./core/store";
