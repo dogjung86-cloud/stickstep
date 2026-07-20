@@ -678,6 +678,9 @@ export function homeScreen(
    * 걷기 연출(레슨 첫 완료 귀환의 보상) — 홈 안착 ~300ms 뒤, 도착 노드가 화면 밖이면 스크롤-인 후 시작.
    * 8fps 두 포즈 플립북(125ms — 스플래시 리듬) + 24px마다 진한 도장 + 도착 시 idle 복귀(=깃발 플랜팅)와
    * arriving 해제(테마색 점등). 고정 2.1s: 경로 길이(125~148px)와 무관하게 보상 시간이 일정하다.
+   * 진행 방향 응시(2026-07-21 사용자 피드백): 도착 노드가 왼쪽이면 걷는 동안 .face-l(scaleX 반전)로
+   * 왼쪽을 보고 걷는다 — 이웃 노드는 STEP_PATTERN이 |Δx| ≥ 33px를 보장하므로 걸음 전체 한 방향 고정이
+   * 안전(프레임별 dx 판정은 세로 구간에서 지터). idle(깃발 플랜팅) 복귀 시 기본 방향(오른쪽)으로 되돌린다.
    */
   function startWalk(o: {
     svgEl: SVGSVGElement;
@@ -713,6 +716,7 @@ export function homeScreen(
     const land = (): void => {
       // 도착: idle 복귀(깃발 플랜팅) + 워커를 %-left로 재고정(리사이즈 안전) + 도착 노드 해금 점등
       pose("idle");
+      o.walker.classList.remove("face-l"); // 깃발 플랜팅은 기본 방향(오른쪽) — 정지 워커와 표정 일치
       o.walker.style.left = `${((o.dest.x / o.W) * 100).toFixed(3)}%`;
       o.walker.style.top = `${o.dest.y + 8}px`;
       o.destNode.classList.remove("arriving");
@@ -747,6 +751,8 @@ export function homeScreen(
       });
       const t0 = performance.now();
       const DUR = 2100;
+      // 도착 노드가 출발점보다 왼쪽이면 왼쪽을 보고 걷는다(항상 오른쪽만 보던 것 수정)
+      o.walker.classList.toggle("face-l", o.dest.x < wp.getPointAtLength(0).x);
       pose("pa");
       poseTimer = window.setInterval(() => pose(Math.floor((performance.now() - t0) / 125) % 2 ? "pb" : "pa"), 125);
       const step = (now: number): void => {

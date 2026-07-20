@@ -2986,6 +2986,8 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .gm-walker { position: absolute; z-index: 4; width: 0; height: 0; pointer-events: none; }
 /* 0×0 부모 함정 방지: 명시 크기 + 발 앵커(viewBox 0,0) 고정 확대(1.13×) */
 .gm-walker svg { position: absolute; left: -23px; top: -62px; width: 46px; height: 66px; overflow: visible; transform: scale(1.13); transform-origin: 23px 62px; }
+/* 걷기 방향 응시(2026-07-21) — 왼쪽 노드로 걸을 땐 발 앵커(origin 23px=중심) 기준 좌우 반전. home.ts begin()이 소유 */
+.gm-walker.face-l svg { transform: scale(1.13) scaleX(-1); }
 
 /* ---------- 발자국 도장·펄스·바운스 — reduced-motion은 정지 상태 유지 ---------- */
 @media (prefers-reduced-motion: no-preference) {
