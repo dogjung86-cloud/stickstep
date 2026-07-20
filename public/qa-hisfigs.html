@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>hisFigures 텍스트 격상 검수 시트</title>
+<style>
+  body { margin: 0; padding: 16px; background: #edf1f5; font-family: Pretendard, -apple-system, sans-serif; }
+  .col { width: 372px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+  /* 앱 실렌더 근사: c-figure-art(패딩 16) 안 svg width:100% — 폰 372px 카드 기준 */
+  .card { background: #fff; border-radius: 16px; border: 1px solid #e3e9f0; padding: 16px; }
+  .card h3 { margin: 0 0 8px; font-size: 12px; font-weight: 700; color: #8b95a1; }
+  .card svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="col" id="root"></div>
+<script type="module">
+import {
+  sagwanFig, centuryStripFig, tamguFlowFig, yeonhoFig, millenniumFig, fourRiversFig,
+  casteFig, romeFlowFig, jejaFig, silkroadFig, worldReligionsFig, feudalFig, threeSixFig,
+  eastAsiaFig, islamFlowFig, songPressFig, yuanClassFig, bakufuFig, silverFlowFig,
+  searoutesFig, triangleTradeFig,
+} from "/src/ui/hisFigures.ts";
+
+const F = [
+  ["yuanClassFig", yuanClassFig()],
+  ["yuanClassFig hide=1", yuanClassFig({ hide: 1 })],
+  ["casteFig", casteFig()],
+  ["casteFig hide=0", casteFig({ hide: 0 })],
+  ["feudalFig", feudalFig()],
+  ["feudalFig hide=3", feudalFig({ hide: 3 })],
+  ["bakufuFig", bakufuFig()],
+  ["bakufuFig hide=0", bakufuFig({ hide: 0 })],
+  ["songPressFig", songPressFig()],
+  ["songPressFig hide=yo", songPressFig({ hide: "yo" })],
+  ["romeFlowFig", romeFlowFig()],
+  ["romeFlowFig hide=3", romeFlowFig({ hide: 3 })],
+  ["tamguFlowFig", tamguFlowFig()],
+  ["tamguFlowFig hide=1", tamguFlowFig({ hide: 1 })],
+  ["threeSixFig", threeSixFig()],
+  ["threeSixFig hide=1", threeSixFig({ hide: 1 })],
+  ["islamFlowFig", islamFlowFig()],
+  ["islamFlowFig hide=2", islamFlowFig({ hide: 2 })],
+  ["jejaFig names", jejaFig({ names: true })],
+  ["jejaFig 기호판", jejaFig()],
+  ["sagwanFig", sagwanFig()],
+  ["yeonhoFig", yeonhoFig()],
+  ["centuryStrip -4..4 mark -3", centuryStripFig({ start: -4, end: 4, mark: -3 })],
+  ["centuryStrip 10..17 mark 15", centuryStripFig({ start: 10, end: 17, mark: 15 })],
+  ["millenniumFig", millenniumFig()],
+  ["fourRiversFig marks", fourRiversFig({ marks: true })],
+  ["fourRiversFig labels", fourRiversFig({ labels: true })],
+  ["silkroadFig", silkroadFig()],
+  ["worldReligionsFig marks", worldReligionsFig({ marks: true })],
+  ["eastAsiaFig", eastAsiaFig()],
+  ["eastAsiaFig 기호판", eastAsiaFig({ labels: false })],
+  ["silverFlowFig", silverFlowFig()],
+  ["searoutesFig marks", searoutesFig({ marks: true })],
+  ["triangleTradeFig", triangleTradeFig()],
+  ["triangleTradeFig hide=1", triangleTradeFig({ hide: 1 })],
+];
+
+const root = document.getElementById("root");
+for (const [name, svg] of F) {
+  const d = document.createElement("div");
+  d.className = "card";
+  d.innerHTML = `<h3>${name}</h3>${svg}`;
+  root.appendChild(d);
+}
+document.title = `hisFigures 검수 시트 (${F.length}렌더)`;
+</script>
+</body>
+</html>

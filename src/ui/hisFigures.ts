@@ -18,30 +18,30 @@ export function sagwanFig(): string {
     <circle cx="200" cy="66" r="20" fill="#FFE8CE" stroke="#3C4654" stroke-width="2.4"/>
     <path d="M186 52q14-12 28 0l-3 8q-11-7-22 0z" fill="url(#hf-cape)" stroke="#8A5A26" stroke-width="1.6"/>
     <path d="M200 86v28M200 94l-14 8M200 94l14 8M200 114l-10 20M200 114l10 20" stroke="#3C4654" stroke-width="2.4" stroke-linecap="round"/>
-    <text x="200" y="164" text-anchor="middle" font-size="12" font-weight="900" fill="#5B6570" font-family="Pretendard, sans-serif">같은 인물</text>
+    <text x="200" y="164" text-anchor="middle" font-size="13" font-weight="900" fill="#5B6570" font-family="Pretendard, sans-serif">같은 인물</text>
     <g>
       <rect x="20" y="52" width="112" height="76" rx="9" fill="url(#hf-parch)" stroke="#8A6A3E" stroke-width="1.8"/>
       <path d="M32 70h88M32 84h88M32 98h56" stroke="#B99B66" stroke-width="3" stroke-linecap="round" opacity=".8"/>
-      <text x="76" y="120" text-anchor="middle" font-size="12.5" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">“위대한 지도자”</text>
+      <text x="76" y="120" text-anchor="middle" font-size="13.5" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">“위대한 지도자”</text>
       <path d="M132 90 L146 90" stroke="#C2843A" stroke-width="2.4" stroke-dasharray="3 4"/>
       <g stroke="#3C4654" stroke-width="2.2" fill="none">
         <circle cx="42" cy="158" r="8" fill="#FFE8CE"/>
         <path d="M42 166v18M42 172l-9 5M42 172l10 3M42 184l-7 12M42 184l7 12"/>
         <path d="M52 175l12-5" stroke="#8A6534"/>
       </g>
-      <text x="90" y="176" text-anchor="middle" font-size="11" font-weight="800" fill="#8B95A1" font-family="Pretendard, sans-serif">역사가 A의 기록</text>
+      <text x="94" y="180" text-anchor="middle" font-size="12.5" font-weight="800" fill="#8B95A1" stroke="#F7FAFC" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">역사가 A의 기록</text>
     </g>
     <g>
       <rect x="268" y="52" width="112" height="76" rx="9" fill="url(#hf-parch)" stroke="#8A6A3E" stroke-width="1.8"/>
       <path d="M280 70h88M280 84h88M280 98h56" stroke="#B99B66" stroke-width="3" stroke-linecap="round" opacity=".8"/>
-      <text x="324" y="120" text-anchor="middle" font-size="12.5" font-weight="900" fill="#B23428" font-family="Pretendard, sans-serif">“잔인한 정복자”</text>
+      <text x="324" y="120" text-anchor="middle" font-size="13.5" font-weight="900" fill="#B23428" font-family="Pretendard, sans-serif">“잔인한 정복자”</text>
       <path d="M268 90 L254 90" stroke="#C2843A" stroke-width="2.4" stroke-dasharray="3 4"/>
       <g stroke="#3C4654" stroke-width="2.2" fill="none">
         <circle cx="358" cy="158" r="8" fill="#FFE8CE"/>
         <path d="M358 166v18M358 172l-10 3M358 172l9 5M358 184l-7 12M358 184l7 12"/>
         <path d="M348 175l-12-5" stroke="#8A6534"/>
       </g>
-      <text x="310" y="176" text-anchor="middle" font-size="11" font-weight="800" fill="#8B95A1" font-family="Pretendard, sans-serif">역사가 B의 기록</text>
+      <text x="306" y="180" text-anchor="middle" font-size="12.5" font-weight="800" fill="#8B95A1" stroke="#F7FAFC" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">역사가 B의 기록</text>
     </g>
   </svg>`;
 }
@@ -64,8 +64,8 @@ export function centuryStripFig(o: { start: number; end: number; mark?: number; 
       const x = L + i * bw;
       const marked = o.mark === c;
       const fill = marked ? "#BFE3E8" : c < 0 ? "#F4E7C8" : "#FBF3DC";
-      const name = o.names ? `<text x="${x + bw / 2}" y="${top + 30}" text-anchor="middle" font-size="10.5" font-weight="900" fill="#5E4626" font-family="Pretendard, sans-serif">${c < 0 ? `전 ${-c}` : c}세기</text>` : "";
-      const mk = marked ? `<text x="${x + bw / 2}" y="${top + (o.names ? 48 : 38)}" text-anchor="middle" font-size="15" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">㉮</text>` : "";
+      const name = o.names ? `<text x="${x + bw / 2}" y="${top + 30}" text-anchor="middle" font-size="11" font-weight="900" fill="#5E4626" font-family="Pretendard, sans-serif">${c < 0 ? `전 ${-c}` : c}세기</text>` : "";
+      const mk = marked ? `<text x="${x + bw / 2}" y="${top + (o.names ? 48 : 40)}" text-anchor="middle" font-size="17" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">㉮</text>` : "";
       return `<rect x="${x}" y="${top}" width="${bw}" height="${h}" fill="${fill}" stroke="#8A6A3E" stroke-width="1.2"/>${name}${mk}`;
     })
     .join("");
@@ -79,7 +79,7 @@ export function centuryStripFig(o: { start: number; end: number; mark?: number; 
     const label = isOne ? "1" : String(Math.abs(y));
     const x = L + i * bw;
     return `<line x1="${x}" y1="${top + h}" x2="${x}" y2="${top + h + 6}" stroke="#8A6A3E" stroke-width="1.4"/>
-      <text x="${x}" y="${top + h + 20}" text-anchor="middle" font-size="10" font-weight="${isOne ? 900 : 700}" fill="${isOne ? "#C2843A" : "#5B6570"}" font-family="Pretendard, sans-serif">${label}</text>`;
+      <text x="${x}" y="${top + h + 20}" text-anchor="middle" font-size="11" font-weight="${isOne ? 900 : 700}" fill="${isOne ? "#C2843A" : "#5B6570"}" font-family="Pretendard, sans-serif">${label}</text>`;
   }).join("");
   const evts = (o.events ?? [])
     .map((e, i) => {
@@ -89,7 +89,7 @@ export function centuryStripFig(o: { start: number; end: number; mark?: number; 
       const ly = i % 2 ? top + h + 34 : top - 26;
       return `<circle cx="${x}" cy="${top + h / 2}" r="5" fill="#0E7C8A" stroke="#073E46" stroke-width="1.6"/>
         <line x1="${x}" y1="${i % 2 ? top + h : ly + 8}" x2="${x}" y2="${i % 2 ? ly - 10 : top}" stroke="#0E7C8A" stroke-width="1.2" stroke-dasharray="2 3"/>
-        <text x="${x}" y="${ly}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#0A5964" font-family="Pretendard, sans-serif">${e.label}</text>`;
+        <text x="${x}" y="${ly}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#0A5964" font-family="Pretendard, sans-serif">${e.label}</text>`;
     })
     .join("");
   const bcW = bcCount * bw;
@@ -97,9 +97,9 @@ export function centuryStripFig(o: { start: number; end: number; mark?: number; 
     aria-label="세기 칸이 나뉜 연표 띠 그림. 눈금에 연도가 적혀 있고, 표시된 구간은 동그라미 기호로 나타나 있다">
     <rect x="0" y="0" width="${W}" height="176" rx="16" fill="#F7FAFC"/>
     ${bcCount ? `<rect x="${L}" y="${top - 24}" width="${bcW}" height="18" rx="6" fill="rgba(168,122,62,.18)"/>
-    <text x="${L + bcW / 2}" y="${top - 11}" text-anchor="middle" font-size="10.5" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">기원전</text>` : ""}
+    <text x="${L + bcW / 2}" y="${top - 11}" text-anchor="middle" font-size="11.5" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">기원전</text>` : ""}
     <rect x="${L + bcW}" y="${top - 24}" width="${W - R - L - bcW}" height="18" rx="6" fill="rgba(14,124,138,.14)"/>
-    <text x="${L + bcW + (W - R - L - bcW) / 2}" y="${top - 11}" text-anchor="middle" font-size="10.5" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">기원후</text>
+    <text x="${L + bcW + (W - R - L - bcW) / 2}" y="${top - 11}" text-anchor="middle" font-size="11.5" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">기원후</text>
     ${cells}
     ${bcCount ? `<line x1="${L + bcW}" y1="${top - 4}" x2="${L + bcW}" y2="${top + h + 4}" stroke="#E0A72E" stroke-width="2.6"/>` : ""}
     ${ticks}${evts}
@@ -109,7 +109,7 @@ export function centuryStripFig(o: { start: number; end: number; mark?: number; 
 /* ---------- 탐구 절차 순서도(파라미터형) ---------- */
 /** 역사 탐구 5단계 순서도. hide에 준 인덱스 칸은 ㉠으로 가린다(그 단계 이름을 묻는 문제용 — 유출 방지). */
 export function tamguFlowFig(o?: { hide?: number }): string {
-  const steps = ["탐구 주제 선정", "자료 수집", "자료 분석·해석", "해석 검증", "정리·발표"];
+  // 단계 정본: 탐구 주제 선정 → 자료 수집 → 자료 분석·해석 → 해석 검증 → 정리·발표
   const icons = [
     `<circle cx="0" cy="0" r="7" fill="none" stroke="#3182F6" stroke-width="2.2"/><path d="M0-3v3l2.4 2.4" stroke="#3182F6" stroke-width="2" stroke-linecap="round"/>`,
     `<path d="M-7-5h9l5 4v8h-14z" fill="none" stroke="#E8850C" stroke-width="2.2" stroke-linejoin="round"/><path d="M-4 0h8M-4 4h8" stroke="#E8850C" stroke-width="1.8" stroke-linecap="round"/>`,
@@ -120,21 +120,22 @@ export function tamguFlowFig(o?: { hide?: number }): string {
   const W = 400;
   const bw = 68;
   const gap = (W - 24 - bw * 5) / 4;
-  const boxes = steps
-    .map((name, i) => {
+  // 텍스트 격상판: 단계 이름 12.5(2줄 고정 분할 — 공백 split 3줄은 상자를 넘쳤다) · 번호 10.
+  const lines = [["탐구 주제", "선정"], ["자료 수집"], ["자료", "분석·해석"], ["해석 검증"], ["정리·발표"]];
+  const boxes = lines
+    .map((ws, i) => {
       const x = 12 + i * (bw + gap);
       const hidden = o?.hide === i;
       const label = hidden
-        ? `<text x="${x + bw / 2}" y="96" text-anchor="middle" font-size="16" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
-        : name
-            .split(" ")
-            .map((w, k) => `<text x="${x + bw / 2}" y="${90 + k * 14}" text-anchor="middle" font-size="10.5" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">${w}</text>`)
+        ? `<text x="${x + bw / 2}" y="97" text-anchor="middle" font-size="17" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
+        : ws
+            .map((w, k) => `<text x="${x + bw / 2}" y="${(ws.length > 1 ? 88 : 94) + k * 15}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">${w}</text>`)
             .join("");
       const arrow = i < 4 ? `<path d="M${x + bw + 4} 74 h${gap - 9} m-6 -5 l6 5 -6 5" stroke="#8B95A1" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` : "";
       return `<rect x="${x}" y="40" width="${bw}" height="72" rx="10" fill="${hidden ? "#FBF0DA" : "#FFFFFF"}" stroke="${hidden ? "#C2843A" : "#B9C4D4"}" stroke-width="1.8"/>
         <g transform="translate(${x + bw / 2} 60)">${hidden ? `<circle r="7" fill="none" stroke="#C2843A" stroke-width="2" stroke-dasharray="2 3"/>` : icons[i]}</g>
         ${label}${arrow}
-        <circle cx="${x + 12}" cy="50" r="7" fill="#33405A"/><text x="${x + 12}" y="53.4" text-anchor="middle" font-size="9" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">${i + 1}</text>`;
+        <circle cx="${x + 12}" cy="50" r="7.5" fill="#33405A"/><text x="${x + 12}" y="53.6" text-anchor="middle" font-size="10" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">${i + 1}</text>`;
     })
     .join("");
   return `<svg viewBox="0 0 ${W} 132" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
@@ -158,16 +159,16 @@ export function yeonhoFig(): string {
     <path d="M70 160 V52 q0-16 16-18 l40-4 q16 0 16 18 V160 z" fill="url(#hf-stone)" stroke="#4E6078" stroke-width="2.2"/>
     <path d="M62 160 h160" stroke="#4E6078" stroke-width="3" stroke-linecap="round" opacity="0"/>
     <rect x="58" y="158" width="96" height="12" rx="5" fill="#8FA0B6" stroke="#4E6078" stroke-width="1.8"/>
-    <text x="106" y="84" text-anchor="middle" font-size="15" font-weight="900" fill="#F2F6FB" font-family="Pretendard, sans-serif">영락 1년</text>
-    <text x="106" y="106" text-anchor="middle" font-size="10" font-weight="800" fill="#D6E0EC" font-family="Pretendard, sans-serif">왕이 즉위한 해</text>
+    <text x="106" y="84" text-anchor="middle" font-size="16" font-weight="900" fill="#F2F6FB" font-family="Pretendard, sans-serif">영락 1년</text>
+    <text x="106" y="106" text-anchor="middle" font-size="11.5" font-weight="800" fill="#D6E0EC" font-family="Pretendard, sans-serif">왕이 즉위한 해</text>
     <path d="M92 120h28M92 132h28" stroke="#5E7088" stroke-width="2" stroke-linecap="round" opacity=".7"/>
     <path d="M168 96 h56 m-8 -7 l8 7 -8 7" stroke="#C2843A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     <rect x="240" y="52" width="120" height="88" rx="12" fill="url(#hf-cal2)" stroke="#B9C4D4" stroke-width="2"/>
-    <rect x="240" y="52" width="120" height="26" rx="12" fill="#0E7C8A"/>
-    <rect x="240" y="68" width="120" height="10" fill="url(#hf-cal2)"/>
-    <text x="300" y="70" text-anchor="middle" font-size="12" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">오늘날 연도로는</text>
-    <text x="300" y="116" text-anchor="middle" font-size="24" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">391년</text>
-    <text x="300" y="162" text-anchor="middle" font-size="10.5" font-weight="800" fill="#8B95A1" font-family="Pretendard, sans-serif">같은 해를 두 가지 방법으로 부른다</text>
+    <rect x="240" y="52" width="120" height="32" rx="12" fill="#0E7C8A"/>
+    <rect x="240" y="76" width="120" height="8" fill="#0E7C8A"/>
+    <text x="300" y="73" text-anchor="middle" font-size="13" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">오늘날 연도로는</text>
+    <text x="300" y="118" text-anchor="middle" font-size="26" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">391년</text>
+    <text x="220" y="184" text-anchor="middle" font-size="12" font-weight="800" fill="#8B95A1" font-family="Pretendard, sans-serif">같은 해를 두 가지 방법으로 부른다</text>
   </svg>`;
 }
 
@@ -190,7 +191,7 @@ export function millenniumFig(): string {
   const x = (y: number): number => L + ((y - years[0]) / span) * (W - L - R);
   const cells = years.slice(0, -1).map((y, i) => `<rect x="${x(y)}" y="${top}" width="${x(years[i + 1]) - x(y)}" height="${h}" fill="${i % 2 ? "#F4E7C8" : "#FBF3DC"}" stroke="#8A6A3E" stroke-width="1.2"/>`).join("");
   const ticks = years.map((y) => `<line x1="${x(y)}" y1="${top + h}" x2="${x(y)}" y2="${top + h + 6}" stroke="#8A6A3E" stroke-width="1.4"/>
-    <text x="${x(y)}" y="${top + h + 20}" text-anchor="middle" font-size="9.5" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">${-y}</text>`).join("");
+    <text x="${x(y)}" y="${top + h + 20}" text-anchor="middle" font-size="11" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">${-y}</text>`).join("");
   const evts: { y: number; label: string; up: boolean }[] = [
     { y: -3500, label: "메소포타미아 문명", up: true },
     { y: -3000, label: "이집트 문명", up: false },
@@ -201,15 +202,15 @@ export function millenniumFig(): string {
     const ly = e.up ? top - 14 : top + h + 38;
     return `<circle cx="${ex}" cy="${top + h / 2}" r="5.5" fill="#0E7C8A" stroke="#073E46" stroke-width="1.6"/>
       <line x1="${ex}" y1="${e.up ? ly + 4 : top + h}" x2="${ex}" y2="${e.up ? top : ly - 10}" stroke="#0E7C8A" stroke-width="1.2" stroke-dasharray="2 3"/>
-      <text x="${ex}" y="${ly}" text-anchor="middle" font-size="11" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">${e.label}</text>`;
+      <text x="${ex}" y="${ly}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">${e.label}</text>`;
   }).join("");
   return `<svg viewBox="0 0 ${W} 186" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
     aria-label="기원전 4000년부터 기원전 1500년까지를 500년 칸으로 나눈 연표 띠에 네 문명의 시작 시점이 점으로 찍혀 있는 그림">
     <rect x="0" y="0" width="${W}" height="186" rx="16" fill="#F7FAFC"/>
     <rect x="${L}" y="${top - 46}" width="${W - L - R}" height="18" rx="6" fill="rgba(168,122,62,.18)"/>
-    <text x="${W / 2}" y="${top - 33}" text-anchor="middle" font-size="10.5" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">모두 기원전 — 한 칸이 500년!</text>
+    <text x="${W / 2}" y="${top - 33}" text-anchor="middle" font-size="12" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">모두 기원전 — 한 칸이 500년!</text>
     ${cells}${ticks}${evtEls}
-    <text x="${W - R}" y="${top + h + 34}" text-anchor="end" font-size="9" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">(연도 단위: 년)</text>
+    <text x="${W - R}" y="${top + h + 34}" text-anchor="end" font-size="10.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">(연도 단위: 년)</text>
   </svg>`;
 }
 
@@ -220,9 +221,9 @@ export function fourRiversFig(o?: { marks?: boolean; labels?: boolean }): string
   const marks = o?.marks ?? false;
   const labels = o?.labels ?? false;
   const name = (x: number, y: number, t: string): string =>
-    labels ? `<text x="${x}" y="${y}" text-anchor="middle" font-size="10.5" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">${t}</text>` : "";
+    labels ? `<text x="${x}" y="${y}" text-anchor="middle" font-size="12" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">${t}</text>` : "";
   const mk = (x: number, y: number, t: string): string =>
-    marks ? `<circle cx="${x}" cy="${y}" r="10" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="11" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${t}</text>` : "";
+    marks ? `<circle cx="${x}" cy="${y}" r="11" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="12" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${t}</text>` : "";
   // 해안선 검산 메모(시각 감사 재발 방지): 아프리카 서쪽 불룩·기니만 홈·희망봉·아프리카의 뿔(152,128) →
   // 수에즈(140,70)로 아시아와 연결, 홍해 사선 슬릿이 아라비아 반도(아덴 뾰족 174,138)를 가르고,
   // 페르시아만 홈(206,104) 위가 메소포타미아 스팟(196,92), 인도 반도 삼각형 끝(262,186),
@@ -245,39 +246,41 @@ export function fourRiversFig(o?: { marks?: boolean; labels?: boolean }): string
 /* ---------- 카스트제 4단 피라미드(파라미터형) ----------
    hide에 준 인덱스(0=브라만 … 3=수드라)는 ㉠으로 가린다(그 신분 이름을 묻는 문제용 — 유출 방지). */
 export function casteFig(o?: { hide?: number }): string {
+  // 텍스트 격상판: 이름 15 · 역할 13 · 캡션 12(행 h 46·상자 폭 확대 — yuanClassFig 계보).
   const rows = [
-    { name: "브라만", role: "제사 의식 담당", w: 96, color: "#E8D4A4" },
-    { name: "크샤트리아", role: "정치·군사 담당", w: 160, color: "#EFDDB8" },
-    { name: "바이샤", role: "농업·상업 등 생산 담당", w: 224, color: "#F5E7CB" },
-    { name: "수드라", role: "정복당한 민족·주로 노예", w: 288, color: "#FBF1DC" },
+    { name: "브라만", role: "제사 의식 담당", w: 128, color: "#E8D4A4" },
+    { name: "크샤트리아", role: "정치·군사 담당", w: 184, color: "#EFDDB8" },
+    { name: "바이샤", role: "농업·상업 등 생산 담당", w: 244, color: "#F5E7CB" },
+    { name: "수드라", role: "정복당한 민족 · 주로 노예", w: 300, color: "#FBF1DC" },
   ];
   const els = rows.map((r, i) => {
-    const y = 30 + i * 40;
+    const y = 20 + i * 50;
     const x = (400 - r.w) / 2;
     const hidden = o?.hide === i;
     const label = hidden
-      ? `<text x="200" y="${y + 20}" text-anchor="middle" font-size="15" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
-      : `<text x="200" y="${y + 17}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${r.name}</text>
-         <text x="200" y="${y + 31}" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${r.role}</text>`;
-    return `<rect x="${x}" y="${y}" width="${r.w}" height="36" rx="7" fill="${hidden ? "#FBF0DA" : r.color}" stroke="${hidden ? "#C2843A" : "#8A6A3E"}" stroke-width="1.6"/>${label}`;
+      ? `<text x="200" y="${y + 29}" text-anchor="middle" font-size="16" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
+      : `<text x="200" y="${y + 19}" text-anchor="middle" font-size="15" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${r.name}</text>
+         <text x="200" y="${y + 37}" text-anchor="middle" font-size="13" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${r.role}</text>`;
+    return `<rect x="${x}" y="${y}" width="${r.w}" height="46" rx="8" fill="${hidden ? "#FBF0DA" : r.color}" stroke="${hidden ? "#C2843A" : "#8A6A3E"}" stroke-width="1.6"/>${label}`;
   }).join("");
-  return `<svg viewBox="0 0 400 210" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+  return `<svg viewBox="0 0 400 238" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
     aria-label="위로 갈수록 좁아지는 네 단의 신분 피라미드 그림. 일부 칸은 동그라미 기호로 가려져 있을 수 있다">
-    <rect x="0" y="0" width="400" height="210" rx="16" fill="#F7FAFC"/>
-    <path d="M200 12 l-150 186 M200 12 l150 186" stroke="#D9CBAA" stroke-width="1.6" stroke-dasharray="4 5"/>
+    <rect x="0" y="0" width="400" height="238" rx="16" fill="#F7FAFC"/>
+    <path d="M200 10 l-156 210 M200 10 l156 210" stroke="#D9CBAA" stroke-width="1.6" stroke-dasharray="4 5"/>
     ${els}
-    <text x="200" y="204" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">위로 갈수록 지위가 높다</text>
+    <text x="200" y="230" text-anchor="middle" font-size="12" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">위로 갈수록 지위가 높다</text>
   </svg>`;
 }
 
 /* ---------- 로마 정치 변천 순서도(파라미터형) ----------
    hide 인덱스 칸은 ㉠으로 가린다(tamguFlowFig 계보 — 단계 이름을 묻는 문제용). */
 export function romeFlowFig(o?: { hide?: number }): string {
-  const steps = [
-    { name: "왕정", sub: "왕이 다스림" },
-    { name: "공화정", sub: "집정관·원로원·민회" },
-    { name: "평민권 확대", sub: "호민관·평민회" },
-    { name: "제정", sub: "황제가 다스림" },
+  // 텍스트 격상판: 이름 13.5 · 보조 11.5(긴 보조는 2줄) · 번호 10 — 상자 h 66.
+  const steps: { name: string; sub: string[] }[] = [
+    { name: "왕정", sub: ["왕이 다스림"] },
+    { name: "공화정", sub: ["집정관·원로원", "민회"] },
+    { name: "평민권 확대", sub: ["호민관·평민회"] },
+    { name: "제정", sub: ["황제가 다스림"] },
   ];
   const W = 400;
   const bw = 84;
@@ -286,12 +289,12 @@ export function romeFlowFig(o?: { hide?: number }): string {
     const x = 12 + i * (bw + gap);
     const hidden = o?.hide === i;
     const label = hidden
-      ? `<text x="${x + bw / 2}" y="82" text-anchor="middle" font-size="16" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
-      : `<text x="${x + bw / 2}" y="76" text-anchor="middle" font-size="12.5" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">${s.name}</text>
-         <text x="${x + bw / 2}" y="92" text-anchor="middle" font-size="8.6" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">${s.sub}</text>`;
-    const arrow = i < 3 ? `<path d="M${x + bw + 4} 72 h${gap - 9} m-6 -5 l6 5 -6 5" stroke="#8B95A1" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` : "";
-    return `<rect x="${x}" y="46" width="${bw}" height="58" rx="10" fill="${hidden ? "#FBF0DA" : "#FFFFFF"}" stroke="${hidden ? "#C2843A" : "#B9C4D4"}" stroke-width="1.8"/>${label}${arrow}
-      <circle cx="${x + 12}" cy="56" r="7" fill="#33405A"/><text x="${x + 12}" y="59.4" text-anchor="middle" font-size="9" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">${i + 1}</text>`;
+      ? `<text x="${x + bw / 2}" y="80" text-anchor="middle" font-size="17" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
+      : `<text x="${x + bw / 2}" y="66" text-anchor="middle" font-size="13.5" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">${s.name}</text>
+         ${s.sub.map((t, k) => `<text x="${x + bw / 2}" y="${84 + k * 14}" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">${t}</text>`).join("")}`;
+    const arrow = i < 3 ? `<path d="M${x + bw + 4} 74 h${gap - 9} m-6 -5 l6 5 -6 5" stroke="#8B95A1" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` : "";
+    return `<rect x="${x}" y="40" width="${bw}" height="68" rx="10" fill="${hidden ? "#FBF0DA" : "#FFFFFF"}" stroke="${hidden ? "#C2843A" : "#B9C4D4"}" stroke-width="1.8"/>${label}${arrow}
+      <circle cx="${x + 12}" cy="50" r="7.5" fill="#33405A"/><text x="${x + 12}" y="53.6" text-anchor="middle" font-size="10" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">${i + 1}</text>`;
   }).join("");
   return `<svg viewBox="0 0 ${W} 124" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
     aria-label="로마의 정치 체제가 차례로 바뀌는 과정을 나타낸 순서도. 일부 칸은 동그라미 기호로 가려져 있을 수 있다">
@@ -304,23 +307,24 @@ export function romeFlowFig(o?: { hide?: number }): string {
    names=true면 학파 이름을 인쇄(개념·recap 전용). 퀴즈용 기본판은 ㉮~㉱ 기호만 —
    주장 문구를 읽고 학파를 고르는 문제에 학파명이 유출되지 않게 한다. */
 export function jejaFig(o?: { names?: boolean }): string {
+  // 텍스트 격상판: 이름 14.5 · 주장 12.5(2줄) — 카드 h 88.
   const cards = [
-    { name: "유가", tag: "㉮", claim: "인과 예로 도덕 정치를", icon: `<path d="M-9 8 q9 -12 18 0 M0 -10 v10" stroke="#3D5BC0" stroke-width="2.4" stroke-linecap="round" fill="none"/><circle cx="0" cy="-13" r="3.4" fill="none" stroke="#3D5BC0" stroke-width="2.2"/>` },
-    { name: "도가", tag: "㉯", claim: "자연의 순리를 따르자", icon: `<path d="M-11 2 q5 -8 11 0 t11 0 M-11 -6 q5 -8 11 0" stroke="#0E7C8A" stroke-width="2.4" stroke-linecap="round" fill="none"/><circle cx="8" cy="-9" r="2.6" fill="#0E7C8A"/>` },
-    { name: "묵가", tag: "㉰", claim: "차별 없는 사랑과 평화", icon: `<path d="M0 8 q-12 -8 -8 -16 q3 -6 8 -1 q5 -5 8 1 q4 8 -8 16 z" fill="none" stroke="#C2843A" stroke-width="2.4" stroke-linejoin="round"/>` },
-    { name: "법가", tag: "㉱", claim: "엄격한 법으로 질서를", icon: `<path d="M0 -12 v22 M-10 -8 h20 M-10 -8 l-4 8 q4 4 8 0 z M10 -8 l4 8 q-4 4 -8 0 z" stroke="#5C677D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>` },
+    { name: "유가", tag: "㉮", claim: ["인과 예로", "도덕 정치를"], icon: `<path d="M-9 8 q9 -12 18 0 M0 -10 v10" stroke="#3D5BC0" stroke-width="2.4" stroke-linecap="round" fill="none"/><circle cx="0" cy="-13" r="3.4" fill="none" stroke="#3D5BC0" stroke-width="2.2"/>` },
+    { name: "도가", tag: "㉯", claim: ["자연의 순리를", "따르자"], icon: `<path d="M-11 2 q5 -8 11 0 t11 0 M-11 -6 q5 -8 11 0" stroke="#0E7C8A" stroke-width="2.4" stroke-linecap="round" fill="none"/><circle cx="8" cy="-9" r="2.6" fill="#0E7C8A"/>` },
+    { name: "묵가", tag: "㉰", claim: ["차별 없는", "사랑과 평화"], icon: `<path d="M0 8 q-12 -8 -8 -16 q3 -6 8 -1 q5 -5 8 1 q4 8 -8 16 z" fill="none" stroke="#C2843A" stroke-width="2.4" stroke-linejoin="round"/>` },
+    { name: "법가", tag: "㉱", claim: ["엄격한 법으로", "질서를"], icon: `<path d="M0 -12 v22 M-10 -8 h20 M-10 -8 l-4 8 q4 4 8 0 z M10 -8 l4 8 q-4 4 -8 0 z" stroke="#5C677D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>` },
   ];
   const els = cards.map((c, i) => {
     const x = 12 + (i % 2) * 194;
-    const y = 12 + Math.floor(i / 2) * 92;
-    return `<rect x="${x}" y="${y}" width="182" height="80" rx="12" fill="#FFFFFF" stroke="#B9C4D4" stroke-width="1.8"/>
-      <g transform="translate(${x + 30} ${y + 40})">${c.icon}</g>
-      <text x="${x + 62}" y="${y + 34}" font-size="13" font-weight="900" fill="${o?.names ? "#33405A" : "#8F5A1D"}" font-family="Pretendard, sans-serif">${o?.names ? c.name : c.tag}</text>
-      <text x="${x + 62}" y="${y + 54}" font-size="10.5" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">${c.claim}</text>`;
+    const y = 10 + Math.floor(i / 2) * 94;
+    return `<rect x="${x}" y="${y}" width="182" height="88" rx="12" fill="#FFFFFF" stroke="#B9C4D4" stroke-width="1.8"/>
+      <g transform="translate(${x + 30} ${y + 44})">${c.icon}</g>
+      <text x="${x + 60}" y="${y + 31}" font-size="14.5" font-weight="900" fill="${o?.names ? "#33405A" : "#8F5A1D"}" font-family="Pretendard, sans-serif">${o?.names ? c.name : c.tag}</text>
+      ${c.claim.map((t, k) => `<text x="${x + 60}" y="${y + 53 + k * 16}" font-size="12.5" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">${t}</text>`).join("")}`;
   }).join("");
-  return `<svg viewBox="0 0 400 196" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+  return `<svg viewBox="0 0 400 202" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
     aria-label="네 학파의 주장을 적은 카드 네 장. 학파 이름은 동그라미 기호로 표시되어 있을 수 있다">
-    <rect x="0" y="0" width="400" height="196" rx="16" fill="#F7FAFC"/>
+    <rect x="0" y="0" width="400" height="202" rx="16" fill="#F7FAFC"/>
     ${els}
   </svg>`;
 }
@@ -340,13 +344,13 @@ export function silkroadFig(): string {
       <path d="M18 96 h44 v30 h-44 z M22 96 v-8 h8 v8 M40 96 v-12 h10 v12" stroke-linejoin="round"/>
       <path d="M24 106 a8 8 0 0 1 14 0 z M42 106 a8 8 0 0 1 14 0 z" fill="#F7FAFC"/>
     </g>
-    <text x="40" y="142" text-anchor="middle" font-size="10.5" font-weight="900" fill="#5B6570" font-family="Pretendard, sans-serif">로마</text>
+    <text x="40" y="142" text-anchor="middle" font-size="12.5" font-weight="900" fill="#5B6570" font-family="Pretendard, sans-serif">로마</text>
     <g stroke="#8A5A26" stroke-width="2" fill="#F2D9A4">
       <path d="M338 92 h46 v34 h-46 z" stroke-linejoin="round"/>
       <path d="M334 92 h54 l-6 -10 h-42 z" fill="#C89A5E"/>
       <rect x="356" y="108" width="12" height="18" fill="#8A5A26"/>
     </g>
-    <text x="362" y="142" text-anchor="middle" font-size="10.5" font-weight="900" fill="#5B6570" font-family="Pretendard, sans-serif">장안</text>
+    <text x="362" y="142" text-anchor="middle" font-size="12.5" font-weight="900" fill="#5B6570" font-family="Pretendard, sans-serif">장안</text>
     <g stroke="#6E4E26" stroke-width="2" fill="#C9A05E">
       <path d="M196 118 q6 -12 16 -12 q6 -8 12 0 q10 0 14 12 l-4 14 h-6 l-2 -8 h-16 l-2 8 h-6 z" stroke-linejoin="round"/>
       <circle cx="230" cy="104" r="4" fill="#C9A05E"/>
@@ -357,9 +361,9 @@ export function silkroadFig(): string {
     </g>
     <rect x="188" y="112" width="16" height="7" rx="2" fill="#0E7C8A" transform="rotate(-14 196 115)"/>
     <path d="M150 70 h-92 m8 -6 l-8 6 8 6" stroke="#0E7C8A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="104" y="58" text-anchor="middle" font-size="10.5" font-weight="800" fill="#0A5964" font-family="Pretendard, sans-serif">비단</text>
+    <text x="104" y="58" text-anchor="middle" font-size="12" font-weight="800" fill="#0A5964" font-family="Pretendard, sans-serif">비단</text>
     <path d="M250 70 h92 m-8 -6 l8 6 -8 6" stroke="#C2843A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="296" y="58" text-anchor="middle" font-size="10.5" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">포도·석류·호두, 불교</text>
+    <text x="296" y="58" text-anchor="middle" font-size="12" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">포도·석류·호두, 불교</text>
   </svg>`;
 }
 
@@ -373,7 +377,7 @@ export function silkroadFig(): string {
    발칸 동남끝)·룽먼(330,72 황허 중류 남쪽)·앙코르(310,148 동남아 반도) — 좌표는 아래 해안선 기준. */
 export function worldReligionsFig(o?: { marks?: boolean }): string {
   const mk = (x: number, y: number, t: string): string =>
-    o?.marks ? `<circle cx="${x}" cy="${y}" r="10" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="11" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${t}</text>` : "";
+    o?.marks ? `<circle cx="${x}" cy="${y}" r="11" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="12" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${t}</text>` : "";
   return `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
     aria-label="유럽과 아프리카, 아시아를 단순하게 그린 지도 위 다섯 곳에 서로 다른 종교 건축물이 작게 그려진 그림">
     <rect x="0" y="0" width="400" height="220" rx="16" fill="#DCEFF6"/>
@@ -394,37 +398,38 @@ export function worldReligionsFig(o?: { marks?: boolean }): string {
    casteFig 계보의 4단 + 주종 계약 쌍방향 화살표(왼쪽 내려가는 토지, 오른쪽 올라가는 충성)가 심장.
    hide 인덱스(0=왕 … 3=농노)는 ㉠으로 가린다. 성직자("기도하는 자")는 오른쪽 별동 카드. */
 export function feudalFig(o?: { hide?: number }): string {
+  // 텍스트 격상판: 이름 15 · 역할 12.5 · 곁 라벨 11.5 · 캡션 12(행 h 46 — yuanClassFig 계보).
   const rows = [
-    { name: "왕", role: "가장 높은 주군", w: 88 },
-    { name: "제후", role: "왕의 봉신 · 기사의 주군", w: 152 },
-    { name: "기사", role: "장원을 다스리는 영주", w: 216 },
-    { name: "농노", role: "장원의 농민", w: 280 },
+    { name: "왕", role: "가장 높은 주군", w: 116 },
+    { name: "제후", role: "왕의 봉신 · 기사의 주군", w: 176 },
+    { name: "기사", role: "장원을 다스리는 영주", w: 236 },
+    { name: "농노", role: "장원의 농민", w: 292 },
   ];
   const cx = 172;
   const els = rows.map((r, i) => {
-    const y = 26 + i * 44;
+    const y = 20 + i * 52;
     const x = cx - r.w / 2;
     const hidden = o?.hide === i;
     const label = hidden
-      ? `<text x="${cx}" y="${y + 21}" text-anchor="middle" font-size="15" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
-      : `<text x="${cx}" y="${y + 16}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${r.name}</text>
-         <text x="${cx}" y="${y + 30}" text-anchor="middle" font-size="9" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${r.role}</text>`;
-    return `<rect x="${x}" y="${y}" width="${r.w}" height="36" rx="7" fill="${hidden ? "#FBF0DA" : ["#E8D4A4", "#EFDDB8", "#F5E7CB", "#FBF1DC"][i]}" stroke="${hidden ? "#C2843A" : "#8A6A3E"}" stroke-width="1.6"/>${label}`;
+      ? `<text x="${cx}" y="${y + 29}" text-anchor="middle" font-size="16" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
+      : `<text x="${cx}" y="${y + 19}" text-anchor="middle" font-size="15" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${r.name}</text>
+         <text x="${cx}" y="${y + 37}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${r.role}</text>`;
+    return `<rect x="${x}" y="${y}" width="${r.w}" height="46" rx="8" fill="${hidden ? "#FBF0DA" : ["#E8D4A4", "#EFDDB8", "#F5E7CB", "#FBF1DC"][i]}" stroke="${hidden ? "#C2843A" : "#8A6A3E"}" stroke-width="1.6"/>${label}`;
   }).join("");
-  return `<svg viewBox="0 0 400 216" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+  return `<svg viewBox="0 0 400 244" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
     aria-label="위로 갈수록 좁아지는 네 단의 피라미드 양옆으로 내려가는 화살표와 올라가는 화살표가 그려진 구조도. 일부 칸은 동그라미 기호로 가려져 있을 수 있다">
-    <rect x="0" y="0" width="400" height="216" rx="16" fill="#F7FAFC"/>
+    <rect x="0" y="0" width="400" height="244" rx="16" fill="#F7FAFC"/>
     ${els}
-    <path d="M52 40 q-16 52 0 104 m-5 -8 l5 8 6 -7" stroke="#3D5BC0" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="34" y="86" text-anchor="middle" font-size="9.5" font-weight="800" fill="#3D5BC0" font-family="Pretendard, sans-serif">보호와</text>
-    <text x="34" y="98" text-anchor="middle" font-size="9.5" font-weight="800" fill="#3D5BC0" font-family="Pretendard, sans-serif">토지(봉토)</text>
-    <path d="M292 144 q16 -52 0 -104 m-6 8 l6 -8 5 8" stroke="#C2843A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="312" y="86" text-anchor="middle" font-size="9.5" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">충성과</text>
-    <text x="312" y="98" text-anchor="middle" font-size="9.5" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">군사 봉사</text>
-    <rect x="330" y="140" width="62" height="40" rx="8" fill="#FFFFFF" stroke="#B9C4D4" stroke-width="1.6"/>
-    <text x="361" y="157" text-anchor="middle" font-size="10.5" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">성직자</text>
-    <text x="361" y="171" text-anchor="middle" font-size="8.6" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">기도하는 자</text>
-    <text x="172" y="206" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">주종 관계는 서로 의무를 지키는 계약!</text>
+    <path d="M50 48 q-20 62 0 124 m-5 -8 l5 8 6 -7" stroke="#3D5BC0" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="32" y="102" text-anchor="middle" font-size="11.5" font-weight="800" fill="#3D5BC0" stroke="#F7FAFC" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">보호와</text>
+    <text x="32" y="116" text-anchor="middle" font-size="11.5" font-weight="800" fill="#3D5BC0" stroke="#F7FAFC" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">토지(봉토)</text>
+    <path d="M294 172 q20 -62 0 -124 m-6 8 l6 -8 5 8" stroke="#C2843A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="312" y="102" text-anchor="middle" font-size="11.5" font-weight="800" fill="#8F5A1D" stroke="#F7FAFC" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">충성과</text>
+    <text x="312" y="116" text-anchor="middle" font-size="11.5" font-weight="800" fill="#8F5A1D" stroke="#F7FAFC" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">군사 봉사</text>
+    <rect x="322" y="178" width="72" height="42" rx="8" fill="#FFFFFF" stroke="#B9C4D4" stroke-width="1.6"/>
+    <text x="358" y="196" text-anchor="middle" font-size="12.5" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">성직자</text>
+    <text x="358" y="212" text-anchor="middle" font-size="11" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">기도하는 자</text>
+    <text x="172" y="236" text-anchor="middle" font-size="12" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">주종 관계는 서로 의무를 지키는 계약!</text>
   </svg>`;
 }
 
@@ -440,32 +445,33 @@ export function threeSixFig(o?: { hide?: number }): string {
   const bw = 104;
   const gap = 26;
   const x0 = (400 - bw * 3 - gap * 2) / 2;
+  // 텍스트 격상판: 성 이름 14 · 역할 11.5 · 부 12.5 · 황제 13.5(상자 h 56).
   const boxes = seong.map((s, i) => {
     const x = x0 + i * (bw + gap);
     const hidden = o?.hide === i;
     const label = hidden
-      ? `<text x="${x + bw / 2}" y="90" text-anchor="middle" font-size="16" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
-      : `<text x="${x + bw / 2}" y="84" text-anchor="middle" font-size="12.5" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">${s.name}</text>
-         <text x="${x + bw / 2}" y="100" text-anchor="middle" font-size="9" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">${s.sub}</text>`;
-    const arrow = i < 2 ? `<path d="M${x + bw + 4} 82 h${gap - 9} m-6 -5 l6 5 -6 5" stroke="#8B95A1" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` : "";
-    return `<rect x="${x}" y="58" width="${bw}" height="52" rx="10" fill="${hidden ? "#FBF0DA" : "#FFFFFF"}" stroke="${hidden ? "#C2843A" : "#B9C4D4"}" stroke-width="1.8"/>${label}${arrow}`;
+      ? `<text x="${x + bw / 2}" y="92" text-anchor="middle" font-size="17" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
+      : `<text x="${x + bw / 2}" y="82" text-anchor="middle" font-size="14" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">${s.name}</text>
+         <text x="${x + bw / 2}" y="101" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">${s.sub}</text>`;
+    const arrow = i < 2 ? `<path d="M${x + bw + 4} 86 h${gap - 9} m-6 -5 l6 5 -6 5" stroke="#8B95A1" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` : "";
+    return `<rect x="${x}" y="58" width="${bw}" height="56" rx="10" fill="${hidden ? "#FBF0DA" : "#FFFFFF"}" stroke="${hidden ? "#C2843A" : "#B9C4D4"}" stroke-width="1.8"/>${label}${arrow}`;
   }).join("");
   const bu = ["이부", "호부", "예부", "병부", "형부", "공부"];
   const bw2 = 52;
   const bx0 = (400 - bw2 * 6 - 10 * 5) / 2;
   const buEls = bu.map((b, i) => {
     const x = bx0 + i * (bw2 + 10);
-    return `<rect x="${x}" y="150" width="${bw2}" height="30" rx="7" fill="#F5EFE2" stroke="#C4B28E" stroke-width="1.4"/>
-      <text x="${x + bw2 / 2}" y="169" text-anchor="middle" font-size="11" font-weight="800" fill="#5E4626" font-family="Pretendard, sans-serif">${b}</text>`;
+    return `<rect x="${x}" y="142" width="${bw2}" height="34" rx="7" fill="#F5EFE2" stroke="#C4B28E" stroke-width="1.4"/>
+      <text x="${x + bw2 / 2}" y="164" text-anchor="middle" font-size="12.5" font-weight="800" fill="#5E4626" font-family="Pretendard, sans-serif">${b}</text>`;
   }).join("");
   return `<svg viewBox="0 0 400 196" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
     aria-label="황제 아래 세 개의 성이 화살표로 이어지고 마지막 성 아래에 여섯 개의 부가 달린 구조도. 일부 칸은 동그라미 기호로 가려져 있을 수 있다">
     <rect x="0" y="0" width="400" height="196" rx="16" fill="#F7FAFC"/>
-    <rect x="164" y="12" width="72" height="30" rx="9" fill="#33405A"/>
-    <text x="200" y="32" text-anchor="middle" font-size="12.5" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">황제</text>
+    <rect x="162" y="10" width="76" height="32" rx="9" fill="#33405A"/>
+    <text x="200" y="31" text-anchor="middle" font-size="13.5" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">황제</text>
     <path d="M200 42 v12 m-5 -6 l5 6 5 -6" stroke="#8B95A1" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     ${boxes}
-    <path d="M${x0 + bw * 2 + gap * 2 + bw / 2} 110 v14 M${bx0 + bw2 / 2} 138 h${bw2 * 6 + 50 - bw2} M${bx0 + bw2 / 2} 138 v6 m${bw2 + 10} -6 v6 m${bw2 + 10} -6 v6 m${bw2 + 10} -6 v6 m${bw2 + 10} -6 v6 m${bw2 + 10} -6 v6" stroke="#C4B28E" stroke-width="1.6" fill="none"/>
+    <path d="M${x0 + bw * 2 + gap * 2 + bw / 2} 114 v16 M${bx0 + bw2 / 2} 130 h${bw2 * 6 + 50 - bw2} M${bx0 + bw2 / 2} 130 v8 m${bw2 + 10} -8 v8 m${bw2 + 10} -8 v8 m${bw2 + 10} -8 v8 m${bw2 + 10} -8 v8 m${bw2 + 10} -8 v8" stroke="#C4B28E" stroke-width="1.6" fill="none"/>
     ${buEls}
   </svg>`;
 }
@@ -479,8 +485,8 @@ export function eastAsiaFig(o?: { labels?: boolean }): string {
   const lab = o?.labels ?? true;
   const name = (x: number, y: number, t: string, tag: string): string =>
     lab
-      ? `<text x="${x}" y="${y}" text-anchor="middle" font-size="12" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${t}</text>`
-      : `<circle cx="${x}" cy="${y - 4}" r="10" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x}" y="${y}" text-anchor="middle" font-size="11" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${tag}</text>`;
+      ? `<text x="${x}" y="${y}" text-anchor="middle" font-size="13.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${t}</text>`
+      : `<circle cx="${x}" cy="${y - 4}" r="11" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x}" y="${y}" text-anchor="middle" font-size="12" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${tag}</text>`;
   return `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
     aria-label="동아시아의 네 나라 사이를 화살표가 오가고 아래에 네 개의 공통 요소 칩이 놓인 지도">
     <rect x="0" y="0" width="400" height="220" rx="16" fill="#DCEFF6"/>
@@ -492,8 +498,8 @@ export function eastAsiaFig(o?: { labels?: boolean }): string {
     <path d="M318 96 q-40 20 -110 26 m8 -5 l-8 5 9 3" stroke="#0E7C8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
     <path d="M282 52 q-30 -6 -66 -2 m8 -4 l-8 4 8 4" stroke="#0E7C8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
     ${name(120, 96, "당", "(가)")}${name(284, 30, "발해", "(나)")}${name(238, 76, "신라", "(다)")}${name(342, 146, "일본", "(라)")}
-    ${lab ? `<text x="196" y="130" text-anchor="middle" font-size="8.6" font-weight="700" fill="#0A5964" font-family="Pretendard, sans-serif">사신 · 유학생 · 승려</text>` : ""}
-    <g font-family="Pretendard, sans-serif" font-size="10.5" font-weight="900" text-anchor="middle">
+    ${lab ? `<text x="196" y="130" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0A5964" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">사신 · 유학생 · 승려</text>` : ""}
+    <g font-family="Pretendard, sans-serif" font-size="12.5" font-weight="900" text-anchor="middle">
       <rect x="24" y="186" width="80" height="24" rx="12" fill="#FBF3DC" stroke="#8A6A3E" stroke-width="1.4"/><text x="64" y="202" fill="#5E4626">한자</text>
       <rect x="116" y="186" width="80" height="24" rx="12" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="1.4"/><text x="156" y="202" fill="#0A5964">유교</text>
       <rect x="208" y="186" width="80" height="24" rx="12" fill="#EDEAFA" stroke="#5B4AC0" stroke-width="1.4"/><text x="248" y="202" fill="#3D2E86">율령</text>
@@ -515,37 +521,38 @@ export function islamFlowFig(o?: { hide?: number }): string {
   const W = 400;
   const bw = 88;
   const gap = (W - 24 - bw * 4) / 3;
+  // 텍스트 격상판: 본류 이름 12.5 · 보조 11 · 갈래 이름 12.5 · 번호 10(상자 h 60/54).
   const boxes = steps.map((s, i) => {
     const x = 12 + i * (bw + gap);
     const hidden = o?.hide === i;
     const label = hidden
-      ? `<text x="${x + bw / 2}" y="60" text-anchor="middle" font-size="16" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
-      : `<text x="${x + bw / 2}" y="54" text-anchor="middle" font-size="11" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">${s.name}</text>
-         <text x="${x + bw / 2}" y="70" text-anchor="middle" font-size="8.4" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">${s.sub}</text>`;
-    const arrow = i < 3 ? `<path d="M${x + bw + 4} 52 h${gap - 9} m-6 -5 l6 5 -6 5" stroke="#8B95A1" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` : "";
-    return `<rect x="${x}" y="26" width="${bw}" height="56" rx="10" fill="${hidden ? "#FBF0DA" : "#FFFFFF"}" stroke="${hidden ? "#C2843A" : "#B9C4D4"}" stroke-width="1.8"/>${label}${arrow}
-      <circle cx="${x + 12}" cy="36" r="7" fill="#0E7C8A"/><text x="${x + 12}" y="39.4" text-anchor="middle" font-size="9" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">${i + 1}</text>`;
+      ? `<text x="${x + bw / 2}" y="60" text-anchor="middle" font-size="17" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
+      : `<text x="${x + bw / 2}" y="53" text-anchor="middle" font-size="12.5" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">${s.name}</text>
+         <text x="${x + bw / 2}" y="71" text-anchor="middle" font-size="11" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">${s.sub}</text>`;
+    const arrow = i < 3 ? `<path d="M${x + bw + 4} 55 h${gap - 9} m-6 -5 l6 5 -6 5" stroke="#8B95A1" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` : "";
+    return `<rect x="${x}" y="24" width="${bw}" height="60" rx="10" fill="${hidden ? "#FBF0DA" : "#FFFFFF"}" stroke="${hidden ? "#C2843A" : "#B9C4D4"}" stroke-width="1.8"/>${label}${arrow}
+      <circle cx="${x + 12}" cy="34" r="7.5" fill="#0E7C8A"/><text x="${x + 12}" y="37.6" text-anchor="middle" font-size="10" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">${i + 1}</text>`;
   }).join("");
   const branches = [
     { name: "후우마이야 왕조", sub: "이베리아반도" },
     { name: "파티마 왕조", sub: "북아프리카" },
     { name: "셀주크 튀르크", sub: "지배자가 술탄 칭호" },
   ];
-  const bw2 = 118;
-  const bx0 = (W - bw2 * 3 - 14 * 2) / 2;
+  const bw2 = 122;
+  const bx0 = (W - bw2 * 3 - 12 * 2) / 2;
   const brEls = branches.map((b, i) => {
-    const x = bx0 + i * (bw2 + 14);
-    return `<rect x="${x}" y="128" width="${bw2}" height="46" rx="9" fill="#F5EFE2" stroke="#C4B28E" stroke-width="1.5"/>
-      <text x="${x + bw2 / 2}" y="148" text-anchor="middle" font-size="10.5" font-weight="900" fill="#5E4626" font-family="Pretendard, sans-serif">${b.name}</text>
-      <text x="${x + bw2 / 2}" y="164" text-anchor="middle" font-size="8.4" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${b.sub}</text>`;
+    const x = bx0 + i * (bw2 + 12);
+    return `<rect x="${x}" y="120" width="${bw2}" height="54" rx="9" fill="#F5EFE2" stroke="#C4B28E" stroke-width="1.5"/>
+      <text x="${x + bw2 / 2}" y="142" text-anchor="middle" font-size="12.5" font-weight="900" fill="#5E4626" font-family="Pretendard, sans-serif">${b.name}</text>
+      <text x="${x + bw2 / 2}" y="161" text-anchor="middle" font-size="11" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${b.sub}</text>`;
   }).join("");
   return `<svg viewBox="0 0 ${W} 188" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
     aria-label="이슬람 세계가 차례로 이어지는 네 칸의 순서도와 그 아래에 갈라져 나온 세 칸. 일부 칸은 동그라미 기호로 가려져 있을 수 있다">
     <rect x="0" y="0" width="${W}" height="188" rx="16" fill="#F7FAFC"/>
     ${boxes}
-    <path d="M200 88 v14 M${bx0 + bw2 / 2} 116 h${bw2 * 2 + 28} M${bx0 + bw2 / 2} 116 v8 m${bw2 + 14} -8 v8 m${bw2 + 14} -8 v8" stroke="#C4B28E" stroke-width="1.6" fill="none"/>
+    <path d="M200 84 v20 M${bx0 + bw2 / 2} 104 h${bw2 * 2 + 24} M${bx0 + bw2 / 2} 104 v12 m${bw2 + 12} -12 v12 m${bw2 + 12} -12 v12" stroke="#C4B28E" stroke-width="1.6" fill="none"/>
     ${brEls}
-    <text x="200" y="16" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">이슬람 세계의 변천</text>
+    <text x="200" y="16" text-anchor="middle" font-size="12" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">이슬람 세계의 변천</text>
   </svg>`;
 }
 
@@ -555,25 +562,26 @@ export function islamFlowFig(o?: { hide?: number }): string {
    가운데 송, 북쪽 요·서북 서하 카드 + 송에서 올라가는 "비단·은(물자)" 화살표(세폐 관계).
    hide: "yo" | "seoha" | "song"이면 그 카드를 ㉠으로 가린다(나라 이름을 묻는 문제용). */
 export function songPressFig(o?: { hide?: "yo" | "seoha" | "song" }): string {
-  const name = (key: "yo" | "seoha" | "song", x: number, y: number, t: string, sub: string): string =>
+  // 텍스트 격상판: 이름 14.5 · 보조 11.5(긴 보조는 2줄) · 캡션 11.5 — 상자 폭 150.
+  const name = (key: "yo" | "seoha" | "song", x: number, y: number, t: string, sub: string[]): string =>
     o?.hide === key
-      ? `<text x="${x}" y="${y + 5}" text-anchor="middle" font-size="16" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
-      : `<text x="${x}" y="${y}" text-anchor="middle" font-size="13" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${t}</text>
-         <text x="${x}" y="${y + 15}" text-anchor="middle" font-size="8.8" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${sub}</text>`;
-  const box = (key: "yo" | "seoha" | "song", x: number, y: number, w: number): string =>
-    `<rect x="${x}" y="${y}" width="${w}" height="46" rx="10" fill="${o?.hide === key ? "#FBF0DA" : "#FFFFFF"}" stroke="${o?.hide === key ? "#C2843A" : "#B9C4D4"}" stroke-width="1.8"/>`;
-  return `<svg viewBox="0 0 400 210" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+      ? `<text x="${x}" y="${y + 12}" text-anchor="middle" font-size="16" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
+      : `<text x="${x}" y="${y}" text-anchor="middle" font-size="14.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${t}</text>
+         ${sub.map((s, k) => `<text x="${x}" y="${y + 18 + k * 14}" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${s}</text>`).join("")}`;
+  const box = (key: "yo" | "seoha" | "song", x: number, y: number, w: number, h: number): string =>
+    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${o?.hide === key ? "#FBF0DA" : "#FFFFFF"}" stroke="${o?.hide === key ? "#C2843A" : "#B9C4D4"}" stroke-width="1.8"/>`;
+  return `<svg viewBox="0 0 400 216" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
     aria-label="가운데 나라에서 위쪽의 두 나라로 물자 화살표가 올라가는 관계도. 일부 칸은 동그라미 기호로 가려져 있을 수 있다">
-    <rect x="0" y="0" width="400" height="210" rx="16" fill="#F7FAFC"/>
-    <text x="200" y="20" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">지나친 문치주의 → 군사력 약화 → 물자로 지킨 평화</text>
-    ${box("yo", 236, 34, 120)}${name("yo", 296, 54, "요(거란)", "발해를 멸망시킴 · 송과 대립")}
-    ${box("seoha", 44, 34, 120)}${name("seoha", 104, 54, "서하(탕구트)", "비단길 무역의 이익 차지")}
-    ${box("song", 140, 140, 120)}${name("song", 200, 160, "송", "문치주의의 나라")}
-    <path d="M172 136 Q 128 110 108 86 m2 10 l-2 -10 10 3" stroke="#C2843A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M228 136 Q 272 110 292 86 m-2 10 l2 -10 -10 3" stroke="#C2843A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <rect x="142" y="96" width="116" height="22" rx="11" fill="#FBEFDA" stroke="#C2843A" stroke-width="1.6"/>
-    <text x="200" y="111" text-anchor="middle" font-size="10.5" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">비단 · 은 등 물자</text>
-    <text x="200" y="200" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">평화의 값은 송의 재정을 무겁게 했어요</text>
+    <rect x="0" y="0" width="400" height="216" rx="16" fill="#F7FAFC"/>
+    <text x="200" y="19" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">지나친 문치주의 → 군사력 약화 → 물자로 지킨 평화</text>
+    ${box("yo", 226, 30, 150, 58)}${name("yo", 301, 51, "요(거란)", ["발해를 멸망시킴", "송과 대립"])}
+    ${box("seoha", 24, 30, 150, 58)}${name("seoha", 99, 51, "서하(탕구트)", ["비단길 무역의 이익 차지"])}
+    ${box("song", 125, 146, 150, 50)}${name("song", 200, 167, "송", ["문치주의의 나라"])}
+    <path d="M168 142 Q 124 116 106 94 m2 10 l-2 -10 10 3" stroke="#C2843A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M232 142 Q 276 116 294 94 m-2 10 l2 -10 -10 3" stroke="#C2843A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="130" y="100" width="140" height="26" rx="13" fill="#FBEFDA" stroke="#C2843A" stroke-width="1.6"/>
+    <text x="200" y="118" text-anchor="middle" font-size="12" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">비단 · 은 등 물자</text>
+    <text x="200" y="210" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">평화의 값은 송의 재정을 무겁게 했어요</text>
   </svg>`;
 }
 
@@ -581,34 +589,39 @@ export function songPressFig(o?: { hide?: "yo" | "seoha" | "song" }): string {
    casteFig·feudalFig 계보의 4단 + 지배/피지배 브래킷. hide 인덱스(0=몽골인 … 3=남인)는 ㉠으로
    가린다(그 계층 이름을 묻는 문제용 — aria에도 계층 이름 대신 중립 문구만). */
 export function yuanClassFig(o?: { hide?: number }): string {
-  const rows = [
-    { name: "몽골인", role: "주요 관직 차지", w: 96 },
-    { name: "색목인", role: "주로 재정 업무 담당 · 서역 출신", w: 168 },
-    { name: "한인", role: "하급 관리 · 생산 활동(금의 지배를 받던 한족 등)", w: 240 },
-    { name: "남인", role: "생산 활동 담당(남송 출신의 한족)", w: 300 },
+  // 텍스트 격상판(2026-07-20 사용자 피드백 "실표시 7px는 안 보인다"): 이름 15 · 역할 13 · 캡션 12.
+  // 역할이 긴 행은 2줄 배열(h 60), 나머지 h 46 — 행 높이·상자 폭을 글자에 맞춰 재설계.
+  const rows: { name: string; role: string[]; w: number; h: number }[] = [
+    { name: "몽골인", role: ["주요 관직 차지"], w: 132, h: 46 },
+    { name: "색목인", role: ["재정 업무 담당 · 서역 출신"], w: 196, h: 46 },
+    { name: "한인", role: ["하급 관리 · 생산 활동", "(금의 지배를 받던 한족 등)"], w: 256, h: 60 },
+    { name: "남인", role: ["생산 활동 담당(남송 출신의 한족)"], w: 306, h: 46 },
   ];
-  const cx = 186;
+  const cx = 178;
+  let yAcc = 14;
   const els = rows.map((r, i) => {
-    const y = 22 + i * 44;
+    const y = yAcc;
+    yAcc += r.h + 6;
     const x = cx - r.w / 2;
     const hidden = o?.hide === i;
+    const two = r.role.length > 1;
     const label = hidden
-      ? `<text x="${cx}" y="${y + 22}" text-anchor="middle" font-size="15" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
-      : `<text x="${cx}" y="${y + 16}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${r.name}</text>
-         <text x="${cx}" y="${y + 30}" text-anchor="middle" font-size="8.6" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${r.role}</text>`;
-    return `<rect x="${x}" y="${y}" width="${r.w}" height="36" rx="7" fill="${hidden ? "#FBF0DA" : ["#E8D4A4", "#EFDDB8", "#F5E7CB", "#FBF1DC"][i]}" stroke="${hidden ? "#C2843A" : "#8A6A3E"}" stroke-width="1.6"/>${label}`;
+      ? `<text x="${cx}" y="${y + r.h / 2 + 6}" text-anchor="middle" font-size="16" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
+      : `<text x="${cx}" y="${y + 19}" text-anchor="middle" font-size="15" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${r.name}</text>
+         ${r.role.map((t, k) => `<text x="${cx}" y="${y + (two ? 36 : 37) + k * 15}" text-anchor="middle" font-size="13" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${t}</text>`).join("")}`;
+    return `<rect x="${x}" y="${y}" width="${r.w}" height="${r.h}" rx="8" fill="${hidden ? "#FBF0DA" : ["#E8D4A4", "#EFDDB8", "#F5E7CB", "#FBF1DC"][i]}" stroke="${hidden ? "#C2843A" : "#8A6A3E"}" stroke-width="1.6"/>${label}`;
   }).join("");
-  return `<svg viewBox="0 0 400 216" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
+  return `<svg viewBox="0 0 400 252" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
     aria-label="위로 갈수록 좁아지는 네 단의 계층 구조도. 위 두 단과 아래 두 단이 묶여 있고, 일부 칸은 동그라미 기호로 가려져 있을 수 있다">
-    <rect x="0" y="0" width="400" height="216" rx="16" fill="#F7FAFC"/>
+    <rect x="0" y="0" width="400" height="252" rx="16" fill="#F7FAFC"/>
     ${els}
-    <path d="M352 26 v72 M348 26 h8 M348 98 h8" stroke="#0E7C8A" stroke-width="2" fill="none"/>
-    <text x="366" y="56" text-anchor="middle" font-size="9.5" font-weight="800" fill="#0A5964" font-family="Pretendard, sans-serif">지배</text>
-    <text x="366" y="68" text-anchor="middle" font-size="9.5" font-weight="800" fill="#0A5964" font-family="Pretendard, sans-serif">계층</text>
-    <path d="M352 110 v72 M348 110 h8 M348 182 h8" stroke="#C2843A" stroke-width="2" fill="none"/>
-    <text x="368" y="140" text-anchor="middle" font-size="9.5" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">피지배</text>
-    <text x="368" y="152" text-anchor="middle" font-size="9.5" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">계층</text>
-    <text x="186" y="206" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">실무에 능한 사람은 출신과 상관없이 등용했어요</text>
+    <path d="M344 16 v94 M340 16 h8 M340 110 h8" stroke="#0E7C8A" stroke-width="2" fill="none"/>
+    <text x="368" y="58" text-anchor="middle" font-size="12" font-weight="800" fill="#0A5964" font-family="Pretendard, sans-serif">지배</text>
+    <text x="368" y="73" text-anchor="middle" font-size="12" font-weight="800" fill="#0A5964" font-family="Pretendard, sans-serif">계층</text>
+    <path d="M344 120 v106 M340 120 h8 M340 226 h8" stroke="#C2843A" stroke-width="2" fill="none"/>
+    <text x="368" y="166" text-anchor="middle" font-size="12" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">피지배</text>
+    <text x="368" y="181" text-anchor="middle" font-size="12" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">계층</text>
+    <text x="178" y="244" text-anchor="middle" font-size="12" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">실무에 능한 사람은 출신과 상관없이 등용했어요</text>
   </svg>`;
 }
 
@@ -616,36 +629,40 @@ export function yuanClassFig(o?: { hide?: number }): string {
    쇼군→다이묘→사무라이 3단 + 내려가는 보호·토지, 올라가는 충성·복종(feudalFig 계보).
    hide 인덱스(0=쇼군 1=다이묘 2=사무라이)는 ㉠으로 가린다. 천황은 오른쪽 별동 카드(형식상의 지위). */
 export function bakufuFig(o?: { hide?: number }): string {
-  const rows = [
-    { name: "쇼군", role: "막부의 우두머리 · 실질적 지배자", w: 104 },
-    { name: "다이묘", role: "번(영지)을 다스리는 영주", w: 180 },
-    { name: "사무라이", role: "하급 무사", w: 256 },
+  // 텍스트 격상판: 이름 15 · 역할 12.5(쇼군은 2줄) · 곁 라벨 11.5 · 캡션 12 — yuanClassFig 계보.
+  const rows: { name: string; role: string[]; w: number; h: number }[] = [
+    { name: "쇼군", role: ["막부의 우두머리", "실질적 지배자"], w: 132, h: 60 },
+    { name: "다이묘", role: ["번(영지)을 다스리는 영주"], w: 196, h: 46 },
+    { name: "사무라이", role: ["하급 무사"], w: 260, h: 46 },
   ];
   const cx = 172;
+  let yAcc = 22;
   const els = rows.map((r, i) => {
-    const y = 34 + i * 52;
+    const y = yAcc;
+    yAcc += r.h + 6;
     const x = cx - r.w / 2;
     const hidden = o?.hide === i;
+    const two = r.role.length > 1;
     const label = hidden
-      ? `<text x="${cx}" y="${y + 24}" text-anchor="middle" font-size="15" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
-      : `<text x="${cx}" y="${y + 18}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${r.name}</text>
-         <text x="${cx}" y="${y + 32}" text-anchor="middle" font-size="8.8" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${r.role}</text>`;
-    return `<rect x="${x}" y="${y}" width="${r.w}" height="40" rx="8" fill="${hidden ? "#FBF0DA" : ["#E8D4A4", "#F0DFBC", "#F8ECD2"][i]}" stroke="${hidden ? "#C2843A" : "#8A6A3E"}" stroke-width="1.6"/>${label}`;
+      ? `<text x="${cx}" y="${y + r.h / 2 + 6}" text-anchor="middle" font-size="16" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">㉠</text>`
+      : `<text x="${cx}" y="${y + 19}" text-anchor="middle" font-size="15" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${r.name}</text>
+         ${r.role.map((t, k) => `<text x="${cx}" y="${y + (two ? 36 : 37) + k * 15}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#8F5A1D" font-family="Pretendard, sans-serif">${t}</text>`).join("")}`;
+    return `<rect x="${x}" y="${y}" width="${r.w}" height="${r.h}" rx="8" fill="${hidden ? "#FBF0DA" : ["#E8D4A4", "#F0DFBC", "#F8ECD2"][i]}" stroke="${hidden ? "#C2843A" : "#8A6A3E"}" stroke-width="1.6"/>${label}`;
   }).join("");
   return `<svg viewBox="0 0 400 216" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
-    aria-label="세 단의 피라미드 양옆으로 내려가는 화살표와 올라가는 화살표가 있고 오른쪽 위에 별도의 작은 카드가 있는 구조도. 일부 칸은 동그라미 기호로 가려져 있을 수 있다">
+    aria-label="세 단의 피라미드 양옆으로 내려가는 화살표와 올라가는 화살표가 있고 오른쪽 아래에 별도의 작은 카드가 있는 구조도. 일부 칸은 동그라미 기호로 가려져 있을 수 있다">
     <rect x="0" y="0" width="400" height="216" rx="16" fill="#F7FAFC"/>
     ${els}
-    <path d="M52 48 q-14 42 0 84 m-5 -8 l5 8 6 -7" stroke="#3D5BC0" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="32" y="86" text-anchor="middle" font-size="9.5" font-weight="800" fill="#3D5BC0" font-family="Pretendard, sans-serif">보호와</text>
-    <text x="32" y="98" text-anchor="middle" font-size="9.5" font-weight="800" fill="#3D5BC0" font-family="Pretendard, sans-serif">토지 분배</text>
-    <path d="M292 132 q14 -42 0 -84 m-6 8 l6 -8 5 8" stroke="#C2843A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="312" y="86" text-anchor="middle" font-size="9.5" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">충성과</text>
-    <text x="312" y="98" text-anchor="middle" font-size="9.5" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">복종</text>
-    <rect x="326" y="150" width="64" height="42" rx="8" fill="#FFFFFF" stroke="#B9C4D4" stroke-width="1.6"/>
-    <text x="358" y="168" text-anchor="middle" font-size="10.5" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">천황</text>
-    <text x="358" y="182" text-anchor="middle" font-size="8.4" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">형식상의 지위</text>
-    <text x="172" y="204" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">막부의 우두머리가 실질적인 지배권을 행사해요!</text>
+    <path d="M50 50 q-20 43 0 86 m-5 -8 l5 8 6 -7" stroke="#3D5BC0" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="30" y="88" text-anchor="middle" font-size="11.5" font-weight="800" fill="#3D5BC0" stroke="#F7FAFC" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">보호와</text>
+    <text x="30" y="102" text-anchor="middle" font-size="11.5" font-weight="800" fill="#3D5BC0" stroke="#F7FAFC" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">토지 분배</text>
+    <path d="M294 136 q20 -43 0 -86 m-6 8 l6 -8 5 8" stroke="#C2843A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="314" y="88" text-anchor="middle" font-size="11.5" font-weight="800" fill="#8F5A1D" stroke="#F7FAFC" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">충성과</text>
+    <text x="314" y="102" text-anchor="middle" font-size="11.5" font-weight="800" fill="#8F5A1D" stroke="#F7FAFC" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">복종</text>
+    <rect x="308" y="146" width="84" height="46" rx="8" fill="#FFFFFF" stroke="#B9C4D4" stroke-width="1.6"/>
+    <text x="350" y="165" text-anchor="middle" font-size="12.5" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">천황</text>
+    <text x="350" y="182" text-anchor="middle" font-size="11" font-weight="700" fill="#5B6570" font-family="Pretendard, sans-serif">형식상의 지위</text>
+    <text x="172" y="208" text-anchor="middle" font-size="12" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">막부의 우두머리가 실질적인 지배권을 행사해요!</text>
   </svg>`;
 }
 
@@ -662,25 +679,25 @@ export function silverFlowFig(): string {
     <path d="M168 58 L178 48 L186 60 L178 72 z M172 84 L182 78 L188 90 L178 96 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="1.8" stroke-linejoin="round"/>
     <path d="M150 118 L160 112 L166 122 L156 130 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="1.8" stroke-linejoin="round"/>
     <path d="M394 16 L342 22 L310 34 L296 52 L302 72 L312 84 L306 100 L316 112 L330 124 L322 142 L328 162 L318 184 L308 196 L300 178 L296 156 L302 136 L292 122 L286 104 L294 88 L286 72 L292 52 L286 38 L318 26 L358 16 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round" transform="translate(0 2)"/>
-    <text x="52" y="66" text-anchor="middle" font-size="11" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">유럽 방면</text>
-    <text x="128" y="66" text-anchor="middle" font-size="11.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">명 · 청</text>
-    <text x="192" y="42" text-anchor="middle" font-size="9.5" font-weight="800" fill="#5E4626" font-family="Pretendard, sans-serif">이와미 은광</text>
+    <text x="52" y="66" text-anchor="middle" font-size="12" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">유럽 방면</text>
+    <text x="128" y="66" text-anchor="middle" font-size="13" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">명 · 청</text>
+    <text x="192" y="42" text-anchor="middle" font-size="11" font-weight="800" fill="#5E4626" font-family="Pretendard, sans-serif">이와미 은광</text>
     <circle cx="180" cy="58" r="3.4" fill="#8A96A6" stroke="#4A5668" stroke-width="1.4"/>
-    <text x="150" y="146" text-anchor="middle" font-size="9.5" font-weight="800" fill="#5E4626" font-family="Pretendard, sans-serif">마닐라</text>
+    <text x="150" y="146" text-anchor="middle" font-size="11" font-weight="800" fill="#5E4626" font-family="Pretendard, sans-serif">마닐라</text>
     <circle cx="157" cy="122" r="3.4" fill="#8A96A6" stroke="#4A5668" stroke-width="1.4"/>
-    <text x="330" y="70" text-anchor="middle" font-size="10.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">아메리카</text>
+    <text x="330" y="70" text-anchor="middle" font-size="12" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">아메리카</text>
     <circle cx="318" cy="168" r="4" fill="#8A96A6" stroke="#4A5668" stroke-width="1.6"/>
-    <text x="352" y="176" text-anchor="middle" font-size="9.5" font-weight="800" fill="#5E4626" font-family="Pretendard, sans-serif">포토시 은광</text>
+    <text x="352" y="180" text-anchor="middle" font-size="11" font-weight="800" fill="#5E4626" font-family="Pretendard, sans-serif">포토시 은광</text>
     <path d="M310 164 Q 230 178 168 130 m10 8 l-10 -8 12 -3" stroke="#5E6A7A" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="238" y="184" text-anchor="middle" font-size="10" font-weight="900" fill="#3E4864" font-family="Pretendard, sans-serif">은</text>
+    <text x="238" y="184" text-anchor="middle" font-size="12.5" font-weight="900" fill="#3E4864" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">은</text>
     <path d="M150 116 Q 142 104 138 96 m1 9 l-1 -9 8 3" stroke="#5E6A7A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M174 62 q-14 10 -26 16 m9 -1 l-9 1 4 -8" stroke="#5E6A7A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="176" y="80" text-anchor="middle" font-size="10" font-weight="900" fill="#3E4864" font-family="Pretendard, sans-serif">은</text>
+    <text x="176" y="80" text-anchor="middle" font-size="12.5" font-weight="900" fill="#3E4864" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">은</text>
     <path d="M44 90 Q 84 178 128 116 m-1 10 l1 -10 -9 4" stroke="#5E6A7A" stroke-width="2.6" fill="none" stroke-dasharray="6 5" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="76" y="160" text-anchor="middle" font-size="10" font-weight="900" fill="#3E4864" font-family="Pretendard, sans-serif">은</text>
+    <text x="76" y="160" text-anchor="middle" font-size="12.5" font-weight="900" fill="#3E4864" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">은</text>
     <path d="M112 40 Q 80 30 52 38 m8 -5 l-8 5 9 4" stroke="#C2843A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="82" y="24" text-anchor="middle" font-size="9.5" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">비단 · 도자기 · 차</text>
-    <text x="200" y="210" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">세계의 은이 상품값으로 오간 16~17세기의 바닷길</text>
+    <text x="82" y="24" text-anchor="middle" font-size="11" font-weight="800" fill="#8F5A1D" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">비단 · 도자기 · 차</text>
+    <text x="200" y="212" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">세계의 은이 상품값으로 오간 16~17세기의 바닷길</text>
   </svg>`;
 }
 
@@ -692,7 +709,7 @@ export function silverFlowFig(): string {
    안데스(97,164)=24.3,74.5 · 희망봉(203,186)=50.8,84.5 · 캘리컷(287,120)=71.8,54.5. */
 export function searoutesFig(o?: { marks?: boolean }): string {
   const mk = (x: number, y: number, t: string): string =>
-    o?.marks ? `<circle cx="${x}" cy="${y}" r="10" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="11" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${t}</text>` : "";
+    o?.marks ? `<circle cx="${x}" cy="${y}" r="11" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="12" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${t}</text>` : "";
   return `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
     aria-label="여러 대륙을 단순하게 그린 세계 지도 위로 서로 다른 색의 항로 세 개가 그려진 그림">
     <rect x="0" y="0" width="400" height="220" rx="16" fill="#DCEFF6"/>
@@ -704,11 +721,11 @@ export function searoutesFig(o?: { marks?: boolean }): string {
     <path d="M302 48 L330 40 L358 36 L384 40 L394 52 L390 70 L378 84 L362 92 L344 96 L330 104 L318 96 L308 84 L304 68 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
     <path d="M330 104 L342 112 L352 124 L344 134 L332 126 z M356 108 L368 104 L376 114 L366 122 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="1.8" stroke-linejoin="round"/>
     <path d="M346 118 L352 112 L358 120 L352 126 z" fill="#EFE6D2" stroke="#C4B28E" stroke-width="1.4" stroke-linejoin="round"/>
-    <text x="196" y="52" text-anchor="middle" font-size="10" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">유럽</text>
-    <text x="196" y="120" text-anchor="middle" font-size="10" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">아프리카</text>
-    <text x="344" y="66" text-anchor="middle" font-size="10" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">아시아</text>
-    <text x="58" y="48" text-anchor="middle" font-size="9.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">북아메리카</text>
-    <text x="118" y="170" text-anchor="middle" font-size="9.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">남아메리카</text>
+    <text x="196" y="52" text-anchor="middle" font-size="11.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">유럽</text>
+    <text x="196" y="120" text-anchor="middle" font-size="11.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">아프리카</text>
+    <text x="344" y="66" text-anchor="middle" font-size="11.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">아시아</text>
+    <text x="58" y="48" text-anchor="middle" font-size="11" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">북아메리카</text>
+    <text x="118" y="170" text-anchor="middle" font-size="11" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">남아메리카</text>
     <path d="M182 70 Q 140 84 108 100 m9 -6 l-9 6 10 3" stroke="#C2843A" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M186 74 Q 142 128 198 190 Q 213 200 232 186 Q 264 162 284 128 m-2 10 l2 -10 -10 4" stroke="#0E7C8A" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M182 76 Q 148 150 122 186 Q 108 206 66 208 L 10 200 M 394 150 Q 372 132 352 122 m4 9 l-4 -9 10 1" stroke="#7C6BFF" stroke-width="2.6" fill="none" stroke-dasharray="7 5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -732,18 +749,18 @@ export function triangleTradeFig(o?: { hide?: number }): string {
     <rect x="0" y="0" width="400" height="232" rx="16" fill="#F7FAFC"/>
     <path d="M96 138 q64 74 208 0" stroke="#4E7694" stroke-width="2" fill="none" opacity=".25"/>
     <rect x="152" y="18" width="96" height="40" rx="10" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="1.8"/>
-    <text x="200" y="43" text-anchor="middle" font-size="13" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">유럽</text>
+    <text x="200" y="43" text-anchor="middle" font-size="14.5" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">유럽</text>
     <rect x="278" y="140" width="102" height="40" rx="10" fill="#FBEFDA" stroke="#C2843A" stroke-width="1.8"/>
-    <text x="329" y="165" text-anchor="middle" font-size="13" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">아프리카</text>
+    <text x="329" y="165" text-anchor="middle" font-size="14.5" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">아프리카</text>
     <rect x="20" y="140" width="102" height="40" rx="10" fill="#EDEAFA" stroke="#5B4AC0" stroke-width="1.8"/>
-    <text x="71" y="165" text-anchor="middle" font-size="13" font-weight="900" fill="#3D2E86" font-family="Pretendard, sans-serif">아메리카</text>
+    <text x="71" y="165" text-anchor="middle" font-size="14.5" font-weight="900" fill="#3D2E86" font-family="Pretendard, sans-serif">아메리카</text>
     <path d="M242 62 Q 300 88 322 134 m1 -10 l-1 10 -9 -4" stroke="#0E7C8A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="308" y="92" text-anchor="middle" font-size="10" font-weight="800" fill="#0A5964" font-family="Pretendard, sans-serif">${g(0)}</text>
+    <text x="308" y="92" text-anchor="middle" font-size="12" font-weight="800" fill="#0A5964" stroke="#F7FAFC" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">${g(0)}</text>
     <path d="M274 172 Q 200 200 128 172 m10 6 l-10 -6 11 -3" stroke="#8F5A1D" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="200" y="216" text-anchor="middle" font-size="10" font-weight="800" fill="#8F5A1D" font-family="Pretendard, sans-serif">${g(1)}</text>
+    <text x="200" y="216" text-anchor="middle" font-size="12" font-weight="800" fill="#8F5A1D" stroke="#F7FAFC" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">${g(1)}</text>
     <path d="M80 134 Q 110 84 158 60 m-10 1 l10 -1 -4 10" stroke="#5B4AC0" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="92" y="88" text-anchor="middle" font-size="10" font-weight="800" fill="#3D2E86" font-family="Pretendard, sans-serif">${g(2)}</text>
-    <text x="200" y="140" text-anchor="middle" font-size="10.5" font-weight="800" fill="#4E7694" font-family="Pretendard, sans-serif">대서양</text>
+    <text x="92" y="88" text-anchor="middle" font-size="12" font-weight="800" fill="#3D2E86" stroke="#F7FAFC" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">${g(2)}</text>
+    <text x="200" y="140" text-anchor="middle" font-size="12" font-weight="800" fill="#4E7694" font-family="Pretendard, sans-serif">대서양</text>
   </svg>`;
 }
 
