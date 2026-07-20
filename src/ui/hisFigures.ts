@@ -3,6 +3,8 @@
 // 파라미터형 원칙: 연표 띠(centuryStripFig)는 눈금 범위·표시 구간이 인자 — 시험·후속 단원이 재사용.
 // aria 가드: 그림 aria-label에 정답(세기 이름·단계 이름)을 쓰지 않는다(crudeTowerFig 선례).
 
+import { WORLD_LAND_PATH } from "./worldMap.generated";
+
 /* ---------- 사관 그림 — 같은 인물, 서로 다른 두 기록 ---------- */
 export function sagwanFig(): string {
   return `<svg viewBox="0 0 400 210" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
@@ -164,9 +166,8 @@ export function yeonhoFig(): string {
     <path d="M92 120h28M92 132h28" stroke="#5E7088" stroke-width="2" stroke-linecap="round" opacity=".7"/>
     <path d="M168 96 h56 m-8 -7 l8 7 -8 7" stroke="#C2843A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     <rect x="240" y="52" width="120" height="88" rx="12" fill="url(#hf-cal2)" stroke="#B9C4D4" stroke-width="2"/>
-    <rect x="240" y="52" width="120" height="32" rx="12" fill="#0E7C8A"/>
-    <rect x="240" y="76" width="120" height="8" fill="#0E7C8A"/>
-    <text x="300" y="73" text-anchor="middle" font-size="13" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">오늘날 연도로는</text>
+    <path d="M252 52 h96 q12 0 12 12 v24 h-120 v-24 q0 -12 12 -12 z" fill="#0E7C8A"/>
+    <text x="300" y="75" text-anchor="middle" font-size="13" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">오늘날 연도로는</text>
     <text x="300" y="118" text-anchor="middle" font-size="26" font-weight="900" fill="#0A5964" font-family="Pretendard, sans-serif">391년</text>
     <text x="220" y="184" text-anchor="middle" font-size="12" font-weight="800" fill="#8B95A1" font-family="Pretendard, sans-serif">같은 해를 두 가지 방법으로 부른다</text>
   </svg>`;
@@ -477,28 +478,36 @@ export function threeSixFig(o?: { hide?: number }): string {
 }
 
 /* ---------- 동아시아 문화권 지도(파라미터형) ----------
-   당·발해·신라·일본 + 사신(견당사) 왕래 화살표 + 공통 요소 4칩. labels=false면 나라 이름 대신
-   (가)~(라) 기호(그 나라를 묻는 문제용 — 라벨형은 shuffle:false).
-   해안 검산 메모: 대륙 동해안(190,16)→산둥(216,58)→황해 홈(196,84)→남해안(150,170), 한반도는
-   (232,44)에서 남쪽 꼬리(246,118), 일본 열도는 (300,74)~(346,132) 사선 호. */
+   실데이터 지도판(2026-07-20 사용자 피드백 "당·신라·발해를 저렇게 표현하는 게 맞나"):
+   손그림 러프를 폐기하고 WORLD_LAND_PATH(Natural Earth 110m equirect 1000×500)를 동아시아
+   크롭(96~154°E × 20~52°N — 58:32 ≈ 400:220)으로 임베드. 사회 트랙 "대륙 손그리기 금지" 원칙의
+   역사판 첫 사례. 좌표 변환 ex=(lon−96)×6.8966 · ey=(52−lat)×6.8966, 라벨은 실좌표 앵커
+   (당=장안 108.9E,34.3N · 발해=상경 일대 126.5E,45.5N · 신라=경주권 128.5E,36N · 일본=혼슈 137.5E,36N).
+   labels=false면 나라 이름 대신 (가)~(라) 기호(그 나라를 묻는 문제용 — 라벨형은 shuffle:false). */
 export function eastAsiaFig(o?: { labels?: boolean }): string {
   const lab = o?.labels ?? true;
-  const name = (x: number, y: number, t: string, tag: string): string =>
-    lab
-      ? `<text x="${x}" y="${y}" text-anchor="middle" font-size="13.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">${t}</text>`
-      : `<circle cx="${x}" cy="${y - 4}" r="11" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x}" y="${y}" text-anchor="middle" font-size="12" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${tag}</text>`;
+  const S = 400 / (58 * (1000 / 360)); // ≈ 2.4828 — 경도 58° 크롭을 400px에
+  const ex = (lon: number): number => (lon - 96) * (1000 / 360) * S;
+  const ey = (lat: number): number => (52 - lat) * (500 / 180) * S;
+  const name = (lon: number, lat: number, t: string, tag: string): string => {
+    const x = ex(lon);
+    const y = ey(lat);
+    return lab
+      ? `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" font-size="13.5" font-weight="900" fill="#4A3410" stroke="#F2E7CE" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">${t}</text>`
+      : `<circle cx="${x.toFixed(1)}" cy="${(y - 4).toFixed(1)}" r="11" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" font-size="12" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${tag}</text>`;
+  };
   return `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
     aria-label="동아시아의 네 나라 사이를 화살표가 오가고 아래에 네 개의 공통 요소 칩이 놓인 지도">
+    <defs><clipPath id="hf-ea-clip"><rect x="0" y="0" width="400" height="220" rx="16"/></clipPath></defs>
     <rect x="0" y="0" width="400" height="220" rx="16" fill="#DCEFF6"/>
-    <path d="M8 10 L190 16 L204 40 L216 58 L206 72 L196 84 L200 102 L192 122 L178 138 L164 154 L150 170 L128 178 L102 172 L84 178 L60 172 L36 176 L8 170 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M204 40 L232 44 L252 40 L262 52 L256 66 L250 82 L252 98 L246 118 L234 122 L224 110 L218 92 L214 72 L206 72 L216 58 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M262 52 L282 40 L302 34 L312 44 L298 54 L278 58 z" fill="#EFE6D2" stroke="#C4B28E" stroke-width="1.6" stroke-linejoin="round"/>
-    <path d="M300 74 L316 66 L330 74 L322 86 L306 86 z M312 92 L336 84 L352 94 L340 110 L318 104 z M336 116 L352 108 L360 120 L348 132 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="1.8" stroke-linejoin="round"/>
-    <path d="M236 90 q-24 4 -44 0 m7 -4 l-7 4 7 4" stroke="#0E7C8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
-    <path d="M318 96 q-40 20 -110 26 m8 -5 l-8 5 9 3" stroke="#0E7C8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
-    <path d="M282 52 q-30 -6 -66 -2 m8 -4 l-8 4 8 4" stroke="#0E7C8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
-    ${name(120, 96, "당", "(가)")}${name(284, 30, "발해", "(나)")}${name(238, 76, "신라", "(다)")}${name(342, 146, "일본", "(라)")}
-    ${lab ? `<text x="196" y="130" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0A5964" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">사신 · 유학생 · 승려</text>` : ""}
+    <g clip-path="url(#hf-ea-clip)">
+      <path d="${WORLD_LAND_PATH}" transform="scale(${S.toFixed(4)}) translate(-766.667 -105.556)" fill="#F2E7CE" fill-rule="evenodd" stroke="#C4B28E" stroke-width="0.65" stroke-linejoin="round"/>
+    </g>
+    <path d="M207 107 Q 160 99 114 118 m9 -6 l-9 6 10 3" stroke="#0E7C8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
+    <path d="M200 55 Q 152 70 110 104 m10 -4 l-10 4 10 5" stroke="#0E7C8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
+    <path d="M266 123 Q 207 164 148 141 m10 -2 l-10 2 8 6" stroke="#0E7C8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
+    ${name(108.9, 34.3, "당", "(가)")}${name(126.5, 45.5, "발해", "(나)")}${name(127.6, 35.8, "신라", "(다)")}${name(138.6, 36.4, "일본", "(라)")}
+    ${lab ? `<text x="${ex(122.8).toFixed(1)}" y="${ey(38.6).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0A5964" stroke="#DCEFF6" stroke-width="4" paint-order="stroke" font-family="Pretendard, sans-serif">사신 · 유학생 · 승려</text>` : ""}
     <g font-family="Pretendard, sans-serif" font-size="12.5" font-weight="900" text-anchor="middle">
       <rect x="24" y="186" width="80" height="24" rx="12" fill="#FBF3DC" stroke="#8A6A3E" stroke-width="1.4"/><text x="64" y="202" fill="#5E4626">한자</text>
       <rect x="116" y="186" width="80" height="24" rx="12" fill="#E2F1F3" stroke="#0E7C8A" stroke-width="1.4"/><text x="156" y="202" fill="#0A5964">유교</text>

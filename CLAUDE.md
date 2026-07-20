@@ -1746,7 +1746,14 @@ src/
   2줄 배열(role: string[])·행 높이 증가를 세트로 재설계**한다(yuanClassFig·bakufuFig가 기준 구현).
   화살표·소품을 관통하는 라벨은 흰 할로(stroke 배경색+paint-order:stroke — m2u4 규칙의 도해판,
   지도류는 바다색 #DCEFF6 할로). 눈검수는 public/qa-hisfigs.html(전 그림 렌더 시트) +
-  `PORT=<포트> node qa/shot-hisfigs.mjs`(스크롤 분할 샷) — 새 역사 그림도 이 시트에 등록 후 검수.
+  `PORT=<포트> node qa/shot-hisfigs.mjs`(스크롤 분할 샷, 요소 확대는 shot-hisfigs-zoom.mjs) —
+  새 역사 그림도 이 시트에 등록 후 검수.
+- **나라 단위 지도는 실데이터(2026-07-20 사용자 피드백 "당·신라·발해가 뭉뚝하다")**: eastAsiaFig가
+  WORLD_LAND_PATH(Natural Earth 110m equirect) 동아시아 크롭(96~154°E × 20~52°N, ex=(lon−96)×6.8966 ·
+  ey=(52−lat)×6.8966)으로 전환 — 사회 트랙 "대륙 손그리기 금지" 원칙의 역사판 첫 사례. 나라 라벨은
+  실좌표 앵커(당=장안·발해=상경 일대·신라=경주권·일본=혼슈)로 계산 배치. 이후 역사 지도 신작도
+  나라·반도가 식별돼야 하면 이 문법(크롭+clipPath+실좌표 라벨)을 쓴다 — 대륙 스케일 러프 개념도
+  (silkroad·searoutes·silverFlow류)는 흐름도라 기존 유지.
 - **h1u1 구성(5레슨 = 무료 3+프리미엄 2)**: L1 역사의 의미(만화 기함+사실/기록 binSort) · L2 학습 목적
   (목적 4통 binSort) · L3 사료(실사 binSort+사료 비판) · L4 시간 읽기(timelineLab 기함+세기 드릴, prem) ·
   L5 탐구 절차(만화+order, prem). 훅 5종 hookHis.ts(saveicon 저장 아이콘=플로피·gamechar 게임 속 실존
