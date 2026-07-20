@@ -77,6 +77,10 @@ export interface AppState {
   // 단원부터 열린다(구 방식 = 첫 미완료 단원뿐이라 건너뛰며 학습하면 "최근"이 아니었음).
   // viewGrade처럼 기기 화면 상태라 동기화 제외. 구버전 저장분엔 없어서 optional.
   lastUnits?: Record<string, string>;
+  // 이 기기 데이터의 주인 = 마지막으로 동기화한 계정 user id(2026-07-21 계정 전환 누출 수정).
+  // 다른 계정이 로그인하면 sync.ts가 병합 대신 서버 상태로 교체하기 위한 소유 표식 —
+  // 로그아웃해도 지우지 않는다(그래야 다음 로그인 때 주인을 판별). 기기 메타라 동기화 제외.
+  syncedUserId?: string | null;
 }
 
 const KEY = "science-app.v1";
@@ -104,6 +108,7 @@ const DEFAULT_STATE: AppState = {
   avatarPreset: null,
   nickname: null,
   lastUnits: {},
+  syncedUserId: null,
 };
 
 function dayKey(d = new Date()): string {

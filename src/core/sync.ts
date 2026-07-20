@@ -135,10 +135,43 @@ function mergeIntoLocal(local: Readonly<AppState>, row: ProgressRow): Partial<Ap
   };
 }
 
+/**
+ * 계정 전환 교체 패치(2026-07-21 사용자 버그 리포트 — A 로그아웃 후 같은 기기에서 B 로그인 시
+ * A의 닉네임이 B 마이 탭에 보이고 profiles에도 밀려 올라감): 이 기기 데이터의 주인(syncedUserId)이
+ * 새 로그인 계정과 다르면 "학습은 잃지 않는다" 병합을 적용하지 않는다 — 그 데이터는 게스트가 아니라
+ * 이전 계정의 것이라, 병합하면 기록·닉네임·아바타가 계정 사이를 넘나든다(개인정보 누출).
+ * 계정 데이터는 전부 새 계정의 서버 값으로 교체하고, 서버 행이 없으면(신규 계정) 초기값에서 시작.
+ * 기기 설정(onboarded·viewGrade·viewSubject·reviewMode·desktopMode)은 계정 정보가 아니라 유지.
+ * export는 QA 검증용(qa에서 vite 모듈 import로 순수 함수 검사 — data-oi와 같은 dev 관행).
+ */
+export function accountSwitchPatch(local: Readonly<AppState>, row: ProgressRow | null): Partial<AppState> {
+  return {
+    grade: row?.grade ?? local.grade, // 신규 계정은 기기 온보딩 학년으로 시작(직후 push가 서버에 기록)
+    goalMin: row ? row.goal_min : local.goalMin,
+    premium: row?.premium ?? false,
+    totalXp: row?.total_step ?? 0,
+    lifeXp: row ? Math.max(row.life_step ?? 0, row.total_step ?? 0) : 0,
+    avatarId: row?.avatar_id ?? null,
+    streak: row?.streak ?? 0,
+    lastStudyDay: row?.last_study_day ?? null,
+    lessons: row?.lessons ?? {},
+    exams: row?.exams ?? {},
+    minigame: row?.minigame ?? {},
+    wrongNotes: row?.wrong_notes ?? {},
+    // 서버 미동기 정체성·추적 필드 — 이전 계정 흔적이 남지 않게 리셋.
+    // 닉네임은 아래 fullSync 닉네임 단계가 새 계정 profiles 값을 채택한다.
+    nickname: null,
+    avatarCustom: null,
+    avatarPreset: null,
+    lastUnits: {},
+  };
+}
+
 let activeUserId: string | null = null;
 let pushTimer = 0;
 let pushing = false;
 let dirty = false;
+let syncing = false; // fullSync 풀 구간 가드 — 디바운스 push가 이전 계정 로컬을 새 계정 행에 밀어올리는 경합 차단
 
 function schedulePush(): void {
   window.clearTimeout(pushTimer);
@@ -146,7 +179,7 @@ function schedulePush(): void {
 }
 
 async function pushNow(): Promise<void> {
-  if (!activeUserId || pushing) return;
+  if (!activeUserId || pushing || syncing) return;
   pushing = true;
   dirty = false;
   try {
@@ -159,15 +192,28 @@ async function pushNow(): Promise<void> {
   }
 }
 
-/** 로그인 직후 1회: 서버 기록을 내려받아 병합하고, 결과를 다시 올린다. */
+/**
+ * 로그인 직후 1회. 기기 데이터의 주인(syncedUserId)에 따라 갈린다:
+ * 같은 계정·첫 로그인(주인 없음) = 병합("학습은 잃지 않는다" — 게스트 진행 흡수),
+ * 다른 계정 = 교체(accountSwitchPatch — 이전 계정 데이터를 병합·푸시하면 계정 간 누출).
+ */
 async function fullSync(userId: string): Promise<void> {
+  syncing = true;
+  window.clearTimeout(pushTimer); // 로그인 전 저장이 걸어 둔 디바운스 push 취소(이전 계정 데이터 보호)
   try {
     const sb = await getSupabase();
+    const prevOwner = getState().syncedUserId ?? null;
+    const switching = prevOwner !== null && prevOwner !== userId;
     const { data } = await sb.from("progress").select("*").eq("user_id", userId).maybeSingle();
-    if (data) applySyncedState(mergeIntoLocal(getState(), data as ProgressRow));
+    const row = (data as ProgressRow | null) ?? null;
+    if (switching) applySyncedState({ ...accountSwitchPatch(getState(), row), syncedUserId: userId });
+    else if (row) applySyncedState({ ...mergeIntoLocal(getState(), row), syncedUserId: userId });
+    else applySyncedState({ syncedUserId: userId }); // 신규 계정 첫 기기 — 게스트 데이터가 곧 시작 기록
+    syncing = false;
     await pushNow();
-    // 닉네임(profiles.nickname — progress와 별개 테이블이라 rowOf에 안 싣는다): 기기 값이 있으면
-    // 서버로 밀고, 없으면 서버 값을 채택 — "학습은 잃지 않는다"의 닉네임판(기기 우선).
+    // 닉네임(profiles.nickname — progress와 별개 테이블이라 rowOf에 안 싣는다): 같은 계정·첫 로그인만
+    // 기기 값 우선("학습은 잃지 않는다"의 닉네임판). 계정 전환은 교체 패치가 로컬 닉네임을 이미 비워
+    // 항상 서버 값 채택 경로로 들어간다 — 이전 계정 닉네임을 새 계정 프로필에 밀어쓰지 않는다.
     const { data: prof } = await sb.from("profiles").select("nickname").eq("id", userId).maybeSingle();
     const localNick = getState().nickname;
     const serverNick = (prof?.nickname as string | null | undefined) ?? null;
@@ -175,6 +221,8 @@ async function fullSync(userId: string): Promise<void> {
     else if (!localNick && serverNick) applySyncedState({ nickname: serverNick });
   } catch {
     /* 실패해도 학습은 로컬로 계속 — 다음 저장 push가 재시도 역할 */
+  } finally {
+    syncing = false;
   }
 }
 

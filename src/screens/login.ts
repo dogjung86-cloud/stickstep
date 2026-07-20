@@ -6,7 +6,7 @@ import { el } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { stickAvatar } from "../ui/avatar";
-import { getState, currentStreak, wrongNoteCount } from "../core/store";
+import { getState, currentStreak, wrongNoteCount, applySyncedState } from "../core/store";
 import type { Screen } from "../core/router";
 import { consumeAuthError, currentUser, deleteAccount, isAuthConfigured, onAuthChange, signInWith, signOut } from "../core/auth";
 import type { AuthUser, OAuthProvider } from "../core/auth";
@@ -145,6 +145,9 @@ export function loginScreen(
           withdrawBusy = false;
           if (r.ok) {
             // 성공 — onAuthChange가 화면을 비로그인 상태로 다시 그린다. 스낵만 남긴다.
+            // 기기 데이터 소유 표식 해제: 주인 계정이 소멸했으니 게스트 귀속(재가입 시 병합 부활 —
+            // 해제하지 않으면 sync.ts 계정 전환 교체가 본인 기기 기록을 날린다).
+            applySyncedState({ syncedUserId: null });
             snack("탈퇴가 끝났어요. 이 기기의 학습 기록은 그대로 남아 있어요.");
           } else {
             go.textContent = "모두 삭제하고 탈퇴하기";
