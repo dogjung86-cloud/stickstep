@@ -1637,7 +1637,7 @@ export const H1_UNIT4: Unit = {
         }),
         hotspot({
           title: "새 뱃길 지도 —<br>다섯 이정표를 찾아서",
-          lead: "세 항해가 지난 자리들을 탭해 새 뱃길의 세계를 탐험해요!",
+          lead: "항해의 이정표 세 곳과, 뱃길이 닿은 아메리카의 두 문명을 탭해 봐요!",
           svg: searoutesFig(),
           spots: [
             // 스팟 % = searoutesFig 실좌표 검산(hisFigures 주석 정본): x=(lon+120)×1.81818/4 · y=(66−lat)×1.81818/2.2
