@@ -180,7 +180,8 @@ export function subjectScreen(opts: {
   const body = el(
     "div",
     { class: "scroll pad subj-body-wrap" },
-    h1,
+    // 탭 모드는 tab-head "과목"이 제목 — 본문 h1("과목 고르기")은 중복이라 뺀다(2026-07-21 사용자 지시)
+    ...(tabMode ? [] : [h1]),
     sub,
     el("div", { class: "subj-list" }, sci, mth, soc, his),
     el("div", { class: "subj-note", text: st.onboarded ? "과목은 언제든 여기서 바꿀 수 있어요." : "지금은 과학부터! 다른 과목도 준비되는 대로 열려요." },
