@@ -18,7 +18,9 @@ qa/shots/
 # codex image_gen 작업 디렉터리(발주 임시)
 tmp/
 .vercel
-.env*
+# .env 실값 파일만 무시 — .env.example(자리 안내, 커밋 대상)은 제외(2026-07-21 수정: 구 .env*가 example까지 잡았음)
+.env
+.env*.local
 
 # QA 디버그 스크린샷(세션 산출물)
 qa/u2-*.png

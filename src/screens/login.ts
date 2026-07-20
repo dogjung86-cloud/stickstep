@@ -175,13 +175,13 @@ export function loginScreen(
   const startOAuth = (provider: OAuthProvider, label: string): void => {
     if (busy) return;
     busy = true;
-    snack(`${label} 화면으로 이동할게요…`);
-    void signInWith(provider).then((ok) => {
-      if (!ok) {
-        busy = false;
-        snack("로그인 연결에 실패했어요. 잠시 후 다시 시도해 주세요.");
-      }
-      // 성공 시 공급자 페이지로 떠나므로 busy는 풀지 않는다.
+    // 구글은 GIS 원탭이면 이 페이지 안에서 끝난다 — "이동할게요" 단정 대신 중립 문구(2026-07-21).
+    snack(`${label} 로그인을 시작할게요…`);
+    void signInWith(provider).then((r) => {
+      if (r === "redirect") return; // 공급자 페이지로 떠나는 중 — busy는 풀지 않는다
+      busy = false;
+      if (r === "error") snack("로그인 연결에 실패했어요. 잠시 후 다시 시도해 주세요.");
+      // "done"은 onAuthChange 재렌더가 로그인 화면을 그리고, "cancel"(원탭 카드 닫음)은 조용히 복귀.
     });
   };
 

@@ -11,8 +11,16 @@ const env = (import.meta as unknown as { env?: Record<string, unknown> }).env ??
 const cleanEnv = (v: unknown): string => (typeof v === "string" ? v.replace(/\uFEFF/g, "").trim() : "");
 const SUPABASE_URL = cleanEnv(env.VITE_SUPABASE_URL);
 const SUPABASE_ANON_KEY = cleanEnv(env.VITE_SUPABASE_ANON_KEY);
+// 구글 웹 클라이언트 ID(공개 식별자 — 비밀 아님). 있으면 구글 로그인은 GIS ID 토큰 방식이 우선:
+// 구글 계정 선택 화면에 수파베이스 프로젝트 도메인(tzidcrq….supabase.co)이 노출되는 문제의 무료
+// 해법(2026-07-21 사용자 확정 — 커스텀 도메인 유료안 기각). 없으면 기존 리다이렉트 그대로라
+// 콘솔 설정 전 배포·로컬 dev·e2e 전부 무영향. 설정 절차는 SUPABASE_SETUP.md.
+const GOOGLE_CLIENT_ID = cleanEnv(env.VITE_GOOGLE_CLIENT_ID);
 
 export type OAuthProvider = "google" | "kakao";
+/** signInWith 결과 — done: 이 페이지 안에서 로그인 완결(GIS), redirect: 공급자 페이지로 떠남,
+ *  cancel: 사용자가 원탭 카드를 닫음(에러 아님 — 스낵 금지), error: 시작 실패. */
+export type SignInResult = "done" | "redirect" | "cancel" | "error";
 
 export interface AuthUser {
   id: string;
@@ -184,18 +192,146 @@ export async function initAuth(): Promise<void> {
   if (storageHasSession()) await getSupabase(); // 세션 복원(getClient의 getSession이 emit까지 처리)
 }
 
-/** 소셜 로그인 시작 — 성공 시 공급자 페이지로 이동한다(이 페이지는 떠남). */
-export async function signInWith(provider: OAuthProvider): Promise<boolean> {
-  if (!isAuthConfigured()) return false;
+// ---------- 구글 GIS(Identity Services) — ID 토큰 로그인 ----------
+// 원탭 카드가 이 페이지 안에서 ID 토큰을 주고 signInWithIdToken으로 세션을 만든다(리다이렉트 0회).
+// 구글이 표시하는 도메인 = 이 페이지(stickstep.com). 원탭이 못 뜨는 상황(쿨다운·브라우저에 구글
+// 미로그인·스크립트 차단·FedCM 거부)은 전부 기존 리다이렉트 플로우로 폴백 — 로그인이 막히는 일은 없다.
+interface GsiPromptMoment {
+  isNotDisplayed?: () => boolean;
+  isSkippedMoment?: () => boolean;
+  isDismissedMoment?: () => boolean;
+  getDismissedReason?: () => string;
+}
+interface GsiId {
+  initialize(cfg: Record<string, unknown>): void;
+  prompt(cb?: (m: GsiPromptMoment) => void): void;
+}
+declare global {
+  interface Window {
+    google?: { accounts?: { id?: GsiId } };
+  }
+}
+
+let gsiPromise: Promise<GsiId | null> | null = null;
+function loadGsi(): Promise<GsiId | null> {
+  if (!gsiPromise) {
+    gsiPromise = new Promise((resolve) => {
+      if (window.google?.accounts?.id) {
+        resolve(window.google.accounts.id);
+        return;
+      }
+      try {
+        const s = document.createElement("script");
+        s.src = "https://accounts.google.com/gsi/client";
+        s.async = true;
+        s.onload = (): void => resolve(window.google?.accounts?.id ?? null);
+        s.onerror = (): void => resolve(null);
+        document.head.appendChild(s);
+        window.setTimeout(() => resolve(window.google?.accounts?.id ?? null), 8000); // 로드 안전망(중복 resolve 무해)
+      } catch {
+        resolve(null);
+      }
+    });
+  }
+  return gsiPromise;
+}
+
+/** OpenID nonce — 원본은 signInWithIdToken에, SHA-256 해시는 GIS에(수파베이스 공식 패턴).
+ *  crypto.subtle이 없는 비보안 컨텍스트면 nonce 없이 진행(수파베이스가 토큰에 nonce 없으면 검사 생략). */
+async function makeNonce(): Promise<{ raw: string; hashed: string } | null> {
+  try {
+    const bytes = crypto.getRandomValues(new Uint8Array(16));
+    const raw = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw));
+    const hashed = Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+    return { raw, hashed };
+  } catch {
+    return null;
+  }
+}
+
+function signInWithGoogleIdToken(): Promise<"done" | "cancel" | "fallback"> {
+  return (async () => {
+    const gsi = await loadGsi();
+    if (!gsi) return "fallback" as const;
+    const nonce = await makeNonce();
+    return new Promise<"done" | "cancel" | "fallback">((resolve) => {
+      let settled = false;
+      const settle = (r: "done" | "cancel" | "fallback"): void => {
+        if (!settled) {
+          settled = true;
+          resolve(r);
+        }
+      };
+      // 모멘트 콜백이 어떤 이유로도 안 오면(원탭 API 변동 등) 리다이렉트로 탈출 — busy 영구 잠금 방지.
+      window.setTimeout(() => settle("fallback"), 25000);
+      try {
+        gsi.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: (resp: { credential?: string }) => {
+            void (async () => {
+              if (!resp?.credential) {
+                settle("fallback");
+                return;
+              }
+              try {
+                const c = await getSupabase();
+                const { error } = await c.auth.signInWithIdToken({
+                  provider: "google",
+                  token: resp.credential,
+                  ...(nonce ? { nonce: nonce.raw } : {}),
+                });
+                if (error) {
+                  lastAuthError = error.message;
+                  settle("fallback"); // 교환 실패(클라이언트 ID 미등록 등) — 리다이렉트가 마지막 그물
+                } else {
+                  settle("done"); // onAuthStateChange가 emit·동기화까지 이어 간다(리다이렉트 복귀와 동일 경로)
+                }
+              } catch (e) {
+                lastAuthError = e instanceof Error ? e.message : String(e);
+                settle("fallback");
+              }
+            })();
+          },
+          ...(nonce ? { nonce: nonce.hashed } : {}),
+          use_fedcm_for_prompt: true,
+          auto_select: false,
+          cancel_on_tap_outside: true,
+          context: "signin",
+        });
+        gsi.prompt((m) => {
+          // 카드가 아예 못 뜸(쿨다운·구글 미로그인) → 폴백. 사용자가 직접 닫음 → 조용한 취소.
+          // FedCM 모드에선 일부 모멘트 API가 제한 — 실패해도 credential 콜백·타임아웃이 안전망.
+          try {
+            if (m?.isNotDisplayed?.() || m?.isSkippedMoment?.()) settle("fallback");
+            else if (m?.isDismissedMoment?.() && m.getDismissedReason?.() !== "credential_returned") settle("cancel");
+          } catch {
+            /* 무시 */
+          }
+        });
+      } catch {
+        settle("fallback");
+      }
+    });
+  })();
+}
+
+/** 소셜 로그인 시작 — 구글은 GIS 원탭(페이지 안 완결) 우선, 그 외·폴백은 공급자 페이지로 리다이렉트. */
+export async function signInWith(provider: OAuthProvider): Promise<SignInResult> {
+  if (!isAuthConfigured()) return "error";
+  if (provider === "google" && GOOGLE_CLIENT_ID) {
+    const r = await signInWithGoogleIdToken();
+    if (r !== "fallback") return r; // "done" | "cancel"
+  }
   try {
     const c = await getSupabase();
     const { error } = await c.auth.signInWithOAuth({
       provider,
       options: { redirectTo: location.origin + location.pathname },
     });
-    return !error;
+    return error ? "error" : "redirect";
   } catch {
-    return false;
+    return "error";
   }
 }
 

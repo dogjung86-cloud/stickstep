@@ -672,6 +672,14 @@ src/
   (VITE_SUPABASE_URL·VITE_SUPABASE_ANON_KEY, .env.local)가 없으면 전원 no-op** — dev·e2e·기존
   배포는 백엔드 없이 그대로 동작한다(스텁 모드: 로그인 버튼이 안내 스낵만). supabase-js는 three와
   같은 규칙으로 **동적 import**(vite optimizeDeps에 등록) — 로그인 안 한 기기는 번들을 아예 받지 않는다.
+- **구글 로그인은 GIS 원탭(ID 토큰) 우선(2026-07-21 사용자 확정)**: 구글 계정 선택 화면에 수파베이스
+  프로젝트 도메인이 노출되는 문제의 무료 해법(커스텀 도메인 월 $35안 기각). `VITE_GOOGLE_CLIENT_ID`
+  있을 때만 발동 — auth.ts가 GIS 스크립트 지연 로드 → 원탭 카드 → `signInWithIdToken`(nonce는
+  원본→수파베이스·SHA-256→GIS, 공식 패턴)으로 페이지 안 완결. 원탭 불가(쿨다운·구글 미로그인·차단)는
+  전부 기존 리다이렉트 폴백이라 **구글 redirect URI 설정은 계속 유지**. signInWith 반환은
+  `SignInResult`("done"=페이지 안 완결/"redirect"=떠남/"cancel"=원탭 닫음(스낵 금지)/"error") —
+  login.ts startOAuth가 이 계약을 소유. 콘솔 절차는 SUPABASE_SETUP.md §3.5(원본 등록 +
+  수파베이스 Authorized Client IDs + Vercel env). 카카오는 콘솔 앱 이름이 떠서 해당 없음.
 - 스키마·설정 절차: `supabase/schema.sql` + `SUPABASE_SETUP.md`(서울 리전, 구글·카카오 프로바이더).
   **네이버는 Supabase 미지원**이라 준비 중 스낵 유지. 서버 컬럼명은 `total_stick`(XP→'스틱' 개명 선반영).
 - **병합 원칙 "학습은 잃지 않는다"**(sync.ts가 소유): lessons/exams/minigame은 항목별 max·OR,

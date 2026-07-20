@@ -37,6 +37,27 @@
      (예: `https://stickstep.vercel.app/privacy.html` — 앱에 포함된 방침 문서예요.
      카카오 비즈 앱 전환·심사에서도 같은 URL을 쓰면 돼요).
 
+## 3.5 구글 원탭(GIS ID 토큰) — 계정 선택 화면에 stickstep.com 표시하기 (5분, 권장)
+
+기본 리다이렉트 방식은 구글 계정 선택 화면에 콜백 도메인인
+`<프로젝트ref>.supabase.co`가 노출돼요(구글의 피싱 방지 표기 — supabase.co는 우리 소유가 아니라
+브랜드 인증도 불가). `VITE_GOOGLE_CLIENT_ID`를 설정하면 구글 로그인이 **GIS 원탭(ID 토큰) 방식**으로
+떠서 페이지 안에서 로그인이 끝나고, 표시 도메인이 **stickstep.com**이 돼요(2026-07-21 도입).
+원탭이 못 뜨는 상황(쿨다운·브라우저에 구글 미로그인 등)은 자동으로 기존 리다이렉트로 폴백하니
+아래 3번의 redirect URI 설정은 그대로 유지해야 해요.
+
+1. 구글 클라우드 → Credentials → 3-2에서 만든 **웹 OAuth 클라이언트** 열기 →
+   **Authorized JavaScript origins**에 추가:
+   - `https://stickstep.com` (+ `https://www.stickstep.com` 등 실제 접속 도메인 전부)
+   - `http://localhost:5199` (dev에서 원탭 테스트하려면)
+2. Supabase → **Authentication → Providers → Google → Authorized Client IDs**에
+   같은 웹 클라이언트 ID를 추가(콤마 구분) — `signInWithIdToken`의 토큰 검증(aud)에 필요.
+3. Vercel → 프로젝트 → Settings → Environment Variables에 `VITE_GOOGLE_CLIENT_ID` 추가 후 재배포.
+   로컬은 `.env.local`에 같은 줄 추가(클라이언트 ID는 공개 식별자라 비밀 아님 — 시크릿은 넣지 말 것).
+4. (선택·격상) OAuth 동의 화면 브랜딩에서 **승인된 도메인**에 `stickstep.com`을 등록하고
+   (Search Console 소유 확인 필요) 앱 이름·로고까지 채워 심사를 받으면 도메인 대신
+   **"스틱스텝"** 으로 표시돼요.
+
 ## 4. 카카오 로그인 (10분)
 
 1. https://developers.kakao.com → 애플리케이션 추가
