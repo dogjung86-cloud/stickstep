@@ -119,6 +119,12 @@ function storageHasSession(): boolean {
   }
 }
 
+/** 이 기기에 세션 토큰 흔적이 있는지 — 부팅 직후 initAuth의 복원이 아직 안 끝난 시점에
+ *  "곧 로그인될 기기"를 화면 쪽이 미리 알아채는 용도(마이 탭 로그인 유도 생략 판단). */
+export function hasStoredSession(): boolean {
+  return storageHasSession();
+}
+
 /** 다른 컨텍스트(새 탭·카카오톡 인앱 브라우저 등)에서 완결된 로그인을 이 탭이 알아채게 한다.
  *  안드로이드 소셜 로그인은 앱 전환 뒤 새 탭으로 돌아오는 일이 흔한데, 그 탭이 세션을 저장하면
  *  원래 탭은 storage 이벤트/재노출 시점에 클라이언트를 깨워 세션을 집어 든다. */
@@ -211,9 +217,19 @@ export async function signOut(): Promise<void> {
   if (!clientPromise) return;
   try {
     const c = await getSupabase();
-    await c.auth.signOut();
+    const { error } = await c.auth.signOut();
+    // supabase는 서버 호출이 실패하면(네트워크 등) 로컬 세션을 지우지 않고 에러만 "반환"한다
+    // (throw가 아니라서 catch에 안 걸린다). 그대로 두면 남은 토큰을 다음 부팅·visibilitychange
+    // pickup()이 집어 들어 "로그아웃했는데 로그인된 화면이 다시 뜨는" 사고가 된다(실사용 보고,
+    // 2026-07-21). 로컬 범위 로그아웃으로 이 기기의 토큰을 마저 걷어낸다.
+    if (error) await c.auth.signOut({ scope: "local" });
   } catch {
     /* 네트워크 실패여도 아래에서 로컬 상태는 로그아웃 처리 */
+  }
+  try {
+    localStorage.removeItem(sessionStorageKey()); // 최종 보증 — 이 키가 남아 있는 한 재로그인 경로가 살아 있다
+  } catch {
+    /* 사생활 보호 모드 등 — 무시 */
   }
   user = null;
   emit();

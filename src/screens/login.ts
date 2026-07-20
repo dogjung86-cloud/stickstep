@@ -22,10 +22,26 @@ const KAKAO_MARK = `<svg viewBox="0 0 24 24" width="20" height="20" fill="#3C1E1
 
 const PROVIDER_LABEL: Record<string, string> = { google: "Google", kakao: "카카오" };
 
+const base = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/";
+
 /** 프로필 아바타 원형 — 소셜 프로필 사진은 개인정보라 쓰지 않는다. 스틱맨 고정. */
 function avatarEl(): HTMLElement {
   const host = el("div", { class: "login-ava" });
   host.appendChild(stickAvatar("wave"));
+  return host;
+}
+
+/** 비로그인 히어로 — 스플래시 정착 컷과 같은 "공부하자!" 머리띠 스틱맨(발주본, 앱 아이콘 원본).
+ *  파란 원 프레임에 가두지 않고 흰 배경 그대로 둔다(사용자 확정 2026-07-21).
+ *  lazy 금지(발주 이미지 공통 규칙), 로드 실패 시 파란 원 + 벡터 스틱맨 폴백. */
+function heroArt(): HTMLElement {
+  const host = el("div", { class: "login-study", attrs: { "aria-hidden": "true" } });
+  const img = el("img", { attrs: { src: `${base}brand/study.webp`, alt: "" } }) as HTMLImageElement;
+  img.addEventListener("error", () => {
+    host.className = "login-ava"; // 폴백은 기존 원형 프레임 문법으로
+    host.replaceChildren(stickAvatar("wave"));
+  });
+  host.appendChild(img);
   return host;
 }
 
@@ -73,7 +89,8 @@ export function loginScreen(
     return b;
   };
 
-  /** 오답노트 진입 카드 — 로그인 여부와 무관(기록은 기기 우선이라 비로그인도 쌓인다). */
+  /** 오답노트 진입 카드 — 로그인된 계정 관리 화면에서만. 비로그인 로그인 유도 화면에서는 뺐다
+   *  (2026-07-21 사용자 확정 — 화면의 본론은 로그인 CTA, 오답노트 정본 진입은 복습 탭). */
   const notebookCard = (): HTMLElement | null => {
     if (!extras?.onOpenNotebook) return null;
     const { open, overcome } = wrongNoteCount();
@@ -169,7 +186,7 @@ export function loginScreen(
     const hero = el(
       "div",
       { class: "login-hero" },
-      el("div", { class: "login-ava" }, stickAvatar("wave")),
+      heroArt(),
       el("div", { class: "pw-title", text: "로그인하고 기록을 지켜요" }),
       el("div", { class: "pw-sub", text: "기기를 바꿔도 학습 기록과 이용권이 그대로 이어져요." }),
     );
@@ -184,7 +201,8 @@ export function loginScreen(
         live ? startOAuth("kakao", "카카오") : snack("카카오 로그인은 앱 출시와 함께 열려요!"),
       ),
     );
-    const note = el("div", { class: "login-note", text: "로그인 없이도 모든 학습을 할 수 있어요. 기록은 이 기기에 안전하게 저장돼요." });
+    // 문구는 무료/프리미엄 구분을 정직하게(2026-07-21 사용자 확정) — 구 "모든 학습" 문구 폐기.
+    const note = el("div", { class: "login-note", text: "로그인 없이 일부 단원을 학습할 수 있어요. 프리미엄 회원은 과목별 모든 콘텐츠를 이용할 수 있어요." });
     // 동의 고지 — 로그인은 방침 동의를 전제로 하고, 만 14세 미만은 보호자 동의가 필요하다(방침 6조).
     const legal = el(
       "div",
@@ -196,8 +214,6 @@ export function loginScreen(
       el("span", { text: "만 14세 미만은 보호자(법정대리인) 동의가 필요해요." }),
     );
     body.replaceChildren(hero, buttons, note, legal);
-    const nb = notebookCard();
-    if (nb) body.insertBefore(nb, note);
 
     const later = el("button", { class: "btn-ghost", text: "나중에 할게요" });
     later.addEventListener("click", () => {

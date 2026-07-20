@@ -1729,6 +1729,10 @@
 /* 로그인 상태 — 앱바 프로필 사진 + 마이페이지 학습 요약 */
 /* .ab-avatar 폐기(2026-07-16) — 우상단 프로필 버튼 제거(프로필 진입 단일화), 아바타 노출은 탭바 .gnav-ava가 승계 */
 .login-ava img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+/* 비로그인 히어로 = "공부하자!" 발주 컷 — 파란 원 프레임 없이 흰 배경 그대로(사용자 확정 2026-07-21).
+   흰 종이 배경은 multiply로 화면 배경에 녹인다(스플래시 .flip-img 문법 — 흰 화면이라 이음매 0). */
+.login-study { width: 156px; height: 156px; }
+.login-study img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; display: block; }
 .my-stats { display: flex; gap: 10px; padding: 2px 0 6px; }
 .my-stat {
   flex: 1; text-align: center; padding: 14px 6px 12px; border-radius: var(--r-md);

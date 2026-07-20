@@ -35,7 +35,7 @@ import { examScreen } from "./screens/exam";
 import { weakDrillScreen } from "./screens/weakDrill";
 import { createLessonPlayer } from "./lessons/player";
 import { findLesson, isPremiumLocked } from "./content/curriculum";
-import { initAuth, onAuthChange, isPrivilegedUser, currentUser, isAuthConfigured } from "./core/auth";
+import { initAuth, onAuthChange, isPrivilegedUser, currentUser, isAuthConfigured, hasStoredSession } from "./core/auth";
 import { initSync } from "./core/sync";
 
 const frame = document.getElementById("frame")!;
@@ -113,7 +113,9 @@ function goTab(k: GnavKey): void {
     );
     // 비로그인 유저의 마이 탭 = 로그인 유도 창구(2026-07-20 사용자 확정) — 마이 화면 위에
     // 로그인 화면을 얹는다(닫으면 마이 화면). 스텁 모드(env 없음 — dev·e2e)는 로그인이 불가하니 생략.
-    if (isAuthConfigured() && !currentUser()) openLogin();
+    // 세션 토큰 흔적이 있으면(부팅 복원이 끝나기 전일 수 있음) 띄우지 않는다 — 복원이 끝나는 순간
+    // 비로그인 로그인 화면이 로그인된 모습으로 뒤바뀌는 경합 혼란 차단(2026-07-21 사용자 보고).
+    if (isAuthConfigured() && !currentUser() && !hasStoredSession()) openLogin();
   }
 }
 
