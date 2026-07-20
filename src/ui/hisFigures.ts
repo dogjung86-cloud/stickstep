@@ -393,27 +393,35 @@ export function silkroadFig(): string {
 /* ══════════ Ⅲ. 세계 종교의 확산과 지역 문화의 발전 ══════════ */
 
 /* ---------- 세계 종교 유산 지도(파라미터형 — Ⅲ 기함 hotspot 무대) ----------
-   fourRiversFig의 검산된 해안선을 계승하되 유럽을 실제 반도꼴로 확장(이베리아·이탈리아 장화·발칸).
-   다섯 유산 자리에 미니 건물 글리프만 그린다(이름은 hotspot 스팟/문제 보기 몫 — aria에도 정답 유출 금지).
-   marks=true면 (가)~(마) 기호를 인쇄(라벨형 문제는 shuffle:false 규약).
-   글리프 검산 메모: 샤르트르(52,26 북프랑스)·코르도바(24,52 이베리아 남부)·콘스탄티노폴리스(120,52
-   발칸 동남끝)·룽먼(330,72 황허 중류 남쪽)·앙코르(310,148 동남아 반도) — 좌표는 아래 해안선 기준. */
+   실데이터판(2026-07-20): WORLD_LAND_PATH를 −15~125°E × 57~−20°N 크롭(140:77 = 400:220 풀블리드,
+   S=1.02857)으로 임베드. wx=(lon+15)×2.857 · wy=(57−lat)×2.857. 다섯 유산 자리에 미니 건물
+   글리프만 그린다(이름은 hotspot 스팟/문제 보기 몫 — aria에도 정답 유출 금지).
+   marks=true면 (가)~(마) 기호를 인쇄(라벨형 문제는 shuffle:false 규약 — 현재 콘텐츠 미사용).
+   글리프·스팟 % 검산(실좌표→%): 샤르트르(1.49,48.45)=(47.1,24.4)=11.8,11.1 ·
+   코르도바(−4.78,37.88)=(29.2,54.6)=7.3,24.8 · 콘스탄티노폴리스(28.98,41.01)=(125.7,45.7)=31.4,20.8 ·
+   룽먼(112.47,34.55)=(364.2,64.1)=91.1,29.2 · 앙코르(103.87,13.43)=(339.6,124.5)=84.9,56.6. */
 export function worldReligionsFig(o?: { marks?: boolean }): string {
+  const wx = (lon: number): number => (lon + 15) * 2.857;
+  const wy = (lat: number): number => (57 - lat) * 2.857;
   const mk = (x: number, y: number, t: string): string =>
     o?.marks ? `<circle cx="${x}" cy="${y}" r="11" fill="#FBF0DA" stroke="#C2843A" stroke-width="1.8"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="12" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">${t}</text>` : "";
+  const at = (lon: number, lat: number, glyph: string): string =>
+    `<g transform="translate(${wx(lon).toFixed(1)} ${wy(lat).toFixed(1)})">${glyph}</g>`;
   return `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
-    aria-label="유럽과 아프리카, 아시아를 단순하게 그린 지도 위 다섯 곳에 서로 다른 종교 건축물이 작게 그려진 그림">
+    aria-label="유럽과 아프리카, 아시아가 그려진 지도 위 다섯 곳에 서로 다른 종교 건축물이 작게 그려진 그림">
+    <defs><clipPath id="hf-wr-clip"><rect x="0" y="0" width="400" height="220" rx="16"/></clipPath></defs>
     <rect x="0" y="0" width="400" height="220" rx="16" fill="#DCEFF6"/>
-    <path d="M10 64 L16 44 L28 34 L20 22 L34 10 L74 10 L96 20 L112 14 L134 22 L128 36 L112 40 L120 50 L132 46 L142 52 L134 60 L118 58 L108 66 L96 60 L84 68 L96 44 L76 40 L62 48 L66 60 L54 66 L40 58 L30 64 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M394 12 L394 44 L380 66 L368 88 L358 92 L354 104 L344 116 L330 126 L318 142 L314 168 L304 172 L300 156 L296 138 L286 128 L282 146 L272 170 L262 186 L252 168 L246 140 L240 122 L232 112 L222 108 L214 110 L206 104 L198 96 L190 100 L182 112 L174 138 L162 118 L150 98 L144 82 L140 70 L134 62 L126 60 L116 64 L106 62 L96 66 L84 62 L70 66 L54 74 L42 88 L34 106 L30 128 L36 146 L48 152 L60 148 L72 156 L84 176 L92 196 L100 208 L110 200 L114 178 L118 156 L126 142 L136 134 L146 132 L152 128 L148 116 L144 100 L148 88 L154 78 L160 72 L168 66 L178 60 L190 54 L204 50 L220 44 L238 38 L256 30 L276 24 L298 18 L322 14 L348 10 z" fill="#F2E7CE" stroke="#C4B28E" stroke-width="2" stroke-linejoin="round"/>
-    <g stroke="#6E5426" stroke-width="1.5" stroke-linejoin="round">
-      <path d="M44 32 l8 -9 8 9 z M49 32 h6 v7 h-6 z" fill="#E4EAF2"/>
-      <path d="M16 56 h16 v-6 h-16 z M19 50 a5 5 0 0 1 10 0 z" fill="#F2D9A4"/>
-      <path d="M112 56 h16 M114 56 v-5 a6 6 0 0 1 12 0 v5 M111 51 v-8 M129 51 v-8" fill="#E4EAF2"/>
-      <path d="M322 78 h16 v-6 h-16 z M325 72 v-5 h10 v5 M328 67 v-4 h4 v4" fill="#C9B48A"/>
-      <path d="M302 154 l8 -12 8 12 z M306 146 l4 -7 4 7" fill="#C9A05E"/>
+    <g clip-path="url(#hf-wr-clip)">
+      <path d="${WORLD_LAND_PATH}" transform="scale(1.02857) translate(-458.333 -91.667)" fill="#F2E7CE" fill-rule="evenodd" stroke="#C4B28E" stroke-width="1.2" stroke-linejoin="round"/>
     </g>
-    ${mk(70, 22, "(가)")}${mk(28, 74, "(나)")}${mk(134, 74, "(다)")}${mk(348, 66, "(라)")}${mk(334, 156, "(마)")}
+    <g stroke="#6E5426" stroke-width="1.5" stroke-linejoin="round">
+      ${at(1.49, 48.45, `<path d="M-8 1 l8 -9 8 9 z M-3 1 h6 v7 h-6 z" fill="#E4EAF2"/>`)}
+      ${at(-4.78, 37.88, `<path d="M-8 4.5 h16 v-6 h-16 z M-5 -1.5 a5 5 0 0 1 10 0 z" fill="#F2D9A4"/>`)}
+      ${at(28.98, 41.01, `<path d="M-8 6 h16 M-6 6 v-5 a6 6 0 0 1 12 0 v5 M-9 1 v-8 M9 1 v-8" fill="#E4EAF2"/>`)}
+      ${at(112.47, 34.55, `<path d="M-8 7 h16 v-6 h-16 z M-5 1 v-5 h10 v5 M-2 -4 v-4 h4 v4" fill="#C9B48A"/>`)}
+      ${at(103.87, 13.43, `<path d="M-8 7 l8 -12 8 12 z M-4 -1 l4 -7 4 7" fill="#C9A05E"/>`)}
+    </g>
+    ${mk(64, 20, "(가)")}${mk(16, 72, "(나)")}${mk(143, 40, "(다)")}${mk(382, 56, "(라)")}${mk(357, 118, "(마)")}
   </svg>`;
 }
 

@@ -1608,11 +1608,12 @@ export const H1_UNIT3: Unit = {
           lead: "이 단원에서 만난 다섯 종교 건축을 지도에서 탭하면 진짜 사진이 나타나요!",
           svg: worldReligionsFig(),
           spots: [
-            { x: 82, y: 34, label: "룽먼 석굴", desc: "불교 · 중국 뤄양. 북위~당에 걸쳐 절벽을 파서 만든 석굴 사원 — 「황제가 곧 부처」의 시대가 남긴 유산.", photo: "photos/his/longmen.webp", photoCredit: "Gary Todd, CC0", photoCap: "봉선사 대불 — 아래 사람과 크기를 비교해 봐요" },
-            { x: 79.5, y: 64.5, label: "앙코르 와트", desc: "힌두교 · 캄보디아. 인도 상인의 뱃길로 전해진 힌두교가 동남아시아에 세운 '사원의 도시'.", photo: "photos/his/angkor.webp", photoCredit: "Amaury Laporte, CC BY 2.0", photoCap: "다섯 탑은 힌두교 우주관의 표현이에요" },
-            { x: 30, y: 26, label: "성 소피아 대성당", desc: "그리스 정교 · 콘스탄티노폴리스. 유스티니아누스 황제가 세운 비잔티움 양식의 걸작 — 거대한 돔과 모자이크.", photo: "photos/his/sophia.webp", photoCredit: "위키미디어 커먼스", photoCap: "네 첨탑은 훗날 모스크로 쓰이며 더해졌어요" },
-            { x: 10, y: 29, label: "코르도바 대모스크", desc: "이슬람교 · 이베리아반도. 후우마이야 왕조가 세운 모스크 — 말굽형 아치의 기둥 숲과 아라베스크.", photo: "photos/his/cordoba.webp", photoCredit: "Richard Mortel, CC BY 2.0", photoCap: "붉은 줄무늬 아치가 숲처럼 이어져요" },
-            { x: 13.5, y: 14, label: "샤르트르 대성당", desc: "로마 가톨릭 · 프랑스. 첨탑과 스테인드글라스의 고딕 양식 — 천국을 향한 신앙심을 새긴 건축.", photo: "photos/his/chartres.webp", photoCredit: "Tony Hisgett, CC BY 2.0", photoCap: "장미창의 빛이 성경 이야기를 전했어요" },
+            // 스팟 % = worldReligionsFig 실좌표 검산(hisFigures 주석 정본): x=(lon+15)×2.857/4 · y=(57−lat)×2.857/2.2
+            { x: 91.1, y: 29.2, label: "룽먼 석굴", desc: "불교 · 중국 뤄양. 북위~당에 걸쳐 절벽을 파서 만든 석굴 사원 — 「황제가 곧 부처」의 시대가 남긴 유산.", photo: "photos/his/longmen.webp", photoCredit: "Gary Todd, CC0", photoCap: "봉선사 대불 — 아래 사람과 크기를 비교해 봐요" },
+            { x: 84.9, y: 56.6, label: "앙코르 와트", desc: "힌두교 · 캄보디아. 인도 상인의 뱃길로 전해진 힌두교가 동남아시아에 세운 '사원의 도시'.", photo: "photos/his/angkor.webp", photoCredit: "Amaury Laporte, CC BY 2.0", photoCap: "다섯 탑은 힌두교 우주관의 표현이에요" },
+            { x: 31.4, y: 20.8, label: "성 소피아 대성당", desc: "그리스 정교 · 콘스탄티노폴리스. 유스티니아누스 황제가 세운 비잔티움 양식의 걸작 — 거대한 돔과 모자이크.", photo: "photos/his/sophia.webp", photoCredit: "위키미디어 커먼스", photoCap: "네 첨탑은 훗날 모스크로 쓰이며 더해졌어요" },
+            { x: 7.3, y: 24.8, label: "코르도바 대모스크", desc: "이슬람교 · 이베리아반도. 후우마이야 왕조가 세운 모스크 — 말굽형 아치의 기둥 숲과 아라베스크.", photo: "photos/his/cordoba.webp", photoCredit: "Richard Mortel, CC BY 2.0", photoCap: "붉은 줄무늬 아치가 숲처럼 이어져요" },
+            { x: 11.8, y: 11.1, label: "샤르트르 대성당", desc: "로마 가톨릭 · 프랑스. 첨탑과 스테인드글라스의 고딕 양식 — 천국을 향한 신앙심을 새긴 건축.", photo: "photos/his/chartres.webp", photoCredit: "Tony Hisgett, CC BY 2.0", photoCap: "장미창의 빛이 성경 이야기를 전했어요" },
           ],
           explainGood: "다섯 유산 완주! 불교·힌두교·그리스 정교·이슬람교·가톨릭 — 믿음이 지은 건축이 지도 위에 이어졌어요.",
           explainBad: "반짝이는 다섯 지점을 모두 탭해 종교 건축의 자리와 개성을 확인해요 — 동아시아의 석굴부터 서유럽의 대성당까지!",
