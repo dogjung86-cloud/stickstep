@@ -2763,6 +2763,8 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .mypf-name-row { display: flex; align-items: center; gap: 7px; min-width: 0; max-width: 100%; }
 .mypf-nick-edit { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--n100); color: var(--n600); display: grid; place-items: center; transition: transform .12s var(--spring-soft), background .15s; }
 .mypf-nick-edit:active { transform: scale(.86); background: var(--n150); }
+/* 닉네임은 계정 기능(2026-07-21) — 비로그인은 편집 연필을 숨긴다(이름은 항상 "게스트 스틱") */
+.mypf-nick-edit.hidden { display: none; }
 /* 닉네임 시트 — 시스템 키보드 허용(수학 답 입력이 아니라 이름 입력) */
 .nick-input { width: 100%; padding: 13px 14px; border: 1.5px solid var(--n200); border-radius: 13px; font-size: 16px; font-weight: 700; color: var(--ink); background: var(--n50); outline: none; transition: border-color .15s, background .15s; }
 .nick-input:focus { border-color: var(--blue); background: #fff; }

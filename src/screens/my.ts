@@ -46,11 +46,13 @@ export function myScreen(o: {
     attrs: { "aria-label": "아바타 꾸미기", "aria-haspopup": "dialog" },
     html: icon("pencil", 13),
   });
-  // 이름 = 닉네임 우선(기기 저장) → 소셜 이름 → 기본(게스트 스틱). 연필 탭 → 닉네임 시트.
+  // 닉네임은 계정 기능(2026-07-21 사용자 확정) — 비로그인은 항상 "게스트 스틱"(저장된 별명은
+  // 로그인하면 복원). 로그아웃하면 이름도 게스트로 돌아가 로그인 여부가 이름만으로 구분된다.
+  // 로그인 상태 이름 = 닉네임 우선(기기 저장) → 소셜 이름 → 기본. 연필 탭 → 닉네임 시트.
   const displayName = (): string => {
-    const s = getState();
     const u = currentUser();
-    return s.nickname ?? (u ? (u.name ?? "스틱스텝 친구") : "게스트 스틱");
+    if (!u) return "게스트 스틱";
+    return getState().nickname ?? u.name ?? "스틱스텝 친구";
   };
   const nameEl = el("div", { class: "my-name", text: displayName() });
   const nickBtn = el("button", {
@@ -393,6 +395,7 @@ export function myScreen(o: {
 
   const offAuth = onAuthChange(() => {
     nameEl.textContent = displayName();
+    nickBtn.classList.toggle("hidden", !currentUser()); // 닉네임 편집은 로그인 전용(등록 즉시 1회 호출로 초기 상태도 처리)
     refreshGnavMyIcon(bar); // 로그인·로그아웃 즉시 탭바 아이콘도 아바타 ⇄ user로 전환
   });
 
