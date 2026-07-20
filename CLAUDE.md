@@ -424,6 +424,10 @@ src/
   재발주: `bash qa/order-splash2-tower.sh`(0..6+study+증류탑) / `bash qa/order-splash2b.sh`(7..13+study 상체 수정) →
   `node qa/process-loading2.mjs`(512 webp 경량화, 프레임당 11~33KB). 이미지 속 글자는 study 머리띠 단 하나만 예외
   (잠자는 컷의 Zzz도 금지 — 코 방울로, 음표·하트는 허용).
+- **과목 허브 카드 스틱맨 4종(2026-07-21)**: public/brand/subj/{sci,math,soc,his}.webp — 과목 소품 든
+  상반신(플라스크·컴퍼스 원호·지구본·두루마리, 손그림+teal 원포인트·글자 금지). subject.ts subjArt()가
+  발주본 우선 + stickAvatar 폴백(lazy 금지). 재발주 = bash qa/order-subj.sh → node qa/process-subj.mjs
+  (프롬프트 qa/subj_prompts.txt). 카드 문구 확정본(2026-07-21 사용자 선택)은 subject.ts가 정본.
 - **파비콘 = 발자국 마크(사용자 확정 2026-07-16)**: 블루 그라데이션 라운드 사각 + 흰 발자국 2개
   지그재그(홈 트레일 도장 #bsfp 실루엣) + 입체 옆면(#175BC4 — 지도 스텝 노드 문법) + 키라이트.
   재생성 `node qa/make-favicon.mjs` → public/favicon.ico(16·32·48 PNG-in-ICO)+brand/favicon-{크기}.png,

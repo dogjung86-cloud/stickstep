@@ -1674,6 +1674,8 @@
 .subj-card.soon .subj-body, .subj-card.soon .subj-ico { opacity: .55; }
 .subj-ava { flex: none; width: 56px; height: 56px; border-radius: 18px; background: var(--blue-tint, #EEF4FF); display: grid; place-items: center; overflow: hidden; }
 .subj-ava svg { width: 44px; height: 44px; }
+/* 발주 과목 스틱맨(brand/subj — 2026-07-21): 슬롯을 꽉 채우는 커버 크롭, 실패 시 svg 폴백이 대신 선다 */
+.subj-ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .subj-ico { flex: none; width: 56px; height: 56px; border-radius: 18px; background: var(--n100); display: grid; place-items: center; color: var(--n600); }
 .subj-body { flex: 1; min-width: 0; }
 .subj-name { display: flex; align-items: center; gap: 7px; font-size: 17px; font-weight: 800; color: var(--n900); }

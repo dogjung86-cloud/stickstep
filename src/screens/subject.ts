@@ -66,21 +66,31 @@ export function subjectScreen(opts: {
   const h1 = el("div", { class: "h1", html: opts.mode === "onboard" ? "무엇을<br>배워 볼까요?" : "과목 고르기" });
   const sub = el("div", { class: "sub", text: "과학·수학·사회·역사가 열려 있어요. 골라 볼까요?" });
 
+  // 과목 카드 스틱맨 — 발주 일러스트(public/brand/subj, 과목 소품 든 상반신) 우선, 로드 실패 시
+  // 기존 stickAvatar 폴백. lazy 금지(.scroll 컨테이너에서 안 뜨는 사고 14 계보).
+  const subjArt = (key: string, fallback: Parameters<typeof stickAvatar>[0]): HTMLElement => {
+    const img = document.createElement("img");
+    img.src = `${import.meta.env.BASE_URL}brand/subj/${key}.webp`;
+    img.alt = "";
+    img.addEventListener("error", () => img.replaceWith(stickAvatar(fallback)));
+    return img;
+  };
+
   // ── 과학 카드(활성), 스틱맨 쌤이 손을 흔든다 ──
   const prog = subjectProgress("sci");
   const started = prog.done > 0;
   const sci = el(
     "button",
     { class: "subj-card sci", attrs: { "aria-label": "과학 시작하기" } },
-    el("div", { class: "subj-ava" }, stickAvatar(started ? "cheer" : "wave")),
+    el("div", { class: "subj-ava" }, subjArt("sci", started ? "cheer" : "wave")),
     el(
       "div",
       { class: "subj-body" },
       el("div", { class: "subj-name" }, el("span", { html: icon("flask", 18) }), el("span", { text: "과학" })),
-      el("div", { class: "subj-desc", text: "중1·중2 — 실험하며 배우는 개념" }),
+      el("div", { class: "subj-desc", text: "중1·중2 — 모바일에서 실험하며 배우는 개념" }),
       started
         ? el("div", { class: "subj-meta", text: `레슨 ${prog.done}개 완료 · ${currentStreak()}일 연속` })
-        : el("div", { class: "subj-meta", text: "손끝 실험 랩 + 게임 지도" }),
+        : el("div", { class: "subj-meta", text: "손끝 실험 랩 + 3D 우주 탐험" }),
     ),
     el("div", { class: "subj-go", html: icon("chevron", 20) }),
   );
@@ -95,15 +105,15 @@ export function subjectScreen(opts: {
   const mth = el(
     "button",
     { class: "subj-card mth", attrs: { "aria-label": "수학 시작하기" } },
-    el("div", { class: "subj-ava" }, stickAvatar(mstarted ? "cheer" : "curious")),
+    el("div", { class: "subj-ava" }, subjArt("math", mstarted ? "cheer" : "curious")),
     el(
       "div",
       { class: "subj-body" },
       el("div", { class: "subj-name" }, el("span", { html: icon("mathop", 18) }), el("span", { text: "수학" })),
-      el("div", { class: "subj-desc", text: "중1, 계산이 아니라 감각으로" }),
+      el("div", { class: "subj-desc", text: "중1·중2 — 단순 계산이 아닌, 감각으로" }),
       mstarted
         ? el("div", { class: "subj-meta", text: `레슨 ${mprog.done}개 완료 · ${currentStreak()}일 연속` })
-        : el("div", { class: "subj-meta", text: "수와 연산부터, 발견 랩 + 스피드 퀴즈" }),
+        : el("div", { class: "subj-meta", text: "수학의 원리를 발견하는 랩 + 스피드 퀴즈" }),
     ),
     el("div", { class: "subj-go", html: icon("chevron", 20) }),
   );
@@ -118,15 +128,15 @@ export function subjectScreen(opts: {
   const soc = el(
     "button",
     { class: "subj-card soc", attrs: { "aria-label": "사회 시작하기" } },
-    el("div", { class: "subj-ava" }, stickAvatar(sstarted ? "cheer" : "wave")),
+    el("div", { class: "subj-ava" }, subjArt("soc", sstarted ? "cheer" : "wave")),
     el(
       "div",
       { class: "subj-body" },
       el("div", { class: "subj-name" }, el("span", { html: icon("globe", 18) }), el("span", { text: "사회" })),
-      el("div", { class: "subj-desc", text: "중1, 지도 위에서 배우는 세상" }),
+      el("div", { class: "subj-desc", text: "중1 — 지도 위에서 배우는 세상" }),
       sstarted
         ? el("div", { class: "subj-meta", text: `레슨 ${sprog.done}개 완료 · ${currentStreak()}일 연속` })
-        : el("div", { class: "subj-meta", text: "세계 지리부터, 배치 랩 + 추론 게임" }),
+        : el("div", { class: "subj-meta", text: "진짜 세계지도 배치 랩 + 생활 사례 판정" }),
     ),
     el("div", { class: "subj-go", html: icon("chevron", 20) }),
   );
@@ -141,15 +151,15 @@ export function subjectScreen(opts: {
   const his = el(
     "button",
     { class: "subj-card his", attrs: { "aria-label": "역사 시작하기" } },
-    el("div", { class: "subj-ava" }, stickAvatar(hstarted ? "cheer" : "curious")),
+    el("div", { class: "subj-ava" }, subjArt("his", hstarted ? "cheer" : "curious")),
     el(
       "div",
       { class: "subj-body" },
       el("div", { class: "subj-name" }, el("span", { html: icon("book", 18) }), el("span", { text: "역사" })),
-      el("div", { class: "subj-desc", text: "중1, 만화로 떠나는 시간 여행" }),
+      el("div", { class: "subj-desc", text: "중1 — 만화로 떠나는 시간 여행" }),
       hstarted
         ? el("div", { class: "subj-meta", text: `레슨 ${hprog.done}개 완료 · ${currentStreak()}일 연속` })
-        : el("div", { class: "subj-meta", text: "역사 탐정의 기초부터, 만화 + 연표 랩" }),
+        : el("div", { class: "subj-meta", text: "웃으며 읽는 스틱맨 만화 + 단원별 요약 정리" }),
     ),
     el("div", { class: "subj-go", html: icon("chevron", 20) }),
   );
