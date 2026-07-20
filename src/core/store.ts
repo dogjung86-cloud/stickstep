@@ -73,6 +73,10 @@ export interface AppState {
   // progress 테이블 컬럼이 아니라 profiles.nickname에 실린다(sync.ts fullSync가 채택·푸시 —
   // rowOf에 넣으면 400으로 push 전체가 죽는 avatarCustom과 같은 함정 주의).
   nickname: string | null;
+  // 최근에 연 단원("<과목>:<학년>" → unitId, 2026-07-21) — 재접속·과목 전환 시 홈 지도가 이
+  // 단원부터 열린다(구 방식 = 첫 미완료 단원뿐이라 건너뛰며 학습하면 "최근"이 아니었음).
+  // viewGrade처럼 기기 화면 상태라 동기화 제외. 구버전 저장분엔 없어서 optional.
+  lastUnits?: Record<string, string>;
 }
 
 const KEY = "science-app.v1";
@@ -99,6 +103,7 @@ const DEFAULT_STATE: AppState = {
   avatarCustom: null,
   avatarPreset: null,
   nickname: null,
+  lastUnits: {},
 };
 
 function dayKey(d = new Date()): string {
@@ -242,6 +247,17 @@ function touchStudyDay(): void {
 }
 
 /** 레슨 완료 처리. 스트릭·XP 갱신 후 획득 XP를 반환. */
+/** 최근에 연 단원 기억("<과목>:<학년>" 키) — 홈 지도의 재접속·과목 전환 초기 포커스(main.ts openLesson/openExam이 기록). */
+export function setLastUnit(key: string, unitId: string): void {
+  if (state.lastUnits?.[key] === unitId) return; // 같은 단원 반복 진입은 저장 생략
+  state.lastUnits = { ...(state.lastUnits ?? {}), [key]: unitId };
+  save();
+}
+
+export function lastUnitOf(key: string): string | null {
+  return state.lastUnits?.[key] ?? null;
+}
+
 export function completeLesson(id: string, acc: number, xp: number): number {
   const prev = lessonOf(id);
   const firstClear = !prev.done;

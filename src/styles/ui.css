@@ -368,6 +368,15 @@
 .unit-tab.on { background: linear-gradient(180deg, #333D4B, #191F28); color: #fff; border-color: transparent; box-shadow: 0 4px 12px -3px rgba(25,31,40,.4); }
 .sec-head { padding: 14px 22px 2px; font-size: 13.5px; font-weight: 800; color: var(--n600); }
 
+/* 홈 지도 헤더 — "정복 지도"(2026-07-21): 단원 테마색(--mh-ink) 발자국 칩 + 타이틀.
+   .sec-head는 시험 결과·문제 뽑기 화면이 공유해 건드리지 않고 홈 전용 클래스로 분리. */
+.map-head { display: flex; align-items: center; gap: 8px; padding: 16px 22px 4px; }
+.mh-chip {
+  display: grid; place-items: center; width: 26px; height: 26px; border-radius: 9px;
+  background: var(--mh-ink, var(--blue)); color: #fff; box-shadow: var(--sh-card);
+}
+.mh-t { font-size: 15px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); }
+
 /* 게임 지도 */
 .gamemap { position: relative; margin: 2px 0 8px; overflow: hidden; }
 .gm-terrain { position: absolute; inset: 0; z-index: 0;

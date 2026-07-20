@@ -6,7 +6,7 @@ import { el, clear, afterPaint } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { BRAND } from "../core/brand";
-import { getState, currentStreak, isDone, getViewGrade, setViewGrade, getViewSubject, toggleReviewMode, isReviewMode, examRecordOf, wrongNoteCount } from "../core/store";
+import { getState, currentStreak, isDone, getViewGrade, setViewGrade, getViewSubject, toggleReviewMode, isReviewMode, examRecordOf, wrongNoteCount, lastUnitOf } from "../core/store";
 import { CURRICULA_OF, GRADE_LABEL, gradeOfUnit, subjectOfUnit, isUnlocked, isPremiumLocked, unitProgress, findLesson, findUnit, type Unit, type GradeId, type SubjectId } from "../content/curriculum";
 import { bootLevel } from "../core/level";
 import { bootArt } from "../ui/boots";
@@ -50,8 +50,13 @@ export function homeScreen(
   const CURRICULA = CURRICULA_OF[subject];
   let grade: GradeId = focusUnitId ? gradeOfUnit(focusUnitId) : getViewGrade();
   let cur = CURRICULA[grade];
-  // 우선순위: 방금 학습한 단원 → 첫 미완료 단원 → 첫 단원
+  // 우선순위: 방금 학습한 단원 → 최근에 연 단원(기기 기억, 2026-07-21) → 첫 미완료 단원 → 첫 단원.
+  // 기기 기억이 없던 구버전 저장분·새 유저는 "첫 미완료"가 자연스러운 시작점을 대신한다.
   let sel = focusUnitId ? cur.findIndex((u) => u.id === focusUnitId) : -1;
+  if (sel < 0) {
+    const remembered = lastUnitOf(`${subject}:${grade}`);
+    if (remembered) sel = cur.findIndex((u) => u.id === remembered);
+  }
   if (sel < 0) sel = cur.findIndex((u) => !u.comingSoon && unitProgress(u) < 100);
   if (sel < 0) sel = 0;
 
@@ -142,7 +147,10 @@ export function homeScreen(
       grade = g;
       setViewGrade(g);
       cur = CURRICULA[g];
-      sel = cur.findIndex((u) => !u.comingSoon && unitProgress(u) < 100);
+      // 학년 전환도 최근에 연 단원(기기 기억) 우선 — 없으면 첫 미완료 단원(부트와 같은 우선순위)
+      const remembered = lastUnitOf(`${subject}:${g}`);
+      sel = remembered ? cur.findIndex((u) => u.id === remembered) : -1;
+      if (sel < 0) sel = cur.findIndex((u) => !u.comingSoon && unitProgress(u) < 100);
       if (sel < 0) sel = 0;
       gradeSeg.querySelectorAll(".gseg").forEach((x, i) => {
         const on = (Object.keys(CURRICULA) as GradeId[])[i] === g;
@@ -457,7 +465,16 @@ export function homeScreen(
     }
     const theme = UNIT_THEME[u.id] ?? "";
     const ink = themeInk(theme);
-    mapHost.appendChild(el("div", { class: "sec-head", text: "레슨 지도" }));
+    // 지도 헤더 — "정복 지도"(2026-07-21, 구 "레슨 지도" plain 텍스트 격상): 단원 테마색 발자국
+    // 칩 + 타이틀. 단원을 넘길 때마다 칩 색이 그 단원 테마를 따라 바뀐다(정복률·정복 인증과 어휘 통일).
+    mapHost.appendChild(
+      el(
+        "div",
+        { class: "map-head", style: `--mh-ink:${ink}` },
+        el("span", { class: "mh-chip", attrs: { "aria-hidden": "true" }, html: icon("footstep", 14) }),
+        el("span", { class: "mh-t", text: "정복 지도" }),
+      ),
+    );
 
     const gm = el("div", { class: "gamemap" });
     const terrain = el("div", { class: `gm-terrain ${theme}` });
@@ -518,16 +535,18 @@ export function homeScreen(
       }
       node.appendChild(el("div", { class: "gm-label", text: lesson.label ?? lesson.title }));
       node.addEventListener("click", () => {
-        haptic(HAPTIC.tap);
         if (prem) {
           // 프리미엄 잠금 — 페이월로 안내(main.ts openLesson이 라우팅)
+          haptic(HAPTIC.navTap);
           onOpenLesson(lesson.id);
           return;
         }
         if (!unlocked) {
+          haptic(HAPTIC.deny); // 잠긴 발바닥 — 살짝 더 강한 "안 돼요" 버즈(2026-07-21 사용자 승인)
           snack("이전 레슨을 먼저 완료해요");
           return;
         }
+        haptic(HAPTIC.navTap);
         onOpenLesson(lesson.id);
       });
       nodesLayer.appendChild(node);
@@ -553,7 +572,7 @@ export function homeScreen(
       node.appendChild(el("div", { class: "gm-label", text: "단원 종합 평가" }));
       if (rec.best > 0) node.appendChild(el("div", { class: "gm-exam-best", text: `최고 ${rec.best}점` }));
       node.addEventListener("click", () => {
-        haptic(HAPTIC.tap);
+        haptic(HAPTIC.navTap); // 시험 노드도 발바닥(잉크 밑창) — 지도 노드 공통 격상
         nav2?.onOpenExam?.(u.id);
       });
       nodesLayer.appendChild(node);

@@ -56,7 +56,7 @@ export function gnav(active: GnavKey, go: (k: GnavKey) => void): HTMLElement {
     );
     b.addEventListener("click", () => {
       if (it.key === active) return;
-      haptic(HAPTIC.tap);
+      haptic(HAPTIC.navTap); // 8ms tap은 실기기에서 안 느껴져 격상(2026-07-21)
       go(it.key);
     });
     bar.appendChild(b);

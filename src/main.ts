@@ -14,7 +14,7 @@ import "./styles/his.css";
 import "./styles/desktop.css"; // 데스크톱 셸(옵트인·≥1024px) — html.dt 게이트, 캐스케이드 최후순위
 
 import { nav } from "./core/router";
-import { getState, completeLesson, setViewSubject, isPremium, isReviewMode, setPremiumOverride, isDone } from "./core/store";
+import { getState, completeLesson, setViewSubject, isPremium, isReviewMode, setPremiumOverride, isDone, setLastUnit } from "./core/store";
 import type { WrongNote } from "./core/store";
 import { isTutorConfigured } from "./core/tutor";
 import { tutorScreen } from "./screens/tutor";
@@ -34,7 +34,7 @@ import { policyScreen } from "./screens/policy";
 import { examScreen } from "./screens/exam";
 import { weakDrillScreen } from "./screens/weakDrill";
 import { createLessonPlayer } from "./lessons/player";
-import { findLesson, isPremiumLocked } from "./content/curriculum";
+import { findLesson, isPremiumLocked, subjectOfUnit, gradeOfUnit } from "./content/curriculum";
 import { initAuth, onAuthChange, isPrivilegedUser, currentUser, isAuthConfigured, hasStoredSession } from "./core/auth";
 import { initSync } from "./core/sync";
 
@@ -292,6 +292,7 @@ function openOneStroke(): void {
 /** 단원 종합 평가 — 항상 열린 지도 노드에서 진입. 재응시 잠금은 화면 안에서 페이월로 안내한다. */
 function openExam(unitId: string): void {
   lastUnitId = unitId;
+  rememberUnit(unitId); // 기기 기억 — 재접속·과목 전환 시 홈 지도 초기 포커스(store.lastUnits)
   nav.go(
     examScreen(unitId, {
       onExit: goHome,
@@ -339,10 +340,16 @@ function openPolicy(): void {
 // 네온 한붓그리기 = openOneStroke(오일러 스테이지 퍼즐), 레이저 미로 = openLaserMaze(빛 반사 퍼즐) —
 // 넷 다 프리미엄 게이트 + 동적 import, 나가기는 도전 탭 복귀.
 
+/** 최근에 연 단원을 기기에 기억(과목:학년 키) — 홈 지도가 재접속·과목 전환 시 이 단원부터 연다(2026-07-21). */
+function rememberUnit(unitId: string): void {
+  setLastUnit(`${subjectOfUnit(unitId)}:${gradeOfUnit(unitId)}`, unitId);
+}
+
 function openLesson(id: string): void {
   const found = findLesson(id);
   if (!found) return;
   lastUnitId = found.unit.id;
+  rememberUnit(found.unit.id);
   // 프리미엄 잠금 — 구매 전에는 페이월로 안내
   if (isPremiumLocked(found.lesson)) {
     nav.go(
