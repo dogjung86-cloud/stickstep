@@ -214,10 +214,12 @@
   --subj-num: #0DA5C6;     /* 수학 Ⅰ 수와 연산 — 수학 시안(과학 트랙과 동시 노출 없음) */
   --subj-num-press: #0A87A3;
   --subj-num-tint: #E6F7FB;
-  --subj-soc: #E8590C;     /* 사회 트랙 과목색(트래블 오렌지 — 과목 허브 카드 액센트) */
-  --subj-soc-press: #C2410B;
-  --subj-soc-tint: #FDEFE5;
-  --subj-his: #0E7C8A;     /* 역사 트랙 과목색(청동 녹청 — 과목 허브 카드 액센트) */
+  /* 과목 허브 카드 액센트 4색 = 파랑·초록 2쌍(2026-07-21 사용자 확정): 과학 파랑(밝은)·사회 진한 파랑
+     / 수학 청록(밝은)·역사 진한 청록 — 사회 카드 색은 트랙 테마(world 오렌지)와 무관, 카드 전용. */
+  --subj-soc: #2450D8;     /* 사회 — 진한 파랑(과학 #3182F6보다 깊게) */
+  --subj-soc-press: #1B3EAE;
+  --subj-soc-tint: #E9EEFC;
+  --subj-his: #0E7C8A;     /* 역사 — 진한 청록(청동 녹청, 수학 #0DA5C6보다 깊게) */
   --subj-his-press: #0A5F6A;
   --subj-his-tint: #E6F3F5;
   --m-pos: #2F6FE4;        /* 수학 부호 색 — 양수 + */
