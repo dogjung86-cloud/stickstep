@@ -23,7 +23,8 @@ function rng(seed: number): () => number {
 }
 
 function mapShell(inner: string, opts?: { h?: number; legend?: string; aria?: string; pad?: number }): string {
-  const legendH = opts?.legend ? 40 : 0;
+  // h — 범례 밴드 높이 오버라이드(기본 40 = 한 줄, 두 줄 범례는 52 — asiaIndustryFig).
+  const legendH = opts?.legend ? (opts?.h ?? 40) : 0;
   // pad — 크롭을 사방으로 넓혀 가장자리 요소(조산대 남단·카스피해 서안)에 여백을 준다(지형도 전용).
   const p = opts?.pad ?? 0;
   const vx = CROP.x - p;
@@ -236,7 +237,8 @@ export function pyramidPairFig(): string {
 }
 
 /* ---------- L7: 산업 지도(개념 그림) ---------- */
-export function asiaIndustryFig(): string {
+/** 산업 분포 지도. letters — 퀴즈용 ㉠㉡ 마커(문두가 "㉠ 지역"을 지칭할 때 그림에도 반드시 찍는다). */
+export function asiaIndustryFig(opts?: { letters?: { lon: number; lat: number; t: string }[] }): string {
   const badge = (lon: number, lat: number, icon: string, fill: string): string => {
     const x = lonToX(lon);
     const y = latToY(lat);
@@ -257,18 +259,22 @@ export function asiaIndustryFig(): string {
     ${badge(113, 33, chip, "#3F8FC8")}${badge(127.5, 37, chip, "#3F8FC8")}${badge(138, 36.5, chip, "#3F8FC8")}
     ${badge(128.5, 34, film, "#E2574C")}
     ${badge(101, 15, rice2, "#5A8A2E")}${badge(110, -7, rice2, "#5A8A2E")}
+    ${letterMarks(opts?.letters)}
   `;
   // 범례에도 지도와 같은 아이콘을 넣는다 — 빈 원만 있으면 "모양이 안 보인다"(실사용 피드백)
-  const legIcon = (cx: number, icon: string): string => `<g transform="translate(${cx - 6} -10) scale(.5)">${icon}</g>`;
+  // 두 줄 5항목: 지도에 찍힌 아이콘은 전부 범례에 있어야 한다 — 우리나라 옆 주황 영화 아이콘이
+  // 범례에 없어 "저건 뭐지"가 되던 실사용 피드백(2026-07-20). 첨단+문화는 같은 엔진이라 둘째 줄에 나란히.
+  const legEntry = (x: number, icon: string, stroke: string, label: string): string =>
+    `<circle cx="${x}" cy="-4" r="8" fill="#fff" stroke="${stroke}" stroke-width="1.4"/><g transform="translate(${x - 6} -10) scale(.5)">${icon}</g><text x="${x + 12}" y="0">${label}</text>`;
   const legend = `<g font-size="9.5" font-weight="800" fill="#4E5968">
-    <g transform="translate(${CROP.x + 8} ${CROP.y + CROP.h + 24})">
-      <circle cx="6" cy="-4" r="8" fill="#fff" stroke="#5A6B7E" stroke-width="1.4"/>${legIcon(6, oil)}<text x="18" y="0">석유·천연자원</text>
-      <circle cx="106" cy="-4" r="8" fill="#fff" stroke="#8A5AC2" stroke-width="1.4"/>${legIcon(106, sew)}<text x="118" y="0">의류·제조 공장</text>
-      <circle cx="208" cy="-4" r="8" fill="#fff" stroke="#3F8FC8" stroke-width="1.4"/>${legIcon(208, chip)}<text x="220" y="0">첨단·문화</text>
-      <circle cx="292" cy="-4" r="8" fill="#fff" stroke="#5A8A2E" stroke-width="1.4"/>${legIcon(292, rice2)}<text x="304" y="0">벼농사</text>
+    <g transform="translate(${CROP.x + 8} ${CROP.y + CROP.h + 22})">
+      ${legEntry(6, oil, "#5A6B7E", "석유·천연자원")}${legEntry(104, sew, "#8A5AC2", "의류·제조 공장")}${legEntry(206, rice2, "#5A8A2E", "벼농사")}
+    </g>
+    <g transform="translate(${CROP.x + 8} ${CROP.y + CROP.h + 42})">
+      ${legEntry(6, chip, "#3F8FC8", "첨단 산업")}${legEntry(104, film, "#E2574C", "문화 콘텐츠(게임·영화)")}
     </g>
   </g>`;
-  return mapShell(inner, { legend, aria: "아시아의 주요 산업 분포 지도" });
+  return mapShell(inner, { legend, h: 52, aria: "아시아의 주요 산업 분포 지도" });
 }
 
 /* ---------- L8: 공장의 이사(퀴즈 그림) ---------- */

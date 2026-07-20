@@ -480,9 +480,27 @@ export function renderSkiSlope(
 }
 
 /* ══════════ L6: 기차 국경 통과 ══════════ */
-function trainSvg(pos: 0 | 1 | 2): string {
-  // pos: 0 국경 앞 · 1 첫 국경 통과 · 2 두 번째 국경 통과 — 기차 x 위치만 이동
-  const tx = pos === 0 ? 18 : pos === 1 ? 96 : 174;
+// v2(2026-07-20 사용자 피드백): ① 위치 스왑 재렌더 → 장면 1회 렌더 + 기차 그룹만 CSS transform으로
+// 실제 주행(1.6s 가감속, .hs3-loco — 이동 중 속도 스트릭). ② 버스형 차체 → 진짜 전동차(유선형
+// 기관차+객차 2량, 팬터그래프가 가공전차선에 닿고, 레일·침목 위 작은 바퀴 8개).
+// 정차 위치 3곳(TX)은 세 나라 들판 한가운데 — 국경 기둥(82·158)을 실제로 '지나가며' 넘는다.
+const TRAIN_TX = [10, 88, 166] as const; // 기차 폭 64 — 각 들판(76px) 안에 정차
+const TRAIN_RIDE_MS = 1650; // soc.css .hs3-loco transition 1.6s + 여유
+
+function trainSceneSvg(): string {
+  const starRing = (cx: number): string =>
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+      .map((i) => `<circle cx="${(cx + 7 * Math.cos((i * Math.PI) / 6)).toFixed(2)}" cy="${(52 + 7 * Math.sin((i * Math.PI) / 6)).toFixed(2)}" r="1.05"/>`)
+      .join("");
+  const pole = (cx: number): string => `<g>
+      <rect x="${cx - 3}" y="60" width="6" height="86" rx="2" fill="#C8D0DC" stroke="#8A98AC" stroke-width="1.2"/>
+      <circle cx="${cx}" cy="52" r="11" fill="#20304E" stroke="#4E668E" stroke-width="1.4"/>
+      <g fill="#FFD98A">${starRing(cx)}</g>
+    </g>`;
+  const sleepers = Array.from({ length: 19 }, (_, i) => `<rect x="${10 + i * 12}" y="144.6" width="4" height="6.6" rx="1" fill="#5E5240"/>`).join("");
+  const wheels = [5, 12, 21, 28, 39, 46, 54, 61]
+    .map((cx) => `<circle cx="${cx}" cy="139" r="3" fill="#2E3A50" stroke="#101820" stroke-width="1"/><circle cx="${cx}" cy="139" r="1" fill="#8A98AC"/>`)
+    .join("");
   return `<svg viewBox="0 0 240 168" fill="none" aria-hidden="true">
     <defs>
       <linearGradient id="hs3-tsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#AED6F2"/><stop offset="1" stop-color="#E6F4FC"/></linearGradient>
@@ -498,30 +516,39 @@ function trainSvg(pos: 0 | 1 | 2): string {
     <path d="M30 100q4-8 10 0M52 98q4-8 10 0" stroke="#4E8A2E" stroke-width="2" fill="none"/>
     <path d="M100 96l6-10 6 10zM120 98l5-8 5 8" fill="#C8A83E"/>
     <path d="M186 96q6-10 12 0M206 98q5-8 10 0" stroke="#3E7E5E" stroke-width="2" fill="none"/>
+    <path d="M6 98q38 4 76 0q38 4 76 0q38 4 76 0" stroke="#7E92B0" stroke-width="1.1" fill="none" opacity=".6"/>
+    <circle cx="82" cy="98" r="1.4" fill="#5A6B7E"/><circle cx="158" cy="98" r="1.4" fill="#5A6B7E"/>
+    ${pole(82)}${pole(158)}
     <rect x="6" y="144" width="228" height="8" fill="#8A7A5E"/>
-    <path d="M6 146h228M6 150h228" stroke="#5E5240" stroke-width="1.2"/>
-    <g>
-      <rect x="79" y="60" width="6" height="86" rx="2" fill="#C8D0DC" stroke="#8A98AC" stroke-width="1.2"/>
-      <circle cx="82" cy="52" r="11" fill="#20304E" stroke="#4E668E" stroke-width="1.4"/>
-      <g fill="#FFD98A">${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => `<circle cx="${82 + 7 * Math.cos((i * Math.PI) / 6)}" cy="${52 + 7 * Math.sin((i * Math.PI) / 6)}" r="1.05"/>`).join("")}</g>
+    ${sleepers}
+    <path d="M6 142.6h228" stroke="#6E7A8A" stroke-width="2.6"/>
+    <path d="M6 141.6h228" stroke="#C8D2DC" stroke-width="1"/>
+    <g class="hs3-loco" style="transform:translate(${TRAIN_TX[0]}px,0px)">
+      <ellipse cx="32" cy="147" rx="36" ry="3.5" fill="#2A3A5E" opacity=".16"/>
+      <g class="hs3-streaks" stroke="#B8C6D8" stroke-linecap="round" fill="none">
+        <path d="M-4 120h-11" stroke-width="2"/>
+        <path d="M-2 127h-14" stroke-width="1.7" opacity=".75"/>
+        <path d="M-4 134h-9" stroke-width="1.5" opacity=".55"/>
+      </g>
+      <rect x="0" y="114" width="30" height="23" rx="3.5" fill="url(#hs3-train)" stroke="#7E1814" stroke-width="1.5"/>
+      <g fill="#D8ECF8" stroke="#7E1814" stroke-width=".9">
+        <rect x="3.5" y="118.5" width="6.4" height="7.4" rx="1.6"/><rect x="12" y="118.5" width="6.4" height="7.4" rx="1.6"/><rect x="20.5" y="118.5" width="6.4" height="7.4" rx="1.6"/>
+      </g>
+      <g stroke="#3C4654" stroke-width="1.3" fill="none"><circle cx="15.2" cy="122.6" r="2.1" fill="#FFE8CE"/><path d="M13.5 125q1.7 1.5 3.4 0"/></g>
+      <ellipse cx="8" cy="116.4" rx="6" ry="1.6" fill="#fff" opacity=".35"/>
+      <rect x="30" y="126" width="4" height="4" rx="1.2" fill="#4A3A34"/>
+      <path d="M34 114h22q7.5 2.5 8 13.5V137H34z" fill="url(#hs3-train)" stroke="#7E1814" stroke-width="1.5"/>
+      <g fill="#D8ECF8" stroke="#7E1814" stroke-width=".9">
+        <rect x="37.5" y="118.5" width="6.4" height="7.4" rx="1.6"/><rect x="46" y="118.5" width="6.4" height="7.4" rx="1.6"/>
+      </g>
+      <path d="M56.8 117.6q4.6 2 5.7 8.2l-5.7.8z" fill="#B8E0F5" stroke="#7E1814" stroke-width=".9"/>
+      <circle cx="62.4" cy="132.8" r="1.7" fill="#FFE9A8" stroke="#7E1814" stroke-width=".8"/>
+      <ellipse cx="42" cy="116.4" rx="6" ry="1.6" fill="#fff" opacity=".35"/>
+      <path d="M40.5 114 46 99.4M51.5 114 46 99.4" stroke="#3A4658" stroke-width="1.5"/>
+      <rect x="42" y="98.2" width="8" height="1.6" rx=".8" fill="#3A4658"/>
+      ${wheels}
     </g>
-    <g>
-      <rect x="155" y="60" width="6" height="86" rx="2" fill="#C8D0DC" stroke="#8A98AC" stroke-width="1.2"/>
-      <circle cx="158" cy="52" r="11" fill="#20304E" stroke="#4E668E" stroke-width="1.4"/>
-      <g fill="#FFD98A">${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => `<circle cx="${158 + 7 * Math.cos((i * Math.PI) / 6)}" cy="${52 + 7 * Math.sin((i * Math.PI) / 6)}" r="1.05"/>`).join("")}</g>
-    </g>
-    <ellipse cx="${tx + 26}" cy="146" rx="34" ry="4" fill="#2A3A5E" opacity=".16"/>
-    <g class="hs3-trainbody" transform="translate(${tx} 112)">
-      <rect x="0" y="0" width="52" height="26" rx="6" fill="url(#hs3-train)" stroke="#7E1814" stroke-width="1.6"/>
-      <path d="M52 6q10 2 10 12v8H52z" fill="url(#hs3-train)" stroke="#7E1814" stroke-width="1.6"/>
-      <g fill="#D8ECF8" stroke="#7E1814" stroke-width="1"><rect x="6" y="6" width="10" height="9" rx="2"/><rect x="21" y="6" width="10" height="9" rx="2"/><rect x="36" y="6" width="10" height="9" rx="2"/></g>
-      <circle cx="12" cy="27" r="4.6" fill="#2E3A50" stroke="#101820" stroke-width="1.2"/>
-      <circle cx="40" cy="27" r="4.6" fill="#2E3A50" stroke="#101820" stroke-width="1.2"/>
-      <ellipse cx="14" cy="4" rx="9" ry="2.4" fill="#fff" opacity=".4"/>
-      <g stroke="#3C4654" stroke-width="1.5" fill="none"><circle cx="26" cy="10" r="2.6" fill="#FFE8CE"/><path d="M23 13q3 3 6 0" /></g>
-    </g>
-    ${pos > 0 ? `<g opacity=".9"><path d="M${tx - 8} 120q-6 2-10 0" stroke="#B8C6D8" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M${tx - 14} 126q-5 1-8 0" stroke="#B8C6D8" stroke-width="1.6" stroke-linecap="round" fill="none" opacity=".7"/></g>` : ""}
-    <text x="120" y="24" text-anchor="middle" font-size="8.5" font-weight="800" fill="#4E6A8E">${pos === 0 ? "곧 국경입니다" : pos === 1 ? "국경 통과! 아무도 안 왔어요" : "두 번째 국경도 통과!"}</text>
+    <text class="hs3-tstatus" x="120" y="24" text-anchor="middle" font-size="8.5" font-weight="800" fill="#4E6A8E">곧 국경입니다</text>
   </svg>`;
 }
 
@@ -538,41 +565,59 @@ export function renderTrainBorder(
   scene.append(fig, btn, choicesBox);
   helper.innerHTML = "유럽 배낭여행 — 기차로 옆 나라까지 가요. 여권을 손에 꼭 쥐고… <b>출발</b>!";
 
+  fig.innerHTML = trainSceneSvg();
+  const mover = fig.querySelector(".hs3-loco") as SVGGElement;
+  const status = fig.querySelector(".hs3-tstatus") as SVGTextElement;
+
   let pos: 0 | 1 | 2 = 0;
-  let timer = 0;
-  fig.innerHTML = trainSvg(0);
+  const timers = new Set<number>();
+  const later = (fn: () => void, ms: number): void => {
+    const t = window.setTimeout(() => {
+      timers.delete(t);
+      fn();
+    }, ms);
+    timers.add(t);
+  };
   const next = (): void => {
-    if (pos >= 2) return;
+    if (pos >= 2 || fig.classList.contains("ride")) return;
     pos = (pos + 1) as 1 | 2;
     haptic(HAPTIC.tap);
-    fig.innerHTML = trainSvg(pos);
-    fig.classList.remove("flip");
-    void fig.offsetWidth;
-    fig.classList.add("flip");
-    if (pos === 1) {
-      btn.textContent = "계속 달리기";
-      helper.innerHTML = "국경 표지판을 지났는데… <b>아무도 여권을 확인하러 오지 않아요?</b> 다음 나라로 계속 가 봐요.";
-    } else {
-      btn.disabled = true;
-      btn.classList.add("done");
-      face("surprised");
-      helper.innerHTML = "나라를 두 번이나 넘었는데 여권은 가방 속 그대로! <b>왜 아무도 검사하지 않을까요?</b>";
-      timer = window.setTimeout(() => {
-        ask(choicesBox, helper, {
-          choices: s.choices ?? [
-            "국경을 자유롭게 오가기로 나라들끼리 약속했기 때문에",
-            "기차가 너무 빨라 검사원이 못 탔기 때문에",
-            "여권 검사는 원래 비행기에서만 하기 때문에",
-          ],
-          good: "정확해요! 유럽의 여러 나라는 <b>국경 검문 없이 자유롭게 오가기로 약속</b>했어요(솅겐 조약). 이 약속을 만든 '하나의 유럽' 이야기 — 유럽연합을 만나러 가요!",
-          bad: "기차 속도나 교통수단의 문제가 아니에요 — 걸어서 넘어도 검사가 없답니다. 유럽 나라들이 <b>국경을 자유롭게 오가기로 약속</b>했기 때문이죠. 그 약속의 이름과 이야기를 만나러 가요!",
-          onDone: finish,
-        });
-      }, 750);
-    }
+    btn.disabled = true;
+    fig.classList.add("ride");
+    status.textContent = "덜컹덜컹 — 국경을 향해 달려요";
+    mover.style.transform = `translate(${TRAIN_TX[pos]}px,0px)`;
+    const arrived = pos;
+    later(() => {
+      fig.classList.remove("ride");
+      if (arrived === 1) {
+        status.textContent = "국경 통과! 아무도 안 왔어요";
+        btn.textContent = "계속 달리기";
+        btn.disabled = false;
+        helper.innerHTML = "국경 표지판을 지났는데… <b>아무도 여권을 확인하러 오지 않아요?</b> 다음 나라로 계속 가 봐요.";
+      } else {
+        status.textContent = "두 번째 국경도 통과!";
+        btn.classList.add("done");
+        face("surprised");
+        helper.innerHTML = "나라를 두 번이나 넘었는데 여권은 가방 속 그대로! <b>왜 아무도 검사하지 않을까요?</b>";
+        later(() => {
+          ask(choicesBox, helper, {
+            choices: s.choices ?? [
+              "국경을 자유롭게 오가기로 나라들끼리 약속했기 때문에",
+              "기차가 너무 빨라 검사원이 못 탔기 때문에",
+              "여권 검사는 원래 비행기에서만 하기 때문에",
+            ],
+            good: "정확해요! 유럽의 여러 나라는 <b>국경 검문 없이 자유롭게 오가기로 약속</b>했어요(솅겐 조약). 이 약속을 만든 '하나의 유럽' 이야기 — 유럽연합을 만나러 가요!",
+            bad: "기차 속도나 교통수단의 문제가 아니에요 — 걸어서 넘어도 검사가 없답니다. 유럽 나라들이 <b>국경을 자유롭게 오가기로 약속</b>했기 때문이죠. 그 약속의 이름과 이야기를 만나러 가요!",
+            onDone: finish,
+          });
+        }, 750);
+      }
+    }, TRAIN_RIDE_MS);
   };
   btn.addEventListener("click", next);
-  return () => window.clearTimeout(timer);
+  return () => {
+    for (const t of timers) window.clearTimeout(t);
+  };
 }
 
 /* ══════════ L7: 조 추첨 — 한 나라에서 유니폼 4벌 ══════════ */
@@ -584,6 +629,10 @@ const SHIRTS = [
 ];
 
 function shirtsSvg(count: number): string {
+  // 탭 안내는 방송 하단자막풍 다크 필 + 금색 텍스트 — 맨 텍스트(8px 회청색)가 어두운 무대에
+  // 묻히던 실사용 피드백(2026-07-20)의 교정. 공개 중에만 은은한 펄스(.hs3-taphint, soc.css).
+  const hint = count < 4 ? "탭해서 다음 팀 공개" : "…전부 한 나라에서 왔다고?";
+  const hw = count < 4 ? 110 : 142;
   const shirt = (x: number, i: number): string => {
     const sh = SHIRTS[i];
     const on = i < count;
@@ -597,7 +646,7 @@ function shirtsSvg(count: number): string {
         <path d="M-9 -18q9 5 18 0" stroke="${sh.trim}" stroke-width="2.4" fill="none"/>
         <path d="M-8 12h16" stroke="${sh.trim}" stroke-width="2.2"/>
         <ellipse cx="-6" cy="-8" rx="4.6" ry="1.8" fill="#fff" opacity=".35"/>
-        <text x="0" y="28" text-anchor="middle" font-size="7.6" font-weight="800" fill="#3E4A5A">${on ? sh.name : "?"}</text>
+        <text x="0" y="28" text-anchor="middle" font-size="8.4" font-weight="800" fill="#D8E2F8">${on ? sh.name : "?"}</text>
       </g>
     </g>`;
   };
@@ -616,7 +665,10 @@ function shirtsSvg(count: number): string {
       <circle cx="120" cy="128" r="6.5" fill="#FFE8CE"/>
       <path d="M120 134v12M120 138l-8 3M120 138l8 3M120 146l-6 10M120 146l6 10"/>
     </g>
-    <text x="120" y="160" text-anchor="middle" font-size="8" font-weight="700" fill="#8FA2C8">${count < 4 ? "탭해서 다음 팀 공개" : "…전부 한 나라에서 왔다고?"}</text>
+    <g class="${count < 4 ? "hs3-taphint" : ""}">
+      <rect x="${120 - hw / 2}" y="145.5" width="${hw}" height="16" rx="8" fill="#0A1020" opacity=".82" stroke="#4E5E86" stroke-width="1"/>
+      <text x="120" y="157" text-anchor="middle" font-size="9" font-weight="800" fill="#FFE9B8">${hint}</text>
+    </g>
   </svg>`;
 }
 

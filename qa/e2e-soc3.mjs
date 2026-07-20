@@ -125,7 +125,17 @@ const hookStep = async (scene) => {
   else if (scene === "frozenriver") await tapFig(".hs3-flipbtn", 2, 520);
   else if (scene === "cityfeed") await tapFig(".hs3-feed", 2, 480);
   else if (scene === "skislope") await tapFig(".hs3-flipbtn", 2, 1000); // v2: 꼭대기 → 하늘(줌 아웃) 2탭
-  else if (scene === "trainborder") await tapFig(".hs3-flipbtn", 2, 560);
+  else if (scene === "trainborder") {
+    // v2: 기차가 실제로 달리는 1.6s 동안 버튼이 잠긴다 — 재활성화를 기다렸다 다음 국경으로
+    for (let i = 0; i < 2; i += 1) {
+      await page.waitForFunction(() => {
+        const b = document.querySelector(".screen.active .hs3-flipbtn");
+        return b && !b.disabled;
+      }, undefined, { timeout: 8000 });
+      await page.evaluate(() => document.querySelector(".screen.active .hs3-flipbtn").click());
+      await W(400);
+    }
+  }
   else if (scene === "fourshirts") await tapFig(".hs3-shirts", 3, 440);
   await page.waitForSelector(`${active} .hook-choices.show .hook-choice`, { timeout: 12000 });
   const q = await page.evaluate(() => !!document.querySelector(".screen.active .hook-q"));

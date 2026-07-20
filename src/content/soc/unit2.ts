@@ -921,7 +921,7 @@ export const S1_UNIT2: Unit = {
         }),
         mcq({
           prompt: "산업 지도에서 석유 표시가 모여 있는 ㉠ 지역(아라비아반도 일대)의 산업 특징으로 알맞은 것은 무엇일까요?",
-          figure: asiaIndustryFig(),
+          figure: asiaIndustryFig({ letters: [{ lon: 44.5, lat: 15.5, t: "㉠" }] }), // 배지(46,26)와 비겹침 검산: Δ≈29px > r합 24
           options: [
             "석유·천연가스 등 천연자원 생산이 중심이다",
             "반도체 등 첨단 산업이 중심이다",

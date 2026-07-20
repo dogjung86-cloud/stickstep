@@ -116,7 +116,8 @@ const hookStep = async (L, scene) => {
   const times = { dawnsoccer: 2, peakhike: 2, frozenriver: 2, cityfeed: 2, skislope: 2, trainborder: 2, fourshirts: 3 }[scene];
   for (let i = 1; i <= times; i += 1) {
     await page.evaluate((s) => document.querySelector(`.screen.active ${s}`).click(), tapSel);
-    await W(560);
+    // trainborder v2는 실주행 1.6s 동안 버튼이 잠긴다 — 도착 후 상태를 찍고 다음 탭
+    await W(scene === "trainborder" ? 2100 : 560);
     await SHOT(`${L}-hook-${scene}-${i}`);
   }
   await page.waitForSelector(`${active} .hook-choices.show .hook-choice`, { timeout: 12000 });
