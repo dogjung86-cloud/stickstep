@@ -2173,6 +2173,7 @@
 .rck-cmp.pop { animation: m5Pop .5s var(--spring-bounce); }
 .rck-ang { animation: rckFadeUp .4s var(--ease) both; transform-box: view-box; }
 @keyframes rckFadeUp { 0% { opacity: 0; transform: translateY(4px); } 100% { opacity: 1; transform: translateY(0); } }
+/* ============================================================
    Ⅵ 확률 랩 — treeLab(.trl-) 가지 뻗기 · tossLab(.tsl-) 던지기 실험실
    ============================================================ */
 .trl-stage { padding: 14px 8px 4px; }

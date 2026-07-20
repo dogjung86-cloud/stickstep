@@ -307,36 +307,16 @@ export function renderFrozenRiver(
 }
 
 /* ══════════ L4: 도시 SNS 피드 ══════════ */
+// 피드 사진 3장 = 위키미디어 실물(photos/CREDITS.md — 파리 라데팡스·로마 콜로세움·프라이부르크
+// 슐리어베르크 태양광 단지). 손그림 SVG 카드가 "퀄리티 낮음 + 태그 글자 안 보임" 사용자 피드백
+// (2026-07-20)으로 교체 — L5 코펜힐·figTabs 실물 계보. figTabs 5탭(런던·암스테르담·아테네·
+// 아이슬란드·소피아 앙티폴리스)과 도시가 겹치지 않게 골랐다. 태그(계정 캡션)는 사진 아래
+// 캡션 행에 진한 10px(뷰박스)로 — 사진 위 8.4px 회색 텍스트가 안 보이던 결함의 재발 방지.
+// recap "피드에서 본 세 장면"·ox 해설 문구와 동기화(unit3.ts).
 const FEED_CARDS = [
-  {
-    tag: "높은 빌딩 · 정장 · 바쁜 걸음",
-    art: `<rect x="0" y="0" width="150" height="86" rx="6" fill="#20304E"/>
-      <g><rect x="14" y="18" width="16" height="60" fill="#3E5478"/><rect x="36" y="8" width="20" height="70" fill="#4E668E"/><rect x="62" y="24" width="14" height="54" fill="#3A4E72"/><rect x="82" y="12" width="22" height="66" fill="#56709A"/><rect x="110" y="28" width="16" height="50" fill="#42587E"/></g>
-      <g fill="#FFE9B8" opacity=".85"><rect x="40" y="14" width="3" height="3"/><rect x="47" y="22" width="3" height="3"/><rect x="86" y="18" width="3" height="3"/><rect x="94" y="30" width="3" height="3"/><rect x="115" y="34" width="3" height="3"/></g>
-      <g stroke="#E8EEF6" stroke-width="1.8" fill="none"><circle cx="130" cy="58" r="4" fill="#FFE8CE"/><path d="M130 62v9M130 64l-4 3M130 64l4 2M130 71l-3 7M130 71l4 7"/></g>
-      <circle cx="22" cy="14" r="6.5" fill="#F2C24E"/><text x="22" y="17.5" text-anchor="middle" font-size="8" font-weight="900" fill="#8A5A10">₩</text>`,
-  },
-  {
-    tag: "돌기둥 · 카메라 · 여행 가방",
-    art: `<rect x="0" y="0" width="150" height="86" rx="6" fill="#E8DCC2"/>
-      <path d="M20 70h110v6H20zM26 26h98v6H26z" fill="#C8B896"/>
-      <g fill="#D8CCAC" stroke="#A89870" stroke-width="1"><rect x="34" y="32" width="10" height="38"/><rect x="58" y="32" width="10" height="38"/><rect x="82" y="32" width="10" height="38"/><rect x="106" y="32" width="10" height="38"/></g>
-      <path d="M30 26 75 12l45 14z" fill="#D0C0A0" stroke="#A89870" stroke-width="1.2"/>
-      <g stroke="#3C4654" stroke-width="1.8" fill="none"><circle cx="130" cy="56" r="4" fill="#FFE8CE"/><path d="M130 60v9M130 62l-5 1M130 62l5 2M130 69l-3 8M130 69l3 8"/><rect x="132" y="61" width="6" height="4.6" rx="1" fill="#3A4658" stroke="none"/></g>`,
-  },
-  {
-    tag: "자전거 · 태양광 · 초록 지붕",
-    art: `<rect x="0" y="0" width="150" height="86" rx="6" fill="#D8EEDC"/>
-      <rect x="18" y="34" width="44" height="38" rx="3" fill="#E8E2D2" stroke="#B0A890" stroke-width="1.2"/>
-      <path d="M14 36 40 20l26 16z" fill="#5A8A2E"/>
-      <g fill="#2E4E7E" stroke="#1E3450" stroke-width=".8"><rect x="24" y="24" width="9" height="7" transform="rotate(-31 28 27)"/><rect x="36" y="17" width="9" height="7" transform="rotate(-31 40 20)"/></g>
-      <path d="M80 30q6-8 14 0M84 22q5-6 10 0" stroke="#5A8A2E" stroke-width="2" fill="none"/>
-      <g stroke="#3C4654" stroke-width="1.8" fill="none">
-        <circle cx="100" cy="62" r="7" stroke="#4E7CB8" stroke-width="2"/><circle cx="124" cy="62" r="7" stroke="#4E7CB8" stroke-width="2"/>
-        <path d="M100 62l8-14h8l8 14M108 48l-4 14" stroke="#4E7CB8" stroke-width="2"/>
-        <circle cx="112" cy="42" r="3.6" fill="#FFE8CE"/><path d="M112 46v7M112 48l-4 3M112 48h6"/>
-      </g>`,
-  },
+  { tag: "높은 빌딩 · 유리 타워 · 금융가", img: "feed-world.webp" },
+  { tag: "돌기둥 · 카메라 · 여행 가방", img: "feed-hist.webp" },
+  { tag: "지붕엔 태양광 · 마당엔 초록", img: "feed-eco.webp" },
 ];
 
 export function renderCityFeed(
@@ -350,22 +330,28 @@ export function renderCityFeed(
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
   helper.innerHTML = "유럽 여행 계정을 팔로우했더니 피드가 도시 사진으로 가득! <b>탭해서</b> 한 장씩 넘겨 봐요.";
+  for (const c of FEED_CARDS) new Image().src = `${BASE}soc/europe/${c.img}`; // 탭 전 프리로드(스와이프 공백 방지)
 
   let idx = 0;
   let timer = 0;
   const show = (): void => {
     const c = FEED_CARDS[idx];
-    fig.innerHTML = `<svg viewBox="0 0 240 168" fill="none" aria-hidden="true">
-      <defs><linearGradient id="hs3-phone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDFEFF"/><stop offset="1" stop-color="#EEF2F8"/></linearGradient></defs>
-      <rect x="6" y="6" width="228" height="156" rx="12" fill="#E2E8F2"/>
-      <ellipse cx="120" cy="152" rx="70" ry="5" fill="#2A3A5E" opacity=".10"/>
-      <rect x="42" y="12" width="156" height="146" rx="14" fill="url(#hs3-phone)" stroke="#B8C2D2" stroke-width="1.6"/>
+    // 사진은 clipPath 라운드 크롭 + slice(SNS 카드 문법). 캡션은 사진 아래 흰 바탕 위 진한 글자.
+    fig.innerHTML = `<svg viewBox="0 0 240 176" fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="hs3-phone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDFEFF"/><stop offset="1" stop-color="#EEF2F8"/></linearGradient>
+        <clipPath id="hs3-shot"><rect x="50" y="36" width="140" height="88" rx="7"/></clipPath>
+      </defs>
+      <rect x="6" y="6" width="228" height="164" rx="12" fill="#E2E8F2"/>
+      <ellipse cx="120" cy="160" rx="70" ry="5" fill="#2A3A5E" opacity=".10"/>
+      <rect x="42" y="12" width="156" height="152" rx="14" fill="url(#hs3-phone)" stroke="#B8C2D2" stroke-width="1.6"/>
       <circle cx="58" cy="26" r="6" fill="#E8590C"/><rect x="70" y="22" width="52" height="4" rx="2" fill="#C8D0DC"/><rect x="70" y="29" width="30" height="3" rx="1.5" fill="#D8DEE8"/>
-      <g transform="translate(45 40)">${c.art}</g>
-      <path d="M56 136q4-5 8 0 -4 6 -8 0z" fill="#E2574C"/>
-      <rect x="72" y="132" width="44" height="4" rx="2" fill="#C8D0DC"/><rect x="72" y="140" width="70" height="3.4" rx="1.7" fill="#D8DEE8"/>
-      <text x="120" y="120" text-anchor="middle" font-size="8.4" font-weight="800" fill="#5A6B7E">${c.tag}</text>
-      <g fill="#B8C2D2"><circle cx="112" cy="151" r="2"/><circle cx="120" cy="151" r="2" fill="#8A98AC"/><circle cx="128" cy="151" r="2"/></g>
+      <image href="${BASE}soc/europe/${c.img}" x="50" y="36" width="140" height="88" preserveAspectRatio="xMidYMid slice" clip-path="url(#hs3-shot)"/>
+      <rect x="50" y="36" width="140" height="88" rx="7" stroke="#C6D0DE" stroke-width="1"/>
+      <path d="M54 130q4-5 8 0-4 6-8 0z" fill="#E2574C"/>
+      <rect x="68" y="127" width="24" height="4" rx="2" fill="#D8DEE8"/>
+      <text x="52" y="148" font-size="10" font-weight="800" fill="#33415C">${c.tag}</text>
+      <g fill="#B8C2D2">${[0, 1, 2].map((i) => `<circle cx="${112 + i * 8}" cy="157" r="2"${i === idx ? ' fill="#8A98AC"' : ""}/>`).join("")}</g>
     </svg>`;
     fig.classList.remove("flip");
     void fig.offsetWidth;
@@ -380,7 +366,7 @@ export function renderCityFeed(
     if (idx === 1) helper.innerHTML = "이번 도시는 오래된 돌기둥과 카메라… 앞 도시와 분위기가 전혀 달라요. <b>한 장 더!</b>";
     if (idx === FEED_CARDS.length - 1) {
       face("curious");
-      helper.innerHTML = "빌딩의 도시, 유적의 도시, 자전거의 도시 — <b>같은 유럽인데 도시마다 사진이 전혀 달라요.</b> 왜 그럴까요?";
+      helper.innerHTML = "빌딩의 도시, 유적의 도시, 태양광의 도시 — <b>같은 유럽인데 도시마다 사진이 전혀 달라요.</b> 왜 그럴까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
