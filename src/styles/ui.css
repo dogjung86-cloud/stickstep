@@ -2879,7 +2879,7 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .prep-pill.gold svg { color: var(--gold); }
 
 /* 도전 탭 "쉬는 시간" — 랭킹 아래 2×2 게임 타일 + 입장 현황(2026-07-21). */
-.play-head { display: flex; align-items: center; justify-content: space-between; gap: 8px 10px; flex-wrap: wrap; margin: 22px 2px 0; }
+.play-head { display: flex; align-items: center; justify-content: space-between; gap: 7px 10px; flex-wrap: wrap; margin: 18px 2px 0; }
 .play-title {
   display: inline-flex; align-items: center; gap: 7px; color: var(--ink);
   font-size: 16px; font-weight: 900; letter-spacing: -.015em;
@@ -2895,21 +2895,41 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .play-bal svg { color: var(--blue); }
 /* 오늘 판수 소진 — 어두운 필로 "닫힘"을 표시(내일 자정 리셋) */
 .play-cnt.done { background: var(--n700); border-color: var(--n700); color: #fff; }
-.play-note { margin: 9px 2px 0; padding: 9px 11px; border-radius: 11px; background: var(--n100); font-size: 11.5px; line-height: 1.5; color: var(--n600); word-break: keep-all; }
+.play-note { margin: 7px 2px 0; padding: 7px 10px; border-radius: 10px; background: var(--n100); font-size: 11.5px; line-height: 1.45; color: var(--n600); word-break: keep-all; }
 .prep-pill.fee { display: inline-flex; align-items: center; gap: 3px; color: #1B64DA; background: var(--blue-tint); border: 1px solid #C9DCFB; }
 .prep-pill.fee svg { color: var(--blue); }
-.game-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 11px; }
+.game-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 9px; }
 .game-tile {
-  position: relative; overflow: hidden; min-height: 158px; margin-top: 0; padding: 13px;
-  flex-direction: column; align-items: flex-start; gap: 9px;
+  position: relative; overflow: hidden; min-height: 128px; margin-top: 0; padding: 10px 11px;
+  align-items: stretch;
 }
 .game-tile::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: var(--game-color); }
-.prep-card.game-tile .prep-ic { width: 42px; height: 42px; border-radius: 14px; background: var(--game-tint); color: var(--game-color); }
-.game-tile .prep-tx { width: 100%; flex: 1; gap: 6px; }
-.game-tile .prep-tx b { align-items: flex-start; flex-wrap: wrap; gap: 5px; font-size: 14.5px; line-height: 1.25; }
-.game-tile .prep-desc { display: -webkit-box; min-height: 34px; overflow: hidden; font-size: 11.5px; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
-.game-meta { display: flex; align-items: center; margin-top: auto; }
-.game-tile .prep-pill.fee { padding: 3px 7px; font-size: 10px; }
+.game-tile .prep-tx { width: 100%; flex: 1; gap: 5px; }
+.game-tile .prep-tx b { align-items: center; gap: 5px; font-size: 14px; line-height: 1.25; white-space: nowrap; }
+.game-title-icon { display: grid; place-items: center; width: 22px; height: 22px; flex: none; }
+.game-title-art { display: block; width: 22px; height: 22px; overflow: visible; }
+.gi-sun-rays { stroke: var(--gold-deep); stroke-width: 1.7; }
+.gi-sun-core { fill: var(--gold); }
+.gi-sun-shine { fill: var(--gold-tint); }
+.gi-step-one { fill: var(--blue); }
+.gi-step-two { fill: var(--subj-space); }
+.gi-laser-body { fill: var(--n700); }
+.gi-laser-grip { fill: var(--blue); }
+.gi-laser-lens { fill: var(--gold); }
+.gi-laser-beam { fill: none; stroke-width: 1.8; stroke-linecap: round; }
+.gi-laser-beam-a { stroke: var(--subj-light); }
+.gi-laser-beam-b { stroke: var(--subj-gas); }
+.gi-laser-beam-c { stroke: var(--gold); }
+.gi-neon-start, .gi-neon-end { stop-color: var(--subj-light); }
+.gi-neon-mid { stop-color: var(--blue); }
+.gi-neon-glow, .gi-neon-line { fill: none; stroke: url(#game-neon-star-gradient); stroke-linecap: round; stroke-linejoin: round; }
+.gi-neon-glow { stroke-width: 2.8; opacity: .18; }
+.gi-neon-line { stroke-width: 1.6; }
+.game-title-art-neonStar { filter: drop-shadow(0 0 2px var(--subj-light)); }
+.game-tile .prep-desc { min-height: 45px; font-size: 11px; line-height: 1.38; }
+.game-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 4px; margin-top: auto; }
+.game-tile .prep-pill { padding: 3px 6px; font-size: 9.5px; }
+.game-tile .prep-pill.fee { padding: 3px 6px; font-size: 9.5px; }
 .game-tile.cosmo { --game-color: var(--subj-space); --game-tint: var(--subj-space-tint); }
 .game-tile.rush { --game-color: var(--blue); --game-tint: var(--blue-tint); }
 .game-tile.laser { --game-color: var(--subj-gas); --game-tint: var(--subj-gas-tint); }

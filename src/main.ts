@@ -252,7 +252,7 @@ function openStepRush(): void {
   );
 }
 
-/** 코스모 머지(도전 탭 미니게임 2호 — 수박게임 문법의 천체 합체) — 프리미엄 전용.
+/** 태양 만들기(내부 모듈명 cosmoMerge, 도전 탭 미니게임 2호 — 수박게임 문법의 천체 합체) — 프리미엄 전용.
  *  게임 코드는 동적 import(three 규칙) — matter-js 물리까지 이 청크에 실려 초기 번들 무영향. */
 function openCosmoMerge(): void {
   if (isPremium() || isReviewMode()) {
@@ -263,7 +263,7 @@ function openCosmoMerge(): void {
   }
   nav.go(
     paywallScreen({
-      sub: "도전 탭 미니게임 코스모 머지가 프리미엄에 포함돼 있어요. 우주먼지를 합쳐 태양까지 키워 보세요.",
+      sub: "도전 탭 미니게임 태양 만들기가 프리미엄에 포함돼 있어요. 우주먼지를 합쳐 태양까지 키워 보세요.",
       onUnlocked: () => {
         nav.back();
         openCosmoMerge();
@@ -360,7 +360,7 @@ function openPolicy(): void {
 
 // 보너스 미니게임은 도전 탭으로 이사(2026-07-12). 단열 디펜스는 폐기(2026-07-17 — minigame.ts 삭제),
 // 별자리 한붓그리기도 폐기(2026-07-19 사용자 확정 — starGame.ts 삭제, 서로소 학습은 vennFactor 몫).
-// 스텝 러시 = openStepRush(간판), 코스모 머지 = openCosmoMerge(matter-js 천체 합체),
+// 스텝 러시 = openStepRush(간판), 태양 만들기 = openCosmoMerge(matter-js 천체 합체),
 // 네온 한붓그리기 = openOneStroke(오일러 스테이지 퍼즐), 레이저 미로 = openLaserMaze(빛 반사 퍼즐) —
 // 넷 다 프리미엄 게이트 + 동적 import, 나가기는 도전 탭 복귀.
 

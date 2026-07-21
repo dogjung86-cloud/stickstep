@@ -576,7 +576,7 @@ export class CosmoRenderer {
     ctx.font = "800 13px Pretendard, system-ui, sans-serif";
     ctx.textAlign = "center";
     ctx.fillStyle = "#DCE6F4";
-    ctx.fillText("코스모 머지 — 천체 도감(크기 순서는 실제 그대로)", CMX_W / 2, 22);
+    ctx.fillText("태양 만들기 — 천체 도감(크기 순서는 실제 그대로)", CMX_W / 2, 22);
     const disp = [16, 18, 22, 26, 30, 32, 34, 34, 28, 34, 32];
     for (let t = 0; t < TIERS.length; t++) {
       const col = t % 3;

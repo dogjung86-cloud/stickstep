@@ -92,3 +92,45 @@ export function icon(
   const style = opts.style ? ` style="${opts.style}"` : "";
   return `<svg${cls}${style} width="${size}" height="${size}" viewBox="0 0 24 24" ${stroke}>${def.v}</svg>`;
 }
+
+/** 도전 탭 게임 제목용 컬러 아이콘. 작은 크기에서도 소재가 바로 읽히도록 전용 실루엣을 쓴다. */
+export type GameIconName = "sun" | "footsteps" | "laser" | "neonStar";
+
+const GAME_ICONS: Record<GameIconName, string> = {
+  sun: `
+    <g class="gi-sun-rays" fill="none" stroke-linecap="round">
+      <path d="M12 1.7V4M12 20v2.3M1.7 12H4M20 12h2.3M4.7 4.7l1.6 1.6M17.7 17.7l1.6 1.6M19.3 4.7l-1.6 1.6M6.3 17.7l-1.6 1.6"/>
+    </g>
+    <circle class="gi-sun-core" cx="12" cy="12" r="5.3"/>
+    <circle class="gi-sun-shine" cx="10.2" cy="10.1" r="1.35"/>
+  `,
+  footsteps: `
+    <g class="gi-step-one" transform="translate(7.6 16.4) rotate(-8) scale(-1.3,1.3)">
+      <path d="M0-5.6c1.8 0 3.2 1.2 3.2 3s-.7 3.4-1.5 4C1.2 1.8-1.2 1.8-1.7 1.4c-.8-.6-1.5-2.2-1.5-4s1.4-3 3.2-3Z"/><rect x="-2" y="2.9" width="4" height="2.7" rx="1.35"/>
+    </g>
+    <g class="gi-step-two" transform="translate(16.4 7.6) rotate(8) scale(1.3)">
+      <path d="M0-5.6c1.8 0 3.2 1.2 3.2 3s-.7 3.4-1.5 4C1.2 1.8-1.2 1.8-1.7 1.4c-.8-.6-1.5-2.2-1.5-4s1.4-3 3.2-3Z"/><rect x="-2" y="2.9" width="4" height="2.7" rx="1.35"/>
+    </g>
+  `,
+  laser: `
+    <path class="gi-laser-beam gi-laser-beam-a" d="M13.2 11.8 21.5 6.5"/>
+    <path class="gi-laser-beam gi-laser-beam-b" d="M13.4 12h8.8"/>
+    <path class="gi-laser-beam gi-laser-beam-c" d="m13.2 12.2 8.3 5.3"/>
+    <path class="gi-laser-body" d="M3.1 8.5h7.2l3.4 3.5-3.4 3.5H3.1Z"/>
+    <path class="gi-laser-grip" d="M6.1 15.5 5 20.7h4.2l1.1-5.2Z"/>
+    <circle class="gi-laser-lens" cx="13" cy="12" r="1.7"/>
+  `,
+  neonStar: `
+    <defs>
+      <linearGradient id="game-neon-star-gradient" x1="3" y1="4" x2="21" y2="20" gradientUnits="userSpaceOnUse">
+        <stop class="gi-neon-start" offset="0"/><stop class="gi-neon-mid" offset=".52"/><stop class="gi-neon-end" offset="1"/>
+      </linearGradient>
+    </defs>
+    <path class="gi-neon-glow" d="m12 2.8 2.8 5.7 6.3.9-4.55 4.44 1.08 6.28L12 17.15 6.37 20.1l1.08-6.28L2.9 9.38l6.3-.88Z"/>
+    <path class="gi-neon-line" d="m12 2.8 2.8 5.7 6.3.9-4.55 4.44 1.08 6.28L12 17.15 6.37 20.1l1.08-6.28L2.9 9.38l6.3-.88Z"/>
+  `,
+};
+
+export function gameIcon(name: GameIconName, size = 22): string {
+  return `<svg class="game-title-art game-title-art-${name}" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true">${GAME_ICONS[name]}</svg>`;
+}

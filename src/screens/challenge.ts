@@ -15,7 +15,7 @@
 // 랭킹은 서버 검증 채점(+검토 모드 우회 제거)이 선행 조건이라 자리만 잡는다.
 
 import { el } from "../core/dom";
-import { icon } from "../core/icons";
+import { gameIcon, icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { getState, spendXp, isPremium, isReviewMode } from "../core/store";
 import { gnav, type GnavKey } from "../ui/gnav";
@@ -84,7 +84,7 @@ export function challengeScreen(o: {
   function gameCard(
     id: string,
     tone: "cosmo" | "rush" | "laser" | "stroke",
-    ic: Parameters<typeof icon>[0],
+    art: Parameters<typeof gameIcon>[0],
     title: string,
     desc: string,
     onPlay?: () => void,
@@ -92,18 +92,22 @@ export function challengeScreen(o: {
     const card = el(
       "button",
       { class: `prep-card accent game-tile ${tone}`, attrs: { id } },
-      el("span", { class: "prep-ic", html: icon(ic, 20) }),
       el(
         "span",
         { class: "prep-tx" },
         el(
           "b",
           {},
+          el("span", { class: "game-title-icon", html: gameIcon(art, 22) }),
           el("span", { text: title }),
-          !isPremium() ? el("i", { class: "prep-pill gold", html: `${icon("crown", 11)}<span>프리미엄</span>` }) : null,
         ),
         el("span", { class: "prep-desc", text: desc }),
-        el("span", { class: "game-meta" }, el("i", { class: "prep-pill fee", html: `${icon("footstep", 10)}<span>입장료 ${GAME_FEE} 스텝</span>` })),
+        el(
+          "span",
+          { class: "game-meta" },
+          !isPremium() ? el("i", { class: "prep-pill gold", html: `${icon("crown", 10)}<span>프리미엄</span>` }) : null,
+          el("i", { class: "prep-pill fee", html: `${icon("footstep", 10)}<span>입장료 ${GAME_FEE} 스텝</span>` }),
+        ),
       ),
     );
     card.addEventListener("click", () => {
@@ -165,10 +169,10 @@ export function challengeScreen(o: {
   const gameGrid = el(
     "div",
     { class: "game-grid", attrs: { "aria-label": "미니게임" } },
-    gameCard("btn-cosmo", "cosmo", "globe", "코스모 머지", "천체를 배우며 같은 천체를 합쳐요", o.onPlayCosmo),
-    gameCard("btn-steprush", "rush", "footstep", "스텝 러시", "두 버튼으로 무한 계단을 올라요", o.onPlayStepRush),
-    gameCard("btn-lasermaze", "laser", "reflect", "레이저 미로", "빛의 반사를 배우며 블록을 옮겨요", o.onPlayLaserMaze),
-    gameCard("btn-onestroke", "stroke", "route", "네온 한붓그리기", "네온사인을 한 붓에 모두 켜요", o.onPlayOneStroke),
+    gameCard("btn-cosmo", "cosmo", "sun", "태양 만들기", "천체를 합쳐 태양 만들기에 도전하고 태양계를 알아보자!", o.onPlayCosmo),
+    gameCard("btn-steprush", "rush", "footsteps", "스텝 러시", "무한 계단을 빠르게 오르면서 대기권의 구조를 알아보자!", o.onPlayStepRush),
+    gameCard("btn-lasermaze", "laser", "laser", "레이저 미로", "반사의 원리를 이용해 블록을 옮겨 레이저를 통과시켜라!", o.onPlayLaserMaze),
+    gameCard("btn-onestroke", "stroke", "neonStar", "네온 한붓그리기", "제한 시간 내에 한 붓으로 네온 사인의 빛을 모두 켜 보자!", o.onPlayOneStroke),
   );
 
   const elm = el(

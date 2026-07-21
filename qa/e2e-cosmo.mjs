@@ -39,6 +39,15 @@ const D = () => page.evaluate(() => ({ ...document.getElementById("sc-cosmo").da
 const spawn = (t, x, y, still) =>
   page.evaluate(([tt, xx, yy, ss]) => document.getElementById("sc-cosmo").__cmx.spawn(tt, xx, yy, ss), [t, x, y, still ?? false]);
 
+async function openChallenge() {
+  if (await page.$("#sc-splash")) {
+    await page.waitForSelector("#sc-splash .splash-foot.done", { timeout: 12000 });
+    await page.getByRole("button", { name: "한번 둘러보기", exact: true }).click();
+    await page.waitForSelector(".screen.active .gnav-item", { timeout: 5000 });
+  }
+  await page.locator('.screen.active .gnav-item:has-text("도전")').click();
+}
+
 const BASE = {
   version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci",
   premium: true, reviewMode: false, goalMin: 10, streak: 0, lastStudyDay: null,
@@ -55,14 +64,17 @@ await page.addInitScript((s) => {
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
 await W(1000);
 
-// ── 진입: 도전 탭 → 코스모 머지 카드 ──────────────────────────
-await page.evaluate(() => document.querySelectorAll(".screen.active nav button")[2].click());
+// ── 진입: 도전 탭 → 태양 만들기 카드 ──────────────────────────
+await openChallenge();
 await W(500);
 ok(await page.$("#sc-challenge"), "도전 탭 진입");
-ok(await page.$("#btn-cosmo"), "코스모 머지 카드 존재");
+ok(await page.$("#btn-cosmo"), "태양 만들기 카드 존재");
+ok(await page.evaluate(() => document.querySelector("#btn-cosmo b")?.textContent.trim() === "태양 만들기"), "카드 제목 변경");
+ok(await page.evaluate(() => document.querySelector("#btn-cosmo .prep-desc")?.textContent.trim() === "천체를 합쳐 태양 만들기에 도전하고 태양계를 알아보자!"), "카드 설명 문구");
 await page.evaluate(() => document.getElementById("btn-cosmo").click());
 await page.waitForSelector("#sc-cosmo", { timeout: 6000 }); // matter-js 청크 동적 로드 여유
 await W(700);
+ok(await page.evaluate(() => document.querySelector("#sc-cosmo .mg-title")?.textContent.trim() === "태양 만들기"), "게임 화면 제목 변경");
 const boot = await page.evaluate(() => {
   const h = document.getElementById("sc-cosmo");
   const cv = h.querySelector(".cmx-cv");

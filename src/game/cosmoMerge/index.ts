@@ -86,7 +86,7 @@ export function cosmoScreen(o: { onExit: () => void }): Screen {
     html: icon("note", 18),
   });
   const bestPill = el("div", { class: "pill mg-best", text: `최고 ${bestScore(COSMO_ID)}점` });
-  const header = el("div", { class: "lheader" }, xbtn, el("div", { class: "mg-title", text: "코스모 머지" }), sndBtn, bestPill);
+  const header = el("div", { class: "lheader" }, xbtn, el("div", { class: "mg-title", text: "태양 만들기" }), sndBtn, bestPill);
 
   // ---- 무대(캔버스 + HUD 오버레이) ----
   const cv = el("canvas", { class: "cmx-cv", attrs: { "aria-hidden": "true" } }) as unknown as HTMLCanvasElement;
