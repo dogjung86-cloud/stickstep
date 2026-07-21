@@ -164,6 +164,7 @@ export function accountSwitchPatch(local: Readonly<AppState>, row: ProgressRow |
     avatarCustom: null,
     avatarPreset: null,
     lastUnits: {},
+    recentUnitId: null,
   };
 }
 

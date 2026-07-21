@@ -30,7 +30,7 @@ export interface SplashScreen extends Screen {
   setSignedIn: (signedIn: boolean) => void;
 }
 
-export function splashScreen(o: { signedIn: boolean; onStart: () => void; onLogin: () => void }): SplashScreen {
+export function splashScreen(o: { signedIn: boolean; instant?: boolean; onStart: () => void; onLogin: () => void }): SplashScreen {
   const img = el("img", { class: "flip-img", attrs: { alt: "", "aria-hidden": "true" } }) as HTMLImageElement;
   const book = el("div", { class: "flipbook" }, img);
   const word = el("div", { class: "wordmark", text: BRAND.name });
@@ -102,7 +102,7 @@ export function splashScreen(o: { signedIn: boolean; onStart: () => void; onLogi
     ).then((oks) => oks.every(Boolean));
   }
 
-  function settle(): void {
+  function settle(quiet = false): void {
     if (settled) return;
     settled = true;
     window.clearInterval(timer);
@@ -110,7 +110,7 @@ export function splashScreen(o: { signedIn: boolean; onStart: () => void; onLogi
     book.classList.add("settled");
     mid.classList.add("done");
     foot.classList.add("done"); // 버튼 3개가 워드마크에 이어 샥 나타난다
-    haptic(HAPTIC.ctaUnlock);
+    if (!quiet) haptic(HAPTIC.ctaUnlock);
     for (const b of buttons) b.disabled = false;
   }
 
@@ -129,24 +129,30 @@ export function splashScreen(o: { signedIn: boolean; onStart: () => void; onLogi
     }, FRAME_MS);
   }
 
-  void (async () => {
-    const ok = await preload([...FLIP_FRAMES, STUDY]);
-    if (!ok) {
-      const fbOk = await preload([...FALLBACK_FRAMES, FALLBACK_STUDY]);
-      if (!fbOk) {
-        // 이미지가 전혀 없으면 애니메이션 없이 바로 완성 상태
-        book.classList.add("noart");
-        mid.classList.add("done");
-        foot.classList.add("done");
-        settled = true;
-        for (const b of buttons) b.disabled = false;
-        return;
+  if (o.instant) {
+    // 학습 탭 홈 아이콘으로 돌아온 경우 — 플립북을 반복하지 않고 완성 컷을 즉시 보여 준다.
+    elm.classList.add("instant");
+    settle(true);
+  } else {
+    void (async () => {
+      const ok = await preload([...FLIP_FRAMES, STUDY]);
+      if (!ok) {
+        const fbOk = await preload([...FALLBACK_FRAMES, FALLBACK_STUDY]);
+        if (!fbOk) {
+          // 이미지가 전혀 없으면 애니메이션 없이 바로 완성 상태
+          book.classList.add("noart");
+          mid.classList.add("done");
+          foot.classList.add("done");
+          settled = true;
+          for (const b of buttons) b.disabled = false;
+          return;
+        }
+        frames = FALLBACK_FRAMES;
+        study = FALLBACK_STUDY;
       }
-      frames = FALLBACK_FRAMES;
-      study = FALLBACK_STUDY;
-    }
-    play();
-  })();
+      play();
+    })();
+  }
 
   // 탭하면 건너뛰기
   elm.addEventListener("pointerdown", () => {

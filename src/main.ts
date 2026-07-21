@@ -14,7 +14,7 @@ import "./styles/his.css";
 import "./styles/desktop.css"; // 데스크톱 셸(옵트인·≥1024px) — html.dt 게이트, 캐스케이드 최후순위
 
 import { nav } from "./core/router";
-import { getState, completeLesson, setViewSubject, isPremium, isReviewMode, setPremiumOverride, isDone, setLastUnit } from "./core/store";
+import { getState, completeLesson, setViewSubject, setViewGrade, isPremium, isReviewMode, setPremiumOverride, isDone, setLastUnit, recentUnit } from "./core/store";
 import type { WrongNote } from "./core/store";
 import { isTutorConfigured } from "./core/tutor";
 import { tutorScreen } from "./screens/tutor";
@@ -34,7 +34,7 @@ import { policyScreen } from "./screens/policy";
 import { examScreen } from "./screens/exam";
 import { weakDrillScreen } from "./screens/weakDrill";
 import { createLessonPlayer } from "./lessons/player";
-import { findLesson, isPremiumLocked, subjectOfUnit, gradeOfUnit } from "./content/curriculum";
+import { findLesson, findUnit, isPremiumLocked, subjectOfUnit, gradeOfUnit } from "./content/curriculum";
 import { initAuth, onAuthChange, isPrivilegedUser, currentUser, isAuthConfigured, hasStoredSession } from "./core/auth";
 import { initSync } from "./core/sync";
 
@@ -59,7 +59,25 @@ function goHome(): void {
   currentTab = "home";
   const walkFrom = walkFromLessonId;
   walkFromLessonId = undefined;
-  nav.reset(homeScreen(openLesson, lastUnitId, { onOpenExam: openExam, onTab: goTab, onOpenNotebook: openNotebook }, { walkFrom }));
+  nav.reset(
+    homeScreen(
+      openLesson,
+      lastUnitId,
+      { onOpenExam: openExam, onTab: goTab, onOpenNotebook: openNotebook, onOpenSplash: () => showSplash(true) },
+      { walkFrom },
+    ),
+  );
+}
+
+/** 스플래시의 "학습 이어가기" — 마지막 대단원의 과목·학년을 복원한 뒤 그 지도에 초점을 맞춘다. */
+function resumeLearning(): void {
+  const recent = recentUnit();
+  if (recent && findUnit(recent)) {
+    lastUnitId = recent;
+    setViewSubject(subjectOfUnit(recent));
+    setViewGrade(gradeOfUnit(recent));
+  }
+  goHome();
 }
 
 /** 하단 탭 전환(2026-07-12 IA 개편) — 탭은 스택을 쌓지 않고 reset으로 갈아끼운다. */
@@ -377,46 +395,24 @@ function openLesson(id: string): void {
   nav.go({ el: player.el });
 }
 
-function start(): void {
+function showSplash(instant = false): void {
   // 공개 진입 플로우(2026-07-21 사용자 확정): 누구나 앱을 열면 스플래시(=상시 메인)를 먼저 거친다.
   // 신규 사용자는 과목 선택·온보딩으로, 기존 사용자는 곧바로 학습 홈으로 보낸다.
   const enterOnboarding = (): void => {
     if (getState().onboarded) {
-      goHome(); // 랜딩에서 로그인해 서버 기록(onboarded)이 내려온 경우 — 온보딩 생략
+      resumeLearning();
       return;
     }
-    nav.go(
-      subjectScreen({
-        mode: "onboard",
-        onPickScience: () => {
-          setViewSubject("sci");
-          nav.go(onboardingScreen(goHome));
-        },
-        onPickMath: () => {
-          setViewSubject("math");
-          nav.go(onboardingScreen(goHome));
-        },
-        onPickSoc: () => {
-          setViewSubject("soc");
-          nav.go(onboardingScreen(goHome));
-        },
-        onPickHis: () => {
-          setViewSubject("his");
-          nav.go(onboardingScreen(goHome));
-        },
-      }),
-    );
+    nav.go(onboardingScreen(goHome, () => nav.back()));
   };
   const splash = splashScreen({
     signedIn: !!currentUser() || hasStoredSession(),
+    instant,
     onStart: enterOnboarding,
     onLogin: () =>
       nav.go(
         loginScreen(
-          () => {
-            if (getState().onboarded) goHome();
-            else nav.back();
-          },
+          () => nav.back(),
           { onOpenNotebook: openNotebook, onOpenPolicy: openPolicy },
         ),
       ),
@@ -425,7 +421,7 @@ function start(): void {
   splash.onExit = () => {
     if (updateSplashAuth === splash.setSignedIn) updateSplashAuth = null;
   };
-  nav.go(splash);
+  nav.reset(splash);
 }
 
 // [임시 프리뷰] 적용 랩 시제품 — DEV에서 ?preview=u3l1v2 로 진입. 폐기 시 이 분기를 지우고 start()만 남긴다.
@@ -438,7 +434,7 @@ if (import.meta.env.DEV && new URLSearchParams(location.search).get("preview") =
     nav.go({ el: player.el });
   });
 } else {
-  start();
+  showSplash();
 }
 
 // [DEV 전용] 걷기 연출 눈검수 트리거 — 콘솔에서 __walkHome("u1l2")처럼 방금 완료한 레슨 id를 넘기면

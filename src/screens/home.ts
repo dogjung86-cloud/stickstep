@@ -41,7 +41,7 @@ function splayOf(i: number): number {
 export function homeScreen(
   onOpenLesson: (id: string) => void,
   focusUnitId?: string,
-  nav2?: { onOpenExam?: (unitId: string) => void; onTab?: (k: GnavKey) => void; onOpenNotebook?: () => void },
+  nav2?: { onOpenExam?: (unitId: string) => void; onTab?: (k: GnavKey) => void; onOpenNotebook?: () => void; onOpenSplash?: () => void },
   opts?: { walkFrom?: string },
 ): Screen {
   const st = getState();
@@ -94,10 +94,15 @@ export function homeScreen(
       rebuild();
     }
   });
+  const splashBtn = el("button", { class: "abtn home-entry", attrs: { "aria-label": "처음 화면으로" }, html: icon("home", 18) });
+  splashBtn.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    nav2?.onOpenSplash?.();
+  });
   const appbar = el(
     "div",
     { class: "appbar" },
-    el("div", { class: "ab-side" }, brandEl),
+    el("div", { class: "ab-side ab-brand" }, splashBtn, brandEl),
     el("div", { class: "ab-side" }, chips),
   );
 

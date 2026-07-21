@@ -4,15 +4,14 @@
 // 프리셋을 골라도 내가 꾸민 조합(avatarCustom)은 남고, 파츠를 만지는 순간 커스텀이 대표가
 // 된다(사용자 확정: 고른 캐릭터를 이어서 꾸미게 하지 않는다). 선택은 즉시 적용(앱 관례 —
 // 저장 버튼 없음, 시트의 '완료'는 닫기일 뿐). 스텝 장화 단계표도 같은 시트 문법으로 연다.
-// 소셜 프로필 사진은 쓰지 않는다(미성년 개인정보). 개인정보처리방침은 하단 스몰 프린트,
-// 사업자 표기는 brand.BIZ_INFO가 채워지면 같은 자리에 줄이 생긴다.
+// 소셜 프로필 사진은 쓰지 않는다(미성년 개인정보). 하단에는 개인정보처리방침 링크만 두고,
+// 사업자 정보는 로그인 없이 볼 수 있는 공개 스플래시가 전담한다.
 
 import { el, clear } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { getState, currentStreak, setAvatarPreset, setAvatarCustom, setNickname, isDesktopMode, setDesktopMode } from "../core/store";
 import { onAuthChange, currentUser, pushNickname } from "../core/auth";
-import { BIZ_INFO } from "../core/brand";
 import { bootLevel, BOOT_TIERS } from "../core/level";
 import { bootArt } from "../ui/boots";
 import { profileAvatar, setProfileAvatar } from "../ui/avatar";
@@ -358,14 +357,13 @@ export function myScreen(o: {
     o.onTab("home");
   });
 
-  // ---- 하단 법적 고지(스몰 프린트) — 방침 링크 + 사업자 표기(BIZ_INFO 채워지면 줄 생성) ----
+  // ---- 하단 법적 고지 — 사업자 정보는 공개 스플래시로 옮기고 방침 링크만 남긴다. ----
   const polBtn = el("button", { class: "legal-link", text: "개인정보처리방침" });
   polBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     o.onOpenPolicy();
   });
   const legal = el("div", { class: "my-legal" }, polBtn);
-  for (const line of BIZ_INFO) legal.appendChild(el("div", { class: "my-legal-line", text: line }));
 
   const elm = el(
     "section",

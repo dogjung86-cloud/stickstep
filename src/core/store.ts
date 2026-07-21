@@ -77,6 +77,9 @@ export interface AppState {
   // 단원부터 열린다(구 방식 = 첫 미완료 단원뿐이라 건너뛰며 학습하면 "최근"이 아니었음).
   // viewGrade처럼 기기 화면 상태라 동기화 제외. 구버전 저장분엔 없어서 optional.
   lastUnits?: Record<string, string>;
+  // 모든 과목·학년을 통틀어 가장 최근에 연 대단원 — 스플래시의 "학습 이어가기"가 과목·학년까지
+  // 정확히 복원하는 기준. lastUnits와 같은 기기 내 탐색 상태라 서버 동기화에서는 제외한다.
+  recentUnitId?: string | null;
   // 이 기기 데이터의 주인 = 마지막으로 동기화한 계정 user id(2026-07-21 계정 전환 누출 수정).
   // 다른 계정이 로그인하면 sync.ts가 병합 대신 서버 상태로 교체하기 위한 소유 표식 —
   // 로그아웃해도 지우지 않는다(그래야 다음 로그인 때 주인을 판별). 기기 메타라 동기화 제외.
@@ -108,6 +111,7 @@ const DEFAULT_STATE: AppState = {
   avatarPreset: null,
   nickname: null,
   lastUnits: {},
+  recentUnitId: null,
   syncedUserId: null,
 };
 
@@ -254,13 +258,18 @@ function touchStudyDay(): void {
 /** 레슨 완료 처리. 스트릭·XP 갱신 후 획득 XP를 반환. */
 /** 최근에 연 단원 기억("<과목>:<학년>" 키) — 홈 지도의 재접속·과목 전환 초기 포커스(main.ts openLesson/openExam이 기록). */
 export function setLastUnit(key: string, unitId: string): void {
-  if (state.lastUnits?.[key] === unitId) return; // 같은 단원 반복 진입은 저장 생략
+  if (state.lastUnits?.[key] === unitId && state.recentUnitId === unitId) return;
   state.lastUnits = { ...(state.lastUnits ?? {}), [key]: unitId };
+  state.recentUnitId = unitId;
   save();
 }
 
 export function lastUnitOf(key: string): string | null {
   return state.lastUnits?.[key] ?? null;
+}
+
+export function recentUnit(): string | null {
+  return state.recentUnitId ?? null;
 }
 
 export function completeLesson(id: string, acc: number, xp: number): number {
