@@ -51,6 +51,9 @@ let lastUnitId: string | undefined;
 let walkFromLessonId: string | undefined;
 // 현재 탭(하드웨어 뒤로가기 판단 근거) — goHome/goTab이 갱신한다.
 let currentTab: GnavKey = "home";
+// 스플래시는 앱을 열 때마다 거치는 공개 메인 화면이다. 세션 복원이 늦게 끝나도 버튼 문구가
+// "한번 둘러보기" → "학습 이어가기"로 즉시 맞춰지도록 현재 스플래시의 갱신 함수를 잡아 둔다.
+let updateSplashAuth: ((signedIn: boolean) => void) | null = null;
 
 function goHome(): void {
   currentTab = "home";
@@ -375,12 +378,8 @@ function openLesson(id: string): void {
 }
 
 function start(): void {
-  if (getState().onboarded) {
-    goHome();
-    return;
-  }
-  // 첫 사용 플로우(2026-07-12 IA): 스플래시(=랜딩 — 플립북 정착 후 버튼 3개가 나타남) → 과목 선택 →
-  // 학년·목표 온보딩 → 홈. 프라이머리는 "한번 둘러보기"(무로그인) — 가치 먼저, 로그인은 보조.
+  // 공개 진입 플로우(2026-07-21 사용자 확정): 누구나 앱을 열면 스플래시(=상시 메인)를 먼저 거친다.
+  // 신규 사용자는 과목 선택·온보딩으로, 기존 사용자는 곧바로 학습 홈으로 보낸다.
   const enterOnboarding = (): void => {
     if (getState().onboarded) {
       goHome(); // 랜딩에서 로그인해 서버 기록(onboarded)이 내려온 경우 — 온보딩 생략
@@ -408,21 +407,25 @@ function start(): void {
       }),
     );
   };
-  nav.go(
-    splashScreen({
-      onStart: enterOnboarding,
-      onLogin: () =>
-        nav.go(
-          loginScreen(
-            () => {
-              if (getState().onboarded) goHome();
-              else nav.back();
-            },
-            { onOpenNotebook: openNotebook, onOpenPolicy: openPolicy },
-          ),
+  const splash = splashScreen({
+    signedIn: !!currentUser() || hasStoredSession(),
+    onStart: enterOnboarding,
+    onLogin: () =>
+      nav.go(
+        loginScreen(
+          () => {
+            if (getState().onboarded) goHome();
+            else nav.back();
+          },
+          { onOpenNotebook: openNotebook, onOpenPolicy: openPolicy },
         ),
-    }),
-  );
+      ),
+  });
+  updateSplashAuth = splash.setSignedIn;
+  splash.onExit = () => {
+    if (updateSplashAuth === splash.setSignedIn) updateSplashAuth = null;
+  };
+  nav.go(splash);
 }
 
 // [임시 프리뷰] 적용 랩 시제품 — DEV에서 ?preview=u3l1v2 로 진입. 폐기 시 이 분기를 지우고 start()만 남긴다.
@@ -453,6 +456,10 @@ if (import.meta.env.DEV) {
 // 로그인·동기화 부팅 — Supabase 환경변수(.env.local)가 없으면 둘 다 no-op(core/auth.ts 참조).
 // initSync가 먼저 리스너를 배선해야 initAuth의 세션 복원 이벤트를 놓치지 않는다.
 // 운영 계정 프리미엄 겹층 — 지정 이메일 로그인 시 결제 없이 전 기능(로그아웃하면 자동 해제).
-onAuthChange((u) => setPremiumOverride(isPrivilegedUser(u)));
+onAuthChange((u) => {
+  setPremiumOverride(isPrivilegedUser(u));
+  // 저장된 세션은 initAuth 복원 전에도 로그인 사용자 버튼을 먼저 보여 줘 깜빡임을 막는다.
+  updateSplashAuth?.(!!u || hasStoredSession());
+});
 initSync();
 void initAuth();

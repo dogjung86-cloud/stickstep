@@ -6,7 +6,7 @@
 
 import { el } from "../core/dom";
 import { haptic, HAPTIC } from "../core/haptics";
-import { BRAND } from "../core/brand";
+import { BRAND, BIZ_INFO } from "../core/brand";
 import type { Screen } from "../core/router";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -26,7 +26,11 @@ const FALLBACK_STUDY = `${base}comics/avatar/4.png`;
 const FRAME_MS = 125; // 타다다닥 속도(서사가 읽히는 최소 호흡)
 const LOOPS = 1;
 
-export function splashScreen(o: { onStart: () => void; onLogin: () => void }): Screen {
+export interface SplashScreen extends Screen {
+  setSignedIn: (signedIn: boolean) => void;
+}
+
+export function splashScreen(o: { signedIn: boolean; onStart: () => void; onLogin: () => void }): SplashScreen {
   const img = el("img", { class: "flip-img", attrs: { alt: "", "aria-hidden": "true" } }) as HTMLImageElement;
   const book = el("div", { class: "flipbook" }, img);
   const word = el("div", { class: "wordmark", text: BRAND.name });
@@ -52,8 +56,21 @@ export function splashScreen(o: { onStart: () => void; onLogin: () => void }): S
   const buttons = [startBtn, loginBtn, teacherBtn];
   for (const b of buttons) b.disabled = true; // 정착(settle) 때 함께 열린다
 
-  const foot = el("div", { class: "footer splash-foot" }, startBtn, loginBtn, teacherBtn);
+  // 첫 화면 자체가 공개 홈페이지 역할을 하므로 사업자 정보는 로그인·온보딩 없이 바로 확인할 수 있어야 한다.
+  const business = el(
+    "div",
+    { class: "splash-business", attrs: { "aria-label": "사업자 정보" } },
+    el("div", { class: "splash-business-title", text: "사업자 정보" }),
+    ...BIZ_INFO.map((line) => el("div", { class: "splash-business-line", text: line })),
+  );
+  const foot = el("div", { class: "footer splash-foot" }, startBtn, loginBtn, teacherBtn, business);
   const elm = el("section", { class: "screen", attrs: { id: "sc-splash" } }, mid, foot);
+
+  function setSignedIn(signedIn: boolean): void {
+    startBtn.textContent = signedIn ? "학습 이어가기" : "한번 둘러보기";
+    loginBtn.hidden = signedIn;
+  }
+  setSignedIn(o.signedIn);
 
   let snackTimer = 0;
   const snackEl = el("div", { class: "snack" });
@@ -136,5 +153,5 @@ export function splashScreen(o: { onStart: () => void; onLogin: () => void }): S
     if (!settled) settle();
   });
 
-  return { el: elm };
+  return { el: elm, setSignedIn };
 }

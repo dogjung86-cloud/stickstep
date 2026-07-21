@@ -260,8 +260,8 @@
 .dk-btn.no { background: #fff; border: 1.5px solid var(--line); color: var(--sub); }
 
 /* ---------- 스플래시 ---------- */
-#sc-splash { justify-content: space-between; background: radial-gradient(130% 70% at 50% -10%, #EAF2FF 0%, #fff 55%); }
-.splash-mid { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+#sc-splash { justify-content: space-between; overflow-y: auto; overscroll-behavior: contain; background: radial-gradient(130% 70% at 50% -10%, #EAF2FF 0%, #fff 55%); }
+.splash-mid { flex: 1 0 auto; min-height: 445px; padding: 34px 20px 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .logo { width: 92px; height: 92px; border-radius: 26px; background: linear-gradient(145deg, #3D8DFF, #2A6FE8); box-shadow: 0 18px 34px -10px rgba(49,130,246,.5), inset 0 1px 0 rgba(255,255,255,.35); position: relative; animation: logoIn .8s var(--spring) both; display: grid; place-items: center; }
 .logo svg { color: #fff; }
 @keyframes logoIn { 0% { transform: scale(.6) rotate(-8deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
@@ -2736,7 +2736,7 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .gnav-item.on .gnav-ava { box-shadow: 0 0 0 1.5px var(--blue); }
 
 /* 스플래시 푸터(=랜딩 버튼) — 정착(done) 후 워드마크 리듬에 이어 샥 나타난다 */
-.splash-foot { display: flex; flex-direction: column; gap: 12px; }
+.splash-foot { flex: none; display: flex; flex-direction: column; gap: 12px; }
 .splash-foot .btn, .splash-foot .ld-login, .splash-foot .ld-teacher { opacity: 0; }
 .splash-foot.done .btn { animation: fadeUp .6s .36s var(--ease) both; }
 .splash-foot.done .ld-login { animation: fadeUp .6s .46s var(--ease) both; }
@@ -2744,6 +2744,14 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .ld-login { width: 100%; height: 52px; border-radius: var(--r-md); border: 1.5px solid var(--n300); background: #fff; font-size: 15.5px; font-weight: 700; color: var(--n800); transition: transform .14s var(--spring-soft), background .16s; }
 .ld-login:active { transform: scale(.975); background: var(--n50); }
 .ld-teacher { width: 100%; padding: 8px 0 2px; font-size: 13px; font-weight: 600; color: var(--n500); }
+.splash-business { margin-top: 8px; padding: 17px 12px 2px; border-top: 1px solid var(--n150); text-align: center; }
+.splash-business-title { margin-bottom: 7px; font-size: 11.5px; font-weight: 700; color: var(--n500); }
+.splash-business-line { margin-top: 3px; font-size: 10.5px; line-height: 1.5; color: var(--n400); word-break: keep-all; }
+
+@media (max-height: 720px) {
+  .splash-mid { min-height: 390px; padding-top: 24px; }
+  .flipbook { width: 166px; height: 166px; }
+}
 
 /* 탭 화면 공통 */
 .tab-head { padding: 16px 22px 4px; }
