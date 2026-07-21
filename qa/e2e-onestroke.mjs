@@ -36,6 +36,15 @@ const shot = (name) => page.screenshot({ path: `qa/shots/${name}.png` });
 const store = () => page.evaluate(() => JSON.parse(localStorage.getItem("science-app.v1")));
 const attr = (name) => page.evaluate((n) => document.getElementById("sc-onestroke")?.dataset[n], name);
 
+async function openChallenge() {
+  if (await page.$("#sc-splash")) {
+    await page.waitForSelector("#sc-splash .splash-foot.done", { timeout: 12000 });
+    await page.getByRole("button", { name: "한번 둘러보기", exact: true }).click();
+    await page.waitForSelector(".screen.active .gnav-item", { timeout: 5000 });
+  }
+  await page.locator('.screen.active .gnav-item:has-text("도전")').click();
+}
+
 const BASE = {
   version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci",
   premium: true, reviewMode: false, goalMin: 10, streak: 0, lastStudyDay: null,
@@ -51,11 +60,13 @@ await page.reload({ waitUntil: "networkidle" });
 await W(1200);
 
 // ── 진입: 도전 탭 → 카드 ───────────────────────────────────
-await page.evaluate(() => document.querySelectorAll(".screen.active nav button")[2].click());
+await openChallenge();
 await W(500);
 ok(await page.$("#sc-challenge"), "도전 탭 진입");
 ok(await page.$("#btn-onestroke"), "네온 한붓그리기 카드 존재");
-ok(await page.evaluate(() => document.querySelector("#btn-onestroke .prep-pill.gold")?.textContent.includes("프리미엄")), "카드에 프리미엄 크라운");
+ok(await page.evaluate(() => !document.querySelector("#btn-onestroke .prep-pill.gold")), "프리미엄 이용자 — 카드 구매 배지 숨김");
+ok(await page.evaluate(() => document.querySelector("#btn-onestroke .prep-pill.fee")?.textContent.trim() === "입장료 20 스텝"), "입장료 문구");
+ok(await page.evaluate(() => document.querySelector(".play-note")?.textContent.trim() === "레슨·시험에서 모은 스텝으로 입장해요. 하루 15판까지, 잔고만 차감되고 장화 레벨은 그대로예요."), "쉬는 시간 안내 문구");
 await page.evaluate(() => document.getElementById("btn-onestroke").click());
 await page.waitForSelector("#sc-onestroke", { timeout: 4000 });
 await W(600); // 동적 import + 루프 시작(setTimeout 0) 여유
@@ -230,7 +241,7 @@ ok(await page.$("#sc-challenge"), "나가기 — 도전 탭 복귀");
 await page.evaluate((s) => localStorage.setItem("science-app.v1", JSON.stringify({ ...s, premium: false })), BASE);
 await page.reload({ waitUntil: "networkidle" });
 await W(1000);
-await page.evaluate(() => document.querySelectorAll(".screen.active nav button")[2].click());
+await openChallenge();
 await W(400);
 await page.evaluate(() => document.getElementById("btn-onestroke").click());
 await W(700);

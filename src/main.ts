@@ -121,11 +121,14 @@ function goTab(k: GnavKey): void {
       myScreen({
         onTab: goTab,
         onOpenAccount: openLogin,
-        onOpenPaywall: () =>
+        onOpenPaywall: (onUnlocked) =>
           nav.go(
             paywallScreen({
               sub: "모든 프리미엄 레슨과 단원 평가 재응시를 평생 열 수 있어요.",
-              onUnlocked: () => nav.back(),
+              onUnlocked: () => {
+                nav.back();
+                onUnlocked?.();
+              },
               onClose: () => nav.back(),
             }),
           ),

@@ -149,6 +149,7 @@ export function accountSwitchPatch(local: Readonly<AppState>, row: ProgressRow |
     grade: row?.grade ?? local.grade, // 신규 계정은 기기 온보딩 학년으로 시작(직후 push가 서버에 기록)
     goalMin: row ? row.goal_min : local.goalMin,
     premium: row?.premium ?? false,
+    premiumSubjectIds: [], // 결제 백엔드 연동 전 로컬 표시값 — 다른 계정으로 넘기지 않는다
     totalXp: row?.total_step ?? 0,
     lifeXp: row ? Math.max(row.life_step ?? 0, row.total_step ?? 0) : 0,
     avatarId: row?.avatar_id ?? null,

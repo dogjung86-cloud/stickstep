@@ -36,6 +36,15 @@ const shot = (name) => page.screenshot({ path: `qa/shots/${name}.png` });
 const store = () => page.evaluate(() => JSON.parse(localStorage.getItem("science-app.v1")));
 const attr = (name) => page.evaluate((n) => document.getElementById("sc-lasermaze")?.dataset[n], name);
 
+async function openChallenge() {
+  if (await page.$("#sc-splash")) {
+    await page.waitForSelector("#sc-splash .splash-foot.done", { timeout: 12000 });
+    await page.getByRole("button", { name: "한번 둘러보기", exact: true }).click();
+    await page.waitForSelector(".screen.active .gnav-item", { timeout: 5000 });
+  }
+  await page.locator('.screen.active .gnav-item:has-text("도전")').click();
+}
+
 const BASE = {
   version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci",
   premium: true, reviewMode: false, goalMin: 10, streak: 0, lastStudyDay: null,
@@ -50,7 +59,7 @@ async function seedAndEnter(minigame) {
   }, { ...BASE, minigame });
   await page.reload({ waitUntil: "networkidle" });
   await W(1100);
-  await page.evaluate(() => document.querySelectorAll(".screen.active nav button")[2].click());
+  await openChallenge();
   await W(400);
   await page.evaluate(() => document.getElementById("btn-lasermaze").click());
   await page.waitForSelector("#sc-lasermaze", { timeout: 4000 });
@@ -89,11 +98,11 @@ await page.evaluate((s) => {
 }, BASE);
 await page.reload({ waitUntil: "networkidle" });
 await W(1100);
-await page.evaluate(() => document.querySelectorAll(".screen.active nav button")[2].click());
+await openChallenge();
 await W(400);
 ok(await page.$("#sc-challenge"), "도전 탭 진입");
 ok(await page.$("#btn-lasermaze"), "레이저 미로 카드 존재");
-ok(await page.evaluate(() => document.querySelector("#btn-lasermaze .prep-pill.gold")?.textContent.includes("프리미엄")), "카드에 프리미엄 크라운");
+ok(await page.evaluate(() => !document.querySelector("#btn-lasermaze .prep-pill.gold")), "프리미엄 이용자 — 카드 구매 배지 숨김");
 ok(await page.evaluate(() => document.querySelector("#btn-lasermaze").textContent.includes("블록을 옮겨")), "카드 설명 = 블록 배치 문법");
 await page.evaluate(() => document.getElementById("btn-lasermaze").click());
 await page.waitForSelector("#sc-lasermaze", { timeout: 4000 });
@@ -266,7 +275,7 @@ ok(await page.$("#sc-challenge"), "나가기 — 도전 탭 복귀");
 await page.evaluate((s) => localStorage.setItem("science-app.v1", JSON.stringify({ ...s, premium: false })), BASE);
 await page.reload({ waitUntil: "networkidle" });
 await W(1000);
-await page.evaluate(() => document.querySelectorAll(".screen.active nav button")[2].click());
+await openChallenge();
 await W(400);
 await page.evaluate(() => document.getElementById("btn-lasermaze").click());
 await W(700);

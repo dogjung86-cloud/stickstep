@@ -10,8 +10,9 @@
 import { el, clear } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
-import { getState, currentStreak, setAvatarPreset, setAvatarCustom, setNickname, isDesktopMode, setDesktopMode } from "../core/store";
+import { getState, currentStreak, setAvatarPreset, setAvatarCustom, setNickname, isDesktopMode, setDesktopMode, isPremium } from "../core/store";
 import { onAuthChange, currentUser, pushNickname, signOut } from "../core/auth";
+import { ownedPremiumSubjectIds, SELLABLE_SUBJECTS } from "../core/purchase";
 import { bootLevel, BOOT_TIERS } from "../core/level";
 import { bootArt } from "../ui/boots";
 import { profileAvatar, setProfileAvatar } from "../ui/avatar";
@@ -22,7 +23,7 @@ import type { Screen } from "../core/router";
 export function myScreen(o: {
   onTab: (k: GnavKey) => void;
   onOpenAccount: () => void;
-  onOpenPaywall: () => void;
+  onOpenPaywall: (onUnlocked?: () => void) => void;
   onOpenPolicy: () => void;
 }): Screen {
   const st = getState();
@@ -323,9 +324,37 @@ export function myScreen(o: {
     });
     return r;
   }
+  // 현재 결제 모델은 premium=true가 전 과목 권한이다. 새 DEV 구매는 선택 id를 함께 저장하고,
+  // 구버전 구매자·운영 계정은 현재 판매 과목 전체를 표시해 빈 이용권처럼 보이지 않게 한다.
+  function premiumSummary(): string {
+    if (!isPremium()) return "";
+    const ids = ownedPremiumSubjectIds();
+    const groups = new Map<string, string[]>();
+    for (const subject of SELLABLE_SUBJECTS) {
+      if (!ids.includes(subject.id)) continue;
+      const [grade, name] = subject.name.split(" ");
+      if (!grade || !name) continue;
+      groups.set(grade, [...(groups.get(grade) ?? []), name]);
+    }
+    const owned = [...groups].map(([grade, names]) => `${grade} ${names.join(" ")}`).join(" / ");
+    return owned ? `이용중 / ${owned}` : "이용중";
+  }
+  const premiumRow = row({
+    ic: icon("footstep", 17),
+    gold: true,
+    title: "프리미엄",
+    value: premiumSummary(),
+    onClick: () => o.onOpenPaywall(refreshPremiumRow),
+  });
+  premiumRow.classList.toggle("premium-active", isPremium());
+  const premiumValue = premiumRow.querySelector<HTMLElement>(".my-row-v")!;
+  function refreshPremiumRow(): void {
+    premiumValue.textContent = premiumSummary();
+    premiumRow.classList.toggle("premium-active", isPremium());
+  }
   const menuRows: HTMLElement[] = [
     row({ ic: bootArt(lv.tier.id, 19), title: "스텝 장화 레벨", value: lv.tier.name, onClick: (b) => openSheet(bootSheet, b) }),
-    row({ ic: icon("footstep", 17), gold: true, title: "프리미엄", onClick: () => o.onOpenPaywall() }),
+    premiumRow,
     row({ ic: icon("book", 17), title: "과제함", onClick: () => snack("학급·과제 기능은 준비 중이에요") }),
   ];
   // 넓은 화면 레이아웃(데스크톱 셸) 토글 — 행은 항상 만들고 CSS 미디어쿼리로 ≥1024px에서만 보인다.
@@ -410,6 +439,7 @@ export function myScreen(o: {
     nameEl.textContent = displayName();
     nickBtn.classList.toggle("hidden", !signedIn); // 닉네임 편집은 로그인 전용(등록 즉시 1회 호출로 초기 상태도 처리)
     accountTitle.textContent = signedIn ? "계정 관리" : "계정 관리 · 로그인";
+    refreshPremiumRow();
     logoutBtn.hidden = !signedIn;
     legalSep.hidden = !signedIn;
     refreshGnavMyIcon(bar); // 로그인·로그아웃 즉시 탭바 아이콘도 아바타 ⇄ user로 전환

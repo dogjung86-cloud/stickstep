@@ -10,7 +10,7 @@
 import { el } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
-import { buyPremium, restorePurchase, SELLABLE_SUBJECTS, PER_SUBJECT_FLOOR, priceOf, saveOf, won } from "../core/purchase";
+import { buyPremium, ownedPremiumSubjectIds, restorePurchase, SELLABLE_SUBJECTS, PER_SUBJECT_FLOOR, priceOf, saveOf, won } from "../core/purchase";
 import { BRAND } from "../core/brand";
 import type { Screen } from "../core/router";
 import { stepMarkSvg } from "../ui/stepMark";
@@ -72,22 +72,39 @@ export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlo
   );
 
   // ── 과목 선택 — 다중 선택(최소 1, 개수 제한 없음) ──
-  const picked = new Set<string>([SELLABLE_SUBJECTS[0].id]);
+  const owned = new Set(ownedPremiumSubjectIds());
+  const firstAvailable = SELLABLE_SUBJECTS.find((s) => !owned.has(s.id));
+  const picked = new Set<string>(firstAvailable ? [firstAvailable.id] : []);
   const count = el("span", { class: "pwx-scount" });
   const helper = el("div", { class: "helper", attrs: { role: "status", "aria-live": "polite" } });
+  const subjectMsg = el("div", { class: "pwx-submsg", attrs: { role: "status", "aria-live": "polite" } });
 
   const chips = SELLABLE_SUBJECTS.map((s) => {
+    const isOwned = owned.has(s.id);
     const chip = el(
       "button",
-      { class: "pwx-sub", attrs: { type: "button", "aria-pressed": "false" } },
+      {
+        class: `pwx-sub ${isOwned ? "owned" : ""}`,
+        attrs: {
+          type: "button",
+          "aria-pressed": "false",
+          ...(isOwned ? { "aria-label": `${s.name}, 이미 구매한 평생 이용권` } : {}),
+        },
+      },
       el("span", { class: "pwx-dot", html: icon("check", 11), attrs: { "aria-hidden": "true" } }),
       el("span", { text: s.name }),
+      isOwned ? el("em", { class: "pwx-owned", text: "이용중" }) : null,
     );
     chip.addEventListener("click", () => {
+      if (isOwned) {
+        haptic(HAPTIC.deny);
+        subjectMsg.textContent = "이미 구매했어요. 평생 이용할 수 있는 과목이에요.";
+        return;
+      }
       if (picked.has(s.id)) {
         if (picked.size === 1) {
           haptic(HAPTIC.tap);
-          helper.textContent = "최소 1과목은 골라야 해요.";
+          subjectMsg.textContent = "최소 1과목은 골라야 해요.";
           return;
         }
         picked.delete(s.id);
@@ -95,17 +112,23 @@ export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlo
         picked.add(s.id);
       }
       haptic(HAPTIC.tap);
-      helper.textContent = "";
+      subjectMsg.textContent = "";
       refresh(true);
     });
-    return { id: s.id, chip };
+    return { id: s.id, chip, isOwned };
   });
   const subs = el(
     "section",
     { class: "pwx-subjects pwx-rise r3", attrs: { "aria-label": "이용할 과목 고르기" } },
     el("div", { class: "pwx-shead" }, el("h2", { text: "이용할 과목 고르기" }), count),
     el("div", { class: "pwx-subs", attrs: { role: "group" } }, ...chips.map((c) => c.chip)),
-    el("div", { class: "pwx-hint", text: `담을수록 과목당 가격이 내려가요 · 3과목부터는 과목당 ${won(PER_SUBJECT_FLOOR)}` }),
+    subjectMsg,
+    el("div", {
+      class: "pwx-hint",
+      text: owned.size > 0
+        ? "이용 중인 과목은 다시 결제되지 않아요 · 새로 고른 과목만 결제해요"
+        : `담을수록 과목당 가격이 내려가요 · 3과목부터는 과목당 ${won(PER_SUBJECT_FLOOR)}`,
+    }),
   );
 
   // ── 가격 카드: 영수증처럼 — 얼마를, 몇 번, 무엇에 내는지 한눈에 ──
@@ -151,6 +174,7 @@ export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlo
   // ── CTA: 합계와 함께 갱신, 결정 직전에 안심 정보(환불) 배치 ──
   const cta = el("button", { class: "btn cta" });
   cta.addEventListener("click", async () => {
+    if (picked.size === 0) return;
     haptic(HAPTIC.tap);
     cta.disabled = true;
     const r = await buyPremium({ subjectIds: [...picked] });
@@ -182,13 +206,23 @@ export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlo
 
   function refresh(pop = false): void {
     const n = picked.size;
-    const price = priceOf(n);
+    const price = n > 0 ? priceOf(n) : 0;
     chips.forEach((c) => {
       const on = picked.has(c.id);
       c.chip.classList.toggle("on", on);
       c.chip.setAttribute("aria-pressed", String(on));
     });
-    count.textContent = `${n}과목 선택`;
+    count.textContent = n > 0 ? `${n}과목 선택` : "전체 이용 중";
+    if (n === 0) {
+      pname.textContent = "모든 과목을 이용 중이에요";
+      amount.textContent = "";
+      pernote.textContent = "구매한 평생 이용권은 다시 결제하지 않아요.";
+      save.style.display = "none";
+      cta.textContent = "모든 과목을 이용 중이에요";
+      cta.disabled = true;
+      return;
+    }
+    cta.disabled = false;
     const firstName = SELLABLE_SUBJECTS.find((s) => picked.has(s.id))?.name ?? "";
     pname.textContent = n === 1 ? `${firstName} 평생 이용권` : `선택한 ${n}과목 평생 이용권`;
     amount.textContent = won(price);

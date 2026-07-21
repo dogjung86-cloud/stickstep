@@ -49,6 +49,9 @@ export interface AppState {
   viewGrade: string | null; // 홈이 보여주는 학년 커리큘럼("g1"|"g2") — 온보딩 학년과 별개로 전환 가능
   viewSubject: string | null; // 홈이 보여주는 과목("sci"|"math"|"soc"|"his") — 과목 허브에서 전환·저장
   premium: boolean; // 프리미엄 구매 여부 — premium 레슨 잠금 해제
+  // 구매한 이용권(학년×과목) id. 결제 백엔드가 열리기 전까지는 기기 안 표시용이며,
+  // 구버전의 premium=true에는 값이 없으므로 화면에서 현재 판매 과목 전체로 폴백한다.
+  premiumSubjectIds?: string[];
   reviewMode: boolean; // 검토 모드(브랜드 7연타) — 순차·프리미엄 잠금 전부 해제(콘텐츠 검수용)
   desktopMode: boolean; // 데스크톱 셸 옵트인(마이 탭 토글) — 기본 false = 넓은 화면에서도 폰 프레임. 기기 설정이라 동기화 제외
   goalMin: number;
@@ -95,6 +98,7 @@ const DEFAULT_STATE: AppState = {
   viewGrade: null,
   viewSubject: null,
   premium: false,
+  premiumSubjectIds: [],
   reviewMode: false,
   desktopMode: false,
   goalMin: 10,
@@ -221,9 +225,11 @@ export function setDesktopMode(v: boolean): void {
   save();
 }
 
-/** 결제 성공/복원 시 core/purchase.ts가 호출한다. */
-export function setPremium(v: boolean): void {
+/** 결제 성공/복원 시 core/purchase.ts가 호출한다. 선택 과목은 마이 탭 이용권 표시에 쓴다. */
+export function setPremium(v: boolean, subjectIds?: string[]): void {
   state.premium = v;
+  if (!v) state.premiumSubjectIds = [];
+  else if (subjectIds) state.premiumSubjectIds = [...new Set([...(state.premiumSubjectIds ?? []), ...subjectIds])];
   save();
 }
 

@@ -79,11 +79,19 @@ export function challengeScreen(o: {
     return card;
   }
 
-  // 열려 있는 실카드 — 크라운(가격 정책)+입장 스텝 필. 아이콘은 전 카드 accent(회색이면 비활성으로 읽힌다).
-  function gameCard(id: string, ic: Parameters<typeof icon>[0], title: string, desc: string, onPlay?: () => void): HTMLElement {
+  // 열려 있는 실카드 — 비프리미엄에게만 크라운, 모두에게 입장료 필을 보인다.
+  // 이미 이용 중인 사람에게 구매 배지를 반복하면 잠긴 카드처럼 읽히므로 감춘다.
+  function gameCard(
+    id: string,
+    tone: "cosmo" | "rush" | "laser" | "stroke",
+    ic: Parameters<typeof icon>[0],
+    title: string,
+    desc: string,
+    onPlay?: () => void,
+  ): HTMLElement {
     const card = el(
       "button",
-      { class: "prep-card accent", attrs: { id } },
+      { class: `prep-card accent game-tile ${tone}`, attrs: { id } },
       el("span", { class: "prep-ic", html: icon(ic, 20) }),
       el(
         "span",
@@ -92,10 +100,10 @@ export function challengeScreen(o: {
           "b",
           {},
           el("span", { text: title }),
-          el("i", { class: "prep-pill gold", html: `${icon("crown", 11)}<span>프리미엄</span>` }),
-          el("i", { class: "prep-pill fee", html: `${icon("footstep", 10)}<span>${GAME_FEE} 스텝</span>` }),
+          !isPremium() ? el("i", { class: "prep-pill gold", html: `${icon("crown", 11)}<span>프리미엄</span>` }) : null,
         ),
         el("span", { class: "prep-desc", text: desc }),
+        el("span", { class: "game-meta" }, el("i", { class: "prep-pill fee", html: `${icon("footstep", 10)}<span>입장료 ${GAME_FEE} 스텝</span>` })),
       ),
     );
     card.addEventListener("click", () => {
@@ -150,9 +158,18 @@ export function challengeScreen(o: {
   const playNote = el("div", {
     class: "play-note",
     text: capLeft
-      ? `레슨·시험에서 모은 스텝 ${GAME_FEE}으로 한 번 입장해요(하루 ${PLAY_CAP}판까지). 잔고에서만 빠지고, 장화 레벨(누적 스텝)은 줄지 않아요.`
-      : "오늘 쉬는 시간은 끝났어요 — 내일 다시 열려요! 남은 시간엔 레슨으로 스텝을 모아 두면 좋아요.",
+      ? `레슨·시험에서 모은 스텝으로 입장해요. 하루 ${PLAY_CAP}판까지, 잔고만 차감되고 장화 레벨은 그대로예요.`
+      : `오늘 ${PLAY_CAP}판을 모두 이용했어요. 내일 다시 열려요.`,
   });
+
+  const gameGrid = el(
+    "div",
+    { class: "game-grid", attrs: { "aria-label": "미니게임" } },
+    gameCard("btn-cosmo", "cosmo", "globe", "코스모 머지", "천체를 배우며 같은 천체를 합쳐요", o.onPlayCosmo),
+    gameCard("btn-steprush", "rush", "footstep", "스텝 러시", "두 버튼으로 무한 계단을 올라요", o.onPlayStepRush),
+    gameCard("btn-lasermaze", "laser", "reflect", "레이저 미로", "빛의 반사를 배우며 블록을 옮겨요", o.onPlayLaserMaze),
+    gameCard("btn-onestroke", "stroke", "route", "네온 한붓그리기", "네온사인을 한 붓에 모두 켜요", o.onPlayOneStroke),
+  );
 
   const elm = el(
     "section",
@@ -166,7 +183,7 @@ export function challengeScreen(o: {
         el("button", { class: "tab-back", attrs: { "aria-label": "학습 탭으로 돌아가기" }, html: icon("back", 19) }),
         el("div", { class: "h1 sm", text: "도전" }),
       ),
-      el("div", { class: "sub", text: "스텝으로 겨루고, 게임으로 쉬어 가는 곳이에요." }),
+      el("div", { class: "sub", text: "나의 랭킹을 확인하고, 게임으로 쉬어 가는 곳" }),
     ),
     el(
       "div",
@@ -177,10 +194,7 @@ export function challengeScreen(o: {
         prepCard("trophy", "친구·우리 학교 랭킹", "같은 학교 친구들과 스텝으로 겨루는 주간 랭킹", { accent: true }),
         playHead,
         playNote,
-        gameCard("btn-cosmo", "globe", "코스모 머지", "천체에 대해 배우면서 같은 천체를 합쳐 태양까지 키우는 낙하 퍼즐", o.onPlayCosmo),
-        gameCard("btn-steprush", "footstep", "스텝 러시", "두 버튼으로 무한 계단을 오르는 반사신경 게임", o.onPlayStepRush),
-        gameCard("btn-lasermaze", "reflect", "레이저 미로", "빛의 반사를 배우면서 블록을 옮겨 레이저를 보석까지 보내는 퍼즐", o.onPlayLaserMaze),
-        gameCard("btn-onestroke", "route", "네온 한붓그리기", "네온사인을 손 떼지 않고 한 붓에 켜는 퍼즐", o.onPlayOneStroke),
+        gameGrid,
       ),
     ),
     gnav("challenge", o.onTab),

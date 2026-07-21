@@ -63,6 +63,11 @@
 }
 .pwx-sub.on { border-color: var(--blue); background: var(--blue-tint); color: var(--n900); box-shadow: 0 0 0 3px rgba(49, 130, 246, .10); }
 .pwx-sub.on .pwx-dot { background: var(--blue); border-color: var(--blue); color: #fff; }
+.pwx-sub.owned { background: var(--n50); border-color: var(--n200); color: var(--n500); box-shadow: none; }
+.pwx-sub.owned:active { transform: none; }
+.pwx-sub.owned .pwx-dot { background: var(--n300); border-color: var(--n300); color: var(--n0); }
+.pwx-owned { margin-left: auto; padding: 3px 6px; border-radius: 999px; background: var(--gold-tint); color: var(--gold-deep); font-size: 10px; font-style: normal; font-weight: 800; white-space: nowrap; }
+.pwx-submsg { min-height: 18px; margin: 8px 2px 0; color: var(--gold-deep); font-size: 12px; font-weight: 700; line-height: 1.5; text-align: center; word-break: keep-all; }
 .pwx-hint { font-size: 12px; color: var(--n500); text-align: center; margin: 10px 0 18px; word-break: keep-all; }
 
 /* ── 가격 카드: 영수증처럼 명확하게 ── */

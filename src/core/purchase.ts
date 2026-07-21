@@ -2,7 +2,7 @@
 // 주문 생성(가격은 서버가 결정) → 결제위젯 → 승인 → 과목별 이용권(entitlement) 지급 순서.
 // Capacitor 앱 포장 시에는 이 파일만 IAP 브리지(cordova-plugin-purchase/RevenueCat)로 바꾼다.
 // 페이월 UI는 아래 카탈로그·요금표만 읽으므로 결제 수단이 바뀌어도 그대로 동작한다.
-import { setPremium } from "./store";
+import { getState, isPremium, setPremium } from "./store";
 
 /** 판매 과목 카탈로그 — 이용권 단위 = 학년×과목. icon은 core/icons.ts 키.
  *  중1 사회·역사는 콘텐츠가 있어도 판매 목록에서 일단 제외(2026-07-20 사용자 지시 — 추후 재추가). */
@@ -37,15 +37,24 @@ export function priceOf(n: number): number {
 export const saveOf = (n: number) => PLAN_TIERS[0].price * Math.max(n, 1) - priceOf(n);
 export const won = (v: number) => v.toLocaleString("ko-KR") + "원";
 
+/** 이미 보유한 학년×과목 이용권. 구버전 premium=true와 운영 계정은 전 과목 권한이므로
+ *  선택 목록이 없을 때 현재 판매 카탈로그 전체를 반환한다. */
+export function ownedPremiumSubjectIds(): string[] {
+  if (!isPremium()) return [];
+  const valid = new Set(SELLABLE_SUBJECTS.map((s) => s.id));
+  const saved = (getState().premiumSubjectIds ?? []).filter((id) => valid.has(id));
+  return saved.length > 0 ? saved : [...valid];
+}
+
 export type PurchaseResult = "ok" | "unavailable";
 
 const isDev = (import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV === true;
 
 /** 프리미엄 이용권 구매. DEV에서는 즉시 해금(개발·QA용).
- *  selection은 토스 PG 주문 생성에 쓸 예약 파라미터 — 스텁은 무시한다. */
-export async function buyPremium(_selection?: { subjectIds: string[] }): Promise<PurchaseResult> {
+ *  selection은 토스 PG 주문 생성에 쓸 예약 파라미터이며, 지금은 마이 탭 표시용으로 기기에 함께 남긴다. */
+export async function buyPremium(selection?: { subjectIds: string[] }): Promise<PurchaseResult> {
   if (isDev) {
-    setPremium(true);
+    setPremium(true, selection?.subjectIds);
     return "ok";
   }
   // 웹 배포판: 정식 출시(결제 오픈) 전까지 실제 결제 경로 없음
