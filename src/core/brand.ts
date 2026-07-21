@@ -3,7 +3,7 @@
 export const BRAND = {
   name: "스틱스텝",
   short: "스틱스텝",
-  tagline: "손끝으로 배우는 중학 과학",
+  tagline: "손끝으로 배우는 중학 개념",
   note: "최신 개정 교육과정 반영",
 };
 

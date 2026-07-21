@@ -289,6 +289,23 @@
 .splash-anim.done .wordmark { animation: fadeUp .6s .05s var(--ease) both; }
 .splash-anim.done .tagline { animation: fadeUp .6s .16s var(--ease) both; }
 .splash-anim.done .splash-note { animation: fadeUp .6s .27s var(--ease) both; }
+.splash-step-wrap { width: 178px; height: 52px; margin-top: 12px; opacity: 0; }
+.splash-step-mark { width: 100%; height: 100%; display: block; }
+.splash-step-fp { transform-box: fill-box; transform-origin: center; }
+.splash-step-flag { transform-box: fill-box; transform-origin: left bottom; }
+.splash-anim.done .splash-step-wrap { opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .splash-anim.done .splash-step-fp { animation: splashStepStamp .34s var(--spring-soft) both; }
+  .splash-anim.done .splash-step-fp.f1 { animation-delay: .70s; }
+  .splash-anim.done .splash-step-fp.f2 { animation-delay: .81s; }
+  .splash-anim.done .splash-step-fp.f3 { animation-delay: .92s; }
+  .splash-anim.done .splash-step-fp.f4 { animation-delay: 1.03s; }
+  .splash-anim.done .splash-step-fp.f5 { animation-delay: 1.14s; }
+  .splash-anim.done .splash-step-fp.f6 { animation-delay: 1.25s; }
+  .splash-anim.done .splash-step-flag { animation: splashStepFlagIn .34s var(--spring-bounce) 1.42s both; }
+}
+@keyframes splashStepStamp { from { opacity: 0; transform: scale(1.55); } to { transform: scale(1); } }
+@keyframes splashStepFlagIn { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: scale(1); } }
 @keyframes fadeUp { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: none; } }
 
 /* ---------- 온보딩 ---------- */
@@ -1744,6 +1761,8 @@
    흰 종이 배경은 multiply로 화면 배경에 녹인다(스플래시 .flip-img 문법 — 흰 화면이라 이음매 0). */
 .login-study { width: 156px; height: 156px; }
 .login-study img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; display: block; }
+.login-account-study { width: 176px; height: 156px; }
+.login-footer-empty { display: none; }
 .my-stats { display: flex; gap: 10px; padding: 2px 0 6px; }
 .my-stat {
   flex: 1; text-align: center; padding: 14px 6px 12px; border-radius: var(--r-md);
@@ -2747,6 +2766,9 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 #sc-splash.instant .splash-anim.done .wordmark,
 #sc-splash.instant .splash-anim.done .tagline,
 #sc-splash.instant .splash-anim.done .splash-note,
+#sc-splash.instant .splash-step-wrap,
+#sc-splash.instant .splash-step-fp,
+#sc-splash.instant .splash-step-flag,
 #sc-splash.instant .splash-foot.done .btn,
 #sc-splash.instant .splash-foot.done .ld-login,
 #sc-splash.instant .splash-foot.done .ld-teacher { opacity: 1; animation: none; }
@@ -2807,6 +2829,8 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 /* 메뉴 — 흰 카드 하나에 행 목록(틴트 아이콘 박스 + 라벨 + 값 + 셰브런) */
 .my-menu { margin-top: 10px; background: var(--n0); border: 1px solid var(--n200); border-radius: var(--r-lg); box-shadow: var(--sh-card); overflow: hidden; }
 .my-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 14px; text-align: left; background: none; transition: background .12s; }
+.desktop-pref-row { display: none; }
+@media (min-width: 1024px) { .desktop-pref-row { display: flex; } }
 .my-row + .my-row { border-top: 1px solid var(--n100); }
 .my-row:active { background: var(--n50); }
 .my-row-ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 12px; background: var(--blue-tint); color: var(--blue); flex: none; }
@@ -2838,9 +2862,12 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .bdex-name { font-size: 13.5px; font-weight: 800; color: var(--n800); }
 .bdex-need { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--n500); font-variant-numeric: tabular-nums; }
 
-/* 마이 탭 하단 법적 고지 — 사업자 정보는 공개 스플래시에 두고 방침 링크만 남긴다 */
-.my-legal { margin: 22px 0 8px; text-align: center; }
+/* 마이 탭 하단 법적 고지 — 사업자 정보는 공개 스플래시에 두고, 로그인 상태면 로그아웃을 함께 둔다. */
+.my-legal { margin: 22px 0 8px; display: flex; align-items: center; justify-content: center; gap: 2px; text-align: center; }
 .my-legal .legal-link { display: inline-block; font-size: 12px; font-weight: 600; color: var(--n500); text-decoration: underline; text-underline-offset: 2px; background: none; border: 0; padding: 4px 6px; }
+.my-legal-sep { font-size: 12px; color: var(--n300); }
+.my-legal-sep[hidden], .my-logout[hidden] { display: none; }
+.my-logout:disabled { opacity: .5; }
 
 /* ---------- 취약 단원 문제 뽑기 (screens/weakDrill.ts — 복습 탭, 프리미엄) ---------- */
 /* 복습 탭 카드의 프리미엄 필 — 잠금 상태에서만 골드 크라운으로 표시 */

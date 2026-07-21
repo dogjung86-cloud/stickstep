@@ -13,36 +13,8 @@ import { haptic, HAPTIC } from "../core/haptics";
 import { buyPremium, restorePurchase, SELLABLE_SUBJECTS, PER_SUBJECT_FLOOR, priceOf, saveOf, won } from "../core/purchase";
 import { BRAND } from "../core/brand";
 import type { Screen } from "../core/router";
+import { stepMarkSvg } from "../ui/stepMark";
 import "../styles/paywall.css";
-
-/** 히어로 마크 — 깃발을 향해 왼쪽→오른쪽으로 걸어가는 발자국 6개(실제 걸음처럼 위/아래
- *  지그재그 교차, 2026-07-15 사용자 지시 — 처음 4개에서 한 세트 더해 6개 확정). 발자국 패스는
- *  홈 트레일 미니 발자국(ui/soleMap.ts #bsfp)과 동일(발끝 -y 기준 → rotate 90±스플레이로 발끝이
- *  오른쪽). 바깥 g가 배치(속성 transform)를, 안쪽 g(.pwx-fp)가 도장 애니(CSS)를 소유해
- *  서로 덮어쓰지 않는다. */
-function stepMarkSvg(): string {
-  const FP =
-    `<path d="M0,-5.6 C1.8,-5.6 3.2,-4.4 3.2,-2.6 C3.2,-0.8 2.5,0.8 1.7,1.4 C1.2,1.8 -1.2,1.8 -1.7,1.4 C-2.5,0.8 -3.2,-0.8 -3.2,-2.6 C-3.2,-4.4 -1.8,-5.6 0,-5.6 Z"/>` +
-    `<rect x="-2" y="2.9" width="4" height="2.7" rx="1.35"/>`;
-  const fp = (x: number, y: number, deg: number, k: string, op: number): string =>
-    `<g transform="translate(${x} ${y}) rotate(${deg}) scale(1.45)"><g class="pwx-fp ${k}" fill="url(#pwxGold)" opacity="${op}">${FP}</g></g>`;
-  return (
-    `<svg class="pwx-mark" viewBox="0 0 136 40" fill="none" aria-hidden="true">` +
-    `<defs><linearGradient id="pwxGold" x1="0" y1="1" x2="1" y2="0">` +
-    `<stop offset="0" stop-color="#EFA32B"/><stop offset="1" stop-color="#FFCF4D"/>` +
-    `</linearGradient></defs>` +
-    fp(9, 27, 98, "f1", 0.3) + // 오른발(아래)
-    fp(28, 13, 82, "f2", 0.44) + // 왼발(위)
-    fp(47, 27, 98, "f3", 0.58) +
-    fp(66, 13, 82, "f4", 0.72) +
-    fp(85, 27, 98, "f5", 0.86) +
-    fp(104, 13, 82, "f6", 1) +
-    `<g class="pwx-flag" fill="var(--n800)">` +
-    `<rect x="123" y="5" width="2.6" height="24" rx="1.3"/>` +
-    `<path d="M125.6 6 H135 L131.3 9.6 L135 13.2 H125.6 Z"/>` +
-    `</g></svg>`
-  );
-}
 
 export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlocked: () => void; onClose: () => void }): Screen {
   const close = el("button", { class: "backbtn", attrs: { "aria-label": "닫기" }, html: icon("x", 22) });
@@ -58,7 +30,7 @@ export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlo
   const hero = el(
     "header",
     { class: "pwx-hero pwx-rise r1" },
-    el("div", { class: "pwx-markwrap", html: stepMarkSvg() }),
+    el("div", { class: "pwx-markwrap", html: stepMarkSvg("pwx") }),
     el("div", { class: "pw-title pwx-eyebrow", text: `${BRAND.name} 프리미엄` }),
     el("h1", { class: "pwx-h1", text: "한 번 결제로, 모든 단원을 평생" }), // 한 줄 확정(2026-07-15)
     el("div", {

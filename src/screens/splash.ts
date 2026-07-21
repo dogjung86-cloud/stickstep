@@ -8,6 +8,7 @@ import { el } from "../core/dom";
 import { haptic, HAPTIC } from "../core/haptics";
 import { BRAND, BIZ_INFO } from "../core/brand";
 import type { Screen } from "../core/router";
+import { stepMarkSvg } from "../ui/stepMark";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
@@ -36,7 +37,8 @@ export function splashScreen(o: { signedIn: boolean; instant?: boolean; onStart:
   const word = el("div", { class: "wordmark", text: BRAND.name });
   const tag = el("div", { class: "tagline", text: BRAND.tagline });
   const note = el("div", { class: "splash-note", text: BRAND.note });
-  const mid = el("div", { class: "splash-mid splash-anim" }, book, word, tag, note);
+  const journey = el("div", { class: "splash-step-wrap", html: stepMarkSvg("splash-step") });
+  const mid = el("div", { class: "splash-mid splash-anim" }, book, word, tag, note, journey);
 
   const startBtn = el("button", { class: "btn", text: "한번 둘러보기" }) as HTMLButtonElement;
   startBtn.addEventListener("click", () => {

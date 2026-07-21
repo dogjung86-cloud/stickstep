@@ -22,6 +22,7 @@ type Face = (k: AvatarKind) => void;
 function ringsSvg(): string {
   const ring = (id: string, cx: number): string => `
     <g class="hc-ring" data-r="${id}" style="cursor:pointer">
+      <circle cx="${cx}" cy="92" r="40" fill="transparent" pointer-events="all"/>
       <ellipse cx="${cx}" cy="128" rx="34" ry="7" fill="#2A3A5E" opacity=".11"/>
       <g class="hc-ring-spin">
         <circle cx="${cx}" cy="92" r="30" fill="none" stroke="url(#hc-metal)" stroke-width="11"/>

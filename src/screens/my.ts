@@ -4,14 +4,14 @@
 // 프리셋을 골라도 내가 꾸민 조합(avatarCustom)은 남고, 파츠를 만지는 순간 커스텀이 대표가
 // 된다(사용자 확정: 고른 캐릭터를 이어서 꾸미게 하지 않는다). 선택은 즉시 적용(앱 관례 —
 // 저장 버튼 없음, 시트의 '완료'는 닫기일 뿐). 스텝 장화 단계표도 같은 시트 문법으로 연다.
-// 소셜 프로필 사진은 쓰지 않는다(미성년 개인정보). 하단에는 개인정보처리방침 링크만 두고,
-// 사업자 정보는 로그인 없이 볼 수 있는 공개 스플래시가 전담한다.
+// 소셜 프로필 사진은 쓰지 않는다(미성년 개인정보). 하단에는 개인정보처리방침과 로그인 상태의
+// 로그아웃만 작게 두고, 사업자 정보는 로그인 없이 볼 수 있는 공개 스플래시가 전담한다.
 
 import { el, clear } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { getState, currentStreak, setAvatarPreset, setAvatarCustom, setNickname, isDesktopMode, setDesktopMode } from "../core/store";
-import { onAuthChange, currentUser, pushNickname } from "../core/auth";
+import { onAuthChange, currentUser, pushNickname, signOut } from "../core/auth";
 import { bootLevel, BOOT_TIERS } from "../core/level";
 import { bootArt } from "../ui/boots";
 import { profileAvatar, setProfileAvatar } from "../ui/avatar";
@@ -328,26 +328,27 @@ export function myScreen(o: {
     row({ ic: icon("footstep", 17), gold: true, title: "프리미엄", onClick: () => o.onOpenPaywall() }),
     row({ ic: icon("book", 17), title: "과제함", onClick: () => snack("학급·과제 기능은 준비 중이에요") }),
   ];
-  // 넓은 화면 레이아웃(데스크톱 셸) 토글 — 옵트인(사용자 확정 2026-07-20), 기본은 폰 프레임.
-  // ≥1024px에서만 행을 노출한다: 폰에선 켜도 효력이 없어(desktop.css 미디어 쿼리 게이트) 죽은 토글이 된다.
-  if (window.matchMedia("(min-width: 1024px)").matches) {
-    menuRows.push(
-      row({
-        ic: icon("monitor", 17),
-        title: "넓은 화면 레이아웃(PC, 태블릿용)",
-        value: isDesktopMode() ? "켜짐" : "꺼짐",
-        onClick: (b) => {
-          const on = !isDesktopMode();
-          setDesktopMode(on);
-          document.documentElement.classList.toggle("dt", on); // 저장 + 즉시 반영(재렌더 불필요 — 순수 CSS 재배치)
-          const v = b.querySelector<HTMLElement>(".my-row-v");
-          if (v) v.textContent = on ? "켜짐" : "꺼짐";
-          snack(on ? "넓은 화면 레이아웃을 켰어요" : "폰 화면 보기로 돌아왔어요");
-        },
-      }),
-    );
-  }
-  menuRows.push(row({ ic: icon("user", 17), title: "계정 관리 · 로그인", onClick: () => o.onOpenAccount() }));
+  // 넓은 화면 레이아웃(데스크톱 셸) 토글 — 행은 항상 만들고 CSS 미디어쿼리로 ≥1024px에서만 보인다.
+  // 화면 생성 시점의 matchMedia 결과로 DOM 자체를 빼면, 창을 나중에 넓혀도 행이 안 생기는 버그가 난다.
+  const desktopRow = row({
+    ic: icon("monitor", 17),
+    title: "넓은 화면 레이아웃(PC, 태블릿용)",
+    value: isDesktopMode() ? "켜짐" : "꺼짐",
+    onClick: (b) => {
+      const on = !isDesktopMode();
+      setDesktopMode(on);
+      document.documentElement.classList.toggle("dt", on); // 저장 + 즉시 반영(재렌더 불필요 — 순수 CSS 재배치)
+      const v = b.querySelector<HTMLElement>(".my-row-v");
+      if (v) v.textContent = on ? "켜짐" : "꺼짐";
+      snack(on ? "넓은 화면 레이아웃을 켰어요" : "폰 화면 보기로 돌아왔어요");
+    },
+  });
+  desktopRow.classList.add("desktop-pref-row");
+  menuRows.push(desktopRow);
+
+  const accountRow = row({ ic: icon("user", 17), title: "계정 관리 · 로그인", onClick: () => o.onOpenAccount() });
+  const accountTitle = accountRow.querySelector<HTMLElement>(".my-row-t")!;
+  menuRows.push(accountRow);
   const menu = el("nav", { class: "my-menu", attrs: { "aria-label": "더 보기" } }, ...menuRows);
 
   // ---- 상단 뒤로가기(학습 탭 복귀, 2026-07-20 — 복습·도전 탭과 공통 문법) ----
@@ -357,13 +358,26 @@ export function myScreen(o: {
     o.onTab("home");
   });
 
-  // ---- 하단 법적 고지 — 사업자 정보는 공개 스플래시로 옮기고 방침 링크만 남긴다. ----
+  // ---- 하단 법적 고지 — 사업자 정보는 공개 스플래시로 옮긴다. 로그인 상태에선 로그아웃을 함께 둔다. ----
   const polBtn = el("button", { class: "legal-link", text: "개인정보처리방침" });
   polBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     o.onOpenPolicy();
   });
-  const legal = el("div", { class: "my-legal" }, polBtn);
+  const legalSep = el("span", { class: "my-legal-sep", text: "·", attrs: { "aria-hidden": "true" } });
+  const logoutBtn = el("button", { class: "legal-link my-logout", text: "로그아웃" }) as HTMLButtonElement;
+  let logoutBusy = false;
+  logoutBtn.addEventListener("click", () => {
+    if (logoutBusy) return;
+    logoutBusy = true;
+    logoutBtn.disabled = true;
+    haptic(HAPTIC.tap);
+    void signOut().then(() => snack("로그아웃했어요. 기록은 이 기기에 그대로 남아요.")).finally(() => {
+      logoutBusy = false;
+      logoutBtn.disabled = false;
+    });
+  });
+  const legal = el("div", { class: "my-legal" }, polBtn, legalSep, logoutBtn);
 
   const elm = el(
     "section",
@@ -392,8 +406,12 @@ export function myScreen(o: {
   }
 
   const offAuth = onAuthChange(() => {
+    const signedIn = !!currentUser();
     nameEl.textContent = displayName();
-    nickBtn.classList.toggle("hidden", !currentUser()); // 닉네임 편집은 로그인 전용(등록 즉시 1회 호출로 초기 상태도 처리)
+    nickBtn.classList.toggle("hidden", !signedIn); // 닉네임 편집은 로그인 전용(등록 즉시 1회 호출로 초기 상태도 처리)
+    accountTitle.textContent = signedIn ? "계정 관리" : "계정 관리 · 로그인";
+    logoutBtn.hidden = !signedIn;
+    legalSep.hidden = !signedIn;
     refreshGnavMyIcon(bar); // 로그인·로그아웃 즉시 탭바 아이콘도 아바타 ⇄ user로 전환
   });
 
