@@ -1,31 +1,15 @@
-// 중2 수학 Ⅴ. 도형의 닮음과 피타고라스 정리: 단원 종합 평가 풀 v2, 레슨 4 삼각형의 닮음 조건: SSS·SAS·AA (책 199~201쪽)
-// (m2u5e055~e073) · 2026-07 교과서 준거 재출제(정본 설계표 qa/m2u5-v2-blueprint.md, 규격 v2).
-// 유형 쿼터: mcq 10 + multi 2 = 12 · num 7, diff 8/8/3. word 0(규격 v2, 교과서 실측 계승).
-// 그림 원칙: 수치는 라벨 단위 병기("12 cm"·"x cm"), 관계 조건은 문두, 실각·실비 검산 완료(각 문항 주석).
-// 트리플·앵커 배정은 설계표 §2·§2-1이 정본. 표기: mfmt 미사용(gsym·유니코드 리터럴), em대시 금지, −는 U+2212.
-import type { ExamItem } from "./types";
-import { gsym } from "../../ui/geoKit";
+﻿// m2u5 v2 확장분 B: L4~L5 비파일럿 슬롯(설계표 순번, id=슬롯). 규칙은 rest-a 헤더와 동일.
+import type { ExamItem } from "../src/content/exams/types";
+import { gsym } from "../src/ui/geoKit";
 import {
   m2ExamTriPairFig,
   m2ExamTriSplitFig,
-} from "../../ui/examFiguresMath";
+  m2ExamXCrossFig,
+  m2ExamRightAltFig,
+} from "../src/ui/examFiguresMath";
 
-export const POOL_M2U5L4: ExamItem[] = [
-  {
-    // [슬롯 55] 검산: 8:12=10:15=14:21=2:3, 세 쌍 비 일치 → SSS 닮음.
-    //  실각: 변 (8,14,10)=(4,7,5)×2 → A(대변 14)=101.5°, B(대변 10)=44.4°, C(대변 8)=34.1°. ratio 1.5.
-    id: "m2u5e055", lessonId: "m2u5l4", type: "mcq",
-    prompt: "그림의 두 삼각형이 서로 닮은 도형임을 보이는 데 이용되는 닮음 조건은?",
-    figure: m2ExamTriPairFig({
-      B1: 44, C1: 34, ratio: 1.5,
-      sides1: { AB: "8 cm", BC: "14 cm", CA: "10 cm" }, sides2: { AB: "12 cm", BC: "21 cm", CA: "15 cm" },
-      names2: ["D", "E", "F"],
-    }),
-    options: ["SSS 닮음", "SAS 닮음", "AA 닮음", "SSS 합동", "닮음이 아니다"],
-    answer: 0, diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>주어진 정보가 무엇인지부터 확인해요. 각은 없고 세 쌍의 변 길이만 있어요.<br>① 8:12=2:3<br>② 10:15=2:3<br>③ 14:21=2:3<br>세 쌍의 대응변의 길이의 비가 모두 같으니 <b>SSS 닮음</b>이에요 ✓<span class='xh'>오답 하나씩 격파</span>SAS 닮음은 두 쌍의 변의 비와 그 끼인각이 필요한데 이 그림엔 각 정보가 없어요. AA 닮음도 두 쌍의 각이 필요하죠. SSS 합동은 세 변의 길이가 각각 같아야 하는데 여기는 길이가 1.5배씩 차이 나니 합동이 아니라 닮음이에요. 어떤 정보가 주어졌는지 보고 조건의 이름을 고르는 것이 이 유형의 전부예요.",
-    core: "변 세 쌍의 비가 같다 = SSS 닮음, 정보 종류로 조건 판별!",
-  },
+// L4 num 등록부: 24(s58)·10(s61)·33(s64)·12(s66)·7(s69)·9(s72)·120(s73), 중복 없음.
+export const POOL_M2U5V2_REST_B: ExamItem[] = [
   {
     // [슬롯 56] 검산: 6:9=8:12=2:3 두 쌍 + 끼인각 ∠B=∠E(●) → SAS. 실각: sinC/sinA=6/8 → B=65·A=70·C=45.
     id: "m2u5e056", lessonId: "m2u5l4", type: "mcq",
@@ -56,21 +40,6 @@ export const POOL_M2U5L4: ExamItem[] = [
     core: "각 두 쌍이면 끝, 셋째 각은 공짜(AA)!",
   },
   {
-    // [슬롯 58] 검산: AB:DE=9:18=1:2, BC:EF=8:16=1:2, 끼인각 ∠B=∠E(같음 표시 ●) → SAS. x=12×2=24.
-    //  실각: 변 (9,8,12): AB=9(대각 C≈49°), BC=8(대각 A≈90°), CA=12(대각 B≈42°), 꼭지각 A가 90°라 좌우 안 잘림.
-    id: "m2u5e058", lessonId: "m2u5l4", type: "num",
-    prompt: `그림의 두 삼각형에서 ∠B=∠E일 때, <i class='mv'>x</i>의 값을 구하세요.`,
-    figure: m2ExamTriPairFig({
-      B1: 42, C1: 49, ratio: 2,
-      labels1: { B: "●" }, labels2: { B: "●" },
-      sides1: { AB: "9 cm", BC: "8 cm", CA: "12 cm" }, sides2: { AB: "18 cm", BC: "16 cm", CA: "x cm" },
-      names2: ["D", "E", "F"],
-    }),
-    answer: "24", numKind: "int", diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>먼저 두 삼각형이 닮음인지 확인해요.<br>① AB:DE=9:18=1:2, BC:EF=8:16=1:2<br>② 그 끼인각 ∠B=∠E(그림의 같음 표시)이므로 SAS 닮음<br>③ CA:FD=1:2이므로 12:x=1:2, x=<b>24</b> ✓<span class='xh'>계산 실수 격파</span>비례식만 세워도 답은 나오지만, 시험에서는 두 변의 비가 정말 같은지(9:18과 8:16), 같다고 표시된 각이 정말 그 두 변 사이의 끼인각인지 확인하는 단계가 근거예요. 12÷2=6으로 계산했다면 방향이 뒤집힌 거예요. x는 큰 삼각형의 변이니 12보다 커야 해요. 검산: 9:18=8:16=12:24=1:2로 세 쌍이 모두 일치!",
-    core: "두 쌍 비+끼인각 확인(SAS), 그다음 비례식!",
-  },
-  {
     // [슬롯 59] 무그림(화이트리스트 ③ 수 나열 판정). 검산: (3,5,6)×2=(6,10,12)만 일치.
     id: "m2u5e059", lessonId: "m2u5l4", type: "mcq",
     prompt: "세 변의 길이가 각각 다음과 같은 두 삼각형이 서로 닮은 도형인 것은?",
@@ -84,27 +53,6 @@ export const POOL_M2U5L4: ExamItem[] = [
     answer: 0, diff: 1,
     explain: "<span class='xh'>정답 풀이</span>세 쌍의 변의 길이의 비가 모두 같은지 확인해요(SSS 닮음).<br>① 3:6=1:2<br>② 5:10=1:2<br>③ 6:12=1:2<br>세 비가 모두 1:2로 같으니 <b>닮음</b> ✓<span class='xh'>오답 하나씩 격파</span>5, 7, 8은 3, 5, 6과 아무 비도 맞지 않아요. 4:8, 5:10은 1:2인데 8:12는 2:3이라 마지막에서 어긋나고, 3:9, 4:12는 1:3인데 6:15는 2:5라 역시 어긋나요. 2:6, 5:15는 1:3인데 6:12는 1:2로 마지막이 함정이죠. 두 쌍까지 맞다가 셋째에서 깨지는 세트가 단골 함정이니, 반드시 세 쌍을 끝까지 확인해야 해요. 큰 세트의 순서가 크기순이 아닐 수도 있으니 작은 변끼리, 큰 변끼리 짝지어 재는 것도 요령이에요.",
     core: "SSS 판정은 세 쌍 전부, 두 쌍에서 멈추면 함정!",
-  },
-  {
-    // [슬롯 60] SSA 함정: 비 2:5 두 쌍 + 끼인각이 아닌 ∠A=∠D → 닮음 단정 불가.
-    //  그림은 각 라벨과 실각이 일치하도록 A1=A2=44°(B1+C1=B2+C2=136), 모양은 다르게.
-    id: "m2u5e060", lessonId: "m2u5l4", type: "mcq",
-    prompt: `그림의 두 삼각형에서 ${gsym("AB", "seg")}:${gsym("DE", "seg")}=${gsym("BC", "seg")}:${gsym("EF", "seg")}=2:5이고 ∠A=∠D=44°예요. 두 삼각형에 대한 설명으로 옳은 것은?`,
-    figure: m2ExamTriPairFig({
-      B1: 70, C1: 66, B2: 58, C2: 78,
-      labels1: { A: "44°" }, labels2: { A: "44°" },
-      names2: ["D", "E", "F"],
-    }),
-    options: [
-      "닮음이라고 단정할 수 없다",
-      "SAS 닮음이다",
-      "SSS 닮음이다",
-      "AA 닮음이다",
-      "닮음비 2:5인 닮음이다",
-    ],
-    answer: 0, diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>SAS 닮음이 되려면 두 쌍의 변의 비가 같고, 그 <b>끼인각</b>이 같아야 해요. 여기서 비가 주어진 변은 AB와 BC인데, 이 두 변 사이에 끼인 각은 ∠B예요. 그런데 같다고 한 각은 ∠A, 즉 끼인각이 아니에요. 그래서 <b>닮음이라고 단정할 수 없어요</b> ✓ 실제로 그림의 두 삼각형은 나머지 각이 서로 달라요.<span class='xh'>오답 하나씩 격파</span>SAS를 골랐다면 각의 위치를 확인하지 않은 거예요. 변 두 쌍과 각 하나가 보이면 반사적으로 SAS로 보이지만, 각이 두 변 사이에 있어야만 성립해요. SSS는 세 쌍의 변이, AA는 두 쌍의 각이 필요하니 조건 부족이에요. 조건이 어긋난 이상 닮음비 2:5도 말할 수 없어요.",
-    core: "SAS의 S와 S 사이엔 반드시 끼인각, 아니면 단정 금지!",
   },
   {
     // [슬롯 61] 검산: AA(각 ● 두 쌍) → BC:EF=9:15=3:5 → x=6×5/3=10. 실각 sinC/sinA=6/9 → A=76·C=40·B=64.
@@ -167,25 +115,6 @@ export const POOL_M2U5L4: ExamItem[] = [
     answer: "33", numKind: "int", unitLabel: "cm", diff: 2,
     explain: "<span class='xh'>정답 풀이</span>둘레의 비는 닮음비와 같아요.<br>① 닮음비: AB:DE=6:9=2:3<br>② 둘레: 22:x=2:3<br>③ 2x=66, x=<b>33</b> ✓<span class='xh'>계산 실수 격파</span>세 변을 각각 구해 더할 필요가 없어요. 모든 변이 3/2배가 되니 그 합도 정확히 3/2배가 되거든요. 22×2÷3=14.7처럼 방향을 뒤집는 실수와, 둘레에 제곱 비 4:9를 적용해 49.5를 만드는 실수를 조심하세요. 제곱은 넓이의 몫이고 둘레는 길이라 닮음비 그대로예요. 검산: 22:33=2:3 일치!",
     core: "둘레의 비 = 닮음비, 변마다 구할 필요 없다!",
-  },
-  {
-    // [슬롯 65] 검산: ∠A 공통+∠ADE=∠ACB → AA. 대응 A↔A, D↔C, E↔B → △ADE∽△ACB.
-    id: "m2u5e065", lessonId: "m2u5l4", type: "mcq",
-    prompt: `그림에서 ∠ADE=∠ACB일 때, ${gsym("ADE", "tri")}와 닮은 삼각형을 기호로 바르게 나타낸 것은?`,
-    figure: m2ExamTriSplitFig({
-      B: 64, C: 46, t: 0.56, mode: "swapped",
-      marks: [{ at: "ADE", label: "●" }, { at: "ACB", label: "●" }],
-    }),
-    options: [
-      `${gsym("ACB", "tri")}`,
-      `${gsym("ABC", "tri")}`,
-      `${gsym("BCA", "tri")}`,
-      `${gsym("CBA", "tri")}`,
-      "닮은 삼각형이 없다",
-    ],
-    answer: 0, diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>닮음 기호는 대응하는 꼭짓점 순서대로 써요.<br>① ∠A는 두 삼각형의 공통각<br>② ∠ADE=∠ACB(주어진 조건)<br>③ 두 쌍의 각이 같으니 AA 닮음<br>④ 대응을 짚으면 A↔A, D↔C, E↔B이므로 △ADE∽<b>△ACB</b> ✓<span class='xh'>오답 하나씩 격파</span>△ABC를 골랐다면 큰 삼각형의 이름을 늘 쓰던 순서로 쓴 거예요. 닮음 기호에서는 이름 순서가 곧 대응 관계라서, ∠D와 짝인 ∠C가 두 번째 자리에 와야 해요. △BCA나 △CBA도 대응이 어긋나요. 이 그림은 D와 C가 엇갈려 대응하는 뒤집힌 닮음이라, 평행선 문제처럼 D↔B로 넘겨짚으면 틀려요. 같은 각끼리 짝을 지어 순서를 맞추는 것이 전부예요.",
-    core: "닮음 기호의 순서 = 같은 각끼리의 대응 순서!",
   },
   {
     // [슬롯 66] 검산: ∠ADE=∠ACB → AD·AB=AE·AC, 6×16=8×AC → AC=12. 정합: 6×16=96=8×12 ✓, AB/AC=4/3(B=41·C=61).
@@ -309,5 +238,212 @@ export const POOL_M2U5L4: ExamItem[] = [
     answer: "120", numKind: "int", diff: 2,
     explain: "<span class='xh'>정답 풀이</span>값이 둘 다 있는 BC:EF로 닮음비를 정해요.<br>① 16:20=4:5<br>② x: CA:FD=4:5에서 x:15=4:5, x=12<br>③ y: AB:DE=4:5에서 8:y=4:5, y=10<br>④ x×y=12×10=<b>120</b> ✓<span class='xh'>계산 실수 격파</span>x는 작은 삼각형의 변이라 15보다 작고(12 ✓), y는 큰 삼각형의 변이라 8보다 커요(10 ✓). 이 크기 감각이 방향 실수를 걸러 줘요. 두 미지수를 곱한 값을 묻는 것은 하나만 맞혀서는 안 되게 하는 장치이니, 각각을 차분히 구하고 마지막 곱셈까지 확인하세요. 검산: 8:10=16:20=12:15=4:5로 세 쌍 모두 일치!",
     core: "묶음 답은 각각 정확히, 크기 감각으로 검산!",
+  },
+
+  // ─ L5 닮은 삼각형 찾기: 겹친 삼각형 ─
+  // L5 num 등록부: 21(s75)·20(s79)·5(s76)·8(s81)·24(s83)·36(s87)·12(s90), 중복 없음.
+  {
+    // [슬롯 74] 검산: ∠AED=∠ABC(●) → 공통각 A와 AA, 대응 A↔A·E↔B·D↔C → △AED∽△ABC.
+    id: "m2u5e074", lessonId: "m2u5l5", type: "mcq",
+    prompt: `그림에서 ∠AED=∠ABC일 때, ${gsym("AED", "tri")}와 닮은 삼각형을 기호로 바르게 나타낸 것은?`,
+    figure: m2ExamTriSplitFig({
+      B: 58, C: 48, t: 0.5, mode: "swapped",
+      marks: [{ at: "AED", label: "●" }, { at: "ABC", label: "●" }],
+    }),
+    options: [
+      `${gsym("ABC", "tri")}`,
+      `${gsym("ACB", "tri")}`,
+      `${gsym("BCA", "tri")}`,
+      `${gsym("CBA", "tri")}`,
+      "닮은 삼각형이 없다",
+    ],
+    answer: 0, diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>겹친 삼각형은 공통각부터 찾아요.<br>① ∠A는 두 삼각형의 공통각<br>② ∠AED=∠ABC(조건)<br>③ AA 닮음이고 대응은 A↔A, E↔B, D↔C<br>④ 따라서 △AED∽<b>△ABC</b> ✓<span class='xh'>오답 하나씩 격파</span>△ACB를 고르면 E↔C, D↔B로 짝이 뒤바뀌어요. 같은 각끼리(∠AED와 ∠ABC → E와 B) 짝을 짓는 것이 순서의 근거예요. 겹친 그림에서는 작은 삼각형의 이름 순서를 먼저 쓰고, 같은 각의 꼭짓점을 같은 자리에 두며 큰 삼각형을 읽어 내려가면 실수가 없어요. 조건의 각 이름 속에 답이 이미 들어 있는 셈이에요.",
+    core: "공통각+같은 각, 조건의 글자에서 순서를 읽어라!",
+  },
+  {
+    // [슬롯 76] 검산: AD·AB=AE·AC → 4×10=AE×8 → AE=5. 정합: t=0.4, s=0.4×(10/8)²=0.625=5/8 ✓.
+    id: "m2u5e076", lessonId: "m2u5l5", type: "num",
+    prompt: `그림에서 ∠ADE=∠ACB이고 ${gsym("AD", "seg")}=4 cm, ${gsym("DB", "seg")}=6 cm, ${gsym("AC", "seg")}=8 cm예요. ${gsym("AE", "seg")}의 길이 <i class='mv'>x</i>는 몇 cm인지 구하세요.`,
+    figure: m2ExamTriSplitFig({
+      B: 46, C: 64, t: 0.4, mode: "swapped",
+      labels: { AD: "4 cm", DB: "6 cm", AC: "8 cm", AE: "x cm" },
+      marks: [{ at: "ADE", label: "●" }, { at: "ACB", label: "●" }],
+    }),
+    answer: "5", numKind: "int", unitLabel: "cm", diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>∠A 공통, ∠ADE=∠ACB이므로 뒤집힌 닮음 △ADE∽△ACB예요.<br>① AB=4+6=10<br>② AD×AB=AE×AC<br>③ 4×10=x×8, 40=8x, x=<b>5</b> ✓<span class='xh'>계산 실수 격파</span>공식에 AD=4 대신 DB=6을 넣거나, AB=10 대신 DB=6을 넣는 실수가 가장 흔해요. 곱 공식의 네 길이는 전부 꼭짓점 A에서 출발해 잰 것(AD, AB, AE, AC)이에요. 그림에서 A에 연필을 대고 각 길이를 따라가 보면 헷갈리지 않아요. 검산: 4×10=40=5×8 일치!",
+    core: "곱 공식의 재료는 전부 A에서 잰 길이!",
+  },
+  {
+    // [슬롯 77] 검산: AB∥DC → 엇각 2쌍(또는 엇각+맞꼭지각) → AA.
+    id: "m2u5e077", lessonId: "m2u5l5", type: "mcq",
+    prompt: `그림에서 ${gsym("AB", "seg")}∥${gsym("DC", "seg")}이고 두 선분 AC, BD가 점 O에서 만나요. ${gsym("OAB", "tri")}∽${gsym("OCD", "tri")}임을 보이는 근거로 알맞은 것은?`,
+    figure: m2ExamXCrossFig({
+      rTop: [7, 10], rSide: [8, 80 / 7],
+      paraMarks: true,
+    }),
+    options: [
+      "엇각과 맞꼭지각이 각각 같다 (AA 닮음)",
+      "세 쌍의 대응변의 길이의 비가 같다 (SSS 닮음)",
+      "두 쌍의 대응변의 비와 끼인각이 같다 (SAS 닮음)",
+      "두 삼각형의 넓이가 같다",
+      "대응하는 변이 서로 평행하다",
+    ],
+    answer: 0, diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>변의 길이 정보가 하나도 없는데 닮음을 말할 수 있는 이유는 각이에요.<br>① AB∥DC이므로 엇각 ∠OAB=∠OCD<br>② 맞꼭지각 ∠AOB=∠COD<br>③ 두 쌍의 각이 같으니 <b>AA 닮음</b> ✓<span class='xh'>오답 하나씩 격파</span>SSS나 SAS는 변의 길이 정보가 필요한데 이 그림엔 없어요. 넓이가 같다는 것은 닮음의 근거가 아니고, 실제로 두 삼각형은 크기가 달라요. 변이 평행하다는 사실 자체는 근거의 재료일 뿐, 그 평행에서 엇각이 같아진다는 한 걸음을 밟아야 닮음 조건이 완성돼요. X자(나비꼴) 그림을 보면 반사적으로 '엇각+맞꼭지각=AA'가 떠올라야 해요.",
+    core: "X자 구도의 자동 조건: 엇각+맞꼭지각=AA!",
+  },
+  {
+    // [슬롯 78] 검산: ∠DBA=∠DAC=90−C·∠D=90 공통 등, △DBA∽△DAC∽△ABC(각 D·D·A=90, B↔A↔B 대응).
+    id: "m2u5e078", lessonId: "m2u5l5", type: "mcq",
+    prompt: `그림에서 ∠BAC=90°이고 ${gsym("AD", "seg")}⊥${gsym("BC", "seg")}예요. 서로 닮은 삼각형을 빠짐없이 나타낸 것은?`,
+    figure: m2ExamRightAltFig({ bd: 9, dc: 16 }),
+    options: [
+      `${gsym("DBA", "tri")}∽${gsym("DAC", "tri")}∽${gsym("ABC", "tri")}`,
+      `${gsym("DBA", "tri")}∽${gsym("DCA", "tri")}∽${gsym("ABC", "tri")}`,
+      `${gsym("ABD", "tri")}∽${gsym("ACD", "tri")}∽${gsym("ABC", "tri")}`,
+      `${gsym("DBA", "tri")}∽${gsym("DAC", "tri")}뿐이다`,
+      "서로 닮은 삼각형이 없다",
+    ],
+    answer: 0, diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>수선 하나가 삼각형 세 개를 만들고, 셋은 전부 닮음이에요.<br>① △DBA: ∠D=90°, ∠B, ∠DAB=90°−∠B<br>② △DAC: ∠D=90°, ∠DAC=∠B(둘 다 90°−∠C), ∠C<br>③ △ABC: ∠A=90°, ∠B, ∠C<br>같은 크기의 각이 같은 자리에 오도록 쓰면 △DBA∽△DAC∽<b>△ABC</b> ✓<span class='xh'>오답 하나씩 격파</span>△DCA는 두 번째 자리에 ∠C가 와서 ∠B 자리와 어긋나요. △ABD∽△ACD도 각의 짝이 맞지 않는 순서죠. 두 쌍만 닮았다는 보기는 큰 삼각형을 빠뜨렸어요. 셋의 닮음에서 나오는 대응변 비가 곧 AD²=BD×DC 같은 제곱 공식들의 뿌리라서, 이 순서 감각은 다음 문제들의 기초 공사예요.",
+    core: "수선은 닮음 삼형제를 만든다, 순서는 같은 각끼리!",
+  },
+  {
+    // [슬롯 80] 검산: AB∥DC ⟺ OA:OC=OB:OD → 6:9=8:x → x=12.
+    id: "m2u5e080", lessonId: "m2u5l5", type: "mcq",
+    prompt: `그림에서 두 선분 AC, BD가 점 O에서 만나요. ${gsym("AB", "seg")}∥${gsym("DC", "seg")}가 되려면 ${gsym("OD", "seg")}의 길이는 얼마여야 하나요?`,
+    figure: m2ExamXCrossFig({
+      rTop: [6, 9], rSide: [8, 12],
+      labels: { OA: "6 cm", OC: "9 cm", OB: "8 cm", OD: "x cm" },
+    }),
+    options: ["12 cm", "10 cm", "13.5 cm", "7 cm", "16 cm"],
+    answer: 0, diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>평행의 조건을 비로 뒤집어 쓰는 문제예요. AB∥DC이려면 △OAB∽△OCD가 되어야 하고, 맞꼭지각은 이미 같으니 SAS 닮음이 되도록 O를 낀 두 쌍의 비가 같아야 해요.<br>① OA:OC=6:9=2:3<br>② OB:OD=2:3이 되어야 하므로 8:x=2:3<br>③ x=<b>12 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>13.5 cm는 9×1.5로, OC에 배율을 잘못 이어 붙인 값이에요. 비는 반드시 같은 직선 위의 짝(OA와 OC, OB와 OD)으로 세워야 해요. 10 cm는 8+2, 16 cm는 8×2로 어림한 값이죠. 지금까지는 평행에서 비를 얻었다면, 이 문제는 비를 맞춰 평행을 만들어요. 조건과 결론을 거꾸로도 쓸 수 있어야 진짜 이해예요.",
+    core: "평행 ⟺ O를 낀 두 쌍의 비 일치, 거꾸로도 쓴다!",
+  },
+  {
+    // [슬롯 81] 검산: AB²=BD·BC=4×16=64 → AB=8.
+    id: "m2u5e081", lessonId: "m2u5l5", type: "num",
+    prompt: `그림에서 ∠BAC=90°이고 ${gsym("AD", "seg")}⊥${gsym("BC", "seg")}예요. ${gsym("BD", "seg")}=4 cm, ${gsym("DC", "seg")}=12 cm일 때, ${gsym("AB", "seg")}의 길이 <i class='mv'>x</i>는 몇 cm인지 구하세요.`,
+    figure: m2ExamRightAltFig({
+      bd: 4, dc: 12,
+      labels: { BD: "4 cm", DC: "12 cm", AB: "x cm" },
+    }),
+    answer: "8", numKind: "int", unitLabel: "cm", diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>△DBA∽△ABC(둘 다 ∠B 공유, 직각)에서 BD:BA=BA:BC가 나와요.<br>① AB²=BD×BC<br>② BC=4+12=16<br>③ AB²=4×16=64, 제곱해서 64가 되는 양수는 8<br>④ x=<b>8</b> ✓<span class='xh'>계산 실수 격파</span>AB²=BD×DC=48로 쓰는 것이 최대 함정이에요. 두 조각의 곱(BD×DC)과 짝을 이루는 것은 수선 AD이고, 변 AB와 짝을 이루는 것은 자기 쪽 조각과 빗변 전체(BD×BC)예요. 어느 공식이든 '그 변이 낀 두 삼각형의 대응변 비'에서 나온다는 뿌리를 기억하면 헷갈릴 때 유도해서 복구할 수 있어요. 검산: 8²=64=4×16!",
+    core: "AB의 짝은 BD×BC(자기 조각×빗변 전체)!",
+  },
+  {
+    // [슬롯 83] 검산: 닮음비 AD:AC=6:9=2:3 → 둘레 16×3/2=24.
+    id: "m2u5e083", lessonId: "m2u5l5", type: "num",
+    prompt: `그림에서 ∠ADE=∠ACB이고 ${gsym("AD", "seg")}=6 cm, ${gsym("AC", "seg")}=9 cm예요. ${gsym("ADE", "tri")}의 둘레가 16 cm일 때, ${gsym("ACB", "tri")}의 둘레는 몇 cm인지 구하세요.`,
+    figure: m2ExamTriSplitFig({
+      B: 60, C: 46, t: 0.5, mode: "swapped",
+      labels: { AD: "6 cm", AC: "9 cm" },
+      marks: [{ at: "ADE", label: "●" }, { at: "ACB", label: "●" }],
+    }),
+    answer: "24", numKind: "int", unitLabel: "cm", diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>△ADE∽△ACB(AA)이고, 닮음비는 대응변 AD:AC에서 바로 나와요.<br>① 닮음비: 6:9=2:3<br>② 둘레의 비도 2:3이므로 16:x=2:3<br>③ 2x=48, x=<b>24</b> ✓<span class='xh'>계산 실수 격파</span>AD의 짝을 AB로 잘못 잡으면 닮음비를 구할 수 없어 막혀요. 뒤집힌 닮음에서 AD(작은 삼각형)의 대응변은 AC(큰 삼각형)라는 것, 즉 대응이 D↔C로 엇갈린다는 것이 이 구도의 핵심이었죠. 닮음비만 정확히 뽑으면 둘레는 변마다 계산할 필요 없이 한 번의 비례식으로 끝나요. 검산: 16:24=2:3!",
+    core: "뒤집힌 닮음의 닮음비는 AD:AC, 둘레는 그대로 따라온다!",
+  },
+  {
+    // [슬롯 84] 검산: OA:OC=40:10=4:1, AB=12×4=48. 실비 rSide [36,9]=4:1.
+    id: "m2u5e084", lessonId: "m2u5l5", type: "mcq",
+    prompt: `강의 폭 ${gsym("AB", "seg")}를 직접 잴 수 없어서, 그림처럼 강 밖에 점 O를 잡고 ${gsym("AB", "seg")}∥${gsym("DC", "seg")}가 되도록 두 점 C, D를 정했어요. ${gsym("DC", "seg")}=12 m일 때, 강의 폭 ${gsym("AB", "seg")}는?`,
+    figure: m2ExamXCrossFig({
+      rTop: [40, 10], rSide: [36, 9],
+      labels: { OA: "40 m", OC: "10 m", DC: "12 m", AB: "x m" },
+      paraMarks: true,
+    }),
+    options: ["48 m", "3 m", "30 m", "52 m", "120 m"],
+    answer: 0, diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>X자 닮음 측량이에요. AB∥DC이므로 엇각과 맞꼭지각으로 △OAB∽△OCD(AA)죠.<br>① 닮음비: OA:OC=40:10=4:1<br>② AB=DC×4=12×4=<b>48 m</b> ✓<span class='xh'>오답 하나씩 격파</span>3 m는 12÷4로 방향이 뒤집힌 값이에요. 강 쪽(OA=40)이 잰 쪽(OC=10)의 4배이니 폭도 4배로 커져야 하죠. 30 m는 40−10을 어설프게 쓴 값, 52 m는 40+12로 더한 값, 120 m는 12×10처럼 엉뚱한 곱이에요. 강 이쪽에서 몇 걸음 재는 것만으로 건너편까지의 폭을 아는 것, 닮음이 고대부터 측량술의 심장이었던 이유예요.",
+    core: "건널 수 없는 폭도 X자 닮음이면 몇 걸음으로 끝!",
+  },
+  {
+    // [슬롯 85] 검산: 평행이려면 AD:DB=AE:EC → 4:8=5:x → x=10. 그림은 비평행 상태(free s≠t)가 정직.
+    id: "m2u5e085", lessonId: "m2u5l5", type: "mcq",
+    prompt: `그림에서 ${gsym("AD", "seg")}=4 cm, ${gsym("DB", "seg")}=8 cm, ${gsym("AE", "seg")}=5 cm예요. ${gsym("DE", "seg")}∥${gsym("BC", "seg")}가 되려면 ${gsym("EC", "seg")}의 길이는 얼마여야 하나요?`,
+    figure: m2ExamTriSplitFig({
+      B: 62, C: 50, t: 1 / 3, s: 0.45, mode: "free",
+      labels: { AD: "4 cm", DB: "8 cm", AE: "5 cm", EC: "x cm" },
+    }),
+    options: ["10 cm", "7 cm", "9 cm", "6 cm", "13 cm"],
+    answer: 0, diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>DE∥BC가 되기 위한 조건은 두 변이 같은 비로 잘리는 것이에요.<br>① AD:DB=4:8=1:2<br>② AE:EC=1:2가 되어야 하므로 5:x=1:2<br>③ x=<b>10 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>7 cm는 5+2처럼 차이를 이어 붙인 값이고, 9 cm는 4:8과 5:9를 얼추 비슷하게 맞춘 어림이에요. 평행은 얼추가 아니라 비가 정확히 같아야 성립해요. 6 cm는 5:6을 4:8의 절반쯤으로 착각한 값, 13 cm는 8+5예요. 그림에서 DE가 BC와 살짝 어긋나 보이는 것은 아직 조건이 맞지 않은 상태라는 뜻이에요. x=10이 되는 순간 평행이 완성되죠.",
+    core: "평행의 조건 = 두 변이 같은 비로 잘리기!",
+  },
+  {
+    // [슬롯 86] 검산: AD²=2×8=16 → AD=4, BC=10, 넓이=½×10×4=20.
+    id: "m2u5e086", lessonId: "m2u5l5", type: "mcq",
+    prompt: `그림에서 ∠BAC=90°이고 ${gsym("AD", "seg")}⊥${gsym("BC", "seg")}예요. ${gsym("BD", "seg")}=2 cm, ${gsym("DC", "seg")}=8 cm일 때, ${gsym("ABC", "tri")}의 넓이는?`,
+    figure: m2ExamRightAltFig({
+      bd: 2, dc: 8,
+      labels: { BD: "2 cm", DC: "8 cm" },
+    }),
+    options: ["20 cm²", "40 cm²", "16 cm²", "10 cm²", "24 cm²"],
+    answer: 0, diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>넓이를 구하려면 밑변과 높이가 필요해요. 밑변 BC는 바로 나오고, 높이가 바로 수선 AD예요.<br>① AD²=BD×DC=2×8=16, AD=4<br>② BC=2+8=10<br>③ 넓이=½×10×4=<b>20 cm²</b> ✓<span class='xh'>오답 하나씩 격파</span>40 cm²는 ½을 빼먹은 값이에요. 16 cm²는 AD²에서 멈춘 값인데, 16은 넓이가 아니라 수선 길이의 제곱이에요. 10 cm²는 밑변 10을 넓이로 착각한 값, 24 cm²는 계산이 뒤섞인 값이죠. 이 문제의 묘미는 수선 공식이 넓이 문제의 부품으로 쓰인다는 데 있어요. 공식은 외우는 것이 아니라 꺼내 쓰는 도구라는 것을 보여 주는 융합형이에요.",
+    core: "수선 공식으로 높이를 얻고, 넓이 공식으로 마무리!",
+  },
+  {
+    // [슬롯 87] 검산: 닮음비 8:12=2:3, △OAB 둘레 8+6+10=24 → △OCD 둘레 36.
+    id: "m2u5e087", lessonId: "m2u5l5", type: "num",
+    prompt: `그림에서 ${gsym("AB", "seg")}∥${gsym("DC", "seg")}이고 ${gsym("OA", "seg")}=8 cm, ${gsym("OB", "seg")}=6 cm, ${gsym("AB", "seg")}=10 cm, ${gsym("OC", "seg")}=12 cm예요. ${gsym("OCD", "tri")}의 둘레는 몇 cm인지 구하세요.`,
+    figure: m2ExamXCrossFig({
+      rTop: [8, 12], rSide: [6, 9],
+      labels: { OA: "8 cm", OB: "6 cm", AB: "10 cm", OC: "12 cm" },
+      paraMarks: true,
+    }),
+    answer: "36", numKind: "int", unitLabel: "cm", diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>△OAB∽△OCD(엇각+맞꼭지각 AA)이고 닮음비는 OA:OC=8:12=2:3이에요.<br>① △OAB의 둘레=8+6+10=24<br>② 둘레의 비는 닮음비와 같으므로 24:x=2:3<br>③ x=<b>36</b> ✓<span class='xh'>계산 실수 격파</span>OD=9, DC=15를 각각 구해 12+9+15=36으로 더해도 같은 답이 나와요. 하지만 둘레의 비가 닮음비와 같다는 성질을 쓰면 변 두 개의 계산을 건너뛸 수 있죠. 종합 문제일수록 성질로 지름길을 내는 훈련이 중요해요. 흔한 실수는 △OAB의 둘레에 OC까지 섞어 더하는 것이니, 어느 삼각형의 둘레인지 변 세 개를 정확히 짚고 더하세요. 검산: 24:36=2:3!",
+    core: "둘레 지름길: 세 변 다 구하지 말고 닮음비로!",
+  },
+  {
+    // [슬롯 89] 그림 진술 multi. 검산: 6:9=8:12=2:3 → 닮음·엇각 참, OB의 짝은 OD(OC 아님).
+    id: "m2u5e089", lessonId: "m2u5l5", type: "multi",
+    prompt: `그림에서 ${gsym("AB", "seg")}∥${gsym("DC", "seg")}이고 두 선분 AC, BD가 점 O에서 만나요. 옳은 것을 모두 고르세요.`,
+    figure: m2ExamXCrossFig({
+      rTop: [6, 9], rSide: [8, 12],
+      labels: { OA: "6 cm", OC: "9 cm", OB: "8 cm", OD: "12 cm" },
+      paraMarks: true,
+    }),
+    options: [
+      `${gsym("OAB", "tri")}∽${gsym("OCD", "tri")}`,
+      "두 삼각형의 닮음비는 2:3이다",
+      "∠OAB=∠OCD이다",
+      `${gsym("AB", "seg")}:${gsym("DC", "seg")}=${gsym("OB", "seg")}:${gsym("OC", "seg")}이다`,
+      `${gsym("OA", "seg")}:${gsym("OC", "seg")}=${gsym("OD", "seg")}:${gsym("OB", "seg")}이다`,
+    ],
+    answer: [0, 1, 2], diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>평행에서 시작해요.<br>① AB∥DC → 엇각 ∠OAB=∠OCD, 맞꼭지각까지 AA 닮음 ✓<br>② 닮음비: OA:OC=6:9=2:3 (OB:OD=8:12로 재확인) ✓<span class='xh'>오답 하나씩 격파</span>AB:DC의 짝은 OB:OC가 아니라 닮음비 그 자체(OA:OC=OB:OD)예요. OB의 대응변은 같은 직선 위 건너편인 OD이지, 다른 직선의 OC가 아니죠. 마지막 보기도 OD와 OB의 자리가 뒤집혀 2:3이 아닌 3:2가 되니 틀려요. X자 구도에서 비의 짝은 언제나 O를 사이에 둔 같은 직선 위 두 조각이라는 것, 이 하나만 지키면 진술 판별이 어렵지 않아요.",
+    core: "X자의 비 짝 = O를 낀 같은 직선의 두 조각!",
+  },
+  {
+    // [슬롯 90] 검산: OA:OC=7:14=1:2 → OD=6×2=12.
+    id: "m2u5e090", lessonId: "m2u5l5", type: "num",
+    prompt: `그림에서 ${gsym("AB", "seg")}∥${gsym("DC", "seg")}이고 두 선분 AC, BD가 점 O에서 만나요. ${gsym("OD", "seg")}의 길이 <i class='mv'>x</i>는 몇 cm인지 구하세요.`,
+    figure: m2ExamXCrossFig({
+      rTop: [7, 14], rSide: [6, 12],
+      labels: { OA: "7 cm", OC: "14 cm", OB: "6 cm", OD: "x cm" },
+      paraMarks: true,
+    }),
+    answer: "12", numKind: "int", unitLabel: "cm", diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>AB∥DC이므로 엇각과 맞꼭지각으로 △OAB∽△OCD예요.<br>① 닮음비: OA:OC=7:14=1:2<br>② OB:OD=1:2이므로 6:x=1:2<br>③ x=<b>12</b> ✓<span class='xh'>계산 실수 격파</span>6÷2=3으로 답했다면 방향이 뒤집힌 거예요. D는 큰 삼각형 쪽이니 OD는 OB보다 길어야 하죠. 또 OA:OB=7:6처럼 같은 삼각형 안의 두 변으로 비를 만드는 실수도 조심하세요. 닮음비는 두 삼각형을 건너서, O를 사이에 둔 같은 직선 위의 짝으로만 재요. 검산: 7:14=6:12=1:2!",
+    core: "비는 삼각형을 건너서, 같은 직선의 짝으로!",
+  },
+  {
+    // [슬롯 91] 검산: AC²=CD·CB=9×16=144 → AC=12.
+    id: "m2u5e091", lessonId: "m2u5l5", type: "mcq",
+    prompt: `그림에서 ∠BAC=90°이고 ${gsym("AD", "seg")}⊥${gsym("BC", "seg")}예요. ${gsym("BD", "seg")}=7 cm, ${gsym("DC", "seg")}=9 cm일 때, ${gsym("AC", "seg")}의 길이는?`,
+    figure: m2ExamRightAltFig({
+      bd: 7, dc: 9,
+      labels: { BD: "7 cm", DC: "9 cm", AC: "x cm" },
+    }),
+    options: ["12 cm", "9 cm", "16 cm", "11 cm", "15 cm"],
+    answer: 0, diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>변 AC가 낀 닮음 쌍 △DAC∽△ABC에서 CD:CA=CA:CB가 나와요.<br>① AC²=CD×CB<br>② CB=7+9=16<br>③ AC²=9×16=144, 제곱해서 144가 되는 양수는 12<br>④ AC=<b>12 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>AC²=BD×DC=63으로 쓰면 수선 AD의 공식과 뒤섞인 거예요. 각 변의 짝을 정리하면 AD²=BD×DC(두 조각), AB²=BD×BC(B쪽 조각×전체), AC²=CD×CB(C쪽 조각×전체)예요. 셋 다 '그 변이 어느 삼각형 쌍에 끼어 있는가'에서 나오죠. 9 cm는 DC를 그대로 옮긴 값, 16 cm는 CB를 옮긴 값, 11 cm는 7+9−5 같은 어림, 15 cm는 근처 어림이에요. 검산: 12²=144=9×16!",
+    core: "AC의 짝은 CD×CB, 세 공식은 자기 조각×전체!",
   },
 ];

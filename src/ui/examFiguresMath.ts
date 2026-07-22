@@ -1948,7 +1948,10 @@ const g4right = (v: GPt, p1: GPt, p2: GPt, size = 10): string => {
   const a2 = angleOf(v.x, v.y, p2.x, p2.y);
   return Math.abs(normDeg(a2 - a1) - 90) < 2 ? rightMark(v.x, v.y, a1, size) : rightMark(v.x, v.y, a2, size);
 };
-/** 변 라벨 — 도형 무게중심 반대쪽(바깥)에 배치. inside면 안쪽. */
+/** 변 라벨 — 도형 무게중심 반대쪽(바깥)에 배치. inside면 안쪽.
+ *  라벨은 가로쓰기라 가파른 변 옆에서는 텍스트 반폭이 변을 도로 덮는다(2026-07-22 파일럿 눈검수) —
+ *  법선의 수평 성분만큼 반폭을 간격에 더해 겹침을 구조적으로 막는다(수평 변은 기존 간격 그대로,
+ *  inside 라벨은 반대편 변을 뚫지 않게 +6px 상한). */
 const g4side = (a: GPt, b: GPt, label: string, cen: GPt, distance = 15, inside = false, fs = 11.5): string => {
   const mx = (a.x + b.x) / 2;
   const my = (a.y + b.y) / 2;
@@ -1959,7 +1962,12 @@ const g4side = (a: GPt, b: GPt, label: string, cen: GPt, distance = 15, inside =
   const ny = -dx / len;
   const toCen = (cen.x - mx) * nx + (cen.y - my) * ny;
   const s = (toCen > 0 ? -1 : 1) * (inside ? -1 : 1);
-  return g4text(mx + nx * s * distance, my + ny * s * distance + 4, label, fs, INK);
+  const need = Math.abs(nx) * label.length * fs * 0.3 + Math.abs(ny) * fs * 0.55 + 5;
+  const eff = inside ? Math.min(Math.max(distance, need), distance + 6) : Math.max(distance, need);
+  // 뷰박스(0~360) 밖으로 밀려 반쪽이 잘리는 것 방지 — 텍스트 반폭만큼 안쪽으로 클램프.
+  const half = label.length * fs * 0.3 + 2;
+  const lx = Math.min(360 - half, Math.max(half, mx + nx * s * eff));
+  return g4text(lx, my + ny * s * eff + 4, label, fs, INK);
 };
 
 /** 이등변삼각형 범용 — apexDeg가 "실제" 꼭지각(도)이라 그림과 라벨이 늘 일치한다.
@@ -3604,9 +3612,10 @@ export function m2ExamRightAltFig(o: {
   let out = g4poly([A, B, C]);
   if (o.showAlt !== false) {
     out += g4line(A, D, GEO.hlC, 2.4);
-    if (o.rightAtD !== false) out += rightMark(D.x, D.y, 180, 9);
+    if (o.rightAtD !== false) out += rightMark(D.x, D.y, 180, 11);
   }
-  if (o.rightAtA) out += g4right(A, B, C);
+  // ∠BAC=90°가 이 구도의 전제라 직각 마크는 기본 표시(2026-07-22 파일럿 검수 반영).
+  if (o.rightAtA !== false) out += g4right(A, B, C, 11);
   if (o.labels?.BD) out += g4side(B, D, o.labels.BD, cen, 15, false, 11.5);
   if (o.labels?.DC) out += g4side(D, C, o.labels.DC, cen, 15, false, 11.5);
   if (o.labels?.BC) out += g4side(B, C, o.labels.BC, cen, 30, false, 11.5);
@@ -3709,7 +3718,7 @@ export function m2ExamTrapCutFig(o: {
   if (o.shape === "right") out += g4right(A, D, B, 9) + g4right(B, A, C, 9);
   if (o.perp) {
     const Hp = { x: D.x, y: gy };
-    out += g4line(D, Hp, GEO.hlC, 2.2, "6 5") + rightMark(Hp.x, Hp.y, 180, 9);
+    out += g4line(D, Hp, GEO.hlC, 2.2, "6 5") + rightMark(Hp.x, Hp.y, 180, 11);
     out += dot(Hp.x, Hp.y, GEO.pt, 3) + ptLabel(Hp.x, Hp.y, o.perpName ?? "H", 0, 18);
     if (o.labels?.DH) out += g4text(D.x - 9, (D.y + gy) / 2 + 4, o.labels.DH, 11.5, GEO.hlC, "end");
     if (o.labels?.HC) out += g4side(Hp, C, o.labels.HC, cen, 15, false, 11.5);
@@ -3918,11 +3927,12 @@ export function m2ExamCentroidFig(o: {
     if (sl.on === "BD" || sl.on === "DC" || sl.on === "BC") out += g4side(seg[0], seg[1], sl.label, cen, 30, false, 11.5);
     else if (sl.on === "AD" || sl.on === "BE" || sl.on === "CF") {
       // 중선 "전체" 라벨은 중점이 아니라 위쪽 30% 지점 — G 이름·점(⅔ 지점)과 겹치지 않는다.
+      // 간격 4→12px: 라벨이 중선 위에 걸리던 파일럿 눈검수(29번) 반영.
       const at = m2lerp(seg[0], seg[1], 0.3);
       const away = { x: at.x - cen.x, y: at.y - cen.y };
       const len = Math.hypot(away.x, away.y) || 1;
-      out += g4text(at.x + (away.x / len) * 4 - 8, at.y + (away.y / len) * 4 + 4, sl.label, 11.5, GEO.ink, "end");
-    } else out += g4side(seg[0], seg[1], sl.label, cen, 13, true, 11.5);
+      out += g4text(at.x + (away.x / len) * 12 - 15, at.y + (away.y / len) * 12 + 4, sl.label, 11.5, GEO.ink, "end");
+    } else out += g4side(seg[0], seg[1], sl.label, cen, 15, true, 11.5);
   }
   if (o.marks?.length) out += g4marks(pts, o.marks, { A: ["B", "C"], B: ["A", "C"], C: ["A", "B"], G: ["B", "C"], D: ["B", "A"], E: ["C", "A"], F: ["A", "B"] });
   if (o.showG !== false) out += dot(G.x, G.y, GEO.hlC, 3.6) + ptLabel(G.x, G.y, o.gName ?? "G", 0, -11, GEO.hlC);
@@ -3997,14 +4007,19 @@ export function m2ExamRightTriFig(o: {
     const Araw = { x: 0, y: o.b };
     const Craw = { x: o.a, y: 0 };
     const c = Math.hypot(o.a, o.b);
-    const nx = (Craw.y - Araw.y) / c;
-    const ny = -(Craw.x - Araw.x) / c;
+    let nx = (Craw.y - Araw.y) / c;
+    let ny = -(Craw.x - Araw.x) / c;
+    // D는 항상 오른쪽으로 펼친다 — 왼쪽 접힘은 AD가 AB와 겹쳐 보이는 시각 퇴화(파일럿 36번 검수).
+    if (nx < 0) {
+      nx = -nx;
+      ny = -ny;
+    }
     raw.push([Craw, { x: Craw.x + nx * o.dual.d, y: Craw.y + ny * o.dual.d }]);
   }
   const { g, H } = m2fit(raw, 250, 170, 360, 46);
   const [A, B, C] = g[0];
   const cen = g4cen([A, B, C]);
-  let out = g4poly([A, B, C]) + g4right(B, A, C, 10);
+  let out = g4poly([A, B, C]) + g4right(B, A, C, 12);
   if (o.labels?.a) out += g4side(B, C, o.labels.a, cen, 15, false, 11.5);
   if (o.labels?.b) out += g4side(A, B, o.labels.b, cen, 15, false, 11.5);
   if (o.labels?.c) out += g4side(A, C, o.labels.c, cen, 15, false, 11.5);
@@ -4012,7 +4027,7 @@ export function m2ExamRightTriFig(o: {
   if (o.dual) {
     const D = g[1][1];
     const cen2 = g4cen([A, C, D]);
-    out += g4poly([A, C, D], "none", 2.4) + g4right(C, A, D, 9);
+    out += g4poly([A, C, D], "none", 2.4) + g4right(C, A, D, 11);
     if (o.dual.dLabel) out += g4side(C, D, o.dual.dLabel, cen2, 14, false, 11.5);
     if (o.dual.hypLabel) out += g4side(A, D, o.dual.hypLabel, cen2, 15, false, 11.5);
     out += ptLabel(D.x, D.y, o.dual.dName ?? "D", 12, 4);
@@ -4147,7 +4162,8 @@ export function m2ExamSolidPairFig(o: {
       s += `<path d="M${cx - r} ${baseY} A${r} ${Math.max(8, r * 0.24)} 0 0 0 ${cx + r} ${baseY}" stroke="${GEO.ink}" stroke-width="2.4" fill="none"/>`;
       s += lineSvg(cx - r, ty, cx - r, baseY, GEO.ink, 2.4) + lineSvg(cx + r, ty, cx + r, baseY, GEO.ink, 2.4);
       s += `<ellipse cx="${cx}" cy="${ty}" rx="${r}" ry="${Math.max(8, r * 0.24)}" fill="none" stroke="${GEO.ink}" stroke-width="2.4"/>`;
-      if (labels?.[0]) s += lineSvg(cx, ty, cx + r, ty, GEO.hlC, 2) + dot(cx, ty, GEO.hlC, 2.6) + g4text(cx + r / 2, ty - 9, labels[0], 11.5, GEO.hlC);
+      // 반지름 라벨은 윗면 타원 테를 넘겨 얹는다(테에 걸리던 파일럿 눈검수 5번 반영).
+      if (labels?.[0]) s += lineSvg(cx, ty, cx + r, ty, GEO.hlC, 2) + dot(cx, ty, GEO.hlC, 2.6) + g4text(cx + r / 2, ty - Math.max(13, r * 0.24 + 8), labels[0], 11.5, GEO.hlC);
       if (labels?.[1]) s += g4text(cx + r + 10, baseY - hh / 2 + 4, labels[1], 11.5, GEO.ink, "start");
     } else if (o.kind === "cone") {
       const r = dims[0] * unit;

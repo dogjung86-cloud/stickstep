@@ -1,179 +1,249 @@
-// 중2 수학 Ⅴ. 도형의 닮음과 피타고라스 정리: 단원 종합 평가 풀, 레슨 7 삼각형의 중점연결정리: 절반의 지름길 (m2u5e110~e127) · 책 206쪽
-// 유형 쿼터: mcq 9 + multi 2 = 11 · num 5 · word 2, diff 7/7/4.
-// 함정 계보(교과서 대조): 절반 방향 혼동(2배↔절반), 중점 사각형=평행사변형(대각선 근거), 사다리꼴 중간 평균.
-// 수치 앵커 회피: 레슨 7/14·16·12→28·18→9·11→22·10·14→24·30→15·380→190·65°·58° 회피(브리프 준수).
-// num 정답 등록부(중복 없음): 17·38·30·26·34.
-// word 정답: 중점(e126)·중점연결정리(e127) · '평행사변형'은 e120 문두·정답 보기와 명제 중복이라 교체.
-// 표기: em대시 금지, 뺄셈·차는 −(U+2212), 기하 기호는 gsym·유니코드 리터럴(mfmt 미사용).
+// 중2 수학 Ⅴ. 도형의 닮음과 피타고라스 정리: 단원 종합 평가 풀 v2, 레슨 7 삼각형의 중점연결정리 (책 206쪽)
+// (m2u5e110~e127) · 2026-07 교과서 준거 재출제(정본 설계표 qa/m2u5-v2-blueprint.md, 규격 v2).
+// 유형 쿼터: mcq 9 + multi 2 = 11 · num 7, diff 7/7/4. word 0(규격 v2, 교과서 실측 계승).
+// 그림 원칙: 수치는 라벨 단위 병기("12 cm"·"x cm"), 관계 조건은 문두, 실각·실비 검산 완료(각 문항 주석).
+// 트리플·앵커 배정은 설계표 §2·§2-1이 정본. 표기: mfmt 미사용(gsym·유니코드 리터럴), em대시 금지, −는 U+2212.
 import type { ExamItem } from "./types";
 import { gsym } from "../../ui/geoKit";
-import { m2ExamMidsegFig, m2ExamMidQuadFig, m2ExamTrapCutFig } from "../../ui/examFiguresMath";
-const L = "m2u5l7";
+import {
+  m2ExamMidsegFig,
+  m2ExamMidQuadFig,
+} from "../../ui/examFiguresMath";
 
 export const POOL_M2U5L7: ExamItem[] = [
   {
-    id: "m2u5e110", lessonId: L, type: "mcq",
-    prompt: `그림에서 점 M, N은 각각 ${gsym("ABC", "tri")}의 두 변 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}의 중점이에요. ${gsym("BC", "seg")}=26 cm일 때, ${gsym("MN", "seg")}의 길이는?`,
-    figure: m2ExamMidsegFig({ B: 58, C: 50, mode: "MN", labels: { BC: "26 cm", MN: "x cm" } }),
-    options: ["13 cm", "52 cm", "26 cm", "6.5 cm", "39 cm"],
+    // [슬롯 110] 검산: M, N이 중점이면 MN=½BC=46/2=23.
+    id: "m2u5e110", lessonId: "m2u5l7", type: "num",
+    prompt: `그림에서 점 M, N은 각각 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}의 중점이에요. ${gsym("BC", "seg")}=46 cm일 때, ${gsym("MN", "seg")}의 길이 <i class='mv'>x</i>는 몇 cm인지 구하세요.`,
+    figure: m2ExamMidsegFig({
+      B: 62, C: 48, ticks: true, paraMarks: true,
+      labels: { BC: "46 cm", MN: "x cm" },
+    }),
+    answer: "23", numKind: "int", unitLabel: "cm", diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>삼각형의 두 변의 중점을 이은 선분은 나머지 변과 평행하고, 길이는 그 절반이에요(중점연결정리).<br>① M, N이 중점이라는 표시(같은 눈금)를 확인<br>② MN=½×BC=½×46=<b>23</b> ✓<span class='xh'>계산 실수 격파</span>92라고 답했다면 절반이 아니라 2배를 한 거예요. 중점을 이은 선분 MN은 밑변 BC보다 짧은 쪽이에요. 그림에서도 MN이 BC보다 위에 있는 짧은 선분이니, 계산 결과가 그림의 크기 감각과 맞는지 확인하면 방향 실수를 바로 잡을 수 있어요. 이 정리는 △AMN∽△ABC(닮음비 1:2, SAS)에서 나온 것이라, 닮음비 1:2만 기억해도 절반이 바로 보여요.",
+    core: "중점끼리 이으면 평행+절반, 닮음비 1:2!",
+  },
+  {
+    // [슬롯 111] 검산: BC=2×MN=2×16=32.
+    id: "m2u5e111", lessonId: "m2u5l7", type: "num",
+    prompt: `그림에서 점 M, N은 각각 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}의 중점이에요. ${gsym("MN", "seg")}=16 cm일 때, ${gsym("BC", "seg")}의 길이 <i class='mv'>x</i>는 몇 cm인지 구하세요.`,
+    figure: m2ExamMidsegFig({
+      B: 61, C: 49, ticks: true, paraMarks: true,
+      labels: { MN: "16 cm", BC: "x cm" },
+    }),
+    answer: "32", numKind: "int", unitLabel: "cm", diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>중점연결정리를 거꾸로 써요.<br>① MN=½BC<br>② 16=½x이므로 x=16×2=<b>32</b> ✓<span class='xh'>계산 실수 격파</span>16÷2=8로 답했다면 방향이 뒤집힌 거예요. MN이 절반 쪽이니 BC는 그 2배죠. 그림에서 BC가 아래쪽의 긴 밑변이라는 위치 감각으로도 확인할 수 있어요. 이 정리는 △AMN∽△ABC(닮음비 1:2)의 특별한 경우라서, '절반'과 '2배' 중 어느 쪽을 쓸지는 구하는 변이 작은 삼각형 쪽인지 큰 삼각형 쪽인지로 판단하면 돼요. 검산: 16:32=1:2!",
+    core: "역산은 ×2, MN이 절반이고 BC가 원본!",
+  },
+  {
+    // [슬롯 112] 검산: MN∥BC → 동위각 ∠AMN=∠B=64°.
+    id: "m2u5e112", lessonId: "m2u5l7", type: "mcq",
+    prompt: `그림에서 점 M, N은 각각 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}의 중점이고 ∠B=64°예요. ∠AMN의 크기는?`,
+    figure: m2ExamMidsegFig({
+      B: 64, C: 44, ticks: true, paraMarks: true,
+    }),
+    options: ["64°", "32°", "116°", "58°", "126°"],
     answer: 0, diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>삼각형의 두 변의 중점을 이은 선분은 나머지 한 변과 평행하고, 그 길이는 절반이에요.<br>① 점 M, N은 각각 AB, AC의 중점이에요<br>② 그러면 MN은 BC의 절반이 돼요<br>③ MN=½×26=<b>13 cm</b><span class='xh'>오답 하나씩 격파</span>52 cm는 26을 오히려 2배 한 값인데, 중점끼리 이은 선분은 밑변보다 길어질 수 없어요. 26 cm는 BC를 그대로 옮겨 적어 절반으로 줄이는 과정을 빠뜨린 값이에요. 6.5 cm는 26을 4로 나눠 절반을 두 번 적용한 값이고, 39 cm는 26의 1.5배라 어느 쪽도 절반 관계가 아니에요. 중점끼리 이으면 항상 밑변의 절반이 된다는 점을 기억하세요.",
-    core: "두 중점 이으면 밑변의 절반!",
+    explain: "<span class='xh'>정답 풀이</span>중점연결정리의 '평행' 쪽을 쓰는 문제예요.<br>① M, N이 중점이므로 MN∥BC<br>② 평행선에서 동위각은 같으므로 ∠AMN=∠B=<b>64°</b> ✓<span class='xh'>오답 하나씩 격파</span>32°는 길이의 절반 규칙을 각에까지 적용한 값이에요. 절반이 되는 것은 길이(MN=½BC)뿐이고, 각은 평행 덕분에 그대로 복사돼요. 116°는 보각(180−64), 58°와 126°는 어림이죠. 중점연결정리가 주는 두 가지 결론(평행, 절반) 중 문제가 어느 쪽을 쓰는지 구분하는 연습이에요. 각을 물으면 평행, 길이를 물으면 절반이에요.",
+    core: "각은 평행으로 복사, 절반은 길이 전용!",
   },
   {
-    id: "m2u5e111", lessonId: L, type: "mcq",
-    prompt: `점 M, N이 각각 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}의 중점이고 ${gsym("MN", "seg")}=16 cm예요. 이때 ${gsym("BC", "seg")}의 길이는?`,
-    options: ["16 cm", "32 cm", "8 cm", "48 cm", "64 cm"],
-    answer: 1, diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>중점을 이은 선분 MN은 BC의 절반이니, 거꾸로 BC는 MN의 2배예요.<br>① MN은 두 중점을 이은 선분이에요<br>② MN=½BC이므로 BC=2×MN<br>③ BC=2×16=<b>32 cm</b><span class='xh'>오답 하나씩 격파</span>16 cm는 MN을 그대로 옮겨 BC와 MN을 같다고 본 값이에요. 8 cm는 오히려 16을 절반으로 줄인 값인데, BC는 MN보다 길어야 하니 방향이 반대예요. 48 cm는 16의 3배, 64 cm는 16의 4배라 2배 관계를 넘어선 값이고요. 절반의 반대는 2배라는 관계만 정확히 세우면 돼요.",
-    core: "절반의 반대는 2배, MN×2=BC!",
+    // [슬롯 113] 검산: 세 변 9·15·20(둘레 44) → 중점삼각형 각 변은 절반, 둘레 22.
+    //  실각: 변 AB=9(대각 C)·AC=15(대각 B)·BC=20(대각 A) → A≈110°, B≈45°, C≈25°.
+    id: "m2u5e113", lessonId: "m2u5l7", type: "mcq",
+    prompt: `그림에서 점 M, N, D는 ${gsym("ABC", "tri")} 세 변의 중점이에요. ${gsym("MND", "tri")}의 둘레는?`,
+    figure: m2ExamMidsegFig({
+      B: 45, C: 25, mode: "three", ticks: true,
+      labels: { AB: "9 cm", AC: "15 cm", BC: "20 cm" },
+    }),
+    options: ["22 cm", "44 cm", "11 cm", "33 cm", "88 cm"],
+    answer: 0, diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>세 중점을 이으면 중점연결정리가 세 번 적용돼요.<br>① 각 변이 마주 보는 변의 절반: 9÷2, 15÷2, 20÷2<br>② 중점삼각형의 둘레=(9+15+20)÷2=44÷2=<b>22 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>44 cm는 원래 삼각형의 둘레를 그대로 답한 값이에요. 11 cm는 절반을 두 번 해 ¼로 줄인 값인데, 절반이 되는 것은 한 번뿐이죠. 33 cm는 둘레의 ¾, 88 cm는 반대로 2배를 한 값이에요. 변마다 따로 4.5, 7.5, 10을 구해 더해도 되지만, 세 변이 전부 절반이 되니 둘레도 통째로 절반이라는 사실을 쓰면 한 번의 나눗셈으로 끝나요.",
+    core: "중점삼각형의 둘레 = 원래 둘레의 절반!",
   },
   {
-    id: "m2u5e112", lessonId: L, type: "mcq",
-    prompt: `점 M, N은 각각 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}의 중점이에요. ∠B=47°일 때, ∠AMN의 크기는?`,
-    figure: m2ExamMidsegFig({ B: 47, C: 61, mode: "MN", marks: [{ at: "B", label: "47°" }, { at: "AMN", label: "x°" }] }),
-    options: ["94°", "43°", "47°", "133°", "23.5°"],
-    answer: 2, diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>MN이 BC와 평행하므로 ∠AMN과 ∠B는 서로 동위각이에요.<br>① 점 M, N이 중점이라 MN∥BC예요<br>② 평행선에서 동위각의 크기는 서로 같아요<br>③ ∠AMN=∠B=<b>47°</b><span class='xh'>오답 하나씩 격파</span>94°는 47°를 2배 한 값인데 동위각은 크기가 그대로 같아요. 43°는 90°에서 47°를 뺀 여각이라 직각과 헷갈린 값이고, 133°는 180°에서 47°를 뺀 값인데 ∠AMN과 ∠B는 더해서 180°가 되는 관계가 아니라 크기가 같은 관계예요. 23.5°는 47°의 절반이고요. MN∥BC에서 같은 위치에 놓인 각은 크기가 같다는 점이 핵심이에요.",
-    core: "MN∥BC, 동위각으로 크기가 같아요!",
-  },
-  {
-    id: "m2u5e113", lessonId: L, type: "mcq",
-    prompt: `그림의 사각형 ABCD에서 네 변 ${gsym("AB", "seg")}, ${gsym("BC", "seg")}, ${gsym("CD", "seg")}, ${gsym("DA", "seg")}의 중점을 각각 P, Q, R, S라고 해요. 사각형 PQRS가 평행사변형인 까닭으로 옳은 것은?`,
-    figure: m2ExamMidQuadFig({ preset: 0, diag: "AC" }),
-    options: [
-      "네 변의 길이가 모두 같기 때문이에요",
-      "두 대각선이 서로를 수직이등분하기 때문이에요",
-      "네 각이 모두 직각이기 때문이에요",
-      "PQ와 SR가 모두 대각선 AC의 절반이면서 평행하기 때문이에요",
-      "이웃한 PQ와 QR의 길이가 같기 때문이에요",
-    ],
-    answer: 3, diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>대각선 AC를 그으면 까닭이 보여요.<br>① △ABC에서 P, Q는 중점이라 PQ∥AC, PQ=½AC예요<br>② △ACD에서 S, R도 중점이라 SR∥AC, SR=½AC예요<br>③ 따라서 PQ와 SR는 평행하고 길이도 같아 PQRS는 평행사변형이에요<span class='xh'>오답 하나씩 격파</span>네 변의 길이가 모두 같다는 설명은 마름모의 조건이라 일반 사각형에서는 보장되지 않아요. 두 대각선이 서로를 수직이등분한다는 것도 마름모 성질이고요. 네 각이 모두 직각이라는 건 직사각형 이야기라 항상 참은 아니에요. 이웃한 PQ와 QR가 같다는 것도 평행사변형의 근거가 못 돼요. 한 쌍의 대변이 평행하고 길이가 같으면 평행사변형이에요.",
-    core: "대각선으로 두 변이 평행·같음을 보인다!",
-  },
-  {
-    id: "m2u5e114", lessonId: L, type: "mcq",
-    prompt: `사각형 ABCD의 네 변의 중점을 이어 사각형 PQRS를 만들었어요. 두 대각선이 ${gsym("AC", "seg")}=18 cm, ${gsym("BD", "seg")}=16 cm일 때, 사각형 PQRS의 둘레는?`,
-    figure: m2ExamMidQuadFig({ preset: 1, diag: "both", labels: { AC: "18 cm", BD: "16 cm" } }),
-    options: ["17 cm", "68 cm", "18 cm", "16 cm", "34 cm"],
-    answer: 4, diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>중점 사각형의 각 변은 대각선의 절반이에요.<br>① PQ=SR=½AC=9 cm, QR=SP=½BD=8 cm예요<br>② 둘레=9+8+9+8이라 AC+BD와 같아요<br>③ 둘레=18+16=<b>34 cm</b><span class='xh'>오답 하나씩 격파</span>17 cm는 18과 16의 합을 절반만 한 값이라 네 변을 다 더하지 않은 거예요. 68 cm는 34를 다시 2배 한 값이고요. 18 cm는 대각선 AC 하나만, 16 cm는 BD 하나만 본 값이라 둘 다 나머지 절반을 빠뜨렸어요. 중점 사각형의 둘레는 두 대각선의 길이를 더한 것과 같다는 결론을 기억하세요.",
-    core: "중점 사각형 둘레 = 두 대각선의 합!",
-  },
-  {
-    id: "m2u5e115", lessonId: L, type: "mcq",
-    prompt: `그림에서 점 M, N, D는 각각 ${gsym("ABC", "tri")}의 세 변의 중점이에요. ${gsym("ABC", "tri")}의 둘레가 44 cm일 때, 세 중점을 이어 만든 ${gsym("MND", "tri")}의 둘레는?`,
-    figure: m2ExamMidsegFig({ B: 56, C: 54, mode: "three" }),
-    options: ["22 cm", "88 cm", "44 cm", "11 cm", "14.7 cm"],
+    // [슬롯 114] 검산: M 중점+MN∥BC → N도 중점(정리의 역) → AN=½AC=9.
+    id: "m2u5e114", lessonId: "m2u5l7", type: "mcq",
+    prompt: `그림의 ${gsym("ABC", "tri")}에서 점 M은 ${gsym("AB", "seg")}의 중점이고 ${gsym("MN", "seg")}∥${gsym("BC", "seg")}예요. ${gsym("AC", "seg")}=18 cm일 때, ${gsym("AN", "seg")}의 길이는?`,
+    figure: m2ExamMidsegFig({
+      B: 62, C: 47, ticks: true, paraMarks: true,
+      labels: { AC: "18 cm" },
+    }),
+    options: ["9 cm", "18 cm", "6 cm", "12 cm", "4.5 cm"],
     answer: 0, diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>세 변의 중점을 이으면 안쪽에 작은 삼각형이 생겨요.<br>① 각 중점을 이은 변은 마주 보는 변의 절반이에요<br>② 세 변이 모두 절반이면 둘레도 절반이에요<br>③ △MND의 둘레=½×44=<b>22 cm</b><span class='xh'>오답 하나씩 격파</span>88 cm는 44를 2배 한 값이라 안쪽 삼각형이 오히려 커진 셈이니 맞지 않아요. 44 cm는 원래 삼각형의 둘레를 그대로 옮긴 값이고요. 11 cm는 44를 4로 나눠 절반을 두 번 적용한 값, 14.7 cm는 44를 3으로 나눈 값이라 셋 다 절반 관계가 아니에요. 세 변이 각각 절반이면 둘레도 정확히 절반이 된다는 점을 기억하세요.",
-    core: "세 중점 삼각형의 둘레는 원래의 절반!",
+    explain: "<span class='xh'>정답 풀이</span>중점 하나와 평행만으로 나머지 중점이 공짜로 나와요.<br>① M이 중점이고 MN∥BC이면, 평행선이 두 변을 같은 비(1:1)로 자르므로 N도 AC의 중점<br>② AN=½AC=½×18=<b>9 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>6 cm는 1:2로 잘린다고 착각한 값이에요. M이 중점이라는 것이 비를 1:1로 고정해 줘요. 4.5 cm는 ¼로 두 번 줄인 값, 12 cm는 ⅔ 어림이죠. 이 성질은 중점연결정리의 역방향(중점+평행→중점)으로, 정리를 앞뒤로 자유롭게 쓸 수 있는지 확인하는 단골 각도예요. 평행선의 비 성질(앞 레슨)과 중점이 만나는 다리이기도 하죠.",
+    core: "중점+평행이면 반대편도 중점(정리의 역)!",
   },
   {
-    id: "m2u5e116", lessonId: L, type: "mcq",
-    prompt: `사다리꼴 ABCD에서 ${gsym("AD", "seg")}∥${gsym("BC", "seg")}이고, 점 E, F는 각각 두 변 ${gsym("AB", "seg")}, ${gsym("DC", "seg")}의 중점이에요. ${gsym("AD", "seg")}=36 cm, ${gsym("BC", "seg")}=52 cm일 때, ${gsym("EF", "seg")}의 길이는?`,
-    figure: m2ExamTrapCutFig({ top: 36, bot: 52, t: 0.5, labels: { AD: "36 cm", BC: "52 cm", EF: "x cm" }, midTicks: true }),
-    options: ["16 cm", "44 cm", "88 cm", "22 cm", "36 cm"],
-    answer: 1, diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>사다리꼴에서 두 변의 중점을 이은 선분은 평행한 두 변의 길이의 평균이에요.<br>① EF는 AD와 BC의 중점을 이은 선분이에요<br>② EF=(AD+BC)÷2예요<br>③ EF=(36+52)÷2=<b>44 cm</b><span class='xh'>오답 하나씩 격파</span>16 cm는 52에서 36을 뺀 두 변의 차라 평균과는 다른 값이에요. 88 cm는 36과 52를 더하기만 하고 절반으로 나누지 않은 값이고요. 22 cm는 합을 4로 나눠 절반을 한 번 더 적용한 값, 36 cm는 위 변 AD를 그대로 옮긴 값이에요. 가운데 선분은 두 평행한 변을 더해 2로 나눈 평균이라는 점이 핵심이에요.",
-    core: "사다리꼴 중간 선분 = 두 변의 평균!",
+    // [슬롯 115] 검산: 바리뇽, PQ=½AC=44/2=22.
+    id: "m2u5e115", lessonId: "m2u5l7", type: "num",
+    prompt: `그림에서 점 P, Q, R, S는 사각형 ABCD 네 변의 중점이에요. 대각선 ${gsym("AC", "seg")}=44 cm일 때, ${gsym("PQ", "seg")}의 길이 <i class='mv'>x</i>는 몇 cm인지 구하세요.`,
+    figure: m2ExamMidQuadFig({
+      preset: 0, diag: "AC", ticks: true, shade: true,
+      labels: { AC: "44 cm", PQ: "x cm" },
+    }),
+    answer: "22", numKind: "int", unitLabel: "cm", diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>사각형에 대각선 AC를 그으면 두 삼각형으로 나뉘어요.<br>① △ABC에서 P, Q는 두 변의 중점이므로 중점연결정리에 따라 PQ∥AC, PQ=½AC<br>② x=44÷2=<b>22</b> ✓<span class='xh'>이렇게 확인해요</span>사각형 문제처럼 보여도 대각선 하나를 그으면 삼각형의 중점연결정리 문제가 돼요. 반대쪽 △ACD에서도 SR=½AC=22가 되니 PQ=SR이고, 같은 방법으로 대각선 BD를 그으면 QR=PS=½BD예요. 두 쌍의 대변이 각각 같아지니 네 중점을 이은 사각형 PQRS는 언제나 평행사변형이 되죠. 44×2=88로 답했다면 절반과 2배의 방향이 뒤집힌 것이니 그림의 크기 감각으로 확인하세요.",
+    core: "네 변의 중점 사각형은 대각선의 절반 변, 항상 평행사변형!",
   },
   {
-    id: "m2u5e117", lessonId: L, type: "mcq",
-    prompt: `${gsym("ABC", "tri")}에서 점 M, N은 각각 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}의 중점이에요. 다시 ${gsym("AMN", "tri")}에서 점 P, Q는 각각 ${gsym("AM", "seg")}, ${gsym("AN", "seg")}의 중점이고요. ${gsym("BC", "seg")}=40 cm일 때, ${gsym("PQ", "seg")}의 길이는?`,
-    options: ["20 cm", "5 cm", "10 cm", "40 cm", "80 cm"],
-    answer: 2, diff: 3,
-    explain: "<span class='xh'>정답 풀이</span>중점을 이을 때마다 길이가 절반씩 줄어요.<br>① M, N은 AB, AC의 중점이라 MN=½×40=20 cm예요<br>② P, Q는 AM, AN의 중점이라 PQ=½×MN이에요<br>③ PQ=½×20=<b>10 cm</b><span class='xh'>오답 하나씩 격파</span>20 cm는 첫 단계 MN까지만 구하고 멈춘 값이에요. 5 cm는 절반을 세 번 적용해 한 단계 더 나아간 값이고요. 40 cm는 BC를 그대로 옮긴 값, 80 cm는 오히려 2배 한 값이라 방향이 반대예요. 중점 잇기를 두 번 했으니 절반을 두 번, 곧 4분의 1이 되어 10 cm가 맞아요.",
-    core: "중점 잇기 두 번이면 4분의 1!",
+    // [슬롯 116] 검산: PQ=SR=½AC=11, QR=PS=½BD=8 → 둘레 2(11+8)=38.
+    id: "m2u5e116", lessonId: "m2u5l7", type: "num",
+    prompt: `그림에서 점 P, Q, R, S는 사각형 ABCD 네 변의 중점이에요. ${gsym("AC", "seg")}=22 cm, ${gsym("BD", "seg")}=16 cm일 때, 사각형 PQRS의 둘레는 몇 cm인지 구하세요.`,
+    figure: m2ExamMidQuadFig({
+      preset: 1, diag: "both", ticks: true, shade: true,
+      labels: { AC: "22 cm", BD: "16 cm" },
+    }),
+    answer: "38", numKind: "int", unitLabel: "cm", diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>두 대각선이 각각 두 쌍의 변을 책임져요.<br>① PQ=SR=½AC=11<br>② QR=PS=½BD=8<br>③ 둘레=2×(11+8)=<b>38</b> ✓<br>정리하면 중점 사각형의 둘레는 두 대각선 길이의 합과 같아요.<span class='xh'>계산 실수 격파</span>(22+16)÷2=19로 답하면 절반을 한 번 더 나눈 거예요. 네 변이 각각 대각선의 절반이니 둘레(네 변의 합)는 절반×4, 즉 대각선 합(38) 그대로가 되죠. PQ가 어느 대각선의 절반인지 헷갈리면 △ABC 안에서 중점연결정리를 다시 그려 보세요. P, Q가 AB, BC의 중점이니 PQ는 AC와 짝이에요. 검산: 2×(11+8)=38=22+16!",
+    core: "중점 사각형의 둘레 = 두 대각선의 합!",
   },
   {
-    id: "m2u5e118", lessonId: L, type: "mcq",
-    prompt: `강 건너 두 지점 B, C 사이의 거리를 직접 잴 수 없어요. 한 지점 A를 정하고 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}의 중점 M, N을 잡아 ${gsym("MN", "seg")}=130 m로 쟀어요. 두 지점 B, C 사이의 거리는?`,
-    options: ["130 m", "65 m", "390 m", "260 m", "520 m"],
-    answer: 3, diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>직접 잴 수 없는 거리를 중점연결정리로 구하는 상황이에요.<br>① M, N이 AB, AC의 중점이라 MN=½BC예요<br>② 거꾸로 BC=2×MN이에요<br>③ BC=2×130=<b>260 m</b><span class='xh'>오답 하나씩 격파</span>130 m는 재어 둔 MN을 그대로 답한 값이라 두 배로 늘리는 과정을 빠뜨렸어요. 65 m는 오히려 절반으로 줄인 값인데 BC는 MN보다 길어야 하니 방향이 반대예요. 390 m는 3배, 520 m는 4배라 2배 관계를 벗어난 값이고요. 잴 수 있는 MN을 2배 하면 건널 수 없는 BC를 알 수 있다는 게 이 정리의 쓸모예요.",
-    core: "잰 MN의 2배가 못 재는 BC!",
+    // [슬롯 117] 검산: BC=24 → MN=12 → PQ(△AMN의 중점연결)=6.
+    id: "m2u5e117", lessonId: "m2u5l7", type: "mcq",
+    prompt: `그림에서 점 M, N은 ${gsym("ABC", "tri")}의 두 변 AB, AC의 중점이에요. 다시 ${gsym("AMN", "tri")}에서 두 변 AM, AN의 중점을 P, Q라 할 때, ${gsym("BC", "seg")}=24 cm이면 ${gsym("PQ", "seg")}의 길이는?`,
+    figure: m2ExamMidsegFig({
+      B: 60, C: 48, ticks: true, paraMarks: true,
+      labels: { BC: "24 cm" },
+    }),
+    options: ["6 cm", "12 cm", "3 cm", "8 cm", "18 cm"],
+    answer: 0, diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>같은 정리를 두 번 겹쳐 써요.<br>① △ABC에서: MN=½BC=12<br>② △AMN에서: PQ=½MN=6<br>③ PQ=<b>6 cm</b> ✓<br>결국 PQ=¼BC, 절반의 절반이에요.<span class='xh'>오답 하나씩 격파</span>12 cm는 한 번만 적용하고 멈춘 값(MN)이에요. 문제는 두 번째 삼각형 안의 PQ까지 내려가라고 했죠. 3 cm는 ⅛로 세 번 줄인 값, 8 cm는 ⅓ 어림이에요. 정리를 반복 적용하면 ½, ¼, ⅛로 계속 줄어드는 구조가 보이는데, 이런 '접기 반복' 감각은 종이접기나 프랙털 무늬에서도 그대로 만나요.",
+    core: "정리 반복 적용: 절반의 절반은 ¼!",
   },
   {
-    id: "m2u5e119", lessonId: L, type: "multi",
-    prompt: `점 M, N이 각각 ${gsym("ABC", "tri")}의 두 변 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}의 중점일 때, 다음 중 옳은 것을 모두 고르세요.`,
+    // [슬롯 118] 바리뇽 진술 multi. 검산: 평행사변형 항상·PQ=½AC·AC=BD면 마름모 참.
+    id: "m2u5e118", lessonId: "m2u5l7", type: "multi",
+    prompt: "그림에서 점 P, Q, R, S는 사각형 ABCD 네 변의 중점이에요. 옳은 것을 모두 고르세요.",
+    figure: m2ExamMidQuadFig({
+      preset: 2, diag: "both", ticks: true, shade: true,
+    }),
     options: [
-      "MN과 BC는 서로 평행해요",
-      "MN의 길이는 BC의 절반이에요",
-      "△AMN과 △ABC는 닮음이고 닮음비는 1:2예요",
-      "△AMN의 넓이는 △ABC의 넓이의 절반이에요",
-      "MN의 길이는 BC의 2배예요",
+      "사각형 PQRS는 항상 평행사변형이다",
+      `${gsym("PQ", "seg")}=½${gsym("AC", "seg")}이다`,
+      `${gsym("AC", "seg")}=${gsym("BD", "seg")}이면 사각형 PQRS는 마름모가 된다`,
+      `${gsym("PQ", "seg")}=½${gsym("BD", "seg")}이다`,
+      "사각형 PQRS의 넓이는 사각형 ABCD의 넓이와 같다",
     ],
-    answer: [0, 1, 2], diff: 3,
-    explain: "<span class='xh'>정답 풀이</span>중점연결정리의 성질을 하나씩 확인해요.<br>① 두 변의 중점을 이으면 MN∥BC예요<br>② 길이는 MN=½BC예요<br>③ ∠AMN=∠B, ∠ANM=∠C라 △AMN∽△ABC이고 대응변의 비가 1:2라 닮음비는 1:2예요<span class='xh'>오답 하나씩 격파</span>넓이가 절반이라는 설명은 틀려요. 닮음비가 1:2이면 넓이의 비는 그 제곱인 1:4라, △AMN의 넓이는 △ABC의 4분의 1이에요. MN이 BC의 2배라는 설명도 방향이 반대라 틀렸어요. MN은 절반이라 BC보다 짧아야 해요. 평행, 절반, 닮음비 1:2 세 가지가 이 정리의 핵심 성질이에요.",
-    core: "닮음비 1:2면 넓이비는 1:4!",
+    answer: [0, 1, 2], diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>대각선 AC를 그으면 △ABC와 △ACD에서 중점연결정리가 두 번 적용돼요.<br>① PQ∥AC∥SR, PQ=SR=½AC → 한 쌍의 대변이 평행하고 같으니 <b>항상 평행사변형</b> ✓<br>② PQ=½AC ✓<br>③ AC=BD이면 PQ=QR이 되어 네 변이 모두 같아지니 마름모 ✓<span class='xh'>오답 하나씩 격파</span>PQ의 짝은 AC예요. P, Q가 AB, BC의 중점이라 △ABC 안에서 AC와 평행·절반 관계가 생기죠. BD의 절반이 되는 것은 QR과 PS예요. 넓이는 원래 사각형의 절반이 되는 것으로 알려져 있으니 같다는 진술은 틀려요. 아무리 찌그러진 사각형이라도 중점만 이으면 반듯한 평행사변형이 나온다는 것, 이 단원에서 가장 마법 같은 결론이에요.",
+    core: "찌그러져도 중점을 이으면 평행사변형, 짝은 같은 삼각형 안에서!",
   },
   {
-    id: "m2u5e120", lessonId: L, type: "multi",
-    prompt: `사각형 ABCD의 네 변의 중점을 차례로 이어 사각형 PQRS를 만들었어요. 다음 중 옳은 것을 모두 고르세요.`,
+    // [슬롯 119] 검산: 세 변 12·17·21 둘레 50 → 중점삼각형 둘레 25. 실각 (12,21,17): A≈91°·B≈54°·C≈35°.
+    id: "m2u5e119", lessonId: "m2u5l7", type: "num",
+    prompt: `그림에서 점 M, N, D는 ${gsym("ABC", "tri")} 세 변의 중점이에요. ${gsym("MND", "tri")}의 둘레는 몇 cm인지 구하세요.`,
+    figure: m2ExamMidsegFig({
+      B: 54, C: 35, mode: "three", ticks: true,
+      labels: { AB: "12 cm", AC: "17 cm", BC: "21 cm" },
+    }),
+    answer: "25", numKind: "int", unitLabel: "cm", diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>세 중점을 이으면 각 변이 마주 보는 변의 절반이 돼요.<br>① 원래 둘레: 12+17+21=50<br>② 중점삼각형의 둘레는 그 절반: 50÷2=<b>25</b> ✓<span class='xh'>계산 실수 격파</span>변마다 6, 8.5, 10.5를 구해 더해도 25가 나오지만, 소수 계산이 끼어들어 실수 여지가 커져요. 세 변이 전부 절반이 되니 둘레도 통째로 절반이라는 성질을 쓰면 나눗셈 한 번으로 끝나죠. 12+17+21을 12+17=29, 29+21=50으로 차분히 더하는 것만 조심하면 돼요. 각 변의 절반이 어느 변과 짝인지(MN↔BC처럼 마주 보는 변) 헷갈려도 둘레 계산에는 영향이 없다는 것도 이 접근의 장점이에요.",
+    core: "셋 다 절반이면 둘레도 절반, 통째로 나눠라!",
+  },
+  {
+    // [슬롯 120] 검산: ∠C=180−70−62=48, MN∥BC 동위각 → ∠ANM=∠C=48°.
+    id: "m2u5e120", lessonId: "m2u5l7", type: "mcq",
+    prompt: `그림에서 점 M, N은 각각 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}의 중점이고 ∠A=70°, ∠B=62°예요. ∠ANM의 크기는?`,
+    figure: m2ExamMidsegFig({
+      B: 62, C: 48, ticks: true, paraMarks: true,
+    }),
+    options: ["48°", "62°", "70°", "55°", "42°"],
+    answer: 0, diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>두 단계로 풀어요.<br>① 삼각형 내각의 합: ∠C=180°−70°−62°=48°<br>② MN∥BC이므로 동위각 ∠ANM=∠C=<b>48°</b> ✓<span class='xh'>오답 하나씩 격파</span>62°는 ∠B를 그대로 옮긴 값인데, ∠ANM의 동위각 짝은 같은 쪽인 ∠C예요(∠AMN의 짝이 ∠B죠). N이 AC 위의 점이니 C 쪽 각과 짝이라고 위치로 기억하면 좋아요. 70°는 ∠A를 옮긴 값, 55°와 42°는 어림이에요. 내각의 합으로 빠진 각을 채우고, 평행으로 복사하는 두 동작을 이어 붙이는 전형적인 2단 문제예요.",
+    core: "빠진 각은 내각 합으로, 복사는 같은 쪽 동위각으로!",
+  },
+  {
+    // [슬롯 121] 검산: MN=½×28=14.
+    id: "m2u5e121", lessonId: "m2u5l7", type: "mcq",
+    prompt: `그림에서 점 M, N은 각각 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}의 중점이에요. ${gsym("BC", "seg")}=28 cm일 때, ${gsym("MN", "seg")}의 길이는?`,
+    figure: m2ExamMidsegFig({
+      B: 63, C: 46, ticks: true, paraMarks: true,
+      labels: { BC: "28 cm" },
+    }),
+    options: ["14 cm", "56 cm", "28 cm", "7 cm", "21 cm"],
+    answer: 0, diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>중점연결정리 그대로예요.<br>① M, N이 중점(그림의 같은 눈금 표시)<br>② MN=½BC=½×28=<b>14 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>56 cm는 2배를 한 값인데, MN은 위쪽의 짧은 선분이니 원본보다 길어질 수 없어요. 7 cm는 ¼로 두 번 나눈 값, 21 cm는 ¾ 어림이에요. 근거가 궁금하면 △AMN과 △ABC를 보세요. AM:AB=AN:AC=1:2에 ∠A가 공통이니 SAS 닮음이고, 닮음비 1:2에서 절반이 나와요. 정리는 닮음의 특별한 경우라는 연결을 기억하면 공식이 아니라 이해로 남아요.",
+    core: "중점연결 = 닮음비 1:2의 특별한 경우!",
+  },
+  {
+    // [슬롯 122] 검산: 중점삼각형 둘레 27 → 원 둘레 54.
+    id: "m2u5e122", lessonId: "m2u5l7", type: "mcq",
+    prompt: `그림에서 점 M, N, D는 ${gsym("ABC", "tri")} 세 변의 중점이에요. ${gsym("MND", "tri")}의 둘레가 27 cm일 때, ${gsym("ABC", "tri")}의 둘레는?`,
+    figure: m2ExamMidsegFig({
+      B: 57, C: 49, mode: "three", ticks: true,
+    }),
+    options: ["54 cm", "13.5 cm", "27 cm", "81 cm", "40.5 cm"],
+    answer: 0, diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>절반 관계를 거꾸로 타고 올라가요.<br>① 중점삼각형의 둘레=원래 둘레의 ½<br>② 27=½x이므로 x=<b>54 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>13.5 cm는 절반을 한 번 더 나눈 값이에요. 역산 문제인데 정방향 공식을 또 적용한 거죠. 81 cm는 3배, 40.5 cm는 1.5배로 어림한 값이에요. 어느 쪽이 절반이고 어느 쪽이 원본인지는 그림에서 바로 보여요. 가운데 작은 삼각형이 절반 쪽이니 바깥 큰 삼각형은 2배죠. 역산 유형은 '주어진 것이 절반 쪽인가 원본 쪽인가'를 한 줄 적고 시작하면 방향 실수가 사라져요.",
+    core: "역산 첫 줄: 주어진 값이 절반 쪽인지 원본 쪽인지!",
+  },
+  {
+    // [슬롯 123] 검산: 둘레 46 = AC+BD → BD=46−26=20.
+    id: "m2u5e123", lessonId: "m2u5l7", type: "num",
+    prompt: `그림에서 점 P, Q, R, S는 사각형 ABCD 네 변의 중점이에요. 사각형 PQRS의 둘레가 46 cm이고 ${gsym("AC", "seg")}=26 cm일 때, ${gsym("BD", "seg")}의 길이는 몇 cm인지 구하세요.`,
+    figure: m2ExamMidQuadFig({
+      preset: 0, diag: "both", ticks: true,
+      labels: { AC: "26 cm" },
+    }),
+    answer: "20", numKind: "int", unitLabel: "cm", diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>중점 사각형의 둘레가 두 대각선의 합과 같다는 성질을 거꾸로 써요.<br>① 둘레=AC+BD<br>② 46=26+BD<br>③ BD=<b>20</b> ✓<span class='xh'>계산 실수 격파</span>46−26을 계산한 뒤 다시 2로 나누거나 2를 곱하고 싶어지는 유혹을 참으세요. 둘레 속에 이미 '절반×4'가 들어 있어서, 둘레와 대각선 합은 1:1로 맞아떨어져요(PQ=SR=½AC로 AC 몫이 26, QR=PS=½BD로 BD 몫이 20). 성질을 유도 과정째 기억하면 역산에서 계수를 붙일지 말지 흔들리지 않아요. 검산: ½×26×2+½×20×2=26+20=46!",
+    core: "둘레=대각선 합, 역산은 뺄셈 한 번!",
+  },
+  {
+    // [슬롯 124] 검산: 두 번 접기, 중점삼각형의 중점삼각형 둘레 = 원 둘레의 ¼: 60→15.
+    id: "m2u5e124", lessonId: "m2u5l7", type: "mcq",
+    prompt: `${gsym("ABC", "tri")}의 세 변의 중점을 이어 ${gsym("MND", "tri")}를 만들고, 다시 ${gsym("MND", "tri")} 세 변의 중점을 이어 새 삼각형을 만들었어요. ${gsym("ABC", "tri")}의 둘레가 60 cm일 때, 새 삼각형의 둘레는?`,
+    figure: m2ExamMidsegFig({
+      B: 59, C: 47, mode: "three", ticks: true,
+    }),
+    options: ["15 cm", "30 cm", "20 cm", "7.5 cm", "12 cm"],
+    answer: 0, diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>절반이 두 번 겹쳐요.<br>① 첫 중점삼각형의 둘레: 60×½=30<br>② 두 번째 중점삼각형의 둘레: 30×½=<b>15 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>30 cm는 한 번에서 멈춘 값이고, 7.5 cm는 세 번 접은 값이에요. 몇 번 접었는지 세는 것이 전부죠. 20 cm는 ⅓로 오해한 값인데, 중점은 언제나 ½이지 ⅓이 아니에요. 이렇게 같은 규칙을 반복하면 60→30→15→7.5로 절반씩 줄어드는 수열이 나와요. 반복 축소의 감각은 프랙털 도형(시에르핀스키 삼각형)이 만들어지는 원리 그 자체랍니다.",
+    core: "반복 접기는 ½을 거듭제곱처럼, 횟수만 세라!",
+  },
+  {
+    // [슬롯 125] MS 진술 multi. 검산: MN∥BC·MN=15·닮음 참, ⅓ 거짓, AM=AN 일반 거짓.
+    id: "m2u5e125", lessonId: "m2u5l7", type: "multi",
+    prompt: `그림에서 점 M, N은 각각 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}의 중점이고 ${gsym("BC", "seg")}=30 cm예요. 옳은 것을 모두 고르세요.`,
+    figure: m2ExamMidsegFig({
+      B: 62, C: 46, ticks: true, paraMarks: true,
+      labels: { BC: "30 cm" },
+    }),
     options: [
-      "PQRS는 항상 평행사변형이에요",
-      "PQ와 RS의 길이는 서로 같아요",
-      "PQRS의 둘레는 두 대각선의 길이의 합과 같아요",
-      "PQRS는 항상 마름모예요",
-      "PQRS의 넓이는 사각형 ABCD의 넓이와 같아요",
+      `${gsym("MN", "seg")}∥${gsym("BC", "seg")}`,
+      `${gsym("MN", "seg")}=15 cm`,
+      `${gsym("AMN", "tri")}∽${gsym("ABC", "tri")}`,
+      `${gsym("MN", "seg")}은 ${gsym("BC", "seg")}의 ⅓이다`,
+      `${gsym("AM", "seg")}=${gsym("AN", "seg")}이다`,
     ],
-    answer: [0, 1, 2], diff: 3,
-    explain: "<span class='xh'>정답 풀이</span>어떤 사각형이든 네 변의 중점을 이으면 성질이 정해져요.<br>① 마주 보는 두 변이 각각 대각선의 절반이라 PQRS는 항상 평행사변형이에요<br>② PQ와 RS는 둘 다 대각선 AC의 절반이라 길이가 같아요<br>③ 네 변의 합이 ½AC+½BD+½AC+½BD라 둘레는 두 대각선의 합과 같아요<span class='xh'>오답 하나씩 격파</span>항상 마름모라는 설명은 틀려요. 네 변이 모두 같아지려면 두 대각선의 길이가 같아야 하는데 일반 사각형에서는 그렇지 않아요. 넓이가 원래 사각형과 같다는 설명도 틀렸어요. 중점 사각형의 넓이는 원래 사각형의 절반이에요. 평행사변형이 된다는 것과 둘레가 대각선의 합이라는 점이 늘 성립하는 성질이에요.",
-    core: "네 변 중점 사각형은 언제나 평행사변형!",
+    answer: [0, 1, 2], diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>중점연결정리의 두 결론과 그 뿌리를 한 번에 확인해요.<br>① MN∥BC ✓<br>② MN=½×30=15 cm ✓<br>③ 뿌리인 닮음: AM:AB=AN:AC=1:2, ∠A 공통으로 SAS 닮음 ✓<span class='xh'>오답 하나씩 격파</span>⅓은 무게중심 단원에서 만날 비율이고 중점연결은 언제나 ½이에요. AM=AN은 AB=AC인 이등변삼각형일 때만 우연히 성립하는 것으로, 중점이라는 조건은 각 변 '안에서' 절반이라는 뜻이지 두 변끼리 같다는 뜻이 아니에요. 조건이 말하는 범위를 넘겨짚지 않는 것도 판별의 기술이에요.",
+    core: "중점연결은 ½·평행·닮음 세트, ⅓은 남의 단원!",
   },
   {
-    id: "m2u5e121", lessonId: L, type: "num",
-    prompt: `점 M, N이 각각 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}의 중점이고 ${gsym("BC", "seg")}=34 cm예요. ${gsym("MN", "seg")}의 길이는 몇 cm인지 구하세요.`,
-    answer: "17", numKind: "int", unitLabel: "cm", diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>두 변의 중점을 이은 선분은 밑변의 절반이에요.<br>① MN=½BC예요<br>② MN=½×34<br>③ MN=<b>17 cm</b><span class='xh'>계산 실수 격파</span>34를 절반으로 나눌 때 2로 나눠야 하는데 그대로 두면 34 cm가 나와요. 반대로 2를 곱해 68 cm로 답하면 절반과 2배를 혼동한 거예요. 34를 4로 나눠 8.5 cm로 적는 것도 절반을 두 번 적용한 실수예요. 중점끼리 이으면 밑변의 절반이니 34÷2=17 cm가 정확하고, 17×2=34로 되짚으면 검산도 끝나요.",
-    core: "MN은 밑변 BC의 절반, 34÷2=17!",
+    // [슬롯 126] 검산: BC=2×13=26.
+    id: "m2u5e126", lessonId: "m2u5l7", type: "num",
+    prompt: `그림에서 점 M, N은 각각 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}의 중점이에요. ${gsym("MN", "seg")}=13 cm일 때, ${gsym("BC", "seg")}의 길이 <i class='mv'>x</i>는 몇 cm인지 구하세요.`,
+    figure: m2ExamMidsegFig({
+      B: 58, C: 50, ticks: true, paraMarks: true,
+      labels: { MN: "13 cm", BC: "x cm" },
+    }),
+    answer: "26", numKind: "int", unitLabel: "cm", diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>절반 관계를 거꾸로 써요.<br>① MN=½BC<br>② 13=½x, x=13×2=<b>26</b> ✓<span class='xh'>계산 실수 격파</span>13÷2=6.5로 가면 방향이 뒤집힌 거예요. 답이 소수로 나오는 순간 방향을 의심해 보는 것도 좋은 습관이에요(이 단원의 답은 대부분 자연수로 설계되니까요). MN은 위쪽 작은 삼각형의 변이고 BC는 바닥의 원본이니, 원본을 구할 때는 2배가 자연스럽죠. 검산: 13:26=1:2로 중점연결정리의 비와 정확히 맞고, MN이 짧고 BC가 긴 그림의 위치 감각과도 일치해요!",
+    core: "원본 복원은 ×2, 소수가 나오면 방향 의심!",
   },
   {
-    id: "m2u5e122", lessonId: L, type: "num",
-    prompt: `점 M, N이 각각 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}의 중점이고 ${gsym("MN", "seg")}=19 cm예요. ${gsym("BC", "seg")}의 길이는 몇 cm인지 구하세요.`,
-    answer: "38", numKind: "int", unitLabel: "cm", diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>MN은 BC의 절반이니 BC는 MN의 2배예요.<br>① MN=½BC에서 BC=2×MN<br>② BC=2×19<br>③ BC=<b>38 cm</b><span class='xh'>계산 실수 격파</span>19를 그대로 두어 19 cm로 답하면 MN과 BC를 같다고 본 실수예요. 19를 절반으로 나눠 9.5 cm로 적으면 곱셈과 나눗셈을 뒤바꾼 거예요. 19에 3을 곱해 57 cm로 적는 것도 관계를 잘못 세운 경우예요. MN의 2배가 BC이므로 19×2=38 cm가 정확하고, 38의 절반이 19인지 되짚으면 검산까지 끝나요.",
-    core: "BC는 MN의 2배, 19×2=38!",
-  },
-  {
-    id: "m2u5e123", lessonId: L, type: "num",
-    prompt: `사각형 ABCD의 네 변의 중점을 이어 만든 사각형 PQRS의 둘레는 몇 cm인지 구하세요. 두 대각선의 길이는 ${gsym("AC", "seg")}=13 cm, ${gsym("BD", "seg")}=17 cm예요.`,
-    answer: "30", numKind: "int", unitLabel: "cm", diff: 3,
-    explain: "<span class='xh'>정답 풀이</span>중점 사각형의 둘레는 두 대각선의 길이를 더한 것과 같아요.<br>① 네 변은 각각 대각선의 절반이라 둘레=½AC+½BD+½AC+½BD예요<br>② 정리하면 둘레=AC+BD예요<br>③ 둘레=13+17=<b>30 cm</b><span class='xh'>계산 실수 격파</span>13과 17을 더한 뒤 다시 절반으로 나눠 15 cm로 적으면 이미 절반을 반영한 공식을 한 번 더 나눈 실수예요. 13 cm나 17 cm처럼 한 대각선만 쓰면 나머지 절반 두 변을 빠뜨린 거예요. 각 변이 대각선의 절반이고 그런 변이 둘씩 있어 결국 두 대각선의 합인 30 cm가 되고, 네 변 6.5+8.5+6.5+8.5를 직접 더해도 30으로 같아요.",
-    core: "중점 사각형 둘레 = AC+BD = 30!",
-  },
-  {
-    id: "m2u5e124", lessonId: L, type: "num",
-    prompt: `삼각형의 세 변의 중점을 이어 만든 삼각형의 둘레는 몇 cm인지 구하세요. 원래 삼각형의 둘레는 52 cm예요.`,
-    answer: "26", numKind: "int", unitLabel: "cm", diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>세 중점을 이은 삼각형의 각 변은 마주 보는 변의 절반이에요.<br>① 세 변이 모두 절반이면 둘레도 절반이에요<br>② 안쪽 삼각형의 둘레=½×52<br>③ 둘레=<b>26 cm</b><span class='xh'>계산 실수 격파</span>52를 그대로 두어 52 cm로 답하면 절반으로 줄이는 과정을 빠뜨린 거예요. 52를 4로 나눠 13 cm로 적으면 절반을 두 번 적용한 실수이고, 2배를 해 104 cm로 답하면 방향을 반대로 잡은 거예요. 세 변이 각각 절반이라 둘레도 절반인 26 cm가 정확하고, 26×2=52로 되짚으면 검산까지 한 번에 끝나요.",
-    core: "세 중점 삼각형 둘레는 절반, 52÷2=26!",
-  },
-  {
-    id: "m2u5e125", lessonId: L, type: "num",
-    prompt: `사다리꼴 ABCD에서 ${gsym("AD", "seg")}∥${gsym("BC", "seg")}이고 점 E, F는 각각 두 변 ${gsym("AB", "seg")}, ${gsym("DC", "seg")}의 중점이에요. ${gsym("AD", "seg")}=28 cm, ${gsym("BC", "seg")}=40 cm일 때, ${gsym("EF", "seg")}의 길이는 몇 cm인지 구하세요.`,
-    answer: "34", numKind: "int", unitLabel: "cm", diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>사다리꼴에서 두 변의 중점을 이은 선분은 평행한 두 변의 평균이에요.<br>① EF=(AD+BC)÷2예요<br>② EF=(28+40)÷2<br>③ EF=<b>34 cm</b><span class='xh'>계산 실수 격파</span>28과 40을 더한 68을 그대로 두면 절반으로 나누는 과정을 빠뜨린 거예요. 40에서 28을 뺀 12로 답하면 두 변의 차를 구한 실수이고요. 합 68을 4로 나눠 17로 적으면 절반을 한 번 더 적용한 경우예요. 두 평행한 변을 더해 2로 나눈 (28+40)÷2=34 cm가 정확해요.",
-    core: "사다리꼴 중간 선분은 두 변의 평균, 34!",
-  },
-  {
-    id: "m2u5e126", lessonId: L, type: "word",
-    prompt: "선분 위에 있으면서 그 선분을 길이가 같은 두 부분으로 나누는 점을 그 선분의 ___이라고 해요.",
-    answer: "중점",
-    bank: ["중점", "무게중심", "꼭짓점", "교점", "수선의 발", "원점", "중심", "끝점"],
-    diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>선분을 똑같은 길이의 두 도막으로 나누는 한가운데 점이 <b>중점</b>이에요. 이 단원에서 두 중점을 이은 선분이 밑변의 절반이 되는 성질을 배웠죠.<span class='xh'>낱말 하나씩 격파</span>무게중심은 삼각형의 세 중선이 만나는 점이라 선분 하나를 나누는 점이 아니에요. 꼭짓점은 변과 변이 만나는 모서리 점이고, 교점은 두 선이 서로 만나 생기는 점이라 길이를 반으로 나눈다는 뜻이 없어요. 수선의 발은 수직으로 내린 선이 닿는 점, 원점은 수직선에서 기준이 되는 0의 자리, 중심은 원의 한가운데 점이라 모두 달라요. 끝점은 선분의 양 끝이라 가운데가 아니에요. 선분을 이등분하는 점의 이름은 중점 하나뿐이에요.",
-    core: "선분을 이등분하는 한가운데 점이 중점!",
-  },
-  {
-    id: "m2u5e127", lessonId: L, type: "word",
-    prompt: "삼각형의 두 변의 중점을 이은 선분은 나머지 한 변과 평행하고 길이가 그 절반이에요. 이 정리를 삼각형의 ___라고 해요.",
-    answer: "중점연결정리",
-    bank: ["중점연결정리", "수직이등분선", "외심", "내심", "대각선", "둘레", "높이", "합동"],
-    diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>두 변의 중점을 이으면 평행과 절반이 한꺼번에 따라 나오는 이 성질의 이름이 <b>중점연결정리</b>예요. 중점을 연결해서 얻는 정리라는 뜻 그대로죠.<span class='xh'>낱말 하나씩 격파</span>수직이등분선은 선분을 수직으로 반 나누는 직선이라 정리의 이름이 아니에요. 외심과 내심은 삼각형 안팎의 특별한 점을 부르는 말이고, 대각선은 다각형에서 꼭짓점을 잇는 선분이에요. 둘레와 높이는 도형의 길이를 재는 말이라 성질의 이름이 될 수 없어요. 합동은 두 도형이 완전히 포개지는 관계를 뜻해 이 정리와는 달라요. 중점을 이어 평행·절반을 얻는 정리는 중점연결정리예요.",
-    core: "중점을 이으면 평행하고 절반, 그 이름이 중점연결정리!",
+    // [슬롯 127] 검산: AC=2×PQ=18, BD=2×QR=14 → AC+BD=32.
+    id: "m2u5e127", lessonId: "m2u5l7", type: "mcq",
+    prompt: `그림에서 점 P, Q, R, S는 사각형 ABCD 네 변의 중점이고 ${gsym("PQ", "seg")}=9 cm, ${gsym("QR", "seg")}=7 cm예요. ${gsym("AC", "seg")}+${gsym("BD", "seg")}의 값은?`,
+    figure: m2ExamMidQuadFig({
+      preset: 1, diag: "both", ticks: true,
+      labels: { PQ: "9 cm", QR: "7 cm" },
+    }),
+    options: ["32 cm", "16 cm", "23 cm", "18 cm", "28 cm"],
+    answer: 0, diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>변에서 대각선으로 거꾸로 올라가요.<br>① PQ=½AC이므로 AC=2×9=18<br>② QR=½BD이므로 BD=2×7=14<br>③ AC+BD=18+14=<b>32 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>16 cm는 9+7로, 변의 합에서 멈춘 값이에요. 대각선은 각 변의 2배이니 합도 2배가 되죠. 23 cm나 18 cm는 한쪽만 2배 한 값, 28 cm는 14×2로 헷갈린 값이에요. PQ의 짝이 AC(P, Q가 있는 쪽 삼각형의 밑변)이고 QR의 짝이 BD라는 대응만 정확하면, 나머지는 2배 두 번과 덧셈뿐이에요. 검산: 중점 사각형 둘레 2×(9+7)=32=AC+BD로 앞 문제의 성질과도 맞아떨어져요!",
+    core: "변→대각선은 ×2, 짝은 같은 삼각형 안에서!",
   },
 ];

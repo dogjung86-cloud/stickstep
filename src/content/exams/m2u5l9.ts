@@ -1,184 +1,245 @@
-// 중2 수학 Ⅴ. 도형의 닮음과 피타고라스 정리: 단원 종합 평가 풀, 레슨 9 삼각형의 무게중심: 균형의 한 점 (m2u5e146~e163) · 책 208~210쪽
-// 유형 쿼터: mcq 8 + multi 2 = 10 · num 6 · word 2, diff 7/7/4.
-// 함정 계보(교과서 대조): 2:1 방향 혼동(꼭짓점 쪽이 2), 6등분 넓이(△GBC=⅓), 무게중심↔외심 성질 혼동.
-// 수치 앵커 회피: 레슨 AD 18·AG8·GD5·중선 24·GD7·넓이 36·42·BC16·30 회피(브리프 준수).
-// num 정답 등록부(중복 없음): 9·24·16·18·13·22.
-// word 정답: 무게중심(e162)·중선(e163).
-// 표기: em대시 금지, 뺄셈·차는 −(U+2212), 기하 기호는 gsym·유니코드 리터럴(mfmt 미사용).
+// 중2 수학 Ⅴ. 도형의 닮음과 피타고라스 정리: 단원 종합 평가 풀 v2, 레슨 9 삼각형의 무게중심 (책 208~210쪽)
+// (m2u5e146~e163) · 2026-07 교과서 준거 재출제(정본 설계표 qa/m2u5-v2-blueprint.md, 규격 v2).
+// 유형 쿼터: mcq 9 + multi 2 = 11 · num 7, diff 7/7/4. word 0(규격 v2, 교과서 실측 계승).
+// 그림 원칙: 수치는 라벨 단위 병기("12 cm"·"x cm"), 관계 조건은 문두, 실각·실비 검산 완료(각 문항 주석).
+// 트리플·앵커 배정은 설계표 §2·§2-1이 정본. 표기: mfmt 미사용(gsym·유니코드 리터럴), em대시 금지, −는 U+2212.
 import type { ExamItem } from "./types";
 import { gsym } from "../../ui/geoKit";
-import { m2ExamCentroidFig } from "../../ui/examFiguresMath";
-const L = "m2u5l9";
+import {
+  m2ExamCentroidFig,
+} from "../../ui/examFiguresMath";
 
 export const POOL_M2U5L9: ExamItem[] = [
   {
-    id: "m2u5e146", lessonId: L, type: "mcq",
-    prompt: `그림에서 점 G는 ${gsym("ABC", "tri")}의 무게중심이고 ${gsym("AD", "seg")}는 중선이에요. ${gsym("AD", "seg")}=21 cm일 때, ${gsym("AG", "seg")}의 길이는?`,
-    figure: m2ExamCentroidFig({ B: 56, C: 50, medians: ["AD"], showG: true, gName: "G", segLabels: [{ on: "AD", label: "21 cm" }] }),
-    options: ["14 cm", "7 cm", "10.5 cm", "42 cm", "21 cm"],
+    // [슬롯 146] 검산: AG=⅔AD=⅔×39=26.
+    id: "m2u5e146", lessonId: "m2u5l9", type: "num",
+    prompt: `그림에서 점 G는 ${gsym("ABC", "tri")}의 무게중심이고 중선 ${gsym("AD", "seg")}의 길이는 39 cm예요. ${gsym("AG", "seg")}의 길이 <i class='mv'>x</i>는 몇 cm인지 구하세요.`,
+    // AD 전체 라벨은 A 근처 쐐기(변 AB와 중선 사이)에 끼어 그림 표기 생략, 문두 수치가 전담(교과서 관행).
+    figure: m2ExamCentroidFig({
+      B: 60, C: 46, medians: ["AD"], showG: true, ticks: ["BD"],
+      segLabels: [{ on: "AG", label: "x cm" }],
+    }),
+    answer: "26", numKind: "int", unitLabel: "cm", diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>무게중심은 중선을 꼭짓점 쪽부터 2:1로 나눠요.<br>① AG:GD=2:1이므로 AG는 중선 AD의 ⅔<br>② x=39×⅔=<b>26</b> ✓<span class='xh'>계산 실수 격파</span>39×⅓=13은 GD, 즉 아래쪽 짧은 조각의 길이예요. 어느 쪽이 2배인지 헷갈리면 무게중심이 꼭짓점보다 밑변에 가깝다는 사실을 떠올리세요. 밑변에 가까우니 꼭짓점 쪽 조각 AG가 긴 쪽(⅔)이에요. 39÷2=19.5로 반을 나누는 것도 2:1을 1:1로 착각한 실수죠. 검산: AG=26, GD=13, 26:13=2:1이고 합이 39로 딱 맞아요.",
+    core: "무게중심은 중선을 2:1로, 꼭짓점 쪽이 ⅔!",
+  },
+  {
+    // [슬롯 147] 검산: GD=⅓AD → AD=9×3=27.
+    id: "m2u5e147", lessonId: "m2u5l9", type: "num",
+    prompt: `그림에서 점 G는 ${gsym("ABC", "tri")}의 무게중심이에요. ${gsym("GD", "seg")}=9 cm일 때, 중선 ${gsym("AD", "seg")}의 길이 <i class='mv'>x</i>는 몇 cm인지 구하세요.`,
+    // AD 전체 라벨은 쐐기 겹침으로 그림 표기 생략, 구할 값 x는 문두가 전담.
+    figure: m2ExamCentroidFig({
+      B: 56, C: 50, medians: ["AD"], showG: true, ticks: ["BD"],
+      segLabels: [{ on: "GD", label: "9 cm" }],
+    }),
+    answer: "27", numKind: "int", unitLabel: "cm", diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>GD는 무게중심이 나눈 두 조각 중 짧은 쪽(밑변 쪽)이에요.<br>① AG:GD=2:1이므로 GD는 전체 중선의 ⅓<br>② AD=9×3=<b>27</b> ✓<span class='xh'>계산 실수 격파</span>9×2=18은 AG만 구한 값이에요. 문제가 묻는 것은 중선 전체 AD이니 AG+GD=18+9=27까지 가야 해요. 거꾸로 9를 AG로 착각하면 AD를 13.5로 구하는 실수가 나오는데, 그림에서 G 아래쪽의 짧은 조각에 9 cm가 붙어 있는지 위치부터 확인하면 막을 수 있어요. 역산 문제는 주어진 조각이 전체의 몇 분의 몇인지부터 정하는 것이 순서예요.",
+    core: "GD는 중선의 ⅓, 역산은 ×3 한 번!",
+  },
+  {
+    // [슬롯 148] 검산: GD=⅓AD=⅓×30=10.
+    id: "m2u5e148", lessonId: "m2u5l9", type: "mcq",
+    prompt: `그림에서 점 G는 ${gsym("ABC", "tri")}의 무게중심이고 중선 ${gsym("AD", "seg")}의 길이는 30 cm예요. ${gsym("GD", "seg")}의 길이는?`,
+    figure: m2ExamCentroidFig({
+      B: 59, C: 47, medians: ["AD"], showG: true, ticks: ["BD"],
+    }),
+    options: ["10 cm", "20 cm", "15 cm", "6 cm", "12 cm"],
     answer: 0, diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>무게중심은 중선을 꼭짓점 쪽에서 2:1로 나눠요.<br>① AG:GD=2:1이라 AG는 중선 전체의 ⅔예요<br>② AG=⅔×AD=⅔×21<br>③ AG=<b>14 cm</b><span class='xh'>오답 하나씩 격파</span>7 cm는 중선의 ⅓인 GD의 길이라 무게중심에서 대변 쪽 조각이에요. 10.5 cm는 21의 절반이라 2:1이 아니라 1:1로 나눈 값이고요. 42 cm는 21을 2배 한 값, 21 cm는 중선 전체를 그대로 옮긴 값이에요. 꼭짓점 쪽이 2, 대변 쪽이 1이라 AG는 전체의 ⅔인 14 cm가 맞아요.",
-    core: "무게중심은 중선을 2:1, AG=⅔중선!",
+    explain: "<span class='xh'>정답 풀이</span>무게중심은 중선을 꼭짓점 쪽 2, 밑변 쪽 1로 나눠요.<br>① AG:GD=2:1<br>② GD는 전체의 ⅓<br>③ GD=30×⅓=<b>10 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>20 cm는 AG(꼭짓점 쪽 ⅔)의 길이예요. 문제가 어느 조각을 묻는지 확인하세요. 15 cm는 2:1을 1:1로 착각해 절반을 낸 값이고, 6 cm는 ⅕, 12 cm는 0.4배 어림이에요. 밑변에 가까운 쪽이 짧은 조각(⅓)이라는 위치 감각, 즉 무게중심이 밑변 쪽으로 치우쳐 있다는 그림 이미지를 기억하면 2:1의 방향을 잊지 않아요.",
+    core: "GD는 밑변 쪽 짧은 조각, 전체의 ⅓!",
   },
   {
-    id: "m2u5e147", lessonId: L, type: "mcq",
-    prompt: `점 G가 ${gsym("ABC", "tri")}의 무게중심이고 ${gsym("ABC", "tri")}의 넓이가 48 cm²일 때, ${gsym("GBC", "tri")}의 넓이는?`,
-    figure: m2ExamCentroidFig({ B: 54, C: 52, medians: ["AD", "BE", "CF"], showG: true, gName: "G", shade: ["GBD", "GDC"] }),
-    options: ["8 cm²", "16 cm²", "24 cm²", "12 cm²", "6 cm²"],
-    answer: 1, diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>세 중선은 삼각형을 넓이가 같은 6조각으로 나눠요.<br>① 무게중심에서 그은 세 중선이 △ABC를 6등분해요<br>② △GBC는 그중 2조각이라 전체의 ⅓이에요<br>③ △GBC=⅓×48=<b>16 cm²</b><span class='xh'>오답 하나씩 격파</span>8 cm²는 6조각 중 한 조각의 넓이라 △GBC의 절반만 본 값이에요. 24 cm²는 전체의 절반이라 세 조각을 센 셈이고요. 12 cm²는 ¼, 6 cm²는 1/8로 나눈 값이라 6등분과 맞지 않아요. △GBC는 6조각 중 2조각이니 전체의 ⅓인 16 cm²가 정확해요.",
-    core: "세 중선은 6등분, △GBC는 전체의 ⅓!",
-  },
-  {
-    id: "m2u5e148", lessonId: L, type: "mcq",
-    prompt: `점 G가 ${gsym("ABC", "tri")}의 무게중심이고, G를 지나 ${gsym("BC", "seg")}에 평행한 직선이 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}와 만나는 점을 각각 E, F라고 해요. 이때 ${gsym("EF", "seg")}와 ${gsym("BC", "seg")}의 관계로 옳은 것은?`,
-    figure: m2ExamCentroidFig({ B: 58, C: 46, medians: ["AD"], showG: true, gName: "G", ef: true, efNames: ["E", "F"] }),
-    options: [
-      "EF는 BC의 ½이에요",
-      "EF는 BC와 길이가 같아요",
-      "EF는 BC의 ⅔예요",
-      "EF는 BC의 ⅓이에요",
-      "EF는 BC의 ¾이에요",
-    ],
-    answer: 2, diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>무게중심은 중선을 꼭짓점 쪽에서 2:1로 나누니, A에서 G까지가 중선의 ⅔예요.<br>① G를 지나 BC에 평행한 직선은 A에서 ⅔ 되는 높이에 있어요<br>② 닮음에서 EF:BC=AG:AD=2:3이에요<br>③ 따라서 EF는 BC의 <b>⅔</b>예요<span class='xh'>오답 하나씩 격파</span>½은 E, F가 두 변의 중점일 때, 곧 중점을 이은 선분의 경우라 무게중심을 지나는 이 직선과는 위치가 달라요. BC와 같다는 설명은 두 선이 겹칠 때뿐이고요. ⅓이나 ¾은 A에서의 높이 비를 잘못 잡은 값이에요. 무게중심은 A에서 ⅔ 지점이라 EF도 BC의 ⅔예요.",
-    core: "무게중심 지나는 평행선 EF는 BC의 ⅔!",
-  },
-  {
-    id: "m2u5e149", lessonId: L, type: "mcq",
-    prompt: `점 G는 ${gsym("ABC", "tri")}의 무게중심이고, 점 G'은 ${gsym("GBC", "tri")}의 무게중심이에요. 중선 ${gsym("AD", "seg")}=45 cm일 때, ${gsym("GG'", "seg")}의 길이는?`,
-    figure: m2ExamCentroidFig({ B: 52, C: 50, medians: ["AD"], showG: true, gName: "G", g2: true, g2Name: "G'", segLabels: [{ on: "AD", label: "45 cm" }] }),
-    options: ["15 cm", "5 cm", "30 cm", "10 cm", "20 cm"],
-    answer: 3, diff: 3,
-    explain: "<span class='xh'>정답 풀이</span>무게중심의 성질을 두 번 적용해요.<br>① AD=45이고 GD=⅓×45=15 cm예요<br>② G'은 △GBC의 무게중심이라 중선 GD를 2:1로 나눠요<br>③ GG'=⅔×GD=⅔×15=<b>10 cm</b><span class='xh'>오답 하나씩 격파</span>15 cm는 GD까지만 구하고 멈춘 값이에요. 5 cm는 GD의 ⅓이라 G'에서 D까지인 나머지 조각이고요. 30 cm는 큰 삼각형의 AG(⅔×45)를 잘못 가져온 값, 20 cm는 근거 없는 값이에요. △GBC에서 G'이 GD를 2:1로 나누니 GG'은 GD의 ⅔인 10 cm가 맞아요.",
-    core: "GD의 ⅔가 GG', 15의 ⅔는 10!",
-  },
-  {
-    id: "m2u5e150", lessonId: L, type: "mcq",
-    prompt: `∠A=90°인 직각삼각형 ABC에서 점 G는 무게중심이고 ${gsym("AD", "seg")}는 빗변 ${gsym("BC", "seg")}에 그은 중선이에요. ${gsym("GD", "seg")}=5 cm일 때, 빗변 ${gsym("BC", "seg")}의 길이는?`,
-    figure: m2ExamCentroidFig({ B: 45, C: 45, medians: ["AD"], showG: true, gName: "G", rightAt: "A", segLabels: [{ on: "GD", label: "5 cm" }] }),
-    options: ["10 cm", "15 cm", "5 cm", "20 cm", "30 cm"],
-    answer: 4, diff: 3,
-    explain: "<span class='xh'>정답 풀이</span>직각삼각형에서 빗변에 그은 중선은 빗변의 절반이에요.<br>① GD=5이고 무게중심이 중선을 2:1로 나눠 GD는 ⅓이라 AD=3×5=15 cm예요<br>② 빗변에 그은 중선 AD는 빗변 BC의 절반이라 BC=2×AD<br>③ BC=2×15=<b>30 cm</b><span class='xh'>오답 하나씩 격파</span>5 cm는 GD 그대로, 15 cm는 중선 AD까지만 구한 값이에요. 10 cm는 GD를 곧바로 2배 해 중선 단계를 건너뛴 값이고요. 20 cm는 근거가 없어요. GD의 3배가 중선 AD(15), 그 중선의 2배가 빗변 BC라서 30 cm가 정확해요.",
-    core: "빗변 중선은 빗변의 절반, GD의 6배!",
-  },
-  {
-    id: "m2u5e151", lessonId: L, type: "mcq",
-    prompt: `삼각형에서 무게중심에 대한 다음 설명 중 옳은 것은?`,
-    options: [
-      "무게중심은 세 중선이 만나는 점이에요",
-      "무게중심은 세 변의 수직이등분선이 만나는 점이에요",
-      "무게중심은 세 각의 이등분선이 만나는 점이에요",
-      "무게중심은 세 꼭짓점에서 같은 거리에 있어요",
-      "무게중심은 세 변에서 같은 거리에 있어요",
-    ],
+    // [슬롯 149] 검산: D는 BC 중점 → BD=½×26=13.
+    id: "m2u5e149", lessonId: "m2u5l9", type: "mcq",
+    prompt: `그림에서 점 G는 ${gsym("ABC", "tri")}의 무게중심이고 ${gsym("BC", "seg")}=26 cm예요. ${gsym("BD", "seg")}의 길이는?`,
+    figure: m2ExamCentroidFig({
+      B: 58, C: 48, medians: ["AD"], showG: true, ticks: ["BD"],
+      segLabels: [{ on: "BC", label: "26 cm" }],
+    }),
+    options: ["13 cm", "26 cm", "6.5 cm", "39 cm", "20 cm"],
     answer: 0, diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>삼각형의 세 중선은 반드시 한 점에서 만나고, 그 점이 무게중심이에요.<br>① 중선은 꼭짓점과 대변의 중점을 이은 선분이에요<br>② 세 중선이 모두 지나는 한 점이 무게중심이에요<br>③ 이 점은 중선을 2:1로 나눠요<span class='xh'>오답 하나씩 격파</span>세 변의 수직이등분선이 만나는 점은 외심이고, 세 각의 이등분선이 만나는 점은 내심이라 무게중심과 다른 점이에요. 세 꼭짓점에서 같은 거리에 있는 점은 외심, 세 변에서 같은 거리에 있는 점은 내심의 성질이고요. 무게중심은 오직 세 중선이 만나는 점으로 정의돼요.",
-    core: "무게중심 = 세 중선이 만나는 점!",
+    explain: "<span class='xh'>정답 풀이</span>중선의 정의로 바로 풀려요.<br>① AD가 중선이므로 D는 BC의 중점<br>② BD=½×26=<b>13 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>중선이라는 말에서 2:1부터 떠올려 26을 2:1로 나누려는 것이 이 문제의 함정이에요. 2:1은 중선 위(AD 방향)의 이야기이고, 밑변 BC는 중점 D가 정확히 절반(1:1)으로 나눠요. 6.5 cm는 ¼, 39 cm는 1.5배, 20 cm는 어림이죠. 무게중심 그림에는 두 종류의 분할이 공존해요. 밑변은 1:1, 중선은 2:1. 어느 선분 위의 이야기인지부터 확인하는 습관이 핵심이에요.",
+    core: "밑변은 1:1(중점), 2:1은 중선 위 전용!",
   },
   {
-    id: "m2u5e152", lessonId: L, type: "mcq",
-    prompt: `점 G가 ${gsym("ABC", "tri")}의 무게중심이고 ${gsym("AD", "seg")}는 중선이에요. ${gsym("GD", "seg")}=8 cm일 때, ${gsym("AG", "seg")}의 길이는?`,
-    options: ["4 cm", "16 cm", "8 cm", "24 cm", "12 cm"],
-    answer: 1, diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>무게중심은 중선을 꼭짓점 쪽에서 2:1로 나눠요.<br>① 꼭짓점 쪽 AG가 2, 대변 쪽 GD가 1이에요<br>② AG:GD=2:1이라 AG=2×GD<br>③ AG=2×8=<b>16 cm</b><span class='xh'>오답 하나씩 격파</span>4 cm는 AG를 GD의 절반으로 본 값인데, 더 긴 쪽은 꼭짓점 쪽 AG예요. 8 cm는 GD를 그대로 옮긴 값이고요. 24 cm는 중선 전체 AD의 길이(3×8)라 AG가 아니에요. 12 cm는 근거 없는 값이고요. 대변 쪽 GD가 1, 꼭짓점 쪽 AG가 2라서 AG는 GD의 2배인 16 cm예요.",
-    core: "꼭짓점 쪽이 2! AG=2×GD=16!",
+    // [슬롯 150] 검산: 중선 3개는 넓이를 6등분, △GBD=54/6=9.
+    id: "m2u5e150", lessonId: "m2u5l9", type: "mcq",
+    prompt: `그림에서 점 G는 ${gsym("ABC", "tri")}의 무게중심이고, ${gsym("ABC", "tri")}의 넓이는 54 cm²예요. 색칠한 ${gsym("GBD", "tri")}의 넓이는?`,
+    figure: m2ExamCentroidFig({
+      B: 58, C: 48, medians: ["AD", "BE", "CF"], showG: true,
+      shade: ["GBD"],
+    }),
+    options: ["9 cm²", "18 cm²", "27 cm²", "6 cm²", "12 cm²"],
+    answer: 0, diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>세 중선은 삼각형의 넓이를 똑같은 여섯 조각으로 나눠요.<br>① 중선은 밑변을 절반으로 나누니 넓이도 절반씩<br>② 세 중선이 만나면 같은 넓이 조각이 6개<br>③ △GBD=54÷6=<b>9 cm²</b> ✓<span class='xh'>오답 하나씩 격파</span>18 cm²는 ⅓(두 조각 몫)로, △GBC처럼 조각 두 개를 합친 삼각형의 넓이예요. 27 cm²는 절반이니 중선 하나가 나눈 큰 조각이죠. 색칠된 부분이 여섯 조각 중 몇 개인지부터 세는 것이 순서예요. 6등분의 근거도 간단해요. △GBD와 △GDC는 밑변 BD=DC에 높이가 같아 넓이가 같고, 이런 짝이 세 중선마다 생겨 결국 여섯 조각이 모두 같아져요.",
+    core: "세 중선은 넓이 6등분, 조각 개수부터 세라!",
   },
   {
-    id: "m2u5e153", lessonId: L, type: "mcq",
-    prompt: `점 G가 ${gsym("ABC", "tri")}의 무게중심이고 ${gsym("BE", "seg")}는 꼭짓점 B에서 그은 중선이에요(E는 ${gsym("CA", "seg")}의 중점). ${gsym("BE", "seg")}=27 cm일 때, ${gsym("BG", "seg")}의 길이는?`,
-    figure: m2ExamCentroidFig({ B: 50, C: 58, medians: ["BE"], showG: true, gName: "G", ticks: ["CE"], segLabels: [{ on: "BE", label: "27 cm" }] }),
-    options: ["9 cm", "13.5 cm", "18 cm", "54 cm", "27 cm"],
-    answer: 2, diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>중선이 AD가 아니어도 무게중심은 어느 중선이든 2:1로 나눠요.<br>① BE도 중선이라 BG:GE=2:1이에요<br>② BG는 중선 BE의 ⅔예요<br>③ BG=⅔×27=<b>18 cm</b><span class='xh'>오답 하나씩 격파</span>9 cm는 중선의 ⅓인 GE라 무게중심에서 대변 쪽 조각이에요. 13.5 cm는 27의 절반이라 2:1이 아니라 1:1로 나눈 값이고요. 54 cm는 27을 2배 한 값, 27 cm는 중선 전체를 그대로 옮긴 값이에요. 어느 중선이든 꼭짓점 쪽이 ⅔라 BG는 18 cm예요.",
-    core: "어느 중선이든 2:1, BG=⅔BE!",
+    // [슬롯 151] 검산: △GBC=△ABC의 ⅓=48÷3=16.
+    id: "m2u5e151", lessonId: "m2u5l9", type: "num",
+    prompt: `그림에서 점 G는 ${gsym("ABC", "tri")}의 무게중심이고 ${gsym("ABC", "tri")}의 넓이는 48 cm²예요. 색칠한 ${gsym("GBC", "tri")}의 넓이는 몇 cm²인지 구하세요.`,
+    figure: m2ExamCentroidFig({
+      B: 57, C: 49, medians: ["AD", "BE", "CF"], showG: true,
+      shade: ["GBD", "GDC"],
+    }),
+    answer: "16", numKind: "int", unitLabel: "cm²", diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>여섯 조각 그림에서 △GBC가 몇 조각인지 세요.<br>① 세 중선은 넓이를 6등분<br>② △GBC=△GBD+△GDC로 두 조각<br>③ 48×2/6=<b>16</b> ✓<span class='xh'>계산 실수 격파</span>48÷6=8에서 멈추면 한 조각(△GBD)만 구한 거예요. 색칠된 부분이 조각 두 개를 합친 삼각형이라는 것을 그림에서 확인해야 해요. 무게중심과 세 꼭짓점을 이으면 삼각형이 △GAB, △GBC, △GCA 셋으로 나뉘고 각각 전체의 ⅓이라는 결론(6조각의 2개씩)을 통째로 기억해 두면, 이런 문제는 나누기 한 번으로 끝나요. 검산: 16×3=48!",
+    core: "꼭짓점 셋과 G를 이으면 ⅓씩 삼등분!",
   },
   {
-    id: "m2u5e154", lessonId: L, type: "multi",
-    prompt: `삼각형의 무게중심 G에 대한 다음 설명 중 옳은 것을 모두 고르세요.`,
+    // [슬롯 152] 검산: BG=⅔×중선 BE=⅔×21=14.
+    id: "m2u5e152", lessonId: "m2u5l9", type: "num",
+    prompt: `그림에서 점 G는 ${gsym("ABC", "tri")}의 무게중심이에요. 중선 ${gsym("BE", "seg")}의 길이가 21 cm일 때, ${gsym("BG", "seg")}의 길이는 몇 cm인지 구하세요.`,
+    figure: m2ExamCentroidFig({
+      B: 60, C: 46, medians: ["AD", "BE"], showG: true,
+      segLabels: [{ on: "BG", label: "x cm" }],
+    }),
+    answer: "14", numKind: "int", unitLabel: "cm", diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>2:1 규칙은 세 중선 모두에 똑같이 적용돼요.<br>① BE도 중선이므로 BG:GE=2:1<br>② BG=BE×⅔=21×⅔=<b>14</b> ✓<span class='xh'>계산 실수 격파</span>21×⅓=7은 GE(중점 쪽 짧은 조각)예요. B에서 출발하는 긴 조각을 물었으니 ⅔죠. 중선이 AD가 아니라 BE로 바뀌면 갑자기 헷갈리는 경우가 많은데, 규칙은 '꼭짓점 쪽이 2'라는 것 하나예요. 어느 중선이든 출발점(꼭짓점)에서 무게중심까지가 ⅔, 무게중심에서 중점까지가 ⅓이에요. 검산: BG:GE=14:7=2:1!",
+    core: "어느 중선이든 꼭짓점 쪽이 ⅔!",
+  },
+  {
+    // [슬롯 153] 검산: AD=27 → GD=9 → GG′=⅔GD=6.
+    id: "m2u5e153", lessonId: "m2u5l9", type: "mcq",
+    prompt: `그림에서 점 G는 ${gsym("ABC", "tri")}의 무게중심이고, 점 G′는 ${gsym("GBC", "tri")}의 무게중심이에요. 중선 ${gsym("AD", "seg")}=27 cm일 때, ${gsym("GG′", "seg")}의 길이는?`,
+    figure: m2ExamCentroidFig({
+      B: 58, C: 48, medians: ["AD"], showG: true, g2: true, ticks: ["BD"],
+    }),
+    options: ["6 cm", "9 cm", "18 cm", "3 cm", "12 cm"],
+    answer: 0, diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>2:1 규칙을 두 번 겹쳐 써요.<br>① △ABC에서: GD=AD×⅓=27÷3=9<br>② △GBC에서 GD는 G′가 놓이는 중선이고, GG′=GD×⅔=9×⅔=<b>6 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>9 cm는 GD에서 멈춘 값이에요. G′는 △GBC의 무게중심이라 그 삼각형의 중선 GD를 다시 2:1로 나누죠. 18 cm는 AG(첫 삼각형의 ⅔)이고, 3 cm는 G′D(⅓의 ⅓), 12 cm는 어림이에요. 결국 GG′=AD×⅓×⅔=AD×2/9로, 같은 규칙이 다른 삼각형에 반복 적용되는 구조예요. 이중 무게중심은 이 반복 감각을 확인하는 단골 심화랍니다.",
+    core: "이중 무게중심 = 2:1 규칙의 반복, ⅓의 ⅔!",
+  },
+  {
+    // [슬롯 154] 진술 multi. 검산: 2:1·한 점·6등분 참 / AG=GD X / 세 변 등거리는 내심 X.
+    id: "m2u5e154", lessonId: "m2u5l9", type: "multi",
+    prompt: "삼각형의 무게중심에 대한 설명으로 옳은 것을 모두 고르세요.",
     options: [
-      "세 중선은 반드시 한 점 G에서 만나요",
-      "무게중심은 각 중선을 꼭짓점 쪽에서 2:1로 나눠요",
-      "세 중선이 나눈 6개의 작은 삼각형은 넓이가 모두 같아요",
-      "무게중심은 세 꼭짓점에서 같은 거리에 있어요",
-      "무게중심은 삼각형의 세 변에 모두 닿는 원의 중심이에요",
-    ],
-    answer: [0, 1, 2], diff: 3,
-    explain: "<span class='xh'>정답 풀이</span>무게중심의 세 가지 핵심 성질을 확인해요.<br>① 삼각형의 세 중선은 항상 한 점에서 만나고 그 점이 무게중심이에요<br>② 무게중심은 각 중선을 꼭짓점 쪽에서 2:1로 나눠요<br>③ 세 중선이 만든 6개의 작은 삼각형은 넓이가 서로 같아요<span class='xh'>오답 하나씩 격파</span>세 꼭짓점에서 같은 거리에 있는 점은 외심이지 무게중심이 아니에요. 세 변에 모두 닿는 원의 중심은 내심이고요. 이 둘은 무게중심과 위치가 다른 점이에요. 한 점에서 만남, 2:1로 나눔, 6조각 넓이가 같음 세 가지가 무게중심의 성질이에요.",
-    core: "한 점·2:1·6등분 넓이가 무게중심 성질!",
-  },
-  {
-    id: "m2u5e155", lessonId: L, type: "multi",
-    prompt: `점 G가 ${gsym("ABC", "tri")}의 무게중심일 때, 넓이에 대한 다음 설명 중 옳은 것을 모두 고르세요.`,
-    options: [
-      "△GBC, △GCA, △GAB의 넓이는 서로 같아요",
-      "△GBC의 넓이는 △ABC의 ⅓이에요",
-      "중선 AD가 나눈 △ABD와 △ACD의 넓이는 같아요",
-      "△GBC의 넓이는 △ABC의 절반이에요",
-      "△GBD와 △GDC의 넓이는 서로 달라요",
+      "무게중심은 중선을 꼭짓점으로부터 2:1로 나눈다",
+      "세 중선은 한 점에서 만난다",
+      "세 중선은 삼각형의 넓이를 6등분한다",
+      "무게중심은 중선의 중점이다",
+      "무게중심은 세 변에서 같은 거리에 있다",
     ],
     answer: [0, 1, 2], diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>무게중심과 중선이 만드는 넓이 관계를 살펴요.<br>① 무게중심에서 각 변으로 이룬 △GBC, △GCA, △GAB는 넓이가 모두 같아요(각각 전체의 ⅓)<br>② 그래서 △GBC는 △ABC의 ⅓이에요<br>③ 중선 AD는 밑변 BC를 이등분하므로 △ABD와 △ACD의 넓이도 같아요<span class='xh'>오답 하나씩 격파</span>△GBC가 전체의 절반이라는 설명은 틀려요. ⅓씩 세 조각으로 나뉘니 절반이 아니에요. △GBD와 △GDC가 서로 다르다는 설명도 틀렸어요. D가 BC의 중점이라 두 삼각형은 밑변과 높이가 같아 넓이가 같아요. 세 조각이 같음, △GBC가 ⅓, 중선이 넓이를 이등분함이 옳은 관계예요.",
-    core: "무게중심은 삼각형을 넓이 같은 셋으로!",
+    explain: "<span class='xh'>정답 풀이</span>무게중심의 3대 성질 그대로예요.<br>① 꼭짓점 쪽부터 2:1 ✓<br>② 세 중선의 교점이 무게중심 ✓<br>③ 여섯 조각의 넓이가 모두 같음 ✓<span class='xh'>오답 하나씩 격파</span>중선의 중점이라는 말은 1:1로 나눈다는 뜻이라 2:1과 모순돼요. 세 변에서 같은 거리에 있는 점은 내심(내접원의 중심)이고, 세 꼭짓점에서 같은 거리는 외심이죠. 무게중심, 내심, 외심은 각각 중선, 각의 이등분선, 수직이등분선의 교점이라는 출신이 달라요. 삼각형의 중심 삼형제를 정의로 구분하는 것이 이런 진술 문제의 바탕이에요.",
+    core: "무게중심=중선 교점·2:1·6등분, 등거리는 남의 성질!",
   },
   {
-    id: "m2u5e156", lessonId: L, type: "num",
-    prompt: `점 G가 ${gsym("ABC", "tri")}의 무게중심이고 ${gsym("AD", "seg")}는 중선이에요. ${gsym("AD", "seg")}=27 cm일 때, ${gsym("GD", "seg")}의 길이는 몇 cm인지 구하세요.`,
-    answer: "9", numKind: "int", unitLabel: "cm", diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>무게중심은 중선을 2:1로 나누니 대변 쪽 GD는 중선의 ⅓이에요.<br>① AG:GD=2:1이라 GD=⅓×AD<br>② GD=⅓×27<br>③ GD=<b>9 cm</b><span class='xh'>계산 실수 격파</span>18 cm는 꼭짓점 쪽 AG(⅔×27)라 GD가 아니에요. 27 cm를 그대로 두거나 절반인 13.5 cm로 적으면 2:1로 나눈다는 점을 놓친 거예요. 27을 2배 한 54 cm도 방향이 반대예요. 대변 쪽은 ⅓이라 GD=27÷3=9 cm가 정확하고, AG=18과 더해 27이 되는지 되짚으면 검산도 끝나요.",
-    core: "대변 쪽 GD는 중선의 ⅓, 27÷3=9!",
-  },
-  {
-    id: "m2u5e157", lessonId: L, type: "num",
-    prompt: `점 G가 ${gsym("ABC", "tri")}의 무게중심이고 ${gsym("ABC", "tri")}의 넓이가 72 cm²예요. ${gsym("GAB", "tri")}의 넓이는 몇 cm²인지 구하세요.`,
-    answer: "24", numKind: "int", unitLabel: "cm²", diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>무게중심에서 각 변으로 이룬 세 삼각형은 넓이가 모두 같아요.<br>① △GAB는 △ABC의 ⅓이에요<br>② △GAB=⅓×72<br>③ △GAB=<b>24 cm²</b><span class='xh'>계산 실수 격파</span>36 cm²는 절반이라 세 조각이 아니라 두 조각으로 나눈 값이에요. 12 cm²는 6조각 중 한 조각(1/6)이라 △GAB의 절반만 본 값이고요. 72 cm²를 그대로 두면 나누는 과정을 빠뜨린 거예요. 무게중심은 삼각형을 넓이가 같은 세 조각으로 나누니 △GAB=72÷3=24 cm²예요.",
-    core: "무게중심의 세 삼각형은 각각 ⅓, 72÷3=24!",
-  },
-  {
-    id: "m2u5e158", lessonId: L, type: "num",
-    prompt: `점 G가 ${gsym("ABC", "tri")}의 무게중심이고, 세 중선이 ${gsym("ABC", "tri")}를 6개의 작은 삼각형으로 나눠요. ${gsym("ABC", "tri")}의 넓이가 96 cm²일 때, 작은 삼각형 한 개의 넓이는 몇 cm²인지 구하세요.`,
-    answer: "16", numKind: "int", unitLabel: "cm²", diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>세 중선은 삼각형을 넓이가 같은 6조각으로 나눠요.<br>① 작은 삼각형 한 개는 전체의 1/6이에요<br>② 한 조각=96÷6<br>③ 한 조각=<b>16 cm²</b><span class='xh'>계산 실수 격파</span>32 cm²는 96을 3으로 나눈 값이라 한 조각이 아니라 두 조각(△GBC 같은)의 넓이예요. 48 cm²는 절반이라 세 조각을 센 값이고요. 24 cm²는 4로 나눈 값이라 6등분과 맞지 않아요. 세 중선이 만든 조각은 6개라 96÷6=16 cm²가 정확하고, 16×6=96으로 되짚으면 검산도 한 번에 끝나요.",
-    core: "세 중선은 넓이 같은 6조각, 96÷6=16!",
-  },
-  {
-    id: "m2u5e159", lessonId: L, type: "num",
-    prompt: `점 G가 ${gsym("ABC", "tri")}의 무게중심이고, G를 지나 ${gsym("BC", "seg")}에 평행한 직선이 ${gsym("AB", "seg")}, ${gsym("AC", "seg")}와 만나는 점을 각각 E, F라고 해요. ${gsym("BC", "seg")}=27 cm일 때, ${gsym("EF", "seg")}의 길이는 몇 cm인지 구하세요.`,
+    // [슬롯 155] 검산: G 지나는 평행선 EF=⅔BC=⅔×27=18.
+    id: "m2u5e155", lessonId: "m2u5l9", type: "num",
+    prompt: `그림에서 점 G는 ${gsym("ABC", "tri")}의 무게중심이고, G를 지나며 ${gsym("BC", "seg")}에 평행한 직선이 두 변과 만나는 점을 E, F라 해요. ${gsym("BC", "seg")}=27 cm일 때, ${gsym("EF", "seg")}의 길이는 몇 cm인지 구하세요.`,
+    figure: m2ExamCentroidFig({
+      B: 58, C: 47, medians: ["AD"], showG: true, ef: true, ticks: ["BD"],
+      segLabels: [{ on: "BC", label: "27 cm" }, { on: "EF", label: "x cm" }],
+    }),
     answer: "18", numKind: "int", unitLabel: "cm", diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>무게중심은 A에서 중선의 ⅔ 되는 지점이라, G를 지나는 평행선도 A에서 ⅔ 높이에 있어요.<br>① 닮음에서 EF:BC=2:3이에요<br>② EF=⅔×BC=⅔×27<br>③ EF=<b>18 cm</b><span class='xh'>계산 실수 격파</span>13.5 cm는 27의 절반이라 E, F를 중점으로 본 값인데, 무게중심을 지나는 직선은 더 아래인 A에서 ⅔ 지점에 있어요. 9 cm는 27의 ⅓이라 비를 거꾸로 잡은 값이고요. 27 cm를 그대로 두면 줄어드는 것을 놓친 거예요. 무게중심을 지나는 평행선은 BC의 ⅔라 18 cm가 정확해요.",
-    core: "무게중심 지나는 평행선 EF=⅔BC, 18!",
+    explain: "<span class='xh'>정답 풀이</span>무게중심과 평행선 단원이 만나는 융합이에요.<br>① G는 중선 AD를 A로부터 ⅔ 지점에서 지나요<br>② EF∥BC이므로 △AEF∽△ABC, 닮음비는 AG:AD=2:3<br>③ EF=BC×⅔=27×⅔=<b>18</b> ✓<span class='xh'>계산 실수 격파</span>절반(13.5)으로 어림하는 것이 흔한 실수예요. G가 중선의 한가운데가 아니라 ⅔ 지점에 있다는 것이 이 문제의 심장이죠. 2:1 규칙이 낮이의 비 2:3(A에서 잰 조각:전체)으로 번역되고, 그 비가 평행선 닮음으로 EF에 전달되는 두 단계 흐름을 따라가 보세요. 앞 단원(평행선의 비)과 이번 단원(무게중심)이 한 문제에서 만나는 대표 융합형이에요.",
+    core: "G 통과 평행선 = 닮음비 2:3, 절반 아님!",
   },
   {
-    id: "m2u5e160", lessonId: L, type: "num",
-    prompt: `점 D가 ${gsym("ABC", "tri")}에서 변 ${gsym("BC", "seg")}의 중점이고 ${gsym("AD", "seg")}는 중선이에요. ${gsym("BC", "seg")}=26 cm일 때, ${gsym("BD", "seg")}의 길이는 몇 cm인지 구하세요.`,
-    answer: "13", numKind: "int", unitLabel: "cm", diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>중선의 발 D는 대변 BC의 중점이에요.<br>① D가 BC의 중점이라 BD=½×BC<br>② BD=½×26<br>③ BD=<b>13 cm</b><span class='xh'>계산 실수 격파</span>26 cm를 그대로 두면 중점이 반으로 나눈다는 점을 놓친 거예요. 26을 2배 한 52 cm는 방향이 반대이고, 26을 3으로 나눈 값은 무게중심의 2:1과 헷갈린 경우예요. 중점은 BC를 반으로 나누니 BD=26÷2=13 cm가 정확하고, BD와 DC를 더해 26이 되는지 되짚으면 검산도 끝나요. 2:1로 나뉘는 건 중선 위의 무게중심이지 밑변이 아니라는 점을 구분하세요.",
-    core: "중선의 발은 대변의 중점, 26÷2=13!",
+    // [슬롯 156] 검산: 균형점 = 무게중심, 꼭짓점에서 중선의 ⅔ → 33×⅔=22.
+    id: "m2u5e156", lessonId: "m2u5l9", type: "mcq",
+    prompt: "삼각형 모양의 나무 쟁반을 손가락 하나로 수평이 되게 받치려고 해요. 받칠 점은 꼭짓점 A와 마주 보는 변의 중점 D를 이은 선분 위에 있고, 이 선분의 길이는 33 cm예요. A로부터 몇 cm 지점을 받쳐야 하나요?",
+    figure: m2ExamCentroidFig({
+      B: 59, C: 48, medians: ["AD"], showG: true, ticks: ["BD"],
+    }),
+    options: ["22 cm", "11 cm", "16.5 cm", "26 cm", "30 cm"],
+    answer: 0, diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>고르게 만든 삼각형 판이 수평으로 균형을 이루는 점이 바로 무게중심이에요.<br>① 받칠 점=무게중심 G<br>② AG=AD×⅔=33×⅔=<b>22 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>16.5 cm는 중선의 절반인데, 무게중심은 한가운데가 아니라 밑변 쪽으로 치우친 ⅔ 지점이에요. 손가락으로 받치는 상상을 해 보면 넓은 밑변 쪽에 살이 더 많으니 균형점도 그쪽으로 쏠리는 것이 자연스럽죠. 11 cm는 ⅓(반대쪽에서 잰 값), 26 cm와 30 cm는 어림이에요. 무게중심이라는 이름 자체가 물리에서 온 것이라는 것, 판을 실제로 오려 실험해 볼 수 있다는 것이 이 개념의 매력이에요.",
+    core: "균형점=무게중심, 꼭짓점에서 ⅔ 지점!",
   },
   {
-    id: "m2u5e161", lessonId: L, type: "num",
-    prompt: `점 G가 ${gsym("ABC", "tri")}의 무게중심이고 ${gsym("AD", "seg")}는 중선이에요. 꼭짓점 쪽 ${gsym("AG", "seg")}와 대변 쪽 ${gsym("GD", "seg")}의 길이의 차가 11 cm일 때, ${gsym("AG", "seg")}의 길이는 몇 cm인지 구하세요.`,
-    answer: "22", numKind: "int", unitLabel: "cm", diff: 3,
-    explain: "<span class='xh'>정답 풀이</span>무게중심은 중선을 2:1로 나누니 AG와 GD의 관계로 식을 세워요.<br>① AG:GD=2:1이라 GD를 <i class='mv'>k</i>라 하면 AG=2<i class='mv'>k</i>예요<br>② 차가 11이라 2<i class='mv'>k</i>−<i class='mv'>k</i>=11, 즉 GD=<i class='mv'>k</i>=11 cm예요<br>③ AG=2<i class='mv'>k</i>=2×11=<b>22 cm</b><span class='xh'>계산 실수 격파</span>11 cm는 차 그 자체이자 GD의 길이라 AG가 아니에요. 5.5 cm는 11을 절반으로 나눈 값이고, 33 cm는 중선 전체 AD(3<i class='mv'>k</i>)를 구한 값이에요. 차 11이 곧 GD와 같아지므로 AG는 그 2배인 22 cm가 정확해요.",
-    core: "차가 곧 GD, AG는 그 2배인 22!",
+    // [슬롯 157] 검산: D는 중점 → DC=BD=9.
+    id: "m2u5e157", lessonId: "m2u5l9", type: "mcq",
+    prompt: `그림에서 ${gsym("AD", "seg")}는 ${gsym("ABC", "tri")}의 중선이고 ${gsym("BD", "seg")}=9 cm예요. ${gsym("DC", "seg")}의 길이는?`,
+    figure: m2ExamCentroidFig({
+      B: 61, C: 47, medians: ["AD"], showG: false, ticks: ["BD"],
+      segLabels: [{ on: "BD", label: "9 cm" }],
+    }),
+    options: ["9 cm", "18 cm", "4.5 cm", "6 cm", "13.5 cm"],
+    answer: 0, diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>중선의 정의를 확인하는 문제예요.<br>① 중선은 꼭짓점과 마주 보는 변의 <b>중점</b>을 이은 선분<br>② D가 BC의 중점이므로 DC=BD=<b>9 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>18 cm는 BC 전체의 길이이고, 4.5 cm는 9를 다시 절반 낸 값이에요. 6 cm는 2:1 규칙을 밑변에 잘못 가져온 값이죠. 2:1은 무게중심이 중선을 나누는 비율이지, 중점 D가 밑변을 나누는 비율이 아니에요. 용어의 정의(중선, 중점)와 성질(2:1)을 분리해서 쓰는 것, 단원 마무리에서 꼭 다시 확인해야 할 기본기예요.",
+    core: "중선의 발은 중점, 밑변 분할은 언제나 1:1!",
   },
   {
-    id: "m2u5e162", lessonId: L, type: "word",
-    prompt: "두께가 고른 삼각형 모양의 판을 단 한 점으로 받쳐 수평으로 균형을 잡을 수 있는 점을 삼각형의 ___이라고 해요.",
-    answer: "무게중심",
-    bank: ["무게중심", "외심", "내심", "중점", "꼭짓점", "원점", "수선의 발", "대칭점"],
-    diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>삼각형 판의 무게가 어느 쪽으로도 쏠리지 않는 균형점이 <b>무게중심</b>이에요. 수학에서는 세 중선이 만나는 점으로 찾을 수 있고, 이 점은 각 중선을 꼭짓점 쪽에서 2:1로 나눠요.<span class='xh'>낱말 하나씩 격파</span>외심은 세 꼭짓점에서 같은 거리에 있는 점, 내심은 세 변에서 같은 거리에 있는 점이라 균형점과는 위치가 달라요. 중점은 선분 하나를 반으로 나누는 점이고, 꼭짓점은 변이 만나는 모서리라 판을 받치는 자리가 아니에요. 원점은 수직선에서 기준이 되는 0의 자리, 수선의 발과 대칭점도 균형과는 관계없는 말이에요. 판이 수평을 이루는 그 점의 이름은 무게중심이에요.",
-    core: "삼각형 판의 균형점이 무게중심!",
+    // [슬롯 158] 검산: ∠A=90°, 빗변 중선 AD=½BC=30(외심=빗변 중점), AG=⅔×30=20. B+C=56+34=90.
+    id: "m2u5e158", lessonId: "m2u5l9", type: "mcq",
+    prompt: `그림에서 ${gsym("ABC", "tri")}는 ∠A=90°인 직각삼각형이고, 점 G는 무게중심, 점 D는 ${gsym("BC", "seg")}의 중점이에요. ${gsym("BC", "seg")}=60 cm일 때, ${gsym("AG", "seg")}의 길이는?`,
+    figure: m2ExamCentroidFig({
+      B: 56, C: 34, rightAt: "A", medians: ["AD"], showG: true, ticks: ["BD"],
+      segLabels: [{ on: "BC", label: "60 cm" }],
+    }),
+    options: ["20 cm", "30 cm", "40 cm", "15 cm", "10 cm"],
+    answer: 0, diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>두 정리를 이어 쓰는 문제예요.<br>① 직각삼각형에서 빗변의 중점 D는 세 꼭짓점에서 같은 거리에 있어요(외심). 그래서 AD=BD=CD=½×60=30<br>② G는 무게중심이니 AG=⅔×AD=⅔×30=<b>20 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>30 cm는 중선 AD에서 멈춘 값이고, 40 cm는 ⅔ 대신 BC에 ⅔를 곱한 값이에요. 15 cm는 AD의 절반, 10 cm는 AD의 ⅓(GD)이죠. 이 문제의 핵심은 직각삼각형의 빗변 중선이 빗변의 절반과 같다는 사실(빗변 중점이 외심)을 먼저 꺼내는 거예요. 직각 표시와 중점 표시가 함께 보이면 이 연결을 의심해 보세요.",
+    core: "직각삼각형 빗변 중선=빗변 절반, 그 위에 2:1!",
   },
   {
-    id: "m2u5e163", lessonId: L, type: "word",
-    prompt: "삼각형의 한 꼭짓점과 그 대변의 중점을 이은 선분을 ___이라고 해요.",
-    answer: "중선",
-    bank: ["중선", "수선", "수직이등분선", "높이", "대각선", "엇각", "반지름", "현"],
-    diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>삼각형의 한 꼭짓점과 마주 보는 변의 중점을 이은 선분이 <b>중선</b>이에요. 삼각형에는 중선을 세 개 그을 수 있고, 세 중선은 무게중심에서 만나요.<span class='xh'>낱말 하나씩 격파</span>수선은 한 점에서 직선에 수직으로 내린 선분, 높이는 밑변에서 마주 보는 꼭짓점까지의 수직 거리라 중점을 지난다는 보장이 없어요. 수직이등분선은 변의 중점을 지나지만 그 변에 수직인 선이라 꼭짓점을 지나지 않아요. 대각선은 다각형의 꼭짓점을 잇는 선분, 엇각은 각의 한 종류, 반지름과 현은 원에서 쓰는 말이라 모두 달라요. 꼭짓점과 대변의 중점을 잇는 선분은 중선이에요.",
-    core: "꼭짓점과 대변의 중점을 이으면 중선!",
+    // [슬롯 158은 파일럿] [슬롯 159] 검산: GG′=8 → GD=8×3/2=12 → AD=3×12=36.
+    id: "m2u5e159", lessonId: "m2u5l9", type: "num",
+    prompt: `그림에서 점 G는 ${gsym("ABC", "tri")}의 무게중심이고, 점 G′는 ${gsym("GBC", "tri")}의 무게중심이에요. ${gsym("GG′", "seg")}=8 cm일 때, 중선 ${gsym("AD", "seg")}의 길이는 몇 cm인지 구하세요.`,
+    figure: m2ExamCentroidFig({
+      B: 59, C: 46, medians: ["AD"], showG: true, g2: true, ticks: ["BD"],
+    }),
+    answer: "36", numKind: "int", unitLabel: "cm", diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>정방향 관계(GG′=AD×2/9)를 거꾸로 타요.<br>① △GBC에서 GG′=GD×⅔이므로 GD=8×3/2=12<br>② △ABC에서 GD=AD×⅓이므로 AD=12×3=<b>36</b> ✓<span class='xh'>계산 실수 격파</span>역산에서는 각 단계의 배율을 뒤집어(⅔ 대신 3/2을, ⅓ 대신 3을 곱해) 적용해야 해요. 8×⅔×⅓처럼 정방향 배율을 또 곱하면 점점 작아지는 엉뚱한 값이 나오죠. 지금 아는 값이 어느 삼각형의 어느 조각인지(GG′는 작은 삼각형 쪽 조각) 표시하며 한 층씩 올라가세요. 검산: AD=36 → GD=12 → GG′=8 ✓, 한 번에 확인하면 36×2/9=8!",
+    core: "역산은 배율을 뒤집어 한 층씩: ×3/2, ×3!",
+  },
+  {
+    // [슬롯 160] 검산: 6조각 중 2조각(GBD·GCE) 색칠, 72×2/6=24.
+    id: "m2u5e160", lessonId: "m2u5l9", type: "mcq",
+    prompt: `그림에서 점 G는 ${gsym("ABC", "tri")}의 무게중심이고 ${gsym("ABC", "tri")}의 넓이는 72 cm²예요. 색칠한 부분의 넓이는?`,
+    figure: m2ExamCentroidFig({
+      B: 58, C: 49, medians: ["AD", "BE", "CF"], showG: true,
+      shade: ["GBD", "GCE"],
+    }),
+    options: ["24 cm²", "12 cm²", "36 cm²", "18 cm²", "48 cm²"],
+    answer: 0, diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>색칠한 곳이 여섯 조각 중 몇 개인지부터 세요.<br>① 세 중선은 넓이를 6등분<br>② 색칠은 서로 떨어진 두 조각<br>③ 72×2/6=<b>24 cm²</b> ✓<span class='xh'>오답 하나씩 격파</span>12 cm²는 한 조각 값이에요. 떨어져 있는 두 조각도 각각 같은 넓이(12)라서 그냥 더하면 돼요. 36 cm²는 절반, 18 cm²는 1.5조각 어림, 48 cm²는 4조각 값이죠. 조각들이 붙어 있든 떨어져 있든 여섯 조각의 넓이가 전부 같다는 사실만 믿으면, 어떤 조합 색칠 문제도 개수 세기로 끝나요. 6등분의 근거(중선이 밑변을 절반으로 나누니 높이가 같은 두 삼각형이 생김)도 함께 기억해 두세요.",
+    core: "어떤 조합이든 조각 수 세기, 6등분은 만능 자!",
+  },
+  {
+    // [슬롯 161] 진술 multi. 검산: AD=15 → AG=10·GD=5.
+    id: "m2u5e161", lessonId: "m2u5l9", type: "multi",
+    prompt: `그림에서 점 G는 ${gsym("ABC", "tri")}의 무게중심이고 중선 ${gsym("AD", "seg")}의 길이는 15 cm예요. 옳은 것을 모두 고르세요.`,
+    figure: m2ExamCentroidFig({
+      B: 60, C: 47, medians: ["AD"], showG: true, ticks: ["BD"],
+    }),
+    options: [
+      `${gsym("AG", "seg")}=10 cm이다`,
+      `${gsym("GD", "seg")}=5 cm이다`,
+      `${gsym("AG", "seg")}:${gsym("GD", "seg")}=2:1이다`,
+      `${gsym("AG", "seg")}=7.5 cm이다`,
+      `점 G는 ${gsym("AD", "seg")}의 중점이다`,
+    ],
+    answer: [0, 1, 2], diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>15를 2:1로 나누면 끝이에요.<br>① AG=15×⅔=10 cm ✓<br>② GD=15×⅓=5 cm ✓<br>③ 10:5=2:1 ✓<span class='xh'>오답 하나씩 격파</span>7.5 cm와 '중점' 진술은 같은 오해(1:1 분할)의 두 얼굴이에요. 무게중심이 중선의 한가운데라면 균형점이 밑변 쪽 무게를 반영하지 못하겠죠. 꼭짓점 쪽이 2배 길다는 것, 그래서 G가 밑변 쪽으로 치우친다는 것을 수치(10과 5)로 확인하는 문제예요. 세 값(전체 15, 조각 10과 5)이 늘 세트로 움직인다는 감각을 들이면 어떤 조각을 물어도 즉답이 나와요.",
+    core: "15는 10+5로, 2:1 세트 감각!",
+  },
+  {
+    // [슬롯 162] 검산: AG=12 → GD=½AG=6.
+    id: "m2u5e162", lessonId: "m2u5l9", type: "mcq",
+    prompt: `그림에서 점 G는 ${gsym("ABC", "tri")}의 무게중심이에요. ${gsym("AG", "seg")}=12 cm일 때, ${gsym("GD", "seg")}의 길이는?`,
+    figure: m2ExamCentroidFig({
+      B: 57, C: 48, medians: ["AD"], showG: true, ticks: ["BD"],
+      segLabels: [{ on: "AG", label: "12 cm" }],
+    }),
+    options: ["6 cm", "12 cm", "4 cm", "8 cm", "24 cm"],
+    answer: 0, diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>조각에서 조각으로 바로 건너가요.<br>① AG:GD=2:1<br>② GD=AG×½=12×½=<b>6 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>4 cm는 12×⅓으로, AG를 중선 전체로 착각한 값이에요. 12는 이미 꼭짓점 쪽 조각(⅔ 몫)이니 전체는 18이고, GD는 6이죠. 8 cm는 ⅔을 조각에 또 곱한 값, 24 cm는 2배로 방향이 뒤집힌 값이에요. 주어진 값이 전체(중선)인지 조각(AG, GD)인지 확인하고, 조각끼리는 2:1로 직행하는 것이 가장 짧은 길이에요. 검산: AG+GD=12+6=18=AD, 12:6=2:1!",
+    core: "주어진 게 조각이면 2:1로 직행, 전체 착각 금지!",
+  },
+  {
+    // [슬롯 163] 검산: GD=⅓AD=⅓×21=7.
+    id: "m2u5e163", lessonId: "m2u5l9", type: "num",
+    prompt: `그림에서 점 G는 ${gsym("ABC", "tri")}의 무게중심이고 중선 ${gsym("AD", "seg")}의 길이는 21 cm예요. ${gsym("GD", "seg")}의 길이 <i class='mv'>x</i>는 몇 cm인지 구하세요.`,
+    figure: m2ExamCentroidFig({
+      B: 58, C: 46, medians: ["AD"], showG: true, ticks: ["BD"],
+      segLabels: [{ on: "GD", label: "x cm" }],
+    }),
+    answer: "7", numKind: "int", unitLabel: "cm", diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>2:1 분할에서 밑변 쪽 조각을 구해요.<br>① AG:GD=2:1이므로 GD는 전체의 ⅓<br>② x=21×⅓=<b>7</b> ✓<span class='xh'>계산 실수 격파</span>21×⅔=14는 AG예요. 묻는 조각이 G 아래쪽(밑변 쪽)이라는 것을 그림에서 확인하고 ⅓을 골라야 해요. 21÷2=10.5처럼 절반을 내면 2:1을 1:1로 뭉갠 것이고, 답이 소수로 나오는 순간 방향을 의심해야 하죠. 검산: AG=14, GD=7이면 합이 21이고 비가 2:1이니, 세 수가 한 세트로 정확히 맞아떨어져요!",
+    core: "밑변 쪽 조각은 ⅓, 소수가 나오면 의심!",
   },
 ];
