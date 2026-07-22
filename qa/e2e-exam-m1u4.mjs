@@ -23,10 +23,16 @@ const BASE = {
   totalXp: 0, lessons: {}, minigame: {}, exams: {},
 };
 
-await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
-await page.evaluate((state) => localStorage.setItem("science-app.v1", JSON.stringify(state)), BASE);
-await page.reload({ waitUntil: "networkidle" });
+// addInitScript 시드 + 스플래시(상시 메인) 통과 — 정본 = qa/e2e-exam-m2u5.mjs seed.
+await page.addInitScript((s) => localStorage.setItem("science-app.v1", JSON.stringify(s)), BASE);
+await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
 await wait(1200);
+await page.mouse.click(210, 300);
+await wait(500);
+await page.evaluate(() => {
+  [...document.querySelectorAll("button")].find((b) => b.textContent.includes("둘러보기"))?.click();
+});
+await wait(1100);
 
 await page.waitForSelector(".unit-tab", { timeout: 12000 });
 await page.evaluate(() => [...document.querySelectorAll(".unit-tab")].find((el) => el.textContent?.includes("기본 도형"))?.click());

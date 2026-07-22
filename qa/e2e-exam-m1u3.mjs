@@ -32,10 +32,19 @@ const BASE = {
 };
 
 async function seed(state) {
-  await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
-  await page.evaluate((s) => localStorage.setItem("science-app.v1", JSON.stringify(s)), state);
-  await page.reload({ waitUntil: "networkidle" });
-  await W(1500);
+  // addInitScript = 페이지 스크립트보다 먼저 실행(앱 부팅 저장과의 경합 차단, 시딩 사고 기록의 정석 패턴).
+  // 여러 번 시드하면 스크립트가 누적되지만 마지막 등록이 마지막에 실행돼 최종 시드가 이긴다.
+  await page.addInitScript((s) => localStorage.setItem("science-app.v1", JSON.stringify(s)), state);
+  await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
+  await W(1200);
+  // 2026-07-21 공개 진입 플로우: 부팅은 항상 스플래시(상시 메인). 탭으로 플립북을 건너뛰고
+  // "한번 둘러보기"를 눌러야 온보딩 완료 상태가 홈으로 직행한다(정본 = qa/e2e-exam-m2u5.mjs seed).
+  await page.mouse.click(210, 300);
+  await W(500);
+  await page.evaluate(() => {
+    [...document.querySelectorAll("button")].find((b) => b.textContent.includes("둘러보기"))?.click();
+  });
+  await W(1100);
 }
 
 async function gotoUnitTab() {

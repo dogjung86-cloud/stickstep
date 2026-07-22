@@ -59,8 +59,16 @@ const state = {
   premium: false, reviewMode: false, goalMin: 10, streak: 0, lastStudyDay: null,
   totalXp: 0, lessons: {}, minigame: {}, exams: {},
 };
-await page.evaluate((s) => localStorage.setItem("science-app.v1", JSON.stringify(s)), state);
+// addInitScript 시드 + 스플래시(상시 메인) 통과 — 정본 = qa/e2e-exam-m2u5.mjs seed.
+await page.addInitScript((s) => localStorage.setItem("science-app.v1", JSON.stringify(s)), state);
 await page.reload({ waitUntil: "networkidle" });
+await wait(1200);
+await page.mouse.click(210, 300);
+await wait(500);
+await page.evaluate(() => {
+  [...document.querySelectorAll("button")].find((b) => b.textContent.includes("둘러보기"))?.click();
+});
+await wait(1100);
 await page.waitForSelector(".unit-tab", { timeout: 12000 });
 await page.evaluate(() => [...document.querySelectorAll(".unit-tab")].find((x) => x.textContent.includes("생물의 구성과 다양성"))?.click());
 await wait(600);
