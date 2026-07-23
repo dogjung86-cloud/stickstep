@@ -1453,6 +1453,36 @@ export function m2ExamSegPlaneFig(o: {
   return svg(p.vb, "좌표평면 위의 선분과 직선을 나타낸 그림", p.grid + g);
 }
 
+/** 눈금 없는 부호 판독 그래프(m2u3 v2 신설) — 부호 추론(그래프 개형 → a·b 부호, 3사 공통 단골)은
+ *  눈금이 있으면 a·b 실값이 역산되어 과제가 붕괴한다. 축 화살표+원점 O+직선 하나만: 방향(기울기
+ *  부호)과 y절편의 위아래만 읽힌다. a: 1 우상향 / -1 우하향, b: 1 y절편 양 / -1 음.
+ *  label은 직선 옆 식 이름(라틴만 이탤릭 — 서체는 math.css의 SVG 이탤릭 규칙이 mvar로 통일). */
+export function m2ExamSignLineFig(o: { a: 1 | -1; b: 1 | -1; label: string }): string {
+  const cx = 120;
+  const cy = 97;
+  const by = cy - o.b * 30;
+  const slope = o.a > 0 ? -0.62 : 0.62;
+  const x1 = cx - 84;
+  const x2 = cx + 84;
+  const y1 = by + slope * (x1 - cx);
+  const y2 = by + slope * (x2 - cx);
+  const lab = o.label.replace(/[a-z]/g, (ch) => `<tspan font-style="italic">${ch}</tspan>`);
+  const labX = x2 - 4;
+  // 상승이 가파른 조합(a=1·b=1)에서 라벨이 위 모서리에 끼지 않게 상하 클램프
+  const labY = o.a > 0 ? Math.max(14, y2 - 10) : Math.min(184, y2 + 18);
+  const body =
+    `<line x1="18" y1="${cy}" x2="228" y2="${cy}" stroke="#64748B" stroke-width="1.8"/>` +
+    `<path d="M228 ${cy} l-7 -4 v8 z" fill="#64748B"/>` +
+    `<line x1="${cx}" y1="184" x2="${cx}" y2="12" stroke="#64748B" stroke-width="1.8"/>` +
+    `<path d="M${cx} 12 l-4 7 h8 z" fill="#64748B"/>` +
+    `<text x="230" y="${cy + 15}" font-size="12" font-weight="800" font-style="italic" fill="#64748B">x</text>` +
+    `<text x="${cx + 7}" y="20" font-size="12" font-weight="800" font-style="italic" fill="#64748B">y</text>` +
+    `<text x="${cx - 7}" y="${cy + 14}" text-anchor="end" font-size="11.5" font-weight="800" fill="#64748B">O</text>` +
+    `<line x1="${x1}" y1="${y1.toFixed(1)}" x2="${x2}" y2="${y2.toFixed(1)}" stroke="#0CA678" stroke-width="3" stroke-linecap="round"/>` +
+    `<text x="${labX}" y="${labY.toFixed(1)}" text-anchor="end" font-size="11.5" font-weight="800" fill="#087F5B">${lab}</text>`;
+  return `<svg viewBox="0 0 240 196" role="img" aria-label="좌표축 위에 직선 하나를 그린 그림">${body}</svg>`;
+}
+
 /* ════════════════════════════════════════════════════════════
    m1u2(중1 Ⅱ 문자와 식) 시험 전용 — 2026-07 개보수(그림 17문항 확충)에서 신설.
    재사용이 1순위: 저울 mExamBalanceFig(상자 ≤4 제약) · 표 mExamTableFig ·
