@@ -1,5 +1,5 @@
-// 수학 중1 Ⅳ. 기본 도형: 단원 종합 평가 문항 풀(200제, 13레슨).
-// 유형 120(mcq+multi)/60(num)/20(word), diff 80/80/40. 풀 순서는 교과 진도 순서다.
+// 수학 중1 Ⅳ. 기본 도형: 단원 종합 평가 문항 풀(200제, 13레슨) — 2026-07 v2 재출제(교과서 준거).
+// 유형 mcq 96/multi 26/num 78/word 0, diff 80/80/40, 그림 161. 정본 설계표 qa/m1u4-v2-blueprint.md. 풀 순서는 교과 진도 순서다.
 import type { ExamDef } from "./types";
 import { POOL_M1U4L1 } from "./m1u4l1";
 import { POOL_M1U4L2 } from "./m1u4l2";

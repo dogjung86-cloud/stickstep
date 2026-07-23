@@ -1,4 +1,6 @@
-// m1u4(중1 수학 Ⅳ 기본 도형) 시험 풀 기계 검사.
+// m1u4(중1 수학 Ⅳ 기본 도형) 시험 풀 기계 검사 — v2(2026-07 교과서 준거 재출제, 정본 qa/m1u4-v2-blueprint.md).
+// v2 변경: word 0 강제, 유형 쿼터 mcq+multi/num 재배분, 그림 쿼터(전체 ≥152+파일별 정확값) 기계 강제,
+// 금지어에 내각·외각·동측내각 추가, mcq 정답 위치 편중은 표시 셔플이 있어 로그로 강등(m2u5 v2 계승).
 // node qa/check-exam-m1u4.mjs
 import { readFileSync } from "node:fs";
 import { createServer } from "vite";
@@ -6,9 +8,11 @@ import { createServer } from "vite";
 const files = Array.from({ length: 13 }, (_, i) => `m1u4l${i + 1}`);
 const totals = [15, 15, 15, 15, 15, 15, 15, 15, 16, 16, 16, 16, 16];
 const typeQuota = [
-  [9, 5, 1], [9, 5, 1], [9, 4, 2], [9, 4, 2], [9, 5, 1], [9, 4, 2], [9, 5, 1],
-  [9, 4, 2], [9, 5, 2], [10, 5, 1], [10, 4, 2], [10, 5, 1], [9, 5, 2],
+  [9, 6, 0], [9, 6, 0], [8, 7, 0], [9, 6, 0], [9, 6, 0], [9, 6, 0], [9, 6, 0],
+  [9, 6, 0], [9, 7, 0], [12, 4, 0], [10, 6, 0], [10, 6, 0], [10, 6, 0],
 ];
+// 그림 쿼터(blueprint §0·§4 — 설계 161/200, 기계 하한 152 + 파일별 정확값)
+const figQuota = [10, 14, 13, 13, 14, 9, 13, 14, 16, 8, 8, 13, 16];
 // diff 배분(2026.07 개보수): 균일 쿼터를 폐기하고 내용 기준으로 재캘리브레이션(MATH_GUIDE 규격 항목 참조).
 // 전체 합 80/80/40 불변 — 아래 배열이 레슨별 확정값이다(L7·L9·L11은 공간·평행선·결정조건이라 심화 4).
 const diffQuota = [
@@ -28,7 +32,7 @@ for (const f of files) {
   sources.set(f, src);
   const em = [...src.matchAll(/—/g)].length;
   if (em) fail(`${f}: em대시 ${em}건`);
-  for (const w of ["기울기", "닮음", "피타고라스", "삼각비", "원주각", "벡터", "좌표기하", "무리수"]) {
+  for (const w of ["기울기", "닮음", "피타고라스", "삼각비", "원주각", "벡터", "좌표기하", "무리수", "내각", "외각", "동측내각"]) {
     if (src.includes(w)) fail(`${f}: 금지어 "${w}"`);
   }
   if (/\d\s*-\s*\d/.test(src)) warn(`${f}: ASCII 하이픈 뺄셈 후보, U+2212 여부 수동 확인`);
@@ -67,6 +71,8 @@ for (let li = 0; li < pools.length; li++) {
   if ([mcqMulti, num, word].join("/") !== typeQuota[li].join("/")) fail(`${lid}: 유형 ${mcqMulti}/${num}/${word}`);
   const dc = [1, 2, 3].map((d) => pool.filter((it) => it.diff === d).length);
   if (dc.join("/") !== diffQuota[li].join("/")) fail(`${lid}: diff ${dc.join("/")}`);
+  const figs = pool.filter((it) => it.figure).length;
+  if (figs !== figQuota[li]) fail(`${lid}: 그림 ${figs}, 기대 ${figQuota[li]}`);
 }
 
 const typeTotal = {
@@ -74,9 +80,11 @@ const typeTotal = {
   num: all.filter((it) => it.type === "num").length,
   word: all.filter((it) => it.type === "word").length,
 };
-if ([typeTotal.mcqMulti, typeTotal.num, typeTotal.word].join("/") !== "120/60/20") fail(`전체 유형 ${JSON.stringify(typeTotal)}`);
+if ([typeTotal.mcqMulti, typeTotal.num, typeTotal.word].join("/") !== "122/78/0") fail(`전체 유형 ${JSON.stringify(typeTotal)}`);
 const diffTotal = [1, 2, 3].map((d) => all.filter((it) => it.diff === d).length);
 if (diffTotal.join("/") !== "80/80/40") fail(`전체 diff ${diffTotal.join("/")}`);
+const figTotal = all.filter((it) => it.figure).length;
+if (figTotal < 152) fail(`그림 쿼터 ${figTotal} < 152`);
 
 for (const it of all) {
   const plainExplain = strip(it.explain);
@@ -122,8 +130,8 @@ for (const it of all) {
   }
 }
 
+// mcq 정답 위치는 표시 셔플이 있어 정보용 로그만 남긴다(shuffle:false 첫 보기 정답만 fail — 위 개별 검사).
 const pos = [0, 1, 2, 3, 4].map((p) => all.filter((it) => it.type === "mcq" && it.answer === p).length);
-if (Math.max(...pos) - Math.min(...pos) > 6) fail(`mcq 정답 위치 편중 ${pos.join("/")}`);
 
 const norm = (s) => strip(s).toLowerCase().replace(/\d+(?:\.\d+)?/g, "#").replace(/[a-z]/g, "x").replace(/\s+/g, "");
 const grams = (s) => new Set(Array.from({ length: Math.max(0, s.length - 1) }, (_, i) => s.slice(i, i + 2)));

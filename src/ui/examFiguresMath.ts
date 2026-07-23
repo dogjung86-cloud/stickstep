@@ -750,9 +750,10 @@ export function m4BoxRelationsFig(labels: [string, string, string, string, strin
   } as const;
   const edge = (u: keyof typeof p, v: keyof typeof p, dash = false) =>
     `<line x1="${p[u][0]}" y1="${p[u][1]}" x2="${p[v][0]}" y2="${p[v][1]}" stroke="${GEO.ink}" stroke-width="2.5"${dash ? ' stroke-dasharray="6 5"' : ""} stroke-linecap="round"/>`;
+  // 겨냥도 시점(앞·위·오른쪽 면이 보임) — 숨은 꼭짓점은 E 하나, 점선은 E에 모이는 세 모서리뿐.
   let out = edge("B", "C") + edge("C", "G") + edge("G", "F") + edge("F", "B");
-  out += edge("A", "B") + edge("D", "C") + edge("H", "G") + edge("E", "F");
-  out += edge("A", "D", true) + edge("A", "E", true) + edge("E", "H", true) + edge("D", "H", true);
+  out += edge("A", "B") + edge("D", "C") + edge("H", "G") + edge("A", "D") + edge("D", "H");
+  out += edge("A", "E", true) + edge("E", "H", true) + edge("E", "F", true);
   const names = { A, B, C, D, E, F, G, H };
   const offsets: Record<keyof typeof p, [number, number]> = { A: [0, -9], B: [-10, 2], C: [10, 2], D: [0, -9], E: [0, 18], F: [-10, 12], G: [10, 12], H: [10, 3] };
   for (const key of Object.keys(p) as Array<keyof typeof p>) out += dot(p[key][0], p[key][1], GEO.pt, 3.2) + ptLabel(p[key][0], p[key][1], names[key], offsets[key][0], offsets[key][1]);
@@ -768,18 +769,44 @@ export function m4TransversalExamFig(opts: {
   /** 선 위 점 이름 — ul·ur: 윗직선 양 끝, ui·li: 두 교점, ll·lr: 아랫직선 양 끝, ct·cb: 횡단선 위·아래 끝. */
   pts?: { ul?: string; ui?: string; ur?: string; ll?: string; li?: string; lr?: string; ct?: string; cb?: string };
 }): string {
-  const [a, b, c, d, e, f, g, h] = opts.labels;
   // parallel: true면 두 직선을 같은 기울기로 그린다(l∥m 문항용 — 기본 구도는 의도적으로 비평행).
-  let out = opts.parallel
-    ? `<line x1="24" y1="60" x2="278" y2="66" stroke="${GEO.ink}" stroke-width="2.8"/>` +
-      `<line x1="20" y1="142" x2="274" y2="148" stroke="${GEO.ink}" stroke-width="2.8"/>`
-    : `<line x1="24" y1="58" x2="278" y2="72" stroke="${GEO.ink}" stroke-width="2.8"/>` +
-      `<line x1="20" y1="150" x2="276" y2="136" stroke="${GEO.ink}" stroke-width="2.8"/>`;
-  out += `<line x1="116" y1="18" x2="190" y2="184" stroke="${GEO.ink}" stroke-width="2.8"/>`;
-  const txt = (x: number, y: number, s: string) => `<text x="${x}" y="${y}" text-anchor="middle" font-size="13" font-weight="800" fill="${GEO.ink}">${s}</text>`;
-  // a·e는 횡단선 기울기 위에 얹히지 않게 왼쪽·위로 비껴 둔다(m1u4 v2 샘플 검수 — 전 호출 공통 개선).
-  out += txt(121, 44, a) + txt(157, 49, b) + txt(163, 83, c) + txt(133, 82, d);
-  out += txt(158, 120, e) + txt(194, 122, f) + txt(199, 154, g) + txt(169, 157, h);
+  const U1 = opts.parallel ? { x: 24, y: 60 } : { x: 24, y: 58 };
+  const U2 = opts.parallel ? { x: 278, y: 66 } : { x: 278, y: 72 };
+  const D1 = opts.parallel ? { x: 20, y: 142 } : { x: 20, y: 150 };
+  const D2 = opts.parallel ? { x: 274, y: 148 } : { x: 276, y: 136 };
+  const T1 = { x: 116, y: 18 }, T2 = { x: 190, y: 184 };
+  const ln = (p: { x: number; y: number }, q: { x: number; y: number }) =>
+    `<line x1="${p.x}" y1="${p.y}" x2="${q.x}" y2="${q.y}" stroke="${GEO.ink}" stroke-width="2.8"/>`;
+  let out = ln(U1, U2) + ln(D1, D2) + ln(T1, T2);
+  const txt = (x: number, y: number, s: string) => `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" font-size="13" font-weight="800" fill="${GEO.ink}">${fxv(s)}</text>`;
+  // 여덟 라벨은 교점을 실계산해 각 부채꼴의 이등분선 위에 둔다(선에 붙은 라벨은 어느 각인지 모호 — 파일럿 검수).
+  // 수치·식 라벨("76°"·"x°"·"(3x−20)°")은 해당 부채꼴 호를 함께 그려 어느 각인지 못 박는다.
+  const meet = (p: { x: number; y: number }, q: { x: number; y: number }) => {
+    const dx = q.x - p.x, dy = q.y - p.y;
+    const ex = T2.x - T1.x, ey = T2.y - T1.y;
+    const t = ((T1.x - p.x) * ey - (T1.y - p.y) * ex) / (dx * ey - dy * ex);
+    return { x: p.x + dx * t, y: p.y + dy * t };
+  };
+  const four = (ix: number, iy: number, right: { x: number; y: number }, labs: [string, string, string, string]) => {
+    const aR = angleOf(ix, iy, right.x, right.y);
+    const aU = angleOf(ix, iy, T1.x, T1.y);
+    const aL = aR + 180, aD = aU + 180;
+    // 라벨 순서 [왼위, 오른위, 오른아래, 왼아래] = 부채꼴 [위~왼, 오른~위, 아래~오른, 왼~아래]
+    const wedges: Array<[number, number]> = [[aU, aL], [aR, aU + 360], [aD, aR + 360], [aL, aD]];
+    labs.forEach((lab, i) => {
+      if (!lab) return;
+      const [w0, w1] = wedges[i];
+      const span = normDeg(w1 - w0);
+      const mid = w0 + span / 2;
+      const valued = lab.includes("°");
+      const p = polar(ix, iy, valued ? 31 : 26, mid);
+      out += txt(p.x, p.y + 5, lab);
+      if (valued) out += angleArc(ix, iy, 15, w0, w0 + span, GEO.hlA);
+    });
+  };
+  const UI = meet(U1, U2), DI = meet(D1, D2);
+  four(UI.x, UI.y, U2, [opts.labels[0], opts.labels[1], opts.labels[2], opts.labels[3]]);
+  four(DI.x, DI.y, D2, [opts.labels[4], opts.labels[5], opts.labels[6], opts.labels[7]]);
   out += `<text x="278" y="61" text-anchor="end" font-size="12" font-style="italic" fill="${GEO.soft}">${opts.upper}</text>`;
   out += `<text x="276" y="132" text-anchor="end" font-size="12" font-style="italic" fill="${GEO.soft}">${opts.lower}</text>`;
   out += `<text x="194" y="182" font-size="12" font-style="italic" fill="${GEO.soft}">${opts.cross}</text>`;
@@ -817,12 +844,15 @@ export function m4ConstructionBisectorFig(opts: { a: string; b: string; m: strin
   return svg("0 0 300 202", "두 끝점을 중심으로 그린 원호와 두 교점을 이은 직선 그림", out);
 }
 
-export function m4TriangleConditionFig(opts: { a: string; b: string; c: string; mode: "sas" | "asa" }): string {
+export function m4TriangleConditionFig(opts: { a: string; b: string; c: string; mode: "sas" | "asa" | "ss" }): string {
   const A = { x: 146, y: 34 }, B = { x: 50, y: 164 }, C = { x: 252, y: 164 };
   let out = `<path d="M${A.x} ${A.y} L${B.x} ${B.y} L${C.x} ${C.y} Z" stroke="${GEO.ink}" stroke-width="3" fill="#F8FAFC"/>`;
   out += dot(A.x, A.y) + dot(B.x, B.y) + dot(C.x, C.y);
   out += ptLabel(A.x, A.y, opts.a, 0, -10) + ptLabel(B.x, B.y, opts.b, -9, 14) + ptLabel(C.x, C.y, opts.c, 9, 14);
-  if (opts.mode === "sas") {
+  if (opts.mode === "ss") {
+    // v2 확장: 두 변만 주어진 상태(끼인각 미지) — 각 쐐기를 그리면 정답(끼인각) 단서가 인쇄된다(경량 검산).
+    out += tickMark(A.x, A.y, B.x, B.y, 1, GEO.hlB) + tickMark(A.x, A.y, C.x, C.y, 2, GEO.hlB);
+  } else if (opts.mode === "sas") {
     out += tickMark(A.x, A.y, B.x, B.y, 1, GEO.hlB) + tickMark(A.x, A.y, C.x, C.y, 2, GEO.hlB);
     out += angleArc(A.x, A.y, 30, 233, 307, GEO.hlA, undefined, { fill: true });
   } else {
@@ -839,15 +869,19 @@ export function m4CongruenceExamFig(opts: {
   sides?: { left?: [string?, string?, string?]; right?: [string?, string?, string?] };
   /** m1u4 v2 확장 — 꼭짓점 곁 각 수치 라벨(끼인각 자리). */
   apex?: { left?: string; right?: string };
+  /** m1u4 v2 확장 — 틱·각 마크 생략(조건 나열 판별의 중립 배경용 — 마크가 조건으로 읽히는 것 방지). */
+  plain?: boolean;
 }): string {
   const halo = `stroke="#fff" stroke-width="3.5" paint-order="stroke"`;
   const tri = (ox: number, names: [string, string, string], flip = false, sides?: [string?, string?, string?], apexLab?: string) => {
     const A = { x: ox + 58, y: 28 }, B = { x: ox + (flip ? 108 : 12), y: 142 }, C = { x: ox + (flip ? 12 : 108), y: 142 };
     let s = `<path d="M${A.x} ${A.y} L${B.x} ${B.y} L${C.x} ${C.y} Z" stroke="${GEO.ink}" stroke-width="2.7" fill="#F8FAFC"/>`;
-    s += tickMark(A.x, A.y, B.x, B.y, 1, GEO.hlB) + tickMark(A.x, A.y, C.x, C.y, 2, GEO.hlB);
-    const a0 = angleOf(A.x, A.y, B.x, B.y);
-    const a1 = angleOf(A.x, A.y, C.x, C.y);
-    s += angleArc(A.x, A.y, 25, Math.min(a0, a1), Math.max(a0, a1), GEO.hlA, undefined, { fill: true });
+    if (!opts.plain) {
+      s += tickMark(A.x, A.y, B.x, B.y, 1, GEO.hlB) + tickMark(A.x, A.y, C.x, C.y, 2, GEO.hlB);
+      const a0 = angleOf(A.x, A.y, B.x, B.y);
+      const a1 = angleOf(A.x, A.y, C.x, C.y);
+      s += angleArc(A.x, A.y, 25, Math.min(a0, a1), Math.max(a0, a1), GEO.hlA, undefined, { fill: true });
+    }
     s += ptLabel(A.x, A.y, names[0], 0, -9) + ptLabel(B.x, B.y, names[1], flip ? 9 : -9, 14) + ptLabel(C.x, C.y, names[2], flip ? -9 : 9, 14);
     if (sides) {
       const put = (p: { x: number; y: number }, q: { x: number; y: number }, lab: string | undefined, dx: number, dy: number, anchor: string) => {
@@ -861,22 +895,33 @@ export function m4CongruenceExamFig(opts: {
     if (apexLab) s += `<text x="${A.x}" y="${A.y + 44}" text-anchor="middle" font-size="11.5" font-weight="800" fill="${GEO.ink}" ${halo}>${fxv(apexLab)}</text>`;
     return s;
   };
+  // aria는 중립 서술만 — "두 변과 끼인각" 문구는 합동 조건 명명 문항의 정답을 낭독한다(경량 검산 적발).
   return svg(
     "0 0 300 172",
-    "두 삼각형에 대응하는 두 변과 끼인각을 표시한 그림",
+    "서로 포개어지는 두 삼각형 그림",
     tri(14, opts.left, false, opts.sides?.left, opts.apex?.left) + tri(158, opts.right, true, opts.sides?.right, opts.apex?.right),
   );
 }
 
-export function m4SurveyFig(opts: { mode: "reflect" | "cross" | "offset"; labels: string[] }): string {
+export function m4SurveyFig(opts: {
+  mode: "reflect" | "cross" | "offset";
+  labels: string[];
+  /** m1u4 v2 확장(cross 전용) — 강 쪽 AB·잴 수 있는 CD 선분 곁 길이 라벨(흰 할로). 기존 호출 무영향. */
+  lens?: { ab?: string; cd?: string };
+}): string {
   if (opts.mode === "cross") {
     const [A, B, O, C, D] = opts.labels;
     const pA = { x: 48, y: 36 }, pB = { x: 54, y: 166 }, pO = { x: 150, y: 101 }, pC = { x: 246, y: 36 }, pD = { x: 240, y: 166 };
     let out = `<line x1="${pA.x}" y1="${pA.y}" x2="${pD.x}" y2="${pD.y}" stroke="${GEO.ink}" stroke-width="2.8"/>`;
     out += `<line x1="${pB.x}" y1="${pB.y}" x2="${pC.x}" y2="${pC.y}" stroke="${GEO.ink}" stroke-width="2.8"/>`;
+    out += `<line x1="${pA.x}" y1="${pA.y}" x2="${pB.x}" y2="${pB.y}" stroke="${GEO.soft}" stroke-width="2" stroke-dasharray="6 5"/>`;
+    out += `<line x1="${pC.x}" y1="${pC.y}" x2="${pD.x}" y2="${pD.y}" stroke="${GEO.ink}" stroke-width="2.2"/>`;
     out += tickMark(pA.x, pA.y, pO.x, pO.y, 1, GEO.hlB) + tickMark(pO.x, pO.y, pC.x, pC.y, 1, GEO.hlB);
     out += tickMark(pB.x, pB.y, pO.x, pO.y, 2, GEO.hlC) + tickMark(pO.x, pO.y, pD.x, pD.y, 2, GEO.hlC);
     out += angleArc(pO.x, pO.y, 25, 146, 214, GEO.hlA, undefined, { fill: true }) + angleArc(pO.x, pO.y, 25, 326, 34, GEO.hlA, undefined, { fill: true });
+    const halo = `stroke="#fff" stroke-width="3.5" paint-order="stroke"`;
+    if (opts.lens?.ab) out += `<text x="${(pA.x + pB.x) / 2 - 9}" y="${(pA.y + pB.y) / 2 + 4}" text-anchor="end" font-size="11.5" font-weight="800" fill="${GEO.ink}" ${halo}>${fxv(opts.lens.ab)}</text>`;
+    if (opts.lens?.cd) out += `<text x="${(pC.x + pD.x) / 2 + 9}" y="${(pC.y + pD.y) / 2 + 4}" text-anchor="start" font-size="11.5" font-weight="800" fill="${GEO.ink}" ${halo}>${fxv(opts.lens.cd)}</text>`;
     for (const [pt, name, dx, dy] of [[pA, A, -8, -6], [pB, B, -9, 14], [pO, O, 0, -10], [pC, C, 8, -6], [pD, D, 9, 14]] as const) out += dot(pt.x, pt.y) + ptLabel(pt.x, pt.y, name, dx, dy);
     return svg("0 0 300 196", "두 직선이 만나 생긴 두 삼각형의 대응 표시 그림", out);
   }
@@ -1620,7 +1665,9 @@ export function mExamAreaMorphFig(o: { side: string; ext: string; cut: string })
 export function mExamXAnglesFig(o: {
   ends?: [string, string, string, string];
   vertex?: string;
-  angles?: [string, string, string, string];
+  /** 네 자리 라벨 [위, 왼, 아래, 오른] — 빈 자리는 null. 호가 부채꼴 전체를 감싸므로 수치 라벨은 실각과 일치 필수 —
+   *  자리 0(위) 실각 = slope2−a1(기본 152−24=128), 자리 1(왼) = 180−그 값. (2x+16)° 같은 식도 대입값 기준. */
+  angles?: [string | null, string | null, string | null, string | null];
   /** 두 직선이 수직(네 각 전부 90°) — 직교 표기·판독 전용. 90° 아닌 각 라벨과 함께 쓰면 라벨-실각 모순(금지). */
   perp?: boolean;
   /** m1u4 v2 확장 — 교점에서 뻗는 반직선(비상 CD⊥OE 원형). deg = 수학 각도, perpToLine2를 주면
@@ -1642,7 +1689,21 @@ export function mExamXAnglesFig(o: {
     `<line x1="${p2.x.toFixed(1)}" y1="${p2.y.toFixed(1)}" x2="${p4.x.toFixed(1)}" y2="${p4.y.toFixed(1)}" stroke="${GEO.ink}" stroke-width="2.8" stroke-linecap="round"/>` +
     dot(cx, cy);
   if (o.perp) out += rightMark(cx, cy, 0, 13, GEO.ink);
-  if (o.vertex) out += ptLabel(cx, cy, o.vertex, 2, 20);
+  if (o.vertex) {
+    // 교점 라벨은 반직선들 사이 가장 넓은 빈 부채꼴의 이등분선에 둔다(선 위에 얹히는 것 방지 — 파일럿 검수).
+    const dirs = [a1, a2, a1 + 180, a2 + 180];
+    if (o.ray) dirs.push(o.ray.deg);
+    const sorted = dirs.map(normDeg).sort((p, q) => p - q);
+    let best = { score: -1, mid: 270 };
+    sorted.forEach((d0, i) => {
+      const d1 = i + 1 < sorted.length ? sorted[i + 1] : sorted[0] + 360;
+      const mid = normDeg((d0 + d1) / 2);
+      const score = d1 - d0 + (Math.sin((mid * Math.PI) / 180) < 0 ? 8 : 0);
+      if (score > best.score) best = { score, mid };
+    });
+    const lp = polar(cx, cy, 21, best.mid);
+    out += ptLabel(lp.x, lp.y, o.vertex, 0, 4);
+  }
   if (o.ray) {
     const rp = polar(cx, cy, r - 36, o.ray.deg);
     out += `<line x1="${cx}" y1="${cy}" x2="${rp.x.toFixed(1)}" y2="${rp.y.toFixed(1)}" stroke="${GEO.ink}" stroke-width="2.6" stroke-linecap="round"/>` + dot(rp.x, rp.y);
@@ -1656,13 +1717,15 @@ export function mExamXAnglesFig(o: {
     });
   }
   if (o.angles) {
-    const mids = [(a1 + a2) / 2, (a2 + a1 + 180) / 2, (a1 + a2) / 2 + 180, (a2 + a1 + 180) / 2 + 180];
+    // 호는 두 직선이 만드는 실제 부채꼴 전체를 감싼다(mid±14 스텁은 "그리다 만" 호 — 파일럿 검수).
+    const bounds: Array<[number, number]> = [[a1, a2], [a2, a1 + 180], [a1 + 180, a2 + 180], [a2 + 180, a1 + 360]];
     const rr = 46;
     o.angles.forEach((lab, i) => {
       if (!lab) return;
-      const p = polar(cx, cy, rr, mids[i]);
+      const [s0, s1] = bounds[i];
+      const p = polar(cx, cy, rr, (s0 + s1) / 2);
       out += `<text x="${p.x.toFixed(1)}" y="${(p.y + 5).toFixed(1)}" text-anchor="middle" font-size="13" font-weight="800" fill="${GEO.ink}">${fxv(lab)}</text>`;
-      out += angleArc(cx, cy, 24, mids[i] - 14, mids[i] + 14, GEO.hlA);
+      out += angleArc(cx, cy, 24, s0, s1, GEO.hlA);
     });
   }
   if (o.arcs) {
@@ -1708,15 +1771,18 @@ export function mExamAngleFanFig(o: {
   return svg("0 0 320 176", "평각을 반직선으로 나눈 각 그림", out);
 }
 
-/** 한 직선 위에 놓인 점들 — 점 이름은 위, 구간 라벨(길이)은 아래 괄호로. */
+/** 한 직선 위에 놓인 점들 — 점 이름은 위, 구간 라벨(길이)은 아래 괄호로.
+ *  pos(0~1 상대 위치, v2 확장): 중점·비 조건 문항은 실제 비율대로 배치해 "그림상 같아 보이는" 오독을
+ *  막는다(라벨=실각 원칙의 길이판 — 경량 검산 반영). 생략 시 균등 간격(순서만 의미 있는 문항용). */
 export function mExamPointsLineFig(o: {
   pts: string[];
   segs?: Array<{ from: number; to: number; label: string }>;
+  pos?: number[];
 }): string {
   const y = 74;
   const X0 = 42, X1 = 278;
   const n = o.pts.length;
-  const xAt = (i: number) => X0 + ((X1 - X0) * i) / Math.max(1, n - 1);
+  const xAt = (i: number) => X0 + (X1 - X0) * (o.pos ? o.pos[i] : i / Math.max(1, n - 1));
   let out = `<line x1="${X0 - 20}" y1="${y}" x2="${X1 + 20}" y2="${y}" stroke="${GEO.ink}" stroke-width="2.6" stroke-linecap="round"/>`;
   o.pts.forEach((name, i) => {
     out += dot(xAt(i), y) + ptLabel(xAt(i), y, name, 0, -10);
@@ -1821,9 +1887,10 @@ export function mExamSolidFig(kind: "pyr4" | "prism5" | "prism3", labels?: strin
     return svg("0 0 300 190", "사각뿔 겨냥도", out);
   }
   if (kind === "prism3") {
+    // 시점: 위에서 내려봄 — 윗면 전부 실선, 뒤 옆면(J-K 쪽)이 숨어 밑면 뒤 변 M-N만 점선(세로 모서리는 전부 윤곽선).
     const J = [96, 40] as const, K = [222, 52] as const, Lp = [156, 84] as const;
     const M = [96, 150] as const, N = [222, 162] as const, O = [156, 194] as const;
-    let out = L(J, K) + L(J, Lp, true) + L(K, Lp, true) + L(M, N) + L(M, O) + L(N, O) + L(J, M) + L(K, N) + L(Lp, O, true);
+    let out = L(J, K) + L(J, Lp) + L(K, Lp) + L(M, N, true) + L(M, O) + L(N, O) + L(J, M) + L(K, N) + L(Lp, O);
     out += name(J, 0, -10, -5) + name(K, 1, 11, -5) + name(Lp, 2, 10, -7) + name(M, 3, -10, 12) + name(N, 4, 11, 12) + name(O, 5, 4, 17);
     return svg("0 0 300 216", "삼각기둥 겨냥도", out);
   }
@@ -1836,13 +1903,27 @@ export function mExamSolidFig(kind: "pyr4" | "prism5" | "prism3", labels?: strin
     top.push([Math.round(x), Math.round(y)]);
     bot.push([Math.round(x), Math.round(y) + 92]);
   }
-  const hidden = (i: number) => top[i][1] < 62;
+  // 시점: 위에서 내려봄(원기둥 겨냥도와 동일 원리) — 윗면 전부 실선, 뒤를 향한 옆면의 밑변만 점선,
+  // 세로 모서리는 양옆 면이 모두 숨은 "가운데 뒤" 하나만 점선(파일럿 검수 반영).
+  const faceHidden = (i: number, j: number) => (top[i][1] + top[j][1]) / 2 < 62;
   let out = "";
   for (let i = 0; i < 5; i += 1) {
     const j = (i + 1) % 5;
-    out += L(top[i], top[j], hidden(i) && hidden(j));
-    out += L(bot[i], bot[j], false);
-    out += L(top[i], bot[i], hidden(i));
+    const prev = (i + 4) % 5;
+    out += L(top[i], top[j]);
+    out += L(bot[i], bot[j], faceHidden(i, j));
+    out += L(top[i], bot[i], faceHidden(prev, i) && faceHidden(i, j));
+  }
+  // labels(v2 확대 — 슬롯 93·94): [윗면 5, 밑면 5]를 앞왼→앞오른→뒤오른→뒤가운데→뒤왼 시계 한 바퀴 순으로.
+  // A~E·F~J를 순서대로 주면 A(앞왼) 아래가 F가 되어 세로 모서리 AF·BG·…가 성립한다.
+  if (labels?.length) {
+    const ring = [2, 3, 4, 0, 1];
+    const offT: Array<[number, number]> = [[-12, 3], [12, 3], [12, -4], [0, -9], [-12, -4]];
+    const offB: Array<[number, number]> = [[-6, 17], [6, 17], [13, 6], [4, 16], [-13, 6]];
+    ring.forEach((gi, ri) => {
+      out += name(top[gi], ri, offT[ri][0], offT[ri][1]);
+      out += name(bot[gi], ri + 5, offB[ri][0], offB[ri][1]);
+    });
   }
   return svg("0 0 300 200", "오각기둥 겨냥도", out);
 }
@@ -1863,7 +1944,13 @@ export function mExamCopyAngleFig(o: { deg?: number; labels?: Partial<Record<"o"
       ? `<line x1="${cx}" y1="${cy}" x2="${pU.x.toFixed(1)}" y2="${pU.y.toFixed(1)}" stroke="${GEO.ink}" stroke-width="2.6" stroke-linecap="round"/>`
       : `<line x1="${cx}" y1="${cy}" x2="${pU.x.toFixed(1)}" y2="${pU.y.toFixed(1)}" stroke="${GEO.soft}" stroke-width="2.2" stroke-dasharray="6 4" stroke-linecap="round"/>`;
     s += `<path d="M${(cx + r + 13).toFixed(1)} ${cy} A${r + 13} ${r + 13} 0 0 0 ${polar(cx, cy, r + 13, deg + 13).x.toFixed(1)} ${polar(cx, cy, r + 13, deg + 13).y.toFixed(1)}" stroke="${GEO.hlB}" stroke-width="1.8" fill="none" stroke-dasharray="5 4"/>`;
-    s += `<path d="M${polar(cx, cy, 34, deg - 26).x.toFixed(1)} ${polar(cx, cy, 34, deg - 26).y.toFixed(1)} A34 34 0 0 0 ${polar(cx, cy, 34, deg + 22).x.toFixed(1)} ${polar(cx, cy, 34, deg + 22).y.toFixed(1)}" stroke="${GEO.hlC}" stroke-width="1.8" fill="none" stroke-dasharray="5 4"/>`;
+    // 폭(MN=CD) 옮기기 호 — 실제 작도대로 N(D)을 중심으로 반지름 MN인 호가 M(C)을 지나게 그린다
+    // (꼭짓점 중심 동심호는 작도 논리에 없는 가짜 호 — 파일럿 검수 반영).
+    const wr = Math.hypot(M.x - N.x, M.y - N.y);
+    const phi = (Math.atan2(-(M.y - N.y), M.x - N.x) * 180) / Math.PI;
+    const w0 = polar(N.x, N.y, wr, phi - 15);
+    const w1 = polar(N.x, N.y, wr, phi + 15);
+    s += `<path d="M${w0.x.toFixed(1)} ${w0.y.toFixed(1)} A${wr.toFixed(1)} ${wr.toFixed(1)} 0 0 0 ${w1.x.toFixed(1)} ${w1.y.toFixed(1)}" stroke="${GEO.hlC}" stroke-width="1.8" fill="none" stroke-dasharray="5 4"/>`;
     s += dot(cx, cy) + dot(N.x, N.y) + dot(M.x, M.y);
     return { s, pE, pU, M, N };
   };
@@ -1915,19 +2002,28 @@ export function mExamTwinEquiFig(mode: "in" | "twin"): string {
     out += `<text x="${(P[0] + 20).toFixed(1)}" y="${(P[1] - 12).toFixed(1)}" font-size="12.5" font-weight="800" fill="${GEO.ink}">㉮</text>`;
     out += dot(A[0], A[1]) + dot(B[0], B[1]) + dot(C[0], C[1]) + dot(D[0], D[1]) + dot(E[0], E[1]) + dot(P[0], P[1], GEO.pt, 2.6);
     out += ptLabel(A[0], A[1], "A", 0, -9) + ptLabel(B[0], B[1], "B", -9, 14) + ptLabel(C[0], C[1], "C", 9, 14) + ptLabel(D[0], D[1], "D", 2, 17) + ptLabel(E[0], E[1], "E", 12, -2);
+    out += ptLabel(P[0], P[1], "P", -11, 13); // 문두가 "교점 P"를 지칭 — 라벨 누락은 파일럿 검수 지적
     return svg("0 0 300 208", "정삼각형 안에 두 선분을 그은 그림", out);
   }
-  const B = [34, 168] as const, C = [148, 168] as const, D = [262, 168] as const;
-  const A = [91, 168 - 98.7] as const;
-  const E = [205, 168 - 98.7] as const;
+  // 두 정삼각형은 크기를 다르게 그린다 — 같은 크기로 그리면 좌우 대칭이 생겨
+  // △ACD≡△ECB 같은 거짓 진술이 그림상 참이 되는 복수 정답 사고(경량 검산 적발).
+  const B = [34, 168] as const, C = [158, 168] as const, D = [252, 168] as const;
+  const h1 = (C[0] - B[0]) * 0.866, h2 = (D[0] - C[0]) * 0.866;
+  const A = [(B[0] + C[0]) / 2, 168 - h1] as const;
+  const E = [(C[0] + D[0]) / 2, 168 - h2] as const;
+  // 교점 F = AD ∩ BE(실계산 — 크기 파라미터를 바꿔도 라벨이 따라온다)
+  const d1 = [D[0] - A[0], D[1] - A[1]] as const;
+  const d2 = [E[0] - B[0], E[1] - B[1]] as const;
+  const den = d1[0] * d2[1] - d1[1] * d2[0];
+  const s = ((B[0] - A[0]) * d2[1] - (B[1] - A[1]) * d2[0]) / den;
+  const F = [A[0] + d1[0] * s, A[1] + d1[1] * s] as const;
   let out =
-    `<path d="M${A[0]} ${A[1]} L${B[0]} ${B[1]} L${C[0]} ${C[1]} Z" stroke="${GEO.ink}" stroke-width="2.7" fill="#F8FAFC"/>` +
-    `<path d="M${E[0]} ${E[1]} L${C[0]} ${C[1]} L${D[0]} ${D[1]} Z" stroke="${GEO.ink}" stroke-width="2.7" fill="#F6F9FF"/>` +
+    `<path d="M${A[0]} ${A[1].toFixed(1)} L${B[0]} ${B[1]} L${C[0]} ${C[1]} Z" stroke="${GEO.ink}" stroke-width="2.7" fill="#F8FAFC"/>` +
+    `<path d="M${E[0]} ${E[1].toFixed(1)} L${C[0]} ${C[1]} L${D[0]} ${D[1]} Z" stroke="${GEO.ink}" stroke-width="2.7" fill="#F6F9FF"/>` +
     `<line x1="${B[0]}" y1="${B[1]}" x2="${D[0]}" y2="${D[1]}" stroke="${GEO.ink}" stroke-width="2.2"/>`;
   out += L(A, D, 2.2) + L(B, E, 2.2);
-  const F = [148, 102.2] as const;
   out += dot(A[0], A[1]) + dot(B[0], B[1]) + dot(C[0], C[1]) + dot(D[0], D[1]) + dot(E[0], E[1]) + dot(F[0], F[1], GEO.pt, 2.6);
-  out += ptLabel(A[0], A[1], "A", -2, -9) + ptLabel(B[0], B[1], "B", -9, 16) + ptLabel(C[0], C[1], "C", 0, 18) + ptLabel(D[0], D[1], "D", 9, 16) + ptLabel(E[0], E[1], "E", 2, -9) + ptLabel(F[0], F[1], "F", -12, -4);
+  out += ptLabel(A[0], A[1], "A", -2, -9) + ptLabel(B[0], B[1], "B", -9, 16) + ptLabel(C[0], C[1], "C", 0, 18) + ptLabel(D[0], D[1], "D", 9, 16) + ptLabel(E[0], E[1], "E", 2, -9) + ptLabel(F[0], F[1], "F", -13, -3);
   return svg("0 0 300 200", "정삼각형 두 개를 잇대어 두 선분을 그은 그림", out);
 }
 
@@ -2017,6 +2113,145 @@ export function mExamZigzagFig(o: {
   out += arcLab(C2, 180, 360 - o.b, GEO.hlB, o.labels.lRight, 16, 29);
   out += dot(V.x, V.y) + dot(Lb.x, Lb.y) + dot(Rb.x, Rb.y);
   return svg("0 0 320 214", "평행한 두 직선과 그 사이에 걸친 삼각형 모양 그림", out);
+}
+
+/** 세 직선이 한 점에서 만나는 6각 그림(m1u4 v2 확대 신작 — 슬롯 54·57).
+ *  실각 a·b(도)만 받고 셋째 각 c=180−a−b를 헬퍼가 역산해 그린다(위쪽 세 각 합 180 구조 보장 — 라벨=실각 원칙).
+ *  labels: 위쪽 세 부채꼴 a(0~a)·b(a~a+b)·c(a+b~180)와 각각의 맞꼭지각 a2·b2·c2 — 준 키만 그린다. */
+export function mExamStarCrossFig(o: {
+  a: number;
+  b: number;
+  labels: Partial<Record<"a" | "b" | "c" | "a2" | "b2" | "c2", string>>;
+  vertex?: string;
+}): string {
+  const cx = 150, cy = 100, r = 118;
+  const line = (deg: number) => {
+    const p = polar(cx, cy, r, deg);
+    const q = polar(cx, cy, r, deg + 180);
+    return `<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${q.x.toFixed(1)}" y2="${q.y.toFixed(1)}" stroke="${GEO.ink}" stroke-width="2.8" stroke-linecap="round"/>`;
+  };
+  let out = line(0) + line(o.a) + line(o.a + o.b) + dot(cx, cy);
+  const sectors: Array<["a" | "b" | "c" | "a2" | "b2" | "c2", number, number, string]> = [
+    ["a", 0, o.a, GEO.hlA],
+    ["b", o.a, o.a + o.b, GEO.hlB],
+    ["c", o.a + o.b, 180, GEO.hlC],
+    ["a2", 180, 180 + o.a, GEO.hlA],
+    ["b2", 180 + o.a, 180 + o.a + o.b, GEO.hlB],
+    ["c2", 180 + o.a + o.b, 360, GEO.hlC],
+  ];
+  let k = 0;
+  for (const [key, s0, s1, color] of sectors) {
+    const lab = o.labels[key];
+    if (!lab) continue;
+    const rr = 24 + (k % 2) * 13;
+    out += angleArc(cx, cy, rr, s0, s1, color);
+    const m = polar(cx, cy, rr + 20, s0 + (s1 - s0) / 2);
+    out += `<text x="${m.x.toFixed(1)}" y="${(m.y + 4).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="800" fill="${GEO.ink}">${fxv(lab)}</text>`;
+    k += 1;
+  }
+  if (o.vertex) {
+    let best = { score: -1, mid: 270 };
+    for (const [key, s0, s1] of sectors) {
+      if (o.labels[key]) continue;
+      const mid = normDeg((s0 + s1) / 2);
+      const score = s1 - s0 + (Math.sin((mid * Math.PI) / 180) < 0 ? 8 : 0);
+      if (score > best.score) best = { score, mid };
+    }
+    const lp = polar(cx, cy, 20, best.mid);
+    out += ptLabel(lp.x, lp.y, o.vertex, 0, 4);
+  }
+  return svg("0 0 300 200", "세 직선이 한 점에서 만나 생긴 여섯 각 그림", out);
+}
+
+/** 직사각형·사다리꼴·정육각형 변 위치 관계 그림(m1u4 v2 확대 신작 — 슬롯 83·84·86·90).
+ *  labels = 꼭짓점 이름. rect·trap은 4개를 좌상→좌하→우하→우상 순으로(A·B·C·D면 AB가 왼 변, AD가 윗변 —
+ *  trap은 윗변 AD ∥ 아랫변 BC), hex는 6개를 좌상부터 시계 방향으로(A·B·…·F면 AB가 윗변, 평행 변은 DE).
+ *  extend: 각 변을 양쪽으로 연장한 점선("변을 포함하는 직선" 문두와 세트 — 슬롯 86). */
+export function mExamQuadSidesFig(o: { shape: "rect" | "trap" | "hex"; labels?: string[]; extend?: boolean }): string {
+  let pts: Array<{ x: number; y: number }>;
+  let offs: Array<[number, number]>;
+  if (o.shape === "rect") {
+    pts = [{ x: 74, y: 40 }, { x: 74, y: 148 }, { x: 226, y: 148 }, { x: 226, y: 40 }];
+    offs = [[-10, -6], [-10, 15], [10, 15], [10, -6]];
+  } else if (o.shape === "trap") {
+    pts = [{ x: 104, y: 42 }, { x: 58, y: 148 }, { x: 242, y: 148 }, { x: 196, y: 42 }];
+    offs = [[-9, -7], [-10, 15], [10, 15], [9, -7]];
+  } else {
+    pts = [];
+    for (let i = 0; i < 6; i += 1) pts.push(polar(150, 96, 76, 120 - i * 60));
+    offs = [[-9, -7], [9, -7], [14, 4], [9, 16], [-9, 16], [-14, 4]];
+  }
+  const n = pts.length;
+  let out = `<path d="M${pts.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" L")} Z" fill="#F8FAFC" stroke="${GEO.ink}" stroke-width="2.7"/>`;
+  if (o.extend) {
+    for (let i = 0; i < n; i += 1) {
+      const p = pts[i], q = pts[(i + 1) % n];
+      const d = Math.hypot(q.x - p.x, q.y - p.y);
+      const ux = (q.x - p.x) / d, uy = (q.y - p.y) / d;
+      out += `<line x1="${(p.x - ux * 24).toFixed(1)}" y1="${(p.y - uy * 24).toFixed(1)}" x2="${p.x.toFixed(1)}" y2="${p.y.toFixed(1)}" stroke="${GEO.soft}" stroke-width="1.8" stroke-dasharray="5 4"/>`;
+      out += `<line x1="${q.x.toFixed(1)}" y1="${q.y.toFixed(1)}" x2="${(q.x + ux * 24).toFixed(1)}" y2="${(q.y + uy * 24).toFixed(1)}" stroke="${GEO.soft}" stroke-width="1.8" stroke-dasharray="5 4"/>`;
+    }
+  }
+  if (o.shape === "rect") {
+    out += rightMark(74, 40, 270, 10) + rightMark(74, 148, 0, 10) + rightMark(226, 148, 90, 10) + rightMark(226, 40, 180, 10);
+  }
+  (o.labels ?? []).forEach((name, i) => {
+    if (!name || !pts[i]) return;
+    out += dot(pts[i].x, pts[i].y, GEO.pt, 3.2) + ptLabel(pts[i].x, pts[i].y, name, offs[i][0], offs[i][1]);
+  });
+  return svg("0 0 300 196", "여러 변으로 이루어진 도형에서 변 사이의 위치 관계 그림", out);
+}
+
+/** 길이가 같은 선분의 작도 그림(m1u4 v2 확대 신작 — 슬롯 145·147·151).
+ *  위 = 원본 AB(길이 라벨 옵션), 아래 = 직선 l 위 점 C를 중심으로 반지름 AB인 원호(점선)를 그려 교점 D.
+ *  CD 길이는 AB와 픽셀 단위로 같게 그린다(작도 의미 그대로). */
+export function mExamCopyLenFig(o: { ab?: string; labels?: Partial<Record<"a" | "b" | "c" | "d", string>> } = {}): string {
+  const lab = { a: "A", b: "B", c: "C", d: "D", ...(o.labels ?? {}) };
+  const ax = 88, bx = 212, ty = 40;
+  const ly = 132, cxp = 92;
+  const R = bx - ax;
+  const dxp = cxp + R;
+  let out = `<line x1="${ax}" y1="${ty}" x2="${bx}" y2="${ty}" stroke="${GEO.ink}" stroke-width="2.8" stroke-linecap="round"/>`;
+  out += dot(ax, ty) + dot(bx, ty) + ptLabel(ax, ty, lab.a, 0, -9) + ptLabel(bx, ty, lab.b, 0, -9);
+  if (o.ab) out += `<text x="${(ax + bx) / 2}" y="${ty + 20}" text-anchor="middle" font-size="12" font-weight="800" fill="${GEO.ink}">${fxv(o.ab)}</text>`;
+  out += `<line x1="30" y1="${ly}" x2="292" y2="${ly}" stroke="${GEO.ink}" stroke-width="2.6" stroke-linecap="round"/>`;
+  out += `<text x="292" y="${ly - 8}" text-anchor="end" font-size="12" font-style="italic" fill="${GEO.soft}">l</text>`;
+  const a0 = polar(cxp, ly, R, -24);
+  const a1 = polar(cxp, ly, R, 24);
+  out += `<path d="M${a0.x.toFixed(1)} ${a0.y.toFixed(1)} A${R} ${R} 0 0 0 ${a1.x.toFixed(1)} ${a1.y.toFixed(1)}" stroke="${GEO.hlB}" stroke-width="1.8" fill="none" stroke-dasharray="5 4"/>`;
+  out += dot(cxp, ly) + dot(dxp, ly) + ptLabel(cxp, ly, lab.c, 0, 18) + ptLabel(dxp, ly, lab.d, 0, 18);
+  return svg("0 0 320 196", "컴퍼스로 선분의 길이를 옮겨 그리는 작도 그림", out);
+}
+
+/** 정사각형 겹침 회전 그림(m1u4 v2 확대 신작 — 슬롯 194·195, 미래엔 ⑳ 계보).
+ *  정사각형 ABCD의 두 대각선의 교점 O에 합동 정사각형의 한 꼭짓점을 고정하고 rot(도)만큼 돌린 상태.
+ *  겹친 부분만 옅게 칠하고, 넓이·비율 등 정답 수치는 인쇄하지 않는다. side = 변 길이 라벨("12 cm"). */
+export function mExamSquareOverlapFig(o: { side?: string; rot?: number; labels2?: [string, string, string] } = {}): string {
+  const s = 96;
+  const A = { x: 58, y: 30 }, B = { x: 58, y: 126 }, C = { x: 154, y: 126 }, D = { x: 154, y: 30 };
+  const O = { x: 106, y: 78 };
+  const rot = o.rot ?? 24;
+  const cr = Math.cos((rot * Math.PI) / 180), sr = Math.sin((rot * Math.PI) / 180);
+  const F = { x: O.x + s * cr, y: O.y + s * sr };
+  const G = { x: F.x - s * sr, y: F.y + s * cr };
+  const H = { x: O.x - s * sr, y: O.y + s * cr };
+  // 회전 사각형의 두 변이 원본과 만나는 점(오른 변·아랫변) — 겹친 부분 = O·P1·C·P2
+  const t1 = (C.x - O.x) / cr;
+  const P1 = { x: C.x, y: O.y + t1 * sr };
+  const t2 = (C.y - O.y) / cr;
+  const P2 = { x: O.x - t2 * sr, y: C.y };
+  let out = `<path d="M${O.x} ${O.y} L${P1.x.toFixed(1)} ${P1.y.toFixed(1)} L${C.x} ${C.y} L${P2.x.toFixed(1)} ${P2.y.toFixed(1)} Z" fill="#EAF1FE" fill-opacity=".85"/>`;
+  out += `<line x1="${A.x}" y1="${A.y}" x2="${C.x}" y2="${C.y}" stroke="${FAINT}" stroke-width="1.4" stroke-dasharray="4 4"/>`;
+  out += `<line x1="${B.x}" y1="${B.y}" x2="${D.x}" y2="${D.y}" stroke="${FAINT}" stroke-width="1.4" stroke-dasharray="4 4"/>`;
+  out += `<path d="M${A.x} ${A.y} L${B.x} ${B.y} L${C.x} ${C.y} L${D.x} ${D.y} Z" fill="none" stroke="${GEO.ink}" stroke-width="2.7"/>`;
+  out += `<path d="M${O.x} ${O.y} L${F.x.toFixed(1)} ${F.y.toFixed(1)} L${G.x.toFixed(1)} ${G.y.toFixed(1)} L${H.x.toFixed(1)} ${H.y.toFixed(1)} Z" fill="none" stroke="${GEO.ink}" stroke-width="2.4"/>`;
+  if (o.side) out += `<text x="${(A.x + D.x) / 2}" y="${A.y - 10}" text-anchor="middle" font-size="12" font-weight="800" fill="${GEO.ink}">${fxv(o.side)}</text>`;
+  out += dot(O.x, O.y, GEO.pt, 3.2);
+  out += ptLabel(A.x, A.y, "A", -9, -6) + ptLabel(B.x, B.y, "B", -9, 14) + ptLabel(C.x, C.y, "C", -11, -8) + ptLabel(D.x, D.y, "D", 9, -6);
+  out += ptLabel(O.x, O.y, "O", -11, -4);
+  const l2 = o.labels2 ?? ["F", "G", "H"];
+  out += ptLabel(F.x, F.y, l2[0], 11, 0) + ptLabel(G.x, G.y, l2[1], 6, 15) + ptLabel(H.x, H.y, l2[2], -11, 6);
+  return svg("0 0 300 230", "두 정사각형이 겹쳐 놓인 그림", out);
 }
 
 /* ── m1u3 개보수(2026-07) 신작 — 그래프 개형 ①~⑤ 고르기 카드 ─────────────

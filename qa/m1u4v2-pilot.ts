@@ -51,7 +51,7 @@ export const POOL_M1U4V2_PILOT: ExamItem[] = [
   // ─ L2 직선, 반직선, 선분 ─
   {
     // [슬롯 16] 검산: 네 점 A,B,C,D 순서. 반직선 AB와 AC는 시작점 A·방향(오른쪽)이 같아 같은 반직선.
-    //  나머지: 시작점 다름(②)·구간 다름(③)·방향 반대(④)·종류 다름(⑤) — 전부 다르다. 정답 유일 확인.
+    //  나머지: 시작점 다름(②)·구간 다름(③)·방향 반대(④)·종류 다름(⑤) · 전부 다르다. 정답 유일 확인.
     id: "m1u4e016", lessonId: "m1u4l2", type: "mcq",
     prompt: "그림과 같이 한 직선 위에 네 점 A, B, C, D가 있어요. 다음 중 서로 같은 것끼리 짝 지은 것은?",
     figure: mExamPointsLineFig({ pts: ["A", "B", "C", "D"] }),
@@ -81,6 +81,7 @@ export const POOL_M1U4V2_PILOT: ExamItem[] = [
     prompt: `그림에서 점 M은 ${gsym("AB", "seg")}의 중점이에요. ${gsym("AC", "seg")}=23 cm, ${gsym("BC", "seg")}=11 cm일 때, ${gsym("MC", "seg")}의 길이는 몇 cm인지 구하세요.`,
     figure: mExamPointsLineFig({
       pts: ["A", "M", "B", "C"],
+      pos: [0, 0.26, 0.52, 1],
       segs: [
         { from: 0, to: 3, label: "23 cm" },
         { from: 2, to: 3, label: "11 cm" },
@@ -94,7 +95,7 @@ export const POOL_M1U4V2_PILOT: ExamItem[] = [
     // [슬롯 24] 검산: AB=48 → AM=MB=24, AM=4MN → MN=6, N은 MB 위 → AN=AM+MN=24+6=30.
     id: "m1u4e024", lessonId: "m1u4l2", type: "num",
     prompt: `그림에서 점 M은 ${gsym("AB", "seg")}의 중점이고, 점 N은 ${gsym("MB", "seg")} 위의 점이에요. ${gsym("AM", "seg")}=4${gsym("MN", "seg")}이고 ${gsym("AB", "seg")}=48 cm일 때, ${gsym("AN", "seg")}의 길이는 몇 cm인지 구하세요.`,
-    figure: mExamPointsLineFig({ pts: ["A", "M", "N", "B"], segs: [{ from: 0, to: 3, label: "48 cm" }] }),
+    figure: mExamPointsLineFig({ pts: ["A", "M", "N", "B"], pos: [0, 0.5, 0.625, 1], segs: [{ from: 0, to: 3, label: "48 cm" }] }),
     answer: "30", numKind: "int", unitLabel: "cm", diff: 3,
     explain: "<span class='xh'>정답 풀이</span>조건을 하나씩 길이로 바꿔요.<br>① M이 AB의 중점: AM=48÷2=24<br>② AM=4MN이므로 MN=24÷4=6<br>③ N은 M보다 B 쪽에 있으니 AN=AM+MN=24+6=<b>30</b> ✓<span class='xh'>계산 실수 격파</span>AN=AM−MN=18로 계산했다면 N의 위치를 그림에서 놓친 거예요. N은 MB 위, 즉 M의 오른쪽에 있으니 AM에 MN을 더해야 해요. 또 AM=4MN을 거꾸로 읽어 MN=4AM=96처럼 만들면 전체 48을 넘겨 버리니 바로 이상하다는 걸 눈치챌 수 있어요. 구한 값이 전체 길이보다 커지지 않는지 확인하는 습관이 이런 실수를 걸러 줘요. 검산: AN=30, NB=48−30=18, MN=6이 모두 자연스럽게 맞아요.",
     core: "몇 배 조건은 짧은 쪽부터, 위치는 그림에서 확인!",
@@ -130,7 +131,7 @@ export const POOL_M1U4V2_PILOT: ExamItem[] = [
   },
   {
     // [슬롯 39] 검산: ∠AOC=4∠COD, ∠BOE=4∠DOE → 5(∠COD+∠DOE)=180, ∠COE=∠COD+∠DOE=36.
-    //  그림 실각: ∠BOE=48, ∠DOE=12, ∠COD=24, ∠AOC=96(합 180 ✓) — rays E=48, D=60, C=84.
+    //  그림 실각: ∠BOE=48, ∠DOE=12, ∠COD=24, ∠AOC=96(합 180 ✓) · rays E=48, D=60, C=84.
     id: "m1u4e039", lessonId: "m1u4l3", type: "num",
     prompt: `그림에서 ${gsym("AOB", "angle")}는 평각이고, ${gsym("AOC", "angle")}=4${gsym("COD", "angle")}, ${gsym("BOE", "angle")}=4${gsym("DOE", "angle")}예요. ${gsym("COE", "angle")}의 크기는 몇 도인지 구하세요.`,
     figure: mExamAngleFanFig({
@@ -292,8 +293,8 @@ export const POOL_M1U4V2_PILOT: ExamItem[] = [
     core: "공간 명제는 교실(바닥·벽·기둥)에서 반례 찾기!",
   },
   {
-    // [슬롯 100] 검산(접기 손검산): 십자 전개도 — 밑면 셀 (0,1) 기준 접기. 격자→정육면체 매핑:
-    //  (0,0)=t1, (1,0)=t2(A·B — 윗면 뒤 변 t1t2), (0,1)=u1(C), (1,1)=u2(D), (1,2)=u4(E), (0,2)=u3(F).
+    // [슬롯 100] 검산(접기 손검산): 십자 전개도 · 밑면 셀 (0,1) 기준 접기. 격자→정육면체 매핑:
+    //  (0,0)=t1, (1,0)=t2(A·B · 윗면 뒤 변 t1t2), (0,1)=u1(C), (1,1)=u2(D), (1,2)=u4(E), (0,2)=u3(F).
     //  면 CDEF = 밑면. a = AB(t1t2)와 꼬인 모서리 = u2u4·u1u3·u3t3·u4t4 = 4.
     //  b = 밑면과 평행한 모서리 = 윗면 네 변(t1t2·t2t4·t4t3·t3t1) = 4. a+b=8.
     id: "m1u4e100", lessonId: "m1u4l7", type: "num",
@@ -332,7 +333,7 @@ export const POOL_M1U4V2_PILOT: ExamItem[] = [
     core: "엇각은 안쪽에서 반대편으로 엇갈린 짝(c-e·d-f)!",
   },
   {
-    // [슬롯 111] 검산: ㈀ a-e 동위 ✓ ㈁ c-e 엇각 ✓ ㈂ b-d 맞꼭지각 ✓ / ∠a=∠e ✗(비평행 — 크기 비교 불가)
+    // [슬롯 111] 검산: ㈀ a-e 동위 ✓ ㈁ c-e 엇각 ✓ ㈂ b-d 맞꼭지각 ✓ / ∠a=∠e ✗(비평행 · 크기 비교 불가)
     //  / ∠c의 동위각은 ∠g(∠h 아님) ✗.
     id: "m1u4e111", lessonId: "m1u4l8", type: "multi",
     prompt: "그림과 같이 두 직선 <i class='mv'>l</i>, <i class='mv'>m</i>이 직선 <i class='mv'>n</i>과 만날 때, 옳은 것을 모두 고르세요.",
@@ -351,16 +352,16 @@ export const POOL_M1U4V2_PILOT: ExamItem[] = [
 
   // ─ L9 평행선의 성질 ─
   {
-    // [슬롯 121] 검산: l∥m — 76°와 x°는 동위각(두 교점의 같은 왼쪽 위 자리) → x=76.
+    // [슬롯 121] 검산: l∥m · 76°와 x°는 동위각(두 교점의 같은 왼쪽 위 자리 · a·e, 예각 부채꼴 ✓ 실각 근사) → x=76.
     id: "m1u4e121", lessonId: "m1u4l9", type: "num",
     prompt: "그림에서 <i class='mv'>l</i>∥<i class='mv'>m</i>일 때, <i class='mv'>x</i>의 값을 구하세요.",
-    figure: m4TransversalExamFig({ upper: "l", lower: "m", cross: "n", parallel: true, labels: ["", "76°", "", "", "", "x°", "", ""] }),
+    figure: m4TransversalExamFig({ upper: "l", lower: "m", cross: "n", parallel: true, labels: ["76°", "", "", "", "x°", "", "", ""] }),
     answer: "76", numKind: "int", diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>두 직선이 평행하면 동위각의 크기는 서로 같아요.<br>① 76°와 x°는 두 교점에서 같은 오른쪽 위 자리에 있는 동위각<br>② l∥m이므로 x=<b>76</b> ✓<span class='xh'>계산 실수 격파</span>180−76=104로 계산했다면 자리를 잘못 읽은 거예요. 합이 180°가 되는 것은 한 교점에서 이웃한 두 각이거나, 평행선 안쪽 같은 편에 있는 두 각의 이야기죠. 이 문제의 두 각은 방향까지 똑같은 동위각 자리라 값을 그대로 옮기면 끝나요. 지난 시간까지는 동위각이 '자리 이름'일 뿐이었지만, 평행이라는 조건이 붙는 순간 '크기가 같다'는 강력한 성질로 바뀐다는 것이 이 단원의 핵심이에요. 반대로 동위각이 같으면 두 직선이 평행하다는 판정에도 쓸 수 있어요.",
+    explain: "<span class='xh'>정답 풀이</span>두 직선이 평행하면 동위각의 크기는 서로 같아요.<br>① 76°와 x°는 두 교점에서 같은 왼쪽 위 자리에 있는 동위각<br>② l∥m이므로 x=<b>76</b> ✓<span class='xh'>계산 실수 격파</span>180−76=104로 계산했다면 자리를 잘못 읽은 거예요. 합이 180°가 되는 것은 한 교점에서 이웃한 두 각이거나, 평행선 안쪽 같은 편에 있는 두 각의 이야기죠. 이 문제의 두 각은 방향까지 똑같은 동위각 자리라 값을 그대로 옮기면 끝나요. 지난 시간까지는 동위각이 '자리 이름'일 뿐이었지만, 평행이라는 조건이 붙는 순간 '크기가 같다'는 강력한 성질로 바뀐다는 것이 이 단원의 핵심이에요. 반대로 동위각이 같으면 두 직선이 평행하다는 판정에도 쓸 수 있어요.",
     core: "평행하면 동위각이 같다, 같으면 평행하다!",
   },
   {
-    // [슬롯 125] 검산: 안쪽 꺾임 — 꺾인 점에 보조 평행선을 그으면 x=34+46=80. 그림 실각 34·46·80 ✓.
+    // [슬롯 125] 검산: 안쪽 꺾임 · 꺾인 점에 보조 평행선을 그으면 x=34+46=80. 그림 실각 34·46·80 ✓.
     id: "m1u4e125", lessonId: "m1u4l9", type: "num",
     prompt: "그림에서 <i class='mv'>l</i>∥<i class='mv'>m</i>일 때, ∠<i class='mv'>x</i>의 크기는 몇 도인지 구하세요.",
     figure: mExamZigzagFig({ mode: "in", a: 34, b: 46, labels: { a: "34°", b: "46°", x: "x°" } }),
@@ -376,18 +377,19 @@ export const POOL_M1U4V2_PILOT: ExamItem[] = [
     prompt: "그림에서 <i class='mv'>l</i>∥<i class='mv'>m</i>일 때, 옳은 것을 모두 고르세요.",
     figure: m4TransversalExamFig({ upper: "l", lower: "m", cross: "n", parallel: true, labels: ["a", "b", "c", "d", "e", "f", "g", "h"] }),
     options: [
-      "∠<i class='mv'>a</i>=∠<i class='mv'>g</i>예요",
-      "∠<i class='mv'>d</i>=∠<i class='mv'>f</i>예요",
-      "∠<i class='mv'>c</i>+∠<i class='mv'>f</i>=180°예요",
-      "∠<i class='mv'>a</i>=∠<i class='mv'>b</i>예요",
-      "∠<i class='mv'>d</i>=∠<i class='mv'>g</i>예요",
+      "∠<i class='mv'>a</i>=∠<i class='mv'>g</i>",
+      "∠<i class='mv'>d</i>=∠<i class='mv'>f</i>",
+      "∠<i class='mv'>c</i>+∠<i class='mv'>f</i>=180°",
+      "∠<i class='mv'>a</i>=∠<i class='mv'>b</i>",
+      "∠<i class='mv'>d</i>=∠<i class='mv'>g</i>",
     ],
     answer: [0, 1, 2], diff: 2,
     explain: "<span class='xh'>정답 풀이</span>평행선에서는 각이 두 부류로 나뉘어요. ∠a와 같은 값인 무리(∠c, ∠e, ∠g)와 ∠b와 같은 값인 무리(∠d, ∠f, ∠h)죠.<br>① ∠a=∠e(동위각), ∠e=∠g(맞꼭지각)이므로 ∠a=∠g ✓<br>② ∠d와 ∠f는 안쪽에서 엇갈린 엇각 ✓<br>③ ∠c와 ∠f는 서로 다른 부류라 합이 평각 180° ✓<span class='xh'>오답 하나씩 격파</span>∠a=∠b는 한 교점에서 이웃한 두 각이라 합이 180°일 뿐, 직각이 아닌 한 같을 수 없어요. ∠d=∠g도 서로 다른 부류의 각이라 거짓이고요. 복잡해 보여도 요령은 하나예요. 아무 각 하나를 α라 정하고 맞꼭지각·동위각·엇각을 따라 α를 퍼뜨려 보세요. 여덟 각이 α와 180°−α 딱 두 값으로 정리되면서 어떤 진술이든 즉시 판정할 수 있게 돼요.",
     core: "평행선의 8각은 α와 180°−α 두 부류뿐!",
   },
   {
-    // [슬롯 131] 검산: 비평행 그림에서 a 자리 124°, e 자리 x°. 동위각이 같아지도록 x=124일 때만 l∥m.
+    // [슬롯 131] 검산: 비평행 그림에서 b 자리 124°, f 자리 x°(둔각 부채꼴 ✓ 실각 근사).
+    //  동위각이 같아지도록 x=124일 때만 l∥m.
     id: "m1u4e131", lessonId: "m1u4l9", type: "mcq",
     prompt: "그림에서 두 직선 <i class='mv'>l</i>, <i class='mv'>m</i>이 평행해지려면 ∠<i class='mv'>x</i>의 크기가 몇 도가 되어야 하나요?",
     figure: m4TransversalExamFig({ upper: "l", lower: "m", cross: "n", labels: ["", "124°", "", "", "", "x°", "", ""] }),
@@ -397,7 +399,7 @@ export const POOL_M1U4V2_PILOT: ExamItem[] = [
     core: "동위각(엇각)이 같아지는 순간이 평행 판정!",
   },
   {
-    // [슬롯 134] 검산: 접기 — 접힌 각과 원래 각은 같다(반사). 62°가 두 번 접혀 62+62=124, x=180−124=56.
+    // [슬롯 134] 검산: 접기 · 접힌 각과 원래 각은 같다(반사). 62°가 두 번 접혀 62+62=124, x=180−124=56.
     //  헬퍼가 fold=62 실각 반사로 렌더 → 라벨 62°·x° 기하 일치.
     id: "m1u4e134", lessonId: "m1u4l9", type: "num",
     prompt: "직사각형 모양의 종이를 그림과 같이 접었어요. ∠<i class='mv'>x</i>의 크기는 몇 도인지 구하세요.",
@@ -460,7 +462,7 @@ export const POOL_M1U4V2_PILOT: ExamItem[] = [
   },
   {
     // [슬롯 155] 검산: 삼각형 성립 = 가장 긴 변 < 나머지 합. (3,7,11) 10<11 ✗ / (2,3,6) 5<6 ✗ /
-    //  (7,12,19) 19=19 ✗ / (7,11,16) 18>16 ✓ / (1,2,3) 3=3 ✗ — 정답 유일.
+    //  (7,12,19) 19=19 ✗ / (7,11,16) 18>16 ✓ / (1,2,3) 3=3 ✗ · 정답 유일.
     id: "m1u4e155", lessonId: "m1u4l11", type: "mcq",
     prompt: "세 선분의 길이가 다음과 같을 때, 삼각형을 만들 수 <u>있는</u> 것은?",
     options: [
@@ -476,14 +478,16 @@ export const POOL_M1U4V2_PILOT: ExamItem[] = [
   },
   {
     // [슬롯 159] 검산: ㈀ SSS(7,12,16): 7+12=19>16 성립 → 정해짐 ✓ ㈁ 세 각 → 모양만(무수히 많음) ✗
-    //  ㈂ ASA(11, 44°, 68°) → 정해짐 ✓ ㈃ SSA(비끼인각) ✗ ㈄ SSS(3,9,13): 3+9=12<13 → 아예 없음 ✗.
+    //  ㈂ ASA(11, 44°, 68°) → 정해짐 ✓ ㈃ SSA(비끼인각) · 대변 BC(11)<이웃 AB(13)·11>13sin46°≈9.35라
+    //  삼각형이 두 개 생기는 진짜 모호 세팅(경량 검산: 구 7·13은 대변>이웃이라 유일 결정 = 복수 정답 사고) ✗
+    //  ㈄ SSS(3,9,13): 3+9=12<13 → 아예 없음 ✗.
     id: "m1u4e159", lessonId: "m1u4l11", type: "multi",
     prompt: "다음 조건 중 삼각형 ABC가 하나로 정해지는 것을 모두 고르세요.",
     options: [
       `${gsym("AB", "seg")}=7 cm, ${gsym("BC", "seg")}=12 cm, ${gsym("CA", "seg")}=16 cm`,
       "∠A=35°, ∠B=75°, ∠C=70°",
       `${gsym("AB", "seg")}=11 cm, ∠A=44°, ∠B=68°`,
-      `${gsym("AB", "seg")}=7 cm, ${gsym("BC", "seg")}=13 cm, ∠A=46°`,
+      `${gsym("AB", "seg")}=13 cm, ${gsym("BC", "seg")}=11 cm, ∠A=46°`,
       `${gsym("AB", "seg")}=3 cm, ${gsym("BC", "seg")}=9 cm, ${gsym("CA", "seg")}=13 cm`,
     ],
     answer: [0, 2], diff: 2,
@@ -518,9 +522,10 @@ export const POOL_M1U4V2_PILOT: ExamItem[] = [
     core: "표시를 읽어라: 변·변·끼인각이면 SAS!",
   },
   {
-    // [슬롯 174] 검산: 기준 △ABC — AB=13 cm(∠A=35°·∠B=75° 낀 변, 실각 렌더), ∠C=70°.
+    // [슬롯 174] 검산: 기준 △ABC · AB=13 cm(∠A=35°·∠B=75° 낀 변, 실각 렌더), ∠C=70°.
     //  ① ASA 정확 대응(DE=13이 ∠D=35·∠E=75 낀 변) → 합동 ✓ ② 13이 75°·70° 낀 변 → 대응 어긋남 ✗
-    //  ③ AAA ✗ ④ SSA(∠D는 DE·EF의 끼인각 아님) ✗ ⑤ 두 변만 ✗.
+    //  ③ AAA ✗ ④ SSA(∠D는 DE·EF의 끼인각 아님) · EF(12)<DE(13)·12>13sin46°≈9.35라 두 개 생기는
+    //  진짜 모호 세팅(경량 검산: 구 EF=20은 대변>이웃이라 유일 결정 · 해설 근거와 어긋남) ✗ ⑤ 두 변만 ✗.
     id: "m1u4e174", lessonId: "m1u4l12", type: "mcq",
     prompt: "그림의 삼각형 ABC와 반드시 합동인 삼각형 DEF를 만들 수 있는 조건은?",
     figure: mExamTriSidesFig({
@@ -533,7 +538,7 @@ export const POOL_M1U4V2_PILOT: ExamItem[] = [
       `${gsym("DE", "seg")}=13 cm, ∠D=35°, ∠E=75°`,
       `${gsym("DE", "seg")}=13 cm, ∠D=75°, ∠E=70°`,
       "∠D=35°, ∠E=75°, ∠F=70°",
-      `${gsym("DE", "seg")}=13 cm, ${gsym("EF", "seg")}=20 cm, ∠D=46°`,
+      `${gsym("DE", "seg")}=13 cm, ${gsym("EF", "seg")}=12 cm, ∠D=46°`,
       `${gsym("DE", "seg")}=13 cm, ${gsym("DF", "seg")}=11 cm`,
     ],
     answer: 0, diff: 2,
@@ -541,7 +546,7 @@ export const POOL_M1U4V2_PILOT: ExamItem[] = [
     core: "값만 같으면 부족, 자리(대응)까지 같아야 합동!",
   },
   {
-    // [슬롯 175] 검산: ≡에서 대응변 — DE=AB=6, EF=BC=13, DF=CA=12(그림 라벨) → 둘레 6+13+12=31.
+    // [슬롯 175] 검산: ≡에서 대응변 · DE=AB=6, EF=BC=13, DF=CA=12(그림 라벨) → 둘레 6+13+12=31.
     id: "m1u4e175", lessonId: "m1u4l12", type: "num",
     prompt: `그림에서 ${gsym("ABC", "tri")}≡${gsym("DEF", "tri")}일 때, ${gsym("DEF", "tri")}의 둘레는 몇 cm인지 구하세요.`,
     figure: m4CongruenceExamFig({
@@ -572,7 +577,7 @@ export const POOL_M1U4V2_PILOT: ExamItem[] = [
   },
   {
     // [슬롯 188] 검산: 정삼각형 ABC, BD=CE(틱) → △ABD≡△BCE(SAS: AB=BC·BD=CE·∠ABD=∠BCE=60°)
-    //  → ∠BAD=∠CBE. ㉮=∠APE는 △ABP의 외각 = ∠ABP+∠BAP = ∠ABE+∠CBE = ∠ABC = 60°.
+    //  → ∠BAD=∠CBE. ㉮=∠APE는 ∠APB의 평각 보충이라 ∠ABP+∠BAP = ∠ABE+∠CBE = ∠ABC = 60°.
     id: "m1u4e188", lessonId: "m1u4l13", type: "num",
     prompt: `그림에서 ${gsym("ABC", "tri")}는 정삼각형이고 ${gsym("BD", "seg")}=${gsym("CE", "seg")}, 점 P는 ${gsym("AD", "seg")}와 ${gsym("BE", "seg")}의 교점이에요. ㉮로 표시한 각의 크기는 몇 도인지 구하세요.`,
     figure: mExamTwinEquiFig("in"),

@@ -1,316 +1,200 @@
-// 중1 수학 Ⅳ. 기본 도형: 단원 종합 평가 풀, 레슨 2 직선·반직선·선분 (m1u4e016~m1u4e030).
-// 유형 9(mcq+multi)/5(num)/1(word), diff 7/5/3(개보수 재캘리브레이션). 교과서의 문장·수치·도형 배치는 복제하지 않았다.
+// 중1 수학 Ⅳ. 기본 도형: 단원 종합 평가 풀 v2, 레슨 2 직선, 반직선, 선분 (책 145~147쪽)
+// (m1u4e016~e030) · 2026-07 교과서 준거 재출제(정본 설계표 qa/m1u4-v2-blueprint.md, 규격 v2).
+// 유형 쿼터: mcq 7 + multi 2 + num 6, diff 7/5/3. word 0(규격 v2 · 교과서 실측: 용어 빈칸형 0).
+// 그림 원칙: 수치는 라벨 단위 병기("35°"·"12 cm"·"x°"), 관계 조건은 문두, 각 그림 전부 실각 렌더(각 문항 주석 검산).
+// 수치·앵커 배정은 설계표 §2가 정본. 표기: mfmt 미사용(gsym·유니코드 리터럴 ∥ ⊥ ≡ °), em대시 금지, −는 U+2212.
 import type { ExamItem } from "./types";
 import { gsym } from "../../ui/geoKit";
-import { mExamPointsLineFig } from "../../ui/examFiguresMath";
-
-const L = "m1u4l2";
+import {
+  mExamPointsLineFig,
+} from "../../ui/examFiguresMath";
 
 export const POOL_M1U4L2: ExamItem[] = [
   {
-    id: "m1u4e016",
-    lessonId: L,
-    type: "mcq",
-    prompt: "손전등을 점 P에 놓고 점 Q를 향하게 했더니 빛이 Q를 지나 한쪽으로 계속 나아갔어요. 이 빛의 경로를 나타내는 기호는?",
+    // [슬롯 16] 검산: 네 점 A,B,C,D 순서. 반직선 AB와 AC는 시작점 A·방향(오른쪽)이 같아 같은 반직선.
+    //  나머지: 시작점 다름(②)·구간 다름(③)·방향 반대(④)·종류 다름(⑤) · 전부 다르다. 정답 유일 확인.
+    id: "m1u4e016", lessonId: "m1u4l2", type: "mcq",
+    prompt: "그림과 같이 한 직선 위에 네 점 A, B, C, D가 있어요. 다음 중 서로 같은 것끼리 짝 지은 것은?",
+    figure: mExamPointsLineFig({ pts: ["A", "B", "C", "D"] }),
     options: [
-      gsym("PQ", "line") + " (직선 PQ)",
-      gsym("PQ", "ray") + " (반직선 PQ)",
-      gsym("PQ", "seg") + " (선분 PQ)",
-      gsym("QP", "ray") + " (반직선 QP)",
-      gsym("QP", "seg") + " (선분 QP)",
+      `${gsym("AB", "ray")}와 ${gsym("AC", "ray")}`,
+      `${gsym("BA", "ray")}와 ${gsym("AB", "ray")}`,
+      `${gsym("AC", "seg")}과 ${gsym("BD", "seg")}`,
+      `${gsym("CB", "ray")}와 ${gsym("CD", "ray")}`,
+      `${gsym("AB", "line")}와 ${gsym("AB", "ray")}`,
     ],
-    answer: 1,
-    diff: 1,
-    explain:
-      "<span class='xh'>정답 풀이</span>빛은 P에서 시작해 Q를 지나 한쪽으로 계속 나아가므로 " +
-      gsym("PQ", "ray") +
-      "예요. 반직선의 이름은 시작점을 먼저 쓰고, 방향을 알려 주는 점을 뒤에 써요.<span class='xh'>오답 하나씩 격파</span>" +
-      gsym("PQ", "line") +
-      "은 P의 뒤쪽까지 양방향으로 뻗으므로 시작점이 없어요. " +
-      gsym("PQ", "seg") +
-      "와 " +
-      gsym("QP", "seg") +
-      "는 P와 Q 사이에서 끝나는 같은 선분이라 Q 너머로 가지 않아요. " +
-      gsym("QP", "ray") +
-      "는 Q에서 시작해 P 쪽으로 나아가므로 시작점과 방향이 모두 달라요. 반직선은 화살표 모양만 보지 말고 앞 글자가 시작점인지 확인해야 해요.",
-    core: "반직선 PQ는 P에서 시작해 Q의 방향으로 뻗는다.",
+    answer: 0, diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>반직선이 같으려면 시작점과 뻗는 방향이 모두 같아야 해요. 반직선 AB는 A에서 출발해 B 쪽(오른쪽)으로, 반직선 AC도 A에서 출발해 C 쪽(오른쪽)으로 뻗으니 <b>완전히 같은 반직선</b>이에요 ✓<span class='xh'>오답 하나씩 격파</span>반직선 BA와 AB는 시작점부터 다르고 방향도 반대라 다른 도형이에요. 선분 AC와 BD는 양 끝점이 달라 서로 다른 구간이죠. 반직선 CB와 CD는 시작점은 C로 같지만 CB는 왼쪽, CD는 오른쪽으로 뻗어 방향이 반대예요. 직선 AB와 반직선 AB는 아예 종류가 달라요. 직선은 양쪽으로 끝없이, 반직선은 한쪽으로만 뻗으니까요.",
+    core: "반직선은 시작점과 방향이 둘 다 같아야 같다!",
   },
   {
-    id: "m1u4e017",
-    lessonId: L,
-    type: "mcq",
-    prompt: "그림과 같이 서로 다른 네 점 A, C, E, G가 한 직선 위에 있어요. 다음 중 " + gsym("CG", "line") + "와 같은 도형은?",
-    figure: mExamPointsLineFig({ pts: ["A", "C", "E", "G"] }),
+    // [슬롯 17] 검산: 반직선 CB = 시작점 C, B 방향(왼쪽) = 반직선 CA와 같다(A·B 모두 C의 왼쪽).
+    id: "m1u4e017", lessonId: "m1u4l2", type: "mcq",
+    prompt: `그림과 같이 한 직선 위에 세 점 A, B, C가 있어요. ${gsym("CB", "ray")}와 같은 것은?`,
+    figure: mExamPointsLineFig({ pts: ["A", "B", "C"] }),
     options: [
-      gsym("GC", "ray") + " (반직선 GC)",
-      gsym("CE", "seg") + " (선분 CE)",
-      gsym("CG", "seg") + " (선분 CG)",
-      gsym("EA", "line") + " (직선 EA)",
-      gsym("GE", "ray") + " (반직선 GE)",
+      `${gsym("CA", "ray")}`,
+      `${gsym("BA", "ray")}`,
+      `${gsym("BC", "ray")}`,
+      `${gsym("CB", "seg")}`,
+      `${gsym("CB", "line")}`,
     ],
-    answer: 3,
-    diff: 1,
-    explain:
-      "<span class='xh'>정답 풀이</span>A, C, E, G가 모두 같은 직선 위에 있으므로 그중 서로 다른 두 점으로 이름 붙인 직선은 모두 같은 직선이에요. 따라서 " +
-      gsym("EA", "line") +
-      "가 " +
-      gsym("CG", "line") +
-      "와 같아요.<span class='xh'>오답 하나씩 격파</span>" +
-      gsym("GC", "ray") +
-      "와 " +
-      gsym("GE", "ray") +
-      "는 각각 시작점과 한쪽 방향이 정해진 반직선이라 양쪽으로 뻗는 직선과 달라요. " +
-      gsym("CE", "seg") +
-      "와 " +
-      gsym("CG", "seg") +
-      "는 양 끝점 사이만 포함하는 선분이에요. 같은 점들을 지나더라도 어디까지 뻗는지 다르면 같은 도형이 아니에요. 기호 위의 표시는 도형의 범위를 알려 줘요. 이름보다 도형의 종류를 먼저 확인해요.",
-    core: "한 직선 위의 서로 다른 두 점은 같은 직선에 여러 이름을 붙일 수 있다.",
+    answer: 0, diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>반직선은 '시작점'과 '뻗는 방향' 두 가지로 정해져요.<br>① 반직선 CB는 C에서 출발해 B 쪽(왼쪽)으로 끝없이 뻗어요<br>② 반직선 CA도 C에서 출발해 A 쪽(왼쪽)으로 뻗죠<br>③ B와 A는 모두 C의 왼쪽에 있으니 두 반직선은 <b>완전히 같은 도형</b>이에요 ✓<span class='xh'>오답 하나씩 격파</span>반직선 BA는 시작점이 B라서 출발부터 달라요. 반직선 BC는 B에서 C 쪽(오른쪽)으로 뻗어 방향이 정반대고요. 선분 CB는 C와 B 사이의 끊긴 구간, 직선 CB는 양쪽으로 무한히 뻗는 선이라 종류 자체가 달라요. 이름에 쓰인 두 점이 같아도 기호가 다르면 다른 도형이라는 것, 그리고 반직선끼리는 시작점과 방향이 모두 같아야 같은 도형이라는 것이 이 단원의 첫 관문이에요.",
+    core: "반직선의 정체 = 시작점 + 방향, 이름은 달라도 OK!",
   },
   {
-    id: "m1u4e018",
-    lessonId: L,
-    type: "mcq",
-    prompt: "그림과 같이 울타리의 네 표지 H, J, K, L이 한 직선 위에 있어요. 다음 중 " + gsym("JK", "ray") + "와 같은 도형은?",
-    figure: mExamPointsLineFig({ pts: ["H", "J", "K", "L"] }),
+    // [슬롯 18] 검산: M이 AB 중점, AB=22 → MB=22÷2=11. 그림 전체 띠 22 cm + 문두 이중 제시.
+    id: "m1u4e018", lessonId: "m1u4l2", type: "num",
+    prompt: `그림에서 점 M은 ${gsym("AB", "seg")}의 중점이에요. ${gsym("AB", "seg")}=22 cm일 때, ${gsym("MB", "seg")}의 길이는 몇 cm인지 구하세요.`,
+    figure: mExamPointsLineFig({ pts: ["A", "M", "B"], segs: [{ from: 0, to: 2, label: "22 cm" }] }),
+    answer: "11", numKind: "int", unitLabel: "cm", diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>중점은 선분을 길이가 같은 두 부분으로 나누는 점이에요.<br>① M이 AB의 중점이므로 AM=MB<br>② AB=AM+MB=2MB<br>③ 2MB=22, MB=<b>11</b> ✓<span class='xh'>계산 실수 격파</span>MB를 22 cm 그대로 쓰면 전체와 부분을 혼동한 거예요. 그림에서 22 cm는 A부터 B까지 전체 길이를 나타내는 띠라는 것을 먼저 확인하세요. 또 AM=MB라는 조건을 식으로 옮길 때 AB=2AM처럼 2배 관계로 적어 두면 나눗셈 한 번으로 깔끔하게 끝나요. 검산: AM=11, MB=11이면 합이 22가 되어 전체 길이와 딱 맞아요.",
+    core: "중점은 절반! AB=2AM=2MB로 식을 세운다!",
+  },
+  {
+    // [슬롯 19] 검산: 세 점의 두 점 표기 반직선 = AB(=AC)·BA·BC·CA(=CB) → 서로 다른 것 4개.
+    id: "m1u4e019", lessonId: "m1u4l2", type: "mcq",
+    prompt: "그림과 같이 한 직선 위에 세 점 A, B, C가 있어요. 이 중 두 점을 사용하여 나타낼 수 있는 서로 다른 반직선의 개수는?",
+    figure: mExamPointsLineFig({ pts: ["A", "B", "C"] }),
+    options: ["4개", "6개", "3개", "2개", "5개"],
+    answer: 0, diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>기호로 전부 나열한 뒤 같은 것을 묶어요.<br>① 만들 수 있는 표기: AB, AC, BA, BC, CA, CB의 6가지<br>② 반직선 AB와 AC는 A에서 오른쪽으로 뻗는 같은 반직선<br>③ 반직선 CA와 CB도 C에서 왼쪽으로 뻗는 같은 반직선<br>④ 서로 다른 것은 AB, BA, BC, CA의 <b>4개</b> ✓<span class='xh'>오답 하나씩 격파</span>6개는 표기의 수를 그대로 답한 것으로, 같은 반직선이 두 이름을 가질 수 있다는 점을 놓친 거예요. 가운데 점 B에서는 왼쪽(BA)과 오른쪽(BC)으로 서로 다른 두 반직선이 나오지만, 양 끝 점에서는 안쪽 방향 하나씩만 나와요. 3개는 점의 개수만큼만 센 값, 2개는 방향이 두 가지라는 데서 멈춘 값이죠. 시작점마다 몇 방향이 가능한지 따지는 것이 정확한 세기 절차예요.",
+    core: "나열 후 병합! 끝점은 1방향, 가운데 점은 2방향!",
+  },
+  {
+    // [슬롯 20] 검산: AC=23, BC=11 → AB=23−11=12, M 중점 → MB=6, MC=MB+BC=6+11=17.
+    id: "m1u4e020", lessonId: "m1u4l2", type: "num",
+    prompt: `그림에서 점 M은 ${gsym("AB", "seg")}의 중점이에요. ${gsym("AC", "seg")}=23 cm, ${gsym("BC", "seg")}=11 cm일 때, ${gsym("MC", "seg")}의 길이는 몇 cm인지 구하세요.`,
+    figure: mExamPointsLineFig({
+      pts: ["A", "M", "B", "C"],
+      pos: [0, 0.26, 0.52, 1],
+      segs: [
+        { from: 0, to: 3, label: "23 cm" },
+        { from: 2, to: 3, label: "11 cm" },
+      ],
+    }),
+    answer: "17", numKind: "int", unitLabel: "cm", diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>구하려는 MC를 아는 길이들로 쪼개는 것이 열쇠예요.<br>① AB=AC−BC=23−11=12<br>② M은 AB의 중점이므로 MB=12÷2=6<br>③ MC=MB+BC=6+11=<b>17</b> ✓<span class='xh'>계산 실수 격파</span>M을 AC 전체의 중점으로 착각해 23÷2를 하면 소수가 나와 막혀 버려요. M은 어디까지나 AB의 중점이라는 조건을 문제에서 다시 확인하세요. 또 MC를 AC−AM=23−6=17로 구해도 같은 답이 나와요. 두 가지 경로로 답이 일치하면 계산이 맞다는 확실한 검산이 되죠. 선분 여러 개가 겹친 문제는 전체에서 부분을 빼 필요한 조각부터 만드는 순서가 정석이에요.",
+    core: "겹친 선분은 전체−부분으로 조각부터 확보!",
+  },
+  {
+    // [슬롯 21] 검산: 한 직선 위 세 점 · 직선 1(전부 같은 직선)·반직선 4(슬롯 19)·선분 3(AB·BC·AC).
+    id: "m1u4e021", lessonId: "m1u4l2", type: "mcq",
+    prompt: "그림과 같이 한 직선 위에 세 점 A, B, C가 있어요. 이 중 두 점을 사용하여 만들 수 있는 서로 다른 직선, 반직선, 선분의 개수를 차례대로 짝 지은 것은?",
+    figure: mExamPointsLineFig({ pts: ["A", "B", "C"] }),
     options: [
-      gsym("KJ", "ray") + " (반직선 KJ)",
-      gsym("JH", "ray") + " (반직선 JH)",
-      gsym("JK", "seg") + " (선분 JK)",
-      gsym("JK", "line") + " (직선 JK)",
-      gsym("JL", "ray") + " (반직선 JL)",
+      "직선 1개, 반직선 4개, 선분 3개",
+      "직선 3개, 반직선 4개, 선분 3개",
+      "직선 1개, 반직선 6개, 선분 3개",
+      "직선 1개, 반직선 4개, 선분 6개",
+      "직선 3개, 반직선 6개, 선분 6개",
     ],
-    answer: 4,
-    diff: 2,
-    explain:
-      "<span class='xh'>정답 풀이</span>" +
-      gsym("JK", "ray") +
-      "는 J에서 시작해 K를 지나 L 쪽으로 뻗어요. " +
-      gsym("JL", "ray") +
-      "도 시작점이 J이고 같은 쪽으로 뻗으므로 두 반직선은 같아요.<span class='xh'>오답 하나씩 격파</span>" +
-      gsym("KJ", "ray") +
-      "는 시작점이 K라서 J와 K 사이 일부가 겹쳐도 같은 도형이 아니에요. " +
-      gsym("JH", "ray") +
-      "는 시작점은 같지만 H 쪽으로 뻗어 방향이 반대예요. " +
-      gsym("JK", "seg") +
-      "는 J와 K 사이에서 끝나고, " +
-      gsym("JK", "line") +
-      "은 양쪽으로 계속 뻗어요. 반직선이 같으려면 시작점과 방향이 모두 같아야 해요. 한 조건이라도 달라지면 일부가 겹쳐도 다른 반직선이에요.",
-    core: "같은 반직선은 시작점과 뻗는 방향이 모두 같다.",
+    answer: 0, diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>세 종류를 각각 세요.<br>① 직선: 세 점이 이미 한 직선 위에 있으니 어떤 두 점을 골라도 같은 직선 → 1개<br>② 반직선: AB(=AC), BA, BC, CA(=CB) → 4개<br>③ 선분: AB, BC, AC는 양 끝점이 달라 모두 다른 구간 → 3개 ✓<span class='xh'>오답 하나씩 격파</span>직선 3개는 점이 일렬이라는 그림의 조건을 놓친 값이에요. 점이 삼각형처럼 흩어져 있을 때만 직선이 3개가 되죠. 반직선 6개는 같은 반직선의 두 이름(AB와 AC)을 따로 센 것이고, 선분 6개는 선분 AB와 BA를 다른 것으로 센 거예요. 선분과 직선은 방향이 없어 이름 순서를 바꿔도 그대로라는 점, 반직선만 시작점·방향으로 구분된다는 점이 세 도형 세기의 핵심 차이랍니다.",
+    core: "일렬 세 점: 직선 1·반직선 4·선분 3!",
   },
   {
-    id: "m1u4e019",
-    lessonId: L,
-    type: "multi",
-    prompt: "직선, 반직선, 선분에 대한 설명으로 옳은 것은? <b>정답을 모두 고르세요.</b>",
+    // [슬롯 22] 검산: AB=24 → MB=12, N은 MB 중점 → NB=6. 그림 전체 24 cm + 문두 이중 제시.
+    id: "m1u4e022", lessonId: "m1u4l2", type: "num",
+    prompt: `그림에서 점 M은 ${gsym("AB", "seg")}의 중점이고, 점 N은 ${gsym("MB", "seg")}의 중점이에요. ${gsym("AB", "seg")}=24 cm일 때, ${gsym("NB", "seg")}의 길이는 몇 cm인지 구하세요.`,
+    figure: mExamPointsLineFig({ pts: ["A", "M", "N", "B"], pos: [0, 0.5, 0.75, 1], segs: [{ from: 0, to: 3, label: "24 cm" }] }),
+    answer: "6", numKind: "int", unitLabel: "cm", diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>중점이 두 번 나오면 절반을 두 번 하면 돼요.<br>① M이 AB의 중점: MB=24÷2=12<br>② N이 MB의 중점: NB=12÷2=6<br>③ NB=<b>6</b> ✓<span class='xh'>계산 실수 격파</span>12로 답했다면 절반을 한 번만 한 거예요. N이 어느 선분의 중점인지 문제를 다시 읽으세요. N은 전체 AB가 아니라 반쪽 MB의 중점이에요. 또 NB=AB÷4라는 지름길도 눈에 담아 두세요. 절반의 절반은 4분의 1이니 24÷4=6으로 한 번에 갈 수 있죠. 검산: AM=12, MN=6, NB=6을 모두 더하면 24로 전체와 딱 맞아요. 중점이 여러 번 등장하는 문제는 그림에 길이를 하나씩 적어 가며 누적 확인하는 것이 가장 확실한 방어예요.",
+    core: "중점 두 번 = ÷2 두 번 = ÷4 한 번!",
+  },
+  {
+    // [슬롯 23] 무그림 ①(일반 진술 판별) · 문장 mcq 4슬롯 중 1번째(23·70·116·144 한정).
+    id: "m1u4e023", lessonId: "m1u4l2", type: "mcq",
+    prompt: "직선, 반직선, 선분에 대한 설명으로 옳지 <u>않은</u> 것은?",
     options: [
-      gsym("MN", "line") + "과 " + gsym("NM", "line") + "은 같은 직선이다",
-      gsym("PQ", "ray") + "와 " + gsym("QP", "ray") + "은 언제나 같은 반직선이다",
-      gsym("HK", "seg") + "와 " + gsym("KH", "seg") + "은 같은 선분이다",
-      "선분은 한 시작점에서 한쪽으로 한없이 뻗는다",
-      "두 점 사이의 거리는 두 점을 이은 선분의 길이이다",
+      "반직선은 시작점에서 한쪽으로만 끝없이 뻗어요",
+      "서로 다른 두 점을 지나는 직선은 오직 하나예요",
+      "선분 AB와 선분 BA는 같은 도형이에요",
+      "반직선 AB와 반직선 BA는 같은 도형이에요",
+      "직선은 양쪽으로 끝없이 뻗은 곧은 선이에요",
     ],
-    answer: [0, 2, 4],
-    diff: 2,
-    explain:
-      "<span class='xh'>정답 풀이</span>직선은 양쪽으로 뻗으므로 두 점의 이름을 거꾸로 써도 같아요. 선분도 두 끝점 사이만 나타내므로 " +
-      gsym("HK", "seg") +
-      "와 " +
-      gsym("KH", "seg") +
-      "이 같아요. 두 점 사이의 거리는 두 점을 곧게 이은 선분의 길이예요.<span class='xh'>오답 하나씩 격파</span>" +
-      gsym("PQ", "ray") +
-      "는 P에서, " +
-      gsym("QP", "ray") +
-      "는 Q에서 시작하므로 일반적으로 달라요. 일부가 겹친다는 사실만으로 같은 반직선이 되지는 않아요. 또 한 시작점에서 한쪽으로 한없이 뻗는 도형은 선분이 아니라 반직선이에요. 선분에는 양 끝점이 있어 길이를 정할 수 있다는 차이를 기억해요.",
-    core: "직선과 선분은 글자 순서를 바꾸어도 같지만 반직선은 다르다.",
+    answer: 3, diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>반직선 AB는 A에서 출발해 B 쪽으로 뻗고, 반직선 BA는 B에서 출발해 A 쪽으로 뻗어요. 시작점도 방향도 정반대인 <b>서로 다른 도형</b>이니 '같다'는 설명이 옳지 않아요 ✓ 두 반직선이 겹치는 부분은 선분 AB뿐이라는 것도 그림을 그려 보면 바로 보여요.<span class='xh'>오답 하나씩 격파</span>나머지는 모두 참이에요. 반직선은 한쪽으로만 무한히 뻗는 도형이고, 두 점을 지나는 직선이 하나뿐이라는 것은 직선의 가장 기본 성질이죠. 선분은 양 끝점 사이의 구간이라 방향이 없으니 AB로 부르든 BA로 부르든 같은 도형이에요. 직선의 정의도 그대로고요. 이름 순서에 민감한 것은 셋 중 반직선뿐이라는 사실, 기호 문제의 단골 함정이니 확실히 새겨 두세요.",
+    core: "이름 순서에 민감한 건 반직선뿐!",
   },
   {
-    id: "m1u4e020",
-    lessonId: L,
-    type: "mcq",
-    prompt: "철길의 두 역 A, C를 곧게 이은 " + gsym("AC", "seg") + "의 길이는 7 km이고, 굽은 연결 도로의 길이는 12 km예요. 두 점 A, C 사이의 거리는?",
-    options: ["12 km", "19 km", "7 km", "5 km", "정할 수 없다"],
-    answer: 2,
-    diff: 1,
-    explain:
-      "<span class='xh'>정답 풀이</span>두 점 사이의 거리는 여러 이동 경로 중 임의의 길이가 아니라, 두 점을 곧게 이은 선분의 길이로 정해요. 따라서 " +
-      gsym("AC", "seg") +
-      "의 길이인 <b>7 km</b>가 답이에요.<span class='xh'>오답 하나씩 격파</span>'12 km'는 실제로 돌아가는 연결 도로의 길이일 뿐 두 점 사이의 거리 정의와 달라요. '19 km'는 서로 다른 두 경로를 더한 값이라 출발점과 끝점 사이의 곧은 길이가 아니고요. '5 km'는 12와 7의 차를 계산했지만 그런 계산을 요구하지 않았어요. '정할 수 없다'도 선분 AC의 길이가 이미 주어졌으므로 틀려요. 거리라는 말이 나오면 곧은 선분의 길이를 먼저 찾아요.",
-    core: "두 점 사이의 거리는 두 점을 이은 선분의 길이다.",
+    // [슬롯 24] 검산: AB=48 → AM=MB=24, AM=4MN → MN=6, N은 MB 위 → AN=AM+MN=24+6=30.
+    id: "m1u4e024", lessonId: "m1u4l2", type: "num",
+    prompt: `그림에서 점 M은 ${gsym("AB", "seg")}의 중점이고, 점 N은 ${gsym("MB", "seg")} 위의 점이에요. ${gsym("AM", "seg")}=4${gsym("MN", "seg")}이고 ${gsym("AB", "seg")}=48 cm일 때, ${gsym("AN", "seg")}의 길이는 몇 cm인지 구하세요.`,
+    figure: mExamPointsLineFig({ pts: ["A", "M", "N", "B"], pos: [0, 0.5, 0.625, 1], segs: [{ from: 0, to: 3, label: "48 cm" }] }),
+    answer: "30", numKind: "int", unitLabel: "cm", diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>조건을 하나씩 길이로 바꿔요.<br>① M이 AB의 중점: AM=48÷2=24<br>② AM=4MN이므로 MN=24÷4=6<br>③ N은 M보다 B 쪽에 있으니 AN=AM+MN=24+6=<b>30</b> ✓<span class='xh'>계산 실수 격파</span>AN=AM−MN=18로 계산했다면 N의 위치를 그림에서 놓친 거예요. N은 MB 위, 즉 M의 오른쪽에 있으니 AM에 MN을 더해야 해요. 또 AM=4MN을 거꾸로 읽어 MN=4AM=96처럼 만들면 전체 48을 넘겨 버리니 바로 이상하다는 걸 눈치챌 수 있어요. 구한 값이 전체 길이보다 커지지 않는지 확인하는 습관이 이런 실수를 걸러 줘요. 검산: AN=30, NB=48−30=18, MN=6이 모두 자연스럽게 맞아요.",
+    core: "몇 배 조건은 짧은 쪽부터, 위치는 그림에서 확인!",
   },
   {
-    id: "m1u4e021",
-    lessonId: L,
-    type: "mcq",
-    prompt: "점 C가 길이 12 cm인 " + gsym("AE", "seg") + "의 중점일 때, " + gsym("AC", "seg") + "의 길이는?",
-    options: ["12 cm", "6 cm", "24 cm", "4 cm", "8 cm"],
-    answer: 1,
-    diff: 2,
-    explain:
-      "<span class='xh'>정답 풀이</span>C가 " +
-      gsym("AE", "seg") +
-      "의 중점이므로 " +
-      gsym("AC", "seg") +
-      "와 " +
-      gsym("CE", "seg") +
-      "의 길이가 같아요. 두 선분이 합쳐 12 cm이므로 각각 12÷2 = <b>6 cm</b>예요.<span class='xh'>오답 하나씩 격파</span>'12 cm'는 전체 AE를 절반 AC로 그대로 옮긴 값이에요. '24 cm'는 전체를 다시 두 배 하여 중점 관계를 거꾸로 적용했고, '4 cm'는 세 부분으로 나눈 값이라 중점의 뜻과 달라요. '8 cm'도 나머지 CE가 4 cm가 되어 두 길이가 같지 않아요. 중점은 선분 위의 가운데 점이므로 먼저 같은 두 부분을 만들고 전체를 2로 나누면 돼요.",
-    core: "중점은 선분을 길이가 같은 두 부분으로 나눈다.",
-  },
-  {
-    id: "m1u4e022",
-    lessonId: L,
-    type: "mcq",
-    prompt: "점 J가 " + gsym("HL", "seg") + "의 중점이라는 사실만으로 반드시 알 수 있는 것은?",
+    // [슬롯 25] 검산: M은 AB 중점·N은 MB 중점 · AB=2AM ✓·MN=NB ✓·AB=4NB ✓ / AM=MN ✗(AM=2MN)·AN=NB ✗(3배).
+    id: "m1u4e025", lessonId: "m1u4l2", type: "multi",
+    prompt: `그림에서 점 M은 ${gsym("AB", "seg")}의 중점이고, 점 N은 ${gsym("MB", "seg")}의 중점이에요. 옳은 것을 모두 고르세요.`,
+    figure: mExamPointsLineFig({ pts: ["A", "M", "N", "B"], pos: [0, 0.5, 0.75, 1] }),
     options: [
-      gsym("HJ", "ray") + "와 " + gsym("JL", "ray") + "이 같은 반직선이다",
-      "H와 L이 같은 점이다",
-      gsym("HL", "line") + "의 길이를 정할 수 있다",
-      "J는 H 또는 L과 겹친다",
-      gsym("HJ", "seg") + "과 " + gsym("JL", "seg") + "의 길이가 같다",
+      `${gsym("AB", "seg")}=2${gsym("AM", "seg")}`,
+      `${gsym("MN", "seg")}=${gsym("NB", "seg")}`,
+      `${gsym("AB", "seg")}=4${gsym("NB", "seg")}`,
+      `${gsym("AM", "seg")}=${gsym("MN", "seg")}`,
+      `${gsym("AN", "seg")}=${gsym("NB", "seg")}`,
     ],
-    answer: 4,
-    diff: 1,
-    explain:
-      "<span class='xh'>정답 풀이</span>J가 " +
-      gsym("HL", "seg") +
-      "의 중점이라는 말에는 J가 선분 HL 위에 있고, " +
-      gsym("HJ", "seg") +
-      "와 " +
-      gsym("JL", "seg") +
-      "의 길이가 같다는 뜻이 들어 있어요.<span class='xh'>오답 하나씩 격파</span>" +
-      gsym("HJ", "ray") +
-      "와 " +
-      gsym("JL", "ray") +
-      "은 시작점부터 다르므로 같은 반직선이 아니에요. H와 L은 선분의 서로 다른 두 끝점이고, J도 그 사이의 점이라 어느 끝점과도 겹치지 않아요. 직선은 양쪽으로 한없이 뻗는 도형이므로 길이를 정하지 않아요. 중점 조건이 알려 주는 것은 전체의 실제 수치가 아니라 두 부분의 길이가 서로 같다는 관계예요.",
-    core: "중점 J이면 HJ와 JL의 길이가 같다.",
+    answer: [0, 1, 2], diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>NB를 1이라 두고 전부 환산하면 판정이 쉬워요. NB=1이면 MN=1, MB=2, AM=2, AB=4가 돼요.<br>① AB=4, AM=2이므로 AB=2AM ✓<br>② MN=NB=1 ✓<br>③ AB=4, NB=1이므로 AB=4NB ✓<span class='xh'>오답 하나씩 격파</span>AM=MN은 2와 1을 같다고 한 것이라 거짓이에요. M이 전체의 중점, N이 반쪽의 중점이라 AM은 MN의 2배죠. AN=NB도 AN=AM+MN=3과 NB=1을 비교하면 3배 차이라 거짓이고요. 이렇게 가장 짧은 조각을 1로 놓고 모든 선분을 숫자로 바꾸는 방법은 어떤 진술이 와도 즉시 판정할 수 있는 만능 도구예요. 문자만 보며 눈으로 비교하다 틀리는 실수를 원천 차단해 줘요.",
+    core: "가장 짧은 조각을 1로! 전부 숫자로 바꿔 판정!",
   },
   {
-    id: "m1u4e023",
-    lessonId: L,
-    type: "mcq",
-    prompt: "그림과 같이 세 점 H, J, K가 한 직선 위에 있고, " + gsym("HJ", "seg") + "=4 cm, " + gsym("JK", "seg") + "=6 cm예요. 옳은 것은?",
-    figure: mExamPointsLineFig({ pts: ["H", "J", "K"], segs: [{ from: 0, to: 1, label: "4 cm" }, { from: 1, to: 2, label: "6 cm" }] }),
+    // [슬롯 26] 검산: M=AB 중점·N=BC 중점 → MN=MB+BN=½AB+½BC=½AC=26÷2=13. 미05-05 계보.
+    id: "m1u4e026", lessonId: "m1u4l2", type: "mcq",
+    prompt: `그림에서 점 M은 ${gsym("AB", "seg")}의 중점이고, 점 N은 ${gsym("BC", "seg")}의 중점이에요. ${gsym("AC", "seg")}=26 cm일 때, ${gsym("MN", "seg")}의 길이는?`,
+    figure: mExamPointsLineFig({ pts: ["A", "M", "B", "N", "C"], segs: [{ from: 0, to: 4, label: "26 cm" }] }),
+    options: ["13 cm", "26 cm", "12 cm", "14 cm", "24 cm"],
+    answer: 0, diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>AB와 BC의 길이를 각각 몰라도 풀리는 것이 이 문제의 매력이에요.<br>① MN=MB+BN<br>② MB=AB의 절반, BN=BC의 절반<br>③ MN=(AB+BC)÷2=AC÷2=26÷2=<b>13 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>26 cm는 전체를 그대로 옮긴 값이에요. M과 N은 각 조각의 가운데라 그 사이 거리는 전체의 절반으로 줄어들죠. 12나 14를 골랐다면 AB, BC를 특정 값으로 멋대로 정해 계산했을 가능성이 커요. 점 B가 어디에 있든, 두 조각의 절반끼리 더하면 언제나 전체의 절반이 된다는 것이 핵심 구조예요. B를 왼쪽이나 오른쪽으로 움직여 봐도 MN이 13에서 변하지 않는 장면을 상상해 보세요. '몰라도 되는 값'을 알아보는 눈이 이 문제가 기르는 진짜 실력이에요.",
+    core: "절반+절반 = 전체의 절반! AB·BC는 몰라도 된다!",
+  },
+  {
+    // [슬롯 27] 검산: 3AB=2BC·AM=14 → AB=2AM=28, BC=3AB÷2=42, BN=21 → MN=MB+BN=14+21=35. 미05-05 심화.
+    id: "m1u4e027", lessonId: "m1u4l2", type: "num",
+    prompt: `그림에서 점 M은 ${gsym("AB", "seg")}의 중점이고, 점 N은 ${gsym("BC", "seg")}의 중점이에요. 3${gsym("AB", "seg")}=2${gsym("BC", "seg")}이고 ${gsym("AM", "seg")}=14 cm일 때, ${gsym("MN", "seg")}의 길이는 몇 cm인지 구하세요.`,
+    figure: mExamPointsLineFig({ pts: ["A", "M", "B", "N", "C"], pos: [0, 0.2, 0.4, 0.7, 1], segs: [{ from: 0, to: 1, label: "14 cm" }] }),
+    answer: "35", numKind: "int", unitLabel: "cm", diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>조건을 사슬처럼 이어요.<br>① M이 AB의 중점이고 AM=14이므로 AB=28<br>② 3AB=2BC에서 3×28=84=2BC이므로 BC=42<br>③ N이 BC의 중점이므로 BN=21<br>④ MN=MB+BN=14+21=<b>35</b> ✓<span class='xh'>계산 실수 격파</span>3AB=2BC를 거꾸로 읽어 BC를 더 짧게(BC=84÷3 꼴로) 만들면 안 돼요. 계수가 큰 쪽이 오히려 짧은 선분이에요. 3×AB와 2×BC가 같아지려면 AB가 BC보다 짧아야 하니까요. 헷갈리면 AB=2, BC=3인 미니 예로 비율부터 확인하세요. 검산: AC=28+42=70이고 MN은 AC의 절반인 35와 일치해요. 앞 문제에서 발견한 'MN은 항상 AC의 절반' 구조가 비 조건이 붙은 심화판에서도 그대로 작동하는 거죠.",
+    core: "3AB=2BC는 AB가 짧다! 사슬 계산 후 절반 검산!",
+  },
+  {
+    // [슬롯 28] 검산: AB=32 → AM=MB=16, MN:NB=3:1 → MN=12·NB=4, AN=16+12=28.
+    id: "m1u4e028", lessonId: "m1u4l2", type: "mcq",
+    prompt: `그림에서 점 M은 ${gsym("AB", "seg")}의 중점이고, 점 N은 ${gsym("MB", "seg")} 위의 점이에요. ${gsym("MN", "seg")}:${gsym("NB", "seg")}=3:1이고 ${gsym("AB", "seg")}=32 cm일 때, ${gsym("AN", "seg")}의 길이는?`,
+    figure: mExamPointsLineFig({ pts: ["A", "M", "N", "B"], pos: [0, 0.5, 0.875, 1], segs: [{ from: 0, to: 3, label: "32 cm" }] }),
+    options: ["28 cm", "24 cm", "20 cm", "30 cm", "16 cm"],
+    answer: 0, diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>중점 조건과 비 조건을 차례로 써요.<br>① M이 AB의 중점: AM=MB=32÷2=16<br>② MB를 3:1로 나누면 MN=16×(3/4)=12, NB=4<br>③ AN=AM+MN=16+12=<b>28 cm</b> ✓<span class='xh'>오답 하나씩 격파</span>24 cm는 MN을 MB의 절반(8)으로 잘못 잡거나 3:1을 2:2처럼 다룬 값이에요. 비 3:1은 전체를 3+1=4칸으로 나눠 3칸과 1칸을 가진다는 뜻이라, 한 칸이 16÷4=4가 되는 것부터 계산해야 해요. 20 cm는 AN을 AM+NB처럼 엉뚱한 조각의 합으로 세운 값이고, 16 cm는 AM에서 멈춘 값, 30 cm는 NB=2로 어림한 값이에요. 비 조건이 나오면 '전체 몇 칸, 한 칸 얼마'를 먼저 적는 습관이 모든 실수를 막아 줘요. 검산: AM 16+MN 12+NB 4=32 ✓",
+    core: "비는 칸부터! 전체 4칸, 한 칸 4로 확정!",
+  },
+  {
+    // [슬롯 29] 검산: 직선·선분은 방향 없음(AB=BA ✓), 반직선은 시작점·방향으로 구분(✗), 종류 다르면 ✗.
+    id: "m1u4e029", lessonId: "m1u4l2", type: "multi",
+    prompt: "그림과 같이 한 직선 위에 두 점 A, B가 있어요. 옳은 것을 모두 고르세요.",
+    figure: mExamPointsLineFig({ pts: ["A", "B"] }),
     options: [
-      gsym("HK", "seg") + "=10 cm",
-      gsym("HK", "seg") + "=2 cm",
-      gsym("HJ", "seg") + "=10 cm",
-      gsym("JK", "seg") + "=4 cm",
-      gsym("HK", "line") + "=10 cm",
+      `${gsym("AB", "line")}=${gsym("BA", "line")}`,
+      `${gsym("AB", "seg")}=${gsym("BA", "seg")}`,
+      `${gsym("AB", "ray")}=${gsym("BA", "ray")}`,
+      `${gsym("AB", "ray")}=${gsym("AB", "line")}`,
+      `${gsym("AB", "seg")}=${gsym("AB", "line")}`,
     ],
-    answer: 0,
-    diff: 2,
-    explain:
-      "<span class='xh'>정답 풀이</span>J가 H와 K 사이에 있으므로 " +
-      gsym("HK", "seg") +
-      "는 " +
-      gsym("HJ", "seg") +
-      "와 " +
-      gsym("JK", "seg") +
-      "를 이어 붙인 선분이에요. 따라서 HK=4+6 = <b>10 cm</b>예요.<span class='xh'>오답 하나씩 격파</span>'HK=2 cm'는 6−4를 계산한 값이라 두 이웃한 구간을 합쳐야 하는 점의 순서를 놓쳤어요. 'HJ=10 cm'는 전체 길이를 한 부분에 잘못 붙였고, 'JK=4 cm'는 서로 다른 두 주어진 길이를 같다고 바꾸었어요. " +
-      gsym("HK", "line") +
-      "에 10 cm라고 한 설명도 틀려요. 직선은 양쪽으로 한없이 뻗어 전체 길이를 정할 수 없고, 길이 10 cm는 양 끝이 있는 선분 HK에 붙여야 해요.",
-    core: "사이에 있는 점을 기준으로 이웃한 선분의 길이를 더한다.",
+    answer: [0, 1], diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>기호의 뜻을 하나씩 대조해요.<br>① 직선 AB와 직선 BA: 직선은 방향이 없으니 두 점의 순서를 바꿔도 같은 직선 ✓<br>② 선분 AB와 선분 BA: 선분도 A와 B 사이의 같은 구간 ✓<span class='xh'>오답 하나씩 격파</span>반직선 AB와 반직선 BA는 시작점이 A와 B로 다르고 뻗는 방향도 반대라 서로 다른 도형이에요. 셋 중 유일하게 이름 순서가 의미를 갖는 것이 반직선이죠. 반직선 AB와 직선 AB는 한쪽으로만 뻗는 도형과 양쪽으로 뻗는 도형이라 같을 수 없고, 선분 AB와 직선 AB도 유한한 구간과 무한한 선이라 다른 도형이에요. 기호 위의 표시(양쪽 화살표·한쪽 화살표·민짜 선)가 도형의 종류를 말해 준다는 것을 기억하면 어떤 짝이 나와도 흔들리지 않아요.",
+    core: "순서 바꿔도 같은 건 직선·선분, 반직선만 예외!",
   },
   {
-    id: "m1u4e024",
-    lessonId: L,
-    type: "mcq",
-    prompt: "서로 다른 여섯 점 A, C, E, G, J, L이 한 직선 위에 있어요. 이 점 가운데 두 점을 끝점으로 하는 서로 다른 선분의 개수는?",
-    options: ["6개", "12개", "30개", "15개", "36개"],
-    answer: 3,
-    diff: 3,
-    explain:
-      "<span class='xh'>정답 풀이</span>선분 하나는 서로 다른 두 끝점을 고르면 정해져요. A와 이을 수 있는 선분은 5개, 이미 센 A를 빼고 C에서 새로 세면 4개, 이어서 3개, 2개, 1개예요. 따라서 5+4+3+2+1 = <b>15개</b>예요.<span class='xh'>오답 하나씩 격파</span>'6개'는 점의 개수만 적은 값이고, '12개'는 각 점에서 양쪽 방향만 막연히 두 번 센 값이에요. '30개'는 시작점과 끝점의 순서를 구별해 6×5로 센 값인데, 선분 AC와 선분 CA는 같은 선분이라 두 번 세면 안 돼요. '36개'는 같은 점을 두 번 고르는 경우까지 넣은 값이에요. 중복을 피하려면 앞 점마다 아직 짝짓지 않은 뒤쪽 점만 세어요.",
-    core: "여섯 점에서 두 끝점을 고르는 선분은 5+4+3+2+1 = 15개다.",
-  },
-  {
-    id: "m1u4e025",
-    lessonId: L,
-    type: "num",
-    prompt: "한 직선 위에 M, P, N이 이 순서로 있고 " + gsym("MN", "seg") + "=18 m, " + gsym("MP", "seg") + "=7 m입니다. 두 점 P, N 사이의 거리를 구하세요. 정답은 숫자만 입력하세요.",
-    answer: "11",
-    numKind: "int",
-    unitLabel: "m",
-    diff: 1,
-    explain:
-      "<span class='xh'>정답 풀이</span>M, P, N이 이 순서이므로 전체 선분 MN은 MP와 PN으로 나뉘어요. 따라서 PN=MN−MP=18−7=<b>11 m</b>이고, 두 점 P, N 사이의 거리는 선분 PN의 길이인 11 m예요.<span class='xh'>헷갈림 격파</span>18을 그대로 쓰면 M과 N 사이의 거리를 답한 것이고, 7은 M과 P 사이의 거리예요. 18+7은 부분을 전체에 다시 더한 값이라 점의 순서와 맞지 않아요. 직선 전체에는 길이를 붙일 수 없지만 두 끝점이 정해진 선분의 길이는 정할 수 있어요. 먼저 어느 선분이 전체인지 확인하고 사이점 P가 나눈 한 부분을 빼세요.",
-    core: "사이점 P가 나눈 전체 선분에서 MP를 빼 PN의 길이를 구한다.",
-  },
-  {
-    id: "m1u4e026",
-    lessonId: L,
-    type: "num",
-    prompt: "한 직선 위에 서로 다른 다섯 점 A, B, C, D, E가 이 순서로 있습니다. 이 점 중 하나를 시작점으로 하고 다른 점을 지나는 서로 다른 반직선은 모두 몇 개인가요? 정답은 숫자만 입력하세요.",
-    answer: "8",
-    numKind: "int",
-    unitLabel: "개",
-    diff: 1,
-    explain:
-      "<span class='xh'>정답 풀이</span>끝점 A에서 시작하는 반직선은 오른쪽 방향 1개, 끝점 E에서는 왼쪽 방향 1개예요. 안쪽 점 B, C, D에서는 왼쪽과 오른쪽으로 각각 1개씩이므로 2개씩 생겨요. 따라서 1+2+2+2+1=<b>8개</b>예요.<span class='xh'>헷갈림 격파</span>지나는 점을 바꿀 때마다 새 반직선으로 세면 안 돼요. 예를 들어 반직선 BA와 BC는 방향이 다르지만, 반직선 BC와 BD는 시작점과 방향이 같아 같은 반직선이에요. 직선이나 선분의 개수를 세는 문제로 바꾸지도 말고, 시작점과 뻗는 방향 두 가지를 함께 비교하세요.",
-    core: "다섯 공선점에서 시작점과 방향이 다른 반직선은 모두 8개다.",
-  },
-  {
-    id: "m1u4e027",
-    lessonId: L,
-    type: "num",
-    prompt: "점 C는 " + gsym("AE", "seg") + "의 중점입니다. " + gsym("AC", "seg") + "=7 cm일 때, " + gsym("CE", "seg") + "의 길이를 구하세요. 정답은 숫자만 입력하세요.",
-    answer: "7",
-    numKind: "int",
-    unitLabel: "cm",
-    diff: 2,
-    explain:
-      "<span class='xh'>정답 풀이</span>C가 " +
-      gsym("AE", "seg") +
-      "의 중점이므로 C는 A와 E 사이에 있고, 두 부분의 길이는 AC=CE예요. AC가 7 cm이므로 같은 길이인 CE도 <b>7 cm</b>예요. 입력칸에는 숫자 7만 적어요.<span class='xh'>헷갈림 격파</span>14라고 답하면 전체 AE의 길이를 구한 것이고, 문제는 한쪽 부분 CE를 물었어요. 3.5는 주어진 한쪽 길이 7을 다시 반으로 나눈 값이라 중점 조건을 한 번 더 적용한 오류예요. 중점은 전체를 반으로 나눈다는 뜻이면서, 동시에 양쪽 두 선분의 길이가 같다는 뜻이에요. 이미 한쪽 길이가 주어졌다면 계산보다 먼저 반대쪽에 같은 값을 옮기면 돼요.",
-    core: "중점 C이면 AC=CE이므로 CE=7 cm이다.",
-  },
-  {
-    id: "m1u4e028",
-    lessonId: L,
-    type: "num",
-    prompt: "그림과 같이 한 직선 위에 A, C, E, G가 있습니다. C는 " + gsym("AE", "seg") + "의 중점이고, E는 " + gsym("CG", "seg") + "의 중점입니다. " + gsym("AG", "seg") + "=21 cm일 때, " + gsym("AE", "seg") + "의 길이를 구하세요. 정답은 숫자만 입력하세요.",
-    figure: mExamPointsLineFig({ pts: ["A", "C", "E", "G"], segs: [{ from: 0, to: 3, label: "21 cm" }] }),
-    answer: "14",
-    numKind: "int",
-    unitLabel: "cm",
-    diff: 3,
-    explain:
-      "<span class='xh'>정답 풀이</span>C가 " +
-      gsym("AE", "seg") +
-      "의 중점이므로 AC=CE이고, E가 " +
-      gsym("CG", "seg") +
-      "의 중점이므로 CE=EG예요. 따라서 AC, CE, EG는 모두 같은 길이예요. AG=21 cm를 세 부분으로 나누면 한 부분은 7 cm이고, AE는 AC+CE이므로 7+7 = <b>14 cm</b>예요.<span class='xh'>헷갈림 격파</span>7은 같은 세 부분 중 하나의 길이에서 멈춘 값이에요. 10.5는 C가 AG 전체의 중점이라고 잘못 본 값이고, 21은 전체 AG를 그대로 쓴 값이에요. 중점이 어느 선분의 중점인지 각각 확인한 뒤 같은 길이 관계를 이어야 해요.",
-    core: "겹친 중점 관계로 AC=CE=EG를 만든 뒤 AE를 구한다.",
-  },
-  {
-    id: "m1u4e029",
-    lessonId: L,
-    type: "num",
-    prompt: "그림과 같이 점 M은 " + gsym("AG", "seg") + "의 중점이고, 점 N은 " + gsym("MG", "seg") + "의 중점입니다. " + gsym("NG", "seg") + "=9 cm일 때, " + gsym("AM", "seg") + "의 길이를 구하세요. 정답은 숫자만 입력하세요.",
-    figure: mExamPointsLineFig({ pts: ["A", "M", "N", "G"], segs: [{ from: 2, to: 3, label: "9 cm" }] }),
-    answer: "18",
-    numKind: "int",
-    unitLabel: "cm",
-    diff: 3,
-    explain:
-      "<span class='xh'>정답 풀이</span>N이 " +
-      gsym("MG", "seg") +
-      "의 중점이므로 MN=NG=9 cm이고, MG=9+9 = 18 cm예요. 다시 M이 " +
-      gsym("AG", "seg") +
-      "의 중점이므로 AM=MG예요. 따라서 " +
-      gsym("AM", "seg") +
-      "의 길이는 <b>18 cm</b>예요.<span class='xh'>헷갈림 격파</span>9는 안쪽 선분 MG의 절반인 NG에서 멈춘 값이에요. 36은 AG 전체의 길이로, 문제에서 요구한 AM보다 두 배 커요. 중점이 두 번 나오지만 같은 선분을 연속으로 반씩 나누는 상황만은 아니에요. 먼저 N이 나누는 MG를 복원한 뒤, M이 나누는 AG의 두 부분 AM과 MG가 같다는 관계를 사용해야 해요. 작은 선분에서 바깥쪽으로 차례로 올라가요.",
-    core: "NG로 MG를 복원하고, AG의 중점 관계 AM=MG를 쓴다.",
-  },
-  {
-    id: "m1u4e030",
-    lessonId: L,
-    type: "word",
-    prompt: "선분을 길이가 같은 두 선분으로 나누는 점을 무엇이라고 하나요? 알맞은 말을 고르세요.",
-    answer: "중점",
-    bank: ["중점", "교점", "수선의 발", "꼭짓점", "시작점", "교선", "직선", "평면"],
-    diff: 1,
-    explain:
-      "<span class='xh'>정답 풀이</span>한 선분 위에서 양 끝점까지의 거리가 같아지도록 선분을 두 부분으로 나누는 점을 <b>중점</b>이라고 해요. 점 M이 선분 AB의 중점이면 M은 AB 위에 있고 AM=MB예요.<span class='xh'>오답 하나씩 격파</span>'교점'은 두 선이 만나는 점이고, '수선의 발'은 한 점에서 직선에 내린 수선과 그 직선이 만나는 점이에요. '꼭짓점'은 변이나 모서리가 만나는 점, '시작점'은 반직선이 출발하는 점이에요. '교선'은 두 면이 만나 생기는 선이라 점이 아니고, '직선'과 '평면'도 점의 이름이 아니에요. 중점은 반드시 어느 선분의 중점인지와 양쪽 길이가 같은지를 함께 확인해요.",
-    core: "선분을 길이가 같은 두 부분으로 나누는 점은 중점이다.",
+    // [슬롯 30] 검산: AB=14, M 중점 → AM=7. 기초 판독.
+    id: "m1u4e030", lessonId: "m1u4l2", type: "num",
+    prompt: `그림에서 점 M은 ${gsym("AB", "seg")}의 중점이에요. ${gsym("AB", "seg")}=14 cm일 때, ${gsym("AM", "seg")}의 길이는 몇 cm인지 구하세요.`,
+    figure: mExamPointsLineFig({ pts: ["A", "M", "B"], segs: [{ from: 0, to: 2, label: "14 cm" }] }),
+    answer: "7", numKind: "int", unitLabel: "cm", diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>중점은 선분을 똑같은 두 도막으로 나누는 점이에요.<br>① M이 AB의 중점이므로 AM=MB<br>② AM=14÷2=<b>7</b> ✓<span class='xh'>계산 실수 격파</span>14를 그대로 답하면 전체와 부분을 혼동한 거예요. 그림의 14 cm 띠가 A부터 B까지 전체를 가리킨다는 것부터 확인하세요. 또 AM과 MB 중 무엇을 묻는지도 살펴야 해요. 이 문제는 둘 다 7이라 결과가 같지만, 중점이 아닌 점이 나오는 다음 단계 문제부터는 어느 쪽 도막인지가 답을 가르거든요. 중점 문제의 기본기는 'AB=2AM=2MB'라는 2배 관계식을 자동으로 떠올리는 것이에요. 이 식 하나면 전체에서 부분으로, 부분에서 전체로 어느 방향이든 오갈 수 있어요. 검산: 7+7=14 ✓",
+    core: "중점은 절반! AB=2AM 관계식이 기본기!",
   },
 ];

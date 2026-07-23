@@ -20,6 +20,10 @@ import {
   m4CongruenceExamFig,
   m4SurveyFig,
   mExamTwinEquiFig,
+  mExamStarCrossFig,
+  mExamQuadSidesFig,
+  mExamCopyLenFig,
+  mExamSquareOverlapFig,
 } from "../src/ui/examFiguresMath";
 
 export const SAMPLES: Array<{ t: string; note: string; svg: string }> = [
@@ -71,8 +75,8 @@ export const SAMPLES: Array<{ t: string; note: string; svg: string }> = [
   },
   {
     t: "XA 기본(슬롯 46~48·50)",
-    note: "58° ↔ 이웃각 x=122",
-    svg: mExamXAnglesFig({ ends: ["A", "C", "B", "D"], vertex: "O", angles: ["58°", "x°", null, null] }),
+    note: "58° ↔ 이웃각 x=122 — angles 라벨도 실각 일치 필수(자리 0 실각 = slope2−24)",
+    svg: mExamXAnglesFig({ ends: ["A", "C", "B", "D"], vertex: "O", slope2: 82, angles: ["58°", "x°", null, null] }),
   },
   {
     t: "XA ray+arcs(슬롯 49·55) 확장",
@@ -189,4 +193,45 @@ export const SAMPLES: Array<{ t: string; note: string; svg: string }> = [
   { t: "TE in(슬롯 187·188·200)", note: "정삼각형 안 ㉮", svg: mExamTwinEquiFig("in") },
   { t: "TE twin(슬롯 189·192·196)", note: "잇댄 정삼각형", svg: mExamTwinEquiFig("twin") },
   { t: "CA 각 옮기기(슬롯 139·141·142)", note: "기본 라벨", svg: mExamCopyAngleFig({}) },
+  // ── 확대 신작 5종(파일럿 검수 반영 후 제작 — blueprint §6) ──
+  {
+    t: "SC 세 직선 방정식(슬롯 54) 신작",
+    note: "(2x)°+(3x−20)°+(x+50)°=180, x=25 — 실각 50/55/75(합 180 역산 보장)",
+    svg: mExamStarCrossFig({ a: 50, b: 55, labels: { a: "(2x)°", b: "(3x−20)°", c: "(x+50)°" } }),
+  },
+  {
+    t: "SC 심화 — 맞꼭지각 경유(슬롯 57) 신작",
+    note: "위 40°·x° + 아래 맞꼭지각 65° — 실각 40/65/75",
+    svg: mExamStarCrossFig({ a: 40, b: 65, labels: { a: "40°", c: "x°", b2: "65°" }, vertex: "O" }),
+  },
+  {
+    t: "QS 직사각형(슬롯 83·90) 신작",
+    note: "AB 왼 변·AD 윗변 — 직각 마크 4",
+    svg: mExamQuadSidesFig({ shape: "rect", labels: ["A", "B", "C", "D"] }),
+  },
+  {
+    t: "QS 사다리꼴(슬롯 84) 신작",
+    note: "AD ∥ BC(윗변·아랫변)",
+    svg: mExamQuadSidesFig({ shape: "trap", labels: ["A", "B", "C", "D"] }),
+  },
+  {
+    t: "QS 정육각형 extend(슬롯 86) 신작",
+    note: "AB 윗변·DE 평행 — 변 연장 점선",
+    svg: mExamQuadSidesFig({ shape: "hex", labels: ["A", "B", "C", "D", "E", "F"], extend: true }),
+  },
+  {
+    t: "CL 길이 옮기기(슬롯 145·147·151) 신작",
+    note: "AB=7 cm 원호 → CD(픽셀 동일 길이)",
+    svg: mExamCopyLenFig({ ab: "7 cm" }),
+  },
+  {
+    t: "SQO 정사각형 겹침(슬롯 194·195) 신작",
+    note: "중심 O 고정 회전 — 겹침만 옅게, 수치 미인쇄",
+    svg: mExamSquareOverlapFig({ side: "12 cm" }),
+  },
+  {
+    t: "SD5 labels(슬롯 93·94) 확장",
+    note: "A~E 윗면(앞왼부터 시계)·F~J 밑면 — AF 세로 모서리",
+    svg: mExamSolidFig("prism5", ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]),
+  },
 ];

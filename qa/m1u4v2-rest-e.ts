@@ -1,33 +1,195 @@
-// 중1 수학 Ⅳ. 기본 도형: 단원 종합 평가 풀 v2, 레슨 13 합동의 활용 (책 178~183쪽)
-// (m1u4e185~e200) · 2026-07 교과서 준거 재출제(정본 설계표 qa/m1u4-v2-blueprint.md, 규격 v2).
-// 유형 쿼터: mcq 8 + multi 2 + num 6, diff 6/7/3. word 0(규격 v2 · 교과서 실측: 용어 빈칸형 0).
-// 그림 원칙: 수치는 라벨 단위 병기("35°"·"12 cm"·"x°"), 관계 조건은 문두, 각 그림 전부 실각 렌더(각 문항 주석 검산).
-// 수치·앵커 배정은 설계표 §2가 정본. 표기: mfmt 미사용(gsym·유니코드 리터럴 ∥ ⊥ ≡ °), em대시 금지, −는 U+2212.
-import type { ExamItem } from "./types";
-import { gsym } from "../../ui/geoKit";
+// m1u4 v2 확대 저작 E · L12 합동(13) + L13 합동의 활용(14) = 27문항.
+// 정본 설계표 qa/m1u4-v2-blueprint.md §3의 비파일럿 슬롯. 관행은 rest-a 헤더와 동일.
+// 설계 조정: [슬롯 200] §3의 "∠PBD+∠PDB(=60)"은 기하 검산과 어긋남 · ∠BPD는 ㉮(=60)의 맞꼭지각이라
+//  두 각의 합은 180−60=120. 답 120으로 정정(196의 ∠BFD=120과 값이 겹치나 서로 다른 그림·유형(num↔mcq)이라 수용).
+// [슬롯 190·193] 측량 num 수치는 §4 "저작 시 유일" 슬롯 · 34 m·57 m로 확정(L13 앵커 52·68·7 회피).
+import type { ExamItem } from "../src/content/exams/types";
+import { gsym } from "../src/ui/geoKit";
 import {
+  m4CongruenceExamFig,
+  m4TriangleConditionFig,
   m4SurveyFig,
   mExamTwinEquiFig,
   mExamSquareOverlapFig,
-} from "../../ui/examFiguresMath";
+} from "../src/ui/examFiguresMath";
 
-export const POOL_M1U4L13: ExamItem[] = [
+export const POOL_M1U4V2_REST_E: ExamItem[] = [
+  // ─ L12 합동 ─
   {
-    // [슬롯 185] 검산: 그림 틱 OA=OC(1)·OB=OD(2)+맞꼭지각 ∠AOB=∠COD → SAS. 측량 서사(강 건너 거리).
-    id: "m1u4e185", lessonId: "m1u4l13", type: "mcq",
-    prompt: `강 건너 두 지점 A, B 사이의 거리를 직접 재기 어려워, 그림과 같이 점 O를 잡고 ${gsym("OA", "seg")}=${gsym("OC", "seg")}, ${gsym("OB", "seg")}=${gsym("OD", "seg")}가 되도록 점 C, D를 정했어요. ${gsym("AOB", "tri")}≡${gsym("COD", "tri")}임을 설명할 때 이용되는 합동 조건은?`,
-    figure: m4SurveyFig({ mode: "cross", labels: ["A", "B", "O", "C", "D"] }),
+    // [슬롯 170] 검산: ≡ 순서 대응 A↔D·B↔E → DE=AB=11(그림 라벨 판독).
+    id: "m1u4e170", lessonId: "m1u4l12", type: "num",
+    prompt: `그림에서 ${gsym("ABC", "tri")}≡${gsym("DEF", "tri")}일 때, <i class='mv'>x</i>의 값을 구하세요.`,
+    figure: m4CongruenceExamFig({
+      left: ["A", "B", "C"], right: ["D", "E", "F"],
+      sides: { left: ["11 cm", undefined, undefined], right: ["x cm", undefined, undefined] },
+    }),
+    answer: "11", numKind: "int", diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>합동 기호 ≡에 적힌 꼭짓점 순서가 대응표예요.<br>① △ABC≡△DEF에서 첫째끼리 A↔D, 둘째끼리 B↔E, 셋째끼리 C↔F<br>② 변 AB의 대응변은 DE<br>③ 대응변의 길이는 같으므로 x=AB=<b>11</b> ✓<span class='xh'>계산 실수 격파</span>대응을 그림의 위치 느낌으로 정하면 안 돼요. 오른쪽 삼각형이 뒤집혀 그려져 있어도 기준은 언제나 ≡ 기호의 글자 순서예요. DE를 BC나 CA와 짝지으면 엉뚱한 변의 길이를 옮기게 되죠. 요령은 두 삼각형 이름 아래에 A-D, B-E, C-F를 세로로 적어 대응표부터 만드는 거예요. 그다음 변 이름을 표에서 글자 단위로 번역(AB→DE)하면 실수가 원천 차단돼요. 대응각도 같은 표로 읽어요(∠A=∠D). 표 만들기 10초가 합동 단원 전체의 안전벨트랍니다.",
+    core: "≡ 순서가 대응표! 위치 말고 글자로 짝짓기!",
+  },
+  {
+    // [슬롯 171] 검산: 대응각 ∠A↔∠D · ∠A=74°(그림 라벨) → ∠D=74°.
+    id: "m1u4e171", lessonId: "m1u4l12", type: "mcq",
+    prompt: `그림에서 ${gsym("ABC", "tri")}≡${gsym("DEF", "tri")}이고 ∠A=74°일 때, ∠D의 크기는?`,
+    figure: m4CongruenceExamFig({ left: ["A", "B", "C"], right: ["D", "E", "F"], apex: { left: "74°" } }),
+    options: ["74°", "106°", "37°", "148°", "53°"],
+    answer: 0, diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>합동인 두 삼각형에서 대응각의 크기는 서로 같아요.<br>① ≡ 순서에서 A↔D이므로 ∠A과 ∠D는 대응각<br>② ∠D=∠A=<b>74°</b> ✓<span class='xh'>오답 하나씩 격파</span>106°는 180−74로 보각을 구한 값인데, 대응각은 보각 관계가 아니라 복사 관계예요. 37°와 148°는 절반과 두 배로, 합동에서 각이 늘거나 줄어들 이유가 없죠. 53°는 근거 없는 값이고요. 합동은 모양과 크기가 완전히 같아 포개어지는 관계라, 대응하는 것끼리는 변이든 각이든 값이 그대로 옮겨져요. 계산할 것이 없다는 것 자체가 이 문제의 핵심 개념이에요. 다만 '어느 각과 어느 각이 대응인가'만은 반드시 ≡ 기호의 순서로 확인하세요. 위치나 느낌으로 짝을 지으면 다음 단계의 역산 문제부터 무너지기 시작해요.",
+    core: "합동은 복사! 대응각은 계산 없이 그대로!",
+  },
+  {
+    // [슬롯 172] 검산: ∠C=180−(52+71)=57(세 각 합), ∠F는 ∠C의 대응각 → 57.
+    id: "m1u4e172", lessonId: "m1u4l12", type: "num",
+    prompt: `그림에서 ${gsym("ABC", "tri")}≡${gsym("DEF", "tri")}이고 ∠A=52°, ∠B=71°일 때, ∠F의 크기는 몇 도인지 구하세요.`,
+    figure: m4CongruenceExamFig({ left: ["A", "B", "C"], right: ["D", "E", "F"], apex: { left: "52°" } }),
+    answer: "57", numKind: "int", unitLabel: "°", diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>대응 찾기와 세 각의 합, 두 도구를 이어 써요.<br>① ≡ 순서에서 C↔F이므로 ∠F=∠C<br>② 삼각형 세 각의 크기의 합은 180°: ∠C=180°−52°−71°<br>③ ∠F=∠C=<b>57</b> ✓<span class='xh'>계산 실수 격파</span>∠F를 ∠A나 ∠B와 짝지어 52°나 71°를 답하면 대응표를 안 만든 거예요. F는 셋째 글자라 짝도 셋째 글자 C죠. 또 180−52−71 계산에서 123−71을 하다 받아내림 실수로 51이나 59가 나오기 쉬워요. 52+71=123을 먼저 만들고 180−123=57로 한 번에 빼면 안전해요. 검산: 세 각 52, 71, 57의 합이 정확히 180이 되는지 더해 보세요. 주어진 각이 왼쪽 삼각형에 있고 묻는 각이 오른쪽에 있어도, 대응만 정확하면 한쪽에서 구한 값을 그대로 건너보낼 수 있다는 것이 합동의 힘이에요.",
+    core: "셋째는 셋째끼리! 모자란 각은 세 각의 합으로!",
+  },
+  {
+    // [슬롯 173] 검산: 오른쪽 라벨 [E, F, D] · 마크 대응은 위↔위·왼변↔대응변 구조라 A↔E, B↔F, C↔D
+    //  → 바른 표기는 △ABC≡△EFD.
+    id: "m1u4e173", lessonId: "m1u4l12", type: "mcq",
+    prompt: "그림과 같이 표시한 두 삼각형이 서로 합동일 때, 기호 ≡를 사용하여 바르게 나타낸 것은?",
+    figure: m4CongruenceExamFig({ left: ["A", "B", "C"], right: ["E", "F", "D"] }),
     options: [
-      "SAS 합동",
-      "ASA 합동",
-      "SSS 합동",
-      "세 각의 크기가 각각 같다",
-      "넓이가 서로 같다",
+      `${gsym("ABC", "tri")}≡${gsym("EFD", "tri")}`,
+      `${gsym("ABC", "tri")}≡${gsym("DEF", "tri")}`,
+      `${gsym("ABC", "tri")}≡${gsym("FDE", "tri")}`,
+      `${gsym("ABC", "tri")}≡${gsym("EDF", "tri")}`,
+      `${gsym("ABC", "tri")}≡${gsym("FED", "tri")}`,
+    ],
+    answer: 0, diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>≡ 표기는 대응하는 꼭짓점끼리 같은 자리에 서야 해요.<br>① 그림의 표시를 읽으면 같은 개수의 빗금 변끼리, 색칠된 각끼리 대응: A↔E, B↔F, C↔D<br>② A, B, C 순서로 썼으니 상대도 대응 순서대로 E, F, D<br>③ 따라서 <b>△ABC≡△EFD</b> ✓<span class='xh'>오답 하나씩 격파</span>△DEF라고 쓰면 알파벳이 예뻐 보이지만 A↔D, B↔E 대응이라는 거짓 정보를 담게 돼요. 표기는 미관이 아니라 대응 선언이거든요. 나머지 순서들도 최소 한 자리가 어긋나 있어요. 오른쪽 삼각형의 꼭짓점 이름이 뒤섞여 붙어 있을 때가 이 유형의 진짜 시험대인데, 요령은 그림의 마크(빗금 수, 각 표시)를 기준으로 짝을 먼저 확정하고 그 짝 순서로 받아 적는 거예요. 이름의 알파벳 순서는 아무 근거가 아니라는 것, 꼭 기억하세요.",
+    core: "표기는 대응 선언! 알파벳순의 유혹을 끊어라!",
+  },
+  {
+    // [슬롯 176] 무그림 ④(성질 진술 · 조건 상자 계열). 넓이·각·둘레 같음 ✓ / 역방향 두 문장 ✗.
+    id: "m1u4e176", lessonId: "m1u4l12", type: "multi",
+    prompt: "합동인 도형에 대한 설명으로 옳은 것을 모두 고르세요.",
+    options: [
+      "합동인 두 도형의 넓이는 서로 같아요",
+      "합동인 두 삼각형의 대응각의 크기는 서로 같아요",
+      "합동인 두 도형의 둘레의 길이는 서로 같아요",
+      "넓이가 같은 두 삼각형은 항상 합동이에요",
+      "둘레의 길이가 같은 두 삼각형은 항상 합동이에요",
+    ],
+    answer: [0, 1, 2], diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>합동이면 완전히 포개어지니 따라오는 것들이 있어요.<br>① 포개어지는 두 도형의 넓이는 당연히 같아요 ✓<br>② 대응각의 크기도 같아요 ✓<br>③ 둘레도 대응변 길이의 합이라 같아요 ✓<span class='xh'>오답 하나씩 격파</span>거꾸로 가는 두 문장이 함정이에요. 넓이가 같다고 합동일까요? 밑변 6에 높이 4인 삼각형과 밑변 8에 높이 3인 삼각형은 넓이가 12로 같지만 모양이 전혀 달라요. 둘레도 마찬가지로, 변의 조합이 다른 두 삼각형이 같은 둘레를 가질 수 있죠. '합동이면 넓이가 같다'는 참이지만 '넓이가 같으면 합동이다'는 거짓. 명제의 방향을 뒤집으면 참이 유지된다는 보장이 없다는 것이 이 문제의 진짜 주제예요. '항상'이 붙은 역방향 문장을 만나면 반례 하나를 만들어 보는 습관, 판별 문제의 최강 무기랍니다.",
+    core: "합동→넓이·둘레 같음은 참, 뒤집으면 거짓!",
+  },
+  {
+    // [슬롯 177] 검산: ∠F=180−(39+98)=43(오른쪽 세 각 합), ∠C는 ∠F의 대응각 → 43. 역방향 2단.
+    id: "m1u4e177", lessonId: "m1u4l12", type: "num",
+    prompt: `그림에서 ${gsym("ABC", "tri")}≡${gsym("DEF", "tri")}이고 ∠D=39°, ∠E=98°일 때, ∠C의 크기는 몇 도인지 구하세요.`,
+    figure: m4CongruenceExamFig({ left: ["A", "B", "C"], right: ["D", "E", "F"], apex: { right: "39°" } }),
+    answer: "43", numKind: "int", unitLabel: "°", diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>이번엔 오른쪽 삼각형의 정보로 왼쪽 각을 구하는 역방향이에요.<br>① ≡ 순서에서 C↔F이므로 ∠C=∠F<br>② △DEF에서 세 각의 합: ∠F=180°−39°−98°=43°<br>③ ∠C=<b>43</b> ✓<span class='xh'>계산 실수 격파</span>∠C를 ∠D나 ∠E와 짝지어 39°나 98°를 옮기면 대응표 없이 푼 거예요. C는 셋째 글자, 짝은 F. 39+98=137을 만들고 180−137=43으로 한 번에 빼면 계산도 안전해요. 이 문제의 포인트는 정보가 어느 쪽 삼각형에 몰려 있든 상관없다는 거예요. 세 각의 합 180°는 양쪽 모두에서 성립하니, 정보가 많은 쪽에서 완성하고 대응으로 건너보내면 되죠. 검산: △DEF의 세 각 39, 98, 43의 합 180 ✓. 대응 한 걸음과 세 각의 합 한 걸음, 이 2단 콤보가 합동 역산 문제의 표준 리듬이에요.",
+    core: "정보 많은 쪽에서 완성 → 대응으로 건너보내기!",
+  },
+  {
+    // [슬롯 178] 검산: AB=DE·AC=DF 두 변 확보 · 합동이 되려면 끼인각 ∠A=∠D 필요(SAS).
+    //  검산 C 반영: 구 문두(AB·BC)는 그림 틱(AB·AC)과 모순 · 그림 재사용 문항은 문두를 그림에 정렬,
+    //  그림은 ss 모드(각 쐐기 = 정답 단서 제거).
+    id: "m1u4e178", lessonId: "m1u4l12", type: "mcq",
+    prompt: `그림과 같이 삼각형 ABC에서 두 변 AB, AC의 길이가 주어졌어요. 삼각형 DEF가 ${gsym("AB", "seg")}=${gsym("DE", "seg")}, ${gsym("AC", "seg")}=${gsym("DF", "seg")}를 만족할 때, ${gsym("ABC", "tri")}≡${gsym("DEF", "tri")}가 되기 위해 더 필요한 조건은?`,
+    figure: m4TriangleConditionFig({ a: "A", b: "B", c: "C", mode: "ss" }),
+    options: [
+      "∠A=∠D",
+      "∠B=∠E",
+      "∠C=∠F",
+      `${gsym("AB", "seg")}=${gsym("DF", "seg")}`,
+      "∠B=∠D",
+    ],
+    answer: 0, diff: 2,
+    explain: "<span class='xh'>정답 풀이</span>두 쌍의 대응변이 같을 때 합동을 완성하는 열쇠는 끼인각이에요.<br>① AB와 AC의 공통 끝점은 A, DE와 DF의 공통 끝점은 D<br>② 그 사이에 낀 각 <b>∠A=∠D</b>가 같으면 SAS 합동 ✓<span class='xh'>오답 하나씩 격파</span>∠B=∠E나 ∠C=∠F는 두 변 사이에 끼이지 않은 각이라, 조건을 만족하면서도 모양이 다른 두 삼각형이 생길 수 있어 합동을 보장하지 못해요. AB=DF는 대응이 어긋난 짝(AB의 짝은 DE)이라 새 정보가 되기는커녕 대응 관계를 흐트러뜨리는 함정이죠. ∠B=∠D도 대응이 뒤틀린 각 쌍이고요. 합동 조건 문제는 '무엇이 더 있으면 되나'를 묻는 척하지만, 사실은 끼인각을 정확히 짚는지를 묻는 문제예요. 두 변의 공통 끝점 찾기, 이 한 동작이 정답을 결정해요.",
+    core: "두 변의 공통 끝점 = 끼인각! ∠A와 ∠D가 짝!",
+  },
+  {
+    // [슬롯 179] 검산: 마크 대응 정방향 A↔D·B↔E·C↔F → △ABC≡△DEF. ≡ 표기 기초.
+    id: "m1u4e179", lessonId: "m1u4l12", type: "mcq",
+    prompt: "그림과 같이 표시한 두 삼각형이 서로 합동일 때, 기호 ≡를 사용하여 바르게 나타낸 것은?",
+    figure: m4CongruenceExamFig({ left: ["A", "B", "C"], right: ["D", "E", "F"] }),
+    options: [
+      `${gsym("ABC", "tri")}≡${gsym("DEF", "tri")}`,
+      `${gsym("ABC", "tri")}≡${gsym("EFD", "tri")}`,
+      `${gsym("ABC", "tri")}≡${gsym("FDE", "tri")}`,
+      `${gsym("ABC", "tri")}≡${gsym("DFE", "tri")}`,
+      `${gsym("BCA", "tri")}≡${gsym("DEF", "tri")}`,
     ],
     answer: 0, diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>두 삼각형이 가진 조건을 모아요.<br>① OA=OC (측량하며 같게 잡은 길이)<br>② OB=OD (같게 잡은 길이)<br>③ ∠AOB=∠COD (두 직선이 O에서 만나 생기는 맞꼭지각)<br>④ 두 변과 그 끼인각이 각각 같으니 <b>SAS 합동</b> ✓ 덕분에 잴 수 있는 CD의 길이가 곧 잴 수 없는 AB의 길이가 돼요.<span class='xh'>오답 하나씩 격파</span>ASA를 고르려면 한 변과 그 양 끝 각 정보가 있어야 하는데, 여기서 아는 각은 맞꼭지각 하나뿐이에요. SSS는 세 변이 필요하지만 AB는 애초에 잴 수 없어서 조건으로 쓸 수 없죠. 세 각이 같다는 것과 넓이가 같다는 것은 합동 조건이 아니에요. 맞꼭지각이 '공짜 조건'으로 굴러 들어오는 X자 구도는 측량 문제의 단골 장치이니 그림에서 O를 보자마자 떠올리세요.",
-    core: "X자 구도 = 맞꼭지각 공짜! 변·변·끼인각 SAS!",
+    explain: "<span class='xh'>정답 풀이</span>그림의 표시로 대응부터 확정해요.<br>① 색칠된 각끼리: ∠A↔∠D<br>② 빗금 한 줄 변끼리 AB↔DE, 두 줄 변끼리 AC↔DF<br>③ 대응 순서대로 받아 적으면 <b>△ABC≡△DEF</b> ✓<span class='xh'>오답 하나씩 격파</span>△ABC≡△DFE는 둘째, 셋째 자리가 바뀌어 B↔F, C↔E라는 거짓 대응을 선언해요. △BCA≡△DEF는 왼쪽 이름을 돌려 쓴 것인데, 그러면 B↔D가 되어 그림의 표시와 어긋나죠. 시작 꼭짓점을 바꿔 쓰려면 양쪽을 함께 돌려야(△BCA≡△EFD) 같은 대응이 유지돼요. 나머지도 자리가 어긋난 순서들이고요. ≡ 표기 문제의 채점 기준은 단 하나, 같은 자리의 글자끼리 정말 대응하는가예요. 쓰기 전에 마크 기준 대응표를 만들고, 쓴 뒤에 자리별로 검산하는 두 번의 확인이 만점 습관이에요.",
+    core: "쓰기 전 대응표, 쓴 뒤 자리 검산!",
   },
+  {
+    // [슬롯 180] 무그림 ④(조건 상자 역산 · 천04-08 원형이 무그림). 검산: 넓이 같음(합동) →
+    //  ½·DE·DF=27, DF=6 → DE=9.
+    id: "m1u4e180", lessonId: "m1u4l12", type: "num",
+    prompt: `${gsym("ABC", "tri")}≡${gsym("DEF", "tri")}인 두 삼각형이 다음 조건을 만족할 때, ${gsym("DE", "seg")}의 길이는 몇 cm인지 구하세요.<br>· ∠D=90°<br>· ${gsym("DF", "seg")}=6 cm<br>· ${gsym("ABC", "tri")}의 넓이는 27 cm²`,
+    answer: "9", numKind: "int", unitLabel: "cm", diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>조건 세 개를 사슬로 이어요.<br>① 합동인 두 삼각형의 넓이는 같으므로 △DEF의 넓이도 27 cm²<br>② ∠D=90°이므로 △DEF는 DE와 DF를 밑변과 높이로 쓰는 직각삼각형<br>③ (1/2)×DE×6=27, 3×DE=27<br>④ DE=<b>9</b> ✓<span class='xh'>계산 실수 격파</span>DE×6=27로 세워 4.5가 나왔다면 삼각형 넓이의 절반 계수를 빠뜨린 거예요. 답이 소수로 나오면 식부터 의심하세요. 또 넓이 27이 △ABC의 것이라 △DEF와 무관해 보인다며 막히는 경우가 있는데, 그 다리를 놓아 주는 것이 바로 '합동이면 넓이가 같다'는 성질이에요. 조건 상자 문제는 각 조건이 어떤 성질을 발동시키는지(합동→넓이 전달, 직각→밑변과 높이 확정) 하나씩 번역하는 것이 풀이의 전부랍니다. 검산: (1/2)×9×6=27 ✓",
+    core: "조건마다 성질 번역! 합동이 넓이를 건네준다!",
+  },
+  {
+    // [슬롯 181] 검산: SSA(두 변+끼이지 않은 각)만 합동 미보장 · 나머지는 SSS·ASA·SAS·ASA.
+    id: "m1u4e181", lessonId: "m1u4l12", type: "mcq",
+    prompt: `그림과 같은 두 삼각형 ABC, DEF에 대하여 다음 조건 중 ${gsym("ABC", "tri")}≡${gsym("DEF", "tri")}임이 반드시 성립한다고 할 수 <u>없는</u> 것은?`,
+    figure: m4CongruenceExamFig({ left: ["A", "B", "C"], right: ["D", "E", "F"], plain: true }),
+    options: [
+      `${gsym("AB", "seg")}=${gsym("DE", "seg")}, ${gsym("BC", "seg")}=${gsym("EF", "seg")}, ∠C=∠F`,
+      `${gsym("AB", "seg")}=${gsym("DE", "seg")}, ${gsym("BC", "seg")}=${gsym("EF", "seg")}, ${gsym("CA", "seg")}=${gsym("FD", "seg")}`,
+      `${gsym("AB", "seg")}=${gsym("DE", "seg")}, ∠A=∠D, ∠B=∠E`,
+      `${gsym("AB", "seg")}=${gsym("DE", "seg")}, ${gsym("BC", "seg")}=${gsym("EF", "seg")}, ∠B=∠E`,
+      `${gsym("BC", "seg")}=${gsym("EF", "seg")}, ∠B=∠E, ∠C=∠F`,
+    ],
+    answer: 0, diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>첫 번째 조건에서 ∠C는 두 변 AB, BC 사이에 낀 각이 아니에요(끼인각은 ∠B). 두 변과 끼이지 않은 각이 같아도, 조건에 맞는 삼각형이 두 가지로 생길 수 있어 합동이 <b>보장되지 않아요</b> ✓ 한 변이 컴퍼스처럼 흔들리며 두 자리에 닿는 장면을 상상해 보세요.<span class='xh'>오답 하나씩 격파</span>나머지는 전부 합동을 보장해요. 세 변이 각각 같으면 SSS, 한 변과 그 양 끝 각이 같으면 ASA(둘째, 다섯째), 두 변과 그 끼인각이 같으면 SAS(넷째)죠. 판정 절차는 기계적으로: 재료를 세고(변 몇, 각 몇), 각이 있다면 그 각이 두 변 '사이'에 끼었는지 또는 변의 '양 끝'에 붙었는지 자리를 확인해요. 자리가 맞으면 합동, 각이 옆으로 비켜나 있으면 보장 없음. 값의 개수가 아니라 자리가 합동을 결정한다는 것이 이 단원 최후의 교훈이에요.",
+    core: "세 개라도 자리가 틀리면 무효! 낀 각인지 확인!",
+  },
+  {
+    // [슬롯 182] 검산: AB=7·BC=16 라벨 · 대응변 DE=7 ✓·EF=16 ✓·∠A=∠D ✓ / DF는 미지 ✗·EF=7 ✗.
+    id: "m1u4e182", lessonId: "m1u4l12", type: "multi",
+    prompt: `그림에서 ${gsym("ABC", "tri")}≡${gsym("DEF", "tri")}일 때, 옳은 것을 모두 고르세요.`,
+    figure: m4CongruenceExamFig({
+      left: ["A", "B", "C"], right: ["D", "E", "F"],
+      sides: { left: ["7 cm", undefined, "16 cm"] },
+    }),
+    options: [
+      `${gsym("DE", "seg")}=7 cm`,
+      `${gsym("EF", "seg")}=16 cm`,
+      "∠A=∠D",
+      `${gsym("DF", "seg")}=16 cm`,
+      `${gsym("EF", "seg")}=7 cm`,
+    ],
+    answer: [0, 1, 2], diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>대응표(A-D, B-E, C-F)로 그림의 정보를 번역해요.<br>① AB=7 cm의 대응변은 DE → DE=7 cm ✓<br>② BC=16 cm의 대응변은 EF → EF=16 cm ✓<br>③ 첫 글자끼리인 ∠A와 ∠D는 대응각이라 크기가 같아요 ✓<span class='xh'>오답 하나씩 격파</span>DF=16 cm는 대응을 잘못 읽은 값이에요. DF의 짝은 CA인데, CA의 길이는 그림 어디에도 없으니 16이라 말할 근거가 없죠. 주어진 값과 알 수 없는 값을 구분하는 것도 판별의 일부예요. EF=7 cm는 EF를 AB와 짝지은 것으로, 둘째·셋째 글자 짝(B-E, C-F)을 무시한 결과고요. 합동 판별 문제의 모든 함정은 결국 '짝 바꿔치기' 하나로 만들어져요. 보기를 읽기 전에 대응표를 먼저 적어 두면, 어떤 바꿔치기가 나와도 표와 대조하는 순간 걸러진답니다.",
+    core: "판별 전에 대응표! 없는 값은 없다고 판정!",
+  },
+  {
+    // [슬롯 183] 무그림 ⑤(세기 · 그리면 세여진다). 검산: 대각선 교점 O · △ABO≡△BCO≡△CDO≡△DAO
+    //  (반씩 같고 90°, SAS) → △ABO와 합동인 것은 자신 제외 3개.
+    id: "m1u4e183", lessonId: "m1u4l12", type: "mcq",
+    prompt: "정사각형 ABCD의 두 대각선의 교점을 O라 할 때, 두 대각선으로 나뉜 네 삼각형 중 삼각형 ABO와 합동인 삼각형의 개수는?",
+    options: ["3개", "4개", "2개", "1개", "없다"],
+    answer: 0, diff: 3,
+    explain: "<span class='xh'>정답 풀이</span>정사각형의 대각선 성질을 재료로 합동을 판정해요.<br>① 정사각형의 두 대각선은 길이가 같고, 서로를 절반으로 나누며, 수직으로 만나요<br>② 그래서 OA=OB=OC=OD이고 교점의 네 각은 모두 90°<br>③ 네 삼각형 ABO, BCO, CDO, DAO는 두 변과 끼인각이 각각 같아 모두 합동(SAS)<br>④ △ABO와 합동인 것은 자신을 뺀 <b>3개</b> ✓<span class='xh'>오답 하나씩 격파</span>4개로 답했다면 △ABO 자신까지 센 거예요. 합동은 서로 다른 두 도형을 짝짓는 관계라 자기 자신은 세지 않아요. 2개 이하로 답했다면 마주 보는 삼각형만 합동이라 생각한 것인데, 대각선 반쪽 길이가 전부 같으니 이웃한 삼각형끼리도 똑같은 SAS 재료를 가져요. 그림 없이도 성질(대각선의 길이·이등분·수직)만으로 합동이 논증되는 것이 이 문제의 묘미예요. 도형의 성질이 곧 합동 조건의 재료 창고라는 감각을 챙겨 가세요.",
+    core: "대각선 성질 3종이 SAS 재료! 자신은 빼고 3개!",
+  },
+  {
+    // [슬롯 184] 검산: CA=12 라벨 · 대응변 FD=x → 12(≡ 순서 C↔F·A↔D).
+    id: "m1u4e184", lessonId: "m1u4l12", type: "num",
+    prompt: `그림에서 ${gsym("ABC", "tri")}≡${gsym("DEF", "tri")}일 때, <i class='mv'>x</i>의 값을 구하세요.`,
+    figure: m4CongruenceExamFig({
+      left: ["A", "B", "C"],
+      right: ["D", "E", "F"],
+      sides: { left: [undefined, "12 cm", undefined], right: [undefined, "x cm", undefined] },
+    }),
+    answer: "12", numKind: "int", diff: 1,
+    explain: "<span class='xh'>정답 풀이</span>이번 대응변은 셋째 짝이에요.<br>① 그림의 12 cm는 변 AC의 길이<br>② ≡ 순서에서 A↔D, C↔F이므로 AC의 대응변은 DF<br>③ x=AC=<b>12</b> ✓<span class='xh'>계산 실수 격파</span>같은 유형을 두 번 만났다고 눈으로만 풀면, 이번엔 라벨이 다른 변에 붙어 있다는 것을 놓치기 쉬워요. 어느 변에 값이 적혀 있는지(AC), 그 변의 두 글자가 상대 삼각형의 어느 글자로 번역되는지(A→D, C→F)를 매번 새로 확인하는 것이 정확한 절차예요. 두 글자를 각각 번역하는 습관은 변 이름이 CA처럼 뒤집혀 나와도 흔들리지 않게 해 줘요. CA의 대응변은 FD이고, FD와 DF는 같은 선분이니까요. 검산: 대응변끼리 같은 위치에 같은 값 12가 놓였는지 그림에서 마지막으로 확인!",
+    core: "글자 단위 번역: A→D·C→F, 그래서 AC→DF!",
+  },
+
+  // ─ L13 합동의 활용 ─
   {
     // [슬롯 186] 검산: OA=OC·OB=OD·맞꼭지각 → △AOB≡△COD(SAS) → AB=CD=46(그림 라벨 판독).
     id: "m1u4e186", lessonId: "m1u4l13", type: "num",
@@ -52,16 +214,6 @@ export const POOL_M1U4L13: ExamItem[] = [
     answer: 0, diff: 1,
     explain: "<span class='xh'>정답 풀이</span>대응까지 맞는 이름을 골라야 해요.<br>① △ABD와 △BCE에서 AB=BC(정삼각형의 변), BD=CE(주어진 조건), ∠ABD=∠BCE=60°(정삼각형의 각)<br>② 두 변과 끼인각이 각각 같아 SAS 합동<br>③ 대응 순서 A↔B, B↔C, D↔E를 지킨 표기는 <b>△BCE</b> ✓<span class='xh'>오답 하나씩 격파</span>나머지 보기들은 같은 세 점 B, C, E를 쓰지만 순서가 달라요. 예를 들어 △CBE라고 쓰면 A↔C, B↔B라는 대응 선언이 되는데, 그러면 AB의 짝이 CB가 되어 조건의 틱 표시(BD와 CE)와 어긋나죠. 합동 표기에서 점의 집합이 같아도 순서가 다르면 다른 답이라는 것, 이 단원 채점의 확고한 기준이에요. 첫 변 AB의 짝이 BC, 둘째 변 BD의 짝이 CE라는 조건의 짝 그대로 글자를 배열하면 순서는 저절로 정해져요.",
     core: "같은 세 점이라도 순서가 다르면 다른 표기!",
-  },
-  {
-    // [슬롯 188] 검산: 정삼각형 ABC, BD=CE(틱) → △ABD≡△BCE(SAS: AB=BC·BD=CE·∠ABD=∠BCE=60°)
-    //  → ∠BAD=∠CBE. ㉮=∠APE는 ∠APB의 평각 보충이라 ∠ABP+∠BAP = ∠ABE+∠CBE = ∠ABC = 60°.
-    id: "m1u4e188", lessonId: "m1u4l13", type: "num",
-    prompt: `그림에서 ${gsym("ABC", "tri")}는 정삼각형이고 ${gsym("BD", "seg")}=${gsym("CE", "seg")}, 점 P는 ${gsym("AD", "seg")}와 ${gsym("BE", "seg")}의 교점이에요. ㉮로 표시한 각의 크기는 몇 도인지 구하세요.`,
-    figure: mExamTwinEquiFig("in"),
-    answer: "60", numKind: "int", unitLabel: "°", diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>먼저 숨은 합동을 찾아요.<br>① △ABD와 △BCE에서 AB=BC(정삼각형), BD=CE(조건), ∠ABD=∠BCE=60°<br>② SAS 합동이므로 ∠BAD=∠CBE<br>③ △ABP에서 세 각의 합은 180°이므로 ∠APB=180°−(∠ABP+∠BAP)이고, ㉮는 ∠APB와 평각을 이루니 ㉮=∠ABP+∠BAP<br>④ ∠ABE+∠BAD=∠ABE+∠CBE=∠ABC=<b>60°</b> ✓<span class='xh'>계산 실수 격파</span>P 주변의 각을 직접 재려 들면 아무 수치도 없어 막혀요. 이 문제의 설계는 '합동으로 각을 옮겨 담기'예요. ∠BAD를 같은 크기인 ∠CBE로 바꿔치기하는 순간, 흩어져 있던 두 각이 ∠ABC라는 한 각으로 합쳐지죠. 근거는 초등에서 배운 '삼각형 세 각의 합 180°'와 평각뿐이라 중1 지식만으로 완결돼요. 정삼각형 겹침 문제는 시험 단골이니 이 옮겨 담기 흐름을 통째로 기억하세요!",
-    core: "합동으로 각을 바꿔치기 → 60° 한 각으로 모인다!",
   },
   {
     // [슬롯 189] 검산: B·C·D 일직선 · △ACD≡△BCE(SAS: AC=BC·CD=CE·∠ACD=∠BCE=120°).
