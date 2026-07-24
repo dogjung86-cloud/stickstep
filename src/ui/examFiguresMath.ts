@@ -3888,6 +3888,8 @@ export function m5CircleRatioFig(o: {
       out += `<path d="M${cx} ${cy} L${p0.x.toFixed(1)} ${p0.y.toFixed(1)} A${R} ${R} 0 ${large} 0 ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} Z" fill="${color}" opacity=".18"/>`;
     out += m5seg({ x: cx, y: cy }, p0) + m5seg({ x: cx, y: cy }, p1);
     if (s.angleLabel) {
+      // 중심각 호 표시를 함께 그린다(라벨만 있으면 어느 각인지 표기가 안 됨 — m1u5 v2 검수 소급).
+      out += angleArc(cx, cy, 24, s.from, s.to, color, undefined, { width: 2.2 });
       const m = polar(cx, cy, 42, s.from + span / 2);
       out += m5text(m.x, m.y + 4, s.angleLabel, "middle", color, 12);
     }
@@ -3926,8 +3928,10 @@ export function m5SectorXFig(o: {
     out += m5text(m.x, m.y + 4, o.degLabel, "middle", GEO.hlC, 12.5);
   }
   if (o.rLabel) {
+    // 반지름 라벨은 a1 반지름의 수직 바깥쪽(부채꼴 밖)으로 밀어 선과 겹치지 않게(m1u5 v2 파일럿 검수 소급).
     const m = polar(cx, cy, R * 0.56, a1);
-    out += m5text(m.x, m.y - 8, o.rLabel, "middle", GEO.ink, 12);
+    const off = polar(0, 0, 14, a1 + 90);
+    out += m5text(m.x + off.x, m.y + off.y + 4, o.rLabel, "middle", GEO.ink, 12);
   }
   if (o.arcLabel) {
     const m = polar(cx, cy, R + 18, a0 + o.deg / 2);
@@ -4002,7 +4006,7 @@ export function m5RotateChoicesFig(cells: Array<"rtri" | "rect" | "rtrap" | "sem
     const bot = y0 + 86;
     out +=
       `<rect x="${x0}" y="${y0}" width="112" height="102" rx="10" fill="#FFFFFF" stroke="${LINE}" stroke-width="1.3"/>` +
-      `<text x="${x0 + 13}" y="${y0 + 19}" font-size="12.5" font-weight="900" fill="${INK}">${"①②③④⑤⑥"[i]}</text>` +
+      `<text x="${x0 + 12}" y="${y0 + 22}" font-size="16" font-weight="900" fill="${INK}">${"①②③④⑤⑥"[i]}</text>` +
       `<line x1="${ax}" y1="${y0 + 14}" x2="${ax}" y2="${y0 + 94}" stroke="${GEO.soft}" stroke-width="1.8" stroke-dasharray="6 5"/>`;
     const shape = (d: string) => `<path d="${d}" fill="${GEO.hlB}" fill-opacity=".18" stroke="${GEO.ink}" stroke-width="2.2" stroke-linejoin="round"/>`;
     if (kind === "rtri") out += shape(`M${ax} ${top} L${ax + 44} ${bot} L${ax} ${bot} Z`);
@@ -4037,7 +4041,8 @@ export function m5SolidDimFig(o: {
     out += `<ellipse cx="${cx}" cy="${ty}" rx="${rx}" ry="15" fill="#FFFFFF" stroke="${GEO.ink}" stroke-width="2.5"/>`;
     if (o.rLabel) {
       out += m5seg({ x: cx, y: ty }, { x: cx + rx, y: ty }, false, 2, GEO.hlC) + dot(cx, ty, GEO.hlC, 2.6);
-      out += m5text(cx + rx / 2, ty - 8, o.rLabel, "middle", GEO.hlC);
+      // 윗면 타원 위 호와 겹치지 않게 반지름 선 바로 위(살짝 안쪽)로(m1u5 v2 파일럿 검수 소급).
+      out += m5text(cx + rx / 2 - 6, ty - 2, o.rLabel, "middle", GEO.hlC);
     }
     if (o.hLabel) out += m5text(cx + rx + 12, (ty + by) / 2 + 4, o.hLabel, "start");
   } else if (o.kind === "cone") {
@@ -4050,12 +4055,14 @@ export function m5SolidDimFig(o: {
     out += m5seg({ x: cx - rx, y: by }, { x: cx, y: ay }) + m5seg({ x: cx + rx, y: by }, { x: cx, y: ay });
     if (o.hLabel) {
       out += m5seg({ x: cx, y: ay }, { x: cx, y: by }, true, 1.8, GEO.soft) + rightMark(cx, by, 0, 10);
-      out += m5text(cx - 8, (ay + by) / 2 + 4, o.hLabel, "end");
+      // 중간 높이에선 왼쪽 모선이 라벨을 지나가므로 아래쪽(모선이 왼쪽으로 벌어진 구간)에 배치(m1u5 v2 검수 소급).
+      out += m5text(cx - 8, (ay + by) / 2 + 32, o.hLabel, "end");
     }
     if (o.lLabel) out += m5text(cx + rx / 2 + 16, (ay + by) / 2 - 12, o.lLabel, "start");
     if (o.rLabel) {
       out += m5seg({ x: cx, y: by }, { x: cx + rx, y: by }, false, 2, GEO.hlC) + dot(cx, by, GEO.hlC, 2.6);
-      out += m5text(cx + rx / 2, by + 16, o.rLabel, "middle", GEO.hlC);
+      // 반지름 선(위)과 밑면 타원 앞 호(아래) 사이 띠에 배치 — 호와 겹침 해소(m1u5 v2 검수 소급).
+      out += m5text(cx + rx / 2 - 8, by + 11, o.rLabel, "middle", GEO.hlC);
     }
   } else if (o.kind === "sphere") {
     const cx = 150;
