@@ -1,15 +1,14 @@
 // m1u5 v2 파일럿 40문항(교과서 준거 규격) - 정본 설계표 qa/m1u5-v2-blueprint.md의 🅟 슬롯.
 // 격리 저작본: 레슨 파일 무수정, index.ts 미등록. 승인 후 슬롯 번호대로 m1u5lN.ts에 이식한다.
-// 공유 파일 가드(경과): 저작 시점엔 examFiguresMath.ts가 m2u4 v2 세션 WIP라 무수정 방침 → 신작 헬퍼 6종
-// (m5StarFig·m5TubeFig·m5NetConeFig·m5FrustumFig·m5CompositeFig·m5TriPrismDimFig)을 이 파일 로컬로 저작.
-// m2u4 종결·푸시(6c8cf5d) 확인 후 사용자 검수 8건 중 공유 헬퍼 4건(SX rLabel·SD cyl rLabel·SD cone hLabel·
-// RC 번호 크기)만 examFiguresMath.ts에 시각 소급(m2u5 관행). 신작 6종의 이식은 확대 세션 몫(blueprint §9).
+// 공유 파일 가드(경과): 저작 시점엔 examFiguresMath.ts가 m2u4 v2 세션 WIP라 신작 헬퍼 6종
+// (m5StarFig·m5TubeFig·m5NetConeFig·m5FrustumFig·m5CompositeFig·m5TriPrismDimFig)을 이 파일 로컬로 저작
+// → 확대 사이클(2026-07-25)에서 examFiguresMath.ts 말미 "m1u5 v2" 섹션으로 승격 이식 완료(blueprint §9-1,
+// 이 파일은 import만 남김. 문항 40개는 승인분 무수정).
 // 표기: 기하 풀 mfmt 미사용(gsym·유니코드 리터럴 °·π), em대시 금지, 뺄셈은 −(U+2212), num answer만 ASCII.
 // 발문 표준: 관계 조건은 문두, 수치는 그림 라벨(단위 병기), 핵심 수치 이중 제시. 각 그림은 전부 실각 렌더.
 // π 규칙: num 답이 aπ 꼴이면 "aπ ...일 때 a의 값" 부품 문항(무단위 면제 문구), 식 전체 보기는 mcq.
 // 각 문항 주석 = [슬롯 n] 검산 노트.
 import type { ExamItem } from "../src/content/exams/types";
-import { GEO, angleArc, angleOf, dot, polar, rightMark } from "../src/ui/geoKit";
 import {
   m5TriAngleFig,
   m5PolyAngleFig,
@@ -21,221 +20,20 @@ import {
   m5SolidDimFig,
   m5LensFig,
   mExamSolidFig,
+  m5StarFig,
+  m5TubeFig,
+  m5NetConeFig,
+  m5FrustumFig,
+  m5CompositeFig,
+  m5TriPrismDimFig,
 } from "../src/ui/examFiguresMath";
-
-/* ── 신작 헬퍼(로컬) — 확대 시 examFiguresMath.ts 이식분. geoKit 프리미티브만 사용. ── */
-
-const svg = (vb: string, aria: string, inner: string): string =>
-  `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="${aria}">${inner}</svg>`;
-
-const seg = (a: { x: number; y: number }, b: { x: number; y: number }, dash = false, w = 2.5, color: string = GEO.ink): string =>
-  `<line x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke="${color}" stroke-width="${w}"${dash ? ' stroke-dasharray="6 5"' : ""} stroke-linecap="round"/>`;
-
-const txt = (x: number, y: number, s: string, anchor = "middle", color: string = GEO.ink, size = 12): string =>
-  `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${anchor}" font-size="${size}" font-weight="800" fill="${color}">${s}</text>`;
-
-/** 오각별(별 모양 다각형) — 정오각별 골격에 다섯 꼭지각 라벨(실각 근사 렌더, 라벨 합 180 검산은 저작 몫).
- *  labels[i]는 위(0)부터 반시계 순서의 바깥 꼭짓점 라벨(null이면 생략). x 자리는 로즈색 강조. */
-function m5StarFig(o: { labels: Array<string | null>; xAt?: number }): string {
-  const cx = 150;
-  const cy = 108;
-  const R = 92;
-  const tips = Array.from({ length: 5 }, (_, i) => polar(cx, cy, R, 90 + i * 72));
-  const order = [0, 2, 4, 1, 3];
-  let d = "";
-  order.forEach((idx, k) => {
-    d += `${k === 0 ? "M" : "L"}${tips[idx].x.toFixed(1)} ${tips[idx].y.toFixed(1)} `;
-  });
-  let out = `<path d="${d}Z" stroke="${GEO.ink}" stroke-width="2.5" fill="none" stroke-linejoin="round"/>`;
-  o.labels.forEach((label, i) => {
-    if (!label) return;
-    const a = tips[i];
-    const t1 = tips[(i + 2) % 5];
-    const t2 = tips[(i + 3) % 5];
-    let a0 = angleOf(a.x, a.y, t1.x, t1.y);
-    let a1 = angleOf(a.x, a.y, t2.x, t2.y);
-    if (((a1 - a0 + 360) % 360) > 180) [a0, a1] = [a1, a0];
-    const color = o.xAt === i ? GEO.hlC : GEO.hlA;
-    out += angleArc(a.x, a.y, 15, a0, a1, color, label, { labelR: 34, fontSize: 12.5 });
-  });
-  return svg("0 0 300 216", "별 모양 도형과 표시된 각 그림", out);
-}
-
-/** 가운데 구멍 뚫린 원기둥 겨냥도 — 바깥 원기둥+안쪽 구멍(윗면 테두리 실선, 안 벽·밑 테두리 점선).
- *  라벨: 바깥 반지름(오른쪽)·구멍 반지름(왼쪽)·높이. */
-function m5TubeFig(o: { rLabel?: string; innerLabel?: string; hLabel?: string } = {}): string {
-  const cx = 150;
-  const RX = 62;
-  const RY = 16;
-  const rx = 26;
-  const ry = 7;
-  const ty = 54;
-  const by = 162;
-  let out = "";
-  out += `<ellipse cx="${cx}" cy="${by}" rx="${RX}" ry="${RY}" stroke="${GEO.ink}" stroke-width="2.2" stroke-dasharray="6 5" fill="none"/>`;
-  out += `<path d="M${cx - RX} ${by} A${RX} ${RY} 0 0 0 ${cx + RX} ${by}" stroke="${GEO.ink}" stroke-width="2.5" fill="none"/>`;
-  out += seg({ x: cx - RX, y: ty }, { x: cx - RX, y: by }) + seg({ x: cx + RX, y: ty }, { x: cx + RX, y: by });
-  out += `<ellipse cx="${cx}" cy="${ty}" rx="${RX}" ry="${RY}" fill="#FFFFFF" stroke="${GEO.ink}" stroke-width="2.5"/>`;
-  out += `<ellipse cx="${cx}" cy="${ty}" rx="${rx}" ry="${ry}" fill="#EDF2F7" stroke="${GEO.ink}" stroke-width="2.2"/>`;
-  out += seg({ x: cx - rx, y: ty }, { x: cx - rx, y: by }, true, 1.8, GEO.soft) + seg({ x: cx + rx, y: ty }, { x: cx + rx, y: by }, true, 1.8, GEO.soft);
-  out += `<ellipse cx="${cx}" cy="${by}" rx="${rx}" ry="${ry}" stroke="${GEO.soft}" stroke-width="1.8" stroke-dasharray="6 5" fill="none"/>`;
-  if (o.rLabel) {
-    out += seg({ x: cx, y: ty }, { x: cx + RX, y: ty }, false, 2, GEO.hlC) + dot(cx, ty, GEO.hlC, 2.6);
-    // 검수 2차 33번: 윗면 호와 겹치지 않게 바깥 반지름 선의 오른쪽 끝 밖으로.
-    out += txt(cx + RX + 7, ty + 4, o.rLabel, "start", GEO.hlC);
-  }
-  if (o.innerLabel) {
-    out += seg({ x: cx, y: ty }, { x: cx - rx, y: ty }, false, 2, GEO.hlB);
-    // 검수 2차 33번: 구멍 반지름 선의 왼쪽(고리 면 안, 두 타원 호 사이 띠)으로.
-    out += txt(cx - 44, ty + 4, o.innerLabel, "middle", GEO.hlB);
-  }
-  if (o.hLabel) out += txt(cx + RX + 12, (ty + by) / 2 + 4, o.hLabel, "start");
-  return svg("0 0 300 202", "가운데에 구멍이 뚫린 원기둥 모양 입체도형의 겨냥도", out);
-}
-
-/** 원뿔의 전개도 — 옆면 부채꼴(중심각 실각 렌더)+밑면 원(호에 접함).
- *  검산 항등식: 중심각 = 360·(밑면 r)/(모선 l). 구하는 자리는 "x°"류 라벨. */
-function m5NetConeFig(o: { deg: number; slantLabel?: string; rLabel?: string; degLabel?: string }): string {
-  const A = { x: 150, y: 42 };
-  const L = 88;
-  const a0 = 270 - o.deg / 2;
-  const a1 = 270 + o.deg / 2;
-  const p0 = polar(A.x, A.y, L, a0);
-  const p1 = polar(A.x, A.y, L, a1);
-  const large = o.deg > 180 ? 1 : 0;
-  let out = `<path d="M${A.x} ${A.y} L${p0.x.toFixed(1)} ${p0.y.toFixed(1)} A${L} ${L} 0 ${large} 0 ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} Z" fill="${GEO.hlA}" opacity=".13"/>`;
-  out += `<path d="M${p0.x.toFixed(1)} ${p0.y.toFixed(1)} A${L} ${L} 0 ${large} 0 ${p1.x.toFixed(1)} ${p1.y.toFixed(1)}" stroke="${GEO.ink}" stroke-width="2.5" fill="none"/>`;
-  out += seg(A, p0) + seg(A, p1);
-  out += dot(A.x, A.y, GEO.pt, 3);
-  if (o.degLabel) out += angleArc(A.x, A.y, 20, a0, a1, GEO.hlC, o.degLabel, { labelR: 38, fontSize: 12.5 });
-  if (o.slantLabel) {
-    const m = polar(A.x, A.y, L * 0.55, a1);
-    out += txt(m.x + 12, m.y + 2, o.slantLabel, "start");
-  }
-  // 밑면 원 반지름은 접선·둘레 항등식 그대로: rb = L·deg/360 (호 길이 = 밑원 둘레가 시각적으로도 성립)
-  const rb = (L * o.deg) / 360;
-  const bc = { x: A.x, y: A.y + L + rb };
-  out += `<circle cx="${bc.x}" cy="${bc.y.toFixed(1)}" r="${rb.toFixed(1)}" stroke="${GEO.ink}" stroke-width="2.3" fill="none"/>`;
-  if (o.rLabel) {
-    out += seg(bc, { x: bc.x + rb, y: bc.y }, false, 2, GEO.hlB) + dot(bc.x, bc.y, GEO.hlB, 2.6);
-    out += txt(bc.x + rb / 2, bc.y - 7, o.rLabel, "middle", GEO.hlB);
-  }
-  return svg("0 0 300 224", "원뿔의 전개도, 옆면인 부채꼴과 밑면인 원", out);
-}
-
-/** 뿔대 겨냥도 — kind "pyr"(사각뿔대)·"cone"(원뿔대). 숨은선은 겨냥도 관행(숨은 꼭짓점에 모이는 변만 점선).
- *  pyr 라벨: 윗면 한 변·아랫면 한 변·옆면(앞면) 높이(점선 수선+직각 마크). cone 라벨: 위 r·아래 R·높이. */
-function m5FrustumFig(o: {
-  kind: "pyr" | "cone";
-  topLabel?: string;
-  botLabel?: string;
-  sideLabel?: string;
-  topRLabel?: string;
-  botRLabel?: string;
-  hLabel?: string;
-}): string {
-  let out = "";
-  if (o.kind === "pyr") {
-    const F1 = { x: 70, y: 168 };
-    const F2 = { x: 222, y: 168 };
-    const B1 = { x: 104, y: 148 };
-    const B2 = { x: 256, y: 148 };
-    const T1 = { x: 118, y: 80 };
-    const T2 = { x: 174, y: 80 };
-    const T3 = { x: 152, y: 60 };
-    const T4 = { x: 208, y: 60 };
-    out += seg(F1, F2) + seg(F2, B2) + seg(B2, B1, true, 2, GEO.soft) + seg(B1, F1, true, 2, GEO.soft);
-    out += seg(T1, T2) + seg(T2, T4) + seg(T4, T3) + seg(T3, T1);
-    out += seg(F1, T1) + seg(F2, T2) + seg(B2, T4) + seg(B1, T3, true, 2, GEO.soft);
-    if (o.sideLabel) {
-      const mTop = { x: (T1.x + T2.x) / 2, y: 80 };
-      const mBot = { x: (T1.x + T2.x) / 2, y: 168 };
-      out += seg(mTop, mBot, true, 1.8, GEO.hlB) + rightMark(mBot.x, mBot.y, 0, 9, GEO.hlB);
-      out += txt(mBot.x + 8, (mTop.y + mBot.y) / 2 + 4, o.sideLabel, "start", GEO.hlB);
-    }
-    // 검수 2차 36번: 윗면 왼쪽 변(T1-T3) 중점 곁(왼쪽 바깥)에 배치.
-    if (o.topLabel) out += txt((T1.x + T3.x) / 2 - 7, (T1.y + T3.y) / 2 + 4, o.topLabel, "end");
-    if (o.botLabel) out += txt((F1.x + F2.x) / 2, F1.y + 17, o.botLabel);
-  } else {
-    const cx = 150;
-    const RX = 64;
-    const rx = 30;
-    const ty = 64;
-    const by = 160;
-    out += `<ellipse cx="${cx}" cy="${by}" rx="${RX}" ry="15" stroke="${GEO.ink}" stroke-width="2.2" stroke-dasharray="6 5" fill="none"/>`;
-    out += `<path d="M${cx - RX} ${by} A${RX} 15 0 0 0 ${cx + RX} ${by}" stroke="${GEO.ink}" stroke-width="2.5" fill="none"/>`;
-    out += `<ellipse cx="${cx}" cy="${ty}" rx="${rx}" ry="9" fill="#FFFFFF" stroke="${GEO.ink}" stroke-width="2.4"/>`;
-    out += seg({ x: cx - RX, y: by }, { x: cx - rx, y: ty }) + seg({ x: cx + RX, y: by }, { x: cx + rx, y: ty });
-    if (o.topRLabel) {
-      out += seg({ x: cx, y: ty }, { x: cx + rx, y: ty }, false, 2, GEO.hlB) + dot(cx, ty, GEO.hlB, 2.5);
-      out += txt(cx + rx / 2, ty - 8, o.topRLabel, "middle", GEO.hlB);
-    }
-    if (o.botRLabel) {
-      out += seg({ x: cx, y: by }, { x: cx + RX, y: by }, false, 2, GEO.hlC) + dot(cx, by, GEO.hlC, 2.5);
-      out += txt(cx + RX / 2, by + 16, o.botRLabel, "middle", GEO.hlC);
-    }
-    if (o.hLabel) {
-      out += seg({ x: cx, y: ty }, { x: cx, y: by }, true, 1.8, GEO.soft);
-      out += txt(cx - 8, (ty + by) / 2 + 4, o.hLabel, "end");
-    }
-  }
-  return svg("0 0 300 200", o.kind === "pyr" ? "사각뿔대의 겨냥도" : "원뿔대의 겨냥도", out);
-}
-
-/** 복합 회전체(위에서 원뿔·원기둥·반구를 붙인 모양) — cone을 생략하면 원기둥 윗면이 뚜껑.
- *  맞닿은 면의 원 테두리는 실선 타원으로 그린다(경계 자체는 보이는 모서리). */
-function m5CompositeFig(o: { cone?: { lLabel?: string }; cylHLabel?: string; rLabel?: string } = {}): string {
-  const cx = 150;
-  const RX = 46;
-  const RY = 12;
-  const shoulder = 94;
-  const waist = 150;
-  let out = "";
-  if (o.cone) {
-    const apex = { x: cx, y: 30 };
-    out += seg({ x: cx - RX, y: shoulder }, apex) + seg({ x: cx + RX, y: shoulder }, apex);
-    if (o.cone.lLabel) out += txt((cx + RX + apex.x) / 2 + 12, (shoulder + apex.y) / 2, o.cone.lLabel, "start");
-  }
-  out += `<ellipse cx="${cx}" cy="${shoulder}" rx="${RX}" ry="${RY}" stroke="${GEO.ink}" stroke-width="2.2" fill="${o.cone ? "none" : "#FFFFFF"}"/>`;
-  out += seg({ x: cx - RX, y: shoulder }, { x: cx - RX, y: waist }) + seg({ x: cx + RX, y: shoulder }, { x: cx + RX, y: waist });
-  out += `<ellipse cx="${cx}" cy="${waist}" rx="${RX}" ry="${RY}" stroke="${GEO.ink}" stroke-width="2.2" fill="none"/>`;
-  out += `<path d="M${cx - RX} ${waist} A${RX} ${RX} 0 0 0 ${cx + RX} ${waist}" stroke="${GEO.ink}" stroke-width="2.5" fill="none"/>`;
-  if (o.cylHLabel) out += txt(cx + RX + 11, (shoulder + waist) / 2 + 4, o.cylHLabel, "start");
-  if (o.rLabel) {
-    out += seg({ x: cx, y: waist }, { x: cx + RX, y: waist }, false, 2, GEO.hlC) + dot(cx, waist, GEO.hlC, 2.6);
-    // 허리 타원 호와 겹치지 않게 반지름 선 아래(반구 안 공백)로(검수 38번 반영).
-    out += txt(cx + RX / 2, waist + 22, o.rLabel, "middle", GEO.hlC);
-  }
-  return svg("0 0 300 212", "여러 입체를 쌓아 만든 입체도형의 겨냥도", out);
-}
-
-/** 삼각기둥 치수 겨냥도 — 밑면 직각삼각형+기둥 높이 라벨(검수 32번 반영 신작 — PR은 꼭짓점 이름 전용이라
- *  치수 병기 불가). 직각 꼭짓점 O의 두 밑변이 화면에서도 실제 90°가 되게 투영 좌표를 구성했고(내적 0),
- *  변 길이도 8:6:9 실비(9.5px/cm). 숨은선은 밑면 뒤 변(빗변 MN)만 점선(PR prism3 관행). */
-function m5TriPrismDimFig(o: { aLabel?: string; bLabel?: string; hLabel?: string } = {}): string {
-  const O = { x: 150, y: 192 };
-  const M = { x: 84, y: 154 };
-  const N = { x: 178.5, y: 142.5 };
-  const H = 86;
-  const J = { x: M.x, y: M.y - H };
-  const K = { x: N.x, y: N.y - H };
-  const L = { x: O.x, y: O.y - H };
-  let out = seg(J, K) + seg(K, L) + seg(L, J);
-  out += seg(J, M) + seg(K, N) + seg(L, O);
-  out += seg(M, O) + seg(O, N) + seg(M, N, true, 2, GEO.soft);
-  out += rightMark(O.x, O.y, angleOf(O.x, O.y, N.x, N.y), 9);
-  if (o.aLabel) out += txt((O.x + M.x) / 2 - 7, (O.y + M.y) / 2 + 14, o.aLabel);
-  if (o.bLabel) out += txt((O.x + N.x) / 2 + 13, (O.y + N.y) / 2 + 10, o.bLabel, "start");
-  if (o.hLabel) out += txt(K.x + 9, (K.y + N.y) / 2 + 4, o.hLabel, "start");
-  return svg("0 0 300 212", "밑면이 직각삼각형인 삼각기둥의 겨냥도", out);
-}
 
 /* ── 파일럿 40문항 (슬롯 순서) ── */
 
 export const POOL_M1U5V2_PILOT: ExamItem[] = [
   // ─ L1 다각형: 대각선 ─
   {
-    // [슬롯 1] 검산: 육각형 한 꼭짓점 대각선 6−3=3. 그림은 도형 제시(대각선 미표시 — 세기 유출 없음).
+    // [슬롯 1] 검산: 육각형 한 꼭짓점 대각선 6−3=3. 그림은 도형 제시(대각선 미표시 · 세기 유출 없음).
     id: "m1u5e001", lessonId: "m1u5l1", type: "mcq",
     prompt: "그림과 같은 육각형에서 한 꼭짓점에서 그을 수 있는 대각선의 개수는?",
     figure: m5PolyAngleFig({ angles: [120, 120, 120, 120, 120, 120], labels: [null, null, null, null, null, null] }),
@@ -258,7 +56,7 @@ export const POOL_M1U5V2_PILOT: ExamItem[] = [
     prompt: "어떤 다각형의 한 꼭짓점에서 그을 수 있는 대각선의 개수를 <i class='mv'>a</i>개, 이때 나누어지는 삼각형의 개수를 <i class='mv'>b</i>개라 할 때, <i class='mv'>a</i>+<i class='mv'>b</i>=17이에요. 이 다각형은?",
     options: ["십일각형", "십각형", "십이각형", "구각형", "십삼각형"],
     answer: 0, diff: 3,
-    explain: "<span class='xh'>정답 풀이</span>변의 개수를 <i class='mv'>n</i>개라 하면 한 꼭짓점에서 그을 수 있는 대각선은 <i class='mv'>n</i>−3개, 이때 다각형은 <i class='mv'>n</i>−2개의 삼각형으로 나누어져요.<br>① (<i class='mv'>n</i>−3)+(<i class='mv'>n</i>−2)=17<br>② 2<i class='mv'>n</i>−5=17, <i class='mv'>n</i>=11 → <b>십일각형</b> ✓<span class='xh'>오답 하나씩 격파</span>십각형은 8+8=16, 십이각형은 9+10=19라 조건에 안 맞아요. 구각형은 6+7=13, 십삼각형은 10+11=21이고요. 대각선 수(<i class='mv'>n</i>−3)와 삼각형 수(<i class='mv'>n</i>−2)를 둘 다 <i class='mv'>n</i>−3으로 쓰면 2<i class='mv'>n</i>−6=17이 되어 자연수 해가 없어져요. 두 공식의 차이 1을 꼭 구분하세요.",
+    explain: "<span class='xh'>정답 풀이</span>변의 개수를 <i class='mv'>n</i>개라 하면 한 꼭짓점에서 그을 수 있는 대각선은 <i class='mv'>n</i>−3개, 이때 다각형은 <i class='mv'>n</i>−2개의 삼각형으로 나누어져요.<br>① (<i class='mv'>n</i>−3)+(<i class='mv'>n</i>−2)=17<br>② 2<i class='mv'>n</i>−5=17, <i class='mv'>n</i>=11 → <b>십일각형</b> ✓<span class='xh'>오답 하나씩 격파</span>십각형은 7+8=15, 십이각형은 9+10=19라 조건에 안 맞아요. 구각형은 6+7=13, 십삼각형은 10+11=21이고요. 대각선 수(<i class='mv'>n</i>−3)와 삼각형 수(<i class='mv'>n</i>−2)를 둘 다 <i class='mv'>n</i>−3으로 쓰면 2<i class='mv'>n</i>−6=17이 되어 자연수 해가 없어져요. 두 공식의 차이 1을 꼭 구분하세요.",
     core: "한 꼭짓점에서 대각선 n−3개, 삼각형 n−2개!",
   },
 
@@ -480,7 +278,7 @@ export const POOL_M1U5V2_PILOT: ExamItem[] = [
     core: "중심각 없이 넓이·반지름·호를 잇는 S=½rl!",
   },
   {
-    // [슬롯 94] 검산: 렌즈=2×(사분원−직각삼각형)=2×(16π−32)=32π−64. √ 무등장 조합.
+    // [슬롯 94] 검산: 렌즈=2×(사분원−직각삼각형)=2×(16π−32)=32π−64. 특수각·빗변 계산 무등장 색칠 계보(§0).
     id: "m1u5e094", lessonId: "m1u5l7", type: "mcq",
     prompt: "그림과 같이 한 변의 길이가 <b>8 cm</b>인 정사각형 ABCD에서 두 꼭짓점 B, D를 각각 중심으로 하고 반지름이 정사각형의 한 변인 원의 일부를 그렸어요. 색칠한 부분의 넓이는?",
     figure: m5LensFig("8 cm"),
@@ -603,7 +401,7 @@ export const POOL_M1U5V2_PILOT: ExamItem[] = [
   },
   {
     // [슬롯 144] 검산: 밑넓이 ½·6·8=24, V=24·9=216. 검수 32번 반영: PR 도형 제시 → 신작 TP 치수 겨냥도
-    //  (6·8·9 라벨 병기 — 문두+그림 이중 제시 성립).
+    //  (6·8·9 라벨 병기 · 문두+그림 이중 제시 성립).
     id: "m1u5e144", lessonId: "m1u5l11", type: "num",
     prompt: "그림과 같은 삼각기둥의 밑면은 직각을 낀 두 변의 길이가 <b>6 cm</b>, <b>8 cm</b>인 직각삼각형이에요. 높이가 <b>9 cm</b>일 때, 이 삼각기둥의 부피는 몇 cm³인지 구하세요.",
     figure: m5TriPrismDimFig({ aLabel: "8 cm", bLabel: "6 cm", hLabel: "9 cm" }),
