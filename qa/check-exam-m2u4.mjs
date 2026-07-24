@@ -1,24 +1,24 @@
-// m2u4(중2 수학 Ⅳ 삼각형과 사각형의 성질) 단원 종합 평가 200제 기계 검사.
-// m2u3 검사기(esbuild 실로드·raw 부등호 태그 함정·파일 간 중복 후보·20×10 배분)를 계승,
-// 금지어를 중2 Ⅳ 표로 교체(닮음·피타고라스·무게중심·중선·등변사다리꼴·점대칭·√·명제의 '역')
-// + 외심·내심 "공식 암기" 문자열(2∠·90°+½·½∠) 검사(해설은 이등변 세 조각·반각 합 유도만),
-// mcq/multi 분할(10+2, l7·l9만 9+3)을 명시 검사한다. 기하 풀은 mfmt 미사용(gsym·리터럴).
-// node qa/check-exam-m2u4.mjs
+// m2u4(중2 수학 Ⅳ 삼각형과 사각형의 성질) 단원 종합 평가 200제 기계 검사 — v2(2026-07 교과서 준거 재출제).
+// 규격 v2: word 0(실측 용어 빈칸형 0), num 8/파일(전부 자연수), mcq/multi 분할 10+2(l7·l9만 9+3),
+// 그림 쿼터 파일별 정확값(전체 155 — 설계표 qa/m2u4-v2-blueprint.md §4). m2u3 검사기 골격 계승,
+// 금지어 중2 Ⅳ 표(닮음·피타고라스·무게중심·중선·등변사다리꼴·점대칭·√·명제의 '역'·원주각)
+// + 외심·내심 "공식 암기" 문자열(2∠·90°+½·½∠) 검사(해설은 이등변 세 조각·반각 합 유도만).
+// 기하 풀은 mfmt 미사용(gsym·리터럴). node qa/check-exam-m2u4.mjs
 import { readFileSync } from "node:fs";
 import { build } from "esbuild";
 
-// [file, count, mcq, multi, num, word, diff[1,2,3]]
+// [file, count, mcq, multi, num, word, diff[1,2,3], fig]
 const specs = [
-  ["m2u4l1", 20, 10, 2, 6, 2, [8, 8, 4]],
-  ["m2u4l2", 20, 10, 2, 6, 2, [8, 8, 4]],
-  ["m2u4l3", 20, 10, 2, 6, 2, [8, 8, 4]],
-  ["m2u4l4", 20, 10, 2, 6, 2, [8, 8, 4]],
-  ["m2u4l5", 20, 10, 2, 6, 2, [8, 8, 4]],
-  ["m2u4l6", 20, 10, 2, 6, 2, [8, 8, 4]],
-  ["m2u4l7", 20, 9, 3, 6, 2, [8, 8, 4]],
-  ["m2u4l8", 20, 10, 2, 6, 2, [8, 8, 4]],
-  ["m2u4l9", 20, 9, 3, 6, 2, [8, 8, 4]],
-  ["m2u4l10", 20, 10, 2, 6, 2, [8, 8, 4]],
+  ["m2u4l1", 20, 10, 2, 8, 0, [8, 8, 4], 18],
+  ["m2u4l2", 20, 10, 2, 8, 0, [8, 8, 4], 15],
+  ["m2u4l3", 20, 10, 2, 8, 0, [8, 8, 4], 16],
+  ["m2u4l4", 20, 10, 2, 8, 0, [8, 8, 4], 16],
+  ["m2u4l5", 20, 10, 2, 8, 0, [8, 8, 4], 17],
+  ["m2u4l6", 20, 10, 2, 8, 0, [8, 8, 4], 16],
+  ["m2u4l7", 20, 9, 3, 8, 0, [8, 8, 4], 11],
+  ["m2u4l8", 20, 10, 2, 8, 0, [8, 8, 4], 17],
+  ["m2u4l9", 20, 9, 3, 8, 0, [8, 8, 4], 10],
+  ["m2u4l10", 20, 10, 2, 8, 0, [8, 8, 4], 19],
 ];
 
 let failures = 0;
@@ -57,14 +57,14 @@ async function loadPool(file) {
 }
 
 const all = [];
-for (const [file, count, mcqCount, multiCount, numCount, wordCount, diffSpec] of specs) {
+for (const [file, count, mcqCount, multiCount, numCount, wordCount, diffSpec, figSpec] of specs) {
   const source = readFileSync(`src/content/exams/${file}.ts`, "utf8");
   if (source.includes("—")) fail(`${file}: em대시(—) 발견(주석 포함 전면 금지)`);
   // 중2 Ⅳ 언어 가드: 중2 Ⅴ 선행(닮음·피타고라스·무게중심·중선·중점연결)·중3(√·삼각비)·
   // 교과서 미명명(등변사다리꼴·점대칭)·고교(명제의 '역') + 외심·내심 공식 암기 문자열.
   for (const word of [
     "닮음", "피타고라스", "무게중심", "중선", "중점연결", "등변사다리꼴", "이등변사다리꼴",
-    "점대칭", "삼각비", "√", "정의역", "치역",
+    "점대칭", "삼각비", "√", "정의역", "치역", "원주각",
     "역이 성립", "역은 성립", "역도 성립", "의 역도", "의 역은", "의 역이",
     "2∠", "90°+½", "½∠",
   ]) {
@@ -155,7 +155,7 @@ for (const [file, count, mcqCount, multiCount, numCount, wordCount, diffSpec] of
   if (types.word !== wordCount) fail(`${file}: word ${types.word}, 기대 ${wordCount}`);
   if (diffs[1] !== diffSpec[0] || diffs[2] !== diffSpec[1] || diffs[3] !== diffSpec[2])
     fail(`${file}: diff ${diffs[1]}/${diffs[2]}/${diffs[3]}, 기대 ${diffSpec.join("/")}`);
-  if (figCount < 4) warn(`${file}: 그림 문항 ${figCount}개(기하 시험 기준 6~8 권장) — 수동 확인`);
+  if (figCount !== figSpec) fail(`${file}: 그림 ${figCount}개, 설계 정확값 ${figSpec}(그림 쿼터 v2)`);
   const used = mcqPositions.filter((n) => n > 0);
   if (used.length < 5 || Math.max(...used) - Math.min(...used) > 2)
     warn(`${file}: mcq 정답 위치 ${mcqPositions.join("/")} 수동 확인`);
@@ -177,8 +177,8 @@ for (const item of all) {
   else totalTypes[item.type] += 1;
   totalDiffs[item.diff] += 1;
 }
-if (totalTypes.choice !== 120 || totalTypes.num !== 60 || totalTypes.word !== 20)
-  fail(`전체 유형 ${totalTypes.choice}/${totalTypes.num}/${totalTypes.word}, 기대 120/60/20`);
+if (totalTypes.choice !== 120 || totalTypes.num !== 80 || totalTypes.word !== 0)
+  fail(`전체 유형 ${totalTypes.choice}/${totalTypes.num}/${totalTypes.word}, 기대 120/80/0(규격 v2)`);
 if (totalDiffs[1] !== 80 || totalDiffs[2] !== 80 || totalDiffs[3] !== 40)
   fail(`전체 diff ${totalDiffs[1]}/${totalDiffs[2]}/${totalDiffs[3]}, 기대 80/80/40`);
 

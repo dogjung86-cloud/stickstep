@@ -1831,14 +1831,28 @@ export function mExamPointsLineFig(o: {
 
 /** 종이 띠 접기 그림 — fold는 실제 접기 각(윗변 오른쪽 방향과 접는 선 사이, 도).
  *  반사 계산으로 접힌 부분을 정확히 그리므로 라벨 수치는 기하와 일치한다.
- *  given은 접는 선과 원래 윗변(점선 쪽) 사이 각 라벨, x는 접힌 변과 남은 윗변 사이 각 라벨. */
-export function mExamFoldFig(o: { fold: number; given: string; x: string }): string {
+ *  given은 접는 선과 원래 윗변(점선 쪽) 사이 각 라벨, x는 접힌 변과 남은 윗변 사이 각 라벨(m1u4 유형).
+ *  m2u4 확장(전부 옵셔널 — 기존 호출 무영향): fold>90°면 접힌 아랫변이 윗변과 교점 P에서 만나
+ *  이등변삼각형 P·위 끝·아래 끝이 생긴다(두 밑각 = 180−fold, 꼭지각 = 2·fold−180 — 저작 검산 병기).
+ *  tri를 주면 P·이름 라벨(names=[P, 위 끝, 아래 끝], 기본 A·C·B)을 그리고, lens는 길이 라벨
+ *  (top: P~위 끝 · fold: 접는 선 곁 · slant: 접힌 변 곁), angles는 삼각형 각 호(at "P"|"T"|"B"). */
+export function mExamFoldFig(o: {
+  fold: number;
+  given?: string;
+  x?: string;
+  tri?: boolean;
+  names?: [string, string, string];
+  lens?: { top?: string; fold?: string; slant?: string };
+  angles?: Array<{ at: "P" | "T" | "B"; label: string }>;
+}): string {
   const top = 58, bot = 122;
   const E = { x: 172, y: top };
   const rad = (o.fold * Math.PI) / 180;
   const F = { x: E.x + (bot - top) / Math.tan(rad), y: bot };
-  const R1 = { x: 296, y: top };
-  const R2 = { x: 296, y: bot };
+  // tri 모드는 접히는 오른쪽 날개 폭을 줄여 위로 선 플랩이 뷰박스를 넘지 않게 한다.
+  const wing = o.tri ? 88 : 124;
+  const R1 = { x: E.x + wing, y: top };
+  const R2 = { x: E.x + wing, y: bot };
   // 접는 선 EF에 대한 반사
   const refl = (p: { x: number; y: number }) => {
     const dx = F.x - E.x, dy = F.y - E.y;
@@ -1856,15 +1870,62 @@ export function mExamFoldFig(o: { fold: number; given: string; x: string }): str
   // 실각 fold°만 감싸야 한다(-(180-fold)로 잡으면 호가 접는 선을 가로지르는 실사고).
   const foldDirDeg = -o.fold;
   const east = 0;
-  const reflDeg = (Math.atan2(-(R1p.y - E.y), R1p.x - E.x) * 180) / Math.PI;
-  out += angleArc(E.x, E.y, 26, foldDirDeg, east, GEO.hlA);
-  const g = polar(E.x, E.y, 44, (foldDirDeg + east) / 2);
-  out += `<text x="${g.x.toFixed(1)}" y="${(g.y + 4).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="800" fill="${GEO.ink}">${fxv(o.given)}</text>`;
-  out += angleArc(E.x, E.y, 22, 180, reflDeg + 360, GEO.hlB);
-  const xm = polar(E.x, E.y, 40, (180 + reflDeg + 360) / 2);
-  out += `<text x="${xm.x.toFixed(1)}" y="${(xm.y + 4).toFixed(1)}" text-anchor="middle" font-size="12.5" font-weight="800" fill="${GEO.ink}">${fxv(o.x)}</text>`;
+  if (o.given) {
+    out += angleArc(E.x, E.y, 26, foldDirDeg, east, GEO.hlA);
+    const g = polar(E.x, E.y, 44, (foldDirDeg + east) / 2);
+    out += `<text x="${g.x.toFixed(1)}" y="${(g.y + 4).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="800" fill="${GEO.ink}">${fxv(o.given)}</text>`;
+  }
+  if (o.x) {
+    const reflDeg = (Math.atan2(-(R1p.y - E.y), R1p.x - E.x) * 180) / Math.PI;
+    out += angleArc(E.x, E.y, 22, 180, reflDeg + 360, GEO.hlB);
+    const xm = polar(E.x, E.y, 40, (180 + reflDeg + 360) / 2);
+    out += `<text x="${xm.x.toFixed(1)}" y="${(xm.y + 4).toFixed(1)}" text-anchor="middle" font-size="12.5" font-weight="800" fill="${GEO.ink}">${fxv(o.x)}</text>`;
+  }
+  if (o.tri && R2p.y < top - 4) {
+    // 접힌 아랫변(F→R2p)이 윗변과 만나는 교점 P — fold>90°에서만 존재(저작 검산 의무).
+    const P = { x: F.x + ((R2p.x - F.x) * (top - F.y)) / (R2p.y - F.y), y: top };
+    const deg = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+      (Math.atan2(-(b.y - a.y), b.x - a.x) * 180) / Math.PI;
+    const label = (x: number, y: number, s: string, fs = 11.5): string =>
+      `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" font-size="${fs}" font-weight="700" fill="${GEO.ink}" stroke="#fff" stroke-width="3" paint-order="stroke">${s}</text>`;
+    for (const a of o.angles ?? []) {
+      let v = P;
+      let a1 = deg(P, F);
+      let a2 = 0;
+      let color: string = GEO.hlA;
+      if (a.at === "T") {
+        v = E;
+        a1 = 180;
+        a2 = deg(E, F) + 360;
+        color = GEO.hlB;
+      } else if (a.at === "B") {
+        v = F;
+        a1 = deg(F, E);
+        a2 = deg(F, P);
+        color = GEO.hlD;
+      }
+      out += angleArc(v.x, v.y, 20, Math.min(a1, a2), Math.max(a1, a2), color);
+      const m = polar(v.x, v.y, 37, (a1 + a2) / 2);
+      out += label(m.x, m.y + 4, fxv(a.label), 12);
+    }
+    if (o.lens?.top) out += label((P.x + E.x) / 2, top - 9, o.lens.top);
+    if (o.lens?.fold) {
+      const dx = F.x - E.x, dy = F.y - E.y;
+      const len = Math.hypot(dx, dy) || 1;
+      out += label((E.x + F.x) / 2 + (dy / len) * 19, (E.y + F.y) / 2 - (dx / len) * 19 + 4, o.lens.fold);
+    }
+    if (o.lens?.slant) {
+      const dx = P.x - F.x, dy = P.y - F.y;
+      const len = Math.hypot(dx, dy) || 1;
+      out += label((F.x + P.x) / 2 - (dy / len) * 19, (F.y + P.y) / 2 + (dx / len) * 19 + 4, o.lens.slant);
+    }
+    const [nP, nT, nB] = o.names ?? ["A", "C", "B"];
+    // 교점 라벨은 위-살짝 오른쪽: 접힌 변이 좌상향으로 지나가 왼쪽 오프셋은 선에 겹친다(검수 반영).
+    out += dot(P.x, P.y) + ptLabel(P.x, P.y, nP, 4, -11);
+    out += ptLabel(E.x, E.y, nT, 8, -8) + ptLabel(F.x, F.y, nB, 3, 18);
+  }
   out += dot(E.x, E.y) + dot(F.x, F.y);
-  return svg("0 0 320 190", "직사각형 종이를 한 번 접은 그림", out);
+  return svg(o.tri ? "0 -18 320 226" : "0 0 320 190", "직사각형 종이를 한 번 접은 그림", out);
 }
 
 /** 정육면체 십자 전개도 — 세로 4칸 + 가운데 행 양옆 1칸. 격자 꼭짓점 (c, r)에 라벨을 단다.
@@ -2574,18 +2635,19 @@ export function m2ExamRhPairsFig(items: Array<{
   const cols = n <= 2 ? n : 2;
   const rows = Math.ceil(n / cols);
   const cw = 360 / cols;
-  const ch = 138;
+  // 카드 1장이면 크게 그린다(v2 확대 눈검수 반영 — 소형 렌더는 각 라벨 판독이 어려움).
+  const ch = n === 1 ? 172 : 138;
   let out = "";
   items.forEach((it, i) => {
     const ox = (i % cols) * cw;
     const oy = Math.floor(i / cols) * ch;
     const ac = (it.acute * Math.PI) / 180;
-    const Hh = Math.min(96, 88 / Math.sin(ac), (cw - 66) / Math.cos(ac));
+    const Hh = Math.min(n === 1 ? 126 : 96, (n === 1 ? 122 : 88) / Math.sin(ac), (cw - 66) / Math.cos(ac));
     const legW = Hh * Math.cos(ac);
     const legH = Hh * Math.sin(ac);
     const s = it.flip ? -1 : 1;
     const bx = it.flip ? ox + cw / 2 + legW / 2 : ox + cw / 2 - legW / 2;
-    const by = oy + 118;
+    const by = oy + (n === 1 ? 150 : 118);
     const B = { x: bx, y: by };
     const C = { x: bx + s * legW, y: by };
     const A = { x: bx, y: by - legH };
@@ -2723,6 +2785,11 @@ export function m2ExamCenterFig(o: {
   circle?: boolean;
   marks?: Array<{ at: string; label: string }>;
   sideLabels?: Partial<Record<"AB" | "BC" | "CA", string>>;
+  /** 발이 나눈 반변 조각 라벨(v2 확대 확장 — feet:true 필요, 외심 "발=중점" 유형 비Ⅳ1-03). */
+  segLabels?: Array<{ on: "AD" | "DB" | "BE" | "EC" | "CF" | "FA"; label: string }>;
+  /** 내심 I를 지나는 BC 평행선 D~E(v2 확대 확장 — kind I 전용, 미06-06 둘레 치환). */
+  paraLine?: boolean;
+  paraNames?: [string, string];
   rLabel?: string;
   tickR?: boolean;
   tickFeet?: boolean;
@@ -2774,11 +2841,32 @@ export function m2ExamCenterFig(o: {
         tickMark(fBC.x, fBC.y, C.x, C.y, 2) +
         tickMark(C.x, C.y, fCA.x, fCA.y, 3) +
         tickMark(fCA.x, fCA.y, A.x, A.y, 3);
+    if (o.segLabels) {
+      const segMap: Record<string, [GPt, GPt]> = {
+        AD: [A, fAB], DB: [fAB, B], BE: [B, fBC], EC: [fBC, C], CF: [C, fCA], FA: [fCA, A],
+      };
+      for (const s of o.segLabels) {
+        const pair = segMap[s.on];
+        if (pair) out += g4side(pair[0], pair[1], s.label, cen, 15);
+      }
+    }
   }
   for (const v of o.segs ?? []) {
     const P = v === "A" ? A : v === "B" ? B : C;
     out += g4line(ctr, P, GEO.ink, 2.2);
     if (o.tickR && o.kind === "O") out += tickMark(ctr.x, ctr.y, P.x, P.y, 1);
+  }
+  if (o.paraLine && o.kind === "I") {
+    // I를 지나는 BC 평행선(수평) — AB·AC와의 교점 D·E 실계산, 평행 화살표 이중.
+    const tD = (ctr.y - A.y) / (B.y - A.y);
+    const Dp = { x: A.x + (B.x - A.x) * tD, y: ctr.y };
+    const tE = (ctr.y - A.y) / (C.y - A.y);
+    const Ep = { x: A.x + (C.x - A.x) * tE, y: ctr.y };
+    const [nD, nE] = o.paraNames ?? ["D", "E"];
+    out += g4line(Dp, Ep, GEO.ink, 2.2);
+    out += arrowHead((Dp.x + Ep.x) / 2 + 5, ctr.y, 0) + arrowHead((B.x + C.x) / 2 + 5, gy, 0);
+    out += dot(Dp.x, Dp.y, GEO.pt, 3) + dot(Ep.x, Ep.y, GEO.pt, 3);
+    out += ptLabel(Dp.x, Dp.y, nD, -12, -2) + ptLabel(Ep.x, Ep.y, nE, 13, -2);
   }
   if (o.rLabel) {
     const f = { x: ctr.x, y: gy };
@@ -2795,7 +2883,9 @@ export function m2ExamCenterFig(o: {
   }
   out += dot(ctr.x, ctr.y, GEO.pt, 3.4) + ptLabel(ctr.x, ctr.y, cName, 12, -5);
   out += ptLabel(A.x, A.y, nA, 0, -10) + ptLabel(B.x, B.y, nB, -8, 16) + ptLabel(C.x, C.y, nC, 8, 16);
-  return svg(`0 0 360 ${H}`, o.kind === "O" ? "삼각형과 한 점 O를 나타낸 그림" : "삼각형과 한 점 I를 나타낸 그림", out);
+  // 둔각삼각형 외심은 BC 아래 외부로 나가고, 외접원은 밑변 아래로 불룩하다 — 뷰박스만 아래로 확장(v2 확대).
+  const H2 = Math.max(H, Math.round(ctr.y) + 50, o.circle ? Math.round(ctr.y + r) + 16 : 0);
+  return svg(`0 0 360 ${H2}`, o.kind === "O" ? "삼각형과 한 점 O를 나타낸 그림" : "삼각형과 한 점 I를 나타낸 그림", out);
 }
 
 /** 직각삼각형(∠B=90°)과 빗변 AC의 중점 O — 외접원 반지름·빗변 유형.
@@ -2821,9 +2911,12 @@ export function m2ExamCircumRightFig(o: {
   const cen = g4cen([A, B, C]);
   const [nA, nB, nC] = o.names ?? ["A", "B", "C"];
   let out = "";
+  let H2 = H;
   if (o.circle) {
     const r = Math.hypot(O.x - A.x, O.y - A.y);
     out += `<circle cx="${O.x.toFixed(1)}" cy="${O.y.toFixed(1)}" r="${r.toFixed(1)}" fill="none" stroke="${GEO.soft}" stroke-width="1.8"/>`;
+    // 외접원은 밑변 아래로 불룩하다 — 뷰박스 하단 확장(v2 확대 눈검수 반영).
+    H2 = Math.max(H, Math.round(O.y + r) + 16);
   }
   out += g4poly([A, B, C]) + g4right(B, C, A);
   out += g4line(O, B, GEO.ink, 2.2);
@@ -2832,7 +2925,7 @@ export function m2ExamCircumRightFig(o: {
   if (o.obLabel) out += g4side(O, B, o.obLabel, { x: cen.x - 200, y: cen.y }, 13);
   out += dot(O.x, O.y, GEO.pt, 3.4) + ptLabel(O.x, O.y, o.oName ?? "O", 10, -8);
   out += ptLabel(A.x, A.y, nA, -8, -4) + ptLabel(B.x, B.y, nB, -8, 16) + ptLabel(C.x, C.y, nC, 8, 16);
-  return svg(`0 0 360 ${H}`, "직각삼각형과 빗변 위의 점 O를 나타낸 그림", out);
+  return svg(`0 0 360 ${H2}`, "직각삼각형과 빗변 위의 점 O를 나타낸 그림", out);
 }
 
 /** 평행사변형 ▱ABCD 좌표(A 좌상 → B 좌하 → C 우하 → D 우상). angleB가 실제 ∠B(도). */
@@ -2862,6 +2955,10 @@ export function m2ExamParaFig(o: {
   ticksOpp?: boolean;
   ticksDiag?: boolean;
   arrows?: boolean;
+  /** 세 글자 각 키 부분각 라벨(v2 확대 확장 — 대각선 엇각 유형, 예: "DBC"·"ABD"·"DAC"). */
+  marks?: Array<{ at: string; label: string }>;
+  /** 5번 조건 시각화(v2 확대 확장): AD·BC 한 쌍에만 틱+평행 화살표. */
+  pair5?: boolean;
   names?: [string, string, string, string];
 }): string {
   const { A, B, C, D, O, H } = g4para(o.angleB, o.w, o.h);
@@ -2913,6 +3010,15 @@ export function m2ExamParaFig(o: {
   const oSegDefs: Record<string, [GPt, GPt]> = { OA: [O, A], OB: [O, B], OC: [O, C], OD: [O, D] };
   for (const [key, lab] of Object.entries(o.oLabels ?? {})) {
     if (lab) out += g4side(oSegDefs[key][0], oSegDefs[key][1], lab, cen, 12);
+  }
+  if (o.pair5) {
+    out += tickMark(A.x, A.y, D.x, D.y, 1) + tickMark(B.x, B.y, C.x, C.y, 1);
+    out += arrowHead((A.x + D.x) / 2 + 5, A.y, 0) + arrowHead((B.x + C.x) / 2 + 5, B.y, 0);
+  }
+  if (o.marks) {
+    const pts: Record<string, GPt> = { A, B, C, D, O };
+    const adj: Record<string, [string, string]> = { A: ["B", "D"], B: ["A", "C"], C: ["B", "D"], D: ["A", "C"] };
+    out += g4marks(pts, o.marks, adj);
   }
   out +=
     ptLabel(A.x, A.y, nA, -6, -8) +
@@ -3003,7 +3109,8 @@ export function m2ExamParaBisectFig(o: {
     ptLabel(A.x, A.y, nA, -6, -8) +
     ptLabel(B.x, B.y, nB, -7, 17) +
     ptLabel(C.x, C.y, nC, 7, 17) +
-    ptLabel(D.x, D.y, nD, 7, -8);
+    // Bext 모드는 D 위로 점선(D~E)이 지나가므로 D 라벨을 아래-오른쪽으로 내린다(검수 반영).
+    ptLabel(D.x, D.y, nD, o.mode === "Bext" ? 13 : 7, o.mode === "Bext" ? 11 : -8);
   return svg(`0 0 360 ${H}`, "평행사변형과 각의 이등분선 그림", out);
 }
 
@@ -3167,13 +3274,13 @@ export function m2ExamFamilyFig(o: {
     const lines = text.split("\n");
     const tw = Math.max(...lines.map((l) => l.length)) * 11.8 + 14;
     const bh = lines.length * 15.5 + 6;
-    // 세로 화살표(C)는 필을 화살표 위 중앙 정렬(폰트 12 확대 후 우측 밀기는 카드 끝까지 닿음)
-    const tx = side === "C" ? mx : side === "L" ? mx - 10 : mx + 10;
-    const anchor = side === "L" ? "end" : side === "R" ? "start" : "middle";
-    const bx = anchor === "end" ? tx - tw + 3 : anchor === "middle" ? tx - tw / 2 : tx - 7;
+    // 필 배치(검수 반영): 대각 화살표(L·R)는 필을 화살표 선 옆으로 완전히 비켜 세워 화살표를
+    // 가리지 않고, 텍스트는 전부 필 중앙 정렬. 세로(C)는 선 중간을 끊는 중앙 필 관례 유지.
+    const tx = side === "C" ? mx : side === "L" ? mx - tw / 2 - 7 : mx + tw / 2 + 7;
+    const bx = tx - tw / 2;
     out2 += `<rect x="${bx.toFixed(1)}" y="${my - bh / 2}" width="${tw.toFixed(1)}" height="${bh}" rx="7" fill="${hidden ? "#FFF4E0" : "#F4F7FE"}" stroke="${hidden ? GEO.hlA : "#D5DEF0"}" stroke-width="1.2"/>`;
     lines.forEach((ln, i) => {
-      out2 += `<text x="${tx}" y="${my - bh / 2 + 15.5 * i + 15}" text-anchor="${anchor}" font-size="12" font-weight="700" fill="${GEO.ink}">${ln}</text>`;
+      out2 += `<text x="${tx.toFixed(1)}" y="${my - bh / 2 + 15.5 * i + 15}" text-anchor="middle" font-size="12" font-weight="700" fill="${GEO.ink}">${ln}</text>`;
     });
     return out2;
   };
@@ -3228,7 +3335,7 @@ export function m2ExamQuadRowFig(o: {
  *  "bent"(꺾인 경계 밭 ABCD + AC와 평행한 보조선 D→E, 경계 펴기).
  *  shade: 음영 도형(꼭짓점 문자열, twin·trap·para) · areaLabel: 음영 안 조건 넓이 라벨. */
 export function m2ExamEqAreaFig(o: {
-  mode: "twin" | "trap" | "para" | "bent";
+  mode: "twin" | "trap" | "para" | "bent" | "split";
   shade?: string;
   areaLabel?: { in: string; label: string };
   diag?: "AC" | "both";
@@ -3237,6 +3344,12 @@ export function m2ExamEqAreaFig(o: {
   segAD?: boolean;
   lineNames?: [string, string];
   names?: string[];
+  /** split(등고 비율 · 천04-08 계보 · v2 확대 확장): D가 BC를 m:n으로 나눈다(실비 렌더). */
+  m?: number;
+  n?: number;
+  splitLabels?: { bd?: string; dc?: string };
+  /** bent 전용 라벨(v2 검수 반영): BC·CE 구간과 A~직선 BC 수선(점선+직각 마크) 높이. */
+  bentLabels?: { bc?: string; ce?: string; height?: string };
 }): string {
   let out = "";
   let H = 240;
@@ -3298,7 +3411,7 @@ export function m2ExamEqAreaFig(o: {
     if (o.diag === "both") out += g4line(g.B, g.D, GEO.ink, 2.2);
     if (o.diag === "both") out += dot(g.O.x, g.O.y, GEO.pt, 3.2) + ptLabel(g.O.x, g.O.y, "O", 0, -9);
     out += ptLabel(g.A.x, g.A.y, "A", -6, -8) + ptLabel(g.B.x, g.B.y, "B", -7, 17) + ptLabel(g.C.x, g.C.y, "C", 7, 17) + ptLabel(g.D.x, g.D.y, "D", 7, -8);
-  } else {
+  } else if (o.mode === "bent") {
     H = 246;
     pts.A = { x: 102, y: 76 };
     pts.B = { x: 58, y: 204 };
@@ -3313,8 +3426,32 @@ export function m2ExamEqAreaFig(o: {
     out += g4line(pts.A, pts.C, NAVY, 1.8, "6 5");
     out += g4line(pts.D, pts.E, NAVY, 1.8, "6 5");
     out += g4line(pts.A, pts.E, GEO.ink, 2.4);
+    if (o.bentLabels?.height) {
+      const foot = { x: pts.A.x, y: 204 };
+      out += g4line(pts.A, foot, GEO.hlB, 1.8, "5 4") + g4right(foot, pts.C, pts.A, 8);
+      out += g4text(pts.A.x + 21, (pts.A.y + 204) / 2 + 4, o.bentLabels.height, 11.5, GEO.hlB);
+    }
+    if (o.bentLabels?.bc) out += g4text((pts.B.x + pts.C.x) / 2, 222, o.bentLabels.bc, 11.5);
+    if (o.bentLabels?.ce) out += g4text((pts.C.x + pts.E.x) / 2, 222, o.bentLabels.ce, 11.5);
     out += dot(pts.E.x, pts.E.y, GEO.pt, 3.2) + ptLabel(pts.E.x, pts.E.y, "E", 6, 18);
     out += ptLabel(pts.A.x, pts.A.y, "A", -4, -9) + ptLabel(pts.B.x, pts.B.y, "B", -7, 17) + ptLabel(pts.C.x, pts.C.y, "C", -6, 18) + ptLabel(pts.D.x, pts.D.y, "D", 5, -9);
+  } else {
+    // split: 삼각형 ABC와 BC 위의 점 D — BD:DC=m:n 실비 위치(간격 비의 정본은 문두, m1u4 PL 교훈).
+    H = 232;
+    const gy = 186;
+    const mm = o.m ?? 1;
+    const nn = o.n ?? 1;
+    pts.B = { x: 64, y: gy };
+    pts.C = { x: 322, y: gy };
+    pts.D = { x: 64 + (258 * mm) / (mm + nn), y: gy };
+    pts.A = { x: 148, y: 54 };
+    if (o.shade) out += shadePoly(o.shade);
+    out += g4poly([pts.A, pts.B, pts.C], "none", 2.5);
+    out += g4line(pts.A, pts.D, GEO.ink, 2.3);
+    if (o.splitLabels?.bd) out += g4text((pts.B.x + pts.D.x) / 2, gy + 20, o.splitLabels.bd, 11.5);
+    if (o.splitLabels?.dc) out += g4text((pts.D.x + pts.C.x) / 2, gy + 20, o.splitLabels.dc, 11.5);
+    out += dot(pts.D.x, pts.D.y, GEO.pt, 3.2) + ptLabel(pts.D.x, pts.D.y, "D", 0, 18);
+    out += ptLabel(pts.A.x, pts.A.y, "A", 0, -10) + ptLabel(pts.B.x, pts.B.y, "B", -8, 17) + ptLabel(pts.C.x, pts.C.y, "C", 8, 17);
   }
   if (o.areaLabel) {
     const ps = o.areaLabel.in.split("").map((ch) => pts[ch]).filter(Boolean);
@@ -3324,7 +3461,250 @@ export function m2ExamEqAreaFig(o: {
       out += g4text(cx, cy + 4, o.areaLabel.label, 12, NAVY);
     }
   }
-  return svg(`0 0 360 ${H}`, "평행선과 도형의 넓이 관계 그림", out);
+  return svg(`0 0 360 ${H}`, o.mode === "split" ? "삼각형과 밑변 위의 한 점을 이은 그림" : "평행선과 도형의 넓이 관계 그림", out);
+}
+
+/** 이등변 연쇄(누적형 — 3사 최다 단골, m2u4 v2 신작). th가 "실제" 기준각(도)이라 라벨과 그림이
+ *  늘 일치한다. mode ray: 바닥 반직선 C→D→E와 사선 C→B→A, CB=BD=DA(각 1틱) —
+ *  ∠BCD=∠BDC=th·∠ABD=∠DAB=2th·∠ADE=3th를 좌표로 강제(A는 사선 위 CA=(4cos²th−1)·CB 지점).
+ *  mode tri: 삼각형 ABC 안 사슬 D(AB 위)·E(BC 위), BD=DE=EA=AC(각 1틱) — ∠B=th·∠C=3th.
+ *  marks의 at: ray는 C|BDC|ABD|DAB|ADE, tri는 B|C|ADE|DAE|AEC. ticks:false + sideLabels로
+ *  "두 각이 같으면 두 변도 같다" 역방향(되는 조건) 유형을 만든다. */
+export function m2ExamIsoLadderFig(o: {
+  mode: "ray" | "tri";
+  th: number;
+  marks?: Array<{ at: string; label: string }>;
+  ticks?: boolean;
+  sideLabels?: Partial<Record<"CB" | "BD" | "DA" | "DE" | "EA" | "AC" | "BC", string>>;
+  names?: string[];
+}): string {
+  const t = (o.th * Math.PI) / 180;
+  const c = Math.cos(t);
+  const s = Math.sin(t);
+  let out = "";
+  let H = 0;
+  const pts: Record<string, GPt> = {};
+  if (o.mode === "ray") {
+    const span = 4 * c * c - 1; // CA/CB 배율 — DA=CB가 되는 사선 위 지점
+    const L = Math.min(150, 272 / (span * c), 216 / (2 * c));
+    const ay = span * s * L;
+    H = Math.round(ay) + 92;
+    const gy = H - 46;
+    const C = { x: 42, y: gy };
+    const B = { x: C.x + L * c, y: gy - L * s };
+    const A = { x: C.x + span * c * L, y: gy - ay };
+    const D = { x: C.x + 2 * L * c, y: gy };
+    const E = { x: D.x + 52, y: gy };
+    Object.assign(pts, { A, B, C, D, E });
+    out += g4line(C, { x: D.x + 76, y: gy }, GEO.ink, 2.2);
+    out += g4line(C, A, GEO.ink, 2.5) + g4line(B, D, GEO.ink, 2.5) + g4line(D, A, GEO.ink, 2.5);
+    if (o.ticks !== false)
+      out += tickMark(C.x, C.y, B.x, B.y, 1) + tickMark(B.x, B.y, D.x, D.y, 1) + tickMark(D.x, D.y, A.x, A.y, 1);
+    out += dot(E.x, E.y, GEO.pt, 3);
+  } else {
+    const t3 = (3 * o.th * Math.PI) / 180;
+    const h0 = 288 / (1 / Math.tan(t) + 1 / Math.tan(t3));
+    const w = h0 > 150 ? (288 * 150) / h0 : 288;
+    const h = Math.min(h0, 150);
+    H = Math.round(h) + 92;
+    const gy = H - 46;
+    const lx = (360 - w) / 2;
+    const B = { x: lx, y: gy };
+    const C = { x: lx + w, y: gy };
+    const A = { x: lx + h / Math.tan(t), y: gy - h };
+    const len = h / Math.sin(t3); // AC=BD=DE=EA — ∠C=3th에서 역산
+    const D = { x: B.x + len * c, y: gy - len * s };
+    const E = { x: B.x + 2 * len * c, y: gy };
+    Object.assign(pts, { A, B, C, D, E });
+    out += g4poly([A, B, C], F4);
+    out += g4line(D, E, GEO.ink, 2.3) + g4line(E, A, GEO.ink, 2.3);
+    if (o.ticks !== false)
+      out +=
+        tickMark(B.x, B.y, D.x, D.y, 1) +
+        tickMark(D.x, D.y, E.x, E.y, 1) +
+        tickMark(E.x, E.y, A.x, A.y, 1) +
+        tickMark(A.x, A.y, C.x, C.y, 1);
+  }
+  const arcDefs: Record<string, [string, string, string]> =
+    o.mode === "ray"
+      ? { C: ["C", "B", "D"], BDC: ["D", "B", "C"], ABD: ["B", "A", "D"], DAB: ["A", "D", "B"], ADE: ["D", "A", "E"] }
+      : { B: ["B", "A", "C"], C: ["C", "A", "B"], ADE: ["D", "A", "E"], DAE: ["A", "D", "E"], AEC: ["E", "A", "C"] };
+  const rot = [GEO.hlA, GEO.hlB, GEO.hlD];
+  (o.marks ?? []).forEach((m, i) => {
+    const def = arcDefs[m.at];
+    if (def) out += g4arc(pts[def[0]], pts[def[1]], pts[def[2]], rot[i % 3], m.label, 22);
+  });
+  const segDefs: Record<string, [string, string]> =
+    o.mode === "ray"
+      ? { CB: ["C", "B"], BD: ["B", "D"], DA: ["D", "A"] }
+      : { BD: ["B", "D"], DE: ["D", "E"], EA: ["E", "A"], AC: ["A", "C"], BC: ["B", "C"] };
+  const cen =
+    o.mode === "ray"
+      ? { x: (pts.C.x + pts.A.x + pts.D.x) / 3, y: (pts.C.y + pts.A.y + pts.D.y) / 3 }
+      : g4cen([pts.A, pts.B, pts.C]);
+  for (const [key, lab] of Object.entries(o.sideLabels ?? {})) {
+    const def = segDefs[key];
+    if (def && lab) out += g4side(pts[def[0]], pts[def[1]], lab, cen, 15);
+  }
+  const nm = o.names ?? ["A", "B", "C", "D", "E"];
+  out += ptLabel(pts.A.x, pts.A.y, nm[0], 0, -10);
+  out += ptLabel(pts.B.x, pts.B.y, nm[1], -11, o.mode === "ray" ? -5 : 17);
+  out += ptLabel(pts.C.x, pts.C.y, nm[2], o.mode === "ray" ? -7 : 8, 17);
+  out += ptLabel(pts.D.x, pts.D.y, nm[3], o.mode === "ray" ? 2 : -11, o.mode === "ray" ? 18 : -5);
+  out += ptLabel(pts.E.x, pts.E.y, nm[4], o.mode === "ray" ? 6 : 2, 18);
+  return svg(`0 0 360 ${H}`, "길이가 같은 선분들을 이어 붙인 삼각형 그림", out);
+}
+
+/** 직사각형 모서리 접기(C→A, m2u4 v2 확대 신작 · 천04-07 계보) — phi가 "실제" ∠D′AF(도).
+ *  관계식 phi=90−2·atan(h/w)로 직사각형 비율을 역산해 라벨=기하 일치를 구조 보장.
+ *  접는 선 F(AD 위)~E(BC 위)는 대각선 AC의 수직이등분선, D′는 D의 반사상(위로 돌출).
+ *  askE를 주면 ∠AEF 물음 호. 검산: ∠AEF=(180−(90−phi))÷2. */
+export function m2ExamFoldCornerFig(o: { phi: number; phiLabel?: string; askE?: string }): string {
+  const th = ((90 - o.phi) / 2) * (Math.PI / 180);
+  const w = 250;
+  const h = w * Math.tan(th);
+  const ox = (360 - w) / 2;
+  const oy = Math.round(h * Math.cos(2 * th)) + 28;
+  const A = { x: ox, y: oy };
+  const B = { x: ox, y: oy + h };
+  const C = { x: ox + w, y: oy + h };
+  const D = { x: ox + w, y: oy };
+  const half = (h * h) / (2 * w);
+  const F = { x: ox + w / 2 + half, y: oy };
+  const E = { x: ox + w / 2 - half, y: oy + h };
+  const Dp = { x: ox + h * Math.sin(2 * th), y: oy - h * Math.cos(2 * th) };
+  let out = "";
+  // 남은 종이(접는 선 왼쪽) + 원래 자리 점선 + 접힌 플랩(F·D′·A·E)
+  out += `<path d="M${A.x} ${A.y} L${F.x.toFixed(1)} ${F.y} L${E.x.toFixed(1)} ${E.y} L${B.x} ${B.y} Z" fill="#F8FAFC" stroke="${GEO.ink}" stroke-width="2.4"/>`;
+  out += `<path d="M${F.x.toFixed(1)} ${F.y} L${D.x} ${D.y} L${C.x} ${C.y} L${E.x.toFixed(1)} ${E.y}" fill="none" stroke="${FAINT}" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+  out += `<path d="M${F.x.toFixed(1)} ${F.y} L${Dp.x.toFixed(1)} ${Dp.y.toFixed(1)} L${A.x} ${A.y} L${E.x.toFixed(1)} ${E.y} Z" fill="#EAF1FE" fill-opacity=".82" stroke="${GEO.ink}" stroke-width="2.4"/>`;
+  if (o.phiLabel) out += g4arc(A, Dp, F, GEO.hlA, o.phiLabel, 24);
+  if (o.askE) out += g4arc(E, A, F, GEO.hlB, o.askE, 22);
+  out += dot(A.x, A.y) + dot(E.x, E.y) + dot(F.x, F.y);
+  out += ptLabel(A.x, A.y, "A", -9, 4) + ptLabel(B.x, B.y, "B", -9, 12) + ptLabel(C.x, C.y, "C", 9, 12);
+  out += ptLabel(D.x, D.y, "D", 10, -2) + ptLabel(Dp.x, Dp.y, "D′", 2, -9);
+  out += ptLabel(E.x, E.y, "E", 2, 18) + ptLabel(F.x, F.y, "F", 6, -9);
+  return svg(`0 0 360 ${Math.round(oy + h) + 46}`, "직사각형 종이의 한 꼭짓점을 다른 꼭짓점에 오도록 접은 그림", out);
+}
+
+/** 중점 수선 쌍(m2u4 v2 확대 신작 · 비Ⅳ1-07 계보) — apex가 "실제" 꼭지각(도).
+ *  이등변삼각형이라 DM=EM이 구조적으로 성립(RHS 유형의 실각 렌더). M=BC 중점(2틱),
+ *  MD⊥AB·ME⊥AC(직각 마크, 1틱). marks: "A"(전각)·"BMD"·"CME"·"B"·"C". */
+export function m2ExamMidPerpFig(o: { apex: number; marks?: Array<{ at: string; label: string }> }): string {
+  const beta = ((180 - o.apex) / 2) * (Math.PI / 180);
+  const W = Math.min(264, 320 / Math.tan(beta));
+  const h = (W / 2) * Math.tan(beta);
+  const H = Math.round(h) + 92;
+  const gy = H - 46;
+  const lx = (360 - W) / 2;
+  const B = { x: lx, y: gy };
+  const C = { x: lx + W, y: gy };
+  const A = { x: lx + W / 2, y: gy - h };
+  const M = { x: lx + W / 2, y: gy };
+  const proj = (W / 2) * Math.cos(beta);
+  const D = { x: B.x + proj * Math.cos(beta), y: B.y - proj * Math.sin(beta) };
+  const E = { x: C.x - proj * Math.cos(beta), y: C.y - proj * Math.sin(beta) };
+  let out = g4poly([A, B, C]);
+  out += g4line(M, D, GEO.ink, 2.2) + g4line(M, E, GEO.ink, 2.2);
+  out += g4right(D, B, M) + g4right(E, A, M);
+  out += tickMark(B.x, B.y, M.x, M.y, 2) + tickMark(M.x, M.y, C.x, C.y, 2);
+  out += tickMark(D.x, D.y, M.x, M.y, 1) + tickMark(E.x, E.y, M.x, M.y, 1);
+  const pts: Record<string, GPt> = { A, B, C, M, D, E };
+  const adj: Record<string, [string, string]> = { A: ["B", "C"], B: ["A", "C"], C: ["A", "B"], M: ["B", "D"] };
+  if (o.marks) out += g4marks(pts, o.marks, adj);
+  out += dot(M.x, M.y, GEO.pt, 3) + dot(D.x, D.y, GEO.pt, 3) + dot(E.x, E.y, GEO.pt, 3);
+  out += ptLabel(A.x, A.y, "A", 0, -10) + ptLabel(B.x, B.y, "B", -8, 16) + ptLabel(C.x, C.y, "C", 8, 16);
+  out += ptLabel(M.x, M.y, "M", 0, 18) + ptLabel(D.x, D.y, "D", -12, -4) + ptLabel(E.x, E.y, "E", 12, -4);
+  return svg(`0 0 360 ${H}`, "삼각형과 밑변의 중점에서 두 변에 내린 수선을 나타낸 그림", out);
+}
+
+/** 직각이등변+직선 수선(m2u4 v2 확대 신작 · 미06-12 계보) — bd·ce 실비로 기울기를 역산해
+ *  라벨=기하 일치(BD=k·sinβ·CE=k·cosβ, β=atan(bd/ce)). ∠A=90°(마크)·AB=AC(틱),
+ *  D·E는 B·C에서 세로 직선 l에 내린 수선의 발(D가 위 — AD=CE<AE=BD 검산 병기). */
+export function m2ExamRightPerpFig(o: { bd: number; ce: number; bdLabel?: string; ceLabel?: string; askDE?: string }): string {
+  const beta = Math.atan2(o.bd, o.ce);
+  const s = Math.min(150, 128 / Math.sin(beta), 128 / Math.cos(beta));
+  const cx = 186;
+  const ay = 44;
+  const A = { x: cx, y: ay };
+  const B = { x: cx - s * Math.sin(beta), y: ay + s * Math.cos(beta) };
+  const D = { x: cx, y: B.y };
+  const C = { x: cx + s * Math.cos(beta), y: ay + s * Math.sin(beta) };
+  const E = { x: cx, y: C.y };
+  const H = Math.round(Math.max(B.y, C.y)) + 52;
+  let out = lineSvg(cx, 16, cx, H - 18, GEO.ink, 2.2);
+  out += `<text x="${cx + 10}" y="26" font-size="12.5" font-weight="800" font-style="italic" fill="${GEO.ink}">l</text>`;
+  out += g4line(A, B, GEO.ink, 2.5) + g4line(A, C, GEO.ink, 2.5);
+  out += g4line(B, D, GEO.ink, 2.2) + g4line(C, E, GEO.ink, 2.2);
+  out += g4right(A, B, C) + g4right(D, B, A) + g4right(E, C, A);
+  out += tickMark(A.x, A.y, B.x, B.y, 1) + tickMark(A.x, A.y, C.x, C.y, 1);
+  if (o.bdLabel) out += g4text((B.x + D.x) / 2, B.y - 8, o.bdLabel, 11.5);
+  if (o.ceLabel) out += g4text((C.x + E.x) / 2, C.y + 16, o.ceLabel, 11.5);
+  // g4text가 내부에서 fxv를 적용하므로 여기서 겹쳐 감싸면 마크업이 재치환된다(구현 확정 사고).
+  if (o.askDE) out += g4text(cx - 24, (D.y + E.y) / 2 + 4, o.askDE, 12);
+  out += dot(A.x, A.y) + dot(D.x, D.y) + dot(E.x, E.y);
+  out += ptLabel(A.x, A.y, "A", 12, -4) + ptLabel(B.x, B.y, "B", -12, 4) + ptLabel(C.x, C.y, "C", 12, 8);
+  out += ptLabel(D.x, D.y, "D", 12, 0) + ptLabel(E.x, E.y, "E", 13, 8);
+  return svg(`0 0 360 ${H}`, "직각이등변삼각형의 두 꼭짓점에서 한 직선에 내린 수선을 나타낸 그림", out);
+}
+
+/** 이등변 축 위 외심 O+내심 I 동시(m2u4 v2 확대 신작 · 미06-09·천04-10 계보) — apex가 실제
+ *  꼭지각(도). O·I의 y는 실계산(∠A<60°면 O가 위, >60°면 I가 위 — 저작 검산 병기).
+ *  좁은 ∠OBI는 호를 그리지 않는다(146 표준 — 문두 지정). marks: "A" 전각 라벨용. */
+export function m2ExamIsoOIFig(o: { apex: number; apexLabel?: string; axis?: boolean }): string {
+  const beta = ((180 - o.apex) / 2) * (Math.PI / 180);
+  const a = Math.tan(beta);
+  const L = Math.sqrt(1 + a * a);
+  const yO = (a * a - 1) / (2 * a);
+  const yI = a / (1 + L);
+  const k = Math.min(118, 148 / a);
+  const H = Math.round(k * a) + 96;
+  const gy = H - 48;
+  const cx = 180;
+  const B = { x: cx - k, y: gy };
+  const C = { x: cx + k, y: gy };
+  const A = { x: cx, y: gy - k * a };
+  const O = { x: cx, y: gy - k * yO };
+  const I = { x: cx, y: gy - k * yI };
+  let out = g4poly([A, B, C]);
+  if (o.axis !== false) out += g4line(A, { x: cx, y: gy }, GEO.ink, 1.6, "5 4");
+  out += g4line(O, B, GEO.ink, 2) + g4line(O, C, GEO.ink, 2);
+  out += g4line(I, B, GEO.ink, 2) + g4line(I, C, GEO.ink, 2);
+  out += tickMark(A.x, A.y, B.x, B.y, 1) + tickMark(A.x, A.y, C.x, C.y, 1);
+  if (o.apexLabel) out += g4arc(A, B, C, GEO.hlA, o.apexLabel, 24);
+  out += dot(O.x, O.y, GEO.pt, 3.4) + dot(I.x, I.y, GEO.pt, 3.4);
+  out += ptLabel(O.x, O.y, "O", 13, 4) + ptLabel(I.x, I.y, "I", -12, 4);
+  out += ptLabel(A.x, A.y, "A", 0, -10) + ptLabel(B.x, B.y, "B", -8, 16) + ptLabel(C.x, C.y, "C", 8, 16);
+  return svg(`0 0 360 ${H}`, "이등변삼각형과 두 점 O, I를 나타낸 그림", out);
+}
+
+/** 세 변 밖 정삼각형 셋(m2u4 v2 확대 신작 · 천04-11 계보) — △ABC 세 변을 한 변으로 하는
+ *  정삼각형 ABD·BCE·ACF(E는 BC 위쪽)와 □DAFE(D~E·E~F 실선). 변 그룹은 틱 1·2·3으로 구분. */
+export function m2ExamEquiTriFig(): string {
+  const rot = (p: GPt, c: GPt, deg: number): GPt => {
+    const r = (deg * Math.PI) / 180;
+    const dx = p.x - c.x;
+    const dy = p.y - c.y;
+    return { x: c.x + dx * Math.cos(r) - dy * Math.sin(r), y: c.y + dx * Math.sin(r) + dy * Math.cos(r) };
+  };
+  const B = { x: 112, y: 196 };
+  const C = { x: 256, y: 196 };
+  const A = { x: 172, y: 128 };
+  // 화면 y축이 아래로 커서 "바깥" 회전 부호가 수학 관례와 반대다(샘플 눈검수로 확정):
+  // D(AB 왼쪽 바깥)=rot(A,B,−60) · E(BC 위쪽)=rot(C,B,−60) · F(AC 오른쪽 바깥)=rot(A,C,+60).
+  const D = rot(A, B, -60);
+  const F = rot(A, C, 60);
+  const E = rot(C, B, -60);
+  let out = "";
+  out += g4poly([A, B, D], "#F0F6FF", 2.2) + g4poly([A, C, F], "#F0F6FF", 2.2) + g4poly([B, C, E], "#F8FAFC", 2.2);
+  out += g4poly([A, B, C], F4, 2.6);
+  out += g4line(D, E, GEO.ink, 2.3) + g4line(E, F, GEO.ink, 2.3);
+  out += tickMark(A.x, A.y, B.x, B.y, 1) + tickMark(B.x, B.y, D.x, D.y, 1) + tickMark(D.x, D.y, A.x, A.y, 1);
+  out += tickMark(A.x, A.y, C.x, C.y, 2) + tickMark(C.x, C.y, F.x, F.y, 2) + tickMark(F.x, F.y, A.x, A.y, 2);
+  out += tickMark(B.x, B.y, C.x, C.y, 3) + tickMark(C.x, C.y, E.x, E.y, 3) + tickMark(E.x, E.y, B.x, B.y, 3);
+  out += ptLabel(A.x, A.y, "A", 2, -9) + ptLabel(B.x, B.y, "B", -6, 17) + ptLabel(C.x, C.y, "C", 8, 17);
+  out += ptLabel(D.x, D.y, "D", -12, 0) + ptLabel(E.x, E.y, "E", 2, -10) + ptLabel(F.x, F.y, "F", 13, 0);
+  return svg("0 0 360 224", "삼각형의 세 변을 각각 한 변으로 하는 정삼각형 세 개를 그린 그림", out);
 }
 
 /* ── m1u5 개보수(2026-07) 신작 — Ⅴ 평면도형·입체도형 시험 그림 ─────────────
