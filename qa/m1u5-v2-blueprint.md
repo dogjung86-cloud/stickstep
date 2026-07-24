@@ -545,6 +545,18 @@ m2u5 "헬퍼 시각 소급" 관행, v1 그림도 함께 개선됨. mathFigures2.
 - tsc 0 · render ALL PASS · 확대 캡처 4컷(qa/shots/fix2-*.png)으로 전건 해소 확인. 공유 소급 누계 6건(§8-1 4 + CR
   각 호·SD cone rLabel).
 
+### §8-3. 사용자 검수 3차 2건 반영 (2026-07-24 — 전부 m5SectorXFig 공유 소급)
+
+- **19번(슬롯 085)·20번(슬롯 089) — 중심각 호 미표시**: SX에 degLabel이 있으면 **중심각 호(r 20, hlC)를 함께
+  렌더** — CR(§8-2)과 같은 관행. 우각(225°)도 a0→a1 반시계 스팬이라 그대로 맞는다. degLabel 없는 문항(슬롯
+  091 — 중심각이 과제의 미지값)은 호를 그리지 않는 것이 맞으므로 라벨 유무에 묶는다.
+- **20번 — O 라벨이 색칠 안**: 우각 배치(deg>180)의 O를 중심 위(−8)에서 **중심 아래(+16)**로 — SX의 우각
+  세팅은 빈 부채꼴 틈 이등분선이 항상 262°(아래)라 아래가 구조적으로 안전(검산 82−deg/2+180+deg/2=262).
+- **덤 — SX rLabel 앵커 보강**: 3차 확대 캡처에서 "12 cm" 오른쪽 끝이 여전히 선에 닿는 것을 발견(middle 앵커는
+  텍스트 절반이 선 쪽으로 되돌아옴) → 수직 오프셋 12px + **앵커를 선 반대쪽으로**(off.x<0 → end, >0 → start).
+  19·21번 완전 분리, 20번 "8 cm"도 자연 개선. tsc 0 · render ALL PASS · 확대 캡처 3컷(fix3-*.png) 확인.
+  공유 소급 누계 8건.
+
 ## 9. 확대(160) 착수 브리프 — 다른 세션·다른 계정 핸드오프 정본
 
 **이 절만 읽고도 착수 가능하도록 쓴 자기완결 브리프다**(다른 계정·다른 컴퓨터 세션은 이 계정의 메모리를 못 본다 —
@@ -565,9 +577,10 @@ m2u5 "헬퍼 시각 소급" 관행, v1 그림도 함께 개선됨. mathFigures2.
 - qa/m1u5v2-pilot.ts — 파일럿 40 완성본(승인분). **신작 헬퍼 6종이 이 파일 로컬**: ST=m5StarFig·TB=m5TubeFig·
   NC=m5NetConeFig·FR=m5FrustumFig·CM=m5CompositeFig·TP=m5TriPrismDimFig.
 - qa/render-m1u5v2-pilot.mjs(검증+렌더 → tmp/m1u5v2-pilot/)·qa/shot-m1u5v2-pilot.mjs(분할 샷).
-- src/ui/examFiguresMath.ts — 이 사이클 소급 6건 포함(SX rLabel 수직 오프셋·SD cyl rLabel·SD cone hLabel+rLabel·
-  CR 중심각 호·RC 번호 16px — §8-1·§8-2). **mathFigures2.ts와 app/.claude/launch.json은 타 세션 WIP — 원본
-  컴퓨터에서만 존재하는 미커밋 상태이니 브랜치·확대 커밋에 절대 섞지 말 것.**
+- src/ui/examFiguresMath.ts — 이 사이클 소급 8건 포함(SX rLabel 수직 오프셋+앵커·SX 중심각 호·SX 우각 O 위치·
+  SD cyl rLabel·SD cone hLabel+rLabel·CR 중심각 호·RC 번호 16px — §8-1~§8-3). **mathFigures2.ts와
+  app/.claude/launch.json은 타 세션 WIP — 원본 컴퓨터에서만 존재하는 미커밋 상태이니 브랜치·확대 커밋에 절대
+  섞지 말 것.**
 - 갤러리: 루트 D:\Brilliant Science\.claude\launch.json "m1u5v2-pilot"(5990). 아티팩트(원격 검수):
   https://claude.ai/code/artifact/db451bd0-3964-4396-9b2d-340b39e10ed8
 - 교과서 원본: D:\Brilliant Science\중학교 교과서\단원 종합 평가\수학_{비상,미래엔,천재교육}_단원 평가\*중1*

@@ -3922,16 +3922,22 @@ export function m5SectorXFig(o: {
   let out = `<path d="M${cx} ${cy} L${p1.x.toFixed(1)} ${p1.y.toFixed(1)} A${R} ${R} 0 ${large} 1 ${p0.x.toFixed(1)} ${p0.y.toFixed(1)} Z" fill="${GEO.hlA}" opacity=".15"/>`;
   out += `<path d="M${p1.x.toFixed(1)} ${p1.y.toFixed(1)} A${R} ${R} 0 ${large} 1 ${p0.x.toFixed(1)} ${p0.y.toFixed(1)}" stroke="${GEO.hlA}" stroke-width="4.4" fill="none" stroke-linecap="round"/>`;
   out += m5seg({ x: cx, y: cy }, p0) + m5seg({ x: cx, y: cy }, p1);
-  out += dot(cx, cy, GEO.pt, 3.2) + ptLabel(cx, cy, "O", -2, o.deg > 180 ? -8 : 15);
+  // O 라벨은 항상 빈 쪽에: 우각(>180°) 배치에서도 빈 부채꼴 틈의 이등분선이 262°(아래)라 아래가 안전
+  // (구 -8은 색칠 안에 얹힘 — m1u5 v2 검수 3차 소급).
+  out += dot(cx, cy, GEO.pt, 3.2) + ptLabel(cx, cy, "O", -2, o.deg > 180 ? 16 : 15);
   if (o.degLabel) {
+    // 중심각 호를 함께 그린다(라벨만으로는 각 표기가 안 됨 — m1u5 v2 검수 3차 소급, CR과 같은 관행).
+    out += angleArc(cx, cy, 20, a0, a1, GEO.hlC, undefined, { width: 2.2 });
     const m = polar(cx, cy, 34, a0 + o.deg / 2);
     out += m5text(m.x, m.y + 4, o.degLabel, "middle", GEO.hlC, 12.5);
   }
   if (o.rLabel) {
-    // 반지름 라벨은 a1 반지름의 수직 바깥쪽(부채꼴 밖)으로 밀어 선과 겹치지 않게(m1u5 v2 파일럿 검수 소급).
+    // 반지름 라벨은 a1 반지름의 수직 바깥쪽(부채꼴 밖)으로 밀고, 앵커도 선 반대쪽으로 키운다
+    // (middle 앵커는 텍스트 절반이 선으로 되돌아와 긴 라벨이 다시 걸침 — m1u5 v2 검수 3차 소급).
     const m = polar(cx, cy, R * 0.56, a1);
-    const off = polar(0, 0, 14, a1 + 90);
-    out += m5text(m.x + off.x, m.y + off.y + 4, o.rLabel, "middle", GEO.ink, 12);
+    const off = polar(0, 0, 12, a1 + 90);
+    const anchor = off.x < -1 ? "end" : off.x > 1 ? "start" : "middle";
+    out += m5text(m.x + off.x, m.y + off.y + 4, o.rLabel, anchor, GEO.ink, 12);
   }
   if (o.arcLabel) {
     const m = polar(cx, cy, R + 18, a0 + o.deg / 2);
