@@ -2,20 +2,22 @@
 // m1u2 검사기(esbuild 실로드 — 백틱 템플릿 해설도 자연 처리)를 22×7+23×2 배분 그대로 계승하고,
 // 금지어를 중2 Ⅱ 표로 교체 + raw 부등호 태그 함정(<b 뒤 한글 등) 소스 검사 + m2u1 ⑩(num·word·
 // 정답 문구 파일 간 중복 후보)을 얹었다.
+// 2026-07-25 소수리 v2: word 0(유형 자체 즉시 FAIL)·배분표 121/79/0 갱신·판별형 상한 30(15%,
+// 문장 보기 multi+bogi 합답+문장형 mcq — m2u6 중수리 계보)·readFileSync 직후 CRLF 정규화.
 // node qa/check-exam-m2u2.mjs
 import { readFileSync } from "node:fs";
 import { build } from "esbuild";
 
 const specs = [
-  ["m2u2l1", 22, 13, 7, 2, [9, 9, 4]],
-  ["m2u2l2", 22, 14, 6, 2, [9, 8, 5]],
-  ["m2u2l3", 22, 13, 7, 2, [9, 9, 4]],
-  ["m2u2l4", 22, 14, 6, 2, [8, 9, 5]],
-  ["m2u2l5", 22, 13, 7, 2, [9, 9, 4]],
-  ["m2u2l6", 22, 14, 6, 2, [9, 9, 4]],
-  ["m2u2l7", 22, 13, 7, 2, [9, 9, 4]],
-  ["m2u2l8", 23, 13, 7, 3, [9, 9, 5]],
-  ["m2u2l9", 23, 13, 7, 3, [9, 9, 5]],
+  ["m2u2l1", 22, 13, 9, 0, [9, 9, 4]],
+  ["m2u2l2", 22, 15, 7, 0, [9, 8, 5]],
+  ["m2u2l3", 22, 13, 9, 0, [9, 9, 4]],
+  ["m2u2l4", 22, 14, 8, 0, [8, 9, 5]],
+  ["m2u2l5", 22, 13, 9, 0, [9, 9, 4]],
+  ["m2u2l6", 22, 14, 8, 0, [9, 9, 4]],
+  ["m2u2l7", 22, 13, 9, 0, [9, 9, 4]],
+  ["m2u2l8", 23, 13, 10, 0, [9, 9, 5]],
+  ["m2u2l9", 23, 13, 10, 0, [9, 9, 5]],
 ];
 
 let failures = 0;
@@ -55,7 +57,8 @@ async function loadPool(file) {
 
 const all = [];
 for (const [file, count, choiceCount, numCount, wordCount, diffSpec] of specs) {
-  const source = readFileSync(`src/content/exams/${file}.ts`, "utf8");
+  // CRLF 작업 사본에서 소스 스캔이 무증상으로 어긋나지 않게 읽는 즉시 정규화(m1u6 검사기 사고 계보).
+  const source = readFileSync(`src/content/exams/${file}.ts`, "utf8").replace(/\r\n/g, "\n");
   if (source.includes("—")) fail(`${file}: em대시(—) 발견(주석 포함 전면 금지)`);
   // 중2 Ⅱ 언어 가드: 고교('연립부등식'·'부등식의 영역'·'해집합')·중2 Ⅲ 선행('일차함수'·'기울기'·
   // '그래프'·'직선') · 범위 밖('이차방정식'·'근의 공식')
@@ -90,6 +93,7 @@ for (const [file, count, choiceCount, numCount, wordCount, diffSpec] of specs) {
     all.push(item);
     if (!(item.type in types)) fail(`${item.id}: 알 수 없는 type ${item.type}`);
     else types[item.type] += 1;
+    if (item.type === "word") fail(`${item.id}: word 유형 발견(2026-07-25 소수리로 word 0 확정 — mcq/num으로 재출제할 것)`);
     if (![1, 2, 3].includes(item.diff)) fail(`${item.id}: diff가 1|2|3이 아님`);
     else diffs[item.diff] += 1;
     if (item.lessonId !== file) fail(`${item.id}: lessonId ${item.lessonId}, 기대 ${file}`);
@@ -172,10 +176,23 @@ for (const item of all) {
   else totalTypes[item.type] += 1;
   totalDiffs[item.diff] += 1;
 }
-if (totalTypes.choice !== 120 || totalTypes.num !== 60 || totalTypes.word !== 20)
-  fail(`전체 유형 ${totalTypes.choice}/${totalTypes.num}/${totalTypes.word}, 기대 120/60/20`);
+if (totalTypes.choice !== 121 || totalTypes.num !== 79 || totalTypes.word !== 0)
+  fail(`전체 유형 ${totalTypes.choice}/${totalTypes.num}/${totalTypes.word}, 기대 121/79/0`);
 if (totalDiffs[1] !== 80 || totalDiffs[2] !== 80 || totalDiffs[3] !== 40)
   fail(`전체 diff ${totalDiffs[1]}/${totalDiffs[2]}/${totalDiffs[3]}, 기대 80/80/40`);
+
+// 판별형 상한(2026-07-23 진단 축): 문장 보기 multi + bogi 합답형(mcq·multi) + 보기 5개 중 3개
+// 이상이 문장 어미(…요/…다)로 끝나는 mcq ≤ 30(15%). 수식·수치·명사구 보기의 계산 multi는 제외
+// (m2u6 중수리 검사 계보의 m2u2판 — 이 단원은 대입 판정형 계산 multi가 많아 multi 전수 집계가 아님).
+const sentenceEnd = (opt) => /(?:요|다)[.!]?$/.test(plain(opt));
+const discriminative = all.filter((item) => {
+  if (item.type !== "mcq" && item.type !== "multi") return false;
+  if (Array.isArray(item.bogi)) return true;
+  return (item.options ?? []).filter(sentenceEnd).length >= 3;
+});
+if (discriminative.length > 30)
+  fail(`판별형 ${discriminative.length}문항(>30, 15% 상한 초과): ${discriminative.map((i) => i.id).join(", ")}`);
+else console.log(`판별형 ${discriminative.length}/200 (상한 30):`, discriminative.map((i) => i.id).join(", "));
 
 // m2u1 ⑩ 계승: (a) 같은 파일 num 정답 중복 FAIL + 파일 간 값·단위 일치 WARN
 const numByFile = new Map();

@@ -1,6 +1,7 @@
-// 중2 수학 Ⅵ. 확률 단원 종합 평가 200제(9레슨, 22×7+23×2 — 23은 L8·L9).
-// 유형 120(mcq+multi)/60(num)/20(word), diff 80/80/40. 풀 순서는 교과 진도 순서다.
-// num은 L1~L3 int(경우의 수, "가지")·L4~L8 frac(기약분수 — numKind frac 첫 도입)·L9 dec(소수).
+// 중2 수학 Ⅵ. 확률 단원 종합 평가 200제(9레슨, 22×7+23×2, 23은 L8·L9).
+// 유형 120(mcq 111+multi 9)/80(num)/0(word), diff 80/80/40. 풀 순서는 교과 진도 순서다.
+// 2026-07-25 중수리: word 0화·판별형(문장 보기 multi+문장형 mcq) 34→20건·e128 힌트 제거·그림 25→31.
+// num은 L1~L3 int(경우의 수, "가지")·L4~L8 frac(기약분수, numKind frac 첫 도입)·L9 dec(소수)+개수 역산 int 예외.
 import type { ExamDef } from "./types";
 import { POOL_M2U6L1 } from "./m2u6l1";
 import { POOL_M2U6L2 } from "./m2u6l2";

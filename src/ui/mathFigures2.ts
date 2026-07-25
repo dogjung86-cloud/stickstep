@@ -900,12 +900,13 @@ export function lineFig(o: {
   const spec = planeSpec({ min: o.min ?? -5, max: o.max ?? 5, size: 260 });
   const PALETTE = ["#0CA678", "#E8608A", "#3D5BC0", "#E8A93E"];
   let g = "";
+  let labels = "";
   o.lines.forEach((ln, i) => {
     const color = ln.color ?? PALETTE[i % PALETTE.length];
     if (ln.vert != null) {
       g += `<line x1="${spec.px(ln.vert)}" y1="${spec.py(spec.min - 0.6)}" x2="${spec.px(ln.vert)}" y2="${spec.py(spec.max + 0.6)}" stroke="${color}" stroke-width="3"${ln.dash ? ' stroke-dasharray="7 5"' : ""} stroke-linecap="round"/>`;
       if (ln.label)
-        g += `<text x="${spec.px(ln.vert) + 7}" y="${spec.py(spec.max - 0.8)}" font-size="11" font-weight="800" font-style="italic" fill="${color}">${ln.label}</text>`;
+        labels += `<text x="${spec.px(ln.vert) + 7}" y="${spec.py(spec.max - 0.8)}" font-size="11" font-weight="800" font-style="italic" fill="${color}" stroke="#FFFFFF" stroke-width="5" stroke-linejoin="round" paint-order="stroke fill">${ln.label}</text>`;
       return;
     }
     const a = ln.a ?? 1;
@@ -914,7 +915,7 @@ export function lineFig(o: {
     g += `<line x1="${spec.px(-t)}" y1="${spec.py(a * -t + b)}" x2="${spec.px(t)}" y2="${spec.py(a * t + b)}" stroke="${color}" stroke-width="3"${ln.dash ? ' stroke-dasharray="7 5"' : ""} stroke-linecap="round"/>`;
     if (ln.label) {
       const lx = ln.lx ?? 2.6;
-      g += `<text x="${spec.px(lx)}" y="${spec.py(a * lx + b) + (a >= 0 ? -9 : 15)}" font-size="11" font-weight="800" font-style="italic" fill="${color}">${ln.label}</text>`;
+      labels += `<text x="${spec.px(lx)}" y="${spec.py(a * lx + b) + (a >= 0 ? -9 : 15)}" font-size="11" font-weight="800" font-style="italic" fill="${color}" stroke="#FFFFFF" stroke-width="5" stroke-linejoin="round" paint-order="stroke fill">${ln.label}</text>`;
     }
   });
   if (o.tri) {
@@ -933,9 +934,9 @@ export function lineFig(o: {
     const color = d.color ?? "#E8A93E";
     g += `<circle cx="${spec.px(d.x)}" cy="${spec.py(d.y)}" r="5" fill="${color}" stroke="#4A3208" stroke-width="1.2" opacity=".95"/>`;
     if (d.label)
-      g += `<text x="${spec.px(d.x) + 8}" y="${spec.py(d.y) + (d.below ? 15 : -8)}" font-size="10.5" font-weight="900" fill="#334155">${d.label}</text>`;
+      labels += `<text x="${spec.px(d.x) + 8}" y="${spec.py(d.y) + (d.below ? 15 : -8)}" font-size="10.5" font-weight="900" fill="#334155" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round" paint-order="stroke fill">${d.label}</text>`;
   }
-  return svg(spec.vb, spec.grid + g);
+  return svg(spec.vb, spec.grid + g + labels);
 }
 
 /* ════════════════════════════════════════════════════════════

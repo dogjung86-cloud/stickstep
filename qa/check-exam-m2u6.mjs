@@ -1,21 +1,23 @@
-// m2u6(중2 수학 Ⅵ 확률) 단원 종합 평가 200제 기계 검사.
-// m2u2 검사기(esbuild 실로드)를 22×7+23×2 배분 그대로 계승하고, 금지어를 중2 Ⅵ 표로 교체 +
-// frac numKind(첫 도입 — 기약·형식·문두 "기약분수로" 검사) + 합·곱 조건 서술 이형 검출 +
-// m2ExamSpinnerFig 중심각 합 360 검산 + pairGridFig 빈 상태(()=>false) 강제를 얹었다.
+// m2u6(중2 수학 Ⅵ 확률) 단원 종합 평가 200제 기계 검사 — 2026-07-25 중수리 v2.
+// m2u2 검사기(esbuild 실로드) 계승 + 금지어 중2 Ⅵ 표 + frac numKind(기약·형식·문두 "기약분수로") +
+// 합·곱 조건 서술 이형 검출 + m2ExamSpinnerFig 중심각 합 360 검산 + pairGridFig 빈 상태 강제.
+// 중수리 신설: word 0 FAIL(발견 즉시)·mcq/multi 분리 배분(12/1×4+13/1×3+12/1×2)·판별형 상한
+// (multi 전수 + bogi mcq + 문장 어미 보기 3개 이상 mcq ≤ 30 = 15%).
 // node qa/check-exam-m2u6.mjs
 import { readFileSync } from "node:fs";
 import { build } from "esbuild";
 
+// [file, count, mcq, multi, num, diffSpec] — word는 0 강제라 스펙에서 제거.
 const specs = [
-  ["m2u6l1", 22, 13, 7, 2, [9, 9, 4]],
-  ["m2u6l2", 22, 13, 7, 2, [9, 9, 4]],
-  ["m2u6l3", 22, 13, 7, 2, [9, 9, 4]],
-  ["m2u6l4", 22, 13, 7, 2, [9, 9, 4]],
-  ["m2u6l5", 22, 14, 6, 2, [9, 9, 4]],
-  ["m2u6l6", 22, 14, 6, 2, [9, 9, 4]],
-  ["m2u6l7", 22, 14, 6, 2, [9, 9, 4]],
-  ["m2u6l8", 23, 13, 7, 3, [8, 9, 6]],
-  ["m2u6l9", 23, 13, 7, 3, [9, 8, 6]],
+  ["m2u6l1", 22, 12, 1, 9, [9, 9, 4]],
+  ["m2u6l2", 22, 12, 1, 9, [9, 9, 4]],
+  ["m2u6l3", 22, 12, 1, 9, [9, 9, 4]],
+  ["m2u6l4", 22, 12, 1, 9, [9, 9, 4]],
+  ["m2u6l5", 22, 13, 1, 8, [9, 9, 4]],
+  ["m2u6l6", 22, 13, 1, 8, [9, 9, 4]],
+  ["m2u6l7", 22, 13, 1, 8, [9, 9, 4]],
+  ["m2u6l8", 23, 12, 1, 10, [8, 9, 6]],
+  ["m2u6l9", 23, 12, 1, 10, [9, 8, 6]],
 ];
 
 let failures = 0;
@@ -60,7 +62,7 @@ async function loadPool(file) {
 }
 
 const all = [];
-for (const [file, count, choiceCount, numCount, wordCount, diffSpec] of specs) {
+for (const [file, count, mcqCount, multiCount, numCount, diffSpec] of specs) {
   const source = readFileSync(`src/content/exams/${file}.ts`, "utf8").replace(/\r\n/g, "\n");
   if (source.includes("—")) fail(`${file}: em대시(—) 발견(주석 포함 전면 금지)`);
   if (source.includes("figureDark")) fail(`${file}: figureDark 금지(이 단원 그림은 전부 밝음)`);
@@ -174,25 +176,15 @@ for (const [file, count, choiceCount, numCount, wordCount, diffSpec] of specs) {
       if (/[−]/.test(ans)) fail(`${item.id}: num answer에 U+2212(ASCII여야 채점 일치)`);
       if (Math.abs(parseFloat(ans)) > 9999) fail(`${item.id}: 정답 절댓값 4자리 초과(넘패드 슬롯 제한)`);
     } else if (item.type === "word") {
-      if (!Array.isArray(item.bank)) fail(`${item.id}: word bank 없음`);
-      else {
-        if (item.bank.length < 8 || item.bank.length > 10)
-          fail(`${item.id}: word bank ${item.bank.length}개, 8~10개 필요`);
-        if (new Set(item.bank).size !== item.bank.length) fail(`${item.id}: word bank 중복`);
-        if (item.bank[0] !== item.answer) fail(`${item.id}: answer가 bank[0]이 아님`);
-        // '확률'↔'상대도수' 상호 오염 금지(극한 서사로 문장이 참이 될 수 있음)
-        if (item.answer === "확률" && item.bank.includes("상대도수"))
-          fail(`${item.id}: '확률' 답 문장 bank에 '상대도수' 칩 금지`);
-        if (item.answer === "상대도수" && item.bank.includes("확률"))
-          fail(`${item.id}: '상대도수' 답 문장 bank에 '확률' 칩 금지`);
-      }
+      // 중수리 정책: 시험 word 유형 전면 폐지(교과서 용어 빈칸형 0/299 준거).
+      fail(`${item.id}: word 유형 발견(중수리 후 word 0 정책 — mcq/num으로 재출제할 것)`);
     }
   }
 
-  if (types.mcq + types.multi !== choiceCount)
-    fail(`${file}: mcq+multi ${types.mcq + types.multi}, 기대 ${choiceCount}`);
+  if (types.mcq !== mcqCount) fail(`${file}: mcq ${types.mcq}, 기대 ${mcqCount}`);
+  if (types.multi !== multiCount) fail(`${file}: multi ${types.multi}, 기대 ${multiCount}`);
   if (types.num !== numCount) fail(`${file}: num ${types.num}, 기대 ${numCount}`);
-  if (types.word !== wordCount) fail(`${file}: word ${types.word}, 기대 ${wordCount}`);
+  if (types.word !== 0) fail(`${file}: word ${types.word}, 기대 0`);
   if (diffs[1] !== diffSpec[0] || diffs[2] !== diffSpec[1] || diffs[3] !== diffSpec[2])
     fail(`${file}: diff ${diffs[1]}/${diffs[2]}/${diffs[3]}, 기대 ${diffSpec.join("/")}`);
   const used = mcqPositions.filter((n) => n > 0);
@@ -209,17 +201,29 @@ for (let index = 0; index < 200; index += 1) {
   if (ids[index] !== expected) fail(`ID 연번 오류: 위치 ${index + 1}=${ids[index]}, 기대 ${expected}`);
 }
 
-const totalTypes = { choice: 0, num: 0, word: 0 };
+const totalTypes = { mcq: 0, multi: 0, num: 0, word: 0 };
 const totalDiffs = { 1: 0, 2: 0, 3: 0 };
 for (const item of all) {
-  if (item.type === "mcq" || item.type === "multi") totalTypes.choice += 1;
-  else totalTypes[item.type] += 1;
+  totalTypes[item.type] += 1;
   totalDiffs[item.diff] += 1;
 }
-if (totalTypes.choice !== 120 || totalTypes.num !== 60 || totalTypes.word !== 20)
-  fail(`전체 유형 ${totalTypes.choice}/${totalTypes.num}/${totalTypes.word}, 기대 120/60/20`);
+if (totalTypes.mcq !== 111 || totalTypes.multi !== 9 || totalTypes.num !== 80 || totalTypes.word !== 0)
+  fail(`전체 유형 ${totalTypes.mcq}/${totalTypes.multi}/${totalTypes.num}/${totalTypes.word}, 기대 111/9/80/0`);
 if (totalDiffs[1] !== 80 || totalDiffs[2] !== 80 || totalDiffs[3] !== 40)
   fail(`전체 diff ${totalDiffs[1]}/${totalDiffs[2]}/${totalDiffs[3]}, 기대 80/80/40`);
+
+// 판별형 상한(중수리 진단 축): multi 전수 + bogi 합답형 mcq + 보기 5개 중 3개 이상이
+// 문장 어미(…요/…다)로 끝나는 mcq ≤ 30(15%). 라벨·수치·명사구 보기는 제외된다.
+const sentenceEnd = (opt) => /(?:요|다)[.!]?$/.test(plain(opt));
+const discriminative = all.filter((item) => {
+  if (item.type === "multi") return true;
+  if (item.type !== "mcq") return false;
+  if (Array.isArray(item.bogi)) return true;
+  return (item.options ?? []).filter(sentenceEnd).length >= 3;
+});
+if (discriminative.length > 30)
+  fail(`판별형 ${discriminative.length}문항(>30, 15% 상한 초과): ${discriminative.map((i) => i.id).join(", ")}`);
+else console.log(`판별형 ${discriminative.length}/200 (상한 30):`, discriminative.map((i) => i.id).join(", "));
 
 // (a) 같은 파일 num 정답 중복 FAIL + 파일 간 값 일치 WARN
 const numByFile = new Map();
@@ -232,13 +236,7 @@ for (const item of all.filter((a) => a.type === "num")) {
   if (numGlobal.has(v)) warn(`파일 간 num 정답 일치 후보: ${numGlobal.get(v)} ↔ ${item.id} (${v}) — 과제가 다른지 수동 판정`);
   else numGlobal.set(v, item.id);
 }
-// (b) word 정답 용어 파일 간 중복 FAIL
-const wordAns = new Map();
-for (const item of all.filter((a) => a.type === "word")) {
-  if (wordAns.has(item.answer)) fail(`word 정답 용어 중복: "${item.answer}" (${wordAns.get(item.answer)} ↔ ${item.id})`);
-  wordAns.set(item.answer, item.id);
-}
-// (c) mcq/multi 정답 보기 문구(10자+) 파일 간 일치 후보 WARN
+// (b) mcq/multi 정답 보기 문구(10자+) 파일 간 일치 후보 WARN
 const optAns = new Map();
 for (const item of all.filter((a) => a.type === "mcq" || a.type === "multi")) {
   const idxs = item.type === "mcq" ? [item.answer] : item.answer;

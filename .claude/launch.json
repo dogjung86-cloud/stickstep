@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "autoPort": true
+    },
+    {
+      "name": "m1u4v2-gallery",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5988", "--directory", "tmp"],
+      "port": 5988
     }
   ]
 }

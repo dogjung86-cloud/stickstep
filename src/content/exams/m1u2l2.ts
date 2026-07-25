@@ -1,9 +1,11 @@
 // 중1 수학 II 문자와 식, 레슨 2 곱셈·나눗셈 기호 생략 단원 종합 평가 풀(22문항).
 // 교과서에서는 표현 구조와 함정만 참고하고 수치·문구·소재 결합은 새로 설계했다.
-// 유형 14(mcq+multi)/6(num)/2(word), diff 1/2/3 = 10/8/4 (2026-07 개보수:
+// 유형 16(mcq+multi)/6(num)/0(word), diff 1/2/3 = 10/8/4 (2026-07 개보수:
 // 괄호식 분자·괄호 분모 약분 신작 2, diff는 내용 기준 재캘리브레이션).
+// 2026-07-25 소수리: word 2문항(e043·e044)을 그림 판독형 mcq로 전환(직사각형 넓이 표기·거리 띠 시간 표기), diff 슬롯 유지.
 import type { ExamItem } from "./types";
 import { mfmt } from "../../ui/mathKit";
+import { mExamDistBandFig, m2ExamRectXYFig } from "../../ui/examFiguresMath";
 
 const L = "m1u2l2";
 
@@ -266,28 +268,48 @@ export const POOL_M1U2L2: ExamItem[] = [
       "<span class='xh'>정답 풀이</span>18×<i class='mv'>r</i>÷□에서 문자 <i class='mv'>r</i>은 그대로이고 수로 된 계수 18을 □로 나눈 결과가 3이어야 해요. 18÷□=3이므로 □=<b>6</b>이에요.<span class='xh'>오답 경로 격파</span>3은 결과의 계수를 그대로 옮긴 값이라 18÷3=6이 되어 6<i class='mv'>r</i>가 나와요. 15는 18−3으로 구한 수라 나눗셈 관계와 맞지 않고, 21은 18+3을 한 값이에요. 54는 18×3을 계산해 나누는 수를 더 크게 잘못 잡은 값이죠. 답 6을 넣으면 18×<i class='mv'>r</i>÷6=3<i class='mv'>r</i>로 정확히 돌아가요. 빈칸은 3×□=18로 역산해도 구할 수 있어요.",
     core: "18÷빈칸=3이므로 빈칸은 6!",
   },
+  // [e043] 2026-07-25 소수리 word→mcq(그림) · 검산: 넓이 = 가로×세로 = a×b = ab ✓ (a=3, b=2 대입 시
+  // 보기 값 5/6/10/1.5/12 전부 상이) · 쌍둥이: e010(l1 둘레 식 세우기)과 도형 재사용이나 질문 상이(넓이 표기) ·
+  // 라벨이 문자뿐이라 그림 비율 임의 허용, 정답 수치 미인쇄.
   {
     id: "m1u2e043",
     lessonId: L,
-    type: "word",
-    prompt: "수와 문자의 곱에서 곱셈 기호를 생략할 때, 수는 문자의 어느 쪽에 쓰나요?",
-    answer: "앞",
-    bank: ["앞", "뒤", "위", "아래", "분모", "지수", "괄호 밖", "등호 뒤"],
+    type: "mcq",
+    prompt: "그림과 같이 가로가 <i class='mv'>a</i> cm, 세로가 <i class='mv'>b</i> cm인 직사각형의 넓이를 곱셈 기호를 생략한 식으로 나타낸 것은?",
+    figure: m2ExamRectXYFig({ w: "a cm", h: "b cm" }),
+    options: [
+      "<i class='mv'>a</i>+<i class='mv'>b</i>",
+      "<i class='mv'>ab</i>",
+      "2(<i class='mv'>a</i>+<i class='mv'>b</i>)",
+      mfmt("{a/b}"),
+      "2<i class='mv'>ab</i>",
+    ],
+    answer: 1,
     diff: 1,
     explain:
-      "<span class='xh'>정답 풀이</span>수와 문자의 곱에서 ×를 생략하면 수를 문자의 <b>앞</b>에 써요. 예를 들어 <i class='mv'>c</i>×8은 곱의 순서를 바꾸어 8<i class='mv'>c</i>로 나타내요.<span class='xh'>오답 칩 격파</span>'뒤'는 <i class='mv'>c</i>8처럼 쓰게 되어 표기 약속에 맞지 않아요. '위'와 '아래', '분모'는 나눗셈을 분수로 나타낼 때 살피는 위치예요. '지수'는 같은 문자를 여러 번 곱한 횟수를 쓰는 자리이고요. '괄호 밖'은 괄호식과 수의 곱에서 관련될 수 있지만 모든 수와 문자의 곱을 설명하지 못해요. '등호 뒤'도 등식의 위치에 관한 말이라 기호 생략 약속과 무관해요. 수 먼저, 문자 나중 순서를 기억해요.",
-    core: "곱셈 기호를 생략하면 수는 문자 앞!",
+      "<span class='xh'>정답 풀이</span>직사각형의 넓이는 가로와 세로의 곱이므로 <i class='mv'>a</i>×<i class='mv'>b</i>예요. 문자끼리의 곱에서 곱셈 기호를 생략하고 알파벳 순서로 쓰면 <b><i class='mv'>ab</i></b>가 돼요.<span class='xh'>오답 하나씩 격파</span>'<i class='mv'>a</i>+<i class='mv'>b</i>'는 두 길이를 더한 값이라 곱으로 구하는 넓이가 아니에요. '2(<i class='mv'>a</i>+<i class='mv'>b</i>)'는 네 변의 길이를 모두 더한 둘레의 식이고요. '" + mfmt("{a/b}") + "'는 나눗셈 <i class='mv'>a</i>÷<i class='mv'>b</i>를 나타내요. '2<i class='mv'>ab</i>'는 넓이에 2를 더 곱해 직사각형 두 개의 넓이가 돼요. <i class='mv'>a</i>=3, <i class='mv'>b</i>=2를 넣으면 넓이는 6 cm²이고 <i class='mv'>ab</i>만 6이 되는지 확인하면 기호 생략 뒤에도 곱셈이라는 뜻이 지켜졌는지 검산할 수 있어요.",
+    core: "넓이 a×b는 기호를 생략해 ab!",
   },
+  // [e044] 2026-07-25 소수리 word→mcq(그림) · 검산: 시간 = 거리÷속력 = a÷b = a/b ✓ (a=6, b=3 대입 시
+  // 보기 값 0.5/18/9/3/2 전부 상이) · 쌍둥이: e028·e029(수÷문자 분수 표기)와 구조 상이(문자÷문자+공식 판독) ·
+  // e189(l9) 거짓 보기 6x와 방향은 겹치나 노출면 정답 인쇄 아님 · 소재 공원(도서관은 e195 선점).
   {
     id: "m1u2e044",
     lessonId: L,
-    type: "word",
-    prompt: "<i class='mv'>a</i>÷<i class='mv'>b</i>를 분수 꼴로 나타낼 때, 나누는 수 <i class='mv'>b</i>가 놓이는 부분을 무엇이라고 하나요?",
-    answer: "분모",
-    bank: ["분모", "분자", "계수", "지수", "밑", "항", "상수항", "괄호"],
+    type: "mcq",
+    prompt: "그림과 같이 <i class='mv'>a</i> km 떨어진 공원까지 시속 <i class='mv'>b</i> km로 걸어갈 때, 걸리는 시간을 나눗셈 기호를 사용하지 않고 나타낸 것은?",
+    figure: mExamDistBandFig({ rows: [{ segs: [{ top: "a km", bot: "시속 b km" }] }] }),
+    options: [
+      mfmt("{b/a}"),
+      "<i class='mv'>ab</i>",
+      "<i class='mv'>a</i>+<i class='mv'>b</i>",
+      "<i class='mv'>a</i>−<i class='mv'>b</i>",
+      mfmt("{a/b}"),
+    ],
+    answer: 4,
     diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span><i class='mv'>a</i>÷<i class='mv'>b</i>는 " + mfmt("{a/b}") + "로 나타내며, 나누는 수 <i class='mv'>b</i>가 놓이는 아래 부분을 <b>분모</b>라고 해요.<span class='xh'>오답 칩 격파</span>'분자'는 나누어지는 수 <i class='mv'>a</i>가 놓이는 위 부분이에요. '계수'는 문자에 곱해진 수이고, '지수'는 같은 인자를 곱한 횟수를 나타내요. '밑'은 거듭제곱에서 반복하여 곱하는 수나 문자이고요. '항'과 '상수항'은 덧셈으로 연결된 식을 구분할 때 쓰는 말이에요. '괄호'는 계산 범위를 묶는 기호이지 분수의 아래쪽 이름이 아니에요. 나눗셈에서는 제수가 분모로 간다고 연결해 기억해요.",
-    core: "a÷b에서 나누는 수 b는 분모!",
+      "<span class='xh'>정답 풀이</span>걸리는 시간은 거리를 속력으로 나눈 값이에요. 거리 <i class='mv'>a</i> km를 속력 <i class='mv'>b</i>로 나누면 <i class='mv'>a</i>÷<i class='mv'>b</i>이고, 나눗셈 기호를 생략해 분수 꼴로 쓰면 <b>" + mfmt("{a/b}") + "</b>시간이에요.<span class='xh'>오답 하나씩 격파</span>'" + mfmt("{b/a}") + "'는 속력을 거리로 나눠 나눗셈의 순서가 뒤집혔어요. '<i class='mv'>ab</i>'는 두 수를 곱한 식인데, 속력에 시간을 곱해야 거리가 나오므로 시간 자리에 올 수 없어요. '<i class='mv'>a</i>+<i class='mv'>b</i>'와 '<i class='mv'>a</i>−<i class='mv'>b</i>'는 거리와 속력을 더하거나 뺀 값이라 시간과 무관하고요. <i class='mv'>a</i>=6, <i class='mv'>b</i>=3이면 2시간이 답인데 " + mfmt("{a/b}") + "만 2가 되는지 넣어 보면 분자와 분모의 방향까지 검산돼요.",
+    core: "시간은 거리÷속력, 분수 꼴로 a/b!",
   },
 ];

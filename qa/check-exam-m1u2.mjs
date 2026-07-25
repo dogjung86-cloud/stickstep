@@ -6,16 +6,19 @@ import { build } from "esbuild";
 // diff 배분(2026-07 개보수): 레슨별 균일 쿼터(9/9/4대)를 폐기하고 내용 기준으로 재캘리브레이션.
 // 표현·개념 레슨(L1·L6)은 기초가 많고 방정식 풀이·활용(L8·L9)은 심화가 몰리는 게 자연스럽다.
 // 전체 합 80/80/40(40/40/20%)은 불변 — 아래 배열이 레슨별 확정값이다.
+// 2026-07-25 소수리: word 20문항을 전부 mcq·num으로 전환(교과서 용어 빈칸형 0/299 대조) — word는
+// 0이 확정값이고 1개라도 나오면 FAIL. 그림은 16→26으로 보강(교과서 기준선 12.5%), 파일별 정확값 검사.
+// specs: [file, count, choice, num, word, diff, figures]
 const specs = [
-  ["m1u2l1", 22, 13, 7, 2, [9, 11, 2]],
-  ["m1u2l2", 22, 14, 6, 2, [10, 8, 4]],
-  ["m1u2l3", 22, 13, 7, 2, [9, 10, 3]],
-  ["m1u2l4", 22, 14, 6, 2, [9, 8, 5]],
-  ["m1u2l5", 22, 13, 7, 2, [8, 8, 6]],
-  ["m1u2l6", 22, 14, 6, 2, [10, 10, 2]],
-  ["m1u2l7", 22, 13, 7, 2, [9, 9, 4]],
-  ["m1u2l8", 23, 13, 7, 3, [9, 7, 7]],
-  ["m1u2l9", 23, 13, 7, 3, [7, 9, 7]],
+  ["m1u2l1", 22, 14, 8, 0, [9, 11, 2], 6],
+  ["m1u2l2", 22, 16, 6, 0, [10, 8, 4], 2],
+  ["m1u2l3", 22, 13, 9, 0, [9, 10, 3], 2],
+  ["m1u2l4", 22, 14, 8, 0, [9, 8, 5], 0],
+  ["m1u2l5", 22, 15, 7, 0, [8, 8, 6], 2],
+  ["m1u2l6", 22, 14, 8, 0, [10, 10, 2], 2],
+  ["m1u2l7", 22, 14, 8, 0, [9, 9, 4], 4],
+  ["m1u2l8", 23, 14, 9, 0, [9, 7, 7], 2],
+  ["m1u2l9", 23, 13, 10, 0, [7, 9, 7], 6],
 ];
 
 let failures = 0;
@@ -54,13 +57,17 @@ async function loadPool(file) {
 }
 
 const all = [];
-for (const [file, count, choiceCount, numCount, wordCount, diffSpec] of specs) {
-  const source = readFileSync(`src/content/exams/${file}.ts`, "utf8");
+for (const [file, count, choiceCount, numCount, wordCount, diffSpec, figCount] of specs) {
+  // CRLF 정규화: autocrlf 체크아웃 사본에서 정규식 검사가 무증상으로 어긋나는 사고 계보(m1u6 검사기) 예방.
+  const source = readFileSync(`src/content/exams/${file}.ts`, "utf8").replace(/\r\n/g, "\n");
   if (source.includes("—")) fail(`${file}: em대시(—) 발견`);
   if (source.includes("Ⅰ")) fail(`${file}: 금지 로마 숫자 Ⅰ 발견`);
 
   const pool = await loadPool(file);
   if (pool.length !== count) fail(`${file}: ${pool.length}문항, 기대 ${count}`);
+
+  const figs = pool.filter((item) => item.figure).length;
+  if (figs !== figCount) fail(`${file}: 그림 ${figs}문항, 기대 ${figCount}`);
 
   const types = { mcq: 0, multi: 0, num: 0, word: 0 };
   const diffs = { 1: 0, 2: 0, 3: 0 };
@@ -126,6 +133,7 @@ for (const [file, count, choiceCount, numCount, wordCount, diffSpec] of specs) {
     fail(`${file}: mcq+multi ${types.mcq + types.multi}, 기대 ${choiceCount}`);
   if (types.num !== numCount) fail(`${file}: num ${types.num}, 기대 ${numCount}`);
   if (types.word !== wordCount) fail(`${file}: word ${types.word}, 기대 ${wordCount}`);
+  if (types.word > 0) fail(`${file}: word ${types.word}문항 발견, 소수리 이후 word는 0이 확정값(용어 빈칸형 금지)`);
   if (diffs[1] !== diffSpec[0] || diffs[2] !== diffSpec[1] || diffs[3] !== diffSpec[2])
     fail(`${file}: diff ${diffs[1]}/${diffs[2]}/${diffs[3]}, 기대 ${diffSpec.join("/")}`);
   const used = mcqPositions.filter((n) => n > 0);
@@ -149,10 +157,12 @@ for (const item of all) {
   else totalTypes[item.type] += 1;
   totalDiffs[item.diff] += 1;
 }
-if (totalTypes.choice !== 120 || totalTypes.num !== 60 || totalTypes.word !== 20)
-  fail(`전체 유형 ${totalTypes.choice}/${totalTypes.num}/${totalTypes.word}, 기대 120/60/20`);
+if (totalTypes.choice !== 127 || totalTypes.num !== 73 || totalTypes.word !== 0)
+  fail(`전체 유형 ${totalTypes.choice}/${totalTypes.num}/${totalTypes.word}, 기대 127/73/0`);
 if (totalDiffs[1] !== 80 || totalDiffs[2] !== 80 || totalDiffs[3] !== 40)
   fail(`전체 diff ${totalDiffs[1]}/${totalDiffs[2]}/${totalDiffs[3]}, 기대 80/80/40`);
+const totalFigs = all.filter((item) => item.figure).length;
+if (totalFigs !== 26) fail(`전체 그림 ${totalFigs}문항, 기대 26(2026-07-25 소수리 확정값·교과서 기준선 12.5% 이상)`);
 
 // 동일 문두는 실패, 숫자·변수만 바꾼 동형 문두와 높은 문자열 유사도는 후보로 보고한다.
 const normalized = (item) =>

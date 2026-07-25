@@ -68,6 +68,8 @@ export function mExamPlaneFig(spec: MExamPlaneSpec): string {
 export interface MExamGraphSeries {
   points: Array<[number, number]>;
   label?: string;
+  /** 라벨 앵커 점 인덱스(기본 마지막 점 — 다중 시리즈의 끝점 라벨 충돌 시 중간점 지정, m1u3 v2 소급) */
+  labelAt?: number;
   color?: string;
   dashed?: boolean;
   smooth?: boolean;
@@ -124,7 +126,8 @@ export function mExamChangeGraphFig(spec: MExamChangeGraphSpec): string {
     inner += `<path d="${d}" stroke="${color}" stroke-width="2.7" ${series.dashed ? 'stroke-dasharray="5 4"' : ""} fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
     for (const [x, y] of coords) inner += `<circle cx="${x}" cy="${y}" r="3.4" fill="#FFFFFF" stroke="${color}" stroke-width="1.8"/>`;
     if (series.label && coords.length) {
-      const [x, y] = coords[coords.length - 1];
+      const anchor = Math.min(series.labelAt ?? coords.length - 1, coords.length - 1);
+      const [x, y] = coords[anchor];
       inner += `<text x="${x - 3}" y="${y - 8}" text-anchor="end" font-size="10" font-weight="900" fill="${color}">${series.label}</text>`;
     }
   });
@@ -5831,4 +5834,81 @@ export function m5CircleParallelFig(o: {
   out += ptLabel(A.x, A.y, "A", -13, 4) + ptLabel(B.x, B.y, "B", 13, 4);
   out += ptLabel(C.x, C.y, "C", -9, -7) + ptLabel(D.x, D.y, "D", 9, -7);
   return svg("0 0 300 226", "원 O에서 지름과 그와 평행한 현을 나타낸 그림", out);
+}
+
+/* ══════════════ m1u6 v2 통계 섹션 ══════════════
+ * 재출제 7호 신작 2종(파일럿 로컬 승격 · 정본 qa/m1u6-v2-blueprint.md §6).
+ * aria는 중립 서술만(도수·판독 결과 낭독 금지). */
+
+/** 6~9변량 자료 상자(statDataFig의 확장판 · 5변량 이하는 mathFigures statDataFig를 쓴다).
+ *  칩 폭·간격·서체를 변량 수에 맞춰 축소(6개 42px/8 · 7개 38px/6 · 8개 33px/4 · 9개 30px/3).
+ *  문자 변량("a")은 이탤릭. hot 인덱스는 극단값 강조(로즈). unit이 빈 문자열이면 단위 라벨을
+ *  생략한다(무단위 추상 자료·질적 자료 — "(단위: )" 빈 괄호 노출 방지, 200제 격자 눈검수 반영). */
+export function m6DataBoxFig(vals: Array<number | string>, opts: { title: string; unit: string; hot?: number }): string {
+  const n = vals.length;
+  const spec = n <= 6 ? [42, 8, 14] : n <= 7 ? [38, 6, 13] : n <= 8 ? [33, 4, 12] : [30, 3, 11.5];
+  const [cw, gap, fs] = spec;
+  const x0 = (320 - (n * cw + (n - 1) * gap)) / 2;
+  let chips = "";
+  vals.forEach((v, i) => {
+    const hot = opts.hot === i;
+    const x = x0 + i * (cw + gap);
+    const alpha = typeof v === "string" && /[a-z]/i.test(v);
+    chips +=
+      `<rect x="${x.toFixed(1)}" y="50" width="${cw}" height="36" rx="9" fill="${hot ? "#FDEDF2" : "#EEF1FB"}" stroke="${hot ? ROSE : "#B9C3EE"}" stroke-width="1.5"/>` +
+      `<text x="${(x + cw / 2).toFixed(1)}" y="73" text-anchor="middle" font-size="${fs}" font-weight="900"${alpha ? ` font-style="italic"` : ""} fill="${hot ? "#C0355C" : "#2839A0"}">${v}</text>`;
+  });
+  return svg(
+    "0 0 320 102",
+    "자료를 나열한 상자",
+    `<rect x="4" y="4" width="312" height="94" rx="14" fill="#FFFFFF" stroke="${LINE}" stroke-width="1.5"/>` +
+      `<text x="20" y="33" font-size="12.5" font-weight="900" fill="${INK}">${opts.title}</text>` +
+      (opts.unit ? `<text x="302" y="33" text-anchor="end" font-size="10" font-weight="700" fill="${FAINT}">(단위: ${opts.unit})</text>` : "") +
+      chips,
+  );
+}
+
+/** 단일 집단 도수분포다각형(opts.bars면 히스토그램 겹침판).
+ *  양 끝은 도수 0인 유령 계급의 중앙까지 내려 닫는다 · 유령 반 칸을 축 안쪽에 확보
+ *  (histoFig poly는 유령 꼭짓점이 세로축 왼쪽으로 나가는 기하라 순수 다각형 렌더에 부적합).
+ *  세로축은 정수 전 눈금 라벨(yMax=최대+1 ≤ 8 유지). 꼭짓점에 도수 값을 인쇄하지 않는다. */
+export function mExamFreqPolyFig(
+  freqs: number[],
+  x0: number,
+  cw: number,
+  opts: { xUnit?: string; yUnit?: string; yMax?: number; bars?: boolean } = {},
+): string {
+  const n = freqs.length;
+  const yMax = opts.yMax ?? Math.max(...freqs) + 1;
+  const W = 300;
+  const H = 190;
+  const L = 34;
+  const AXY = 158;
+  const gx0 = L + 12;
+  const step = (W - 14 - gx0) / (n + 1);
+  const midX = (i: number): number => gx0 + i * step;
+  const bX = (i: number): number => gx0 + step / 2 + i * step;
+  const ty = (f: number): number => AXY - (f / yMax) * 120;
+  let out = "";
+  for (let f = 1; f <= yMax; f++) {
+    if (yMax > 8 && f % 2 === 1) continue;
+    out += `<line x1="${L}" y1="${ty(f)}" x2="${W - 12}" y2="${ty(f)}" stroke="${GRID}" stroke-width="1.1"/><text x="${L - 8}" y="${ty(f) + 3.5}" text-anchor="middle" font-size="8.5" font-weight="700" fill="${FAINT}">${f}</text>`;
+  }
+  out += `<line x1="${L}" y1="${AXY}" x2="${W - 12}" y2="${AXY}" stroke="${INK}" stroke-width="1.8"/>`;
+  out += `<line x1="${L}" y1="${AXY}" x2="${L}" y2="${ty(yMax) - 8}" stroke="${INK}" stroke-width="1.8"/>`;
+  for (let i = 0; i <= n; i++)
+    out += `<text x="${bX(i).toFixed(1)}" y="${AXY + 14}" text-anchor="middle" font-size="8.5" font-weight="700" fill="${FAINT}">${x0 + i * cw}</text>`;
+  if (opts.xUnit) out += `<text x="${W - 10}" y="${AXY + 27}" text-anchor="end" font-size="8" font-weight="700" fill="${FAINT}">(${opts.xUnit})</text>`;
+  if (opts.yUnit) out += `<text x="${L - 14}" y="${ty(yMax) - 12}" font-size="8" font-weight="700" fill="${FAINT}">(${opts.yUnit})</text>`;
+  if (opts.bars)
+    freqs.forEach((f, i) => {
+      out += `<rect x="${bX(i).toFixed(1)}" y="${ty(f).toFixed(1)}" width="${(bX(i + 1) - bX(i)).toFixed(1)}" height="${(AXY - ty(f)).toFixed(1)}" fill="${NAVY_SOFT}" fill-opacity=".4" stroke="${NAVY}" stroke-width="1.3"/>`;
+    });
+  const pts: Array<[number, number]> = [[midX(0), AXY]];
+  freqs.forEach((f, i) => pts.push([midX(i + 1), ty(f)]));
+  pts.push([midX(n + 1), AXY]);
+  const d = pts.map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
+  out += `<path d="${d}" stroke="${ROSE}" stroke-width="2.2" fill="none" stroke-linejoin="round"/>`;
+  out += pts.map(([x, y]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.8" fill="#FFFFFF" stroke="${ROSE}" stroke-width="1.8"/>`).join("");
+  return svg(`0 0 ${W} ${H}`, opts.bars ? "히스토그램과 도수분포다각형" : "도수분포다각형", out);
 }
