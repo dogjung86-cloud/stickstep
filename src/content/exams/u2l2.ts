@@ -1,10 +1,14 @@
 // II. 생물의 구성과 다양성 — 단원 종합 평가 풀: 레슨 2 현미경으로 세포 관찰 (u2e21~u2e40)
 // 출제 각도: 표본 제작의 이유·공기 방울 방지·염색의 역할·저배율 우선 관찰·시야 이동·총배율·축척 판독.
 // 레슨 퀴즈의 10×20 수치와 출판사 축척값은 피하고, 사진은 관찰 맥락에만 사용한다.
+// [재매핑] 개념 레슨이 6→10레슨으로 재제작되어 문항별 lessonId를 내용 기준으로 다시 붙였다
+//   (파일 이름·문항 id·문항 내용·정답·해설 불변). 이 파일의 새 태그 분포: u2l3 18문항 · u2l1 2문항.
 import type { ExamItem } from "./types";
 import { bioSlideMoveFig, bioFieldPairFig } from "../../ui/examFigures";
 
-const L = "u2l2";
+// lessonId는 재제작된 새 10레슨 구조 기준 — 문항 내용으로 판정했으므로 파일 이름과 다를 수 있다.
+const L1 = "u2l1"; // 세포, 생명의 기본 단위
+const L3 = "u2l3"; // 동물세포와 식물세포
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 const ximg = (file: string, alt: string): string =>
   '<img src="' + IMG_BASE + 'exam/u2/' + file + '" alt="' + alt + '" style="display:block;width:100%;border-radius:14px" />';
@@ -17,7 +21,7 @@ const xpair = (a: string, altA: string, b: string, altB: string): string =>
 export const POOL_U2L2: ExamItem[] = [
   {
     id: "u2e21",
-    lessonId: L,
+    lessonId: L3,
     type: "mcq",
     prompt: "(가), (나)는 서로 다른 생물에서 얻은 세포를 현미경으로 관찰한 모습이에요. 관찰 결과를 옳게 해석한 것은?",
     figure: xpair("cheek-cells.webp", "현미경으로 관찰한 표본 (가)", "elodea-cells.webp", "현미경으로 관찰한 표본 (나)"),
@@ -35,7 +39,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e22",
-    lessonId: L,
+    lessonId: L3,
     type: "mcq",
     prompt: "(가)는 둥근 공기 방울이 많이 남은 프레파라트, (나)는 공기 방울이 거의 없는 프레파라트예요. (나)처럼 만들기 위한 조작으로 가장 알맞은 것은?",
     figure: xpair("coverslip-bubble.webp", "프레파라트 관찰 장면 (가)", "coverslip-clean.webp", "프레파라트 관찰 장면 (나)"),
@@ -53,7 +57,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e23",
-    lessonId: L,
+    lessonId: L3,
     type: "mcq",
     prompt: "거의 투명한 입안 상피세포에 알맞은 염색액을 떨어뜨린 뒤 관찰했어요. 염색액의 역할을 가장 정확하게 설명한 것은?",
     figure: ximg("cheek-cells.webp", "염색한 세포를 현미경으로 관찰한 장면"),
@@ -71,7 +75,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e24",
-    lessonId: L,
+    lessonId: L3,
     type: "mcq",
     prompt: "현미경용 프레파라트를 만드는 방법으로 옳은 내용을 <b>보기</b>에서 모두 고른 것은?",
     bogi: [
@@ -88,7 +92,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e25",
-    lessonId: L,
+    lessonId: L3,
     type: "mcq",
     prompt: "그림은 같은 표본을 서로 다른 배율로 관찰한 두 시야예요. (나)에 대한 설명으로 옳은 것은?",
     figure: bioFieldPairFig(20, 5),
@@ -106,7 +110,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e26",
-    lessonId: L,
+    lessonId: L3,
     type: "mcq",
     prompt: "현미경 시야의 오른쪽에 있는 점을 가운데로 옮기려고 그림의 화살표처럼 프레파라트를 오른쪽으로 움직였어요. 시야 속 점은 어느 방향으로 움직일까요?",
     figure: bioSlideMoveFig("right"),
@@ -118,7 +122,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e27",
-    lessonId: L,
+    lessonId: L3,
     type: "mcq",
     prompt: "현미경으로 처음 표본을 찾을 때 저배율 대물렌즈부터 사용하는 가장 중요한 까닭은?",
     options: [
@@ -135,7 +139,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e28",
-    lessonId: L,
+    lessonId: L3,
     type: "mcq",
     prompt: "그림의 식물 세포에서 세포벽은 뚜렷하지만 세포막은 세포벽과 겹쳐 잘 구별되지 않았어요. 이 관찰을 옳게 해석한 것은?",
     figure: ximg("elodea-cells.webp", "식물의 잎에서 얻은 세포를 현미경으로 관찰한 장면"),
@@ -153,7 +157,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e29",
-    lessonId: L,
+    lessonId: L3,
     type: "mcq",
     prompt: "입안 상피세포와 검정말잎 세포의 관찰 결과로 옳은 내용을 <b>보기</b>에서 모두 고른 것은?",
     bogi: [
@@ -170,7 +174,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e30",
-    lessonId: L,
+    lessonId: L1,
     type: "mcq",
     prompt: "서로 다른 현미경 사진 A, B에서 세포 하나의 사진상 길이가 각각 3 cm, 5 cm였어요. 두 세포의 실제 크기를 비교하려면 추가로 꼭 필요한 정보는?",
     options: [
@@ -187,7 +191,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e31",
-    lessonId: L,
+    lessonId: L3,
     type: "mcq",
     prompt: "저배율에서 관찰할 세포를 찾은 뒤 고배율로 자세히 보려 해요. 가장 알맞은 관찰 방법은?",
     options: [
@@ -204,7 +208,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e32",
-    lessonId: L,
+    lessonId: L3,
     type: "mcq",
     prompt: "현미경으로 관찰할 양파의 얇은 안쪽 막을 한 겹만 떼어 사용하는 까닭으로 가장 알맞은 것은?",
     options: [
@@ -221,7 +225,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e33",
-    lessonId: L,
+    lessonId: L3,
     type: "multi",
     prompt: "공기 방울이 적고 관찰하기 좋은 프레파라트를 만드는 방법으로 옳은 것을 <b>모두</b> 고르세요.",
     options: [
@@ -237,7 +241,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e34",
-    lessonId: L,
+    lessonId: L3,
     type: "multi",
     prompt: "현미경 관찰 원리에 대한 설명으로 옳은 것을 <b>모두</b> 고르세요.",
     options: [
@@ -253,7 +257,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e35",
-    lessonId: L,
+    lessonId: L3,
     type: "num",
     prompt: "접안렌즈가 <b>15배</b>, 대물렌즈가 <b>4배</b>일 때 현미경의 총배율은 몇 <b>배</b>인가요?",
     answer: "60",
@@ -265,7 +269,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e36",
-    lessonId: L,
+    lessonId: L3,
     type: "num",
     prompt: "같은 표본을 관찰했더니 저배율 시야에는 세포가 <b>18개</b>, 고배율 시야에는 <b>5개</b> 보였어요. 고배율 시야에서 보이는 세포는 저배율보다 몇 <b>개</b> 적나요?",
     answer: "13",
@@ -277,7 +281,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e37",
-    lessonId: L,
+    lessonId: L1,
     type: "num",
     prompt: "현미경 사진에서 같은 종류의 세포 <b>5개</b>가 빈틈없이 한 줄로 놓여 있고, 그 전체 실제 길이가 <b>450 μm</b>예요. 세포 한 개의 평균 길이는 몇 <b>μm</b>인가요?",
     answer: "90",
@@ -289,7 +293,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e38",
-    lessonId: L,
+    lessonId: L3,
     type: "num",
     prompt: "대물렌즈가 <b>40배</b>이고 총배율이 <b>600배</b>인 현미경이에요. 접안렌즈의 배율은 몇 <b>배</b>인가요?",
     answer: "15",
@@ -301,7 +305,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e39",
-    lessonId: L,
+    lessonId: L3,
     type: "word",
     prompt: "현미경을 통해 한 번에 볼 수 있는 둥근 범위를 무엇이라고 하나요?",
     bank: ["시야", "배율", "초점", "표본", "핵", "렌즈", "축척", "염색"],
@@ -312,7 +316,7 @@ export const POOL_U2L2: ExamItem[] = [
   },
   {
     id: "u2e40",
-    lessonId: L,
+    lessonId: L3,
     type: "word",
     prompt: "현미경에서 프레파라트를 올려놓고 관찰 위치를 조절하는 평평한 부분을 무엇이라고 하나요?",
     bank: ["재물대", "접안렌즈", "대물렌즈", "조절 나사", "반사경", "받침대", "덮개유리", "거름종이"],

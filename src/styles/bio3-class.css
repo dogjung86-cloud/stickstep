@@ -1,0 +1,158 @@
+/* bio3-class.css — 중1 Ⅱ. 생물의 분류 랩 3종 전용 시트(classifyLab · rankLab · kingdomKeyLab).
+   공용 크롬(.pn-badge.bio.on · .b3-controls · .b3-btn · .b3-row · .b3-chip · .b3-canvas · .b3-stage)은
+   bio3.css 것을 그대로 쓰고 여기서 다시 정의하지 않는다.
+
+   접두사: classifyLab `.cls-` · rankLab `.rnk-` · kingdomKeyLab `.kkl-`
+   (2026-07-25 src/styles/*.css 전수 grep으로 선점 0건 확인 — math.css `.mpl-` 충돌 사고의 교훈).
+   랩 파일이 이 시트를 직접 import 한다(steps/dichotomKey.ts의 bio-kingdom.css 문법 계승). */
+
+/* ---------- classifyLab (.cls-) ----------
+   무대(360×262로 낮춤)와 기준 버튼이 **스크롤 없이 한 화면**에 들어와야 한다 — 버튼을 누르면
+   위쪽 무대의 분류 결과가 바뀌는데, 그걸 보려고 다시 위로 스크롤해야 했다(실사용 피드백 2026-07-26).
+   diversityLab(.dvs-)이 같은 문제를 먼저 푼 선례이고, 거기서 확인했듯 **position: sticky는 쓰지 않는다**
+   (조작 카드가 무대 밑으로 미끄러져 들어가 잘린다). 조작부를 무대 위로 올리는 것도 금지 —
+   "연타하는 손이 무대를 가린다"는 전 과목 배치 규칙. 그래서 해법은 무대 축소 + 조작부 압축뿐이다. */
+.cls-controls { gap: 8px; margin-top: 10px; }
+/* 기준 3개는 세로로 쌓지 않고 가로 한 줄로 — 세로로 쌓으면 그것만으로 160px을 먹는다. */
+.cls-crits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.cls-crits .b3-chip {
+  display: flex; align-items: center; justify-content: center; min-height: 52px;
+  text-align: center; padding: 8px 6px; font-size: 12.5px; line-height: 1.34;
+  word-break: keep-all;
+}
+.cls-crits .b3-chip.done { opacity: .55; pointer-events: auto; }
+.cls-kicker {
+  margin: 0 2px; font-size: 12px; font-weight: 800; color: var(--ter);
+}
+.cls-controls .b3-btn { height: 48px; font-size: 15px; }
+/* 국면 3의 판정 질문·선택지도 같은 예산 안에서 — 훅 기본값(14px/12·14 패딩)보다 한 단계 낮춘다. */
+.cls-controls .hook-choices { gap: 7px; }
+.cls-controls .hook-q { padding: 2px 4px 0; font-size: 13.5px; line-height: 1.45; }
+.cls-controls .hook-choice { padding: 10px 12px; font-size: 13.5px; }
+.cls-verdict, .rnk-verdict, .kkl-verdict {
+  margin-top: 12px; padding: 13px 15px; border: 1.5px solid var(--subj-bio);
+  background: rgba(18, 184, 134, .08); border-radius: var(--r-md);
+  font-size: 14px; line-height: 1.6; color: var(--ink); word-break: keep-all;
+  animation: clsRise .38s var(--ease-out) both;
+}
+.cls-verdict b, .rnk-verdict b, .kkl-verdict b { color: var(--subj-bio-deep); }
+/* 마무리 정리 두 장도 무대와 한 화면에 남게(조작부 압축과 같은 예산) */
+.cls-verdict { margin-top: 0; padding: 11px 13px; font-size: 13.5px; line-height: 1.55; }
+.cls-verdict + .cls-verdict { margin-top: 0; }
+@keyframes clsRise { from { opacity: 0; transform: translateY(8px); } }
+
+/* ---------- rankLab (.rnk-) ---------- */
+.rnk-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rnk-nav .btn { height: 52px; font-size: 15.5px; }
+/* 좁히기는 오답이 아니라 되돌리기 — 빨강(.btn.bad) 대신 중립 카드 톤 */
+.rnk-nav .btn.rnk-sub {
+  background: #fff; color: var(--subj-bio-deep);
+  box-shadow: inset 0 0 0 1.5px var(--line), var(--sh-card);
+}
+.rnk-nav .btn.rnk-sub:active { background: var(--surface); box-shadow: inset 0 0 0 1.5px var(--line); }
+.rnk-nav .btn.rnk-sub:disabled { background: var(--n150); color: #BAC2CC; box-shadow: none; }
+.rnk-q {
+  margin-top: 2px; font-size: 15px; font-weight: 800; line-height: 1.5;
+  color: var(--ink); word-break: keep-all;
+}
+.rnk-steps { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.rnk-step {
+  border: 1.5px solid var(--line); border-radius: var(--r-sm); background: #fff;
+  padding: 9px 0; text-align: center; font-size: 15px; font-weight: 800; color: var(--n400);
+  transition: border-color .2s, background .2s, color .2s, transform .18s var(--spring-soft);
+}
+.rnk-step.on { border-color: rgba(18, 184, 134, .45); color: var(--subj-bio-deep); }
+.rnk-step.now {
+  border-color: var(--subj-bio); background: rgba(18, 184, 134, .12);
+  color: var(--subj-bio-deep); transform: translateY(-2px);
+}
+.rnk-name {
+  margin-top: 9px; text-align: center; font-size: 14px; font-weight: 800; color: var(--ink);
+}
+.rnk-name span { color: var(--ter); font-weight: 700; }
+.rnk-read { display: block; }
+.rnk-slot { display: grid; gap: 10px; }
+
+/* ---------- kingdomKeyLab (.kkl-) ----------
+   조작부(.b3-controls)가 flex column gap 10을 주므로 자식들은 margin-top을 쓰지 않는다. */
+.kkl-card {
+  padding: 13px 15px 14px; background: #fff;
+  border: 1.5px solid var(--line); border-radius: var(--r-md); box-shadow: var(--sh-card);
+  animation: kklRise .32s var(--ease-out) both;
+}
+@keyframes kklRise { from { opacity: 0; transform: translateY(10px); } }
+.kkl-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.kkl-name { font-size: 16px; font-weight: 800; color: var(--ink); }
+.kkl-idx { font-size: 12.5px; font-weight: 700; color: var(--ter); white-space: nowrap; }
+.kkl-facts { margin: 9px 0 0; padding: 0; list-style: none; display: grid; gap: 5px; }
+.kkl-facts li {
+  position: relative; padding-left: 15px; font-size: 13.5px; line-height: 1.55;
+  color: var(--sub); word-break: keep-all;
+}
+.kkl-facts li::before {
+  content: ""; position: absolute; left: 2px; top: 8px; width: 5px; height: 5px;
+  border-radius: 50%; background: var(--subj-bio);
+}
+.kkl-q {
+  font-size: 15px; font-weight: 800; line-height: 1.5;
+  color: var(--ink); word-break: keep-all;
+}
+.kkl-q em { font-style: normal; color: var(--subj-bio-deep); }
+.kkl-yn { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.kkl-yn .b3-chip { padding: 14px 8px; font-size: 15.5px; }
+.kkl-fb {
+  padding: 11px 13px; border-radius: var(--r-md);
+  font-size: 13.5px; line-height: 1.55; font-weight: 600; word-break: keep-all;
+  animation: kklRise .28s var(--ease-out) both;
+}
+.kkl-fb b { font-weight: 800; }
+.kkl-fb.bad { background: var(--red-tint); border: 1.5px solid var(--red); color: #8E1F2B; }
+.kkl-fb.good { background: var(--green-tint); border: 1.5px solid var(--green); color: #0A6B41; }
+
+/* 지금 분류 중인 생물 카드를 무대(검색표) **위**로 올린 자리(실사용 피드백 2026-07-26).
+   갈림길 질문에 답하려면 카드의 특징을 보면서 검색표를 따라가야 해서, 둘이 한 화면에 있어야 한다.
+   .compact는 무대 위로 올라온 카드용 축약판 — 여백·글자를 줄여 무대 높이를 벌어 준다. */
+.kkl-specimen { margin-top: 12px; }
+.kkl-specimen:empty { display: none; }
+.kkl-card.compact { padding: 9px 12px 10px; }
+.kkl-card.compact .kkl-name { font-size: 14.5px; }
+.kkl-card.compact .kkl-facts { margin-top: 6px; gap: 3px; }
+.kkl-card.compact .kkl-facts li { font-size: 12.5px; line-height: 1.45; padding-left: 13px; }
+
+/* 갈림길 질문 + 예/아니요를 생물 카드 안에 담은 자리(실사용 피드백 2026-07-26).
+   판단 근거(특징)와 판단 행동(답)이 한 카드에 모이도록 — 무대는 결과만 보여 준다.
+   버튼은 카드 안이라 전폭 칩보다 작게(패딩·글자 축소). */
+.kkl-ask { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.kkl-ask .kkl-q { font-size: 13.5px; }
+.kkl-yn.tight { margin-top: 8px; grid-template-columns: 1fr 1fr; gap: 7px; }
+.kkl-yn.tight .b3-chip { padding: 9px 8px; font-size: 14px; min-width: 0; }
+
+/* 답한 뒤 카드 안에 들어가는 결과·다음 버튼 — 카드가 커지지 않게 여백을 줄인다. */
+.kkl-ask .kkl-fb { padding: 9px 11px; font-size: 12.5px; }
+.kkl-next { display: block; width: 100%; margin-top: 8px; padding: 10px 12px; font-size: 14.5px; }
+
+/* 5계 최종 비교표(구작 dichotomKey의 표를 되살림 — 사용자 요청 2026-07-26).
+   4열 그리드: 계 / 핵막·세포 수 / 세포벽 / 양분 얻기. 360px 폭에서도 줄바꿈으로 버티게
+   글자를 작게 잡고, 계 이름 칸만 색 띠로 구분한다. */
+.kkl-sum {
+  margin-top: 12px; padding: 12px 12px 13px; background: #fff;
+  border: 1.5px solid var(--line); border-radius: var(--r-md); box-shadow: var(--sh-card);
+}
+.kkl-sum-h { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 9px; }
+.kkl-tbl { display: grid; gap: 1px; background: var(--n200); border: 1px solid var(--n200); border-radius: 10px; overflow: hidden; }
+.kkl-tr { display: grid; grid-template-columns: 4.6fr 6.4fr 4fr 4.6fr; gap: 1px; background: var(--n200); }
+.kkl-th, .kkl-td {
+  background: #fff; padding: 6px 6px; font-size: 11px; line-height: 1.35;
+  color: var(--sub); word-break: keep-all; display: flex; align-items: center;
+}
+.kkl-tr.head .kkl-th { background: var(--n50); font-weight: 800; color: var(--ink); font-size: 10.5px; }
+.kkl-td.name { flex-direction: column; align-items: flex-start; gap: 1px; border-left: 3px solid var(--kc); }
+.kkl-td.name b { font-size: 11.5px; font-weight: 800; color: var(--ink); }
+.kkl-td.name i { font-style: normal; font-size: 10px; color: var(--ter); }
+.kkl-note {
+  margin-top: 9px; font-size: 11.5px; line-height: 1.5; color: var(--sub); word-break: keep-all;
+}
+.kkl-note b { color: var(--subj-bio-deep); font-weight: 800; }
+/* recap 콜아웃 안에 들어가는 5계 표 — 콜아웃 여백과 겹치지 않게 위 여백만 준다. */
+.c-callout-body .kkl-tbl { margin-top: 8px; }
+.c-callout-body .kkl-note { margin-top: 8px; }

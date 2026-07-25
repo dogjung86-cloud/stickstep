@@ -1,0 +1,61 @@
+# 중1 Ⅱ 재제작 발주 PHASE 2 프롬프트 — 세포 구조·현미경 관찰·생태계·변이 17장.
+# 스타일 블록 A/B/C 정의는 qa/bio3_prompts.txt 상단에 있다(그 파일을 함께 읽을 것).
+
+# ══════════ 배치 1 · 세포 구조·현미경 → public/bio3/figs (스타일 B) ══════════
+
+[F0] file=public/bio3/figs/animal-cell.png (square 1:1, 스타일 B)
+A single animal cell shown as a rounded irregular blob with a soft translucent outer membrane, a large round nucleus offset from center containing a slightly darker granular interior, and four or five bean-shaped mitochondria with visible internal folds scattered in the pale cytoplasm. No rigid outer wall, no green structures anywhere. Warm pink and lavender palette, gentle inner glow, plain very light background.
+
+[F1] file=public/bio3/figs/plant-cell.png (square 1:1, 스타일 B)
+A single plant cell shown as a distinctly rectangular box shape with a thick rigid straight-edged outer wall and a thin membrane just inside it, a round nucleus pushed toward one side, several bean-shaped mitochondria, and many small oval green disc-shaped chloroplasts distributed through the cytoplasm. The straight rigid corners must read clearly as different from a soft round cell. Fresh green and cream palette, plain very light background.
+
+[F2] file=public/bio3/figs/microscope.png (portrait 3:4, 스타일 B)
+A classroom optical compound microscope viewed from a three-quarter front angle: eyepiece tube at top, a rotating nose piece carrying three objective lenses of different lengths, a flat stage with two small clips holding a glass slide, an adjustable diaphragm beneath the stage, a mirror at the base tilted to catch light, and two focus knobs of clearly different sizes on the arm. Neutral grey-blue metal with soft highlights, plain very light background.
+
+# ══════════ 배치 2 · 현미경 관찰 사진풍 → public/bio3/micro (스타일 C) ══════════
+
+[M0] file=public/bio3/micro/onion.png (square 1:1, 스타일 C)
+Onion epidermis under a light microscope: many elongated brick-shaped cells packed edge to edge in a tidy tiled mosaic, each cell bounded by a clearly visible straight rigid wall, each containing one small oval nucleus. Pale straw and amber tones, no green pigment. Round eyepiece field with soft edge falloff.
+
+[M1] file=public/bio3/micro/cheek.png (square 1:1, 스타일 C)
+Human cheek lining cells under a light microscope stained with methylene blue: a few loose, very flat irregular polygonal cells scattered apart on a pale field, each with a single distinctly deep-blue rounded nucleus near its center. Soft blue-grey wash, no rigid straight walls, no green granules. Round eyepiece field with soft edge falloff.
+
+[M2] file=public/bio3/micro/elodea.png (square 1:1, 스타일 C)
+Elodea waterweed leaf cells under a light microscope: neat rectangular cells arranged in tidy rows with clearly visible rigid straight walls, each cell packed with many small vivid green oval discs crowded along the cell edges. Rich green on a pale field. Round eyepiece field with soft edge falloff.
+
+[M3] file=public/bio3/micro/nerve.png (square 1:1, 스타일 C)
+A single nerve cell under a light microscope: a small star-shaped cell body with several short branching extensions, and one extremely long slender fiber trailing far across the field, far longer than the body is wide. Violet-stained on a pale field. Round eyepiece field with soft edge falloff.
+
+[M4] file=public/bio3/micro/rbc.png (square 1:1, 스타일 C)
+Human red blood cells under a light microscope: many small round disc-shaped cells crowded together, each clearly showing a paler dimpled hollow at its center so the discs read as dented in the middle rather than as flat circles or spheres. Deep crimson on a pale plasma field. Round eyepiece field with soft edge falloff.
+
+[M5] file=public/bio3/micro/epithelial.png (square 1:1, 스타일 C)
+A sheet of epithelial lining cells under a light microscope: very flat, thin, broad polygonal cells fitted tightly edge to edge with no gaps at all, forming one continuous covering layer, each with a single small nucleus. Soft pink stain on a pale field. Round eyepiece field with soft edge falloff.
+
+# ══════════ 배치 3 · 생태계 5종 → public/bio3/eco (스타일 B, 4:3) ══════════
+
+[E0] file=public/bio3/eco/forest.png (landscape 4:3, 스타일 B)
+A temperate broadleaf forest habitat scene: layered tall trees, a shrub layer, ferns and leaf litter on the floor, dappled sunlight through the canopy. Living and lush, no people, no buildings, no signage.
+
+[E1] file=public/bio3/eco/wetland.png (landscape 4:3, 스타일 B)
+A freshwater wetland habitat scene: shallow still water, tall reeds and cattails, floating water lily pads, a heron standing in the shallows and a duck on the water. No people, no buildings, no signage.
+
+[E2] file=public/bio3/eco/tidalflat.png (landscape 4:3, 스타일 B)
+A coastal tidal mudflat at low tide: broad wet ribbed mud with winding water channels, small crabs and clam siphon holes, distant shoreline and shorebirds. No people, no buildings, no signage.
+
+[E3] file=public/bio3/eco/sea.png (landscape 4:3, 스타일 B)
+A shallow coastal sea habitat seen half above and half below the waterline: seaweed fronds and rocks below, small fish schooling, open sea and sky above. No people, no boats, no signage.
+
+[E4] file=public/bio3/eco/desert.png (landscape 4:3, 스타일 B)
+A hot sandy desert habitat scene: rolling dunes, a few hardy succulent plants and a lone shrub, a small lizard on warm sand, bright dry sky. No people, no buildings, no signage.
+
+# ══════════ 배치 4 · 변이 3종 → public/bio3/vary (스타일 B, 4:3) ══════════
+
+[V0] file=public/bio3/vary/clams.png (landscape 4:3, 스타일 B)
+Eight Manila clam shells of the same kind laid out in two neat rows on a plain pale surface, seen from directly above. Every shell is unmistakably the same species and the same overall shape and size, but each one carries a clearly different surface pattern: different zigzag banding, different blotch placement, different brown and cream tones. The differences must be obvious at a glance.
+
+[V1] file=public/bio3/vary/hibiscus.png (landscape 4:3, 스타일 B)
+Six rose of Sharon blossoms of the same kind arranged in two rows on a plain pale surface, seen face on. Identical flower structure and petal count in every bloom, but each differs clearly in petal colour and in the size and depth of the darker centre blush: white, pale pink, deep pink, lavender, pale violet, near magenta.
+
+[V2] file=public/bio3/vary/cats.png (landscape 4:3, 스타일 B)
+Six domestic cats of the same build sitting in a row on a plain pale surface, seen from the side in the same pose. Same species and body shape, but each has clearly different fur colouring and markings: solid black, orange tabby, grey tabby, tuxedo black and white, calico, cream point.

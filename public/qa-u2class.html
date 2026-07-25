@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>u2 classify labs — 임시 눈검수 하니스</title>
+</head>
+<body>
+<div id="app" style="max-width:420px;margin:0 auto;padding:16px 18px 60px"></div>
+<script type="module">
+import "/src/styles/tokens.css";
+import "/src/styles/base.css";
+import "/src/styles/ui.css";
+import { classifyLab } from "/src/lessons/steps/classifyLab.ts";
+import { rankLab } from "/src/lessons/steps/rankLab.ts";
+import { kingdomKeyLab } from "/src/lessons/steps/kingdomKeyLab.ts";
+
+const log = [];
+const mkApi = (tag) => ({
+  lesson: { id: "x", unitId: "u2", title: "t", steps: [] },
+  index: 0, total: 1,
+  setCTA(l, o) { log.push([tag, "cta", l, o && o.enabled]); },
+  enableCTA(l) { log.push([tag, "cta:on", l]); document.body.dataset[tag] = "cta-open"; },
+  disableCTA() {},
+  next() {},
+  openSheet() {},
+  recordQuiz(ok) { log.push([tag, "quiz", ok]); },
+  snack(m) { log.push([tag, "snack", m]); },
+});
+
+const app = document.getElementById("app");
+const mount = (id, fn, step) => {
+  const h = document.createElement("div");
+  h.id = id;
+  h.style.marginBottom = "48px";
+  app.appendChild(h);
+  fn(h, step, mkApi(id));
+};
+mount("cls", classifyLab, { type: "x", title: "무엇을 기준으로 나눌까요", lead: "같은 생물 12종도 기준이 바뀌면 무리가 달라져요." });
+mount("rnk", rankLab, { type: "x", title: "종에서 계까지", lead: "가장 작은 무리에서 가장 큰 무리까지 넓혀 볼까요?" });
+mount("kkl", kingdomKeyLab, { type: "x", title: "다섯 계로 갈라지는 길", lead: "예와 아니요를 따라가면 어디에 도착할까요?" });
+window.__labs = { log };
+</script>
+</body>
+</html>

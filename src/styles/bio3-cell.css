@@ -1,0 +1,36 @@
+/* bio3-cell.css — 중1 Ⅱ. 세포 랩 4종(cellScaleLab·cellFactoryLab·microscopeLab·cellJobLab) 전용 시트.
+   공용 크롬(.stage / .helper / .toast / .pn-badge.bio / .b3-*)은 base.css·ui.css·bio3.css 것을 그대로 쓰고,
+   여기에는 이 네 랩에만 있는 것만 둔다(중복 정의 금지).
+   접두사는 랩마다 다르다 — .zcl-(배율) .cfl-(빵공장) .mscl-(현미경) .cjl-(하는 일).
+   선점 검사 완료(2026-07-25): .csl-은 math2.css caseLab, .mic-은 ui.css 구 microscope 스텝,
+   .msc-는 math.css가 이미 쓰고 있어 전부 피했다. 새 접두사는 ui.css·math*.css·bio3*.css 전수 grep 후에만 추가할 것. */
+
+/* ---------- cellScaleLab (.zcl-) : 배율 스크럽 ---------- */
+.zcl-slider { margin-top: 2px; padding-bottom: 38px; }
+.zcl-slider .sl-track.plain {
+  background: linear-gradient(90deg, rgba(18, 184, 134, .16), rgba(18, 184, 134, .5));
+}
+.zcl-slider .sl-track.plain .sl-fill { background: var(--subj-bio); }
+.zcl-slider .sl-thumb i { background: var(--subj-bio); }
+.zcl-slider:focus-visible { outline: none; }
+.zcl-slider:focus-visible .sl-track { box-shadow: var(--focus-ring); }
+/* 양 끝 눈금은 라벨이 트랙 밖으로 넘치지 않게 안쪽 정렬 */
+.zcl-tick.zcl-s span { left: 0; transform: none; }
+.zcl-tick.zcl-e { transform: translateX(-2px); }
+.zcl-tick.zcl-e span { left: auto; right: 0; transform: none; }
+
+/* ---------- microscopeLab (.mscl-) : 관찰 단계 표시 ---------- */
+.mscl-steps {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 10px 2px 0;
+}
+.mscl-steps span {
+  text-align: center; font-size: 12px; font-weight: 800; color: var(--ter);
+  padding: 7px 3px; border-radius: var(--r-pill); border: 1.5px solid var(--line);
+  background: #fff; white-space: nowrap;
+  transition: color .2s, border-color .2s, background .2s;
+}
+.mscl-steps span.on {
+  color: var(--subj-bio-deep); border-color: var(--subj-bio);
+  background: rgba(18, 184, 134, .10);
+}
+.mscl-steps span.done { color: var(--subj-bio-deep); opacity: .6; }

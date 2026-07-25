@@ -1,0 +1,87 @@
+# 중1 Ⅱ. 생물의 구성과 다양성 재제작 — 발주 프롬프트
+# 저장 폴더는 public/bio3/**(신규) + public/comics/u2l1/ — 구작 public/bio·bio2는 건드리지 않는다.
+# 발주는 codex exec 순차(병렬 금지 — tmp/ 충돌 실사고). 발주 후 process-geo.mjs / process-comics.mjs 변환.
+#
+# ── 스타일 블록 A (스틱맨 만화·개념 컷 공용) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 B (교육용 생물 일러스트 — 도해·표본) ──
+# clean modern educational biology illustration for a middle-school science app, soft flat vector
+# shading with gentle depth, warm friendly palette, crisp readable shapes, smooth edges, plain
+# very light neutral background, centered subject with comfortable margin. Scientifically accurate
+# proportions and structures. absolutely no text, no letters, no numbers, no labels, no arrows,
+# no scale bars, no watermarks anywhere in the image. NOT photorealistic stock photo, NOT 3D
+# render, NOT clip-art outline, NOT cartoon mascot.
+#
+# ── 스타일 블록 C (현미경 관찰 사진풍) ──
+# realistic light-microscope view through a round eyepiece field, shallow depth of field, soft
+# focus falloff at the edges, authentic laboratory specimen appearance, biologically accurate cell
+# shapes and staining. absolutely no text, no letters, no numbers, no labels, no arrows, no scale
+# bars, no measurement markings, no crosshairs anywhere in the image. NOT a diagram, NOT a cartoon,
+# NOT an infographic.
+
+
+# ══════════ 배치 1 · 만화 u2l1 「작은 방을 본 사람」 7컷 → public/comics/u2l1 ══════════
+# 스타일 블록 A + 시대 소품. 주인공 스틱맨 과학자는 7컷 내내 어깨까지 오는 곱슬 가발로 동일 인물 유지.
+
+[C0] file=public/comics/u2l1/0.png (landscape 4:3, 스타일 A)
+A 17th-century stick figure scientist with shoulder-length curly wig sits at a wooden workbench in a candlelit study, hunched over a tall narrow tube-shaped early microscope that stands upright on a small stand. Stacks of leather books and a candle on the bench. The figure rubs its hands together, eager to begin. Only the candle flame is teal; everything else pure black and white.
+
+[C1] file=public/comics/u2l1/1.png (landscape 4:3, 스타일 A)
+Close-up over the workbench: the same curly-wigged stick figure carefully shaves an extremely thin translucent sliver off a chunky cork bottle stopper using a straight razor blade held flat. The paper-thin shaving curls away from the cork. The figure squints in concentration, tongue-tip out. Only the thin cork sliver is teal; everything else pure black and white.
+
+[C2] file=public/comics/u2l1/2.png (landscape 4:3, 스타일 A)
+The curly-wigged stick figure leans in and presses one eye to the top of the tall tube microscope, one hand steadying the tube, the other hand adjusting a small screw on the stand. The thin cork sliver sits on the small stage below the tube. The figure's visible eye is drawn wide open. Only the microscope tube is teal; everything else pure black and white.
+
+[C3] file=public/comics/u2l1/3.png (landscape 4:3, 스타일 A)
+The scientist's view through the microscope, drawn as a large circle filling most of the panel: inside the circle, a dense honeycomb-like grid of many small empty box-shaped compartments packed edge to edge, each with thin walls, like a tiny stack of empty rooms. Outside the circle, pure white paper. Only the compartment walls inside the circle are teal; everything else pure black and white.
+
+[C4] file=public/comics/u2l1/4.png (landscape 4:3, 스타일 A)
+Split composition: on the left half the curly-wigged stick figure sketches the honeycomb grid of small compartments into an open notebook with a quill pen, glancing up. On the right half, a cutaway of a plain building showing rows of many identical tiny bare rooms side by side and stacked, each room the same small box. The figure gestures between the two, connecting them. Only the notebook sketch is teal; everything else pure black and white.
+
+[C5] file=public/comics/u2l1/5.png (landscape 4:3, 스타일 A)
+A different stick figure scientist, bald with a plain flat collar, holds a tiny single-lens handheld microscope up to one eye, peering at a drop of pond water on a glass slide held in the other hand. Beside the figure, a large circular inset shows the view: several small blobby rounded shapes with tiny whip-like tails, drawn mid-motion with small curved motion lines around them. The figure's mouth is an open circle of astonishment. Only the moving blobby shapes are teal; everything else pure black and white.
+
+[C6] file=public/comics/u2l1/6.png (landscape 4:3, 스타일 A)
+A present-day stick figure student in a classroom sits at a modern compound microscope. Three large circular insets fan out above, each showing a different specimen packed edge to edge with small compartments: one inset of a leaf's compartments, one of skin's compartments, one of a flower petal's compartments — all clearly made of the same kind of small units. The student throws both arms up, delighted, realizing they all match. Only the three circular insets are teal; everything else pure black and white.
+
+
+# ══════════ 배치 2 · 스틱맨 개념 컷 10장 → public/bio3/cuts ══════════
+# concept 스텝 첫 블록용. 훅·랩에서 쓴 소재 재활용 금지 — 전부 새 각도의 일상 장면.
+
+[K0] file=public/bio3/cuts/u2l1.png (landscape 4:3, 스타일 A)
+A stick figure stands in front of three things lined up in a row on a table: a small potted leafy plant, a sitting dog, and the figure's own bare forearm resting on the table. The figure holds one big round magnifying glass and sweeps it along the row, checking each in turn. Above each of the three items floats a small circular thought-bubble-free inset showing the same honeycomb pattern of tiny compartments — identical in all three. The figure's eyebrows are raised in recognition. Only the three small circular insets are teal; everything else pure black and white.
+
+[K1] file=public/bio3/cuts/u2l2.png (landscape 4:3, 스타일 A)
+A stick figure peers into a cutaway of a small one-room workshop building. Inside, distinct stations are visible doing different jobs: a doorway in the wall where a crate is being carried in and another carried out, a raised desk with levers in the middle where a tiny worker directs things, and a chugging machine in the corner with motion puffs. The outer wall wraps the whole room. The figure points at the middle desk, understanding. Only the doorway is teal; everything else pure black and white.
+
+[K2] file=public/bio3/cuts/u2l3.png (landscape 4:3, 스타일 A)
+A stick figure holds up one item in each hand and looks back and forth comparing them. In the left hand: a soft floppy water balloon that sags and bulges, drawn with droopy curves. In the right hand: a rigid square box that holds a perfect stiff shape, with a few small flat green-ish panels tucked inside it visible through an open flap. The figure's head tilts, noticing the difference. Only the small panels inside the box are teal; everything else pure black and white.
+
+[K3] file=public/bio3/cuts/u2l4.png (landscape 4:3, 스타일 A)
+A stick figure stands in a tidy workshop looking at three tools hung in a row on a pegboard wall: a very long thin coiled cable, a stack of flat square tiles, and a shallow round dish with a dimple in the middle. Each tool is clearly shaped for a different job. The figure reaches for one, hand outstretched, choosing. Only the long coiled cable is teal; everything else pure black and white.
+
+[K4] file=public/bio3/cuts/u2l5.png (landscape 4:3, 스타일 A)
+A stick figure builds upward in four visible stages laid out left to right on the ground: a single small brick, then a short wall of bricks, then a small room made of walls, then a whole little house made of rooms. The figure stands at the right end placing the roof on the finished house, with the earlier three stages still standing behind. Only the single small brick at the far left is teal; everything else pure black and white.
+
+[K5] file=public/bio3/cuts/u2l6.png (landscape 4:3, 스타일 A)
+A stick figure crouches in front of three open shoebox-sized dioramas set side by side on the floor. The first box holds tiny trees and a fallen log, the second holds sand dunes and a bare rock, the third holds shallow water with reeds. Each box contains completely different little creature doodles from the others — no creature repeats between boxes. The figure looks between them, hand on chin. Only the third box's water is teal; everything else pure black and white.
+
+[K6] file=public/bio3/cuts/u2l7.png (landscape 4:3, 스타일 A)
+A row of eight stick figures posing shoulder to shoulder for a group photo, all clearly the same kind of stick figure but each drawn slightly differently: different heights, different hair tufts, one with round glasses, one with freckle dots, different ear shapes. A ninth stick figure crouches in front holding up a simple boxy camera to take the picture. Only the camera is teal; everything else pure black and white.
+
+[K7] file=public/bio3/cuts/u2l8.png (landscape 4:3, 스타일 A)
+A stick figure kneels between two large baskets, sorting a jumbled pile of assorted doodled objects. A first sorting has already been done and sits in the two baskets. The figure has just lifted one object back out and is moving it to the other basket, having changed the rule — a few objects are shown mid-air crossing between the baskets. The figure looks uncertain, one eyebrow up. Only the left basket is teal; everything else pure black and white.
+
+[K8] file=public/bio3/cuts/u2l9.png (landscape 4:3, 스타일 A)
+A stick figure stands at a tall cabinet with exactly five open drawers stacked vertically, each drawer pulled out to a different depth. The figure holds one small creature doodle in both hands, hovering it in front of the drawers, deciding which drawer it belongs in. Different small creature doodles already rest inside the other drawers. Only the middle drawer is teal; everything else pure black and white.
+
+[K9] file=public/bio3/cuts/u2l10.png (landscape 4:3, 스타일 A)
+Split composition: on the left a stick figure sits confidently on a sturdy stool with four thick legs, relaxed and level. On the right the same stick figure perches on a stool that has only two spindly legs left, tilting hard and flailing both arms to keep from falling, with wobble lines around the stool. Only the four-legged stool is teal; everything else pure black and white.

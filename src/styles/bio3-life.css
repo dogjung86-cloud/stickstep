@@ -1,0 +1,204 @@
+/* bio3-life.css — 중1 Ⅱ. 생명의 구성 단계·생물다양성 랩 3종 전용 시트.
+   orgLadderLab(.oll-) · diversityLab(.dvs-) · webStabilityLab(.wsl-)
+
+   공용 크롬(.stage/.toast/.helper/.pill = base.css, .b3-controls/.b3-btn/.b3-row/.b3-chip/
+   .b3-canvas/.b3-stage/.pn-badge.bio.on = bio3.css)은 여기서 다시 정의하지 않는다.
+   접두사 선점 검사(src/styles/*.css 전수 grep) — .oll-/.wsl-/.dvs- 는 비어 있었고,
+   초안의 .dvl- 은 math2.css divLab(중2 수학 Ⅰ L1)이 이미 쓰고 있어 .dvs- 로 확정했다.
+   각 랩 파일이 이 시트를 직접 import 한다(biodiversityLab→bio-unit.css 관례 계승). */
+
+/* ==================================================================
+   orgLadderLab — 구성 단계 사다리 조립(.oll-)
+   ================================================================== */
+/* 위 52px = 무대 HUD 알약 자리 · 아래 48px = 토스트 자리(오답 안내가 카드를 가리면 안 된다) */
+.oll-stage { padding: 52px 12px 48px; }
+.oll-board { display: grid; gap: 12px; }
+
+/* 사다리는 아래에서 위로 쌓는다 — column-reverse 라 DOM 순서 = 실제 단계 순서(0이 맨 아래). */
+.oll-ladder { display: flex; flex-direction: column-reverse; gap: 6px; }
+.oll-slot {
+  display: flex; align-items: center; gap: 9px; min-height: 44px;
+  padding: 5px 10px; border-radius: 14px;
+  border: 1.5px dashed rgba(146, 170, 206, .34); background: rgba(255, 255, 255, .03);
+  transition: border-color .26s, background .26s, transform .34s var(--spring-soft);
+}
+.oll-slot.next { border-color: rgba(18, 184, 134, .62); background: rgba(18, 184, 134, .06); }
+.oll-slot.on {
+  border-style: solid; border-color: var(--subj-bio); background: rgba(18, 184, 134, .14);
+  animation: ollDrop .4s var(--spring-bounce) both;
+}
+@keyframes ollDrop {
+  0% { transform: translateY(14px) scale(.94); opacity: 0; }
+  100% { transform: none; opacity: 1; }
+}
+.oll-rung { flex: 0 0 auto; width: 20px; text-align: center; font-size: 12px; font-weight: 800; color: #6C82A2; }
+.oll-ic { flex: 0 0 auto; width: 32px; height: 32px; }
+.oll-ic svg { display: block; width: 100%; height: 100%; }
+.oll-txt { min-width: 0; }
+.oll-name { font-size: 13.5px; font-weight: 800; color: #EAF1FA; letter-spacing: -.012em; }
+.oll-ex { font-size: 12px; font-weight: 600; color: #93A9C6; margin-top: 1px; }
+.oll-empty { font-size: 12.5px; font-weight: 700; color: #6C82A2; }
+/* 두 모드에서 자리가 다른 단계(기관계·조직계)를 눈에 띄게 */
+.oll-slot.key.on { border-color: #FFD43B; background: rgba(255, 212, 59, .14); }
+.oll-slot.key.on .oll-name { color: #FFE066; }
+
+.oll-tray { display: grid; grid-template-columns: repeat(auto-fit, minmax(98px, 1fr)); gap: 7px; }
+.oll-card {
+  appearance: none; cursor: pointer; text-align: left;
+  display: flex; align-items: center; gap: 7px; padding: 7px 8px;
+  border: 1.5px solid rgba(160, 186, 222, .3); border-radius: 13px;
+  background: rgba(255, 255, 255, .06); color: #EAF1FA;
+  transition: transform .14s var(--spring-soft), border-color .2s, background .2s, opacity .24s;
+}
+.oll-card:active { transform: scale(.965); }
+.oll-card .oll-ic { width: 24px; height: 24px; }
+.oll-card b { font-size: 12.5px; font-weight: 800; display: block; letter-spacing: -.012em; }
+.oll-card i { font-size: 11.5px; font-style: normal; font-weight: 600; color: #93A9C6; }
+.oll-card.bad { animation: ollShake .42s var(--ease-out); border-color: var(--red); }
+@keyframes ollShake {
+  0%, 100% { transform: translateX(0); }
+  18% { transform: translateX(-6px); }
+  38% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+
+/* 마무리 국면 — 두 사다리를 나란히 놓고 자리 차이를 본다 */
+.oll-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.oll-col { display: flex; flex-direction: column-reverse; gap: 5px; }
+.oll-col-h {
+  order: 99; text-align: center; font-size: 12.5px; font-weight: 800; color: #A8BCDF;
+  padding-bottom: 3px;
+}
+.oll-mini {
+  font-size: 12px; font-weight: 700; color: #C6D6EC; text-align: center;
+  padding: 7px 4px; border-radius: 10px;
+  border: 1px solid rgba(150, 175, 210, .26); background: rgba(255, 255, 255, .05);
+}
+.oll-mini.key {
+  border-color: #FFD43B; background: rgba(255, 212, 59, .16); color: #FFE066; font-weight: 800;
+}
+.oll-note {
+  grid-column: 1 / -1; font-size: 12.5px; font-weight: 700; line-height: 1.55;
+  color: #A8BCDF; word-break: keep-all; text-align: center; padding: 2px 4px 0;
+}
+.oll-note b { color: #FFE066; }
+
+/* 되돌리기류 보조 버튼 — 파란 CTA와 위계를 구분한다(진짜 CTA는 레슨 하단에 있다) */
+.b3-sub {
+  background: #fff; color: var(--ink); border: 1.5px solid var(--line); box-shadow: var(--sh-card);
+}
+.b3-sub:active { background: var(--n150); box-shadow: var(--sh-inset); }
+
+/* 모드 전환 칩 안의 "완성" 표식 */
+.oll-mode i {
+  font-style: normal; font-size: 10.5px; font-weight: 800; margin-left: 5px;
+  color: var(--subj-bio-deep); border: 1px solid var(--subj-bio); border-radius: 999px;
+  padding: 1px 5px;
+}
+
+/* ==================================================================
+   diversityLab — 세 가지 다양함(.dvs-)
+   ================================================================== */
+.dvs-legend { display: grid; gap: 4px; margin-top: 10px; }
+.dvs-leg {
+  display: flex; align-items: baseline; gap: 7px; font-size: 12.5px; line-height: 1.45;
+  word-break: keep-all;
+}
+.dvs-dot { flex: 0 0 auto; width: 8px; height: 8px; border-radius: 999px; transform: translateY(-1px); }
+.dvs-leg b { flex: 0 0 auto; font-weight: 800; color: var(--ink); }
+.dvs-leg span { font-weight: 600; color: var(--sub); }
+
+/* 무대 + 게이지 묶음. **sticky는 쓰지 않는다** — 스크롤 시 손잡이 카드가 이 덩어리 밑으로
+   미끄러져 들어가 윗부분이 잘려 보였다(실측). 대신 무대 높이(214)와 손잡이 카드를 충분히
+   압축해 무대·게이지·손잡이 3개가 스크롤 없이 한 화면에 들어오게 했다 — 조작하는 동안
+   무대가 바뀌는 장면과 게이지가 차오르는 것을 함께 볼 수 있다(실사용 피드백 2026-07-26). */
+.dvs-pane { padding-bottom: 2px; }
+.dvs-gauge {
+  margin-top: 8px; padding: 9px 11px; border: 1.5px solid var(--line);
+  border-radius: var(--r-md); background: #fff; box-shadow: var(--sh-card);
+}
+.dvs-gauge-h { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.dvs-gauge-h b { font-size: 13.5px; font-weight: 800; color: var(--ink); }
+.dvs-lv { font-size: 13.5px; font-weight: 800; color: var(--subj-bio-deep); font-variant-numeric: tabular-nums; }
+.dvs-track { margin-top: 6px; height: 10px; border-radius: 999px; background: var(--n150); overflow: hidden; }
+.dvs-fill {
+  height: 100%; width: 0; border-radius: 999px;
+  background: linear-gradient(90deg, #8CE0C4, var(--subj-bio) 60%, var(--subj-bio-deep));
+  transition: width .42s var(--spring-soft);
+}
+.dvs-warn { margin-top: 7px; font-size: 12.5px; font-weight: 700; line-height: 1.5; color: #B4820B; word-break: keep-all; }
+.dvs-warn:empty { display: none; }
+
+/* 손잡이 카드는 가로 한 줄 — 제목·설명 왼쪽, -/값/+ 오른쪽.
+   세로로 쌓으면 세 개만으로 화면을 다 먹어 무대가 밀려난다(실사용 피드백 2026-07-26). */
+.dvs-ctl {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border: 1.5px solid var(--line); border-radius: var(--r-md);
+  background: #fff; box-shadow: var(--sh-card);
+}
+.dvs-ctl > .dvs-ctl-h { flex: 1 1 auto; min-width: 0; }
+.dvs-ctl > .dvs-row { flex: 0 0 auto; margin-top: 0; width: 150px; }
+.dvs-ctl-h { font-size: 13px; font-weight: 800; color: var(--ink); line-height: 1.3; }
+.dvs-ctl-h span { display: block; margin-top: 1px; font-size: 11.5px; font-weight: 600; color: var(--sub); word-break: keep-all; line-height: 1.35; }
+.dvs-row { display: flex; align-items: center; gap: 6px; }
+.dvs-pm {
+  appearance: none; cursor: pointer; flex: 0 0 auto; width: 36px; height: 34px;
+  border: 1.5px solid var(--line); border-radius: 12px; background: #fff;
+  font-size: 19px; font-weight: 800; color: var(--ink); line-height: 1;
+  transition: transform .14s var(--spring-soft), border-color .2s, opacity .2s;
+}
+.dvs-pm:active { transform: scale(.94); }
+.dvs-pm:disabled { opacity: .34; cursor: default; }
+.dvs-val {
+  flex: 1 1 auto; text-align: center; font-size: 12px; font-weight: 800; color: var(--subj-bio-deep);
+  word-break: keep-all; line-height: 1.3;
+}
+
+.dvs-compare { display: grid; gap: 9px; }
+.dvs-cq { font-size: 14px; font-weight: 800; line-height: 1.55; color: var(--ink); word-break: keep-all; }
+.dvs-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.dvs-region {
+  appearance: none; cursor: pointer; padding: 9px 8px 11px; border: 1.5px solid var(--line);
+  border-radius: var(--r-md); background: #fff; box-shadow: var(--sh-card); text-align: center;
+  transition: transform .14s var(--spring-soft), border-color .2s, background .2s;
+}
+.dvs-region:active { transform: scale(.975); }
+.dvs-region svg { display: block; width: 100%; height: auto; border-radius: 10px; }
+.dvs-region b { display: block; margin-top: 7px; font-size: 13px; font-weight: 800; color: var(--ink); }
+.dvs-region span { display: block; margin-top: 2px; font-size: 11.5px; font-weight: 600; color: var(--sub); word-break: keep-all; }
+.dvs-region.ok { border-color: var(--green); background: #EFFBF4; }
+.dvs-region.no { border-color: var(--red); background: #FFF2F3; }
+.dvs-why {
+  font-size: 13px; font-weight: 600; line-height: 1.6; color: var(--sub); word-break: keep-all;
+  padding: 11px 12px; border-radius: var(--r-md); background: var(--n100, #F4F6F9);
+}
+.dvs-why b { color: var(--ink); font-weight: 800; }
+
+/* ==================================================================
+   webStabilityLab — 먹이 관계 안정성(.wsl-)
+   ================================================================== */
+.wsl-legend { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 12px; }
+.wsl-key { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--sub); }
+.wsl-key i { width: 11px; height: 11px; border-radius: 4px; flex: 0 0 auto; }
+.wsl-key.alive i { background: var(--subj-bio); }
+.wsl-key.risk i { background: #8A99AE; }
+.wsl-key.gone i { background: #45506180; border: 1.5px solid #7C8AA0; }
+.wsl-why {
+  margin-top: 12px; font-size: 13px; font-weight: 600; line-height: 1.6; color: var(--sub);
+  word-break: keep-all; padding: 11px 12px; border-radius: var(--r-md); background: var(--n100, #F4F6F9);
+}
+.wsl-why b { color: var(--ink); font-weight: 800; }
+.wsl-why:empty { display: none; }
+
+/* 이동 제거 + 페이드 유지(모션 원칙 ④) */
+@media (prefers-reduced-motion: reduce) {
+  .oll-slot.on { animation: none; }
+  .oll-card.bad { animation: none; }
+  .dvs-fill { transition: width .2s ease; }
+}
+
+/* 게이지가 실제로 변한 순간의 튕김 — 조작부를 보고 있어도 변화가 주변시에 걸린다. */
+@keyframes dvsBump { 0% { transform: scale(1); } 38% { transform: scale(1.028); } 100% { transform: scale(1); } }
+.dvs-gauge.bump { animation: dvsBump .34s var(--spring-soft); }
+@media (prefers-reduced-motion: reduce) { .dvs-gauge.bump { animation: none; } }

@@ -1,10 +1,15 @@
 // II. 생물의 구성과 다양성 — 단원 종합 평가 풀: 레슨 1 세포의 구조와 기능 (u2e01~u2e20)
 // 출판사 마무리의 개념 범위만 참고하고 세포 배열·비유·선지 문구·자료 수치는 새로 설계했다.
+// [재매핑] 개념 레슨이 6→10레슨으로 재제작되어 문항별 lessonId를 내용 기준으로 다시 붙였다
+//   (파일 이름·문항 id·문항 내용·정답·해설 불변). 이 파일의 새 태그 분포: u2l2 9문항 · u2l3 5문항 · u2l4 6문항.
 import type { ExamItem } from "./types";
 import { animalCell, plantCell } from "../../ui/figures";
 import { cellTypeArt } from "../../ui/bioFigures";
 
-const L = "u2l1";
+// lessonId는 재제작된 새 10레슨 구조 기준 — 문항 내용으로 판정했으므로 파일 이름과 다를 수 있다.
+const L2 = "u2l2"; // 세포의 구조와 기능
+const L3 = "u2l3"; // 동물세포와 식물세포
+const L4 = "u2l4"; // 모양이 다르면 하는 일도 달라요
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 const ximg = (file: string, alt: string): string =>
   `<img src="${IMG_BASE}exam/u2/${file}" alt="${alt}" style="display:block;width:100%;border-radius:14px" />`;
@@ -17,7 +22,7 @@ const cellRolesFigure = (): string =>
 export const POOL_U2L1: ExamItem[] = [
   {
     id: "u2e01",
-    lessonId: L,
+    lessonId: L2,
     type: "mcq",
     prompt: "그림의 세포에서 바깥 물질이 필요 이상으로 들어오고 세포 안 물질이 빠져나가는 현상이 나타났어요. 가장 먼저 기능 이상을 의심할 구조는?",
     figure: animalCell.svg,
@@ -29,7 +34,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e02",
-    lessonId: L,
+    lessonId: L2,
     type: "mcq",
     prompt: "빛을 충분히 받은 잎의 세포가 물질 출입과 생명활동 조절은 정상인데도 양분을 거의 만들지 못했어요. 손상되었을 가능성이 가장 큰 구조는?",
     figure: plantCell.svg,
@@ -41,7 +46,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e03",
-    lessonId: L,
+    lessonId: L4,
     type: "mcq",
     prompt: "그림과 같은 세포가 좁은 모세혈관을 지나며 산소를 운반해요. 이 세포의 모양이 기능에 주는 이점으로 가장 알맞은 것은?",
     figure: cellTypeArt("redBlood"),
@@ -59,7 +64,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e04",
-    lessonId: L,
+    lessonId: L4,
     type: "mcq",
     prompt: "그림의 ㉠~㉢ 중 하나가 피부 표면에서 촘촘한 층을 이루고 있어요. 이 층에 틈이 많이 생겼을 때 가장 직접적으로 약해질 기능은?",
     figure: cellRolesFigure(),
@@ -77,7 +82,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e05",
-    lessonId: L,
+    lessonId: L2,
     type: "mcq",
     prompt: "세포 구조에 대한 설명으로 옳은 것을 <b>보기</b>에서 모두 고른 것은?",
     bogi: [
@@ -94,7 +99,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e06",
-    lessonId: L,
+    lessonId: L4,
     type: "mcq",
     prompt: "사진은 같은 동물의 몸에서 관찰한 서로 다른 세포들이에요. 사진만 보고 세울 수 있는 가장 타당한 탐구 결론은?",
     figure: ximg("cell-shapes-observation.webp", "서로 다른 모양과 배열을 보이는 세포 표본 세 장"),
@@ -112,7 +117,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e07",
-    lessonId: L,
+    lessonId: L2,
     type: "mcq",
     prompt: "식물세포의 경계에서 얇은 구조 A는 물질 출입을 조절하고, 그 바깥의 두껍고 단단한 구조 B는 형태 유지에 도움을 주었어요. A와 B를 옳게 짝 지은 것은?",
     options: [
@@ -129,7 +134,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e08",
-    lessonId: L,
+    lessonId: L2,
     type: "mcq",
     prompt: "쉬지 않고 수축하는 근육의 세포에는 다른 세포보다 마이토콘드리아가 많이 관찰되었어요. 이를 가장 잘 설명한 것은?",
     options: [
@@ -146,7 +151,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e09",
-    lessonId: L,
+    lessonId: L3,
     type: "mcq",
     prompt: "빛이 거의 닿지 않는 뿌리의 한 세포에서 세포벽은 보였지만 엽록체는 관찰되지 않았어요. 이 결과에 대한 해석으로 가장 옳은 것은?",
     options: [
@@ -163,7 +168,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e10",
-    lessonId: L,
+    lessonId: L2,
     type: "mcq",
     prompt: "그림의 세포에서 특정 구조가 손상된 뒤 성장과 여러 생명활동의 조절이 함께 흐트러졌어요. 손상된 구조로 가장 알맞은 것은?",
     figure: animalCell.svg,
@@ -175,7 +180,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e11",
-    lessonId: L,
+    lessonId: L3,
     type: "mcq",
     prompt: "식물세포의 특징에 대한 설명으로 옳은 것을 <b>보기</b>에서 모두 고른 것은?",
     bogi: [
@@ -192,7 +197,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e12",
-    lessonId: L,
+    lessonId: L4,
     type: "mcq",
     prompt: "그림의 ㉠~㉢ 세포에 변화가 생겼어요. 변화와 그 결과를 가장 타당하게 연결한 것은?",
     figure: cellRolesFigure(),
@@ -210,7 +215,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e13",
-    lessonId: L,
+    lessonId: L4,
     type: "mcq",
     prompt: "그림과 같은 세포들이 기관의 안쪽 표면을 덮고 있어요. 이 세포들의 배열이 맡은 일에 알맞은 까닭은?",
     figure: ximg("cell-shapes-observation-epithelial.webp", "u2e06의 오른쪽에 제시된 빈틈없이 이어진 상피세포"),
@@ -228,7 +233,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e14",
-    lessonId: L,
+    lessonId: L3,
     type: "mcq",
     prompt: "세포 A에는 세포막·핵·마이토콘드리아가, 세포 B에는 이 세 구조와 세포벽·엽록체가 관찰되었어요. 두 세포에 대한 추론으로 가장 옳은 것은?",
     options: [
@@ -245,7 +250,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e15",
-    lessonId: L,
+    lessonId: L2,
     type: "multi",
     prompt: "세포 구조의 이상과 예상되는 결과를 <b>옳게</b> 연결한 것을 모두 고르세요.",
     options: [
@@ -262,7 +267,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e16",
-    lessonId: L,
+    lessonId: L4,
     type: "multi",
     prompt: "그림의 세 세포에 일어난 변화로부터 기능의 변화를 <b>타당하게</b> 추론한 것을 모두 고르세요.",
     figure: cellTypeArt("all"),
@@ -280,7 +285,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e17",
-    lessonId: L,
+    lessonId: L3,
     type: "num",
     prompt: "세포 구조 손상 사례를 조사했더니 세포막 4건, 핵 3건, 마이토콘드리아 5건, 세포벽 2건, 엽록체 3건이었어요. 이 중 <b>동물세포에는 없고 식물세포에서 볼 수 있는 구조</b>의 손상 사례는 모두 몇 건인가요? (숫자만 입력)",
     answer: "5",
@@ -292,7 +297,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e18",
-    lessonId: L,
+    lessonId: L3,
     type: "num",
     prompt: "동물 또는 식물의 몸에서 얻은 일곱 세포 A~G를 관찰한 결과예요.<br><b>세포벽 있음</b>: A, B, D, F, G<br><b>엽록체 있음</b>: A, D, G<br>세포벽을 근거로 식물세포라고 판단할 수 있는 것은 모두 몇 개인가요? (숫자만 입력)",
     answer: "5",
@@ -304,7 +309,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e19",
-    lessonId: L,
+    lessonId: L2,
     type: "word",
     prompt: "세포 바깥의 형광 물질이 필요 이상으로 들어오고 세포 안 물질도 빠져나갔어요. 안팎을 구분하며 물질 출입을 조절하는 구조의 이름을 고르세요.",
     bank: ["세포막", "세포벽", "핵", "마이토콘드리아", "엽록체", "세포질", "신경세포", "적혈구", "상피세포"],
@@ -315,7 +320,7 @@ export const POOL_U2L1: ExamItem[] = [
   },
   {
     id: "u2e20",
-    lessonId: L,
+    lessonId: L2,
     type: "word",
     prompt: "활동량이 큰 세포에서 많이 관찰되며, 손상되면 생명활동에 사용할 에너지가 크게 줄어드는 구조의 이름을 고르세요.",
     bank: ["세포막", "세포벽", "핵", "마이토콘드리아", "엽록체", "세포질", "신경세포", "적혈구", "상피세포"],

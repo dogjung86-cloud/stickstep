@@ -1,11 +1,15 @@
 // II. 생물의 구성과 다양성 — 단원 종합 평가 풀: 레슨 5 생물의 분류와 5계 (u2e81~u2e100)
 // 출제 각도: 분류의 목적·종의 기준·분류 단계 포함 관계·핵막/세포 수/세포벽/광합성/양분 획득 근거.
 // 실사풍 표본은 관찰 맥락만 제공하며, 계 판정에 필요한 근거는 문두·표에서 통제한다.
+// [재매핑] 개념 레슨이 6→10레슨으로 재제작되어 문항별 lessonId를 내용 기준으로 다시 붙였다
+//   (파일 이름·문항 id·문항 내용·정답·해설 불변). 이 파일의 새 태그 분포: u2l8 10문항 · u2l9 10문항.
 import type { ExamItem } from "./types";
 import { bioKingdomClueTableFig } from "../../ui/examFigures";
 import { classStagesFig } from "../../ui/bioFigures";
 
-const L = "u2l5";
+// lessonId는 재제작된 새 10레슨 구조 기준 — 문항 내용으로 판정했으므로 파일 이름과 다를 수 있다.
+const L8 = "u2l8"; // 생물의 분류와 종
+const L9 = "u2l9"; // 5계로 나눈 생물
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 const ximg = (file: string, alt: string): string =>
   '<img src="' + IMG_BASE + 'exam/u2/' + file + '" alt="' + alt + '" style="display:block;width:100%;border-radius:14px" />';
@@ -13,7 +17,7 @@ const ximg = (file: string, alt: string): string =>
 export const POOL_U2L5: ExamItem[] = [
   {
     id: "u2e81",
-    lessonId: L,
+    lessonId: L8,
     type: "mcq",
     prompt: "생물의 고유한 특징을 조사하여 공통점이 있는 생물끼리 분류하는 가장 중요한 까닭은?",
     options: [
@@ -30,7 +34,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e82",
-    lessonId: L,
+    lessonId: L8,
     type: "mcq",
     prompt: "처음 보는 여러 생물을 과학적으로 분류할 때 가장 알맞은 과정은?",
     options: [
@@ -47,7 +51,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e83",
-    lessonId: L,
+    lessonId: L8,
     type: "mcq",
     prompt: "강의 상류와 하류에서 잡힌 물고기 무리 A, B가 자연 상태에서 짝짓기하여 자손을 낳았고, 그 자손도 다시 번식할 수 있었어요. 이 자료로 판단한 내용은?",
     options: [
@@ -64,7 +68,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e84",
-    lessonId: L,
+    lessonId: L8,
     type: "mcq",
     prompt: "생물분류에서 <b>종</b>을 판단하는 내용으로 옳은 것을 <b>보기</b>에서 모두 고른 것은?",
     bogi: [
@@ -81,7 +85,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e85",
-    lessonId: L,
+    lessonId: L8,
     type: "mcq",
     prompt: "두 생물 X, Y는 같은 <b>과</b>에 속하지만 서로 다른 <b>속</b>에 속해요. 그림의 분류 단계 관계를 이용할 때 반드시 옳은 것은?",
     figure: classStagesFig(),
@@ -99,7 +103,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e86",
-    lessonId: L,
+    lessonId: L8,
     type: "mcq",
     prompt: "생물의 분류 단계를 가장 작은 기본 단위에서 가장 큰 단계까지 바르게 나열한 것은?",
     options: [
@@ -116,7 +120,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e87",
-    lessonId: L,
+    lessonId: L9,
     type: "mcq",
     prompt: "어떤 생물 P는 몸 전체가 세포 하나이고 유전물질은 있지만 이를 둘러싼 핵막이 없어요. P를 분류할 계로 가장 알맞은 것은?",
     options: ["식물계", "동물계", "균계", "원생생물계", "원핵생물계"],
@@ -127,7 +131,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e88",
-    lessonId: L,
+    lessonId: L9,
     type: "mcq",
     prompt: "사진 속 세 표본은 모두 핵막과 세포벽이 있고, 광합성하지 않으며 몸 밖에서 물질을 분해한 뒤 양분을 흡수해요. 이들을 분류할 계는?",
     figure: ximg("fungi-trio.webp", "서로 다른 세 가지 생물 표본을 나란히 관찰한 장면"),
@@ -139,7 +143,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e89",
-    lessonId: L,
+    lessonId: L9,
     type: "mcq",
     prompt: "표의 후보 가운데 <b>식물계</b>의 대표 특징과 가장 잘 맞는 후보는?",
     figure: bioKingdomClueTableFig(),
@@ -157,7 +161,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e90",
-    lessonId: L,
+    lessonId: L9,
     type: "mcq",
     prompt: "사진 속 세 생물은 모두 핵막이 있어요. 한 세포인 것도 있고 여러 세포인 것도 있으며, 광합성 여부와 양분을 얻는 방식도 서로 달라 식물계·동물계·균계의 대표 특징으로 한꺼번에 묶이지 않아요. 가장 알맞은 분류는?",
     figure: ximg("protist-trio.webp", "서로 다른 세 가지 생물 표본을 나란히 관찰한 장면"),
@@ -169,7 +173,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e91",
-    lessonId: L,
+    lessonId: L9,
     type: "mcq",
     prompt: "5계 분류의 특징에 대한 설명으로 옳은 내용을 <b>보기</b>에서 모두 고른 것은?",
     bogi: [
@@ -186,7 +190,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e92",
-    lessonId: L,
+    lessonId: L9,
     type: "mcq",
     prompt: "여러 생물 표본의 사진만 보고 5계를 정확히 판정하려 해요. 겉모습과 함께 조사해야 할 정보로 가장 알맞은 것은?",
     figure: ximg("five-kingdom-specimens.webp", "여러 종류의 생물 표본을 관찰 카드처럼 배열한 장면"),
@@ -204,7 +208,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e93",
-    lessonId: L,
+    lessonId: L9,
     type: "mcq",
     prompt: "5계의 세포 수에 관한 설명으로 가장 옳은 것은?",
     options: [
@@ -221,7 +225,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e94",
-    lessonId: L,
+    lessonId: L9,
     type: "mcq",
     prompt: "식물계와 균계를 구별하는 근거를 가장 정확하게 설명한 것은?",
     options: [
@@ -238,7 +242,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e95",
-    lessonId: L,
+    lessonId: L8,
     type: "multi",
     prompt: "생물분류와 분류 단계에 대한 설명으로 옳은 것을 <b>모두</b> 고르세요.",
     options: [
@@ -254,7 +258,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e96",
-    lessonId: L,
+    lessonId: L9,
     type: "multi",
     prompt: "처음 관찰한 생물 P~T의 특징으로 내린 5계 판정 중 근거가 충분한 것을 <b>모두</b> 고르세요.",
     options: [
@@ -271,7 +275,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e97",
-    lessonId: L,
+    lessonId: L8,
     type: "mcq",
     prompt: "한 학생이 표에서 A와 E의 네 특징이 같다는 까닭만으로 ‘A와 E는 반드시 같은 <b>종</b>이다.’라고 결론 내렸어요. 이 결론을 가장 타당하게 평가한 것은?",
     figure: bioKingdomClueTableFig(),
@@ -289,7 +293,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e98",
-    lessonId: L,
+    lessonId: L8,
     type: "num",
     prompt: "두 생물이 같은 <b>강</b>에 속하지만 서로 다른 <b>목</b>에 속해요. 두 생물이 반드시 공통으로 속하는 단계는 강·문·계로 모두 몇 <b>단계</b>인가요?",
     answer: "3",
@@ -301,7 +305,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e99",
-    lessonId: L,
+    lessonId: L8,
     type: "word",
     prompt: "생물의 고유한 특징을 기준으로 공통점이 있는 생물끼리 무리를 지어 나누는 것을 무엇이라고 하나요?",
     bank: ["생물분류", "생물다양성", "변이", "광합성", "번식", "관찰", "생태계", "서식지"],
@@ -312,7 +316,7 @@ export const POOL_U2L5: ExamItem[] = [
   },
   {
     id: "u2e100",
-    lessonId: L,
+    lessonId: L9,
     type: "word",
     prompt: "세포에서 유전물질이 들어 있는 부분을 둘러싸 뚜렷한 핵의 경계를 만드는 막을 무엇이라고 하나요?",
     bank: ["핵막", "세포벽", "세포막", "엽록체", "세포질", "염색액", "덮개유리", "재물대"],

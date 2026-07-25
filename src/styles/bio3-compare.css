@@ -1,0 +1,69 @@
+/* bio3-compare.css — cellCompareLab 전용(접두사 .cmp-).
+   .ccl-은 중2 coolingLab이 선점하고 있어 회피했다(선점 grep 검사 결과). */
+
+.cmp-stage { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.cmp-cell { min-width: 0; }
+.cmp-cap {
+  font-size: 13px; font-weight: 800; color: var(--sub); text-align: center; margin-bottom: 6px;
+}
+.cmp-animal .cmp-cap { color: #B85C7E; }
+.cmp-plant .cmp-cap { color: var(--subj-bio-deep); }
+.cmp-frame {
+  position: relative; width: 100%; aspect-ratio: 1 / 1;
+  border-radius: var(--r-md); overflow: hidden; background: var(--n100);
+  box-shadow: var(--sh-card);
+}
+/* 원비율(정사각) 유지 — 이미지 %와 컨테이너 %가 일치해야 점이 구조 위에 정확히 앉는다. */
+.cmp-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.cmp-dot {
+  position: absolute; transform: translate(-50%, -50%);
+  width: 22px; height: 22px; border-radius: 999px; padding: 0; cursor: pointer;
+  border: 2.5px solid #fff; background: var(--blue);
+  box-shadow: 0 2px 8px rgba(10, 20, 40, .35);
+  transition: transform .16s var(--spring-soft), background .2s;
+}
+.cmp-dot::after {
+  content: ""; position: absolute; inset: 0; border-radius: 999px;
+  box-shadow: 0 0 0 0 rgba(49, 130, 246, .45); animation: cmpPing 1.9s ease-out infinite;
+}
+.cmp-dot.on { background: var(--subj-bio); }
+.cmp-dot.on::after { animation: none; }
+.cmp-dot:active { transform: translate(-50%, -50%) scale(.9); }
+@keyframes cmpPing { 0% { box-shadow: 0 0 0 0 rgba(49,130,246,.45); } 70%, 100% { box-shadow: 0 0 0 12px rgba(49,130,246,0); } }
+@media (prefers-reduced-motion: reduce) { .cmp-dot::after { animation: none; } }
+
+.cmp-read {
+  margin-top: 12px; padding: 12px 14px; border-radius: var(--r-md);
+  background: var(--n25); border: 1.5px solid var(--line); min-height: 62px;
+}
+.cmp-read b { display: block; font-size: 14.5px; color: var(--ink); margin-bottom: 3px; }
+.cmp-read span { font-size: 13px; line-height: 1.5; color: var(--sub); word-break: keep-all; }
+
+.cmp-tray { display: flex; flex-wrap: wrap; gap: 8px; }
+.cmp-chip { flex: 1 1 auto; min-width: 92px; }
+.cmp-chip.shake { animation: cmpShake .38s; }
+@keyframes cmpShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+.cmp-bins { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cmp-bin {
+  appearance: none; cursor: pointer; text-align: left;
+  border: 1.5px dashed var(--n300); border-radius: var(--r-md);
+  background: #fff; padding: 11px 12px; min-height: 92px; box-shadow: var(--sh-card);
+  transition: border-color .2s, background .2s;
+}
+.cmp-bin b { display: block; font-size: 13.5px; font-weight: 800; color: var(--ink); }
+.cmp-bin span { display: block; font-size: 11.5px; color: var(--faint); margin-top: 2px; }
+.cmp-bin-both { border-color: rgba(49, 130, 246, .5); }
+.cmp-bin-plantOnly { border-color: rgba(18, 184, 134, .5); }
+.cmp-bin-items { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+.cmp-bin-items i {
+  font-style: normal; font-size: 11.5px; font-weight: 700; color: var(--subj-bio-deep);
+  background: rgba(18, 184, 134, .12); border-radius: 999px; padding: 3px 8px;
+}
+.cmp-bin-both .cmp-bin-items i { color: var(--blue-press); background: var(--blue-tint); }
+
+/* 좁은 화면에서는 두 세포를 위아래로 — 나란히가 원칙이지만 320px대에서는 점이 뭉친다 */
+@media (max-width: 340px) {
+  .cmp-stage, .cmp-bins { grid-template-columns: 1fr; }
+}
