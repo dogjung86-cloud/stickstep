@@ -115,6 +115,9 @@ export const hook = (o: {
     | "stargaze" | "planetsize" | "shadowclock" | "moonpic" | "sunglasses"
     | "colorcups" | "speaker" | "smokestack"
     | "cellzoom" | "stain" | "bodycount" | "fingerprint" | "batbird" | "foodweb"
+    // 중1 Ⅱ 재제작 훅 10종(hookBio2.ts) — 구작 6종과 이름이 겹치지 않는다
+    | "celldot" | "slidepress" | "signalrun" | "blockflower" | "biomedoor"
+    | "beakpick" | "batwho" | "noplant" | "seedvault" | "scalezoom"
     | "rings" | "deadsea" | "cocoa" | "fishmouth" | "gallium" | "milkzoom" | "soysauce" | "syrup" | "perfume"
     | "stripemount" | "foolsgold" | "dolstatue" | "bookcliff" | "pressrock" | "cappadocia" | "gravestone" | "puzzlemap" | "quakenews" | "eggearth"
     | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba"
@@ -467,6 +470,36 @@ export const dilemmaLab = (o: { title: string; lead?: string; cta?: string; curi
   ({ type: "dilemmaLab", ...o });
 export const lifePathLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "lifePathLab", ...o });
+
+// ── 중1 Ⅱ 생물의 구성과 다양성 랩 11종(2026-07-25 재제작) ────────────
+// 전부 같은 계약: { title, lead?, cta?, curio? }. 구작 랩(orgLevels·finchSim·microscope·
+// dichotomKey·biodiversityLab)은 아래 Obj 팩토리로 보존만 하고 새 단원에선 쓰지 않는다.
+export const cellScaleLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "cellScaleLab", ...o });
+export const cellFactoryLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "cellFactoryLab", ...o });
+/** 동물세포·식물세포를 나란히 놓고 공통점·차이점을 찾는 비교 랩(실사용 피드백 2026-07-25). */
+export const cellCompareLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "cellCompareLab", ...o });
+export const microscopeLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "microscopeLab", ...o });
+export const cellJobLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "cellJobLab", ...o });
+export const orgLadderLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "orgLadderLab", ...o });
+export const diversityLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "diversityLab", ...o });
+/** L7 기함 — 변이 → 환경 적응 → 종 분화를 집단 분포의 이동으로 보여 준다. */
+export const finchIslandLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "finchIslandLab", ...o });
+export const classifyLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "classifyLab", ...o });
+export const rankLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "rankLab", ...o });
+export const kingdomKeyLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "kingdomKeyLab", ...o });
+export const webStabilityLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "webStabilityLab", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

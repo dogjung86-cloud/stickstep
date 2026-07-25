@@ -1,0 +1,281 @@
+/* bio3-hook.css — 중1 Ⅱ. 생물의 구성과 다양성(재제작) 훅 장면 10종 전용 시트.
+   SVG(steps/hookBio2.ts)는 재질을, 이 파일은 상태·모션·배치를 맡는다(body-hook.css 문법 계승).
+   네임스페이스는 .hb2- 하나뿐 — ui.css·bio3.css와 선점 충돌 없음(grep 확인).
+   SVG 그룹 변형에는 transform-box: view-box를 반드시 함께 준다(회전·반전 사고 예방). */
+
+/* ---------- 공용 크롬 ---------- */
+.hk-bio2 {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--n200);
+  border-radius: var(--r-md);
+  background: var(--n25);
+  box-shadow: var(--sh-inset);
+}
+.hk-bio2 svg { display: block; width: 100%; height: auto; }
+
+.hb2-action {
+  border-color: var(--subj-bio);
+  color: var(--subj-bio-deep);
+  background: rgba(18, 184, 134, .08);
+}
+.hb2-action:focus-visible { outline: 3px solid var(--blue-tint); outline-offset: 2px; }
+.hb2-choices { margin-top: 10px; }
+
+.hb2-btnrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.hb2-btnrow .swapbtn { margin-top: 12px; font-size: 14px; }
+.hb2-chiprow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+/* 라벨이 "숟가락 모양"까지 길어지므로 13px + 어절 단위 줄바꿈(keep-all)로 좁은 화면을 버틴다 */
+.hb2-chip {
+  appearance: none; border: 1.5px solid var(--line); background: #fff;
+  border-radius: var(--r-md); padding: 11px 4px; font-size: 13px; font-weight: 750;
+  line-height: 1.3; word-break: keep-all;
+  color: var(--ink); box-shadow: var(--sh-card); cursor: pointer;
+  transition: transform .14s var(--spring-soft), border-color .2s, background .2s, color .2s;
+}
+.hb2-chip:active { transform: scale(.965); }
+.hb2-chip.on { border-color: var(--subj-bio); background: rgba(18, 184, 134, .10); color: var(--subj-bio-deep); }
+.hb2-chip.done { opacity: .55; }
+.hb2-chip:disabled { pointer-events: none; }
+
+/* ---------- L2 celldot — 양파 껍질 3단 확대 ---------- */
+.hb2-celldot .hb2-cd-skin { transition: opacity .5s var(--ease-out); }
+.hb2-celldot .hb2-cd-bricks {
+  transform-box: view-box; transform-origin: 138px 94px; transform: scale(.86); opacity: 0;
+  transition: opacity .5s var(--ease-out), transform .58s var(--spring-soft);
+}
+.hb2-celldot .hb2-cd-dots { opacity: 0; transition: opacity .45s var(--ease-out); }
+.hb2-celldot.z1 .hb2-cd-skin { opacity: .3; }
+.hb2-celldot.z1 .hb2-cd-bricks { opacity: 1; transform: scale(1); }
+.hb2-celldot.z2 .hb2-cd-skin { opacity: 0; }
+.hb2-celldot.z2 .hb2-cd-bricks { transform: scale(1.35); }
+.hb2-celldot.z3 .hb2-cd-bricks { transform: scale(1.9); }
+.hb2-celldot.z3 .hb2-cd-dots { opacity: 1; }
+.hb2-celldot .hb2-cd-t1, .hb2-celldot .hb2-cd-t2, .hb2-celldot .hb2-cd-t3 { opacity: 0; }
+.hb2-celldot.z1 .hb2-cd-t0 { opacity: 0; }
+.hb2-celldot.z1 .hb2-cd-t1 { opacity: 1; }
+.hb2-celldot.z2 .hb2-cd-t1 { opacity: 0; }
+.hb2-celldot.z2 .hb2-cd-t2 { opacity: 1; }
+.hb2-celldot.z3 .hb2-cd-t2 { opacity: 0; }
+.hb2-celldot.z3 .hb2-cd-t3 { opacity: 1; }
+
+/* ---------- L3 slidepress — 덮개 유리 덮는 두 방법 ---------- */
+.hb2-slidepress .hb2-sp-cover { transform-box: view-box; transform-origin: 90px 46px; }
+.hb2-slidepress .hb2-sp-water {
+  transform-box: view-box; transform-origin: 120px 118px;
+  transition: transform .55s .45s var(--ease-out);
+}
+.hb2-slidepress .hb2-sp-air { opacity: 0; }
+.hb2-slidepress .hb2-sp-tag { opacity: 0; transition: opacity .3s var(--ease-out) .95s; }
+.hb2-slidepress .hb2-sp-ok, .hb2-slidepress .hb2-sp-no { opacity: 0; }
+.hb2-slidepress.tilted .hb2-sp-cover { animation: hb2Tilt 1.15s var(--ease-out) forwards; }
+.hb2-slidepress.dropped .hb2-sp-cover { animation: hb2Drop .95s var(--ease-out) forwards; }
+.hb2-slidepress.tilted .hb2-sp-water, .hb2-slidepress.dropped .hb2-sp-water { transform: scale(1.16, .5); }
+.hb2-slidepress.dropped .hb2-sp-air { animation: hb2Pop .42s .8s var(--spring-soft) both; }
+.hb2-slidepress.tilted .hb2-sp-tag, .hb2-slidepress.dropped .hb2-sp-tag { opacity: 1; }
+.hb2-slidepress.tilted .hb2-sp-ok { opacity: 1; }
+.hb2-slidepress.dropped .hb2-sp-no { opacity: 1; }
+
+/* ---------- L4 signalrun — 발끝에서 머리까지 ---------- */
+.hb2-signalrun .hb2-sr-signal { opacity: 0; filter: drop-shadow(0 0 4px rgba(255, 176, 32, .75)); }
+.hb2-signalrun .hb2-sr-tack { transform-box: view-box; transform-origin: 130px 134px; }
+.hb2-signalrun .hb2-sr-stick { transform-box: view-box; transform-origin: 152px 90px; }
+.hb2-signalrun .hb2-sr-bang, .hb2-signalrun .hb2-sr-fast { opacity: 0; }
+.hb2-signalrun.stepped .hb2-sr-tack { animation: hb2Press .34s var(--ease-out); }
+.hb2-signalrun.stepped .hb2-sr-signal { opacity: 1; animation: hb2Draw .62s .16s var(--ease-out) forwards; }
+.hb2-signalrun.yelled .hb2-sr-stick { animation: hb2Jolt .3s ease-in-out 2; }
+.hb2-signalrun.yelled .hb2-sr-bang { animation: hb2Pop .42s var(--spring-soft) both; }
+.hb2-signalrun.yelled .hb2-sr-fast { animation: hb2Rise .42s .26s var(--spring-soft) both; }
+
+/* ---------- L5 blockflower — 조각 → 부품 → 꽃 → 화분 식물 ---------- */
+.hb2-blockflower .hb2-bf-l1 {
+  transform-box: view-box; transform-origin: 120px 84px;
+  transition: opacity .45s var(--ease-out), transform .5s var(--ease-out);
+}
+.hb2-blockflower .hb2-bf-l2, .hb2-blockflower .hb2-bf-l3, .hb2-blockflower .hb2-bf-l4 { opacity: 0; }
+.hb2-blockflower.s1 .hb2-bf-l1 { opacity: 0; transform: scale(.88); }
+.hb2-blockflower.s1 .hb2-bf-l2 { animation: hb2Pop .5s .12s var(--spring-soft) both; }
+.hb2-blockflower.s2 .hb2-bf-l2 { opacity: 0; animation: none; }
+.hb2-blockflower.s2 .hb2-bf-l3 { animation: hb2Pop .5s .12s var(--spring-soft) both; }
+.hb2-blockflower.s3 .hb2-bf-l4 { animation: hb2Rise .5s .1s var(--spring-soft) both; }
+.hb2-blockflower .hb2-bf-t1, .hb2-blockflower .hb2-bf-t2, .hb2-blockflower .hb2-bf-t3 { opacity: 0; }
+.hb2-blockflower.s1 .hb2-bf-t0 { opacity: 0; }
+.hb2-blockflower.s1 .hb2-bf-t1 { opacity: 1; }
+.hb2-blockflower.s2 .hb2-bf-t1 { opacity: 0; }
+.hb2-blockflower.s2 .hb2-bf-t2 { opacity: 1; }
+.hb2-blockflower.s3 .hb2-bf-t2 { opacity: 0; }
+.hb2-blockflower.s3 .hb2-bf-t3 { opacity: 1; }
+
+/* ---------- L6 biomedoor — 전시관 문 세 개 ---------- */
+.hb2-biomedoor .hb2-bd-panel { transform-box: view-box; transition: transform .62s var(--ease-out); }
+.hb2-biomedoor .hb2-bd-d0 .hb2-bd-panel { transform-origin: 14px 74px; }
+.hb2-biomedoor .hb2-bd-d1 .hb2-bd-panel { transform-origin: 88px 74px; }
+.hb2-biomedoor .hb2-bd-d2 .hb2-bd-panel { transform-origin: 162px 74px; }
+.hb2-biomedoor.o1 .hb2-bd-d0 .hb2-bd-panel,
+.hb2-biomedoor.o2 .hb2-bd-d1 .hb2-bd-panel,
+.hb2-biomedoor.o3 .hb2-bd-d2 .hb2-bd-panel { transform: scaleX(.13); }
+
+/* ---------- L7 beakpick — 부리 모양이 자기 먹이로 날아가 집는다 ---------- */
+.hb2-beakpick .hb2-bp-tool { opacity: 0; transition: opacity .22s var(--ease-out); }
+.hb2-beakpick.t-clip .hb2-bp-clip,
+.hb2-beakpick.t-tweez .hb2-bp-tweez,
+.hb2-beakpick.t-spoon .hb2-bp-spoon { opacity: 1; }
+/* 대기 위치(무대 위, dx 0) → 먹이 카드 중심(48·120·192 = dx -72·0·72)으로 .62s 이동.
+   내려앉는 dy 14px까지 함께 줘서 가운데 카드(dx 0)도 '다가가는' 움직임이 보인다.
+   이동 곡선은 가속→감속(ease-in-out)이라야 '날아간다'로 읽힌다 — expo-out(--ease-out)은
+   첫 150ms에 거의 다 가버려 순간이동처럼 보인다(실측 0.3s에 97% 도달). */
+.hb2-beakpick .hb2-bp-arm {
+  --bp-dx: 0px;
+  transform-box: view-box; transform-origin: 120px 16px;
+  transition: transform .62s cubic-bezier(.3, .05, .2, 1);
+}
+.hb2-beakpick.warp .hb2-bp-arm,
+.hb2-beakpick.warp .hb2-bp-food { transition: none; } /* 다시 시도할 때 대기 위치로 되돌리는 순간 */
+.hb2-beakpick.aim0 .hb2-bp-arm { --bp-dx: -72px; }
+.hb2-beakpick.aim2 .hb2-bp-arm { --bp-dx: 72px; }
+.hb2-beakpick.aim0 .hb2-bp-arm,
+.hb2-beakpick.aim1 .hb2-bp-arm,
+.hb2-beakpick.aim2 .hb2-bp-arm { transform: translate(var(--bp-dx), 14px); }
+.hb2-beakpick.dip .hb2-bp-arm { animation: hb2Peck .62s var(--ease-out); }
+/* 집힌 먹이는 부리를 따라 올라오고, 못 집은 먹이는 흐려진다 */
+.hb2-beakpick .hb2-bp-food {
+  transform-box: view-box;
+  transition: transform .34s var(--spring-soft), opacity .3s var(--ease-out);
+}
+.hb2-beakpick .hb2-bp-f0, .hb2-beakpick .hb2-bp-k0 { transform-origin: 48px 98px; }
+.hb2-beakpick .hb2-bp-f1, .hb2-beakpick .hb2-bp-k1 { transform-origin: 120px 98px; }
+.hb2-beakpick .hb2-bp-f2, .hb2-beakpick .hb2-bp-k2 { transform-origin: 192px 98px; }
+/* -14px면 먹이가 카드 입구까지 올라와 부리 끝에 맞물린다(부리 끝 = 뷰박스 y 66~74) */
+.hb2-beakpick .hb2-bp-food.hit { transform: translateY(-14px) scale(1.06); }
+.hb2-beakpick .hb2-bp-food.miss { opacity: .5; }
+.hb2-beakpick .hb2-bp-spark { transform-box: view-box; opacity: 0; }
+.hb2-beakpick .hb2-bp-spark.on { animation: hb2Pop .42s var(--spring-soft) both; }
+.hb2-beakpick .hb2-bp-res { opacity: 0; }
+.hb2-beakpick .hb2-bp-res.on { animation: hb2Pop .38s var(--spring-soft) both; }
+.hb2-beakpick .hb2-bp-res.on.ok { animation-delay: 0s; }
+.hb2-beakpick .hb2-bp-res.on.no { animation-delay: .18s; } /* 집은 쪽이 먼저, 못 집은 쪽이 뒤이어 */
+.hb2-beakpick .hb2-bp-res.ok { fill: #0B7E5D; }
+.hb2-beakpick .hb2-bp-res.no { fill: #C2255C; }
+
+/* ---------- L8 batwho — 특징 표가 한 줄씩 켜진다 ---------- */
+.hb2-batwho .hb2-bw-row { opacity: .12; transition: opacity .4s var(--ease-out); }
+.hb2-batwho.f1 .hb2-bw-r0,
+.hb2-batwho.f2 .hb2-bw-r1,
+.hb2-batwho.f3 .hb2-bw-r2,
+.hb2-batwho.f4 .hb2-bw-r3 { opacity: 1; animation: hb2Rise .45s var(--spring-soft) both; }
+
+/* ---------- L9 noplant — 버섯의 단서 세 줄 ---------- */
+.hb2-noplant .hb2-np-clue { opacity: 0; }
+.hb2-noplant .hb2-np-log { opacity: 0; transition: opacity .5s var(--ease-out); }
+.hb2-noplant .hb2-np-hypha { opacity: 0; stroke-dasharray: 46; stroke-dashoffset: 46; }
+.hb2-noplant .hb2-np-mush { transform-box: view-box; transform-origin: 104px 88px; }
+.hb2-noplant.c1 .hb2-np-mush { animation: hb2Press .5s var(--spring-soft); }
+.hb2-noplant.c1 .hb2-np-c0,
+.hb2-noplant.c2 .hb2-np-c1,
+.hb2-noplant.c3 .hb2-np-c2 { animation: hb2Rise .45s var(--spring-soft) both; }
+.hb2-noplant.c3 .hb2-np-log { opacity: 1; }
+.hb2-noplant.c3 .hb2-np-hypha { opacity: 1; animation: hb2Draw .85s .25s var(--ease-out) forwards; }
+
+/* ---------- L10 seedvault — 씨앗 서랍이 한 칸씩 열린다 ---------- */
+.hb2-seedvault .hb2-sv-front { transform-box: view-box; transition: transform .55s var(--ease-out); }
+.hb2-seedvault .hb2-sv-d0 .hb2-sv-front { transform-origin: 120px 58px; }
+.hb2-seedvault .hb2-sv-d1 .hb2-sv-front { transform-origin: 120px 96px; }
+.hb2-seedvault .hb2-sv-d2 .hb2-sv-front { transform-origin: 120px 134px; }
+.hb2-seedvault .hb2-sv-seeds { opacity: 0; transition: opacity .4s .2s var(--ease-out); }
+.hb2-seedvault.o1 .hb2-sv-d0 .hb2-sv-front,
+.hb2-seedvault.o2 .hb2-sv-d1 .hb2-sv-front,
+.hb2-seedvault.o3 .hb2-sv-d2 .hb2-sv-front { transform: scaleY(.26); }
+.hb2-seedvault.o1 .hb2-sv-d0 .hb2-sv-seeds,
+.hb2-seedvault.o2 .hb2-sv-d1 .hb2-sv-seeds,
+.hb2-seedvault.o3 .hb2-sv-d2 .hb2-sv-seeds { opacity: 1; }
+.hb2-seedvault .hb2-sv-t1, .hb2-seedvault .hb2-sv-t2, .hb2-seedvault .hb2-sv-t3 { opacity: 0; }
+.hb2-seedvault.o1 .hb2-sv-t0 { opacity: 0; }
+.hb2-seedvault.o1 .hb2-sv-t1 { opacity: 1; }
+.hb2-seedvault.o2 .hb2-sv-t1 { opacity: 0; }
+.hb2-seedvault.o2 .hb2-sv-t2 { opacity: 1; }
+.hb2-seedvault.o3 .hb2-sv-t2 { opacity: 0; }
+.hb2-seedvault.o3 .hb2-sv-t3 { opacity: 1; }
+
+/* ---------- L1(예비) scalezoom — 손등을 더 확대 ---------- */
+.hb2-scalezoom .hb2-sz-plain { transition: opacity .45s var(--ease-out); }
+.hb2-scalezoom .hb2-sz-ridge, .hb2-scalezoom .hb2-sz-cells {
+  transform-box: view-box; transform-origin: 148px 78px; opacity: 0;
+  transition: opacity .45s var(--ease-out), transform .58s var(--spring-soft);
+}
+.hb2-scalezoom .hb2-sz-ridge { transform: scale(.82); }
+.hb2-scalezoom .hb2-sz-cells { transform: scale(.46); }
+.hb2-scalezoom .hb2-sz-nuc { opacity: 0; }
+.hb2-scalezoom.s1 .hb2-sz-plain { opacity: 0; }
+.hb2-scalezoom.s1 .hb2-sz-ridge { opacity: 1; transform: scale(1); }
+.hb2-scalezoom.s2 .hb2-sz-ridge { opacity: .4; transform: scale(1.5); }
+.hb2-scalezoom.s2 .hb2-sz-cells { opacity: .85; transform: scale(.64); }
+.hb2-scalezoom.s3 .hb2-sz-ridge { opacity: 0; }
+.hb2-scalezoom.s3 .hb2-sz-cells { opacity: 1; transform: scale(1.16); }
+.hb2-scalezoom.s3 .hb2-sz-nuc { animation: hb2Pop .5s .28s var(--spring-soft) both; }
+.hb2-scalezoom .hb2-sz-t1, .hb2-scalezoom .hb2-sz-t2, .hb2-scalezoom .hb2-sz-t3 { opacity: 0; }
+.hb2-scalezoom.s1 .hb2-sz-t0 { opacity: 0; }
+.hb2-scalezoom.s1 .hb2-sz-t1 { opacity: 1; }
+.hb2-scalezoom.s2 .hb2-sz-t1 { opacity: 0; }
+.hb2-scalezoom.s2 .hb2-sz-t2 { opacity: 1; }
+.hb2-scalezoom.s3 .hb2-sz-t2 { opacity: 0; }
+.hb2-scalezoom.s3 .hb2-sz-t3 { opacity: 1; }
+
+/* ---------- 키프레임 ---------- */
+@keyframes hb2Pop { from { opacity: 0; transform: scale(.68); } to { opacity: 1; transform: scale(1); } }
+@keyframes hb2Rise { from { opacity: 0; transform: translateY(6px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes hb2Draw { to { stroke-dashoffset: 0; } }
+@keyframes hb2Press { 45% { transform: translateY(3px) scale(.98); } to { transform: translateY(0) scale(1); } }
+@keyframes hb2Jolt { 0%, 100% { transform: rotate(0); } 35% { transform: rotate(-2.4deg); } 70% { transform: rotate(2deg); } }
+/* 먹이 카드 위에 도착한 부리가 내려가 쪼는 동작 — dx는 유지한 채 dy만 오르내린다 */
+@keyframes hb2Peck {
+  0% { transform: translate(var(--bp-dx), 14px); }
+  34% { transform: translate(var(--bp-dx), 38px); }
+  54% { transform: translate(var(--bp-dx), 30px); }
+  74% { transform: translate(var(--bp-dx), 38px); }
+  100% { transform: translate(var(--bp-dx), 14px); }
+}
+@keyframes hb2Tilt {
+  0% { transform: translateY(0) rotate(0); }
+  18% { transform: translateY(0) rotate(-17deg); }
+  62% { transform: translateY(58px) rotate(-17deg); }
+  100% { transform: translateY(68px) rotate(0); }
+}
+@keyframes hb2Drop {
+  0% { transform: translateY(0); }
+  70% { transform: translateY(70px); }
+  84% { transform: translateY(64px); }
+  100% { transform: translateY(68px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hk-bio2 *, .hk-bio2 *::before, .hk-bio2 *::after {
+    animation-name: none !important;
+    transition-duration: .2s !important;
+    transition-property: opacity, filter !important;
+  }
+  /* 등장을 애니메이션에 기대던 요소들은 이동 없이 그대로 보이게(연출은 꺼도 내용은 남는다) */
+  .hb2-slidepress.dropped .hb2-sp-air,
+  .hb2-signalrun.yelled .hb2-sr-bang,
+  .hb2-signalrun.yelled .hb2-sr-fast,
+  .hb2-blockflower.s1 .hb2-bf-l2,
+  .hb2-blockflower.s2 .hb2-bf-l3,
+  .hb2-blockflower.s3 .hb2-bf-l4,
+  .hb2-beakpick .hb2-bp-res.on,
+  .hb2-beakpick .hb2-bp-spark.on,
+  .hb2-noplant.c1 .hb2-np-c0,
+  .hb2-noplant.c2 .hb2-np-c1,
+  .hb2-noplant.c3 .hb2-np-c2,
+  .hb2-scalezoom.s3 .hb2-sz-nuc { opacity: 1; }
+  .hb2-blockflower.s2 .hb2-bf-l2 { opacity: 0; }
+  .hb2-signalrun.stepped .hb2-sr-signal,
+  .hb2-noplant.c3 .hb2-np-hypha { stroke-dashoffset: 0; }
+  /* 덮개 유리는 이동 애니메이션 없이 최종 위치로 */
+  .hb2-slidepress.tilted .hb2-sp-cover,
+  .hb2-slidepress.dropped .hb2-sp-cover { transform: translateY(68px); }
+  /* 부리는 아예 움직이지 않고(대기 위치 고정) 성공·실패와 반짝임만 즉시 보여 준다 */
+  .hb2-beakpick .hb2-bp-arm,
+  .hb2-beakpick .hb2-bp-food { transform: none !important; }
+}

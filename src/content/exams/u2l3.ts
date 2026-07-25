@@ -1,14 +1,17 @@
 // II. 생물의 구성과 다양성 - 단원 종합 평가 풀: 레슨 3 생물의 구성 단계 (u2e41~u2e60)
 // 동물의 기관계와 식물의 조직계를 섞지 않고, 단계의 이름보다 포함 관계와 기능을 근거로 판단하게 한다.
+// [재매핑] 개념 레슨이 6→10레슨으로 재제작되어 문항별 lessonId를 내용 기준으로 다시 붙였다
+//   (파일 이름·문항 id·문항 내용·정답·해설 불변). 이 파일의 새 태그 분포: u2l5 20문항.
 import type { ExamItem } from "./types";
 import { bioOrgFlowExamFig } from "../../ui/examFigures";
 
-const L = "u2l3";
+// lessonId는 재제작된 새 10레슨 구조 기준 — 문항 내용으로 판정했으므로 파일 이름과 다를 수 있다.
+const L5 = "u2l5"; // 생물의 구성 단계
 
 export const POOL_U2L3: ExamItem[] = [
   {
     id: "u2e41",
-    lessonId: L,
+    lessonId: L5,
     type: "mcq",
     prompt: "생물의 몸을 이루며, 그 안에서 물질을 받아들이고 에너지를 얻는 등 <b>생명활동이 일어나는 가장 작은 기본 단위</b>는?",
     options: ["세포", "조직", "기관", "기관계", "개체"],
@@ -19,7 +22,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e42",
-    lessonId: L,
+    lessonId: L5,
     type: "mcq",
     prompt: "현미경으로 본 표본에서 비슷한 모양의 세포들이 촘촘히 모여 한 가지 보호 기능을 함께 수행하고 있었어요. 이 세포 무리가 해당하는 구성 단계는?",
     options: ["세포", "조직", "기관", "기관계", "개체"],
@@ -30,7 +33,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e43",
-    lessonId: L,
+    lessonId: L5,
     type: "mcq",
     prompt: "뇌를 조사했더니 신경 신호를 전달하는 부분, 지지하는 부분, 피가 흐르는 부분처럼 <b>서로 다른 여러 조직</b>이 함께 작용하고 있었어요. 뇌의 구성 단계는?",
     options: ["세포", "조직", "기관", "기관계", "개체"],
@@ -41,7 +44,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e44",
-    lessonId: L,
+    lessonId: L5,
     type: "mcq",
     prompt: "뇌, 척수, 온몸에 뻗은 신경처럼 서로 다른 기관들이 연결되어 자극을 받아들이고 명령을 전달해요. 이 전체에 해당하는 구성 단계는?",
     options: ["세포", "조직", "기관", "기관계", "개체"],
@@ -52,7 +55,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e45",
-    lessonId: L,
+    lessonId: L5,
     type: "mcq",
     prompt: "세포에서 시작한 여러 구성 단계가 모두 모여, 먹이를 얻고 자라며 번식하는 <b>완성된 하나의 생물</b>을 이루었어요. 이 단계의 이름은?",
     options: ["세포", "조직", "기관", "기관계", "개체"],
@@ -63,7 +66,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e46",
-    lessonId: L,
+    lessonId: L5,
     type: "mcq",
     prompt: "동물의 구성 요소 A, B, C를 조사했어요. A는 여러 세포로 이루어지고, B는 여러 A로 이루어지며, C는 여러 B가 함께 작용해요. A, B, C를 옳게 짝 지은 것은?",
     options: [
@@ -80,7 +83,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e47",
-    lessonId: L,
+    lessonId: L5,
     type: "mcq",
     prompt: "중학교 과학에서 사용하는 동물과 식물의 구성 단계를 비교한 설명으로 가장 옳은 것은?",
     options: [
@@ -97,7 +100,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e48",
-    lessonId: L,
+    lessonId: L5,
     type: "mcq",
     prompt: "자료에서 A는 여러 조직이 모여 보는 일을 하는 동물의 눈이고, B는 여러 조직계가 모여 물을 흡수하는 식물의 뿌리예요. A와 B의 구성 단계를 옳게 짝 지은 것은?",
     options: [
@@ -114,7 +117,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e49",
-    lessonId: L,
+    lessonId: L5,
     type: "mcq",
     prompt: "그림은 동물의 구성 단계를 작은 것부터 나타낸 거예요. ㉢과 ㉤에 들어갈 말을 차례대로 옳게 고른 것은?",
     figure: bioOrgFlowExamFig("animal", [2, 4]),
@@ -127,7 +130,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e50",
-    lessonId: L,
+    lessonId: L5,
     type: "mcq",
     prompt: "생물의 구성 단계에 대한 설명으로 옳은 것을 <b>보기</b>에서 모두 고른 것은?",
     bogi: [
@@ -144,7 +147,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e51",
-    lessonId: L,
+    lessonId: L5,
     type: "mcq",
     prompt: "그림은 식물의 구성 단계를 작은 것부터 나타낸 거예요. ㉡과 ㉢에 들어갈 말을 차례대로 옳게 고른 것은?",
     figure: bioOrgFlowExamFig("plant", [1, 2]),
@@ -157,7 +160,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e52",
-    lessonId: L,
+    lessonId: L5,
     type: "mcq",
     prompt: "자료에서 A는 여러 조직이 모여 정보를 처리하는 뇌이고, B는 A와 척수·신경 등이 함께 자극에 반응하는 전체예요. A와 B의 구성 단계를 옳게 짝 지은 것은?",
     options: ["A 기관, B 기관계", "A 조직, B 기관", "A 기관계, B 개체", "A 세포, B 조직", "A 조직계, B 기관계"],
@@ -168,7 +171,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e53",
-    lessonId: L,
+    lessonId: L5,
     type: "mcq",
     prompt: "한 학생이 '나무 한 그루는 여러 조직계가 모였으므로 기관이다.'라고 말했어요. 이 말을 가장 알맞게 고친 것은?",
     options: [
@@ -185,7 +188,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e54",
-    lessonId: L,
+    lessonId: L5,
     type: "multi",
     prompt: "생물의 구성 단계에 대한 설명 중 옳은 것을 <b>모두</b> 고르세요.",
     options: [
@@ -202,7 +205,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e55",
-    lessonId: L,
+    lessonId: L5,
     type: "num",
     prompt: "동물의 구성 단계를 작은 것부터 큰 것까지 <b>다섯 장의 카드</b>로 한 줄에 놓고, 이웃한 카드 사이마다 화살표를 하나씩 그었어요. 첫 카드에서 마지막 카드까지 화살표는 모두 몇 <b>개</b>일까요?",
     answer: "4",
@@ -214,7 +217,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e56",
-    lessonId: L,
+    lessonId: L5,
     type: "num",
     prompt: "관찰 기록에는 ① 생명활동의 기본 단위, ② 비슷한 단위들의 모임, ③ 여러 조직이 모인 구조, ④ 여러 기관의 협력 체계, ⑤ 완성된 한 생물이 하나씩 적혀 있어요. 서로 다른 구성 단계는 모두 몇 <b>단계</b>인가요?",
     answer: "5",
@@ -226,7 +229,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e57",
-    lessonId: L,
+    lessonId: L5,
     type: "word",
     prompt: "빈칸에 알맞은 말을 고르세요.<br><br>식물의 몸 바깥을 덮어 수분 손실을 줄이고 내부를 보호하는 조직들이 이어진 조직계를 ( )(이)라고 해요.",
     answer: "표피조직계",
@@ -237,7 +240,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e58",
-    lessonId: L,
+    lessonId: L5,
     type: "word",
     prompt: "빈칸에 알맞은 말을 고르세요.<br><br>뇌·척수·온몸의 신경이 함께 자극을 받아들이고 명령을 전달하는 기관계를 ( )(이)라고 해요.",
     answer: "신경계",
@@ -248,7 +251,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e59",
-    lessonId: L,
+    lessonId: L5,
     type: "word",
     prompt: "빈칸에 알맞은 말을 고르세요.<br><br>여러 구성 단계가 모두 모여 스스로 생활하는 완성된 하나의 생물을 ( )(이)라고 해요.",
     answer: "개체",
@@ -259,7 +262,7 @@ export const POOL_U2L3: ExamItem[] = [
   },
   {
     id: "u2e60",
-    lessonId: L,
+    lessonId: L5,
     type: "word",
     prompt: "빈칸에 알맞은 말을 고르세요.<br><br>세포→조직→기관→기관계→개체의 구성 단계를 사용하는 생물 무리는 ( )이에요.",
     answer: "동물",

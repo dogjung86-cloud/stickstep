@@ -1,10 +1,13 @@
 // II. 생물의 구성과 다양성 - 단원 종합 평가 풀: 레슨 6 생물다양성 보전과 실천 (u2e101~u2e120)
 // 서식지 보전·복원, 침입 외래 생물의 조건부 관리, 생태통로의 역할과 한계를 근거로 판단하게 한다.
+// [재매핑] 개념 레슨이 6→10레슨으로 재제작되어 문항별 lessonId를 내용 기준으로 다시 붙였다
+//   (파일 이름·문항 id·문항 내용·정답·해설 불변). 이 파일의 새 태그 분포: u2l10 20문항.
 import type { ExamItem } from "./types";
 import { foodWebArt } from "../../ui/bioFigures";
 import { bioPopulationBarsFig } from "../../ui/examFigures";
 
-const L = "u2l6";
+// lessonId는 재제작된 새 10레슨 구조 기준 — 문항 내용으로 판정했으므로 파일 이름과 다를 수 있다.
+const L10 = "u2l10"; // 생물다양성보전
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 const ximg = (file: string, alt: string): string =>
   `<img src="${IMG_BASE}exam/u2/${file}" alt="${alt}" style="display:block;width:100%;border-radius:14px" />`;
@@ -22,7 +25,7 @@ const foodPair = (): string =>
 export const POOL_U2L6: ExamItem[] = [
   {
     id: "u2e101",
-    lessonId: L,
+    lessonId: L10,
     type: "mcq",
     prompt: "그림처럼 숲 한가운데에 도로가 놓였을 때 생물다양성에 나타날 수 있는 가장 직접적인 영향은?",
     figure: ximg("forest-road.webp", "숲과 도로가 한 화면에 보이는 환경 장면"),
@@ -40,7 +43,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e102",
-    lessonId: L,
+    lessonId: L10,
     type: "mcq",
     prompt: "(가)와 (나)는 같은 숲과 도로를 같은 위치에서 본 장면이에요. (나)에 새로 설치한 구조의 주된 역할로 가장 옳은 것은?",
     figure: xpair(
@@ -63,7 +66,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e103",
-    lessonId: L,
+    lessonId: L10,
     type: "mcq",
     prompt: "(가)의 습지를 복원한 뒤 (나)와 같은 모습이 되었어요. 복원이 실제로 생물다양성 회복에 도움이 되었는지 판단할 때 가장 알맞은 추가 자료는?",
     figure: xpair(
@@ -86,7 +89,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e104",
-    lessonId: L,
+    lessonId: L10,
     type: "mcq",
     prompt: "그림처럼 서로 다른 식물의 씨앗을 낮은 온도와 건조한 환경에서 오래 보관하는 주된 까닭은?",
     figure: ximg("seed-bank.webp", "여러 모양의 씨앗이 든 용기를 선반에 보관한 실내 장면"),
@@ -104,7 +107,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e105",
-    lessonId: L,
+    lessonId: L10,
     type: "mcq",
     prompt: "두 먹이 관계에서 같은 생산자 한 종류의 수가 줄었어요. (나)가 (가)보다 변화의 영향이 작을 <b>가능성</b>이 있는 까닭은?",
     figure: foodPair(),
@@ -122,7 +125,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e106",
-    lessonId: L,
+    lessonId: L10,
     type: "mcq",
     prompt: "도로와 생태통로에 대한 설명으로 옳은 것을 <b>보기</b>에서 모두 고른 것은?",
     bogi: [
@@ -139,7 +142,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e107",
-    lessonId: L,
+    lessonId: L10,
     type: "mcq",
     prompt: "외국에서 들어온 수생 식물 A는 연못에서 소수만 관찰되고 토종 생물에 피해를 준 증거가 아직 없어요. 가장 과학적인 대응은?",
     options: [
@@ -156,7 +159,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e108",
-    lessonId: L,
+    lessonId: L10,
     type: "mcq",
     prompt: "오염되어 생물이 줄어든 하천을 복원하려고 해요. 가장 알맞은 계획은?",
     options: [
@@ -173,7 +176,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e109",
-    lessonId: L,
+    lessonId: L10,
     type: "mcq",
     prompt: "학생이 생활 속에서 생물다양성 보전에 가장 직접적으로 도움을 줄 수 있는 행동은?",
     options: [
@@ -190,7 +193,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e110",
-    lessonId: L,
+    lessonId: L10,
     type: "mcq",
     prompt: "지역 조사에서 개구리가 알을 낳던 작은 물웅덩이들이 사라지는 것이 확인되었어요. 지역 사회의 대응으로 가장 알맞은 것은?",
     options: [
@@ -207,7 +210,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e111",
-    lessonId: L,
+    lessonId: L10,
     type: "mcq",
     prompt: "도로 위 생태통로의 효과를 높이기 위해 함께 시행할 대책으로 가장 알맞은 것은?",
     options: [
@@ -224,7 +227,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e112",
-    lessonId: L,
+    lessonId: L10,
     type: "mcq",
     prompt: "생물다양성 보전에 대한 설명으로 옳은 것을 <b>보기</b>에서 모두 고른 것은?",
     bogi: [
@@ -241,7 +244,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e113",
-    lessonId: L,
+    lessonId: L10,
     type: "mcq",
     prompt: "그림은 한 지역에서 같은 방법으로 조사한 토종 생물 A의 개체 수예요. 자료를 바르게 해석한 것은?",
     figure: bioPopulationBarsFig([48, 39, 27, 21], ["조사 1", "조사 2", "조사 3", "조사 4"]),
@@ -259,7 +262,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e114",
-    lessonId: L,
+    lessonId: L10,
     type: "mcq",
     prompt: "여러 나라의 습지를 오가는 철새를 보호하는 방법으로 가장 알맞은 것은?",
     options: [
@@ -276,7 +279,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e115",
-    lessonId: L,
+    lessonId: L10,
     type: "multi",
     prompt: "생물다양성 보전 계획의 원칙으로 옳은 것을 <b>모두</b> 고르세요.",
     options: [
@@ -293,7 +296,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e116",
-    lessonId: L,
+    lessonId: L10,
     type: "num",
     prompt: "그림에서 토종 동물의 개체 수는 도로 설치 전 56마리, 3년 뒤 20마리예요. 이 기간에 개체 수는 모두 몇 <b>마리</b> 감소했나요?",
     figure: bioPopulationBarsFig([56, 44, 32, 20], ["도로 전", "1년 뒤", "2년 뒤", "3년 뒤"]),
@@ -306,7 +309,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e117",
-    lessonId: L,
+    lessonId: L10,
     type: "num",
     prompt: "복원한 습지를 같은 기간 조사했더니 양서류 4종, 수서 곤충 6종, 물새 3종, 수생 식물 7종이 확인되었고 서로 겹치는 종은 없었어요. 확인된 생물은 모두 몇 <b>종</b>인가요?",
     answer: "20",
@@ -318,7 +321,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e118",
-    lessonId: L,
+    lessonId: L10,
     type: "word",
     prompt: "빈칸에 알맞은 말을 고르세요.<br><br>연속된 숲이 도로와 개발지로 나뉘어 생물 무리 사이의 이동이 어려워지는 현상을 ( )(이)라고 해요.",
     answer: "서식지 단절",
@@ -329,7 +332,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e119",
-    lessonId: L,
+    lessonId: L10,
     type: "word",
     prompt: "빈칸에 알맞은 말을 고르세요.<br><br>다른 지역에서 들어온 뒤 빠르게 퍼져 토종 생물을 잡아먹거나 먹이를 빼앗아 생태계에 피해를 주는 생물을 ( )(이)라고 해요.",
     answer: "침입 외래 생물",
@@ -340,7 +343,7 @@ export const POOL_U2L6: ExamItem[] = [
   },
   {
     id: "u2e120",
-    lessonId: L,
+    lessonId: L10,
     type: "word",
     prompt: "빈칸에 알맞은 말을 고르세요.<br><br>다양한 식물의 씨앗을 낮은 온도와 건조한 환경에 보관해 미래의 재배·연구·복원에 활용하는 시설을 ( )(이)라고 해요.",
     answer: "종자은행",

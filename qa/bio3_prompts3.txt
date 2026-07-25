@@ -1,0 +1,14 @@
+# 중1 Ⅱ 재제작 발주 PHASE 3 — 실사용 피드백 반영 재발주.
+# 스타일 블록 B 정의는 qa/bio3_prompts.txt 상단에 있다(그 파일을 함께 읽을 것).
+#
+# 재발주 사유(사용자 피드백):
+#  · 식물세포를 사각형이 아니라 **육각형**으로 — 식물 조직 단면의 관용 표현이고, 둥근 동물세포와
+#    "각진 벽"의 대비가 훨씬 선명하게 읽힌다.
+#  · L2가 동물세포·식물세포를 나란히 비교하는 랩으로 바뀌므로 두 그림의 **크기·시점·선 굵기·조명이
+#    한 세트로 보여야** 한다(따로 그린 티가 나면 비교 랩에서 어색하다).
+
+[H0] file=public/bio3/figs/plant-cell.png (square 1:1, 스타일 B)
+A single plant cell drawn as a clear regular HEXAGON with flat top and bottom edges, filling most of the square frame. The outline is a thick, rigid, straight-edged hexagonal cell wall in a deeper green, and just inside it runs a separate thin membrane line following the same hexagonal path with a narrow gap between the two. Inside: one round nucleus with a slightly darker interior placed in the upper right area, four bean-shaped mitochondria with visible internal folds spread around, many small oval green disc-shaped chloroplasts distributed evenly through the pale green cytoplasm, and one large soft pale blue rounded vacuole occupying the middle-left. Every corner of the hexagon must be a crisp straight-edged angle so the cell reads as rigid and angular, clearly different from a soft round cell. Fresh green and cream palette, soft flat vector shading, gentle top-left key light, plain very light neutral background, centered with comfortable margin.
+
+[H1] file=public/bio3/figs/animal-cell.png (square 1:1, 스타일 B)
+A single animal cell drawn as a soft rounded irregular blob, filling a similar area of the square frame as a hexagonal plant cell would, so the two can sit side by side at matching scale. A single thin flexible outer membrane line only, with NO thick rigid wall and NO straight edges anywhere. Inside: one round nucleus with a slightly darker interior placed in the upper right area, four bean-shaped mitochondria with visible internal folds spread around, and pale cytoplasm with a few small colourless granules. Absolutely no green structures of any kind and no large blue vacuole. Warm pink and lavender palette, soft flat vector shading, gentle top-left key light, plain very light neutral background, centered with comfortable margin. Same line weight, same lighting direction and same illustration style as the plant cell it will be compared with.

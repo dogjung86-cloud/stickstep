@@ -15,6 +15,19 @@ import { finchSim } from "./steps/finchSim";
 import { microscope } from "./steps/microscope";
 import { dichotomKey } from "./steps/dichotomKey";
 import { biodiversityLab } from "./steps/biodiversityLab";
+// ── 중1 Ⅱ 재제작 랩 11종(2026-07-25) — 구작 orgLevels·finchSim·microscope·dichotomKey는 보존만 하고 쓰지 않는다 ──
+import { cellScaleLab } from "./steps/cellScaleLab";
+import { cellFactoryLab } from "./steps/cellFactoryLab";
+import { cellCompareLab } from "./steps/cellCompareLab";
+import { microscopeLab } from "./steps/microscopeLab";
+import { cellJobLab } from "./steps/cellJobLab";
+import { orgLadderLab } from "./steps/orgLadderLab";
+import { diversityLab } from "./steps/diversityLab";
+import { finchIslandLab } from "./steps/finchIslandLab";
+import { classifyLab } from "./steps/classifyLab";
+import { rankLab } from "./steps/rankLab";
+import { kingdomKeyLab } from "./steps/kingdomKeyLab";
+import { webStabilityLab } from "./steps/webStabilityLab";
 import { comic } from "./steps/comic";
 import { hook } from "./steps/hook";
 import { recap } from "./steps/recap";
@@ -522,6 +535,19 @@ const R: Record<string, StepRenderer> = {
   microscope,
   dichotomKey,
   biodiversityLab,
+  // 중1 Ⅱ 재제작 랩
+  cellScaleLab,
+  cellFactoryLab,
+  cellCompareLab,
+  microscopeLab,
+  cellJobLab,
+  orgLadderLab,
+  diversityLab,
+  finchIslandLab,
+  classifyLab,
+  rankLab,
+  kingdomKeyLab,
+  webStabilityLab,
 };
 
 export function getRenderer(type: string): StepRenderer | undefined {

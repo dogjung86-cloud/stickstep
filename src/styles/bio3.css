@@ -1,0 +1,41 @@
+/* bio3.css — 중1 Ⅱ. 생물의 구성과 다양성 재제작 전용 시트.
+   ui.css를 건드리지 않는 단원 전용 시트(수학 math.css 문법 계승) — main.ts에서 import.
+   공용 크롬(.pn-badge.bio · .b3-*)과 랩별 네임스페이스(.fil-* 등)를 함께 둔다.
+   새 랩 접두사는 반드시 ui.css·bio3*.css 양쪽 grep으로 선점 검사할 것(math.css 충돌 사고 교훈). */
+
+/* ---------- 공용 크롬 ---------- */
+.pn-badge.bio.on {
+  border-color: var(--subj-bio);
+  background: rgba(18, 184, 134, .10);
+  color: var(--subj-bio-deep);
+  border-style: solid;
+}
+.pn-badge.bio.on b { color: var(--subj-bio-deep); }
+
+/* 랩 조작부 — 무대 아래(연타하는 손이 무대를 가리지 않게). helper는 무대 위 유지. */
+.b3-controls, .fil-controls {
+  display: flex; flex-direction: column; gap: 10px; margin-top: 14px;
+}
+.b3-btn, .fil-btn {
+  display: block; width: 100%;
+}
+.b3-row {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px;
+}
+.b3-chip {
+  appearance: none; border: 1.5px solid var(--line); background: #fff;
+  border-radius: var(--r-md); padding: 10px 8px; font-size: 13.5px; font-weight: 700;
+  color: var(--ink); box-shadow: var(--sh-card); cursor: pointer;
+  transition: transform .14s var(--spring-soft), border-color .2s, background .2s;
+}
+.b3-chip:active { transform: scale(.965); }
+.b3-chip.on { border-color: var(--subj-bio); background: rgba(18, 184, 134, .10); color: var(--subj-bio-deep); }
+.b3-chip.done { opacity: .5; pointer-events: none; }
+
+/* 다크 무대 위 캔버스 공통 — 실기기에서 드래그가 페이지 스크롤로 새지 않게 touch-action 필수
+   (중2 VI .body-lab-canvas에서 확인된 공용 버그) */
+.fil-canvas, .b3-canvas { touch-action: none; display: block; width: 100%; }
+.fil-stage, .b3-stage { position: relative; }
+
+/* ---------- L7 finchIslandLab ---------- */
+.fil-controls .hook-q { margin-top: 2px; }

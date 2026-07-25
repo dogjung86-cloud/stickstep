@@ -1,9 +1,13 @@
 // II. 생물의 구성과 다양성 — 단원 종합 평가 풀: 레슨 4 생물다양성과 변이 (u2e61~u2e80)
 // 출판사 자료의 개념 범위만 참고하고 생물 소재·분포 수치·보기 문구·시각 자료는 새로 설계했다.
+// [재매핑] 개념 레슨이 6→10레슨으로 재제작되어 문항별 lessonId를 내용 기준으로 다시 붙였다
+//   (파일 이름·문항 id·문항 내용·정답·해설 불변). 이 파일의 새 태그 분포: u2l6 9문항 · u2l7 11문항.
 import type { ExamItem } from "./types";
 import { bioDiversityGridFig } from "../../ui/examFigures";
 
-const L = "u2l4";
+// lessonId는 재제작된 새 10레슨 구조 기준 — 문항 내용으로 판정했으므로 파일 이름과 다를 수 있다.
+const L6 = "u2l6"; // 생물다양성
+const L7 = "u2l7"; // 변이와 새로운 종
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 const ximg = (file: string, alt: string): string =>
   `<img src="${IMG_BASE}exam/u2/${file}" alt="${alt}" style="display:block;width:100%;border-radius:14px" />`;
@@ -11,7 +15,7 @@ const ximg = (file: string, alt: string): string =>
 export const POOL_U2L4: ExamItem[] = [
   {
     id: "u2e61",
-    lessonId: L,
+    lessonId: L6,
     type: "mcq",
     prompt: "한 해안 지역에 모래언덕, 바위 해안, 강물이 바다와 만나는 곳이 함께 있어 서로 다른 생물이 살아요. 이 자료가 가장 직접적으로 보여 주는 생물다양성의 모습은?",
     options: [
@@ -28,7 +32,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e62",
-    lessonId: L,
+    lessonId: L6,
     type: "mcq",
     prompt: "그림에서 같은 색 점은 같은 종류의 생물이에요. A와 B에는 생물 종류가 세 가지씩 있지만 분포가 달라요. 생물 종류의 다양함이 더 높다고 판단할 지역과 까닭은?",
     figure: bioDiversityGridFig([4, 4, 4], [10, 1, 1]),
@@ -46,7 +50,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e63",
-    lessonId: L,
+    lessonId: L7,
     type: "mcq",
     prompt: "사진의 곤충들은 모두 같은 종류의 무당벌레이지만 등 무늬의 수와 모양이 조금씩 달라요. 이 관찰을 가장 옳게 설명한 것은?",
     figure: ximg("ladybug-variation.webp", "등 무늬가 서로 다른 무당벌레 여러 마리를 같은 크기로 비교한 사진"),
@@ -64,7 +68,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e64",
-    lessonId: L,
+    lessonId: L6,
     type: "mcq",
     prompt: "생물다양성의 여러 모습에 대한 설명으로 옳은 것을 <b>보기</b>에서 모두 고른 것은?",
     bogi: [
@@ -81,7 +85,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e65",
-    lessonId: L,
+    lessonId: L7,
     type: "mcq",
     prompt: "사진은 같은 종류의 나방에서 관찰된 밝은 날개와 어두운 날개예요. 나무껍질이 점차 어두워진 환경에서 여러 세대가 지난 뒤 어두운 날개 개체가 많아졌어요. 가장 타당한 설명은?",
     figure: ximg("moth-variation.webp", "밝은 날개와 어두운 날개를 가진 같은 종류의 나방을 나란히 비교한 사진"),
@@ -99,7 +103,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e66",
-    lessonId: L,
+    lessonId: L7,
     type: "mcq",
     prompt: "사진의 세 딱정벌레는 겉모습에 공통점이 있지만 서로 다른 종류라고 확인되었어요. 이 곤충들의 차이를 ‘변이’라고 하지 않는 가장 중요한 까닭은?",
     figure: ximg("beetle-species-pair.webp", "서로 다른 형태를 지닌 딱정벌레 세 마리를 같은 방향에서 비교한 사진"),
@@ -117,7 +121,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e67",
-    lessonId: L,
+    lessonId: L7,
     type: "mcq",
     prompt: "다음 중 같은 종류 안의 변이를 조사하기 위한 방법으로 가장 알맞은 것은?",
     options: [
@@ -134,7 +138,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e68",
-    lessonId: L,
+    lessonId: L7,
     type: "mcq",
     prompt: "털이 촘촘한 개체와 성긴 개체가 함께 있던 같은 종류의 생물 무리가 추운 지역에서 여러 세대를 지냈어요. 뒤에 털이 촘촘한 개체가 많아졌다면 가장 알맞은 해석은?",
     options: [
@@ -151,7 +155,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e69",
-    lessonId: L,
+    lessonId: L6,
     type: "mcq",
     prompt: "두 지역의 생물다양성을 비교하려고 해요. 한 지역의 생물 이름 목록만 세는 것보다 더 알맞은 조사 계획은?",
     options: [
@@ -168,7 +172,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e70",
-    lessonId: L,
+    lessonId: L7,
     type: "mcq",
     prompt: "환경 변화와 같은 종류 안의 변이에 대한 설명으로 옳은 것을 <b>보기</b>에서 모두 고른 것은?",
     bogi: [
@@ -185,7 +189,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e71",
-    lessonId: L,
+    lessonId: L7,
     type: "mcq",
     prompt: "다음 중 ‘서로 다른 생물 종류 사이의 차이’에 해당하는 사례는?",
     options: [
@@ -202,7 +206,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e72",
-    lessonId: L,
+    lessonId: L6,
     type: "mcq",
     prompt: "한 산호초에서 산호, 작은 물고기, 불가사리, 새우가 함께 관찰되었어요. 이 사실만으로 가장 직접적으로 알 수 있는 것은?",
     options: [
@@ -219,7 +223,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e73",
-    lessonId: L,
+    lessonId: L7,
     type: "mcq",
     prompt: "같은 종류의 식물 열두 개체를 조사했더니 잎 너비가 조금씩 달랐어요. 이 조사 결과를 해석할 때 가장 주의해야 할 점은?",
     options: [
@@ -236,7 +240,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e74",
-    lessonId: L,
+    lessonId: L7,
     type: "multi",
     prompt: "<b>같은 종류 안의 변이</b>에 해당하는 사례를 모두 고르세요.",
     options: [
@@ -253,7 +257,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e75",
-    lessonId: L,
+    lessonId: L7,
     type: "multi",
     prompt: "환경이 달라진 뒤 생물 무리의 특징 분포가 여러 세대에 걸쳐 변하는 과정에 대한 설명으로 옳은 것을 모두 고르세요.",
     options: [
@@ -270,7 +274,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e76",
-    lessonId: L,
+    lessonId: L6,
     type: "num",
     prompt: "그림에서 같은 색 점은 같은 종류의 생물이에요. A 지역에 관찰된 생물은 모두 몇 종류인가요? (숫자만 입력)",
     figure: bioDiversityGridFig([3, 3, 3, 3], [7, 3, 2]),
@@ -283,7 +287,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e77",
-    lessonId: L,
+    lessonId: L6,
     type: "num",
     prompt: "그림에서 같은 색 점은 같은 종류의 생물이에요. B 지역의 생물 종류 수는 A 지역보다 몇 종류 더 많은가요? (숫자만 입력)",
     figure: bioDiversityGridFig([6, 4, 2], [4, 3, 3, 2]),
@@ -296,7 +300,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e78",
-    lessonId: L,
+    lessonId: L7,
     type: "word",
     prompt: "같은 종류의 들콩을 같은 밭에서 길렀는데 개체마다 씨의 무늬와 크기가 조금씩 달랐어요. 같은 종류의 개체 사이에 나타나는 이런 특징 차이를 무엇이라고 하나요?",
     bank: ["변이", "생물다양성", "생태계", "분류", "세포", "조직", "기관", "서식지", "광합성"],
@@ -307,7 +311,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e79",
-    lessonId: L,
+    lessonId: L6,
     type: "word",
     prompt: "한 지역의 생태계가 여러 형태인지, 생물 종류가 다양한지, 같은 종류 안의 특징 차이가 풍부한지를 함께 나타내는 말을 고르세요.",
     bank: ["변이", "생물다양성", "생태계", "분류", "세포", "조직", "기관", "서식지", "광합성"],
@@ -318,7 +322,7 @@ export const POOL_U2L4: ExamItem[] = [
   },
   {
     id: "u2e80",
-    lessonId: L,
+    lessonId: L6,
     type: "word",
     prompt: "강물과 바닷물이 만나는 곳에서 물의 소금기, 바닥 흙, 식물과 동물이 서로 영향을 주며 살아가요. 이처럼 생물과 환경이 관계를 맺는 하나의 단위를 고르세요.",
     bank: ["변이", "생물다양성", "생태계", "분류", "세포", "조직", "기관", "서식지", "광합성"],

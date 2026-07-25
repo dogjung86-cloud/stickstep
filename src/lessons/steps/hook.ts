@@ -61,6 +61,11 @@ import {
 import {
   renderBreadOnly, renderChewRice, renderPulse, renderDeepBreath, renderPeeColor, renderAfterRun,
 } from "./hookBody";
+// 중1 Ⅱ 재제작 훅 10종(2026-07-25) — 구작 hookBio.ts 6종은 보존만 하고 새 단원에선 쓰지 않는다.
+import {
+  renderCellDot, renderSlidePress, renderSignalRun, renderBlockFlower, renderBiomeDoor,
+  renderBeakPick, renderBatWho, renderNoPlant, renderSeedVault, renderScaleZoom,
+} from "./hookBio2";
 import {
   renderThreeCities, renderStiltHouse, renderSkyRoute, renderAvocado, renderMaasai, renderIloveNyc,
 } from "./hookSoc";
@@ -131,6 +136,8 @@ interface HookStep {
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
     | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
+    | "celldot" | "slidepress" | "signalrun" | "blockflower" | "biomedoor"
+    | "beakpick" | "batwho" | "noplant" | "seedvault" | "scalezoom"
     | "threecities" | "stilthouse" | "skyroute" | "avocado" | "maasai" | "ilovenyc"
     | "asiangames" | "monsoonrain" | "templetrip" | "halalmark" | "trainride" | "emptyclass" | "madein" | "fanchant"
     | "dawnsoccer" | "peakhike" | "frozenriver" | "cityfeed" | "skislope" | "trainborder" | "fourshirts"
@@ -235,6 +242,16 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "deepbreath") sceneCleanup = renderDeepBreath(scene, helper, s, finish, face);
   else if (s.scene === "peecolor") sceneCleanup = renderPeeColor(scene, helper, s, finish, face);
   else if (s.scene === "afterrun") sceneCleanup = renderAfterRun(scene, helper, s, finish, face);
+  else if (s.scene === "celldot") sceneCleanup = renderCellDot(scene, helper, s, finish, face);
+  else if (s.scene === "slidepress") sceneCleanup = renderSlidePress(scene, helper, s, finish, face);
+  else if (s.scene === "signalrun") sceneCleanup = renderSignalRun(scene, helper, s, finish, face);
+  else if (s.scene === "blockflower") sceneCleanup = renderBlockFlower(scene, helper, s, finish, face);
+  else if (s.scene === "biomedoor") sceneCleanup = renderBiomeDoor(scene, helper, s, finish, face);
+  else if (s.scene === "beakpick") sceneCleanup = renderBeakPick(scene, helper, s, finish, face);
+  else if (s.scene === "batwho") sceneCleanup = renderBatWho(scene, helper, s, finish, face);
+  else if (s.scene === "noplant") sceneCleanup = renderNoPlant(scene, helper, s, finish, face);
+  else if (s.scene === "seedvault") sceneCleanup = renderSeedVault(scene, helper, s, finish, face);
+  else if (s.scene === "scalezoom") sceneCleanup = renderScaleZoom(scene, helper, s, finish, face);
   else if (s.scene === "threecities") sceneCleanup = renderThreeCities(scene, helper, s, finish, face);
   else if (s.scene === "stilthouse") sceneCleanup = renderStiltHouse(scene, helper, s, finish, face);
   else if (s.scene === "skyroute") sceneCleanup = renderSkyRoute(scene, helper, s, finish, face);

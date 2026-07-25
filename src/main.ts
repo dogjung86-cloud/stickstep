@@ -1,6 +1,8 @@
 import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/ui.css";
+import "./styles/bio3.css"; // 중1 Ⅱ 재제작 전용 시트(공용 크롬) — 랩별 시트는 각 렌더러가 자체 import
+import "./styles/bio3-hook.css"; // 훅 10종(hookBio2)은 자체 import를 하지 않아 여기서 싣는다
 import "./styles/math.css";
 import "./styles/math2.css";
 import "./styles/body-hook.css";

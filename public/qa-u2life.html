@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>u2 life labs — 임시 눈검수 하니스</title>
+</head>
+<body>
+<div id="app" style="max-width:420px;margin:0 auto;padding:16px 18px 60px"></div>
+<script type="module">
+import "/src/styles/tokens.css";
+import "/src/styles/base.css";
+import "/src/styles/ui.css";
+import "/src/styles/bio3.css";
+import { orgLadderLab } from "/src/lessons/steps/orgLadderLab.ts";
+import { diversityLab } from "/src/lessons/steps/diversityLab.ts";
+import { webStabilityLab } from "/src/lessons/steps/webStabilityLab.ts";
+
+const api = {
+  lesson: { id: "x", unitId: "u2", title: "t", steps: [] },
+  index: 0, total: 1,
+  setCTA(l) { console.log("[cta]", l); },
+  enableCTA(l) { console.log("[cta:on]", l); },
+  disableCTA() {},
+  next() {},
+  openSheet() {},
+  recordQuiz(ok) { console.log("[quiz]", ok); },
+  snack(m) { console.log("[snack]", m); },
+};
+
+const app = document.getElementById("app");
+const mount = (id, fn, step) => {
+  const h = document.createElement("div");
+  h.id = id;
+  h.style.marginBottom = "48px";
+  app.appendChild(h);
+  fn(h, step, api);
+};
+mount("lab-oll", orgLadderLab, { type: "x", title: "생물의 구성 단계", lead: "세포에서 개체까지, 직접 쌓아 볼까요?" });
+mount("lab-dvs", diversityLab, { type: "x", title: "생물다양성", lead: "다양하다는 건 정확히 무엇일까요?" });
+mount("lab-wsl", webStabilityLab, { type: "x", title: "먹이 관계와 안정성", lead: "한 생물이 사라지면 어떻게 될까요?" });
+window.__labs = { app };
+</script>
+</body>
+</html>
