@@ -1,0 +1,122 @@
+/* 중2 Ⅵ 동물과 에너지 전용 시트. 네임스페이스 `an-`.
+   색은 tokens.css 변수(브랜드·중립)와 animalKit의 재질 상수만 쓴다.
+   ui.css·base.css는 건드리지 않는다(공유 시트 오염 금지). */
+
+/* 목표 칩 — 단원 톤. ui.css의 .pn-badge 기본형 위에 얹는다. */
+.pn-badge.anim.on {
+  border-color: var(--subj-body);
+  background: var(--subj-body-tint);
+  color: var(--subj-body-press);
+}
+.pn-badges.anim + .helper { --helper-bar: var(--subj-body); }
+
+/* 훅 장면 — 조작 버튼이 "누를 것"으로 읽히게 은은히 숨 쉰다(고빈도 아님, 훅당 1회). */
+.an-pulse { animation: anPulse 1.7s ease-in-out infinite; }
+@keyframes anPulse {
+  0%, 100% { border-color: var(--line); }
+  50% { border-color: color-mix(in srgb, var(--subj-body) 62%, var(--line)); }
+}
+.hook-scene.anhk svg { display: block; width: 100%; height: auto; }
+
+/* 무대·캔버스 */
+.an-stage { overflow: hidden; }
+.an-canvas {
+  display: block;
+  width: 100%;
+  /* 실기기에서 드래그가 페이지 스크롤로 새는 것을 막는다 — 캔버스 랩 필수 규칙. */
+  touch-action: none;
+  cursor: pointer;
+}
+.an-canvas.grabbing { cursor: grabbing; }
+
+/* 조작부 — 무대 아래(연타하는 손이 무대를 가리지 않게) */
+.an-controls { display: grid; gap: 10px; margin: 12px 0; }
+.an-controls.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.an-controls.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.an-controls.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.an-btn {
+  min-height: 46px;
+  padding: 0 8px;
+  border: 1px solid color-mix(in srgb, var(--subj-body) 26%, var(--n200));
+  border-radius: var(--r-md);
+  background: var(--grad-card);
+  color: var(--n800);
+  box-shadow: var(--sh-card);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 800;
+  line-height: 1.2;
+  transition: transform .16s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+}
+.an-btn:active { transform: scale(.965); }
+.an-btn.on {
+  border-color: var(--subj-body);
+  background: var(--subj-body-tint);
+  color: var(--subj-body-press);
+}
+.an-btn:disabled,
+.an-btn:disabled:active {
+  cursor: not-allowed; opacity: .48; transform: none;
+  border-color: var(--n200); background: var(--n100); color: var(--n500); box-shadow: none;
+}
+.an-btn .an-btn-sub { display: block; margin-top: 2px; font-size: 10.5px; font-weight: 700; opacity: .72; }
+
+/* 읽기 값 줄 */
+.an-readout {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 12px; border: 1px solid var(--n200); border-radius: var(--r-md);
+  background: var(--n0); box-shadow: var(--sh-card);
+  color: var(--n700); font-size: 13px; font-weight: 700;
+}
+.an-readout b { color: var(--subj-body-press); }
+
+.an-note {
+  padding: 12px 14px; border-radius: var(--r-md);
+  background: var(--subj-body-tint); color: var(--subj-body-press);
+  font-size: 12.5px; font-weight: 700; line-height: 1.55;
+}
+.an-note.calm { background: var(--n100); color: var(--n700); }
+
+/* 끌어다 놓는 토큰 트레이 (DOM 드래그를 쓰는 랩용) */
+.an-tray {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  padding: 10px; border: 1px dashed var(--n300); border-radius: var(--r-md);
+  background: var(--n50);
+}
+.an-tok {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 38px; padding: 0 12px;
+  border: 1px solid var(--n200); border-radius: 999px;
+  background: var(--n0); box-shadow: var(--sh-card);
+  color: var(--n800); font-size: 13px; font-weight: 800;
+  touch-action: none; user-select: none;
+}
+.an-tok:active { transform: scale(.965); }
+.an-tok.used { opacity: .35; pointer-events: none; }
+.an-tok .an-dot { width: 12px; height: 12px; border-radius: 50%; }
+
+/* 발주 라스터 + 한글 라벨 오버레이(하이브리드 표준) */
+.an-figwrap { position: relative; overflow: hidden; border-radius: var(--r-lg); background: var(--n0); box-shadow: var(--sh-card); }
+.an-fig { display: block; width: 100%; }
+.an-flabel {
+  position: absolute; transform: translate(-50%, -50%);
+  padding: 3px 8px; border-radius: 999px;
+  background: color-mix(in srgb, var(--n0) 92%, transparent);
+  color: var(--n800); font-size: 11.5px; font-weight: 800; white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(20, 30, 50, .16);
+}
+.an-flabel.dark { background: color-mix(in srgb, #0B1524 82%, transparent); color: #fff; }
+
+/* 정리 표(랩 아래 관찰 기록) */
+.an-tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12.5px; }
+.an-tbl th, .an-tbl td {
+  padding: 8px 6px; border-bottom: 1px solid var(--n200); text-align: center;
+}
+.an-tbl th { color: var(--n600); font-weight: 800; font-size: 11.5px; }
+.an-tbl td { color: var(--n800); font-weight: 700; }
+.an-tbl td.hit { color: var(--subj-body-press); }
+
+@media (prefers-reduced-motion: reduce) {
+  .an-btn, .an-tok { transition: none; }
+}

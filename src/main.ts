@@ -9,6 +9,7 @@ import "./styles/policy.css";
 import "./styles/stickavatar.css";
 import "./styles/tutor.css";
 import "./styles/game.css";
+import "./styles/plant2.css";
 import "./styles/soc.css";
 import "./styles/his.css";
 import "./styles/desktop.css"; // 데스크톱 셸(옵트인·≥1024px) — html.dt 게이트, 캐스케이드 최후순위

@@ -47,6 +47,10 @@ import {
   renderBedroomPlant, renderGerminating, renderFruitThinning,
 } from "./hookPlant";
 import {
+  renderSproutPot, renderStomaPeek, renderDarkBox, renderMixedTest,
+  renderGreenhouse, renderMangrove, renderHoneyFlower,
+} from "./hookPlant2";
+import {
   renderWinterShock, renderBalloonDoll, renderDeadClock, renderBrightPair,
   renderMultiTap, renderLabelPeek, renderCompassWire, renderEbike,
 } from "./hookElec";
@@ -123,6 +127,7 @@ interface HookStep {
     | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba"
     | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull"
     | "potmass" | "waterweed" | "windowplant" | "bedroomplant" | "germinating" | "fruitthinning"
+    | "sproutpot" | "stomapeek" | "darkbox" | "mixedtest" | "greenhouse" | "mangrove" | "honeyflower"
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
     | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
@@ -202,6 +207,13 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "bedroomplant") sceneCleanup = renderBedroomPlant(scene, helper, s, finish, face);
   else if (s.scene === "germinating") sceneCleanup = renderGerminating(scene, helper, s, finish, face);
   else if (s.scene === "fruitthinning") sceneCleanup = renderFruitThinning(scene, helper, s, finish, face);
+  else if (s.scene === "sproutpot") sceneCleanup = renderSproutPot(scene, helper, s, finish, face);
+  else if (s.scene === "stomapeek") sceneCleanup = renderStomaPeek(scene, helper, s, finish, face);
+  else if (s.scene === "darkbox") sceneCleanup = renderDarkBox(scene, helper, s, finish, face);
+  else if (s.scene === "mixedtest") sceneCleanup = renderMixedTest(scene, helper, s, finish, face);
+  else if (s.scene === "greenhouse") sceneCleanup = renderGreenhouse(scene, helper, s, finish, face);
+  else if (s.scene === "mangrove") sceneCleanup = renderMangrove(scene, helper, s, finish, face);
+  else if (s.scene === "honeyflower") sceneCleanup = renderHoneyFlower(scene, helper, s, finish, face);
   else if (s.scene === "wintershock") sceneCleanup = renderWinterShock(scene, helper, s, finish, face);
   else if (s.scene === "balloondoll") sceneCleanup = renderBalloonDoll(scene, helper, s, finish, face);
   else if (s.scene === "deadclock") sceneCleanup = renderDeadClock(scene, helper, s, finish, face);

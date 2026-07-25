@@ -6,7 +6,10 @@ import { icon } from "../core/icons";
 /** 단원 테마 원색 — ui.css/math*.css의 .gm-path-done.X 스트로크와 같은 값(열림 면·펄스·완료 체크가 공유). */
 const THEME_INK: Record<string, string> = {
   bio: "#12B886", heat: "#FF6B4A", matter: "#7C6BFF", force: "#F0A422", gas: "#1FB6D4", space: "#4A54E1",
-  chem: "#E64980", geo: "#A9713B", light: "#C838A6", atom: "#7CB024", plant: "#27864B", elec: "#EFB800", star: "#2E3A8C",
+  chem: "#E64980", geo: "#A9713B", light: "#C838A6", atom: "#7CB024", plant: "#27864B",
+  // body(중2 Ⅵ 동물과 에너지)가 빠져 있어 발바닥만 토스 블루 폴백이던 버그 수정(2026-07-26 사용자 적발).
+  // 값은 tokens.css --subj-body와 동일해야 한다 — 밴드·지형·노드 링은 그 토큰을 쓰는데 밑창만 이 표를 본다.
+  body: "#E23B4B", elec: "#EFB800", star: "#2E3A8C",
   num: "#0DA5C6", alge: "#7C5CE8", grph: "#E8547E", geom: "#F08C00", solid: "#2F9E44", data: "#364FC7",
   calc: "#9C36B5", ineq: "#A9631B", func: "#0CA678", prove: "#1971C2", sim: "#C2255C", dice: "#C92A2A",
   // 사회 — 대륙 여행 팔레트(2026-07-21 단원별 분리. Ⅰ만 기존 트래블 오렌지 유지)

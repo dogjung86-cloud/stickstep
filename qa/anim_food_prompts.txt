@@ -1,0 +1,50 @@
+# 중2 Ⅵ L1 식판 설계소 랩 — 음식 누끼 13장 → public/anim/food
+# 랩에서 캔버스 토큰으로 끌어다 놓는 아이콘. 투명 배경(PNG alpha) 필수.
+# 변환은 process-geo.mjs의 TRANSPARENT_DIRS(흰 배경 fill 생략, 알파 보존)가 맡는다.
+#
+# ── 스타일 블록 C (전 음식 아이콘 공용) ──
+# single food item icon, clean modern educational illustration, soft cel-shaded vector look
+# with gentle gradients and a subtle highlight, friendly appetizing palette, crisp clean edges,
+# viewed from a slight three-quarter angle, object fills most of the frame and is centered,
+# FULLY TRANSPARENT background (PNG alpha), no ground, no plate unless the prompt says so,
+# no drop shadow on the background, no text, no letters, no numbers, no labels, no watermark.
+# NOT a photograph, NOT on a table, NOT a scene — a single isolated object icon. Square 1:1.
+
+[0] file=public/anim/food/rice.png (square 1:1, 스타일 C)
+A single bowl of steamed white short-grain rice, heaped into a soft rounded dome above the rim of a small plain white ceramic bowl. Individual grains faintly visible on the surface.
+
+[1] file=public/anim/food/bread.png (square 1:1, 스타일 C)
+Two slices of soft white sandwich bread, one leaning against the other, golden-brown crust around a pale airy crumb.
+
+[2] file=public/anim/food/potato.png (square 1:1, 스타일 C)
+One whole raw potato with light brown speckled skin and a few shallow eyes, plus one half potato beside it showing the pale creamy cut face.
+
+[3] file=public/anim/food/meat.png (square 1:1, 스타일 C)
+A single thick cut of raw lean red meat, deep red muscle with a thin pale trimmed edge, no bone.
+
+[4] file=public/anim/food/egg.png (square 1:1, 스타일 C)
+One whole hard-boiled egg standing upright with a smooth white shell-less surface, next to one half egg lying cut-side up showing a bright round yellow yolk centered in firm white.
+
+[5] file=public/anim/food/tofu.png (square 1:1, 스타일 C)
+Two clean-cut cubes of fresh white soft tofu with smooth flat faces and slightly softened edges, one stacked partly behind the other.
+
+[6] file=public/anim/food/butter.png (square 1:1, 스타일 C)
+A rectangular block of pale yellow butter with one square pat cut and resting beside it, smooth glossy cut faces.
+
+[7] file=public/anim/food/peanut.png (square 1:1, 스타일 C)
+A small loose heap of shelled peanuts with papery red-brown skins, about eight nuts, some split into halves showing the pale cream inside.
+
+[8] file=public/anim/food/apple.png (square 1:1, 스타일 C)
+One whole ripe red apple with a short brown stem and one small green leaf, glossy skin with a soft highlight.
+
+[9] file=public/anim/food/carrot.png (square 1:1, 스타일 C)
+One whole orange carrot with a tapered tip, faint horizontal surface rings, and a tuft of feathery green leaves at the top.
+
+[10] file=public/anim/food/anchovy.png (square 1:1, 스타일 C)
+A small loose pile of dried tiny silver-white anchovies, roughly ten little fish lying across each other, each with a visible dark eye and a silvery stripe.
+
+[11] file=public/anim/food/milk.png (square 1:1, 스타일 C)
+One tall clear drinking glass filled to the top with plain white milk, opaque and creamy, with a soft highlight along the glass edge.
+
+[12] file=public/anim/food/water.png (square 1:1, 스타일 C)
+One tall clear drinking glass filled two-thirds with plain clear water, a visible flat water surface line and a soft blue-tinted highlight along the glass, no ice, no straw.

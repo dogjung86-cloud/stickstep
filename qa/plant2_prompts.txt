@@ -1,0 +1,112 @@
+# 중2 Ⅴ 식물과 에너지(v2) 발주 프롬프트 — 3종류
+#  · 스타일 A: 스틱맨 개념 컷 9장 → public/plant2/cuts (concept 첫 블록, 가로 4:3)
+#  · 스타일 B: 식물·실험 교육 일러스트 9장 → public/plant2/figs (라벨은 앱이 SVG로 얹으므로 글자 금지)
+#  · 스타일 C: 저장 부위 재료 8장 → public/plant2/items (정사각, binSort 칩용)
+# 전부 이미지 안 글자·숫자·알파벳·기호 절대 금지.
+
+# ══════════════════════════════════════════════════════════════════
+# ── 스타일 블록 A (스틱맨 개념 컷 — 9장, public/plant2/cuts) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, fresh leaf green, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+
+[0] file=public/plant2/cuts/g2u5l1.png (landscape 4:3, 스타일 A)
+A stick figure holds a big round magnifying glass right up against a single large leaf held in the other hand, one eye drawn wide with delight behind the lens. Through the circular lens the leaf is revealed to be packed with many small oval grains crowded together like eggs in a carton. Only those grains inside the lens are fresh leaf green; everything else pure black and white.
+
+[1] file=public/plant2/cuts/g2u5l2.png (landscape 4:3, 스타일 A)
+A stick figure stands at a huge leaf that is drawn like a factory building with a small open hatch door on its underside. The figure pushes a small crate through the hatch with both hands, while a thin hose runs up from the ground into the leaf's stalk. The big leaf is the only fresh leaf green element; everything else pure black and white.
+
+[2] file=public/plant2/cuts/g2u5l2b.png (landscape 4:3, 스타일 A)
+A stick figure sits threading many identical small round beads onto a long string, making a long beaded chain that coils neatly on the floor beside them. A loose pile of the same scattered beads sits on the other side, clearly harder to carry. Only the threaded chain is fresh leaf green; everything else pure black and white.
+
+[3] file=public/plant2/cuts/g2u5l3.png (landscape 4:3, 스타일 A)
+A stick figure squeezes a dropper over a flat leaf lying on a small dish, and where the drop lands a dark blotch is spreading across the leaf. The figure leans in with wide surprised eyes and a raised eyebrow. The dark blotch stays black; only the leaf itself is fresh leaf green; everything else pure black and white.
+
+[4] file=public/plant2/cuts/g2u5l4.png (landscape 4:3, 스타일 A)
+A stick figure stands at a two-pan balance scale. On each pan sit three identical small boxes stacked the same way, and the figure is placing one single extra box onto the right pan only, tilting it down. The figure looks focused, one hand still on the extra box. Only that single extra box is fresh leaf green; everything else pure black and white.
+
+[5] file=public/plant2/cuts/g2u5l5.png (landscape 4:3, 스타일 A)
+A stick figure stands at a control panel with three big round dials in a row, hands on the third dial which is turned all the way up past the others. Behind the panel a potted plant droops sadly with its leaves hanging down and one leaf falling off. The figure glances back over its shoulder, alarmed. Only the drooping plant is fresh leaf green; everything else pure black and white.
+
+[6] file=public/plant2/cuts/g2u5l6.png (landscape 4:3, 스타일 A)
+Night scene: a stick figure sleeps curled on a simple bed with a crescent moon in the window, and beside the bed a potted plant sits on a small table. Small round puff marks rise from the plant, showing it is quietly working while everyone sleeps. Only the potted plant is fresh leaf green; everything else pure black and white.
+
+[7] file=public/plant2/cuts/g2u5l6b.png (landscape 4:3, 스타일 A)
+A stick figure stands between two large open crates and hands a small round parcel from the left crate into the right crate, while a second identical parcel travels back the other way along a simple loop line drawn between the two crates. The figure looks busy and cheerful. Only the left crate is fresh leaf green; everything else pure black and white.
+
+[8] file=public/plant2/cuts/g2u5l7.png (landscape 4:3, 스타일 A)
+A stick figure stands on a big leaf at the top of a tall plant stem and pushes small boxes onto a slide that runs down along the stem to the roots below, where the boxes pile up neatly. One box also travels up a short branch toward a flower at the top. Only the big leaf at the top is fresh leaf green; everything else pure black and white.
+
+# ══════════════════════════════════════════════════════════════════
+# ── 스타일 블록 B (식물·실험 교육 일러스트 — 9장, public/plant2/figs) ──
+# clean modern educational science illustration, textbook diagram style, soft flat vector shading
+# with gentle 3-stop gradients and a soft top-left key light, smooth rounded organic forms, clear
+# separation between parts, calm natural palette (fresh greens for plant tissue, soft neutral glass
+# and warm wood for lab surfaces), gentle contact shadow, thin darker outline per material,
+# clean white or very light background. absolutely no text, no letters, no numbers, no arrows,
+# no labels, no symbols anywhere in the image — labels are added later by the app.
+# NOT photorealistic stock photo, NOT 3D render, NOT anime.
+
+[9] file=public/plant2/figs/leaf-cell-micro.png (square 1:1, 스타일 B)
+A microscope field of view: a bright circular field showing plant leaf cells packed together like a tile mosaic, each cell a rounded rectangle outlined by a distinct cell wall, and inside every cell many small green oval grains scattered against a pale interior. The circle edge fades softly to a dark vignette. Clean, crisp, educational.
+
+[10] file=public/plant2/figs/stoma-micro.png (square 1:1, 스타일 B)
+A microscope field of view of a leaf's lower skin surface: many flat irregular jigsaw-shaped cells, and scattered among them several pairs of kidney-bean-shaped guard cells that face each other to form a small oval opening between them. Two or three of the openings are wide open, one is nearly closed. Soft green tones, dark vignette at the circle edge.
+
+[11] file=public/plant2/figs/sensor-setup.png (landscape 4:3, 스타일 B)
+A laboratory bench setup: a clear sealed transparent container with a lid, holding a small leafy lettuce seedling planted in soil. Two slim probe rods pass down through the lid into the container's air space, each connected by a thin cable to a small blank-screened handheld device on the bench. A compact desk lamp on a stand shines down onto the container from above.
+
+[12] file=public/plant2/figs/darkbox-pair.png (landscape 4:3, 스타일 B)
+Two identical potted lettuce seedlings stand side by side on a bench in bright daylight. The right one is completely covered by a plain matte black box that sits over it like a lid, hiding it entirely; the left one stands uncovered in the light. Clean simple background, soft shadows.
+
+[13] file=public/plant2/figs/ethanol-bath.png (portrait 3:4, 스타일 B)
+A tall glass beaker filled with steaming hot water sits on a bench, with wisps of steam rising. Standing inside the beaker is a slim glass test tube holding clear liquid and one small flat leaf piece; the liquid in the test tube has turned pale green while the leaf piece has become pale and washed out. Warm soft lighting, clean background.
+
+[14] file=public/plant2/figs/iodine-pair.png (landscape 4:3, 스타일 B)
+Two shallow round glass petri dishes side by side on a white surface. The left dish holds a flat leaf piece stained a deep blue-purple colour; the right dish holds a leaf piece of the same size and shape that stayed a plain pale yellowish-tan. Clean top-down three-quarter view, soft shadows.
+
+[15] file=public/plant2/figs/lamp-distance.png (landscape 4:3, 스타일 B)
+Three identical clear sealed containers, each holding an identical small lettuce seedling, stand in a row on a long bench. A desk lamp shines on each container from a clearly different distance: very close to the left one, medium distance to the middle one, far away from the right one. The lamps are identical in size and shape.
+
+[16] file=public/plant2/figs/greenhouse-in.png (landscape 4:3, 스타일 B)
+Interior of a bright glass greenhouse: rows of leafy green plants in planting beds receding toward the back, a clear glass roof with visible frame beams overhead, and a small wall-mounted device box on one post. Clean, calm, softly lit, no people.
+
+[17] file=public/plant2/figs/mangrove-roots.png (landscape 4:3, 스타일 B)
+A mangrove tree growing in shallow coastal water: a leafy crown above, a sturdy trunk, and many slender pencil-like roots sticking straight up out of the muddy water surface all around the trunk, plus arching stilt roots entering the water. Calm water surface, soft daylight.
+
+# ══════════════════════════════════════════════════════════════════
+# ── 스타일 블록 C (저장 부위 재료 — 8장, public/plant2/items) ──
+# clean educational illustration of a single food item, centred, soft flat vector shading with
+# gentle 3-stop gradients and a soft top-left key light, natural true-to-life colours, gentle
+# contact shadow beneath, thin darker outline, plain pure white background, nothing else in frame.
+# absolutely no text, no letters, no numbers, no labels, no symbols. NOT photorealistic stock
+# photo, NOT 3D render. Square 1:1.
+
+[18] file=public/plant2/items/sweetpotato.png (square 1:1, 스타일 C)
+One whole sweet potato: an elongated tuber with tapered ends and smooth reddish-purple skin, lying horizontally.
+
+[19] file=public/plant2/items/potato.png (square 1:1, 스타일 C)
+One whole potato: a rounded lumpy tuber with pale brown skin and a few shallow eyes, lying still.
+
+[20] file=public/plant2/items/sugarcane.png (square 1:1, 스타일 C)
+Two cut lengths of sugarcane stalk lying side by side: thick jointed canes with visible ring-shaped nodes and pale yellow-green skin.
+
+[21] file=public/plant2/items/grape.png (square 1:1, 스타일 C)
+One bunch of purple grapes with a short green stem and a couple of leaves, berries plump and glossy.
+
+[22] file=public/plant2/items/soybean.png (square 1:1, 스타일 C)
+A small heap of dried soybeans: round pale-yellow beans piled together, with one fuzzy green pod split open beside the heap showing beans inside.
+
+[23] file=public/plant2/items/sesame.png (square 1:1, 스타일 C)
+A small heap of sesame seeds: many tiny flat teardrop-shaped pale seeds piled in a low mound, with a few loose seeds scattered around.
+
+[24] file=public/plant2/items/carrot.png (square 1:1, 스타일 C)
+One whole carrot: a tapered orange root with fine ring lines and a tuft of feathery green leaves at the top.
+
+[25] file=public/plant2/items/peanut.png (square 1:1, 스타일 C)
+Two peanuts in their tan wrinkled shells lying beside one shelled peanut kernel with reddish-brown skin.

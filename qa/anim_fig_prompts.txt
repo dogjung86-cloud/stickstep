@@ -1,0 +1,59 @@
+# 중2 Ⅵ 동물과 에너지 — 해부 일러스트 15장 → public/anim/figs
+# 하이브리드 방침: 발주 라스터는 **형태·질감만** 담당하고, 한글 라벨·화살표·수치는
+# unit6animal.ts / animalFigures.ts의 SVG 오버레이가 얹는다.
+# → 그림 안에 글자·화살표·지시선(leader line)이 들어가면 실격이다(재발주).
+#
+# ── 스타일 블록 B (전 해부도 공용) ──
+# clean modern educational biology illustration for a middle-school science textbook,
+# soft cel-shaded vector look with gentle smooth gradients, friendly approachable palette,
+# anatomically correct, crisp clean edges, subtle soft shadow, pure white background,
+# centered composition with generous margin on all sides.
+# absolutely no text, no letters, no numbers, no words, no labels, no captions,
+# no arrows, no leader lines, no pointer lines, no callouts, no measurement marks,
+# no watermark. NOT a photograph, NOT gory, NOT bloody, NOT horror, NOT a medical
+# textbook cadaver photo — friendly and clean like a school poster.
+
+[0] file=public/anim/figs/digestsys.png (portrait 3:4, 스타일 B)
+The complete human digestive system shown inside a simplified pale translucent torso silhouette, front view, upright. Visible in correct anatomical position and connected in order from top to bottom: mouth cavity, a long esophagus tube running down, a curved J-shaped stomach on the upper left, a long tightly coiled small intestine filling the center of the abdomen, a wide frame-shaped large intestine wrapping around the coiled small intestine, ending at the bottom. Also shown clearly separate from that tube: a pair of salivary glands beside the mouth, a large brown-red liver in the upper right overlapping the stomach, a small green gallbladder tucked under the liver, and a pale tapered pancreas lying behind the stomach. Warm pink and coral organ tones, liver deeper red-brown, gallbladder green. Everything clean and separated enough that each organ is individually distinguishable.
+
+[1] file=public/anim/figs/villiwall.png (landscape 4:3, 스타일 B)
+A cutaway wedge block of the inner wall of the small intestine, shown as a three-dimensional slab cut open. The inner surface rises into several large rounded circular folds like rolling ridges, and the entire surface of those folds is densely carpeted with thousands of tiny finger-like projections standing upright, packed close together like a thick velvet pile. The cut face on the near side shows the layered thickness of the wall. Warm salmon-pink tones, the finger-like projections slightly lighter than the wall beneath.
+
+[2] file=public/anim/figs/villiinside.png (portrait 3:4, 스타일 B)
+A single finger-like intestinal projection shown greatly enlarged and cut open lengthwise to reveal what is inside. Its outer surface is a neat single layer of tall column-shaped cells. Inside the core, a dense mesh network of very fine looping blood vessels wraps around the whole interior, drawn in red, and running straight up the very center is one single wider blind-ended tube drawn in pale cream white, closed at its top tip. The fine red vessel mesh and the single central cream tube must be clearly distinguishable from each other. Soft pink outer tissue.
+
+[3] file=public/anim/figs/heartcut.png (landscape 4:3, 스타일 B)
+A human heart cut open in a front-facing coronal section so all four internal chambers are visible at once as hollow spaces. The two upper chambers are smaller with visibly thin muscular walls; the two lower chambers are larger with visibly thick muscular walls, and the wall of the lower left chamber is clearly the thickest of all. Between each upper and lower chamber sits a thin flap valve, and another thin flap valve sits where each lower chamber opens into its outgoing great vessel at the top. Large vessels enter and leave at the top of the heart. Deep red-pink muscle, chamber interiors darker, valve flaps pale cream. Whole heart shown, no arrows, no flow marks.
+
+[4] file=public/anim/figs/vessels3.png (landscape 4:3, 스타일 B)
+Three blood vessels shown side by side in a row, each as a short cut-open tube segment so the wall thickness and hollow interior are both visible. Left: a vessel with a very thick, sturdy, muscular wall and a round open interior, drawn in bright red. Center: an extremely thin vessel, the wall only a single delicate cell layer thick, narrow, drawn in soft purple-pink. Right: a vessel with a visibly thinner and floppier wall than the left one, wider slack interior, and one pair of thin pocket-shaped flap valves visible inside its lumen, drawn in blue. All three at the same scale, evenly spaced, clean white space between them.
+
+[5] file=public/anim/figs/bloodtube.png (portrait 3:4, 스타일 B)
+A single glass test tube standing upright in a simple wooden rack, filled with blood that has fully separated into two distinct horizontal layers. The upper layer, taking a little more than half the height, is a clear translucent pale straw-yellow liquid. The lower layer is a dense opaque dark red packed mass with a flat sharp boundary between the two layers. Clean glassware highlight along the tube. Nothing else in the frame.
+
+[6] file=public/anim/figs/bloodcells.png (landscape 4:3, 스타일 B)
+The inside of a blood vessel seen cut open lengthwise, filled with flowing blood cells of three clearly different kinds. Most numerous by far: many bright red flattened discs with a dimpled sunken center, like tiny doughnuts without a hole. Much larger and only two of them: pale bluish-white round lumpy cells, each with a big dark purple lobed nucleus clearly visible inside. Smallest and few: tiny pale irregular chips with jagged outlines and no nucleus. The size difference must read at a glance — the pale lumpy cells clearly the biggest, the tiny chips clearly the smallest. Soft pink vessel wall around them.
+
+[7] file=public/anim/figs/circulationbase.png (portrait 3:4, 스타일 B)
+A simplified pale human body silhouette, front view, with the circulatory system inside. At the center of the chest a small stylized heart. Above it a pair of lungs. From the heart, one large vessel network branches out and spreads through the head, both arms, the trunk and both legs, ending in fine mesh in the limbs; a separate short vessel pair loops between the heart and the lungs only. Half of the vessel network is drawn in red and half in blue as two clearly separate interwoven trees. No arrows, no flow marks, no labels — just the vessel anatomy.
+
+[8] file=public/anim/figs/respsys.png (portrait 3:4, 스타일 B)
+The human respiratory system inside a simplified pale translucent chest silhouette, front view. From the top: nose and nasal cavity, then a single straight ribbed windpipe running down the center, which splits into two branches, one entering each lung. Inside each lung the branches divide again and again into a finer and finer branching tree, like an upside-down tree. A curved cage of rib bones arcs around the outside of both lungs, and a broad dome-shaped muscular sheet sits underneath the lungs forming the floor of the chest. Soft pink lungs, cream-white ribs, pale muscle sheet.
+
+[9] file=public/anim/figs/alveoli.png (landscape 4:3, 스타일 B)
+The very end of a fine airway branch opening into a cluster of many tiny thin-walled round sacs, bunched together exactly like a bunch of grapes. One sac at the front is cut open to show its hollow interior and its extremely thin wall. Wrapping tightly around the outside of the whole cluster is a dense net of very fine blood vessels, drawn half red and half blue, hugging every sac. Pale pink sacs, translucent and delicate.
+
+[10] file=public/anim/figs/breathmodel.png (landscape 4:3, 스타일 B)
+A simple school science model apparatus made of everyday objects, standing on a desk: a clear rigid plastic cup turned upside down with its bottom cut away, a bent drinking straw inserted through a sealed hole in the closed top of the cup and splitting into two short branches inside, each branch capped with a small deflated rubber balloon hanging inside the cup, and a large flat sheet of rubber stretched taut across the open bottom of the cup and secured around the rim. The rubber sheet is drawn flat and relaxed. Clean product-illustration look, everything clearly readable as real classroom objects.
+
+[11] file=public/anim/figs/excretesys.png (portrait 3:4, 스타일 B)
+The human urinary system inside a simplified pale translucent lower-torso silhouette, front view. Two bean-shaped organs sit high on either side of the spine at the back of the abdomen, each with a thick red vessel and a thick blue vessel attached at its inner notch. From the bottom of each bean-shaped organ a long slender tube runs downward and inward, both tubes ending in a single rounded muscular sac low in the pelvis, from which one short tube exits at the bottom. Warm red-brown organs, pale tubes.
+
+[12] file=public/anim/figs/kidneycut.png (landscape 4:3, 스타일 B)
+A single bean-shaped kidney cut in half lengthwise, the cut face turned toward the viewer, showing three clearly different internal zones: a smooth even outer rim layer, an inner layer made of several triangular striated wedge shapes pointing inward, and at the center an open pale branching funnel-shaped hollow that collects into the tube leaving at the inner notch. A thick red vessel and a thick blue vessel enter at the notch. Warm red-brown tones with the central hollow pale cream.
+
+[13] file=public/anim/figs/nephron.png (landscape 4:3, 스타일 B)
+A single kidney functional unit shown greatly enlarged and isolated on white. At the upper left, a tight ball of tangled looping capillaries like a small yarn ball, cupped inside a round double-walled cup that opens into a tube. From that cup a long tube leaves and winds in loops and a long hairpin bend before draining away at the right. Wrapped loosely around the whole winding tube along its entire length is a separate net of fine blood vessels. The yarn-ball of capillaries, the cup around it, the winding tube, and the surrounding vessel net must each be clearly distinguishable as separate structures. Tube pale yellow-cream, vessels red and blue.
+
+[14] file=public/anim/figs/mitochondria.png (landscape 4:3, 스타일 B)
+A single animal cell shown cut open, round and soft-edged, with a large round nucleus set off-center. Floating in the cytoplasm are several bean-shaped organelles, and one of them is shown greatly enlarged in the foreground, cut open to reveal its double outer membrane and the deeply folded shelf-like inner membrane running through its interior. Soft warm cream and amber cell tones, the bean-shaped organelles a deeper orange so they stand out.

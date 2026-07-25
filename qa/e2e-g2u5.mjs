@@ -73,6 +73,7 @@ const stepData = (index) => page.evaluate((i) => {
     mode: step.mode,
     answer: step.answer,
     items: step.items,
+    panelCount: step.panels?.length ?? 0,
     bins: step.bins,
     spots: step.spots,
     hotspotMode: step.mode,
@@ -223,51 +224,79 @@ const figTabs = async () => {
 };
 
 const leafFactory = async () => {
-  const metrics = await page.evaluate(() => {
-    const buttons = [...document.querySelectorAll(".screen.active .leaf-factory-inputs .plant-btn")];
-    return buttons.map((button) => {
-      const rect = button.getBoundingClientRect();
-      const style = getComputedStyle(button);
-      return { width: rect.width, height: rect.height, fontSize: style.fontSize, text: button.textContent?.trim() };
-    });
-  });
-  if (metrics.length !== 3 || metrics.some((item) => Math.abs(item.height - 48) > 0.5 || item.fontSize !== "13px")) {
-    throw new Error(`광합성 입력 버튼 규격 불일치: ${JSON.stringify(metrics)}`);
-  }
-  if (Math.max(...metrics.map((item) => item.width)) - Math.min(...metrics.map((item) => item.width)) > 1) {
-    throw new Error(`광합성 입력 버튼 너비가 같지 않아요: ${JSON.stringify(metrics)}`);
-  }
-  if (CAPTURE) {
-    await page.locator(`${active} .leaf-factory-inputs`).scrollIntoViewIfNeeded();
-    await capture("lab-input-buttons");
-  }
-  await clickBtn("^물$", CAPTURE ? 760 : 720);
-  if (CAPTURE) {
-    await page.locator(`${active} .plant-stage`).scrollIntoViewIfNeeded();
-    await capture("lab-water-route");
-  }
-  await clickBtn("^이산화 탄소$", CAPTURE ? 760 : 720);
-  if (CAPTURE) {
-    await capture("lab-carbon-route");
-  }
-  await clickBtn("^빛$", CAPTURE ? 760 : 720);
-  if (CAPTURE) {
-    await capture("lab-light-route");
-  }
-  await clickBtn("광합성 시작", 1000);
+  // 랩이 "밸브 3개(물관·기공 CO₂·빛) + 반응로 + 저장" 구조로 개편된 뒤의 조작(2026-07-26 갱신).
+  //  products  = 셋 다 열고 반응 진행률 0.62까지
+  //  lightOnly = products 달성 뒤 물관·기공을 닫고 빛만 남긴 채 420ms 유지
+  //  storage   = "포도당을 녹말로 저장" 뒤 저장 진행률 1까지
+  const setValve = async (name, open) => {
+    await page.evaluate(({ name, open }) => {
+      const button = [...document.querySelectorAll(".screen.active button")]
+        .find((candidate) => candidate.textContent.trim().startsWith(name));
+      if (!button) throw new Error(`${name} 밸브 버튼을 찾지 못했어요`);
+      const closed = /닫힘/.test(button.textContent ?? "");
+      if (open === closed) button.click();
+    }, { name, open });
+    await W(300);
+  };
+  await setValve("물관", true);
+  await setValve("기공", true);
+  await setValve("빛", true);
+  await W(1500);
   await capture("lab-products");
-  await clickBtn("포도당을 녹말로 저장", 1100);
+  await setValve("물관", false);
+  await setValve("기공", false);
+  await W(1300);
+  await clickBtn("포도당을 녹말로 저장", 1500);
   await capture("lab-goals-complete");
+  const lit = await page.evaluate(() => document.querySelectorAll(".screen.active .pn-badge.plant.on").length);
+  if (lit < 3) throw new Error(`leafFactoryLab: 목표 3개 중 ${lit}개만 켜졌어요`);
   await clickCTA();
 };
 
 const photoEvidence = async () => {
-  await clickBtn("빛 비추고 센서 관찰하기", 1800);
-  await clickBtn("상추 한 개체 사전 암처리하기", 1500);
-  await clickBtn("두 잎을 에탄올 물중탕으로 탈색", 1300);
-  await clickBtn("탈색한 두 잎을 물로 헹구기", 1100);
-  await clickBtn("아이오딘 용액 떨어뜨리기", 1300);
+  // 랩 개편 후 조작(2026-07-26 갱신): ①빛 슬라이더 약→강 ②잎 가리개 드래그 뒤 검출(암처리 ON)
+  // ③암처리를 끄고 다시 검출해 "생략하면 비교가 흐려짐"까지 확인해야 목표 3개가 채워진다.
+  const slide = async (fraction) => {
+    await page.evaluate((value) => {
+      const slider = document.querySelector(".screen.active .plant-evidence-slider");
+      const track = slider?.querySelector(".sl-track");
+      if (!(track instanceof HTMLElement)) throw new Error("센서 슬라이더를 찾지 못했어요");
+      const rect = track.getBoundingClientRect();
+      const clientX = rect.left + rect.width * value;
+      const init = { bubbles: true, pointerId: 51, isPrimary: true, clientX, clientY: rect.top + rect.height / 2 };
+      slider.dispatchEvent(new PointerEvent("pointerdown", { ...init, buttons: 1 }));
+      slider.dispatchEvent(new PointerEvent("pointermove", { ...init, buttons: 1 }));
+      slider.dispatchEvent(new PointerEvent("pointerup", { ...init, buttons: 0 }));
+    }, fraction);
+    await W(320);
+  };
+  await slide(0.08);
+  await slide(0.55);
+  await slide(0.96);
+  await W(700);
+  // 잎 가리개: 캔버스 좌표(cx, cy=316)에서 오른쪽으로 끌어 일부만 가린다.
+  await page.evaluate(() => {
+    const cv = document.querySelector(".screen.active .plant-canvas");
+    if (!cv) throw new Error("잎 캔버스를 찾지 못했어요");
+    cv.scrollIntoView({ block: "center" });
+    const r = cv.getBoundingClientRect();
+    const p = (dx) => ({ x: r.left + r.width * 0.5 + dx, y: r.top + 316 });
+    const ev = (type, pt, buttons) => cv.dispatchEvent(new PointerEvent(type, {
+      bubbles: true, cancelable: true, pointerId: 12, isPrimary: true, pointerType: "touch",
+      clientX: pt.x, clientY: pt.y, buttons,
+    }));
+    ev("pointerdown", p(0), 1);
+    ev("pointermove", p(28), 1);
+    ev("pointermove", p(58), 1);
+    ev("pointerup", p(58), 0);
+  });
+  await W(500);
+  await clickBtn("아이오딘 검출|탈색·헹굼", 1400);
   await capture("evidence-iodine-result");
+  await clickBtn("사전 암처리", 700);
+  await clickBtn("아이오딘 검출|탈색·헹굼", 1400);
+  const lit = await page.evaluate(() => document.querySelectorAll(".screen.active .pn-badge.plant.on").length);
+  if (lit < 3) throw new Error(`photoEvidenceLab: 목표 3개 중 ${lit}개만 켜졌어요`);
   await clickCTA();
 };
 
@@ -301,27 +330,69 @@ const photoFactor = async () => {
 };
 
 const plantRespire = async () => {
-  await clickBtn("포도당 넣기", 180);
-  await clickBtn("산소 넣기", 180);
-  await clickBtn("호흡 시작", 2300);
+  // 목표 3개(에너지 꺼내기·쓰기·밤에도 호흡) — 재료 투입만으로는 CTA가 안 열린다(2026-07-26 수정).
+  await clickBtn("포도당 넣기", 220);
+  await clickBtn("산소 넣기", 220);
+  await clickBtn("호흡 시작", 1800);
+  for (let i = 0; i < 10; i++) {
+    const lit = await page.evaluate(() => document.querySelectorAll(".screen.active .pn-badge.plant.on").length);
+    if (lit >= 3) break;
+    const hit = await page.evaluate(() => {
+      const b = [...document.querySelectorAll(".screen.active button")]
+        .filter((x) => x.offsetParent && !x.disabled)
+        .find((x) => /어린싹 키우기|물질 운반하기|꽃·열매 만들기|빛 끄기|호흡 시작/.test(x.textContent ?? ""));
+      if (!b) return null;
+      b.click();
+      return b.textContent.trim();
+    });
+    if (!hit) break;
+    await W(900);
+  }
   await clickCTA();
 };
 
 const dayNight = async () => {
-  await clickBtn("강한 낮 보기", 300);
+  // 세 번째 목표 "순이동 0"은 |광합성량−호흡량|<0.045를 320ms 유지해야 잡힌다 →
+  // 캔버스의 키보드 슬라이더(ArrowUp=0.025)를 한 칸씩 올리며 머문다(2026-07-26 추가).
+  await clickBtn("강한 낮 보기", 320);
   await capture("day-night-day");
-  await clickBtn("빛 없는 밤 보기", 500);
+  await clickBtn("빛 없는 밤 보기", 460);
   await capture("day-night-night");
+  await page.evaluate(() => document.querySelector(".screen.active .plant-canvas")?.focus());
+  await page.keyboard.press("Home");
+  await W(320);
+  for (let i = 0; i < 42; i++) {
+    const lit = await page.evaluate(() => document.querySelectorAll(".screen.active .pn-badge.plant.on").length);
+    if (lit >= 3) break;
+    await page.keyboard.press("ArrowUp");
+    await W(380);
+  }
   await clickCTA();
 };
 
 const sugarJourney = async () => {
-  await clickBtn("잎에서 포도당 만들기", 1200);
-  await clickBtn("밤: 녹말을 설탕으로", 1200);
-  await clickBtn("어린잎·꽃으로: 성장", 80);
-  await clickBtn("열매로: 저장", 80);
-  await clickBtn("뿌리로: 호흡·저장", 1500);
+  // 버튼 문구가 개편됐다(2026-07-26 갱신): 밤 전환 → 세 목적지 배송 버튼이 열린다.
+  await clickBtn("밤으로", 1200);
+  for (const pattern of ["어린잎·꽃으로", "열매·씨로", "뿌리로"]) {
+    await clickBtn(pattern, 900);
+  }
+  for (let i = 0; i < 6; i++) {
+    const lit = await page.evaluate(() => document.querySelectorAll(".screen.active .pn-badge.plant.on").length);
+    if (lit >= 3) break;
+    const hit = await page.evaluate(() => {
+      const b = [...document.querySelectorAll(".screen.active button")]
+        .filter((x) => x.offsetParent && !x.disabled)
+        .find((x) => /어린잎·꽃으로|열매·씨로|뿌리로|밤으로|낮으로/.test(x.textContent ?? ""));
+      if (!b) return null;
+      b.click();
+      return b.textContent.trim();
+    });
+    if (!hit) break;
+    await W(900);
+  }
   await capture("journey-complete");
+  const lit = await page.evaluate(() => document.querySelectorAll(".screen.active .pn-badge.plant.on").length);
+  if (lit < 3) throw new Error(`sugarJourneyLab: 목표 3개 중 ${lit}개만 켜졌어요`);
   await clickCTA();
 };
 
@@ -370,6 +441,11 @@ const playStep = async (step, index) => {
     await W(320);
     await capture("recap-more-open");
     return clickCTA();
+  }
+  if (step.type === "comic") {
+    // 컷 수만큼 CTA를 눌러 넘긴다(마지막 컷에서 다음 스텝으로).
+    for (let i = 0; i < step.panelCount; i++) await clickCTA();
+    return;
   }
   if (step.type === "concept") return conceptStep();
   if (["recap", "table"].includes(step.type)) return clickCTA();

@@ -247,7 +247,35 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
 - IV 단원 콘텐츠 주의: 이 교과서는 **녹는점·어는점·끓는점 용어를 도입하지 않는다** — "온도가 일정하게
   유지된다"로만 서술하고, 승화는 양방향(고↔기) 모두 같은 이름을 쓴다.
 
-## 중2 과학 V 식물과 에너지 제작 관례
+## 중2 과학 Ⅴ 식물과 에너지 — **정본은 기존 구현 + 발견 만화 1편(2026-07-26 최종)**
+- 경위: 2026-07-25에 교과서만 보고 v2를 전면 재제작(7~8레슨·랩 8종)했으나, 실사용 비교에서
+  **사용자가 기존 구현이 더 낫다고 판정** → **만화 한 편만 남기고 전부 원복**(2026-07-26 확정).
+  현재 배선 = `content/g2/unit5.ts`(6레슨) + 그 L1에 이식한 **광합성 발견 만화 7컷**.
+- **살아남은 것**: `public/comics/g2u5l1/0~6.webp`(반 헬몬트 버드나무 5년 → 프리스틀리 촛불 →
+  잉엔하우스의 빛 → "빛 + 공기 + 물 = 광합성") + unit5.ts L1의 `comic()` 스텝.
+  **과학사 만화는 인물을 실명으로 쓴다**(린드·보일·뉴턴·허블 선례) — 교과서에 인명이 없다고 "한 과학자가"로
+  뭉개면 서사가 죽는다. **단원의 대표 용어(광합성)도 만화 마지막 컷에서 이름을 준다**(교과서가 첫 본문
+  쪽에서 바로 명명하므로 끝까지 아끼는 것은 뜸들이기다). 두 가지 모두 사용자 지적으로 교정한 관행.
+- **보존만 하는 v2 산출물**(삭제 금지·배선 없음): `content/g2/unit5v2.ts` · `lessons/steps/plant2/*`(랩 8종) ·
+  `steps/hookPlant2.ts` · `ui/plantKit2.ts`·`ui/plantFigures2.ts` · `styles/plant2.css` ·
+  `public/plant2/{cuts,figs,items}` · `qa/e2e-g2u5v2.mjs`(배선 시에만 유효) · `qa/g2u5v2-blueprint.md`.
+  registry·dsl 등록도 그대로 둔다(되살릴 때 배선 한 줄이면 된다).
+- **레슨 아이콘은 `core/icons.ts`의 ICONS 키만** — `sun`·`footsteps`·`laser`·`neonStar`는 도전 탭 전용
+  GAME_ICONS라 `icon()`이 못 찾아 지도 노드가 빈 칸이 된다(v2 환경요인 노드 실사고).
+- **`qa/e2e-g2u5.mjs`를 랩 개편분에 맞게 전면 갱신(2026-07-26)** — 메모리에 남아 있던 "codex가 빠뜨림"의
+  실체는 **드라이버 5개가 개편 이전 UI를 조작하고 있었던 것**이다. 확정 조작:
+  · `leafFactoryLab` = 밸브 3개(물관·기공 CO₂·빛) 라벨의 "닫힘/열림"을 읽어 토글 → 셋 다 열고 1.5초(반응로)
+    → 물관·기공만 닫고 1.3초(빛은 재료가 아님) → "포도당을 녹말로 저장".
+  · `photoEvidenceLab` = 빛 슬라이더(.plant-evidence-slider .sl-track) 약→강 → 캔버스 y=316에서 가리개를
+    오른쪽으로 드래그 → 검출 → **암처리를 끄고 다시 검출**(목표 3개째).
+  · `plantRespireLab` = 재료 투입·호흡 시작만으로는 CTA가 안 열린다 → 에너지 소비 버튼·"빛 끄기"까지 훑는다.
+  · `dayNightLab` = "순이동 0"은 |광합성량−호흡량|<0.045를 **320ms 유지**해야 하므로 포인터 훑기 대신
+    캔버스 키보드 슬라이더(role=slider, ArrowUp=0.025)를 한 칸씩 올린다.
+  · `sugarJourneyLab` = "밤으로 · 녹말을 설탕으로" → 어린잎·꽃 / 열매·씨 / 뿌리 3배송.
+  · `comic` 스텝 처리 추가(stepData가 panelCount를 넘기고 컷 수만큼 CTA).
+  현재 **6레슨 전 스텝 PASS(정확도 100%)**.
+
+## (구판) 중2 과학 V 식물과 에너지 제작 관례 — 배선 해제, 파일은 보존
 - `g2u5`는 6레슨이며 L1~L3 무료, L4~L6 프리미엄이다. 훅은 `hookPlant.ts`의 potmass·waterweed·
   windowplant·bedroomplant·germinating·fruitthinning 6종을 쓴다.
 - 전용 랩 6종은 leafFactoryLab(`plantFactoryLab.ts`)·photoEvidenceLab(`plantEvidenceLab.ts`)·
@@ -292,3 +320,40 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
   **하이브리드 방침 유지**: 발주 라스터 위에 한글 라벨·화살표는 unit6.ts/bodyFigures의 SVG 오버레이가 얹는다
   (경로도·모식도는 라벨이 본질이라 벡터 유지).
 
+
+## 중2 과학 VI 동물과 에너지 — **v2 전면 재제작**(2026-07-25, 사용자 지시)
+사용자 지시로 처음부터 다시 만든 정본. **위 항목(구 g2u6)의 파일은 보존만 하고 손대지 않는다**
+(`content/g2/unit6.ts`·`ui/bodyKit.ts`·`ui/bodyFigures.ts`·`steps/hookBody.ts`·랩 6종·`styles/body.css`·
+`public/body/`). 배선은 `curriculum.ts`가 `G2_UNIT6_V2`를 쓰도록 교체됐다(중2 Ⅴ v2와 같은 규약).
+
+- **파일**: `content/g2/unit6v2.ts` · `ui/animalKit.ts`(색·물질 토큰·관·판막·혈구의 단일 진실 공급원) ·
+  `ui/animalLab.ts`(랩 뼈대) · `ui/animalFigures.ts`(퀴즈 도해 + `anMiniArt`) ·
+  `steps/hookAnimal.ts`+`hookAnimal2.ts`(독립 타입 `animalHook`, 12장면) · `steps/anim/an*.ts`(랩) ·
+  `styles/animal.css`(네임스페이스 `an-`). 테마는 기존 `body`(--subj-body) 재사용 — 지도·밴드는 단원 인프라라 재제작 대상이 아니다.
+- **랩 12종은 전부 캔버스 조작형**: anMealLab(식판 게이지)·anReagentLab(시약 드롭+가열)·anOrganLab(기관 배치→
+  소화관 골라내기)·anEnzymeLab(기관 이동×효소 특이성)·anVilliLab(벽 모양×흡수율)·anHeartLab(이완/수축/판막 제거)·
+  anBloodLab(원심분리→혈구 분류→작용 매칭 3국면)·anPathLab(갈림길 선택으로 두 순환 완주) + L9~L12 예정.
+- **`fitLabCanvas`가 랩 캔버스의 정본**(animalKit): `ctx.scale(k,k)`로 논리 좌표(BASE_W=360)를 키우면서
+  CSS 높이를 baseH로 고정하면 **보이는 논리 높이가 baseH/k로 줄어 아래가 잘린다**(폭 374px 기기에서 4% —
+  트레이 라벨이 실제로 잘렸다). 매 프레임 CSS 높이를 `baseH·k`로 맞춰야 한다. 새 캔버스 랩은 fitCanvas 직접 호출 금지.
+- **랩은 `stage-cap`을 쓰지 않는다** — 무대 하단 절대배치라 캔버스 트레이·막대를 덮는다. 지시문은 무대 위 helper가 담당.
+- **무대 좌상단 HUD 필(`setPill`) 자리를 비워 둘 것** — 논리 y 0~48은 필이 덮는다. 도해·슬롯·라벨을 그 위에 두면 겹친다
+  (침샘 슬롯·대정맥 라벨·허파 노드에서 3회 발생).
+- **흰 글자에 흰 할로를 씌우면 글자가 사라진다** — animalFigures의 `T()`는 `halo` 인자를 받는다.
+  어두운 면 위 흰 라벨은 halo를 그 면의 최암색으로 줘야 읽힌다(심장 4방·순환 도해에서 실제로 안 보였다).
+- **수치는 지어내지 않고 기하에서 뽑는다**(anVilliLab이 기준): 벽의 "닿는 길이 1.0/1.6/8.9배"는 그려진 프로필을
+  0.25px 간격으로 실측한 값이고, 흡수율 24/56/82%는 알갱이가 벽면에 닿았는지 기하 판정한 결과다(별도 스크립트로 검산).
+- **QA 2종**: `PORT=<포트> node qa/e2e-g2u6v2.mjs`(레슨별 랩을 **실제 조작**으로 목표 칩 3개까지 켜고 CTA 개방 확인 —
+  탭-탭 문법은 down+up 제자리 후 목적지 탭) · `PORT=<포트> node qa/shot-g2u6v2.mjs`(전 스텝 캡처 → tmp/g2u6v2-shots).
+  **훅 검증은 고정 대기 금지·선택지 폴링**(장면 연출이 훅마다 다르다 — twoloop은 5.3초).
+  `@vite/client` 스텁은 **updateStyle을 실제로 동작시켜야 한다**(no-op이면 dev CSS가 통째로 안 붙어 전 화면이 무스타일).
+- **발주 에셋 `public/anim/{cuts,figs,food}`**: 스틱맨 개념 컷 12 + 해부 일러스트 15(글자·화살표·지시선 금지 —
+  한글 라벨은 `anLabeled`가 %좌표로 얹는다) + 음식 누끼 13. 프롬프트 `qa/anim_{cut,fig,food}_prompts.txt`,
+  실행 `bash qa/order-anim.sh [cuts|figs|food]`(순차, 병렬 금지). process-geo.mjs에 세 폴더 등록 완료.
+  발주 전에도 랩은 폴백(영양소 색 알갱이)으로 정상 동작한다.
+- **짝짓기 UI는 그리기와 판정이 같은 매핑 함수를 공유해야 한다**(anBreathLab `bodyAtRow`): 오른쪽 열을 엇갈리게
+  그려 놓고 판정은 원래 인덱스를 보면 **정답을 눌러도 오답**이 된다. 표시 순서를 섞는 순간 함수 하나로 통일할 것.
+- **정렬 헬퍼의 `indexOf` −1 가드**(anNephronLab `layout`): 정렬 목록에서 제외한 알갱이에 같은 함수를 돌리면
+  i=−1로 좌표가 음수 쪽으로 튀어 화면 밖으로 사라진다. 제외 대상은 조기 return으로 제 자리를 지키게 한다.
+- **e2e가 잡아 준 것**(둘 다 눈으로는 안 보였다): 위 두 버그는 목표 칩이 안 켜지는 증상으로만 드러났다 —
+  랩마다 "실제 조작으로 목표 3개 점등" 게이트를 반드시 돌릴 것.

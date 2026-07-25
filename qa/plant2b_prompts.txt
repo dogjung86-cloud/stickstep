@@ -1,0 +1,17 @@
+# 중2 Ⅴ 2차 발주 — 문제 그림용 식물 전체 일러스트 1장.
+# 용도: L2 문제 1(㉠~㉣ 물질의 이동 경로) 배경. 화살표·라벨은 앱이 SVG로 얹으므로 이미지엔 절대 금지.
+# 저장: public/plant2/figs/whole-plant.png → process-geo.mjs가 webp 변환.
+
+# ── 스타일 블록 B (교육 일러스트) ──
+# clean modern educational science illustration, textbook diagram style, soft flat vector shading
+# with gentle 3-stop gradients and a soft top-left key light, smooth rounded organic forms, clear
+# separation between parts, calm natural palette (fresh greens for the plant, warm brown soil),
+# gentle contact shadow, thin darker outline per material, plain very light background.
+# absolutely no text, no letters, no numbers, no arrows, no labels, no symbols anywhere in the
+# image — labels are added later by the app. NOT photorealistic stock photo, NOT 3D render, NOT anime.
+
+[0] file=public/plant2/figs/whole-plant.png (landscape 4:3, 스타일 B)
+A single young leafy plant shown from the side in a clean cutaway view, centred in the frame and filling most of it. The upper two thirds is open pale sky: one straight vertical green stem rises from the ground, and exactly four broad simple leaves spread from it — two on the left side and two on the right side, each leaf clearly attached to the stem by a short stalk, with visible central veins. The lower third is a cutaway block of brown soil with a flat top surface, and beneath that surface a clearly visible pale root system spreads downward from the base of the stem: one thicker central root with several thinner branching side roots. The stem is continuous and unbroken from the roots through the soil surface up to the top of the plant. Nothing floats detached. Leave generous empty sky space in the upper left corner and the upper right corner, and empty space just outside the left and right leaf tips, so labels can be added later. No pot, no flower, no fruit, no insects, no sun, no clouds, no light rays.
+
+[1] file=public/plant2/figs/plant-flower-fruit.png (landscape 4:3, 스타일 B)
+A single leafy plant shown from the side in a clean cutaway view, centred and filling most of the frame. One straight vertical green stem rises from the ground. Near the top of the stem sits one simple open flower with rounded pink petals and a small yellow centre. Two broad simple leaves spread from the middle of the stem, one to the left and one to the right, each attached by a short stalk with a visible central vein. From the right side of the stem, below the leaves, one short side branch reaches out and carries one round ripe red fruit hanging at its end, clearly attached to that branch. The lower third is a cutaway block of brown soil with a flat top surface, and beneath the surface a pale root system spreads downward from the base of the stem. The stem is continuous and unbroken from the roots up to the flower. Nothing floats detached. Leave generous empty space in the upper left corner, along the left side, and just left of the soil surface, so labels can be added later. No pot, no sun, no clouds, no insects.

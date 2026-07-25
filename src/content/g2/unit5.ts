@@ -2,7 +2,7 @@
 // 광합성 과정 → 광합성의 증거 → 환경 요인 → 식물의 호흡 → 광합성과 호흡의 관계 → 광합성산물의 이동·저장·이용.
 import type { Unit } from "../curriculum";
 import {
-  lesson, hook, concept, recap, cut, mcq, ox, multi, order, binSort, hotspot,
+  lesson, hook, comic, concept, recap, cut, mcq, ox, multi, order, binSort, hotspot,
   leafFactoryLab, photoEvidenceLab, photoFactorLab, plantRespireLab, dayNightLab, sugarJourneyLab,
 } from "../dsl";
 import {
@@ -160,6 +160,58 @@ const L1 = lesson({
       choices: ["공기 중 이산화 탄소와 뿌리로 흡수한 물", "식물이 조금씩 먹어 없앤 흙", "식물의 몸으로 그대로 바뀐 빛"],
       done: "식물은 흙 자체를 먹어 몸을 만들지 않아요. 잎 속 공장으로 들어가는 재료의 길을 찾아봐요.",
       cta: "잎 속으로 들어가기",
+    }),
+    comic({
+      title: "나무의 몸은 어디서 왔을까",
+      lead: "반 헬몬트 · 프리스틀리 · 잉엔하우스",
+      narrator: "물일까, 흙일까, 공기일까? 세 과학자가 100년씩 이어 달려 답을 찾았어요.",
+      cta: "잎 속으로 들어가기",
+      panels: [
+        {
+          img: "comics/g2u5l1/0.webp",
+          stage: "1단계 · 질문",
+          title: "반 헬몬트, 흙의 무게부터 재요",
+          caption: "1600년대 벨기에의 과학자 <b>얀 반 헬몬트</b>는 화분에 담은 흙의 무게를 정확히 재고, 작은 버드나무 묘목을 심었어요. 나무가 자라면 흙이 그만큼 줄어들 거라고 생각했거든요.",
+        },
+        {
+          img: "comics/g2u5l1/1.webp",
+          stage: "2단계 · 실험",
+          title: "5년 동안 물만 주었어요",
+          caption: "반 헬몬트는 거름도 주지 않고 오직 물만 주며 5년을 길렀어요. 나무는 사람 키를 훌쩍 넘길 만큼 자랐지요.",
+        },
+        {
+          img: "comics/g2u5l1/2.webp",
+          stage: "3단계 · 결과",
+          title: "나무는 무거워지고, 흙은 그대로",
+          caption: "나무의 무게는 크게 늘었는데 화분의 흙은 아주 조금밖에 줄지 않았어요. 나무의 몸은 흙에서 온 것이 아니었어요.",
+          term: { name: "결정적 관찰", def: "예상과 다른 결과가 나올 때, 과학은 거기서 한 걸음 나아가요. 반 헬몬트의 저울이 그런 순간이었어요." },
+        },
+        {
+          img: "comics/g2u5l1/3.webp",
+          stage: "4단계 · 절반의 답",
+          title: "반 헬몬트: \"그럼 물이구나!\"",
+          caption: "그는 나무의 몸이 모두 물로 만들어졌다고 결론지었어요. 절반은 맞고 절반은 틀렸지요. 눈에 보이지 않는 공기도 재료라는 것은 아직 아무도 몰랐답니다.",
+        },
+        {
+          img: "comics/g2u5l1/4.webp",
+          stage: "5단계 · 새 단서",
+          title: "프리스틀리의 촛불이 다시 타올랐어요",
+          caption: "100여 년 뒤, 영국의 <b>조지프 프리스틀리</b>가 유리 종 안에서 촛불을 태웠어요. 촛불은 곧 꺼졌지만, 식물을 함께 넣어 두자 촛불이 다시 탈 수 있었어요. 식물이 공기를 되살린 거예요.",
+        },
+        {
+          img: "comics/g2u5l1/5.webp",
+          stage: "6단계 · 마지막 조각",
+          title: "잉엔하우스: 빛이 있어야 했어요",
+          caption: "그런데 어떤 날은 실패했어요. 까닭을 찾아낸 사람은 네덜란드의 <b>얀 잉엔하우스</b>예요. 식물이 공기를 되살리는 일은 오직 <b>빛이 있을 때</b>만 일어났어요.",
+          term: { name: "빛이라는 조건", def: "같은 장치라도 빛이 없으면 결과가 달라져요. 조건 하나가 결과를 바꿉니다." },
+        },
+        {
+          img: "comics/g2u5l1/6.webp",
+          stage: "정리",
+          title: "빛 + 공기 + 물 = 광합성",
+          caption: "세 사람이 이어 달린 끝에 답이 모였어요. 식물은 빛에너지를 이용해 공기 중의 이산화 탄소와 물을 재료로 스스로 양분을 만들고, 그 과정에서 산소를 내놓아요. 이 과정을 <b>광합성</b>이라고 해요.",
+        },
+      ],
     }),
     concept({
       kicker: "과학 용어 정복하기",

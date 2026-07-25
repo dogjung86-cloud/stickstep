@@ -148,6 +148,14 @@ src/
    **테마명은 기존 유틸 클래스와도 충돌 검사**: 수학 Ⅵ이 'stat'을 썼다가 완료 화면 카드 `.stat`
    (ui.css, 흰 카드)에 `.gm-node.stat`이 걸려 지도 노드가 흰 카드로 감싸인 실사고 → 'data'로 교체.
    새 테마명 확정 전 `grep "\.<이름>\b" src/styles/*.css`로 선점 여부부터 확인한다.
+   **`ui/soleMap.ts`의 `THEME_INK`에도 반드시 등록한다(같은 사고 2회)**: 밴드·지형·노드 링은 CSS
+   토큰(--subj-*)을 쓰는데 **발바닥(밑창 노드·발자국 도장·"정복 지도" 헤더 칩)만** 이 TS 표를 본다 →
+   빠뜨리면 그 단원만 발바닥이 토스 블루 폴백이 된다(his 2026-07-21 · body 2026-07-26 사용자 적발).
+   값은 `--subj-<테마>` 토큰과 **같아야** 한다. 검사 = `node qa/check-theme-ink.mjs`(UNIT_THEME 전
+   테마의 등록 여부 + 토큰 일치를 기계 검증), 눈검수 = `PORT=<포트> node qa/shot-sole-ink.mjs`.
+   참고: 사회·역사는 `Unit.color` 필드가 2026-07-21 팔레트 분리 때 갱신되지 않아 THEME_INK와 다르지만,
+   화면 색은 `.unit-band.<테마>`(soc/his.css)와 THEME_INK가 담당하므로 **보이는 색은 일치**한다
+   (Unit.color는 화면에서 읽지 않는 값 — 이걸 근거로 발바닥 색을 고치지 말 것).
 
 ## 중2 트랙 · 프리미엄(수익화)
 - **학년 트랙**: `curriculum.ts`의 `CURRICULA = { g1: CURRICULUM, g2: CURRICULUM_G2 }`.

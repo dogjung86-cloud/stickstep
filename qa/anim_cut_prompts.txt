@@ -1,0 +1,63 @@
+# 중2 Ⅵ 동물과 에너지 — 스틱맨 개념 컷 12장 (전부 가로 4:3) → public/anim/cuts
+# concept 스텝 첫 블록에 cut("anim", "<name>", alt)로 임베드하는 발주 만화 1컷.
+# 컷 장면은 그 개념을 "일상 스틱맨 장면"으로 — 훅/랩에서 쓴 소재 재활용 금지, 새 각도로.
+#
+# ── 스타일 블록 A (전 컷 공용 — 전 단원 표준, elec/chem/geo/atom과 동일) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+
+[0] file=public/anim/cuts/nutrient.png (landscape 4:3, 스타일 A)
+A stick figure stands proudly beside a tall stack of building blocks shaped into a rough human figure, holding one more block in one hand ready to add it. Scattered on the ground around the stack are three clearly different kinds of small items — round pellets, square cubes, and tiny droplets — sorted into three separate little heaps. The figure looks between the heaps and the block-person, deciding which to add next. Only the block-person being built is teal; everything else pure black and white.
+
+[1] file=public/anim/cuts/reagent.png (landscape 4:3, 스타일 A)
+A stick figure detective wearing a deerstalker cap holds a dropper bottle over a row of four identical small dishes on a table, squeezing a single drop into the third dish. That one dish has visibly changed — it is filled with a dark solid tone while the other three stay empty white. The detective leans in, one eye wide with discovery, other hand raised in a small triumphant fist. Only the changed dish's contents are teal; everything else pure black and white.
+
+[2] file=public/anim/cuts/digest.png (landscape 4:3, 스타일 A)
+A stick figure tries to push an enormous long chain of linked balls through a narrow doorway in a wall, but the chain is far too wide and jams sideways across the frame. On the other side of the doorway, several single loose balls have already passed through and sit neatly in a little pile. The figure strains with both feet braced, comically stuck. Only the narrow doorway is teal; everything else pure black and white.
+
+[3] file=public/anim/cuts/enzyme.png (landscape 4:3, 스타일 A)
+A stick figure worker stands at a workbench holding a pair of scissors, snipping a long chain of linked balls into short pieces. On the bench sit two other pairs of scissors of clearly different shapes and sizes, each resting beside a different material — one beside a coiled ribbon, one beside a blob of round droplets. The figure has picked exactly the pair that matches the chain, and the wrong-shaped scissors lie unused. Only the scissors in the figure's hand are teal; everything else pure black and white.
+
+[4] file=public/anim/cuts/villi.png (landscape 4:3, 스타일 A)
+A stick figure kneels on the floor mopping up a big spill with a cloth. Beside them lie two cloths of the same size: one lying perfectly flat, one bunched into many deep folds and ridges. The folded cloth is visibly swollen and dripping heavily while the flat one is barely damp. The figure holds up the sopping folded cloth, eyes wide, impressed. Only the deeply folded cloth is teal; everything else pure black and white.
+
+[5] file=public/anim/cuts/heart.png (landscape 4:3, 스타일 A)
+A stick figure squeezes a hand pump bulb attached to a looping tube that runs all the way around the panel and returns to the pump. Inside the tube, small dots are visibly pushed along in one direction, and a small hinged flap inside the tube is swung open by the flow. A second flap further along the loop is pressed shut against the backflow. The figure squeezes with both hands, cheeks puffed with effort. Only the pump bulb is teal; everything else pure black and white.
+
+[6] file=public/anim/cuts/blood.png (landscape 4:3, 스타일 A)
+A stick figure holds up a tall clear jar filled with liquid in which three clearly different kinds of small objects float together — many identical flat discs, a few large lumpy blobs, and several tiny irregular chips. The figure peers in through a magnifying glass held in the other hand, delighted at the variety. Only the many identical flat discs are teal; everything else pure black and white.
+
+[7] file=public/anim/cuts/circuit.png (landscape 4:3, 스타일 A)
+A stick figure stands at the center of a figure-eight racetrack drawn on the ground, holding a flag. One loop of the eight is small and runs up past a pair of bellows lying on the ground; the other loop is large and runs far out around the whole panel. A small runner figure is caught mid-stride crossing the center point where the two loops meet, having to pass through the middle every lap. Only the small loop is teal; everything else pure black and white.
+
+[8] file=public/anim/cuts/breath.png (landscape 4:3, 스타일 A)
+A stick figure pulls down hard on the handle of a large fireplace bellows sitting on the ground, and the bellows' body has visibly expanded wide open, sucking a swirl of little motion lines in through its nozzle. The figure grips the handle with both hands, leaning back with the effort, feet braced. The bellows itself has no arms or legs — it clearly cannot move on its own. Only the bellows body is teal; everything else pure black and white.
+
+[9] file=public/anim/cuts/gasswap.png (landscape 4:3, 스타일 A)
+Two stick figures stand facing each other across a low fence, each handing the other a differently shaped parcel at the same moment — one passes a round ball to the right, the other passes a square box to the left, their arms crossing in the middle. Both smile. The exchange is perfectly simultaneous and two-way. Only the round ball being passed is teal; everything else pure black and white.
+
+[10] file=public/anim/cuts/excrete.png (landscape 4:3, 스타일 A)
+A stick figure holds a large sieve over a bucket and pours a mixed jumble through it. Big lumps stay caught on top of the sieve, small bits fall through into the bucket below. With the free hand the figure is picking a few of the fallen good bits back out of the bucket and dropping them into a jar held under one arm, keeping only the rest in the bucket. Only the sieve is teal; everything else pure black and white.
+
+[11] file=public/anim/cuts/cellresp.png (landscape 4:3, 스타일 A)
+Four stick figures form a relay chain across the panel, passing supplies hand to hand toward a small campfire at the right end where a fifth figure warms their hands. The first figure hands over a bundle, the second a round ball, the third carries both toward the fire, the fourth carries an empty sack away from it. Every figure is turned toward the fire, working together. Only the campfire flame is teal; everything else pure black and white.
+
+# ══ 추가분 — concept 스텝이 2개인 레슨(L3·L4·L9·L11)의 두 번째 컷 ══
+
+[12] file=public/anim/cuts/tract.png (landscape 4:3, 스타일 A)
+A stick figure rides down a long winding water slide, arms up, whooshing along the chute. Standing beside the slide — not on it — are three other stick figures holding buckets, each tipping their bucket to pour liquid into the chute as the rider passes. The riders never leave the chute and the pourers never get in it. Only the chute of the slide is teal; everything else pure black and white.
+
+[13] file=public/anim/cuts/flow.png (landscape 4:3, 스타일 A)
+A stick figure pushes a very long log through three sawhorse stations set in a row across the panel. At the first station the log has been cut in half, at the second the halves are cut smaller, and at the third station only a neat pile of short little blocks remains. The same log gets shorter at every station, left to right. Only the pile of short blocks at the far right is teal; everything else pure black and white.
+
+[14] file=public/anim/cuts/pressure.png (landscape 4:3, 스타일 A)
+A stick figure pulls the two handles of a large accordion wide apart with both arms stretched out, and the accordion's bellows has stretched open into a broad wedge. Nearby loose feathers and paper scraps are visibly being drawn through the air toward the accordion's open air hole, curving in. The figure leans back with the effort, feet braced. Only the accordion bellows is teal; everything else pure black and white.
+
+[15] file=public/anim/cuts/urine.png (landscape 4:3, 스타일 A)
+A stick figure works beside a conveyor belt that runs left to right through three stations. At the first station a sieve lets small bits fall onto the belt while big lumps stay behind. At the second the figure reaches down and lifts a few good items off the belt, dropping them into a jar held under the other arm. At the third station a chute drops a couple of extra discarded scraps down onto the belt. What is left on the belt runs off the right edge. Only the jar of rescued items is teal; everything else pure black and white.

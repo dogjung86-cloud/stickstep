@@ -120,6 +120,7 @@ export const hook = (o: {
     | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba"
     | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull"
     | "potmass" | "waterweed" | "windowplant" | "bedroomplant" | "germinating" | "fruitthinning"
+    | "sproutpot" | "stomapeek" | "darkbox" | "mixedtest" | "greenhouse" | "mangrove" | "honeyflower"
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
     | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
@@ -311,6 +312,24 @@ export const dayNightLab = (o: { title: string; lead?: string; cta?: string; cur
   ({ type: "dayNightLab", ...o });
 export const sugarJourneyLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "sugarJourneyLab", ...o });
+// ── 중2 Ⅴ 식물과 에너지 랩(v2 — 전면 재제작, steps/plant2/*) ──
+export const leafZoomLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "leafZoomLab", ...o });
+export const photoBuildLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "photoBuildLab", ...o });
+export const gasSensorLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "gasSensorLab", ...o });
+export const iodineTestLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "iodineTestLab", ...o });
+export const photoDesignLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "photoDesignLab", ...o });
+export const photoCurveLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "photoCurveLab", ...o });
+export const dayNightGasLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "dayNightGasLab", ...o });
+export const sugarFlowLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "sugarFlowLab", ...o });
+
 // ── 중2 VI 동물과 에너지 랩 ─────────────────────────────────
 export const nutrientTestLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "nutrientTestLab", ...o });
@@ -324,6 +343,31 @@ export const nephronLab = (o: { title: string; lead?: string; cta?: string; curi
   ({ type: "nephronLab", ...o });
 export const bodyIntegrateLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "bodyIntegrateLab", ...o });
+
+// ── 중2 Ⅵ 동물과 에너지(g2u6, 2026-07-25 재제작) ─────────────
+// 훅은 과학 hook.ts와 분리된 독립 타입 `animalHook`(steps/hookAnimal.ts)을 쓴다.
+export type AnimalScene =
+  | "lunchtray" | "mysterytube" | "cellgate" | "pineapple" | "foldtowel" | "pulsecheck"
+  | "spintube" | "twoloop" | "holdbreath" | "windowair" | "saltysnack" | "afterswim";
+
+export const animalHook = (o: {
+  title: string; lead?: string; narrator: string; done?: string;
+  scene: AnimalScene; choices?: string[]; cta?: string;
+}): Step => ({ type: "animalHook", ...o });
+
+type AnLabOpt = { title: string; lead?: string; cta?: string; curio?: CurioOpt };
+export const anMealLab = (o: AnLabOpt): Step => ({ type: "anMealLab", ...o });
+export const anReagentLab = (o: AnLabOpt): Step => ({ type: "anReagentLab", ...o });
+export const anOrganLab = (o: AnLabOpt): Step => ({ type: "anOrganLab", ...o });
+export const anEnzymeLab = (o: AnLabOpt): Step => ({ type: "anEnzymeLab", ...o });
+export const anVilliLab = (o: AnLabOpt): Step => ({ type: "anVilliLab", ...o });
+export const anHeartLab = (o: AnLabOpt): Step => ({ type: "anHeartLab", ...o });
+export const anBloodLab = (o: AnLabOpt): Step => ({ type: "anBloodLab", ...o });
+export const anPathLab = (o: AnLabOpt): Step => ({ type: "anPathLab", ...o });
+export const anBreathLab = (o: AnLabOpt): Step => ({ type: "anBreathLab", ...o });
+export const anGasSwapLab = (o: AnLabOpt): Step => ({ type: "anGasSwapLab", ...o });
+export const anNephronLab = (o: AnLabOpt): Step => ({ type: "anNephronLab", ...o });
+export const anEnergyLab = (o: AnLabOpt): Step => ({ type: "anEnergyLab", ...o });
 
 // ── 중2 전기와 자기 단원(g2 VII) 랩 ─────────────────────────
 export const frictionLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>

@@ -13,7 +13,13 @@ import { G2_UNIT1 } from "./g2/unit1";
 import { G2_UNIT2 } from "./g2/unit2";
 import { G2_UNIT3 } from "./g2/unit3";
 import { G2_UNIT4 } from "./g2/unit4";
+// 중2 Ⅴ 식물과 에너지는 기존 구현이 정본(2026-07-26 사용자 확정 — v2 재제작본에서
+// 광합성 발견 만화 7컷만 이 파일의 L1으로 이식했고, 나머지는 전부 원복했다.
+// v2 산출물(content/g2/unit5v2.ts·steps/plant2/*·ui/plantKit2·plantFigures2·styles/plant2.css)은 보존만).
 import { G2_UNIT5 } from "./g2/unit5";
+// 중2 Ⅵ 동물과 에너지도 기존 구현이 정본(2026-07-26 사용자 확정 — v2 재제작본은 전부 원복).
+// v2 산출물(content/g2/unit6v2.ts·steps/anim/*·steps/hookAnimal*·ui/animalKit·animalLab·
+// animalFigures·styles/animal.css·public/anim/*)은 보존만 한다.
 import { G2_UNIT6 } from "./g2/unit6";
 import { G2_UNIT7 } from "./g2/unit7";
 import { G2_UNIT8 } from "./g2/unit8";

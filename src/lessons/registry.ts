@@ -71,6 +71,30 @@ import { photoEvidenceLab } from "./steps/plantEvidenceLab";
 import { photoFactorLab } from "./steps/plantFactorLab";
 import { plantRespireLab, dayNightLab } from "./steps/plantRespirationLab";
 import { sugarJourneyLab } from "./steps/sugarJourneyLab";
+// 중2 Ⅴ 식물과 에너지 v2(전면 재제작) — 구 plant* 랩과 타입명이 겹치지 않는다.
+import { leafZoomLab } from "./steps/plant2/leafZoomLab";
+import { photoBuildLab } from "./steps/plant2/photoBuildLab";
+import { gasSensorLab } from "./steps/plant2/gasSensorLab";
+import { iodineTestLab } from "./steps/plant2/iodineTestLab";
+import { photoDesignLab } from "./steps/plant2/photoDesignLab";
+import { photoCurveLab } from "./steps/plant2/photoCurveLab";
+import { dayNightGasLab } from "./steps/plant2/dayNightGasLab";
+import { sugarFlowLab } from "./steps/plant2/sugarFlowLab";
+// 중2 Ⅵ 동물과 에너지 v2(전면 재제작) — 구 body* 랩과 타입명이 겹치지 않는다(an 접두).
+import { animalHook } from "./steps/hookAnimal";
+import "./steps/hookAnimal2"; // 뒤쪽 6장면을 ANIMAL_SCENES에 등록(부수 효과 import)
+import { anMealLab } from "./steps/anim/anMealLab";
+import { anReagentLab } from "./steps/anim/anReagentLab";
+import { anOrganLab } from "./steps/anim/anOrganLab";
+import { anEnzymeLab } from "./steps/anim/anEnzymeLab";
+import { anVilliLab } from "./steps/anim/anVilliLab";
+import { anHeartLab } from "./steps/anim/anHeartLab";
+import { anBloodLab } from "./steps/anim/anBloodLab";
+import { anPathLab } from "./steps/anim/anPathLab";
+import { anBreathLab } from "./steps/anim/anBreathLab";
+import { anGasSwapLab } from "./steps/anim/anGasSwapLab";
+import { anNephronLab } from "./steps/anim/anNephronLab";
+import { anEnergyLab } from "./steps/anim/anEnergyLab";
 import { nutrientTestLab } from "./steps/nutrientTestLab";
 import { digestJourneyLab } from "./steps/digestJourneyLab";
 import { circulationLab } from "./steps/circulationLab";
@@ -300,6 +324,27 @@ const R: Record<string, StepRenderer> = {
   plantRespireLab,
   dayNightLab,
   sugarJourneyLab,
+  leafZoomLab,
+  photoBuildLab,
+  gasSensorLab,
+  iodineTestLab,
+  photoDesignLab,
+  photoCurveLab,
+  dayNightGasLab,
+  sugarFlowLab,
+  animalHook,
+  anMealLab,
+  anReagentLab,
+  anOrganLab,
+  anEnzymeLab,
+  anVilliLab,
+  anHeartLab,
+  anBloodLab,
+  anPathLab,
+  anBreathLab,
+  anGasSwapLab,
+  anNephronLab,
+  anEnergyLab,
   nutrientTestLab,
   digestJourneyLab,
   circulationLab,
