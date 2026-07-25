@@ -24,25 +24,28 @@ const wait = (ms) => page.waitForTimeout(ms);
 
 await page.goto(BASE_URL, { waitUntil: "domcontentloaded" });
 
-// 실제 Vite 모듈을 브라우저에서 불러 300회 추출한다. 매번 3·3·3·3·4·4인지 확인한다.
-const drawAudit = await page.evaluate(async () => {
+// 실제 Vite 모듈을 브라우저에서 불러 300회 추출한다. 매번 레슨당 2문항인지 확인한다.
+// (2026-07-26 재제작으로 소단원 태그가 6레슨 → 10레슨으로 재매핑됐다. 20문항 ÷ 10레슨 = 레슨당 2.)
+const BALANCE = "2,2,2,2,2,2,2,2,2,2";
+const drawAudit = await page.evaluate(async (want) => {
   const { U2_EXAM } = await import("/src/content/exams/u2.ts");
   const { drawExamItems } = await import("/src/content/exams/types.ts");
   const failures = [];
+  const lessonOf = Object.fromEntries(U2_EXAM.pool.map((q) => [q.id, q.lessonId]));
   for (let n = 0; n < 300; n++) {
     const draw = drawExamItems(U2_EXAM);
     const counts = new Map();
     for (const q of draw) counts.set(q.lessonId, (counts.get(q.lessonId) ?? 0) + 1);
     const values = [...counts.values()].sort((a, b) => a - b);
-    if (draw.length !== 20 || new Set(draw.map((q) => q.id)).size !== 20 || values.join(",") !== "3,3,3,3,4,4") {
+    if (draw.length !== 20 || new Set(draw.map((q) => q.id)).size !== 20 || values.join(",") !== want) {
       failures.push({ n, ids: draw.map((q) => q.id), values });
       break;
     }
   }
-  return { pool: U2_EXAM.pool.length, failures };
-});
+  return { pool: U2_EXAM.pool.length, failures, lessonOf };
+}, BALANCE);
 ok(drawAudit.pool === 120, "브라우저 모듈의 u2 풀 120문항", String(drawAudit.pool));
-ok(drawAudit.failures.length === 0, "300회 추출 모두 3·3·3·3·4·4 및 중복 없음", JSON.stringify(drawAudit.failures[0]));
+ok(drawAudit.failures.length === 0, `300회 추출 모두 레슨당 2문항(${BALANCE}) 및 중복 없음`, JSON.stringify(drawAudit.failures[0]));
 
 // 신규 생성 이미지 전부가 실제 앱 URL에서 로드되는지 확인한다.
 const imageAudit = await page.evaluate(async (names) => Promise.all(names.map((name) => new Promise((resolve) => {
@@ -103,14 +106,14 @@ for (let i = 0; i < 20; i++) {
   await wait(180);
 }
 await page.waitForSelector(".screen.active .ex-score-hero", { timeout: 10000 });
+// 소단원은 풀의 lessonId로 센다 — 문항 번호로 역산하면(구 20문항×6레슨 배치) 재매핑 뒤에는 어긋난다.
 const liveCounts = Object.values(seen.reduce((m, q) => {
-  const n = Number(q.id.replace("u2e", ""));
-  const lesson = `u2l${Math.ceil(n / 20)}`;
+  const lesson = drawAudit.lessonOf[q.id];
   m[lesson] = (m[lesson] ?? 0) + 1;
   return m;
 }, {})).sort((a, b) => a - b);
 ok(seen.length === 20 && new Set(seen.map((q) => q.id)).size === 20, "실플레이 20문항 및 ID 중복 없음");
-ok(liveCounts.join(",") === "3,3,3,3,4,4", "실플레이 레슨 균형 3·3·3·3·4·4", liveCounts.join(","));
+ok(liveCounts.join(",") === BALANCE, `실플레이 레슨 균형 ${BALANCE}`, liveCounts.join(","));
 ok(seen.every((q) => q.imagesOk), "실플레이에 등장한 이미지 로드 성공");
 ok(seen.every((q) => !q.clipped), "모바일 폭에서 문항 본문 가로 잘림 없음");
 ok((await page.locator(".screen.active .ex-score-hero").getAttribute("data-score")) === "100", "전 문항 정답 입력 시 100점");
