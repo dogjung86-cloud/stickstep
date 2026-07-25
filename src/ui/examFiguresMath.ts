@@ -5912,3 +5912,77 @@ export function mExamFreqPolyFig(
   out += pts.map(([x, y]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.8" fill="#FFFFFF" stroke="${ROSE}" stroke-width="1.8"/>`).join("");
   return svg(`0 0 ${W} ${H}`, opts.bars ? "히스토그램과 도수분포다각형" : "도수분포다각형", out);
 }
+
+/* ════════════════════════════════════════════════════════════
+   m1u3 v2(중1 Ⅲ 좌표평면과 그래프 재출제) 전용 — 2026-07-25 이식 때 파일럿 로컬(nlFig·rdFig)에서
+   승격(m2u3 signLineFig 관행). 규칙 동일: 정답·판정을 색이나 위치로 강조하지 않고, aria는 중립
+   서술만(값·정오 낭독 금지). 뺄셈·음수 라벨은 U+2212로 렌더한다.
+   ════════════════════════════════════════════════════════════ */
+
+/** 수직선 점 그림(비상05-1 계보) — 정수 눈금 전부 라벨, 분수 좌표는 subdiv(단위 구간 등분 잔눈금)로
+ *  위치를 정의한다. 점의 값은 인쇄하지 않는다(문두가 좌표를 물으므로 유출 금지). */
+export function mExamNumLineFig(o: {
+  min: number;
+  max: number;
+  points: Array<{ label: string; value: number }>;
+  /** 잔눈금: lo~hi(기본 lo+1) 사이 단위 구간마다 den 등분(분수 좌표의 위치 정의) */
+  subdiv?: { lo: number; hi?: number; den: number };
+}): string {
+  const W = 320;
+  const pad = 26;
+  const y = 54;
+  const mn = (v: number): string => String(v).replace("-", "−");
+  const px = (v: number): number => pad + ((v - o.min) / (o.max - o.min)) * (W - pad * 2);
+  let out =
+    `<line x1="${pad - 14}" y1="${y}" x2="${W - pad + 14}" y2="${y}" stroke="#334155" stroke-width="2"/>` +
+    `<path d="M${W - pad + 14} ${y} l-7 -4 v8 z" fill="#334155"/>` +
+    `<path d="M${pad - 14} ${y} l7 -4 v8 z" fill="#334155"/>`;
+  for (let v = o.min; v <= o.max; v++) {
+    out +=
+      `<line x1="${px(v).toFixed(1)}" y1="${y - 6}" x2="${px(v).toFixed(1)}" y2="${y + 6}" stroke="#334155" stroke-width="1.6"/>` +
+      `<text x="${px(v).toFixed(1)}" y="${y + 22}" text-anchor="middle" font-size="11" font-weight="700" fill="#64748B">${mn(v)}</text>`;
+  }
+  if (o.subdiv) {
+    const hi = o.subdiv.hi ?? o.subdiv.lo + 1;
+    for (let seg = o.subdiv.lo; seg < hi; seg++) {
+      for (let i = 1; i < o.subdiv.den; i++) {
+        const v = seg + i / o.subdiv.den;
+        out += `<line x1="${px(v).toFixed(1)}" y1="${y - 4}" x2="${px(v).toFixed(1)}" y2="${y + 4}" stroke="#94A3B8" stroke-width="1.2"/>`;
+      }
+    }
+  }
+  for (const pt of o.points) {
+    out +=
+      `<circle cx="${px(pt.value).toFixed(1)}" cy="${y}" r="4.6" fill="#364FC7" stroke="#FFFFFF" stroke-width="1.4"/>` +
+      `<text x="${px(pt.value).toFixed(1)}" y="${y - 13}" text-anchor="middle" font-size="12.5" font-weight="900" fill="#334155">${pt.label}</text>`;
+  }
+  const names = o.points.map((pt) => pt.label).join(", ");
+  return `<svg viewBox="0 0 ${W} 90" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="수직선 위에 표시된 점 ${names}">${out}</svg>`;
+}
+
+/** 반비례 곡선+원점 대칭 직사각형(미래엔12·천재08 3사 신단골) — 꼭짓점 B(−m, −a/m)·D(m, a/m)가
+ *  곡선 위, A(−m, a/m)·C(m, −a/m). 넓이 = 4a(기하 검산: 가로 2m × 세로 2a/m — m과 무관).
+ *  m은 a의 약수만(꼭짓점 정수 격자 보장). a·넓이는 미인쇄(문두 몫), x축 ±m은 planeSpec 라벨이 담당.
+ *  min은 짝수 −10(labelEvery 2가 min 기점이라 홀수 min이면 홀수 라벨만 찍히는 함정 · m2u3 ③ 교훈). */
+export function mExamInvRectFig(o: { a: number; m: number }): string {
+  const half = o.a / o.m;
+  const p = planeSpec({ min: -10, max: 10, size: 340, labelEvery: 2 });
+  let out = p.grid;
+  out += `<rect x="${p.px(-o.m).toFixed(1)}" y="${p.py(half).toFixed(1)}" width="${(p.px(o.m) - p.px(-o.m)).toFixed(1)}" height="${(p.py(-half) - p.py(half)).toFixed(1)}" fill="#EAF1FE" fill-opacity=".8" stroke="#8B99EE" stroke-width="1.4"/>`;
+  for (const sign of [-1, 1] as const) {
+    const closest = Math.max(o.a / 10, 0.6);
+    let d = "";
+    for (let i = 0; i <= 64; i++) {
+      const absX = closest + (i / 64) * (10 - closest);
+      const x = sign * absX;
+      const yv = o.a / x;
+      d += `${i === 0 ? "M" : "L"}${p.px(x).toFixed(1)} ${p.py(yv).toFixed(1)} `;
+    }
+    out += `<path d="${d}" stroke="#364FC7" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+  }
+  const corner = (x: number, yv: number, label: string, dx: number, dy: number): string =>
+    `<circle cx="${p.px(x).toFixed(1)}" cy="${p.py(yv).toFixed(1)}" r="4.4" fill="#E8547E" stroke="#FFFFFF" stroke-width="1.4"/>` +
+    `<text x="${(p.px(x) + dx).toFixed(1)}" y="${(p.py(yv) + dy).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="900" fill="#334155">${label}</text>`;
+  out += corner(-o.m, half, "A", -12, -8) + corner(-o.m, -half, "B", -12, 16) + corner(o.m, -half, "C", 12, 16) + corner(o.m, half, "D", 12, -8);
+  return `<svg viewBox="${p.vb}" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="반비례 그래프와 네 꼭짓점 A, B, C, D인 직사각형">${out}</svg>`;
+}

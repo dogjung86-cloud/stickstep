@@ -1,19 +1,20 @@
-// m1u3(수학 중1 III 좌표평면과 그래프) 200문항 기계 검사.
-// 전체: 120(mcq+multi)/60(num)/20(word), diff 80/80/40, figure 36~48.
-// L1 정본만 검사할 때: LESSON_ONLY=m1u3l1 node qa/check-exam-m1u3.mjs
+// m1u3(수학 중1 III 좌표평면과 그래프) 200문항 기계 검사 · v2(2026-07-25 재출제 6호 이식판).
+// 전체: mcq 99/multi 20/num 81/word 0(1개라도 FAIL), diff 80/80/40, 그림 파일별 정확값 합 105.
+// 정본 스펙 = qa/m1u3-v2-blueprint.md §0·§4. L1만 검사: LESSON_ONLY=m1u3l1 node qa/check-exam-m1u3.mjs
 import { readFileSync, existsSync } from "node:fs";
 import { createServer } from "vite";
 
+// [file, total, mcq, multi, num, word, diff, fig, start, end]
 const lessons = [
-  ["m1u3l1", 22, 13, 7, 2, [9, 9, 4], 1, 22],
-  ["m1u3l2", 22, 14, 6, 2, [9, 9, 4], 23, 44],
-  ["m1u3l3", 22, 13, 7, 2, [9, 9, 4], 45, 66],
-  ["m1u3l4", 23, 13, 7, 3, [9, 9, 5], 67, 89],
-  ["m1u3l5", 22, 13, 7, 2, [9, 9, 4], 90, 111],
-  ["m1u3l6", 22, 14, 6, 2, [9, 8, 5], 112, 133],
-  ["m1u3l7", 22, 13, 7, 2, [9, 9, 4], 134, 155],
-  ["m1u3l8", 22, 14, 6, 2, [8, 9, 5], 156, 177],
-  ["m1u3l9", 23, 13, 7, 3, [9, 9, 5], 178, 200],
+  ["m1u3l1", 22, 11, 2, 9, 0, [9, 9, 4], 12, 1, 22],
+  ["m1u3l2", 22, 11, 2, 9, 0, [9, 9, 4], 5, 23, 44],
+  ["m1u3l3", 22, 11, 2, 9, 0, [9, 9, 4], 16, 45, 66],
+  ["m1u3l4", 23, 11, 3, 9, 0, [9, 9, 5], 20, 67, 89],
+  ["m1u3l5", 22, 11, 2, 9, 0, [9, 9, 4], 6, 90, 111],
+  ["m1u3l6", 22, 11, 2, 9, 0, [9, 8, 5], 13, 112, 133],
+  ["m1u3l7", 22, 11, 2, 9, 0, [9, 9, 4], 5, 134, 155],
+  ["m1u3l8", 22, 11, 2, 9, 0, [8, 9, 5], 14, 156, 177],
+  ["m1u3l9", 23, 11, 3, 9, 0, [9, 9, 5], 14, 178, 200],
 ];
 
 const only = process.env.LESSON_ONLY;
@@ -39,13 +40,14 @@ try {
   await vite.close();
 }
 
-for (const [file, expectedTotal, expectedChoice, expectedNum, expectedWord, expectedDiff, start, end] of active) {
+for (const [file, expectedTotal, expectedMcq, expectedMulti, expectedNum, expectedWord, expectedDiff, expectedFig, start, end] of active) {
   const path = `src/content/exams/${file}.ts`;
   if (!existsSync(path)) { fail(`${file}: 파일 없음`); continue; }
-  const src = readFileSync(path, "utf8");
+  // CRLF 정규화: autocrlf 체크아웃 사본에서 정규식 검사가 무증상으로 어긋나는 사고 계보(m1u6 검사기) 예방.
+  const src = readFileSync(path, "utf8").replace(/\r\n/g, "\n");
   const em = [...src.matchAll(/—/g)].length;
   if (em) fail(`${file}: em대시 ${em}개`);
-  for (const word of ["기울기", "절편", "일차함수", "점근선", "정의역", "치역", "쌍곡선"]) {
+  for (const word of ["기울기", "절편", "일차함수", "점근선", "정의역", "치역", "쌍곡선", "함수"]) {
     if (src.includes(word)) fail(`${file}: 중1 단원 금지어 '${word}'`);
   }
   const blocks = src.split(/\r?\n  \{\r?\n/).slice(1);
@@ -104,7 +106,12 @@ for (const [file, expectedTotal, expectedChoice, expectedNum, expectedWord, expe
         const idx = Number(runtime?.answer);
         const optionCount = runtime?.options?.length ?? 0;
         if (!Number.isInteger(idx) || idx < 0 || idx > 4) fail(`${id}: mcq answer 인덱스 ${answerRaw}`);
-        if (optionCount !== 5) fail(`${id}: mcq 보기 ${optionCount}개, 5개 요구`);
+        // v2 예외: 그림 카드 매칭형((가)(나)(다)(라) 순수 라벨 보기 + shuffle:false + figure)은
+        // 카드 수만큼 3~4지 허용(교과서 병·개형 매칭 실측 관행 · blueprint L3·L5 카드 슬롯).
+        const labelCard = figure && shuffleFalse && (runtime?.options ?? []).every((opt) => /^\([가-라]\)$/.test(String(opt)));
+        if (labelCard) {
+          if (optionCount < 3 || optionCount > 5) fail(`${id}: 카드 매칭 보기 ${optionCount}개, 3~5개 요구`);
+        } else if (optionCount !== 5) fail(`${id}: mcq 보기 ${optionCount}개, 5개 요구`);
       } else {
         const indexes = Array.isArray(runtime?.answer) ? runtime.answer : [];
         if (indexes.length < 2 || new Set(indexes).size !== indexes.length || indexes.some((i) => i < 0 || i > 4))
@@ -119,18 +126,25 @@ for (const [file, expectedTotal, expectedChoice, expectedNum, expectedWord, expe
   }
 
   const rows = all.filter((item) => item.file === file);
-  const choice = rows.filter((item) => item.type === "mcq" || item.type === "multi").length;
+  const mcq = rows.filter((item) => item.type === "mcq").length;
+  const multi = rows.filter((item) => item.type === "multi").length;
   const num = rows.filter((item) => item.type === "num").length;
   const word = rows.filter((item) => item.type === "word").length;
+  const figs = rows.filter((item) => item.figure).length;
   const ds = [1, 2, 3].map((d) => rows.filter((item) => item.diff === d).length);
   if (rows.length !== expectedTotal) fail(`${file}: ${rows.length}문항 != ${expectedTotal}`);
   rows.forEach((item, index) => {
     const expectedId = `m1u3e${String(start + index).padStart(3, "0")}`;
     if (item.id !== expectedId) fail(`${file}: ${index + 1}번째 ID ${item.id} != ${expectedId}`);
   });
-  if (choice !== expectedChoice || num !== expectedNum || word !== expectedWord)
-    fail(`${file}: 유형 ${choice}/${num}/${word} != ${expectedChoice}/${expectedNum}/${expectedWord}`);
+  if (mcq !== expectedMcq || multi !== expectedMulti || num !== expectedNum || word !== expectedWord)
+    fail(`${file}: 유형 m${mcq}/M${multi}/n${num}/w${word} != m${expectedMcq}/M${expectedMulti}/n${expectedNum}/w${expectedWord}`);
+  if (word > 0) fail(`${file}: word ${word}문항 발견, v2는 0이 확정값(용어 빈칸형 금지)`);
+  if (figs !== expectedFig) fail(`${file}: 그림 ${figs} != ${expectedFig}(파일별 정확값)`);
   if (ds.some((count, i) => count !== expectedDiff[i])) fail(`${file}: diff ${ds.join("/")} != ${expectedDiff.join("/")}`);
+  const numAnswers = rows.filter((item) => item.type === "num").map((item) => item.answerRaw);
+  for (const [value, count] of [...new Set(numAnswers)].map((v) => [v, numAnswers.filter((x) => x === v).length]))
+    if (count > 1) fail(`${file}: num 정답 ${value} 파일 내 ${count}회 중복(블루프린트 값표 위반)`);
 }
 
 const ids = all.map((item) => item.id);
@@ -143,22 +157,24 @@ if (!only) {
     if (!ids.includes(id)) fail(`${id}: ID 누락`);
   }
   const counts = {
-    choice: all.filter((item) => item.type === "mcq" || item.type === "multi").length,
+    mcq: all.filter((item) => item.type === "mcq").length,
+    multi: all.filter((item) => item.type === "multi").length,
     num: all.filter((item) => item.type === "num").length,
     word: all.filter((item) => item.type === "word").length,
   };
   const diff = [1, 2, 3].map((d) => all.filter((item) => item.diff === d).length);
   const figs = all.filter((item) => item.figure).length;
   if (all.length !== 200) fail(`전체 ${all.length} != 200`);
-  if (counts.choice !== 120 || counts.num !== 60 || counts.word !== 20) fail(`전체 유형 ${counts.choice}/${counts.num}/${counts.word}`);
+  if (counts.mcq !== 99 || counts.multi !== 20 || counts.num !== 81 || counts.word !== 0)
+    fail(`전체 유형 m${counts.mcq}/M${counts.multi}/n${counts.num}/w${counts.word} != m99/M20/n81/w0`);
   if (diff.join("/") !== "80/80/40") fail(`전체 diff ${diff.join("/")}`);
-  if (figs < 36 || figs > 48) fail(`figure ${figs}개, 목표 36~48 밖`);
+  if (figs !== 105) fail(`figure ${figs}개 != 105(v2 파일별 정확값 합)`);
 }
 
 const mcqPositions = all.filter((item) => item.type === "mcq").map((item) => Number(item.answerRaw));
 const pos = [0, 1, 2, 3, 4].map((i) => mcqPositions.filter((x) => x === i).length);
 if (mcqPositions.length && Math.max(...pos) - Math.min(...pos) > Math.max(2, Math.ceil(mcqPositions.length * 0.15)))
-  fail(`mcq 정답 위치 편중 ${pos.join("/")}`);
+  caution(`mcq 저작 정답 위치 편중 ${pos.join("/")} · v2는 정답 첫 보기 저작 관행+표시 셔플이라 로그 강등(m1u5 검사기 계보), shuffle:false만 별도 FAIL`);
 
 // 숫자·좌표만 바꾼 동형 문두와 핵심 좌표+정답의 정확 중복은 후보만 출력하고 사람이 판정한다.
 const normalizedGroups = new Map();

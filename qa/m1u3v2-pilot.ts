@@ -25,7 +25,7 @@ const withVars = (text: string): string =>
   text.replace(/[xyab]/g, (variable) => `<i class='mv'>${variable}</i>`);
 
 /* ── 신작 헬퍼(파일 로컬 · 이식 때 examFiguresMath "m1u3 v2" 섹션 승격) ──────────
- * rest-a~e가 import해 단일 정의를 유지한다(m2u3 signLineFig 관행 — export).
+ * rest-a~e가 import해 단일 정의를 유지한다(m2u3 signLineFig 관행 · export).
  * nlFig: 수직선 점 그림(비상05-1 계보). 정수 눈금 전부 라벨, 분수 좌표는 subdiv(단위 구간
  * 등분 잔눈금)로 위치를 정의한다. 점의 값은 인쇄하지 않는다(문두가 좌표를 물으므로 유출 금지). */
 export const nlFig = (o: {
@@ -71,7 +71,7 @@ export const nlFig = (o: {
  * m은 a의 약수만(꼭짓점 정수 격자 보장). a·넓이는 미인쇄(문두 몫), x축 ±m은 planeSpec 라벨이 담당. */
 export const rdFig = (o: { a: number; m: number }): string => {
   const half = o.a / o.m;
-  // min은 짝수 −10(labelEvery 2가 min 기점이라 홀수 min이면 홀수 라벨만 — 검산 V2가 적발한
+  // min은 짝수 −10(labelEvery 2가 min 기점이라 홀수 min이면 홀수 라벨만 · 검산 V2가 적발한
   // planeSpec 홀짝 함정 · m2u3 ③ 교훈 재확인). ±m 세로변 위치가 짝수 라벨 위에 놓인다.
   const p = planeSpec({ min: -10, max: 10, size: 340, labelEvery: 2 });
   let out = p.grid;
@@ -257,7 +257,7 @@ export const POOL_M1U3V2_PILOT: ExamItem[] = [
     shuffle: false,
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>제4사분면의 부호는 (+, −)이므로 <i class='mv'>a</i>>0, <i class='mv'>b</i><0이라고 먼저 적어요. 새 점의 <i class='mv'>x</i>좌표 <i class='mv'>ab</i>는 양수와 음수의 곱이라 음수예요. <i class='mv'>y</i>좌표 <i class='mv'>b</i>−<i class='mv'>a</i>는 음수에서 양수를 빼는 것이라 더 작아져 역시 음수죠. 부호가 (−, −)이므로 <b>제3사분면</b>이에요.<span class='xh'>오답 하나씩 격파</span>곱 <i class='mv'>ab</i>를 양수로 보면 제4사분면으로, <i class='mv'>b</i>−<i class='mv'>a</i>를 양수로 보면 제2사분면으로 잘못 가요. 뺄셈의 부호는 '음수 − 양수 = 더 작은 음수'로 확정된다는 점이 핵심이에요. 문자 문제는 항상 조건을 부호로 번역해 놓고 시작해요.",
+      "<span class='xh'>정답 풀이</span>제4사분면의 부호는 (+, −)이므로 <i class='mv'>a</i>&gt;0, <i class='mv'>b</i>&lt;0이라고 먼저 적어요. 새 점의 <i class='mv'>x</i>좌표 <i class='mv'>ab</i>는 양수와 음수의 곱이라 음수예요. <i class='mv'>y</i>좌표 <i class='mv'>b</i>−<i class='mv'>a</i>는 음수에서 양수를 빼는 것이라 더 작아져 역시 음수죠. 부호가 (−, −)이므로 <b>제3사분면</b>이에요.<span class='xh'>오답 하나씩 격파</span>곱 <i class='mv'>ab</i>를 양수로 보면 제4사분면으로, <i class='mv'>b</i>−<i class='mv'>a</i>를 양수로 보면 제2사분면으로 잘못 가요. 뺄셈의 부호는 '음수 − 양수 = 더 작은 음수'로 확정된다는 점이 핵심이에요. 문자 문제는 항상 조건을 부호로 번역해 놓고 시작해요.",
     core: "조건을 a>0, b<0으로 적고 부호만 계산해요.",
   },
   {
@@ -453,8 +453,8 @@ export const POOL_M1U3V2_PILOT: ExamItem[] = [
     core: "속력 그래프의 수평은 정지가 아니라 일정한 빠르기예요.",
   },
   {
-    // [슬롯 72] 검산: 걷기(증가)→기다림(수평)→뛰기(더 가파른 증가) = upflatup(path 기울기
-    //  실측 1 → 0 → 1.4로 '뛰기가 더 가파름' 성립, §3-0). 배치 ①up·②upflatup 정답·③updown·
+    // [슬롯 72] 검산: 걷기(증가)→기다림(수평)→뛰기(더 가파른 증가) = upflatup(path의 구간별
+    //  오름 폭 실측 1 → 0 → 1.4로 '뛰기가 더 가파름' 성립, §3-0). 배치 ①up·②upflatup 정답·③updown·
     //  ④upflat·⑤twoup(천재04 계보 · 정답 ① 금지 ✓).
     id: "m1u3e072",
     lessonId: "m1u3l4",
@@ -537,7 +537,7 @@ export const POOL_M1U3V2_PILOT: ExamItem[] = [
   {
     // [슬롯 90] 검산: y=x/6 = (1/6)x 꼴이라 정비례 ✓. y=4/x 반비례·y=6−x 뺄셈·y=0.5x+1
     //  상수항·xy=10 반비례 변형. 레슨 판별 세트(y=x/8·y=−4x·x+y=5·y=6/x·y=7−3x)와 식 전부 분리.
-    //  (초판 오답 y=6/x·xy=6은 s099 오답 y=6/x와 레슨 내 같은 관계식 노출이라 4/x·10으로 교체 — full 게이트 WARN 반영.)
+    //  (초판 오답 y=6/x·xy=6은 s099 오답 y=6/x와 레슨 내 같은 관계식 노출이라 4/x·10으로 교체 · full 게이트 WARN 반영.)
     id: "m1u3e090",
     lessonId: "m1u3l5",
     type: "mcq",
@@ -694,7 +694,7 @@ export const POOL_M1U3V2_PILOT: ExamItem[] = [
     shuffle: false,
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>조건이 두 개예요. 원점을 지나는 직선이어야 하고, 동시에 오른쪽 아래로 향해야 하죠. '③'은 원점을 지나는 직선이면서 오른쪽 아래로 내려가므로 두 조건을 모두 만족해요. <i class='mv'>y</i>=<i class='mv'>a</i><i class='mv'>x</i>에서 <i class='mv'>a</i><0인 그래프의 모습 그대로예요.<span class='xh'>오답 하나씩 격파</span>'②'는 오른쪽 아래로 향하는 것처럼 보이지만 한 쌍의 곡선이라 반비례 그래프이고 원점도 지나지 않아요. '④'는 방향은 맞는데 직선이 원점을 비껴가서 정비례 그래프가 아니죠. '①'과 '⑤'는 둘 다 오른쪽 위로 향해서 방향 조건에서 탈락해요. 조건이 두 개인 문제는 하나만 확인하고 멈추지 말고, 카드마다 두 조건에 전부 체크 표시를 해 보는 게 안전해요.",
+      "<span class='xh'>정답 풀이</span>조건이 두 개예요. 원점을 지나는 직선이어야 하고, 동시에 오른쪽 아래로 향해야 하죠. '③'은 원점을 지나는 직선이면서 오른쪽 아래로 내려가므로 두 조건을 모두 만족해요. <i class='mv'>y</i>=<i class='mv'>a</i><i class='mv'>x</i>에서 <i class='mv'>a</i>&lt;0인 그래프의 모습 그대로예요.<span class='xh'>오답 하나씩 격파</span>'②'는 오른쪽 아래로 향하는 것처럼 보이지만 한 쌍의 곡선이라 반비례 그래프이고 원점도 지나지 않아요. '④'는 방향은 맞는데 직선이 원점을 비껴가서 정비례 그래프가 아니죠. '①'과 '⑤'는 둘 다 오른쪽 위로 향해서 방향 조건에서 탈락해요. 조건이 두 개인 문제는 하나만 확인하고 멈추지 말고, 카드마다 두 조건에 전부 체크 표시를 해 보는 게 안전해요.",
     core: "조건 둘 다 만족하는 카드만 살아남아요.",
   },
   {
@@ -833,7 +833,7 @@ export const POOL_M1U3V2_PILOT: ExamItem[] = [
     answer: [0, 1],
     diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span>격자를 따라가면 곡선이 가로 3칸, 세로 6칸인 격자점을 정확히 지나므로 (3, 6)을 지난다는 설명은 참이에요. 그리고 곡선 한 쌍이 오른쪽 위와 왼쪽 아래, 즉 제1사분면과 제3사분면에 놓여 있으니 두 번째 설명도 참이죠.<span class='xh'>틀린 설명 격파</span>반비례 그래프는 <i class='mv'>x</i>=0을 넣을 수 없어서 원점을 지나지 않아요. 원점 통과는 정비례 직선의 전매특허죠. 또 곡선은 좌표축에 한없이 가까워질 뿐 절대 닿지 않으므로 x축과 만난다는 설명도 틀렸어요. 마지막으로 <i class='mv'>x</i>>0에서 <i class='mv'>x</i>가 커지면 곡선이 점점 내려가 <i class='mv'>y</i>는 작아져요. 곱을 일정하게 지키려면 한쪽이 커질 때 다른 쪽이 작아져야 하기 때문이에요.",
+      "<span class='xh'>정답 풀이</span>격자를 따라가면 곡선이 가로 3칸, 세로 6칸인 격자점을 정확히 지나므로 (3, 6)을 지난다는 설명은 참이에요. 그리고 곡선 한 쌍이 오른쪽 위와 왼쪽 아래, 즉 제1사분면과 제3사분면에 놓여 있으니 두 번째 설명도 참이죠.<span class='xh'>틀린 설명 격파</span>반비례 그래프는 <i class='mv'>x</i>=0을 넣을 수 없어서 원점을 지나지 않아요. 원점 통과는 정비례 직선의 전매특허죠. 또 곡선은 좌표축에 한없이 가까워질 뿐 절대 닿지 않으므로 x축과 만난다는 설명도 틀렸어요. 마지막으로 <i class='mv'>x</i>&gt;0에서 <i class='mv'>x</i>가 커지면 곡선이 점점 내려가 <i class='mv'>y</i>는 작아져요. 곱을 일정하게 지키려면 한쪽이 커질 때 다른 쪽이 작아져야 하기 때문이에요.",
     core: "반비례 곡선은 원점도 축도 건드리지 않아요.",
   },
   {
@@ -859,7 +859,7 @@ export const POOL_M1U3V2_PILOT: ExamItem[] = [
     lessonId: "m1u3l8",
     type: "num",
     prompt:
-      "그림과 같이 반비례 관계 " + withVars("y=a/x") + "(" + withVars("a") + ">0)의 그래프 위에 두 점 B, D가 있고, 직사각형 ABCD의 각 변은 " + withVars("x") + "축 또는 " + withVars("y") + "축에 평행해요. 직사각형 ABCD의 넓이가 <b>64</b>일 때, " + withVars("a") + "의 값을 구하세요.",
+      "그림과 같이 반비례 관계 " + withVars("y=a/x") + "(" + withVars("a") + "&gt;0)의 그래프 위에 두 점 B, D가 있고, 직사각형 ABCD의 각 변은 " + withVars("x") + "축 또는 " + withVars("y") + "축에 평행해요. 직사각형 ABCD의 넓이가 <b>64</b>일 때, " + withVars("a") + "의 값을 구하세요.",
     figure: rdFig({ a: 16, m: 2 }),
     answer: "16",
     numKind: "int",
@@ -873,8 +873,8 @@ export const POOL_M1U3V2_PILOT: ExamItem[] = [
   {
     // [슬롯 181] 검산: 교점의 x좌표 5 → 곡선에서 y=50÷5=10 → P(5, 10) → 10=5a → a=2 ✓
     //  (비상06-8 계보 a=2/3 분수를 정수 재설계 · §2 · 초판 직선 y=3x가 s178 문두 y=3x와
-    //  L9 내 관계식 중복 — 검산 V2 적발로 곡선 50·x=5·a=2 재설계). min −12·max 12·
-    //  labelEvery 2 — x=5는 문두 인쇄라 판독 불요(168 판례), P의 y=10은 짝수 라벨 위.
+    //  L9 내 관계식 중복 · 검산 V2 적발로 곡선 50·x=5·a=2 재설계). min −12·max 12·
+    //  labelEvery 2 · x=5는 문두 인쇄라 판독 불요(168 판례), P의 y=10은 짝수 라벨 위.
     id: "m1u3e181",
     lessonId: "m1u3l9",
     type: "num",
@@ -929,8 +929,8 @@ export const POOL_M1U3V2_PILOT: ExamItem[] = [
     // [슬롯 184] 검산: A는 y=−(1/2)x 위·y좌표 4 → 4=−(1/2)x → x=−8 → A(−8, 4). B는 y=x
     //  위 → B(4, 4). AB=4−(−8)=12(수평선 y=4), 높이=원점에서 4 → 넓이 12×4÷2=24 ✓
     //  (비상06-7 두 직선+수평선 계보 · 수치 신작). min −10·max 10·labelEvery 2로 −8·4가
-    //  짝수 라벨 위(초판 min −9는 홀수 라벨만 인쇄되는 planeSpec 홀짝 함정 — 검산 V2 적발).
-    //  y=4 연회색 수평 보조선이 선분 AB를 시각화(교과서 원형의 선분 표시 — 눈검수 반영).
+    //  짝수 라벨 위(초판 min −9는 홀수 라벨만 인쇄되는 planeSpec 홀짝 함정 · 검산 V2 적발).
+    //  y=4 연회색 수평 보조선이 선분 AB를 시각화(교과서 원형의 선분 표시 · 눈검수 반영).
     id: "m1u3e184",
     lessonId: "m1u3l9",
     type: "mcq",

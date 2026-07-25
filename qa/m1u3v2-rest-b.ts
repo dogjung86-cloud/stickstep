@@ -1,7 +1,7 @@
 // m1u3 v2 확대 저작 B: L3 그래프(17) + L4 그래프 해석(18) = 35문항.
 // 정본 = qa/m1u3-v2-blueprint.md §3(§3-0 우선). 파일럿 슬롯(45·47·51·54·58·70·71·72·75·84)은 제외.
 // 표기: v1 관행(mfmt 미사용·slash 분수·withVars·U+2212), em대시 금지(주석 포함 · 로).
-// CG 도판 재사용: 같은 spec 상수를 여러 문항이 공유(교과서 (1)(2)(3) 관행 — 67·68·85, 69·77, 73·74·78, 76·87, 88·89).
+// CG 도판 재사용: 같은 spec 상수를 여러 문항이 공유(교과서 (1)(2)(3) 관행 · 67·68·85, 69·77, 73·74·78, 76·87, 88·89).
 // 각 문항 주석 = [슬롯 n] 검산 노트.
 import type { ExamItem } from "../src/content/exams/types";
 import { mExamChangeGraphFig, type MExamChangeGraphSpec } from "../src/ui/examFiguresMath";
@@ -28,7 +28,7 @@ const CG_S53: MExamChangeGraphSpec = {
   series: [{ points: [[0, 0], [6, 24], [10, 24], [14, 8]] }],
 };
 const CG_S55: MExamChangeGraphSpec = {
-  // 자전거: 일정 빠르기 (0,0)→(6,3) = 시속 30 km(초판 (6,9)는 시속 90 km로 실감 위반 —
+  // 자전거: 일정 빠르기 (0,0)→(6,3) = 시속 30 km(초판 (6,9)는 시속 90 km로 실감 위반 ·
   // 검산 V1 권고 반영). 판독점 (4, 2)가 격자 라벨 교차점.
   xMin: 0, xMax: 6, yMin: 0, yMax: 3,
   xTicks: [0, 2, 4, 6],
@@ -37,7 +37,7 @@ const CG_S55: MExamChangeGraphSpec = {
   series: [{ points: [[0, 0], [6, 3]] }],
 };
 const CG_S60: MExamChangeGraphSpec = {
-  // 양초: 30 cm → 10시간에 0(일정 감소 · 초판 '분' 단위는 분당 3 cm 연소로 실감 위반 — 검산 V1 권고 반영).
+  // 양초: 30 cm → 10시간에 0(일정 감소 · 초판 '분' 단위는 분당 3 cm 연소로 실감 위반 · 검산 V1 권고 반영).
   xMin: 0, xMax: 10, yMin: 0, yMax: 30,
   xTicks: [0, 2, 4, 6, 8, 10],
   yTicks: [0, 10, 20, 30],
@@ -114,7 +114,7 @@ const CG_S80: MExamChangeGraphSpec = {
   series: [{ points: [[0, 40], [4, 40], [10, 10]] }],
 };
 const CG_S81: MExamChangeGraphSpec = {
-  // 바이킹 반복: 꼭대기 2·6·10초(간격 4초 · 초판 '분' 단위는 왕복 4분으로 실감 위반 —
+  // 바이킹 반복: 꼭대기 2·6·10초(간격 4초 · 초판 '분' 단위는 왕복 4분으로 실감 위반 ·
   // 검산 V1 권고 반영, 수치 불변·단위만 초).
   xMin: 0, xMax: 12, yMin: 0, yMax: 8,
   xTicks: [0, 2, 4, 6, 8, 10, 12],
@@ -503,7 +503,7 @@ export const POOL_M1U3V2_REST_B: ExamItem[] = [
     core: "같아지는 순간 = 두 그래프의 교점이에요.",
   },
   {
-    // [슬롯 77] 검산: (0,0)(20,4)... 대신 이 슬롯은 CG_S69 도판 — 돌아오기 시작한 시각 =
+    // [슬롯 77] 검산: (0,0)(20,4)... 대신 이 슬롯은 CG_S69 도판 · 돌아오기 시작한 시각 =
     //  마지막 꼭대기 수평이 끝나는 30분 ✓. 시간 보기(수치)라 셔플 기본.
     id: "m1u3e077",
     lessonId: "m1u3l4",

@@ -1,404 +1,453 @@
-// 중1 수학 Ⅲ. 좌표평면과 그래프: 단원 종합 평가 풀, 레슨 8 반비례 그래프 (m1u3e156~m1u3e177). 2026-07 개보수: e162 개형 ①~⑤·e175 교점·e177 정수 점 개수 신작, e166 조어 제거.
-// 유형 14(mcq+multi)/6(num)/2(word), diff 8/9/5. 곡선·점·문항 수치는 관계 그래프 spec에서 함께 가져온다.
+// 수학 중1 Ⅲ. 좌표평면과 그래프 v2 재출제 문항 풀 · L8 반비례 그래프: 한 쌍의 매끄러운 곡선(책 129~131쪽) 슬롯 156~177(22문항).
+// 생성 파일: 수정은 qa/m1u3v2-*.ts(스테이징 정본)에서 한 뒤 node qa/build-m1u3v2-lessons.mjs 재실행.
+// 규격 v2(정본 qa/m1u3-v2-blueprint.md · §3-0 우선): mcq 11/multi 2/num 9·word 0 · diff 8/9/5 ·
+// 그림 14 · mfmt 미사용(slash 분수·withVars·U+2212) · 무그림은 화이트리스트 사유 태그 · em대시 금지.
 import type { ExamItem } from "./types";
-import { mExamRelChoicesFig, mExamRelationPlaneFig, type MExamRelationPlaneSpec } from "../../ui/examFiguresMath";
+import { mExamRelChoicesFig, mExamRelationPlaneFig, mExamInvRectFig } from "../../ui/examFiguresMath";
 
-const L = "m1u3l8";
-const minus = (value: number): string => String(value).replace("-", "−");
-const coord = (x: number, y: number): string => `(${minus(x)}, ${minus(y)})`;
-const variable = (name: string): string => `<i class='mv'>${name}</i>`;
-const inverse = (a: number): string => `${variable("y")}=${minus(a)}/${variable("x")}`;
-
-const A_156 = 14;
-const PLANE_156: MExamRelationPlaneSpec = {
-  min: -8,
-  max: 8,
-  labelEvery: 2,
-  inverseCurves: [{ a: A_156, color: "#364FC7" }],
-};
-
-const POINT_160 = { label: "P", x: -4, y: 4, color: "#E8547E", labelDx: 12 };
-const A_160 = POINT_160.x * POINT_160.y;
-const PLANE_160: MExamRelationPlaneSpec = {
-  min: -8,
-  max: 8,
-  labelEvery: 2,
-  inverseCurves: [{ a: A_160, color: "#364FC7" }],
-  points: [POINT_160],
-};
-
-const A_164 = 21;
-const POINTS_164 = [
-  { label: "A", x: 3, y: A_164 / 3, color: "#364FC7", labelDx: 10 },
-  { label: "B", x: 7, y: A_164 / 7, color: "#E8547E", labelDx: 10 },
-];
-const PLANE_164: MExamRelationPlaneSpec = {
-  min: -8,
-  max: 8,
-  labelEvery: 1,
-  inverseCurves: [{ a: A_164, color: "#2F9E44" }],
-  points: POINTS_164,
-};
-
-const CURVES_169 = {
-  inverse: { label: "㉠", a: 16, color: "#364FC7" },
-  line: { label: "㉡", a: 0.5, color: "#E8547E" },
-};
-const PLANE_169: MExamRelationPlaneSpec = {
-  min: -8,
-  max: 8,
-  labelEvery: 2,
-  inverseCurves: [CURVES_169.inverse],
-  lines: [CURVES_169.line],
-};
-
-const MEET_175 = { label: "P", x: 3, y: 9, color: "#E8547E", labelDx: 14 };
-const A_175 = MEET_175.x * MEET_175.y;
-const PLANE_175: MExamRelationPlaneSpec = {
-  min: -10,
-  max: 10,
-  labelEvery: 2,
-  lines: [{ a: MEET_175.y / MEET_175.x, color: "#2F9E44" }],
-  inverseCurves: [{ a: A_175, color: "#364FC7" }],
-  points: [MEET_175],
-};
-
-const POINT_173 = { label: "R", x: -8, y: -4, color: "#E8547E", labelDx: 12 };
-const A_173 = POINT_173.x * POINT_173.y;
-const TARGET_X_173 = 4;
-const PLANE_173: MExamRelationPlaneSpec = {
-  min: -8,
-  max: 8,
-  labelEvery: 2,
-  inverseCurves: [{ a: A_173, color: "#364FC7" }],
-  points: [POINT_173],
-};
+const withVars = (text: string): string =>
+  text.replace(/[xyabkp]/g, (variable) => `<i class='mv'>${variable}</i>`);
 
 export const POOL_M1U3L8: ExamItem[] = [
   {
+    // [슬롯 156] 검산: 그림 곡선 a=25 > 0 → 제1·3사분면 한 쌍 ✓ (부품 a=25 · L8 내 관계식
+    //  유일 · (5, 5) 격자점 통과. 초판 a=36은 ±9 격자에서 구석 호로 보여 25로 재설계 ·
+    //  눈검수 반영 · s161 곡선 길이 문법). 조합 보기 셔플 기본.
     id: "m1u3e156",
-    lessonId: L,
+    lessonId: "m1u3l8",
     type: "mcq",
-    prompt: `그림은 ${inverse(A_156)}의 그래프예요. 이 그래프에 대한 설명으로 옳은 것은?`,
-    figure: mExamRelationPlaneFig(PLANE_156),
+    prompt: "그림과 같은 반비례 관계의 그래프가 <b>지나는 사분면</b>을 짝지은 것은?",
+    figure: mExamRelationPlaneFig({
+      min: -9,
+      max: 9,
+      size: 330,
+      labelEvery: 1,
+      inverseCurves: [{ a: 25, color: "#364FC7" }],
+    }),
     options: [
-      "제2사분면과 제4사분면에만 나타난다",
-      "제1사분면과 제3사분면에 두 갈래로 나타난다",
-      "원점을 지나 한 줄의 직선으로 이어진다",
-      `${variable("x")}축과 ${variable("y")}축을 각각 한 번씩 만난다`,
-      `${variable("x")}좌표와 ${variable("y")}좌표의 부호가 언제나 다르다`,
-    ],
-    answer: 1,
-    diff: 1,
-    explain:
-      `<span class='xh'>정답 풀이</span>${inverse(A_156)}에서 두 좌표의 곱은 ${A_156}로 양수예요. 두 수의 부호가 같아야 곱이 양수이므로 그래프는 제1사분면과 제3사분면에 한 갈래씩 나타나요.<span class='xh'>오답 하나씩 격파</span>제2·제4사분면은 두 좌표의 부호가 다를 때예요. 반비례 그래프는 원점을 지나는 직선이 아니고, 두 좌표축과도 만나지 않아요. 따라서 축을 각각 만난다는 말도 틀려요. 좌표의 부호가 언제나 다르다는 설명 역시 곱이 양수라는 조건과 반대예요. 식의 분자 부호와 두 좌표의 곱부터 확인하면 두 갈래의 위치를 바로 판단할 수 있어요.`,
-    core: "a가 양수인 반비례 그래프는 제1사분면과 제3사분면에 나타나요.",
-  },
-  {
-    id: "m1u3e157",
-    lessonId: L,
-    type: "num",
-    prompt: `${inverse(32)}의 그래프 위에서 ${variable("x")}=−4일 때, ${variable("y")}의 값을 쓰세요.`,
-    answer: "-8",
-    numKind: "int",
-    diff: 1,
-    explain:
-      `<span class='xh'>정답 풀이</span>${inverse(32)}에 ${variable("x")}=−4를 넣으면 ${variable("y")}=32÷(−4)=<b>−8</b>이에요. 따라서 그래프 위의 점은 (−4, −8)이고, 두 좌표의 곱도 (−4)×(−8)=32로 관계식과 맞아요.<span class='xh'>헷갈림 격파</span>'8'은 음수로 나눈 몫의 부호를 놓친 값이고, '−4'는 주어진 ${variable("x")}좌표를 그대로 옮긴 값이에요. '−128'은 나눗셈 대신 곱셈을 한 결과예요. 반비례식에서는 분자의 수를 ${variable("x")}값으로 나누고, 마지막에 ${variable("x")}${variable("y")}=32인지 곱으로 검산해요. 음수 부호까지 포함한 −8을 답으로 입력하면 돼요.`,
-    core: "반비례식에 x값을 넣어 나눈 뒤 xy=a로 검산해요.",
-  },
-  {
-    id: "m1u3e158",
-    lessonId: L,
-    type: "word",
-    prompt: "반비례 그래프 전체를 이루는 매끄러운 곡선의 모양을 나타내는 말을 고르세요.",
-    answer: "두 갈래",
-    bank: ["두 갈래", "한 갈래", "세 갈래", "한 직선", "두 직선", "꺾은선", "반원", "선분", "점 하나"],
-    diff: 1,
-    explain:
-      `<span class='xh'>정답 풀이</span>${inverse(28)}처럼 ${variable("a")}가 0이 아닌 반비례 그래프는 좌표평면의 서로 마주 보는 두 구역에 나뉘어 나타나므로 <b>두 갈래</b>의 매끄러운 곡선이에요. 한쪽만 보고 그래프 전체라고 생각하면 안 돼요.<span class='xh'>낱말 하나씩 격파</span>'한 갈래'와 '점 하나'는 반대쪽 부분을 빠뜨린 표현이에요. '세 갈래'가 될 수도 없어요. '한 직선'과 '두 직선'은 곧은 선을 뜻하고, '꺾은선'은 여러 선분이 꺾여 이어진 모양이에요. '반원'은 원의 절반이고 '선분'은 두 끝점 사이의 곧은 부분이라 매끄럽게 휘어진 반비례 그래프 전체의 모양과 달라요.`,
-    core: "반비례 그래프는 서로 떨어진 두 갈래의 매끄러운 곡선이에요.",
-  },
-  {
-    id: "m1u3e159",
-    lessonId: L,
-    type: "mcq",
-    prompt: `${inverse(-24)}의 그래프가 나타나는 사분면을 옳게 짝 지은 것은?`,
-    options: [
-      "제1사분면과 제2사분면",
       "제1사분면과 제3사분면",
-      "제3사분면과 제4사분면",
       "제2사분면과 제4사분면",
-      "네 사분면 모두",
-    ],
-    answer: 3,
-    diff: 1,
-    explain:
-      `<span class='xh'>정답 풀이</span>${inverse(-24)}에서는 ${variable("x")}${variable("y")}=−24예요. 곱이 음수이려면 두 좌표의 부호가 서로 달라야 해요. ${variable("x")}&lt;0, ${variable("y")}&gt;0인 제2사분면과 ${variable("x")}&gt;0, ${variable("y")}&lt;0인 제4사분면에 그래프가 나타나요.<span class='xh'>오답 하나씩 격파</span>제1·2사분면이나 제3·4사분면의 조합은 서로 마주 보는 두 갈래가 아니에요. 제1·3사분면은 두 좌표의 부호가 같아 곱이 양수일 때이고, 네 사분면 모두에 나타나는 것도 아니에요. ${variable("a")}의 부호로 두 좌표의 부호가 같은지 다른지부터 정해요.`,
-    core: "a가 음수이면 두 좌표의 부호가 달라 제2·제4사분면에 나타나요.",
-  },
-  {
-    id: "m1u3e160",
-    lessonId: L,
-    type: "num",
-    prompt: `그림의 곡선은 ${variable("y")}=${variable("a")}/${variable("x")}의 그래프이고 점 P${coord(POINT_160.x, POINT_160.y)}를 지나요. ${variable("a")}의 값을 쓰세요.`,
-    figure: mExamRelationPlaneFig(PLANE_160),
-    answer: String(A_160),
-    numKind: "int",
-    diff: 1,
-    explain:
-      `<span class='xh'>정답 풀이</span>점 P${coord(POINT_160.x, POINT_160.y)}가 ${variable("y")}=${variable("a")}/${variable("x")}의 그래프 위에 있으므로 ${variable("a")}=${variable("x")}${variable("y")}예요. 따라서 ${variable("a")}=(${minus(POINT_160.x)})×${minus(POINT_160.y)}=<b>${minus(A_160)}</b>이에요. 실제로 ${inverse(A_160)}에 ${variable("x")}=${minus(POINT_160.x)}를 넣으면 ${variable("y")}=${minus(POINT_160.y)}가 돼요.<span class='xh'>헷갈림 격파</span>'16'은 곱의 음수 부호를 빠뜨린 값이고, '0'은 두 좌표의 부호가 다르다는 사실을 반영하지 못한 값이에요. '−1'은 나눗셈으로 잘못 구한 값이에요. 한 점이 주어지면 두 좌표를 순서대로 확인하고 곱해 ${variable("a")}를 구한 뒤 다시 나누어 검산해요. 그래프가 제2·4사분면에 놓이는지도 마지막에 확인해요.`,
-    core: "반비례 그래프 위 한 점의 두 좌표를 곱하면 a를 구할 수 있어요.",
-  },
-  {
-    id: "m1u3e161",
-    lessonId: L,
-    type: "mcq",
-    prompt: `반비례 관계 ${variable("y")}=${variable("a")}/${variable("x")}에서 ${variable("a")}가 0이 아닐 때, 그래프와 좌표축의 관계로 옳은 것은?`,
-    options: [
-      "두 좌표축에 가까워질 수 있지만 어느 축과도 만나지 않는다",
-      `${variable("x")}축과는 만나고 ${variable("y")}축과는 만나지 않는다`,
-      `${variable("y")}축과는 만나고 ${variable("x")}축과는 만나지 않는다`,
-      "반드시 원점에서 두 좌표축과 만난다",
-      "각 좌표축 위에 점이 두 개씩 있다",
+      "제1사분면과 제2사분면",
+      "제3사분면과 제4사분면",
+      "제1사분면과 제4사분면",
     ],
     answer: 0,
     diff: 1,
     explain:
-      `<span class='xh'>정답 풀이</span>그래프가 ${variable("y")}축 위에 있으려면 ${variable("x")}=0이어야 하지만 0으로 나눌 수 없어요. 또 ${variable("x")}축 위에 있으려면 ${variable("y")}=0이어야 하는데 그러면 ${variable("x")}${variable("y")}=0이 되어 0이 아닌 ${variable("a")}와 맞지 않아요. 따라서 그래프는 두 축에 가까워질 수는 있어도 어느 축과도 만나지 않아요.<span class='xh'>오답 하나씩 격파</span>한 축만 만난다는 두 설명은 각각 나눗셈 또는 곱의 조건을 놓쳤어요. 원점에서는 ${variable("x")}=0이라 식을 사용할 수 없으므로 원점을 지난다는 말도 틀려요. 축마다 점이 두 개 있다는 설명 역시 축과 만나지 않는 성질에 어긋나요.`,
-    core: "a가 0이 아닌 반비례 그래프는 x축과 y축 어느 쪽과도 만나지 않아요.",
+      "<span class='xh'>정답 풀이</span>그림의 곡선 한 쌍은 오른쪽 위와 왼쪽 아래에 놓여 있어요. 오른쪽 위는 (+, +)인 제1사분면, 왼쪽 아래는 (−, −)인 제3사분면이므로 <b>제1사분면과 제3사분면</b> 짝이에요. 곱 <i class='mv'>xy</i>가 양수로 일정한 관계라 두 좌표의 부호가 늘 같은 구역에만 곡선이 사는 거죠.<span class='xh'>오답 하나씩 격파</span>'제2사분면과 제4사분면'은 <i class='mv'>a</i>가 음수일 때의 짝이라 그림과 반대예요. 나머지 조합들은 위아래나 좌우로 이웃한 사분면끼리 묶었는데, 반비례 곡선 한 쌍은 언제나 원점을 사이에 두고 마주 보는 대각 구역에 놓여요. 이웃 구역 짝은 아예 나올 수 없다는 것까지 알아 두면 보기를 빠르게 걸러 낼 수 있어요.",
+    core: "곡선 한 쌍은 대각 구역, a>0은 1·3이에요.",
   },
   {
-    id: "m1u3e162",
-    lessonId: L,
+    // [슬롯 157] 검산: 격자점 (2, 7) 판독 → a=2×7=14 ✓ (레슨 (3,2)·(2,5) 회피 · 부품 14).
+    id: "m1u3e157",
+    lessonId: "m1u3l8",
+    type: "num",
+    prompt: "반비례 관계 " + withVars("y=a/x") + "의 그래프가 그림과 같이 점 P를 지날 때, " + withVars("a") + "의 값을 구하세요.",
+    figure: mExamRelationPlaneFig({
+      min: -8,
+      max: 8,
+      size: 330,
+      labelEvery: 1,
+      inverseCurves: [{ a: 14, color: "#364FC7" }],
+      points: [{ label: "P", x: 2, y: 7, color: "#364FC7", labelDx: 14, labelDy: -4 }],
+    }),
+    answer: "14",
+    numKind: "int",
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>점 P의 좌표를 격자에서 읽으면 (2, 7)이에요. 반비례 그래프 위의 점이므로 <i class='mv'>a</i>는 두 좌표의 곱, 즉 <i class='mv'>a</i>=2×7=<b>14</b>예요. 관계식은 <i class='mv'>y</i>=14/<i class='mv'>x</i>이고, 곡선이 (7, 2)도 지나는 것을 그림에서 확인하면 검산까지 끝나죠.<span class='xh'>계산 함정 격파</span>정비례의 습관대로 7÷2=3.5를 계산하면 나눗셈과 곱셈을 맞바꾼 거예요. 직선(정비례)에서는 나누고, 곡선(반비례)에서는 곱한다는 짝을 그래프 모양과 함께 기억해요. 또 P를 (7, 2)로 읽어도 곱은 14로 같지만, 좌표 읽기 자체는 가로 먼저라는 순서를 지켜야 다른 문제에서 실수하지 않아요.",
+    core: "곡선 위 격자점은 곱하면 a가 나와요.",
+  },
+  {
+    // [슬롯 158] 검산: y=−5/x는 a<0이라 제2·4사분면 두 갈래 → 카드 ③. 함정 ① 1·3사분면
+    //  곡선(부호 반전)·② 우하향 직선·④ 한 갈래(1사분면만)·⑤ 우상향 직선.
+    //  천재07 계보(직선 2·곡선 3 구성) · 정답 ③ (① 금지 ✓).
+    id: "m1u3e158",
+    lessonId: "m1u3l8",
     type: "mcq",
-    prompt: `다음 ①~⑤ 중 반비례 관계 ${inverse(-12)}의 그래프는?`,
+    prompt: "반비례 관계 " + withVars("y=−5/x") + "의 그래프로 알맞은 것은?",
     figure: mExamRelChoicesFig([
-      { line: { a: 1 } },
       { inv: 1 },
-      { line: { a: -1 } },
-      { inv: -1, single: true },
+      { line: { a: -0.8 } },
       { inv: -1 },
+      { inv: 1, single: true },
+      { line: { a: 0.8 } },
     ]),
     options: ["①", "②", "③", "④", "⑤"],
-    answer: 4,
+    answer: 2,
     shuffle: false,
     diff: 1,
     explain:
-      `<span class='xh'>정답 풀이</span>${inverse(-12)}는 반비례 관계이므로 그래프는 서로 떨어진 <b>두 갈래의 매끄러운 곡선</b>이에요. 두 좌표의 곱이 −12로 음수라 두 좌표의 부호가 달라야 하므로 곡선은 제2사분면과 제4사분면에 나타나요. 두 조건을 모두 만족하는 그림은 <b>⑤</b>예요.<span class='xh'>오답 하나씩 격파</span>①과 ③은 원점을 지나는 직선이라 정비례 그래프의 모양이에요. ②는 두 갈래 곡선이지만 제1·3사분면에 있어 곱이 양수인 관계의 그래프예요. ④는 제4사분면 쪽 한 갈래만 그려서 그래프의 절반을 빠뜨렸어요. 반비례 그래프는 곡선인지, 어느 사분면 짝인지, 두 갈래가 모두 있는지를 차례로 확인해요.`,
-    core: "a<0인 반비례 그래프는 제2·제4사분면의 두 갈래 곡선이에요.",
+      "<span class='xh'>정답 풀이</span>반비례 그래프는 좌표축에 한없이 가까워지며 뻗는 <b>한 쌍의 매끄러운 곡선</b>이에요. <i class='mv'>a</i>=−5처럼 <i class='mv'>a</i>가 음수이면 <i class='mv'>x</i>와 <i class='mv'>y</i>의 부호가 항상 반대라 제2사분면과 제4사분면에 곡선이 놓여요. 두 조건을 만족하는 카드는 <b>③</b>이에요.<span class='xh'>오답 하나씩 격파</span>'①'은 곡선이지만 제1·3사분면에 있어서 <i class='mv'>a</i>가 양수인 그래프예요. 부호부터 확인하는 습관이 이 함정을 막아요. '②'와 '⑤'는 직선이라 정비례 그래프이고, 반비례가 직선으로 그려지는 일은 없어요. '④'는 곡선이 한 갈래뿐인데, 반비례 그래프는 음수 쪽 짝꿍 곡선까지 항상 한 쌍이라는 것을 기억해요.",
+    core: "a<0인 반비례는 2·4사분면의 곡선 한 쌍이에요.",
   },
   {
-    id: "m1u3e163",
-    lessonId: L,
+    // [슬롯 159] 검산: 곡선 y=−9/x 위에서 y좌표가 3인 점 → x=−9÷3=−3 → k=−3 ✓
+    //  (2·4사분면 곡선 · 역방향 판독 · 부품 −9).
+    id: "m1u3e159",
+    lessonId: "m1u3l8",
     type: "num",
-    prompt: `${inverse(16)}의 그래프에서 ${variable("x")}좌표가 음수인 점은 어느 사분면에 있나요? 사분면 번호만 쓰세요.`,
-    answer: "3",
+    prompt: "반비례 관계의 그래프가 그림과 같아요. 이 그래프가 점 " + withVars("(k, 3)") + "을 지날 때, " + withVars("k") + "의 값을 구하세요.",
+    figure: mExamRelationPlaneFig({
+      min: -9,
+      max: 9,
+      size: 330,
+      labelEvery: 1,
+      inverseCurves: [{ a: -9, color: "#364FC7" }],
+    }),
+    answer: "-3",
+    numKind: "int",
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>먼저 그래프의 식을 복원해요. 곡선이 왼쪽 위 갈래에서 격자점 (−3, 3)을 지나므로 <i class='mv'>a</i>=(−3)×3=−9, 즉 <i class='mv'>y</i>=−9/<i class='mv'>x</i>예요. 이제 <i class='mv'>y</i>좌표가 3인 점을 찾으면 3=−9/<i class='mv'>k</i>에서 <i class='mv'>k</i>=−9÷3=<b>−3</b>이에요. 판독한 그 격자점이 바로 (k, 3)이었던 셈이죠.<span class='xh'>계산 함정 격파</span>부호를 잃고 3이라 답하면 (3, 3)이 되는데, 그 점의 곱은 9라 이 곡선(곱 −9) 위에 있을 수 없어요. 2·4사분면 곡선 위의 점은 두 좌표의 부호가 반드시 반대라는 성질로 부호를 검산해요. y좌표가 양수 3이면 x좌표는 음수일 수밖에 없답니다.",
+    core: "2·4사분면 곡선 위의 점은 부호가 반대예요.",
+  },
+  {
+    // [슬롯 160] 검산: 격자점 (2, −8) 판독 → a=2×(−8)=−16 → 식 y=−16/x ✓ (레슨 드릴
+    //  a=−6 회피 · 부품 −16). 오답 y=16/x·xy=16은 s165 정답 a=16을 인쇄하는 유출(검산 V2
+    //  적발)이라 y=8/x·xy=−8로 교체 · xy=−16은 정답과 동치라 금지.
+    id: "m1u3e160",
+    lessonId: "m1u3l8",
+    type: "mcq",
+    prompt: "그림과 같이 점 P를 지나는 반비례 관계 그래프의 <b>관계식</b>은?",
+    figure: mExamRelationPlaneFig({
+      min: -9,
+      max: 9,
+      size: 330,
+      labelEvery: 1,
+      inverseCurves: [{ a: -16, color: "#364FC7" }],
+      points: [{ label: "P", x: 2, y: -8, color: "#364FC7", labelDx: 14, labelDy: 16 }],
+    }),
+    options: [withVars("y=−16/x"), withVars("y=8/x"), withVars("y=−4x"), withVars("y=−8/x"), withVars("xy=−8")],
+    answer: 0,
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>점 P의 좌표는 (2, −8)이에요. 반비례의 <i class='mv'>a</i>는 곱이므로 <i class='mv'>a</i>=2×(−8)=−16이고, 관계식은 <b><i class='mv'>y</i>=−16/<i class='mv'>x</i></b>예요. 곡선이 제2사분면과 제4사분면에 놓인 것도 <i class='mv'>a</i>&lt;0과 정확히 맞아떨어지죠.<span class='xh'>오답 하나씩 격파</span>'<i class='mv'>y</i>=8/<i class='mv'>x</i>'는 부호도 크기도 어긋나요. <i class='mv'>x</i>=2를 넣으면 4가 되어 P를 지나지 않죠. '<i class='mv'>y</i>=−8/<i class='mv'>x</i>'와 '<i class='mv'>xy</i>=−8'은 P의 y좌표 −8을 그대로 <i class='mv'>a</i>로 쓴 함정이에요. 반비례의 <i class='mv'>a</i>는 한 좌표가 아니라 두 좌표의 곱이라는 것을 다시 확인해요. '<i class='mv'>y</i>=−4<i class='mv'>x</i>'는 (2, −8)을 지나긴 하지만 원점을 지나는 직선이라, 곡선인 그림과 정체가 달라요. 같은 점을 지나는 식이 여럿일 때는 그래프의 모양(직선인가 곡선인가)이 최종 심판이에요.",
+    core: "점과 모양을 함께 봐요, 곡선이면 a는 곱!",
+  },
+  {
+    // [슬롯 161] 검산: 곡선 y=18/x. ㄱ 참(18÷3=6, 격자 판독 가능) · ㄴ 참(a>0 → 1·3사분면) ·
+    //  ㄷ 거짓(반비례는 원점 안 지남) · ㄹ 거짓(축 비접촉) · ㅁ 거짓(x>0에서 x 커지면 y 작아짐).
+    //  answer [0,1]. min −9·max 9·labelEvery 1이라 (3, 6) 전부 라벨 눈금 위(±6 격자는 곡선이
+    //  x=3부터 시작해 짧은 호로 보이는 시각 지적 → ±9로 확장, 눈검수 반영).
+    id: "m1u3e161",
+    lessonId: "m1u3l8",
+    type: "multi",
+    prompt: "그림과 같은 반비례 관계의 그래프에 대한 설명으로 옳은 것을 <b>모두</b> 고르세요.",
+    figure: mExamRelationPlaneFig({
+      min: -9,
+      max: 9,
+      size: 330,
+      labelEvery: 1,
+      inverseCurves: [{ a: 18, color: "#364FC7" }],
+    }),
+    options: [
+      "점 (3, 6)을 지나요",
+      "제1사분면과 제3사분면을 지나요",
+      "원점을 지나요",
+      "x축과 한 점에서 만나요",
+      "x>0일 때 x의 값이 커지면 y의 값도 커져요",
+    ],
+    answer: [0, 1],
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>격자를 따라가면 곡선이 가로 3칸, 세로 6칸인 격자점을 정확히 지나므로 (3, 6)을 지난다는 설명은 참이에요. 그리고 곡선 한 쌍이 오른쪽 위와 왼쪽 아래, 즉 제1사분면과 제3사분면에 놓여 있으니 두 번째 설명도 참이죠.<span class='xh'>틀린 설명 격파</span>반비례 그래프는 <i class='mv'>x</i>=0을 넣을 수 없어서 원점을 지나지 않아요. 원점 통과는 정비례 직선의 전매특허죠. 또 곡선은 좌표축에 한없이 가까워질 뿐 절대 닿지 않으므로 x축과 만난다는 설명도 틀렸어요. 마지막으로 <i class='mv'>x</i>&gt;0에서 <i class='mv'>x</i>가 커지면 곡선이 점점 내려가 <i class='mv'>y</i>는 작아져요. 곱을 일정하게 지키려면 한쪽이 커질 때 다른 쪽이 작아져야 하기 때문이에요.",
+    core: "반비례 곡선은 원점도 축도 건드리지 않아요.",
+  },
+  {
+    // [슬롯 162] 검산: |a| 비교 · |−13|=13이 최대 → y=−13/x가 원점에서 가장 멂 ✓
+    //  (레슨 9vs5 값 회피 · 보기 관계식은 L8 내 부품·문두와 전부 상이).
+    id: "m1u3e162",
+    lessonId: "m1u3l8",
+    type: "mcq",
+    prompt: "다음 반비례 관계의 그래프 중 <b>원점에서 가장 멀리</b> 떨어진 것은?",
+    options: [withVars("y=−13/x"), withVars("y=7/x"), withVars("y=−4/x"), withVars("y=2/x"), withVars("y=−1/x")],
+    answer: 0,
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>반비례 그래프가 원점에서 얼마나 떨어져 있는지는 <i class='mv'>a</i>의 절댓값이 정해요. |<i class='mv'>a</i>|가 클수록 같은 <i class='mv'>x</i>에서 |<i class='mv'>y</i>|가 커져 곡선 전체가 원점에서 밀려나죠. 절댓값을 비교하면 13, 7, 4, 2, 1이므로 <b><i class='mv'>y</i>=−13/<i class='mv'>x</i></b>가 가장 멀어요.<span class='xh'>오답 하나씩 격파</span>'<i class='mv'>y</i>=7/<i class='mv'>x</i>'를 고르는 것은 부호가 양수인 것 중 가장 크다는 이유인데, 원점과의 거리는 부호와 무관하게 절댓값만 봐요. 음수 <i class='mv'>a</i>는 곡선을 2·4사분면으로 보낼 뿐 멀기와는 상관없죠. '<i class='mv'>y</i>=−1/<i class='mv'>x</i>'는 반대로 가장 가까운 곡선이에요. 정비례의 |<i class='mv'>a</i>|는 y축에 가까워지는 정도, 반비례의 |<i class='mv'>a</i>|는 원점에서 멀어지는 정도라는 두 규칙을 나란히 정리해 두면 헷갈리지 않아요.",
+    core: "멀기는 |a| 순서, 부호는 구역만 정해요.",
+  },
+  {
+    // [슬롯 163] 검산: xy=−21인 정수 쌍. 21의 약수 1·3·7·21 → (1,−21)(3,−7)(7,−3)(21,−1)과
+    //  부호를 바꾼 (−1,21)(−3,7)(−7,3)(−21,1) = 총 8개 ✓ (미래엔09 y=−12/x·12개의 수치 신작).
+    id: "m1u3e163",
+    lessonId: "m1u3l8",
+    type: "num",
+    prompt: "반비례 관계 " + withVars("y=−21/x") + "의 그래프 위의 점 중 " + withVars("x") + "좌표와 " + withVars("y") + "좌표가 <b>모두 정수</b>인 점의 개수를 구하세요.",
+    answer: "8",
+    numKind: "int",
+    unitLabel: "개",
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>그래프 위의 점은 모두 <i class='mv'>xy</i>=−21을 만족해요. 두 정수의 곱이 −21이 되려면 21의 약수를 이용하면 돼요. 21의 약수는 1, 3, 7, 21의 4개이므로 <i class='mv'>x</i>가 양수인 점은 (1, −21), (3, −7), (7, −3), (21, −1)의 4개예요. 부호를 맞바꾼 (−1, 21), (−3, 7), (−7, 3), (−21, 1)도 곱이 −21이라 4개가 더 있죠. 합해서 <b>8</b>개예요.<span class='xh'>계산 함정 격파</span>양수 쪽 4개만 세고 멈추면 절반을 놓쳐요. 곱이 음수이려면 두 좌표의 부호가 반대여야 하는데, 그 배치가 두 방향이라는 걸 꼭 챙겨요. 반대로 (−1, −21)처럼 둘 다 음수인 쌍을 세면 곱이 +21이 되어 그래프 위의 점이 아니에요. 약수 개수 × 2가 공식처럼 통하는 이유를 부호로 이해해 두면 안전해요.",
+    core: "약수 쌍을 세고 부호 배치 두 방향을 곱해요.",
+  },
+  {
+    // [슬롯 164] 검산: y=28/x 대입 판별 · (4, 7): 4×7=28 ✓ 정답. (28, 0)은 y=0 불가(축 위) ·
+    //  (2, 12)=24 · (7, −4)=−28 · (−4, 7)=−28 전부 탈락.
+    id: "m1u3e164",
+    lessonId: "m1u3l8",
+    type: "mcq",
+    prompt: "반비례 관계 " + withVars("y=28/x") + "의 그래프 <b>위에 있는</b> 점은?",
+    options: ["(4, 7)", "(28, 0)", "(2, 12)", "(7, −4)", "(−4, 7)"],
+    answer: 0,
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>그래프 위의 점인지는 곱이 28인지로 판정해요. (4, 7)은 4×7=28이라 정확히 그래프 위의 점이에요. 대입으로도 <i class='mv'>y</i>=28÷4=7로 일치하죠.<span class='xh'>오답 하나씩 격파</span>'(28, 0)'은 곱이 0이라 어떤 반비례 그래프에도 있을 수 없는 점이에요. 반비례 곡선은 축에 한없이 가까워질 뿐 절대 닿지 않으니 <i class='mv'>y</i>=0인 점은 존재하지 않죠. '(2, 12)'는 곱 24, '(7, −4)'와 '(−4, 7)'은 곱 −28이라 전부 약속 28을 어겨요. 특히 부호가 하나만 음수면 곱이 음수가 되어 1·3사분면 곡선 위에 있을 수 없다는 것도 함께 확인해 두면 빠른 판별 무기가 돼요.",
+    core: "곱이 28인 점만 통과, 축 위 점은 자격 미달!",
+  },
+  {
+    // [슬롯 165] 검산: D(2, 8)이 곡선 위 → a=2×8=16. 직사각형 가로 2−(−2)=4·세로 8−(−8)=16
+    //  → 넓이 4×16=64 ✓ (넓이=4a 구조 · §3-0 확정 (a=16, m=2)). x축 라벨 ±2는 planeSpec
+    //  labelEvery 2가 담당 · 문두 넓이 64, 그림엔 a·넓이 미인쇄.
+    id: "m1u3e165",
+    lessonId: "m1u3l8",
+    type: "num",
+    prompt:
+      "그림과 같이 반비례 관계 " + withVars("y=a/x") + "(" + withVars("a") + "&gt;0)의 그래프 위에 두 점 B, D가 있고, 직사각형 ABCD의 각 변은 " + withVars("x") + "축 또는 " + withVars("y") + "축에 평행해요. 직사각형 ABCD의 넓이가 <b>64</b>일 때, " + withVars("a") + "의 값을 구하세요.",
+    figure: mExamInvRectFig({ a: 16, m: 2 }),
+    answer: "16",
+    numKind: "int",
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>그림에서 점 D의 <i class='mv'>x</i>좌표는 2, 점 B의 <i class='mv'>x</i>좌표는 −2예요. 두 점이 원점에 대해 마주 보므로 D를 (2, <i class='mv'>k</i>)라 하면 B는 (−2, −<i class='mv'>k</i>)예요. 직사각형의 가로는 4, 세로는 2<i class='mv'>k</i>이고 넓이가 64이므로 4×2<i class='mv'>k</i>=64에서 <i class='mv'>k</i>=8이에요. D(2, 8)이 그래프 위의 점이므로 <i class='mv'>a</i>=2×8=<b>16</b>이에요.<span class='xh'>계산 함정 격파</span>세로 길이를 <i class='mv'>k</i>로만 잡으면 넓이가 32가 되어 <i class='mv'>a</i>=32라는 오답이 나와요. B가 x축 아래로 똑같이 내려가 있어서 세로는 <i class='mv'>k</i>의 두 배라는 것을 그림에서 확인해요. 마지막에 <i class='mv'>a</i>를 곱 2×8이 아니라 8로 답하는 실수도 잦아요. <i class='mv'>a</i>는 좌표가 아니라 두 좌표의 곱이에요.",
+    core: "대칭 직사각형의 세로는 2배, a는 곱으로 마무리!",
+  },
+  {
+    // [슬롯 166] 검산: xy=9는 a=9>0 반비례 → 1·3사분면 두 갈래 = ② ✓. ① 우상향 직선 ·
+    //  ③ 우하향 직선 · ④ 2·4 곡선(부호 함정) · ⑤ 한 갈래 함정. 정답 ② (① 금지 ✓).
+    id: "m1u3e166",
+    lessonId: "m1u3l8",
+    type: "mcq",
+    prompt: "관계식 " + withVars("xy=9") + "의 그래프로 알맞은 것은?",
+    figure: mExamRelChoicesFig([
+      { line: { a: 0.7 } },
+      { inv: 1 },
+      { line: { a: -0.7 } },
+      { inv: -1 },
+      { inv: 1, single: true },
+    ]),
+    options: ["①", "②", "③", "④", "⑤"],
+    answer: 1,
+    shuffle: false,
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span><i class='mv'>xy</i>=9는 곱이 9로 일정한 반비례이고, <i class='mv'>y</i>=9/<i class='mv'>x</i>와 같은 관계식이에요. <i class='mv'>a</i>=9가 양수이므로 그래프는 제1사분면과 제3사분면에 놓인 한 쌍의 매끄러운 곡선, 즉 <b>②</b>예요.<span class='xh'>오답 하나씩 격파</span>'①'과 '③'은 직선이라 정비례 그래프예요. <i class='mv'>xy</i>=9라는 변형 표기를 보고 정비례로 착각하면 이쪽으로 빠지죠. '④'는 곡선이지만 2·4사분면에 있어 <i class='mv'>a</i>가 음수인 그래프이고, '⑤'는 한 갈래만 있는 함정이에요. 반비례 그래프는 음수 쪽 짝꿍 곡선까지 항상 한 쌍이라는 것, 그리고 변형 표기는 <i class='mv'>y</i>= 꼴로 정리해 부호부터 읽는다는 것이 판별 순서예요.",
+    core: "xy=9는 a=9인 반비례, 1·3사분면 한 쌍!",
+  },
+  {
+    // [슬롯 167] 검산: y=−30/x에 x=5 → −30÷5=−6 ✓.
+    id: "m1u3e167",
+    lessonId: "m1u3l8",
+    type: "num",
+    prompt: "반비례 관계 " + withVars("y=−30/x") + "의 그래프가 점 " + withVars("(5, k)") + "를 지날 때, " + withVars("k") + "의 값을 구하세요.",
+    answer: "-6",
     numKind: "int",
     diff: 1,
     explain:
-      `<span class='xh'>정답 풀이</span>${inverse(16)}에서 두 좌표의 곱은 양수 16이에요. ${variable("x")}좌표가 음수라면 곱을 양수로 만들기 위해 ${variable("y")}좌표도 음수여야 해요. 두 좌표가 모두 음수인 점은 <b>제3사분면</b>에 있으므로 번호 3을 써요.<span class='xh'>헷갈림 격파</span>제2사분면은 (−, +)라 곱이 음수이고, 제4사분면은 (+, −)라 ${variable("x")}좌표부터 조건과 달라요. 제1사분면은 두 좌표가 양수인 다른 갈래예요. 좌표축 위에서는 한 좌표가 0이 되어 곱 16을 만들 수 없어요. 분자의 부호와 주어진 한 좌표의 부호로 나머지 부호를 정한 뒤 사분면을 판정해요.`,
-    core: "a>0이고 x<0이면 y<0이므로 제3사분면이에요.",
+      "<span class='xh'>정답 풀이</span>그래프가 (5, <i class='mv'>k</i>)를 지나므로 <i class='mv'>x</i>=5를 관계식에 대입해요. <i class='mv'>k</i>=−30÷5=<b>−6</b>이에요. 곱 검사로도 5×(−6)=−30이 <i class='mv'>a</i>와 일치하죠. <i class='mv'>a</i>가 음수라 <i class='mv'>x</i>가 양수인 쪽에서 <i class='mv'>y</i>는 음수, 즉 곡선의 제4사분면 갈래 위의 점이에요.<span class='xh'>계산 함정 격파</span>−30÷5를 6으로 쓰면 부호를 놓친 거예요. 그래프 감각으로 검산해 보세요. <i class='mv'>a</i>&lt;0인 곡선은 2·4사분면에 있으니 <i class='mv'>x</i>=5(양수)인 점의 <i class='mv'>y</i>는 반드시 음수여야 해요. 계산의 부호와 그래프의 구역이 서로를 확인해 주는 이중 검산을 습관으로 만들면 부호 실수가 사라져요.",
+    core: "계산 부호와 사분면 구역이 서로 검산해 줘요.",
   },
   {
-    id: "m1u3e164",
-    lessonId: L,
+    // [슬롯 168] 검산: 그래프가 (4, 5)를 지남 → a=20 → y=20/x에 x=−2 → y=−10 ✓
+    //  (§3-0: RP 두 갈래 고정이라 '찢어진' 서사 대신 점 경유 역산 · 부품 20).
+    id: "m1u3e168",
+    lessonId: "m1u3l8",
     type: "mcq",
-    prompt: `그림의 곡선은 ${inverse(A_164)}의 그래프이고 A, B는 곡선 위의 점이에요. A에서 B로 갈 때 좌표의 절댓값 변화를 옳게 말한 것은?`,
-    figure: mExamRelationPlaneFig(PLANE_164),
-    options: [
-      `${variable("x")}좌표의 절댓값과 ${variable("y")}좌표의 절댓값이 모두 커진다`,
-      `${variable("x")}좌표의 절댓값과 ${variable("y")}좌표의 절댓값이 모두 작아진다`,
-      `${variable("x")}좌표의 절댓값은 커지고 ${variable("y")}좌표의 절댓값은 작아진다`,
-      `${variable("x")}좌표의 절댓값은 작아지고 ${variable("y")}좌표의 절댓값은 커진다`,
-      "두 좌표의 절댓값이 서로 같은 값으로 유지된다",
-    ],
-    answer: 2,
-    diff: 2,
+    prompt: "반비례 관계의 그래프가 그림과 같이 점 P(4, 5)를 지나요. 이 그래프가 점 " + withVars("(−2, k)") + "를 지날 때, " + withVars("k") + "의 값은?",
+    figure: mExamRelationPlaneFig({
+      min: -10,
+      max: 10,
+      size: 330,
+      labelEvery: 2,
+      inverseCurves: [{ a: 20, color: "#364FC7" }],
+      points: [{ label: "P", x: 4, y: 5, color: "#364FC7", labelDx: 14, labelDy: -4 }],
+    }),
+    options: ["−10", "10", "−5", "−40", "5"],
+    answer: 0,
+    diff: 3,
     explain:
-      `<span class='xh'>정답 풀이</span>그림의 점 A는 ${coord(POINTS_164[0].x, POINTS_164[0].y)}, 점 B는 ${coord(POINTS_164[1].x, POINTS_164[1].y)}예요. A에서 B로 가면 ${variable("x")}좌표의 절댓값은 3에서 7로 커지고 ${variable("y")}좌표의 절댓값은 7에서 3으로 작아져요. 곱 21을 유지하려면 한쪽이 커질 때 다른 쪽이 작아져야 해요.<span class='xh'>오답 하나씩 격파</span>둘 다 커지거나 둘 다 작아지면 두 좌표의 곱이 21로 유지되지 않아요. ${variable("x")}가 작아지고 ${variable("y")}가 커진다는 말은 이동 방향을 거꾸로 읽었어요. 두 절댓값이 늘 같다는 설명도 A와 B의 실제 좌표에 맞지 않아요. 두 점의 좌표를 각각 읽고 곱까지 확인해요.`,
-    core: "반비례 그래프에서는 |x|가 커질 때 |y|가 작아져 곱의 크기를 유지해요.",
+      "<span class='xh'>정답 풀이</span>P(4, 5)가 그래프 위에 있으므로 <i class='mv'>a</i>=4×5=20, 관계식은 <i class='mv'>y</i>=20/<i class='mv'>x</i>예요. <i class='mv'>x</i>=−2를 대입하면 <i class='mv'>k</i>=20÷(−2)=<b>−10</b>이에요. 점 하나로 곡선 전체를 복원하고, 반대쪽 갈래의 값까지 읽어 내는 문제죠.<span class='xh'>오답 하나씩 격파</span>'10'은 나눗셈의 부호를 잃은 답이에요. <i class='mv'>x</i>=−2는 제3사분면 갈래 위라 <i class='mv'>y</i>도 음수여야 해요. '−5'는 P의 y좌표에 부호만 바꾼 것이고, '−40'은 20×(−2)로 나눌 자리에 곱한 값이에요. '5'는 그래프 복원 없이 P의 y좌표를 그대로 옮긴 거죠. '점으로 <i class='mv'>a</i> 확정, 새 <i class='mv'>x</i> 대입'이라는 두 걸음과 갈래별 부호 확인까지가 한 세트예요.",
+    core: "점 하나로 a를 복원하면 반대 갈래도 읽혀요.",
   },
   {
-    id: "m1u3e165",
-    lessonId: L,
-    type: "multi",
-    prompt: `${inverse(-35)}의 그래프 위에 있는 점을 <b>모두</b> 고르세요.`,
-    options: [coord(-5, 7), coord(5, 7), coord(7, -5), coord(-7, -5), coord(-7, 5)],
-    answer: [0, 2, 4],
-    diff: 2,
-    explain:
-      `<span class='xh'>정답 풀이</span>${inverse(-35)}의 그래프 위 점은 두 좌표의 곱이 −35여야 해요. ${coord(-5, 7)}, ${coord(7, -5)}, ${coord(-7, 5)}는 각각 곱이 −35이므로 모두 골라요.<span class='xh'>선택지 격파</span>${coord(5, 7)}은 곱이 35이고, ${coord(-7, -5)}도 음수 두 수를 곱해 35가 되므로 그래프 위에 있지 않아요. 숫자 5와 7의 조합만 보고 고르면 부호를 놓치기 쉬워요. 이 식의 그래프는 제2·제4사분면에 있으므로 두 좌표의 부호가 달라야 한다는 조건과 곱의 정확한 값을 함께 확인해요.`,
-    core: "그래프 위 점인지는 좌표의 부호와 곱 xy=a를 함께 확인해요.",
-  },
-  {
-    id: "m1u3e166",
-    lessonId: L,
+    // [슬롯 169] 검산: 곡선 y=24/x(부품 24 · 비상06-8 그림 문법 계보) · x=6에서 y=24÷6=4 ✓.
+    id: "m1u3e169",
+    lessonId: "m1u3l8",
     type: "num",
-    prompt: `${variable("y")}가 ${variable("x")}에 반비례하고 그 그래프가 점 ${coord(8, -4)}를 지나요. ${variable("x")}=16일 때 ${variable("y")}의 값을 쓰세요.`,
+    prompt: "반비례 관계 " + withVars("y=24/x") + "의 그래프가 그림과 같아요. 이 그래프가 점 " + withVars("(6, k)") + "를 지날 때, " + withVars("k") + "의 값을 구하세요.",
+    figure: mExamRelationPlaneFig({
+      min: -8,
+      max: 8,
+      size: 330,
+      labelEvery: 1,
+      inverseCurves: [{ a: 24, color: "#364FC7" }],
+    }),
+    answer: "4",
+    numKind: "int",
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>관계식이 <i class='mv'>y</i>=24/<i class='mv'>x</i>로 주어져 있으니 <i class='mv'>x</i>=6을 대입하면 <i class='mv'>k</i>=24÷6=<b>4</b>예요. 그림의 제1사분면 갈래에서 가로 6칸 자리의 곡선 높이를 읽어도 4로 일치하죠. 식과 그림이 서로를 검산해 주는 구조예요.<span class='xh'>계산 함정 격파</span>24×6=144를 계산하면 <i class='mv'>a</i>를 구하는 곱셈과 값을 구하는 나눗셈을 맞바꾼 거예요. <i class='mv'>a</i>가 이미 24로 주어졌으니 남은 일은 나누기뿐이죠. 또 (6, <i class='mv'>k</i>)의 6을 <i class='mv'>y</i>좌표로 착각해 24÷<i class='mv'>k</i>=6을 풀어도 이번엔 우연히 4가 나오지만, 순서쌍의 앞자리는 <i class='mv'>x</i>라는 원칙을 지켜 읽는 것이 다른 문제에서의 안전을 보장해요.",
+    core: "a가 주어지면 나누기, 그림은 검산용이에요.",
+  },
+  {
+    // [슬롯 170] 검산: 반비례 그래프는 원점을 지나지 않음(x=0 금지) = 참 ✓. 오답 = 직선 ·
+    //  x축과 만남 · 한 갈래 · y축에 닿음(전부 거짓).
+    id: "m1u3e170",
+    lessonId: "m1u3l8",
+    type: "mcq",
+    prompt: "반비례 관계 " + withVars("y=a/x") + "(" + withVars("a") + "는 0이 아닌 수)의 그래프에 대한 설명으로 <b>옳은</b> 것은?",
+    options: [
+      "원점을 지나지 않아요",
+      "원점을 지나는 직선이에요",
+      "x축과 한 점에서 만나요",
+      "한 갈래의 곡선이에요",
+      "y축에 닿을 때까지 뻗어요",
+    ],
+    answer: 0,
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>반비례에서 <i class='mv'>x</i>=0은 0으로 나누기가 되어 아예 쓸 수 없는 값이에요. 그래서 그래프에는 <i class='mv'>x</i>좌표가 0인 점이 하나도 없고, 원점 (0, 0)도 지날 수 없어요. '원점을 지나지 않는다'가 옳은 설명이에요.<span class='xh'>오답 하나씩 격파</span>'원점을 지나는 직선'은 정비례 그래프의 신분증이라 정반대예요. 'x축과 만난다'와 'y축에 닿는다'는 곡선이 축에 한없이 가까워질 뿐 절대 닿지 않는다는 성질에 어긋나요. 닿는 순간 곱이 0이 되어 약속이 깨지니까요. '한 갈래'도 틀렸어요. 반비례 그래프는 원점을 사이에 두고 마주 보는 두 갈래가 언제나 한 쌍이랍니다.",
+    core: "원점도 축도 금지 구역, 두 갈래 한 쌍이에요.",
+  },
+  {
+    // [슬롯 171] 검산: ㄱ 참(a<0 → 2·4) · ㄴ 참(축 비접촉) · ㄷ 참(|a| 클수록 원점에서 멂) ·
+    //  ㄹ 거짓(원점 통과 불가) · ㅁ 거짓(a>0이어도 곡선). answer [0, 1, 2].
+    id: "m1u3e171",
+    lessonId: "m1u3l8",
+    type: "multi",
+    prompt: "반비례 관계 " + withVars("y=a/x") + "(" + withVars("a") + "는 0이 아닌 수)의 그래프에 대한 설명으로 옳은 것을 <b>모두</b> 고르세요.",
+    options: [
+      "a<0이면 제2사분면과 제4사분면을 지나요",
+      "그래프는 좌표축에 닿지 않아요",
+      "a의 절댓값이 클수록 그래프가 원점에서 멀어져요",
+      "그래프는 원점을 지나요",
+      "a>0이면 오른쪽 위로 향하는 직선이에요",
+    ],
+    answer: [0, 1, 2],
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span><i class='mv'>a</i>&lt;0이면 두 좌표의 부호가 항상 반대라 곡선이 제2사분면과 제4사분면에 놓여요. 곡선은 축에 한없이 가까워질 뿐 닿지 않고, |<i class='mv'>a</i>|가 클수록 같은 <i class='mv'>x</i>에서 |<i class='mv'>y</i>|가 커져 곡선 전체가 원점에서 멀어지죠. 세 설명 모두 반비례 그래프의 핵심 성질이에요.<span class='xh'>틀린 설명 격파</span>'원점을 지난다'는 <i class='mv'>x</i>=0이 금지라는 대전제에 어긋나요. 원점 통과는 정비례 직선만의 것이죠. '<i class='mv'>a</i>&gt;0이면 직선'도 틀렸어요. <i class='mv'>a</i>의 부호는 곡선이 놓이는 구역(1·3인가 2·4인가)을 정할 뿐, 반비례 그래프는 부호와 무관하게 언제나 매끄러운 곡선 한 쌍이에요. 직선과 곡선의 정체를 바꿔치기하는 보기가 이 단원 판별의 단골 함정이랍니다.",
+    core: "구역은 a의 부호, 멀기는 |a|, 모양은 항상 곡선!",
+  },
+  {
+    // [슬롯 172] 검산: ㉠은 1·3사분면 (1, 4) 경유 → a=4 · ㉡은 2·4사분면 (−1, 4) 경유 →
+    //  a=−4 ✓ (부호쌍 부품 4·−4). ㉠㉡ 정의는 문두가 담당(곡선 label 옵션은 오른쪽 끝 축
+    //  근처에 고정 렌더라 x축 눈금과 겹침 · 눈검수 반영, 그림 라벨 제거).
+    //  ㉠㉡ 조합 보기 관례순 고정 · 정답 두 번째(① 금지 ✓).
+    id: "m1u3e172",
+    lessonId: "m1u3l8",
+    type: "mcq",
+    prompt:
+      "그림의 두 곡선은 각각 반비례 관계 그래프예요. <b>제1사분면과 제3사분면</b>을 지나는 곡선을 ㉠, <b>제2사분면과 제4사분면</b>을 지나는 곡선을 ㉡이라 할 때, ㉠과 ㉡의 " + withVars("a") + "(" + withVars("y=a/x") + ") 값을 차례로 짝지은 것은?",
+    figure: mExamRelationPlaneFig({
+      min: -6,
+      max: 6,
+      labelEvery: 1,
+      inverseCurves: [
+        { a: 4, color: "#364FC7" },
+        { a: -4, color: "#E8547E" },
+      ],
+    }),
+    options: ["㉠ −4, ㉡ 4", "㉠ 4, ㉡ −4", "㉠ 4, ㉡ 4", "㉠ 2, ㉡ −2", "㉠ 8, ㉡ −8"],
+    answer: 1,
+    shuffle: false,
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>구역부터 읽어요. ㉠은 제1사분면과 제3사분면에 있으니 <i class='mv'>a</i>&gt;0이고, ㉡은 제2사분면과 제4사분면에 있으니 <i class='mv'>a</i>&lt;0이에요. 격자점을 찾으면 ㉠은 (1, 4)를 지나 <i class='mv'>a</i>=4, ㉡은 (−1, 4)를 지나 <i class='mv'>a</i>=−4예요. 짝은 <b>㉠ 4, ㉡ −4</b>죠.<span class='xh'>오답 하나씩 격파</span>'㉠ −4, ㉡ 4'는 두 곡선의 부호를 서로 바꾼 답이라 구역 읽기에서 걸러져요. '㉠ 4, ㉡ 4'는 ㉡의 구역이 2·4사분면이라는 것을 무시했고, '㉠ 2, ㉡ −2'와 '㉠ 8, ㉡ −8'은 격자점 판독이 어긋난 값이에요. 두 곡선이 원점을 사이에 두고 거울처럼 마주 보면 |<i class='mv'>a</i>|가 같고 부호만 다르다는 것까지 읽어 내면 완벽해요.",
+    core: "구역으로 부호, 격자점으로 크기를 읽어요.",
+  },
+  {
+    // [슬롯 173] 검산: (2, 11) 경유 → a=22 → (p, 2)에서 p=22÷2=11 ✓ (2단 · 무그림 ②).
+    id: "m1u3e173",
+    lessonId: "m1u3l8",
+    type: "num",
+    prompt: "반비례 관계 " + withVars("y=a/x") + "의 그래프가 두 점 " + withVars("(2, 11)") + ", " + withVars("(p, 2)") + "를 지나요. " + withVars("p") + "의 값을 구하세요.",
+    answer: "11",
+    numKind: "int",
+    diff: 3,
+    explain:
+      "<span class='xh'>정답 풀이</span>좌표가 완전한 점 (2, 11)로 <i class='mv'>a</i>를 확정하면 <i class='mv'>a</i>=2×11=22예요. 같은 그래프 위의 점은 곱이 전부 22여야 하므로 (<i class='mv'>p</i>, 2)에서도 <i class='mv'>p</i>×2=22, 즉 <i class='mv'>p</i>=<b>11</b>이에요. 두 점 (2, 11)과 (11, 2)는 좌표가 서로 뒤바뀐 쌍인데, 곱이 같으니 둘 다 곡선 위에 있는 거죠.<span class='xh'>계산 함정 격파</span><i class='mv'>a</i>=22를 구해 놓고 22를 그대로 답하면 마지막 나눗셈을 건너뛴 거예요. 묻는 것은 <i class='mv'>a</i>가 아니라 <i class='mv'>p</i>라는 것을 확인해요. 또 (2, 11)에서 11÷2를 계산하는 것은 정비례의 방법이에요. 반비례 곡선 위의 점들은 '곱이 같은 짝꿍'이라는 사실 하나로 전부 이어져 있다는 것을 기억해요.",
+    core: "같은 곡선의 점들은 곱이 같은 짝꿍이에요.",
+  },
+  {
+    // [슬롯 174] 검산: 조건 = 제2사분면 통과 + 축 비접촉 → 2·4사분면 두 갈래 곡선 ② ✓.
+    //  ① 우하향 직선(2·4 지나지만 원점 통과 직선) · ③ 1·3 곡선 · ④ 원점 이탈 직선 ·
+    //  ⑤ 4사분면 한 갈래(2사분면 안 지남). 정답 ② (① 금지 ✓).
+    id: "m1u3e174",
+    lessonId: "m1u3l8",
+    type: "mcq",
+    prompt: "그래프가 <b>제2사분면을 지나는 매끄러운 곡선 한 쌍</b>인 것은?",
+    figure: mExamRelChoicesFig([
+      { line: { a: -0.8 } },
+      { inv: -1 },
+      { inv: 1 },
+      { line: { a: 0.8, bPx: 14 } },
+      { inv: -1, single: true },
+    ]),
+    options: ["①", "②", "③", "④", "⑤"],
+    answer: 1,
+    shuffle: false,
+    diff: 3,
+    explain:
+      "<span class='xh'>정답 풀이</span>조건이 둘이에요. 곡선 한 쌍이어야 하고, 제2사분면을 지나야 하죠. '②'는 제2사분면과 제4사분면에 놓인 두 갈래 곡선이라 두 조건을 모두 만족해요. <i class='mv'>a</i>&lt;0인 반비례 그래프의 표준 모습이에요.<span class='xh'>오답 하나씩 격파</span>'①'은 제2사분면을 지나긴 하지만 원점을 통과하는 직선이라 곡선 조건에서 탈락해요. '③'은 곡선 한 쌍인데 1·3사분면에 있어 구역이 어긋나고, '④'는 축과 만나는 직선이라 아예 반비례 그래프가 아니에요. '⑤'는 4사분면에 한 갈래만 있어 '한 쌍'과 '제2사분면' 두 조건을 다 어겨요. 모양(곡선), 개수(한 쌍), 구역(2·4)의 세 가지 도장을 카드마다 찍어 보면 기계적으로 풀려요.",
+    core: "곡선인가, 한 쌍인가, 구역이 맞는가, 도장 셋!",
+  },
+  {
+    // [슬롯 175] 검산: 격자점 (1, 5) 판독 → a=1×5=5 ✓ (부품 5 · 기초 판독).
+    id: "m1u3e175",
+    lessonId: "m1u3l8",
+    type: "num",
+    prompt: "반비례 관계 " + withVars("y=a/x") + "의 그래프가 그림과 같이 점 P를 지날 때, " + withVars("a") + "의 값을 구하세요.",
+    figure: mExamRelationPlaneFig({
+      min: -6,
+      max: 6,
+      labelEvery: 1,
+      inverseCurves: [{ a: 5, color: "#364FC7" }],
+      points: [{ label: "P", x: 1, y: 5, color: "#364FC7", labelDx: 13, labelDy: -5 }],
+    }),
+    answer: "5",
+    numKind: "int",
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>점 P의 좌표를 격자에서 읽으면 (1, 5)예요. 반비례의 <i class='mv'>a</i>는 곱이므로 <i class='mv'>a</i>=1×5=<b>5</b>죠. 특히 <i class='mv'>x</i>=1인 점은 곱이 <i class='mv'>y</i>값 그 자체라서, 곡선이 세로선 <i class='mv'>x</i>=1과 만나는 높이만 읽으면 <i class='mv'>a</i>가 바로 나와요. 정비례의 (1, <i class='mv'>a</i>) 성질과 닮은 지름길이에요.<span class='xh'>계산 함정 격파</span>5÷1=5라서 이 문제는 나눗셈으로 풀어도 답이 같아 보이지만, 그건 <i class='mv'>x</i>=1일 때만 생기는 우연이에요. 다른 점이었다면 곱과 몫이 갈라지니, '반비례는 곱'이라는 원칙으로 풀었는지 스스로 확인해요. P를 (5, 1)로 읽어도 곱은 같지만 판독 순서는 늘 가로 먼저랍니다.",
+    core: "x=1인 점의 높이가 곧 a예요.",
+  },
+  {
+    // [슬롯 176] 검산: y=−45/x 위의 점은 곱이 −45 · (5, 9)는 곱 +45라 지나지 않음(정답) ✓.
+    //  (−5, 9)·(9, −5)·(−9, 5)·(15, −3)은 전부 곱 −45로 통과(부정형 전수 대입).
+    id: "m1u3e176",
+    lessonId: "m1u3l8",
+    type: "mcq",
+    prompt: "반비례 관계 " + withVars("y=−45/x") + "의 그래프가 <b>지나지 않는</b> 점은?",
+    options: ["(5, 9)", "(−5, 9)", "(9, −5)", "(−9, 5)", "(15, −3)"],
+    answer: 0,
+    diff: 3,
+    explain:
+      "<span class='xh'>정답 풀이</span>그래프 위의 점은 두 좌표의 곱이 −45여야 해요. 다섯 점의 곱을 차례로 계산하면 (−5, 9)는 −45, (9, −5)도 −45, (−9, 5)도 −45, (15, −3)도 −45로 전부 통과하는데, <b>(5, 9)</b>만 곱이 +45라 그래프 위에 없어요.<span class='xh'>오답 하나씩 격파</span>이 문제의 함정은 숫자 5와 9, 15와 3의 조합이 전부 절댓값 45를 만든다는 거예요. 크기만 보면 다섯 점이 모두 그럴듯하죠. 갈림길은 부호예요. <i class='mv'>a</i>=−45가 음수이므로 두 좌표의 부호가 반드시 반대여야 하는데, (5, 9)만 둘 다 양수라 제1사분면에 있고, 이 곡선은 제2·4사분면에만 살아요. '지나지 않는' 부정형 문제일수록 전수 계산과 부호 확인을 끝까지 밟아요.",
+    core: "크기는 같아도 부호가 다르면 다른 세상이에요.",
+  },
+  {
+    // [슬롯 177] 검산: 격자점 (4, 8) 판독 → a=32 → x=−16일 때 y=32÷(−16)=−2 ✓
+    //  (외삽 계산 · 격자 밖 값 · 레슨 "넓이=a" 드릴과 도출 상이 · 부품 32).
+    id: "m1u3e177",
+    lessonId: "m1u3l8",
+    type: "num",
+    prompt: "반비례 관계 " + withVars("y=a/x") + "의 그래프가 그림과 같이 점 P를 지나요. " + withVars("x=−16") + "일 때 " + withVars("y") + "의 값을 구하세요.",
+    figure: mExamRelationPlaneFig({
+      min: -9,
+      max: 9,
+      size: 330,
+      labelEvery: 1,
+      inverseCurves: [{ a: 32, color: "#364FC7" }],
+      points: [{ label: "P", x: 4, y: 8, color: "#364FC7", labelDx: 14, labelDy: -4 }],
+    }),
     answer: "-2",
     numKind: "int",
-    diff: 2,
-    explain:
-      `<span class='xh'>정답 풀이</span>${variable("x")}가 8에서 16으로 2배가 되었으므로 반비례하는 ${variable("y")}는 −4의 절반인 <b>−2</b>가 돼요. 곱으로 확인하면 8×(−4)=−32이고 16×(−2)=−32로 일정해요.<span class='xh'>헷갈림 격파</span>'−8'은 ${variable("x")}가 2배일 때 ${variable("y")}도 2배로 만들어 정비례처럼 생각한 값이에요. '2'는 절반으로 줄이면서 음수 부호를 빠뜨렸고, '−32'는 일정한 곱을 ${variable("y")}값으로 옮긴 수예요. ${variable("x")}가 커졌다는 말만 보고 ${variable("y")}에 같은 수를 더하거나 빼지 말고 배수의 역수로 바꾸고 곱을 다시 검산해요.`,
-    core: "x가 2배가 되므로 y는 −4의 절반인 −2가 돼요.",
-  },
-  {
-    id: "m1u3e167",
-    lessonId: L,
-    type: "mcq",
-    prompt: "점 (7, −3)을 지나는 반비례 그래프의 관계식은?",
-    options: [inverse(21), inverse(-21), inverse(-28), `${variable("y")}=−21${variable("x")}`, inverse(32)],
-    answer: 1,
-    diff: 2,
-    explain:
-      `<span class='xh'>정답 풀이</span>점 (7, −3)을 지나므로 ${variable("a")}=${variable("x")}${variable("y")}=7×(−3)=−21이에요. 따라서 관계식은 <b>${inverse(-21)}</b>이에요. ${variable("a")}가 음수라 제2사분면과 제4사분면에 나타난다는 조건에도 맞아요.<span class='xh'>오답 하나씩 격파</span>${inverse(21)}은 부호가 양수라 제1·3사분면에 나타나요. ${inverse(-28)}과 ${inverse(32)}는 점 (7, −3)의 좌표를 곱한 값과 분자가 달라요. ${variable("y")}=−21${variable("x")}는 나눗셈이 아니라 곱셈으로 나타낸 식이라 원점을 지나는 직선의 관계예요. 점의 곱과 그래프의 사분면을 두 번 확인하면 식을 하나로 정할 수 있어요.`,
-    core: "한 점의 좌표를 곱해 a를 구하고 그 부호로 사분면을 검산해요.",
-  },
-  {
-    id: "m1u3e168",
-    lessonId: L,
-    type: "word",
-    prompt: "반비례 그래프가 만나지 않는 두 축을 한꺼번에 부르는 말을 고르세요.",
-    answer: "좌표축",
-    bank: ["좌표축", "원점", "사분면", "순서쌍", "좌표평면", "가로선", "세로선", "두 갈래", "격자점"],
-    diff: 2,
-    explain:
-      `<span class='xh'>정답 풀이</span><i class='mv'>x</i>축과 <i class='mv'>y</i>축을 한꺼번에 <b>좌표축</b>이라고 해요. ${variable("a")}가 0이 아닌 ${variable("y")}=${variable("a")}/${variable("x")}의 그래프는 두 좌표축에 가까워질 수 있지만 만나지는 않아요.<span class='xh'>낱말 하나씩 격파</span>'원점'은 두 축이 만나는 한 점이고, '사분면'은 좌표축이 나누는 네 구역이에요. '순서쌍'은 좌표를 나타내는 두 수, '좌표평면'은 좌표축이 놓인 평면 전체예요. '가로선'과 '세로선'은 방향만 말해 정확한 수학 이름이 아니고, '두 갈래'는 그래프의 모양이에요. '격자점'은 눈금선이 만나는 점이므로 두 축을 함께 부르는 말이 아니에요.`,
-    core: "x축과 y축을 함께 좌표축이라고 하며 반비례 그래프는 좌표축과 만나지 않아요.",
-  },
-  {
-    id: "m1u3e169",
-    lessonId: L,
-    type: "mcq",
-    prompt: `그림의 ㉠, ㉡ 중 ${inverse(CURVES_169.inverse.a)}의 그래프를 찾고 그 까닭을 옳게 설명한 것은?`,
-    figure: mExamRelationPlaneFig(PLANE_169),
-    options: [
-      "㉡, 원점을 지나는 직선이기 때문이다",
-      "㉡, 제1사분면과 제3사분면을 지나기 때문이다",
-      "㉠, 원점을 지나 한 줄로 이어지기 때문이다",
-      "㉠, 서로 떨어진 두 갈래의 곡선이고 좌표축과 만나지 않기 때문이다",
-      "㉠과 ㉡ 모두, 오른쪽 위와 왼쪽 아래에 부분이 있기 때문이다",
-    ],
-    answer: 3,
-    diff: 2,
-    explain:
-      `<span class='xh'>정답 풀이</span>㉠은 서로 떨어진 두 갈래의 매끄러운 곡선이고 두 좌표축과 만나지 않아요. 이는 ${inverse(CURVES_169.inverse.a)}의 그래프 모양과 같아요. ㉡은 원점을 지나 한 줄로 이어진 직선이므로 정비례 그래프예요.<span class='xh'>오답 하나씩 격파</span>㉡이 원점을 지나는 직선이라는 사실은 맞지만 그래서 반비례 그래프가 될 수는 없어요. 두 그림이 제1·3사분면에 보인다는 위치만으로 같은 종류라고 판단해서도 안 돼요. ㉠이 원점을 지나거나 한 줄로 이어진다는 설명은 그림과 반대예요. 두 그래프가 모두 조건을 만족한다는 말도 모양과 축 교차 여부를 무시했어요. 위치뿐 아니라 곡선의 갈래와 축과의 관계를 함께 봐요.`,
-    core: "반비례의 두 갈래 곡선과 정비례의 원점을 지나는 직선을 구별해요.",
-  },
-  {
-    id: "m1u3e170",
-    lessonId: L,
-    type: "num",
-    prompt: `${inverse(-27)}의 그래프 위 점 ${coord(-9, 3)}에서 ${variable("x")}좌표를 −3으로 바꾸었을 때, 같은 그래프 위 점의 ${variable("y")}좌표를 쓰세요.`,
-    answer: "9",
-    numKind: "int",
-    diff: 2,
-    explain:
-      `<span class='xh'>정답 풀이</span>${inverse(-27)}에서 ${variable("x")}${variable("y")}=−27이에요. ${variable("x")}=−3으로 바꾸면 (−3)${variable("y")}=−27이므로 ${variable("y")}=<b>9</b>예요. 새 점은 ${coord(-3, 9)}이고 두 좌표의 곱은 −27로 유지돼요.<span class='xh'>헷갈림 격파</span>'−9'는 음수 두 수를 나눌 때 몫의 부호를 잘못 정한 값이에요. '3'은 처음 점의 ${variable("y")}좌표를 그대로 둔 것이고, '−24'는 두 수의 차로 처리한 값이에요. ${variable("x")}좌표의 절댓값이 9에서 3으로 1/3배가 되었으므로 ${variable("y")}좌표의 절댓값은 3에서 9로 3배가 되는지도 끝까지 확인해요.`,
-    core: "같은 곡선 위에서는 xy가 일정하므로 바뀐 x로 y를 다시 구해요.",
-  },
-  {
-    id: "m1u3e171",
-    lessonId: L,
-    type: "mcq",
-    prompt: `${inverse(14)}과 ${inverse(45)}에서 ${variable("x")}=5일 때 두 ${variable("y")}좌표의 절댓값을 비교한 것으로 옳은 것은?`,
-    options: [
-      `${inverse(45)}에서의 절댓값이 더 크다`,
-      `${inverse(14)}에서의 절댓값이 더 크다`,
-      "두 절댓값은 항상 같다",
-      "둘 다 0이다",
-      "두 관계 모두에서 값을 정할 수 없다",
-    ],
-    answer: 0,
-    diff: 2,
-    explain:
-      `<span class='xh'>정답 풀이</span>${variable("x")}=5를 넣으면 ${inverse(14)}에서는 ${variable("y")}=14÷5=2.8, ${inverse(45)}에서는 ${variable("y")}=45÷5=9예요. 따라서 ${inverse(45)}에서의 ${variable("y")}좌표 절댓값 9가 더 커요. 같은 ${variable("x")}에서 분자의 절댓값이 큰 쪽이 축에서 더 멀리 놓여요.<span class='xh'>오답 하나씩 격파</span>${inverse(14)} 쪽이 더 크다는 말은 두 분자의 크기를 거꾸로 비교했어요. 두 값은 2.8과 9라 같지 않고, ${variable("x")}=5는 사용할 수 있는 값이므로 둘 다 0도 아니며 정할 수 없는 것도 아니에요. 직접 나누어 비교하면 그림의 겉모양에 기대지 않고 정확히 판단할 수 있어요.`,
-    core: "같은 x에서는 |a|가 큰 반비례 그래프의 |y|가 더 커요.",
-  },
-  {
-    id: "m1u3e172",
-    lessonId: L,
-    type: "multi",
-    prompt: `반비례 그래프 ${variable("y")}=${variable("a")}/${variable("x")}에서 ${variable("a")}가 0이 아닐 때 항상 옳은 설명을 <b>모두</b> 고르세요.`,
-    options: [
-      "그래프는 두 좌표축과 만나지 않는다",
-      `${variable("a")}&gt;0이면 제1사분면과 제3사분면에 나타난다`,
-      "그래프는 언제나 원점을 지나는 직선이다",
-      `${variable("a")}&lt;0이면 제2사분면과 제4사분면에 나타난다`,
-      "그래프의 한 갈래만 그려도 전체 그래프가 된다",
-    ],
-    answer: [0, 1, 3],
-    diff: 2,
-    explain:
-      `<span class='xh'>정답 풀이</span>${variable("a")}가 0이 아닌 반비례 그래프는 두 좌표축과 만나지 않아요. ${variable("a")}&gt;0이면 두 좌표의 부호가 같아 제1·3사분면에, ${variable("a")}&lt;0이면 부호가 달라 제2·4사분면에 나타나요. 따라서 이 세 설명을 모두 골라요.<span class='xh'>선택지 격파</span>원점을 지나는 직선이라는 설명은 정비례 그래프의 특징을 섞은 것이에요. 원점에서는 ${variable("x")}=0이라 반비례식을 사용할 수 없어요. 한 갈래만 그려도 전체라는 설명도 틀려요. 반비례 그래프는 서로 마주 보는 두 사분면에 한 갈래씩 있으므로 양쪽을 모두 보아야 해요. 축, 부호, 갈래 수를 각각 따로 확인하면 빠뜨리지 않아요.`,
-    core: "반비례 그래프는 a의 부호에 맞는 두 사분면에 두 갈래로 나타나고 축과 만나지 않아요.",
-  },
-  {
-    id: "m1u3e173",
-    lessonId: L,
-    type: "num",
-    prompt: `그림의 곡선은 ${variable("y")}=${variable("a")}/${variable("x")}의 그래프이고 R${coord(POINT_173.x, POINT_173.y)}를 지나요. 같은 곡선에서 ${variable("x")}=4일 때 ${variable("y")}의 값을 쓰세요.`,
-    figure: mExamRelationPlaneFig(PLANE_173),
-    answer: String(A_173 / TARGET_X_173),
-    numKind: "int",
     diff: 3,
     explain:
-      `<span class='xh'>정답 풀이</span>먼저 R${coord(POINT_173.x, POINT_173.y)}에서 ${variable("a")}=${variable("x")}${variable("y")}=(${minus(POINT_173.x)})×(${minus(POINT_173.y)})=${A_173}를 구해요. 관계식은 ${inverse(A_173)}이고, ${variable("x")}=${TARGET_X_173}를 넣으면 ${variable("y")}=${A_173}÷${TARGET_X_173}=<b>${A_173 / TARGET_X_173}</b>이에요. 새 점은 ${coord(TARGET_X_173, A_173 / TARGET_X_173)}로 제1사분면의 다른 갈래에 있어요.<span class='xh'>헷갈림 격파</span>'−8'은 처음 점의 ${variable("x")}를 옮긴 값이고, '−4'는 처음 ${variable("y")}를 그대로 둔 값이에요. '−8'처럼 부호를 음수로 두면 양수인 ${variable("a")}와 맞지 않아요. 한 점으로 ${variable("a")}를 먼저 복원하고 목표 ${variable("x")}를 넣는 두 단계를 지켜요. 마지막에는 4×8=32인지 곱으로 다시 확인해요.`,
-    core: "한 점으로 a를 복원한 뒤 다른 x값의 y를 구하면 반대쪽 갈래도 찾을 수 있어요.",
-  },
-  {
-    id: "m1u3e174",
-    lessonId: L,
-    type: "mcq",
-    prompt: `${variable("y")}=${variable("a")}/${variable("x")}의 그래프가 점 ${coord(-5, -6)}을 지날 때, 같은 그래프 위의 점은?`,
-    options: [coord(5, -6), coord(-6, 5), coord(6, -5), coord(-5, 6), coord(5, 6)],
-    answer: 4,
-    diff: 3,
-    explain:
-      `<span class='xh'>정답 풀이</span>점 ${coord(-5, -6)}에서 ${variable("a")}=(−5)×(−6)=30이에요. 같은 그래프 위의 점은 두 좌표의 곱이 30이어야 하므로 ${coord(5, 6)}이 맞아요. 두 좌표가 모두 양수여서 제1사분면의 다른 갈래에 있다는 점도 확인할 수 있어요.<span class='xh'>오답 하나씩 격파</span>${coord(5, -6)}과 ${coord(6, -5)}은 곱이 −30이고, ${coord(-6, 5)}와 ${coord(-5, 6)}도 곱이 −30이에요. 숫자 5와 6만 같다고 같은 그래프가 되는 것은 아니며 부호까지 확인해야 해요. 원래 점의 두 부호를 함께 바꾸면 곱과 그래프가 유지돼요.`,
-    core: "두 좌표의 부호를 함께 바꾸면 곱이 같아 반대쪽 갈래의 점이 돼요.",
-  },
-  {
-    id: "m1u3e175",
-    lessonId: L,
-    type: "mcq",
-    prompt: `그림과 같이 정비례 관계 ${variable("y")}=3${variable("x")}의 그래프와 반비례 관계 ${variable("y")}=${variable("a")}/${variable("x")}의 그래프가 점 P에서 만나요. 점 P의 ${variable("x")}좌표가 ${MEET_175.x}일 때, ${variable("a")}의 값은?`,
-    figure: mExamRelationPlaneFig(PLANE_175),
-    options: [`${MEET_175.y}`, `${MEET_175.x + MEET_175.y}`, `${A_175}`, `${MEET_175.x}`, `${MEET_175.y * MEET_175.y}`],
-    answer: 2,
-    diff: 3,
-    explain:
-      `<span class='xh'>정답 풀이</span>① 점 P는 ${variable("y")}=3${variable("x")}의 그래프 위에 있으므로 ${variable("x")}좌표 ${MEET_175.x}을 넣으면 ${variable("y")}좌표는 3×${MEET_175.x}=${MEET_175.y}예요. 곧 P(${MEET_175.x}, ${MEET_175.y})예요.<br>② P는 ${variable("y")}=${variable("a")}/${variable("x")}의 그래프 위에도 있으므로 ${variable("a")}=${variable("x")}${variable("y")}=${MEET_175.x}×${MEET_175.y}=<b>${A_175}</b>이에요.<span class='xh'>오답 하나씩 격파</span>'${MEET_175.y}'는 P의 ${variable("y")}좌표를 구하고 멈춘 값이고, '${MEET_175.x + MEET_175.y}'는 두 좌표를 곱하지 않고 더한 값이에요. '${MEET_175.x}'은 주어진 ${variable("x")}좌표를 그대로 옮겼고, '${MEET_175.y * MEET_175.y}'은 ${variable("y")}좌표를 두 번 곱한 값이에요. 만나는 점은 두 그래프 위에 동시에 있으므로 두 식을 차례로 사용해요.`,
-    core: "교점은 두 그래프 위에 동시에 있어 P(3, 9)에서 a=27이에요.",
-  },
-  {
-    id: "m1u3e176",
-    lessonId: L,
-    type: "mcq",
-    prompt: `학생이 ${inverse(45)}의 그래프를 보고 "오른쪽으로 계속 가면 곡선이 결국 ${variable("x")}축과 만난다"라고 말했어요. 가장 알맞은 반박은?`,
-    options: [
-      `점 ${coord(0, 45)}에서 ${variable("y")}축과 먼저 만난다`,
-      `점 ${coord(45, 0)}에서 ${variable("x")}축과 만난다`,
-      "두 좌표축과 각각 한 번씩 만난다",
-      `${variable("x")}좌표의 절댓값이 커지면 ${variable("y")}좌표의 절댓값은 0에 가까워지지만 0이 되지는 않는다`,
-      "원점을 지나면 두 좌표축과 동시에 만난다",
-    ],
-    answer: 3,
-    diff: 3,
-    explain:
-      `<span class='xh'>정답 풀이</span>${inverse(45)}에서 ${variable("x")}좌표의 절댓값이 커지면 ${variable("y")}=45/${variable("x")}의 절댓값은 점점 작아져 0에 가까워져요. 그러나 어떤 사용할 수 있는 ${variable("x")}를 넣어도 ${variable("y")}=0이 되지는 않으므로 곡선은 ${variable("x")}축과 만나지 않아요.<span class='xh'>오답 하나씩 격파</span>${coord(45, 0)}은 곱이 0이라 45가 아니고, ${coord(0, 45)}는 ${variable("x")}=0을 식에 사용할 수 없어 그래프 위 점이 아니에요. 따라서 두 축과 한 번씩 만난다는 설명도 틀려요. 원점에서는 두 좌표의 곱이 0이며 분모도 0이 되므로 그래프가 지날 수 없어요. 가까워지는 것과 실제로 만나는 것을 구분해요.`,
-    core: "반비례 곡선은 좌표축에 가까워져도 만나지 않아요.",
-  },
-  {
-    id: "m1u3e177",
-    lessonId: L,
-    type: "mcq",
-    prompt: `반비례 관계 ${inverse(-18)}의 그래프 위의 점 중에서 ${variable("x")}좌표와 ${variable("y")}좌표가 모두 정수인 점은 모두 몇 개인가요?`,
-    options: ["12개", "6개", "24개", "8개", "10개"],
-    answer: 0,
-    diff: 3,
-    explain:
-      `<span class='xh'>정답 풀이</span>① 그래프 위의 점은 ${variable("x")}${variable("y")}=−18을 만족해요. ${variable("y")}=−18÷${variable("x")}가 정수가 되려면 ${variable("x")}는 18을 나누어떨어뜨리는 정수여야 해요.<br>② 18의 약수는 1, 2, 3, 6, 9, 18의 6개이고, ${variable("x")}는 음수도 될 수 있으므로 ±1, ±2, ±3, ±6, ±9, ±18의 12개예요.<br>③ 각 ${variable("x")}마다 ${variable("y")}가 하나씩 정해지므로 정수 점은 모두 <b>12개</b>예요.<span class='xh'>오답 하나씩 격파</span>'6개'는 양의 약수만 세고 음수 쪽 갈래를 빠뜨린 값이에요. '24개'는 각 점의 두 좌표를 따로 세어 한 점을 두 번 센 값이고, '8개'와 '10개'는 약수 1과 18이나 2와 9 같은 짝을 빠뜨리고 센 값이에요. 약수를 짝으로 늘어놓고 부호까지 곱해 세면 빠짐이 없어요.`,
-    core: "x는 ±(18의 약수)여야 하므로 정수 점은 6×2=12개예요.",
+      "<span class='xh'>정답 풀이</span>점 P의 좌표는 (4, 8)이므로 <i class='mv'>a</i>=4×8=32, 관계식은 <i class='mv'>y</i>=32/<i class='mv'>x</i>예요. <i class='mv'>x</i>=−16은 그림 밖의 값이지만 식이 있으니 문제없어요. <i class='mv'>y</i>=32÷(−16)=<b>−2</b>예요. 그래프가 보여 주는 범위 너머까지 식으로 뻗어 나가는 것이 관계식의 힘이죠.<span class='xh'>계산 함정 격파</span>32÷(−16)을 2로 쓰면 부호를 잃은 거예요. <i class='mv'>x</i>가 음수면 제3사분면 갈래라 <i class='mv'>y</i>도 음수죠. 또 그림에 −16이 없다고 당황해 이웃 눈금을 어림하는 것은 위험해요. 격자 판독은 <i class='mv'>a</i>를 복원하는 데까지만 쓰고, 그다음은 계산에게 맡기는 역할 분담을 기억해요. 검산은 (−16)×(−2)=32로 곱이 <i class='mv'>a</i> 그대로인지 보면 끝이에요.",
+    core: "판독은 a까지, 격자 밖은 식이 데려다줘요.",
   },
 ];

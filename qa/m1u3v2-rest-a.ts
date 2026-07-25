@@ -1,7 +1,7 @@
 // m1u3 v2 확대 저작 A: L1 좌표(18) + L2 사분면(18) = 36문항.
 // 정본 = qa/m1u3-v2-blueprint.md §3(§3-0 우선). 파일럿 슬롯(1·5·9·12·23·24·33·34)은 제외.
 // 표기: v1 관행(mfmt 미사용·slash 분수·withVars·U+2212), em대시 금지(주석 포함 · 로).
-// 신작 헬퍼 NL은 파일럿에서 import(단일 정의 — 이식 때 examFiguresMath 승격과 함께 경로 교체).
+// 신작 헬퍼 NL은 파일럿에서 import(단일 정의 · 이식 때 examFiguresMath 승격과 함께 경로 교체).
 // 각 문항 주석 = [슬롯 n] 검산 노트.
 import type { ExamItem } from "../src/content/exams/types";
 import { mExamPlaneFig, type MExamPlaneSpec } from "../src/ui/examFiguresMath";
@@ -139,7 +139,7 @@ export const POOL_M1U3V2_REST_A: ExamItem[] = [
   /* ════════ L1 좌표: 위치를 수의 쌍으로 ════════ */
   {
     // [슬롯 2] 검산: P는 원점에서 왼쪽 5칸 = x좌표 −5 ✓ (y좌표 2는 답 아님). L1 num 값표의
-    //  음수 자리(§3) — 파일 내 유일(−5). "좌표를 구하세요" 무단위 면제 문구.
+    //  음수 자리(§3) · 파일 내 유일(−5). "좌표를 구하세요" 무단위 면제 문구.
     id: "m1u3e002",
     lessonId: "m1u3l1",
     type: "num",
@@ -495,7 +495,7 @@ export const POOL_M1U3V2_REST_A: ExamItem[] = [
     shuffle: false,
     diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span>제3사분면의 부호는 (−, −)이므로 <i class='mv'>a</i><0, <i class='mv'>b</i><0이라고 먼저 적어요. Q의 <i class='mv'>x</i>좌표 −<i class='mv'>b</i>는 음수의 반대라서 양수이고, <i class='mv'>y</i>좌표 <i class='mv'>a</i>는 그대로 음수예요. 부호 조합이 (+, −)이므로 Q는 <b>제4사분면</b> 위의 점이에요.<span class='xh'>오답 하나씩 격파</span>−<i class='mv'>b</i>를 '마이너스가 붙었으니 음수'라고 읽으면 (−, −)가 되어 제3사분면이라는 오답에 빠져요. −<i class='mv'>b</i>의 부호는 <i class='mv'>b</i>의 부호에 따라 정해지고, <i class='mv'>b</i>가 음수면 −<i class='mv'>b</i>는 양수예요. 문자 앞의 기호만 보고 부호를 단정하지 않는 것이 이 유형의 핵심이에요. 조건을 부등호 두 줄로 적어 놓고 새 점의 좌표를 하나씩 판정하면 절대 흔들리지 않아요.",
+      "<span class='xh'>정답 풀이</span>제3사분면의 부호는 (−, −)이므로 <i class='mv'>a</i>&lt;0, <i class='mv'>b</i>&lt;0이라고 먼저 적어요. Q의 <i class='mv'>x</i>좌표 −<i class='mv'>b</i>는 음수의 반대라서 양수이고, <i class='mv'>y</i>좌표 <i class='mv'>a</i>는 그대로 음수예요. 부호 조합이 (+, −)이므로 Q는 <b>제4사분면</b> 위의 점이에요.<span class='xh'>오답 하나씩 격파</span>−<i class='mv'>b</i>를 '마이너스가 붙었으니 음수'라고 읽으면 (−, −)가 되어 제3사분면이라는 오답에 빠져요. −<i class='mv'>b</i>의 부호는 <i class='mv'>b</i>의 부호에 따라 정해지고, <i class='mv'>b</i>가 음수면 −<i class='mv'>b</i>는 양수예요. 문자 앞의 기호만 보고 부호를 단정하지 않는 것이 이 유형의 핵심이에요. 조건을 부등호 두 줄로 적어 놓고 새 점의 좌표를 하나씩 판정하면 절대 흔들리지 않아요.",
     core: "−b는 b가 음수일 때 양수, 기호만 보고 속지 마요.",
   },
   {
@@ -596,7 +596,7 @@ export const POOL_M1U3V2_REST_A: ExamItem[] = [
     shuffle: false,
     diff: 2,
     explain:
-      "<span class='xh'>정답 풀이</span>주어진 점 (<i class='mv'>a</i>, −<i class='mv'>b</i>)가 제3사분면에 있으므로 두 좌표가 모두 음수예요. 즉 <i class='mv'>a</i><0이고 −<i class='mv'>b</i><0이죠. −<i class='mv'>b</i>가 음수라는 것은 <i class='mv'>b</i> 자신은 양수라는 뜻이에요. 이제 (<i class='mv'>b</i>, <i class='mv'>a</i>)의 첫째 자리는 양수, 둘째 자리는 음수라 부호가 (+, −)이므로 오른쪽 아래 구역인 <b>제4사분면</b>이에요.<span class='xh'>오답 하나씩 격파</span>조건이 <i class='mv'>b</i>가 아니라 −<i class='mv'>b</i>에 걸려 있다는 것이 이 문제의 갈림길이에요. −<i class='mv'>b</i><0을 <i class='mv'>b</i><0으로 그대로 옮기면 (−, −)로 읽혀 제3사분면이라는 오답이 나오죠. 음수 기호를 벗길 때는 뜻이 뒤집혀서 '−<i class='mv'>b</i>가 음수면 <i class='mv'>b</i>는 양수'가 돼요. 또 새 점의 좌표 순서가 (<i class='mv'>b</i>, <i class='mv'>a</i>)로 두 문자의 자리가 바뀌어 있다는 것도 놓치기 쉬워요. 부호 추론은 조건 정리 한 줄과 자리 확인이 전부랍니다.",
+      "<span class='xh'>정답 풀이</span>주어진 점 (<i class='mv'>a</i>, −<i class='mv'>b</i>)가 제3사분면에 있으므로 두 좌표가 모두 음수예요. 즉 <i class='mv'>a</i>&lt;0이고 −<i class='mv'>b</i>&lt;0이죠. −<i class='mv'>b</i>가 음수라는 것은 <i class='mv'>b</i> 자신은 양수라는 뜻이에요. 이제 (<i class='mv'>b</i>, <i class='mv'>a</i>)의 첫째 자리는 양수, 둘째 자리는 음수라 부호가 (+, −)이므로 오른쪽 아래 구역인 <b>제4사분면</b>이에요.<span class='xh'>오답 하나씩 격파</span>조건이 <i class='mv'>b</i>가 아니라 −<i class='mv'>b</i>에 걸려 있다는 것이 이 문제의 갈림길이에요. −<i class='mv'>b</i>&lt;0을 <i class='mv'>b</i>&lt;0으로 그대로 옮기면 (−, −)로 읽혀 제3사분면이라는 오답이 나오죠. 음수 기호를 벗길 때는 뜻이 뒤집혀서 '−<i class='mv'>b</i>가 음수면 <i class='mv'>b</i>는 양수'가 돼요. 또 새 점의 좌표 순서가 (<i class='mv'>b</i>, <i class='mv'>a</i>)로 두 문자의 자리가 바뀌어 있다는 것도 놓치기 쉬워요. 부호 추론은 조건 정리 한 줄과 자리 확인이 전부랍니다.",
     core: "−b<0이면 b>0, 기호 벗기기가 관문이에요.",
   },
   {
@@ -622,7 +622,7 @@ export const POOL_M1U3V2_REST_A: ExamItem[] = [
     core: "대칭 배치는 크기가 같아도 부호로 갈라요.",
   },
   {
-    // [슬롯 39] 검산: P(−3, 4)의 두 부호를 모두 바꾸면 (3, −4) — 그 위치의 점은 U(3, −4) ✓.
+    // [슬롯 39] 검산: P(−3, 4)의 두 부호를 모두 바꾸면 (3, −4) · 그 위치의 점은 U(3, −4) ✓.
     //  T(−3, −4)는 y부호만·V(3, 4)는 x부호만·W(−4, 3)는 자리 바꿈. 기호 보기 고정 · 정답
     //  U = 두 번째(① 금지 ✓, §3 재배치 반영).
     id: "m1u3e039",
@@ -710,7 +710,7 @@ export const POOL_M1U3V2_REST_A: ExamItem[] = [
     numKind: "int",
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>제2사분면은 (−, +) 구역이므로 <i class='mv'>a</i><0, <i class='mv'>b</i>>0이에요. 절댓값 조건과 합치면 <i class='mv'>a</i>=−3, <i class='mv'>b</i>=6으로 확정되죠. 따라서 <i class='mv'>b</i>−<i class='mv'>a</i>=6−(−3)=6+3=<b>9</b>예요.<span class='xh'>계산 함정 격파</span>가장 큰 함정은 마지막 뺄셈이에요. 6−(−3)에서 음수를 빼는 것은 그 수를 더하는 것과 같은데, 이를 6−3=3으로 계산하면 부호 처리 하나로 답이 무너져요. 또 사분면 부호를 반대로 적어 <i class='mv'>a</i>=3, <i class='mv'>b</i>=−6으로 잡으면 −9가 나오죠. 조건 정리(부호), 값 확정(절댓값), 마지막 계산(음수 뺄셈)의 세 단계마다 부호를 소리 내어 확인하는 습관이 심화 문제의 안전벨트예요.",
+      "<span class='xh'>정답 풀이</span>제2사분면은 (−, +) 구역이므로 <i class='mv'>a</i>&lt;0, <i class='mv'>b</i>&gt;0이에요. 절댓값 조건과 합치면 <i class='mv'>a</i>=−3, <i class='mv'>b</i>=6으로 확정되죠. 따라서 <i class='mv'>b</i>−<i class='mv'>a</i>=6−(−3)=6+3=<b>9</b>예요.<span class='xh'>계산 함정 격파</span>가장 큰 함정은 마지막 뺄셈이에요. 6−(−3)에서 음수를 빼는 것은 그 수를 더하는 것과 같은데, 이를 6−3=3으로 계산하면 부호 처리 하나로 답이 무너져요. 또 사분면 부호를 반대로 적어 <i class='mv'>a</i>=3, <i class='mv'>b</i>=−6으로 잡으면 −9가 나오죠. 조건 정리(부호), 값 확정(절댓값), 마지막 계산(음수 뺄셈)의 세 단계마다 부호를 소리 내어 확인하는 습관이 심화 문제의 안전벨트예요.",
     core: "음수를 빼면 더하기, 6−(−3)=9예요.",
   },
 ];

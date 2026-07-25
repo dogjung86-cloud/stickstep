@@ -9,7 +9,7 @@ import { mExamChangeGraphFig, mExamRelationPlaneFig, type MExamChangeGraphSpec }
 const withVars = (text: string): string =>
   text.replace(/[xyak]/g, (variable) => `<i class='mv'>${variable}</i>`);
 
-/* 달리기 도판(파일럿 183과 동일 spec — 185·196 공유) */
+/* 달리기 도판(파일럿 183과 동일 spec · 185·196 공유) */
 const CG_RACE: MExamChangeGraphSpec = {
   xMin: 0, xMax: 50, yMin: 0, yMax: 150,
   xTicks: [0, 10, 20, 30, 40, 50],
@@ -21,7 +21,7 @@ const CG_RACE: MExamChangeGraphSpec = {
   ],
 };
 /* 추격 도판(189·196용 · 동생 분속 60 m 먼저 출발 · 형 분속 90 m 4분 후 출발 · 교점 (12, 720)).
- * 형 끝점은 yMax 안쪽 (14, 900)으로(초판 (16, 1080)이 뷰박스를 뚫어 라벨 잘림 — 눈검수 반영),
+ * 형 끝점은 yMax 안쪽 (14, 900)으로(초판 (16, 1080)이 뷰박스를 뚫어 라벨 잘림 · 눈검수 반영),
  * 동생 라벨은 labelAt으로 중간점 (8, 480)에(형 라벨과 우상단 충돌 해소). */
 const CG_CHASE: MExamChangeGraphSpec = {
   xMin: 0, xMax: 16, yMin: 0, yMax: 960,
@@ -191,7 +191,7 @@ export const POOL_M1U3V2_REST_E: ExamItem[] = [
     numKind: "int",
     diff: 3,
     explain:
-      "<span class='xh'>정답 풀이</span>교점은 두 그래프를 모두 만족해요. 먼저 반비례 쪽에 <i class='mv'>x</i>=−4를 넣으면 <i class='mv'>k</i>=−32÷(−4)=8이므로 P(−4, 8)이에요. 이 점이 정비례 그래프 위에도 있으므로 8=<i class='mv'>a</i>×(−4)에서 <i class='mv'>a</i>=−2죠. 따라서 <i class='mv'>k</i>+<i class='mv'>a</i>=8+(−2)=<b>6</b>이에요.<span class='xh'>계산 함정 격파</span>부호 갈림길이 세 번이에요. −32÷(−4)를 −8로 쓰면 첫 단추부터 어긋나고, 8=−4<i class='mv'>a</i>에서 <i class='mv'>a</i>=2로 쓰면 두 번째, 8+(−2)를 10으로 쓰면 마지막에서 무너져요. 각 단계의 부호를 소리 내어 확인해요. P가 제2사분면(−, +)에 있으니 <i class='mv'>k</i>>0, 직선이 오른쪽 아래로 향하니 <i class='mv'>a</i><0이라는 그림 검산도 든든한 안전망이에요.",
+      "<span class='xh'>정답 풀이</span>교점은 두 그래프를 모두 만족해요. 먼저 반비례 쪽에 <i class='mv'>x</i>=−4를 넣으면 <i class='mv'>k</i>=−32÷(−4)=8이므로 P(−4, 8)이에요. 이 점이 정비례 그래프 위에도 있으므로 8=<i class='mv'>a</i>×(−4)에서 <i class='mv'>a</i>=−2죠. 따라서 <i class='mv'>k</i>+<i class='mv'>a</i>=8+(−2)=<b>6</b>이에요.<span class='xh'>계산 함정 격파</span>부호 갈림길이 세 번이에요. −32÷(−4)를 −8로 쓰면 첫 단추부터 어긋나고, 8=−4<i class='mv'>a</i>에서 <i class='mv'>a</i>=2로 쓰면 두 번째, 8+(−2)를 10으로 쓰면 마지막에서 무너져요. 각 단계의 부호를 소리 내어 확인해요. P가 제2사분면(−, +)에 있으니 <i class='mv'>k</i>&gt;0, 직선이 오른쪽 아래로 향하니 <i class='mv'>a</i>&lt;0이라는 그림 검산도 든든한 안전망이에요.",
     core: "곡선으로 k, 직선으로 a, 부호 세 번 검사!",
   },
   {
@@ -298,7 +298,7 @@ export const POOL_M1U3V2_REST_E: ExamItem[] = [
   {
     // [슬롯 196] 검산: (추격 도판 공유) 1분당 거리 = 형 90 m > 동생 60 m → 형 ✓
     //  (§3-0: MG 카드는 선 1개라 두 사람 개형 불가 · CG 판독형으로 전환). 문두는 자기완결
-    //  재서술(검산 V2 — "같은 그래프에서" 지시어는 부분 추출 단독 출제 시 부유).
+    //  재서술(검산 V2 · "같은 그래프에서" 지시어는 부분 추출 단독 출제 시 부유).
     id: "m1u3e196",
     lessonId: "m1u3l9",
     type: "mcq",
@@ -315,7 +315,7 @@ export const POOL_M1U3V2_REST_E: ExamItem[] = [
     // [슬롯 197] 검산: 직선 y=6x와 곡선 y=24/x의 제1사분면 교점 · 6x=24/x → x²=4 → x=2 →
     //  P(2, 12) → y좌표 12 ✓. min −12·max 12·labelEvery 2로 2·12 짝수 라벨 위.
     //  (초판 y=4x×y=16/x·P(2, 8)은 답 8이 s199 정답 보기 "(6, 8)"과 같은 의미역(교점 P의
-    //  y좌표)으로 노출 — 검산 V2 적발로 재설계.)
+    //  y좌표)으로 노출 · 검산 V2 적발로 재설계.)
     id: "m1u3e197",
     lessonId: "m1u3l9",
     type: "num",

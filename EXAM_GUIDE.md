@@ -713,3 +713,26 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
   (부분 검증 모드 내장 — 저작 중간 게이트, STIX 번들 임베드) → tmp/m1u6v2-full(루트 launch.json
   "m1u6v2-full" 5995), 눈검수 `node qa/shot-m1u6v2-figs.mjs`(시각 172종 격자 11샷).
 
+- **m1u3 v2 전면 재출제·이식(2026-07-25 — 교과서 준거 재출제 6호, 좌표·그래프 고시각 규격)**: 정본 =
+  qa/m1u3-v2-blueprint.md(**§3-0 저작 확정 변경·검산 반영 기록이 §3 개별 행보다 우선**). 확정 스펙:
+  9레슨 200제(22×7+23×2, 23은 L4·L9 — v1 계승) = **mcq 99/multi 20/num 81/word 0** · diff 80/80/40
+  (v1 diffQuota 계승) · **그림 105/200(52.5%)** 파일별 정확값(12·5·16·20·6·13·5·14·14)+무그림 화이트
+  리스트 7분류 · mfmt 미사용(slash 분수·withVars·U+2212) · 금지어 v1 7종+**'함수'**. 스테이징
+  qa/m1u3v2-pilot.ts+rest-a~e.ts(a=L1L2/b=L3L4/c=L5L6/d=L7L8/e=L9)가 정본 소스 — 수정 시
+  `node qa/build-m1u3v2-lessons.mjs` 재이식(레슨 파일 직접 수정 금지). 신작 헬퍼 2종은 이식 때
+  examFiguresMath "m1u3 v2" 섹션 승격(mExamNumLineFig 수직선 잔눈금·mExamInvRectFig 반비례 대칭
+  직사각형 — 넓이 4a·m은 a의 약수만). **이식 생성기 신규 관행 2가지**: ① 스테이징마다 withVars
+  변수 클래스가 달라([xy]~[xyabck]) 레슨별 합집합으로 통합하되 전 리터럴 호출을 원본·합집합 양쪽
+  재래핑해 렌더 동일성을 기계 증명(유일 waive = s131, 확대 중 재설계로 들어온 변수 k가 파일럿
+  클래스에 없어 비이탤릭이던 잠복 결함 — 합집합 전환이 교정) ② 로컬 const(spec 도판·coord류)는
+  사용 감지+간접 의존 고정점으로 분배. **이식 게이트 적발·소급 5종**: 부등호 미이스케이프 28곳
+  (a&lt;0을 원시 <로 — v1 검사기 규칙으로 적발, 스테이징 전량 &lt;/&gt; 치환), em대시 주석 21개
+  (5번째 재발 — 검산·저작 주석), '기울기' 주석 1건(금지어는 주석도 대상 — m1u6 ⑦ 계보),
+  figure: 줄바꿈 4곳(그림 검출 정규식은 `\n\s*figure:`가 정본), **카드 매칭 mcq 3~4지 허용 예외**
+  (miniGraphRow (가)~(라) 카드 수만큼 보기 — 교과서 병·개형 매칭 실측 관행, shuffle:false+순수
+  라벨+figure 조건일 때만·9문항, 5지 고정 관행의 유일 예외로 명문화). 기계 검사
+  `node qa/check-exam-m1u3.mjs`(**v2** — m/M/n 분리·word 0 FAIL·그림 파일별 정확값·num 파일 내
+  중복 FAIL·CRLF 정규화·저작 정답 위치는 WARN 강등(m1u5 계보)), QA `PORT=<전용 포트> node
+  qa/e2e-exam-m1u3.mjs`(50검증 — v1 스크립트 무수정 호환, 전용 포트 5233 일발 50/50), 조립·갤러리
+  `node qa/render-m1u3v2-full.mjs`(STIX 번들 임베드) → tmp/m1u3v2-full(루트 launch.json
+  "m1u3v2-full" 5993), 눈검수 `node qa/shot-m1u3v2-figs.mjs`(그림 105 격자).

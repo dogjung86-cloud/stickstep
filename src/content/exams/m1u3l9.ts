@@ -1,426 +1,511 @@
-// 중1 수학 Ⅲ. 좌표평면과 그래프: 단원 종합 평가 풀, 레슨 9 정비례와 그래프의 활용 (m1u3e178~m1u3e200). 2026-07 개보수: e194 수치 재설계(레슨 앵커 회피)·급수 장치→펌프·카트→킥보드.
-// 유형 13(mcq+multi)/7(num)/3(word), diff 9/9/5. 활용 그래프는 공통 수치와 MExamChangeGraphSpec에서 문항까지 파생한다.
+// 수학 중1 Ⅲ. 좌표평면과 그래프 v2 재출제 문항 풀 · L9 정비례와 그래프의 활용(책 132~139쪽) 슬롯 178~200(23문항).
+// 생성 파일: 수정은 qa/m1u3v2-*.ts(스테이징 정본)에서 한 뒤 node qa/build-m1u3v2-lessons.mjs 재실행.
+// 규격 v2(정본 qa/m1u3-v2-blueprint.md · §3-0 우선): mcq 11/multi 3/num 9·word 0 · diff 9/9/5 ·
+// 그림 14 · mfmt 미사용(slash 분수·withVars·U+2212) · 무그림은 화이트리스트 사유 태그 · em대시 금지.
 import type { ExamItem } from "./types";
-import { mExamChangeGraphFig, type MExamChangeGraphSpec } from "../../ui/examFiguresMath";
+import { mExamChangeGraphFig, mExamRelationPlaneFig, type MExamChangeGraphSpec } from "../../ui/examFiguresMath";
 
-const L = "m1u3l9";
-const pointsAt = (rate: number, times: number[]): Array<[number, number]> =>
-  times.map((time) => [time, rate * time]);
-
-const WALK = {
-  fastRate: 150,
-  steadyRate: 90,
-  targetTime: 4,
-  times: [0, 2, 4, 6],
-} as const;
-const WALK_SPEC: MExamChangeGraphSpec = {
-  xMin: 0,
-  xMax: 6,
-  yMin: 0,
-  yMax: 900,
-  xTicks: [...WALK.times],
-  yTicks: [0, 180, 360, 600, 900],
-  xLabel: "시간(분)",
-  yLabel: "거리(m)",
+const withVars = (text: string): string =>
+  text.replace(/[xyabk]/g, (variable) => `<i class='mv'>${variable}</i>`);
+const CG_RACE: MExamChangeGraphSpec = {
+  xMin: 0, xMax: 50, yMin: 0, yMax: 150,
+  xTicks: [0, 10, 20, 30, 40, 50],
+  yTicks: [0, 50, 100, 150],
+  xLabel: "시간(초)", yLabel: "거리(m)",
   series: [
-    { label: "빠른 걸음", color: "#364FC7", points: pointsAt(WALK.fastRate, [...WALK.times]) },
-    { label: "보통 걸음", color: "#E8547E", points: pointsAt(WALK.steadyRate, [...WALK.times]) },
+    { points: [[0, 0], [30, 150]], label: "형", color: "#E8547E" },
+    { points: [[0, 0], [50, 150]], label: "동생", color: "#364FC7" },
   ],
 };
-
-const MACHINE = {
-  aRate: 14,
-  bRate: 9,
-  targetTime: 4,
-  times: [0, 2, 4, 6],
-} as const;
-const MACHINE_SPEC: MExamChangeGraphSpec = {
-  xMin: 0,
-  xMax: 6,
-  yMin: 0,
-  yMax: 84,
-  xTicks: [...MACHINE.times],
-  yTicks: [0, 18, 36, 56, 84],
-  xLabel: "시간(분)",
-  yLabel: "완성 수(개)",
+const CG_CHASE: MExamChangeGraphSpec = {
+  xMin: 0, xMax: 16, yMin: 0, yMax: 960,
+  xTicks: [0, 4, 8, 12, 16],
+  yTicks: [0, 240, 480, 720, 960],
+  xLabel: "시간(분)", yLabel: "거리(m)",
   series: [
-    { label: "기계 A", color: "#2F9E44", points: pointsAt(MACHINE.aRate, [...MACHINE.times]) },
-    { label: "기계 B", color: "#E8547E", points: pointsAt(MACHINE.bRate, [...MACHINE.times]) },
+    { points: [[0, 0], [8, 480], [16, 960]], label: "동생", labelAt: 1, color: "#364FC7" },
+    { points: [[4, 0], [14, 900]], label: "형", color: "#E8547E" },
   ],
 };
-
-const QUAKE = {
-  pRate: 9,
-  sRate: 6,
-  targetDistance: 54,
-  times: [0, 3, 6, 9, 12],
-} as const;
-const QUAKE_SPEC: MExamChangeGraphSpec = {
-  xMin: 0,
-  xMax: 12,
-  yMin: 0,
-  yMax: 108,
-  xTicks: [...QUAKE.times],
-  yTicks: [0, 27, 54, 72, 81, 108],
-  xLabel: "시간(초)",
-  yLabel: "거리(km)",
+const CG_SAVE: MExamChangeGraphSpec = {
+  xMin: 0, xMax: 8, yMin: 0, yMax: 48,
+  xTicks: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+  yTicks: [0, 6, 12, 18, 24, 30, 36, 42, 48],
+  xLabel: "시간(주)", yLabel: "저금액(천 원)",
   series: [
-    { label: "P파", color: "#364FC7", points: pointsAt(QUAKE.pRate, [...QUAKE.times]) },
-    { label: "S파", color: "#E8547E", points: pointsAt(QUAKE.sRate, [...QUAKE.times]) },
+    { points: [[0, 18], [4, 30], [8, 42]], label: "누나", labelAt: 1, color: "#E8547E" },
+    { points: [[0, 0], [8, 48]], label: "동생", color: "#364FC7" },
   ],
 };
-
-const PUMP = {
-  aRate: 12,
-  bRate: 7,
-  targetTime: 5,
-  times: [0, 5, 10],
-} as const;
-const PUMP_SPEC: MExamChangeGraphSpec = {
-  xMin: 0,
-  xMax: 10,
-  yMin: 0,
-  yMax: 120,
-  xTicks: [...PUMP.times],
-  yTicks: [0, 35, 60, 70, 120],
-  xLabel: "시간(분)",
-  yLabel: "보낸 물의 양(L)",
-  series: [
-    { label: "펌프 A", color: "#0DA5C6", points: pointsAt(PUMP.aRate, [...PUMP.times]) },
-    { label: "펌프 B", color: "#F08C2E", points: pointsAt(PUMP.bRate, [...PUMP.times]) },
-  ],
-};
-
-const DELIVERY = {
-  speed: 15,
-  targetDistance: 45,
-  times: [0, 1, 2, 3, 4],
-} as const;
-const DELIVERY_SPEC: MExamChangeGraphSpec = {
-  xMin: 0,
-  xMax: 4,
-  yMin: 0,
-  yMax: 60,
-  xTicks: [...DELIVERY.times],
-  yTicks: [0, 15, 30, 45, 60],
-  xLabel: "시간(시간)",
-  yLabel: "거리(km)",
-  series: [
-    { label: "배달차", color: "#364FC7", points: pointsAt(DELIVERY.speed, [...DELIVERY.times]) },
-    {
-      label: "목표 지점",
-      color: "#E8547E",
-      dashed: true,
-      points: DELIVERY.times.map((time) => [time, DELIVERY.targetDistance]),
-    },
-  ],
-};
-
-const walkFastDistance = WALK.fastRate * WALK.targetTime;
-const walkSteadyDistance = WALK.steadyRate * WALK.targetTime;
-const machineAOutput = MACHINE.aRate * MACHINE.targetTime;
-const machineBOutput = MACHINE.bRate * MACHINE.targetTime;
-const quakePTime = QUAKE.targetDistance / QUAKE.pRate;
-const quakeSTime = QUAKE.targetDistance / QUAKE.sRate;
-const quakeGap = quakeSTime - quakePTime;
-const pumpAAmount = PUMP.aRate * PUMP.targetTime;
-const pumpBAmount = PUMP.bRate * PUMP.targetTime;
-const deliveryTime = DELIVERY.targetDistance / DELIVERY.speed;
 
 export const POOL_M1U3L9: ExamItem[] = [
   {
+    // [슬롯 178] 검산: 직선 y=3x와 곡선 y=27/x의 제1사분면 교점 · 3x=27/x → x²=9 → x=3 →
+    //  P(3, 9) ✓ (§3-0: 초판 곡선 a=12가 레슨 y=12/x 드릴 앵커라 27로 재설계).
+    //  min −9·max 9·labelEvery 1로 3·9 라벨 위. 좌표쌍 보기 셔플 기본.
     id: "m1u3e178",
-    lessonId: L,
+    lessonId: "m1u3l9",
     type: "mcq",
-    prompt: `두 사람이 일정한 빠르기로 걸을 때의 그래프예요. 빠른 걸음으로 <b>${WALK.targetTime}분</b> 동안 간 거리는?`,
-    figure: mExamChangeGraphFig(WALK_SPEC),
-    options: [`${walkFastDistance} m`, `${walkSteadyDistance} m`, "450 m", "900 m", `${WALK.fastRate} m`],
+    prompt: "정비례 관계 " + withVars("y=3x") + "의 그래프와 어떤 반비례 관계의 그래프가 그림과 같이 <b>제1사분면의 점 P</b>에서 만나요. 점 P의 좌표는?",
+    figure: mExamRelationPlaneFig({
+      min: -9,
+      max: 9,
+      size: 330,
+      labelEvery: 1,
+      lines: [{ a: 3, color: "#E8547E" }],
+      inverseCurves: [{ a: 27, color: "#364FC7" }],
+      points: [{ label: "P", x: 3, y: 9, color: "#E8547E", labelDx: 14, labelDy: -4 }],
+    }),
+    options: ["(3, 9)", "(9, 3)", "(3, 3)", "(−3, 9)", "(3, 6)"],
     answer: 0,
     diff: 1,
-    explain: `<span class='xh'>정답 풀이</span>빠른 걸음은 1분에 ${WALK.fastRate} m씩 가므로 거리 <i class='mv'>y</i>는 시간 <i class='mv'>x</i>에 정비례해요. ${WALK.targetTime}분일 때 <i class='mv'>y</i>=${WALK.fastRate}×${WALK.targetTime}=<b>${walkFastDistance} m</b>이고, 그래프의 점도 (${WALK.targetTime}, ${walkFastDistance})에 있어요.<span class='xh'>오답 하나씩 격파</span>'${walkSteadyDistance} m'는 보통 걸음의 거리, '450 m'는 1분에 가는 양을 3배만 한 값이에요. '900 m'는 6분 뒤 거리이고, '${WALK.fastRate} m'는 1분에 가는 양을 전체 거리로 착각한 답이에요. 시간과 해당 직선의 점을 함께 확인해요. 가로축의 ${WALK.targetTime}에서 빠른 걸음 직선의 점을 지나 세로축 눈금을 읽어도 같은 값을 얻어요.`,
-    core: `빠른 걸음의 거리는 ${WALK.fastRate}×시간이며 ${WALK.targetTime}분에는 ${walkFastDistance} m예요.`,
+    explain:
+      "<span class='xh'>정답 풀이</span>교점 P의 좌표를 격자에서 읽으면 가로 3칸, 세로 9칸인 <b>(3, 9)</b>예요. 검산해 보면 정비례 쪽은 3×3=9로 통과하고, 반비례 쪽도 곱이 3×9=27로 곡선의 일정한 곱과 맞아요. 교점은 두 그래프를 동시에 만족하는 점이라는 것이 이렇게 확인되죠.<span class='xh'>오답 하나씩 격파</span>'(9, 3)'은 두 좌표를 거꾸로 읽은 것으로, 그 점은 직선 <i class='mv'>y</i>=3<i class='mv'>x</i> 위에 있지 않아요(3×9=27≠3). '(3, 3)'과 '(3, 6)'은 세로 눈금을 잘못 센 값이고, '(−3, 9)'는 제1사분면이라는 문제의 조건과 어긋나요. 교점 판독 후에는 두 식(또는 두 성질)에 각각 대입해 양쪽 다 통과하는지 확인하는 이중 검산이 정석이에요.",
+    core: "교점은 두 그래프 모두의 점, 양쪽에 대입 검산!",
   },
   {
+    // [슬롯 179] 검산: 물 받기 직선 (0,0)→(10,40) = 분당 4 L · 8분일 때 (8, 32) 라벨 교차 ✓.
     id: "m1u3e179",
-    lessonId: L,
+    lessonId: "m1u3l9",
     type: "num",
-    prompt: "한 자루에 <b>420원</b>인 연필을 8자루 살 때의 총액을 쓰세요. (단위: 원)",
-    answer: "3360",
+    prompt: "빈 수조에 물을 일정하게 받을 때 담긴 물의 양을 나타낸 그래프예요. <b>8분</b>일 때 담긴 물의 양은 몇 L인지 구하세요.",
+    figure: mExamChangeGraphFig({
+      xMin: 0, xMax: 10, yMin: 0, yMax: 40,
+      xTicks: [0, 2, 4, 6, 8, 10],
+      yTicks: [0, 8, 16, 24, 32, 40],
+      xLabel: "시간(분)", yLabel: "물의 양(L)",
+      series: [{ points: [[0, 0], [10, 40]] }],
+    }),
+    answer: "32",
     numKind: "int",
-    unitLabel: "원",
+    unitLabel: "L",
     diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>연필 한 자루의 값이 420원으로 일정하므로 자루 수가 2배, 3배가 되면 총액도 같은 배수가 돼요. 자루 수를 <i class='mv'>x</i>, 총액을 <i class='mv'>y</i>라고 하면 <i class='mv'>y</i>=420<i class='mv'>x</i>예요. <i class='mv'>x</i>=8을 넣으면 420×8=<b>3360원</b>이에요.<span class='xh'>헷갈림 격파</span>420+8로 계산하면 단가와 개수처럼 단위가 다른 두 수를 더한 셈이에요. 420×7은 한 자루를 빠뜨린 값이고, 336은 자리 하나를 빠뜨린 값이에요. 420×10−420×2로 다시 계산하면 4200−840=3360이라 검산돼요.",
-    core: "총액은 단가×개수이므로 420×8=3360원이에요.",
+    explain:
+      "<span class='xh'>정답 풀이</span>가로축 8분에서 세로로 올라가 그래프와 만난 점의 세로 눈금을 읽으면 <b>32</b> L예요. 원점을 지나는 직선이므로 담긴 양은 시간에 정비례하고, 10분에 40 L니까 1분에 4 L씩, 8분이면 4×8=32 L라는 계산과도 일치하죠.<span class='xh'>판독 함정 격파</span>그래프 끝의 40 L를 답하면 8분과 10분을 혼동한 거예요. 반드시 묻는 시각에서 수직으로 올라가 만나는 점 하나를 짚어요. 또 눈금이 8 간격이라는 것을 놓치고 한 칸을 10으로 세면 값이 어긋나요. 세로축의 눈금 간격부터 확인하는 것이 판독의 첫 단추예요. 정비례 그래프는 '1분당 몇 L'라는 배율을 먼저 읽어 두면 어떤 시각의 값도 곱셈으로 빠르게 검산할 수 있어요.",
+    core: "직선 판독은 배율(1분당 양)로 검산해요.",
   },
   {
+    // [슬롯 180] 검산: 한 개 x g × 12개 = 12x g → y=12x ✓ (정비례 관계식 세우기 기초).
     id: "m1u3e180",
-    lessonId: L,
-    type: "word",
-    prompt: "물건 한 개에 해당하는 일정한 가격을 뜻하는 말을 고르세요.",
-    answer: "단가",
-    bank: ["단가", "총액", "개수", "속력", "거리", "시간", "비율", "좌표", "눈금"],
+    lessonId: "m1u3l9",
+    type: "mcq",
+    prompt: "무게가 한 개에 " + withVars("x") + " g씩인 과자 <b>12개</b>의 전체 무게를 " + withVars("y") + " g이라 할 때, " + withVars("x") + "와 " + withVars("y") + " 사이의 관계식은?",
+    options: [withVars("y=12x"), withVars("y=x/12"), withVars("y=12/x"), withVars("y=x+12"), withVars("xy=12")],
+    answer: 0,
     diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>물건 한 개에 해당하는 가격을 <b>단가</b>라고 해요. 단가가 일정하면 개수를 <i class='mv'>x</i>, 총액을 <i class='mv'>y</i>라고 할 때 총액=단가×개수이므로 <i class='mv'>y</i>=<i class='mv'>a</i><i class='mv'>x</i> 꼴의 정비례 관계가 돼요.<span class='xh'>낱말 하나씩 격파</span>'총액'은 여러 개를 산 전체 금액, '개수'는 산 물건의 수예요. '속력', '거리', '시간'은 이동 상황의 양이고, '비율'은 두 양의 관계를 나타내는 넓은 말이에요. '좌표'와 '눈금'은 그래프를 읽을 때 쓰는 말이지 한 개의 가격을 뜻하지 않아요. 단가는 총액을 개수로 나누어도 확인할 수 있어요.",
-    core: "한 개에 해당하는 일정한 가격은 단가예요.",
+    explain:
+      "<span class='xh'>정답 풀이</span>같은 무게의 과자가 12개이므로 전체 무게는 (한 개의 무게)×(개수)예요. 즉 <i class='mv'>y</i>=<i class='mv'>x</i>×12=<b>12<i class='mv'>x</i></b>죠. 한 개의 무게가 2배가 되면 전체 무게도 2배가 되는 정비례 관계예요.<span class='xh'>오답 하나씩 격파</span>'<i class='mv'>y</i>=<i class='mv'>x</i>/12'는 12개의 전체 무게가 아니라 한 개 무게를 12로 나눈 값이라 뜻이 뒤집혔어요. '<i class='mv'>y</i>=12/<i class='mv'>x</i>'와 '<i class='mv'>xy</i>=12'는 곱이 고정된 반비례 꼴인데, 이 상황에서 고정된 것은 곱이 아니라 개수 12예요. '<i class='mv'>y</i>=<i class='mv'>x</i>+12'는 무게에 개수를 더하는 이상한 계산이 되죠. 관계식 세우기는 '무엇이 고정인가'를 찾는 데서 출발해요. 개수 고정이면 정비례, 전체량 고정이면 반비례랍니다.",
+    core: "개수가 고정이면 y=(개수)×x인 정비례예요.",
   },
   {
+    // [슬롯 181] 검산: 교점의 x좌표 5 → 곡선에서 y=50÷5=10 → P(5, 10) → 10=5a → a=2 ✓
+    //  (비상06-8 계보 a=2/3 분수를 정수 재설계 · §2 · 초판 직선 y=3x가 s178 문두 y=3x와
+    //  L9 내 관계식 중복 · 검산 V2 적발로 곡선 50·x=5·a=2 재설계). min −12·max 12·
+    //  labelEvery 2 · x=5는 문두 인쇄라 판독 불요(168 판례), P의 y=10은 짝수 라벨 위.
     id: "m1u3e181",
-    lessonId: L,
-    type: "mcq",
-    prompt: "포장 기계가 1분에 <b>11상자</b>씩 일정하게 포장해요. 7분 동안 포장한 상자 수는?",
-    options: ["18상자", "77상자", "70상자", "4상자", "121상자"],
-    answer: 1,
-    diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>매분 11상자씩 일정하게 늘어나므로 시간과 포장 수는 정비례해요. 7분 동안의 포장 수는 11×7=<b>77상자</b>예요. 관계식으로 쓰면 시간 <i class='mv'>x</i>분, 포장 수 <i class='mv'>y</i>상자에 대하여 <i class='mv'>y</i>=11<i class='mv'>x</i>예요.<span class='xh'>오답 하나씩 격파</span>'18상자'는 11과 7을 더한 값이고, '70상자'는 11을 10으로 바꿔 어림한 뒤 그대로 답한 값이에요. '4상자'는 두 수를 빼었고, '121상자'는 11×11로 시간 대신 단위당 양을 두 번 곱했어요. 분당 양과 실제 시간을 곱해야 해요.",
-    core: "일정한 분당 생산량에 시간을 곱하면 전체 생산량이 돼요.",
-  },
-  {
-    id: "m1u3e182",
-    lessonId: L,
+    lessonId: "m1u3l9",
     type: "num",
-    prompt: "자전거가 5분마다 <b>1 km</b>씩 일정하게 가요. 18분 동안 간 거리를 쓰세요. (단위: km)",
-    answer: "3.6",
-    numKind: "dec",
-    unitLabel: "km",
-    diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>5분에 1 km를 가므로 1분에는 1÷5=0.2 km를 가요. 일정한 속력으로 움직이므로 시간 <i class='mv'>x</i>분과 거리 <i class='mv'>y</i> km 사이에는 <i class='mv'>y</i>=0.2<i class='mv'>x</i>의 관계가 있어요. 18분에는 0.2×18=<b>3.6 km</b>예요.<span class='xh'>헷갈림 격파</span>18÷5=3.6으로 바로 계산해도 같아요. 3 km라고 쓰면 남은 3분의 이동을 버린 것이고, 90 km는 5와 18을 곱해 단위당 방향을 거꾸로 잡은 값이에요. 20분이면 4 km이므로 18분의 3.6 km는 상황에도 알맞아요. 유한소수 정답은 소수점까지 빠짐없이 입력해요.",
-    core: "1분에 0.2 km이므로 18분에는 3.6 km를 가요.",
+    prompt: "정비례 관계 " + withVars("y=ax") + "의 그래프와 반비례 관계 " + withVars("y=50/x") + "의 그래프가 그림과 같이 점 P에서 만나요. 점 P의 " + withVars("x") + "좌표가 <b>5</b>일 때, " + withVars("a") + "의 값을 구하세요.",
+    figure: mExamRelationPlaneFig({
+      min: -12,
+      max: 12,
+      size: 330,
+      labelEvery: 2,
+      lines: [{ a: 2, color: "#E8547E" }],
+      inverseCurves: [{ a: 50, color: "#364FC7" }],
+      points: [{ label: "P", x: 5, y: 10, color: "#E8547E", labelDx: 14, labelDy: -6 }],
+    }),
+    answer: "2",
+    numKind: "int",
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>점 P는 두 그래프가 함께 지나는 점이에요. 먼저 반비례 쪽에 <i class='mv'>x</i>=5를 넣으면 <i class='mv'>y</i>=50÷5=10이므로 P의 좌표는 (5, 10)이에요. 이 점이 정비례 그래프 위에도 있으므로 10=<i class='mv'>a</i>×5, 즉 <i class='mv'>a</i>=<b>2</b>예요.<span class='xh'>계산 함정 격파</span><i class='mv'>a</i>를 곱 5×10=50으로 계산하면 반비례의 <i class='mv'>a</i>를 구한 셈이 돼요. 정비례의 <i class='mv'>a</i>는 곱이 아니라 <i class='mv'>y</i>÷<i class='mv'>x</i>=10÷5라는 것, 두 관계식의 <i class='mv'>a</i> 구하는 법이 서로 반대라는 것을 구분해요. 또 P의 y좌표 10을 곧바로 <i class='mv'>a</i>로 착각하지 않도록, '교점은 두 식을 모두 만족한다'는 원리로 한 식씩 차례로 대입하는 순서를 지켜요.",
+    core: "교점은 두 그래프의 공용 점, 한 식씩 대입해요.",
   },
   {
-    id: "m1u3e183",
-    lessonId: L,
+    // [슬롯 182] 검산: 누나 y=18+3x·동생 y=6x → 18+3x=6x → x=6 → (6, 36) · 6·36 라벨 위 ✓.
+    //  시간 수치 보기 셔플 기본.
+    id: "m1u3e182",
+    lessonId: "m1u3l9",
     type: "mcq",
-    prompt: `그래프에서 두 기계가 <b>${MACHINE.targetTime}분</b> 동안 완성한 제품 수의 차는?`,
-    figure: mExamChangeGraphFig(MACHINE_SPEC),
-    options: [`${machineAOutput}개`, `${machineBOutput}개`, `${machineAOutput - machineBOutput}개`, `${MACHINE.aRate + MACHINE.bRate}개`, `${MACHINE.aRate - MACHINE.bRate}개`],
-    answer: 2,
+    prompt: "누나와 동생의 저금액을 나타낸 그래프예요. 두 사람의 저금액이 <b>같아지는</b> 때는 몇 주 후일까요?",
+    figure: mExamChangeGraphFig(CG_SAVE),
+    options: ["6주", "4주", "5주", "7주", "8주"],
+    answer: 0,
     diff: 1,
-    explain: `<span class='xh'>정답 풀이</span>기계 A는 1분에 ${MACHINE.aRate}개이므로 ${MACHINE.targetTime}분에 ${machineAOutput}개, 기계 B는 1분에 ${MACHINE.bRate}개이므로 같은 시간에 ${machineBOutput}개를 완성해요. 따라서 차는 ${machineAOutput}−${machineBOutput}=<b>${machineAOutput - machineBOutput}개</b>예요. 그래프의 ${MACHINE.targetTime}분 점 두 개도 이 값을 나타내요.<span class='xh'>오답 하나씩 격파</span>'${machineAOutput}개'와 '${machineBOutput}개'는 각각 한 기계의 전체 수만 읽은 답이에요. '${MACHINE.aRate + MACHINE.bRate}개'는 분당 양을 더했고, '${MACHINE.aRate - MACHINE.bRate}개'는 1분 동안의 차에서 멈췄어요. 문제의 ${MACHINE.targetTime}분을 반드시 반영해요. 두 직선의 세로 간격은 분당 차 ${MACHINE.aRate - MACHINE.bRate}개가 ${MACHINE.targetTime}번 쌓인 결과라고 보아도 돼요.`,
-    core: `${MACHINE.targetTime}분 생산량 ${machineAOutput}개와 ${machineBOutput}개의 차는 ${machineAOutput - machineBOutput}개예요.`,
+    explain:
+      "<span class='xh'>정답 풀이</span>두 사람의 저금액이 같아지는 순간은 두 그래프가 만나는 교점이에요. 그림에서 두 직선은 가로 6주, 세로 36(천 원)인 눈금 교차점에서 만나요. 답은 <b>6주</b>죠. 누나는 18에서 매주 3씩, 동생은 0에서 매주 6씩 모으니 6주째에 둘 다 36이 되는 계산과도 맞아요.<span class='xh'>오답 하나씩 격파</span>'4주'나 '5주'는 두 직선의 간격이 좁아지는 중간 지점을 어림한 답이에요. 같아지는 것은 간격이 좁아지는 때가 아니라 정확히 0이 되는 교점이죠. '7주'와 '8주'는 이미 동생이 앞선 뒤예요. 출발이 앞선 쪽(누나)과 빠르게 모으는 쪽(동생)이 다를 때 반드시 한 번 만나는 순간이 생긴다는 것, 그 순간이 교점이라는 것이 두 그래프 문제의 핵심 문법이에요.",
+    core: "같아지는 순간 = 교점의 가로 눈금이에요.",
   },
   {
+    // [슬롯 183] 검산: 형 150÷5=30초·동생 150÷3=50초 → 차 50−30=20초 ✓ (레슨 지진 P·S파
+    //  구조(속력 두 정비례의 도착 차)를 달리기 소재로 교체 · §2 파생값 회피).
+    //  그래프 (0,0)→(30,150)·(0,0)→(50,150) 전 꺾임점 라벨 눈금 위.
+    id: "m1u3e183",
+    lessonId: "m1u3l9",
+    type: "num",
+    prompt: "형과 동생이 동시에 출발해 <b>150 m</b> 달리기를 했어요. 형은 1초에 5 m, 동생은 1초에 3 m를 일정하게 달렸을 때, 형이 도착한 뒤 <b>몇 초 후</b>에 동생이 도착하는지 구하세요.",
+    figure: mExamChangeGraphFig({
+      xMin: 0,
+      xMax: 50,
+      yMin: 0,
+      yMax: 150,
+      xTicks: [0, 10, 20, 30, 40, 50],
+      yTicks: [0, 50, 100, 150],
+      xLabel: "시간(초)",
+      yLabel: "거리(m)",
+      series: [
+        { points: [[0, 0], [30, 150]], label: "형", color: "#E8547E" },
+        { points: [[0, 0], [50, 150]], label: "동생", color: "#364FC7" },
+      ],
+    }),
+    answer: "20",
+    numKind: "int",
+    unitLabel: "초",
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>두 사람 모두 일정한 빠르기로 달리므로 달린 거리는 시간에 정비례해요. 형은 <i class='mv'>y</i>=5<i class='mv'>x</i>, 동생은 <i class='mv'>y</i>=3<i class='mv'>x</i>예요. 150 m 지점에 닿는 시각은 형이 150=5<i class='mv'>x</i>에서 30초, 동생이 150=3<i class='mv'>x</i>에서 50초예요. 따라서 동생은 형보다 50−30=<b>20</b>초 늦게 도착해요. 그래프에서도 형의 직선이 더 가파르게 올라가 150에 먼저 닿는 것이 보여요.<span class='xh'>계산 함정 격파</span>두 사람의 빠르기 차 5−3=2를 이용해 150÷2=75초라고 하면, '같은 시각에 벌어진 거리'와 '도착 시각의 차'를 섞은 오답이 돼요. 이 문제는 각자의 도착 시각을 먼저 구한 뒤 빼는 두 단계가 정석이에요. 가파른 직선일수록 빠른 사람이라는 것도 함께 기억해요.",
+    core: "각자 도착 시각부터, 차는 마지막에 빼요.",
+  },
+  {
+    // [슬롯 184] 검산: A는 y=−(1/2)x 위·y좌표 4 → 4=−(1/2)x → x=−8 → A(−8, 4). B는 y=x
+    //  위 → B(4, 4). AB=4−(−8)=12(수평선 y=4), 높이=원점에서 4 → 넓이 12×4÷2=24 ✓
+    //  (비상06-7 두 직선+수평선 계보 · 수치 신작). min −10·max 10·labelEvery 2로 −8·4가
+    //  짝수 라벨 위(초판 min −9는 홀수 라벨만 인쇄되는 planeSpec 홀짝 함정 · 검산 V2 적발).
+    //  y=4 연회색 수평 보조선이 선분 AB를 시각화(교과서 원형의 선분 표시 · 눈검수 반영).
     id: "m1u3e184",
-    lessonId: L,
-    type: "word",
-    prompt: "P파가 도착한 뒤 S파가 도착할 때까지의 시간 차를 뜻하는 말을 고르세요.",
-    answer: "초기 미동 시간",
-    bank: ["초기 미동 시간", "도착 거리", "진행 속력", "경보 거리", "비례상수", "원점", "좌표축", "총 이동량"],
-    diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>P파가 먼저 도착한 뒤 S파가 도착할 때까지의 시간 차를 <b>초기 미동 시간</b>이라고 해요. 두 파가 각각 일정한 속력으로 이동한다면 같은 거리까지 걸린 시간을 구하고, 느린 S파의 도착 시각에서 빠른 P파의 도착 시각을 빼서 계산해요.<span class='xh'>낱말 하나씩 격파</span>'도착 거리'와 '경보 거리'는 거리의 크기이고, '진행 속력'은 1초에 가는 거리예요. '비례상수'는 정비례식의 일정한 수, '원점'과 '좌표축'은 그래프의 구성 요소예요. '총 이동량'도 두 도착 시각의 차를 가리키지 않아요.",
-    core: "S파 도착 시각에서 P파 도착 시각을 뺀 값이 초기 미동 시간이에요.",
+    lessonId: "m1u3l9",
+    type: "mcq",
+    prompt:
+      "그림과 같이 두 정비례 관계 " + withVars("y=x") + ", " + withVars("y=−(1/2)x") + "의 그래프가 " + withVars("y") + "좌표가 <b>4</b>인 두 점 B, A를 각각 지나요. 삼각형 OAB의 넓이는? (단, 점 O는 원점이에요.)",
+    figure: mExamRelationPlaneFig({
+      min: -10,
+      max: 10,
+      size: 330,
+      labelEvery: 2,
+      lines: [
+        { a: 1, color: "#E8547E" },
+        { a: -0.5, color: "#364FC7" },
+        { a: 0, b: 4, color: "#B8C2D8" },
+      ],
+      points: [
+        { label: "A", x: -8, y: 4, color: "#364FC7", labelDx: -4, labelDy: -8 },
+        { label: "B", x: 4, y: 4, color: "#E8547E", labelDx: 12, labelDy: -6 },
+      ],
+    }),
+    options: ["24", "12", "48", "16", "20"],
+    answer: 0,
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>두 점의 좌표부터 구해요. B는 <i class='mv'>y</i>=<i class='mv'>x</i> 위의 점이고 <i class='mv'>y</i>좌표가 4이므로 B(4, 4)예요. A는 <i class='mv'>y</i>=−(1/2)<i class='mv'>x</i> 위의 점이므로 4=−(1/2)<i class='mv'>x</i>에서 <i class='mv'>x</i>=−8, 즉 A(−8, 4)예요. 선분 AB는 높이 4에 놓인 수평 선분이라 길이가 4−(−8)=12이고, 원점 O에서 이 선분까지의 거리는 4예요. 넓이는 12×4÷2=<b>24</b>예요.<span class='xh'>오답 하나씩 격파</span>'48'은 밑변 곱 높이에서 2로 나누기를 빠뜨린 값이고, '12'는 밑변 길이를 그대로 답한 거예요. '16'은 A의 x좌표를 −4로 잘못 구했을 때 나오는 값이에요. −(1/2)<i class='mv'>x</i>=4를 풀 때 양변에 −2를 곱하는 부호 처리가 이 문제의 급소예요.",
+    core: "수평 선분이 밑변이면 높이는 y좌표 그 자체예요.",
   },
   {
+    // [슬롯 185] 검산: (달리기 도판 공유) 형 30초 완주 · 동생 50초 완주 · 동시 출발(둘 다
+    //  원점) · ㄱ 참 · ㄴ 참 · ㄷ 참 · ㄹ 거짓(형 분속: 150÷30=초속 5 m) · ㅁ 거짓(150 m에
+    //  형이 먼저). answer [0, 1, 2].
     id: "m1u3e185",
-    lessonId: L,
+    lessonId: "m1u3l9",
     type: "multi",
-    prompt: `P파와 S파가 일정한 속력으로 퍼지는 그래프예요. 진원에서 <b>${QUAKE.targetDistance} km</b> 떨어진 관측소에 대한 설명으로 <b>옳은 것을 모두</b> 고르세요.`,
-    figure: mExamChangeGraphFig(QUAKE_SPEC),
+    prompt: "형과 동생이 150 m 달리기를 한 그래프예요. 옳은 설명을 <b>모두</b> 고르세요.",
+    figure: mExamChangeGraphFig(CG_RACE),
     options: [
-      `P파는 ${quakePTime}초에 도착한다`,
-      `S파는 ${quakeSTime}초에 도착한다`,
-      `초기 미동 시간은 ${quakeGap}초이다`,
-      `${quakePTime}초일 때 두 파가 간 거리는 같다`,
-      "S파가 P파보다 먼저 관측소에 도착한다",
+      "두 사람은 동시에 출발했어요",
+      "형이 동생보다 먼저 결승점에 도착했어요",
+      "동생은 출발한 지 50초 후에 도착했어요",
+      "형은 1초에 3 m씩 달렸어요",
+      "동생이 먼저 150 m 지점에 닿았어요",
     ],
     answer: [0, 1, 2],
     diff: 2,
-    explain: `<span class='xh'>정답 풀이</span>P파는 1초에 ${QUAKE.pRate} km를 가므로 ${QUAKE.targetDistance}÷${QUAKE.pRate}=<b>${quakePTime}초</b>, S파는 1초에 ${QUAKE.sRate} km를 가므로 ${QUAKE.targetDistance}÷${QUAKE.sRate}=<b>${quakeSTime}초</b>에 도착해요. 초기 미동 시간은 ${quakeSTime}−${quakePTime}=<b>${quakeGap}초</b>이므로 앞의 세 설명이 옳아요.<span class='xh'>틀린 설명 격파</span>${quakePTime}초일 때 P파는 ${QUAKE.targetDistance} km, S파는 ${QUAKE.sRate * quakePTime} km를 가서 거리가 다르고, 속력이 더 큰 P파가 먼저 도착해요. 그래프의 같은 거리 눈금에서 두 시각을 따로 읽어야 해요. 시간축에서 ${quakePTime}초와 ${quakeSTime}초의 간격을 확인하면 뺄셈 결과 ${quakeGap}초도 다시 검산할 수 있어요. 단위는 모두 초로 맞아요.`,
-    core: `${QUAKE.targetDistance} km에서 P파 ${quakePTime}초, S파 ${quakeSTime}초, 시간 차는 ${quakeGap}초예요.`,
+    explain:
+      "<span class='xh'>정답 풀이</span>두 그래프 모두 원점에서 출발하므로 동시에 출발한 것이 맞아요. 150 m 눈금에 먼저 닿는 것은 가파른 형의 직선으로 30초, 동생의 직선은 50초에 닿으니 형이 먼저 도착했고 동생의 완주 시간이 50초라는 설명도 참이에요.<span class='xh'>틀린 설명 격파</span>형의 빠르기는 150 m를 30초에 달렸으니 1초에 150÷30=5 m예요. 3 m는 동생의 빠르기(150÷50)죠. 두 직선의 배율을 서로 바꿔 읽는 것이 이 유형의 단골 함정이에요. 그리고 150 m에 먼저 닿은 것은 동생이 아니라 형이니 마지막 설명도 거짓이에요. 여러 사람 그래프는 '가파른 쪽이 빠른 쪽'이라는 한 문장을 축으로 각 설명을 검산해요.",
+    core: "가파른 직선이 빠른 사람, 도착은 150에 닿는 순간!",
   },
   {
+    // [슬롯 186] 검산: 1인분 90 g → 6인분 90×6=540 g ✓ (정비례 활용 기초).
     id: "m1u3e186",
-    lessonId: L,
+    lessonId: "m1u3l9",
     type: "num",
-    prompt: "P파가 7초 동안 63 km를 일정한 속력으로 퍼졌어요. 같은 속력으로 90 km를 가는 데 걸리는 시간을 쓰세요. (단위: 초)",
-    answer: "10",
+    prompt: "쌀 <b>1인분</b>은 <b>90 g</b>이에요. 같은 기준으로 <b>6인분</b>을 준비하려면 쌀은 몇 g이 필요한지 구하세요.",
+    answer: "540",
     numKind: "int",
-    unitLabel: "초",
+    unitLabel: "g",
     diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>먼저 P파의 1초당 거리는 63÷7=9 km예요. 같은 속력으로 90 km를 가는 데 걸리는 시간은 90÷9=<b>10초</b>예요. 식으로는 거리 <i class='mv'>y</i>=9<i class='mv'>x</i>에서 90=9<i class='mv'>x</i>를 푼 것과 같아요.<span class='xh'>헷갈림 격파</span>9초는 중간에 구한 초당 거리 9를 시간으로 옮긴 값이에요. 13초는 7과 63의 일부 숫자를 더한 값이고, 630초는 거리와 시간을 곱해 단위를 맞추지 못한 결과예요. 90÷7처럼 처음 시간으로 바로 나누면 두 거리의 비를 반영하지 못해요. 검산하면 9×10=90 km로 목표 거리와 정확히 같아요.",
-    core: "63÷7=9 km/s이고 90÷9=10초예요.",
+    explain:
+      "<span class='xh'>정답 풀이</span>1인분의 양이 90 g으로 고정이니 <i class='mv'>x</i>인분에 필요한 쌀 <i class='mv'>y</i> g은 <i class='mv'>y</i>=90<i class='mv'>x</i>인 정비례 관계예요. <i class='mv'>x</i>=6을 대입하면 <i class='mv'>y</i>=90×6=<b>540</b> g이죠. 인분이 6배가 되니 쌀도 정확히 6배가 되는 구조예요.<span class='xh'>계산 함정 격파</span>90+6=96처럼 더하는 것은 '몫이 반복해서 쌓인다'는 구조를 놓친 계산이에요. 또 90×6을 480이나 560으로 쓰는 곱셈 실수도 잦으니 90×6=9×6×10으로 나눠 검산해요. 이 문제의 관계가 정비례인 이유는 '1인분당 양이 고정'이기 때문이라는 것까지 한 번 되새기면, 활용 문제에서 정비례와 반비례를 가르는 눈이 길러져요.",
+    core: "1인분 고정이면 인분 수에 정비례해요.",
   },
   {
+    // [슬롯 187] 검산: 연못 둘레(원형) 120 m를 x m 간격으로 → 간격 수 = 나무 수 → xy=120 ·
+    //  x=8이면 y=120÷8=15그루 ✓ (원형이라 +1 없음 · 직선 길이었다면 +1 함정).
     id: "m1u3e187",
-    lessonId: L,
+    lessonId: "m1u3l9",
     type: "mcq",
-    prompt: "운반 수레가 1초에 <b>1.2 m</b>씩 일정하게 움직여요. 5분 동안 간 거리는?",
-    options: ["6 m", "60 m", "72 m", "300 m", "360 m"],
-    answer: 4,
+    prompt: "둘레가 <b>120 m</b>인 원 모양 연못을 따라 나무를 <b>" + withVars("x") + " m 간격</b>으로 심으면 " + withVars("y") + "그루가 필요해요. 간격을 <b>8 m</b>로 하면 나무는 몇 그루 필요할까요?",
+    options: ["15그루", "16그루", "12그루", "10그루", "8그루"],
+    answer: 0,
     diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>속력의 단위가 초이므로 먼저 5분을 5×60=300초로 바꿔요. 1초에 1.2 m씩 300초 동안 움직이므로 1.2×300=<b>360 m</b>를 가요. 시간과 거리의 단위를 맞춘 뒤 정비례식을 적용한 계산이에요.<span class='xh'>오답 하나씩 격파</span>'6 m'는 1.2×5로 분을 그대로 초처럼 쓴 값이고, '60 m'는 1분의 초 수만 답했어요. '72 m'는 1.2×60으로 1분 거리에서 멈췄고, '300 m'는 5분을 초로 바꾼 수를 거리로 착각했어요. 계산 전 속력과 시간의 단위를 반드시 맞춰요.",
-    core: "5분은 300초이므로 1.2×300=360 m예요.",
+    explain:
+      "<span class='xh'>정답 풀이</span>원 모양 둘레를 따라 심으면 나무 사이 간격의 수와 나무의 수가 같아요. (간격)×(나무 수)=(둘레)이므로 <i class='mv'>xy</i>=120인 반비례 관계죠. 간격이 8 m이면 <i class='mv'>y</i>=120÷8=<b>15</b>그루예요.<span class='xh'>오답 하나씩 격파</span>'16그루'는 끝이 있는 직선 길에 심을 때의 계산(간격 수+1)을 원에 잘못 적용한 답이에요. 원은 끝이 없어 처음 나무가 마지막 간격의 끝을 겸하므로 +1이 없죠. '12그루'는 120÷10, '10그루'는 120÷12로 나누는 수가 어긋난 값이고, '8그루'는 간격을 그대로 답한 거예요. 심기 문제는 길의 모양(원인가, 직선인가)이 +1의 유무를 정한다는 것을 꼭 확인해요.",
+    core: "원 둘레 심기는 간격 수 = 나무 수, +1 없음!",
   },
   {
+    // [슬롯 188] 검산: 곡선 y=−32/x 위의 교점 x=−4 → k=−32÷(−4)=8 → 직선 8=−4a → a=−2 →
+    //  k+a=8+(−2)=6 ✓. min −10·max 10·labelEvery 2로 −4·8 라벨 위.
     id: "m1u3e188",
-    lessonId: L,
+    lessonId: "m1u3l9",
     type: "num",
-    prompt: "색종이 6묶음의 총액이 <b>5100원</b>이고 묶음마다 가격이 같아요. 한 묶음의 가격을 쓰세요. (단위: 원)",
-    answer: "850",
+    prompt:
+      "정비례 관계 " + withVars("y=ax") + "의 그래프와 반비례 관계 " + withVars("y=−32/x") + "의 그래프가 그림과 같이 점 " + withVars("P(−4, k)") + "에서 만나요. " + withVars("k+a") + "의 값을 구하세요.",
+    figure: mExamRelationPlaneFig({
+      min: -10,
+      max: 10,
+      size: 330,
+      labelEvery: 2,
+      lines: [{ a: -2, color: "#E8547E" }],
+      inverseCurves: [{ a: -32, color: "#364FC7" }],
+      points: [{ label: "P", x: -4, y: 8, color: "#E8547E", labelDx: -14, labelDy: -6 }],
+    }),
+    answer: "6",
     numKind: "int",
-    unitLabel: "원",
-    diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>묶음마다 가격이 같으므로 총액을 묶음 수로 나누면 한 묶음의 가격을 구할 수 있어요. 5100÷6=<b>850원</b>이에요. 묶음 수를 <i class='mv'>x</i>, 총액을 <i class='mv'>y</i>라고 하면 <i class='mv'>y</i>=850<i class='mv'>x</i>의 정비례 관계가 돼요.<span class='xh'>헷갈림 격파</span>5100원은 여섯 묶음의 총액이라 한 묶음 값이 아니에요. 30600원은 나누지 않고 곱한 결과이고, 510원은 5100÷10처럼 묶음 수 6을 사용하지 않았어요. 856원은 가격과 묶음 수를 더한 값이라 단위의 뜻도 맞지 않아요. 850×6=5100으로 다시 곱해 검산해요.",
-    core: "총액 5100원을 6묶음으로 나누면 한 묶음은 850원이에요.",
+    diff: 3,
+    explain:
+      "<span class='xh'>정답 풀이</span>교점은 두 그래프를 모두 만족해요. 먼저 반비례 쪽에 <i class='mv'>x</i>=−4를 넣으면 <i class='mv'>k</i>=−32÷(−4)=8이므로 P(−4, 8)이에요. 이 점이 정비례 그래프 위에도 있으므로 8=<i class='mv'>a</i>×(−4)에서 <i class='mv'>a</i>=−2죠. 따라서 <i class='mv'>k</i>+<i class='mv'>a</i>=8+(−2)=<b>6</b>이에요.<span class='xh'>계산 함정 격파</span>부호 갈림길이 세 번이에요. −32÷(−4)를 −8로 쓰면 첫 단추부터 어긋나고, 8=−4<i class='mv'>a</i>에서 <i class='mv'>a</i>=2로 쓰면 두 번째, 8+(−2)를 10으로 쓰면 마지막에서 무너져요. 각 단계의 부호를 소리 내어 확인해요. P가 제2사분면(−, +)에 있으니 <i class='mv'>k</i>&gt;0, 직선이 오른쪽 아래로 향하니 <i class='mv'>a</i>&lt;0이라는 그림 검산도 든든한 안전망이에요.",
+    core: "곡선으로 k, 직선으로 a, 부호 세 번 검사!",
   },
   {
+    // [슬롯 189] 검산: 동생 분속 60 m(y=60x) · 형은 4분 늦게 분속 90 m(y=90(x−4)) ·
+    //  60x=90x−360 → x=12분 · 교점 (12, 720) 라벨 위 ✓. 시간 수치 보기 셔플 기본.
     id: "m1u3e189",
-    lessonId: L,
+    lessonId: "m1u3l9",
     type: "mcq",
-    prompt: `두 펌프가 일정한 비율로 물을 보내는 그래프예요. <b>${PUMP.targetTime}분</b> 뒤의 상황을 옳게 설명한 것은?`,
-    figure: mExamChangeGraphFig(PUMP_SPEC),
-    options: [
-      `펌프 A는 ${PUMP.targetTime}분에 ${PUMP.aRate * 10} L를 보낸다`,
-      `펌프 B는 ${PUMP.targetTime}분에 ${pumpAAmount} L를 보낸다`,
-      `펌프 B가 펌프 A보다 ${pumpAAmount - pumpBAmount} L 더 보낸다`,
-      `펌프 A의 시간은 ${PUMP.targetTime}배이고 물의 양은 3배이다`,
-      `펌프 A가 펌프 B보다 ${pumpAAmount - pumpBAmount} L 더 보낸다`,
-    ],
-    answer: 4,
-    diff: 2,
-    explain: `<span class='xh'>정답 풀이</span>${PUMP.targetTime}분 뒤 펌프 A는 ${PUMP.aRate}×${PUMP.targetTime}=${pumpAAmount} L, 펌프 B는 ${PUMP.bRate}×${PUMP.targetTime}=${pumpBAmount} L를 보내요. 따라서 A가 B보다 ${pumpAAmount}−${pumpBAmount}=<b>${pumpAAmount - pumpBAmount} L 더</b> 보냈다는 설명이 옳아요.<span class='xh'>오답 하나씩 격파</span>'A는 ${PUMP.aRate * 10} L'는 10분 값을 읽었고, 'B는 ${pumpAAmount} L'는 A의 값을 B에 붙였어요. 'B가 더 보낸다'는 두 직선을 거꾸로 비교했고, '시간 ${PUMP.targetTime}배에 물 3배'는 정비례의 같은 배수 규칙과 맞지 않아요. 같은 시각의 두 점을 비교해요. A의 직선이 같은 시각에서 더 위에 있다는 사실도 A가 더 많은 물을 보냈다는 판단과 일치해요.`,
-    core: `${PUMP.targetTime}분에 A ${pumpAAmount} L, B ${pumpBAmount} L이므로 차는 ${pumpAAmount - pumpBAmount} L예요.`,
+    prompt: "동생이 먼저 걷기 시작하고, 형이 <b>4분 후</b> 같은 길을 따라 출발한 그래프예요. 형이 동생을 <b>따라잡는</b> 때는 동생이 출발한 지 몇 분 후일까요?",
+    figure: mExamChangeGraphFig(CG_CHASE),
+    options: ["12분", "8분", "10분", "14분", "16분"],
+    answer: 0,
+    diff: 3,
+    explain:
+      "<span class='xh'>정답 풀이</span>따라잡는 순간은 두 사람의 간 거리가 같아지는 순간, 즉 두 직선의 교점이에요. 그림에서 두 직선은 가로 12분, 세로 720 m 눈금에서 만나므로 답은 <b>12분</b>이에요. 계산으로도 동생은 분속 60 m라 12분에 720 m, 형은 8분(12−4) 동안 분속 90 m로 720 m를 걸어 정확히 일치하죠.<span class='xh'>오답 하나씩 격파</span>'8분'은 형이 걸은 시간을 동생 기준 시각으로 착각한 답이에요. 문제의 기준이 '동생이 출발한 지'라는 것을 확인해요. '10분'은 어림 판독이고, '14분'과 '16분'은 이미 형이 앞서간 뒤예요. 늦게 출발해도 직선이 가파르면(빠르면) 언젠가 교점이 생긴다는 것, 그리고 출발이 늦은 그래프는 가로축의 출발 시각에서 시작한다는 것이 추격 그래프의 두 가지 문법이에요.",
+    core: "따라잡음 = 교점, 기준 시각을 먼저 확인!",
   },
   {
+    // [슬롯 190] 검산: 케이블카 1분 15 m → y=15x · x=20 → 300 m ✓ (대입 활용).
     id: "m1u3e190",
-    lessonId: L,
-    type: "word",
-    prompt: "초당 이동량이 주어졌는데 시간을 분으로 받은 문제에서, 계산하기 전에 초와 분처럼 서로 다른 단위를 같게 바꾸는 과정을 뜻하는 말을 고르세요.",
-    answer: "단위 변환",
-    bank: ["단위 변환", "비례상수", "초기 미동 시간", "단가", "총액", "좌표", "눈금", "원점", "사분면"],
-    diff: 1,
-    explain: "<span class='xh'>정답 풀이</span>초당 이동량과 분 단위 시간을 함께 계산하려면 먼저 분을 초로 바꾸거나 초당 양을 분당 양으로 바꾸어 기준을 맞춰야 해요. 이렇게 서로 다른 단위를 같은 기준으로 바꾸는 과정을 <b>단위 변환</b>이라고 해요.<span class='xh'>낱말 하나씩 격파</span>'비례상수'는 정비례식에 곱해진 일정한 수이고, '단가'는 물건 한 단위의 가격, '총액'은 전체 가격이에요. '초기 미동 시간'은 두 지진파의 도착 시각 차예요. '좌표', '사분면', '원점'은 점의 위치를 설명하고 '눈금'은 축의 간격을 나타내므로 시간 단위를 맞추는 과정의 이름이 아니에요. 계산식의 수치뿐 아니라 단위가 서로 같은지 먼저 확인해요.",
-    core: "초와 분처럼 다른 단위를 같은 기준으로 바꾸는 과정이 단위 변환이에요.",
-  },
-  {
-    id: "m1u3e191",
-    lessonId: L,
-    type: "mcq",
-    prompt: "A는 시속 4 km, B는 시속 6 km로 각각 일정하게 걸어요. 두 사람이 각각 <b>12 km</b>를 걷는 데 걸리는 시간의 차는?",
-    options: ["5시간", "2시간", "6시간", "1시간", "12시간"],
-    answer: 3,
-    diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>같은 12 km를 가는 시간을 각각 구해요. A는 12÷4=3시간, B는 12÷6=2시간이므로 시간의 차는 3−2=<b>1시간</b>이에요. 속력이 큰 B가 같은 거리에 먼저 도착한다는 상황과도 맞아요.<span class='xh'>오답 하나씩 격파</span>'5시간'은 두 도착 시간을 더한 값이고, '2시간'과 '3시간이 아닌 6시간'은 한 사람의 시간만 택하거나 속력 차를 잘못 사용한 값이에요. '12시간'은 주어진 거리를 그대로 시간으로 쓴 답이에요. 같은 거리에서는 각자의 거리÷속력을 먼저 계산한 뒤 두 시간을 빼요.",
-    core: "12 km에 A는 3시간, B는 2시간이 걸려 차이는 1시간이에요.",
-  },
-  {
-    id: "m1u3e192",
-    lessonId: L,
+    lessonId: "m1u3l9",
     type: "num",
-    prompt: "P파는 1초에 <b>12 km</b>, S파는 1초에 <b>9 km</b>씩 퍼져요. 진원에서 180 km 떨어진 곳의 초기 미동 시간을 쓰세요. (단위: 초)",
+    prompt: "케이블카가 <b>1분에 15 m씩</b> 일정하게 올라가요. 출발한 지 " + withVars("x") + "분 후 올라간 높이를 " + withVars("y") + " m라 할 때, <b>20분</b> 후 올라간 높이는 몇 m인지 구하세요.",
+    answer: "300",
+    numKind: "int",
+    unitLabel: "m",
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>1분마다 15 m씩 일정하게 오르므로 관계식은 <i class='mv'>y</i>=15<i class='mv'>x</i>인 정비례예요. <i class='mv'>x</i>=20을 대입하면 <i class='mv'>y</i>=15×20=<b>300</b> m죠. 관계식을 한 번 세워 두면 5분 후든 20분 후든 대입 한 번으로 어떤 시각의 높이도 구할 수 있어요.<span class='xh'>계산 함정 격파</span>15×20을 3000으로 쓰는 자릿수 실수가 의외로 잦아요. 15×2=30에 0을 하나만 붙이는 검산으로 잡아요. 또 이 문제는 '올라간 높이'를 묻지 산꼭대기까지 '남은 높이'를 묻지 않아요. 활용 문제의 마지막 관문은 언제나 묻는 양이 누적량인지 남은 양인지 확인하는 것이라는 걸 기억하고, 단위 m까지 붙여 마무리해요.",
+    core: "식을 세우면 어떤 시각도 대입 한 번이에요.",
+  },
+  {
+    // [슬롯 191] 검산: 감소 직선 (0, 60)→(12, 0) · 남은 물이 0이 되는 때 = 가로축 도달
+    //  12분 ✓. 수치 보기 셔플 기본.
+    id: "m1u3e191",
+    lessonId: "m1u3l9",
+    type: "mcq",
+    prompt: "물탱크에 남은 물의 양을 나타낸 그래프예요. 물탱크가 <b>완전히 비는</b> 때는 몇 분 후일까요?",
+    figure: mExamChangeGraphFig({
+      xMin: 0, xMax: 12, yMin: 0, yMax: 60,
+      xTicks: [0, 2, 4, 6, 8, 10, 12],
+      yTicks: [0, 20, 40, 60],
+      xLabel: "시간(분)", yLabel: "남은 물(L)",
+      series: [{ points: [[0, 60], [12, 0]] }],
+    }),
+    options: ["12분", "60분", "6분", "10분", "15분"],
+    answer: 0,
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>'완전히 빈다'는 남은 물이 0이 되는 순간이에요. 그래프가 가로축(남은 물 0)에 닿는 점을 읽으면 (12, 0)이므로 <b>12분</b> 후예요. 처음 60 L가 12분 동안 일정하게 줄었으니 1분에 5 L씩 빠져나간 셈이라는 것도 그래프에서 읽을 수 있죠.<span class='xh'>오답 하나씩 격파</span>'60분'은 세로축의 시작값 60 L를 시간으로 착각한 답이에요. 묻는 것은 시각이니 가로축에서 읽어야 하죠. '6분'은 절반쯤 비는 때(30 L 남음)이고, '10분'은 어림 판독, '15분'은 그래프 밖의 값이에요. 남은 양 그래프에서 가로축과의 만남은 언제나 '전부 소진'이라는 사건이라는 번역을 다시 확인해요.",
+    core: "완전히 비는 순간 = 그래프의 가로축 도달점!",
+  },
+  {
+    // [슬롯 192] 검산: 1.2 km = 1200 m · 분속 240 m → 1200÷240=5분 ✓ (단위 환산 활용).
+    id: "m1u3e192",
+    lessonId: "m1u3l9",
+    type: "num",
+    prompt: "자전거를 타고 <b>1분에 240 m씩</b> 일정하게 달려요. <b>1.2 km</b>를 가는 데 걸리는 시간은 몇 분인지 구하세요.",
     answer: "5",
     numKind: "int",
-    unitLabel: "초",
+    unitLabel: "분",
     diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>180 km까지 P파가 걸리는 시간은 180÷12=15초이고, S파가 걸리는 시간은 180÷9=20초예요. 초기 미동 시간은 S파 도착 시각에서 P파 도착 시각을 뺀 값이므로 20−15=<b>5초</b>예요.<span class='xh'>헷갈림 격파</span>15초나 20초만 쓰면 한 파의 도착 시각을 답한 것이고, 35초는 두 시각을 더한 값이에요. 속력 차 3을 그대로 시간 차로 쓴다면 단위도 근거도 맞지 않아요. P파가 더 빠르므로 먼저 도착하는지 확인해요. 각 도착 시간을 원래 거리식에 넣으면 둘 다 180 km가 나와요.",
-    core: "180 km에서 P파 15초, S파 20초이므로 초기 미동 시간은 5초예요.",
+    explain:
+      "<span class='xh'>정답 풀이</span>단위부터 통일해요. 1.2 km는 1200 m죠. 1분에 240 m씩 가므로 걸리는 시간은 1200÷240=<b>5</b>분이에요. <i class='mv'>x</i>분 동안 간 거리를 <i class='mv'>y</i> m라 하면 <i class='mv'>y</i>=240<i class='mv'>x</i>이고, 1200=240<i class='mv'>x</i>를 푸는 역방향 대입과 같은 계산이에요.<span class='xh'>계산 함정 격파</span>1.2를 그대로 나눠 1.2÷240을 계산하면 단위가 뒤섞인 값이 나와요. km와 m가 함께 나오면 반드시 한쪽으로 통일하고 시작해요(1 km=1000 m). 또 240÷1200처럼 나누는 방향을 뒤집으면 0.2라는 어색한 값이 나오죠. '전체 거리 ÷ 1분당 거리 = 걸린 시간'이라는 구조를 말로 세우고 나누면 방향 실수가 없어요.",
+    core: "km는 m로 통일 먼저, 그다음 나누기예요.",
   },
   {
+    // [슬롯 193] 검산: ㄱ 참(순서쌍 하나로 a 확정) · ㄴ 참(가파를수록 같은 시간에 멀리) ·
+    //  ㄷ 참(a 확정 후 대입이 활용의 순서) · ㄹ 거짓(반비례는 곱이 일정) · ㅁ 거짓(교점 =
+    //  두 양이 같아지는 순간). answer [0, 1, 2].
     id: "m1u3e193",
-    lessonId: L,
+    lessonId: "m1u3l9",
     type: "multi",
-    prompt: "한 장에 750원인 사진을 인화할 때, 인화 장수 <i class='mv'>x</i>와 총액 <i class='mv'>y</i>에 대한 설명으로 <b>옳은 것을 모두</b> 고르세요.",
+    prompt: "정비례·반비례의 활용에 대한 설명으로 옳은 것을 <b>모두</b> 고르세요.",
     options: [
-      "4장을 인화하면 총액은 3000원이다",
-      "장수가 2배가 되면 총액도 2배가 된다",
-      "0장을 인화하면 총액은 0원이다",
-      "그래프는 원점을 지나지 않는다",
-      "총액을 장수로 나누면 항상 600이다",
+      "순서쌍 하나를 알면 관계식의 a를 구할 수 있어요",
+      "거리 그래프에서는 직선이 가파를수록 같은 시간에 더 멀리 가요",
+      "관계식의 a를 먼저 구한 뒤 구하려는 값을 대입해요",
+      "반비례 관계에서는 두 변수의 차가 항상 일정해요",
+      "두 그래프의 교점에는 아무 의미가 없어요",
     ],
     answer: [0, 1, 2],
-    diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>총액은 750×장수이므로 <i class='mv'>y</i>=750<i class='mv'>x</i>예요. 4장이면 750×4=<b>3000원</b>이고, 장수가 2배면 총액도 2배가 돼요. 0장일 때는 0원이므로 그래프는 원점을 지나요. 따라서 앞의 세 설명이 옳아요.<span class='xh'>틀린 설명 격파</span>'그래프는 원점을 지나지 않는다'는 <i class='mv'>x</i>=0일 때 <i class='mv'>y</i>=0인 사실과 반대예요. 또 총액을 장수로 나눈 값은 언제나 단가인 750이지 600이 아니에요. 계산값뿐 아니라 식과 그래프의 모양도 함께 검산해요. 2장 1500원, 4장 3000원처럼 같은 배수 규칙도 확인할 수 있어요.",
-    core: "총액=750×장수이므로 2배 규칙과 원점 통과가 모두 성립해요.",
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>정비례든 반비례든 모르는 것은 <i class='mv'>a</i> 하나라, 순서쌍 하나만 있으면 나눗셈(정비례) 또는 곱셈(반비례)으로 <i class='mv'>a</i>가 확정돼요. 활용의 순서도 '<i class='mv'>a</i> 확정 → 대입'이 정석이고, 거리 그래프에서 가파른 직선일수록 1분당 가는 거리가 커서 빠른 쪽이라는 것도 맞아요.<span class='xh'>틀린 설명 격파</span>반비례에서 일정한 것은 두 변수의 차가 아니라 곱이에요. 차가 일정한 관계는 뺄셈 관계라 반비례와 전혀 다르죠. 그리고 두 그래프의 교점은 두 양이 같아지는 순간(만남, 따라잡음, 저금액 역전)이라는 결정적인 사건을 알려 줘요. 의미가 없기는커녕 활용 문제의 하이라이트랍니다.",
+    core: "a 확정 → 대입이 활용의 뼈대, 교점은 사건!",
   },
   {
+    // [슬롯 194] 검산: 곡선 y=20/x에 x=2를 넣으면 P(2, 10) → 직선 10=2a → a=5 ✓.
+    //  보기 오답 = 10(y좌표)·2(x좌표)·40(곱 = 반비례 a 착각)·1/5(역수). min −12·max 12·
+    //  labelEvery 2로 2·10 라벨 위(±10 격자는 P가 상단 경계 밀착 → ±12 여유, 눈검수 반영).
     id: "m1u3e194",
-    lessonId: L,
+    lessonId: "m1u3l9",
     type: "mcq",
-    prompt: "P파는 초당 10 km, S파는 초당 6 km로 퍼져요. 150 km 떨어진 곳에서 P파 감지 <b>2초 뒤</b> 경보가 전송되었다면, 경보 뒤 S파 도착까지 남은 시간은?",
-    options: ["10초", "25초", "8초", "12초", "2초"],
-    answer: 2,
+    prompt: "그림과 같이 정비례 관계 " + withVars("y=ax") + "의 그래프와 반비례 관계 " + withVars("y=20/x") + "의 그래프가 점 P에서 만나요. 점 P의 " + withVars("x") + "좌표가 <b>2</b>일 때, " + withVars("a") + "의 값은?",
+    figure: mExamRelationPlaneFig({
+      min: -12,
+      max: 12,
+      size: 330,
+      labelEvery: 2,
+      lines: [{ a: 5, color: "#E8547E" }],
+      inverseCurves: [{ a: 20, color: "#364FC7" }],
+      points: [{ label: "P", x: 2, y: 10, color: "#E8547E", labelDx: 14, labelDy: -4 }],
+    }),
+    options: ["5", "10", "2", "40", "1/5"],
+    answer: 0,
     diff: 3,
-    explain: "<span class='xh'>정답 풀이</span>150 km까지 P파는 150÷10=15초, S파는 150÷6=25초가 걸려 초기 미동 시간은 25−15=10초예요. 그러나 경보가 P파 감지 2초 뒤에 전송되었으므로 경보 뒤에 실제로 남은 시간은 10−2=<b>8초</b>예요.<span class='xh'>오답 하나씩 격파</span>'10초'는 경보 전송의 지연을 빼지 않은 초기 미동 시간 그대로이고, '25초'는 S파의 전체 도착 시간이에요. '12초'는 지연 2초를 빼지 않고 거꾸로 더한 값이고, '2초'는 경보 처리에 걸린 시간만 답했어요. 기준 시점을 P파 도착과 경보 전송 중 어느 것으로 잡는지 끝까지 구분해야 해요.",
-    core: "초기 미동 10초에서 경보 지연 2초를 빼면 8초가 남아요.",
+    explain:
+      "<span class='xh'>정답 풀이</span>교점 P는 두 그래프를 모두 만족해요. 반비례 관계에 <i class='mv'>x</i>=2를 대입하면 <i class='mv'>y</i>=20÷2=10이므로 P(2, 10)이에요. 이 점을 정비례 관계에 대입하면 10=<i class='mv'>a</i>×2, <i class='mv'>a</i>=<b>5</b>예요.<span class='xh'>오답 하나씩 격파</span>'10'은 P의 y좌표를 그대로 <i class='mv'>a</i>로 착각한 답이고, '2'는 x좌표를 답한 거예요. '40'은 2×10, 즉 곱을 계산한 값인데 그건 반비례 쪽 <i class='mv'>a</i>=20을 구할 때나 쓰는 방법이고 여기 곱은 이미 20으로 주어져 있으니 이중으로 어긋나요. '1/5'은 <i class='mv'>x</i>÷<i class='mv'>y</i>로 거꾸로 나눈 값이에요. 정비례의 <i class='mv'>a</i>는 <i class='mv'>y</i>÷<i class='mv'>x</i>, 반비례의 <i class='mv'>a</i>는 <i class='mv'>x</i>×<i class='mv'>y</i>라는 두 공식을 나란히 두고 구분해요.",
+    core: "곡선으로 P를 완성하고 직선으로 a를 구해요.",
   },
   {
+    // [슬롯 195] 검산: A 수도 분당 6 L → 240 L에 40분 · B 수도 분당 2 L → 120분 · 차
+    //  120−40=80분 ✓ (지진 파생값 구조 회피 소재 · 계산형).
     id: "m1u3e195",
-    lessonId: L,
+    lessonId: "m1u3l9",
     type: "num",
-    prompt: "펌프가 1초에 <b>2.5 L</b>씩 일정하게 물을 보내요. 450 L를 보내는 데 걸리는 시간을 쓰세요. (단위: 분)",
-    answer: "3",
+    prompt:
+      "빈 물통에 물을 받는 두 수도가 있어요. A 수도는 <b>1분에 6 L씩</b>, B 수도는 <b>1분에 2 L씩</b> 일정하게 나와요. 각각 <b>240 L</b>짜리 물통을 가득 채울 때, B 수도는 A 수도보다 몇 분 <b>더 오래</b> 걸리는지 구하세요.",
+    answer: "80",
     numKind: "int",
     unitLabel: "분",
     diff: 3,
-    explain: "<span class='xh'>정답 풀이</span>먼저 초 단위 시간을 구하면 450÷2.5=180초예요. 1분은 60초이므로 180÷60=<b>3분</b>이에요. 또는 1분에 보내는 양이 2.5×60=150 L이므로 450÷150=3분으로 바로 계산할 수도 있어요.<span class='xh'>헷갈림 격파</span>180은 초 단위 답이라 문제에서 요구한 분 단위로 바꾸지 않은 값이에요. 1125는 450×2.5처럼 전체량과 초당 양을 곱한 결과이고, 7.5는 2.5×3으로 답 3분을 미리 사용한 순환 계산이에요. 450÷60은 물의 양과 시간을 직접 나누어 단위가 맞지 않아요. 마지막에 3분=180초, 2.5×180=450 L로 검산해요.",
-    core: "450÷2.5=180초=3분이에요.",
+    explain:
+      "<span class='xh'>정답 풀이</span>각자 걸리는 시간을 먼저 구해요. A 수도는 240÷6=40분, B 수도는 240÷2=120분이에요. 차이는 120−40=<b>80</b>분이죠. 나오는 양이 3배 차이라 걸리는 시간도 3배(40분 대 120분)가 되는, 빠르기와 시간의 반비례 감각도 함께 확인할 수 있어요.<span class='xh'>계산 함정 격파</span>두 수도의 분당 양 차이 6−2=4를 이용해 240÷4=60분이라 하면, '함께 틀었을 때'류의 다른 문제와 뒤섞인 계산이 돼요. 이 문제는 각자 따로 채우는 상황이라 각자의 시간을 구한 뒤 빼는 두 단계가 정석이에요. 또 '더 오래'를 놓치고 40분이나 120분을 그대로 답하지 않도록, 묻는 것이 차라는 것을 마지막에 확인해요.",
+    core: "각자의 시간부터, 차는 마지막에 빼요.",
   },
   {
+    // [슬롯 196] 검산: (추격 도판 공유) 1분당 거리 = 형 90 m > 동생 60 m → 형 ✓
+    //  (§3-0: MG 카드는 선 1개라 두 사람 개형 불가 · CG 판독형으로 전환). 문두는 자기완결
+    //  재서술(검산 V2 · "같은 그래프에서" 지시어는 부분 추출 단독 출제 시 부유).
     id: "m1u3e196",
-    lessonId: L,
+    lessonId: "m1u3l9",
     type: "mcq",
-    prompt: `배달차가 일정한 속력으로 가는 거리와 <b>${DELIVERY.targetDistance} km 목표 지점</b>을 함께 나타낸 그래프예요. 두 그래프의 값이 같아지는 시각은?`,
-    figure: mExamChangeGraphFig(DELIVERY_SPEC),
-    options: ["1시간", `${deliveryTime}시간`, "2시간", "4시간", `${DELIVERY.targetDistance}시간`],
-    answer: 1,
-    diff: 3,
-    explain: `<span class='xh'>정답 풀이</span>배달차는 1시간에 ${DELIVERY.speed} km씩 가므로 거리 <i class='mv'>y</i>=${DELIVERY.speed}<i class='mv'>x</i>예요. 목표 지점은 ${DELIVERY.targetDistance} km이므로 ${DELIVERY.speed}<i class='mv'>x</i>=${DELIVERY.targetDistance}, <i class='mv'>x</i>=<b>${deliveryTime}시간</b>이에요. 그래프에서도 배달차 선과 목표선이 (${deliveryTime}, ${DELIVERY.targetDistance})에서 만나요.<span class='xh'>오답 하나씩 격파</span>'1시간'과 '2시간'에는 각각 ${DELIVERY.speed} km, ${DELIVERY.speed * 2} km라 아직 도착 전이에요. '4시간'에는 ${DELIVERY.speed * 4} km라 목표를 지났고, '${DELIVERY.targetDistance}시간'은 거리값을 시간으로 잘못 읽었어요. 축 단위를 확인해 교점을 읽어요. 세로축의 ${DELIVERY.targetDistance} km에서 목표선을 따라 교점까지 간 뒤 가로축으로 내려가도 ${deliveryTime}시간을 읽을 수 있어요.`,
-    core: `${DELIVERY.speed}×시간=${DELIVERY.targetDistance}이므로 목표 도착은 ${deliveryTime}시간이에요.`,
+    prompt: "동생이 먼저 걷기 시작하고 형이 4분 후에 같은 길을 따라 출발한 그래프예요. <b>1분 동안 더 멀리 가는</b> 사람은 누구일까요?",
+    figure: mExamChangeGraphFig(CG_CHASE),
+    options: ["형", "동생", "두 사람이 같다", "알 수 없다", "시간에 따라 달라진다"],
+    answer: 0,
+    diff: 2,
+    explain:
+      "<span class='xh'>정답 풀이</span>1분 동안 가는 거리는 직선의 가파른 정도가 알려 줘요. 형의 직선은 10분 동안(4분부터 14분까지) 900 m를 가 1분에 90 m씩이고, 동생의 직선은 16분 동안 960 m를 가 1분에 60 m씩이에요. 더 가파른 <b>형</b>이 1분당 더 멀리 가죠.<span class='xh'>오답 하나씩 격파</span>'동생'을 고르는 것은 그래프에서 동생의 선이 앞쪽(위쪽)에 있는 구간만 본 착각이에요. 동생이 앞선 것은 먼저 출발했기 때문이지 빨라서가 아니죠. '시간에 따라 달라진다'는 직선이 곧게 뻗어 있는 한 성립하지 않아요. 직선은 빠르기가 일정하다는 뜻이니까요. 위치(누가 앞에 있나)와 빠르기(누가 가파른가)를 분리해 읽는 것이 두 사람 그래프의 핵심이에요.",
+    core: "앞선 것과 빠른 것은 달라요, 빠르기는 가파름!",
   },
   {
+    // [슬롯 197] 검산: 직선 y=6x와 곡선 y=24/x의 제1사분면 교점 · 6x=24/x → x²=4 → x=2 →
+    //  P(2, 12) → y좌표 12 ✓. min −12·max 12·labelEvery 2로 2·12 짝수 라벨 위.
+    //  (초판 y=4x×y=16/x·P(2, 8)은 답 8이 s199 정답 보기 "(6, 8)"과 같은 의미역(교점 P의
+    //  y좌표)으로 노출 · 검산 V2 적발로 재설계.)
     id: "m1u3e197",
-    lessonId: L,
+    lessonId: "m1u3l9",
+    type: "num",
+    prompt: "정비례 관계와 반비례 관계의 그래프가 그림과 같이 <b>제1사분면의 점 P</b>에서 만나요. 점 P의 " + withVars("y") + "<b>좌표</b>를 구하세요.",
+    figure: mExamRelationPlaneFig({
+      min: -12,
+      max: 12,
+      size: 330,
+      labelEvery: 2,
+      lines: [{ a: 6, color: "#E8547E" }],
+      inverseCurves: [{ a: 24, color: "#364FC7" }],
+      points: [{ label: "P", x: 2, y: 12, color: "#E8547E", labelDx: 14, labelDy: -4 }],
+    }),
+    answer: "12",
+    numKind: "int",
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>교점 P에서 가로로 점선을 그어 세로축 눈금을 읽으면 <b>12</b>예요. P의 좌표는 (2, 12)이고, 묻는 것은 그중 <i class='mv'>y</i>좌표죠. 검산하면 직선 쪽은 6×2=12, 곡선 쪽은 곱 2×12=24로 두 그래프 모두를 만족하는 점이라는 것이 확인돼요.<span class='xh'>판독 함정 격파</span>x좌표 2를 답하면 묻는 좌표를 바꿔 읽은 거예요. y좌표는 세로 눈금이라는 것을 확인해요. 또 두 그래프가 그려져 있으면 어느 선을 읽어야 할지 헷갈릴 수 있지만, 교점은 두 그래프의 공용 점이라 어느 쪽으로 읽어도 같은 값이에요. 교점 문제에서 판독이 막히면 '두 식 모두 만족'이라는 성질로 계산 검산을 돌리는 것이 안전망이 돼요.",
+    core: "교점의 y좌표는 세로 눈금, 두 식이 검산해 줘요.",
+  },
+  {
+    // [슬롯 198] 검산: "1분에 80 m씩 걸을 때 시간과 거리"만 y=80x 정비례 ✓. 나머지 =
+    //  속력·시간(반비례)·읽은 쪽·남은 쪽(뺄셈)·나눔(반비례)·곱 36(반비례).
+    id: "m1u3e198",
+    lessonId: "m1u3l9",
     type: "mcq",
-    prompt: "두 인쇄소의 주문 장수 <i class='mv'>x</i>와 총액 <i class='mv'>y</i>가 다음과 같아요. A: (0장, 0원), (2장, 1400원), (4장, 2800원). B: (0장, 500원), (2장, 1900원), (4장, 3300원). 옳은 설명은?",
+    prompt: "다음 상황 중 두 양이 <b>정비례</b>하는 것은?",
     options: [
-      "A만 정비례 관계이고 식은 <i class='mv'>y</i>=700<i class='mv'>x</i>이다",
-      "B만 정비례 관계이고 식은 <i class='mv'>y</i>=700<i class='mv'>x</i>이다",
-      "A와 B가 모두 정비례 관계이다",
-      "A의 한 장 가격은 1400원이다",
-      "B는 0장을 주문하면 총액이 0원이다",
+      "1분에 80 m씩 걸을 때, 걸은 시간과 걸은 거리",
+      "240 km를 갈 때, 빠르기와 걸리는 시간",
+      "300쪽짜리 책에서 읽은 쪽수와 남은 쪽수",
+      "주스 1200 mL를 나눌 때, 사람 수와 한 명의 몫",
+      "곱이 36으로 일정한 두 수",
     ],
     answer: 0,
-    diff: 3,
-    explain: "<span class='xh'>정답 풀이</span>A는 총액÷장수가 1400÷2=2800÷4=700으로 일정하고 0장일 때 0원이므로 <i class='mv'>y</i>=700<i class='mv'>x</i>인 정비례 관계예요. B는 장수가 늘 때 1장당 700원씩 늘지만 0장에도 500원이어서 정비례가 아니에요.<span class='xh'>오답 하나씩 격파</span>'B만 정비례'와 '둘 다 정비례'는 0장일 때의 값을 놓쳤어요. 'A의 한 장 가격은 1400원'은 2장 총액을 한 장 값으로 착각했고, 'B는 0장에 0원'은 표의 500원과 달라요. 단순히 일정하게 증가하는지만 보지 말고 0일 때 0인지도 확인해요.",
-    core: "A는 y=700x이지만 B는 0장에도 500원이어서 정비례가 아니에요.",
+    diff: 1,
+    explain:
+      "<span class='xh'>정답 풀이</span>1분당 80 m가 고정이면 걸은 거리는 (80)×(시간)이라 시간에 정비례해요. 시간이 2배면 거리도 2배가 되죠. 이것이 정답이에요.<span class='xh'>오답 하나씩 격파</span>'빠르기와 걸리는 시간'은 (빠르기)×(시간)=240으로 곱이 고정된 반비례예요. 빨리 갈수록 시간이 줄죠. '읽은 쪽수와 남은 쪽수'는 합이 300으로 고정된 뺄셈 관계라 정비례도 반비례도 아니에요. '사람 수와 몫'은 곱이 1200인 반비례, '곱이 36인 두 수'는 반비례의 정의 그 자체고요. 갈림길은 언제나 '무엇이 고정인가'예요. 단위당 양이 고정이면 정비례, 전체(곱)가 고정이면 반비례, 합이 고정이면 둘 다 아니랍니다.",
+    core: "단위당 고정은 정비례, 곱 고정은 반비례!",
   },
   {
-    id: "m1u3e198",
-    lessonId: L,
-    type: "num",
-    prompt: "P파는 초당 <b>15 km</b>, S파는 초당 <b>10 km</b>로 퍼져요. 초기 미동 시간이 7초인 관측소와 진원 사이의 거리를 쓰세요. (단위: km)",
-    answer: "210",
-    numKind: "int",
-    unitLabel: "km",
-    diff: 3,
-    explain: "<span class='xh'>정답 풀이</span>두 속력의 공통 이동 거리 30 km를 기준으로 생각해요. P파는 30÷15=2초, S파는 30÷10=3초가 걸리므로 30 km마다 도착 시각 차가 1초 생겨요. 초기 미동 시간이 7초이려면 거리는 30 km의 7배인 <b>210 km</b>예요.<span class='xh'>헷갈림 격파</span>속력 차 5에 7을 곱한 35는 거리 차를 잘못 사용한 값이에요. 120 km에서는 P파 8초, S파 12초로 차가 4초뿐이에요. 검산하면 210÷15=14초, 210÷10=21초이고 21−14=7초라 조건에 맞아요.",
-    core: "30 km마다 시간 차가 1초이므로 7초 차이는 210 km에서 생겨요.",
-  },
-  {
+    // [슬롯 199] 검산: 직선 y=(4/3)x·곡선 y=48/x → 교점 (6, 8)·(−6, −8) (검산: (4/3)×6=8 ✓
+    //  6×8=48 ✓). ㄱ 참(교점 판독)·ㄴ 참(원점 대칭 교점, 그림에 표시)·ㄷ 참(정비례 직선) ·
+    //  ㄹ 거짓(a>0 곡선은 1·3사분면)·ㅁ 거짓(교점 두 개, 그림). min −10·max 10·labelEvery 2.
     id: "m1u3e199",
-    lessonId: L,
-    type: "mcq",
-    prompt: "프린터 A는 1분에 18쪽, 프린터 B는 1분에 12쪽씩 일정하게 인쇄해요. 같은 때 시작하여 5분 동안 인쇄한 쪽수의 비 A:B는?",
-    options: ["2:3", "5:6", "18:5", "3:2", "30:1"],
-    answer: 3,
+    lessonId: "m1u3l9",
+    type: "multi",
+    prompt: "그림은 정비례 관계와 반비례 관계의 그래프예요. 옳은 것을 <b>모두</b> 고르세요.",
+    figure: mExamRelationPlaneFig({
+      min: -10,
+      max: 10,
+      size: 330,
+      labelEvery: 2,
+      lines: [{ a: 4 / 3, color: "#E8547E" }],
+      inverseCurves: [{ a: 48, color: "#364FC7" }],
+      points: [
+        { label: "P", x: 6, y: 8, color: "#E8547E", labelDx: 13, labelDy: -6 },
+        { label: "Q", x: -6, y: -8, color: "#E8547E", labelDx: -13, labelDy: 16 },
+      ],
+    }),
+    options: [
+      "점 P의 좌표는 (6, 8)이에요",
+      "두 그래프는 점 Q(−6, −8)에서도 만나요",
+      "정비례 관계의 그래프는 원점을 지나요",
+      "반비례 관계의 그래프는 제2사분면을 지나요",
+      "두 그래프가 만나는 점은 한 개뿐이에요",
+    ],
+    answer: [0, 1, 2],
     diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>5분 동안 A는 18×5=90쪽, B는 12×5=60쪽을 인쇄해요. 따라서 비는 90:60이고, 두 수를 30으로 나누면 <b>3:2</b>예요. 두 양에 같은 시간 5를 곱했으므로 분당 인쇄량의 비 18:12와도 같아요.<span class='xh'>오답 하나씩 격파</span>'2:3'은 A와 B의 순서를 바꾼 비이고, '5:6'은 시간과 두 비율을 섞었어요. '18:5'는 A의 분당 양과 시간을 비교했고, '30:1'은 90과 60의 차 30을 비로 잘못 나타냈어요. 비의 순서를 문제의 A:B와 맞추고 공통 인수로 간단히 해요.",
-    core: "같은 시간 동안의 출력 비는 90:60=3:2예요.",
+    explain:
+      "<span class='xh'>정답 풀이</span>격자에서 점 P를 읽으면 가로 6, 세로 8이라 (6, 8)이 맞아요. 정비례 직선과 반비례 곡선은 원점에 대해 서로 반대쪽에서도 만나므로, 그림처럼 P와 부호만 바꾼 Q(−6, −8)이 두 번째 교점이 돼요. 그리고 정비례 그래프가 원점을 지나는 직선이라는 것은 언제나 참이죠.<span class='xh'>틀린 설명 격파</span>이 반비례 곡선은 제1사분면과 제3사분면에 놓여 있어요. 제2사분면을 지나는 건 <i class='mv'>a</i>가 음수일 때예요. '교점이 한 개뿐'이라는 설명은 그림의 Q를 놓친 거예요. 직선과 곡선이 제1사분면에서 만나면 제3사분면의 대칭 지점에서도 반드시 다시 만나요. 두 그래프 모두 원점 반대편까지 뻗어 있다는 것을 잊지 마세요.",
+    core: "직선과 곡선의 교점은 원점 반대편에 짝이 있어요.",
   },
   {
+    // [슬롯 200] 검산: 160쪽 · 하루 20쪽 → 8일 · 3일 빨리 = 5일 → 160÷5=32쪽 ✓
+    //  (xy=160 반비례 조건 변화 복합 · 마지막 슬롯).
     id: "m1u3e200",
-    lessonId: L,
+    lessonId: "m1u3l9",
     type: "mcq",
-    prompt: "전동 킥보드가 시속 <b>7.5 km</b>로 일정하게 0.4시간 움직였어요. 계산과 상황 검산을 모두 옳게 한 것은?",
-    options: [
-      "7.5+0.4=7.9이므로 7.9 km이다",
-      "7.5÷0.4=18.75이므로 18.75 km이다",
-      "0.4÷7.5이므로 약 0.05 km이다",
-      "7.5×4=30이므로 30 km이다",
-      "7.5×0.4=3이므로 3 km이고, 1시간 거리보다 짧아 알맞다",
-    ],
-    answer: 4,
-    diff: 2,
-    explain: "<span class='xh'>정답 풀이</span>일정한 속력에서 거리는 속력×시간이므로 7.5×0.4=<b>3 km</b>예요. 0.4시간은 1시간보다 짧으니, 1시간 거리 7.5 km보다 결과가 작은 것도 상황에 알맞아요.<span class='xh'>오답 하나씩 격파</span>'7.5+0.4'는 단위가 다른 두 양을 더했고, '7.5÷0.4'와 '0.4÷7.5'는 거리 공식의 계산 방향을 거꾸로 했어요. '7.5×4=30'은 0.4의 소수점을 빠뜨려 4시간 거리로 계산한 값이에요. 식의 종류, 소수 계산, 결과의 크기를 차례로 검산하면 오류를 찾을 수 있어요.",
-    core: "7.5×0.4=3 km이며 1시간 거리보다 작아 상황에도 알맞아요.",
+    prompt:
+      "<b>160쪽</b>짜리 책을 하루에 " + withVars("x") + "쪽씩 매일 같은 양으로 읽으면 다 읽는 데 " + withVars("y") + "일이 걸려요. 하루 <b>20쪽씩</b> 읽을 때보다 <b>3일 빨리</b> 끝내려면 하루에 몇 쪽씩 읽어야 할까요?",
+    options: ["32쪽", "30쪽", "24쪽", "40쪽", "26쪽"],
+    answer: 0,
+    diff: 3,
+    explain:
+      "<span class='xh'>정답 풀이</span>전체 160쪽이 고정이니 <i class='mv'>xy</i>=160인 반비례예요. 기준 상황부터 완성하면 하루 20쪽일 때 160÷20=8일이 걸려요. 3일 빨리 끝내려면 8−3=5일 안에 읽어야 하고, 그때 하루 분량은 160÷5=<b>32</b>쪽이에요. 검산으로 32×5=160이 전체 쪽수와 정확히 맞죠.<span class='xh'>오답 하나씩 격파</span>'30쪽'은 하루 분량에 어림을 더한 값이고, '24쪽'은 3일이 아니라 하루쯤 앞당기는 계산이에요. '40쪽'은 160÷4로 목표 일수를 잘못 세운 답, '26쪽'은 20+3×2 같은 덧셈식 접근이죠. 조건 변화 문제는 기준 상황(20쪽, 8일) 완성, 목표(5일) 확정, 식으로 복귀(160÷5)의 세 걸음을 차례로 밟는 것이 정석이에요. 이 구조는 반비례 활용의 마지막 관문이자 대표 문형이랍니다.",
+    core: "기준 → 목표 → 다시 나누기, 세 걸음이면 끝!",
   },
 ];
