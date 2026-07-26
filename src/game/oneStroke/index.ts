@@ -9,6 +9,10 @@
 //  · 직전 점으로 되돌아가면 마지막 선 취소(재진입 무장 — 커밋 직후 오발 방지). 버튼도 있다.
 //  · 손을 떼도 진행 유지 — 빛나는 끝점에서 이어 그린다. 막다른 길이면 자동 리셋(실패 누적).
 //  · 홀수판에서 2번 막히면 홀수점 힌트(금빛 펄스) — 오일러의 규칙을 몸으로 배우는 장치.
+//  · 판마다 기회가 유한하다(막다른 길 = 1 소모, HUD 핍). 다 쓰면 "판 실패" 시트 = 이 게임의
+//    게임 오버(2026-07-26 사용자 지시 — 초판엔 실패 개념이 없어 긴장이 0이었다). 되돌리기·
+//    처음부터는 무료(스스로 알아차린 건 실력 — 되돌리기 연타와 등가라 과금하면 편법만 늘어난다),
+//    다시 도전도 무료다(입장료·판수는 카드 탭 시점뿐 — CLAUDE.md 게임 입장료 규칙).
 import { el } from "../../core/dom";
 import { icon } from "../../core/icons";
 import { haptic, HAPTIC } from "../../core/haptics";
@@ -22,6 +26,10 @@ import { BOARD, HAND_COUNT, inspect, puzzleFor, solvePath, type Pt, type StrokeP
 export const ONE_STROKE_ID = "onestroke";
 const SND_KEY = "ost.sound"; // 기기 설정(동기화 대상 아님) — "0"이면 끔
 const REWARD_XP = 3; // 새 판 첫 클리어 보상(신기록 갱신분만)
+const TRIES_BASE = 3; // 판마다 주는 기회(막다른 길 1회 = 1 소모)
+const TRIES_CAP = 5;
+/** 기회 수 — 선 7개마다 하나 더(대형 후반 판은 한 수 앞을 다 못 보는 게 정상이라 여유를 준다). */
+const triesFor = (p: StrokePuzzle): number => Math.min(TRIES_CAP, TRIES_BASE + Math.floor(p.edges.length / 7));
 const NEON = ["#38E1FF", "#FF5FA2", "#8CFF6B", "#FFC53D", "#B78CFF"]; // 판마다 순환하는 네온 색
 const GOLD = "#FFC53D"; // 홀수점 힌트
 
@@ -68,7 +76,16 @@ export function oneStrokeScreen(o: { onExit: () => void }): Screen {
   const stageLbl = el("b", { text: "1판" });
   const stageRow = el("div", { class: "ost-stagerow" }, prevBtn, stageLbl, nextBtn);
   const edgeLbl = el("div", { class: "ost-edges", attrs: { "aria-label": "켠 선 수" }, text: "선 0/0" });
-  const hud = el("div", { class: "ost-hud" }, stageRow, edgeLbl);
+  const livesEl = el("div", { class: "ost-lives", attrs: { "aria-label": "남은 기회" } });
+  const metaRow = el(
+    "div",
+    { class: "ost-meta" },
+    edgeLbl,
+    el("span", { class: "ost-meta-dot", text: "·" }),
+    el("span", { class: "ost-meta-lbl", text: "기회" }),
+    livesEl,
+  );
+  const hud = el("div", { class: "ost-hud" }, stageRow, metaRow);
   const toast = el("div", { class: "ost-toast", attrs: { role: "status" } });
   const coachMain = el("b", { text: "모든 선을 딱 한 번씩 지나면 완성!" });
   const coachSub = el("span", { text: "" });
@@ -76,7 +93,28 @@ export function oneStrokeScreen(o: { onExit: () => void }): Screen {
   const banNum = el("b", { text: "" });
   const banSub = el("div", { class: "ost-ban-sub", text: "" });
   const banner = el("div", { class: "ost-banner", attrs: { role: "status" } }, banNum, banSub);
-  const stage = el("div", { class: "ost-stage" }, cv, hud, helper, toast, banner);
+
+  // ---- 판 실패 시트(기회 소진 = 이 게임의 게임 오버. 스텝 러시 srx-over 문법 계승) ----
+  const ovBig = el("b", { text: "" });
+  const ovBest = el("div", { class: "ost-ov-best", text: "" });
+  const ovTip = el("div", { class: "ost-ov-tip", text: "" });
+  const btnRetry = el("button", { class: "ost-obtn primary", text: "다시 도전" });
+  const btnQuit = el("button", { class: "ost-obtn", text: "그만하기" });
+  const overLay = el(
+    "div",
+    { class: "ost-over", attrs: { role: "dialog", "aria-modal": "true", "aria-label": "기회 소진" } },
+    el(
+      "div",
+      { class: "ost-card" },
+      el("div", { class: "ost-ov-reason", text: "기회를 다 썼어요!" }),
+      el("div", { class: "ost-ov-label", text: "이번 판" }),
+      el("div", { class: "ost-ov-score" }, ovBig, el("span", { text: "판" })),
+      ovBest,
+      ovTip,
+      el("div", { class: "ost-ov-btns" }, btnRetry, btnQuit),
+    ),
+  );
+  const stage = el("div", { class: "ost-stage" }, cv, hud, helper, toast, banner, overLay);
 
   // ---- 조작부 ----
   const undoBtn = el("button", { class: "ost-abtn" }, el("span", { class: "ost-bi", html: icon("back", 16, { sw: 2.4 }) }), el("span", { text: "되돌리기" }));
@@ -123,8 +161,9 @@ export function oneStrokeScreen(o: { onExit: () => void }): Screen {
   let usedCount = 0;
   let trail: number[] = [];
   let fails = 0;
+  let triesMax = triesFor(pz);
   let hintOn = false;
-  let phase: "idle" | "stuck" | "clear" = "idle";
+  let phase: "idle" | "stuck" | "clear" | "over" = "idle";
   let dragging = false;
   let pointer: Pt = { x: 0, y: 0 };
   let armedUndo = false; // 커밋 직후 오발 방지 — 직전 점에서 충분히 멀어져야 후퇴 취소 무장
@@ -182,9 +221,29 @@ export function oneStrokeScreen(o: { onExit: () => void }): Screen {
     coachSub.textContent = msg;
   }
 
+  const triesLeft = (): number => Math.max(0, triesMax - fails);
+
+  /** 기회 핍 — 남은 만큼 켜고 쓴 것은 비운다(숫자를 읽지 않아도 잔량이 보이는 층). */
+  function renderLives(): void {
+    while (livesEl.childElementCount > triesMax) livesEl.lastElementChild!.remove();
+    while (livesEl.childElementCount < triesMax) livesEl.appendChild(el("i"));
+    const n = triesLeft();
+    Array.from(livesEl.children).forEach((c, i) => c.classList.toggle("gone", i >= n));
+    livesEl.classList.toggle("last", n === 1);
+    livesEl.setAttribute("aria-label", `남은 기회 ${n}번`);
+  }
+  /** 한 칸 꺼지는 순간의 튀김 — 소모를 몸으로 알린다(reduced-motion은 생략). */
+  function pulseLives(): void {
+    if (reduced) return;
+    livesEl.classList.remove("hit");
+    void livesEl.offsetWidth;
+    livesEl.classList.add("hit");
+  }
+
   function updateHud(): void {
     stageLbl.textContent = `${stageNo}판`;
     edgeLbl.textContent = `선 ${usedCount}/${pz.edges.length}`;
+    renderLives();
     const maxStage = bestScore(ONE_STROKE_ID) + 1;
     prevBtn.disabled = stageNo <= 1;
     nextBtn.disabled = stageNo >= maxStage;
@@ -194,6 +253,7 @@ export function oneStrokeScreen(o: { onExit: () => void }): Screen {
       host.dataset.ostEdges = `${usedCount}/${pz.edges.length}`;
       host.dataset.ostOdd = String(pz.odd.length);
       host.dataset.ostFails = String(fails);
+      host.dataset.ostTries = `${triesLeft()}/${triesMax}`;
       host.dataset.ostHint = hintOn ? "1" : "0";
     }
   }
@@ -218,8 +278,10 @@ export function oneStrokeScreen(o: { onExit: () => void }): Screen {
     pz.edges.forEach(([a, b], i) => edgeIdx.set(ekey(a, b), i));
     vertFlash = pz.verts.map(() => -1e9);
     fails = 0;
+    triesMax = triesFor(pz);
     hintOn = false;
     banner.classList.remove("on");
+    overLay.classList.remove("on");
     particles.clear();
     resetTrail();
     coachMain.textContent = "모든 선을 딱 한 번씩 지나면 완성!";
@@ -280,23 +342,57 @@ export function oneStrokeScreen(o: { onExit: () => void }): Screen {
       void stage.offsetWidth;
       stage.classList.add("shake");
     }
-    const left = pz.edges.length - usedCount;
-    showToast(`막다른 길이에요! 남은 선 ${left}개`);
+    const left = triesLeft();
+    renderLives();
+    pulseLives();
+    showToast(left > 0 ? `막다른 길이에요! 기회 ${left}번 남음` : "막다른 길이에요! 기회를 다 썼어요");
     let newHint = false;
     if (pz.odd.length === 2 && fails >= 2 && !hintOn) {
       hintOn = true;
       newHint = true;
       coach("비밀 공개: 선이 홀수 개 모인 점이 두 개 있어요. 금빛 점에서 시작해야 끝까지 그릴 수 있어요!");
-    } else if (pz.odd.length === 0 && fails >= 3) {
+    } else if (pz.odd.length === 0 && fails >= 2) {
+      // 짝수 순환판의 조언도 기회가 남아 있을 때 도착해야 도움이 된다(기회 3개 판 기준)
       coach("시작점은 어디든 좋아요. 대신 시작점으로 돌아오는 건 마지막 한 번이어야 해요!");
     }
     later(() => {
-      if (phase === "stuck") {
-        resetTrail();
-        updateHud();
-        if (newHint) sfx.neonHint(); // 리셋된 새 판 + 금빛 링과 함께 발견 차임
+      if (phase !== "stuck") return;
+      if (left <= 0) {
+        onOver(); // 기회 소진 — 자동 리셋 없이 시트를 얹는다(다시 도전이 판을 새로 깐다)
+        return;
       }
+      resetTrail();
+      updateHud();
+      if (newHint) sfx.neonHint(); // 리셋된 새 판 + 금빛 링과 함께 발견 차임
     }, 900);
+    updateHud();
+  }
+
+  /** 기회 소진 = 판 실패(이 게임의 게임 오버). 기록은 깎지 않고, 다시 도전은 무료다. */
+  function onOver(): void {
+    phase = "over";
+    dragging = false;
+    if (pz.odd.length === 2) hintOn = true; // 마지막 자비 — 다시 도전은 규칙을 알고 시작하게
+    ovBig.textContent = String(stageNo);
+    ovBest.textContent = `최고 기록 ${bestScore(ONE_STROKE_ID)}판`;
+    ovTip.textContent =
+      pz.odd.length === 2
+        ? "선이 홀수 개 모인 금빛 점에서 출발해야 끝까지 그릴 수 있어요."
+        : "어느 점에서 시작해도 되지만, 시작점으로 돌아오는 건 마지막 한 번이어야 해요.";
+    overLay.classList.add("on");
+    bgm.duck(true); // 시트 동안만 가라앉힘 — 다시 도전이 복귀시킨다
+    updateHud();
+  }
+
+  /** 같은 판을 기회 충전 상태로 다시(힌트는 유지 — 배운 규칙을 빼앗지 않는다). */
+  function retryStage(): void {
+    overLay.classList.remove("on");
+    bgm.duck(false);
+    fails = 0;
+    particles.clear();
+    resetTrail();
+    coach(hintOn ? "금빛 점에서 시작해 보세요. 이번엔 끝까지!" : "기회를 다시 채웠어요. 길을 아껴 쓰며 돌아요.");
+    haptic(HAPTIC.tap);
     updateHud();
   }
 
@@ -422,18 +518,28 @@ export function oneStrokeScreen(o: { onExit: () => void }): Screen {
   });
   resetBtn.addEventListener("click", () => {
     audioBoot();
-    if (phase === "clear") return;
+    if (phase !== "idle") return; // 기회 소진 시트·완성 연출 중엔 잠금
     resetTrail();
     haptic(HAPTIC.tap);
     showToast("처음부터 다시 그려요");
   });
+  // 판 실패 시트 — 다시 도전(무료)·그만하기
+  btnRetry.addEventListener("click", () => {
+    audioBoot();
+    retryStage();
+  });
+  btnQuit.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    cleanup();
+    o.onExit();
+  });
   prevBtn.addEventListener("click", () => {
-    if (phase === "clear" || stageNo <= 1) return;
+    if (phase !== "idle" || stageNo <= 1) return;
     haptic(HAPTIC.select);
     setStage(stageNo - 1);
   });
   nextBtn.addEventListener("click", () => {
-    if (phase === "clear" || stageNo >= bestScore(ONE_STROKE_ID) + 1) return;
+    if (phase !== "idle" || stageNo >= bestScore(ONE_STROKE_ID) + 1) return;
     haptic(HAPTIC.select);
     setStage(stageNo + 1);
   });

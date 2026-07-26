@@ -1,0 +1,20 @@
+도전 탭 게임 카드 키 비주얼 4종 — 발주 프롬프트 (qa/order-gamecards.sh가 사용)
+저장: public/game/cards/<tone>.png → node qa/process-gamecards.mjs 로 720×480 webp 변환.
+다크 아케이드 패널(.arc-panel #0B1524) 위 3:2 카드 슬롯용 — 어두운 배경에 네온 글로우가
+주인공. 각 게임의 실제 화면 언어(코스모=유리 통 천체, 러시=스틱맨 계단 여정, 미로=45° 빔,
+한붓=네온 튜브)를 카드가 미리 보여 준다. 이미지 안 글자 절대 금지(전 발주 공통 규칙).
+
+스타일 블록 G (공통 — 각 프롬프트 앞에 붙일 것):
+Vivid flat vector-style key art for a kids' educational mobile game card. Deep navy night background (#0B1524), soft neon glow accents, rounded friendly shapes, clean minimal composition with generous margins, subject centered and large so it reads clearly at small card size. High contrast against the dark background. Landscape 3:2 aspect. Absolutely no text, no letters, no numbers, no words, no logos, no watermarks, no UI elements anywhere in the image. NOT photorealistic, NOT 3D render, NOT glossy, NOT anime.
+
+[0] file=public/game/cards/cosmo.png  (태양 만들기 — 유리 통 속 천체 머지)
+Inside a tall rounded glass jar with an open rim, a cozy stack of cute round planets: a big glowing golden sun at the bottom center radiating warm light, above it a blue-and-green Earth, a tilted pale-yellow Saturn with rings, a small red Mars and a tiny gray cratered moon resting near the top. Tiny white stars sparkle in the dark space around the jar. The sun's warm glow softly lights the inside of the glass.
+
+[1] file=public/game/cards/rush.png  (스텝 러시 — 밤하늘로 오르는 계단)
+A tiny cheerful stick figure drawn in simple clean white lines (round head, dot eyes) climbing a zigzag staircase of glowing sky-blue steps. The staircase rises from a dark city skyline silhouette at the bottom toward a starry night sky with a soft green aurora ribbon at the top. Steps glow brighter toward the top, small motion lines trail behind the figure.
+
+[2] file=public/game/cards/laser.png  (레이저 미로 — 45° 빔과 보석)
+Top-down view of a dark puzzle board with faint grid lines: a bright red laser beam travels in straight 45-degree diagonal segments, bouncing off two dark navy rounded square blocks, and passing through one translucent light-blue glass block where it splits into two beams. The beams end at three small glowing round gems: one red, one green, one blue. Strong neon glow along the beams, small flare sparks at each bounce point.
+
+[3] file=public/game/cards/stroke.png  (네온 한붓그리기 — 반쯤 켜진 네온 별)
+A neon sign of a five-pointed star mounted on a dark wall at night, drawn as one continuous glowing tube: about half of the star's tube segments glow in a bright cyan-to-pink gradient, the remaining segments are unlit dim gray glass tubes. A small bright spark glows at the point where the lit tube meets the unlit tube. Soft neon light reflects faintly on the wall behind. Cozy neon signboard mood.

@@ -12,6 +12,12 @@
 // 입력 문법(연타 방지의 핵심): 드래그로 든 조각은 판에서 '들려' 빔이 그 칸을 지나가고,
 // 빔 갱신은 내려놓는 순간(커밋)에만 — 끌고 다니며 빔을 훑는 스크럽 풀이를 차단해
 // "예측→배치→확인" 리듬을 지킨다. 탭-탭(선택→목적지)은 폴백 겸 e2e 경로.
+//
+// 실패 개념(2026-07-26 사용자 지시 — 초판엔 게임 오버가 없어 긴장이 0이었다): 한 시도의
+// 자원은 **이동 예산**(최소 필요 이동의 2배 + 3)이고, 다 쓰고도 미완성이면 시도 실패 =
+// 기회 1 소모 + 처음 배치로 자동 복귀(예산 재충전). 기회(판당 3)를 다 쓰면 "판 실패" 시트.
+// "처음 배치로" 버튼은 배치만 되돌리고 예산은 그대로 흐른다 — 예산을 되돌려 주면 리셋 연타로
+// 게임 오버를 무한 회피할 수 있고, 반대로 기회를 물리면 마지막 기회에 누른 순간 즉사가 된다.
 import { el } from "../../core/dom";
 import { icon } from "../../core/icons";
 import { haptic, HAPTIC } from "../../core/haptics";
@@ -25,6 +31,11 @@ import { COLOR_HEX, COLOR_NAME, DDX, DDY, REV, inspect, puzzleFor, trace, type D
 export const LASER_MAZE_ID = "lasermaze";
 const SND_KEY = "lzm.sound"; // 기기 설정(동기화 대상 아님) — "0"이면 끔
 const REWARD_XP = 3; // 새 판 첫 클리어 보상(한붓그리기와 통일)
+const TRIES = 3; // 판마다 주는 기회(이동 예산 소진 = 1 소모)
+/** 이동 예산 — 흩어 놓은 조각 수(= 최소 필요 이동)의 2배 + 3. 실험 여유는 두되 무한은 아니게.
+ *  하한 8은 조각 1~2개인 튜토리얼 판(1~4판) 몫 — 첫 판에서 판 실패를 겪게 하지 않는다. */
+const capFor = (p: LaserPuzzle): number =>
+  Math.max(8, p.pieces.filter((q) => q.solX !== q.scrX || q.solY !== q.scrY).length * 2 + 3);
 
 const angOf = (d: DDir): number => Math.atan2(DDY[d], DDX[d]);
 
@@ -58,7 +69,19 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
   const nextBtn = el("button", { class: "lzm-nav", attrs: { "aria-label": "다음 판" }, html: icon("chevron", 16, { sw: 2.6 }) }) as HTMLButtonElement;
   const stageLbl = el("b", { text: "1판" });
   const gemLbl = el("div", { class: "lzm-gems", attrs: { "aria-label": "켜진 보석 수" }, text: "보석 0/0" });
-  const hud = el("div", { class: "lzm-hud" }, el("div", { class: "lzm-stagerow" }, prevBtn, stageLbl, nextBtn), gemLbl);
+  const moveLbl = el("div", { class: "lzm-moves", attrs: { "aria-label": "남은 이동 횟수" }, text: "이동 0번 남음" });
+  const livesEl = el("div", { class: "lzm-lives", attrs: { "aria-label": "남은 기회" } });
+  const metaRow = el(
+    "div",
+    { class: "lzm-meta" },
+    gemLbl,
+    el("span", { class: "lzm-meta-dot", text: "·" }),
+    moveLbl,
+    el("span", { class: "lzm-meta-dot", text: "·" }),
+    el("span", { class: "lzm-meta-lbl", text: "기회" }),
+    livesEl,
+  );
+  const hud = el("div", { class: "lzm-hud" }, el("div", { class: "lzm-stagerow" }, prevBtn, stageLbl, nextBtn), metaRow);
   const toast = el("div", { class: "lzm-toast", attrs: { role: "status" } });
   const coachMain = el("b", { text: "블록을 끌어 옮기면 빛이 튕겨요. 레이저를 모든 보석에!" });
   const coachSub = el("span", { text: "" });
@@ -66,7 +89,28 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
   const banNum = el("b", { text: "" });
   const banSub = el("div", { class: "lzm-ban-sub", text: "" });
   const banner = el("div", { class: "lzm-banner", attrs: { role: "status" } }, banNum, banSub);
-  const stage = el("div", { class: "lzm-stage" }, cv, hud, helper, toast, banner);
+
+  // ---- 판 실패 시트(기회 소진 = 게임 오버. 한붓그리기와 같은 골격) ----
+  const ovBig = el("b", { text: "" });
+  const ovBest = el("div", { class: "lzm-ov-best", text: "" });
+  const ovTip = el("div", { class: "lzm-ov-tip", text: "" });
+  const btnRetry = el("button", { class: "lzm-obtn primary", text: "다시 도전" });
+  const btnQuit = el("button", { class: "lzm-obtn", text: "그만하기" });
+  const overLay = el(
+    "div",
+    { class: "lzm-over", attrs: { role: "dialog", "aria-modal": "true", "aria-label": "기회 소진" } },
+    el(
+      "div",
+      { class: "lzm-card" },
+      el("div", { class: "lzm-ov-reason", text: "기회를 다 썼어요!" }),
+      el("div", { class: "lzm-ov-label", text: "이번 판" }),
+      el("div", { class: "lzm-ov-score" }, ovBig, el("span", { text: "판" })),
+      ovBest,
+      ovTip,
+      el("div", { class: "lzm-ov-btns" }, btnRetry, btnQuit),
+    ),
+  );
+  const stage = el("div", { class: "lzm-stage" }, cv, hud, helper, toast, banner, overLay);
 
   // ---- 조작부 ----
   const resetBtn = el("button", { class: "lzm-abtn" }, el("span", { class: "lzm-bi", html: icon("recycle", 16) }), el("span", { text: "처음 배치로" }));
@@ -110,8 +154,10 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
   let disp: { x: number; y: number }[] = []; // 표시 위치(칸 단위 float — cur로 스프링)
   let tr: Traced;
   let litPrev = new Set<number>();
-  let phase: "idle" | "clear" = "idle";
+  let phase: "idle" | "fail" | "clear" | "over" = "idle";
   let moves = 0;
+  let moveCap = capFor(pz); // 이번 시도의 이동 예산
+  let fails = 0; // 예산을 다 쓴 횟수(= 소모한 기회)
   let selIdx = -1; // 탭-탭 선택 조각
   interface DragSt { idx: number; pid: number; sx: number; sy: number; px: number; py: number; moved: boolean; }
   let drag: DragSt | null = null;
@@ -164,9 +210,31 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
     return n;
   }
 
+  const movesLeft = (): number => Math.max(0, moveCap - moves);
+  const triesLeft = (): number => Math.max(0, TRIES - fails);
+
+  /** 기회 핍 — 남은 만큼 켜고 쓴 것은 비운다(한붓그리기와 같은 층). */
+  function renderLives(): void {
+    while (livesEl.childElementCount > TRIES) livesEl.lastElementChild!.remove();
+    while (livesEl.childElementCount < TRIES) livesEl.appendChild(el("i"));
+    const n = triesLeft();
+    Array.from(livesEl.children).forEach((c, i) => c.classList.toggle("gone", i >= n));
+    livesEl.classList.toggle("last", n === 1);
+    livesEl.setAttribute("aria-label", `남은 기회 ${n}번`);
+  }
+  function pulseLives(): void {
+    if (reduced) return;
+    livesEl.classList.remove("hit");
+    void livesEl.offsetWidth;
+    livesEl.classList.add("hit");
+  }
+
   function updateHud(): void {
     stageLbl.textContent = `${stageNo}판`;
     gemLbl.textContent = `보석 ${litCount()}/${pz.gems.length}`;
+    moveLbl.textContent = `이동 ${movesLeft()}번 남음`;
+    moveLbl.classList.toggle("low", movesLeft() <= 2); // 바닥이 보이면 붉게
+    renderLives();
     const maxStage = bestScore(LASER_MAZE_ID) + 1;
     prevBtn.disabled = stageNo <= 1;
     nextBtn.disabled = stageNo >= maxStage;
@@ -175,6 +243,9 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
       host.dataset.lzmPhase = phase;
       host.dataset.lzmGems = `${litCount()}/${pz.gems.length}`;
       host.dataset.lzmMoves = String(moves);
+      host.dataset.lzmLeft = String(movesLeft());
+      host.dataset.lzmCap = String(moveCap);
+      host.dataset.lzmTries = `${triesLeft()}/${TRIES}`;
       host.dataset.lzmKind = pz.kind;
     }
   }
@@ -197,21 +268,29 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
     });
   }
 
+  /** 처음 배치로 — refill이면 이동 예산까지 새 시도로 채운다(예산 소진 복귀·판 시작). */
+  function restoreStart(refill: boolean): void {
+    cur = pz.pieces.map((p) => ({ x: p.scrX, y: p.scrY }));
+    disp = pz.pieces.map((p) => ({ x: p.scrX, y: p.scrY }));
+    if (refill) moves = 0;
+    selIdx = -1;
+    drag = null;
+    retrace();
+    seedLit();
+  }
+
   function setStage(n: number): void {
     stageNo = n;
     pz = puzzleFor(n);
     bgm.setZone(n <= 6 ? 0 : 1); // 미기동 시에도 무해 — init이 밀린 존을 이어받는다
     bgm.duck(false);
-    cur = pz.pieces.map((p) => ({ x: p.scrX, y: p.scrY }));
-    disp = pz.pieces.map((p) => ({ x: p.scrX, y: p.scrY }));
-    moves = 0;
-    selIdx = -1;
-    drag = null;
+    moveCap = capFor(pz);
+    fails = 0;
     phase = "idle";
     banner.classList.remove("on");
+    overLay.classList.remove("on");
     particles.clear();
-    retrace();
-    seedLit();
+    restoreStart(true);
     coachSub.textContent = coachFor();
     resize(); // 격자 크기가 판마다 달라질 수 있다
     updateHud();
@@ -253,6 +332,69 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
     });
   }
 
+  /** 이동 예산 소진 — 시도 실패(기회 1 소모). 남았으면 처음 배치로 복귀, 없으면 판 실패. */
+  function onBudgetOut(): void {
+    phase = "fail";
+    fails++;
+    drag = null;
+    selIdx = -1;
+    sfx.fall();
+    haptic(HAPTIC.wrong);
+    if (!reduced) {
+      stage.classList.remove("shake");
+      void stage.offsetWidth;
+      stage.classList.add("shake");
+    }
+    const left = triesLeft();
+    renderLives();
+    pulseLives();
+    showToast(left > 0 ? `이동을 다 썼어요! 기회 ${left}번 남음` : "이동을 다 썼어요! 기회를 다 썼어요");
+    later(() => {
+      if (phase !== "fail") return;
+      if (left <= 0) {
+        onOver();
+        return;
+      }
+      restoreStart(true); // 새 시도 — 처음 배치 + 예산 재충전
+      phase = "idle";
+      updateHud();
+    }, 900);
+    updateHud();
+  }
+
+  /** 기회 소진 = 판 실패(이 게임의 게임 오버). 기록은 깎지 않고, 다시 도전은 무료다. */
+  function onOver(): void {
+    phase = "over";
+    drag = null;
+    selIdx = -1;
+    ovBig.textContent = String(stageNo);
+    ovBest.textContent = `최고 기록 ${bestScore(LASER_MAZE_ID)}판`;
+    ovTip.textContent =
+      pz.kind === "white"
+        ? "빨강·초록·파랑이 모두 도착해야 켜져요. 한 빛씩 차례로 맞춰 보세요."
+        : pz.kind === "pair"
+          ? "두 빛을 한 보석으로 — 한 빛을 먼저 도착시키고 나머지를 맞춰 보세요."
+          : pz.pieces.some((p) => p.kind === "glass")
+            ? "유리 블록은 빛을 둘로 나눠요. 갈라진 가지가 어디로 가는지 먼저 보세요."
+            : "빛이 꺾여야 하는 자리를 먼저 정하고, 그 칸에 블록을 놓아 보세요.";
+    overLay.classList.add("on");
+    bgm.duck(true); // 시트 동안만 가라앉힘 — 다시 도전이 복귀시킨다
+    updateHud();
+  }
+
+  /** 같은 판을 기회·예산 충전 상태로 다시. */
+  function retryStage(): void {
+    overLay.classList.remove("on");
+    bgm.duck(false);
+    fails = 0;
+    particles.clear();
+    restoreStart(true);
+    phase = "idle";
+    coachSub.textContent = coachFor();
+    haptic(HAPTIC.tap);
+    updateHud();
+  }
+
   /** 조각을 (x,y) 칸으로 — 같은 칸이면 무이동 정착, 막힌 칸이면 false. */
   function commitMove(idx: number, x: number, y: number): boolean {
     const same = cur[idx].x === x && cur[idx].y === y;
@@ -267,6 +409,7 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
     gemFx();
     updateHud();
     if (tr.won && phase === "idle") onClear();
+    else if (moves >= moveCap && phase === "idle") onBudgetOut();
     return true;
   }
 
@@ -337,17 +480,21 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
   resetBtn.addEventListener("click", () => {
     audioBoot();
     if (phase !== "idle") return;
-    cur = pz.pieces.map((p) => ({ x: p.scrX, y: p.scrY }));
-    disp = pz.pieces.map((p) => ({ x: p.scrX, y: p.scrY }));
-    moves = 0;
-    selIdx = -1;
-    drag = null;
-    retrace();
-    seedLit();
+    restoreStart(false); // 배치만 — 이동 예산은 그대로(예산까지 되돌리면 리셋 연타로 실패가 사라진다)
     sfx.resetWhoosh();
     haptic(HAPTIC.tap);
-    showToast("처음 배치로 되돌렸어요");
+    showToast("처음 배치로 되돌렸어요. 이동 횟수는 그대로예요");
     updateHud();
+  });
+  // 판 실패 시트 — 다시 도전(무료)·그만하기
+  btnRetry.addEventListener("click", () => {
+    audioBoot();
+    retryStage();
+  });
+  btnQuit.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    cleanup();
+    o.onExit();
   });
   prevBtn.addEventListener("click", () => {
     if (phase !== "idle" || stageNo <= 1) return;
@@ -716,6 +863,8 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
       stage: (): number => stageNo,
       won: (): boolean => tr.won,
       moves: (): number => moves,
+      cap: (): number => moveCap,
+      tries: (): number => triesLeft(),
       grid: (): number => pz.grid,
       pieces: (): { kind: string; x: number; y: number; sx: number; sy: number; wrong: boolean }[] =>
         pz.pieces.map((p, i) => ({ kind: p.kind, x: cur[i].x, y: cur[i].y, sx: p.solX, sy: p.solY, wrong: cur[i].x !== p.solX || cur[i].y !== p.solY })),

@@ -1041,3 +1041,205 @@
     transition: opacity 0.2s linear;
   }
 }
+
+/* ═══ 판 실패 층(한붓그리기·레이저 미로 공용 — 2026-07-26 게임 오버 도입) ═══
+   두 게임은 격리 네임스페이스를 쓰되 이 층의 골격은 하나로 묶는다(중복 정의 금지).
+   HUD 기회 핍 = 숫자를 읽지 않아도 잔량이 보이는 층 · 시트는 srx- 게임오버 문법 계승. */
+.ost-meta,
+.lzm-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.lzm-moves {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.66);
+  transition: color 0.2s var(--ease-out);
+}
+.lzm-moves.low {
+  color: #ff8f98;
+}
+.ost-meta-dot,
+.lzm-meta-dot {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.34);
+}
+.ost-meta-lbl,
+.lzm-meta-lbl {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.66);
+}
+.ost-lives,
+.lzm-lives {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px; /* 45° 회전한 사방 8px = 대각 11.3px — 시각 간격을 남기려면 4px로는 붙는다 */
+}
+.ost-lives i,
+.lzm-lives i {
+  width: 8px;
+  height: 8px;
+  border-radius: 2.5px;
+  background: #ffc53d;
+  box-shadow: 0 0 6px rgba(255, 197, 61, 0.55);
+  transform: rotate(45deg);
+  transition: background 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out), opacity 0.2s var(--ease-out);
+}
+.ost-lives i.gone,
+.lzm-lives i.gone {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.4px rgba(255, 255, 255, 0.28);
+  opacity: 0.75;
+}
+.ost-lives.last i:not(.gone),
+.lzm-lives.last i:not(.gone) {
+  background: #ff6b76;
+  box-shadow: 0 0 7px rgba(255, 107, 118, 0.6);
+}
+.ost-lives.hit,
+.lzm-lives.hit {
+  animation: mgLivesHit 0.42s var(--spring);
+}
+@keyframes mgLivesHit {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.28);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.lzm-stage.shake {
+  animation: srxShake 0.32s var(--ease);
+}
+
+/* 시트 — 기회를 다 쓴 판(다시 도전은 무료) */
+.ost-over,
+.lzm-over {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(11, 21, 36, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s var(--ease-out);
+}
+.ost-over.on,
+.lzm-over.on {
+  opacity: 1;
+  pointer-events: auto;
+}
+.ost-card,
+.lzm-card {
+  width: min(300px, 88%);
+  background: var(--n0);
+  border-radius: var(--r-xl);
+  box-shadow: var(--sh-sheet);
+  padding: 20px 18px;
+  text-align: center;
+  transform: translateY(12px) scale(0.97);
+  transition: transform 0.42s var(--spring);
+}
+.ost-over.on .ost-card,
+.lzm-over.on .lzm-card {
+  transform: none;
+}
+.ost-ov-reason,
+.lzm-ov-reason {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--red);
+  margin-bottom: 8px;
+}
+.ost-ov-label,
+.lzm-ov-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--n500);
+}
+.ost-ov-score b,
+.lzm-ov-score b {
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.ost-ov-score span,
+.lzm-ov-score span {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--n500);
+  margin-left: 3px;
+}
+.ost-ov-best,
+.lzm-ov-best {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--n600);
+  margin-top: 4px;
+}
+.ost-ov-tip,
+.lzm-ov-tip {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--n100);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--n700);
+  text-align: left;
+}
+.ost-ov-btns,
+.lzm-ov-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+.ost-obtn,
+.lzm-obtn {
+  flex: 1;
+  height: 48px;
+  border: none;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  background: var(--n100);
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.09s var(--ease);
+}
+.ost-obtn:active,
+.lzm-obtn:active {
+  transform: scale(0.97);
+}
+.ost-obtn.primary,
+.lzm-obtn.primary {
+  background: var(--grad-blue);
+  color: #ffffff;
+  box-shadow: var(--sh-cta);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lzm-stage.shake,
+  .ost-lives.hit,
+  .lzm-lives.hit {
+    animation: none;
+  }
+  .ost-card,
+  .lzm-card {
+    transition: none;
+    transform: none;
+  }
+}
