@@ -1,6 +1,7 @@
 // m1u1(수학 중1 Ⅰ 수와 연산) 시험 풀 기계 검사 — 커밋 전 스캔. m1u6 검사기의 200제·12레슨 확장판.
-//   ① shuffle:false && answer===0 ② id 유일·연번(m1u1e01~e200) ③ 유형 구성(54/36/10 = 108/72/20)
-//   ④ 레슨 분포(17×8+16×4) + 레슨별 유형 쿼터(mcq+multi 9 · num 6 · word 2/1)
+//   ① shuffle:false && answer===0 ② id 유일·연번(m1u1e01~e200) ③ 유형 구성(109 choice/91 num/0 word)
+//      · 2026-07-25 소수리: word 20 전량 계산·판별형 전환(word 1개라도 나오면 FAIL)
+//   ④ 레슨 분포(17×8+16×4) + 레슨별 유형 쿼터(17레슨 9/8/0 · 16레슨 9/7/0 · l6만 10/7/0)
 //   ⑤ num 계약(문자열 answer · int /^-?\d+$/ · dec /^-?\d+\.\d+$/ · 절댓값 ≤ 9999)
 //   ⑥ word 계약(bank 8~10 · 정답=bank[0] · 파일 간 word 정답 용어 중복 금지)
 //   ⑦ 해설 길이(태그 제외 250~450자, 480+ 경고) ⑧ diff(17레슨 7/7/3 · 16레슨 6/6/4 · 전체 80/80/40)
@@ -42,7 +43,8 @@ for (const f of files) {
     const numKind = b.match(/numKind: "(\w+)"/)?.[1];
     const diff = b.match(/diff: (\d)/)?.[1];
     const hasFigure = /figure: /.test(b);
-    const explain = b.match(/explain:\s*\n?\s*"([\s\S]*?)",\n    core/)?.[1] ?? "";
+    // 백틱 템플릿 해설 수용(m2u1 계보: ["`] 둘 다 받아야 조용한 미검사가 없다)
+    const explain = b.match(/explain:\s*\n?\s*["`]([\s\S]*?)["`],\n    core/)?.[1] ?? "";
     const optsRaw = b.match(/options: \[([\s\S]*?)\],\n/)?.[1] ?? "";
     all.push({ file: f, id, type, shuffle, ansRaw, bank, unitLabel, numKind, diff, hasFigure, explain, optsRaw });
   }
@@ -60,14 +62,14 @@ for (let i = 0; i < ids.length; i++) {
   if (ids[i] !== want && ids[i] !== want2) { say(`연번 어긋남: ${ids[i]} (기대 ${want}|${want2})`); break; }
 }
 
-// ③ 유형 구성 — 54/36/10 = 108(mcq+multi)/72(num)/20(word)
+// ③ 유형 구성 — 소수리판: 109(mcq+multi)/91(num)/0(word)
 const cnt = { mcq: 0, multi: 0, num: 0, word: 0 };
 for (const it of all) cnt[it.type]++;
 console.log("counts:", JSON.stringify(cnt), "total:", all.length);
 if (all.length !== 200) say(`총 문항 ${all.length} ≠ 200`);
-if (cnt.mcq + cnt.multi !== 108) say(`mcq+multi ${cnt.mcq + cnt.multi} ≠ 108`);
-if (cnt.num !== 72) say(`num ${cnt.num} ≠ 72`);
-if (cnt.word !== 20) say(`word ${cnt.word} ≠ 20`);
+if (cnt.mcq + cnt.multi !== 109) say(`mcq+multi ${cnt.mcq + cnt.multi} ≠ 109`);
+if (cnt.num !== 91) say(`num ${cnt.num} ≠ 91`);
+if (cnt.word !== 0) say(`word ${cnt.word} ≠ 0 — 소수리 이후 word는 0이 확정값(용어 빈칸형 금지)`);
 
 // ④ 레슨 분포 + 레슨별 유형 쿼터
 const per = {};
@@ -78,10 +80,12 @@ for (const f of files) {
   const mine = all.filter((a) => a.file === f);
   const c = { mm: 0, num: 0, word: 0 };
   for (const it of mine) { if (it.type === "num") c.num++; else if (it.type === "word") c.word++; else c.mm++; }
-  const wantWord = SIZE[f] === 17 ? 2 : 1;
-  if (c.mm !== 9) say(`${f}: mcq+multi ${c.mm} ≠ 9`);
-  if (c.num !== 6) say(`${f}: num ${c.num} ≠ 6`);
-  if (c.word !== wantWord) say(`${f}: word ${c.word} ≠ ${wantWord}`);
+  // 소수리판 쿼터: 17문항 레슨 9/8/0, 16문항 레슨 9/7/0, l6만 word→mcq 전환이 있어 10/7/0
+  const wantMm = f === "m1u1l6" ? 10 : 9;
+  const wantNum = f === "m1u1l6" ? 7 : SIZE[f] === 17 ? 8 : 7;
+  if (c.mm !== wantMm) say(`${f}: mcq+multi ${c.mm} ≠ ${wantMm}`);
+  if (c.num !== wantNum) say(`${f}: num ${c.num} ≠ ${wantNum}`);
+  if (c.word !== 0) say(`${f}: word ${c.word} ≠ 0 — 소수리 이후 word 금지`);
 }
 
 // ⑤ num 계약 — 음수 허용(ASCII 하이픈), 무단위 순수 수는 unitLabel 생략 허용(m1u1 관행)

@@ -1,8 +1,9 @@
 // m2u1(수학 중2 Ⅰ 유리수의 표현과 식의 계산) 시험 풀 기계 검사 — 커밋 전 스캔. m1u1 검사기의 20×10 판.
-//   ① shuffle:false && answer===0 ② id 유일·연번(m2u1e01~e200) ③ 유형 구성(60/30/10 = 120/60/20)
-//   ④ 레슨 분포(20×10) + 레슨별 유형 쿼터(mcq+multi 12 · num 6 · word 2)
+//   ① shuffle:false && answer===0 ② id 유일·연번(m2u1e01~e200) ③ 유형 구성(2026-07-25 소수리판 133/67/0)
+//   ④ 레슨 분포(20×10) + 레슨별 유형 쿼터(SPECS 표가 정본 — 소수리로 레슨마다 달라졌다)
 //   ⑤ num 계약(문자열 answer · int /^-?\d+$/ · dec /^-?\d+\.\d+$/ · 절댓값 ≤ 9999)
-//   ⑥ word 계약(bank 8~10 · 정답=bank[0] · 파일 간 word 정답 용어 중복 금지)
+//   ⑥ word 계약: **word는 1개라도 FAIL**(용어 빈칸형 0화 — 교과서 단원평가 기준선 0/299 정합).
+//      잔존 시를 대비해 bank 계약 검사도 남겨 둔다(bank 8~10 · 정답=bank[0] · 파일 간 정답 용어 중복 금지).
 //   ⑦ 해설 길이(태그 제외 250~450자, 480+ 경고) ⑧ diff(레슨당 8/8/4 · 전체 80/80/40)
 //   ⑨ 수학 언어 가드(em대시 — 금지 · 중2Ⅰ 금지어: 무리수/인수분해/곱셈 공식/기울기/항등식 ·
 //      맨몸 <i> 금지(변수는 <i class='mv'>) · 지수 0·음의 지수 서술 백리스트는 수동)
@@ -13,6 +14,20 @@ import { readFileSync } from "node:fs";
 
 const files = ["m2u1l1", "m2u1l2", "m2u1l3", "m2u1l4", "m2u1l5", "m2u1l6", "m2u1l7", "m2u1l8", "m2u1l9", "m2u1l10"];
 const SIZE = 20;
+// 2026-07-25 소수리 확정 배분(word 20 → 0). 레슨마다 전환 유형이 달라 균일 쿼터를 폐기하고 이 표가 정본이 된다.
+//   합계 mcq+multi 133 · num 67 · word 0 (= 200)
+const SPECS = {
+  m2u1l1: { mm: 13, num: 7 },   // e19 word→num(개수) · e20 word→mcq(기약분수)
+  m2u1l2: { mm: 13, num: 7 },   // e39 word→num(순환 시작 자리) · e40 word→mcq(점 표기 풀어쓰기)
+  m2u1l3: { mm: 13, num: 7 },   // e59 word→num(판별 개수) · e60 word→mcq(분모 소인수분해 판별)
+  m2u1l4: { mm: 14, num: 6 },   // e79·e80 둘 다 word→mcq(유리수 판별 · 분수→순환소수)
+  m2u1l5: { mm: 13, num: 7 },   // e99 word→num(결과 지수) · e100 word→mcq(거듭제곱의 값)
+  m2u1l6: { mm: 13, num: 7 },   // e119 word→num(밑 통일) · e120 word→mcq(괄호+나눗셈)
+  m2u1l7: { mm: 14, num: 6 },   // e139·e140 둘 다 word→mcq(3항 곱 · 곱해서 1이 되는 식)
+  m2u1l8: { mm: 13, num: 7 },   // e159 word→mcq(3항 합) · e160 word→num(정리 후 차수)
+  m2u1l9: { mm: 13, num: 7 },   // e179 word→num(3항 괄호 전개) · e180 word→mcq(괄호 뒤 곱)
+  m2u1l10: { mm: 14, num: 6 },  // e199·e200 둘 다 word→mcq(삼각기둥 부피 · 높이 역산)
+};
 let all = [];
 let bad = 0;
 const say = (m) => { console.log("FAIL", m); bad++; };
@@ -63,14 +78,15 @@ for (let i = 0; i < ids.length; i++) {
   if (ids[i] !== want && ids[i] !== want2) { say(`연번 어긋남: ${ids[i]} (기대 ${want}|${want2})`); break; }
 }
 
-// ③ 유형 구성 — 60/30/10 = 120(mcq+multi)/60(num)/20(word)
+// ③ 유형 구성 — 2026-07-25 소수리판 133(mcq+multi)/67(num)/0(word)
 const cnt = { mcq: 0, multi: 0, num: 0, word: 0 };
 for (const it of all) cnt[it.type]++;
 console.log("counts:", JSON.stringify(cnt), "total:", all.length);
 if (all.length !== 200) say(`총 문항 ${all.length} ≠ 200`);
-if (cnt.mcq + cnt.multi !== 120) say(`mcq+multi ${cnt.mcq + cnt.multi} ≠ 120`);
-if (cnt.num !== 60) say(`num ${cnt.num} ≠ 60`);
-if (cnt.word !== 20) say(`word ${cnt.word} ≠ 20`);
+if (cnt.mcq + cnt.multi !== 133) say(`mcq+multi ${cnt.mcq + cnt.multi} ≠ 133`);
+if (cnt.num !== 67) say(`num ${cnt.num} ≠ 67`);
+// word는 한 문항이라도 남으면 실격(용어 빈칸형 0화)
+if (cnt.word !== 0) say(`word ${cnt.word}건 잔존 — 용어 빈칸형은 0이어야 한다(소수리 규격)`);
 
 // ④ 레슨 분포 + 레슨별 유형 쿼터
 const per = {};
@@ -81,9 +97,10 @@ for (const f of files) {
   const mine = all.filter((a) => a.file === f);
   const c = { mm: 0, num: 0, word: 0 };
   for (const it of mine) { if (it.type === "num") c.num++; else if (it.type === "word") c.word++; else c.mm++; }
-  if (c.mm !== 12) say(`${f}: mcq+multi ${c.mm} ≠ 12`);
-  if (c.num !== 6) say(`${f}: num ${c.num} ≠ 6`);
-  if (c.word !== 2) say(`${f}: word ${c.word} ≠ 2`);
+  const spec = SPECS[f];
+  if (c.mm !== spec.mm) say(`${f}: mcq+multi ${c.mm} ≠ ${spec.mm}`);
+  if (c.num !== spec.num) say(`${f}: num ${c.num} ≠ ${spec.num}`);
+  if (c.word !== 0) say(`${f}: word ${c.word}건 잔존(0이어야 함)`);
 }
 
 // ⑤ num 계약 — 음수 허용(ASCII 하이픈), 무단위 순수 수는 unitLabel 생략 허용
