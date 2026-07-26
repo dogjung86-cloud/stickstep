@@ -212,15 +212,20 @@ export const cellScaleLab: StepRenderer = (host, step, api) => {
     capL: [number, number]; capR: [number, number];
     dir: [number, number]; perp: [number, number]; w1: number;
   }
-  /** 새끼·약지·중지·검지(왼쪽부터). 길이·굵기·벌어진 각이 전부 달라야 갈퀴가 아니라 손가락으로 읽힌다. */
+  /**
+   * 새끼·약지·중지·검지(왼쪽부터). 길이·굵기·벌어진 각이 전부 달라야 갈퀴가 아니라 손가락으로 읽힌다.
+   * **비율이 곧 두께감이다**(사용자 피드백 "너무 뚱뚱하다"로 재실측): 실물 손은
+   * 손바닥 길이 ≈ 가운뎃손가락 길이, 손바닥 폭 ≈ 손가락 폭의 5배, 손목 폭 ≈ 손바닥 폭의 55%.
+   * 손바닥이 손가락보다 길거나(1.5배였다) 손목이 안 좁아지면 그 즉시 부은 손으로 읽힌다.
+   */
   const FINGERS: Digit[] = [
-    { bx: -72, by: -6, ang: -0.3, len: 72, w0: 11, w1: 8.5 },
-    { bx: -38, by: -18, ang: -0.16, len: 94, w0: 12.5, w1: 9.5 },
-    { bx: -2, by: -22, ang: -0.02, len: 96, w0: 13, w1: 10 },
-    { bx: 34, by: -16, ang: 0.13, len: 92, w0: 12.5, w1: 9.5 },
+    { bx: -54, by: 10, ang: -0.27, len: 76, w0: 9.5, w1: 7.5 },
+    { bx: -28, by: -6, ang: -0.13, len: 98, w0: 11, w1: 8.5 },
+    { bx: -1, by: -10, ang: -0.01, len: 104, w0: 11.5, w1: 9 },
+    { bx: 26, by: -4, ang: 0.12, len: 96, w0: 11, w1: 8.5 },
   ];
   /** 엄지는 위에서 보면 단축돼 짧고 두껍다. */
-  const THUMB: Digit = { bx: 62, by: 40, ang: 1.02, len: 70, w0: 18, w1: 13 };
+  const THUMB: Digit = { bx: 42, by: 42, ang: 1, len: 62, w0: 14, w1: 10 };
   const SKIN = "#FBDDCD", SHADE = "242,193,171", LINE = "#E29B80", NAIL = "#FDEEE5";
 
   const digitPts = (d: Digit): DigitPts => {
@@ -246,18 +251,18 @@ export const cellScaleLab: StepRenderer = (host, step, api) => {
    * 밑동 높이까지 내리면 막대 네 개가 따로 꽂힌 그림이 되고, 그 사이를 위로 부풀리면 혹이 달린다.
    */
   const CROTCH: [number, number][] = [0, 1, 2].map((i): [number, number] => [
-    (FP[i].br[0] + FP[i + 1].bl[0]) / 2, (FP[i].br[1] + FP[i + 1].bl[1]) / 2 - 14,
+    (FP[i].br[0] + FP[i + 1].bl[0]) / 2, (FP[i].br[1] + FP[i + 1].bl[1]) / 2 - 11,
   ]);
 
   /** 손목 → 엄지 → 네 손가락(오른쪽부터) → 손날 → 손목으로 한 바퀴 도는 실루엣. */
   function handOutline(ctx: CanvasRenderingContext2D): void {
     ctx.beginPath();
-    ctx.moveTo(26, 210);                                       // 손목 오른쪽(화면 밖)
-    ctx.bezierCurveTo(24, 150, 62, 106, TP.br[0], TP.br[1]);   // 엄지 두덩
-    ctx.quadraticCurveTo(96, 40, TP.tr[0], TP.tr[1]);          // 엄지 바깥선
+    ctx.moveTo(15, 210);                                       // 손목 오른쪽(화면 밖)
+    ctx.bezierCurveTo(15, 150, 38, 104, TP.br[0], TP.br[1]);   // 손목 → 엄지 두덩(여기서 폭이 벌어진다)
+    ctx.quadraticCurveTo(72, 40, TP.tr[0], TP.tr[1]);          // 엄지 바깥선
     ctx.bezierCurveTo(TP.capR[0], TP.capR[1], TP.capL[0], TP.capL[1], TP.tl[0], TP.tl[1]);
-    ctx.quadraticCurveTo(84, -2, TP.bl[0], TP.bl[1]);          // 엄지 안쪽선
-    ctx.quadraticCurveTo(48, 3, FP[3].br[0], FP[3].br[1]);     // 엄지·검지 물갈퀴(얕게 파인다)
+    ctx.quadraticCurveTo(60, 8, TP.bl[0], TP.bl[1]);           // 엄지 안쪽선
+    ctx.quadraticCurveTo(30, 14, FP[3].br[0], FP[3].br[1]);    // 엄지·검지 물갈퀴(얕게 파인다)
     for (let i = FP.length - 1; i >= 0; i--) {
       const f = FP[i];
       const from = i === FP.length - 1 ? f.br : CROTCH[i];
@@ -273,8 +278,8 @@ export const cellScaleLab: StepRenderer = (host, step, api) => {
       );
     }
     // 손날은 새끼손가락 옆선이 내려오던 방향을 이어받아야 한다(제어점을 반대쪽에 두면 각이 진다)
-    ctx.bezierCurveTo(-80, 20, -89, 50, -84, 88);
-    ctx.quadraticCurveTo(-78, 142, -54, 210);                  // 손목 왼쪽(화면 밖)
+    ctx.bezierCurveTo(-62, 30, -66, 56, -58, 84);
+    ctx.quadraticCurveTo(-50, 140, -46, 210);                  // 손목 왼쪽(화면 밖 — 손바닥의 55% 폭)
     ctx.closePath();
   }
 
@@ -293,7 +298,7 @@ export const cellScaleLab: StepRenderer = (host, step, api) => {
   // ── 층 그리기(전부 논리 좌표 · 라벨은 층 밖에서 따로) ────────────────
   function drawHand(ctx: CanvasRenderingContext2D, cx: number, cy: number): void {
     ctx.save();
-    ctx.translate(cx - 20, cy + 10);   // 실루엣 중심(x≈20)을 창 한가운데로. y+10은 손끝 여백
+    ctx.translate(cx - 18, cy + 3);   // 실루엣 중심(x≈18)을 창 한가운데로. y+3은 손끝 여백
 
     handOutline(ctx);
     ctx.fillStyle = SKIN;
@@ -325,7 +330,7 @@ export const cellScaleLab: StepRenderer = (host, step, api) => {
     shadeDigit(TP, TP.br, TP.bl);
 
     // 손등 자체의 그늘 — 오른쪽·아래 테두리를 따라 도는 한 겹
-    const pg = ctx.createRadialGradient(-34, -4, 12, -14, 22, 152);
+    const pg = ctx.createRadialGradient(-38, 8, 10, -18, 38, 116);
     pg.addColorStop(0, `rgba(${SHADE},0)`);
     pg.addColorStop(0.6, `rgba(${SHADE},0)`);
     pg.addColorStop(0.76, `rgba(${SHADE},.62)`);
