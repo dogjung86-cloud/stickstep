@@ -381,6 +381,9 @@ export const inductionLab = (o: { title: string; lead?: string; cta?: string; cu
   ({ type: "inductionLab", ...o });
 export const waterCircuit = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "waterCircuit", ...o });
+// 3D 판(현행). 위 2D 판은 원본 보존용으로 남겨 둔다.
+export const waterCircuit3d = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "waterCircuit3d", ...o });
 export const ohmLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "ohmLab", ...o });
 export const circuitLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>

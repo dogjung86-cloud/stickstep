@@ -9,7 +9,7 @@
 import type { Unit } from "../curriculum";
 import {
   hook, concept, recap, mcq, ox, multi, binSort, hotspot, figTabs, cut,
-  frictionLab, rubLab, inductionLab, waterCircuit, ohmLab, circuitLab, coilFieldLab, swingLab3d,
+  frictionLab, rubLab, inductionLab, waterCircuit3d, ohmLab, circuitLab, coilFieldLab, swingLab3d,
 } from "../dsl";
 import {
   rubBeforeAfterFig, canInductionFig, viGraphFig, parallelBulbsFig,
@@ -358,7 +358,7 @@ const L3 = {
       done: "예측 완료! 전지의 정체를 밝히러 — <b>물의 회로</b>와 나란히 놓고 비교해 봐요.",
       cta: "실험실 열기",
     }),
-    waterCircuit({
+    waterCircuit3d({
       title: "물의 흐름 ↔ 전류 —<br>비유 실험실",
       lead: "펌프가 물을 올리면 물레방아가 돌고, 전지가 전압을 만들면 전구가 켜져요. 같은 것끼리 이어 봐요!",
       cta: "전자의 흐름 보기",

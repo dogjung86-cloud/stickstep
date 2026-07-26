@@ -119,6 +119,7 @@ import { formulaLab } from "./steps/formulaLab";
 import { frictionLab, rubLab } from "./steps/elecStatic";
 import { inductionLab } from "./steps/elecInduction";
 import { waterCircuit } from "./steps/elecWater";
+import { waterCircuit3d } from "./steps/elecWater3d";
 import { ohmLab } from "./steps/elecOhm";
 import { circuitLab } from "./steps/elecCircuit";
 import { coilFieldLab } from "./steps/elecCoil";
@@ -370,6 +371,7 @@ const R: Record<string, StepRenderer> = {
   rubLab,
   inductionLab,
   waterCircuit,
+  waterCircuit3d,
   ohmLab,
   circuitLab,
   coilFieldLab,
