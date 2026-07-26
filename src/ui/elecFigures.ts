@@ -96,7 +96,7 @@ export function electronFlowFig(): string {
     <text x="40" y="110" text-anchor="end" font-size="13" font-weight="800" fill="#2E5AA8">(가)</text>
     <path d="M292 90v26M287 110l5 7 5-7" stroke="#2E5AA8" stroke-width="2.6" fill="none"/>
     <text x="304" y="108" font-size="13" font-weight="800" fill="#2E5AA8">(나)</text>
-    <text x="172" y="192" text-anchor="middle" font-size="11" fill="#8B95A1">(가)·(나)는 전류의 방향이에요 — 전자는 어느 쪽일까요?</text>
+    <text x="172" y="192" text-anchor="middle" font-size="11" fill="#8B95A1">(가)·(나)는 전류의 방향이에요 · 전자는 어느 쪽일까요?</text>
   </svg>`;
 }
 

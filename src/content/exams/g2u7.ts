@@ -1,7 +1,7 @@
-// 중2 과학 VII. 전기와 자기 — 단원 종합 평가 문항 풀(150제 = 19×6 + 18×2, 8레슨).
+// 중2 과학 VII. 전기와 자기 · 단원 종합 평가 문항 풀 v2(160제 = 20×8, 8레슨 · 재출제 2호).
 // 문항은 레슨 파일(g2u7l1~g2u7l8)에 산다. 풀 등장 순서 = 교과 진도 순서(추출·시험지 정렬의 기준).
-// 유형 구성은 u3 규격 스케일: 113(mcq+multi) / 18(num) / 19(word). 18문항 레슨은 L2(정전기 유도)·
-// L7(전류가 만드는 자기장) — 관찰 중심의 좁은 소단원. word 3문항 레슨은 L1·L3·L7.
+// 유형 구성: mcq 124 / multi 16 / num 20 / word 0 · diff 64/64/32 · 그림 91(사진 12장 재사용).
+// 규격·회피표·검산 기록 정본 = qa/g2u7-v2-blueprint.md, 이식 = qa/build-g2u7v2-lessons.mjs(재실행 가능).
 import type { ExamDef } from "./types";
 import { POOL_G2U7L1 } from "./g2u7l1";
 import { POOL_G2U7L2 } from "./g2u7l2";

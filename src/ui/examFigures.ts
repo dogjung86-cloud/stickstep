@@ -2318,15 +2318,15 @@ const ebulb = (x: number, y: number, r = 14): string =>
   `<circle cx="${x}" cy="${y}" r="${r}" fill="#FFF3C4" stroke="#C8A23E" stroke-width="1.8"/>
    <path d="M${x - r * 0.45} ${y + r * 0.25}q${r * 0.22}-${r * 0.5} ${r * 0.45}-${r * 0.07}t${r * 0.45}-${r * 0.07}" stroke="#E8963E" stroke-width="1.7" fill="none"/>`;
 
-/** 마찰 전/후 두 물체 (가)(나)의 전하 분포(파라미터형) — moved = (가)→(나)로 이동한 전자 수.
- *  전하 보존: (+)는 양쪽 3개 불변, (−)만 이동(마찰 전 각 3개). 위 줄이 마찰 전, 아래 줄이 마찰 후. */
+/** 마찰 전/후 전하 분포 모형 · v2 확대판(헝겊 폭 128·깊이 54, moved 3 = 9알갱이 수용 · 파일럿 검수 반영).
+ *  (가) 막대 = 전자를 잃는 쪽 · (나) 헝겊 = 얻는 쪽 · 시작은 (+)3·(−)3 중성. */
 export function elecRubExamFig(o: { moved: number }): string {
   const rod = (x: number, y: number): string =>
-    `<rect x="${x - 62}" y="${y - 15}" width="124" height="30" rx="14" fill="#C8DCEC" stroke="#7A94AC" stroke-width="1.8"/>
-     <path d="M${x - 48} ${y - 8}h34" stroke="#FFF" stroke-width="2" stroke-linecap="round" opacity=".8"/>`;
+    `<rect x="${x - 62}" y="${y - 18}" width="124" height="34" rx="15" fill="#C8DCEC" stroke="#7A94AC" stroke-width="1.8"/>
+     <path d="M${x - 48} ${y - 10}h34" stroke="#FFF" stroke-width="2" stroke-linecap="round" opacity=".8"/>`;
   const cloth = (x: number, y: number): string =>
-    `<path d="M${x - 60} ${y - 17}q14 -8 30 0t30 0t30 0v30q-14 8 -30 0t-30 0t-30 0z" fill="#E8C9A0" stroke="#A87A44" stroke-width="1.8"/>
-     ${[0, 1, 2].map((i) => `<path d="M${x - 34 + i * 30} ${y - 10}v22" stroke="#C79A66" stroke-width="1.2"/>`).join("")}`;
+    `<path d="M${x - 64} ${y - 21}q14 -8 32 0t32 0t32 0t32 0v54q-14 8 -32 0t-32 0t-32 0t-32 0z" fill="#E8C9A0" stroke="#A87A44" stroke-width="1.8"/>
+     ${[0, 1, 2].map((i) => `<path d="M${x - 34 + i * 34} ${y - 12}v38" stroke="#C79A66" stroke-width="1.2"/>`).join("")}`;
   const charges = (x: number, y: number, p: number, m: number): string => {
     const both = [...Array.from({ length: p }, () => "p"), ...Array.from({ length: m }, () => "m")];
     return both
@@ -2334,26 +2334,25 @@ export function elecRubExamFig(o: { moved: number }): string {
         const col = i % 4;
         const row = Math.floor(i / 4);
         const cx = x - 39 + col * 26;
-        const cy = y - 6 + row * 15;
-        return k === "p" ? eplus(cx, cy, 5.8) : eminus(cx, cy, 5.8);
+        const cy = y - 8 + row * 15;
+        return k === "p" ? g7p(cx, cy) : g7m(cx, cy);
       })
       .join("");
   };
   const P = 3;
   const M0 = 3;
-  return `<svg viewBox="0 0 344 236" ${NS} fill="none" role="img" aria-label="서로 다른 두 물체 (가)와 (나)를 마찰하기 전과 후의 전하 분포 모형 — 알갱이의 종류와 개수를 비교해 읽어요">
-    <text x="30" y="42" font-size="12" font-weight="800" fill="#4E5968">마찰 전</text>
-    ${rod(120, 66)}${charges(120, 66, P, M0)}
-    ${cloth(258, 66)}${charges(258, 66, P, M0)}
-    <text x="120" y="26" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(가)</text>
-    <text x="258" y="26" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(나)</text>
-    <path d="M172 106v18M167 118l5 7 5-7" stroke="#8B95A1" stroke-width="2" fill="none"/>
-    <text x="30" y="170" font-size="12" font-weight="800" fill="#4E5968">마찰 후</text>
-    ${rod(120, 192)}${charges(120, 192, P, M0 - o.moved)}
-    ${cloth(258, 192)}${charges(258, 192, P, M0 + o.moved)}
+  return `<svg viewBox="0 0 344 248" ${NS} fill="none" role="img" aria-label="서로 다른 두 물체 (가)와 (나)를 마찰하기 전과 후의 전하 분포 모형 · 알갱이의 종류와 개수를 비교해 읽어요">
+    <text x="30" y="40" font-size="12" font-weight="800" fill="#4E5968">마찰 전</text>
+    ${rod(120, 64)}${charges(120, 64, P, M0)}
+    ${cloth(258, 64)}${charges(258, 64, P, M0)}
+    <text x="120" y="22" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(가)</text>
+    <text x="258" y="22" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(나)</text>
+    <path d="M172 110v18M167 122l5 7 5-7" stroke="#8B95A1" stroke-width="2" fill="none"/>
+    <text x="30" y="166" font-size="12" font-weight="800" fill="#4E5968">마찰 후</text>
+    ${rod(120, 190)}${charges(120, 190, P, M0 - o.moved)}
+    ${cloth(258, 190)}${charges(258, 190, P, M0 + o.moved)}
   </svg>`;
 }
-
 /** 대전 막대 × 눕힌 깡통 정전기 유도(시험판) — 레슨 그림과 좌우·부호·라벨 전부 교체:
  *  막대가 오른쪽에서 접근, 기본 (−)대전. ㉠=막대와 가까운 쪽(오른쪽), ㉡=먼 쪽(왼쪽). */
 export function elecCanExamFig(o?: { pol?: "+" | "-" }): string {
@@ -2823,5 +2822,519 @@ export function elecCoilCompassFig(): string {
     <path d="M70 114l-7-18h14z" fill="#B0B8C1"/>
     <text x="70" y="46" text-anchor="middle" font-size="13.5" font-weight="800" fill="#4E5968">㉠</text>
     <text x="196" y="66" text-anchor="middle" font-size="11" fill="#8B95A1">코일</text>
+  </svg>`;
+}
+
+// ── g2u7 v2 신작(파일럿 승격 · 재출제 2호) ──
+
+/** (+)·(−) 전하 알갱이(examFigures eplus·eminus와 같은 시각 문법의 로컬판) */
+const g7p = (x: number, y: number, r = 5.8): string =>
+  `<circle cx="${x}" cy="${y}" r="${r}" fill="#FBE3E0" stroke="#D06050" stroke-width="1.3"/>
+   <path d="M${x - r * 0.5} ${y}h${r}M${x} ${y - r * 0.5}v${r}" stroke="#C24437" stroke-width="1.4" stroke-linecap="round"/>`;
+const g7m = (x: number, y: number, r = 5.8): string =>
+  `<circle cx="${x}" cy="${y}" r="${r}" fill="#E3EDFB" stroke="#5B87C9" stroke-width="1.3"/>
+   <path d="M${x - r * 0.5} ${y}h${r}" stroke="#3A6BAE" stroke-width="1.4" stroke-linecap="round"/>`;
+
+
+/** HG elecHangFig · 실에 매단 가벼운 물체 장면(마찰 전기력 관찰) · 힘 화살표는 그리지 않는다(판정이 과제).
+ *  mode "repel" = 같은 대전체 두 개가 V자로 벌어짐 · "attract" = 매단 물체가 오른쪽 대전체 쪽으로 기울어짐. */
+export function elecHangFig(o: { mode: "repel" | "attract"; left: string; right: string; neutral?: boolean }): string {
+  const bar = `<line x1="60" y1="26" x2="284" y2="26" stroke="#8B95A1" stroke-width="4" stroke-linecap="round"/>
+    <path d="M60 26v-8M284 26v-8" stroke="#8B95A1" stroke-width="3"/>`;
+  if (o.mode === "repel")
+    return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="천장 막대의 한 점에 실 두 가닥으로 매단 두 물체가 서로 기울어져 벌어진 채 멈춰 있는 그림">
+      ${bar}
+      <line x1="172" y1="26" x2="120" y2="120" stroke="#B0B8C1" stroke-width="1.8"/>
+      <line x1="172" y1="26" x2="224" y2="120" stroke="#B0B8C1" stroke-width="1.8"/>
+      <g transform="rotate(-26 120 136)"><rect x="98" y="122" width="44" height="28" rx="7" fill="#C8DCEC" stroke="#7A94AC" stroke-width="1.8"/></g>
+      <g transform="rotate(26 224 136)"><rect x="202" y="122" width="44" height="28" rx="7" fill="#C8DCEC" stroke="#7A94AC" stroke-width="1.8"/></g>
+      <text x="96" y="176" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">${o.left}</text>
+      <text x="248" y="176" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">${o.right}</text>
+    </svg>`;
+  if (o.neutral)
+    return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="실에 매단 가벼운 물체의 옆으로 대전된 막대를 가까이 가져가는 그림">
+    ${bar}
+    <line x1="150" y1="26" x2="150" y2="118" stroke="#B0B8C1" stroke-width="1.8"/>
+    <circle cx="150" cy="130" r="15" fill="#D8E2EE" stroke="#8B99AC" stroke-width="1.8"/>
+    <text x="128" y="166" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">${o.left}</text>
+    <g transform="rotate(24 262 108)">
+      <rect x="222" y="100" width="96" height="16" rx="8" fill="#D9C9EC" stroke="#8F78AC" stroke-width="1.6"/>
+      <path d="M232 104h30" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+    </g>
+    <path d="M252 118l-24 6M232 121l-9 5 10 2" stroke="#8B95A1" stroke-width="1.8" fill="none"/>
+    <text x="268" y="70" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">${o.right}</text>
+  </svg>`;
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="실에 매단 가벼운 물체 옆으로 막대를 가까이 가져가자 물체가 막대 쪽으로 기울어진 그림">
+    ${bar}
+    <line x1="150" y1="26" x2="186" y2="118" stroke="#B0B8C1" stroke-width="1.8"/>
+    <circle cx="190" cy="130" r="15" fill="#D8E2EE" stroke="#8B99AC" stroke-width="1.8"/>
+    <text x="128" y="166" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">${o.left}</text>
+    <g transform="rotate(24 262 108)">
+      <rect x="222" y="100" width="96" height="16" rx="8" fill="#D9C9EC" stroke="#8F78AC" stroke-width="1.6"/>
+      <path d="M232 104h30" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+    </g>
+    <text x="268" y="70" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">${o.right}</text>
+  </svg>`;
+}
+
+/** PF elecPairForceFig · 매달린 대전체 A·B·C와 두 쌍의 힘 관계 화살표.
+ *  rel1 = A·B 사이, rel2 = B·C 사이("att" 인력=마주보기 · "rep" 척력=등지기). 부호는 B만 인쇄. */
+export function elecPairForceFig(o: { rel1: "att" | "rep"; rel2: "att" | "rep"; bSign: "+" | "-" }): string {
+  const ball = (x: number, name: string, sign?: string): string =>
+    `<line x1="${x}" y1="24" x2="${x}" y2="78" stroke="#B0B8C1" stroke-width="1.6"/>
+     <circle cx="${x}" cy="96" r="19" fill="${sign ? "#FFF7E0" : "#F0F3F7"}" stroke="#9DAABD" stroke-width="1.8"/>
+     <text x="${x}" y="${sign ? 102 : 101}" text-anchor="middle" font-size="${sign ? 14 : 13}" font-weight="800" fill="#4E5968">${sign ?? "?"}</text>
+     <text x="${x}" y="150" text-anchor="middle" font-size="13" font-weight="800" fill="#333D4B">${name}</text>`;
+  const arr = (x1: number, x2: number): string =>
+    `<path d="M${x1} 96H${x2}" stroke="#F0A422" stroke-width="2.4"/><path d="M${x2} 96l${x1 < x2 ? -8 : 8} -4.6v9.2z" fill="#F0A422"/>`;
+  const pair = (cx: number, rel: "att" | "rep"): string =>
+    rel === "att" ? arr(cx - 26, cx - 6) + arr(cx + 26, cx + 6) : arr(cx - 6, cx - 26) + arr(cx + 6, cx + 26);
+  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="실에 매단 대전체 A, B, C 사이에 작용하는 힘의 방향이 화살표로 표시된 그림 · B의 전기 종류만 적혀 있다">
+    <line x1="30" y1="24" x2="314" y2="24" stroke="#8B95A1" stroke-width="4" stroke-linecap="round"/>
+    ${ball(70, "A")}${ball(172, "B", `(${o.bSign === "+" ? "+" : "−"})`)}${ball(274, "C")}
+    ${pair(121, o.rel1)}${pair(223, o.rel2)}
+  </svg>`;
+}
+
+/** SC elecScopeChoicesFig · 검전기 전하 분포 5컷 고르기(그림이 곧 선택지 · shuffle:false 전용).
+ *  pol = 가까이 가져간 대전체의 부호. 물리 정답 컷은 ②에 고정(라벨형 정답 위치 설계 관행):
+ *  (−)대전체 기준 · 금속판 (+)·금속박 (−)·박 벌어짐. 미끼 = ①부호 반전 ③벌어짐 누락 ④양쪽 (+) ⑤양쪽 (−)닫힘. */
+export function elecScopeChoicesFig(o: { pol: "+" | "-" }): string {
+  const near = o.pol === "-" ? "p" : "m";
+  const far = o.pol === "-" ? "m" : "p";
+  const sgn = (k: string, x: number, y: number): string => (k === "p" ? g7p(x, y, 3.6) : g7m(x, y, 3.6));
+  const cell = (x: number, num: string, plate: string, foil: string, open: boolean): string => {
+    const foilPath = open
+      ? `<path d="M33 40l-6 16M33 40l6 16" stroke="#D9B44A" stroke-width="2.4" stroke-linecap="round"/>`
+      : `<path d="M33 40l-1.6 16M33 40l1.6 16" stroke="#D9B44A" stroke-width="2.4" stroke-linecap="round"/>`;
+    return `<g transform="translate(${x} 0)">
+      <text x="33" y="13" text-anchor="middle" font-size="12" font-weight="800" fill="#4E5968">${num}</text>
+      <ellipse cx="33" cy="22" rx="15" ry="4.5" fill="#C9D4E0" stroke="#8C99A8" stroke-width="1.4"/>
+      <rect x="31" y="26" width="4" height="14" fill="#B7C2CE" stroke="#8C99A8" stroke-width="1"/>
+      <rect x="12" y="32" width="42" height="34" rx="5" fill="rgba(224,238,250,.35)" stroke="#9DAABD" stroke-width="1.4"/>
+      ${foilPath}
+      ${sgn(plate, 24, 22)}${sgn(plate, 33, 22)}${sgn(plate, 42, 22)}
+      ${sgn(foil, 26, 60)}${sgn(foil, 40, 60)}
+    </g>`;
+  };
+  return `<svg viewBox="0 0 344 78" ${NS} fill="none" role="img" aria-label="검전기의 금속판과 금속박에 표시된 전하 분포와 금속박이 벌어진 모습이 서로 다른 다섯 가지 그림 · 번호 ①부터 ⑤">
+    ${cell(2, "①", far, near, true)}
+    ${cell(70, "②", near, far, true)}
+    ${cell(138, "③", near, far, false)}
+    ${cell(206, "④", near, near, true)}
+    ${cell(274, "⑤", far, far, false)}
+  </svg>`;
+}
+
+/* CF elecCircuitFig 공용 소품 · 전류 화살표는 볼트 옐로+진갈색 테두리(SCI_GUIDE 관행) */
+const cfWire = (d: string): string => `<path d="${d}" stroke="#8B95A1" stroke-width="3.4" fill="none" stroke-linecap="round"/>`;
+const cfBattery = (cx: number, y: number, w = 58, h = 22, flip = false): string => {
+  const px = flip ? cx + w / 2 - 13 : cx - w / 2 + 13;
+  const mx = flip ? cx - w / 2 + 13 : cx + w / 2 - 13;
+  return `<rect x="${cx - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="6" fill="#AEBDD6" stroke="#4E5A70" stroke-width="1.8"/>
+    <text x="${px}" y="${y + 5}" text-anchor="middle" font-size="14" font-weight="800" fill="#333D4B">+</text>
+    <text x="${mx}" y="${y + 5}" text-anchor="middle" font-size="14" font-weight="800" fill="#333D4B">−</text>`;
+};
+const cfBulb = (x: number, y: number, r = 13): string =>
+  `<circle cx="${x}" cy="${y}" r="${r}" fill="#FFF3C4" stroke="#C8A23E" stroke-width="1.8"/>
+   <path d="M${x - 7} ${y + 4}q3.5 -7 7 -1t7 -1" stroke="#E8963E" stroke-width="1.8" fill="none"/>`;
+const cfArrow = (x: number, y: number, ang: number): string =>
+  `<g transform="rotate(${ang} ${x} ${y})"><path d="M${x + 7} ${y}l-10 -6v12z" fill="#FFD400" stroke="#6E3F16" stroke-width="1.1" stroke-linejoin="round"/></g>`;
+
+/** CF elecCircuitFig · 파라미터 회로도 워크호스. 수치는 그림 라벨로 인쇄(정보 이분) · 정답 수치는 인쇄 금지.
+ *  kind: "open" 열린 스위치 회로 · "basic" 닫힌 회로+전류 화살표 ㉠ · "symbols" 기호 회로도 ㉠㉡㉢ ·
+ *  "series" 같은 전구 n개 직렬(+전지 라벨) · "parallelSwitch" 병렬 두 갈래·한 갈래에만 스위치 S ·
+ *  "labelR" 니크롬선 저항·전류 라벨 회로. */
+export function elecCircuitFig(o: {
+  kind:
+    | "open"
+    | "basic"
+    | "symbols"
+    | "series"
+    | "parallelSwitch"
+    | "labelR"
+    | "dirs"
+    | "nichromeLen"
+    | "twin"
+    | "battery2"
+    | "parallelN"
+    | "parallelAdd"
+    | "branchAmps";
+  bulbs?: number;
+  volt?: string;
+  ohm?: string;
+  amp?: string;
+  /** branchAmps 전용 · 인쇄할 라벨만 넘긴다(정답 값은 넘기지 않는 게 저작 규약) */
+  main?: string;
+  b1?: string;
+  b2?: string;
+}): string {
+  if (o.kind === "dirs") {
+    // 같은 회로 두 컷 · (가)는 전류 방향을 옳게(전지 + 왼쪽 → 시계 방향), (나)는 반대로 표시.
+    // 곡선 화살표는 회전 방향 판독이 모호해 도선 위 화살표 3개로 명시(눈검수 반영 재작도).
+    const mini = (ox: number, name: string, correct: boolean): string => {
+      const a = (x: number, y: number, ang: number): string => cfArrow(x, y, correct ? ang : ang + 180);
+      return `<text x="${ox + 62}" y="20" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">${name}</text>
+      ${cfWire(`M${ox + 40} 160H${ox + 8}V54h112v106h-24`)}
+      ${cfBulb(ox + 64, 54, 12)}
+      ${cfBattery(ox + 68, 160, 48, 20)}
+      ${a(ox + 8, 104, 270)}${a(ox + 90, 54, 0)}${a(ox + 120, 110, 90)}`;
+    };
+    return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="같은 전지와 전구 회로 두 개 · (가)와 (나)는 도선 위 화살표로 전류의 방향을 서로 반대로 표시해 두었다">
+      ${mini(16, "(가)", true)}
+      ${mini(196, "(나)", false)}
+    </svg>`;
+  }
+  if (o.kind === "nichromeLen") {
+    // 같은 전지·같은 굵기, 길이만 1배/2배인 니크롬선 (가)(나) 비교.
+    const box = (x: number, w: number, label: string): string =>
+      `<rect x="${x - w / 2}" y="40" width="${w}" height="22" rx="6" fill="#F4E6D8" stroke="#B98A5A" stroke-width="1.8"/>
+       <path d="M${x - w / 2 + 7} 51l8 -6 8 6 8 -6 8 6${w > 100 ? " 8 -6 8 6 8 -6 8 6" : ""}" stroke="#B98A5A" stroke-width="1.5" fill="none"/>
+       <text x="${x}" y="82" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8A5A2E">${label}</text>`;
+    return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="같은 전지에 굵기가 같고 길이만 다른 니크롬선을 하나씩 연결한 두 회로 (가)와 (나)">
+      <text x="96" y="22" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(가)</text>
+      ${cfWire("M72 160H40V51h24M128 51h24v109h-24")}
+      ${box(96, 64, "길이 1배")}
+      ${cfBattery(100, 160, 48, 20)}
+      <text x="248" y="22" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(나)</text>
+      ${cfWire("M224 160H182V51h10M310 51h10v109h-58")}
+      ${box(251, 118, "길이 2배")}
+      ${cfBattery(252, 160, 48, 20)}
+    </svg>`;
+  }
+  if (o.kind === "twin") {
+    // 같은 전지·같은 전구 2개씩 · (가) 직렬 vs (나) 병렬 직접 대결.
+    return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="같은 전지와 같은 전구 두 개씩으로 만든 두 회로 · (가)는 한 줄로, (나)는 두 갈래로 연결되어 있다">
+      <text x="92" y="20" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(가)</text>
+      ${cfWire("M68 168H36V62h112v106h-24")}
+      ${cfBulb(70, 62, 11)}${cfBulb(114, 62, 11)}
+      ${cfBattery(96, 168, 48, 20)}
+      <text x="252" y="20" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(나)</text>
+      ${cfWire("M228 168H196V90h112v78h-24")}
+      ${cfWire("M216 90v-34h72v34")}
+      ${cfBulb(252, 56, 11)}
+      ${cfBulb(252, 90, 11)}
+      ${cfBattery(256, 168, 48, 20)}
+    </svg>`;
+  }
+  if (o.kind === "battery2") {
+    // 전지 1개(가) vs 같은 전지 2개 직렬(나) · 전구는 같다.
+    return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="같은 전구에 전지 한 개를 연결한 회로 (가)와 같은 전지 두 개를 한 줄로 연결한 회로 (나)">
+      <text x="92" y="20" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(가)</text>
+      ${cfWire("M68 160H36V54h112v106h-24")}
+      ${cfBulb(92, 54, 12)}
+      ${cfBattery(96, 160, 48, 20)}
+      <text x="252" y="20" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(나)</text>
+      ${cfWire("M200 160h-4V54h112v106h-4")}
+      ${cfBulb(252, 54, 12)}
+      ${cfBattery(226, 160, 48, 20)}
+      ${cfBattery(280, 160, 48, 20)}
+    </svg>`;
+  }
+  if (o.kind === "parallelN") {
+    // 같은 전구 n개(2~3) 병렬 + 전지 라벨(volt) · 각 갈래 전압 판독 문항용.
+    const n = Math.min(3, Math.max(2, o.bulbs ?? 3));
+    const ys = n === 2 ? [34, 70] : [22, 56, 90];
+    return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="전지 한 개에 똑같은 전구 여러 개가 갈래를 나누어 연결된 회로 · 전지의 전압이 적혀 있다">
+      ${cfWire(`M134 182H56V${ys[n - 1]}h232v${182 - ys[n - 1]}h-96`)}
+      ${ys
+        .slice(0, n - 1)
+        .map((y) => cfWire(`M120 ${ys[n - 1]}v${y - ys[n - 1]}h104v${ys[n - 1] - y}`.replace(`v0h104v0`, "h104")))
+        .join("")}
+      ${ys.map((y) => cfBulb(172, y, 11)).join("")}
+      ${cfBattery(166, 182)}
+      <text x="166" y="156" text-anchor="middle" font-size="12.5" font-weight="800" fill="#2E5AA8">${o.volt ?? ""}</text>
+      <text x="60" y="16" font-size="10.5" fill="#8B95A1">똑같은 전구 ${n}개</text>
+    </svg>`;
+  }
+  if (o.kind === "parallelAdd") {
+    // 병렬 2갈래 + 점선(추가 예정) 갈래 · 갈래 추가의 효과 문항용.
+    return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="전지에 전구 두 개가 두 갈래로 연결된 회로 · 전구 한 개를 더 다는 갈래가 점선으로 표시되어 있다">
+      ${cfWire("M134 182H56V90h232v92h-96")}
+      ${cfWire("M120 90v-34h104v34")}
+      ${cfBulb(172, 56, 11)}
+      ${cfBulb(172, 90, 11)}
+      <path d="M120 90v-68h104v68" stroke="#B0B8C1" stroke-width="2.6" fill="none" stroke-dasharray="7 6"/>
+      <circle cx="172" cy="22" r="11" fill="none" stroke="#B0B8C1" stroke-width="2" stroke-dasharray="4 4"/>
+      <text x="298" y="26" text-anchor="end" font-size="10.5" fill="#8B95A1">추가하려는 갈래</text>
+      ${cfBattery(166, 182)}
+    </svg>`;
+  }
+  if (o.kind === "branchAmps") {
+    // 병렬 두 갈래 + 전류 라벨(주어진 값만 인쇄 · 정답 값 인쇄 금지).
+    return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="전지에 전구 두 개가 두 갈래로 연결된 회로 · 도선 위에 주어진 전류값이 적혀 있다">
+      ${cfWire("M134 182H56V90h232v92h-96")}
+      ${cfWire("M120 90v-34h104v34")}
+      ${cfBulb(172, 56, 11)}
+      ${cfBulb(172, 90, 11)}
+      ${cfBattery(166, 182)}
+      ${o.main ? `${cfArrow(84, 90, 0)}<text x="84" y="114" text-anchor="middle" font-size="12" font-weight="800" fill="#8A6600">${o.main}</text>` : ""}
+      ${o.b1 ? `${cfArrow(200, 56, 0)}<text x="206" y="40" font-size="12" font-weight="800" fill="#8A6600">${o.b1}</text>` : ""}
+      ${o.b2 ? `${cfArrow(200, 90, 0)}<text x="206" y="126" font-size="12" font-weight="800" fill="#8A6600">${o.b2}</text>` : ""}
+    </svg>`;
+  }
+  if (o.kind === "open" || o.kind === "basic") {
+    const open = o.kind === "open";
+    const sw = open
+      ? `<circle cx="252" cy="52" r="4" fill="#5E6B7E"/><circle cx="286" cy="52" r="4" fill="#5E6B7E"/>
+         <path d="M252 52l26 -16" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
+         <text x="269" y="26" text-anchor="middle" font-size="10.5" fill="#8B95A1">스위치(열림)</text>`
+      : `<circle cx="252" cy="52" r="4" fill="#5E6B7E"/><circle cx="286" cy="52" r="4" fill="#5E6B7E"/>
+         <path d="M252 52h34" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
+         <text x="269" y="30" text-anchor="middle" font-size="10.5" fill="#8B95A1">스위치(닫힘)</text>`;
+    const arrow = open
+      ? ""
+      : `${cfArrow(150, 52, 0)}<text x="150" y="34" text-anchor="middle" font-size="13.5" font-weight="800" fill="#4E5968">㉠</text>`;
+    return `<svg viewBox="0 0 344 178" ${NS} fill="none" role="img" aria-label="전지, 전구, 스위치가 도선으로 연결된 회로 그림${open ? " · 스위치는 열려 있다" : " · 도선 위에 ㉠ 화살표가 표시되어 있다"}">
+      ${cfWire("M136 152H56V52h192")}${cfWire("M290 52h-2")}${cfWire("M286 52h2V152h-94")}
+      ${cfBulb(96, 52)}
+      ${sw}
+      ${cfBattery(164, 152)}
+      ${arrow}
+    </svg>`;
+  }
+  if (o.kind === "symbols") {
+    return `<svg viewBox="0 0 344 168" ${NS} fill="none" role="img" aria-label="전기 회로를 기호로 나타낸 회로도 · 세 부품에 ㉠, ㉡, ㉢ 표시가 있다">
+      <path d="M160 140H60V44h100M184 140h100V44H184M160 44h24" stroke="#4E5968" stroke-width="2" fill="none"/>
+      <path d="M160 128v24M184 134v12" stroke="#4E5968" stroke-width="2"/>
+      <path d="M160 128v24" stroke="#4E5968" stroke-width="3.4"/>
+      <path d="M184 122v36" stroke="#4E5968" stroke-width="1.6"/>
+      <circle cx="120" cy="44" r="15" fill="none" stroke="#4E5968" stroke-width="2"/>
+      <path d="M109.4 33.4l21.2 21.2M130.6 33.4l-21.2 21.2" stroke="#4E5968" stroke-width="1.8"/>
+      <circle cx="240" cy="44" r="3.6" fill="#4E5968"/><circle cx="272" cy="44" r="3.6" fill="#4E5968"/>
+      <path d="M240 44l26 -15" stroke="#4E5968" stroke-width="2.2" stroke-linecap="round"/>
+      <text x="172" y="112" text-anchor="middle" font-size="14" font-weight="800" fill="#2E5AA8">㉠</text>
+      <path d="M172 118v14" stroke="#C4CAD2" stroke-width="1.3"/>
+      <text x="120" y="84" text-anchor="middle" font-size="14" font-weight="800" fill="#2E5AA8">㉡</text>
+      <path d="M120 62v10" stroke="#C4CAD2" stroke-width="1.3"/>
+      <text x="256" y="84" text-anchor="middle" font-size="14" font-weight="800" fill="#2E5AA8">㉢</text>
+      <path d="M256 62v10" stroke="#C4CAD2" stroke-width="1.3"/>
+    </svg>`;
+  }
+  if (o.kind === "series") {
+    const n = o.bulbs ?? 4;
+    const xs = Array.from({ length: n }, (_, i) => 76 + (192 / (n - 1)) * i);
+    return `<svg viewBox="0 0 344 178" ${NS} fill="none" role="img" aria-label="전지 한 개에 똑같은 전구 여러 개가 한 줄로 연결된 회로 · 전지의 전압이 적혀 있다">
+      ${cfWire("M136 152H48V52h248v100h-84")}
+      ${xs.map((x) => cfBulb(x, 52, 12)).join("")}
+      ${cfBattery(172, 152)}
+      <text x="172" y="126" text-anchor="middle" font-size="12.5" font-weight="800" fill="#2E5AA8">${o.volt ?? ""}</text>
+      <text x="172" y="24" text-anchor="middle" font-size="10.5" fill="#8B95A1">똑같은 전구 ${n}개</text>
+    </svg>`;
+  }
+  if (o.kind === "parallelSwitch") {
+    // 스위치 S는 병렬 구간(갈림 120 ~ 합류 224) 안(186~214)에 두어 ㉡ 갈래 전용임을 위상으로 보장.
+    return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="전지에 전구 두 개가 두 갈래로 연결된 회로 · 한 갈래에만 스위치 S가 있고 지금은 닫혀 있다">
+      ${cfWire("M134 170H56V70h232v100h-96")}
+      ${cfWire("M120 70v-36h104v36")}
+      ${cfBulb(172, 34, 12)}
+      <text x="172" y="12" text-anchor="middle" font-size="13" font-weight="800" fill="#4E5968">㉠</text>
+      ${cfBulb(150, 70, 12)}
+      <text x="150" y="98" text-anchor="middle" font-size="13" font-weight="800" fill="#4E5968">㉡</text>
+      <circle cx="186" cy="70" r="3.6" fill="#5E6B7E"/><circle cx="214" cy="70" r="3.6" fill="#5E6B7E"/>
+      <path d="M186 70h28" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
+      <text x="214" y="94" text-anchor="middle" font-size="11" font-weight="700" fill="#4E5968">스위치 S(닫힘)</text>
+      ${cfBattery(166, 170)}
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 344 178" ${NS} fill="none" role="img" aria-label="전지와 니크롬선이 연결된 회로 · 그림에 적힌 값을 읽어 계산해요">
+    ${cfWire("M136 152H56V52h60M228 52h60v100h-94")}
+    <rect x="116" y="40" width="112" height="24" rx="6" fill="#F4E6D8" stroke="#B98A5A" stroke-width="1.8"/>
+    <path d="M124 52l10 -7 10 7 10 -7 10 7 10 -7 10 7 10 -7 10 7 10 -7 10 7" stroke="#B98A5A" stroke-width="1.6" fill="none"/>
+    <text x="172" y="86" text-anchor="middle" font-size="12.5" font-weight="800" fill="#8A5A2E">니크롬선 ${o.ohm ?? ""}</text>
+    ${o.amp ? `${cfArrow(268, 52, 0)}<text x="268" y="32" text-anchor="middle" font-size="12" font-weight="800" fill="#8A6600">${o.amp}</text>` : ""}
+    ${o.volt ? `<text x="164" y="124" text-anchor="middle" font-size="12.5" font-weight="800" fill="#2E5AA8">${o.volt}</text>` : ""}
+    ${cfBattery(164, 152)}
+  </svg>`;
+}
+
+/** EB elecEnergyBarFig · 전기 에너지 흐름 도식(1초 기준) · 입력 → 빛/열/운동 갈래.
+ *  정답 판독이 과제이므로 aria는 값을 낭독하지 않는다. */
+export function elecEnergyBarFig(o: { rows: { name: string; inW: number; parts: { label: string; w: number }[] }[] }): string {
+  const H = o.rows.length * 92 + 8;
+  const tone: Record<string, [string, string]> = {
+    빛: ["#FFF3C4", "#C8A23E"],
+    열: ["#FBE3E0", "#D06050"],
+    운동: ["#E3EDFB", "#5B87C9"],
+    소리: ["#EDE6FA", "#8F78AC"],
+  };
+  const row = (r: { name: string; inW: number; parts: { label: string; w: number }[] }, i: number): string => {
+    const y = 10 + i * 92;
+    const parts = r.parts
+      .map((p, j) => {
+        const px = 208;
+        const py = y + 10 + j * 38;
+        const [f, s] = tone[p.label] ?? ["#F0F3F7", "#9DAABD"];
+        return `<path d="M168 ${y + 30} q20 ${py + 14 - (y + 30)} 36 ${py + 14 - (y + 30)}" stroke="#C4CAD2" stroke-width="1.8" fill="none"/>
+          <path d="M${px - 6} ${py + 14}l8 -4.4v8.8z" fill="#C4CAD2"/>
+          <rect x="${px + 4}" y="${py}" width="118" height="28" rx="8" fill="${f}" stroke="${s}" stroke-width="1.6"/>
+          <text x="${px + 63}" y="${py + 18.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#4E5968">${p.label} ${p.w}W</text>`;
+      })
+      .join("");
+    return `<rect x="14" y="${y + 8}" width="86" height="44" rx="9" fill="#F0F3F7" stroke="#C4CAD2" stroke-width="1.6"/>
+      <text x="57" y="${y + 35}" text-anchor="middle" font-size="12" font-weight="700" fill="#333D4B">${r.name}</text>
+      <path d="M100 ${y + 30}h20" stroke="#C4CAD2" stroke-width="1.8"/>
+      <rect x="120" y="${y + 16}" width="48" height="28" rx="8" fill="#EAF3FC" stroke="#9FB6CE" stroke-width="1.6"/>
+      <text x="144" y="${y + 34.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#2E5AA8">${r.inW}W</text>
+      ${parts}`;
+  };
+  return `<svg viewBox="0 0 344 ${H}" ${NS} fill="none" role="img" aria-label="전기 기구가 1초 동안 쓰는 전기 에너지가 어떤 에너지로 얼마씩 바뀌는지 나타낸 흐름 그림 · 갈래의 값을 비교해 읽어요">
+    ${o.rows.map(row).join("")}
+  </svg>`;
+}
+
+/** CP elecCoilPolesFig · 코일·전지·나침반 파라미터판(기존 elecCoilCompassFig 고정판과 별개).
+ *  variant "one" = 열린 스위치(닫기 직전) + 코일 오른쪽 끝 나침반 ㉠(바늘 남북 그대로 · 정답 미인쇄)
+ *  variant "deflected" = 닫힌 스위치 + 바늘이 돌아가 멈춘 상태(동쪽) · "열면?" 문항용
+ *  variant "two" = 코일 양 끝 나침반 ㉠㉡(바늘 없는 ? 원판 · 관계 판정이 과제라 정답 미인쇄)
+ *  variant "pair" = 전지 방향만 반대인 (가)(나) 두 회로 비교(바늘 남북 그대로)
+ *  variant "nail" = 쇠못 전자석 + 클립. 권선 앞뒤 판독을 요구하지 않는 구도(감싸쥐기 3D 판독 금지). */
+export function elecCoilPolesFig(o: { variant: "one" | "deflected" | "two" | "pair" | "nail" }): string {
+  const needleE = (x: number, y: number): string =>
+    `<path d="M${x + 18} ${y}l-18 7 -18 -7 18 -7z" fill="#E0452E" transform="rotate(0 ${x} ${y})"/>
+     <path d="M${x - 18} ${y}l18 -7v14z" fill="#B0B8C1"/>`;
+  if (o.variant === "deflected") {
+    const turns = [0, 1, 2, 3, 4]
+      .map((i) => `<ellipse cx="${96 + i * 22}" cy="92" rx="11" ry="20" stroke="#C97F3A" stroke-width="4" fill="none"/>`)
+      .join("");
+    return `<svg viewBox="0 0 344 204" ${NS} fill="none" role="img" aria-label="코일과 전지, 닫힌 스위치로 이루어진 회로 · 코일 오른쪽 끝의 나침반 ㉠ 바늘이 옆으로 돌아가 멈춰 있다">
+      ${cfWire("M85 92H74v66h57")}
+      ${cfWire("M189 158h39M252 158h16v-66h-73")}
+      ${turns}
+      ${cfBattery(160, 150, 58, 24)}
+      <circle cx="232" cy="158" r="4" fill="#5E6B7E"/><circle cx="252" cy="158" r="4" fill="#5E6B7E"/>
+      <path d="M232 158h20" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
+      <text x="242" y="182" text-anchor="middle" font-size="10.5" fill="#8B95A1">스위치(닫힘)</text>
+      <circle cx="300" cy="92" r="24" fill="#F7F9FC" stroke="#8B95A1" stroke-width="2"/>
+      ${needleE(300, 92)}
+      <text x="300" y="42" text-anchor="middle" font-size="13.5" font-weight="800" fill="#4E5968">㉠</text>
+      <text x="140" y="62" text-anchor="middle" font-size="11" fill="#8B95A1">코일</text>
+    </svg>`;
+  }
+  if (o.variant === "two") {
+    const turns = [0, 1, 2, 3, 4]
+      .map((i) => `<ellipse cx="${130 + i * 22}" cy="92" rx="11" ry="20" stroke="#C97F3A" stroke-width="4" fill="none"/>`)
+      .join("");
+    return `<svg viewBox="0 0 344 204" ${NS} fill="none" role="img" aria-label="전류가 흐르는 코일의 양 끝에 나침반 ㉠과 ㉡이 하나씩 놓여 있는 회로 · 두 나침반의 바늘 방향은 가려져 있다">
+      ${cfWire("M119 92h-9v66h44M229 92h9v66h-44")}
+      ${turns}
+      ${cfBattery(172, 150, 58, 24)}
+      <circle cx="58" cy="92" r="24" fill="#F7F9FC" stroke="#8B95A1" stroke-width="2"/>
+      <text x="58" y="99" text-anchor="middle" font-size="16" font-weight="800" fill="#8B95A1">?</text>
+      <text x="58" y="42" text-anchor="middle" font-size="13.5" font-weight="800" fill="#4E5968">㉠</text>
+      <circle cx="292" cy="92" r="24" fill="#F7F9FC" stroke="#8B95A1" stroke-width="2"/>
+      <text x="292" y="99" text-anchor="middle" font-size="16" font-weight="800" fill="#8B95A1">?</text>
+      <text x="292" y="42" text-anchor="middle" font-size="13.5" font-weight="800" fill="#4E5968">㉡</text>
+      <text x="174" y="56" text-anchor="middle" font-size="11" fill="#8B95A1">전류가 흐르는 코일</text>
+    </svg>`;
+  }
+  if (o.variant === "pair") {
+    const mini = (ox: number, name: string, flip: boolean): string => {
+      const turns = [0, 1, 2]
+        .map((i) => `<ellipse cx="${ox + 34 + i * 18}" cy="92" rx="9" ry="16" stroke="#C97F3A" stroke-width="3.4" fill="none"/>`)
+        .join("");
+      return `<text x="${ox + 62}" y="24" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">${name}</text>
+      <path d="M${ox + 27} 92h-7v54h32M${ox + 95} 92h9v54h-34" stroke="#8B95A1" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      ${turns}
+      ${cfBattery(ox + 62, 140, 44, 18, flip)}
+      <circle cx="${ox + 128}" cy="92" r="19" fill="#F7F9FC" stroke="#8B95A1" stroke-width="2"/>
+      <path d="M${ox + 128} 78l5.5 14 -5.5 14 -5.5 -14z" fill="#E0452E"/>
+      <path d="M${ox + 128} 106l-5.5 -14h11z" fill="#B0B8C1"/>
+      <text x="${ox + 128}" y="50" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">㉠</text>`;
+    };
+    return `<svg viewBox="0 0 344 178" ${NS} fill="none" role="img" aria-label="같은 코일과 나침반으로 만든 두 회로 (가)와 (나) · 전지의 방향만 서로 반대다">
+      ${mini(8, "(가)", false)}
+      ${mini(186, "(나)", true)}
+    </svg>`;
+  }
+  if (o.variant === "one") {
+    // 스위치는 아래 도선 위 열린 상태(들린 레버 + 실제 끊김) · 문두 "닫기 직전"과 일치.
+    const turns = [0, 1, 2, 3, 4]
+      .map((i) => `<ellipse cx="${96 + i * 22}" cy="92" rx="11" ry="20" stroke="#C97F3A" stroke-width="4" fill="none"/>`)
+      .join("");
+    return `<svg viewBox="0 0 344 204" ${NS} fill="none" role="img" aria-label="코일과 전지, 열린 스위치로 이루어진 회로 · 코일의 오른쪽 끝에 나침반 ㉠이 놓여 있고 바늘은 아직 남북을 가리킨다">
+      ${cfWire("M85 92H74v66h57")}
+      ${cfWire("M189 158h39M256 158h12v-66h-73")}
+      ${turns}
+      ${cfBattery(160, 150, 58, 24)}
+      <circle cx="232" cy="158" r="4" fill="#5E6B7E"/><circle cx="252" cy="158" r="4" fill="#5E6B7E"/>
+      <path d="M232 158l17 -12" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
+      <text x="242" y="182" text-anchor="middle" font-size="10.5" fill="#8B95A1">스위치(닫기 직전)</text>
+      <circle cx="300" cy="92" r="24" fill="#F7F9FC" stroke="#8B95A1" stroke-width="2"/>
+      <path d="M300 74l7 18 -7 18 -7 -18z" fill="#E0452E"/>
+      <path d="M300 110l-7 -18h14z" fill="#B0B8C1"/>
+      <text x="300" y="42" text-anchor="middle" font-size="13.5" font-weight="800" fill="#4E5968">㉠</text>
+      <text x="140" y="62" text-anchor="middle" font-size="11" fill="#8B95A1">코일</text>
+    </svg>`;
+  }
+  const turns = [0, 1, 2, 3, 4, 5]
+    .map((i) => `<ellipse cx="${118 + i * 17}" cy="92" rx="8.5" ry="17" stroke="#C97F3A" stroke-width="3.4" fill="none"/>`)
+    .join("");
+  return `<svg viewBox="0 0 344 204" ${NS} fill="none" role="img" aria-label="쇠못에 코일을 감고 전지에 연결한 전자석 · 못의 뾰족한 끝에 클립이 붙어 있다">
+    <path d="M96 92h-16v66h64M226 92h30v66h-40" stroke="#8B95A1" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M92 84h150l26 8 -26 8H92z" fill="#C3CBD6" stroke="#7C8798" stroke-width="1.8"/>
+    ${turns}
+    ${cfBattery(170, 150, 58, 24)}
+    <text x="140" y="56" text-anchor="middle" font-size="11" fill="#8B95A1">쇠못에 감은 코일</text>
+    <ellipse cx="266" cy="110" rx="4.5" ry="10" transform="rotate(14 266 110)" fill="none" stroke="#7C8798" stroke-width="2.2"/>
+    <ellipse cx="266" cy="106.5" rx="2.6" ry="6" transform="rotate(14 266 106.5)" fill="none" stroke="#7C8798" stroke-width="1.4"/>
+    <ellipse cx="280" cy="112" rx="4.5" ry="10" transform="rotate(-10 280 112)" fill="none" stroke="#7C8798" stroke-width="2.2"/>
+    <ellipse cx="280" cy="108.5" rx="2.6" ry="6" transform="rotate(-10 280 108.5)" fill="none" stroke="#7C8798" stroke-width="1.4"/>
+    <text x="292" y="146" text-anchor="middle" font-size="10.5" fill="#8B95A1">클립</text>
+  </svg>`;
+}
+
+/** SW elecSwingExamFig · 말굽자석 틈의 코일 그네 사시도(자기장·전류·힘 3벡터는 2D 평면 불가 · 사시 관행).
+ *  힘 후보 ㉮(안쪽·화면 뒤 대각)·㉯(바깥쪽·화면 앞 대각)만 표시하고 실제 힘 방향은 그리지 않는다.
+ *  검산(F = IL×B · 오른손 좌표 x=오른쪽·y=위·z=화면 앞):
+ *    기본: B = 아래팔(N)→위팔(S) = +y · 아래변 전류 I = 왼→오 = +x → F ∝ x̂×ŷ = +z = 앞 = ㉯.
+ *    swapPoles(위 N·아래 S): B = −y → F = −z = ㉮. · revCurrent: I = −x → F = −z = ㉮.
+ *    둘 다: F = +z = ㉯. 전류 반전판은 전원 (+)(−) 라벨까지 뒤집는다(극·전류 일관 관행). */
+export function elecSwingExamFig(o?: { swapPoles?: boolean; revCurrent?: boolean }): string {
+  const sp = o?.swapPoles ?? false;
+  const rv = o?.revCurrent ?? false;
+  const topPole = sp ? ["N", "#E8836B", "#A8442E"] : ["S", "#7FA6E8", "#2E5AA8"];
+  const botPole = sp ? ["S", "#7FA6E8", "#2E5AA8"] : ["N", "#E8836B", "#A8442E"];
+  // 사시 깊이축 = (+26, −14): 뒤(안쪽) = 오른쪽 위 대각. 슬랩 앞면 x 46~176, 틈 y 116~150.
+  const slab = (y: number, [t, f, s]: string[]): string =>
+    `<path d="M46 ${y}l26 -14h130l-26 14z" fill="${f}" opacity=".72" stroke="${s}" stroke-width="1.6"/>
+     <path d="M176 ${y}l26 -14v20l-26 14z" fill="${f}" opacity=".55" stroke="${s}" stroke-width="1.6"/>
+     <rect x="46" y="${y}" width="130" height="20" fill="${f}" stroke="${s}" stroke-width="1.8"/>
+     <text x="104" y="${y + 15}" text-anchor="middle" font-size="13" font-weight="800" fill="#FFF">${t}</text>`;
+  // 말굽자석 몸통(U자 연결부) · 위·아래 극 색을 반씩.
+  const bridge = `<rect x="20" y="96" width="26" height="37" fill="${topPole[1]}" stroke="${topPole[2]}" stroke-width="1.8"/>
+    <rect x="20" y="133" width="26" height="37" fill="${botPole[1]}" stroke="${botPole[2]}" stroke-width="1.8"/>`;
+  const cur = (x: number, y: number, ang: number): string => cfArrow(x, y, rv ? ang + 180 : ang);
+  // 자기장 화살표는 극 배치를 따라간다: 기본 N(아래)→S(위) = 위 방향 · swapPoles면 아래 방향.
+  const field = sp
+    ? `<path d="M66 120V144M61 138l5 7 5 -7" stroke="#5E6B7E" stroke-width="2" fill="none" stroke-dasharray="4 3"/>`
+    : `<path d="M66 146V122M61 128l5 -7 5 7" stroke="#5E6B7E" stroke-width="2" fill="none" stroke-dasharray="4 3"/>`;
+  const halo = `stroke="#FFF" stroke-width="3.4" paint-order="stroke" style="paint-order:stroke"`;
+  return `<svg viewBox="0 0 344 236" ${NS} fill="none" role="img" aria-label="스탠드에 매단 코일 그네의 아래변이 옆으로 눕힌 말굽자석의 두 극 사이 틈에 들어가 있는 사시 그림 · 그네가 움직일 수 있는 두 방향에 ㉮(안쪽)와 ㉯(바깥쪽) 표시가 있다">
+    <path d="M78 22h174" stroke="#8B95A1" stroke-width="4" stroke-linecap="round"/>
+    <path d="M78 22v-8M252 22v-8" stroke="#8B95A1" stroke-width="3"/>
+    <path d="M112 22v18M170 22v18" stroke="#6E7B8E" stroke-width="2.6"/>
+    <g stroke="#C97F3A" stroke-width="4.5" fill="none" stroke-linecap="round">
+      <path d="M112 40v58l-6 35M170 40v58l6 35"/>
+      <path d="M104 133h74"/>
+    </g>
+    ${bridge}
+    ${slab(96, topPole)}
+    ${slab(150, botPole)}
+    ${field}
+    <text x="66" y="112" text-anchor="middle" font-size="10.5" font-weight="700" fill="#4E5968" ${halo}>자기장</text>
+    ${cur(110, 72, 90)}${cur(136, 133, 0)}${cur(172, 72, 270)}
+    <text x="192" y="64" font-size="11" font-weight="700" fill="#8A6600" ${halo}>전류</text>
+    <path d="M166 130l32 -17M198 113l-4.5 9.5M198 113l-10.5 0.5" stroke="#FFF" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+    <path d="M166 130l32 -17M198 113l-4.5 9.5M198 113l-10.5 0.5" stroke="#04B45F" stroke-width="2.4" fill="none"/>
+    <text x="204" y="104" font-size="12.5" font-weight="800" fill="#04865F" ${halo}>㉮ 안쪽</text>
+    <path d="M162 140l-32 17M130 157l10.5 -0.5M130 157l4.5 -9.5" stroke="#FFF" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+    <path d="M162 140l-32 17M130 157l10.5 -0.5M130 157l4.5 -9.5" stroke="#E0452E" stroke-width="2.4" fill="none"/>
+    <text x="128" y="186" font-size="12.5" font-weight="800" fill="#C23B2E" ${halo}>㉯ 바깥쪽</text>
+    <rect x="252" y="192" width="76" height="32" rx="7" fill="#AEBDD6" stroke="#4E5A70" stroke-width="1.6"/>
+    <text x="${rv ? 312 : 270}" y="213" text-anchor="middle" font-size="13" font-weight="800" fill="#333D4B">+</text>
+    <text x="${rv ? 270 : 312}" y="212" text-anchor="middle" font-size="13" font-weight="800" fill="#333D4B">−</text>
+    <text x="290" y="186" text-anchor="middle" font-size="10" fill="#8B95A1">전원</text>
+    <path d="M252 200h-14V22M252 216h-22V22" stroke="#8B95A1" stroke-width="1.8" fill="none" opacity=".6"/>
   </svg>`;
 }
