@@ -251,3 +251,14 @@ NASA 이미지는 퍼블릭 도메인이며 NASA의 보증을 의미하지 않�
 | mars.jpg | 화성 전면(허블, 2003 최근접 — 남극 극관) | NASA/ESA/Hubble Heritage Team (STScI/AURA) — Wikimedia "Mars 23 aug 2003 hubble.jpg" | Public Domain (NASA/ESA Hubble) |
 | uranus.jpg | 천왕성 전면(보이저 2) | NASA/JPL-Caltech (PIA18182) | Public Domain (NASA) |
 | neptune.jpg | 해왕성 전면(보이저 2 — 대흑점) | NASA/JPL — Wikimedia "Neptune Full.jpg" (보이저 2 전면) | Public Domain (NASA) |
+| last-quarter.jpg | 하현달(왼쪽 절반 밝음 — LRO 자료 시각화) | NASA/GSFC Scientific Visualization Studio "Third Quarter" (GSFC_20171208_Archive_e000870) | Public Domain (NASA) |
+| partial-solar.jpg | 부분일식(진행 전반 — 태양 오른쪽이 가려짐) | NASA/Michoud Assembly Facility, 2024-04-08 뉴올리언스 (MAF_20240408_NOLAeclipse02) | Public Domain (NASA) |
+| partial-solar2.jpg | 부분일식(진행 후반 — 왼쪽이 가려진 석양 무렵) | NASA/Bill Ingalls, 2021-06-10 (NHQ202106100012) | Public Domain (NASA) |
+
+`public/exam/u7/waning-crescent.webp`(그믐달 — 왼쪽 가장자리만 밝음)는 앱 자체 발주(codex ChatGPT
+image_gen) 생성 이미지이며 외부 저작물은 포함하지 않는다.
+`public/photos/sun_quiet.jpg`는 위 표의 sun_hmi.jpg(NASA/SDO — PD)에서, `sun_red.jpg`는
+sun_304.jpg(NASA/SDO — PD)에서 각각 관측 캡션 글자를 크롭해 만든 파생본(시험 u7 v2).
+`public/photos/sun_active.jpg`는 NASA SVS #5344 "Solar Cycle 25 Continues to Exceed Predictions"의
+HMI 백색광 전면 프레임(2024-04-26, NASA/SDO — Public Domain)에서 하단 캡션 글자를 크롭해 만든
+파생본(시험 u7 v2 — 267번 흑점 다수 활동기 태양).

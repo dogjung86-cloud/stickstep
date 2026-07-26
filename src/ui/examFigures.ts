@@ -3738,3 +3738,502 @@ export function elecSwingExamFig(o?: { swapPoles?: boolean; revCurrent?: boolean
     <path d="M252 200h-14V22M252 216h-22V22" stroke="#8B95A1" stroke-width="1.8" fill="none" opacity=".6"/>
   </svg>`;
 }
+
+// ── u7 v2 신작(파일럿 승격 · 재출제 3호) ──
+// 다크 우주 문법(u7 섹션 계승): 밝은 반구 = 태양 쪽 · 회전 반시계 · figureDark: true.
+const U7_IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+/** 조건 자료 상자(u7 v2 · 미래엔 2 계보 — 텍스트 조건 (가)(나)(다)). 시각자료로 집계한다. */
+export const dbox = (rows: [string, string][]): string =>
+  `<div style="border:1.5px solid #D9DFE6;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:7px">
+    ${rows.map(([tag, body]) => `<div style="display:flex;gap:8px;font-size:13.2px;line-height:1.55;word-break:keep-all"><b style="flex:none;color:#4E5968">${tag}</b><span>${body}</span></div>`).join("")}
+  </div>`;
+
+
+
+/** SG 흑점 수 연도 그래프(다크·파라미터형) · 실제 태양 사이클 연도만 사용(극대 1957·1968·1979 ·
+ *  극소 1954·1964·1976·1986). 레슨 sunspotGraphFig 창(1990~2010·극소 1996·극대 2000)과 분리.
+ *  극대·극소 연도는 곡선 위 라벨로 직접 표기(눈금 사이 판독 오차 차단 · 정답 값은 라벨·눈금 위 원칙).
+ *  가이드 점선 없음. peaks·dips는 [연도, 라벨 표시 여부]. */
+export function sunspotCycleFig(o: { y0: number; y1: number; peaks: number[]; dips: number[]; labelPeaks?: boolean }): string {
+  const L = 46;
+  const R = 330;
+  const TOP = 34;
+  const BASE = 168;
+  const HI = 58;
+  const x = (yr: number): number => L + ((yr - o.y0) / (o.y1 - o.y0)) * (R - L);
+  // 곡선: 극소(BASE 근처)와 극대(HI)를 번갈아 지나는 부드러운 산봉우리 열.
+  const pts: [number, number][] = [];
+  const knots = [...o.dips.map((y) => [y, BASE - 8] as [number, number]), ...o.peaks.map((y) => [y, HI] as [number, number])].sort((a, b) => a[0] - b[0]);
+  if (knots.length && knots[0][0] > o.y0) pts.push([o.y0, BASE - 22]);
+  pts.push(...knots);
+  if (knots.length && knots[knots.length - 1][0] < o.y1) pts.push([o.y1, BASE - 30]);
+  let d = `M${x(pts[0][0]).toFixed(1)} ${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i++) {
+    const [py, pv] = pts[i - 1];
+    const [cy, cv] = pts[i];
+    const mx = (x(py) + x(cy)) / 2;
+    d += ` C${mx.toFixed(1)} ${pv}, ${mx.toFixed(1)} ${cv}, ${x(cy).toFixed(1)} ${cv}`;
+  }
+  let ticks = "";
+  for (let yr = Math.ceil(o.y0 / 5) * 5; yr <= o.y1; yr += 5) {
+    ticks += `<path d="M${x(yr).toFixed(1)} ${BASE}v5" stroke="#3D5378" stroke-width="1.6"/>
+      <text x="${x(yr).toFixed(1)}" y="${BASE + 20}" text-anchor="middle" font-size="10.5" fill="#AFC3E3">${yr}</text>`;
+  }
+  const peakLabels = (o.labelPeaks ?? true)
+    ? o.peaks.map((yr) => `<circle cx="${x(yr).toFixed(1)}" cy="${HI}" r="3.4" fill="#FFD25E"/>
+        <text x="${x(yr).toFixed(1)}" y="${HI - 10}" text-anchor="middle" font-size="11.5" font-weight="700" fill="#FFE9A8">${yr}년</text>`).join("")
+    : "";
+  return `<svg viewBox="0 0 344 214" ${NS} fill="none" role="img" aria-label="여러 해 동안 관측한 흑점 수의 변화 그래프. 가장 많았던 해가 곡선 위에 표시되어 있다">
+    <path d="M${L} ${TOP - 10}V${BASE}H${R + 6}" stroke="#3D5378" stroke-width="2"/>
+    <text x="${L - 8}" y="${TOP + 2}" text-anchor="end" font-size="10.5" fill="#AFC3E3">많음</text>
+    <text x="${L - 8}" y="${BASE}" text-anchor="end" font-size="10.5" fill="#AFC3E3">적음</text>
+    <text x="18" y="${(TOP + BASE) / 2}" text-anchor="middle" font-size="10.5" fill="#8FA6CE" transform="rotate(-90 18 ${(TOP + BASE) / 2})">흑점 수</text>
+    ${ticks}
+    <text x="${R}" y="${BASE + 34}" text-anchor="end" font-size="10.5" fill="#8FA6CE">연도(년)</text>
+    <path d="${d}" stroke="#FFD25E" stroke-width="2.4"/>
+    ${peakLabels}
+  </svg>`;
+}
+
+/** SP 태양 실사 가림판(다크) · 실제 사진 위 기호 콜아웃만(이름 라벨 없음 · sunAnatomyFig의 시험판).
+ *  normal: 백색광 전면(㉠ 둥근 표면 전체 · ㉡ 검은 점). eclipse: 개기일식(㉢ 밖으로 뻗은 진주빛).
+ *  사진 좌표는 눈검수로 확정(흑점 위치에 ㉡이 실제로 닿는지 갤러리에서 판정). */
+export function sunLabelFig(kind: "normal" | "eclipse"): string {
+  if (kind === "normal") {
+    return `<svg viewBox="0 0 344 236" ${NS} fill="none" role="img" aria-label="망원경으로 찍은 태양 전체 사진. 둥근 면 전체를 가리키는 기호와 표면의 검은 점 하나를 가리키는 기호가 붙어 있다">
+      <defs><clipPath id="u7sp-n"><circle cx="172" cy="118" r="86"/></clipPath></defs>
+      <g clip-path="url(#u7sp-n)"><image href="${U7_IMG_BASE}photos/sun_whitelight.jpg" x="80" y="26" width="184" height="184" preserveAspectRatio="xMidYMid slice"/></g>
+      <circle cx="172" cy="118" r="86" stroke="rgba(224,150,40,.65)" stroke-width="1.6"/>
+      <path d="M258 60L218 82" stroke="#8FB3E8" stroke-width="1.8"/>
+      <circle cx="286" cy="52" r="15" fill="#12203C" stroke="#8FB3E8" stroke-width="1.4"/>
+      <text x="286" y="57" text-anchor="middle" font-size="13.5" font-weight="800" fill="#DCE8FF">㉠</text>
+      <text x="286" y="82" text-anchor="middle" font-size="9.5" fill="#AFC3E3">둥근 면 전체</text>
+      <path d="M84 178L163 118" stroke="#8FB3E8" stroke-width="1.8"/>
+      <circle cx="174" cy="110" r="13" stroke="#8FB3E8" stroke-width="1.6" stroke-dasharray="4 3" fill="none"/>
+      <circle cx="62" cy="186" r="15" fill="#12203C" stroke="#8FB3E8" stroke-width="1.4"/>
+      <text x="62" y="191" text-anchor="middle" font-size="13.5" font-weight="800" fill="#DCE8FF">㉡</text>
+      <text x="62" y="214" text-anchor="middle" font-size="9.5" fill="#AFC3E3">검은 점</text>
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 344 236" ${NS} fill="none" role="img" aria-label="검게 가려진 둥근 천체 둘레로 밝은 빛이 멀리 뻗어 있는 사진. 그 빛을 가리키는 기호가 붙어 있다">
+    <defs><clipPath id="u7sp-e"><circle cx="172" cy="118" r="92"/></clipPath></defs>
+    <g clip-path="url(#u7sp-e)"><image href="${U7_IMG_BASE}photos/eclipse_corona.jpg" x="66" y="12" width="212" height="212" preserveAspectRatio="xMidYMid slice"/></g>
+    <path d="M268 66L232 96" stroke="#8FB3E8" stroke-width="1.8"/>
+    <circle cx="292" cy="56" r="15" fill="#12203C" stroke="#8FB3E8" stroke-width="1.4"/>
+    <text x="292" y="61" text-anchor="middle" font-size="13.5" font-weight="800" fill="#DCE8FF">㉢</text>
+    <text x="292" y="86" text-anchor="middle" font-size="9.5" fill="#AFC3E3">밖으로 뻗은 빛</text>
+  </svg>`;
+}
+
+/** SK 방향별 일주 궤적(다크·파라미터형) · 교과서 표준 구도(우리나라 기준):
+ *  동쪽 하늘 = 오른쪽 위로 비스듬히 떠오름(↗) · 서쪽 하늘 = 오른쪽 아래로 비스듬히 짐(↘) ·
+ *  남쪽 하늘 = 왼쪽(동)에서 오른쪽(서)으로 수평(→). 화살촉은 진행 방향(레슨 northSkyFig 검산 계보).
+ *  choices 모드 = "북쪽 하늘을 오래 찍으면?" ①~⑤ 미니 컷(정답 ② 반시계 동심원 · shuffle:false 전용). */
+export function skyTrailFig(o: { dir: "e" | "w" | "s"; choices?: boolean; hideLabel?: boolean }): string {
+  // hideLabel: "어느 방향 하늘인가"를 묻는 문항용 · 방향 필을 "관측 기록"으로 중립화(검산 B-3 유출 차단).
+  if (o.choices) {
+    const mini = (cx: number, kind: string, num: string): string => {
+      let art = "";
+      if (kind === "ccw") art = `<circle cx="${cx}" cy="64" r="9" stroke="#BED6FF" stroke-width="1.4" stroke-dasharray="10 6"/><circle cx="${cx}" cy="64" r="17" stroke="#BED6FF" stroke-width="1.4" stroke-dasharray="18 9"/><path d="M${cx + 17} 64A17 17 0 0 0 ${cx} 47" stroke="#FFD25E" stroke-width="1.8"/><path d="M${cx - 2} 44l-5 4 6 3z" fill="#FFD25E"/><circle cx="${cx}" cy="64" r="1.8" fill="#FFF0C8"/>`;
+      else if (kind === "cw") art = `<circle cx="${cx}" cy="64" r="9" stroke="#BED6FF" stroke-width="1.4" stroke-dasharray="10 6"/><circle cx="${cx}" cy="64" r="17" stroke="#BED6FF" stroke-width="1.4" stroke-dasharray="18 9"/><path d="M${cx + 17} 64A17 17 0 0 1 ${cx} 81" stroke="#FFD25E" stroke-width="1.8"/><path d="M${cx - 2} 84l-5-4 6-3z" fill="#FFD25E"/><circle cx="${cx}" cy="64" r="1.8" fill="#FFF0C8"/>`;
+      else if (kind === "flat") art = `<path d="M${cx - 20} 56h40M${cx - 20} 66h40M${cx - 20} 76h40" stroke="#BED6FF" stroke-width="1.6"/><path d="M${cx + 22} 66l-7-3.5v7z" fill="#FFD25E" transform="rotate(180 ${cx + 18} 66)"/>`;
+      else if (kind === "rise") art = `<path d="M${cx - 18} 80l28-24M${cx - 22} 68l28-24M${cx - 8} 86l28-24" stroke="#BED6FF" stroke-width="1.6"/><path d="M${cx + 12} 54l1-8-8 2z" fill="#FFD25E"/>`;
+      else art = `<path d="M${cx - 22} 46q22 18 44 0M${cx - 22} 62q22 18 44 0M${cx - 22} 78q22 18 44 0" stroke="#BED6FF" stroke-width="1.6"/>`;
+      return `${art}<text x="${cx}" y="108" text-anchor="middle" font-size="13" font-weight="800" fill="#DCE8FF">${num}</text>`;
+    };
+    return `<svg viewBox="0 0 344 128" ${NS} fill="none" role="img" aria-label="북쪽 하늘을 오랫동안 찍었을 때 나올 수 있는 별 궤적 다섯 가지 후보 그림">
+      <rect x="4" y="8" width="336" height="112" rx="14" fill="#0E1830"/>
+      ${mini(40, "rise", "①")}${mini(106, "ccw", "②")}${mini(172, "flat", "③")}${mini(238, "cw", "④")}${mini(304, "wave", "⑤")}
+    </svg>`;
+  }
+  const label = o.hideLabel ? "관측 기록" : o.dir === "e" ? "동쪽 하늘" : o.dir === "w" ? "서쪽 하늘" : "남쪽 하늘";
+  let sd = o.dir === "e" ? 7 : o.dir === "w" ? 11 : 17;
+  const rnd = (): number => {
+    sd = (sd * 48271) % 2147483647;
+    return sd / 2147483647;
+  };
+  let lines = "";
+  for (let i = 0; i < 13; i++) {
+    const x0 = 24 + rnd() * 210;
+    const y0 = 22 + rnd() * 96;
+    const len = 52 + rnd() * 40;
+    const op = (0.22 + rnd() * 0.3).toFixed(2);
+    if (o.dir === "s") {
+      lines += `<path d="M${x0.toFixed(0)} ${y0.toFixed(0)}h${len.toFixed(0)}" stroke="rgba(190,214,255,${op})" stroke-width="1.6"/><circle cx="${(x0 + len).toFixed(0)}" cy="${y0.toFixed(0)}" r="1.6" fill="rgba(226,238,255,.9)"/>`;
+    } else if (o.dir === "e") {
+      const dy = len * 0.62;
+      lines += `<path d="M${x0.toFixed(0)} ${(y0 + dy).toFixed(0)}l${len.toFixed(0)} ${(-dy).toFixed(0)}" stroke="rgba(190,214,255,${op})" stroke-width="1.6"/><circle cx="${(x0 + len).toFixed(0)}" cy="${y0.toFixed(0)}" r="1.6" fill="rgba(226,238,255,.9)"/>`;
+    } else {
+      const dy = len * 0.62;
+      lines += `<path d="M${x0.toFixed(0)} ${y0.toFixed(0)}l${len.toFixed(0)} ${dy.toFixed(0)}" stroke="rgba(190,214,255,${op})" stroke-width="1.6"/><circle cx="${(x0 + len).toFixed(0)}" cy="${(y0 + dy).toFixed(0)}" r="1.6" fill="rgba(226,238,255,.9)"/>`;
+    }
+  }
+  const arrow =
+    o.dir === "s"
+      ? `<path d="M118 128h84" stroke="#FFD25E" stroke-width="2.4"/><path d="M211 128l-9-4.5v9z" fill="#FFD25E"/>`
+      : o.dir === "e"
+        ? `<path d="M128 150l64-40" stroke="#FFD25E" stroke-width="2.4"/><path d="M196 106l-10-1 4 9z" fill="#FFD25E"/>`
+        : `<path d="M128 110l64 40" stroke="#FFD25E" stroke-width="2.4"/><path d="M196 154l-4-9-6 8z" fill="#FFD25E"/>`;
+  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="한 방향 하늘을 오랫동안 찍은 별 궤적 그림. 궤적이 기울어진 모양과 노란 화살표가 별이 움직인 방향을 나타내고, 아래에 지평선이 있다">
+    <rect x="4" y="6" width="336" height="172" rx="14" fill="#0E1830"/>
+    ${lines}
+    ${arrow}
+    <path d="M10 168q80-22 160-10t164 2v8a10 10 0 0 1-10 10H20a10 10 0 0 1-10-10z" fill="#04080F" stroke="#3D5378" stroke-width="1.4"/>
+    <text x="30" y="174" font-size="9.5" fill="#7E93B8">지평선</text>
+    <rect x="130" y="184" width="84" height="20" rx="10" fill="#16233F" stroke="#2C4066" stroke-width="1"/>
+    <text x="172" y="198" text-anchor="middle" font-size="11" font-weight="700" fill="#BFD4F2">${label}</text>
+  </svg>`;
+}
+
+/** SS2 북쪽 하늘 위치 후보(다크) · 북극성 중심 원 궤도 + 30도 간격 눈금 틱 + 별 A + 후보 ㉠~㉤.
+ *  offsets = A로부터의 각도(반시계 +). 후보 라벨은 offsets 순서대로 ㉠~㉤.
+ *  [검산] 시계 반대 = 수학 각 증가 방향. 정답 후보가 ㉠(첫 보기)이 되지 않게 배치할 것. */
+export function starSpinChoiceFig(o: { fromDeg: number; offsets: number[] }): string {
+  const cx = 172;
+  const cy = 116;
+  const R = 80;
+  const pos = (d: number, r: number): [number, number] => [cx + Math.cos((d * Math.PI) / 180) * r, cy - Math.sin((d * Math.PI) / 180) * r];
+  let ticks = "";
+  for (let d = 0; d < 360; d += 30) {
+    const [tx1, ty1] = pos(d, R - 4);
+    const [tx2, ty2] = pos(d, R + 4);
+    ticks += `<path d="M${tx1.toFixed(1)} ${ty1.toFixed(1)}L${tx2.toFixed(1)} ${ty2.toFixed(1)}" stroke="#3D5378" stroke-width="1.6"/>`;
+  }
+  const [ax, ay] = pos(o.fromDeg, R);
+  const G = ["㉠", "㉡", "㉢", "㉣", "㉤"];
+  const cands = o.offsets
+    .map((off, i) => {
+      const [px, py] = pos(o.fromDeg + off, R);
+      const [lx, ly] = pos(o.fromDeg + off, R + 22);
+      return `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="4.6" stroke="#8FB3E8" stroke-width="1.6" stroke-dasharray="3 3"/>
+        <text x="${lx.toFixed(1)}" y="${(ly + 5).toFixed(1)}" text-anchor="middle" font-size="14" font-weight="800" fill="#DCE8FF">${G[i]}</text>`;
+    })
+    .join("");
+  return `<svg viewBox="0 0 344 232" ${NS} fill="none" role="img" aria-label="북쪽 하늘 그림. 가운데 북극성이 있고 원 궤도에 30도 간격 눈금이 있다. 별 A와 다섯 개의 점선 원 후보 자리가 표시되어 있다">
+    <circle cx="${cx}" cy="${cy}" r="${R}" stroke="#2C4066" stroke-width="1.4" stroke-dasharray="4 5"/>
+    ${ticks}
+    <circle cx="${cx}" cy="${cy}" r="4.6" fill="#FFE9A8"/>
+    <text x="${cx}" y="${cy + 20}" text-anchor="middle" font-size="10.5" fill="#AFC3E3">북극성</text>
+    <text x="${cx + 42}" y="${cy - 4}" font-size="9.5" fill="#7E93B8">눈금 간격 30°</text>
+    <circle cx="${ax.toFixed(1)}" cy="${ay.toFixed(1)}" r="5.6" fill="#EDE2BE"/>
+    <text x="${(ax + 15).toFixed(1)}" y="${(ay + 4).toFixed(1)}" font-size="12.5" font-weight="700" fill="#DCE8FF">A</text>
+    ${cands}
+    <path d="M24 222h296" stroke="#3D5378" stroke-width="2"/>
+    <text x="322" y="216" text-anchor="end" font-size="10" fill="#7E93B8">지평선</text>
+  </svg>`;
+}
+
+/** ZE 황도 12궁(다크·파라미터형) · 레슨 zodiacQuizFig(㉠=5월·양↔천칭)와 별개 시험판: 지구 위치가
+ *  파라미터. earthDeg = 지구가 놓인 별자리 쪽 각도(그 별자리 "앞"). 별자리 배열은 레슨과 동일 각도표.
+ *  [검산] 태양 쪽(못 보는) 별자리 = earthDeg+180 · 한밤 남쪽 별자리 = earthDeg. 두 점선(태양 방향·
+ *  반대 방향)이 판독 장치. 전 별자리 같은 스타일(강조 금지 · 정답 유추 방지). */
+export function zodiacExamFig(o: { earthDeg: number }): string {
+  const names: [string, number][] = [
+    ["게", 0], ["쌍둥이", 30], ["황소", 60], ["양", 90], ["물고기", 120], ["물병", 150],
+    ["염소", 180], ["궁수", 210], ["전갈", 240], ["천칭", 270], ["처녀", 300], ["사자", 330],
+  ];
+  const cx = 172;
+  const cy = 108;
+  const R = 84;
+  let ring = "";
+  for (const [n, deg] of names) {
+    const a = (deg * Math.PI) / 180;
+    const x = cx + Math.cos(a) * R;
+    const y = cy + Math.sin(a) * R * 0.82;
+    ring += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2" fill="#9FB6DC"/>
+      <text x="${x.toFixed(1)}" y="${(y - 7).toFixed(1)}" fill="#9FB6DC" font-size="9.5" text-anchor="middle">${n}</text>`;
+  }
+  const ea = (o.earthDeg * Math.PI) / 180;
+  const eR = R - 26;
+  const ex = cx + Math.cos(ea) * eR;
+  const ey = cy + Math.sin(ea) * eR * 0.82;
+  const ox = cx + Math.cos(ea) * (R - 8);
+  const oy = cy + Math.sin(ea) * (R - 8) * 0.82;
+  const sx = cx - Math.cos(ea) * (R - 8);
+  const sy = cy - Math.sin(ea) * (R - 8) * 0.82;
+  return `<svg viewBox="0 0 344 224" ${NS} fill="none" role="img" aria-label="가운데 태양을 두고 열두 별자리가 빙 둘러 있는 그림. 궤도 위의 지구에서 태양 방향과 그 반대 방향으로 점선이 그어져 있다">
+    <ellipse cx="${cx}" cy="${cy}" rx="${R}" ry="${R * 0.82}" stroke="#3D5378" stroke-width="1.3" stroke-dasharray="3 4"/>
+    ${ring}
+    <circle cx="${cx}" cy="${cy}" r="10" fill="url(#u7ze-sun)"/>
+    <text x="${cx + 20}" y="${cy + 4}" fill="#FFC85E" font-size="9.5">태양</text>
+    <path d="M${ex.toFixed(1)} ${ey.toFixed(1)}L${sx.toFixed(1)} ${sy.toFixed(1)}" stroke="rgba(255,170,80,.55)" stroke-width="1.3" stroke-dasharray="4 4"/>
+    <path d="M${ex.toFixed(1)} ${ey.toFixed(1)}L${ox.toFixed(1)} ${oy.toFixed(1)}" stroke="rgba(140,190,255,.6)" stroke-width="1.3" stroke-dasharray="4 4"/>
+    <circle cx="${ex.toFixed(1)}" cy="${ey.toFixed(1)}" r="6" fill="url(#u7ze-ea)"/>
+    <text x="${(ex - Math.cos(ea) * 24).toFixed(1)}" y="${(ey - Math.sin(ea) * 0.82 * 24 + 4).toFixed(1)}" fill="#BFD8FF" font-size="10.5" font-weight="700" text-anchor="middle">지구</text>
+    <defs>
+      <radialGradient id="u7ze-sun" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFEDBE"/><stop offset="1" stop-color="#FFB03A"/></radialGradient>
+      <radialGradient id="u7ze-ea" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#9FC6F4"/><stop offset="1" stop-color="#2E6FD4"/></radialGradient>
+    </defs>
+  </svg>`;
+}
+
+/** EO 지구 낮밤 관측자(다크) · 북극 위에서 본 조감. 햇빛 오른쪽 · 자전 반시계.
+ *  [검산] 오른쪽 절반 = 낮. 반시계 자전이므로 A(오른쪽) = 한낮 · B(위) = 해 질 무렵(밝은 쪽 → 어두운
+ *  쪽으로 넘어감) · C(왼쪽) = 한밤 · D(아래) = 해 뜰 무렵(어두운 쪽 → 밝은 쪽). */
+export function earthDayNightFig(): string {
+  const cx = 156;
+  const cy = 118;
+  const R = 62;
+  const obs = (deg: number, name: string): string => {
+    const a = (deg * Math.PI) / 180;
+    const x = cx + Math.cos(a) * R;
+    const y = cy - Math.sin(a) * R;
+    const lx = cx + Math.cos(a) * (R + 22);
+    const ly = cy - Math.sin(a) * (R + 22);
+    return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.4" fill="#FFE9A8" stroke="#B98A3A" stroke-width="1.2"/>
+      <text x="${lx.toFixed(1)}" y="${(ly + 5).toFixed(1)}" text-anchor="middle" font-size="13.5" font-weight="800" fill="#DCE8FF">${name}</text>`;
+  };
+  return `<svg viewBox="0 0 344 236" ${NS} fill="none" role="img" aria-label="북극 위에서 내려다본 지구 그림. 오른쪽에서 햇빛이 들어와 오른쪽 절반이 밝고, 지구 둘레 네 곳에 관측자 A, B, C, D가 표시되어 있으며 자전 방향 화살표는 시계 반대 방향이다">
+    <defs>
+      <clipPath id="u7eo-day"><rect x="${cx}" y="${cy - R - 2}" width="${R + 4}" height="${R * 2 + 4}"/></clipPath>
+    </defs>
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="#16233F" stroke="#3D5378" stroke-width="1.6"/>
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="#2E5FA8" clip-path="url(#u7eo-day)"/>
+    <path d="M${cx} ${cy - R}V${cy + R}" stroke="#5A6C8E" stroke-width="1.2" stroke-dasharray="4 4"/>
+    <path d="M${cx - 18} ${cy - 8}q6-6 12-2t12 0" stroke="#7CA65A" stroke-width="1.6"/>
+    <path d="M${cx + 8} ${cy + 18}q8-4 16 0" stroke="#7CA65A" stroke-width="1.6"/>
+    <path d="M${cx + 30} ${cy - R - 26}a${R + 30} ${R + 30} 0 0 1 -60 0" stroke="#8FB3E8" stroke-width="2" fill="none" stroke-dasharray="6 5"/>
+    <path d="M${cx - 30} ${cy - R - 22}l-4-8 9-1z" fill="#8FB3E8"/>
+    <text x="${cx}" y="${cy - R - 36}" text-anchor="middle" font-size="10" fill="#8FB3E8">자전 방향(서 → 동)</text>
+    ${obs(0, "A")}${obs(90, "B")}${obs(180, "C")}${obs(270, "D")}
+    <g stroke="#FFC24E" stroke-width="3"><path d="M336 88l-18 0M336 118l-18 0M336 148l-18 0"/></g>
+    <path d="M318 88l7-4v8zM318 118l7-4v8zM318 148l7-4v8z" fill="#FFC24E"/>
+    <text x="327" y="170" fill="#FFD79E" font-size="9.5" text-anchor="middle">햇빛</text>
+  </svg>`;
+}
+
+/** MO 달 공전 위치판(다크·파라미터형) · 지구 중심 4위치. moonPhase8Fig(반구 인쇄 8위치)와 역할 분리:
+ *  달 원판은 중립 회색(위상 미인쇄 · 위치→위상 추론이 과제). 햇빛 오른쪽 고정.
+ *  [검산] 오른쪽 = 삭 자리 · 위 = 상현 자리 · 왼쪽 = 망 자리 · 아래 = 하현 자리(반시계 공전).
+ *  labels = [오른쪽, 위, 왼쪽, 아래] 순 라벨 문자열. arrow = 반시계 공전 화살표 표시. */
+export function moonPosFig(o: { labels: [string, string, string, string]; arrow?: boolean }): string {
+  const cx = 156;
+  const cy = 112;
+  const R = 66;
+  const spots = [0, 90, 180, 270].map((deg, i) => {
+    const a = (deg * Math.PI) / 180;
+    const x = cx + Math.cos(a) * R;
+    const y = cy - Math.sin(a) * R * 0.88;
+    const lx = cx + Math.cos(a) * (R + 24);
+    const ly = cy - Math.sin(a) * (R * 0.88 + 22);
+    return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" fill="#3A4560" stroke="#5A6C8E" stroke-width="1.2"/>
+      <text x="${lx.toFixed(1)}" y="${(ly + 5.5).toFixed(1)}" fill="#DCE8FF" font-size="14.5" font-weight="800" text-anchor="middle">${o.labels[i]}</text>`;
+  }).join("");
+  const arrow = o.arrow
+    ? `<path d="M${cx + R - 6} ${cy - 26}A${R} ${R * 0.88} 0 0 0 ${cx + 22} ${cy - R * 0.88 + 3}" stroke="#8FB3E8" stroke-width="2" fill="none"/>
+       <path d="M${cx + 18} ${cy - R * 0.88 - 3}l-8 3 5 6z" fill="#8FB3E8"/>
+       <text x="${cx + R + 4}" y="${cy - 40}" font-size="9.5" fill="#8FB3E8">공전 방향</text>`
+    : "";
+  return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="지구를 중심으로 한 달의 공전 궤도 그림. 햇빛은 오른쪽에서 들어오고, 궤도 위 네 곳에 달의 자리가 표시되어 있다. 달의 밝은 부분은 그리지 않은 중립 그림">
+    <ellipse cx="${cx}" cy="${cy}" rx="${R}" ry="${R * 0.88}" stroke="#3D5378" stroke-width="1.4" stroke-dasharray="4 5"/>
+    ${spots}
+    ${arrow}
+    <circle cx="${cx}" cy="${cy}" r="12" fill="url(#u7mo-earth)"/>
+    <path d="M${cx - 5} ${cy - 2}q3-3 6-1t6 0" stroke="#7CA65A" stroke-width="1.6"/>
+    <text x="${cx}" y="${cy + 28}" fill="#BFD8FF" font-size="9.5" text-anchor="middle">지구</text>
+    <defs><radialGradient id="u7mo-earth" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#9FC6F4"/><stop offset="1" stop-color="#2E6FD4"/></radialGradient></defs>
+    <g stroke="#FFC24E" stroke-width="3"><path d="M336 82l-16 0M336 112l-16 0M336 142l-16 0"/></g>
+    <path d="M320 82l7-4v8zM320 112l7-4v8zM320 142l7-4v8z" fill="#FFC24E"/>
+    <text x="328" y="164" fill="#FFD79E" font-size="9.5" text-anchor="middle">태양 빛</text>
+  </svg>`;
+}
+
+/** EA 세 천체 배열(다크·파라미터형) · 그림자 없이 배열만(eclipseShadowFig의 그림자 판독과 역할 분리).
+ *  kind solar = 태양 · 달 · 지구 차례(일식 배치) · lunar = 태양 · 지구 · 달(월식 배치).
+ *  tilt = 달이 일직선에서 위로 벗어난 컷(궤도 기울어짐 · 얇은 그림자 띠가 지구 위를 비껴감).
+ *  [검산] 천체 이름은 라벨로 인쇄(배열 판정이 과제 · 이름 동정이 과제가 아님). */
+export function eclipseAlignFig(o: { kind: "solar" | "lunar"; tilt?: boolean }): string {
+  const defs = `<defs>
+    <radialGradient id="u7ea-sun" cx=".5" cy=".5" r=".9"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#F2A93B"/></radialGradient>
+    <radialGradient id="u7ea-earth" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#9FC6F4"/><stop offset="1" stop-color="#2E6FD4"/></radialGradient>
+    <radialGradient id="u7ea-moon" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#D8D2C0"/><stop offset="1" stop-color="#8E8874"/></radialGradient>
+  </defs>`;
+  const sun = `<circle cx="52" cy="96" r="34" fill="url(#u7ea-sun)"/><text x="52" y="146" text-anchor="middle" font-size="10.5" fill="#FFD79E">태양</text>`;
+  if (o.tilt) {
+    // [검산] 달은 지구를 도는 위성이라 지구 곁의 기울어진 궤도(타원) 위, 태양 쪽 끝에 그린다
+    // (검수 지적: 태양 쪽에 붕 뜬 초판은 삭의 자리로 안 읽힘). 그림자 띠는 태양(52,96)→달(241,64)
+    // 연장선 · 지구 x구간(262~322)에서 띠 아래변이 지구 윗변(y66)보다 위를 지나 비껴간다.
+    // 기울기는 시각 과장(캡션 명시 · 수치 라벨 없음 · 5° 직접 묻기 금지 원칙).
+    return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="태양과 지구 사이에서, 지구 둘레를 도는 달의 궤도가 기울어져 달이 일직선보다 위로 벗어나 있는 그림. 달의 그림자 띠가 지구 위쪽을 비껴 지나간다">
+      ${defs}
+      ${sun}
+      <path d="M96 96H332" stroke="#5A6C8E" stroke-width="1.2" stroke-dasharray="5 5"/>
+      <text x="118" y="110" font-size="9" fill="#5A7396">태양과 지구를 잇는 선</text>
+      <ellipse cx="292" cy="96" rx="60" ry="13" transform="rotate(32 292 96)" stroke="#8FB3E8" stroke-width="1.2" stroke-dasharray="4 4"/>
+      <path d="M216 144L259 94" stroke="#8FB3E8" stroke-width="1"/>
+      <text x="196" y="156" text-anchor="middle" font-size="9.5" fill="#8FB3E8">달의 공전 궤도(기울어짐)</text>
+      <circle cx="241" cy="64" r="9" fill="url(#u7ea-moon)"/>
+      <text x="241" y="46" text-anchor="middle" font-size="10.5" fill="#BFD4F2">달</text>
+      <path d="M249 60L336 46L336 56L250 69z" fill="rgba(10,16,32,.55)"/>
+      <text x="296" y="40" text-anchor="middle" font-size="9.5" fill="#8FA6CE">달의 그림자</text>
+      <circle cx="292" cy="96" r="30" fill="url(#u7ea-earth)"/>
+      <path d="M282 78q6-4 12-2M278 108q8 5 16 3" stroke="#7CA65A" stroke-width="2"/>
+      <text x="292" y="146" text-anchor="middle" font-size="10.5" fill="#BFD8FF">지구</text>
+      <text x="172" y="182" text-anchor="middle" font-size="9" fill="#66788F">궤도 기울기는 실제보다 과장해 그렸어요</text>
+    </svg>`;
+  }
+  const mid = o.kind === "solar"
+    ? `<circle cx="176" cy="96" r="9" fill="url(#u7ea-moon)"/><text x="176" y="120" text-anchor="middle" font-size="10.5" fill="#BFD4F2">달</text>
+       <circle cx="292" cy="96" r="30" fill="url(#u7ea-earth)"/><path d="M282 78q6-4 12-2M278 108q8 5 16 3" stroke="#7CA65A" stroke-width="2"/><text x="292" y="146" text-anchor="middle" font-size="10.5" fill="#BFD8FF">지구</text>`
+    : `<circle cx="192" cy="96" r="30" fill="url(#u7ea-earth)"/><path d="M182 78q6-4 12-2M178 108q8 5 16 3" stroke="#7CA65A" stroke-width="2"/><text x="192" y="146" text-anchor="middle" font-size="10.5" fill="#BFD8FF">지구</text>
+       <circle cx="296" cy="96" r="9" fill="url(#u7ea-moon)"/><text x="296" y="120" text-anchor="middle" font-size="10.5" fill="#BFD4F2">달</text>`;
+  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="태양과 두 천체가 한 줄로 늘어선 배열 그림. 각 천체에 이름이 붙어 있다">
+    ${defs}
+    ${sun}
+    <path d="M96 96H332" stroke="#5A6C8E" stroke-width="1.2" stroke-dasharray="5 5"/>
+    ${mid}
+  </svg>`;
+}
+
+/** EP 식 진행 컷(다크·파라미터형) · mode next: 진행 (가)(나) 두 컷 + 다음 모습 후보 ①~⑤.
+ *  [검산 · 진행 방향 규칙] 일식 = 태양의 오른쪽(서쪽)부터 가려진다 · 월식 = 달의 왼쪽(동쪽)부터
+ *  가려진다(남쪽 하늘 기준 · 근거는 달의 서에서 동으로 가는 공전). 정답 컷은 ②에 배치(shuffle:false).
+ *  개기월식 컷의 달 색은 모식(실제 붉은 색감은 사진 몫). */
+export function eclipseProgressFig(o: { kind: "solar" | "lunar"; mode?: "next" | "order" | "label" }): string {
+  const sunDisk = (cx: number, cy: number, r: number, cover: number, fromRight: boolean): string => {
+    const off = (1.55 - cover * 1.35) * r * (fromRight ? 1 : -1);
+    return `<defs>${cover === 0 ? "" : ""}</defs>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="#FFD879"/>
+      ${cover > 0 ? `<circle cx="${(cx + off).toFixed(1)}" cy="${cy}" r="${r * 1.02}" fill="#0E1830"/>` : ""}
+      <circle cx="${cx}" cy="${cy}" r="${r}" stroke="#B98A3A" stroke-width="1" fill="none"/>`;
+  };
+  const moonDisk = (cx: number, cy: number, r: number, cover: number, fromLeft: boolean): string => {
+    const off = (1.55 - cover * 1.35) * r * (fromLeft ? -1 : 1);
+    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#EDE2BE"/>
+      ${cover > 0 ? `<circle cx="${(cx + off).toFixed(1)}" cy="${cy}" r="${r * 1.06}" fill="#1A2438" opacity=".94"/>` : ""}
+      <circle cx="${cx}" cy="${cy}" r="${r}" stroke="#7E93B8" stroke-width="1" fill="none"/>`;
+  };
+  const disk = (cx: number, cy: number, r: number, cover: number, correctDir: boolean): string =>
+    o.kind === "solar" ? sunDisk(cx, cy, r, cover, correctDir) : moonDisk(cx, cy, r, cover, correctDir);
+  const capt = o.kind === "solar" ? "일식이 진행되는 모습(남쪽 하늘 기준)" : "월식이 진행되는 모습(남쪽 하늘 기준)";
+  if (o.mode === "order") {
+    // 순서 배열판(월식 342용): 세 장면을 순서 없이 (가)(나)(다) 나열. [검산] 문두를 "가려지는 동안"으로
+    // 한정해야 복원 국면 역순의 복수 정답이 차단된다. 정답 순서 = (나) 온달 → (다) 살짝 → (가) 절반
+    // (월식은 달의 왼쪽부터 · fromLeft = true).
+    return `<svg viewBox="0 0 344 152" ${NS} fill="none" role="img" aria-label="월식이 진행되는 동안의 세 장면을 순서 없이 늘어놓은 그림. 달이 가려진 정도가 장면마다 다르다">
+      <rect x="4" y="6" width="336" height="140" rx="14" fill="#0E1830"/>
+      <text x="172" y="26" text-anchor="middle" font-size="10.5" fill="#8FA6CE">월식이 진행되는 동안의 세 장면(순서 없이 나열 · 남쪽 하늘 기준)</text>
+      ${disk(70, 78, 26, 0.5, true)}
+      <text x="70" y="126" text-anchor="middle" font-size="12" font-weight="700" fill="#AFC3E3">(가)</text>
+      ${disk(172, 78, 26, 0, true)}
+      <text x="172" y="126" text-anchor="middle" font-size="12" font-weight="700" fill="#AFC3E3">(나)</text>
+      ${disk(274, 78, 26, 0.22, true)}
+      <text x="274" y="126" text-anchor="middle" font-size="12" font-weight="700" fill="#AFC3E3">(다)</text>
+    </svg>`;
+  }
+  if (o.mode === "label") {
+    // 라벨판(일식 359용): 태양 원판 양 가장자리 ㉮(왼쪽)·㉯(오른쪽)만. 달은 그리지 않는다(접근 방향
+    // 인쇄 = 정답 유출). [검산] 먼저 가려지는 쪽 = ㉯(오른쪽 · 서쪽) · 근거는 달의 서→동 공전.
+    return `<svg viewBox="0 0 344 172" ${NS} fill="none" role="img" aria-label="곧 일식이 시작될 태양 원판 그림. 왼쪽 가장자리와 오른쪽 가장자리에 기호가 붙어 있다">
+      <rect x="4" y="6" width="336" height="160" rx="14" fill="#0E1830"/>
+      <text x="172" y="28" text-anchor="middle" font-size="10.5" fill="#8FA6CE">곧 일식이 시작돼요(남쪽 하늘 기준)</text>
+      ${sunDisk(172, 96, 42, 0, true)}
+      <circle cx="106" cy="96" r="14" fill="#12203C" stroke="#8FB3E8" stroke-width="1.4"/>
+      <text x="106" y="101" text-anchor="middle" font-size="13" font-weight="800" fill="#DCE8FF">㉮</text>
+      <path d="M120 96h8" stroke="#8FB3E8" stroke-width="1.6"/>
+      <circle cx="238" cy="96" r="14" fill="#12203C" stroke="#8FB3E8" stroke-width="1.4"/>
+      <text x="238" y="101" text-anchor="middle" font-size="13" font-weight="800" fill="#DCE8FF">㉯</text>
+      <path d="M224 96h-8" stroke="#8FB3E8" stroke-width="1.6"/>
+    </svg>`;
+  }
+  const cand = (cx: number, num: string, cover: number, correctDir: boolean): string =>
+    `${disk(cx, 168, 17, cover, correctDir)}<text x="${cx}" y="206" text-anchor="middle" font-size="13" font-weight="800" fill="#DCE8FF">${num}</text>`;
+  return `<svg viewBox="0 0 344 218" ${NS} fill="none" role="img" aria-label="식이 진행되는 두 장면 (가), (나)와 다음에 올 모습 후보 다섯 개가 그려진 그림">
+    <rect x="4" y="6" width="336" height="206" rx="14" fill="#0E1830"/>
+    <text x="172" y="26" text-anchor="middle" font-size="10.5" fill="#8FA6CE">${capt}</text>
+    ${disk(100, 62, 24, 0.22, true)}
+    <text x="100" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#AFC3E3">(가)</text>
+    <path d="M148 62h32M173 56l9 6-9 6z" fill="#8FB3E8" stroke="#8FB3E8" stroke-width="1.6"/>
+    ${disk(238, 62, 24, 0.5, true)}
+    <text x="238" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#AFC3E3">(나)</text>
+    <path d="M20 122h304" stroke="#2C4066" stroke-width="1.2"/>
+    <text x="28" y="139" font-size="10" fill="#8FA6CE">바로 다음에 올 모습은?</text>
+    ${cand(46, "①", 0, true)}
+    ${cand(109, "②", 0.78, true)}
+    ${cand(172, "③", 0.5, false)}
+    ${cand(235, "④", 0.22, true)}
+    ${cand(298, "⑤", 0.78, false)}
+  </svg>`;
+}
+
+/** PD 행성 분류 순서도(라이트) · 코딩 분기(천재 06 계보 · 질문·행성 세트는 자체 제작).
+ *  [검산] 질문 1 "표면에 충돌 구덩이가 많고 대기가 거의 없는가" 예 = A(수성) · 아니요 → 질문 2
+ *  "뚜렷하고 큰 고리를 가졌는가" 예 = B(토성) · 아니요 = C(해왕성). 결론 칸은 각자 분리(수렴 금지). */
+export function planetFlowFig(q1: string, q2: string, o?: { names?: string; reveal?: [string, string, string]; hideQ2?: boolean }): string {
+  const box = (x: number, y: number, w: number, h: number, txt: string, fill = "#F7F9FC"): string =>
+    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${fill}" stroke="#C9D2DD" stroke-width="1.4"/>
+     ${txt}`;
+  const t = (x: number, y: number, s: string, size = 11.5, w = 700, fill = "#333D4B"): string =>
+    `<text x="${x}" y="${y}" text-anchor="middle" font-size="${size}" font-weight="${w}" fill="${fill}">${s}</text>`;
+  const names = o?.names ?? "수성 · 토성 · 해왕성";
+  const r1 = o?.reveal?.[0] ?? "A";
+  const r2 = o?.reveal?.[1] ?? "B";
+  const r3 = o?.reveal?.[2] ?? "C";
+  const rs = o?.reveal ? 12 : 14;
+  const q2txt = o?.hideQ2 ? `${t(234, 133, "㉠ ?", 13)}${t(234, 149, "(질문 2)", 9.5, 600, "#8B95A1")}` : `${t(234, 133, q2, 11)}${t(234, 149, "(질문 2)", 9.5, 600, "#8B95A1")}`;
+  return `<svg viewBox="0 0 344 218" ${NS} fill="none" role="img" aria-label="행성을 두 가지 질문으로 나누는 순서도. 질문마다 예와 아니요 갈래가 있고 끝 칸은 세 곳으로 갈라진다">
+    ${box(92, 10, 160, 30, t(172, 29, names, 12), "#EEF4FF")}
+    <path d="M172 40v14" stroke="#8B95A1" stroke-width="1.6"/>
+    ${box(52, 54, 240, 40, `${t(172, 71, q1, 11)}${t(172, 87, "(질문 1)", 9.5, 600, "#8B95A1")}`)}
+    <path d="M90 94v22M234 94v22" stroke="#8B95A1" stroke-width="1.6"/>
+    ${t(76, 110, "예", 10.5, 700, "#04B45F")}${t(248, 110, "아니요", 10.5, 700, "#F04452")}
+    ${box(58, 116, 64, 32, t(90, 137, r1, rs), "#FFF7E8")}
+    ${box(140, 116, 188, 40, q2txt)}
+    <path d="M196 156v22M296 156v22" stroke="#8B95A1" stroke-width="1.6"/>
+    ${t(182, 172, "예", 10.5, 700, "#04B45F")}${t(312, 172, "아니요", 10.5, 700, "#F04452")}
+    ${box(160, 178, 72, 32, t(196, 199, r2, rs), "#FFF7E8")}
+    ${box(260, 178, 72, 32, t(296, 199, r3, rs), "#FFF7E8")}
+  </svg>`;
+}
+
+/** PC 위상 카드 셔플판(다크) · 다섯 모양 카드 (가)~(마)를 뒤섞어 나열(순서 배열 문항 전용 ·
+ *  fivePhasesFig의 고정 ①~⑤ 제시와 구분). shapes = 카드 순서대로 위상 키.
+ *  [검산] 모양: new=거의 안 보임 · crescent=오른쪽 가는 조각 · first=오른쪽 반 · full=온면 ·
+ *  last=왼쪽 반(밝은 쪽 = 태양 쪽 원칙의 지구 시점판). */
+export function phaseCardsFig(shapes: ("new" | "crescent" | "first" | "full" | "last")[]): string {
+  const moon = (cx: number, kind: string): string => {
+    const r = 16;
+    const base = `<circle cx="${cx}" cy="58" r="${r}" fill="#232E48" stroke="#5A6C8E" stroke-width="1"/>`;
+    if (kind === "new") return base;
+    if (kind === "full") return `<circle cx="${cx}" cy="58" r="${r}" fill="#EDE2BE" stroke="#B9AE8C" stroke-width="1"/>`;
+    if (kind === "first") return `${base}<path d="M${cx} ${58 - r}a${r} ${r} 0 0 1 0 ${r * 2}z" fill="#EDE2BE"/>`;
+    if (kind === "last") return `${base}<path d="M${cx} ${58 - r}a${r} ${r} 0 0 0 0 ${r * 2}z" fill="#EDE2BE"/>`;
+    return `${base}<path d="M${cx} ${58 - r}a${r} ${r} 0 0 1 0 ${r * 2}a${r * 1.5} ${r * 1.5} 0 0 0 0 ${-r * 2}z" fill="#EDE2BE"/>`;
+  };
+  const tags = ["(가)", "(나)", "(다)", "(라)", "(마)"];
+  return `<svg viewBox="0 0 344 118" ${NS} fill="none" role="img" aria-label="뒤섞어 놓은 달의 다섯 가지 모양 카드. 각 카드에 가나다 순서 기호가 붙어 있다">
+    <rect x="4" y="6" width="336" height="106" rx="14" fill="#0E1830"/>
+    ${shapes.map((k, i) => `${moon(44 + i * 64, k)}<text x="${44 + i * 64}" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#DCE8FF">${tags[i]}</text>`).join("")}
+  </svg>`;
+}
+
+/** WS 같은 시각 서쪽 하늘 연속 관측(다크) · 15일 간격 3컷(천재 11 계보 · 별자리는 가상 점군).
+ *  [검산] 해 진 직후 서쪽 하늘: 같은 별자리가 날이 갈수록 태양 쪽(지평선 쪽)으로 낮아진다 =
+ *  태양이 별자리 사이를 서에서 동으로 이동(연주 운동)한 결과. 컷 순서 (가)→(나)→(다). */
+export function westSkyFig(o?: { v?: 2 }): string {
+  // v 2 = 별자리 모양·높이·간격(10일)이 다른 두 번째 자료셋(같은 그림 두 문항 금지 · 자료셋 배타).
+  const alt = o?.v === 2;
+  const cut = (x0: number, tag: string, starY: number): string => {
+    const pts = alt
+      ? [[0, 0], [12, -14], [28, -8], [40, -18], [18, -24], [34, 2]]
+      : [[0, 0], [14, -10], [26, -2], [36, -14], [22, -22]];
+    const line = alt
+      ? `<path d="M${x0 + 34} ${starY}L${x0 + 46} ${starY - 14}L${x0 + 62} ${starY - 8}L${x0 + 74} ${starY - 18}M${x0 + 46} ${starY - 14}L${x0 + 52} ${starY - 24}M${x0 + 62} ${starY - 8}L${x0 + 68} ${starY + 2}" stroke="rgba(190,214,255,.5)" stroke-width="1"/>`
+      : `<path d="M${x0 + 34} ${starY}L${x0 + 48} ${starY - 10}L${x0 + 60} ${starY - 2}L${x0 + 70} ${starY - 14}M${x0 + 48} ${starY - 10}L${x0 + 56} ${starY - 22}" stroke="rgba(190,214,255,.5)" stroke-width="1"/>`;
+    const cluster = pts.map(([dx, dy]) => `<circle cx="${x0 + 34 + dx}" cy="${starY + dy}" r="1.9" fill="#EDE2BE"/>`).join("") + line;
+    return `<rect x="${x0}" y="16" width="104" height="150" rx="10" fill="#0E1830" stroke="#22314F" stroke-width="1"/>
+      ${cluster}
+      <path d="M${x0 + 6} 142q30-10 52-6t46 2v8a8 8 0 0 1-8 8h-82a8 8 0 0 1-8-8z" fill="#0A1428"/>
+      <circle cx="${x0 + 20}" cy="150" r="7" fill="#FF9E4A" opacity=".85"/>
+      <text x="${x0 + 52}" y="180" text-anchor="middle" font-size="11" font-weight="700" fill="#AFC3E3">${tag}</text>`;
+  };
+  const g1 = alt ? 66 : 58;
+  const g2 = alt ? 94 : 92;
+  const g3 = alt ? 122 : 124;
+  const t2 = alt ? "(나) 10일 뒤" : "(나) 15일 뒤";
+  const t3 = alt ? "(다) 20일 뒤" : "(다) 30일 뒤";
+  return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="며칠 간격으로 같은 시각에 서쪽 하늘을 관측한 세 장면. 같은 별자리가 점점 지평선 가까이 내려가 있다">
+    ${cut(8, "(가)", g1)}${cut(120, t2, g2)}${cut(232, t3, g3)}
+    <text x="172" y="192" text-anchor="middle" font-size="9.5" fill="#7E93B8">해가 진 직후 · 서쪽 하늘 · 주황 점은 해가 진 자리</text>
+  </svg>`;
+}

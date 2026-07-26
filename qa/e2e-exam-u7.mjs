@@ -100,24 +100,31 @@ async function playExam(correctCount) {
   return seen;
 }
 
-// ═══════════ 0. 발주 사진 8장 로드(exam/u7) ═══════════
-console.log("0. 발주 사진 로드");
+// ═══════════ 0. 시험 사진 로드(v2 세트 — exam/u7 발주 9장 + photos 신규 NASA 11장) ═══════════
+console.log("0. 시험 사진 로드");
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
-const PHOTOS = ["sundial", "star-trails", "solar-projection", "crescent-moon", "first-quarter", "red-moon", "aurora", "comet"];
-const photoRes = await page.evaluate(async (names) => {
+const PHOTOS = [
+  "exam/u7/sundial.webp", "exam/u7/star-trails.webp", "exam/u7/solar-projection.webp",
+  "exam/u7/crescent-moon.webp", "exam/u7/first-quarter.webp", "exam/u7/red-moon.webp",
+  "exam/u7/aurora.webp", "exam/u7/comet.webp", "exam/u7/waning-crescent.webp",
+  "photos/mercury.jpg", "photos/venus.jpg", "photos/mars.jpg", "photos/uranus.jpg", "photos/neptune.jpg",
+  "photos/last-quarter.jpg", "photos/partial-solar.jpg", "photos/partial-solar2.jpg", "photos/sun_quiet.jpg",
+  "photos/sun_red.jpg", "photos/sun_active.jpg",
+];
+const photoRes = await page.evaluate(async (paths) => {
   const out = [];
-  for (const n of names) {
+  for (const p of paths) {
     const r = await new Promise((res) => {
       const im = new Image();
       im.onload = () => res(im.naturalWidth);
       im.onerror = () => res(0);
-      im.src = `/exam/u7/${n}.webp`;
+      im.src = `/${p}`;
     });
-    out.push({ n, w: r });
+    out.push({ p, w: r });
   }
   return out;
 }, PHOTOS);
-ok(photoRes.every((p) => p.w > 0), "exam/u7 사진 8장 전부 로드", JSON.stringify(photoRes.filter((p) => !p.w)));
+ok(photoRes.every((p) => p.w > 0), "시험 사진 v2 세트(20장) 전부 로드", JSON.stringify(photoRes.filter((p) => !p.w)));
 
 // ═══════════ A. 무료 첫 응시 — 레슨 진행 0%에서도 열려 있어야 한다 ═══════════
 console.log("A. 무료 첫 응시(진행 0%)");
