@@ -1514,39 +1514,6 @@ export function chemDistillApparatusFig(): string {
 // ── g2u2(지권의 변화) 시험 전용 ──────────────────────────────
 // aria-label에 정오 단서 금지 — 분포의 '모양'을 말하지 않는다.
 
-/** 세계 지진 발생 지점 점 지도 — 판 경계 띠를 따라 몰린 분포(라이트).
- *  aria는 중립("점으로 나타냈다")로 — 띠 모양 여부가 문항 정답이다. */
-export function geoQuakeBeltFig(): string {
-  // 간이 대륙 실루엣(비율 왜곡한 교육용 지도) — 정밀 지도가 아니라 분포 파악용
-  const land = `fill="#E7DFC8" stroke="#C9BFA0" stroke-width="1"`;
-  // 환태평양 + 알프스-히말라야 + 대서양 중앙 해령 띠의 점들
-  const belts: [number, number][] = [
-    // 남북 아메리카 서해안(환태평양 동쪽)
-    [64, 54], [60, 66], [58, 78], [62, 90], [68, 102], [74, 114], [80, 128], [86, 142], [90, 156], [94, 170],
-    // 알류샨~일본~필리핀~뉴질랜드(환태평양 서쪽)
-    [116, 44], [136, 40], [158, 44], [176, 52], [186, 64], [192, 78], [198, 92], [206, 106], [214, 122], [222, 138], [230, 154], [238, 168],
-    // 알프스-히말라야 벨트
-    [128, 78], [142, 82], [156, 86], [170, 88], [184, 92],
-    // 대서양 중앙 해령
-    [96, 60], [100, 76], [104, 92], [102, 110], [106, 128], [110, 146],
-  ];
-  const dots = belts.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.3" fill="#F04452"/>`).join("");
-  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="세계 지도 위에 지진이 발생한 지점들이 점으로 찍혀 있어요. 점들이 어떻게 분포하는지 살펴보세요">
-    <rect x="8" y="8" width="328" height="184" rx="10" fill="#DDF0FB" stroke="#B8D6EC" stroke-width="1.4"/>
-    <!-- 북아메리카 -->
-    <path d="M42 36 q30 -10 52 4 q10 8 4 20 q-14 6 -12 18 q-2 14 -14 18 q-16 2 -22 -10 q-12 -22 -8 -50z" ${land}/>
-    <!-- 남아메리카 -->
-    <path d="M78 106 q16 -6 24 6 q6 14 0 30 q-4 20 -14 30 q-10 4 -14 -8 q-6 -30 4 -58z" ${land}/>
-    <!-- 유라시아 -->
-    <path d="M120 34 q46 -14 96 -2 q26 6 30 22 q2 14 -14 20 q-24 8 -48 6 q-30 -2 -52 -12 q-16 -10 -12 -34z" ${land}/>
-    <!-- 아프리카 -->
-    <path d="M124 92 q20 -8 34 2 q10 12 6 30 q-6 20 -20 26 q-14 2 -18 -12 q-8 -24 -2 -46z" ${land}/>
-    <!-- 오스트레일리아 -->
-    <path d="M226 134 q18 -8 32 2 q8 10 2 20 q-12 10 -26 6 q-12 -6 -8 -28z" ${land}/>
-    ${dots}
-  </svg>`;
-}
-
 /** 암석 분류 순서도 — 질문 2단 분기, 예/아니요가 각자의 결론 칸으로 갈라진다(수렴 금지).
  *  시작 상자에 담을 암석 목록과 질문 2개를 파라미터로 — 문항마다 각도를 바꿔 재사용. */
 export function geoRockFlowFig(o: { start: string; q1: string; q2: string }): string {
@@ -1602,7 +1569,7 @@ export function geoDriftRateFig(o: { xMax: number; xStep: number; yMax: number; 
   const dots = (o.dots ?? [])
     .map(([x, y]) => `<circle cx="${px(x)}" cy="${py(y)}" r="3.4" fill="#FFF" stroke="#F04452" stroke-width="2"/>`)
     .join("");
-  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="두 판 사이가 벌어진 거리를 시간에 따라 나타낸 그래프예요. 가로축은 시간, 세로축은 벌어진 거리이고 원점을 지나는 직선이 그려져 있어요">
+  return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="두 판 사이가 벌어진 거리를 시간에 따라 나타낸 그래프예요. 가로축은 시간, 세로축은 벌어진 거리이고 원점을 지나는 직선이 그려져 있어요">
     ${grid}
     <line x1="${L}" y1="${B}" x2="${R}" y2="${B}" stroke="#8B95A1" stroke-width="1.6"/>
     <line x1="${L}" y1="${B}" x2="${L}" y2="${T}" stroke="#8B95A1" stroke-width="1.6"/>
@@ -1645,27 +1612,460 @@ export function geoCycleQuizFig(): string {
   </svg>`;
 }
 
-/** 남아메리카-아프리카 해안선 맞물림 + 같은 화석 발견 띠 — 대륙 이동 증거 문항용.
- *  두 대륙을 살짝 벌려 두고 화석 띠가 이어짐을 점선으로 표시. */
-export function geoCoastFitFig(): string {
-  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="바다를 사이에 둔 두 대륙이 그려져 있어요. 왼쪽 대륙의 오른쪽 해안과 오른쪽 대륙의 왼쪽 해안 모양이 서로 닮았고, 양쪽 해안의 같은 무늬 구역이 점선으로 이어져 있어요">
-    <rect x="8" y="8" width="328" height="194" rx="10" fill="#DDF0FB" stroke="#B8D6EC" stroke-width="1.4"/>
-    <!-- 왼쪽: 남아메리카풍 -->
-    <path d="M52 40 q28 -10 46 2 q14 10 10 26 q-4 12 4 22 q8 12 2 26 q-8 22 -24 34 q-14 8 -22 -4 q-10 -18 -8 -40 q2 -20 -4 -34 q-6 -18 -4 -32z" fill="#C9A26A" stroke="#8E6A34" stroke-width="1.6"/>
-    <!-- 오른쪽: 아프리카풍(서해안 굴곡이 왼쪽과 상보) -->
-    <path d="M206 44 q30 -14 58 -2 q18 8 16 28 q-2 18 -10 32 q-10 18 -26 26 q-16 6 -26 -6 q-8 -12 -2 -26 q6 -12 -2 -22 q-10 -14 -8 -30z" fill="#DDB868" stroke="#8E6A24" stroke-width="1.6"/>
-    <!-- 같은 화석 발견 구역(양 대륙 해안의 마주 보는 띠) -->
-    <path d="M96 96 q8 8 6 20 q-2 10 -8 16" stroke="#D6336C" stroke-width="7" opacity=".45" stroke-linecap="round"/>
-    <path d="M212 92 q-8 8 -6 20 q2 10 8 16" stroke="#D6336C" stroke-width="7" opacity=".45" stroke-linecap="round"/>
-    <path d="M104 112 h100" stroke="#D6336C" stroke-width="1.8" stroke-dasharray="5 4"/>
-    <circle cx="100" cy="112" r="3" fill="#D6336C"/>
-    <circle cx="208" cy="112" r="3" fill="#D6336C"/>
-    <!-- 바다 물결 -->
-    <path d="M140 60 q8 4 16 0 M150 160 q8 4 16 0 M136 132 q7 4 14 0" stroke="#8FBBF2" stroke-width="1.6"/>
-    <text x="70" y="182" text-anchor="middle" font-size="11.5" font-weight="800" fill="#8E6A34">(가)</text>
-    <text x="252" y="182" text-anchor="middle" font-size="11.5" font-weight="800" fill="#8E6A24">(나)</text>
+
+// ── g2u2 v2(지권의 변화 재출제) 시험 전용 — 실지도 킷 + 신작 헬퍼 ──────────────
+// 파일럿 스테이징(qa/g2u2v2-pilot.ts)에서 승격(2026-07-26). 배경 = PALEOMAP 실지도(plateMap 랩과
+// 같은 자산), 점·경계 = plateMap.ts lon/lat 실데이터 복제. 사진 임베드(pic 계열)는 풀 파일 로컬 관행.
+const GEO_IMG_BASE = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/";
+
+/** 화성암 생성 장소 단면 — 지표(용암) 부근 A, 지하 깊은 곳(마그마) 부근 B. */
+export function geoMagmaSiteFig(): string {
+  return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="화산과 땅속의 단면 그림. 산 위로 흘러나온 용암 부근에 A, 땅속 깊은 곳의 마그마 부근에 B가 표시되어 있어요">
+    <rect x="8" y="8" width="328" height="86" fill="#DDF0FB"/>
+    <path d="M8 94 h100 l52 -58 q12 -12 24 0 l52 58 h100 v114 h-328 z" fill="#C9A26A" stroke="#8E6A34" stroke-width="1.4"/>
+    <path d="M8 138 h328 M8 172 h328" stroke="#B08D52" stroke-width="1.2" opacity=".6"/>
+    <path d="M160 36 q12 -10 24 0 l-4 6 q-8 -6 -16 0 z" fill="#F2F4F6" opacity=".9"/>
+    <path d="M164 42 q8 -7 16 0 l30 52 h-76 z" fill="#B0836A" stroke="#8E5A3A" stroke-width="1.3"/>
+    <path d="M168 46 q4 8 8 0 q4 8 8 0 l20 46 h-56 z" fill="#F25C54" opacity=".85"/>
+    <path d="M210 92 q26 4 40 14 q8 6 4 12" stroke="#F25C54" stroke-width="7" stroke-linecap="round" opacity=".8"/>
+    <path d="M172 92 q-4 34 -6 52 q-2 22 6 34 q8 -12 6 -34 q-2 -18 -6 -52z" fill="#E8590C" opacity=".85"/>
+    <ellipse cx="172" cy="186" rx="52" ry="22" fill="#D6336C" opacity=".9"/>
+    <ellipse cx="172" cy="186" rx="30" ry="12" fill="#F25C54" opacity=".9"/>
+    <circle cx="252" cy="112" r="11" fill="#FFFFFF" stroke="#4E5968" stroke-width="1.6"/>
+    <text x="252" y="116.5" text-anchor="middle" font-size="12.5" font-weight="800" fill="#333D4B">A</text>
+    <path d="M252 101 q0 -8 -6 -12" stroke="#4E5968" stroke-width="1.3"/>
+    <circle cx="236" cy="186" r="11" fill="#FFFFFF" stroke="#4E5968" stroke-width="1.6"/>
+    <text x="236" y="190.5" text-anchor="middle" font-size="12.5" font-weight="800" fill="#333D4B">B</text>
+    <path d="M225 186 h-14" stroke="#4E5968" stroke-width="1.3"/>
+    <rect x="8" y="8" width="328" height="200" rx="2" stroke="#8B95A1" stroke-width="1.4"/>
   </svg>`;
 }
+
+/** 이분 검색표(질문 4 · 결과 5) — 시작 목록과 질문 문구는 파라미터. 예/아니요는 각자 결론 칸(한 칸 합류 금지).
+ *  q4는 두 줄 상자(파일럿 눈검수에서 (다) 칸과의 겹침을 잡아 재배치 — 결과 행과 x 분리). */
+export function geoKeyFiveFig(o: { start: string; q1: string; q2: string; q3: string; q4: [string, string] }): string {
+  const q = (cx: number, cy: number, w: number, t: string): string =>
+    `<rect x="${cx - w / 2}" y="${cy - 17}" width="${w}" height="34" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
+     <text x="${cx}" y="${cy + 4.5}" text-anchor="middle" font-size="11" font-weight="700" fill="#1B64DA">${t}</text>`;
+  const res = (cx: number, cy: number, label: string): string =>
+    `<rect x="${cx - 30}" y="${cy - 16}" width="60" height="32" rx="9" fill="#F8FAFC" stroke="#B0B8C1" stroke-width="1.4" stroke-dasharray="5 4"/>
+     <text x="${cx}" y="${cy + 5}" text-anchor="middle" font-size="13.5" font-weight="800" fill="#4E5968">${label}</text>`;
+  const edge = (x1: number, y1: number, x2: number, y2: number, lbl: string, yes: boolean): string =>
+    `<path d="M${x1} ${y1} C ${x1} ${(y1 + y2) / 2} ${x2} ${(y1 + y2) / 2} ${x2} ${y2 - 4}" stroke="#8B95A1" stroke-width="1.7" fill="none"/>
+     <path d="M${x2} ${y2} l-4.2 -7 h8.4 z" fill="#8B95A1"/>
+     <text x="${(x1 + x2) / 2 + (x2 > x1 ? 12 : -12)}" y="${(y1 + y2) / 2 - 2}" text-anchor="middle" font-size="10" font-weight="800" fill="${yes ? "#0CA678" : "#8B95A1"}">${lbl}</text>`;
+  return `<svg viewBox="0 0 344 312" ${NS} fill="none" role="img" aria-label="암석 분류 순서도. 시작 목록의 암석들을 네 가지 질문에 예, 아니요로 답하며 가, 나, 다, 라, 마 다섯 칸으로 나눕니다">
+    <rect x="62" y="8" width="220" height="30" rx="15" fill="#F2F4F6" stroke="#C4CAD2" stroke-width="1.4"/>
+    <text x="172" y="27" text-anchor="middle" font-size="11.5" font-weight="800" fill="#333D4B">${o.start}</text>
+    <line x1="172" y1="38" x2="172" y2="54" stroke="#8B95A1" stroke-width="1.7"/>
+    <path d="M172 56 l-4.2 -7 h8.4 z" fill="#8B95A1"/>
+    ${q(172, 75, 216, o.q1)}
+    ${edge(120, 92, 86, 136, "예", true)}
+    ${edge(224, 92, 252, 136, "아니요", false)}
+    ${q(86, 153, 150, o.q2)}
+    ${q(252, 153, 160, o.q3)}
+    ${edge(56, 170, 40, 204, "예", true)}
+    ${edge(116, 170, 126, 204, "아니요", false)}
+    ${res(40, 220, "(가)")}
+    ${res(126, 220, "(나)")}
+    ${edge(218, 170, 202, 204, "예", true)}
+    ${edge(286, 170, 288, 194, "아니요", false)}
+    ${res(202, 220, "(다)")}
+    <rect x="236" y="194" width="104" height="40" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
+    <text x="288" y="210" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1B64DA">${o.q4[0]}</text>
+    <text x="288" y="224" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1B64DA">${o.q4[1]}</text>
+    ${edge(262, 234, 248, 266, "예", true)}
+    ${edge(314, 234, 312, 266, "아니요", false)}
+    ${res(248, 283, "(라)")}
+    ${res(312, 283, "(마)")}
+  </svg>`;
+}
+
+// ── 실지도 래스터 + 실좌표 오버레이 공용(plateMap 랩과 같은 지도·데이터 계보) ──────────
+// 배경 = PALEOMAP 실지도(public/geo/maps — C.R. Scotese, photos/CREDITS.md 기재 자산 재사용).
+// 점·경계 좌표는 plateMap.ts의 lon/lat 실데이터 복제(승격 때 공용 export 검토).
+// 투영(equirect): x=(lon+180)/360·1000, y=(90−lat)/180·500 — 창(window)으로 잘라 328px 폭에 맞춘다.
+export const MAP_NOW = "geo/maps/Map01a_PALEOMAP_PaleoAtlas_000.webp";
+let FIG_UID = Math.floor(Math.random() * 1e9); // 번들마다 난수 기점 — 갤러리(다중 번들 합본)의 clip id 충돌 방지
+
+export interface MapWin {
+  img: string;
+  open: string;
+  close: string;
+  px: (lon: number) => number;
+  py: (lat: number) => number;
+  h: number;
+}
+/** 경위도 창을 (x, y) 위치 폭 w 프레임으로 자른 실지도 배경 + 클립 그룹. */
+export function mapWindow(o: { lon0: number; lon1: number; lat0: number; lat1: number; x: number; y: number; w: number; src?: string }): MapWin {
+  const wx0 = ((o.lon0 + 180) / 360) * 1000;
+  const wx1 = ((o.lon1 + 180) / 360) * 1000;
+  const wy0 = ((90 - o.lat0) / 180) * 500;
+  const wy1 = ((90 - o.lat1) / 180) * 500;
+  const s = o.w / (wx1 - wx0);
+  const h = (wy1 - wy0) * s;
+  const id = `gmw${FIG_UID++}`;
+  const img = `<image href="${GEO_IMG_BASE}${o.src ?? MAP_NOW}" x="${(o.x - wx0 * s).toFixed(1)}" y="${(o.y - wy0 * s).toFixed(1)}" width="${(1000 * s).toFixed(1)}" height="${(500 * s).toFixed(1)}" preserveAspectRatio="none"/>`;
+  return {
+    img,
+    open: `<defs><clipPath id="${id}"><rect x="${o.x}" y="${o.y}" width="${o.w}" height="${h.toFixed(1)}" rx="10"/></clipPath></defs><g clip-path="url(#${id})">`,
+    close: `</g><rect x="${o.x}" y="${o.y}" width="${o.w}" height="${h.toFixed(1)}" rx="10" fill="none" stroke="#8B95A1" stroke-width="1.4"/>`,
+    px: (lon: number) => o.x + (((lon + 180) / 360) * 1000 - wx0) * s,
+    py: (lat: number) => o.y + (((90 - lat) / 180) * 500 - wy0) * s,
+    h,
+  };
+}
+
+/** 지진 95지점(lon, lat, 등급) — 실제 지진대(불의 고리·알프스-히말라야·대양저 경계·열곡). plateMap 복제. */
+export const QUAKES: readonly (readonly [number, number, number])[] = [
+  [-71.6, -33.0, 3], [-70.3, -27.4, 2], [-71.7, -30.6, 2], [-73.0, -36.8, 3], [-72.1, -39.8, 2],
+  [-76.9, -12.1, 3], [-79.0, -8.1, 2], [-79.9, -2.2, 2], [-78.5, 0.6, 1],
+  [-77.0, 3.9, 2], [-84.1, 9.9, 2], [-86.3, 12.2, 2], [-90.5, 14.3, 2],
+  [-93.1, 16.4, 2], [-99.1, 17.5, 3], [-102.3, 18.6, 2], [-104.8, 19.9, 1],
+  [-118.2, 34.1, 3], [-122.4, 37.8, 3], [-124.2, 40.4, 2], [-125.6, 44.5, 1], [-131.5, 52.5, 2],
+  [-147.5, 61.2, 2], [-153.0, 57.8, 2], [-160.5, 55.3, 2], [-168.0, 53.5, 1],
+  [-175.0, 51.8, 2], [178.5, 51.7, 1], [171.0, 52.3, 1], [160.3, 54.8, 2], [158.6, 52.9, 3],
+  [153.9, 47.8, 2], [148.0, 44.5, 2], [143.9, 42.7, 3], [142.4, 38.3, 3], [141.0, 35.7, 2], [132.6, 33.9, 2],
+  [140.6, 30.5, 1], [143.2, 25.0, 2], [146.0, 18.0, 2], [147.5, 13.5, 1],
+  [121.5, 17.5, 2], [124.0, 11.5, 2], [126.5, 7.0, 3],
+  [95.9, 4.4, 3], [97.9, 1.5, 2], [100.9, -2.9, 2], [102.9, -5.3, 2], [106.0, -7.6, 2],
+  [110.5, -8.3, 2], [115.2, -8.8, 2], [119.8, -9.8, 1], [124.9, -8.8, 2], [119.9, -0.6, 2],
+  [143.9, -4.0, 2], [150.5, -5.6, 2], [156.0, -7.5, 2], [161.0, -10.4, 1],
+  [167.5, -15.5, 2], [173.5, -41.3, 2], [171.7, -43.5, 2],
+  [-175.0, -21.0, 2], [-177.5, -26.0, 1], [-179.0, -30.5, 1],
+  [84.7, 28.2, 3], [86.9, 27.9, 2], [78.5, 32.5, 1], [73.6, 34.5, 2], [70.5, 36.5, 3],
+  [67.0, 30.2, 2], [96.1, 22.0, 2], [91.9, 27.3, 1], [74.6, 42.9, 1],
+  [57.3, 30.3, 2], [52.8, 28.5, 1], [48.5, 38.5, 1], [44.0, 39.5, 2], [38.3, 38.5, 3], [35.5, 37.0, 2],
+  [28.2, 36.7, 2], [25.7, 35.3, 2], [22.0, 38.2, 2], [16.3, 38.3, 2], [13.5, 42.5, 2], [3.0, 36.6, 1],
+  [-17.0, 66.2, 1], [-22.8, 63.9, 2], [-29.5, 52.5, 1], [-43.0, 29.5, 1], [-45.5, 15.5, 1], [-13.5, -7.5, 1],
+  [40.0, 12.5, 1], [36.8, -1.3, 1], [29.5, -6.0, 1], [34.9, -13.5, 1],
+];
+
+/** 화산 ~60지점(lon, lat) — 불의 고리+지중해+열곡+아이슬란드. 알프스-히말라야 벨트는 실제로
+ *  화산이 드물어 비어 있다(지진·화산 분포가 "거의(완전이 아닌)" 일치하는 실증). plateMap 복제. */
+export const VOLCS: readonly (readonly [number, number])[] = [
+  [-78.4, -0.7], [-77.4, 1.2], [-75.3, 4.9], [-71.9, -15.8], [-67.7, -23.3], [-72.0, -39.4], [-72.6, -42.8], [-70.6, -35.4],
+  [-90.9, 14.5], [-89.6, 13.8], [-86.7, 12.5], [-84.2, 10.5], [-98.6, 19.0], [-103.6, 19.5],
+  [-122.2, 46.2], [-121.7, 45.4], [-122.3, 41.4], [-153.4, 59.4], [-161.9, 55.4], [-164.0, 54.8], [-176.1, 52.1],
+  [160.6, 56.1], [158.8, 53.3], [153.2, 48.1],
+  [138.7, 35.4], [130.7, 31.6], [131.1, 32.9], [140.8, 42.5],
+  [140.9, 27.2], [145.8, 18.1],
+  [120.4, 15.1], [123.7, 13.3], [121.0, 14.0],
+  [98.4, 3.2], [105.4, -6.1], [110.4, -7.5], [112.9, -7.9], [118.0, -8.25], [121.7, -8.5], [124.8, 1.4], [127.9, 1.7],
+  [152.2, -4.3], [151.3, -5.1], [168.3, -16.3], [175.6, -39.3], [177.2, -37.5],
+  [-175.4, -20.5],
+  [-19.7, 64.0], [-17.3, 64.4], [-22.4, 63.9], [-25.5, 37.8], [-17.9, 28.6],
+  [15.0, 37.7], [14.4, 40.8], [15.2, 38.8], [25.4, 36.4],
+  [40.7, 13.6], [29.2, -1.5], [35.9, -2.8],
+  [-155.3, 19.4],
+];
+
+/** 대서양 한가운데를 남북으로 지나는 판 경계 폴리라인(lon, lat) — plateMap BOUNDS 복제(확대 때 전 경계 승격). */
+export const RIDGE_ATL: readonly (readonly [number, number])[] = [
+  [-10, 72], [-16, 68], [-19, 65], [-24, 61], [-28, 56], [-31, 50], [-30, 44], [-35, 38], [-41, 31],
+  [-45, 24], [-46, 17], [-40, 11], [-31, 7], [-25, 2], [-16, -4], [-13, -11], [-14, -19], [-15, -27],
+  [-17, -35], [-14, -43], [-12, -50],
+];
+
+/** 판 경계 폴리라인 전체(lon, lat) — plateMap BOUNDS 복제(날짜변경선 넘는 경계는 2조각). */
+export const BOUNDS_ALL: readonly (readonly (readonly [number, number])[])[] = [
+  [[-150, 58], [-159, 56], [-168, 53.6], [-179.8, 51.6]],
+  [[179.8, 51.6], [171, 52.5], [163, 55], [158, 52], [153, 47], [147, 43], [142, 39], [140, 34], [141, 29], [143, 23], [146, 17], [147, 11], [143, 5]],
+  [[-131, 52], [-127, 48], [-125, 43], [-122, 37], [-116, 31], [-108, 23], [-104, 18], [-96, 15], [-88, 11], [-84, 9], [-80, 1], [-78, -7], [-74, -15], [-71, -23], [-72, -32], [-74, -41], [-76, -50]],
+  [[122, 20], [125, 13], [127, 6], [129, 0]],
+  [[92, 10], [95, 4], [98, -2], [102, -6], [107, -8.5], [113, -9.5], [119, -10], [125, -9], [131, -7]],
+  [[-179.5, -16], [-177.5, -23], [-178.5, -29]],
+  [[179.5, -30], [176, -36], [172, -42], [167, -47]],
+  RIDGE_ATL,
+  [[-9, 36], [0, 37], [10, 38], [19, 39], [27, 37], [35, 37], [44, 37], [52, 33], [60, 28], [68, 31], [76, 33], [84, 29], [92, 27], [98, 25]],
+  [[34, 28], [37, 21], [41, 14], [39, 8], [36, 2], [34, -4], [32, -10], [34, -16], [34, -22]],
+];
+
+
+export const quakeDot = (x: number, y: number, r = 2.1): string =>
+  `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="#FF5252" stroke="rgba(255,255,255,.6)" stroke-width=".6"/>`;
+export const volcTri = (x: number, y: number, s = 3.1): string =>
+  `<path d="M${x.toFixed(1)} ${(y - s).toFixed(1)} l${s * 0.9} ${s * 1.7} h-${s * 1.8} z" fill="#FFA94D" stroke="#7E3A14" stroke-width=".6"/>`;
+export const chip = (x: number, y: number, t: string, w = 36): string =>
+  `<rect x="${x}" y="${y}" width="${w}" height="19" rx="9.5" fill="rgba(255,255,255,.94)" stroke="#C4CAD2" stroke-width="1.1"/>
+   <text x="${x + w / 2}" y="${y + 13.5}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#4E5968">${t}</text>`;
+
+/** 세계 지진(또는 화산) 분포 지도 — 실지도 배경 + 실좌표 점.
+ *  boundary: 판 경계 폴리라인 겹침(노랑 점선 — plateMap 랩과 같은 문법) · marks: ㉮㉯ 위치 칩. */
+export function geoQuakeBeltFig(o?: { kind?: "quake" | "volcano"; boundary?: boolean; marks?: { lon: number; lat: number; t: string }[] }): string {
+  const kind = o?.kind ?? "quake";
+  const W = mapWindow({ lon0: -180, lon1: 180, lat0: 72, lat1: -58, x: 8, y: 8, w: 328 });
+  const marks =
+    kind === "quake"
+      ? QUAKES.map(([lon, lat]) => quakeDot(W.px(lon), W.py(lat))).join("")
+      : VOLCS.map(([lon, lat]) => volcTri(W.px(lon), W.py(lat))).join("");
+  const bounds = o?.boundary
+    ? BOUNDS_ALL.map(
+        (line) =>
+          `<path d="${line.map(([lon, lat], i) => `${i === 0 ? "M" : "L"}${W.px(lon).toFixed(1)} ${W.py(lat).toFixed(1)}`).join("")}" stroke="rgba(255,255,255,.55)" stroke-width="3.6" fill="none"/>` +
+          `<path d="${line.map(([lon, lat], i) => `${i === 0 ? "M" : "L"}${W.px(lon).toFixed(1)} ${W.py(lat).toFixed(1)}`).join("")}" stroke="#FFD43B" stroke-width="1.8" stroke-dasharray="6 4" fill="none"/>`,
+      ).join("")
+    : "";
+  const pos = o?.marks
+    ? o.marks.map((m) => {
+        const x = W.px(m.lon);
+        const y = W.py(m.lat);
+        return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="10.5" fill="rgba(255,255,255,.94)" stroke="#D6336C" stroke-width="1.6"/>
+        <text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#D6336C">${m.t}</text>`;
+      }).join("")
+    : "";
+  const legend =
+    (kind === "quake"
+      ? `${quakeDot(16, 8 + W.h + 13, 2.6)}<text x="26" y="${8 + W.h + 17}" font-size="10.5" fill="#4E5968">지진이 발생한 지점</text>`
+      : `${volcTri(16, 8 + W.h + 13, 3.4)}<text x="26" y="${8 + W.h + 17}" font-size="10.5" fill="#4E5968">화산 활동이 일어난 지역</text>`) +
+    (o?.boundary
+      ? `<line x1="168" y1="${8 + W.h + 13}" x2="190" y2="${8 + W.h + 13}" stroke="#FFD43B" stroke-width="2.6" stroke-dasharray="6 4"/><text x="196" y="${8 + W.h + 17}" font-size="10.5" fill="#4E5968">판의 경계</text>`
+      : "");
+  return `<svg viewBox="0 0 344 ${Math.round(8 + W.h + 26)}" ${NS} fill="none" role="img" aria-label="세계 지도 위에 ${kind === "quake" ? "지진이 발생한 지점" : "화산 활동이 일어난 지역"}이 표시되어 있어요${o?.boundary ? ". 판의 경계선도 함께 그려져 있어요" : ""}. 표시가 어떻게 분포하는지 살펴보세요">
+    ${W.open}${W.img}${bounds}${pos}${W.close}
+    ${marks}
+    ${legend}
+  </svg>`;
+}
+
+/** (가)(나) 두 분포 지도 대조(상하 2패널) — 지진·화산 실좌표. 알프스-히말라야 벨트의
+ *  화산 공백이 "거의 일치(완전 일치 아님)"의 실측 근거로 그림에 남는다. */
+export function geoTwinMapsFig(o: { left: "quake" | "volcano"; right: "quake" | "volcano" }): string {
+  const panel = (y: number, kind: "quake" | "volcano", label: string): string => {
+    const W = mapWindow({ lon0: -180, lon1: 180, lat0: 72, lat1: -58, x: 8, y, w: 328 });
+    const marks =
+      kind === "quake"
+        ? QUAKES.map(([lon, lat]) => quakeDot(W.px(lon), W.py(lat), 1.9)).join("")
+        : VOLCS.map(([lon, lat]) => volcTri(W.px(lon), W.py(lat), 2.8)).join("");
+    return `${W.open}${W.img}${W.close}${marks}${chip(14, y + 6, label)}`;
+  };
+  const h = 118.4;
+  const ly = 8 + h + 8 + h + 12;
+  return `<svg viewBox="0 0 344 ${Math.round(ly + 16)}" ${NS} fill="none" role="img" aria-label="두 장의 세계 지도. 가 지도와 나 지도에 서로 다른 종류의 표시가 찍혀 있어요. 두 분포를 비교해 보세요">
+    ${panel(8, o.left, "(가)")}
+    ${panel(8 + h + 8, o.right, "(나)")}
+    ${quakeDot(16, ly + 5, 2.6)}<text x="26" y="${ly + 9}" font-size="10.5" fill="#4E5968">지진 발생 지점</text>
+    ${volcTri(190, ly + 5, 3.4)}<text x="200" y="${ly + 9}" font-size="10.5" fill="#4E5968">화산 활동 지역</text>
+  </svg>`;
+}
+
+/** 판 경계 실경로 + 이동 방향 화살표 실지도.
+ *  scene "atlantic"(기본) = 남대서양 확대(벌어짐 ㉮) · "world2" = 세계 전도에 벌어짐 ㉮·모임 ㉯ 두 경계. */
+export function geoPlateArrowsFig(o?: { scene?: "atlantic" | "world2" }): string {
+  const scene = o?.scene ?? "atlantic";
+  const W =
+    scene === "atlantic"
+      ? mapWindow({ lon0: -75, lon1: 25, lat0: 20, lat1: -40, x: 8, y: 8, w: 328 })
+      : mapWindow({ lon0: -105, lon1: 25, lat0: 18, lat1: -48, x: 8, y: 8, w: 328 });
+  const line = (pts: readonly (readonly [number, number])[]): string => {
+    const d = pts.map(([lon, lat], i) => `${i === 0 ? "M" : "L"}${W.px(lon).toFixed(1)} ${W.py(lat).toFixed(1)}`).join("");
+    return `<path d="${d}" stroke="rgba(255,255,255,.75)" stroke-width="4.2" fill="none"/>
+      <path d="${d}" stroke="#FFD43B" stroke-width="2.2" stroke-dasharray="8 5" fill="none"/>`;
+  };
+  const arrow = (lon: number, lat: number, deg: number, len = 13): string => {
+    const x = W.px(lon);
+    const y = W.py(lat);
+    return `<g transform="rotate(${deg} ${x.toFixed(1)} ${y.toFixed(1)})">
+      <line x1="${(x - len).toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x + len - 5).toFixed(1)}" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,.85)" stroke-width="5.6"/>
+      <line x1="${(x - len).toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x + len - 5).toFixed(1)}" y2="${y.toFixed(1)}" stroke="#1971C2" stroke-width="3"/>
+      <path d="M${(x + len + 2).toFixed(1)} ${y.toFixed(1)} l-10 -5.5 v11 z" fill="#1971C2" stroke="rgba(255,255,255,.85)" stroke-width="1.1"/>
+    </g>`;
+  };
+  const tag = (lon: number, lat: number, t: string): string => {
+    const x = W.px(lon);
+    const y = W.py(lat);
+    return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="10.5" fill="rgba(255,255,255,.94)" stroke="#D6336C" stroke-width="1.6"/>
+      <text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#D6336C">${t}</text>`;
+  };
+  const body =
+    scene === "atlantic"
+      ? `${line(RIDGE_ATL)}${arrow(-52, -14, 180, 16)}${arrow(8, -10, 0, 16)}`
+      : `${line(RIDGE_ATL)}${line(BOUNDS_ALL[2])}${arrow(-48, -4, 180, 13)}${arrow(2, -2, 0, 13)}${arrow(-92, -26, 0, 13)}${arrow(-58, -28, 180, 13)}`;
+  const tags =
+    scene === "atlantic"
+      ? tag(-20, 4, "㉮")
+      : `${tag(-21, 6, "㉮")}${tag(-79, -37, "㉯")}`;
+  const ly = 8 + W.h + 13;
+  return `<svg viewBox="0 0 344 ${Math.round(8 + W.h + 26)}" ${NS} fill="none" role="img" aria-label="실제 지도 위에 판의 경계선과 경계 양쪽 판이 움직이는 방향 화살표가 표시되어 있어요">
+    ${W.open}${W.img}
+    ${body}
+    ${W.close}
+    ${tags}
+    <line x1="16" y1="${ly}" x2="38" y2="${ly}" stroke="#FFD43B" stroke-width="3" stroke-dasharray="8 5"/>
+    <text x="44" y="${ly + 4}" font-size="10.5" fill="#4E5968">판의 경계</text>
+    <line x1="128" y1="${ly}" x2="146" y2="${ly}" stroke="#1971C2" stroke-width="3"/>
+    <path d="M152 ${ly} l-8 -4.6 v9.2 z" fill="#1971C2"/>
+    <text x="158" y="${ly + 4}" font-size="10.5" fill="#4E5968">판의 이동 방향</text>
+  </svg>`;
+}
+
+/** 대륙 이동 증거 실지도 창 — mode "fossil"(기본): 남대서양, 마주 보는 해안 화석 구역 띠.
+ *  mode "mountain": 북대서양, 북아메리카 동부와 유럽 북부의 산맥 띠가 이어짐. */
+export function geoCoastFitFig(o?: { mode?: "fossil" | "mountain" }): string {
+  const mode = o?.mode ?? "fossil";
+  if (mode === "mountain") {
+    const W = mapWindow({ lon0: -92, lon1: 26, lat0: 66, lat1: 22, x: 8, y: 8, w: 328 });
+    const belt = (a: readonly [number, number], b: readonly [number, number]): string =>
+      `<line x1="${W.px(a[0]).toFixed(1)}" y1="${W.py(a[1]).toFixed(1)}" x2="${W.px(b[0]).toFixed(1)}" y2="${W.py(b[1]).toFixed(1)}" stroke="rgba(255,255,255,.75)" stroke-width="11" stroke-linecap="round"/>
+       <line x1="${W.px(a[0]).toFixed(1)}" y1="${W.py(a[1]).toFixed(1)}" x2="${W.px(b[0]).toFixed(1)}" y2="${W.py(b[1]).toFixed(1)}" stroke="#B0836A" stroke-width="7" opacity=".9" stroke-linecap="round"/>`;
+    return `<svg viewBox="0 0 344 ${Math.round(8 + W.h + 8)}" ${NS} fill="none" role="img" aria-label="바다를 사이에 둔 두 대륙의 실제 지도예요. 왼쪽 대륙과 오른쪽 대륙에 있는 산맥 구역이 굵은 띠로 표시되어 있고, 두 띠가 점선으로 이어져 있어요">
+      ${W.open}${W.img}
+      ${belt([-84, 33], [-66, 46])}
+      ${belt([-8, 54], [9, 63])}
+      <line x1="${W.px(-64).toFixed(1)}" y1="${W.py(47).toFixed(1)}" x2="${W.px(-10).toFixed(1)}" y2="${W.py(53.5).toFixed(1)}" stroke="#E8CB9C" stroke-width="2" stroke-dasharray="6 5"/>
+      ${W.close}
+      ${chip(14, 14, "(가)")}
+      ${chip(294, 14, "(나)")}
+    </svg>`;
+  }
+  const W = mapWindow({ lon0: -85, lon1: 40, lat0: 15, lat1: -42, x: 8, y: 8, w: 328 });
+  const band = (lon: number, lat0: number, lat1: number, bend: number): string =>
+    `<path d="M${W.px(lon).toFixed(1)} ${W.py(lat0).toFixed(1)} q${bend} ${(W.py(lat1) - W.py(lat0)) / 2} 0 ${(W.py(lat1) - W.py(lat0)).toFixed(1)}" stroke="rgba(255,255,255,.75)" stroke-width="10" fill="none" stroke-linecap="round"/>
+     <path d="M${W.px(lon).toFixed(1)} ${W.py(lat0).toFixed(1)} q${bend} ${(W.py(lat1) - W.py(lat0)) / 2} 0 ${(W.py(lat1) - W.py(lat0)).toFixed(1)}" stroke="#E64980" stroke-width="6" opacity=".8" fill="none" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 344 ${Math.round(8 + W.h + 8)}" ${NS} fill="none" role="img" aria-label="바다를 사이에 둔 두 대륙의 실제 지도예요. 왼쪽 대륙의 오른쪽 해안과 오른쪽 대륙의 왼쪽 해안 모양이 서로 닮았고, 양쪽 해안의 같은 화석 구역이 점선으로 이어져 있어요">
+    ${W.open}${W.img}
+    ${band(-45, -18, -32, 10)}
+    ${band(13.5, -16, -30, -10)}
+    <line x1="${W.px(-42).toFixed(1)}" y1="${W.py(-25).toFixed(1)}" x2="${W.px(11).toFixed(1)}" y2="${W.py(-23).toFixed(1)}" stroke="#FAA2C1" stroke-width="2" stroke-dasharray="6 5"/>
+    ${W.close}
+    ${chip(14, 14, "(가)")}
+    ${chip(294, 14, "(나)")}
+  </svg>`;
+}
+
+/** 대륙 이동 4단계 — PALEOMAP 실제 고지리 지도 4장(2×2, 순서 뒤섞어 라벨).
+ *  (가)=약 9천만 년 전 · (나)=약 2억 4천만 년 전(판게아) · (다)=현재 · (라)=약 1억 7천만 년 전.
+ *  시대 수치는 그림에 쓰지 않는다(순서 추론 과제 보존). */
+export function geoDriftPanelsFig(): string {
+  const P = (x: number, y: number, src: string, label: string): string => {
+    const id = `gdp${FIG_UID++}`;
+    return `<defs><clipPath id="${id}"><rect x="${x}" y="${y}" width="160" height="80" rx="8"/></clipPath></defs>
+    <g clip-path="url(#${id})"><image href="${GEO_IMG_BASE}geo/maps/${src}" x="${x}" y="${y}" width="160" height="80" preserveAspectRatio="none"/></g>
+    <rect x="${x}" y="${y}" width="160" height="80" rx="8" fill="none" stroke="#8B95A1" stroke-width="1.3"/>
+    ${chip(x + 6, y + 6, label, 34)}`;
+  };
+  return `<svg viewBox="0 0 344 184" ${NS} fill="none" role="img" aria-label="네 장의 실제 세계 지도. 대륙의 분포가 서로 다른 네 모습에 가, 나, 다, 라 표시가 붙어 있어요">
+    ${P(8, 8, "ma090.webp", "(가)")}
+    ${P(176, 8, "ma240.webp", "(나)")}
+    ${P(8, 96, "Map01a_PALEOMAP_PaleoAtlas_000.webp", "(다)")}
+    ${P(176, 96, "ma175.webp", "(라)")}
+  </svg>`;
+}
+
+/** 변성암 광물 배열·압력 도해 — candidates: 배열만 보여 주고 압력 방향 후보 ㉮(위아래)·㉯(좌우) 제시.
+ *  pair: (가)(나) 두 도해 비교(둘 다 위아래 압력, 배열만 다름). */
+export function geoPressFig(o: { mode: "candidates" | "pair" }): string {
+  const grains = (cx: number, cy: number, dir: "h" | "v"): string => {
+    let out = "";
+    const rows = [[-26, 3], [0, 4], [26, 3]] as [number, number][];
+    rows.forEach(([dy, n]) => {
+      for (let i = 0; i < n; i++) {
+        const dx = (i - (n - 1) / 2) * 34;
+        out += dir === "h"
+          ? `<ellipse cx="${cx + dx}" cy="${cy + dy}" rx="14" ry="4.6" fill="#8A6844" stroke="#5E4430" stroke-width="1"/>`
+          : `<ellipse cx="${cx + dy}" cy="${cy + dx * 0.68}" rx="4.6" ry="14" fill="#8A6844" stroke="#5E4430" stroke-width="1"/>`;
+      }
+    });
+    return out;
+  };
+  const press = (cx: number, topY: number, botY: number, color: string): string =>
+    `<line x1="${cx}" y1="${topY - 22}" x2="${cx}" y2="${topY - 4}" stroke="${color}" stroke-width="3.4"/>
+     <path d="M${cx} ${topY} l-6 -9 h12 z" fill="${color}"/>
+     <line x1="${cx}" y1="${botY + 22}" x2="${cx}" y2="${botY + 4}" stroke="${color}" stroke-width="3.4"/>
+     <path d="M${cx} ${botY} l-6 9 h12 z" fill="${color}"/>`;
+  if (o.mode === "pair") {
+    const panel = (x: number, dir: "h" | "v", label: string): string =>
+      `<g transform="translate(${x} 0)">
+        <rect x="10" y="52" width="140" height="92" rx="8" fill="#EFE7DA" stroke="#9C8465" stroke-width="1.5"/>
+        ${grains(80, 98, dir)}
+        ${press(80, 52, 144, "#1B64DA")}
+        <rect x="14" y="160" width="34" height="19" rx="9.5" fill="#FFFFFF" stroke="#C4CAD2" stroke-width="1.2"/>
+        <text x="31" y="173.5" text-anchor="middle" font-size="11.5" font-weight="800" fill="#4E5968">${label}</text>
+      </g>`;
+    return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="가와 나 두 그림. 둘 다 암석 덩어리를 위아래에서 누르는 화살표가 있고, 가는 납작한 광물들이 가로로 누워 있고 나는 세로로 서 있어요">
+      ${panel(14, "h", "(가)")}
+      ${panel(174, "v", "(나)")}
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="암석 덩어리 속에 납작한 광물들이 가로 방향으로 나란히 누워 있어요. 위아래 방향 화살표 쌍에 ㉮, 좌우 방향 화살표 쌍에 ㉯가 표시되어 있어요">
+    <rect x="92" y="58" width="160" height="92" rx="8" fill="#EFE7DA" stroke="#9C8465" stroke-width="1.5"/>
+    ${grains(172, 104, "h")}
+    ${press(172, 58, 150, "#1B64DA")}
+    <text x="186" y="30" font-size="13" font-weight="800" fill="#1B64DA">㉮</text>
+    <line x1="52" y1="104" x2="76" y2="104" stroke="#F76707" stroke-width="3.4"/>
+    <path d="M88 104 l-11 -6 v12 z" fill="#F76707"/>
+    <line x1="292" y1="104" x2="268" y2="104" stroke="#F76707" stroke-width="3.4"/>
+    <path d="M256 104 l11 -6 v12 z" fill="#F76707"/>
+    <text x="40" y="88" font-size="13" font-weight="800" fill="#F76707">㉯</text>
+  </svg>`;
+}
+
+/** 판의 구조 단면 시험판 — plateSectionFig의 라벨(대륙·해양 지각, 맨틀의 윗부분, 판·두께)을
+ *  ㉠~㉣로 감춘다(라벨 인쇄판은 이름·두께 문항 정답 유출 — geoCycleQuizFig 계보). */
+export function geoPlateQuizFig(): string {
+  const tag = (x: number, y: number, t: string): string =>
+    `<circle cx="${x}" cy="${y}" r="11" fill="#FFFFFF" stroke="#5AA2F8" stroke-width="1.6"/>
+     <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#1B64DA">${t}</text>`;
+  return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="땅의 단면 그림. 왼쪽 뭍과 오른쪽 바다 밑의 겉껍질 층, 그 아래 층이 있고, 위쪽 일부 구간을 묶은 표시와 함께 동그라미 기호 네 개가 붙어 있어요">
+    <path d="M188 40 h132 v26 h-132 z" fill="#BFE0F8"/>
+    <path d="M196 46 q10 4 20 0 M250 52 q10 4 20 0" stroke="#8FBBF2" stroke-width="1.6"/>
+    <path d="M24 40 h164 v26 l-14 0 q-6 42 -34 46 q-40 6 -84 0 q-26 -4 -32 -40 z" fill="#C9A26A" stroke="#8E6A34" stroke-width="1.6"/>
+    <path d="M34 48 q30 -6 60 0" stroke="#E8CB9C" stroke-width="3" opacity=".8"/>
+    <path d="M52 40 q4 -8 10 0 M96 40 q4 -8 10 0" stroke="#3F9B4F" stroke-width="1.8"/>
+    <path d="M174 66 h146 v20 h-146 z" fill="#8B7355" stroke="#5E4A30" stroke-width="1.5"/>
+    <path d="M24 72 q6 36 32 40 q44 6 84 0 q28 -4 34 -46 l146 20 v64 h-296 z" fill="#F29A66" stroke="#C4602E" stroke-width="1.4"/>
+    <line x1="24" y1="150" x2="320" y2="150" stroke="#7E3A14" stroke-width="2.2" stroke-dasharray="8 6"/>
+    <rect x="24" y="150" width="296" height="46" fill="#E07038" opacity=".85"/>
+    <path d="M48 172 q14 -8 28 0 M120 178 q14 -8 28 0 M210 170 q14 -8 28 0 M280 180 q12 -7 24 0" stroke="#FFB98C" stroke-width="2" opacity=".8"/>
+    <rect x="24" y="40" width="296" height="156" stroke="#4E4432" stroke-width="1.6"/>
+    ${tag(96, 26, "㉠")}
+    <path d="M96 37 v10" stroke="#4E5968" stroke-width="1.3"/>
+    ${tag(260, 26, "㉡")}
+    <path d="M260 37 v33" stroke="#4E5968" stroke-width="1.3"/>
+    ${tag(150, 128, "㉢")}
+    <path d="M8 40 q-6 2 -6 12 v34 q0 8 -5 10 q5 2 5 10 v34 q0 8 6 10" stroke="#4E5968" stroke-width="1.8" fill="none"/>
+    ${tag(14, 130, "㉣")}
+  </svg>`;
+}
+
+/** 여러 대륙의 옛 빙하 흔적 + 이동 방향 — 실지도(남반구 중심 창) 위 오버레이. 적도선 포함. */
+export function geoGlacierMapFig(): string {
+  const W = mapWindow({ lon0: -90, lon1: 160, lat0: 30, lat1: -60, x: 8, y: 8, w: 328 });
+  const ice = (lon: number, lat: number, rx: number, ry: number): string =>
+    `<ellipse cx="${W.px(lon).toFixed(1)}" cy="${W.py(lat).toFixed(1)}" rx="${rx}" ry="${ry}" fill="#A5D8FF" opacity=".82" stroke="#1971C2" stroke-width="1.2"/>`;
+  const arr = (lon: number, lat: number, deg: number): string => {
+    const x = W.px(lon);
+    const y = W.py(lat);
+    return `<g transform="rotate(${deg} ${x.toFixed(1)} ${y.toFixed(1)})">
+      <line x1="${(x - 12).toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x + 7).toFixed(1)}" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,.85)" stroke-width="5.4"/>
+      <line x1="${(x - 12).toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x + 7).toFixed(1)}" y2="${y.toFixed(1)}" stroke="#1971C2" stroke-width="2.8"/>
+      <path d="M${(x + 14).toFixed(1)} ${y.toFixed(1)} l-9 -5 v10 z" fill="#1971C2" stroke="rgba(255,255,255,.85)" stroke-width="1"/>
+    </g>`;
+  };
+  const eqY = W.py(0);
+  const ly = 8 + W.h + 12;
+  return `<svg viewBox="0 0 344 ${Math.round(ly + 16)}" ${NS} fill="none" role="img" aria-label="실제 세계 지도 위에 여러 대륙에 남은 옛 빙하의 흔적과 빙하가 움직인 방향 화살표가 표시되어 있어요. 적도를 나타내는 선도 있어요">
+    ${W.open}${W.img}
+    <line x1="8" y1="${eqY.toFixed(1)}" x2="336" y2="${eqY.toFixed(1)}" stroke="#FFC078" stroke-width="1.6" stroke-dasharray="7 5"/>
+    ${ice(-56, -28, 15, 10)}
+    ${ice(24, -29, 16, 10)}
+    ${ice(78, 21, 13, 9)}
+    ${ice(133, -27, 15, 9)}
+    ${arr(-60, -20, -140)}
+    ${arr(28, -20, -90)}
+    ${arr(80, 28, -70)}
+    ${arr(139, -19, -35)}
+    ${W.close}
+    <rect x="12" y="${(eqY - 9).toFixed(1)}" width="32" height="17" rx="8.5" fill="rgba(255,244,230,.95)" stroke="#F76707" stroke-width="1"/>
+    <text x="28" y="${(eqY + 3.5).toFixed(1)}" text-anchor="middle" font-size="9.5" font-weight="800" fill="#D9480F">적도</text>
+    <rect x="16" y="${ly}" width="14" height="10" fill="#A5D8FF" stroke="#1971C2" stroke-width="1"/>
+    <text x="36" y="${ly + 9}" font-size="10.5" fill="#4E5968">빙하의 흔적</text>
+    <line x1="128" y1="${ly + 5}" x2="146" y2="${ly + 5}" stroke="#1971C2" stroke-width="2.6"/>
+    <path d="M152 ${ly + 5} l-8 -4.6 v9.2 z" fill="#1971C2"/>
+    <text x="158" y="${ly + 9}" font-size="10.5" fill="#4E5968">빙하가 이동한 방향</text>
+  </svg>`;
+}
+
 
 // ── g2u3(빛과 파동) 시험 전용 ──────────────────────────────
 // 규칙 계승: 값 읽기 정답 수치는 aria-label 금지(그림 속 조건 값 서술은 동등 접근이라 허용),

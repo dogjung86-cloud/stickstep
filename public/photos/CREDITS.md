@@ -55,7 +55,7 @@ NASA 이미지는 퍼블릭 도메인이며 NASA의 보증을 의미하지 않�
 |---|---|---|
 | g2u2/limestone-cave.webp | [Postojna Caves의 종유석·석순](https://commons.wikimedia.org/wiki/File:Stalactites_and_Stalagmites_at_Postojna_Caves_-_panoramio.jpg), Adrian Farwell | CC BY 3.0, 크롭·리사이즈 |
 | g2u2/yehliu-geopark.webp | [Yehliu Mushroom Rock](https://commons.wikimedia.org/wiki/File:Yehliu_-_Mushroom_Rock_01.jpg), Bernard Gagnon | CC BY-SA 3.0, 크롭·리사이즈 |
-| g2u2/earthquake-map.webp | [World map showing global distribution of earthquakes](https://www.usgs.gov/media/images/world-map-showing-global-distribution-earthquakes), USGS | Public Domain (USGS), 리사이즈 |
+| g2u2/earthquake-map.webp | [Quake epicenters 1963-98](https://commons.wikimedia.org/wiki/File:Quake_epicenters_1963-98.png), NASA DTAM project (PDE 358,214 events) | Public Domain (NASA), 상단 제목 띠 크롭·리사이즈 |
 | g2u3/convex-mirror.webp | [Convex mirror in Atlanta garage entrance](https://commons.wikimedia.org/wiki/File:2008-03-14_Convex_mirror_in_Atlanta_garage_entrance.jpg), Ildar Sagdejev | CC BY-SA 4.0, 크롭·리사이즈 |
 | g2u3/concave-mirror.webp | [Concave mirror, Scottish Lighthouse Museum](https://commons.wikimedia.org/wiki/File:Concave_mirror,_Scottish_Lighthouse_Museum_-_geograph.org.uk_-_562674.jpg), David Hawgood | CC BY-SA 2.0, 크롭·리사이즈 |
 | g2u3/prism-split.webp | [Dispersive prism](https://commons.wikimedia.org/wiki/File:Dispersive_prism.png), Kelvinsong | CC0, 크롭·리사이즈 |
@@ -233,3 +233,21 @@ NASA 이미지는 퍼블릭 도메인이며 NASA의 보증을 의미하지 않�
 | polarbear.webp | 북극곰(알래스카) | Alan Wilson, Wikimedia Commons "Polar Bear - Alaska (cropped).jpg" | CC BY-SA 3.0 |
 | jangbogo.webp | 장보고 과학 기지(남극) | Σρτ, Wikimedia Commons "Jang Bogo Station South View 1.jpg" | CC BY-SA 4.0 |
 | krill.webp | 남극 크릴 | Uwe Kils, Wikimedia Commons "Antarctic krill (Euphausia superba).jpg" | CC BY-SA 3.0 |
+
+## 시험 g2u2 v2(지권의 변화 재출제) 신규 실사 (public/exam/g2u2)
+
+| 파일 | 내용 | 출처 | 라이선스 |
+|---|---|---|---|
+| strata-tilt.webp | 겹겹이 쌓인 층리 절벽(석탄층 노두) | Michael C. Rygel, Wikimedia Commons "Channel-StellartonFm-CoalburnPit.JPG" | CC BY-SA 3.0 |
+| mountain-fossil.webp | 산 지층에서 발견되는 화석(암모나이트 표본) | H. Zell (Llez), Wikimedia Commons "Pleuroceras solare, Little Switzerland, Bavaria, Germany.jpg" | CC BY-SA 3.0 |
+| frost-split.webp | 동결 쐐기(바위 틈의 얼음) | codex(ChatGPT image_gen) 생성 이미지 | 자체 생성 |
+
+## 시험 u7 v2(태양계 재출제) 신규 실사 — 행성 전면 5종 (public/photos/)
+
+| 파일 | 내용 | 출처 · 크레딧 | 라이선스 |
+|---|---|---|---|
+| mercury.jpg | 수성 전면(MESSENGER 컬러 모자이크) | NASA/Johns Hopkins University APL/Carnegie Institution of Washington — Wikimedia "Mercury in color - Prockter07-edit1.jpg" | Public Domain (NASA) |
+| venus.jpg | 금성 전면(Mariner 10, 2020 재처리 — 원본 2패널 중 왼쪽 패널 크롭) | NASA/JPL-Caltech (PIA23791) | Public Domain (NASA) |
+| mars.jpg | 화성 전면(허블, 2003 최근접 — 남극 극관) | NASA/ESA/Hubble Heritage Team (STScI/AURA) — Wikimedia "Mars 23 aug 2003 hubble.jpg" | Public Domain (NASA/ESA Hubble) |
+| uranus.jpg | 천왕성 전면(보이저 2) | NASA/JPL-Caltech (PIA18182) | Public Domain (NASA) |
+| neptune.jpg | 해왕성 전면(보이저 2 — 대흑점) | NASA/JPL — Wikimedia "Neptune Full.jpg" (보이저 2 전면) | Public Domain (NASA) |

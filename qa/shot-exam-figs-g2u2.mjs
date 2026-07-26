@@ -1,3 +1,7 @@
+// g2u2 시험 그림 눈검수 — v2(2026-07 재출제)부터는 갤러리 카드 전수 캡처가 정본 경로다:
+//   node qa/render-g2u2v2-full.mjs && PORT=6002 node qa/shot-g2u2v2-pilot.mjs → qa/shots/g2u2v2/<slot>.png
+// (문항 맥락(문두·보기)과 그림을 함께 캡처 — 그림 단독 렌더보다 검수력이 높다.)
+// 아래 v1 스크립트는 구 150제 그림 전용으로 보존(v2 풀에는 그대로 쓸 수 없음).
 // g2u2 시험 그림 눈검수용 스크린샷 — 신규 examFigures g2u2 섹션 + 재사용 geoFigures를 실제 문항 파라미터로 렌더.
 // PORT=<포트> node qa/shot-exam-figs-g2u2.mjs (dev 서버 필수 — vite 모듈 URL로 임포트)
 import { chromium } from "playwright-core";

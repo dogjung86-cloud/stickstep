@@ -1,6 +1,6 @@
-// 중2 과학 II. 지권의 변화 — 단원 종합 평가 문항 풀(150제 = 17×6 + 16×3, 9레슨).
+// 중2 과학 II. 지권의 변화 — 단원 종합 평가 문항 풀 v2(160제 = 18×7 + 17×2, 9레슨 — 17은 L4·L5).
 // 문항은 레슨 파일(g2u2l1~g2u2l9)에 산다. 풀 등장 순서 = 교과 진도 순서(추출·시험지 정렬의 기준).
-// 유형 구성은 u3 규격 스케일: 113(mcq+multi) / 18(num) / 19(word).
+// 2026-07 교과서 준거 재출제 1호: mcq 140/multi 20/num 0/word 0 — 정본 기록은 qa/g2u2-v2-blueprint.md.
 import type { ExamDef } from "./types";
 import { POOL_G2U2L1 } from "./g2u2l1";
 import { POOL_G2U2L2 } from "./g2u2l2";
