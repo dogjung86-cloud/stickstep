@@ -25,6 +25,21 @@ await page.addInitScript(() => {
 });
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
 await page.waitForTimeout(1300);
+// 2026-07-21 공개 진입 플로우: 부팅은 항상 스플래시(상시 메인). 탭으로 플립북을 건너뛰고
+// "한번 둘러보기"를 눌러야 온보딩 완료 상태가 홈으로 직행한다(정본 = qa/e2e-exam-m2u5.mjs).
+// 고정 대기가 아니라 조건 대기 — 콜드 스타트 dev 서버에선 1.2초 뒤에도 스플래시가 아직 없어
+// 버튼 클릭이 통째로 헛돌았다(2026-07-26 실사고).
+await page.waitForSelector("#sc-splash", { timeout: 25000 });
+await page.mouse.click(210, 300); // 플립북 건너뛰기
+await page.waitForFunction(
+  () => [...document.querySelectorAll("button")].some((b) => b.textContent.includes("둘러보기")),
+  { timeout: 15000 },
+);
+await page.evaluate(() => {
+  [...document.querySelectorAll("button")].find((b) => b.textContent.includes("둘러보기")).click();
+});
+await page.waitForSelector("#sc-home", { timeout: 15000 });
+await page.waitForTimeout(600);
 
 const W = (ms) => page.waitForTimeout(ms);
 const shot = (name) => page.screenshot({ path: `qa/shots/${name}.png` });
@@ -640,8 +655,9 @@ await drill([8, 60, 24, 0, 3, 3]);
 await clickBtn("홈으로", 900).catch(() => {});
 log("L12 완료");
 
-/* ================= L13 보스전 ================= */
-await openLesson("보스전");
+/* ================= L13 합동 활용(탈레스의 측량) ================= */
+// 노드 라벨은 m1u4l13의 label "합동 활용" — 구 "보스전"은 지도 게임 노드 시절 잔재(2026-07-12 IA 개편에서 삭제).
+await openLesson("합동 활용");
 log(`L13: ${await h1()}`);
 await waitBtn("탈레스의 방법 보기", 3200);
 await hookChoice();
@@ -652,7 +668,7 @@ await quiz(0);
 await quiz(0);
 await multiQuiz([0, 2]);
 await orderAuto(["거리 BC를 잰다", "배를 보는 각", "교점 D", "BD를 재면"]);
-await drill([8, 9, 150, 35, 90, 4, 63, 65, 5, 52]);
+await drill([52, 7, 68, 1, 1, 35]); // m1u4l13 mathDrill 6문항 정답(구 10문항 목록은 개편 전 잔재)
 await clickBtn("홈으로", 900).catch(() => {});
 log("L13 완료");
 

@@ -22,7 +22,22 @@ const clickText = (re) => page.evaluate((re) => {
   if (b) b.click();
   return !!b;
 }, re);
-const goHome = async () => { await page.goto("http://localhost:5173/", { waitUntil: "networkidle" }); await page.waitForTimeout(900); };
+const PORT = process.env.PORT || "5173"; // 동시 세션이 5173을 잡을 수 있어 포트 주입 허용
+// goHome은 여러 번 불린다 — 부팅마다 스플래시를 거치므로 우회도 여기 안에(정본 = qa/e2e-soc7.mjs 부팅부).
+const goHome = async () => {
+  await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
+  await page.waitForSelector("#sc-splash", { timeout: 25000 });
+  await page.mouse.click(195, 300); // 플립북 건너뛰기(뷰포트 390 기준 가운데)
+  await page.waitForFunction(
+    () => [...document.querySelectorAll("button")].some((b) => b.textContent.includes("둘러보기")),
+    { timeout: 15000 },
+  );
+  await page.evaluate(() => {
+    [...document.querySelectorAll("button")].find((b) => b.textContent.includes("둘러보기")).click();
+  });
+  await page.waitForSelector("#sc-home", { timeout: 15000 });
+  await page.waitForTimeout(900);
+};
 const pickUnit = async (roman) => {
   await page.evaluate((roman) => { [...document.querySelectorAll(".unit-tab")].find((b) => b.textContent.trim().startsWith(roman + "."))?.click(); }, roman);
   await page.waitForTimeout(700);

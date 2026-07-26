@@ -21,6 +21,21 @@ await page.addInitScript(() => {
 });
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
 await page.waitForTimeout(1300);
+// 2026-07-21 공개 진입 플로우: 부팅은 항상 스플래시(상시 메인). 탭으로 플립북을 건너뛰고
+// "한번 둘러보기"를 눌러야 온보딩 완료 상태가 홈으로 직행한다(정본 = qa/e2e-exam-m2u5.mjs).
+// 고정 대기가 아니라 조건 대기 — 콜드 스타트 dev 서버에선 1.2초 뒤에도 스플래시가 아직 없어
+// 버튼 클릭이 통째로 헛돌았다(2026-07-26 실사고).
+await page.waitForSelector("#sc-splash", { timeout: 25000 });
+await page.mouse.click(210, 300); // 플립북 건너뛰기
+await page.waitForFunction(
+  () => [...document.querySelectorAll("button")].some((b) => b.textContent.includes("둘러보기")),
+  { timeout: 15000 },
+);
+await page.evaluate(() => {
+  [...document.querySelectorAll("button")].find((b) => b.textContent.includes("둘러보기")).click();
+});
+await page.waitForSelector("#sc-home", { timeout: 15000 });
+await page.waitForTimeout(600);
 
 const W = (ms) => page.waitForTimeout(ms);
 const shot = (name) => page.screenshot({ path: `qa/shots/${name}.png` });

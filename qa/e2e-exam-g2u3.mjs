@@ -35,13 +35,19 @@ async function seed(state) {
   await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
   await W(1200);
   // 2026-07-21 공개 진입 플로우: 부팅은 항상 스플래시(상시 메인). 탭으로 플립북을 건너뛰고
-  // "한번 둘러보기"를 눌러야 온보딩 완료 상태가 홈으로 직행한다(정본 = qa/e2e-exam-m2u5.mjs seed).
-  await page.mouse.click(210, 300);
-  await W(500);
+  // "한번 둘러보기"를 눌러야 온보딩 완료 상태가 홈으로 직행한다(정본 = qa/e2e-soc7.mjs 부팅부).
+  // 고정 sleep이 아니라 조건 대기 — 버튼 등장까지 실측 ~1.5초라 구 "1.2s+0.5s"는 여유가 없었다(2026-07-26).
+  await page.waitForSelector("#sc-splash", { timeout: 25000 });
+  await page.mouse.click(210, 300); // 플립북 건너뛰기
+  await page.waitForFunction(
+    () => [...document.querySelectorAll("button")].some((b) => b.textContent.includes("둘러보기")),
+    { timeout: 15000 },
+  );
   await page.evaluate(() => {
-    [...document.querySelectorAll("button")].find((b) => b.textContent.includes("둘러보기"))?.click();
+    [...document.querySelectorAll("button")].find((b) => b.textContent.includes("둘러보기")).click();
   });
-  await W(1100);
+  await page.waitForSelector("#sc-home", { timeout: 15000 });
+  await W(600);
 }
 
 async function gotoExamIntro() {

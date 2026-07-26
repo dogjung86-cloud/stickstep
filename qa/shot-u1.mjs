@@ -1,6 +1,7 @@
 // 1단원 개편 + 스플래시 검증 샷 — node qa/shot-u1.mjs <outPrefix> (dev 5173 필요)
 import { chromium } from "playwright-core";
 
+const PORT = process.env.PORT || "5173"; // 동시 세션이 5173을 잡을 수 있어 포트 주입 허용
 const OUT = process.argv[2] ?? "qa/u1";
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
@@ -9,8 +10,8 @@ page.on("pageerror", (e) => console.log("PAGEERROR:", e.message));
 const freeze = () => page.evaluate(() => document.getAnimations().forEach((a) => a.cancel()));
 const shot = async (name) => { await freeze(); await page.screenshot({ path: `${OUT}-${name}.png` }); console.log("SAVED", name); };
 
-// 0) 스플래시 플립북 — 온보딩 전 상태로 접속
-await page.goto("http://localhost:5173/", { waitUntil: "networkidle" });
+// 0) 스플래시 플립북 — 온보딩 전 상태로 접속(이 구간은 스플래시 자체가 촬영 대상이라 우회를 넣지 않는다)
+await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
 await page.waitForTimeout(700); // 플립북 재생 중간
 await page.screenshot({ path: `${OUT}-splash-flip.png` });
 console.log("SAVED splash-flip");
@@ -26,8 +27,21 @@ await page.evaluate(() => {
     lastStudyDay: "2026-07-07", totalXp: 300, lessons, minigame: {},
   }));
 });
-await page.goto("http://localhost:5173/", { waitUntil: "networkidle" });
+await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
 await page.waitForTimeout(1000);
+// 2026-07-21 공개 진입 플로우: 부팅은 항상 스플래시. "한번 둘러보기"를 눌러야 홈으로 간다
+// (정본 = qa/e2e-soc7.mjs 부팅부). 고정 sleep 대신 조건 대기.
+await page.waitForSelector("#sc-splash", { timeout: 25000 });
+await page.mouse.click(195, 300); // 플립북 건너뛰기(뷰포트 390 기준 가운데)
+await page.waitForFunction(
+  () => [...document.querySelectorAll("button")].some((b) => b.textContent.includes("둘러보기")),
+  { timeout: 15000 },
+);
+await page.evaluate(() => {
+  [...document.querySelectorAll("button")].find((b) => b.textContent.includes("둘러보기")).click();
+});
+await page.waitForSelector("#sc-home", { timeout: 15000 });
+await page.waitForTimeout(600);
 
 const pickUnit1 = async () => {
   await page.evaluate(() => {

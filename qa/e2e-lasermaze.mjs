@@ -1,8 +1,9 @@
 // 레이저 미로 v2(블록 배치) E2E — 진입(프리미엄 시딩)→부트→소리 토글→
 // 생성기 소크(1~120판: 정답 배치 전 보석 점등·흩은 상태 미완성·폴백 0·커브 데뷔·결정성)→
 // 1판 탭-탭 이동 클리어(+3 스틱·자동 다음 판)→실드래그 문법(집기→끌기→놓기)→2·3판 클리어→
-// 스테퍼 재플레이(보상 없음)→합성판(7판 pair) 이동·리셋→하양판(12판 white) 실플레이→
-// 나가기 복귀→무료 계정 페이월 게이트까지.
+// 스테퍼 재플레이(보상 없음)→합성판(7판 pair) 이동·리셋(예산 유지)→
+// 이동 예산 소진 3회 = 판 실패 시트(게임 오버)→다시 도전(예산·기회 충전)→
+// 하양판(12판 white) 실플레이→나가기 복귀→무료 계정 페이월 게이트까지.
 // PORT=<포트> node qa/e2e-lasermaze.mjs — dev 서버 필수(data-lzm-*·__lzmDev 훅이 DEV 전용).
 import { chromium } from "playwright-core";
 import fs from "node:fs";
@@ -90,6 +91,34 @@ async function solveCurrent() {
   await W(200);
 }
 
+/** 여분 블록(정답 = 시작 칸)을 빈 칸과 왕복시켜 이동 예산만 태운다 — 본 조각은 흩은 채로
+ *  두므로 판이 우연히 풀릴 일이 없다(그래도 won 가드를 둔다). */
+async function burnBudget() {
+  await page.evaluate(() => {
+    const dev = window.__lzmDev;
+    const cv = document.querySelector("#sc-lasermaze .lzm-cv");
+    const tap = (pt) => {
+      cv.dispatchEvent(new PointerEvent("pointerdown", { pointerId: 11, clientX: pt.x, clientY: pt.y, bubbles: true, isPrimary: true, pointerType: "touch" }));
+      cv.dispatchEvent(new PointerEvent("pointerup", { pointerId: 11, clientX: pt.x, clientY: pt.y, bubbles: true, isPrimary: true, pointerType: "touch" }));
+    };
+    const di = dev.pieces().findIndex((p) => !p.wrong);
+    if (di < 0) return;
+    const home = { x: dev.pieces()[di].x, y: dev.pieces()[di].y };
+    const grid = dev.grid();
+    let spot = null;
+    for (let x = 0; x < grid && !spot; x++) for (let y = 0; y < grid && !spot; y++) if (dev.free(x, y)) spot = { x, y };
+    if (!spot) return;
+    for (let k = 0; k < 40; k++) {
+      if (dev.won() || dev.moves() >= dev.cap()) break;
+      const p = dev.pieces()[di];
+      const dest = p.x === home.x && p.y === home.y ? spot : home;
+      tap(dev.cellPos(p.x, p.y));
+      tap(dev.cellPos(dest.x, dest.y));
+    }
+  });
+  await W(150);
+}
+
 // ── 진입: 도전 탭 → 카드 → 게임 ────────────────────────────
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
 await page.evaluate((s) => {
@@ -111,6 +140,14 @@ ok((await attr("lzmStage")) === "1", "1판에서 시작", await attr("lzmStage")
 ok((await attr("lzmPhase")) === "idle", "초기 phase=idle");
 ok((await attr("lzmGems")) === "0/1", "1판 보석 0/1", await attr("lzmGems"));
 ok((await attr("lzmKind")) === "mono", "1판은 단색판");
+ok((await attr("lzmTries")) === "3/3", "1판 기회 3개", await attr("lzmTries"));
+ok((await attr("lzmCap")) === "8" && (await attr("lzmLeft")) === "8", "이동 예산 = 필요 이동×2+3(튜토리얼 하한 8)", `${await attr("lzmCap")}/${await attr("lzmLeft")}`);
+const hud0 = await page.evaluate(() => ({
+  moves: document.querySelector("#sc-lasermaze .lzm-moves").textContent,
+  pips: document.querySelectorAll("#sc-lasermaze .lzm-lives i").length,
+  gone: document.querySelectorAll("#sc-lasermaze .lzm-lives i.gone").length,
+}));
+ok(hud0.moves === "이동 8번 남음" && hud0.pips === 3 && hud0.gone === 0, "HUD — 남은 이동·기회 핍", JSON.stringify(hud0));
 const px0 = await page.evaluate(() => {
   const cv = document.querySelector("#sc-lasermaze .lzm-cv");
   const d = cv.getContext("2d").getImageData(Math.floor(cv.width / 2), Math.floor(cv.height / 2), 1, 1).data;
@@ -253,9 +290,56 @@ ok(movedRes && movedRes.moves === 1 && !movedRes.won, "이동 집계(미완성 �
 await page.evaluate(() => document.querySelector("#sc-lasermaze .lzm-abtn").click());
 await W(120);
 const afterReset = await page.evaluate(() => ({ wrong: window.__lzmDev.pieces().filter((p) => p.wrong).length, moves: window.__lzmDev.moves() }));
-ok(afterReset.moves === 0 && afterReset.wrong === wrong0, "처음 배치로 리셋", JSON.stringify([afterReset, wrong0]));
+// 예산까지 되돌리면 리셋 연타로 게임 오버를 무한 회피할 수 있다 → 배치만 복원, 이동은 그대로
+ok(afterReset.moves === 1 && afterReset.wrong === wrong0, "처음 배치로 리셋(이동 예산은 유지)", JSON.stringify([afterReset, wrong0]));
+ok(await page.evaluate(() => document.querySelector("#sc-lasermaze .lzm-toast").textContent.includes("이동 횟수는 그대로")), "리셋 토스트 — 예산 유지 고지");
 await solveCurrent();
 ok((await attr("lzmPhase")) === "clear", "합성판 클리어(두 빛이 한 보석에)");
+
+// ── 이동 예산 소진 3회 = 판 실패 시트(게임 오버) → 다시 도전 ──
+await seedAndEnter({ lasermaze: 3 });
+ok((await attr("lzmStage")) === "4", "4판 진입(여분 블록 있는 판)", await attr("lzmStage"));
+const cap4 = Number(await attr("lzmCap"));
+ok(cap4 >= 8, "이동 예산 노출", String(cap4));
+await burnBudget();
+ok((await attr("lzmPhase")) === "fail" && (await attr("lzmTries")) === "2/3", "예산 소진 = 시도 실패(기회 1 소모)", `${await attr("lzmPhase")} ${await attr("lzmTries")}`);
+ok(await page.evaluate(() => document.querySelector("#sc-lasermaze .lzm-toast").textContent.includes("이동을 다 썼어요")), "예산 소진 토스트");
+await W(1100);
+ok((await attr("lzmPhase")) === "idle" && (await attr("lzmLeft")) === String(cap4), "새 시도 — 처음 배치 + 예산 재충전", `${await attr("lzmPhase")} ${await attr("lzmLeft")}`);
+await burnBudget();
+await W(1100);
+ok((await attr("lzmTries")) === "1/3", "두 번째 실패 — 기회 1 남음", await attr("lzmTries"));
+ok(await page.evaluate(() => document.querySelector("#sc-lasermaze .lzm-lives").classList.contains("last")), "마지막 기회 핍 강조");
+await burnBudget();
+await W(1100);
+ok((await attr("lzmPhase")) === "over", "기회 소진 → phase=over", await attr("lzmPhase"));
+const over = await page.evaluate(() => {
+  const o = document.querySelector("#sc-lasermaze .lzm-over");
+  return {
+    on: o.classList.contains("on"),
+    reason: o.querySelector(".lzm-ov-reason").textContent,
+    big: o.querySelector(".lzm-ov-score b").textContent,
+    best: o.querySelector(".lzm-ov-best").textContent,
+    tip: o.querySelector(".lzm-ov-tip").textContent,
+    btns: Array.from(o.querySelectorAll(".lzm-obtn")).map((b) => b.textContent),
+  };
+});
+ok(over.on && over.reason.includes("기회를 다 썼어요"), "판 실패 시트 노출", over.reason);
+ok(over.big === "4" && over.best.includes("최고 기록 3판"), "시트 = 이번 판 4 · 최고 기록 3판", JSON.stringify([over.big, over.best]));
+ok(over.tip.length > 10 && over.btns.join("|") === "다시 도전|그만하기", "시트 코치 팁·버튼 2개", JSON.stringify([over.tip, over.btns]));
+await shot("lasermaze-over");
+const stOver = await store();
+ok(stOver.minigame.lasermaze === 3, "게임 오버는 기록을 깎지 않는다", JSON.stringify(stOver.minigame));
+await page.evaluate(() => document.querySelector("#sc-lasermaze .lzm-obtn.primary").click());
+await W(220);
+ok(
+  (await attr("lzmPhase")) === "idle" && (await attr("lzmTries")) === "3/3" && (await attr("lzmLeft")) === String(cap4),
+  "다시 도전 — 기회·예산 충전",
+  `${await attr("lzmPhase")} ${await attr("lzmTries")} ${await attr("lzmLeft")}`,
+);
+await solveCurrent();
+ok((await attr("lzmPhase")) === "clear", "다시 도전 후 4판 클리어");
+await W(1700);
 
 // ── 하양판(12판) 실플레이 ──────────────────────────────────
 await seedAndEnter({ lasermaze: 11 });

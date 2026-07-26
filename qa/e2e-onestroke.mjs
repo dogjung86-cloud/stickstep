@@ -1,8 +1,9 @@
 // 네온 한붓그리기 E2E — 진입(프리미엄 시딩)→부트→소리 토글→
 // 생성기 소크(1~140판: 해결 가능·홀짝 규칙·품질 게이트·결정성·폴백 0)→
 // 1판 실그리기 클리어(+3 스틱·자동 다음 판)→2판 이어 그리기(떼고 재개·오시작 토스트)→
-// 3판 되돌리기 버튼→4판 홀수판: 오시작 막다른 길 2회→홀수점 힌트→정해 클리어→
-// 스테퍼 재플레이(보상 없음)→나가기 복귀→무료 계정 페이월 게이트까지.
+// 3판 되돌리기 버튼→4판 홀수판: 오시작 막다른 길 2회→홀수점 힌트→3회째 기회 소진→
+// 판 실패 시트(게임 오버)→다시 도전(기회 충전·힌트 유지)→정해 클리어→
+// 스테퍼 재플레이(보상 없음)→나가기 복귀→후반 판 기회 커브(13판 5/5)→무료 계정 페이월까지.
 // PORT=<포트> node qa/e2e-onestroke.mjs — dev 서버 필수(data-ost-*·__ostDev 훅이 DEV 전용).
 import { chromium } from "playwright-core";
 import fs from "node:fs";
@@ -65,8 +66,10 @@ await W(500);
 ok(await page.$("#sc-challenge"), "도전 탭 진입");
 ok(await page.$("#btn-onestroke"), "네온 한붓그리기 카드 존재");
 ok(await page.evaluate(() => !document.querySelector("#btn-onestroke .prep-pill.gold")), "프리미엄 이용자 — 카드 구매 배지 숨김");
-ok(await page.evaluate(() => document.querySelector("#btn-onestroke .prep-pill.fee")?.textContent.trim() === "입장료 20 스텝"), "입장료 문구");
-ok(await page.evaluate(() => document.querySelector(".play-note")?.textContent.trim() === "레슨·시험에서 모은 스텝으로 입장해요. 하루 15판까지, 잔고만 차감되고 장화 레벨은 그대로예요."), "쉬는 시간 안내 문구");
+ok(await page.evaluate(() => document.querySelector(".play-note")?.textContent.includes("입장료 20 스텝")), "입장료 안내 — 아케이드 헤더 한 줄(2026-07-27 카드 필 → 헤더 일원화)");
+ok(await page.evaluate(() => document.querySelector(".play-note")?.textContent.trim() === "한 판 입장료 20 스텝 · 하루 15판 · 잔고만 차감되고 장화 레벨은 그대로예요"), "쉬는 시간 안내 문구");
+ok(await page.evaluate(() => document.querySelector("#btn-onestroke .arc-rec")?.textContent.trim() === "첫 도전!"), "기록 없는 카드 — 첫 도전 필");
+ok(await page.evaluate(() => !!document.querySelector("#btn-onestroke .arc-art")), "카드 키 비주얼 슬롯 존재");
 await page.evaluate(() => document.getElementById("btn-onestroke").click());
 await page.waitForSelector("#sc-onestroke", { timeout: 4000 });
 await W(600); // 동적 import + 루프 시작(setTimeout 0) 여유
@@ -75,6 +78,12 @@ ok((await attr("ostStage")) === "1", "1판에서 시작", await attr("ostStage")
 ok((await attr("ostPhase")) === "idle", "초기 phase=idle");
 ok((await attr("ostEdges")) === "0/3", "1판 = 삼각형(선 3)", await attr("ostEdges"));
 ok((await attr("ostOdd")) === "0", "1판은 짝수판(아무 데서나 시작)");
+ok((await attr("ostTries")) === "3/3", "1판 기회 3개(선 7개마다 +1, 최대 5)", await attr("ostTries"));
+const pips0 = await page.evaluate(() => {
+  const ps = document.querySelectorAll("#sc-onestroke .ost-lives i");
+  return { n: ps.length, gone: document.querySelectorAll("#sc-onestroke .ost-lives i.gone").length };
+});
+ok(pips0.n === 3 && pips0.gone === 0, "기회 핍 3개 전부 켜짐", JSON.stringify(pips0));
 const px0 = await page.evaluate(() => {
   const cv = document.querySelector("#sc-onestroke .ost-cv");
   const d = cv.getContext("2d").getImageData(Math.floor(cv.width / 2), Math.floor(cv.height / 2), 1, 1).data;
@@ -210,10 +219,45 @@ ok((await attr("ostEdges")) === "0/6" && (await attr("ostPhase")) === "idle", "�
 ok((await attr("ostHint")) === "0", "실패 1회로는 힌트 없음(발견 우선)");
 await tracePath(dead);
 ok((await attr("ostPhase")) === "stuck" && (await attr("ostFails")) === "2", "실패 2 누적");
+ok((await attr("ostTries")) === "1/3", "기회 1개 남음", await attr("ostTries"));
+ok(await page.evaluate(() => document.querySelector("#sc-onestroke .ost-toast").textContent.includes("기회 1번 남음")), "막힘 토스트 — 남은 기회 표기");
+ok(await page.evaluate(() => document.querySelector("#sc-onestroke .ost-lives").classList.contains("last")), "마지막 기회 핍 강조");
 await W(1100);
 ok((await attr("ostHint")) === "1", "실패 2회 — 홀수점 힌트 점등");
 ok(await page.evaluate(() => document.querySelector("#sc-onestroke .ost-helper span").textContent.includes("홀수")), "힌트 코치 문구(홀수점 규칙)");
 await shot("onestroke-hint");
+
+// ── 3회째 막힘 = 기회 소진 → 판 실패 시트(게임 오버) → 다시 도전 ──
+await tracePath(dead);
+ok((await attr("ostPhase")) === "stuck" && (await attr("ostTries")) === "0/3", "3회째 막힘 — 기회 0", await attr("ostTries"));
+await W(1100);
+ok((await attr("ostPhase")) === "over", "기회 소진 → phase=over", await attr("ostPhase"));
+const over = await page.evaluate(() => {
+  const o = document.querySelector("#sc-onestroke .ost-over");
+  return {
+    on: o.classList.contains("on"),
+    reason: o.querySelector(".ost-ov-reason").textContent,
+    big: o.querySelector(".ost-ov-score b").textContent,
+    best: o.querySelector(".ost-ov-best").textContent,
+    tip: o.querySelector(".ost-ov-tip").textContent,
+    btns: Array.from(o.querySelectorAll(".ost-obtn")).map((b) => b.textContent),
+  };
+});
+ok(over.on && over.reason.includes("기회를 다 썼어요"), "판 실패 시트 노출", JSON.stringify(over.reason));
+ok(over.big === "4" && over.best.includes("최고 기록 3판"), "시트 = 이번 판 4 · 최고 기록 3판", JSON.stringify([over.big, over.best]));
+ok(over.tip.includes("금빛"), "시트 코치 팁(홀수점 규칙)", over.tip);
+ok(over.btns.join("|") === "다시 도전|그만하기", "시트 버튼 2개", over.btns.join("|"));
+await shot("onestroke-over");
+await page.evaluate(() => document.querySelectorAll("#sc-onestroke .ost-abtn")[1].click()); // 처음부터 — 시트 중엔 잠금
+await W(120);
+ok((await attr("ostPhase")) === "over", "시트 중 조작부 잠금");
+let st0 = await store();
+ok(st0.minigame.onestroke === 3, "게임 오버는 기록을 깎지 않는다", JSON.stringify(st0.minigame));
+await page.evaluate(() => document.querySelector("#sc-onestroke .ost-obtn.primary").click());
+await W(200);
+ok((await attr("ostPhase")) === "idle" && (await attr("ostTries")) === "3/3", "다시 도전 — 기회 충전", `${await attr("ostPhase")} ${await attr("ostTries")}`);
+ok((await attr("ostHint")) === "1", "다시 도전 — 배운 힌트는 유지");
+ok(await page.evaluate(() => !document.querySelector("#sc-onestroke .ost-over").classList.contains("on")), "시트 닫힘");
 await tracePath(await solvedPath()); // 솔버 정해 = 홀수점 시작
 ok((await attr("ostPhase")) === "clear", "홀수점 시작으로 4판 클리어");
 await W(1700);
@@ -236,6 +280,23 @@ ok((await attr("ostStage")) === "5", "재플레이 후 다시 5판");
 await page.evaluate(() => document.querySelector("#sc-onestroke .xbtn").click());
 await W(500);
 ok(await page.$("#sc-challenge"), "나가기 — 도전 탭 복귀");
+ok(await page.evaluate(() => document.querySelector("#btn-onestroke .arc-rec")?.textContent.trim() === "최고 4판"), "복귀한 카드 — 최고 기록 필 갱신");
+
+// ── 후반 대형 판 기회 커브(선 7개마다 +1, 최대 5) ────────────
+await page.evaluate((s) => localStorage.setItem("science-app.v1", JSON.stringify({ ...s, minigame: { onestroke: 12 } })), BASE);
+await page.reload({ waitUntil: "networkidle" });
+await W(1000);
+await openChallenge();
+await W(400);
+await page.evaluate(() => document.getElementById("btn-onestroke").click());
+await page.waitForSelector("#sc-onestroke", { timeout: 4000 });
+await W(600);
+const curve = await page.evaluate(() => {
+  const e = window.__ostDev.inspect(13).e;
+  return { e, expect: Math.min(5, 3 + Math.floor(e / 7)) };
+});
+ok((await attr("ostStage")) === "13", "13판 진입(기회 커브 확인용)", await attr("ostStage"));
+ok(curve.expect === 5 && (await attr("ostTries")) === "5/5", "후반 대형 판 기회 5개", `${await attr("ostTries")} e=${curve.e}`);
 
 // ── 무료 계정 페이월 게이트 ─────────────────────────────────
 await page.evaluate((s) => localStorage.setItem("science-app.v1", JSON.stringify({ ...s, premium: false })), BASE);

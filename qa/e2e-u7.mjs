@@ -8,18 +8,49 @@ const log = (...a) => console.log("[e2e]", ...a);
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage({ viewport: { width: 420, height: 900 }, deviceScaleFactor: 2 });
 page.on("pageerror", (e) => console.log("PAGEERROR:", e.message));
+// 동시 세션의 src 편집 → vite HMR 풀 리로드로 e2e가 중도 사망하는 간섭(사고 #12 계보) 차단:
+// @vite/client를 스텁으로 대체 — CSS 주입(updateStyle)은 살리고 웹소켓·리로드만 제거한다.
+// (abort는 금물 — dev의 CSS import가 이 모듈의 updateStyle에 의존해 앱이 통째로 안 뜬다.)
+await page.route("**/@vite/client", (r) =>
+  r.fulfill({
+    contentType: "application/javascript",
+    body: `export function updateStyle(id, css){ let el = document.querySelector('style[data-vite-dev-id="' + id + '"]'); if (!el) { el = document.createElement("style"); el.setAttribute("data-vite-dev-id", id); document.head.appendChild(el); } el.textContent = css; }
+export function removeStyle(id){ document.querySelector('style[data-vite-dev-id="' + id + '"]')?.remove(); }
+export function createHotContext(){ return { accept(){}, acceptExports(){}, dispose(){}, prune(){}, on(){}, off(){}, send(){}, invalidate(){}, data: {} }; }
+export function injectQuery(u){ return u; }
+export const ErrorOverlay = class {};
+export default {};`,
+  }),
+);
 
 await page.addInitScript(() => {
+  // 현행 store 시드(2026-07-26 갱신 — 구형 grade:"중1"/done/quiz 시드는 부팅 파싱 실패로 홈이 안 뜸)
   const KEY = "science-app.v1";
   if (!localStorage.getItem(KEY)) {
     localStorage.setItem(KEY, JSON.stringify({
-      onboarded: true, grade: "중1", goal: "daily5", streak: 0, xp: 0,
-      lastDay: "", done: {}, quiz: {},
+      version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci",
+      premium: false, reviewMode: false, goalMin: 10, streak: 0, lastStudyDay: null,
+      totalXp: 0, lessons: {}, minigame: {},
     }));
   }
 });
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
 await page.waitForTimeout(1100);
+// 2026-07-21 공개 진입 플로우: 부팅은 항상 스플래시(상시 메인). 탭으로 플립북을 건너뛰고
+// "한번 둘러보기"를 눌러야 온보딩 완료 상태가 홈으로 직행한다(정본 = qa/e2e-exam-m2u5.mjs).
+// 고정 대기가 아니라 조건 대기 — 콜드 스타트 dev 서버에선 1.2초 뒤에도 스플래시가 아직 없어
+// 버튼 클릭이 통째로 헛돌았다(2026-07-26 실사고).
+await page.waitForSelector("#sc-splash", { timeout: 25000 });
+await page.mouse.click(210, 300); // 플립북 건너뛰기
+await page.waitForFunction(
+  () => [...document.querySelectorAll("button")].some((b) => b.textContent.includes("둘러보기")),
+  { timeout: 15000 },
+);
+await page.evaluate(() => {
+  [...document.querySelectorAll("button")].find((b) => b.textContent.includes("둘러보기")).click();
+});
+await page.waitForSelector("#sc-home", { timeout: 15000 });
+await page.waitForTimeout(600);
 
 const cta = () => page.evaluate(() => {
   const b = document.querySelector(".cta button, button.cta, .lesson-cta");

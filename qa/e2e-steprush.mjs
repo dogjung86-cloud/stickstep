@@ -38,6 +38,18 @@ const W = (ms) => page.waitForTimeout(ms);
 const shot = (name) => page.screenshot({ path: `qa/shots/${name}.png` });
 const store = () => page.evaluate(() => JSON.parse(localStorage.getItem("science-app.v1")));
 
+// 부팅은 항상 스플래시(2026-07-21 공개 진입 플로우) → 둘러보기 우회 후 도전 탭.
+// 구판 `.screen.active nav button[2]`는 스플래시 미대응 + 과목 탭 신설(5탭) 이전 인덱스라 폐기
+// (e2e-onestroke·lasermaze·cosmo와 같은 하드닝 패턴, 2026-07-27 수리).
+async function openChallenge() {
+  if (await page.$("#sc-splash")) {
+    await page.waitForSelector("#sc-splash .splash-foot.done", { timeout: 12000 });
+    await page.getByRole("button", { name: "한번 둘러보기", exact: true }).click();
+    await page.waitForSelector(".screen.active .gnav-item", { timeout: 5000 });
+  }
+  await page.locator('.screen.active .gnav-item:has-text("도전")').click();
+}
+
 const BASE = {
   version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci",
   premium: true, reviewMode: false, goalMin: 10, streak: 0, lastStudyDay: null,
@@ -55,7 +67,7 @@ await page.reload({ waitUntil: "networkidle" });
 await W(1200);
 
 // ── 진입: 도전 탭 → 스텝 러시 카드 ──────────────────────────
-await page.evaluate(() => document.querySelectorAll(".screen.active nav button")[2].click());
+await openChallenge();
 await W(500);
 ok(await page.$("#sc-challenge"), "도전 탭 진입");
 ok(await page.$("#btn-steprush"), "스텝 러시 카드 존재");
@@ -212,7 +224,7 @@ await page.evaluate(() => {
 });
 await page.reload({ waitUntil: "networkidle" });
 await W(1200);
-await page.evaluate(() => document.querySelectorAll(".screen.active nav button")[2].click());
+await openChallenge();
 await W(400);
 await page.evaluate(() => document.getElementById("btn-steprush").click());
 await page.waitForSelector("#sc-steprush", { timeout: 4000 });
@@ -281,7 +293,7 @@ await page.evaluate(() => {
 });
 await page.reload({ waitUntil: "networkidle" });
 await W(1200);
-await page.evaluate(() => document.querySelectorAll(".screen.active nav button")[2].click());
+await openChallenge();
 await W(400);
 await page.evaluate(() => document.getElementById("btn-steprush").click());
 await page.waitForSelector("#sc-steprush", { timeout: 4000 });
@@ -365,7 +377,7 @@ await page.evaluate(() => {
 });
 await page.reload({ waitUntil: "networkidle" });
 await W(1200);
-await page.evaluate(() => document.querySelectorAll(".screen.active nav button")[2].click());
+await openChallenge();
 await W(400);
 ok(await page.evaluate(() => document.querySelector(".play-bal b")?.textContent) === "5", "쉬는 시간 헤더 잔고 표시(5)");
 await page.evaluate(() => document.getElementById("btn-steprush").click());
@@ -385,7 +397,7 @@ await page.evaluate(() => {
 });
 await page.reload({ waitUntil: "networkidle" });
 await W(1200);
-await page.evaluate(() => document.querySelectorAll(".screen.active nav button")[2].click());
+await openChallenge();
 await W(400);
 ok(await page.evaluate(() => document.querySelector(".play-cnt")?.textContent) === "오늘 15/15판", "소진 카운터(15/15)");
 ok(await page.evaluate(() => document.querySelector(".play-cnt")?.classList.contains("done")), "카운터 done 스타일");

@@ -9,34 +9,35 @@ const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage({ viewport: { width: 420, height: 900 }, deviceScaleFactor: 2 });
 page.on("pageerror", (e) => console.log("PAGEERROR:", e.message));
 
-// 온보딩 스킵: 완료 상태 시드
 await page.addInitScript(() => {
+  // 현행 store 시드(2026-07-26 갱신 — 구형 grade:"중1"/goal/done/quiz 시드는 부팅 파싱 실패로 홈이 안 뜸)
   const KEY = "science-app.v1";
   if (!localStorage.getItem(KEY)) {
     localStorage.setItem(KEY, JSON.stringify({
-      onboarded: true, grade: "중1", goal: "daily5", streak: 0, xp: 0,
-      lastDay: "", done: {}, quiz: {},
+      version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci",
+      premium: false, reviewMode: false, goalMin: 10, streak: 0, lastStudyDay: null,
+      totalXp: 0, lessons: {}, minigame: {},
     }));
   }
 });
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
 await page.waitForTimeout(1200);
-
-// 혹시 온보딩이 뜨면 CTA 연타로 통과
-for (let i = 0; i < 8; i++) {
-  const onHome = await page.evaluate(() => !!document.querySelector(".gm-node"));
-  if (onHome) break;
-  await page.evaluate(() => {
-    const b = [...document.querySelectorAll("button")].find(
-      (x) => x.offsetParent && !x.disabled && /시작|다음|계속|좋아요|이대로/.test(x.textContent),
-    );
-    b?.click();
-    // 선택지가 필요하면 첫 옵션 선택
-    const opt = [...document.querySelectorAll("button")].find((x) => x.offsetParent && /중학교 1학년|중1/.test(x.textContent));
-    opt?.click();
-  });
-  await page.waitForTimeout(500);
-}
+// 2026-07-21 공개 진입 플로우: 부팅은 항상 스플래시(상시 메인). 탭으로 플립북을 건너뛰고
+// "한번 둘러보기"를 눌러야 온보딩 완료 상태가 홈으로 직행한다(정본 = qa/e2e-exam-m2u5.mjs).
+// 고정 대기가 아니라 조건 대기 — 콜드 스타트 dev 서버에선 1.2초 뒤에도 스플래시가 아직 없어
+// 버튼 클릭이 통째로 헛돌았다(2026-07-26 실사고).
+await page.waitForSelector("#sc-splash", { timeout: 25000 });
+await page.mouse.click(210, 300); // 플립북 건너뛰기
+await page.waitForFunction(
+  () => [...document.querySelectorAll("button")].some((b) => b.textContent.includes("둘러보기")),
+  { timeout: 15000 },
+);
+await page.evaluate(() => {
+  [...document.querySelectorAll("button")].find((b) => b.textContent.includes("둘러보기")).click();
+});
+await page.waitForSelector("#sc-home", { timeout: 15000 });
+await page.waitForTimeout(600);
+await page.waitForSelector(".gm-node", { timeout: 12000 });
 
 // V 단원 탭 → u5l1
 await page.evaluate(() => [...document.querySelectorAll(".unit-tab")].find((b) => b.textContent.includes("힘의 작용"))?.click());

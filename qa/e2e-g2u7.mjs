@@ -20,6 +20,21 @@ await page.addInitScript(() => {
 });
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
 await page.waitForTimeout(1200);
+// 2026-07-21 공개 진입 플로우: 부팅은 항상 스플래시(상시 메인). 탭으로 플립북을 건너뛰고
+// "한번 둘러보기"를 눌러야 온보딩 완료 상태가 홈으로 직행한다(정본 = qa/e2e-exam-m2u5.mjs).
+// 고정 대기가 아니라 조건 대기 — 콜드 스타트 dev 서버에선 1.2초 뒤에도 스플래시가 아직 없어
+// 버튼 클릭이 통째로 헛돌았다(2026-07-26 실사고).
+await page.waitForSelector("#sc-splash", { timeout: 25000 });
+await page.mouse.click(210, 300); // 플립북 건너뛰기
+await page.waitForFunction(
+  () => [...document.querySelectorAll("button")].some((b) => b.textContent.includes("둘러보기")),
+  { timeout: 15000 },
+);
+await page.evaluate(() => {
+  [...document.querySelectorAll("button")].find((b) => b.textContent.includes("둘러보기")).click();
+});
+await page.waitForSelector("#sc-home", { timeout: 15000 });
+await page.waitForTimeout(600);
 
 const W = (ms) => page.waitForTimeout(ms);
 const log = (...a) => console.log(...a);
@@ -229,58 +244,49 @@ try {
   await W(1700);
   await hookChoice(0);
   await clickCTA();
-  log("  waterCircuit:", await h1());
+  log("  waterCircuit3d:", await h1());
   await clickBtn("가로 화면", 1500);
   await page.waitForSelector(".rot-overlay.in canvas", { timeout: 9000 });
-  await W(800);
-  // 회전 무대 좌표 → 화면 좌표 매핑 A(우상단 원점) 시도, 실패 시 B
-  const SPOT = {
-    pump: [92, 240], flow: [155, 96], wheel: [395, 205], pipe: [244, 372], valve: [244, 96],
-    battery: [610, 240], current: [673, 96], bulb: [913, 205], wire: [762, 372], switch: [762, 96],
-  };
-  const tapSpot = async (id, mapB) => {
-    await page.evaluate(([X, Y, mapB]) => {
-      const overlay = document.querySelector(".rot-overlay");
-      const cv = overlay.querySelector("canvas");
-      const r = overlay.getBoundingClientRect();
-      const w = r.height, h = r.width; // 가로 무대: 논리 폭=화면 세로
-      const s = Math.min(w / 1000, (h - 40) / 460);
-      const ox = (w - 1000 * s) / 2, oy = (h - 40 - 460 * s) / 2 + 6;
-      const sx = ox + X * s, sy = oy + Y * s;
-      const cx = mapB ? r.left + sy : r.right - sy;
-      const cy = mapB ? r.bottom - sx : r.top + sx;
-      cv.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerId: 8, isPrimary: true, pointerType: "touch", clientX: cx, clientY: cy }));
-    }, [SPOT[id][0], SPOT[id][1], mapB]);
-    await W(340);
-  };
-  // 매핑 프로브: pump→battery 후 토스트에 "정답"이 뜨는지
-  let mapB = false;
-  await tapSpot("pump", mapB); await tapSpot("battery", mapB);
-  const probe = await page.evaluate(() => document.querySelector(".sp3-toast")?.textContent ?? "");
-  if (!probe.includes("정답")) {
-    log("   매핑 A 실패 → B로 전환");
-    mapB = true;
-    await tapSpot("pump", mapB); await tapSpot("battery", mapB);
+  await W(2000); // 3D 부팅(space3d 동적 import)
+  const ewx = async (fn, ...args) => page.evaluate(([f, a]) => window.__ewx[f](...a), [fn, args]);
+  // ① 진짜 포인터 탭 1회 — 레이캐스트 히트 경로 검증(좌표는 DEV 훅이 무대 좌표로 알려 준다)
+  await page.evaluate(() => {
+    const p = window.__ewx.screenOf("pump");
+    const overlay = document.querySelector(".rot-overlay");
+    const r = overlay.getBoundingClientRect();
+    const native = window.innerWidth > window.innerHeight;
+    const cx = native ? r.left + p.x : r.right - p.y;
+    const cy = native ? r.top + p.y : r.top + p.x;
+    const cv = overlay.querySelector("canvas");
+    for (const type of ["pointerdown", "pointerup"])
+      cv.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId: 9, isPrimary: true, pointerType: "touch", clientX: cx, clientY: cy }));
+  });
+  await W(420);
+  const pumpCard = await page.evaluate(() => document.querySelector(".ew-card.show")?.textContent ?? "");
+  log("   실탭 카드:", pumpCard.includes("펌프") ? "OK" : `FAIL(${pumpCard.slice(0, 20)})`);
+  // ② 대응 5쌍 — 물 요소 → 전기 요소 순서로 탭
+  for (const [a, b] of [["pump", "battery"], ["flow", "current"], ["wheel", "bulb"], ["pipe", "wire"], ["valve", "switch"]]) {
+    await ewx("tap", a); await W(200); await ewx("tap", b); await W(260);
   }
-  for (const [a, b] of [["flow", "current"], ["wheel", "bulb"], ["pipe", "wire"], ["valve", "switch"]]) {
-    await tapSpot(a, mapB); await tapSpot(b, mapB);
-  }
-  // 펌프 세기 양끝(회전 무대 세로 트랙: 위=세게)
-  const wcSlider = async (frac) => {
-    await page.evaluate((frac) => {
-      const row = document.querySelector(".rot-overlay .wc-slider .px-sl");
-      const tr = row.querySelector(".px-track").getBoundingClientRect();
-      const vertical = tr.height > tr.width;
-      const x = vertical ? tr.left + tr.width / 2 : tr.left + frac * tr.width;
-      const y = vertical ? tr.top + (1 - frac) * tr.height : tr.top + tr.height / 2;
-      for (const type of ["pointerdown", "pointerup"]) {
-        row.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId: 12, isPrimary: true, clientX: x, clientY: y }));
-      }
-    }, frac);
-    await W(500);
-  };
-  await wcSlider(0.97); await wcSlider(0.03); await wcSlider(0.6);
-  await clickBtn("밸브·스위치 잠그기", 900);
+  const pairCard = await page.evaluate(() => document.querySelector(".ew-card.show")?.textContent ?? "");
+  log("   짝 카드:", pairCard.includes("밸브") && pairCard.includes("스위치") ? "OK" : "FAIL");
+  // ③ 세기 3단 — 약하게·세게를 모두 시험(높이 차·물살이 함께 변한다)
+  await ewx("setStep", 2); await W(1500);
+  const strong = await page.evaluate(() => window.__ewx.state());
+  await ewx("setStep", 0); await W(1700);
+  const weak = await page.evaluate(() => window.__ewx.state());
+  log("   높이 차:", `${weak.level.toFixed(0)}→${strong.level.toFixed(0)}`, strong.level > weak.level + 20 ? "OK" : "FAIL");
+  log("   물살:", `${weak.rate.toFixed(2)}→${strong.rate.toFixed(2)}`, strong.rate > weak.rate ? "OK" : "FAIL");
+  // ④ 물레방아가 실제로 돈다
+  await ewx("setStep", 2); await W(1000);
+  const a1 = (await page.evaluate(() => window.__ewx.state())).ang;
+  await W(700);
+  const a2 = (await page.evaluate(() => window.__ewx.state())).ang;
+  log("   물레방아 회전:", Math.abs(a2 - a1).toFixed(2), Math.abs(a2 - a1) > 0.2 ? "OK" : "FAIL");
+  // ⑤ 밸브·스위치 잠갔다 열기 — 물도 전류도 함께 멈춘다
+  await clickBtn("밸브·스위치 잠그기", 1600);
+  const closed = await page.evaluate(() => window.__ewx.state());
+  log("   잠금 물살:", closed.rate.toFixed(2), closed.rate < 0.12 ? "OK" : "FAIL");
   await clickBtn("밸브·스위치 열기", 900);
   log("   칩:", await chipsOn());
   await page.evaluate(() => document.querySelector(".rot-exit")?.click());

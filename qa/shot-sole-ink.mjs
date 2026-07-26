@@ -27,6 +27,19 @@ export default {};`,
 );
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
 await page.waitForTimeout(1200);
+// 2026-07-21 공개 진입 플로우: 부팅은 항상 스플래시. "한번 둘러보기"를 눌러야 홈으로 간다
+// (정본 = qa/e2e-soc7.mjs 부팅부). 고정 sleep 대신 조건 대기.
+await page.waitForSelector("#sc-splash", { timeout: 25000 });
+await page.mouse.click(210, 300); // 플립북 건너뛰기
+await page.waitForFunction(
+  () => [...document.querySelectorAll("button")].some((b) => b.textContent.includes("둘러보기")),
+  { timeout: 15000 },
+);
+await page.evaluate(() => {
+  [...document.querySelectorAll("button")].find((b) => b.textContent.includes("둘러보기")).click();
+});
+await page.waitForSelector("#sc-home", { timeout: 15000 });
+await page.waitForTimeout(600);
 
 for (const [unit, name] of [["g2u6", "g2u6-body"], ["g2u5", "g2u5-plant"]]) {
   await page.evaluate(async (u) => {

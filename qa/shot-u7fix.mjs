@@ -2,6 +2,8 @@
 // 일식 가로 / 태양계 투어 가로 / 훅 실사 3종 / 마지막 레슨 문제1 그림을 캡처한다.
 import { chromium } from "playwright-core";
 
+const PORT = process.env.PORT || "5173"; // 동시 세션이 5173을 잡을 수 있어 포트 주입 허용
+
 const OUT = process.argv[2] ?? "qa/u7fix";
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
@@ -30,8 +32,21 @@ const clickText = (re) => page.evaluate((re) => {
   return !!b;
 }, re);
 const openLesson = async (label) => {
-  await page.goto("http://localhost:5173/", { waitUntil: "networkidle" });
+  await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
   await page.waitForTimeout(1000);
+  // 2026-07-21 공개 진입 플로우: 부팅은 항상 스플래시. "한번 둘러보기"를 눌러야 홈으로 간다
+  // (정본 = qa/e2e-soc7.mjs 부팅부). 고정 sleep 대신 조건 대기.
+  await page.waitForSelector("#sc-splash", { timeout: 25000 });
+  await page.mouse.click(210, 300); // 플립북 건너뛰기
+  await page.waitForFunction(
+    () => [...document.querySelectorAll("button")].some((b) => b.textContent.includes("둘러보기")),
+    { timeout: 15000 },
+  );
+  await page.evaluate(() => {
+    [...document.querySelectorAll("button")].find((b) => b.textContent.includes("둘러보기")).click();
+  });
+  await page.waitForSelector("#sc-home", { timeout: 15000 });
+  await page.waitForTimeout(600);
   await clickText("VII\\. 태양계");
   await page.waitForTimeout(500);
   await page.evaluate((label) => {
