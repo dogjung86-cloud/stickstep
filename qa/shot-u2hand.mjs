@@ -12,7 +12,8 @@ await page.addInitScript(() => {
   localStorage.setItem("bs.state", JSON.stringify({ onboarded: true, premium: true, reviewMode: true, lessons: {}, totalXp: 0 }));
 });
 await page.goto(`http://localhost:${PORT}`, { waitUntil: "networkidle" });
-await page.waitForTimeout(1500);
+await page.waitForSelector(".screen.active", { timeout: 20000 });  // 부팅 전 nav.go는 mountEnter에서 죽는다
+await page.waitForTimeout(1200);
 
 await page.evaluate(async () => {
   const st = await import("/src/core/store.ts");           // 완료 표시가 있어야 자유 모드(앞으로 가기)가 열린다
@@ -56,10 +57,22 @@ const setU = async (frac) => {
 
 await page.waitForTimeout(1200);
 save("1x", await grab());
-for (const f of [0.08, 0.18, 0.3]) {
+for (const f of [0.08, 0.18, 0.3, 0.55]) {
   await setU(f);
   save(`u${String(f).replace("0.", "")}`, await grab());
 }
+
+// 400배 — 눈금자(40 µm)와 세포 하나가 나란한지가 이 랩의 결론이다
+await setU(1);
+await page.waitForTimeout(900);
+save("400x", await grab());
+console.log("PILL", await page.evaluate(() =>
+  [...document.querySelectorAll(".screen.active .stage-hud .pill")].map((p) => p.textContent.trim()).join(" | ")));
+await page.evaluate(() => document.querySelector(".screen.active .zcl-btn")?.click());
+await page.waitForTimeout(1600);
+save("400x-ruler", await grab());
+console.log("HELPER", await page.evaluate(() =>
+  document.querySelector(".screen.active .helper")?.textContent.trim().slice(0, 70)));
 
 await browser.close();
 console.log("DONE");

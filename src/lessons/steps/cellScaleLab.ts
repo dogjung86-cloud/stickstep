@@ -2,9 +2,11 @@
 //  · 슬라이더(1배 → 40배 → 400배)를 올리면 손등 → 피부 표면 무늬 → 세포로 화면이 이어서 확대된다.
 //    세 층은 각자의 기준 배율(1·40·400)을 가지고 "현재 배율 ÷ 기준 배율"만큼 확대되며 크로스페이드되므로,
 //    다른 그림으로 갈아탄 느낌이 아니라 한 번의 줌으로 읽힌다.
-//  · 40 µm 눈금자를 무대 아래에 상시 표기한다. 1배에서 손등 폭 60 mm가 관찰 창에 담긴다고 두면
-//    눈금 길이 = 0.221 × 배율(px)이라, 1배에서는 점보다도 작고(그래서 맨눈으로 안 보이고)
+//  · 40 µm 눈금자를 무대 아래에 상시 표기한다. 1배에서 손 전체(폭 250 mm)가 관찰 창에 담기므로
+//    눈금 길이 = 0.053 × 배율(px)이라, 1배에서는 점보다도 작고(그래서 맨눈으로 안 보이고)
 //    400배에서 비로소 세포 하나와 나란해진다. "안 보인다"를 말이 아니라 눈금으로 체험시키는 장치.
+//    **세포 크기는 이 눈금에서 역산한다(CELL_PX)** — 숫자를 따로 적으면 FIELD_1X를 바꾸는 순간
+//    "눈금과 세포가 나란하다"는 랩의 결론이 조용히 거짓이 된다.
 //  · 목표 2개: 400배까지 올려 세포 보기 · 눈금자를 세포에 대어 크기 확인하기.
 //  · 슬라이더 경계 밖은 core/rubber.ts 러버밴딩(모션 격상 ③ — 파일럿 heatParticles와 같은 3줄).
 //
@@ -27,8 +29,13 @@ const CVH = 344;
 const BASE_W = 360;
 const MAG_MAX = 400;
 const LOG_MAX = Math.log(MAG_MAX);
-/** 1배에서 관찰 창에 담기는 실제 폭(µm) — 손등 약 60 mm. 배율 m에서는 60000/m µm가 담긴다. */
-const FIELD_1X = 60000;
+/**
+ * 1배에서 관찰 창에 담기는 실제 폭(µm) — **손 전체가 들어오도록 250 mm**(창이 가로 332 : 세로 250이라
+ * 세로로 188 mm, 손목까지 약 175 mm인 손이 꽉 찬다). 배율 m에서는 250000/m µm가 담긴다.
+ * 이 값이 곧 40배(6.3 mm 피부 조각)·400배(625 µm 시야)의 현실성을 정한다 — 광학현미경 400배의
+ * 실제 시야가 0.5 mm 안팎이라 이 세팅이 교과서 값과 맞는다.
+ */
+const FIELD_1X = 250000;
 const RULER_UM = 40;
 const VIEW = { x: 14, y: 12, w: 332, h: 250 };
 const MEM = "#12B886";
@@ -159,23 +166,33 @@ export const cellScaleLab: StepRenderer = (host, step, api) => {
   };
 
   // ── 세포 모양(한 번만 생성 — 매 프레임 흔들리지 않게) ────────────────
+  /** 400배 화면에서 세포 하나(=눈금자 40 µm)가 차지하는 논리 px. 세포 지름·간격을 전부 여기서 뽑는다. */
+  const CELL_PX = pxPerUm(400) * RULER_UM;
   const cells: CellShape[] = [];
   {
     const cx = VIEW.x + VIEW.w / 2;
     const cy = VIEW.y + VIEW.h / 2;
-    const step2 = 96;
-    for (let row = -1; row <= 1; row++) {
-      for (let col = -2; col <= 2; col++) {
-        const ox = cx + col * step2 + (row & 1 ? step2 / 2 : 0) + (rnd() - 0.5) * 12;
-        const oy = cy + row * (step2 * 0.86) + (rnd() - 0.5) * 12;
+    const gap = CELL_PX * 1.06;
+    // 400배 미만에서는 이 층이 축소돼 그려지므로 창보다 훨씬 넓게 깔아 둔다(그리기는 컬링).
+    const cols = Math.ceil(480 / gap), rows = Math.ceil(360 / (gap * 0.86));
+    for (let row = -rows; row <= rows; row++) {
+      for (let col = -cols; col <= cols; col++) {
+        const ox = cx + col * gap + (row & 1 ? gap / 2 : 0) + (rnd() - 0.5) * gap * 0.34;
+        const oy = cy + row * (gap * 0.86) + (rnd() - 0.5) * gap * 0.34;
         const n = 7;
+        const rot = rnd() * Math.PI * 2;   // 낱개 회전이 없으면 벌집 무늬로 읽힌다
         const pts: [number, number][] = [];
         for (let i = 0; i < n; i++) {
-          const a = (i / n) * Math.PI * 2 + rnd() * 0.22;
-          const r = 40 + rnd() * 13;
+          const a = (i / n) * Math.PI * 2 + rot + rnd() * 0.22;
+          const r = CELL_PX * (0.46 + rnd() * 0.18);
           pts.push([ox + Math.cos(a) * r, oy + Math.sin(a) * r * 0.92]);
         }
-        cells.push({ pts, nx: ox + (rnd() - 0.5) * 16, ny: oy + (rnd() - 0.5) * 12, nr: 12 + rnd() * 3 });
+        cells.push({
+          pts,
+          nx: ox + (rnd() - 0.5) * CELL_PX * 0.18,
+          ny: oy + (rnd() - 0.5) * CELL_PX * 0.14,
+          nr: CELL_PX * (0.15 + rnd() * 0.035),
+        });
       }
     }
   }
@@ -184,31 +201,27 @@ export const cellScaleLab: StepRenderer = (host, step, api) => {
   const pores: [number, number][] = [];
   for (let i = 0; i < 14; i++) pores.push([rnd() * 520 - 260, rnd() * 460 - 230]);
 
-  // 손등 땀구멍·잔털용 고정 난수(손 국소 좌표)
-  const handPores: [number, number][] = [];
-  for (let i = 0; i < 30; i++) handPores.push([rnd() * 226 - 116, rnd() * 178 - 34]);
-  const handHairs: [number, number, number][] = [];
-  for (let i = 0; i < 10; i++) handHairs.push([rnd() * 214 - 110, rnd() * 156 - 22, rnd() - 0.5]);
-
-  // ── 손 ──────────────────────────────────────────────────────────────
-  // 부품(둥근 사각형)을 이어 붙이면 손이 아니라 벙어리장갑으로 읽힌다 — 손등·엄지·네 손가락을
-  // **실루엣 한 경로**로 그리고, 굴곡(너클 융기·손가락 사이 골·폄근 힘줄·정맥)은 전부 그 위에
-  // 얹는 음영으로 만든다. 좌표는 손 중심 기준 국소계이고 y가 음수인 쪽이 손끝이다.
+  // ── 손(1배 층) ───────────────────────────────────────────────────────
+  // **플랫 일러스트 문법**(사용자 확정 2026-07-26): 면 하나 + 한쪽 그늘 + 코럴 외곽선 + 손톱이 전부다.
+  // 사실적 질감(모공·잔털·힘줄·정맥)을 얹었더니 오히려 "퉁퉁 부은 손"으로 읽혔다 — 전부 걷어냈다.
+  // 손은 잘라 보여 주지 않고 **손목까지 통째로** 담는다(잘린 손은 굵기만 보여 부어 보인다).
+  // 좌표는 손 국소계(원점 = 손등 한가운데, y 음수가 손끝). 왼손을 손등 쪽에서 본 모습이라 엄지가 오른쪽이다.
   interface Digit { bx: number; by: number; ang: number; len: number; w0: number; w1: number }
   interface DigitPts {
     bl: [number, number]; br: [number, number]; tl: [number, number]; tr: [number, number];
-    capL: [number, number]; capR: [number, number]; knuckle: [number, number];
-    dir: [number, number]; perp: [number, number]; w0: number; ang: number;
+    capL: [number, number]; capR: [number, number];
+    dir: [number, number]; perp: [number, number]; w1: number;
   }
-  /** 검지·중지·약지·새끼 — 길이·굵기·벌어진 각이 전부 달라야 갈퀴가 아니라 손가락으로 읽힌다. */
+  /** 새끼·약지·중지·검지(왼쪽부터). 길이·굵기·벌어진 각이 전부 달라야 갈퀴가 아니라 손가락으로 읽힌다. */
   const FINGERS: Digit[] = [
-    { bx: -88, by: -48, ang: -0.1, len: 152, w0: 21, w1: 15.5 },
-    { bx: -29, by: -60, ang: -0.01, len: 168, w0: 22, w1: 16 },
-    { bx: 29, by: -54, ang: 0.075, len: 156, w0: 21, w1: 15 },
-    { bx: 82, by: -34, ang: 0.2, len: 122, w0: 18, w1: 13 },
+    { bx: -72, by: -6, ang: -0.3, len: 72, w0: 11, w1: 8.5 },
+    { bx: -38, by: -18, ang: -0.16, len: 94, w0: 12.5, w1: 9.5 },
+    { bx: -2, by: -22, ang: -0.02, len: 96, w0: 13, w1: 10 },
+    { bx: 34, by: -16, ang: 0.13, len: 92, w0: 12.5, w1: 9.5 },
   ];
-  /** 엄지는 위에서 보면 단축돼 짧고 두껍다. 왼쪽에서 뻗으므로 이 손은 오른손이다. */
-  const THUMB: Digit = { bx: -114, by: 40, ang: -0.98, len: 62, w0: 26, w1: 17 };
+  /** 엄지는 위에서 보면 단축돼 짧고 두껍다. */
+  const THUMB: Digit = { bx: 62, by: 40, ang: 1.02, len: 70, w0: 18, w1: 13 };
+  const SKIN = "#FBDDCD", SHADE = "242,193,171", LINE = "#E29B80", NAIL = "#FDEEE5";
 
   const digitPts = (d: Digit): DigitPts => {
     const dx = Math.sin(d.ang), dy = -Math.cos(d.ang);  // 손끝 방향
@@ -222,267 +235,137 @@ export const cellScaleLab: StepRenderer = (host, step, api) => {
       tr: [tx + px * d.w1, ty + py * d.w1],
       capL: [tx - px * d.w1 + dx * cap, ty - py * d.w1 + dy * cap],
       capR: [tx + px * d.w1 + dx * cap, ty + py * d.w1 + dy * cap],
-      knuckle: [d.bx + dx * 8, d.by + dy * 8],
-      dir: [dx, dy], perp: [px, py], w0: d.w0, ang: d.ang,
+      dir: [dx, dy], perp: [px, py], w1: d.w1,
     };
   };
   const FP = FINGERS.map(digitPts);
   const TP = digitPts(THUMB);
 
   /**
-   * 이웃한 두 손가락이 갈라지는 점. **너클보다 손끝 쪽**에 있어야 손가락이 손에 붙어 보인다 —
-   * 너클 높이까지 내려오면 네 개의 막대가 따로 꽂힌 그림이 되고, 그 사이를 위로 부풀리면
-   * 손가락마다 혹이 달린 반죽처럼 보인다. 이 점이 곧 두 손가락 옆선의 만남이다.
+   * 이웃한 두 손가락이 갈라지는 점. **밑동보다 손끝 쪽**에 있어야 손가락이 손에 붙어 보인다 —
+   * 밑동 높이까지 내리면 막대 네 개가 따로 꽂힌 그림이 되고, 그 사이를 위로 부풀리면 혹이 달린다.
    */
-  const crotchOf = (a: DigitPts, b: DigitPts): [number, number] =>
-    [(a.br[0] + b.bl[0]) / 2, (a.br[1] + b.bl[1]) / 2 - 24];
-  const CROTCH: [number, number][] = [crotchOf(FP[0], FP[1]), crotchOf(FP[1], FP[2]), crotchOf(FP[2], FP[3])];
+  const CROTCH: [number, number][] = [0, 1, 2].map((i): [number, number] => [
+    (FP[i].br[0] + FP[i + 1].bl[0]) / 2, (FP[i].br[1] + FP[i + 1].bl[1]) / 2 - 14,
+  ]);
 
-  /** 손목 → 엄지 → 네 손가락 → 손날 → 손목으로 한 바퀴 도는 실루엣. */
+  /** 손목 → 엄지 → 네 손가락(오른쪽부터) → 손날 → 손목으로 한 바퀴 도는 실루엣. */
   function handOutline(ctx: CanvasRenderingContext2D): void {
     ctx.beginPath();
-    ctx.moveTo(-100, 178);
-    ctx.quadraticCurveTo(-137, 126, TP.bl[0], TP.bl[1]);      // 엄지 두덩(굵은 밑동에서 자라야 붙어 보인다)
-    ctx.quadraticCurveTo(-158, 52, TP.tl[0], TP.tl[1]);
-    ctx.bezierCurveTo(TP.capL[0], TP.capL[1], TP.capR[0], TP.capR[1], TP.tr[0], TP.tr[1]);
-    ctx.quadraticCurveTo(-128, -6, TP.br[0], TP.br[1]);       // 엄지 안쪽선
-    ctx.quadraticCurveTo(-88, -14, FP[0].bl[0], FP[0].bl[1]); // 엄지·검지 물갈퀴(안으로 파인다)
-    for (let i = 0; i < FP.length; i++) {
+    ctx.moveTo(26, 210);                                       // 손목 오른쪽(화면 밖)
+    ctx.bezierCurveTo(24, 150, 62, 106, TP.br[0], TP.br[1]);   // 엄지 두덩
+    ctx.quadraticCurveTo(96, 40, TP.tr[0], TP.tr[1]);          // 엄지 바깥선
+    ctx.bezierCurveTo(TP.capR[0], TP.capR[1], TP.capL[0], TP.capL[1], TP.tl[0], TP.tl[1]);
+    ctx.quadraticCurveTo(84, -2, TP.bl[0], TP.bl[1]);          // 엄지 안쪽선
+    ctx.quadraticCurveTo(48, 3, FP[3].br[0], FP[3].br[1]);     // 엄지·검지 물갈퀴(얕게 파인다)
+    for (let i = FP.length - 1; i >= 0; i--) {
       const f = FP[i];
-      const from = i === 0 ? f.bl : CROTCH[i - 1];
-      const to = i === FP.length - 1 ? f.br : CROTCH[i];
+      const from = i === FP.length - 1 ? f.br : CROTCH[i];
+      const to = i === 0 ? f.bl : CROTCH[i - 1];
       ctx.quadraticCurveTo(
-        (from[0] + f.tl[0]) / 2 - f.perp[0] * 3, (from[1] + f.tl[1]) / 2 - f.perp[1] * 3,
-        f.tl[0], f.tl[1],
+        (from[0] + f.tr[0]) / 2 + f.perp[0] * 2, (from[1] + f.tr[1]) / 2 + f.perp[1] * 2,
+        f.tr[0], f.tr[1],
       );
-      ctx.bezierCurveTo(f.capL[0], f.capL[1], f.capR[0], f.capR[1], f.tr[0], f.tr[1]);
+      ctx.bezierCurveTo(f.capR[0], f.capR[1], f.capL[0], f.capL[1], f.tl[0], f.tl[1]);
       ctx.quadraticCurveTo(
-        (f.tr[0] + to[0]) / 2 + f.perp[0] * 3, (f.tr[1] + to[1]) / 2 + f.perp[1] * 3,
+        (f.tl[0] + to[0]) / 2 - f.perp[0] * 2, (f.tl[1] + to[1]) / 2 - f.perp[1] * 2,
         to[0], to[1],
       );
     }
-    ctx.bezierCurveTo(118, 28, 112, 104, 92, 178);            // 새끼손가락 쪽 손날
-    ctx.lineTo(-100, 178);
+    // 손날은 새끼손가락 옆선이 내려오던 방향을 이어받아야 한다(제어점을 반대쪽에 두면 각이 진다)
+    ctx.bezierCurveTo(-80, 20, -89, 50, -84, 88);
+    ctx.quadraticCurveTo(-78, 142, -54, 210);                  // 손목 왼쪽(화면 밖)
+    ctx.closePath();
+  }
+
+  /** 손가락 하나가 실루엣에서 차지하는 조각 — 그늘을 그 안에만 칠하려고 쓴다. */
+  function digitPath(
+    ctx: CanvasRenderingContext2D, f: DigitPts, from: [number, number], to: [number, number],
+  ): void {
+    ctx.beginPath();
+    ctx.moveTo(from[0], from[1]);
+    ctx.lineTo(f.tr[0], f.tr[1]);
+    ctx.bezierCurveTo(f.capR[0], f.capR[1], f.capL[0], f.capL[1], f.tl[0], f.tl[1]);
+    ctx.lineTo(to[0], to[1]);
     ctx.closePath();
   }
 
   // ── 층 그리기(전부 논리 좌표 · 라벨은 층 밖에서 따로) ────────────────
   function drawHand(ctx: CanvasRenderingContext2D, cx: number, cy: number): void {
     ctx.save();
-    ctx.translate(cx + 24, cy);
+    ctx.translate(cx - 20, cy + 10);   // 실루엣 중심(x≈20)을 창 한가운데로. y+10은 손끝 여백
 
     handOutline(ctx);
-    const skin = ctx.createLinearGradient(-160, -180, 140, 170);
-    skin.addColorStop(0, "#F9DAC0");
-    skin.addColorStop(0.46, "#EBBA97");
-    skin.addColorStop(1, "#C58860");
-    ctx.fillStyle = skin;
+    ctx.fillStyle = SKIN;
     ctx.fill();
 
-    // 굴곡은 전부 실루엣 안쪽에만
     ctx.save();
     handOutline(ctx);
     ctx.clip();
-    ctx.lineCap = "round";
-    const wash = (g: CanvasGradient): void => { ctx.fillStyle = g; ctx.fillRect(-230, -250, 420, 470); };
 
-    const bulge = ctx.createRadialGradient(-40, 4, 6, -26, 26, 176);
-    bulge.addColorStop(0, "rgba(255,241,224,.5)");
-    bulge.addColorStop(0.5, "rgba(255,230,206,.15)");
-    bulge.addColorStop(1, "rgba(255,224,198,0)");
-    wash(bulge);
-    const edge = ctx.createLinearGradient(4, 0, 126, 0);
-    edge.addColorStop(0, "rgba(146,84,50,0)");
-    edge.addColorStop(1, "rgba(120,64,38,.5)");
-    wash(edge);
-    const thenar = ctx.createLinearGradient(-56, 0, -136, 0);   // 엄지 두덩 쪽도 어두워야 가운데가 능선이 된다
-    thenar.addColorStop(0, "rgba(142,80,48,0)");
-    thenar.addColorStop(1, "rgba(126,68,40,.34)");
-    wash(thenar);
-    const wrist = ctx.createLinearGradient(0, 72, 0, 176);
-    wrist.addColorStop(0, "rgba(140,80,48,0)");
-    wrist.addColorStop(1, "rgba(116,62,38,.44)");
-    wash(wrist);
-    const webShade = ctx.createRadialGradient(-104, 16, 6, -104, 16, 76);
-    webShade.addColorStop(0, "rgba(126,68,40,.32)");
-    webShade.addColorStop(1, "rgba(126,68,40,0)");
-    wash(webShade);
-
-    // 손가락 원통 음영 — 평평한 판이 아니라 둥근 마디로 읽히게 하는 결정적 한 겹.
-    // 축에 수직인 그라데이션(왼쪽 어둡게 → 밝은 능선 → 오른쪽 어둡게)을 그 손가락 안에만 칠한다.
-    // 음영 영역은 **실루엣에서 그 손가락이 차지하는 만큼**과 정확히 같아야 한다 — 밑동을 손등
-    // 쪽으로 늘이면 손등 위에 반투명 관 네 개가 겹쳐 놓인 그림이 된다(실제로 그렇게 보였다).
-    const cylinder = (f: DigitPts, from: [number, number], to: [number, number], k: number): void => {
+    // 손가락마다 왼쪽은 밝은 테, 오른쪽은 한 톤 어두운 면. 플랫이라 경계를 좁게 끊는다
+    // (넓게 번지면 사실화가 되고, 사실화는 이 크기에서 부은 손으로 읽힌다).
+    const shadeDigit = (f: DigitPts, from: [number, number], to: [number, number]): void => {
       ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(from[0], from[1]);
-      ctx.lineTo(f.tl[0], f.tl[1]);
-      ctx.bezierCurveTo(f.capL[0], f.capL[1], f.capR[0], f.capR[1], f.tr[0], f.tr[1]);
-      ctx.lineTo(to[0], to[1]);
-      ctx.closePath();
+      digitPath(ctx, f, from, to);
       ctx.clip();
       const g = ctx.createLinearGradient(f.bl[0], f.bl[1], f.br[0], f.br[1]);
-      g.addColorStop(0, `rgba(146,86,52,${0.26 * k})`);
-      g.addColorStop(0.32, `rgba(255,242,226,${0.26 * k})`);
-      g.addColorStop(0.62, `rgba(255,236,216,${0.04 * k})`);
-      g.addColorStop(1, `rgba(124,68,40,${0.32 * k})`);
+      g.addColorStop(0, "rgba(255,247,241,.85)");
+      g.addColorStop(0.2, "rgba(255,247,241,0)");
+      g.addColorStop(0.6, `rgba(${SHADE},0)`);
+      g.addColorStop(0.72, `rgba(${SHADE},.9)`);
+      g.addColorStop(1, `rgba(${SHADE},.9)`);
       ctx.fillStyle = g;
-      ctx.fillRect(-230, -250, 420, 470);
+      ctx.fillRect(-260, -280, 540, 560);
       ctx.restore();
     };
     for (let i = 0; i < FP.length; i++) {
-      cylinder(FP[i], i === 0 ? FP[0].bl : CROTCH[i - 1], i === 3 ? FP[3].br : CROTCH[i], 1);
+      shadeDigit(FP[i], i === FP.length - 1 ? FP[i].br : CROTCH[i], i === 0 ? FP[i].bl : CROTCH[i - 1]);
     }
-    cylinder(TP, TP.bl, TP.br, 0.6);
+    shadeDigit(TP, TP.br, TP.bl);
 
-    // 살 밑의 굴곡은 윤곽이 없다 — 굵기를 줄여 가며 여러 겹 겹쳐야 번진 그늘이 된다.
-    // 한 겹으로 굵게 그으면 그늘이 아니라 띠·꿰맨 자국으로 읽힌다(실제로 그렇게 보였다).
-    const softLine = (color: string, layers: [number, number][], draw: () => void): void => {
-      for (const [w, a] of layers) {
-        ctx.strokeStyle = `rgba(${color},${a})`;
-        ctx.lineWidth = w;
-        ctx.beginPath();
-        draw();
-        ctx.stroke();
-      }
-    };
+    // 손등 자체의 그늘 — 오른쪽·아래 테두리를 따라 도는 한 겹
+    const pg = ctx.createRadialGradient(-34, -4, 12, -14, 22, 152);
+    pg.addColorStop(0, `rgba(${SHADE},0)`);
+    pg.addColorStop(0.6, `rgba(${SHADE},0)`);
+    pg.addColorStop(0.76, `rgba(${SHADE},.62)`);
+    pg.addColorStop(1, `rgba(${SHADE},.62)`);
+    ctx.fillStyle = pg;
+    ctx.fillRect(-260, -280, 540, 560);
 
-    // 너클 아래 그늘 — 손등이 손가락으로 넘어가며 한 번 꺼진다(없으면 손등이 판판해 보인다)
-    softLine("138,78,46", [[46, 0.045], [32, 0.055], [20, 0.055]], () => {
-      ctx.moveTo(FP[0].knuckle[0] - 26, FP[0].knuckle[1] + 32);
-      ctx.bezierCurveTo(
-        FP[1].knuckle[0], FP[1].knuckle[1] + 20, FP[2].knuckle[0], FP[2].knuckle[1] + 20,
-        FP[3].knuckle[0] + 20, FP[3].knuckle[1] + 36,
-      );
-    });
-
-    // 손가락 사이 골 — 갈라지는 점에서 손등 쪽으로 짧게 번지는 그늘
-    for (let i = 0; i < CROTCH.length; i++) {
-      const a = FP[i], b = FP[i + 1];
-      const wx = CROTCH[i][0], wy = CROTCH[i][1];
-      const dx = (a.dir[0] + b.dir[0]) / 2, dy = (a.dir[1] + b.dir[1]) / 2;
-      softLine("112,60,34", [[17, 0.075], [10, 0.085], [5, 0.085]], () => {
-        ctx.moveTo(wx + dx * 2, wy + dy * 2);
-        ctx.lineTo(wx - dx * 16, wy - dy * 16);
-      });
-    }
-
-    // 폄근 힘줄 — 손목에서 너클로 부챗살. 수렴점을 화면 한참 아래에 두어야 살 밑의 결로 보인다
-    // (가까운 한 점으로 모으면 손등이 아니라 빛 번짐처럼 읽힌다).
-    for (const f of FP) {
-      const kx = f.knuckle[0], ky = f.knuckle[1];
-      const mx = (kx + 6) / 2 + 8, my = (ky + 190) / 2;
-      ctx.strokeStyle = "rgba(255,236,216,.07)";
-      ctx.lineWidth = 15;
+    // 손톱 다섯 — 손톱만큼 강한 "손" 신호가 없다
+    for (const f of [...FP, TP]) {
+      const tx = (f.tl[0] + f.tr[0]) / 2, ty = (f.tl[1] + f.tr[1]) / 2;
+      const nx = tx - f.dir[0] * f.w1 * 1.05, ny = ty - f.dir[1] * f.w1 * 1.05;
       ctx.beginPath();
-      ctx.moveTo(6, 190);
-      ctx.quadraticCurveTo(mx, my, kx, ky + 26);
-      ctx.stroke();
-    }
-
-    // 정맥 — 살 밑으로 비치는 것이라 윤곽이 없다. 넓고 흐리게 깔고 가는 심만 얹는다
-    // (선 하나로 진하게 그으면 혈관이 아니라 갈라진 금으로 읽힌다).
-    softLine("116,140,160", [[16, 0.03], [11, 0.032], [7, 0.03]], () => {
-      ctx.moveTo(70, 154);
-      ctx.bezierCurveTo(44, 112, 12, 90, -14, 66);
-      ctx.moveTo(-14, 66); ctx.bezierCurveTo(-34, 50, -50, 28, -60, 4);
-      ctx.moveTo(-14, 66); ctx.bezierCurveTo(0, 42, 10, 22, 16, 0);
-    });
-
-    // 너클 융기 + 관절 주름
-    for (const f of FP) {
-      const kx = f.knuckle[0], ky = f.knuckle[1];
-      const g = ctx.createRadialGradient(kx - 6, ky - 8, 2, kx, ky, f.w0 * 1.45);
-      g.addColorStop(0, "rgba(255,246,232,.62)");
-      g.addColorStop(0.55, "rgba(245,210,180,.18)");
-      g.addColorStop(1, "rgba(205,155,120,0)");
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.ellipse(kx, ky, f.w0 * 1.3, f.w0 * 1.02, f.ang, 0, Math.PI * 2);
+      ctx.ellipse(nx, ny, f.w1 * 1.02, f.w1 * 0.62, Math.atan2(f.dir[1], f.dir[0]), 0, Math.PI * 2);
+      ctx.fillStyle = NAIL;
       ctx.fill();
-      // 융기 아래 접힘 — 선으로 읽히면 꿰맨 자국이 된다. 아주 옅게, 짧게.
-      ctx.strokeStyle = "rgba(142,82,50,.085)";
-      ctx.lineWidth = 4.2;
-      ctx.beginPath();
-      ctx.arc(kx, ky + f.w0 * 0.7, f.w0 * 0.82, Math.PI * 1.3, Math.PI * 1.7);
-      ctx.stroke();
-      ctx.strokeStyle = "rgba(150,90,56,.24)";
-      ctx.lineWidth = 1.6;
-      for (let j = 0; j < 2; j++) {
-        const t = 16 + j * 8;
-        const ax = kx + f.dir[0] * t, ay = ky + f.dir[1] * t;
-        const w = f.w0 * (0.72 - j * 0.08);
-        ctx.beginPath();
-        ctx.moveTo(ax - f.perp[0] * w, ay - f.perp[1] * w);
-        ctx.quadraticCurveTo(ax + f.dir[0] * 4, ay + f.dir[1] * 4, ax + f.perp[0] * w, ay + f.perp[1] * w);
-        ctx.stroke();
-      }
-    }
-
-    // 엄지손톱 — 위에서 본 손에서 손톱만큼 강한 "손" 신호가 없다(네 손가락은 끝이 화면 밖이라 없다)
-    {
-      const tx = (TP.tl[0] + TP.tr[0]) / 2, ty = (TP.tl[1] + TP.tr[1]) / 2;
-      const nx = tx - TP.dir[0] * 14, ny = ty - TP.dir[1] * 14;
-      const rot = Math.atan2(TP.dir[1], TP.dir[0]);
-      const ng = ctx.createLinearGradient(
-        nx - TP.perp[0] * 12, ny - TP.perp[1] * 12, nx + TP.perp[0] * 12, ny + TP.perp[1] * 12,
-      );
-      ng.addColorStop(0, "rgba(255,240,226,.85)");
-      ng.addColorStop(0.5, "rgba(250,220,202,.72)");
-      ng.addColorStop(1, "rgba(224,180,156,.72)");
-      ctx.beginPath();
-      ctx.ellipse(nx, ny, 15, 11.5, rot, 0, Math.PI * 2);
-      ctx.fillStyle = ng;
-      ctx.fill();
-      ctx.strokeStyle = "rgba(168,112,78,.4)";
-      ctx.lineWidth = 1.3;
-      ctx.stroke();
-      ctx.strokeStyle = "rgba(160,104,72,.3)";   // 밑동(큐티클) 그늘
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(nx - TP.dir[0] * 4, ny - TP.dir[1] * 4, 9, rot + Math.PI * 0.45, rot + Math.PI * 1.55);
+      ctx.strokeStyle = "rgba(226,155,128,.5)";
+      ctx.lineWidth = 1;
       ctx.stroke();
     }
-
-    // 살결(땀구멍·잔털) — 진하면 살결이 아니라 긁힌 자국으로 읽힌다
-    ctx.fillStyle = "rgba(152,98,66,.19)";
-    for (const [px, py] of handPores) { ctx.beginPath(); ctx.arc(px, py, 1.3, 0, Math.PI * 2); ctx.fill(); }
-    ctx.strokeStyle = "rgba(122,80,54,.13)";
-    ctx.lineWidth = 1;
-    for (const [hx, hy, hb] of handHairs) {
-      ctx.beginPath();
-      ctx.moveTo(hx, hy);
-      ctx.quadraticCurveTo(hx + 3 + hb * 4, hy - 5, hx + 7 + hb * 6, hy - 9);
-      ctx.stroke();
-    }
-
-    // 좌상단 림 라이트(안쪽 테두리)
-    handOutline(ctx);
-    const rim = ctx.createLinearGradient(-160, -170, 70, 100);
-    rim.addColorStop(0, "rgba(255,247,235,.7)");
-    rim.addColorStop(0.5, "rgba(255,240,224,.1)");
-    rim.addColorStop(1, "rgba(255,236,218,0)");
-    ctx.strokeStyle = rim;
-    ctx.lineWidth = 3.4;
-    ctx.stroke();
     ctx.restore();
 
-    // 외곽선은 살의 최암색(균일한 검정 금지 — 파운드리 재질 문법)
     handOutline(ctx);
-    ctx.strokeStyle = "#A2643F";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = LINE;
+    ctx.lineWidth = 2.2;
+    ctx.lineJoin = "round";
     ctx.stroke();
     ctx.restore();
     drawBracket(ctx, cx, cy, VIEW.w / 40);
   }
 
-  function drawSkin(ctx: CanvasRenderingContext2D, cx: number, cy: number): void {
+  function drawSkin(ctx: CanvasRenderingContext2D, cx: number, cy: number, mag: number): void {
+    // 이 층은 mag/40배로 그려진다 — 40배보다 낮으면 축소돼 창보다 작아지므로, 그리는 범위를
+    // 배율에 맞춰 넓힌다. 고정 범위로 두면 저배율에서 **피부가 네모난 조각으로** 떠 보인다.
+    const ext = Math.min(1250, VIEW.w / 2 / (mag / 40) + 60);
     const g = ctx.createLinearGradient(cx - 260, cy - 240, cx + 260, cy + 240);
     g.addColorStop(0, "#F3CDAF");
     g.addColorStop(0.5, "#E5B08B");
     g.addColorStop(1, "#D19A73");
     ctx.fillStyle = g;
-    ctx.fillRect(cx - 320, cy - 300, 640, 600);
+    ctx.fillRect(cx - 3000, cy - 2800, 6000, 5600);
     // 피부 표면의 골(소구)이 만드는 그물 무늬
     ctx.lineCap = "round";
     const fam = (angle: number, gap: number, alpha: number, width: number): void => {
@@ -491,10 +374,11 @@ export const cellScaleLab: StepRenderer = (host, step, api) => {
       ctx.rotate(angle);
       ctx.strokeStyle = `rgba(150,96,64,${alpha})`;
       ctx.lineWidth = width;
-      for (let i = -6; i <= 6; i++) {
+      const n = Math.ceil(ext / gap);
+      for (let i = -n; i <= n; i++) {
         ctx.beginPath();
-        ctx.moveTo(-360, i * gap);
-        for (let x = -360; x <= 360; x += 40) ctx.lineTo(x, i * gap + Math.sin((x + i * 90) / 60) * 4);
+        ctx.moveTo(-ext, i * gap);
+        for (let x = -ext; x <= ext; x += 40) ctx.lineTo(x, i * gap + Math.sin((x + i * 90) / 60) * 4);
         ctx.stroke();
       }
       ctx.restore();
@@ -518,21 +402,27 @@ export const cellScaleLab: StepRenderer = (host, step, api) => {
     drawBracket(ctx, cx, cy, VIEW.w / 10);
   }
 
-  function drawCellLayer(ctx: CanvasRenderingContext2D): void {
+  function drawCellLayer(ctx: CanvasRenderingContext2D, mag: number): void {
     ctx.fillStyle = "#F2E4F6";
-    ctx.fillRect(VIEW.x - 320, VIEW.y - 320, VIEW.w + 640, VIEW.h + 640);
+    ctx.fillRect(VIEW.x - 1100, VIEW.y - 1100, VIEW.w + 2200, VIEW.h + 2200);
+    // 이 층은 mag/400배로 그려진다 — 400배 아래에서는 축소돼 훨씬 넓은 범위가 들어오므로
+    // 세포를 넓게 깔아 두고 화면에 실제로 걸리는 것만 그린다(전부 그리면 1000개가 넘는다).
+    const s = mag / 400;
+    const mx = VIEW.x + VIEW.w / 2, my = VIEW.y + VIEW.h / 2;
+    const hw = VIEW.w / 2 / s + CELL_PX, hh = VIEW.h / 2 / s + CELL_PX;
     for (const c of cells) {
+      if (Math.abs(c.nx - mx) > hw || Math.abs(c.ny - my) > hh) continue;
       ctx.beginPath();
       ctx.moveTo(c.pts[0][0], c.pts[0][1]);
       for (let i = 1; i < c.pts.length; i++) ctx.lineTo(c.pts[i][0], c.pts[i][1]);
       ctx.closePath();
-      const g = ctx.createRadialGradient(c.nx, c.ny, 4, c.nx, c.ny, 62);
+      const g = ctx.createRadialGradient(c.nx, c.ny, CELL_PX * 0.08, c.nx, c.ny, CELL_PX * 1.4);
       g.addColorStop(0, "#DCEFF9");
       g.addColorStop(1, "#BCD8E8");
       ctx.fillStyle = g;
       ctx.fill();
       ctx.strokeStyle = MEM;
-      ctx.lineWidth = 2.6;
+      ctx.lineWidth = CELL_PX * 0.062;
       ctx.stroke();
       // 핵
       ctx.beginPath();
@@ -540,7 +430,7 @@ export const cellScaleLab: StepRenderer = (host, step, api) => {
       ctx.fillStyle = "#4A5FD6";
       ctx.fill();
       ctx.strokeStyle = "#2B3AA8";
-      ctx.lineWidth = 1.6;
+      ctx.lineWidth = CELL_PX * 0.038;
       ctx.stroke();
     }
   }
@@ -613,9 +503,10 @@ export const cellScaleLab: StepRenderer = (host, step, api) => {
       ctx.stroke();
     }
     // 무대 폭(논리 360)을 넘지 않게 짧게 — 캔버스 텍스트는 줄바꿈이 없다.
+    // 문턱은 배율이 아니라 실제 눈금 길이(px)로 — FIELD_1X가 바뀌어도 문구가 따라온다.
     const note = barPx < 2
       ? "점보다 작아요 — 맨눈으로는 안 보여요"
-      : barPx < 26
+      : barPx < 16
         ? "겨우 보이기 시작했어요 — 아직 작아요"
         : "이제 눈금과 세포가 나란해요";
     ctx.font = `700 ${fpx(12)}px Pretendard, sans-serif`;
@@ -754,9 +645,10 @@ export const cellScaleLab: StepRenderer = (host, step, api) => {
 
     const cx = VIEW.x + VIEW.w / 2;
     const cy = VIEW.y + VIEW.h / 2;
-    const wA = 1 - smooth(0.1, 0.44, uD);
-    const wB = smooth(0.2, 0.5, uD) * (1 - smooth(0.7, 0.93, uD));
-    const wC = smooth(0.72, 0.97, uD);
+    // 층 크로스페이드는 **아래 층을 불투명하게 깔고 위 층을 덮는 방식**이다. 둘 다 반투명으로
+    // 겹치면 두 알파의 곱만큼 무대 배경이 비쳐 중간 배율이 흙빛으로 뜬다(실제로 그랬다).
+    const tAB = smooth(0.2, 0.5, uD);    // 손 → 피부
+    const tBC = smooth(0.7, 0.94, uD);   // 피부 → 세포
     const layer = (home: number, weight: number, draw: () => void): void => {
       if (weight < 0.005) return;
       ctx.save();
@@ -767,17 +659,17 @@ export const cellScaleLab: StepRenderer = (host, step, api) => {
       draw();
       ctx.restore();
     };
-    layer(1, wA, () => drawHand(ctx, cx, cy));
-    layer(40, wB, () => drawSkin(ctx, cx, cy));
-    layer(400, wC, () => drawCellLayer(ctx));
-    drawRulerOnCell(ctx, mag, rulerT * wC);
+    layer(1, tAB > 0.995 ? 0 : 1, () => drawHand(ctx, cx, cy));
+    layer(40, tBC > 0.995 ? 0 : tAB, () => drawSkin(ctx, cx, cy, mag));
+    layer(400, tBC, () => drawCellLayer(ctx, mag));
+    drawRulerOnCell(ctx, mag, rulerT * tBC);
     // 관찰 창 안쪽 그림자
     const vig = ctx.createRadialGradient(cx, cy, VIEW.w * 0.28, cx, cy, VIEW.w * 0.72);
     vig.addColorStop(0, "rgba(0,0,0,0)");
     vig.addColorStop(1, "rgba(4,10,20,.42)");
     ctx.fillStyle = vig;
     ctx.fillRect(VIEW.x, VIEW.y, VIEW.w, VIEW.h);
-    drawViewLabel(ctx, wC > 0.5 ? "피부를 이루는 세포" : wB > 0.45 ? "피부 표면 무늬" : "손등 (맨눈)", Math.max(wA, wB, wC));
+    drawViewLabel(ctx, tBC > 0.5 ? "피부를 이루는 세포" : tAB > 0.5 ? "피부 표면 무늬" : "손등 (맨눈)", 1);
     ctx.restore();
 
     ctx.strokeStyle = "rgba(120,150,190,.28)";
