@@ -60,7 +60,10 @@ export function inquiryFlowFig(o: { steps: string[]; blank?: number; loop?: [num
       <text x="${OUT + 6}" y="${(y1 + y2) / 2 - 4}" font-size="10.5" font-weight="700" fill="#B4690E">고쳐서</text>
       <text x="${OUT + 6}" y="${(y1 + y2) / 2 + 8}" font-size="10.5" font-weight="700" fill="#B4690E">다시</text>`;
   }
-  return `<svg viewBox="0 0 344 ${H}" ${NS} role="img" aria-label="탐구 과정의 단계를 위에서 아래로 이은 흐름도. 한 칸은 비어 있고 기호로 표시되어 있다">${body}</svg>`;
+  const aria = o.blank === undefined
+    ? "탐구 과정의 단계를 위에서 아래로 이은 흐름도"
+    : "탐구 과정의 단계를 위에서 아래로 이은 흐름도. 한 칸은 비어 있고 기호로 표시되어 있다";
+  return `<svg viewBox="0 0 344 ${H}" ${NS} role="img" aria-label="${aria}">${body}</svg>`;
 }
 
 // ── PT 탐구 계획표(행 라벨 | 내용 2열 · 빈칸 ㉠) ─────────────────────────
@@ -96,7 +99,10 @@ export function planTableFig(o: { rows: [string, string][]; blank?: number }): s
     grid += `<line x1="8" y1="${gy}" x2="${W - 8}" y2="${gy}" stroke="#DCE0E6" stroke-width="1.2"/>`;
   }
   grid += `<line x1="8" y1="8" x2="8" y2="${y}" stroke="#DCE0E6" stroke-width="1.2"/><line x1="${W - 8}" y1="8" x2="${W - 8}" y2="${y}" stroke="#DCE0E6" stroke-width="1.2"/>`;
-  return `<svg viewBox="0 0 ${W} ${H}" ${NS} role="img" aria-label="탐구 계획을 항목별로 적은 표. 한 칸은 비어 있고 기호로 표시되어 있다">${body}${grid}</svg>`;
+  const aria = o.blank === undefined
+    ? "탐구 계획을 항목별로 적은 표"
+    : "탐구 계획을 항목별로 적은 표. 한 칸은 비어 있고 기호로 표시되어 있다";
+  return `<svg viewBox="0 0 ${W} ${H}" ${NS} role="img" aria-label="${aria}">${body}${grid}</svg>`;
 }
 
 // ── VT 변인 배정 표(조건 | 같게 | 다르게 · q = ㉠ 빈칸) ─────────────────
