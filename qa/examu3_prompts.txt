@@ -1,0 +1,28 @@
+스타일 블록 A (모든 프롬프트 앞에 붙일 공통 스타일):
+Photorealistic photograph, natural lighting, clean composition, single clear subject.
+ABSOLUTELY NO text, NO numbers, NO letters, NO logos, NO watermarks, NO on-screen UI overlays anywhere in the image.
+No people, no hands, no faces, no human body parts (including reflections). Square 1:1 aspect ratio. High detail, realistic textures.
+
+[0] file=public/exam/u3/thermal-spoon.png
+A thermal infrared camera view of a metal spoon standing in a bowl of hot soup on a table: the bowl and the submerged part of the spoon glow bright yellow-white (hot), and the color along the spoon handle fades gradually through orange and red to dark purple-blue at the top end of the handle (cooler), showing heat traveling up the metal. Background in cold dark blue tones. Classic false-color thermogram look, smooth color gradient along the spoon. NO temperature scale bar, NO numbers, NO crosshair, NO camera UI of any kind.
+
+[1] file=public/exam/u3/thermal-window.png
+A thermal infrared camera view of a house exterior wall with one closed window on a cold winter night: the window glass and the thin gaps around the window frame glow bright yellow-orange (heat leaking out), while the surrounding wall stays dark blue-purple (cold). False-color thermogram aesthetic, strong contrast between the glowing window and the cold wall. NO temperature scale bar, NO numbers, NO crosshair, NO camera UI of any kind.
+
+[2] file=public/exam/u3/wire-summer.png
+A single wooden utility pole with electric power lines photographed against a bright clear blue summer sky with lush green tree tops at the frame edge: the wires between poles hang noticeably LOW, drooping in deep slack curves (sagging catenary), the sag clearly visible. Low angle looking up. The drooping of the wires must be obvious.
+
+[3] file=public/exam/u3/wire-winter.png
+The same kind of wooden utility pole with electric power lines, photographed in winter: pale gray-white sky, bare leafless branches at the frame edge, thin snow on the pole top, and the wires between poles stretched TIGHT and nearly straight with almost no sag. Same low angle looking up as a summer counterpart shot. The tautness of the wires must be obvious.
+
+[4] file=public/exam/u3/rail-gap.png
+A close-up photograph of a railway track expansion joint: the ends of two steel rails meet with a clearly visible narrow gap of a few centimeters between them, bolted fishplates on the side, weathered wooden sleepers and gravel ballast below, shallow depth of field focused on the gap. The gap between the two rail ends must be clearly visible.
+
+[5] file=public/exam/u3/bridge-joint.png
+A close-up photograph of a highway bridge expansion joint on the road surface: interlocking steel comb teeth (finger joint) spanning across the asphalt with visible spacing between the metal fingers, viewed from a low angle along the road, daytime. The comb-shaped steel joint must be the clear single subject.
+
+[6] file=public/exam/u3/pot-pair.png
+Two cooking pots side by side on a plain kitchen table, studio-like clean composition: on the left a traditional Korean dark earthenware pot (ttukbaegi, thick rounded ceramic with lid), on the right a thin shiny lightweight stainless steel ramen pot with handle. Both empty and clean, similar size, soft daylight. The material contrast between thick ceramic and thin metal must be obvious.
+
+[7] file=public/exam/u3/frost-bench.png
+An early winter morning park scene close-up: a metal handrail and a wooden bench side by side, BOTH evenly covered with the same thin white frost, soft cold morning light, pale fog in background. Neither object looks icier than the other; the frost coverage looks identical on metal and wood.

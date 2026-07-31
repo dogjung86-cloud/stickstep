@@ -107,6 +107,25 @@ async function playExam(correctCount) {
   return seen;
 }
 
+// ═══════════ 0. 발주 사진 8장 로드(exam/u3 — v2 재출제분) ═══════════
+console.log("0. 발주 사진 로드");
+await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
+const PHOTOS = ["thermal-spoon", "thermal-window", "wire-summer", "wire-winter", "rail-gap", "bridge-joint", "pot-pair", "frost-bench"];
+const photoRes = await page.evaluate(async (names) => {
+  const out = [];
+  for (const n of names) {
+    const r = await new Promise((res) => {
+      const im = new Image();
+      im.onload = () => res(im.naturalWidth);
+      im.onerror = () => res(0);
+      im.src = `/exam/u3/${n}.webp`;
+    });
+    out.push({ n, w: r });
+  }
+  return out;
+}, PHOTOS);
+ok(photoRes.every((p) => p.w > 0), "exam/u3 사진 8장 전부 로드", JSON.stringify(photoRes.filter((p) => !p.w)));
+
 // ═══════════ A. 무료 첫 응시 — 레슨 진행 0%에서도 열려 있어야 한다 ═══════════
 console.log("A. 무료 첫 응시(진행 0%)");
 await seed(BASE);

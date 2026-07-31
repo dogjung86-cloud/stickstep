@@ -1,0 +1,49 @@
+스타일 블록 A (모든 프롬프트 앞에 붙일 공통 스타일):
+Photorealistic photograph, natural lighting, shallow depth of field, clean composition, single clear subject.
+ABSOLUTELY NO text, NO numbers, NO letters, NO logos, NO watermarks anywhere in the image.
+No people, no hands, no faces, no human body parts (including reflections). Square 1:1 aspect ratio. High detail, realistic textures.
+
+[0] file=public/exam/u1/plant-light.png
+Three identical small potted seedlings standing in a row on a plain white laboratory bench, all three pots exactly the same size and shape with the same amount of dark soil and the same small green plant. The lighting differs clearly across the row: the LEFT pot sits under a bright white lamp and is brightly lit, the MIDDLE pot is moderately lit, the RIGHT pot sits in clear shadow and is dim. Plain light gray background, straight-on side view, all three plants identical in size.
+
+[1] file=public/exam/u1/measure-tools.png
+A flat top-down arrangement of school science measuring instruments on a clean white table: a plain glass thermometer with a red liquid column but a COMPLETELY BLANK scale (no printed numbers or tick marks), a plain wooden ruler with NO printed scale marks, a small digital balance with a completely BLANK dark display panel, and a plain analog stopwatch with a blank white dial showing only thin needles. Even bright lighting, neat spacing, absolutely no digits or markings anywhere.
+
+[2] file=public/exam/u1/seed-dishes.png
+Three identical shallow round glass petri dishes in a row on a white bench, each holding damp cotton and sprouted bean seeds. The sprouts differ clearly in length: the LEFT dish has tall well grown sprouts, the MIDDLE dish has medium sprouts, the RIGHT dish has very short barely emerged sprouts. Bright even laboratory lighting, straight-on side view, dishes identical in size.
+
+[3] file=public/exam/u1/ramp-ball.png
+A simple physics setup on a wooden table: two smooth wooden ramps side by side made of the same plain board, the LEFT ramp propped clearly STEEPER at a sharp angle and the RIGHT ramp much shallower and flatter, with one identical small steel ball resting at the top of each ramp. Plain neutral background, straight-on side view, no measuring scales, no markings.
+
+[4] file=public/exam/u1/old-microscope.png
+An antique brass optical microscope from the seventeenth century style, standing on a dark wooden desk, polished brass tube and simple stand, a thin cork slice lying on a small glass slide beside it, warm window light from the side, dark moody background, museum object photography.
+
+[5] file=public/exam/u1/steam-locomotive.png
+A vintage black steam locomotive on iron rails, thick white steam billowing from its chimney and drifting sideways, large red driving wheels with connecting rods, seen from a three quarter front angle, open countryside behind, overcast daylight, absolutely no numbers or lettering on the locomotive body.
+
+[6] file=public/exam/u1/vaccine-vial.png
+Several small clear glass medicine vials with plain rubber stoppers and completely BLANK white labels (no printing at all), standing upright on a sterile stainless steel tray, one clean glass syringe with a plain barrel lying beside them, cool clinical lighting, shallow depth of field, plain light background.
+
+[7] file=public/exam/u1/satellite-dish.png
+A large white parabolic satellite communication dish antenna pointed up at a clear blue sky, seen from a low angle, its metal support frame and feed horn clearly visible, thin clouds behind, bright daylight, completely plain white surface with no markings.
+
+[8] file=public/exam/u1/smart-speaker.png
+A modern cylindrical smart speaker with a fabric covered body standing on a plain wooden shelf, a soft glowing ring of blue light around its flat top edge, no buttons with symbols, completely plain surface with no text or logos, warm cozy living room bokeh in the background, evening indoor lighting.
+
+[9] file=public/exam/u1/ar-tablet.png
+A tablet computer mounted on a plain metal stand in an EMPTY living room with bare wooden floor and blank white walls. On the tablet screen the same empty room is shown but with a realistic virtual sofa and a virtual floor lamp composited into it, so the screen clearly shows furniture that is NOT actually present in the real room behind. The contrast between the empty real room and the furnished screen image must be obvious. Bright daylight from a window, no text or icons on the screen.
+
+[10] file=public/exam/u1/smart-home.png
+A smartphone lying face up on a plain white table, its screen showing a simple grid of plain rounded control tiles with only small pictogram shapes (no letters, no numbers, no words). In the softly blurred background of the same room are a plain white air conditioner on the wall and a plain electric fan, suggesting connected home appliances. Bright clean interior, top-down slightly angled view.
+
+[11] file=public/exam/u1/solar-farm.png
+A wide field of dark blue solar photovoltaic panels arranged in long neat rows across green grassland, tilted toward the sun, clear blue sky with a few clouds, low afternoon sunlight glinting off the panel surfaces, aerial three quarter view, no buildings with signage.
+
+[12] file=public/exam/u1/wind-turbines.png
+Three tall white wind turbines standing on a green rolling hillside, their long slender blades clearly visible against a bright blue sky with scattered clouds, seen from ground level looking slightly upward, completely plain white towers with no markings, crisp daylight.
+
+[13] file=public/exam/u1/ev-charging.png
+A plain white electric car parked at an outdoor charging station, the thick charging cable plugged into the car's charging port on the side of the body, the charging post a simple plain column with a completely BLANK dark display panel (no digits, no icons, no text), clean parking area with green trees behind, soft daylight, side three quarter view.
+
+[14] file=public/exam/u1/upcycle-bag.png
+A sturdy shoulder bag made from recycled banner fabric and old fire hose material, its patchwork panels showing weathered colored vinyl and thick canvas straps with visible stitching, standing on a plain wooden table, beside it a folded roll of the same weathered banner fabric it was made from, soft studio lighting, plain light background, absolutely no printed letters or logos visible on any fabric piece.

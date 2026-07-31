@@ -196,13 +196,20 @@ export function heatCurves(o: {
     yt += `<line x1="40" y1="${gy(T)}" x2="320" y2="${gy(T)}" stroke="#EDF0F4" stroke-width="1"/>
       <text x="32" y="${gy(T) + 3.5}" text-anchor="end" font-size="10.5" fill="#8B95A1">${T}</text>`;
   }
+  // 같은 T가 둘 이상이면 선이 포개진다 — 라벨을 세로로 흩어 판독 가능하게(u3 v2 검산 치명 1건 반영).
+  // 같은 물질 후보를 묻는 문항이 이 구도를 쓰므로 선 겹침 자체는 의도된 자료다.
+  const sameT = new Map<number, number>();
   const lines = o.ends
-    .map(
-      (e) => `<line x1="${gx(0)}" y1="${gy(o.start)}" x2="${gx(o.tMax)}" y2="${gy(e.T)}" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
-      <text x="${gx(o.tMax) + 4}" y="${gy(e.T) + 4}" font-size="12.5" font-weight="700" fill="#4E5968">${e.label}</text>`,
-    )
+    .map((e) => {
+      const k = sameT.get(e.T) ?? 0;
+      sameT.set(e.T, k + 1);
+      const dup = o.ends.filter((x) => x.T === e.T).length > 1;
+      const dy = dup ? (k === 0 ? -7 : 12) : 4;
+      return `<line x1="${gx(0)}" y1="${gy(o.start)}" x2="${gx(o.tMax)}" y2="${gy(e.T)}" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
+      <text x="${gx(o.tMax) + 4}" y="${gy(e.T) + dy}" font-size="12.5" font-weight="700" fill="#4E5968">${e.label}</text>`;
+    })
     .join("");
-  return `<svg viewBox="0 0 344 222" ${NS} role="img" aria-label="질량이 같은 물질들을 같은 양의 열로 가열한 시간-온도 그래프. 온도가 오르는 기울기가 서로 다르다">
+  return `<svg viewBox="0 0 344 222" ${NS} role="img" aria-label="질량이 같은 물질들을 같은 양의 열로 가열한 시간-온도 그래프">
     ${yt}${xt}
     <line x1="40" y1="26" x2="40" y2="186" stroke="#B0B8C1" stroke-width="1.6"/>
     <line x1="40" y1="186" x2="320" y2="186" stroke="#B0B8C1" stroke-width="1.6"/>
@@ -290,7 +297,7 @@ export function thermometerRead(value: number): string {
     ticks += `<line x1="${major ? 132 : 140}" y1="${yOf(T)}" x2="152" y2="${yOf(T)}" stroke="#8B95A1" stroke-width="${major ? 1.8 : 1}"/>`;
     if (major) ticks += `<text x="124" y="${yOf(T) + 4}" text-anchor="end" font-size="12" fill="#4E5968">${T}</text>`;
   }
-  return `<svg viewBox="0 0 344 214" ${NS} role="img" aria-label="눈금이 새겨진 알코올 온도계. 액체 기둥이 눈금 사이 어느 지점까지 올라와 있다">
+  return `<svg viewBox="0 0 344 214" ${NS} role="img" aria-label="눈금이 새겨진 알코올 온도계. 액체 기둥이 어느 눈금까지 올라와 있다">
     <rect x="156" y="26" width="18" height="150" rx="9" fill="#F4F6F8" stroke="#8B95A1" stroke-width="2"/>
     <circle cx="165" cy="188" r="16" fill="#F25C54" stroke="#8B95A1" stroke-width="2"/>
     <rect x="160" y="${yOf(value)}" width="10" height="${178 - yOf(value)}" rx="5" fill="#F25C54"/>
@@ -4235,5 +4242,1467 @@ export function westSkyFig(o?: { v?: 2 }): string {
   return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="며칠 간격으로 같은 시각에 서쪽 하늘을 관측한 세 장면. 같은 별자리가 점점 지평선 가까이 내려가 있다">
     ${cut(8, "(가)", g1)}${cut(120, t2, g2)}${cut(232, t3, g3)}
     <text x="172" y="192" text-anchor="middle" font-size="9.5" fill="#7E93B8">해가 진 직후 · 서쪽 하늘 · 주황 점은 해가 진 자리</text>
+  </svg>`;
+}
+
+// ── u3 v2 신작(파일럿 승격 · 재출제 10호) ──
+// 열 단원 문법: 입자 모형은 개수·크기 고정(온도 단서는 떨림 줄 수와 간격뿐 · 호 최대 2줄) ·
+// 균일 가열(뜨거운 물 담금)로 방향성 가열 논쟁 차단 · 회로형은 전류 경로 한 바퀴 검산.
+
+
+/** PB 입자 운동 모형 N박스(다크 · 파라미터형) · particleTrio/Duo 대체 신작.
+ *  개수는 9개 고정(개수·크기는 온도의 단서가 아님을 구조로 보장) · spread 간격 · trail 운동 세기.
+ *  운동 표시는 입자 옆 호(弧) 떨림 줄(교과서 문법 · 실측 미래엔 "호 줄 수만 다름" 계승):
+ *  trail 0 = 없음 · 1~7 = 1줄 · 8+ = 2줄(최대 2줄 · 3단계 0/1/2가 한눈에 갈리는 상한 ·
+ *  파일럿 2차 검수 "떨림 과함 · 2줄vs3줄 구분 곤란" 반영). 긴 직선 잔상은 잡선으로 읽혀 폐기
+ *  (1차 검수 반영). 색은 전부 같은 파랑 · aria는 중립(순서 낭독 금지). */
+export function htParticleBoxFig(boxes: { label: string; spread: number; trail: number; count?: number }[]): string {
+  const n = boxes.length;
+  const bw = n === 2 ? 112 : 100;
+  const xs = n === 2 ? [40, 192] : [6, 122, 238];
+  const box = (bx: number, label: string, spread: number, trail: number, count = 9): string => {
+    const pts: [number, number][] = [];
+    for (let i = 0; i < count; i++) {
+      const c = i % 3;
+      const r = Math.floor(i / 3);
+      const rows = Math.ceil(count / 3);
+      const cx = bw / 2 + (c - 1) * spread + (i % 2 ? 3 : -2) * (spread / 16);
+      const cy = 48 + (r - (rows - 1) / 2) * spread + (i % 3 === 1 ? 4 : -2) * (spread / 16);
+      pts.push([cx, cy]);
+    }
+    const arcN = trail < 1 ? 0 : trail < 8 ? 1 : 2;
+    const parts = pts
+      .map(([x, y], i) => {
+        const deg = (i * 137 + 40) % 360;
+        let arcs = "";
+        for (let k = 0; k < arcN; k++) {
+          const r = 9 + k * 4.2;
+          const sy = (r * 0.522).toFixed(1);
+          const sx = (r * 0.852).toFixed(1);
+          arcs += `<path d="M${(x + Number(sx)).toFixed(1)} ${(y - Number(sy)).toFixed(1)} A${r} ${r} 0 0 1 ${(x + Number(sx)).toFixed(1)} ${(y + Number(sy)).toFixed(1)}" fill="none" stroke="#8FB3E8" stroke-width="1.7" stroke-linecap="round" opacity=".8"/>`;
+        }
+        const wrapped = arcs ? `<g transform="rotate(${deg} ${x.toFixed(1)} ${y.toFixed(1)})">${arcs}</g>` : "";
+        return `${wrapped}<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="#6E9EDB"/><circle cx="${(x - 2).toFixed(1)}" cy="${(y - 2).toFixed(1)}" r="1.8" fill="rgba(255,255,255,.4)"/>`;
+      })
+      .join("");
+    return `<g transform="translate(${bx},10)">
+      <rect x="0" y="0" width="${bw}" height="96" rx="14" fill="rgba(255,255,255,.04)" stroke="#2C4066" stroke-width="1.5"/>
+      ${parts}
+      <text x="${bw / 2}" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#AFC3E3">${label}</text>
+    </g>`;
+  };
+  // aria는 파라미터에서 파생한다(문두 조건과 모순되는 고정 문구 금지 · u3 v2 검산 반영).
+  // 판독 결과(어느 쪽이 뜨거운가)는 낭독하지 않고, 무엇이 같고 무엇이 다른지만 서술한다.
+  const uniq = (arr: (number | undefined)[]): number => new Set(arr).size;
+  const sameSpread = uniq(boxes.map((b) => b.spread)) === 1;
+  const sameTrail = uniq(boxes.map((b) => (b.trail < 1 ? 0 : b.trail < 8 ? 1 : 2))) === 1;
+  const sameCount = uniq(boxes.map((b) => b.count ?? 9)) === 1;
+  const parts: string[] = [];
+  parts.push(sameCount ? "입자의 개수는 상자마다 같다" : "입자의 개수가 상자마다 다르다");
+  parts.push(sameSpread ? "입자 사이의 간격도 같다" : "입자 사이의 간격이 서로 다르다");
+  parts.push(sameTrail ? "입자 옆 움직임 표시도 같다" : "입자 옆 움직임 표시의 수가 서로 다르다");
+  return `<svg viewBox="0 0 344 136" ${NS} role="img" aria-label="입자 운동 모형 ${n}가지. ${parts.join(", ")}">
+    ${boxes.map((b, i) => box(xs[i], b.label, b.spread, b.trail, b.count)).join("")}
+  </svg>`;
+}
+
+/** SC 한 장면 3방식(라이트 · 파운드리 문법) · 미5·천02 계보(모닥불·캠핑 소재 회피).
+ *  hearth: 벽난로 위 주전자(A 물 순환 · B 금속 손잡이 · C 앞에서 손 쬐는 스틱맨).
+ *  kitchen: 가스레인지 냄비(A 물 순환 · B 꽂힌 금속 국자 · C 불 곁 버터 접시).
+ *  라벨은 A·B·C 콜아웃만(방식 이름 인쇄 금지) · aria 중립. */
+export function htSceneFig(scene: "hearth" | "kitchen"): string {
+  const tag = (x: number, y: number, t: string): string =>
+    `<circle cx="${x}" cy="${y}" r="13" fill="#FFF" stroke="#3182F6" stroke-width="1.8"/>
+     <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="13" font-weight="800" fill="#1B64DA">${t}</text>`;
+  const flame = (x: number, y: number, s = 1): string =>
+    `<g transform="translate(${x},${y}) scale(${s})"><path d="M0 10 C 8 5 5 -2 0 -9 C -5 -2 -8 5 0 10 Z" fill="#FF9F43"/><path d="M0 6.5 C 4.5 3.5 3 -1 0 -5 C -3 -1 -4.5 3.5 0 6.5 Z" fill="#FFD98A"/></g>`;
+  if (scene === "hearth") {
+    return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="벽난로 불 위에 걸린 주전자와 그 앞에서 손을 쬐는 사람 그림. 주전자 속 물, 주전자 손잡이, 사람의 손에 각각 기호 A, B, C가 붙어 있다">
+      <rect x="8" y="8" width="328" height="180" rx="14" fill="#FBF7F0" stroke="#DCE0E6" stroke-width="1.4"/>
+      <path d="M30 168 h130 v-96 a14 14 0 0 1 14 -14 h0" fill="none"/>
+      <rect x="34" y="60" width="120" height="108" rx="8" fill="#E8DCCB" stroke="#C9B79A" stroke-width="1.6"/>
+      <rect x="46" y="120" width="96" height="48" rx="6" fill="#3A2E24"/>
+      <path d="M58 160 h24 M70 166 h28 M96 160 h24" stroke="#8A6842" stroke-width="7" stroke-linecap="round"/>
+      ${flame(94, 146, 1.5)}${flame(78, 150, 1.05)}${flame(112, 150, 1.1)}
+      <path d="M64 118 h60 v4 h-60 Z" fill="#6B7684"/>
+      <path d="M80 84 a14 18 0 0 1 28 0 l3 30 h-34 Z" fill="#9AA3AD" stroke="#6B7684" stroke-width="1.6"/>
+      <path d="M80 84 q14 -12 28 0" fill="none" stroke="#6B7684" stroke-width="1.6"/>
+      <rect x="88" y="70" width="12" height="8" rx="2" fill="#8B95A1" stroke="#6B7684" stroke-width="1.2"/>
+      <path d="M111 92 q16 4 14 20" fill="none" stroke="#C46A2B" stroke-width="5" stroke-linecap="round"/>
+      <ellipse cx="94" cy="104" rx="13" ry="9" fill="#DCEBFB" opacity=".9"/>
+      <path d="M90 108 c-6 -2 -6 -8 0 -10 m8 0 c6 2 6 8 0 10" stroke="#0CA6C0" stroke-width="1.8" fill="none"/>
+      <path d="M98 98 l3 4 -5 0" fill="none" stroke="#0CA6C0" stroke-width="1.6" stroke-linejoin="round"/>
+      <g stroke="#FF6B4A" stroke-width="2" stroke-linecap="round" fill="none" opacity=".85">
+        <path d="M162 120 q8 -4 16 0 q8 4 16 0"/>
+        <path d="M162 136 q8 -4 16 0 q8 4 16 0"/>
+        <path d="M162 152 q8 -4 16 0 q8 4 16 0"/>
+      </g>
+      <g stroke="#4E5968" stroke-width="2.6" stroke-linecap="round" fill="none">
+        <circle cx="284" cy="96" r="13" stroke-width="2.4"/>
+        <path d="M284 109 v40 M284 122 l-24 -8 M284 122 l-22 14 M284 149 l-14 22 M284 149 l14 22"/>
+        <path d="M260 114 l-14 4 M262 136 l-16 -2"/>
+      </g>
+      <ellipse cx="284" cy="176" rx="26" ry="5" fill="#2A3A5E" opacity=".10"/>
+      ${tag(64, 96, "A")}
+      <path d="M74 99 L84 102" stroke="#3182F6" stroke-width="1.6"/>
+      ${tag(146, 74, "B")}
+      <path d="M137 80 L126 96" stroke="#3182F6" stroke-width="1.6"/>
+      ${tag(238, 108, "C")}
+      <path d="M245 117 L252 128" stroke="#3182F6" stroke-width="1.6"/>
+      <text x="172" y="206" text-anchor="middle" font-size="11" fill="#8B95A1">벽난로 위 주전자 · 앞에 선 사람</text>
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="가스레인지 불 위 냄비 그림. 냄비 속 물, 냄비에 꽂힌 금속 국자의 손잡이, 불 곁에 둔 버터 접시에 각각 기호 A, B, C가 붙어 있다">
+    <rect x="8" y="8" width="328" height="180" rx="14" fill="#F7F8FA" stroke="#DCE0E6" stroke-width="1.4"/>
+    <rect x="30" y="150" width="284" height="18" rx="6" fill="#DCE0E6"/>
+    <rect x="70" y="144" width="120" height="8" rx="4" fill="#6B7684"/>
+    ${flame(114, 138, 1.1)}${flame(132, 136, 1.35)}${flame(150, 138, 1.1)}
+    <path d="M57 84 h150 v44 a10 10 0 0 1 -10 10 h-130 a10 10 0 0 1 -10 -10 Z" fill="#C4CAD2" stroke="#8B95A1" stroke-width="1.8"/>
+    <rect x="57" y="84" width="150" height="10" fill="#B0B8C1"/>
+    <ellipse cx="115" cy="112" rx="20" ry="12" fill="#DCEBFB" opacity=".92"/>
+    <path d="M109 118 c-8 -3 -8 -10 0 -13 m12 0 c8 3 8 10 0 13" stroke="#0CA6C0" stroke-width="2" fill="none"/>
+    <path d="M121 103 l4 5 -6 0" fill="none" stroke="#0CA6C0" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M177 92 L211 44" stroke="#B45309" stroke-width="6" stroke-linecap="round"/>
+    <path d="M177 92 L211 44" stroke="#E8A25A" stroke-width="3.4" stroke-linecap="round"/>
+    <ellipse cx="173" cy="98" rx="10" ry="6" fill="#9AA3AD" stroke="#6B7684" stroke-width="1.4"/>
+    <g stroke="#FF6B4A" stroke-width="2" stroke-linecap="round" fill="none" opacity=".85">
+      <path d="M176 150 q8 -4 16 0 q8 4 16 0 q8 -4 16 0"/>
+      <path d="M186 162 q8 -4 16 0 q8 4 16 0"/>
+    </g>
+    <ellipse cx="268" cy="150" rx="30" ry="8" fill="#FFF" stroke="#C4CAD2" stroke-width="1.6"/>
+    <path d="M254 138 h26 a4 4 0 0 1 4 4 v6 h-34 v-6 a4 4 0 0 1 4 -4 Z" fill="#FFDE8A" stroke="#E0B84B" stroke-width="1.4"/>
+    <path d="M258 138 q4 -6 10 -4" stroke="#E0B84B" stroke-width="1.4" fill="none"/>
+    <ellipse cx="268" cy="172" rx="30" ry="5" fill="#2A3A5E" opacity=".10"/>
+    ${tag(114, 64, "A")}
+    <path d="M114 77 L114 98" stroke="#3182F6" stroke-width="1.6"/>
+    ${tag(243, 30, "B")}
+    <path d="M233 37 L215 43" stroke="#3182F6" stroke-width="1.6"/>
+    ${tag(310, 118, "C")}
+    <path d="M302 127 L284 140" stroke="#3182F6" stroke-width="1.6"/>
+    <text x="172" y="206" text-anchor="middle" font-size="11" fill="#8B95A1">가스레인지 위 냄비 · 국자 · 버터 접시</text>
+  </svg>`;
+}
+
+/** RD 열화상풍 막대 비교(다크 · 파라미터형) · thermalRods(레슨 고정 구리/철/유리) 대체 신작.
+ *  rods: 재질 이름 + 데워진 비율(0~1 · 0이면 회색 중립). beads: 한 막대 위 구슬 위치(0~1 배열 ·
+ *  촛농 구슬 예측 문항용 · 중립 상태 원칙이라 frac 0과 함께 쓴다). 왼쪽 끝 가열 고정. */
+export function htRodsFig(rods: { name: string; frac: number; beads?: { at: number; label: string }[] }[]): string {
+  const flame = (y: number): string => `
+    <g transform="translate(51,${y + 8})">
+      <path d="M0 9 C 8 5 5 -3 0 -11 C -5 -3 -8 5 0 9 Z" fill="#FF9F43"/>
+      <path d="M0 5 C 4 3 3 -2 0 -6 C -3 -2 -4 3 0 5 Z" fill="#FFE9A8"/>
+    </g>`;
+  const H = rods.length * 58 + 30;
+  const rod = (r: { name: string; frac: number; beads?: { at: number; label: string }[] }, i: number): string => {
+    const y = 40 + i * 58;
+    const w = 250 * r.frac;
+    const beads = (r.beads ?? [])
+      .map(
+        (b) => `<circle cx="${62 + 250 * b.at}" cy="${y - 6}" r="7" fill="#EDE2BE" stroke="#B9A96A" stroke-width="1.4"/>
+      <text x="${62 + 250 * b.at}" y="${y - 18}" text-anchor="middle" font-size="11.5" font-weight="700" fill="#DCE8FF">${b.label}</text>`,
+      )
+      .join("");
+    return `<g>
+      <text x="58" y="${y - 7}" font-size="12.5" font-weight="700" fill="#AFC3E3">${r.name}</text>
+      <rect x="62" y="${y}" width="250" height="16" rx="8" fill="#22335C"/>
+      ${w > 4 ? `<rect x="62" y="${y}" width="${w}" height="16" rx="8" fill="url(#u3HeatGrad)"/>` : ""}
+      <rect x="62" y="${y}" width="250" height="16" rx="8" fill="none" stroke="#31456F" stroke-width="1.2"/>
+      ${beads}
+      ${flame(y)}
+    </g>`;
+  };
+  return `<svg viewBox="0 0 344 ${H}" ${NS} role="img" aria-label="막대의 왼쪽 끝을 같은 불로 동시에 가열하는 실험 그림. ${rods.some((r) => r.frac > 0) ? "막대마다 데워진 부분의 길이가 다르게 표시되어 있다" : "아직 가열하기 전이다"}${rods.some((r) => (r.beads ?? []).length) ? ". 막대 위에는 이름표가 붙은 구슬이 놓여 있다" : ""}">
+    <defs>
+      <linearGradient id="u3HeatGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#FFE9A8"/>
+        <stop offset=".45" stop-color="#FF9F43"/>
+        <stop offset=".85" stop-color="#F0442E"/>
+        <stop offset="1" stop-color="#F0442E" stop-opacity=".15"/>
+      </linearGradient>
+    </defs>
+    ${rods.map(rod).join("")}
+    <text x="34" y="${H - 6}" text-anchor="middle" font-size="11" fill="#7E93B3">가열</text>
+  </svg>`;
+}
+
+/** RM 방 단면 · 설치 위치(라이트 · 파라미터형) · 비03·천09 계보.
+ *  arrows "none"이면 위치 A(벽 위)·B(벽 아래) 배지만(예측 중립) · "cool"이면 A에서 찬 공기가
+ *  내려오는 순환 화살표 · "warm"이면 B에서 더운 공기가 올라가는 순환. */
+export function htRoomFig(o: { arrows: "none" | "cool" | "warm" }): string {
+  const badge = (x: number, y: number, t: string): string =>
+    `<rect x="${x - 15}" y="${y - 13}" width="30" height="26" rx="8" fill="#EEF4FF" stroke="#3182F6" stroke-width="1.6" stroke-dasharray="4 3"/>
+     <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="13" font-weight="800" fill="#1B64DA">${t}</text>`;
+  const cool = `
+    <path d="M84 66 C 120 96 150 132 148 158" fill="none" stroke="#3182F6" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M148 158 l-8 -8 M148 158 l3 -10" fill="none" stroke="#3182F6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M196 158 C 236 132 258 100 260 70" fill="none" stroke="#FF6B4A" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="1 8"/>
+    <path d="M260 70 l-9 6 M260 70 l-2 11" fill="none" stroke="#FF6B4A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const warm = `
+    <path d="M264 148 C 240 112 210 84 180 68" fill="none" stroke="#FF6B4A" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M180 68 l11 1 M180 68 l6 10" fill="none" stroke="#FF6B4A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M120 70 C 96 100 84 128 86 152" fill="none" stroke="#3182F6" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="1 8"/>
+    <path d="M86 152 l-3 -10 M86 152 l9 -6" fill="none" stroke="#3182F6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="방 안 단면 그림. 한쪽 벽의 위쪽에 A, 반대쪽 벽의 아래쪽에 B 위치가 표시되어 있다${o.arrows === "none" ? "" : o.arrows === "cool" ? ". A 쪽에서 바닥으로 내려가는 화살표와 반대편에서 위로 올라가는 화살표가 그려져 있다" : ". B 쪽에서 위로 올라가는 화살표와 반대편에서 아래로 내려가는 화살표가 그려져 있다"}">
+    <rect x="24" y="20" width="296" height="164" rx="10" fill="#F7F8FA" stroke="#B0B8C1" stroke-width="2"/>
+    <rect x="150" y="34" width="60" height="46" rx="6" fill="#DCEBFB" stroke="#B9C2CE" stroke-width="1.4"/>
+    <path d="M150 57 h60 M180 34 v46" stroke="#B9C2CE" stroke-width="1.2"/>
+    <path d="M54 184 v-26 a10 10 0 0 1 20 0 v26" fill="#C4CAD2"/>
+    ${o.arrows === "cool" ? cool : o.arrows === "warm" ? warm : ""}
+    ${badge(66, 54, "A")}
+    ${badge(288, 150, "B")}
+    <text x="172" y="202" text-anchor="middle" font-size="11" fill="#8B95A1">방 안 · A는 벽 위쪽, B는 벽 아래쪽 위치</text>
+  </svg>`;
+}
+
+/** FC2 비열 비교 실험 순서도(라이트 · 파라미터형) · v1 flowChart의 각도 교체판.
+ *  ask "yes"면 ㉠(예 갈래) 강조 · "no"면 ㉡(아니요 갈래) 강조 · 캡션 중립.
+ *  예/아니요 분기가 각자 결론 칸으로 갈라진다(감사 지적 계승). */
+export function htFlowFig(o: { ask: "yes" | "no" }): string {
+  const boxStyle = `fill="#F7F8FA" stroke="#B0B8C1" stroke-width="1.5"`;
+  const hi = `fill="#EEF4FF" stroke="#3182F6" stroke-width="1.6"`;
+  const arrow = (x: number, y1: number, y2: number): string =>
+    `<path d="M${x} ${y1} V${y2} M${x} ${y2} l-5 -7 M${x} ${y2} l5 -7" fill="none" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const yes = o.ask === "yes";
+  return `<svg viewBox="0 0 344 258" ${NS} role="img" aria-label="비열 비교 실험 순서도. 질량을 같게 한 두 물질을 같은 세기 불로 가열해 온도 변화를 비교하고, 예 갈래의 결론 칸과 아니요 갈래의 결론 칸이 비어 있다">
+    <rect x="62" y="8" width="220" height="34" rx="10" ${boxStyle}/>
+    <text x="172" y="30" text-anchor="middle" font-size="12.5" font-weight="700" fill="#333D4B">물질 A와 B의 질량을 같게 잰다</text>
+    ${arrow(172, 42, 58)}
+    <rect x="62" y="58" width="220" height="34" rx="10" ${boxStyle}/>
+    <text x="172" y="80" text-anchor="middle" font-size="12.5" font-weight="700" fill="#333D4B">같은 세기의 불로 같은 시간 가열한다</text>
+    ${arrow(172, 92, 108)}
+    <path d="M172 108 L294 134 L172 160 L50 134 Z" fill="#FFF6E6" stroke="#E8B04B" stroke-width="1.5"/>
+    <text x="172" y="131" text-anchor="middle" font-size="12" font-weight="700" fill="#8A5A00">A의 온도가 B보다</text>
+    <text x="172" y="147" text-anchor="middle" font-size="12" font-weight="700" fill="#8A5A00">많이 올랐다?</text>
+    <text x="308" y="126" font-size="11.5" font-weight="700" fill="#4E5968">예</text>
+    <path d="M294 134 H249 V170" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M249 170 l-5 -7 M249 170 l5 -7" fill="none" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round"/>
+    <text x="24" y="126" font-size="11.5" font-weight="700" fill="#4E5968">아니요</text>
+    <path d="M50 134 H95 V170" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M95 170 l-5 -7 M95 170 l5 -7" fill="none" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round"/>
+    <rect x="182" y="172" width="134" height="36" rx="10" ${yes ? hi : boxStyle}/>
+    <text x="249" y="195" text-anchor="middle" font-size="14" font-weight="800" fill="${yes ? "#1B64DA" : "#6B7684"}">㉠</text>
+    <rect x="28" y="172" width="134" height="36" rx="10" ${yes ? boxStyle : hi}/>
+    <text x="95" y="195" text-anchor="middle" font-size="14" font-weight="800" fill="${yes ? "#6B7684" : "#1B64DA"}">㉡</text>
+    <text x="172" y="240" text-anchor="middle" font-size="11.5" fill="#8B95A1">갈라진 두 결론 칸 ㉠과 ㉡에는 각각 어떤 말이 들어갈까요?</text>
+  </svg>`;
+}
+
+/** BM 바이메탈(라이트 · 파라미터형) · bimetalBend/fireAlarm 고정형 대체 신작.
+ *  strip: 데우기 전(곧음)/뜨거운 물에 담가 골고루 데운 후(bend 방향) 2컷 · 라벨은 위/아래 금속 이름.
+ *  가열원은 뜨거운 물(균일 가열) · 아래 불꽃 연출 폐기(파일럿 1차 검수 반영 · "아래가 먼저 데워져
+ *  위로 휜다"는 과도기 직관과 충돌하지 않게 설계 단계에서 제거).
+ *  iron: 전기다리미 온도 스위치 · 전원→열선→접점→띠→기둥의 한 줄 직렬 회로(끊긴 데 없음 검산) ·
+ *  평소 닿아 있는 중립 상태만 그림(휘는 방향은 그리지 않는다 · 예측 문항 중립 원칙). */
+export function htBimetalFig(o: { top: string; bottom: string; mode: "strip" | "iron"; bend?: "up" | "down"; cool?: boolean }): string {
+  if (o.mode === "strip") {
+    const down = o.bend === "down";
+    const bathFill = o.cool ? "#E3F0FC" : "#FBE3DC";
+    const bathEdge = o.cool ? "#9FBFE4" : "#E8B0A0";
+    const bathWave = o.cool ? "#8FB3DC" : "#E8A08C";
+    const bathName = o.cool ? "얼음물" : "뜨거운 물";
+    const before = o.cool ? "식히기 전" : "데우기 전";
+    const afterT = o.cool ? "식힌 후" : "데운 후";
+    const capt = o.cool ? "얼음물에 담가 골고루 식힌 후" : "뜨거운 물에 담가 골고루 데운 후";
+    const steam = o.cool ? "" : `<path d="M216 28 c -3 -4 3 -6 0 -10 M322 28 c -3 -4 3 -6 0 -10" stroke="#D9A08C" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
+    const after = down
+      ? `<path d="M204 82.5 C246 82.5 280 97 312 118" fill="none" stroke="#8FA6C6" stroke-width="11.4" stroke-linecap="round"/>
+         <path d="M204 82.5 C246 82.5 280 97 312 118" fill="none" stroke="#AFC6E8" stroke-width="9" stroke-linecap="round"/>
+         <path d="M204 91.5 C246 91.5 280 106 312 127" fill="none" stroke="#7C8590" stroke-width="11.4" stroke-linecap="round"/>
+         <path d="M204 91.5 C246 91.5 280 106 312 127" fill="none" stroke="#9AA3AD" stroke-width="9" stroke-linecap="round"/>`
+      : `<path d="M204 82.5 C246 82.5 280 68 312 47" fill="none" stroke="#8FA6C6" stroke-width="11.4" stroke-linecap="round"/>
+         <path d="M204 82.5 C246 82.5 280 68 312 47" fill="none" stroke="#AFC6E8" stroke-width="9" stroke-linecap="round"/>
+         <path d="M204 91.5 C246 91.5 280 77 312 56" fill="none" stroke="#7C8590" stroke-width="11.4" stroke-linecap="round"/>
+         <path d="M204 91.5 C246 91.5 280 77 312 56" fill="none" stroke="#9AA3AD" stroke-width="9" stroke-linecap="round"/>`;
+    return `<svg viewBox="0 0 344 176" ${NS} role="img" aria-label="두 금속을 붙인 띠를 ${bathName}에 담가 골고루 ${o.cool ? "식히기" : "데우기"} 전과 후의 모습. ${before}에는 곧고, ${afterT}에는 한쪽으로 휘어져 있다">
+      <text x="86" y="24" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${before}</text>
+      <text x="258" y="24" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${afterT}</text>
+      <line x1="172" y1="16" x2="172" y2="162" stroke="#EDF0F4" stroke-width="1.6"/>
+      <rect x="20" y="66" width="12" height="40" rx="2" fill="#C4CAD2"/>
+      <rect x="32" y="78" width="112" height="9" rx="4.5" fill="#AFC6E8" stroke="#8FA6C6" stroke-width="1.2"/>
+      <rect x="32" y="87" width="112" height="9" rx="4.5" fill="#9AA3AD" stroke="#7C8590" stroke-width="1.2"/>
+      <text x="148" y="72" font-size="12" font-weight="700" fill="#5E7BA6">${o.top}(위)</text>
+      <text x="148" y="110" font-size="12" font-weight="700" fill="#6B7684">${o.bottom}(아래)</text>
+      <rect x="206" y="36" width="128" height="122" rx="12" fill="${bathFill}" stroke="${bathEdge}" stroke-width="1.6"/>
+      <path d="M214 45 q8 -5 16 0 t16 0" fill="none" stroke="${bathWave}" stroke-width="1.6"/>
+      <path d="M286 45 q8 -5 16 0 t16 0" fill="none" stroke="${bathWave}" stroke-width="1.6"/>
+      ${steam}
+      <rect x="192" y="66" width="12" height="40" rx="2" fill="#C4CAD2"/>
+      ${after}
+      <text x="296" y="150" text-anchor="middle" font-size="11" fill="${o.cool ? "#4E6E96" : "#B0705E"}">${bathName}</text>
+      <text x="258" y="172" text-anchor="middle" font-size="11" fill="#8B95A1">${capt}</text>
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 344 206" ${NS} role="img" aria-label="전기다리미 온도 스위치의 구조. 전원에서 나온 도선이 열선을 지나 접점으로 이어지고, 두 금속을 붙인 띠의 오른쪽 끝이 위쪽 접점에 닿아 회로가 연결되어 있다">
+    <rect x="8" y="8" width="328" height="172" rx="14" fill="#F7F8FA" stroke="#DCE0E6" stroke-width="1.4"/>
+    <rect x="36" y="34" width="26" height="16" rx="3" fill="#C4CAD2"/>
+    <text x="49" y="26" text-anchor="middle" font-size="11" fill="#8B95A1">전원</text>
+    <path d="M62 42 H96" stroke="#6B7684" stroke-width="2" fill="none"/>
+    <path d="M96 42 c3 -8 9 -8 12 0 c3 8 9 8 12 0 c3 -8 9 -8 12 0" stroke="#E8542F" stroke-width="2.2" fill="none"/>
+    <text x="114" y="64" text-anchor="middle" font-size="11" fill="#B0705E">다리미 열선</text>
+    <path d="M132 42 H236 V114" stroke="#6B7684" stroke-width="2" fill="none"/>
+    <rect x="228" y="114" width="16" height="8" rx="2" fill="#6B7684"/>
+    <text x="252" y="121" font-size="11" fill="#8B95A1">접점</text>
+    <path d="M36 50 V128 H52" stroke="#6B7684" stroke-width="2" fill="none"/>
+    <rect x="52" y="112" width="14" height="34" rx="2" fill="#C4CAD2"/>
+    <rect x="66" y="122" width="176" height="8" rx="4" fill="#AFC6E8" stroke="#8FA6C6" stroke-width="1.1"/>
+    <rect x="66" y="130" width="176" height="8" rx="4" fill="#9AA3AD" stroke="#7C8590" stroke-width="1.1"/>
+    <text x="120" y="116" font-size="12" font-weight="700" fill="#5E7BA6">${o.top}(위)</text>
+    <text x="120" y="152" font-size="12" font-weight="700" fill="#6B7684">${o.bottom}(아래)</text>
+    <text x="172" y="198" text-anchor="middle" font-size="11" fill="#8B95A1">평소 모습 · 띠 끝이 접점에 닿아 열선으로 전류가 흐른다</text>
+  </svg>`;
+}
+
+/** EG 온도-눈금 보간 그래프(라이트 · 파라미터형) · v1 expandScaleGraph(고정값) 대체 신작.
+ *  조건 점 2개만 값 라벨(조건 수치는 허용) · 묻는 지점은 무표시 · 가이드 점선은 축까지 잇지
+ *  않는다(g2u2 관행) · 정답은 눈금 위 검산 의무. */
+export function htExpandGraphFig(o: { xMax: number; xStep: number; yMax: number; yStep: number; pts: [number, number][] }): string {
+  const gx = (T: number): number => 40 + T * (280 / o.xMax);
+  const gy = (n: number): number => 186 - (n / o.yMax) * 160;
+  let xt = "";
+  for (let T = 0; T <= o.xMax; T += o.xStep) {
+    xt += `<line x1="${gx(T)}" y1="186" x2="${gx(T)}" y2="26" stroke="#EDF0F4" stroke-width="1"/>
+      <text x="${gx(T)}" y="202" text-anchor="middle" font-size="10.5" fill="#8B95A1">${T}</text>`;
+  }
+  let yt = "";
+  for (let n = 0; n <= o.yMax; n += o.yStep) {
+    yt += `<line x1="40" y1="${gy(n)}" x2="320" y2="${gy(n)}" stroke="#EDF0F4" stroke-width="1"/>
+      <text x="32" y="${gy(n) + 3.5}" text-anchor="end" font-size="10.5" fill="#8B95A1">${n}</text>`;
+  }
+  const [p1, p2] = o.pts;
+  const slope = (p2[1] - p1[1]) / (p2[0] - p1[0]);
+  const y0 = p1[1] - slope * p1[0];
+  const xEnd = o.xMax * 0.96;
+  // 라벨은 직선을 피해 배치(파일럿 1차 검수 반영 · 직선이 글자를 가로지르던 결함):
+  // 아래 점은 점 아래(우하) · 위 점은 점 위(좌상 · anchor end) · 오름 직선과 겹치지 않는 사분면.
+  const sorted = [...o.pts].sort((a, b) => a[1] - b[1]);
+  const dots = sorted
+    .map(([T, n], i) => {
+      const label = `(${T} ℃, ${n}칸)`;
+      const pos =
+        i === 0
+          ? `x="${gx(T) + 2}" y="${gy(n) + 19}" text-anchor="start"`
+          : `x="${gx(T) - 7}" y="${gy(n) - 9}" text-anchor="end"`;
+      return `<circle cx="${gx(T)}" cy="${gy(n)}" r="4.5" fill="#3182F6"/>
+      <text ${pos} font-size="11.5" font-weight="700" fill="#1B64DA">${label}</text>`;
+    })
+    .join("");
+  return `<svg viewBox="0 0 344 222" ${NS} role="img" aria-label="액체가 든 가는 유리관을 데우며 온도에 따라 액체 기둥의 눈금을 기록한 그래프. 직선 위에 측정한 점 두 개가 값과 함께 표시되어 있다">
+    ${yt}${xt}
+    <line x1="40" y1="26" x2="40" y2="186" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="40" y1="186" x2="320" y2="186" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="${gx(0)}" y1="${gy(y0)}" x2="${gx(xEnd)}" y2="${gy(y0 + slope * xEnd)}" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
+    ${dots}
+    <text x="8" y="14" font-size="11" fill="#4E5968">눈금(칸)</text>
+    <text x="338" y="218" text-anchor="end" font-size="11" fill="#4E5968">온도(℃)</text>
+  </svg>`;
+}
+
+/** IN 보온병 단면(라이트) · 층 이름 대신 ㉠㉡㉢ 기호(정답 인쇄 방지 기호판 · geoCycleQuizFig 계보).
+ *  ㉠ 마개 · ㉡ 이중 벽 사이 진공 층 · ㉢ 반짝이는 안쪽 벽면. 확대분 사용 · 파일럿은 부록 눈검수. */
+export function htInsulFig(): string {
+  return `<svg viewBox="0 0 344 226" ${NS} fill="none" role="img" aria-label="보온병을 세로로 자른 단면 그림. 마개, 이중 벽 사이의 빈 층, 반짝이는 안쪽 벽면에 각각 동그라미 기호가 붙어 있다">
+    <rect x="8" y="8" width="328" height="196" rx="14" fill="#F7F8FA" stroke="#DCE0E6" stroke-width="1.4"/>
+    <rect x="128" y="26" width="88" height="24" rx="6" fill="#C4CAD2" stroke="#8B95A1" stroke-width="1.6"/>
+    <path d="M118 50 h108 v112 a14 14 0 0 1 -14 14 h-80 a14 14 0 0 1 -14 -14 Z" fill="#DCE0E6" stroke="#8B95A1" stroke-width="2"/>
+    <path d="M132 60 h80 v98 a8 8 0 0 1 -8 8 h-64 a8 8 0 0 1 -8 -8 Z" fill="#FFF" stroke="#B0B8C1" stroke-width="1.6"/>
+    <path d="M140 68 h64 v88 a6 6 0 0 1 -6 6 h-52 a6 6 0 0 1 -6 -6 Z" fill="#EAF3FF" stroke="#9FBBDF" stroke-width="1.4"/>
+    <path d="M144 74 q6 22 0 44 q-4 18 2 36" stroke="#FFF" stroke-width="2.4" opacity=".9" fill="none"/>
+    <path d="M146 92 c8 -5 16 -5 24 0 m-24 16 c8 -5 16 -5 24 0" stroke="#7FAFE4" stroke-width="1.6" fill="none" opacity=".7"/>
+    <circle cx="86" cy="38" r="14" fill="#12203C" opacity="0"/>
+    <circle cx="84" cy="38" r="14" fill="#FFF" stroke="#3182F6" stroke-width="1.6"/>
+    <text x="84" y="43" text-anchor="middle" font-size="13" font-weight="800" fill="#1B64DA">㉠</text>
+    <path d="M98 40 L128 38" stroke="#3182F6" stroke-width="1.5"/>
+    <circle cx="70" cy="112" r="14" fill="#FFF" stroke="#3182F6" stroke-width="1.6"/>
+    <text x="70" y="117" text-anchor="middle" font-size="13" font-weight="800" fill="#1B64DA">㉡</text>
+    <path d="M84 112 L125 110" stroke="#3182F6" stroke-width="1.5"/>
+    <circle cx="278" cy="92" r="14" fill="#FFF" stroke="#3182F6" stroke-width="1.6"/>
+    <text x="278" y="97" text-anchor="middle" font-size="13" font-weight="800" fill="#1B64DA">㉢</text>
+    <path d="M264 94 L208 86" stroke="#3182F6" stroke-width="1.5"/>
+    <text x="172" y="220" text-anchor="middle" font-size="11" fill="#8B95A1">보온병을 세로로 자른 단면</text>
+  </svg>`;
+}
+
+/** LT 액체 열팽창 비교 장치(라이트 · 파라미터형) · liquidExpand(고정 A>B>C) 대체 신작.
+ *  같은 부피 액체가 든 병 3개를 뜨거운 물 수조에 담근 뒤 유리관 높이 비교(천04 계보).
+ *  rise는 px(처음 높이 기준선 위로) · 이름 라벨 파라미터. 확대분 사용 · 파일럿은 부록 눈검수. */
+export function htLiquidTubesFig(tubes: { name: string; rise: number }[]): string {
+  const xs = [52, 148, 244];
+  const flask = (x: number, name: string, rise: number): string => `
+    <rect x="${x + 21}" y="${60 - rise}" width="8" height="${52 + rise}" fill="#7FAFE4"/>
+    <rect x="${x + 19}" y="18" width="12" height="96" rx="5" fill="none" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M${x + 19} 108 L${x + 4} 138 a8 8 0 0 0 8 10 h26 a8 8 0 0 0 8 -10 L${x + 31} 108" fill="#B7D3F2" stroke="#8B95A1" stroke-width="1.8"/>
+    <text x="${x + 25}" y="164" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">${name}</text>`;
+  return `<svg viewBox="0 0 344 216" ${NS} role="img" aria-label="같은 부피의 액체가 든 병 세 개를 뜨거운 물이 담긴 수조에 담근 실험 그림. 유리관 속 액체 기둥의 높이가 서로 다르다">
+    <rect x="16" y="118" width="312" height="66" rx="12" fill="#FBE3DC" stroke="#E8B0A0" stroke-width="1.6"/>
+    <path d="M40 130 q8 -5 16 0 t16 0" fill="none" stroke="#E8A08C" stroke-width="1.6"/>
+    <path d="M262 130 q8 -5 16 0 t16 0" fill="none" stroke="#E8A08C" stroke-width="1.6"/>
+    <text x="296" y="178" text-anchor="middle" font-size="11" fill="#B0705E">뜨거운 물</text>
+    <line x1="36" y1="60" x2="308" y2="60" stroke="#8B95A1" stroke-width="1.4" stroke-dasharray="5 5"/>
+    <text x="10" y="52" font-size="10.5" fill="#8B95A1">처음 높이</text>
+    ${tubes.map((t, i) => flask(xs[i], t.name, t.rise)).join("")}
+  </svg>`;
+}
+
+/** POT 냄비 단면(라이트) · 금속 몸통 ㉠ · 플라스틱 손잡이 ㉡ 기호판(이름 미인쇄 · 재질 판정 문항용).
+ *  확대분 276 사용 · 갤러리 카드가 데뷔 눈검수를 겸한다. */
+export function htPotFig(): string {
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="냄비를 세로로 자른 단면 그림. 몸통 부분과 손잡이 부분에 각각 동그라미 기호가 붙어 있다">
+    <rect x="8" y="8" width="328" height="156" rx="14" fill="#F7F8FA" stroke="#DCE0E6" stroke-width="1.4"/>
+    <path d="M96 66 h152 v54 a10 10 0 0 1 -10 10 h-132 a10 10 0 0 1 -10 -10 Z" fill="#C4CAD2" stroke="#8B95A1" stroke-width="1.8"/>
+    <rect x="96" y="66" width="152" height="9" fill="#B0B8C1"/>
+    <ellipse cx="172" cy="100" rx="52" ry="16" fill="#DCEBFB" opacity=".85"/>
+    <rect x="244" y="80" width="58" height="14" rx="7" fill="#2F3A48" stroke="#1F2833" stroke-width="1.4"/>
+    <rect x="40" y="80" width="58" height="14" rx="7" fill="#2F3A48" stroke="#1F2833" stroke-width="1.4"/>
+    <circle cx="140" cy="34" r="14" fill="#FFF" stroke="#3182F6" stroke-width="1.6"/>
+    <text x="140" y="39" text-anchor="middle" font-size="13" font-weight="800" fill="#1B64DA">㉠</text>
+    <path d="M148 45 L162 66" stroke="#3182F6" stroke-width="1.5"/>
+    <circle cx="292" cy="46" r="14" fill="#FFF" stroke="#3182F6" stroke-width="1.6"/>
+    <text x="292" y="51" text-anchor="middle" font-size="13" font-weight="800" fill="#1B64DA">㉡</text>
+    <path d="M287 59 L280 78" stroke="#3182F6" stroke-width="1.5"/>
+    <text x="172" y="180" text-anchor="middle" font-size="11" fill="#8B95A1">국을 끓이는 냄비 · ㉠ 몸통과 ㉡ 손잡이는 서로 다른 재료예요</text>
+  </svg>`;
+}
+
+/** SE 태양-우주-지구 복사 도해(다크) · 사이 공간이 텅 비어 있음(입자 없음)을 라벨로 명시.
+ *  확대분 280 사용 · 갤러리 카드가 데뷔 눈검수를 겸한다. */
+export function htSunEarthFig(): string {
+  return `<svg viewBox="0 0 344 150" ${NS} fill="none" role="img" aria-label="왼쪽의 태양에서 나온 열이 아무것도 없는 텅 빈 공간을 지나 오른쪽의 지구에 도달하는 모습을 나타낸 그림">
+    <circle cx="52" cy="72" r="34" fill="#F2A93B"/>
+    <circle cx="52" cy="72" r="26" fill="#FFE9A8"/>
+    <g stroke="#F2A93B" stroke-width="2.2" stroke-linecap="round"><path d="M52 26 v-10 M52 118 v10 M6 72 h-2 M14 34 l-7 -7 M14 110 l-7 7"/></g>
+    <circle cx="296" cy="72" r="24" fill="#3D6ED9"/>
+    <path d="M282 62 q8 -6 14 0 t12 4 q-2 8 -10 8 t-16 -12" fill="#4CAF6E"/>
+    <g stroke="#FF6B4A" stroke-width="2.2" stroke-linecap="round" fill="none" opacity=".9">
+      <path d="M96 58 q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0"/>
+      <path d="M96 86 q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0"/>
+      <path d="M256 58 l10 3 -8 6 M256 86 l10 3 -8 6" stroke-width="2"/>
+    </g>
+    <text x="176" y="34" text-anchor="middle" font-size="11.5" font-weight="700" fill="#AFC3E3">태양과 지구 사이 · 아무것도 없는 텅 빈 공간</text>
+    <text x="52" y="138" text-anchor="middle" font-size="12" font-weight="700" fill="#FFE9A8">태양</text>
+    <text x="296" y="128" text-anchor="middle" font-size="12" font-weight="700" fill="#AFC3E3">지구</text>
+  </svg>`;
+}
+
+// ── u1 v2 신작(파일럿 승격 · 신규 출제 12호) ──
+// 탐구 과정·계획표·결과 그래프·문명 사슬·연표·주장 말풍선. 전부 파라미터형 · aria 중립.
+/** 한글 줄바꿈(공백 단위) · 라벨·말풍선 공용. */
+const u1WrapKo = (s: string, per: number): string[] => {
+  const words = s.split(" ");
+  const lines: string[] = [];
+  let cur = "";
+  for (const w of words) {
+    if (cur && (cur + " " + w).length > per) {
+      lines.push(cur);
+      cur = w;
+    } else cur = cur ? cur + " " + w : w;
+  }
+  if (cur) lines.push(cur);
+  return lines;
+};
+
+// ── IF 탐구 과정 흐름도(세로 사슬 · 빈칸 ㉠ · 되돌아가는 화살표) ────────────
+/** o.blank = ㉠ 점선 칸 인덱스 · o.loop = [from, to] 되돌아가는 곡선 화살표. */
+export function inquiryFlowFig(o: { steps: string[]; blank?: number; loop?: [number, number] }): string {
+  const BW = 168;
+  const BH = 31;
+  const GAP = 15;
+  // loop가 없으면 오른쪽 되돌림 화살표 자리가 통째로 비므로 사슬을 중앙 정렬한다.
+  const X = o.loop ? 52 : (344 - BW) / 2;
+  const n = o.steps.length;
+  const H = 12 + n * BH + (n - 1) * GAP + 12;
+  const yOf = (i: number): number => 12 + i * (BH + GAP);
+  let body = "";
+  o.steps.forEach((s, i) => {
+    const y = yOf(i);
+    const bl = o.blank === i;
+    body += `<rect x="${X}" y="${y}" width="${BW}" height="${BH}" rx="9" fill="${bl ? "#FFFFFF" : "#F2F4F7"}" stroke="${bl ? "#3182F6" : "#C9D0D8"}" stroke-width="${bl ? 1.8 : 1.3}"${bl ? ' stroke-dasharray="5 4"' : ""}/>
+      <text x="${X + BW / 2}" y="${y + BH / 2 + 4.5}" text-anchor="middle" font-size="13" font-weight="${bl ? 800 : 600}" fill="${bl ? "#1B64DA" : "#333D4B"}">${bl ? "㉠" : s}</text>`;
+    if (i < n - 1) {
+      const ay = y + BH;
+      const tip = ay + GAP - 2;
+      body += `<path d="M${X + BW / 2} ${ay} V${tip} M${X + BW / 2} ${tip} l-4.5 -6 M${X + BW / 2} ${tip} l4.5 -6" fill="none" stroke="#8B95A1" stroke-width="1.5" stroke-linecap="round"/>`;
+    }
+  });
+  if (o.loop) {
+    const [from, to] = o.loop;
+    const y1 = yOf(from) + BH / 2;
+    const y2 = yOf(to) + BH / 2;
+    const R = X + BW + 6;
+    const OUT = X + BW + 44;
+    body += `<path d="M${R} ${y1} H${OUT} V${y2} H${R + 7}" fill="none" stroke="#F0A422" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M${R} ${y2} l7 -4.5 M${R} ${y2} l7 4.5" fill="none" stroke="#F0A422" stroke-width="1.8" stroke-linecap="round"/>
+      <text x="${OUT + 6}" y="${(y1 + y2) / 2 - 4}" font-size="10.5" font-weight="700" fill="#B4690E">고쳐서</text>
+      <text x="${OUT + 6}" y="${(y1 + y2) / 2 + 8}" font-size="10.5" font-weight="700" fill="#B4690E">다시</text>`;
+  }
+  return `<svg viewBox="0 0 344 ${H}" ${NS} role="img" aria-label="탐구 과정의 단계를 위에서 아래로 이은 흐름도. 한 칸은 비어 있고 기호로 표시되어 있다">${body}</svg>`;
+}
+
+// ── PT 탐구 계획표(행 라벨 | 내용 2열 · 빈칸 ㉠) ─────────────────────────
+export function planTableFig(o: { rows: [string, string][]; blank?: number }): string {
+  const W = 344;
+  const LW = 96;
+  const RW = W - 16 - LW;
+  const heights = o.rows.map(([, v]) => Math.max(1, u1WrapKo(v, 17).length) * 17 + 15);
+  const H = heights.reduce((a, b) => a + b, 0) + 16;
+  let body = "";
+  let y = 8;
+  o.rows.forEach(([k, v], i) => {
+    const h = heights[i];
+    const bl = o.blank === i;
+    body += `<rect x="8" y="${y}" width="${LW}" height="${h}" fill="#F2F4F7"/>
+      <text x="${8 + LW / 2}" y="${y + h / 2 + 4.5}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${k}</text>`;
+    if (bl) {
+      body += `<rect x="${8 + LW + 5}" y="${y + 5}" width="${RW - 10}" height="${h - 10}" rx="7" fill="#FFFFFF" stroke="#3182F6" stroke-width="1.6" stroke-dasharray="5 4"/>
+        <text x="${8 + LW + RW / 2}" y="${y + h / 2 + 5}" text-anchor="middle" font-size="14" font-weight="800" fill="#1B64DA">㉠</text>`;
+    } else {
+      const lines = u1WrapKo(v, 17);
+      lines.forEach((ln, j) => {
+        body += `<text x="${8 + LW + 10}" y="${y + h / 2 - ((lines.length - 1) * 17) / 2 + j * 17 + 4.5}" font-size="12.5" fill="#333D4B">${ln}</text>`;
+      });
+    }
+    y += h;
+  });
+  let grid = `<line x1="${8 + LW}" y1="8" x2="${8 + LW}" y2="${y}" stroke="#DCE0E6" stroke-width="1.2"/>`;
+  let gy = 8;
+  grid += `<line x1="8" y1="8" x2="${W - 8}" y2="8" stroke="#DCE0E6" stroke-width="1.2"/>`;
+  for (const h of heights) {
+    gy += h;
+    grid += `<line x1="8" y1="${gy}" x2="${W - 8}" y2="${gy}" stroke="#DCE0E6" stroke-width="1.2"/>`;
+  }
+  grid += `<line x1="8" y1="8" x2="8" y2="${y}" stroke="#DCE0E6" stroke-width="1.2"/><line x1="${W - 8}" y1="8" x2="${W - 8}" y2="${y}" stroke="#DCE0E6" stroke-width="1.2"/>`;
+  return `<svg viewBox="0 0 ${W} ${H}" ${NS} role="img" aria-label="탐구 계획을 항목별로 적은 표. 한 칸은 비어 있고 기호로 표시되어 있다">${body}${grid}</svg>`;
+}
+
+// ── VT 변인 배정 표(조건 | 같게 | 다르게 · q = ㉠ 빈칸) ─────────────────
+export function variableTableFig(o: { items: string[]; marks: ("same" | "diff" | "q")[] }): string {
+  const W = 344;
+  const C1 = 176;
+  const C2 = (W - 16 - C1) / 2;
+  const RH = 30;
+  const H = RH * (o.items.length + 1) + 16;
+  let body = `<rect x="8" y="8" width="${W - 16}" height="${RH}" fill="#F2F4F7"/>
+    <text x="${8 + C1 / 2}" y="${8 + RH / 2 + 4.5}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">조건</text>
+    <text x="${8 + C1 + C2 / 2}" y="${8 + RH / 2 + 4.5}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">같게</text>
+    <text x="${8 + C1 + C2 * 1.5}" y="${8 + RH / 2 + 4.5}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">다르게</text>`;
+  o.items.forEach((it, i) => {
+    const y = 8 + RH * (i + 1);
+    body += `<text x="18" y="${y + RH / 2 + 4.5}" font-size="12.5" fill="#333D4B">${it}</text>`;
+    const m = o.marks[i];
+    const cx = m === "diff" ? 8 + C1 + C2 * 1.5 : 8 + C1 + C2 / 2;
+    if (m === "q") {
+      body += `<text x="${8 + C1 + C2}" y="${y + RH / 2 + 5}" text-anchor="middle" font-size="14" font-weight="800" fill="#1B64DA">㉠</text>`;
+    } else {
+      body += `<path d="M${cx - 6} ${y + RH / 2} l4.5 5 l8 -10" fill="none" stroke="#04B45F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+    }
+  });
+  let grid = "";
+  for (let i = 0; i <= o.items.length + 1; i++) {
+    grid += `<line x1="8" y1="${8 + RH * i}" x2="${W - 8}" y2="${8 + RH * i}" stroke="#DCE0E6" stroke-width="1.2"/>`;
+  }
+  for (const x of [8, 8 + C1, 8 + C1 + C2, W - 8]) {
+    grid += `<line x1="${x}" y1="8" x2="${x}" y2="${8 + RH * (o.items.length + 1)}" stroke="#DCE0E6" stroke-width="1.2"/>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" ${NS} role="img" aria-label="실험 조건마다 같게 할지 다르게 할지를 표시한 표">${body}${grid}</svg>`;
+}
+
+// ── CG 결과 꺾은선 그래프(집단 비교 · 정답 판독값은 눈금선 위) ───────────
+export function resultLineFig(o: {
+  xTicks: string[];
+  series: { name: string; color: string; points: number[] }[];
+  yMin: number;
+  yMax: number;
+  yStep: number;
+  yLabel: string;
+  xLabel: string;
+}): string {
+  const L = 44;
+  const R = 306;
+  const TOP = 26;
+  const BASE = 182;
+  const n = o.xTicks.length;
+  const gx = (i: number): number => L + (i * (R - L)) / (n - 1);
+  const gy = (v: number): number => BASE - ((v - o.yMin) / (o.yMax - o.yMin)) * (BASE - TOP);
+  let grid = "";
+  for (let v = o.yMin; v <= o.yMax; v += o.yStep) {
+    grid += `<line x1="${L}" y1="${gy(v)}" x2="${R}" y2="${gy(v)}" stroke="#EDF0F4" stroke-width="1"/>
+      <text x="${L - 8}" y="${gy(v) + 3.5}" text-anchor="end" font-size="10.5" fill="#8B95A1">${v}</text>`;
+  }
+  o.xTicks.forEach((t, i) => {
+    grid += `<line x1="${gx(i)}" y1="${BASE}" x2="${gx(i)}" y2="${TOP}" stroke="#EDF0F4" stroke-width="1"/>
+      <text x="${gx(i)}" y="${BASE + 16}" text-anchor="middle" font-size="10.5" fill="#8B95A1">${t}</text>`;
+  });
+  let lines = "";
+  o.series.forEach((s) => {
+    const d = s.points.map((p, i) => `${i ? "L" : "M"}${gx(i)},${gy(p)}`).join(" ");
+    lines += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+    s.points.forEach((p, i) => {
+      lines += `<circle cx="${gx(i)}" cy="${gy(p)}" r="3.6" fill="#FFFFFF" stroke="${s.color}" stroke-width="2.4"/>`;
+    });
+    const last = s.points[s.points.length - 1];
+    lines += `<text x="${R + 4}" y="${gy(last) + 4}" font-size="11.5" font-weight="700" fill="${s.color}">${s.name}</text>`;
+  });
+  return `<svg viewBox="0 0 344 214" ${NS} role="img" aria-label="여러 집단의 측정값을 시간에 따라 이은 꺾은선 그래프">
+    ${grid}
+    <line x1="${L}" y1="${TOP}" x2="${L}" y2="${BASE}" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="${L}" y1="${BASE}" x2="${R}" y2="${BASE}" stroke="#B0B8C1" stroke-width="1.6"/>
+    ${lines}
+    <text x="6" y="14" font-size="11" fill="#4E5968">${o.yLabel}</text>
+    <text x="338" y="210" text-anchor="end" font-size="11" fill="#4E5968">${o.xLabel}</text>
+  </svg>`;
+}
+
+// ── BR 결과 막대 그래프(값 라벨 미인쇄 · 높이 판독이 과제) ───────────────
+export function resultBarFig(o: {
+  bars: { label: string; value: number }[];
+  yMax: number;
+  yStep: number;
+  yLabel: string;
+}): string {
+  const L = 44;
+  const R = 320;
+  const TOP = 26;
+  const BASE = 176;
+  const n = o.bars.length;
+  const slot = (R - L) / n;
+  const bw = Math.min(40, slot * 0.54);
+  const gy = (v: number): number => BASE - (v / o.yMax) * (BASE - TOP);
+  let grid = "";
+  for (let v = 0; v <= o.yMax; v += o.yStep) {
+    grid += `<line x1="${L}" y1="${gy(v)}" x2="${R}" y2="${gy(v)}" stroke="#EDF0F4" stroke-width="1"/>
+      <text x="${L - 8}" y="${gy(v) + 3.5}" text-anchor="end" font-size="10.5" fill="#8B95A1">${v}</text>`;
+  }
+  let bars = "";
+  o.bars.forEach((b, i) => {
+    const cx = L + slot * (i + 0.5);
+    bars += `<rect x="${cx - bw / 2}" y="${gy(b.value)}" width="${bw}" height="${BASE - gy(b.value)}" rx="3" fill="#7FB2F0"/>
+      <rect x="${cx - bw / 2}" y="${gy(b.value)}" width="${bw}" height="4" rx="2" fill="#3182F6"/>`;
+    u1WrapKo(b.label, 6).forEach((ln, j) => {
+      bars += `<text x="${cx}" y="${BASE + 16 + j * 13}" text-anchor="middle" font-size="11" fill="#4E5968">${ln}</text>`;
+    });
+  });
+  return `<svg viewBox="0 0 344 212" ${NS} role="img" aria-label="여러 항목의 값을 막대 높이로 나타낸 그래프">
+    ${grid}
+    <line x1="${L}" y1="${TOP}" x2="${L}" y2="${BASE}" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="${L}" y1="${BASE}" x2="${R}" y2="${BASE}" stroke="#B0B8C1" stroke-width="1.6"/>
+    ${bars}
+    <text x="6" y="14" font-size="11" fill="#4E5968">${o.yLabel}</text>
+  </svg>`;
+}
+
+// ── EX 실험 장치 (가)(나) 2패널(조건 이름 미인쇄 · 판독이 과제) ──────────
+interface SetupSpec {
+  liquidH: number;
+  liquidColor?: string;
+  cubes?: number;
+  heat?: boolean;
+  lid?: boolean;
+}
+export function setupPairFig(o: { a: SetupSpec; b: SetupSpec }): string {
+  const panel = (s: SetupSpec, ox: number, tag: string): string => {
+    const BX = ox + 30;
+    const BW = 92;
+    const BY = 30;
+    const BH = 96;
+    const lh = Math.round(BH * s.liquidH);
+    const ly = BY + BH - lh;
+    let g = `<path d="M${BX} ${BY} v${BH} a10 10 0 0 0 10 10 h${BW - 20} a10 10 0 0 0 10 -10 v${-BH}" fill="rgba(200,225,255,.18)" stroke="#9AA7B8" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M${BX + 2} ${ly} v${lh - 2} a8 8 0 0 0 8 8 h${BW - 20} a8 8 0 0 0 8 -8 v${-(lh - 2)} z" fill="${s.liquidColor ?? "#BFDDFA"}" opacity=".85"/>
+      <ellipse cx="${BX + BW / 2}" cy="${ly}" rx="${BW / 2 - 2}" ry="4" fill="#DCEBFB"/>`;
+    for (let i = 0; i < (s.cubes ?? 0); i++) {
+      const cx = BX + BW / 2 - 11 + i * 22;
+      g += `<rect x="${cx - 8}" y="${BY + BH - 20}" width="16" height="16" rx="3" fill="#FFFFFF" stroke="#B0B8C1" stroke-width="1.4"/>`;
+    }
+    // 뚜껑은 컵 폭 +4까지만(양쪽 2px) · 컵 크기가 달라 보이면 "컵의 크기" 오답이 참처럼 읽힌다.
+    if (s.lid) {
+      g += `<rect x="${BX - 2}" y="${BY - 7}" width="${BW + 4}" height="7" rx="3" fill="#9AA7B8"/>
+        <rect x="${BX + BW / 2 - 7}" y="${BY - 12}" width="14" height="6" rx="3" fill="#9AA7B8"/>`;
+    }
+    if (s.heat) {
+      g += `<path d="M${BX + BW / 2 - 22} 148 h44" stroke="#9AA7B8" stroke-width="3" stroke-linecap="round"/>`;
+      for (let i = -1; i <= 1; i++) {
+        const fx = BX + BW / 2 + i * 15;
+        g += `<path d="M${fx} 146 q-5 -8 0 -14 q5 6 0 14z" fill="#F5A028"/><path d="M${fx} 146 q-2.6 -5 0 -8.5 q2.6 3.5 0 8.5z" fill="#FFD25E"/>`;
+      }
+    } else {
+      g += `<path d="M${BX + BW / 2 - 22} 148 h44" stroke="#9AA7B8" stroke-width="3" stroke-linecap="round"/>`;
+    }
+    g += `<text x="${BX + BW / 2}" y="172" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">${tag}</text>`;
+    return g;
+  };
+  return `<svg viewBox="0 0 344 182" ${NS} role="img" aria-label="같은 모양의 실험 장치 두 개를 나란히 놓고 조건을 달리한 그림">
+    ${panel(o.a, 0, "(가)")}${panel(o.b, 172, "(나)")}
+  </svg>`;
+}
+
+// ── CH 원리 → 기술 → 기기 → 문명 사슬(가로 · 빈칸 ㉠) ─────────────────
+export function chainFig(o: { cells: string[]; blank?: number }): string {
+  const n = o.cells.length;
+  const GAP = 16;
+  const W = 344;
+  const CW = (W - 16 - GAP * (n - 1)) / n;
+  const CH2 = 66;
+  let body = "";
+  o.cells.forEach((c, i) => {
+    const x = 8 + i * (CW + GAP);
+    const bl = o.blank === i;
+    body += `<rect x="${x}" y="18" width="${CW}" height="${CH2}" rx="10" fill="${bl ? "#FFFFFF" : "#F2F4F7"}" stroke="${bl ? "#3182F6" : "#C9D0D8"}" stroke-width="${bl ? 1.8 : 1.3}"${bl ? ' stroke-dasharray="5 4"' : ""}/>`;
+    if (bl) {
+      body += `<text x="${x + CW / 2}" y="${18 + CH2 / 2 + 6}" text-anchor="middle" font-size="16" font-weight="800" fill="#1B64DA">㉠</text>`;
+    } else {
+      const lines = u1WrapKo(c, 5);
+      lines.forEach((ln, j) => {
+        body += `<text x="${x + CW / 2}" y="${18 + CH2 / 2 - ((lines.length - 1) * 15) / 2 + j * 15 + 4.5}" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333D4B">${ln}</text>`;
+      });
+    }
+    if (i < n - 1) {
+      const ax = x + CW + 2;
+      body += `<path d="M${ax} ${18 + CH2 / 2} h${GAP - 6} M${ax + GAP - 6} ${18 + CH2 / 2} l-6 -4 M${ax + GAP - 6} ${18 + CH2 / 2} l-6 4" fill="none" stroke="#8B95A1" stroke-width="1.6" stroke-linecap="round"/>`;
+    }
+  });
+  const aria = o.blank === undefined
+    ? "네 칸이 화살표로 이어진 가로 흐름 그림"
+    : "네 칸이 화살표로 이어진 가로 흐름 그림. 한 칸은 비어 있고 기호로 표시되어 있다";
+  return `<svg viewBox="0 0 344 100" ${NS} role="img" aria-label="${aria}">${body}</svg>`;
+}
+
+// ── TL 문명 연표(가로 축 + 사건 카드 · hide는 라벨 가림) ─────────────────
+export function timelineFig(o: { events: { era: string; label: string }[]; hide?: number[] }): string {
+  const n = o.events.length;
+  // 축 양 끝은 카드 반폭만큼 안쪽으로 · 끝 카드가 뷰박스를 넘어 잘리는 것을 막는다.
+  const CW = 74;
+  const L = CW / 2 + 8;
+  const R = 344 - CW / 2 - 8;
+  const PER = 5;
+  // 카드 높이는 가장 긴 라벨의 줄 수를 따라간다(고정 높이면 세 줄 라벨이 상자 밖으로 흘러넘친다).
+  const maxLines = Math.max(1, ...o.events.map((e) => (e.label ? u1WrapKo(e.label, PER).length : 1)));
+  const CH2 = 20 + maxLines * 14;
+  const GAPV = 22;
+  const AY = CH2 + GAPV + 8;
+  const H = AY * 2;
+  const gx = (i: number): number => L + (i * (R - L)) / (n - 1);
+  const MARK = ["㉠", "㉡", "㉢", "㉣"];
+  let body = `<path d="M${L - 14} ${AY} H${R + 14} M${R + 14} ${AY} l-7 -4.5 M${R + 14} ${AY} l-7 4.5" fill="none" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round"/>`;
+  o.events.forEach((e, i) => {
+    const x = gx(i);
+    const up = i % 2 === 0;
+    const cy = up ? AY - GAPV - CH2 : AY + GAPV;
+    const hid = (o.hide ?? []).includes(i);
+    body += `<line x1="${x}" y1="${AY}" x2="${x}" y2="${up ? cy + CH2 : cy}" stroke="#C9D0D8" stroke-width="1.4"/>
+      <circle cx="${x}" cy="${AY}" r="4.6" fill="#FFFFFF" stroke="#3182F6" stroke-width="2.4"/>
+      <rect x="${x - CW / 2}" y="${cy}" width="${CW}" height="${CH2}" rx="9" fill="${hid ? "#FFFFFF" : "#F2F4F7"}" stroke="${hid ? "#3182F6" : "#C9D0D8"}" stroke-width="${hid ? 1.7 : 1.3}"${hid ? ' stroke-dasharray="5 4"' : ""}/>
+      <text x="${x}" y="${cy + 15}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8B95A1">${e.era}</text>`;
+    if (hid) {
+      body += `<text x="${x}" y="${cy + CH2 / 2 + 12}" text-anchor="middle" font-size="15" font-weight="800" fill="#1B64DA">${MARK[i] ?? "㉠"}</text>`;
+    } else {
+      u1WrapKo(e.label, PER).forEach((ln, j) => {
+        body += `<text x="${x}" y="${cy + 30 + j * 14}" text-anchor="middle" font-size="11" font-weight="600" fill="#333D4B">${ln}</text>`;
+      });
+    }
+  });
+  return `<svg viewBox="0 0 344 ${H}" ${NS} role="img" aria-label="시간 축 위아래로 사건 카드를 번갈아 배치한 연표">${body}</svg>`;
+}
+
+// ── DB 두 학생 주장 말풍선 ────────────────────────────────────────────
+export function debateFig(o: { a: { name: string; claim: string }; b: { name: string; claim: string } }): string {
+  const bubble = (name: string, claim: string, y: number, right: boolean): string => {
+    const lines = u1WrapKo(claim, 20);
+    const BH = lines.length * 17 + 22;
+    const BX = right ? 44 : 8;
+    const BW = 292;
+    const tone = right ? "#F0A422" : "#3182F6";
+    const fillT = right ? "#FFF7E8" : "#EEF4FF";
+    let g = `<rect x="${BX}" y="${y}" width="${BW}" height="${BH}" rx="13" fill="${fillT}" stroke="${tone}" stroke-width="1.4"/>`;
+    g += right
+      ? `<path d="M${BX + BW - 26} ${y + BH} l-4 11 l16 -11z" fill="${fillT}" stroke="${tone}" stroke-width="1.4" stroke-linejoin="round"/>`
+      : `<path d="M${BX + 26} ${y + BH} l4 11 l-16 -11z" fill="${fillT}" stroke="${tone}" stroke-width="1.4" stroke-linejoin="round"/>`;
+    lines.forEach((ln, j) => {
+      g += `<text x="${BX + 14}" y="${y + 19 + j * 17}" font-size="12.5" fill="#333D4B">${ln}</text>`;
+    });
+    const nx = right ? BX + BW - 12 : BX + 12;
+    g += `<text x="${nx}" y="${y + BH + 24}" text-anchor="${right ? "end" : "start"}" font-size="12" font-weight="800" fill="${tone}">${name}</text>`;
+    return g;
+  };
+  const aLines = u1WrapKo(o.a.claim, 20).length;
+  const y2 = 8 + (aLines * 17 + 22) + 34;
+  const H = y2 + (u1WrapKo(o.b.claim, 20).length * 17 + 22) + 34;
+  return `<svg viewBox="0 0 344 ${H}" ${NS} role="img" aria-label="두 학생이 각자의 주장을 말하는 말풍선 두 개">
+    ${bubble(o.a.name, o.a.claim, 8, false)}${bubble(o.b.name, o.b.claim, y2, true)}
+  </svg>`;
+}
+// ── u1 v2 섹션 끝 ──
+
+// ── u4 v2 신작(파일럿 승격 · 재출제 9호) ──
+// 입자 운동 표현 3종이 정본(설계표 §8-2): 기체 = 블러 꼬리 · 고체 = 바깥 괄호 호 · 액체 = 2겹 괄호+회전.
+
+
+/** 다크 입자 프리미티브(u4 v2) · 컷 간 입자 개수 12개 통일(개수 보존 검산 가능 설계 · v1의 9/6 혼재 보정).
+ *  운동 표현은 교과서 세 상태 그림 문법(사용자 원본 이미지 검수로 확정):
+ *  기체 = 날아가는 방향의 블러 꼬리(원뿔 잔상) · 고체 = 입자 양옆 괄호형 진동 호 ( ) ·
+ *  액체 = 같은 괄호 호를 더 크게 2겹 + 입자별 회전(고체보다 크게 흔들리는 느낌). */
+const dotP = (x: number, y: number, r = 5.6): string =>
+  `<circle cx="${x}" cy="${y}" r="${r}" fill="#6E9EDB"/><circle cx="${(x - r * 0.3).toFixed(1)}" cy="${(y - r * 0.33).toFixed(1)}" r="${(r * 0.3).toFixed(1)}" fill="rgba(255,255,255,.4)"/>`;
+/** 기체 블러 꼬리 · ang = 날아가는 방향(라디안) · 꼬리는 반대쪽으로 좁아지며 페이드. */
+const gasTailP = (x: number, y: number, ang: number, len: number, r = 4.7): string => {
+  const dx = Math.cos(ang);
+  const dy = Math.sin(ang);
+  const px = -dy;
+  const py = dx;
+  const w = r * 0.8;
+  const tx = x - dx * len;
+  const ty = y - dy * len;
+  return `<path d="M${(x - px * w).toFixed(1)} ${(y - py * w).toFixed(1)} L${tx.toFixed(1)} ${ty.toFixed(1)} L${(x + px * w).toFixed(1)} ${(y + py * w).toFixed(1)} Z" fill="#8FB3E8" opacity=".22"/>
+    <circle cx="${(x - dx * len * 0.55).toFixed(1)}" cy="${(y - dy * len * 0.55).toFixed(1)}" r="${(r * 0.55).toFixed(1)}" fill="#8FB3E8" opacity=".13"/>`;
+};
+/** 고체 진동 호 · 교과서 (나) 문법: 격자 덩어리의 **맨 바깥쪽에만** 그린다(입자 사이사이에는 없음).
+ *  side = 그 입자가 덩어리 가장자리에서 바깥을 향한 면. */
+const vibSideP = (x: number, y: number, side: "l" | "r" | "t" | "b", r = 5.8): string => {
+  const rr = r + 3;
+  const S = `stroke="#8FB3E8" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".6"`;
+  if (side === "l") return `<path d="M${(x - rr).toFixed(1)} ${(y - 4.8).toFixed(1)}q-2.4 4.8 0 9.6" ${S}/>`;
+  if (side === "r") return `<path d="M${(x + rr).toFixed(1)} ${(y - 4.8).toFixed(1)}q2.4 4.8 0 9.6" ${S}/>`;
+  if (side === "t") return `<path d="M${(x - 4.8).toFixed(1)} ${(y - rr).toFixed(1)}q4.8 -2.4 9.6 0" ${S}/>`;
+  return `<path d="M${(x - 4.8).toFixed(1)} ${(y + rr).toFixed(1)}q4.8 2.4 9.6 0" ${S}/>`;
+};
+/** 바깥 방향(중심 반대쪽) 진동 호 1개 · 고리형 고체(얼음)용. */
+const vibOutP = (x: number, y: number, cx: number, cy: number, r = 5.2): string => {
+  const deg = ((Math.atan2(y - cy, x - cx) * 180) / Math.PI).toFixed(1);
+  const rr = r + 3;
+  return `<g transform="rotate(${deg} ${x} ${y})"><path d="M${(x + rr).toFixed(1)} ${(y - 4.8).toFixed(1)}q2.4 4.8 0 9.6" stroke="#8FB3E8" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".6"/></g>`;
+};
+/** 액체 진동 호 · 괄호 2겹 + 입자별 회전(교과서 (다) 문법 · 고체보다 크게 흔들림). */
+const vib2P = (x: number, y: number, i: number, r = 5.6): string => {
+  const rot = [0, 26, -26, 13, -13][i % 5];
+  const r1 = r + 2.8;
+  const r2 = r + 5.8;
+  const arc = (rr: number): string =>
+    `M${(x - rr).toFixed(1)} ${(y - 4.6).toFixed(1)}q-2.3 4.6 0 9.2M${(x + rr).toFixed(1)} ${(y - 4.6).toFixed(1)}q2.3 4.6 0 9.2`;
+  return `<g transform="rotate(${rot} ${x} ${y})">
+    <path d="${arc(r1)}" stroke="#8FB3E8" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".6"/>
+    <path d="${arc(r2)}" stroke="#8FB3E8" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".3"/>
+  </g>`;
+};
+/** 배치 3종 · 상자 좌표계 (0,0)~(94,84) · 전부 12개. */
+const gridP = (): string => {
+  let out = "";
+  for (let i = 0; i < 12; i++) {
+    const c = i % 4;
+    const rw = Math.floor(i / 4);
+    const x = 20 + c * 18;
+    const y = 24 + rw * 20;
+    let vib = "";
+    if (c === 0) vib += vibSideP(x, y, "l");
+    if (c === 3) vib += vibSideP(x, y, "r");
+    if (rw === 0) vib += vibSideP(x, y, "t");
+    if (rw === 2) vib += vibSideP(x, y, "b");
+    out += vib + dotP(x, y, 5.8);
+  }
+  return out;
+};
+const clumpP = (): string => {
+  // 교과서 액체 표준(사용자 검수 반영): 서로 닿을 듯 말 듯한 틈(중심 간 = 지름의 1.3배쯤)을 두고
+  // 불규칙하게 아래쪽 2/3를 채운다 · 다닥다닥 겹칠 듯 뭉치면 실격 · 위 1/3은 자유 표면으로 비움.
+  const pts: [number, number][] = [
+    [21, 41], [36, 38], [50, 42], [65, 39], [79, 42],
+    [27, 55], [42, 53], [57, 56], [71, 53],
+    [33, 68], [48, 70], [63, 67],
+  ];
+  return pts.map(([x, y], i) => vib2P(x, y, i) + dotP(x, y, 5.6)).join("");
+};
+const scatterP = (motion = true): string => {
+  const pts: [number, number][] = [
+    [14, 14], [46, 10], [78, 16], [28, 32], [62, 30], [86, 38],
+    [12, 48], [42, 46], [72, 52], [22, 68], [54, 66], [82, 72],
+  ];
+  return pts.map(([x, y], i) => `${motion ? gasTailP(x, y, ((i * 137) % 360) * (Math.PI / 180), 13) : ""}${dotP(x, y, 4.7)}`).join("");
+};
+/** 상태 성질 모형용 성긴 기체(교과서 세 상태 그림 표준 · 5~6개 + 날아가는 블러 꼬리).
+ *  변화 전후 2컷(PP2·SB)은 개수 보존 검산 때문에 scatterP(12)를 유지한다(천체 실측 12=12 계보). */
+const scatterSparseP = (): string => {
+  const pts: [number, number][] = [[20, 16], [64, 12], [84, 42], [38, 40], [16, 66], [64, 66]];
+  return pts.map(([x, y], i) => `${gasTailP(x, y, ((i * 137 + 40) % 360) * (Math.PI / 180), 18, 5)}${dotP(x, y, 5)}`).join("");
+};
+const boxP = (x: number, y: number, inner: string, label?: string): string =>
+  `<g transform="translate(${x},${y})"><rect x="0" y="0" width="94" height="84" rx="13" fill="rgba(255,255,255,.04)" stroke="#2C4066" stroke-width="1.5"/>${inner}</g>${label ? `<text x="${x + 47}" y="${y + 104}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#AFC3E3">${label}</text>` : ""}`;
+
+/** PP2 상태 변화 입자 모형 2컷(다크·6방향) · 왼쪽 상자가 화살표를 지나 오른쪽 상자로.
+ *  컷 간 입자 개수 12 = 12(개수 보존 판정 성립). aria는 중립(방향·상태 판독 결과를 낭독하지 않는다). */
+export function particleChangeFig(kind: "melt" | "freeze" | "vaporize" | "condense" | "sublime" | "deposit", o?: { labels?: [string, string] }): string {
+  const arr: Record<string, [string, string]> = {
+    melt: [gridP(), clumpP()],
+    freeze: [clumpP(), gridP()],
+    vaporize: [clumpP(), scatterP()],
+    condense: [scatterP(), clumpP()],
+    sublime: [gridP(), scatterP()],
+    deposit: [scatterP(), gridP()],
+  };
+  const [a, b] = arr[kind];
+  const la = o?.labels?.[0];
+  const lb = o?.labels?.[1];
+  const H = la ? 132 : 116;
+  return `<svg viewBox="0 0 344 ${H}" ${NS} fill="none" role="img" aria-label="입자 배열 모형 두 상자. 왼쪽 상자의 배열이 화살표를 지나 오른쪽 상자의 배열로 변한다">
+    ${boxP(28, 14, a, la)}
+    <path d="M142 56h52" stroke="#AFC3E3" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M186 44l14 12-14 12" fill="none" stroke="#AFC3E3" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+    ${boxP(222, 14, b, lb)}
+  </svg>`;
+}
+
+/** PT3 세 상태 입자 모형(다크·배정 파라미터판) · order로 (가)(나)(다) 배정을 바꾼다
+ *  (구 stateTrioFig 고정 배열 (가)기체(나)고체(다)액체의 회피판). motion = 운동 표현 유지. */
+export function stateTrioParamFig(order: ("solid" | "liquid" | "gas")[]): string {
+  const inner: Record<string, string> = { solid: gridP(), liquid: clumpP(), gas: scatterSparseP() };
+  const tags = ["(가)", "(나)", "(다)"];
+  return `<svg viewBox="0 0 344 136" ${NS} fill="none" role="img" aria-label="물질의 세 가지 상태를 나타낸 입자 배열 모형 세 상자. 상자마다 입자의 배열과 간격이 다르다">
+    ${order.map((k, i) => boxP(16 + i * 108, 8, inner[k], tags[i])).join("")}
+  </svg>`;
+}
+
+/** SM 한 상태 입자 모형 단독(다크·확대 1컷). */
+export function stateSingleFig(kind: "solid" | "liquid" | "gas"): string {
+  const inner: Record<string, string> = { solid: gridP(), liquid: clumpP(), gas: scatterSparseP() };
+  return `<svg viewBox="0 0 344 128" ${NS} fill="none" role="img" aria-label="어떤 상태의 입자 배열 모형 한 상자">
+    <g transform="translate(114,10) scale(1.24)"><rect x="0" y="0" width="94" height="84" rx="13" fill="rgba(255,255,255,.04)" stroke="#2C4066" stroke-width="1.5"/>${inner[kind]}</g>
+  </svg>`;
+}
+
+/** MX 융해 진행 중(수평 구간) 공존 모형(다크 1컷) · 아래쪽 규칙 덩어리 + 둘레 흐트러진 입자. */
+export function meltMixFig(): string {
+  // 아직 안 녹은 규칙 덩어리(하단 · 밀집 격자 · 진동 호) + 먼저 녹은 입자(둘레 · 운동 잔상) · 경계 분리.
+  let grid = "";
+  const gp: [number, number][] = [[33, 56], [47, 56], [61, 56], [33, 70], [47, 70], [61, 70]];
+  gp.forEach(([x, y], i) => {
+    const c = i % 3;
+    const rw = Math.floor(i / 3);
+    let vib = "";
+    if (c === 0) vib += vibSideP(x, y, "l");
+    if (c === 2) vib += vibSideP(x, y, "r");
+    if (rw === 0) vib += vibSideP(x, y, "t");
+    if (rw === 1) vib += vibSideP(x, y, "b");
+    grid += vib + dotP(x, y, 5.8);
+  });
+  const liq: [number, number][] = [[16, 26], [38, 20], [62, 24], [82, 34], [12, 52], [82, 62]];
+  const liqArt = liq.map(([x, y], i) => vib2P(x, y, i, 5.4) + dotP(x, y, 5.4)).join("");
+  return `<svg viewBox="0 0 344 128" ${NS} fill="none" role="img" aria-label="가열 중인 용기 속 입자 모형 한 상자. 규칙적으로 모여 있는 부분과 흐트러진 부분이 함께 있다">
+    <g transform="translate(114,10) scale(1.24)"><rect x="0" y="0" width="94" height="84" rx="13" fill="rgba(255,255,255,.04)" stroke="#2C4066" stroke-width="1.5"/>${liqArt}${grid}</g>
+  </svg>`;
+}
+
+/** IL 물/얼음 입자 배열 비교(다크 2컷) · 얼음은 가운데가 빈 고리(틈) 얼개 · 물은 촘촘 불규칙.
+ *  같은 개수(12)로 그려 부피 차이의 원인이 "틈"임을 판독하게 한다. */
+export function iceLatticeFig(): string {
+  // 얼음 = 가운데가 빈 육각 고리 얼개 · 고리 결합선을 함께 그려 "틈"이 한눈에 읽히게 한다(점만으로는 약함).
+  const ringHex = (cx: number, cy: number, r: number): string => {
+    const pts: [number, number][] = [];
+    for (let i = 0; i < 6; i++) {
+      const a = (Math.PI / 3) * i - Math.PI / 2;
+      pts.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]);
+    }
+    const outline = `<path d="${pts.map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ")} Z" stroke="#3D5378" stroke-width="1.6" fill="none"/>`;
+    return outline + pts.map(([x, y]) => vibOutP(x, y, cx, cy) + dotP(x, y, 5.2)).join("");
+  };
+  const ice = `${ringHex(31, 30, 16)}${ringHex(63, 56, 16)}<line x1="31" y1="46" x2="49" y2="48" stroke="#3D5378" stroke-width="1.6"/>`;
+  return `<svg viewBox="0 0 344 132" ${NS} fill="none" role="img" aria-label="두 입자 배열 모형. 왼쪽 상자는 물, 오른쪽 상자는 얼음이라고 표시되어 있다">
+    ${boxP(48, 8, clumpP(), "(가) 물")}
+    ${boxP(202, 8, ice, "(나) 얼음")}
+  </svg>`;
+}
+
+/** EB 증발/끓음 비교 모형(다크 2컷) · (가) 표면에서만 조용히 이탈 · (나) 액체 속 기포 + 활발한 이탈. */
+export function evapBoilFig(): string {
+  const surface = (esc: string, inner: string): string => `${inner}${esc}`;
+  const liqLow = ((): string => {
+    const pts: [number, number][] = [[20, 46], [38, 42], [56, 47], [74, 43], [26, 60], [46, 62], [64, 58], [78, 64], [34, 74], [56, 74]];
+    return pts.map(([x, y], i) => vib2P(x, y, i, 5.4) + dotP(x, y, 5.4)).join("");
+  })();
+  const evap = surface(`${gasTailP(36, 18, -1.35, 10, 4.8)}${dotP(36, 18, 4.8)}${gasTailP(70, 12, -1.75, 10, 4.8)}${dotP(70, 12, 4.8)}<path d="M24 34h46" stroke="#3D5378" stroke-width="1.6" stroke-dasharray="4 4"/>`, liqLow);
+  const boilLiq = ((): string => {
+    const pts: [number, number][] = [[18, 48], [36, 44], [72, 46], [24, 62], [78, 62], [40, 76], [60, 76]];
+    return pts.map(([x, y], i) => vib2P(x, y, i, 5.4) + dotP(x, y, 5.4)).join("");
+  })();
+  const bubble = `<circle cx="52" cy="58" r="12" stroke="#8FB3E8" stroke-width="1.6" fill="rgba(143,179,232,.08)"/>${dotP(48, 56, 3.6)}${dotP(57, 60, 3.6)}
+    <circle cx="66" cy="34" r="8" stroke="#8FB3E8" stroke-width="1.4" fill="rgba(143,179,232,.08)"/>${dotP(66, 34, 3.2)}`;
+  const boil = surface(`${gasTailP(28, 14, -1.55, 11, 4.8)}${dotP(28, 14, 4.8)}${gasTailP(56, 10, -1.3, 11, 4.8)}${dotP(56, 10, 4.8)}${gasTailP(82, 16, -1.85, 11, 4.8)}${dotP(82, 16, 4.8)}<path d="M14 28h66" stroke="#3D5378" stroke-width="1.6" stroke-dasharray="4 4"/>${bubble}`, boilLiq);
+  return `<svg viewBox="0 0 344 132" ${NS} fill="none" role="img" aria-label="액체가 기체로 변하는 두 가지 방식의 입자 모형 (가)와 (나). 두 상자의 속 모습이 서로 다르다">
+    ${boxP(48, 8, evap, "(가)")}
+    ${boxP(202, 8, boil, "(나)")}
+  </svg>`;
+}
+
+/** QC 정성 가열·냉각 곡선(라이트) · 실측 3사 이식: 눈금 수치 없음 · 축 라벨(온도(℃)/시간(분))과
+ *  원점 0만 · 구간 라벨 ㉠~㉤(레슨 (가)~(라) 회피) · 경계 세로 점선. pair = 같은 물질 양 비교 두 곡선. */
+export function qualCurveFig(o: { mode: "heat" | "cool"; plateaus?: 1 | 2; secs?: boolean; pair?: boolean }): string {
+  const L = 42;
+  const BASE = 164;
+  const TOP = 24;
+  // secs 모드에서는 구간 라벨(㉠~)이 BASE+18 줄을 쓰므로 시간(분) 축 제목을 한 줄 아래로 내린다(겹침 방지).
+  const axis = `<path d="M${L} ${TOP - 8}V${BASE}H326" stroke="#B0B8C1" stroke-width="1.6" fill="none"/>
+    <text x="${L - 10}" y="${BASE + 4}" text-anchor="end" font-size="10.5" fill="#8B95A1">0</text>
+    <text x="10" y="16" font-size="11" fill="#4E5968">온도(℃)</text>
+    <text x="336" y="${BASE + (o.secs ? 34 : 18)}" text-anchor="end" font-size="11" fill="#4E5968">시간(분)</text>`;
+  const seg = (pts: [number, number][], color = "#5E6B7E", w = 3): string =>
+    `<path d="${pts.map(([x, y], i) => `${i === 0 ? "M" : "L"}${x} ${y}`).join(" ")}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if (o.pair) {
+    const pa: [number, number][] = [[L, 148], [104, 92], [156, 92], [232, 38]];
+    const pb: [number, number][] = [[L, 148], [138, 92], [252, 92], [318, 44]];
+    return `<svg viewBox="0 0 344 196" ${NS} role="img" aria-label="같은 물질을 가열한 두 온도 그래프 (가)와 (나). 온도가 일정하게 유지되는 구간의 높이는 서로 같고, 길이는 서로 다르다">
+      ${axis}
+      <line x1="${L}" y1="92" x2="326" y2="92" stroke="#DCE0E6" stroke-width="1.2" stroke-dasharray="3 4"/>
+      ${seg(pa, "#4E5968")}${seg(pb, "#3182F6")}
+      <text x="238" y="34" font-size="11.5" font-weight="700" fill="#4E5968">(가)</text>
+      <text x="322" y="40" text-anchor="end" font-size="11.5" font-weight="700" fill="#3182F6">(나)</text>
+    </svg>`;
+  }
+  const two = o.plateaus === 2;
+  let pts: [number, number][];
+  if (o.mode === "heat") {
+    pts = two
+      ? [[L, 152], [102, 112], [158, 112], [216, 62], [266, 62], [318, 32]]
+      : [[L, 148], [128, 92], [216, 92], [312, 38]];
+  } else {
+    pts = two
+      ? [[L, 34], [102, 74], [158, 74], [216, 124], [266, 124], [318, 154]]
+      : [[L, 40], [128, 96], [216, 96], [312, 150]];
+  }
+  let secs = "";
+  if (o.secs) {
+    const marks = ["㉠", "㉡", "㉢", "㉣", "㉤"];
+    const bounds = [L, ...pts.slice(1, -1).map(([x]) => x), 326];
+    for (let i = 0; i < bounds.length - 1 && i < marks.length; i++) {
+      const mid = (bounds[i] + bounds[i + 1]) / 2;
+      secs += `<text x="${mid.toFixed(0)}" y="${BASE + 18}" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">${marks[i]}</text>`;
+      if (i > 0) secs += `<line x1="${bounds[i]}" y1="${BASE}" x2="${bounds[i]}" y2="${TOP}" stroke="#DCE0E6" stroke-width="1" stroke-dasharray="2 4"/>`;
+    }
+  }
+  return `<svg viewBox="0 0 344 ${o.secs ? 206 : 192}" ${NS} role="img" aria-label="물질을 ${o.mode === "heat" ? "가열" : "냉각"}할 때 시간에 따른 온도 변화를 나타낸 그래프. 온도가 일정하게 유지되는 구간이 있다">
+    ${axis}${secs}
+    ${seg(pts)}
+  </svg>`;
+}
+
+/** TRI 상태 변화 삼각 다이어그램(라이트·모형 꼭짓점판) · 꼭짓점 = 입자 모형 원판(상태 이름 미표기 ·
+ *  판독 과제) · 화살표 (가)~(바) 고정 배정: (가) 고체→액체 · (나) 액체→고체 · (다) 액체→기체 ·
+ *  (라) 기체→액체 · (마) 고체→기체 · (바) 기체→고체. 위 = 기체 · 좌하 = 고체 · 우하 = 액체(앱 관례). */
+export function phaseTriModelFig(): string {
+  const md = (x: number, y: number, r = 3): string => `<circle cx="${x}" cy="${y}" r="${r}" fill="#8B95A1"/>`;
+  const gtail = (x: number, y: number, deg: number): string => {
+    const a = (deg * Math.PI) / 180;
+    const dx = Math.cos(a);
+    const dy = Math.sin(a);
+    const px = -dy;
+    const py = dx;
+    const w = 2.1;
+    const L = 7.5;
+    return `<path d="M${(x - px * w).toFixed(1)} ${(y - py * w).toFixed(1)} L${(x - dx * L).toFixed(1)} ${(y - dy * L).toFixed(1)} L${(x + px * w).toFixed(1)} ${(y + py * w).toFixed(1)} Z" fill="#8B95A1" opacity=".3"/>`;
+  };
+  const miniSolid = `${md(-11, -6)}${md(0, -6)}${md(11, -6)}${md(-11, 5)}${md(0, 5)}${md(11, 5)}${md(-11, 16)}${md(0, 16)}${md(11, 16)}`;
+  const miniLiquid = `${md(-12, -4)}${md(-1, -8)}${md(10, -3)}${md(-7, 7)}${md(4, 6)}${md(13, 9)}${md(-2, 17)}${md(9, 18)}`;
+  const miniGas = `${gtail(-14, -10, 215)}${md(-14, -10, 2.6)}${gtail(8, -14, 80)}${md(8, -14, 2.6)}${gtail(15, 2, 340)}${md(15, 2, 2.6)}${gtail(-6, 4, 150)}${md(-6, 4, 2.6)}${gtail(-15, 14, 250)}${md(-15, 14, 2.6)}${gtail(6, 16, 30)}${md(6, 16, 2.6)}`;
+  const node = (cx: number, cy: number, inner: string): string =>
+    `<circle cx="${cx}" cy="${cy}" r="38" fill="#F7F8FA" stroke="#DCE0E6" stroke-width="1.5"/><g transform="translate(${cx},${cy})">${inner}</g>`;
+  const arrow = (x1: number, y1: number, x2: number, y2: number, lab: string, lx: number, ly: number): string => {
+    const ang = Math.atan2(y2 - y1, x2 - x1);
+    const hx = (a: number): number => x2 - Math.cos(ang - a) * 9;
+    const hy = (a: number): number => y2 - Math.sin(ang - a) * 9;
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#6B7684" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M${x2} ${y2} L${hx(0.44).toFixed(1)} ${hy(0.44).toFixed(1)} M${x2} ${y2} L${hx(-0.44).toFixed(1)} ${hy(-0.44).toFixed(1)}" stroke="#6B7684" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+      <circle cx="${lx}" cy="${ly}" r="14" fill="#fff" stroke="#B0B8C1" stroke-width="1.4"/>
+      <text x="${lx}" y="${ly + 4.5}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#333D4B">${lab}</text>`;
+  };
+  return `<svg viewBox="0 0 344 258" ${NS} fill="none" role="img" aria-label="세 개의 입자 배열 원판 사이를 화살표 (가)부터 (바)까지가 잇는 상태 변화 그림. 원판에는 상태 이름이 적혀 있지 않다">
+    ${node(172, 52, miniGas)}
+    ${node(66, 200, miniSolid)}
+    ${node(278, 200, miniLiquid)}
+    ${arrow(112, 188, 226, 188, "(가)", 169, 172)}
+    ${arrow(226, 218, 112, 218, "(나)", 169, 236)}
+    ${arrow(266, 158, 210, 78, "(다)", 222, 134)}
+    ${arrow(226, 62, 288, 154, "(라)", 298, 92)}
+    ${arrow(80, 158, 136, 78, "(마)", 122, 134)}
+    ${arrow(118, 62, 56, 154, "(바)", 46, 92)}
+  </svg>`;
+}
+
+/** DF 확산 관찰(라이트) · time = 색소 한 방울의 시간 순 3컷 · temp = 같은 시간 뒤 뜨거운 물/차가운 물 비교. */
+export function diffuseSeqFig(mode: "time" | "temp"): string {
+  const beaker = (x: number, w: number, ink: string, label: string): string => `
+    <g transform="translate(${x},0)">
+      <path d="M6 18 V96 a8 8 0 0 0 8 8 H${w - 14} a8 8 0 0 0 8-8 V18" fill="#fff" stroke="#8B95A1" stroke-width="2"/>
+      <line x1="2" y1="18" x2="${w - 2}" y2="18" stroke="#8B95A1" stroke-width="2" stroke-linecap="round"/>
+      <rect x="8" y="30" width="${w - 16}" height="72" rx="6" fill="#EAF3FF"/>
+      ${ink}
+      <text x="${w / 2}" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">${label}</text>
+    </g>`;
+  if (mode === "time") {
+    const drop = `<ellipse cx="46" cy="94" rx="15" ry="7" fill="#3B6FD4" opacity=".85"/>`;
+    const mid = `<ellipse cx="46" cy="84" rx="24" ry="18" fill="#3B6FD4" opacity=".38"/><ellipse cx="46" cy="92" rx="30" ry="10" fill="#3B6FD4" opacity=".5"/>`;
+    const full = `<rect x="8" y="30" width="76" height="72" rx="6" fill="#3B6FD4" opacity=".34"/>`;
+    return `<svg viewBox="0 0 344 132" ${NS} fill="none" role="img" aria-label="물이 든 비커 바닥에 색소 한 방울을 떨어뜨린 뒤 시간 순서대로 관찰한 세 장면">
+      ${beaker(14, 92, drop, "(가)")}${beaker(126, 92, mid, "(나)")}${beaker(238, 92, full, "(다)")}
+    </svg>`;
+  }
+  const spreadBig = `<ellipse cx="53" cy="76" rx="36" ry="30" fill="#3B6FD4" opacity=".4"/><ellipse cx="53" cy="90" rx="42" ry="14" fill="#3B6FD4" opacity=".5"/>`;
+  const spreadSmall = `<ellipse cx="53" cy="92" rx="18" ry="9" fill="#3B6FD4" opacity=".7"/>`;
+  return `<svg viewBox="0 0 344 132" ${NS} fill="none" role="img" aria-label="같은 시간이 지난 뒤 두 비커를 비교한 그림. 한쪽은 뜨거운 물, 다른 쪽은 차가운 물이라고 표시되어 있다">
+    ${beaker(46, 106, spreadBig, "(가) 뜨거운 물")}${beaker(196, 106, spreadSmall, "(나) 차가운 물")}
+  </svg>`;
+}
+
+/** OB 열린 접시 증발 저울(라이트 2컷) · (가) 직후 진한 얼룩 · (나) 시간이 지난 뒤 옅은 얼룩 ·
+ *  표시창은 빈 패널(숫자 각인 금지 · u4 원조 관행). */
+export function openScaleFig(): string {
+  const unit = (x: number, stain: string, label: string): string => `
+    <g transform="translate(${x},0)">
+      <ellipse cx="76" cy="42" rx="52" ry="10" fill="#F4F6F8" stroke="#8B95A1" stroke-width="1.8"/>
+      <ellipse cx="76" cy="38" rx="52" ry="10" fill="#fff" stroke="#8B95A1" stroke-width="1.8"/>
+      <ellipse cx="76" cy="38" rx="34" ry="6.4" fill="#FDFEFF" stroke="#C9D0D9" stroke-width="1.2"/>
+      ${stain}
+      <path d="M28 56h96a8 8 0 0 1 8 8v22a8 8 0 0 1-8 8H28a8 8 0 0 1-8-8V64a8 8 0 0 1 8-8z" fill="#EDF1F6" stroke="#8B95A1" stroke-width="1.8"/>
+      <rect x="46" y="64" width="60" height="16" rx="4" fill="#2A3442"/>
+      <text x="76" y="112" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">${label}</text>
+    </g>`;
+  const wetStain = `<ellipse cx="76" cy="37" rx="24" ry="4.6" fill="#9EC5FB" opacity=".9"/>`;
+  const dryStain = `<ellipse cx="76" cy="37" rx="11" ry="2.6" fill="#C9DDF7" opacity=".8"/>
+    <g stroke="#9EC5FB" stroke-width="1.8" fill="none" stroke-linecap="round"><path d="M62 26c-2-4 2-6 0-10M90 27c-2-4 2-6 0-10"/></g>`;
+  return `<svg viewBox="0 0 344 124" ${NS} fill="none" role="img" aria-label="전자저울 위 접시에 액체를 떨어뜨린 거름종이를 올린 두 장면. 얼룩의 크기가 서로 다르고 표시창은 비어 있다">
+    ${unit(10, wetStain, "(가) 떨어뜨린 직후")}${unit(182, dryStain, "(나) 시간이 지난 뒤")}
+  </svg>`;
+}
+
+/** SY 주사기 압축 비교(라이트 2컷) · 입구를 막고 피스톤을 누른 결과 · (가) 공기 크게 눌림 · (나) 물 거의 안 눌림. */
+export function syringeFig(): string {
+  const unit = (y: number, plungerX: number, inner: string, label: string): string => `
+    <g transform="translate(30,${y})">
+      <rect x="60" y="6" width="180" height="34" rx="8" fill="#fff" stroke="#8B95A1" stroke-width="2"/>
+      <rect x="240" y="14" width="16" height="18" rx="4" fill="#C4CAD2" stroke="#8B95A1" stroke-width="1.6"/>
+      <rect x="256" y="19" width="10" height="8" rx="3" fill="#8B95A1"/>
+      ${inner}
+      <rect x="${plungerX}" y="8" width="9" height="30" rx="3" fill="#B7C0CC" stroke="#8B95A1" stroke-width="1.4"/>
+      <rect x="${plungerX - 44}" y="19" width="46" height="8" rx="3" fill="#C4CAD2" stroke="#8B95A1" stroke-width="1.4"/>
+      <rect x="${plungerX - 56}" y="10" width="12" height="26" rx="4" fill="#C4CAD2" stroke="#8B95A1" stroke-width="1.4"/>
+      <path d="M${plungerX - 78} 23h14M${plungerX - 70} 17l8 6-8 6" stroke="#F04452" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="150" y="62" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">${label}</text>
+    </g>`;
+  const airDots = [[172, 16], [196, 24], [184, 32], [212, 15], [222, 30], [206, 23]]
+    .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.4" fill="#9EC5FB"/>`)
+    .join("");
+  const waterFill = `<rect x="122" y="8" width="118" height="30" rx="6" fill="#B7D3F2" opacity=".9"/>` +
+    [[130, 15], [148, 27], [166, 14], [184, 28], [202, 15], [220, 27], [232, 16], [139, 21], [157, 20], [175, 21], [193, 21], [211, 20]]
+      .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.4" fill="#6E9EDB"/>`)
+      .join("");
+  return `<svg viewBox="0 0 344 148" ${NS} fill="none" role="img" aria-label="입구를 막은 주사기 두 개를 같은 힘으로 누른 그림. (가)는 피스톤이 깊이 들어갔고 (나)는 거의 들어가지 않았다">
+    ${unit(2, 168, airDots, "(가) 공기")}
+    ${unit(78, 118, waterFill, "(나) 물")}
+  </svg>`;
+}
+
+/** SB 밀폐 용기 상태 변화 전후(라이트) · zip = 지퍼 백(드라이아이스류 · 저울 없음 · 부피 대비) ·
+ *  flask = 마개 플라스크+저울(빈 패널 · 질량 대비) · open = 마개 없는 대비판. */
+export function sealedPairFig(o: { vessel: "zip" | "flask"; open?: boolean }): string {
+  // 라이트 그림용 기체 꼬리(교과서 문법 · 지퍼 백 기체 입자에도 운동 꼬리를 그린다 · 천재 실측 계보).
+  const ltail = (x: number, y: number, deg: number, L = 9, w = 2.6): string => {
+    const a = (deg * Math.PI) / 180;
+    const dx = Math.cos(a);
+    const dy = Math.sin(a);
+    const px = -dy;
+    const py = dx;
+    return `<path d="M${(x - px * w).toFixed(1)} ${(y - py * w).toFixed(1)} L${(x - dx * L).toFixed(1)} ${(y - dy * L).toFixed(1)} L${(x + px * w).toFixed(1)} ${(y + py * w).toFixed(1)} Z" fill="#9EC5FB" opacity=".4"/>`;
+  };
+  if (o.vessel === "zip") {
+    const flat = `
+      <g transform="translate(20,26)">
+        <path d="M4 44 Q2 20 14 16 H128 Q140 20 138 44 Q140 62 128 64 H14 Q2 62 4 44z" fill="#F4F8FE" stroke="#8B95A1" stroke-width="2"/>
+        <rect x="10" y="10" width="122" height="9" rx="4" fill="#C9D6E8" stroke="#8B95A1" stroke-width="1.4"/>
+        <g transform="translate(46,25)">${[...Array(12)].map((_, i) => dotP(7 + (i % 4) * 12.5, 8 + Math.floor(i / 4) * 11.5, 4.2)).join("")}</g>
+        <text x="71" y="92" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">(가) 넣은 직후</text>
+      </g>`;
+    const puffed = `
+      <g transform="translate(186,10)">
+        <path d="M6 58 Q-6 26 22 14 H118 Q146 26 134 58 Q146 84 112 92 H28 Q-6 84 6 58z" fill="#F4F8FE" stroke="#8B95A1" stroke-width="2"/>
+        <rect x="16" y="6" width="110" height="9" rx="4" fill="#C9D6E8" stroke="#8B95A1" stroke-width="1.4"/>
+        ${[[34, 34], [66, 26], [98, 36], [26, 56], [56, 50], [88, 56], [112, 48], [44, 72], [76, 70], [104, 72], [60, 86], [88, 84]].map(([x, y], i) => `${ltail(x, y, (i * 137 + 25) % 360, 8, 2.4)}<circle cx="${x}" cy="${y}" r="3.6" fill="#9EC5FB"/>`).join("")}
+        <text x="70" y="118" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">(나) 시간이 지난 뒤</text>
+      </g>`;
+    return `<svg viewBox="0 0 344 140" ${NS} fill="none" role="img" aria-label="꼭 잠근 지퍼 백 두 장면. 하나는 납작하고 안에 고체 조각이 있으며, 다른 하나는 크게 부풀어 있다">${flat}${puffed}</svg>`;
+  }
+  const flask = (x: number, inner: string, label: string, open?: boolean): string => `
+    <g transform="translate(${x},0)">
+      ${open ? `<path d="M62 20h16" stroke="#8B95A1" stroke-width="1.8"/>` : `<rect x="60" y="12" width="20" height="12" rx="4" fill="#C4CAD2" stroke="#8B95A1" stroke-width="1.6"/>`}
+      <path d="M62 24 v16 L40 82 a10 10 0 0 0 9 14 h42 a10 10 0 0 0 9-14 L78 40 v-16" fill="#fff" stroke="#8B95A1" stroke-width="2"/>
+      ${inner}
+      <path d="M50 102h40a8 8 0 0 1 8 8v14a8 8 0 0 1-8 8H50a8 8 0 0 1-8-8v-14a8 8 0 0 1 8-8z" fill="#EDF1F6" stroke="#8B95A1" stroke-width="1.8"/>
+      <rect x="55" y="108" width="30" height="13" rx="4" fill="#2A3442"/>
+      <text x="70" y="152" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">${label}</text>
+    </g>`;
+  const liquid = `<path d="M46 86 L94 86 a7 7 0 0 1 3 9 l-1 3 a8 8 0 0 1-8 5 h-46 a8 8 0 0 1-8-5 l-1-3 a7 7 0 0 1 3-9z" fill="#B7D3F2" opacity=".9" transform="translate(4,0)"/>`;
+  const gasDots = [[58, 56], [78, 48], [68, 72], [52, 84], [86, 80], [74, 92]].map(([x, y], i) => `${ltail(x, y, (i * 137 + 60) % 360, 7, 2)}<circle cx="${x}" cy="${y}" r="3" fill="#9EC5FB" opacity=".85"/>`).join("");
+  return `<svg viewBox="0 0 344 160" ${NS} fill="none" role="img" aria-label="${o.open ? "마개를 열어 둔" : "마개로 꼭 막은"} 플라스크를 전자저울에 올린 두 장면. 왼쪽은 바닥에 액체가 있고 오른쪽은 액체가 보이지 않는다. 표시창은 비어 있다">
+    ${flask(24, liquid, "(가) 가열 전", o.open)}
+    ${flask(186, gasDots, "(나) 모두 기체가 된 후", o.open)}
+  </svg>`;
+}
+
+/** DW 물 + 드라이아이스 비커(라이트) · ㉠ 물속 기포 · ㉡ 비커 바깥 면 물방울 · ㉢ 흘러내리는 흰 김 ·
+ *  기호 라벨만 붙이고 정체는 인쇄하지 않는다(판정 과제). */
+export function dryiceBeakerFig(): string {
+  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="물이 든 비커 바닥에 흰 고체 덩어리가 있고, 물속에 둥근 기포가 오르며, 비커 바깥 면에 작은 물방울이 맺혀 있고, 비커 위로 흰 김이 넘쳐 흘러내린다. 세 곳에 기호가 붙어 있다">
+    <path d="M116 44 V168 a10 10 0 0 0 10 10 h92 a10 10 0 0 0 10-10 V44" fill="none" stroke="#8B95A1" stroke-width="2.4"/>
+    <line x1="110" y1="44" x2="234" y2="44" stroke="#8B95A1" stroke-width="2.4" stroke-linecap="round"/>
+    <rect x="120" y="72" width="104" height="102" rx="7" fill="#DCEBFB"/>
+    <path d="M138 160 l16 -8 18 9 16 -9 14 8 v12 h-64z" fill="#F2F7FD" stroke="#B9CBDF" stroke-width="1.6"/>
+    <circle cx="150" cy="128" r="7" fill="#fff" stroke="#9DB8D6" stroke-width="1.5"/>
+    <circle cx="182" cy="104" r="5.4" fill="#fff" stroke="#9DB8D6" stroke-width="1.5"/>
+    <circle cx="204" cy="136" r="6.4" fill="#fff" stroke="#9DB8D6" stroke-width="1.5"/>
+    <circle cx="168" cy="84" r="4.6" fill="#fff" stroke="#9DB8D6" stroke-width="1.5"/>
+    <g fill="#9EC5FB"><circle cx="112" cy="96" r="4.2"/><circle cx="111" cy="120" r="3.6"/><circle cx="113" cy="146" r="4"/><circle cx="239" cy="104" r="4"/><circle cx="240" cy="132" r="3.6"/></g>
+    <path d="M128 40 Q120 24 138 22 Q142 8 166 12 Q178 2 198 10 Q220 6 224 22 Q240 26 232 40 Q246 52 262 64 Q278 78 270 92 Q286 100 292 114" fill="none" stroke="#C9D4E2" stroke-width="10" stroke-linecap="round" opacity=".75"/>
+    <path d="M120 40 Q98 50 84 66 Q70 80 74 96" fill="none" stroke="#C9D4E2" stroke-width="9" stroke-linecap="round" opacity=".7"/>
+    <path d="M262 150 L216 136" stroke="#B0B8C1" stroke-width="1.6"/>
+    <circle cx="278" cy="154" r="14" fill="#fff" stroke="#8B95A1" stroke-width="1.4"/>
+    <text x="278" y="159" text-anchor="middle" font-size="12.5" font-weight="800" fill="#333D4B">㉠</text>
+    <path d="M68 168 L108 147" stroke="#B0B8C1" stroke-width="1.6"/>
+    <circle cx="54" cy="174" r="14" fill="#fff" stroke="#8B95A1" stroke-width="1.4"/>
+    <text x="54" y="179" text-anchor="middle" font-size="12.5" font-weight="800" fill="#333D4B">㉡</text>
+    <path d="M296 96 L268 82" stroke="#B0B8C1" stroke-width="1.6"/>
+    <circle cx="310" cy="92" r="14" fill="#fff" stroke="#8B95A1" stroke-width="1.4"/>
+    <text x="310" y="97" text-anchor="middle" font-size="12.5" font-weight="800" fill="#333D4B">㉢</text>
+    <text x="172" y="200" text-anchor="middle" font-size="11" fill="#8B95A1">물이 든 비커 + 흰 고체 덩어리</text>
+  </svg>`;
+}
+
+
+/** FCQ 상태 판별 순서도 질문 가림판(라이트) · 첫 질문 = 압축성(인쇄), 두 번째 질문(모양)을 ㉮로 가린다.
+ *  e234의 순서도(stateFlowFig · 모양→부피 순)와 위상을 다르게 잡았다: 결론 칸이 인쇄되어도 e234의
+ *  빈칸(㉡액체·㉢기체) 자리 대응을 보여 주지 않게(검산 A 유출 적발의 구조적 봉합). */
+export function flowQuizFig(): string {
+  const ansBox = (x: number, y: number, lab: string): string =>
+    `<rect x="${x}" y="${y}" width="84" height="32" rx="10" fill="#EEF4FF" stroke="#3182F6" stroke-width="1.5"/>
+     <text x="${x + 42}" y="${y + 21}" text-anchor="middle" font-size="13.5" font-weight="800" fill="#1B64DA">${lab}</text>`;
+  const qShape = (cx: number, cy: number, w: number, txt1: string, txt2: string, masked: boolean): string =>
+    `<path d="M${cx} ${cy - 30} L${cx + w} ${cy} L${cx} ${cy + 30} L${cx - w} ${cy} Z" fill="${masked ? "#FFF1F0" : "#FFF6E6"}" stroke="${masked ? "#F04452" : "#E8B04B"}" stroke-width="1.5"/>` +
+    (masked
+      ? `<text x="${cx}" y="${cy + 6}" text-anchor="middle" font-size="15" font-weight="800" fill="#D6173A">㉮</text>`
+      : `<text x="${cx}" y="${cy - 3}" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8A5A00">${txt1}</text>
+         <text x="${cx}" y="${cy + 13}" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8A5A00">${txt2}</text>`);
+  const arr = (x1: number, y1: number, x2: number, y2: number): string =>
+    `<path d="M${x1} ${y1} L${x2} ${y2}" fill="none" stroke="#8B95A1" stroke-width="1.8"/>`;
+  return `<svg viewBox="0 0 344 250" ${NS} fill="none" role="img" aria-label="물질의 상태를 나누는 순서도. 첫 질문은 힘을 가할 때 부피가 크게 줄어드는지 묻고, 두 번째 질문 하나가 기호로 가려져 있다">
+    <rect x="128" y="6" width="88" height="30" rx="10" fill="#F7F8FA" stroke="#B0B8C1" stroke-width="1.5"/>
+    <text x="172" y="26" text-anchor="middle" font-size="12.5" font-weight="700" fill="#333D4B">물질</text>
+    ${arr(172, 36, 172, 48)}
+    ${qShape(172, 78, 118, "힘을 가하면 부피가", "크게 줄어드는가?", false)}
+    <text x="298" y="68" font-size="11" font-weight="700" fill="#4E5968">예</text>
+    ${arr(290, 78, 314, 78)}${arr(314, 78, 314, 120)}
+    ${ansBox(252, 122, "기체")}
+    <text x="146" y="124" text-anchor="end" font-size="11" font-weight="700" fill="#4E5968">아니요</text>
+    ${arr(172, 108, 172, 128)}
+    ${qShape(172, 158, 76, "", "", true)}
+    <text x="58" y="150" text-anchor="end" font-size="11" font-weight="700" fill="#4E5968">아니요</text>
+    ${arr(96, 158, 64, 158)}${arr(64, 158, 64, 204)}
+    ${ansBox(22, 206, "고체")}
+    <text x="300" y="190" font-size="11" font-weight="700" fill="#4E5968">예</text>
+    ${arr(248, 158, 292, 158)}${arr(292, 158, 292, 204)}
+    ${ansBox(250, 206, "액체")}
+  </svg>`;
+}
+
+/** GA 기체 질량 증거(라이트) · 같은 튜브의 바람 넣기 전/후 + 전자저울(빈 패널). */
+export function gasWeighFig(): string {
+  const scale = (x: number): string => `
+    <path d="M${x} 96h104a8 8 0 0 1 8 8v18a8 8 0 0 1-8 8H${x}a8 8 0 0 1-8-8v-18a8 8 0 0 1 8-8z" fill="#EDF1F6" stroke="#8B95A1" stroke-width="1.8"/>
+    <rect x="${x + 24}" y="104" width="56" height="14" rx="4" fill="#2A3442"/>`;
+  return `<svg viewBox="0 0 344 156" ${NS} fill="none" role="img" aria-label="같은 튜브를 전자저울에 올린 두 장면. 하나는 쭈글쭈글하고 다른 하나는 빵빵하게 부풀어 있다. 표시창은 비어 있다">
+    <g transform="translate(18,0)">
+      <path d="M28 82 q-10 -18 8 -26 q-6 -16 18 -18 q10 -12 30 -6 q18 -8 26 6 q20 0 16 18 q14 10 2 26 q-46 14 -100 0z" fill="#FBD9CF" stroke="#C97B5F" stroke-width="2"/>
+      <circle cx="80" cy="66" r="6" fill="#C97B5F"/>
+      ${scale(26)}
+      <text x="78" y="148" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">(가) 바람 넣기 전</text>
+    </g>
+    <g transform="translate(186,0)">
+      <circle cx="76" cy="52" r="42" fill="#FBD9CF" stroke="#C97B5F" stroke-width="2.4"/>
+      <circle cx="76" cy="52" r="22" fill="#fff" stroke="#C97B5F" stroke-width="2"/>
+      <circle cx="112" cy="66" r="6" fill="#C97B5F"/>
+      ${scale(24)}
+      <text x="76" y="148" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">(나) 빵빵하게 넣은 후</text>
+    </g>
+  </svg>`;
+}
+
+/** VE 부피 급증 도식(라이트) · 소량의 액체(또는 고체)가 기체가 되며 훨씬 넓은 공간을 차지한다 ·
+ *  입자 개수는 양쪽 같게(12) · 배율 수치는 인쇄하지 않는다. */
+export function volumeJumpFig(from: "liquid" | "solid"): string {
+  const srcInner = from === "liquid"
+    ? `<rect x="12" y="46" width="52" height="24" rx="5" fill="#B7D3F2"/>` + [[20, 52], [30, 60], [40, 51], [50, 60], [58, 52], [26, 66], [46, 66], [56, 64], [18, 60], [36, 55], [52, 55], [42, 62]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.6" fill="#4A7BC0"/>`).join("")
+    : `<rect x="18" y="42" width="40" height="30" rx="6" fill="#EAF4FF" stroke="#9DB8D6" stroke-width="1.5"/>` + [[28, 50], [40, 50], [50, 50], [28, 60], [40, 60], [50, 60], [28, 68], [40, 68], [50, 68], [34, 55], [46, 55], [34, 64]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.4" fill="#7FA4CC"/>`).join("");
+  const gasDots = [[36, 30], [96, 20], [150, 34], [52, 66], [118, 58], [166, 74], [28, 100], [86, 92], [146, 104], [62, 128], [120, 130], [172, 118]]
+    .map(([x, y], i) => {
+      const a = (((i * 137 + 45) % 360) * Math.PI) / 180;
+      const dx = Math.cos(a);
+      const dy = Math.sin(a);
+      const px = -dy;
+      const py = dx;
+      return `<path d="M${(x - px * 2.2).toFixed(1)} ${(y - py * 2.2).toFixed(1)} L${(x - dx * 8).toFixed(1)} ${(y - dy * 8).toFixed(1)} L${(x + px * 2.2).toFixed(1)} ${(y + py * 2.2).toFixed(1)} Z" fill="#7FA4CC" opacity=".35"/><circle cx="${x}" cy="${y}" r="3" fill="#7FA4CC"/>`;
+    })
+    .join("");
+  return `<svg viewBox="0 0 344 164" ${NS} fill="none" role="img" aria-label="작은 그릇에 담긴 물질이 기체가 되어 훨씬 넓은 점선 상자 공간을 차지하는 그림. 입자의 개수는 양쪽이 같다">
+    <g transform="translate(8,44)">
+      <path d="M8 40 V64 a8 8 0 0 0 8 8 H60 a8 8 0 0 0 8-8 V40" fill="none" stroke="#8B95A1" stroke-width="2"/>
+      ${srcInner}
+    </g>
+    <path d="M92 84h32" stroke="#8B95A1" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M118 74l14 10-14 10" fill="none" stroke="#8B95A1" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(140,8)">
+      <rect x="4" y="4" width="192" height="144" rx="14" fill="rgba(158,197,251,.08)" stroke="#9DB8D6" stroke-width="1.8" stroke-dasharray="7 6"/>
+      ${gasDots}
+    </g>
+  </svg>`;
+}
+
+/** LD 끓는 물 위 국자 실험(라이트) · 시계 접시 구도 교체판 · (가) 국자 속 얼음물 · (나) 국자 아랫면 물방울. */
+export function ladleFig(): string {
+  return `<svg viewBox="0 0 344 214" ${NS} fill="none" role="img" aria-label="끓는 물이 든 냄비 위에 얼음물을 담은 국자를 들고 있는 실험 그림. 국자 아랫면에 작은 물방울이 맺혀 있고 두 곳에 기호가 붙어 있다">
+    <path d="M84 130h176v44a12 12 0 0 1-12 12H96a12 12 0 0 1-12-12z" fill="#E8EDF3" stroke="#8B95A1" stroke-width="2.2"/>
+    <rect x="92" y="138" width="160" height="40" rx="8" fill="#DCEBFB"/>
+    <path d="M100 142q10 6 20 0t20 0 20 0 20 0 20 0 20 0" stroke="#9DB8D6" stroke-width="2" fill="none"/>
+    <circle cx="120" cy="158" r="4.6" fill="#fff" stroke="#9DB8D6" stroke-width="1.4"/>
+    <circle cx="176" cy="164" r="5.4" fill="#fff" stroke="#9DB8D6" stroke-width="1.4"/>
+    <circle cx="226" cy="156" r="4.2" fill="#fff" stroke="#9DB8D6" stroke-width="1.4"/>
+    <g stroke="#C9D4E2" stroke-width="7" stroke-linecap="round" opacity=".8" fill="none">
+      <path d="M128 122c-4-10 6-14 2-24M172 120c-4-10 6-14 2-24M216 122c-4-10 6-14 2-24"/>
+    </g>
+    <path d="M138 64 a34 20 0 0 0 68 0z" fill="#EDF1F6" stroke="#8B95A1" stroke-width="2.2"/>
+    <path d="M150 64 a22 12 0 0 0 44 0" fill="#DCEBFB"/>
+    <path d="M154 60 l10 -7 8 7 9 -6 8 6" stroke="#B9CBDF" stroke-width="2" fill="none"/>
+    <path d="M206 60 L292 34" stroke="#8B95A1" stroke-width="4" stroke-linecap="round"/>
+    <rect x="286" y="22" width="34" height="14" rx="6" transform="rotate(-17 286 22)" fill="#C4CAD2" stroke="#8B95A1" stroke-width="1.4"/>
+    <g fill="#6FA6E8"><circle cx="152" cy="88" r="3.4"/><circle cx="172" cy="92" r="4"/><circle cx="192" cy="87" r="3.2"/></g>
+    <path d="M60 52 L136 60" stroke="#B0B8C1" stroke-width="1.6"/>
+    <circle cx="44" cy="50" r="14" fill="#fff" stroke="#8B95A1" stroke-width="1.4"/>
+    <text x="44" y="55" text-anchor="middle" font-size="12.5" font-weight="800" fill="#333D4B">(가)</text>
+    <path d="M66 100 L150 92" stroke="#B0B8C1" stroke-width="1.6"/>
+    <circle cx="50" cy="102" r="14" fill="#fff" stroke="#8B95A1" stroke-width="1.4"/>
+    <text x="50" y="107" text-anchor="middle" font-size="12.5" font-weight="800" fill="#333D4B">(나)</text>
+    <text x="172" y="204" text-anchor="middle" font-size="11" fill="#8B95A1">(가) 국자 속 얼음물 · (나) 국자 아랫면</text>
+  </svg>`;
+}
+
+/** WC 겨울 아침 장면 종합(라이트) · ㉠ 유리창 성에 · ㉡ 입김 · ㉢ 빨랫줄의 언 빨래 · 정체 미인쇄. */
+export function winterSceneFig(): string {
+  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="겨울 아침 마당 장면. 유리창에 얼음 결정 무늬, 사람 입 앞의 하얀 김, 빨랫줄에 뻣뻣하게 언 빨래가 있고 세 곳에 기호가 붙어 있다">
+    <rect x="20" y="26" width="96" height="120" rx="8" fill="#EAF3FB" stroke="#8B95A1" stroke-width="2"/>
+    <line x1="68" y1="26" x2="68" y2="146" stroke="#8B95A1" stroke-width="1.6"/>
+    <line x1="20" y1="86" x2="116" y2="86" stroke="#8B95A1" stroke-width="1.6"/>
+    <g stroke="#BFDCF2" stroke-width="1.8" fill="none">
+      <path d="M28 42l12 12M40 42l-12 12M34 38v20M26 48h16"/>
+      <path d="M84 108l14 14M98 108l-14 14M91 104v22M80 115h22"/>
+    </g>
+    <circle cx="196" cy="76" r="16" fill="#FBE8D8" stroke="#C99B72" stroke-width="1.8"/>
+    <path d="M186 96q10 10 20 0" stroke="#C99B72" stroke-width="1.8" fill="none"/>
+    <path d="M180 68q-4 4 0 8M212 68q4 4 0 8" stroke="#C99B72" stroke-width="1.6" fill="none"/>
+    <path d="M214 84 q16 -4 26 4 q12 -2 16 6" stroke="#D9E2EC" stroke-width="8" stroke-linecap="round" fill="none" opacity=".85"/>
+    <path d="M196 92v34l-10 34M196 126l12 34M196 104l-16 8M196 104l18 6" stroke="#C99B72" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M258 60 L338 54" stroke="#8B95A1" stroke-width="2.2"/>
+    <path d="M268 60 l-3 34 h26 l-3 -35" fill="#F4F7FA" stroke="#9AA6B4" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M304 58 l-2 26 h20 l-2 -27" fill="#F4F7FA" stroke="#9AA6B4" stroke-width="1.8" stroke-linejoin="round"/>
+    <g stroke="#C7D6E4" stroke-width="1.2"><path d="M270 70h20M269 80h21M306 68h15M305 76h16"/></g>
+    <path d="M56 160 L44 132" stroke="#B0B8C1" stroke-width="1.6"/>
+    <circle cx="60" cy="172" r="13" fill="#fff" stroke="#8B95A1" stroke-width="1.4"/>
+    <text x="60" y="177" text-anchor="middle" font-size="12" font-weight="800" fill="#333D4B">㉠</text>
+    <path d="M232 116 L242 96" stroke="#B0B8C1" stroke-width="1.6"/>
+    <circle cx="228" cy="128" r="13" fill="#fff" stroke="#8B95A1" stroke-width="1.4"/>
+    <text x="228" y="133" text-anchor="middle" font-size="12" font-weight="800" fill="#333D4B">㉡</text>
+    <path d="M296 116 L288 96" stroke="#B0B8C1" stroke-width="1.6"/>
+    <circle cx="300" cy="128" r="13" fill="#fff" stroke="#8B95A1" stroke-width="1.4"/>
+    <text x="300" y="133" text-anchor="middle" font-size="12" font-weight="800" fill="#333D4B">㉢</text>
+  </svg>`;
+}
+
+/** LN3 빨래 세 방법 3컷(라이트) · (가) 응달에 뭉쳐 널기 · (나) 양달에 펼쳐 널기 · (다) 양달 펼침+바람.
+ *  증발 조건(온도·표면·바람) 판독용 · 확대 217 multi 데뷔. */
+export function laundryTrioFig(): string {
+  const panel = (x: number, sun: boolean, spread: boolean, wind: boolean, label: string): string => {
+    const sky = sun
+      ? `<circle cx="88" cy="18" r="9" fill="#FFD25E"/><path d="M88 4v-3M100 8l2-2M104 18h3M76 8l-2-2" stroke="#FFD25E" stroke-width="2" stroke-linecap="round"/>`
+      : `<path d="M70 14q6-8 16-6q4-8 14-5q10-2 12 7q8 2 5 9h-44q-6-1-3-5z" fill="#CBD5E1"/>`;
+    const line = `<line x1="8" y1="42" x2="102" y2="42" stroke="#8B95A1" stroke-width="2"/>`;
+    const clothes = spread
+      ? `<path d="M20 42l-3 26h16l-3-26z" fill="#BFDCF2" stroke="#8FA8BE" stroke-width="1.5"/>
+         <path d="M48 42l-3 26h16l-3-26z" fill="#F9D9C0" stroke="#C9A183" stroke-width="1.5"/>
+         <path d="M76 42l-3 26h16l-3-26z" fill="#CFead2" stroke="#93B897" stroke-width="1.5"/>`
+      : `<path d="M38 42l-6 24q14 8 28 0l-6-24z" fill="#BFDCF2" stroke="#8FA8BE" stroke-width="1.5"/>
+         <path d="M46 46l-3 18h14l-3-18z" fill="#F9D9C0" stroke="#C9A183" stroke-width="1.5" opacity=".9"/>`;
+    const windArt = wind
+      ? `<path d="M6 54q8-4 14 0M4 62q10-5 18 0" stroke="#7FB2E5" stroke-width="2" fill="none" stroke-linecap="round"/>`
+      : "";
+    return `<g transform="translate(${x},4)">
+      <rect x="0" y="0" width="110" height="78" rx="10" fill="#F7FAFD" stroke="#DCE3EA" stroke-width="1.4"/>
+      ${sky}${line}${clothes}${windArt}
+      <text x="55" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">${label}</text>
+    </g>`;
+  };
+  return `<svg viewBox="0 0 344 110" ${NS} fill="none" role="img" aria-label="같은 빨래를 세 가지 방법으로 널어 말리는 그림. 응달에 뭉쳐 넌 것, 햇볕에 펼쳐 넌 것, 햇볕에 펼치고 바람까지 부는 것">
+    ${panel(6, false, false, false, "(가)")}
+    ${panel(118, true, true, false, "(나)")}
+    ${panel(230, true, true, true, "(다)")}
+  </svg>`;
+}
+
+/** WT 물의 세 가지 상태(라이트 3컷) · (가) 얼음 · (나) 물 · (다) 수증기(눈에 보이지 않음 표기) ·
+ *  이름 라벨을 인쇄하므로 명명 문항 금지 · 성질·공통점 판정 전용(확대 246 데뷔). */
+export function waterThreeFig(): string {
+  const panel = (x: number, art: string, label: string): string => `
+    <g transform="translate(${x},4)">
+      <rect x="0" y="0" width="104" height="86" rx="10" fill="#F7FAFD" stroke="#DCE3EA" stroke-width="1.4"/>
+      ${art}
+      <text x="52" y="106" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">${label}</text>
+    </g>`;
+  const ice = `<g transform="translate(26,22)">
+    <path d="M8 14 L30 6 L52 14 L52 34 L30 44 L8 34 Z" fill="#EAF4FF" stroke="#9DB8D6" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M8 14 L30 22 L52 14 M30 22 V44" stroke="#C4DCEF" stroke-width="1.6" fill="none"/>
+  </g>`;
+  const water = `<g transform="translate(28,14)">
+    <path d="M6 8 V52 a8 8 0 0 0 8 8 h20 a8 8 0 0 0 8-8 V8" fill="#fff" stroke="#8B95A1" stroke-width="2"/>
+    <rect x="9" y="22" width="30" height="35" rx="5" fill="#B7D3F2"/>
+  </g>`;
+  // (다) 주둥이 앞은 빈 점선 원만 · "안 보인다"를 글자로 선언하면 타 문항(김 판정)의 열쇠가
+  // 인쇄되는 유출(검산 A 적발)이라, 시각(빈 원)으로만 전한다.
+  const steam = `<g transform="translate(10,10)">
+    <path d="M14 52 a20 12 0 0 1 40 0 l4 8 H10z" fill="#EDF1F6" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M50 46 L64 38 l6 4 -10 8z" fill="#C4CAD2" stroke="#8B95A1" stroke-width="1.4"/>
+    <circle cx="76" cy="30" r="15" fill="none" stroke="#9DB8D6" stroke-width="1.5" stroke-dasharray="4 3"/>
+  </g>`;
+  return `<svg viewBox="0 0 344 116" ${NS} fill="none" role="img" aria-label="물의 세 가지 상태 그림. 얼음, 물, 그리고 끓는 주전자 주둥이 앞의 점선 원">
+    ${panel(6, ice, "(가) 얼음")}
+    ${panel(120, water, "(나) 물")}
+    ${panel(234, steam, "(다) 수증기")}
+  </svg>`;
+}
+
+/** PR 옮겨 담기 착시(라이트) · 좁고 긴 컵의 주스를 넓은 대접에 남김없이 옮긴 두 장면(높이 대비). */
+export function pourFig(): string {
+  return `<svg viewBox="0 0 344 156" ${NS} fill="none" role="img" aria-label="좁고 긴 컵에 높이 담긴 주스를 넓은 대접에 남김없이 옮겨 담은 두 장면. 대접에서는 낮게 깔려 있다">
+    <g transform="translate(58,8)">
+      <path d="M8 6 V104 a8 8 0 0 0 8 8 h28 a8 8 0 0 0 8-8 V6" fill="#fff" stroke="#8B95A1" stroke-width="2"/>
+      <rect x="11" y="30" width="38" height="79" rx="5" fill="#FBD46B" opacity=".85"/>
+      <text x="30" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">(가)</text>
+    </g>
+    <path d="M152 76h28" stroke="#8B95A1" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M174 66l14 10-14 10" fill="none" stroke="#8B95A1" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(200,42)">
+      <path d="M2 24 a62 34 0 0 0 124 0 v-12 H2z" fill="#fff" stroke="#8B95A1" stroke-width="2"/>
+      <path d="M8 26 a56 26 0 0 0 112 0 v-4 H8z" fill="#FBD46B" opacity=".85"/>
+      <ellipse cx="64" cy="20" rx="56" ry="9" fill="#FFE9A8" opacity=".9"/>
+      <text x="64" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">(나)</text>
+    </g>
+  </svg>`;
+}
+
+/** IC 얼음 띄운 컵 단면(라이트) · 얼음의 일부가 수면 위로 나와 떠 있는 관찰 그림. */
+export function iceCupFig(): string {
+  return `<svg viewBox="0 0 344 152" ${NS} fill="none" role="img" aria-label="물이 든 유리컵 단면. 얼음 조각이 물에 떠 있고 일부가 수면 위로 나와 있다">
+    <path d="M122 20 V116 a10 10 0 0 0 10 10 h80 a10 10 0 0 0 10-10 V20" fill="none" stroke="#8B95A1" stroke-width="2.4"/>
+    <rect x="126" y="52" width="92" height="70" rx="7" fill="#DCEBFB"/>
+    <line x1="126" y1="52" x2="218" y2="52" stroke="#9DB8D6" stroke-width="1.8"/>
+    <path d="M150 34 l40 -6 14 22 -6 24 -40 6 -14 -22z" fill="#F2F9FF" stroke="#9DB8D6" stroke-width="2"/>
+    <path d="M150 34 l14 22M204 50 l-6 24" stroke="#C4DCEF" stroke-width="1.6"/>
+    <text x="172" y="146" text-anchor="middle" font-size="11" fill="#8B95A1">물에 뜬 얼음</text>
   </svg>`;
 }
