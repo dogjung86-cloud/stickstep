@@ -58,11 +58,13 @@ for (const it of items) {
     if (typeof it.answer !== "number" || it.answer < 0 || it.answer >= (it.options?.length ?? 0)) fail(`${it.id} answer 범위`);
     if (it.shuffle === false && it.answer === 0) fail(`${it.id} shuffle:false && 첫 보기 정답`);
     // 짧은 라벨 조합/짝 보기((가)~·㉠~·ㄱ~ 나열, 평균 16자 이하)인데 shuffle:false가 없으면 렌더
-    // 셔플로 관례 순서가 깨진다 — u4 v2 신설 검사 계승. 완비 서술형은 규격 예외라 셔플 허용.
+    // 셔플로 관례 순서가 깨진다 — u4 v2 신설 검사 계승. 완비 서술형은 규격 예외라 셔플 허용:
+    // 라벨·구분 문자를 걷어낸 뒤 내용어가 남으면("㉠ 자홍색 · ㉡ 흰색") 짝지음 완결 보기다(e302).
     const opts = (it.options ?? []).map(plain);
     const labelStart = opts.length > 0 && opts.every((o) => /^[(（]?[가나다라마바㉠㉡㉢㉣㉤ㄱㄴㄷ①②③④⑤]/.test(o));
     const avgLen = opts.length ? opts.reduce((s, o) => s + o.length, 0) / opts.length : 0;
-    if (labelStart && avgLen <= 16 && it.shuffle !== false) fail(`${it.id} 라벨형(짧은 조합/짝) 보기인데 shuffle:false 누락`);
+    const contentful = opts.every((o) => o.replace(/[가나다라마바㉠㉡㉢㉣㉤ㄱㄴㄷ①②③④⑤()（）.,·와과\s]/g, "").length >= 2);
+    if (labelStart && avgLen <= 16 && !contentful && it.shuffle !== false) fail(`${it.id} 라벨형(짧은 조합/짝) 보기인데 shuffle:false 누락`);
   }
   if (it.type === "multi") {
     if (!Array.isArray(it.answer) || it.answer.length < 2 || it.answer.length > 3) fail(`${it.id} multi answer 형식/개수(2~3)`);
@@ -93,11 +95,15 @@ for (const it of items) {
     const aria = (String(it.figure).match(/aria-label="([^"]*)"/) ?? [])[1] ?? "";
     if (aria.includes(String(it.answer)) && !plain(it.prompt).includes(String(it.answer))) fail(`${it.id} 그림 aria에 정답 수치 노출`);
   }
-  // 사진 alt·그림 aria에 짧은 정답 텍스트 유출 검사.
+  // 사진 alt·그림 aria에 짧은 정답 텍스트 유출 검사. 예외 둘(§9 이식 게이트에서 정밀화):
+  // ① 정답 텍스트가 문두에 그대로 있으면 조건 서술의 동등 접근(e298 "빨간색 화소만" — num 규칙과 동일)
+  // ② 정답이 순수 라벨("(다)"·"㉡")이면 스킵 — aria의 라벨 언급은 조건 서술이고 라벨 자체는 정오 정보가 아니다(e346).
   if (it.type === "mcq" && it.figure) {
     const meta = [...String(it.figure).matchAll(/(?:aria-label|alt)="([^"]*)"/g)].map((m) => m[1]).join(" ");
     const ansText = plain(it.options?.[it.answer] ?? "");
-    if (ansText.length >= 2 && ansText.length <= 12 && meta.includes(ansText)) fail(`${it.id} 그림 aria/alt에 정답 "${ansText}" 노출`);
+    const pureLabel = ansText.replace(/[가나다라마바㉠㉡㉢㉣㉤ㄱㄴㄷ①②③④⑤()（）.,·와과\s]/g, "").length === 0;
+    if (ansText.length >= 2 && ansText.length <= 12 && meta.includes(ansText) && !plain(it.prompt).includes(ansText) && !pureLabel)
+      fail(`${it.id} 그림 aria/alt에 정답 "${ansText}" 노출`);
   }
 }
 
