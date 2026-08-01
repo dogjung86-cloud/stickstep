@@ -1,31 +1,41 @@
-// u5 시험 그림 눈검수용 스크린샷 — 신규 examFigures u5 섹션 전부를 한 페이지에 렌더.
-// PORT=<포트> node qa/shot-exam-figs-u5.mjs (dev 서버 필수)
+// u5 v2 시험 그림 눈검수 — 이식된 풀(src/content/exams/u5.ts)에서 figure 문항 106개를 자동
+// 수집해 12개씩 격자 페이지로 나눠 캡처한다(손으로 파라미터를 옮겨 적지 않는 자동화판 · u4 v2 계승).
+// dev 서버 불필요(esbuild 실로드) · 사진(ximg)은 tmp 복사 후 상대 경로로 로드.
+// (v1 스크립트는 dev 서버 기반 헬퍼 나열판 — v2 재출제로 폐기·교체.)
+// node qa/shot-exam-figs-u5.mjs
+import { build } from "esbuild";
 import { chromium } from "playwright-core";
 import fs from "node:fs";
+import path from "node:path";
 
-const PORT = process.env.PORT || "5173";
+const result = await build({ entryPoints: ["src/content/exams/u5.ts"], bundle: true, write: false, format: "esm", platform: "node", logLevel: "silent" });
+const mod = await import(`data:text/javascript;base64,${Buffer.from(result.outputFiles[0].text).toString("base64")}`);
+const figs = mod.U5_EXAM.pool.filter((i) => i.figure);
+console.log(`figure 문항 ${figs.length}개 수집`);
+
 fs.mkdirSync("qa/shots", { recursive: true });
-const browser = await chromium.launch({ channel: "chrome", headless: true });
-const page = await browser.newPage({ viewport: { width: 420, height: 2400 }, deviceScaleFactor: 2 });
-await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
+fs.mkdirSync("tmp/u5v2-figs/exam/u5", { recursive: true });
+for (const f of fs.readdirSync("public/exam/u5")) fs.copyFileSync(`public/exam/u5/${f}`, `tmp/u5v2-figs/exam/u5/${f}`);
 
-await page.evaluate(async () => {
-  const m = await import("/src/ui/examFigures.ts");
-  const box = (title, svg) =>
-    `<div style="margin:10px;padding:10px;border-radius:12px;background:#fff;border:1px solid #ddd">
-      <div style="font:700 12px sans-serif;color:#333;margin-bottom:6px">${title}</div>${svg}</div>`;
-  document.body.innerHTML = `<div style="background:#F2F4F6">
-    ${box("forcePairFig 같은 방향 3+5", m.forcePairFig({ a: 3, b: 5 }))}
-    ${box("forcePairFig 반대 7 vs 4", m.forcePairFig({ a: 7, b: 4, opposite: true }))}
-    ${box("pushStillFig(6)", m.pushStillFig(6))}
-    ${box("springExamGraph slope .75 dots 4,8", m.springExamGraph({ slope: 0.75, xMax: 12, xStep: 4, yMax: 9, yStep: 3, dots: [4, 8] }))}
-    ${box("buoyThreeFig", m.buoyThreeFig())}
-    ${box("floatBallFig", m.floatBallFig())}
-    ${box("gravityAroundFig", m.gravityAroundFig())}
-    ${box("motionFlowFig", m.motionFlowFig())}
-  </div>`;
-});
-await page.waitForTimeout(400);
-await page.screenshot({ path: "qa/shots/exam-u5-figs.png", fullPage: true });
-console.log("SAVED qa/shots/exam-u5-figs.png");
+const CHUNK = 12;
+const pages = [];
+for (let i = 0; i < figs.length; i += CHUNK) pages.push(figs.slice(i, i + CHUNK));
+const browser = await chromium.launch({ channel: "chrome", headless: true });
+const page = await browser.newPage({ viewport: { width: 1180, height: 900 }, deviceScaleFactor: 2 });
+for (let p = 0; p < pages.length; p++) {
+  const cells = pages[p]
+    .map(
+      (it) => `<div style="border:1px solid #ddd;border-radius:10px;padding:8px;background:#fff">
+      <div style="font:700 12px sans-serif;color:#333;margin-bottom:6px">${it.id} · ${it.lessonId} · ${it.type}${it.diff ? " · d" + it.diff : ""}</div>
+      <div style="max-width:352px;${it.figureDark ? "background:#0B1524;border-radius:12px;padding:8px" : ""}">${String(it.figure).replaceAll('src="/exam/u5/', 'src="./exam/u5/')}</div></div>`,
+    )
+    .join("");
+  const html = `<!doctype html><meta charset="utf-8"><body style="background:#F2F4F6;margin:0;padding:12px">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">${cells}</div></body>`;
+  const file = path.resolve(`tmp/u5v2-figs/page-${p + 1}.html`);
+  fs.writeFileSync(file, html);
+  await page.goto(`file:///${file.replace(/\\/g, "/")}`, { waitUntil: "networkidle" });
+  await page.screenshot({ path: `qa/shots/exam-u5v2-figs-${p + 1}.png`, fullPage: true });
+  console.log(`SAVED qa/shots/exam-u5v2-figs-${p + 1}.png (${pages[p].length}그림)`);
+}
 await browser.close();

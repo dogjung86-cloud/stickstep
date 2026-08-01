@@ -1,0 +1,16 @@
+스타일 블록 A (모든 프롬프트 앞에 붙일 공통 스타일):
+Photorealistic photograph, natural lighting, shallow depth of field, clean composition, single clear subject.
+ABSOLUTELY NO text, NO numbers, NO letters, NO logos, NO watermarks anywhere in the image.
+No visible faces. Square 1:1 aspect ratio. High detail, realistic textures.
+
+[0] file=public/exam/u5/rock-climber.png
+For this image only, a person is allowed but seen from behind, no face visible. A climber in a harness hanging completely still on a taut vertical safety rope against a tall gray rock wall, rope stretched perfectly straight and tight from above, climber's feet off any ledge, calm resting pose seen from behind at a slight distance. The rope must look tight and vertical, not slack. Plain climbing gear without any lettering.
+
+[1] file=public/exam/u5/bungee-cord.png
+For this image only, a distant person silhouette is allowed, no face visible. A bungee jumper at the lowest point of the jump, hanging upside down far below a tall bridge platform, the thick elastic bungee cord stretched long, straight and visibly taut in full tension between the platform and the jumper's ankles. Wide distant shot against a bright sky and a deep gorge, the stretched cord is the clear subject. The cord must look fully stretched, not slack or coiled.
+
+[2] file=public/exam/u5/merry-go-round.png
+An empty classic carousel merry-go-round at an amusement park, ornate round platform with painted horses on poles, seen from a slight distance at eye level so the round horizontal rotating structure is clear, warm afternoon light, no riders, no visible letters or signs on the decorations.
+
+[3] file=public/exam/u5/parachute.png
+For this image only, a small distant person figure is allowed, no face visible. A fully open round parachute canopy gently descending in a clear blue sky, dome completely inflated with taut lines running down to a small skydiver figure far below the canopy, seen from a distance slightly below. The canopy is plain colored fabric panels with no letters or symbols, fully deployed, not partially opened.

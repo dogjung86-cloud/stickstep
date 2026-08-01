@@ -109,7 +109,8 @@ async function playExam(correctCount) {
 // ═══════════ 0. 발주 사진 8장 로드(exam/u5) ═══════════
 console.log("0. 발주 사진 로드");
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
-const PHOTOS = ["bowling-pins", "waterfall", "spring-coil", "soccer-cleats", "snow-chain", "ice-hockey", "container-ship", "hot-air-balloon"];
+// v2 세트(2026-08 재출제 7호): 기존 8장 + 신규 4장(클라이머·번지·회전목마·낙하산)
+const PHOTOS = ["bowling-pins", "waterfall", "spring-coil", "soccer-cleats", "snow-chain", "ice-hockey", "container-ship", "hot-air-balloon", "rock-climber", "bungee-cord", "merry-go-round", "parachute"];
 const photoRes = await page.evaluate(async (names) => {
   const out = [];
   for (const n of names) {

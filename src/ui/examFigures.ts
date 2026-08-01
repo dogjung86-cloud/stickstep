@@ -804,7 +804,8 @@ export function forcePairFig(o: { a: number; b: number; opposite?: boolean }): s
 export function pushStillFig(n: number): string {
   let hatch = "";
   for (let x = 30; x <= 314; x += 16) hatch += `<line x1="${x}" y1="118" x2="${x - 9}" y2="130" stroke="#C9B49A" stroke-width="2"/>`;
-  return `<svg viewBox="0 0 344 150" ${NS} role="img" aria-label="거친 바닥 위의 상자를 옆으로 ${n} N으로 밀고 있지만 상자는 정지해 있는 그림">
+  // aria에 미는 힘 값을 낭독하지 않는다(정지 문항은 그 값이 곧 정답 — 값 제시는 문두·그림 라벨 몫).
+  return `<svg viewBox="0 0 344 150" ${NS} role="img" aria-label="거친 바닥 위의 상자를 옆으로 밀고 있지만 상자는 정지해 있는 그림. 미는 힘의 크기는 그림에 적혀 있다">
     <line x1="20" y1="118" x2="324" y2="118" stroke="#B08D5E" stroke-width="3"/>
     ${hatch}
     <rect x="150" y="66" width="66" height="52" rx="7" fill="#EDF1F6" stroke="#B0B8C1" stroke-width="2"/>
@@ -815,8 +816,9 @@ export function pushStillFig(n: number): string {
   </svg>`;
 }
 
-/** 용수철 탄성력 그래프(파라미터형, 라이트) — slope N/cm 직선 + 안내선 점. 눈금 숫자 포함(값 읽기용). */
-export function springExamGraph(o: { slope: number; xMax: number; xStep: number; yMax: number; yStep: number; dots?: number[] }): string {
+/** 용수철 탄성력 그래프(파라미터형, 라이트) — slope N/cm 직선 + 안내선 점. 눈금 숫자 포함(값 읽기용).
+ *  lines 옵션: 이름 붙은 직선 여러 개(용수철 A·B 비교용 — u5 v2 확장, 기존 단일 slope 호출 무영향). */
+export function springExamGraph(o: { slope: number; xMax: number; xStep: number; yMax: number; yStep: number; dots?: number[]; lines?: { slope: number; name: string }[] }): string {
   const gx = (cm: number): number => 48 + cm * (264 / o.xMax);
   const gy = (n: number): number => 168 - (n / o.yMax) * 138;
   let xt = "";
@@ -835,11 +837,18 @@ export function springExamGraph(o: { slope: number; xMax: number; xStep: number;
     <line x1="48" y1="${gy(cm * o.slope)}" x2="${gx(cm)}" y2="${gy(cm * o.slope)}" stroke="#B9C2CE" stroke-width="1.2" stroke-dasharray="3 4"/>`,
     )
     .join("");
-  return `<svg viewBox="0 0 344 200" ${NS} role="img" aria-label="용수철이 늘어난 길이에 따른 탄성력 그래프. 원점을 지나는 직선이다">
+  const multi = (o.lines ?? [])
+    .map((l) => {
+      const end = Math.min(o.xMax, o.yMax / l.slope);
+      return `<line x1="${gx(0)}" y1="${gy(0)}" x2="${gx(end)}" y2="${gy(end * l.slope)}" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
+      <text x="${gx(end) + (end >= o.xMax ? -6 : 10)}" y="${gy(end * l.slope) - 8}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">${l.name}</text>`;
+    })
+    .join("");
+  return `<svg viewBox="0 0 344 200" ${NS} role="img" aria-label="용수철이 늘어난 길이에 따른 탄성력 그래프. 원점을 지나는 직선${o.lines?.length ? ` ${o.lines.length}개(${o.lines.map((l) => l.name).join("·")})가 기울기를 달리해 그려져 있다` : "이다"}">
     ${yt}${xt}
     <line x1="48" y1="26" x2="48" y2="168" stroke="#B0B8C1" stroke-width="1.6"/>
     <line x1="48" y1="168" x2="320" y2="168" stroke="#B0B8C1" stroke-width="1.6"/>
-    <line x1="${gx(0)}" y1="${gy(0)}" x2="${gx(endCm)}" y2="${gy(endCm * o.slope)}" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
+    ${o.lines?.length ? multi : `<line x1="${gx(0)}" y1="${gy(0)}" x2="${gx(endCm)}" y2="${gy(endCm * o.slope)}" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>`}
     ${dots}
     <text x="10" y="16" font-size="11" fill="#4E5968">탄성력(N)</text>
     <text x="320" y="198" text-anchor="end" font-size="11" fill="#4E5968">늘어난 길이(cm)</text>
@@ -5712,3 +5721,456 @@ export function iceCupFig(): string {
     <text x="172" y="146" text-anchor="middle" font-size="11" fill="#8B95A1">물에 뜬 얼음</text>
   </svg>`;
 }
+
+// ── u5 v2 신작(파일럿 승격 · 재출제 7호) ──
+// 힘 단원 문법: 화살표 길이 = 값 비례(코드 보장) · 방향이 정답인 문항은 후보 화살표 ㉮~ 제시형만 ·
+// 운동 방향은 속이 빈 초록(힘과 구분) · 저울류 표시창은 빈 패널(값은 콜아웃) · quiet 옵션은
+// 조건 값이 곧 정답인 평형 문항 전용(aria 값 낭독 생략 · 값은 문두가 제공).
+
+
+/** 공용 화살표(라이트) · 촉 포함. 길이는 호출부가 값에 비례해 계산한다. */
+function fArr(x1: number, y1: number, x2: number, y2: number, color: string, w = 4.4, dash = ""): string {
+  const ang = Math.atan2(y2 - y1, x2 - x1);
+  const bx = x2 - Math.cos(ang) * 11;
+  const by = y2 - Math.sin(ang) * 11;
+  const hx = (a: number): number => x2 - Math.cos(ang - a) * 12;
+  const hy = (a: number): number => y2 - Math.sin(ang - a) * 12;
+  return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="${color}" stroke-width="${w}" stroke-linecap="round"${dash ? ` stroke-dasharray="${dash}"` : ""}/>
+  <path d="M${x2.toFixed(1)} ${y2.toFixed(1)} L${hx(0.44).toFixed(1)} ${hy(0.44).toFixed(1)} L${hx(-0.44).toFixed(1)} ${hy(-0.44).toFixed(1)} Z" fill="${color}"/>`;
+}
+const DIRV: Record<string, [number, number]> = { r: [1, 0], l: [-1, 0], u: [0, -1], d: [0, 1] };
+const DIRKO: Record<string, string> = { r: "오른쪽", l: "왼쪽", u: "위쪽", d: "아래쪽" };
+
+/** AR 화살표 표현 헬퍼(라이트 · 파라미터형) · L1 전용.
+ *  anat: 화살표 한 개에 ㉮(시작점)·㉯(길이 구간)·㉰(화살촉) 기호 · aria는 기호 위치만(요소 이름 낭독 금지).
+ *  grid: 모눈 위 화살표 1~3개(칸 수 파라미터) + "모눈 한 칸 = ○" 캡션 옵션 · aria에 칸 수 낭독 금지.
+ *  cards: 후보 화살표 카드 ①~⑤(길이·방향·굵기 변형 · 정답 카드가 첫 칸이 되지 않게 저작). */
+export function arrowAnatFig(
+  o:
+    | { mode: "anat" }
+    | { mode: "grid"; cell?: string; arrows: { row: number; cells: number; start?: number; dir?: "r" | "l"; name?: string }[] }
+    | { mode: "cards"; cards: { len: number; dir: "r" | "l" | "u"; w?: number }[] },
+): string {
+  if (o.mode === "anat") {
+    return `<svg viewBox="0 0 344 128" ${NS} role="img" aria-label="힘을 나타낸 화살표 하나. 시작점에 ㉮, 몸통의 길이 구간에 ㉯, 화살촉에 ㉰ 기호가 붙어 있다">
+      <circle cx="72" cy="66" r="6" fill="#34434F"/>
+      ${fArr(72, 66, 268, 66, "#5E6B7E", 5)}
+      <path d="M72 46 v-8 M256 46 v-8" stroke="#B0B8C1" stroke-width="1.4"/>
+      <path d="M72 42 H256" stroke="#B0B8C1" stroke-width="1.4" stroke-dasharray="4 4"/>
+      <text x="72" y="94" text-anchor="middle" font-size="14" font-weight="800" fill="#4E5968">㉮</text>
+      <text x="164" y="32" text-anchor="middle" font-size="14" font-weight="800" fill="#4E5968">㉯</text>
+      <text x="272" y="94" text-anchor="middle" font-size="14" font-weight="800" fill="#4E5968">㉰</text>
+    </svg>`;
+  }
+  if (o.mode === "grid") {
+    const rows = Math.max(...o.arrows.map((a) => a.row)) + 1;
+    const H = 20 + rows * 42 + (o.cell ? 26 : 8);
+    const x0 = 36;
+    let grid = "";
+    for (let c = 0; c <= 8; c++) grid += `<line x1="${x0 + c * 32}" y1="14" x2="${x0 + c * 32}" y2="${14 + rows * 42}" stroke="#E4E9EF" stroke-width="1"/>`;
+    for (let r = 0; r <= rows; r++) grid += `<line x1="${x0}" y1="${14 + r * 42}" x2="${x0 + 256}" y2="${14 + r * 42}" stroke="#E4E9EF" stroke-width="1"/>`;
+    const arrows = o.arrows
+      .map((a) => {
+        const y = 14 + a.row * 42 + 21;
+        const bx = x0 + 8 + (a.start ?? 0) * 32;
+        const sx = a.dir === "l" ? bx + a.cells * 32 : bx;
+        const ex = a.dir === "l" ? bx : bx + a.cells * 32;
+        const name = a.name ? `<text x="${(a.dir === "l" ? ex : sx) - 14}" y="${y + 5}" text-anchor="middle" font-size="13.5" font-weight="800" fill="#4E5968">${a.name}</text>` : "";
+        return `<circle cx="${sx}" cy="${y}" r="4.6" fill="#34434F"/>${fArr(sx, y, ex, y, "#5E6B7E", 4.6)}${name}`;
+      })
+      .join("");
+    const cap = o.cell ? `<text x="292" y="${H - 8}" text-anchor="end" font-size="12" font-weight="700" fill="#4E5968">모눈 한 칸 = ${o.cell}</text>` : "";
+    return `<svg viewBox="0 0 344 ${H}" ${NS} role="img" aria-label="모눈 위에 그린 힘 화살표${o.arrows.length > 1 ? " 여러 개. 길이와 방향을 모눈 칸으로 비교할 수 있다" : " 하나"}">${grid}${arrows}${cap}</svg>`;
+  }
+  const cards = o.cards
+    .map((c, i) => {
+      const cx = 8 + i * 66 + 33;
+      const cyMid = 52;
+      const [dx, dy] = DIRV[c.dir];
+      const half = c.len / 2;
+      const sx = cx - dx * half;
+      const sy = cyMid + 10 - dy * half;
+      return `<g>
+        <rect x="${8 + i * 66}" y="8" width="62" height="86" rx="12" fill="#F7F9FB" stroke="#D5DBE3" stroke-width="1.4"/>
+        <text x="${cx}" y="28" text-anchor="middle" font-size="13" font-weight="800" fill="#4E5968">${["①", "②", "③", "④", "⑤"][i]}</text>
+        <circle cx="${sx}" cy="${sy}" r="3.8" fill="#34434F"/>
+        ${fArr(sx, sy, sx + dx * c.len, sy + dy * c.len, "#5E6B7E", c.w ?? 4.4)}
+      </g>`;
+    })
+    .join("");
+  return `<svg viewBox="0 0 344 102" ${NS} role="img" aria-label="힘 화살표 후보 카드 ①에서 ⑤. 길이나 방향, 굵기가 서로 다르다">${cards}</svg>`;
+}
+
+/** FB 수평면 힘 장면(라이트 · 파라미터형) · 물체+힘 화살표 워크호스.
+ *  화살표 길이는 n 값에 단조 증가(최소 가시폭 보정 어핀 · 대소 관계는 항상 정확하나 정확한
+ *  배수는 라벨 몫 · 배수 판정 과제는 AR 모눈이 전담) · tone: act 주황(작용힘)/resist 파랑(마찰·반응)/
+ *  grav 남색(중력)/buoy 하늘(부력)/기본 중립 · motion: 속이 빈 초록 화살표(힘과 구분).
+ *  같은 방향 수평 화살표 여럿이면 세로 스택(겹침 방지) · 수직 화살표는 물체 가장자리에서 시작,
+ *  뷰박스 높이 동적 확장(잘림 방지). cand: 방향 후보 점선 화살표 ㉮~(방향이 정답인 문항은
+ *  반드시 후보 제시형 · 단정 화살표 금지). aria는 각 화살표의 방향·라벨 값만 서술(그림 속 조건
+ *  서술 = 동등 접근 · 판정 결과 낭독 금지). */
+export function forceSceneFig(o: {
+  obj?: "box" | "ball" | "bag" | "cart";
+  arrows?: { dir: "l" | "r" | "u" | "d"; n?: number; label?: string; tone?: "act" | "resist" | "grav" | "buoy" }[];
+  motion?: "l" | "r";
+  ground?: "line" | "rough" | "ice" | "water" | "none";
+  still?: boolean;
+  cand?: { name: string; dir: "l" | "r" | "u" | "d" }[];
+  cap?: string;
+  /** true면 aria에 라벨 값을 낭독하지 않는다(값이 곧 정답인 평형 문항용 · 값은 문두가 제공). */
+  quiet?: boolean;
+}): string {
+  const TONE: Record<string, string> = { act: "#E8710A", resist: "#4A7DDB", grav: "#3F5875", buoy: "#37A8DB" };
+  const arrows = o.arrows ?? [];
+  const maxN = Math.max(1, ...arrows.map((a) => a.n ?? 0));
+  const len = (n?: number): number => (n ? 26 + (n / maxN) * 66 : 62);
+  const gy = 118;
+  let ground = "";
+  if (o.ground === "rough") {
+    let hatch = "";
+    for (let x = 30; x <= 314; x += 16) hatch += `<line x1="${x}" y1="${gy}" x2="${x - 9}" y2="${gy + 11}" stroke="#C9B49A" stroke-width="2"/>`;
+    ground = `<line x1="20" y1="${gy}" x2="324" y2="${gy}" stroke="#B08D5E" stroke-width="3"/>${hatch}`;
+  } else if (o.ground === "ice") {
+    ground = `<line x1="20" y1="${gy}" x2="324" y2="${gy}" stroke="#9CC8EE" stroke-width="3"/><path d="M40 ${gy + 8} h44 M130 ${gy + 8} h30 M240 ${gy + 8} h50" stroke="#C9E4F8" stroke-width="2.4" stroke-linecap="round"/>`;
+  } else if (o.ground === "water") {
+    ground = `<rect x="24" y="86" width="296" height="52" rx="6" fill="rgba(90,162,248,.20)"/><path d="M24 86 h296" stroke="#5AA2F8" stroke-width="2.2"/>`;
+  } else if (o.ground !== "none") {
+    ground = `<line x1="24" y1="${gy}" x2="320" y2="${gy}" stroke="#D5DBE3" stroke-width="2"/>`;
+  }
+  const cx = 172;
+  let objSvg = "";
+  const inWater = o.ground === "water";
+  const oy = 74;
+  let objTop = oy;
+  let objBot = oy + 44;
+  if (o.obj === "ball") {
+    // 물 장면의 공은 수면(86) 아래 완전 잠김 배치(수면 위 노출 = "잠긴 공" 문두와 모순 · 검산 B 반영)
+    const cy = inWater ? 112 : 96;
+    objSvg = `<circle cx="${cx}" cy="${cy}" r="22" fill="#FFD98A" stroke="#C9A96A" stroke-width="2.2"/>`;
+    objTop = cy - 22;
+    objBot = cy + 22;
+  } else if (o.obj === "bag") {
+    objSvg = `<path d="M${cx - 26} ${gy} v-30 q0 -10 10 -10 h32 q10 0 10 10 v30 z" fill="#D9C6EC" stroke="#9A7FBE" stroke-width="2"/><path d="M${cx - 8} ${gy - 40} q8 -14 16 0" fill="none" stroke="#9A7FBE" stroke-width="2.4"/>`;
+    objTop = gy - 52;
+    objBot = gy;
+  } else if (o.obj === "cart") {
+    objSvg = `<rect x="${cx - 30}" y="${gy - 40}" width="60" height="26" rx="6" fill="#EDF1F6" stroke="#B0B8C1" stroke-width="2"/><circle cx="${cx - 16}" cy="${gy - 8}" r="7" fill="#8B95A1"/><circle cx="${cx + 16}" cy="${gy - 8}" r="7" fill="#8B95A1"/>`;
+    objTop = gy - 40;
+    objBot = gy;
+  } else {
+    objSvg = `<rect x="${cx - 30}" y="${oy}" width="60" height="44" rx="7" fill="#EDF1F6" stroke="#B0B8C1" stroke-width="2"/>`;
+  }
+  const midY = inWater ? 92 : 96;
+  const offsetsFor = (count: number): number[] => (count === 1 ? [0] : count === 2 ? [-13, 13] : [-16, 0, 16]);
+  const hOffsets = new Map<number, number>();
+  for (const dir of ["l", "r"]) {
+    const idxs = arrows.map((a, i) => (a.dir === dir ? i : -1)).filter((i) => i >= 0);
+    const offs = offsetsFor(idxs.length);
+    idxs.forEach((idx, k) => hOffsets.set(idx, offs[k] ?? 0));
+  }
+  let maxY = 152;
+  const arrParts: string[] = [];
+  arrows.forEach((a, i) => {
+    const color = a.tone ? TONE[a.tone] : "#5E6B7E";
+    const L = len(a.n);
+    const [dx, dy] = DIRV[a.dir];
+    let sx = cx + dx * 32;
+    let sy = midY + (hOffsets.get(i) ?? 0);
+    if (a.dir === "u") { sx = cx; sy = objTop - 4; }
+    if (a.dir === "d") { sx = cx; sy = objBot + 4; }
+    let ex = sx + dx * L;
+    let ey = sy + dy * L;
+    if (a.dir === "u" && ey < 16) ey = 16;
+    if (a.dir === "d") maxY = Math.max(maxY, ey + 10);
+    const lx = a.dir === "u" || a.dir === "d" ? sx + 16 : (sx + ex) / 2;
+    const ly = a.dir === "u" || a.dir === "d" ? (sy + ey) / 2 : sy - 12;
+    const label = a.label ? `<text x="${lx}" y="${ly}" text-anchor="${a.dir === "u" || a.dir === "d" ? "start" : "middle"}" font-size="12.5" font-weight="700" fill="${color}">${a.label}</text>` : "";
+    arrParts.push(fArr(sx, sy, ex, ey, color, 4.6) + label);
+  });
+  const hasCand = (o.cand ?? []).length > 0;
+  const motion = o.motion
+    ? (() => {
+        const [dx] = DIRV[o.motion!];
+        const sx = cx + dx * (hasCand ? 44 : 6);
+        const y = objTop - 22;
+        return `${fArr(sx, y, sx + dx * 58, y, "#37C08E", 3.6)}<text x="${sx + dx * 29}" y="${y - 9}" text-anchor="middle" font-size="11" font-weight="700" fill="#2C9973">운동 방향</text>`;
+      })()
+    : "";
+  const cand = (o.cand ?? [])
+    .map((c) => {
+      const [dx, dy] = DIRV[c.dir];
+      let sx = cx + dx * 34;
+      let sy = midY;
+      if (c.dir === "u") { sx = cx; sy = objTop - 6; }
+      if (c.dir === "d") { sx = cx; sy = objBot + 6; }
+      const ex = sx + dx * 40;
+      const ey = sy + dy * 40;
+      if (c.dir === "d") maxY = Math.max(maxY, ey + 22);
+      return `${fArr(sx, sy, ex, ey, "#8B95A1", 3.4, "5 5")}<text x="${ex + dx * 13}" y="${ey + dy * 16 + 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#4E5968">${c.name}</text>`;
+    })
+    .join("");
+  const still = o.still ? `<text x="${cx}" y="50" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">정지 상태</text>` : "";
+  const H = Math.ceil(o.cap ? maxY + 16 : maxY);
+  const cap = o.cap ? `<text x="172" y="${H - 6}" text-anchor="middle" font-size="11.5" fill="#8B95A1">${o.cap}</text>` : "";
+  const ariaArr = arrows.map((a) => `${DIRKO[a.dir]}으로${!o.quiet && a.label ? " " + a.label : ""} 화살표`).join(", ");
+  const ariaCand = (o.cand ?? []).map((c) => `${c.name}는 ${DIRKO[c.dir]}`).join(", ");
+  const aria = `물체 그림.${arrows.length ? " 힘 화살표: " + ariaArr + "." : ""}${o.motion ? ` ${DIRKO[o.motion]}으로 움직이는 중.` : ""}${o.cand?.length ? " 후보 화살표: " + ariaCand + "." : ""}${o.still ? " 정지 상태라고 적혀 있다." : ""}`;
+  return `<svg viewBox="0 0 344 ${H}" ${NS} role="img" aria-label="${aria}">${ground}${objSvg}${arrParts.join("")}${motion}${cand}${still}${cap}</svg>`;
+}
+
+/** GD 천체 주위 중력 방향(라이트 · 파라미터형) · 물체 위치 deg(0=오른쪽·90=위)와 후보 화살표.
+ *  후보 dir: in(중심 쪽)·out(바깥)·u/d/l/r(화면 절대 방향). 화살표는 짧게(행성 원 침범 방지),
+ *  라벨은 화살표 중간의 수직 옆자리. aria는 화면 절대 방향으로만 서술(중심 쪽 여부는 판정
+ *  과제라 낭독 금지). 레슨 (가)(나)+A~F 그림과 위치·기호 체계 분리. */
+export function gravityDirsFig(o: {
+  body?: "earth" | "moon";
+  spots: { label: string; deg: number; cands: { name: string; dir: "in" | "out" | "u" | "d" | "l" | "r" }[] }[];
+}): string {
+  const cx = 172;
+  const cy = 118;
+  const R = 46;
+  const moon = o.body === "moon";
+  const planet = moon
+    ? `<circle cx="${cx}" cy="${cy}" r="${R}" fill="#F0F1F3" stroke="#9AA2AA" stroke-width="2.4"/>
+       <circle cx="${cx - 14}" cy="${cy - 10}" r="8" fill="#DCDFE3"/><circle cx="${cx + 12}" cy="${cy + 14}" r="6" fill="#DCDFE3"/><circle cx="${cx + 18}" cy="${cy - 16}" r="4.5" fill="#DCDFE3"/>
+       <text x="${cx}" y="${cy + 4}" text-anchor="middle" font-size="10.5" fill="#8B95A1">달</text>`
+    : `<circle cx="${cx}" cy="${cy}" r="${R}" fill="#EAF2FD" stroke="#8FB3E8" stroke-width="2.4"/>
+       <ellipse cx="${cx - 16}" cy="${cy - 14}" rx="17" ry="11" fill="#CBE4D2"/><ellipse cx="${cx + 18}" cy="${cy + 14}" rx="12" ry="8" fill="#CBE4D2"/>
+       <text x="${cx}" y="${cy + 4}" text-anchor="middle" font-size="10.5" fill="#8B95A1">지구</text>`;
+  const ariaParts: string[] = [];
+  const spots = o.spots
+    .map((s) => {
+      const rad = (s.deg * Math.PI) / 180;
+      const px = cx + Math.cos(rad) * (R + 44);
+      const py = cy - Math.sin(rad) * (R + 44);
+      // 물체 라벨은 접선 방향 옆자리(위·중심 쪽 후보 화살표와 겹치지 않게 · 파일럿 눈검수 반영)
+      const tx = px - Math.sin(rad) * 26;
+      const ty = py - Math.cos(rad) * 26;
+      const obj = `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="9" fill="#D9C6EC" stroke="#9A7FBE" stroke-width="2"/>
+        <text x="${tx.toFixed(1)}" y="${(ty + 4.5).toFixed(1)}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">${s.label}</text>`;
+      const cands = s.cands
+        .map((c) => {
+          let vx = 0;
+          let vy = 0;
+          if (c.dir === "in") { vx = cx - px; vy = cy - py; }
+          else if (c.dir === "out") { vx = px - cx; vy = py - cy; }
+          else { [vx, vy] = DIRV[c.dir]; }
+          const m = Math.hypot(vx, vy) || 1;
+          const ux = vx / m;
+          const uy = vy / m;
+          const sx = px + ux * 12;
+          const sy = py + uy * 12;
+          const ex = px + ux * 38;
+          const ey = py + uy * 38;
+          const mx = (sx + ex) / 2 - uy * 15;
+          const my = (sy + ey) / 2 + ux * 15;
+          const dko = Math.abs(ux) > Math.abs(uy) ? (ux > 0 ? "오른쪽" : "왼쪽") : uy > 0 ? "아래쪽" : "위쪽";
+          ariaParts.push(`${c.name}는 ${dko}`);
+          return `${fArr(sx, sy, ex, ey, "#5E6B7E", 3.6)}<text x="${mx.toFixed(1)}" y="${(my + 4.5).toFixed(1)}" text-anchor="middle" font-size="13" font-weight="800" fill="#4E5968">${c.name}</text>`;
+        })
+        .join("");
+      return obj + cands;
+    })
+    .join("");
+  return `<svg viewBox="0 0 344 236" ${NS} role="img" aria-label="${moon ? "달" : "지구"} 주위 물체들과 후보 화살표. 화면 기준으로 ${ariaParts.join(", ")} 방향을 가리킨다">${planet}${spots}</svg>`;
+}
+
+/** SH 용수철 장면(라이트 · 파라미터형) · hang(천장 매달림)/pull(벽 수평 당김)/press(바닥 압축).
+ *  dims: [원래 길이 라벨, 지금 길이 라벨] · 원래 길이는 왼쪽 구간 화살표+가로 점선, 지금 길이는
+ *  오른쪽 구간 화살표(정보 이분 배치 · 값은 파라미터). cands: 탄성력 방향 후보 점선 화살표
+ *  (방향 정답 문항은 후보 제시형만). pull 모드에서 forceLabel과 cands는 동시 사용 금지(겹침 ·
+ *  당기는 힘 표기는 문두 서술로). */
+export function springHangFig(o: {
+  kind: "hang" | "pull" | "press";
+  dims?: [string, string];
+  weightLabel?: string;
+  forceLabel?: string;
+  cands?: { name: string; dir: "u" | "d" | "l" | "r" }[];
+}): string {
+  const coilV = (x: number, y1: number, y2: number, w = 13): string => {
+    const n = 7;
+    const step = (y2 - y1) / (n * 2);
+    let d = `M${x} ${y1}`;
+    for (let i = 0; i < n * 2; i++) d += ` L${x + (i % 2 ? -w : w)} ${(y1 + step * (i + 0.5)).toFixed(1)}`;
+    d += ` L${x} ${y2}`;
+    return `<path d="${d}" fill="none" stroke="#7E8B9C" stroke-width="3" stroke-linejoin="round"/>`;
+  };
+  const coilH = (y: number, x1: number, x2: number, w = 13): string => {
+    const n = 7;
+    const step = (x2 - x1) / (n * 2);
+    let d = `M${x1} ${y}`;
+    for (let i = 0; i < n * 2; i++) d += ` L${(x1 + step * (i + 0.5)).toFixed(1)} ${y + (i % 2 ? -w : w)}`;
+    d += ` L${x2} ${y}`;
+    return `<path d="${d}" fill="none" stroke="#7E8B9C" stroke-width="3" stroke-linejoin="round"/>`;
+  };
+  let body = "";
+  let H = 200;
+  const cands = (cx: number, cy: number): string =>
+    (o.cands ?? [])
+      .map((c) => {
+        const [dx, dy] = DIRV[c.dir];
+        const sx = cx + dx * 20;
+        const sy = cy + dy * 20;
+        return `${fArr(sx, sy, sx + dx * 40, sy + dy * 40, "#8B95A1", 3.4, "5 5")}<text x="${sx + dx * 56}" y="${sy + dy * 56 + 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#4E5968">${c.name}</text>`;
+      })
+      .join("");
+  if (o.kind === "hang") {
+    let hatch = "";
+    for (let x = 96; x <= 250; x += 15) hatch += `<line x1="${x}" y1="22" x2="${x + 9}" y2="10" stroke="#B0B8C1" stroke-width="2"/>`;
+    const dims = o.dims
+      ? `<path d="M232 22 H286 M232 150 H286" stroke="#C4CAD2" stroke-width="1.3" stroke-dasharray="4 4"/>
+         <path d="M272 26 V146" stroke="#8B95A1" stroke-width="1.6"/>
+         <path d="M272 26 l-4 8 h8 z M272 146 l-4 -8 h8 z" fill="#8B95A1"/>
+         <text x="280" y="90" font-size="11.5" font-weight="700" fill="#4E5968">${o.dims[1]}</text>
+         <path d="M58 92 H160" stroke="#C4CAD2" stroke-width="1.3" stroke-dasharray="4 4"/>
+         <path d="M104 26 V88" stroke="#B0B8C1" stroke-width="1.6"/>
+         <path d="M104 26 l-4 8 h8 z M104 88 l-4 -8 h8 z" fill="#B0B8C1"/>
+         <text x="96" y="60" text-anchor="end" font-size="11.5" font-weight="700" fill="#8B95A1">${o.dims[0]}</text>`
+      : "";
+    body = `<line x1="90" y1="22" x2="254" y2="22" stroke="#8B95A1" stroke-width="3"/>${hatch}
+      ${coilV(172, 22, 150)}
+      <rect x="150" y="150" width="44" height="34" rx="6" fill="#C9B49A" stroke="#8B7355" stroke-width="2"/>
+      <text x="172" y="172" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5B4632">${o.weightLabel ?? "추"}</text>
+      ${dims}${cands(172, 167)}`;
+    H = 208;
+  } else if (o.kind === "pull") {
+    let hatch = "";
+    for (let y = 52; y <= 128; y += 15) hatch += `<line x1="40" y1="${y}" x2="28" y2="${y + 9}" stroke="#B0B8C1" stroke-width="2"/>`;
+    const force = o.forceLabel
+      ? `${fArr(268, 90, 322, 90, "#E8710A", 4.6)}<text x="295" y="74" text-anchor="middle" font-size="12.5" font-weight="700" fill="#E8710A">${o.forceLabel}</text>`
+      : "";
+    body = `<line x1="40" y1="46" x2="40" y2="134" stroke="#8B95A1" stroke-width="3"/>${hatch}
+      ${coilH(90, 40, 244)}
+      <circle cx="256" cy="90" r="7" fill="none" stroke="#7E8B9C" stroke-width="3"/>
+      ${force}${cands(266, 52)}`;
+    H = 160;
+  } else {
+    const force = o.forceLabel
+      ? `${fArr(172, 26, 172, 66, "#E8710A", 4.6)}<text x="190" y="44" font-size="12.5" font-weight="700" fill="#E8710A">${o.forceLabel}</text>`
+      : "";
+    body = `<rect x="140" y="70" width="64" height="10" rx="4" fill="#D5DBE3"/>
+      ${coilV(172, 80, 140, 15)}
+      <line x1="90" y1="142" x2="254" y2="142" stroke="#8B95A1" stroke-width="3"/>
+      ${force}${cands(172, 108)}`;
+    H = 168;
+  }
+  const aria = o.kind === "hang" ? "천장에 매단 용수철에 추가 걸려 있는 그림" : o.kind === "pull" ? "벽에 고정한 용수철을 옆으로 당기는 그림" : "바닥 위 용수철을 위에서 누르는 그림";
+  return `<svg viewBox="0 0 344 ${H}" ${NS} role="img" aria-label="${aria}${o.dims ? `. 길이 표시 ${o.dims[0]}와 ${o.dims[1]}` : ""}${o.forceLabel ? `. 힘 라벨 ${o.forceLabel}` : ""}${o.cands?.length ? ". 방향 후보 화살표가 붙어 있다" : ""}">${body}</svg>`;
+}
+
+/** BS 용수철저울·추 잠김 장면(라이트 · 파라미터형) · buoyThreeFig 대체 확장.
+ *  water: none(공기 중)/half(절반 잠김)/full(완전 잠김)/deep(완전 잠김 더 깊이).
+ *  val: 저울 옆 콜아웃 라벨(표시창은 빈 패널 유지 · 값 제시는 콜아웃이 담당).
+ *  quiet: aria에 콜아웃 값을 낭독하지 않는다(값이 곧 정답인 함정 문항용 · 값은 문두가 제공). */
+export function buoyScaleFig(o: { scenes: { label: string; water: "none" | "half" | "full" | "deep"; val?: string }[]; quiet?: boolean }): string {
+  const n = o.scenes.length;
+  const W = 344 / n;
+  const scene = (i: number, s: { label: string; water: string; val?: string }): string => {
+    const cx = W / 2;
+    const sink = s.water === "deep" ? 30 : s.water === "full" ? 16 : 0;
+    const wy = 96 + sink;
+    const waterTop = s.water === "none" ? null : s.water === "half" ? wy - 8 : s.water === "full" ? wy - 34 : wy - 48;
+    const val = s.val
+      ? `<g><rect x="${cx + 24}" y="20" width="58" height="24" rx="8" fill="#FFF0F3" stroke="#E8829B" stroke-width="1.6"/>
+         <path d="M${cx + 24} 32 l-8 4 8 4z" fill="#E8829B"/>
+         <text x="${cx + 53}" y="36" text-anchor="middle" font-size="12.5" font-weight="800" fill="#C9365E">${s.val}</text></g>`
+      : "";
+    return `<g transform="translate(${i * W},0)">
+      <rect x="${cx - 20}" y="14" width="40" height="24" rx="5" fill="#EDF1F6" stroke="#8B95A1" stroke-width="1.8"/>
+      <rect x="${cx - 12}" y="19" width="24" height="13" rx="3" fill="#2A3442"/>
+      <path d="M${cx} 38 v${wy - 60}" stroke="#8B95A1" stroke-width="2"/>
+      <rect x="${cx - 14}" y="${wy - 22}" width="28" height="26" rx="5" fill="#C9B49A" stroke="#8B7355" stroke-width="1.8"/>
+      ${waterTop != null ? `<rect x="${cx - 38}" y="${waterTop}" width="76" height="${162 - waterTop}" rx="6" fill="rgba(90,162,248,.22)"/><path d="M${cx - 38} ${waterTop} h76" stroke="#5AA2F8" stroke-width="2"/>` : ""}
+      <path d="M${cx - 38} 162 h76" stroke="#8B95A1" stroke-width="2.4"/>
+      <path d="M${cx - 38} 58 v104 M${cx + 38} 58 v104" stroke="#8B95A1" stroke-width="2.4"/>
+      ${val}
+      <text x="${cx}" y="184" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">${s.label}</text>
+    </g>`;
+  };
+  const KO: Record<string, string> = { none: "물 밖", half: "절반 잠김", full: "완전히 잠김", deep: "완전히 잠긴 채 더 깊이" };
+  const aria = o.scenes.map((s) => `${s.label} ${KO[s.water]}${s.val ? (o.quiet ? " 저울 옆에 값 표시" : " 저울 값 " + s.val) : ""}`).join(", ");
+  return `<svg viewBox="0 0 344 196" ${NS} role="img" aria-label="용수철저울에 추를 매달아 물에 넣는 장면. ${aria}. 저울 표시창은 비어 있다">${o.scenes.map((s, i) => scene(i, s)).join("")}</svg>`;
+}
+
+/** FR 마찰 측정 장면(라이트 · 파라미터형) · 판+도막(쌓기)+수평 용수철저울(빈 표시창)+당김 화살표.
+ *  surface: smooth(민면)/rough(빗금)/wet(물기) · val: 저울 옆 콜아웃(움직이기 시작하는 순간의 값).
+ *  quiet: aria에 콜아웃 값을 낭독하지 않는다(값이 곧 정답인 평형 문항용 · 값은 문두가 제공). */
+export function frictionRigFig(o: { boards: { surface: "smooth" | "rough" | "wet"; blocks: 1 | 2; val?: string; label?: string }[]; quiet?: boolean }): string {
+  const row = (i: number, b: { surface: string; blocks: number; val?: string; label?: string }): string => {
+    const y0 = i * 96;
+    const by = y0 + 66;
+    let surf = "";
+    if (b.surface === "rough") {
+      for (let x = 44; x <= 240; x += 14) surf += `<line x1="${x}" y1="${by + 4}" x2="${x - 8}" y2="${by + 13}" stroke="#B08D5E" stroke-width="1.8"/>`;
+    } else if (b.surface === "wet") {
+      surf = `<ellipse cx="90" cy="${by + 8}" rx="26" ry="4.5" fill="rgba(90,162,248,.35)"/><ellipse cx="180" cy="${by + 9}" rx="34" ry="5" fill="rgba(90,162,248,.30)"/>`;
+    }
+    const blocks =
+      b.blocks === 2
+        ? `<rect x="86" y="${by - 26}" width="44" height="26" rx="4" fill="#C9B49A" stroke="#8B7355" stroke-width="1.8"/><rect x="86" y="${by - 50}" width="44" height="26" rx="4" fill="#D8C7AC" stroke="#8B7355" stroke-width="1.8"/>`
+        : `<rect x="86" y="${by - 26}" width="44" height="26" rx="4" fill="#C9B49A" stroke="#8B7355" stroke-width="1.8"/>`;
+    const val = b.val
+      ? `<g><rect x="238" y="${by - 58}" width="56" height="23" rx="8" fill="#FFF0F3" stroke="#E8829B" stroke-width="1.6"/>
+         <path d="M258 ${by - 35} l4 8 4 -8z" fill="#E8829B"/>
+         <text x="266" y="${by - 42}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#C9365E">${b.val}</text></g>`
+      : "";
+    return `<g>
+      <rect x="40" y="${by}" width="208" height="7" rx="3" fill="#E3D5C0" stroke="#B08D5E" stroke-width="1.6"/>${surf}
+      ${blocks}
+      <line x1="130" y1="${by - 13}" x2="176" y2="${by - 13}" stroke="#8B95A1" stroke-width="2"/>
+      <rect x="176" y="${by - 22}" width="54" height="18" rx="6" fill="#EDF1F6" stroke="#8B95A1" stroke-width="1.8"/>
+      <rect x="184" y="${by - 18}" width="26" height="10" rx="2.5" fill="#2A3442"/>
+      ${fArr(232, by - 13, 296, by - 13, "#E8710A", 4.4)}
+      ${val}
+      ${b.label ? `<text x="24" y="${by - 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#4E5968">${b.label}</text>` : ""}
+    </g>`;
+  };
+  const H = o.boards.length * 96 + 6;
+  const KO: Record<string, string> = { smooth: "매끈한 면", rough: "거친 면", wet: "물기 있는 면" };
+  const aria = o.boards.map((b) => `${b.label ?? ""} ${KO[b.surface]} 위 도막 ${b.blocks}개${b.val ? (o.quiet ? ", 저울 옆에 값 표시" : ", 저울 옆 값 " + b.val) : ""}`).join(". ");
+  return `<svg viewBox="0 0 344 ${H}" ${NS} role="img" aria-label="나무 도막을 용수철저울로 당기는 마찰 측정 장면. ${aria}. 저울 표시창은 비어 있다">${o.boards.map((b, i) => row(i, b)).join("")}</svg>`;
+}
+
+/** 떨어져 있는 두 상자 A·B에 힘이 하나씩(한 물체 조건 판정 전용 · 화살표 길이 동일 = 크기 동일). */
+export function twoBoxesFig(): string {
+  const arr = (x1: number, x2: number, y: number): string => {
+    const dir = x2 > x1 ? 1 : -1;
+    return `<line x1="${x1}" y1="${y}" x2="${x2 - dir * 11}" y2="${y}" stroke="#5E6B7E" stroke-width="4.6" stroke-linecap="round"/>
+      <path d="M${x2} ${y} l${-dir * 12} -7 v14 z" fill="#5E6B7E"/>`;
+  };
+  return `<svg viewBox="0 0 344 140" ${NS} role="img" aria-label="서로 떨어져 있는 상자 A와 B. A에는 오른쪽으로 5 N 화살표 하나, B에는 왼쪽으로 5 N 화살표 하나가 그려져 있다">
+    <line x1="16" y1="112" x2="328" y2="112" stroke="#D5DBE3" stroke-width="2"/>
+    <rect x="44" y="68" width="52" height="44" rx="7" fill="#EDF1F6" stroke="#B0B8C1" stroke-width="2"/>
+    <text x="70" y="94" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">A</text>
+    ${arr(98, 158, 90)}
+    <text x="128" y="74" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">5 N</text>
+    <rect x="248" y="68" width="52" height="44" rx="7" fill="#EDF1F6" stroke="#B0B8C1" stroke-width="2"/>
+    <text x="274" y="94" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">B</text>
+    ${arr(246, 186, 90)}
+    <text x="216" y="74" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">5 N</text>
+  </svg>`;
+}
+
+/** TJ 같은 시간 간격 위치 기록(라이트 · 파라미터형) · 공 위치 배열이 전부(궤적 경향은 좌표가 만든다).
+ *  공 사이 파란 화살표 길이 = 실제 간격(코드 보장 · 속력 변화가 화살표 길이로 읽힘).
+ *  aria는 "같은 시간 간격 기록"까지만(간격 경향·방향 변화 낭독 금지 = 판독 과제). */
+export function trajStroboFig(o: { pts: [number, number][]; cap?: string }): string {
+  const r = 9;
+  const balls = o.pts
+    .map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${i === 0 ? "#F0A422" : "#FFE9C4"}" stroke="#D08A18" stroke-width="1.8"/>`)
+    .join("");
+  let arrows = "";
+  for (let i = 0; i < o.pts.length - 1; i++) {
+    const [x1, y1] = o.pts[i];
+    const [x2, y2] = o.pts[i + 1];
+    const d = Math.hypot(x2 - x1, y2 - y1);
+    // 간격이 공 지름 수준이면 화살표가 뭉개진다(거의 멈춤) · 생략이 물리적으로도 자연
+    if (d < 2 * (r + 3) + 15) continue;
+    const ux = (x2 - x1) / d;
+    const uy = (y2 - y1) / d;
+    arrows += fArr(x1 + ux * (r + 3), y1 + uy * (r + 3), x2 - ux * (r + 3), y2 - uy * (r + 3), "#4A7DDB", 3.4);
+  }
+  const cap = o.cap ? `<text x="172" y="152" text-anchor="middle" font-size="11.5" fill="#8B95A1">${o.cap}</text>` : "";
+  return `<svg viewBox="0 0 344 158" ${NS} role="img" aria-label="같은 시간 간격으로 기록한 공의 위치들. 이웃한 위치 사이에 화살표가 그려져 있다">${arrows}${balls}${cap}</svg>`;
+}
+// ── u5 v2 신작 끝 ──
