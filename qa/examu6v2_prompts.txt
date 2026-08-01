@@ -1,0 +1,10 @@
+스타일 블록 A (모든 프롬프트 앞에 붙일 공통 스타일):
+Photorealistic photograph, natural lighting, clean composition, single clear subject.
+ABSOLUTELY NO text, NO numbers, NO letters, NO logos, NO watermarks, NO on-screen UI overlays anywhere in the image.
+No people, no hands, no faces, no human body parts (including reflections). Square 1:1 aspect ratio. High detail, realistic textures.
+
+[0] file=public/exam/u6/hot-car-bag.png
+Inside a parked car on a scorching summer day: a plain matte silver foil snack bag, completely blank with no printing, puffed up tight and round like an inflated pillow, lying on the dark dashboard near the windshield. Strong bright sunlight streams through the windshield, harsh light and warm glare, blue sky and sun visible through the glass. Camera close on the bag so the instrument cluster and any gauges are OUT of frame - no dials, no numbers, no screens anywhere. The bag must look clearly swollen and taut.
+
+[1] file=public/exam/u6/suction-cup.png
+A close-up photograph of a single transparent plastic suction cup hook attached firmly to a glossy white ceramic tile wall in a bright bathroom: the clear round suction cup is pressed completely FLAT against the tile so its rim sits tight on the surface, small hook part pointing downward, nothing hanging on it. Soft daylight, shallow depth of field, clean minimal composition. The flat pressed contact between the cup and the tile must be clearly visible.
