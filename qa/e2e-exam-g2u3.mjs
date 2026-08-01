@@ -118,7 +118,8 @@ async function playExam(correctCount, pattern) {
 // ═══════════ 0. 발주 사진 10장 로드(exam/g2u3) ═══════════
 console.log("0. 발주 사진 로드");
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
-const PHOTOS = ["calm-lake", "ripple-lake", "chopstick-cup", "laser-glass", "prism-split", "glass-sphere", "ladle-mirror", "buoy-wave", "tuningfork-water", "guitar-strings"];
+// v2 사용 11장(10문항 — e208은 xpair 2장) · concave-mirror는 v2 미사용(판독 불가 판정 · 설계표 §6).
+const PHOTOS = ["calm-lake", "ripple-lake", "chopstick-cup", "laser-glass", "prism-split", "glass-sphere", "convex-mirror", "ladle-mirror", "buoy-wave", "tuningfork-water", "guitar-strings"];
 const photoRes = await page.evaluate(async (names) => {
   const out = [];
   for (const n of names) {

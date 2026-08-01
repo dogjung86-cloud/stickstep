@@ -131,28 +131,31 @@ export function catMirrorFig(): string {
 
 /** L5 — 볼록·오목 거울 단면(어느 쪽이 어떤 상?) */
 export function twoMirrorsFig(): string {
-  return `<svg viewBox="0 0 344 168" ${NS} fill="none" role="img" aria-label="볼록 거울과 오목 거울의 단면">
-    <g transform="translate(88,84)">
-      <path d="M-14 -56Q26 0 -14 56" stroke="#5E6B7E" stroke-width="4" stroke-linecap="round"/>
-      ${Array.from({ length: 7 }, (_, i) => {
-        const t = -0.9 + (i * 1.8) / 6;
-        const y = t * 56;
-        const x = -14 + (1 - t * t) * 40;
-        return `<line x1="${x}" y1="${y}" x2="${x + 10}" y2="${y - 8}" stroke="#B0B8C1" stroke-width="1.6"/>`;
-      }).join("")}
+  // 반사면(빛이 오는 왼쪽)과 뒷면의 정합을 기하로 보장한다(2026-08-01 재작도 · 사용자 파일럿
+  // 검수 반영 2차): 가는 호+빗금만으로는 볼록/오목이 "부푼 곡선"으로만 읽힌다 → 반사면 호 +
+  // 평평한 등(오른쪽) + 회색 채움의 닫힌 몸통. 벨리가 왼쪽으로 부풀면 볼록(D자 몸통), 오른쪽으로
+  // 부풀면 오목(왼쪽이 파인 초승달 몸통). 구판은 벨리·빗금이 뒤집힌 기하 결함(미사용 킷 ·
+  // v2 시험 데뷔 눈검수에서 적발).
+  const arc = (p0x: number, c: number, half: number): string => {
+    const apex = (p0x + 2 * c + p0x) / 4;
+    const backX = Math.max(p0x, apex) + 11;
+    const ticks = Array.from({ length: 6 }, (_, i) => {
+      const y = -half + 8 + ((half * 2 - 16) * i) / 5;
+      return `<line x1="${(backX - 1).toFixed(1)}" y1="${y.toFixed(1)}" x2="${(backX + 9).toFixed(1)}" y2="${(y - 9).toFixed(1)}" stroke="#B0B8C1" stroke-width="1.6"/>`;
+    }).join("");
+    return `<path d="M${p0x} ${-half} Q${c} 0 ${p0x} ${half} L${backX} ${half} L${backX} ${-half} Z" fill="#E4E9F0" stroke="#8B95A1" stroke-width="1.2"/>
+      <path d="M${p0x} ${-half} Q${c} 0 ${p0x} ${half}" fill="none" stroke="#5E6B7E" stroke-width="4" stroke-linecap="round"/>${ticks}`;
+  };
+  return `<svg viewBox="0 0 344 168" ${NS} fill="none" role="img" aria-label="볼록 거울과 오목 거울의 단면. 왼쪽에서 빛이 들어오는 화살표가 있고, 각 거울의 뒷면에 빗금이 표시되어 있어요">
+    <g transform="translate(96,84)">
+      ${arc(10, -34, 56)}
       <text x="0" y="80" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(가) 볼록 거울</text>
       <path d="M-70 0h34M-42 -4l6 4-6 4" stroke="#8B95A1" stroke-width="2" fill="none"/>
     </g>
-    <g transform="translate(258,84)">
-      <path d="M14 -56Q-26 0 14 56" stroke="#5E6B7E" stroke-width="4" stroke-linecap="round"/>
-      ${Array.from({ length: 7 }, (_, i) => {
-        const t = -0.9 + (i * 1.8) / 6;
-        const y = t * 56;
-        const x = 14 - (1 - t * t) * 40;
-        return `<line x1="${x}" y1="${y}" x2="${x + 10}" y2="${y - 8}" stroke="#B0B8C1" stroke-width="1.6"/>`;
-      }).join("")}
+    <g transform="translate(262,84)">
+      ${arc(-12, 34, 56)}
       <text x="0" y="80" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(나) 오목 거울</text>
-      <path d="M-72 0h34M-44 -4l6 4-6 4" stroke="#8B95A1" stroke-width="2" fill="none"/>
+      <path d="M-74 0h34M-46 -4l6 4-6 4" stroke="#8B95A1" stroke-width="2" fill="none"/>
     </g>
   </svg>`;
 }
