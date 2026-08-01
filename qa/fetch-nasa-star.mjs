@@ -25,6 +25,17 @@ const jobs = [
   // g2u8 단원 종합 평가 추가분(외부 은하 문항용) — 정본 직링크만, 다운로드 후 눈검수 필수
   { name: "andromeda", url: "https://noirlab.edu/public/media/archives/images/large/noao-m31.jpg", credit: "Bill Schoening, Vanessa Harvey/REU program/NOIRLab/NSF/AURA (CC BY 4.0)" },
   { name: "whirlpool", url: "https://cdn.esahubble.org/archives/images/large/heic0506a.jpg", credit: "NASA, ESA, S. Beckwith (STScI), Hubble Heritage Team (CC BY 4.0)" },
+  // g2u8 v2 재출제 추가분(색 대비 관찰 문항용 이중성) — 눈검수: 주황·청백 두 별이 또렷이 구분돼야 합격.
+  // NOIRLab 슬러그는 403이라 위키미디어 정본 제목 고정(Special:FilePath — 검색 자동 매칭 아님).
+  // 저장본 albireo.webp는 이 원본에서 두 별 중심 정사각 크롭·900px webp(절차 qa/g2u8-v2-blueprint.md §8-0).
+  { name: "albireo", url: "https://commons.wikimedia.org/wiki/Special:FilePath/Albireo%20Killarney%20Provincial%20Park%20Observatory.jpg", credit: "Brucewaters, Wikimedia Commons (CC BY 4.0)" },
+  // g2u8 v2 확대분(L6 성단·성운 사진화 4장) · 눈검수 기준: 이중 성단 = 두 별 무리가 나란히 또렷,
+  // m13 = 공 모양 밀집이 한눈에, coalsack = 별밭 속 검은 영역 대비, lagoon = 붉게 번지는 구름.
+  // 위키미디어는 upload 정본 직링크(제목 고정 · Special:FilePath 리다이렉트도 안 씀), ESO는 screen 판(1280px).
+  { name: "double-cluster", url: "https://upload.wikimedia.org/wikipedia/commons/b/bb/Double_Cluster_%2850503695887%29.jpg", credit: "Stephen Rahn, Wikimedia Commons (CC0)" },
+  { name: "m13", url: "https://upload.wikimedia.org/wikipedia/commons/2/2d/M13_%28noao-m13bash2%29.jpg", credit: "KPNO/NOIRLab/NSF/AURA/Tom Bash and John Fox/Adam Block (CC BY 4.0)" },
+  { name: "coalsack", url: "https://cdn.eso.org/images/screen/eso1539a.jpg", credit: "ESO (CC BY 4.0)" },
+  { name: "lagoon", url: "https://cdn.eso.org/images/screen/eso1403a.jpg", credit: "ESO/VPHAS+ team (CC BY 4.0)" },
 ];
 
 for (const j of jobs) {

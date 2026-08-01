@@ -262,3 +262,13 @@ sun_304.jpg(NASA/SDO — PD)에서 각각 관측 캡션 글자를 크롭해 만�
 `public/photos/sun_active.jpg`는 NASA SVS #5344 "Solar Cycle 25 Continues to Exceed Predictions"의
 HMI 백색광 전면 프레임(2024-04-26, NASA/SDO — Public Domain)에서 하단 캡션 글자를 크롭해 만든
 파생본(시험 u7 v2 — 267번 흑점 다수 활동기 태양).
+
+## g2u8 v2 단원 종합 평가 추가분 (2026-07-26)
+
+| 파일 | 내용 | 출처 | 라이선스 |
+|---|---|---|---|
+| star/albireo.webp | 알비레오 이중성(주황·청백 색 대비 — 두 별 중심 정사각 크롭) | Brucewaters — Wikimedia "Albireo Killarney Provincial Park Observatory.jpg" | CC BY 4.0 |
+| star/double-cluster.webp | 페르세우스 이중 성단(허술한 두 별 무리가 나란히 — 산개 성단 예시) | Stephen Rahn — Wikimedia "Double Cluster (50503695887).jpg" | CC0 |
+| star/m13.webp | M13 헤라클레스 구상 성단(공 모양 밀집) | KPNO/NOIRLab/NSF/AURA/Tom Bash and John Fox/Adam Block — Wikimedia "M13 (noao-m13bash2).jpg" | CC BY 4.0 |
+| star/coalsack.webp | 석탄자루 암흑 성운(별밭 속 검은 영역) | ESO (eso1539a) | CC BY 4.0 |
+| star/lagoon.webp | 라군 성운(붉게 빛나며 번지는 방출 성운) | ESO/VPHAS+ team (eso1403a) | CC BY 4.0 |

@@ -1,7 +1,8 @@
 // 단원 종합 평가(g2u8 별과 우주) E2E — 응시 → 일괄 채점 → 8파트 진단 → 리뷰 → 레슨 바로가기 →
-// 재응시 페이월 → (정복+프리미엄) 재응시 → 정복 인증 + 신기록 XP + 발주 사진 8장·NASA 신규 2장 로드까지 실플레이.
+// 재응시 페이월 → (정복+프리미엄) 재응시 → 정복 인증 + 신기록 XP + 사진 로드까지 실플레이.
 // PORT=<포트> node qa/e2e-exam-g2u8.mjs — dev 서버 필수(보기 선택이 dev 전용 data-oi/data-ans를 쓴다).
-// g2u7판과의 차이: 단원 탭 "별과 우주", exam/g2u8 사진 8장 + photos/star 신규 2장(andromeda·whirlpool).
+// v2(2026-08 재출제 4호) 갱신: 사진 검증 = exam/g2u8 발주 9장 + photos/star 20장(신규 수급
+// albireo·double-cluster·m13·coalsack·lagoon 포함, 전 장 사용). 여덟 파트 문구·2×4+3×4 균형은 무수정 호환.
 // 무료 구간은 L1~L3(레슨당 2~3문항 = 시험지 앞 6문항 이상) — 무료 응시 오답은 앞 6문항에 배치.
 import { chromium } from "playwright-core";
 import fs from "node:fs";
@@ -12,6 +13,20 @@ const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage({ viewport: { width: 420, height: 900 }, deviceScaleFactor: 2 });
 let pageErrors = 0;
 page.on("pageerror", (e) => { pageErrors++; console.log("PAGEERROR:", e.message); });
+
+// 동시 세션 HMR 풀리로드 면역(상설 이식 · g2u1 v2 관행): @vite/client를 스텁으로 대체 —
+// CSS 주입(updateStyle)은 살리고 웹소켓·리로드만 제거(abort는 금물 · 정본 = qa/e2e-steprush.mjs).
+await page.route("**/@vite/client", (r) =>
+  r.fulfill({
+    contentType: "application/javascript",
+    body: `export function updateStyle(id, css){ let el = document.querySelector('style[data-vite-dev-id="' + id + '"]'); if (!el) { el = document.createElement("style"); el.setAttribute("data-vite-dev-id", id); document.head.appendChild(el); } el.textContent = css; }
+export function removeStyle(id){ document.querySelector('style[data-vite-dev-id="' + id + '"]')?.remove(); }
+export function createHotContext(){ return { accept(){}, acceptExports(){}, dispose(){}, prune(){}, on(){}, off(){}, send(){}, invalidate(){}, data: {} }; }
+export function injectQuery(u){ return u; }
+export const ErrorOverlay = class {};
+export default {};`,
+  }),
+);
 
 let PASS = 0, FAIL = 0;
 const ok = (cond, name, extra = "") => {
@@ -115,14 +130,20 @@ async function playExam(correctCount, pattern) {
   return seen;
 }
 
-// ═══════════ 0. 발주 사진 8장(exam/g2u8) + NASA 신규 2장(photos/star) 로드 ═══════════
-console.log("0. 발주·NASA 사진 로드");
+// ═══════════ 0. v2 사진 세트 로드(발주 9장 exam/g2u8 + 실사 20장 photos/star — 전 장 사용) ═══════════
+console.log("0. v2 사진 세트 로드(발주 9 + 실사 20)");
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
 const PHOTOS = [
-  "/exam/g2u8/balloon-small.webp", "/exam/g2u8/balloon-big.webp", "/exam/g2u8/thumb-eye.webp",
-  "/exam/g2u8/observatory.webp", "/exam/g2u8/iron-red.webp", "/exam/g2u8/torch-blue.webp",
-  "/exam/g2u8/star-colors.webp", "/exam/g2u8/satellite-dish.webp",
-  "/photos/star/andromeda.webp", "/photos/star/whirlpool.webp",
+  "/exam/g2u8/balloon-small.webp", "/exam/g2u8/balloon-big.webp", "/exam/g2u8/balloon-expansion.webp",
+  "/exam/g2u8/thumb-eye.webp", "/exam/g2u8/observatory.webp", "/exam/g2u8/iron-red.webp",
+  "/exam/g2u8/torch-blue.webp", "/exam/g2u8/star-colors.webp", "/exam/g2u8/satellite-dish.webp",
+  "/photos/star/albireo.webp", "/photos/star/andromeda.webp", "/photos/star/apollo11.webp",
+  "/photos/star/coalsack.webp", "/photos/star/double-cluster.webp", "/photos/star/horsehead.webp",
+  "/photos/star/hubble-telescope.webp", "/photos/star/iss.webp", "/photos/star/jwst.webp",
+  "/photos/star/lagoon.webp", "/photos/star/m13.webp", "/photos/star/m5-globular.webp",
+  "/photos/star/m78-reflection.webp", "/photos/star/milkyway-pan.webp", "/photos/star/milkyway-top.webp",
+  "/photos/star/orion-nebula.webp", "/photos/star/pleiades.webp", "/photos/star/pluto.webp",
+  "/photos/star/sputnik.webp", "/photos/star/whirlpool.webp",
 ];
 const photoRes = await page.evaluate(async (urls) => {
   const out = [];
@@ -137,7 +158,7 @@ const photoRes = await page.evaluate(async (urls) => {
   }
   return out;
 }, PHOTOS);
-ok(photoRes.every((p) => p.w > 0), "발주 8장 + NASA 2장 전부 로드", JSON.stringify(photoRes.filter((p) => !p.w)));
+ok(photoRes.every((p) => p.w > 0), "v2 사진 발주 9장 + 실사 20장 전부 로드", JSON.stringify(photoRes.filter((p) => !p.w)));
 
 // ═══════════ A. 무료 첫 응시 — 레슨 진행 0%에서도 열려 있어야 한다 ═══════════
 console.log("A. 무료 첫 응시(진행 0% · 중2 지도)");

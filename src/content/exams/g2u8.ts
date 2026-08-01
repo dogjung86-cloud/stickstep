@@ -1,7 +1,7 @@
-// 중2 과학 VIII. 별과 우주 — 단원 종합 평가 문항 풀(150제 = 19×6 + 18×2, 8레슨).
+// 중2 과학 VIII. 별과 우주 · 단원 종합 평가 문항 풀 v2(160제 = 21/18/21/19/20/22/20/19, 8레슨).
 // 문항은 레슨 파일(g2u8l1~g2u8l8)에 산다. 풀 등장 순서 = 교과 진도 순서(추출·시험지 정렬의 기준).
-// 유형 구성은 u3 규격 스케일: 113(mcq+multi) / 18(num) / 19(word). 18문항 레슨은 L4(색과 표면 온도)·
-// L8(우주 탐사) — 단일 규칙·지식 나열형의 좁은 소단원. word 4문항 레슨은 L5·L6(용어 밀집 소단원).
+// 유형 구성: mcq 136 / multi 16 / num 8 / word 0 · diff 64/64/32 · 시각 85(사진 37 포함) · bogi 합답 22.
+// 규격·회피표·검산 기록 정본 = qa/g2u8-v2-blueprint.md, 이식 = qa/build-g2u8v2-lessons.mjs(재실행 가능).
 import type { ExamDef } from "./types";
 import { POOL_G2U8L1 } from "./g2u8l1";
 import { POOL_G2U8L2 } from "./g2u8l2";

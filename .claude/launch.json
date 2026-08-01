@@ -12,6 +12,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "5988", "--directory", "tmp"],
       "port": 5988
+    },
+    {
+      "name": "g2u8v2-full",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "6005", "--directory", "tmp/g2u8v2-full"],
+      "port": 6005
     }
   ]
 }

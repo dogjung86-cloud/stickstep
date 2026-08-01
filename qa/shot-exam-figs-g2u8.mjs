@@ -1,43 +1,47 @@
-// g2u8 시험 그림 눈검수용 스크린샷 — 신규 examFigures g2u8 섹션을 실제 문항 파라미터로 렌더.
-// 다크 그림(figureDark)은 시험 화면과 같은 짙은 패널 위에서 검수한다.
-// PORT=<포트> node qa/shot-exam-figs-g2u8.mjs (dev 서버 필수 — vite 모듈 URL로 임포트)
+// g2u8 v2 시험 그림 눈검수 — 이식된 풀(src/content/exams/g2u8.ts)에서 figure 문항 85개를 자동
+// 수집해 12개씩 격자 페이지로 나눠 캡처한다(손으로 파라미터를 옮겨 적지 않는 자동화판 · u4 v2 계승).
+// dev 서버 불필요(esbuild 실로드) · 다크 모형(figureDark)은 다크 패널 위에 렌더 · 사진(exam/g2u8 +
+// photos/star)은 tmp로 복사해 상대 경로로 로드.
+// (v1 스크립트는 dev 서버 모듈 URL로 헬퍼를 직접 나열하던 방식 — v2 재출제로 폐기·교체.)
+// node qa/shot-exam-figs-g2u8.mjs
+import { build } from "esbuild";
 import { chromium } from "playwright-core";
 import fs from "node:fs";
+import path from "node:path";
 
-const PORT = process.env.PORT || "5173";
+const result = await build({ entryPoints: ["src/content/exams/g2u8.ts"], bundle: true, write: false, format: "esm", platform: "node", logLevel: "silent" });
+const mod = await import(`data:text/javascript;base64,${Buffer.from(result.outputFiles[0].text).toString("base64")}`);
+const figs = mod.G2U8_EXAM.pool.filter((i) => i.figure);
+console.log(`figure 문항 ${figs.length}개 수집`);
+
 fs.mkdirSync("qa/shots", { recursive: true });
-const browser = await chromium.launch({ channel: "chrome", headless: true });
-const page = await browser.newPage({ viewport: { width: 420, height: 4600 }, deviceScaleFactor: 2 });
-await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
+fs.mkdirSync("tmp/g2u8v2-figs/exam/g2u8", { recursive: true });
+fs.mkdirSync("tmp/g2u8v2-figs/photos/star", { recursive: true });
+for (const f of fs.readdirSync("public/exam/g2u8")) fs.copyFileSync(`public/exam/g2u8/${f}`, `tmp/g2u8v2-figs/exam/g2u8/${f}`);
+for (const f of fs.readdirSync("public/photos/star")) fs.copyFileSync(`public/photos/star/${f}`, `tmp/g2u8v2-figs/photos/star/${f}`);
 
-await page.evaluate(async () => {
-  const ex = await import("/src/ui/examFigures.ts");
-  const dark = (title, svg) =>
-    `<div style="margin:10px;padding:10px;border-radius:12px;background:#0B1524;border:1px solid #223">
-      <div style="font:700 12px sans-serif;color:#9FB6CE;margin-bottom:6px">${title}</div>${svg}</div>`;
-  const light = (title, svg) =>
-    `<div style="margin:10px;padding:10px;border-radius:12px;background:#fff;border:1px solid #ddd">
-      <div style="font:700 12px sans-serif;color:#333;margin-bottom:6px">${title}</div>${svg}</div>`;
-  document.body.innerHTML = `<div style="background:#F2F4F6">
-    ${dark("starParallax3Fig 기본 0.4/0.2/0.1 (e04·e05 — (가) 가장 가까움·(다)=4배)", ex.starParallax3Fig())}
-    ${dark("starShiftPairFig 1.0→0.4 (e11·e12 — 이동 0.6″, 연주 시차 0.3″)", ex.starShiftPairFig({ g1: "1.0″", g2: "0.4″" }))}
-    ${dark("starBrightGridFig (e21 — 1·4·9칸, 3배 지점 1/9)", ex.starBrightGridFig())}
-    ${dark("starMagScatterFig A청1·B황3·C주황5·D백2 (e72 — 정답 C)", ex.starMagScatterFig({ pts: [
-      { label: "A", col: 0, mag: 1 }, { label: "B", col: 4, mag: 3 }, { label: "C", col: 5, mag: 5 }, { label: "D", col: 2, mag: 2 },
-    ] }))}
-    ${dark("colorTempTrioFig ㉠적·㉡백·㉢청 (e59 — 높은 순 ㉢㉡㉠, 정답 ④)", ex.colorTempTrioFig({ stars: [
-      { label: "㉠", name: "적색", hex: "#FF9A66" }, { label: "㉡", name: "백색", hex: "#F0F4FA" }, { label: "㉢", name: "청색", hex: "#9CC4FF" },
-    ] }))}
-    ${dark("starGalaxyQuizFig (e78 태양계=㉡ · e79 ㉠=중심부)", ex.starGalaxyQuizFig())}
-    ${dark("starClusterMapFig (e98 — ㉯=구상 성단 분포)", ex.starClusterMapFig())}
-    ${dark("starExpandArrowFig (e119 — C 화살표가 B보다 길다)", ex.starExpandArrowFig())}
-    ${light("svgTable 연주 시차 4별 (e13 — 최솟값 (라)=가장 멂)", ex.svgTable(["별", "연주 시차"], [["(가)", "0.8″"], ["(나)", "0.08″"], ["(다)", "0.4″"], ["(라)", "0.02″"]]))}
-    ${light("svgTable 등급 표A (e46 — 맨눈 최밝 (나) −0.5)", ex.svgTable(["별", "겉보기 등급", "절대 등급"], [["(가)", "2.0", "0.0"], ["(나)", "−0.5", "1.5"], ["(다)", "3.0", "−1.0"]]))}
-    ${light("svgTable 등급 표B (e47 — 실제 최밝 (다) −4.5)", ex.svgTable(["별", "겉보기 등급", "절대 등급"], [["(가)", "1.5", "3.5"], ["(나)", "0.0", "0.0"], ["(다)", "2.5", "−4.5"]]))}
-    ${light("svgTable 등급 표C (e53 — 10pc보다 가까움 = (다)(라))", ex.svgTable(["별", "겉보기 등급", "절대 등급"], [["(가)", "3.0", "1.0"], ["(나)", "0.0", "0.0"], ["(다)", "1.0", "4.0"], ["(라)", "0.0", "2.0"]]))}
-  </div>`;
-});
-await page.waitForTimeout(400);
-await page.screenshot({ path: "qa/shots/exam-g2u8-figs.png", fullPage: true });
-console.log("SAVED qa/shots/exam-g2u8-figs.png");
+const CHUNK = 12;
+const pages = [];
+for (let i = 0; i < figs.length; i += CHUNK) pages.push(figs.slice(i, i + CHUNK));
+const browser = await chromium.launch({ channel: "chrome", headless: true });
+const page = await browser.newPage({ viewport: { width: 1180, height: 900 }, deviceScaleFactor: 2 });
+for (let p = 0; p < pages.length; p++) {
+  const cells = pages[p]
+    .map(
+      (it) => `<div style="border:1px solid #ddd;border-radius:10px;padding:8px;background:#fff">
+      <div style="font:700 12px sans-serif;color:#333;margin-bottom:6px">${it.id} · ${it.lessonId} · ${it.type}${it.diff ? " · d" + it.diff : ""}</div>
+      <div style="max-width:352px;${it.figureDark ? "background:#0B1524;border-radius:12px;padding:8px" : ""}">${String(it.figure)
+        .replaceAll('src="/exam/g2u8/', 'src="./exam/g2u8/')
+        .replaceAll('src="/photos/star/', 'src="./photos/star/')
+        .replaceAll('href="/photos/star/', 'href="./photos/star/')}</div></div>`,
+    )
+    .join("");
+  const html = `<!doctype html><meta charset="utf-8"><body style="background:#F2F4F6;margin:0;padding:12px">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">${cells}</div></body>`;
+  const file = path.resolve(`tmp/g2u8v2-figs/page-${p + 1}.html`);
+  fs.writeFileSync(file, html);
+  await page.goto(`file:///${file.replace(/\\/g, "/")}`, { waitUntil: "networkidle" });
+  await page.screenshot({ path: `qa/shots/exam-g2u8v2-figs-${p + 1}.png`, fullPage: true });
+  console.log(`SAVED qa/shots/exam-g2u8v2-figs-${p + 1}.png (${pages[p].length}그림)`);
+}
 await browser.close();
