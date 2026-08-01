@@ -43,7 +43,7 @@ export function massVolScatterFig(): string {
 export function solCurves3Fig(): string {
   const gx = (t: number): number => 54 + (t / 85) * 268;
   const gy = (s: number): number => 170 - (s / 170) * 150;
-  return `<svg viewBox="0 0 344 206" ${NS} fill="none" role="img" aria-label="온도에 따른 용해도 곡선. 질산 나트륨과 질산 칼륨은 가파르게 오르고 염화 나트륨은 거의 평평해요">
+  return `<svg viewBox="0 0 344 206" ${NS} fill="none" role="img" aria-label="세 물질의 온도에 따른 용해도 곡선. 곡선마다 물질 이름이 붙어 있어요">
     <line x1="54" y1="12" x2="54" y2="170" stroke="#B0B8C1" stroke-width="1.6"/>
     <line x1="54" y1="170" x2="326" y2="170" stroke="#B0B8C1" stroke-width="1.6"/>
     ${[40, 80, 120, 160].map((s) => `<line x1="54" y1="${gy(s)}" x2="320" y2="${gy(s)}" stroke="#EDF0F4"/><text x="46" y="${gy(s) + 4}" text-anchor="end" font-size="10" fill="#8B95A1">${s}</text>`).join("")}
@@ -120,7 +120,7 @@ export function sodaTubesFig(): string {
 /** 물 vs 소금물 가열 곡선(그림 I-11) — 순물질은 일정, 혼합물은 계속 상승 */
 export function waterSaltBoilFig(): string {
   const gy = (c: number): number => 160 - ((c - 20) / 100) * 132;
-  return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="물과 소금물의 가열 곡선. 물은 100도에서 평평하고 소금물은 100도를 넘어 계속 오릅니다">
+  return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="물과 소금물의 가열 곡선. 곡선마다 이름이 붙어 있고 100도 눈금선이 그려져 있어요">
     <line x1="52" y1="12" x2="52" y2="160" stroke="#B0B8C1" stroke-width="1.6"/>
     <line x1="52" y1="160" x2="326" y2="160" stroke="#B0B8C1" stroke-width="1.6"/>
     <line x1="52" y1="${gy(100)}" x2="320" y2="${gy(100)}" stroke="#EDF0F4"/>
