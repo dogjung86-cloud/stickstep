@@ -37,14 +37,14 @@ export function gasHeatChoicesFig(): string {
   </svg>`;
 }
 
-/** WARM 끝 막은 주사기 물중탕 단독(고정형 · 라이트) · 김이 나는 따뜻한 물 + 피스톤이 밀려 나가는
- *  방향 화살표(결과는 문두 서술 · 까닭이 과제). */
+/** WARM 끝 막은 주사기 물중탕 단독(고정형 · 라이트) · 따뜻한 물 + 피스톤이 밀려 나가는
+ *  방향 화살표(결과는 문두 서술 · 까닭이 과제). 김 곡선은 사후 갤러리 검수(2026-08-01)로 제거:
+ *  피스톤 곁 갈색 호가 떨림 표시로 오독 · 따뜻함은 물 색과 라벨이 전달(WB 계보 공통 조치). */
 export function syringeWarmFig(): string {
-  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="끝을 막은 주사기를 김이 나는 따뜻한 물이 든 비커에 세워 담근 그림. 피스톤 옆에 위쪽으로 향한 화살표가 있다">
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="끝을 막은 주사기를 따뜻한 물이 든 비커에 세워 담근 그림. 피스톤 옆에 위쪽으로 향한 화살표가 있다">
     <ellipse cx="172" cy="176" rx="80" ry="6" fill="#2A3A5E" opacity=".11"/>
     <path d="M116 84 v74 q0 10 10 10 h92 q10 0 10 -10 v-74" fill="none" stroke="#8B95A1" stroke-width="2.6"/>
     <rect x="119" y="94" width="106" height="71" rx="7" fill="#FADCC8"/>
-    <path d="M138 78 q7 -12 0 -22 M160 76 q7 -12 0 -22 M182 78 q7 -12 0 -22" stroke="#D9A88C" stroke-width="2.2" fill="none" stroke-linecap="round"/>
     <rect x="158" y="52" width="22" height="98" rx="7" fill="#F7FAFE" stroke="#8B95A1" stroke-width="2.2"/>
     <rect x="162" y="62" width="14" height="8" rx="2.5" fill="#8B99AC"/>
     <rect x="166.5" y="34" width="5" height="30" fill="#8B99AC"/>
@@ -106,7 +106,7 @@ export function syringeTwoOpsFig(): string {
     <rect x="${x + 7.5}" y="${y - 22}" width="5" height="24" fill="#8B99AC"/>
     <rect x="${x + 1}" y="${y - 28}" width="18" height="7" rx="3" fill="#8B99AC"/>
     ${g6dot(x + 7, y + 32, 3.4)}${g6dot(x + 13, y + 46, 3.4)}${g6dot(x + 8, y + 62, 3.4)}${g6dot(x + 13, y + 74, 3.4)}`;
-  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="끝을 막은 같은 주사기 두 개. 가는 피스톤 위를 손이 아래로 누르고 있고, 나는 김이 나는 따뜻한 물이 든 비커에 세워져 있다">
+  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="끝을 막은 같은 주사기 두 개. 가는 피스톤 위를 손이 아래로 누르고 있고, 나는 따뜻한 물이 든 비커에 세워져 있다">
     <g>
       ${syr(86, 74)}
       <path d="M96 40 v-14" stroke="#F25757" stroke-width="3" stroke-linecap="round"/>
@@ -117,7 +117,6 @@ export function syringeTwoOpsFig(): string {
     <g>
       <path d="M196 96 v64 q0 10 10 10 h72 q10 0 10 -10 v-64" fill="none" stroke="#8B95A1" stroke-width="2.4"/>
       <rect x="199" y="106" width="86" height="60" rx="6" fill="#FADCC8"/>
-      <path d="M214 90 q6 -11 0 -20 M234 88 q6 -11 0 -20 M254 90 q6 -11 0 -20" stroke="#D9A88C" stroke-width="2" fill="none" stroke-linecap="round"/>
       ${syr(232, 66)}
       <text x="242" y="192" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(나)</text>
     </g>
@@ -125,14 +124,14 @@ export function syringeTwoOpsFig(): string {
 }
 
 /** WB2 두 물중탕 설계 대조(고정형 · 라이트) · (가) 기체 부분까지 물에 잠긴 주사기 · (나) 물이
- *  얕아 기체 부분이 물 밖에 나온 주사기(설계 결함 판독이 과제). 둘 다 따뜻한 물(김). */
+ *  얕아 기체 부분이 물 밖에 나온 주사기(설계 결함 판독이 과제). 둘 다 따뜻한 물(물 색·문두가
+ *  전달) · 김 곡선은 사후 갤러리 검수(2026-08-01)로 제거(피스톤 곁 갈색 호 오독 · WB 계보 공통). */
 export function waterBath2Fig(): string {
   const set = (x: number, label: string, waterH: number): string => {
     const top = 150 - waterH;
     return `<g>
       <path d="M${x} 78 v72 q0 9 9 9 h64 q9 0 9 -9 v-72" fill="none" stroke="#8B95A1" stroke-width="2.4"/>
       <rect x="${x + 3}" y="${top}" width="76" height="${waterH + 6}" rx="6" fill="#FADCC8"/>
-      <path d="M${x + 16} ${top - 12} q6 -10 0 -18 M${x + 38} ${top - 14} q6 -10 0 -18" stroke="#D9A88C" stroke-width="2" fill="none" stroke-linecap="round"/>
       <rect x="${x + 31}" y="58" width="20" height="88" rx="6" fill="#F7FAFE" stroke="#8B95A1" stroke-width="2"/>
       <rect x="${x + 34.5}" y="66" width="13" height="7" rx="2.5" fill="#8B99AC"/>
       <rect x="${x + 38.5}" y="40" width="5" height="24" fill="#8B99AC"/>
@@ -538,7 +537,7 @@ export const POOL_U6V2_REST_D: ExamItem[] = [
     lessonId: "u6l4",
     type: "mcq",
     diff: 1,
-    prompt: "그림 (가)는 끝 막은 주사기의 피스톤을 손으로 누르는 것, (나)는 같은 주사기를 따뜻한 물에 담근 거예요. 두 경우 모두 뒤에 기체의 변화가 생기는데, 기체 입자의 <b>움직임 빠르기</b>가 변하는 쪽과 그 까닭을 옳게 짝 지은 것은?",
+    prompt: "그림 (가)는 끝 막은 주사기의 피스톤을 손으로 천천히 누르는 것, (나)는 같은 주사기를 따뜻한 물에 담근 거예요. 두 경우 모두 뒤에 기체의 변화가 생기는데, 기체 입자의 <b>움직임 빠르기</b>가 변하는 쪽과 그 까닭을 옳게 짝 지은 것은?",
     figure: syringeTwoOpsFig(),
     options: [
       "(나) · 입자의 빠르기는 온도가 변할 때만 달라지기 때문",

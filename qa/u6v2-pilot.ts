@@ -250,13 +250,15 @@ export function gasTvQualFig(o: { marks?: { f: number; label: string }[]; extrap
   </svg>`;
 }
 
-/** WB 물중탕 대조 실험(고정형 · 라이트) · 끝 막은 같은 주사기를 (가) 김이 나는 뜨거운 물 ·
- *  (나) 얼음물에 세워 담근 시작 상태. 피스톤 높이는 양쪽 동일(결과 미제시 중립 · 예측 문항용). */
+/** WB 물중탕 대조 실험(고정형 · 라이트) · 끝 막은 같은 주사기를 (가) 뜨거운 물 · (나) 얼음물에
+ *  세워 담근 시작 상태. 피스톤 높이는 양쪽 동일(결과 미제시 중립 · 예측 문항용).
+ *  (가)의 김 곡선은 사후 갤러리 검수(2026-08-01)로 제거: 피스톤 곁 갈색 호가 떨림 표시로
+ *  오독된다 · 뜨거움은 물 색과 라벨이 이미 전달(같은 까닭으로 SYW·SYDUO·WB2도 김 제거). */
 export function waterBathFig(): string {
   const set = (x: number, label: string, hot: boolean): string => {
     const water = hot ? "#FADCC8" : "#D5E9FB";
     const deco = hot
-      ? `<path d="M${x + 26} 66 q6 -10 0 -18 M${x + 44} 64 q6 -10 0 -18 M${x + 62} 66 q6 -10 0 -18" stroke="#D9A88C" stroke-width="2" fill="none" stroke-linecap="round"/>`
+      ? ""
       : `<rect x="${x + 22}" y="92" width="15" height="12" rx="3" fill="#FDFEFF" stroke="#9DB8D4" stroke-width="1.6" transform="rotate(-12 ${x + 29} 98)"/>
          <rect x="${x + 58}" y="100" width="13" height="11" rx="3" fill="#FDFEFF" stroke="#9DB8D4" stroke-width="1.6" transform="rotate(14 ${x + 64} 105)"/>`;
     return `<g>

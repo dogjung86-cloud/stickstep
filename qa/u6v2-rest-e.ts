@@ -10,7 +10,6 @@
 import type { ExamItem } from "../src/content/exams/types";
 import { svgTable, dbox } from "../src/ui/examFigures";
 import { twoBottlesFig, g6part, g6dot } from "./u6v2-pilot";
-import { pressHand } from "./u6v2-rest-b";
 
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 const ximg = (file: string, alt: string): string =>
@@ -20,19 +19,17 @@ const NS = `xmlns="http://www.w3.org/2000/svg"`;
 
 /* ══════════ 신작 헬퍼(확대 데뷔 · 이식 때 examFigures "u6 v2" 섹션 승격) ══════════ */
 
-/** COIN 병 입구 동전(고정형 · 라이트) · 차가운 주스 병 입구에 동전이 얹혀 있고 두 손이 병을 감싼
- *  장면. 들썩임은 문두가 서술(그림은 동전이 살짝 기운 순간 · 파운드리 재질 문법). */
+/** COIN 병 입구 동전(고정형 · 라이트) · 차가운 주스 병 입구에 동전이 얹혀 있는 장면(동전이 살짝
+ *  기운 순간 · 파운드리 재질 문법). 들썩임·감싸 쥐기는 문두가 서술 · 손은 그리지 않는다(사후 검수
+ *  3차 확정: 미는 손도 감싸 쥔 손 이식도 어색해 손 무그림 + 문두 "그림처럼" 삭제로 정리). */
 export function coinBottleFig(): string {
-  return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="차가운 유리병의 입구 위에 동전이 얹혀 있고, 두 손이 병의 몸통을 감싸 쥔 그림. 동전 한쪽이 살짝 들려 있다">
+  return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="차가운 유리병의 입구 위에 동전이 얹혀 있는 그림. 동전 한쪽이 살짝 들려 있다">
     <defs>
       <linearGradient id="u6reBot" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#EDF6EE"/><stop offset=".5" stop-color="#CFE8D3"/><stop offset="1" stop-color="#A8D0AF"/>
       </linearGradient>
       <linearGradient id="u6reCoin" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#F5D98A"/><stop offset="1" stop-color="#D2A64B"/>
-      </linearGradient>
-      <linearGradient id="u6rbHand" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#FBD9C0"/><stop offset="1" stop-color="#EFB894"/>
       </linearGradient>
     </defs>
     <ellipse cx="172" cy="180" rx="56" ry="6" fill="#2A3A5E" opacity=".11"/>
@@ -44,8 +41,6 @@ export function coinBottleFig(): string {
       <ellipse cx="172" cy="29.5" rx="23" ry="6.5" fill="url(#u6reCoin)" stroke="#9A7626" stroke-width="1.6"/>
       <path d="M155 28 q9 -3 22 -3" stroke="#FBEBBB" stroke-width="1.6" opacity=".9" fill="none"/>
     </g>
-    ${pressHand(138, 112, 1)}
-    ${pressHand(206, 112, -1)}
   </svg>`;
 }
 
@@ -114,16 +109,14 @@ export function winterKickFig(): string {
   </svg>`;
 }
 
-/** FOUNTAIN 분수 장난감 단면(고정형 · 라이트) · 물 위 공기층 + 물속까지 내려간 관 + 감싼 손.
+/** FOUNTAIN 분수 장난감 단면(고정형 · 라이트) · 물 위 공기층 + 물속까지 내려간 관 + 관 위 물방울.
+ *  감싸 쥐기는 문두가 서술 · 손은 그리지 않는다(사후 검수 3차 확정: 손 무그림으로 정리).
  *  관·공기층 구조 판독이 풀이의 필수 재료(구조를 모르면 못 푸는 의존 설계). */
 export function fountainToyFig(): string {
-  return `<svg viewBox="0 0 344 206" ${NS} fill="none" role="img" aria-label="물이 절반쯤 담긴 투명한 병의 단면. 물 위에는 공기층이 있고, 병 마개를 뚫고 물속 바닥 근처까지 내려간 가는 관이 있으며, 관 끝은 병 위로 나와 있다. 두 손이 병을 감싸고 관 위로 물방울이 튀어 오른다">
+  return `<svg viewBox="0 0 344 206" ${NS} fill="none" role="img" aria-label="물이 절반쯤 담긴 투명한 병의 단면. 물 위에는 공기층이 있고, 병 마개를 뚫고 물속 바닥 근처까지 내려간 가는 관이 있으며, 관 끝은 병 위로 나와 있다. 관 위로 물방울이 튀어 오른다">
     <defs>
       <linearGradient id="u6reWat" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#BBDCF8"/><stop offset="1" stop-color="#8FC0EC"/>
-      </linearGradient>
-      <linearGradient id="u6rbHand" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#FBD9C0"/><stop offset="1" stop-color="#EFB894"/>
       </linearGradient>
     </defs>
     <ellipse cx="172" cy="190" rx="64" ry="6" fill="#2A3A5E" opacity=".11"/>
@@ -136,8 +129,6 @@ export function fountainToyFig(): string {
     <circle cx="172" cy="16" r="3" fill="#5E9ED6"/>
     <circle cx="164" cy="8" r="2.4" fill="#5E9ED6"/>
     <circle cx="181" cy="10" r="2.4" fill="#5E9ED6"/>
-    ${pressHand(126, 98, 1)}
-    ${pressHand(218, 98, -1)}
     <text x="284" y="100" text-anchor="middle" font-size="11" fill="#66707E">공기층</text>
     <path d="M270 96 q-30 -6 -66 -6" stroke="#B9C2CE" stroke-width="1.4" fill="none"/>
   </svg>`;
@@ -222,7 +213,7 @@ export const POOL_U6V2_REST_E: ExamItem[] = [
     lessonId: "u6l5",
     type: "mcq",
     diff: 1,
-    prompt: "냉장고에서 막 꺼낸 차가운 주스 병의 입구에 동전을 얹고, 그림처럼 두 손으로 병을 감싸 쥐었더니 잠시 뒤 동전이 달칵달칵 들썩였어요. 옳은 설명을 <b>보기</b>에서 모두 고른 것은?",
+    prompt: "냉장고에서 막 꺼낸 차가운 주스 병의 입구에 동전을 얹고, 손으로 병을 감싸 쥐었더니 잠시 뒤 동전이 달칵달칵 들썩였어요. 옳은 설명을 <b>보기</b>에서 모두 고른 것은?",
     figure: coinBottleFig(),
     bogi: [
       "병 속 공기가 데워져 부피가 늘어나면서 동전을 밀어 올린 것이다.",
@@ -482,7 +473,7 @@ export const POOL_U6V2_REST_E: ExamItem[] = [
     lessonId: "u6l5",
     type: "mcq",
     diff: 1,
-    prompt: "그림은 물이 절반쯤 든 병에, 물속까지 내려가는 가는 관을 꽂아 만든 분수 장난감이에요. 병을 두 손으로 감싸 쥐면 잠시 뒤 관 끝에서 물이 뿜어져 나와요. 그 까닭으로 옳은 것은?",
+    prompt: "그림은 물이 절반쯤 든 병에, 물속까지 내려가는 가는 관을 꽂아 만든 분수 장난감이에요. 병을 손으로 감싸 쥐면 잠시 뒤 관 끝에서 물이 뿜어져 나와요. 그 까닭으로 옳은 것은?",
     figure: fountainToyFig(),
     options: [
       "손의 열로 물 위의 공기층이 데워져 부풀면서, 물을 눌러 관 위로 밀어 올리기 때문",

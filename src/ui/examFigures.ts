@@ -7468,13 +7468,15 @@ export function gasTvQualFig(o: { marks?: { f: number; label: string }[]; extrap
   </svg>`;
 }
 
-/** WB 물중탕 대조 실험(고정형 · 라이트) · 끝 막은 같은 주사기를 (가) 김이 나는 뜨거운 물 ·
- *  (나) 얼음물에 세워 담근 시작 상태. 피스톤 높이는 양쪽 동일(결과 미제시 중립 · 예측 문항용). */
+/** WB 물중탕 대조 실험(고정형 · 라이트) · 끝 막은 같은 주사기를 (가) 뜨거운 물 · (나) 얼음물에
+ *  세워 담근 시작 상태. 피스톤 높이는 양쪽 동일(결과 미제시 중립 · 예측 문항용).
+ *  (가)의 김 곡선은 사후 갤러리 검수(2026-08-01)로 제거: 피스톤 곁 갈색 호가 떨림 표시로
+ *  오독된다 · 뜨거움은 물 색과 라벨이 이미 전달(같은 까닭으로 SYW·SYDUO·WB2도 김 제거). */
 export function waterBathFig(): string {
   const set = (x: number, label: string, hot: boolean): string => {
     const water = hot ? "#FADCC8" : "#D5E9FB";
     const deco = hot
-      ? `<path d="M${x + 26} 66 q6 -10 0 -18 M${x + 44} 64 q6 -10 0 -18 M${x + 62} 66 q6 -10 0 -18" stroke="#D9A88C" stroke-width="2" fill="none" stroke-linecap="round"/>`
+      ? ""
       : `<rect x="${x + 22}" y="92" width="15" height="12" rx="3" fill="#FDFEFF" stroke="#9DB8D4" stroke-width="1.6" transform="rotate(-12 ${x + 29} 98)"/>
          <rect x="${x + 58}" y="100" width="13" height="11" rx="3" fill="#FDFEFF" stroke="#9DB8D4" stroke-width="1.6" transform="rotate(14 ${x + 64} 105)"/>`;
     return `<g>
@@ -7704,14 +7706,10 @@ export function rescueMatFig(): string {
   </svg>`;
 }
 
-/** SEAT 소파와 의자(고정형 · 라이트) · (가) 푹신한 소파: 엉덩이가 방석에 깊이 파묻혀 닿는 면이
- *  넓다 · (나) 딱딱한 나무 의자: 좌판이 평평해 닿는 면이 좁다. 파묻힘 대비가 판독 재료. */
+/** SEAT 소파와 의자(고정형 · 라이트) · (가) 푹신한 소파 · (나) 딱딱한 나무 의자. 앉은 스틱맨은
+ *  사후 갤러리 검수(2026-08-01)로 제거(자세가 어색해 오히려 방해) · 파묻힘 대비는 문두·해설이 서술. */
 export function sofaChairFig(): string {
-  const man = (x: number, y: number): string => `<g stroke="#333D4B" stroke-width="2.6" stroke-linecap="round" fill="none">
-    <circle cx="${x}" cy="${y}" r="7.5" fill="#fff"/>
-    <path d="M${x} ${y + 7.5} q-2 12 -3 18 M${x - 3} ${y + 25} h20 M${x + 17} ${y + 25} l3 18 M${x - 3} ${y + 25} l-2 -12"/>
-  </g>`;
-  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="가는 푹신한 소파에 앉아 엉덩이와 허벅지가 방석에 깊이 파묻힌 사람, 나는 딱딱한 나무 의자에 앉아 엉덩이만 좌판에 닿은 사람 그림">
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="가는 방석이 두툼한 푹신한 소파, 나는 등받이와 좌판이 평평한 딱딱한 나무 의자 그림">
     <defs>
       <linearGradient id="u6raSofa" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#DFAF86"/><stop offset=".55" stop-color="#C08A5D"/><stop offset="1" stop-color="#9A6A41"/>
@@ -7726,11 +7724,7 @@ export function sofaChairFig(): string {
       <path d="M42 78 q16 -8 36 -9" stroke="#F2D3B4" stroke-width="2.6" opacity=".75" fill="none"/>
       <rect x="34" y="96" width="18" height="52" rx="9" fill="#B27E51" stroke="#6E4527" stroke-width="1.6"/>
       <rect x="138" y="96" width="18" height="52" rx="9" fill="#B27E51" stroke="#6E4527" stroke-width="1.6"/>
-      <path d="M52 114 h14 q3 16 16 19 h26 q13 -2 16 -19 h14" fill="none" stroke="#6E4527" stroke-width="2.2" opacity=".85"/>
-      <g stroke="#333D4B" stroke-width="2.6" stroke-linecap="round" fill="none">
-        <circle cx="86" cy="56" r="7.5" fill="#fff"/>
-        <path d="M87 63.5 q4 14 3 26 M90 89 q13 2 22 12 M90 89 l-14 8 M89 76 l-15 10"/>
-      </g>
+      <path d="M56 120 h78" stroke="#6E4527" stroke-width="2" opacity=".55" stroke-linecap="round"/>
     </g>
     <ellipse cx="258" cy="164" rx="52" ry="6" fill="#2A3A5E" opacity=".11"/>
     <g>
@@ -7740,7 +7734,6 @@ export function sofaChairFig(): string {
       <path d="M222 106 h50" stroke="#EBCB98" stroke-width="2" opacity=".7"/>
       <rect x="222" y="117" width="9" height="45" fill="url(#u6raWood)" stroke="#61451E" stroke-width="1.6"/>
       <rect x="284" y="117" width="9" height="45" fill="url(#u6raWood)" stroke="#61451E" stroke-width="1.6"/>
-      ${man(252, 62)}
     </g>
     <text x="95" y="182" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(가)</text>
     <text x="258" y="182" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(나)</text>
@@ -7862,16 +7855,26 @@ export function gasPistonTrioFig(cuts: { label: string; w: number; vol: number; 
   return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="추를 올린 피스톤 실린더 ${cuts.length}개. 추의 개수와 피스톤 높이가 서로 다르고 안에 기체 입자가 그려져 있다">${out}</svg>`;
 }
 
-/** 미는 손 공용 파츠(옆모습) · 손가락 네 개의 끝이 tipX에서 대상 면에 닿는다 · dir -1은 좌우 반전.
- *  주먹·엄지척으로 오독되던 초판을 손가락 스트립 명시형으로 교체(갤러리 눈검수 반영).
- *  사용하는 그림의 defs에 u6rbHand 그라데이션 정의 필요(rest-e COIN·FOUNTAIN도 공용). */
+/** 미는 손 공용 파츠 · 오픈 팜 손바닥 벡터(무료 아이콘 이식 · 손가락 4개 위로 편 원본을 눕혀 쓴다).
+ *  가운뎃손가락 끝이 tipX에서 대상 면에 닿고 손목은 왼쪽 · 엄지는 위 · dir -1은 좌우 반전.
+ *  자작 손(팜 블록+스트립 4개+아래 엄지 타원)은 엄지가 맨 아래로 가 어색하다는 사후 갤러리 검수
+ *  (2026-08-01)로 교체 · u6rbHand 그라데이션 의존도 함께 폐기(rest-e COIN·FOUNTAIN 공용). */
+const HAND_BASE =
+  "M43.865 93.979a43.548 43.548 0 0123.898 7.127V89.281c0-12.063 4.935-23.029 12.876-30.961 7.932-7.941 18.898-12.866 30.961-12.866a43.513 43.513 0 0125.052 7.903v-9.529c0-12.064 4.926-23.03 12.866-30.962C157.459 4.925 168.415 0 180.478 0c12.064 0 23.03 4.925 30.961 12.866 7.941 7.942 12.876 18.898 12.876 30.962v9.671c7.015-4.774 15.485-7.582 24.579-7.582 12.063 0 23.02 4.925 30.961 12.866 7.941 7.941 12.866 18.908 12.866 30.961v208.3a72.82 72.82 0 01.832 11.004V321.3l1.087-1.021c7.535-7.081 14.918-14.464 17.688-17.244 18.69-18.717 38.816-22.687 54.774-17.62a41.811 41.811 0 0118.368 11.778c4.897 5.388 8.461 12.063 10.239 19.541 4.225 17.707-1.494 40.008-23.493 59.709l-.359.359.01.01-.076.066-96.379 97.315.018.029c-.226.227-.463.444-.709.652-14.076 13.537-27.897 22.82-42.89 28.786-15.239 6.069-31.329 8.602-49.792 8.602h-62.356c-33.202 0-63.056-13.575-84.666-35.44C13.33 454.87 0 424.562 0 391.247v-82.199c0-2.874.161-5.71.473-8.509a10.004 10.004 0 01-.445-3.063v-159.67c0-12.063 4.926-23.02 12.867-30.961 7.941-7.942 18.907-12.866 30.97-12.866z";
+const HAND_SKIN =
+  "M252.362 337.64c7.675 1.654 15.79 4.087 24.294 7.345a3.41 3.41 0 011.772 1.196c2.318 2.98 5.89 3.173 8.979 1.32 2.85-1.618 5.703-3.933 8.22-6.033 3.182-2.654 6.742-5.876 10.284-9.206 6.134-5.763 12.12-11.688 18.071-17.639 6.379-6.374 12.782-10.478 18.849-12.7 10.864-3.981 22.372-2.395 30.291 6.172 9.032 9.273 8.887 23.928 4.012 35.141-2.704 6.225-7.15 12.657-13.666 18.936l-4.954 4.751-95.217 96.139c-24.394 23.484-47.433 32.722-81.258 32.722h-62.356c-57.687 0-103.204-47.228-103.204-104.528v-82.199c0-23.973 13.827-44.01 36.709-52.131 13.327-4.025 18.939-2.783 30.66-2.783h136.194c25.593 0 48.04 17.33 54.912 41.554 2.95 10.416 2.111 20.011 2.111 30.717-.047 2.32-2.246 3.998-4.502 3.265-7.665-2.515-15.051-4.399-22.122-5.673-38.152-6.872-77.318 2.909-93.508 41.478-4.231 10.072-6.265 20.958-6.744 31.841l12.999.155c.488-10.17 2.241-17.467 5.772-26.953 14.428-34.34 50.429-39.978 83.402-32.887zM22.618 260.367a3.441 3.441 0 01-6.101-2.179V137.815c0-15.015 12.326-27.348 27.348-27.348 15.017 0 27.338 12.335 27.338 27.348v97.873a3.445 3.445 0 01-3.238 3.426c-8.59.517-16.702 2.605-24.081 5.977a68.096 68.096 0 00-17.123 11.229 71.915 71.915 0 00-4.143 4.047zm112.89-21.371H87.691a3.441 3.441 0 01-3.44-3.44V89.29c0-15 12.348-27.348 27.349-27.348 15.092 0 27.348 12.41 27.348 27.348v146.266a3.441 3.441 0 01-3.44 3.44zm68.879 0H156.57a3.441 3.441 0 01-3.44-3.44V43.837c0-15.092 12.41-27.349 27.348-27.349 15.092 0 27.349 12.411 27.349 27.349v191.719a3.441 3.441 0 01-3.44 3.44zm44.534 6.246a69.284 69.284 0 00-23.964-6.076 3.442 3.442 0 01-3.41-3.44V89.753c0-15.098 12.406-27.338 27.347-27.338 15.008 0 27.348 12.323 27.348 27.338V257.99a3.472 3.472 0 01-1.048 2.459 3.432 3.432 0 01-4.851-.068l-.832-.85a70.652 70.652 0 00-20.59-14.289z";
+const HAND_HI =
+  "M252.362 337.64c7.675 1.654 15.79 4.087 24.294 7.345a3.41 3.41 0 011.772 1.196c2.318 2.98 5.89 3.173 8.979 1.32 2.85-1.618 5.703-3.933 8.22-6.033 3.182-2.654 6.742-5.876 10.284-9.206 6.134-5.763 12.12-11.688 18.071-17.639 6.379-6.374 12.782-10.478 18.849-12.7 10.864-3.981 22.372-2.395 30.291 6.172 9.032 9.273 8.887 23.928 4.012 35.141-2.704 6.225-7.15 12.657-13.666 18.936l-4.954 4.751-95.217 96.139c-24.394 23.484-47.433 32.722-81.258 32.722h-52.976c-57.686 0-103.203-47.228-103.203-104.528v-82.199c0-23.973 13.827-34.63 36.708-42.751 13.327-4.024 18.94-2.783 30.66-2.783h126.814c25.593 0 48.044 17.33 54.912 41.554 2.952 10.415 2.111 10.631 2.111 21.337-.047 2.32-2.246 3.998-4.502 3.265-7.665-2.515-15.051-4.399-22.122-5.673-38.152-6.872-77.318 2.909-93.508 41.478-4.231 10.072-6.265 20.958-6.744 31.841l12.999.155c.488-10.17 2.241-17.467 5.772-26.953 14.428-34.34 50.429-39.978 83.402-32.887zm5.94-92.398a69.29 69.29 0 00-23.965-6.076 3.443 3.443 0 01-3.41-3.44V99.134c0-15.099 12.407-27.339 27.347-27.339 15.008 0 17.968 12.323 17.968 27.339V257.99a3.472 3.472 0 01-1.048 2.459 3.432 3.432 0 01-4.851-.068l-.832-.85c-5.927-5.915-3.514-10.783-11.209-14.289zm-226.304 5.745a3.44 3.44 0 01-6.101-2.18V147.195c0-15.014 2.946-27.348 17.968-27.348 15.017 0 27.338 12.335 27.338 27.348v88.493c-.033 8.356-15.546-9.59-39.205 15.299zm103.51-11.991H97.072a3.441 3.441 0 01-3.44-3.44V98.671c0-15.001 2.967-27.349 17.968-27.349 15.092 0 27.348 12.411 27.348 27.349v136.885a3.441 3.441 0 01-3.44 3.44zm68.879 0h-38.436a3.441 3.441 0 01-3.44-3.44V53.217c0-15.092 3.029-27.348 17.967-27.348 15.092 0 27.349 12.41 27.349 27.348v182.339a3.441 3.441 0 01-3.44 3.44z";
 export const pressHand = (tipX: number, cy: number, dir: 1 | -1): string => {
-  const body = `
-    <rect x="${tipX - 80}" y="${cy - 30}" width="44" height="60" rx="15" fill="url(#u6rbHand)" stroke="#C98F66" stroke-width="1.8"/>
-    ${[0, 1, 2, 3].map((i) => `<rect x="${tipX - 48}" y="${cy - 26 + i * 13.4}" width="48" height="10.6" rx="5.3" fill="url(#u6rbHand)" stroke="#C98F66" stroke-width="1.6"/>`).join("")}
-    <ellipse cx="${tipX - 42}" cy="${cy + 32}" rx="17" ry="8.5" fill="#F7C9A8" stroke="#C98F66" stroke-width="1.6" transform="rotate(-24 ${tipX - 42} ${cy + 32})"/>
-    <path d="M${tipX - 74} ${cy - 22} q6 -5 14 -5" stroke="#FDEDE0" stroke-width="2.2" opacity=".85" fill="none"/>`;
-  return dir === 1 ? `<g>${body}</g>` : `<g transform="translate(${2 * tipX},0) scale(-1,1)">${body}</g>`;
+  // 원본 좌표계 397×512(손끝이 위) · rotate(90) 선적용 후 scale(s,-s)로 눕힌다:
+  // (x,y) → (tipX - s·y, cy + 198.5s - s·x) = 손끝(y=0)이 tipX · 엄지(x=397)가 위 · 세로 중앙 cy.
+  const s = 0.16;
+  const body = `<g transform="translate(${tipX},${Math.round((cy + 198.5 * s) * 10) / 10}) scale(${s},${-s}) rotate(90)">
+    <path d="${HAND_BASE}" fill="#000000" fill-rule="nonzero"/>
+    <path d="${HAND_SKIN}" fill="#FDD0BF" fill-rule="nonzero"/>
+    <path d="${HAND_HI}" fill="#FEDECF" fill-rule="nonzero"/>
+  </g>`;
+  return dir === 1 ? body : `<g transform="translate(${2 * tipX},0) scale(-1,1)">${body}</g>`;
 };
 
 /** HANDS 풍선 누르기 장면(고정형 · 라이트) · 두 손의 손가락이 풍선 옆면에 닿아 지그시 누르는 중 ·
@@ -7882,9 +7885,6 @@ export function balloonPressFig(): string {
       <radialGradient id="u6rbBal" cx=".38" cy=".3" r="1">
         <stop offset="0" stop-color="#FFD9CE"/><stop offset=".55" stop-color="#F9A08C"/><stop offset="1" stop-color="#E06A55"/>
       </radialGradient>
-      <linearGradient id="u6rbHand" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#FBD9C0"/><stop offset="1" stop-color="#EFB894"/>
-      </linearGradient>
     </defs>
     <ellipse cx="172" cy="168" rx="62" ry="6" fill="#2A3A5E" opacity=".1"/>
     <path d="M172 30 C202 30 220 50 222 76 C223 84 218 92 218 100 C218 108 223 116 221 124 C216 144 198 154 172 154 C146 154 128 144 123 124 C121 116 126 108 126 100 C126 92 121 84 122 76 C124 50 142 30 172 30 Z" fill="url(#u6rbBal)" stroke="#B84A38" stroke-width="2.2"/>
@@ -7896,32 +7896,26 @@ export function balloonPressFig(): string {
 }
 
 /** AIRSHOE 운동화 에어 주머니(고정형 · 라이트) · 착지 순간 옆모습 + 뒤축 공기층 확대 인셋.
+ *  운동화 본체는 무료 벡터(스니커즈) 이식(뒤축 왼쪽 · 앞코 오른쪽으로 눕혀 좌표 재계산) ·
+ *  자작 파랑 실루엣이 신발로 안 읽힌다는 사후 갤러리 검수(2026-08-01)로 교체.
  *  눌린 정도는 살짝만(변화 판정이 과제 · 입자 수 판독 과제 아님). */
 export function airShoeFig(): string {
   return `<svg viewBox="0 0 344 186" ${NS} fill="none" role="img" aria-label="바닥에 막 닿은 운동화의 옆모습. 뒤축 밑창 속 공기층이 동그란 확대 그림으로 함께 그려져 있고 그 안에 기체 입자들이 있다">
-    <defs>
-      <linearGradient id="u6rbShoe" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#9FC3EC"/><stop offset=".55" stop-color="#6E9FD6"/><stop offset="1" stop-color="#4A7CB4"/>
-      </linearGradient>
-      <linearGradient id="u6rbSole" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#FDFEFF"/><stop offset="1" stop-color="#D2DCE8"/>
-      </linearGradient>
-    </defs>
     <path d="M8 152 h328" stroke="#B0B8C1" stroke-width="2.4"/>
-    <ellipse cx="120" cy="152" rx="86" ry="5.5" fill="#2A3A5E" opacity=".11"/>
-    <path d="M42 118 q2 -34 30 -44 q20 -7 34 -22 q6 -6 14 -4 q34 9 62 34 q14 12 16 24 l2 12 z" fill="url(#u6rbShoe)" stroke="#2F5680" stroke-width="2.2"/>
-    <path d="M56 84 q10 -12 26 -16" stroke="#D8E8FA" stroke-width="2.6" opacity=".85" fill="none"/>
-    <path d="M100 54 q12 -9 24 -5 q4 2 3 7 q-1 5 -7 5 q-10 -1 -18 3 q-5 -3 -2 -10 z" fill="#24425F" opacity=".85"/>
-    <path d="M128 62 q16 10 34 14 M138 54 q14 9 30 13 M150 47 q12 8 26 11" stroke="#EAF2FB" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-    <path d="M128 62 q16 10 34 14 M138 54 q14 9 30 13 M150 47 q12 8 26 11" stroke="#2F5680" stroke-width="1" fill="none" opacity=".4"/>
-    <path d="M38 118 h164 q8 0 8 9 v10 q0 9 -8 9 h-166 q-9 0 -8 -10 q1 -12 10 -18 z" fill="url(#u6rbSole)" stroke="#7A8798" stroke-width="2"/>
-    <rect x="46" y="124" width="44" height="15" rx="7.5" fill="#EAF2FB" stroke="#8B99AC" stroke-width="1.6"/>
-    <circle cx="68" cy="131" r="30" fill="none" stroke="#5E86B4" stroke-width="1.6" stroke-dasharray="4 4"/>
-    <path d="M96 118 q56 -46 130 -50" stroke="#5E86B4" stroke-width="1.6" fill="none" stroke-dasharray="4 4"/>
-    <circle cx="256" cy="62" r="46" fill="#F7FAFE" stroke="#5E86B4" stroke-width="2.2"/>
-    <path d="M218 46 q-2 18 6 32" stroke="#D8E8FA" stroke-width="2.4" fill="none" opacity=".9"/>
-    ${g6part(240, 48, 0.7, 1, 4.4)}${g6part(272, 42, 2.4, 1, 4.4)}${g6part(250, 74, 4.1, 1, 4.4)}${g6part(276, 68, 5.5, 1, 4.4)}
-    <text x="256" y="122" text-anchor="middle" font-size="11" fill="#4E5968">밑창 공기층 확대</text>
+    <ellipse cx="131" cy="152" rx="92" ry="5.5" fill="#2A3A5E" opacity=".11"/>
+    <path d="M52 36 q17 -9 34 -11 M62 50 q14 -8 29 -9" stroke="#C2CDDA" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <path d="M45.1 77.6C71.8 72.2 94.1 71.9 111.8 77L143.8 123.1L81.6 126.3L45.1 77.6Z" fill="#000000" fill-rule="evenodd"/>
+    <path d="M213.9 108.1L203.1 123.7L137.6 134.5L128.6 109.3C126.1 102.4 122 97.1 115.9 93.1C106.8 87.1 102.7 76.2 105.3 65.8C105.8 63.9 107 62.5 108.8 61.7C110.6 61 112.5 61.1 114.2 62L141.7 77.3C152.1 83.1 161.8 86.6 173.5 88.8L198.5 93.5C204.4 94.6 209 98.1 211.6 103.4L213.9 108.1ZM129.8 122L126.6 111.6C124.6 105.3 121.3 100.5 116.2 96.3L102 85C81.1 88.7 62.5 84.9 45.1 77.6L43.4 81.5C38.7 92.1 37.9 102.7 41.1 113.9L44 124.2L129.8 122L129.8 122Z" fill="#0d0b0c" fill-rule="evenodd"/>
+    <path d="M213.9 108.1L203.1 123.7L137.6 134.5L128.6 109.3C128.1 108 127.6 106.8 127 105.6C141.2 109.7 153.8 116.7 169.6 117.8C184.7 118.8 199.2 111.4 213.9 108.1ZM129.8 122L126.6 111.6C125.8 109.1 124.8 106.8 123.5 104.7C119.8 103.7 116 103.1 112 102.8C100.2 102 86.1 108.7 74.6 111.1C64.7 113.2 55.2 110.4 46 108C43.1 102.3 42 94.9 41.3 87C38.5 95.8 38.5 104.6 41.1 113.9L44 124.2L129.8 122L129.8 122Z" fill="#000000" fill-rule="evenodd"/>
+    <path d="M223.5 110.7C224.4 113.4 224.5 116.2 223.8 119.2C222.6 123.9 219.7 127.4 215.3 129.4L196.6 137.8C174.8 147.7 152.5 148.9 130.2 141.7C119.4 138.1 109.1 138.2 98.3 141.7L94.2 143.1C83.5 146.6 73.9 147.8 62.7 147.2L48.9 146.4C43.3 146 38.8 141.5 38.5 135.8L38 124.7C37.9 122.9 38.6 121.3 39.9 120C41.3 118.8 43 118.3 44.8 118.6L57.4 120.7C67.5 122.3 76.5 121.6 86.2 118.5L88.9 117.6C106.3 111.9 123 112.4 140.1 119.1C155.9 125.3 171.8 125.2 187.6 118.8L216 107.3C217.5 106.7 219 106.7 220.5 107.4C222 108 223 109.2 223.5 110.7Z" fill="#ebe1e3" fill-rule="evenodd"/>
+    <path d="M42.4 118.7C43.1 118.5 43.9 118.5 44.8 118.6L57.4 120.7C67.5 122.3 76.5 121.6 86.2 118.5L88.9 117.6C106.3 111.9 123 112.4 140.1 119.1C155.9 125.3 171.8 125.2 187.6 118.8L213.9 108.1L213.9 108.1L192.2 122C171.9 134.8 150.5 129.3 128.1 122C117.3 118.5 107.1 118.5 96.3 122L92.1 123.4C81.5 126.9 69.1 129.1 58.6 125L43.9 119.4C43.4 119.1 42.9 118.9 42.4 118.7Z" fill="#d8d3d3" fill-rule="evenodd"/>
+    <rect x="48" y="130" width="42" height="12" rx="6" fill="#EAF2FB" stroke="#8B99AC" stroke-width="1.5" opacity=".94"/>
+    <circle cx="69" cy="136" r="27" fill="none" stroke="#5E86B4" stroke-width="1.6" stroke-dasharray="4 4"/>
+    <path d="M96 128 q58 -50 118 -54" stroke="#5E86B4" stroke-width="1.6" fill="none" stroke-dasharray="4 4"/>
+    <circle cx="262" cy="58" r="46" fill="#F7FAFE" stroke="#5E86B4" stroke-width="2.2"/>
+    <path d="M224 42 q-2 18 6 32" stroke="#D8E8FA" stroke-width="2.4" fill="none" opacity=".9"/>
+    ${g6part(246, 44, 0.7, 1, 4.4)}${g6part(278, 38, 2.4, 1, 4.4)}${g6part(256, 70, 4.1, 1, 4.4)}${g6part(282, 64, 5.5, 1, 4.4)}
+    <text x="262" y="118" text-anchor="middle" font-size="11" fill="#4E5968">밑창 공기층 확대</text>
   </svg>`;
 }
 
@@ -7932,9 +7926,6 @@ export function bottleSqueezeFig(): string {
     <defs>
       <linearGradient id="u6rbPet" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#FDFEFF"/><stop offset=".5" stop-color="#EAF2FB"/><stop offset="1" stop-color="#D3E0EF"/>
-      </linearGradient>
-      <linearGradient id="u6rbHand" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#FBD9C0"/><stop offset="1" stop-color="#EFB894"/>
       </linearGradient>
     </defs>
     <ellipse cx="172" cy="164" rx="46" ry="5.5" fill="#2A3A5E" opacity=".1"/>
@@ -8115,14 +8106,14 @@ export function gasHeatChoicesFig(): string {
   </svg>`;
 }
 
-/** WARM 끝 막은 주사기 물중탕 단독(고정형 · 라이트) · 김이 나는 따뜻한 물 + 피스톤이 밀려 나가는
- *  방향 화살표(결과는 문두 서술 · 까닭이 과제). */
+/** WARM 끝 막은 주사기 물중탕 단독(고정형 · 라이트) · 따뜻한 물 + 피스톤이 밀려 나가는
+ *  방향 화살표(결과는 문두 서술 · 까닭이 과제). 김 곡선은 사후 갤러리 검수(2026-08-01)로 제거:
+ *  피스톤 곁 갈색 호가 떨림 표시로 오독 · 따뜻함은 물 색과 라벨이 전달(WB 계보 공통 조치). */
 export function syringeWarmFig(): string {
-  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="끝을 막은 주사기를 김이 나는 따뜻한 물이 든 비커에 세워 담근 그림. 피스톤 옆에 위쪽으로 향한 화살표가 있다">
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="끝을 막은 주사기를 따뜻한 물이 든 비커에 세워 담근 그림. 피스톤 옆에 위쪽으로 향한 화살표가 있다">
     <ellipse cx="172" cy="176" rx="80" ry="6" fill="#2A3A5E" opacity=".11"/>
     <path d="M116 84 v74 q0 10 10 10 h92 q10 0 10 -10 v-74" fill="none" stroke="#8B95A1" stroke-width="2.6"/>
     <rect x="119" y="94" width="106" height="71" rx="7" fill="#FADCC8"/>
-    <path d="M138 78 q7 -12 0 -22 M160 76 q7 -12 0 -22 M182 78 q7 -12 0 -22" stroke="#D9A88C" stroke-width="2.2" fill="none" stroke-linecap="round"/>
     <rect x="158" y="52" width="22" height="98" rx="7" fill="#F7FAFE" stroke="#8B95A1" stroke-width="2.2"/>
     <rect x="162" y="62" width="14" height="8" rx="2.5" fill="#8B99AC"/>
     <rect x="166.5" y="34" width="5" height="30" fill="#8B99AC"/>
@@ -8184,7 +8175,7 @@ export function syringeTwoOpsFig(): string {
     <rect x="${x + 7.5}" y="${y - 22}" width="5" height="24" fill="#8B99AC"/>
     <rect x="${x + 1}" y="${y - 28}" width="18" height="7" rx="3" fill="#8B99AC"/>
     ${g6dot(x + 7, y + 32, 3.4)}${g6dot(x + 13, y + 46, 3.4)}${g6dot(x + 8, y + 62, 3.4)}${g6dot(x + 13, y + 74, 3.4)}`;
-  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="끝을 막은 같은 주사기 두 개. 가는 피스톤 위를 손이 아래로 누르고 있고, 나는 김이 나는 따뜻한 물이 든 비커에 세워져 있다">
+  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="끝을 막은 같은 주사기 두 개. 가는 피스톤 위를 손이 아래로 누르고 있고, 나는 따뜻한 물이 든 비커에 세워져 있다">
     <g>
       ${syr(86, 74)}
       <path d="M96 40 v-14" stroke="#F25757" stroke-width="3" stroke-linecap="round"/>
@@ -8195,7 +8186,6 @@ export function syringeTwoOpsFig(): string {
     <g>
       <path d="M196 96 v64 q0 10 10 10 h72 q10 0 10 -10 v-64" fill="none" stroke="#8B95A1" stroke-width="2.4"/>
       <rect x="199" y="106" width="86" height="60" rx="6" fill="#FADCC8"/>
-      <path d="M214 90 q6 -11 0 -20 M234 88 q6 -11 0 -20 M254 90 q6 -11 0 -20" stroke="#D9A88C" stroke-width="2" fill="none" stroke-linecap="round"/>
       ${syr(232, 66)}
       <text x="242" y="192" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(나)</text>
     </g>
@@ -8203,14 +8193,14 @@ export function syringeTwoOpsFig(): string {
 }
 
 /** WB2 두 물중탕 설계 대조(고정형 · 라이트) · (가) 기체 부분까지 물에 잠긴 주사기 · (나) 물이
- *  얕아 기체 부분이 물 밖에 나온 주사기(설계 결함 판독이 과제). 둘 다 따뜻한 물(김). */
+ *  얕아 기체 부분이 물 밖에 나온 주사기(설계 결함 판독이 과제). 둘 다 따뜻한 물(물 색·문두가
+ *  전달) · 김 곡선은 사후 갤러리 검수(2026-08-01)로 제거(피스톤 곁 갈색 호 오독 · WB 계보 공통). */
 export function waterBath2Fig(): string {
   const set = (x: number, label: string, waterH: number): string => {
     const top = 150 - waterH;
     return `<g>
       <path d="M${x} 78 v72 q0 9 9 9 h64 q9 0 9 -9 v-72" fill="none" stroke="#8B95A1" stroke-width="2.4"/>
       <rect x="${x + 3}" y="${top}" width="76" height="${waterH + 6}" rx="6" fill="#FADCC8"/>
-      <path d="M${x + 16} ${top - 12} q6 -10 0 -18 M${x + 38} ${top - 14} q6 -10 0 -18" stroke="#D9A88C" stroke-width="2" fill="none" stroke-linecap="round"/>
       <rect x="${x + 31}" y="58" width="20" height="88" rx="6" fill="#F7FAFE" stroke="#8B95A1" stroke-width="2"/>
       <rect x="${x + 34.5}" y="66" width="13" height="7" rx="2.5" fill="#8B99AC"/>
       <rect x="${x + 38.5}" y="40" width="5" height="24" fill="#8B99AC"/>
@@ -8227,19 +8217,17 @@ export function waterBath2Fig(): string {
 
 // ── (rest-e 저작분) ──
 
-/** COIN 병 입구 동전(고정형 · 라이트) · 차가운 주스 병 입구에 동전이 얹혀 있고 두 손이 병을 감싼
- *  장면. 들썩임은 문두가 서술(그림은 동전이 살짝 기운 순간 · 파운드리 재질 문법). */
+/** COIN 병 입구 동전(고정형 · 라이트) · 차가운 주스 병 입구에 동전이 얹혀 있는 장면(동전이 살짝
+ *  기운 순간 · 파운드리 재질 문법). 들썩임·감싸 쥐기는 문두가 서술 · 손은 그리지 않는다(사후 검수
+ *  3차 확정: 미는 손도 감싸 쥔 손 이식도 어색해 손 무그림 + 문두 "그림처럼" 삭제로 정리). */
 export function coinBottleFig(): string {
-  return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="차가운 유리병의 입구 위에 동전이 얹혀 있고, 두 손이 병의 몸통을 감싸 쥔 그림. 동전 한쪽이 살짝 들려 있다">
+  return `<svg viewBox="0 0 344 196" ${NS} fill="none" role="img" aria-label="차가운 유리병의 입구 위에 동전이 얹혀 있는 그림. 동전 한쪽이 살짝 들려 있다">
     <defs>
       <linearGradient id="u6reBot" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#EDF6EE"/><stop offset=".5" stop-color="#CFE8D3"/><stop offset="1" stop-color="#A8D0AF"/>
       </linearGradient>
       <linearGradient id="u6reCoin" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#F5D98A"/><stop offset="1" stop-color="#D2A64B"/>
-      </linearGradient>
-      <linearGradient id="u6rbHand" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#FBD9C0"/><stop offset="1" stop-color="#EFB894"/>
       </linearGradient>
     </defs>
     <ellipse cx="172" cy="180" rx="56" ry="6" fill="#2A3A5E" opacity=".11"/>
@@ -8251,8 +8239,6 @@ export function coinBottleFig(): string {
       <ellipse cx="172" cy="29.5" rx="23" ry="6.5" fill="url(#u6reCoin)" stroke="#9A7626" stroke-width="1.6"/>
       <path d="M155 28 q9 -3 22 -3" stroke="#FBEBBB" stroke-width="1.6" opacity=".9" fill="none"/>
     </g>
-    ${pressHand(138, 112, 1)}
-    ${pressHand(206, 112, -1)}
   </svg>`;
 }
 
@@ -8321,16 +8307,14 @@ export function winterKickFig(): string {
   </svg>`;
 }
 
-/** FOUNTAIN 분수 장난감 단면(고정형 · 라이트) · 물 위 공기층 + 물속까지 내려간 관 + 감싼 손.
+/** FOUNTAIN 분수 장난감 단면(고정형 · 라이트) · 물 위 공기층 + 물속까지 내려간 관 + 관 위 물방울.
+ *  감싸 쥐기는 문두가 서술 · 손은 그리지 않는다(사후 검수 3차 확정: 손 무그림으로 정리).
  *  관·공기층 구조 판독이 풀이의 필수 재료(구조를 모르면 못 푸는 의존 설계). */
 export function fountainToyFig(): string {
-  return `<svg viewBox="0 0 344 206" ${NS} fill="none" role="img" aria-label="물이 절반쯤 담긴 투명한 병의 단면. 물 위에는 공기층이 있고, 병 마개를 뚫고 물속 바닥 근처까지 내려간 가는 관이 있으며, 관 끝은 병 위로 나와 있다. 두 손이 병을 감싸고 관 위로 물방울이 튀어 오른다">
+  return `<svg viewBox="0 0 344 206" ${NS} fill="none" role="img" aria-label="물이 절반쯤 담긴 투명한 병의 단면. 물 위에는 공기층이 있고, 병 마개를 뚫고 물속 바닥 근처까지 내려간 가는 관이 있으며, 관 끝은 병 위로 나와 있다. 관 위로 물방울이 튀어 오른다">
     <defs>
       <linearGradient id="u6reWat" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#BBDCF8"/><stop offset="1" stop-color="#8FC0EC"/>
-      </linearGradient>
-      <linearGradient id="u6rbHand" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#FBD9C0"/><stop offset="1" stop-color="#EFB894"/>
       </linearGradient>
     </defs>
     <ellipse cx="172" cy="190" rx="64" ry="6" fill="#2A3A5E" opacity=".11"/>
@@ -8343,8 +8327,6 @@ export function fountainToyFig(): string {
     <circle cx="172" cy="16" r="3" fill="#5E9ED6"/>
     <circle cx="164" cy="8" r="2.4" fill="#5E9ED6"/>
     <circle cx="181" cy="10" r="2.4" fill="#5E9ED6"/>
-    ${pressHand(126, 98, 1)}
-    ${pressHand(218, 98, -1)}
     <text x="284" y="100" text-anchor="middle" font-size="11" fill="#66707E">공기층</text>
     <path d="M270 96 q-30 -6 -66 -6" stroke="#B9C2CE" stroke-width="1.4" fill="none"/>
   </svg>`;

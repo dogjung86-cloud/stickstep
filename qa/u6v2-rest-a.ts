@@ -111,14 +111,10 @@ export function rescueMatFig(): string {
   </svg>`;
 }
 
-/** SEAT 소파와 의자(고정형 · 라이트) · (가) 푹신한 소파: 엉덩이가 방석에 깊이 파묻혀 닿는 면이
- *  넓다 · (나) 딱딱한 나무 의자: 좌판이 평평해 닿는 면이 좁다. 파묻힘 대비가 판독 재료. */
+/** SEAT 소파와 의자(고정형 · 라이트) · (가) 푹신한 소파 · (나) 딱딱한 나무 의자. 앉은 스틱맨은
+ *  사후 갤러리 검수(2026-08-01)로 제거(자세가 어색해 오히려 방해) · 파묻힘 대비는 문두·해설이 서술. */
 export function sofaChairFig(): string {
-  const man = (x: number, y: number): string => `<g stroke="#333D4B" stroke-width="2.6" stroke-linecap="round" fill="none">
-    <circle cx="${x}" cy="${y}" r="7.5" fill="#fff"/>
-    <path d="M${x} ${y + 7.5} q-2 12 -3 18 M${x - 3} ${y + 25} h20 M${x + 17} ${y + 25} l3 18 M${x - 3} ${y + 25} l-2 -12"/>
-  </g>`;
-  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="가는 푹신한 소파에 앉아 엉덩이와 허벅지가 방석에 깊이 파묻힌 사람, 나는 딱딱한 나무 의자에 앉아 엉덩이만 좌판에 닿은 사람 그림">
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="가는 방석이 두툼한 푹신한 소파, 나는 등받이와 좌판이 평평한 딱딱한 나무 의자 그림">
     <defs>
       <linearGradient id="u6raSofa" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#DFAF86"/><stop offset=".55" stop-color="#C08A5D"/><stop offset="1" stop-color="#9A6A41"/>
@@ -133,11 +129,7 @@ export function sofaChairFig(): string {
       <path d="M42 78 q16 -8 36 -9" stroke="#F2D3B4" stroke-width="2.6" opacity=".75" fill="none"/>
       <rect x="34" y="96" width="18" height="52" rx="9" fill="#B27E51" stroke="#6E4527" stroke-width="1.6"/>
       <rect x="138" y="96" width="18" height="52" rx="9" fill="#B27E51" stroke="#6E4527" stroke-width="1.6"/>
-      <path d="M52 114 h14 q3 16 16 19 h26 q13 -2 16 -19 h14" fill="none" stroke="#6E4527" stroke-width="2.2" opacity=".85"/>
-      <g stroke="#333D4B" stroke-width="2.6" stroke-linecap="round" fill="none">
-        <circle cx="86" cy="56" r="7.5" fill="#fff"/>
-        <path d="M87 63.5 q4 14 3 26 M90 89 q13 2 22 12 M90 89 l-14 8 M89 76 l-15 10"/>
-      </g>
+      <path d="M56 120 h78" stroke="#6E4527" stroke-width="2" opacity=".55" stroke-linecap="round"/>
     </g>
     <ellipse cx="258" cy="164" rx="52" ry="6" fill="#2A3A5E" opacity=".11"/>
     <g>
@@ -147,7 +139,6 @@ export function sofaChairFig(): string {
       <path d="M222 106 h50" stroke="#EBCB98" stroke-width="2" opacity=".7"/>
       <rect x="222" y="117" width="9" height="45" fill="url(#u6raWood)" stroke="#61451E" stroke-width="1.6"/>
       <rect x="284" y="117" width="9" height="45" fill="url(#u6raWood)" stroke="#61451E" stroke-width="1.6"/>
-      ${man(252, 62)}
     </g>
     <text x="95" y="182" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(가)</text>
     <text x="258" y="182" text-anchor="middle" font-size="13" font-weight="700" fill="#4E5968">(나)</text>
@@ -568,7 +559,7 @@ export const POOL_U6V2_REST_A: ExamItem[] = [
     ],
     answer: 0,
     explain:
-      "<span class='xh'>정답 풀이</span>앉을 때 의자를 누르는 힘은 어느 쪽이든 몸무게로 같아요. 다른 것은 몸이 <b>닿는 넓이</b>죠. 푹신한 소파는 그림처럼 엉덩이와 허벅지가 방석에 깊이 파묻히며 넓은 면이 함께 몸무게를 받아요. 딱딱한 의자는 파묻힘이 없어 엉덩이의 좁은 부분에만 몸무게가 몰리고, 그 자리의 압력이 커져 아픈 거예요.<span class='xh'>오답 하나씩 격파</span>'몸무게가 무거워진다'는 앉는 자리에 따라 몸무게가 변한다는 틀린 전제예요. '몸무게를 빨아들인다'는 힘이 사라진다는 뜻이 되어 성립하지 않아요. 소파는 힘을 없애는 게 아니라 넓게 나눌 뿐이죠. '밀어 올리는 힘이 세서'는 아픔의 원인을 설명하지 못하고, '소파에 앉으면 닿는 면이 좁아진다'는 소파와 의자의 역할을 서로 바꿔 말한 것이랍니다.",
+      "<span class='xh'>정답 풀이</span>앉을 때 의자를 누르는 힘은 어느 쪽이든 몸무게로 같아요. 다른 것은 몸이 <b>닿는 넓이</b>죠. 푹신한 소파는 엉덩이와 허벅지가 방석에 깊이 파묻히면서 넓은 면이 함께 몸무게를 받아요. 딱딱한 의자는 파묻힘이 없어 엉덩이의 좁은 부분에만 몸무게가 몰리고, 그 자리의 압력이 커져 아픈 거예요.<span class='xh'>오답 하나씩 격파</span>'몸무게가 무거워진다'는 앉는 자리에 따라 몸무게가 변한다는 틀린 전제예요. '몸무게를 빨아들인다'는 힘이 사라진다는 뜻이 되어 성립하지 않아요. 소파는 힘을 없애는 게 아니라 넓게 나눌 뿐이죠. '밀어 올리는 힘이 세서'는 아픔의 원인을 설명하지 못하고, '소파에 앉으면 닿는 면이 좁아진다'는 소파와 의자의 역할을 서로 바꿔 말한 것이랍니다.",
     core: "푹신함의 정체 = 파묻혀 넓게 받기. 딱딱함 = 좁게 받아 압력 집중!",
   },
   // [226 d1 무④ ④] 풍선이 사방으로 둥근 까닭 · 모든 방향 축(입자 그림을 주면 정답 인쇄라 무그림 · §0 화이트리스트 ④)
