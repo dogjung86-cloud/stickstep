@@ -1378,7 +1378,8 @@ export function chemMassVolExamFig(o: {
   mMax: number;
   vStep: number;
   mStep: number;
-  dots?: [number, number][];
+  /** [부피, 질량, 라벨?] — 라벨은 점 곁에 인쇄(문두가 P·Q로 지칭하는 문항의 렌더 보장 · g2u1 v2 검산 A 반영). */
+  dots?: [number, number, string?][];
 }): string {
   const gx = (v: number): number => 52 + v * (258 / o.vMax);
   const gy = (m: number): number => 186 - (m / o.mMax) * 156;
@@ -1402,9 +1403,11 @@ export function chemMassVolExamFig(o: {
     .join("");
   const dots = (o.dots ?? [])
     .map(
-      ([v, m]) => `<circle cx="${gx(v)}" cy="${gy(m)}" r="4.5" fill="#E64980"/>
+      ([v, m, lb]) => `<circle cx="${gx(v)}" cy="${gy(m)}" r="4.5" fill="#E64980"/>
       <line x1="${gx(v)}" y1="${gy(m)}" x2="${gx(v)}" y2="186" stroke="#B9C2CE" stroke-width="1.2" stroke-dasharray="3 4"/>
-      <line x1="52" y1="${gy(m)}" x2="${gx(v)}" y2="${gy(m)}" stroke="#B9C2CE" stroke-width="1.2" stroke-dasharray="3 4"/>`,
+      <line x1="52" y1="${gy(m)}" x2="${gx(v)}" y2="${gy(m)}" stroke="#B9C2CE" stroke-width="1.2" stroke-dasharray="3 4"/>${
+        lb ? `<text x="${gx(v) + 9}" y="${gy(m) + 12}" font-size="12" font-weight="800" fill="#D6336C">${lb}</text>` : ""
+      }`,
     )
     .join("");
   return `<svg viewBox="0 0 344 222" ${NS} role="img" aria-label="여러 물질의 부피와 질량 그래프. 원점을 지나는 직선들이며 축의 눈금 숫자로 값을 읽는다">
@@ -7005,3 +7008,226 @@ export function xLW4(o: { cells: { label: string; amp: number; cyc: number; nois
 }
 
 /* ══════════ 파일럿 미사용 신작 모드 데뷔 카드(부록 · 눈검수용) ══════════ */
+
+// ── g2u1 v2 신작(파일럿 승격 · 재출제 11호) ──
+// 물질의 특성 그림 문법: 기포·결정 등 '결과'는 그리지 않는다(예측 과제 중립) · 라벨은 (가)(나)·㉠㉡ 중립 ·
+// aria는 파라미터 파생 중립 문구(값·정오 낭독 금지) · 값 읽기 문항의 판독점은 반드시 눈금선 위 ·
+// chemBoilCurvesParamFig는 chemFigures.chemBoilCurvesFig(고정 58/82)의 시험용 파라미터판.
+
+
+/** SC2 질량-부피 산점도(파라미터형 · 라이트) · 점 좌표를 축 눈금으로 읽어 밀도를 비교한다.
+ *  레슨 massVolScatterFig(고정 좌표 · aria가 전 좌표 낭독)의 시험판. aria는 중립(값 낭독 금지).
+ *  전 점의 좌표는 눈금선 위에만 둔다(판독 과제 성립 조건). */
+export function chemScatterExamFig(o: {
+  pts: [string, number, number][];
+  vMax: number;
+  mMax: number;
+  vStep: number;
+  mStep: number;
+}): string {
+  const gx = (v: number): number => 52 + v * (258 / o.vMax);
+  const gy = (m: number): number => 186 - (m / o.mMax) * 156;
+  let xt = "";
+  for (let v = 0; v <= o.vMax; v += o.vStep) {
+    xt += `<line x1="${gx(v)}" y1="186" x2="${gx(v)}" y2="24" stroke="#EDF0F4" stroke-width="1"/>
+      <text x="${gx(v)}" y="202" text-anchor="middle" font-size="10.5" fill="#8B95A1">${v}</text>`;
+  }
+  let yt = "";
+  for (let m = 0; m <= o.mMax; m += o.mStep) {
+    yt += `<line x1="52" y1="${gy(m)}" x2="316" y2="${gy(m)}" stroke="#EDF0F4" stroke-width="1"/>
+      <text x="44" y="${gy(m) + 3.5}" text-anchor="end" font-size="10.5" fill="#8B95A1">${m}</text>`;
+  }
+  const dots = o.pts
+    .map(
+      ([lb, v, m]) => `<circle cx="${gx(v)}" cy="${gy(m)}" r="5" fill="#E64980"/>
+      <text x="${gx(v) + 2}" y="${gy(m) - 11}" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">${lb}</text>`,
+    )
+    .join("");
+  return `<svg viewBox="0 0 344 222" ${NS} role="img" aria-label="여러 물질의 부피와 질량을 나타낸 산점도. 점마다 라벨이 붙어 있고 축 눈금으로 값을 읽는다">
+    ${yt}${xt}
+    <line x1="52" y1="24" x2="52" y2="186" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="52" y1="186" x2="316" y2="186" stroke="#B0B8C1" stroke-width="1.6"/>
+    ${dots}
+    <text x="8" y="14" font-size="11" fill="#4E5968">질량(g)</text>
+    <text x="338" y="218" text-anchor="end" font-size="11" fill="#4E5968">부피(cm³)</text>
+  </svg>`;
+}
+
+/** GT 탄산음료 시험관 조건 비교(파라미터형 · 라이트) · 수조 온도(얼음물/따뜻한 물)×마개 유무.
+ *  레슨 sodaTubesFig(온도×흔들기)와 조건 축을 분리한 시험판. 기포는 절대 그리지 않는다(정답 유출).
+ *  마개 있는 시험관은 입구에 회색 마개, 없는 시험관은 입구가 열려 있다. */
+export function chemGasTubesFig(o: { tubes: { label: string; warm: boolean; capped: boolean }[] }): string {
+  const bathW = 150;
+  const bath = (bx: number, warm: boolean, tubes: { label: string; capped: boolean }[]): string => {
+    const water = warm ? "#FFDFD0" : "#D6ECFC";
+    const edge = warm ? "#E8A187" : "#9CC4E4";
+    const deco = warm
+      ? ""
+      : `<rect x="${bx + 14}" y="128" width="14" height="11" rx="3" fill="#FFFFFF" stroke="#B9D9F2" stroke-width="1.4"/><rect x="${bx + 122}" y="132" width="12" height="10" rx="3" fill="#FFFFFF" stroke="#B9D9F2" stroke-width="1.4"/>`;
+    const ts = tubes
+      .map((t, i) => {
+        const tx = bx + 42 + i * 52;
+        return `<path d="M${tx} 58v96a12 12 0 0 0 24 0V58" fill="#FDF3E0" stroke="#B9A187" stroke-width="1.8"/>
+        <path d="M${tx} 96v58a12 12 0 0 0 24 0V96z" fill="#F5D9A8" opacity=".9"/>
+        ${t.capped ? `<rect x="${tx - 2}" y="48" width="28" height="12" rx="4" fill="#C9D4E0" stroke="#8C99A8" stroke-width="1.6"/>` : `<path d="M${tx - 3} 56h30" stroke="#B9A187" stroke-width="1.8"/>`}
+        <text x="${tx + 12}" y="36" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">${t.label}</text>`;
+      })
+      .join("");
+    return `<path d="M${bx} 118h${bathW}v54a12 12 0 0 1 -12 12h-${bathW - 24}a12 12 0 0 1 -12 -12z" fill="${water}" stroke="${edge}" stroke-width="2"/>
+      ${deco}${ts}
+      <text x="${bx + bathW / 2}" y="204" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">${warm ? "따뜻한 물" : "얼음물"}</text>`;
+  };
+  const cold = o.tubes.filter((t) => !t.warm);
+  const hot = o.tubes.filter((t) => t.warm);
+  return `<svg viewBox="0 0 344 214" ${NS} fill="none" role="img" aria-label="탄산음료가 담긴 시험관 여러 개가 온도가 다른 두 수조에 담겨 있고, 시험관마다 마개 유무가 다르다">
+    ${bath(10, false, cold)}
+    ${bath(184, true, hot)}
+  </svg>`;
+}
+
+/** SF 혼합 고체 분리 순서도(파라미터형 · 라이트) · 시작 상자·질문 2개·결과 3칸(㉮㉯㉰ 가림).
+ *  geoRockFlowFig 문법 이식: 예/아니요가 각자의 결론 칸으로 갈라진다(수렴 금지). 결과 칸 이름을
+ *  물으면 칸에 인쇄하지 않는다(가림판이 기본). */
+export function chemSepFlowFig(o: { start: string; q1: string; q2: string }): string {
+  const result = (x: number, y: number, label: string): string =>
+    `<rect x="${x}" y="${y}" width="76" height="38" rx="10" fill="#F8FAFC" stroke="#B0B8C1" stroke-width="1.4" stroke-dasharray="5 4"/>
+     <text x="${x + 38}" y="${y + 24}" text-anchor="middle" font-size="14.5" font-weight="800" fill="#4E5968">${label}</text>`;
+  return `<svg viewBox="0 0 344 252" ${NS} fill="none" role="img" aria-label="혼합물 분리 순서도. 시작 상자의 혼합물을 질문 두 개로 차례로 갈라 세 칸으로 나눈다">
+    <rect x="72" y="10" width="200" height="34" rx="17" fill="#F2F4F6" stroke="#C4CAD2" stroke-width="1.4"/>
+    <text x="172" y="31" text-anchor="middle" font-size="12" font-weight="800" fill="#333D4B">${o.start}</text>
+    <line x1="172" y1="44" x2="172" y2="64" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M172 66 l-4.5 -7 h9 z" fill="#8B95A1"/>
+    <rect x="62" y="68" width="220" height="38" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
+    <text x="172" y="91" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1B64DA">${o.q1}</text>
+    <line x1="62" y1="87" x2="34" y2="87" stroke="#8B95A1" stroke-width="1.8"/>
+    <line x1="34" y1="87" x2="34" y2="104" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M34 106 l-4.5 -7 h9 z" fill="#8B95A1"/>
+    <text x="46" y="80" text-anchor="middle" font-size="10.5" font-weight="800" fill="#0CA678">예</text>
+    ${result(0, 108, "㉮")}
+    <line x1="186" y1="106" x2="186" y2="130" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M186 132 l-4.5 -7 h9 z" fill="#8B95A1"/>
+    <text x="206" y="122" text-anchor="middle" font-size="10.5" font-weight="800" fill="#8B95A1">아니요</text>
+    <rect x="96" y="134" width="196" height="38" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
+    <text x="194" y="157" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1B64DA">${o.q2}</text>
+    <line x1="96" y1="153" x2="34" y2="153" stroke="#8B95A1" stroke-width="1.8"/>
+    <line x1="34" y1="153" x2="34" y2="196" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M34 198 l-4.5 -7 h9 z" fill="#8B95A1"/>
+    <text x="84" y="148" text-anchor="middle" font-size="10.5" font-weight="800" fill="#0CA678">예</text>
+    ${result(0, 200, "㉰")}
+    <line x1="172" y1="172" x2="172" y2="196" stroke="#8B95A1" stroke-width="1.8"/>
+    <path d="M172 198 l-4.5 -7 h9 z" fill="#8B95A1"/>
+    <text x="192" y="188" text-anchor="middle" font-size="10.5" font-weight="800" fill="#8B95A1">아니요</text>
+    ${result(134, 200, "㉯")}
+  </svg>`;
+}
+
+/** PM 입자 모형 상자(파라미터형 · 라이트) · 상자마다 입자 구성이 다르다(comp = 종류별 개수).
+ *  종류 0 = 파란 원, 종류 1 = 주황 삼각형(이 단원 금지어 회피 · "입자 모형"으로만 서술).
+ *  aria는 중립(어느 상자가 순물질인지 낭독 금지). */
+export function chemPureMixFig(o: { boxes: { label: string; comp: number[] }[] }): string {
+  const n = o.boxes.length;
+  const bw = n === 4 ? 76 : 100;
+  const gap = n === 4 ? 8 : 16;
+  const x0 = (344 - n * bw - (n - 1) * gap) / 2;
+  const shape = (kind: number, cx: number, cy: number): string =>
+    kind === 0
+      ? `<circle cx="${cx}" cy="${cy}" r="6.4" fill="#5AA2F8" stroke="#3A7DDB" stroke-width="1.2"/>`
+      : `<path d="M${cx} ${cy - 7.4} L${cx + 6.8} ${cy + 4.8} L${cx - 6.8} ${cy + 4.8} z" fill="#F0A422" stroke="#D18708" stroke-width="1.2"/>`;
+  const boxes = o.boxes
+    .map((b, i) => {
+      const bx = x0 + i * (bw + gap);
+      const total = b.comp.reduce((a, c) => a + c, 0);
+      const kinds: number[] = [];
+      b.comp.forEach((cnt, k) => { for (let j = 0; j < cnt; j++) kinds.push(k); });
+      const parts = kinds
+        .map((k, j) => {
+          const col = j % 3;
+          const row = Math.floor(j / 3);
+          const jit = ((i * 7 + j * 5) % 4) - 1.5;
+          const cx = bw / 2 + (col - 1) * (bw / 3.4) + jit;
+          const cy = 34 + row * 26 + (((j * 11 + i * 3) % 5) - 2);
+          const kind = total > 6 && kinds.length > 0 ? kinds[(j * 5 + i) % kinds.length] : k;
+          return shape(kind, cx, cy);
+        })
+        .join("");
+      return `<g transform="translate(${bx},14)">
+        <rect x="0" y="0" width="${bw}" height="112" rx="12" fill="#F8FAFC" stroke="#C4CAD2" stroke-width="1.6"/>
+        ${parts}
+        <text x="${bw / 2}" y="136" text-anchor="middle" font-size="13" font-weight="800" fill="#4E5968">${b.label}</text>
+      </g>`;
+    })
+    .join("");
+  return `<svg viewBox="0 0 344 156" ${NS} fill="none" role="img" aria-label="상자마다 입자 배열 모형이 그려져 있다. 상자에 라벨이 붙어 있다">${boxes}</svg>`;
+}
+
+/** FT 거름 장치(라이트) · 깔때기 속 거름종이 위에 남은 고체 ㉠, 아래 그릇에 모인 거른 용액 ㉡.
+ *  내용물의 이름은 인쇄하지 않는다(㉠㉡ 판정 과제). */
+export function chemFilterFig(): string {
+  return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="거름 장치. 깔때기에 거름종이가 접혀 있고 위에 고체가 남아 있으며, 아래 그릇에 거른 용액이 모여 있다">
+    <path d="M118 34h108l-40 62v34h-28v-34z" fill="rgba(224,238,250,.35)" stroke="#9DAABD" stroke-width="2.2"/>
+    <path d="M128 40h88l-33 50h-22z" fill="#FFFFFF" stroke="#C9CFD8" stroke-width="1.6"/>
+    <path d="M150 52l8 -9 7 9 8 -8 7 8 8 -9 7 9" stroke="#B08D3E" stroke-width="0" fill="none"/>
+    ${[152, 166, 180, 194].map((x, i) => `<rect x="${x}" y="${46 + (i % 2) * 6}" width="9" height="9" rx="2" transform="rotate(45 ${x + 4} ${50 + (i % 2) * 6})" fill="#CBB3E8" stroke="#9A7BC8" stroke-width="1.2"/>`).join("")}
+    <path d="M172 130v26" stroke="#9DAABD" stroke-width="3"/>
+    <path d="M132 158h80v36a10 10 0 0 1 -10 10h-60a10 10 0 0 1 -10 -10z" fill="rgba(224,238,250,.4)" stroke="#9DAABD" stroke-width="2"/>
+    <path d="M136 178h72v16a10 10 0 0 1 -10 10h-52a10 10 0 0 1 -10 -10z" fill="#EAE2F6" opacity=".85"/>
+    <text x="258" y="52" font-size="13.5" font-weight="800" fill="#4E5968">㉠</text>
+    <path d="M252 50h-42" stroke="#C4CAD2" stroke-width="1.4"/>
+    <text x="258" y="192" font-size="13.5" font-weight="800" fill="#4E5968">㉡</text>
+    <path d="M252 188h-40" stroke="#C4CAD2" stroke-width="1.4"/>
+    <text x="104" y="46" text-anchor="end" font-size="11" fill="#8B95A1">거름종이</text>
+    <path d="M108 42h22" stroke="#C4CAD2" stroke-width="1.3"/>
+  </svg>`;
+}
+
+/** MB 물·혼합물 가열 곡선 쌍(파라미터형 · 라이트 · 눈금 포함) · (가) 순물질은 plat 온도에서 수평,
+ *  (나) 혼합물은 mixStart(>plat)에서 끓기 시작해 계속 오른다. 라벨은 (가)(나) 중립(이름 인쇄 금지).
+ *  값 읽기 문항은 mixStart를 눈금선 위에 둔다. */
+export function chemMixBoilFig(o: { plat: number; mixStart: number; yMin: number; yMax: number; yStep: number }): string {
+  const gy = (c: number): number => 168 - ((c - o.yMin) / (o.yMax - o.yMin)) * 146;
+  let yt = "";
+  for (let T = o.yMin; T <= o.yMax; T += o.yStep) {
+    yt += `<line x1="50" y1="${gy(T)}" x2="322" y2="${gy(T)}" stroke="#EDF0F4"/><text x="42" y="${gy(T) + 4}" text-anchor="end" font-size="10" fill="#8B95A1">${T}</text>`;
+  }
+  const s = o.yMin + (o.yMax - o.yMin) * 0.08;
+  return `<svg viewBox="0 0 344 206" ${NS} fill="none" role="img" aria-label="두 액체의 가열 곡선. 곡선에 가와 나 라벨이 붙어 있고 세로축 눈금으로 온도를 읽는다">
+    ${yt}
+    <line x1="50" y1="12" x2="50" y2="168" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="50" y1="168" x2="322" y2="168" stroke="#B0B8C1" stroke-width="1.6"/>
+    <path d="M56 ${gy(s)} C120 ${gy(o.plat - 8)} 148 ${gy(o.plat - 1)} 168 ${gy(o.plat)} L318 ${gy(o.plat)}" stroke="#5E6B7E" stroke-width="2.8" fill="none"/>
+    <path d="M56 ${gy(s)} C124 ${gy(o.mixStart - 9)} 156 ${gy(o.mixStart - 1)} 180 ${gy(o.mixStart)} C230 ${gy(o.mixStart + 3)} 280 ${gy(o.mixStart + 5)} 318 ${gy(o.mixStart + 7)}" stroke="#5E6B7E" stroke-width="2.8" fill="none" stroke-dasharray="7 5"/>
+    <text x="300" y="${gy(o.plat) + 17}" font-size="12" font-weight="700" fill="#4E5968">(가)</text>
+    <text x="296" y="${gy(o.mixStart + 7) - 9}" font-size="12" font-weight="700" fill="#4E5968">(나)</text>
+    <text x="14" y="12" font-size="10.5" fill="#4E5968">온도(℃)</text>
+    <text x="322" y="192" text-anchor="end" font-size="11" fill="#4E5968">가열 시간(분)</text>
+  </svg>`;
+}
+
+/** 액체 (가)~(라) 가열 곡선 파라미터판 · chemBoilCurvesFig(고정 58/82)의 확장.
+ *  (가)·(다)는 t2에서 평평(다는 기울기 완만+구간 김 = 양 많음 세트), (나)는 t1, (라)는 계속 상승.
+ *  이식 때 chemBoilCurvesFig에 {t1,t2} 옵션으로 통합한다(기본값 = 현행 58/82 렌더 무영향). */
+export function chemBoilCurvesParamFig(o: { t1: number; t2: number }): string {
+  const top = o.t2 + 28;
+  const gy = (c: number): number => 168 - (c / top) * 146;
+  const seg = (x0: number, tempo: number, plateau: number, label: string, lx: number, plen: number): string => {
+    const pY = gy(plateau);
+    return `<path d="M${x0} ${gy(16)} L${x0 + 40 * tempo} ${pY} L${x0 + 40 * tempo + plen} ${pY}" stroke="#5E6B7E" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+      <text x="${lx}" y="${pY - 8}" font-size="12" font-weight="700" fill="#4E5968">${label}</text>`;
+  };
+  const rTop = o.t2 * 0.9;
+  const riser = (x0: number, label: string): string =>
+    `<path d="M${x0} ${gy(16)} L${x0 + 44} ${gy(rTop * 0.72)} C${x0 + 66} ${gy(rTop * 0.86)} ${x0 + 88} ${gy(rTop * 0.94)} ${x0 + 108} ${gy(rTop)}" stroke="#5E6B7E" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+      <text x="${x0 + 96}" y="${gy(rTop) - 9}" font-size="12" font-weight="700" fill="#4E5968">${label}</text>`;
+  return `<svg viewBox="0 0 344 206" ${NS} fill="none" role="img" aria-label="서로 다른 비커에 담긴 액체 네 개를 각각 가열한 시간-온도 그래프">
+    <line x1="46" y1="12" x2="46" y2="168" stroke="#B0B8C1" stroke-width="1.6"/>
+    <line x1="46" y1="168" x2="330" y2="168" stroke="#B0B8C1" stroke-width="1.6"/>
+    ${[o.t1, o.t2].map((c) => `<line x1="46" y1="${gy(c)}" x2="326" y2="${gy(c)}" stroke="#EDF0F4"/><text x="38" y="${gy(c) + 4}" text-anchor="end" font-size="10" fill="#8B95A1">${c}</text>`).join("")}
+    ${seg(52, 1.15, o.t2, "(가)", 100, 46)}
+    ${seg(92, 1.5, o.t1, "(나)", 158, 54)}
+    ${seg(128, 1.75, o.t2, "(다)", 226, 88)}
+    ${riser(200, "(라)")}
+    <text x="12" y="12" font-size="10.5" fill="#4E5968">온도(℃)</text>
+    <text x="330" y="188" text-anchor="end" font-size="11" fill="#4E5968">가열 시간(분)</text>
+  </svg>`;
+}
+// ── g2u1 v2 신작 끝 ──

@@ -1,6 +1,7 @@
-// 중2 과학 I. 물질의 특성 — 단원 종합 평가 문항 풀(150제 = 17×6 + 16×3, 9레슨).
+// 중2 과학 I. 물질의 특성 · 단원 종합 평가 문항 풀 v2(160제 = 18×7 + 17×2, 9레슨 · 재출제 11호).
 // 문항은 레슨 파일(g2u1l1~g2u1l9)에 산다. 풀 등장 순서 = 교과 진도 순서(추출·시험지 정렬의 기준).
-// 유형 구성은 u3 규격 스케일: 113(mcq+multi) / 18(num) / 19(word).
+// 유형 구성: mcq 122 / multi 18 / num 20 / word 0 · diff 64/64/32 · 시각 112(사진 10장 전량 재사용).
+// 규격·회피표·검산 기록 정본 = qa/g2u1-v2-blueprint.md, 이식 = qa/build-g2u1v2-lessons.mjs(재실행 가능).
 import type { ExamDef } from "./types";
 import { POOL_G2U1L1 } from "./g2u1l1";
 import { POOL_G2U1L2 } from "./g2u1l2";

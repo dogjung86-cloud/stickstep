@@ -9,6 +9,20 @@ const PORT = process.env.PORT || "5173";
 fs.mkdirSync("qa/shots", { recursive: true });
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage({ viewport: { width: 420, height: 900 }, deviceScaleFactor: 2 });
+// 동시 세션 HMR 풀리로드 면역(미니게임 함정 ③ — 다른 세션이 src를 저장하면 e2e 페이지가 통째로
+// 리로드돼 스플래시로 되돌아간다): @vite/client를 스텁으로 대체 — CSS 주입(updateStyle)은 살리고
+// 웹소켓·리로드만 제거(abort는 금물 · 스텁 본문은 qa/e2e-steprush.mjs 정본을 그대로).
+await page.route("**/@vite/client", (r) =>
+  r.fulfill({
+    contentType: "application/javascript",
+    body: `export function updateStyle(id, css){ let el = document.querySelector('style[data-vite-dev-id="' + id + '"]'); if (!el) { el = document.createElement("style"); el.setAttribute("data-vite-dev-id", id); document.head.appendChild(el); } el.textContent = css; }
+export function removeStyle(id){ document.querySelector('style[data-vite-dev-id="' + id + '"]')?.remove(); }
+export function createHotContext(){ return { accept(){}, acceptExports(){}, dispose(){}, prune(){}, on(){}, off(){}, send(){}, invalidate(){}, data: {} }; }
+export function injectQuery(u){ return u; }
+export const ErrorOverlay = class {};
+export default {};`,
+  }),
+);
 let pageErrors = 0;
 page.on("pageerror", (e) => { pageErrors++; console.log("PAGEERROR:", e.message); });
 
