@@ -2593,7 +2593,7 @@ export function atomFlowFig(o: { start: string; q1: string; q2: string }): strin
   </svg>`;
 }
 
-/** 물 전기 분해 장치 — (가) 시험관은 전원 (−)극 쪽, (나)는 (+)극 쪽. 모인 기체는 (가)가 더 많다.
+/** 물에 전류를 흘려 분해하는 장치 · (가) 시험관은 전원 (−)극 쪽, (나)는 (+)극 쪽. 모인 기체는 (가)가 더 많다.
  *  aria는 장치·연결만 말하고 기체의 정체와 부피 비율 수치는 말하지 않는다(해석이 과제). */
 export function atomElectrolysisFig(): string {
   const tube = (x: number, gasH: number, label: string): string => `
@@ -2602,7 +2602,7 @@ export function atomElectrolysisFig(): string {
     <rect x="${x + 3}" y="${40 + gasH}" width="38" height="${126 - gasH}" fill="#C9DFF6"/>
     <text x="${x + 22}" y="26" text-anchor="middle" font-size="13" font-weight="800" fill="#4E5968">${label}</text>
     ${[0, 1, 2, 3].map((i) => `<circle cx="${x + 12 + (i % 2) * 20}" cy="${152 - i * 9}" r="${1.6 + (i % 2) * 0.6}" fill="#AACCEE"/>`).join("")}`;
-  return `<svg viewBox="0 0 344 236" ${NS} fill="none" role="img" aria-label="물 전기 분해 장치 — 물이 든 용기에 전극 두 개가 있고 그 위에 시험관 (가)와 (나)가 거꾸로 세워져 있어요. (가)는 전원의 (−)극과, (나)는 (+)극과 연결되어 있어요. 두 시험관에 모인 기체의 양을 비교해 보세요">
+  return `<svg viewBox="0 0 344 236" ${NS} fill="none" role="img" aria-label="물에 전류를 흘려 분해하는 장치 · 물이 든 용기에 전극 두 개가 있고 그 위에 시험관 (가)와 (나)가 거꾸로 세워져 있어요. (가)는 전원의 (−)극과, (나)는 (+)극과 연결되어 있어요. 두 시험관에 모인 기체의 양을 비교해 보세요">
     <rect x="52" y="84" width="240" height="106" rx="10" fill="#EAF3FC" stroke="#9FB6CE" stroke-width="1.8"/>
     <rect x="56" y="98" width="232" height="88" rx="7" fill="#D8E9FA"/>
     ${tube(96, 78, "(가)")}
@@ -8534,3 +8534,253 @@ export function starColorRowFig(o: { stars: { label: string; name: string; hex: 
   return `<svg viewBox="0 0 344 142" ${NS} fill="none" role="img" aria-label="색이 서로 다른 별 ${o.stars.map((s) => s.label).join(", ")}와 각 별의 색 이름이 표시된 그림">${body}</svg>`;
 }
 // ── g2u8 v2 섹션 끝 ──
+
+/* ══════════════ g2u4 v2 재출제 전용(빌드 승격 · 수정은 qa/g2u4v2-*.ts에서) ══════════════ */
+// 신작·개조 헬퍼 · build-g2u4v2-lessons.mjs가 스테이징 로컬 정의를 그대로 승격한다(멱등).
+// 중성자 표기 = 교과서 그림 Ⅳ-4 문법(양성자 + 표시 · 중성자 무표시 회색 · 구 atomStructQuizFig의
+// "0" 라벨 폐기 사유는 blueprint §7-2). 구판(atomStructQuizFig·atomCellQuizFig·atomPieFig)은
+// v1 폐기로 참조가 사라지지만 하위 호환을 위해 유지한다.
+/** CQ2 주기율표 칸 확대(파라미터판) · 구 atomCellQuizFig(수소 고정)의 대체 · 칸 내용이 파라미터고
+ *  aria가 세 표지의 정체(원자 번호·원소 기호·원소 이름)를 말하지 않는다(정체 판정이 곧 과제).
+ *  ㉠ = 위 왼쪽 숫자 · ㉡ = 가운데 큰 글자 · ㉢ = 아래 한글. */
+export function cellQuiz2Fig(o: { no: number; sym: string; name: string }): string {
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="주기율표의 한 칸을 확대한 그림 · 칸의 위 왼쪽 숫자를 ㉠이, 가운데 큰 글자를 ㉡이, 아래 한글 낱말을 ㉢이 가리켜요">
+    <rect x="130" y="24" width="96" height="132" rx="10" fill="#F0F4F9"/>
+    <rect x="124" y="18" width="96" height="132" rx="10" fill="#FAFCFF" stroke="#B8C2CE" stroke-width="1.6"/>
+    <text x="138" y="42" font-size="16" font-weight="800" fill="#C43A2E">${o.no}</text>
+    <text x="172" y="98" text-anchor="middle" font-family="Georgia, serif" font-size="40" font-weight="800" fill="#2E5AA8">${o.sym}</text>
+    <text x="172" y="132" text-anchor="middle" font-size="14" font-weight="800" fill="#0B8A5E">${o.name}</text>
+    <line x1="105" y1="38" x2="134" y2="38" stroke="#C43A2E" stroke-width="1.6"/>
+    <circle cx="94" cy="38" r="11" fill="#FFF" stroke="#E2695F" stroke-width="1.6"/>
+    <text x="94" y="42.5" text-anchor="middle" font-size="12" font-weight="800" fill="#C43A2E">㉠</text>
+    <line x1="239" y1="82" x2="200" y2="82" stroke="#2E5AA8" stroke-width="1.6"/>
+    <circle cx="250" cy="82" r="11" fill="#FFF" stroke="#5AA2F8" stroke-width="1.6"/>
+    <text x="250" y="86.5" text-anchor="middle" font-size="12" font-weight="800" fill="#1B64DA">㉡</text>
+    <line x1="105" y1="127" x2="140" y2="127" stroke="#0B8A5E" stroke-width="1.6"/>
+    <circle cx="94" cy="127" r="11" fill="#FFF" stroke="#4CB18C" stroke-width="1.6"/>
+    <text x="94" y="131.5" text-anchor="middle" font-size="12" font-weight="800" fill="#0B8A5E">㉢</text>
+    <text x="172" y="176" text-anchor="middle" font-size="11" fill="#8B95A1">주기율표의 한 칸</text>
+  </svg>`;
+}
+
+/** AM2 분자 모형 확장판(파일 로컬) · atomMolsFig에 없는 H2O2 키를 보태고 같은 팔레트로 그린다.
+ *  이식 때 examFigures atomMolsFig switch에 H2O2 케이스를 추가하며 이 로컬판은 승격 삭제.
+ *  H2O2 기하: H-O-O-H 지그재그(가운데 산소 2개 가로 결합 · 수소는 양끝 아래 대각). */
+const AM2EL: Record<string, { fill: string; line: string; r: number }> = {
+  H: { fill: "#F4F7FB", line: "#9AA5B4", r: 8 },
+  O: { fill: "#E8695A", line: "#A8342A", r: 12 },
+};
+const am2ball = (x: number, y: number, el: string): string => {
+  const s = AM2EL[el];
+  return `<circle cx="${x}" cy="${y}" r="${s.r}" fill="${s.fill}" stroke="${s.line}" stroke-width="1.4"/>`;
+};
+const am2bond = (x0: number, y0: number, x1: number, y1: number): string =>
+  `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="#9AA5B4" stroke-width="4" stroke-linecap="round"/>`;
+const am2draw = (key: "H2O" | "H2O2", cx: number, cy: number): string =>
+  key === "H2O"
+    ? am2bond(cx, cy - 6, cx - 17, cy + 12) + am2bond(cx, cy - 6, cx + 17, cy + 12) + am2ball(cx - 17, cy + 12, "H") + am2ball(cx + 17, cy + 12, "H") + am2ball(cx, cy - 6, "O")
+    : am2bond(cx - 16, cy - 4, cx + 16, cy - 4) + am2bond(cx - 16, cy - 4, cx - 34, cy + 14) + am2bond(cx + 16, cy - 4, cx + 34, cy + 14) + am2ball(cx - 34, cy + 14, "H") + am2ball(cx + 34, cy + 14, "H") + am2ball(cx - 16, cy - 4, "O") + am2ball(cx + 16, cy - 4, "O");
+export function molsFig2(mols: { key: "H2O" | "H2O2"; label: string }[]): string {
+  const n = mols.length;
+  const pos: [number, number][] = n === 1 ? [[172, 54]] : [[94, 58], [250, 58]];
+  const H = n === 1 ? 124 : 132;
+  const cells = mols
+    .map((m, i) => {
+      const [cx, cy] = pos[i];
+      const molecule = n === 1 ? `<g transform="translate(${cx} ${cy}) scale(1.55)">${am2draw(m.key, 0, 0)}</g>` : am2draw(m.key, cx, cy);
+      return molecule + (m.label ? `<text x="${cx}" y="${cy + 56}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${m.label}</text>` : "");
+    })
+    .join("");
+  return `<svg viewBox="0 0 344 ${H}" ${NS} fill="none" role="img" aria-label="분자 모형${mols.some((m) => m.label) ? " " + mols.map((m) => m.label).filter(Boolean).join(", ") : ""} · 각 모형을 이루는 공(원자)의 색깔 종류와 개수를 살펴보세요">${cells}</svg>`;
+}
+
+/** SQ2 원자 구조 ㉠㉡㉢ 판독(교과서 그림 Ⅳ-4 문법판) · 구 atomStructQuizFig(중성자 "0" 라벨)의 대체.
+ *  교과서 표기 = 양성자: 빨간 공에 흰 + 표시 · 중성자: 표시 없는 회색 공 · 전자: 파란 (−) 알갱이.
+ *  "0" 라벨은 교과서에 없는 창작 표기라 폐기(사용자 파일럿 검수 지시 · 미래엔 144~145쪽 대조).
+ *  핵 알갱이 상한 9(p+n ≤ 9). 이식 때 examFigures의 구판을 이 문법으로 교체 승격한다. */
+export function structQuiz2Fig(o: { p: number; n: number; e: number }): string {
+  const cx = 172, cy = 100;
+  const ring6: [number, number][] = [[0, -14], [12, -7], [12, 7], [0, 14], [-12, 7], [-12, -7]];
+  const extra: [number, number][] = [[0, 0], [0, -26], [0, 26]];
+  const spots: [number, number][] = [...ring6, ...extra].slice(0, o.p + o.n);
+  const kinds: boolean[] = [];
+  let pl = o.p, nl = o.n;
+  for (let i = 0; i < spots.length; i++) {
+    const wantP = i % 2 === 0;
+    if (wantP && pl > 0) { kinds.push(true); pl--; }
+    else if (!wantP && nl > 0) { kinds.push(false); nl--; }
+    else if (pl > 0) { kinds.push(true); pl--; }
+    else { kinds.push(false); nl--; }
+  }
+  const grainSvg = spots
+    .map(([dx, dy], idx) =>
+      kinds[idx]
+        ? `<circle cx="${cx + dx}" cy="${cy + dy}" r="7.5" fill="#F0685A" stroke="#A8342A" stroke-width="1.5"/><text x="${cx + dx}" y="${cy + dy + 3.2}" text-anchor="middle" font-size="9" font-weight="900" fill="#FFF">+</text>`
+        : `<circle cx="${cx + dx}" cy="${cy + dy}" r="7.5" fill="#C9C2BD" stroke="#7A6E68" stroke-width="1.5"/>`,
+    )
+    .join("");
+  const eAngles = [-90, 150, 30, -30, -150, 90, 60, -120].slice(0, o.e);
+  const ePos = eAngles.map((a) => [cx + 112 * Math.cos((a * Math.PI) / 180), cy + 62 * Math.sin((a * Math.PI) / 180)] as [number, number]);
+  const xelec2 = (x: number, y: number, r = 6.5): string =>
+    `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="#5A9AE0" stroke="#2A5AA0" stroke-width="1.3"/><line x1="${(x - r * 0.45).toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x + r * 0.45).toFixed(1)}" y2="${y.toFixed(1)}" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>`;
+  const tag = (x: number, y: number, t: string): string =>
+    `<circle cx="${x}" cy="${y}" r="11" fill="#FFFFFF" stroke="#5AA2F8" stroke-width="1.6"/>
+     <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#1B64DA">${t}</text>`;
+  const pIdx = kinds.indexOf(true), nIdx = kinds.indexOf(false);
+  const pT: [number, number] = [cx + spots[pIdx][0], cy + spots[pIdx][1]];
+  const nT: [number, number] = [cx + spots[nIdx][0], cy + spots[nIdx][1]];
+  const eT = ePos.reduce((best, p) => (Math.hypot(p[0] - 310, p[1] - 146) < Math.hypot(best[0] - 310, best[1] - 146) ? p : best), ePos[0]);
+  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="원자 모형 · 가운데 덩어리(원자핵) 속에 + 표시가 있는 알갱이와 아무 표시가 없는 회색 알갱이가 섞여 있고, 주위 점선 궤도에 작은 알갱이들이 있어요. 세 종류의 알갱이에 ㉠, ㉡, ㉢ 기호가 붙어 있어요">
+    <ellipse cx="${cx}" cy="${cy}" rx="112" ry="62" stroke="#C9D2DC" stroke-width="1.6" stroke-dasharray="5 6"/>
+    <circle cx="${cx}" cy="${cy}" r="30" fill="#F6E3DC" stroke="#D8A08C" stroke-width="1.6"/>
+    ${grainSvg}
+    ${ePos.map(([x, y]) => xelec2(x, y)).join("")}
+    <line x1="66" y1="42" x2="${pT[0] - 6}" y2="${pT[1] - 6}" stroke="#8B95A1" stroke-width="1.4"/>
+    ${tag(56, 36, "㉠")}
+    <line x1="286" y1="42" x2="${nT[0] + 6}" y2="${nT[1] - 5}" stroke="#8B95A1" stroke-width="1.4"/>
+    ${tag(296, 36, "㉡")}
+    <line x1="300" y1="140" x2="${eT[0] + 7}" y2="${eT[1] + 3}" stroke="#8B95A1" stroke-width="1.4"/>
+    ${tag(310, 146, "㉢")}
+  </svg>`;
+}
+
+/** PIE2 이온 조성 원그래프(범례 좌측 이동판) · 구 atomPieFig의 우측 정렬 %가 긴 라벨과 겹치는
+ *  결함의 해소판(사용자 파일럿 검수 "목록을 왼쪽으로" 반영) · 원을 왼쪽으로 당기고 범례를
+ *  "이름(이온식) NN %" 한 줄 좌정렬로 흘려 겹침이 구조적으로 불가능하게 한다. 이식 때 승격. */
+export function pieFig2(o: { slices: { label: string; pct: number; hex: string }[] }): string {
+  const cx = 84, cy = 88, r = 58;
+  let acc = -90;
+  const paths = o.slices
+    .map((s) => {
+      const a0 = (acc * Math.PI) / 180;
+      acc += s.pct * 3.6;
+      const a1 = (acc * Math.PI) / 180;
+      const x0 = cx + r * Math.cos(a0), y0 = cy + r * Math.sin(a0);
+      const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+      const large = s.pct > 50 ? 1 : 0;
+      return `<path d="M${cx} ${cy} L${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${large} 1 ${x1.toFixed(1)} ${y1.toFixed(1)} Z" fill="${s.hex}" stroke="#fff" stroke-width="1.6"/>`;
+    })
+    .join("");
+  const legend = o.slices
+    .map((s, i) => {
+      const y = 32 + i * 26;
+      return `<rect x="152" y="${y - 10}" width="13" height="13" rx="3.5" fill="${s.hex}"/>
+        <text x="172" y="${y + 1}" font-size="11.2" font-weight="700" fill="#333D4B">${s.label} <tspan font-weight="800" fill="#4E5968">${s.pct} %</tspan></text>`;
+    })
+    .join("");
+  const spoken = o.slices.map((s) => `${s.label} ${s.pct} 퍼센트`).join(", ");
+  return `<svg viewBox="0 0 344 176" ${NS} fill="none" role="img" aria-label="이온 조성 원그래프 · ${spoken}">
+    ${paths}
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#DCE0E6" stroke-width="1.4"/>
+    ${legend}
+  </svg>`;
+}
+
+const NM_EL: Record<string, { fill: string; line: string; r: number }> = {
+  N: { fill: "#5C86D8", line: "#2A5AA0", r: 12 },
+  C: { fill: "#6E7887", line: "#3E4654", r: 12 },
+  O: { fill: "#E8695A", line: "#A8342A", r: 12 },
+};
+const nmBall = (x: number, y: number, el: string): string => {
+  const s = NM_EL[el];
+  return `<circle cx="${x}" cy="${y}" r="${s.r}" fill="${s.fill}" stroke="${s.line}" stroke-width="1.4"/>`;
+};
+const nmBond = (x0: number, y0: number, x1: number, y1: number): string =>
+  `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="#9AA5B4" stroke-width="4" stroke-linecap="round"/>`;
+/** N2·CO 두 분자 모형(파일 로컬 · atomMolsFig 문법) · (가) 질소 분자(파란 공 2) · (나) 일산화 탄소. */
+export function n2CoFig(): string {
+  return `<svg viewBox="0 0 344 132" ${NS} fill="none" role="img" aria-label="분자 모형 (가), (나) · 각 모형을 이루는 공(원자)의 색깔 종류와 개수를 살펴보세요">
+    ${nmBond(94 - 13, 58, 94 + 13, 58)}${nmBall(94 - 13, 58, "N")}${nmBall(94 + 13, 58, "N")}
+    <text x="94" y="114" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">(가)</text>
+    ${nmBond(250 - 16, 58, 250 + 16, 58)}${nmBall(250 - 16, 58, "C")}${nmBall(250 + 16, 58, "O")}
+    <text x="250" y="114" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">(나)</text>
+  </svg>`;
+}
+
+/** N2 단독 분자 모형(파일 로컬 · atomMolsFig 문법 · 파란 공 2 = 질소). */
+export function n2Fig(): string {
+  const ball = (x: number, y: number): string => `<circle cx="${x}" cy="${y}" r="18.6" fill="#5C86D8" stroke="#2A5AA0" stroke-width="1.4"/>`;
+  return `<svg viewBox="0 0 344 124" ${NS} fill="none" role="img" aria-label="분자 모형 · 모형을 이루는 공(원자)의 색깔 종류와 개수를 살펴보세요">
+    <line x1="152" y1="54" x2="192" y2="54" stroke="#9AA5B4" stroke-width="6" stroke-linecap="round"/>
+    ${ball(152, 54)}${ball(192, 54)}
+  </svg>`;
+}
+
+/** IF2 이온 생성 예측판(파일 로컬) · 왼쪽 원자만 그리고 오른쪽은 물음표(결과 선노출 금지 ·
+ *  atomIonFormExamFig의 중립 예측 모드). e 전자 수 ≤ 12(링 겹침 상한). */
+export function ionFormBeforeFig(o: { p: number }): string {
+  const ring = Array.from({ length: o.p }, (_, i) => {
+    const th = (Math.PI * 2 * i) / o.p - Math.PI / 2;
+    const x = Math.round(80 + 36 * Math.cos(th));
+    const y = Math.round(66 + 26 * Math.sin(th));
+    return `<circle cx="${x}" cy="${y}" r="6" fill="#5A9AE0" stroke="#2A5AA0" stroke-width="1.3"/><line x1="${x - 2.7}" y1="${y}" x2="${x + 2.7}" y2="${y}" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>`;
+  }).join("");
+  return `<svg viewBox="0 0 344 130" ${NS} fill="none" role="img" aria-label="원자가 이온으로 변하는 과정을 예측하는 모형 · 왼쪽은 변하기 전 원자이고, 오른쪽은 물음표로 비워져 있어요">
+    <circle cx="80" cy="66" r="15" fill="#E8836B"/><circle cx="75.5" cy="61" r="4.8" fill="#FFC0AE" opacity=".8"/>
+    <circle cx="80" cy="66" r="15" fill="none" stroke="#A8442E" stroke-width="1.6"/>
+    <text x="80" y="70" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">+${o.p}</text>
+    ${ring}
+    <path d="M140 66h56M188 60l8 6-8 6" stroke="#8B95A1" stroke-width="2.2" fill="none"/>
+    <rect x="216" y="30" width="84" height="72" rx="12" fill="#F8FAFC" stroke="#B0B8C1" stroke-width="1.5" stroke-dasharray="6 5"/>
+    <text x="258" y="74" text-anchor="middle" font-size="26" font-weight="800" fill="#8B95A1">?</text>
+    <text x="80" y="122" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">변하기 전</text>
+    <text x="258" y="122" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">변한 후</text>
+  </svg>`;
+}
+
+const imBase = (leftLabel: string, rightLabel: string, leftFill: string, rightFill: string): string => `
+    <rect x="40" y="50" width="264" height="60" rx="8" fill="#EFF3F7"/>
+    <rect x="52" y="58" width="240" height="44" rx="6" fill="#FBFCFE" stroke="#C4CAD2" stroke-width="1.5"/>
+    <rect x="32" y="52" width="18" height="56" rx="4" fill="#8B99AC"/>
+    <rect x="294" y="52" width="18" height="56" rx="4" fill="#8B99AC"/>
+    <path d="M41 52 V30" stroke="#6B7684" stroke-width="2"/>
+    <path d="M303 52 V30" stroke="#6B7684" stroke-width="2"/>
+    <circle cx="41" cy="22" r="10" fill="${leftFill}"/>
+    <text x="41" y="26.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">${leftLabel}</text>
+    <circle cx="303" cy="22" r="10" fill="${rightFill}"/>
+    <text x="303" y="26.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">${rightLabel}</text>`;
+
+
+
+/** IM-still 중립 초기 상태(번짐 전 · 가운데 색 점만) · 예측 문항 전용(결과 선노출 금지). */
+export function ionMoveStillFig(o: { hex: string; leftSign: "+" | "−" }): string {
+  const rightSign = o.leftSign === "+" ? "−" : "+";
+  const pole = (s: string): string => (s === "+" ? "#F0685A" : "#5A88D8");
+  return `<svg viewBox="0 0 344 150" ${NS} fill="none" role="img" aria-label="거름종이 양 끝에 전극이 있고 왼쪽이 (${o.leftSign})극, 오른쪽이 (${rightSign})극이에요. 가운데에 색소 한 방울이 막 떨어져 있고 아직 번지지 않았어요">
+    ${imBase(o.leftSign, rightSign, pole(o.leftSign), pole(rightSign))}
+    <circle cx="172" cy="80" r="11" fill="${o.hex}" opacity=".85"/>
+    <text x="172" y="134" text-anchor="middle" font-size="10.5" fill="#8B95A1">전류를 흘리기 전(가운데에 막 떨어뜨림)</text>
+  </svg>`;
+}
+
+/** IM-duo 두 색 반대 번짐 · 두 성분의 전하 조합 판정 전용. */
+export function ionMoveDuoFig(o: { hexA: string; hexB: string; leftSign: "+" | "−" }): string {
+  const rightSign = o.leftSign === "+" ? "−" : "+";
+  const pole = (s: string): string => (s === "+" ? "#F0685A" : "#5A88D8");
+  return `<svg viewBox="0 0 344 150" ${NS} fill="none" role="img" aria-label="거름종이 양 끝에 전극이 있고 왼쪽이 (${o.leftSign})극, 오른쪽이 (${rightSign})극이에요. 가운데 떨어뜨린 두 색소가 서로 반대 방향으로 번져 있어요">
+    ${imBase(o.leftSign, rightSign, pole(o.leftSign), pole(rightSign))}
+    <circle cx="172" cy="80" r="8" fill="#B0B8C1" opacity=".3"/>
+    <ellipse cx="128" cy="80" rx="30" ry="11" fill="${o.hexA}" opacity=".6"/>
+    <ellipse cx="104" cy="80" rx="16" ry="8" fill="${o.hexA}" opacity=".85"/>
+    <text x="104" y="60" text-anchor="middle" font-size="11" font-weight="800" fill="#4E5968">㉮</text>
+    <ellipse cx="216" cy="80" rx="30" ry="11" fill="${o.hexB}" opacity=".6"/>
+    <ellipse cx="240" cy="80" rx="16" ry="8" fill="${o.hexB}" opacity=".85"/>
+    <text x="240" y="60" text-anchor="middle" font-size="11" font-weight="800" fill="#4E5968">㉯</text>
+    <text x="172" y="134" text-anchor="middle" font-size="10.5" fill="#8B95A1">처음 떨어뜨린 자리는 가운데(희미한 자국)</text>
+  </svg>`;
+}
+
+/** IM-mask 극 가림판 · 번짐 방향과 전하 정보에서 가려진 극을 역추론하는 문항 전용.
+ *  색소는 무명 회색(색-전하 대응 창작 금지 · aria 중립). */
+export function ionMoveMaskFig(o: { dir: "left" | "right" }): string {
+  const smearCx = o.dir === "left" ? 132 : 212;
+  const smearCx2 = o.dir === "left" ? 104 : 240;
+  return `<svg viewBox="0 0 344 150" ${NS} fill="none" role="img" aria-label="거름종이 양 끝에 전극이 있는데 두 전극의 부호는 가려져 있어요. 가운데 떨어뜨린 색소 얼룩이 ${o.dir === "left" ? "왼쪽" : "오른쪽"} 전극 쪽으로 번져 있어요">
+    ${imBase("?", "?", "#B0B8C1", "#B0B8C1")}
+    <circle cx="172" cy="80" r="9" fill="#8B95A1" opacity=".28"/>
+    <ellipse cx="${smearCx}" cy="80" rx="34" ry="12" fill="#8B95A1" opacity=".5"/>
+    <ellipse cx="${smearCx2}" cy="80" rx="18" ry="9" fill="#8B95A1" opacity=".8"/>
+    <text x="172" y="134" text-anchor="middle" font-size="10.5" fill="#8B95A1">색소의 실제 색은 나타내지 않았어요(회색으로 표시)</text>
+  </svg>`;
+}
+/* ══════════════ g2u4 v2 end ══════════════ */

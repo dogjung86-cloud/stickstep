@@ -115,10 +115,10 @@ async function playExam(correctCount, pattern) {
   return seen;
 }
 
-// ═══════════ 0. 발주 사진 10장 로드(exam/g2u4) ═══════════
+// ═══════════ 0. 발주 사진 로드(exam/g2u4 — v2 사용 세트 11장) ═══════════
 console.log("0. 발주 사진 로드");
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
-const PHOTOS = ["gold-ring", "salt-crystals", "sports-drink", "electrolysis", "paper-blue-left", "helium-balloons", "pencil-graphite", "diamond-stone", "aluminum-cans", "pool-water"];
+const PHOTOS = ["gold-ring", "salt-crystals", "sports-drink", "helium-balloons", "pencil-graphite", "diamond-stone", "aluminum-cans", "pool-water", "copper-wire", "sugar-vs-salt", "iv-drip"];
 const photoRes = await page.evaluate(async (names) => {
   const out = [];
   for (const n of names) {

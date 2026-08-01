@@ -1,0 +1,13 @@
+스타일 블록 A (모든 프롬프트 앞에 붙일 공통 스타일):
+Photorealistic photograph, natural lighting, shallow depth of field, clean composition, single clear subject.
+ABSOLUTELY NO text, NO numbers, NO letters, NO logos, NO watermarks anywhere in the image.
+No people, no hands, no faces, no human body parts (including reflections). Square 1:1 aspect ratio. High detail, realistic textures.
+
+[0] file=public/exam/g2u4/copper-wire.png
+Macro photograph of a stripped electrical cable end on a workbench: the outer insulation is peeled back to reveal a thick bundle of bright shiny copper wire strands, the exposed copper showing its distinctive warm reddish-orange metallic luster, twisted strands clearly visible, plain dark insulation with no printed markings, soft workshop lighting.
+
+[1] file=public/exam/g2u4/iv-drip.png
+A completely plain transparent IV fluid bag hanging from a stainless metal stand, filled with a clear colorless solution, a thin transparent tube with a drip chamber running down from the bag, softly blurred bright clinical background, no labels or printing of any kind on the bag or tube, calm clean mood.
+
+[2] file=public/exam/g2u4/sugar-vs-salt.png
+Two absolutely identical plain drinking glasses standing side by side on a neutral light-gray kitchen counter, each filled to the same level with completely clear colorless water-like liquid, the two glasses indistinguishable from each other by appearance alone, no bubbles, no color difference, no residue at the bottom, even soft daylight, minimalist composition, straight-on eye-level view.
