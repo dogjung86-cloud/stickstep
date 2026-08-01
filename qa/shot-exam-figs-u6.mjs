@@ -1,37 +1,56 @@
-// u6 시험 그림 눈검수용 스크린샷 — 신규 examFigures u6 섹션 전부를 한 페이지에 렌더.
-// PORT=<포트> node qa/shot-exam-figs-u6.mjs (dev 서버 필수 — vite 모듈 URL로 임포트)
+// u6 v2 그림 눈검수 — 이식된 풀(u6l1~l5)에서 figure 문항을 자동 수집해 격자 시트로 캡처.
+// esbuild 실로드라 dev 서버 불요(u3 v2판 계승 · 구판 v1 수동 나열 폐기). 사진은 public/exam/u6에서 복사.
+// node qa/shot-exam-figs-u6.mjs → qa/shots/u6v2-figs/sheet-N.png
+import { build } from "esbuild";
 import { chromium } from "playwright-core";
-import fs from "node:fs";
+import { mkdirSync, writeFileSync, readdirSync, copyFileSync, existsSync } from "node:fs";
 
-const PORT = process.env.PORT || "5173";
-fs.mkdirSync("qa/shots", { recursive: true });
+async function loadPool(path, name) {
+  const r = await build({ entryPoints: [path], bundle: true, write: false, format: "esm", platform: "node", logLevel: "silent" });
+  const mod = await import(`data:text/javascript;base64,${Buffer.from(r.outputFiles[0].text).toString("base64")}`);
+  return mod[name];
+}
+
+const items = [];
+for (let n = 1; n <= 5; n++) {
+  items.push(...(await loadPool(`src/content/exams/u6l${n}.ts`, `POOL_U6L${n}`)));
+}
+const figs = items.filter((i) => i.figure);
+console.log(`figure 문항 ${figs.length}개 수집`);
+
+mkdirSync("qa/shots/u6v2-figs", { recursive: true });
+mkdirSync("tmp/u6v2-figs/exam/u6", { recursive: true });
+if (existsSync("public/exam/u6")) {
+  for (const f of readdirSync("public/exam/u6")) copyFileSync(`public/exam/u6/${f}`, `tmp/u6v2-figs/exam/u6/${f}`);
+}
+
+const PER = 12;
+const sheets = [];
+for (let i = 0; i < figs.length; i += PER) sheets.push(figs.slice(i, i + PER));
+
+const css = `body{margin:0;background:#E8EAEE;font-family:"Pretendard","Malgun Gothic",sans-serif}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:14px}
+.cell{background:#fff;border:1px solid #D5DAE2;border-radius:8px;padding:10px}
+.tag{font-size:11px;font-weight:800;color:#1B64DA;margin-bottom:6px}
+.q{font-size:11.5px;color:#4E5968;line-height:1.45;margin-bottom:8px;word-break:keep-all}
+.fig{max-width:344px;margin:0 auto}
+.fig.dark{background:#0B1524;border-radius:12px;padding:8px 6px}
+.fig svg,.fig img{width:100%;height:auto;display:block}`;
+
 const browser = await chromium.launch({ channel: "chrome", headless: true });
-const page = await browser.newPage({ viewport: { width: 420, height: 2600 }, deviceScaleFactor: 2 });
-await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
-
-await page.evaluate(async () => {
-  const m = await import("/src/ui/examFigures.ts");
-  const g = await import("/src/ui/gasFigures.ts");
-  const box = (title, svg) =>
-    `<div style="margin:10px;padding:10px;border-radius:12px;background:#fff;border:1px solid #ddd">
-      <div style="font:700 12px sans-serif;color:#333;margin-bottom:6px">${title}</div>${svg}</div>`;
-  document.body.innerHTML = `<div style="background:#F2F4F6">
-    ${box("gasPvGraphFig k=60 (dots 1·2·4 → 60·30·15)", m.gasPvGraphFig({ k: 60, pMax: 5, vMax: 60, vStep: 15, dots: [1, 2, 4] }))}
-    ${box("gasPvGraphFig k=40 (dots 1·2·4 → 40·20·10)", m.gasPvGraphFig({ k: 40, pMax: 5, vMax: 40, vStep: 10, dots: [1, 2, 4] }))}
-    ${box("gasTvGraphFig 55+0.2 marks 가·나·다(10·40·70℃)", m.gasTvGraphFig({ v0: 55, slope: 0.2, tMax: 80, tStep: 25, vMin: 50, vMax: 75, vStep: 5, marks: [{ t: 10, label: "(가)" }, { t: 40, label: "(나)" }, { t: 70, label: "(다)" }] }))}
-    ${box("gasTvGraphFig dots [50] → 65 눈금 위", m.gasTvGraphFig({ v0: 55, slope: 0.2, tMax: 80, tStep: 25, vMin: 50, vMax: 75, vStep: 5, dots: [50] }))}
-    ${box("gasTvChoicesFig — ②가 정답(절편 직선), ①은 원점 함정", m.gasTvChoicesFig())}
-    ${box("gasParticleTrioFig — (나) 절반 부피, (다) 긴 화살표", m.gasParticleTrioFig())}
-    ${box("gasPistonDuoFig wa1 wb3 va.85 vb.32", m.gasPistonDuoFig({ wa: 1, wb: 3, va: 0.85, vb: 0.32 }))}
-    ${box("gasBottleSpongeFig 기본(눌림 없음 — u6e04용, 정답 비노출)", m.gasBottleSpongeFig())}
-    ${box("gasBottleSpongeFig dents(u6e05용 — 눌림 전제 문항)", m.gasBottleSpongeFig({ dents: true }))}
-    ${box("gasSyringeDuoFig — (가) 당김 (나) 누름, 입자 6개씩", m.gasSyringeDuoFig())}
-    ${box("svgTable 보일 48·24·㉠·12", m.svgTable(["압력(기압)", "1", "2", "3", "4"], [["부피(mL)", "48", "24", "㉠", "12"]], { firstColHead: true }))}
-    ${box("svgTable 샤를 55·59·63·67", m.svgTable(["온도(℃)", "0", "20", "40", "60"], [["부피(mL)", "55", "59", "63", "67"]], { firstColHead: true }))}
-    ${box("(재사용) balloonParticleFig", g.balloonParticleFig())}
-  </div>`;
-});
-await page.waitForTimeout(400);
-await page.screenshot({ path: "qa/shots/exam-u6-figs.png", fullPage: true });
-console.log("SAVED qa/shots/exam-u6-figs.png");
+const page = await browser.newPage({ viewport: { width: 1180, height: 1500 } });
+for (let s = 0; s < sheets.length; s++) {
+  const cells = sheets[s].map((it) => {
+    const slot = it.id.replace("u6e", "");
+    const q = String(it.prompt).replace(/<[^>]*>/g, "").slice(0, 70);
+    // file:// 렌더라 절대 경로 src를 상대 경로로(발주 사진은 tmp로 복사해 둔다)
+    const figHtml = String(it.figure).replace(/src="\/exam\/u6\//g, 'src="exam/u6/');
+    return `<div class="cell"><div class="tag">슬롯 ${slot} · ${it.lessonId} · ${it.type}</div><div class="q">${q}</div><div class="fig${it.figureDark ? " dark" : ""}">${figHtml}</div></div>`;
+  }).join("");
+  writeFileSync("tmp/u6v2-figs/index.html", `<!doctype html><meta charset="utf-8"><style>${css}</style><div class="grid">${cells}</div>`);
+  await page.goto(`file://${process.cwd().replace(/\\/g, "/")}/tmp/u6v2-figs/index.html`, { waitUntil: "networkidle" });
+  await page.screenshot({ path: `qa/shots/u6v2-figs/sheet-${s + 1}.png`, fullPage: true });
+  console.log(`SHOT sheet-${s + 1}.png (${sheets[s].length}개)`);
+}
 await browser.close();
+console.log(`DONE ${sheets.length}장`);

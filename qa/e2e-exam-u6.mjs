@@ -106,10 +106,10 @@ async function playExam(correctCount) {
   return seen;
 }
 
-// ═══════════ 0. 발주 사진 8장 로드(exam/u6) ═══════════
+// ═══════════ 0. 발주 사진 10장 로드(exam/u6 · v2 = 재사용 8 + 신규 2) ═══════════
 console.log("0. 발주 사진 로드");
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
-const PHOTOS = ["heel-sole", "camel-feet", "mudflat-plank", "vacuum-pack", "snack-bag-mountain", "underwater-bubbles", "winter-ball", "wrap-bowl"];
+const PHOTOS = ["heel-sole", "camel-feet", "mudflat-plank", "vacuum-pack", "snack-bag-mountain", "underwater-bubbles", "winter-ball", "wrap-bowl", "hot-car-bag", "suction-cup"];
 const photoRes = await page.evaluate(async (names) => {
   const out = [];
   for (const n of names) {
@@ -123,7 +123,7 @@ const photoRes = await page.evaluate(async (names) => {
   }
   return out;
 }, PHOTOS);
-ok(photoRes.every((p) => p.w > 0), "exam/u6 사진 8장 전부 로드", JSON.stringify(photoRes.filter((p) => !p.w)));
+ok(photoRes.every((p) => p.w > 0), "exam/u6 사진 10장 전부 로드", JSON.stringify(photoRes.filter((p) => !p.w)));
 
 // ═══════════ A. 무료 첫 응시 — 레슨 진행 0%에서도 열려 있어야 한다 ═══════════
 console.log("A. 무료 첫 응시(진행 0%)");

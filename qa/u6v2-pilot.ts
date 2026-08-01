@@ -25,7 +25,7 @@ const NS = `xmlns="http://www.w3.org/2000/svg"`;
 /* 기체 입자 파츠(라이트) · 운동 표시 = 날아가는 방향 반대쪽 블러 꼬리(원뿔 잔상+페이드 원).
  * u4 v2에서 사용자 검수로 확정한 교과서 기체 문법의 라이트 팔레트판 · 화살표·직선 잔상 금지.
  * 꼬리 세기는 2단만(1 짧음 9.5 · 2 김 17) · 3단 구분은 판독 곤란(u3 검수 계보). */
-const g6dot = (x: number, y: number, r = 5): string =>
+export const g6dot = (x: number, y: number, r = 5): string =>
   `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="#7FB8F2" stroke="#4E86C4" stroke-width="1.3"/>`;
 const g6tail = (x: number, y: number, ang: number, len: number, r = 5): string => {
   const dx = Math.cos(ang);
@@ -38,11 +38,11 @@ const g6tail = (x: number, y: number, ang: number, len: number, r = 5): string =
   return `<path d="M${(x - px * w).toFixed(1)} ${(y - py * w).toFixed(1)} L${tx.toFixed(1)} ${ty.toFixed(1)} L${(x + px * w).toFixed(1)} ${(y + py * w).toFixed(1)} Z" fill="#6FA3E0" opacity=".5"/>
     <circle cx="${(x - dx * len * 0.6).toFixed(1)}" cy="${(y - dy * len * 0.6).toFixed(1)}" r="${(r * 0.55).toFixed(1)}" fill="#6FA3E0" opacity=".26"/>`;
 };
-const g6part = (x: number, y: number, ang: number, tail: 1 | 2, r = 5): string =>
+export const g6part = (x: number, y: number, ang: number, tail: 1 | 2, r = 5): string =>
   g6tail(x, y, ang, tail === 2 ? 20 : 11, r) + g6dot(x, y, r);
 
 /* 입자 배치 프리셋(상자 내부 fraction 좌표) · 해시 산포의 겹침 사고 방지용 고정 좌표. */
-const PSET: Record<number, [number, number][]> = {
+export const PSET: Record<number, [number, number][]> = {
   3: [[0.28, 0.3], [0.7, 0.42], [0.42, 0.74]],
   4: [[0.25, 0.25], [0.72, 0.3], [0.3, 0.72], [0.7, 0.75]],
   6: [[0.22, 0.22], [0.66, 0.18], [0.82, 0.52], [0.3, 0.55], [0.6, 0.8], [0.18, 0.84]],
@@ -77,7 +77,7 @@ export function gasBoxesExamFig(boxes: { label: string; w: number; count: 3 | 4 
 export function gasShrinkChoicesFig(): string {
   const mini = (x: number, y: number, no: string, w: number, count: 3 | 6 | 9, r: number): string => {
     const bx = x + (96 - w) / 2;
-    const pts = PSET[count].map(([fx, fy], i) => g6dot(bx + 8 + fx * (w - 16), y + 20 + fy * 46, r)).join("");
+    const pts = PSET[count].map(([fx, fy]) => g6dot(bx + 8 + fx * (w - 16), y + 20 + fy * 46, r)).join("");
     return `<text x="${x + 48}" y="${y + 10}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${no}</text>
       <rect x="${bx}" y="${y + 14}" width="${w}" height="58" rx="7" fill="#F7FAFE" stroke="#8B95A1" stroke-width="1.8"/>${pts}`;
   };
@@ -344,7 +344,9 @@ export function gasPvGraphV2Fig(o: { k: number; pMax: number; pStep?: number; vM
   for (let v = 0; v <= o.vMax; v += o.vStep) {
     yt += `<line x1="48" y1="${gy(v)}" x2="320" y2="${gy(v)}" stroke="#EDF0F4" stroke-width="1"/><text x="40" y="${gy(v) + 4}" text-anchor="end" font-size="10.5" fill="#8B95A1">${v}</text>`;
   }
-  const pMin = Math.max(o.k / o.vMax, 0.4);
+  // 곡선 하한: 정수 축은 0.4(구판 값 유지) · 소수 축(pStep<1)은 k/vMax부터 그려 좌상단 절단 방지
+  // (검산 A 지적 · 감압 그래프 vMax 128 눈금까지 곡선이 닿게).
+  const pMin = Math.max(o.k / o.vMax, (o.pStep ?? 1) < 1 ? o.k / o.vMax : 0.4);
   let d = "";
   for (let p = pMin; p <= o.pMax; p += 0.03) d += `${d ? "L" : "M"}${gx(p).toFixed(1)} ${gy(o.k / p).toFixed(1)}`;
   const dots = (o.dots ?? []).map((p) => `<circle cx="${gx(p)}" cy="${gy(o.k / p)}" r="4.4" fill="#5E6B7E"/>`).join("");
