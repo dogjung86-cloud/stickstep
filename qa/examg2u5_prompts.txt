@@ -1,0 +1,29 @@
+스타일 블록 A (모든 프롬프트 앞에 붙일 공통 스타일):
+Photorealistic photograph, natural lighting, shallow depth of field, clean composition, single clear subject.
+ABSOLUTELY NO text, NO numbers, NO letters, NO logos, NO watermarks, NO scale bars anywhere in the image.
+No people, no hands, no faces, no human body parts (including reflections). Square 1:1 aspect ratio. High detail, realistic textures.
+Any instrument display panel must be completely blank (no digits, no tick marks, no readings).
+
+[0] file=public/exam/g2u5/stomata-micro.png
+High magnification light-microscope view of the underside surface of a green plant leaf, showing the flat jigsaw-shaped epidermal cells and, in the centre of the frame, one clearly open pore shaped like a narrow oval slit, flanked on both sides by a pair of distinctly kidney-bean-shaped cells that are noticeably greener and thicker-walled than the surrounding flat cells. The pore and its two flanking bean-shaped cells must be unmistakably separable from the ordinary flat cells around them. Crisp focus, pale green and translucent tones, plain circular microscope field, no measurement markings.
+
+[1] file=public/exam/g2u5/foil-leaf.png
+A healthy broad green leaf still attached to a small potted plant, photographed from directly above. A piece of matte silver aluminium foil is wrapped tightly around the MIDDLE PORTION of that single leaf only, like a band, so that the leaf tip and the leaf base on either side of the foil remain fully exposed and clearly green. The covered and uncovered parts of the same leaf must both be plainly visible in one frame. Soft daylight, plain terracotta pot, blurred neutral background.
+
+[2] file=public/exam/g2u5/pondweed-bubbles.png
+A plain clear drinking glass filled with water on a light table, holding a submerged sprig of feathery dark-green aquatic pond plant. Many tiny round gas bubbles are clearly seen emerging from the plant's leaves and rising in a stream toward the water surface. The bubbles must obviously originate at the plant, not at the glass wall. Bright side lighting makes the bubbles sparkle, plain glass with no markings of any kind, no test tube, no funnel, blurred soft background.
+
+[3] file=public/exam/g2u5/ethanol-bath.png
+A science demonstration of a water bath: a large wide metal pan on a tripod sits over a small blue gas flame and is filled with gently steaming hot water; standing INSIDE that pan, partly submerged in the hot water, is a small clear glass beaker containing a pale liquid with one green leaf soaking in it. The nested arrangement must be immediately readable: flame under the outer water pan only, and the small inner beaker surrounded by the hot water, so the flame never touches the inner beaker. Clean lab bench, plain glassware without any printed graduations or labels, soft daylight.
+
+[4] file=public/exam/g2u5/sensor-jar.png
+A sealed transparent glass jar with a tight-fitting lid standing on a light laboratory bench; inside the closed jar sits a small leafy green plant in a tiny pot. A slim probe on a thin cable passes through the lid into the jar and connects to a compact rectangular measuring device lying beside the jar. The device's display screen is completely blank and dark with no digits or symbols at all. The jar is clearly closed and airtight. Clean minimal composition, soft even daylight, no printing on any surface.
+
+[5] file=public/exam/g2u5/iodine-leaf.png
+A single flat leaf that has lost its green colour, lying on a plain white ceramic dish, photographed from directly above. Roughly half of the leaf area is stained a deep blue-black colour while the remaining part stays pale creamy beige, with a sharp clean boundary between the dark and pale regions running across the leaf. A few drops of amber liquid pool on the dish beside the leaf. Bright even lighting, plain white dish with no pattern or rim decoration.
+
+[6] file=public/exam/g2u5/sprouting-seeds.png
+Two identical plain glass jars standing side by side on a neutral light-gray bench, each half filled with soaked round beige beans. In the LEFT jar the beans have clearly germinated: every bean shows a white sprout curling out of it. In the RIGHT jar the beans are plainly swollen and dull with absolutely no sprouts, looking cooked and soft. The difference between the sprouted and unsprouted beans must be obvious at a glance. Both jars are unlabelled and identical in shape and size, even soft daylight, blurred neutral background.
+
+[7] file=public/exam/g2u5/potato-slice.png
+A raw potato cut cleanly in half, both halves resting cut-face-up on a plain wooden board, photographed from slightly above. The pale creamy starchy flesh of the cut surfaces is crisp and clearly visible, with the thin brown skin around the rim. No knife, no other food, no cutting marks or garnish, plain unpatterned board, soft natural window light.

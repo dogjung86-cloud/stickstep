@@ -1237,3 +1237,41 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
   커밋은 g2u8 분만 선별 스테이징(examFigures.ts·EXAM_GUIDE.md·CREDITS.md·fetch-nasa-star.mjs·루트
   launch.json은 u6 세션과 공유 가능성 — 커밋 시점 diff 재확인 후 합성 스테이징). push 후 g2u8-v2
   브랜치 정리(diff 잔재 0 확인 → 로컬·원격 삭제).
+- **g2u5 v2 전면 재출제(2026-08-03 · 과학 재출제 12호 — 중2 Ⅴ 식물과 에너지. 파일럿 40 승인 뒤
+  확대 120~완주는 인계 세션이 진행)**: 정본 = qa/g2u5-v2-blueprint.md(**§10~§15가 §3 슬롯 표보다
+  우선 · §2 앵커 회피표가 §3보다 우선 · §15가 §3 개별 행보다 우선**). 확정 스펙: **160 =
+  27×4(L1·L2·L3·L5) + 26×2(L4·L6)** · id g2u5e201~e360 · **mcq 144/multi 16/num 0/word 0**(식물
+  단원은 셀 수 있는 값이 없어 num 전면 배제 — u1 v2 계보) · diff 64/64/32 · **시각 112(70.0%)**
+  파일별 20/20/20/16/20/16 · bogi 24(조합 ㄱㄴ7/ㄱㄷ7/ㄴㄷ5/단독4/전부1 · ㄱ 진위 참15/거짓9 ·
+  첫 칸 정답 0) · multi 정답 개수 2개×7/3개×9 · 조합 11종. 사진 = 15종 18문항(장당 ≤2 ·
+  plant/figs·plant/labs 재사용, 신규 수급 0). 신작 헬퍼 9 = **psExchangeFig**(광합성 기체 교환 ·
+  hide로 부위/기체 가림) · leafPartsFig · starchLeafFig · gasSensorFig · sealedPlantFig ·
+  factorGraphFig · dayNightGasFig · rateBarsFig · transportRouteFig — 전부 파라메트릭(고정 aria
+  금지 · g2u8 관행 ②의 게시 전 적용). 이 사이클 신규 관행: ① **두 곡선 그래프의 진술은 비교
+  기준을 문장 안에 넣는다**(281 치명 — "크게 늘지 않아요"는 같은 곡선 안 변화로 읽으면 거짓)
+  ② **순서 오류 문항은 전치가 아니라 방향어로 잠근다**(349 치명 — 인접 두 칸 전치는 어느 칸을
+  지목해도 옳아 복수 정답) ③ **대조군의 평평한 곡선은 비교 대상과 같은 높이에서 출발**(gasSensorFig
+  flat이 MID에서 시작해 "똑같이 밀폐한 두 용기"의 처음 농도가 달라 보였다) ④ **봉우리 곡선 위
+  표지도 §14-5 실측 대상**(좌우 비대칭이라 같은 거리가 같은 높이가 아니다 · 266을 0.82→0.765로)
+  ⑤ **헬퍼가 좌표 고정이면 기호만 바꿔서는 유출이 안 끊긴다**(leafPartsFig 배지 위치가 부위마다
+  고정 → 대상 부위 자체를 교체, psExchangeFig는 hide:["site"]) ⑥ **어둠 대조는 L2에서 못 쓴다**
+  (호흡으로 CO2가 늘어 설명 불가 → 아주 약한 빛으로) ⑦ **승격할 로컬 헬퍼 이름에는 단원 접두**
+  (badge·chip이 examFigures 기존 심벌과 충돌 → g5badge·g5chip · 이식 직후 tsc 의무가 적발)
+  ⑧ **부분열로 도는 제외 조건은 검사기를 조용히 죽인다** — scan-g2u5-terms의 제외어 `표`가
+  "화살표"·"이름표"에 걸려 도해 문항이 통째로 빠진 채 ALL CLEAR였다(제외어는 실제 aria 문구로
+  못 박을 것) ⑨ **em대시 일괄 치환이 검사기의 탐지 리터럴까지 바꾼다**(g2u4 v2 사고 재현 ·
+  치환 대상에서 제외하거나 직후 복구). 검산 = **검증 에이전트 2병렬**(A 60·B 60 전수 재풀이·전
+  보기 진위·헬퍼 소스 좌표 실측): **재풀이 119/120 일치 · 정답 오류 0 · 정답 없음 0 · 복수 정답 1 ·
+  치명 2 · 실질 37 전건 반영**(앵커 near-verbatim 6 재작성 · 교차 유출 16 재설계 · 그림 장식화 8
+  문두 축소) · 파일럿 최소 수정 4(gasSensorFig·factorGraphFig 라벨·g5badge/g5chip 개명·261/344
+  해설). 파이프라인 = qa/g2u5v2-{pilot,rest-a~f}.ts → `node qa/build-g2u5v2-lessons.mjs`(마커 구간
+  교체·**실행 직후 tsc 의무**) → `node qa/check-exam-g2u5.mjs`(**신설** — §4 파일별 정확값·num/word
+  즉시 FAIL·BAN 32어·위치 지칭 11표현·짧은 라벨형 shuffle:false 이중 판정·사진 실재+장당 ≤2(src만 ·
+  href 도해 베이스는 실재만)·aria/alt 정답 유출·해설 250~460·문두 중복·CRLF·em대시) →
+  `node qa/scan-g2u5-terms.mjs`(§13 용어 관행) → `node qa/render-g2u5v2-full.mjs`(160 전수 검증 +
+  갤러리 tmp/g2u5v2-full · 포트 **6019**) → `PORT=6019 node qa/shot-g2u5v2-pilot.mjs`(카드 160 전수) →
+  `node qa/shot-exam-figs-g2u5.mjs`(**신설** — esbuild 실로드 자동 수집 112그림 10시트) →
+  `PORT=5321 node qa/e2e-exam-g2u5.mjs`(**신설 50검증** — 사진 15종+도해 베이스 4장 로드 · 여섯 파트 ·
+  3×4+4×2 균형 · 진단 레슨 키 g2u5l1~l6 · 무료 6문항 구간). 회귀 = qa/e2e-g2u5.mjs 6레슨 PASS +
+  e2e-exam-g2u4 47/47(공유 examFigures 무결) + tsc + build. 커밋은 g2u5 분만 선별 스테이징
+  (examFigures.ts·index.ts·EXAM_GUIDE.md는 g2u6·u2 세션과 공유 — 커밋 시점 diff 재확인 후 합성 스테이징).

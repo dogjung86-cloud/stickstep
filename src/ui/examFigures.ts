@@ -8784,3 +8784,561 @@ export function ionMoveMaskFig(o: { dir: "left" | "right" }): string {
   </svg>`;
 }
 /* ══════════════ g2u4 v2 end ══════════════ */
+
+/* ============== g2u5 v2 신작(파일럿 승격 · 신규 출제 14호) ============== */
+// 물질 출입 도해·잎 단면·아이오딘 잎·기체 센서 곡선·밀폐 용기 패널·요인 곡선·낮밤 출입·
+// 광합성량 호흡량 막대·물관 체관 경로. 전부 파라미터형 · aria는 파라미터에서 파생.
+// 수정은 qa/g2u5v2-pilot.ts에서 한 뒤 qa/build-g2u5v2-lessons.mjs를 다시 돌린다.
+// ── g2u5 v2 공용 팔레트(examFigures 관행대로 하드 헥스 · 토큰 미로드 환경에서도 색이 산다) ──
+const C = {
+  ink: "#333D4B", sub: "#4E5968", line: "#C9D0D8", panel: "#F2F4F7", white: "#FFFFFF",
+  leafHi: "#7FD66D", leaf: "#39A85A", leafLo: "#17643A", vein: "#8FCB6B",
+  xylem: "#3C93E8", phloem: "#DC4B86", sun: "#F0A422", sunHi: "#FFD97A",
+  co2: "#7A8798", o2: "#17958F", o2Fill: "#7FD5D0", glucose: "#7A5FCB", starch: "#B08FE0",
+  soil: "#8A6440", night: "#1E2C4A", blue: "#1B64DA", tint: "#EAF7EF", warn: "#C43A2E",
+};
+
+// ── 발주 도해 베이스(public/exam/g2u5fig · 글자·기호·화살표 0의 일러스트) ──────────────
+// 하이브리드 방침: 라스터는 그림만 담고, 기호(㉠㉡)·물질 이름 칩·화살표는 아래 헬퍼가 SVG로 얹는다.
+// 오버레이 좌표는 눈대중이 아니라 qa/shot-g2u5fig-grid.mjs로 격자를 얹어 실측한 원본 비율에서 역산했다.
+const G5_IMG_BASE = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/";
+const g5fig = (file: string): string => `${G5_IMG_BASE}exam/g2u5fig/${file}`;
+
+/** 문서 안에서 유일한 id(리뷰 화면이 같은 그림을 여러 번 렌더해도 clipPath가 충돌하지 않게). */
+let uidSeed = Math.floor(Math.random() * 1679616);
+const uid = (): string => `g5${(uidSeed++).toString(36)}`;
+
+/** 기호 배지(원 + 기호) + 지시선. 지시선 없는 라벨은 무엇을 가리키는지 모호해진다(plantFigures 결함). */
+const g5badge = (bx: number, by: number, tx: number, ty: number, sym: string, color: string): string =>
+  `<line x1="${bx}" y1="${by}" x2="${tx}" y2="${ty}" stroke="${color}" stroke-width="1.4"/>
+   <circle cx="${bx}" cy="${by}" r="12" fill="#FFFFFF" stroke="${color}" stroke-width="1.6"/>
+   <text x="${bx}" y="${by + 4.5}" text-anchor="middle" font-size="12.5" font-weight="800" fill="${color}">${sym}</text>`;
+
+const g5chip = (x: number, y: number, w: number, text: string, color: string, dashed = false): string =>
+  `<rect x="${x}" y="${y}" width="${w}" height="24" rx="12" fill="#FFFFFF" stroke="${color}" stroke-width="${dashed ? 1.8 : 1.5}"${dashed ? ' stroke-dasharray="5 4"' : ""}/>
+   <text x="${x + w / 2}" y="${y + 16.5}" text-anchor="middle" font-size="12" font-weight="${dashed ? 800 : 700}" fill="${color}">${text}</text>`;
+
+/** 화살촉 크기는 **선 굵기와 분리**한다(markerUnits="userSpaceOnUse").
+ *  기본값(strokeWidth)이면 굵기 4.6짜리 화살에 29px 화살촉이 붙어 몸통이 안 보인다(사용자 지적). */
+const arrowDefs = (id: string, color: string, size = 12): string =>
+  `<marker id="${id}" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="${size}" markerHeight="${size}" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 L9 5 L1 9 Z" fill="${color}"/></marker>`;
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PS · 광합성·호흡 물질/에너지 출입 도해 (파라미터 가림판)
+// 구 respirationCycleFig은 "포도당·산소"·"이산화 탄소·물"·"에너지"를 전부 글자로 인쇄해
+// 물질 방향을 묻는 문항에 쓰면 정답 인쇄였다. 이 판은 슬롯별 가림(㉠㉡㉢㉣)을 지원한다.
+// ══════════════════════════════════════════════════════════════════════════════
+type PsSlot = "in1" | "in2" | "out1" | "out2" | "site" | "energy";
+const PS_TEXT: Record<"photo" | "resp", Record<PsSlot, string>> = {
+  photo: { in1: "이산화 탄소", in2: "물", out1: "포도당", out2: "산소", site: "엽록체", energy: "빛에너지" },
+  resp: { in1: "포도당", in2: "산소", out1: "이산화 탄소", out2: "물", site: "마이토콘드리아", energy: "에너지" },
+};
+/** o.hide 순서대로 ㉠㉡㉢㉣를 배정한다. o.reverse에 든 화살표는 방향이 뒤집힌다(오류 찾기 문항용).
+ *  o.arrowSyms가 참이면 네 화살표에 ㉠~㉣ 기호를 단다(가림과 동시에 쓰지 않는다). */
+/** o.materials === false면 물질 칩·화살표를 아예 그리지 않는다(에너지 방향만 묻는 문항용 ·
+ *  같은 도해를 두 문항이 나눠 쓰면 한쪽이 다른 쪽의 정답을 인쇄한다). */
+export function psExchangeFig(o: { mode: "photo" | "resp"; hide?: PsSlot[]; reverse?: PsSlot[]; arrowSyms?: boolean; materials?: false }): string {
+  const T = PS_TEXT[o.mode];
+  const SYM = ["㉠", "㉡", "㉢", "㉣"];
+  const hidden = new Map<PsSlot, string>();
+  (o.hide ?? []).forEach((k, i) => hidden.set(k, SYM[i] ?? "㉠"));
+  const rev = new Set(o.reverse ?? []);
+  const label = (k: PsSlot): string => hidden.get(k) ?? T[k];
+  const isHid = (k: PsSlot): boolean => hidden.has(k);
+  const CY = 112, RY = 32;
+  // 화살표·칩 색은 물질마다 고정한다(한 색이 두 물질을 뜻하면 색이 오독의 단서가 된다).
+  const MAT_COL: Record<"photo" | "resp", Record<"in1" | "in2" | "out1" | "out2", string>> = {
+    photo: { in1: C.co2, in2: C.xylem, out1: C.glucose, out2: C.o2 },
+    resp: { in1: C.glucose, in2: C.o2, out1: C.co2, out2: C.xylem },
+  };
+  const mIn = uid(), mOut = uid(), mE = uid();
+
+  // 소기관은 발주 일러스트를 얹는다. 임베드 사각형은 "그림 속 소기관 몸통"이 (CX,CY) 중심의
+  // 가로 128 상자에 오도록 실측 비율에서 역산했다(엽록체 몸통 = 원본 폭 87%·높이 41%·중심 48.5/49.5%,
+  // 마이토콘드리아 = 84%·43%·중심 50/47.5%). 결과는 두 모드 모두 몸통이 x 108~236 · y 80~144.
+  const EMB = o.mode === "photo"
+    ? { file: "chloroplast.webp", x: 100.7, y: 39.2, w: 147.1 }
+    : { file: "mitochondrion.webp", x: 95.8, y: 39.6, w: 152.4 };
+  const organelle = `<image href="${g5fig(EMB.file)}" x="${EMB.x}" y="${EMB.y}" width="${EMB.w}" height="${EMB.w}" preserveAspectRatio="xMidYMid meet"/>`;
+
+  // 물질 화살표 4개 · in은 기본 오른쪽(들어감), out은 기본 오른쪽(나감). reverse면 뒤집는다.
+  const hArrow = (x1: number, x2: number, y: number, color: string, marker: string, flip: boolean): string =>
+    flip
+      ? `<path d="M${x2} ${y} H${x1}" stroke="${color}" stroke-width="3.2" marker-end="url(#${marker})" fill="none"/>`
+      : `<path d="M${x1} ${y} H${x2}" stroke="${color}" stroke-width="3.2" marker-end="url(#${marker})" fill="none"/>`;
+
+  // 화살표 높이는 소기관 몸통(y 80~144)의 위·아래 어깨에 닿는 96과 128로 잡는다.
+  const rows: { k: "in1" | "in2" | "out1" | "out2"; y: number; side: "L" | "R" }[] = [
+    { k: "in1", y: 96, side: "L" },
+    { k: "in2", y: 128, side: "L" },
+    { k: "out1", y: 96, side: "R" },
+    { k: "out2", y: 128, side: "R" },
+  ];
+  const markers = new Map<string, string>();
+  let body = "";
+  let ai = 0;
+  for (const r of o.materials === false ? [] : rows) {
+    const hid = isHid(r.k);
+    const col = hid ? C.blue : MAT_COL[o.mode][r.k];
+    const mk = `${r.side === "L" ? mIn : mOut}${r.k}`;
+    markers.set(mk, col);
+    if (r.side === "L") {
+      body += g5chip(8, r.y - 12, 84, label(r.k), col, hid);
+      body += hArrow(94, 126, r.y, col, mk, rev.has(r.k));
+    } else {
+      body += g5chip(252, r.y - 12, 84, label(r.k), col, hid);
+      body += hArrow(218, 250, r.y, col, mk, rev.has(r.k));
+    }
+    if (o.arrowSyms) {
+      const bx = r.side === "L" ? 104 : 240;
+      body += `<circle cx="${bx}" cy="${r.y - 18}" r="10.5" fill="#FFFFFF" stroke="${C.sub}" stroke-width="1.4"/>
+        <text x="${bx}" y="${r.y - 13.8}" text-anchor="middle" font-size="11.5" font-weight="800" fill="${C.sub}">${SYM[ai]}</text>`;
+    }
+    ai += 1;
+  }
+
+  // 에너지(세로) · 광합성은 들어오고, 호흡은 나간다.
+  const eHid = isHid("energy");
+  const eCol = eHid ? C.blue : C.sun;
+  markers.set(mE, eCol);
+  const eFlip = rev.has("energy");
+  const down = o.mode === "photo" ? !eFlip : eFlip;
+  body += down
+    ? `<path d="M172 40 V72" stroke="${eCol}" stroke-width="3.2" marker-end="url(#${mE})" fill="none"/>`
+    : `<path d="M172 72 V40" stroke="${eCol}" stroke-width="3.2" marker-end="url(#${mE})" fill="none"/>`;
+  body += `<text x="172" y="30" text-anchor="middle" font-size="12.5" font-weight="800" fill="${eCol}">${label("energy")}</text>`;
+
+  const sHid = isHid("site");
+  body += `<rect x="106" y="${CY + RY + 8}" width="132" height="26" rx="13" fill="${sHid ? "#FFFFFF" : C.tint}" stroke="${sHid ? C.blue : C.leafLo}" stroke-width="${sHid ? 1.8 : 1.4}"${sHid ? ' stroke-dasharray="5 4"' : ""}/>
+    <text x="172" y="${CY + RY + 25}" text-anchor="middle" font-size="13" font-weight="800" fill="${sHid ? C.blue : C.leafLo}">${label("site")}</text>`;
+
+  const hidNames = (o.hide ?? []).map((_k, i) => SYM[i]).join("·");
+  const aria = o.materials === false
+    ? "한 세포 소기관과, 그 위쪽으로 이어진 에너지 화살표만 그린 그림"
+    : `한 세포 소기관을 가운데 두고 왼쪽과 오른쪽에 물질 이름 칸이 두 개씩 있고 각 칸에 화살표가 이어진 그림${o.hide?.length ? `. ${hidNames} 자리는 이름이 가려져 있다` : ""}${o.arrowSyms ? ". 화살표마다 기호가 붙어 있다" : ""}`;
+  const defs = [...markers].map(([id, col]) => arrowDefs(id, col)).join("");
+  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="${aria}"><defs>${defs}</defs>${organelle}${body}</svg>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// LF · 잎 단면 + 부위 기호 (지시선 필수 · 인셋에도 연결선)
+// 구 leafRouteFig은 기공 인셋이 지시선 없이 잎 바깥에 떠 있고 (가)(나)(다) 배정이 레슨에 3중 소진.
+// ══════════════════════════════════════════════════════════════════════════════
+type LfPart = "chloro" | "stoma" | "xylem" | "phloem" | "cell";
+/** 발주 일러스트(leaf-section.webp) 위에 기호 배지와 지시선만 얹는다.
+ *  지시선 끝점은 qa/shot-g2u5fig-grid.mjs로 격자를 얹어 실측한 원본 비율에서 역산했다:
+ *  물관 다발 (23.5%, 40%) · 체관 다발 (23%, 55%) · 엽록체 알갱이 (52%, 28%) ·
+ *  해면 세포 (48.5%, 57%) · 기공 틈 (74.5%, 71.5%). 그림은 4:3이므로 x% x 3.44, y% x 2.58. */
+export function leafPartsFig(o: { marks: { part: LfPart; sym: string }[] }): string {
+  const IW = 344, IH = 258;
+  const px = (f: number): number => Math.round(f * IW / 100) / 100;   // f = 만분율(2350 = 23.50%)
+  const py = (f: number): number => Math.round(f * IH / 100) / 100;   // f = 만분율(7150 = 71.50%)
+  const art = `<image href="${g5fig("leaf-section.webp")}" x="0" y="0" width="${IW}" height="${IH}" preserveAspectRatio="xMidYMid meet"/>`;
+  // 배지는 그림의 흰 여백(위 0~45 · 아래 191~258)에만 둔다.
+  const POS: Record<LfPart, { bx: number; by: number; tx: number; ty: number; col: string }> = {
+    xylem: { bx: 36, by: 24, tx: px(2350), ty: py(4000), col: C.xylem },
+    chloro: { bx: 180, by: 22, tx: px(5200), ty: py(2800), col: C.leafLo },
+    phloem: { bx: 40, by: 234, tx: px(2300), ty: py(5500), col: C.phloem },
+    cell: { bx: 152, by: 234, tx: px(4850), ty: py(5700), col: C.sub },
+    stoma: { bx: 302, by: 234, tx: px(7450), ty: py(7150), col: C.leafLo },
+  };
+  let badges = "";
+  for (const m of o.marks) {
+    const p = POS[m.part];
+    badges += g5badge(p.bx, p.by, p.tx, p.ty, m.sym, p.col);
+  }
+  const syms = o.marks.map((m) => m.sym).join("·");
+  return `<svg viewBox="0 0 ${IW} ${IH}" ${NS} fill="none" role="img" aria-label="잎을 세로로 자른 단면 그림. 위아래에 납작한 세포가 한 줄씩 있고 그 사이를 길쭉한 세포와 둥근 세포가 채우고 있으며, 아래쪽 한 곳에는 세포 두 개가 감싼 틈이 있다. ${syms} 기호가 각각 서로 다른 부분을 가리킨다">${art}${badges}</svg>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ST · 아이오딘 반응 잎 (조건 라벨 기본 미인쇄 · 부위 기호 ㉠㉡)
+// 구 starchTestFig은 "햇빛 받은 잎 / 햇빛 가린 잎" 조건을 인쇄해 판정 과제가 붕괴했다.
+// ══════════════════════════════════════════════════════════════════════════════
+/** regions는 왼쪽부터(ring이면 [바깥 테두리, 안쪽]).
+ *  result "blue" = 청람색 · "none" = 반응 없음(탈색된 옅은 빛깔) · "green" = 아직 반응 전 초록 ·
+ *  "white" = 엽록소가 없는 흰 부분. */
+export function starchLeafFig(o: {
+  regions: { result: "blue" | "none" | "green" | "white"; sym?: string }[];
+  cover?: number;   // 이 구간을 은박 띠로 덮는다(인덱스 · ring 모드에서는 무시)
+  ring?: boolean;   // 얼룩무늬 잎 문법 · 바깥 테두리와 안쪽을 나눈다
+}): string {
+  const id = uid(), idIn = uid();
+  const n = o.regions.length;
+  const LX = 34, RX = 310, TY = 46, BY = 168;
+  const CXm = (LX + RX) / 2, CYm = (TY + BY) / 2;
+  const seg = (RX - LX) / n;
+  const FILL: Record<string, string> = { blue: "#2E4E9E", none: "#EDE4CE", green: "#49AE63", white: "#F7F7F2" };
+  const leafPath = (s: number): string => {
+    const lx = CXm + (LX - CXm) * s, rx = CXm + (RX - CXm) * s;
+    const ty = CYm + (TY - CYm) * s, by = CYm + (BY - CYm) * s;
+    return `M${lx} ${CYm} C${lx + (rx - lx) * 0.09} ${ty - 6 * s} ${rx - (rx - lx) * 0.15} ${ty - 2 * s} ${rx} ${CYm} C${rx - (rx - lx) * 0.15} ${by + 2 * s} ${lx + (rx - lx) * 0.09} ${by + 6 * s} ${lx} ${CYm} Z`;
+  };
+  const leaf = leafPath(1);
+  let fills = "";
+  let marks = "";
+  if (o.ring) {
+    fills += `<path d="${leaf}" fill="${FILL[o.regions[0].result]}"/>`;
+    fills += `<path d="${leafPath(0.6)}" fill="${FILL[o.regions[1]?.result ?? "none"]}" stroke="${C.leafLo}" stroke-width="1.4" stroke-dasharray="5 4"/>`;
+    const at: [number, number][] = [[LX + 30, CYm], [CXm, CYm]];
+    o.regions.slice(0, 2).forEach((r, i) => {
+      if (!r.sym) return;
+      marks += `<circle cx="${at[i][0]}" cy="${at[i][1]}" r="14" fill="#FFFFFF" stroke="${C.sub}" stroke-width="1.6"/>
+        <text x="${at[i][0]}" y="${at[i][1] + 5}" text-anchor="middle" font-size="14" font-weight="800" fill="${C.ink}">${r.sym}</text>`;
+    });
+  } else {
+    o.regions.forEach((r, i) => {
+      fills += `<rect x="${LX + seg * i}" y="${TY - 12}" width="${seg + 0.6}" height="${BY - TY + 24}" fill="${FILL[r.result]}" clip-path="url(#${id})"/>`;
+      if (!r.sym) return;
+      const cx = LX + seg * (i + 0.5);
+      marks += `<circle cx="${cx}" cy="${CYm}" r="14" fill="#FFFFFF" stroke="${C.sub}" stroke-width="1.6"/>
+        <text x="${cx}" y="${CYm + 5}" text-anchor="middle" font-size="14" font-weight="800" fill="${C.ink}">${r.sym}</text>`;
+    });
+  }
+  let cover = "";
+  if (o.cover !== undefined && !o.ring) {
+    const x = LX + seg * o.cover;
+    cover = `<rect x="${x}" y="${TY - 8}" width="${seg}" height="${BY - TY + 16}" rx="7" fill="#C6CDD6" stroke="#8B95A1" stroke-width="1.6" opacity=".95"/>
+      <path d="M${x + 7} ${TY + 12} l${seg - 14} 0 M${x + 7} ${TY + 44} l${seg - 14} 0 M${x + 7} ${TY + 76} l${seg - 14} 0 M${x + 7} ${TY + 108} l${seg - 14} 0" stroke="#FFFFFF" stroke-width="1.2" opacity=".7"/>`;
+  }
+  const plate = `<ellipse cx="172" cy="${CYm + 26}" rx="152" ry="44" fill="#FFFFFF" stroke="${C.line}" stroke-width="2"/>`;
+  const shapeTxt = o.ring ? "잎의 바깥 테두리와 안쪽의 빛깔이 서로 다르다" : `잎이 ${n}개 구역으로 나뉘어 서로 다른 빛깔로 보인다`;
+  return `<svg viewBox="0 0 344 206" ${NS} fill="none" role="img" aria-label="접시 위에 놓인 잎 한 장을 위에서 본 그림. ${shapeTxt}${o.cover !== undefined && !o.ring ? ". 한 구역은 은박으로 덮여 있다" : ""}">
+    <defs><clipPath id="${id}"><path d="${leaf}"/></clipPath><clipPath id="${idIn}"><path d="${leafPath(0.6)}"/></clipPath></defs>
+    ${plate}<path d="${leaf}" fill="#EDE4CE" stroke="${C.leafLo}" stroke-width="2"/>${fills}
+    <path d="${leaf}" fill="none" stroke="${C.leafLo}" stroke-width="2"/>
+    ${o.ring ? "" : `<path d="M${LX + 8} ${CYm} H${RX - 10}" stroke="${C.leafLo}" stroke-width="1.6" opacity=".45"/>`}${cover}${marks}</svg>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SP · 기체 농도 시간 곡선 (정성 · 눈금 수치 없음 · 가이드 점선 금지)
+// 구 sensorGraphFig의 고정 aria "이산화 탄소 감소와 산소 증가"는 정답 낭독이었다.
+// ══════════════════════════════════════════════════════════════════════════════
+type SpShape = "up" | "down" | "flat" | "flat-up" | "flat-down" | "up-flat" | "down-flat" | "down-up" | "up-down";
+export function gasSensorFig(o: {
+  series: { name: string; shape: SpShape; color?: string }[];
+  changeAt?: number;                          // 0~1 · flat/꺾임 지점
+  marks?: { frac: number; sym: string }[];    // 세로 점선 + 기호
+  xLabel?: string; yLabel?: string;
+}): string {
+  const L = 54, R = 328, TOP = 30, BASE = 156;
+  const k = o.changeAt ?? 0.45;
+  const px = (f: number): number => L + f * (R - L);
+  const HI = TOP + 10, LO = BASE - 12, MID = (HI + LO) / 2;
+  const path = (shape: SpShape): string => {
+    const kx = px(k);
+    switch (shape) {
+      // flat은 "변화가 없는 대조군"이라 다른 곡선과 **같은 높이에서 출발**해야 한다.
+      // MID에서 시작하던 초판은 247(똑같이 밀폐한 두 용기)에서 두 용기의 처음 농도가 다르게 그려졌다
+      // (갤러리 눈검수 자가 적발). down도 HI에서 출발하므로 왼쪽 끝에서 만났다가 갈라진다.
+      case "flat": return `M${L} ${HI} H${R}`;
+      case "up": return `M${L} ${LO} C${px(0.35)} ${LO - 6} ${px(0.6)} ${HI + 22} ${R} ${HI}`;
+      case "down": return `M${L} ${HI} C${px(0.35)} ${HI + 6} ${px(0.6)} ${LO - 22} ${R} ${LO}`;
+      case "flat-up": return `M${L} ${LO} H${kx} C${px(k + 0.18)} ${LO - 8} ${px(k + 0.4)} ${HI + 18} ${R} ${HI}`;
+      case "flat-down": return `M${L} ${HI} H${kx} C${px(k + 0.18)} ${HI + 8} ${px(k + 0.4)} ${LO - 18} ${R} ${LO}`;
+      case "up-flat": return `M${L} ${LO} C${px(k * 0.5)} ${LO - 10} ${px(k * 0.8)} ${HI + 16} ${kx} ${HI} H${R}`;
+      // V자 · Λ자 · 하루 동안의 농도 변화처럼 방향이 한 번 바뀌는 곡선(꺾이는 지점 = changeAt).
+      case "down-up": return `M${L} ${MID + 24} C${px(k * 0.55)} ${LO} ${px(k * 0.8)} ${LO} ${kx} ${LO} C${px(k + (1 - k) * 0.3)} ${LO} ${px(k + (1 - k) * 0.6)} ${MID + 6} ${R} ${MID - 6}`;
+      case "up-down": return `M${L} ${MID - 24} C${px(k * 0.55)} ${HI} ${px(k * 0.8)} ${HI} ${kx} ${HI} C${px(k + (1 - k) * 0.3)} ${HI} ${px(k + (1 - k) * 0.6)} ${MID - 6} ${R} ${MID + 6}`;
+      default: return `M${L} ${HI} C${px(k * 0.5)} ${HI + 10} ${px(k * 0.8)} ${LO - 16} ${kx} ${LO} H${R}`;
+    }
+  };
+  const COLORS = [C.co2, C.o2, C.glucose];
+  let curves = "";
+  o.series.forEach((s, i) => {
+    const col = s.color ?? COLORS[i % 3];
+    curves += `<path d="${path(s.shape)}" stroke="${col}" stroke-width="3.6" stroke-linecap="round" fill="none"/>`;
+  });
+  let marks = "";
+  for (const m of o.marks ?? []) {
+    const x = px(m.frac);
+    marks += `<line x1="${x}" y1="${TOP}" x2="${x}" y2="${BASE}" stroke="${C.line}" stroke-width="1.4" stroke-dasharray="4 4"/>
+      <circle cx="${x}" cy="${TOP - 12}" r="11" fill="#FFFFFF" stroke="${C.sub}" stroke-width="1.5"/>
+      <text x="${x}" y="${TOP - 7.6}" text-anchor="middle" font-size="12" font-weight="800" fill="${C.ink}">${m.sym}</text>`;
+  }
+  let legend = "";
+  o.series.forEach((s, i) => {
+    const col = s.color ?? COLORS[i % 3];
+    const x = 54 + i * 132;
+    legend += `<rect x="${x}" y="${BASE + 22}" width="18" height="4" rx="2" fill="${col}"/>
+      <text x="${x + 24}" y="${BASE + 30}" font-size="12" font-weight="700" fill="${C.sub}">${s.name}</text>`;
+  });
+  const yTxt = o.yLabel ?? "기체 농도";
+  const xTxt = o.xLabel ?? "시간";
+  const aria = `가로축이 ${xTxt}, 세로축이 ${yTxt}인 그래프에 곡선 ${o.series.length}개가 그려져 있다. 눈금 수치는 표시되어 있지 않다${o.marks?.length ? `. ${o.marks.map((m) => m.sym).join("·")} 위치에 세로 점선이 있다` : ""}`;
+  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="${aria}">
+    <path d="M${L} ${TOP} V${BASE} H${R}" stroke="${C.sub}" stroke-width="1.8" fill="none"/>
+    <path d="M${L} ${TOP} l-4.5 7 M${L} ${TOP} l4.5 7 M${R} ${BASE} l-7 -4.5 M${R} ${BASE} l-7 4.5" stroke="${C.sub}" stroke-width="1.8" fill="none"/>
+    ${marks}${curves}
+    <text x="6" y="${TOP - 8}" font-size="11.5" font-weight="700" fill="${C.sub}">${yTxt}</text>
+    <text x="${R}" y="${BASE + 16}" text-anchor="end" font-size="11.5" font-weight="700" fill="${C.sub}">${xTxt}</text>${legend}</svg>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// EX · 밀폐 용기 실험 패널 (조건 이름 미인쇄 · 라벨은 (가)(나)(다)뿐)
+// ══════════════════════════════════════════════════════════════════════════════
+export function sealedPlantFig(o: {
+  panels: { plant: "live" | "boiled" | "none"; cover: "none" | "foil" | "dark"; label: string; probe?: boolean }[];
+  lime?: boolean;   // 용기 바닥에 석회수 접시를 둔다(뿌옇게 변한 상태는 그리지 않는다 · 결과 인쇄 금지)
+}): string {
+  const n = o.panels.length;
+  const PW = n === 2 ? 156 : 106;
+  const GAP = n === 2 ? 20 : 12;
+  const startX = (344 - (PW * n + GAP * (n - 1))) / 2;
+  let body = "";
+  o.panels.forEach((p, i) => {
+    const x = startX + i * (PW + GAP);
+    const cx = x + PW / 2;
+    const jarTop = 34, jarBot = 168;
+    const jw = PW - 22;
+    const jx = x + 11;
+    const dark = p.cover === "dark";
+    body += `<rect x="${jx}" y="${jarTop}" width="${jw}" height="${jarBot - jarTop}" rx="10" fill="${dark ? "#3A4356" : "#EAF4FA"}" stroke="${C.sub}" stroke-width="1.8"/>
+      <rect x="${jx - 4}" y="${jarTop - 12}" width="${jw + 8}" height="14" rx="5" fill="#B9C2CC" stroke="${C.sub}" stroke-width="1.6"/>`;
+    if (p.plant !== "none") {
+      const leafCol = p.plant === "live" ? C.leaf : "#9A9A6E";
+      const leafHi = p.plant === "live" ? C.leafHi : "#B4B48A";
+      body += `<path d="M${cx} 148 V108" stroke="${p.plant === "live" ? C.leafLo : "#7A7A58"}" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M${cx} 116 C${cx - 26} 100 ${cx - 34} 112 ${cx - 30} 122 C${cx - 16} 130 ${cx - 4} 126 ${cx} 116 Z" fill="${leafCol}" stroke="${p.plant === "live" ? C.leafLo : "#7A7A58"}" stroke-width="1.4"/>
+        <path d="M${cx} 110 C${cx + 26} 94 ${cx + 34} 106 ${cx + 30} 116 C${cx + 16} 124 ${cx + 4} 120 ${cx} 110 Z" fill="${leafHi}" stroke="${p.plant === "live" ? C.leafLo : "#7A7A58"}" stroke-width="1.4"/>
+        <path d="M${cx - 16} 148 h32 l-4 16 h-24 Z" fill="#C0724A" stroke="#8A4E2F" stroke-width="1.4"/>`;
+    }
+    if (o.lime) body += `<ellipse cx="${cx}" cy="${jarBot - 8}" rx="${jw / 3}" ry="6" fill="#FFFFFF" stroke="${C.line}" stroke-width="1.4"/>`;
+    if (p.cover === "foil") {
+      body += `<rect x="${jx - 2}" y="${jarTop + 4}" width="${jw + 4}" height="${jarBot - jarTop - 8}" rx="8" fill="#C6CDD6" stroke="#8B95A1" stroke-width="1.6" opacity=".95"/>
+        <path d="M${jx + 6} ${jarTop + 24} h${jw - 12} M${jx + 6} ${jarTop + 56} h${jw - 12} M${jx + 6} ${jarTop + 88} h${jw - 12}" stroke="#FFFFFF" stroke-width="1.2" opacity=".65"/>`;
+    }
+    if (p.probe !== false) {
+      body += `<path d="M${cx + jw / 2 - 12} ${jarTop - 6} V54" stroke="${C.sub}" stroke-width="2.2" fill="none"/>
+        <rect x="${cx + jw / 2 - 20}" y="54" width="16" height="22" rx="4" fill="#DDE3EA" stroke="${C.sub}" stroke-width="1.4"/>
+        <path d="M${cx + jw / 2 - 12} ${jarTop - 6} C${cx + jw / 2 + 4} ${jarTop - 22} ${x + PW - 2} ${jarTop - 20} ${x + PW - 2} ${jarTop - 6}" stroke="${C.sub}" stroke-width="1.6" fill="none"/>`;
+    }
+    body += `<text x="${cx}" y="190" text-anchor="middle" font-size="13.5" font-weight="800" fill="${C.ink}">${p.label}</text>`;
+  });
+  // aria는 "무엇이 보이는가"까지만 서술한다(가려짐·식물 상태는 관찰 · 어느 쪽이 대조군인지는 판정이라 제외).
+  const seen = o.panels.map((p) => {
+    const cov = p.cover === "foil" ? "겉면이 불투명한 것으로 감싸여 있고" : p.cover === "dark" ? "속이 어둡고" : "속이 훤히 들여다보이고";
+    const pl = p.plant === "live" ? "안에 푸른 잎의 화분이 있다" : p.plant === "boiled" ? "안에 빛깔이 바랜 화분이 있다" : "안이 비어 있다";
+    return `${p.label} 용기는 ${cov} ${pl}`;
+  }).join(", ");
+  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="뚜껑을 덮은 용기 ${n}개를 나란히 놓은 실험 그림. ${seen}${o.lime ? ". 각 용기 바닥에는 얕은 접시가 하나씩 놓여 있다" : ""}">${body}</svg>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// FC · 요인–광합성량 곡선 (정성 · 축 라벨 생략 = 역추론 문항)
+// ══════════════════════════════════════════════════════════════════════════════
+export function factorGraphFig(o: {
+  kind: "sat" | "peak";
+  curves: { label?: string; scale?: number; color?: string }[];
+  xLabel?: string; yLabel?: string;
+  marks?: { frac: number; sym: string }[];
+}): string {
+  const L = 54, R = 322, TOP = 28, BASE = 152;
+  const px = (f: number): number => L + f * (R - L);
+  const COLORS = [C.leafLo, C.sun, C.xylem];
+  // sat 다중 곡선은 "같은 상승 경로를 공유하고 각자의 높이에서 먼저 평평해진다"(교과서 표준 도해).
+  // scale로 곡선 전체를 비례 축소하면 저광도 구간의 기울기까지 달라져 "빛이 부족할 땐 두 조건이
+  // 거의 같다"는 판정 근거가 사라진다(검산 A 적발). 공유 상승 곡선을 샘플링해 각자 plateau로 클램프한다.
+  const TOP1 = BASE - (BASE - TOP - 8);
+  const bez = (t: number, p0: number, p1: number, p2: number, p3: number): number => {
+    const u = 1 - t;
+    return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3;
+  };
+  const sharedSat = (n: number): [number, number][] => {
+    const pts: [number, number][] = [];
+    for (let i = 0; i <= n; i++) {
+      const t = i / n;
+      pts.push([bez(t, L + 2, px(0.16), px(0.36), px(0.58)), bez(t, BASE - 4, BASE - (BASE - TOP1) * 0.5, TOP1 + 4, TOP1)]);
+    }
+    return pts;
+  };
+  let curves = "";
+  o.curves.forEach((c, i) => {
+    const s = c.scale ?? 1;
+    const top = BASE - (BASE - TOP - 8) * s;
+    const col = c.color ?? COLORS[i % 3];
+    let d;
+    if (o.kind === "sat") {
+      const pts = sharedSat(48).map(([x, y]) => [x, Math.max(top, y)] as [number, number]);
+      d = `M${pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join(" L")} L${R} ${top.toFixed(1)}`;
+    } else {
+      d = `M${L + 2} ${BASE - 4} C${px(0.2)} ${BASE - (BASE - top) * 0.55} ${px(0.34)} ${top} ${px(0.48)} ${top} C${px(0.66)} ${top} ${px(0.76)} ${BASE - (BASE - top) * 0.45} ${R} ${BASE - 6}`;
+    }
+    curves += `<path d="${d}" stroke="${col}" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
+    // 라벨 자리: sat는 곡선이 오른쪽에서 평평해지므로 오른쪽 끝 위에 건다.
+    // peak는 오른쪽에서 곡선들이 한데 모여 내려오므로 거기에 걸면 라벨이 곡선에 겹친다
+    // (봉우리 2곡선 데뷔 슬롯 281에서 실제로 겹쳤다 · 갤러리 눈검수 자가 적발).
+    // → 각 곡선의 **자기 봉우리 바로 위**에 건다. scale이 다르면 높이가 갈리므로 라벨끼리도 안 겹친다.
+    if (c.label) {
+      curves += o.kind === "sat"
+        ? `<text x="${R - 4}" y="${top - 6}" text-anchor="end" font-size="11.5" font-weight="700" fill="${col}">${c.label}</text>`
+        : `<text x="${px(0.57)}" y="${top - 7}" text-anchor="middle" font-size="11.5" font-weight="700" fill="${col}">${c.label}</text>`;
+    }
+  });
+  let marks = "";
+  for (const m of o.marks ?? []) {
+    const x = px(m.frac);
+    marks += `<line x1="${x}" y1="${TOP}" x2="${x}" y2="${BASE}" stroke="${C.line}" stroke-width="1.3" stroke-dasharray="4 4"/>
+      <circle cx="${x}" cy="${BASE + 18}" r="11" fill="#FFFFFF" stroke="${C.sub}" stroke-width="1.5"/>
+      <text x="${x}" y="${BASE + 22.6}" text-anchor="middle" font-size="12" font-weight="800" fill="${C.ink}">${m.sym}</text>`;
+  }
+  const yTxt = o.yLabel ?? "광합성량";
+  const xTxt = o.xLabel ?? "?";
+  const aria = `가로축이 ${o.xLabel ?? "이름이 적혀 있지 않은 조건"}, 세로축이 ${yTxt}인 그래프에 곡선 ${o.curves.length}개가 그려져 있다. 눈금 수치는 표시되어 있지 않다`;
+  return `<svg viewBox="0 0 344 202" ${NS} fill="none" role="img" aria-label="${aria}">
+    <path d="M${L} ${TOP} V${BASE} H${R}" stroke="${C.sub}" stroke-width="1.8" fill="none"/>
+    <path d="M${L} ${TOP} l-4.5 7 M${L} ${TOP} l4.5 7 M${R} ${BASE} l-7 -4.5 M${R} ${BASE} l-7 4.5" stroke="${C.sub}" stroke-width="1.8" fill="none"/>
+    ${marks}${curves}
+    <text x="6" y="${TOP - 8}" font-size="11.5" font-weight="700" fill="${C.sub}">${yTxt}</text>
+    <text x="${R}" y="${BASE + (o.marks?.length ? 46 : 18)}" text-anchor="end" font-size="11.5" font-weight="700" fill="${C.sub}">${xTxt}</text></svg>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DN · 낮/밤 겉보기 기체 출입 2패널 (기체 이름 칩 인쇄 · 결론 캡션 없음)
+// 구 dayNightFlowFig은 범례 없이 색으로만 기체를 구분했고 캡션이 결론을 인쇄했다.
+// ══════════════════════════════════════════════════════════════════════════════
+type DnGas = "co2" | "o2" | null;
+const DN_NAME: Record<"co2" | "o2", string> = { co2: "이산화 탄소", o2: "산소" };
+/** 패널을 세로로 쌓는다 · 좌우 배치로는 기체 이름 칩 두 개(각 88px)가 폭 344 안에서 겹친다
+ *  (첫 렌더에서 실제로 겹쳤다). 세로 쌓기면 칸마다 칩이 좌우로 넉넉히 떨어진다. */
+export function dayNightGasFig(o: {
+  panels: { light: "bright" | "dim" | "none"; inGas: DnGas; outGas: DnGas; label: string; inSym?: string; outSym?: string }[];
+}): string {
+  const PX = 8, PW = 328, PH = 142, GAP = 12;
+  const mCo2 = uid(), mO2 = uid(), mMask = uid();
+  let body = "";
+  o.panels.forEach((p, i) => {
+    const y = 10 + i * (PH + GAP);
+    const cx = PX + 150;
+    const night = p.light === "none";
+    body += `<rect x="${PX}" y="${y}" width="${PW}" height="${PH}" rx="14" fill="${night ? C.night : "#F3FAF2"}" stroke="${night ? "#0F1A31" : C.leafLo}" stroke-width="1.6"/>`;
+    body += night
+      ? `<circle cx="${PX + 296}" cy="${y + 30}" r="13" fill="#F3EFC0"/><circle cx="${PX + 301}" cy="${y + 27}" r="11" fill="${C.night}"/>`
+      : `<circle cx="${PX + 296}" cy="${y + 30}" r="${p.light === "bright" ? 14 : 10}" fill="${p.light === "bright" ? C.sun : "#E6D6A8"}"/>${p.light === "bright"
+        ? `<path d="M${PX + 296} ${y + 8} v-6 M${PX + 296} ${y + 52} v6 M${PX + 274} ${y + 30} h-6 M${PX + 318} ${y + 30} h6" stroke="${C.sun}" stroke-width="2.4" stroke-linecap="round"/>`
+        : `<ellipse cx="${PX + 282}" cy="${y + 34}" rx="20" ry="9" fill="#DDE3EA"/>`}`;
+    // 식물
+    body += `<path d="M${cx} ${y + 118} V${y + 74}" stroke="${night ? "#2C5B3C" : C.leafLo}" stroke-width="5" stroke-linecap="round"/>
+      <path d="M${cx} ${y + 86} C${cx - 30} ${y + 68} ${cx - 40} ${y + 82} ${cx - 34} ${y + 94} C${cx - 18} ${y + 104} ${cx - 5} ${y + 98} ${cx} ${y + 86} Z" fill="${night ? "#2F7A4B" : C.leaf}" stroke="${night ? "#1B4A2C" : C.leafLo}" stroke-width="1.4"/>
+      <path d="M${cx} ${y + 78} C${cx + 30} ${y + 60} ${cx + 40} ${y + 74} ${cx + 34} ${y + 86} C${cx + 18} ${y + 96} ${cx + 5} ${y + 90} ${cx} ${y + 78} Z" fill="${night ? "#3B8F58" : C.leafHi}" stroke="${night ? "#1B4A2C" : C.leafLo}" stroke-width="1.4"/>
+      <path d="M${cx - 18} ${y + 118} h36 l-5 16 h-26 Z" fill="#C0724A" stroke="#8A4E2F" stroke-width="1.4"/>`;
+    // inSym·outSym이 오면 기체 이름 대신 기호를 점선 칩으로 인쇄한다(기체 동정 문항 · 정답 인쇄 차단).
+    if (p.inGas) {
+      const hid = !!p.inSym;
+      const col = hid ? C.blue : p.inGas === "co2" ? C.co2 : C.o2;
+      body += `<path d="M${PX + 18} ${y + 92} H${cx - 40}" stroke="${col}" stroke-width="3.6" marker-end="url(#${hid ? mMask : p.inGas === "co2" ? mCo2 : mO2})" fill="none"/>`;
+      body += g5chip(PX + 12, y + 52, 92, p.inSym ?? DN_NAME[p.inGas], col, hid);
+    }
+    if (p.outGas) {
+      const hid = !!p.outSym;
+      const col = hid ? C.blue : p.outGas === "co2" ? C.co2 : C.o2;
+      body += `<path d="M${cx + 40} ${y + 92} H${PX + 236}" stroke="${col}" stroke-width="3.6" marker-end="url(#${hid ? mMask : p.outGas === "co2" ? mCo2 : mO2})" fill="none"/>`;
+      body += g5chip(PX + 156, y + 52, 92, p.outSym ?? DN_NAME[p.outGas], col, hid);
+    }
+    body += `<text x="${PX + 22}" y="${y + 26}" font-size="14" font-weight="800" fill="${night ? "#FFFFFF" : C.ink}">${p.label}</text>`;
+  });
+  const desc = o.panels.map((p) => `${p.label} 칸은 ${p.light === "none" ? "빛이 없고" : p.light === "bright" ? "해가 밝게 떠 있고" : "빛이 약하고"} 왼쪽과 오른쪽에 이름표가 붙은 화살표가 하나씩 있다${p.inSym || p.outSym ? `. 이름표 가운데 ${[p.inSym, p.outSym].filter(Boolean).join("·")}는 기호로 가려져 있다` : ""}`).join(", ");
+  const H = 10 + o.panels.length * (PH + GAP);
+  return `<svg viewBox="0 0 344 ${H}" ${NS} fill="none" role="img" aria-label="같은 식물을 서로 다른 빛 조건에서 그린 ${o.panels.length}개 칸. ${desc}"><defs>${arrowDefs(mCo2, C.co2, 14)}${arrowDefs(mO2, C.o2, 14)}${arrowDefs(mMask, C.blue, 14)}</defs>${body}</svg>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// GB · 광합성량 / 호흡량 막대 쌍 (값 라벨 미인쇄 · 높이 판독이 과제)
+// ══════════════════════════════════════════════════════════════════════════════
+export function rateBarsFig(o: { groups: { label: string; photo: number; resp: number }[]; yLabel?: string }): string {
+  const BASE = 156, TOP = 34;
+  const maxV = Math.max(...o.groups.flatMap((g) => [g.photo, g.resp]), 1);
+  const h = (v: number): number => (v / maxV) * (BASE - TOP - 6);
+  const BW = 22, INNER = 7;
+  const gw = BW * 2 + INNER;
+  const span = 322 - 58;
+  const step = span / o.groups.length;
+  let body = "";
+  o.groups.forEach((g, i) => {
+    const gx = 58 + step * i + (step - gw) / 2;
+    // 값이 0인 막대는 아무것도 안 그리면 "빠뜨린 것"으로 읽힌다 → 점선 빈 자리로 표시한다.
+    const bar = (bx: number, v: number, fill: string, stroke: string): string =>
+      v > 0
+        ? `<rect x="${bx}" y="${BASE - h(v)}" width="${BW}" height="${h(v)}" rx="3" fill="${fill}" stroke="${stroke}" stroke-width="1.2"/>`
+        : `<rect x="${bx}" y="${BASE - 9}" width="${BW}" height="9" rx="3" fill="none" stroke="${stroke}" stroke-width="1.3" stroke-dasharray="4 3"/>`;
+    body += bar(gx, g.photo, C.leaf, C.leafLo);
+    body += bar(gx + BW + INNER, g.resp, "#C86AA0", "#8E3E6C");
+    body += `<text x="${gx + gw / 2}" y="${BASE + 18}" text-anchor="middle" font-size="12.5" font-weight="800" fill="${C.ink}">${g.label}</text>`;
+  });
+  const legend = `<rect x="58" y="${BASE + 30}" width="14" height="10" rx="2" fill="${C.leaf}" stroke="${C.leafLo}" stroke-width="1.1"/>
+    <text x="78" y="${BASE + 39}" font-size="12" font-weight="700" fill="${C.sub}">광합성량</text>
+    <rect x="176" y="${BASE + 30}" width="14" height="10" rx="2" fill="#C86AA0" stroke="#8E3E6C" stroke-width="1.1"/>
+    <text x="196" y="${BASE + 39}" font-size="12" font-weight="700" fill="${C.sub}">호흡량</text>`;
+  // 세로축 이름을 x 46 오른끝맞춤으로만 두면 축 왼쪽 38px를 넘는 긴 이름이 화면 밖으로 잘린다
+  // (318 "하루 동안의 양"이 "동안의 양"으로 보였다). 폭을 재서 넘치면 축 위 왼끝맞춤으로 돌린다.
+  const yl = o.yLabel ?? "양";
+  const ylw = [...yl].reduce((a, c) => a + (c === " " ? 3.4 : 11.5), 0);
+  const ylTag =
+    ylw > 38
+      ? `<text x="8" y="20" font-size="11.5" font-weight="700" fill="${C.sub}">${yl}</text>`
+      : `<text x="46" y="${TOP - 2}" text-anchor="end" font-size="11.5" font-weight="700" fill="${C.sub}">${yl}</text>`;
+  return `<svg viewBox="0 0 344 206" ${NS} fill="none" role="img" aria-label="${o.groups.map((g) => g.label).join("·")}에서 잰 두 가지 양을 막대 두 개씩 짝지어 나타낸 그래프. 막대에 값은 적혀 있지 않다">
+    <path d="M54 ${TOP - 4} V${BASE} H326" stroke="${C.sub}" stroke-width="1.8" fill="none"/>
+    ${ylTag}
+    ${body}${legend}</svg>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TR · 물관·체관 이동 경로도 (물관은 반드시 뿌리 끝에서 시작 · 라벨은 지시선 배지)
+// 구 transportFig은 물관 화살표가 줄기 중간에서 시작했고 라벨 (나)가 줄기에 겹쳐 뭉갰다.
+// ══════════════════════════════════════════════════════════════════════════════
+type TrRoute = "xylem" | "phloem-up" | "phloem-down" | "phloem-fruit";
+/** 발주 일러스트(plant-vessels.webp) 위에 이동 화살표와 기호 배지만 얹는다.
+ *  격자 실측(qa/shot-g2u5fig-grid.mjs): 줄기는 x 49.5%의 곧은 수직선 · 흙 선 y 71% ·
+ *  뿌리 71~95% · 왼쪽 잎 y 27~44% · 오른쪽 잎 y 20~40% · 어린 순 y 5~17% · 열매 (62.5%, 45%).
+ *  그림은 3:4이므로 x% x 3.44, y% x 4.59. 화살표는 줄기를 가리지 않도록 양옆으로 나란히 둔다
+ *  (물관 x 46% · 체관 x 53%). 뷰박스는 420이라 아래 흙 일부가 잘린다. */
+export function transportRouteFig(o: {
+  routes: TrRoute[];
+  syms?: { route: TrRoute; sym: string }[];
+  reverse?: TrRoute[];
+}): string {
+  const IW = 344, IH = 459, VH = 420;
+  const px = (f: number): number => Math.round(f * IW / 100) / 100;   // f = 만분율(2350 = 23.50%)
+  const py = (f: number): number => Math.round(f * IH / 100) / 100;   // f = 만분율(7150 = 71.50%)
+  const mX = uid(), mP = uid();
+  const rev = new Set(o.reverse ?? []);
+  const XV = px(4600), PH = px(5300);
+  const art = `<image href="${g5fig("plant-vessels.webp")}" x="0" y="0" width="${IW}" height="${IH}" preserveAspectRatio="xMidYMid meet"/>`;
+  const P: Record<TrRoute, { d: string; rd: string; col: string; m: string; bx: number; by: number; tx: number; ty: number }> = {
+    xylem: {
+      d: `M${XV} ${py(8600)} V${py(2700)}`, rd: `M${XV} ${py(2700)} V${py(8600)}`,
+      col: C.xylem, m: mX, bx: 44, by: 250, tx: XV - 1, ty: 252,
+    },
+    "phloem-up": {
+      d: `M${PH} ${py(3300)} V${py(1200)}`, rd: `M${PH} ${py(1200)} V${py(3300)}`,
+      col: C.phloem, m: mP, bx: 300, by: 62, tx: PH + 2, ty: 68,
+    },
+    "phloem-down": {
+      d: `M${PH} ${py(3800)} V${py(8400)}`, rd: `M${PH} ${py(8400)} V${py(3800)}`,
+      col: C.phloem, m: mP, bx: 300, by: 292, tx: PH + 2, ty: 294,
+    },
+    // 열매 갈래 · 확대 격자 실측(qa/shot-g2u5fig-zoom.mjs plant-vessels.webp 42 34 76 54):
+    // 열매 가지는 줄기의 마디 (50.5%, 42.3%)에서 갈라져 **위로 올라가** 열매 꼭지(x 57~68%, y 38~43%)에
+    // 닿는다. 2차 수리본은 (53%, 35.3%) 허공에서 시작해 아래로 내려가 방향이 반대였다(사용자 3차 지적).
+    // 이제 마디 오른쪽 끝(51.2%, 42.4%)에서 출발해 가지 곡선을 따라 오르며 체관 줄기와 교차한다.
+    "phloem-fruit": {
+      d: `M${px(5120)} ${py(4240)} C${px(5400)} ${py(4060)} ${px(5620)} ${py(3940)} ${px(6020)} ${py(3950)}`,
+      rd: `M${px(6020)} ${py(3950)} C${px(5620)} ${py(3940)} ${px(5400)} ${py(4060)} ${px(5120)} ${py(4240)}`,
+      col: C.phloem, m: mP, bx: 300, by: 258, tx: px(6020), ty: py(3950),
+    },
+  };
+  let arrows = "";
+  for (const r of o.routes) {
+    const p = P[r];
+    arrows += `<path d="${rev.has(r) ? p.rd : p.d}" stroke="${p.col}" stroke-width="3.8" marker-end="url(#${p.m})" fill="none" stroke-linecap="round"/>`;
+  }
+  let badges = "";
+  for (const sm of o.syms ?? []) {
+    const p = P[sm.route];
+    badges += g5badge(p.bx, p.by, p.tx, p.ty, sm.sym, p.col);
+  }
+  const syms = (o.syms ?? []).map((sm) => sm.sym).join("·");
+  return `<svg viewBox="0 0 ${IW} ${VH}" ${NS} fill="none" role="img" aria-label="흙에 뿌리를 내린 식물 한 그루를 옆에서 그린 그림. 곧은 줄기에 잎 두 장과 붉은 열매 하나가 달려 있고, 줄기 양옆에 이동 방향을 나타낸 화살표가 그려져 있다${syms ? `. ${syms} 기호가 각각 한 화살표를 가리킨다` : ""}"><defs>${arrowDefs(mX, C.xylem, 14)}${arrowDefs(mP, C.phloem, 14)}</defs>${art}${arrows}${badges}</svg>`;
+}
+/* ============== g2u5 v2 end ============== */

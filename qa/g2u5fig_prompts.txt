@@ -1,0 +1,51 @@
+스타일 블록 B (모든 프롬프트 앞에 붙일 공통 스타일):
+Clean educational science illustration for a middle-school textbook. Soft flat shading with gentle gradients,
+crisp clean outlines, bright and friendly colors, pure white background, generous even margins.
+ABSOLUTELY NO text, NO numbers, NO letters, NO symbols, NO arrows, NO labels, NO leader lines, NO scale bars,
+NO watermarks anywhere in the image. No people, no hands. The illustration must be a single centered subject
+with nothing else in the frame. Do not add any callouts or annotation marks of any kind.
+
+[0] file=public/exam/g2u5fig/leaf-section.png  aspect=4:3
+A cutaway cross-section of a green leaf, drawn as a wide horizontal slab that spans the full width of the frame
+and is centered vertically, with white margin above and below.
+From top to bottom the slab shows, in this exact order:
+(1) a single row of flat, tightly packed, colorless brick-like cells forming the upper skin;
+(2) a band of tall column-shaped cells standing upright, each densely filled with many small oval green bodies;
+(3) a band of rounder, loosely packed cells with air gaps between them, also holding green oval bodies;
+(4) a single row of flat colorless brick-like cells forming the lower skin.
+Two special features must be clearly visible and well separated from each other:
+(A) At about ONE FIFTH of the way in from the LEFT edge, a bundle of cut tube openings runs through the middle
+of the slab: an UPPER cluster of a few LARGE round pale-blue openings and, directly below it, a LOWER cluster of
+several SMALLER round pink openings. The two clusters must be obviously different in size and color.
+(B) At about THREE QUARTERS of the way in from the LEFT edge, the lower skin row is interrupted by ONE opening:
+a narrow oval gap flanked on both sides by two plump kidney-bean-shaped green cells that are clearly greener and
+thicker than the flat skin cells around them.
+Everything else in the lower skin row is continuous. Crisp, uncluttered, textbook-diagram clarity.
+
+[1] file=public/exam/g2u5fig/chloroplast.png  aspect=1:1
+A single plant cell organelle shaped like a smooth flattened lens or rugby ball, lying horizontally in the exact
+center of the frame, occupying about two thirds of the frame width with clean white space all around it.
+It is vivid grass green with a slightly darker green smooth outer envelope and a soft glossy highlight on the
+upper left. Inside, three or four gently curved horizontal green bands run lengthwise, a little darker than the
+surrounding body, suggesting layered inner sheets. No other structures, no cell wall, no surrounding cell.
+Simple, clean, friendly.
+
+[2] file=public/exam/g2u5fig/mitochondrion.png  aspect=1:1
+A single plant cell organelle shaped like a plump rounded bean or capsule, lying horizontally in the exact center
+of the frame, occupying about two thirds of the frame width with clean white space all around it.
+It is warm rose-pink to magenta with a smooth darker outer envelope and a soft glossy highlight on the upper left.
+Inside, four or five wavy ribbon-like folds in a warm golden-orange color weave back and forth from one side to the
+other, clearly standing out against the pink interior. No other structures, no surrounding cell.
+Simple, clean, friendly.
+
+[3] file=public/exam/g2u5fig/plant-vessels.png  aspect=3:4
+A whole young tomato-like plant drawn straight on from the side, standing in the exact center of the frame.
+The main stem is a single STRAIGHT VERTICAL brown stalk running exactly down the horizontal center line of the
+frame, from a small young shoot at the very top to the soil line near the bottom.
+Attached to the stem: one broad green leaf reaching out to the LEFT at roughly mid height, one broad green leaf
+reaching out to the RIGHT slightly higher, one round ripe red fruit hanging on a short side branch to the RIGHT
+below the leaves, and a spreading pale root system fanning out below the soil line.
+The lower third of the frame shows a simple flat band of brown soil with the roots inside it.
+The stem must stay unobstructed and clearly visible along its whole length from top to soil, with the leaves
+attached to its sides rather than crossing in front of it. No pot, no container, no background scenery.
+Clean white background above the soil band.

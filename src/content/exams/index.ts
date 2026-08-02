@@ -12,6 +12,7 @@ import { G2U1_EXAM } from "./g2u1";
 import { G2U2_EXAM } from "./g2u2";
 import { G2U3_EXAM } from "./g2u3";
 import { G2U4_EXAM } from "./g2u4";
+import { G2U5_EXAM } from "./g2u5";
 import { G2U7_EXAM } from "./g2u7";
 import { G2U8_EXAM } from "./g2u8";
 import { M1U2_EXAM } from "./m1u2";
@@ -42,6 +43,7 @@ const EXAMS: Record<string, ExamDef> = {
   g2u2: G2U2_EXAM,
   g2u3: G2U3_EXAM,
   g2u4: G2U4_EXAM,
+  g2u5: G2U5_EXAM, // 신규 출제 v2 · 160제 = 27x4 + 26x2(num 0 · word 0, g2u5.ts 헤더 참조)
   g2u7: G2U7_EXAM,
   g2u8: G2U8_EXAM,
   m1u1: M1U1_EXAM, // 첫 200제 풀(54/36/10 — m1u1.ts 헤더 참조)
