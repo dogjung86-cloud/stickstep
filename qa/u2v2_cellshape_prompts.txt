@@ -1,0 +1,20 @@
+# u2 v2 시험 · 세포 모양 카드 보강 발주 — 기존 3장(cell-nerve · cell-rbc · cell-epithelial)과
+# 같은 화풍(스타일 블록 B)으로 오답 후보 2장만 추가한다. 스타일 블록 정의는 qa/bio3_prompts.txt 상단.
+# 저장 폴더 public/bio3/figs (기존 세포 일러스트와 같은 자리). 발주 후 node qa/process-geo.mjs 로 webp 변환.
+# 발주는 codex exec 순차(병렬 금지 - tmp/ 충돌 실사고).
+
+[S0] file=public/bio3/figs/cell-ball.png (square 1:1, 스타일 B)
+A single free-floating spherical cell, perfectly round and plump like a small ball, smooth
+unbroken surface with gentle soft shading that reads as a sphere, one round nucleus faintly
+visible inside near the centre. Exactly one cell, isolated, centred with comfortable margin.
+It must NOT be flattened, NOT dented or dimpled in the middle, NOT elongated, NOT branched,
+and must have NO thick outer wall and NO green granules. Warm neutral pinkish tone, plain very
+light neutral background, same clean educational illustration look as a textbook cell diagram.
+
+[S1] file=public/bio3/figs/cell-brick.png (square 1:1, 스타일 B)
+A small patch of plant epidermal cells viewed from directly above: rectangular brick-shaped
+cells with straight edges and sharp square corners, packed in tidy staggered rows like a neat
+brick wall, every cell outlined by a distinctly thick rigid outer wall, one small round nucleus
+per cell. Pale cream-green cells with NO green granules inside, NO round or blob-like shapes,
+NO gaps between cells, NO long trailing fibres. Roughly twelve to sixteen cells filling the
+frame evenly, plain very light neutral background, clean educational illustration look.

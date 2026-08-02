@@ -9342,3 +9342,447 @@ export function transportRouteFig(o: {
   return `<svg viewBox="0 0 ${IW} ${VH}" ${NS} fill="none" role="img" aria-label="흙에 뿌리를 내린 식물 한 그루를 옆에서 그린 그림. 곧은 줄기에 잎 두 장과 붉은 열매 하나가 달려 있고, 줄기 양옆에 이동 방향을 나타낸 화살표가 그려져 있다${syms ? `. ${syms} 기호가 각각 한 화살표를 가리킨다` : ""}"><defs>${arrowDefs(mX, C.xylem, 14)}${arrowDefs(mP, C.phloem, 14)}</defs>${art}${arrows}${badges}</svg>`;
 }
 /* ============== g2u5 v2 end ============== */
+
+// == u2 v2 신작(파일럿 승격 · 재출제 13호) ==
+// 크기 띠·세포 한 개와 여럿·표본 단계·모양 카드·혈관 단면·구성 단계 사다리·분포 자료·
+// 특징 분포 막대·분류 중첩도·이분 순서도·5계 검색표·먹이 그물·서식지 분단.
+// 전부 파라미터형 · aria는 파라미터에서 파생 · 전 그림 의존 설계.
+// (세포 구조는 SVG 도해가 아니라 발주 실사 + 기호 배지 = 레슨 파일 로컬 cellPhotoFig가 담당한다.)
+const U2SYM = ["㉠", "㉡", "㉢", "㉣", "㉤"];
+const U2PAREN = ["(가)", "(나)", "(다)", "(라)", "(마)"];
+
+/** 한글 줄바꿈(공백 단위) · 라벨 공용. */
+const u2WrapKo = (s: string, per: number): string[] => {
+  const words = s.split(" ");
+  const lines: string[] = [];
+  let cur = "";
+  for (const w of words) {
+    if (cur && (cur + " " + w).length > per) {
+      lines.push(cur);
+      cur = w;
+    } else cur = cur ? cur + " " + w : w;
+  }
+  if (cur) lines.push(cur);
+  return lines;
+};
+
+// ── SB 크기 비교(band 로그 띠 · pair 두 생물 대조 · ruler 1 mm 확대) ───────────
+/** o.mode band = 대상들을 크기 띠 위에 핀으로 · pair = 두 생물의 세포 크기·세포 수 대조 ·
+ *  ruler = 1 mm 한 칸 안에 세포가 늘어선 모습. aria는 mode·라벨에서 파생한다. */
+export function sizeBandFig(
+  o:
+    | { mode: "band"; items: { label: string; um: number }[] }
+    | { mode: "pair"; a: { name: string; cellUm: number; many: number }; b: { name: string; cellUm: number; many: number } }
+    | { mode: "ruler"; cells: number; cellUm: number },
+): string {
+  if (o.mode === "band") {
+    const L = 30;
+    const R = 322;
+    const X = (um: number): number => L + (Math.log10(um) / 5) * (R - L);
+    const ticks: [number, string][] = [
+      [1, "1 µm"],
+      [10, "10 µm"],
+      [100, "100 µm"],
+      [1000, "1 mm"],
+      [10000, "1 cm"],
+      [100000, "10 cm"],
+    ];
+    const bandY = 128;
+    let body = `<line x1="${L}" y1="${bandY}" x2="${R}" y2="${bandY}" stroke="#8B95A1" stroke-width="1.8"/>`;
+    for (const [v, t] of ticks) {
+      const x = X(v);
+      body += `<line x1="${x.toFixed(1)}" y1="${bandY - 6}" x2="${x.toFixed(1)}" y2="${bandY + 6}" stroke="#8B95A1" stroke-width="1.4"/>
+        <text x="${x.toFixed(1)}" y="${bandY + 24}" text-anchor="middle" font-size="11.5" fill="#4E5968">${t}</text>`;
+    }
+    o.items.forEach((it, i) => {
+      const x = X(it.um);
+      const y = i % 2 === 0 ? 44 : 82;
+      body += `<line x1="${x.toFixed(1)}" y1="${y + 14}" x2="${x.toFixed(1)}" y2="${bandY - 4}" stroke="#B0B8C1" stroke-width="1.2" stroke-dasharray="3 3"/>
+        <circle cx="${x.toFixed(1)}" cy="${bandY}" r="5" fill="#12B886"/>
+        <rect x="${(x - 39).toFixed(1)}" y="${y - 13}" width="78" height="27" rx="8" fill="#E9F8F1" stroke="#12B886" stroke-width="1.3"/>
+        <text x="${x.toFixed(1)}" y="${y + 5}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#0B6E4F">${it.label}</text>`;
+    });
+    return `<svg viewBox="0 0 344 168" ${NS} role="img" aria-label="여러 대상의 크기를 나타낸 띠. 왼쪽으로 갈수록 작고 오른쪽으로 갈수록 크다. 표시된 대상은 ${o.items
+      .map((i) => i.label)
+      .join(", ")}">
+      <rect x="2" y="2" width="340" height="164" rx="18" fill="#F7FAF9"/>${body}</svg>`;
+  }
+  if (o.mode === "pair") {
+    const panel = (x: number, s: { name: string; cellUm: number; many: number }, tag: string): string => {
+      const barW = Math.round(s.many * 108);
+      return `<text x="${x + 74}" y="26" text-anchor="middle" font-size="12.5" font-weight="800" fill="#333D4B">${tag} ${s.name}</text>
+        <rect x="${x + 22}" y="40" width="104" height="58" rx="12" fill="#FFFFFF" stroke="#C9D0D8" stroke-width="1.4"/>
+        <rect x="${x + 48}" y="52" width="52" height="34" rx="10" fill="#D9F2E6" stroke="#12B886" stroke-width="1.8"/>
+        <circle cx="${x + 74}" cy="69" r="7" fill="#7048E8"/>
+        <text x="${x + 74}" y="114" text-anchor="middle" font-size="11.5" fill="#4E5968">세포 한 개 약 ${s.cellUm} µm</text>
+        <text x="${x + 22}" y="140" font-size="11.5" fill="#4E5968">세포 수</text>
+        <rect x="${x + 22}" y="148" width="108" height="12" rx="6" fill="#EDF0F3"/>
+        <rect x="${x + 22}" y="148" width="${barW}" height="12" rx="6" fill="#3182F6"/>`;
+    };
+    return `<svg viewBox="0 0 344 176" ${NS} role="img" aria-label="${o.a.name}와 ${o.b.name}의 세포 한 개의 크기와 세포 수를 나란히 나타낸 자료">
+      <rect x="2" y="2" width="340" height="172" rx="18" fill="#F7FAFC"/>
+      ${panel(8, o.a, "(가)")}${panel(178, o.b, "(나)")}
+      <line x1="172" y1="18" x2="172" y2="164" stroke="#DCE0E6" stroke-width="1.2"/></svg>`;
+  }
+  const cw = 268 / o.cells;
+  let cells = "";
+  for (let i = 0; i < o.cells; i += 1) {
+    cells += `<rect x="${(38 + i * cw).toFixed(1)}" y="66" width="${(cw - 1.6).toFixed(1)}" height="40" rx="3" fill="#D9F2E6" stroke="#12B886" stroke-width="1.2"/>`;
+  }
+  return `<svg viewBox="0 0 344 156" ${NS} role="img" aria-label="자의 눈금 한 칸을 확대해 그 안에 세포 ${o.cells}개가 줄지어 늘어선 모습을 나타낸 그림">
+    <rect x="2" y="2" width="340" height="152" rx="18" fill="#FAFBFC"/>
+    <line x1="38" y1="40" x2="306" y2="40" stroke="#4E5968" stroke-width="1.6"/>
+    <line x1="38" y1="32" x2="38" y2="48" stroke="#4E5968" stroke-width="1.6"/>
+    <line x1="306" y1="32" x2="306" y2="48" stroke="#4E5968" stroke-width="1.6"/>
+    <text x="172" y="26" text-anchor="middle" font-size="12.5" font-weight="800" fill="#333D4B">자의 눈금 한 칸 = 1 mm</text>
+    ${cells}
+    <text x="172" y="128" text-anchor="middle" font-size="12" fill="#4E5968">세포 한 개의 한 변은 약 ${o.cellUm} µm</text></svg>`;
+}
+
+// ── OM 몸이 세포 한 개인 생물 ↔ 여러 개인 생물 ──────────────────────────────
+export function oneVsManyFig(o: { aName: string; bName: string }): string {
+  let many = "";
+  for (let r = 0; r < 5; r += 1) {
+    for (let c = 0; c < 6; c += 1) {
+      const x = 196 + c * 20;
+      const y = 52 + r * 18;
+      const inBody = Math.abs(c - 2.5) * 1.5 + Math.abs(r - 2) < 5.2;
+      if (inBody) many += `<rect x="${x}" y="${y}" width="17" height="15" rx="4" fill="#D9F2E6" stroke="#12B886" stroke-width="1.1"/><circle cx="${x + 8.5}" cy="${y + 7.5}" r="2.4" fill="#7048E8"/>`;
+    }
+  }
+  return `<svg viewBox="0 0 344 164" ${NS} role="img" aria-label="두 생물 ${o.aName}, ${o.bName}의 몸을 확대해 나란히 그린 그림">
+    <rect x="2" y="2" width="340" height="160" rx="18" fill="#F7FAF9"/>
+    <text x="88" y="28" text-anchor="middle" font-size="12.5" font-weight="800" fill="#333D4B">${o.aName}</text>
+    <text x="256" y="28" text-anchor="middle" font-size="12.5" font-weight="800" fill="#333D4B">${o.bName}</text>
+    <ellipse cx="88" cy="98" rx="58" ry="42" fill="#D9F2E6" stroke="#12B886" stroke-width="2.2"/>
+    <circle cx="88" cy="98" r="13" fill="#7048E8"/>
+    ${many}
+    <line x1="172" y1="16" x2="172" y2="150" stroke="#DCE0E6" stroke-width="1.2"/></svg>`;
+}
+
+// ── SS 현미경표본 만들기 네 칸(순서는 파라미터 그대로 · blank는 ㉠) ──────────
+export function slideStepsFig(o: { steps: string[]; blank?: number }): string {
+  const BW = 74;
+  const GAP = 12;
+  const X0 = (344 - (BW * 4 + GAP * 3)) / 2;
+  let body = "";
+  o.steps.forEach((s, i) => {
+    const x = X0 + i * (BW + GAP);
+    const bl = o.blank === i;
+    const lines = bl ? ["㉠"] : u2WrapKo(s, 6);
+    body += `<rect x="${x}" y="44" width="${BW}" height="84" rx="11" fill="${bl ? "#FFFFFF" : "#F4F7FA"}" stroke="${bl ? "#3182F6" : "#C0C8D2"}" stroke-width="${bl ? 1.8 : 1.3}"${bl ? ' stroke-dasharray="5 4"' : ""}/>
+      <circle cx="${x + BW / 2}" cy="34" r="11" fill="#3182F6"/><text x="${x + BW / 2}" y="38.5" text-anchor="middle" font-size="12" font-weight="900" fill="#FFFFFF">${i + 1}</text>`;
+    lines.forEach((ln, j) => {
+      body += `<text x="${x + BW / 2}" y="${86 - ((lines.length - 1) * 16) / 2 + j * 16 + (bl ? 2 : 0)}" text-anchor="middle" font-size="${bl ? 16 : 12}" font-weight="${bl ? 900 : 600}" fill="${bl ? "#1B64DA" : "#333D4B"}">${ln}</text>`;
+    });
+    if (i < 3) body += `<path d="M${x + BW + 1} 86 h9 M${x + BW + 10} 86 l-5 -4 M${x + BW + 10} 86 l-5 4" stroke="#8B95A1" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
+  });
+  return `<svg viewBox="0 0 344 146" ${NS} role="img" aria-label="한 학생이 실제로 한 차례를 네 칸에 나타낸 그림. 각 칸의 내용은 ${o.steps
+    .map((s, i) => (o.blank === i ? "가려진 칸" : s))
+    .join(", ")}">
+    <rect x="2" y="2" width="340" height="142" rx="18" fill="#FAFBFC"/>${body}</svg>`;
+}
+
+// ── VC 좁아진 통로를 지나는 세포 단면 ──────────────────────────────────────
+/** narrowW = 좁아진 곳의 폭(px) · restW = 눌리지 않은 세포의 폭. restW가 narrowW보다 크게
+ *  그려져야 "크기가 작아서 통과한다"는 오답이 그림으로 반박된다(설계 의존 조건).
+ *  stiff = 잘 휘지 않는 단단한 세포. 이때는 좁아진 곳 **앞에서 멈춘** 모습으로 그리고
+ *  "지나온 뒤" 세포를 그리지 않는다(검산 A 적발 · 구판은 단단한 세포를 좁은 곳 한가운데
+ *  덮어 그려 "지나가지 못한다"는 정답을 그림이 반박했다). aria도 stiff에서 파생한다. */
+export function vesselCrossFig(o: { narrowW: number; stiff?: boolean }): string {
+  const midY = 100;
+  const half = o.narrowW / 2;
+  const wall = (sign: number): string =>
+    `<path d="M8 ${midY + sign * 46}C90 ${midY + sign * 46} 118 ${midY + sign * half} 172 ${midY + sign * half}C226 ${midY + sign * half} 254 ${midY + sign * 46} 336 ${midY + sign * 46}" fill="none" stroke="#D96A7E" stroke-width="5" stroke-linecap="round"/>`;
+  const disc = (cx: number, squeeze: number): string =>
+    `<g transform="translate(${cx} ${midY})"><ellipse cx="0" cy="0" rx="${26 - squeeze * 8}" ry="${13 - squeeze * 3}" fill="#EF7C90" stroke="#A92B49" stroke-width="1.8"/><ellipse cx="0" cy="0" rx="${11 - squeeze * 3}" ry="${5 - squeeze}" fill="#C94867"/></g>`;
+  const stiffBall = (cx: number): string =>
+    `<circle cx="${cx}" cy="${midY}" r="24" fill="#C9CFD8" stroke="#5A6473" stroke-width="2"/>
+     <path d="M${cx + 30} ${midY - 20} l14 14 l-14 14" fill="none" stroke="#B04A5E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+     <path d="M${cx + 34} ${midY - 6} h16 M${cx + 42} ${midY - 14} v16" fill="none" stroke="#B04A5E" stroke-width="3" stroke-linecap="round" transform="rotate(45 ${cx + 42} ${midY - 6})"/>`;
+  const body = o.stiff
+    ? `${disc(64, 0)}${stiffBall(122)}`
+    : `${disc(80, 0)}${disc(172, 1)}${disc(268, 0)}
+       <text x="268" y="${midY + 40}" text-anchor="middle" font-size="11.5" fill="#4E5968">지나온 뒤</text>`;
+  return `<svg viewBox="0 0 344 200" ${NS} role="img" aria-label="가운데가 좁아진 관과 그 안의 세포를 옆에서 본 그림${
+    o.stiff ? ". 단단한 세포 하나가 좁아진 곳 앞에 멈춰 서 있다" : ". 세포 셋이 좁아진 곳을 차례로 지나고 있다"
+  }">
+    <rect x="2" y="2" width="340" height="196" rx="18" fill="#FFF6F8"/>
+    ${wall(1)}${wall(-1)}
+    <path d="M12 ${midY}h30 M42 ${midY} l-7 -5 M42 ${midY} l-7 5" stroke="#8B95A1" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    ${body}
+    <line x1="172" y1="${midY - half - 6}" x2="172" y2="${midY - half - 22}" stroke="#8B95A1" stroke-width="1.1"/>
+    <text x="172" y="${midY - half - 26}" text-anchor="middle" font-size="11.5" fill="#4E5968">좁아진 곳</text>
+    <text x="${o.stiff ? 64 : 80}" y="${midY + 40}" text-anchor="middle" font-size="11.5" fill="#4E5968">들어가기 전</text></svg>`;
+}
+
+// ── OL 동물·식물 구성 단계 사다리 두 줄(hide 자리는 ㉠㉡㉢㉣) ────────────────
+const U2_OL_A = ["세포", "조직", "기관", "기관계", "개체"];
+const U2_OL_P = ["세포", "조직", "조직계", "기관", "개체"];
+export function orgLadderPairFig(o: { hideA?: number[]; hideP?: number[] }): string {
+  const hideA = o.hideA ?? [];
+  const hideP = o.hideP ?? [];
+  const BW = 58;
+  const GAP = 8;
+  const X0 = (344 - (BW * 5 + GAP * 4)) / 2;
+  const row = (names: string[], hide: number[], symOffset: number, y: number, tag: string): string => {
+    let out = `<text x="12" y="${y - 10}" font-size="12" font-weight="800" fill="#4E5968">${tag}</text>`;
+    names.forEach((s, i) => {
+      const x = X0 + i * (BW + GAP);
+      const k = hide.indexOf(i);
+      const bl = k >= 0;
+      out += `<rect x="${x}" y="${y}" width="${BW}" height="36" rx="10" fill="${bl ? "#FFFFFF" : "#F2F6FA"}" stroke="${bl ? "#3182F6" : "#B7C2CE"}" stroke-width="${bl ? 1.8 : 1.3}"${bl ? ' stroke-dasharray="5 4"' : ""}/>
+        <text x="${x + BW / 2}" y="${y + 23}" text-anchor="middle" font-size="${bl ? 15 : 11.5}" font-weight="${bl ? 900 : 700}" fill="${bl ? "#1B64DA" : "#333D4B"}">${bl ? U2SYM[symOffset + k] : s}</text>`;
+      if (i < 4)
+        out += `<path d="M${x + BW + 1} ${y + 18} h5 M${x + BW + 6} ${y + 18} l-4 -3 M${x + BW + 6} ${y + 18} l-4 3" stroke="#8B95A1" stroke-width="1.4" fill="none" stroke-linecap="round"/>`;
+    });
+    return out;
+  };
+  return `<svg viewBox="0 0 344 150" ${NS} role="img" aria-label="동물과 식물의 구성 단계를 각각 다섯 칸으로 나타낸 두 줄. 동물 줄은 ${hideA.length}칸, 식물 줄은 ${hideP.length}칸이 기호로 가려져 있다">
+    <rect x="2" y="2" width="340" height="146" rx="18" fill="#F6FAF7"/>
+    ${row(U2_OL_A, hideA, 0, 34, "동물")}
+    ${row(U2_OL_P, hideP, hideA.length, 100, "식물")}</svg>`;
+}
+
+// ── DP 두 지역 생물 분포(점 색 = 종류 · 범례는 기호로) ──────────────────────
+/** 범례는 두지 않는다 · 패널마다 쓰는 색 가짓수가 달라 공용 범례가 판독을 오도한다(검산 B 적발).
+ *  "색이 같으면 같은 종류"라는 규약은 문두가 제시한다. */
+export function diversityPlotFig(o: { panels: { label: string; kinds: number[] }[] }): string {
+  const COLORS = ["#EF6B7A", "#4BAE82", "#4C83D5", "#E5A33F", "#8B6FD1", "#3BB1C4"];
+  const panel = (x: number, p: { label: string; kinds: number[] }): string => {
+    let dots = "";
+    let i = 0;
+    p.kinds.forEach((n, k) => {
+      for (let j = 0; j < n; j += 1, i += 1) {
+        const dx = x + 20 + (i % 5) * 22;
+        const dy = 44 + Math.floor(i / 5) * 22;
+        dots += `<circle cx="${dx}" cy="${dy}" r="7" fill="${COLORS[k]}" stroke="#FFFFFF" stroke-width="1.4"/>`;
+      }
+    });
+    return `<rect x="${x}" y="26" width="140" height="112" rx="14" fill="#FFFFFF" stroke="#C3D6C9" stroke-width="1.6"/>${dots}
+      <text x="${x + 70}" y="158" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">${p.label}</text>`;
+  };
+  return `<svg viewBox="0 0 344 174" ${NS} role="img" aria-label="두 지역 ${o.panels
+    .map((p) => p.label)
+    .join(", ")}에서 관찰된 생물을 색이 있는 점으로 나타낸 자료">
+    <rect x="2" y="2" width="340" height="170" rx="18" fill="#EEF7F1"/>
+    ${panel(22, o.panels[0])}${panel(182, o.panels[1])}</svg>`;
+}
+
+// ── TB 같은 종류 무리의 특징 분포 막대(세대별·지역별 두 패널) ────────────────
+export function traitBarsFig(o: { panels: { label: string; bars: number[] }[]; axisNote: string }): string {
+  const H = 100;
+  const top = Math.max(4, Math.ceil(Math.max(...o.panels.flatMap((p) => p.bars)) / 2) * 2);
+  const panel = (y: number, p: { label: string; bars: number[] }): string => {
+    const base = y + H - 26;
+    let out = `<text x="14" y="${y + 12}" font-size="12" font-weight="800" fill="#4E5968">${p.label}</text>
+      <line x1="46" y1="${base}" x2="322" y2="${base}" stroke="#9CA7B4" stroke-width="1.4"/>
+      <line x1="46" y1="${y + 16}" x2="46" y2="${base}" stroke="#9CA7B4" stroke-width="1.4"/>`;
+    for (let t = 0; t <= top; t += 2) {
+      const gy = base - (t / top) * (base - y - 20);
+      out += `<line x1="46" y1="${gy.toFixed(1)}" x2="322" y2="${gy.toFixed(1)}" stroke="#E6EBF0"/><text x="40" y="${(gy + 4).toFixed(1)}" text-anchor="end" font-size="10" fill="#8B95A1">${t}</text>`;
+    }
+    p.bars.forEach((v, i) => {
+      const bx = 62 + i * 52;
+      const bh = (v / top) * (base - y - 20);
+      out += `<rect x="${bx}" y="${(base - bh).toFixed(1)}" width="34" height="${bh.toFixed(1)}" rx="4" fill="#54B889"/>
+        <text x="${bx + 17}" y="${base + 15}" text-anchor="middle" font-size="11" fill="#596574">${"①②③④⑤"[i]}</text>`;
+    });
+    return out;
+  };
+  return `<svg viewBox="0 0 344 ${H * o.panels.length + 34}" ${NS} role="img" aria-label="${o.panels
+    .map((p) => p.label)
+    .join("와 ")}에서 같은 종류 무리의 특징이 어떻게 나뉘어 있는지 막대로 나타낸 자료">
+    <rect x="2" y="2" width="340" height="${H * o.panels.length + 30}" rx="18" fill="#FAFBFC"/>
+    ${o.panels.map((p, i) => panel(16 + i * H, p)).join("")}
+    <text x="172" y="${H * o.panels.length + 26}" text-anchor="middle" font-size="11" fill="#8B95A1">${o.axisNote}</text></svg>`;
+}
+
+// ── RN 분류 단계 포함 관계 중첩도(안쪽이 좁은 무리) ─────────────────────────
+const U2RANKS = ["종", "속", "과", "목", "강", "문", "계"];
+export function rankNestFig(o: { hide?: number[]; dots?: { label: string; level: number }[] }): string {
+  const hide = o.hide ?? [];
+  const IN = 15;
+  let body = "";
+  for (let i = 6; i >= 0; i -= 1) {
+    const d = 6 - i;
+    const x = 8 + d * IN;
+    const y = 8 + d * IN;
+    const w = 328 - d * IN * 2;
+    const h = 212 - d * IN * 2;
+    const k = hide.indexOf(i);
+    const bl = k >= 0;
+    body += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${12 - d}" fill="${d % 2 ? "#F4F8FB" : "#FFFFFF"}" stroke="${bl ? "#3182F6" : "#B7C2CE"}" stroke-width="${bl ? 1.8 : 1.2}"${bl ? ' stroke-dasharray="5 4"' : ""}/>
+      <text x="${x + 8}" y="${y + 15}" font-size="${bl ? 13 : 11.5}" font-weight="${bl ? 900 : 700}" fill="${bl ? "#1B64DA" : "#4E5968"}">${bl ? U2PAREN[k] : U2RANKS[i]}</text>`;
+  }
+  for (const d of o.dots ?? []) {
+    const dd = 6 - d.level;
+    const cx = 328 - dd * IN - 22;
+    const cy = 8 + dd * IN + 15;
+    body += `<circle cx="${cx}" cy="${cy}" r="10" fill="#12B886"/><text x="${cx}" y="${cy + 4}" text-anchor="middle" font-size="11" font-weight="900" fill="#FFFFFF">${d.label}</text>`;
+  }
+  return `<svg viewBox="0 0 344 228" ${NS} role="img" aria-label="분류 단계를 크기가 다른 상자 일곱 개로 겹쳐 나타낸 그림${hide.length ? `. ${hide.length}칸은 이름 대신 기호로 표시되어 있다` : ""}">${body}</svg>`;
+}
+
+// ── DK 이분 분류 순서도(기준 한 개 · 결론 두 칸이 서로 다르게) ───────────────
+export function dichotomyFig(o: { items: string[]; q: string | null; yes: string[]; no: string[] }): string {
+  const box = (x: number, y: number, w: number, h: number, lines: string[], tone: "top" | "q" | "leaf", blank: boolean): string => {
+    const fill = tone === "q" ? (blank ? "#FFFFFF" : "#EAF3FE") : tone === "top" ? "#F2F4F7" : "#F0FAF4";
+    const stroke = blank ? "#3182F6" : tone === "q" ? "#5AA2F8" : tone === "top" ? "#C0C8D2" : "#7BBE8E";
+    let out = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="11" fill="${fill}" stroke="${stroke}" stroke-width="${blank ? 1.8 : 1.4}"${blank ? ' stroke-dasharray="5 4"' : ""}/>`;
+    lines.forEach((ln, j) => {
+      out += `<text x="${x + w / 2}" y="${y + h / 2 + 4.5 - ((lines.length - 1) * 16) / 2 + j * 16}" text-anchor="middle" font-size="${blank ? 15 : 12.5}" font-weight="${blank ? 900 : 700}" fill="${blank ? "#1B64DA" : "#333D4B"}">${ln}</text>`;
+    });
+    return out;
+  };
+  const qLines = o.q === null ? ["(가)"] : u2WrapKo(o.q, 14);
+  const qh = Math.max(38, qLines.length * 17 + 20);
+  // 갈래 화살표는 반드시 "아래 결론 상자를 가리키도록" 꺾어 내린다(사용자 검수 지적).
+  // 예전 판은 옆으로만 꺾여 상자를 안 가리켰다.
+  const qBottom = 62 + qh;
+  const midY = qBottom + 20;
+  const y2 = qBottom + 42;
+  const H = y2 + 58;
+  const branch = (fromX: number, toX: number): string =>
+    `<path d="M${fromX} ${qBottom} V${midY} H${toX} V${y2 - 3}" fill="none" stroke="#8B95A1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+     <path d="M${toX} ${y2 - 3} l-4.5 -6 M${toX} ${y2 - 3} l4.5 -6" fill="none" stroke="#8B95A1" stroke-width="1.5" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 344 ${H}" ${NS} role="img" aria-label="생물 ${o.items.length}가지를 기준 하나로 두 무리로 나눈 순서도${o.q === null ? ". 기준 자리는 비어 있다" : ""}">
+    <rect x="2" y="2" width="340" height="${H - 4}" rx="18" fill="#FAFBFC"/>
+    ${box(52, 14, 240, 34, [o.items.join(" · ")], "top", false)}
+    <path d="M172 48 v10 M172 60 l-4 -6 M172 60 l4 -6" stroke="#8B95A1" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    ${box(72, 62, 200, qh, qLines, "q", o.q === null)}
+    ${branch(110, 88)}${branch(234, 256)}
+    <text x="96" y="${midY - 5}" font-size="11.5" font-weight="700" fill="#0B6E4F">예</text>
+    <text x="248" y="${midY - 5}" text-anchor="end" font-size="11.5" font-weight="700" fill="#B4690E">아니요</text>
+    ${box(14, y2, 148, 44, [o.yes.join(" · ")], "leaf", false)}
+    ${box(182, y2, 148, 44, [o.no.join(" · ")], "leaf", false)}</svg>`;
+}
+
+// ── KQ 5계 검색표 시험판(결과 칸·질문 칸 각각 가림) ─────────────────────────
+const U2_KQ_Q = ["핵막이 있나요?", "균계·식물계·동물계 가운데 하나인가요?", "광합성을 하나요?", "세포벽이 있나요?"];
+const U2_KQ_SIDE = ["아니요", "아니요", "예", "아니요"];
+const U2_KQ_LEAF = ["원핵생물계", "원생생물계", "식물계", "동물계"];
+const U2_KQ_LAST = "균계";
+export function kingdomKeyQuizFig(o: { blanks?: number[]; qBlanks?: number[] }): string {
+  const blanks = o.blanks ?? [];
+  const qBlanks = o.qBlanks ?? [];
+  const BX = 10;
+  // 질문 상자 폭은 168 · 곁가지 "아니요" 라벨이 결과 상자에 덮이지 않을 만큼 사이를 벌린다(검산 B 적발).
+  const BW = 168;
+  const BH = 44;
+  const GAP = 22;
+  const LX = 232;
+  const LW = 100;
+  const LH = 32;
+  const spine = BX + BW / 2;
+  let body = "";
+  U2_KQ_Q.forEach((q, i) => {
+    const y = 14 + i * (BH + GAP);
+    const cy = y + BH / 2;
+    const qk = qBlanks.indexOf(i);
+    const qb = qk >= 0;
+    const lines = qb ? [U2SYM[qk]] : u2WrapKo(q, 11);
+    body += `<rect x="${BX}" y="${y}" width="${BW}" height="${BH}" rx="12" fill="${qb ? "#FFFFFF" : "#EAF3FE"}" stroke="${qb ? "#3182F6" : "#5AA2F8"}" stroke-width="${qb ? 1.8 : 1.4}"${qb ? ' stroke-dasharray="5 4"' : ""}/>`;
+    lines.forEach((ln, j) => {
+      body += `<text x="${spine}" y="${cy + 4.5 - ((lines.length - 1) * 16) / 2 + j * 16}" text-anchor="middle" font-size="${qb ? 16 : 12.5}" font-weight="${qb ? 900 : 700}" fill="${qb ? "#1B64DA" : "#1F4E86"}">${ln}</text>`;
+    });
+    body += `<path d="M${BX + BW} ${cy} h${LX - BX - BW - 4} M${LX - 4} ${cy} l-6 -4 M${LX - 4} ${cy} l-6 4" stroke="#8B95A1" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <text x="${BX + BW + 6}" y="${cy - 6}" font-size="10.5" font-weight="700" fill="#4E5968">${U2_KQ_SIDE[i]}</text>`;
+    const lk = blanks.indexOf(i);
+    const lb = lk >= 0;
+    body += `<rect x="${LX}" y="${cy - LH / 2}" width="${LW}" height="${LH}" rx="10" fill="${lb ? "#FFFFFF" : "#E9F8F1"}" stroke="${lb ? "#3182F6" : "#12B886"}" stroke-width="${lb ? 1.8 : 1.5}"${lb ? ' stroke-dasharray="5 4"' : ""}/>
+      <text x="${LX + LW / 2}" y="${cy + 4.5}" text-anchor="middle" font-size="${lb ? 14 : 12}" font-weight="900" fill="${lb ? "#1B64DA" : "#0B6E4F"}">${lb ? U2PAREN[lk] : U2_KQ_LEAF[i]}</text>`;
+    const nextY = y + BH;
+    body += `<path d="M${spine} ${nextY} v${GAP - 4} M${spine} ${nextY + GAP - 4} l-4 -6 M${spine} ${nextY + GAP - 4} l4 -6" stroke="#8B95A1" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <text x="${spine + 6}" y="${nextY + 14}" font-size="10.5" font-weight="700" fill="#4E5968">${U2_KQ_SIDE[i] === "예" ? "아니요" : "예"}</text>`;
+  });
+  const lastY = 14 + 4 * (BH + GAP);
+  const lk = blanks.indexOf(4);
+  const lb = lk >= 0;
+  body += `<rect x="${spine - LW / 2}" y="${lastY}" width="${LW}" height="${LH}" rx="10" fill="${lb ? "#FFFFFF" : "#E9F8F1"}" stroke="${lb ? "#3182F6" : "#12B886"}" stroke-width="${lb ? 1.8 : 1.5}"${lb ? ' stroke-dasharray="5 4"' : ""}/>
+    <text x="${spine}" y="${lastY + 21}" text-anchor="middle" font-size="${lb ? 14 : 12}" font-weight="900" fill="${lb ? "#1B64DA" : "#0B6E4F"}">${lb ? U2PAREN[lk] : U2_KQ_LAST}</text>`;
+  return `<svg viewBox="0 0 344 ${lastY + LH + 14}" ${NS} role="img" aria-label="생물을 다섯 무리로 나누는 검색표. 질문을 따라 예와 아니요로 갈라진다${blanks.length ? ` · 결과 칸 ${blanks.length}곳` : ""}${qBlanks.length ? ` · 질문 칸 ${qBlanks.length}곳` : ""}${blanks.length || qBlanks.length ? "이 기호로 가려져 있다" : ""}">
+    <rect x="2" y="2" width="340" height="${lastY + LH + 10}" rx="18" fill="#F7FAFC"/>${body}</svg>`;
+}
+
+// ── FW 먹이 관계 두 그물(갈래 수가 다르게) ─────────────────────────────────
+export function foodWebQuizFig(o: { panels: { label: string; kind: "chain" | "web" }[] }): string {
+  const PH = 132;
+  const node = (x: number, y: number, t: string): string =>
+    `<rect x="${x - 30}" y="${y - 13}" width="60" height="26" rx="13" fill="#FFFFFF" stroke="#7BBE8E" stroke-width="1.5"/><text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="11.5" font-weight="700" fill="#2A6B47">${t}</text>`;
+  // 끝점은 상자 "경계"까지만 자른다 · 축별 고정 오프셋(31,15)을 빼면 대각선이 상자 안에 파묻힌다(검산 B 적발).
+  const arrow = (x1: number, y1: number, x2: number, y2: number): string => {
+    const a = Math.atan2(y2 - y1, x2 - x1);
+    const ca = Math.abs(Math.cos(a));
+    const sa = Math.abs(Math.sin(a));
+    const t = Math.min(ca > 1e-6 ? 31 / ca : 1e9, sa > 1e-6 ? 14 / sa : 1e9);
+    const sx = x1 + Math.cos(a) * t;
+    const sy = y1 + Math.sin(a) * t;
+    const ex = x2 - Math.cos(a) * t;
+    const ey = y2 - Math.sin(a) * t;
+    return `<line x1="${sx.toFixed(1)}" y1="${sy.toFixed(1)}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}" stroke="#8B95A1" stroke-width="1.5"/>
+      <path d="M${ex.toFixed(1)} ${ey.toFixed(1)} l${(-Math.cos(a - 0.5) * 7).toFixed(1)} ${(-Math.sin(a - 0.5) * 7).toFixed(1)} M${ex.toFixed(1)} ${ey.toFixed(1)} l${(-Math.cos(a + 0.5) * 7).toFixed(1)} ${(-Math.sin(a + 0.5) * 7).toFixed(1)}" stroke="#8B95A1" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
+  };
+  const panel = (y0: number, p: { label: string; kind: "chain" | "web" }): string => {
+    const yTop = y0 + 34;
+    const yMid = y0 + 74;
+    const yBot = y0 + 112;
+    let out = `<text x="12" y="${y0 + 16}" font-size="12" font-weight="800" fill="#4E5968">${p.label}</text>`;
+    if (p.kind === "chain") {
+      out += node(56, yBot, "나뭇잎") + node(56, yMid, "애벌레") + node(56, yTop, "박새") + node(210, yTop, "족제비");
+      out += arrow(56, yBot, 56, yMid) + arrow(56, yMid, 56, yTop) + arrow(56, yTop, 210, yTop);
+    } else {
+      // 족제비는 박새·들쥐 사이 높이에 두어 두 갈래가 모두 뚜렷한 길이로 그려지게 한다.
+      const yPred = y0 + 54;
+      out += node(52, yBot, "나뭇잎") + node(146, yBot, "씨앗") + node(52, yMid, "애벌레") + node(146, yMid, "들쥐") + node(52, yTop, "박새") + node(256, yPred, "족제비");
+      out += arrow(52, yBot, 52, yMid) + arrow(52, yMid, 52, yTop) + arrow(146, yBot, 146, yMid);
+      out += arrow(52, yTop, 256, yPred) + arrow(146, yMid, 256, yPred);
+    }
+    return out;
+  };
+  return `<svg viewBox="0 0 344 ${PH * o.panels.length + 20}" ${NS} role="img" aria-label="${o.panels
+    .map((p) => p.label)
+    .join(", ")} ${o.panels.length > 1 ? "두 생태계" : "한 생태계"}의 먹이 관계를 화살표로 이어 나타낸 그림">
+    <rect x="2" y="2" width="340" height="${PH * o.panels.length + 16}" rx="18" fill="#F5FBF7"/>
+    ${o.panels.map((p, i) => panel(8 + i * PH, p)).join("")}</svg>`;
+}
+
+// ── HC 숲 서식지 분단 전후(도로·생태통로) ──────────────────────────────────
+export function habitatCutFig(o: { panels: { label: string; stage: "before" | "after" | "corridor" }[] }): string {
+  const PW = 160;
+  // 동물 종류는 색만으로 구분하면 판독이 어렵다 · 종류마다 모양도 함께 다르게 그린다(눈검수 반영).
+  const ico = (x: number, y: number, kind: number): string => {
+    const C = ["#7A4E2E", "#C77B14", "#4A5566", "#1F6B3E", "#6A45C4"][kind];
+    if (kind === 0) return `<circle cx="${x}" cy="${y}" r="5.6" fill="${C}"/>`;
+    if (kind === 1) return `<rect x="${x - 5}" y="${y - 5}" width="10" height="10" rx="1.6" fill="${C}"/>`;
+    if (kind === 2) return `<path d="M${x} ${y - 6.2}l5.6 10h-11.2z" fill="${C}"/>`;
+    if (kind === 3) return `<path d="M${x} ${y - 6.4}l6 6.4l-6 6.4l-6 -6.4z" fill="${C}"/>`;
+    return `<path d="M${x - 5.6} ${y}h11.2M${x} ${y - 5.6}v11.2" stroke="${C}" stroke-width="3.4" stroke-linecap="round"/>`;
+  };
+  const panel = (x0: number, p: { label: string; stage: "before" | "after" | "corridor" }): string => {
+    const split = p.stage !== "before";
+    let out = `<rect x="${x0}" y="30" width="${PW}" height="132" rx="12" fill="#CFE8D3" stroke="#7BBE8E" stroke-width="1.6"/>`;
+    if (split) {
+      out += `<rect x="${x0}" y="86" width="${PW}" height="22" fill="#B9BFC7"/>
+        <line x1="${x0}" y1="97" x2="${x0 + PW}" y2="97" stroke="#FFFFFF" stroke-width="1.6" stroke-dasharray="10 8"/>`;
+    }
+    if (p.stage === "corridor") {
+      out += `<rect x="${x0 + 54}" y="80" width="52" height="34" rx="10" fill="#8FCB9B" stroke="#3F8B57" stroke-width="1.8"/>`;
+    }
+    const spots: [number, number, number][] =
+      p.stage === "before"
+        ? [[34, 56, 0], [96, 50, 1], [62, 74, 2], [126, 70, 3], [40, 128, 4], [104, 134, 0], [136, 122, 1]]
+        : p.stage === "after"
+          ? [[34, 56, 0], [96, 50, 1], [104, 134, 0]]
+          : [[34, 56, 0], [96, 50, 1], [62, 72, 2], [104, 134, 0], [136, 126, 1]];
+    for (const [dx, dy, k] of spots) out += ico(x0 + dx, dy, k);
+    out += `<text x="${x0 + PW / 2}" y="18" text-anchor="middle" font-size="12.5" font-weight="800" fill="#333D4B">${p.label}</text>`;
+    return out;
+  };
+  return `<svg viewBox="0 0 344 176" ${NS} role="img" aria-label="같은 숲을 ${o.panels
+    .map((p) => p.label)
+    .join(", ")} 두 시기로 나타낸 그림. 초록 바탕은 숲, 회색 띠는 도로이며 작은 도형은 그곳에서 관찰된 동물을 뜻한다">
+    <rect x="2" y="2" width="340" height="172" rx="18" fill="#F4FAF5"/>
+    ${o.panels.map((p, i) => panel(10 + i * 172, p)).join("")}</svg>`;
+}
+// == u2 v2 섹션 끝 ==
