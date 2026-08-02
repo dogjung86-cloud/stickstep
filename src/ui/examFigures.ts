@@ -9786,3 +9786,602 @@ export function habitatCutFig(o: { panels: { label: string; stage: "before" | "a
     ${o.panels.map((p, i) => panel(10 + i * 172, p)).join("")}</svg>`;
 }
 // == u2 v2 섹션 끝 ==
+
+// -- g2u6 v2 신작(파일럿 승격 · 신규 출제 15호) --
+// 검출 시험관·영양소 도표·소화 격자·흐름도·순환 경로·호흡 모형·허파꽈리·기관계 도해 +
+// 발주 라스터 하이브리드 3종(기호 배지·2패널·방향 화살표) + 표/카드/이동 도해 범용 3종.
+// 전부 파라미터형 · aria는 파라미터에서 파생한다.
+const G2U6_IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+/** 한글 줄바꿈(공백 단위) · 라벨·상자 문구 공용. */
+const g2u6WrapKo = (s: string, per: number): string[] => {
+  const words = s.split(" ");
+  const lines: string[] = [];
+  let cur = "";
+  for (const w of words) {
+    if (cur && (cur + " " + w).length > per) {
+      lines.push(cur);
+      cur = w;
+    } else cur = cur ? cur + " " + w : w;
+  }
+  if (cur) lines.push(cur);
+  return lines;
+};
+
+/** 받침 판정 조사 · aria 낭독이 어색해지지 않게(검산 A 3-6). 괄호·기호는 안쪽 글자로 판정한다. */
+const g2u6Josa = (w: string, pair: string): string => {
+  const [a, b] = pair.split("/");
+  const m = w.replace(/[()㉠-㉣]/g, "").trim();
+  // 기호만으로 된 라벨(㉠~㉣)은 지우고 나면 빈 문자열이 된다 · 우리말 관례는 "㉠은"이라 받침 있는 쪽.
+  if (!m) return a;
+  const c = m.charCodeAt(m.length - 1);
+  if (Number.isNaN(c)) return b;
+  // A~E·숫자 등 한글이 아닌 라벨은 읽을 때 모음으로 끝나므로 받침 없는 쪽(는·를)을 쓴다.
+  if (c < 0xac00 || c > 0xd7a3) return b;
+  return (c - 0xac00) % 28 ? a : b;
+};
+
+/** 기호 배지(원 안 기호) · 전 헬퍼 공용. 흰 원 + 파란 테로 어떤 바탕 위에서도 읽힌다. */
+const g2u6Mark = (x: number, y: number, t: string, r = 12.5): string =>
+  `<circle cx="${x}" cy="${y}" r="${r}" fill="#FFFFFF" stroke="#3182F6" stroke-width="1.8"/>
+   <text x="${x}" y="${y + 4.4}" text-anchor="middle" font-size="${r > 11 ? 12.5 : 11}" font-weight="800" fill="#1B64DA">${t}</text>`;
+
+/** 어두운 면 위 흰 라벨 · 할로는 그 면의 최암색으로(흰 할로는 글자를 지운다 · bodyFigures 계보). */
+const g2u6T = (x: number, y: number, t: string, o?: { size?: number; anchor?: string; fill?: string; halo?: string; weight?: number }): string => {
+  const s = o?.size ?? 12;
+  const a = o?.anchor ?? "middle";
+  const f = o?.fill ?? "#333D4B";
+  const w = o?.weight ?? 700;
+  const halo = o?.halo ? `stroke="${o.halo}" stroke-width="3" paint-order="stroke"` : "";
+  return `<text x="${x}" y="${y}" text-anchor="${a}" font-size="${s}" font-weight="${w}" fill="${f}" ${halo}>${t}</text>`;
+};
+
+// ══════════════════ 발주 라스터 하이브리드 ══════════════════
+// SCI_GUIDE g2u6 하이브리드 방침: **발주 라스터 위에 한글 기호·지시선은 SVG/DOM으로 얹는다.**
+// 라스터에는 글자가 하나도 없으므로, 같은 라스터라도 기호 세트·가림 대상·질문 축을 바꾸면
+// 자료셋이 갈린다(레슨은 `bodyLabeled`로 이름 라벨을 얹으므로 시험은 기호만 얹어 verbatim을 피한다).
+// 좌표는 %(그림 기준)다 · 반드시 스크린샷으로 눈으로 맞춘다(CLAUDE.md 세포도 좌표 관행).
+type G2u6Pin = { x: number; y: number; t: string; lx?: number; ly?: number };
+export const rasterFig = (
+  file: string,
+  alt: string,
+  pins: G2u6Pin[],
+  o?: { base?: string; caption?: string },
+): string => {
+  const base = o?.base ?? "body/figs";
+  const lines = pins
+    .filter((p) => p.lx !== undefined && p.ly !== undefined)
+    .map((p) => `<line x1="${p.x}" y1="${p.y}" x2="${p.lx}" y2="${p.ly}" stroke="#8B95A1" stroke-width="1" vector-effect="non-scaling-stroke"/>`)
+    .join("");
+  const badges = pins
+    .map(
+      (p) =>
+        `<span style="position:absolute;left:${p.lx ?? p.x}%;top:${p.ly ?? p.y}%;transform:translate(-50%,-50%);width:27px;height:27px;border-radius:999px;background:#fff;border:1.9px solid #3182F6;color:#1B64DA;font-size:12.5px;font-weight:800;line-height:23px;text-align:center;box-shadow:0 1px 4px rgba(10,20,40,.2)">${p.t}</span>`,
+    )
+    .join("");
+  return `<div style="position:relative;border-radius:14px;overflow:hidden;background:#FBFCFD;border:1px solid #DCE0E6">
+    <img src="${G2U6_IMG_BASE}${base}/${file}" alt="${alt}" style="display:block;width:100%"/>
+    ${lines ? `<svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%" aria-hidden="true">${lines}</svg>` : ""}
+    ${badges}
+    ${o?.caption ? `<div style="position:absolute;left:0;right:0;bottom:0;padding:5px 8px;background:rgba(251,252,253,.92);font-size:10.8px;font-weight:700;color:#6B7684;text-align:center">${o.caption}</div>` : ""}
+  </div>`;
+};
+
+/** 라스터 두 장을 (가)(나)로 나란히 · 들숨·날숨처럼 한 쌍이 곧 자료인 문항용. */
+export const rasterPair = (
+  a: { file: string; label: string },
+  b: { file: string; label: string },
+  alt: string,
+  base = "body/figs/v2",
+): string =>
+  `<div style="display:flex;gap:8px" role="img" aria-label="${alt}">
+    ${[a, b]
+      .map(
+        (c) => `<div style="flex:1;border:1px solid #DCE0E6;border-radius:12px;overflow:hidden;background:#FBFCFD">
+        <img src="${G2U6_IMG_BASE}${base}/${c.file}" alt="" style="display:block;width:100%"/>
+        <div style="padding:5px 0 7px;text-align:center;font-size:13px;font-weight:900;color:#191F28">${c.label}</div>
+      </div>`,
+      )
+      .join("")}
+  </div>`;
+
+/** 라스터 위에 물질 이동 화살표를 얹는다(콩팥단위 세 과정 등). %좌표 · 화살촉 자동. */
+export const rasterArrows = (
+  file: string,
+  alt: string,
+  arrows: { x1: number; y1: number; x2: number; y2: number; c: string; t?: string; tx?: number; ty?: number }[],
+  base = "body/figs/v2",
+): string => {
+  const body = arrows
+    .map((a) => {
+      const dx = a.x2 - a.x1;
+      const dy = a.y2 - a.y1;
+      const L = Math.hypot(dx, dy) || 1;
+      const ux = dx / L;
+      const uy = dy / L;
+      return `<path d="M${a.x1} ${a.y1} L${a.x2} ${a.y2} M${a.x2} ${a.y2} l${(-ux * 4 - uy * 2.4).toFixed(2)} ${(-uy * 4 + ux * 2.4).toFixed(2)} M${a.x2} ${a.y2} l${(-ux * 4 + uy * 2.4).toFixed(2)} ${(-uy * 4 - ux * 2.4).toFixed(2)}" fill="none" stroke="${a.c}" stroke-width="2.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`;
+    })
+    .join("");
+  const badges = arrows
+    .filter((a) => a.t)
+    .map(
+      (a) =>
+        `<span style="position:absolute;left:${a.tx ?? (a.x1 + a.x2) / 2}%;top:${a.ty ?? (a.y1 + a.y2) / 2 + 9}%;transform:translate(-50%,-50%);width:27px;height:27px;border-radius:999px;background:#fff;border:1.9px solid ${a.c};color:${a.c};font-size:12.5px;font-weight:800;line-height:23px;text-align:center;box-shadow:0 1px 4px rgba(10,20,40,.2)">${a.t}</span>`,
+    )
+    .join("");
+  return `<div style="position:relative;border-radius:14px;overflow:hidden;background:#FBFCFD;border:1px solid #DCE0E6">
+    <img src="${G2U6_IMG_BASE}${base}/${file}" alt="${alt}" style="display:block;width:100%"/>
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%" aria-hidden="true">${body}</svg>
+    ${badges}
+  </div>`;
+};
+
+// ══════════════════ L1 영양소 ══════════════════
+
+/** NT 검출 반응 시험관 열(파라미터형).
+ *  tubes[].tint = 관찰된 용액 색 키 · heated = 가열 표시(중탕 물 표시) · reagent 라벨은 선택.
+ *  aria는 파라미터 파생이며 **관찰 서술까지만** 한다(어느 영양소인지는 낭독하지 않는다). */
+const G2U6_TINT: Record<string, [string, string]> = {
+  none: ["#DDE3EA", "변화 없음"],
+  blue: ["#8FB3E8", "푸른색"],
+  navy: ["#2C3E8F", "청람색"],
+  purple: ["#9B59B6", "보라색"],
+  orange: ["#E8833A", "황적색"],
+  red: ["#E8455F", "선홍색"],
+};
+export function bodyTestTubesFig(o: { tubes: { label: string; tint: string; reagent?: string; heated?: boolean }[]; hideTint?: number }): string {
+  const n = o.tubes.length;
+  const W = 344;
+  const gap = n <= 3 ? 96 : n === 4 ? 78 : 64;
+  const x0 = (W - gap * n) / 2 + gap / 2;
+  // 시약 설명은 한 줄에 들어갈 글자 수를 **칸 폭에서** 뽑고, 그러고도 넘치면 글자 크기를 줄인다.
+  // 상수 나눗셈(gap/5.6)으로 줄바꿈만 하면 한글 한 글자가 10.5px라 4관에서 옆 칸을 침범한다(갤러리 적발).
+  const per = Math.max(4, Math.floor((gap - 6) / 9));
+  const rlines = (s?: string): string[] => (s ? g2u6WrapKo(s, per) : []);
+  const rsize = (ls: string[]): number => (ls.length ? Math.max(7.6, Math.min(10.5, (gap - 6) / Math.max(...ls.map((l) => l.length)))) : 10.5);
+  const body = o.tubes
+    .map((t, i) => {
+      const cx = x0 + i * gap;
+      const hidden = o.hideTint === i;
+      const [col] = G2U6_TINT[t.tint] ?? G2U6_TINT.none;
+      const fill = hidden ? "#F2F4F7" : col;
+      const heat = t.heated
+        ? `<path d="M${cx - 26} 128 h52 a4 4 0 0 1 4 4 v14 a4 4 0 0 1 -4 4 h-52 a4 4 0 0 1 -4 -4 v-14 a4 4 0 0 1 4 -4 Z" fill="#FFE3C4" stroke="#E8A25A" stroke-width="1.3"/>
+           <path d="M${cx - 14} 137 q4 -5 8 0 q4 5 8 0 q4 -5 8 0" fill="none" stroke="#E8833A" stroke-width="1.6" stroke-linecap="round"/>`
+        : "";
+      return `<g>
+        ${heat}
+        <ellipse cx="${cx}" cy="46" rx="17" ry="5" fill="#EDF1F5" stroke="#B9C2CC" stroke-width="1.3"/>
+        <path d="M${cx - 17} 46 V116 Q${cx - 17} 130 ${cx} 130 Q${cx + 17} 130 ${cx + 17} 116 V46" fill="#F7FAFC" stroke="#B9C2CC" stroke-width="1.4"/>
+        <path d="M${cx - 15} 86 V116 Q${cx - 15} 128 ${cx} 128 Q${cx + 15} 128 ${cx + 15} 116 V86 Z" fill="${fill}" opacity="${hidden ? 1 : 0.92}"/>
+        ${hidden ? `<text x="${cx}" y="${112}" text-anchor="middle" font-size="15" font-weight="800" fill="#8B95A1">?</text>` : ""}
+        <path d="M${cx - 12} 58 q7 -4 14 -2" stroke="#FFFFFF" stroke-width="2.6" opacity=".7" stroke-linecap="round" fill="none"/>
+        ${g2u6T(cx, 168, t.label, { size: Math.max(9, Math.min(13, (gap - 8) / Math.max(1, t.label.length))), weight: 900, fill: "#191F28" })}
+        ${rlines(t.reagent).map((ln, k, a) => g2u6T(cx, 185 + k * 13, ln, { size: rsize(a), weight: 700, fill: "#6B7684" })).join("")}
+      </g>`;
+    })
+    .join("");
+  const obs = o.tubes
+    .map((t, i) => `${t.label}${g2u6Josa(t.label, "은/는")} ${o.hideTint === i ? "결과를 가려 두었다" : (G2U6_TINT[t.tint] ?? G2U6_TINT.none)[1]}${t.heated ? "이고 따뜻한 물에 담가 두었다" : ""}`)
+    .join(", ");
+  // 긴 시약 설명은 줄바꿈되므로 줄 수만큼 그림 높이를 늘린다(라벨 겹침·잘림 방지 · 파일럿 검수 적발).
+  const maxLines = Math.max(1, ...o.tubes.map((t) => rlines(t.reagent).length));
+  const H = 183 + maxLines * 13;
+  return `<svg viewBox="0 0 ${W} ${H}" ${NS} role="img" aria-label="시험관 ${n}개를 나란히 둔 그림. ${obs}">
+    <rect x="8" y="8" width="328" height="${H - 16}" rx="14" fill="#FBFCFD" stroke="#DCE0E6" stroke-width="1.3"/>
+    ${body}
+  </svg>`;
+}
+
+/** NC 영양소 분류 도표(파라미터형) · 칸 일부를 기호로 가린다.
+ *  cols = 분류 축(기능 등) · 각 열의 items 중 mask 인덱스를 ㉠㉡㉢으로 대체한다. */
+export function nutrientChartFig(o: { title?: string; cols: { head: string; items: string[] }[]; masks?: { col: number; row: number; sym: string }[] }): string {
+  const n = o.cols.length;
+  const W = 344;
+  const cw = (W - 24 - (n - 1) * 8) / n;
+  const maxRows = Math.max(...o.cols.map((c) => c.items.length));
+  const H = 46 + maxRows * 30 + 16;
+  const body = o.cols
+    .map((c, ci) => {
+      const x = 12 + ci * (cw + 8);
+      const cells = c.items
+        .map((it, ri) => {
+          const m = o.masks?.find((k) => k.col === ci && k.row === ri);
+          const y = 46 + ri * 30;
+          return `<rect x="${x}" y="${y}" width="${cw}" height="26" rx="7" fill="${m ? "#FFFFFF" : "#F7F8FA"}" stroke="${m ? "#3182F6" : "#DCE0E6"}" stroke-width="${m ? 1.7 : 1.1}"${m ? ' stroke-dasharray="5 4"' : ""}/>
+            ${g2u6T(x + cw / 2, y + 17.5, m ? m.sym : it, { size: m ? 12 : Math.max(9.5, Math.min(12, (cw - 8) / it.length)), weight: m ? 800 : 700, fill: m ? "#1B64DA" : "#333D4B" })}`;
+        })
+        .join("");
+      const hs = Math.max(9, Math.min(12, (cw - 8) / c.head.length));
+      return `<rect x="${x}" y="12" width="${cw}" height="28" rx="8" fill="#EEF4FF" stroke="#C7DBFA" stroke-width="1.2"/>
+        ${g2u6T(x + cw / 2, 31, c.head, { size: hs, weight: 800, fill: "#1B64DA" })}${cells}`;
+    })
+    .join("");
+  const maskDesc = o.masks?.length ? `, ${o.masks.map((m) => m.sym).join("·")} 자리는 비어 있다` : "";
+  return `<svg viewBox="0 0 ${W} ${H}" ${NS} role="img" aria-label="${o.title ?? "영양소를 갈래별로 묶은 표"}. 갈래는 ${o.cols.map((c) => c.head).join(", ")}이다${maskDesc}">
+    ${body}
+  </svg>`;
+}
+
+/** 표 계열 공용 래퍼 · svgTable의 고정 aria("자료 표")를 머리글·행 이름에서 파생한 문구로 바꾼다
+ *  (§5-2 "aria는 파라미터 파생" · 검산 A 3-11). 값 자체는 낭독하지 않아 판독 과제를 지운다. */
+const g2u6TableAria = (svg: string, head: string[], rows: string[][], what: string): string =>
+  svg.replace(
+    'aria-label="자료 표"',
+    `aria-label="${what}. 세로줄은 ${head.join(", ")}이다. ${rows
+      .map((r) => `${r[0]} 줄은 ${head.slice(1).map((h, i) => `${h} ${r[i + 1]}`).join(", ")}`)
+      .join(". ")}"`,
+  );
+
+/** FT 식품 성분 자료 표 · svgTable 래핑(2열 한글 ≤13자 · 3열 ≤8자 준수). */
+export function foodTableFig(head: string[], rows: string[][]): string {
+  return g2u6TableAria(svgTable(head, rows, { firstColHead: true }), head, rows, "식품에 들어 있는 성분을 정리한 표");
+}
+
+// ══════════════════ L2 소화와 소화효소 ══════════════════
+
+/** EG 영양소 × 소화 장소 격자(파라미터형).
+ *  cells[r][c] = "" 없음 · "arrow" 분해 일어남 · 기호 문자열이면 그 칸에 기호 배지.
+ *  행 = 소화 장소 · 열 = 영양소. 효소 이름은 인쇄하지 않는 것이 기본. */
+export function enzymeGridFig(o: { cols: string[]; rows: string[]; cells: string[][]; note?: string }): string {
+  const W = 344;
+  const LW = 76;
+  const cw = (W - 24 - LW) / o.cols.length;
+  const rh = 40;
+  const H = 44 + o.rows.length * rh + (o.note ? 26 : 10);
+  let body = "";
+  o.cols.forEach((c, ci) => {
+    const x = 12 + LW + ci * cw;
+    body += `<rect x="${x}" y="12" width="${cw}" height="28" rx="7" fill="#EEF4FF" stroke="#C7DBFA" stroke-width="1.2"/>${g2u6T(x + cw / 2, 30.5, c, { size: 12, weight: 800, fill: "#1B64DA" })}`;
+  });
+  o.rows.forEach((r, ri) => {
+    const y = 44 + ri * rh;
+    body += `<rect x="12" y="${y}" width="${LW}" height="${rh - 4}" rx="7" fill="#F7F8FA" stroke="#DCE0E6" stroke-width="1.1"/>${g2u6T(12 + LW / 2, y + rh / 2 + 2, r, { size: 12, weight: 800 })}`;
+    o.cols.forEach((_, ci) => {
+      const x = 12 + LW + ci * cw;
+      const v = o.cells[ri]?.[ci] ?? "";
+      body += `<rect x="${x}" y="${y}" width="${cw}" height="${rh - 4}" rx="7" fill="#FFFFFF" stroke="#DCE0E6" stroke-width="1.1"/>`;
+      if (v === "arrow") {
+        body += `<path d="M${x + cw / 2 - 15} ${y + rh / 2} h26 m-6 -5 l6 5 l-6 5" fill="none" stroke="#37A446" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+      } else if (v) {
+        body += g2u6Mark(x + cw / 2, y + rh / 2 - 2, v, 11);
+      }
+    });
+  });
+  if (o.note) body += g2u6T(W / 2, H - 10, o.note, { size: 10.8, weight: 700, fill: "#6B7684" });
+  const syms = o.cells.flat().filter((v) => v && v !== "arrow");
+  return `<svg viewBox="0 0 ${W} ${H}" ${NS} role="img" aria-label="세로는 ${o.rows.join("·")}, 가로는 ${o.cols.join("·")}으로 나눈 표. 분해가 일어나는 칸에는 화살표가 있고${syms.length ? ` ${syms.join("·")} 기호가 붙은 칸이 있다` : " 나머지 칸은 비어 있다"}">
+    ${body}
+  </svg>`;
+}
+
+/** DF 소화·흡수 흐름도(파라미터형 · 가로 사슬) · blank 칸은 ㉠ 점선.
+ *  arrowLabels가 있으면 화살표 위에 조건을 적는다(상자 밖 배치 · 겹침 방지). */
+export function digestFlowFig(o: { steps: string[]; blank?: number; arrowLabels?: (string | null)[]; caption?: string }): string {
+  const W = 344;
+  const n = o.steps.length;
+  // 칸이 적을수록 간격을 줄여 상자 폭을 확보한다(글자 하한 11px 보장 · 검산 A 3-1).
+  const GAP = n <= 3 ? 20 : 28;
+  const bw = (W - 24 - GAP * (n - 1)) / n;
+  const y = o.arrowLabels ? 46 : 30;
+  const H = y + 46 + (o.caption ? 26 : 12);
+  let body = "";
+  o.steps.forEach((s, i) => {
+    const x = 12 + i * (bw + GAP);
+    const bl = o.blank === i;
+    const lines = g2u6WrapKo(s, 6);
+    // 띄어쓰기가 없는 긴 낱말(모노글리세라이드 등)은 줄바꿈이 안 되므로 글자 크기로 상자 안에 맞춘다.
+    const maxLen = Math.max(...lines.map((l) => l.length), 1);
+    const fs = Math.max(11, Math.min(11.5, (bw - 8) / maxLen));
+    body += `<rect x="${x}" y="${y}" width="${bw}" height="42" rx="10" fill="${bl ? "#FFFFFF" : "#F2F4F7"}" stroke="${bl ? "#3182F6" : "#C9D0D8"}" stroke-width="${bl ? 1.8 : 1.3}"${bl ? ' stroke-dasharray="5 4"' : ""}/>`;
+    if (bl) body += g2u6T(x + bw / 2, y + 27, "㉠", { size: 15, weight: 800, fill: "#1B64DA" });
+    else lines.forEach((ln, k) => (body += g2u6T(x + bw / 2, y + (lines.length === 1 ? 26 : 20 + k * (fs + 3)), ln, { size: fs, weight: 700 })));
+    if (i < n - 1) {
+      const ax = x + bw + 5;
+      body += `<path d="M${ax} ${y + 21} h${GAP - 10} m-6 -5 l6 5 l-6 5" fill="none" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+      const al = o.arrowLabels?.[i];
+      if (al) body += g2u6T(ax + (GAP - 10) / 2, y - 8, al, { size: 10.5, weight: 800, fill: "#B4690E" });
+    }
+  });
+  if (o.caption) body += g2u6T(W / 2, H - 9, o.caption, { size: 10.8, weight: 700, fill: "#6B7684" });
+  return `<svg viewBox="0 0 ${W} ${H}" ${NS} role="img" aria-label="왼쪽에서 오른쪽으로 이어지는 흐름도. 칸은 ${n}개이고${o.blank === undefined ? " 모두 채워져 있다" : " 한 칸은 비어 있으며 기호로 표시되어 있다"}">
+    ${body}
+  </svg>`;
+}
+
+// ══════════════════ L3 순환계 ══════════════════
+
+/** CP 두 순환 경로 도해(기호판) · 심장을 가운데 두고 위 고리·아래 고리.
+ *  loopSyms = [위 고리, 아래 고리] · vesselSyms = [왼위, 오른위, 오른아래, 왼아래] 혈관 기호.
+ *  showColor:false면 색 단서를 지운다(색이 곧 답이 되는 문항에서 쓴다). */
+export function circulationPathFig(o: { loopSyms?: (string | null)[]; vesselSyms?: (string | null)[]; showColor?: boolean }): string {
+  const [up, down] = o.loopSyms ?? [null, null];
+  const [v1, v2, v3, v4] = o.vesselSyms ?? [null, null, null, null];
+  const red = o.showColor === false ? "#9AA3AD" : "#D9525F";
+  const blue = o.showColor === false ? "#9AA3AD" : "#4A6FA5";
+  // 방향 화살촉은 항상 그린다. 색을 지운 판(showColor:false)에서 화살촉까지 없으면 어느 쪽으로
+  // 흐르는지 판독할 근거가 사라져 문항이 성립하지 않는다(파일럿 검수 적발 · 정보 미제시는 치명).
+  const tipUp = (x: number, y: number): string => `<path d="M${x - 6} ${y + 5} L${x} ${y - 3} L${x + 6} ${y + 5}" fill="none" stroke="#333D4B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const tipDown = (x: number, y: number): string => `<path d="M${x - 6} ${y - 5} L${x} ${y + 3} L${x + 6} ${y - 5}" fill="none" stroke="#333D4B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  // aria는 파라미터에서 파생한다. 이 그림에서는 **화살촉의 방향**만이 혈관 이름의 판독 근거라
+  // 방향을 낭독하지 않으면 스크린리더 경로에서 문항이 성립하지 않는다(검산 A S17).
+  const WHERE = ["왼쪽 위", "오른쪽 위", "오른쪽 아래", "왼쪽 아래"];
+  const TOWARD = ["허파 쪽인 위", "심장 쪽인 아래", "조직세포 쪽인 아래", "심장 쪽인 위"];
+  const vDesc = [v1, v2, v3, v4]
+    .map((v, i) => `${WHERE[i]} 혈관은 화살촉이 ${TOWARD[i]}를 향하고${v ? ` ${v} 기호가 붙어 있다` : " 기호는 붙어 있지 않다"}`)
+    .join(", ");
+  const lDesc = [up, down].filter(Boolean).length
+    ? `. 점선 고리로 묶은 자리에 ${[up ? "위쪽 고리에 " + up : "", down ? "아래쪽 고리에 " + down : ""].filter(Boolean).join(", ")} 기호가 붙어 있다`
+    : "";
+  const cDesc = o.showColor === false ? ". 혈관은 모두 같은 회색으로 그려져 색 단서는 없다" : ". 혈관은 붉은색과 푸른색으로 나누어 그려져 있다";
+  return `<svg viewBox="0 0 344 250" ${NS} role="img" aria-label="심장을 가운데 두고 위쪽 고리는 허파로, 아래쪽 고리는 조직세포로 이어진 혈액 순환 경로 도해. ${vDesc}${lDesc}${cDesc}">
+    <rect x="8" y="8" width="328" height="234" rx="14" fill="#FBFCFD" stroke="#DCE0E6" stroke-width="1.3"/>
+    <path d="M126 52 C104 50 96 76 108 98 C118 116 132 124 142 128" fill="none" stroke="${blue}" stroke-width="7" stroke-linecap="round"/>
+    <path d="M202 128 C214 124 228 114 238 96 C250 74 240 50 218 52" fill="none" stroke="${red}" stroke-width="7" stroke-linecap="round"/>
+    <path d="M202 152 C216 158 232 176 226 198" fill="none" stroke="${red}" stroke-width="7" stroke-linecap="round"/>
+    <path d="M118 198 C112 176 128 158 142 152" fill="none" stroke="${blue}" stroke-width="7" stroke-linecap="round"/>
+    ${tipUp(100, 80)}${tipDown(245, 82)}${tipDown(227, 178)}${tipUp(117, 176)}
+    <rect x="128" y="28" width="88" height="40" rx="12" fill="#E8F1FB" stroke="#7FA8D8" stroke-width="1.5"/>
+    ${g2u6T(172, 53, "허파", { size: 13, weight: 900, fill: "#2E5D93" })}
+    <rect x="132" y="112" width="80" height="56" rx="13" fill="#F0C9CE" stroke="#A83744" stroke-width="1.7"/>
+    ${g2u6T(172, 145, "심장", { size: 13, weight: 900, fill: "#8C3540" })}
+    <rect x="122" y="192" width="100" height="40" rx="12" fill="#EAF6EC" stroke="#7FB77E" stroke-width="1.5"/>
+    ${g2u6T(172, 217, "조직세포", { size: 12.5, weight: 900, fill: "#3B7A44" })}
+    ${up ? `<path d="M118 34 C74 44 62 96 92 128" fill="none" stroke="#3182F6" stroke-width="1.6" stroke-dasharray="5 4"/>${g2u6Mark(74, 62, up)}` : ""}
+    ${down ? `<path d="M226 222 C270 212 282 160 252 128" fill="none" stroke="#3182F6" stroke-width="1.6" stroke-dasharray="5 4"/>${g2u6Mark(270, 192, down)}` : ""}
+    ${v1 ? g2u6Mark(108, 58, v1, 11) : ""}${v2 ? g2u6Mark(238, 58, v2, 11) : ""}
+    ${v3 ? g2u6Mark(234, 192, v3, 11) : ""}${v4 ? g2u6Mark(110, 192, v4, 11) : ""}
+  </svg>`;
+}
+
+// ══════════════════ L4 호흡계와 호흡운동 ══════════════════
+
+/** BM 병 호흡 모형(파라미터형) · 부품에 기호를 붙이고 이름은 인쇄하지 않는다.
+ *  pull = 고무막을 아래로 당긴 상태 · syms = [유리관, 고무풍선, 병, 고무막]. */
+export function breathModelFig(o: { pull: boolean; syms?: (string | null)[]; hand?: boolean }): string {
+  const [tube, balloon, jar, sheet] = o.syms ?? [null, null, null, null];
+  // 병의 크기는 고정하고 고무막만 병 안에서 오르내린다(병 바닥선이 함께 움직이면 병이 줄어든 것처럼 읽힌다).
+  const memY = o.pull ? 200 : 168;
+  const bal = o.pull ? 1 : 0.66;
+  const bw = 34 * bal;
+  const bh = 40 * bal;
+  return `<svg viewBox="0 0 344 244" ${NS} role="img" aria-label="투명한 병 안에 고무풍선을 매단 호흡 모형 그림. 병 아래를 막은 고무 막이 ${o.pull ? "아래로 당겨져 풍선이 크게 부풀어" : "위로 올라와 풍선이 쪼그라들어"} 있다. ${[[tube, "병 위쪽에 꽂힌 유리관"], [balloon, "병 안에 매달린 고무풍선"], [jar, "바깥을 이루는 병"], [sheet, "병 아래를 막은 고무 막"]].filter((x) => x[0]).map((x) => `${x[1]}에 ${x[0]} 기호가 붙어 있다`).join(", ") || "부품에 기호는 붙어 있지 않다"}">
+    <rect x="8" y="8" width="328" height="228" rx="14" fill="#FBFCFD" stroke="#DCE0E6" stroke-width="1.3"/>
+    <rect x="164" y="26" width="16" height="46" rx="6" fill="#E8F1FB" stroke="#7FA8D8" stroke-width="1.6"/>
+    <path d="M104 72 H240 V212 H104 Z" fill="#F2F8FD" stroke="none" opacity=".9"/>
+    <path d="M104 72 V212 M240 72 V212" fill="none" stroke="#9BB9DC" stroke-width="2.4"/>
+    <path d="M120 62 H224 a10 10 0 0 1 10 10 H110 a10 10 0 0 1 10 -10 Z" fill="#DCE9F7" stroke="#9BB9DC" stroke-width="1.5"/>
+    <ellipse cx="172" cy="${96 + bh * 0.5}" rx="${bw}" ry="${bh}" fill="#F0C9CE" stroke="#A83744" stroke-width="1.6"/>
+    <path d="M172 72 V${96}" stroke="#A83744" stroke-width="3"/>
+    <path d="M104 ${memY - 24} Q172 ${memY} 240 ${memY - 24}" fill="none" stroke="#C2606C" stroke-width="7" stroke-linecap="round"/>
+    ${o.hand ? `<path d="M166 ${memY + 4} q6 -8 12 0 v22 h-12 Z" fill="#F3C7B4" stroke="#D89C82" stroke-width="1.4"/>` : ""}
+    ${tube ? g2u6Mark(200, 40, tube, 11) : ""}
+    ${balloon ? g2u6Mark(172, 96 + bh, balloon, 11) : ""}
+    ${jar ? g2u6Mark(120, 92, jar, 11) : ""}
+    ${sheet ? g2u6Mark(218, memY - 8, sheet, 11) : ""}
+  </svg>`;
+}
+
+/** AL 허파꽈리 기체 교환(기호판) · 기체 기호를 허파꽈리 쪽과 모세혈관 쪽 **양쪽에** 배치한다
+ *  (한쪽만 보고 정하면 뒤집히는 천재 02 구조 계승). dirs = 화살표 방향 [위쪽, 아래쪽]. */
+export function alveoliQuizFig(o: { symA?: string | null; symB?: string | null; showArrows?: boolean; showWall?: boolean }): string {
+  const arr = o.showArrows
+    ? `<path d="M152 96 h44 m-8 -5.5 l8 5.5 l-8 5.5" fill="none" stroke="#3182F6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+       <path d="M196 148 h-44 m8 -5.5 l-8 5.5 l8 5.5" fill="none" stroke="#7C6BFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`
+    : "";
+  // aria는 파라미터에서 파생한다. 화살표가 있으면 그 방향까지 관찰 서술로 말해야 이 그림으로만
+  // 풀리는 문항(방향 판정)이 스크린리더에서도 성립한다. 기체의 정체는 여전히 학생 몫이라 유출이 아니다.
+  const marks = o.symA && o.symB
+    ? `기체 두 가지에 ${o.symA}·${o.symB} 기호가 붙어 있고 같은 기호가 벽 양쪽에 각각 놓여 있다`
+    : "기체에 기호는 붙어 있지 않다";
+  const arrows = o.showArrows
+    ? `. ${o.symA}는 왼쪽에서 오른쪽으로, ${o.symB}는 오른쪽에서 왼쪽으로 향하는 화살표와 함께 그려져 있다`
+    : "";
+  const wall = o.showWall ? ". 두 자리를 가르는 벽은 한 겹으로 얇게 그려져 있다" : "";
+  return `<svg viewBox="0 0 344 220" ${NS} role="img" aria-label="허파꽈리와 그것을 감싼 모세혈관을 얇은 벽 하나를 사이에 두고 그린 그림. ${marks}${arrows}${wall}">
+    <rect x="8" y="8" width="328" height="204" rx="14" fill="#FBFCFD" stroke="#DCE0E6" stroke-width="1.3"/>
+    <path d="M26 122 C58 122 60 88 84 88" fill="none" stroke="#9BB9DC" stroke-width="12" stroke-linecap="round"/>
+    <g fill="#E8F1FB" stroke="#7FA8D8" stroke-width="1.8">
+      <circle cx="104" cy="72" r="30"/><circle cx="98" cy="132" r="30"/><circle cx="140" cy="102" r="26"/>
+    </g>
+    <path d="M212 42 C238 62 244 104 232 140 C222 172 208 186 196 194" fill="none" stroke="#D9525F" stroke-width="13" stroke-linecap="round"/>
+    <path d="M212 42 C238 62 244 104 232 140 C222 172 208 186 196 194" fill="none" stroke="#4A6FA5" stroke-width="6" stroke-linecap="round" opacity=".55"/>
+    <path d="M172 40 V196" stroke="#B9C2CC" stroke-width="2" stroke-dasharray="6 5"/>
+    ${g2u6T(172, 32, "얇은 벽", { size: 10.8, weight: 700, fill: "#8B95A1" })}
+    ${arr}
+    ${o.symA ? `${g2u6Mark(132, 96, o.symA, 11)}${g2u6Mark(216, 96, o.symA, 11)}` : ""}
+    ${o.symB ? `${g2u6Mark(216, 148, o.symB, 11)}${g2u6Mark(132, 150, o.symB, 11)}` : ""}
+    ${o.showWall ? `<path d="M164 108 h16 M164 108 l4 -4 M164 108 l4 4 M180 108 l-4 -4 M180 108 l-4 4" fill="none" stroke="#4E5968" stroke-width="1.6" stroke-linecap="round"/>${g2u6T(172, 124, "한 겹", { size: 10, weight: 800, fill: "#4E5968", halo: "#FFFFFF" })}` : ""}
+    ${g2u6T(90, 206, "허파꽈리 쪽", { size: 10.8, weight: 800, fill: "#2E5D93" })}
+    ${g2u6T(262, 206, "모세혈관 쪽", { size: 10.8, weight: 800, fill: "#8C3540" })}
+  </svg>`;
+}
+
+/** GT 들숨·날숨 성분 자료 표 · svgTable 래핑(3열 한글 ≤8자 준수). */
+export function gasTableFig(head: string[], rows: string[][]): string {
+  return g2u6TableAria(svgTable(head, rows, { firstColHead: true }), head, rows, "들숨과 날숨에 든 기체의 양을 견준 표");
+}
+
+// ══════════════════ L5 배설계 ══════════════════
+
+/** UT 혈액·여과액·오줌 성분 표 · svgTable 래핑(3열 한글 ≤8자). */
+export function urineTableFig(head: string[], rows: string[][]): string {
+  return g2u6TableAria(svgTable(head, rows, { firstColHead: true }), head, rows, "여과액과 오줌에 든 물질을 견준 표");
+}
+
+/** HC 검사 결과지(항목 | 결과 | 정상 범위) · svgTable 래핑(천재 10 구조 계승 · 대소 비교만). */
+export function checkupFig(rows: string[][]): string {
+  const head = ["검사 항목", "결과", "정상 범위"];
+  return g2u6TableAria(svgTable(head, rows, { firstColHead: true }), head, rows, "건강 검진 결과지의 일부");
+}
+
+// ══════════════════ L6 세포호흡과 기관계의 통합 ══════════════════
+
+/** CR 세포호흡 도해(기호판) · 재료 칸·결과 칸을 기호로 가릴 수 있다.
+ *  hide = "in" 재료 가림 · "out" 결과 가림 · "none". */
+export function cellRespQuizFig(o: { inItems: string[]; outItems: string[]; hide?: "in" | "out" | "none"; symIn?: string; symOut?: string }): string {
+  const boxed = (x: number, y: number, w: number, title: string, items: string[], hidden: boolean, sym?: string): string => {
+    const rows = items
+      .map((it, i) => `<rect x="${x + 9}" y="${y + 34 + i * 32}" width="${w - 18}" height="26" rx="8" fill="#F7F8FA" stroke="#DCE0E6" stroke-width="1"/>${g2u6T(x + w / 2, y + 51 + i * 32, it, { size: 11.5, weight: 700 })}`)
+      .join("");
+    const masked = `<rect x="${x + 9}" y="${y + 34}" width="${w - 18}" height="${items.length * 32 - 6}" rx="8" fill="#FFFFFF" stroke="#3182F6" stroke-width="1.7" stroke-dasharray="5 4"/>${g2u6T(x + w / 2, y + 34 + (items.length * 32 - 6) / 2 + 5, sym ?? "㉠", { size: 15, weight: 800, fill: "#1B64DA" })}`;
+    return `<rect x="${x}" y="${y}" width="${w}" height="${34 + items.length * 32 - 4}" rx="12" fill="#FFFFFF" stroke="#C9D0D8" stroke-width="1.3"/>
+      ${g2u6T(x + w / 2, y + 22, title, { size: 12, weight: 900, fill: "#4E5968" })}${hidden ? masked : rows}`;
+  };
+  // 상자 폭 96 · 원 반지름 44에서는 좌우 화살표가 4~10px밖에 남지 않아 방향 단서로 기능하지 못했다
+  // (검산 B 33 · 해설은 화살표 방향을 판독 근거로 든다). 상자를 좁히고 원을 줄여 ≥24px를 확보한다.
+  const BW = 84;
+  const RAD = 38;
+  const H = 46 + Math.max(o.inItems.length, o.outItems.length) * 32 + 40;
+  const midY = 24 + (34 + Math.max(o.inItems.length, o.outItems.length) * 32 - 4) / 2;
+  // aria 파생: 칸에 실제로 적힌 내용과 가림 기호를 낭독해야 접근성 경로에서도 문항이 성립한다(§9-1 B13).
+  const inTxt = o.hide === "in" ? `가려져 ${o.symIn ?? "㉠"} 기호로 표시되어` : o.inItems.join("와 ") + "가 적혀";
+  const outTxt = o.hide === "out" ? `가려져 ${o.symOut ?? "㉠"} 기호로 표시되어` : o.outItems.join("와 ") + "가 적혀";
+  return `<svg viewBox="0 0 344 ${H}" ${NS} role="img" aria-label="조직세포를 가운데 두고 왼쪽에 들어가는 물질 칸, 오른쪽에 생기는 물질 칸을 놓은 도해. 왼쪽 칸에는 ${inTxt} 있고 오른쪽 칸에는 ${outTxt} 있다. 화살표는 왼쪽 칸에서 조직세포로, 조직세포에서 오른쪽 칸으로 향한다">
+    <rect x="8" y="8" width="328" height="${H - 16}" rx="14" fill="#FBFCFD" stroke="#DCE0E6" stroke-width="1.3"/>
+    ${boxed(14, 24, BW, "들어가는 물질", o.inItems, o.hide === "in", o.symIn)}
+    ${boxed(344 - 14 - BW, 24, BW, "생기는 물질", o.outItems, o.hide === "out", o.symOut)}
+    <circle cx="172" cy="${midY}" r="${RAD}" fill="#EAF6EC" stroke="#7FB77E" stroke-width="1.8"/>
+    ${g2u6T(172, midY + 5, "조직세포", { size: 12.5, weight: 900, fill: "#3B7A44" })}
+    <path d="M${14 + BW + 6} ${midY} h${172 - RAD - (14 + BW + 6) - 4} m-6 -5 l6 5 l-6 5" fill="none" stroke="#37A446" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M${172 + RAD + 4} ${midY} h${344 - 14 - BW - 6 - (172 + RAD + 4) - 4} m-6 -5 l6 5 l-6 5" fill="none" stroke="#7C6BFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    ${g2u6T(172, H - 14, "에너지는 이 과정에서 생명 활동에 쓰여요", { size: 10.5, weight: 700, fill: "#6B7684" })}
+  </svg>`;
+}
+
+/** SI 기관계 상자 + 물질 화살표(기호판) · 상자 이름을 기호로 가리고 화살표 라벨만으로 역산시킨다
+ *  (천재 08 구조 계승). boxes = [왼위, 왼아래, 오른위, 오른아래] · center는 고정 표기. */
+export function systemsQuizFig(o: { boxes: { sym: string; label?: string; inLabel?: string; outLabel?: string; dir?: "toCenter" | "fromCenter" | "both" }[]; center?: string }): string {
+  // 가운데 순환계는 **세로 막대**로 그린다. 네 상자를 모서리에 두고 중앙에 작은 상자를 놓으면
+  // 화살표가 그 상자를 비껴가거나(직결로 오독) 상자에 덮여 사라진다(사용자 검수 36·37번 적발).
+  // 막대로 두면 두 줄 모두 같은 높이에서 막대 변에 정확히 닿는다.
+  const BW = 92;
+  const BH = 54;
+  const LX = 8;
+  const RX = 244;
+  const CX = 136;
+  const CW = 72;
+  const ROW = [28, 124];
+  const POS: [number, number][] = [
+    [LX, ROW[0]],
+    [LX, ROW[1]],
+    [RX, ROW[0]],
+    [RX, ROW[1]],
+  ];
+  const body = o.boxes
+    .map((b, i) => {
+      const [x, y] = POS[i] ?? POS[0];
+      const cxm = x + BW / 2;
+      const ay = y + BH / 2;
+      const left = x < 172;
+      const dir = b.dir ?? "toCenter";
+      // 화살표는 바깥 상자 변 ↔ 가운데 막대 변 사이 빈 구간에만 그린다(어디에도 덮이지 않는다).
+      const a1 = left ? x + BW + 4 : x - 4;
+      const a2 = left ? CX - 4 : CX + CW + 4;
+      const head = (px: number, sign: number): string => `M${px} ${ay} l${-7 * sign} -5 M${px} ${ay} l${-7 * sign} 5`;
+      const toCenter = dir === "toCenter";
+      const tip = dir === "both" ? "" : toCenter ? head(a2, left ? 1 : -1) : head(a1, left ? -1 : 1);
+      const both = dir === "both" ? `${head(a2, left ? 1 : -1)} ${head(a1, left ? -1 : 1)}` : "";
+      return `<rect x="${x}" y="${y}" width="${BW}" height="${BH}" rx="12" fill="#FFFFFF" stroke="#C9D0D8" stroke-width="1.4"/>
+        ${b.label ? g2u6T(cxm, y + BH / 2 + 5, b.label, { size: 12, weight: 900 }) : g2u6Mark(cxm, y + BH / 2, b.sym)}
+        ${b.inLabel ? `<path d="M${cxm} ${y - 6} V${y - 1}" stroke="#B4690E" stroke-width="1.2" stroke-linecap="round"/>${g2u6T(cxm, y - 8, b.inLabel, { size: 10.8, weight: 800, fill: "#B4690E" })}` : ""}
+        ${b.outLabel ? `<path d="M${cxm} ${y + BH + 2} V${y + BH + 7} " stroke="#B4690E" stroke-width="1.2" stroke-linecap="round"/>${g2u6T(cxm, y + BH + 17, b.outLabel, { size: 10.8, weight: 800, fill: "#B4690E" })}` : ""}
+        <path d="M${a1} ${ay} H${a2} ${tip}${both}" fill="none" stroke="#3182F6" stroke-width="2.2" stroke-linecap="round"/>`;
+    })
+    .join("");
+  // aria 파생: 상자마다 무엇이 붙어 있고 화살표가 어느 쪽을 향하는지까지 관찰 서술한다.
+  const WHERE = ["왼쪽 위", "왼쪽 아래", "오른쪽 위", "오른쪽 아래"];
+  const desc = o.boxes
+    .map((b, i) => {
+      const who = b.label ? `${b.label}이라고 적힌 상자` : `${b.sym} 기호가 붙은 상자`;
+      const io2 = [b.inLabel ? `위에 ${b.inLabel}` : "", b.outLabel ? `아래에 ${b.outLabel}` : ""].filter(Boolean).join(", ");
+      const d = b.dir === "fromCenter" ? "가운데에서 이 상자 쪽으로" : b.dir === "both" ? "양쪽으로" : "이 상자에서 가운데 쪽으로";
+      return `${WHERE[i]}는 ${who}이고${io2 ? ` ${io2}가 적혀 있으며` : ""} 화살표는 ${d} 향한다`;
+    })
+    .join(". ");
+  return `<svg viewBox="0 0 344 206" ${NS} role="img" aria-label="가운데에 ${o.center ?? "순환계"} 상자를 세로로 길게 두고 그 양옆에 상자 네 개를 놓은 관계 도해. ${desc}">
+    <rect x="8" y="8" width="328" height="190" rx="14" fill="#FBFCFD" stroke="#DCE0E6" stroke-width="1.3"/>
+    <rect x="${CX}" y="22" width="${CW}" height="158" rx="14" fill="#EEF4FF" stroke="#3182F6" stroke-width="1.7"/>
+    ${g2u6T(CX + CW / 2, 96, o.center ?? "순환계", { size: 12.5, weight: 900, fill: "#1B64DA" })}
+    ${g2u6T(CX + CW / 2, 114, "혈액", { size: 11, weight: 700, fill: "#4E5968" })}
+    ${body}
+  </svg>`;
+}
+
+/** AT 활동 강도별 지표 표 · svgTable 래핑(천재 09 구조 계승 · 한 지표만 추세가 반대). */
+export function activityTableFig(head: string[], rows: string[][]): string {
+  return g2u6TableAria(svgTable(head, rows, { firstColHead: true }), head, rows, "활동에 따른 몸의 변화를 견준 표");
+}
+
+// ══════════════════ 확대 120 신작(파일럿 문항은 건드리지 않는 append) ══════════════════
+// 사용자 검수로 "해부 구조도는 발주 라스터가 정본"이 확정됐다(§5-1). 라스터는 장당 2문항이 상한이라
+// 확대분의 시각 조달은 **해부가 아닌 자료**(표·성질 카드·이동 도해)로 채운다. 셋 다 파라미터형이고
+// aria는 파라미터에서 파생한다.
+
+/** 표 범용 래퍼 · what은 이 표가 무엇을 정리한 것인지만 적는다(판정 결과·해석은 적지 않는다). */
+export function dataTableFig(what: string, head: string[], rows: string[][]): string {
+  return g2u6TableAria(svgTable(head, rows, { firstColHead: true }), head, rows, what);
+}
+
+/** 정체 역동정 카드 · 기호 배지 + 성질 줄을 가로 카드로 쌓는다.
+ *  같은 해부 그림을 반복하지 않고도 "순서 없이 나타낸 것" 아키타입을 만들 수 있다.
+ *  성질 줄에는 이름을 적지 않는 것이 원칙이다(이름을 적으면 정체가 인쇄된다). */
+export function factCardsFig(o: { cards: { sym: string; lines: string[] }[]; caption?: string }): string {
+  const W = 344;
+  const LH = 17;
+  let y = 14;
+  const parts: string[] = [];
+  for (const c of o.cards) {
+    const wrapped = c.lines.flatMap((ln) => g2u6WrapKo(ln, 20));
+    const h = 14 + wrapped.length * LH;
+    parts.push(`<rect x="12" y="${y}" width="${W - 24}" height="${h}" rx="11" fill="#FFFFFF" stroke="#DCE0E6" stroke-width="1.2"/>`);
+    parts.push(g2u6Mark(38, y + h / 2, c.sym, 12.5));
+    wrapped.forEach((ln, k) => parts.push(g2u6T(66, y + 22 + k * LH, ln, { size: 12, anchor: "start", weight: 700, fill: "#333D4B" })));
+    y += h + 8;
+  }
+  const H = y + (o.caption ? 22 : 4);
+  if (o.caption) parts.push(g2u6T(W / 2, H - 8, o.caption, { size: 10.8, weight: 700, fill: "#6B7684" }));
+  const desc = o.cards.map((c) => `${c.sym} 카드에는 ${c.lines.join(", ")}${g2u6Josa(c.lines[c.lines.length - 1] ?? "", "이라고/라고")} 적혀 있다`).join(". ");
+  return `<svg viewBox="0 0 ${W} ${H}" ${NS} role="img" aria-label="성질을 적은 카드 ${o.cards.length}장을 위아래로 늘어놓은 그림. 이름은 적혀 있지 않다. ${desc}">
+    <rect x="4" y="4" width="${W - 8}" height="${H - 8}" rx="14" fill="#FBFCFD" stroke="#DCE0E6" stroke-width="1.3"/>
+    ${parts.join("")}
+  </svg>`;
+}
+
+/** 두 자리 사이 물질 이동 도해 · 이름 상자 둘과 그 사이 화살표.
+ *  dir "right"면 왼쪽에서 오른쪽으로 간다. 방향 판정이 정답인 문항에서는 물질 이름을 기호로 가린다. */
+export function transferFig(o: { left: string; right: string; arrows: { sym: string; dir: "right" | "left" }[]; caption?: string; note?: string }): string {
+  const W = 344;
+  const BX = 20;
+  const BW = 96;
+  const RX = W - BX - BW;
+  const n = o.arrows.length;
+  const boxH = n * 46 + 18;
+  // 상자 아래에 note·caption 자리를 따로 확보한다(초판은 두 줄이 상자 안으로 파고들었다 · 갤러리 적발).
+  const boxBottom = 46 + boxH;
+  const noteY = boxBottom + 18;
+  const capY = boxBottom + (o.note ? 40 : 18);
+  const H = boxBottom + (o.note ? 26 : 0) + (o.caption ? 28 : 0) + 12;
+  const body = o.arrows
+    .map((a, i) => {
+      const y = 60 + i * 46;
+      const x1 = a.dir === "right" ? BX + BW + 10 : RX - 10;
+      const x2 = a.dir === "right" ? RX - 10 : BX + BW + 10;
+      const s = a.dir === "right" ? 1 : -1;
+      return `<path d="M${x1} ${y} H${x2} M${x2} ${y} l${-9 * s} -5.5 M${x2} ${y} l${-9 * s} 5.5" fill="none" stroke="#3182F6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        ${g2u6Mark((x1 + x2) / 2, y - 17, a.sym, 12)}`;
+    })
+    .join("");
+  const desc = o.arrows.map((a) => `${a.sym}${g2u6Josa(a.sym, "은/는")} ${a.dir === "right" ? `${o.left} 쪽에서 ${o.right} 쪽으로` : `${o.right} 쪽에서 ${o.left} 쪽으로`} 향하는 화살표와 함께 그려져 있다`).join(", ");
+  return `<svg viewBox="0 0 ${W} ${H}" ${NS} role="img" aria-label="왼쪽에 ${o.left}, 오른쪽에 ${o.right} 상자를 두고 그 사이에 물질이 옮겨 가는 화살표를 그린 그림. ${desc}${o.note ? `. ${o.note}` : ""}">
+    <rect x="6" y="6" width="${W - 12}" height="${H - 12}" rx="14" fill="#FBFCFD" stroke="#DCE0E6" stroke-width="1.3"/>
+    <rect x="${BX}" y="46" width="${BW}" height="${boxH}" rx="12" fill="#E8F1FB" stroke="#7FA8D8" stroke-width="1.5"/>
+    <rect x="${RX}" y="46" width="${BW}" height="${boxH}" rx="12" fill="#FADFE3" stroke="#C2606C" stroke-width="1.5"/>
+    ${g2u6T(BX + BW / 2, 34, o.left, { size: 12.5, weight: 900, fill: "#2E5D93" })}
+    ${g2u6T(RX + BW / 2, 34, o.right, { size: 12.5, weight: 900, fill: "#8C3540" })}
+    ${body}
+    ${o.note ? g2u6T(W / 2, noteY, o.note, { size: 10.8, weight: 700, fill: "#6B7684" }) : ""}
+    ${o.caption ? g2u6T(W / 2, capY, o.caption, { size: 10.8, weight: 700, fill: "#6B7684" }) : ""}
+  </svg>`;
+}
+
+// -- g2u6 v2 섹션 끝 --

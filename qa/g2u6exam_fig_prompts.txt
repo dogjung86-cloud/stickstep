@@ -1,0 +1,82 @@
+# g2u6 v2 시험 그림 발주안 — 신규 2장
+# 기존 public/body/figs 발주분과 **같은 화풍**으로 뽑아야 한다(재사용 9장과 한 벌로 보여야 함).
+# 이미지 안에 글자·숫자·라벨·화살표·지시선 절대 금지 — 한글 기호는 앱이 SVG로 얹는다.
+# 저장 경로는 각 프롬프트의 file= 그대로. 발주 후 node qa/process-geo.mjs 로 webp 변환.
+
+## 스타일 블록 B (기존 body/figs 발주안과 동일 · 반드시 각 프롬프트 앞에 붙일 것)
+
+Clean modern educational anatomy illustration for a 14-year-old middle-school science learning app. Textbook-diagram style with soft flat-vector shading, gentle three-step gradients, a soft top-left key light, smooth rounded organic forms, and clear separation between parts.
+
+Use a muted, anatomically plausible palette: warm reds, muted pinks and red-browns for cells and tissue; soft blue-violet only where a nucleus or oxygen-poor structure is implied; pale translucent tones for liquids and glassware. Add restrained contact shadows and thin, slightly darker outlines appropriate to each material.
+
+Pure white background. No text, no letters, no numbers, no arrows, no leader lines, no labels, no legend, no watermark, no border frame. Centered composition with generous margins so that symbol badges can be overlaid later. Single subject per image, no collage, no contact sheet, no poster layout.
+
+---
+
+## [0] 혈액 성분 네 가지 (file=public/exam/g2u6/blood-parts.png · 3:2 가로)
+
+Four blood components arranged in one horizontal row, evenly spaced, each on its own clean white area with a subtle rounded soft shadow beneath, no dividing lines and no boxes.
+
+Left to right, in exactly this order:
+
+1. A loose scatter of five or six small irregular pale-amber cell fragments with rounded corners, clearly the smallest objects in the row.
+2. A single biconcave red disc seen at a slight three-quarter tilt, deep warm red, with a distinctly paler dimple in the centre showing it is hollowed on both faces.
+3. One large round cell, clearly the biggest object in the row, pale translucent greyish membrane with a single large lobed blue-violet nucleus inside.
+4. A soft rounded blob of clear pale straw-yellow liquid with a gentle glossy highlight and a faintly wavy top surface, reading unmistakably as a liquid rather than a cell.
+
+Sizes must read as a size ranking: object 3 largest, object 2 medium, object 1 smallest fragments. Keep all four visually distinct in colour so none of them look like the same family: fragments pale amber, disc deep red, big cell grey with violet nucleus, liquid pale straw-yellow.
+
+No text, no numbers, no arrows, no labels of any kind.
+
+---
+
+## [1] 침의 소화 작용 대조 실험 장치 (file=public/exam/g2u6/saliva-setup.png · 4:3 가로)
+## ※ 재발주(2차) — 교과서 탐구 지면의 장치 그림을 준거로 삼는다.
+##    준거: 눈금 있는 비커에 미지근한 물, 시험관 두 개가 비커 위로 길게 솟아 나란히 서 있음,
+##    시험관대·유리 막대·온도계 없음, 김(수증기) 없음(35~40 ℃ 미지근한 물이라 김이 나지 않는다).
+
+A simple school laboratory setup seen straight from the front at eye level, on a plain light worktop.
+
+One tall clear glass beaker with a pouring lip stands in the centre, filled a little over halfway with
+clear colourless water. The beaker wall carries a vertical column of thin engraved graduation lines with
+short and long ticks, but **no numbers and no letters of any kind** next to them.
+
+Two identical clear glass test tubes stand upright inside the beaker, side by side and slightly apart,
+leaning very slightly against the beaker rim. The test tubes are **much taller than the beaker** and rise
+well above its rim, so roughly the lower half of each tube is under the water and the upper half is in
+the air. Each test tube holds the same amount of a clear, colourless, very slightly milky liquid, and the
+liquid surface inside both tubes is at exactly the same height. The two tubes must look completely
+identical in shape, size, liquid colour and liquid level.
+
+**No steam, no vapour wisps, no rising heat lines** anywhere in the picture: the water is only lukewarm.
+No test tube rack, no wire stand, no clamp, no glass stirring rod, no thermometer, no dropper, no hands,
+no flame, no hotplate. Nothing is being poured. Calm, tidy, evenly lit.
+
+No text, no numbers, no scale figures, no arrows, no labels of any kind.
+
+---
+
+## [2] 융털의 속 구조 (file=public/exam/g2u6/villus.png · 4:3 가로)
+## ※ 교과서 그림 VI-5 「융털의 속 구조」 패널을 준거로 삼는다.
+##    핵심: 물질 입자와 이동 화살표를 절대 그리지 않는다(그것이 곧 문항의 정답이다).
+##    기존 body/figs/v2/villus-absorption.webp 는 화살표·입자가 있어 시험에 쓸 수 없다.
+
+One single finger-shaped intestinal villus, cut lengthwise and shown large in the centre of the frame.
+
+The outer boundary is a single tidy row of tall brick-like epithelial cells in warm salmon pink, each with
+a small oval nucleus, and the outer surface carries a fine even fringe of very short bristle-like
+projections. The villus is rounded at the top and widens at the base, where it merges into a strip of
+paler tissue at the bottom of the frame.
+
+Inside the villus, running straight up the middle, is one **cream-yellow tube** that is clearly **closed at
+its upper end** and continues downward out of the base. Around and behind it, a dense network of fine
+**red and blue vessels** weaves through the villus interior: a red vessel rises on one side, branches into
+a fine mesh near the top, and a blue vessel gathers the mesh and descends on the other side, both joining
+larger vessels in the tissue strip at the base. The cream-yellow central tube must stay clearly visible in
+front of the red and blue mesh and must be distinctly thicker than any single red or blue vessel.
+
+At the far left and far right edges, show only the partial silhouettes of two neighbouring villi, faded and
+much less detailed, so the central villus is unmistakably the subject.
+
+**Absolutely no particles, dots, hexagons, squiggles, molecules or granules anywhere**, and
+**absolutely no arrows, no leader lines, no labels, no text, no numbers.** Structure only.
