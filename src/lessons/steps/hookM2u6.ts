@@ -475,7 +475,7 @@ export const renderRoulette: SceneFn = (scene, helper, finish, face, choices) =>
   fig.innerHTML = wrapSvg(
     `${CARD}
     ${SHADOW(CX, 182, 62, 0.12)}
-    <g id="rl6-wheel" style="transform-box: view-box; transform-origin:${CX}px ${CY}px; transition: transform 1.4s cubic-bezier(.2,.8,.2,1)">
+    <g id="rl6-wheel" style="transform-box: view-box; transform-origin:${CX}px ${CY}px; transform: rotate(-22.5deg); transition: transform 1.4s cubic-bezier(.2,.8,.2,1)">
       ${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => slice(i, WINS.includes(i))).join("")}
       <circle cx="${CX}" cy="${CY}" r="10" fill="url(#rl6-hub)" stroke="#8F1D1D" stroke-width="1.6"/>
     </g>
@@ -499,7 +499,9 @@ export const renderRoulette: SceneFn = (scene, helper, finish, face, choices) =>
     if (spun) return;
     spun = true;
     haptic(HAPTIC.select);
-    q<SVGGElement>(fig, "#rl6-wheel").style.transform = "rotate(1035deg)"; // 2바퀴 반 + 45×7 근처, 꽝에 멈춤
+    // 포인터(12시) 밑 = 원래 각 −90−회전값. 1012.5° → −22.5° = 꽝 1번 칸 정중앙(45의 배수는 경계 정렬이라 금지).
+    // 시작 상태도 −22.5° 초기 회전으로 당첨 0번 칸 정중앙에서 출발(경계 애매함 0).
+    q<SVGGElement>(fig, "#rl6-wheel").style.transform = "rotate(1012.5deg)";
     window.setTimeout(() => {
       btn.disabled = true;
       btn.classList.remove("pulse");
@@ -522,18 +524,21 @@ export const renderRoulette: SceneFn = (scene, helper, finish, face, choices) =>
 /* ── 8 doublespin: 두 원판 모두 당첨이어야 상품 (확률의 곱셈) ── */
 export const renderDoublespin: SceneFn = (scene, helper, finish, face, choices) => {
   const fig = el("div", {});
-  const wheel = (cx: number, cy: number, r: number, id: string): string => {
+  const wheel = (cx: number, cy: number, r: number, id: string, tilt: number): string => {
+    // 온전한 원을 지름 하나로 반 가른 진짜 반반 원판: 오른쪽 반 = 당첨 빨강, 왼쪽 반 = 꽝 회색.
+    // (구버전은 a1이 start+90−90이라 90° 부채꼴 2조각 + 빈틈 — 실존하지 않는 원판 모양, 사용자 적발 2026-08-03)
     const half = (start: number, win: boolean): string => {
       const a0 = (start - 90) * (Math.PI / 180);
-      const a1 = (start + 90 - 90) * (Math.PI / 180);
+      const a1 = (start + 90) * (Math.PI / 180); // 180° 스팬 — sweep 1이 시계 방향 반원을 확정
       const x0 = cx + r * Math.cos(a0);
       const y0 = cy + r * Math.sin(a0);
       const x1 = cx + r * Math.cos(a1);
       const y1 = cy + r * Math.sin(a1);
       return `<path d="M${cx} ${cy} L${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)} Z" fill="${win ? "url(#rl6-win2)" : "url(#rl6-dud2)"}" stroke="#8F1D1D" stroke-width="1.6"/>`;
     };
+    // tilt = 초기 회전 — 정지 상태에서 포인터가 경계선(수직 지름) 위에 앉지 않게 반 칸 비껴 둔다.
     return (
-      `<g id="${id}" style="transform-box: view-box; transform-origin:${cx}px ${cy}px; transition: transform 1.3s cubic-bezier(.2,.8,.2,1)">` +
+      `<g id="${id}" style="transform-box: view-box; transform-origin:${cx}px ${cy}px; transform: rotate(${tilt}deg); transition: transform 1.3s cubic-bezier(.2,.8,.2,1)">` +
       half(0, true) +
       half(180, false) +
       `<circle cx="${cx}" cy="${cy}" r="7" fill="url(#rl6-hub2)" stroke="#8F1D1D" stroke-width="1.4"/></g>` +
@@ -543,8 +548,8 @@ export const renderDoublespin: SceneFn = (scene, helper, finish, face, choices) 
   fig.innerHTML = wrapSvg(
     `${CARD}
     ${SHADOW(112, 174, 50, 0.12)}${SHADOW(248, 174, 50, 0.12)}
-    ${wheel(112, 106, 48, "ds6-w1")}
-    ${wheel(248, 106, 48, "ds6-w2")}
+    ${wheel(112, 106, 48, "ds6-w1", -30)}
+    ${wheel(248, 106, 48, "ds6-w2", 30)}
     <text x="112" y="180" text-anchor="middle" font-size="11" font-weight="800" fill="#5A6B7E">1번 원판, 당첨 반</text>
     <text x="248" y="180" text-anchor="middle" font-size="11" font-weight="800" fill="#5A6B7E">2번 원판, 당첨 반</text>`,
     `${BG}
@@ -562,8 +567,10 @@ export const renderDoublespin: SceneFn = (scene, helper, finish, face, choices) 
     if (spun) return;
     spun = true;
     haptic(HAPTIC.select);
-    q<SVGGElement>(fig, "#ds6-w1").style.transform = "rotate(990deg)"; // 당첨 반원에 멈춤
-    q<SVGGElement>(fig, "#ds6-w2").style.transform = "rotate(1170deg)"; // 꽝 반원에 멈춤
+    // 포인터(12시) 밑 = 원래 각 −90−회전값. 990° → 0°(3시) = 당첨 반원 정중앙 · 1170° → 180°(9시) = 꽝 반원 정중앙.
+    // 180의 배수 회전은 경계(수직 지름) 정렬이라 금지.
+    q<SVGGElement>(fig, "#ds6-w1").style.transform = "rotate(990deg)"; // 1번: 당첨 정중앙에 멈춤
+    q<SVGGElement>(fig, "#ds6-w2").style.transform = "rotate(1170deg)"; // 2번: 꽝 정중앙에 멈춤
     window.setTimeout(() => {
       btn.disabled = true;
       btn.classList.remove("pulse");

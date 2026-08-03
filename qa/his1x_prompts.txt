@@ -1,0 +1,113 @@
+# 역사① Ⅰ(h1u1) 만화 확대 발주 — 만화 3편 21컷 (백로그 2026-07-20 → 2026-08-03 착수)
+#   public/comics/h1u1l2 「기록을 지킨 사람들」(실록 수호) · h1u1l3 「둘 다 이겼다고?」(카데시 사료 비판) ·
+#   h1u1l4 「0년이 없는 이유」(서력의 탄생), 각 7컷.
+# 컷 모두 "이미지 안 글자 절대 금지". 앱이 한글 말풍선을 얹는 하이브리드라 인물이 입을 벌리고
+# 손짓하는 "말하는 연기"만 그리고, 인물 머리 위쪽 상단 1/3은 여백으로 비운다.
+# 표시 프레임은 이미지 원비율(2026-08-03 전환 — 4:3 전체가 그대로 보임, 구 1:1 크롭 없음).
+# 주인공은 가로 중앙 부근 배치(구도 안정), 말풍선이 앉을 화자 머리 위 여백 필수.
+# ★ 코믹 격상 표준(h1u2~h1u4 계승): 코믹 컷은 "GAG:" 문장으로 무엇이 웃긴지 명시, 죽음·전쟁 관련
+#   컷은 DIGNIFIED 표기(개그 금지). 실존 인물(안의·손홍록·람세스 2세·디오니시우스)은 존엄 유지 —
+#   개그는 주변 인물(조각가·조수·학생) 몫.
+# ★★ 정복·수탈 존중 가드(Ⅳ 계승): 전투·유혈·죽음·무기로 사람을 겨누는 장면은 그리지 않는다 —
+#   전쟁은 캡션·대사로만, 그림은 전령·행렬·건물로 상징. 종교 존중 가드(Ⅲ 계승): 종교 창시자와
+#   신앙 대상(예수·부처·무함마드·신상·십자가 등 상징물 포함)은 어떤 형태로도 그리지 않는다.
+#   수도원·신전은 평범한 건물 외관·책상·양피지만.
+#
+# ── 스타일 블록 C (만화 컷 공용 — 말풍선 하이브리드 + 코믹 연기) ──
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal, used sparingly where the prompt says.
+# Absolutely NO text, NO letters, NO numbers, NO speech bubbles, NO captions anywhere.
+# Characters ACT like they are talking: open mouth (small oval), expressive hand gestures.
+# Comedic acting is allowed and encouraged where the prompt marks GAG: exaggerated poses,
+# big reactions, falling over backwards, sweat drops, bulging wide eyes, jaw dropping —
+# but all historical objects, clothing and facts must stay accurate; never make the scene
+# absurd beyond what the prompt describes, and NO anachronistic props (no phones, no modern
+# items) inside historical scenes.
+# CONQUEST RULE (absolute): never draw battle, blood, weapons striking people, or death.
+# War is conveyed only through messengers, processions, gates and architecture.
+# RELIGION RULE (absolute): never depict founders or objects of worship of any religion —
+# no Jesus in any form whatsoever, no Buddha figures, no Muhammad, no deities, no crosses or
+# other worship symbols. Religious buildings appear as plain building exteriors only.
+# Keep the upper third of the panel mostly empty white space above the characters' heads
+# (the app overlays Korean speech bubbles there). Main subjects centered horizontally.
+# Simple, charming, educational middle-school history comic. 4:3 landscape panel.
+
+## ── 만화 h1u1l2 「기록을 지킨 사람들」 7컷 (스타일 C) ──
+## 등장인물 고정: AHN = 챙 넓은 갓을 쓰고 긴 흰 수염을 기른 나이 든 선비 스틱맨(도포 차림).
+## SON = 갓을 쓰고 짧은 검은 수염을 기른 조금 젊은 선비 스틱맨(도포 차림). 두 사람 컷마다 동일 유지.
+## 배경: 1592년 조선 — 기와·초가 마을, 산길, 산속 암자. 왜군·병사·무기·불타는 건물은 절대 그리지 않는다.
+
+[p0] file=public/comics/h1u1l2/0.png (landscape 4:3, 스타일 C)
+DIGNIFIED — tense opening, no gag. A breathless messenger stick figure with a small pennant staff arrives at a Korean village pavilion, one arm flung out mid-report, dust puffs at his feet; AHN (elderly scholar stick figure with wide-brimmed traditional Korean gat hat and long beard, long robe) and SON (scholar stick figure with gat and short beard) spring up from a wooden bench in alarm, AHN clutching his hat brim, SON's sleeve flying. Tiled-roof pavilion posts frame the scene. Teal accent: the messenger's small pennant. Upper third empty for a speech bubble.
+
+[p1] file=public/comics/h1u1l2/1.png (landscape 4:3, 스타일 C)
+AHN and SON stand resolute in front of a sturdy two-story Korean archive pavilion with tiled roof and stone base, its double doors open revealing shelves stacked with cloth-wrapped book chests inside; AHN raises a determined fist, SON presses a palm on his own chest making a vow, both mouths open mid-declaration. Teal accent: the cloth wraps on the book chests. Upper third empty for a speech bubble.
+
+[p2] file=public/comics/h1u1l2/2.png (landscape 4:3, 스타일 C)
+GAG: the mountain of book chests piled on the ox cart towers absurdly high like a wobbling pagoda, and the elderly scholar staggers under a single chest bigger than his own body, legs bending like noodles. An ox cart stands loaded with a comically tall, slightly leaning stack of cloth-wrapped book chests roped together; AHN wobbles knock-kneed carrying one huge chest with both arms, three sweat drops flying, eyes wide; SON steadies the stack with one hand and pushes a smaller chest up with the other, cheeks puffed. A patient ox chews calmly. Teal accent: the ropes binding the stack. Upper third empty for a speech bubble.
+
+[p3] file=public/comics/h1u1l2/3.png (landscape 4:3, 스타일 C)
+DIGNIFIED — determined journey, no gag. The loaded ox cart and the two scholars wind up a steep zigzag mountain path into a deep forested valley, mist bands around jagged peaks, tall pines beside the trail; SON walks ahead holding up a small hand lantern, AHN steadies the rear of the cart, both leaning into the slope with resolute faces. Teal accent: the lantern's glow. Upper third empty for a speech bubble.
+
+[p4] file=public/comics/h1u1l2/4.png (landscape 4:3, 스타일 C)
+Night at a small hermitage beside a rocky cave mouth in the mountains; the book chests rest safely stacked just inside the cave; SON stands guard by the entrance holding the lantern high, chest out proudly; AHN sits cross-legged at a low wooden desk writing with a brush in an open journal of blank pages (plain blank lines only, absolutely no letters), a crescent moon and stars above. Teal accent: the lantern's glow. Upper third empty for two speech bubbles.
+
+[p5] file=public/comics/h1u1l2/5.png (landscape 4:3, 스타일 C)
+DIGNIFIED — proud handover, no gag. Bright day: AHN and SON bow respectfully as they present the neat rows of intact cloth-wrapped book chests to a government official stick figure in a formal robe and winged official hat, who bows back deeply with both hands folded; the chests sit in perfect order between them, every rope untouched. Teal accent: the cloth wraps. Upper third empty for a speech bubble.
+
+[p6] file=public/comics/h1u1l2/6.png (landscape 4:3, 스타일 C)
+GAG: the student solemnly holds up their own worn-out school notebook beside the 400-year-old volume as if the two are equals, chest puffed with pride. Modern museum interior: an old bound Korean book rests on a lit pedestal inside a glass case; a student stick figure stands beside the case holding up their own small tattered notebook at the same height, beaming proudly with sparkling eyes; a soft glow rises from the case. Teal accent: the glow inside the display case. Upper third empty for a speech bubble.
+
+## ── 만화 h1u1l3 「둘 다 이겼다고?」 7컷 (스타일 C) ──
+## 등장인물 고정: PHARAOH = 이집트 파라오 줄무늬 머리쓰개(네메스)를 쓴 스틱맨 — 항상 근엄·존엄 유지,
+## 개그 연기 금지. SCULPTOR = 끌과 나무망치를 든 작은 조각가 스틱맨. HKING = 뾰족 원뿔 관을 쓴
+## 히타이트 왕 스틱맨(존엄 유지). HSCRIBE = 둥근 모자의 히타이트 서기 스틱맨.
+## SCHOLAR1 = 탐험 모자를 쓴 현대 고고학자 스틱맨. SCHOLAR2 = 안경을 쓴 현대 고고학자 스틱맨.
+## 전투·무기로 사람을 겨누는 장면 절대 금지 — 전쟁은 캡션 몫.
+
+[q0] file=public/comics/h1u1l3/0.png (landscape 4:3, 스타일 C)
+DIGNIFIED — grand royal scene, no gag. PHARAOH (stick figure wearing the striped Egyptian pharaoh headcloth) stands tall on a stopped ceremonial chariot drawn by one calm horse, pointing grandly at a huge blank sandstone temple wall; SCULPTOR (small stick figure holding a chisel and wooden mallet) stands at the wall's base looking up, ready; two banner poles with plain flags flank the scene, palm trees behind. No weapons anywhere. Teal accent: the banner flags. Upper third empty for a speech bubble.
+
+[q1] file=public/comics/h1u1l3/1.png (landscape 4:3, 스타일 C)
+GAG: the pharaoh carved on the wall is comically gigantic — many times larger than the real pharaoh standing below — and the sculptor on the tall ladder sweats buckets as the real pharaoh gestures "even bigger". The temple wall now bears a huge outline relief of a giant pharaoh figure riding a chariot with a bow raised toward the sky (no targets, no enemies, no violence); SCULPTOR chisels away high on a wooden ladder, five sweat drops, tiny stone chips flying; below, the real PHARAOH spreads both arms wide upward in a "bigger!" gesture, dignified but demanding. Teal accent: the chisel. Upper third empty for two speech bubbles.
+
+[q2] file=public/comics/h1u1l3/2.png (landscape 4:3, 스타일 C)
+Inside a Hittite palace room with thick stone walls and a small high window: HKING (stick figure with a tall pointed cone crown, dignified) gestures firmly mid-dictation with one raised finger; HSCRIBE (stick figure with a round cap) sits cross-legged pressing rows of small wedge-shaped dents into a soft clay tablet with a cut reed stylus (abstract wedge dents only, absolutely NOT real letters); spare clay tablets stacked beside. Teal accent: the reed stylus. Upper third empty for a speech bubble.
+
+[q3] file=public/comics/h1u1l3/3.png (landscape 4:3, 스타일 C)
+DIGNIFIED — historic peace scene, no gag. An Egyptian envoy stick figure (small striped headcloth) and a Hittite envoy stick figure (small cone cap) clasp hands warmly across a stone table; on the table lies a single gleaming rectangular metal tablet covered in abstract wedge dents (no letters); behind each envoy stands their plain banner pole. Both envoys smile with open mouths. Teal accent: the gleam lines around the metal tablet. Upper third empty for two speech bubbles.
+
+[q4] file=public/comics/h1u1l3/4.png (landscape 4:3, 스타일 C)
+A modern excavation site with a taut string grid over a shallow dig trench: SCHOLAR1 (stick figure with a pith explorer hat) kneels brushing sand off a fallen relief slab that shows the giant carved pharaoh outline; on the other side SCHOLAR2 (stick figure with glasses) lifts a small clay tablet out of the trench with both hands, eyes wide; a wheelbarrow and tools rest nearby. Teal accent: the soft brush in SCHOLAR1's hand. Upper third empty for two speech bubbles.
+
+[q5] file=public/comics/h1u1l3/5.png (landscape 4:3, 스타일 C)
+GAG: both ancient records claim victory, and the two scholars' heads whip back and forth between them so fast that curved motion arcs blur around their necks, papers flying everywhere. A study desk holds the relief rubbing sheet (giant pharaoh outline) on one side and the clay tablet on the other; SCHOLAR1 and SCHOLAR2 lean over the desk between them, heads mid-swivel with motion arcs, eyes bulging, jaws dropped, loose note papers (blank) flying off the desk. Teal accent: the clay tablet's wedge dents. Upper third empty for a speech bubble.
+
+[q6] file=public/comics/h1u1l3/6.png (landscape 4:3, 스타일 C)
+Calm resolution scene: SCHOLAR2 holds up the metal peace-treaty tablet high like a referee presenting the decisive evidence, while SCHOLAR1 nods writing on a clipboard of blank pages; on the desk, the relief rubbing and the clay tablet now lie side by side with the treaty tablet placed between them like a bridge. Teal accent: the treaty tablet's gleam. Upper third empty for a speech bubble.
+
+## ── 만화 h1u1l4 「0년이 없는 이유」 7컷 (스타일 C) ──
+## 등장인물 고정: MONK = 소박한 통짜 로브를 입은 수도사 스틱맨(존엄 유지, 온화한 학자 톤 —
+## 종교 상징물 없이 로브·양피지·촛불만). APPRENTICE = 조금 작은 조수 수도사 스틱맨(개그 담당).
+## TEACHER = 현대 교사 스틱맨. STUDENT = 현대 학생 스틱맨. 십자가·성상 등 종교 상징물 절대 금지.
+
+[r0] file=public/comics/h1u1l4/0.png (landscape 4:3, 스타일 C)
+A candle-lit stone room with a wooden desk piled with rolled parchment scrolls and an abacus-like counting frame with sliding beads; MONK (stick figure in a simple hooded robe, hood down) dips a quill pen thoughtfully, other hand resting on an open blank scroll (no letters); APPRENTICE (smaller robed stick figure) carries in another armful of scrolls, one scroll slipping. Teal accent: the candle flame. Upper third empty for a speech bubble.
+
+[r1] file=public/comics/h1u1l4/1.png (landscape 4:3, 스타일 C)
+MONK gently but firmly pushes away a scroll bearing a stern emperor profile portrait drawing (a simple line-drawing bust inside the scroll, no text), turning his face aside with a frown; behind him on a stand waits a fresh blank scroll tied with a ribbon; APPRENTICE peeks from behind the desk, curious. Teal accent: the ribbon on the fresh scroll. Upper third empty for a speech bubble.
+
+[r2] file=public/comics/h1u1l4/2.png (landscape 4:3, 스타일 C)
+A long timeline ribbon stretches across the whole room between two wooden stands; MONK plants a small flag onto one point of the ribbon with quiet determination, like planting a starting line; APPRENTICE holds the far end of the ribbon steady, standing on tiptoe. The ribbon is plain with evenly spaced small tick notches (no numbers, no letters). Teal accent: the planted flag. Upper third empty for a speech bubble.
+
+[r3] file=public/comics/h1u1l4/3.png (landscape 4:3, 스타일 C)
+GAG: searching for "zero", the apprentice finds literally nothing — a conspicuous empty gap in the row of stone tiles — and topples over backwards into it, legs in the air, eyes spiraling. A row of small square stone tiles lies on the floor representing years marching away from the flag; right where a zero tile should sit there is a clean empty gap; APPRENTICE tips backwards over the gap, legs up, spiral eyes; MONK shrugs with both palms up, mouth open in a mild "that's how it is" expression. Teal accent: one stone tile beside the gap. Upper third empty for two speech bubbles.
+
+[r4] file=public/comics/h1u1l4/4.png (landscape 4:3, 스타일 C)
+MONK spreads both arms wide gathering a length of the long ribbon into one big loop bundle, like folding a measuring tape into equal sections; several completed loop bundles hang neatly on pegs behind him; APPRENTICE counts on raised fingers, tongue out in concentration. Teal accent: one ribbon bundle. Upper third empty for a speech bubble.
+
+[r5] file=public/comics/h1u1l4/5.png (landscape 4:3, 스타일 C)
+A later-era scholar stick figure in a flat cap walks along a winding road holding an open book happily; behind him the road branches toward a horizon of simple city silhouettes (plain square towers and rooftops only), and along each branch smaller stick figures walk carrying books; small dotted trails mark their paths. Teal accent: the bookmark ribbon of the open book. Upper third empty for a speech bubble.
+
+[r6] file=public/comics/h1u1l4/6.png (landscape 4:3, 스타일 C)
+GAG: fifteen hundred years later, the student topples backwards from a chair in the exact same pose as the apprentice once did — legs up, spiral eyes — history repeating itself. Modern classroom: TEACHER stick figure points with a stick at a long timeline strip pinned above a blank board (the strip has tick notches and one small flag, no numbers); STUDENT tips over backwards off a chair mid-shock, legs in the air, spiral eyes; a pencil flies. Teal accent: the small flag on the classroom timeline strip. Upper third empty for two speech bubbles.
