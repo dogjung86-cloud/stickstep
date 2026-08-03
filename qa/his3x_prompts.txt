@@ -1,0 +1,158 @@
+# 역사① Ⅲ(h1u3) 만화 확대 발주 — 만화 5편 35컷 (2026-08-03, his2x의 Ⅲ판)
+#   public/comics/h1u3l1 「성을 바꾼 황제」(북위 효문제) · h1u3l3 「바다를 건넌 선생님들」(백제→아스카) ·
+#   h1u3l5 「없음을 세는 사람들」(0의 발명) · h1u3l8 「글씨를 연습한 대제」(카롤루스) ·
+#   h1u3l10 「책이 쏟아진 날」(구텐베르크), 각 7컷.
+# 컷 모두 "이미지 안 글자 절대 금지"(한자·가나·로마자·숫자 포함 — 글씨·활자·족보는 추상 표식만).
+# 앱이 한글 말풍선을 얹는 하이브리드 — 인물은 말하는 연기만, 상단 1/3 여백, 주인공 가로 중앙 부근.
+# ★ 코믹 표준: GAG 명시 컷만 과장 연기. 실존 인물(효문제·카롤루스·구텐베르크·쇼토쿠 태자)은 존엄
+#   유지 — 개그는 신하·제자·수도사·시민 몫(카롤루스의 밤 연습 컷은 애정 어린 인간미 연출로).
+# ★★ 종교 존중 가드(Ⅲ 제1원칙): 종교 창시자·신앙 대상·불상·불화·십자가 등 상징물은 어떤 형태로도
+#   그리지 않는다. 절·수도원은 건물 외관(목탑·기와·돌벽·책상)만. 정복·수탈 가드: 전투·유혈 금지.
+#
+# ── 스타일 블록 C (만화 컷 공용 — 말풍선 하이브리드 + 코믹 연기) ──
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal, used sparingly where the prompt says.
+# Absolutely NO text, NO letters, NO numbers, NO Chinese/Japanese characters, NO speech bubbles,
+# NO captions anywhere. Characters ACT like they are talking: open mouth (small oval),
+# expressive hand gestures. Comedic acting is allowed and encouraged where the prompt marks GAG:
+# exaggerated poses, big reactions, falling over backwards, sweat drops, bulging wide eyes,
+# jaw dropping — but all historical objects, clothing and facts must stay accurate; never make
+# the scene absurd beyond what the prompt describes, and NO anachronistic props inside
+# historical scenes.
+# CONQUEST RULE (absolute): never draw battle, blood, weapons striking people, or death.
+# RELIGION RULE (absolute): never depict founders or objects of worship of any religion —
+# no Buddha statues or figures, no deities, no crosses or other worship symbols. Temples and
+# monasteries appear as plain building exteriors (pagoda roofs, stone walls, desks) only.
+# Keep the upper third of the panel mostly empty white space above the characters' heads
+# (the app overlays Korean speech bubbles there). Main subjects centered horizontally.
+# Simple, charming, educational middle-school history comic. 4:3 landscape panel.
+
+## ── 만화 h1u3l1 「성을 바꾼 황제」 7컷 (스타일 C) ──
+## 등장인물 고정: EMPEROR = 젊고 단정한 황제 스틱맨(처음엔 유목풍 모피 깃 로브, 개혁 후엔 한족식
+## 관과 넓은 소매 예복 — 존엄 유지, 개그 금지). MIN1/MIN2 = 선비족 대신 스틱맨들(모피 모자 —
+## 적응 개그 담당). 배경: 5세기 말 북위 궁정과 뤄양 거리.
+
+[a0] file=public/comics/h1u3l1/0.png (landscape 4:3, 스타일 C)
+A palace hall mixing two styles: felt-tent-like drapes and fur rugs on one side, Chinese tiled-roof pillars on the other; EMPEROR (young stick figure in a fur-collared robe) stands before a large floor map scroll showing a wide plain and rivers (plain shapes, no letters), one hand on chin in deep thought; MIN1 and MIN2 (fur-hat minister stick figures) wait behind. Teal accent: one river line on the map. Upper third empty for a speech bubble.
+
+[a1] file=public/comics/h1u3l1/1.png (landscape 4:3, 스타일 C)
+GAG: the ministers are so shocked their fur hats jump off their heads in unison. EMPEROR points firmly southward on the floor map toward a walled city icon; MIN1 and MIN2 recoil in shock, both fur hats popping into the air, arms flailing; a rolled luggage bundle already waits by the door. Teal accent: the walled city icon on the map. Upper third empty for a speech bubble.
+
+[a2] file=public/comics/h1u3l1/2.png (landscape 4:3, 스타일 C)
+GAG: the ministers hopelessly tangle themselves in wide Chinese sleeves — one has both arms stuck straight up inside the robe, the other's tall official hat slides down over his eyes. A dressing chamber: EMPEROR stands at center already neatly dressed in a wide-sleeved Chinese court robe and tall official hat, demonstrating a calm bow; MIN1 struggles with both arms lost in enormous sleeves, MIN2's hat covers his eyes as he bumps a folding screen. Robe racks behind. Teal accent: the sash of the EMPEROR's new robe. Upper third empty for two speech bubbles.
+
+[a3] file=public/comics/h1u3l1/3.png (landscape 4:3, 스타일 C)
+DIGNIFIED — solemn reform, no gag. At a writing desk, EMPEROR gently places his old carved seal stamp into a drawer and holds up a brand-new seal stamp toward the light with quiet resolve (both seals show only abstract geometric carving, no letters); MIN1 and MIN2 bow respectfully behind; an attendant holds a tray with more new seals. Teal accent: the new seal's carved face. Upper third empty for a speech bubble.
+
+[a4] file=public/comics/h1u3l1/4.png (landscape 4:3, 스타일 C)
+GAG: the minister's brush calligraphy practice goes so wrong that ink splashes back onto his own face, leaving round ink dots on his cheeks. A palace study: MIN1 sits at a low desk practicing brush strokes on paper (abstract wavy stroke marks only, no letters), face dotted with ink splashes, brush bent; EMPEROR stands beside with a patient teaching gesture; MIN2 peeks from behind a stack of books, snickering. Teal accent: the water dish beside the ink stone. Upper third empty for a speech bubble.
+
+[a5] file=public/comics/h1u3l1/5.png (landscape 4:3, 스타일 C)
+A lively street in Luoyang: on one side a vendor stick figure grills skewers at a stall while robed customers sit on chairs (not floor mats) eating happily; on the other side a fur-hat family in Chinese robes shops at a silk stall; roofs and a city gate behind. Cultures visibly mixed in clothing and goods. Teal accent: the grill stall's awning. Upper third empty for a speech bubble.
+
+[a6] file=public/comics/h1u3l1/6.png (landscape 4:3, 스타일 C)
+A wide symbolic river view: two separate streams (one from rocky steppe hills with a yurt silhouette, one from farmland with tiled roofs) merge into a single broad river flowing toward a bright horizon where a grand city silhouette waits; a small boat with a family stick figure sails on the merged river toward it. Teal accent: the merged river's center current line. Upper third holds sky (leave space for a speech bubble).
+
+## ── 만화 h1u3l3 「바다를 건넌 선생님들」 7컷 (스타일 C) ──
+## 등장인물 고정: MASTER = 상투를 틀고 짧은 도포를 입은 백제 기와 장인 스틱맨(존엄, 따뜻함).
+## SCHOLAR = 책 상자를 멘 백제 학자 스틱맨(갓 아닌 낮은 관모). CHILD = 일본 소년 스틱맨(개그·성장 담당).
+## 절·탑은 건물 외관만 — 불상·불화·범종 장식 등 신앙 대상은 절대 그리지 않는다.
+
+[b0] file=public/comics/h1u3l3/0.png (landscape 4:3, 스타일 C)
+A Baekje harbor at morning: a wooden ship being loaded — workers carry roof-tile stacks, a big book chest, and farming tools up a plank; MASTER (topknot artisan stick figure) checks a tile against the light, SCHOLAR (low-cap scholar stick figure with a book box on his back) waves farewell to family figures on the dock. Teal accent: the roof tiles' glaze edge. Upper third empty for a speech bubble.
+
+[b1] file=public/comics/h1u3l3/1.png (landscape 4:3, 스타일 C)
+GAG: on the far shore a small boy jumps up and down so excitedly to greet the ship that his straw hat bounces off with every hop. The ship approaches an island shore with gentle waves; CHILD (small stick figure) hops ecstatically on the beach waving both arms, straw hat mid-air above him; villagers gather behind him; MASTER and SCHOLAR wave back from the deck. Teal accent: the wave crests. Upper third empty for a speech bubble.
+
+[b2] file=public/comics/h1u3l3/2.png (landscape 4:3, 스타일 C)
+An open-air lesson under a tree: SCHOLAR guides CHILD's hand holding a brush over paper on a low desk (abstract practice strokes only, no letters); three more village children lean in around them with wide eyes; the book chest sits open showing bound books (plain covers). Teal accent: the brush tip. Upper third empty for a speech bubble.
+
+[b3] file=public/comics/h1u3l3/3.png (landscape 4:3, 스타일 C)
+GAG: the boy proudly presents his very first self-made roof tile — hopelessly bent like a banana — while the master tries hard not to laugh. At a tile kiln yard: CHILD holds up a comically warped banana-shaped tile with sparkling proud eyes; MASTER covers his mouth with one hand, shoulders shaking, the other hand giving a thumbs-up anyway; neat rows of proper curved tiles dry on racks behind; a domed kiln puffs gentle smoke. Teal accent: the proper tiles' glaze. Upper third empty for two speech bubbles.
+
+[b4] file=public/comics/h1u3l3/4.png (landscape 4:3, 스타일 C)
+DIGNIFIED — joyful completion, no gag. A five-story wooden pagoda stands complete against the sky (plain building exterior only); workers and villagers cheer around it raising arms; MASTER and SCHOLAR stand side by side looking up with quiet pride; CHILD rides on a villager's shoulders clapping. Teal accent: the pagoda's top spire. Upper third holds the pagoda top (leave side space for a speech bubble).
+
+[b5] file=public/comics/h1u3l3/5.png (landscape 4:3, 스타일 C)
+A village panorama years later: tiled-roof houses spread along a lane, children walk with books under their arms, the pagoda rises in the distance; a small market sells brushes and paper. Peaceful flourishing mood. Teal accent: one tiled roof's ridge. Upper third holds sky (leave space for a speech bubble).
+
+[b6] file=public/comics/h1u3l3/6.png (landscape 4:3, 스타일 C)
+The same tree from the lesson scene, years later: CHILD — now grown into a young teacher stick figure — guides a new small child's brush hand at the same low desk, in the exact mirror of the old lesson; the elderly SCHOLAR watches from behind the tree with a warm smile. Teal accent: the brush tip. Upper third empty for two speech bubbles.
+
+## ── 만화 h1u3l5 「없음을 세는 사람들」 7컷 (스타일 C) ──
+## 등장인물 고정: SAGE = 어깨에 숄을 두른 인도 학자 스틱맨(존엄·온화). PUPIL = 작은 제자 스틱맨
+## (개그 담당 — h1u1l4 조수의 자빠짐 개그와 수미쌍관). MERCHANT1/2 = 시장 상인 스틱맨들.
+## 수는 절대 숫자로 쓰지 않는다 — 구슬 개수·빈 칸·점으로만 표현.
+
+[e0] file=public/comics/h1u3l5/0.png (landscape 4:3, 스타일 C)
+GAG: two merchants argue over a sand counting board because an empty column ruins everything — one insists with two raised fingers, the other with all five, both leaning nose to nose, sweat flying. A market stall: a flat sand tray between MERCHANT1 and MERCHANT2 shows pebble groups arranged in columns with one conspicuously EMPTY column in the middle; both merchants lean over it arguing, gesturing different finger counts; grain sacks and a scale around. Teal accent: one pebble. Upper third empty for two speech bubbles.
+
+[e1] file=public/comics/h1u3l5/1.png (landscape 4:3, 스타일 C)
+SAGE (shawl-draped scholar stick figure) crouches calmly beside the same sand tray, chin on hand, gazing intently at the EMPTY column; PUPIL (small stick figure) mimics the pose next to him, puzzled; the merchants watch hopefully from behind. Teal accent: the sand tray's rim. Upper third empty for a speech bubble.
+
+[e2] file=public/comics/h1u3l5/2.png (landscape 4:3, 스타일 C)
+Close moment of insight: SAGE's finger draws a small clear circle in the empty sand column — the first zero mark; light rays radiate from the little circle; PUPIL and both merchants lean in from the sides, eyes reflecting the mark. Teal accent: the drawn circle. Upper third empty for a speech bubble.
+
+[e3] file=public/comics/h1u3l5/3.png (landscape 4:3, 스타일 C)
+GAG: the pupil topples over backwards, legs in the air, eyes spiraling — writing down "nothing" breaks his brain. PUPIL lies tipped backwards beside the sand tray, legs up, spiral eyes, one sandal flying; SAGE smiles serenely holding up one finger in gentle explanation; MERCHANT1 scratches his head, MERCHANT2 tries drawing a tiny circle in the air with his finger. Teal accent: the circle in the sand. Upper third empty for two speech bubbles.
+
+[e4] file=public/comics/h1u3l5/4.png (landscape 4:3, 스타일 C)
+The sand tray now shows tidy pebble-and-circle columns; MERCHANT1 slides pebbles rapidly with a happy flourish, coins stacking neatly beside; MERCHANT2 shakes SAGE's hand vigorously with both hands; PUPIL balances a tall neat pebble column like a trophy. Teal accent: the circle marks in the columns. Upper third empty for a speech bubble.
+
+[e5] file=public/comics/h1u3l5/5.png (landscape 4:3, 스타일 C)
+DIGNIFIED — golden-age wonder, no gag. A rooftop observatory at night: SAGE points up at a star-filled sky where a round planet hangs with a subtle rotation-arrow ring around it; PUPIL peers through a simple sighting tube on a tripod; scrolls and an armillary-like ring instrument beside them. Teal accent: the rotation-arrow ring around the planet. Upper third holds stars (leave side space for a speech bubble).
+
+[e6] file=public/comics/h1u3l5/6.png (landscape 4:3, 스타일 C)
+A caravan departure at dawn: a camel loaded with scroll bundles walks westward along a road; the lead scroll, half-open, shows a row of pebble-dots and one clear circle mark (abstract, no numerals); SAGE and PUPIL wave farewell from the city gate behind. Teal accent: the circle mark on the open scroll. Upper third holds dawn sky (leave space for a speech bubble).
+
+## ── 만화 h1u3l8 「글씨를 연습한 대제」 7컷 (스타일 C) ──
+## 등장인물 고정: CHARLES = 수염이 풍성하고 어깨가 넓은 왕관 쓴 대제 스틱맨(존엄 — 밤 연습 컷은
+## 애정 어린 인간미로, 우스꽝 금지). MONK2 = 필사 수도사 스틱맨(로브 — 손목 개그 담당).
+## SCHOLAR3 = 여행 망토의 초빙 학자 스틱맨. 십자가·성상 등 종교 상징물 절대 금지.
+
+[d0] file=public/comics/h1u3l8/0.png (landscape 4:3, 스타일 C)
+A throne room desk piled with scrolls: CHARLES (broad-shouldered bearded king stick figure with a simple crown) holds up two unrolled scrolls side by side, frowning — each scroll bears a DIFFERENT style of messy abstract scribble lines (wild loops vs cramped zigzags, no letters); a large wall map of a wide kingdom behind (plain shapes). Teal accent: the map's border line. Upper third empty for a speech bubble.
+
+[d1] file=public/comics/h1u3l8/1.png (landscape 4:3, 스타일 C)
+Palace gate at dusk: SCHOLAR3 (travel-cloaked scholar stick figure with a satchel of books) arrives on a mule, greeted warmly by CHARLES himself who extends both hands; attendants hold lanterns; more arriving scholars on the road behind. Teal accent: a lantern's glow. Upper third empty for two speech bubbles.
+
+[d2] file=public/comics/h1u3l8/2.png (landscape 4:3, 스타일 C)
+GAG: one copying monk shakes out his cramped wrist with comic agony while another accidentally tips his ink pot, chasing the rolling pot mid-air. A monastery writing hall: a row of monks at slanted desks copying books (abstract line rows only, no letters); MONK2 grips his wrist grimacing with wavy pain lines; a second monk lunges after a tipping ink pot; tall bookshelves of bound volumes behind. Teal accent: one book's ribbon marker. Upper third empty for a speech bubble.
+
+[d3] file=public/comics/h1u3l8/3.png (landscape 4:3, 스타일 C)
+Comparison scene at a lectern: SCHOLAR3 holds up a fresh page of neat small rounded abstract stroke rows (tidy, evenly spaced — still not letters) beside an old page of wild messy scribbles; the gathered monks lean in with delighted "ooh" faces; MONK2 wipes a happy tear. Teal accent: the neat page's first row. Upper third empty for a speech bubble.
+
+[d4] file=public/comics/h1u3l8/4.png (landscape 4:3, 스타일 C)
+Warm night scene, gentle humor with dignity: CHARLES sits up in bed by candlelight in a night robe (crown resting on the bedside table), tongue slightly out in concentration, carefully tracing strokes on a small wax tablet propped on his knees; a folded blanket, a sleeping cat at the bed's foot. Teal accent: the candle flame. Upper third empty for a speech bubble.
+
+[d5] file=public/comics/h1u3l8/5.png (landscape 4:3, 스타일 C)
+A monastery school yard: SCHOLAR3 teaches a circle of children and young monks seated on benches, holding up a slate with a big neat abstract stroke row; children raise hands eagerly; CHARLES observes from the side with satisfied arms crossed; a rooster pecks nearby. Teal accent: the slate's frame. Upper third empty for a speech bubble.
+
+[d6] file=public/comics/h1u3l8/6.png (landscape 4:3, 스타일 C)
+Time-bridge scene: on the left, a monastery bookshelf loaded with neatly bound volumes glows in candle light; a dotted arc flows rightward across the panel to a bright later-era study where a renaissance-capped scholar stick figure joyfully opens one of the same volumes at a sunlit desk. Teal accent: the dotted arc. Upper third holds the arc (leave side space for a speech bubble).
+
+## ── 만화 h1u3l10 「책이 쏟아진 날」 7컷 (스타일 C) ──
+## 등장인물 고정: MONK3 = 필사 수도사 스틱맨(손목 개그 — l8 필사실의 후배 격). GUT = 가죽 앞치마를
+## 두른 인쇄 장인 스틱맨(존엄·열정). TOWNS = 시민 스틱맨들(농부 모자·상인 두건·아주머니 스카프).
+## 활자·책장은 추상 각인·줄 무늬만 — 실제 글자 절대 금지.
+
+[f0] file=public/comics/h1u3l10/0.png (landscape 4:3, 스타일 C)
+GAG: the monk finishes ONE book after months and collapses over the desk in triumph-exhaustion, while the buyer must push a wheelbarrow FULL of coins to pay for it. A scriptorium corner: MONK3 slumps dramatically over a finished bound book, one arm raised weakly in victory, calendar-like tally sheet pinned above (abstract tally strokes); beside the desk a buyer stick figure arrives pushing a wheelbarrow heaped with coins. Teal accent: the finished book's cover ribbon. Upper third empty for two speech bubbles.
+
+[f1] file=public/comics/h1u3l10/1.png (landscape 4:3, 스타일 C)
+A workshop at night: GUT (leather-apron artisan stick figure) holds up a small metal block stamp to the candle light, examining its face (abstract raised marks, no letters); on the bench, rows of identical small metal blocks sit in a wooden tray next to a big screw-press machine adapted from a wine press; tools scattered. Teal accent: the metal block's face. Upper third empty for a speech bubble.
+
+[f2] file=public/comics/h1u3l10/2.png (landscape 4:3, 스타일 C)
+GAG: at the first successful print the assistant monk's eyes bulge so hard his hood flies back — months of work, done in one pull. GUT pulls the press lever with both hands, muscles straining; a fresh printed sheet emerges covered in tidy abstract line rows; MONK3 (visiting) stares with bulging eyes, hood blown back, holding his own half-finished handwritten page limply. Teal accent: the fresh printed sheet's first row. Upper third empty for two speech bubbles.
+
+[f3] file=public/comics/h1u3l10/3.png (landscape 4:3, 스타일 C)
+The workshop in full swing: stacks of identical printed sheets rise like towers; one apprentice hangs sheets on a drying line like laundry, another carries a tall wobbling stack; GUT checks a bound copy at the front bench; loose sheets flutter in the air. Teal accent: the drying-line sheets' first rows. Upper third partly holds the drying line (leave space for a speech bubble).
+
+[f4] file=public/comics/h1u3l10/4.png (landscape 4:3, 스타일 C)
+A market square book stall: TOWNS crowd around a table stacked with small books — a farmer-hat figure flips pages in wonder, a scarf-wearing woman holds one up to show her child, a merchant pays with just TWO coins held up cheerfully (contrast with the earlier wheelbarrow). Teal accent: one small book's cover. Upper third empty for two speech bubbles.
+
+[f5] file=public/comics/h1u3l10/5.png (landscape 4:3, 스타일 C)
+A map-like panorama of Europe (plain coastlines, no letters): from a printing-press icon in the center, dotted lines fan out carrying tiny flying open books across mountains and seas toward city silhouettes; at several endpoints small groups of stick figures huddle reading and debating with raised fingers. Teal accent: the dotted lines. Upper third holds the fanning books (leave side space for a speech bubble).
+
+[f6] file=public/comics/h1u3l10/6.png (landscape 4:3, 스타일 C)
+Modern library scene: a student stick figure sits at a table stacked with many books, happily reading one; through the window a city skyline; on the wall hangs a small framed picture of an old screw press. Teal accent: the framed press picture. Upper third empty for a speech bubble.

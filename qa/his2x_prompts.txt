@@ -1,0 +1,161 @@
+# 역사① Ⅱ(h1u2) 만화 확대 발주 — 만화 5편 35컷 (2026-08-03, h1u1 확대(his1x)의 Ⅱ판)
+#   public/comics/h1u2l2 「동굴 속 소 떼의 비밀」(알타미라) · h1u2l4 「용의 뼈 소동」(갑골문 발견) ·
+#   h1u2l5 「성문을 연 왕」(키루스 실린더) · h1u2l7 「재가 멈춘 시간」(폼페이) ·
+#   h1u2l9 「로마를 홀린 옷감」(비단길 중계 무역), 각 7컷.
+# 컷 모두 "이미지 안 글자 절대 금지"(한자·로마자·숫자 포함 — 갑골 새김·낙서·가격은 추상 표식만).
+# 앱이 한글 말풍선을 얹는 하이브리드 — 인물은 말하는 연기만, 상단 1/3 여백, 주인공 가로 중앙 부근.
+# 표시 프레임은 이미지 원비율(4:3 전체 표시).
+# ★ 코믹 표준: GAG 컷은 무엇이 웃긴지 명시, 죽음·재해·정복 관련 컷은 DIGNIFIED(개그 금지).
+#   실존 인물(사우투올라·왕의영·키루스·플리니우스)은 존엄 유지 — 과장 개그는 주변 인물 몫.
+# ★★ 정복·수탈 존중 가드: 전투·유혈·죽음·무기로 사람을 겨누는 장면 절대 금지 — 정복은 성문·행렬로만.
+#   재해(화산)는 자연 현상(연기 기둥)만 그리고 인명 피해는 그리지 않는다. 종교 존중 가드: 종교
+#   창시자·신앙 대상·종교 상징물은 어떤 형태로도 그리지 않는다(신전은 건물 외관만).
+#
+# ── 스타일 블록 C (만화 컷 공용 — 말풍선 하이브리드 + 코믹 연기) ──
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal, used sparingly where the prompt says.
+# Absolutely NO text, NO letters, NO numbers, NO Chinese characters, NO speech bubbles,
+# NO captions anywhere. Characters ACT like they are talking: open mouth (small oval),
+# expressive hand gestures. Comedic acting is allowed and encouraged where the prompt marks GAG:
+# exaggerated poses, big reactions, falling over backwards, sweat drops, bulging wide eyes,
+# jaw dropping — but all historical objects, clothing and facts must stay accurate; never make
+# the scene absurd beyond what the prompt describes, and NO anachronistic props inside
+# historical scenes.
+# CONQUEST RULE (absolute): never draw battle, blood, weapons striking people, or death.
+# Conquest and disaster are conveyed only through gates, processions, architecture and nature.
+# RELIGION RULE (absolute): never depict founders or objects of worship of any religion —
+# no deities, no worship statues, no crosses or other worship symbols. Religious buildings
+# appear as plain building exteriors only.
+# Keep the upper third of the panel mostly empty white space above the characters' heads
+# (the app overlays Korean speech bubbles there). Main subjects centered horizontally.
+# Simple, charming, educational middle-school history comic. 4:3 landscape panel.
+
+## ── 만화 h1u2l2 「동굴 속 소 떼의 비밀」 7컷 (스타일 C) ──
+## 등장인물 고정: MARIA = 원피스 차림에 양갈래 머리의 어린 소녀 스틱맨(주인공, 개그·감탄 담당).
+## FATHER = 챙 모자와 콧수염의 아버지 스틱맨(19세기 신사복 — 존엄 유지, 놀람 연기는 허용).
+## SCHOLARS = 프록코트·외알 안경의 학자 스틱맨들(비웃음→참회 담당). 배경: 1879년 스페인 시골 동굴.
+
+[s0] file=public/comics/h1u2l2/0.png (landscape 4:3, 스타일 C)
+GAG: the father is so busy digging at the cave floor that he never once looks up, while his small daughter stares straight up at the ceiling with huge sparkling eyes. Inside a dim cave entrance chamber: FATHER (stick figure with a brimmed hat and mustache, 19th-century coat) kneels absorbed, troweling the dirt floor beside a small pile of stone tools; MARIA (small girl stick figure with twin braids and a simple dress) stands behind him holding a candle, head tilted all the way back, eyes wide at something above. Rocky cave walls frame the scene. Teal accent: the candle flame. Upper third empty for a speech bubble.
+
+[s1] file=public/comics/h1u2l2/1.png (landscape 4:3, 스타일 C)
+Low-angle cave interior: MARIA points excitedly up at the cave ceiling where a herd of large bison is painted in bold prehistoric outline style (simple thick-line animal figures only, no letters); FATHER rushes over mid-stride, one hand holding his hat. The painted bison spread across the sloping ceiling above them. Teal accent: MARIA's candle flame lighting the ceiling. Upper third MOSTLY empty but may contain faint painted bison (keep space for a speech bubble).
+
+[s2] file=public/comics/h1u2l2/2.png (landscape 4:3, 스타일 C)
+GAG: the father is so stunned his hat pops off his head and his monocle-like eyes bulge as he cranes backward under the painted ceiling. FATHER leans far back staring up, hat flying off, jaw dropped; MARIA beams proudly with both fists raised beside him; above them the bison herd ceiling painting glows in the candle light, one bison drawn with remarkable lifelike shading (still simple line art). Teal accent: candle flame. Upper third mostly empty for two speech bubbles.
+
+[s3] file=public/comics/h1u2l2/3.png (landscape 4:3, 스타일 C)
+A lecture hall scene: FATHER stands at a podium presenting a large framed sketch of a painted bison on an easel; before him a row of SCHOLARS (stick figures in frock coats) turn away — one waves a dismissive hand, one crosses arms with a raised skeptical eyebrow, one laughs behind a sleeve. FATHER's shoulders slump, a single sweat drop. Teal accent: the framed bison sketch's border. Upper third empty for a speech bubble.
+
+[s4] file=public/comics/h1u2l2/4.png (landscape 4:3, 스타일 C)
+DIGNIFIED — quiet passage of time, no gag. A large wall map of southwestern Europe (plain coastline outline, no letters) with several small cave-mouth icons being pinned across it by two SCHOLAR stick figures on stepladders; each cave icon has a tiny bison mark beside it; a calendar-like stack of paper sheets (blank) piles up on a desk below. Teal accent: the newest cave pin. Upper third empty for a speech bubble.
+
+[s5] file=public/comics/h1u2l2/5.png (landscape 4:3, 스타일 C)
+GAG: the once-mocking scholar now publicly bows in apology, hat pressed to his chest, so low that his monocle dangles straight down. An elderly SCHOLAR stick figure stands at the same lecture podium bowing deeply toward the audience, hat held to chest, monocle swinging; behind him on the easel stands the same framed bison sketch, now garlanded with a small laurel wreath; the audience of stick figures applauds warmly. Teal accent: the laurel wreath. Upper third empty for a speech bubble.
+
+[s6] file=public/comics/h1u2l2/6.png (landscape 4:3, 스타일 C)
+Modern museum-cave scene: a student stick figure and a guide stick figure stand on a walkway inside a recreated cave hall, looking up at the great bison ceiling; the student holds up their own small sketchbook showing a stick-figure doodle of a bison, comparing proudly. Soft spotlights. Teal accent: the walkway handrail. Upper third mostly empty for a speech bubble.
+
+## ── 만화 h1u2l4 「용의 뼈 소동」 7컷 (스타일 C) ──
+## 등장인물 고정: WANG = 청나라 관모(둥근 챙 없는 모자)와 긴 두루마기 차림, 가는 콧수염의 학자
+## 스틱맨(존엄 유지 — 놀람·열정 연기 허용, 우스꽝 금지). CLERK = 앞치마의 약방 점원 스틱맨(개그 담당).
+## 배경: 1899년 베이징 약방·서재. 이미지 안 한자 절대 금지 — 뼈의 새김은 추상 각획만.
+
+[g0] file=public/comics/h1u2l4/0.png (landscape 4:3, 스타일 C)
+A traditional Chinese apothecary interior with a tall wall of small wooden medicine drawers; WANG (stick figure in a Qing scholar's cap and long robe, thin mustache, looking pale with a small cold-compress cloth on his forehead) sits at the counter; CLERK (apron stick figure) proudly holds out a scoop of pale bone fragments over a paper wrap. A hanging balance scale sits on the counter. Teal accent: the medicine scoop. Upper third empty for a speech bubble.
+
+[g1] file=public/comics/h1u2l4/1.png (landscape 4:3, 스타일 C)
+Close over the counter: WANG lifts one larger flat bone fragment close to his eyes, squinting; on its surface faint rows of small abstract scratch marks are visible (simple angular scratches only, absolutely NOT real characters); CLERK freezes mid-grind with a mortar and pestle, puzzled. Teal accent: the scratch marks on the bone. Upper third empty for a speech bubble.
+
+[g2] file=public/comics/h1u2l4/2.png (landscape 4:3, 스타일 C)
+GAG: the abandoned medicine bowl tips over on the counter as the scholar springs up, holding the bone to a magnifying glass with both trembling hands, eyes shining. WANG stands bolt upright holding a magnifying glass over the bone fragment, sparkle lines around his head; the medicine bowl lies tipped with a little spill; CLERK catches the rolling pestle mid-air, flustered. Teal accent: the magnifying glass rim. Upper third empty for two speech bubbles.
+
+[g3] file=public/comics/h1u2l4/3.png (landscape 4:3, 스타일 C)
+GAG: the scholar sweeps the ENTIRE drawer of dragon bones into his arms while the clerk's jaw drops to the floor — the best customer ever, for the strangest reason. WANG cradles a huge armful of bone fragments, more pieces stacked on the counter in a wobbling pile; CLERK stands with jaw comically dropped, holding an empty drawer upside down; a second customer stick figure peeks in from the doorway, baffled. Teal accent: one bone fragment's scratch marks. Upper third empty for a speech bubble.
+
+[g4] file=public/comics/h1u2l4/4.png (landscape 4:3, 스타일 C)
+A journey scene: WANG and a fellow scholar stick figure ride a mule cart along a dirt road toward a distant riverside village with low earthen mounds; WANG holds up a bone fragment, comparing it against the landscape ahead; a simple hand-drawn route map rolls open on his lap (plain lines, no letters). Teal accent: the river line in the distance. Upper third empty for a speech bubble.
+
+[g5] file=public/comics/h1u2l4/5.png (landscape 4:3, 스타일 C)
+DIGNIFIED — solemn discovery, no gag. At the village dig site at dusk: WANG kneels reverently holding up a large turtle-shell plate covered in neat rows of abstract scratch marks toward the last light; beside him lies an ox shoulder-blade bone with a scorched crack running through it; the fellow scholar holds a lantern close. Teal accent: the lantern glow. Upper third empty for a speech bubble.
+
+[g6] file=public/comics/h1u2l4/6.png (landscape 4:3, 스타일 C)
+Modern museum: a glass case holds the turtle-shell plate with its scratch-mark rows, lit warmly; a student stick figure and a curator stick figure stand beside it; the curator gestures from the shell toward a large wall panel showing a simple evolution of one abstract pictograph shape morphing in three steps into a simpler abstract shape (pure abstract shapes, NOT real characters). Teal accent: the glow inside the case. Upper third empty for a speech bubble.
+
+## ── 만화 h1u2l5 「성문을 연 왕」 7컷 (스타일 C) ──
+## 등장인물 고정: CYRUS = 뾰족 장식 왕관과 곱슬 수염의 페르시아 왕 스틱맨(항상 존엄·온화 — 개그 금지).
+## CITIZENS = 바빌론 시민 스틱맨들(공포→안도 담당). SCRIBE = 점토 원통에 새기는 서기 스틱맨.
+## 전투·무기로 사람을 겨누는 장면 절대 금지 — 입성은 열린 성문과 평화 행렬로만.
+
+[c0] file=public/comics/h1u2l5/0.png (landscape 4:3, 스타일 C)
+DIGNIFIED — grand opening scene, no gag. The massive gate of Babylon with blue-glazed brick towers stands wide open; CYRUS (stick figure king with a pointed crown and curled beard, calm dignified face) rides slowly through on a horse at walking pace, one palm raised in greeting; behind him a column of attendants carries banners (plain flags, no weapons pointed at anyone); city rooftops beyond. Teal accent: the glazed bricks of the gate. Upper third empty for a speech bubble.
+
+[c1] file=public/comics/h1u2l5/1.png (landscape 4:3, 스타일 C)
+A narrow street corner: CITIZENS (a family of stick figures — parent clutching a child, an elder gripping a walking stick) huddle behind a doorway peeking out fearfully at the passing procession's shadows; above their heads a shared thought cloud shows a tiny burning house and chains icon (simple line icons inside the cloud only). Teal accent: none of the fear icons — teal only on a small potted plant by the door. Upper third empty for a speech bubble.
+
+[c2] file=public/comics/h1u2l5/2.png (landscape 4:3, 스타일 C)
+City square: CYRUS stands before his assembled attendants, arms spread wide in a calm protective gesture; behind him a temple-like building facade (plain exterior only) stands untouched, and an attendant gently lowers a torch into a water bucket, extinguishing it; CITIZENS watch from the edges, surprised. Teal accent: the small hiss-steam from the extinguished torch. Upper third empty for a speech bubble.
+
+[c3] file=public/comics/h1u2l5/3.png (landscape 4:3, 스타일 C)
+DIGNIFIED — joyful release, no gag. The open city gate from inside: a long line of families with packed bundles and hand carts walks out toward a bright horizon road, some waving back happily, a child skipping; CYRUS watches from the side with a gentle nod; an attendant hands a bread loaf to a departing elder. Teal accent: one family's bundle cloth. Upper third empty for two speech bubbles.
+
+[c4] file=public/comics/h1u2l5/4.png (landscape 4:3, 스타일 C)
+Palace chamber: SCRIBE sits pressing rows of small wedge-shaped dents around the curved surface of a barrel-shaped clay cylinder held on a wooden cradle (abstract wedge dents only, NOT real letters); CYRUS stands beside, dictating with a calm raised finger; an oil lamp burns on the desk. Teal accent: the clay cylinder's fresh dent rows. Upper third empty for a speech bubble.
+
+[c5] file=public/comics/h1u2l5/5.png (landscape 4:3, 스타일 C)
+GAG (gentle): the empire map unrolls so long that two attendants have to run to catch its rolling end, while citizens of many different hats smile inside the borders. A long unrolled map scroll across a palace floor showing a wide empire outline (plain shapes, no letters); small stick figures with clearly different hats stand INSIDE the border smiling and waving; two attendants chase the still-rolling end of the scroll; CYRUS observes with calm satisfaction. Teal accent: the map's border line. Upper third empty for a speech bubble.
+
+[c6] file=public/comics/h1u2l5/6.png (landscape 4:3, 스타일 C)
+Modern museum: the barrel-shaped clay cylinder with wedge-dent rows rests in a lit glass case; a student stick figure leans close while a guide stick figure gestures toward a tall modern building silhouette visible through a window behind (plain glass tower, no letters or flags). Teal accent: the glow inside the case. Upper third empty for a speech bubble.
+
+## ── 만화 h1u2l7 「재가 멈춘 시간」 7컷 (스타일 C) ──
+## 등장인물 고정: BAKER = 앞치마의 빵집 주인 스틱맨. PLINY = 두루마리와 첨필을 든 청년 스틱맨
+## (존엄 — 기록자). EXCAVATOR = 밀짚모자의 발굴자 스틱맨. STUDENT = 현대 학생 스틱맨.
+## 재해 존중: 연기 기둥 등 자연 현상만 — 인명 피해·쓰러진 사람은 절대 그리지 않는다.
+
+[p0] file=public/comics/h1u2l7/0.png (landscape 4:3, 스타일 C)
+A lively Roman street in Pompeii on a sunny day: BAKER (apron stick figure) slides round flat bread loaves from a domed brick oven with a wooden paddle; neighbors chat by a public fountain; an arched aqueduct line runs along the far background with a mountain beyond. Teal accent: the fountain water. Upper third empty for a speech bubble.
+
+[p1] file=public/comics/h1u2l7/1.png (landscape 4:3, 스타일 C)
+DIGNIFIED — awe and alarm, no gag. The same street: everyone stops and looks up — the distant mountain now sends up an enormous umbrella-pine-shaped smoke column (tall trunk of smoke spreading flat at the top); BAKER shields his eyes with a hand, paddle lowered; a pigeon flock scatters. No falling debris, no fire on buildings. Teal accent: none in the smoke — teal on the fountain water only. Upper third holds the smoke column top (leave side space for a speech bubble).
+
+[p2] file=public/comics/h1u2l7/2.png (landscape 4:3, 스타일 C)
+DIGNIFIED — orderly departure, no gag. A wide bay view: boats row away from the shore carrying seated families with bundles; on the far opposite shore, PLINY (young stick figure in a tunic) stands at a villa terrace writing intently on a wax tablet, looking toward the smoking mountain across the water; an elder behind him points seaward. Teal accent: the sea water lines. Upper third empty for a speech bubble.
+
+[p3] file=public/comics/h1u2l7/3.png (landscape 4:3, 스타일 C)
+DIGNIFIED — silent stillness, no gag, no people. The city skyline of Pompeii seen from a distance, now hushed under a soft deep blanket of grey ash: only rooftops, columns and the aqueduct line emerge as gentle mounds; light ash flakes drift; the mountain stands quiet behind. A single bird circles high. Teal accent: none — fully monochrome except one tiny teal sprout at the frame's front edge. Upper third holds sky and drifting ash (leave space for a speech bubble).
+
+[p4] file=public/comics/h1u2l7/4.png (landscape 4:3, 스타일 C)
+GAG: after seventeen centuries the excavator uncovers the bakery oven — and inside sit perfectly round bread loaves, carbonized but keeping their shape; his eyes bulge and his brush freezes mid-air. EXCAVATOR (straw-hat stick figure) kneels at the opened dome oven brushing away ash, face thrust forward with bulging eyes at the row of dark round loaves still inside; a second excavator behind drops a small shovel in surprise. Ancient walls and a column stump around. Teal accent: the excavation string-line pegs. Upper third empty for two speech bubbles.
+
+[p5] file=public/comics/h1u2l7/5.png (landscape 4:3, 스타일 C)
+Uncovered street scene: EXCAVATOR walks along a cleared Pompeii lane pointing out details to a notebook-carrying colleague — a wall with simple scratched doodle marks (abstract scribbles, NOT letters), a shop counter with round jars sunk into it, a stepping-stone crossing; the colleague sketches eagerly. Teal accent: one jar's rim. Upper third empty for a speech bubble.
+
+[p6] file=public/comics/h1u2l7/6.png (landscape 4:3, 스타일 C)
+Modern site visit: STUDENT stands on the same stepping-stone crossing holding a printed photo card, comparing it against the excavated street around them with delighted recognition; a guide stick figure spreads both arms presenting the city; the quiet mountain rises in the background. Teal accent: the photo card's border. Upper third empty for a speech bubble.
+
+## ── 만화 h1u2l9 「로마를 홀린 옷감」 7컷 (스타일 C) ──
+## 등장인물 고정: WEAVER = 쪽진 머리의 장안 직조 장인 스틱맨. TRADER1/2/3 = 서로 다른 모자의 대상
+## 상인 스틱맨들(릴레이 담당 — 개그 허용). LADY = 로마 귀부인 스틱맨(우아·열광). ELDER = 로마 원로
+## 스틱맨(허연 수염 — 떨떠름 담당). 가격·숫자는 절대 쓰지 않는다 — 동전 더미 크기로만 표현.
+
+[k0] file=public/comics/h1u2l9/0.png (landscape 4:3, 스타일 C)
+A silk workshop in Chang'an: WEAVER (stick figure with a neat hair bun) lifts a shimmering bolt of silk from a wooden loom, holding it up to the light; behind on a shelf, round silkworm cocoons rest in flat baskets; an assistant stick figure closes wooden shutters secretively, peeking outside. Teal accent: the silk bolt's sheen. Upper third empty for a speech bubble.
+
+[k1] file=public/comics/h1u2l9/1.png (landscape 4:3, 스타일 C)
+Desert oasis market: TRADER1 (pointed cap) hands the wrapped silk bolt down from a kneeling two-humped camel to TRADER2 (round turban-like wrap), who hands over a modest pouch of coins; palm trees and a small pond behind; another camel drinks. A small heap of coins sits on the trading mat. Teal accent: the silk bolt peeking from its wrap. Upper third empty for a speech bubble.
+
+[k2] file=public/comics/h1u2l9/2.png (landscape 4:3, 스타일 C)
+GAG: at every hand-off the coin pile grows absurdly — now TRADER3 pays with a coin heap taller than the tea table it sits on, and TRADER2 fans himself smugly. A caravanserai courtyard: TRADER2 lounges smugly while TRADER3 (flat cap) pushes forward a towering wobbling heap of coins on a tray, sweating; the silk bolt lies between them on a cushion like a treasure; a donkey peeks around a pillar. Teal accent: the silk bolt. Upper third empty for two speech bubbles.
+
+[k3] file=public/comics/h1u2l9/3.png (landscape 4:3, 스타일 C)
+A Roman atrium: LADY (elegant stick figure with a high hairdo) swirls with a translucent silk shawl streaming around her, delighted; two friend stick figures reach out to touch the fabric with sparkling eyes; a column and a small fountain behind. Teal accent: the silk shawl. Upper third empty for a speech bubble.
+
+[k4] file=public/comics/h1u2l9/4.png (landscape 4:3, 스타일 C)
+GAG: the Romans' hilarious guess — a shared thought cloud shows silk bolts growing on a tree like fluffy fruit being combed off with a rake by a tiny farmer. Three Roman stick figures (LADY, a merchant, a curious child) stand in a garden gazing up at a big shared thought cloud containing a tree with fluffy silk tufts hanging like fruit and a tiny stick farmer combing them into a basket; all three nod earnestly, completely convinced. Teal accent: the silk tufts inside the cloud. Upper third holds the thought cloud (leave side space for a speech bubble).
+
+[k5] file=public/comics/h1u2l9/5.png (landscape 4:3, 스타일 C)
+GAG: the elder senator watches coin sacks sprout little wings and fly east in a worried daydream, clutching his head with both hands. ELDER (white-bearded Roman stick figure in a toga) stands on a terrace clutching his head; above the horizon his thought stream shows a line of coin sacks with tiny wings flying toward the rising sun direction; LADY behind him happily holds up yet another silk bolt. Teal accent: the silk bolt. Upper third holds the flying-sack daydream (leave side space for a speech bubble).
+
+[k6] file=public/comics/h1u2l9/6.png (landscape 4:3, 스타일 C)
+A wide route panorama at golden light: a dotted trade route line winds from a walled eastern city across mountains, desert dunes with a camel caravan, an oasis town, and a sea with a sailing ship, to a western city with domes and columns; small bundles of goods (silk bolt, fruit basket, round pot) sit as waypoint markers along the dotted line. Teal accent: the dotted route line. Upper third holds sky (leave space for a speech bubble).

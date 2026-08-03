@@ -4,14 +4,19 @@
 //   발주 원본(컷당 0.8~3MB)이 webp 미변환으로 98MB까지 커진 것을 정리한 2026-07 작업 —
 //   새 만화 발주 후에도 이 스크립트를 돌리고, 콘텐츠 img 경로는 .webp로 저작한다.
 // node qa/process-comics.mjs  (app 루트에서)
+//   ONLY=h1u2 node qa/process-comics.mjs — 접두사 필터(쉼표 복수 가능). 다른 발주가 병렬로 도는 동안
+//   완료된 단원만 선별 변환할 때 사용(2026-08-03 — 전체 변환은 진행 중 폴더의 미검수 png까지 삼킨다).
 import { chromium } from "playwright-core";
 import { readFileSync, writeFileSync, readdirSync, unlinkSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const ROOT = "public/comics";
 const SKIP = new Set(["avatar"]);
+const ONLY = (process.env.ONLY || "").split(",").filter(Boolean);
 
-const dirs = readdirSync(ROOT).filter((d) => !SKIP.has(d) && statSync(join(ROOT, d)).isDirectory());
+const dirs = readdirSync(ROOT).filter(
+  (d) => !SKIP.has(d) && (!ONLY.length || ONLY.some((p) => d.startsWith(p))) && statSync(join(ROOT, d)).isDirectory(),
+);
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage();
 

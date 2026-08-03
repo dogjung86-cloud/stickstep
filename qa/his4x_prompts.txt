@@ -1,0 +1,186 @@
+# 역사① Ⅳ(h1u4) 만화 확대 발주 — 만화 6편 42컷 (2026-08-03, his2x·his3x의 Ⅳ판)
+#   public/comics/h1u4l1 「평화의 가격표」(전연의 맹) · h1u4l2 「바늘이 가리킨 바다」(송 나침반) ·
+#   h1u4l5 「하얀 금 소동」(경덕진 백자) · h1u4l6 「파도를 그린 노인」(호쿠사이) ·
+#   h1u4l7 「모두의 황제」(아크바르) · h1u4l10 「망치 소리와 인쇄기」(루터), 각 7컷.
+# 컷 모두 "이미지 안 글자 절대 금지"(한자·가나·로마자·숫자 — 문서·장부·판화 속 글은 추상 표식만).
+# 앱이 한글 말풍선을 얹는 하이브리드 — 인물은 말하는 연기만, 상단 1/3 여백, 주인공 가로 중앙 부근.
+# ★ 코믹 표준: GAG 명시 컷만 과장 연기. 실존 인물(진종·구준·호쿠사이·아크바르·루터)은 존엄 유지 —
+#   호쿠사이의 괴짜 연출은 애정 어린 톤(자칭 별명이 「그림에 미친 노인」), 루터·성직자 희화 절대 금지.
+# ★★ 정복·수탈 존중 가드: 전투·유혈·무기로 사람을 겨누는 장면 절대 금지 — 군사 대치는 성벽·깃발·
+#   진영 천막·사신 왕래로만, 30년 전쟁은 협상 테이블로만. 종교 존중 가드: 신앙 대상·십자가·성상 등
+#   상징물은 어떤 형태로도 그리지 않는다 — 성당·사원은 건물 외관·문만, 종교인은 복장 다양성만.
+#
+# ── 스타일 블록 C (만화 컷 공용 — 말풍선 하이브리드 + 코믹 연기) ──
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal, used sparingly where the prompt says.
+# Absolutely NO text, NO letters, NO numbers, NO Chinese/Japanese characters, NO speech bubbles,
+# NO captions anywhere. Characters ACT like they are talking: open mouth (small oval),
+# expressive hand gestures. Comedic acting is allowed and encouraged where the prompt marks GAG:
+# exaggerated poses, big reactions, falling over backwards, sweat drops, bulging wide eyes,
+# jaw dropping — but all historical objects, clothing and facts must stay accurate; never make
+# the scene absurd beyond what the prompt describes, and NO anachronistic props inside
+# historical scenes.
+# CONQUEST RULE (absolute): never draw battle, blood, weapons striking people, or death.
+# Military standoffs appear only as walls, flags, distant camps and envoys.
+# RELIGION RULE (absolute): never depict founders or objects of worship of any religion —
+# no deities, no worship statues, no crosses or other worship symbols. Churches, mosques and
+# temples appear as plain building exteriors (doors, towers, domes) only.
+# Keep the upper third of the panel mostly empty white space above the characters' heads
+# (the app overlays Korean speech bubbles there). Main subjects centered horizontally.
+# Simple, charming, educational middle-school history comic. 4:3 landscape panel.
+
+## ── 만화 h1u4l1 「평화의 가격표」 7컷 (스타일 C) ──
+## 등장인물 고정: EMPEROR4 = 통천관(위가 평평한 관)을 쓴 송 황제 스틱맨(존엄 — 긴장·결심 연기 허용).
+## CHANCELLOR = 관모를 쓴 결단력 있는 재상 스틱맨(존엄). ENVOY_K = 모피 깃 외투의 거란 사신 스틱맨
+## (존엄). CLERKS = 관리 스틱맨들(주판·찬반 개그 담당). 전투 장면 절대 금지 — 성벽·깃발·사신만.
+
+[t0] file=public/comics/h1u4l1/0.png (landscape 4:3, 스타일 C)
+DIGNIFIED — urgent court scene, no gag. A Song palace hall: a dusty messenger stick figure kneels presenting a rolled dispatch; EMPEROR4 (flat-top crown) rises from his throne in alarm; CHANCELLOR (resolute minister stick figure) steps forward decisively; other CLERKS huddle whispering anxiously in the back. A wall map behind shows a river line and northern plains (plain shapes). Teal accent: the dispatch's ribbon. Upper third empty for a speech bubble.
+
+[t1] file=public/comics/h1u4l1/1.png (landscape 4:3, 스타일 C)
+CHANCELLOR bows firmly before EMPEROR4, one arm sweeping toward the north window with total conviction; EMPEROR4 grips his own robe sleeve, swallowing hard but nodding with dawning resolve; two CLERKS in the back clutch each other nervously. Teal accent: the chancellor's official tablet held at his chest. Upper third empty for two speech bubbles.
+
+[t2] file=public/comics/h1u4l1/2.png (landscape 4:3, 스타일 C)
+DIGNIFIED — grand standoff, no violence. A wide river divides the panel: on the near side a walled city rampart where EMPEROR4's tall imperial banner is raised high among cheering soldier silhouettes (arms raised, NO weapons pointed); on the far bank, rows of nomad camp tents with their own banners stand quietly; between them on the river bridge, a tiny envoy figure with a white flag walks across. Teal accent: the imperial banner. Upper third holds sky (leave space for a speech bubble).
+
+[t3] file=public/comics/h1u4l1/3.png (landscape 4:3, 스타일 C)
+A negotiation tent interior: ENVOY_K (fur-collared Khitan envoy) and CHANCELLOR sit across a low table holding silk bolt samples and small silver ingots; between them a CLERK flicks an abacus so fast that one bead pops off mid-air, sweat drop flying; both principals remain composed and dignified. Teal accent: the silk bolt sample. Upper third empty for two speech bubbles.
+
+[t4] file=public/comics/h1u4l1/4.png (landscape 4:3, 스타일 C)
+GAG: two clerks argue over the deal — one flails scandalized, the other calmly stacks a tiny coin pile beside a HUGE pile, showing the bargain with a smug face. Palace corridor: CLERK-A throws both arms up scandalized, hat tilting; CLERK-B points serenely at two coin piles on a bench — one tiny (the tribute) and one towering (the cost of war) — with a knowing look. Teal accent: the tiny coin pile. Upper third empty for two speech bubbles.
+
+[t5] file=public/comics/h1u4l1/5.png (landscape 4:3, 스타일 C)
+A lively border market: Song merchants with silk bolts and tea chests trade happily with fur-hatted Khitan merchants leading horses laden with furs; a shared awning covers both stalls; children from both sides chase a hoop together. Teal accent: the tea chest's band. Upper third empty for a speech bubble.
+
+[t6] file=public/comics/h1u4l1/6.png (landscape 4:3, 스타일 C)
+A symbolic study scene: EMPEROR4 rests a writing brush on a stand beside a sheathed ceremonial sword hung high on the wall rack (untouched, dusty with a tiny cobweb); on the desk, a balance scale holds a brush on one pan outweighing a tiny sword charm on the other. Teal accent: the brush's tuft. Upper third empty for a speech bubble.
+
+## ── 만화 h1u4l2 「바늘이 가리킨 바다」 7컷 (스타일 C) ──
+## 등장인물 고정: CAPTAIN = 챙 없는 두건을 쓴 노련한 송 선장 스틱맨(존엄·태연). SAILOR = 신참 뱃사람
+## 스틱맨(개그 — 벌벌 담당). OFFICIAL = 관모의 시박사 관리 스틱맨. ARAB_M = 둥근 터번의 아라비아 상인
+## 스틱맨(존엄). 나침반은 물그릇에 뜬 바늘(수부침)로 그린다.
+
+[u0] file=public/comics/h1u4l2/0.png (landscape 4:3, 스타일 C)
+GAG: the rookie sailor stares at the cloudy sky and trembles so hard his knees knock together — no stars, no way home. A busy Quanzhou dock: porters load straw-packed porcelain crates up a plank onto a large junk ship with battened sails; SAILOR (rookie stick figure) points up at a fully overcast sky, knees knocking, face pale; CAPTAIN (hooded veteran) pats his shoulder with a calm grin. Teal accent: the junk's pennant. Upper third empty for two speech bubbles.
+
+[u1] file=public/comics/h1u4l2/1.png (landscape 4:3, 스타일 C)
+On deck: CAPTAIN holds out a shallow water bowl where a slender magnetized needle floats on a straw, pointing steadily; SAILOR leans in nose-close, eyes huge with wonder; the crew gathers around the bowl like a campfire. Teal accent: the floating needle. Upper third empty for a speech bubble.
+
+[u2] file=public/comics/h1u4l2/2.png (landscape 4:3, 스타일 C)
+GAG: in a pitch-dark stormy night the rookie clings to the mast like a koala while the captain calmly checks the needle bowl under a tiny lantern, totally unbothered. Night sea with rolling waves and rain streaks: SAILOR wraps arms and legs around the mast, teeth chattering; CAPTAIN crouches by the glowing lantern reading the needle bowl with one steady finger raised toward the correct heading. Teal accent: the needle. Upper third holds storm clouds (leave side space for a speech bubble).
+
+[u3] file=public/comics/h1u4l2/3.png (landscape 4:3, 스타일 C)
+A bright tropical harbor with palm trees and white buildings with rounded arches: the Song junk moors beside an Arab dhow with a triangular sail; CAPTAIN and ARAB_M (round-turban merchant) greet each other warmly from their decks with raised hands; gulls circle. Teal accent: the dhow's triangular sail edge. Upper third empty for two speech bubbles.
+
+[u4] file=public/comics/h1u4l2/4.png (landscape 4:3, 스타일 C)
+A harbor trading mat: porcelain bowls and silk bolts laid out on one side, spice sacks, coral branches and ivory on the other; CAPTAIN and ARAB_M shake hands over the goods; SAILOR sniffs a spice sack and his eyes water comically. Teal accent: one porcelain bowl's glaze. Upper third empty for a speech bubble.
+
+[u5] file=public/comics/h1u4l2/5.png (landscape 4:3, 스타일 C)
+GAG: back home the customs official writes so fast to keep up with the mountain of cargo that he wields TWO brushes at once, one in each hand. The home port customs house: OFFICIAL (capped official) sits at a desk stacked with tally scrolls (abstract stroke rows), a brush in EACH hand scribbling; porters carry an endless line of crates past him; CAPTAIN hands over a small pouch of coins as tax. Teal accent: the customs house's hanging lantern. Upper third empty for a speech bubble.
+
+[u6] file=public/comics/h1u4l2/6.png (landscape 4:3, 스타일 C)
+A relay-of-hands symbolic scene: three pairs of hands pass a compass bowl left to right — a Song sailor's hand, then a turbaned merchant's hand, then a European sailor's cuffed hand — over a background of connected seas with small ship silhouettes of each culture; a dotted route line links them. Teal accent: the floating needle in the bowl. Upper third holds sky (leave space for a speech bubble).
+
+## ── 만화 h1u4l5 「하얀 금 소동」 7컷 (스타일 C) ──
+## 등장인물 고정: POTTER = 머릿수건을 쓴 경덕진 도공 스틱맨(존엄·장인 자부심). KILN_BOY = 가마
+## 견습 스틱맨(개그). EU_KING = 작은 왕관의 유럽 군주 스틱맨(열광 — 특정 실존 인물 아님).
+## ALCHEMIST = 헝클어진 머리의 유럽 장인 스틱맨(실패 개그 담당). 도자기 문양은 추상 덩굴무늬만.
+
+[v0] file=public/comics/h1u4l5/0.png (landscape 4:3, 스타일 C)
+A Jingdezhen kiln yard: POTTER (head-scarf artisan) paints a flowing abstract vine pattern onto a white vase with a fine brush; racks of white porcelain in rows behind; a long brick dragon-kiln climbs the hill puffing gentle smoke; KILN_BOY fans the kiln mouth. Teal accent: the painted vine pattern on the vase. Upper third empty for a speech bubble.
+
+[v1] file=public/comics/h1u4l5/1.png (landscape 4:3, 스타일 C)
+Harbor loading: straw-wrapped porcelain stacks are carried up onto a tall ship alongside silk bolts and tea chests; POTTER waves a proud farewell to his crates like sending children off; KILN_BOY wipes a mock tear with a huge handkerchief. Teal accent: one unwrapped vase's vine pattern peeking from straw. Upper third empty for two speech bubbles.
+
+[v2] file=public/comics/h1u4l5/2.png (landscape 4:3, 스타일 C)
+GAG: the European king lifts a porcelain plate overhead like a sacred treasure while his courtiers faint backward in waves at its beauty. A European palace hall: EU_KING (small-crown monarch) holds a white plate aloft with both hands, light rays beaming from it; three courtier stick figures swoon backward in a domino row, wigs tilting; a cushioned display pedestal waits. Teal accent: the plate's vine pattern. Upper third empty for two speech bubbles.
+
+[v3] file=public/comics/h1u4l5/3.png (landscape 4:3, 스타일 C)
+A dockside exchange scene: sacks and small chests of silver ingots move UP a plank onto an eastbound ship while porcelain crates come DOWN another plank from it; merchants on both planks pass in opposite directions tipping hats. Teal accent: the silver ingots' shine marks. Upper third empty for a speech bubble.
+
+[v4] file=public/comics/h1u4l5/4.png (landscape 4:3, 스타일 C)
+GAG: the European workshop's imitation attempts fail in every possible way — one pot slumps like melted cheese, one is brown and lumpy, one shatters as ALCHEMIST holds it up, leaving him gripping just a handle, hair blasted back by kiln soot. A cluttered European workshop: ALCHEMIST (wild-haired artisan) holds up a cracked handle as the rest of the pot crumbles; on the bench, a saggy pot and a lumpy brown pot sit in shame; a small kiln burps a soot cloud. Teal accent: a pinned sketch of the dream vase (abstract vine pattern) on the wall. Upper third empty for a speech bubble.
+
+[v5] file=public/comics/h1u4l5/5.png (landscape 4:3, 스타일 C)
+DIGNIFIED — craft pride, no gag. Inside the Jingdezhen workshop: POTTER kneads fine white clay from a special white-earth mound (marked by a small spade), while behind him the kiln master checks the roaring kiln's peephole glowing bright; shelves of perfect vases above. Teal accent: the kiln peephole's glow. Upper third empty for a speech bubble.
+
+[v6] file=public/comics/h1u4l5/6.png (landscape 4:3, 스타일 C)
+Modern museum: a lit case displays the vine-patterned vase; a student stick figure admires it while a curator gestures proudly; through the window, a world-map wall panel with dotted trade lines connecting east and west (plain shapes). Teal accent: the vase's vine pattern. Upper third empty for a speech bubble.
+
+## ── 만화 h1u4l6 「파도를 그린 노인」 7컷 (스타일 C) ──
+## 등장인물 고정: HOKUSAI = 백발을 위로 묶은 깡마른 노화가 스틱맨(존엄+사랑스러운 괴짜 — 그림에만
+## 진심). PRINTER6 = 목판 인쇄공 스틱맨. TOWNIE = 에도 상인 스틱맨(개그). EU_PAINTER = 베레모의
+## 유럽 화가 스틱맨(열광). 판화 속 그림은 파도·산 형태만(글자 금지).
+
+[w0] file=public/comics/h1u4l6/0.png (landscape 4:3, 스타일 C)
+GAG: in the middle of moving house the old painter has stopped to sketch, sitting on his own luggage while the movers wait with a full cart, exchanging weary looks. An Edo street: HOKUSAI (wiry white-topknot elder) sits cross-legged on a bundle sketching intently on paper (abstract strokes); two mover stick figures lean on a loaded handcart behind, one checking an hourglass-like sandglass with a sigh; shop banners with plain patterns line the street. Teal accent: the sketch paper's wave curve. Upper third empty for two speech bubbles.
+
+[w1] file=public/comics/h1u4l6/1.png (landscape 4:3, 스타일 C)
+DIGNIFIED — artist at work, no gag. A small tatami studio at dawn: HOKUSAI kneels over a large sheet, brush poised, drawing a great claw-like wave curling over a tiny distant mountain (the composition clearly forming); ink dishes and brush pots around; through the window the real mountain peak floats on the horizon. Teal accent: the wave's crest line on the sheet. Upper third empty for a speech bubble.
+
+[w2] file=public/comics/h1u4l6/2.png (landscape 4:3, 스타일 C)
+A print workshop: three-stage assembly — a carver stick figure chisels the wave design into a woodblock, PRINTER6 rubs a paper over an inked block with a round pad, and a drying line holds identical wave prints in a row; HOKUSAI inspects one print with a magnifier. Teal accent: the wave shape on the drying prints. Upper third empty for a speech bubble.
+
+[w3] file=public/comics/h1u4l6/3.png (landscape 4:3, 스타일 C)
+GAG: the townsman agonizes between a bowl of noodles and a wave print that cost the same — holding one in each hand, drooling at both. A street stall pair: on one side a noodle vendor ladles steaming noodles, on the other a print seller fans out wave prints; TOWNIE (merchant stick figure) holds a noodle bowl in one hand and a print in the other, head swiveling, drool drop; a child tugs his sleeve pointing at the print. Teal accent: the print's wave. Upper third empty for two speech bubbles.
+
+[w4] file=public/comics/h1u4l6/4.png (landscape 4:3, 스타일 C)
+GAG: precious prints end up as wrapping paper — a packer casually crumples a wave print around a teacup while a stack of prints waits beside the porcelain crates. A packing house: a packer stick figure wraps porcelain cups in wave prints, stuffing them into a crate bound for a ship at the dock outside the window; one print sticks out of the crate's seam like a tail. Teal accent: the visible wave on the wrapping print. Upper third empty for a speech bubble.
+
+[w5] file=public/comics/h1u4l6/5.png (landscape 4:3, 스타일 C)
+GAG: unpacking his new teacups, the European painter discovers the crumpled wrapping, smooths it out — and freezes, then hugs it to his chest spinning with joy. A Paris-style studio: EU_PAINTER (beret painter stick figure) holds the smoothed wave print up to the light with trembling hands, eyes sparkling; the forgotten teacup rolls on the floor; easel and canvases behind. Teal accent: the wave on the print. Upper third empty for two speech bubbles.
+
+[w6] file=public/comics/h1u4l6/6.png (landscape 4:3, 스타일 C)
+Modern scene: a student stick figure wearing a T-shirt printed with the great wave stands in a museum gift shop holding a wave poster tube; postcards and mugs with the same wave fill the shelf; through the doorway, the framed original hangs in a gallery with visitors. Teal accent: the wave on the T-shirt. Upper third empty for a speech bubble.
+
+## ── 만화 h1u4l7 「모두의 황제」 7컷 (스타일 C) ──
+## 등장인물 고정: AKBAR = 둥근 터번에 짧은 수염의 무굴 황제 스틱맨(존엄·경청하는 온화함).
+## HINDU_ADV = 다른 모양의 두건을 쓴 힌두 신하 스틱맨(존엄). CLERK7 = 세금 장부 관리 스틱맨(개그).
+## 종교 학자들은 서로 다른 모자·복장으로만 구분 — 종교 상징물은 절대 그리지 않는다.
+
+[x0] file=public/comics/h1u4l7/0.png (landscape 4:3, 스타일 C)
+A Mughal palace terrace: young AKBAR (round-turban emperor) leans over a railing gazing down at a bustling market crowd where people wear clearly DIFFERENT hats and wraps (diverse but plain); behind him a vast wall map of the empire (plain shapes); his hand rests thoughtfully on his chin. Teal accent: the map's border. Upper third empty for a speech bubble.
+
+[x1] file=public/comics/h1u4l7/1.png (landscape 4:3, 스타일 C)
+GAG: ordered to strike out the special tax, the clerk's eyes bulge and he asks three times, quill frozen mid-air, while the emperor calmly nods each time. A records room: CLERK7 stands at a tall ledger stand, quill hovering over an open ledger of abstract entry rows, head snapped toward AKBAR with saucer eyes; AKBAR nods serenely with one confirming hand gesture; a second clerk drops a scroll in shock. Teal accent: the ledger's ribbon bookmark. Upper third empty for two speech bubbles.
+
+[x2] file=public/comics/h1u4l7/2.png (landscape 4:3, 스타일 C)
+DIGNIFIED — alliance celebration, no gag. A palace courtyard procession: a ceremonial palanquin arrives escorted by HINDU_ADV and welcomed by AKBAR who steps down from the dais himself, extending both hands; garland ropes of flowers span the courtyard; musicians with drums and long horns play. Teal accent: the flower garlands. Upper third empty for a speech bubble.
+
+[x3] file=public/comics/h1u4l7/3.png (landscape 4:3, 스타일 C)
+The debate hall at night: scholars in FOUR different styles of hats and robes sit in a circle on cushions, mid-lively-discussion with varied hand gestures; AKBAR sits among them (not above), chin on hand, listening intently; oil lamps on low tables. No religious symbols anywhere — only diverse clothing. Teal accent: one oil lamp's flame. Upper third empty for two speech bubbles.
+
+[x4] file=public/comics/h1u4l7/4.png (landscape 4:3, 스타일 C)
+A thriving market: bolt after bolt of patterned cotton cloth (abstract prints) change hands; a foreign merchant with a wide-brim hat loads cloth onto a ship at the dock edge; coins flow; children weave between stalls. Teal accent: one cotton bolt's pattern. Upper third empty for a speech bubble.
+
+[x5] file=public/comics/h1u4l7/5.png (landscape 4:3, 스타일 C)
+A palace art studio: two painter stick figures work on a large shared miniature-style page (abstract courtly scene of tiny figures and a garden — no letters), one painting fine details with a tiny brush, another grinding pigments; AKBAR observes delightedly pointing at a detail; pigment bowls in a rainbow row. Teal accent: one pigment bowl's contents. Upper third empty for a speech bubble.
+
+[x6] file=public/comics/h1u4l7/6.png (landscape 4:3, 스타일 C)
+A great shade tree on a hill at sunset: beneath it, figures wearing all the different hats from the story rest together — sharing water, chatting, a child asleep on a parent's lap; the empire's rooftops spread below the hill. Teal accent: a water jug passed between two figures. Upper third holds the tree crown (leave side space for a speech bubble).
+
+## ── 만화 h1u4l10 「망치 소리와 인쇄기」 7컷 (스타일 C) ──
+## 등장인물 고정: LUTHER = 소박한 수도사 로브의 학자 스틱맨(존엄 — 결연하되 희화 금지).
+## PRINTER10 = 가죽 앞치마 인쇄공 스틱맨(h1u3l10의 공방 후배 격). TOWNS10 = 시민 스틱맨들.
+## 성당은 건물 외관·문만, 십자가·성상·신앙 대상 절대 금지. 구교·신교 어느 쪽도 우스꽝·악역 금지.
+
+[y0] file=public/comics/h1u4l10/0.png (landscape 4:3, 스타일 C)
+A study at night: LUTHER (simple-robed scholar stick figure) sits at a candle-lit desk buried in open books and letters (abstract line rows), brow furrowed, quill paused; through the window a grand church facade with tall doors looms under the moon (plain building, no symbols). Teal accent: the candle flame. Upper third empty for a speech bubble.
+
+[y1] file=public/comics/h1u4l10/1.png (landscape 4:3, 스타일 C)
+DIGNIFIED — the famous posting, no gag. Morning at the church's tall wooden door: LUTHER nails up a long document sheet covered in many numbered-looking abstract row marks (strictly abstract, no letters or numerals), mallet raised mid-tap; two passing students stop and lean in curiously; pigeons scatter from the door's ledge. Teal accent: the document's top seal ribbon. Upper third empty for a speech bubble.
+
+[y2] file=public/comics/h1u4l10/2.png (landscape 4:3, 스타일 C)
+GAG: the print shop works so fast that sheets fly off the press like a paper blizzard and an apprentice skates across the floor on spilled pages. A print shop in overdrive: PRINTER10 hauls the press lever, sheets flying in an arc; an apprentice slides comically across scattered pages, arms windmilling; stacked bundles tied with string pile toward the ceiling; a rider stuffs bundles into saddlebags at the door. Teal accent: the fresh sheet mid-air. Upper third empty for two speech bubbles.
+
+[y3] file=public/comics/h1u4l10/3.png (landscape 4:3, 스타일 C)
+A town square: clusters of TOWNS10 read shared sheets aloud — one group nods vigorously, another shakes heads with crossed arms, a third debates with raised fingers over a barrel table; a sheet passes hand to hand overhead. Balanced, lively, no mockery of either side. Teal accent: the sheet passing overhead. Upper third empty for two speech bubbles.
+
+[y4] file=public/comics/h1u4l10/4.png (landscape 4:3, 스타일 C)
+DIGNIFIED — the parting of ways, no gag. A wide valley road forks around a gentle hill: two orderly processions of families walk each branch toward two church buildings on opposite slopes (both plain exteriors with towers, equally sized and dignified); between the roads, a shared well where a child from each side drinks together. Teal accent: the shared well's bucket. Upper third holds sky (leave space for a speech bubble).
+
+[y5] file=public/comics/h1u4l10/5.png (landscape 4:3, 스타일 C)
+DIGNIFIED — the peace table, no gag. A long negotiation hall: envoy stick figures with many different hats and sashes sit along both sides of a long table, each pressing a seal stamp onto a shared long treaty scroll (abstract seal marks); candles line the table center; aides exchange relieved nods behind. Teal accent: the treaty scroll's ribbon. Upper third empty for two speech bubbles.
+
+[y6] file=public/comics/h1u4l10/6.png (landscape 4:3, 스타일 C)
+Symbolic closing scene: the printing press stands center like a monument; from its bed a fan of printed sheets rises and splits into two gentle light streams flowing toward the two church silhouettes on the horizon, coexisting under one sky with birds crossing between them. Teal accent: the two light streams' edges. Upper third holds the streams and sky (leave side space for a speech bubble).
