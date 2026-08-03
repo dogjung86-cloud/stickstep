@@ -71,6 +71,9 @@ export const comic: StepRenderer = (host, step, api) => {
   host.append(dots, panelEl);
 
   let i = 0;
+  // 프레임 원비율 추종(2026-08-03): 첫 컷 로드에서 실측한 비율 — 한 만화 = 한 비율(폴더 균일)이라
+  // 이후 컷은 로드 전에 선적용돼 높이 점프가 없다. 로드 전 기본 예약은 CSS의 4:3.
+  let artRatio: string | null = null;
 
   function fallback(): HTMLElement {
     return el("div", { class: "comic-fallback", html: stickman() });
@@ -115,8 +118,16 @@ export const comic: StepRenderer = (host, step, api) => {
     const title = el("div", { class: "comic-title", html: p.title });
 
     const art = el("div", { class: "comic-art" });
+    if (artRatio) art.style.aspectRatio = artRatio;
     if (p.img) {
-      const img = el("img", { class: "comic-img", attrs: { src: base + p.img, alt: p.title, loading: "eager" } });
+      const img = el("img", { class: "comic-img", attrs: { src: base + p.img, alt: p.title, loading: "eager" } }) as HTMLImageElement;
+      const applyRatio = () => {
+        if (!img.naturalWidth || !img.naturalHeight) return;
+        artRatio = `${img.naturalWidth} / ${img.naturalHeight}`;
+        art.style.aspectRatio = artRatio;
+      };
+      if (img.complete) applyRatio();
+      else img.addEventListener("load", applyRatio, { once: true });
       img.addEventListener("error", () => {
         clear(art);
         art.classList.add("is-fallback");

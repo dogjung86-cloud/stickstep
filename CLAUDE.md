@@ -638,14 +638,13 @@ src/
 - 컷 전환은 rAF 아닌 reflow 기반(헤드리스에서도 항상 보이게). 스틱맨 캐릭터는 `stickman()`/`stickmanHead()`.
 
 ## 만화 컷 이미지 발주 (codex auth → ChatGPT 이미지 생성)
-- **[백로그 — 만화 프레임 원비율 추종(2026-07-20 사용자 확정, 미착수)]**: 현재 comic 스텝 프레임은
-  `.comic-art` aspect-ratio 1/1 + `.comic-img` cover라 4:3 발주분이 좌우 12.5%씩 잘린다. 실측(전
-  171컷): 4:3=108장(역사 13편+사회 장영실+u1l3·u7l3) / 1:1=63장(과학 초기 9편), **폴더별 비율 균일**
-  (한 만화 = 한 비율이라 컷 전환 높이 점프 없음). 확정 방향 = **프레임 고정 폐기, 이미지 원비율
-  추종(로드 전 기본 예약 4:3)** — 4:3 무크롭 + 1:1 구작 재발주 0. 딸린 작업: 역사·사회 만화
-  **panels[].bubbles의 x좌표 역변환 x_new = x_old×0.75+12.5**(y 불변 — 크롭 보정 공식의 역),
-  cut() 개념 컷 말풍선은 무관(이미 원비율), 눈검수는 shot-his1/2/3/4-bubbles + shot-soc7-bubbles
-  재실행. 완료 시 이 항목과 HIS_GUIDE.md의 "1:1 크롭 보정" 문구를 갱신할 것.
+- **만화 프레임 원비율 추종(2026-08-03 완료 — 구 1:1 고정 크롭 폐지)**: `.comic-art`는 로드 전
+  4:3 예약(폴백 프레임 겸)이고, comic.ts가 로드 후 naturalWidth/Height 실비율을 주입한다(한 만화 =
+  한 비율이라 첫 컷 이후 전환 높이 점프 없음). 4:3 발주분(역사 13편+사회 장영실+과학 u1l3·u2l1·u7l3)
+  무크롭 표시, 1:1 구작은 보이는 것 그대로(재발주 0). **panels[].bubbles 좌표는 이제 이미지 % =
+  프레임 %** — 구 크롭 보정 공식 x=(imgX−12.5)/0.75는 폐지됐고, 기존 저작분 116개는
+  x_new = x_old×0.75+12.5(y 불변)로 일괄 역변환 완료. cut() 개념 컷 말풍선은 원래 원비율이라 무관.
+  눈검수 = shot-his1/2/3/4-bubbles + shot-soc7-bubbles + shot-u2l1-bubbles.
 - **확정 방법**: `codex exec`로 codex의 **ChatGPT 내장 image_gen**을 씀(= codex/OpenAI 로그인 auth, **API 키 없음**).
   Google(ImageFX/Flow/Imagen/Gemini) 아님 — 그 경로는 네트워크·로그인 문제로 실패했음. 프롬프트에 "구글 금지" 명시할 것.
 - 실행: `codex exec --skip-git-repo-check -s danger-full-access -C <dir> - <<PROMPT`.
