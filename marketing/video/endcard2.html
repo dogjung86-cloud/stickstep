@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pretendard/1.3.9/variable/pretendardvariable-dynamic-subset.min.css" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; }
+  body {
+    font-family: "Pretendard Variable", Pretendard, sans-serif;
+    letter-spacing: -0.012em;
+    background:
+      radial-gradient(80% 55% at 50% 8%, rgba(110,168,255,.12) 0%, transparent 62%),
+      radial-gradient(120% 90% at 50% 10%, #10233C 0%, #0B1524 55%, #070F1C 100%);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+  }
+  .wrap { text-align: center; transform: translateY(-2vh); }
+  /* 스플래시 플립북 — 노는 스틱맨 다다다닥 → "공부하자!" 정착 */
+  .card {
+    width: 150px; height: 150px; border-radius: 32px; margin: 0 auto;
+    background: #fff; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 18px 44px rgba(2,8,20,.6), 0 0 0 1px rgba(126,166,255,.18), 0 0 44px rgba(110,168,255,.15);
+    opacity: 0; animation: pop .55s cubic-bezier(.34,1.35,.5,1) .12s forwards;
+  }
+  .card img { width: 126px; height: 126px; object-fit: contain; }
+  .name {
+    margin-top: 22px; font-size: 38px; font-weight: 900; color: #fff;
+    opacity: 0; animation: fadeUp .5s cubic-bezier(.22,1,.36,1) 1.62s forwards;
+  }
+  /* 발자국 타타닥 — 스플래시 stepMark(금 발자국 6개 + 깃발) 그대로 */
+  .feet { margin-top: 12px; display: flex; justify-content: center; }
+  .feet svg { width: 208px; height: 61px; overflow: visible; }
+  .ec-fp {
+    opacity: 0; transform-box: fill-box; transform-origin: center;
+    animation: stamp2 .26s cubic-bezier(.34,1.35,.5,1) forwards;
+  }
+  .ec-fp.f1 { animation-delay: 1.84s; } .ec-fp.f2 { animation-delay: 1.93s; }
+  .ec-fp.f3 { animation-delay: 2.02s; } .ec-fp.f4 { animation-delay: 2.11s; }
+  .ec-fp.f5 { animation-delay: 2.2s; } .ec-fp.f6 { animation-delay: 2.29s; }
+  .ec-flag {
+    opacity: 0; transform-box: fill-box; transform-origin: 20% 90%;
+    animation: flagPop .42s cubic-bezier(.34,1.35,.5,1) 2.44s forwards;
+  }
+  @keyframes stamp2 { 0% { opacity: 0; transform: scale(.5); } 100% { opacity: var(--o); transform: scale(1); } }
+  @keyframes flagPop { 0% { opacity: 0; transform: scale(.4) rotate(-14deg); } 100% { opacity: 1; transform: none; } }
+  .tag {
+    margin-top: 12px; font-size: 16.5px; font-weight: 600; color: #8FA0B5;
+    opacity: 0; animation: fadeUp .5s cubic-bezier(.22,1,.36,1) 2.72s forwards;
+  }
+  .cta {
+    display: inline-block; margin-top: 22px; font-size: 17px; font-weight: 800; color: #fff;
+    background: linear-gradient(180deg, #4A93F8 0%, #3182F6 100%);
+    padding: 15px 30px; border-radius: 999px;
+    box-shadow: 0 12px 30px rgba(49,130,246,.42), 0 0 0 1px rgba(126,168,255,.25);
+    opacity: 0; animation: pop .55s cubic-bezier(.34,1.35,.5,1) 3.0s forwards;
+  }
+  .url {
+    margin-top: 15px; font-size: 19px; font-weight: 800; color: #6EA8FF;
+    opacity: 0; animation: fadeUp .5s cubic-bezier(.22,1,.36,1) 3.32s forwards;
+  }
+  .note {
+    margin-top: 9px; font-size: 12px; font-weight: 500; color: #5D6C82;
+    opacity: 0; animation: fadeUp .5s cubic-bezier(.22,1,.36,1) 3.52s forwards;
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(13px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { 0% { opacity: 0; transform: translateY(16px) scale(.9); } 100% { opacity: 1; transform: none; } }
+  @keyframes stamp { 0% { opacity: 0; transform: translateY(-9px) scale(.55); } 100% { opacity: 1; transform: none; } }
+  /* 녹화 게이트 — __start() 호출 전에는 전 연출 정지 */
+  .card, .name, .ec-fp, .ec-flag, .tag, .cta, .url, .note { animation-play-state: paused; }
+  body.go .card, body.go .name, body.go .ec-fp, body.go .ec-flag, body.go .tag, body.go .cta, body.go .url, body.go .note { animation-play-state: running; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card"><img id="flip" src="/__app/brand/loading/0.webp" alt="" /></div>
+    <div class="name">스틱스텝</div>
+    <div class="feet">
+      <!-- 앱 스플래시·페이월 공용 stepMark(ui/stepMark.ts) 실물 — 금 발자국 6개 + 깃발 -->
+      <svg viewBox="0 0 136 40" fill="none" aria-hidden="true">
+        <defs><linearGradient id="ec-gold" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stop-color="#EFA32B"/><stop offset="1" stop-color="#FFCF4D"/>
+        </linearGradient></defs>
+        <g transform="translate(9 27) rotate(98) scale(1.45)"><g class="ec-fp f1" fill="url(#ec-gold)" style="--o:.55"><path d="M0,-5.6 C1.8,-5.6 3.2,-4.4 3.2,-2.6 C3.2,-0.8 2.5,0.8 1.7,1.4 C1.2,1.8 -1.2,1.8 -1.7,1.4 C-2.5,0.8 -3.2,-0.8 -3.2,-2.6 C-3.2,-4.4 -1.8,-5.6 0,-5.6 Z"/><rect x="-2" y="2.9" width="4" height="2.7" rx="1.35"/></g></g>
+        <g transform="translate(28 13) rotate(82) scale(1.45)"><g class="ec-fp f2" fill="url(#ec-gold)" style="--o:.64"><path d="M0,-5.6 C1.8,-5.6 3.2,-4.4 3.2,-2.6 C3.2,-0.8 2.5,0.8 1.7,1.4 C1.2,1.8 -1.2,1.8 -1.7,1.4 C-2.5,0.8 -3.2,-0.8 -3.2,-2.6 C-3.2,-4.4 -1.8,-5.6 0,-5.6 Z"/><rect x="-2" y="2.9" width="4" height="2.7" rx="1.35"/></g></g>
+        <g transform="translate(47 27) rotate(98) scale(1.45)"><g class="ec-fp f3" fill="url(#ec-gold)" style="--o:.73"><path d="M0,-5.6 C1.8,-5.6 3.2,-4.4 3.2,-2.6 C3.2,-0.8 2.5,0.8 1.7,1.4 C1.2,1.8 -1.2,1.8 -1.7,1.4 C-2.5,0.8 -3.2,-0.8 -3.2,-2.6 C-3.2,-4.4 -1.8,-5.6 0,-5.6 Z"/><rect x="-2" y="2.9" width="4" height="2.7" rx="1.35"/></g></g>
+        <g transform="translate(66 13) rotate(82) scale(1.45)"><g class="ec-fp f4" fill="url(#ec-gold)" style="--o:.82"><path d="M0,-5.6 C1.8,-5.6 3.2,-4.4 3.2,-2.6 C3.2,-0.8 2.5,0.8 1.7,1.4 C1.2,1.8 -1.2,1.8 -1.7,1.4 C-2.5,0.8 -3.2,-0.8 -3.2,-2.6 C-3.2,-4.4 -1.8,-5.6 0,-5.6 Z"/><rect x="-2" y="2.9" width="4" height="2.7" rx="1.35"/></g></g>
+        <g transform="translate(85 27) rotate(98) scale(1.45)"><g class="ec-fp f5" fill="url(#ec-gold)" style="--o:.91"><path d="M0,-5.6 C1.8,-5.6 3.2,-4.4 3.2,-2.6 C3.2,-0.8 2.5,0.8 1.7,1.4 C1.2,1.8 -1.2,1.8 -1.7,1.4 C-2.5,0.8 -3.2,-0.8 -3.2,-2.6 C-3.2,-4.4 -1.8,-5.6 0,-5.6 Z"/><rect x="-2" y="2.9" width="4" height="2.7" rx="1.35"/></g></g>
+        <g transform="translate(104 13) rotate(82) scale(1.45)"><g class="ec-fp f6" fill="url(#ec-gold)" style="--o:1"><path d="M0,-5.6 C1.8,-5.6 3.2,-4.4 3.2,-2.6 C3.2,-0.8 2.5,0.8 1.7,1.4 C1.2,1.8 -1.2,1.8 -1.7,1.4 C-2.5,0.8 -3.2,-0.8 -3.2,-2.6 C-3.2,-4.4 -1.8,-5.6 0,-5.6 Z"/><rect x="-2" y="2.9" width="4" height="2.7" rx="1.35"/></g></g>
+        <g class="ec-flag" fill="#E9EFF8">
+          <rect x="123" y="5" width="2.6" height="24" rx="1.3"/>
+          <path d="M125.6 6 H135 L131.3 9.6 L135 13.2 H125.6 Z"/>
+        </g>
+      </svg>
+    </div>
+    <div class="tag">손끝으로 배우는 중학 개념</div>
+    <div><span class="cta">지금 무료로 시작해 보세요</span></div>
+    <div class="url">stickstep.com</div>
+    <div class="note">최신 개정 교육과정 반영</div>
+  </div>
+<script>
+  // 스플래시 플립북: 0..13 다다다닥(85ms) → study.webp 정착. 전 프레임 프리로드 후 시작.
+  // /__app/* = compose.mjs 정적 서버가 app/public/으로 프록시하는 경로(dev 서버 포트 의존 제거)
+  const BASE = "/__app/brand/";
+  const SEQ = [...Array(14).keys()].map((i) => BASE + "loading/" + i + ".webp");
+  const STUDY = BASE + "study.webp";
+  const flip = document.getElementById("flip");
+  Promise.all([...SEQ, STUDY].map((src) => new Promise((ok) => { const im = new Image(); im.onload = ok; im.onerror = ok; im.src = src; })))
+    .then(() => { window.__ready = true; });
+  window.__start = () => {
+    document.body.classList.add("go");
+    let k = 0;
+    const t = setInterval(() => {
+      if (k < SEQ.length) { flip.src = SEQ[k]; k += 1; }
+      else { flip.src = STUDY; clearInterval(t); }
+    }, 85);
+  };
+</script>
+</body>
+</html>

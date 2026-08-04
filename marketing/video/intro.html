@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pretendard/1.3.9/variable/pretendardvariable-dynamic-subset.min.css" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; }
+  body {
+    font-family: "Pretendard Variable", Pretendard, sans-serif;
+    letter-spacing: -0.012em;
+    background: radial-gradient(120% 90% at 50% 8%, #12233E 0%, #0B1524 58%, #081020 100%);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+  }
+  .dot { position: absolute; border-radius: 50%; background: #7EA6FF; filter: blur(1px); opacity: 0; animation: twinkle 3.2s ease-in-out infinite; }
+  .dot::after { content: ""; position: absolute; inset: -8px; border-radius: 50%; background: radial-gradient(circle, rgba(126,166,255,.5), transparent 70%); }
+  @keyframes twinkle { 0%,100% { opacity: .15; } 50% { opacity: .8; } }
+  .wrap { text-align: center; transform: translateY(-4vh); }
+
+  /* 1) 아무 것도 없다가 "보는 과학"만 가운데 크게 → 2) 줄어들며 왼쪽으로 */
+  .l1 {
+    font-size: 29px; font-weight: 700; color: rgba(255,255,255,.7); white-space: nowrap;
+    opacity: 0;
+    animation:
+      lineIn .45s cubic-bezier(.34,1.35,.5,1) .15s both,
+      lineShrink .5s cubic-bezier(.22,1,.36,1) 1.05s forwards;
+  }
+  @keyframes lineIn { from { opacity: 0; transform: translateX(8%) scale(1.9); } to { opacity: 1; transform: translateX(8%) scale(1.9); } }
+  @keyframes lineShrink { from { transform: translateX(8%) scale(1.9); } to { transform: translateX(0) scale(1); } }
+  .s1 { position: relative; display: inline-block; }
+  /* 3) "말고" 등장 + 빨간 줄 */
+  .s2 { opacity: 0; animation: fadeIn .3s ease 1.42s forwards; }
+  .s1::after {
+    content: ""; position: absolute; left: -4%; right: -4%; top: 54%; height: 3.5px;
+    background: #F04452; border-radius: 2px; transform: scaleX(0); transform-origin: left center;
+    animation: strike .34s cubic-bezier(.22,1,.36,1) 1.52s forwards;
+  }
+  /* 4) 만져 보는 과학 */
+  .l2 {
+    margin-top: 16px; color: #fff; font-size: 42px; font-weight: 900; line-height: 1.25;
+    opacity: 0; animation: pop .62s cubic-bezier(.34,1.35,.5,1) 1.92s forwards;
+  }
+  .l2 b { color: #6EA8FF; }
+  @keyframes strike { to { transform: scaleX(1); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes pop { 0% { opacity: 0; transform: translateY(20px) scale(.92); } 100% { opacity: 1; transform: none; } }
+  /* 녹화 게이트 — rec.start 후 body.go가 붙어야 연출 시작(로드 시점 선주행 방지) */
+  .l1, .s2, .s1::after, .l2 { animation-play-state: paused; }
+  body.go .l1, body.go .s2, body.go .s1::after, body.go .l2 { animation-play-state: running; }
+</style>
+</head>
+<body>
+  <div class="dot" style="left:18%;top:22%;width:5px;height:5px;animation-delay:.2s"></div>
+  <div class="dot" style="left:78%;top:18%;width:4px;height:4px;animation-delay:1.1s"></div>
+  <div class="dot" style="left:66%;top:64%;width:6px;height:6px;animation-delay:.6s"></div>
+  <div class="dot" style="left:26%;top:72%;width:4px;height:4px;animation-delay:1.6s"></div>
+  <div class="dot" style="left:50%;top:34%;width:3px;height:3px;animation-delay:2.1s"></div>
+  <div class="wrap">
+    <div class="l1"><span class="s1">보는 과학</span><span class="s2"> 말고</span></div>
+    <div class="l2"><b>만져 보는</b> 과학</div>
+  </div>
+</body>
+</html>
