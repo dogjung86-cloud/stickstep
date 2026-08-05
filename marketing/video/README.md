@@ -20,6 +20,11 @@
 - v7.3(같은 날): **달 카드 무대 밀림 제거** — 6.1s에 마지막 목표(상현) 달성으로 안내문이 2줄→5줄이
   되며 무대가 115px 내려갔다(사용자 지적). 궤도 드래그는 6.0s에 완주하므로 rebuild-beats에서
   **원속을 5.9s로 캡**(SEQ 4번째 값)하고 배속을 1.75→1.3으로 낮춰 카드 길이를 유지. 총 49.0→47.9초.
+- 2026-08-06(오디오·호환 패치 — 러닝타임·화면 불변): ① **전 산출물 yuvj444p→yuv420p** —
+  더블클릭(윈도우 기본 플레이어) 녹색 글리치 수정. edges xfade 협상 누수가 원인(아래 함정 12),
+  구버전 보존본 v1~v6도 전량 재인코딩. ② **BGM 전면 교체** — 코스모 머지 '행성 시대' 유용 폐기
+  (게임용 8비트 치프튠이라 "음악이 이상하다" 사용자 피드백), 전용 발주 48초 원샷곡 `audio/bgm-edu-a.mp3`
+  기본(후보 B 동봉). ③ **효과음 13개 신설** — 발주·배치는 아래 §2.5.
 사용자 로컬 산출물은 `D:\Brilliant Science\output\marketing-video\`
 (`stickstep-marketing-9x16.mp4` = 최신, `-v1-79s` … `-v6-62s` = 구버전 보존,
 `gif-*.gif` **5종**(2026-08-05 재제작 — 구판은 `-v1.gif`로 보존, 아래 §3.5)).
@@ -85,8 +90,11 @@
 ① capture.mjs   앱을 헤드리스로 실제 조작하며 스크린캐스트 → cap/<beat>/f*.jpg + times.json
 ② rebuild-beats.mjs   cap/ → beats-raw/*.mp4 (자막·손가락 없는 원속 영상, 30fps CFR)
 ③ compose.mjs   beats-raw를 폰 목업 안에서 배속 재생하며 재촬영 → cap2/c-*/
-④ assemble2.mjs  cap + cap2 → beats2/*.mp4 → 밴드 분할 전환 연결 → BGM → out/stickstep-marketing-9x16.mp4
+④ assemble2.mjs  cap + cap2 → beats2/*.mp4 → 밴드 분할 전환 연결 → BGM+효과음 → out/stickstep-marketing-9x16.mp4
 ```
+
+④는 `audio/*.mp3`(BGM 2곡+효과음 5종)가 있어야 돈다 — 없으면 `XI_KEY=<키> node gen-audio.mjs`로
+1회 발주(있으면 skip, 재발주는 해당 mp3 삭제 또는 --force. 키는 env로만 — 리포 저장 금지).
 
 `make-gifs.mjs`는 ② 뒤에 언제든 돌릴 수 있다(beats-raw에서 다크 무대만 크롭 → out/gifs/, 아래 §5).
 `check-safezone.mjs`는 ④ 뒤에 돌린다(인스타 세이프 존 기계 판정 — 위 §1 규격, 실패 시 exit 1).
@@ -108,8 +116,31 @@ node assemble2.mjs
 - 한 비트만 다시: `BEAT=moon` (capture·compose 공통, 쉼표 구분).
   키 = `intro enter exam notebook heat matter boyle moon laser quiz` (+ compose는 `end`).
 - 카피만 고칠 때는 **③④만** 다시 돌리면 된다(2분). 캡처는 그대로 재사용.
-- BGM 교체는 `BGM=<mp3 경로> node assemble2.mjs`. 기본값은 코스모 머지 '행성 시대'
-  (`public/game/cosmo/bgm-planets.mp3` — 일레븐랩스 자체 발주 자산).
+- BGM 교체는 `BGM=<mp3 경로> node assemble2.mjs`. 기본값은 전용 발주곡 `audio/bgm-edu-c.mp3`
+  (모던 테크 프로모 톤), 대안 후보는 `BGM=audio/bgm-edu-d.mp3`(신스팝, 더 통통 튐).
+  구 기본값이던 코스모 머지 '행성 시대' 유용은 2026-08-06 폐기(게임 BGM 재사용 금지 — 영상 전용곡만).
+
+### 2.5 오디오 (2026-08-06 — 발주 gen-audio.mjs · 배치 assemble2.mjs EVENTS 표가 정본)
+
+- **BGM**: 모던 테크 프로모/신스팝 톤 48초 원샷곡 — 게임 BGM과 달리 루프 굽기 없음(길이가
+  영상과 1:1, 마지막 3초 페이드는 조립 몫). **c(테크 프로모) 확정**(2026-08-06 사용자 —
+  더 신나는 e(124BPM 드라이빙)까지 비교 후 c 잔류), d(신스팝)·e는 후보 보존.
+  ⚠ 초판 a·b(마림바·글로켄슈필·우쿨렐레·'kids' 계열 프롬프트)는 **유아틱 판정 폐기**(2026-08-06
+  사용자 — 타깃은 중학생: 앱 런칭 필름처럼 세련된 톤이 정답, 유아 악기 어휘 재발주 금지.
+  원본 mp3는 리포 제외 — output/marketing-video/ 로컬 보존).
+  8비트 치프튠도 금지(게임 정체성 유용이 초대 "음악 이상함" 피드백의 원인).
+- **효과음 5종 × 13배치**: swish(밴드 분할 전환 ×7 + 인트로 취소선), rise(풀프레임 slideup ×2),
+  pop("만져 보는 과학" 팝), steps(엔드카드 발자국 타타닥), tada(깃발 팝 팬페어).
+- **배치 시각은 전부 계산 파생**(눈대중 0): 전환 = xfade 오프셋 그대로, 인트로·엔드카드 내부 연출 =
+  해당 html의 animation-delay 실측 + 캡처 게이트 지연 LAT 0.1s(인트로는 시작 트림 0.2s도 차감).
+  intro/endcard2.html의 연출 타이밍을 바꾸면 EVENTS 표의 해당 줄도 함께 옮길 것.
+  검증법 = 이벤트 시각 ±0.2s 프레임 추출해 화면 비트와 대조(2026-08-06 3점 검증: 밴드 전환 중간·
+  발자국 3개째·깃발 완료 전부 일치).
+- 믹스: BGM loudnorm **I=-22**(초판 −15 → "BGM 소리 너무 큼" 2회 하향 −19 → −22, 2026-08-06 —
+  효과음도 ×0.75→×0.85 누적 동반 하향해 0.26~0.42) → adelay 오버레이 → amix normalize=0 →
+  alimiter 0.89(합산 클리핑 방지 — 0.95는 AAC 오버슈트로 피크가 0.0dBFS에 닿았다, 실측).
+  효과음이 묻히거나 튀면 EVENTS 표의 vol만, 전체 음량은 loudnorm I만 조정.
+  출하 검사 = volumedetect로 max_volume이 −0.3dB 아래인지 확인.
 
 ## 3. 반드시 알아야 할 함정 (전부 실사고)
 
@@ -138,6 +169,12 @@ node assemble2.mjs
     (`completeLesson` 후 `nav.reset`). 걷기 1회 = 고정 2.1초.
 11. 동시 세션이 `src`를 저장하면 HMR 풀리로드로 캡처가 깨진다 →
     capture.mjs가 `@vite/client` 스텁을 물려 둔다(그대로 유지할 것).
+12. **xfade 체인 끝엔 `format=yuv420p`를 반드시 명시** — 입력 beats가 전부 420이어도 xfade
+    다중 체인은 필터 협상이 4:4:4로 승격해 최종본이 yuvj444p로 인코딩된다(2026-08-06 실사고:
+    윈도우 기본 플레이어(하드웨어 디코더)가 4:4:4 미지원이라 **더블클릭하면 녹색 글리치** —
+    브라우저는 SW 디코딩이라 멀쩡해 보여 발견이 늦었다). assemble2 edges 단계의 format을
+    지우지 말 것. 출하 전 검사 = `ffprobe -select_streams v:0 -show_entries stream=pix_fmt`
+    → `yuvj420p`여야 한다(444가 보이면 실격).
 
 ## 3.5 GIF 짤 (유튜브 커뮤니티·SNS) — `make-gifs.mjs`
 

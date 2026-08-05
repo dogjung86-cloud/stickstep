@@ -83,9 +83,12 @@ for (let i = 0; i < CARDS.length; i++) {
      + `[bs${i}]crop=1080:${1920 - SPLIT_Y}:0:${SPLIT_Y}[b${i}];`;
 }
 // 위·아래 체인은 offset·duration이 완전히 같아야 vstack에서 길이가 맞는다 — 전환 종류만 다르게.
+// cardOffs = 카드 체인 로컬 기준 각 밴드 전환 시작 시각(초) — 아래 효과음 배치가 재사용한다.
+const cardOffs = [];
 let top = "[t0]", bot = "[b0]", acc = cardDurs[0];
 for (let i = 1; i < CARDS.length; i++) {
   const off = (acc - XF_CARD).toFixed(3);
+  cardOffs.push(acc - XF_CARD);
   const tOut = i === CARDS.length - 1 ? "[tv]" : `[tx${i}]`;
   const bOut = i === CARDS.length - 1 ? "[bv]" : `[bx${i}]`;
   f += `${top}[t${i}]xfade=transition=slideleft:duration=${XF_CARD}:offset=${off}${tOut};`;
@@ -106,19 +109,56 @@ const dIntro = probeDur(INTRO), dCards = probeDur(CARDS_MP4);
 const off1 = (dIntro - XF_EDGE).toFixed(3);
 const off2 = (dIntro - XF_EDGE + dCards - XF_EDGE).toFixed(3);
 const NOAUDIO = path.join(OUT, "v7-noaudio.mp4");
+// 끝의 format=yuv420p는 필수 — xfade 체인만 두면 필터 협상이 4:4:4로 승격해 최종본이
+// yuvj444p가 되고, 윈도우 기본 플레이어(하드웨어 디코더)에서 녹색 글리치가 난다(2026-08-06 실사고.
+// beats·cards가 420이어도 이 단계에서 새로 샌다 — 지우지 말 것).
 ff(["-i", INTRO, "-i", CARDS_MP4, "-i", END, "-filter_complex",
     `[0:v][1:v]xfade=transition=slideup:duration=${XF_EDGE}:offset=${off1}[x1];` +
-    `[x1][2:v]xfade=transition=slideup:duration=${XF_EDGE}:offset=${off2}[vout]`,
+    `[x1][2:v]xfade=transition=slideup:duration=${XF_EDGE}:offset=${off2},format=yuv420p[vout]`,
     "-map", "[vout]", "-c:v", "libx264", "-crf", "17", "-preset", "medium",
     "-movflags", "+faststart", NOAUDIO], "edges");
 const total = probeDur(NOAUDIO);
 console.log("본편 길이:", total.toFixed(2) + "s");
 
-// ── 3) BGM = 코스모 머지 '행성 시대'(일레븐랩스 자체 발주 자산) — BGM 환경변수로 교체 가능 ──
-const BGM = process.env.BGM || path.join(__dirname, "..", "..", "public", "game", "cosmo", "bgm-planets.mp3");
+// ── 3) 오디오 = 전용 BGM + 효과음(둘 다 일레븐랩스 발주 — gen-audio.mjs, audio/) ──
+// BGM 기본값은 audio/bgm-edu-c.mp3(모던 테크 프로모 톤 48초 전용곡 — 구 코스모 머지 '행성 시대'
+// 유용 폐기(2026-08-06), a·b는 유아틱 판정 폐기(같은 날 — gen-audio.mjs 주석 참조)).
+// 후보 D로 바꿔 보려면 BGM=audio/bgm-edu-d.mp3 node assemble2.mjs.
+const AUDIO = path.join(__dirname, "audio");
+const BGM = process.env.BGM || path.join(AUDIO, "bgm-edu-c.mp3");
+
+// 효과음 배치표. 전환 시각은 위 xfade 오프셋 계산에서 그대로 파생(절대 초) — 눈대중 금지.
+//  · off1/off2 = 풀프레임 slideup 시작, cardOffs = 밴드 분할 전환 시작(카드 체인 로컬 → +off1)
+//  · 인트로·엔드카드 내부 연출 시각은 intro.html/endcard2.html의 animation-delay 실측값.
+//    LAT 0.1 = rec.start 뒤 body.go 게이트가 붙기까지의 캡처 지연 보정(함정 ③ 참조),
+//    인트로는 SEQ 시작 트림 0.2초도 빼야 한다.
+// 볼륨(2026-08-06 사용자 "BGM 소리 너무 큼" 2회 하향): BGM 라우드니스 −15→−19→−22 LUFS,
+// 효과음은 상대 균형 유지를 위해 ×0.75→×0.85 누적 동반 하향. 더 줄일 땐 loudnorm I만 내리면 된다.
+const LAT = 0.1;
+const EVENTS = [
+  { f: "sfx-swish", t: 1.02 - 0.2 + LAT, vol: 0.26 },           // 인트로: 빨간 취소선
+  { f: "sfx-pop",   t: 1.36 - 0.2 + LAT, vol: 0.38 },           // 인트로: "만져 보는 과학" 팝
+  { f: "sfx-rise",  t: parseFloat(off1), vol: 0.32 },           // 인트로 → 첫 카드 slideup
+  ...cardOffs.map((t) => ({ f: "sfx-swish", t: t + parseFloat(off1), vol: 0.32 })), // 밴드 분할 ×7
+  { f: "sfx-rise",  t: parseFloat(off2), vol: 0.32 },           // 마지막 카드 → 엔드카드 slideup
+  { f: "sfx-steps", t: parseFloat(off2) + 1.84 + LAT, vol: 0.35 }, // 엔드카드: 발자국 타타닥
+  { f: "sfx-tada",  t: parseFloat(off2) + 2.44 + LAT, vol: 0.42 }, // 엔드카드: 깃발 팝
+];
+for (const e of EVENTS) {
+  if (!fs.existsSync(path.join(AUDIO, `${e.f}.mp3`))) throw new Error(`효과음 없음: audio/${e.f}.mp3 — XI_KEY=<키> node gen-audio.mjs 먼저`);
+}
+
 const FINAL = path.join(OUT, "stickstep-marketing-9x16.mp4");
-ff(["-i", NOAUDIO, "-stream_loop", "-1", "-i", BGM,
-    "-filter_complex", `[1:a]volume=0.85,afade=t=in:d=0.9,afade=t=out:st=${(total - 3.0).toFixed(2)}:d=3.0,loudnorm=I=-15:TP=-1.5:LRA=11[aout]`,
+const aIn = ["-i", NOAUDIO, "-stream_loop", "-1", "-i", BGM];
+for (const e of EVENTS) aIn.push("-i", path.join(AUDIO, `${e.f}.mp3`));
+let af = `[1:a]loudnorm=I=-22:TP=-1.5:LRA=11,volume=0.9,afade=t=in:d=0.6,afade=t=out:st=${(total - 3.0).toFixed(2)}:d=3.0[bg];`;
+EVENTS.forEach((e, i) => {
+  const ms = Math.round(e.t * 1000);
+  af += `[${i + 2}:a]volume=${e.vol},adelay=${ms}|${ms}[s${i}];`;
+});
+af += `[bg]${EVENTS.map((_, i) => `[s${i}]`).join("")}amix=inputs=${EVENTS.length + 1}:duration=first:normalize=0,alimiter=limit=0.89[aout]`;
+ff([...aIn, "-filter_complex", af,
     "-map", "0:v", "-map", "[aout]", "-c:v", "copy", "-c:a", "aac", "-b:a", "160k", "-shortest", "-movflags", "+faststart",
-    FINAL], "bgm");
-console.log("최종 →", FINAL, probeDur(FINAL).toFixed(2) + "s");
+    FINAL], "audio");
+console.log("최종 →", FINAL, probeDur(FINAL).toFixed(2) + "s",
+  "· 전환 효과음", EVENTS.length + "개 · BGM", path.basename(BGM));
