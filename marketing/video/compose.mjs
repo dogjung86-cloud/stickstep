@@ -76,26 +76,30 @@ const rec = {
 };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// 비트 정의 — [키, 소스 mp4, 배속, 칩, 헤드라인, 강조어, 서브, 글로우]
+// 비트 정의 — [키, 소스 mp4, 배속, 칩, 헤드라인, 강조어, 서브, 글로우, 옵션?]
+// 옵션: { preRoll, src2/rate2(한 카드 두 랩 연속 재생 — 컴포지터 v2), hs(헤드 px — 한 줄 카피 축소) }
+// 헤드라인은 기본 2줄("|" 강제 줄갈이) — laser·notebook만 의도적 한 줄(2026-08-05 사용자 확정 카피).
 const BEATS = [
-  ["enter", "b0b-enter", 1.3, "중1·중2 과학 · 수학", "게임처럼 한 스텝 한 스텝|공부를 정복해요!", "정복", "레슨부터 단원 종합 평가까지, 한 지도에서", "rgba(255,138,92,.16)"],
-  ["heat", "b1-heat", 1.8, "중1 과학 · 열", "과학을 손끝으로 직접 만져 봐요", "손끝", "슬라이더를 밀면 입자 운동이 보여요", "rgba(255,138,92,.15)"],
-  ["matter", "b2-matter", 1.85, "중1 과학 · 물질의 상태 변화", "교과서 속 그림을 눈앞에서 생생하게!", "생생하게", "얼음이 녹고 끓는 전 과정을 직접 조작해요", "rgba(124,107,255,.17)"],
-  ["boyle", "b3-boyle", 1.85, "중1 과학 · 기체의 성질", "실험실이 내 손안에서 펼쳐지는 학습앱!", "내 손안", "피스톤을 누르면 그래프가 실시간으로 그려져요", "rgba(110,168,255,.17)"],
-  ["moon", "b4-moon", 1.75, "중1 과학 · 3D 우주 랩", "그림으로 외우던 걸 3D로 돌려 봐요", "3D", "달을 끌면 위상이 변하는 이유가 보여요", "rgba(74,84,225,.2)"],
-  ["laser", "b5-laser", 1.85, "중2 과학 · 빛과 파동", "법칙은 외우지 않고 발견해요", "발견", "레이저를 돌리면 반사 법칙이 손에 잡혀요", "rgba(46,204,134,.15)"],
-  ["color", "b6-color", 1.9, "중2 과학 · 빛의 삼원색", "직접 익힌 개념은 오래 기억돼요", "오래 기억", "세 가지 빛을 겹쳐 흰색을 직접 만들어요", "rgba(200,56,166,.16)"],
-  ["comic", "b7-comic", 1.5, "과학사 스토리", "개념은 만화로 재밌게 잡아요", "만화", "뉴턴의 사과에서 중력까지 이야기로", "rgba(255,183,77,.14)"],
+  ["enter", "b0b-enter", 1.3, "중1·중2 과학 · 수학", "한 스텝 한 스텝|소단원들을 정복하고,", "정복", "레슨부터 단원 종합 평가까지, 한 지도에서", "rgba(255,138,92,.16)"],
+  ["heat", "b1-heat", 1.8, "중1 과학 · 열", "과학을 손끝으로|직접 만져 봐요", "손끝", "슬라이더를 밀면 입자 운동이 보여요", "rgba(255,138,92,.15)"],
+  // lab2 = 구 matter+boyle 카드 통합(2026-08-05 사용자 지시 — 보일 카피 삭제, 랩 영상은 흡수·각각 배속 업)
+  ["lab2", "b2-matter", 2.4, "중1 과학 · 물질의 상태 변화 · 기체", "교과서 속 그림을|눈앞에서 생생하게!", "생생하게", "얼음 녹이기부터 압력 그래프까지 직접 조작해요", "rgba(124,107,255,.17)", { src2: "b3-boyle", rate2: 2.4 }],
+  // moon 배속 1.75→1.3: 원속을 5.9s로 잘라(무대 밀림 차단, rebuild-beats 주석) 카드 길이를 유지
+  ["moon", "b4-moon", 1.3, "중1 과학 · 3D 우주 랩", "그림으로 외우던 걸|3D로 돌려 보고", "3D", "달을 끌면 위상이 변하는 이유가 보여요", "rgba(74,84,225,.2)"],
+  ["laser", "b5-laser", 1.85, "중2 과학 · 빛과 파동", "법칙은 외우지 않고 발견해요!", "발견", "레이저를 돌리면 반사 법칙이 손에 잡혀요", "rgba(46,204,134,.15)", { hs: 24 }],
+  // color(빛의 삼원색)·comic(과학사 만화) 비트는 v7에서 제거(2026-08-05) — 복원은 git 8960e20 참조
   ["quiz", "b8-quiz", 1.6, "확실한 피드백", "왜 맞았는지까지 짚어 줘요", "왜", "오답엔 오개념을 바로잡는 해설까지", "rgba(4,180,95,.15)"],
-  ["exam", "bE-exam", 1.55, "단원 종합 평가", "배운 단원은 종합 평가로 마무리해요", "종합 평가", "실전처럼 풀고, 약한 소단원까지 진단해요", "rgba(110,168,255,.16)"],
-  ["notebook", "bN-note", 1.5, "오답노트", "틀린 문제는 자동으로 모여요", "자동", "다시 풀어 맞히면 해결 완료", "rgba(255,183,77,.15)"],
+  ["exam", "bE-exam", 1.55, "단원 종합 평가", "배운 단원은|종합 평가로 마무리하고", "종합 평가", "실전처럼 풀고, 약한 소단원까지 진단해요", "rgba(110,168,255,.16)"],
+  ["notebook", "bN-note", 1.5, "오답노트", "틀린 문제는 오답노트에서 다시 봐요!", "오답노트", "다시 풀어 맞히면 해결 완료", "rgba(255,183,77,.15)", { hs: 19 }],
 ];
 
 const runOn = (k) => !ONLY.length || ONLY.includes(k);
 
-for (const [key, src, rate, chip, head, acc, sub, glow, preRoll] of BEATS) {
+for (const [key, src, rate, chip, head, acc, sub, glow, opts = {}] of BEATS) {
   if (!runOn(key)) continue;
   const q = new URLSearchParams({ v: `/beats-raw/${src}.mp4`, chip, head, acc, sub, glow });
+  if (opts.src2) { q.set("v2", `/beats-raw/${opts.src2}.mp4`); q.set("rate2", String(opts.rate2 ?? 1.8)); }
+  if (opts.hs) q.set("hs", String(opts.hs));
   await page.goto(`http://127.0.0.1:${PORT}/compositor.html?${q}`, { waitUntil: "networkidle" });
   await page.evaluate(() => document.fonts.ready);
   await page.waitForFunction(() => window.__ready === true, { timeout: 20000 });
@@ -103,7 +107,7 @@ for (const [key, src, rate, chip, head, acc, sub, glow, preRoll] of BEATS) {
   await page.evaluate(() => window.__reveal());
   await sleep(1450);
   await rec.start(`c-${key}`);
-  await sleep(preRoll ?? 200);
+  await sleep(opts.preRoll ?? 200);
   await page.evaluate((r) => window.__go(r), rate);
   await page.waitForFunction(() => window.__ended === true, { timeout: 60000 });
   await sleep(1000);

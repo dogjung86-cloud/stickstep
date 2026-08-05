@@ -25,7 +25,9 @@ const VITE_STUB = {
   body: "export const createHotContext=()=>({accept(){},dispose(){},prune(){},on(){},send(){}});export function updateStyle(id,css){let s=document.querySelector(`style[data-vite-dev-id=\"${id}\"]`);if(!s){s=document.createElement('style');s.setAttribute('data-vite-dev-id',id);document.head.appendChild(s)}s.textContent=css}export function removeStyle(){}export function injectQuery(u){return u}",
 };
 
-const DONE_IDS = ["u3l1", "u4l2", "u6l2", "u7l5", "g2u3l1", "g2u3l6"];
+// 시딩 완료 처리 = player.ts freeNav → 헤더 앞으로 가기(.xbtn.fwd)가 생겨 랩 스텝으로 점프할 수 있다.
+// GIF 전용 랩(g2u3l7·g2u4l2·g2u4l3)도 여기 없으면 fwdTo가 동작하지 않는다.
+const DONE_IDS = ["u3l1", "u4l2", "u6l2", "u7l5", "g2u3l1", "g2u3l6", "g2u3l7", "g2u4l2", "g2u4l3", "g2u5l1"];
 
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 
@@ -239,6 +241,31 @@ const box = async (page, sel) => {
   return b;
 };
 
+// 글자로 버튼 찾아 탭 — 조작이 버튼인 랩(분자·원자 조립소)용
+const tapText = async (page, sel, re, settle = 420) => {
+  const b = await page.locator(`.screen.active ${sel}`).filter({ hasText: re }).first().boundingBox();
+  if (!b) throw new Error("no button " + re);
+  await tap(page, b.x + b.width / 2, b.y + b.height / 2, { settle });
+};
+
+// 스테퍼 + 버튼 n번 (원자 조립소: 행 0=양성자 1=중성자 2=전자, .ck-btn 마지막이 "+")
+const stepPlus = async (page, row, n, settle = 300) => {
+  for (let k = 0; k < n; k++) {
+    const b = await page.locator(`.screen.active .ck-steppers .ck-step`).nth(row).locator(".ck-btn").last().boundingBox();
+    if (!b) throw new Error("no stepper row " + row);
+    await tap(page, b.x + b.width / 2, b.y + b.height / 2, { settle });
+  }
+};
+
+// 랩 스텝으로 점프 — 스텝 배열에서 타입으로 인덱스를 찾는다(콘텐츠가 바뀌어도 안 깨짐)
+const toLab = async (page, lessonId, type) => {
+  const types = await jump(page, lessonId);
+  if (!types) throw new Error("레슨 없음 " + lessonId);
+  const i = types.indexOf(type);
+  if (i < 0) throw new Error(`${lessonId}에 ${type} 스텝이 없음: ${types.join(",")}`);
+  await fwdTo(page, i);
+};
+
 // ═══════════════ 비트 정의 ═══════════════
 const BEATS = {};
 
@@ -262,6 +289,149 @@ BEATS.heat = async (page, rec) => {
   await sleep(1500);
   await rec.stop();
   await caption(page, null);
+};
+
+// ── GIF 전용 왕복 비트(2026-08-05 사용자 지시 "갔다 왔다까지 왕복으로") ──
+// 영상 본편은 한 방향 드래그가 리듬에 맞아 그대로 두고, GIF만 별도 캡처한다
+// (본편 비트를 늘리면 카드 길이·전체 러닝타임이 함께 변한다). 산출 = cap/b1r-heat, cap/b2r-matter.
+
+// b1r — 입자 운동 왕복 (u3l1 heatParticles): 차갑게 → 끝까지 뜨겁게 → 다시 끝까지 차갑게 → 중간
+BEATS.heatrt = async (page, rec) => {
+  await jump(page, "u3l1");
+  await fwdTo(page, 1);
+  await sleep(1100);
+  await frameOn(page, ".stage", 0.42);
+  await rec.start("b1r-heat");
+  await sleep(500);
+  const s = await box(page, ".hp-slider");
+  const y = s.y + s.height / 2;
+  const at = (f) => ({ x: s.x + s.width * f, y });
+  await drag(page, [
+    at(0.18),
+    { ...at(0.98), steps: 40, hold: 900 },  // 뜨겁게 — 입자 빨라지고 간격 벌어짐
+    { ...at(0.05), steps: 46, hold: 900 },  // 다시 차갑게 — 되돌아오는 게 보여야 함
+    { ...at(0.55), steps: 24, hold: 400 },
+  ]);
+  await sleep(700);
+  await rec.stop();
+};
+
+// b2r — 상태 변화 왕복 (u4l2 matterTemp): 얼음 → 융해 → 끓음 → 융해 → 다시 얼음
+BEATS.matterrt = async (page, rec) => {
+  await jump(page, "u4l2");
+  await fwdTo(page, 1);
+  await sleep(1300);
+  await frameOn(page, ".stage", 0.42);
+  await rec.start("b2r-matter");
+  await sleep(500);
+  const s = await box(page, ".slider");
+  const y = s.y + s.height / 2;
+  const at = (f) => ({ x: s.x + s.width * f, y });
+  await drag(page, [
+    at(0.04),
+    { ...at(0.42), steps: 30, hold: 700 },  // 융해
+    { ...at(0.97), steps: 34, hold: 800 },  // 끓음
+    { ...at(0.42), steps: 30, hold: 500 },  // 되돌아오는 길
+    { ...at(0.04), steps: 26, hold: 800 },  // 다시 얼음
+  ]);
+  await sleep(700);
+  await rec.stop();
+};
+
+// b6r — 빛의 삼원색 (g2u3l6 colorMixLab): 빨강·초록·파랑을 겹쳐 노랑→자홍→청록→흰색
+// 조작부 없음(캔버스 드래그가 전부) → GIF는 무대만 크롭.
+BEATS.colorgif = async (page, rec) => {
+  await toLab(page, "g2u3l6", "colorMixLab");
+  await sleep(1200);
+  await frameOn(page, ".stage", 0.45);
+  await rec.start("b6r-color");
+  await sleep(600);
+  const c = await box(page, ".stage canvas");
+  const f = (fx, fy) => ({ x: c.x + c.width * fx, y: c.y + c.height * fy });
+  // 초기 위치 R(0.30,0.34) G(0.70,0.34) B(0.50,0.72)
+  await drag(page, [f(0.70, 0.34), { ...f(0.35, 0.37), steps: 26, hold: 750 }]); // G→R = 노랑
+  await drag(page, [f(0.35, 0.37), { ...f(0.70, 0.34), steps: 22, hold: 350 }]); // G 복귀
+  await drag(page, [f(0.50, 0.72), { ...f(0.31, 0.42), steps: 26, hold: 750 }]); // B→R = 자홍
+  await drag(page, [f(0.31, 0.42), { ...f(0.70, 0.42), steps: 26, hold: 750 }]); // B→G = 청록
+  await drag(page, [f(0.30, 0.34), { ...f(0.64, 0.38), steps: 26, hold: 1100 }]); // 셋 겹침 = 흰색
+  await sleep(600);
+  await rec.stop();
+};
+
+// b7r — 분자 조립소 (g2u4l2 moleculeLab): 원자를 넣으면 실제 분자 구조로 스냅
+// 조작 버튼이 무대 아래(.gp-controls) → GIF는 조작부 포함 크롭.
+BEATS.molgif = async (page, rec) => {
+  await toLab(page, "g2u4l2", "moleculeLab");
+  await sleep(1200);
+  await frameOn(page, ".stage", 0.38);
+  await rec.start("b7r-mol");
+  await sleep(500);
+  const H = /수소/, O = /산소/, C = /탄소/;
+  const B = ".gp-controls button.swapbtn";
+  await tapText(page, B, H); await tapText(page, B, H, 1500);           // H₂
+  await tapText(page, B, H); await tapText(page, B, H); await tapText(page, B, O, 1700); // H₂O
+  await tapText(page, B, C); await tapText(page, B, O); await tapText(page, B, O, 1900); // CO₂
+  await sleep(500);
+  await rec.stop();
+};
+
+// b8r — 원자 조립소 (g2u4l3 atomLab): 양성자를 6개 채우는 순간 "정체: 탄소"로 바뀐다
+// 조작 스테퍼가 무대 아래(.ck-steppers) → GIF는 조작부 포함 크롭.
+BEATS.atomgif = async (page, rec) => {
+  await toLab(page, "g2u4l3", "atomLab");
+  await sleep(1200);
+  await frameOn(page, ".stage", 0.36);
+  await rec.start("b8r-atom");
+  await sleep(500);
+  await stepPlus(page, 0, 1); await stepPlus(page, 2, 1, 900);  // 수소(양성자1·전자1)
+  await stepPlus(page, 0, 5); await stepPlus(page, 1, 6); await stepPlus(page, 2, 5, 1400); // 탄소(6·6·6)
+  await sleep(700);
+  await rec.stop();
+};
+
+// b9r — 파동 (g2u3l7 waveLab): 손으로 흔든 파형이 오른쪽으로 전파, 탁구공은 제자리에서 위아래
+// 자동 진동·이름표는 녹화 전에 켜 둔다(버튼이 무대 아래라 GIF엔 안 보인다) → 무대만 크롭.
+BEATS.wavegif = async (page, rec) => {
+  await toLab(page, "g2u3l7", "waveLab");
+  await sleep(1200);
+  const c0 = await box(page, ".stage canvas");
+  // 손 흔들기 먼저(파동이 "만들어지는" 그림) — 진동자 잡이는 캔버스 왼쪽 끝 98px 안쪽만 받는다
+  await frameOn(page, ".stage", 0.45);
+  await rec.start("b9r-wave");
+  await sleep(500);
+  const x = c0.x + 46, my = c0.y + c0.height * 0.46;
+  const wig = [];
+  for (let k = 0; k < 5; k++) {
+    wig.push({ x, y: my - 30, steps: 7, stepMs: 26 });
+    wig.push({ x, y: my + 30, steps: 7, stepMs: 26 });
+  }
+  await drag(page, [{ x, y: my }, ...wig, { x, y: my, steps: 6, stepMs: 26, hold: 900 }]);
+  await sleep(1600); // 만든 파동이 오른쪽 끝까지 전파되는 걸 보여 준다
+  await rec.stop();
+};
+
+// b10r — 광합성 잎 공장 (g2u5l1 leafFactoryLab): 밸브 3개를 열면 물이 물관을 타고 오르고,
+// 이산화 탄소가 기공으로 들어오고, 햇빛이 쏟아지고, 산소가 빠져나가는 흐름이 **계속** 돈다.
+// 탭 3번 뒤로는 스스로 도는 랩이라 루프 GIF에 최적(생물 트랙 대표).
+// 주의: '저장'·'반응로' 버튼은 누르지 않는다 — 밸브를 닫아 흐름이 멈춘다.
+// **밸브를 하나씩 여는 과정을 녹화 안에 담는다**(2026-08-05 사용자 지시 "물 클릭하면 생기고
+// 이산화탄소 클릭하면 생기고 순서대로"): 닫힌 잎 → 물관 열림(물방울) → 기공 열림(CO₂) →
+// 빛 열림(광자·포도당·산소)까지 재료가 하나씩 쌓이는 게 광합성 식 그 자체라 결과만 보여 주면 손해다.
+BEATS.leafgif = async (page, rec) => {
+  await toLab(page, "g2u5l1", "leafFactoryLab");
+  await sleep(1300);
+  await frameOn(page, ".stage", 0.28); // 무대 + 아래 밸브 줄이 함께 보이게(탭 전에 스크롤 확정)
+  const act = async (a, settle) => {
+    const b = await box(page, `.plant-btn[data-act="${a}"]`);
+    await tap(page, b.x + b.width / 2, b.y + b.height / 2, { settle });
+  };
+  await rec.start("b10r-leaf");
+  await sleep(900);           // 다 닫힌 상태 — 아무것도 안 흐르는 출발점을 먼저 보여 준다
+  await act("water", 1600);   // 물관에 물방울이 오르기 시작
+  await act("carbon", 1600);  // 기공으로 이산화 탄소 유입
+  await act("light", 3000);   // 빛 → 포도당·산소 생성 시작(공급 3/3)
+  await sleep(1300);
+  await rec.stop();
 };
 
 // b2 — 얼음 융해·끓음 (u4l2 matterTemp 메타볼)
@@ -362,43 +532,8 @@ BEATS.laser = async (page, rec) => {
   await caption(page, null);
 };
 
-// b6 — 빛의 합성 (g2u3l6 colorMixLab)
-BEATS.color = async (page, rec) => {
-  await jump(page, "g2u3l6");
-  await fwdTo(page, 3);
-  await sleep(1200);
-  await frameOn(page, ".stage", 0.45);
-  await caption(page, "빛을 섞어 새 색을 만들어요");
-  await rec.start("b6-color");
-  await sleep(700);
-  const c = await box(page, ".stage canvas");
-  const f = (fx, fy) => ({ x: c.x + c.width * fx, y: c.y + c.height * fy });
-  // 빨강 → 초록 쪽으로 (노랑)
-  await drag(page, [ { ...f(0.29, 0.31) }, { ...f(0.42, 0.36), steps: 30, hold: 700 } ]);
-  await sleep(500);
-  // 초록 → 빨강 쪽으로 살짝 (겹침 강화)
-  await drag(page, [ { ...f(0.68, 0.31) }, { ...f(0.56, 0.36), steps: 26, hold: 600 } ]);
-  await sleep(500);
-  // 파랑 → 가운데 위 (흰색)
-  await drag(page, [ { ...f(0.5, 0.66) }, { ...f(0.49, 0.44), steps: 30, hold: 900 } ]);
-  await sleep(1500);
-  await rec.stop();
-  await caption(page, null);
-};
-
-// b7 — 과학사 만화 (u5l3 뉴턴, 미완료 상태 → CTA "다음 컷")
-BEATS.comic = async (page, rec) => {
-  await jump(page, "u5l3");
-  await sleep(1200);
-  await caption(page, "개념은 과학사 만화로");
-  await rec.start("b7-comic");
-  await sleep(1500);
-  const cta = await box(page, ".btn.cta");
-  await tap(page, cta.x + cta.width / 2, cta.y + cta.height / 2, { settle: 1900 });
-  await tap(page, cta.x + cta.width / 2, cta.y + cta.height / 2, { settle: 2100 });
-  await rec.stop();
-  await caption(page, null);
-};
+// (b6 빛의 합성·b7 과학사 만화 비트는 v7에서 제거 — 러닝타임 단축, 2026-08-05 사용자 지시.
+//  복원 시 git 히스토리 8960e20의 BEATS.color/BEATS.comic + rebuild/compose/assemble 각 행 참조.)
 
 // b8 — 문제 풀이 채점 (u3l1 그림 퀴즈, index 5)
 BEATS.quiz = async (page, rec) => {
@@ -533,7 +668,7 @@ BEATS.intro = async (page, rec) => {
   await rec.start("b0-intro");
   await sleep(150);
   await page.evaluate(() => document.body.classList.add("go")); // 게이트 발사 — 연출이 녹화 안에서 처음부터
-  await sleep(3300);
+  await sleep(2500); // 압축 타임라인(l2 정착 1.88s) + 홀드
   await rec.stop();
 };
 
@@ -556,11 +691,12 @@ await pageA.waitForSelector("#sc-home", { timeout: 15000 });
 await sleep(800);
 
 if (runOn("map")) await BEATS.map(pageA, recA);
-for (const name of ["heat", "matter", "boyle", "moon", "laser", "color", "quiz"]) {
+for (const name of ["heat", "matter", "boyle", "moon", "laser", "quiz",
+                    "heatrt", "matterrt", "colorgif", "molgif", "atomgif", "wavegif", "leafgif"]) {
   if (runOn(name)) await BEATS[name](pageA, recA);
 }
 
-// B 페이지: 미완료 상태(만화 CTA "다음 컷") + 인트로/엔드카드
+// B 페이지: 미완료 상태 + 인트로/엔드카드
 const bootHome = async (page) => {
   await page.goto(`http://localhost:${PORT}/`, { waitUntil: "networkidle" });
   await page.waitForSelector("#sc-splash", { timeout: 25000 });
@@ -574,11 +710,10 @@ const bootHome = async (page) => {
 const pageB = await makePage(false);
 const recB = makeRecorder(pageB);
 await recB.attach();
-if (runOn("comic") || runOn("enter") || runOn("exam")) {
+if (runOn("enter") || runOn("exam")) {
   await bootHome(pageB);
   if (runOn("enter")) await BEATS.enter(pageB, recB);
   if (runOn("exam")) await BEATS.exam(pageB, recB); // enter 직후 — 지도가 시험 노드에 스크롤된 상태
-  if (runOn("comic")) await BEATS.comic(pageB, recB);
 }
 if (runOn("notebook")) {
   const pageC = await makePage(false, { wrongNotes: WRONG_NOTES });

@@ -23,23 +23,23 @@
     font-size: 29px; font-weight: 700; color: rgba(255,255,255,.7); white-space: nowrap;
     opacity: 0;
     animation:
-      lineIn .45s cubic-bezier(.34,1.35,.5,1) .15s both,
-      lineShrink .5s cubic-bezier(.22,1,.36,1) 1.05s forwards;
+      lineIn .36s cubic-bezier(.34,1.35,.5,1) .12s both,
+      lineShrink .38s cubic-bezier(.22,1,.36,1) .7s forwards;
   }
   @keyframes lineIn { from { opacity: 0; transform: translateX(8%) scale(1.9); } to { opacity: 1; transform: translateX(8%) scale(1.9); } }
   @keyframes lineShrink { from { transform: translateX(8%) scale(1.9); } to { transform: translateX(0) scale(1); } }
   .s1 { position: relative; display: inline-block; }
   /* 3) "말고" 등장 + 빨간 줄 */
-  .s2 { opacity: 0; animation: fadeIn .3s ease 1.42s forwards; }
+  .s2 { opacity: 0; animation: fadeIn .22s ease .95s forwards; }
   .s1::after {
     content: ""; position: absolute; left: -4%; right: -4%; top: 54%; height: 3.5px;
     background: #F04452; border-radius: 2px; transform: scaleX(0); transform-origin: left center;
-    animation: strike .34s cubic-bezier(.22,1,.36,1) 1.52s forwards;
+    animation: strike .28s cubic-bezier(.22,1,.36,1) 1.02s forwards;
   }
   /* 4) 만져 보는 과학 */
   .l2 {
     margin-top: 16px; color: #fff; font-size: 42px; font-weight: 900; line-height: 1.25;
-    opacity: 0; animation: pop .62s cubic-bezier(.34,1.35,.5,1) 1.92s forwards;
+    opacity: 0; animation: pop .52s cubic-bezier(.34,1.35,.5,1) 1.36s forwards;
   }
   .l2 b { color: #6EA8FF; }
   @keyframes strike { to { transform: scaleX(1); } }

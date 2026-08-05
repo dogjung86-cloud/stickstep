@@ -15,8 +15,12 @@
       radial-gradient(120% 90% at 50% 10%, #10233C 0%, #0B1524 55%, #070F1C 100%);
     overflow: hidden;
   }
+  /* 인스타 세이프 존(2026-08-05 — 실측 튜닝): 폰 254→230px·카피 마진 24→16px·폰 상단 마진
+     30→22px로 압축해 **카피 블록을 y 1179~1494**에 완결시켰다(가이드: 하단 1500·우측 900 —
+     릴스 캡션 오버레이 1536, 액션 레일 950보다 안쪽). 한 줄 카피는 폭이 900을 넘어 hs 옵션으로
+     축소(laser 24 · notebook 19). 이 값을 바꾸면 assemble2.mjs SPLIT_Y도 재실측할 것. */
   .phone {
-    width: 254px; margin: 30px auto 0;
+    width: 230px; margin: 22px auto 0;
     border-radius: 36px; padding: 8px;
     background: linear-gradient(180deg, #1D2836 0%, #131C29 100%);
     box-shadow:
@@ -26,8 +30,11 @@
       0 0 44px rgba(110, 168, 255, 0.1);
     opacity: 0; animation: rise .7s cubic-bezier(.22,1,.36,1) .1s forwards;
   }
-  .phone video { width: 100%; display: block; border-radius: 28px; background: #0B1524; }
-  .copy { text-align: center; margin-top: 24px; padding: 0 22px; }
+  /* .scr 래퍼가 비율(9:16)을 소유 — 두 랩 연속 재생(v2) 때 비디오를 절대 배치로 겹치기 위함.
+     aspect-ratio 9/16 = 비디오 고유비라 레이아웃(폰 높이·밴드 경계 1280)은 기존과 동일하다. */
+  .phone .scr { position: relative; width: 100%; aspect-ratio: 9 / 16; border-radius: 28px; overflow: hidden; background: #0B1524; }
+  .phone video { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .copy { text-align: center; margin-top: 16px; padding: 0 22px; }
   .chip {
     display: inline-block; font-size: 11.5px; font-weight: 700; color: #8FB8FF;
     background: rgba(110, 168, 255, 0.13); border: 1px solid rgba(110, 168, 255, 0.22);
@@ -53,7 +60,7 @@
 </style>
 </head>
 <body>
-  <div class="phone"><video id="v" muted playsinline preload="auto"></video></div>
+  <div class="phone"><div class="scr"><video id="v" muted playsinline preload="auto"></video></div></div>
   <div class="copy">
     <div class="chip" id="chip"></div>
     <div class="head" id="head"></div>
@@ -67,17 +74,38 @@
   const acc = P.get("acc") || "";
   const marked = acc ? head.replace(esc(acc), "<b>" + esc(acc) + "</b>") : head;
   document.getElementById("head").innerHTML = marked.replaceAll("|", "<br>"); // "|" = 강제 줄갈이
+  if (P.get("hs")) document.getElementById("head").style.fontSize = P.get("hs") + "px"; // 한 줄 카피 축소(오답노트 21px)
   document.getElementById("chip").textContent = P.get("chip") || "";
   document.getElementById("sub").textContent = P.get("sub") || "";
+  const scr = document.querySelector(".scr");
   const v = document.getElementById("v");
   v.src = P.get("v");
   window.__ended = false;
-  v.addEventListener("ended", () => { window.__ended = true; });
+  // v2 = 한 카드 두 랩 연속 재생(2026-08-05 — 보일 카드 흡수): v가 끝나면 아래 깔린 v2가
+  // 이어 재생되며 v를 0.22s 페이드 아웃(폰 안 크로스페이드). __ready는 두 소스 모두 준비된 뒤.
+  const v2src = P.get("v2");
+  let ok1 = false, ok2 = !v2src;
+  const arm = () => { if (ok1 && ok2) window.__ready = true; };
+  v.addEventListener("canplaythrough", () => { ok1 = true; arm(); }, { once: true });
+  if (v2src) {
+    const v2 = document.createElement("video");
+    v2.muted = true; v2.playsInline = true; v2.preload = "auto"; v2.src = v2src;
+    scr.insertBefore(v2, v); // v 뒤(아래) — 전환 전에는 v가 덮는다
+    v2.addEventListener("canplaythrough", () => { ok2 = true; arm(); }, { once: true });
+    v.addEventListener("ended", () => {
+      v2.playbackRate = parseFloat(P.get("rate2") || "1.8");
+      v2.play();
+      v.style.transition = "opacity .22s ease";
+      v.style.opacity = "0";
+    });
+    v2.addEventListener("ended", () => { window.__ended = true; });
+  } else {
+    v.addEventListener("ended", () => { window.__ended = true; });
+  }
   // 등장 연출과 영상 재생을 분리 — 쇼츠 스와이프에서는 "완성된 카드"가 통째로 슬라이드 인해야
   // 자연스럽다(비트 안에서 또 떠오르면 이중 전환처럼 읽힘). compose가 __reveal → 대기 → 녹화 → __go.
   window.__reveal = () => { document.body.classList.add("go"); };
   window.__go = (rate) => { document.body.classList.add("go"); v.playbackRate = rate; v.play(); };
-  v.addEventListener("canplaythrough", () => { window.__ready = true; }, { once: true });
 </script>
 </body>
 </html>

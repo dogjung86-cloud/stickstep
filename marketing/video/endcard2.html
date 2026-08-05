@@ -15,7 +15,10 @@
       radial-gradient(120% 90% at 50% 10%, #10233C 0%, #0B1524 55%, #070F1C 100%);
     overflow: hidden; display: flex; align-items: center; justify-content: center;
   }
-  .wrap { text-align: center; transform: translateY(-2vh); }
+  /* -5vh = 인스타 세이프 존 보정(2026-08-05): -2vh일 때 맨 아래 note가 y 1524까지 내려가
+     릴스 캡션 오버레이(1536)와 12px밖에 안 떨어졌다 → 전체를 위로 밀어 note를 1440대로.
+     검사 = node check-safezone.mjs */
+  .wrap { text-align: center; transform: translateY(-5vh); }
   /* 스플래시 플립북 — 노는 스틱맨 다다다닥 → "공부하자!" 정착 */
   .card {
     width: 150px; height: 150px; border-radius: 32px; margin: 0 auto;
