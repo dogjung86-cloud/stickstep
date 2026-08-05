@@ -499,8 +499,11 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
         drawMaterialToken(ctx, point.x, point.y, 7.5, "water");
       }
     }
+    // 반응식 상자 폭 — 아래 "+" 위치 계산에도 쓴다(폭이 다르면 중심끼리의 중점이 빈틈 중앙과 어긋난다).
+    const waterBoxW = 42;
+    const carbonBoxW = 82;
     const waterBoxP = clamp((states.water.p - 0.68) / 0.32, 0, 1);
-    drawTextBox(ctx, "물", waterBox.x, waterBox.y, 42, plantColor("water"), waterBoxP);
+    drawTextBox(ctx, "물", waterBox.x, waterBox.y, waterBoxW, plantColor("water"), waterBoxP);
 
     // 2. 이산화 탄소: 여러 알갱이가 기공을 지나 잎 안으로 모인다.
     if (states.carbon.started) {
@@ -512,10 +515,14 @@ export const leafFactoryLab: StepRenderer = (host, step, api) => {
       }
     }
     const carbonBoxP = clamp((states.carbon.p - 0.68) / 0.32, 0, 1);
-    drawTextBox(ctx, "이산화 탄소", carbonBox.x, carbonBox.y, 82, plantColor("carbon"), carbonBoxP);
+    drawTextBox(ctx, "이산화 탄소", carbonBox.x, carbonBox.y, carbonBoxW, plantColor("carbon"), carbonBoxP);
 
+    // "+"는 두 상자 **중심**의 중점이 아니라 마주보는 변 사이(실제 빈틈)의 중점에 놓는다.
+    // 물 42 · 이산화 탄소 82로 폭이 달라, 중심 중점은 빈틈(24px) 중앙보다 10px 오른쪽 —
+    // 즉 CO₂ 상자 테두리에 겹쳐 그려져 읽히지 않았다(2026-08-05 사용자 적발).
     const plusP = Math.min(waterBoxP, carbonBoxP);
-    if (plusP > 0) label(ctx, "+", (waterBox.x + carbonBox.x) / 2, reactionY, n0);
+    const plusX = (waterBox.x + waterBoxW / 2 + (carbonBox.x - carbonBoxW / 2)) / 2;
+    if (plusP > 0) label(ctx, "+", plusX, reactionY, n0);
     const reactionArrowP = allOn ? 1 : 0;
     if (reactionArrowP > 0) {
       ctx.save();
