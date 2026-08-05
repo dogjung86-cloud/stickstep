@@ -271,6 +271,9 @@ import { shipRaceLab } from "./steps/shipRaceLab";
 import { judgeLab } from "./steps/judgeLab";
 import { dilemmaLab } from "./steps/dilemmaLab";
 import { lifePathLab } from "./steps/lifePathLab";
+import { kimchiLab } from "./steps/kimchiLab";
+import { factLab } from "./steps/factLab";
+import { feastLab } from "./steps/feastLab";
 import { timelineLab } from "./steps/timelineLab";
 
 const R: Record<string, StepRenderer> = {
@@ -523,6 +526,9 @@ const R: Record<string, StepRenderer> = {
   judgeLab,
   dilemmaLab,
   lifePathLab,
+  kimchiLab,
+  factLab,
+  feastLab,
   timelineLab,
   quiz,
   table,

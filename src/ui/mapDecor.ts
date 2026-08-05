@@ -1787,6 +1787,71 @@ const MAP_DECOR: Record<string, string> = {
     `<linearGradient id="s7d-hands" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FCE0A8"/><stop offset=".55" stop-color="#F2C070"/><stop offset="1" stop-color="#D99E42"/></linearGradient>`,
   ),
 
+  // ── 사회 Ⅷ. 다양한 문화의 이해 — "문화를 발견하고 바르게 보는 눈"(밥상 → 장독 → 폰 → 탈 → 안경) ──
+  socBowlDeco: S(
+    `${shadow(32, 56, 17, 0.13)}
+    <ellipse cx="32" cy="50" rx="22" ry="4" fill="url(#s8d-mat)" opacity=".9"/>
+    <path d="M16 36q0 12 16 12t16-12z" fill="url(#s8d-bowl)" stroke="#8A4A22" stroke-width="1.7"/>
+    <ellipse cx="32" cy="36" rx="16" ry="4.6" fill="#FDF3E4" stroke="#8A4A22" stroke-width="1.4"/>
+    <ellipse cx="32" cy="35.4" rx="12" ry="3" fill="#F8FAFC"/>
+    <path d="M27 33q3-2 7-1M36 34q2-1 4 0" stroke="#E2E8F2" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+    <path d="M14 18v14M11 18v5M17 18v5M11 23q3 2 6 0" stroke="#7E6A4E" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <path d="M50 18v14M47 18l1.4 6M53 18l-1.4 6" stroke="#7E6A4E" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <ellipse cx="25" cy="40" rx="4.6" ry="1.8" fill="#fff" opacity=".35" transform="rotate(-12 25 40)"/>`,
+    `<linearGradient id="s8d-bowl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E2925A"/><stop offset=".55" stop-color="#C26A34"/><stop offset="1" stop-color="#96481E"/></linearGradient>
+    <linearGradient id="s8d-mat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EADFC8"/><stop offset="1" stop-color="#D2C0A0"/></linearGradient>`,
+  ),
+  socJarDeco: S(
+    `${shadow(32, 57, 16, 0.13)}
+    <path d="M24 16h16l3 6q5 8 5 16 0 14-16 14T16 38q0-8 5-16z" fill="url(#s8d-jar)" stroke="#5E3A1E" stroke-width="1.7" stroke-linejoin="round"/>
+    <ellipse cx="32" cy="16" rx="8" ry="2.8" fill="url(#s8d-jarlid)" stroke="#5E3A1E" stroke-width="1.4"/>
+    <path d="M20 30q12 5 24 0M18 40q14 5 28 0" stroke="#4E2E12" stroke-width="1.3" opacity=".45" fill="none"/>
+    <path d="M27 22q-4 3-5 8" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".4" fill="none"/>
+    <path d="M40 46l2.4 5.4M44 44l3.2 4.4" stroke="#C24A2E" stroke-width="2.2" stroke-linecap="round" opacity=".85"/>
+    <ellipse cx="24" cy="26" rx="4.4" ry="1.8" fill="#fff" opacity=".32" transform="rotate(-24 24 26)"/>`,
+    `<linearGradient id="s8d-jar" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A9744A"/><stop offset=".55" stop-color="#84522C"/><stop offset="1" stop-color="#5E3A1E"/></linearGradient>
+    <linearGradient id="s8d-jarlid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B98A5E"/><stop offset="1" stop-color="#7E5230"/></linearGradient>`,
+  ),
+  socPhoneDeco: S(
+    `${shadow(32, 57, 14, 0.13)}
+    <g transform="rotate(-6 32 36)">
+      <rect x="20" y="14" width="24" height="42" rx="6" fill="url(#s8d-phone)" stroke="#2E3A4E" stroke-width="1.7"/>
+      <rect x="23" y="19" width="18" height="30" rx="3" fill="url(#s8d-screen)"/>
+      <path d="M29 30l8 4-8 4z" fill="#FFFFFF" stroke="#1B64DA" stroke-width="1.2" stroke-linejoin="round"/>
+      <circle cx="32" cy="52.5" r="1.8" fill="#8A93A6"/>
+      <ellipse cx="27" cy="22" rx="4" ry="1.6" fill="#fff" opacity=".5" transform="rotate(-16 27 22)"/>
+    </g>
+    <path d="M48 18q4 4 0 8M52 15q6 7 0 14" stroke="#E8944E" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <circle cx="14" cy="24" r="2" fill="#F2C24E"/><circle cx="11" cy="31" r="1.4" fill="#E8944E"/>`,
+    `<linearGradient id="s8d-phone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5E6A7E"/><stop offset=".55" stop-color="#3E4A5E"/><stop offset="1" stop-color="#283242"/></linearGradient>
+    <linearGradient id="s8d-screen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BFE0FF"/><stop offset="1" stop-color="#7EB2F2"/></linearGradient>`,
+  ),
+  socMaskDeco: S(
+    `${shadow(32, 56, 15, 0.13)}
+    <g transform="rotate(-5 32 34)">
+      <path d="M32 12q16 0 16 16 0 12-7 18t-9 6-9-6-7-18q0-16 16-16z" fill="url(#s8d-mask)" stroke="#8A4A1E" stroke-width="1.7"/>
+      <path d="M22 26q3-3 7-1M35 25q4-2 7 1" stroke="#4E2E12" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <circle cx="25.5" cy="30" r="1.6" fill="#3A2810"/><circle cx="38.5" cy="30" r="1.6" fill="#3A2810"/>
+      <path d="M25 42q7 6 14 0" stroke="#4E2E12" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      <circle cx="22" cy="36" r="2.6" fill="#E86A5E" opacity=".75"/><circle cx="42" cy="36" r="2.6" fill="#E86A5E" opacity=".75"/>
+      <ellipse cx="26" cy="18" rx="5" ry="2" fill="#fff" opacity=".35" transform="rotate(-16 26 18)"/>
+    </g>
+    <path d="M13 20l1.4 3 3 1.2-3 1.2-1.4 3-1.4-3-3-1.2 3-1.2zM50 14l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1z" fill="#F2C24E"/>`,
+    `<radialGradient id="s8d-mask" cx=".4" cy=".3" r="1"><stop offset="0" stop-color="#F5D9A8"/><stop offset=".6" stop-color="#E2B26E"/><stop offset="1" stop-color="#C28A42"/></radialGradient>`,
+  ),
+  socLensDeco: S(
+    `${shadow(32, 56, 17, 0.12)}
+    <g transform="rotate(-4 32 36)">
+      <circle cx="21" cy="34" r="10.5" fill="url(#s8d-lens)" stroke="#8A4A22" stroke-width="2.4"/>
+      <circle cx="43" cy="34" r="10.5" fill="url(#s8d-lens)" stroke="#8A4A22" stroke-width="2.4"/>
+      <path d="M31.5 34q.5-3 1 0" stroke="#8A4A22" stroke-width="2.2" fill="none"/>
+      <path d="M10.5 34q-3-2-4-5M53.5 34q3-2 4-5" stroke="#8A4A22" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      <path d="M15 28q3-3 7-3M37 28q3-3 7-3" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7" fill="none"/>
+      <path d="M40 37l2.4 2.4 4.6-5" stroke="#2E8A4C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </g>`,
+    `<radialGradient id="s8d-lens" cx=".38" cy=".32" r="1"><stop offset="0" stop-color="#F2FBFF"/><stop offset=".7" stop-color="#CBE8F2"/><stop offset="1" stop-color="#9EC8DA"/></radialGradient>`,
+  ),
+
   // ── 역사 Ⅰ. 역사 학습의 기초 — 역사 탐정의 도구(두루마리 → 돋보기 → 붓 → 모래시계 → 항아리) ──
   scrollDeco: S(
     `${shadow(32, 56, 16, 0.12)}

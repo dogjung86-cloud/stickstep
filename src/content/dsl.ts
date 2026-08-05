@@ -134,6 +134,7 @@ export const hook = (o: {
     | "searchamerica" | "panroad" | "quitopack" | "teamroster" | "dinnertable" | "fruitlogo" | "motorcity"
     | "newyearfirst" | "ulurumystery" | "santasurf" | "martorigin" | "trashisland" | "ploggingrun" | "stationwhy" | "arcticflags"
     | "twinstory" | "hiddenteacher" | "profileme" | "nametags" | "doubleday" | "vinestangle" | "dollshelf"
+    | "wordhunt" | "greetmix" | "birthsoup" | "mycomment" | "mugwort" | "doorbell" | "siesta"
     | "saveicon" | "gamechar" | "timecapsule" | "dangi" | "milmyeon"
     | "sprout" | "receipt" | "aptmap" | "parcel" | "olympic" | "romanclock" | "silkscarf"
     | "lambskewer" | "examnotice" | "kanasign" | "hanjahw" | "zeroscore" | "chessmate" | "arabnum" | "francejersey" | "pepper"
@@ -473,6 +474,13 @@ export const dilemmaLab = (o: { title: string; lead?: string; cta?: string; curi
   ({ type: "dilemmaLab", ...o });
 export const lifePathLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "lifePathLab", ...o });
+// 사회 Ⅷ 전용 랩 3종(문화의 속성 릴레이·팩트체크·손님상) — 데이터 내장형(judgeKit 밖)
+export const kimchiLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "kimchiLab", ...o });
+export const factLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "factLab", ...o });
+export const feastLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "feastLab", ...o });
 
 // ── 중1 Ⅱ 생물의 구성과 다양성 랩 11종(2026-07-25 재제작) ────────────
 // 전부 같은 계약: { title, lead?, cta?, curio? }. 구작 랩(orgLevels·finchSim·microscope·

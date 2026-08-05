@@ -272,3 +272,11 @@ HMI 백색광 전면 프레임(2024-04-26, NASA/SDO — Public Domain)에서 하
 | star/m13.webp | M13 헤라클레스 구상 성단(공 모양 밀집) | KPNO/NOIRLab/NSF/AURA/Tom Bash and John Fox/Adam Block — Wikimedia "M13 (noao-m13bash2).jpg" | CC BY 4.0 |
 | star/coalsack.webp | 석탄자루 암흑 성운(별밭 속 검은 영역) | ESO (eso1539a) | CC BY 4.0 |
 | star/lagoon.webp | 라군 성운(붉게 빛나며 번지는 방출 성운) | ESO/VPHAS+ team (eso1403a) | CC BY 4.0 |
+
+## 사회 Ⅷ 다양한 문화의 이해 (public/soc/culture — qa/fetch-soc8-culture.mjs + retry)
+- ganggang.webp — 강강술래 공연(유네스코 인류무형유산) | File:Korean.Dance-03.jpg | CC BY 2.0 | photoren
+- tinikling.webp — 티니클링(필리핀 대나무 춤, 광장 실연) | File:Tinikling sa Plaza.jpg | CC BY-SA 4.0 | Richmond Chi
+- flamenco.webp — 플라멩코/세비야나스(헤레스 페리아 축제 군무) | File:FeriaJerez2010-P1070104.JPG | CC BY-SA 4.0 | El Pantera
+- tteokguk.webp — 떡국(한국 설) | File:Tteokguk.jpg | CC0 | soscs
+- buuz.webp — 보쯔(몽골 차강사르 찐만두) | File:Buuz.jpg | CC BY-SA 3.0 | Mizu Basyo
+- banhchung.webp — 반쯩(베트남 뗏 찹쌀떡, 우측 날짜 스탬프 크롭) | File:Banh chung vuong.jpg | Public domain | Viethavvh

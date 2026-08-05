@@ -1,0 +1,72 @@
+# 사회 Ⅷ(s1u8 다양한 문화의 이해) 발주 — 스틱맨 개념 컷 7장(public/soc/cuts) + 만화 「금기의 비밀」 4컷(public/comics/s1u8l7)
+# 실사(민속춤·새해 음식)는 발주하지 않고 위키미디어(qa/fetch-soc8-culture.mjs — 실물 우선 원칙).
+# 컷·만화 모두 "이미지 안 글자 절대 금지". 만화 컷은 앱이 한글 말풍선을 얹는 하이브리드라
+# 인물이 입을 벌리고 손짓하는 "말하는 연기"만 그리고, 인물 머리 위쪽 1/3 여백을 넉넉히 남긴다.
+# ★ 이 단원 눈검수 특칙(민감 가드 연동): 기존 항목(글자 0·의미 정확·손가락 5개·인물 존엄)에 더해
+#   **종교 존중 검수** — 창시자·신앙 대상·경전·예배 장면 절대 금지(금기는 가축·환경·생활 장면으로만),
+#   특정 문화 희화화 금지(개그는 학생 스틱맨 몫), 스틱맨은 무성별 기본형(머리카락·치마 등 성별 표지 금지).
+#   u8l7 세 태도 컷은 "찡그림"이 특정 문화·인물이 아니라 '태도' 연기임이 읽히게(음식 그릇은 추상 그릇).
+#
+# ── 스타일 블록 A (스틱맨 개념 컷 공용 — soc 공용) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 C (만화 컷 공용 — 말풍선 하이브리드 + 코믹 연기, his2 원전) ──
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal, used sparingly where the prompt says.
+# Absolutely NO text, NO letters, NO numbers, NO speech bubbles, NO captions anywhere.
+# Characters ACT like they are talking: open mouth (small oval), expressive hand gestures.
+# Comedic acting is allowed and encouraged where the prompt marks GAG: exaggerated poses,
+# big reactions, falling over backwards, sweat drops, bulging wide eyes, jaw dropping —
+# but all cultural objects, clothing and facts must stay accurate; never make the scene
+# absurd beyond what the prompt describes, and NO religious figures, NO scripture, NO worship
+# scenes anywhere (animals, land and daily life only). NO anachronistic props in rural scenes.
+# Keep the upper third of the panel mostly empty white space above the characters' heads
+# (the app overlays Korean speech bubbles there). Main subjects centered horizontally.
+# Simple, charming, educational middle-school comic. 4:3 landscape panel.
+
+## ── 개념 컷 7장 (스타일 A) ──
+
+[0] file=public/soc/cuts/u8l1.png (landscape 4:3, 스타일 A)
+A simple house entryway seen from the side: a low doorstep line divides outside and inside. Three stick figures in a row are entering — the first one already inside walking in socks, the second one bending down mid-motion taking off a shoe while balancing on one leg, the third one waiting behind. On the doorstep, several pairs of shoes are lined up neatly in a tidy row. Nobody instructs them; everyone just does the same thing naturally. Only the neat row of shoes is teal; everything else pure black and white.
+
+[1] file=public/soc/cuts/u8l2.png (landscape 4:3, 스타일 A)
+Three small houses stand side by side on gentle ground bumps: on the left a dome-shaped igloo built of snow blocks, in the middle a round felt tent with a low cone roof and tiny door, on the right a Korean house with a gently curved tile roof. In front of each house one stick figure stands waving hello in exactly the same friendly pose. Above all three, one shared long roof-shaped arc lightly drawn connects them. Only the three roofs are teal; everything else pure black and white.
+
+[2] file=public/soc/cuts/u8l3.png (landscape 4:3, 스타일 A)
+A family scene in one room: an adult stick figure bows politely from the waist as a demonstration, a small child stick figure next to it copies the bow halfway with a tiny wobble line, and on the other side two older stick figures (slightly bent backs, one holding a simple cane) return exactly the same bow. Three generations doing one same greeting. Small motion arcs trace each bowing head. Only the three motion arcs of the bows are teal; everything else pure black and white.
+
+[3] file=public/soc/cuts/u8l4.png (landscape 4:3, 스타일 A)
+Two stick figures sit side by side on a simple bench: the left one holds a wide-open large newspaper sheet (blank pages, just faint line strokes suggesting columns), the right one holds a small smartphone up with one hand. From the phone, three gentle curved broadcast ripple arcs spread out into the air, and two tiny simple picture frames float along the ripples (one with a tiny mountain doodle, one with a tiny ball doodle). Only the ripple arcs are teal; everything else pure black and white.
+
+[4] file=public/soc/cuts/u8l5.png (landscape 4:3, 스타일 A)
+A stick figure sits at a desk holding a smartphone in one hand and a very large magnifying glass in the other, leaning in and examining the phone screen through the lens with one eyebrow-like squint line; the phone screen shows only abstract doodle lines (a wavy line and a circle — no letters). Behind, a second stick figure walks by glancing at its own phone and nodding along without checking. Only the round lens of the magnifying glass is teal; everything else pure black and white.
+
+[5] file=public/soc/cuts/u8l6.png (landscape 4:3, 스타일 A)
+A friendly apartment hallway or shared yard: three stick figures from neighboring homes meet in the middle, each holding out a different plate of food to share — one plate with a small stack of round dumplings, one with skewers, one with a round flat bread. Their free hands wave warmly, all smiling. Three simple doorways are hinted behind them. Only the middle plate of dumplings is teal; everything else pure black and white.
+
+[6] file=public/soc/cuts/u8l7.png (landscape 4:3, 스타일 A)
+One round pot of unfamiliar steaming food sits on a small table in the center (abstract food — just steam curls above a simple pot). Three stick figures react around it in three clearly different ways: the left one crosses its arms and turns its head sharply away with a frown; the middle one leans in with sparkly admiring eyes while pushing away its own small bowl behind it; the right one bends forward politely with a hand on its chin, observing with a calm curious smile. Only the steam curls above the pot are teal; everything else pure black and white.
+
+## ── 만화 s1u8l7 「금기의 비밀」 4컷 (스타일 C) ──
+## 등장인물 고정: HERDER = 머리에 간결한 천을 두른 유목민 스틱맨(사막 복장 — 헐렁한 긴 옷).
+## FARMER = 소매를 걷은 간결한 농부 스틱맨. TEACHER = 안경을 쓴 스틱맨 쌤. STUDENTS = 학생 스틱맨 둘.
+## 종교 존중: 신앙 대상·예배·경전·사원 절대 금지 — 가축·땅·물·생활 장면만. 개그는 학생 몫.
+
+[c0] file=public/comics/s1u8l7/0.png (landscape 4:3, 스타일 C)
+DIGNIFIED (no gag — calm, factual): A hot dry land under a big blazing sun with cracked earth lines. HERDER, a stick figure with a simple head cloth and loose robe, carefully holds one precious small water jar close, a single drop falling into a cup. Beside him, one pig stands panting next to a completely dried-up mud puddle (cracked dry circle on the ground), looking hot with two sweat drops. In the background a few sparse dry bushes. Teal accent: the little water inside the jar. Upper third of the panel empty white space for speech bubbles.
+
+[c1] file=public/comics/s1u8l7/1.png (landscape 4:3, 스타일 C)
+DIGNIFIED (no gag — calm, warm): The same dry land, but now HERDER walks contentedly with animals that thrive there: two sheep with simple curly fleece lines and one camel with a single hump walking in a line behind him. The camel carries a small rolled bundle on its back. The sun is still big but everyone walks at ease, tiny happy step lines under their feet. Teal accent: the rolled bundle on the camel's back. Upper third empty for speech bubbles.
+
+[c2] file=public/comics/s1u8l7/2.png (landscape 4:3, 스타일 C)
+DIGNIFIED (no gag — warm, grateful): A green farm field with simple crop rows. A large gentle cow pulls a simple wooden plow, and FARMER, a stick figure with rolled-up sleeves, walks beside the cow guiding the plow with one hand and patting the cow's side affectionately with the other. Near the field edge stand a tall milk jug and a small wooden cart. The cow has kind long-lashed eyes. Teal accent: the tall milk jug. Upper third empty for speech bubbles.
+
+[c3] file=public/comics/s1u8l7/3.png (landscape 4:3, 스타일 C)
+GAG: one student is so amazed by the realization that it falls straight over backwards with legs in the air, and the other student's eyes bulge wide with jaw dropped. TEACHER, a stick figure with simple round glasses, stands beside a large blank world map poster on a stand (continent outlines only, no letters), pointing with a stick at two far-apart spots on the map — one in a dry region, one in a farm region — connected by a light dotted arc. Two STUDENT stick figures react in front: one falling over backwards dramatically, one gasping. Teal accent: the two map spots and the dotted arc between them. Upper third empty for speech bubbles.

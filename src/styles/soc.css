@@ -122,6 +122,20 @@
 .gm-path-glow.civic { stroke: rgba(214,51,108,.22); }
 .gm-path-done.civic { stroke: #D6336C; }
 
+/* Ⅷ 다양한 문화의 이해 — 단청 레드 #C13B2E(축제와 채색의 색) */
+.unit-band.fest { background: linear-gradient(150deg, #D96A57 0%, #C13B2E 55%, #A22F24 100%); }
+.gm-terrain.fest {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #F8DCD2, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #F6D2C6, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #F7D6CA, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #F4C8BA, transparent 72%),
+    linear-gradient(180deg, #FDF4F1 0%, #FAE6DF 55%, #F6D6CC 100%);
+}
+.gm-path-glow.fest { stroke: rgba(193,59,46,.22); }
+.gm-path-done.fest { stroke: #C13B2E; }
+
 /* ---------- worldPlaceLab(기함) — 가로 무대 "지구에 살아 보기" ---------- */
 /* touch-action·선택 방지는 iOS 계열까지 겹겹이 — 스크롤 탈취·롱프레스 선택이 드래그를 죽인다 */
 .wpl-stage { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -1066,3 +1080,153 @@
 
 /* Ⅶ 신규 랩 텍스트 줄바꿈 — 한글 음절 단위 개행 방지(시각 감사 경미 교정: "지켰어/요") */
 .jdg-card-t, .jdg-mini, .jdg-hint, .dlm-scene, .dlm-item, .dlm-stake span, .dlm-term p, .lfp-name { word-break: keep-all; }
+
+/* ═════════ 사회 Ⅷ 다양한 문화의 이해 — 랩 3종 + 훅 ═════════ */
+/* 훅 장면(hs8- — hs7 문법 복제) */
+.hs8-frame {
+  position: relative; margin: 4px auto 0; max-width: 320px;
+  border-radius: 16px; overflow: hidden; box-shadow: var(--sh-card); background: #fff;
+}
+.hs8-frame svg { display: block; width: 100%; height: auto; }
+.hs8-btn {
+  appearance: none; font-family: inherit; cursor: pointer;
+  display: block; margin: 10px auto 0; padding: 10px 18px; border-radius: var(--r-pill);
+  background: var(--grad-card); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  font-size: 13px; font-weight: 800; color: var(--ink); letter-spacing: -.012em;
+  transition: transform .12s var(--ease), opacity .2s;
+}
+.hs8-btn:active { transform: scale(.96); }
+.hs8-btn:disabled, .hs8-btn.done { opacity: .4; cursor: default; }
+.hs8-noti { animation: hs8Pop .5s var(--spring-bounce) backwards; transform-box: fill-box; transform-origin: center; }
+.hs8-noti.d2 { animation-delay: .5s; }
+@keyframes hs8Pop { 0% { opacity: 0; transform: scale(.4); } 70% { transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }
+.hs8-ring { animation: hs8Ring 1s var(--ease) infinite; transform-box: fill-box; transform-origin: left center; }
+@keyframes hs8Ring { 0%, 100% { opacity: .4; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .hs8-noti, .hs8-ring { animation: none; }
+}
+
+/* ── kimchiLab(kcl- — 속성 5 릴레이 기함) ── */
+.kcl-stage { padding: 12px 12px 14px; }
+.kcl-file {
+  display: inline-block; margin: 0 auto 8px; padding: 4px 12px; border-radius: var(--r-pill);
+  background: rgba(255,255,255,.12); color: #FBD9CF; font-size: 11.5px; font-weight: 900; letter-spacing: -.01em;
+}
+.kcl-scene { border-radius: 12px; overflow: hidden; background: #FDF8F3; }
+.kcl-scene svg { display: block; width: 100%; height: auto; }
+.kcl-scene.in { animation: kclIn .45s var(--ease-out); }
+@keyframes kclIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.kcl-badges { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 10px; min-height: 24px; }
+.kcl-prop {
+  padding: 4px 12px; border-radius: var(--r-pill); background: #FDECE6; color: #A22F24;
+  font-size: 12px; font-weight: 900; border: 1.5px solid #E8A28E;
+  animation: kclProp .5s var(--spring-bounce) backwards;
+}
+@keyframes kclProp { 0% { opacity: 0; transform: scale(.4); } 70% { transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); } }
+.kcl-controls { margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.kcl-act { min-width: 210px; display: block; }
+.kcl-act.done { opacity: .45; }
+.kcl-timeline { width: 100%; max-width: 320px; margin: 0 auto; }
+.kcl-time-lab { text-align: center; font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+.kcl-range { width: 100%; accent-color: #C13B2E; height: 28px; }
+.kcl-time-ends { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--n500); }
+.kcl-quiz.show { margin-top: 12px; }
+.kcl-red { transition: opacity .12s linear; }
+
+/* ── factLab(fcl- — 팩트체크 수사대) ── */
+.fcl-stage { padding: 14px 12px; position: relative; }
+.fcl-post {
+  background: #fff; border-radius: 14px; padding: 12px 14px; box-shadow: var(--sh-card);
+  max-width: 330px; margin: 0 auto;
+}
+.fcl-head { display: flex; align-items: center; gap: 9px; padding: 4px 6px; }
+.fcl-avatar {
+  width: 34px; height: 34px; border-radius: 50%; flex: none;
+  background: radial-gradient(circle at 38% 32%, #DCE6F0, #9EB0C4);
+  border: 1.5px solid #8A93A6;
+}
+.fcl-meta { display: flex; flex-direction: column; }
+.fcl-meta b { font-size: 13px; color: var(--ink); letter-spacing: -.01em; }
+.fcl-meta span { font-size: 11px; color: var(--n500); font-weight: 600; }
+.fcl-body { margin-top: 6px; }
+.fcl-body p { margin: 6px 0; font-size: 13px; line-height: 1.55; color: var(--ink); word-break: keep-all; padding: 3px 6px; border-radius: 8px; }
+.fcl-fig { border-radius: 10px; overflow: hidden; background: #F4F8FC; margin: 6px 0; }
+.fcl-fig svg { display: block; width: 100%; height: auto; }
+.fcl-tail { color: #B84A34 !important; font-weight: 800; }
+.fcl-part { transition: background .25s var(--ease), box-shadow .25s var(--ease); }
+.fcl-part.fcl-hl { background: #FFF3CC; box-shadow: 0 0 0 2px #E2C26E inset; }
+.fcl-stamp {
+  position: absolute; top: 50%; left: 50%; pointer-events: none;
+  transform: translate(-50%, -50%) rotate(-14deg) scale(2.4); opacity: 0;
+  padding: 8px 22px; border: 4px solid #C0392E; border-radius: 10px;
+  color: #C0392E; font-size: 26px; font-weight: 900; letter-spacing: .08em;
+  background: rgba(255,255,255,.82); transition: transform .3s var(--spring-bounce), opacity .3s;
+}
+.fcl-stamp.on { opacity: 1; transform: translate(-50%, -50%) rotate(-14deg) scale(1); }
+.fcl-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.fcl-tool {
+  appearance: none; font-family: inherit; cursor: pointer; text-align: left;
+  display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 12px;
+  background: var(--grad-card); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  transition: transform .12s var(--ease), border-color .2s, opacity .2s;
+}
+.fcl-tool:active { transform: scale(.97); }
+.fcl-tool b { font-size: 13px; font-weight: 800; color: var(--ink); letter-spacing: -.012em; }
+.fcl-tool .fcl-lamp { font-size: 11px; font-weight: 800; color: var(--n500); }
+.fcl-tool.live { border-color: #E2C26E; background: #FFFBEE; }
+.fcl-tool.done { border-color: #E8A28E; background: #FDF3F0; }
+.fcl-tool.done .fcl-lamp { color: #B84A34; }
+.fcl-quiz.show { margin-top: 12px; }
+
+/* ── feastLab(fsl- — 세계 손님상) ── */
+.fsl-stage { padding: 12px; }
+.fsl-guests { display: flex; justify-content: center; gap: 10px; }
+.fsl-guest {
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  padding: 8px 10px 7px; border-radius: 12px; min-width: 84px;
+  background: rgba(255,255,255,.08); border: 1.5px solid transparent; transition: border-color .25s, background .25s;
+}
+.fsl-guest b { font-size: 12.5px; color: #fff; font-weight: 800; }
+.fsl-gface { width: 44px; height: 40px; }
+.fsl-gface svg { display: block; width: 100%; height: 100%; }
+.fsl-gserved { font-size: 10px; font-weight: 700; color: #C9B4AC; }
+.fsl-guest.live { border-color: #F2C24E; background: rgba(242,194,78,.14); }
+.fsl-guest.live .fsl-gserved { color: #F2C24E; }
+.fsl-guest.done .fsl-gserved { color: #7FD8A0; }
+.fsl-note {
+  margin: 10px auto 0; max-width: 320px; padding: 8px 12px; border-radius: 10px;
+  background: rgba(255,255,255,.1); color: #F3E6E0; font-size: 12.5px; line-height: 1.5; text-align: center; word-break: keep-all;
+}
+.fsl-note b { color: #fff; }
+.fsl-plate {
+  display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap;
+  min-height: 46px; margin: 10px auto 0; max-width: 300px; padding: 5px 10px;
+  border-radius: 999px; background: #FDF8F3; box-shadow: inset 0 1px 4px rgba(0,0,0,.18);
+}
+.fsl-pitem { width: 38px; height: 32px; animation: fslPop .45s var(--spring-bounce) backwards; }
+.fsl-pitem svg { display: block; width: 100%; height: 100%; }
+@keyframes fslPop { 0% { opacity: 0; transform: scale(.4); } 70% { transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); } }
+.fsl-foods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+.fsl-food {
+  appearance: none; font-family: inherit; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 9px 6px 8px;
+  border-radius: 12px; background: var(--grad-card); border: 1.5px solid var(--n200); box-shadow: var(--sh-card);
+  transition: transform .12s var(--ease), border-color .2s, opacity .2s;
+}
+.fsl-food:active { transform: scale(.96); }
+.fsl-food b { font-size: 12px; font-weight: 800; color: var(--ink); letter-spacing: -.015em; word-break: keep-all; }
+.fsl-fart { width: 44px; height: 36px; }
+.fsl-fart svg { display: block; width: 100%; height: 100%; }
+.fsl-food.on { border-color: #7FBE92; background: #EFF9F1; }
+.fsl-food.on b { color: #2E7E46; }
+.fsl-food.dim { opacity: .4; }
+.fsl-food.shake { animation: fslShake .4s var(--ease); }
+@keyframes fslShake { 0%, 100% { transform: none; } 25% { transform: translateX(-5px); } 65% { transform: translateX(5px); } }
+.fsl-quiz.show { margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) {
+  .kcl-scene.in, .kcl-prop, .fsl-pitem, .fsl-food.shake { animation: none; }
+  .fcl-stamp { transition: opacity .2s; }
+}
+
+/* Ⅷ 신규 랩 텍스트 줄바꿈 — keep-all(Ⅶ 관행 계승) */
+.kcl-file, .kcl-time-lab, .fcl-tool b { word-break: keep-all; }
