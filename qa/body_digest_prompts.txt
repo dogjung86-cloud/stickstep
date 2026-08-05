@@ -1,0 +1,37 @@
+중2 Ⅵ 동물과 에너지 — 소화계 해부 일러스트 발주 프롬프트 (public/body/digest/)
+공용 스타일 블록 = 생물 발주(bio2/levels) 계보. 라벨은 앱이 한글로 얹으므로 이미지 안 글자 금지.
+
+[공통 스타일 — 모든 항목에 그대로 적용]
+Clean educational science illustration for a Korean middle-school biology app.
+Flat vector-like medical illustration, soft cel shading, gentle warm anatomy palette
+(muted rose/coral organs, soft cream background), thin darker outlines of the same hue
+(NOT uniform black outlines), subtle top-left key light, no harsh gradients, no glossy
+3D render, no photorealism, no textbook page scan look.
+ABSOLUTELY NO TEXT, NO LETTERS, NO NUMBERS, NO LABELS, NO ARROWS WITH WORDS, NO WATERMARK
+anywhere in the image — the app overlays Korean labels itself.
+No human face, no full body figure, no skin texture, no gore, no blood.
+Composition centered with generous margins so the app can place label pills around it.
+Aspect ratio 4:3. Do NOT use any Google image tool.
+
+[1] public/body/digest/tract.png — 소화관 전체(라벨 없이)
+The human digestive tract shown alone on a plain soft cream background, front view,
+anatomically ordered top to bottom and clearly separated so each organ is individually
+recognizable: mouth/oral cavity at top, a long narrow esophagus tube, a curved J-shaped
+stomach on the viewer's left-of-center, a large lobed liver at upper right of the abdomen,
+a small pear-shaped gallbladder tucked under the liver, an elongated pancreas lying behind
+and below the stomach, a long coiled small intestine filling the center of the abdomen,
+and a wider inverted-U large intestine framing the coiled small intestine on the outside,
+ending at a short rectum. Each organ in a slightly different tint of the warm palette so
+they read apart at a glance. No body outline silhouette, no bones, organs float on the
+cream background. No text at all.
+
+[2] public/body/digest/villi-wall.png — 작은창자 안쪽 벽(주름과 융털)
+Cutaway view of the inner wall of the small intestine showing WHY the surface area is huge:
+a curved section of intestinal wall opened toward the viewer, its inner surface thrown into
+several large circular folds (ridges), and the entire surface of those folds densely
+carpeted with countless tiny finger-like projections (villi) standing upright like a plush
+velvet or a dense field of soft fingers. Emphasize density and repetition of the tiny
+projections. Warm pink-coral tissue palette, soft cel shading, thin darker-hue outlines.
+One small area may be drawn slightly enlarged to show individual finger shapes, but do NOT
+draw any magnifying glass, callout circle, leader line, ruler or scale bar. No cross-section
+of internal blood vessels needed. No text, no letters, no numbers anywhere.

@@ -144,28 +144,114 @@ export function nutrientTestFig(): string {
   );
 }
 
-export function enzymeFlowFig(): string {
-  const box = (x: number, y: number, w: number, text: string, fill: string): string =>
-    `<g transform="translate(${x} ${y})"><rect width="${w}" height="38" rx="12" fill="${fill}" stroke="var(--n300)"/><text x="${w / 2}" y="24" text-anchor="middle" font-size="12.5" font-weight="850" fill="var(--n800)">${text}</text></g>`;
+/** 소화관 발주 일러스트 + 한글 라벨 오버레이(2026-08-06 — 구 손코딩 SVG 교체).
+ *  발주본에는 글자가 없고(codex 규칙) 앱이 라벨 필을 얹는다 = 천체 실사 문법의 해부판.
+ *  좌표는 tract.webp 실측 비율(%) — 그림을 재발주하면 이 표도 다시 맞출 것.
+ *  루트 svg는 fill="none"이라야 라벨 rect가 사진을 검게 덮지 않는다(실사고 재발 방지). */
+export function digestTractArt(): string {
+  // 이미지 렌더 박스는 원비율(4:3) 그대로 고정 — preserveAspectRatio 자동 맞춤에 기대면
+  // 좌표가 통째로 어긋난다(실사고). 기관 앵커는 **이미지 내부 %**, 필 위치는 절대 좌표.
+  const IX = 30, IY = 6, IW = 300, IH = 225;
+  const ax = (p: number): number => IX + (p / 100) * IW;
+  const ay = (q: number): number => IY + (q / 100) * IH;
+  // [라벨, 기관 앵커 x%, 기관 앵커 y%, 필 중심 x(절대), 필 중심 y(절대)]
+  const MARKS: [string, number, number, number, number][] = [
+    ["입", 48.9, 8.3, 64, 25],
+    ["식도", 49.6, 23.9, 64, 60],
+    ["간", 39.1, 40.4, 56, 97],
+    ["쓸개", 36.3, 49.6, 54, 128],
+    ["위", 54.9, 43.2, 312, 92],
+    ["이자", 52.2, 53.1, 308, 126],
+    ["큰창자", 61.8, 64.3, 304, 160],
+    ["작은창자", 48.1, 71.7, 60, 176],
+    ["항문", 48.1, 91.9, 306, 210],
+  ];
+  const pill = ([t, px, py, cx, cy]: [string, number, number, number, number]): string => {
+    const w = t.length * 12 + 16;
+    return `<path d="M${cx} ${cy} L${ax(px)} ${ay(py)}" stroke="var(--n400)" stroke-width="1.2"/>
+      <g transform="translate(${cx - w / 2} ${cy - 11})"><rect width="${w}" height="22" rx="11" fill="var(--n0)" opacity=".95" stroke="var(--n300)"/>
+      <text x="${w / 2}" y="15" text-anchor="middle" font-size="11" font-weight="850" fill="var(--n800)">${t}</text></g>`;
+  };
   return svg(
-    `${panel()}${box(20,24,68,"녹말","var(--body-cell-hi)")}${box(144,24,68,"엿당","var(--body-cell-hi)")}${box(272,24,68,"포도당","var(--body-cell-hi)")}
-     <path d="M90 43 H140 M214 43 H268" stroke="var(--body-nutrient)" stroke-width="4" marker-end="url(#ef-n)"/><text x="115" y="30" text-anchor="middle" font-size="10.5" font-weight="800" fill="var(--n700)">아밀레이스</text><text x="241" y="30" text-anchor="middle" font-size="10.5" font-weight="800" fill="var(--n700)">작은창자</text>
-     ${box(20,91,82,"단백질","var(--subj-body-tint)")}${box(252,91,88,"아미노산","var(--subj-body-tint)")}<path d="M106 110 H248" stroke="var(--body-protein)" stroke-width="4" marker-end="url(#ef-p)"/><text x="177" y="99" text-anchor="middle" font-size="10.5" font-weight="800" fill="var(--n700)">펩신·트립신</text>
-     ${box(20,158,68,"지방","var(--body-fat)")}${box(235,151,105,"지방산 +","var(--body-fat)")}<text x="288" y="199" text-anchor="middle" font-size="11.5" font-weight="850" fill="var(--n800)">모노글리세라이드</text><path d="M92 177 H231" stroke="var(--body-cell-lo)" stroke-width="4" marker-end="url(#ef-f)"/><text x="160" y="166" text-anchor="middle" font-size="10.5" font-weight="800" fill="var(--n700)">라이페이스</text>`,
-    `${bodyArrow("ef-n", "var(--body-nutrient)")}${bodyArrow("ef-p", "var(--body-protein)")}${bodyArrow("ef-f", "var(--body-cell-lo)")}`,
-    "세 영양소가 소화효소에 의해 작은 물질로 분해되는 흐름도",
+    `<image href="${import.meta.env.BASE_URL}body/digest/tract.webp" x="${IX}" y="${IY}" width="${IW}" height="${IH}"/>
+     ${MARKS.map(pill).join("")}`,
+    "", "입에서 항문까지 이어진 소화관과 간·쓸개·이자의 위치를 나타낸 그림", "0 0 360 240",
   );
 }
 
+/** 작은창자 안쪽 벽 — 주름 위에 융털이 빽빽한 발주 일러스트(표면적이 왜 넓은지의 증거 그림). */
+export function intestineFoldsArt(): string {
+  return svg(
+    `<image href="${import.meta.env.BASE_URL}body/digest/villi-wall.webp" x="8" y="6" width="344" height="196" preserveAspectRatio="xMidYMid slice"/>
+     <g transform="translate(14 12)"><rect width="118" height="24" rx="12" fill="var(--n0)" opacity=".93" stroke="var(--n200)"/><text x="59" y="16.5" text-anchor="middle" font-size="11.5" font-weight="850" fill="var(--n800)">작은창자 안쪽 벽</text></g>
+     <text x="180" y="220" text-anchor="middle" font-size="11.5" font-weight="850" fill="var(--n700)">주름마다 융털이 빽빽해 표면적이 크게 넓어져요</text>`,
+    "", "작은창자 안쪽 벽의 주름과 그 위를 빽빽하게 덮은 융털", "0 0 360 232",
+  );
+}
+
+/** 기관별 소화 과정 — "어디서 · 무엇이 · 무엇으로"를 한 판에.
+ *  구판은 화살표 라벨 축이 섞여 있었다(셋은 효소명인데 엿당→포도당만 "작은창자" = 기관명) →
+ *  기관을 세로 레인으로 세우고 그 안에서 효소가 일하도록 재작도(2026-08-06 사용자 지시).
+ *  세로 레인 = 입 → 위 → 작은창자(소화관 순서), 가로 = 탄수화물·단백질·지방 세 갈래. */
+export function digestByOrganFig(): string {
+  // 레인(기관) — [x, 폭, 기관명, 그 기관이 내는 소화액]. 레인이 '어디서'를 말하므로
+  // 화살표 위 라벨은 언제나 효소 이름만 온다(축이 섞이지 않게).
+  const LANES: [number, number, string, string][] = [
+    [16, 100, "입", "침"],
+    [122, 100, "위", "위액"],
+    [228, 116, "작은창자", "이자액·쓸개즙"],
+  ];
+  const ROW = [92, 148, 202]; // 탄수화물·단백질·지방 행 중심 y
+  const lane = ([x, w, name, juice]: [number, number, string, string], i: number): string =>
+    `<rect x="${x}" y="54" width="${w}" height="182" rx="14" fill="var(--n0)" opacity="${i === 2 ? ".96" : ".8"}" stroke="var(--n200)"/>
+     <text x="${x + w / 2}" y="30" text-anchor="middle" font-size="13" font-weight="900" fill="var(--subj-body)">${name}</text>
+     <text x="${x + w / 2}" y="46" text-anchor="middle" font-size="10" font-weight="750" fill="var(--n600)">${juice}</text>`;
+  const pill = (cx: number, cy: number, w: number, t: string, fill: string): string =>
+    `<g transform="translate(${cx - w / 2} ${cy - 13})"><rect width="${w}" height="26" rx="9" fill="${fill}" stroke="var(--n300)"/><text x="${w / 2}" y="17.5" text-anchor="middle" font-size="11" font-weight="850" fill="var(--n800)">${t}</text></g>`;
+  const enz = (x1: number, x2: number, y: number, label: string, color: string, mk: string): string =>
+    `<path d="M${x1} ${y} H${x2}" stroke="${color}" stroke-width="3.4" marker-end="url(#${mk})"/>
+     <text x="${(x1 + x2) / 2}" y="${y - 10}" text-anchor="middle" font-size="9.5" font-weight="800" fill="var(--n700)">${label}</text>`;
+  return svg(
+    `<rect x="8" y="8" width="344" height="244" rx="18" fill="var(--subj-body-tint)"/>${LANES.map(lane).join("")}
+     ${pill(66, ROW[0], 60, "녹말", "var(--body-cell-hi)")}${enz(100, 138, ROW[0], "아밀레이스", "var(--body-nutrient)", "dg-n")}
+     ${pill(172, ROW[0], 56, "엿당", "var(--body-cell-hi)")}${enz(204, 249, ROW[0], "아밀레이스", "var(--body-nutrient)", "dg-n")}
+     ${pill(286, ROW[0], 66, "포도당", "var(--body-cell-hi)")}
+     ${pill(66, ROW[1], 66, "단백질", "var(--subj-body-tint)")}${enz(102, 134, ROW[1], "펩신", "var(--body-protein)", "dg-p")}
+     ${pill(172, ROW[1], 76, "작아진 단백질", "var(--subj-body-tint)")}${enz(213, 247, ROW[1], "트립신", "var(--body-protein)", "dg-p")}
+     ${pill(286, ROW[1], 72, "아미노산", "var(--subj-body-tint)")}
+     ${pill(66, ROW[2], 56, "지방", "var(--body-fat)")}
+     <path d="M97 ${ROW[2]} H241" stroke="var(--body-cell-lo)" stroke-width="3.4" marker-end="url(#dg-f)"/>
+     <text x="169" y="${ROW[2] - 10}" text-anchor="middle" font-size="9.5" font-weight="800" fill="var(--n700)">라이페이스</text>
+     ${pill(286, ROW[2] - 8, 76, "지방산 +", "var(--body-fat)")}
+     <text x="286" y="${ROW[2] + 16}" text-anchor="middle" font-size="9.5" font-weight="850" fill="var(--n800)">모노글리세라이드</text>
+     <text x="180" y="248" text-anchor="middle" font-size="10.5" font-weight="800" fill="var(--n600)">지방은 입·위를 그대로 지나 작은창자에서만 분해돼요</text>`,
+    `${bodyArrow("dg-n", "var(--body-nutrient)")}${bodyArrow("dg-p", "var(--body-protein)")}${bodyArrow("dg-f", "var(--body-cell-lo)")}`,
+    "입·위·작은창자 세 기관에서 탄수화물·단백질·지방이 각각 어떤 소화효소로 분해되는지 비교한 표",
+    "0 0 360 258",
+  );
+}
+
+/** 작은창자의 융털 — 속 구조(모세혈관·암죽관)와 "왜 흡수에 유리한가"를 함께.
+ *  2026-08-06 사용자 지시로 ① 그림 제목 ② 구조적 특징(표면적·얇은 벽) 라벨 추가.
+ *  구판은 제목이 없었고, 하단 문구만 "주름과 융털"이라 말하면서 정작 주름은 안 그려져 있었다
+ *  → 융털이 앉은 바닥을 물결 주름으로 그려 문구와 그림을 일치시킨다. */
 export function villusAbsorptionFig(): string {
   return svg(
-    `${panel()}<path d="M30 187 C36 160 37 47 86 29 C133 48 131 159 139 187 M112 187 C119 158 125 58 174 40 C223 58 217 158 226 187 M207 187 C214 160 221 50 270 31 C319 52 315 161 329 187" fill="url(#va-tissue)" stroke="var(--body-tissue-lo)" stroke-width="2"/>
-     <path d="M86 55 C70 86 69 142 75 182 M86 55 C103 86 105 143 98 182" stroke="var(--body-oxygenated)" stroke-width="4"/><path d="M86 65 V184" stroke="var(--body-fat)" stroke-width="6" stroke-linecap="round"/>
-     ${bodyMatterSvg("glucose", 49, 83, 6)}${bodyMatterSvg("amino", 118, 91, 6)}${bodyMatterSvg("fat", 54, 126, 7)}
-     <path d="M54 84 C64 91 67 105 70 119 M115 92 C103 101 101 116 99 129" stroke="var(--body-nutrient)" stroke-width="3" marker-end="url(#va-b)"/><path d="M59 127 C72 132 78 144 83 155" stroke="var(--body-fat)" stroke-width="3" marker-end="url(#va-l)"/>
-     ${labelBox(235,72,82,"모세혈관")}${labelBox(235,112,82,"암죽관")}<path d="M232 84 H104 M232 124 H91" stroke="var(--n400)" stroke-width="1.2"/><text x="180" y="207" text-anchor="middle" font-size="12" font-weight="800" fill="var(--n700)">주름과 융털이 흡수할 표면적을 넓혀요</text>`,
+    `<rect x="8" y="8" width="344" height="228" rx="18" fill="var(--subj-body-tint)"/>
+     <text x="180" y="28" text-anchor="middle" font-size="13.5" font-weight="900" fill="var(--subj-body)">작은창자의 융털</text>
+     <path d="M16 190 C50 172 72 190 106 184 C140 178 164 192 198 186 C232 180 256 192 290 185 C314 180 330 186 344 190 V208 H16Z" fill="var(--body-tissue)" stroke="var(--body-tissue-lo)" stroke-width="1.6"/>
+     <text x="180" y="203" text-anchor="middle" font-size="9.5" font-weight="800" fill="var(--n0)" opacity=".9">주름</text>
+     <path d="M30 190 C36 164 37 66 86 48 C133 67 131 162 139 190 M112 186 C119 157 125 75 174 57 C223 75 217 157 226 186 M207 188 C214 161 221 67 270 49 C319 70 315 162 329 188" fill="url(#va-tissue)" stroke="var(--body-tissue-lo)" stroke-width="2"/>
+     <path d="M86 74 C70 105 69 152 75 185 M86 74 C103 105 105 153 98 185" stroke="var(--body-oxygenated)" stroke-width="4"/><path d="M86 84 V187" stroke="var(--body-fat)" stroke-width="6" stroke-linecap="round"/>
+     ${bodyMatterSvg("glucose", 49, 102, 6)}${bodyMatterSvg("amino", 118, 110, 6)}${bodyMatterSvg("fat", 54, 145, 7)}
+     <path d="M54 103 C64 110 67 124 70 138 M115 111 C103 120 101 135 99 148" stroke="var(--body-nutrient)" stroke-width="3" marker-end="url(#va-b)"/><path d="M59 146 C72 151 78 163 83 174" stroke="var(--body-fat)" stroke-width="3" marker-end="url(#va-l)"/>
+     ${labelBox(240,92,78,"모세혈관")}${labelBox(240,132,78,"암죽관")}<path d="M237 104 H104 M237 144 H91" stroke="var(--n400)" stroke-width="1.2"/>
+     <g transform="translate(18 44)"><rect width="72" height="21" rx="10.5" fill="var(--n0)" opacity=".94" stroke="var(--n200)"/><text x="36" y="14.5" text-anchor="middle" font-size="9.5" font-weight="800" fill="var(--n700)">얇은 벽</text></g>
+     <path d="M56 65 C58 76 62 84 68 90" stroke="var(--n400)" stroke-width="1.2" fill="none"/>
+     <text x="180" y="228" text-anchor="middle" font-size="11.5" font-weight="850" fill="var(--n700)">주름 위에 융털이 빽빽해 흡수할 표면적이 매우 넓어요</text>`,
     `<linearGradient id="va-tissue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="var(--body-tissue-hi)"/><stop offset=".55" stop-color="var(--body-tissue)"/><stop offset="1" stop-color="var(--body-tissue-lo)"/></linearGradient>${bodyArrow("va-b", "var(--body-nutrient)")}${bodyArrow("va-l", "var(--body-fat)")}`,
-    "작은창자 융털 속 모세혈관과 암죽관의 흡수 도해",
+    "작은창자 융털의 속 구조 도해 — 주름 위에 솟은 융털과 그 안의 모세혈관·암죽관",
+    "0 0 360 240",
   );
 }
 

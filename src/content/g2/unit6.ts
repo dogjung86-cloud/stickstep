@@ -6,8 +6,8 @@ import {
   nutrientTestLab, digestJourneyLab, circulationLab, breathModelLab, nephronLab, bodyIntegrateLab,
 } from "../dsl";
 import {
-  bodyMiniArt, nutrientTestFig, enzymeFlowFig,
-  heartFourChamberFig, bloodComponentsFig,
+  bodyMiniArt, nutrientTestFig, digestByOrganFig,
+  bloodComponentsFig,
   breathCompareFig,
   cellRespirationFig, bodySystemsIntegrationFig,
 } from "../../ui/bodyFigures";
@@ -46,12 +46,27 @@ const bodyGenerated = (
   ${legend}
 </div>`;
 
-const villusAbsorptionArt = (): string => bodyGenerated(
+// 그림 제목 — 발주 이미지에는 글자가 없으므로(코덱스 규칙) 제목도 앱이 얹는다.
+// 2026-08-06 사용자 지시: "그림 위에 제목이 들어가야 할 듯".
+const artTitle = (t: string): string =>
+  `<div style="font-size:13px;font-weight:900;color:var(--subj-body);text-align:center;margin:0 0 6px">${t}</div>`;
+
+const villusAbsorptionArt = (): string => artTitle("작은창자의 융털 속 구조") + bodyGenerated(
   "villus-absorption.webp",
   "작은창자 융털의 얇은 벽 안에 모세혈관망과 중앙 암죽관이 있고 영양소가 서로 다른 통로로 흡수되는 모습",
   `${bodyPin(24, 18, "포도당·아미노산", "green")}${bodyPin(50, 46, "암죽관", "amber")}${bodyPin(72, 26, "모세혈관", "red")}${bodyPin(82, 72, "지방산·모노글리세라이드", "amber")}`,
   `<div class="body-flow-legend two"><span class="green"><b>포도당·아미노산</b> → 모세혈관</span><span class="amber"><b>지방산·모노글리세라이드</b> → 암죽관</span></div>`,
 );
+
+/** 작은창자 안쪽 벽 — 주름 위에 융털이 빽빽한 발주 일러스트(표면적이 왜 넓은지의 증거).
+ *  융털 속 구조 그림보다 **먼저** 놓아 "왜 흡수에 유리한가"를 먼저 납득시킨다. */
+// bodyGenerated는 경로에 body/figs/v2/를 붙이므로 다른 폴더(body/digest/)는 직접 임베드한다.
+const intestineFoldsArt = (): string => artTitle("작은창자 안쪽 벽") +
+  `<div class="body-generated">
+    <div class="body-generated-frame">
+      <img src="${BODY_IMG_BASE}body/digest/villi-wall.webp" alt="작은창자 안쪽 벽의 주름과 그 위를 빽빽하게 덮은 융털"/>
+    </div>
+  </div>`;
 
 const vesselCompareArt = (): string => bodyGenerated(
   "vessel-compare.webp",
@@ -60,26 +75,34 @@ const vesselCompareArt = (): string => bodyGenerated(
   `<div class="body-flow-legend three"><span class="red"><b>동맥</b> 두껍고 탄력 있는 벽</span><span class="green"><b>모세혈관</b> 한 겹의 얇은 벽</span><span class="blue"><b>정맥</b> 넓은 속공간·판막</span></div>`,
 );
 
-const doubleCirculationArt = (): string => bodyGenerated(
-  "double-circulation-base.webp",
-  "허파와 네 방의 심장, 온몸 조직세포를 배치하고 파란색과 빨간색 혈액 경로를 정확한 방향으로 나타낸 두 순환 모식도",
-  `<svg class="body-route-overlay" viewBox="0 0 960 640" aria-hidden="true">
-    <defs>
-      <marker id="dc-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9Z" fill="#2F80ED"/></marker>
-      <marker id="dc-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9Z" fill="#E23B4B"/></marker>
-    </defs>
-    <path class="route-blue" d="M425 342 C370 323 332 287 286 248" marker-end="url(#dc-blue)"/>
-    <path class="route-red" d="M305 210 C365 204 412 226 448 270" marker-end="url(#dc-red)"/>
-    <path class="route-red" d="M554 354 C642 367 704 405 757 454" marker-end="url(#dc-red)"/>
-    <path class="route-blue" d="M750 531 C661 531 592 482 535 422" marker-end="url(#dc-blue)"/>
-  </svg>${bodyPin(20, 55, "허파순환", "blue")}${bodyPin(77, 54, "온몸순환", "red")}`,
-  `<div class="body-cycle-paths"><span class="blue"><b>허파순환</b> 우심실 → 폐동맥 → 허파 → 폐정맥 → 좌심방</span><span class="red"><b>온몸순환</b> 좌심실 → 대동맥 → 온몸 → 대정맥 → 우심방</span></div>`,
-);
+/** 이중 순환 — 2026-08-06 재발주본으로 교체(사용자 지시 "어디가 대동맥이고 폐정맥인지
+ *  전혀 알 수 없는 그림"). 허파(위) · 네 방 심장(가운데) · 온몸 조직(아래)을 굵은 관 네 개가
+ *  잇고, 관마다 **혈관 이름 라벨**을 얹어 경로를 그림에서 그대로 읽게 한다.
+ *  좌표는 circulation.webp 실측. 심장 좌우는 해부 기준(보는 사람의 왼쪽이 우심방·우심실).
+ *  ⚠ 1차 발주본은 왼쪽 두 관의 연결이 뒤바뀌어(폐동맥이 우심방에서 출발) 폐기했다 —
+ *  재발주 시 부착 지점을 2×2 격자 위치로 못 박을 것(qa/order-body-circ.sh 프롬프트가 정본). */
+const doubleCirculationArt = (): string =>
+  `<div class="body-generated">
+    <div class="body-generated-frame" style="position:relative">
+      <img src="${BODY_IMG_BASE}body/digest/circulation.webp" alt="허파와 네 방의 심장, 온몸 조직세포를 네 개의 혈관이 잇는 이중 순환 모식도"/>
+      ${bodyPin(50, 11, "허파", "red")}
+      ${bodyPin(35, 16, "폐동맥", "blue")}${bodyPin(64, 15, "폐정맥", "red")}
+      ${bodyPin(41, 42, "우심방", "blue")}${bodyPin(57, 42, "좌심방", "red")}
+      ${bodyPin(40, 60, "우심실", "blue")}${bodyPin(58, 62, "좌심실", "red")}
+      ${bodyPin(26, 56, "대정맥", "blue")}${bodyPin(72, 64, "대동맥", "red")}
+      ${bodyPin(50, 88, "온몸 조직세포", "red")}
+    </div>
+    <div class="body-cycle-paths"><span class="blue"><b>허파순환</b> 우심실 → 폐동맥 → 허파 → 폐정맥 → 좌심방</span><span class="red"><b>온몸순환</b> 좌심실 → 대동맥 → 온몸 → 대정맥 → 우심방</span></div>
+  </div>`;
 
 const alveoliExchangeArt = (): string => bodyGenerated(
   "alveoli-exchange.webp",
   "허파꽈리의 산소는 모세혈관으로, 모세혈관의 이산화 탄소는 허파꽈리로 이동하는 기체 교환",
-  `${bodyPin(24, 13, "허파꽈리 안", "red")}${bodyPin(82, 15, "모세혈관", "blue")}`,
+  // 입자 이름 라벨 2개는 2026-08-06 사용자 지시 — 파란 입자·보라 입자가 각각 무엇인지
+  // 그림 안에서 알 수 없었다(범례만으론 색과 물질이 연결되지 않는다).
+  // 좌표는 alveoli-exchange.webp 실측: 파란 입자 39%·44%, 보라 입자 64%·59%.
+  `${bodyPin(24, 13, "허파꽈리 안", "red")}${bodyPin(82, 15, "모세혈관", "blue")}` +
+  `${bodyPin(26, 44, "산소", "blue")}${bodyPin(70, 30, "이산화 탄소", "purple")}`,
   `<div class="body-flow-legend two"><span class="blue"><b>산소</b> 허파꽈리 → 모세혈관</span><span class="purple"><b>이산화 탄소</b> 모세혈관 → 허파꽈리</span></div>`,
 );
 
@@ -113,11 +136,34 @@ const digestiveSystemArt = (): string =>
   ]);
 
 const heartAnatomyArt = (): string =>
+  // 판막 라벨 2개는 2026-08-06 사용자 지시 — 그림에 판막이 그려져 있는데 이름이 없어
+  // 캡션의 "판막은 역류를 막아요"가 어디를 말하는지 알 수 없었다.
+  // 좌표는 heart.webp 실측(심방↔심실 사이의 흰 판막 잎), 방 이름과 색을 달리해 범주를 구분한다.
   bodyLabeled("heart.webp", "네 개의 방과 판막, 굵은 혈관이 드러난 심장 단면", [
     { x: 30, y: 38, t: "우심방", c: "#245B9B" },
     { x: 34, y: 63, t: "우심실", c: "#245B9B" },
     { x: 72, y: 36, t: "좌심방", c: "#B7353E" },
     { x: 66, y: 64, t: "좌심실", c: "#B7353E" },
+    { x: 33, y: 51, t: "판막", c: "#5A6472" },
+    { x: 63, y: 49, t: "판막", c: "#5A6472" },
+  ]);
+
+/** 문제용 심장 그림 — 네 방 + **네 혈관** 라벨(2026-08-06 사용자 지시 "문제 1-3 그림이 이상하다").
+ *  구 heartFourChamberFig(손코딩 SVG)는 혈관이 이름 없는 굵은 곡선 4개뿐이라, 보기의
+ *  대동맥·폐동맥·대정맥·폐정맥을 그림에서 판독할 수 없었다(정답 근거가 그림에 없는 문항).
+ *  개념 스텝과 같은 heart.webp를 쓰되 라벨 세트를 혈관 중심으로 바꾼다 —
+ *  개념에서 익힌 그림을 문제에서 다시 읽는 구성이라 재사용이 오히려 자연스럽다.
+ *  주의: 심장 그림의 좌우는 해부학 기준(보는 사람의 왼쪽이 우심방·우심실). */
+const heartVesselArt = (): string =>
+  bodyLabeled("heart.webp", "네 방과 대정맥·대동맥·폐동맥·폐정맥이 드러난 심장 단면", [
+    { x: 29, y: 13, t: "대정맥", c: "#245B9B" },
+    { x: 47, y: 6, t: "대동맥", c: "#B7353E" },
+    { x: 68, y: 22, t: "폐동맥", c: "#245B9B" },
+    { x: 84, y: 31, t: "폐정맥", c: "#B7353E" },
+    { x: 30, y: 40, t: "우심방", c: "#245B9B" },
+    { x: 33, y: 65, t: "우심실", c: "#245B9B" },
+    { x: 70, y: 40, t: "좌심방", c: "#B7353E" },
+    { x: 66, y: 66, t: "좌심실", c: "#B7353E" },
   ]);
 
 const respiratorySystemArt = (): string =>
@@ -305,9 +351,10 @@ const L2 = lesson({
         { k: "figure", svg: cut("body", "g2u6l2", "밥을 오래 씹다가 단맛을 느끼고 놀란 스틱맨"), cap: "오래 씹을수록 단맛이 난다면, 입에서도 소화가 시작됐다는 단서예요." },
         { k: "figure", svg: digestiveSystemArt(), cap: "음식물은 입에서 항문까지 이어진 소화관을 따라 이동하고, 간과 이자 같은 소화샘이 옆에서 소화액을 보태요." },
         { k: "term", name: "소화", def: "크기가 큰 영양소를 소화관에서 흡수할 수 있는 작은 영양소로 분해하는 과정이에요.", icon: "route" },
-        { k: "figure", svg: enzymeFlowFig(), cap: "탄수화물은 포도당, 단백질은 아미노산, 지방은 지방산과 모노글리세라이드로 최종 분해돼요." },
+        { k: "figure", svg: digestByOrganFig(), cap: "탄수화물은 포도당, 단백질은 아미노산, 지방은 지방산과 모노글리세라이드로 최종 분해돼요." },
         { k: "list", items: ["아밀레이스는 침과 이자액에 들어 있으며 녹말을 엿당으로 분해해요.", "위액의 펩신은 염산의 도움을 받아 단백질을 분해하고, 이자액의 트립신도 단백질에 작용해요.", "이자액의 라이페이스는 지방을 분해해요. 쓸개즙은 간에서 만들어져 쓸개에 저장되며 소화효소는 없지만 지방 소화를 도와요."] },
-        { k: "figure", svg: villusAbsorptionArt(), cap: "융털의 얇은 벽 바로 안쪽에는 모세혈관망과 암죽관이 있어요. 포도당·아미노산은 모세혈관으로, 지방산·모노글리세라이드는 암죽관으로 흡수돼요." },
+        { k: "figure", svg: intestineFoldsArt(), cap: "작은창자 안쪽 벽은 주름져 있고 그 위에 융털이 빽빽해요. 같은 길이의 매끈한 관보다 영양소와 닿는 표면적이 훨씬 넓어 흡수에 유리해요." },
+        { k: "figure", svg: villusAbsorptionArt(), cap: "융털은 벽이 얇고 그 바로 안쪽에 모세혈관망과 암죽관이 있어요. 포도당·아미노산은 모세혈관으로, 지방산·모노글리세라이드는 암죽관으로 흡수돼요." },
         { k: "callout", tone: "amber", title: "소화효소의 특이성", html: "한 소화효소가 모든 영양소를 분해하지 않아요. 아밀레이스는 녹말에, 펩신은 단백질에 작용하는 것처럼 <b>특정 영양소</b>에만 작용해요." },
       ],
       cta: "소화 여행 시작하기",
@@ -361,7 +408,7 @@ const L2 = lesson({
     }),
     mcq({
       prompt: "그림에서 녹말이 최종 산물로 분해되는 흐름을 가장 정확히 설명한 것은 무엇일까요?",
-      figure: enzymeFlowFig(),
+      figure: digestByOrganFig(),
       options: ["입과 작은창자에서 소화되어 최종적으로 포도당이 돼요", "위에서만 소화되어 아미노산이 돼요", "큰창자에서 쓸개즙에 의해 지방산이 돼요", "식도에서 펩신에 의해 엿당이 돼요", "항문에서 물과 무기염류가 돼요"],
       answer: 0,
       explainGood: "맞아요. 녹말 소화는 입에서 시작되고 작은창자에서 마무리되어 포도당이 돼요.",
@@ -499,7 +546,7 @@ const L3 = lesson({
     }),
     mcq({
       prompt: "그림에서 온몸으로 혈액을 내보내는 방과 그 특징을 옳게 설명한 것은 무엇일까요?",
-      figure: heartFourChamberFig(),
+      figure: heartVesselArt(),
       options: ["좌심실이며 근육 벽이 가장 두꺼워요", "우심방이며 폐동맥과 바로 이어져요", "좌심방이며 대정맥에서 혈액을 받아요", "우심실이며 대동맥으로 혈액을 보내요", "좌심실이며 혈액을 폐정맥에서 직접 받아요"],
       answer: 0,
       explainGood: "맞아요. 좌심실은 온몸으로 혈액을 보내므로 높은 압력을 만들 수 있게 벽이 가장 두꺼워요.",

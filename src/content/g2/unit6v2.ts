@@ -15,7 +15,7 @@ import {
 } from "../dsl";
 import { anMiniArt, nutrientRoleFig, detectFig, sizeGateFig } from "../../ui/animalFigures";
 // codex 판 도해 재사용 — 소화계 한 장·효소 흐름·융털 흡수는 그쪽 그림이 더 정돈돼 있다.
-import { digestiveSystemFig, enzymeFlowFig, villusAbsorptionFig } from "../../ui/bodyFigures";
+import { digestiveSystemFig, digestByOrganFig, villusAbsorptionFig } from "../../ui/bodyFigures";
 import { G2_UNIT6 } from "./unit6";
 
 const CUT = (name: string, alt: string): { k: "figure"; svg: string; cap: string } => ({
@@ -413,7 +413,7 @@ const L3 = lesson({
       lead: "세 영양소가 어디에서 무엇에 의해 어떻게 분해되는지 한눈에 봐요.",
       blocks: [
         CUT("flow", "스틱맨이 긴 통나무를 톱질대 세 곳에 차례로 통과시켜 점점 짧게 잘라 마지막엔 작은 토막 더미가 되는 만화 컷"),
-        { k: "figure", svg: enzymeFlowFig(), cap: "탄수화물은 포도당, 단백질은 아미노산, 지방은 지방산과 모노글리세라이드로 최종 분해돼요." },
+        { k: "figure", svg: digestByOrganFig(), cap: "탄수화물은 포도당, 단백질은 아미노산, 지방은 지방산과 모노글리세라이드로 최종 분해돼요." },
         { k: "list", items: [
           "<b>녹말</b> → (입·작은창자, 아밀레이스) → 엿당 → <b>포도당</b>",
           "<b>단백질</b> → (위, 펩신) → (작은창자, 트립신) → <b>아미노산</b>",
@@ -495,7 +495,7 @@ const L3 = lesson({
     }),
     mcq({
       prompt: "그림은 영양소의 소화 과정이에요. 이에 대한 설명으로 <b>옳지 않은</b> 것은?",
-      figure: enzymeFlowFig(),
+      figure: digestByOrganFig(),
       options: [
         "지방은 위에서 라이페이스에 의해 분해돼요.",
         "녹말은 입에서 엿당으로 분해되기 시작해요.",
