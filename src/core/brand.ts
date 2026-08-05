@@ -16,4 +16,5 @@ export const BIZ_INFO: string[] = [
   "대표자명: 김정훈",
   "사업장 주소: 경기도 시흥시 시청로 25, 시티프론트561 507호",
   "유선번호: 010-9556-5771",
+  "이메일: support@stickstep.com",
 ];
