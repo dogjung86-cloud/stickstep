@@ -76,7 +76,8 @@ const heading = () =>
     bands: document.querySelectorAll(".unit-band").length,
     nodes: document.querySelectorAll(".gm-node").length,
   }));
-  check(home.bands === 7, `홈 밴드 7개 (실제 ${home.bands})`);
+  const socUnits = await page.evaluate(async () => (await import("/src/content/soc/curriculum.ts")).SOC_G1.length);
+  check(home.bands === socUnits, `홈 밴드 = 사회 커리큘럼 단원 수(${socUnits}) (실제 ${home.bands})`);
   // Ⅱ 탭으로 전환 → 8레슨 노드 + world 테마 지형
   await page.evaluate(() => document.querySelectorAll(".unit-tab")[1].click());
   await W(800);
