@@ -1,0 +1,73 @@
+# 사회 Ⅹ(s1u10 정치과정과 시민 참여) 발주 — 스틱맨 개념 컷 7장(public/soc/cuts) + 만화 「100원 택시가 달리기까지」 4컷(public/comics/s1u10l6)
+# 컷·만화 모두 "이미지 안 글자 절대 금지". 만화 컷은 앱이 한글 말풍선을 얹는 하이브리드라
+# 인물이 입을 벌리고 손짓하는 "말하는 연기"만 그리고, 인물 머리 위쪽 1/3 여백을 넉넉히 남긴다.
+# ★ 이 단원 눈검수 특칙(정치 단원 가드 — Ⅸ 계승): 기존 항목(글자 0·의미 정확·손가락 5개·인물 존엄)에 더해
+#   **정치 중립 검수** — 현실 정당·정치인·국기·구호·피켓 문구 절대 금지(전부 익명 스틱맨·추상 소품, 팻말은 빈 판만),
+#   **비폭력 검수** — 무기·전투·충돌 절대 금지,
+#   스틱맨은 무성별 기본형(머리카락·치마 등 성별 표지 금지 — 다양성은 지팡이·모자·연장 같은 소품으로),
+#   **만화 존엄 특칙** — 시골 어르신은 "불편의 피해자"가 아니라 "해결을 이끈 주인공"으로: 허리를 편 당당한
+#   자세, 밝은 표정 기본(c0의 아쉬움도 절제된 표정까지만), 낡음·궁핍 연출 금지.
+#
+# ── 스타일 블록 A (스틱맨 개념 컷 공용 — soc 공용) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 T (만화 컷 공용 — 말풍선 하이브리드 + 현대 시골 마을, soc9 스타일 C의 현대판) ──
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal, used sparingly where the prompt says.
+# Absolutely NO text, NO letters, NO numbers, NO speech bubbles, NO captions anywhere.
+# Characters ACT like they are talking: open mouth (small oval), expressive hand gestures.
+# Modern-day South Korean countryside setting: small rural village, low houses, hills,
+# country road — warm, tidy and well-kept (NOT shabby, NOT gloomy). NO flags, NO banners,
+# NO picket signs with any writing (blank boards only if needed), NO weapons, NO fighting.
+# All stick figures are gender-neutral basic form (no hair, no skirts); variety comes from
+# props only: a simple walking cane, a brimmed hat, a satchel. The ELDER character (cane +
+# brimmed hat) always stands upright with dignity and bright, capable energy — never frail,
+# never pitiful. Keep the upper third of the panel mostly empty white space above the
+# characters' heads (the app overlays Korean speech bubbles there). Main subjects centered
+# horizontally. Simple, charming, educational middle-school comic. 4:3 landscape panel.
+
+## ── 개념 컷 7장 (스타일 A) ──
+
+[0] file=public/soc/cuts/u10l1.png (landscape 4:3, 스타일 A)
+A friendly polling place interior: in the center a simple ballot box with a slot on a small table, and one stick figure mid-motion dropping a folded paper slip into the slot with a calm proud smile. To the left, two more stick figures wait in a short line, each holding its own folded slip; to the right, one stick figure wearing a small armband stands neutrally as a watching official with hands clasped. All plain gender-neutral stick figures, dot eyes. Only the folded paper slips are teal; everything else pure black and white.
+
+[1] file=public/soc/cuts/u10l2.png (landscape 4:3, 스타일 A)
+An architectural scene like a tiny open temple: four sturdy vertical columns stand in a row on a wide base, together holding up one flat roof slab. Under the roof, safely sheltered, sits a simple ballot box with a slot. One stick figure stands beside the second column, reaching out and touching it with one hand while looking up at it, like an inspector checking that the pillar is solid (calm focused face). The four columns are clearly equal in size. Only the ballot box under the roof is teal; everything else pure black and white.
+
+[2] file=public/soc/cuts/u10l3.png (landscape 4:3, 스타일 A)
+Split scene divided by a thin vertical wavy line: on the left, one stick figure holds a big round magnifying glass up to a sheet of paper covered only with abstract squiggle lines (no letters), examining it with one narrowed focused eye — the careful voter. On the right, another stick figure stands on a low box speaking through a cone megaphone with an open mouth and one arm raised high — the campaigning candidate; two small stick figures listen below. Only the examined sheet of paper on the left is teal; everything else pure black and white.
+
+[3] file=public/soc/cuts/u10l4.png (landscape 4:3, 스타일 A)
+A wide low stage platform seen from the front, with six stick figures standing on it in a loose row like a cast introduction, each holding a different prop: one holds a thick document folder, one holds a cone megaphone, one holds an old-style boxy TV camera on its shoulder, one holds a small gavel, one holds a completely blank rectangular hand sign (empty board, no writing), one holds a rolled newspaper. Each figure strikes a slightly different friendly pose. Only the stage platform's front edge stripe is teal; everything else pure black and white.
+
+[4] file=public/soc/cuts/u10l5.png (landscape 4:3, 스타일 A)
+A gentle stream crossed by five round stepping stones in a row, drawn from a slight side-top angle. One stick figure is mid-stride on the third stone, arms out for balance, cheerful focused face, heading toward the far bank. Above the stones, one big smooth curved arrow arcs from the fifth (last) stone all the way back to the first stone, showing the path loops around. Only that big curved return arrow is teal; everything else pure black and white.
+
+[5] file=public/soc/cuts/u10l6.png (landscape 4:3, 스타일 A)
+A round table seen from a slight top angle with a big simple village map sheet spread on it (map shows only abstract road lines, house shapes, a river band — no letters). Three stick figures lean over the map from different sides, one pointing at a spot on the map, the others nodding with open engaged mouths. Beside the table at ground level, a small sprout with two leaves grows out of a tiny mound of soil. Only that small sprout is teal; everything else pure black and white.
+
+[6] file=public/soc/cuts/u10l7.png (landscape 4:3, 스타일 A)
+A path forking into four separate trails that spread toward the horizon like a fan. At the fork stands one stick figure seen from behind at three-quarter angle, hands on hips, head tilted up looking at a tall wooden signpost with four completely blank arrow-shaped boards pointing toward the four trails (empty boards, no writing). The scene feels bright and full of possibility. Only the four blank arrow boards on the signpost are teal; everything else pure black and white.
+
+## ── 만화 s1u10l6 「100원 택시가 달리기까지」 4컷 (스타일 T) ──
+## 등장인물 고정: ELDER = 지팡이 + 챙 모자 소품의 어르신 스틱맨(허리 곧게, 밝고 당당 — 존엄 특칙).
+## VILLAGERS = 마을 주민 스틱맨들(가방·모자 등 소품 다양). COUNCIL = 회의복 없는 평범한 스틱맨 의원들.
+
+[c0] file=public/comics/s1u10l6/0.png (landscape 4:3, 스타일 T, DIGNIFIED)
+A small countryside bus stop on a quiet country road: a simple pole with one completely blank timetable board (empty, no letters) and a small bench. The ELDER (cane + brimmed hat, upright posture) stands beside the bench, one hand resting on the cane, the other hand shading its eyes, looking far down the road where a small bus is already driving away into the distance leaving two soft dust puffs. The ELDER's expression is a restrained mild "just missed it" look — composed, not sad, chin up. Rolling hills and two low village houses in the background. Keep the upper third empty. Only the departing bus is teal.
+
+[c1] file=public/comics/s1u10l6/1.png (landscape 4:3, 스타일 T, DIGNIFIED)
+Inside a bright village meeting room: five VILLAGERS and the ELDER sit and stand around a long simple table. The ELDER stands at the head of the table, one hand raised confidently mid-speech (open mouth, energetic dignified pose, cane held like a walking staff), while the seated villagers lean in and nod, two raising their hands in agreement, all with open engaged mouths. On the table lies one single suggestion paper sheet (abstract squiggle lines only, no letters). Keep the upper third empty for speech bubbles. Only that one suggestion paper sheet is teal.
+
+[c2] file=public/comics/s1u10l6/2.png (landscape 4:3, 스타일 T, DIGNIFIED)
+A small local council chamber: a gently curved desk row where four COUNCIL stick figures sit, and one standing chairperson figure at the center raises a small gavel mid-strike above a round sound block — the decisive moment of passing a local rule. Small motion arcs around the gavel show the tap. On the desk in front of the chairperson stands one upright document sheet (abstract squiggle lines, no letters). The seated members raise their hands in approval with open mouths. Keep the upper third empty for speech bubbles. Only the gavel head is teal.
+
+[c3] file=public/comics/s1u10l6/3.png (landscape 4:3, 스타일 T, GAG-LIGHT)
+A sunny village road: a small rounded taxi has pulled up, its friendly DRIVER stick figure (flat cap prop) leaning out the window with a welcoming open-mouth smile and one open palm gesture. The ELDER (cane + brimmed hat, upright and delighted) stands by the open rear door, holding up one single big coin between thumb and finger at eye level like a small trophy, beaming with a wide open-mouth smile. A second villager waves happily from the bench in the background. Keep the upper third empty for speech bubbles. Only the taxi body is teal.

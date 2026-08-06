@@ -136,6 +136,7 @@ export const hook = (o: {
     | "twinstory" | "hiddenteacher" | "profileme" | "nametags" | "doubleday" | "vinestangle" | "dollshelf"
     | "wordhunt" | "greetmix" | "birthsoup" | "mycomment" | "mugwort" | "doorbell" | "siesta"
     | "seatwar" | "oneway" | "lotclass" | "hundredmen" | "kingnope" | "idiotword" | "uniformday"
+    | "onevote" | "ruleposter" | "electletter" | "cablecar" | "schoolzone" | "bikename" | "yellowcarpet"
     | "saveicon" | "gamechar" | "timecapsule" | "dangi" | "milmyeon"
     | "sprout" | "receipt" | "aptmap" | "parcel" | "olympic" | "romanclock" | "silkscarf"
     | "lambskewer" | "examnotice" | "kanasign" | "hanjahw" | "zeroscore" | "chessmate" | "arabnum" | "francejersey" | "pepper"
@@ -487,6 +488,11 @@ export const suffrageLab = (o: { title: string; lead?: string; cta?: string; cur
   ({ type: "suffrageLab", ...o });
 export const principleLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "principleLab", ...o });
+// 사회 Ⅹ 전용 신작 기함 2종(데이터 내장형 — 선거 6단계 릴레이·정치과정 5단계+환류 릴레이)
+export const electLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "electLab", ...o });
+export const policyLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "policyLab", ...o });
 
 // ── 중1 Ⅱ 생물의 구성과 다양성 랩 11종(2026-07-25 재제작) ────────────
 // 전부 같은 계약: { title, lead?, cta?, curio? }. 구작 랩(orgLevels·finchSim·microscope·

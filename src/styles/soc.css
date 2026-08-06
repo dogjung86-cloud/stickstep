@@ -150,6 +150,20 @@
 .gm-path-glow.vote { stroke: rgba(24,100,171,.22); }
 .gm-path-done.vote { stroke: #1864AB; }
 
+/* Ⅹ 정치과정과 시민 참여 — 풀뿌리 라임 #5C940D(새싹의 색. asia #2B8A3E 짙은 초록과 노란빛 연두로 구분) */
+.unit-band.voice { background: linear-gradient(150deg, #82B31E 0%, #5C940D 55%, #47730A 100%); }
+.gm-terrain.voice {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #E4EFCE, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #DCEBBE, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #E0EDC6, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #D2E5AC, transparent 72%),
+    linear-gradient(180deg, #F7FAEE 0%, #EEF5DC 55%, #E0EDC6 100%);
+}
+.gm-path-glow.voice { stroke: rgba(92,148,13,.22); }
+.gm-path-done.voice { stroke: #5C940D; }
+
 /* ---------- worldPlaceLab(기함) — 가로 무대 "지구에 살아 보기" ---------- */
 /* touch-action·선택 방지는 iOS 계열까지 겹겹이 — 스크롤 탈취·롱프레스 선택이 드래그를 죽인다 */
 .wpl-stage { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
