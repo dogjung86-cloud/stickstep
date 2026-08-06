@@ -13,7 +13,7 @@ const THEME_INK: Record<string, string> = {
   num: "#0DA5C6", alge: "#7C5CE8", grph: "#E8547E", geom: "#F08C00", solid: "#2F9E44", data: "#364FC7",
   calc: "#9C36B5", ineq: "#A9631B", func: "#0CA678", prove: "#1971C2", sim: "#C2255C", dice: "#C92A2A",
   // 사회 — 대륙 여행 팔레트(2026-07-21 단원별 분리. Ⅰ만 기존 트래블 오렌지 유지)
-  world: "#E8590C", asia: "#2B8A3E", euro: "#3B5BDB", afri: "#E8A20C", amer: "#0C8599", ocea: "#7048E8", civic: "#D6336C", fest: "#C13B2E", vote: "#1864AB", voice: "#5C940D",
+  world: "#E8590C", asia: "#2B8A3E", euro: "#3B5BDB", afri: "#E8A20C", amer: "#0C8599", ocea: "#7048E8", civic: "#D6336C", fest: "#C13B2E", vote: "#1864AB", voice: "#5C940D", law: "#8C5A16",
   // 역사 — 유물 재질 팔레트(his가 여기 빠져 있어 역사 발바닥이 전부 토스 블루 폴백이던 버그도 함께 수정)
   his: "#0E7C8A", civ: "#C05621", faith: "#6741D9", silk: "#C2273D",
 };

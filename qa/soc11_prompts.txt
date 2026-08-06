@@ -1,0 +1,73 @@
+# 사회 Ⅺ(s1u11 일상생활과 법) 발주 — 스틱맨 개념 컷 7장(public/soc/cuts) + 만화 「우산이 된 법」 4컷(public/comics/s1u11l4)
+# 컷·만화 모두 "이미지 안 글자 절대 금지". 만화 컷은 앱이 한글 말풍선을 얹는 하이브리드라
+# 인물이 입을 벌리고 손짓하는 "말하는 연기"만 그리고, 인물 머리 위쪽 1/3 여백을 넉넉히 남긴다.
+# ★ 이 단원 눈검수 특칙(법 단원 가드 — Ⅸ·Ⅹ 계승 + 확장): 기존 항목(글자 0·의미 정확·손가락 5개·인물 존엄)에 더해
+#   **비범죄 검수** — 범죄 행위 장면(훔치기·때리기 등) 절대 금지: 법·재판은 저울·법전·법정 소품으로만 표현,
+#   **비폭력 검수** — 무기·전투·수갑·감옥 절대 금지(판사의 작은 나무 법봉만 허용),
+#   스틱맨은 무성별 기본형(머리카락·치마 등 성별 표지 금지 — 다양성은 안경·모자·가방 같은 소품으로),
+#   **만화 존엄 특칙** — 과거 공장 컷의 노동자들은 작게(원경) 그리고 쓰러지거나 우는 모습 금지,
+#   비난 캐리커처 금지(악역 인물 없음 — 문제는 '기울어진 저울'이라는 구조 은유로만), 결말 컷은 밝고 안전하게.
+#
+# ── 스타일 블록 A (스틱맨 개념 컷 공용 — soc 공용) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 T (만화 컷 공용 — 말풍선 하이브리드, 「우산이 된 법」) ──
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal, used sparingly where the prompt says.
+# Absolutely NO text, NO letters, NO numbers, NO speech bubbles, NO captions anywhere.
+# Characters ACT like they are talking: open mouth (small oval), expressive hand gestures.
+# All stick figures are gender-neutral basic form (no hair, no skirts); variety comes from
+# props only: round glasses, a small satchel, a flat cap. NO flags, NO banners, NO picket
+# signs with any writing (blank boards only if needed), NO weapons, NO fighting, NO handcuffs,
+# NO crying faces. Historical factory scenes show workers only SMALL and FAR AWAY (distant
+# silhouette-like simple figures), never close up, never collapsed, never miserable poses —
+# calm and composed only. No villain characters anywhere. Keep the upper third of the panel
+# mostly empty white space above the characters' heads (the app overlays Korean speech
+# bubbles there). Main subjects centered horizontally. Simple, charming, educational
+# middle-school comic. 4:3 landscape panel.
+
+## ── 개념 컷 7장 (스타일 A) ──
+
+[0] file=public/soc/cuts/u11l1.png (landscape 4:3, 스타일 A)
+Two stick figures standing face to face in the center, making a pinky-promise: their arms extended toward each other, little fingers hooked together in a clear interlocking hold at chest height, both with warm smiles and dot eyes. Behind them, slightly larger than the figures, stands one big thick closed book upright on the ground like a friendly monument, its front cover facing the viewer, completely blank (no letters, no symbols). The composition reads "a promise becomes a big book of rules". Only the book's front cover is teal; everything else pure black and white.
+
+[1] file=public/soc/cuts/u11l2.png (landscape 4:3, 스타일 A)
+A large classic two-pan balance scale standing on a small table, its beam perfectly horizontal and level. On each of the two pans sits one identical simple cube block, same size on both sides. One stick figure crouches beside the table at eye level with the beam, one hand raised with index finger checking the beam's levelness, focused calm face with dot eyes. The perfectly level beam is the visual point. Only the two identical cube blocks on the pans are teal; everything else pure black and white.
+
+[2] file=public/soc/cuts/u11l3.png (landscape 4:3, 스타일 A)
+A path that splits into two clear directions in front of one stick figure seen from behind at three-quarter angle, head tilted, deciding. On the left side of the panel: a stately public building with a triangular roof pediment and four columns on a wide stone base. On the right side: a small cozy house with a chimney and, next to it, a tiny corner shop with a striped awning. At the fork stands a simple wooden signpost with two completely blank arrow-shaped boards (empty, no writing), one pointing left and one pointing right. Only the two blank arrow boards are teal; everything else pure black and white.
+
+[3] file=public/soc/cuts/u11l4.png (landscape 4:3, 스타일 A)
+Soft rain drawn as sparse thin diagonal dashes falls across the upper part of the scene. In the center one taller stick figure holds up one very large wide umbrella with both hands, and under the umbrella's shelter three smaller stick figures stand together completely dry and safe, relaxed cheerful faces with dot eyes, one of them giving a small thumbs-up. The umbrella clearly covers all three smaller figures. Only the umbrella canopy is teal; everything else pure black and white.
+
+[4] file=public/soc/cuts/u11l5.png (landscape 4:3, 스타일 A)
+A simple courtroom seen from the front: in the center back, one stick figure judge sits behind a tall raised wooden bench, holding up a small wooden gavel calmly in one hand (five fingers). In the foreground, two separate small tables face the bench from the left and right, one stick figure standing behind each table, both gesturing mid-argument toward the bench with open mouths and raised hands — a fair orderly debate, no anger. Only the gavel head is teal; everything else pure black and white.
+
+[5] file=public/soc/cuts/u11l6.png (landscape 4:3, 스타일 A)
+A courtroom viewed from the back of the public gallery: in the foreground, the backs of five stick figures sitting in a row on a bench, watching. Beyond them in the middle distance, the courtroom scene: a judge stick figure behind a raised bench, and two small tables with one stick figure each. On the wall high behind the judge hangs one round wall emblem showing a simple balanced two-pan scale pictogram (no letters). The composition reads "everyone can watch the trial". Only the round wall emblem with the scale pictogram is teal; everything else pure black and white.
+
+[6] file=public/soc/cuts/u11l7.png (landscape 4:3, 스타일 A)
+Three giant wide stone steps rising from left to right like a staircase for a giant, each step clearly taller than the stick figure. One stick figure is climbing energetically from the first step up onto the second step, one knee up, determined cheerful face, dot eyes. On top of the third (highest) step stands a small flag on a pole, waving. The three steps are clearly distinct and evenly sized. Only the flag is teal; everything else pure black and white.
+
+## ── 만화 s1u11l4 「우산이 된 법」 4컷 (스타일 T) ──
+## 등장인물 고정: STUDENT = 작은 가방 소품의 학생 스틱맨. FRIEND = 안경 소품의 친구 스틱맨.
+## 과거 컷의 노동자들은 원경의 작고 담담한 실루엣만(존엄 특칙 — 클로즈업·처량함 금지).
+
+[c0] file=public/comics/s1u11l4/0.png (landscape 4:3, 스타일 T, DIGNIFIED)
+A bright modern street corner with a small cozy cafe: on the cafe's outer wall hangs one completely blank notice board (empty rectangle, no letters). The STUDENT (small satchel) stands in front of the board, head tilted, one hand on chin in a curious thinking pose, looking at the blank board. Beside the student stands the FRIEND (round glasses), open mouth mid-explanation, one hand raised in a friendly teaching gesture pointing at the board. Both upright, cheerful. Keep the upper third empty for speech bubbles. Only the cafe's awning is teal.
+
+[c1] file=public/comics/s1u11l4/1.png (landscape 4:3, 스타일 T, DIGNIFIED)
+A wide calm historical factory landscape seen from far away: two large brick factory buildings with three tall chimneys releasing soft smoke curls, drawn small on the horizon. A long line of small simple stick figures walks calmly along a road toward the factory gate — all far away, tiny, composed walking poses only (no faces visible at this distance, no collapsed or miserable poses). Bare rolling hills behind. The mood is quiet and matter-of-fact, like an old storybook illustration, not gloomy. Keep the upper third mostly empty sky. Only the smoke curls are teal.
+
+[c2] file=public/comics/s1u11l4/2.png (landscape 4:3, 스타일 T, DIGNIFIED)
+One giant two-pan balance scale fills the center of the panel, strongly tilted: the left pan hangs low under a stack of big fat coin discs (plain circles, no letters), while the right pan is lifted high up in the air with three small stick figures standing calmly on it, holding the pan's ropes and looking at each other with composed faces (not scared, not falling — just clearly "lighter"). The dramatic tilt of the beam is the visual point: a structure out of balance. Keep the upper third empty. Only the three small figures' pan (the right pan dish) is teal.
+
+[c3] file=public/comics/s1u11l4/3.png (landscape 4:3, 스타일 T, GAG-LIGHT)
+Soft rain of sparse thin diagonal dashes in the upper corners. In the center, one very large open book is held up high overhead like a wide roof-umbrella by two stick figures (one at each side, arms fully extended, proud open-mouth smiles). Under the big book's shelter stand four more stick figures of different sizes, all dry, safe and delighted — one small figure jumps with joy, arms up. The open book's pages face down like an umbrella canopy, completely blank (no letters). Keep the upper third mostly for the book and rain. Only the big book's cover is teal.

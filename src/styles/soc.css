@@ -164,6 +164,20 @@
 .gm-path-glow.voice { stroke: rgba(92,148,13,.22); }
 .gm-path-done.voice { stroke: #5C940D; }
 
+/* Ⅺ 일상생활과 법 — 법전 브라운 #8C5A16(가죽 장정 법전·저울 청동의 색. 사회 팔레트 유일 브라운, afri #E8A20C 밝은 골드와 명도로 구분) */
+.unit-band.law { background: linear-gradient(150deg, #B07E2E 0%, #8C5A16 55%, #6E4610 100%); }
+.gm-terrain.law {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #F0E2CC, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #ECDABE, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #EEDEC6, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #E4CEA6, transparent 72%),
+    linear-gradient(180deg, #FAF6EE 0%, #F4EADA 55%, #EADAC0 100%);
+}
+.gm-path-glow.law { stroke: rgba(140,90,22,.22); }
+.gm-path-done.law { stroke: #8C5A16; }
+
 /* ---------- worldPlaceLab(기함) — 가로 무대 "지구에 살아 보기" ---------- */
 /* touch-action·선택 방지는 iOS 계열까지 겹겹이 — 스크롤 탈취·롱프레스 선택이 드래그를 죽인다 */
 .wpl-stage { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }

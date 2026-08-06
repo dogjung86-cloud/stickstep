@@ -137,6 +137,7 @@ export const hook = (o: {
     | "wordhunt" | "greetmix" | "birthsoup" | "mycomment" | "mugwort" | "doorbell" | "siesta"
     | "seatwar" | "oneway" | "lotclass" | "hundredmen" | "kingnope" | "idiotword" | "uniformday"
     | "onevote" | "ruleposter" | "electletter" | "cablecar" | "schoolzone" | "bikename" | "yellowcarpet"
+    | "morninglaw" | "goddess" | "twoloans" | "jarcourt" | "oddtrial" | "flipverdict"
     | "saveicon" | "gamechar" | "timecapsule" | "dangi" | "milmyeon"
     | "sprout" | "receipt" | "aptmap" | "parcel" | "olympic" | "romanclock" | "silkscarf"
     | "lambskewer" | "examnotice" | "kanasign" | "hanjahw" | "zeroscore" | "chessmate" | "arabnum" | "francejersey" | "pepper"
@@ -493,6 +494,11 @@ export const electLab = (o: { title: string; lead?: string; cta?: string; curio?
   ({ type: "electLab", ...o });
 export const policyLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "policyLab", ...o });
+// 사회 Ⅺ 전용 신작 기함 2종(데이터 내장형 — 민사·형사 절차 릴레이·공정한 재판 4제도 반사실 릴레이)
+export const trialLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "trialLab", ...o });
+export const fairTrialLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "fairTrialLab", ...o });
 
 // ── 중1 Ⅱ 생물의 구성과 다양성 랩 11종(2026-07-25 재제작) ────────────
 // 전부 같은 계약: { title, lead?, cta?, curio? }. 구작 랩(orgLevels·finchSim·microscope·

@@ -2005,6 +2005,85 @@ const MAP_DECOR: Record<string, string> = {
     <linearGradient id="s10d-leafR" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B8DA6A"/><stop offset=".6" stop-color="#8FBE3A"/><stop offset="1" stop-color="#5C940D"/></linearGradient>`,
   ),
 
+  // ── 사회 Ⅺ. 일상생활과 법 — "약속에서 법정까지"(새끼손가락 약속 → 법전 → 양팔 저울 → 법원 → 세 계단) ──
+  socPinkyDeco: S(
+    `${shadow(32, 56, 17, 0.13)}
+    <g transform="rotate(-8 24 38)">
+      <path d="M10 46q2-12 12-14 6-1 8 4 1.5 4-2 6l-7 3q-6 3-11 1z" fill="url(#s11d-handL)" stroke="#B98A48" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M27 34q4-8 6-4 1.6 3-1 7l-3 4z" fill="url(#s11d-handL)" stroke="#B98A48" stroke-width="1.5" stroke-linejoin="round"/>
+    </g>
+    <g transform="rotate(8 42 38)">
+      <path d="M54 46q-2-12-12-14-6-1-8 4-1.5 4 2 6l7 3q6 3 11 1z" fill="url(#s11d-handR)" stroke="#B98A48" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M37 34q-4-8-6-4-1.6 3 1 7l3 4z" fill="url(#s11d-handR)" stroke="#B98A48" stroke-width="1.5" stroke-linejoin="round"/>
+    </g>
+    <path d="M30 32q2-3 4 0" stroke="#B98A48" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <ellipse cx="18" cy="36" rx="4.6" ry="1.8" fill="#fff" opacity=".4" transform="rotate(-18 18 36)"/>
+    <path d="M28 18l1.3 2.8 2.8 1.2-2.8 1.2-1.3 2.8-1.3-2.8-2.8-1.2 2.8-1.2z" fill="#F2C24E"/>`,
+    `<radialGradient id="s11d-handL" cx=".38" cy=".32" r="1"><stop offset="0" stop-color="#FCE9CE"/><stop offset="1" stop-color="#EBC694"/></radialGradient>
+    <radialGradient id="s11d-handR" cx=".62" cy=".32" r="1"><stop offset="0" stop-color="#FCE9CE"/><stop offset="1" stop-color="#E8C08C"/></radialGradient>`,
+  ),
+  socLawbookDeco: S(
+    `${shadow(32, 57, 18, 0.13)}
+    <g transform="rotate(-5 32 40)">
+      <path d="M14 26q18-6 36 0v26q-18-6-36 0z" fill="url(#s11d-cover)" stroke="#5A3A0C" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="M14 26q18-6 36 0l-2 3q-16-5-32 0z" fill="#fff" opacity=".18"/>
+      <rect x="20" y="32" width="24" height="15" rx="2.4" fill="none" stroke="#E2B45E" stroke-width="1.4"/>
+      <path d="M32 35v7m-4.6-7h9.2M27.4 42q0 2 2 2t2-2m1.2 0q0 2 2 2t2-2" stroke="#E2B45E" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+      <path d="M14 52q18-6 36 0v3q-18-6-36 0z" fill="url(#s11d-pages)" stroke="#5A3A0C" stroke-width="1.4" stroke-linejoin="round"/>
+      <ellipse cx="23" cy="27.5" rx="6" ry="1.7" fill="#fff" opacity=".4" transform="rotate(-8 23 27.5)"/>
+    </g>`,
+    `<linearGradient id="s11d-cover" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B07E2E"/><stop offset=".55" stop-color="#8C5A16"/><stop offset="1" stop-color="#6E4610"/></linearGradient>
+    <linearGradient id="s11d-pages" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDF8EE"/><stop offset="1" stop-color="#E8D9BE"/></linearGradient>`,
+  ),
+  socBalanceDeco: S(
+    `${shadow(32, 57, 18, 0.12)}
+    <rect x="20" y="52" width="24" height="4.6" rx="2.3" fill="url(#s11d-base)" stroke="#6E4610" stroke-width="1.5"/>
+    <rect x="30" y="18" width="4" height="36" rx="2" fill="url(#s11d-pole)" stroke="#6E4610" stroke-width="1.4"/>
+    <rect x="12" y="16" width="40" height="3.6" rx="1.8" fill="url(#s11d-beam)" stroke="#6E4610" stroke-width="1.3"/>
+    <path d="M32 12l3 4h-6z" fill="url(#s11d-beam)" stroke="#6E4610" stroke-width="1.3" stroke-linejoin="round"/>
+    <path d="M15 20v7M11 27h8m-8 0q0 5 4 5t4-5" fill="none" stroke="#6E4610" stroke-width="1.4"/>
+    <path d="M11 27q0 5 4 5t4-5z" fill="url(#s11d-pan)"/>
+    <path d="M49 20v7M45 27h8m-8 0q0 5 4 5t4-5" fill="none" stroke="#6E4610" stroke-width="1.4"/>
+    <path d="M45 27q0 5 4 5t4-5z" fill="url(#s11d-pan)"/>
+    <ellipse cx="26" cy="17" rx="6" ry="1.2" fill="#fff" opacity=".5"/>
+    <circle cx="32" cy="12" r="1.6" fill="#F2C24E"/>`,
+    `<linearGradient id="s11d-pole" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E2B45E"/><stop offset="1" stop-color="#A8781E"/></linearGradient>
+    <linearGradient id="s11d-beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ECC26A"/><stop offset="1" stop-color="#A8781E"/></linearGradient>
+    <linearGradient id="s11d-pan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D8A848"/><stop offset="1" stop-color="#8C5A16"/></linearGradient>
+    <linearGradient id="s11d-base" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B07E2E"/><stop offset="1" stop-color="#6E4610"/></linearGradient>`,
+  ),
+  socCourtDeco: S(
+    `${shadow(32, 57, 19, 0.12)}
+    <path d="M32 10L10 22h44z" fill="url(#s11d-roof)" stroke="#5A6478" stroke-width="1.6" stroke-linejoin="round"/>
+    <rect x="12" y="22" width="40" height="4" rx="1.4" fill="url(#s11d-lintel)" stroke="#5A6478" stroke-width="1.3"/>
+    <g fill="url(#s11d-col)" stroke="#5A6478" stroke-width="1.3">
+      <rect x="16" y="26" width="6" height="22" rx="1.6"/>
+      <rect x="29" y="26" width="6" height="22" rx="1.6"/>
+      <rect x="42" y="26" width="6" height="22" rx="1.6"/>
+    </g>
+    <rect x="10" y="48" width="44" height="5" rx="2" fill="url(#s11d-lintel)" stroke="#5A6478" stroke-width="1.4"/>
+    <ellipse cx="24" cy="15.5" rx="6" ry="1.6" fill="#fff" opacity=".5" transform="rotate(-16 24 15.5)"/>
+    <circle cx="32" cy="17" r="2" fill="#E2B45E"/>`,
+    `<linearGradient id="s11d-roof" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDFEFF"/><stop offset="1" stop-color="#C6D2E0"/></linearGradient>
+    <linearGradient id="s11d-lintel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8EEF5"/><stop offset="1" stop-color="#B8C6D6"/></linearGradient>
+    <linearGradient id="s11d-col" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FDFEFF"/><stop offset=".5" stop-color="#DEE6EF"/><stop offset="1" stop-color="#C0CCDC"/></linearGradient>`,
+  ),
+  socStepsDeco: S(
+    `${shadow(32, 58, 19, 0.12)}
+    <rect x="10" y="46" width="44" height="9" rx="2.4" fill="url(#s11d-st1)" stroke="#6E4610" stroke-width="1.5"/>
+    <rect x="17" y="36" width="30" height="10" rx="2.2" fill="url(#s11d-st2)" stroke="#6E4610" stroke-width="1.5"/>
+    <rect x="24" y="26" width="16" height="10" rx="2" fill="url(#s11d-st3)" stroke="#6E4610" stroke-width="1.5"/>
+    <path d="M32 26v-8" stroke="#8C5A16" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M32 18q6-2 8 1-4 3-8 1z" fill="url(#s11d-flag)" stroke="#6E4610" stroke-width="1.3" stroke-linejoin="round"/>
+    <ellipse cx="20" cy="48" rx="7" ry="1.5" fill="#fff" opacity=".4"/>
+    <ellipse cx="30" cy="28" rx="4.6" ry="1.2" fill="#fff" opacity=".45"/>
+    <path d="M14 20l1.2 2.6 2.6 1.1-2.6 1.1-1.2 2.6-1.2-2.6-2.6-1.1 2.6-1.1z" fill="#F2C24E"/>`,
+    `<linearGradient id="s11d-st1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F0E2CC" /><stop offset="1" stop-color="#D8BE94"/></linearGradient>
+    <linearGradient id="s11d-st2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8CFA0"/><stop offset="1" stop-color="#C8A360"/></linearGradient>
+    <linearGradient id="s11d-st3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D8A848"/><stop offset="1" stop-color="#A8781E"/></linearGradient>
+    <linearGradient id="s11d-flag" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ECC26A"/><stop offset="1" stop-color="#C89232"/></linearGradient>`,
+  ),
+
   // ── 역사 Ⅰ. 역사 학습의 기초 — 역사 탐정의 도구(두루마리 → 돋보기 → 붓 → 모래시계 → 항아리) ──
   scrollDeco: S(
     `${shadow(32, 56, 16, 0.12)}
