@@ -8,7 +8,7 @@
 // 업셀 사다리 = "패스 세 번이면 소장 가격"(4,900×3 ≈ 14,900 — 영수증 카드가 문구로 노출).
 // 가격·플랜은 core/purchase.ts(priceOfPlan · PASS30 · EARLY_BIRD)가 단일 진실 공급원.
 // 환불 문구는 v3 확정 유지(전자상거래법 17조 — 가분적 콘텐츠 조항 + 무료 레슨이 시험 사용 상품):
-// "이용을 시작하지 않은 과목만 7일 내 전액 환불".
+// "이용을 시작하지 않은 과목만 7일 내 전액 환불". 전문은 public/refund.html 정본(파인프린트 아래 링크).
 // e2e 계약: .pw-title 텍스트에 "프리미엄" 포함(qa/e2e-exam-*.mjs 24종이 참조) — 아이브로가 유지.
 import { el } from "../core/dom";
 import { icon } from "../core/icons";
@@ -32,6 +32,8 @@ import { BRAND } from "../core/brand";
 import type { Screen } from "../core/router";
 import { stepMarkSvg } from "../ui/stepMark";
 import "../styles/paywall.css";
+
+const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
 export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlocked: () => void; onClose: () => void }): Screen {
   const eb = earlyBirdActive();
@@ -226,6 +228,13 @@ export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlo
       "단, 이용을 시작한 과목은 환불이 불가능해요 (무료 레슨으로 먼저 체험해 보세요) · " +
       "미성년자는 반드시 보호자의 동의를 얻어 결제해 주세요",
   });
+  // 환불 정책 전문 링크 — 파인프린트 요약의 근거 문서(public/refund.html 정본). 페이월은 9곳에서
+  // prop 없이 열리는 화면이라 인앱 정책 화면 배선 대신 정적 원본을 새 탭으로 연다.
+  const fineLink = el("a", {
+    class: "pwx-fine-link",
+    text: "환불 정책 전문 보기",
+    attrs: { href: `${base}refund.html`, target: "_blank", rel: "noopener" },
+  });
 
   // ── CTA: 합계와 함께 갱신, 결정 직전에 안심 정보(환불) 배치 ──
   const cta = el("button", { class: "btn cta" });
@@ -338,7 +347,7 @@ export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlo
   }
   refresh();
 
-  const body = el("div", { class: "scroll pad pwx-body" }, hero, bens, subs, plans, card, fine, helper);
+  const body = el("div", { class: "scroll pad pwx-body" }, hero, bens, subs, plans, card, fine, fineLink, helper);
   const footer = el("div", { class: "footer pwx-footer" }, cta, secure, restore);
   const elm = el("section", { class: "screen" }, head, body, footer);
   return { el: elm };

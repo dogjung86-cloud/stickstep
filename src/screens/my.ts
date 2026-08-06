@@ -25,6 +25,7 @@ export function myScreen(o: {
   onOpenAccount: () => void;
   onOpenPaywall: (onUnlocked?: () => void) => void;
   onOpenPolicy: () => void;
+  onOpenRefund: () => void;
 }): Screen {
   const st = getState();
   const lv = bootLevel(st.lifeXp);
@@ -393,6 +394,13 @@ export function myScreen(o: {
     haptic(HAPTIC.tap);
     o.onOpenPolicy();
   });
+  const refundBtn = el("button", { class: "legal-link", text: "환불 정책" });
+  refundBtn.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    o.onOpenRefund();
+  });
+  // 방침·환불 사이 구분점은 항상 표시 — legalSep은 로그아웃과 짝이라 signedIn 토글을 받는다(아래 onAuthChange).
+  const polSep = el("span", { class: "my-legal-sep", text: "·", attrs: { "aria-hidden": "true" } });
   const legalSep = el("span", { class: "my-legal-sep", text: "·", attrs: { "aria-hidden": "true" } });
   const logoutBtn = el("button", { class: "legal-link my-logout", text: "로그아웃" }) as HTMLButtonElement;
   let logoutBusy = false;
@@ -406,7 +414,7 @@ export function myScreen(o: {
       logoutBtn.disabled = false;
     });
   });
-  const legal = el("div", { class: "my-legal" }, polBtn, legalSep, logoutBtn);
+  const legal = el("div", { class: "my-legal" }, polBtn, polSep, refundBtn, legalSep, logoutBtn);
 
   const elm = el(
     "section",

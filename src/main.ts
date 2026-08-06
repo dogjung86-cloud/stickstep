@@ -136,6 +136,7 @@ function goTab(k: GnavKey): void {
             }),
           ),
         onOpenPolicy: openPolicy,
+        onOpenRefund: openRefund,
       }),
     );
     // 비로그인 유저의 마이 탭 = 로그인 유도 창구(2026-07-20 사용자 확정) — 마이 화면 위에
@@ -359,6 +360,12 @@ function openLogin(): void {
 /** 개인정보처리방침 — 마이 탭 행과 로그인 화면 동의 고지가 함께 쓴다(원본: public/privacy.html). */
 function openPolicy(): void {
   nav.go(policyScreen(() => nav.back()));
+}
+
+/** 환불 정책 — 마이 탭 legal 행이 쓴다(원본: public/refund.html).
+ *  스플래시·페이월의 환불 링크는 정적 URL을 새 탭으로 직접 연다(policy.ts 헤더 주석 참조). */
+function openRefund(): void {
+  nav.go(policyScreen(() => nav.back(), { file: "refund.html", title: "환불 정책" }));
 }
 
 // 보너스 미니게임은 도전 탭으로 이사(2026-07-12). 단열 디펜스는 폐기(2026-07-17 — minigame.ts 삭제),

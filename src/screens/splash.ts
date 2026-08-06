@@ -65,7 +65,18 @@ export function splashScreen(o: { signedIn: boolean; instant?: boolean; onStart:
     el("div", { class: "splash-business-title", text: "사업자 정보" }),
     ...BIZ_INFO.map((line) => el("div", { class: "splash-business-line", text: line })),
   );
-  const foot = el("div", { class: "footer splash-foot" }, startBtn, loginBtn, teacherBtn, business);
+  // 법적 고지 문서(방침·환불)도 같은 이유로 로그인 없이 접근 — 부팅 전 화면이라 인앱 정책 화면 대신
+  // 정적 원본(public/*.html)을 새 탭으로 연다(전자상거래법 고지·PG 심사 제출 URL과 동일 문서).
+  const legalLink = (file: string, label: string): HTMLElement =>
+    el("a", { class: "splash-legal-link", text: label, attrs: { href: `${base}${file}`, target: "_blank", rel: "noopener" } });
+  const legal = el(
+    "div",
+    { class: "splash-legal" },
+    legalLink("privacy.html", "개인정보처리방침"),
+    el("span", { class: "splash-legal-sep", text: "·", attrs: { "aria-hidden": "true" } }),
+    legalLink("refund.html", "환불 정책"),
+  );
+  const foot = el("div", { class: "footer splash-foot" }, startBtn, loginBtn, teacherBtn, business, legal);
   const elm = el("section", { class: "screen", attrs: { id: "sc-splash" } }, mid, foot);
 
   function setSignedIn(signedIn: boolean): void {
