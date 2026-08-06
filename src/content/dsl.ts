@@ -138,6 +138,7 @@ export const hook = (o: {
     | "seatwar" | "oneway" | "lotclass" | "hundredmen" | "kingnope" | "idiotword" | "uniformday"
     | "onevote" | "ruleposter" | "electletter" | "cablecar" | "schoolzone" | "bikename" | "yellowcarpet"
     | "morninglaw" | "goddess" | "twoloans" | "jarcourt" | "oddtrial" | "flipverdict"
+    | "tenbook" | "schoolfree" | "seatbelt" | "dormrule" | "whoworker" | "teenwage"
     | "saveicon" | "gamechar" | "timecapsule" | "dangi" | "milmyeon"
     | "sprout" | "receipt" | "aptmap" | "parcel" | "olympic" | "romanclock" | "silkscarf"
     | "lambskewer" | "examnotice" | "kanasign" | "hanjahw" | "zeroscore" | "chessmate" | "arabnum" | "francejersey" | "pepper"
@@ -499,6 +500,10 @@ export const trialLab = (o: { title: string; lead?: string; cta?: string; curio?
   ({ type: "trialLab", ...o });
 export const fairTrialLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "fairTrialLab", ...o });
+export const shieldLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "shieldLab", ...o });
+export const workRightLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "workRightLab", ...o });
 
 // ── 중1 Ⅱ 생물의 구성과 다양성 랩 11종(2026-07-25 재제작) ────────────
 // 전부 같은 계약: { title, lead?, cta?, curio? }. 구작 랩(orgLevels·finchSim·microscope·

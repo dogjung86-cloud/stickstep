@@ -278,6 +278,8 @@ import { electLab } from "./steps/electLab";
 import { policyLab } from "./steps/policyLab";
 import { trialLab } from "./steps/trialLab";
 import { fairTrialLab } from "./steps/fairTrialLab";
+import { shieldLab } from "./steps/shieldLab";
+import { workRightLab } from "./steps/workRightLab";
 import { factLab } from "./steps/factLab";
 import { feastLab } from "./steps/feastLab";
 import { timelineLab } from "./steps/timelineLab";
@@ -539,6 +541,8 @@ const R: Record<string, StepRenderer> = {
   policyLab,
   trialLab,
   fairTrialLab,
+  shieldLab,
+  workRightLab,
   factLab,
   feastLab,
   timelineLab,

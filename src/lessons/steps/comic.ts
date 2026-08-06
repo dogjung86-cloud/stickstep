@@ -75,6 +75,8 @@ const STAGE_COLOR: Record<string, string> = {
   "아흔다섯 질문": "#E8590C", "갈리는 입장": "#8A6BFF", "두 갈래": "#5C677D",
   // 사회 Ⅸ — 프닉스 언덕의 하루(아테네 민회 서사)
   "이른 아침": "#E8850C", 민회: "#1864AB", 추첨: "#C2843A", "해 질 무렵": "#E8590C",
+  // 사회 Ⅻ — 당연한 것들의 역사(세계 인권 선언 서사)
+  현재: "#3182F6", 옛날: "#8A6A3E", 전환: "#E8850C", 약속: "#AE3EC9",
 };
 function stageColor(stage: string): string {
   for (const key of Object.keys(STAGE_COLOR)) if (stage.includes(key)) return STAGE_COLOR[key];

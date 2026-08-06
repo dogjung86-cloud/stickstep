@@ -13,13 +13,14 @@ import { S1_UNIT8 } from "./unit8";
 import { S1_UNIT9 } from "./unit9";
 import { S1_UNIT10 } from "./unit10";
 import { S1_UNIT11 } from "./unit11";
+import { S1_UNIT12 } from "./unit12";
 
 /** 준비 중 단원 — 탭·밴드는 노출하되 지도 대신 안내 카드(comingSoon). */
 const soon = (id: string, roman: string, title: string, subtitle: string, color: string, icon: string): Unit => ({
   id, roman, title, subtitle, color, icon, comingSoon: true, lessons: [],
 });
 
-// 중1 사회 — 교과서 대단원 순서 그대로. 지리 영역(Ⅰ~Ⅵ) 완성 + 일반사회(Ⅶ 문법 파일럿 · Ⅷ 문화).
+// 중1 사회 — 교과서 대단원 순서 그대로. 지리 영역(Ⅰ~Ⅵ) + 일반사회(Ⅶ~Ⅻ) 완성 = 중1 완결.
 export const SOC_G1: Unit[] = [
   S1_UNIT1,
   S1_UNIT2,
@@ -32,6 +33,7 @@ export const SOC_G1: Unit[] = [
   S1_UNIT9,
   S1_UNIT10,
   S1_UNIT11,
+  S1_UNIT12,
 ];
 
 // 중2 사회 — 다음 배치에서 제작(자리만 유지).

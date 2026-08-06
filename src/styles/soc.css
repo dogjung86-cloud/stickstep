@@ -178,6 +178,20 @@
 .gm-path-glow.law { stroke: rgba(140,90,22,.22); }
 .gm-path-done.law { stroke: #8C5A16; }
 
+/* Ⅻ 인권과 기본권 — 존엄 플럼 #AE3EC9(존엄의 자수정. ocea #7048E8 청보라와 자주로, civic #D6336C 로즈와 보라로 구분 — 사회 팔레트 유일 자주) */
+.unit-band.dign { background: linear-gradient(150deg, #C86ADB 0%, #AE3EC9 55%, #8B2FA4 100%); }
+.gm-terrain.dign {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #F0DCF6, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #ECD2F4, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #EED6F5, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #E4C2EE, transparent 72%),
+    linear-gradient(180deg, #FBF4FD 0%, #F6E8FA 55%, #EED8F4 100%);
+}
+.gm-path-glow.dign { stroke: rgba(174,62,201,.22); }
+.gm-path-done.dign { stroke: #AE3EC9; }
+
 /* ---------- worldPlaceLab(기함) — 가로 무대 "지구에 살아 보기" ---------- */
 /* touch-action·선택 방지는 iOS 계열까지 겹겹이 — 스크롤 탈취·롱프레스 선택이 드래그를 죽인다 */
 .wpl-stage { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }

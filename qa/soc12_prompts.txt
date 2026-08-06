@@ -1,0 +1,74 @@
+# 사회 Ⅻ(s1u12 인권과 기본권) 발주 — 스틱맨 개념 컷 7장(public/soc/cuts) + 만화 「당연한 것들의 역사」 4컷(public/comics/s1u12l1)
+# 컷·만화 모두 "이미지 안 글자 절대 금지". 만화 컷은 앱이 한글 말풍선을 얹는 하이브리드라
+# 인물이 입을 벌리고 손짓하는 "말하는 연기"만 그리고, 인물 머리 위쪽 1/3 여백을 넉넉히 남긴다.
+# ★ 이 단원 눈검수 특칙(인권 단원 가드 — Ⅶ 차별 가드 준용 + 확장): 기존 항목(글자 0·의미 정확·손가락 5개·인물 존엄)에 더해
+#   **비침해 검수** — 인권 침해 장면 재현·피해자 클로즈업 절대 금지: 침해·구제는 방패·저울·문·서류 소품으로만 표현,
+#   **무표지 검수** — 특정 집단 표지 금지(휠체어·피부색 구분·머리카락·치마 등 0 — 다양성은 안경·모자·가방·앞치마 같은 소품으로),
+#   **비폭력 검수** — 무기·전투·수갑·감옥·국기·구호 팻말 절대 금지(농기구도 들지 않음 — 바구니·보따리만),
+#   **만화 존엄 특칙** — 과거 신분제 컷의 일하는 사람들은 작게(원경) 그리고 쓰러지거나 우는 모습 금지,
+#   비난 캐리커처·악역 인물 금지(문제는 크기·자세 대비라는 구조 은유로만), 실존 인물 묘사 금지, 결말 컷은 밝고 안전하게.
+#
+# ── 스타일 블록 A (스틱맨 개념 컷 공용 — soc 공용) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 T (만화 컷 공용 — 말풍선 하이브리드, 「당연한 것들의 역사」) ──
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal, used sparingly where the prompt says.
+# Absolutely NO text, NO letters, NO numbers, NO speech bubbles, NO captions anywhere.
+# Characters ACT like they are talking: open mouth (small oval), expressive hand gestures.
+# All stick figures are gender-neutral basic form (no hair, no skirts); variety comes from
+# props only: round glasses, a small satchel, a flat cap. NO flags, NO banners, NO picket
+# signs with any writing (blank boards only if needed), NO weapons, NO farming tools held
+# as tools, NO fighting, NO handcuffs, NO crying faces, NO real historical persons.
+# Historical scenes show working people only SMALL and FAR AWAY (distant silhouette-like
+# simple figures), never close up, never collapsed, never miserable poses — calm and
+# composed only. No villain characters anywhere. Keep the upper third of the panel
+# mostly empty white space above the characters' heads (the app overlays Korean speech
+# bubbles there). Main subjects centered horizontally. Simple, charming, educational
+# middle-school comic. 4:3 landscape panel.
+
+## ── 개념 컷 7장 (스타일 A) ──
+
+[0] file=public/soc/cuts/u12l1.png (landscape 4:3, 스타일 A)
+Five stick figures standing in a loose friendly row on flat ground, each different only by small props (one with round glasses, one with a flat cap, one with a small satchel, one slightly taller, one slightly shorter), all with warm dot-eye smiles. Above each figure's head floats one identical small glowing orb, all five orbs exactly the same size and same height, each with three short rays. The composition reads "everyone is born holding the same light". Only the five orbs are teal; everything else pure black and white.
+
+[1] file=public/soc/cuts/u12l2.png (landscape 4:3, 스타일 A)
+One very large thick book stands upright on the ground, opened toward the viewer like a monument, its two visible pages completely blank. From the book's open pages one large shield shape (classic rounded-triangle badge outline) floats up into the air above the book, with three short motion lines under it showing it rising. One stick figure stands beside the book looking up at the floating shield in delighted awe, both arms slightly raised, open-mouth smile. The composition reads "written in the big book, a right becomes a shield". Only the floating shield is teal; everything else pure black and white.
+
+[2] file=public/soc/cuts/u12l3.png (landscape 4:3, 스타일 A)
+A tall wooden cabinet with exactly five wide drawers stacked vertically, standing on the floor. The middle drawer is pulled open by one stick figure who leans in to look inside with curious dot eyes; inside the open drawer three identical small round token discs are visible in a neat row. The other four drawers are closed, each with one plain round knob (no letters, no symbols). The composition reads "each big right has smaller rights inside its own drawer". Only the front face of the open drawer is teal; everything else pure black and white.
+
+[3] file=public/soc/cuts/u12l4.png (landscape 4:3, 스타일 A)
+A large classic two-pan balance scale in the center, its beam perfectly horizontal. On the left pan rests one shield shape (rounded-triangle badge). On the right pan stand four tiny calm stick figures close together, arms relaxed. The beam is exactly level — neither side lower. One stick figure stands beside the scale at ground level, one finger raised thoughtfully, checking the balance with a calm face. The composition reads "my shield and everyone's good, kept in balance". Only the shield on the left pan is teal; everything else pure black and white.
+
+[4] file=public/soc/cuts/u12l5.png (landscape 4:3, 스타일 A)
+Three friendly building fronts side by side in a row, each with one big door: the left building has a triangular roof pediment with four columns, the middle building is a tall flat-roofed hall, the right building is a smaller round-roofed office. Above each door hangs one round sign with a simple line pictogram: a small wooden gavel above the left door, an open book with a balance scale above the middle door, two hands shaking above the right door. One stick figure carrying a shield with a small visible dent stands in front, facing the three doors, one hand raised about to knock on the middle door. Only the three round signs are teal; everything else pure black and white.
+
+[5] file=public/soc/cuts/u12l6.png (landscape 4:3, 스타일 A)
+Three stick figures walking together side by side toward the right in cheerful matching strides, all the same height, each carrying one different work prop: the first a small briefcase, the second a toolbox with a round handle, the third a serving tray held flat with one cup on it. Above them a simple rising sun with short rays sits in the upper corner. The composition reads "all working people walk the same road". Only the three carried props are teal; everything else pure black and white.
+
+[6] file=public/soc/cuts/u12l7.png (landscape 4:3, 스타일 A)
+A small cozy shop counter: behind it stands one stick figure wearing a simple apron (gender-neutral work prop), holding up one bright shield shape high in one hand with a proud open-mouth smile, the other hand resting on the counter where one coffee cup sits. The shield glows with three short rays. The composition reads "even at work, my shield stays on". Only the shield is teal; everything else pure black and white.
+
+## ── 만화 s1u12l1 「당연한 것들의 역사」 4컷 (스타일 T) ──
+## 등장인물 고정: STUDENT = 작은 가방 소품의 학생 스틱맨. TEACHER = 둥근 안경 소품의 선생님 스틱맨.
+## 과거 컷의 일하는 사람들은 원경의 작고 담담한 실루엣만(존엄 특칙 — 클로즈업·처량함 금지).
+
+[c0] file=public/comics/s1u12l1/0.png (landscape 4:3, 스타일 T, GAG-LIGHT)
+A bright cozy bedroom in the morning: the STUDENT (small satchel hanging on the bedpost) sits up in bed mid-stretch, arms up high, open-mouth happy yawn. Around the upper part of the room float three small hand-drawn thought icons connected to the student by tiny bubbles: a steaming rice bowl, a small school building with a triangular roof, a simple soccer ball. Morning sun rays enter from the window. Keep the upper third mostly empty for speech bubbles. Only the blanket is teal.
+
+[c1] file=public/comics/s1u12l1/1.png (landscape 4:3, 스타일 T, DIGNIFIED)
+A wide calm historical landscape seen from very far away, like an old storybook illustration: on a low hill to the left stands a small palace with a tiled roof and a tall gate. On the wide field to the right, a long line of small simple stick figures walks calmly carrying baskets and cloth bundles on their backs — all tiny, far away, composed upright walking poses only (no faces visible, no tools, no collapsed poses). Near the palace gate stands one slightly larger figure wearing a tall crown, upright and still. The quiet size contrast is the visual point. Keep the upper third mostly empty sky. Only the crown is teal.
+
+[c2] file=public/comics/s1u12l1/2.png (landscape 4:3, 스타일 T, DIGNIFIED)
+A wide open plaza seen from a slight distance: a large gathered crowd of small stick figures, all standing calmly and each raising one open hand high toward the sky (open palms, no fists, no objects held). At the front of the plaza a simple low wooden platform with one figure standing on it, also raising one open hand. Behind the plaza a big sun rises on the horizon with long straight rays. No banners, no signs, no flags anywhere. Keep the upper third mostly empty. Only the sun's rays are teal.
+
+[c3] file=public/comics/s1u12l1/3.png (landscape 4:3, 스타일 T, DIGNIFIED)
+A big round table seen from a slightly raised angle, with eight stick figures of friendly variety (round glasses, flat caps, satchels — props only) seated evenly around it. All of them reach one open hand inward toward the table's center, where one large blank document sheet lies flat (completely blank, no letters). Above the table one simple dove flies upward holding a tiny olive twig in its beak, drawn with clean thin lines. Warm, ceremonial, hopeful mood. Keep the upper third mostly empty around the dove. Only the large document sheet is teal.
