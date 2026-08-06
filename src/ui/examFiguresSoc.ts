@@ -217,21 +217,35 @@ export function socLifeSceneFig(kind: SocLifeScene): string {
     },
     desertwear: {
       aria: "강한 햇살과 모래바람 속에서 온몸을 감싸는 헐렁하고 긴 옷을 입은 사람",
-      defs: `<linearGradient id="sxs-sky4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F8E4B8"/><stop offset="1" stop-color="#FCF2DC"/></linearGradient>
-        <linearGradient id="sxs-dune" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EDCB86"/><stop offset="1" stop-color="#D8A85C"/></linearGradient>`,
+      defs: `<linearGradient id="sxs-sky4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6DCA0"/><stop offset=".55" stop-color="#FAEBC6"/><stop offset="1" stop-color="#FDF6E6"/></linearGradient>
+        <linearGradient id="sxs-dune" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2D492"/><stop offset=".5" stop-color="#E2B468"/><stop offset="1" stop-color="#CE9A4E"/></linearGradient>
+        <linearGradient id="sxs-duneB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6E0AC"/><stop offset="1" stop-color="#E8C280"/></linearGradient>
+        <linearGradient id="sxs-robe" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FDFDFB"/><stop offset=".6" stop-color="#F0EEE4"/><stop offset="1" stop-color="#D9D4C2"/></linearGradient>
+        <radialGradient id="sxs-sun4" cx=".38" cy=".38" r=".9"><stop offset="0" stop-color="#FFDE8E"/><stop offset="1" stop-color="#FFB63C"/></radialGradient>`,
       body: `<rect width="360" height="200" rx="14" fill="url(#sxs-sky4)"/>
-        <path d="M0 148q90-34 180-10t180-6v68H0z" fill="url(#sxs-dune)"/>
-        <path d="M60 138q40-14 78-4M210 132q44-10 84 2" stroke="#C2934A" stroke-width="2" fill="none" opacity=".6"/>
-        <circle cx="306" cy="40" r="16" fill="#FFB63C"/><circle cx="306" cy="40" r="26" fill="#FFB63C" opacity=".3"/>
-        <path d="M276 22l-8 6M336 22l8 6M306 8v-6M282 56l-8 4M330 56l8 4" stroke="#F2A72E" stroke-width="3" stroke-linecap="round"/>
-        <ellipse cx="150" cy="180" rx="44" ry="6" fill="#2A3A5E" opacity=".14"/>
-        <circle cx="150" cy="74" r="12" fill="#FFE8CE" stroke="#3C4654" stroke-width="2.2"/>
-        <path d="M134 66q16-12 32 0v12q-16-8-32 0z" fill="#F2F4F8" stroke="#AAB4C4" stroke-width="1.8"/>
-        <path d="M166 72q10 4 10 18" stroke="#AAB4C4" stroke-width="2.4" fill="none"/>
-        <path d="M128 96h44l10 82H118z" fill="#F7F8FA" stroke="#AAB4C4" stroke-width="2"/>
-        <path d="M128 96q22 10 44 0" stroke="#AAB4C4" stroke-width="1.8" fill="none"/>
-        <path d="M136 112q-14 8-18 28M164 112q14 8 18 28" stroke="#AAB4C4" stroke-width="2.2" fill="none"/>
-        <path d="M40 96q14-6 28 0M52 120q12-5 24 0M282 108q12-5 24 0" stroke="#D8A85C" stroke-width="3" stroke-linecap="round"/>`,
+        <circle cx="56" cy="42" r="34" fill="#FFC96A" opacity=".16"/>
+        <circle cx="56" cy="42" r="24" fill="#FFC24D" opacity=".3"/>
+        <circle cx="56" cy="42" r="15" fill="url(#sxs-sun4)"/>
+        <path d="M56 16v-8M30 27l-6-6M82 27l6-6M20 46h-8M92 46h8M34 62l-6 6M78 62l6 6" stroke="#F2A72E" stroke-width="3" stroke-linecap="round"/>
+        <path d="M226 84q26-8 52-2M244 104q22-6 44 0M252 64q20-6 40-1" stroke="#E0B468" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".75"/>
+        <circle cx="288" cy="79" r="1.8" fill="#DCAE5E"/><circle cx="300" cy="100" r="1.6" fill="#DCAE5E"/><circle cx="302" cy="60" r="1.6" fill="#DCAE5E"/><circle cx="320" cy="88" r="1.4" fill="#DCAE5E"/>
+        <path d="M0 146q74-24 158-12t202-6v72H0z" fill="url(#sxs-duneB)"/>
+        <path d="M0 160q92-30 190-10t170-6v56H0z" fill="url(#sxs-dune)"/>
+        <path d="M18 154q46-16 96-10M236 146q52-8 96 0" stroke="#FBEBC2" stroke-width="2.6" fill="none" opacity=".8" stroke-linecap="round"/>
+        <path d="M108 150q34 4 58 14M268 152q26 2 44 10" stroke="#B8823E" stroke-width="2" fill="none" opacity=".4" stroke-linecap="round"/>
+        <ellipse cx="178" cy="184" rx="54" ry="7" fill="#2A3A5E" opacity=".14"/>
+        <path d="M186 62q22-2 36 10t16 20q-5 3-10-1-8-10-20-15t-23-6z" fill="#EDF0F5" stroke="#AAB4C4" stroke-width="1.6"/>
+        <circle cx="168" cy="66" r="11.5" fill="#FFE8CE" stroke="#3C4654" stroke-width="2.2"/>
+        <path d="M152 62a16 16 0 0 1 32 0l-3 6q-13-9-26 0z" fill="#F6F7FA" stroke="#9AA4B4" stroke-width="1.8"/>
+        <path d="M151 66q17-9 34 0" stroke="#DCE2EA" stroke-width="3" stroke-linecap="round"/>
+        <path d="M156 76q12 7 24 0l4 8q-16 9-32 0z" fill="#EDF0F5" stroke="#AAB4C4" stroke-width="1.4"/>
+        <path d="M148 92q20-12 40 0l7 27q4 24 11 51q-18 10-40 9q-22-1-38-10q6-28 12-51z" fill="url(#sxs-robe)" stroke="#A8A290" stroke-width="2"/>
+        <path d="M151 98q-17 9-24 38l10 5q8-23 20-32z" fill="#F4F2E9" stroke="#A8A290" stroke-width="1.8"/>
+        <path d="M185 98q19 9 26 40l-10 5q-9-26-22-36z" fill="#E5E2D4" stroke="#A8A290" stroke-width="1.8"/>
+        <path d="M153 120q15 7 32 0" stroke="#C2934A" stroke-width="4.6" stroke-linecap="round"/>
+        <path d="M159 130q-3 22-4 42M175 128q4 24 8 44" stroke="#C6C0AC" stroke-width="1.8" opacity=".8"/>
+        <path d="M152 102q-6 28-8 60" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+        <path d="M120 168q14-5 26-1M212 172q12-4 22 0" stroke="#E0B468" stroke-width="2.4" stroke-linecap="round" opacity=".8"/>`,
     },
     tundrawear: {
       aria: "눈 덮인 추운 벌판에서 솜을 넣은 두꺼운 털옷과 털모자를 입은 사람",
@@ -283,22 +297,63 @@ export function socEraCardsFig(opts?: { hide?: boolean; marks?: string[] }): str
   const hide = opts?.hide ?? false;
   const marks = opts?.marks ?? ["㉮", "㉯", "㉰", "㉱"];
   const names = ["돛단배", "증기 기관차", "항공기", "인터넷"];
+  const defs = `<linearGradient id="sxe-card" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F4F7FA"/></linearGradient>
+    <linearGradient id="sxe-sail" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DEE5EE"/></linearGradient>
+    <linearGradient id="sxe-hull" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6E9AD2"/><stop offset="1" stop-color="#3A64A0"/></linearGradient>
+    <linearGradient id="sxe-boil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#66748C"/><stop offset=".45" stop-color="#4A5870"/><stop offset="1" stop-color="#303C52"/></linearGradient>
+    <linearGradient id="sxe-fus" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBFDFF"/><stop offset="1" stop-color="#C2CEDE"/></linearGradient>
+    <radialGradient id="sxe-glo" cx=".36" cy=".32" r=".95"><stop offset="0" stop-color="#8CC8F6"/><stop offset="1" stop-color="#3576C2"/></radialGradient>`;
   const icons = [
-    // 돛단배
-    `<path d="M14 52h44l-8 12H22z" fill="#4E7CB8"/><path d="M36 50V16l22 32z" fill="#F2F4F8" stroke="#8A93A6" stroke-width="1.8"/><path d="M36 50V22l-16 26z" fill="#E4E9F0" stroke="#8A93A6" stroke-width="1.6"/><path d="M36 16v-6" stroke="#8A93A6" stroke-width="2"/>`,
-    // 증기 기관차
-    `<rect x="10" y="34" width="40" height="18" rx="4" fill="#4E5968"/><rect x="42" y="22" width="16" height="30" rx="3" fill="#3A4658"/><circle cx="20" cy="56" r="6" fill="#2A3442"/><circle cx="36" cy="56" r="6" fill="#2A3442"/><circle cx="52" cy="56" r="6" fill="#2A3442"/><rect x="14" y="26" width="8" height="8" rx="2" fill="#3A4658"/><path d="M18 22q-2-8 6-10M28 20q0-6 6-8" stroke="#AAB4C4" stroke-width="2.6" fill="none" stroke-linecap="round"/>`,
-    // 항공기
-    `<path d="M10 40q24-10 48-6l6 4-10 6q-24 4-44-4z" fill="#E8EEF6" stroke="#7A8698" stroke-width="1.8"/><path d="M34 36l-8-14 6-2 12 14z" fill="#C4CFDC"/><path d="M30 42l-6 12 6 0 8-10z" fill="#C4CFDC"/><path d="M56 34l6-8 4 2-4 8z" fill="#C4CFDC"/>`,
-    // 인터넷(지구+신호)
-    `<circle cx="34" cy="40" r="16" fill="#4E9AE8"/><path d="M26 34q6-6 13-2-4 7-11 4zM36 46q7-3 9 3-5 5-10 1z" fill="#3E9E5C"/><path d="M18 24q16-14 32 0M23 16q11-9 22 0" stroke="#E8590C" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+    // 돛단배 — 파도·이중 돛(주돛 그늘 주름)·범포 하이라이트·깃발
+    `<path d="M8 51q9-5 17 0t17 0 17 0" stroke="#8CC0E4" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+     <path d="M13 40h44l-9 11H21z" fill="url(#sxe-hull)" stroke="#28517E" stroke-width="1.6"/>
+     <path d="M16 43h37" stroke="#9EC2E8" stroke-width="1.6" opacity=".8"/>
+     <path d="M37 40V7" stroke="#7A5A30" stroke-width="2.4" stroke-linecap="round"/>
+     <path d="M40 9l19 29H40z" fill="url(#sxe-sail)" stroke="#96A0B2" stroke-width="1.6"/>
+     <path d="M44 20q6 9 10 16" stroke="#C4CCD8" stroke-width="1.4" fill="none"/>
+     <path d="M34 12L21 38h13z" fill="#EDF1F6" stroke="#96A0B2" stroke-width="1.5"/>
+     <path d="M37 7l9 2.6-9 2.6z" fill="#E8590C"/>`,
+    // 증기 기관차 — 보일러 원통 스펙큘러·연통 증기 3방울·운전실 창·바퀴 허브+연결봉·레일
+    `<path d="M6 56h58" stroke="#8A93A6" stroke-width="2" stroke-linecap="round"/>
+     <circle cx="25" cy="13" r="5" fill="#E7EDF5" opacity=".95"/><circle cx="33" cy="8" r="4" fill="#E7EDF5" opacity=".7"/><circle cx="41" cy="4" r="3" fill="#E7EDF5" opacity=".5"/>
+     <path d="M14 21h8v9h-8z" fill="#2A3442"/><rect x="11" y="17" width="14" height="5" rx="2.5" fill="#222C3A"/>
+     <rect x="8" y="29" width="34" height="17" rx="8" fill="url(#sxe-boil)" stroke="#1A2432" stroke-width="1.6"/>
+     <path d="M13 33q13-3 25 0" stroke="#96A4BC" stroke-width="2" stroke-linecap="round" opacity=".85"/>
+     <rect x="41" y="19" width="17" height="27" rx="3" fill="#3A4658" stroke="#1A2432" stroke-width="1.6"/>
+     <rect x="45" y="23" width="9" height="9" rx="2" fill="#C2DCF2"/>
+     <path d="M8 46l-4 9h9z" fill="#2A3442"/>
+     <circle cx="17" cy="50.6" r="5.4" fill="#26303E" stroke="#0E141E" stroke-width="1.5"/><circle cx="17" cy="50.6" r="1.8" fill="#96A4BC"/>
+     <circle cx="33" cy="49.2" r="6.8" fill="#26303E" stroke="#0E141E" stroke-width="1.5"/><circle cx="33" cy="49.2" r="2" fill="#96A4BC"/>
+     <circle cx="50" cy="50.6" r="5.4" fill="#26303E" stroke="#0E141E" stroke-width="1.5"/><circle cx="50" cy="50.6" r="1.8" fill="#96A4BC"/>
+     <path d="M17 50.6l16-1.4 17 1.4" stroke="#96A4BC" stroke-width="2" fill="none"/>`,
+    // 항공기 — 유선 동체·주익/수직 꼬리날개·엔진 포드·창문 점선·항적 스트릭
+    `<path d="M3 30h11M1 38h8M5 46h9" stroke="#C6D6EA" stroke-width="2.2" stroke-linecap="round" opacity=".9"/>
+     <path d="M35 31l-4-13 7 1 5 12z" fill="#CDD7E4" stroke="#6E7A8E" stroke-width="1.3"/>
+     <path d="M13 36q21-8 44-6c4 0 7 1.6 6.4 3.6-.8 2.6-4.6 3.8-9.4 4.6q-24 3.4-41-2.2z" fill="url(#sxe-fus)" stroke="#66748A" stroke-width="1.6"/>
+     <path d="M17 34l-6-11 8 1 5 9z" fill="#B6C2D2" stroke="#66748A" stroke-width="1.3"/>
+     <path d="M34 37l-9 13 8 1 10-13z" fill="#B6C2D2" stroke="#66748A" stroke-width="1.3"/>
+     <rect x="42" y="36" width="10" height="4.6" rx="2.3" fill="#8A98AC" stroke="#66748A" stroke-width="1.2"/>
+     <path d="M56 29q4 .6 5 2" stroke="#4E6C9E" stroke-width="2.2" stroke-linecap="round"/>
+     <path d="M26 33q12-4 24-4" stroke="#5E88C8" stroke-width="1.8" stroke-dasharray="1.6 3.2" stroke-linecap="round"/>`,
+    // 인터넷 — 구면 지구(키라이트·경위선)+와이파이 신호·접촉 그림자
+    `<ellipse cx="31" cy="52" rx="15" ry="2.8" fill="#2A3A5E" opacity=".1"/>
+     <circle cx="31" cy="34" r="16" fill="url(#sxe-glo)" stroke="#28568E" stroke-width="1.5"/>
+     <path d="M21 27q5-5 12-3-1 6-7 7-4 0-5-4zM33 42q6-4 10 1-3 5-9 3z" fill="#42A45C" opacity=".95"/>
+     <ellipse cx="31" cy="34" rx="16" ry="6.4" fill="none" stroke="#FFFFFF" stroke-width="1" opacity=".35"/>
+     <path d="M31 18v32" stroke="#FFFFFF" stroke-width="1" opacity=".3"/>
+     <path d="M19 24q4-5 9-6" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" opacity=".55"/>
+     <path d="M46 21a13 13 0 0 1 12 8" stroke="#E8590C" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+     <path d="M46 27a8 8 0 0 1 7 5" stroke="#E8590C" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+     <circle cx="47" cy="35" r="2.2" fill="#E8590C"/>`,
   ];
   const CW = 82;
   const GAP = 6;
+  const H = hide ? 84 : 102;
   const cards = icons
     .map(
       (ic, i) => `<g transform="translate(${8 + i * (CW + GAP)} 10)">
-      <rect width="${CW}" height="${hide ? 84 : 102}" rx="12" fill="#FFFFFF" stroke="#DCE0E6" stroke-width="1.6"/>
+      <ellipse cx="${CW / 2}" cy="${H + 3}" rx="32" ry="3.2" fill="#2A3A5E" opacity=".08"/>
+      <rect width="${CW}" height="${H}" rx="12" fill="url(#sxe-card)" stroke="#D8DDE4" stroke-width="1.6"/>
       <circle cx="17" cy="17" r="12" fill="#FFF4E8" stroke="#E8590C" stroke-width="1.6"/>
       <text x="17" y="21.5" text-anchor="middle" font-size="13" font-weight="900" fill="#B84A08">${marks[i]}</text>
       <g transform="translate(7 14)">${ic}</g>
@@ -306,7 +361,7 @@ export function socEraCardsFig(opts?: { hide?: boolean; marks?: string[] }): str
     </g>`,
     )
     .join("");
-  return `<svg viewBox="0 0 360 ${hide ? 104 : 122}" ${NS} fill="none" role="img" aria-label="세계를 이어 온 도구 카드 ${marks.join(", ")} 네 장${hide ? " — 이름 없이 그림만 있다" : ""}">${cards}</svg>`;
+  return `<svg viewBox="0 0 360 ${hide ? 104 : 122}" ${NS} fill="none" role="img" aria-label="세계를 이어 온 도구 카드 ${marks.join(", ")} 네 장${hide ? " — 이름 없이 그림만 있다" : ""}"><defs>${defs}</defs>${cards}</svg>`;
 }
 
 /* ================================================================
