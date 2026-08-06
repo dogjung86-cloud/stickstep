@@ -185,7 +185,9 @@ export function religionMapFig(opts?: { letters?: { lon: number; lat: number; t:
     ${pal.map(([c, n], i) => `<g transform="translate(${CROP.x + 12 + i * 64} ${CROP.y + CROP.h + 24})">
       <rect x="0" y="-9" width="11" height="11" rx="3" fill="${c}"/><text x="15" y="1" fill="#4E5968">${n}</text></g>`).join("")}
   </g>`;
-  return mapShell(inner, { legend, aria: "아시아의 종교 분포 지도 — 지역마다 주로 믿는 종교" });
+  // aria 뒷구절("지역마다 주로 믿는 종교가 다르다")은 시험 판독 문항의 정답을 낭독한다 —
+  // 관찰 중립 문구만(s1u2 검산 A 적발 · crudeTowerFig/gerFig aria 소급 계보).
+  return mapShell(inner, { legend, aria: "아시아의 종교 분포 지도" });
 }
 
 /* ---------- L5: 인구 분포 점묘 지도(hotspot 배경·pad0) ---------- */

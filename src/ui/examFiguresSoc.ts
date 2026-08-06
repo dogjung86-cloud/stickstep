@@ -6,6 +6,7 @@
 // ④ 파운드리 문법(그라데이션·키라이트·접촉 그림자), SVG 텍스트 12px 이상
 // ⑤ 고정 기하 clipPath만 고정 id 사용(파라미터 기하 클립은 id에 기하 각인 — 사회 Ⅵ 관례)
 import { WORLD_LAND_PATH } from "./worldMap.generated";
+import { CONTINENTS, lonToX, latToY, polyPath } from "./continentMap";
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
 
@@ -632,3 +633,171 @@ export const socDbox = (rows: [string, string][]): string =>
   `<div style="border:1.5px solid #E8D5C4;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:7px;background:#FFFDF9">
     ${rows.map(([tag, body]) => `<div style="display:flex;gap:8px;font-size:13.2px;line-height:1.55;word-break:keep-all">${tag ? `<b style="flex:none;color:#B84A08">${tag}</b>` : ""}<span>${body}</span></div>`).join("")}
   </div>`;
+
+/* ════════════════════════════════════════════════════════════════
+ * s1u2 v1 — 아시아 단원 시험 그림(2026-08 · 정본 qa/s1u2-v1-blueprint.md §5)
+ * 지도는 continentMap ASIA def(크롭·폴리곤)+WORLD_LAND_PATH 재사용 — 손그리기 0.
+ * ════════════════════════════════════════════════════════════════ */
+
+const ASIA_DEF = CONTINENTS.asia;
+
+/* ================================================================
+ * 12. sxAsiaMapFig — 아시아 크롭 지도(레터 마커·이동 화살표·지형 소품)
+ *    letters: 마커(r10.5 — 두 마커 중심 거리 ≥ ~8° 의무 · dx/dy는 svg px 오프셋
+ *             배지 + 대상점 리더선 · GEO 검산은 lon/lat 앵커 기준)
+ *    arrows:  곡선 이동 화살표(socWorldFig routes 문법의 크롭판 — 시작 점·도착 화살촉)
+ *    terrain: 지형 소품(산맥·고원·사막·강·조산대·카스피 — socFigures2.asiaTerrainFig와
+ *             같은 lon/lat 지리 사실 기하 · pad 12로 가장자리 여백)
+ * ================================================================ */
+export function sxAsiaMapFig(opts?: {
+  letters?: { lon: number; lat: number; t: string; dx?: number; dy?: number }[];
+  arrows?: { from: [number, number]; to: [number, number]; color?: string }[];
+  terrain?: boolean;
+}): string {
+  const CROP = ASIA_DEF.crop;
+  const p = opts?.terrain ? 12 : 0;
+  const vx = CROP.x - p;
+  const vy = CROP.y - 6 - p;
+  const vw = CROP.w + p * 2;
+  const vh = CROP.h + 10 + p * 2;
+
+  const mtn = (lon: number, lat: number, s: number): string => {
+    const x = lonToX(lon);
+    const y = latToY(lat);
+    return `<path d="M${x - 7 * s} ${y + 4 * s} L${x} ${y - 6 * s} L${x + 7 * s} ${y + 4 * s}z" fill="#8FA5BE" stroke="#5A7090" stroke-width=".8"/>
+      <path d="M${x - 2.2 * s} ${y - 2.6 * s} L${x} ${y - 6 * s} L${x + 2.2 * s} ${y - 2.6 * s}q-2.2 1.6-4.4 0z" fill="#F2F7FB"/>`;
+  };
+  const volcano = (lon: number, lat: number): string => {
+    const x = lonToX(lon);
+    const y = latToY(lat);
+    return `<path d="M${x - 5} ${y + 3} L${x} ${y - 5} L${x + 5} ${y + 3}z" fill="#C25C3E" stroke="#8F2D1D" stroke-width=".8"/>`;
+  };
+  const river = (pts: [number, number][]): string =>
+    `<path d="${pts.map(([lo, la], i) => `${i === 0 ? "M" : "L"}${lonToX(lo).toFixed(1)} ${latToY(la).toFixed(1)}`).join(" ")}" stroke="#4E9AE8" stroke-width="2" fill="none" stroke-linecap="round" opacity=".9"/>`;
+  const terrainSvg = opts?.terrain
+    ? `<g clip-path="url(#sx2-lclip)">
+        <path d="${polyPath([[78, 36], [86, 36.5], [95, 35], [99, 31], [95, 27.5], [86, 27.5], [79, 30.5]])}" fill="#C8B48A" opacity=".8"/>
+        <path d="${polyPath([[76, 40], [86, 41.5], [90, 38.5], [84, 36.5], [77, 37]])}" fill="#E8D8A8" opacity=".9"/>
+        <path d="${polyPath([[98, 45], [110, 45.5], [112, 42.5], [103, 41], [97, 42.5]])}" fill="#E8D8A8" opacity=".9"/>
+        <path d="${polyPath([[45, 24], [52, 23], [54, 19], [48, 18], [44, 20.5]])}" fill="#E8D8A8" opacity=".9"/>
+      </g>
+      ${river([[94, 33], [98, 27], [100, 20], [104, 15], [106, 10.5]])}
+      ${river([[91, 33], [98, 30], [104, 29], [112, 30.5], [121, 31.8]])}
+      ${river([[78, 31], [82, 27], [86, 25.5], [89.5, 23.5]])}
+      <path d="M ${lonToX(141)} ${latToY(43)} Q ${lonToX(139)} ${latToY(33)} ${lonToX(127)} ${latToY(23)} Q ${lonToX(122)} ${latToY(14)} ${lonToX(124)} ${latToY(5)} Q ${lonToX(118)} ${latToY(-4)} ${lonToX(106)} ${latToY(-8)}"
+        stroke="#E2574C" stroke-width="2.2" stroke-dasharray="6 5" fill="none" opacity=".8"/>
+      ${mtn(78, 29.2, 1)}${mtn(83, 28.6, 1.25)}${mtn(88, 28.2, 1.1)}${mtn(93, 28.6, 1)}
+      ${volcano(138.5, 36)}${volcano(121, 13.5)}${volcano(110, -7.5)}
+      <ellipse cx="${lonToX(50.5)}" cy="${latToY(41.5)}" rx="9" ry="16" fill="#9CCBE8" stroke="#5A94BE" stroke-width=".8" opacity=".95" transform="rotate(-12 ${lonToX(50.5)} ${latToY(41.5)})"/>`
+    : "";
+
+  const arrowSvg = (opts?.arrows ?? [])
+    .map((a) => {
+      const x1 = lonToX(a.from[0]);
+      const y1 = latToY(a.from[1]);
+      const x2 = lonToX(a.to[0]);
+      const y2 = latToY(a.to[1]);
+      const cx = (x1 + x2) / 2;
+      const cy = Math.min(y1, y2) - Math.max(10, Math.hypot(x2 - x1, y2 - y1) * 0.18);
+      const col = a.color ?? "#E8590C";
+      const ang = Math.atan2(y2 - cy, x2 - cx);
+      const ah = 9;
+      return `<path d="M ${x1.toFixed(1)} ${y1.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}" stroke="${col}" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-dasharray="8 6"/>
+      <circle cx="${x1.toFixed(1)}" cy="${y1.toFixed(1)}" r="4.6" fill="${col}"/>
+      <path d="M ${x2.toFixed(1)} ${y2.toFixed(1)} L ${(x2 - ah * Math.cos(ang - 0.42)).toFixed(1)} ${(y2 - ah * Math.sin(ang - 0.42)).toFixed(1)} L ${(x2 - ah * Math.cos(ang + 0.42)).toFixed(1)} ${(y2 - ah * Math.sin(ang + 0.42)).toFixed(1)} z" fill="${col}"/>`;
+    })
+    .join("");
+
+  const letterSvg = (opts?.letters ?? [])
+    .map((m) => {
+      const tx = lonToX(m.lon);
+      const ty = latToY(m.lat);
+      const bx = tx + (m.dx ?? 0);
+      const by = ty + (m.dy ?? 0);
+      const leader =
+        m.dx || m.dy
+          ? `<line x1="${tx.toFixed(1)}" y1="${ty.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="#333D4B" stroke-width="1.3"/>
+             <circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="2.4" fill="#333D4B"/>`
+          : "";
+      return `${leader}<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="10.5" fill="#FFFFFF" stroke="#333D4B" stroke-width="1.8"/>
+      <text x="${bx.toFixed(1)}" y="${(by + 4).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="900" fill="#333D4B">${m.t}</text>`;
+    })
+    .join("");
+
+  const ariaBits = [
+    "아시아 지도",
+    opts?.terrain ? "산맥·고원·사막·강·화산대 지형 표시" : "",
+    (opts?.letters ?? []).length ? `위치 ${(opts?.letters ?? []).map((m) => m.t).join("·")} 표시` : "",
+    (opts?.arrows ?? []).length ? "이동 방향 화살표" : "",
+  ].filter(Boolean);
+  return `<svg viewBox="${vx} ${vy} ${vw} ${vh}" ${NS} fill="none" role="img" aria-label="${ariaBits.join(" — ")}">
+    <defs>
+      <clipPath id="sx2-lclip"><path d="${WORLD_LAND_PATH}" fill-rule="evenodd"/></clipPath>
+      <radialGradient id="sx2-sea" cx=".5" cy=".4" r=".95">
+        <stop offset="0" stop-color="#D9EDF8"/><stop offset="1" stop-color="#BCDCEF"/>
+      </radialGradient>
+    </defs>
+    <rect x="${vx}" y="${vy}" width="${vw}" height="${vh}" rx="12" fill="url(#sx2-sea)"/>
+    <line x1="${vx}" y1="250" x2="${vx + vw}" y2="250" stroke="#7FA8C8" stroke-width="1" opacity=".55"/>
+    <text x="${vx + 5}" y="246" font-size="10" font-weight="700" fill="#5A7A96">적도</text>
+    <path d="${WORLD_LAND_PATH}" fill="#F2ECDE" fill-rule="evenodd"/>
+    ${terrainSvg}
+    <path d="${WORLD_LAND_PATH}" stroke="rgba(74,88,110,.5)" stroke-width=".7" fill="none" fill-rule="evenodd"/>
+    ${arrowSvg}${letterSvg}
+  </svg>`;
+}
+
+/* ================================================================
+ * 13. sxPyramidFig — 인구 피라미드 1~3패널(wide 하광형·aged 상광형·migrant 청장년 남성 돌출)
+ *    막대는 정성 실루엣(수치 눈금 없음) · 아래 = 어린 나이 · 왼쪽 남/오른쪽 여 표기.
+ *    aria는 kinds에서 파생한 관찰 서술만(나라 이름·유형 판정 인쇄 금지).
+ * ================================================================ */
+export type SxPyramidKind = "wide" | "aged" | "migrant";
+
+export function sxPyramidFig(kinds: SxPyramidKind[], opts?: { tags?: string[] }): string {
+  const n = Math.max(1, Math.min(3, kinds.length));
+  const PW = n === 3 ? 118 : 158;
+  const W = PW * n + 8 * (n - 1);
+  const tags = opts?.tags ?? ["(가)", "(나)", "(다)"];
+  const rows = 9;
+  const panel = (kind: SxPyramidKind, x0: number, tag: string): string => {
+    const cx = PW / 2;
+    let bars = "";
+    for (let i = 0; i < rows; i++) {
+      const t = i / (rows - 1); // 0 아래 → 1 위
+      const y = 128 - i * 12;
+      let lw: number;
+      let rw: number;
+      if (kind === "wide") {
+        lw = rw = (PW * 0.37 - t * PW * 0.3) ;
+      } else if (kind === "aged") {
+        lw = rw = (PW * 0.14 + t * PW * 0.175 - (t > 0.82 ? (t - 0.82) * PW * 0.47 : 0));
+      } else {
+        // migrant: 오른쪽(여)은 홀쭉한 종형, 왼쪽(남)은 청장년 대역(행 2~5)만 크게 돌출
+        rw = PW * 0.11 + (t > 0.15 && t < 0.7 ? PW * 0.045 : 0) - (t > 0.82 ? (t - 0.82) * PW * 0.35 : 0);
+        const bulge = t >= 0.2 && t <= 0.62 ? Math.sin(((t - 0.2) / 0.42) * Math.PI) * PW * 0.3 : 0;
+        lw = rw + bulge;
+      }
+      bars += `<rect x="${(x0 + cx - lw).toFixed(1)}" y="${y}" width="${lw.toFixed(1)}" height="9.5" rx="2" fill="${kind === "wide" ? "#F2A72E" : kind === "aged" ? "#4E7CB8" : "#2E9E5B"}" opacity="${(0.52 + 0.05 * i).toFixed(2)}"/>
+        <rect x="${(x0 + cx).toFixed(1)}" y="${y}" width="${rw.toFixed(1)}" height="9.5" rx="2" fill="${kind === "wide" ? "#F2A72E" : kind === "aged" ? "#4E7CB8" : "#2E9E5B"}" opacity="${(0.4 + 0.045 * i).toFixed(2)}"/>`;
+    }
+    return `<g transform="translate(${x0 === 0 ? 0 : 0} 0)">
+      <rect x="${x0 + 2}" y="6" width="${PW - 4}" height="158" rx="12" fill="#F7F9FC" stroke="#E2E8F0"/>
+      ${bars}
+      <line x1="${x0 + cx}" y1="18" x2="${x0 + cx}" y2="140" stroke="#8A93A6" stroke-width=".8" stroke-dasharray="3 3"/>
+      <text x="${x0 + 14}" y="150" font-size="10" font-weight="800" fill="#6B7684">남</text>
+      <text x="${x0 + PW - 14}" y="150" text-anchor="end" font-size="10" font-weight="800" fill="#6B7684">여</text>
+      <text x="${x0 + cx}" y="160" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1">아래 = 어린 나이</text>
+      <text x="${x0 + cx}" y="30" text-anchor="middle" font-size="12.5" font-weight="900" fill="#2E3A50">${tag}</text>
+    </g>`;
+  };
+  const kindWord: Record<SxPyramidKind, string> = {
+    wide: "아래쪽 막대가 넓은",
+    aged: "위쪽 막대가 넓은",
+    migrant: "가운데 나이대의 왼쪽 막대만 길게 튀어나온",
+  };
+  const aria = `인구 피라미드 그래프 ${n}개 — ${kinds.map((k, i) => `${tags[i]} ${kindWord[k]} 모양`).join(", ")}`;
+  return `<svg viewBox="0 0 ${W} 170" ${NS} fill="none" role="img" aria-label="${aria}">
+    ${kinds.slice(0, n).map((k, i) => panel(k, i * (PW + 8), tags[i])).join("")}
+  </svg>`;
+}

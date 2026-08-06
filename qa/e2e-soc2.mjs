@@ -78,14 +78,17 @@ const heading = () =>
   }));
   const socUnits = await page.evaluate(async () => (await import("/src/content/soc/curriculum.ts")).SOC_G1.length);
   check(home.bands === socUnits, `홈 밴드 = 사회 커리큘럼 단원 수(${socUnits}) (실제 ${home.bands})`);
-  // Ⅱ 탭으로 전환 → 8레슨 노드 + world 테마 지형
+  // Ⅱ 탭으로 전환 → 8레슨 노드 + 시험 노드 + world 테마 지형
+  // (s1u2 단원 종합 평가 등록으로 시험 노드가 생겨 레슨 기대치는 :not(.exam) — e2e-soc1 44/44 선례)
   await page.evaluate(() => document.querySelectorAll(".unit-tab")[1].click());
   await W(800);
   const u2map = await page.evaluate(() => ({
-    nodes: document.querySelectorAll(".gm-node").length,
+    nodes: document.querySelectorAll(".gm-node:not(.exam)").length,
+    exam: document.querySelectorAll(".gm-node.exam").length,
     asia: !!document.querySelector(".gm-terrain.asia"),
   }));
   check(u2map.nodes === 8, `Ⅱ단원 레슨 노드 8개 (실제 ${u2map.nodes})`);
+  check(u2map.exam === 1, `Ⅱ단원 시험 노드 1개(단원 종합 평가 등록) (실제 ${u2map.exam})`);
   check(u2map.asia, "Ⅱ단원 asia 테마 지형 적용(단원별 색 분리)");
 }
 
