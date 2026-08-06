@@ -135,6 +135,7 @@ export const hook = (o: {
     | "newyearfirst" | "ulurumystery" | "santasurf" | "martorigin" | "trashisland" | "ploggingrun" | "stationwhy" | "arcticflags"
     | "twinstory" | "hiddenteacher" | "profileme" | "nametags" | "doubleday" | "vinestangle" | "dollshelf"
     | "wordhunt" | "greetmix" | "birthsoup" | "mycomment" | "mugwort" | "doorbell" | "siesta"
+    | "seatwar" | "oneway" | "lotclass" | "hundredmen" | "kingnope" | "idiotword" | "uniformday"
     | "saveicon" | "gamechar" | "timecapsule" | "dangi" | "milmyeon"
     | "sprout" | "receipt" | "aptmap" | "parcel" | "olympic" | "romanclock" | "silkscarf"
     | "lambskewer" | "examnotice" | "kanasign" | "hanjahw" | "zeroscore" | "chessmate" | "arabnum" | "francejersey" | "pepper"
@@ -481,6 +482,11 @@ export const factLab = (o: { title: string; lead?: string; cta?: string; curio?:
   ({ type: "factLab", ...o });
 export const feastLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "feastLab", ...o });
+// 사회 Ⅸ 전용 기함 랩 2종(참정권 타임라인·민주주의 원리 릴레이) — 데이터 내장형(judgeKit 밖)
+export const suffrageLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "suffrageLab", ...o });
+export const principleLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
+  ({ type: "principleLab", ...o });
 
 // ── 중1 Ⅱ 생물의 구성과 다양성 랩 11종(2026-07-25 재제작) ────────────
 // 전부 같은 계약: { title, lead?, cta?, curio? }. 구작 랩(orgLevels·finchSim·microscope·

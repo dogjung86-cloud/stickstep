@@ -1852,6 +1852,78 @@ const MAP_DECOR: Record<string, string> = {
     `<radialGradient id="s8d-lens" cx=".38" cy=".32" r="1"><stop offset="0" stop-color="#F2FBFF"/><stop offset=".7" stop-color="#CBE8F2"/><stop offset="1" stop-color="#9EC8DA"/></radialGradient>`,
   ),
 
+  // ── 사회 Ⅸ. 민주주의와 시민 — "함께 결정하는 기술"(말풍선 → 투표함 → 신전 기둥 → 헌법 책 → 들어 올린 손) ──
+  socTalkDeco: S(
+    `${shadow(32, 56, 16, 0.12)}
+    <g transform="rotate(-3 24 30)">
+      <path d="M10 18h26q4 0 4 4v12q0 4-4 4H22l-6 7v-7h-6q-4 0-4-4V22q0-4 4-4z" fill="url(#s9d-talkA)" stroke="#155A9C" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="M15 26h16M15 31h11" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" opacity=".85"/>
+      <ellipse cx="17" cy="21.5" rx="5" ry="1.7" fill="#fff" opacity=".45"/>
+    </g>
+    <g transform="rotate(3 44 40)">
+      <path d="M28 32h26q4 0 4 4v11q0 4-4 4h-6v7l-6-7H28q-4 0-4-4V36q0-4 4-4z" fill="url(#s9d-talkB)" stroke="#B06A14" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="M32 39h16M32 44h12" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" opacity=".85"/>
+      <ellipse cx="34" cy="35.5" rx="5" ry="1.7" fill="#fff" opacity=".4"/>
+    </g>`,
+    `<linearGradient id="s9d-talkA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7EB2E2"/><stop offset=".55" stop-color="#4A86C8"/><stop offset="1" stop-color="#2A6AAE"/></linearGradient>
+    <linearGradient id="s9d-talkB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2C070"/><stop offset=".55" stop-color="#E2A048"/><stop offset="1" stop-color="#C2822A"/></linearGradient>`,
+  ),
+  socBallotDeco: S(
+    `${shadow(32, 57, 16, 0.13)}
+    <rect x="14" y="30" width="36" height="26" rx="5" fill="url(#s9d-box)" stroke="#0F4676" stroke-width="1.7"/>
+    <path d="M14 39h36" stroke="#0F4676" stroke-width="1.2" opacity=".5"/>
+    <rect x="24" y="27" width="16" height="4" rx="2" fill="#0F4676"/>
+    <g transform="rotate(-14 32 20)">
+      <rect x="25" y="12" width="14" height="18" rx="2" fill="url(#s9d-paper)" stroke="#8A93A6" stroke-width="1.4"/>
+      <path d="M28 17h8M28 21h8" stroke="#A8B2C2" stroke-width="1.2" stroke-linecap="round"/>
+      <circle cx="32" cy="26" r="2.2" fill="none" stroke="#1864AB" stroke-width="1.5"/>
+    </g>
+    <path d="M20 44l3.4 3.6 6.6-7" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".9"/>
+    <ellipse cx="21" cy="33.5" rx="5" ry="1.8" fill="#fff" opacity=".3"/>`,
+    `<linearGradient id="s9d-box" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4A86C8"/><stop offset=".55" stop-color="#1864AB"/><stop offset="1" stop-color="#124F86"/></linearGradient>
+    <linearGradient id="s9d-paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E4EAF2"/></linearGradient>`,
+  ),
+  socPillarDeco: S(
+    `${shadow(32, 57, 18, 0.13)}
+    <path d="M10 24 L32 12 L54 24 v5 H10z" fill="url(#s9d-pedi)" stroke="#8A7648" stroke-width="1.7" stroke-linejoin="round"/>
+    <rect x="12" y="50" width="40" height="6" rx="2" fill="url(#s9d-base)" stroke="#8A7648" stroke-width="1.5"/>
+    ${[19, 32, 45].map((x) => `<rect x="${x - 4}" y="30" width="8" height="19" rx="1.5" fill="url(#s9d-col)" stroke="#8A7648" stroke-width="1.4"/><path d="M${x - 1.6} 32v15M${x + 1.6} 32v15" stroke="#B8A472" stroke-width="1" opacity=".7"/>`).join("")}
+    <ellipse cx="20" cy="18" rx="6" ry="2" fill="#fff" opacity=".4" transform="rotate(-18 20 18)"/>`,
+    `<linearGradient id="s9d-pedi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5EBD2"/><stop offset="1" stop-color="#DCC998"/></linearGradient>
+    <linearGradient id="s9d-col" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#EFE3C4"/><stop offset=".5" stop-color="#E2D2A8"/><stop offset="1" stop-color="#C8B482"/></linearGradient>
+    <linearGradient id="s9d-base" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8D9B2"/><stop offset="1" stop-color="#C2AC7C"/></linearGradient>`,
+  ),
+  socLawDeco: S(
+    `${shadow(32, 57, 17, 0.12)}
+    <g transform="rotate(-4 32 40)">
+      <path d="M12 30q10-5 20 0v22q-10-5-20 0z" fill="url(#s9d-pageL)" stroke="#155A9C" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M52 30q-10-5-20 0v22q10-5 20 0z" fill="url(#s9d-pageR)" stroke="#155A9C" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M17 36q6-2.6 11 0M17 41q6-2.6 11 0M17 46q4-1.8 8 0M36 36q6-2.6 11 0M36 41q6-2.6 11 0" stroke="#7E9EC2" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+      <ellipse cx="20" cy="32" rx="5" ry="1.6" fill="#fff" opacity=".55"/>
+    </g>
+    <path d="M32 10v10M26 13.5h12" stroke="#B8860E" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M26 13.5l-3.4 6.2q3.4 2.6 6.8 0zM38 13.5l3.4 6.2q-3.4 2.6-6.8 0z" fill="url(#s9d-scale)" stroke="#8A6A0E" stroke-width="1.2" stroke-linejoin="round"/>`,
+    `<linearGradient id="s9d-pageL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#EAF2FB"/><stop offset="1" stop-color="#CBDEF2"/></linearGradient>
+    <linearGradient id="s9d-pageR" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#EAF2FB"/><stop offset="1" stop-color="#CBDEF2"/></linearGradient>
+    <linearGradient id="s9d-scale" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2CE7E"/><stop offset="1" stop-color="#D0A63E"/></linearGradient>`,
+  ),
+  socHandsDeco: S(
+    `${shadow(32, 57, 17, 0.12)}
+    ${[
+      { x: 18, h: 22, rot: -10, g: "A" },
+      { x: 32, h: 28, rot: 0, g: "B" },
+      { x: 46, h: 21, rot: 10, g: "A" },
+    ].map((o) => `<g transform="rotate(${o.rot} ${o.x} 52)">
+      <path d="M${o.x} 54V${54 - o.h}" stroke="url(#s9d-arm${o.g})" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="${o.x}" cy="${50 - o.h}" r="5.2" fill="url(#s9d-hand)" stroke="#B06A2E" stroke-width="1.4"/>
+    </g>`).join("")}
+    <path d="M12 16l1.5 3.2 3.2 1.3-3.2 1.3L12 25l-1.5-3.2-3.2-1.3 3.2-1.3zM50 10l1.2 2.6 2.6 1.1-2.6 1.1-1.2 2.6-1.2-2.6-2.6-1.1 2.6-1.1z" fill="#F2C24E"/>
+    <circle cx="32" cy="12" r="2" fill="#4A86C8"/>`,
+    `<linearGradient id="s9d-armA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A86C8"/><stop offset="1" stop-color="#1864AB"/></linearGradient>
+    <linearGradient id="s9d-armB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E2A048"/><stop offset="1" stop-color="#C2822A"/></linearGradient>
+    <radialGradient id="s9d-hand" cx=".38" cy=".32" r="1"><stop offset="0" stop-color="#FCE9CE"/><stop offset="1" stop-color="#EBC694"/></radialGradient>`,
+  ),
+
   // ── 역사 Ⅰ. 역사 학습의 기초 — 역사 탐정의 도구(두루마리 → 돋보기 → 붓 → 모래시계 → 항아리) ──
   scrollDeco: S(
     `${shadow(32, 56, 16, 0.12)}

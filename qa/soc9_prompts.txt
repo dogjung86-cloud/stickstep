@@ -1,0 +1,73 @@
+# 사회 Ⅸ(s1u9 민주주의와 시민) 발주 — 스틱맨 개념 컷 7장(public/soc/cuts) + 만화 「프닉스 언덕의 하루」 4컷(public/comics/s1u9l3)
+# 실사(프닉스 언덕·클레로테리온·란츠게마인데 등)는 발주하지 않고 위키미디어(qa/fetch-soc9-demo.mjs — 실물 우선 원칙).
+# 컷·만화 모두 "이미지 안 글자 절대 금지". 만화 컷은 앱이 한글 말풍선을 얹는 하이브리드라
+# 인물이 입을 벌리고 손짓하는 "말하는 연기"만 그리고, 인물 머리 위쪽 1/3 여백을 넉넉히 남긴다.
+# ★ 이 단원 눈검수 특칙(정치 단원 가드 연동): 기존 항목(글자 0·의미 정확·손가락 5개·인물 존엄)에 더해
+#   **정치 중립 검수** — 현실 정당·정치인·국기·구호·피켓 문구 절대 금지(전부 익명 스틱맨·추상 소품),
+#   **비폭력 검수** — 무기·전투·충돌·유혈 절대 금지(시민 혁명·민주화도 광장과 든 손으로만),
+#   스틱맨은 무성별 기본형(머리카락·치마 등 성별 표지 금지 — 다양성은 지팡이·모자·연장 같은 소품으로),
+#   만화 고대 그리스 컷은 시대 고증(키톤 천 옷·샌들·돌 기둥 — 현대 소품 금지).
+#
+# ── 스타일 블록 A (스틱맨 개념 컷 공용 — soc 공용) ──
+# hand-drawn stick figure comic panel, black ink on clean white paper, thin uniform line weight,
+# xkcd / whiteboard-marker doodle style, minimalist line art, no shading, no gradients, flat,
+# charming educational. The recurring stick-figure character: plain round circle head, simple dot
+# eyes, stick arms and legs, exactly five fingers where hands are drawn. Exactly one restrained
+# accent color, teal, used only where the prompt says; everything else pure black and white.
+# absolutely no text, no letters, no numbers, no words, no speech bubbles, no captions, no labels,
+# no symbols anywhere in the image. NOT 3D, NOT photorealistic, NOT glossy render, NOT digital
+# painting, NOT anime. Landscape 4:3, single panel, generous white space.
+#
+# ── 스타일 블록 C (만화 컷 공용 — 말풍선 하이브리드 + 코믹 연기, his2 원전) ──
+# Hand-drawn stick figure comic panel, black ink lines on warm off-white paper,
+# exactly one accent color: teal, used sparingly where the prompt says.
+# Absolutely NO text, NO letters, NO numbers, NO speech bubbles, NO captions anywhere.
+# Characters ACT like they are talking: open mouth (small oval), expressive hand gestures.
+# Comedic acting is allowed and encouraged where the prompt marks GAG: exaggerated poses,
+# big reactions, bulging wide eyes, jaw dropping — but all historical objects, clothing and
+# facts must stay accurate; never make the scene absurd beyond what the prompt describes.
+# Ancient Greek setting: simple knee-length chiton tunics (draped cloth), simple sandals,
+# stone hill and columns — NO modern props, NO weapons, NO fighting, NO flags, NO banners.
+# Keep the upper third of the panel mostly empty white space above the characters' heads
+# (the app overlays Korean speech bubbles there). Main subjects centered horizontally.
+# Simple, charming, educational middle-school comic. 4:3 landscape panel.
+
+## ── 개념 컷 7장 (스타일 A) ──
+
+[0] file=public/soc/cuts/u9l1.png (landscape 4:3, 스타일 A)
+A round meeting table seen from a slight angle: two stick figures sit facing each other mid-argument, each gesturing firmly toward the other with a frown (crossed arms on one, open palm slap gesture on the other). Between them at the head of the table stands a third stick figure calmly extending both open palms outward — one palm toward each side — in a classic "let's settle this" mediator pose, with a gentle smile. On the table lies a single sheet of paper that both sides' eyes turn toward. Only that single sheet of paper on the table is teal; everything else pure black and white.
+
+[1] file=public/soc/cuts/u9l2.png (landscape 4:3, 스타일 A)
+Six stick figures sit evenly around a round table, and every single one of them wears an identical small simple crown on its round head — no crown is bigger than another. They lean in cooperatively, hands on the table edge, discussing warmly (small smile mouths). In the center of the table stands one small upright document sheet on a tiny stand. Only the six identical small crowns are teal; everything else pure black and white.
+
+[2] file=public/soc/cuts/u9l3.png (landscape 4:3, 스타일 A)
+Split scene divided by a thin vertical wavy line: on the left, a modern classroom with three stick figures at desks raising their hands high, one standing at a small podium; on the right, a gentle stone hill under the open sky with three stick figures in simple knee-length chiton tunics also raising their hands high in exactly the same pose, one standing on a low stone step. The two scenes mirror each other like a reflection across time. Only the six raised hands (three on each side) are teal; everything else pure black and white.
+
+[3] file=public/soc/cuts/u9l4.png (landscape 4:3, 스타일 A)
+A friendly polling place: a simple ballot box with a slot stands on a small table. A diverse queue of five stick figures waits in line, each holding a small folded paper slip — one leans on a simple cane with slightly bent back, one wears a flat work cap and carries a small wrench in its belt, one is small (child-height) standing on tiptoe to see, one wears simple round glasses, one holds a tote-like simple bag. All are plain gender-neutral stick figures with dot eyes and warm smiles. The first in line drops its slip into the box slot. Only the five folded paper slips are teal; everything else pure black and white.
+
+[4] file=public/soc/cuts/u9l5.png (landscape 4:3, 스타일 A)
+A construction scene of a small Greek-style temple: four sturdy columns stand on a base, holding up one triangular roof (pediment). Two stick figures work together raising the fourth column upright with a simple rope and pulley, while a third stick figure stands to the side holding an unrolled blueprint sheet open with both hands, comparing it to the building. The roof triangle is complete and solid. Only the unrolled blueprint sheet is teal; everything else pure black and white.
+
+[5] file=public/soc/cuts/u9l6.png (landscape 4:3, 스타일 A)
+A cozy living room: one stick figure lies deeply sunken into a soft sofa, holding a smartphone close to its face (screen shows only abstract squiggle doodles — no letters), back turned to a large window. Through the window, outside: a small polling-station tent with a tall flag pole flying a simple pennant flag, and three tiny stick figures lining up cheerfully. A small clock-less wall frame hangs above the sofa (empty frame, no numbers). Only the pennant flag outside the window is teal; everything else pure black and white.
+
+[6] file=public/soc/cuts/u9l7.png (landscape 4:3, 스타일 A)
+A bright round-table forum: seven stick figures sit in a full circle, several with one hand raised mid-discussion (open talking mouths, engaged leaning postures). Each has a small square note card in front of it on the table, and gentle motion arcs show the note cards sliding toward the table's center where they gather into one single larger combined sheet standing upright. Only that single combined center sheet is teal; everything else pure black and white.
+
+## ── 만화 s1u9l3 「프닉스 언덕의 하루」 4컷 (스타일 C) ──
+## 등장인물 고정: CITIZEN = 주인공 시민 스틱맨(무릎길이 키톤 천 옷 + 샌들, 허리에 가는 띠).
+## CROWD = 같은 키톤 차림의 시민 스틱맨들. OFFICIAL = 어깨에 짧은 망토 천을 두른 진행 시민.
+## 시대 고증: 키톤·샌들·돌 언덕·돌 연단만 — 현대 소품·무기·국기 절대 금지. 개그는 [c2]만.
+
+[c0] file=public/comics/s1u9l3/0.png (landscape 4:3, 스타일 C)
+DIGNIFIED (no gag — fresh morning energy): Early morning on a wide dirt path up a gentle rocky hill. CITIZEN, a stick figure in a simple knee-length chiton tunic and sandals, strides up the path with a bright determined smile, one fist swinging forward. Ahead and behind, several other chiton-wearing stick figures also climb toward the hilltop where a low flat stone platform waits. Far in the background on another hill, a tiny simple temple silhouette with columns. A big morning sun low on the horizon. Teal accent: the thin waist sash of CITIZEN. Upper third of the panel empty white space for speech bubbles.
+
+[c1] file=public/comics/s1u9l3/1.png (landscape 4:3, 스타일 C)
+DIGNIFIED (no gag — lively but orderly): On the hilltop, a wide gathered crowd of chiton-wearing stick figures sits and stands in a loose semicircle facing a low flat stone speaker's platform. On the platform one CROWD member speaks passionately — open mouth, one arm sweeping wide. Among the audience, two figures raise their hands wanting to speak next; CITIZEN sits near the front listening with a hand on its chin, fully absorbed. Teal accent: the speaker's sweeping arm sleeve edge. Upper third empty for speech bubbles.
+
+[c2] file=public/comics/s1u9l3/2.png (landscape 4:3, 스타일 C)
+GAG: The lottery machine moment. A waist-high upright stone slab stands at the side of the platform, carved with several neat horizontal rows of thin slots, small name tokens tucked into the slots; beside it a narrow vertical tube runs down the slab's edge. OFFICIAL, wearing a short shoulder cape over the chiton, holds up one small round pale ball just drawn from the tube, pointing at one token row. CITIZEN reacts with a huge comic shock: eyes bulging wide, jaw dropped open, both hands pointing at its own chest ("me?!"), knees buckling comically inward, three surprise lines popping around its head. Two CROWD members beside it chuckle warmly. Teal accent: the small round ball held up by OFFICIAL. Upper third empty for speech bubbles.
+
+[c3] file=public/comics/s1u9l3/3.png (landscape 4:3, 스타일 C)
+DIGNIFIED (no gag — warm, proud finale): Late afternoon, the sun now low and large behind the hill. The whole hilltop crowd of chiton stick figures raises hands high together in a vote — a forest of raised arms. CITIZEN stands among them, chest out, arm raised highest, with a proud satisfied smile. The stone platform is visible at the far side with OFFICIAL counting hands, finger extended. Long soft shadows stretch from the figures. Teal accent: CITIZEN's raised arm and hand. Upper third empty for speech bubbles.

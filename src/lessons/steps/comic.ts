@@ -73,6 +73,8 @@ const STAGE_COLOR: Record<string, string> = {
   "은의 물길": "#3D5BC0", 도전: "#E8850C", 비법: "#0E7C8A",
   "괴짜 화가": "#8A6BFF", 목판: "#8A6A3E", "맞잡은 손": "#C2843A", "토론의 방": "#3182F6",
   "아흔다섯 질문": "#E8590C", "갈리는 입장": "#8A6BFF", "두 갈래": "#5C677D",
+  // 사회 Ⅸ — 프닉스 언덕의 하루(아테네 민회 서사)
+  "이른 아침": "#E8850C", 민회: "#1864AB", 추첨: "#C2843A", "해 질 무렵": "#E8590C",
 };
 function stageColor(stage: string): string {
   for (const key of Object.keys(STAGE_COLOR)) if (stage.includes(key)) return STAGE_COLOR[key];

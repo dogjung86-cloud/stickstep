@@ -272,6 +272,8 @@ import { judgeLab } from "./steps/judgeLab";
 import { dilemmaLab } from "./steps/dilemmaLab";
 import { lifePathLab } from "./steps/lifePathLab";
 import { kimchiLab } from "./steps/kimchiLab";
+import { suffrageLab } from "./steps/suffrageLab";
+import { principleLab } from "./steps/principleLab";
 import { factLab } from "./steps/factLab";
 import { feastLab } from "./steps/feastLab";
 import { timelineLab } from "./steps/timelineLab";
@@ -527,6 +529,8 @@ const R: Record<string, StepRenderer> = {
   dilemmaLab,
   lifePathLab,
   kimchiLab,
+  suffrageLab,
+  principleLab,
   factLab,
   feastLab,
   timelineLab,

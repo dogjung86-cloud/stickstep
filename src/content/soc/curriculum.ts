@@ -10,6 +10,7 @@ import { S1_UNIT5 } from "./unit5";
 import { S1_UNIT6 } from "./unit6";
 import { S1_UNIT7 } from "./unit7";
 import { S1_UNIT8 } from "./unit8";
+import { S1_UNIT9 } from "./unit9";
 
 /** 준비 중 단원 — 탭·밴드는 노출하되 지도 대신 안내 카드(comingSoon). */
 const soon = (id: string, roman: string, title: string, subtitle: string, color: string, icon: string): Unit => ({
@@ -26,6 +27,7 @@ export const SOC_G1: Unit[] = [
   S1_UNIT6,
   S1_UNIT7,
   S1_UNIT8,
+  S1_UNIT9,
 ];
 
 // 중2 사회 — 다음 배치에서 제작(자리만 유지).

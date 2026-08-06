@@ -94,6 +94,7 @@ import { renderHis4 } from "./hookHis4";
 import { renderSoc6 } from "./hookSoc6";
 import { renderSoc7 } from "./hookSoc7";
 import { renderSoc8 } from "./hookSoc8";
+import { renderSoc9 } from "./hookSoc9";
 import type { StepAPI, StepRenderer } from "../types";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -338,6 +339,8 @@ export const hook: StepRenderer = (host, step, api) => {
   else if ((sceneCleanup = renderSoc7(s.scene, scene, helper, s, finish, face) ?? undefined)) { /* handled */ }
   // 사회 Ⅷ 훅 7종은 hookSoc8의 서브 디스패처가 처리
   else if ((sceneCleanup = renderSoc8(s.scene, scene, helper, s, finish, face) ?? undefined)) { /* handled */ }
+  // 사회 Ⅸ 훅 7종은 hookSoc9의 서브 디스패처가 처리
+  else if ((sceneCleanup = renderSoc9(s.scene, scene, helper, s, finish, face) ?? undefined)) { /* handled */ }
   else sceneCleanup = renderEgg(scene, helper, s, finish, api, face);
 
   api.setCTA("스틱맨 쌤과 먼저 관찰해요", { enabled: false });

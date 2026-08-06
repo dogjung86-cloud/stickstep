@@ -136,6 +136,20 @@
 .gm-path-glow.fest { stroke: rgba(193,59,46,.22); }
 .gm-path-done.fest { stroke: #C13B2E; }
 
+/* Ⅸ 민주주의와 시민 — 투표 잉크 네이비 #1864AB(기표 도장의 색. euro #3B5BDB보다 어둡고 저채도) */
+.unit-band.vote { background: linear-gradient(150deg, #4A86C8 0%, #1864AB 55%, #124F86 100%); }
+.gm-terrain.vote {
+  background:
+    radial-gradient(85% 30% at 18% 8%, rgba(255,255,255,.6), transparent 62%),
+    radial-gradient(60% 22% at 86% 26%, #D8E6F5, transparent 72%),
+    radial-gradient(70% 26% at 12% 52%, #CEDFF2, transparent 72%),
+    radial-gradient(80% 26% at 84% 74%, #D2E2F4, transparent 72%),
+    radial-gradient(70% 24% at 20% 94%, #C2D8EF, transparent 72%),
+    linear-gradient(180deg, #F1F6FC 0%, #E4EEF9 55%, #D2E2F3 100%);
+}
+.gm-path-glow.vote { stroke: rgba(24,100,171,.22); }
+.gm-path-done.vote { stroke: #1864AB; }
+
 /* ---------- worldPlaceLab(기함) — 가로 무대 "지구에 살아 보기" ---------- */
 /* touch-action·선택 방지는 iOS 계열까지 겹겹이 — 스크롤 탈취·롱프레스 선택이 드래그를 죽인다 */
 .wpl-stage { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -1230,3 +1244,60 @@
 
 /* Ⅷ 신규 랩 텍스트 줄바꿈 — keep-all(Ⅶ 관행 계승) */
 .kcl-file, .kcl-time-lab, .fcl-tool b { word-break: keep-all; }
+
+/* ── suffrageLab(sfr- — Ⅸ 투표권 타임라인 기함. sfl-은 math2 shiftLab 선점이라 sfr-) ── */
+.sfr-stage { padding: 12px 12px 14px; }
+.sfr-year {
+  display: inline-block; margin: 0 auto 8px; padding: 4px 14px; border-radius: var(--r-pill);
+  background: rgba(255,255,255,.12); color: #CFE2F8; font-size: 11.5px; font-weight: 900;
+  letter-spacing: -.01em; word-break: keep-all;
+}
+.sfr-scene { border-radius: 12px; overflow: hidden; background: #F6FAFE; }
+.sfr-scene svg { display: block; width: 100%; height: auto; }
+.sfr-scene.in { animation: kclIn .4s var(--ease-out); }
+.sfr-card { transition: opacity .3s; }
+.sfr-controls { margin-top: 10px; width: 100%; max-width: 320px; margin-inline: auto; }
+.sfr-range { width: 100%; accent-color: #1864AB; height: 30px; }
+.sfr-ends { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--n500); }
+.sfr-quiz.show { margin-top: 12px; }
+
+/* ── principleLab(ppl- — Ⅸ 민주주의 원리 4종 릴레이 기함) ── */
+.ppl-stage { padding: 12px 12px 14px; }
+.ppl-file {
+  display: inline-block; margin: 0 auto 8px; padding: 4px 12px; border-radius: var(--r-pill);
+  background: rgba(255,255,255,.12); color: #CFE2F8; font-size: 11.5px; font-weight: 900;
+  letter-spacing: -.01em; word-break: keep-all;
+}
+.ppl-scene { border-radius: 12px; overflow: hidden; background: #F6FAFE; }
+.ppl-scene svg { display: block; width: 100%; height: auto; }
+.ppl-scene.in { animation: kclIn .45s var(--ease-out); }
+.ppl-badges { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 10px; min-height: 24px; }
+.ppl-prop {
+  padding: 4px 12px; border-radius: var(--r-pill); background: #EAF2FB; color: #124F86;
+  font-size: 12px; font-weight: 900; border: 1.5px solid #9EC2E8;
+  animation: kclProp .5s var(--spring-bounce) backwards; word-break: keep-all;
+}
+.ppl-controls { margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.ppl-act { min-width: 210px; display: block; }
+.ppl-act.done { opacity: .45; }
+.ppl-quiz.show { margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) {
+  .sfr-scene.in, .ppl-scene.in, .ppl-prop { animation: none; }
+}
+
+/* ── Ⅸ 훅(hookSoc9 — hs8-frame·hs8-btn·hs8-noti·hs8-ring 재사용, 신규 2종만) ── */
+.hs9-shake { animation: hs9Shake .55s var(--ease) infinite; transform-box: fill-box; transform-origin: center bottom; }
+@keyframes hs9Shake {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-3deg) translateX(-1px); }
+  75% { transform: rotate(3deg) translateX(1px); }
+}
+.hs9-drop { animation: hs9Drop .5s var(--spring-bounce) backwards; transform-box: fill-box; transform-origin: center top; }
+@keyframes hs9Drop {
+  0% { opacity: 0; transform: translateY(-26px); }
+  70% { opacity: 1; transform: translateY(2px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hs9-shake, .hs9-drop { animation: none; }
+}
