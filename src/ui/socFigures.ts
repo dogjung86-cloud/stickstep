@@ -96,7 +96,7 @@ export function terrainFig(): string {
 
 /** 몽골 초원의 게르 — L2 퀴즈(이동식 집의 까닭) */
 export function gerFig(): string {
-  return `<svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="넓은 초원 위 이동식 천막집과 말">
+  return `<svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="풀밭 위 둥근 천막집과 그 곁의 말">
     <defs>
       <linearGradient id="soc-gsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C4E2F5"/><stop offset="1" stop-color="#EDF6FA"/></linearGradient>
       <linearGradient id="soc-steppe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C2DC8A"/><stop offset="1" stop-color="#96BC5E"/></linearGradient>

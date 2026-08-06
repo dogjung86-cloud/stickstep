@@ -28,6 +28,7 @@ import { M2U3_EXAM } from "./m2u3";
 import { M2U4_EXAM } from "./m2u4";
 import { M2U5_EXAM } from "./m2u5";
 import { M2U6_EXAM } from "./m2u6";
+import { S1U1_EXAM } from "./s1u1";
 
 export type { ExamDef, ExamItem, ExamItemType } from "./types";
 export { drawExamItems } from "./types";
@@ -60,6 +61,7 @@ const EXAMS: Record<string, ExamDef> = {
   m2u4: M2U4_EXAM, // 10레슨 200제 — 20×10 균일, 기하 첫 중2 시험(gsym·mfmt 미사용, m2u4.ts 헤더 참조)
   m2u5: M2U5_EXAM, // 11레슨 200제 — 19×2+18×9 첫 비균일 배분, √ 금지 단원(m2u5.ts 헤더 참조)
   m2u6: M2U6_EXAM, // 9레슨 200제 — 22×7+23×2, 시험 numKind frac 첫 도입(m2u6.ts 헤더 참조)
+  s1u1: S1U1_EXAM, // 사회 첫 시험 160제 — 27×4+26×2, num 0·word 16·bogi 4보기(s1u1.ts 헤더 참조)
 };
 
 /** 단원에 종합 평가가 있으면 정의를 반환(홈 지도 노드·라우팅의 근거). */

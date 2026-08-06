@@ -75,12 +75,14 @@ const heading = () =>
     bands: document.querySelectorAll(".unit-band").length,
     worldBand: !!document.querySelector(".unit-band.world"),
     terrain: !!document.querySelector(".gm-terrain.world"),
-    nodes: document.querySelectorAll(".gm-node").length,
+    nodes: document.querySelectorAll(".gm-node:not(.exam)").length,
+    examNode: !!document.querySelector(".gm-node.exam"),
   }));
   const socUnits = await page.evaluate(async () => (await import("/src/content/soc/curriculum.ts")).SOC_G1.length);
   check(home.bands === socUnits, `홈 밴드 = 사회 커리큘럼 단원 수(${socUnits}) (실제 ${home.bands})`);
   check(home.worldBand && home.terrain, "world 테마(밴드+지형) 적용");
   check(home.nodes === 6, `레슨 노드 6개 (실제 ${home.nodes})`);
+  check(home.examNode, "단원 평가 노드 존재(s1u1 시험 등록)");
 }
 
 const openLesson = async (id) => {
