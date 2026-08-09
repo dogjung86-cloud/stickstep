@@ -81,3 +81,62 @@
   box-shadow: 0 0 0 3px rgba(18, 184, 134, 0.13);
 }
 .zrl-q { margin-top: 12px; }
+
+/* ── L3 slideMakeLab(.smk-) — 현미경표본 만들기·관찰 ─────────── */
+.smk-board { padding: 8px; }
+.smk-board svg { width: 100%; height: auto; display: block; }
+.smk-board [class^="smk-"] { transition: opacity 0.4s ease; }
+.smk-board.shake { animation: smkShake 0.4s ease; }
+@keyframes smkShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  60% { transform: translateX(4px); }
+}
+.smk-tools { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+.smk-tool {
+  border: 1.5px solid var(--n200, #E5E8EB);
+  background: #fff;
+  border-radius: 14px;
+  padding: 9px 4px 8px;
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  transition: transform 0.12s ease, border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+.smk-tool b { font-size: 13px; color: var(--ink, #191F28); }
+.smk-tool span { font-size: 10.5px; color: var(--n600, #6B7684); }
+.smk-tool:active { transform: scale(0.96); }
+.smk-tool:disabled { opacity: 0.38; }
+.smk-tool:not(:disabled) {
+  border-color: var(--subj-bio, #12B886);
+  box-shadow: 0 0 0 3px rgba(18, 184, 134, 0.12);
+}
+.smk-tool.done { opacity: 0.55; border-color: var(--n200, #E5E8EB); box-shadow: none; }
+.smk-tool.done b::after { content: " ✓"; color: var(--subj-bio, #12B886); }
+.smk-ask { margin-top: 12px; }
+.smk-obs { margin-top: 4px; }
+.smk-segrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.smk-seg {
+  height: 42px;
+  border-radius: 13px;
+  border: 1.5px solid var(--n200, #E5E8EB);
+  background: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--n700, #4E5968);
+  transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.smk-seg.cur {
+  border-color: var(--subj-bio, #12B886);
+  color: var(--subj-bio, #0CA678);
+  box-shadow: 0 0 0 3px rgba(18, 184, 134, 0.12);
+}
+.smk-viewwrap { padding: 10px; display: grid; place-items: center; }
+.smk-view { display: block; width: min(100%, 300px); border-radius: 12px; }
+.smk-focus-cap { margin: 10px 2px 6px; font-size: 13px; line-height: 1.5; color: var(--n700, #4E5968); text-align: center; min-height: 20px; }
+.smk-focus-cap b { color: var(--subj-bio, #0CA678); }
+.smk-focus {
+  width: 100%;
+  height: 34px;
+  accent-color: var(--subj-bio, #12B886);
+}

@@ -39,3 +39,11 @@
 @media (prefers-reduced-motion: reduce) {
   .hb4-bf-room.on .bf-blades { animation: none; }
 }
+
+/* ── L3 waterlens(물방울 돋보기) ── */
+.hb4-wl { cursor: pointer; }
+.hb4-wl:focus-visible { outline: 2px solid var(--subj-bio, #12B886); outline-offset: 2px; }
+.hb4-wl .wl-drop { opacity: 0; transform: scale(0.3); transform-box: view-box; transform-origin: 223px 115px; transition: opacity 0.4s ease, transform 0.5s var(--spring, cubic-bezier(0.34, 1.35, 0.5, 1)); }
+.hb4-wl.dropped .wl-drop { opacity: 1; transform: scale(1); }
+.hb4-wl .wl-bead { transition: transform 0.45s ease-in, opacity 0.3s ease 0.35s; transform-box: view-box; }
+.hb4-wl.dropped .wl-bead { transform: translateY(58px); opacity: 0; }

@@ -52,6 +52,20 @@ const MINI: Record<string, () => string> = {
       <ellipse cx="27" cy="28" rx="8.5" ry="5.5" fill="${B4.chloro}" transform="rotate(-15 27 28)"/>
       <ellipse cx="38" cy="40" rx="8.5" ry="5.5" fill="${B4.chloro}" transform="rotate(12 38 40)"/>
     `, "육각형 세포벽과 엽록체"),
+  // L3: 받침 유리 + 덮개 유리 비스듬히
+  slideSteps: () => svg("0 0 64 64", `
+      <ellipse cx="32" cy="54" rx="24" ry="3.5" fill="#2A3A5E" opacity="0.12"/>
+      <rect x="8" y="36" width="48" height="14" rx="3" fill="#EAF4FB" stroke="#9DB8CC" stroke-width="2.4"/>
+      <ellipse cx="32" cy="42" rx="10" ry="4.5" fill="${B4.water}" opacity="0.4"/>
+      <rect x="20" y="14" width="30" height="20" rx="2" fill="#EAF6FF" opacity="0.75" stroke="#8FB8D8" stroke-width="2.2" transform="rotate(-24 35 24)"/>
+    `, "받침 유리에 덮개 유리를 비스듬히 덮는 모습"),
+  // L3: 스포이트 염색 방울 + 물든 핵
+  stainDrop: () => svg("0 0 64 64", `
+      <path d="M40 6 l10 10 M50 16 l-6 6 -10 -10 Z" fill="#C9CDD2" stroke="#6B7684" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M33 30 c0 -5 6 -11 6 -11 c0 0 6 6 6 11 a6 6 0 0 1 -12 0 Z" fill="${B4.water}"/>
+      <circle cx="28" cy="46" r="14" fill="#E7F0FF" stroke="#7FA8E0" stroke-width="2.6"/>
+      <circle cx="28" cy="46" r="5.5" fill="#3B5BDB"/>
+    `, "염색 방울과 푸르게 물든 핵"),
 };
 
 /** recap 카드 미니아트 — 키가 없으면 세포 기본 도해로 폴백(신규 키는 레슨 저작 때 추가). */

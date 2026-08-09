@@ -134,7 +134,83 @@ export function renderBreadFactory(
     });
   });
 }
-export const renderWaterLens = sceneStub("물방울 돋보기");
+/** L3 waterlens — 책 위 물방울이 글자를 확대하는 발견. 물방울을 떨어뜨려 보고
+ *  "세포를 크게 보려면 무엇이 필요할까" 예측으로 잇는다(원리 심화는 중2 빛 단원 몫 — 도구 연결만). */
+export function renderWaterLens(
+  scene: HTMLElement,
+  helper: HTMLElement,
+  s: HookLike,
+  finish: () => void,
+  face: Face,
+): () => void {
+  const fig = el("div", { class: "hb4-stage hb4-wl", attrs: { role: "button", tabindex: "0", "aria-label": "책 위에 물방울 떨어뜨리기" } });
+  fig.innerHTML = `
+  <svg viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <radialGradient id="hb4wlDrop" cx="0.35" cy="0.3" r="1">
+        <stop offset="0" stop-color="#EAF6FF"/><stop offset="0.6" stop-color="#BEE3FF" stop-opacity="0.85"/><stop offset="1" stop-color="#74B9F0" stop-opacity="0.9"/>
+      </radialGradient>
+    </defs>
+    <ellipse cx="160" cy="182" rx="130" ry="9" fill="#2A3A5E" opacity="0.10"/>
+    <path d="M32 60 C90 44 150 44 160 52 C170 44 230 44 288 60 L288 168 C230 152 170 152 160 160 C150 152 90 152 32 168 Z"
+      fill="#FFFEF8" stroke="#C9BFa2" stroke-width="3" stroke-linejoin="round"/>
+    <line x1="160" y1="52" x2="160" y2="160" stroke="#E3DAC0" stroke-width="2.4"/>
+    <g stroke="#8B95A1" stroke-width="3" stroke-linecap="round" opacity="0.75">
+      <path d="M48 76 h92 M48 90 h86 M48 104 h92 M48 118 h78 M48 132 h90 M48 146 h64"/>
+      <path d="M180 76 h92 M180 90 h84 M180 104 h60"/>
+      <path d="M180 132 h88 M180 146 h70"/>
+    </g>
+    <g class="wl-drop">
+      <circle cx="223" cy="115" r="30" fill="url(#hb4wlDrop)" stroke="#5BA8E8" stroke-width="2.6"/>
+      <ellipse cx="212" cy="103" rx="9" ry="5.5" fill="#FFFFFF" opacity="0.75" transform="rotate(-24 212 103)"/>
+      <g stroke="#333D4B" stroke-width="6.5" stroke-linecap="round">
+        <path d="M204 106 h38"/>
+        <path d="M204 120 h30"/>
+      </g>
+    </g>
+    <g class="wl-pipette">
+      <path d="M242 18 l14 14 M256 32 l-8 8 -14 -14 Z" fill="#C9CDD2" stroke="#6B7684" stroke-width="2.4" stroke-linejoin="round"/>
+      <circle class="wl-bead" cx="236" cy="48" r="5" fill="#74B9F0"/>
+    </g>
+  </svg>`;
+  const choicesBox = el("div", { class: "hook-choices" });
+  scene.append(fig, choicesBox);
+  helper.innerHTML = "펼쳐진 책 위에 스포이트가 준비돼 있어요. <b>탭해서 물 한 방울</b>을 떨어뜨려 볼까요?";
+
+  let dropped = false;
+  let timer = 0;
+  const doDrop = (): void => {
+    if (dropped) return;
+    dropped = true;
+    haptic(HAPTIC.tap);
+    fig.classList.add("dropped");
+    timer = window.setTimeout(() => {
+      face("surprised");
+      helper.innerHTML = "우와 — 물방울 아래 글자만 <b>불쑥 커 보여요</b>! 그럼 글자보다 훨씬 작은 <b>세포</b>를 보려면, 무엇이 필요할까요?";
+      timer = window.setTimeout(() => {
+        face("curious");
+        ask(choicesBox, helper, {
+          choices: s.choices ?? [
+            "빛을 모아 크게 보여 주는 도구, 현미경",
+            "아주 밝은 손전등",
+            "눈을 최대한 가까이 대고 보기",
+          ],
+          good: "맞아요! 물방울처럼 <b>빛을 모아 확대하는 장치</b>를 정밀하게 다듬은 것이 <b>현미경</b>이에요. 오늘 직접 다뤄 봐요.",
+          bad: "밝게 비추거나 가까이 봐도 0.1 mm보다 작은 건 안 보여요 — 물방울처럼 <b>빛을 모아 확대하는</b> 도구, <b>현미경</b>이 필요하답니다.",
+          onDone: finish,
+        });
+      }, 1100);
+    }, 700);
+  };
+  fig.addEventListener("click", doDrop);
+  fig.addEventListener("keydown", (e) => {
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      doDrop();
+    }
+  });
+  return () => window.clearTimeout(timer);
+}
 export const renderBloodDrop = sceneStub("피 한 방울");
 export const renderBrickHouse = sceneStub("블록 집");
 export const renderDokdoFriends = sceneStub("독도의 생물");

@@ -5,8 +5,8 @@
 // 언어 가드: '분자' 금지 · 마이토콘드리아(교과서 표기) · '자연선택/진화' 금지 · 액포 등 미도입 구조 금지.
 import type { Unit } from "./curriculum";
 import {
-  lesson, concept, comic, hook, recap, mcq, ox, multi, binSort, hotspot, pairMatch, cut,
-  zoomRulerLab,
+  lesson, concept, comic, hook, recap, mcq, ox, multi, binSort, order, hotspot, pairMatch, cut,
+  zoomRulerLab, slideMakeLab,
 } from "./dsl";
 import {
   b4MiniArt, sizeLadderFig, cellFigAnimal, cellFigPlant, cellPartsQuizFig,
@@ -16,6 +16,15 @@ import {
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 export const b4img = (path: string, alt: string): string =>
   `<img src="${IMG_BASE}bio4/${path}" alt="${alt}" style="display:block;width:100%;border-radius:14px" />`;
+/** public 임의 경로 사진 한 장(구작 검증 자산 재사용용 — exam/u2·bio2 등). */
+const pimg = (path: string, alt: string): string =>
+  `<img src="${IMG_BASE}${path}" alt="${alt}" style="display:block;width:100%;border-radius:14px" />`;
+/** 사진 두 장 나란히 — (가)(나) 라벨(g2 지권 gpair 문법). */
+const ppair = (a: string, altA: string, b: string, altB: string, labA = "(가)", labB = "(나)"): string =>
+  `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <figure style="margin:0"><img src="${IMG_BASE}${a}" alt="${altA}" style="display:block;width:100%;border-radius:12px"/><figcaption style="text-align:center;font-size:12px;font-weight:700;color:#4E5968;margin-top:5px">${labA}</figcaption></figure>
+    <figure style="margin:0"><img src="${IMG_BASE}${b}" alt="${altB}" style="display:block;width:100%;border-radius:12px"/><figcaption style="text-align:center;font-size:12px;font-weight:700;color:#4E5968;margin-top:5px">${labB}</figcaption></figure>
+  </div>`;
 
 /** 제작 중 자리 지킴이 — 레슨을 채우면서 하나씩 제거한다. */
 const todo = (what: string) =>
@@ -357,10 +366,138 @@ export const UNIT2_V3: Unit = {
     lesson({
       id: "u2l3", unitId: "u2",
       title: "현미경으로 직접 보기",
-      subtitle: "표본 만들기부터 400배 관찰까지",
+      subtitle: "표본 만들기부터 초점 맞추기까지",
       label: "현미경", icon: "microscope", minutes: 10, standard: "책 42~43쪽",
-      doneNote: "염색해야 핵이 보여요",
-      steps: [todo("물방울 돋보기 훅·표본 제작 랩")],
+      doneNote: "염색해야 핵이 또렷해요",
+      steps: [
+        hook({
+          title: "물방울 하나가<br><em>돋보기</em>가 됐다",
+          lead: "책 위에 물이 톡 — 그런데 그 부분 글자만 커 보여요. 우연일까요?",
+          narrator: "책을 읽다가 물을 쏟을 뻔했어요! 그런데 잠깐 — <b>물방울 아래 글자</b>가 어딘가 이상해요. 직접 떨어뜨려 볼까요?",
+          scene: "waterlens",
+          done: "현미경 준비 완료! 그런데 세포를 그냥 올리면 잘 안 보인대요 — <b>표본 만들기</b>부터 배워요.",
+          cta: "표본 만들러 가기",
+        }),
+        slideMakeLab({
+          title: "나의 첫 현미경표본 —<br>만들고, 맞추고, 비교하라",
+          lead: "입안 상피세포 표본을 직접 만들고, 검정말잎과 나란히 관찰해요.",
+          cta: "개념 정리하기",
+          curio: {
+            q: "왜 하필 입안이랑 검정말잎일까요?",
+            a: "입안 볼 세포는 <b>아프지 않게, 쉽게</b> 떼어 낼 수 있는 몇 안 되는 내 몸 세포예요. 검정말은 잎이 <b>딱 세포 한두 겹</b>이라 자르지 않아도 빛이 통과하죠 — 둘 다 '표본 만들기 쉬운 대표 선수'라 전 세계 교실이 같은 재료를 써요.",
+          },
+        }),
+        concept({
+          kicker: "핵심 정리",
+          kickerTone: "bio",
+          title: "잘 보이게 만드는<br>세 가지 기술",
+          lead: "방금 손으로 해낸 절차에는 다 이유가 있어요 — 하나씩 이름을 붙여 봐요.",
+          blocks: [
+            { k: "figure", svg: cut("bio4", "u2l3", "받침 유리에 스포이트로 염색액을 떨어뜨리는 스틱맨"), cap: "얇게, 물들이고, 비스듬히 — 표본의 3원칙" },
+            { k: "term", name: "얇게 만들기", def: "빛이 <b>통과해야</b> 보여요. 재료를 얇게 바르거나(입안 세포), 원래 얇은 것(검정말잎)을 골라요. 훅이 코르크를 종잇장처럼 저민 것도 같은 이유죠." },
+            { k: "term", name: "염색하기", def: "거의 투명한 세포에 <b>색을 입혀 또렷하게</b> — 염색약은 주로 <b>유전물질(핵)</b>을 물들여요. <b>메틸렌 블루</b>는 푸른색, <b>아세트올세인</b>은 붉은색!" },
+            { k: "term", name: "덮개 유리 비스듬히", def: "위에서 바로 덮으면 <b>기포</b>가 갇혀 시야를 가려요. <b>비스듬히 기울여 천천히</b> 덮고, 여분의 용액은 거름종이로 눌러 정리해요." },
+            { k: "note", tone: "amber", html: "검정말잎은 염색액이 <b>잘 스며들지 않아요</b> — 아세트올세인 용액을 떨어뜨린 뒤 <b>5분 정도 충분히 기다려야</b> 붉게 염색된답니다. 엽록체의 초록색은 염색이 아니라 <b>원래 색</b>이에요!" },
+          ],
+          cta: "정리하기",
+        }),
+        recap({
+          title: "현미경 관찰,<br>두 장으로 정리",
+          narrator: "실험복을 벗기 전에 오늘 손끝 기술을 기록해요.",
+          cards: [
+            {
+              name: "표본 만들기 4단계",
+              color: "#4DABF7",
+              art: b4MiniArt("slideSteps"),
+              text: "<b>얇게 바르고 → 염색하고 → 덮개 유리 비스듬히 → 거름종이</b>로 정리 — 순서가 곧 기술이에요.",
+              examples: ["입안 세포: 면봉으로 문지르기", "검정말잎: 한 장 떼면 끝", "기포는 관찰 방해꾼"],
+              more: "<b class='rm-h'>왜 이 순서일까요?</b>빛이 재료를 <b>통과</b>해야 상이 맺히니 얇게 만드는 게 첫째, 투명한 세포에 <b>색</b>을 입히는 게 둘째예요. 덮개 유리는 표본을 평평하게 눌러 주고 렌즈를 용액에서 지켜 주는데, <b>비스듬히</b> 덮어야 공기가 옆으로 밀려나 기포가 안 생기죠. 마지막 거름종이는 넘친 용액을 빨아들여 현미경을 더럽히지 않게 해요.<b class='rm-h'>기포가 왜 문제냐면</b>기포는 동그랗고 테두리가 진해서 <b>세포처럼 보여요</b> — 초보 관찰자가 가장 많이 속는 가짜 세포랍니다. 기포가 생겼다면 덮개 유리를 들어내고 다시 덮는 게 정답이에요.<b class='rm-h'>시험에서는</b>'덮개 유리를 비스듬히 기울여 천천히 덮는 까닭은?' → <b>기포가 생기지 않게 하려고</b>. '거름종이의 역할은?' → <b>여분의 용액 제거</b>. 절차 순서 배열 문제도 단골!<span class='fun'><b>알고 있나요?</b> 훅과 같은 시대, 네덜란드의 레이우엔훅은 손수 간 렌즈 한 알로 연못 물속 미생물을 처음 관찰했어요 — 렌즈 하나로 270배까지 봤다니, 장인 정신이죠.</span>",
+            },
+            {
+              name: "염색해야 보인다",
+              color: "#7048E8",
+              art: b4MiniArt("stainDrop"),
+              text: "세포는 거의 투명 — 염색약이 <b>유전물질(핵)</b>을 물들여 줘야 또렷해져요.",
+              examples: ["메틸렌 블루 = 푸른색", "아세트올세인 = 붉은색", "엽록체의 초록은 원래 색"],
+              more: "<b class='rm-h'>무엇이 물드나요?</b>염색약은 세포 아무 데나 색을 칠하는 게 아니라 <b>유전물질</b>에 잘 달라붙어요. 그래서 염색하면 유전물질이 모여 있는 <b>핵</b>이 가장 진하게 보이죠 — 우리가 관찰한 파란 점들이 바로 그거예요.<b class='rm-h'>둘을 짝지어요</b>입안 상피세포엔 <b>메틸렌 블루(푸른색)</b>, 검정말잎엔 <b>아세트올세인(붉은색)</b>이 교과서 조합이에요. 검정말잎은 염색액이 잘 안 스며서 <b>5분쯤 기다림</b>이 필요하다는 것까지 세트로 기억!<b class='rm-h'>헷갈리지 마세요</b>검정말잎 세포의 <b>초록 알갱이(엽록체)는 염색된 게 아니에요</b> — 원래 초록색이라 물만 떨어뜨려도 보여요. '염색 안 했는데 초록색인 까닭은?'이 단골 함정이랍니다.<span class='fun'><b>알고 있나요?</b> 병원의 조직 검사도 원리는 똑같아요 — 떼어 낸 조직을 얇게 썰고 염색해서 현미경으로 봐요. 오늘 배운 기술이 의학의 기본기랍니다.</span>",
+            },
+          ],
+          cta: "문제 풀기",
+        }),
+        order({
+          title: "표본 만들기,<br>순서대로!",
+          lead: "입안 상피세포 표본을 만드는 순서를 배열해요.",
+          items: [
+            "면봉으로 볼 안쪽을 문질러 받침 유리에 바른다",
+            "메틸렌 블루 용액을 한 방울 떨어뜨린다",
+            "덮개 유리를 비스듬히 기울여 천천히 덮는다",
+            "거름종이로 눌러 여분의 용액을 없앤다",
+          ],
+          explainGood: "완벽한 절차! <b>바르고 → 염색하고 → 덮고 → 정리</b> — 손이 기억할 때까지!",
+          explainBad: "순서를 다시 — 재료를 <b>바른 다음</b> 염색하고, 염색한 <b>다음</b> 덮개를 덮고, 마지막에 거름종이로 정리해요.",
+        }),
+        mcq({
+          prompt: "세포를 관찰하기 전에 염색약으로 물들이는 까닭은 무엇일까요?",
+          options: [
+            "세포가 거의 투명해서 그냥 보면 잘 안 보이기 때문",
+            "세포를 오래 살아 있게 하려고",
+            "세포를 크게 부풀리려고",
+            "세포를 깨끗하게 소독하려고",
+            "덮개 유리를 잘 붙이려고",
+          ],
+          answer: 0,
+          explainGood: "맞아요! 염색약이 <b>유전물질(핵)</b>을 물들여서, 투명하던 세포가 또렷하게 보이게 돼요.",
+          explainBad: "염색은 소독도 접착도 아니에요 — 거의 <b>투명한 세포에 색을 입혀</b> 핵을 또렷하게 보려는 기술이랍니다.",
+        }),
+        mcq({
+          prompt: "현미경표본을 만들었더니 사진처럼 보였어요. 어떤 실수를 했을까요?",
+          figure: pimg("exam/u2/coverslip-bubble.webp", "덮개 유리 아래 둥근 기포가 여럿 보이는 표본"),
+          options: [
+            "덮개 유리를 위에서 한 번에 바로 덮었다",
+            "염색액을 너무 조금 넣었다",
+            "거름종이로 너무 세게 눌렀다",
+            "받침 유리를 미리 닦지 않았다",
+            "면봉으로 너무 살살 문질렀다",
+          ],
+          answer: 0,
+          explainGood: "맞아요! 둥근 방울들은 <b>기포</b> — 덮개 유리를 한 번에 덮으면 공기가 갇혀요. <b>비스듬히 천천히</b>가 해결책이죠.",
+          explainBad: "사진의 둥근 방울은 <b>공기 방울(기포)</b>이에요 — 덮개 유리를 위에서 바로 덮을 때 생기죠. 비스듬히 기울여 천천히 덮으면 사라져요.",
+        }),
+        mcq({
+          prompt: "두 관찰 사진 중 검정말잎(식물) 세포는 무엇이고, 그 근거는 무엇일까요?",
+          figure: ppair("exam/u2/cheek-cells.webp", "푸른 염색 세포 관찰 사진", "exam/u2/elodea-cells.webp", "초록 알갱이가 든 각진 세포 관찰 사진"),
+          options: [
+            "(나) — 각진 칸(세포벽)과 초록 알갱이(엽록체)가 보여서",
+            "(가) — 세포가 둥글넓적해서",
+            "(나) — 세포에 핵이 있어서",
+            "(가) — 푸른색으로 염색돼서",
+            "(가)와 (나) 모두 식물세포다",
+          ],
+          answer: 0,
+          shuffle: false,
+          explainGood: "정확해요! <b>세포벽의 각진 칸 + 엽록체의 초록 알갱이</b> — 식물세포만의 두 증거가 (나)에 다 있죠.",
+          explainBad: "핵은 동물세포에도 있어서 근거가 못 돼요 — 식물의 증거는 <b>각진 세포벽과 초록 엽록체</b>, 그게 보이는 쪽은 <b>(나)</b>랍니다.",
+        }),
+        ox({
+          prompt: "메틸렌 블루 용액은 세포의 유전물질을 푸른색으로 염색해요.",
+          answer: true,
+          explainGood: "맞아요. 그래서 염색하면 유전물질이 모인 <b>핵</b>이 가장 진하게 보이죠.",
+          explainBad: "맞는 문장이에요 — 메틸렌 블루는 <b>유전물질을 푸른색</b>으로, 아세트올세인은 <b>붉은색</b>으로 물들여요.",
+        }),
+        mcq({
+          prompt: "검정말잎에 아세트올세인 용액을 떨어뜨린 뒤 5분 정도 기다리는 까닭은?",
+          options: [
+            "염색액이 잘 스며들지 않아 염색될 때까지 기다리는 것",
+            "엽록체가 초록색으로 변할 때까지 기다리는 것",
+            "잎이 마를 때까지 기다리는 것",
+            "세포가 더 커질 때까지 기다리는 것",
+            "기포가 빠져나갈 때까지 기다리는 것",
+          ],
+          answer: 0,
+          explainGood: "맞아요! 검정말잎은 염색액이 <b>천천히 스며들어요</b>. 참, 엽록체의 초록은 염색과 무관한 <b>원래 색</b>이라는 것도 기억!",
+          explainBad: "엽록체는 기다려서 초록이 되는 게 아니라 <b>원래 초록</b>이에요. 기다리는 건 <b>염색액이 잘 스며들지 않아서</b>랍니다.",
+        }),
+      ],
     }),
     lesson({
       id: "u2l4", unitId: "u2", premium: true,
