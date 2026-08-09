@@ -30,3 +30,54 @@ export function josa(word: string, pair: string): string {
 
 /** 발주 이미지 베이스 경로(public/bio4/...) — lazy 금지(스크롤 컨테이너 사고 14). */
 export const B4_BASE = ((import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/") + "bio4/";
+
+// ── 랩 내 판정 선택지 공용(.hook-choices/.hook-q 스타일 재사용) ──────────
+// 훅의 hookAsk와 달리 정오(ok)를 onPick으로 돌려준다 — recordQuiz 여부는 랩이 결정.
+// 질문은 반드시 선택지 위(.hook-q)에 뜬다(전 과목 배치 규칙).
+import { el } from "../core/dom";
+import { haptic, HAPTIC } from "../core/haptics";
+
+export interface B4Choice {
+  t: string;
+  ok: boolean;
+}
+
+export function b4Ask(
+  box: HTMLElement,
+  question: string,
+  choices: B4Choice[],
+  onPick: (ok: boolean) => void,
+): void {
+  box.innerHTML = "";
+  box.style.display = "";
+  box.appendChild(el("div", { class: "hook-q", html: question }));
+  const order = choices.map((_, i) => i);
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  let picked = false;
+  order.forEach((idx) => {
+    const c = choices[idx];
+    const b = el("button", { class: "hook-choice", text: c.t, attrs: { type: "button" } }) as HTMLButtonElement;
+    b.addEventListener("click", () => {
+      if (picked) return;
+      picked = true;
+      haptic(c.ok ? HAPTIC.correct : HAPTIC.wrong);
+      const btns = [...box.querySelectorAll<HTMLButtonElement>(".hook-choice")];
+      btns.forEach((x) => {
+        const mine = x === b;
+        x.classList.add(mine ? (c.ok ? "sel" : "miss") : "dim");
+        x.disabled = !mine;
+      });
+      if (!c.ok) {
+        const goodBtn = btns.find((x) => x.textContent === choices.find((y) => y.ok)?.t);
+        goodBtn?.classList.remove("dim");
+        goodBtn?.classList.add("reveal");
+      }
+      onPick(c.ok);
+    });
+    box.appendChild(b);
+  });
+  window.setTimeout(() => box.scrollIntoView({ behavior: "smooth", block: "nearest" }), 130);
+}

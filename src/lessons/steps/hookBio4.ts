@@ -211,8 +211,182 @@ export function renderWaterLens(
   });
   return () => window.clearTimeout(timer);
 }
-export const renderBloodDrop = sceneStub("피 한 방울");
-export const renderBrickHouse = sceneStub("블록 집");
+/** L4 blooddrop — 손끝의 피 한 방울을 확대경으로 들여다보면 붉은 원반이 우글우글.
+ *  "피가 빨간 까닭"을 예측으로 잇는다(적혈구 = 세포 소개의 문). */
+export function renderBloodDrop(
+  scene: HTMLElement,
+  helper: HTMLElement,
+  s: HookLike,
+  finish: () => void,
+  face: Face,
+): () => void {
+  const fig = el("div", { class: "hb4-stage hb4-bd", attrs: { role: "button", tabindex: "0", "aria-label": "핏방울에 확대경 대기" } });
+  fig.innerHTML = `
+  <svg viewBox="0 0 320 210" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="hb4bdFinger" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#FFE9D6"/><stop offset="1" stop-color="#FFD9B8"/>
+      </linearGradient>
+    </defs>
+    <ellipse cx="120" cy="192" rx="120" ry="9" fill="#2A3A5E" opacity="0.10"/>
+    <path d="M28 210 L28 120 C28 96 44 82 66 82 C88 82 102 96 102 120 L102 210"
+      fill="url(#hb4bdFinger)" stroke="#D9A06B" stroke-width="3"/>
+    <path d="M50 96 C56 90 66 88 74 90" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" opacity="0.6"/>
+    <path d="M56 110 c1.5 8 8 10 10 10 c-3 2 -8 6 -8 10" stroke="#E8B88A" stroke-width="2" fill="none" opacity="0.7"/>
+    <path class="bd-blood" d="M65 74 c0 -7 8 -16 8 -16 c0 0 8 9 8 16 a8 8 0 0 1 -16 0 Z" fill="#E03131" stroke="#C92A2A" stroke-width="2"/>
+    <g class="bd-lens">
+      <circle cx="216" cy="96" r="62" fill="#FFF5F5" stroke="#E03131" stroke-width="3.4"/>
+      <g class="bd-cells">
+        <ellipse cx="192" cy="76" rx="15" ry="12" fill="#FFA8A8" stroke="#E03131" stroke-width="2.4"/>
+        <ellipse cx="192" cy="75" rx="7" ry="5" fill="#F03E3E" opacity="0.45"/>
+        <ellipse cx="232" cy="70" rx="14" ry="11" fill="#FFA8A8" stroke="#E03131" stroke-width="2.4" transform="rotate(18 232 70)"/>
+        <ellipse cx="233" cy="69" rx="6.5" ry="4.5" fill="#F03E3E" opacity="0.45" transform="rotate(18 232 70)"/>
+        <ellipse cx="210" cy="108" rx="16" ry="12.5" fill="#FFA8A8" stroke="#E03131" stroke-width="2.4" transform="rotate(-12 210 108)"/>
+        <ellipse cx="210" cy="107" rx="7.5" ry="5.2" fill="#F03E3E" opacity="0.45" transform="rotate(-12 210 108)"/>
+        <ellipse cx="246" cy="112" rx="13" ry="10.5" fill="#FFA8A8" stroke="#E03131" stroke-width="2.4" transform="rotate(24 246 112)"/>
+        <ellipse cx="246" cy="111" rx="6" ry="4.2" fill="#F03E3E" opacity="0.45" transform="rotate(24 246 112)"/>
+        <ellipse cx="182" cy="118" rx="12" ry="9.5" fill="#FFA8A8" stroke="#E03131" stroke-width="2.4" transform="rotate(-28 182 118)"/>
+        <ellipse cx="222" cy="132" rx="11" ry="9" fill="#FFA8A8" stroke="#E03131" stroke-width="2.4" transform="rotate(8 222 132)"/>
+      </g>
+      <path d="M186 58 C196 48 212 44 226 46" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+      <line x1="258" y1="142" x2="286" y2="176" stroke="#B54708" stroke-width="9" stroke-linecap="round"/>
+    </g>
+  </svg>`;
+  const choicesBox = el("div", { class: "hook-choices" });
+  scene.append(fig, choicesBox);
+  helper.innerHTML = "예방 주사를 맞고 난 손끝에 <b>피 한 방울</b>이 또르르. 아깝지만… 관찰 찬스! <b>확대경을 탭</b>해 볼까요?";
+
+  let zoomed = false;
+  let timer = 0;
+  const doZoom = (): void => {
+    if (zoomed) return;
+    zoomed = true;
+    haptic(HAPTIC.tap);
+    fig.classList.add("zoomed");
+    timer = window.setTimeout(() => {
+      face("surprised");
+      helper.innerHTML = "우와, <b>붉은 원반</b>이 우글우글! 그렇다면 — 피가 빨간 까닭은 무엇일까요?";
+      timer = window.setTimeout(() => {
+        face("curious");
+        ask(choicesBox, helper, {
+          choices: s.choices ?? [
+            "빨간 원반 모양의 세포가 가득 들어 있어서",
+            "피라는 액체 자체가 빨간 잉크 같아서",
+            "혈관이 빨간색이라 물들어서",
+          ],
+          good: "맞아요! 피 한 방울에도 <b>수억 개의 붉은 원반 세포</b>가 들어 있어요 — 이름은 <b>적혈구</b>. 왜 하필 이 모양인지 알아보러 가요.",
+          bad: "피에서 세포를 걸러 내면 남는 액체는 <b>노르스름</b>해요 — 빨강의 정체는 액체가 아니라 <b>붉은 원반 세포(적혈구)</b>랍니다. 왜 이 모양인지 알아보러 가요!",
+          onDone: finish,
+        });
+      }, 1100);
+    }, 650);
+  };
+  fig.addEventListener("click", doZoom);
+  fig.addEventListener("keydown", (e) => {
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      doZoom();
+    }
+  });
+  return () => window.clearTimeout(timer);
+}
+/** L5 brickhouse — 블록으로 꽃 조립하기(교과서 도입 소재 차용). 탭할 때마다
+ *  블록 더미 → 부품 → 완성 꽃으로 조립 단계가 올라가고, "세포가 모이면?" 예측으로 잇는다. */
+export function renderBrickHouse(
+  scene: HTMLElement,
+  helper: HTMLElement,
+  s: HookLike,
+  finish: () => void,
+  face: Face,
+): void {
+  const fig = el("div", { class: "hb4-stage hb4-bh", attrs: { role: "button", tabindex: "0", "aria-label": "탭해서 블록 조립하기" } });
+  fig.innerHTML = `
+  <svg viewBox="0 0 320 210" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <ellipse cx="160" cy="192" rx="120" ry="9" fill="#2A3A5E" opacity="0.10"/>
+    <g class="bh-st bh-st0">
+      <g stroke="#C2255C" stroke-width="2.4">
+        <rect x="66" y="120" width="30" height="18" rx="4" fill="#FAA2C1"/>
+        <rect x="110" y="140" width="30" height="18" rx="4" fill="#FAA2C1"/>
+        <rect x="88" y="158" width="30" height="18" rx="4" fill="#FAA2C1"/>
+        <rect x="150" y="118" width="30" height="18" rx="4" fill="#FAA2C1"/>
+      </g>
+      <g stroke="#2B8A3E" stroke-width="2.4">
+        <rect x="196" y="132" width="30" height="18" rx="4" fill="#8CE99A"/>
+        <rect x="226" y="156" width="30" height="18" rx="4" fill="#8CE99A"/>
+        <rect x="172" y="158" width="30" height="18" rx="4" fill="#8CE99A"/>
+      </g>
+      <circle cx="242" cy="118" r="11" fill="#FFD43B" stroke="#E8A80C" stroke-width="2.4"/>
+    </g>
+    <g class="bh-st bh-st1">
+      <g stroke="#C2255C" stroke-width="2.4">
+        <rect x="78" y="84" width="30" height="18" rx="4" fill="#FAA2C1" transform="rotate(-18 93 93)"/>
+        <rect x="108" y="70" width="30" height="18" rx="4" fill="#FAA2C1" transform="rotate(12 123 79)"/>
+        <rect x="140" y="82" width="30" height="18" rx="4" fill="#FAA2C1" transform="rotate(38 155 91)"/>
+        <rect x="104" y="98" width="30" height="18" rx="4" fill="#FAA2C1" transform="rotate(64 119 107)"/>
+      </g>
+      <circle cx="124" cy="92" r="10" fill="#FFD43B" stroke="#E8A80C" stroke-width="2.4"/>
+      <g stroke="#2B8A3E" stroke-width="2.6">
+        <rect x="196" y="96" width="14" height="52" rx="5" fill="#8CE99A"/>
+        <rect x="184" y="146" width="14" height="34" rx="5" fill="#8CE99A" transform="rotate(34 191 163)"/>
+      </g>
+    </g>
+    <g class="bh-st bh-st2">
+      <g stroke="#C2255C" stroke-width="2.4">
+        <rect x="145" y="34" width="30" height="18" rx="4" fill="#FAA2C1" transform="rotate(-90 160 43)"/>
+        <rect x="130" y="52" width="30" height="18" rx="4" fill="#FAA2C1" transform="rotate(-35 145 61)"/>
+        <rect x="160" y="52" width="30" height="18" rx="4" fill="#FAA2C1" transform="rotate(35 175 61)"/>
+        <rect x="134" y="76" width="30" height="18" rx="4" fill="#FAA2C1" transform="rotate(215 149 85)"/>
+        <rect x="156" y="76" width="30" height="18" rx="4" fill="#FAA2C1" transform="rotate(-215 171 85)"/>
+      </g>
+      <circle cx="160" cy="66" r="12" fill="#FFD43B" stroke="#E8A80C" stroke-width="2.4"/>
+      <rect x="153" y="92" width="14" height="58" rx="5" fill="#8CE99A" stroke="#2B8A3E" stroke-width="2.6"/>
+      <rect x="140" y="120" width="14" height="30" rx="5" fill="#8CE99A" stroke="#2B8A3E" stroke-width="2.6" transform="rotate(40 147 135)"/>
+      <path d="M128 150 h64 l-8 38 h-48 Z" fill="#E8B04B" stroke="#A8762A" stroke-width="2.8" stroke-linejoin="round"/>
+    </g>
+  </svg>`;
+  const cap = el("div", { class: "hb4-bh-cap", text: "탭해서 조립! (3번)" });
+  const choicesBox = el("div", { class: "hook-choices" });
+  scene.append(fig, cap, choicesBox);
+  helper.innerHTML = "탁자 위에 <b>블록</b>이 잔뜩 흩어져 있어요. <b>탭해서</b> 무언가를 만들어 볼까요?";
+
+  let stage = 0;
+  const CAPS = ["블록들이 모여 꽃잎과 줄기 부품이 됐어요! 한 번 더!", "부품이 모여 — 짠, 화분 위 꽃 완성!"];
+  const advance = (): void => {
+    if (stage >= 2) return;
+    stage += 1;
+    haptic(HAPTIC.tap);
+    fig.dataset.st = String(stage);
+    if (stage === 1) {
+      helper.innerHTML = CAPS[0];
+      cap.textContent = "탭해서 조립! (1번 더)";
+    } else {
+      face("surprised");
+      helper.innerHTML = CAPS[1];
+      cap.remove();
+      window.setTimeout(() => {
+        face("curious");
+        helper.innerHTML = "블록 여러 개가 모여 꽃잎이 되고, 꽃잎과 줄기가 모여 꽃이 됐죠. 그럼 우리 몸에서 <b>세포 여러 개가 모이면</b> 무엇이 될까요?";
+        ask(choicesBox, helper, {
+          choices: s.choices ?? [
+            "모양과 하는 일이 비슷한 세포끼리 모인 덩어리가 된다",
+            "세포들이 녹아서 큰 세포 하나가 된다",
+            "모여도 아무 일도 일어나지 않는다",
+          ],
+          good: "바로 그 직감! 그 덩어리의 이름이 <b>조직</b>이에요 — 조직이 모이면 또 무엇이 될까요? 계단을 직접 쌓으며 확인해요.",
+          bad: "세포는 녹아 합쳐지지 않아요 — 각자 살아 있는 채로 <b>비슷한 것끼리 모여 덩어리(조직)</b>를 이루죠. 그다음 계단은 직접 쌓으며 확인해요!",
+          onDone: finish,
+        });
+      }, 1200);
+    }
+  };
+  fig.addEventListener("click", advance);
+  fig.addEventListener("keydown", (e) => {
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      advance();
+    }
+  });
+}
 export const renderDokdoFriends = sceneStub("독도의 생물");
 export const renderMartShelf = sceneStub("마트 진열대");
 export const renderMushroomScan = sceneStub("버섯 스캔");

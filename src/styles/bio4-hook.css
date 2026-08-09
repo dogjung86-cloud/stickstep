@@ -40,6 +40,17 @@
   .hb4-bf-room.on .bf-blades { animation: none; }
 }
 
+/* ── L4 blooddrop(피 한 방울) ── */
+.hb4-bd { cursor: pointer; }
+.hb4-bd:focus-visible { outline: 2px solid var(--subj-bio, #12B886); outline-offset: 2px; }
+.hb4-bd .bd-lens { opacity: 0; transform: scale(0.4); transform-box: view-box; transform-origin: 216px 96px; transition: opacity 0.45s ease, transform 0.55s var(--spring, cubic-bezier(0.34, 1.35, 0.5, 1)); }
+.hb4-bd.zoomed .bd-lens { opacity: 1; transform: scale(1); }
+.hb4-bd .bd-cells { animation: hb4drift 5s ease-in-out infinite alternate; transform-box: view-box; transform-origin: 216px 96px; }
+@keyframes hb4drift { from { transform: translate(0, 0); } to { transform: translate(3px, -4px); } }
+@media (prefers-reduced-motion: reduce) {
+  .hb4-bd .bd-cells { animation: none; }
+}
+
 /* ── L3 waterlens(물방울 돋보기) ── */
 .hb4-wl { cursor: pointer; }
 .hb4-wl:focus-visible { outline: 2px solid var(--subj-bio, #12B886); outline-offset: 2px; }

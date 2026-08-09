@@ -66,6 +66,36 @@ const MINI: Record<string, () => string> = {
       <circle cx="28" cy="46" r="14" fill="#E7F0FF" stroke="#7FA8E0" stroke-width="2.6"/>
       <circle cx="28" cy="46" r="5.5" fill="#3B5BDB"/>
     `, "염색 방울과 푸르게 물든 핵"),
+  // L4: 세 세포 실루엣 나란히 — 신경(선)·적혈구(원반)·상피(타일)
+  cellTypes: () => svg("0 0 64 64", `
+      <path d="M8 50 C16 38 20 26 24 16" stroke="#9775FA" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="26" cy="12" r="5" fill="#7048E8"/>
+      <ellipse cx="40" cy="30" rx="11" ry="9" fill="#FFA8A8" stroke="#E03131" stroke-width="2.4"/>
+      <ellipse cx="40" cy="29" rx="5" ry="3.6" fill="#F03E3E" opacity="0.5"/>
+      <path d="M34 48 l16 -3 4 9 -16 3 Z" fill="#A5D8FF" stroke="#1971C2" stroke-width="2.2" stroke-linejoin="round"/>
+    `, "신경세포·적혈구·상피세포"),
+  // L4: 모양=일 — 퍼즐 조각이 자리에 딱
+  fitJob: () => svg("0 0 64 64", `
+      <path d="M10 22 h18 v-8 a6 6 0 0 1 12 0 v8 h14 v32 h-44 Z" fill="#E9FAC8" stroke="${B4.bioDeep}" stroke-width="2.6" stroke-linejoin="round"/>
+      <circle cx="32" cy="38" r="7" fill="${B4.bio}" opacity="0.85"/>
+      <path d="M46 10 l8 8" stroke="${B4.membrane}" stroke-width="3.4" stroke-linecap="round"/>
+    `, "자리에 꼭 맞는 퍼즐 조각"),
+  // L5: 구성 단계 계단(작→큰)
+  stackLadder: () => svg("0 0 64 64", `
+      <path d="M8 54 h12 v-10 h12 v-10 h12 v-10 h12 v-12" stroke="${B4.bioDeep}" stroke-width="3" fill="none" stroke-linejoin="round"/>
+      <circle cx="14" cy="48" r="4.5" fill="${B4.membrane}"/>
+      <circle cx="24" cy="38" r="3" fill="${B4.bio}"/><circle cx="30" cy="40" r="3" fill="${B4.bio}"/>
+      <path d="M38 24 c-4 3 -4 8 0 10 c4 -2 4 -7 0 -10 Z" fill="${B4.mito}"/>
+      <circle cx="54" cy="12" r="6.5" fill="none" stroke="${B4.ink}" stroke-width="2.4"/>
+      <path d="M54 18 v9 M54 21 l-5 4 M54 21 l5 4" stroke="${B4.ink}" stroke-width="2.4" stroke-linecap="round"/>
+    `, "세포에서 개체까지 오르는 계단"),
+  // L5: 두 갈래 경로 — 식물(조직계)·동물(기관계)
+  twoPath: () => svg("0 0 64 64", `
+      <path d="M32 56 v-14 M32 42 C32 32 18 32 18 20 M32 42 C32 32 46 32 46 20" stroke="#8B95A1" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M12 16 h12 v10 h-12 Z" fill="#8CE99A" stroke="#2B8A3E" stroke-width="2.4" stroke-linejoin="round"/>
+      <circle cx="46" cy="18" r="8" fill="#FFA8A8" stroke="#E03131" stroke-width="2.4"/>
+      <path d="M42 18 c2 -4 6 -4 8 0 c-2 4 -6 4 -8 0 Z" fill="#E03131" opacity="0.5"/>
+    `, "식물과 동물의 갈라지는 단계 경로"),
 };
 
 /** recap 카드 미니아트 — 키가 없으면 세포 기본 도해로 폴백(신규 키는 레슨 저작 때 추가). */
@@ -178,6 +208,36 @@ export function cellPartsQuizFig(): string {
     ${lead(53, 182, 30, 226)}${tag(28, 238, "(라)")}
     ${lead(243, 158, 288, 216)}${tag(292, 228, "(마)")}
   `, "식물세포 도해 — 다섯 구조에 (가)~(마) 표시");
+}
+
+// ── L4 다양한 세포 도해(카드 크기에서 사진풍은 뭉개짐 — 도해가 정답이라는 확정 관행) ──
+
+/** 세포 유형 아트 — 랩 카드·recap 공용. kind: nerve(신경)·rbc(적혈구)·epi(상피). */
+export function cellTypeArt(kind: "nerve" | "rbc" | "epi"): string {
+  if (kind === "nerve")
+    return svg("0 0 120 120", `
+      <path d="M14 96 C34 84 44 72 50 62" stroke="#9775FA" stroke-width="5" stroke-linecap="round"/>
+      <path d="M14 96 l-7 6 M14 96 l2 9 M14 96 l-9 -2" stroke="#9775FA" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M50 62 C58 50 62 44 66 40" stroke="#9775FA" stroke-width="6" stroke-linecap="round"/>
+      <path d="M78 30 m-16 0 l7 -12 l10 -3 l9 6 l1 11 l-8 9 l-11 -1 Z" fill="#D0BFFF" stroke="#7048E8" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="78" cy="30" r="6" fill="#7048E8"/>
+      <path d="M88 15 l6 -9 M97 27 l11 -4 M94 40 l9 7 M66 16 l-4 -10" stroke="#9775FA" stroke-width="3.4" stroke-linecap="round"/>
+    `, "가늘고 긴 신경세포 — 신호를 전달해요");
+  if (kind === "rbc")
+    return svg("0 0 120 120", `
+      <ellipse cx="60" cy="64" rx="40" ry="34" fill="#FFA8A8" stroke="#E03131" stroke-width="3.4"/>
+      <ellipse cx="60" cy="62" rx="20" ry="15" fill="#F03E3E" opacity="0.45"/>
+      <path d="M32 44 C40 36 50 32 58 32" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" opacity="0.65"/>
+    `, "가운데가 오목한 원반 모양 적혈구 — 산소를 운반해요");
+  return svg("0 0 120 120", `
+    <path d="M12 74 L48 66 L58 88 L20 96 Z" fill="#A5D8FF" stroke="#1971C2" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M48 66 L88 62 L96 84 L58 88 Z" fill="#D0EBFF" stroke="#1971C2" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M30 48 L68 42 L76 62 L38 68 Z" fill="#D0EBFF" stroke="#1971C2" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M68 42 L104 40 L110 60 L76 62 Z" fill="#A5D8FF" stroke="#1971C2" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="52" cy="55" r="4" fill="#1971C2" opacity="0.6"/>
+    <circle cx="88" cy="51" r="4" fill="#1971C2" opacity="0.6"/>
+    <circle cx="36" cy="84" r="4" fill="#1971C2" opacity="0.6"/>
+  `, "납작하고 편평한 상피세포 — 표면을 덮어 보호해요");
 }
 
 // ── 문제 그림 ──────────────────────────────────────────────────
