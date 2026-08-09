@@ -66,11 +66,57 @@ const MINI: Record<string, () => string> = {
       <rect x="36" y="14" width="22" height="22" rx="2" fill="#4E5968" stroke="#333D4B" stroke-width="2.2"/>
       <path d="M40 36 h16 l-2 12 h-12 Z" fill="#C9885A" stroke="#8A5A30" stroke-width="2"/>
     `, "햇빛 화분과 어둠상자 화분의 비교"),
+  // L3: 증가 후 일정 곡선(빛·CO₂)
+  curvePlateau: () =>
+    svg("0 0 64 64", `
+      <line x1="10" y1="10" x2="10" y2="54" stroke="#A9B6A9" stroke-width="2.4"/>
+      <line x1="10" y1="54" x2="58" y2="54" stroke="#A9B6A9" stroke-width="2.4"/>
+      <path d="M12 52 L32 20 L56 18" stroke="${P3.leaf}" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    `, "증가하다 일정해지는 곡선"),
+  // L3: 산봉우리 곡선(온도)
+  curvePeak: () =>
+    svg("0 0 64 64", `
+      <line x1="10" y1="10" x2="10" y2="54" stroke="#A9B6A9" stroke-width="2.4"/>
+      <line x1="10" y1="54" x2="58" y2="54" stroke="#A9B6A9" stroke-width="2.4"/>
+      <path d="M12 52 L38 16 L54 48" stroke="#F03E3E" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    `, "정점을 지나 빠르게 감소하는 곡선"),
+  // L3: 온실 다이얼
+  greenhouseDial: () =>
+    svg("0 0 64 64", `
+      <path d="M8 52 v-18 a24 24 0 0 1 48 0 v18 Z" fill="none" stroke="${P3.leaf}" stroke-width="3.2"/>
+      <line x1="4" y1="52" x2="60" y2="52" stroke="${P3.leaf}" stroke-width="3.2" stroke-linecap="round"/>
+      <circle cx="32" cy="36" r="9" fill="#FFFFFF" stroke="#4E5968" stroke-width="2.6"/>
+      <line x1="32" y1="36" x2="37" y2="30" stroke="#4E5968" stroke-width="2.6" stroke-linecap="round"/>
+      <circle cx="18" cy="20" r="4.5" fill="${P3.light}"/>
+    `, "온실 안 조건 다이얼"),
 } as const as Record<string, () => string>;
 
 /** recap 카드 미니아트 — 키가 없으면 잎 기본. */
 export function p3MiniArt(key: string): string {
   return (MINI[key] ?? MINI.leafSun)();
+}
+
+// ── 그래프 모양 3종 비교(factorShapesFig) — (가)(나)(다) 무명 곡선(퀴즈용) ──
+// (가) 증가 후 일정 · (나) 정점 뒤 빠른 감소 · (다) 계속 증가(직선). 축 라벨은 광합성량/요인 값.
+export function factorShapesFig(): string {
+  const panel = (ox: number, label: string, curve: string, color: string): string => `
+    <g transform="translate(${ox} 0)">
+      <rect x="0" y="8" width="100" height="96" rx="10" fill="#FFFFFF" stroke="#E1EBE4" stroke-width="2"/>
+      <line x1="16" y1="20" x2="16" y2="84" stroke="#A9B6A9" stroke-width="2"/>
+      <line x1="16" y1="84" x2="90" y2="84" stroke="#A9B6A9" stroke-width="2"/>
+      <path d="${curve}" stroke="${color}" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="50" y="122" text-anchor="middle" font-size="13" font-weight="800" fill="#333D4B">${label}</text>
+    </g>`;
+  return svg(
+    "0 0 340 132",
+    `
+    ${panel(6, "(가)", "M18 82 L44 34 L86 32", P3.leaf)}
+    ${panel(120, "(나)", "M18 82 L52 28 L84 76", "#F03E3E")}
+    ${panel(234, "(다)", "M18 82 L86 24", "#4DABF7")}
+    <text x="8" y="12" font-size="10.5" font-weight="700" fill="#8B95A1">세로축: 광합성량 · 가로축: 요인 값</text>
+    `,
+    "요인 값에 따른 광합성량 그래프 세 가지 모양 — (가) 증가 후 일정, (나) 정점 뒤 감소, (다) 계속 증가",
+  );
 }
 
 // ── 광합성 과정 도식(psFlowFig) — 교과서 그림 V-2 구도의 자체 도해 ──────────
