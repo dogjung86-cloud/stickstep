@@ -4,6 +4,10 @@ import type { Lesson } from "../lessons/types";
 import { isDone, isPremium, isReviewMode } from "../core/store";
 import { UNIT1 } from "./unit1";
 import { UNIT2 } from "./unit2";
+// 중1 Ⅱ v3 재제작(2026-08-10) — 병행 배선. DEV에서 sessionStorage "ss.u2v3"="1"이면 v3가 뜬다.
+// 현행 UNIT2와 나란히 비교하기 위한 토글(Ⅴ·Ⅵ 전면 교체 원복 사고의 재발 방지 수칙).
+// 확정되면 아래 U2_ACTIVE를 UNIT2_V3로 교체(또는 UNIT2 자리를 직접 교체)하는 것이 전부다.
+import { UNIT2_V3 } from "./unit2v3";
 import { UNIT3 } from "./unit3";
 import { UNIT4 } from "./unit4";
 import { UNIT5 } from "./unit5";
@@ -42,7 +46,17 @@ export interface Unit {
 export type GradeId = "g1" | "g2";
 export const GRADE_LABEL: Record<GradeId, string> = { g1: "중1", g2: "중2" };
 
-export const CURRICULUM: Unit[] = [UNIT1, UNIT2, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7];
+const U2_ACTIVE: Unit = (() => {
+  try {
+    const dev = (import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV;
+    if (dev && sessionStorage.getItem("ss.u2v3") === "1") return UNIT2_V3;
+  } catch {
+    /* sessionStorage 접근 불가 환경(시딩·테스트)은 현행 유지 */
+  }
+  return UNIT2;
+})();
+
+export const CURRICULUM: Unit[] = [UNIT1, U2_ACTIVE, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7];
 
 // 중2 — 대단원 8개.
 export const CURRICULUM_G2: Unit[] = [

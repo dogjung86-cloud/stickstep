@@ -1,0 +1,83 @@
+/* bio4.css — 중1 Ⅱ v3 재제작 공용 크롬(랩 공통 뼈대). 랩별 세부는 이 시트의 각 섹션에.
+   접두 규약: 킷 공통 .b4-*, 랩별 .zrl-(줌 사다리) .smk-(표본) .sjb-(모양·임무) .lsk-(구성 단계)
+   .ecs-(다양성 스캔) .bkl-(두 섬 부리) .grl-(기준 스위치) .kgt-(검색표) .wdp-(먹이 그물).
+   선점 검사 완료(2026-08-10, src/styles·steps·ui 전수 grep 0건). */
+
+/* ── 공통: 밝은 관찰 보드(다크 .stage가 과한 랩은 이 보드를 쓴다) ── */
+.b4-board {
+  background: linear-gradient(180deg, #F4FBF7, #EAF6EF);
+  border: 1px solid #D3E9DC;
+  border-radius: var(--r-lg, 20px);
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.b4-board.dark {
+  background: radial-gradient(120% 90% at 50% 0%, #10233C, var(--stage, #0B1524));
+  border-color: rgba(120, 150, 190, 0.25);
+}
+
+/* 목표 칩 톤(bio) — base.css .pn-badge 골격 위에 색만 */
+.pn-badge.b4 b { color: var(--subj-bio, #12B886); }
+.pn-badge.b4.on {
+  border-color: var(--subj-bio, #12B886);
+  box-shadow: 0 0 0 3px rgba(18, 184, 134, 0.14);
+}
+
+/* ── L1 zoomRulerLab(.zrl-) — 양파 줌 사다리 ─────────────────── */
+.zrl-board { padding: 10px 10px 12px; }
+.zrl-view {
+  position: relative;
+  aspect-ratio: 340 / 240;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #FDFBF3;
+  border: 1px solid #E7DDC2;
+}
+.zrl-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(0.72);
+  transition: opacity 0.42s var(--ease-out, ease-out), transform 0.42s var(--ease-out, ease-out);
+  pointer-events: none;
+}
+.zrl-layer svg { width: 100%; height: 100%; display: block; }
+.zrl-layer.cur { opacity: 1; transform: scale(1); }
+.zrl-layer.out { opacity: 0; transform: scale(2.6); } /* 줌 인: 나가는 층이 커지며 사라진다 */
+.zrl-layer.in { opacity: 0; transform: scale(0.4); } /* 줌 아웃 복귀 */
+.zrl-ruler {
+  position: relative;
+  margin: 10px 6px 0;
+  height: 34px;
+}
+.zrl-line { position: absolute; left: 0; right: 0; top: 7px; height: 2.5px; border-radius: 2px; background: #A9B6A9; }
+.zrl-tick { position: absolute; top: 0; width: 2.5px; height: 16px; border-radius: 2px; background: #A9B6A9; }
+.zrl-tick.l { left: 0; }
+.zrl-tick.r { right: 0; }
+.zrl-ruler-cap { position: absolute; left: 0; right: 0; top: 16px; text-align: center; font-size: 12.5px; color: var(--n600, #6B7684); }
+.zrl-ruler-cap b { color: var(--ink, #191F28); font-size: 13.5px; }
+.zrl-ruler.pulse .zrl-ruler-cap b { animation: zrlPulse 0.5s var(--ease-out, ease-out); display: inline-block; }
+@keyframes zrlPulse {
+  0% { transform: scale(1.35); color: var(--subj-bio, #12B886); }
+  100% { transform: scale(1); }
+}
+.zrl-mags { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+.zrl-mag {
+  height: 46px;
+  border-radius: 14px;
+  border: 1.5px solid var(--n200, #E5E8EB);
+  background: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--n700, #4E5968);
+  transition: transform 0.12s ease, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.zrl-mag:active { transform: scale(0.96); }
+.zrl-mag:disabled { opacity: 0.38; }
+.zrl-mag.cur {
+  border-color: var(--subj-bio, #12B886);
+  color: var(--subj-bio, #0CA678);
+  box-shadow: 0 0 0 3px rgba(18, 184, 134, 0.13);
+}
+.zrl-q { margin-top: 12px; }

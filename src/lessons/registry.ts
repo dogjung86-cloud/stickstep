@@ -28,6 +28,16 @@ import { classifyLab } from "./steps/classifyLab";
 import { rankLab } from "./steps/rankLab";
 import { kingdomKeyLab } from "./steps/kingdomKeyLab";
 import { webStabilityLab } from "./steps/webStabilityLab";
+// ── 중1 Ⅱ v3 랩 9종(2026-08-10 재제작, steps/bio4/*) — 병행 배선(unit2v3) 전용 ──
+import { zoomRulerLab } from "./steps/bio4/zoomRulerLab";
+import { slideMakeLab } from "./steps/bio4/slideMakeLab";
+import { shapeJobLab } from "./steps/bio4/shapeJobLab";
+import { lifeStackLab } from "./steps/bio4/lifeStackLab";
+import { ecoScanLab } from "./steps/bio4/ecoScanLab";
+import { beakIslandsLab } from "./steps/bio4/beakIslandsLab";
+import { groupRuleLab } from "./steps/bio4/groupRuleLab";
+import { kingdomGateLab } from "./steps/bio4/kingdomGateLab";
+import { webDropLab } from "./steps/bio4/webDropLab";
 import { comic } from "./steps/comic";
 import { hook } from "./steps/hook";
 import { recap } from "./steps/recap";
@@ -572,6 +582,16 @@ const R: Record<string, StepRenderer> = {
   rankLab,
   kingdomKeyLab,
   webStabilityLab,
+  // 중1 Ⅱ v3 랩(2026-08-10 재제작)
+  zoomRulerLab,
+  slideMakeLab,
+  shapeJobLab,
+  lifeStackLab,
+  ecoScanLab,
+  beakIslandsLab,
+  groupRuleLab,
+  kingdomGateLab,
+  webDropLab,
 };
 
 export function getRenderer(type: string): StepRenderer | undefined {

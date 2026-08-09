@@ -3,6 +3,8 @@ import "./styles/base.css";
 import "./styles/ui.css";
 import "./styles/bio3.css"; // 중1 Ⅱ 재제작 전용 시트(공용 크롬) — 랩별 시트는 각 렌더러가 자체 import
 import "./styles/bio3-hook.css"; // 훅 10종(hookBio2)은 자체 import를 하지 않아 여기서 싣는다
+import "./styles/bio4.css"; // 중1 Ⅱ v3 재제작(2026-08-10) 공용 크롬 — ss.u2v3 병행 배선
+import "./styles/bio4-hook.css"; // v3 훅 8장면(hookBio4)
 import "./styles/math.css";
 import "./styles/math2.css";
 import "./styles/body-hook.css";

@@ -118,6 +118,9 @@ export const hook = (o: {
     // 중1 Ⅱ 재제작 훅 10종(hookBio2.ts) — 구작 6종과 이름이 겹치지 않는다
     | "celldot" | "slidepress" | "signalrun" | "blockflower" | "biomedoor"
     | "beakpick" | "batwho" | "noplant" | "seedvault" | "scalezoom"
+    // 중1 Ⅱ v3 훅 8종(hookBio4.ts, 2026-08-10 재제작)
+    | "breadfactory" | "waterlens" | "blooddrop" | "brickhouse"
+    | "dokdofriends" | "martshelf" | "mushroomscan" | "beegone"
     | "rings" | "deadsea" | "cocoa" | "fishmouth" | "gallium" | "milkzoom" | "soysauce" | "syrup" | "perfume"
     | "stripemount" | "foolsgold" | "dolstatue" | "bookcliff" | "pressrock" | "cappadocia" | "gravestone" | "puzzlemap" | "quakenews" | "eggearth"
     | "mirrortown" | "coinmagic" | "darkroom" | "catmirror" | "spoon" | "pointillism" | "fishing" | "kalimba"
@@ -534,6 +537,19 @@ export const kingdomKeyLab = (o: { title: string; lead?: string; cta?: string; c
   ({ type: "kingdomKeyLab", ...o });
 export const webStabilityLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "webStabilityLab", ...o });
+
+// ── 중1 Ⅱ 생물의 구성과 다양성 v3 랩 9종(2026-08-10 재제작 — steps/bio4/*) ──
+// 병행 배선(unit2v3.ts + ss.u2v3 토글) 전용 — 현행 unit2 계열과 이름이 겹치지 않는다.
+type B4LabOpt = { title: string; lead?: string; cta?: string; curio?: CurioOpt };
+export const zoomRulerLab = (o: B4LabOpt): Step => ({ type: "zoomRulerLab", ...o });
+export const slideMakeLab = (o: B4LabOpt): Step => ({ type: "slideMakeLab", ...o });
+export const shapeJobLab = (o: B4LabOpt): Step => ({ type: "shapeJobLab", ...o });
+export const lifeStackLab = (o: B4LabOpt): Step => ({ type: "lifeStackLab", ...o });
+export const ecoScanLab = (o: B4LabOpt): Step => ({ type: "ecoScanLab", ...o });
+export const beakIslandsLab = (o: B4LabOpt): Step => ({ type: "beakIslandsLab", ...o });
+export const groupRuleLab = (o: B4LabOpt): Step => ({ type: "groupRuleLab", ...o });
+export const kingdomGateLab = (o: B4LabOpt): Step => ({ type: "kingdomGateLab", ...o });
+export const webDropLab = (o: B4LabOpt): Step => ({ type: "webDropLab", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

@@ -1,0 +1,41 @@
+/* bio4-hook.css — 중1 Ⅱ v3 훅 8장면(.hb4- 접두, hookBio4.ts).
+   장면 SVG는 파운드리 재질 문법(3스톱 면·키라이트·접촉 그림자·최암색 외곽선)을 지킨다. */
+
+.hb4-stage {
+  background: linear-gradient(180deg, #f7fbff, #eef5f0);
+  border: 1px solid #dbe8e0;
+  border-radius: var(--r-lg, 20px);
+  padding: 12px;
+  display: grid;
+  place-items: center;
+}
+.hb4-stage svg {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  display: block;
+}
+
+/* ── L2 breadfactory(빵 공장) ── */
+.hb4-bf-room { cursor: pointer; }
+.hb4-bf-room:focus-visible { outline: 2px solid var(--subj-bio, #12B886); outline-offset: 2px; border-radius: 8px; }
+.hb4-bf .bf-glow { transition: opacity 0.35s ease; }
+.hb4-bf-room.on .bf-glow { opacity: 0.55 !important; }
+.hb4-bf .bf-doorL,
+.hb4-bf .bf-doorR { transition: transform 0.45s var(--ease-out, ease-out); transform-box: view-box; }
+.hb4-bf-room.on .bf-doorL { transform: translateX(-13px); }
+.hb4-bf-room.on .bf-doorR { transform: translateX(13px); }
+.hb4-bf .bf-sack { transition: transform 0.6s var(--ease-out, ease-out) 0.25s; transform-box: view-box; }
+.hb4-bf-room.on .bf-sack { transform: translateX(38px); }
+.hb4-bf .bf-screen { transition: fill 0.35s ease; }
+.hb4-bf-room.on .bf-screen { fill: #10382B; }
+.hb4-bf .bf-graph { transition: opacity 0.4s ease 0.15s; }
+.hb4-bf-room.on .bf-graph { opacity: 1 !important; }
+.hb4-bf .bf-blades { transform-box: view-box; transform-origin: 256px 148px; }
+.hb4-bf-room.on .bf-blades { animation: hb4spin 1.5s linear infinite; }
+.hb4-bf .bf-bolt { opacity: 0.3; transition: opacity 0.3s ease; }
+.hb4-bf-room.on .bf-bolt { opacity: 1; }
+@keyframes hb4spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .hb4-bf-room.on .bf-blades { animation: none; }
+}

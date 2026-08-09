@@ -66,6 +66,11 @@ import {
   renderCellDot, renderSlidePress, renderSignalRun, renderBlockFlower, renderBiomeDoor,
   renderBeakPick, renderBatWho, renderNoPlant, renderSeedVault, renderScaleZoom,
 } from "./hookBio2";
+// 중1 Ⅱ v3 훅 8장면(2026-08-10 재제작) — hookBio2(1차 재제작)와 병존, v3 단원 전용.
+import {
+  renderBreadFactory, renderWaterLens, renderBloodDrop, renderBrickHouse,
+  renderDokdoFriends, renderMartShelf, renderMushroomScan, renderBeeGone,
+} from "./hookBio4";
 import {
   renderThreeCities, renderStiltHouse, renderSkyRoute, renderAvocado, renderMaasai, renderIloveNyc,
 } from "./hookSoc";
@@ -143,6 +148,8 @@ interface HookStep {
     | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
     | "celldot" | "slidepress" | "signalrun" | "blockflower" | "biomedoor"
     | "beakpick" | "batwho" | "noplant" | "seedvault" | "scalezoom"
+    | "breadfactory" | "waterlens" | "blooddrop" | "brickhouse"
+    | "dokdofriends" | "martshelf" | "mushroomscan" | "beegone"
     | "threecities" | "stilthouse" | "skyroute" | "avocado" | "maasai" | "ilovenyc"
     | "asiangames" | "monsoonrain" | "templetrip" | "halalmark" | "trainride" | "emptyclass" | "madein" | "fanchant"
     | "dawnsoccer" | "peakhike" | "frozenriver" | "cityfeed" | "skislope" | "trainborder" | "fourshirts"
@@ -257,6 +264,14 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "noplant") sceneCleanup = renderNoPlant(scene, helper, s, finish, face);
   else if (s.scene === "seedvault") sceneCleanup = renderSeedVault(scene, helper, s, finish, face);
   else if (s.scene === "scalezoom") sceneCleanup = renderScaleZoom(scene, helper, s, finish, face);
+  else if (s.scene === "breadfactory") sceneCleanup = renderBreadFactory(scene, helper, s, finish, face) as (() => void) | undefined;
+  else if (s.scene === "waterlens") sceneCleanup = renderWaterLens(scene, helper, s, finish, face) as (() => void) | undefined;
+  else if (s.scene === "blooddrop") sceneCleanup = renderBloodDrop(scene, helper, s, finish, face) as (() => void) | undefined;
+  else if (s.scene === "brickhouse") sceneCleanup = renderBrickHouse(scene, helper, s, finish, face) as (() => void) | undefined;
+  else if (s.scene === "dokdofriends") sceneCleanup = renderDokdoFriends(scene, helper, s, finish, face) as (() => void) | undefined;
+  else if (s.scene === "martshelf") sceneCleanup = renderMartShelf(scene, helper, s, finish, face) as (() => void) | undefined;
+  else if (s.scene === "mushroomscan") sceneCleanup = renderMushroomScan(scene, helper, s, finish, face) as (() => void) | undefined;
+  else if (s.scene === "beegone") sceneCleanup = renderBeeGone(scene, helper, s, finish, face) as (() => void) | undefined;
   else if (s.scene === "threecities") sceneCleanup = renderThreeCities(scene, helper, s, finish, face);
   else if (s.scene === "stilthouse") sceneCleanup = renderStiltHouse(scene, helper, s, finish, face);
   else if (s.scene === "skyroute") sceneCleanup = renderSkyRoute(scene, helper, s, finish, face);
