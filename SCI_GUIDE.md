@@ -509,3 +509,31 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
   구 배치가 20문항×6레슨이라 `Math.ceil(번호/20)`으로 소단원을 셌는데, 재제작이 lessonId만 10레슨으로
   재매핑하자 균형 검사 2건이 실패했다(실제 추출은 레슨당 2문항으로 정상). 소단원은 **풀의 lessonId**로
   세고 기대 배분도 레슨 수에서 뽑을 것.
+
+## 중1 Ⅱ 생물의 구성과 다양성 — v3 재제작(2026-08-10, 병행 배선)
+- **배선**: `content/unit2v3.ts`(UNIT2_V3) — 레슨 id는 현행과 동일(u2l1~u2l10, 시험 풀·오답노트
+  호환). curriculum.ts의 **DEV 토글 `sessionStorage "ss.u2v3"="1"`**로 현행 unit2와 나란히 비교
+  (Ⅴ·Ⅵ 전면 교체 원복 사고의 재발 방지 수칙 — 확정 시 U2_ACTIVE를 UNIT2_V3로 교체가 전부).
+  현행 unit2.ts·bio3 계열은 무수정 보존.
+- **파일**: 랩 9종 `lessons/steps/bio4/*`(zoomRuler·slideMake·shapeJob·lifeStack·ecoScan·
+  beakIslands·groupRule·kingdomGate·webDrop) · 훅 8장면 `steps/hookBio4.ts`(breadfactory·waterlens·
+  blooddrop·brickhouse·dokdofriends·martshelf·mushroomscan·beegone) · `ui/bio4Kit.ts`(팔레트·josa·
+  **b4Ask** 랩 내 판정 선택지 공용 — 정오를 onPick으로 돌려줘 recordQuiz는 랩이 결정) ·
+  `ui/bio4Figures.ts`(세포 도해·크기 사다리·분류체계 사다리·미니아트 — 식물세포 육각형 관행 준수) ·
+  시트 `bio4.css`/`bio4-hook.css`(전 랩 rAF·캔버스 없음 — SVG+CSS 전환, QA 프리즈 면역).
+- **만화 2편**: L1 로버트 훅 코르크 7컷(`comics/u2v3l1`) + L7 다윈 갈라파고스 7컷(`comics/u2v3l7`) —
+  과학사 실명 관행. L7은 **'자연선택'·'진화' 용어 금지**(교과서 문형 "적합한 변이를 가진 생물이 더
+  많이 살아남아 자손을 남긴다"로만) + 젊은 다윈(구레나룻)→마지막 컷 늙은 다윈 아크로 인지도·정확성 양립.
+- **beakIslandsLab 수 규칙(결정적)**: 유리 ×1.5 반올림·불리 절반 내림·시작 각 4마리 → 3세대에
+  14/0/0 분리(e2e가 수치 문자열로 검산). 개체 부리 불변 — 시뮬을 종류별 마리 수로만 설계해
+  라마르크식 오개념을 구조적으로 차단.
+- **구작 검증 자산 재사용**(bio3는 안 씀): exam/u2(cheek/elodea 관찰 사진·coverslip 기포 쌍·
+  triptych·fungi/protist-trio·wetland 전후·forest-road/corridor·seed-bank) + bio2/levels(구성단계
+  10종) + bio2/quiz(species-mule·invasive-bass) + figures.organism()(5계 아이콘 13종).
+- **발주**: 컷 12장(bio4/cuts — 레슨당 1 + L2·L8은 concept 2개라 b 변형 2장) `qa/order-u2v3-cuts.sh`,
+  만화 `qa/order-u2v3-comics.sh`. process-geo.mjs ASPECT_DIRS에 bio4/cuts 등록.
+- **QA**: `PORT=<포트> node qa/e2e-u2v3.mjs`(10레슨 실플레이 — 훅 조작·랩 목표 3·전 문제 정답
+  시트, **78검증 ALL PASS·pageErrors 0**. 레슨은 모듈 직접 import라 스플래시 우회 불필요) ·
+  `qa/shot-u2v3.mjs`(눈검수 14샷 → qa/shots/u2v3-*.png).
+- **잔여 백로그**: 만화 말풍선(bubbles)은 미저작 — 넣으려면 발주 컷의 화자 머리 픽셀 실측 관행
+  필수. 단원평가 u2 풀은 재매핑 불필요(레슨 id 동일)나 병합 확정 시 스팟 검산 권장.
