@@ -111,6 +111,30 @@ const MINI: Record<string, () => string> = {
       <rect x="18" y="34" width="28" height="20" rx="7" fill="#FFFFFF" stroke="#8B95A1" stroke-width="2.6"/>
       <circle cx="32" cy="44" r="6" fill="#20C997" stroke="#0CA678" stroke-width="2.2"/>
     `, "낮과 밤 모두 켜진 표시등"),
+  // L5: 해 아래 잎 — 들어오는 화살표 크게
+  dayLeaf: () =>
+    svg("0 0 64 64", `
+      <circle cx="14" cy="12" r="7" fill="${P3.light}"/>
+      <path d="M32 22 C46 30 50 44 45 54 C38 60 26 60 19 54 C14 44 18 30 32 22 Z" fill="#51CF66" stroke="#1E5A2A" stroke-width="2.6"/>
+      <path d="M4 34 h14 M14 30 l8 4 -8 4 Z" stroke="${P3.co2}" stroke-width="2.8" fill="${P3.co2}" stroke-linecap="round"/>
+      <path d="M46 34 h12 M52 30 l8 4 -8 4 Z" stroke="${P3.o2}" stroke-width="2.8" fill="${P3.o2}" stroke-linecap="round"/>
+    `, "낮의 잎 — 이산화 탄소 흡수·산소 방출"),
+  // L5: 달 아래 잎 — 방향 반대
+  nightLeaf: () =>
+    svg("0 0 64 64", `
+      <rect x="2" y="2" width="60" height="60" rx="12" fill="#2E3650"/>
+      <path d="M50 8 a8 8 0 1 0 4 14 a6.5 6.5 0 0 1 -4 -14" fill="#B9C2CC"/>
+      <path d="M30 24 C44 32 48 44 43 54 C36 60 24 60 17 54 C12 44 16 32 30 24 Z" fill="#40A85C" stroke="#1E5A2A" stroke-width="2.6"/>
+      <path d="M4 36 h12 M12 32 l8 4 -8 4 Z" stroke="${P3.o2}" stroke-width="2.8" fill="${P3.o2}" stroke-linecap="round"/>
+      <path d="M44 36 h12 M50 32 l8 4 -8 4 Z" stroke="${P3.co2}" stroke-width="2.8" fill="${P3.co2}" stroke-linecap="round"/>
+    `, "밤의 잎 — 산소 흡수·이산화 탄소 방출"),
+  // L5: 좌우 대칭 비교표 아이콘
+  vsTable: () =>
+    svg("0 0 64 64", `
+      <rect x="6" y="10" width="24" height="44" rx="8" fill="#E6FCF5" stroke="${P3.leaf}" stroke-width="2.6"/>
+      <rect x="34" y="10" width="24" height="44" rx="8" fill="#FFF4E6" stroke="#FF922B" stroke-width="2.6"/>
+      <path d="M12 22 h12 M12 32 h12 M12 42 h12 M40 22 h12 M40 32 h12 M40 42 h12" stroke="#8B95A1" stroke-width="2.4" stroke-linecap="round"/>
+    `, "광합성과 호흡 비교표"),
 } as const as Record<string, () => string>;
 
 /** recap 카드 미니아트 — 키가 없으면 잎 기본. */
@@ -138,6 +162,47 @@ export function factorShapesFig(): string {
     <text x="8" y="12" font-size="10.5" font-weight="700" fill="#8B95A1">세로축: 광합성량 · 가로축: 요인 값</text>
     `,
     "요인 값에 따른 광합성량 그래프 세 가지 모양 — (가) 증가 후 일정, (나) 정점 뒤 감소, (다) 계속 증가",
+  );
+}
+
+// ── 낮·밤 기체 출입(dayNightGasFig) — 교과서 그림 V-4 구도의 자체 도해 ──────
+// blank로 라벨 하나를 ㉠으로 가린다(퀴즈용): dayIn(낮 흡수)·dayOut(낮 방출)·nightIn·nightOut.
+export function dayNightGasFig(o?: { blank?: "dayIn" | "dayOut" | "nightIn" | "nightOut" }): string {
+  const blank = o?.blank;
+  const lab = (key: string, label: string): string => (blank === key ? "㉠" : label);
+  const wOf = (key: string, w: number): number => (blank === key ? 34 : w);
+  const pill = (x: number, y: number, w: number, label: string, c: string, dark = false): string =>
+    `<g><rect x="${x - w / 2}" y="${y - 11}" width="${w}" height="22" rx="11" fill="${dark ? "#39445B" : "#FFFFFF"}" stroke="${c}" stroke-width="2.2"/>
+     <text x="${x}" y="${y + 4}" text-anchor="middle" font-size="11" font-weight="800" fill="${dark ? "#F2F4F6" : "#333D4B"}">${label}</text></g>`;
+  const leaf = (cx: number): string => `
+    <path d="M${cx} 64 C${cx + 30} 80 ${cx + 38} 108 ${cx + 31} 128 C${cx + 24} 144 ${cx + 10} 150 ${cx} 150 C${cx - 10} 150 ${cx - 24} 144 ${cx - 31} 128 C${cx - 38} 108 ${cx - 30} 80 ${cx} 64 Z" fill="#51CF66" stroke="#1E5A2A" stroke-width="2.6"/>
+    <path d="M${cx} 68 L${cx} 148" stroke="#1E5A2A" stroke-width="1.8" opacity="0.5"/>`;
+  const arrIn = (cx: number, c: string): string =>
+    `<path d="M${cx - 74} 96 q8 16 34 22" stroke="${c}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M${cx - 44} 116 l10 3 -7 7 Z" fill="${c}"/>`;
+  const arrOut = (cx: number, c: string): string =>
+    `<path d="M${cx + 40} 118 q26 -4 34 -20" stroke="${c}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M${cx + 72} 102 l7 -8 3 10 Z" fill="${c}"/>`;
+  return svg(
+    "0 0 340 190",
+    `
+    <rect x="4" y="6" width="162" height="178" rx="14" fill="#EFF8FF" stroke="#D5E8F5" stroke-width="2"/>
+    <rect x="174" y="6" width="162" height="178" rx="14" fill="#2E3650" stroke="#232B45" stroke-width="2"/>
+    <circle cx="34" cy="34" r="11" fill="${P3.light}"/>
+    <path d="M34 18 v4 M34 46 v4 M18 34 h4 M46 34 h4" stroke="${P3.light}" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M312 24 a10 10 0 1 0 5 18 a8 8 0 0 1 -5 -18" fill="#B9C2CC"/>
+    <text x="85" y="176" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">낮</text>
+    <text x="255" y="176" text-anchor="middle" font-size="12.5" font-weight="800" fill="#DCE8F5">밤</text>
+    ${leaf(94)}
+    ${arrIn(94, P3.co2)}
+    ${pill(52, 84, wOf("dayIn", 78), lab("dayIn", "이산화 탄소"), P3.co2)}
+    ${arrOut(94, P3.o2)}
+    ${pill(140, 88, wOf("dayOut", 44), lab("dayOut", "산소"), P3.o2)}
+    ${leaf(254)}
+    ${arrIn(254, P3.o2)}
+    ${pill(212, 84, wOf("nightIn", 44), lab("nightIn", "산소"), P3.o2, true)}
+    ${arrOut(254, P3.co2)}
+    ${pill(292, 84, wOf("nightOut", 78), lab("nightOut", "이산화 탄소"), P3.co2, true)}
+    `,
+    "낮과 밤 잎의 기체 출입 — 낮에는 이산화 탄소를 흡수하고 산소를 방출하며, 밤에는 반대",
   );
 }
 
