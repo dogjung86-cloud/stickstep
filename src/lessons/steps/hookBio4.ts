@@ -14,20 +14,6 @@ interface HookLike {
   choices?: string[];
 }
 
-/** 구현 전 공용 스켈레톤 — 장면이 완성되면 하나씩 실제 구현으로 교체한다. */
-function sceneStub(label: string) {
-  return (scene: HTMLElement, helper: HTMLElement, _s: HookLike, finish: () => void, face: Face): void => {
-    helper.innerHTML = `${label} 장면 — 제작 중이에요.`;
-    const b = el("button", { class: "hook-choice", text: "계속하기" });
-    b.addEventListener("click", () => {
-      haptic(HAPTIC.tap);
-      face("smile");
-      finish();
-    });
-    scene.appendChild(el("div", { class: "hook-choices show" }, b));
-  };
-}
-
 /** L2 breadfactory — 빵 공장 단면. 시설 3곳(출입문과 벽·중앙 통제실·발전기)을 탭해 켜면
  *  "세포에도 이런 시설이 있을까?" 예측으로 이어진다. 교과서 '해 보기'(공장 비유) 소재 차용. */
 export function renderBreadFactory(
@@ -488,9 +474,262 @@ export function renderDokdoFriends(
     });
   });
 }
-export const renderMartShelf = sceneStub("마트 진열대");
-export const renderMushroomScan = sceneStub("버섯 스캔");
-export const renderBeeGone = sceneStub("꿀벌이 사라진 마트");
+/** L8 martshelf — 토마토를 과일/채소 코너에 놓아 보는 경험(교과서 도입 소재 차용).
+ *  어느 쪽에 놓아도 "친구는 반대!"가 되며 — 사람마다 다른 기준의 한계를 몸으로 느낀다. */
+export function renderMartShelf(
+  scene: HTMLElement,
+  helper: HTMLElement,
+  s: HookLike,
+  finish: () => void,
+  face: Face,
+): () => void {
+  const fig = el("div", { class: "hb4-stage hb4-ms" });
+  fig.innerHTML = `
+  <svg viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="마트 진열대 — 토마토를 놓을 코너 고르기">
+    <ellipse cx="160" cy="188" rx="130" ry="8" fill="#2A3A5E" opacity="0.10"/>
+    <g class="ms-shelf" data-side="fruit" role="button" tabindex="0" aria-label="과일 코너에 놓기">
+      <rect x="14" y="44" width="136" height="112" rx="10" fill="#FFF4E0" stroke="#E8B04B" stroke-width="2.6"/>
+      <rect x="14" y="44" width="136" height="26" rx="10" fill="#FFD8A8"/>
+      <text x="82" y="62" text-anchor="middle" font-size="13.5" font-weight="800" fill="#A8762A">과일 코너</text>
+      <circle cx="46" cy="96" r="14" fill="#FF8787" stroke="#C92A2A" stroke-width="2.2"/>
+      <path d="M44 84 q2 -6 6 -7" stroke="#2B8A3E" stroke-width="2.2" fill="none"/>
+      <circle cx="86" cy="96" r="13" fill="#FFC078" stroke="#E8590C" stroke-width="2.2"/>
+      <path d="M120 86 a12 14 0 1 0 0.1 0 Z" fill="#B197FC" stroke="#7048E8" stroke-width="2.2"/>
+      <g class="ms-slot"><circle cx="82" cy="132" r="14" stroke="#E8B04B" stroke-width="2" stroke-dasharray="4 4" fill="none"/></g>
+    </g>
+    <g class="ms-shelf" data-side="veg" role="button" tabindex="0" aria-label="채소 코너에 놓기">
+      <rect x="170" y="44" width="136" height="112" rx="10" fill="#EAF8E4" stroke="#69B05C" stroke-width="2.6"/>
+      <rect x="170" y="44" width="136" height="26" rx="10" fill="#C8E6C0"/>
+      <text x="238" y="62" text-anchor="middle" font-size="13.5" font-weight="800" fill="#417B36">채소 코너</text>
+      <ellipse cx="202" cy="96" rx="13" ry="9" fill="#8CE99A" stroke="#2B8A3E" stroke-width="2.2"/>
+      <path d="M236 106 q-4 -22 6 -24 q10 2 6 24 Z" fill="#FFA94D" stroke="#D9480F" stroke-width="2.2"/>
+      <path d="M240 82 l2 -6 M244 82 l0 -7 M248 82 l-2 -6" stroke="#2B8A3E" stroke-width="2" stroke-linecap="round"/>
+      <path d="M272 86 q10 4 8 14 q-2 8 -12 8 q-8 -2 -8 -11 q0 -8 12 -11 Z" fill="#69B05C" stroke="#2F6B28" stroke-width="2.2"/>
+      <g class="ms-slot"><circle cx="238" cy="132" r="14" stroke="#69B05C" stroke-width="2" stroke-dasharray="4 4" fill="none"/></g>
+    </g>
+    <g class="ms-tomato">
+      <circle cx="160" cy="176" r="15" fill="#FA5252" stroke="#C92A2A" stroke-width="2.4"/>
+      <path d="M154 164 l4 4 M160 162 v6 M166 164 l-4 4" stroke="#2B8A3E" stroke-width="2.2" stroke-linecap="round"/>
+      <ellipse cx="154" cy="171" rx="4" ry="2.5" fill="#FFFFFF" opacity="0.5" transform="rotate(-24 154 171)"/>
+    </g>
+  </svg>`;
+  const choicesBox = el("div", { class: "hook-choices" });
+  scene.append(fig, choicesBox);
+  helper.innerHTML = "마트 알바 첫날 — 손에 <b>토마토</b>가 들려 있어요. 어느 코너에 놓을까요? <b>코너를 탭</b>해서 놓아 보세요!";
 
-// ask는 실제 장면 구현에서 사용한다 — 스텁 단계 미사용 경고 방지용 재수출.
-export { ask as _hb4Ask };
+  let placed = 0;
+  let timer = 0;
+  const shelves = [...fig.querySelectorAll<SVGGElement>(".ms-shelf")];
+  const place = (g: SVGGElement): void => {
+    if (fig.classList.contains("done")) return;
+    placed += 1;
+    haptic(HAPTIC.tap);
+    fig.dataset.side = g.dataset.side;
+    if (placed === 1) {
+      face("surprised");
+      helper.innerHTML =
+        g.dataset.side === "fruit"
+          ? "달콤하니 과일! …그런데 옆 친구가 <b>\"토마토는 채소지!\"</b> 라며 반대편으로 옮기려 해요. 반대쪽도 눌러 볼까요?"
+          : "요리에 쓰니 채소! …그런데 옆 친구가 <b>\"달콤하니 과일이지!\"</b> 라며 반대편으로 옮기려 해요. 반대쪽도 눌러 볼까요?";
+    } else {
+      fig.classList.add("done");
+      face("curious");
+      helper.innerHTML = "이쪽도 저쪽도 그럴듯… <b>사람마다 기준이 다르면 답도 달라져요</b>. 그럼 과학자들은 생물을 어떤 기준으로 나눌까요?";
+      timer = window.setTimeout(() => {
+        ask(choicesBox, helper, {
+          choices: s.choices ?? [
+            "누가 나눠도 같은 결과가 나오는, 생물 고유의 특징",
+            "겉모습이 예쁜 순서",
+            "크기가 큰 순서",
+          ],
+          good: "맞아요! 생김새·한살이·번식 방법처럼 <b>생물이 가진 고유한 특징</b>이 기준이 되면, 누가 나눠도 같은 결과가 나와요 — 스위치를 눌러 직접 확인해요.",
+          bad: "예쁨·크기는 보는 사람마다 달라져요 — 과학의 기준은 <b>생물 고유의 특징</b>(생김새·한살이·번식 방법)이랍니다. 스위치로 직접 확인해요!",
+          onDone: finish,
+        });
+      }, 1200);
+    }
+  };
+  shelves.forEach((g) => {
+    g.addEventListener("click", () => place(g));
+    g.addEventListener("keydown", (e) => {
+      const k = e as KeyboardEvent;
+      if (k.key === " " || k.key === "Enter") {
+        k.preventDefault();
+        place(g);
+      }
+    });
+  });
+  return () => window.clearTimeout(timer);
+}
+/** L9 mushroomscan — 도감 앱으로 버섯을 스캔했더니 "식물 아님!" 판정.
+ *  "버섯이 식물이 아닌 까닭"을 예측으로 잇는다(5계의 문). */
+export function renderMushroomScan(
+  scene: HTMLElement,
+  helper: HTMLElement,
+  s: HookLike,
+  finish: () => void,
+  face: Face,
+): () => void {
+  const fig = el("div", { class: "hb4-stage hb4-mr", attrs: { role: "button", tabindex: "0", "aria-label": "도감 앱으로 버섯 스캔하기" } });
+  fig.innerHTML = `
+  <svg viewBox="0 0 320 210" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <ellipse cx="160" cy="196" rx="120" ry="8" fill="#2A3A5E" opacity="0.10"/>
+    <path d="M20 186 q60 -14 130 -8" stroke="#69B05C" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M36 182 l3 -9 M52 179 l3 -9 M70 177 l2 -9" stroke="#69B05C" stroke-width="2.4" stroke-linecap="round"/>
+    <g class="mr-shroom">
+      <rect x="86" y="142" width="18" height="36" rx="7" fill="#F5E8D2" stroke="#B49B72" stroke-width="2.4"/>
+      <path d="M60 148 q35 -44 70 0 q-35 12 -70 0 Z" fill="#E8590C" stroke="#A8380A" stroke-width="2.6"/>
+      <circle cx="80" cy="128" r="4.5" fill="#FFE8D9"/>
+      <circle cx="102" cy="122" r="3.6" fill="#FFE8D9"/>
+      <circle cx="92" cy="138" r="2.8" fill="#FFE8D9"/>
+    </g>
+    <g class="mr-phone">
+      <rect x="176" y="44" width="112" height="150" rx="16" fill="#FFFFFF" stroke="#4E5968" stroke-width="3"/>
+      <rect x="188" y="60" width="88" height="76" rx="10" fill="#EAF6FF" stroke="#B9C8D8" stroke-width="2"/>
+      <g class="mr-preview" opacity="0.9">
+        <rect x="212" y="102" width="8" height="18" rx="3.4" fill="#F5E8D2" stroke="#B49B72" stroke-width="1.6"/>
+        <path d="M200 106 q16 -22 33 0 q-16 6 -33 0 Z" fill="#E8590C" stroke="#A8380A" stroke-width="1.8"/>
+      </g>
+      <rect class="mr-scanline" x="188" y="60" width="88" height="5" fill="#12B886" opacity="0"/>
+      <g class="mr-result">
+        <rect x="188" y="146" width="88" height="36" rx="9" fill="#FFF0F0" stroke="#F04452" stroke-width="2.2"/>
+        <text x="232" y="161" text-anchor="middle" font-size="11.5" font-weight="800" fill="#D6303E">식물이 아님!</text>
+        <text x="232" y="175" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8B95A1">분류: ??? 왕국</text>
+      </g>
+    </g>
+  </svg>`;
+  const choicesBox = el("div", { class: "hook-choices" });
+  scene.append(fig, choicesBox);
+  helper.innerHTML = "숲에서 만난 새빨간 버섯! 요즘은 <b>도감 앱</b>으로 스캔하면 이름을 알려 줘요. <b>탭해서 스캔</b>해 볼까요?";
+
+  let scanned = false;
+  let timer = 0;
+  const doScan = (): void => {
+    if (scanned) return;
+    scanned = true;
+    haptic(HAPTIC.tap);
+    fig.classList.add("scanning");
+    timer = window.setTimeout(() => {
+      fig.classList.add("done");
+      face("surprised");
+      haptic(HAPTIC.wrong);
+      helper.innerHTML = "판정 결과: <b>\"식물이 아님!\"</b> — 땅에 뿌리내린 것처럼 보이는데 왜 식물이 아닐까요?";
+      timer = window.setTimeout(() => {
+        face("curious");
+        ask(choicesBox, helper, {
+          choices: s.choices ?? [
+            "광합성을 하지 못해서 — 스스로 양분을 만들 수 없다",
+            "꽃이 피지 않아서",
+            "초록색이 아니어서",
+          ],
+          good: "정확해요! 버섯은 엽록체가 없어 <b>광합성을 못 하고</b>, 죽은 생물을 분해해 양분을 얻어요. 그럼 버섯의 진짜 왕국은 어디일까요? 검색표 여행에서 밝혀져요!",
+          bad: "꽃과 색은 결정적 기준이 아니에요(이끼도 꽃이 없지만 식물!). 열쇠는 <b>광합성</b> — 버섯은 스스로 양분을 못 만들고 죽은 생물을 분해해 얻죠. 진짜 왕국은 검색표 여행에서!",
+          onDone: finish,
+        });
+      }, 1200);
+    }, 1300);
+  };
+  fig.addEventListener("click", doScan);
+  fig.addEventListener("keydown", (e) => {
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      doScan();
+    }
+  });
+  return () => window.clearTimeout(timer);
+}
+/** L10 beegone — "꿀벌이 사라진다면?" 스위치를 내려 보면 마트 선반의 과일들이 사라진다.
+ *  한 종의 소멸이 나에게 닿는 경험 — 보전 필요성의 문. */
+export function renderBeeGone(
+  scene: HTMLElement,
+  helper: HTMLElement,
+  s: HookLike,
+  finish: () => void,
+  face: Face,
+): () => void {
+  const fig = el("div", { class: "hb4-stage hb4-bg" });
+  fig.innerHTML = `
+  <svg viewBox="0 0 320 210" fill="none" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="꿀벌 스위치가 달린 마트 선반">
+    <ellipse cx="160" cy="198" rx="130" ry="8" fill="#2A3A5E" opacity="0.10"/>
+    <rect x="16" y="34" width="288" height="160" rx="12" fill="#FFF9F0" stroke="#C9BFA2" stroke-width="2.6"/>
+    <line x1="28" y1="96" x2="292" y2="96" stroke="#C9BFA2" stroke-width="3"/>
+    <line x1="28" y1="156" x2="292" y2="156" stroke="#C9BFA2" stroke-width="3"/>
+    <g class="bg-fruit">
+      <circle cx="52" cy="78" r="13" fill="#FA5252" stroke="#C92A2A" stroke-width="2.2"/>
+      <path d="M50 66 q2 -5 5 -6" stroke="#2B8A3E" stroke-width="2" fill="none"/>
+      <circle cx="86" cy="78" r="12" fill="#FFC078" stroke="#E8590C" stroke-width="2.2"/>
+      <path d="M116 66 a12 15 0 1 0 0.1 0 Z" fill="#B197FC" stroke="#7048E8" stroke-width="2.2"/>
+      <g transform="translate(148 64)">
+        <circle cx="0" cy="10" r="6" fill="#FA5252" stroke="#C92A2A" stroke-width="1.8"/>
+        <circle cx="11" cy="8" r="6" fill="#FA5252" stroke="#C92A2A" stroke-width="1.8"/>
+        <circle cx="5" cy="17" r="6" fill="#FA5252" stroke="#C92A2A" stroke-width="1.8"/>
+      </g>
+      <path d="M196 88 q-3 -22 8 -24 q11 2 8 24 Z" fill="#8CE99A" stroke="#2B8A3E" stroke-width="2.2"/>
+    </g>
+    <g class="bg-stay">
+      <rect x="238" y="58" width="24" height="32" rx="4" fill="#EAF4FB" stroke="#8FB8D8" stroke-width="2.2"/>
+      <rect x="238" y="58" width="24" height="9" rx="4" fill="#8FB8D8"/>
+      <rect x="42" y="118" width="30" height="34" rx="5" fill="#F5E8D2" stroke="#B49B72" stroke-width="2.2"/>
+      <path d="M46 126 h22 M46 134 h22 M46 142 h14" stroke="#B49B72" stroke-width="2"/>
+      <rect x="88" y="120" width="26" height="32" rx="13" fill="#FFFFFF" stroke="#9DB8CC" stroke-width="2.2"/>
+      <rect x="128" y="122" width="34" height="30" rx="5" fill="#FFE9B8" stroke="#C9A040" stroke-width="2.2"/>
+    </g>
+    <g class="bg-empty-tags" opacity="0">
+      <g transform="translate(52 78)"><circle r="14" fill="none" stroke="#C9BFA2" stroke-width="2" stroke-dasharray="4 4"/></g>
+      <g transform="translate(86 78)"><circle r="13" fill="none" stroke="#C9BFA2" stroke-width="2" stroke-dasharray="4 4"/></g>
+      <g transform="translate(116 78)"><circle r="14" fill="none" stroke="#C9BFA2" stroke-width="2" stroke-dasharray="4 4"/></g>
+      <g transform="translate(153 76)"><circle r="15" fill="none" stroke="#C9BFA2" stroke-width="2" stroke-dasharray="4 4"/></g>
+      <g transform="translate(204 76)"><circle r="14" fill="none" stroke="#C9BFA2" stroke-width="2" stroke-dasharray="4 4"/></g>
+    </g>
+    <g class="bg-switch" role="button" tabindex="0" aria-label="꿀벌 스위치 내리기">
+      <rect x="236" y="118" width="58" height="66" rx="10" fill="#FFFFFF" stroke="#4E5968" stroke-width="2.6"/>
+      <g class="bg-bee">
+        <ellipse cx="265" cy="136" rx="9" ry="6.5" fill="#FFD43B" stroke="#8A6A1E" stroke-width="1.8"/>
+        <path d="M261 131 v11 M268 130 v12" stroke="#5C4A10" stroke-width="2"/>
+        <path d="M259 128 q-5 -6 -1 -8 q4 0 5 6 Z M271 128 q5 -6 1 -8 q-4 0 -5 6 Z" fill="#CFE8F5" stroke="#8FB8D8" stroke-width="1.4"/>
+      </g>
+      <rect x="256" y="150" width="18" height="26" rx="9" fill="#EDF1F5" stroke="#8B95A1" stroke-width="2"/>
+      <circle class="bg-knob" cx="265" cy="158" r="6.5" fill="#12B886" stroke="#0CA678" stroke-width="2"/>
+      <text x="265" y="192" text-anchor="middle" font-size="9.5" font-weight="800" fill="#6B7684">꿀벌 스위치</text>
+    </g>
+  </svg>`;
+  const choicesBox = el("div", { class: "hook-choices" });
+  scene.append(fig, choicesBox);
+  helper.innerHTML = "마트 과일 코너 옆에 이상한 <b>'꿀벌 스위치'</b>가 있어요 — 꿀벌이 세상에서 사라지면 어떻게 되는지 보여 주는 장치래요. <b>스위치를 탭</b>!";
+
+  let flipped = false;
+  let timer = 0;
+  const doFlip = (): void => {
+    if (flipped) return;
+    flipped = true;
+    haptic(HAPTIC.wrong);
+    fig.classList.add("off");
+    timer = window.setTimeout(() => {
+      face("surprised");
+      helper.innerHTML = "사과·귤·가지·딸기·아보카도가 <b>텅</b>! 우유·빵·생수는 남았네요. 왜 <b>과일 선반만</b> 비었을까요?";
+      timer = window.setTimeout(() => {
+        face("curious");
+        ask(choicesBox, helper, {
+          choices: s.choices ?? [
+            "꿀벌이 꽃가루를 옮겨 줘야 열매가 맺히기 때문",
+            "꿀벌이 과일을 마트로 배달하기 때문",
+            "우연일 뿐, 꿀벌과 과일은 관계없다",
+          ],
+          good: "맞아요! 과일나무 대부분은 <b>꿀벌이 꽃가루를 옮겨야</b> 열매를 맺어요. 생물 하나가 사라지면 그 영향이 <b>우리 식탁까지</b> 닿죠 — 생물다양성을 지켜야 하는 이유예요.",
+          bad: "배달 기사는 아니지만… 꿀벌은 <b>꽃가루를 옮겨 열매를 맺게</b> 해요. 한 생물이 사라지면 그 영향이 우리 식탁까지 닿는다는 것 — 그게 오늘의 주제랍니다.",
+          onDone: finish,
+        });
+      }, 1300);
+    }, 900);
+  };
+  const sw = fig.querySelector(".bg-switch") as SVGGElement;
+  sw.addEventListener("click", doFlip);
+  sw.addEventListener("keydown", (e) => {
+    const k = e as KeyboardEvent;
+    if (k.key === " " || k.key === "Enter") {
+      k.preventDefault();
+      doFlip();
+    }
+  });
+  return () => window.clearTimeout(timer);
+}

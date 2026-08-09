@@ -51,6 +51,38 @@
   .hb4-bd .bd-cells { animation: none; }
 }
 
+/* ── L10 beegone(꿀벌 스위치) ── */
+.hb4-bg .bg-switch { cursor: pointer; }
+.hb4-bg .bg-switch:focus-visible { outline: 2px solid var(--subj-bio, #12B886); outline-offset: 2px; border-radius: 10px; }
+.hb4-bg .bg-knob { transition: transform 0.3s ease, fill 0.3s ease; transform-box: view-box; }
+.hb4-bg.off .bg-knob { transform: translateY(11px); fill: #F04452; stroke: #C92A2A; }
+.hb4-bg .bg-bee { transition: opacity 0.5s ease 0.2s, transform 0.6s ease 0.2s; transform-box: fill-box; transform-origin: center; }
+.hb4-bg.off .bg-bee { opacity: 0.18; transform: rotate(24deg); }
+.hb4-bg .bg-fruit { transition: opacity 0.7s ease 0.35s; }
+.hb4-bg.off .bg-fruit { opacity: 0; }
+.hb4-bg .bg-empty-tags { transition: opacity 0.5s ease 0.75s; }
+.hb4-bg.off .bg-empty-tags { opacity: 1; }
+
+/* ── L9 mushroomscan(버섯 스캔) ── */
+.hb4-mr { cursor: pointer; }
+.hb4-mr:focus-visible { outline: 2px solid var(--subj-bio, #12B886); outline-offset: 2px; }
+.hb4-mr .mr-scanline { transition: opacity 0.2s; }
+.hb4-mr.scanning .mr-scanline { opacity: 0.85; animation: hb4scan 1.2s ease-in-out 1; }
+@keyframes hb4scan { 0% { transform: translateY(0); } 100% { transform: translateY(71px); } }
+.hb4-mr .mr-scanline { transform-box: view-box; }
+.hb4-mr .mr-result { opacity: 0; transition: opacity 0.35s ease; }
+.hb4-mr.done .mr-result { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .hb4-mr.scanning .mr-scanline { animation: none; opacity: 0; }
+}
+
+/* ── L8 martshelf(마트 진열대) ── */
+.hb4-ms .ms-shelf { cursor: pointer; }
+.hb4-ms .ms-shelf:focus-visible { outline: 2px solid var(--subj-bio, #12B886); outline-offset: 2px; border-radius: 10px; }
+.hb4-ms .ms-tomato { transition: transform 0.55s var(--spring, cubic-bezier(0.34, 1.35, 0.5, 1)); transform-box: view-box; }
+.hb4-ms[data-side="fruit"] .ms-tomato { transform: translate(-78px, -44px); }
+.hb4-ms[data-side="veg"] .ms-tomato { transform: translate(78px, -44px); }
+
 /* ── L6 dokdofriends(독도의 생물) ── */
 .hb4-dk .dk-spot { cursor: pointer; }
 .hb4-dk .dk-spot:focus-visible { outline: 2px solid var(--subj-bio, #12B886); outline-offset: 2px; border-radius: 50%; }

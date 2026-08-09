@@ -128,6 +128,49 @@ const MINI: Record<string, () => string> = {
       <path d="M52 13 l10 1.6 -10 2.4 Z" fill="#1971C2"/>
       <circle cx="46" cy="15" r="5.5" fill="#FFF8EC" stroke="#5F574A" stroke-width="1.8"/>
     `, "한 무리가 두 갈래로 나뉘는 그림"),
+  // L8: 기준 = 열쇠(맞는 열쇠라야 관계가 열린다)
+  ruleKey: () => svg("0 0 64 64", `
+      <rect x="30" y="24" width="26" height="22" rx="6" fill="#FFE9B8" stroke="#C9A040" stroke-width="2.6"/>
+      <path d="M43 33 a4 4 0 1 0 0.1 0 Z M43 36 v6" stroke="#8A6A1E" stroke-width="2.4" fill="none"/>
+      <circle cx="14" cy="26" r="7" fill="none" stroke="${B4.bioDeep}" stroke-width="3"/>
+      <path d="M19 31 l9 9 M24 36 l4 -3 M28 41 l4 -3" stroke="${B4.bioDeep}" stroke-width="3" stroke-linecap="round"/>
+    `, "자물쇠에 맞는 열쇠"),
+  // L8: 7단 사다리 미니(종→계)
+  rank7: () => svg("0 0 64 64", `
+      ${[0, 1, 2, 3, 4, 5, 6].map((i) => `<rect x="${30 - (10 + i * 3.4) / 2}" y="${7 + i * 7.4}" width="${10 + i * 3.4}" height="5.4" rx="2.7" fill="${i === 0 ? "#F08C00" : "#63C79B"}"/>`).join("")}
+      <path d="M52 12 v40 M52 52 l-4 -7 M52 52 l4 -7" stroke="#8B95A1" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+    `, "종에서 계까지 일곱 단 사다리"),
+  // L9: 다섯 왕국(색 다른 문 5개)
+  fiveKing: () => svg("0 0 64 64", `
+      ${["#8B95A1", "#4DABF7", "#F08C00", "#2F9E44", "#E03131"].map((c, i) => `
+        <path d="M${6 + i * 11.4} 50 v-14 a5 5 0 0 1 9 0 v14 Z" fill="${c}" opacity="0.85"/>`).join("")}
+      <line x1="4" y1="50" x2="60" y2="50" stroke="#8B95A1" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M28 14 l4 -8 4 8 M24 16 l8 -4 8 4" stroke="#C9A040" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    `, "다섯 개의 왕국 문"),
+  // L9: 갈림길 열쇠(예/아니요 분기)
+  keyFork: () => svg("0 0 64 64", `
+      <path d="M32 56 v-16 M32 40 C32 30 18 32 16 18 M32 40 C32 30 46 32 48 18" stroke="#8B95A1" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+      <circle cx="16" cy="14" r="7" fill="#E6FCF1" stroke="${B4.bioDeep}" stroke-width="2.6"/>
+      <path d="M12.5 14 l2.6 2.6 4.6 -5" stroke="${B4.bioDeep}" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <circle cx="48" cy="14" r="7" fill="#FFF0F0" stroke="#E03131" stroke-width="2.6"/>
+      <path d="M45 11 l6 6 M51 11 l-6 6" stroke="#E03131" stroke-width="2.4" stroke-linecap="round"/>
+    `, "예 아니요 갈림길"),
+  // L10: 그물망(대체 경로가 있는 안전망)
+  webNet: () => svg("0 0 64 64", `
+      <circle cx="32" cy="10" r="5" fill="#E03131"/>
+      <circle cx="16" cy="28" r="5" fill="#8CE99A" stroke="#2B8A3E" stroke-width="1.6"/>
+      <circle cx="48" cy="28" r="5" fill="#C9A16B"/>
+      <circle cx="12" cy="50" r="5" fill="#66A80F"/>
+      <circle cx="32" cy="50" r="5" fill="#66A80F"/>
+      <circle cx="52" cy="50" r="5" fill="#66A80F"/>
+      <path d="M16 45 l-2 -12 M30 45 l-12 -13 M34 45 l12 -13 M52 45 l-2 -12 M18 24 l11 -10 M46 24 l-11 -10 M32 45 l-14 -13" stroke="#8FA898" stroke-width="2.2" stroke-linecap="round"/>
+    `, "여러 갈래로 이어진 먹이 그물"),
+  // L10: 지구를 받치는 손(보전)
+  guardEarth: () => svg("0 0 64 64", `
+      <circle cx="32" cy="26" r="15" fill="#A5D8FF" stroke="#4DABF7" stroke-width="2.6"/>
+      <path d="M24 22 q4 -5 8 -1 q5 -4 8 1 q-4 6 -8 4 q-5 3 -8 -4 Z" fill="#8CE99A" stroke="#2B8A3E" stroke-width="1.4"/>
+      <path d="M14 46 q8 10 18 10 q10 0 18 -10 M14 46 q-2 -6 4 -7 M50 46 q2 -6 -4 -7" stroke="${B4.bioDeep}" stroke-width="3" fill="none" stroke-linecap="round"/>
+    `, "지구를 받치는 두 손"),
 };
 
 /** recap 카드 미니아트 — 키가 없으면 세포 기본 도해로 폴백(신규 키는 레슨 저작 때 추가). */
@@ -270,6 +313,35 @@ export function cellTypeArt(kind: "nerve" | "rbc" | "epi"): string {
     <circle cx="88" cy="51" r="4" fill="#1971C2" opacity="0.6"/>
     <circle cx="36" cy="84" r="4" fill="#1971C2" opacity="0.6"/>
   `, "납작하고 편평한 상피세포 — 표면을 덮어 보호해요");
+}
+
+// ── L8 분류체계 사다리(종속과목강문계 — 들고양이 예시, 교과서 그림 Ⅱ-9 구도) ──
+
+/** blanks: 가릴 단계 인덱스(0=종 … 6=계) — 퀴즈용. 무인자는 concept·recap 완성본. */
+export function rankLadderFig(blanks?: number[]): string {
+  const RANKS = ["종", "속", "과", "목", "강", "문", "계"];
+  const EXAMPLES = ["들고양이종", "고양이속", "고양이과", "식육목", "포유강", "척삭동물문", "동물계"];
+  const marks = ["(가)", "(나)", "(다)", "(라)", "(마)", "(바)", "(사)"];
+  let bi = 0;
+  const rows = RANKS.map((r, i) => {
+    const w = 96 + i * 32;
+    const x = 170 - w / 2;
+    const y = 12 + i * 30;
+    const blanked = blanks?.includes(i);
+    const label = blanked ? marks[bi++] : r;
+    return `
+      <rect x="${x}" y="${y}" width="${w}" height="24" rx="12" fill="${blanked ? "#FFF3BF" : "#E6FCF1"}" stroke="${blanked ? "#E8A80C" : "#63C79B"}" stroke-width="2"/>
+      <text x="170" y="${y + 16.5}" text-anchor="middle" font-size="13" font-weight="800" fill="#1F4B38">${label}</text>
+      <text x="${x + w + 8}" y="${y + 16.5}" font-size="10.5" font-weight="700" fill="#8B95A1">${EXAMPLES[i]}</text>`;
+  }).join("");
+  return `<svg viewBox="0 0 340 226" fill="none" xmlns="http://www.w3.org/2000/svg" role="img"
+    aria-label="종에서 계까지 점점 커지는 분류체계 사다리">
+    <path d="M28 26 v166" stroke="#C9D6CE" stroke-width="2.4"/>
+    <path d="M28 198 l-5 -9 h10 Z" fill="#C9D6CE"/>
+    <text x="28" y="16" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8B95A1">작은 단위</text>
+    <text x="28" y="214" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8B95A1">큰 단위</text>
+    ${rows}
+  </svg>`;
 }
 
 // ── 문제 그림 ──────────────────────────────────────────────────
