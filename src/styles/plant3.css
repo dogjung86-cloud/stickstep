@@ -73,3 +73,90 @@
   .ghz-ring circle, .ghz-spark path { animation: none; }
   .ghz-rays { opacity: 1; animation: none; }
 }
+
+/* ── L2 gasCrossLab(.gxc-) — 빛과 기체 교차 실험 ─────────────────── */
+.gxc-board { padding: 10px; display: grid; gap: 10px; }
+.gxc-stage svg { width: 100%; height: auto; display: block; }
+.gxc-stage .gxc-rays { opacity: 0; transition: opacity 0.4s ease; }
+.gxc-stage .gxc-bulb { transition: fill 0.4s ease; }
+.gxc-stage.lit .gxc-rays { opacity: 1; }
+.gxc-stage.lit .gxc-bulb { fill: #FFD43B; filter: drop-shadow(0 0 5px rgba(255, 201, 64, 0.9)); }
+.gxc-graphs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.gxc-graph {
+  background: #FFFFFF;
+  border: 1px solid #E1EBE4;
+  border-radius: 12px;
+  padding: 7px 6px 4px;
+}
+.gxc-graph svg { width: 100%; height: auto; display: block; }
+.gxc-gtitle {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--c, #4E5968);
+  text-align: center;
+  margin-bottom: 2px;
+}
+.gxc-line { transition: none; }
+.gxc-btnrow { display: grid; margin-top: 12px; }
+.gxc-btn {
+  height: 50px;
+  border-radius: 15px;
+  border: 1.5px solid var(--subj-bio, #12B886);
+  background: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--subj-bio, #0CA678);
+  box-shadow: 0 0 0 3px rgba(18, 184, 134, 0.1);
+  transition: transform 0.12s ease, opacity 0.25s;
+}
+.gxc-btn:active { transform: scale(0.97); }
+.gxc-btn:disabled { opacity: 0.4; box-shadow: none; border-color: var(--n200, #E5E8EB); color: var(--n600, #6B7684); }
+.gxc-q { margin-top: 12px; }
+
+/* ── L2 starchQuestLab(.stq-) — 녹말 수사대 ─────────────────────── */
+.stq-board { padding: 8px; }
+.stq-board svg { width: 100%; height: auto; display: block; }
+.stq-sc { opacity: 0; transition: opacity 0.45s ease; }
+.stq-board[data-sc="0"] .stq-sc0, .stq-board[data-sc="1"] .stq-sc1, .stq-board[data-sc="2"] .stq-sc2 { opacity: 1; }
+.stq-box { opacity: 0; transform: translateY(-14px); transition: opacity 0.4s ease, transform 0.5s var(--spring-soft, ease-out); }
+.stq-board.boxed .stq-box { opacity: 1; transform: translateY(0); }
+.stq-leafA, .stq-leafB { transition: fill 0.9s ease, stroke 0.9s ease; }
+.stq-ethanolA, .stq-ethanolB { transition: fill 0.9s ease; }
+.stq-board.bathed .stq-leafA, .stq-board.bathed .stq-leafB { fill: #F2EFDB; stroke: #B8B294; }
+.stq-board.bathed .stq-ethanolA, .stq-board.bathed .stq-ethanolB { fill: #DDEFD8; }
+.stq-steam path { opacity: 0.8; }
+.stq-stain, .stq-tint { opacity: 0; transform: scale(0.3); transform-box: fill-box; transform-origin: center; transition: opacity 0.5s ease, transform 0.6s var(--spring-soft, ease-out); }
+.stq-droplet { opacity: 0; }
+.stq-board.dropped .stq-droplet { opacity: 1; animation: stqDrop 0.7s ease forwards; }
+.stq-board.dropped .stq-stain { opacity: 1; transform: scale(1); transition-delay: 0.55s; }
+.stq-board.dropped .stq-tint { opacity: 1; transform: scale(1); transition-delay: 0.55s; }
+@keyframes stqDrop {
+  0% { transform: translateY(0); opacity: 1; }
+  80% { transform: translateY(34px); opacity: 1; }
+  100% { transform: translateY(38px); opacity: 0; }
+}
+.stq-tools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+.stq-tool {
+  border: 1.5px solid var(--n200, #E5E8EB);
+  background: #fff;
+  border-radius: 14px;
+  padding: 9px 4px 8px;
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  transition: transform 0.12s ease, border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+.stq-tool b { font-size: 13px; color: var(--ink, #191F28); }
+.stq-tool span { font-size: 10.5px; color: var(--n600, #6B7684); }
+.stq-tool:active { transform: scale(0.96); }
+.stq-tool:disabled { opacity: 0.38; }
+.stq-tool:not(:disabled) {
+  border-color: var(--subj-bio, #12B886);
+  box-shadow: 0 0 0 3px rgba(18, 184, 134, 0.12);
+}
+.stq-tool.done { opacity: 0.55; border-color: var(--n200, #E5E8EB); box-shadow: none; }
+.stq-tool.done b::after { content: " ✓"; color: var(--subj-bio, #12B886); }
+.stq-q { margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) {
+  .stq-board.dropped .stq-droplet { animation: none; opacity: 0; }
+}

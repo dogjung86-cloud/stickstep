@@ -38,6 +38,34 @@ const MINI: Record<string, () => string> = {
       <path d="M46 40 h10 M52 36 l6 4 -6 4 Z" stroke="${P3.o2}" stroke-width="2.8" stroke-linecap="round" fill="${P3.o2}"/>
       <path d="M26 6 l6 8 M38 6 l-4 8" stroke="${P3.light}" stroke-width="2.8" stroke-linecap="round"/>
     `, "들어가는 재료와 나오는 산물"),
+  // L2: 가위처럼 교차하는 두 곡선(기체 그래프)
+  gasSwap: () =>
+    svg("0 0 64 64", `
+      <line x1="10" y1="10" x2="10" y2="54" stroke="#A9B6A9" stroke-width="2.4"/>
+      <line x1="10" y1="54" x2="58" y2="54" stroke="#A9B6A9" stroke-width="2.4"/>
+      <path d="M14 20 C28 22 40 38 56 44" stroke="${P3.co2}" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      <path d="M14 46 C28 44 40 28 56 20" stroke="${P3.o2}" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      <circle cx="56" cy="44" r="3.4" fill="${P3.co2}"/>
+      <circle cx="56" cy="20" r="3.4" fill="${P3.o2}"/>
+    `, "교차하는 이산화 탄소·산소 그래프"),
+  // L2: 청람색 반점이 생긴 잎 + 방울
+  starchBlue: () =>
+    svg("0 0 64 64", `
+      <path d="M32 8 C48 16 54 32 50 44 C46 54 38 58 32 58 C26 58 18 54 14 44 C10 32 16 16 32 8 Z" fill="#F2EFDB" stroke="#B8B294" stroke-width="2.6"/>
+      <path d="M32 12 L32 56" stroke="#B8B294" stroke-width="1.8" opacity="0.7"/>
+      <ellipse cx="32" cy="34" rx="11" ry="8" fill="${P3.starch}"/>
+      <ellipse cx="40" cy="40" rx="4.5" ry="3.4" fill="#3B5BDB"/>
+      <path d="M50 10 c0 -4 3 -8 3 -8 c0 0 3 4 3 8 a3 3 0 0 1 -6 0 Z" fill="#E8590C"/>
+    `, "청람색으로 물든 잎"),
+  // L2: 해 화분 vs 상자 화분(비교)
+  comparePots: () =>
+    svg("0 0 64 64", `
+      <circle cx="16" cy="12" r="6" fill="${P3.light}"/>
+      <path d="M10 30 h16 l-2 14 h-12 Z" fill="#C9885A" stroke="#8A5A30" stroke-width="2"/>
+      <path d="M18 30 v-8 M18 24 c-5 -2 -7 -7 -6 -10 c5 0 8 4 8 8 M18 26 c5 -2 7 -7 6 -10 c-5 0 -8 4 -8 8" fill="#69C77E" stroke="#2E7D46" stroke-width="2"/>
+      <rect x="36" y="14" width="22" height="22" rx="2" fill="#4E5968" stroke="#333D4B" stroke-width="2.2"/>
+      <path d="M40 36 h16 l-2 12 h-12 Z" fill="#C9885A" stroke="#8A5A30" stroke-width="2"/>
+    `, "햇빛 화분과 어둠상자 화분의 비교"),
 } as const as Record<string, () => string>;
 
 /** recap 카드 미니아트 — 키가 없으면 잎 기본. */
