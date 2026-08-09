@@ -232,6 +232,84 @@
 .lsk-card.nope { border-color: var(--red, #F04452); box-shadow: 0 0 0 3px rgba(240, 68, 82, 0.12); }
 .lsk-ask { margin-top: 12px; }
 
+/* ── L6 ecoScanLab(.ecs-) — 다양성 검사관 ──────────────────────── */
+.ecs-board { padding: 10px; }
+.ecs-regions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ecs-region {
+  border: 1.5px solid var(--n200, #E5E8EB);
+  background: #fff;
+  border-radius: 14px;
+  padding: 7px 6px 8px;
+  display: grid;
+  gap: 4px;
+  justify-items: stretch;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.12s ease;
+}
+.ecs-region:active { transform: scale(0.98); }
+.ecs-region b { font-size: 12.5px; color: var(--ink, #191F28); text-align: center; }
+.ecs-region svg { width: 100%; height: auto; display: block; }
+.ecs-region.nope { border-color: var(--red, #F04452); box-shadow: 0 0 0 3px rgba(240, 68, 82, 0.12); }
+.ecs-lenses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+.ecs-lens {
+  height: 44px;
+  border-radius: 13px;
+  border: 1.5px solid var(--n200, #E5E8EB);
+  background: #fff;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--n700, #4E5968);
+  transition: border-color 0.2s, color 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+.ecs-lens:disabled { opacity: 0.38; }
+.ecs-lens.cur { border-color: var(--subj-bio, #12B886); color: var(--subj-bio, #0CA678); box-shadow: 0 0 0 3px rgba(18, 184, 134, 0.12); }
+.ecs-ask { margin-top: 12px; }
+/* 렌즈 모드별 강조 — 기본은 전부 은은, 모드에서 해당 요소만 선명 */
+.ecs-region .ecs-eco, .ecs-region .ecs-life, .ecs-region .ecs-vary { transition: opacity 0.35s ease, filter 0.35s ease; }
+.ecs-board.mode-eco .ecs-life, .ecs-board.mode-eco .ecs-vary { opacity: 0.25; }
+.ecs-board.mode-eco .ecs-eco { filter: drop-shadow(0 0 4px rgba(18, 184, 134, 0.65)); }
+.ecs-board.mode-kind .ecs-eco { opacity: 0.45; }
+.ecs-board.mode-kind .ecs-life { filter: drop-shadow(0 0 3px rgba(240, 140, 0, 0.7)); }
+.ecs-board.mode-kind .ecs-vary { opacity: 0.3; }
+.ecs-board.mode-vary .ecs-eco, .ecs-board.mode-vary .ecs-life { opacity: 0.22; }
+.ecs-board.mode-vary .ecs-vary { transform: scale(1.9) translate(-22px, -14px); transform-box: fill-box; transform-origin: center; }
+.ecs-board.mode-vary .ecs-vary { transition: transform 0.5s var(--spring-soft, ease-out); }
+.ecs-vary .tappable { cursor: pointer; }
+.ecs-vary .seen circle:first-child { stroke-width: 2.6; filter: drop-shadow(0 0 3px rgba(18, 184, 134, 0.8)); }
+
+/* ── L7 beakIslandsLab(.bkl-) — 두 섬의 새 ─────────────────────── */
+.bkl-board { padding: 10px; }
+.bkl-islands { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.bkl-island { display: grid; gap: 4px; }
+.bkl-island svg { width: 100%; height: auto; display: block; background: #EAF6FF; border-radius: 12px; border: 1px solid #CBE3F5; }
+.bkl-island b { font-size: 12px; color: var(--ink, #191F28); text-align: center; }
+.bkl-count { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-top: 5px; min-height: 22px; }
+.bkl-chip {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--c, #8B95A1);
+  border-radius: 999px;
+  padding: 2.5px 8px;
+  transition: opacity 0.3s ease;
+}
+.bkl-chip b { font-size: 11.5px; }
+.bkl-genrow { margin-top: 12px; display: grid; }
+.bkl-gen {
+  height: 50px;
+  border-radius: 15px;
+  border: 1.5px solid var(--subj-bio, #12B886);
+  background: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--subj-bio, #0CA678);
+  box-shadow: 0 0 0 3px rgba(18, 184, 134, 0.1);
+  transition: transform 0.12s ease, opacity 0.25s;
+}
+.bkl-gen:active { transform: scale(0.97); }
+.bkl-gen:disabled { opacity: 0.4; box-shadow: none; border-color: var(--n200, #E5E8EB); color: var(--n600, #6B7684); }
+.bkl-ask { margin-top: 12px; }
+.bkl-flock g { transition: opacity 0.4s ease; }
+
 /* 훅 brickhouse 안내 캡션 */
 .hb4-bh-cap { text-align: center; font-size: 12.5px; font-weight: 700; color: var(--n600, #6B7684); margin-top: 6px; }
 .hb4-bh .bh-st { opacity: 0; transition: opacity 0.4s ease; }

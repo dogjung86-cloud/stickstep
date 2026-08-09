@@ -96,6 +96,38 @@ const MINI: Record<string, () => string> = {
       <circle cx="46" cy="18" r="8" fill="#FFA8A8" stroke="#E03131" stroke-width="2.4"/>
       <path d="M42 18 c2 -4 6 -4 8 0 c-2 4 -6 4 -8 0 Z" fill="#E03131" opacity="0.5"/>
     `, "식물과 동물의 갈라지는 단계 경로"),
+  // L6: 눈금 세 개 저울(생태계·종류·변이)
+  scaleTrio: () => svg("0 0 64 64", `
+      <line x1="10" y1="54" x2="54" y2="54" stroke="#8B95A1" stroke-width="3" stroke-linecap="round"/>
+      <rect x="12" y="36" width="9" height="18" rx="2.5" fill="#4DABF7"/>
+      <rect x="27" y="26" width="9" height="28" rx="2.5" fill="${B4.bio}"/>
+      <rect x="42" y="16" width="9" height="38" rx="2.5" fill="#F08C00"/>
+      <path d="M14 10 l4 4 8 -8" stroke="${B4.bioDeep}" stroke-width="3" stroke-linecap="round" fill="none"/>
+    `, "세 개의 다양성 눈금 막대"),
+  // L6: 풍요로운 땅 — 여러 환경과 생물
+  richLand: () => svg("0 0 64 64", `
+      <path d="M4 44 q14 -10 28 0 t28 0 v16 h-56 Z" fill="#C8E6C0" stroke="#8FBE85" stroke-width="2.2"/>
+      <ellipse cx="20" cy="52" rx="10" ry="5" fill="#A5D8FF" stroke="#4DABF7" stroke-width="2"/>
+      <circle cx="16" cy="26" r="7" fill="#69B05C"/>
+      <rect x="14.5" y="31" width="3" height="7" fill="#8A6636"/>
+      <path d="M44 20 q3 -6 6 0 q-3 6 -6 0 Z" fill="#74C0FC" stroke="#1971C2" stroke-width="1.6"/>
+      <circle cx="50" cy="44" r="3.4" fill="#FAA2C1"/>
+      <circle cx="36" cy="50" r="2.6" fill="#FFD43B"/>
+    `, "여러 생태계와 생물이 어울린 땅"),
+  // L7: 무당벌레 세 마리 — 무늬가 제각각(변이)
+  variDots: () => svg("0 0 64 64", `
+      <g transform="translate(18 20)"><circle r="10" fill="#F03E3E" stroke="#A61E1E" stroke-width="2"/><circle cx="-3.4" cy="-2" r="2.2" fill="#1A1A1A"/><circle cx="4" cy="2.4" r="2.2" fill="#1A1A1A"/></g>
+      <g transform="translate(46 26)"><circle r="10" fill="#F03E3E" stroke="#A61E1E" stroke-width="2"/><circle cx="0" cy="-3" r="2.2" fill="#1A1A1A"/><circle cx="-4" cy="3" r="2.2" fill="#1A1A1A"/><circle cx="4" cy="3" r="2.2" fill="#1A1A1A"/></g>
+      <g transform="translate(30 47)"><circle r="10" fill="#FFB020" stroke="#B57808" stroke-width="2"/><circle cx="-3.4" cy="0" r="2" fill="#1A1A1A"/><circle cx="3.4" cy="-2.6" r="2" fill="#1A1A1A"/><circle cx="2.8" cy="3.4" r="2" fill="#1A1A1A"/><circle cx="-2.4" cy="-3.8" r="2" fill="#1A1A1A"/></g>
+    `, "무늬가 서로 다른 무당벌레들"),
+  // L7: 한 갈래가 둘로 — 종류의 다양화
+  splitBranch: () => svg("0 0 64 64", `
+      <path d="M32 58 v-16 M32 42 C32 30 18 32 16 16 M32 42 C32 30 46 32 48 16" stroke="#8B95A1" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      <path d="M8 12 l9 3 -9 4 Z" fill="#E8590C"/>
+      <circle cx="20" cy="14" r="5.5" fill="#FFF8EC" stroke="#5F574A" stroke-width="1.8"/>
+      <path d="M52 13 l10 1.6 -10 2.4 Z" fill="#1971C2"/>
+      <circle cx="46" cy="15" r="5.5" fill="#FFF8EC" stroke="#5F574A" stroke-width="1.8"/>
+    `, "한 무리가 두 갈래로 나뉘는 그림"),
 };
 
 /** recap 카드 미니아트 — 키가 없으면 세포 기본 도해로 폴백(신규 키는 레슨 저작 때 추가). */

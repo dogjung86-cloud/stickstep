@@ -387,7 +387,107 @@ export function renderBrickHouse(
     }
   });
 }
-export const renderDokdoFriends = sceneStub("독도의 생물");
+/** L6 dokdofriends — 독도(교과서 도입 소재)의 숨은 생물 3곳을 탭해 깨우고,
+ *  "이 작은 섬에 몇 종류나 살까" 예측으로 잇는다. */
+export function renderDokdoFriends(
+  scene: HTMLElement,
+  helper: HTMLElement,
+  s: HookLike,
+  finish: () => void,
+  face: Face,
+): void {
+  const fig = el("div", { class: "hb4-stage hb4-dk" });
+  fig.innerHTML = `
+  <svg viewBox="0 0 320 210" fill="none" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="독도 풍경 — 숨은 생물을 탭해 보세요">
+    <defs>
+      <linearGradient id="hb4dkSea" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#A5D8FF"/><stop offset="1" stop-color="#4DABF7"/>
+      </linearGradient>
+      <linearGradient id="hb4dkRock" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#B5AC9C"/><stop offset="1" stop-color="#867C6B"/>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="120" width="320" height="90" fill="url(#hb4dkSea)"/>
+    <path d="M0 126 q20 -5 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" stroke="#E7F5FF" stroke-width="2.4" fill="none" opacity="0.7"/>
+    <path d="M58 128 L74 46 L96 60 L112 128 Z" fill="url(#hb4dkRock)" stroke="#5F574A" stroke-width="2.6" stroke-linejoin="round"/>
+    <path d="M196 128 L212 66 L238 52 L262 128 Z" fill="url(#hb4dkRock)" stroke="#5F574A" stroke-width="2.6" stroke-linejoin="round"/>
+    <circle cx="286" cy="34" r="16" fill="#FFD43B" opacity="0.9"/>
+    <g class="dk-spot" data-d="gull" role="button" tabindex="0" aria-label="바위 꼭대기 살펴보기">
+      <circle class="dk-hint" cx="82" cy="40" r="15" fill="#FFFFFF" opacity="0.35"/>
+      <g class="dk-life">
+        <ellipse cx="82" cy="42" rx="11" ry="7.5" fill="#FFFFFF" stroke="#5F574A" stroke-width="2"/>
+        <circle cx="92" cy="36" r="5" fill="#FFFFFF" stroke="#5F574A" stroke-width="2"/>
+        <path d="M96 36 l6 2 -6 2 Z" fill="#F08C00"/>
+        <path d="M74 42 q-6 -6 -2 -10" stroke="#5F574A" stroke-width="2" fill="none"/>
+      </g>
+    </g>
+    <g class="dk-spot" data-d="flower" role="button" tabindex="0" aria-label="바위틈 살펴보기">
+      <circle class="dk-hint" cx="236" cy="92" r="15" fill="#FFFFFF" opacity="0.35"/>
+      <g class="dk-life">
+        <path d="M236 104 v-12" stroke="#2B8A3E" stroke-width="2.6"/>
+        <g fill="#C9A0F5" stroke="#7048E8" stroke-width="1.6">
+          <ellipse cx="236" cy="84" rx="4" ry="6"/>
+          <ellipse cx="229" cy="90" rx="6" ry="4"/>
+          <ellipse cx="243" cy="90" rx="6" ry="4"/>
+        </g>
+        <circle cx="236" cy="89" r="3.4" fill="#FFD43B"/>
+      </g>
+    </g>
+    <g class="dk-spot" data-d="fish" role="button" tabindex="0" aria-label="물속 살펴보기">
+      <circle class="dk-hint" cx="152" cy="164" r="16" fill="#FFFFFF" opacity="0.3"/>
+      <g class="dk-life">
+        <ellipse cx="150" cy="164" rx="15" ry="8.5" fill="#74C0FC" stroke="#1971C2" stroke-width="2.2"/>
+        <path d="M165 164 l10 -7 v14 Z" fill="#74C0FC" stroke="#1971C2" stroke-width="2.2" stroke-linejoin="round"/>
+        <circle cx="143" cy="162" r="1.8" fill="#1971C2"/>
+        <path d="M138 158 q-2 6 0 12" stroke="#1971C2" stroke-width="1.6" fill="none" opacity="0.7"/>
+      </g>
+    </g>
+  </svg>`;
+  const choicesBox = el("div", { class: "hook-choices" });
+  scene.append(fig, choicesBox);
+  helper.innerHTML = "동해 한가운데 <b>독도</b>예요. 바위섬뿐인 것 같지만… <b>반짝이는 곳 세 군데</b>를 탭해 보세요!";
+
+  const NAME: Record<string, string> = {
+    gull: "바위 꼭대기엔 <b>괭이갈매기</b>! 독도는 괭이갈매기의 대표 번식지예요.",
+    flower: "바위틈엔 보라색 <b>해국</b>이 피어요 — 바닷바람을 견디는 야무진 꽃이죠.",
+    fish: "물속엔 <b>돌돔</b>이 유유히 — 독도 바다는 물고기들의 아파트랍니다.",
+  };
+  const found = new Set<string>();
+  const spots = [...fig.querySelectorAll<SVGGElement>(".dk-spot")];
+  const reveal = (g: SVGGElement): void => {
+    const d = g.dataset.d ?? "";
+    if (found.has(d)) return;
+    found.add(d);
+    g.classList.add("on");
+    haptic(HAPTIC.tap);
+    helper.innerHTML = NAME[d] ?? "";
+    if (found.size === 1) face("curious");
+    if (found.size === spots.length) {
+      face("surprised");
+      helper.innerHTML = "새도, 꽃도, 물고기도! 그렇다면 — 이 작은 독도에 사는 생물은 <b>모두 몇 종류</b>나 될까요?";
+      ask(choicesBox, helper, {
+        choices: s.choices ?? [
+          "1,000종이 넘는다",
+          "20종쯤 된다",
+          "새 말고는 거의 없다",
+        ],
+        good: "정답! 땅 위와 바닷속을 합치면 <b>1,000종이 훌쩍 넘는</b> 생물이 독도에 살아요. 이 '다양한 정도'를 재는 눈금을 배우러 가요.",
+        bad: "놀랍게도 <b>1,000종이 넘어요</b> — 땅 위의 새와 풀, 바닷속 물고기와 해조류까지! 이 '다양한 정도'를 재는 눈금을 배우러 가요.",
+        onDone: finish,
+      });
+    }
+  };
+  spots.forEach((g) => {
+    g.addEventListener("click", () => reveal(g));
+    g.addEventListener("keydown", (e) => {
+      const k = e as KeyboardEvent;
+      if (k.key === " " || k.key === "Enter") {
+        k.preventDefault();
+        reveal(g);
+      }
+    });
+  });
+}
 export const renderMartShelf = sceneStub("마트 진열대");
 export const renderMushroomScan = sceneStub("버섯 스캔");
 export const renderBeeGone = sceneStub("꿀벌이 사라진 마트");

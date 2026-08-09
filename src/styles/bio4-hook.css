@@ -51,6 +51,18 @@
   .hb4-bd .bd-cells { animation: none; }
 }
 
+/* ── L6 dokdofriends(독도의 생물) ── */
+.hb4-dk .dk-spot { cursor: pointer; }
+.hb4-dk .dk-spot:focus-visible { outline: 2px solid var(--subj-bio, #12B886); outline-offset: 2px; border-radius: 50%; }
+.hb4-dk .dk-hint { animation: hb4blink 1.6s ease-in-out infinite; }
+.hb4-dk .dk-spot.on .dk-hint { animation: none; opacity: 0; }
+.hb4-dk .dk-life { opacity: 0; transform: scale(0.5); transform-box: fill-box; transform-origin: center; transition: opacity 0.35s ease, transform 0.45s var(--spring, cubic-bezier(0.34, 1.35, 0.5, 1)); }
+.hb4-dk .dk-spot.on .dk-life { opacity: 1; transform: scale(1); }
+@keyframes hb4blink { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.5; } }
+@media (prefers-reduced-motion: reduce) {
+  .hb4-dk .dk-hint { animation: none; opacity: 0.35; }
+}
+
 /* ── L3 waterlens(물방울 돋보기) ── */
 .hb4-wl { cursor: pointer; }
 .hb4-wl:focus-visible { outline: 2px solid var(--subj-bio, #12B886); outline-offset: 2px; }
