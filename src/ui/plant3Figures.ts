@@ -135,6 +135,32 @@ const MINI: Record<string, () => string> = {
       <rect x="34" y="10" width="24" height="44" rx="8" fill="#FFF4E6" stroke="#FF922B" stroke-width="2.6"/>
       <path d="M12 22 h12 M12 32 h12 M12 42 h12 M40 22 h12 M40 32 h12 M40 42 h12" stroke="#8B95A1" stroke-width="2.4" stroke-linecap="round"/>
     `, "광합성과 호흡 비교표"),
+  // L6: 위아래 화살표가 달린 줄기와 설탕 알갱이(체관 이동)
+  sugarTruck: () =>
+    svg("0 0 64 64", `
+      <rect x="27" y="8" width="10" height="48" rx="5" fill="#8FBE85" stroke="#4E7C46" stroke-width="2.4"/>
+      <circle cx="32" cy="22" r="4.5" fill="${P3.sugar}" stroke="#B8860B" stroke-width="1.6"/>
+      <circle cx="32" cy="42" r="4.5" fill="${P3.sugar}" stroke="#B8860B" stroke-width="1.6"/>
+      <path d="M14 24 v-10 M10 18 l4 -6 4 6 M14 40 v10 M10 46 l4 6 4 -6" stroke="#8B95A1" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+      <path d="M50 14 c-4 6 -10 8 -14 8 c1 -7 6 -11 14 -8 Z" fill="#51CF66" stroke="#1E5A2A" stroke-width="2"/>
+    `, "체관을 오르내리는 설탕"),
+  // L6: 새싹+번개(이용)
+  useGrow: () =>
+    svg("0 0 64 64", `
+      <path d="M24 56 h16 l-2 -12 h-12 Z" fill="#C9885A" stroke="#8A5A30" stroke-width="2.2"/>
+      <path d="M32 44 v-14 M32 34 c-7 -2 -10 -9 -9 -14 c7 0 11 6 11 11 M32 36 c7 -2 10 -9 9 -14 c-7 0 -11 6 -11 11" fill="#69C77E" stroke="#2E7D46" stroke-width="2.4"/>
+      <path d="M50 8 l-6 10 h5 l-4 10 10 -13 h-5 l4 -7 Z" fill="${P3.energy}" stroke="#E8A80C" stroke-width="1.6" stroke-linejoin="round"/>
+    `, "양분으로 자라는 새싹과 에너지"),
+  // L6: 저장 단지 셋(형태 다양)
+  storeJar: () =>
+    svg("0 0 64 64", `
+      <path d="M8 32 c0 -6 14 -6 14 0 v16 c0 6 -14 6 -14 0 Z" fill="#EAF6EF" stroke="${P3.leafDeep}" stroke-width="2.4"/>
+      <path d="M25 26 c0 -6 14 -6 14 0 v22 c0 6 -14 6 -14 0 Z" fill="#FFF4E6" stroke="#E8A80C" stroke-width="2.4"/>
+      <path d="M42 32 c0 -6 14 -6 14 0 v16 c0 6 -14 6 -14 0 Z" fill="#FFF0F3" stroke="#C2566B" stroke-width="2.4"/>
+      <circle cx="15" cy="42" r="3" fill="${P3.starch}"/>
+      <circle cx="32" cy="38" r="3" fill="${P3.sugar}"/>
+      <circle cx="49" cy="42" r="3" fill="#C2566B"/>
+    `, "여러 형태의 저장 단지"),
 } as const as Record<string, () => string>;
 
 /** recap 카드 미니아트 — 키가 없으면 잎 기본. */
