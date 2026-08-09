@@ -89,6 +89,28 @@ const MINI: Record<string, () => string> = {
       <line x1="32" y1="36" x2="37" y2="30" stroke="#4E5968" stroke-width="2.6" stroke-linecap="round"/>
       <circle cx="18" cy="20" r="4.5" fill="${P3.light}"/>
     `, "온실 안 조건 다이얼"),
+  // L4: 상자에서 번개(양분→에너지)
+  boltBox: () =>
+    svg("0 0 64 64", `
+      <path d="M14 34 h36 v20 a4 4 0 0 1 -4 4 h-28 a4 4 0 0 1 -4 -4 Z" fill="#F4E3C2" stroke="#A9854A" stroke-width="2.6"/>
+      <path d="M12 34 l6 -8 h28 l6 8 Z" fill="#E8CB92" stroke="#A9854A" stroke-width="2.4"/>
+      <path d="M36 4 l-9 16 h7 l-6 15 15 -19 h-7 l6 -12 Z" fill="${P3.energy}" stroke="#E8A80C" stroke-width="2" stroke-linejoin="round"/>
+    `, "양분 상자에서 솟는 에너지"),
+  // L4: 마이토콘드리아 콩
+  mitoBean: () =>
+    svg("0 0 64 64", `
+      <path d="M14 26 c8 -12 28 -14 38 -4 c-2 14 -16 24 -30 21 c-10 -2 -12 -10 -8 -17 Z" fill="${P3.danger}" stroke="#B02525" stroke-width="2.8"/>
+      <path d="M22 30 c7 -6 16 -7 23 -3 M20 37 c7 -5 16 -6 23 -3" stroke="#FFD3D3" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+      <path d="M48 10 l3 6 6 3 -6 3 -3 6 -3 -6 -6 -3 6 -3 Z" fill="${P3.energy}"/>
+    `, "마이토콘드리아"),
+  // L4: 해+달 아래 늘 켜진 초록불
+  alwaysOn: () =>
+    svg("0 0 64 64", `
+      <circle cx="18" cy="14" r="8" fill="${P3.light}"/>
+      <path d="M46 8 a9 9 0 1 0 5 16 a7 7 0 0 1 -5 -16" fill="#8B95A1"/>
+      <rect x="18" y="34" width="28" height="20" rx="7" fill="#FFFFFF" stroke="#8B95A1" stroke-width="2.6"/>
+      <circle cx="32" cy="44" r="6" fill="#20C997" stroke="#0CA678" stroke-width="2.2"/>
+    `, "낮과 밤 모두 켜진 표시등"),
 } as const as Record<string, () => string>;
 
 /** recap 카드 미니아트 — 키가 없으면 잎 기본. */
