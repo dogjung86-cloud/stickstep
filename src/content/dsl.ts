@@ -127,6 +127,8 @@ export const hook = (o: {
     | "zoomtwo" | "signs" | "peekatom" | "menusort" | "springwater" | "magnetpull"
     | "potmass" | "waterweed" | "windowplant" | "bedroomplant" | "germinating" | "fruitthinning"
     | "sproutpot" | "stomapeek" | "darkbox" | "mixedtest" | "greenhouse" | "mangrove" | "honeyflower"
+    // 중2 Ⅴ v3 훅 5종(hookPlant3.ts, 2026-08-10 재제작) — 현행·v2 13종과 이름이 겹치지 않는다
+    | "potatodrop" | "winterberry" | "veggiebag" | "tropicalnight" | "sweetpotato"
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
     | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
@@ -550,6 +552,16 @@ export const beakIslandsLab = (o: B4LabOpt): Step => ({ type: "beakIslandsLab", 
 export const groupRuleLab = (o: B4LabOpt): Step => ({ type: "groupRuleLab", ...o });
 export const kingdomGateLab = (o: B4LabOpt): Step => ({ type: "kingdomGateLab", ...o });
 export const webDropLab = (o: B4LabOpt): Step => ({ type: "webDropLab", ...o });
+
+// ── 중2 Ⅴ 식물과 에너지 v3 랩 7종(2026-08-10 재제작 — steps/plant3/*) ──
+// 병행 배선(unit5v3.ts + ss.g2u5v3 토글) 전용 — 현행 unit5 계열·v2(plant2)와 이름이 겹치지 않는다.
+export const greenHuntLab = (o: B4LabOpt): Step => ({ type: "greenHuntLab", ...o });
+export const gasCrossLab = (o: B4LabOpt): Step => ({ type: "gasCrossLab", ...o });
+export const starchQuestLab = (o: B4LabOpt): Step => ({ type: "starchQuestLab", ...o });
+export const factorCurveLab = (o: B4LabOpt): Step => ({ type: "factorCurveLab", ...o });
+export const flipEngineLab = (o: B4LabOpt): Step => ({ type: "flipEngineLab", ...o });
+export const sunGaugeLab = (o: B4LabOpt): Step => ({ type: "sunGaugeLab", ...o });
+export const sapFlowLab = (o: B4LabOpt): Step => ({ type: "sapFlowLab", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

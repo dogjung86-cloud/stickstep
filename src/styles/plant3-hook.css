@@ -1,0 +1,55 @@
+/* plant3-hook.css — 중2 Ⅴ v3 훅 5장면(hookPlant3.ts, .hp3- 접두).
+   장면: potatodrop(감자+소독약) · winterberry(한겨울 딸기) · veggiebag(채소 봉지 숨구멍) ·
+   tropicalnight(열대야 과일 가게) · sweetpotato(고구마 캐기). */
+
+.hp3-stage {
+  border-radius: 16px;
+  overflow: hidden;
+  background: #FDFCF7;
+  border: 1px solid #E8E4D4;
+}
+.hp3-stage svg { display: block; width: 100%; height: auto; }
+.hp3-stage[role="button"] { cursor: pointer; }
+.hp3-stage[role="button"]:focus-visible { outline: 2px solid var(--subj-bio, #12B886); outline-offset: 2px; }
+
+/* potatodrop — 방울 낙하 후 청람 반점 확산 */
+.hp3-pd .pd-drop { opacity: 0; transition: opacity 0.2s ease, transform 0.55s cubic-bezier(0.5, 0, 0.9, 0.4); }
+.hp3-pd .pd-stain { opacity: 0; transform: scale(0.2); transform-box: fill-box; transform-origin: center; transition: opacity 0.5s ease 0.55s, transform 0.7s var(--spring-soft, ease-out) 0.55s; }
+.hp3-pd.dropped .pd-drop { opacity: 1; transform: translate(-108px, 10px); }
+.hp3-pd.dropped .pd-stain { opacity: 1; transform: scale(1); }
+.hp3-pd.dropped .pd-bottle { transform: rotate(-14deg); transform-box: fill-box; transform-origin: center; transition: transform 0.3s ease; }
+
+/* winterberry — 라벨 팝 */
+.hp3-wb .wb-tag { opacity: 0; transform: translateY(8px) scale(0.7); transform-box: fill-box; transform-origin: center; transition: opacity 0.4s ease, transform 0.5s var(--spring-soft, ease-out); }
+.hp3-wb.picked .wb-tag { opacity: 1; transform: translateY(0) scale(1); }
+.hp3-wb.picked .wb-pack { transform: translateY(-6px); transition: transform 0.4s var(--spring-soft, ease-out); }
+
+/* veggiebag — 돋보기 클로즈업·공기 흐름 */
+.hp3-vb .vb-zoom { opacity: 0; transform: scale(0.6); transform-box: fill-box; transform-origin: center; transition: opacity 0.4s ease, transform 0.5s var(--spring-soft, ease-out); }
+.hp3-vb.zoomed .vb-zoom { opacity: 1; transform: scale(1); }
+.hp3-vb.zoomed .vb-hole { fill: var(--subj-bio, #12B886); }
+.hp3-vb .vb-air { opacity: 0; }
+.hp3-vb.zoomed .vb-air { opacity: 1; transition: opacity 0.5s ease 0.4s; }
+
+/* tropicalnight — 수은주 상승 */
+.hp3-tn .tn-mercury { transform-box: fill-box; transform-origin: center bottom; transform: scaleY(0.4); transition: transform 1s cubic-bezier(0.3, 0, 0.4, 1); }
+.hp3-tn.hot .tn-mercury { transform: scaleY(2.1); }
+.hp3-tn.hot .tn-sign { animation: hp3Wiggle 0.7s ease 0.5s; }
+@keyframes hp3Wiggle {
+  0%, 100% { transform: rotate(0); }
+  30% { transform: rotate(-2.4deg); }
+  70% { transform: rotate(1.8deg); }
+}
+
+/* sweetpotato — 흙 속 실루엣 → 뽑혀 올라옴 */
+.hp3-sp .sp-tuber { opacity: 0.22; transition: opacity 0.5s ease, transform 0.85s var(--spring-soft, ease-out); }
+.hp3-sp .sp-q { transition: opacity 0.3s ease; }
+.hp3-sp.pulled .sp-tuber { opacity: 1; transform: translateY(-52px); }
+.hp3-sp.pulled .sp-vine { transform: translateY(-16px); transition: transform 0.85s var(--spring-soft, ease-out); }
+.hp3-sp.pulled .sp-q { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hp3-pd .pd-drop, .hp3-pd .pd-stain, .hp3-wb .wb-tag, .hp3-vb .vb-zoom,
+  .hp3-tn .tn-mercury, .hp3-sp .sp-tuber, .hp3-sp .sp-vine { transition-duration: 0.2s; }
+  .hp3-tn.hot .tn-sign { animation: none; }
+}

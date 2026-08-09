@@ -38,6 +38,14 @@ import { beakIslandsLab } from "./steps/bio4/beakIslandsLab";
 import { groupRuleLab } from "./steps/bio4/groupRuleLab";
 import { kingdomGateLab } from "./steps/bio4/kingdomGateLab";
 import { webDropLab } from "./steps/bio4/webDropLab";
+// ── 중2 Ⅴ v3 랩 7종(2026-08-10 재제작, steps/plant3/*) — 병행 배선(unit5v3) 전용 ──
+import { greenHuntLab } from "./steps/plant3/greenHuntLab";
+import { gasCrossLab } from "./steps/plant3/gasCrossLab";
+import { starchQuestLab } from "./steps/plant3/starchQuestLab";
+import { factorCurveLab } from "./steps/plant3/factorCurveLab";
+import { flipEngineLab } from "./steps/plant3/flipEngineLab";
+import { sunGaugeLab } from "./steps/plant3/sunGaugeLab";
+import { sapFlowLab } from "./steps/plant3/sapFlowLab";
 import { comic } from "./steps/comic";
 import { hook } from "./steps/hook";
 import { recap } from "./steps/recap";
@@ -592,6 +600,14 @@ const R: Record<string, StepRenderer> = {
   groupRuleLab,
   kingdomGateLab,
   webDropLab,
+  // 중2 Ⅴ v3 랩(2026-08-10 재제작)
+  greenHuntLab,
+  gasCrossLab,
+  starchQuestLab,
+  factorCurveLab,
+  flipEngineLab,
+  sunGaugeLab,
+  sapFlowLab,
 };
 
 export function getRenderer(type: string): StepRenderer | undefined {

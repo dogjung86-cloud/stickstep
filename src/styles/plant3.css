@@ -1,0 +1,75 @@
+/* plant3.css — 중2 Ⅴ v3 재제작 공용 크롬(랩 공통 뼈대). 랩별 세부는 이 시트의 각 섹션에.
+   접두 규약: 킷 공통 .p3-*, 랩별 .ghz-(초록 추적) .gxc-(기체 교차) .stq-(녹말 수사)
+   .fct-(요인 곡선) .fpe-(뒤집기 엔진) .sgg-(해 게이지) .sfr-(양분 길찾기). 훅은 plant3-hook.css(.hp3-).
+   선점 검사 완료(2026-08-10, src/styles·steps·ui 전수 grep 0건 — plant-*·plant2-*·pgx-·pg-와 무충돌). */
+
+/* ── 공통: 밝은 관찰 보드(bio4.css .b4-board 문법 — 다크 .stage가 과한 소형 랩용) ── */
+.p3-board {
+  background: linear-gradient(180deg, #F4FBF7, #EAF6EF);
+  border: 1px solid #D3E9DC;
+  border-radius: var(--r-lg, 20px);
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.p3-board.night {
+  background: radial-gradient(120% 90% at 50% 0%, #1B2540, #141B30);
+  border-color: rgba(120, 150, 190, 0.3);
+}
+
+/* 목표 칩 톤(bio 계열 재사용) */
+.pn-badge.p3 b { color: var(--subj-bio, #12B886); }
+.pn-badge.p3.on {
+  border-color: var(--subj-bio, #12B886);
+  box-shadow: 0 0 0 3px rgba(18, 184, 134, 0.14);
+}
+
+/* 공통 흔들기(오답 피드백) */
+@keyframes p3Shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  60% { transform: translateX(4px); }
+}
+.p3-board.shake { animation: p3Shake 0.4s ease; }
+
+/* 공통 팝 */
+@keyframes p3Pop {
+  0% { transform: scale(0.6); opacity: 0.3; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ── L1 greenHuntLab(.ghz-) — 초록의 정체 3단 줌 ─────────────────── */
+.ghz-board { padding: 10px; cursor: pointer; }
+.ghz-board:focus-visible { outline: 2px solid var(--subj-bio, #12B886); outline-offset: 2px; }
+.ghz-board { position: relative; aspect-ratio: 340 / 240; }
+.ghz-layer {
+  position: absolute;
+  inset: 10px;
+  border-radius: 14px;
+  overflow: hidden;
+  opacity: 0;
+  transform: scale(0.72);
+  transition: opacity 0.45s var(--ease-out, ease-out), transform 0.45s var(--ease-out, ease-out);
+  pointer-events: none;
+}
+.ghz-layer svg { width: 100%; height: 100%; display: block; }
+.ghz-layer.cur { opacity: 1; transform: scale(1); }
+.ghz-layer.out { opacity: 0; transform: scale(2.7); }
+.ghz-ring circle { transform-box: fill-box; transform-origin: center; animation: ghzPulse 1.6s ease-in-out infinite; }
+@keyframes ghzPulse {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.14); opacity: 0.5; }
+}
+.ghz-rays { opacity: 0; animation: ghzFade 0.7s ease 0.35s forwards; }
+.ghz-spark path { transform-box: fill-box; transform-origin: center; animation: ghzTwinkle 1.4s ease-in-out infinite; }
+.ghz-spark path:nth-child(2) { animation-delay: 0.55s; }
+@keyframes ghzFade { to { opacity: 1; } }
+@keyframes ghzTwinkle {
+  0%, 100% { transform: scale(0.7); opacity: 0.4; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+.ghz-q { margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) {
+  .ghz-ring circle, .ghz-spark path { animation: none; }
+  .ghz-rays { opacity: 1; animation: none; }
+}

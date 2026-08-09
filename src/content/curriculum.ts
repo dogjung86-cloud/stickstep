@@ -21,6 +21,9 @@ import { G2_UNIT4 } from "./g2/unit4";
 // 광합성 발견 만화 7컷만 이 파일의 L1으로 이식했고, 나머지는 전부 원복했다.
 // v2 산출물(content/g2/unit5v2.ts·steps/plant2/*·ui/plantKit2·plantFigures2·styles/plant2.css)은 보존만).
 import { G2_UNIT5 } from "./g2/unit5";
+// 중2 Ⅴ v3 재제작(2026-08-10) — 병행 배선. DEV에서 sessionStorage "ss.g2u5v3"="1"이면 v3가 뜬다.
+// 현행 G2_UNIT5와 나란히 비교하기 위한 토글(U2_ACTIVE 문법 — 전면 교체 원복 사고의 재발 방지 수칙).
+import { G2_UNIT5_V3 } from "./g2/unit5v3";
 // 중2 Ⅵ 동물과 에너지도 기존 구현이 정본(2026-07-26 사용자 확정 — v2 재제작본은 전부 원복).
 // v2 산출물(content/g2/unit6v2.ts·steps/anim/*·steps/hookAnimal*·ui/animalKit·animalLab·
 // animalFigures·styles/animal.css·public/anim/*)은 보존만 한다.
@@ -58,13 +61,23 @@ const U2_ACTIVE: Unit = (() => {
 
 export const CURRICULUM: Unit[] = [UNIT1, U2_ACTIVE, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7];
 
+const U5G2_ACTIVE: Unit = (() => {
+  try {
+    const dev = (import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV;
+    if (dev && sessionStorage.getItem("ss.g2u5v3") === "1") return G2_UNIT5_V3;
+  } catch {
+    /* sessionStorage 접근 불가 환경(시딩·테스트)은 현행 유지 */
+  }
+  return G2_UNIT5;
+})();
+
 // 중2 — 대단원 8개.
 export const CURRICULUM_G2: Unit[] = [
   G2_UNIT1,
   G2_UNIT2,
   G2_UNIT3,
   G2_UNIT4,
-  G2_UNIT5,
+  U5G2_ACTIVE,
   G2_UNIT6,
   G2_UNIT7,
   G2_UNIT8,
