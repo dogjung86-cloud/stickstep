@@ -206,7 +206,7 @@
 .fpe-sky-night { opacity: 0; }
 .fpe-board.night .fpe-sky-day { opacity: 0; }
 .fpe-board.night .fpe-sky-night { opacity: 1; }
-.fpe-board.night .fpe-scB text { fill: #F2F4F6; }
+/* 칩은 밤에도 흰 배경 그대로라 글자색을 바꾸지 않는다(흰 글자 사고 — 눈검수로 적발) */
 .fpe-engine-light { animation: fpeBlink 1.6s ease-in-out infinite; }
 @keyframes fpeBlink {
   0%, 100% { opacity: 1; }

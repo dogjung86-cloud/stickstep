@@ -537,3 +537,38 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
   `qa/shot-u2v3.mjs`(눈검수 14샷 → qa/shots/u2v3-*.png).
 - **잔여 백로그**: 만화 말풍선(bubbles)은 미저작 — 넣으려면 발주 컷의 화자 머리 픽셀 실측 관행
   필수. 단원평가 u2 풀은 재매핑 불필요(레슨 id 동일)나 병합 확정 시 스팟 검산 권장.
+
+## 중2 Ⅴ 식물과 에너지 — v3 재제작(2026-08-10, 병행 배선)
+- **배선**: `content/g2/unit5v3.ts`(G2_UNIT5_V3) — 레슨 id·수·무료 구간이 현행과 동일(g2u5l1~l6,
+  무료 L1~L3 · 시험 풀 v2 160제/오답노트 호환, 소단원 주제 배분도 유지). curriculum.ts의
+  **DEV 토글 `sessionStorage "ss.g2u5v3"="1"`**(U5G2_ACTIVE — U2_ACTIVE 문법)로 현행 unit5와 병행
+  비교. 현행 unit5.ts·v2 보존물(unit5v2/plant2 계열)은 무수정 보존. 브랜치 `sci-g2u5-v3`
+  (from sci-u2-v3 — bio4Kit.b4Ask 공용 재사용 때문. main 병합은 사용자 판정 후).
+- **설계 원천은 교과서 원문뿐**(pypdf 추출 정독). **이 교과서(2022 개정 미래엔)에는 증산 작용
+  소단원이 없다** — 광합성/환경요인/호흡과 광합성/광합성산물의 저장과 이용 4개 소단원이 전부
+  (구판 기억으로 증산 레슨을 만들면 과잉). 소단원 뼈대는 원문 정독으로 확정하는 게 정석.
+- **파일**: 소형 랩 7종 `lessons/steps/plant3/*`(greenHunt 3단 줌·gasCross 센서 그래프·starchQuest
+  절차 스테퍼·factorCurve 곡선 스크럽·flipEngine 식 뒤집기·sunGauge 해 게이지·sapFlow SMIL 배송) ·
+  훅 5장면 `steps/hookPlant3.ts`(potatodrop·winterberry·veggiebag·tropicalnight·sweetpotato) ·
+  `ui/plant3Kit.ts`(P3 물질색 시맨틱 — 산물·기체 색은 여기서만) · `ui/plant3Figures.ts`(psFlowFig·
+  factorShapesFig·dayNightGasFig 전부 blanks 가림 인자, 미니아트 17키) · 시트 `plant3.css`/
+  `plant3-hook.css`(전 랩 rAF·캔버스 없음 — SVG+CSS 전환+자가 예약 setTimeout, 판정은 b4Ask 공용).
+- **v2 원복 교훈의 반영**: 랩은 전부 "통찰 1개 + 무대 저밀도"(조작부 무대 아래·helper 무대 위·판정
+  질문 선택지 위), 레슨은 교과서 서사형(concept→소형 랩→문제 촘촘 교차 — L2는 탐구 1·2를 소형 랩
+  2개로 분해). 발견 만화 7컷(comics/g2u5l1)은 사용자 합격 자산이라 **컷 불변 재사용·캡션만 신규**.
+- **자란 그래프는 rAF가 아니라 자가 예약 setTimeout으로**(gasCrossLab): polyline points를 틱마다
+  붙이면 QA 프리즈 환경에서도 완주한다. 슬라이더 구동 랩(factorCurve·sunGauge)은 input 이벤트만으로
+  상태를 갱신 — e2e가 value 주입+input dispatch로 완전 제어 가능.
+- **다크 무대(밤 모드) 위 흰 칩의 글자색을 일괄 반전하지 말 것**(flipEngine 눈검수 적발): 칩 배경이
+  흰색 그대로면 글자도 잉크색 유지 — `.night text { fill: 흰색 }` 류 일괄 규칙이 흰-온-흰 사고를 만든다.
+- **시험 겹침 스팟 스캔은 기계로**: 시험 풀 한글 문자열(주석 제거)에서 16자 조각을 뽑아 레슨 소스와
+  대조(공백·태그 정규화) — scratchpad 스크립트로 0건 확인. 교과서 문항 문구(스스로 확인·중단원 정리)와
+  같은 축의 문제는 문구를 재작성해 verbatim을 피한다(예: "계속 증가한다" OX → "한없이 늘어나요").
+- **재사용 검증 자산**: exam/g2u5 실험 사진(pondweed-bubbles·sprouting-seeds 등 — 소재성 재사용) +
+  plant/figs/storage-foods.webp(교과서 그림 V-5의 5작물과 정확히 일치 — L6 concept·퀴즈 공용).
+  발주는 개념 컷 8장(plant3/cuts, order-g2u5v3-cuts.sh)뿐 — 훅·랩 무대는 전부 손코딩 SVG.
+- **QA**: `PORT=<포트> node qa/e2e-g2u5v3.mjs`(6레슨 실플레이 — 훅 조작·랩 목표 3·전 문제 정답
+  시트, **67검증 ALL PASS·pageErrors 0**. 모듈 직접 import라 스플래시 우회 불필요) ·
+  `qa/shot-g2u5v3.mjs`(눈검수 13샷 → qa/shots/g2u5v3-*.png).
+- **잔여 백로그**: 만화 말풍선(bubbles) 미저작(u2v3와 동일 — 화자 머리 실측 관행 필수) · 병합 확정 시
+  시험 풀 사후 스팟 검산 권장 · 개념 컷 g2u5l1b(공기 뭉치가 쿠키처럼 읽힘)는 취향에 따라 재발주 후보.
