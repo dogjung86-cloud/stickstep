@@ -232,61 +232,68 @@ export function dayNightGasFig(o?: { blank?: "dayIn" | "dayOut" | "nightIn" | "n
   );
 }
 
-// ── 광합성 과정 도식(psFlowFig) — 교과서 그림 V-2 구도의 자체 도해 ──────────
-// blanks에 넣은 키의 이름표가 ㉠㉡㉢…으로 가려진다(퀴즈 정답 유출 차단).
-// 키: light · co2 · water · glucose · o2 · starch · place(엽록체)
-export type PsFlowKey = "light" | "co2" | "water" | "glucose" | "o2" | "starch" | "place";
+// ── 잎 실사 하이브리드 과정 그림(leafFlowFig) — 재제작 이전 발주 잎 사진 위에 벡터를 얹는다 ──
+// (plant/labs/leaf-factory-diagram-v2.webp — 사용자 요청으로 SVG 도식 psFlowFig를 대체, 2026-08-10.)
+// mode "hotspot": 화살표·글리프만(라벨은 hotspot 스팟 태그가 담당 — pad0라 스팟 % = viewBox 좌표).
+// mode "label"(퀴즈): 이름표 필 포함, blanks 키는 ㉠으로 가림. 좌표는 스크린샷 눈 정렬로 확정.
+const LEAF_IMG = (): string => {
+  const base = ((import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/") + "plant/labs/leaf-factory-diagram-v2.webp";
+  return `<image href="${base}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice"/>`;
+};
+export type LeafFlowKey = "light" | "co2" | "water" | "glucose" | "o2";
 
-export function psFlowFig(o?: { blanks?: PsFlowKey[] }): string {
+export function leafFlowFig(o?: { mode?: "hotspot" | "label"; blanks?: LeafFlowKey[] }): string {
+  const mode = o?.mode ?? "hotspot";
   const blanks = o?.blanks ?? [];
-  const MASK = ["㉠", "㉡", "㉢", "㉣"];
+  const MASK = ["㉠", "㉡", "㉢"];
   let mi = 0;
-  const name = (key: PsFlowKey, label: string): string =>
+  const name = (key: LeafFlowKey, label: string): string =>
     blanks.includes(key) ? MASK[Math.min(mi++, MASK.length - 1)] : label;
-  const pill = (x: number, y: number, w: number, label: string, c: string, dark = false): string =>
-    `<g><rect x="${x - w / 2}" y="${y - 12}" width="${w}" height="24" rx="12" fill="${dark ? c : "#FFFFFF"}" stroke="${c}" stroke-width="2.2"/>
-     <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12.5" font-weight="800" fill="${dark ? "#FFFFFF" : "#333D4B"}">${label}</text></g>`;
-  const arrow = (x1: number, y1: number, x2: number, y2: number, c: string): string => {
+  const arrow = (x1: number, y1: number, x2: number, y2: number, c: string, w = 1.7): string => {
     const ang = Math.atan2(y2 - y1, x2 - x1);
-    const hx = x2 - 9 * Math.cos(ang);
-    const hy = y2 - 9 * Math.sin(ang);
-    const px = 5.2 * Math.cos(ang + Math.PI / 2);
-    const py = 5.2 * Math.sin(ang + Math.PI / 2);
-    return `<line x1="${x1}" y1="${y1}" x2="${hx}" y2="${hy}" stroke="${c}" stroke-width="3.4" stroke-linecap="round"/>
+    const hx = x2 - 3.4 * Math.cos(ang);
+    const hy = y2 - 3.4 * Math.sin(ang);
+    const px = 2 * Math.cos(ang + Math.PI / 2);
+    const py = 2 * Math.sin(ang + Math.PI / 2);
+    return `<line x1="${x1}" y1="${y1}" x2="${hx}" y2="${hy}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>
       <path d="M${x2} ${y2} L${hx + px} ${hy + py} L${hx - px} ${hy - py} Z" fill="${c}"/>`;
   };
-  return svg(
-    "0 0 340 218",
+  const halo = (body: string): string =>
+    `<g stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round" opacity="0.85" fill="none">${body}</g>`;
+  const pill = (x: number, y: number, w: number, label: string, c: string): string =>
+    `<g><rect x="${x - w / 2}" y="${y - 3.4}" width="${w}" height="6.8" rx="3.4" fill="#FFFFFF" fill-opacity="0.96" stroke="${c}" stroke-width="0.7"/>
+     <text x="${x}" y="${y + 1.5}" text-anchor="middle" font-size="4" font-weight="800" fill="#333D4B">${label}</text></g>`;
+  // 공통 벡터층 — 화살표는 흰 할로 위에 얹어 사진 위에서도 또렷하게(라벨 겹침 방지 관행의 화살표판)
+  const vectors = `
+    <circle cx="17" cy="8" r="4.2" fill="${P3.light}"/>
+    <path d="M17 1.5 v2 M17 12.5 v2 M10.5 8 h2 M21.5 8 h2 M12.4 3.4 l1.4 1.4 M20.2 11.2 l1.4 1.4 M21.6 3.4 l-1.4 1.4 M13.8 11.2 l-1.4 1.4" stroke="${P3.light}" stroke-width="1.1" stroke-linecap="round"/>
+    ${halo(`<line x1="22" y1="12" x2="33.2" y2="20.4"/>`)}
+    ${arrow(22, 12, 34, 21, "#E8A80C")}
+    ${halo(`<line x1="7" y1="27" x2="23.5" y2="33.6"/>`)}
+    ${arrow(7, 27, 25, 34.2, P3.co2)}
+    ${halo(`<path d="M7 86 L7 60 C7 54 11 50 17 47.5"/>`)}
+    <path d="M7 86 L7 60 C7 54 11 50 17 47.5" stroke="${P3.water}" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+    ${arrow(13.4, 49.6, 18.5, 47, P3.water)}
+    <g>
+      <circle cx="52" cy="40" r="2.6" fill="${P3.glucose}" stroke="#FFFFFF" stroke-width="0.9"/>
+      ${arrow(55.4, 40, 59.2, 40, "#FFFFFF", 1.4)}
+      <rect x="60" y="37.6" width="4.8" height="4.8" rx="1.2" fill="${P3.starch}" stroke="#FFFFFF" stroke-width="0.9"/>
+    </g>
+    ${halo(`<line x1="72" y1="21" x2="85" y2="12.8"/>`)}
+    ${arrow(72, 21, 86.2, 12, P3.o2)}
+  `;
+  const labels = mode === "label"
+    ? `
+    ${pill(30, 5.5, blanks.includes("light") ? 8 : 17, name("light", "빛에너지"), "#B8860B")}
+    ${pill(11, 20.5, blanks.includes("co2") ? 8 : 21, name("co2", "이산화 탄소"), P3.co2)}
+    ${pill(13, 91, blanks.includes("water") ? 8 : 8.5, name("water", "물"), P3.water)}
+    ${pill(58, 49, blanks.includes("glucose") ? 8 : 25, name("glucose", "포도당 → 녹말"), P3.glucose)}
+    ${pill(92, 21, blanks.includes("o2") ? 8 : 11, name("o2", "산소"), P3.o2)}
     `
-    <ellipse cx="170" cy="206" rx="120" ry="8" fill="#2A3A5E" opacity="0.08"/>
-    <!-- 엽록체(장소) -->
-    <ellipse cx="170" cy="112" rx="86" ry="56" fill="#69DB7C" stroke="#1E5A2A" stroke-width="3.2"/>
-    <ellipse cx="170" cy="112" rx="72" ry="44" fill="none" stroke="#B2F2BB" stroke-width="2" opacity="0.8"/>
-    <ellipse cx="142" cy="102" rx="13" ry="8" fill="#1E7A34"/>
-    <ellipse cx="176" cy="94" rx="13" ry="8" fill="#1E7A34"/>
-    <ellipse cx="196" cy="122" rx="13" ry="8" fill="#1E7A34"/>
-    <ellipse cx="154" cy="130" rx="13" ry="8" fill="#1E7A34"/>
-    <path d="M104 84 C118 66 146 56 170 56" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" opacity="0.5"/>
-    ${pill(170, 112, 72, name("place", "엽록체"), "#1E5A2A", true)}
-    <!-- 빛에너지(위) -->
-    <circle cx="66" cy="30" r="13" fill="${P3.light}"/>
-    <path d="M66 10 v6 M66 44 v6 M46 30 h6 M80 30 h6 M52 16 l4 4 M76 40 l4 4 M80 16 l-4 4 M56 40 l-4 4" stroke="${P3.light}" stroke-width="2.6" stroke-linecap="round"/>
-    ${arrow(84, 42, 122, 72, P3.light)}
-    ${pill(140, 26, blanks.includes("light") ? 40 : 78, name("light", "빛에너지"), "#B8860B")}
-    <!-- 들어가는 것(왼쪽) -->
-    ${arrow(58, 96, 96, 100, P3.co2)}
-    ${pill(44, 96, blanks.includes("co2") ? 40 : 92, name("co2", "이산화 탄소"), P3.co2)}
-    ${arrow(58, 152, 100, 134, P3.water)}
-    ${pill(44, 156, blanks.includes("water") ? 40 : 46, name("water", "물"), P3.water)}
-    <!-- 나오는 것(오른쪽) -->
-    ${arrow(248, 96, 288, 88, P3.glucose)}
-    ${pill(300, 84, blanks.includes("glucose") ? 40 : 66, name("glucose", "포도당"), P3.glucose)}
-    ${arrow(250, 140, 288, 152, P3.o2)}
-    ${pill(300, 158, blanks.includes("o2") ? 40 : 54, name("o2", "산소"), P3.o2)}
-    <!-- 포도당 → 녹말 저장 -->
-    ${arrow(300, 98, 300, 116, "#8B95A1")}
-    ${pill(300, 130, blanks.includes("starch") ? 40 : 54, name("starch", "녹말"), P3.starch)}
-    `,
-    "광합성 과정 도식 — 빛에너지·이산화 탄소·물이 엽록체로 들어가고 포도당(녹말로 저장)과 산소가 나온다",
+    : "";
+  return svg(
+    "0 0 100 100",
+    `${LEAF_IMG()}${vectors}${labels}`,
+    "잎 사진 위 광합성 과정 — 빛에너지와 이산화 탄소·물이 잎으로 들어가고, 잎 안에서 만든 양분과 산소가 나간다",
   );
 }

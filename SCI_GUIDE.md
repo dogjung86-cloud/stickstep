@@ -550,8 +550,11 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
 - **파일**: 소형 랩 7종 `lessons/steps/plant3/*`(greenHunt 3단 줌·gasCross 센서 그래프·starchQuest
   절차 스테퍼·factorCurve 곡선 스크럽·flipEngine 식 뒤집기·sunGauge 해 게이지·sapFlow SMIL 배송) ·
   훅 5장면 `steps/hookPlant3.ts`(potatodrop·winterberry·veggiebag·tropicalnight·sweetpotato) ·
-  `ui/plant3Kit.ts`(P3 물질색 시맨틱 — 산물·기체 색은 여기서만) · `ui/plant3Figures.ts`(psFlowFig·
-  factorShapesFig·dayNightGasFig 전부 blanks 가림 인자, 미니아트 17키) · 시트 `plant3.css`/
+  `ui/plant3Kit.ts`(P3 물질색 시맨틱 — 산물·기체 색은 여기서만) · `ui/plant3Figures.ts`(leafFlowFig·
+  factorShapesFig·dayNightGasFig 전부 blanks 가림 인자, 미니아트 17키. **leafFlowFig는 재제작 이전
+  발주 실사(plant/labs/leaf-factory-diagram-v2.webp) 위에 벡터 화살표를 얹은 하이브리드** — 초판
+  SVG 도식(psFlowFig)이 "이해가 어렵다"는 사용자 피드백으로 교체, L1은 이 그림을 hotspot 스텝
+  (스팟 5개 탭 견학)으로도 쓴다. pad0라 스팟 % = viewBox 좌표, 눈 정렬 완료) · 시트 `plant3.css`/
   `plant3-hook.css`(전 랩 rAF·캔버스 없음 — SVG+CSS 전환+자가 예약 setTimeout, 판정은 b4Ask 공용).
 - **v2 원복 교훈의 반영**: 랩은 전부 "통찰 1개 + 무대 저밀도"(조작부 무대 아래·helper 무대 위·판정
   질문 선택지 위), 레슨은 교과서 서사형(concept→소형 랩→문제 촘촘 교차 — L2는 탐구 1·2를 소형 랩

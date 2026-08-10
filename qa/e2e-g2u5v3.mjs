@@ -54,6 +54,16 @@ const pickChoice = async (scope, text, tries = 16) => {
   }
   return false;
 };
+const clickAll = async (sel, gap = 320) => {
+  const n = await page.evaluate((s) => document.querySelectorAll(`.screen.active ${s}`).length, sel);
+  for (let i = 0; i < n; i++) {
+    await page.evaluate(({ s, i }) => {
+      document.querySelectorAll(`.screen.active ${s}`)[i]?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    }, { s: sel, i });
+    await W(gap);
+  }
+  return n;
+};
 const closeSheet = async () => {
   await page.evaluate(() => {
     const sheet = [...document.querySelectorAll(".sheet")].find((s) => s.className.includes("open"));
@@ -120,7 +130,7 @@ console.log("L1 스스로 밥을 짓는 식물");
 {
   const meta = await openLesson(0);
   await W(700);
-  ok(meta.steps === 11, `steps=${meta.steps}`);
+  ok(meta.steps === 12, `steps=${meta.steps}`);
   ok(await imgLoaded(".comic-art img"), "발견 만화 컷 이미지 로드");
   for (let i = 0; i < 7; i++) await cta(); // 만화 7컷
   ok(await imgLoaded("img[alt*='셰프']"), "L1 개념 컷 로드");
@@ -131,7 +141,10 @@ console.log("L1 스스로 밥을 짓는 식물");
   ok((await goalsOn()) === 3, "초록 추적 목표 3");
   ok(await ctaEnabled(), "랩 CTA 개방");
   await cta(); // → concept②
-  ok(await page.evaluate(() => !!document.querySelector(".screen.active svg[aria-label*='광합성 과정']")), "과정 도식 렌더");
+  await cta(); // → 잎 견학 hotspot
+  ok(await page.evaluate(() => !!document.querySelector(".screen.active svg[aria-label*='광합성 과정']")), "잎 하이브리드 그림 렌더");
+  ok((await clickAll("button.hs-dot", 380)) === 5, "재료·산물 스팟 5");
+  ok(await ctaEnabled(), "견학 CTA 개방");
   await cta(); // → recap
   await page.evaluate(() => document.querySelectorAll(".screen.active .rc-card, .screen.active .recap-card")[0]?.click());
   await W(450);
