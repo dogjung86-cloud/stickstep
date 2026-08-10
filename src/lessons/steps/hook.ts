@@ -75,6 +75,10 @@ import {
 import {
   renderPotatoDrop, renderWinterBerry, renderVeggieBag, renderTropicalNight, renderSweetPotato,
 } from "./hookPlant3";
+// 중2 Ⅵ v3 훅 5장면(2026-08-10 재제작) — 현행 hookBody·v2 hookAnimal과 병존, v3 단원 전용.
+import {
+  renderBodyScan, renderDripBag, renderHiccup, renderPeeTest, renderWarmBody,
+} from "./hookBody3";
 import {
   renderThreeCities, renderStiltHouse, renderSkyRoute, renderAvocado, renderMaasai, renderIloveNyc,
 } from "./hookSoc";
@@ -148,6 +152,8 @@ interface HookStep {
     | "potmass" | "waterweed" | "windowplant" | "bedroomplant" | "germinating" | "fruitthinning"
     | "sproutpot" | "stomapeek" | "darkbox" | "mixedtest" | "greenhouse" | "mangrove" | "honeyflower"
     | "potatodrop" | "winterberry" | "veggiebag" | "tropicalnight" | "sweetpotato"
+    // 중2 Ⅵ v3 훅 5장면(hookBody3.ts, 2026-08-10 재제작)
+    | "bodyscan" | "dripbag" | "hiccup" | "peetest" | "warmbody"
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
     | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
@@ -282,6 +288,11 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "veggiebag") renderVeggieBag(scene, helper, s, finish, face);
   else if (s.scene === "tropicalnight") renderTropicalNight(scene, helper, s, finish, face);
   else if (s.scene === "sweetpotato") renderSweetPotato(scene, helper, s, finish, face);
+  else if (s.scene === "bodyscan") renderBodyScan(scene, helper, s, finish, face);
+  else if (s.scene === "dripbag") renderDripBag(scene, helper, s, finish, face);
+  else if (s.scene === "hiccup") renderHiccup(scene, helper, s, finish, face);
+  else if (s.scene === "peetest") renderPeeTest(scene, helper, s, finish, face);
+  else if (s.scene === "warmbody") renderWarmBody(scene, helper, s, finish, face);
   else if (s.scene === "threecities") sceneCleanup = renderThreeCities(scene, helper, s, finish, face);
   else if (s.scene === "stilthouse") sceneCleanup = renderStiltHouse(scene, helper, s, finish, face);
   else if (s.scene === "skyroute") sceneCleanup = renderSkyRoute(scene, helper, s, finish, face);

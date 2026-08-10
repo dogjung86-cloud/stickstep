@@ -1,0 +1,228 @@
+/* body3.css — 중2 Ⅵ v3 재제작 공용 크롬(랩 공통 뼈대). 랩별 세부는 이 시트의 각 섹션에.
+   접두 규약: 킷 공통 .b6-*, 랩별 .clu-(색 단서 수사) .slr-(침 레이스) .ftp-(소화 여행)
+   .hpp-(심장 펌프) .tlp-(두 순환) .cms-(호흡운동 모형) .kfl-(콩팥 정수장) .btm-(기관계 팀워크).
+   훅은 body3-hook.css(.hb3-). 선점 검사 완료(2026-08-10, src/styles 전수 grep —
+   .ntl-은 body.css·.ccl-은 bio3-compare.css/math2.css 선점이라 회피). */
+
+/* ── 공통: 밝은 관찰 보드(plant3 .p3-board 문법 — 다크 .stage가 과한 소형 랩용) ── */
+.b6-board {
+  background: linear-gradient(180deg, #FFF7F5, #FBEEEC);
+  border: 1px solid #F1D9D5;
+  border-radius: var(--r-lg, 20px);
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.b6-board.night {
+  background: radial-gradient(120% 90% at 50% 0%, #1B2540, #141B30);
+  border-color: rgba(120, 150, 190, 0.3);
+}
+
+/* 목표 칩 톤(단원 액센트 --subj-body) */
+.pn-badge.b6 b { color: var(--subj-body, #E23B4B); }
+.pn-badge.b6.on {
+  border-color: var(--subj-body, #E23B4B);
+  box-shadow: 0 0 0 3px rgba(226, 59, 75, 0.13);
+}
+
+/* 공통 흔들기(오답 피드백) */
+@keyframes b6Shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  60% { transform: translateX(4px); }
+}
+.b6-board.shake { animation: b6Shake 0.4s ease; }
+
+/* 공통 팝 */
+@keyframes b6Pop {
+  0% { transform: scale(0.6); opacity: 0.3; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ── L1 colorClueLab(.clu-) — 수상한 즙 수사대 ─────────────────────── */
+.clu-board { padding: 10px; }
+.clu-board svg { width: 100%; height: auto; display: block; }
+.clu-pill {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #FFFFFF;
+  border: 1px solid #F1D9D5;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #4E5968;
+  box-shadow: 0 2px 6px rgba(42, 58, 94, 0.08);
+}
+.clu-liquid, .clu-liquid-bottom { transition: fill 0.55s ease; }
+.clu-dropper { opacity: 0; }
+.clu-board.dripping .clu-dropper { opacity: 1; }
+.clu-board.dripping .clu-drop { animation: cluDrop 0.7s ease-in; }
+@keyframes cluDrop {
+  0% { transform: translateY(0); opacity: 1; }
+  80% { transform: translateY(34px); opacity: 1; }
+  100% { transform: translateY(38px); opacity: 0; }
+}
+.clu-board.swap .clu-liquid, .clu-board.swap .clu-liquid-bottom { animation: b6Pop 0.45s ease; }
+.clu-bath { opacity: 0; transition: opacity 0.4s ease; }
+.clu-board.heated .clu-bath { opacity: 1; }
+.clu-board.heated .clu-steam { animation: cluSteam 1.5s ease-in-out infinite; }
+.clu-bubbles { opacity: 0; }
+.clu-board.heated .clu-bubbles { opacity: 1; }
+.clu-board.heated .clu-bubbles circle { animation: cluBub 1.2s ease-in infinite; }
+.clu-board.heated .clu-bubbles circle:nth-child(2) { animation-delay: 0.4s; }
+.clu-board.heated .clu-bubbles circle:nth-child(3) { animation-delay: 0.8s; }
+@keyframes cluSteam {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(-4px); opacity: 1; }
+}
+@keyframes cluBub {
+  0% { transform: translateY(0); opacity: 0.8; }
+  100% { transform: translateY(-26px); opacity: 0; }
+}
+.clu-btnrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.clu-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 12px;
+  border-radius: 14px;
+  border: 1.5px solid var(--n200, #E5E8EB);
+  background: #FFFFFF;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink, #191F28);
+  transition: transform 0.12s ease, border-color 0.2s ease;
+}
+.clu-btn:active { transform: scale(0.965); }
+.clu-dot { width: 12px; height: 12px; border-radius: 50%; flex: 0 0 auto; box-shadow: inset 0 -1px 2px rgba(0, 0, 0, 0.2); }
+.clu-heat {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1.5px solid #F3C9A8;
+  background: linear-gradient(180deg, #FFF4E6, #FFE8CC);
+  font-size: 14px;
+  font-weight: 800;
+  color: #D9480F;
+  animation: b6Pop 0.35s ease;
+}
+.clu-heat:active { transform: scale(0.975); }
+.clu-q { margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) {
+  .clu-board.dripping .clu-drop, .clu-board.heated .clu-steam, .clu-board.heated .clu-bubbles circle { animation: none; }
+}
+
+/* ── L2 salivaRaceLab(.slr-) — 침 vs 증류수 레이스 ─────────────────── */
+.slr-board { padding: 10px; }
+.slr-board svg { width: 100%; height: auto; display: block; }
+.slr-tag {
+  position: absolute;
+  top: 14px;
+  background: #FFFFFF;
+  border: 1px solid #F1D9D5;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #4E5968;
+  box-shadow: 0 2px 6px rgba(42, 58, 94, 0.08);
+}
+.slr-tag-ga { left: 8%; }
+.slr-tag-na { right: 8%; }
+.slr-liq, .slr-liq-b { transition: fill 0.55s ease; }
+.slr-tube { transform-box: view-box; transition: transform 0.8s var(--ease-out, ease-out); }
+.slr-board.warm .slr-tube { transform: translateY(10px); }
+.slr-board.warm .slr-steam { opacity: 1; animation: slrSteam 1.6s ease-in-out infinite; }
+.slr-board.warm .slr-mercury { y: 96px; height: 56px; transition: y 1s ease, height 1s ease; }
+@keyframes slrSteam {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(-4px); opacity: 0.95; }
+}
+.slr-dropga, .slr-dropna { opacity: 0; }
+.slr-board.dripio .slr-dropga, .slr-board.dripio .slr-dropna,
+.slr-board.dripbn .slr-dropga, .slr-board.dripbn .slr-dropna { opacity: 1; }
+.slr-board.dripio .slr-dropga path, .slr-board.dripio .slr-dropna path,
+.slr-board.dripbn .slr-dropga path, .slr-board.dripbn .slr-dropna path { animation: cluDrop 0.75s ease-in; }
+.slr-board.dripbn .slr-dropga path, .slr-board.dripbn .slr-dropna path { fill: #3B82C4; }
+.slr-btnrow { display: grid; gap: 8px; margin-top: 12px; }
+.slr-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1.5px solid var(--n200, #E5E8EB);
+  background: #FFFFFF;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink, #191F28);
+  animation: b6Pop 0.35s ease;
+}
+.slr-btn:active { transform: scale(0.975); }
+.slr-btn:disabled { opacity: 0.45; }
+.slr-q { margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) {
+  .slr-board.warm .slr-steam, .slr-board.dripio .slr-dropga path, .slr-board.dripio .slr-dropna path,
+  .slr-board.dripbn .slr-dropga path, .slr-board.dripbn .slr-dropna path { animation: none; }
+}
+
+/* ── L2 foodTripLab(.ftp-) — 소화 여행 3편 ─────────────────────────── */
+.ftp-board { padding: 10px; }
+.ftp-board svg { width: 100%; height: auto; display: block; }
+.ftp-token { transform-box: view-box; transition: transform 0.7s var(--ease-out, ease-out); }
+.ftp-token.hop circle, .ftp-token.hop rect, .ftp-token.hop ellipse, .ftp-token.hop path { animation: b6Pop 0.5s ease; }
+.ftp-badge {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  background: linear-gradient(180deg, #FFF4E6, #FFE8CC);
+  border: 1.5px solid #F3C9A8;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #D9480F;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.ftp-badge.pop { animation: b6Pop 0.4s ease; }
+.ftp-nutrow { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; }
+.ftp-nut {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 8px;
+  border-radius: 14px;
+  border: 1.5px solid var(--n200, #E5E8EB);
+  background: #FFFFFF;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--ink, #191F28);
+  transition: transform 0.12s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.ftp-nut:active { transform: scale(0.965); }
+.ftp-nut.cur { border-color: var(--subj-body, #E23B4B); box-shadow: 0 0 0 3px rgba(226, 59, 75, 0.12); }
+.ftp-nut.done { opacity: 0.45; }
+.ftp-nutdot { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; }
+.ftp-go {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1.5px solid #F3B9B9;
+  background: linear-gradient(180deg, #FFF0F0, #FFE3E5);
+  font-size: 14px;
+  font-weight: 800;
+  color: #C9303E;
+  animation: b6Pop 0.35s ease;
+}
+.ftp-go:active { transform: scale(0.975); }
+.ftp-q { margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) {
+  .ftp-token.hop circle, .ftp-token.hop rect, .ftp-token.hop ellipse, .ftp-token.hop path { animation: none; }
+}

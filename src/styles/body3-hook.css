@@ -1,0 +1,84 @@
+/* body3-hook.css — 중2 Ⅵ v3 훅 5장면(.hb3- 접두, hookBody3.ts).
+   장면: bodyscan(체성분표) · dripbag(링거 미스터리) · hiccup(딸꾹질) · peetest(소변검사) ·
+   warmbody(한겨울 체온). 선점 검사 완료(.hb3- FREE). */
+
+.hb3-stage {
+  border-radius: var(--r-lg, 20px);
+  background: linear-gradient(180deg, #FDF6F4, #F7EAE7);
+  border: 1px solid #EFDAD5;
+  overflow: hidden;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.hb3-stage:focus-visible { outline: 2px solid var(--subj-body, #E23B4B); outline-offset: 2px; }
+.hb3-stage svg { width: 100%; height: auto; display: block; }
+
+/* ── L1 bodyscan(.hb3-bs) — 물 게이지 스캔 ── */
+.hb3-bs .bs-fill, .hb3-bs .bs-wave { transform: translateY(134px); transition: transform 1.6s var(--ease-out, ease-out); }
+.hb3-bs.scan .bs-fill, .hb3-bs.scan .bs-wave { transform: translateY(0); }
+.hb3-bs .bs-q { opacity: 0; }
+.hb3-bs.scan .bs-q { opacity: 1; transition: opacity 0.4s ease 1.3s; }
+.hb3-bs.scan .bs-wave { animation: hb3Wave 1.8s ease-in-out 1.7s infinite; }
+@keyframes hb3Wave {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(0) translateX(-10px); }
+}
+
+/* ── L2 dripbag(.hb3-dp) — 수액 방울 ── */
+.hb3-dp .dp-drop { opacity: 0; }
+.hb3-dp.drip .dp-drop { opacity: 1; animation: hb3Drip 0.9s ease-in infinite; }
+@keyframes hb3Drip {
+  0% { transform: translateY(0); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(9px); opacity: 0; }
+}
+.hb3-dp.drip .dp-bag { animation: hb3BagPulse 2.2s ease-in-out infinite; }
+@keyframes hb3BagPulse {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(1.5px); }
+}
+
+/* ── L4 hiccup(.hb3-hc) — 딸꾹 움찔 ── */
+.hb3-hc .hc-dia { transform-box: view-box; }
+.hb3-hc.jolt .hc-body { animation: hb3Jolt 0.5s ease 2; }
+.hb3-hc.jolt .hc-dia { animation: hb3Dia 0.5s ease 2; }
+.hb3-hc.jolt .hc-jolt { opacity: 1; transition: opacity 0.15s ease; }
+.hb3-hc.jolt .hc-mouth { animation: hb3Gasp 0.5s ease 2; }
+@keyframes hb3Jolt {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-7px); }
+}
+@keyframes hb3Dia {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-9px); }
+}
+@keyframes hb3Gasp {
+  0%, 100% { transform: scale(1); }
+  30% { transform: scale(1.5); }
+}
+
+/* ── L5 peetest(.hb3-pt) — 스틱 담그기 + 패치 발색 ── */
+.hb3-pt .pt-stick { transform-box: view-box; transition: transform 0.9s var(--ease-out, ease-out); }
+.hb3-pt.dip .pt-stick { transform: translate(-88px, 44px); }
+.hb3-pt .pt-pad { transition: fill 0.5s ease; }
+.hb3-pt.dip .pt-p1 { fill: #FFD43B; transition-delay: 1s; }
+.hb3-pt.dip .pt-p2 { fill: #74B816; transition-delay: 1.2s; }
+.hb3-pt.dip .pt-p3 { fill: #4DABF7; transition-delay: 1.4s; }
+.hb3-pt.dip .pt-p4 { fill: #E8590C; transition-delay: 1.6s; }
+
+/* ── L6 warmbody(.hb3-wm) — 열 아지랑이 + 체온 표시 ── */
+.hb3-wm.hot .wm-heat { opacity: 1; transition: opacity 0.5s ease 0.3s; }
+.hb3-wm.hot .wm-heat path { animation: hb3Heat 1.6s ease-in-out infinite; }
+.hb3-wm.hot .wm-heat path:nth-child(2) { animation-delay: 0.5s; }
+@keyframes hb3Heat {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(-4px); opacity: 1; }
+}
+.hb3-wm.hot .wm-num { fill: #FF8787; transition: fill 0.4s ease 0.2s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hb3-bs.scan .bs-wave, .hb3-dp.drip .dp-drop, .hb3-dp.drip .dp-bag,
+  .hb3-hc.jolt .hc-body, .hb3-hc.jolt .hc-dia, .hb3-hc.jolt .hc-mouth,
+  .hb3-wm.hot .wm-heat path { animation: none; }
+  .hb3-dp.drip .dp-drop { opacity: 1; }
+}

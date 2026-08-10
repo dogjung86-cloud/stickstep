@@ -46,6 +46,15 @@ import { factorCurveLab } from "./steps/plant3/factorCurveLab";
 import { flipEngineLab } from "./steps/plant3/flipEngineLab";
 import { sunGaugeLab } from "./steps/plant3/sunGaugeLab";
 import { sapFlowLab } from "./steps/plant3/sapFlowLab";
+// ── 중2 Ⅵ v3 랩 8종(2026-08-10 재제작, steps/body3/*) — 병행 배선(unit6v3) 전용 ──
+import { colorClueLab } from "./steps/body3/colorClueLab";
+import { salivaRaceLab } from "./steps/body3/salivaRaceLab";
+import { foodTripLab } from "./steps/body3/foodTripLab";
+import { heartPumpLab } from "./steps/body3/heartPumpLab";
+import { twoLoopsLab } from "./steps/body3/twoLoopsLab";
+import { chestModelLab } from "./steps/body3/chestModelLab";
+import { kidneyFilterLab } from "./steps/body3/kidneyFilterLab";
+import { bodyTeamLab } from "./steps/body3/bodyTeamLab";
 import { comic } from "./steps/comic";
 import { hook } from "./steps/hook";
 import { recap } from "./steps/recap";
@@ -608,6 +617,15 @@ const R: Record<string, StepRenderer> = {
   flipEngineLab,
   sunGaugeLab,
   sapFlowLab,
+  // 중2 Ⅵ v3 랩(2026-08-10 재제작)
+  colorClueLab,
+  salivaRaceLab,
+  foodTripLab,
+  heartPumpLab,
+  twoLoopsLab,
+  chestModelLab,
+  kidneyFilterLab,
+  bodyTeamLab,
 };
 
 export function getRenderer(type: string): StepRenderer | undefined {
