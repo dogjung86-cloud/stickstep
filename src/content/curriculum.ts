@@ -64,7 +64,13 @@ export const CURRICULUM: Unit[] = [UNIT1, U2_ACTIVE, UNIT3, UNIT4, UNIT5, UNIT6,
 const U5G2_ACTIVE: Unit = (() => {
   try {
     const dev = (import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV;
-    if (dev && sessionStorage.getItem("ss.g2u5v3") === "1") return G2_UNIT5_V3;
+    if (dev) {
+      // URL 파라미터로도 토글(검수 편의 — 콘솔 없이 링크 한 번에): ?g2u5v3=1 켬 · ?g2u5v3=0 끔.
+      // sessionStorage는 탭별이라 새 탭엔 현행이 떠 "예전 버전 같다" 혼란이 실제로 있었다(2026-08-10).
+      const q = new URLSearchParams(location.search).get("g2u5v3");
+      if (q === "1" || q === "0") sessionStorage.setItem("ss.g2u5v3", q);
+      if (sessionStorage.getItem("ss.g2u5v3") === "1") return G2_UNIT5_V3;
+    }
   } catch {
     /* sessionStorage 접근 불가 환경(시딩·테스트)은 현행 유지 */
   }
