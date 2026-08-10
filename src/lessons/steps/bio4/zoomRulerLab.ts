@@ -203,6 +203,7 @@ export const zoomRulerLab: StepRenderer = (host, step, api) => {
     if (qShown) return;
     qShown = true;
     qBox.style.display = "";
+    qBox.classList.add("show"); // ui.css .hook-choices는 .show일 때만 표시(b4Ask .show 사고의 로컬판)
     qBox.appendChild(
       el("div", { class: "hook-q", html: "화면을 거의 꽉 채운 <b>세포 한 칸</b> — 실제 크기는 어느 정도일까요? 눈금으로 어림해 보세요." }),
     );

@@ -226,6 +226,7 @@ export const slideMakeLab: StepRenderer = (host, step, api) => {
   function showAsk(box: HTMLElement, choices: { t: string; ok: boolean }[], onPick: (ok: boolean) => void): void {
     box.innerHTML = "";
     box.style.display = "";
+    box.classList.add("show"); // ui.css .hook-choices는 .show일 때만 표시(b4Ask .show 사고의 로컬판)
     box.appendChild(el("div", { class: "hook-q", html: helper.innerHTML }));
     const order = choices.map((_, i) => i);
     for (let i = order.length - 1; i > 0; i--) {
@@ -320,6 +321,7 @@ export const slideMakeLab: StepRenderer = (host, step, api) => {
     compareShown = true;
     helper.innerHTML = "두 표본을 모두 봤어요 — 마지막 질문!";
     compareBox.style.display = "";
+    compareBox.classList.add("show");
     compareBox.appendChild(el("div", { class: "hook-q", html: "두 세포에서 <b>다르게</b> 보인 것은 무엇이었나요?" }));
     const choices = [
       { t: "검정말잎 세포에만 각진 칸(세포벽)과 초록 알갱이(엽록체)가 보였다", ok: true },
