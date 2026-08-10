@@ -9,7 +9,7 @@ import {
   lesson, concept, comic, hook, recap, mcq, ox, multi, binSort, order, pairMatch, cut,
   greenHuntLab, gasCrossLab, starchQuestLab, factorCurveLab, flipEngineLab, sunGaugeLab, sapFlowLab,
 } from "../dsl";
-import { p3MiniArt, psFlowFig, factorShapesFig, dayNightGasFig } from "../../ui/plant3Figures";
+import { p3MiniArt, psFlowFig, leafFactorySceneFig, factorShapesFig, dayNightGasFig } from "../../ui/plant3Figures";
 
 /** public 임의 경로 사진 한 장(검증 자산 재사용 — plant/figs·exam/g2u5). */
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -103,7 +103,7 @@ export const G2_UNIT5_V3: Unit = {
           lead: "장소를 찾았으니 이제 <b>들어가는 것</b>과 <b>나오는 것</b>을 확인할 차례예요.",
           blocks: [
             { k: "figure", svg: cut("plant3", "g2u5l1b", "잎 공장으로 들어가는 세 갈래 길과 나오는 두 갈래 길을 안내하는 스틱맨"), cap: "들어가는 재료 셋, 나오는 산물 둘" },
-            { k: "figure", svg: psFlowFig(), cap: "광합성 과정 — 빛에너지·이산화 탄소·물이 들어가고, 포도당과 산소가 나와요" },
+            { k: "figure", svg: leafFactorySceneFig(), cap: "잎 위에서 보는 광합성 — 물·이산화 탄소가 들어오고 빛에너지가 더해지면, 포도당(녹말로 저장)과 산소가 나와요" },
             { k: "term", name: "광합성에 필요한 물질", def: "<b>이산화 탄소</b>는 주로 잎의 <b>기공</b>(잎에 있는 작은 구멍)을 통해 들어오고, <b>물</b>은 뿌리에서 흡수되어 <b>물관</b>을 타고 잎까지 올라와요. 그리고 엽록소가 흡수한 <b>빛에너지</b>가 이 재료들을 양분으로 바꾸죠." },
             { k: "term", name: "광합성산물", def: "광합성으로 만들어지는 양분은 <b>포도당</b>이에요. 포도당은 곧 <b>녹말</b>로 바뀌어 엽록체에 잠시 저장되죠. 함께 만들어진 <b>산소</b>는 기공을 통해 식물 밖으로 나가요." },
             { k: "note", tone: "blue", html: "숲의 공기가 상쾌하게 느껴지는 데는 이유가 있었던 거예요 — 잎들이 낮 동안 부지런히 <b>산소</b>를 내놓고 있으니까요." },

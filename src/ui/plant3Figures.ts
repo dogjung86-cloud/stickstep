@@ -168,6 +168,87 @@ export function p3MiniArt(key: string): string {
   return (MINI[key] ?? MINI.leafSun)();
 }
 
+// ── 잎 공장 장면(leafFactorySceneFig) — 원본 랩(plantFactoryLab)의 연출 재현(사용자 확정) ──
+// codex 발주 잎 실사 위로 물·이산화 탄소·빛 입자가 흘러들며 "물"/"이산화 탄소"/"빛에너지"
+// 텍스트 박스가 차례로 등장 → 포도당(→녹말 저장)과 산소 배출까지 자동 재생(SMIL — rAF 0).
+// 입자 색·라벨 필 스타일은 원본 랩의 캔버스 문법(tokens의 --plant-* 팔레트)을 그대로 따른다.
+export function leafFactorySceneFig(): string {
+  const base = ((import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/") + "plant/labs/leaf-factory-diagram-v2.webp";
+  const C = {
+    water: "var(--plant-water, #55B8F2)",
+    xylem: "var(--plant-xylem, #4DA3F5)",
+    carbon: "var(--plant-carbon, #8A96A8)",
+    sun: "var(--plant-sun, #FFC44F)",
+    oxygen: "var(--plant-oxygen, #69D5D0)",
+    glucose: "var(--plant-glucose, #8D72D9)",
+    starch: "var(--plant-starch, #5A4FB5)",
+    ink: "#333D4B",
+  };
+  /** 원본 drawTextBox 재현 — 흰 라운드 필 + 액센트 테두리, begin 시점에 페이드 등장. */
+  const box = (x: number, y: number, w: number, label: string, accent: string, begin: string, out?: string): string => `
+    <g opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.45s" begin="${begin}" fill="freeze"/>
+      ${out ? `<animate attributeName="opacity" values="1;0" dur="0.4s" begin="${out}" fill="freeze"/>` : ""}
+      <rect x="${x - w / 2}" y="${y - 3.6}" width="${w}" height="7.2" rx="3.6" fill="#FFFFFF" fill-opacity="0.95" stroke="${accent}" stroke-width="0.55"/>
+      <text x="${x}" y="${y + 1.45}" text-anchor="middle" font-size="3.9" font-weight="800" fill="${C.ink}">${label}</text>
+    </g>`;
+  /** 경로 위를 도는 입자 무리 — begin을 어긋나게 준 SMIL animateMotion 반복. */
+  const flow = (path: string, n: number, dur: number, r: number, fill: string, begin = 0, glow = false): string =>
+    Array.from({ length: n })
+      .map(
+        (_, i) => `<circle r="${r}" fill="${fill}" ${glow ? `stroke="#FFF6D8" stroke-width="0.5"` : `stroke="#FFFFFF" stroke-width="0.45"`} opacity="0.92">
+        <animateMotion path="${path}" dur="${dur}s" begin="${(begin + (i * dur) / n).toFixed(2)}s" repeatCount="indefinite"/>
+      </circle>`,
+      )
+      .join("");
+  const WATER_PATH = "M7 86 L7 58 C7 53 12 49 19 47 C26 45 31 48 35 50";
+  const CO2_PATH = "M93 7 C86 11 80 16 76.5 21 C72 28 66 38 62 47";
+  const LIGHT_PATH = "M18 12 C27 20 38 28 50 36";
+  const O2_PATH = "M74 47 C77 38 75.5 28 76.5 23 C80 20 88 26 94 32";
+  return svg(
+    "0 0 100 100",
+    `
+    <image href="${base}" x="0" y="0" width="100" height="100" opacity="0.84" preserveAspectRatio="xMidYMid slice"/>
+    <!-- 반응 영역 힌트(원본의 흰 반투명 상자) -->
+    <rect x="29" y="41" width="66" height="20" rx="4.5" fill="#FFFFFF" opacity="0.28"/>
+    <!-- 물관 통로 + 라벨 -->
+    <path d="${WATER_PATH}" stroke="#1E3A5C" stroke-width="2.6" stroke-linecap="round" fill="none" opacity="0.35"/>
+    <path d="${WATER_PATH}" stroke="${C.xylem}" stroke-width="1.3" stroke-linecap="round" fill="none" opacity="0.9"/>
+    ${box(17, 78, 11, "물관", C.xylem, "0.2s")}
+    <!-- 기공(공변세포 한 쌍) + 라벨 -->
+    <g transform="translate(76.5 21) rotate(-28)">
+      <ellipse cx="-1.7" cy="0" rx="2.1" ry="4.2" fill="#8FD08F" stroke="#2E7D46" stroke-width="0.55"/>
+      <ellipse cx="1.7" cy="0" rx="2.1" ry="4.2" fill="#8FD08F" stroke="#2E7D46" stroke-width="0.55"/>
+      <ellipse cx="0" cy="0" rx="0.9" ry="3" fill="#1C3A28"/>
+    </g>
+    ${box(85, 17, 11, "기공", "#2E7D46", "0.2s")}
+    <!-- 해 -->
+    <circle cx="14" cy="8" r="4" fill="${C.sun}"/>
+    <path d="M14 1.8 v1.8 M14 12.4 v1.8 M7.8 8 h1.8 M18.4 8 h1.8 M9.6 3.6 l1.3 1.3 M17.1 11.1 l1.3 1.3 M18.4 3.6 l-1.3 1.3 M10.9 11.1 l-1.3 1.3" stroke="${C.sun}" stroke-width="1" stroke-linecap="round"/>
+    <!-- 입자 흐름: 물·이산화 탄소·빛(즉시), 산소(반응 시작 뒤) -->
+    ${flow(WATER_PATH, 3, 3.4, 2, C.water)}
+    ${flow(CO2_PATH, 5, 3, 1.25, C.carbon)}
+    ${flow(LIGHT_PATH, 3, 2.5, 1.35, C.sun, 0, true)}
+    ${flow(O2_PATH, 3, 3, 1.7, C.oxygen, 4.6)}
+    <!-- 반응식: 물 + 이산화 탄소 →(빛에너지) 포도당(→녹말 저장) + 산소 -->
+    ${box(36, 51, 9.5, "물", C.water, "1.3s")}
+    <g opacity="0"><animate attributeName="opacity" values="0;1" dur="0.4s" begin="2.9s" fill="freeze"/>
+      <text x="44.4" y="52.6" text-anchor="middle" font-size="4.6" font-weight="800" fill="${C.ink}" stroke="#FFFFFF" stroke-width="0.7" paint-order="stroke">+</text></g>
+    ${box(57, 51, 21, "이산화 탄소", C.carbon, "2.3s")}
+    ${box(57, 37.5, 15.5, "빛에너지", C.sun, "3.5s")}
+    <g opacity="0"><animate attributeName="opacity" values="0;1" dur="0.4s" begin="3.7s" fill="freeze"/>
+      <path d="M57 41.6 v4.6 M55.4 44.6 L57 47 L58.6 44.6" stroke="${C.sun}" stroke-width="0.9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g opacity="0"><animate attributeName="opacity" values="0;1" dur="0.4s" begin="4.1s" fill="freeze"/>
+      <path d="M69.5 51 h5.4 M73.2 49.3 L75.7 51 L73.2 52.7" stroke="${C.ink}" stroke-width="0.95" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/></g>
+    ${box(84.5, 51, 14, "포도당", C.glucose, "4.5s", "6.8s")}
+    ${box(84.5, 51, 12, "녹말", C.starch, "6.9s")}
+    ${box(84.5, 58.5, 11, "저장", C.starch, "7.3s")}
+    ${box(88, 34, 11, "산소", C.oxygen, "5s")}
+    `,
+    "잎 위 광합성 과정 장면 — 물과 이산화 탄소가 잎으로 들어오고 빛에너지가 더해져 포도당이 생기며, 포도당은 녹말로 저장되고 산소는 기공으로 나간다",
+  );
+}
+
 // ── 그래프 모양 3종 비교(factorShapesFig) — (가)(나)(다) 무명 곡선(퀴즈용) ──
 // (가) 증가 후 일정 · (나) 정점 뒤 빠른 감소 · (다) 계속 증가(직선). 축 라벨은 광합성량/요인 값.
 export function factorShapesFig(): string {
