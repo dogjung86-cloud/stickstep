@@ -10,12 +10,14 @@ export const rimg = (file: string, alt: string): string =>
   `<img src="${RECAP_IMG_BASE}recap/${file}" alt="${alt}" loading="lazy" />`;
 
 /** 컷 위 한글 말풍선(하이브리드 표준): 발주 이미지에 글자를 넣는 대신 앱이 얹는다.
- *  x·y는 이미지 기준 %(말풍선의 중심), flip이면 꼬리가 위를 향한다(인물 아래 배치용). */
+ *  x·y는 이미지 기준 %(말풍선의 중심), flip이면 꼬리가 위를 향한다(인물 아래 배치용).
+ *  tail("right"|"left")이면 꼬리가 그쪽 끝으로 이동(붐비는 컷에서 몸통은 빈 곳, 꼬리만 화자 쪽). */
 export interface CutBubble {
   text: string;
   x: number;
   y: number;
   flip?: boolean;
+  tail?: "left" | "right";
 }
 
 /** 스틱맨 개념 컷(발주 만화 1컷) — public/<theme>/cuts/<name>.webp. concept의 첫 블록에 figure로 끼운다.
@@ -27,7 +29,7 @@ export const cut = (theme: string, name: string, alt: string, bubbles?: CutBubbl
   const bs = bubbles
     .map(
       (b) =>
-        `<span class="cut-bubble${b.flip ? " flip" : ""}" style="left:${b.x}%;top:${b.y}%">${b.text}</span>`,
+        `<span class="cut-bubble${b.flip ? " flip" : ""}${b.tail ? ` tail-${b.tail === "right" ? "r" : "l"}` : ""}" style="left:${b.x}%;top:${b.y}%">${b.text}</span>`,
     )
     .join("");
   return `<span class="cutwrap">${img}${bs}</span>`;

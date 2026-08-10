@@ -879,7 +879,7 @@ export const UNIT2_V3: Unit = {
             {
               img: "comics/u2v3l7/3.webp", stage: "관찰 ②", title: "부리도 제각각",
               caption: "새들도 마찬가지 — 몸집은 비슷한데 <b>부리 모양이 섬마다 달랐어요</b>. 두껍거나, 가늘거나, 짧거나, 굽었거나. 다윈은 수첩 가득 부리를 그렸답니다.",
-              bubbles: [{ text: "부리가 다 달라!", x: 80, y: 44 }],
+              bubbles: [{ text: "부리가 다 달라!", x: 64, y: 40, tail: "right" }],
             },
             {
               img: "comics/u2v3l7/4.webp", stage: "질문", title: "왜 다를까?",
