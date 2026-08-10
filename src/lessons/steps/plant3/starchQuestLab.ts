@@ -8,6 +8,7 @@ import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { curioCard, type Curio } from "../../../ui/curio";
 import { b4Ask } from "../../../ui/bio4Kit";
+import { p3Lettuce, p3LettuceDefs } from "../../../ui/plant3Kit";
 import type { StepRenderer } from "../../types";
 
 interface StqStep {
@@ -21,12 +22,10 @@ interface StqStep {
 function stageScene(): string {
   return `<svg viewBox="0 0 340 210" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
-      <radialGradient id="stqLeafG" cx="0.4" cy="0.32" r="1">
-        <stop offset="0" stop-color="#A9E8B8"/><stop offset="0.6" stop-color="#69C77E"/><stop offset="1" stop-color="#40A85C"/>
-      </radialGradient>
       <linearGradient id="stqWater" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#D2ECF8"/><stop offset="1" stop-color="#A8D4EE"/>
       </linearGradient>
+      ${p3LettuceDefs("stq")}
     </defs>
     <!-- 장면 0: 창가의 두 모종 -->
     <g class="stq-sc stq-sc0">
@@ -34,16 +33,12 @@ function stageScene(): string {
       <path d="M292 12 v6 M292 50 v6 M270 34 h6 M308 34 h6 M276 18 l4 4 M304 46 l4 4 M308 18 l-4 4 M280 46 l-4 4" stroke="#FFC940" stroke-width="2.6" stroke-linecap="round"/>
       <rect x="14" y="168" width="312" height="12" rx="5" fill="#D9B678" stroke="#A9854A" stroke-width="2.4"/>
       <g>
-        <path d="M92 128 C82 108 88 88 106 78 C114 92 112 112 104 126" fill="url(#stqLeafG)" stroke="#2E7D46" stroke-width="2.4"/>
-        <path d="M120 126 C124 104 138 92 154 92 C154 108 144 122 130 130" fill="url(#stqLeafG)" stroke="#2E7D46" stroke-width="2.4"/>
-        <path d="M108 132 l0 -18" stroke="#2E7D46" stroke-width="3" stroke-linecap="round"/>
+        ${p3Lettuce(112, 131, 0.6, "stq")}
         <path d="M84 132 h56 l-7 36 h-42 Z" fill="#C9885A" stroke="#8A5A30" stroke-width="2.6"/>
         <text x="112" y="156" text-anchor="middle" font-size="14" font-weight="800" fill="#FFF3DE">(가)</text>
       </g>
       <g>
-        <path d="M212 128 C202 108 208 88 226 78 C234 92 232 112 224 126" fill="url(#stqLeafG)" stroke="#2E7D46" stroke-width="2.4"/>
-        <path d="M240 126 C244 104 258 92 274 92 C274 108 264 122 250 130" fill="url(#stqLeafG)" stroke="#2E7D46" stroke-width="2.4"/>
-        <path d="M228 132 l0 -18" stroke="#2E7D46" stroke-width="3" stroke-linecap="round"/>
+        ${p3Lettuce(232, 131, 0.6, "stq")}
         <path d="M204 132 h56 l-7 36 h-42 Z" fill="#C9885A" stroke="#8A5A30" stroke-width="2.6"/>
         <text x="232" y="156" text-anchor="middle" font-size="14" font-weight="800" fill="#FFF3DE">(나)</text>
       </g>

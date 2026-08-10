@@ -7,7 +7,7 @@ import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { curioCard, type Curio } from "../../../ui/curio";
 import { b4Ask } from "../../../ui/bio4Kit";
-import { P3 } from "../../../ui/plant3Kit";
+import { P3, p3Lettuce, p3LettuceDefs } from "../../../ui/plant3Kit";
 import type { StepRenderer } from "../../types";
 
 interface GxcStep {
@@ -24,9 +24,7 @@ function jarScene(): string {
       <linearGradient id="gxcJar" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/><stop offset="1" stop-color="#D8ECF5" stop-opacity="0.6"/>
       </linearGradient>
-      <radialGradient id="gxcLet" cx="0.4" cy="0.32" r="1">
-        <stop offset="0" stop-color="#A9E8B8"/><stop offset="0.6" stop-color="#69C77E"/><stop offset="1" stop-color="#40A85C"/>
-      </radialGradient>
+      ${p3LettuceDefs("gxc")}
     </defs>
     <ellipse cx="170" cy="178" rx="130" ry="8" fill="#2A3A5E" opacity="0.10"/>
     <g class="gxc-lamp">
@@ -43,9 +41,7 @@ function jarScene(): string {
       <rect x="124" y="58" width="92" height="102" rx="10" fill="url(#gxcJar)" stroke="#9DB2C4" stroke-width="3"/>
       <ellipse cx="170" cy="152" rx="30" ry="9" fill="#B08D5A"/>
       <path d="M148 152 h44 v8 a8 8 0 0 1 -8 8 h-28 a8 8 0 0 1 -8 -8 Z" fill="#C9885A" stroke="#8A5A30" stroke-width="2.4"/>
-      <ellipse cx="170" cy="128" rx="30" ry="22" fill="url(#gxcLet)" stroke="#2E7D46" stroke-width="2.6"/>
-      <path d="M150 118 C158 108 170 104 182 108 M152 138 C162 144 178 144 188 138" stroke="#2E7D46" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
-      <path d="M190 106 C196 110 200 116 201 122" stroke="#D3F3DC" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+      ${p3Lettuce(170, 151, 0.62, "gxc")}
     </g>
     <g class="gxc-probe">
       <rect x="236" y="46" width="52" height="30" rx="7" fill="#FFFFFF" stroke="${P3.co2}" stroke-width="2.6"/>

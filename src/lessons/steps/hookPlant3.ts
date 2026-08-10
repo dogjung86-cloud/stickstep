@@ -6,6 +6,7 @@
 
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
+import { p3Lettuce, p3LettuceDefs } from "../../ui/plant3Kit";
 import { ask } from "./hookAsk";
 
 type Face = (kind: "smile" | "surprised" | "curious") => void;
@@ -202,19 +203,13 @@ export function renderVeggieBag(
       <linearGradient id="hp3vbBag" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.85"/><stop offset="1" stop-color="#DCE9F2" stop-opacity="0.9"/>
       </linearGradient>
-      <radialGradient id="hp3vbLeaf" cx="0.4" cy="0.3" r="1">
-        <stop offset="0" stop-color="#A9E8B8"/><stop offset="0.6" stop-color="#69C77E"/><stop offset="1" stop-color="#40A85C"/>
-      </radialGradient>
+      ${p3LettuceDefs("vb")}
     </defs>
     <ellipse cx="160" cy="200" rx="140" ry="8" fill="#2A3A5E" opacity="0.10"/>
     <g class="vb-bag">
       <path d="M96 42 h128 l14 22 v112 a10 10 0 0 1 -10 10 h-136 a10 10 0 0 1 -10 -10 v-112 Z" fill="url(#hp3vbBag)" stroke="#9DB2C4" stroke-width="3"/>
       <path d="M96 42 l14 22 h128" stroke="#9DB2C4" stroke-width="2" opacity="0.6"/>
-      <g>
-        <ellipse cx="160" cy="128" rx="52" ry="40" fill="url(#hp3vbLeaf)" stroke="#2E7D46" stroke-width="2.6"/>
-        <path d="M126 112 C138 96 154 90 170 92 M136 146 C150 156 172 156 186 148 M118 128 C132 122 148 120 162 122" stroke="#2E7D46" stroke-width="2.2" stroke-linecap="round" opacity="0.6"/>
-        <path d="M188 104 C198 110 204 120 205 130" stroke="#D3F3DC" stroke-width="3.5" stroke-linecap="round" opacity="0.8"/>
-      </g>
+      ${p3Lettuce(162, 168, 0.9, "vb")}
       ${holes}
       <path d="M104 52 c10 -5 24 -7 36 -7" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" opacity="0.75"/>
     </g>
@@ -270,14 +265,47 @@ export function renderTropicalNight(
   face: Face,
 ): void {
   const fig = el("div", { class: "hp3-stage hp3-tn", attrs: { role: "button", tabindex: "0", "aria-label": "밤 온도계 확인하기" } });
+  // 수박 한 통 — 밝은 바탕 위 진초록 줄무늬(꼭지→배꼽 방향 자오선, 타원 클립)·하이라이트·덩굴 꼭지.
+  const wm = (cx: number, cy: number, rx: number, ry: number, id: string, tilt: number): string => {
+    const bands = [-0.68, -0.34, 0, 0.34, 0.68]
+      .map((u) => {
+        const tx = (cx + u * rx * 0.3).toFixed(1);
+        const bx = (cx + u * rx * 1.05).toFixed(1);
+        return `<path d="M${tx} ${(cy - ry * 0.88).toFixed(1)} C${bx} ${(cy - ry * 0.33).toFixed(1)} ${bx} ${(cy + ry * 0.33).toFixed(1)} ${tx} ${(cy + ry * 0.88).toFixed(1)}" stroke="#1E6B2F" stroke-width="${(7 - Math.abs(u) * 2.2).toFixed(1)}" stroke-linecap="round" clip-path="url(#${id})"/>
+        <path d="M${tx} ${(cy - ry * 0.8).toFixed(1)} C${(cx + u * rx * 0.98).toFixed(1)} ${(cy - ry * 0.3).toFixed(1)} ${(cx + u * rx * 0.98).toFixed(1)} ${(cy + ry * 0.3).toFixed(1)} ${tx} ${(cy + ry * 0.8).toFixed(1)}" stroke="#14501F" stroke-width="2" stroke-linecap="round" opacity="0.5" clip-path="url(#${id})"/>`;
+      })
+      .join("");
+    return `<g transform="rotate(${tilt} ${cx} ${cy})">
+      <clipPath id="${id}"><ellipse cx="${cx}" cy="${cy}" rx="${rx - 1.2}" ry="${ry - 1.2}"/></clipPath>
+      <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="url(#hp3tnWm)" stroke="#175325" stroke-width="2.8"/>
+      ${bands}
+      <path d="M${(cx - rx * 0.52).toFixed(1)} ${(cy - ry * 0.6).toFixed(1)} Q${(cx - rx * 0.12).toFixed(1)} ${(cy - ry * 1.0).toFixed(1)} ${(cx + rx * 0.3).toFixed(1)} ${(cy - ry * 0.78).toFixed(1)}" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.38" fill="none"/>
+      <path d="M${cx} ${(cy - ry - 1).toFixed(1)} q-3 -6 -9 -8" stroke="#55763B" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+    </g>`;
+  };
+  // 잘라 둔 웨지 — 빨간 속살+씨+흰 속껍질+초록 겉껍질(수박임을 한눈에).
+  const wedge = (cx: number, cy: number, s: number, tilt: number): string => `
+    <g transform="translate(${cx} ${cy}) rotate(${tilt}) scale(${s})">
+      <ellipse cx="0" cy="4" rx="19" ry="4" fill="#101625" opacity="0.3"/>
+      <path d="M-18.5 -30 A22.5 22.5 0 0 1 18.5 -30 L15 -26 h-30 Z" fill="#2E8B47" stroke="#175325" stroke-width="1.8"/>
+      <path d="M-16.5 -28.5 A20.5 20.5 0 0 1 16.5 -28.5 L14 -25 h-28 Z" fill="#F5F0DC"/>
+      <path d="M0 2 L-15.5 -27 A19 19 0 0 1 15.5 -27 Z" fill="url(#hp3tnFlesh)" stroke="#C0392B" stroke-width="1.4"/>
+      <ellipse cx="-6" cy="-13" rx="1.7" ry="2.6" fill="#26211C" transform="rotate(16 -6 -13)"/>
+      <ellipse cx="5" cy="-17" rx="1.7" ry="2.6" fill="#26211C" transform="rotate(-12 5 -17)"/>
+      <ellipse cx="-1" cy="-22" rx="1.6" ry="2.4" fill="#26211C" transform="rotate(6 -1 -22)"/>
+      <ellipse cx="8" cy="-9" rx="1.6" ry="2.4" fill="#26211C" transform="rotate(-20 8 -9)"/>
+    </g>`;
   fig.innerHTML = `
   <svg viewBox="0 0 320 214" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
       <linearGradient id="hp3tnSky" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#232B45"/><stop offset="1" stop-color="#39445B"/>
       </linearGradient>
-      <radialGradient id="hp3tnMelon" cx="0.36" cy="0.3" r="1">
-        <stop offset="0" stop-color="#69C77E"/><stop offset="0.6" stop-color="#2F9E44"/><stop offset="1" stop-color="#237032"/>
+      <radialGradient id="hp3tnWm" cx="0.34" cy="0.28" r="1">
+        <stop offset="0" stop-color="#D6EFA9"/><stop offset="0.55" stop-color="#A8DC80"/><stop offset="1" stop-color="#74BE58"/>
+      </radialGradient>
+      <radialGradient id="hp3tnFlesh" cx="0.42" cy="0.3" r="1">
+        <stop offset="0" stop-color="#FF8E7A"/><stop offset="0.6" stop-color="#F0524A"/><stop offset="1" stop-color="#D02F2F"/>
       </radialGradient>
     </defs>
     <rect x="0" y="0" width="320" height="132" fill="url(#hp3tnSky)"/>
@@ -289,10 +317,11 @@ export function renderTropicalNight(
     <rect x="16" y="120" width="288" height="16" rx="5" fill="#B5652A"/>
     <rect x="24" y="136" width="272" height="58" rx="8" fill="#D9985C" stroke="#A9713A" stroke-width="3"/>
     <g>
-      <ellipse cx="88" cy="112" rx="34" ry="26" fill="url(#hp3tnMelon)" stroke="#1E5A2A" stroke-width="2.6"/>
-      <path d="M62 100 C70 92 80 88 90 88 M60 116 C64 124 72 130 82 134 M104 92 C112 98 116 106 118 114" stroke="#1E5A2A" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
-      <ellipse cx="158" cy="116" rx="30" ry="22" fill="url(#hp3tnMelon)" stroke="#1E5A2A" stroke-width="2.6"/>
-      <path d="M136 106 C142 100 150 96 158 96 M138 128 C144 134 152 138 160 138" stroke="#1E5A2A" stroke-width="2.8" stroke-linecap="round" opacity="0.7"/>
+      <ellipse cx="88" cy="137" rx="30" ry="4.5" fill="#101625" opacity="0.3"/>
+      <ellipse cx="160" cy="138" rx="25" ry="4" fill="#101625" opacity="0.3"/>
+      ${wm(88, 112, 35, 27, "hp3tnWmc1", -6)}
+      ${wm(160, 117, 29, 22, "hp3tnWmc2", 5)}
+      ${wedge(124, 133, 0.9, -8)}
     </g>
     <g class="tn-sign">
       <rect x="196" y="88" width="104" height="42" rx="8" fill="#FFF9DB" stroke="#E8B04B" stroke-width="2.6" transform="rotate(-3 248 109)"/>
