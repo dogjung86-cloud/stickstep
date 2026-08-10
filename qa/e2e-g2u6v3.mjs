@@ -209,6 +209,113 @@ console.log("L2 잘게 나눠야 들어간다, 소화");
   ok(await quiz("ox-x"), "큰창자 소화 활발 ×");
 }
 
+// ───────────────────────────── L3 ─────────────────────────────
+console.log("L3 피는 돈다 — 심장과 순환");
+{
+  const meta = await openLesson(2);
+  await W(700);
+  ok(meta.steps === 11, `steps=${meta.steps}`);
+  ok(await imgLoaded(".comic-art img"), "하비 만화 컷 이미지 로드");
+  for (let i = 0; i < 7; i++) await cta(); // 만화 7컷
+  ok(await page.evaluate(() => !!document.querySelector(".screen.active svg[aria-label*='심장의 구조']")), "심장 구조도 렌더");
+  await cta(); // → heartPumpLab
+  await clickNth(".hpp-seg", 0); // 이완
+  await W(600);
+  await clickNth(".hpp-seg", 1); // 수축
+  await W(2100);
+  await clickSel(".hpp-rev");
+  await W(2600);
+  ok(await pickChoice(".hpp-q", "판막이 거꾸로"), "한 방향 판정");
+  ok((await goalsOn()) === 3, "펌프장 목표 3");
+  ok(await ctaEnabled(), "펌프장 CTA");
+  await cta(); // → concept②(혈관·혈액)
+  ok(await imgLoaded("img[alt*='혈소판']"), "혈액 일러스트 로드");
+  await cta(); // → twoLoopsLab
+  const loopPick = async (text) => {
+    for (let t = 0; t < 20; t++) {
+      const done = await page.evaluate((x) => {
+        const b = [...document.querySelectorAll(".screen.active .tlp-choice")].find(
+          (c) => c.offsetParent !== null && c.textContent.includes(x),
+        );
+        if (b) { b.click(); return true; }
+        return false;
+      }, text);
+      if (done) { await W(400); return true; }
+      await W(320);
+    }
+    return false;
+  };
+  ok(await loopPick("대동맥으로"), "갈림길 1 대동맥");
+  ok(await loopPick("대정맥을 타고"), "갈림길 2 대정맥");
+  ok(await loopPick("폐동맥으로"), "갈림길 3 폐동맥");
+  ok(await loopPick("폐정맥을 타고"), "갈림길 4 폐정맥");
+  await W(2400);
+  ok(await pickChoice(".tlp-q", "두 번"), "심장 두 번 판정");
+  ok((await goalsOn()) === 3, "두 바퀴 목표 3");
+  ok(await ctaEnabled(), "두 바퀴 CTA");
+  await cta(); // → recap
+  await cta(); // → pairMatch
+  for (const [a, b] of [["혈장", "영양소·노폐물 운반"], ["적혈구", "산소 운반"], ["백혈구", "세균 제거(보호)"], ["혈소판", "혈액응고"]]) {
+    await page.evaluate((t) => { [...document.querySelectorAll(".screen.active .pm-chip.pm-a")].find((c) => c.textContent.trim() === t && !c.disabled)?.click(); }, a);
+    await W(180);
+    await page.evaluate((t) => { [...document.querySelectorAll(".screen.active .pm-chip.pm-b")].find((c) => c.textContent.trim() === t && !c.disabled)?.click(); }, b);
+    await W(320);
+  }
+  await W(700);
+  await cta();
+  await W(300);
+  ok(await sheetGood(), "혈구 임무 짝 맞추기 good");
+  await closeSheet();
+  ok(await quiz("mcq", 0), "㉠=우심방(그림)");
+  ok(await quiz("mcq", 0), "폐동맥=산소 적음");
+  ok(await quiz("ox-x"), "심방 벽 두꺼움 ×");
+  ok(await quiz("mcq", [0, 1]), "multi 모세혈관");
+}
+
+// ───────────────────────────── L4 ─────────────────────────────
+console.log("L4 숨을 움직이는 압력");
+{
+  const meta = await openLesson(3);
+  await W(700);
+  ok(meta.steps === 9, `steps=${meta.steps}`);
+  await clickSel(".hb3-hc");
+  ok(await pickChoice("", "근육 막"), "hiccup 예측");
+  await cta(); // → concept①
+  ok(await imgLoaded("img[alt*='호흡계']"), "호흡계 일러스트 로드");
+  await cta(); // → chestModelLab
+  const setSlider = async (v) => {
+    await page.evaluate((x) => {
+      const sl = document.querySelector(".screen.active .cms-slider");
+      if (!sl) return;
+      sl.value = String(x);
+      sl.dispatchEvent(new Event("input", { bubbles: true }));
+    }, v);
+    await W(300);
+  };
+  for (let v = 0; v <= 100; v += 25) await setSlider(v);
+  for (let v = 100; v >= 0; v -= 25) await setSlider(v);
+  await W(1900);
+  for (let i = 0; i < 4; i++) {
+    await page.evaluate((k) => {
+      const p = document.querySelectorAll(".screen.active .cms-part")[k];
+      p?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    }, i);
+    await W(350);
+  }
+  await W(1100);
+  ok(await pickChoice(".cms-q", "압력이 낮아지자"), "압력 판정");
+  ok((await goalsOn()) === 3, "모형실 목표 3");
+  ok(await ctaEnabled(), "모형실 CTA");
+  await cta(); // → concept②
+  ok(await page.evaluate(() => !!document.querySelector(".screen.active svg[aria-label*='기체 교환']")), "기체 교환 그림 렌더");
+  await cta(); // → recap
+  await cta(); // → binSort
+  ok(await binSort([["갈비뼈가 올라가요", 0], ["가로막이 내려가요", 0], ["흉강 부피가 커져요", 0], ["갈비뼈가 내려가요", 1], ["압력이 높아져요", 1], ["공기가 밖으로 나가요", 1]]), "들숨/날숨 분류 good");
+  ok(await quiz("mcq", 0), "고무 막=가로막(사진)");
+  ok(await quiz("ox-x"), "허파 근육 ×");
+  ok(await quiz("mcq", 0), "㉠=산소(그림)");
+}
+
 console.log(`\nRESULT: PASS ${PASS} / FAIL ${FAIL} / pageErrors ${pageErrors}`);
 await browser.close();
 process.exit(FAIL > 0 || pageErrors > 0 ? 1 : 0);

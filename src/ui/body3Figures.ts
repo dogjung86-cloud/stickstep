@@ -98,6 +98,121 @@ export function starchFlowFig(blanks: string[] = []): string {
   );
 }
 
+// ── 심장 구조도(L3 concept) — 4방·판막·혈관 라벨. 정면 뷰(왼쪽 = 몸의 오른쪽) ──
+export function heartMapFig(): string {
+  const chamber = (x: number, y: number, w: number, h: number, label: string, thick: boolean): string =>
+    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="16" fill="#FFF2F3" stroke="#C2626F" stroke-width="${thick ? 6 : 3}"/>
+     <text x="${x + w / 2}" y="${y + h / 2 + 4.5}" text-anchor="middle" font-size="13" font-weight="800" fill="#A94854">${label}</text>`;
+  const valve = (x: number, y: number): string =>
+    `<path d="M${x - 12} ${y} q6 3 11 10 M${x + 12} ${y} q-6 3 -11 10" stroke="#B8236B" stroke-width="3.6" stroke-linecap="round" fill="none"/>`;
+  const vlab = (x: number, y: number, t: string, anchor = "middle"): string =>
+    `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="12" font-weight="800" fill="#4E5968">${t}</text>`;
+  return SVG(
+    340,
+    252,
+    `<path d="M118 46 v-24" stroke="#7F9DC4" stroke-width="15" stroke-linecap="round"/>
+     <path d="M152 40 v-20" stroke="#C46A7C" stroke-width="12" stroke-linecap="round"/>
+     <path d="M192 40 v-20" stroke="#7F9DC4" stroke-width="12" stroke-linecap="round"/>
+     <path d="M226 46 v-24" stroke="#E05B6E" stroke-width="15" stroke-linecap="round"/>
+     ${vlab(84, 18, "대정맥", "end")}
+     ${vlab(150, 12, "폐동맥")}
+     ${vlab(196, 12, "폐정맥", "start")}
+     ${vlab(258, 18, "대동맥", "start")}
+     <path d="M96 22 l14 4 M214 12 v6 M136 16 h6 M246 22 l-12 4" stroke="#B0B8C1" stroke-width="1.8"/>
+     <path d="M172 52 C126 30 74 58 78 116 C81 168 122 204 172 220 C222 204 263 168 266 116 C270 58 218 30 172 52 Z" fill="#FDE2E5" stroke="#C2626F" stroke-width="4"/>
+     ${chamber(98, 62, 66, 44, "우심방", false)}
+     ${chamber(180, 62, 66, 44, "좌심방", false)}
+     ${chamber(96, 126, 70, 66, "우심실", true)}
+     ${chamber(178, 126, 70, 66, "좌심실", true)}
+     ${valve(131, 110)}
+     ${valve(213, 110)}
+     ${valve(150, 42)}
+     ${valve(192, 42)}
+     <path d="M262 148 h30" stroke="#B0B8C1" stroke-width="1.8"/>
+     <text x="296" y="144" text-anchor="start" font-size="11.5" font-weight="700" fill="#8B95A1">
+       <tspan x="296" dy="0">심실 벽은</tspan><tspan x="296" dy="14">두껍고</tspan><tspan x="296" dy="14">탄력 있어요</tspan>
+     </text>
+     <path d="M120 116 l6 -3" stroke="#B0B8C1" stroke-width="1.8"/>
+     <text x="66" y="120" text-anchor="middle" font-size="11.5" font-weight="800" fill="#B8236B">판막</text>
+     <text x="170" y="244" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">심방 = 받는 곳(정맥과 연결) · 심실 = 내보내는 곳(동맥과 연결)</text>`,
+    "심장의 구조 — 두 심방과 두 심실, 판막",
+  );
+}
+
+// ── 순환 경로 모식도(L3 퀴즈) — blanks: ["bodyEnd"]면 우심방 라벨을 ㉠로 가림 ──
+export function twoLoopFig(blanks: string[] = []): string {
+  const hideEnd = blanks.includes("bodyEnd");
+  const cham = (x: number, y: number, label: string, hidden = false): string =>
+    hidden
+      ? `<rect x="${x}" y="${y}" width="60" height="30" rx="10" fill="#F1F3F5" stroke="#ADB5BD" stroke-width="2" stroke-dasharray="4 3"/>
+         <text x="${x + 30}" y="${y + 20}" text-anchor="middle" font-size="13" font-weight="800" fill="#868E96">㉠</text>`
+      : `<rect x="${x}" y="${y}" width="60" height="30" rx="10" fill="#FFF2F3" stroke="#C2626F" stroke-width="2.6"/>
+         <text x="${x + 30}" y="${y + 20}" text-anchor="middle" font-size="12" font-weight="800" fill="#A94854">${label}</text>`;
+  const arr = (d: string, c: string): string =>
+    `<path d="${d}" stroke="${c}" stroke-width="5" fill="none" marker-end="url(#b6loopArr)" stroke-linecap="round"/>`;
+  const lab = (x: number, y: number, t: string): string =>
+    `<text x="${x}" y="${y}" text-anchor="middle" font-size="11" font-weight="800" fill="#4E5968">${t}</text>`;
+  return SVG(
+    340,
+    258,
+    `<defs><marker id="b6loopArr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/></marker></defs>
+     <rect x="118" y="14" width="104" height="34" rx="14" fill="#E3F2FB" stroke="#7CB2D4" stroke-width="2.6"/>
+     <text x="170" y="36" text-anchor="middle" font-size="13" font-weight="800" fill="#3E759B">허파</text>
+     <rect x="118" y="212" width="104" height="34" rx="14" fill="#FFF7E8" stroke="#E3C58A" stroke-width="2.6"/>
+     <text x="170" y="234" text-anchor="middle" font-size="12.5" font-weight="800" fill="#A9832B">온몸의 조직세포</text>
+     ${cham(104, 88, "우심방", hideEnd)}
+     ${cham(176, 88, "좌심방")}
+     ${cham(104, 132, "우심실")}
+     ${cham(176, 132, "좌심실")}
+     ${arr("M100 147 C46 140 46 60 116 31", "#7F9DC4")}
+     ${arr("M224 31 C290 58 290 92 240 101", "#E05B6E")}
+     ${arr("M240 149 C302 152 302 212 226 224", "#E05B6E")}
+     ${arr("M114 226 C40 200 58 96 100 103", "#7F9DC4")}
+     ${lab(46, 76, "폐동맥")}
+     ${lab(294, 76, "폐정맥")}
+     ${lab(298, 192, "대동맥")}
+     ${lab(44, 186, "대정맥")}
+     ${lab(170, 66, "허파순환")}
+     <text x="170" y="196" text-anchor="middle" font-size="11" font-weight="800" fill="#8B95A1">온몸순환</text>`,
+    "혈액의 순환 경로 모식도",
+  );
+}
+
+// ── 기체 교환 그림(L4) — 허파꽈리·조직세포 두 현장. blanks: ["o2"]면 산소 화살표 라벨을 ㉠로 ──
+export function gasExchangeFig(blanks: string[] = []): string {
+  const hideO2 = blanks.includes("o2");
+  const gasArr = (x1: number, y1: number, x2: number, y2: number, c: string): string =>
+    `<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${c}" stroke-width="4.5" stroke-linecap="round" marker-end="url(#b6gasArr)"/>`;
+  const glab = (x: number, y: number, t: string, c: string, hidden = false): string =>
+    hidden
+      ? `<g><circle cx="${x}" cy="${y}" r="12" fill="#F1F3F5" stroke="#ADB5BD" stroke-width="2" stroke-dasharray="4 3"/>
+         <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#868E96">㉠</text></g>`
+      : `<g><rect x="${x - 26}" y="${y - 11}" width="52" height="22" rx="11" fill="#FFFFFF" stroke="${c}" stroke-width="2"/>
+         <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#333D4B">${t}</text></g>`;
+  return SVG(
+    340,
+    212,
+    `<defs><marker id="b6gasArr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/></marker></defs>
+     <!-- 허파꽈리 현장 -->
+     <circle cx="84" cy="74" r="46" fill="#E3F2FB" stroke="#7CB2D4" stroke-width="3"/>
+     <text x="84" y="44" text-anchor="middle" font-size="12" font-weight="800" fill="#3E759B">허파꽈리</text>
+     <rect x="26" y="128" width="288" height="30" rx="15" fill="#FDE2E5" stroke="#E07A85" stroke-width="2.6"/>
+     <text x="170" y="147.5" text-anchor="middle" font-size="12" font-weight="800" fill="#C9303E">모세혈관</text>
+     ${gasArr(66, 96, 58, 126, B6.o2)}
+     ${glab(44, 106, "산소", "#BDDEF5", hideO2)}
+     ${gasArr(112, 126, 104, 96, B6.co2)}
+     ${glab(136, 106, "이산화 탄소", "#DCD2F7")}
+     <!-- 조직세포 현장 -->
+     <rect x="196" y="34" width="118" height="76" rx="18" fill="#FFF7E8" stroke="#E3C58A" stroke-width="3"/>
+     <text x="255" y="58" text-anchor="middle" font-size="12" font-weight="800" fill="#A9832B">조직세포</text>
+     ${gasArr(236, 126, 228, 106, B6.o2)}
+     ${gasArr(282, 106, 274, 126, B6.co2)}
+     ${blanks.length ? "" : `<text x="170" y="190" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">허파꽈리: 산소는 혈관으로, 이산화 탄소는 꽈리로</text>
+     <text x="170" y="206" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">조직세포: 산소는 세포로, 이산화 탄소는 혈관으로</text>`}`,
+    "허파꽈리와 조직세포에서의 기체 교환",
+  );
+}
+
 // ── recap 미니아트(64×64 플랫 — 과학 *Figures 관례) ─────────────────────
 const MINI: Record<string, string> = {};
 
@@ -121,6 +236,27 @@ MINI.enzymeScissors = `<path d="M10 22 h26" stroke="${B6.carb}" stroke-width="3"
 
 /** 접힌 융털 카펫(표면적) */
 MINI.villiFold = `<rect x="8" y="40" width="48" height="12" rx="4" fill="#FBEEEC" stroke="#E8B9B2" stroke-width="2"/><path d="M12 40 v-14 a5 5 0 0 1 10 0 v14 M24 40 v-18 a5 5 0 0 1 10 0 v18 M36 40 v-14 a5 5 0 0 1 10 0 v14" fill="#FFB3B9" stroke="#E07A85" stroke-width="2.2"/><circle cx="17" cy="30" r="1.6" fill="#FFFFFF"/><circle cx="29" cy="27" r="1.6" fill="#FFFFFF"/><circle cx="41" cy="30" r="1.6" fill="#FFFFFF"/>`;
+
+/** 판막 스윙 문(심장 = 일방통행 펌프) */
+MINI.heartDoor = `<path d="M32 14 C22 6 8 12 9 26 C10 40 20 48 32 54 C44 48 54 40 55 26 C56 12 42 6 32 14 Z" fill="#FDE2E5" stroke="#C2626F" stroke-width="2.6"/><path d="M24 28 q4 2 7 8 M40 28 q-4 2 -7 8" stroke="#B8236B" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M32 18 v6 M29 21 l3 4 3 -4" stroke="#E23B4B" stroke-width="2.2" stroke-linecap="round" fill="none"/>`;
+
+/** 혈관 3종(굵기·벽 다른 관) */
+MINI.vesselTrio = `<path d="M8 16 h48" stroke="#E05B6E" stroke-width="11" stroke-linecap="round"/><path d="M8 16 h48" stroke="#FFD3D9" stroke-width="4" stroke-linecap="round"/><path d="M8 34 h48" stroke="#D9A0AA" stroke-width="6" stroke-linecap="round"/><path d="M8 34 h48" stroke="#FFE8EB" stroke-width="2.4" stroke-linecap="round"/><path d="M8 50 q12 4 24 0 t24 0" stroke="#E8B9B2" stroke-width="2.6" fill="none"/><circle cx="20" cy="49" r="1.8" fill="#E05B6E"/><circle cx="34" cy="51" r="1.8" fill="#E05B6E"/><circle cx="46" cy="49" r="1.8" fill="#E05B6E"/>`;
+
+/** 혈액 구성(혈장 + 혈구 3종) */
+MINI.bloodCrew = `<path d="M14 10 h36 l-4 44 h-28 Z" fill="#FFF3D6" stroke="#E3C58A" stroke-width="2.4"/><circle cx="26" cy="38" r="6.5" fill="${B6.oxyBlood}"/><circle cx="26" cy="38" r="2.6" fill="#FFB3B9"/><circle cx="40" cy="30" r="7.5" fill="#FFFFFF" stroke="#B49FE3" stroke-width="2.4"/><circle cx="40" cy="30" r="3" fill="#B49FE3"/><path d="M36 46 l4 -3 4 3 -2 4 h-4 Z" fill="#F59F00"/>`;
+
+/** 두 순환 고리(8자) */
+MINI.loopTwo = `<rect x="24" y="26" width="16" height="12" rx="4" fill="#FDE2E5" stroke="#C2626F" stroke-width="2.2"/><path d="M30 26 C12 18 12 4 32 8 C50 4 50 18 34 26" stroke="#7CB2D4" stroke-width="3" fill="none" marker-end="none"/><path d="M30 38 C10 46 12 60 32 56 C52 60 52 46 34 38" stroke="#E05B6E" stroke-width="3" fill="none"/><path d="M14 12 l-2 4 4 1 Z" fill="#7CB2D4"/><path d="M50 52 l2 -4 -4 -1 Z" fill="#E05B6E"/>`;
+
+/** 거꾸로 나무(호흡계 — 숨관→숨관가지→허파꽈리) */
+MINI.lungTree = `<path d="M32 8 v14 M32 22 c-8 4 -14 8 -16 16 M32 22 c8 4 14 8 16 16 M16 38 c-3 5 -3 9 -2 12 M48 38 c3 5 3 9 2 12" stroke="#C4707F" stroke-width="3.4" stroke-linecap="round" fill="none"/><circle cx="12" cy="53" r="5" fill="#BBE3F5" stroke="#7CB2D4" stroke-width="2"/><circle cx="21" cy="55" r="5" fill="#BBE3F5" stroke="#7CB2D4" stroke-width="2"/><circle cx="43" cy="55" r="5" fill="#BBE3F5" stroke="#7CB2D4" stroke-width="2"/><circle cx="52" cy="53" r="5" fill="#BBE3F5" stroke="#7CB2D4" stroke-width="2"/>`;
+
+/** 부피↑ = 압력↓ = 공기 in(호흡운동) */
+MINI.pressureFlow = `<path d="M14 20 h36 l4 34 h-44 Z" fill="#EAF2F8" stroke="#8FA6B8" stroke-width="2.6"/><path d="M18 54 q14 -8 28 0" stroke="#E23B4B" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M32 4 v12 M28 12 l4 6 4 -6" stroke="#4DABF7" stroke-width="3" stroke-linecap="round" fill="none"/><ellipse cx="32" cy="34" rx="10" ry="12" fill="#FFB3B9" stroke="#E07A85" stroke-width="2.2"/>`;
+
+/** 승강장 교환(기체 교환 — 파랑 in·보라 out) */
+MINI.swapStation = `<rect x="10" y="24" width="44" height="16" rx="8" fill="#FDE2E5" stroke="#E07A85" stroke-width="2.2"/><circle cx="20" cy="14" r="5" fill="${B6.o2}"/><path d="M20 20 v8 M17 24 l3 5 3 -5" stroke="${B6.o2}" stroke-width="2.4" stroke-linecap="round" fill="none"/><circle cx="44" cy="52" r="5" fill="${B6.co2}"/><path d="M44 46 v-8 M41 42 l3 -5 3 5" stroke="${B6.co2}" stroke-width="2.4" stroke-linecap="round" fill="none"/>`;
 
 /** 자리표시(키 미등록) — 저작 중 눈에 띄게 */
 const FALLBACK = `<rect x="10" y="10" width="44" height="44" rx="10" fill="#F1F3F5" stroke="#CED4DA" stroke-width="2"/><text x="32" y="38" text-anchor="middle" font-size="16" fill="#868E96">?</text>`;

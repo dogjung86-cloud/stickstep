@@ -226,3 +226,110 @@
 @media (prefers-reduced-motion: reduce) {
   .ftp-token.hop circle, .ftp-token.hop rect, .ftp-token.hop ellipse, .ftp-token.hop path { animation: none; }
 }
+
+/* ── L3 heartPumpLab(.hpp-) — 심장 펌프장 ─────────────────────────── */
+.hpp-board { padding: 10px; }
+.hpp-board svg { width: 100%; height: auto; display: block; }
+.hpp-tag {
+  position: absolute;
+  background: #FFFFFF;
+  border: 1px solid #F1D9D5;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #A94854;
+  box-shadow: 0 2px 6px rgba(42, 58, 94, 0.08);
+  pointer-events: none;
+}
+.hpp-tag-atr { top: 24%; left: 10px; }
+.hpp-tag-ven { top: 58%; right: 10px; }
+.hpp-valve path { transform-box: fill-box; transform-origin: top center; transition: transform 0.45s var(--ease-out, ease-out); }
+.hpp-blood { transform-box: view-box; transition: transform 0.7s var(--ease-out, ease-out), opacity 0.4s ease; }
+/* 이완: 심방·심실이 채워지고(방실 판막 열림), 동맥 판막 닫힘 */
+.hpp-board.dia .hpp-av-l .hpp-flapL, .hpp-board.dia .hpp-av-r .hpp-flapL { transform: rotate(-34deg); }
+.hpp-board.dia .hpp-av-l .hpp-flapR, .hpp-board.dia .hpp-av-r .hpp-flapR { transform: rotate(34deg); }
+.hpp-board.dia .hpp-b-atrL, .hpp-board.dia .hpp-b-atrR { opacity: 1; transform: translateY(0); }
+.hpp-board.dia .hpp-b-venL, .hpp-board.dia .hpp-b-venR { opacity: 1; transform: translateY(0); }
+/* 수축: 심실 압축·동맥 판막 열림·심실 피가 위 혈관으로, 방실 판막 닫힘 */
+.hpp-board.sys .hpp-sv-l .hpp-flapL, .hpp-board.sys .hpp-sv-r .hpp-flapL { transform: rotate(-34deg); }
+.hpp-board.sys .hpp-sv-l .hpp-flapR, .hpp-board.sys .hpp-sv-r .hpp-flapR { transform: rotate(34deg); }
+.hpp-board.sys .hpp-vent { transform-box: fill-box; transform-origin: center; transform: scale(0.94); transition: transform 0.45s var(--ease-out, ease-out); }
+.hpp-board.sys .hpp-b-venL, .hpp-board.sys .hpp-b-venR { transform: translateY(-128px); opacity: 0; }
+.hpp-board.sys .hpp-b-atrL, .hpp-board.sys .hpp-b-atrR { transform: translateY(52px); opacity: 0.9; }
+.hpp-vent { transition: transform 0.45s var(--ease-out, ease-out); }
+.hpp-noway { opacity: 0; }
+.hpp-board.revfail .hpp-noway { opacity: 1; transition: opacity 0.2s ease 0.35s; }
+.hpp-board.revfail .hpp-b-atrL, .hpp-board.revfail .hpp-b-atrR { transform: translateY(30px); opacity: 1; transition-duration: 0.35s; }
+.hpp-board.revfail { animation: b6Shake 0.4s ease 0.4s; }
+.hpp-segrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.hpp-seg {
+  padding: 12px;
+  border-radius: 14px;
+  border: 1.5px solid var(--n200, #E5E8EB);
+  background: #FFFFFF;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink, #191F28);
+}
+.hpp-seg:active { transform: scale(0.965); }
+.hpp-seg.cur { border-color: var(--subj-body, #E23B4B); box-shadow: 0 0 0 3px rgba(226, 59, 75, 0.12); color: #C9303E; }
+.hpp-rev {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1.5px solid #E9C1F0;
+  background: linear-gradient(180deg, #FBF0FE, #F3DFF9);
+  font-size: 14px;
+  font-weight: 800;
+  color: #9C36B5;
+  animation: b6Pop 0.35s ease;
+}
+.hpp-rev:active { transform: scale(0.975); }
+.hpp-rev:disabled { opacity: 0.45; }
+.hpp-q { margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) {
+  .hpp-board.revfail { animation: none; }
+}
+
+/* ── L3 twoLoopsLab(.tlp-) — 혈액 방울의 두 바퀴 ───────────────────── */
+.tlp-board { padding: 10px; }
+.tlp-board svg { width: 100%; height: auto; display: block; }
+.tlp-token { transform-box: view-box; transition: transform 0.75s var(--ease-out, ease-out); }
+.tlp-token circle { transition: fill 0.5s ease; }
+.tlp-badge { left: 12px; right: auto; }
+.tlp-choicerow { display: grid; gap: 8px; margin-top: 12px; }
+.tlp-choice {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1.5px solid var(--n200, #E5E8EB);
+  background: #FFFFFF;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink, #191F28);
+  animation: b6Pop 0.3s ease;
+}
+.tlp-choice:active { transform: scale(0.975); }
+.tlp-q { margin-top: 12px; }
+
+/* ── L4 chestModelLab(.cms-) — 호흡운동 모형실 ─────────────────────── */
+.cms-board { padding: 10px; }
+.cms-board svg { width: 100%; height: auto; display: block; }
+.cms-pill { top: auto; bottom: 12px; left: 12px; }
+.cms-memline, .cms-knob { transition: d 0.15s linear, cy 0.15s linear; }
+.cms-balloon ellipse { transition: rx 0.18s ease, ry 0.18s ease; }
+.cms-gaugefill { transition: height 0.18s ease, y 0.18s ease; }
+.cms-air { opacity: 0; transition: opacity 0.25s ease; }
+.cms-board.inhale .cms-air-in { opacity: 1; }
+.cms-board.exhale .cms-air-out { opacity: 1; }
+.cms-part { cursor: pointer; }
+.cms-part:focus-visible { outline: 2px solid var(--subj-body, #E23B4B); outline-offset: 2px; }
+.cms-part.hit rect, .cms-part.hit ellipse, .cms-part.hit path { filter: drop-shadow(0 0 5px rgba(226, 59, 75, 0.55)); }
+.cms-sliderrow { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.cms-sllab { font-size: 12px; font-weight: 800; color: #8B95A1; flex: 0 0 auto; }
+.cms-slider { flex: 1; accent-color: var(--subj-body, #E23B4B); height: 34px; }
+.cms-q { margin-top: 12px; }
