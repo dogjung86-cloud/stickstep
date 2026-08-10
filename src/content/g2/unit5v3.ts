@@ -9,7 +9,7 @@ import {
   lesson, concept, comic, hook, recap, mcq, ox, multi, binSort, order, pairMatch, cut,
   greenHuntLab, gasCrossLab, starchQuestLab, factorCurveLab, flipEngineLab, sunGaugeLab, sapFlowLab,
 } from "../dsl";
-import { p3MiniArt, psFlowFig, leafFactorySceneFig, factorShapesFig, dayNightGasFig } from "../../ui/plant3Figures";
+import { p3MiniArt, leafFactorySceneFig, factorShapesFig, dayNightGasFig } from "../../ui/plant3Figures";
 
 /** public 임의 경로 사진 한 장(검증 자산 재사용 — plant/figs·exam/g2u5). */
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -160,12 +160,12 @@ export const G2_UNIT5_V3: Unit = {
           explainBad: "숨쉬기와 헷갈리면 방향이 뒤집혀요 — 광합성에서는 <b>이산화 탄소가 들어가고 산소가 나온답니다</b>. 재료 셋(빛에너지·이산화 탄소·물), 산물 둘(포도당·산소)로 기억해요.",
         }),
         mcq({
-          prompt: "그림은 광합성 과정을 나타낸 거예요. ㉠에 들어갈 물질로 옳은 것은?",
-          figure: psFlowFig({ blanks: ["co2"] }),
+          prompt: "그림은 잎에서 일어나는 광합성 과정이에요. 기공으로 들어와 물과 함께 재료로 쓰이는 ㉠은 무엇일까요?",
+          figure: leafFactorySceneFig({ mode: "quiz", blank: "co2" }),
           options: ["이산화 탄소", "산소", "녹말", "질소", "수증기"],
           answer: 0,
-          explainGood: "맞아요! 빛에너지·물과 함께 엽록체로 들어가는 재료 — <b>이산화 탄소</b>예요. 주로 잎의 기공으로 들어오죠.",
-          explainBad: "㉠은 화살표가 엽록체를 <b>향해 들어가는</b> 쪽이에요. 산소는 나오는 산물이고, 들어가는 기체 재료는 <b>이산화 탄소</b>랍니다.",
+          explainGood: "맞아요! 기공으로 들어와 물과 함께 반응에 쓰이는 기체 재료 — <b>이산화 탄소</b>예요.",
+          explainBad: "㉠은 잎으로 <b>들어가는</b> 재료 자리예요. 산소는 나오는 산물이고, 기공으로 들어오는 기체 재료는 <b>이산화 탄소</b>랍니다.",
         }),
         mcq({
           prompt: "광합성으로 <b>처음</b> 만들어지는 양분은 무엇일까요?",
