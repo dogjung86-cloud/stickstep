@@ -65,7 +65,7 @@ export const UNIT2_V3: Unit = {
             {
               img: "comics/u2v3l1/0.webp", stage: "1665년, 런던", title: "괴짜 과학자, 로버트 훅",
               caption: "영국의 과학자 <b>로버트 훅</b>은 밤마다 자신이 만든 현미경으로 온갖 것을 들여다봤어요. 벼룩, 바늘 끝, 파리의 눈… 그리고 오늘의 관찰 대상은 — 와인 병의 <b>코르크 마개</b>!",
-              bubbles: [{ text: "난 로버트 훅!", x: 63, y: 13 }],
+              bubbles: [{ text: "난 로버트 훅!", x: 33, y: 12 }],
             },
             {
               img: "comics/u2v3l1/1.webp", stage: "관찰 준비", title: "종잇장보다 얇게",
@@ -864,12 +864,12 @@ export const UNIT2_V3: Unit = {
             {
               img: "comics/u2v3l7/0.webp", stage: "1831년, 영국", title: "청년 다윈, 배에 오르다",
               caption: "스물두 살의 <b>찰스 다윈</b>은 탐사선 비글호에 올랐어요. 임무는 세계 곳곳의 자연을 기록하는 것 — 5년짜리 긴 항해의 시작이었죠.",
-              bubbles: [{ text: "난 찰스 다윈!", x: 22, y: 12 }],
+              bubbles: [{ text: "난 찰스 다윈!", x: 26, y: 27 }],
             },
             {
               img: "comics/u2v3l7/1.webp", stage: "항해", title: "화산섬 무리에 닿다",
               caption: "남아메리카 서쪽 바다를 건너, 배는 <b>갈라파고스 제도</b>에 닿았어요. 화산이 만든 크고 작은 섬들이 흩어져 있는 곳이에요.",
-              bubbles: [{ text: "저기가 갈라파고스!", x: 42, y: 13 }],
+              bubbles: [{ text: "저기가 갈라파고스!", x: 30, y: 36 }],
             },
             {
               img: "comics/u2v3l7/2.webp", stage: "관찰 ①", title: "거북이 섬마다 다르다?",
