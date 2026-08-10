@@ -567,8 +567,18 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
 - **재사용 검증 자산**: exam/g2u5 실험 사진(pondweed-bubbles·sprouting-seeds 등 — 소재성 재사용) +
   plant/figs/storage-foods.webp(교과서 그림 V-5의 5작물과 정확히 일치 — L6 concept·퀴즈 공용).
   발주는 개념 컷 8장(plant3/cuts, order-g2u5v3-cuts.sh)뿐 — 훅·랩 무대는 전부 손코딩 SVG.
+- **⚠ b4Ask `.show` 누락 사고(2026-08-10 사용자 실사용 적발 — 전 레슨 판정 질문 미표시)**:
+  ui.css의 `.hook-choices`는 기본 `display:none`이고 **`.show` 클래스일 때만 flex**다(훅 경로는
+  hookAsk가 붙여 줌). bio4Kit.b4Ask가 이걸 빠뜨려 **랩 안 판정 질문이 DOM에만 있고 화면엔 안 보였다**
+  — u2v3 랩 9종·g2u5v3 랩 7종 전부 영향, 공용 킷 한 줄 수정으로 동시 치유(u2v3 e2e 78/78 재확인).
+  교훈 2가지: ① **합성 클릭(el.click()) e2e는 display:none 버튼도 눌러 통과한다** — 판정 선택지
+  검증은 반드시 `offsetParent !== null` 가시성 필터를 걸 것(e2e-g2u5v3 pickChoice에 반영).
+  ② 오목한 SVG 도형(번개 등)을 탭 대상으로 쓰면 bbox 중심이 빈틈이라 히트가 샌다 — **투명 히트
+  프록시 rect**(`fill="none" pointer-events="all"`)를 g 안에 깐다(flipEngine 번개 소급).
 - **QA**: `PORT=<포트> node qa/e2e-g2u5v3.mjs`(6레슨 실플레이 — 훅 조작·랩 목표 3·전 문제 정답
   시트, **67검증 ALL PASS·pageErrors 0**. 모듈 직접 import라 스플래시 우회 불필요) ·
-  `qa/shot-g2u5v3.mjs`(눈검수 13샷 → qa/shots/g2u5v3-*.png).
+  `qa/check-g2u5v3-real.mjs`(**실사용 경로 검사** — 스플래시 부팅→지도 진입→trusted click, 판정
+  질문 "가시성"이 게이트. **23검증 ALL PASS**. 합성 클릭 e2e가 못 보는 표시 계층을 잡는 그물) ·
+  `qa/shot-g2u5v3.mjs`(눈검수 13샷+질문 표시 2샷 → qa/shots/g2u5v3-*.png).
 - **잔여 백로그**: 만화 말풍선(bubbles) 미저작(u2v3와 동일 — 화자 머리 실측 관행 필수) · 병합 확정 시
   시험 풀 사후 스팟 검산 권장 · 개념 컷 g2u5l1b(공기 뭉치가 쿠키처럼 읽힘)는 취향에 따라 재발주 후보.

@@ -71,6 +71,7 @@ function stageScene(): string {
       <path d="M216 100 h8 M218 96 l8 4 -8 4 Z" stroke="${P3.co2}" stroke-width="2.6" fill="${P3.co2}" stroke-linecap="round"/>
       <path d="M216 138 h30 M240 134 l8 4 -8 4 Z" stroke="${P3.water}" stroke-width="2.6" fill="${P3.water}" stroke-linecap="round"/>
       <g class="fpe-bolt" role="button" tabindex="0" aria-label="에너지 번개 탭">
+        <rect x="152" y="8" width="62" height="62" rx="14" fill="none" pointer-events="all"/>
         <path d="M178 18 l-14 24 h10 l-9 22 l22 -28 h-10 l9 -18 Z" fill="${P3.energy}" stroke="#E8A80C" stroke-width="2.4" stroke-linejoin="round"/>
         <path d="M196 20 l3 6 6 3 -6 3 -3 6 -3 -6 -6 -3 6 -3 Z" fill="#FFF3BF"/>
       </g>

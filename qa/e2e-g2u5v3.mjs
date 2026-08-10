@@ -37,11 +37,14 @@ const cta = async () => { await page.evaluate(() => document.querySelector(".scr
 const ctaEnabled = () => page.evaluate(() => { const b = document.querySelector(".screen.active .btn.cta"); return !!b && !b.disabled; });
 const goalsOn = () => page.evaluate(() => document.querySelectorAll(".screen.active .pn-badge.on").length);
 const clickSel = async (sel) => { await page.evaluate((s) => { const n = document.querySelector(`.screen.active ${s}`); n?.dispatchEvent(new MouseEvent("click", { bubbles: true })); }, sel); };
-/** 훅/랩 판정 선택지(텍스트 포함 매칭) — 등장 대기 폴링. */
+/** 훅/랩 판정 선택지(텍스트 포함 매칭) — 등장 대기 폴링.
+ *  반드시 "실제로 보이는" 버튼만 누른다(offsetParent 검사) — 합성 클릭은 display:none 버튼도
+ *  눌러 버려서 b4Ask .show 누락(질문 미표시) 사고를 통과시켰다(2026-08-10 실사용 적발). */
 const pickChoice = async (scope, text, tries = 16) => {
   for (let t = 0; t < tries; t++) {
     const done = await page.evaluate(({ scope, text }) => {
-      const btns = [...document.querySelectorAll(`.screen.active ${scope} .hook-choice`)].filter((b) => !b.disabled);
+      const btns = [...document.querySelectorAll(`.screen.active ${scope} .hook-choice`)]
+        .filter((b) => !b.disabled && b.offsetParent !== null);
       const b = btns.find((x) => x.textContent.includes(text));
       if (b) { b.click(); return true; }
       return false;

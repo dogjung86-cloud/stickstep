@@ -50,6 +50,10 @@ export function b4Ask(
 ): void {
   box.innerHTML = "";
   box.style.display = "";
+  // ui.css의 .hook-choices는 기본 display:none이고 .show일 때만 flex다(hookAsk와 동일 계약).
+  // 이 줄이 빠지면 판정 질문이 DOM에만 있고 화면엔 안 보인다 — 합성 클릭 e2e는 보이지 않는
+  // 버튼도 눌러 통과하므로 가시성 검증은 offsetParent로 해야 한다(2026-08-10 실사용 적발).
+  box.classList.add("show");
   box.appendChild(el("div", { class: "hook-q", html: question }));
   const order = choices.map((_, i) => i);
   for (let i = order.length - 1; i > 0; i--) {
