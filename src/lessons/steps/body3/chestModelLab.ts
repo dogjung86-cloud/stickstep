@@ -92,7 +92,7 @@ export const chestModelLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "교과서의 <b>호흡운동 모형</b>이에요 — 컵 바닥에 고무 막을 씌우고, 빨대 끝에 작은 풍선을 달았죠. 아래 <b>슬라이더</b>로 고무 막을 아래로 당겼다 올렸다 해 보세요.",
+    html: "숨쉬기의 원리를 담은 <b>호흡운동 모형</b>이에요 — 컵 바닥에 고무 막을 씌우고, 빨대 끝에 작은 풍선을 달았죠. 아래 <b>슬라이더</b>로 고무 막을 아래로 당겼다 올렸다 해 보세요.",
   });
 
   const board = el("div", { class: "b6-board cms-board", html: stageScene() });

@@ -13,9 +13,9 @@
 .hb3-stage:focus-visible { outline: 2px solid var(--subj-body, #E23B4B); outline-offset: 2px; }
 .hb3-stage svg { width: 100%; height: auto; display: block; }
 
-/* ── L1 bodyscan(.hb3-bs) — 물 게이지 스캔 ── */
-.hb3-bs .bs-fill, .hb3-bs .bs-wave { transform: translateY(134px); transition: transform 1.6s var(--ease-out, ease-out); }
-.hb3-bs.scan .bs-fill, .hb3-bs.scan .bs-wave { transform: translateY(0); }
+/* ── L1 bodyscan(.hb3-bs) — 물 게이지 스캔(몸의 3분의 2 지점에서 멈춤 — 문구와 정합) ── */
+.hb3-bs .bs-fill, .hb3-bs .bs-wave { transform: translateY(176px); transition: transform 1.6s var(--ease-out, ease-out); }
+.hb3-bs.scan .bs-fill, .hb3-bs.scan .bs-wave { transform: translateY(58px); }
 .hb3-bs .bs-q { opacity: 0; }
 .hb3-bs.scan .bs-q { opacity: 1; transition: opacity 0.4s ease 1.3s; }
 .hb3-bs.scan .bs-wave { animation: hb3Wave 1.8s ease-in-out 1.7s infinite; }

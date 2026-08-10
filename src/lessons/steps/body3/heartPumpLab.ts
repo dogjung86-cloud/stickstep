@@ -163,8 +163,10 @@ export const heartPumpLab: StepRenderer = (host, step, api) => {
     busy = true;
     haptic(HAPTIC.wrong);
     revBtn.disabled = true;
-    board.classList.remove("dia");
-    board.classList.add("sys", "revfail");
+    board.classList.remove("dia", "sys");
+    diaBtn.classList.remove("cur");
+    sysBtn.classList.remove("cur");
+    board.classList.add("revfail");
     helper.innerHTML = "혈액을 심방 쪽으로 밀어 봤지만 — <b>판막이 탁! 닫히며 길을 막았어요.</b> 거꾸로 가는 문은 열리지 않네요.";
     later(() => {
       busy = false;

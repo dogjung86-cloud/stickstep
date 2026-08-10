@@ -148,15 +148,15 @@ export function twoLoopFig(blanks: string[] = []): string {
          <text x="${x + 30}" y="${y + 20}" text-anchor="middle" font-size="13" font-weight="800" fill="#868E96">㉠</text>`
       : `<rect x="${x}" y="${y}" width="60" height="30" rx="10" fill="#FFF2F3" stroke="#C2626F" stroke-width="2.6"/>
          <text x="${x + 30}" y="${y + 20}" text-anchor="middle" font-size="12" font-weight="800" fill="#A94854">${label}</text>`;
-  const arr = (d: string, c: string): string =>
-    `<path d="${d}" stroke="${c}" stroke-width="5" fill="none" marker-end="url(#b6loopArr)" stroke-linecap="round"/>`;
+  const arr = (d: string, c: string, tip: [number, number, number]): string =>
+    `<path d="${d}" stroke="${c}" stroke-width="5" fill="none" stroke-linecap="round"/>
+     <path d="M-7 -9 L0 0 L7 -9 Z" fill="${c}" transform="translate(${tip[0]} ${tip[1]}) rotate(${tip[2]})"/>`;
   const lab = (x: number, y: number, t: string): string =>
     `<text x="${x}" y="${y}" text-anchor="middle" font-size="11" font-weight="800" fill="#4E5968">${t}</text>`;
   return SVG(
     340,
     258,
-    `<defs><marker id="b6loopArr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/></marker></defs>
-     <rect x="118" y="14" width="104" height="34" rx="14" fill="#E3F2FB" stroke="#7CB2D4" stroke-width="2.6"/>
+    `<rect x="118" y="14" width="104" height="34" rx="14" fill="#E3F2FB" stroke="#7CB2D4" stroke-width="2.6"/>
      <text x="170" y="36" text-anchor="middle" font-size="13" font-weight="800" fill="#3E759B">허파</text>
      <rect x="118" y="212" width="104" height="34" rx="14" fill="#FFF7E8" stroke="#E3C58A" stroke-width="2.6"/>
      <text x="170" y="234" text-anchor="middle" font-size="12.5" font-weight="800" fill="#A9832B">온몸의 조직세포</text>
@@ -164,10 +164,10 @@ export function twoLoopFig(blanks: string[] = []): string {
      ${cham(176, 88, "좌심방")}
      ${cham(104, 132, "우심실")}
      ${cham(176, 132, "좌심실")}
-     ${arr("M100 147 C46 140 46 60 116 31", "#7F9DC4")}
-     ${arr("M224 31 C290 58 290 92 240 101", "#E05B6E")}
-     ${arr("M240 149 C302 152 302 212 226 224", "#E05B6E")}
-     ${arr("M114 226 C40 200 58 96 100 103", "#7F9DC4")}
+     ${arr("M100 147 C46 140 46 60 112 32", "#7F9DC4", [116, 31, -113])}
+     ${arr("M224 31 C290 58 290 92 236 100", "#E05B6E", [240, 101, 82])}
+     ${arr("M240 149 C302 152 302 212 230 223", "#E05B6E", [226, 224, 81])}
+     ${arr("M114 226 C40 200 58 96 96 103", "#7F9DC4", [100, 103, -80])}
      ${lab(46, 76, "폐동맥")}
      ${lab(294, 76, "폐정맥")}
      ${lab(298, 192, "대동맥")}
@@ -181,34 +181,34 @@ export function twoLoopFig(blanks: string[] = []): string {
 // ── 기체 교환 그림(L4) — 허파꽈리·조직세포 두 현장. blanks: ["o2"]면 산소 화살표 라벨을 ㉠로 ──
 export function gasExchangeFig(blanks: string[] = []): string {
   const hideO2 = blanks.includes("o2");
-  const gasArr = (x1: number, y1: number, x2: number, y2: number, c: string): string =>
-    `<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${c}" stroke-width="4.5" stroke-linecap="round" marker-end="url(#b6gasArr)"/>`;
+  const gasArr = (x: number, y1: number, y2: number, c: string): string =>
+    `<path d="M${x} ${y1} L${x} ${y2 + (y2 > y1 ? -7 : 7)}" stroke="${c}" stroke-width="3.4" stroke-linecap="round"/>
+     <path d="M${x - 5} ${y2 + (y2 > y1 ? -8 : 8)} L${x} ${y2} L${x + 5} ${y2 + (y2 > y1 ? -8 : 8)} Z" fill="${c}"/>`;
   const glab = (x: number, y: number, t: string, c: string, hidden = false): string =>
     hidden
       ? `<g><circle cx="${x}" cy="${y}" r="12" fill="#F1F3F5" stroke="#ADB5BD" stroke-width="2" stroke-dasharray="4 3"/>
          <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#868E96">㉠</text></g>`
-      : `<g><rect x="${x - 26}" y="${y - 11}" width="52" height="22" rx="11" fill="#FFFFFF" stroke="${c}" stroke-width="2"/>
-         <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#333D4B">${t}</text></g>`;
+      : `<g><rect x="${x - 33}" y="${y - 10}" width="66" height="20" rx="10" fill="#FFFFFF" stroke="${c}" stroke-width="1.8"/>
+         <text x="${x}" y="${y + 4}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#333D4B">${t}</text></g>`;
   return SVG(
     340,
-    212,
-    `<defs><marker id="b6gasArr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/></marker></defs>
-     <!-- 허파꽈리 현장 -->
-     <circle cx="84" cy="74" r="46" fill="#E3F2FB" stroke="#7CB2D4" stroke-width="3"/>
-     <text x="84" y="44" text-anchor="middle" font-size="12" font-weight="800" fill="#3E759B">허파꽈리</text>
-     <rect x="26" y="128" width="288" height="30" rx="15" fill="#FDE2E5" stroke="#E07A85" stroke-width="2.6"/>
-     <text x="170" y="147.5" text-anchor="middle" font-size="12" font-weight="800" fill="#C9303E">모세혈관</text>
-     ${gasArr(66, 96, 58, 126, B6.o2)}
-     ${glab(44, 106, "산소", "#BDDEF5", hideO2)}
-     ${gasArr(112, 126, 104, 96, B6.co2)}
-     ${glab(136, 106, "이산화 탄소", "#DCD2F7")}
+    216,
+    `<!-- 허파꽈리 현장 -->
+     <circle cx="78" cy="66" r="40" fill="#E3F2FB" stroke="#7CB2D4" stroke-width="3"/>
+     <text x="78" y="71" text-anchor="middle" font-size="12" font-weight="800" fill="#3E759B">허파꽈리</text>
+     <rect x="26" y="132" width="288" height="30" rx="15" fill="#FDE2E5" stroke="#E07A85" stroke-width="2.6"/>
+     <text x="170" y="151.5" text-anchor="middle" font-size="12" font-weight="800" fill="#C9303E">모세혈관</text>
+     ${gasArr(56, 104, 130, B6.o2)}
+     ${glab(hideO2 ? 30 : 40, 118, "산소", "#BDDEF5", hideO2)}
+     ${gasArr(102, 130, 104, B6.co2)}
+     ${glab(146, 118, "이산화 탄소", "#DCD2F7")}
      <!-- 조직세포 현장 -->
-     <rect x="196" y="34" width="118" height="76" rx="18" fill="#FFF7E8" stroke="#E3C58A" stroke-width="3"/>
-     <text x="255" y="58" text-anchor="middle" font-size="12" font-weight="800" fill="#A9832B">조직세포</text>
-     ${gasArr(236, 126, 228, 106, B6.o2)}
-     ${gasArr(282, 106, 274, 126, B6.co2)}
-     ${blanks.length ? "" : `<text x="170" y="190" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">허파꽈리: 산소는 혈관으로, 이산화 탄소는 꽈리로</text>
-     <text x="170" y="206" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">조직세포: 산소는 세포로, 이산화 탄소는 혈관으로</text>`}`,
+     <rect x="200" y="30" width="114" height="72" rx="18" fill="#FFF7E8" stroke="#E3C58A" stroke-width="3"/>
+     <text x="257" y="71" text-anchor="middle" font-size="12" font-weight="800" fill="#A9832B">조직세포</text>
+     ${gasArr(232, 130, 104, B6.o2)}
+     ${gasArr(284, 104, 130, B6.co2)}
+     ${blanks.length ? "" : `<text x="170" y="192" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">허파꽈리: 산소는 혈관으로, 이산화 탄소는 꽈리로</text>
+     <text x="170" y="208" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">조직세포: 산소는 세포로, 이산화 탄소는 혈관으로</text>`}`,
     "허파꽈리와 조직세포에서의 기체 교환",
   );
 }
@@ -250,15 +250,22 @@ export function teamFig(blanks: string[] = []): string {
          <text x="${x}" y="${y + 5}" text-anchor="middle" font-size="13" font-weight="800" fill="#868E96">(가)</text>`
       : `<rect x="${x - 44}" y="${y - 20}" width="88" height="40" rx="13" fill="${tone}" stroke="${ink}" stroke-width="2.6"/>
          <text x="${x}" y="${y + 5}" text-anchor="middle" font-size="13" font-weight="800" fill="#333D4B">${label}</text>`;
-  const arr = (d: string, c: string): string =>
-    `<path d="${d}" stroke="${c}" stroke-width="3.4" fill="none" marker-end="url(#b6teamArr)" stroke-linecap="round"/>`;
+  const arr = (d: string, c: string): string => {
+    const m = /M(\d+) (\d+) v(-?\d+)/.exec(d)!;
+    const x = Number(m[1]);
+    const y1 = Number(m[2]);
+    const dy = Number(m[3]);
+    const y2 = y1 + dy;
+    const down = dy > 0;
+    return `<path d="M${x} ${y1} v${dy + (down ? -6 : 6)}" stroke="${c}" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M${x - 5} ${y2 + (down ? -7 : 7)} L${x} ${y2} L${x + 5} ${y2 + (down ? -7 : 7)} Z" fill="${c}"/>`;
+  };
   const note = (x: number, y: number, t: string, c: string): string =>
     `<text x="${x}" y="${y}" text-anchor="middle" font-size="10.5" font-weight="800" fill="${c}">${t}</text>`;
   return SVG(
     340,
     250,
-    `<defs><marker id="b6teamArr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/></marker></defs>
-     <rect x="42" y="96" width="256" height="58" rx="20" fill="#FDE2E5" stroke="#E07A85" stroke-width="2.8"/>
+    `<rect x="42" y="96" width="256" height="58" rx="20" fill="#FDE2E5" stroke="#E07A85" stroke-width="2.8"/>
      <text x="170" y="130" text-anchor="middle" font-size="13.5" font-weight="800" fill="#C9303E">순환계</text>
      ${org(88, 36, "소화계", "#FFF4E6", "#F3C9A8", hideDig)}
      ${org(252, 36, "호흡계", "#E3F2FB", "#7CB2D4")}

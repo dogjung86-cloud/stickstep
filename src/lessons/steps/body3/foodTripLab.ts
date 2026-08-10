@@ -94,6 +94,7 @@ function stageScene(): string {
      <text x="88" y="${y + 5}" text-anchor="middle" font-size="13.5" font-weight="800" fill="#4E5968">${label}</text></g>`;
   return `<svg viewBox="0 0 340 236" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <path d="M88 40 v168" stroke="#F1D9D5" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 9"/>
+    <path d="M200 40 v168" stroke="#F8E4E0" stroke-width="3" stroke-dasharray="2 8"/>
     ${station(40, "입")}
     <text x="132" y="74" font-size="11" font-weight="700" fill="#B0B8C1">식도</text>
     ${station(100, "위")}
@@ -177,7 +178,7 @@ export const foodTripLab: StepRenderer = (host, step, api) => {
   function drawToken(kind: string, color: string, y: number): void {
     const t = token();
     t.innerHTML = beads(kind as Parameters<typeof beads>[0], color);
-    t.setAttribute("transform", `translate(224 ${y})`);
+    t.setAttribute("transform", `translate(200 ${y})`);
     t.classList.remove("hop");
     void (t as unknown as HTMLElement).getBoundingClientRect?.();
     t.classList.add("hop");

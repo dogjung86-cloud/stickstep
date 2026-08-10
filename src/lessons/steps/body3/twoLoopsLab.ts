@@ -65,18 +65,18 @@ function stageScene(): string {
   </svg>`;
 }
 
-/** 정거장 좌표(토큰 translate 목표). */
+/** 정거장 좌표(토큰 translate 목표) — 방 라벨을 가리지 않게 가장자리로 비껴 둔다. */
 const POS: Record<string, [number, number]> = {
-  LV: [200, 149],
-  aorta: [278, 150],
+  LV: [243, 149],
+  aorta: [278, 165],
   body: [170, 230],
-  vena: [62, 150],
-  RA: [140, 109],
-  RV: [140, 149],
+  vena: [62, 165],
+  RA: [101, 109],
+  RV: [101, 149],
   pulmA: [98, 78],
-  lung: [169, 60],
+  lung: [169, 62],
   pulmV: [244, 78],
-  LA: [200, 109],
+  LA: [243, 109],
 };
 
 export const twoLoopsLab: StepRenderer = (host, step, api) => {

@@ -27,7 +27,7 @@ const SAMPLES = [
 ] as const;
 
 const REAGENTS = [
-  { id: "iodine", label: "아이오딘 용액", dot: "#7B4A12", color: B6.iodine, colorName: "청람색" },
+  { id: "iodine", label: "아이오딘", dot: "#7B4A12", color: B6.iodine, colorName: "청람색" },
   { id: "benedict", label: "베네딕트", dot: "#3B82C4", color: B6.benedict, colorName: "황적색" },
   { id: "biuret", label: "뷰렛", dot: "#6741D9", color: B6.biuret, colorName: "보라색" },
   { id: "sudan", label: "수단 III", dot: "#D6336C", color: B6.sudan, colorName: "선홍색" },

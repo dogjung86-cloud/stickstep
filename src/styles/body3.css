@@ -246,22 +246,29 @@
 .hpp-tag-ven { top: 58%; right: 10px; }
 .hpp-valve path { transform-box: fill-box; transform-origin: top center; transition: transform 0.45s var(--ease-out, ease-out); }
 .hpp-blood { transform-box: view-box; transition: transform 0.7s var(--ease-out, ease-out), opacity 0.4s ease; }
-/* 이완: 심방·심실이 채워지고(방실 판막 열림), 동맥 판막 닫힘 */
+/* 이완: 방실 판막 열림 — 심방의 피가 심실로 내려가 채운다(충전기) */
 .hpp-board.dia .hpp-av-l .hpp-flapL, .hpp-board.dia .hpp-av-r .hpp-flapL { transform: rotate(-34deg); }
 .hpp-board.dia .hpp-av-l .hpp-flapR, .hpp-board.dia .hpp-av-r .hpp-flapR { transform: rotate(34deg); }
-.hpp-board.dia .hpp-b-atrL, .hpp-board.dia .hpp-b-atrR { opacity: 1; transform: translateY(0); }
+.hpp-board.dia .hpp-b-atrL, .hpp-board.dia .hpp-b-atrR { opacity: 0.95; transform: translateY(36px); }
 .hpp-board.dia .hpp-b-venL, .hpp-board.dia .hpp-b-venR { opacity: 1; transform: translateY(0); }
-/* 수축: 심실 압축·동맥 판막 열림·심실 피가 위 혈관으로, 방실 판막 닫힘 */
+/* 수축: 방실 판막 닫힘(심방 피는 제자리 대기)·동맥 판막 열림·심실 피가 위 혈관으로 */
 .hpp-board.sys .hpp-sv-l .hpp-flapL, .hpp-board.sys .hpp-sv-r .hpp-flapL { transform: rotate(-34deg); }
 .hpp-board.sys .hpp-sv-l .hpp-flapR, .hpp-board.sys .hpp-sv-r .hpp-flapR { transform: rotate(34deg); }
 .hpp-board.sys .hpp-vent { transform-box: fill-box; transform-origin: center; transform: scale(0.94); transition: transform 0.45s var(--ease-out, ease-out); }
 .hpp-board.sys .hpp-b-venL, .hpp-board.sys .hpp-b-venR { transform: translateY(-128px); opacity: 0; }
-.hpp-board.sys .hpp-b-atrL, .hpp-board.sys .hpp-b-atrR { transform: translateY(52px); opacity: 0.9; }
+.hpp-board.sys .hpp-b-atrL, .hpp-board.sys .hpp-b-atrR { transform: translateY(0); opacity: 1; }
 .hpp-vent { transition: transform 0.45s var(--ease-out, ease-out); }
 .hpp-noway { opacity: 0; }
-.hpp-board.revfail .hpp-noway { opacity: 1; transition: opacity 0.2s ease 0.35s; }
-.hpp-board.revfail .hpp-b-atrL, .hpp-board.revfail .hpp-b-atrR { transform: translateY(30px); opacity: 1; transition-duration: 0.35s; }
-.hpp-board.revfail { animation: b6Shake 0.4s ease 0.4s; }
+.hpp-board.revfail .hpp-noway { opacity: 1; transition: opacity 0.2s ease 0.5s; }
+/* 거꾸로 실험: 심실의 피가 심방 쪽으로 올라가려다 닫힌 판막에 막혀 되튕긴다 */
+.hpp-board.revfail .hpp-b-venL, .hpp-board.revfail .hpp-b-venR { animation: hppRevTry 1.3s var(--ease-out, ease-out); transform: translateY(0); opacity: 1; }
+@keyframes hppRevTry {
+  0% { transform: translateY(0); }
+  40% { transform: translateY(-30px); }
+  55% { transform: translateY(-30px); }
+  100% { transform: translateY(0); }
+}
+.hpp-board.revfail { animation: b6Shake 0.4s ease 0.55s; }
 .hpp-segrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
 .hpp-seg {
   padding: 12px;
