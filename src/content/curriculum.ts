@@ -28,6 +28,9 @@ import { G2_UNIT5_V3 } from "./g2/unit5v3";
 // v2 산출물(content/g2/unit6v2.ts·steps/anim/*·steps/hookAnimal*·ui/animalKit·animalLab·
 // animalFigures·styles/animal.css·public/anim/*)은 보존만 한다.
 import { G2_UNIT6 } from "./g2/unit6";
+// 중2 Ⅵ v3 재제작(2026-08-10) — 병행 배선. DEV에서 sessionStorage "ss.g2u6v3"="1"이면 v3가 뜬다.
+// 현행 G2_UNIT6과 나란히 비교하기 위한 토글(U5G2_ACTIVE 문법 — 전면 교체 원복 사고의 재발 방지 수칙).
+import { G2_UNIT6_V3 } from "./g2/unit6v3";
 import { G2_UNIT7 } from "./g2/unit7";
 import { G2_UNIT8 } from "./g2/unit8";
 import { MATH_CURRICULA } from "./math/curriculum";
@@ -77,6 +80,19 @@ const U5G2_ACTIVE: Unit = (() => {
   return G2_UNIT5;
 })();
 
+const U6G2_ACTIVE: Unit = (() => {
+  try {
+    const dev = (import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV;
+    // 콘솔 없이 비교할 수 있게 URL 쿼리도 지원: http://localhost:<포트>/?v3=g2u6
+    // (모듈 평가 시점에 읽으므로 리로드 불필요 — sessionStorage 문법과 OR)
+    const urlOn = dev && new URLSearchParams(location.search).get("v3")?.split(",").includes("g2u6");
+    if (dev && (sessionStorage.getItem("ss.g2u6v3") === "1" || urlOn)) return G2_UNIT6_V3;
+  } catch {
+    /* sessionStorage 접근 불가 환경(시딩·테스트)은 현행 유지 */
+  }
+  return G2_UNIT6;
+})();
+
 // 중2 — 대단원 8개.
 export const CURRICULUM_G2: Unit[] = [
   G2_UNIT1,
@@ -84,7 +100,7 @@ export const CURRICULUM_G2: Unit[] = [
   G2_UNIT3,
   G2_UNIT4,
   U5G2_ACTIVE,
-  G2_UNIT6,
+  U6G2_ACTIVE,
   G2_UNIT7,
   G2_UNIT8,
 ];

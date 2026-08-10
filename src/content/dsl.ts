@@ -133,6 +133,8 @@ export const hook = (o: {
     | "sproutpot" | "stomapeek" | "darkbox" | "mixedtest" | "greenhouse" | "mangrove" | "honeyflower"
     // 중2 Ⅴ v3 훅 5종(hookPlant3.ts, 2026-08-10 재제작) — 현행·v2 13종과 이름이 겹치지 않는다
     | "potatodrop" | "winterberry" | "veggiebag" | "tropicalnight" | "sweetpotato"
+    // 중2 Ⅵ v3 훅 5장면(hookBody3.ts, 2026-08-10 재제작)
+    | "bodyscan" | "dripbag" | "hiccup" | "peetest" | "warmbody"
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
     | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
@@ -566,6 +568,17 @@ export const factorCurveLab = (o: B4LabOpt): Step => ({ type: "factorCurveLab", 
 export const flipEngineLab = (o: B4LabOpt): Step => ({ type: "flipEngineLab", ...o });
 export const sunGaugeLab = (o: B4LabOpt): Step => ({ type: "sunGaugeLab", ...o });
 export const sapFlowLab = (o: B4LabOpt): Step => ({ type: "sapFlowLab", ...o });
+
+// ── 중2 Ⅵ 동물과 에너지 v3 랩 8종(2026-08-10 재제작 — steps/body3/*) ──
+// 병행 배선(unit6v3.ts + ss.g2u6v3 토글) 전용 — 현행 unit6 계열·v2(anim)와 이름이 겹치지 않는다.
+export const colorClueLab = (o: B4LabOpt): Step => ({ type: "colorClueLab", ...o });
+export const salivaRaceLab = (o: B4LabOpt): Step => ({ type: "salivaRaceLab", ...o });
+export const foodTripLab = (o: B4LabOpt): Step => ({ type: "foodTripLab", ...o });
+export const heartPumpLab = (o: B4LabOpt): Step => ({ type: "heartPumpLab", ...o });
+export const twoLoopsLab = (o: B4LabOpt): Step => ({ type: "twoLoopsLab", ...o });
+export const chestModelLab = (o: B4LabOpt): Step => ({ type: "chestModelLab", ...o });
+export const kidneyFilterLab = (o: B4LabOpt): Step => ({ type: "kidneyFilterLab", ...o });
+export const bodyTeamLab = (o: B4LabOpt): Step => ({ type: "bodyTeamLab", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

@@ -7,6 +7,8 @@ import "./styles/bio4.css"; // 중1 Ⅱ v3 재제작(2026-08-10) 공용 크롬 �
 import "./styles/bio4-hook.css"; // v3 훅 8장면(hookBio4)
 import "./styles/plant3.css"; // 중2 Ⅴ v3 재제작(2026-08-10) 공용 크롬 — ss.g2u5v3 병행 배선
 import "./styles/plant3-hook.css"; // v3 훅 5장면(hookPlant3)
+import "./styles/body3.css"; // 중2 Ⅵ v3 재제작(2026-08-10) 공용 크롬 — ss.g2u6v3 병행 배선
+import "./styles/body3-hook.css"; // v3 훅 5장면(hookBody3)
 import "./styles/math.css";
 import "./styles/math2.css";
 import "./styles/body-hook.css";
