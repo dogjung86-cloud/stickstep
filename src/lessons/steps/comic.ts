@@ -5,14 +5,15 @@
 import { el, clear } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { renderBlock } from "../../ui/blocks";
-import { stickman } from "../../ui/figures";
+import { cutTailHorn, stickman } from "../../ui/figures";
 import { stickAvatar } from "../../ui/avatar";
 import type { StepRenderer } from "../types";
 
 /** 컷 위 한글 말풍선 — dsl.ts CutBubble 하이브리드 표준의 comic판.
  *  발주 컷엔 글자·말풍선 없이 인물 연기만, 앱이 이미지 % 좌표에 한글을 얹는다.
  *  x·y = 컷 프레임 기준 %(말풍선 중심·아래 꼭지). flip이면 꼬리가 위(인물 아래 배치용).
- *  tail("right"|"left")이면 꼬리가 그쪽 끝으로 — 몸통은 빈 곳, 화자는 옆에 있는 붐비는 컷용. */
+ *  tail("right"|"left")이면 그쪽 끝에 뿔 꼬리(cutTailHorn — 길게 뻗는 스윕 삼각형)를 단다:
+ *  몸통은 빈 곳, 화자는 옆에 있는 붐비는 컷용. */
 interface PanelBubble {
   text: string;
   x: number;
@@ -175,7 +176,7 @@ export const comic: StepRenderer = (host, step, api) => {
           el("span", {
             class: `cut-bubble wrap${b.flip ? " flip" : ""}${b.tail ? ` tail-${b.tail === "right" ? "r" : "l"}` : ""}`,
             style: `left:${b.x}%;top:${b.y}%`,
-            html: b.text,
+            html: b.tail ? b.text + cutTailHorn() : b.text,
           }),
         );
       }

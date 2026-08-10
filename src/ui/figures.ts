@@ -108,6 +108,18 @@ export function stickmanHead(): string {
   </svg>`;
 }
 
+/** 말풍선 뿔 꼬리(cut-bubble tail: "right"|"left" 변형) — 작은 꼭지 대신 만화 관용의 긴 스윕 삼각형.
+ *  밑변(y0 행)이 몸통 아래 테두리 위에 겹쳐 흰 채움으로 지우고 바깥 두 변만 스트로크해,
+ *  몸통 테두리와 이음새 없이 이어진다. 위치·반전은 ui.css .cut-tail 규칙 몫(comic.ts·dsl.ts cut() 공용). */
+export function cutTailHorn(): string {
+  return (
+    `<svg class="cut-tail" viewBox="0 0 46 22" aria-hidden="true">` +
+    `<path d="M1 0 L44 20 L27 0 Z" fill="#FFFFFF"/>` +
+    `<path d="M1 0 L44 20 L27 0" fill="none" stroke="#39424E" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>` +
+    `</svg>`
+  );
+}
+
 // 과학자 얼굴(과학사 사례용, 중립 실루엣)
 export function scientist(): string {
   return `<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="sci-bg" cx="50%" cy="35%" r="75%"><stop offset="0%" stop-color="#F3F7FD"/><stop offset="100%" stop-color="#DCE6F3"/></radialGradient><linearGradient id="sci-fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C4D0E0"/><stop offset="100%" stop-color="#A9B8CC"/></linearGradient></defs><circle cx="24" cy="24" r="22" fill="url(#sci-bg)"/><circle cx="24" cy="19" r="8" fill="url(#sci-fg)"/><path d="M9 41c1-8 7-12 15-12s14 4 15 12z" fill="url(#sci-fg)"/></svg>`;
