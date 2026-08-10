@@ -110,12 +110,14 @@ export function stickmanHead(): string {
 
 /** 말풍선 뿔 꼬리(cut-bubble tail: "right"|"left" 변형) — 작은 꼭지 대신 만화 관용의 긴 스윕 삼각형.
  *  밑변(y0 행)이 몸통 아래 테두리 위에 겹쳐 흰 채움으로 지우고 바깥 두 변만 스트로크해,
- *  몸통 테두리와 이음새 없이 이어진다. 위치·반전은 ui.css .cut-tail 규칙 몫(comic.ts·dsl.ts cut() 공용). */
+ *  몸통 테두리와 이음새 없이 이어진다. 위치·반전은 ui.css .cut-tail 규칙 몫(comic.ts·dsl.ts cut() 공용).
+ *  선 굵기는 몸통 테두리와 동일 1.6 고정 — 두 변이 일찍 모이면 끝쪽이 먹선 덩어리로 합쳐져 굵어 보이므로,
+ *  밑변 대비 충분히 긴 스윕(흰 속이 끝까지 유지) + 끝만 미터 조인 뾰족점으로 잡은 기하다(둥근 캡 금지). */
 export function cutTailHorn(): string {
   return (
-    `<svg class="cut-tail" viewBox="0 0 46 22" aria-hidden="true">` +
-    `<path d="M1 0 L44 20 L27 0 Z" fill="#FFFFFF"/>` +
-    `<path d="M1 0 L44 20 L27 0" fill="none" stroke="#39424E" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>` +
+    `<svg class="cut-tail" viewBox="0 0 70 34" aria-hidden="true">` +
+    `<path d="M1 0 L62 27 L30 0 Z" fill="#FFFFFF"/>` +
+    `<path d="M1 0 L62 27 L30 0" fill="none" stroke="#39424E" stroke-width="1.6" stroke-linejoin="miter" stroke-miterlimit="8"/>` +
     `</svg>`
   );
 }
