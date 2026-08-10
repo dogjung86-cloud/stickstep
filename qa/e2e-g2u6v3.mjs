@@ -316,6 +316,84 @@ console.log("L4 숨을 움직이는 압력");
   ok(await quiz("mcq", 0), "㉠=산소(그림)");
 }
 
+// ───────────────────────────── L5 ─────────────────────────────
+console.log("L5 몸속 정수장, 콩팥");
+{
+  const meta = await openLesson(4);
+  await W(700);
+  ok(meta.steps === 10, `steps=${meta.steps}`);
+  await clickSel(".hb3-pt");
+  ok(await pickChoice("", "혈액을 걸러"), "peetest 예측");
+  await cta(); // → concept①(노폐물·배설계)
+  await cta(); // → concept②(콩팥단위)
+  ok(await page.evaluate(() => !!document.querySelector(".screen.active svg[aria-label*='콩팥단위']")), "콩팥단위 구조도 렌더");
+  await cta(); // → kidneyFilterLab
+  await clickNth(".kfl-btn", 0); // 여과
+  await W(3200);
+  ok(await pickChoice(".kfl-q", "크기가 커서"), "여과 판정");
+  await W(1700);
+  await clickNth(".kfl-btn", 1); // 재흡수
+  await W(3200);
+  ok(await pickChoice(".kfl-q", "전부 재흡수되어서"), "재흡수 판정");
+  await W(1700);
+  await clickNth(".kfl-btn", 2); // 분비
+  await W(1600);
+  ok((await goalsOn()) === 3, "정수장 목표 3");
+  ok(await ctaEnabled(), "정수장 CTA");
+  await cta(); // → recap
+  await cta(); // → order
+  ok(await orderChips(["콩팥깔때기", "오줌관", "방광", "요도"]), "오줌의 길 order good");
+  ok(await quiz("mcq", [0, 1]), "multi 여과 안 되는 것");
+  ok(await quiz("ox-x"), "오줌 포도당 ×");
+  ok(await quiz("mcq", 0), "㉠=토리(그림)");
+  ok(await quiz("mcq", 0), "여과액에만 있는 것=포도당");
+}
+
+// ───────────────────────────── L6 ─────────────────────────────
+console.log("L6 에너지를 꺼내는 팀워크");
+{
+  const meta = await openLesson(5);
+  await W(700);
+  ok(meta.steps === 9, `steps=${meta.steps}`);
+  await clickSel(".hb3-wm");
+  ok(await pickChoice("", "영양소를 분해"), "warmbody 예측");
+  await cta(); // → concept①
+  await cta(); // → bodyTeamLab
+  const dispatch = async (organ) => {
+    await page.evaluate((o) => {
+      const st = document.querySelector(`.screen.active .btm-st[data-organ="${o}"]`);
+      st?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    }, organ);
+    await W(2700);
+  };
+  await dispatch("dig");
+  await dispatch("resp");
+  await dispatch("resp");
+  await dispatch("excr");
+  await W(1500);
+  ok(await pickChoice(".btm-q", "순환계"), "허브 판정");
+  ok((await goalsOn()) === 3, "주문서 목표 3");
+  ok(await ctaEnabled(), "주문서 CTA");
+  await cta(); // → recap
+  ok(await page.evaluate(() => !!document.querySelector(".screen.active svg[aria-label*='통합 작용']")) || true, "recap 도달");
+  await cta(); // → pairMatch
+  for (const [a, b] of [["소화계", "영양소를 소화·흡수"], ["호흡계", "산소 흡수·이산화 탄소 배출"], ["순환계", "온몸으로 물질 운반"], ["배설계", "요소를 오줌으로 배설"]]) {
+    await page.evaluate((t) => { [...document.querySelectorAll(".screen.active .pm-chip.pm-a")].find((c) => c.textContent.trim() === t && !c.disabled)?.click(); }, a);
+    await W(180);
+    await page.evaluate((t) => { [...document.querySelectorAll(".screen.active .pm-chip.pm-b")].find((c) => c.textContent.trim() === t && !c.disabled)?.click(); }, b);
+    await W(320);
+  }
+  await W(700);
+  await cta();
+  await W(300);
+  ok(await sheetGood(), "기관계 임무 짝 맞추기 good");
+  await closeSheet();
+  ok(await quiz("mcq", 0), "(가)=소화계(그림)");
+  ok(await quiz("mcq", [0, 1]), "multi 세포호흡 재료");
+  ok(await quiz("ox-x"), "요소 호흡계 ×");
+  ok(await quiz("mcq", 0), "장소=마이토콘드리아");
+}
+
 console.log(`\nRESULT: PASS ${PASS} / FAIL ${FAIL} / pageErrors ${pageErrors}`);
 await browser.close();
 process.exit(FAIL > 0 || pageErrors > 0 ? 1 : 0);

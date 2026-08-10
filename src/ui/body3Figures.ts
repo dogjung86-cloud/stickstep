@@ -213,6 +213,72 @@ export function gasExchangeFig(blanks: string[] = []): string {
   );
 }
 
+// ── 콩팥단위 구조도(L5) — blanks: ["glom"]이면 토리 라벨을 ㉠로 가림 ──────
+export function nephronMapFig(blanks: string[] = []): string {
+  const hideGlom = blanks.includes("glom");
+  const lab = (x: number, y: number, t: string, hidden = false): string =>
+    hidden
+      ? `<g><circle cx="${x}" cy="${y}" r="12" fill="#F1F3F5" stroke="#ADB5BD" stroke-width="2" stroke-dasharray="4 3"/>
+         <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#868E96">㉠</text></g>`
+      : `<g><rect x="${x - 36}" y="${y - 11}" width="72" height="22" rx="11" fill="#FFFFFF" stroke="#E3E8EF" stroke-width="1.8"/>
+         <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#4E5968">${t}</text></g>`;
+  return SVG(
+    340,
+    218,
+    `<path d="M22 42 h56" stroke="#E05B6E" stroke-width="12" stroke-linecap="round" opacity="0.5"/>
+     <circle cx="128" cy="52" r="30" fill="#FDE2E5" stroke="#E07A85" stroke-width="3"/>
+     <path d="M110 44 q9 -10 21 -3 q12 -8 17 3 q8 7 -2 13 q2 12 -12 9 q-12 7 -17 -3 q-10 -4 -7 -19" stroke="#D96A78" stroke-width="3" fill="none" stroke-linecap="round"/>
+     <path d="M88 66 a45 45 0 0 0 80 0" stroke="#C9A876" stroke-width="4" fill="none"/>
+     <path d="M128 88 v22 q0 14 -38 14 q-38 0 -38 20 q0 20 38 20 q52 0 70 8" stroke="#F3D9B8" stroke-width="18" fill="none" stroke-linecap="round"/>
+     <path d="M232 100 q26 22 4 48 q-16 20 8 36" stroke="#E05B6E" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.4"/>
+     ${lab(128, 14, "토리", hideGlom)}
+     ${lab(236, 78, "보먼주머니")}
+     <path d="M212 74 l-30 -8" stroke="#B0B8C1" stroke-width="1.8"/>
+     ${lab(44, 130, "세뇨관")}
+     ${lab(284, 176, "모세혈관")}
+     <text x="170" y="210" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">콩팥단위 = 토리 + 보먼주머니 + 세뇨관</text>`,
+    "콩팥단위의 구조",
+  );
+}
+
+// ── 기관계 통합 모식도(L6) — blanks: ["dig"]면 소화계 박스를 (가)로 가림 ──
+export function teamFig(blanks: string[] = []): string {
+  const hideDig = blanks.includes("dig");
+  const org = (x: number, y: number, label: string, tone: string, ink: string, hidden = false): string =>
+    hidden
+      ? `<rect x="${x - 44}" y="${y - 20}" width="88" height="40" rx="13" fill="#F1F3F5" stroke="#ADB5BD" stroke-width="2" stroke-dasharray="4 3"/>
+         <text x="${x}" y="${y + 5}" text-anchor="middle" font-size="13" font-weight="800" fill="#868E96">(가)</text>`
+      : `<rect x="${x - 44}" y="${y - 20}" width="88" height="40" rx="13" fill="${tone}" stroke="${ink}" stroke-width="2.6"/>
+         <text x="${x}" y="${y + 5}" text-anchor="middle" font-size="13" font-weight="800" fill="#333D4B">${label}</text>`;
+  const arr = (d: string, c: string): string =>
+    `<path d="${d}" stroke="${c}" stroke-width="3.4" fill="none" marker-end="url(#b6teamArr)" stroke-linecap="round"/>`;
+  const note = (x: number, y: number, t: string, c: string): string =>
+    `<text x="${x}" y="${y}" text-anchor="middle" font-size="10.5" font-weight="800" fill="${c}">${t}</text>`;
+  return SVG(
+    340,
+    250,
+    `<defs><marker id="b6teamArr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/></marker></defs>
+     <rect x="42" y="96" width="256" height="58" rx="20" fill="#FDE2E5" stroke="#E07A85" stroke-width="2.8"/>
+     <text x="170" y="130" text-anchor="middle" font-size="13.5" font-weight="800" fill="#C9303E">순환계</text>
+     ${org(88, 36, "소화계", "#FFF4E6", "#F3C9A8", hideDig)}
+     ${org(252, 36, "호흡계", "#E3F2FB", "#7CB2D4")}
+     ${org(88, 218, "배설계", "#FBF3DC", "#D9C08C")}
+     <rect x="208" y="198" width="88" height="40" rx="13" fill="#FFF7E8" stroke="#E3C58A" stroke-width="2.6"/>
+     <text x="252" y="223" text-anchor="middle" font-size="13" font-weight="800" fill="#A9832B">조직세포</text>
+     ${arr("M88 58 v34", B6.glucose)}
+     ${note(60, 78, "영양소", "#C46A12")}
+     ${arr("M244 58 v34", B6.o2)}
+     ${arr("M262 92 v-34", B6.co2)}
+     ${note(296, 78, "산소·이산화 탄소", "#5F3DC4")}
+     ${arr("M88 158 v34", B6.urea)}
+     ${note(56, 182, "요소", "#7A5D1D")}
+     ${arr("M244 158 v34", B6.o2)}
+     ${arr("M262 192 v-34", B6.co2)}
+     ${note(300, 182, "물질 교환", "#8B95A1")}`,
+    "세포호흡을 떠받치는 기관계의 통합 작용",
+  );
+}
+
 // ── recap 미니아트(64×64 플랫 — 과학 *Figures 관례) ─────────────────────
 const MINI: Record<string, string> = {};
 
@@ -257,6 +323,24 @@ MINI.pressureFlow = `<path d="M14 20 h36 l4 34 h-44 Z" fill="#EAF2F8" stroke="#8
 
 /** 승강장 교환(기체 교환 — 파랑 in·보라 out) */
 MINI.swapStation = `<rect x="10" y="24" width="44" height="16" rx="8" fill="#FDE2E5" stroke="#E07A85" stroke-width="2.2"/><circle cx="20" cy="14" r="5" fill="${B6.o2}"/><path d="M20 20 v8 M17 24 l3 5 3 -5" stroke="${B6.o2}" stroke-width="2.4" stroke-linecap="round" fill="none"/><circle cx="44" cy="52" r="5" fill="${B6.co2}"/><path d="M44 46 v-8 M41 42 l3 -5 3 5" stroke="${B6.co2}" stroke-width="2.4" stroke-linecap="round" fill="none"/>`;
+
+/** 위험물 포장(암모니아→요소, 간) */
+MINI.wastePack = `<path d="M18 22 l3 -6 3 6 6 -3 -3 6 6 3 -6 3 3 6 -6 -3 -3 6 -3 -6 -6 3 3 -6 -6 -3 6 -3 Z" fill="#F59F00" stroke="#C77E0A" stroke-width="1.6"/><rect x="32" y="30" width="24" height="20" rx="5" fill="#EDE6D6" stroke="${B6.urea}" stroke-width="2.4"/><path d="M32 40 h24 M44 30 v20" stroke="${B6.urea}" stroke-width="1.8"/><path d="M26 40 h4 M28 38 l4 2 -4 2 Z" fill="#8B95A1" stroke="#8B95A1" stroke-width="1.6"/>`;
+
+/** 체 3단(여과·재흡수·분비) */
+MINI.filterSteps = `<path d="M10 16 h44" stroke="#C9A876" stroke-width="3.4" stroke-linecap="round"/><path d="M18 16 v6 M26 16 v6 M34 16 v6 M42 16 v6" stroke="#C9A876" stroke-width="2"/><circle cx="22" cy="30" r="3.4" fill="${B6.glucose}"/><circle cx="34" cy="34" r="3" fill="${B6.water}"/><circle cx="44" cy="30" r="3" fill="${B6.urea}"/><path d="M22 36 q-6 6 -6 12 M16 44 l0 6 M20 46 l-4 4" stroke="${B6.glucose}" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M44 36 v14 M41 46 l3 5 3 -5" stroke="${B6.urea}" stroke-width="2.4" stroke-linecap="round" fill="none"/>`;
+
+/** 오줌의 길(방울 계단) */
+MINI.peePath = `<path d="M14 12 q20 2 22 16 q2 12 14 14" stroke="#F5D664" stroke-width="5" stroke-linecap="round" fill="none"/><rect x="38" y="44" width="18" height="12" rx="5" fill="#FBF3DC" stroke="#D9C08C" stroke-width="2.2"/><circle cx="14" cy="12" r="5" fill="#FDE2E5" stroke="#E07A85" stroke-width="2"/><path d="M50 40 c2 -4 4 -6 4 -6 c0 0 2 2 2 5 a3 3 0 0 1 -6 1 Z" fill="#F5D664"/>`;
+
+/** 세포 속 불꽃(세포호흡) */
+MINI.cellFire = `<rect x="10" y="12" width="44" height="40" rx="12" fill="#FFF7E8" stroke="#E3C58A" stroke-width="2.6"/><path d="M26 44 c4 -10 7 -13 10 -17 c3 4 6 7 10 17 a10 10 0 0 1 -20 0 Z" fill="#FF922B"/><path d="M31 45 c2 -5 3.4 -7 5 -9 c1.6 2 3 4 5 9 a5 5 0 0 1 -10 0 Z" fill="${B6.energy}"/><circle cx="20" cy="20" r="3" fill="${B6.glucose}"/><circle cx="46" cy="20" r="3" fill="${B6.o2}"/>`;
+
+/** 에너지의 쓰임(온도계+달리기) */
+MINI.energyUse = `<rect x="12" y="10" width="8" height="30" rx="4" fill="#FFFFFF" stroke="#B9C2CC" stroke-width="2"/><rect x="14.5" y="22" width="3" height="16" fill="#F03E3E"/><circle cx="16" cy="44" r="6" fill="#F03E3E" stroke="#B9C2CC" stroke-width="2"/><g stroke="#333D4B" stroke-width="2.6" stroke-linecap="round" fill="none"><circle cx="42" cy="18" r="6" fill="#FFFFFF"/><path d="M42 24 l-2 12 M40 36 l-6 10 M40 36 l8 8 M42 28 l-8 2 M42 28 l9 -3"/></g><path d="M52 48 h6 M50 52 h8" stroke="#FFB005" stroke-width="2" stroke-linecap="round"/>`;
+
+/** 네 기관계 퍼즐(통합) */
+MINI.teamFour = `<rect x="10" y="10" width="20" height="20" rx="5" fill="#FFF4E6" stroke="#F3C9A8" stroke-width="2"/><rect x="34" y="10" width="20" height="20" rx="5" fill="#E3F2FB" stroke="#7CB2D4" stroke-width="2"/><rect x="10" y="34" width="20" height="20" rx="5" fill="#FBF3DC" stroke="#D9C08C" stroke-width="2"/><rect x="34" y="34" width="20" height="20" rx="5" fill="#FFF7E8" stroke="#E3C58A" stroke-width="2"/><circle cx="32" cy="32" r="8" fill="#FDE2E5" stroke="#E07A85" stroke-width="2.4"/>`;
 
 /** 자리표시(키 미등록) — 저작 중 눈에 띄게 */
 const FALLBACK = `<rect x="10" y="10" width="44" height="44" rx="10" fill="#F1F3F5" stroke="#CED4DA" stroke-width="2"/><text x="32" y="38" text-anchor="middle" font-size="16" fill="#868E96">?</text>`;
