@@ -19,4 +19,28 @@ await page.evaluate(async () => {
 await page.waitForTimeout(1200);
 await page.screenshot({ path: "qa/shots/b6figs-absorb.png", fullPage: true });
 console.log("SHOT b6figs-absorb");
+
+// 라스터 교체분(심장·기체 교환·콩팥단위) — blanks 모드까지 한 번에.
+await page.evaluate(async () => {
+  const m = await import("/src/ui/body3Figures.ts");
+  document.body.innerHTML = `<div style="width:380px;margin:10px auto;display:grid;gap:14px;background:#fff">
+    <div id="g1">${m.heartMapFig()}</div>
+    <div id="g2">${m.gasExchangeFig()}</div>
+    <div id="g3">${m.gasExchangeFig(["o2"])}</div>
+  </div>`;
+});
+await page.waitForTimeout(1200);
+await page.screenshot({ path: "qa/shots/b6figs-heart-gas.png", fullPage: true });
+console.log("SHOT b6figs-heart-gas");
+
+await page.evaluate(async () => {
+  const m = await import("/src/ui/body3Figures.ts");
+  document.body.innerHTML = `<div style="width:380px;margin:10px auto;display:grid;gap:14px;background:#fff">
+    <div id="n1">${m.nephronMapFig()}</div>
+    <div id="n2">${m.nephronMapFig(["glom"])}</div>
+  </div>`;
+});
+await page.waitForTimeout(1200);
+await page.screenshot({ path: "qa/shots/b6figs-nephron.png", fullPage: true });
+console.log("SHOT b6figs-nephron");
 await browser.close();

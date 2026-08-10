@@ -165,45 +165,42 @@ export function starchFlowFig(blanks: string[] = []): string {
   );
 }
 
-// ── 심장 구조도(L3 concept) — 4방·판막·혈관 라벨. 정면 뷰(왼쪽 = 몸의 오른쪽) ──
+// ── 라스터 오버레이 공용 소품 — 흰 필 라벨·리더선·㉠ 가림(villus 문법의 승격판) ──
+const rpill = (x: number, y: number, text: string, stroke: string, ink: string, size = 10.5): string => {
+  const w = Math.round(text.length * (size + 0.8)) + 16;
+  return `<rect x="${x - w / 2}" y="${y - 10}" width="${w}" height="20" rx="10" fill="#FFFFFF" fill-opacity="0.93" stroke="${stroke}" stroke-width="1.8"/>
+    <text x="${x}" y="${y + 3.8}" text-anchor="middle" font-size="${size}" font-weight="800" fill="${ink}">${text}</text>`;
+};
+const rlead = (x1: number, y1: number, x2: number, y2: number, c: string): string =>
+  `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="1.8"/>
+   <circle cx="${x2}" cy="${y2}" r="3" fill="${c}" stroke="#FFFFFF" stroke-width="1.4"/>`;
+const rblank = (x: number, y: number): string =>
+  `<circle cx="${x}" cy="${y}" r="12" fill="#F1F3F5" stroke="#ADB5BD" stroke-width="2" stroke-dasharray="4 3"/>
+   <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#868E96">㉠</text>`;
+
+// ── 심장 구조도(L3 concept) — 발주 해부 단면(heart.webp) 위 라벨 오버레이 ──
+// 좌표는 heart.webp(1:1) 실측 % — 정면 뷰라 화면 왼쪽 = 몸의 오른쪽(우심방·우심실).
+// 파랑 = 산소 적은 혈액 쪽(우측·대정맥·폐동맥), 빨강 = 산소 많은 쪽(좌측·대동맥·폐정맥).
 export function heartMapFig(): string {
-  const chamber = (x: number, y: number, w: number, h: number, label: string, thick: boolean): string =>
-    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="16" fill="#FFF2F3" stroke="#C2626F" stroke-width="${thick ? 6 : 3}"/>
-     <text x="${x + w / 2}" y="${y + h / 2 + 4.5}" text-anchor="middle" font-size="13" font-weight="800" fill="#A94854">${label}</text>`;
-  const valve = (x: number, y: number): string =>
-    `<path d="M${x - 12} ${y} q6 3 11 10 M${x + 12} ${y} q-6 3 -11 10" stroke="#B8236B" stroke-width="3.6" stroke-linecap="round" fill="none"/>`;
-  const vlab = (x: number, y: number, t: string, anchor = "middle"): string =>
-    `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="12" font-weight="800" fill="#4E5968">${t}</text>`;
-  return SVG(
-    340,
-    252,
-    `<path d="M118 46 v-24" stroke="#7F9DC4" stroke-width="15" stroke-linecap="round"/>
-     <path d="M152 40 v-20" stroke="#C46A7C" stroke-width="12" stroke-linecap="round"/>
-     <path d="M192 40 v-20" stroke="#7F9DC4" stroke-width="12" stroke-linecap="round"/>
-     <path d="M226 46 v-24" stroke="#E05B6E" stroke-width="15" stroke-linecap="round"/>
-     ${vlab(84, 18, "대정맥", "end")}
-     ${vlab(150, 12, "폐동맥")}
-     ${vlab(196, 12, "폐정맥", "start")}
-     ${vlab(258, 18, "대동맥", "start")}
-     <path d="M96 22 l14 4 M214 12 v6 M136 16 h6 M246 22 l-12 4" stroke="#B0B8C1" stroke-width="1.8"/>
-     <path d="M172 52 C126 30 74 58 78 116 C81 168 122 204 172 220 C222 204 263 168 266 116 C270 58 218 30 172 52 Z" fill="#FDE2E5" stroke="#C2626F" stroke-width="4"/>
-     ${chamber(98, 62, 66, 44, "우심방", false)}
-     ${chamber(180, 62, 66, 44, "좌심방", false)}
-     ${chamber(96, 126, 70, 66, "우심실", true)}
-     ${chamber(178, 126, 70, 66, "좌심실", true)}
-     ${valve(131, 110)}
-     ${valve(213, 110)}
-     ${valve(150, 42)}
-     ${valve(192, 42)}
-     <path d="M262 148 h30" stroke="#B0B8C1" stroke-width="1.8"/>
-     <text x="296" y="144" text-anchor="start" font-size="11.5" font-weight="700" fill="#8B95A1">
-       <tspan x="296" dy="0">심실 벽은</tspan><tspan x="296" dy="14">두껍고</tspan><tspan x="296" dy="14">탄력 있어요</tspan>
-     </text>
-     <path d="M120 116 l6 -3" stroke="#B0B8C1" stroke-width="1.8"/>
-     <text x="66" y="120" text-anchor="middle" font-size="11.5" font-weight="800" fill="#B8236B">판막</text>
-     <text x="170" y="244" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">심방 = 받는 곳(정맥과 연결) · 심실 = 내보내는 곳(동맥과 연결)</text>`,
-    "심장의 구조 — 두 심방과 두 심실, 판막",
-  );
+  const BLU = ["#5B84B5", "#245B9B"] as const;
+  const RED = ["#D06A76", "#B7353E"] as const;
+  const GRY = ["#9AA4B2", "#5A6472"] as const;
+  return `<svg viewBox="0 0 340 368" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="심장의 구조 — 두 심방과 두 심실, 판막">
+    <image href="${IMG_BASE}body/figs/heart.webp" x="0" y="0" width="340" height="340" preserveAspectRatio="xMidYMid slice"/>
+    ${rpill(99, 44, "대정맥", BLU[0], BLU[1])}
+    ${rpill(160, 20, "대동맥", RED[0], RED[1])}
+    ${rpill(231, 75, "폐동맥", BLU[0], BLU[1])}
+    ${rpill(286, 105, "폐정맥", RED[0], RED[1])}
+    ${rpill(102, 129, "우심방", BLU[0], BLU[1])}
+    ${rpill(112, 218, "우심실", BLU[0], BLU[1])}
+    ${rpill(241, 126, "좌심방", RED[0], RED[1])}
+    ${rpill(224, 221, "좌심실", RED[0], RED[1])}
+    ${rpill(112, 173, "판막", GRY[0], GRY[1], 10)}
+    ${rpill(214, 167, "판막", GRY[0], GRY[1], 10)}
+    ${rlead(268, 252, 252, 238, "#B0B8C1")}
+    <text x="272" y="250" font-size="10" font-weight="700" fill="#8B95A1"><tspan x="272" dy="0">심실 벽이</tspan><tspan x="272" dy="13">심방보다</tspan><tspan x="272" dy="13">두꺼워요</tspan></text>
+    <text x="170" y="360" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">심방 = 받는 곳(정맥과 연결) · 심실 = 내보내는 곳(동맥과 연결)</text>
+  </svg>`;
 }
 
 // ── 순환 경로 모식도(L3 퀴즈) — blanks: ["bodyEnd"]면 우심방 라벨을 ㉠로 가림 ──
@@ -245,67 +242,50 @@ export function twoLoopFig(blanks: string[] = []): string {
   );
 }
 
-// ── 기체 교환 그림(L4) — 허파꽈리·조직세포 두 현장. blanks: ["o2"]면 산소 화살표 라벨을 ㉠로 ──
+// ── 기체 교환 그림(L4) — 발주 일러스트(alveoli-exchange.webp) 위 라벨 오버레이 ──
+// 좌표는 v2/alveoli-exchange.webp(3:2) 실측 % — 파란 알갱이·화살표 = 산소(꽈리→혈관),
+// 보라 알갱이·화살표 = 이산화 탄소(혈관→꽈리). blanks: ["o2"]면 산소 라벨을 ㉠로 가리고
+// 조직세포 승강장 줄(정답 유출 경로)을 함께 생략한다.
 export function gasExchangeFig(blanks: string[] = []): string {
   const hideO2 = blanks.includes("o2");
-  const gasArr = (x: number, y1: number, y2: number, c: string): string =>
-    `<path d="M${x} ${y1} L${x} ${y2 + (y2 > y1 ? -7 : 7)}" stroke="${c}" stroke-width="3.4" stroke-linecap="round"/>
-     <path d="M${x - 5} ${y2 + (y2 > y1 ? -8 : 8)} L${x} ${y2} L${x + 5} ${y2 + (y2 > y1 ? -8 : 8)} Z" fill="${c}"/>`;
-  const glab = (x: number, y: number, t: string, c: string, hidden = false): string =>
-    hidden
-      ? `<g><circle cx="${x}" cy="${y}" r="12" fill="#F1F3F5" stroke="#ADB5BD" stroke-width="2" stroke-dasharray="4 3"/>
-         <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#868E96">㉠</text></g>`
-      : `<g><rect x="${x - 33}" y="${y - 10}" width="66" height="20" rx="10" fill="#FFFFFF" stroke="${c}" stroke-width="1.8"/>
-         <text x="${x}" y="${y + 4}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#333D4B">${t}</text></g>`;
-  return SVG(
-    340,
-    216,
-    `<!-- 허파꽈리 현장 -->
-     <circle cx="78" cy="66" r="40" fill="#E3F2FB" stroke="#7CB2D4" stroke-width="3"/>
-     <text x="78" y="71" text-anchor="middle" font-size="12" font-weight="800" fill="#3E759B">허파꽈리</text>
-     <rect x="26" y="132" width="288" height="30" rx="15" fill="#FDE2E5" stroke="#E07A85" stroke-width="2.6"/>
-     <text x="170" y="151.5" text-anchor="middle" font-size="12" font-weight="800" fill="#C9303E">모세혈관</text>
-     ${gasArr(56, 104, 130, B6.o2)}
-     ${glab(hideO2 ? 30 : 40, 118, "산소", "#BDDEF5", hideO2)}
-     ${gasArr(102, 130, 104, B6.co2)}
-     ${glab(146, 118, "이산화 탄소", "#DCD2F7")}
-     <!-- 조직세포 현장 -->
-     <rect x="200" y="30" width="114" height="72" rx="18" fill="#FFF7E8" stroke="#E3C58A" stroke-width="3"/>
-     <text x="257" y="71" text-anchor="middle" font-size="12" font-weight="800" fill="#A9832B">조직세포</text>
-     ${gasArr(232, 130, 104, B6.o2)}
-     ${gasArr(284, 104, 130, B6.co2)}
-     ${blanks.length ? "" : `<text x="170" y="192" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">허파꽈리: 산소는 혈관으로, 이산화 탄소는 꽈리로</text>
-     <text x="170" y="208" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">조직세포: 산소는 세포로, 이산화 탄소는 혈관으로</text>`}`,
-    "허파꽈리와 조직세포에서의 기체 교환",
-  );
+  const H = hideO2 ? 227 : 318;
+  const cellStrip = `
+    <text x="170" y="243" text-anchor="middle" font-size="10.5" font-weight="800" fill="#8B95A1">조직세포 승강장 — 방향이 반대!</text>
+    <rect x="14" y="252" width="112" height="52" rx="14" fill="#FFF7E8" stroke="#E3C58A" stroke-width="2.6"/>
+    <text x="70" y="282" text-anchor="middle" font-size="12.5" font-weight="800" fill="#A9832B">조직세포</text>
+    <rect x="214" y="252" width="112" height="52" rx="14" fill="#FDE2E5" stroke="#E07A85" stroke-width="2.6"/>
+    <text x="270" y="282" text-anchor="middle" font-size="12.5" font-weight="800" fill="#C9303E">모세혈관</text>
+    <path d="M206 268 H147" stroke="${B6.o2}" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M140 268 l9 -5 v10 Z" fill="${B6.o2}"/>
+    <text x="170" y="258" text-anchor="middle" font-size="10" font-weight="800" fill="#1971A8">산소</text>
+    <path d="M134 290 H193" stroke="${B6.co2}" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M200 290 l-9 -5 v10 Z" fill="${B6.co2}"/>
+    <text x="170" y="309" text-anchor="middle" font-size="10" font-weight="800" fill="#5F3DC4">이산화 탄소</text>`;
+  return `<svg viewBox="0 0 340 ${H}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${hideO2 ? "허파꽈리에서의 기체 교환" : "허파꽈리와 조직세포에서의 기체 교환"}">
+    <image href="${IMG_BASE}body/figs/v2/alveoli-exchange.webp" x="0" y="0" width="340" height="227" preserveAspectRatio="xMidYMid slice"/>
+    ${rpill(82, 30, "허파꽈리 안", "#E8A08A", "#B25B43")}
+    ${rpill(279, 34, "모세혈관", "#E07A85", "#C9303E")}
+    ${hideO2 ? rblank(88, 100) : rpill(88, 100, "산소", "#4DABF7", "#1971A8", 10)}
+    ${rpill(243, 68, "이산화 탄소", "#9775FA", "#5F3DC4", 10)}
+    ${hideO2 ? "" : cellStrip}
+  </svg>`;
 }
 
-// ── 콩팥단위 구조도(L5) — blanks: ["glom"]이면 토리 라벨을 ㉠로 가림 ──────
+// ── 콩팥단위 구조도(L5) — 발주 해부도(nephron.webp) 위 라벨 오버레이 ──────
+// 좌표는 body/figs/nephron.webp(4:3) 실측 %. blanks: ["glom"]이면 토리 라벨을 ㉠로 가림.
 export function nephronMapFig(blanks: string[] = []): string {
   const hideGlom = blanks.includes("glom");
-  const lab = (x: number, y: number, t: string, hidden = false): string =>
-    hidden
-      ? `<g><circle cx="${x}" cy="${y}" r="12" fill="#F1F3F5" stroke="#ADB5BD" stroke-width="2" stroke-dasharray="4 3"/>
-         <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#868E96">㉠</text></g>`
-      : `<g><rect x="${x - 36}" y="${y - 11}" width="72" height="22" rx="11" fill="#FFFFFF" stroke="#E3E8EF" stroke-width="1.8"/>
-         <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#4E5968">${t}</text></g>`;
-  return SVG(
-    340,
-    218,
-    `<path d="M22 42 h56" stroke="#E05B6E" stroke-width="12" stroke-linecap="round" opacity="0.5"/>
-     <circle cx="128" cy="52" r="30" fill="#FDE2E5" stroke="#E07A85" stroke-width="3"/>
-     <path d="M110 44 q9 -10 21 -3 q12 -8 17 3 q8 7 -2 13 q2 12 -12 9 q-12 7 -17 -3 q-10 -4 -7 -19" stroke="#D96A78" stroke-width="3" fill="none" stroke-linecap="round"/>
-     <path d="M88 66 a45 45 0 0 0 80 0" stroke="#C9A876" stroke-width="4" fill="none"/>
-     <path d="M128 88 v22 q0 14 -38 14 q-38 0 -38 20 q0 20 38 20 q52 0 70 8" stroke="#F3D9B8" stroke-width="18" fill="none" stroke-linecap="round"/>
-     <path d="M232 100 q26 22 4 48 q-16 20 8 36" stroke="#E05B6E" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.4"/>
-     ${lab(128, 14, "토리", hideGlom)}
-     ${lab(236, 78, "보먼주머니")}
-     <path d="M212 74 l-30 -8" stroke="#B0B8C1" stroke-width="1.8"/>
-     ${lab(44, 130, "세뇨관")}
-     ${lab(284, 176, "모세혈관")}
-     <text x="170" y="210" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">콩팥단위 = 토리 + 보먼주머니 + 세뇨관</text>`,
-    "콩팥단위의 구조",
-  );
+  const AMB = ["#D9A76A", "#A9662B"] as const;
+  // ㉠ 모드에서는 하단 구성 요약도 뺀다 — "토리"가 인쇄되면 정답 유출 표면이 된다.
+  return `<svg viewBox="0 0 340 ${hideGlom ? 255 : 278}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="콩팥단위의 구조">
+    <image href="${IMG_BASE}body/figs/nephron.webp" x="0" y="0" width="340" height="255" preserveAspectRatio="xMidYMid slice"/>
+    ${hideGlom ? rblank(58, 64) : rpill(58, 64, "토리", "#E07A85", "#C9303E")}
+    ${rpill(65, 102, "보먼주머니", AMB[0], AMB[1])}
+    ${rpill(170, 191, "세뇨관", AMB[0], AMB[1])}
+    ${rpill(170, 130, "모세혈관", "#E07A85", "#C9303E")}
+    ${rpill(299, 97, "집합관", "#B0B8C1", "#5A6472")}
+    ${hideGlom ? "" : `<text x="170" y="271" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">콩팥단위 = 토리 + 보먼주머니 + 세뇨관</text>`}
+  </svg>`;
 }
 
 // ── 기관계 통합 모식도(L6) — blanks: ["dig"]면 소화계 박스를 (가)로 가림 ──

@@ -20,9 +20,10 @@ interface BtmStep {
 
 type OrganId = "dig" | "resp" | "excr";
 
-/** 기관계 정거장 좌표(트럭 이동 목표)와 세포 좌표. */
-const STATION: Record<OrganId, [number, number]> = { dig: [62, 60], resp: [278, 60], excr: [278, 196] };
-const CELL: [number, number] = [62, 196];
+// 상자 중심 = (62,60)(278,60)(278,196)(62,196) — 순환 도로 링이 네 중심을 전부 관통한다.
+/** 트럭 정차 지점 — 각 상자 곁, 도로 레일 위(위 줄은 상자 아래·아래 줄은 상자 위). */
+const PARK: Record<OrganId, [number, number]> = { dig: [62, 98], resp: [278, 98], excr: [278, 158] };
+const CELL_PARK: [number, number] = [62, 158];
 
 function stageScene(): string {
   const box = (x: number, y: number, w: number, label: string, tone: string, ink: string, part: string): string =>
@@ -31,9 +32,9 @@ function stageScene(): string {
       <text x="${x}" y="${y + 5}" text-anchor="middle" font-size="13.5" font-weight="800" fill="#333D4B">${label}</text>
     </g>`;
   return `<svg viewBox="0 0 340 256" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <!-- 순환 고리(도로) -->
-    <rect x="40" y="36" width="260" height="184" rx="46" fill="none" stroke="#F3C0C6" stroke-width="14" opacity="0.6"/>
-    <text x="170" y="32" text-anchor="middle" font-size="12" font-weight="800" fill="#C9303E">순환계(운반 도로)</text>
+    <!-- 순환 고리(도로) — 네 상자의 중심을 관통해 전부 도로 위에 얹힌다 -->
+    <rect x="62" y="60" width="216" height="136" rx="34" fill="none" stroke="#F3C0C6" stroke-width="14" opacity="0.6"/>
+    <text x="170" y="48" text-anchor="middle" font-size="12" font-weight="800" fill="#C9303E">순환계(운반 도로)</text>
     ${box(62, 60, 92, "소화계", "#FFF4E6", "#F3C9A8", "dig")}
     ${box(278, 60, 92, "호흡계", "#E3F2FB", "#7CB2D4", "resp")}
     ${box(278, 196, 92, "배설계", "#FBF3DC", "#D9C08C", "excr")}
@@ -160,7 +161,7 @@ export const bodyTeamLab: StepRenderer = (host, step, api) => {
   function truckTo(x: number, y: number): void {
     truck().style.transform = `translate(${x}px, ${y}px)`;
   }
-  truckTo(CELL[0], CELL[1] - 34);
+  truckTo(CELL_PARK[0], CELL_PARK[1]);
   cargo().style.opacity = "0";
 
   let oi = 0;
@@ -192,15 +193,15 @@ export const bodyTeamLab: StepRenderer = (host, step, api) => {
     busy = true;
     haptic(HAPTIC.tap);
     st.classList.add("hit");
-    const [sx, sy] = STATION[order.organ];
+    const [px, py] = PARK[order.organ];
     const c = cargo();
     c.setAttribute("fill", order.cargo);
     if (order.dir === "pick") {
       // 기관계에서 실어 세포로
-      truckTo(sx, sy + 34);
+      truckTo(px, py);
       later(() => {
         c.style.opacity = "1";
-        truckTo(CELL[0], CELL[1] - 34);
+        truckTo(CELL_PARK[0], CELL_PARK[1]);
         later(() => {
           c.style.opacity = "0";
           arrive(order);
@@ -209,11 +210,11 @@ export const bodyTeamLab: StepRenderer = (host, step, api) => {
     } else {
       // 세포에서 실어 기관계로
       c.style.opacity = "1";
-      truckTo(sx, sy + 34);
+      truckTo(px, py);
       later(() => {
         c.style.opacity = "0";
         later(() => {
-          truckTo(CELL[0], CELL[1] - 34);
+          truckTo(CELL_PARK[0], CELL_PARK[1]);
           arrive(order);
         }, 350);
       }, 950);

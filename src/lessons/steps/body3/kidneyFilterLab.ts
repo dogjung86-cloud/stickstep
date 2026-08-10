@@ -25,62 +25,62 @@ function grain(id: string, cx: number, cy: number, r: number, c: string, stroke:
   </g>`;
 }
 
+// 무대 = 이전 버전 발주 모식도(nephron-process.webp — 빨강 혈관·노랑 세뇨관)를 그대로 살리고,
+// 그 위에 라벨 필·단계 하이라이트·알갱이만 얹는다. 좌표는 이미지(960×617 → 340×219) 실측 %.
+const KFL_IMG_BASE = ((import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/");
+
 function stageScene(): string {
-  return `<svg viewBox="0 0 340 252" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <defs>
-      <linearGradient id="kflTube" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#FDEDE4"/><stop offset="1" stop-color="#F8DCCB"/>
-      </linearGradient>
-    </defs>
-    <!-- 콩팥동맥(입구) → 토리 → 콩팥정맥(출구) 혈관 트랙 -->
-    <path d="M10 46 h64" stroke="#E05B6E" stroke-width="18" stroke-linecap="round" opacity="0.45"/>
-    <path d="M266 46 h64" stroke="#7F9DC4" stroke-width="18" stroke-linecap="round" opacity="0.45"/>
-    <text x="16" y="24" font-size="11.5" font-weight="800" fill="#C9303E">콩팥동맥</text>
-    <text x="270" y="24" font-size="11.5" font-weight="800" fill="#3E5F8A">콩팥정맥</text>
-    <!-- 토리(실뭉치) + 보먼주머니 -->
-    <circle cx="150" cy="52" r="34" fill="#FDE2E5" stroke="#E07A85" stroke-width="3"/>
-    <path d="M128 42 q10 -12 24 -4 q14 -10 20 4 q10 8 -2 16 q2 14 -14 10 q-14 8 -20 -4 q-12 -4 -8 -22" stroke="#D96A78" stroke-width="3.4" fill="none" stroke-linecap="round"/>
-    <path d="M104 66 a52 52 0 0 0 92 0" stroke="#C9A876" stroke-width="4" fill="none"/>
-    <text x="150" y="14" text-anchor="middle" font-size="12" font-weight="800" fill="#C9303E">토리</text>
-    <text x="228" y="86" font-size="11.5" font-weight="800" fill="#A9832B">보먼주머니</text>
-    <path d="M224 82 l-24 -6" stroke="#B0B8C1" stroke-width="1.8"/>
-    <!-- 세뇨관 -->
-    <path d="M150 92 v26 q0 16 -44 16 q-44 0 -44 22 q0 22 44 22 q56 0 76 8" stroke="url(#kflTube)" stroke-width="22" fill="none" stroke-linecap="round"/>
-    <path d="M150 92 v26 q0 16 -44 16 q-44 0 -44 22 q0 22 44 22 q56 0 76 8" stroke="#D9A76A" stroke-width="22" fill="none" stroke-linecap="round" opacity="0.25"/>
-    <text x="52" y="132" font-size="11.5" font-weight="800" fill="#A9662B">세뇨관</text>
-    <!-- 모세혈관(세뇨관 옆) -->
-    <path d="M236 118 q30 24 6 52 q-18 22 8 40" stroke="#E05B6E" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.4"/>
-    <text x="266" y="126" font-size="11.5" font-weight="800" fill="#C9303E">모세혈관</text>
-    <!-- 오줌 출구 -->
-    <path d="M188 210 q26 10 30 26" stroke="#F5D664" stroke-width="14" fill="none" stroke-linecap="round" opacity="0.7"/>
-    <text x="242" y="238" font-size="11.5" font-weight="800" fill="#A9832B">콩팥깔때기로</text>
-    <!-- 알갱이들(혈관 시작점) -->
-    ${grain("rbc", 34, 46, 9, B6.oxyBlood, "#8F1D2C")}
-    ${grain("pro", 62, 46, 8, B6.protein, "#4B2DA8")}
-    ${grain("glc1", 92, 40, 4.5, B6.glucose, "#C46A12")}
-    ${grain("glc2", 104, 54, 4.5, B6.glucose, "#C46A12")}
-    ${grain("wat1", 120, 42, 4, B6.water, "#12839B")}
-    ${grain("wat2", 132, 56, 4, B6.water, "#12839B")}
-    ${grain("wat3", 118, 62, 4, B6.water, "#12839B")}
-    ${grain("ure1", 146, 44, 4, B6.urea, "#7A5D1D")}
-    ${grain("ure2", 160, 58, 4, B6.urea, "#7A5D1D")}
-    ${grain("ure3", 246, 120, 4, B6.urea, "#7A5D1D")}
+  const pl = (x: number, y: number, text: string, stroke: string, ink: string): string => {
+    const w = Math.round(text.length * 11.3) + 16;
+    return `<rect x="${x - w / 2}" y="${y - 10}" width="${w}" height="20" rx="10" fill="#FFFFFF" fill-opacity="0.93" stroke="${stroke}" stroke-width="1.8"/>
+      <text x="${x}" y="${y + 3.8}" text-anchor="middle" font-size="10.5" font-weight="800" fill="${ink}">${text}</text>`;
+  };
+  const ld = (x1: number, y1: number, x2: number, y2: number, c: string): string =>
+    `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="1.8"/>
+     <circle cx="${x2}" cy="${y2}" r="2.6" fill="${c}" stroke="#FFFFFF" stroke-width="1.3"/>`;
+  return `<svg viewBox="0 0 340 219" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <image href="${KFL_IMG_BASE}body/figs/v2/nephron-process.webp" x="0" y="0" width="340" height="219" preserveAspectRatio="xMidYMid slice"/>
+    <!-- 단계 하이라이트(대기 중인 단계에 점멸) -->
+    <rect class="kfl-hl fil" x="32" y="100" width="68" height="80" rx="16"/>
+    <rect class="kfl-hl re" x="138" y="86" width="136" height="84" rx="16"/>
+    <rect class="kfl-hl sec" x="92" y="129" width="238" height="30" rx="15"/>
+    <!-- 구조·흐름 라벨 -->
+    ${ld(46, 160, 56, 150, "#E07A85")}${pl(36, 168, "토리", "#E07A85", "#C9303E")}
+    ${ld(95, 191, 86, 175, "#D9A76A")}${pl(112, 201, "보먼주머니", "#D9A76A", "#A9662B")}
+    ${ld(150, 170, 150, 150, "#D9A76A")}${pl(150, 180, "세뇨관", "#D9A76A", "#A9662B")}
+    ${ld(204, 82, 204, 92, "#E07A85")}${pl(204, 72, "모세혈관", "#E07A85", "#C9303E")}
+    ${pl(42, 207, "콩팥동맥", "#E07A85", "#C9303E")}
+    ${ld(300, 74, 312, 88, "#7F9DC4")}${pl(284, 64, "콩팥정맥으로", "#7F9DC4", "#3E5F8A")}
+    ${ld(300, 167, 316, 148, "#E8A80C")}${pl(283, 177, "콩팥깔때기로", "#E8A80C", "#A9832B")}
+    <!-- 알갱이들(토리 도착 혈액) -->
+    ${grain("rbc", 55, 136, 7, B6.oxyBlood, "#8F1D2C")}
+    ${grain("pro", 76, 151, 6.5, B6.protein, "#4B2DA8")}
+    ${grain("glc1", 59, 154, 4.5, B6.glucose, "#C46A12")}
+    ${grain("glc2", 73, 133, 4.5, B6.glucose, "#C46A12")}
+    ${grain("wat1", 64, 144, 3.8, B6.water, "#12839B")}
+    ${grain("wat2", 50, 147, 3.8, B6.water, "#12839B")}
+    ${grain("wat3", 79, 141, 3.8, B6.water, "#12839B")}
+    ${grain("ure1", 67, 157, 3.8, B6.urea, "#7A5D1D")}
+    ${grain("ure2", 57, 128, 3.8, B6.urea, "#7A5D1D")}
+    ${grain("ure3", 233, 115, 3.8, B6.urea, "#7A5D1D")}
   </svg>`;
 }
 
-/** 단계별 알갱이 목적지 — 여과(fil)·재흡수(re)·분비(sec) 후 좌표. */
+/** 단계별 알갱이 목적지 — 여과(fil)·재흡수(re)·분비(sec) 후 좌표(이미지 실측 기반). */
 const MOVES: Record<string, Record<string, [number, number]>> = {
   fil: {
-    glc1: [128, 106], glc2: [148, 118], wat1: [116, 128], wat2: [136, 132], wat3: [156, 104], ure1: [124, 144], ure2: [150, 140],
-    rbc: [120, 46], pro: [150, 30], // 큰 알갱이는 토리 안에 남는다(통과 실패 강조 위치)
+    // 작은 알갱이는 보먼주머니를 지나 세뇨관 첫 구간(노랑 관)으로
+    glc1: [104, 142], ure1: [115, 146], wat1: [127, 141], glc2: [139, 145], wat2: [151, 141], wat3: [163, 146], ure2: [175, 142],
+    rbc: [57, 133], pro: [74, 153], // 큰 알갱이는 토리 안에 남는다(통과 실패 강조)
   },
   re: {
-    glc1: [238, 128], glc2: [244, 152], wat1: [240, 176], wat2: [246, 200], // 모세혈관으로 복귀
-    wat3: [96, 148], ure1: [110, 190], ure2: [166, 206], // 남는 것(세뇨관 계속)
-    rbc: [292, 40], pro: [304, 52], // 여과 안 된 것은 콩팥정맥으로 흘러 나감
+    glc1: [156, 103], glc2: [183, 115], wat1: [210, 103], wat2: [196, 160], // 모세혈관 그물로 복귀
+    wat3: [206, 144], ure1: [230, 141], ure2: [250, 145], // 남는 것(세뇨관 계속 전진)
+    rbc: [297, 93], pro: [318, 94], // 여과 안 된 것은 위 혈관을 타고 콩팥정맥 쪽으로
   },
   sec: {
-    ure3: [206, 168], // 모세혈관 → 세뇨관으로 분비
+    ure3: [233, 143], // 모세혈관 → 세뇨관으로 분비
+    wat3: [266, 145], ure1: [287, 141], ure2: [306, 145], // 완성된 오줌은 출구 쪽으로 전진
   },
 };
 
@@ -111,6 +111,7 @@ export const kidneyFilterLab: StepRenderer = (host, step, api) => {
   });
 
   const board = el("div", { class: "b6-board kfl-board", html: stageScene() });
+  board.dataset.phase = "fil";
   const legend = el("div", {
     class: "kfl-legend",
     html: `<span><i style="background:${B6.oxyBlood}"></i>혈구</span><span><i style="background:${B6.protein}"></i>단백질</span><span><i style="background:${B6.glucose}"></i>포도당</span><span><i style="background:${B6.water}"></i>물</span><span><i style="background:${B6.urea}"></i>요소</span>`,
@@ -156,6 +157,7 @@ export const kidneyFilterLab: StepRenderer = (host, step, api) => {
     if (goals.has("fil")) return;
     haptic(HAPTIC.tap);
     filBtn.disabled = true;
+    board.dataset.phase = "";
     applyMoves("fil");
     board.classList.add("filtered");
     helper.innerHTML =
@@ -178,6 +180,7 @@ export const kidneyFilterLab: StepRenderer = (host, step, api) => {
             qBox.style.display = "none";
             qBox.innerHTML = "";
             reBtn.disabled = false;
+            board.dataset.phase = "re";
             reBtn.scrollIntoView({ behavior: "smooth", block: "nearest" });
           }, 1400);
         },
@@ -190,6 +193,7 @@ export const kidneyFilterLab: StepRenderer = (host, step, api) => {
     if (!goals.has("fil") || goals.has("re")) return;
     haptic(HAPTIC.tap);
     reBtn.disabled = true;
+    board.dataset.phase = "";
     applyMoves("re");
     helper.innerHTML =
       "여과액이 세뇨관을 지나는 동안 — <b>포도당은 전부</b>, <b>물은 대부분</b> 모세혈관으로 되돌아갔어요! 여과 안 됐던 혈구·단백질은 콩팥정맥으로 빠져나가고요.";
@@ -212,6 +216,7 @@ export const kidneyFilterLab: StepRenderer = (host, step, api) => {
             qBox.style.display = "none";
             qBox.innerHTML = "";
             secBtn.disabled = false;
+            board.dataset.phase = "sec";
             secBtn.scrollIntoView({ behavior: "smooth", block: "nearest" });
           }, 1400);
         },
@@ -224,6 +229,7 @@ export const kidneyFilterLab: StepRenderer = (host, step, api) => {
     if (!goals.has("re") || goals.has("sec")) return;
     haptic(HAPTIC.tap);
     secBtn.disabled = true;
+    board.dataset.phase = "";
     applyMoves("sec");
     helper.innerHTML =
       "여과되지 않고 혈액에 남아 있던 <b>노폐물(요소)</b>이 모세혈관에서 <b>세뇨관으로 분비</b>됐어요 — 마지막 청소죠.";

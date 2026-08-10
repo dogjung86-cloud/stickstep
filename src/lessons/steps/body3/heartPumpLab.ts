@@ -32,19 +32,13 @@ function stageScene(): string {
       <circle cx="${cx + 2}" cy="${cy + 9}" r="5" fill="${c}"/>
     </g>`;
   return `<svg viewBox="0 0 340 250" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <defs>
-      <radialGradient id="hppBody" cx="0.4" cy="0.32" r="1.1">
-        <stop offset="0" stop-color="#FFE3E6"/><stop offset="0.7" stop-color="#FBC6CC"/><stop offset="1" stop-color="#F2A6AF"/>
-      </radialGradient>
-    </defs>
-    <ellipse cx="170" cy="240" rx="120" ry="7" fill="#2A3A5E" opacity="0.10"/>
-    <!-- 혈관 4개(위) : 화면 왼쪽 = 몸의 오른쪽 -->
-    <path d="M108 44 v-24" stroke="#7F9DC4" stroke-width="16" stroke-linecap="round"/>
-    <path d="M148 36 v-22" stroke="#C46A7C" stroke-width="13" stroke-linecap="round"/>
-    <path d="M196 36 v-22" stroke="#7F9DC4" stroke-width="13" stroke-linecap="round"/>
-    <path d="M234 44 v-24" stroke="#E05B6E" stroke-width="16" stroke-linecap="round"/>
-    <!-- 심장 몸통 -->
-    <path d="M170 46 C120 20 62 52 66 118 C69 176 116 218 170 236 C224 218 271 176 274 118 C278 52 220 20 170 46 Z" fill="url(#hppBody)" stroke="#C2626F" stroke-width="4"/>
+    <ellipse cx="170" cy="216" rx="110" ry="7" fill="#2A3A5E" opacity="0.10"/>
+    <!-- 혈관 4개(위) : 화면 왼쪽 = 몸의 오른쪽. 심장 외곽 곡선은 두지 않는다 —
+         방 4개 rect와 외곽 사이 빈 주머니가 "방이 6개"로 읽히는 실사용 오독의 원인이었다. -->
+    <path d="M108 56 v-36" stroke="#7F9DC4" stroke-width="16" stroke-linecap="round"/>
+    <path d="M148 54 v-40" stroke="#C46A7C" stroke-width="13" stroke-linecap="round"/>
+    <path d="M196 54 v-40" stroke="#7F9DC4" stroke-width="13" stroke-linecap="round"/>
+    <path d="M234 56 v-36" stroke="#E05B6E" stroke-width="16" stroke-linecap="round"/>
     <!-- 방 4개 : 심방(위·얇은 벽) / 심실(아래·두꺼운 벽) -->
     <rect x="88" y="58" width="70" height="52" rx="20" fill="#FFF2F3" stroke="#D98D98" stroke-width="3"/>
     <rect x="182" y="58" width="70" height="52" rx="20" fill="#FFF2F3" stroke="#D98D98" stroke-width="3"/>
