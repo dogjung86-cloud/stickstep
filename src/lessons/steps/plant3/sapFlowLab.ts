@@ -18,86 +18,95 @@ interface SfrStep {
   curio?: Curio;
 }
 
-/** 체관 경로(잎 밑동 → 목적지) — 배송 점이 animateMotion으로 따라간다. */
+/** 체관 경로(원천 잎(왼쪽 중간 큰 잎) → 줄기 합류 → 목적지) — 좌표는 whole-plant.webp(820²→340²) 실측 역산. */
+const JOIN = "M86 142 C106 148 138 152 162 150";
 const ROUTES: Record<string, string> = {
-  flower: "M212 76 C192 82 176 84 172 88 L172 56 C172 48 152 44 136 42",
-  fruit: "M212 76 C192 82 176 84 172 88 L172 122 C172 130 200 130 220 133",
-  root: "M212 76 C192 82 176 84 172 88 L172 168 C172 184 170 190 166 197",
+  flower: `${JOIN} C166 149 169 146 169 140 L170 82 C170 72 160 69 151 68`,
+  fruit: `${JOIN} C168 151 172 153 173 157 C174 162 186 164 194 163`,
+  root: `${JOIN} C168 151 171 156 172 164 L172 246 C171 268 170 284 170 298`,
 };
 
 function stageScene(): string {
+  const base = (import.meta as unknown as { env: { BASE_URL: string } }).env.BASE_URL;
   const dots = (key: string): string =>
     [0, 1, 2]
       .map(
-        (i) => `<circle class="sfr-dot sfr-dot-${key}" r="4.5" fill="${P3.sugar}" stroke="#B8860B" stroke-width="1.6" opacity="0">
-          <animateMotion class="sfr-am" data-route="${key}" dur="1.5s" begin="indefinite" fill="freeze" keyPoints="0;1" keyTimes="0;1" path="${ROUTES[key]}" ${i > 0 ? "" : ""}/>
+        () => `<circle class="sfr-dot sfr-dot-${key}" r="4.5" fill="${P3.sugar}" stroke="#FFFFFF" stroke-width="2" opacity="0">
+          <animateMotion class="sfr-am" data-route="${key}" dur="1.5s" begin="indefinite" fill="freeze" keyPoints="0;1" keyTimes="0;1" path="${ROUTES[key]}"/>
         </circle>`,
       )
       .join("");
-  return `<svg viewBox="0 0 340 230" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  // 정거장 = 흰 할로 + 색 링(실사 위 마커). 태그 필은 도착(fed) 순간 팝.
+  const ring = (cx: number, cy: number, r: number, color: string): string =>
+    `<g class="sfr-st-art">
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#FFFFFF" stroke-width="5.5" opacity="0.85"/>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="2.6" stroke-dasharray="7 5" stroke-linecap="round"/>
+    </g>`;
+  return `<svg viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
-      <radialGradient id="sfrLeafG" cx="0.4" cy="0.32" r="1">
-        <stop offset="0" stop-color="#8CE99A"/><stop offset="0.6" stop-color="#51CF66"/><stop offset="1" stop-color="#2F9E44"/>
-      </radialGradient>
+      <filter id="sfrSh" x="-30%" y="-30%" width="160%" height="160%">
+        <feDropShadow dx="0" dy="1.4" stdDeviation="1.6" flood-color="#2A3A5E" flood-opacity="0.28"/>
+      </filter>
     </defs>
-    <!-- 땅 -->
-    <path d="M0 170 h340 v60 h-340 Z" fill="#EBDCC3"/>
-    <path d="M0 170 h340" stroke="#C9A96B" stroke-width="2.6"/>
-    <!-- 줄기(체관 강조) -->
-    <rect x="164" y="40" width="16" height="132" rx="7" fill="#8FBE85" stroke="#4E7C46" stroke-width="2.6"/>
-    <line x1="172" y1="44" x2="172" y2="170" stroke="${P3.sugar}" stroke-width="3" stroke-dasharray="5 4" opacity="0.75"/>
-    <g><rect x="186" y="146" width="44" height="20" rx="10" fill="#FFFFFF" stroke="${P3.sugar}" stroke-width="2"/>
-      <text x="208" y="160" text-anchor="middle" font-size="11" font-weight="800" fill="#8A6D1A">체관</text></g>
-    <!-- 원천 잎(오른쪽 큰 잎) + 알갱이 -->
-    <g>
-      <path d="M212 76 C232 52 266 44 292 52 C294 78 278 98 252 100 C230 100 216 90 212 76 Z" fill="url(#sfrLeafG)" stroke="#1E5A2A" stroke-width="2.8"/>
-      <path d="M216 78 C236 68 262 62 284 58" stroke="#1E5A2A" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
-      <g class="sfr-grain sfr-starch">
-        <rect x="238" y="66" width="11" height="11" rx="3" fill="${P3.starch}"/>
-        <rect x="256" y="74" width="11" height="11" rx="3" fill="${P3.starch}"/>
-        <rect x="246" y="84" width="11" height="11" rx="3" fill="${P3.starch}"/>
-      </g>
-      <g class="sfr-grain sfr-sugar">
-        <circle cx="243" cy="72" r="6" fill="${P3.sugar}" stroke="#B8860B" stroke-width="1.6"/>
-        <circle cx="261" cy="80" r="6" fill="${P3.sugar}" stroke="#B8860B" stroke-width="1.6"/>
-        <circle cx="251" cy="90" r="6" fill="${P3.sugar}" stroke="#B8860B" stroke-width="1.6"/>
-      </g>
+    <!-- 무대 = 발주 실사(토마토 전신 — 꽃·열매·잎·줄기·뿌리 단면) -->
+    <image href="${base}plant/figs/whole-plant.webp" x="0" y="0" width="340" height="340"/>
+    <!-- 밤 베일(multiply — 수채화를 살린 채 어둡게) -->
+    <rect class="sfr-veil" x="0" y="0" width="340" height="340" fill="#2C3B6E"/>
+    <!-- 달 + 별(밤에만) -->
+    <g class="sfr-moon">
+      <path d="M304 28 a13 13 0 1 0 7 23 a10 10 0 0 1 -7 -23" fill="#FFE8A3"/>
+      <circle cx="282" cy="58" r="2" fill="#FFE8A3"/>
+      <circle cx="324" cy="66" r="1.6" fill="#FFE8A3"/>
     </g>
-    <!-- 꽃(위) -->
+    <!-- 체관(줄기 속 통로) 표시 -->
+    <path d="M170 62 C168 105 171 145 172 185 C173 215 171 233 170 248" stroke="${P3.sugar}" stroke-width="3" stroke-dasharray="5 4" opacity="0.8"/>
+    <g filter="url(#sfrSh)">
+      <line x1="144" y1="222" x2="166" y2="224" stroke="${P3.sugar}" stroke-width="2" opacity="0.8"/>
+      <rect x="98" y="212" width="46" height="20" rx="10" fill="#FFFFFF" fill-opacity="0.95" stroke="${P3.sugar}" stroke-width="2"/>
+      <text x="121" y="226" text-anchor="middle" font-size="11" font-weight="800" fill="#8A6D1A">체관</text>
+    </g>
+    <!-- 원천 잎(왼쪽 중간 큰 잎) 위 알갱이 — 낮 녹말 ↔ 밤 설탕 -->
+    <g class="sfr-grain sfr-starch">
+      <rect x="78" y="130" width="11" height="11" rx="3" fill="${P3.starch}" stroke="#FFFFFF" stroke-width="1.8"/>
+      <rect x="94" y="137" width="11" height="11" rx="3" fill="${P3.starch}" stroke="#FFFFFF" stroke-width="1.8"/>
+      <rect x="84" y="146" width="11" height="11" rx="3" fill="${P3.starch}" stroke="#FFFFFF" stroke-width="1.8"/>
+    </g>
+    <g class="sfr-grain sfr-sugar">
+      <circle cx="84" cy="136" r="6.5" fill="${P3.sugar}" stroke="#FFFFFF" stroke-width="2"/>
+      <circle cx="100" cy="143" r="6.5" fill="${P3.sugar}" stroke="#FFFFFF" stroke-width="2"/>
+      <circle cx="90" cy="152" r="6.5" fill="${P3.sugar}" stroke="#FFFFFF" stroke-width="2"/>
+    </g>
+    <!-- 꽃(왼쪽 위 노란 꽃) -->
     <g class="sfr-st" data-st="flower">
-      <path d="M172 56 C168 50 150 46 138 44" stroke="#4E7C46" stroke-width="4" fill="none" stroke-linecap="round"/>
-      <g class="sfr-st-art">
-        ${[0, 72, 144, 216, 288].map((a) => `<ellipse cx="128" cy="30" rx="9" ry="13" fill="#FAA2C1" stroke="#D6336C" stroke-width="2" transform="rotate(${a} 128 42)"/>`).join("")}
-        <circle cx="128" cy="42" r="8" fill="#FFD43B" stroke="#E8A80C" stroke-width="2"/>
+      ${ring(144, 66, 18, "#D6336C")}
+      <g class="sfr-tag" filter="url(#sfrSh)">
+        <rect x="20" y="42" width="92" height="20" rx="10" fill="#FFF0F6" fill-opacity="0.96" stroke="#D6336C" stroke-width="2"/>
+        <text x="66" y="56" text-anchor="middle" font-size="11" font-weight="800" fill="#A61E4D">꽃 피우기에 이용!</text>
       </g>
-      <g class="sfr-tag"><rect x="86" y="62" width="86" height="20" rx="10" fill="#FFF0F6" stroke="#D6336C" stroke-width="2"/>
-        <text x="129" y="76" text-anchor="middle" font-size="11" font-weight="800" fill="#A61E4D">꽃 피우기에 이용!</text></g>
     </g>
-    <!-- 열매(아래 옆) -->
+    <!-- 열매(오른쪽 토마토) -->
     <g class="sfr-st" data-st="fruit">
-      <path d="M172 122 C186 124 206 128 218 132" stroke="#4E7C46" stroke-width="4" fill="none" stroke-linecap="round"/>
-      <g class="sfr-st-art">
-        <circle cx="234" cy="140" r="16" fill="#FF6B6B" stroke="#C0392B" stroke-width="2.6"/>
-        <path d="M228 128 l6 -6 6 6 -4 3 h-5 Z" fill="#2F9E44" stroke="#1E5A2A" stroke-width="1.8"/>
+      ${ring(206, 163, 24, "#E03131")}
+      <g class="sfr-tag" filter="url(#sfrSh)">
+        <rect x="240" y="153" width="74" height="20" rx="10" fill="#FFF5F5" fill-opacity="0.96" stroke="#C0392B" stroke-width="2"/>
+        <text x="277" y="167" text-anchor="middle" font-size="11" font-weight="800" fill="#A63030">열매에 저장!</text>
       </g>
-      <g class="sfr-tag"><rect x="252" y="132" width="74" height="20" rx="10" fill="#FFF5F5" stroke="#C0392B" stroke-width="2"/>
-        <text x="289" y="146" text-anchor="middle" font-size="11" font-weight="800" fill="#A63030">열매에 저장!</text></g>
     </g>
-    <!-- 뿌리(맨 아래) -->
+    <!-- 뿌리(흙 단면 속) -->
     <g class="sfr-st" data-st="root">
-      <path d="M164 170 C150 182 140 192 134 202 M180 170 C192 182 200 192 205 202 M172 172 L170 206" stroke="#A9854A" stroke-width="3.4" fill="none" stroke-linecap="round"/>
       <g class="sfr-st-art">
-        <ellipse cx="163" cy="200" rx="26" ry="14" fill="#C2566B" stroke="#96374D" stroke-width="2.6" transform="rotate(-12 163 200)"/>
+        <ellipse cx="170" cy="288" rx="36" ry="24" fill="none" stroke="#FFFFFF" stroke-width="5.5" opacity="0.85"/>
+        <ellipse cx="170" cy="288" rx="36" ry="24" fill="none" stroke="#F59F00" stroke-width="2.6" stroke-dasharray="7 5" stroke-linecap="round"/>
       </g>
-      <g class="sfr-tag"><rect x="204" y="192" width="76" height="20" rx="10" fill="#FFF9F0" stroke="#96374D" stroke-width="2"/>
-        <text x="242" y="206" text-anchor="middle" font-size="11" font-weight="800" fill="#7A2B3D">녹말로 저장!</text></g>
+      <g class="sfr-tag" filter="url(#sfrSh)">
+        <rect x="216" y="278" width="76" height="20" rx="10" fill="#FFF9F0" fill-opacity="0.96" stroke="#96374D" stroke-width="2"/>
+        <text x="254" y="292" text-anchor="middle" font-size="11" font-weight="800" fill="#7A2B3D">녹말로 저장!</text>
+      </g>
     </g>
     <!-- 배송 점(경로별 3개) -->
     ${dots("flower")}
     ${dots("fruit")}
     ${dots("root")}
-    <!-- 달(밤 변신 연출) -->
-    <g class="sfr-moon"><path d="M40 26 a13 13 0 1 0 7 23 a10 10 0 0 1 -7 -23" fill="#8B95A1"/></g>
   </svg>`;
 }
 

@@ -292,7 +292,10 @@
   transition: background 0.6s ease;
 }
 .sfr-board.night { background: linear-gradient(180deg, #2E3650, #4A5470); }
-.sfr-board svg { width: 100%; height: auto; display: block; }
+.sfr-board svg { width: 100%; height: auto; display: block; border-radius: 12px; overflow: hidden; }
+/* 밤 베일 — multiply로 실사 수채화를 살린 채 어둡게 */
+.sfr-veil { opacity: 0; mix-blend-mode: multiply; transition: opacity 0.6s ease; pointer-events: none; }
+.sfr-board.night .sfr-veil { opacity: 0.55; }
 .sfr-moon { opacity: 0; transition: opacity 0.5s ease; }
 .sfr-board.night .sfr-moon { opacity: 1; }
 .sfr-grain { transition: opacity 0.6s ease; }

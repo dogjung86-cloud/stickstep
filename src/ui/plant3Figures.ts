@@ -73,12 +73,12 @@ const MINI: Record<string, () => string> = {
       <line x1="10" y1="54" x2="58" y2="54" stroke="#A9B6A9" stroke-width="2.4"/>
       <path d="M12 52 L32 20 L56 18" stroke="${P3.leaf}" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     `, "증가하다 일정해지는 곡선"),
-  // L3: 산봉우리 곡선(온도)
+  // L3: 산봉우리 곡선(온도 — 부드러운 봉우리)
   curvePeak: () =>
     svg("0 0 64 64", `
       <line x1="10" y1="10" x2="10" y2="54" stroke="#A9B6A9" stroke-width="2.4"/>
       <line x1="10" y1="54" x2="58" y2="54" stroke="#A9B6A9" stroke-width="2.4"/>
-      <path d="M12 52 L38 16 L54 48" stroke="#F03E3E" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12 52 C20 46 28 26 35 17.5 C36.5 15.8 38.5 15.8 40 18.2 C44 25 50 40 54 48" stroke="#F03E3E" stroke-width="3.6" fill="none" stroke-linecap="round"/>
     `, "정점을 지나 빠르게 감소하는 곡선"),
   // L3: 온실 다이얼
   greenhouseDial: () =>
@@ -297,7 +297,7 @@ export function factorShapesFig(): string {
     "0 0 340 132",
     `
     ${panel(6, "(가)", "M18 82 L44 34 L86 32", P3.leaf)}
-    ${panel(120, "(나)", "M18 82 L52 28 L84 76", "#F03E3E")}
+    ${panel(120, "(나)", "M18 82 C30 74 40 42 50 27 C52 24.5 54 24.5 55.5 27.5 C62 40 72 66 82 78", "#F03E3E")}
     ${panel(234, "(다)", "M18 82 L86 24", "#4DABF7")}
     <text x="8" y="12" font-size="10.5" font-weight="700" fill="#8B95A1">세로축: 광합성량 · 가로축: 요인 값</text>
     `,
