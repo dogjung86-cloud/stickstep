@@ -202,7 +202,8 @@ console.log("L2 잘게 나눠야 들어간다, 소화");
   ok((await goalsOn()) === 3, "소화 여행 목표 3");
   ok(await ctaEnabled(), "소화 여행 CTA");
   await cta(); // → concept③(융털)
-  ok(await imgLoaded("img[alt*='융털']"), "융털 일러스트 로드");
+  ok(await page.evaluate(() => !!document.querySelector(".screen.active svg[aria-label*='소화계 복습']")), "소화 복습 그림 렌더");
+  ok(await page.evaluate(() => !!document.querySelector(".screen.active svg[aria-label*='융털 확대']")), "융털 라벨 그림 렌더");
   await cta(); // → recap
   await cta(); // → order
   ok(await orderChips(["입", "식도", "위", "작은창자", "큰창자", "항문"]), "소화관 순서 good");

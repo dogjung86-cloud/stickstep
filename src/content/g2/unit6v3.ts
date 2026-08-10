@@ -10,7 +10,7 @@ import {
   colorClueLab, salivaRaceLab, foodTripLab, heartPumpLab, twoLoopsLab,
   chestModelLab, kidneyFilterLab, bodyTeamLab,
 } from "../dsl";
-import { b6MiniArt, detectMatchFig, digestMapFig, starchFlowFig, heartMapFig, twoLoopFig, gasExchangeFig, nephronMapFig, teamFig } from "../../ui/body3Figures";
+import { b6MiniArt, detectMatchFig, digestMapFig, starchFlowFig, heartMapFig, twoLoopFig, gasExchangeFig, nephronMapFig, teamFig, digestReviewFig, villusLabeledFig } from "../../ui/body3Figures";
 
 /** public 임의 경로 사진 한 장(검증 자산 재사용 — body/figs·anim/figs·anim/food). */
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -236,11 +236,13 @@ export const G2_UNIT6_V3: Unit = {
           kicker: "과학 용어 정복하기",
           kickerTone: "body",
           title: "흡수 —<br>주름과 융털의 비밀",
-          lead: "잘게 분해했으면 이제 <b>몸 안으로</b> 들여올 차례. 작은창자의 안쪽 벽에 장치가 있어요.",
+          lead: "여행을 마친 영양소들, 이제 <b>몸 안으로</b> 들여올 차례예요. 먼저 지나온 길부터 한눈에 복습!",
           blocks: [
             { k: "figure", svg: cut("body3", "g2u6l2c", "긴 카펫을 아코디언처럼 접어 작은 상자에 넣는 스틱맨"), cap: "접으면 좁은 곳에도 넓은 면이 들어가요" },
-            { k: "figure", svg: bimg("body/figs/v2/villus-absorption.webp", "작은창자 안쪽 벽의 주름과 융털 확대 일러스트"), cap: "작은창자 안쪽 벽 — 주름 위에 융털이 빽빽해요" },
+            { k: "figure", svg: digestReviewFig(), cap: "소화 여행 복습 — 기관마다 맡은 분해가 달랐죠" },
+            { k: "term", name: "소화의 마무리 무대, 작은창자", def: "<b>입</b>에서 녹말이 분해되기 시작하고(침의 아밀레이스), <b>위</b>에서 단백질이 분해되기 시작하며(펩신+염산), <b>작은창자</b>에서 이자액(아밀레이스·트립신·라이페이스)과 쓸개즙이 합류해 <b>3대 영양소의 소화가 모두 완성</b>돼요. 그래서 소화가 끝난 바로 그 자리 — 작은창자에 <b>흡수 장치</b>가 있답니다." },
             { k: "term", name: "융털", def: "작은창자 안쪽 벽의 <b>주름 표면에 빽빽하게 난 돌기</b>예요. 주름과 융털 덕분에 영양소와 닿는 <b>표면적이 매우 넓어져</b>, 영양소를 효율적으로 흡수할 수 있죠. 소화가 끝난 작은 영양소는 융털을 통해 몸 안으로 <b>흡수</b>되고, 심장을 거쳐 온몸의 세포로 보내져요." },
+            { k: "figure", svg: villusLabeledFig(), cap: "융털 확대 — 물에 잘 녹는 포도당·아미노산은 모세혈관으로, 지방산·모노글리세라이드는 암죽관으로!" },
             { k: "note", tone: "blue", html: "작은창자를 지나고 남은 찌꺼기는 <b>큰창자</b>로 가요. 큰창자에서는 소화가 거의 일어나지 않고 <b>주로 물이 흡수</b>되며, 남은 찌꺼기는 대변이 되어 항문으로 나간답니다." },
           ],
           cta: "정리하기",

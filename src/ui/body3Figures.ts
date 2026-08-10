@@ -37,6 +37,73 @@ export function detectMatchFig(blanks: string[] = []): string {
   return SVG(330, 202, rows, "영양소 검출 반응 대응표");
 }
 
+// ── 소화 여행 복습(L2 흡수 concept) — 발주 해부도 위 기관 라벨+분해 요약 오버레이 ──
+// 좌표는 body/figs/digestive.webp(3:4) 실측 % — 이미지를 바꾸면 반드시 재실측.
+const IMG_BASE = ((import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/");
+
+export function digestReviewFig(): string {
+  type Pill = { name: string; sub?: string; x: number; y: number; tx: number; ty: number; tone: string; hot?: boolean };
+  const PILLS: Pill[] = [
+    { name: "입", sub: "녹말 분해 시작", x: 15, y: 10, tx: 41, ty: 13, tone: "#F3C9A8" },
+    { name: "식도", sub: "지나가는 길", x: 81, y: 22, tx: 52, ty: 28, tone: "#E3E8EF" },
+    { name: "간", sub: "쓸개즙 생산", x: 14, y: 44, tx: 37, ty: 52, tone: "#F3C9A8" },
+    { name: "위", sub: "단백질 분해 시작", x: 82, y: 46, tx: 64, ty: 54, tone: "#F3C9A8" },
+    { name: "쓸개", sub: "쓸개즙 저장", x: 13, y: 56, tx: 36.5, ty: 58.5, tone: "#F3C9A8" },
+    { name: "이자", sub: "소화효소 3종", x: 82, y: 60, tx: 60, ty: 60.5, tone: "#F3C9A8" },
+    { name: "큰창자", sub: "물 흡수", x: 14, y: 71, tx: 32.5, ty: 71, tone: "#E3E8EF" },
+    { name: "작은창자", sub: "소화 완성 + 흡수!", x: 81, y: 77, tx: 57, ty: 76, tone: "#E23B4B", hot: true },
+  ];
+  const W = 340;
+  const H = 453; // 3:4
+  const px = (p: number): number => (p / 100) * W;
+  const py = (p: number): number => (p / 100) * H;
+  const parts = PILLS.map((p) => {
+    const w = p.sub ? Math.max(64, Math.max(p.name.length, (p.sub?.length ?? 0) * 0.82) * 11 + 22) : p.name.length * 13 + 24;
+    const h = p.sub ? 34 : 22;
+    const x = px(p.x) - w / 2;
+    const y = py(p.y) - h / 2;
+    return `<line x1="${px(p.x)}" y1="${py(p.y)}" x2="${px(p.tx)}" y2="${py(p.ty)}" stroke="${p.hot ? "#E23B4B" : "#B0B8C1"}" stroke-width="${p.hot ? 2.4 : 1.8}"/>
+      <circle cx="${px(p.tx)}" cy="${py(p.ty)}" r="${p.hot ? 4 : 3.2}" fill="${p.hot ? "#E23B4B" : "#8B95A1"}" stroke="#FFFFFF" stroke-width="1.6"/>
+      <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${h / 2}" fill="#FFFFFF" stroke="${p.hot ? "#E23B4B" : p.tone}" stroke-width="${p.hot ? 2.4 : 1.8}"/>
+      <text x="${px(p.x)}" y="${y + (p.sub ? 14.5 : 15.5)}" text-anchor="middle" font-size="12" font-weight="800" fill="${p.hot ? "#C9303E" : "#333D4B"}">${p.name}</text>
+      ${p.sub ? `<text x="${px(p.x)}" y="${y + 28}" text-anchor="middle" font-size="9.5" font-weight="700" fill="${p.hot ? "#E23B4B" : "#8B95A1"}">${p.sub}</text>` : ""}`;
+  }).join("");
+  return `<svg viewBox="0 0 ${W} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="소화계 복습 — 기관별 분해 요약">
+    <image href="${IMG_BASE}body/figs/digestive.webp" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/>
+    ${parts}
+  </svg>`;
+}
+
+// ── 융털 확대(L2 흡수 concept) — 발주 일러스트 위 양분·통로 라벨 오버레이 ──
+// 좌표는 body/figs/v2/villus-absorption.webp(3:2) 실측 % — 왼쪽 알갱이 = 수용성(청록·보라),
+// 오른쪽 노란 알갱이 = 지방 산물, 중앙 노란 관 = 암죽관, 붉은·파란 그물 = 모세혈관.
+export function villusLabeledFig(): string {
+  const W = 340;
+  const H = 227; // 3:2
+  const pill = (x: number, y: number, lines: string[], tone: string, ink: string): string => {
+    const w = Math.max(...lines.map((l) => l.length)) * 10.2 + 20;
+    const h = lines.length > 1 ? 34 : 21;
+    return `<rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="${h / 2}" fill="#FFFFFF" fill-opacity="0.94" stroke="${tone}" stroke-width="2"/>
+      ${lines.map((l, i) => `<text x="${x}" y="${y - h / 2 + 15 + i * 13}" text-anchor="middle" font-size="${lines.length > 1 ? 10.5 : 11}" font-weight="800" fill="${ink}">${l}</text>`).join("")}`;
+  };
+  const lead = (x1: number, y1: number, x2: number, y2: number, c: string): string =>
+    `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="1.8"/>
+     <circle cx="${x2}" cy="${y2}" r="3" fill="${c}" stroke="#FFFFFF" stroke-width="1.4"/>`;
+  return `<svg viewBox="0 0 ${W} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="융털 확대 — 양분이 흡수되는 두 길">
+    <image href="${IMG_BASE}body/figs/v2/villus-absorption.webp" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/>
+    <rect x="6" y="6" width="74" height="20" rx="10" fill="#E23B4B"/>
+    <text x="43" y="20" text-anchor="middle" font-size="11" font-weight="800" fill="#FFFFFF">융털 확대</text>
+    ${pill(87, 45, ["포도당 · 아미노산"], "#0CA678", "#0B7285")}
+    ${lead(87, 56, 84, 74, "#0CA678")}
+    ${pill(253, 45, ["지방산 ·", "모노글리세라이드"], "#E8A80C", "#B07D08")}
+    ${lead(253, 62, 234, 82, "#E8A80C")}
+    ${pill(64, 204, ["모세혈관"], "#E05B6E", "#C9303E")}
+    ${lead(90, 197, 122, 172, "#E05B6E")}
+    ${pill(276, 204, ["암죽관"], "#D9A76A", "#A9662B")}
+    ${lead(250, 199, 162, 180, "#D9A76A")}
+  </svg>`;
+}
+
 // ── 소화계 모식도(L2 concept) — 소화관 세로 흐름 + 부속 기관 곁가지 ──────
 // 경로도는 한글 라벨이 본질이라 벡터로 그린다(하이브리드 방침 — 실사풍은 발주본 bimg 곁들임).
 export function digestMapFig(): string {
