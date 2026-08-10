@@ -6,10 +6,13 @@
 // 체관 설탕은 위·아래로 · 온도는 알맞은 범위 뒤 광합성량 감소 · 해요체 · 이모지 금지.
 import type { Unit } from "../curriculum";
 import {
-  lesson, concept, comic, hook, hotspot, recap, mcq, ox, multi, binSort, order, pairMatch, cut,
+  lesson, concept, comic, hook, recap, mcq, ox, multi, binSort, order, pairMatch, cut,
   greenHuntLab, gasCrossLab, starchQuestLab, factorCurveLab, flipEngineLab, sunGaugeLab, sapFlowLab,
 } from "../dsl";
-import { p3MiniArt, leafFlowFig, factorShapesFig, dayNightGasFig } from "../../ui/plant3Figures";
+import { p3MiniArt, factorShapesFig, dayNightGasFig } from "../../ui/plant3Figures";
+// 광합성 과정 도해는 재제작 이전 그림을 그대로 쓴다(사용자 확정 2026-08-10 — 현행 plantFigures를
+// 무수정 import. (가) 엽록체 · (나) 기공 · (다) 물관 배정 포함 원본 그대로).
+import { leafRouteFig } from "../../ui/plantFigures";
 
 /** public 임의 경로 사진 한 장(검증 자산 재사용 — plant/figs·exam/g2u5). */
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -103,26 +106,12 @@ export const G2_UNIT5_V3: Unit = {
           lead: "장소를 찾았으니 이제 <b>들어가는 것</b>과 <b>나오는 것</b>을 확인할 차례예요.",
           blocks: [
             { k: "figure", svg: cut("plant3", "g2u5l1b", "잎 공장으로 들어가는 세 갈래 길과 나오는 두 갈래 길을 안내하는 스틱맨"), cap: "들어가는 재료 셋, 나오는 산물 둘" },
-            { k: "term", name: "광합성에 필요한 물질", def: "<b>이산화 탄소</b>는 주로 잎의 <b>기공</b>(잎에 있는 작은 구멍)을 통해 들어오고, <b>물</b>은 뿌리에서 흡수되어 <b>물관</b>을 타고 잎까지 올라와요. 그리고 엽록소가 흡수한 <b>빛에너지</b>가 이 재료들을 양분으로 바꾸죠." },
+            { k: "figure", svg: leafRouteFig(), cap: "재료가 들어오는 길 — (가) 엽록체 · (나) 기공 · (다) 물관" },
+            { k: "term", name: "광합성에 필요한 물질", def: "<b>이산화 탄소</b>는 주로 잎의 <b>기공</b>(잎 표면의 작은 구멍, 그림의 (나))을 통해 들어오고, <b>물</b>은 뿌리에서 흡수되어 <b>물관</b>(그림의 (다))을 타고 잎까지 올라와요. 두 재료는 <b>엽록체(그림의 (가))</b>에서 만나고, 엽록소가 흡수한 <b>빛에너지</b>가 이들을 양분으로 바꾸죠." },
             { k: "term", name: "광합성산물", def: "광합성으로 만들어지는 양분은 <b>포도당</b>이에요. 포도당은 곧 <b>녹말</b>로 바뀌어 엽록체에 잠시 저장되죠. 함께 만들어진 <b>산소</b>는 기공을 통해 식물 밖으로 나가요." },
-            { k: "note", tone: "blue", html: "말로만 들으면 헷갈리죠? 바로 다음 화면에서 <b>진짜 잎 위에</b> 이 다섯 가지를 직접 짚어 볼 거예요." },
+            { k: "note", tone: "blue", html: "숲의 공기가 상쾌하게 느껴지는 데는 이유가 있었던 거예요 — 잎들이 낮 동안 부지런히 <b>산소</b>를 내놓고 있으니까요." },
           ],
-          cta: "진짜 잎에서 확인하기",
-        }),
-        hotspot({
-          title: "광합성 공장 견학 —<br>다섯 곳을 찾아 탭!",
-          lead: "진짜 잎 위에 재료와 산물의 길을 표시했어요. 점 다섯 개를 모두 탭해 견학을 마쳐요.",
-          svg: leafFlowFig(),
-          pad0: true,
-          mode: "reveal",
-          spots: [
-            { x: 17, y: 8, label: "빛에너지", desc: "엽록소가 붙잡는 공장의 동력 — 빛이 있어야 광합성이 시작돼요." },
-            { x: 12, y: 30, label: "이산화 탄소", desc: "공기 중에서 잎의 기공(작은 구멍)으로 들어오는 기체 재료예요." },
-            { x: 7, y: 80, label: "물", desc: "뿌리에서 흡수되어 물관을 타고 잎자루까지 올라오는 재료예요." },
-            { x: 58, y: 48, label: "포도당 → 녹말", desc: "잎에서 만들어진 양분 — 포도당은 곧 녹말로 바뀌어 엽록체에 저장돼요." },
-            { x: 72, y: 21, label: "산소", desc: "양분과 함께 만들어져 기공으로 빠져나가는 산물이에요." },
-          ],
-          explainGood: "견학 완료! 재료 셋(빛에너지·이산화 탄소·물)이 들어가고, 산물 둘(포도당·산소)이 나와요 — 포도당은 녹말로 저장까지!",
+          cta: "정리하기",
         }),
         recap({
           title: "광합성,<br>세 장으로 정리해요",
@@ -174,12 +163,13 @@ export const G2_UNIT5_V3: Unit = {
           explainBad: "숨쉬기와 헷갈리면 방향이 뒤집혀요 — 광합성에서는 <b>이산화 탄소가 들어가고 산소가 나온답니다</b>. 재료 셋(빛에너지·이산화 탄소·물), 산물 둘(포도당·산소)로 기억해요.",
         }),
         mcq({
-          prompt: "그림은 잎에서 일어나는 광합성 과정이에요. 잎으로 들어가는 ㉠에 알맞은 물질은?",
-          figure: leafFlowFig({ mode: "label", blanks: ["co2"] }),
-          options: ["이산화 탄소", "산소", "녹말", "질소", "수증기"],
-          answer: 0,
-          explainGood: "맞아요! 빛에너지·물과 함께 잎으로 들어가는 재료 — <b>이산화 탄소</b>예요. 주로 잎의 기공으로 들어오죠.",
-          explainBad: "㉠은 화살표가 잎을 <b>향해 들어가는</b> 쪽이에요. 산소는 나오는 산물이고, 들어가는 기체 재료는 <b>이산화 탄소</b>랍니다.",
+          prompt: "그림의 (가)~(다) 중, 뿌리에서 흡수한 <b>물</b>이 잎까지 올라오는 통로는 어디일까요?",
+          figure: leafRouteFig(),
+          options: ["(가)", "(나)", "(다)"],
+          answer: 2,
+          shuffle: false,
+          explainGood: "정확해요! 뿌리 쪽에서 잎으로 이어지는 <b>(다)가 물관</b> — 물의 전용 통로예요. (가)는 엽록체, (나)는 기공이죠.",
+          explainBad: "화살표의 출발점을 봐요 — 뿌리 쪽에서 올라오는 길이 <b>(다) 물관</b>이에요. (가)는 광합성이 일어나는 엽록체, (나)는 이산화 탄소가 드나드는 기공이랍니다.",
         }),
         mcq({
           prompt: "광합성으로 <b>처음</b> 만들어지는 양분은 무엇일까요?",

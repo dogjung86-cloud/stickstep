@@ -42,15 +42,11 @@ await clickSel(".ghz-board"); await W(600);
 await clickSel(".ghz-board"); await W(900);
 await scrollTop(); await W(250);
 await shot("l1-greenhunt");
-// 3) L1 concept②(컷+용어) → 잎 견학 hotspot(실사 하이브리드)
+// 3) L1 concept②(컷 + 원본 잎 도해 leafRouteFig + 용어)
 await page.evaluate(() => { [...document.querySelectorAll(".screen.active .ghz-q .hook-choice")].find((b) => b.textContent.includes("엽록체"))?.click(); });
 await W(500); await cta(); await scrollTop(); await W(300);
 await shot("l1-concept-flow");
-await cta(); await scrollTop(); await W(400);
-await shot("l1-leafflow-hotspot");
 // 4) L1 recap 자세히 펼침
-await page.evaluate(() => { document.querySelectorAll(".screen.active button.hs-dot").forEach((d) => d.click()); });
-await W(900);
 await cta();
 await page.evaluate(() => document.querySelectorAll(".screen.active .rc-card, .screen.active .recap-card")[0]?.click());
 await W(450);
