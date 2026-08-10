@@ -1,6 +1,7 @@
 // 콘텐츠 저작 DSL — 스텝을 간결하게 만드는 팩토리. type 문자열 오타를 막는다.
 import type { Lesson, Step } from "../lessons/types";
 import type { Block } from "../ui/blocks";
+import { cutTailHorn } from "../ui/figures";
 
 type Obj = Record<string, unknown>;
 
@@ -11,7 +12,8 @@ export const rimg = (file: string, alt: string): string =>
 
 /** 컷 위 한글 말풍선(하이브리드 표준): 발주 이미지에 글자를 넣는 대신 앱이 얹는다.
  *  x·y는 이미지 기준 %(말풍선의 중심), flip이면 꼬리가 위를 향한다(인물 아래 배치용).
- *  tail("right"|"left")이면 꼬리가 그쪽 끝으로 이동(붐비는 컷에서 몸통은 빈 곳, 꼬리만 화자 쪽). */
+ *  tail("right"|"left")이면 그쪽 끝에 뿔 꼬리(cutTailHorn — 길게 뻗는 스윕 삼각형)를 단다
+ *  (붐비는 컷에서 몸통은 빈 곳, 꼬리만 화자 쪽). */
 export interface CutBubble {
   text: string;
   x: number;
@@ -29,7 +31,7 @@ export const cut = (theme: string, name: string, alt: string, bubbles?: CutBubbl
   const bs = bubbles
     .map(
       (b) =>
-        `<span class="cut-bubble${b.flip ? " flip" : ""}${b.tail ? ` tail-${b.tail === "right" ? "r" : "l"}` : ""}" style="left:${b.x}%;top:${b.y}%">${b.text}</span>`,
+        `<span class="cut-bubble${b.flip ? " flip" : ""}${b.tail ? ` tail-${b.tail === "right" ? "r" : "l"}` : ""}" style="left:${b.x}%;top:${b.y}%">${b.text}${b.tail ? cutTailHorn() : ""}</span>`,
     )
     .join("");
   return `<span class="cutwrap">${img}${bs}</span>`;
