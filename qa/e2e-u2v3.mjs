@@ -52,7 +52,8 @@ const clickAll = async (sel, gap = 320) => {
 const pickChoice = async (scope, text, tries = 16) => {
   for (let t = 0; t < tries; t++) {
     const done = await page.evaluate(({ scope, text }) => {
-      const btns = [...document.querySelectorAll(`.screen.active ${scope} .hook-choice`)].filter((b) => !b.disabled);
+      // offsetParent 가시성 필터 — display:none 버튼도 눌리는 합성 클릭의 검증 구멍 봉쇄(.show 사고 후속)
+      const btns = [...document.querySelectorAll(`.screen.active ${scope} .hook-choice`)].filter((b) => !b.disabled && b.offsetParent !== null);
       const b = btns.find((x) => x.textContent.includes(text));
       if (b) { b.click(); return true; }
       return false;
