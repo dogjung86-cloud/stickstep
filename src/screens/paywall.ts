@@ -28,6 +28,7 @@ import {
   won,
   type PlanId,
 } from "../core/purchase";
+import { canSeeAllSubjects } from "../core/store";
 import { BRAND } from "../core/brand";
 import type { Screen } from "../core/router";
 import { stepMarkSvg } from "../ui/stepMark";
@@ -93,14 +94,17 @@ export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlo
   );
 
   // ── 과목 선택 — 다중 선택(최소 1, 개수 제한 없음) ──
+  // 과목 공개 게이트(2026-08-11) — 일반 사용자에게는 판매 목록도 과학 SKU만 보인다(수학은
+  // 운영 계정·검토 모드·dev 전용). 카탈로그(core/purchase.ts SELLABLE_SUBJECTS)는 불변 — 노출만 거른다.
+  const sellable = canSeeAllSubjects() ? SELLABLE_SUBJECTS : SELLABLE_SUBJECTS.filter((s) => s.id.startsWith("sci-"));
   const owned = new Set(ownedPremiumSubjectIds());
-  const firstAvailable = SELLABLE_SUBJECTS.find((s) => !owned.has(s.id));
+  const firstAvailable = sellable.find((s) => !owned.has(s.id));
   const picked = new Set<string>(firstAvailable ? [firstAvailable.id] : []);
   const count = el("span", { class: "pwx-scount" });
   const helper = el("div", { class: "helper", attrs: { role: "status", "aria-live": "polite" } });
   const subjectMsg = el("div", { class: "pwx-submsg", attrs: { role: "status", "aria-live": "polite" } });
 
-  const chips = SELLABLE_SUBJECTS.map((s) => {
+  const chips = sellable.map((s) => {
     const isOwned = owned.has(s.id);
     const chip = el(
       "button",
@@ -296,16 +300,19 @@ export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlo
       return;
     }
     cta.disabled = false;
-    const firstName = SELLABLE_SUBJECTS.find((s) => picked.has(s.id))?.name ?? "";
+    const firstName = sellable.find((s) => picked.has(s.id))?.name ?? "";
 
-    // 과목 아래 안내 — 상태 우선순위: 얼리버드 균일가 → 패스 균일가 → 보유분 안내 → 묶음 사다리
+    // 과목 아래 안내 — 상태 우선순위: 얼리버드 균일가 → 패스 균일가 → 보유분 안내 → 묶음 사다리.
+    // 노출 과목이 3종 미만이면(공개 게이트 — 과학 2종) 닿을 수 없는 "3과목부터" 문구를 뺀다.
     hint.textContent = eb
       ? `지금은 출시 기념가 · 몇 과목을 담아도 과목당 ${won(EARLY_BIRD.perSubject)}`
       : plan === "pass30"
         ? `30일 패스는 몇 과목이든 과목당 ${won(PASS30.price)} · 묶음 할인은 소장에 있어요`
         : owned.size > 0
           ? "이용 중인 과목은 다시 결제되지 않아요 · 새로 고른 과목만 결제해요"
-          : `담을수록 과목당 가격이 내려가요 · 3과목부터는 과목당 ${won(PER_SUBJECT_FLOOR)}`;
+          : sellable.length >= 3
+            ? `담을수록 과목당 가격이 내려가요 · 3과목부터는 과목당 ${won(PER_SUBJECT_FLOOR)}`
+            : "담을수록 과목당 가격이 내려가요 · 함께 담으면 묶음 할인";
 
     const label = plan === "pass30" ? "30일 패스" : "소장";
     pname.textContent = n === 1 ? `${firstName} ${label}` : `선택한 ${n}과목 ${label}`;

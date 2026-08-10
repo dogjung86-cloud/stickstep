@@ -23,12 +23,11 @@ import "./styles/his.css";
 import "./styles/desktop.css"; // 데스크톱 셸(옵트인·≥1024px) — html.dt 게이트, 캐스케이드 최후순위
 
 import { nav } from "./core/router";
-import { getState, completeLesson, setViewSubject, setViewGrade, isPremium, isReviewMode, setPremiumOverride, isDone, setLastUnit, recentUnit } from "./core/store";
+import { getState, completeLesson, setOnboarding, setViewSubject, setViewGrade, isPremium, isReviewMode, setPremiumOverride, setAdminOverride, canSeeAllSubjects, isDone, setLastUnit, recentUnit } from "./core/store";
 import type { WrongNote } from "./core/store";
 import { isTutorConfigured } from "./core/tutor";
 import { tutorScreen } from "./screens/tutor";
 import { splashScreen } from "./screens/splash";
-import { onboardingScreen } from "./screens/onboarding";
 import { subjectScreen } from "./screens/subject";
 import { loginScreen } from "./screens/login";
 import { notebookScreen } from "./screens/notebook";
@@ -78,10 +77,12 @@ function goHome(): void {
   );
 }
 
-/** 스플래시의 "학습 이어가기" — 마지막 대단원의 과목·학년을 복원한 뒤 그 지도에 초점을 맞춘다. */
+/** 스플래시의 "학습 이어가기" — 마지막 대단원의 과목·학년을 복원한 뒤 그 지도에 초점을 맞춘다.
+ *  과목 공개 게이트가 닫혀 있으면 숨김 과목(수학·사회·역사)의 최근 단원은 복귀 목적지가 될 수
+ *  없다(과거에 열어 본 기록이 있어도 과학 지도로) — 진행 기록 자체는 보존된다. */
 function resumeLearning(): void {
   const recent = recentUnit();
-  if (recent && findUnit(recent)) {
+  if (recent && findUnit(recent) && (canSeeAllSubjects() || subjectOfUnit(recent) === "sci")) {
     lastUnitId = recent;
     setViewSubject(subjectOfUnit(recent));
     setViewGrade(gradeOfUnit(recent));
@@ -416,13 +417,18 @@ function openLesson(id: string): void {
 
 function showSplash(instant = false): void {
   // 공개 진입 플로우(2026-07-21 사용자 확정): 누구나 앱을 열면 스플래시(=상시 메인)를 먼저 거친다.
-  // 신규 사용자는 과목 선택·온보딩으로, 기존 사용자는 곧바로 학습 홈으로 보낸다.
+  // 신규 사용자도 설문(학년·과목·학습량) 없이 곧바로 중1 과학 지도로 보낸다(2026-08-11 사용자
+  // 확정 — 공개 과목이 과학뿐이라 물을 게 없다. screens/onboarding.ts는 배선만 해제, 파일 보존).
+  // 기본값 = 중1·과학·하루 10분, 학년은 홈 상단 세그(중1⇄중2)로 언제든 전환한다.
   const enterOnboarding = (): void => {
     if (getState().onboarded) {
       resumeLearning();
       return;
     }
-    nav.go(onboardingScreen(goHome, () => nav.back()));
+    setOnboarding("g1", 10);
+    setViewGrade("g1");
+    setViewSubject("sci");
+    goHome();
   };
   const splash = splashScreen({
     signedIn: !!currentUser() || hasStoredSession(),
@@ -471,8 +477,10 @@ if (import.meta.env.DEV) {
 // 로그인·동기화 부팅 — Supabase 환경변수(.env.local)가 없으면 둘 다 no-op(core/auth.ts 참조).
 // initSync가 먼저 리스너를 배선해야 initAuth의 세션 복원 이벤트를 놓치지 않는다.
 // 운영 계정 프리미엄 겹층 — 지정 이메일 로그인 시 결제 없이 전 기능(로그아웃하면 자동 해제).
+// 과목 공개 게이트도 같은 지점에서 주입 — 운영 계정만 수학·사회·역사가 보인다(store.canSeeAllSubjects).
 onAuthChange((u) => {
   setPremiumOverride(isPrivilegedUser(u));
+  setAdminOverride(isPrivilegedUser(u));
   // 저장된 세션은 initAuth 복원 전에도 로그인 사용자 버튼을 먼저 보여 줘 깜빡임을 막는다.
   updateSplashAuth?.(!!u || hasStoredSession());
 });

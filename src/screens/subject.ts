@@ -7,7 +7,7 @@ import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { BRAND } from "../core/brand";
 import { stickAvatar } from "../ui/avatar";
-import { getState } from "../core/store";
+import { getState, canSeeAllSubjects } from "../core/store";
 import { CURRICULA_OF, type SubjectId } from "../content/curriculum";
 import { isDone } from "../core/store";
 import { gnav, type GnavKey } from "../ui/gnav";
@@ -63,8 +63,14 @@ export function subjectScreen(opts: {
     }
   }
 
+  // 과목 공개 게이트(2026-08-11) — 일반 사용자에게는 과학 카드만 보인다(수학·사회·역사는
+  // 운영 계정·검토 모드·dev 전용). 카드 구성만 거르고 화면 골격·탭 계약은 불변.
+  const showAll = canSeeAllSubjects();
   const h1 = el("div", { class: "h1", html: opts.mode === "onboard" ? "무엇을<br>배워 볼까요?" : "과목 고르기" });
-  const sub = el("div", { class: "sub", text: "과학·수학·사회·역사가 열려 있어요. 골라 볼까요?" });
+  const sub = el("div", {
+    class: "sub",
+    text: showAll ? "과학·수학·사회·역사가 열려 있어요. 골라 볼까요?" : "실험하며 개념을 배우는 과학이 열려 있어요.",
+  });
 
   // 과목 카드 스틱맨 — 발주 일러스트(public/brand/subj, 과목 소품 든 상반신) 우선, 로드 실패 시
   // 기존 stickAvatar 폴백. lazy 금지(.scroll 컨테이너에서 안 뜨는 사고 14 계보).
@@ -186,9 +192,15 @@ export function subjectScreen(opts: {
     // 탭 모드는 tab-head "과목"이 제목 — 본문 h1("과목 고르기")은 중복이라 뺀다(2026-07-21 사용자 지시)
     ...(tabMode ? [] : [h1]),
     sub,
-    el("div", { class: "subj-list" }, sci, mth, soc, his),
-    el("div", { class: "subj-note", text: st.onboarded ? "과목은 언제든 여기서 바꿀 수 있어요." : "지금은 과학부터! 다른 과목도 준비되는 대로 열려요." },
-    ),
+    el("div", { class: "subj-list" }, ...(showAll ? [sci, mth, soc, his] : [sci])),
+    el("div", {
+      class: "subj-note",
+      text: !showAll
+        ? "다른 과목도 준비되는 대로 열려요."
+        : st.onboarded
+          ? "과목은 언제든 여기서 바꿀 수 있어요."
+          : "지금은 과학부터! 다른 과목도 준비되는 대로 열려요.",
+    }),
   );
 
   const elm = el(

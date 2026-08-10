@@ -180,8 +180,10 @@ export function setViewGrade(g: "g1" | "g2"): void {
   save();
 }
 
-/** 홈 지도가 보여줄 과목 — 전환한 적이 없으면 과학(기존 사용자 그대로). */
+/** 홈 지도가 보여줄 과목 — 전환한 적이 없으면 과학(기존 사용자 그대로).
+ *  과목 공개 게이트가 닫혀 있으면 항상 과학(저장값은 보존 — 운영 계정 재로그인 시 복원). */
 export function getViewSubject(): "sci" | "math" | "soc" | "his" {
+  if (!canSeeAllSubjects()) return "sci";
   return state.viewSubject === "math" ? "math" : state.viewSubject === "soc" ? "soc" : state.viewSubject === "his" ? "his" : "sci";
 }
 
@@ -200,6 +202,29 @@ export function setPremiumOverride(v: boolean): void {
 
 export function isPremium(): boolean {
   return state.premium || premiumOverride;
+}
+
+// 과목 공개 게이트(2026-08-11 사용자 확정) — 일반 사용자에게는 과학 트랙만 공개한다.
+// 수학·사회·역사는 운영 계정(auth.ts PRIVILEGED_EMAILS) 로그인·검토 모드(7연타)·로컬 dev
+// (e2e 전 스크립트가 dev 서버로 돌므로 QA 계약 불변)에서만 노출된다. adminOverride는
+// premiumOverride와 같은 결 — 런타임 전용(저장·동기화 없음, 로그아웃하면 자동 해제),
+// main.ts가 onAuthChange로 주입한다.
+let adminOverride = false;
+
+export function setAdminOverride(v: boolean): void {
+  adminOverride = v;
+}
+
+/** 전 과목(수학·사회·역사) 노출 여부 — 과목을 열거하는 화면(허브·페이월·취약 드릴)과
+ *  getViewSubject가 이 게이트를 지난다. sessionStorage "ss.pub"="1"이면 어디서든 실사용자
+ *  시점을 강제한다(ss.eb 문법 — dev·운영 계정에서 공개 뷰를 검수하는 용도, 열리는 방향 없음). */
+export function canSeeAllSubjects(): boolean {
+  try {
+    if (sessionStorage.getItem("ss.pub") === "1") return false;
+  } catch {
+    /* 사생활 보호 모드 등 — 무시 */
+  }
+  return adminOverride || state.reviewMode || !!import.meta.env.DEV;
 }
 
 export function isReviewMode(): boolean {

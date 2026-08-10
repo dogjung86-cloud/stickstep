@@ -11,7 +11,7 @@ import type { ExamDef, ExamItem } from "../content/exams";
 import { CURRICULA_OF, SUBJECT_LABEL, GRADE_LABEL, findLesson, gradeOfUnit } from "../content/curriculum";
 import type { Unit, GradeId, SubjectId } from "../content/curriculum";
 import type { Lesson } from "../lessons/types";
-import { wrongNoteList, recordWrongNote, resolveWrongNote, touchStudyActivity, getViewSubject, getViewGrade } from "../core/store";
+import { wrongNoteList, recordWrongNote, resolveWrongNote, touchStudyActivity, getViewSubject, getViewGrade, canSeeAllSubjects } from "../core/store";
 import type { Screen } from "../core/router";
 
 interface DrillUnit {
@@ -38,6 +38,7 @@ const GANADA = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ"];
 function drillUnits(): DrillUnit[] {
   const out: DrillUnit[] = [];
   for (const subject of Object.keys(CURRICULA_OF) as SubjectId[]) {
+    if (!canSeeAllSubjects() && subject !== "sci") continue; // 과목 공개 게이트 — 문제 은행도 과학만
     for (const grade of ["g1", "g2"] as GradeId[]) {
       for (const unit of CURRICULA_OF[subject][grade]) {
         const def = examForUnit(unit.id);
