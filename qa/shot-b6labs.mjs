@@ -50,18 +50,23 @@ const shotBoard = async (cls, path) => {
   console.log("SHOT", path);
 };
 
-// ── L3 심장 펌프장(hull 제거 확인) ──
+// ── L3 심장 펌프장(재작도 무대 — 4국면) ──
 await openLesson(2);
 await W(700);
 for (let i = 0; i < 7; i++) await cta(); // 만화 7컷
 await cta(); // concept(심장 구조) → heartPumpLab
 await W(600);
 await shotBoard(".hpp-board", "qa/shots/b6lab-hpp-0-start.png");
-await clickNth(".hpp-seg", 0);
-await W(600);
-await clickNth(".hpp-seg", 1);
-await W(900);
-await shotBoard(".hpp-board", "qa/shots/b6lab-hpp-1-systole.png");
+await clickNth(".hpp-seg", 0); // 이완
+await W(1350);
+await shotBoard(".hpp-board", "qa/shots/b6lab-hpp-1-dia.png");
+await clickNth(".hpp-seg", 1); // 수축
+await W(700); // 분출 중간(공이 동맥 통로를 지나는 순간)
+await shotBoard(".hpp-board", "qa/shots/b6lab-hpp-2-sys.png");
+await W(1500);
+await clickSel(".hpp-rev"); // 거꾸로 밀기
+await W(900); // 되튕김 + X 표시 순간
+await shotBoard(".hpp-board", "qa/shots/b6lab-hpp-3-rev.png");
 
 // ── L5 콩팥 정수장 ──
 await openLesson(4);

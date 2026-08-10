@@ -18,45 +18,67 @@ interface HppStep {
   curio?: Curio;
 }
 
-/** 심장 단면 무대 — 방 4개·판막 2쌍·위쪽 혈관, 혈액 점은 CSS 국면 전환. */
+/** 심장 단면 무대 — 심근 벽 실루엣 속 4개 공동(빈 주머니 0)·판막 2쌍·혈관 4개.
+ *  혈액은 좌·우 각 1개의 공(왼쪽 = 산소 적은 혈액, 검붉음)이 정맥→심방→심실→동맥을 실제로 흐른다.
+ *  동맥(폐동맥·대동맥)은 사이막 곁 통로로 심실 천장과 이어진다(교과서 모식도 문법). */
 function stageScene(): string {
-  const flap = (x: number, y: number, cls: string): string =>
-    `<g class="hpp-valve ${cls}">
-      <path class="hpp-flapL" d="M${x - 14} ${y} q7 3 13 12" stroke="#B8236B" stroke-width="4" stroke-linecap="round" fill="none"/>
-      <path class="hpp-flapR" d="M${x + 14} ${y} q-7 3 -13 12" stroke="#B8236B" stroke-width="4" stroke-linecap="round" fill="none"/>
-    </g>`;
-  const dots = (cls: string, cx: number, cy: number, c: string): string =>
-    `<g class="hpp-blood ${cls}">
-      <circle cx="${cx - 10}" cy="${cy}" r="5" fill="${c}"/>
-      <circle cx="${cx + 8}" cy="${cy - 8}" r="5" fill="${c}"/>
-      <circle cx="${cx + 2}" cy="${cy + 9}" r="5" fill="${c}"/>
+  const avFlap = (x: number, dir: 1 | -1): string =>
+    `<path class="hpp-avflap" style="transform-origin:${x}px 110px; --fr:${dir === 1 ? -50 : 50}deg" d="M${x} 110 q${2 * dir} 7 ${7 * dir} 11" stroke="#B8236B" stroke-width="4.2" stroke-linecap="round" fill="none"/>`;
+  const svFlap = (x: number, dir: 1 | -1): string =>
+    `<path class="hpp-svflap" style="transform-origin:${x}px 121px; --fr:${dir === 1 ? 55 : -55}deg" d="M${x} 121 q${1 * dir} -6 ${5 * dir} -9" stroke="#B8236B" stroke-width="3.6" stroke-linecap="round" fill="none"/>`;
+  const ball = (cls: string, grad: string, edge: string): string =>
+    `<g class="hpp-ball ${cls}">
+      <circle r="11" fill="url(#${grad})" stroke="${edge}" stroke-width="2"/>
+      <circle cx="-3.6" cy="-4" r="3" fill="#FFFFFF" opacity="0.55"/>
     </g>`;
   return `<svg viewBox="0 0 340 250" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <ellipse cx="170" cy="216" rx="110" ry="7" fill="#2A3A5E" opacity="0.10"/>
-    <!-- 혈관 4개(위) : 화면 왼쪽 = 몸의 오른쪽. 심장 외곽 곡선은 두지 않는다 —
-         방 4개 rect와 외곽 사이 빈 주머니가 "방이 6개"로 읽히는 실사용 오독의 원인이었다. -->
-    <path d="M108 56 v-36" stroke="#7F9DC4" stroke-width="16" stroke-linecap="round"/>
-    <path d="M148 54 v-40" stroke="#C46A7C" stroke-width="13" stroke-linecap="round"/>
-    <path d="M196 54 v-40" stroke="#7F9DC4" stroke-width="13" stroke-linecap="round"/>
-    <path d="M234 56 v-36" stroke="#E05B6E" stroke-width="16" stroke-linecap="round"/>
-    <!-- 방 4개 : 심방(위·얇은 벽) / 심실(아래·두꺼운 벽) -->
-    <rect x="88" y="58" width="70" height="52" rx="20" fill="#FFF2F3" stroke="#D98D98" stroke-width="3"/>
-    <rect x="182" y="58" width="70" height="52" rx="20" fill="#FFF2F3" stroke="#D98D98" stroke-width="3"/>
-    <rect class="hpp-vent" x="86" y="128" width="74" height="76" rx="24" fill="#FFEBEE" stroke="#C2626F" stroke-width="7"/>
-    <rect class="hpp-vent" x="180" y="128" width="74" height="76" rx="24" fill="#FFEBEE" stroke="#C2626F" stroke-width="7"/>
-    ${flap(123, 112, "hpp-av-l")}
-    ${flap(217, 112, "hpp-av-r")}
-    ${flap(123, 40, "hpp-sv-l")}
-    ${flap(217, 40, "hpp-sv-r")}
-    ${dots("hpp-b-atrL", 123, 84, B6.deoxyBlood)}
-    ${dots("hpp-b-atrR", 217, 84, B6.oxyBlood)}
-    ${dots("hpp-b-venL", 123, 166, B6.deoxyBlood)}
-    ${dots("hpp-b-venR", 217, 166, B6.oxyBlood)}
-    <!-- 거꾸로 실험 실패 X -->
+    <defs>
+      <radialGradient id="hppWall" cx="0.36" cy="0.28" r="1.15">
+        <stop offset="0" stop-color="#F7BCC3"/><stop offset="0.62" stop-color="#EE9AA5"/><stop offset="1" stop-color="#DE7787"/>
+      </radialGradient>
+      <linearGradient id="hppVe" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#93ADCF"/><stop offset="1" stop-color="#7F9DC4"/>
+      </linearGradient>
+      <linearGradient id="hppAr" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#EE8B98"/><stop offset="1" stop-color="#E05B6E"/>
+      </linearGradient>
+      <radialGradient id="hppBallL" cx="0.35" cy="0.3" r="1">
+        <stop offset="0" stop-color="#C9506F"/><stop offset="1" stop-color="${B6.deoxyBlood}"/>
+      </radialGradient>
+      <radialGradient id="hppBallR" cx="0.35" cy="0.3" r="1">
+        <stop offset="0" stop-color="#FF7B6F"/><stop offset="1" stop-color="#E8394A"/>
+      </radialGradient>
+    </defs>
+    <ellipse cx="170" cy="238" rx="104" ry="7" fill="#2A3A5E" opacity="0.10"/>
+    <!-- 정맥(바깥 두 개 — 심방으로 들어옴): 대정맥(파랑)·폐정맥(빨강) -->
+    <rect x="100" y="14" width="17" height="52" rx="8.5" fill="url(#hppVe)" stroke="#5F7FA8" stroke-width="1.6"/>
+    <rect x="223" y="14" width="17" height="52" rx="8.5" fill="url(#hppAr)" stroke="#C2485C" stroke-width="1.6"/>
+    <!-- 심근 벽(외벽) — 아래로 갈수록 두꺼운 근육 -->
+    <path d="M170 56 C160 44 130 38 108 45 C84 53 76 74 78 102 C79 130 85 162 103 191 C119 216 146 229 170 233 C194 229 221 216 237 191 C255 162 261 130 262 102 C264 74 256 53 232 45 C210 38 180 44 170 56 Z"
+      fill="url(#hppWall)" stroke="#C2626F" stroke-width="2.4"/>
+    <path d="M96 60 C103 51 120 47 133 51" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" opacity="0.35"/>
+    <!-- 동맥 통로(사이막 곁 — 심실에서 위로 나감): 폐동맥(파랑)·대동맥(빨강) -->
+    <rect x="150" y="12" width="16" height="120" rx="8" fill="url(#hppVe)" stroke="#5F7FA8" stroke-width="1.6"/>
+    <rect x="174" y="12" width="16" height="120" rx="8" fill="url(#hppAr)" stroke="#C2485C" stroke-width="1.6"/>
+    <!-- 방 4개 공동 — 심방(위·벽 얇음), 심실(아래·벽 두꺼워 공동이 안쪽으로 좁다) -->
+    <rect x="88" y="56" width="56" height="54" rx="15" fill="#FFF0F2" stroke="#E2A0A9" stroke-width="1.5"/>
+    <rect x="196" y="56" width="56" height="54" rx="15" fill="#FFF0F2" stroke="#E2A0A9" stroke-width="1.5"/>
+    <path class="hpp-vent" d="M110 126 H158 Q166 126 166 138 V186 Q166 206 144 210 L128 212 Q100 214 98 184 V140 Q98 126 110 126 Z" fill="#FFF0F2" stroke="#E2A0A9" stroke-width="1.5"/>
+    <path class="hpp-vent" d="M182 126 H230 Q242 126 242 140 V184 Q244 214 212 212 L196 210 Q174 206 174 186 V138 Q174 126 182 126 Z" fill="#FFF0F2" stroke="#E2A0A9" stroke-width="1.5"/>
+    <!-- 심방↔심실 통로(방실 판막 자리) -->
+    <rect x="116" y="102" width="24" height="30" fill="#FFF0F2"/>
+    <rect x="200" y="102" width="24" height="30" fill="#FFF0F2"/>
+    ${avFlap(117, 1)}${avFlap(139, -1)}
+    ${avFlap(201, 1)}${avFlap(223, -1)}
+    ${svFlap(151, 1)}${svFlap(165, -1)}
+    ${svFlap(175, 1)}${svFlap(189, -1)}
+    <!-- 거꾸로 실험 실패 X (방실 통로 위) -->
     <g class="hpp-noway">
-      <path d="M108 116 l30 24 M138 116 l-30 24" stroke="${B6.danger}" stroke-width="6" stroke-linecap="round"/>
-      <path d="M202 116 l30 24 M232 116 l-30 24" stroke="${B6.danger}" stroke-width="6" stroke-linecap="round"/>
+      <path d="M120 110 l16 16 M136 110 l-16 16" stroke="${B6.danger}" stroke-width="5" stroke-linecap="round"/>
+      <path d="M204 110 l16 16 M220 110 l-16 16" stroke="${B6.danger}" stroke-width="5" stroke-linecap="round"/>
     </g>
+    ${ball("hpp-ball-l", "hppBallL", "#7E1638")}
+    ${ball("hpp-ball-r", "hppBallR", "#B32536")}
   </svg>`;
 }
 

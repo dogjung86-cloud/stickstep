@@ -244,29 +244,72 @@
 }
 .hpp-tag-atr { top: 24%; left: 10px; }
 .hpp-tag-ven { top: 58%; right: 10px; }
-.hpp-valve path { transform-box: fill-box; transform-origin: top center; transition: transform 0.45s var(--ease-out, ease-out); }
-.hpp-blood { transform-box: view-box; transition: transform 0.7s var(--ease-out, ease-out), opacity 0.4s ease; }
-/* 이완: 방실 판막 열림 — 심방의 피가 심실로 내려가 채운다(충전기) */
-.hpp-board.dia .hpp-av-l .hpp-flapL, .hpp-board.dia .hpp-av-r .hpp-flapL { transform: rotate(-34deg); }
-.hpp-board.dia .hpp-av-l .hpp-flapR, .hpp-board.dia .hpp-av-r .hpp-flapR { transform: rotate(34deg); }
-.hpp-board.dia .hpp-b-atrL, .hpp-board.dia .hpp-b-atrR { opacity: 0.95; transform: translateY(36px); }
-.hpp-board.dia .hpp-b-venL, .hpp-board.dia .hpp-b-venR { opacity: 1; transform: translateY(0); }
-/* 수축: 방실 판막 닫힘(심방 피는 제자리 대기)·동맥 판막 열림·심실 피가 위 혈관으로 */
-.hpp-board.sys .hpp-sv-l .hpp-flapL, .hpp-board.sys .hpp-sv-r .hpp-flapL { transform: rotate(-34deg); }
-.hpp-board.sys .hpp-sv-l .hpp-flapR, .hpp-board.sys .hpp-sv-r .hpp-flapR { transform: rotate(34deg); }
-.hpp-board.sys .hpp-vent { transform-box: fill-box; transform-origin: center; transform: scale(0.94); transition: transform 0.45s var(--ease-out, ease-out); }
-.hpp-board.sys .hpp-b-venL, .hpp-board.sys .hpp-b-venR { transform: translateY(-128px); opacity: 0; }
-.hpp-board.sys .hpp-b-atrL, .hpp-board.sys .hpp-b-atrR { transform: translateY(0); opacity: 1; }
-.hpp-vent { transition: transform 0.45s var(--ease-out, ease-out); }
+/* 판막: 기본 = 닫힘(--fr 회전) — 이완에 방실이, 수축에 동맥(반달)이 열린다(rotate 0) */
+.hpp-avflap, .hpp-svflap { transform-box: view-box; transform: rotate(var(--fr, 0deg)); transition: transform 0.4s var(--ease-out, ease-out); }
+.hpp-board.dia .hpp-avflap { transform: rotate(0deg); }
+.hpp-board.sys .hpp-svflap { transform: rotate(0deg); }
+/* 혈액 공: 기본 = 심방 대기. 이완 = 정맥→심방→(열린 판막)→심실 충전, 수축 = 심실→동맥 통로로 분출 */
+.hpp-ball { transform-box: view-box; }
+.hpp-ball-l { transform: translate(116px, 84px); }
+.hpp-ball-r { transform: translate(224px, 84px); }
+.hpp-board.dia .hpp-ball-l { animation: hppFillL 1.15s var(--ease-out, ease-out) forwards; }
+.hpp-board.dia .hpp-ball-r { animation: hppFillR 1.15s var(--ease-out, ease-out) forwards; }
+.hpp-board.sys .hpp-ball-l { animation: hppEjectL 1.15s ease-in forwards; }
+.hpp-board.sys .hpp-ball-r { animation: hppEjectR 1.15s ease-in forwards; }
+@keyframes hppFillL {
+  0% { transform: translate(108px, 24px); opacity: 0; }
+  22% { transform: translate(108px, 58px); opacity: 1; }
+  50% { transform: translate(116px, 84px); }
+  62% { transform: translate(116px, 84px); }
+  80% { transform: translate(128px, 122px); }
+  100% { transform: translate(130px, 168px); opacity: 1; }
+}
+@keyframes hppFillR {
+  0% { transform: translate(231px, 24px); opacity: 0; }
+  22% { transform: translate(231px, 58px); opacity: 1; }
+  50% { transform: translate(224px, 84px); }
+  62% { transform: translate(224px, 84px); }
+  80% { transform: translate(212px, 122px); }
+  100% { transform: translate(208px, 168px); opacity: 1; }
+}
+@keyframes hppEjectL {
+  0% { transform: translate(130px, 168px) scale(1); opacity: 1; }
+  38% { transform: translate(158px, 124px) scale(0.72); }
+  88% { transform: translate(158px, 20px) scale(0.72); opacity: 1; }
+  100% { transform: translate(158px, 8px) scale(0.72); opacity: 0; }
+}
+@keyframes hppEjectR {
+  0% { transform: translate(208px, 168px) scale(1); opacity: 1; }
+  38% { transform: translate(182px, 124px) scale(0.72); }
+  88% { transform: translate(182px, 20px) scale(0.72); opacity: 1; }
+  100% { transform: translate(182px, 8px) scale(0.72); opacity: 0; }
+}
+/* 수축: 심실 공동이 조여들어(스케일) 벽이 두꺼워 보인다 */
+.hpp-vent { transform-box: fill-box; transform-origin: center; transition: transform 0.45s var(--ease-out, ease-out); }
+.hpp-board.sys .hpp-vent { transform: scale(0.93); }
 .hpp-noway { opacity: 0; }
 .hpp-board.revfail .hpp-noway { opacity: 1; transition: opacity 0.2s ease 0.5s; }
-/* 거꾸로 실험: 심실의 피가 심방 쪽으로 올라가려다 닫힌 판막에 막혀 되튕긴다 */
-.hpp-board.revfail .hpp-b-venL, .hpp-board.revfail .hpp-b-venR { animation: hppRevTry 1.3s var(--ease-out, ease-out); transform: translateY(0); opacity: 1; }
-@keyframes hppRevTry {
-  0% { transform: translateY(0); }
-  40% { transform: translateY(-30px); }
-  55% { transform: translateY(-30px); }
-  100% { transform: translateY(0); }
+/* 거꾸로 실험: 심실의 공이 심방 쪽으로 올라가려다 닫힌 판막에 막혀 되튕긴다 */
+.hpp-board.revfail .hpp-ball-l { animation: hppRevL 1.35s var(--ease-out, ease-out) forwards; }
+.hpp-board.revfail .hpp-ball-r { animation: hppRevR 1.35s var(--ease-out, ease-out) forwards; }
+.hpp-board.revfail .hpp-avflap { animation: hppFlapFlash 0.5s ease 0.4s; }
+@keyframes hppRevL {
+  0% { transform: translate(130px, 168px); }
+  42% { transform: translate(128px, 126px); }
+  56% { transform: translate(129px, 140px); }
+  70% { transform: translate(128px, 130px); }
+  100% { transform: translate(130px, 168px); }
+}
+@keyframes hppRevR {
+  0% { transform: translate(208px, 168px); }
+  42% { transform: translate(212px, 126px); }
+  56% { transform: translate(211px, 140px); }
+  70% { transform: translate(212px, 130px); }
+  100% { transform: translate(208px, 168px); }
+}
+@keyframes hppFlapFlash {
+  0%, 100% { stroke: #B8236B; }
+  40% { stroke: #E8394A; }
 }
 .hpp-board.revfail { animation: b6Shake 0.4s ease 0.55s; }
 .hpp-segrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
@@ -299,6 +342,10 @@
 .hpp-q { margin-top: 12px; }
 @media (prefers-reduced-motion: reduce) {
   .hpp-board.revfail { animation: none; }
+  .hpp-ball { animation: none !important; transition: opacity 0.2s ease; }
+  .hpp-board.dia .hpp-ball-l { transform: translate(130px, 168px); }
+  .hpp-board.dia .hpp-ball-r { transform: translate(208px, 168px); }
+  .hpp-board.sys .hpp-ball-l, .hpp-board.sys .hpp-ball-r { opacity: 0; }
 }
 
 /* ── L3 twoLoopsLab(.tlp-) — 혈액 방울의 두 바퀴 ───────────────────── */
