@@ -50,6 +50,9 @@ export function b4Ask(
 ): void {
   box.innerHTML = "";
   box.style.display = "";
+  // ui.css의 .hook-choices 기본값이 display:none이라 .show를 켜야 실제로 보인다
+  // (2026-08-10 실사용 적발 — e2e 합성 클릭은 숨은 버튼에도 먹혀 이 결함을 못 잡았다).
+  box.classList.add("show");
   box.appendChild(el("div", { class: "hook-q", html: question }));
   const order = choices.map((_, i) => i);
   for (let i = order.length - 1; i > 0; i--) {

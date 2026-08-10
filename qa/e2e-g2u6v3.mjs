@@ -38,11 +38,14 @@ const ctaEnabled = () => page.evaluate(() => { const b = document.querySelector(
 const goalsOn = () => page.evaluate(() => document.querySelectorAll(".screen.active .pn-badge.on").length);
 const clickSel = async (sel) => { await page.evaluate((s) => { const n = document.querySelector(`.screen.active ${s}`); n?.dispatchEvent(new MouseEvent("click", { bubbles: true })); }, sel); };
 const clickNth = async (sel, i) => { await page.evaluate(({ sel, i }) => { const n = document.querySelectorAll(`.screen.active ${sel}`)[i]; n?.dispatchEvent(new MouseEvent("click", { bubbles: true })); }, { sel, i }); };
-/** 훅/랩 판정 선택지(텍스트 포함 매칭) — 등장 대기 폴링. */
+/** 훅/랩 판정 선택지(텍스트 포함 매칭) — 등장 대기 폴링.
+ *  offsetParent 가시성 필터 필수(2026-08-10): 합성 click은 display:none 버튼에도 먹혀서,
+ *  질문 상자가 안 보이는 결함(.hook-choices .show 누락)을 통과시킨 실사고가 있었다. */
 const pickChoice = async (scope, text, tries = 18) => {
   for (let t = 0; t < tries; t++) {
     const done = await page.evaluate(({ scope, text }) => {
-      const btns = [...document.querySelectorAll(`.screen.active ${scope} .hook-choice`)].filter((b) => !b.disabled);
+      const btns = [...document.querySelectorAll(`.screen.active ${scope} .hook-choice`)]
+        .filter((b) => !b.disabled && b.offsetParent !== null);
       const b = btns.find((x) => x.textContent.includes(text));
       if (b) { b.click(); return true; }
       return false;

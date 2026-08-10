@@ -600,6 +600,14 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
 - **시험 verbatim 스팟 스캔(16자 조각 대조)에서 문두 관용구는 실질 겹침이 아니다**: "~에 대한
   설명으로 옳은 것을 모두 고르세요" 같은 범용 문형만 걸리면 통과 — 정답 문장·개념 서술 겹침이
   교체 대상이다(이번 스캔 11,572조각 중 실질 0건).
+- **⚠ b4Ask는 `.show` 클래스를 켜야 실제로 보인다(2026-08-10 실사용 적발 — bio4Kit에서 수정)**:
+  ui.css의 `.hook-choices` 기본값이 `display:none`이고 훅 공용 ask()만 `.show`를 켜 왔는데,
+  b4Ask는 인라인 스타일만 지워서 **v3 랩의 판정 질문 전부가 투명 인간**이었다(사용자가 L1에서
+  "시약 떨어뜨린 뒤 안 넘어감"으로 발견). **e2e 합성 click은 display:none 버튼에도 먹혀 88검증을
+  통과시켰다** — 같은 b4Ask를 쓰는 u2 v3·g2u5 v3 랩도 동일 잠복 결함이며 이 브랜치(sci-g2u6-v3,
+  두 단원 코드 포함)에는 수정이 실렸다. **개별 브랜치(sci-u2-v3·sci-g2u5-v3)를 따로 병합하면
+  bio4Kit 한 줄 수정(classList.add("show"))을 소급할 것.** 재발 방지: e2e pickChoice류 헬퍼는
+  `offsetParent !== null` **가시성 필터 의무**(e2e-g2u6v3.mjs가 기준 구현, 재현 도구 qa/repro-clu.mjs).
 - **QA**: `PORT=<포트> node qa/e2e-g2u6v3.mjs`(6레슨 실플레이 — 훅 조작·랩 목표 3·전 문제 정답
   시트, **88검증 ALL PASS·pageErrors 0**. 모듈 직접 import라 스플래시 우회 불필요) ·
   `qa/shot-g2u6v3.mjs`(눈검수 14샷 → qa/shots/g2u6v3-*.png) · tsc/빌드 통과.
