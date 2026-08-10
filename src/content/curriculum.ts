@@ -77,7 +77,10 @@ const U5G2_ACTIVE: Unit = (() => {
 const U6G2_ACTIVE: Unit = (() => {
   try {
     const dev = (import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV;
-    if (dev && sessionStorage.getItem("ss.g2u6v3") === "1") return G2_UNIT6_V3;
+    // 콘솔 없이 비교할 수 있게 URL 쿼리도 지원: http://localhost:<포트>/?v3=g2u6
+    // (모듈 평가 시점에 읽으므로 리로드 불필요 — sessionStorage 문법과 OR)
+    const urlOn = dev && new URLSearchParams(location.search).get("v3")?.split(",").includes("g2u6");
+    if (dev && (sessionStorage.getItem("ss.g2u6v3") === "1" || urlOn)) return G2_UNIT6_V3;
   } catch {
     /* sessionStorage 접근 불가 환경(시딩·테스트)은 현행 유지 */
   }
