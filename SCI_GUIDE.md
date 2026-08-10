@@ -550,17 +550,17 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
 - **파일**: 소형 랩 7종 `lessons/steps/plant3/*`(greenHunt 3단 줌·gasCross 센서 그래프·starchQuest
   절차 스테퍼·factorCurve 곡선 스크럽·flipEngine 식 뒤집기·sunGauge 해 게이지·sapFlow SMIL 배송) ·
   훅 5장면 `steps/hookPlant3.ts`(potatodrop·winterberry·veggiebag·tropicalnight·sweetpotato) ·
-  `ui/plant3Kit.ts`(P3 물질색 시맨틱 — 산물·기체 색은 여기서만) · `ui/plant3Figures.ts`
-  (factorShapesFig·dayNightGasFig — blanks 가림 인자, 미니아트 17키) · 시트 `plant3.css`/
+  `ui/plant3Kit.ts`(P3 물질색 시맨틱 — 산물·기체 색은 여기서만) · `ui/plant3Figures.ts`(psFlowFig·
+  factorShapesFig·dayNightGasFig 전부 blanks 가림 인자, 미니아트 17키) · 시트 `plant3.css`/
   `plant3-hook.css`(전 랩 rAF·캔버스 없음 — SVG+CSS 전환+자가 예약 setTimeout, 판정은 b4Ask 공용).
 - **v2 원복 교훈의 반영**: 랩은 전부 "통찰 1개 + 무대 저밀도"(조작부 무대 아래·helper 무대 위·판정
   질문 선택지 위), 레슨은 교과서 서사형(concept→소형 랩→문제 촘촘 교차 — L2는 탐구 1·2를 소형 랩
   2개로 분해). 발견 만화 7컷(comics/g2u5l1)은 사용자 합격 자산이라 **컷 불변 재사용·캡션만 신규**.
-- **L1 광합성 과정 도해 = 원본 leafRouteFig 무수정 import**(사용자 확정 2026-08-10): v3 신작 SVG
-  도식(psFlowFig)과 실사 하이브리드+견학 스텝 안 모두 기각 — "원래 것대로, 과학 용어 정복하기 안에".
-  현행 `ui/plantFigures.ts`의 leafRouteFig((가) 엽록체·(나) 기공·(다) 물관)를 concept 그림 블록과
-  L1 그림 문제((다) 물관 판독, shuffle:false)에 그대로 쓴다 — 필요한 CSS 변수는 전부 tokens.css라
-  현행 시트 로드 없이도 렌더된다. **사용자 합격 도해는 다시 그리지 말고 import가 정답**(만화 관행의 그림판).
+- **L1 과정 도해 교체 시도 2건 기각·원상 복구**(2026-08-10): psFlowFig가 어렵다는 피드백에
+  ① 발주 실사+벡터 하이브리드/견학 hotspot ② 현행 leafRouteFig import를 차례로 시도했으나 둘 다
+  "이거 아냐" — 사용자 지시로 **concept를 처음 저작본(psFlowFig)으로 복구**했다. 사용자가 원한
+  방향은 "잎이 codex 발주 그림으로 들어가는" 표현(원본 랩의 실사 잎 무대 문법)이었음 — 이 도식을
+  다시 손볼 땐 **먼저 원본 랩(plantFactoryLab)의 잎 표현을 보고 사용자와 모습을 합의한 뒤** 작업할 것.
 - **자란 그래프는 rAF가 아니라 자가 예약 setTimeout으로**(gasCrossLab): polyline points를 틱마다
   붙이면 QA 프리즈 환경에서도 완주한다. 슬라이더 구동 랩(factorCurve·sunGauge)은 input 이벤트만으로
   상태를 갱신 — e2e가 value 주입+input dispatch로 완전 제어 가능.

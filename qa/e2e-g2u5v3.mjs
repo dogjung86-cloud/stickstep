@@ -141,14 +141,14 @@ console.log("L1 스스로 밥을 짓는 식물");
   ok((await goalsOn()) === 3, "초록 추적 목표 3");
   ok(await ctaEnabled(), "랩 CTA 개방");
   await cta(); // → concept②
-  ok(await page.evaluate(() => !!document.querySelector(".screen.active svg[aria-label*='기공, 물관']")), "원본 잎 도해(leafRouteFig) 렌더");
+  ok(await page.evaluate(() => !!document.querySelector(".screen.active svg[aria-label*='광합성 과정']")), "과정 도식 렌더");
   await cta(); // → recap
   await page.evaluate(() => document.querySelectorAll(".screen.active .rc-card, .screen.active .recap-card")[0]?.click());
   await W(450);
   ok(await page.evaluate(() => !!document.querySelector(".screen.active .rm-h")), "recap 자세히(rm-h) 렌더");
   await cta(); // → binSort
   ok(await binSort([["빛에너지", 0], ["이산화 탄소", 0], ["물", 0], ["포도당", 1], ["산소", 1]]), "재료/산물 분류 good");
-  ok(await quiz("mcq", 2), "물관=(다) 그림");
+  ok(await quiz("mcq", 0), "㉠=이산화 탄소");
   ok(await quiz("mcq", 0), "처음 양분=포도당");
   ok(await quiz("ox-x"), "물은 기공 ×");
   ok(await quiz("mcq", 0), "색소=엽록소");

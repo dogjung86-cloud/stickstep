@@ -232,3 +232,61 @@ export function dayNightGasFig(o?: { blank?: "dayIn" | "dayOut" | "nightIn" | "n
   );
 }
 
+// ── 광합성 과정 도식(psFlowFig) — 교과서 그림 V-2 구도의 자체 도해 ──────────
+// blanks에 넣은 키의 이름표가 ㉠㉡㉢…으로 가려진다(퀴즈 정답 유출 차단).
+// 키: light · co2 · water · glucose · o2 · starch · place(엽록체)
+export type PsFlowKey = "light" | "co2" | "water" | "glucose" | "o2" | "starch" | "place";
+
+export function psFlowFig(o?: { blanks?: PsFlowKey[] }): string {
+  const blanks = o?.blanks ?? [];
+  const MASK = ["㉠", "㉡", "㉢", "㉣"];
+  let mi = 0;
+  const name = (key: PsFlowKey, label: string): string =>
+    blanks.includes(key) ? MASK[Math.min(mi++, MASK.length - 1)] : label;
+  const pill = (x: number, y: number, w: number, label: string, c: string, dark = false): string =>
+    `<g><rect x="${x - w / 2}" y="${y - 12}" width="${w}" height="24" rx="12" fill="${dark ? c : "#FFFFFF"}" stroke="${c}" stroke-width="2.2"/>
+     <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="12.5" font-weight="800" fill="${dark ? "#FFFFFF" : "#333D4B"}">${label}</text></g>`;
+  const arrow = (x1: number, y1: number, x2: number, y2: number, c: string): string => {
+    const ang = Math.atan2(y2 - y1, x2 - x1);
+    const hx = x2 - 9 * Math.cos(ang);
+    const hy = y2 - 9 * Math.sin(ang);
+    const px = 5.2 * Math.cos(ang + Math.PI / 2);
+    const py = 5.2 * Math.sin(ang + Math.PI / 2);
+    return `<line x1="${x1}" y1="${y1}" x2="${hx}" y2="${hy}" stroke="${c}" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M${x2} ${y2} L${hx + px} ${hy + py} L${hx - px} ${hy - py} Z" fill="${c}"/>`;
+  };
+  return svg(
+    "0 0 340 218",
+    `
+    <ellipse cx="170" cy="206" rx="120" ry="8" fill="#2A3A5E" opacity="0.08"/>
+    <!-- 엽록체(장소) -->
+    <ellipse cx="170" cy="112" rx="86" ry="56" fill="#69DB7C" stroke="#1E5A2A" stroke-width="3.2"/>
+    <ellipse cx="170" cy="112" rx="72" ry="44" fill="none" stroke="#B2F2BB" stroke-width="2" opacity="0.8"/>
+    <ellipse cx="142" cy="102" rx="13" ry="8" fill="#1E7A34"/>
+    <ellipse cx="176" cy="94" rx="13" ry="8" fill="#1E7A34"/>
+    <ellipse cx="196" cy="122" rx="13" ry="8" fill="#1E7A34"/>
+    <ellipse cx="154" cy="130" rx="13" ry="8" fill="#1E7A34"/>
+    <path d="M104 84 C118 66 146 56 170 56" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" opacity="0.5"/>
+    ${pill(170, 112, 72, name("place", "엽록체"), "#1E5A2A", true)}
+    <!-- 빛에너지(위) -->
+    <circle cx="66" cy="30" r="13" fill="${P3.light}"/>
+    <path d="M66 10 v6 M66 44 v6 M46 30 h6 M80 30 h6 M52 16 l4 4 M76 40 l4 4 M80 16 l-4 4 M56 40 l-4 4" stroke="${P3.light}" stroke-width="2.6" stroke-linecap="round"/>
+    ${arrow(84, 42, 122, 72, P3.light)}
+    ${pill(140, 26, blanks.includes("light") ? 40 : 78, name("light", "빛에너지"), "#B8860B")}
+    <!-- 들어가는 것(왼쪽) -->
+    ${arrow(58, 96, 96, 100, P3.co2)}
+    ${pill(44, 96, blanks.includes("co2") ? 40 : 92, name("co2", "이산화 탄소"), P3.co2)}
+    ${arrow(58, 152, 100, 134, P3.water)}
+    ${pill(44, 156, blanks.includes("water") ? 40 : 46, name("water", "물"), P3.water)}
+    <!-- 나오는 것(오른쪽) -->
+    ${arrow(248, 96, 288, 88, P3.glucose)}
+    ${pill(300, 84, blanks.includes("glucose") ? 40 : 66, name("glucose", "포도당"), P3.glucose)}
+    ${arrow(250, 140, 288, 152, P3.o2)}
+    ${pill(300, 158, blanks.includes("o2") ? 40 : 54, name("o2", "산소"), P3.o2)}
+    <!-- 포도당 → 녹말 저장 -->
+    ${arrow(300, 98, 300, 116, "#8B95A1")}
+    ${pill(300, 130, blanks.includes("starch") ? 40 : 54, name("starch", "녹말"), P3.starch)}
+    `,
+    "광합성 과정 도식 — 빛에너지·이산화 탄소·물이 엽록체로 들어가고 포도당(녹말로 저장)과 산소가 나온다",
+  );
+}
