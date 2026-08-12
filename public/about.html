@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>스틱스텝 소개 — 손끝으로 배우는 중학 과학</title>
+<meta name="description" content="설치 없이 브라우저에서 바로, 실험을 직접 조작하며 배우는 중학 과학 학습 웹앱. 자동결제 없는 소장형, 오답노트와 단원별 실전 평가까지." />
+<!--
+  부모용 소개 페이지(2026-08-11 시안) — 검색·부모 설득·"학부모/선생님" 버튼 착지 페이지 겸용.
+  · privacy.html 문법의 정적 단일 파일 — 앱 코드와 무관, JS 0줄(FAQ는 details/summary).
+  · 가격 숫자 금지(refund.html 규칙 — 금액 정본은 core/purchase.ts·페이월. "문제집 한 권 값"만).
+  · '평생' 금지 → '소장' · 교과서/출판사 언급 금지 · "최신 개정 교육과정 반영"은 BRAND.note 문구 재사용.
+  · 사업자 표기는 core/brand.ts BIZ_INFO와 값이 같아야 한다 — 한쪽만 고치지 말 것.
+  · 실화면 이미지 재캡처: PORT=<dev포트> node qa/shot-about-assets.mjs → public/about/*.webp
+-->
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="ko_KR" />
+<meta property="og:site_name" content="스틱스텝" />
+<meta property="og:title" content="스틱스텝 소개 — 손끝으로 배우는 중학 과학" />
+<meta property="og:description" content="설치 없이 브라우저에서 바로, 실험을 직접 조작하며 배우는 중학 과학 학습 웹앱이에요." />
+<meta property="og:url" content="https://stickstep.com/about.html" />
+<meta property="og:image" content="https://stickstep.com/og-image.png" />
+<link rel="canonical" href="https://stickstep.com/about.html" />
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/brand/favicon-180.png" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pretendard/1.3.9/variable/pretendardvariable-dynamic-subset.min.css" />
+<style>
+  :root {
+    color-scheme: light;
+    --blue: #3182F6; --blue-press: #1B64DA; --tint: #EEF4FF;
+    --ink: #191F28; --body: #4E5968; --muted: #8B95A1; --line: #E7EAEE;
+    --bg: #F7F8FA; --green: #04B45F; --stage: #0B1524;
+    --r-md: 16px; --r-lg: 20px; --r-xl: 24px;
+    --sh-card: 0 1px 2px rgba(23,32,48,.04), 0 6px 20px rgba(23,32,48,.06);
+    --sh-raise: 0 2px 6px rgba(23,32,48,.06), 0 14px 34px rgba(23,32,48,.10);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: #fff; color: var(--ink);
+    font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont,
+      "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+    letter-spacing: -0.012em; line-height: 1.65; word-break: keep-all;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+  .narrow { max-width: 760px; }
+
+  /* ── 상단 바 ── */
+  .top { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.86); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(231,234,238,.7); }
+  .top-in { display: flex; align-items: center; gap: 10px; height: 60px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-weight: 800; font-size: 18px; letter-spacing: -.02em; }
+  .logo img { width: 26px; height: 26px; border-radius: 7px; }
+  .top-cta { margin-left: auto; background: var(--blue); color: #fff; font-weight: 700; font-size: 14px; padding: 9px 16px; border-radius: 999px; transition: background .15s; }
+  .top-cta:hover { background: var(--blue-press); }
+
+  /* ── 히어로 ── */
+  .hero { background: linear-gradient(180deg, #F4F8FF 0%, #FDFEFF 78%, #fff 100%); overflow: hidden; }
+  .hero-in { display: grid; grid-template-columns: 1.08fr .92fr; gap: 36px; align-items: center; padding: 58px 0 64px; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 800; color: var(--blue); background: var(--tint); border-radius: 999px; padding: 7px 13px; margin-bottom: 18px; }
+  h1 { font-size: 46px; line-height: 1.22; letter-spacing: -.035em; font-weight: 800; margin: 0 0 16px; }
+  h1 em { font-style: normal; color: var(--blue); }
+  .lead { font-size: 17.5px; color: var(--body); margin: 0 0 22px; max-width: 30em; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 26px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #33404F; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; box-shadow: 0 1px 2px rgba(23,32,48,.03); }
+  .chip svg { color: var(--green); }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; border-radius: 14px; padding: 15px 24px; font-size: 16px; transition: transform .12s, background .15s; }
+  .btn:active { transform: scale(.97); }
+  .btn-blue { background: var(--blue); color: #fff; box-shadow: 0 8px 22px rgba(49,130,246,.32); }
+  .btn-blue:hover { background: var(--blue-press); }
+  .btn-ghost { background: #fff; color: #33404F; border: 1px solid var(--line); }
+  .btn-ghost:hover { background: var(--bg); }
+  .cta-note { width: 100%; font-size: 13px; color: var(--muted); margin-top: 10px; }
+  .cta-note b { color: var(--body); font-weight: 700; }
+
+  .hero-art { position: relative; display: flex; justify-content: center; }
+  .phone { background: #fff; border: 1px solid var(--line); border-radius: 30px; padding: 10px; box-shadow: var(--sh-raise); width: min(300px, 78vw); }
+  .phone img { border-radius: 21px; }
+  /* 히어로 폰은 상단 크롭 — 원본 비율 그대로 두면 첫 화면이 폰 길이만큼 밀린다(데스크톱 눈검수) */
+  .hero-art .phone { transform: rotate(2.2deg); }
+  .hero-art .phone img { height: 520px; object-fit: cover; object-position: center top; }
+  /* study.webp는 흰 배경 원본 — 로그인 히어로와 같은 multiply 블렌드로 흰 상자를 지운다 */
+  .hero-stick { position: absolute; left: -4%; bottom: -12px; width: 132px; mix-blend-mode: multiply; }
+
+  /* ── 공통 섹션 ── */
+  section { padding: 64px 0; }
+  .sec-eyebrow { font-size: 13.5px; font-weight: 800; color: var(--blue); margin: 0 0 8px; }
+  h2 { font-size: 30px; letter-spacing: -.03em; font-weight: 800; line-height: 1.3; margin: 0 0 12px; }
+  .sec-sub { font-size: 16px; color: var(--body); margin: 0 0 34px; max-width: 36em; }
+
+  /* 다른 점 — 실물 미디어가 든 피처 행 3개(2026-08-11 사용자 피드백: 카드 안에 실제 화면·GIF를,
+     "실제 화면" 별도 섹션은 제거, 랩·평가는 옆으로 넘기는 스트립) */
+  .value { background: #fff; }
+  .vic { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: var(--tint); color: var(--blue); margin-bottom: 16px; }
+  .feat { display: grid; grid-template-columns: 5fr 7fr; gap: 44px; align-items: center; margin-top: 54px; }
+  .feat:first-of-type { margin-top: 8px; }
+  /* 그리드 블로우아웃 방지 — min-width:auto가 스트립 내용 폭(5장 ×330px)만큼 칼럼을 키워
+     오버플로(=가로 스크롤)가 사라지는 사고. 자식 min-width:0이 표준 처방. */
+  .feat .txt, .feat .media { min-width: 0; }
+  .feat h3 { font-size: 22px; letter-spacing: -.025em; margin: 0 0 10px; }
+  .feat > div > p { font-size: 15px; color: var(--body); margin: 0; max-width: 26em; }
+  .feat .more { display: inline-block; margin-top: 14px; font-size: 13.5px; font-weight: 700; color: var(--blue); }
+  .feat.rev .txt { order: 2; }
+  .feat.rev .media { order: 1; }
+
+  /* 옆으로 넘기는 스트립(스크롤 스냅) — 데스크톱은 화살표, 터치는 스와이프 */
+  .strip-wrap { position: relative; }
+  .strip { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 6px 2px 14px; scrollbar-width: none; }
+  .strip::-webkit-scrollbar { display: none; }
+  .slide { flex: 0 0 auto; scroll-snap-align: center; margin: 0; width: min(330px, 82vw); }
+  /* 랩 GIF는 원본 비율이 제각각 — 무대가 다크라 letterbox가 안 보이는 점을 이용해 높이를 통일한다 */
+  .slide .art { border-radius: 18px; overflow: hidden; background: var(--stage); border: 1px solid #1B2A44; box-shadow: var(--sh-card); height: 280px; }
+  .slide .art img { width: 100%; height: 100%; display: block; object-fit: contain; }
+  .slide figcaption { font-size: 13px; font-weight: 700; color: var(--body); margin-top: 9px; text-align: center; }
+  .slide.ph { width: min(236px, 64vw); }
+  .slide.ph .phone { width: 100%; padding: 7px; border-radius: 24px; }
+  .slide.ph .phone img { border-radius: 17px; }
+  .s-arrow { position: absolute; top: 40%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 999px; background: #fff; border: 1px solid var(--line); box-shadow: var(--sh-raise); display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 2; color: #33404F; padding: 0; }
+  .s-arrow:hover { background: var(--bg); }
+  .s-arrow.prev { left: -16px; }
+  .s-arrow.next { right: -16px; }
+  @media (hover: hover) and (min-width: 900px) { .s-arrow { display: flex; } }
+  .strip-hint { font-size: 12.5px; color: var(--muted); text-align: center; margin: 2px 0 0; }
+  @media (hover: hover) and (min-width: 900px) { .strip-hint { display: none; } }
+
+  /* 걷기 지도 카드(피처 2 단일 미디어) */
+  .walkcard { border-radius: 20px; overflow: hidden; border: 1px solid var(--line); box-shadow: var(--sh-raise); background: #FBEFE4; }
+  .walkcard img { width: 100%; display: block; }
+  .media .cap { font-size: 13px; font-weight: 700; color: var(--body); margin-top: 10px; text-align: center; }
+
+  /* 학습 구조 4스텝 */
+  .flow { background: var(--stage); color: #fff; }
+  .flow .sec-eyebrow { color: #8FC0FF; }
+  .flow h2 { color: #fff; }
+  .flow .sec-sub { color: #B7C3D6; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; counter-reset: st; }
+  .stp { background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.09); border-radius: var(--r-lg); padding: 20px 18px; }
+  .stp i { counter-increment: st; font-style: normal; display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 999px; background: var(--blue); font-size: 13px; font-weight: 800; margin-bottom: 12px; }
+  .stp i::before { content: counter(st); }
+  .stp b { display: block; font-size: 16.5px; margin-bottom: 5px; letter-spacing: -.02em; }
+  .stp p { margin: 0; font-size: 13.5px; color: #AEBACD; }
+  .flow-note { margin-top: 22px; font-size: 14px; color: #8FC0FF; font-weight: 700; }
+
+  /* 커리큘럼 */
+  .curri-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .cur-card { border: 1px solid var(--line); border-radius: var(--r-xl); padding: 24px; background: #fff; box-shadow: var(--sh-card); }
+  .cur-card h3 { margin: 0 0 14px; font-size: 17px; display: flex; align-items: center; gap: 8px; }
+  .cur-card h3 s { text-decoration: none; font-size: 12px; font-weight: 800; color: var(--blue); background: var(--tint); padding: 4px 9px; border-radius: 999px; }
+  .cur-card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+  .cur-card li { font-size: 14.5px; color: #33404F; display: flex; gap: 9px; }
+  .cur-card li b { color: var(--muted); font-weight: 700; min-width: 26px; }
+  .cur-note { font-size: 13.5px; color: var(--muted); margin-top: 18px; }
+
+  /* 가격·환불 */
+  .price { background: var(--bg); }
+  .pcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .pcard { background: #fff; border: 1px solid var(--line); border-radius: var(--r-xl); padding: 26px 24px; box-shadow: var(--sh-card); }
+  .pcard.hi { border: 1.6px solid var(--blue); position: relative; }
+  .pcard.hi::before { content: "핵심"; position: absolute; top: -11px; left: 22px; background: var(--blue); color: #fff; font-size: 11.5px; font-weight: 800; padding: 3px 10px; border-radius: 999px; }
+  .pcard h3 { margin: 0 0 10px; font-size: 18px; letter-spacing: -.02em; }
+  .pcard ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+  .pcard li { display: flex; gap: 8px; font-size: 14.5px; color: var(--body); }
+  .pcard li svg { flex: 0 0 auto; margin-top: 3px; color: var(--green); }
+  .plink { display: inline-block; margin-top: 14px; font-size: 13.5px; font-weight: 700; color: var(--blue); }
+  .plink:hover { text-decoration: underline; }
+
+  /* 안전 — 3카드(.vcard는 이 섹션 전용) */
+  .safe-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .vcard { background: var(--bg); border: 1px solid rgba(231,234,238,.8); border-radius: var(--r-xl); padding: 26px 24px; }
+  .vcard h3 { font-size: 18.5px; margin: 0 0 8px; letter-spacing: -.02em; }
+  .vcard p { font-size: 14.5px; color: var(--body); margin: 0; }
+
+  /* FAQ */
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 12px; padding: 18px 4px; font-size: 16px; font-weight: 700; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; margin-left: auto; font-size: 20px; color: var(--muted); font-weight: 400; transition: transform .2s; }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq .a { padding: 0 4px 20px; font-size: 14.5px; color: var(--body); max-width: 46em; }
+
+  /* 마지막 CTA */
+  .final { background: linear-gradient(135deg, #3182F6 0%, #2B6FE3 55%, #1B64DA 100%); color: #fff; text-align: center; border-radius: 0; }
+  .final h2 { color: #fff; font-size: 32px; }
+  .final p { color: #D7E6FF; margin: 0 0 26px; font-size: 16px; }
+  .btn-white { background: #fff; color: var(--blue-press); box-shadow: 0 10px 26px rgba(11,37,84,.28); }
+  .btn-white:hover { background: #F2F7FF; }
+  .final small { display: block; margin-top: 14px; color: #BFD8FF; font-size: 13px; }
+
+  /* 푸터 */
+  footer { background: #fff; border-top: 1px solid var(--line); padding: 34px 0 46px; }
+  .f-links { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13.5px; font-weight: 700; color: #33404F; margin-bottom: 16px; }
+  .f-links a:hover { color: var(--blue); }
+  .biz { font-size: 12.5px; color: var(--muted); line-height: 1.9; }
+  .biz b { font-weight: 700; color: #6B7684; }
+  .copy { margin-top: 12px; font-size: 12.5px; color: #B0B8C1; }
+
+  /* ── 반응형 ── */
+  @media (max-width: 900px) {
+    .hero-in { grid-template-columns: 1fr; padding: 44px 0 52px; gap: 30px; }
+    h1 { font-size: 36px; }
+    .hero-art { order: 2; }
+    .hero-art .phone img { height: 440px; }
+    .hero-stick { left: 2%; width: 104px; }
+    .pcards, .safe-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .curri-grid { grid-template-columns: 1fr; }
+    section { padding: 52px 0; }
+    h2 { font-size: 25px; }
+    /* 피처 행은 텍스트 → 미디어 순서로 쌓는다(rev 포함) */
+    .feat, .feat.rev { grid-template-columns: 1fr; gap: 18px; margin-top: 44px; }
+    .feat.rev .txt { order: 1; }
+    .feat.rev .media { order: 2; }
+    .feat h3 { font-size: 20px; }
+    .walkcard { max-width: 420px; margin: 0 auto; }
+    .media .cap { margin-top: 9px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="logo" href="/about.html" aria-label="스틱스텝 소개 홈">
+      <img src="/brand/favicon-32.png" alt="" width="26" height="26" />
+      <span>스틱스텝</span>
+    </a>
+    <a class="top-cta" href="/">앱 열기</a>
+  </div>
+</header>
+
+<!-- ── 히어로 ── -->
+<div class="hero">
+  <div class="wrap hero-in">
+    <div>
+      <span class="eyebrow">학부모님을 위한 소개 페이지</span>
+      <h1>읽는 공부 말고,<br /><em>만지는 공부</em></h1>
+      <p class="lead">스틱스텝은 중학 과학을 손끝으로 배우는 인터랙티브 학습 웹앱이에요.
+        실험을 직접 조작해 개념을 발견하고, 오개념을 짚는 문제로 완성해요.</p>
+      <div class="chips">
+        <span class="chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>설치 불필요</span>
+        <span class="chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>로그인 없이 체험</span>
+        <span class="chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>자동결제 없음</span>
+        <span class="chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>최신 개정 교육과정 반영</span>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-blue" href="/">지금 3분만 둘러보기
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="#price">가격·환불 안내</a>
+        <div class="cta-note">아이 폰·태블릿·컴퓨터 어디서든 브라우저로 바로 열려요 — <b>stickstep.com</b></div>
+      </div>
+    </div>
+    <div class="hero-art">
+      <div class="phone"><img src="/about/map.webp" alt="스틱스텝 홈 화면 — 열 단원 정복 지도" width="640" height="1372" /></div>
+      <img class="hero-stick" src="/brand/study.webp" alt="" aria-hidden="true" />
+    </div>
+  </div>
+</div>
+
+<!-- ── 다른 점(실물 미디어 피처 3행 — 전부 실제 서비스 화면) ── -->
+<section class="value">
+  <div class="wrap">
+    <p class="sec-eyebrow">스틱스텝이 다른 점</p>
+    <h2>외우기 전에, 먼저 경험하게 해요</h2>
+    <p class="sec-sub">말로만 설명하지 않을게요 — 아래는 전부 연출 없이 담은 실제 서비스 화면이에요.</p>
+
+    <!-- 피처 1 · 실험 랩(움직이는 실화면 스트립) -->
+    <div class="feat">
+      <div class="txt">
+        <div class="vic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V5.5a1.5 1.5 0 013 0V12m0-2.5a1.5 1.5 0 013 0V12m0-1a1.5 1.5 0 013 0v1.5m0-.5a1.5 1.5 0 013 0V15a7 7 0 01-7 7h-1.6a7 7 0 01-5.2-2.3L4 17.5c-1.2-1.4-.6-3 .8-3.4 1-.3 2 .1 2.6 1l.6.9"/></svg></div>
+        <h3>눈이 아니라 손으로 배워요</h3>
+        <p>온도를 올리면 입자가 빨라지고, 주사기를 누르면 공기의 부피가 줄어요. 모든 개념은 아이가 직접 조작하는 실험 랩에서 시작해요 — 그래야 오래 남아요.</p>
+      </div>
+      <div class="media">
+        <div class="strip-wrap">
+          <button class="s-arrow prev" type="button" aria-label="이전 랩 보기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg></button>
+          <div class="strip" aria-label="실험 랩 실화면 모음 — 옆으로 넘겨 보세요">
+            <figure class="slide">
+              <div class="art"><img src="/about/lab-heat.webp" alt="입자 운동 랩 — 온도를 올리자 입자들이 점점 빠르게 움직이는 모습" loading="lazy" /></div>
+              <figcaption>입자 운동 랩 · 중1 열</figcaption>
+            </figure>
+            <figure class="slide">
+              <div class="art"><img src="/about/lab-boyle.webp" alt="주사기 압력 랩 — 주사기를 누르면 기체 부피가 줄어드는 모습" loading="lazy" /></div>
+              <figcaption>주사기 압력 랩 · 중1 기체의 성질</figcaption>
+            </figure>
+            <figure class="slide">
+              <div class="art"><img src="/about/lab-color.webp" alt="빛의 합성 랩 — 빨강·초록·파랑 조명이 겹쳐 색이 합쳐지는 모습" loading="lazy" /></div>
+              <figcaption>빛의 합성 랩 · 중2 빛과 파동</figcaption>
+            </figure>
+            <figure class="slide">
+              <div class="art"><img src="/about/lab-moon.webp" alt="달의 위상 3D 랩 — 달이 궤도를 돌며 위상이 바뀌는 모습" loading="lazy" /></div>
+              <figcaption>달의 위상 3D 랩 · 중1 태양계</figcaption>
+            </figure>
+            <figure class="slide">
+              <div class="art"><img src="/about/lab-laser.webp" alt="빛의 반사 랩 — 레이저 각도를 바꾸며 반사 법칙을 관찰하는 모습" loading="lazy" /></div>
+              <figcaption>빛의 반사 랩 · 중2 빛과 파동</figcaption>
+            </figure>
+          </div>
+          <button class="s-arrow next" type="button" aria-label="다음 랩 보기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg></button>
+        </div>
+        <p class="strip-hint">옆으로 넘기면 다른 랩도 볼 수 있어요</p>
+      </div>
+    </div>
+
+    <!-- 피처 2 · 정복 지도(걷기 실화면) -->
+    <div class="feat rev">
+      <div class="txt">
+        <div class="vic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="2.4"/><circle cx="18" cy="5" r="2.4"/><path d="M8.2 17.6c3.2-1 4.8-2.8 5.4-5.2.5-2.2 1.6-4 4-5"/></svg></div>
+        <h3>학교 진도 순서 그대로, 게임처럼</h3>
+        <p>중1·중2 과학 15개 대단원, 100개가 넘는 레슨이 학교에서 배우는 순서대로 이어져요. 레슨을 마칠 때마다 정복 지도에 발자국이 한 걸음씩 찍혀요 — 아이 눈에는 공부가 아니라 모험이에요.</p>
+        <a class="more" href="#curri">전체 커리큘럼 보기 ↓</a>
+      </div>
+      <div class="media">
+        <div class="walkcard"><img src="/about/walkmap.webp" alt="정복 지도 실화면 — 레슨을 마친 스틱맨이 발자국을 남기며 다음 레슨으로 걸어가는 모습" loading="lazy" /></div>
+        <p class="cap">레슨을 마치고 돌아오면 스틱맨이 다음 걸음을 걸어요</p>
+      </div>
+    </div>
+
+    <!-- 피처 3 · 평가·오답 관리(화면 스트립) -->
+    <div class="feat">
+      <div class="txt">
+        <div class="vic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3V4z"/><path d="M5 4v13a3 3 0 003 3"/><path d="M10 9.5l2.2 2.2L16.5 7"/></svg></div>
+        <h3>문제와 평가까지, 끝까지 책임져요</h3>
+        <p>대단원마다 160문항 문제 은행에서 매번 20문항씩 뽑는 실전 종합 평가로 학교 시험을 대비해요. 파트별 진단이 약한 곳을 짚어 주고, 틀린 문제는 오답노트에 자동으로 쌓여 해결할 때까지 따라다녀요.</p>
+      </div>
+      <div class="media">
+        <div class="strip-wrap">
+          <button class="s-arrow prev" type="button" aria-label="이전 화면 보기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg></button>
+          <div class="strip" aria-label="평가·오답 관리 실화면 모음 — 옆으로 넘겨 보세요">
+            <figure class="slide ph">
+              <div class="phone"><img src="/about/exam.webp" alt="단원 종합 평가 화면 — 입자 운동 모형 그림 문항" loading="lazy" /></div>
+              <figcaption>단원 종합 평가 · 실전 20문항</figcaption>
+            </figure>
+            <figure class="slide ph">
+              <div class="phone"><img src="/about/examdiag.webp" alt="시험 결과 화면 — 75점, 파트별 진단에서 약한 파트를 짚어 주는 모습" loading="lazy" /></div>
+              <figcaption>파트별 진단 · 약한 곳 복습 연결</figcaption>
+            </figure>
+            <figure class="slide ph">
+              <div class="phone"><img src="/about/quiz.webp" alt="레슨 퀴즈 오답 화면 — 왜 틀렸는지 오개념을 짚는 해설 시트" loading="lazy" /></div>
+              <figcaption>오답 즉시 교정 · 오개념 해설</figcaption>
+            </figure>
+            <figure class="slide ph">
+              <div class="phone"><img src="/about/notebook.webp" alt="오답노트 화면 — 틀린 문제가 자동으로 정리된 모습" loading="lazy" /></div>
+              <figcaption>오답노트 · 해결할 때까지 자동 정리</figcaption>
+            </figure>
+          </div>
+          <button class="s-arrow next" type="button" aria-label="다음 화면 보기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg></button>
+        </div>
+        <p class="strip-hint">옆으로 넘기면 다른 화면도 볼 수 있어요</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 학습 구조 ── -->
+<section class="flow">
+  <div class="wrap">
+    <p class="sec-eyebrow">한 레슨의 구조</p>
+    <h2>도입부터 문제까지, 한 호흡으로</h2>
+    <p class="sec-sub">모든 레슨이 같은 리듬으로 진행돼요. 아이 혼자서도 길을 잃지 않아요.</p>
+    <div class="steps">
+      <div class="stp"><i></i><b>흥미 도입</b><p>스틱맨 만화와 일상 속 질문으로 "왜?"를 먼저 열어요.</p></div>
+      <div class="stp"><i></i><b>실험 랩</b><p>예측하고, 조작하고, 결과를 확인하며 개념을 발견해요.</p></div>
+      <div class="stp"><i></i><b>개념 정리</b><p>방금 겪은 경험에 이름을 붙여 정리 카드로 새겨요.</p></div>
+      <div class="stp"><i></i><b>문제 풀이</b><p>오개념을 짚는 해설과 함께 확인 문제로 마무리해요.</p></div>
+    </div>
+    <p class="flow-note">한 레슨은 10분 안팎 — 하루 한 레슨이면 충분해요.</p>
+  </div>
+</section>
+
+<!-- ── 커리큘럼 ── -->
+<section id="curri">
+  <div class="wrap">
+    <p class="sec-eyebrow">커리큘럼</p>
+    <h2>중학 과학 전 단원을 담았어요</h2>
+    <p class="sec-sub">중1·중2 과학 15개 대단원이 모두 열려 있어요. 대단원마다 실전 종합 평가 160문항이 함께 제공돼요.</p>
+    <div class="curri-grid">
+      <div class="cur-card">
+        <h3><s>중1 과학</s>7개 대단원</h3>
+        <ul>
+          <li><b>Ⅰ</b>과학과 인류의 지속가능한 삶</li>
+          <li><b>Ⅱ</b>생물의 구성과 다양성</li>
+          <li><b>Ⅲ</b>열</li>
+          <li><b>Ⅳ</b>물질의 상태 변화</li>
+          <li><b>Ⅴ</b>힘의 작용</li>
+          <li><b>Ⅵ</b>기체의 성질</li>
+          <li><b>Ⅶ</b>태양계</li>
+        </ul>
+      </div>
+      <div class="cur-card">
+        <h3><s>중2 과학</s>8개 대단원</h3>
+        <ul>
+          <li><b>Ⅰ</b>물질의 특성</li>
+          <li><b>Ⅱ</b>지권의 변화</li>
+          <li><b>Ⅲ</b>빛과 파동</li>
+          <li><b>Ⅳ</b>물질의 구성</li>
+          <li><b>Ⅴ</b>식물과 에너지</li>
+          <li><b>Ⅵ</b>동물과 에너지</li>
+          <li><b>Ⅶ</b>전기와 자기</li>
+          <li><b>Ⅷ</b>별과 우주</li>
+        </ul>
+      </div>
+    </div>
+    <p class="cur-note">수학·사회·역사 과목도 준비하고 있어요 — 준비되는 대로 앱에서 열려요.</p>
+  </div>
+</section>
+
+<!-- ── 가격·환불 ── -->
+<section class="price" id="price">
+  <div class="wrap">
+    <p class="sec-eyebrow">가격 · 환불</p>
+    <h2>구독이 아니에요, 문제집처럼 소장해요</h2>
+    <p class="sec-sub">매달 나가는 돈이 없도록 설계했어요. 정확한 금액은 앱 안 프리미엄 안내에서 확인할 수 있어요.</p>
+    <div class="pcards">
+      <div class="pcard">
+        <h3>무료로 시작해요</h3>
+        <ul>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg><span>모든 대단원의 앞 레슨은 무료예요.</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg><span>로그인·결제 없이 지금 바로 시작할 수 있어요.</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg><span>충분히 써 본 뒤에 결정하세요.</span></li>
+        </ul>
+      </div>
+      <div class="pcard hi">
+        <h3>프리미엄은 소장형이에요</h3>
+        <ul>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg><span>과목 단위 1회 결제 — 문제집 한 권 값이에요.</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg><span>구독·자동결제가 없어요. 몰래 갱신될 일이 없어요.</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg><span>새 콘텐츠가 추가되어도 모두 무료로 열려요.</span></li>
+        </ul>
+      </div>
+      <div class="pcard">
+        <h3>환불도 명확해요</h3>
+        <ul>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg><span>결제 후 7일 이내, 이용을 시작하지 않은 과목은 전액 환불해요.</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg><span>미성년자 결제는 반드시 보호자 동의가 필요해요.</span></li>
+        </ul>
+        <a class="plink" href="/refund.html">환불 정책 전문 보기 →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 안전 ── -->
+<section>
+  <div class="wrap">
+    <p class="sec-eyebrow">안전 · 개인정보</p>
+    <h2>아이에게 안전한 환경이 기본이에요</h2>
+    <div class="safe-grid">
+      <div class="vcard">
+        <div class="vic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3z"/><path d="M9 12l2.2 2.2L15.5 9.5"/></svg></div>
+        <h3>광고가 없어요</h3>
+        <p>화면 어디에도 광고·외부 링크가 없어요. 학습 중 다른 곳으로 새지 않아요.</p>
+      </div>
+      <div class="vcard">
+        <div class="vic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7.5a4 4 0 018 0V10"/></svg></div>
+        <h3>개인정보를 거의 수집하지 않아요</h3>
+        <p>로그인 없이 모든 학습이 가능해요(기록은 기기에 저장). 로그인해도 프로필 사진은 저장하지 않아요.</p>
+      </div>
+      <div class="vcard">
+        <div class="vic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2.4"/></svg></div>
+        <h3>하루 학습량이 정해져 있어요</h3>
+        <p>한 레슨 10분 안팎, 쉬는 시간 게임도 하루 입장 횟수가 정해져 있어 과몰입을 막아요.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="faq">
+  <div class="wrap narrow">
+    <p class="sec-eyebrow">자주 묻는 질문</p>
+    <h2>궁금해하실 것들을 모았어요</h2>
+    <details>
+      <summary>앱을 설치해야 하나요?</summary>
+      <div class="a">아니요. 브라우저에서 stickstep.com에 접속하면 바로 시작돼요. 폰·태블릿·컴퓨터 어디서든 같은 방식으로 열려요.</div>
+    </details>
+    <details>
+      <summary>어느 학년이 쓸 수 있나요?</summary>
+      <div class="a">현재 중1·중2 과학 전 단원이 열려 있어요. 예비 중1(초6)의 선행에도, 시험 기간 단원 복습에도 맞아요. 수학·사회·역사 과목도 준비하고 있어요.</div>
+    </details>
+    <details>
+      <summary>무료로 어디까지 쓸 수 있나요?</summary>
+      <div class="a">모든 대단원의 앞 레슨이 무료예요. 로그인 없이도 학습할 수 있고, 무료 범위만으로 학습 방식이 아이에게 맞는지 충분히 판단할 수 있게 열어 두었어요.</div>
+    </details>
+    <details>
+      <summary>결제는 어떻게 하나요? 자동으로 갱신되나요?</summary>
+      <div class="a">구독이 아니라 과목 단위로 한 번 결제하는 '소장' 방식이라 자동 갱신이 없어요. 미성년자 결제는 보호자 동의가 필요해요. 프리미엄 결제는 정식 오픈과 함께 열리고, 금액은 앱 안 프리미엄 안내에서 확인할 수 있어요.</div>
+    </details>
+    <details>
+      <summary>환불은 어떻게 되나요?</summary>
+      <div class="a">결제 후 7일 이내에는 이용을 시작하지 않은 과목을 전액 환불해 드려요. 자세한 기준은 <a href="/refund.html" style="color:var(--blue);font-weight:700">환불 정책</a>에 정리돼 있어요.</div>
+    </details>
+    <details>
+      <summary>아이 학습 현황을 부모가 볼 수 있나요?</summary>
+      <div class="a">홈 화면의 정복 지도에서 단원별 정복률과 학습 흐름을 한눈에 볼 수 있어요. 학부모·선생님용 관리 기능(학급·과제)은 준비 중이에요 — 궁금한 점은 support@stickstep.com으로 편하게 물어봐 주세요.</div>
+    </details>
+  </div>
+</section>
+
+<!-- ── 마지막 CTA ── -->
+<section class="final">
+  <div class="wrap">
+    <h2>오늘 저녁, 아이와 3분만 둘러보세요</h2>
+    <p>설치도 가입도 없이, 지금 바로 첫 실험을 시작할 수 있어요.</p>
+    <a class="btn btn-white" href="/">스틱스텝 열기
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+    <small>stickstep.com — 브라우저에서 바로 열려요</small>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="f-links">
+      <a href="/">스틱스텝 열기</a>
+      <a href="/privacy.html">개인정보처리방침</a>
+      <a href="/refund.html">환불 정책</a>
+      <a href="mailto:support@stickstep.com">문의: support@stickstep.com</a>
+    </div>
+    <div class="biz">
+      <b>사업자 정보</b><br />
+      상호명: 과학드림 · 대표자명: 김정훈 · 사업자등록번호: 105-26-94462<br />
+      사업장 주소: 경기도 시흥시 시청로 25, 시티프론트561 507호<br />
+      유선번호: 010-9556-5771 · 이메일: support@stickstep.com
+    </div>
+    <div class="copy">© 2026 과학드림. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+  // 스트립 화살표(데스크톱 전용 — 터치는 스와이프가 본선). 이 페이지의 유일한 JS.
+  document.querySelectorAll(".strip-wrap").forEach((w) => {
+    const s = w.querySelector(".strip");
+    const step = () => ((s.querySelector(".slide")?.getBoundingClientRect().width ?? 300) + 14);
+    w.querySelector(".s-arrow.prev")?.addEventListener("click", () => s.scrollBy({ left: -step(), behavior: "smooth" }));
+    w.querySelector(".s-arrow.next")?.addEventListener("click", () => s.scrollBy({ left: step(), behavior: "smooth" }));
+  });
+</script>
+</body>
+</html>

@@ -67,11 +67,16 @@ export function splashScreen(o: { signedIn: boolean; instant?: boolean; onStart:
   );
   // 법적 고지 문서(방침·환불)도 같은 이유로 로그인 없이 접근 — 부팅 전 화면이라 인앱 정책 화면 대신
   // 정적 원본(public/*.html)을 새 탭으로 연다(전자상거래법 고지·PG 심사 제출 URL과 동일 문서).
-  const legalLink = (file: string, label: string): HTMLElement =>
-    el("a", { class: "splash-legal-link", text: label, attrs: { href: `${base}${file}`, target: "_blank", rel: "noopener" } });
+  // 소개 페이지(about.html)도 같은 창구에 둔다(2026-08-11 사용자 확정 — 부모 설득·브랜드 검색용
+  // 정적 페이지라 문법이 같다). **"학부모·선생님이신가요?" 버튼에 연결하지 말 것**: 그 자리는
+  // 나중에 학생 진도 관리 공간이 들어올 역할 진입점이라 소개 페이지가 선점하면 안 된다.
+  const legalLink = (file: string, label: string, cls = ""): HTMLElement =>
+    el("a", { class: `splash-legal-link ${cls}`, text: label, attrs: { href: `${base}${file}`, target: "_blank", rel: "noopener" } });
   const legal = el(
     "div",
     { class: "splash-legal" },
+    legalLink("about.html", "스틱스텝 소개", "about"),
+    el("span", { class: "splash-legal-sep", text: "·", attrs: { "aria-hidden": "true" } }),
     legalLink("privacy.html", "개인정보처리방침"),
     el("span", { class: "splash-legal-sep", text: "·", attrs: { "aria-hidden": "true" } }),
     legalLink("refund.html", "환불 정책"),
