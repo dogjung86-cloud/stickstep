@@ -93,7 +93,9 @@ const isDev = (import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV =
 // 서버 시크릿(supabase secrets TOSS_SECRET_KEY)을 같은 상점의 live_sk_…로 함께 바꾼다(PAYMENTS.md).
 const env = (import.meta as unknown as { env?: Record<string, unknown> }).env ?? {};
 const cleanEnv = (v: unknown): string => (typeof v === "string" ? v.replace(/﻿/g, "").trim() : "");
-const TOSS_CLIENT_KEY = cleanEnv(env.VITE_TOSS_CLIENT_KEY) || "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq";
+// 기본값 = 내 상점(MID sticksbzvn)의 테스트 클라이언트 키(2026-08-14 사용자 제공 — 공개 식별값이라
+// 커밋 무해, 테스트 결제내역이 우리 상점 대시보드에 찍힌다). 라이브 키는 env로만(커밋 금지).
+const TOSS_CLIENT_KEY = cleanEnv(env.VITE_TOSS_CLIENT_KEY) || "test_ck_0RnYX2w532YDNEa4BQRl8NeyqApQ";
 const SUPABASE_URL = cleanEnv(env.VITE_SUPABASE_URL);
 const base = cleanEnv(env.BASE_URL) || "/";
 

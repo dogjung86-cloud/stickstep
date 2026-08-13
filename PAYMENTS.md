@@ -32,23 +32,22 @@ PG 심사 대기 기간에 **테스트 키로 전 구간을 가동**해 두고, 
 
 | 자리 | 현재 값 | 교체 방법 |
 |---|---|---|
-| 클라이언트 키 | 문서 공용 테스트 키(코드 기본값, purchase.ts) | `VITE_TOSS_CLIENT_KEY` env가 있으면 그걸 사용 |
-| 시크릿 키 | supabase secrets `TOSS_SECRET_KEY` = 문서 공용 테스트 키 | supabase 대시보드 → Edge Functions → Secrets에서 교체 |
+| 클라이언트 키 | **내 상점(MID sticksbzvn) 테스트 키**(코드 기본값, purchase.ts) | `VITE_TOSS_CLIENT_KEY` env가 있으면 그걸 사용 |
+| 시크릿 키 | supabase secrets `TOSS_SECRET_KEY` = **sticksbzvn 테스트 키** | supabase 대시보드 → Edge Functions → Secrets에서 교체 |
+| 보안 키(웹훅 서명) | supabase secrets `TOSS_WEBHOOK_SECRET`에 보관(아직 미사용 — 웹훅 도입 대비) | 〃 |
 
+- 우리 연동(v2 통합결제창 requestPayment)이 쓰는 키는 개발자센터의 **"API 개별 연동 키"**(test_ck_/test_sk_,
+  MID별)다 — "주문서형·결제창형 연동 키"(test_gck_/gsk_)는 결제위젯용이라 해당 없음.
 - 클라이언트 키는 **공개 식별값**(토스 문서 명시)이라 코드·번들 노출 무해. 시크릿 키는 서버(엣지 함수)에만.
 - 두 키는 **같은 상점 짝**이어야 한다(짝이 어긋나면 승인 단계에서 상점 불일치 오류).
 - 테스트 키 가동 중에는 체크아웃 시트에 "테스트 결제" 배지가 뜬다(live_ck_ 키면 자동 소멸).
 
-### 1단계 — 내 상점(MID: sticksbzvn) 테스트 키로 교체(계약 전에도 가능, 권장)
+### 1단계 — 내 상점(MID: sticksbzvn) 테스트 키로 교체 ✓ 완료(2026-08-14)
 
-개발자센터(https://developers.tosspayments.com/my/api-keys)에서 상점 sticksbzvn의
-**테스트 클라이언트 키(test_ck_…)·테스트 시크릿 키(test_sk_…)**를 확인한 뒤:
-
-1. 클라: Vercel 프로젝트 env `VITE_TOSS_CLIENT_KEY=test_ck_…`(Production+Preview) + 로컬 `.env.local`에도.
-   (또는 purchase.ts의 기본값 상수를 교체 — 테스트 키까지는 공개값이라 커밋 무해.)
-2. 서버: supabase 대시보드 → Edge Functions → Secrets → `TOSS_SECRET_KEY=test_sk_…`
-   (관리 API로도 가능: POST /v1/projects/{ref}/secrets).
-3. 재배포(main push) 후 테스트 결제 1건 → 개발자센터 테스트 결제내역에 찍히는지 확인.
+사용자 제공 API 개별 연동 테스트 키로 교체 완료 — 클라 = purchase.ts 기본값, 서버 =
+TOSS_SECRET_KEY 시크릿, 보안 키 = TOSS_WEBHOOK_SECRET 시크릿. 검증: 결제창이 sticksbzvn 상점
+설정(간편결제 목록 카카오페이·토스페이)으로 렌더 + 승인 API 인증 정상(가짜 키 프로브 =
+NOT_FOUND_PAYMENT_SESSION, UNAUTHORIZED 아님). 이후 테스트 결제는 개발자센터 테스트 결제내역에 찍힌다.
 
 ### 2단계 — 라이브 전환(계약·심사 완료 후)
 
