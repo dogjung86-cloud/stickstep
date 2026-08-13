@@ -45,6 +45,7 @@ import { createLessonPlayer } from "./lessons/player";
 import { findLesson, findUnit, isPremiumLocked, subjectOfUnit, gradeOfUnit } from "./content/curriculum";
 import { initAuth, onAuthChange, isPrivilegedUser, currentUser, isAuthConfigured, hasStoredSession } from "./core/auth";
 import { initSync } from "./core/sync";
+import { capturePaymentReturn, resumePaymentConfirm } from "./core/purchase";
 
 const frame = document.getElementById("frame")!;
 nav.init(frame);
@@ -134,6 +135,7 @@ function goTab(k: GnavKey): void {
         onOpenPaywall: (onUnlocked) =>
           nav.go(
             paywallScreen({
+              onLogin: openLogin,
               sub: "모든 프리미엄 레슨과 단원 평가 재응시를 기간 제한 없이 열 수 있어요.",
               onUnlocked: () => {
                 nav.back();
@@ -195,6 +197,7 @@ function openNotebook(): void {
   }
   nav.go(
     paywallScreen({
+      onLogin: openLogin,
       sub: "틀린 문제가 오답노트에 차곡차곡 모여 있어요. 다시 풀어 완전히 내 것으로 만들 수 있어요.",
       onUnlocked: () => {
         nav.back();
@@ -214,6 +217,7 @@ function openTutor(note?: WrongNote): void {
   }
   nav.go(
     paywallScreen({
+      onLogin: openLogin,
       sub: "AI 튜터 스틱쌤에게 막힌 문제를 사진과 함께 바로 물어볼 수 있어요.",
       onUnlocked: () => {
         nav.back();
@@ -232,6 +236,7 @@ function openWeakDrill(): void {
   }
   nav.go(
     paywallScreen({
+      onLogin: openLogin,
       sub: "취약 단원 문제 뽑기로 원하는 소단원만 골라 맞춤 문제지를 만들 수 있어요.",
       onUnlocked: () => {
         nav.back();
@@ -253,6 +258,7 @@ function openStepRush(): void {
   }
   nav.go(
     paywallScreen({
+      onLogin: openLogin,
       sub: "도전 탭 미니게임 스텝 러시가 프리미엄에 포함돼 있어요. 무한 계단을 오르며 최고 기록에 도전해 보세요.",
       onUnlocked: () => {
         nav.back();
@@ -274,6 +280,7 @@ function openCosmoMerge(): void {
   }
   nav.go(
     paywallScreen({
+      onLogin: openLogin,
       sub: "도전 탭 미니게임 태양 만들기가 프리미엄에 포함돼 있어요. 우주먼지를 합쳐 태양까지 키워 보세요.",
       onUnlocked: () => {
         nav.back();
@@ -294,6 +301,7 @@ function openLaserMaze(): void {
   }
   nav.go(
     paywallScreen({
+      onLogin: openLogin,
       sub: "도전 탭 미니게임 레이저 미로가 프리미엄에 포함돼 있어요. 거울을 돌려 레이저를 보석까지 보내 보세요.",
       onUnlocked: () => {
         nav.back();
@@ -314,6 +322,7 @@ function openOneStroke(): void {
   }
   nav.go(
     paywallScreen({
+      onLogin: openLogin,
       sub: "도전 탭 미니게임 네온 한붓그리기가 프리미엄에 포함돼 있어요. 네온사인을 한 붓에 켜며 몇 판까지 가는지 도전해 보세요.",
       onUnlocked: () => {
         nav.back();
@@ -335,6 +344,7 @@ function openExam(unitId: string): void {
       onPaywall: (unlocked) =>
         nav.go(
           paywallScreen({
+            onLogin: openLogin,
             sub: "단원 종합 평가를 무제한으로 다시 풀고, 모든 프리미엄 레슨도 함께 열 수 있어요.",
             onUnlocked: () => {
               nav.back();
@@ -395,6 +405,7 @@ function openLesson(id: string): void {
   if (isPremiumLocked(found.lesson)) {
     nav.go(
       paywallScreen({
+        onLogin: openLogin,
         lessonTitle: found.lesson.title,
         onUnlocked: goHome,
         onClose: () => nav.back(),
@@ -449,6 +460,10 @@ function showSplash(instant = false): void {
   nav.reset(splash);
 }
 
+// 토스 결제창 복귀 접수 — 반드시 부팅 라우팅·initAuth보다 먼저(failUrl의 ?code=…를 OAuth 코드
+// 교환이 오인하지 않게 주소를 즉시 청소한다). 승인 실행은 아래 resumePaymentConfirm이 맡는다.
+capturePaymentReturn();
+
 // [임시 프리뷰] 적용 랩 시제품 — DEV에서 ?preview=u3l1v2 로 진입. 폐기 시 이 분기를 지우고 start()만 남긴다.
 if (import.meta.env.DEV && new URLSearchParams(location.search).get("preview") === "u3l1v2") {
   void import("./content/previewU3l1").then(({ previewU3L1 }) => {
@@ -486,3 +501,26 @@ onAuthChange((u) => {
 });
 initSync();
 void initAuth();
+
+// ── 결제창 복귀 마무리 — 세션 복원을 기다렸다가 승인(pay-confirm)까지 밀어붙이고 결과를 알린다.
+// 화면 스택과 무관한 전역 스낵(.pay-snack, paywall.css) — 스플래시 위에서도 보인다.
+let paySnackEl: HTMLElement | null = null;
+let paySnackTimer = 0;
+function paySnack(msg: string, good: boolean): void {
+  if (!paySnackEl) {
+    paySnackEl = document.createElement("div");
+    paySnackEl.className = "pay-snack";
+    document.body.appendChild(paySnackEl);
+  }
+  paySnackEl.textContent = msg;
+  paySnackEl.classList.toggle("good", good);
+  paySnackEl.classList.add("show");
+  window.clearTimeout(paySnackTimer);
+  paySnackTimer = window.setTimeout(() => paySnackEl?.classList.remove("show"), good ? 4200 : 3400);
+}
+resumePaymentConfirm((msg, ok) => {
+  paySnack(msg, ok);
+  // 이용권이 방금 반영됐다면 열려 있는 홈 지도의 크라운 잠금을 즉시 다시 그린다(스플래시 등 다른
+  // 화면이면 건드리지 않는다 — 어차피 다음 홈 진입 때 새 상태로 그려진다).
+  if (ok && document.getElementById("sc-home")) goHome();
+});

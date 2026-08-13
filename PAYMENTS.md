@@ -1,0 +1,80 @@
+# PAYMENTS.md — 토스페이먼츠 결제 연동 정본 (2026-08-13)
+
+PG 심사 대기 기간에 **테스트 키로 전 구간을 가동**해 두고, 계약 완료 후 **키 2개만 교체**하면
+실결제가 열리는 구조다. 이 문서가 결제 관련 구조·키 교체·운영 절차의 단일 정본이다.
+
+## 구조 — "주문은 서버가, 가격도 서버가"
+
+```
+페이월(paywall.ts) ─ CTA → 주문 확인 시트(보호자 동의 체크·전상법 고지·BIZ_INFO)
+  → buyPremium(core/purchase.ts)
+    ① pay-order(수파베이스 엣지 함수) ─ JWT 검증 → 가격 재계산·대조 → orders(pending) 생성
+    ② 토스 v2 SDK(js.tosspayments.com/v2/standard) requestPayment(method: CARD — 카드/간편 통합결제창)
+    ③ 결제창 인증 → successUrl(/?pay=ok&paymentKey&orderId&amount) 리다이렉트 복귀
+  → capturePaymentReturn(main.ts 부팅 최상단 — 주소 즉시 청소, OAuth ?code 오인 차단)
+  → resumePaymentConfirm ─ 세션 복원 대기 → ④ pay-confirm(엣지 함수)
+    → 토스 승인 API(POST /v1/payments/confirm, Basic base64("시크릿키:"), 멱등 키 = orderId)
+    → orders paid 갱신 + entitlements(과목별 이용권) 지급 → 클라 store 반영 + 성공 스낵
+```
+
+- **가격 검증**: pay-order가 정가 사다리·얼리버드 균일가·30일 패스 세 "판매 성립 가격"만 승인
+  (클라 조작·스테일 차단). 가격표는 `src/core/purchase.ts` ↔ `supabase/functions/pay-order/index.ts`
+  양쪽에 있고 **qa/e2e-pay.mjs [P]부가 일치를 기계 검증**한다 — 가격 바꿀 때 반드시 둘 다 + 함수 재배포.
+- **이용권 서버 진실 = entitlements 테이블**: 소장 = expires_at null, 30일 패스 = 승인 시각+30일
+  (만료 집행은 로그인 시 refreshEntitlements가 교체 반영 — 오프라인 기기는 다음 접속 때).
+  progress.premium은 편의 동기화 값 유지(진실 아님). RLS = 본인 행 읽기만, 쓰기는 엣지 함수(service role)뿐.
+- **멱등**: 같은 주문 재승인 호출(성공 페이지 새로고침)은 지급 보증 후 결과만 반환. 패스 만료는
+  승인 시각 앵커라 재호출로 늘어나지 않고, 더 긴 기존 이용권을 절대 단축하지 않는다.
+- **보호자 동의 증적**: 시트 체크 → orders.guardian_consent + consent_ua(전상법 13조 2항 대응).
+  시트에 의무 고지 원문·사업자 정보(BIZ_INFO)·환불 요약 표기.
+
+## 키 체계 — 지금 어떤 키로 돌고 있나
+
+| 자리 | 현재 값 | 교체 방법 |
+|---|---|---|
+| 클라이언트 키 | 문서 공용 테스트 키(코드 기본값, purchase.ts) | `VITE_TOSS_CLIENT_KEY` env가 있으면 그걸 사용 |
+| 시크릿 키 | supabase secrets `TOSS_SECRET_KEY` = 문서 공용 테스트 키 | supabase 대시보드 → Edge Functions → Secrets에서 교체 |
+
+- 클라이언트 키는 **공개 식별값**(토스 문서 명시)이라 코드·번들 노출 무해. 시크릿 키는 서버(엣지 함수)에만.
+- 두 키는 **같은 상점 짝**이어야 한다(짝이 어긋나면 승인 단계에서 상점 불일치 오류).
+- 테스트 키 가동 중에는 체크아웃 시트에 "테스트 결제" 배지가 뜬다(live_ck_ 키면 자동 소멸).
+
+### 1단계 — 내 상점(MID: sticksbzvn) 테스트 키로 교체(계약 전에도 가능, 권장)
+
+개발자센터(https://developers.tosspayments.com/my/api-keys)에서 상점 sticksbzvn의
+**테스트 클라이언트 키(test_ck_…)·테스트 시크릿 키(test_sk_…)**를 확인한 뒤:
+
+1. 클라: Vercel 프로젝트 env `VITE_TOSS_CLIENT_KEY=test_ck_…`(Production+Preview) + 로컬 `.env.local`에도.
+   (또는 purchase.ts의 기본값 상수를 교체 — 테스트 키까지는 공개값이라 커밋 무해.)
+2. 서버: supabase 대시보드 → Edge Functions → Secrets → `TOSS_SECRET_KEY=test_sk_…`
+   (관리 API로도 가능: POST /v1/projects/{ref}/secrets).
+3. 재배포(main push) 후 테스트 결제 1건 → 개발자센터 테스트 결제내역에 찍히는지 확인.
+
+### 2단계 — 라이브 전환(계약·심사 완료 후)
+
+1. `VITE_TOSS_CLIENT_KEY=live_ck_…`(Vercel), `TOSS_SECRET_KEY=live_sk_…`(supabase secrets) — 같은 상점 짝.
+2. **결제 오픈 체크리스트**: ① 통신판매업 신고번호를 brand.ts BIZ_INFO에 추가
+   ② 얼리버드 개시면 purchase.ts EARLY_BIRD.active=true ③ 이용약관 명문화(환불은 refund.html 참조 연결)
+   ④ 실카드 소액 결제·취소 1회 검증.
+3. 라이브 키는 어떤 파일에도 커밋 금지(시크릿은 supabase secrets, 클라 키는 Vercel env).
+
+## 서버 배포·스키마
+
+- 엣지 함수 소스 정본 = `supabase/functions/pay-order|pay-confirm/index.ts`(단일 파일, Deno).
+  배포는 관리 API: `POST https://api.supabase.com/v1/projects/{ref}/functions/deploy?slug=<slug>`
+  multipart(metadata{entrypoint_path:"index.ts", verify_jwt:false} + file). CORS·JWT는 함수 코드가 처리.
+- 테이블 정본 = `supabase/schema.sql`의 "결제" 블록(orders·entitlements·RLS·터치 트리거) —
+  적용 완료(2026-08-13). 재적용도 관리 API database/query로(블록 전체 멱등).
+- 결제 e2e: `PORT=<dev포트> node qa/e2e-pay.mjs`(38검증 — 가격 동기·시트 계약·로그인 게이트·
+  스텁 왕복·실패 복귀). 실서버 왕복 검증은 테스트 유저 시딩(관리 API로 auth 유저 생성 → password
+  grant 세션 주입) 후 실플레이 — 세부 패턴은 메모리 project-toss-payments 참조.
+
+## 운영 메모
+
+- **주문 원장 조회**: orders(user_id·plan·subject_ids·amount·status·receipt_url·test_mode).
+  매출전표 URL = receipt_url. 테스트 결제는 test_mode=true로 구분.
+- **환불 처리(수동, 취소 API 미구현)**: 토스 상점관리자에서 결제 취소 → entitlements에서 해당
+  과목 행 삭제(또는 expires_at를 과거로) → orders.status='canceled'로 갱신. 정책은 refund.html 정본.
+- 30일 패스 재구매(만료 후)는 정상 동작. **활성 패스 중 소장 업그레이드는 페이월이 "이용중"으로
+  막는다** — 요청 들어오면 CS로 처리(백로그: 업그레이드 경로).
+- 빌링(자동결제) 상점아이디는 만들지 않았다 — 전 SKU 단건 결제(월구독 기각)라 일반 결제창만 연동.

@@ -16,6 +16,8 @@ import { haptic, HAPTIC } from "../core/haptics";
 import {
   buyPremium,
   ownedPremiumSubjectIds,
+  purchaseNeedsLogin,
+  isTossTestMode,
   restorePurchase,
   SELLABLE_SUBJECTS,
   PER_SUBJECT_FLOOR,
@@ -29,14 +31,21 @@ import {
   type PlanId,
 } from "../core/purchase";
 import { canSeeAllSubjects } from "../core/store";
-import { BRAND } from "../core/brand";
+import { BRAND, BIZ_INFO } from "../core/brand";
 import type { Screen } from "../core/router";
 import { stepMarkSvg } from "../ui/stepMark";
 import "../styles/paywall.css";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
-export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlocked: () => void; onClose: () => void }): Screen {
+export function paywallScreen(opts: {
+  lessonTitle?: string;
+  sub?: string;
+  onUnlocked: () => void;
+  onClose: () => void;
+  /** 비로그인 상태에서 결제를 시작할 때 로그인 화면을 여는 배선(main.ts openLogin) — 없으면 안내 문구만. */
+  onLogin?: () => void;
+}): Screen {
   const eb = earlyBirdActive();
   const close = el("button", { class: "backbtn", attrs: { "aria-label": "닫기" }, html: icon("x", 22) });
   close.addEventListener("click", () => {
@@ -240,21 +249,127 @@ export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlo
     attrs: { href: `${base}refund.html`, target: "_blank", rel: "noopener" },
   });
 
-  // ── CTA: 합계와 함께 갱신, 결정 직전에 안심 정보(환불) 배치 ──
+  // ── CTA → 주문 확인 시트(체크아웃) — 결제 직전 관문(2026-08-13 토스PG 연동과 세트) ──
+  // 전상법 13조 2항 의무 고지 원문 + 보호자 동의·주문 확인 체크(pay-order가 orders.guardian_consent로
+  // 기록) + 결제 시점 사업자 정보 표기. 실제 결제창은 토스가 연다(카드/간편결제 통합결제창).
   const cta = el("button", { class: "btn cta" });
-  cta.addEventListener("click", async () => {
+  cta.addEventListener("click", () => {
     if (picked.size === 0) return;
     haptic(HAPTIC.tap);
-    cta.disabled = true;
-    const r = await buyPremium({ subjectIds: [...picked], plan });
-    if (r === "ok") {
-      haptic(HAPTIC.done);
-      opts.onUnlocked();
-    } else {
-      cta.disabled = false;
-      helper.textContent = "정식 출시 후 결제할 수 있어요. 조금만 기다려 주세요!";
-    }
+    openCheckout();
   });
+
+  function openCheckout(): void {
+    const n = picked.size;
+    const total = priceOfPlan(plan, n);
+    const names = sellable.filter((s) => picked.has(s.id)).map((s) => s.name);
+    const needLogin = purchaseNeedsLogin();
+    const payLabel = needLogin ? "로그인하고 결제 진행" : `${won(total)} 결제하기`;
+
+    const row = (k: string, v: string, strong = false): HTMLElement =>
+      el("div", { class: "pwx-ord" }, el("span", { text: k }), el(strong ? "b" : "span", { text: v }));
+    const msg = el("div", { class: "pwx-sheet-msg", attrs: { role: "status", "aria-live": "polite" } });
+    const check = el("input", { attrs: { type: "checkbox", id: "pwx-consent" } }) as HTMLInputElement;
+    const payBtn = el("button", { class: "btn cta pwx-paybtn", text: payLabel });
+    const cancelBtn = el("button", { class: "pwx-sheet-cancel", text: "돌아가기" });
+    const sheet = el(
+      "div",
+      { class: "pwx-sheet", attrs: { role: "dialog", "aria-modal": "true", "aria-label": "주문 확인" } },
+      el("div", { class: "pwx-sheet-grab", attrs: { "aria-hidden": "true" } }),
+      el(
+        "div",
+        { class: "pwx-sheet-head" },
+        el("h2", { text: "주문 확인" }),
+        // 테스트 키 가동 중임을 화면에서 즉시 알 수 있게 — 라이브 키(live_ck_)로 바꾸면 자동 소멸.
+        isTossTestMode() ? el("span", { class: "pwx-testchip", text: "테스트 결제" }) : null,
+      ),
+      row("과목", names.join(" · ")),
+      row("이용 방법", plan === "pass30" ? `30일 패스 · 오늘부터 ${PASS30.days}일` : "소장 · 기간 제한 없음"),
+      row("결제 금액", `${won(total)} · VAT 포함`, true),
+      el(
+        "label",
+        { class: "pwx-consent" },
+        check,
+        el("span", {
+          text: "주문 내용을 확인했어요. 만 19세 미만은 보호자(법정대리인)의 동의를 받고 결제해요.",
+        }),
+      ),
+      // 전자상거래법 13조 2항 의무 고지 원문 — 계약 체결(결제) 시점 고지 요건. 지우지 말 것.
+      el("p", {
+        class: "pwx-sheet-fine",
+        text:
+          "법정대리인이 동의하지 않은 미성년자의 결제는 미성년자 본인 또는 법정대리인이 취소할 수 있어요. " +
+          "결제는 토스페이먼츠 결제창에서 안전하게 진행되며, 이용을 시작하지 않은 과목은 7일 이내 전액 환불돼요.",
+      }),
+      msg,
+      payBtn,
+      cancelBtn,
+      el("div", { class: "pwx-sheet-biz" }, ...BIZ_INFO.map((line) => el("div", { text: line }))),
+    );
+    const scrim = el("div", { class: "pwx-scrim" }, sheet);
+    const closeSheet = (): void => {
+      scrim.classList.remove("on");
+      window.setTimeout(() => scrim.remove(), 240); // 닫기는 응답이라 빠르게(모션 격상 ① 비대칭)
+    };
+    scrim.addEventListener("click", (e) => {
+      if (e.target === scrim) closeSheet();
+    });
+    cancelBtn.addEventListener("click", () => {
+      haptic(HAPTIC.tap);
+      closeSheet();
+    });
+
+    let busy = false;
+    payBtn.addEventListener("click", async () => {
+      if (busy) return;
+      if (!check.checked) {
+        haptic(HAPTIC.deny);
+        msg.textContent = "주문 확인과 동의에 체크해 주세요.";
+        return;
+      }
+      haptic(HAPTIC.tap);
+      if (needLogin) {
+        if (opts.onLogin) {
+          closeSheet();
+          opts.onLogin();
+        } else {
+          msg.textContent = "마이 탭 → 계정 관리에서 로그인한 뒤 다시 시도해 주세요.";
+        }
+        return;
+      }
+      busy = true;
+      payBtn.classList.add("busy");
+      payBtn.textContent = "결제창을 여는 중이에요…";
+      const r = await buyPremium({ subjectIds: [...picked], plan, guardianConsent: true });
+      if (r.r === "ok") {
+        haptic(HAPTIC.done);
+        closeSheet();
+        opts.onUnlocked();
+        return;
+      }
+      if (r.r === "redirect") {
+        payBtn.textContent = "결제창으로 이동하고 있어요…";
+        return; // 페이지가 곧 토스 결제창으로 떠난다 — 복귀 부팅(capturePaymentReturn)이 이어받는다
+      }
+      busy = false;
+      payBtn.classList.remove("busy");
+      payBtn.textContent = payLabel;
+      if (r.r === "login") {
+        if (opts.onLogin) {
+          closeSheet();
+          opts.onLogin();
+        } else {
+          msg.textContent = "마이 탭 → 계정 관리에서 로그인한 뒤 다시 시도해 주세요.";
+        }
+        return;
+      }
+      msg.textContent = r.r === "unavailable" ? "지금은 결제를 시작할 수 없어요. 잠시 후 다시 시도해 주세요." : r.msg;
+    });
+
+    elm.appendChild(scrim);
+    void scrim.offsetWidth; // reflow 기반 등장(comic 컷 문법) — rAF는 프리뷰 하니스에서 얼어 시트가 안 뜬다
+    scrim.classList.add("on");
+  }
   const secure = el(
     "div",
     { class: "pwx-secure" },
@@ -268,6 +383,9 @@ export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlo
     if (r === "ok") {
       haptic(HAPTIC.done);
       opts.onUnlocked();
+    } else if (r === "login") {
+      helper.textContent = "구매할 때 쓴 계정으로 로그인하면 이용권이 자동으로 복원돼요.";
+      opts.onLogin?.();
     } else {
       helper.textContent = "복원할 구매 내역을 찾지 못했어요.";
     }
@@ -354,7 +472,14 @@ export function paywallScreen(opts: { lessonTitle?: string; sub?: string; onUnlo
   }
   refresh();
 
-  const body = el("div", { class: "scroll pad pwx-body" }, hero, bens, subs, plans, card, fine, fineLink, helper);
+  // 결제 시점 사업자 정보 표기(전자상거래법 — project-biz-info 잔여 항목 이행, 2026-08-13).
+  // 값은 core/brand.ts BIZ_INFO 단일 출처 — 빈 배열이면 아무것도 안 보인다(의도된 동작).
+  const biz = el(
+    "div",
+    { class: "pwx-biz", attrs: { "aria-label": "사업자 정보" } },
+    ...BIZ_INFO.map((line) => el("div", { text: line })),
+  );
+  const body = el("div", { class: "scroll pad pwx-body" }, hero, bens, subs, plans, card, fine, fineLink, biz, helper);
   const footer = el("div", { class: "footer pwx-footer" }, cta, secure, restore);
   const elm = el("section", { class: "screen" }, head, body, footer);
   return { el: elm };

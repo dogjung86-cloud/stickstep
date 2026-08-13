@@ -232,9 +232,18 @@ src/
   법정대리인이 취소할 수 있다")은 결제 오픈 시 토스PG 결제 단계·이용약관에 반드시 명문화**(계약
   체결 시점 고지가 법 요건 — 마케팅 화면 간결판이 이를 대체하지 않는다). 결제 오픈 시
   **보호자 동의 체크+기록 단계**도 설계할 것(동의 입증이 유일한 실질 방어 — 타깃이 중학생이라 필수).
-- **결제**: `core/purchase.ts`가 단일 창구(가격·카탈로그 포함). 현재 스텁 — **DEV에서만 즉시 해금**(QA용),
-  프로덕션 웹은 "출시 후 결제" 안내. Capacitor 포장 시 이 파일만 IAP(cordova-plugin-purchase/RevenueCat)로
-  교체하면 UI는 그대로 동작한다. 구매 성공 경로: 스토어 결제 → 영수증 검증 → `setPremium(true)`.
+- **결제(2026-08-13 토스PG 실연동 — 정본은 PAYMENTS.md, 결제 작업 전 필독)**: `core/purchase.ts`가
+  단일 창구(가격·카탈로그·SDK 로더·복귀 처리). 흐름 = 주문 확인 시트(보호자 동의 체크 →
+  orders.guardian_consent 증적 + 전상법 13조 2항 원문 + BIZ_INFO) → pay-order 엣지 함수(**가격은
+  서버가 재계산** — 정가 사다리·얼리버드·패스 세 가격만 승인, 가격표는 purchase.ts와 서버 양쪽 동기
+  의무·qa/e2e-pay [P]가 기계 검증) → 토스 v2 통합결제창(method CARD, 리다이렉트) → successUrl 복귀
+  (capturePaymentReturn이 부팅 최상단에서 주소 청소 — failUrl ?code를 OAuth가 오인하는 사고 차단) →
+  pay-confirm 엣지 함수(토스 승인 API + **entitlements 지급 — 이용권 서버 진실**, 소장 = 기간 없음·
+  패스 = 승인 시각+30일 앵커, 로그인 시 refreshEntitlements가 교체 반영 = 패스 만료 집행 지점).
+  **DEV 기본은 즉시 해금 스텁 유지**(전 e2e 계약 불변), 실플로우 강제 = sessionStorage "ss.payreal"
+  ="1"·가짜 유저 = "ss.payFakeUser"(e2e 스텁용). 현재 문서 공용 테스트 키 가동(시트에 "테스트 결제"
+  배지) — 내 상점(sticksbzvn) 키·라이브 키 교체는 PAYMENTS.md 절차. QA =
+  `PORT=<포트> node qa/e2e-pay.mjs`(38검증). Capacitor 포장 시 이 파일만 IAP 브리지로 교체.
 - **[백로그 — 부모님께 요청하기(2026-07-21 사용자 확정, 토스PG 결제 오픈과 세트)]**: 페이월 CTA 아래
   보조 버튼 → 시스템 공유(Web Share)/링크 복사 → **부모용 페이지**(아이 학습 리포트 요약 + 가격 +
   자동결제 없음·환불 문구 + 결제 버튼). 결제 결정자(부모)와 사용자(학생)의 간극을 잇는 핵심 전환

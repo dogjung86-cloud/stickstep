@@ -6,6 +6,7 @@
 import type { AppState, ExamRecord, LessonProgress, WrongNote } from "./store";
 import { applySyncedState, getState, setOnStateSaved } from "./store";
 import { getSupabase, isAuthConfigured, onAuthChange } from "./auth";
+import { refreshEntitlements } from "./purchase";
 
 interface ProgressRow {
   user_id: string;
@@ -213,6 +214,9 @@ async function fullSync(userId: string): Promise<void> {
     else applySyncedState({ syncedUserId: userId }); // 신규 계정 첫 기기 — 게스트 데이터가 곧 시작 기록
     syncing = false;
     await pushNow();
+    // 이용권(entitlements — 결제 서버 진실): 병합·푸시가 끝난 뒤 교체 반영해 최종 발언권을 가진다.
+    // progress.premium(편의 동기화 값)이 남긴 낡은 true를 바로잡고 30일 패스 만료를 집행하는 지점.
+    await refreshEntitlements();
     // 닉네임(profiles.nickname — progress와 별개 테이블이라 rowOf에 안 싣는다): 같은 계정·첫 로그인만
     // 기기 값 우선("학습은 잃지 않는다"의 닉네임판). 계정 전환은 교체 패치가 로컬 닉네임을 이미 비워
     // 항상 서버 값 채택 경로로 들어간다 — 이전 계정 닉네임을 새 계정 프로필에 밀어쓰지 않는다.

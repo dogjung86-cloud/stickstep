@@ -143,3 +143,65 @@
 @keyframes pwxRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @keyframes pwxStamp { from { opacity: 0; transform: scale(1.55); } to { transform: scale(1); } }
 @keyframes pwxFlagIn { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: scale(1); } }
+
+/* ── 주문 확인 시트(체크아웃) — 결제 직전 관문(2026-08-13 토스PG 연동과 세트).
+   열기 .42s spring / 닫기 .22s ease-out(모션 격상 ① 비대칭 규칙). fixed 오버레이라
+   폰 프레임·데스크톱 셸 어디서든 화면 전체를 덮는다. ── */
+.pwx-scrim {
+  position: fixed; inset: 0; z-index: 60; display: flex; align-items: flex-end; justify-content: center;
+  background: rgba(11, 21, 36, .46); opacity: 0; transition: opacity .22s var(--ease-out);
+}
+.pwx-scrim.on { opacity: 1; }
+.pwx-sheet {
+  width: min(100%, 480px); max-height: 86vh; overflow-y: auto; overscroll-behavior: contain;
+  background: var(--n0); border-radius: var(--r-xl) var(--r-xl) 0 0; box-shadow: var(--sh-sheet);
+  padding: 10px 18px calc(16px + env(safe-area-inset-bottom, 0px));
+  transform: translateY(24px); opacity: 0; transition: transform .42s var(--spring), opacity .3s var(--ease-out);
+}
+.pwx-scrim.on .pwx-sheet { transform: none; opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .pwx-sheet { transform: none; transition: opacity .2s var(--ease-out); }
+}
+.pwx-sheet-grab { width: 40px; height: 4px; border-radius: 999px; background: var(--n200); margin: 2px auto 12px; }
+.pwx-sheet-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.pwx-sheet-head h2 { font-size: 17px; font-weight: 800; color: var(--n900); letter-spacing: -.01em; }
+.pwx-testchip {
+  font-size: 10.5px; font-weight: 800; letter-spacing: .03em; color: var(--gold-deep);
+  background: var(--gold-tint); border-radius: 6px; padding: 3px 7px;
+} /* 테스트 키 가동 표시 — 라이브 키(live_ck_)로 바꾸면 자동 소멸 */
+.pwx-ord {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  padding: 8.5px 2px; border-bottom: 1px dashed var(--n150, var(--n200)); font-size: 13.5px; color: var(--n600);
+}
+.pwx-ord b { font-size: 15px; font-weight: 800; color: var(--n900); font-variant-numeric: tabular-nums; }
+.pwx-consent {
+  display: flex; gap: 9px; align-items: flex-start; margin: 13px 0 0; padding: 11px 12px;
+  border: 1px solid var(--n200); border-radius: var(--r-md); background: var(--n50);
+  font-size: 12.5px; line-height: 1.55; color: var(--n700, var(--n600)); word-break: keep-all; cursor: pointer;
+}
+.pwx-consent input { width: 17px; height: 17px; margin-top: 1px; accent-color: var(--blue); flex: none; }
+.pwx-sheet-fine { margin-top: 9px; font-size: 11px; line-height: 1.65; color: var(--n500); word-break: keep-all; }
+.pwx-sheet-msg { min-height: 16px; margin-top: 7px; font-size: 12px; font-weight: 700; color: var(--red); text-align: center; }
+.pwx-paybtn { display: block; width: 100%; margin-top: 8px; }
+.pwx-paybtn.busy { opacity: .75; pointer-events: none; }
+.pwx-sheet-cancel {
+  display: block; width: 100%; margin-top: 9px; padding: 11px; border-radius: var(--r-md);
+  background: none; font-size: 13.5px; font-weight: 700; color: var(--n500);
+}
+.pwx-sheet-biz { margin-top: 13px; padding-top: 11px; border-top: 1px solid var(--n100, var(--n200)); }
+.pwx-sheet-biz div, .pwx-biz div { font-size: 10.5px; line-height: 1.7; color: var(--n400); text-align: center; word-break: keep-all; }
+
+/* 페이월 본문 사업자 정보(결제 시점 표기 의무) — 파인프린트 아래 조용하게 */
+.pwx-biz { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--n150, var(--n200)); }
+
+/* ── 결제 복귀 전역 스낵(main.ts paySnack) — 화면 어디서든 부팅 직후 결과를 알린다 ── */
+.pay-snack {
+  position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 16px);
+  z-index: 80; max-width: min(92vw, 420px); padding: 12px 18px; border-radius: 14px;
+  background: var(--n900); color: var(--n0); font-size: 13.5px; font-weight: 700; line-height: 1.5;
+  box-shadow: var(--sh-raise); opacity: 0; pointer-events: none;
+  transition: opacity .25s var(--ease-out), transform .34s var(--spring-soft);
+  word-break: keep-all; text-align: center;
+}
+.pay-snack.show { opacity: 1; transform: translate(-50%, 0); }
+.pay-snack.good { background: var(--green); }
