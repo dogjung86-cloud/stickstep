@@ -166,18 +166,41 @@ let pay = await openPayWindow();
 await sleep(1500);
 snap("10-toss-window");
 
-/** 카드사 한 곳의 "인증 직전"까지 — 타일 선택 → [필수] 약관 체크 → 다음(가이드 요건 8). */
+/** 약관 체크 — 게이트웨이 프레임 DOM 직접 클릭(프레임이 카드 상세로 내비게이트한 직후라
+ *  텍스트 셀렉터는 타이밍에 취약 — [필수] 리프에서 조상으로 올라가며 체크박스를 찾는다). */
+async function consentInFrame(target) {
+  return target
+    .evaluate(() => {
+      const leaf = [...document.querySelectorAll("*")].find(
+        (n) => n.childElementCount === 0 && (n.textContent ?? "").includes("[필수]"),
+      );
+      let t = leaf;
+      for (let i = 0; i < 5 && t; i++) {
+        const box = t.querySelector?.('input[type="checkbox"], [role="checkbox"]');
+        if (box) {
+          box.click();
+          return true;
+        }
+        t = t.parentElement;
+      }
+      leaf?.click();
+      return !!leaf;
+    })
+    .catch(() => false);
+}
+
+/** 카드사 한 곳의 인증 화면까지 — 타일 선택 → [필수] 약관 체크 → 다음(가이드 요건 8).
+ *  샌드박스에서도 실제 카드사 인증 페이지(vbv.nonghyup.com 등)까지 도달한다 — 결제는 안 한다. */
 async function cardRound(label, tileSels, prefix) {
-  await tryClick(pay, ['button:has-text("확인")'], 800); // 잔여 안내 다이얼로그 정리
-  const picked = await tryClick(pay, tileSels, 5000);
+  const picked = await tryClick(pay, tileSels, 6000);
   console.log(`${label} pick:`, picked);
-  await sleep(1200);
-  const consent = await tryClick(pay, ["text=[필수] 서비스 이용 약관", 'text=[필수]'], 3000);
+  await sleep(2600); // 게이트웨이 프레임이 카드 상세 화면으로 내비게이트
+  const consent = await consentInFrame(pay);
   console.log(`${label} consent:`, consent);
   await sleep(500);
   snap(`${prefix}-pick`);
-  await tryClick(pay, ['button:has-text("다음")', "text=다음", 'button:has-text("결제하기")'], 4000);
-  await sleep(5500);
+  await tryClick(pay, ['button:has-text("다음")', "text=다음", 'button:has-text("결제하기")'], 5000);
+  await sleep(6500); // 카드사 인증 페이지 로드
   snap(`${prefix}-auth`);
   // 인증이 별도 팝업이면 정리(메인 페이지는 유지)
   for (const p of ctx.pages()) {
