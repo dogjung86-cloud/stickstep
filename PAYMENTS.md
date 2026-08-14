@@ -73,7 +73,7 @@ NOT_FOUND_PAYMENT_SESSION, UNAUTHORIZED 아님). 이후 테스트 결제는 개�
 - **심사 제출 URL**: 상품/서비스 = `https://stickstep.com/#/pricing`(URL 해시 라우팅 — core/route.ts,
   로그인 = `/#/login`, 과목 = `/#/subject/sci` 등) · 환불 정책 = `https://stickstep.com/refund.html`
   (정본) · 서비스 소개 = `/about.html`. QA = `PORT=<포트> node qa/e2e-route.mjs`.
-- **심사용 테스트 계정**: `toss-review@stickstep.com` / `stickstep2026!` — Supabase auth 실계정
+- **심사용 테스트 계정**: `toss-review@stickstep.com` / `20262026` — Supabase auth 실계정
   (2026-08-14 관리 API로 생성, email_confirm 완료, 일반 권한 = 과학만 노출·비프리미엄이라 결제
   플로우 시연 가능). 로그인 경로 = 마이 탭 또는 `/#/login` → "이메일로 로그인" 토글.
   프리미엄·운영 권한 없음 — PRIVILEGED_EMAILS에 절대 넣지 말 것(넣으면 페이월이 안 떠 심사 불가).

@@ -12,7 +12,7 @@ import fs from "node:fs";
 const BASE = process.env.BASE || "https://stickstep.com";
 const OUT = process.env.OUT || "D:/Brilliant Science/output/toss-pg/shots";
 const EMAIL = process.env.TOSS_TEST_ID || "toss-review@stickstep.com";
-const PW = process.env.TOSS_TEST_PW || "stickstep2026!";
+const PW = process.env.TOSS_TEST_PW || "20262026";
 fs.mkdirSync(OUT, { recursive: true });
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
