@@ -6,6 +6,8 @@
 // [B] 아웃바운드 동기: 부팅(스플래시 해시 없음) → 둘러보기(#/subject/sci) → 탭 전환(#/challenge)
 //     → 마이 탭(비로그인 로그인 유도 → #/login)
 // [C] 뒤로가기: 하드웨어 back 1회 = 앱 내 back 1회(해시 이중 내비 없음 — #/my 복귀)
+// [D] 스택 위 화면에서 해시 수정: #/login → #/pricing — 가드 반납 back()이 방금 연 화면을
+//     닫아 버리던 경합(routingBurst 보류) 회귀 가드 + 이후 하드웨어 back 정상 동작
 import { chromium } from "playwright-core";
 
 const PORT = process.env.PORT || "5199";
@@ -174,6 +176,37 @@ const store = (page) => page.evaluate(() => JSON.parse(localStorage.getItem("sci
   } else {
     check(true, "스텁 모드 — 뒤로가기 케이스 생략(로그인 오버레이 없음)");
   }
+  await page.close();
+}
+
+// ───────────────────── [D] 스택 위 화면에서 해시 수정(가드 경합 회귀) ─────────────────────
+{
+  console.log("[D] #/login 위에서 location.hash=#/pricing — 라우팅 버스트 가드");
+  const page = await newPage();
+  await page.goto(`http://localhost:${PORT}/#/login`, { waitUntil: "networkidle" });
+  await page.waitForSelector("#sc-login", { timeout: 25000 });
+  await page.waitForTimeout(500);
+  await page.evaluate(() => {
+    location.hash = "#/pricing";
+  });
+  await page.waitForSelector("#sc-paywall", { timeout: 8000 });
+  await page.waitForTimeout(1600); // 경합이 있으면 popstate가 이 사이에 화면을 닫는다
+  const still = await page.evaluate(() => ({
+    paywall: !!document.querySelector("#sc-paywall"),
+    login: !!document.querySelector("#sc-login"),
+    hash: location.hash,
+  }));
+  check(still.paywall && still.hash === "#/pricing", `페이월 유지 + 해시(${still.hash})`);
+  check(!still.login, "이전 화면(로그인)은 스택에서 정리됨");
+  // 이후 하드웨어 back → 페이월 닫힘 + 홈 복귀(가드 정상)
+  await page.evaluate(() => history.back());
+  await page.waitForTimeout(900);
+  const after = await page.evaluate(() => ({
+    paywall: !!document.querySelector("#sc-paywall"),
+    home: !!document.querySelector("#sc-home"),
+    hash: location.hash,
+  }));
+  check(!after.paywall && after.home && after.hash === "#/subject/sci", `back → 홈 복귀 + 해시(${after.hash})`);
   await page.close();
 }
 

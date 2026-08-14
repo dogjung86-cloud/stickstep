@@ -163,9 +163,20 @@ function goTab(k: GnavKey): void {
 // popstate가 오면 앱 내 이전 화면으로 이동한다. 루트에선 무장하지 않아(가드도 반납) 다음
 // back이 자연스럽게 사이트를 떠난다. Capacitor WebView의 하드웨어 back도 같은 경로를 탄다.
 let historyArmed = false;
+// 히스토리 방향 판별 인덱스(2026-08-14) — 크롬은 해시 이동(주소창 수정·location.hash 대입)에도
+// popstate를 쏜다. 엔트리마다 ssIdx를 심어 두면 popstate에서 "인덱스가 줄었다 = 진짜 뒤로가기 →
+// appBack" / "늘었다·없다 = 해시 전진 내비 → 라우트 적용"을 가를 수 있다(없으면 해시 이동이
+// appBack으로 오인돼 방금 연 화면이 닫히는 실사고 — qa/e2e-route.mjs [D] 회귀 가드).
+let histIdx = 0;
+try {
+  history.replaceState({ ...((history.state as object | null) ?? {}), ssIdx: 0 }, "");
+} catch {
+  /* 무시 */
+}
 function armHistory(): void {
   if (!historyArmed) {
-    history.pushState({ stickstep: true }, "");
+    history.pushState({ stickstep: true, ssIdx: histIdx + 1 }, "");
+    histIdx += 1;
     historyArmed = true;
   }
 }
@@ -181,17 +192,40 @@ function appBack(): boolean {
   }
   return false;
 }
-window.addEventListener("popstate", () => {
-  historyArmed = false;
-  // 뒤로가기로 주소가 바뀌면 hashchange가 뒤따라온다 — appBack이 이미 처리한 이동이므로
-  // 라우트 적용을 잠깐 막는다(이중 내비 차단, core/route.ts 계약 ②).
+window.addEventListener("popstate", (e) => {
+  // popstate 직후의 hashchange는 여기서 이미 처리한 이동 — 라우트 재적용을 잠깐 막는다
+  // (이중 내비 차단, core/route.ts 계약 ②).
   hashFromPop = true;
   window.setTimeout(() => (hashFromPop = false), 80);
-  appBack(); // 이동이 일어나면 nav 변경 훅이 필요 시 다시 무장한다
+  const s = (e.state as { ssIdx?: number } | null)?.ssIdx;
+  if (typeof s === "number" && s < histIdx) {
+    // 인덱스 감소 = 진짜 뒤로가기(하드웨어 back·가드 반납) → 앱 내 뒤로가기
+    histIdx = s;
+    historyArmed = false;
+    appBack(); // 이동이 일어나면 nav 변경 훅이 필요 시 다시 무장한다
+    return;
+  }
+  // 인덱스 없음(새 해시 엔트리)·증가(브라우저 앞으로가기) = 주소 이동 — 라우트로 처리.
+  if (typeof s === "number") {
+    histIdx = s;
+  } else {
+    histIdx += 1;
+    try {
+      history.replaceState({ ...((history.state as object | null) ?? {}), ssIdx: histIdx }, "");
+    } catch {
+      /* 무시 */
+    }
+  }
+  historyArmed = true; // 등 뒤에 엔트리가 생겼으니 back 1회는 우리가 받는다
+  const r = parseRoute(location.hash);
+  if (r) enterFromRoute(r);
 });
 nav.setOnChange(() => {
   if (nav.depth > 1 || currentTab !== "home") armHistory();
-  else if (historyArmed) history.back(); // 루트 복귀 — 가드 상태를 조용히 반납(popstate는 루트라 no-op)
+  // 루트 복귀 — 가드 상태를 조용히 반납(popstate는 루트라 no-op). 단 라우트 적용 버스트 중에는
+  // 보류한다: enterFromRoute가 "goHome → 서브 화면 push"를 연달아 실행할 때 중간 홈 상태가
+  // back()을 쏘면, 그 popstate가 방금 push한 화면을 도로 닫는 경합이 있었다(2026-08-14 실사고).
+  else if (historyArmed && !routingBurst) history.back();
   syncHash(); // 화면 전환마다 주소창 해시를 따라 맞춘다(2026-08-14 URL 라우팅)
 });
 
@@ -211,29 +245,45 @@ function syncHash(): void {
 
 /** 인바운드: 주소 → 화면. 부팅 딥링크와 주소창 수정(hashchange) 공용. 스플래시를 건너뛰므로
  *  미온보딩 방문자(PG 심사역 포함)에게는 둘러보기와 같은 기본값을 먼저 심는다(showSplash 참조). */
+let routingBurst = false;
 function enterFromRoute(r: AppRoute): void {
+  // 같은 서브 화면이 이미 떠 있으면 재적용하지 않는다(주소창 재입력·중복 hashchange 멱등).
+  const topId = nav.top?.el.id ?? "";
+  if ((r.k === "login" && topId === "sc-login") || (r.k === "pricing" && topId === "sc-paywall")) return;
+  if (r.k === "policy" && topId === "sc-policy" && nav.top?.el.dataset.policyFile === r.file) return;
   if (!getState().onboarded) {
     setOnboarding("g1", 10);
     setViewGrade("g1");
     setViewSubject("sci");
   }
-  if (r.k === "subject") {
-    pickSubject(r.s); // 공개 게이트가 닫혀 있으면 getViewSubject 클램프가 과학 지도로 거른다
-  } else if (r.k === "grade") {
-    setViewGrade(r.g);
-    goHome();
-  } else if (r.k === "tab") {
-    goTab(r.tab);
-  } else {
-    goHome(); // 닫기·뒤로가기가 홈으로 떨어지도록 홈을 깔고 위에 얹는다
-    if (r.k === "login") openLogin();
-    else if (r.k === "pricing") openPricing();
-    else if (r.file === "refund.html") openRefund();
-    else openPolicy();
+  routingBurst = true;
+  try {
+    if (r.k === "subject") {
+      pickSubject(r.s); // 공개 게이트가 닫혀 있으면 getViewSubject 클램프가 과학 지도로 거른다
+    } else if (r.k === "grade") {
+      setViewGrade(r.g);
+      goHome();
+    } else if (r.k === "tab") {
+      goTab(r.tab);
+    } else {
+      goHome(); // 닫기·뒤로가기가 홈으로 떨어지도록 홈을 깔고 위에 얹는다
+      if (r.k === "login") openLogin();
+      else if (r.k === "pricing") openPricing();
+      else if (r.file === "refund.html") openRefund();
+      else openPolicy();
+    }
+  } finally {
+    // 버스트 종료 — 최종 상태가 루트 홈인데 가드가 남아 있으면 이제 반납한다(보류분 정산).
+    window.setTimeout(() => {
+      routingBurst = false;
+      if (nav.depth === 1 && currentTab === "home" && historyArmed) history.back();
+    }, 0);
   }
 }
 
 let hashFromPop = false;
+// 폴백 — 크롬은 해시 이동도 popstate로 먼저 들어와 위에서 처리된다(hashFromPop이 이중 적용 차단).
+// popstate 없이 hashchange만 오는 환경을 위한 안전망.
 window.addEventListener("hashchange", () => {
   if (hashFromPop) return;
   const r = parseRoute(location.hash);
@@ -527,6 +577,12 @@ function showSplash(instant = false): void {
 // 토스 결제창 복귀 접수 — 반드시 부팅 라우팅·initAuth보다 먼저(failUrl의 ?code=…를 OAuth 코드
 // 교환이 오인하지 않게 주소를 즉시 청소한다). 승인 실행은 아래 resumePaymentConfirm이 맡는다.
 capturePaymentReturn();
+// 주소 청소(replaceState)가 히스토리 방향 인덱스를 지웠을 수 있어 재스탬프(armHistory 항목 참조).
+try {
+  history.replaceState({ ...((history.state as object | null) ?? {}), ssIdx: histIdx }, "");
+} catch {
+  /* 무시 */
+}
 
 // [임시 프리뷰] 적용 랩 시제품 — DEV에서 ?preview=u3l1v2 로 진입. 폐기 시 이 분기를 지우고 start()만 남긴다.
 const bootRoute = parseRoute(location.hash);
