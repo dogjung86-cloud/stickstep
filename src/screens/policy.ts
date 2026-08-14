@@ -48,5 +48,13 @@ export function policyScreen(
     }
   })();
 
-  return { el: el("section", { class: "screen" }, head, body) };
+  // id·data-policy-file은 URL 해시 동기(main.ts syncHash — #/refund·#/privacy)의 판별 근거.
+  return {
+    el: el(
+      "section",
+      { class: "screen", attrs: { id: "sc-policy", "data-policy-file": doc.file } },
+      head,
+      body,
+    ),
+  };
 }

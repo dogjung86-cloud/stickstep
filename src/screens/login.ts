@@ -8,7 +8,7 @@ import { haptic, HAPTIC } from "../core/haptics";
 import { stickAvatar } from "../ui/avatar";
 import { getState, currentStreak, wrongNoteCount, applySyncedState } from "../core/store";
 import type { Screen } from "../core/router";
-import { consumeAuthError, currentUser, deleteAccount, isAuthConfigured, onAuthChange, signInWith } from "../core/auth";
+import { consumeAuthError, currentUser, deleteAccount, isAuthConfigured, onAuthChange, signInWith, signInWithEmailPassword } from "../core/auth";
 import type { AuthUser, OAuthProvider } from "../core/auth";
 
 // 간이 소셜 마크 — 외부 이미지 없이 브랜드가 연상되는 최소 글리프
@@ -177,6 +177,55 @@ export function loginScreen(
     return wrap;
   };
 
+  /** 이메일 로그인(2026-08-14 토스PG 심사 대응) — 소셜 아래 접힘 토글로 절제해 둔다.
+   *  가입 UI는 없다(가입 정본은 소셜) — 심사용 테스트 계정·운영 발급 계정의 진입 경로.
+   *  성공 시 onAuthChange 재렌더가 로그인 화면을 그린다(소셜과 동일 경로). */
+  let emailBusy = false;
+  const emailLoginArea = (): HTMLElement => {
+    const wrap = el("div", { class: "login-email" });
+    const toggle = el("button", { class: "login-email-toggle", text: "이메일로 로그인" });
+    const em = el("input", {
+      class: "login-input",
+      attrs: { type: "email", placeholder: "이메일", autocomplete: "username", inputmode: "email", "aria-label": "이메일" },
+    }) as HTMLInputElement;
+    const pw = el("input", {
+      class: "login-input",
+      attrs: { type: "password", placeholder: "비밀번호", autocomplete: "current-password", "aria-label": "비밀번호" },
+    }) as HTMLInputElement;
+    const go = el("button", { class: "login-btn email", attrs: { type: "submit" } }, el("span", { text: "로그인" }));
+    const form = el("form", { class: "login-email-form" }, em, pw, go) as HTMLFormElement;
+    toggle.addEventListener("click", () => {
+      haptic(HAPTIC.tap);
+      if (!isAuthConfigured()) {
+        snack("이메일 로그인은 앱 출시와 함께 열려요!");
+        return;
+      }
+      wrap.classList.add("open");
+      em.focus();
+    });
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (emailBusy || busy) return;
+      const email = em.value.trim();
+      if (!email || !pw.value) {
+        snack("이메일과 비밀번호를 입력해 주세요.");
+        return;
+      }
+      emailBusy = true;
+      go.setAttribute("disabled", "");
+      (go.firstChild as HTMLElement).textContent = "로그인 중…";
+      void signInWithEmailPassword(email, pw.value).then((r) => {
+        emailBusy = false;
+        go.removeAttribute("disabled");
+        (go.firstChild as HTMLElement).textContent = "로그인";
+        // 성공은 onAuthChange 재렌더가 처리 — 실패만 이 화면에서 알린다.
+        if (!r.ok) snack(`로그인하지 못했어요: ${r.reason ?? "잠시 후 다시 시도해 주세요"}`);
+      });
+    });
+    wrap.append(toggle, form);
+    return wrap;
+  };
+
   const startOAuth = (provider: OAuthProvider, label: string): void => {
     if (busy) return;
     busy = true;
@@ -222,7 +271,7 @@ export function loginScreen(
       el("br", {}),
       el("span", { text: "만 14세 미만은 보호자(법정대리인) 동의가 필요해요." }),
     );
-    body.replaceChildren(hero, buttons, note, legal);
+    body.replaceChildren(hero, buttons, emailLoginArea(), note, legal);
 
     const later = el("button", { class: "btn-ghost", text: "나중에 할게요" });
     later.addEventListener("click", () => {
@@ -272,7 +321,8 @@ export function loginScreen(
     else renderSignedOut();
   }
 
-  const elm = el("section", { class: "screen" }, head, body, footer, snackEl);
+  // id는 URL 해시 동기(main.ts syncHash — #/login)의 판별 근거.
+  const elm = el("section", { class: "screen", attrs: { id: "sc-login" } }, head, body, footer, snackEl);
   // 등록 즉시 1회 렌더 + 이후 로그인/로그아웃에 반응. 해제는 leave()와 라우터 onExit 양쪽에서(중복 안전).
   offAuth = onAuthChange(() => render());
   // OAuth 복귀가 에러였다면 원인을 보여 준다(조용한 실패 금지 — 실기기 디버깅의 유일한 창구)

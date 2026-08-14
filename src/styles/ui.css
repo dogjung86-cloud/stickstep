@@ -1823,6 +1823,23 @@
 .login-btn.google { background: #fff; border: 1.5px solid var(--n300); color: var(--n800); }
 .login-btn.kakao { background: #FEE500; color: #3C1E1E; }
 .login-note { margin-top: 16px; text-align: center; font-size: 12.5px; color: var(--n500); line-height: 1.55; word-break: keep-all; }
+/* 이메일 로그인(2026-08-14 토스PG 심사 대응) — 소셜 아래 접힘 토글. 가입 UI 없음(가입 정본은 소셜). */
+.login-email { margin-top: 12px; display: flex; flex-direction: column; align-items: stretch; }
+.login-email-toggle {
+  align-self: center; background: none; border: 0; padding: 6px 10px;
+  font-size: 13px; font-weight: 700; color: var(--n500);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.login-email-form { display: none; margin-top: 8px; flex-direction: column; gap: 8px; }
+.login-email.open .login-email-form { display: flex; }
+.login-email.open .login-email-toggle { display: none; }
+.login-input {
+  height: 48px; border-radius: var(--r-md); border: 1.5px solid var(--n300);
+  background: #fff; padding: 0 14px; font-size: 15px; color: var(--n900);
+}
+.login-input::placeholder { color: var(--n400); }
+.login-input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-tint); }
+.login-btn.email { background: var(--n800); color: #fff; }
 /* 로그인 상태 — 앱바 프로필 사진 + 마이페이지 학습 요약 */
 /* .ab-avatar 폐기(2026-07-16) — 우상단 프로필 버튼 제거(프로필 진입 단일화), 아바타 노출은 탭바 .gnav-ava가 승계 */
 .login-ava img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }

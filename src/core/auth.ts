@@ -335,6 +335,28 @@ export async function signInWith(provider: OAuthProvider): Promise<SignInResult>
   }
 }
 
+/** 이메일/비밀번호 로그인(2026-08-14 토스PG 심사 대응 — 심사용 테스트 계정의 진입 경로 겸
+ *  이메일 계정 로그인). 일반 가입 UI는 두지 않는다(가입 정본은 소셜 — 이메일 계정 발급은
+ *  운영자가 Supabase 관리 콘솔/관리 API로, 절차는 PAYMENTS.md 심사 섹션). 성공 시 처리는
+ *  onAuthStateChange 공용 경로(emit → sync)라 소셜 로그인과 완전히 동일하다. */
+export async function signInWithEmailPassword(
+  email: string,
+  password: string,
+): Promise<{ ok: boolean; reason?: string }> {
+  if (!isAuthConfigured()) return { ok: false, reason: "지금은 이메일 로그인을 쓸 수 없어요" };
+  try {
+    const c = await getSupabase();
+    const { error } = await c.auth.signInWithPassword({ email: email.trim(), password });
+    if (!error) return { ok: true };
+    const m = error.message ?? "";
+    if (/invalid login credentials/i.test(m)) return { ok: false, reason: "이메일 또는 비밀번호가 맞지 않아요" };
+    if (/email not confirmed/i.test(m)) return { ok: false, reason: "이메일 확인이 끝나지 않은 계정이에요" };
+    return { ok: false, reason: m };
+  } catch (e) {
+    return { ok: false, reason: e instanceof Error ? e.message : String(e) };
+  }
+}
+
 /** 닉네임 서버 반영(profiles.nickname — 가입 트리거가 행을 만들므로 update만) —
  *  미로그인·미설정 환경에선 조용히 no-op. 성공 여부만 반환(실패해도 기기 저장이 진실). */
 export async function pushNickname(nickname: string | null): Promise<boolean> {

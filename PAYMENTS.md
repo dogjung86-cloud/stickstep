@@ -68,6 +68,29 @@ NOT_FOUND_PAYMENT_SESSION, UNAUTHORIZED 아님). 이후 테스트 결제는 개�
   스텁 왕복·실패 복귀). 실서버 왕복 검증은 테스트 유저 시딩(관리 API로 auth 유저 생성 → password
   grant 세션 주입) 후 실플레이 — 세부 패턴은 메모리 project-toss-payments 참조.
 
+## PG 심사 대응 (2026-08-14 — 토스 계약 담당자 필수질문 회신 세트)
+
+- **심사 제출 URL**: 상품/서비스 = `https://stickstep.com/#/pricing`(URL 해시 라우팅 — core/route.ts,
+  로그인 = `/#/login`, 과목 = `/#/subject/sci` 등) · 환불 정책 = `https://stickstep.com/refund.html`
+  (정본) · 서비스 소개 = `/about.html`. QA = `PORT=<포트> node qa/e2e-route.mjs`.
+- **심사용 테스트 계정**: `toss-review@stickstep.com` / `stickstep2026!` — Supabase auth 실계정
+  (2026-08-14 관리 API로 생성, email_confirm 완료, 일반 권한 = 과학만 노출·비프리미엄이라 결제
+  플로우 시연 가능). 로그인 경로 = 마이 탭 또는 `/#/login` → "이메일로 로그인" 토글.
+  프리미엄·운영 권한 없음 — PRIVILEGED_EMAILS에 절대 넣지 말 것(넣으면 페이월이 안 떠 심사 불가).
+  재발급(비번 변경 포함) = 관리 API `PUT /auth/v1/admin/users/{id}`(service role — PAT로
+  api-keys?reveal=true에서 취득).
+- **서비스 제공기간 신고 = 12개월**(2026-08-14 사용자 확정): 소장 = 유료 제공기간 12개월 + 이후
+  무상 연장 구조(CLAUDE.md 페이월 v4 항목·refund.html 10절 정본). 6개월 초과 상품이라 **가상계좌는
+  계약에 넣지 않는다**(토스 정책 — 카드·간편결제만). 단건 최고가 = 현 노출 기준 24,900원(과학 2종),
+  전 과목 공개 시 45,200원(4과목).
+- **결제경로 PPT**: `D:\Brilliant Science\output\toss-pg\` — 가이드 요건 = 표지 가맹점 정보(테스트
+  계정 포함)·하단 사업자정보·환불규정·로그인 경로·상품 구매과정·카드 결제경로(비씨는 인증 직전까지),
+  전 캡처에 주소창 도메인 + PC 시계 노출 의무.
+- **잔여**: 통신판매업 신고번호(사용자 신고 예정 — 나오면 brand.ts BIZ_INFO + about.html 푸터 두 곳).
+- **라이브 전환 시 추가 확인**: pay-confirm의 `DOCS_TEST_SECRET` 폴백(index.ts:10·:109 — 시크릿
+  미설정 시 문서 공개 테스트 키로 조용히 폴백) 제거 또는 미설정 500 처리 — 라이브에서 시크릿 누락이
+  "문서 상점으로 승인 시도"가 되는 사고 방지.
+
 ## 운영 메모
 
 - **주문 원장 조회**: orders(user_id·plan·subject_ids·amount·status·receipt_url·test_mode).

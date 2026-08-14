@@ -4,3 +4,4 @@ tmp
 supabase
 *.md
 .env.example
+.claude

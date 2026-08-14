@@ -23,7 +23,9 @@ import "./styles/his.css";
 import "./styles/desktop.css"; // 데스크톱 셸(옵트인·≥1024px) — html.dt 게이트, 캐스케이드 최후순위
 
 import { nav } from "./core/router";
-import { getState, completeLesson, setOnboarding, setViewSubject, setViewGrade, isPremium, isReviewMode, setPremiumOverride, setAdminOverride, canSeeAllSubjects, isDone, setLastUnit, recentUnit } from "./core/store";
+import { parseRoute, writeHash } from "./core/route";
+import type { AppRoute } from "./core/route";
+import { getState, completeLesson, setOnboarding, setViewSubject, setViewGrade, getViewSubject, isPremium, isReviewMode, setPremiumOverride, setAdminOverride, canSeeAllSubjects, isDone, setLastUnit, recentUnit } from "./core/store";
 import type { WrongNote } from "./core/store";
 import { isTutorConfigured } from "./core/tutor";
 import { tutorScreen } from "./screens/tutor";
@@ -136,7 +138,7 @@ function goTab(k: GnavKey): void {
           nav.go(
             paywallScreen({
               onLogin: openLogin,
-              sub: "모든 프리미엄 레슨과 단원 평가 재응시를 기간 제한 없이 열 수 있어요.",
+              sub: "모든 프리미엄 레슨과 단원 평가 재응시를 열 수 있어요.",
               onUnlocked: () => {
                 nav.back();
                 onUnlocked?.();
@@ -181,11 +183,61 @@ function appBack(): boolean {
 }
 window.addEventListener("popstate", () => {
   historyArmed = false;
+  // 뒤로가기로 주소가 바뀌면 hashchange가 뒤따라온다 — appBack이 이미 처리한 이동이므로
+  // 라우트 적용을 잠깐 막는다(이중 내비 차단, core/route.ts 계약 ②).
+  hashFromPop = true;
+  window.setTimeout(() => (hashFromPop = false), 80);
   appBack(); // 이동이 일어나면 nav 변경 훅이 필요 시 다시 무장한다
 });
 nav.setOnChange(() => {
   if (nav.depth > 1 || currentTab !== "home") armHistory();
   else if (historyArmed) history.back(); // 루트 복귀 — 가드 상태를 조용히 반납(popstate는 루트라 no-op)
+  syncHash(); // 화면 전환마다 주소창 해시를 따라 맞춘다(2026-08-14 URL 라우팅)
+});
+
+// ── URL 해시 라우팅(2026-08-14 토스PG 심사 대응 — 계약은 core/route.ts 헤더) ──
+// 아웃바운드: 화면 → 주소. 스플래시·로그인·상품(페이월)·정책 화면과 최상위 탭만 주소를 가진다.
+function syncHash(): void {
+  const top = nav.top?.el;
+  if (!top) return;
+  const id = top.id;
+  if (id === "sc-splash") writeHash("");
+  else if (id === "sc-login") writeHash("login");
+  else if (id === "sc-paywall") writeHash("pricing");
+  else if (id === "sc-policy") writeHash(top.dataset.policyFile === "refund.html" ? "refund" : "privacy");
+  else if (nav.depth === 1) writeHash(currentTab === "home" ? `subject/${getViewSubject()}` : currentTab);
+  // 레슨·시험 등 그 외 화면은 주소를 바꾸지 않는다(마지막 주소 유지 — 계약 ③).
+}
+
+/** 인바운드: 주소 → 화면. 부팅 딥링크와 주소창 수정(hashchange) 공용. 스플래시를 건너뛰므로
+ *  미온보딩 방문자(PG 심사역 포함)에게는 둘러보기와 같은 기본값을 먼저 심는다(showSplash 참조). */
+function enterFromRoute(r: AppRoute): void {
+  if (!getState().onboarded) {
+    setOnboarding("g1", 10);
+    setViewGrade("g1");
+    setViewSubject("sci");
+  }
+  if (r.k === "subject") {
+    pickSubject(r.s); // 공개 게이트가 닫혀 있으면 getViewSubject 클램프가 과학 지도로 거른다
+  } else if (r.k === "grade") {
+    setViewGrade(r.g);
+    goHome();
+  } else if (r.k === "tab") {
+    goTab(r.tab);
+  } else {
+    goHome(); // 닫기·뒤로가기가 홈으로 떨어지도록 홈을 깔고 위에 얹는다
+    if (r.k === "login") openLogin();
+    else if (r.k === "pricing") openPricing();
+    else if (r.file === "refund.html") openRefund();
+    else openPolicy();
+  }
+}
+
+let hashFromPop = false;
+window.addEventListener("hashchange", () => {
+  if (hashFromPop) return;
+  const r = parseRoute(location.hash);
+  if (r) enterFromRoute(r);
 });
 
 /** 오답노트 — 프리미엄 전용(복습 탭 콘텐츠 전면 프리미엄, 2026-07-15 사용자 확정).
@@ -374,6 +426,18 @@ function openLogin(): void {
   );
 }
 
+/** 상품(프리미엄 안내) 화면 단독 진입 — 심사·공유용 URL(#/pricing)이 여는 경로(2026-08-14).
+ *  기존 9곳 게이트 진입과 달리 맥락 문구 없이 기본 페이월을 연다. 닫기·구매 완료 모두 홈 복귀. */
+function openPricing(): void {
+  nav.go(
+    paywallScreen({
+      onLogin: openLogin,
+      onUnlocked: () => nav.back(),
+      onClose: () => nav.back(),
+    }),
+  );
+}
+
 /** 개인정보처리방침 — 마이 탭 행과 로그인 화면 동의 고지가 함께 쓴다(원본: public/privacy.html). */
 function openPolicy(): void {
   nav.go(policyScreen(() => nav.back()));
@@ -465,6 +529,7 @@ function showSplash(instant = false): void {
 capturePaymentReturn();
 
 // [임시 프리뷰] 적용 랩 시제품 — DEV에서 ?preview=u3l1v2 로 진입. 폐기 시 이 분기를 지우고 start()만 남긴다.
+const bootRoute = parseRoute(location.hash);
 if (import.meta.env.DEV && new URLSearchParams(location.search).get("preview") === "u3l1v2") {
   void import("./content/previewU3l1").then(({ previewU3L1 }) => {
     const player = createLessonPlayer(previewU3L1(), {
@@ -473,6 +538,8 @@ if (import.meta.env.DEV && new URLSearchParams(location.search).get("preview") =
     });
     nav.go({ el: player.el });
   });
+} else if (bootRoute) {
+  enterFromRoute(bootRoute); // 딥링크(#/pricing·#/login 등) — 스플래시를 건너뛰고 해당 화면으로(2026-08-14)
 } else {
   showSplash();
 }
