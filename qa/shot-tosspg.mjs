@@ -2,8 +2,8 @@
 // **전체 화면 캡처**(가이드 요건 2·3: 도메인 노출 + 시간 흐름). 산출물 = output/toss-pg/shots/*.png
 // 실행: node qa/shot-tosspg.mjs  (기본 대상 = 프로덕션 https://stickstep.com — dev 서버 불필요)
 // 흐름: 메인(스플래시+사업자정보) → 로그인(이메일 폼 → 완료) → 환불 정책 → 상품(#/pricing)
-//       → 주문 확인 시트 → 토스 결제창(카드) → NH농협 → 비씨 각 인증 직전(가이드 요건 8).
-// **결제는 완료하지 않는다** — 심사 계정(toss-review@…)을 비프리미엄으로 유지해야 심사역이
+//       → 주문 확인 시트 → 토스 결제창(카드) → 삼성카드 → 비씨 각 인증 직전(가이드 요건 8).
+// **결제는 완료하지 않는다** — 심사 계정(toss@…)을 비프리미엄으로 유지해야 심사역이
 // 결제 플로우를 직접 밟을 수 있다. 중단된 주문은 orders에 pending으로 남고 무해(PAYMENTS.md).
 import { chromium } from "playwright-core";
 import { spawnSync } from "node:child_process";
@@ -16,16 +16,78 @@ const PW = process.env.TOSS_TEST_PW || "20262026";
 fs.mkdirSync(OUT, { recursive: true });
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-function snap(name) {
-  const ps =
-    "Add-Type -AssemblyName System.Windows.Forms,System.Drawing; " +
-    "$b=[System.Windows.Forms.Screen]::PrimaryScreen.Bounds; " +
-    "$bmp=New-Object System.Drawing.Bitmap($b.Width,$b.Height); " +
-    "$g=[System.Drawing.Graphics]::FromImage($bmp); " +
-    "$g.CopyFromScreen($b.Location,[System.Drawing.Point]::Empty,$b.Size); " +
-    `$bmp.Save('${OUT}/${name}.png'); $g.Dispose(); $bmp.Dispose()`;
-  const r = spawnSync("powershell.exe", ["-NoProfile", "-Command", ps], { timeout: 30000 });
-  console.log(`SNAP ${name}${r.status === 0 ? "" : " FAIL"}`);
+// 캡처 방식(2026-08-15 개정): 화면 전체 복사(CopyFromScreen)는 사용자가 작업 중이면 다른 창이
+// 위에 찍혀 오염된다(실사고 2회 — bringToFront로도 사용자 앱을 못 이김). 대신 우리 자동화 크롬
+// 창들만 PrintWindow(PW_RENDERFULLCONTENT)로 직접 떠서(가려져 있어도 창 내용이 온전히 나온다)
+// z순서대로 합성하고, 작업표시줄(PC 시계 — 가이드 필수) 띠만 실화면에서 붙인다. 작업표시줄은
+// 항상 최상위라 오염 없음. 우리 크롬 판별 = 실행 인자에 심은 --ss-shot-marker(크롬은 모르는
+// 플래그를 무시한다) → CommandLine 매칭 PID → 그 PID의 Chrome_WidgetWin 창들.
+function snapPs(outfile) {
+  return `
+Add-Type -AssemblyName System.Windows.Forms,System.Drawing
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
+public class SSWin {
+  [DllImport("user32.dll")] public static extern bool EnumWindows(EnumWindowsProc cb, IntPtr l);
+  public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr l);
+  [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
+  [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr h, out uint pid);
+  [DllImport("user32.dll", CharSet=CharSet.Auto)] public static extern int GetClassName(IntPtr h, System.Text.StringBuilder sb, int max);
+  [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
+  [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr h, IntPtr dc, uint flags);
+  public struct RECT { public int Left, Top, Right, Bottom; }
+  public static List<IntPtr> Order = new List<IntPtr>();
+  public static bool Collect(IntPtr h, IntPtr l) { Order.Add(h); return true; }
+}
+"@
+$pids = @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" | Where-Object { $_.CommandLine -like '*ss-shot-marker*' } | ForEach-Object { [uint32]$_.ProcessId })
+if ($pids.Count -eq 0) { Write-Error 'no marked chrome'; exit 1 }
+[SSWin]::Order.Clear()
+[void][SSWin]::EnumWindows([SSWin+EnumWindowsProc]{ param($h,$l) [SSWin]::Collect($h,$l) }, [IntPtr]::Zero)
+$wins = @()
+foreach ($h in [SSWin]::Order) {
+  if (-not [SSWin]::IsWindowVisible($h)) { continue }
+  $wpid = [uint32]0; [void][SSWin]::GetWindowThreadProcessId($h, [ref]$wpid)
+  if ($pids -notcontains $wpid) { continue }
+  $sb = New-Object System.Text.StringBuilder 64; [void][SSWin]::GetClassName($h, $sb, 64)
+  if ($sb.ToString() -notlike 'Chrome_WidgetWin*') { continue }
+  $r = New-Object SSWin+RECT; [void][SSWin]::GetWindowRect($h, [ref]$r)
+  if (($r.Right - $r.Left) -lt 220 -or ($r.Bottom - $r.Top) -lt 160) { continue }
+  $wins += ,@($h, $r)
+}
+if ($wins.Count -eq 0) { Write-Error 'no chrome window'; exit 1 }
+$b = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+$w = [System.Windows.Forms.Screen]::PrimaryScreen.WorkingArea
+$canvas = New-Object System.Drawing.Bitmap($b.Width, $b.Height)
+$g = [System.Drawing.Graphics]::FromImage($canvas)
+$g.Clear([System.Drawing.Color]::White)
+[array]::Reverse($wins)  # EnumWindows는 위→아래 순서 — 아래 창부터 그려 z순서 재현
+foreach ($wr in $wins) {
+  $h = $wr[0]; $r = $wr[1]
+  $ww = $r.Right - $r.Left; $wh = $r.Bottom - $r.Top
+  $wb = New-Object System.Drawing.Bitmap($ww, $wh)
+  $wg = [System.Drawing.Graphics]::FromImage($wb)
+  $dc = $wg.GetHdc()
+  [void][SSWin]::PrintWindow($h, $dc, 2)  # 2 = PW_RENDERFULLCONTENT(GPU 렌더 크롬 필수)
+  $wg.ReleaseHdc($dc); $wg.Dispose()
+  $g.DrawImage($wb, $r.Left, $r.Top)
+  $wb.Dispose()
+}
+$strip = New-Object System.Drawing.Bitmap($b.Width, ($b.Height - $w.Height))
+$sg = [System.Drawing.Graphics]::FromImage($strip)
+$sg.CopyFromScreen(0, $w.Height, 0, 0, $strip.Size)  # 작업표시줄(시계) — 항상 최상위라 청정
+$sg.Dispose()
+$g.DrawImage($strip, 0, $w.Height)
+$strip.Dispose(); $g.Dispose()
+$canvas.Save('${outfile}'); $canvas.Dispose()
+`;
+}
+async function snap(name) {
+  await sleep(250);
+  const r = spawnSync("powershell.exe", ["-NoProfile", "-Command", snapPs(`${OUT}/${name}.png`)], { timeout: 45000 });
+  console.log(`SNAP ${name}${r.status === 0 ? "" : " FAIL " + String(r.stderr).slice(0, 120)}`);
 }
 
 const browser = await chromium.launch({
@@ -33,7 +95,7 @@ const browser = await chromium.launch({
   headless: false,
   ignoreDefaultArgs: ["--enable-automation"], // "자동화 소프트웨어" 인포바 제거(심사 문서 청결)
   // 작업영역 전체를 덮는다 — 뒤에 열린 다른 창(개인 화면)이 캡처에 섞이지 않게. 작업표시줄(시계)만 남긴다.
-  args: ["--window-position=0,0", "--window-size=1920,1032", "--lang=ko-KR"],
+  args: ["--window-position=0,0", "--window-size=1920,1032", "--lang=ko-KR", "--ss-shot-marker"],
 });
 const ctx = await browser.newContext({ viewport: null, locale: "ko-KR" });
 const page = await ctx.newPage();
@@ -86,7 +148,7 @@ if (!settled) {
   await page.waitForSelector(".splash-foot.done", { timeout: 8000 }).catch(() => {});
 }
 await sleep(900);
-snap("01-main");
+await snap("01-main");
 // 사업자 정보 요소 단독 샷(선명 인셋용 — 본 캡처는 전체 화면이 정본)
 await page.locator(".splash-business").screenshot({ path: `${OUT}/inset-biz.png` }).catch(() => {});
 
@@ -97,12 +159,12 @@ await sleep(300);
 await page.locator("#sc-login .login-email-form input").nth(0).fill(EMAIL);
 await page.locator("#sc-login .login-email-form input").nth(1).fill(PW);
 await sleep(300);
-snap("02-login-form");
+await snap("02-login-form");
 await page.click("#sc-login .login-btn.email");
 // 로그인 성공 → 메인 지도 자동 진입(2026-08-15 확정 — 계정 화면 대신 홈)
 await page.waitForSelector("#sc-home", { timeout: 25000 });
 await sleep(1400);
-snap("03-login-done");
+await snap("03-login-done");
 // 계정 확인 — 마이 탭 → 계정 관리(로그인 계정 이메일 표시)
 try {
   await page.evaluate(() => [...document.querySelectorAll(".gnav button")].find((b) => b.textContent.includes("마이"))?.click());
@@ -115,7 +177,7 @@ try {
     timeout: 15000,
   });
   await sleep(600);
-  snap("03b-account");
+  await snap("03b-account");
 } catch (e) {
   console.log("account shot skip:", String(e).slice(0, 80));
 }
@@ -123,14 +185,14 @@ try {
 // ── 3. 환불 정책(정적 정본 — 주소창에 /refund.html) ──
 await page.goto(`${BASE}/refund.html`, { waitUntil: "networkidle" });
 await sleep(600);
-snap("04-refund");
+await snap("04-refund");
 await page.evaluate(() => {
   const h = [...document.querySelectorAll("h2")].find((x) => x.textContent.includes("10."));
   h?.scrollIntoView({ block: "start" });
   window.scrollBy(0, -12);
 });
 await sleep(500);
-snap("05-refund-period");
+await snap("05-refund-period");
 
 // ── 4. 상품(#/pricing) — 상단·플랜·가격/파인프린트 ──
 async function gotoPricing() {
@@ -143,13 +205,13 @@ async function gotoPricing() {
   await sleep(900); // 등장 연출 완료
 }
 await gotoPricing();
-snap("06-pricing");
+await snap("06-pricing");
 await page.evaluate(() => document.querySelector(".pwx-plans")?.scrollIntoView({ block: "center" }));
 await sleep(500);
-snap("07-pricing-plans");
+await snap("07-pricing-plans");
 await page.evaluate(() => document.querySelector(".pwx-fine")?.scrollIntoView({ block: "center" }));
 await sleep(500);
-snap("08-pricing-price");
+await snap("08-pricing-price");
 
 // ── 5. 주문 확인 시트 → 토스 결제창(카드사 선택 → 인증 직전) ──
 async function openSheetAndPay() {
@@ -176,10 +238,10 @@ async function openPayWindow() {
 }
 
 await openSheetAndPay();
-snap("09-order-sheet");
+await snap("09-order-sheet");
 let pay = await openPayWindow();
 await sleep(1500);
-snap("10-toss-window");
+await snap("10-toss-window");
 
 /** 약관 체크 — 게이트웨이 프레임 DOM 직접 클릭(프레임이 카드 상세로 내비게이트한 직후라
  *  텍스트 셀렉터는 타이밍에 취약 — [필수] 리프에서 조상으로 올라가며 체크박스를 찾는다). */
@@ -213,10 +275,10 @@ async function cardRound(label, tileSels, prefix) {
   const consent = await consentInFrame(pay);
   console.log(`${label} consent:`, consent);
   await sleep(500);
-  snap(`${prefix}-pick`);
+  await snap(`${prefix}-pick`);
   await tryClick(pay, ['button:has-text("다음")', "text=다음", 'button:has-text("결제하기")'], 5000);
   await sleep(6500); // 카드사 인증 페이지 로드
-  snap(`${prefix}-auth`);
+  await snap(`${prefix}-auth`);
   // 인증이 별도 팝업이면 정리(메인 페이지는 유지)
   for (const p of ctx.pages()) {
     if (p !== page) await p.close().catch(() => {});
