@@ -20,7 +20,7 @@ const KAKAO_MARK = `<svg viewBox="0 0 24 24" width="20" height="20" fill="#3C1E1
   <path d="M12 4C7 4 3 7.2 3 11.2c0 2.6 1.7 4.8 4.3 6.1l-1 3.7 4-2.4c.6.1 1.1.1 1.7.1 5 0 9-3.2 9-7.2S17 4 12 4z"/>
 </svg>`;
 
-const PROVIDER_LABEL: Record<string, string> = { google: "Google", kakao: "카카오" };
+const PROVIDER_LABEL: Record<string, string> = { google: "Google", kakao: "카카오", email: "이메일" };
 
 const base = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/";
 
