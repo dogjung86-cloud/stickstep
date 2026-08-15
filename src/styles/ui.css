@@ -2871,8 +2871,9 @@ button.he-fig:active:not(:disabled) { transform: scale(.985); }
 .ld-login:active { transform: scale(.975); background: var(--n50); }
 .ld-teacher { width: 100%; padding: 8px 0 2px; font-size: 13px; font-weight: 600; color: var(--n500); }
 .splash-business { margin-top: 8px; padding: 17px 12px 2px; border-top: 1px solid var(--n150); text-align: center; }
-.splash-business-title { margin-bottom: 7px; font-size: 11.5px; font-weight: 700; color: var(--n500); }
-.splash-business-line { margin-top: 3px; font-size: 10.5px; line-height: 1.5; color: var(--n400); word-break: keep-all; }
+/* 명도: 구 n500/n400은 심사 캡처에서 흐릿하다는 사용자 지적(2026-08-15) — 두 단계 진하게. */
+.splash-business-title { margin-bottom: 7px; font-size: 11.5px; font-weight: 700; color: var(--n700); }
+.splash-business-line { margin-top: 3px; font-size: 10.5px; line-height: 1.5; color: var(--n600); word-break: keep-all; }
 /* 하단 링크 행(소개·방침·환불) — 사업자 정보처럼 항상 표시(버튼 fadeUp 애니 대상 아님) */
 .splash-legal { margin-top: -4px; padding-bottom: 2px; text-align: center; }
 .splash-legal-link { display: inline-block; padding: 3px 2px; font-size: 11px; font-weight: 600; color: var(--n500); text-decoration: underline; text-underline-offset: 2px; }
