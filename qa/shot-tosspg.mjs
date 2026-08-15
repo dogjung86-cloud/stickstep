@@ -99,11 +99,26 @@ await page.locator("#sc-login .login-email-form input").nth(1).fill(PW);
 await sleep(300);
 snap("02-login-form");
 await page.click("#sc-login .login-btn.email");
-await page.waitForFunction((em) => (document.querySelector("#sc-login")?.textContent ?? "").includes(em), EMAIL, {
-  timeout: 25000,
-});
-await sleep(800);
+// 로그인 성공 → 메인 지도 자동 진입(2026-08-15 확정 — 계정 화면 대신 홈)
+await page.waitForSelector("#sc-home", { timeout: 25000 });
+await sleep(1400);
 snap("03-login-done");
+// 계정 확인 — 마이 탭 → 계정 관리(로그인 계정 이메일 표시)
+try {
+  await page.evaluate(() => [...document.querySelectorAll(".gnav button")].find((b) => b.textContent.includes("마이"))?.click());
+  await sleep(900);
+  await page.evaluate(() => {
+    const rows = [...document.querySelectorAll("button, [role='button']")];
+    rows.find((b) => (b.textContent ?? "").includes("계정 관리"))?.click();
+  });
+  await page.waitForFunction((em) => (document.querySelector("#sc-login")?.textContent ?? "").includes(em), EMAIL, {
+    timeout: 15000,
+  });
+  await sleep(600);
+  snap("03b-account");
+} catch (e) {
+  console.log("account shot skip:", String(e).slice(0, 80));
+}
 
 // ── 3. 환불 정책(정적 정본 — 주소창에 /refund.html) ──
 await page.goto(`${BASE}/refund.html`, { waitUntil: "networkidle" });
@@ -208,8 +223,17 @@ async function cardRound(label, tileSels, prefix) {
   }
 }
 
-// 농협(NH) 인증 직전
-await cardRound("NH", ['text=농협(NH페이)', "text=농협"], "11-toss-nh");
+// 삼성카드 인증 직전(2026-08-15 사용자 확정 — 구 농협 라운드 교체). 삼성은 카드 그리드
+// "더 보기" 안에 있다 — 더 보기가 간편결제·카드 두 곳에 있으므로 두 번째(카드 쪽)를 편다.
+try {
+  const mb = pay.locator("text=더 보기");
+  const n = await mb.count();
+  await mb.nth(n > 1 ? 1 : 0).click({ timeout: 4000 });
+  await sleep(800);
+} catch {
+  /* 이미 펼쳐짐 등 — 무시 */
+}
+await cardRound("SAMSUNG", ["text=삼성카드", "text=삼성"], "11-toss-sam");
 
 // 결제창 리로드 정리 후 비씨 라운드(창 내 뒤로가기보다 재진입이 안정적)
 await gotoPricing();

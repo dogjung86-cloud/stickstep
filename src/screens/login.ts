@@ -52,7 +52,7 @@ function accountHeroArt(): HTMLElement {
 
 export function loginScreen(
   onClose: () => void,
-  extras?: { onOpenNotebook?: () => void; onOpenPolicy?: () => void },
+  extras?: { onOpenNotebook?: () => void; onOpenPolicy?: () => void; onLoggedIn?: () => void },
 ): Screen {
   let offAuth: (() => void) | null = null;
   const unsub = (): void => {
@@ -324,7 +324,20 @@ export function loginScreen(
   // id는 URL 해시 동기(main.ts syncHash — #/login)의 판별 근거.
   const elm = el("section", { class: "screen", attrs: { id: "sc-login" } }, head, body, footer, snackEl);
   // 등록 즉시 1회 렌더 + 이후 로그인/로그아웃에 반응. 해제는 leave()와 라우터 onExit 양쪽에서(중복 안전).
-  offAuth = onAuthChange(() => render());
+  // 이 화면에서 방금 로그인이 일어난 순간(비로그인 → 로그인)은 계정 화면을 그리지 않고 목적지로
+  // 보낸다(2026-08-15 사용자 확정 — 기본 = 메인 지도, 결제 유도 로그인 = 페이월 복귀. main.ts openLogin).
+  // 로그인된 상태로 연 계정 관리 화면(마이 탭 경유)과 회원탈퇴(로그인 → 비로그인)는 기존 렌더 유지.
+  let wasSignedIn = !!currentUser();
+  offAuth = onAuthChange(() => {
+    const signedIn = !!currentUser();
+    if (signedIn && !wasSignedIn && extras?.onLoggedIn) {
+      unsub();
+      extras.onLoggedIn();
+      return;
+    }
+    wasSignedIn = signedIn;
+    render();
+  });
   // OAuth 복귀가 에러였다면 원인을 보여 준다(조용한 실패 금지 — 실기기 디버깅의 유일한 창구)
   const authErr = consumeAuthError();
   if (authErr) window.setTimeout(() => snack(`로그인이 중단됐어요: ${authErr}`), 350);

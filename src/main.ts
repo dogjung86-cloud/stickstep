@@ -137,7 +137,7 @@ function goTab(k: GnavKey): void {
         onOpenPaywall: (onUnlocked) =>
           nav.go(
             paywallScreen({
-              onLogin: openLogin,
+              onLogin: () => openLogin("back"),
               sub: "모든 프리미엄 레슨과 단원 평가 재응시를 열 수 있어요.",
               onUnlocked: () => {
                 nav.back();
@@ -299,7 +299,7 @@ function openNotebook(): void {
   }
   nav.go(
     paywallScreen({
-      onLogin: openLogin,
+      onLogin: () => openLogin("back"),
       sub: "틀린 문제가 오답노트에 차곡차곡 모여 있어요. 다시 풀어 완전히 내 것으로 만들 수 있어요.",
       onUnlocked: () => {
         nav.back();
@@ -319,7 +319,7 @@ function openTutor(note?: WrongNote): void {
   }
   nav.go(
     paywallScreen({
-      onLogin: openLogin,
+      onLogin: () => openLogin("back"),
       sub: "AI 튜터 스틱쌤에게 막힌 문제를 사진과 함께 바로 물어볼 수 있어요.",
       onUnlocked: () => {
         nav.back();
@@ -338,7 +338,7 @@ function openWeakDrill(): void {
   }
   nav.go(
     paywallScreen({
-      onLogin: openLogin,
+      onLogin: () => openLogin("back"),
       sub: "취약 단원 문제 뽑기로 원하는 소단원만 골라 맞춤 문제지를 만들 수 있어요.",
       onUnlocked: () => {
         nav.back();
@@ -360,7 +360,7 @@ function openStepRush(): void {
   }
   nav.go(
     paywallScreen({
-      onLogin: openLogin,
+      onLogin: () => openLogin("back"),
       sub: "도전 탭 미니게임 스텝 러시가 프리미엄에 포함돼 있어요. 무한 계단을 오르며 최고 기록에 도전해 보세요.",
       onUnlocked: () => {
         nav.back();
@@ -382,7 +382,7 @@ function openCosmoMerge(): void {
   }
   nav.go(
     paywallScreen({
-      onLogin: openLogin,
+      onLogin: () => openLogin("back"),
       sub: "도전 탭 미니게임 태양 만들기가 프리미엄에 포함돼 있어요. 우주먼지를 합쳐 태양까지 키워 보세요.",
       onUnlocked: () => {
         nav.back();
@@ -403,7 +403,7 @@ function openLaserMaze(): void {
   }
   nav.go(
     paywallScreen({
-      onLogin: openLogin,
+      onLogin: () => openLogin("back"),
       sub: "도전 탭 미니게임 레이저 미로가 프리미엄에 포함돼 있어요. 거울을 돌려 레이저를 보석까지 보내 보세요.",
       onUnlocked: () => {
         nav.back();
@@ -424,7 +424,7 @@ function openOneStroke(): void {
   }
   nav.go(
     paywallScreen({
-      onLogin: openLogin,
+      onLogin: () => openLogin("back"),
       sub: "도전 탭 미니게임 네온 한붓그리기가 프리미엄에 포함돼 있어요. 네온사인을 한 붓에 켜며 몇 판까지 가는지 도전해 보세요.",
       onUnlocked: () => {
         nav.back();
@@ -446,7 +446,7 @@ function openExam(unitId: string): void {
       onPaywall: (unlocked) =>
         nav.go(
           paywallScreen({
-            onLogin: openLogin,
+            onLogin: () => openLogin("back"),
             sub: "단원 종합 평가를 무제한으로 다시 풀고, 모든 프리미엄 레슨도 함께 열 수 있어요.",
             onUnlocked: () => {
               nav.back();
@@ -467,11 +467,16 @@ function pickSubject(s: "sci" | "math" | "soc" | "his"): void {
   goHome();
 }
 
-function openLogin(): void {
+/** 로그인 화면 — afterLogin은 "이 화면에서 방금 로그인했을 때"의 목적지(2026-08-15 사용자 확정):
+ *  기본 "home" = 메인 지도(resumeLearning — 최근 단원 복원), "back" = 이전 화면 복귀(페이월의
+ *  "로그인하고 결제 진행" 경로 — 홈으로 던지면 결제 흐름이 끊긴다). 이미 로그인된 상태로 연
+ *  계정 관리 화면은 영향 없음(login.ts onLoggedIn은 비로그인→로그인 전이에만 발동). */
+function openLogin(afterLogin: "home" | "back" = "home"): void {
   nav.go(
     loginScreen(() => nav.back(), {
       onOpenNotebook: openNotebook,
       onOpenPolicy: openPolicy,
+      onLoggedIn: afterLogin === "back" ? () => nav.back() : resumeLearning,
     }),
   );
 }
@@ -481,7 +486,7 @@ function openLogin(): void {
 function openPricing(): void {
   nav.go(
     paywallScreen({
-      onLogin: openLogin,
+      onLogin: () => openLogin("back"),
       onUnlocked: () => nav.back(),
       onClose: () => nav.back(),
     }),
@@ -519,7 +524,7 @@ function openLesson(id: string): void {
   if (isPremiumLocked(found.lesson)) {
     nav.go(
       paywallScreen({
-        onLogin: openLogin,
+        onLogin: () => openLogin("back"),
         lessonTitle: found.lesson.title,
         onUnlocked: goHome,
         onClose: () => nav.back(),
@@ -563,7 +568,8 @@ function showSplash(instant = false): void {
       nav.go(
         loginScreen(
           () => nav.back(),
-          { onOpenNotebook: openNotebook, onOpenPolicy: openPolicy },
+          // 스플래시에서 로그인하면 메인 지도로 — X로 스플래시에 돌아가는 게 아니라(2026-08-15 사용자 확정)
+          { onOpenNotebook: openNotebook, onOpenPolicy: openPolicy, onLoggedIn: resumeLearning },
         ),
       ),
   });
