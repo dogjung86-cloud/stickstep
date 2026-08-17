@@ -157,3 +157,25 @@ as $$
 $$;
 revoke execute on function public.delete_user() from public, anon;
 grant execute on function public.delete_user() to authenticated;
+
+-- ── 버그·건의 접수함(2026-08-17) ──────────────────────────────────────
+-- 마이 탭 "버그·건의 보내기" 시트(core/report.ts)가 쓴다. 공개 게시판이 아니라 운영자
+-- 수신함이다: 클라이언트는 insert만 가능하고 select 정책이 아예 없어 작성자를 포함해
+-- 아무도 읽지 못한다. 조회는 Supabase 대시보드(Table Editor, service role)에서만 한다.
+-- 비로그인(게스트)도 접수할 수 있어 user_id는 null 허용, 로그인 상태면 본인 id만 기록.
+-- 기존 배포 프로젝트에는 이 블록만 SQL Editor에 다시 실행하면 된다.
+create table if not exists public.reports (
+  id bigint generated always as identity primary key,
+  user_id uuid references auth.users (id) on delete set null, -- 게스트 접수 = null, 탈퇴하면 익명화
+  kind text not null check (kind in ('bug', 'typo', 'idea')), -- 버그 신고·오탈자 제보·기능 건의
+  body text not null check (char_length(body) between 5 and 800), -- 클라이언트 제한과 동일(빈 접수·도배 차단)
+  context jsonb not null default '{}'::jsonb, -- 접수 순간 스냅샷(과목·학년·최근 단원·기기 등), report.ts가 채운다
+  created_at timestamptz not null default now()
+);
+create index if not exists reports_created_idx on public.reports (created_at desc);
+
+alter table public.reports enable row level security;
+drop policy if exists "report insert" on public.reports;
+create policy "report insert" on public.reports
+  for insert to anon, authenticated
+  with check (user_id is null or auth.uid() = user_id); -- 남의 id를 사칭한 접수만 차단

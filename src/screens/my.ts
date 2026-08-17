@@ -13,6 +13,7 @@ import { haptic, HAPTIC } from "../core/haptics";
 import { getState, currentStreak, setAvatarPreset, setAvatarCustom, setNickname, isDesktopMode, setDesktopMode, isPremium } from "../core/store";
 import { onAuthChange, currentUser, pushNickname, signOut } from "../core/auth";
 import { ownedPremiumSubjectIds, SELLABLE_SUBJECTS } from "../core/purchase";
+import { submitReport, REPORT_BODY_MIN, REPORT_BODY_MAX, type ReportKind } from "../core/report";
 import { bootLevel, BOOT_TIERS } from "../core/level";
 import { bootArt } from "../ui/boots";
 import { profileAvatar, setProfileAvatar } from "../ui/avatar";
@@ -309,6 +310,97 @@ export function myScreen(o: {
     nickInput.focus({ preventScroll: true }); // openSheet의 X 포커스를 입력으로 재지정(입력이 본론)
   });
 
+  // ---- 버그·건의 접수 시트 ----
+  // 공개 게시판이 아니라 "폼 + 운영자 수신함"이다(core/report.ts 헤더 참조). 유형 칩과 내용만
+  // 받고 연락처 입력란은 두지 않는다(미성년 사용자 최소 수집 원칙 — 방침 9조와 같은 결).
+  const REPORT_KINDS: { id: ReportKind; label: string }[] = [
+    { id: "bug", label: "버그 신고" },
+    { id: "typo", label: "오탈자 제보" },
+    { id: "idea", label: "기능 건의" },
+  ];
+  let repKind: ReportKind = "bug";
+  const repKindWrap = el("div", { class: "rep-kinds", attrs: { role: "radiogroup", "aria-label": "접수 유형" } });
+  function refreshRepKinds(): void {
+    [...repKindWrap.children].forEach((c, i) => {
+      const on = REPORT_KINDS[i].id === repKind;
+      c.classList.toggle("on", on);
+      c.setAttribute("aria-checked", String(on));
+    });
+  }
+  for (const k of REPORT_KINDS) {
+    const b = el("button", { class: "rep-kind", text: k.label, attrs: { role: "radio", "aria-checked": "false" } });
+    b.addEventListener("click", () => {
+      if (repKind === k.id) return;
+      haptic(HAPTIC.tap);
+      repKind = k.id;
+      refreshRepKinds();
+    });
+    repKindWrap.appendChild(b);
+  }
+  refreshRepKinds();
+  const repText = el("textarea", {
+    class: "rep-text",
+    attrs: {
+      rows: "5",
+      maxlength: String(REPORT_BODY_MAX),
+      placeholder: "어떤 화면에서 무엇이 이상했는지 적어 주세요",
+      "aria-label": "접수 내용",
+    },
+  }) as HTMLTextAreaElement;
+  const repCount = el("div", { class: "rep-count", text: `0 / ${REPORT_BODY_MAX}` });
+  const repNote = el("div", {
+    class: "rep-note",
+    text: "지금 보고 있는 과목·단원과 기기 정보가 함께 담겨요. 답장은 어렵지만 전부 읽고 살펴봐요.",
+  });
+  const repSend = el("button", { class: "mysheet-done", text: "보내기" }) as HTMLButtonElement;
+  function refreshRepSend(): void {
+    repSend.disabled = repText.value.trim().length < REPORT_BODY_MIN;
+  }
+  repText.addEventListener("input", () => {
+    repCount.textContent = `${repText.value.length} / ${REPORT_BODY_MAX}`;
+    refreshRepSend();
+  });
+  refreshRepSend();
+  let repBusy = false;
+  repSend.addEventListener("click", () => {
+    if (repBusy) return;
+    haptic(HAPTIC.tap);
+    repBusy = true;
+    repSend.disabled = true;
+    void submitReport(repKind, repText.value)
+      .then((r) => {
+        if (r.ok) {
+          repText.value = "";
+          repCount.textContent = `0 / ${REPORT_BODY_MAX}`;
+          closeSheet();
+          snack("접수했어요. 전부 읽고 살펴볼게요!");
+        } else if (r.reason === "cap") {
+          snack("오늘 보낼 수 있는 만큼 다 보냈어요. 내일 다시 부탁해요!");
+        } else if (r.reason === "short") {
+          snack(`내용을 ${REPORT_BODY_MIN}자 이상 적어 주세요`);
+        } else {
+          snack("지금은 접수하지 못했어요. support@stickstep.com으로 보내 주셔도 돼요.");
+        }
+      })
+      .finally(() => {
+        repBusy = false;
+        refreshRepSend();
+      });
+  });
+  const repSheet = sheetShell(
+    "버그·건의 보내기",
+    el(
+      "div",
+      { class: "mysheet-body" },
+      el("div", { class: "rep-lead", text: "이상한 점이나 바라는 점을 알려 주세요. 보내 준 이야기가 앱을 고치고 키워요." }),
+      repKindWrap,
+      repText,
+      repCount,
+      repNote,
+    ),
+    el("div", { class: "mysheet-foot" }, repSend),
+  );
+
   // ---- 메뉴(흰 카드 하나에 행 목록) ----
   function row(opts: { ic: string; gold?: boolean; title: string; value?: string; onClick: (btn: HTMLElement) => void }): HTMLElement {
     const r = el(
@@ -379,6 +471,17 @@ export function myScreen(o: {
   const accountRow = row({ ic: icon("user", 17), title: "계정 관리 · 로그인", onClick: () => o.onOpenAccount() });
   const accountTitle = accountRow.querySelector<HTMLElement>(".my-row-t")!;
   menuRows.push(accountRow);
+  // 버그·건의 접수 — 지원 성격이라 메뉴 맨 아래(운영자 수신함 시트, 위 repSheet).
+  menuRows.push(
+    row({
+      ic: icon("bulb", 17),
+      title: "버그·건의 보내기",
+      onClick: (b) => {
+        openSheet(repSheet, b);
+        repText.focus({ preventScroll: true }); // 닉네임 시트와 같은 문법(입력이 본론)
+      },
+    }),
+  );
   const menu = el("nav", { class: "my-menu", attrs: { "aria-label": "더 보기" } }, ...menuRows);
 
   // ---- 상단 뒤로가기(학습 탭 복귀, 2026-07-20 — 복습·도전 탭과 공통 문법) ----
@@ -430,6 +533,7 @@ export function myScreen(o: {
     avaSheet,
     bootSheet,
     nickSheet,
+    repSheet,
   );
 
   let snackTimer = 0;

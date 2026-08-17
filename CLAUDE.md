@@ -1106,6 +1106,22 @@ src/
   같은 과학 소재가 오차단되는 실측 — 2026-07-15). 답변은 textContent로만 렌더(XSS 차단) —
   마크다운 렌더러를 붙이지 말 것(프롬프트가 순수 문장을 강제한다).
 
+## 버그·건의 접수함 (2026-08-17 구축 — 마이 탭)
+- **공개 게시판이 아니라 "폼 + 운영자 수신함"**(사용자 확정): 진입은 마이 탭 메뉴 맨 아래
+  "버그·건의 보내기" 행 하나 → 시트(유형 칩 버그/오탈자/건의 + 내용 5~800자). 연락처 입력란
+  없음(미성년 최소 수집), 답장 기능 없음. 전송 창구는 core/report.ts submitReport 단일.
+- **자동 컨텍스트 첨부가 존재 이유**: 접수 순간의 과목·학년·최근 단원(recentUnit)·프리미엄/검토
+  여부·기기(UA·뷰포트)가 context jsonb로 함께 저장된다. 학생이 위치를 설명 못 해도 재현 좌표가 남는다.
+- **저장소는 Supabase reports 테이블(insert 전용)**: RLS에 select 정책이 아예 없어 앱에서는
+  작성자도 못 읽는다(조회는 대시보드 Table Editor뿐). 게스트 접수 허용(user_id null),
+  스키마는 supabase/schema.sql 맨 아래 블록(기존 프로젝트는 그 블록만 재실행, SETUP.md §2 참조).
+- **DEV 기본은 스텁**(결제 ss.payreal 문법): 실전송 대신 window.__ssReports(DEV 훅)에만 쌓인다.
+  로컬 dev·e2e가 운영 수신함을 더럽히지 않기 위한 장치다. 실전송 강제 = sessionStorage
+  "ss.reportreal"="1". 일일 상한 5건(localStorage ss.reportCap, 기기 기준·자정 리셋),
+  본문 5~800자(schema.sql check와 값 이원화 금지).
+- 방침 반영: privacy.html 1의 마(수집 항목)·3절(보유 1년). 배포 시 시행일·버전 갱신+7일 전 고지.
+  QA: `PORT=<포트> node qa/e2e-report.mjs`.
+
 ## 도전 탭 미니게임 — 네온 한붓그리기 (2026-07-18)
 - **구조**: `src/game/oneStroke/` — gen.ts(순수 생성기·히어홀저 솔버·난이도 커브, DOM 없음)와
   index.ts(화면·포인터 입력·캔버스 렌더·보상). 진입은 challenge.ts 카드 → main.ts `openOneStroke`
