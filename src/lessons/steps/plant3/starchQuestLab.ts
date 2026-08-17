@@ -122,7 +122,7 @@ export const starchQuestLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "훅에서 얻은 <b>녹말 탐지기(아이오딘)</b>를 잎에 써 볼 차례예요. 상추 모종 두 개를 준비했어요 — 아래 <b>절차 버튼</b>을 순서대로 눌러 실험을 진행하세요.",
+    html: "훅에서 얻은 <b>녹말 탐지기(아이오딘)</b>를 잎에 써 볼 차례예요. 상추 모종 두 개를 준비했어요. 아래 <b>절차 버튼</b>을 순서대로 눌러 실험을 진행하세요.",
   });
 
   const board = el("div", { class: "p3-board stq-board", html: stageScene() });
@@ -161,7 +161,7 @@ export const starchQuestLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "수사 종결! <b>빛을 받은 (가) 잎에만 녹말</b>이 생겼어요 — 광합성의 증거 2호예요. 아이오딘이 확인한 건 포도당이 아니라, 포도당이 바뀌어 저장된 <b>녹말</b>이라는 것도 꼭 기억해요.";
+        "수사 종결! <b>빛을 받은 (가) 잎에만 녹말</b>이 생겼어요. 광합성의 증거 2호예요. 아이오딘이 확인한 건 포도당이 아니라, 포도당이 바뀌어 저장된 <b>녹말</b>이라는 것도 꼭 기억해요.";
       api.enableCTA(s.cta ?? "증거 정리하기");
     }
   }
@@ -172,7 +172,7 @@ export const starchQuestLab: StepRenderer = (host, step, api) => {
     toolBtns[0].disabled = true;
     toolBtns[0].classList.add("done");
     board.classList.add("boxed");
-    helper.innerHTML = "(나) 모종에만 어둠상자를 씌우고, 햇빛 좋은 곳에서 <b>하루</b>를 보냈어요. 그런데 — 왜 바로 검사하지 않고 하루나 기다렸을까요?";
+    helper.innerHTML = "(나) 모종에만 어둠상자를 씌우고, 햇빛 좋은 곳에서 <b>하루</b>를 보냈어요. 그런데… 왜 바로 검사하지 않고 하루나 기다렸을까요?";
     later(() => {
       b4Ask(
         qBox,
@@ -185,7 +185,7 @@ export const starchQuestLab: StepRenderer = (host, step, api) => {
         (ok) => {
           helper.innerHTML = ok
             ? "정확해요! 잎에는 어제 만든 녹말이 남아 있을 수 있어요. 어둠 속에서 하루를 보내면 (나) 잎은 남은 녹말을 다 써 버려서, <b>'새로 만든 녹말'만 비교</b>할 수 있는 깨끗한 조건이 되죠."
-            : "어둠 속에서는 녹말을 만들지 못해요 — 오히려 그 반대예요. 하루를 기다리면 (나) 잎에 <b>원래 있던 녹말이 다 소모</b>돼서, 새로 만든 녹말만 깨끗하게 비교할 수 있게 된답니다.";
+            : "어둠 속에서는 녹말을 만들지 못해요. 오히려 그 반대예요. 하루를 기다리면 (나) 잎에 <b>원래 있던 녹말이 다 소모</b>돼서, 새로 만든 녹말만 깨끗하게 비교할 수 있게 된답니다.";
           collect("dark", "묵은 녹말 비우기!");
           toolBtns[1].disabled = false;
         },
@@ -216,7 +216,7 @@ export const starchQuestLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     toolBtns[2].disabled = true;
     board.dataset.sc = "2";
-    helper.innerHTML = "탈색한 두 잎을 증류수로 헹궈 페트리 접시에 놓았어요. 이제 <b>아이오딘-아이오딘화 칼륨 용액</b>을 떨어뜨리면 — 어느 잎이 청람색으로 변할까요?";
+    helper.innerHTML = "탈색한 두 잎을 증류수로 헹궈 페트리 접시에 놓았어요. 이제 <b>아이오딘-아이오딘화 칼륨 용액</b>을 떨어뜨리면, 어느 잎이 청람색으로 변할까요?";
     later(() => {
       b4Ask(
         qBox,
@@ -232,8 +232,8 @@ export const starchQuestLab: StepRenderer = (host, step, api) => {
           later(() => {
             board.classList.add("dropped");
             helper.innerHTML = ok
-              ? "예측 적중! <b>(가) 잎만 청람색</b> — 빛을 받은 잎에서만 광합성이 일어나 <b>녹말</b>이 생긴 거예요. (나) 잎은 빛이 없어 녹말을 만들지 못했죠."
-              : "결과를 봐요 — <b>(가) 잎만 청람색</b>이에요! 빛을 받은 잎에서만 광합성이 일어나 <b>녹말</b>이 생겼고, 어둠상자 속 (나) 잎은 만들지 못했답니다.";
+              ? "예측 적중! <b>(가) 잎만 청람색</b>, 빛을 받은 잎에서만 광합성이 일어나 <b>녹말</b>이 생긴 거예요. (나) 잎은 빛이 없어 녹말을 만들지 못했죠."
+              : "결과를 봐요. <b>(가) 잎만 청람색</b>이에요! 빛을 받은 잎에서만 광합성이 일어나 <b>녹말</b>이 생겼고, 어둠상자 속 (나) 잎은 만들지 못했답니다.";
             later(() => collect("detect", "(가)만 청람색!"), 900);
           }, 600);
         },

@@ -74,7 +74,7 @@ export function reviewScreen(o: {
     );
     card.addEventListener("click", () => {
       haptic(HAPTIC.tap);
-      snack("준비 중이에요 — 곧 열려요");
+      snack("준비 중이에요. 곧 열려요");
     });
     return card;
   }

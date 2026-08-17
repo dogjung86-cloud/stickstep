@@ -47,29 +47,29 @@ const RULES: Record<NodeId, Partial<Record<EventId, NodeId>>> = {
 };
 const WRONG_MSG: Record<NodeId, Partial<Record<EventId, string>>> = {
   magma: {
-    break: "마그마는 액체라 부서질 수 없어요 — 먼저 식어서 굳어야 암석이 돼요!",
-    compact: "다져 굳히는 건 퇴적물 이야기 — 마그마는 식어서 굳어져요.",
-    heatpress: "마그마는 이미 뜨거운 액체 — 열·압력을 더 받아도 마그마예요.",
+    break: "마그마는 액체라 부서질 수 없어요. 먼저 식어서 굳어야 암석이 돼요!",
+    compact: "다져 굳히는 건 퇴적물 이야기, 마그마는 식어서 굳어져요.",
+    heatpress: "마그마는 이미 뜨거운 액체, 열·압력을 더 받아도 마그마예요.",
     melt: "이미 다 녹아 있는걸요! 마그마가 갈 길은 식어서 굳는 것뿐.",
   },
   igneous: {
-    cool: "이미 식어서 굳은 암석이에요 — 또 식을 수는 없어요.",
-    compact: "다져 굳히기는 헐거운 퇴적물의 일 — 단단한 암석엔 통하지 않아요.",
+    cool: "이미 식어서 굳은 암석이에요. 또 식을 수는 없어요.",
+    compact: "다져 굳히기는 헐거운 퇴적물의 일, 단단한 암석엔 통하지 않아요.",
   },
   sediment: {
-    cool: "퇴적물은 뜨겁지 않아요 — 식는 게 아니라 다져지고 굳어져야 해요.",
-    break: "이미 잘게 부서진 알갱이들이에요 — 이제 쌓여서 다져질 차례!",
+    cool: "퇴적물은 뜨겁지 않아요. 식는 게 아니라 다져지고 굳어져야 해요.",
+    break: "이미 잘게 부서진 알갱이들이에요. 이제 쌓여서 다져질 차례!",
     heatpress: "헐거운 퇴적물은 먼저 다져져 암석이 된 뒤에야 깊은 곳으로 갈 수 있어요.",
-    melt: "지표의 퇴적물이 바로 녹을 순 없어요 — 마그마는 지하 깊은 곳 이야기죠.",
+    melt: "지표의 퇴적물이 바로 녹을 순 없어요. 마그마는 지하 깊은 곳 이야기죠.",
   },
   sedrock: {
-    cool: "퇴적암은 뜨겁지 않아요 — 식을 일이 없죠.",
+    cool: "퇴적암은 뜨겁지 않아요. 식을 일이 없죠.",
     compact: "이미 다져지고 굳어진 암석이에요.",
   },
   metamorphic: {
     cool: "변성암은 이미 굳어 있는 암석이에요.",
     compact: "다져 굳히기는 퇴적물의 일이에요.",
-    heatpress: "이미 열과 압력으로 변한 암석 — 더 세게 받으면 이젠 녹아서 마그마!",
+    heatpress: "이미 열과 압력으로 변한 암석, 더 세게 받으면 이젠 녹아서 마그마!",
   },
 };
 
@@ -104,7 +104,7 @@ export const rockCycle: StepRenderer = (host, step, api) => {
   const enterBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "가로 화면으로 여행 떠나기" }));
   const helper = el("div", {
     class: "helper",
-    html: "암석은 한번 만들어지면 끝이 아니에요 — 환경이 바뀌면 <b>끊임없이 다른 암석으로</b> 변해요. 마그마 한 방울에서 출발!",
+    html: "암석은 한번 만들어지면 끝이 아니에요. 환경이 바뀌면 <b>끊임없이 다른 암석으로</b> 변해요. 마그마 한 방울에서 출발!",
   });
   host.append(goalChips, helper, preview, enterBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -121,7 +121,7 @@ export const rockCycle: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "완주! 지표에선 <b>부서지고</b>, 쌓이면 <b>다져 굳고</b>, 깊은 곳에선 <b>열과 압력</b>으로 변하고, 더 깊으면 <b>녹아서 마그마</b> — 이 끝없는 여행이 <b>암석의 순환</b>이에요.";
+        "완주! 지표에선 <b>부서지고</b>, 쌓이면 <b>다져 굳고</b>, 깊은 곳에선 <b>열과 압력</b>으로 변하고, 더 깊으면 <b>녹아서 마그마</b>, 이 끝없는 여행이 <b>암석의 순환</b>이에요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -144,9 +144,9 @@ export const rockCycle: StepRenderer = (host, step, api) => {
     void (async () => {
       const { enterRotateStage } = await import("../../ui/rotateStage");
       if (disposed) return;
-      rot = enterRotateStage({ title: "암석의 순환 — 사건을 골라 여행해요", onLeave: () => leave() });
+      rot = enterRotateStage({ title: "암석의 순환, 사건을 골라 여행해요", onLeave: () => leave() });
       const canvas = el("canvas", { class: "sp3-canvas rc-canvas" }) as HTMLCanvasElement;
-      const pill = el("div", { class: "pill sp3-pill" }, el("span", { class: "pdot", style: "background:#C89459" }), el("span", { text: "지금: 마그마 — 아래에서 사건을 골라요" }));
+      const pill = el("div", { class: "pill sp3-pill" }, el("span", { class: "pdot", style: "background:#C89459" }), el("span", { text: "지금: 마그마, 아래에서 사건을 골라요" }));
       const toast = el("div", { class: "sp3-toast" });
       const actions = el("div", { class: "rc-actions" });
       EVENTS.forEach((ev) => {
@@ -195,14 +195,14 @@ export const rockCycle: StepRenderer = (host, step, api) => {
         haptic(HAPTIC.correct);
         if (to === "igneous") {
           collect("first", "화성암!");
-          showToast("마그마가 식어서 굳어짐 — 첫 암석, 화성암 탄생!");
+          showToast("마그마가 식어서 굳어짐, 첫 암석, 화성암 탄생!");
         }
         if (to === "sediment") sediDone = true;
         if (to === "sedrock" && sediDone) {
           collect("sedi", "퇴적암!");
-          showToast("부서지고, 쌓이고, 다져지고 — 퇴적암 완성! 줄무늬(층리)가 보여요.");
+          showToast("부서지고, 쌓이고, 다져지고, 퇴적암 완성! 줄무늬(층리)가 보여요.");
         }
-        if (to === "metamorphic") showToast("깊은 곳의 열과 압력 — 변성암이 됐어요. 줄무늬(엽리)가 생겼죠!");
+        if (to === "metamorphic") showToast("깊은 곳의 열과 압력, 변성암이 됐어요. 줄무늬(엽리)가 생겼죠!");
         if (visited.size === 5) collect("tour", "한 바퀴!");
       }
 
@@ -477,7 +477,7 @@ export const rockCycle: StepRenderer = (host, step, api) => {
       enterBtn.querySelector("span")!.textContent = "다시 여행하기";
       enterBtn.classList.remove("pulse");
     } else {
-      helper.innerHTML = "여행이 아직 끝나지 않았어요 — 다시 열어서 <b>다섯 정거장</b>을 모두 돌아봐요!";
+      helper.innerHTML = "여행이 아직 끝나지 않았어요. 다시 열어서 <b>다섯 정거장</b>을 모두 돌아봐요!";
     }
   }
 

@@ -38,7 +38,7 @@ export const galaxy3d: StepRenderer = (host, step, api) => {
     el("div", { class: "pn-badge star", dataset: { g: "top" } }, el("b", { text: "위에서 보기" }), el("span", { text: "나선팔 확인" })),
     el("div", { class: "pn-badge star", dataset: { g: "side" } }, el("b", { text: "옆에서 보기" }), el("span", { text: "원반+불룩" })),
     el("div", { class: "pn-badge star", dataset: { g: "sun" } }, el("b", { text: "태양계 찾기" }), el("span", { text: "노란 점 탭" })),
-    el("div", { class: "pn-badge star", dataset: { g: "core" } }, el("b", { text: "은하 중심" }), el("span", { text: "탭 — 은하수?" })),
+    el("div", { class: "pn-badge star", dataset: { g: "core" } }, el("b", { text: "은하 중심" }), el("span", { text: "탭, 은하수?" })),
   );
 
   // 세로 화면 — 가로 진입 카드(eclipse3d 문법)
@@ -47,7 +47,7 @@ export const galaxy3d: StepRenderer = (host, step, api) => {
   const btnRow = el("div", { class: "gp-controls" }, enterBtn);
   const helper = el("div", {
     class: "helper",
-    html: "우리은하를 <b>밖에서</b> 도는 관측선에 탑승해요. 드래그로 <b>위에서도, 옆에서도</b> 돌려 보고 — 태양계와 은하 중심을 찾아 탭해 보세요.",
+    html: "우리은하를 <b>밖에서</b> 도는 관측선에 탑승해요. 드래그로 <b>위에서도, 옆에서도</b> 돌려 보고, 태양계와 은하 중심을 찾아 탭해 보세요.",
   });
   host.append(goalChips, helper, enterArt, btnRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
@@ -65,7 +65,7 @@ export const galaxy3d: StepRenderer = (host, step, api) => {
     if (goals.size === 4 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 우리은하는 <b>지름 약 10만 광년</b>의 별 도시 — 위에서 보면 <b>막대+나선팔</b>, 옆에서 보면 <b>납작한 원반+불룩한 중심</b>이에요. 태양계는 중심에서 <b>약 3만 광년</b> 떨어진 변두리, 그리고 원반 안에서 중심 쪽을 바라본 모습이 바로 <b>은하수</b>!";
+        "정리! 우리은하는 <b>지름 약 10만 광년</b>의 별 도시, 위에서 보면 <b>막대+나선팔</b>, 옆에서 보면 <b>납작한 원반+불룩한 중심</b>이에요. 태양계는 중심에서 <b>약 3만 광년</b> 떨어진 변두리, 그리고 원반 안에서 중심 쪽을 바라본 모습이 바로 <b>은하수</b>!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "정리하러 가기");
     }
@@ -100,11 +100,11 @@ export const galaxy3d: StepRenderer = (host, step, api) => {
     const { enterRotateStage } = await import("../../ui/rotateStage");
     if (disposed) return;
     rot = enterRotateStage({
-      title: "우리은하 관측선 — 드래그로 돌리고, 탭으로 찾기",
+      title: "우리은하 관측선, 드래그로 돌리고, 탭으로 찾기",
       onLeave: () => leave(),
     });
     const canvas = el("canvas", { class: "sp3-canvas" }) as HTMLCanvasElement;
-    const pill = el("div", { class: "pill sp3-pill" }, el("span", { class: "pdot", style: "background:#9CA8FF" }), el("span", { text: "드래그 — 위에서, 옆에서" }));
+    const pill = el("div", { class: "pill sp3-pill" }, el("span", { class: "pdot", style: "background:#9CA8FF" }), el("span", { text: "드래그, 위에서, 옆에서" }));
     const missions = el("div", { class: "sp3-missions" });
     for (const t of ["위에서", "옆에서", "태양계", "은하 중심"]) {
       const m = el("span", { text: t });
@@ -118,7 +118,7 @@ export const galaxy3d: StepRenderer = (host, step, api) => {
       "div",
       { class: "g3d-photo" },
       el("img", { attrs: { src: `${base}photos/star/milkyway-pan.webp`, alt: "지구에서 은하 중심 방향을 본 은하수 파노라마" } }),
-      el("div", { class: "g3d-photo-cap", html: "원반 <b>안</b>(태양계)에서 중심 방향을 보면 — 이 <b>은하수</b>로 보여요! 가장 밝고 두꺼운 부분이 방금 탭한 중심 방향(ESO 실사)" }),
+      el("div", { class: "g3d-photo-cap", html: "원반 <b>안</b>(태양계)에서 중심 방향을 보면, 이 <b>은하수</b>로 보여요! 가장 밝고 두꺼운 부분이 방금 탭한 중심 방향(ESO 실사)" }),
       el("button", { class: "g3d-photo-x", attrs: { type: "button", "aria-label": "사진 닫기" }, text: "닫기" }),
     );
     rot.stage.append(canvas, pill, missions, toast, photoCard);
@@ -144,7 +144,7 @@ export const galaxy3d: StepRenderer = (host, step, api) => {
     if (!st) {
       pillText.textContent = "이 기기는 3D를 지원하지 않아요";
       helper.innerHTML =
-        "3D를 켤 수 없어요. 핵심 — 우리은하는 지름 <b>약 10만 광년</b>, 위에서 보면 나선팔·옆에서 보면 불룩한 원반, 태양계는 중심에서 <b>약 3만 광년</b>, 은하수는 <b>안에서 본 우리은하</b>예요.";
+        "3D를 켤 수 없어요. 핵심, 우리은하는 지름 <b>약 10만 광년</b>, 위에서 보면 나선팔·옆에서 보면 불룩한 원반, 태양계는 중심에서 <b>약 3만 광년</b>, 은하수는 <b>안에서 본 우리은하</b>예요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "정리하러 가기");
       return;
@@ -334,7 +334,7 @@ export const galaxy3d: StepRenderer = (host, step, api) => {
           haptic(HAPTIC.select);
           if (hits[0].object === sunProxy) {
             collect("sun", "3만 광년 지점!");
-            showToast("여기가 우리 집 — 중심에서 약 3만 광년 떨어진 나선팔 변두리예요!");
+            showToast("여기가 우리 집, 중심에서 약 3만 광년 떨어진 나선팔 변두리예요!");
           } else {
             collect("core", "= 은하수 방향!");
             photoCard.classList.add("show");
@@ -374,7 +374,7 @@ export const galaxy3d: StepRenderer = (host, step, api) => {
       } else sideMs = 0;
 
       // 상태 필
-      const mode = polar > 1.25 ? "위에서 — 막대·나선팔" : polar < 0.2 ? "옆에서 — 납작한 원반 + 불룩한 중심" : "드래그 — 위·옆으로 돌려 보세요";
+      const mode = polar > 1.25 ? "위에서, 막대·나선팔" : polar < 0.2 ? "옆에서, 납작한 원반 + 불룩한 중심" : "드래그, 위·옆으로 돌려 보세요";
       if (pillText.textContent !== mode) pillText.textContent = mode;
 
       st.render();
@@ -393,9 +393,9 @@ export const galaxy3d: StepRenderer = (host, step, api) => {
     missionEls = [];
     if (finished) {
       helper.innerHTML =
-        "관측 완료! <b>지름 10만 광년 · 태양계는 3만 광년 변두리 · 은하수 = 안에서 본 우리은하</b> — 정리로 넘어가요.";
+        "관측 완료! <b>지름 10만 광년 · 태양계는 3만 광년 변두리 · 은하수 = 안에서 본 우리은하</b>, 정리로 넘어가요.";
     } else {
-      helper.innerHTML = "아직 목표가 남았어요 — 다시 탑승해서 <b>위·옆 시점과 태양계·은하 중심</b>을 마저 찾아봐요!";
+      helper.innerHTML = "아직 목표가 남았어요. 다시 탑승해서 <b>위·옆 시점과 태양계·은하 중심</b>을 마저 찾아봐요!";
     }
   }
 

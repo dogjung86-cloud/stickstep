@@ -99,7 +99,7 @@ export const beakIslandsLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "부리가 <b>제각각(변이)</b>인 한 종류의 새 무리가 두 섬으로 날아갔어요 — <b>섬 (가)</b>엔 크고 단단한 씨앗이, <b>섬 (나)</b>엔 나무 속 작은 곤충이 많죠. 먼저 예측부터!",
+    html: "부리가 <b>제각각(변이)</b>인 한 종류의 새 무리가 두 섬으로 날아갔어요. <b>섬 (가)</b>엔 크고 단단한 씨앗이, <b>섬 (나)</b>엔 나무 속 작은 곤충이 많죠. 먼저 예측부터!",
   });
 
   const islandA = el("div", { class: "bkl-island" });
@@ -169,7 +169,7 @@ export const beakIslandsLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리하면 — <b>변이가 다양한 무리</b>가 서로 다른 환경에서 살면, <b>각 환경에 적합한 변이를 가진 생물이 더 많이 살아남아 자손을 남기고</b>, 아주 오랜 시간이 지나면 서로 다른 생물 무리로 나뉠 수 있어요. 이렇게 <b>생물의 종류가 다양해진답니다</b>.";
+        "정리하면, <b>변이가 다양한 무리</b>가 서로 다른 환경에서 살면, <b>각 환경에 적합한 변이를 가진 생물이 더 많이 살아남아 자손을 남기고</b>, 아주 오랜 시간이 지나면 서로 다른 생물 무리로 나뉠 수 있어요. 이렇게 <b>생물의 종류가 다양해진답니다</b>.";
       api.enableCTA(s.cta ?? "정리하기");
     }
   }
@@ -180,15 +180,15 @@ export const beakIslandsLab: StepRenderer = (host, step, api) => {
       askBox,
       "<b>섬 (가)(크고 단단한 씨앗)</b>에서는 어떤 부리를 가진 새가 살아남기 유리할까요?",
       [
-        { t: "크고 두꺼운 부리 — 단단한 씨앗을 깨기 좋아서", ok: true },
-        { t: "길고 가는 부리 — 씨앗을 멀리서 집을 수 있어서", ok: false },
+        { t: "크고 두꺼운 부리, 단단한 씨앗을 깨기 좋아서", ok: true },
+        { t: "길고 가는 부리, 씨앗을 멀리서 집을 수 있어서", ok: false },
         { t: "부리 모양은 살아남기와 관계없다", ok: false },
       ],
       (ok) => {
         api.recordQuiz(ok);
         helper.innerHTML = ok
-          ? "좋은 예측! 정말 그런지 <b>세대를 넘겨 가며</b> 지켜봐요 — 버튼을 눌러 시간을 흘려요."
-          : "씨앗은 <b>깨야</b> 먹을 수 있어요 — 호두까기처럼 <b>두꺼운 부리</b>가 유리하죠. 정말 그런지 세대를 넘겨 확인해요!";
+          ? "좋은 예측! 정말 그런지 <b>세대를 넘겨 가며</b> 지켜봐요. 버튼을 눌러 시간을 흘려요."
+          : "씨앗은 <b>깨야</b> 먹을 수 있어요. 호두까기처럼 <b>두꺼운 부리</b>가 유리하죠. 정말 그런지 세대를 넘겨 확인해요!";
         collect("predict", ok ? "적중!" : "확인 완료");
         genBtn.disabled = false;
         later(() => genBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 120);
@@ -209,13 +209,13 @@ export const beakIslandsLab: StepRenderer = (host, step, api) => {
     genBtn.textContent = gen < 3 ? `한 세대 지나기 (${gen}/3)` : "3세대 완료";
     if (gen === 1)
       helper.innerHTML =
-        "벌써 차이가 보여요 — <b>먹이에 맞는 부리</b>는 새끼를 많이 남기고, 못 먹는 부리는 줄어들어요. <b>새 한 마리의 부리가 변한 게 아니라</b>, 살아남은 새의 자손이 늘어난 거예요!";
+        "벌써 차이가 보여요. <b>먹이에 맞는 부리</b>는 새끼를 많이 남기고, 못 먹는 부리는 줄어들어요. <b>새 한 마리의 부리가 변한 게 아니라</b>, 살아남은 새의 자손이 늘어난 거예요!";
     if (gen === 2) helper.innerHTML = "불리한 부리가 점점 사라져요. 한 세대 더!";
     if (gen === 3) {
       genBtn.disabled = true;
       collect("gen", "3세대!");
       helper.innerHTML =
-        "오랜 시간이 지나자 — <b>섬 (가)엔 크고 두꺼운 부리</b>, <b>섬 (나)엔 길고 가는 부리</b>를 가진 새만 남았어요!";
+        "오랜 시간이 지나자, <b>섬 (가)엔 크고 두꺼운 부리</b>, <b>섬 (나)엔 길고 가는 부리</b>를 가진 새만 남았어요!";
       later(showLaw, 1100);
     }
   });
@@ -227,7 +227,7 @@ export const beakIslandsLab: StepRenderer = (host, step, api) => {
     lawShown = true;
     b4Ask(
       lawBox,
-      "처음엔 <b>한 종류</b>였던 두 섬의 새 무리 — 시간이 아주 오래 지나면 어떻게 될까요?",
+      "처음엔 <b>한 종류</b>였던 두 섬의 새 무리, 시간이 아주 오래 지나면 어떻게 될까요?",
       [
         { t: "무리 사이의 차이가 커져 서로 다른 종류로 나뉠 수 있다", ok: true },
         { t: "다시 섞이면 금방 원래 모습으로 돌아온다", ok: false },
@@ -235,7 +235,7 @@ export const beakIslandsLab: StepRenderer = (host, step, api) => {
       ],
       (ok) => {
         helper.innerHTML = ok
-          ? "맞아요! 이 과정이 <b>아주 오랜 시간</b> 반복되면 무리 사이의 차이가 커져 <b>서로 다른 종류의 생물 무리</b>로 나뉠 수 있어요 — 변이가 생물의 종류를 다양하게 만드는 원동력이죠."
+          ? "맞아요! 이 과정이 <b>아주 오랜 시간</b> 반복되면 무리 사이의 차이가 커져 <b>서로 다른 종류의 생물 무리</b>로 나뉠 수 있어요. 변이가 생물의 종류를 다양하게 만드는 원동력이죠."
           : "새는 부리를 <b>스스로 바꿀 수 없어요</b>(태어날 때 정해진 변이!). 오랜 시간 살아남기가 반복되면 무리의 차이가 커져 <b>서로 다른 종류로 나뉠 수 있다</b>는 게 핵심이랍니다.";
         collect("law", "종류 다양화!");
       },

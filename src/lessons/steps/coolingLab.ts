@@ -144,8 +144,8 @@ export const coolingLab: StepRenderer = (host, step, api) => {
     lab.appendChild(
       el("span", { html: `${label}<br><small style="font-size:10.5px;font-weight:700;color:var(--ter)">${sub}</small>` }),
     );
-    const c1 = el("div", { class: "tv", text: "—" });
-    const c2 = el("div", { class: "tv", text: "—" });
+    const c1 = el("div", { class: "tv", text: "-" });
+    const c2 = el("div", { class: "tv", text: "-" });
     cellEls.set(`${loc}|dark`, c1);
     cellEls.set(`${loc}|light`, c2);
     tbl.appendChild(el("div", { class: "trow", style: grid }, lab, c1, c2));
@@ -201,18 +201,18 @@ export const coolingLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "<b>식는 속도</b>가 결정 크기를, <b>광물 조성</b>이 색을 정해요 — 두 기준이면 화성암 4종이 딱 갈라져요!";
+        "<b>식는 속도</b>가 결정 크기를, <b>광물 조성</b>이 색을 정해요. 두 기준이면 화성암 4종이 딱 갈라져요!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       return;
     }
     if (finished) return;
     if (id === "volc" && !goals.has("plut")) {
-      helper.innerHTML = "이번엔 <b>지하 깊은 곳</b>을 골라 천천히 식혀 봐요 — 결정 크기가 어떻게 달라질까요?";
+      helper.innerHTML = "이번엔 <b>지하 깊은 곳</b>을 골라 천천히 식혀 봐요. 결정 크기가 어떻게 달라질까요?";
     } else if (id === "plut" && !goals.has("volc")) {
-      helper.innerHTML = "이번엔 <b>지표로 분출</b>을 골라 봐요 — 순식간에 식으면 결정이 자랄 시간이 있을까요?";
+      helper.innerHTML = "이번엔 <b>지표로 분출</b>을 골라 봐요. 순식간에 식으면 결정이 자랄 시간이 있을까요?";
     } else if ((id === "volc" || id === "plut") && goals.has("volc") && goals.has("plut")) {
-      helper.innerHTML = "이제 <b>성분</b>을 바꿔 남은 칸을 채워 봐요 — 어두우면 현무암·반려암, 밝으면 유문암·화강암!";
+      helper.innerHTML = "이제 <b>성분</b>을 바꿔 남은 칸을 채워 봐요. 어두우면 현무암·반려암, 밝으면 유문암·화강암!";
     }
   }
 
@@ -220,7 +220,7 @@ export const coolingLab: StepRenderer = (host, step, api) => {
     const locW = loc === "surface" ? "지표" : "지하 깊은 곳";
     const compW = comp === "dark" ? "어두운 광물이 많은" : "밝은 광물이 많은";
     const st = phase === "done" && curRock ? `${curRock.name} 완성` : phase === "cooling" ? "식는 중" : "식히기 전";
-    canvas.setAttribute("aria-label", `지형 단면과 관찰 렌즈. ${locW}에서 ${compW} 마그마 — ${st}.`);
+    canvas.setAttribute("aria-label", `지형 단면과 관찰 렌즈. ${locW}에서 ${compW} 마그마, ${st}.`);
   }
 
   // ---- 세그 동작 ----
@@ -233,7 +233,7 @@ export const coolingLab: StepRenderer = (host, step, api) => {
   }
   function setLoc(v: Loc): void {
     if (running) {
-      toast("굳는 중이에요 — 잠깐만요");
+      toast("굳는 중이에요. 잠깐만요");
       return;
     }
     if (loc === v) return;
@@ -247,12 +247,12 @@ export const coolingLab: StepRenderer = (host, step, api) => {
     freshMagma();
     haptic(HAPTIC.tap);
     hideCap();
-    toast(v === "surface" ? "지표로 이동 — 용암이 되어 빨리 식어요" : "지하 마그마 방으로 — 아주 천천히 식어요");
+    toast(v === "surface" ? "지표로 이동, 용암이 되어 빨리 식어요" : "지하 마그마 방으로, 아주 천천히 식어요");
     updateA11y();
   }
   function setComp(v: Comp): void {
     if (running) {
-      toast("굳는 중이에요 — 잠깐만요");
+      toast("굳는 중이에요. 잠깐만요");
       return;
     }
     if (comp === v) return;
@@ -317,7 +317,7 @@ export const coolingLab: StepRenderer = (host, step, api) => {
     coolLabel.textContent = "식는 중…";
     haptic(HAPTIC.tap);
     hideCap();
-    toast(loc === "surface" ? "순식간에 식어요 — 결정이 자랄 틈이 없어요!" : "천천히 식어요 — 결정이 자랄 시간이 넉넉해요");
+    toast(loc === "surface" ? "순식간에 식어요. 결정이 자랄 틈이 없어요!" : "천천히 식어요. 결정이 자랄 시간이 넉넉해요");
     updateA11y();
   });
 
@@ -340,10 +340,10 @@ export const coolingLab: StepRenderer = (host, step, api) => {
     made.add(key);
     fillCell(key, rock);
     haptic(HAPTIC.tap);
-    toast(isNew ? `${rock.name} 완성 — 표에 채웠어요!` : `또 ${rock.name} — 이미 채운 칸이에요`);
-    if (loc === "surface") collect("volc", "결정이 작아요!", `${rock.name} — 빨리 식으면 결정이 작아요!`);
-    else collect("plut", "결정이 커요!", `${rock.name} — 천천히 식으면 결정이 커요!`);
-    if (made.size === 4) collect("all4", "네 칸 모두!", "2×2 완성 — 화성암 4종을 다 만들었어요!");
+    toast(isNew ? `${rock.name} 완성, 표에 채웠어요!` : `또 ${rock.name}, 이미 채운 칸이에요`);
+    if (loc === "surface") collect("volc", "결정이 작아요!", `${rock.name}, 빨리 식으면 결정이 작아요!`);
+    else collect("plut", "결정이 커요!", `${rock.name}, 천천히 식으면 결정이 커요!`);
+    if (made.size === 4) collect("all4", "네 칸 모두!", "2×2 완성, 화성암 4종을 다 만들었어요!");
     updateA11y();
   }
 

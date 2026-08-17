@@ -97,7 +97,7 @@ export const colorClueLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "이름표가 지워진 즙 세 병이 실험대로 왔어요. 첫 번째는 <b>시료 ㉮(밥을 으깬 물)</b> — 아래 시약 버튼을 눌러 <b>색 단서</b>를 찾아보세요. 어떤 시약이든 좋아요!",
+    html: "이름표가 지워진 즙 세 병이 실험대로 왔어요. 첫 번째는 <b>시료 ㉮(밥을 으깬 물)</b>, 아래 시약 버튼을 눌러 <b>색 단서</b>를 찾아보세요. 어떤 시약이든 좋아요!",
   });
 
   const board = el("div", { class: "b6-board clu-board", html: stageScene() });
@@ -134,7 +134,7 @@ export const colorClueLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "수사 종결! <b>아이오딘=녹말(청람색) · 뷰렛=단백질(보라색) · 베네딕트+가열=당분(황적색) · 수단 III=지방(선홍색)</b> — 시약마다 담당 영양소가 정해져 있어요.";
+        "수사 종결! <b>아이오딘=녹말(청람색) · 뷰렛=단백질(보라색) · 베네딕트+가열=당분(황적색) · 수단 III=지방(선홍색)</b>, 시약마다 담당 영양소가 정해져 있어요.";
       api.enableCTA(s.cta ?? "정리하기");
     }
   }
@@ -148,8 +148,8 @@ export const colorClueLab: StepRenderer = (host, step, api) => {
     board.querySelectorAll(".clu-liquid, .clu-liquid-bottom").forEach((n) => n.setAttribute("fill", c));
 
   const INTRO: Record<string, string> = {
-    B: "다음 시료예요 — <b>시료 ㉯(달걀흰자를 푼 물)</b>. 이번에도 시약을 골라 색 단서를 찾아봐요.",
-    C: "마지막 — <b>시료 ㉰(맑은 단물)</b>이에요. 살짝 달콤한 냄새가 나네요. 어떤 시약이 단서를 잡을까요?",
+    B: "다음 시료예요. <b>시료 ㉯(달걀흰자를 푼 물)</b>. 이번에도 시약을 골라 색 단서를 찾아봐요.",
+    C: "마지막, <b>시료 ㉰(맑은 단물)</b>이에요. 살짝 달콤한 냄새가 나네요. 어떤 시약이 단서를 잡을까요?",
   };
   function switchSample(idx: number): void {
     si = idx;
@@ -183,23 +183,23 @@ export const colorClueLab: StepRenderer = (host, step, api) => {
       busy = false;
       if (id === sample.react && id !== "benedict") {
         setLiquid(reagent.color);
-        helper.innerHTML = `색이 확 변했어요 — <b>${reagent.colorName}</b>! ${reagent.label} 용액이 단서를 잡았네요.`;
+        helper.innerHTML = `색이 확 변했어요. <b>${reagent.colorName}</b>! ${reagent.label} 용액이 단서를 잡았네요.`;
         later(() => askSample(), 800);
       } else if (id === "benedict") {
         if (sample.react === "benedict") {
           setLiquid("#CFE7F7");
           benedictWaiting = true;
           helper.innerHTML =
-            "베네딕트 용액을 넣었는데… <b>아직 색이 그대로</b>예요. 이 시약에는 한 가지 조작이 더 필요하대요 — 아래 버튼을 눌러 보세요.";
+            "베네딕트 용액을 넣었는데… <b>아직 색이 그대로</b>예요. 이 시약에는 한 가지 조작이 더 필요하대요. 아래 버튼을 눌러 보세요.";
           heatBtn.style.display = "";
           later(() => heatBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 120);
         } else {
           setLiquid(sample.base);
-          helper.innerHTML = "베네딕트 용액은 반응이 없어요(가열해도 마찬가지) — 이 시료엔 <b>당분이 없다</b>는 뜻이에요. 그것도 단서! 다른 시약을 시험해 봐요.";
+          helper.innerHTML = "베네딕트 용액은 반응이 없어요(가열해도 마찬가지), 이 시료엔 <b>당분이 없다</b>는 뜻이에요. 그것도 단서! 다른 시약을 시험해 봐요.";
         }
       } else {
         setLiquid(sample.base);
-        helper.innerHTML = `변화가 없네요 — ${reagent.label} 용액이 찾는 영양소는 이 시료에 <b>없다</b>는 뜻이에요. 그것도 훌륭한 단서! 다른 시약을 시험해 봐요.`;
+        helper.innerHTML = `변화가 없네요. ${reagent.label} 용액이 찾는 영양소는 이 시료에 <b>없다</b>는 뜻이에요. 그것도 훌륭한 단서! 다른 시약을 시험해 봐요.`;
       }
     });
   }
@@ -214,7 +214,7 @@ export const colorClueLab: StepRenderer = (host, step, api) => {
     later(() => {
       busy = false;
       setLiquid(B6.benedict);
-      helper.innerHTML = "우와 — <b>황적색</b>! 시료 ㉰의 단물엔 <b>포도당 같은 당분</b>이 들어 있었어요. 그런데 방금, 색을 깨운 결정적 조작이 뭐였죠?";
+      helper.innerHTML = "우와, <b>황적색</b>! 시료 ㉰의 단물엔 <b>포도당 같은 당분</b>이 들어 있었어요. 그런데 방금, 색을 깨운 결정적 조작이 뭐였죠?";
       later(() => askSample(), 900);
     }, 1200);
   });
@@ -232,8 +232,8 @@ export const colorClueLab: StepRenderer = (host, step, api) => {
           { t: "지방이 많은 식용유", ok: false },
         ],
         sub: "녹말 = 청람색!",
-        done: "정답! 아이오딘 용액의 짝은 <b>녹말</b> — 밥의 주성분이죠.",
-        fix: "청람색의 짝을 떠올려요 — 아이오딘 용액은 <b>녹말</b>을 만났을 때 청람색이 돼요. 녹말이 많은 건 밥을 으깬 물이죠.",
+        done: "정답! 아이오딘 용액의 짝은 <b>녹말</b>, 밥의 주성분이죠.",
+        fix: "청람색의 짝을 떠올려요. 아이오딘 용액은 <b>녹말</b>을 만났을 때 청람색이 돼요. 녹말이 많은 건 밥을 으깬 물이죠.",
       },
       B: {
         q: "시료 ㉯는 뷰렛 용액에서 <b>보라색</b>이 됐어요. 이 즙에 들어 있는 영양소는?",
@@ -243,8 +243,8 @@ export const colorClueLab: StepRenderer = (host, step, api) => {
           { t: "지방", ok: false },
         ],
         sub: "단백질 = 보라색!",
-        done: "맞아요! 뷰렛 용액의 짝은 <b>단백질</b> — 달걀흰자의 주인공이에요.",
-        fix: "보라색은 뷰렛 용액의 신호 — 뷰렛의 짝은 <b>단백질</b>이에요. 녹말은 아이오딘(청람), 지방은 수단 III(선홍)이 담당하죠.",
+        done: "맞아요! 뷰렛 용액의 짝은 <b>단백질</b>, 달걀흰자의 주인공이에요.",
+        fix: "보라색은 뷰렛 용액의 신호, 뷰렛의 짝은 <b>단백질</b>이에요. 녹말은 아이오딘(청람), 지방은 수단 III(선홍)이 담당하죠.",
       },
       C: {
         q: "베네딕트 용액이 <b>황적색</b>을 보여 준 건 언제였나요?",
@@ -254,8 +254,8 @@ export const colorClueLab: StepRenderer = (host, step, api) => {
           { t: "차갑게 식힌 뒤에", ok: false },
         ],
         sub: "가열이 열쇠!",
-        done: "그거예요 — 베네딕트 반응은 <b>가열</b>해야 색이 나타나요. 시험에 단골로 나오는 한 끗이랍니다.",
-        fix: "순서를 다시 봐요 — 넣자마자는 색이 그대로였고, <b>뜨거운 물에 담근 뒤</b>에야 황적색이 됐죠. 베네딕트 반응의 열쇠는 가열이에요.",
+        done: "그거예요. 베네딕트 반응은 <b>가열</b>해야 색이 나타나요. 시험에 단골로 나오는 한 끗이랍니다.",
+        fix: "순서를 다시 봐요. 넣자마자는 색이 그대로였고, <b>뜨거운 물에 담근 뒤</b>에야 황적색이 됐죠. 베네딕트 반응의 열쇠는 가열이에요.",
       },
     };
     const def = qs[sample.id];

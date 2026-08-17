@@ -47,26 +47,26 @@ const DISHES: DishDef[] = [
     color: "#6BDA96", ring: 86, ringName: "우리 동네", ringLabW: 68,
     px: 159, py: 191, ox: 109, oy: 157, lx: 109, ly: 185, lw: 58, bow: -9,
     aria: "부추전 접시. 탭하면 재료가 온 길이 그려져요.",
-    found: "부추전의 부추는 <b>우리 동네 텃밭</b>에서 약 3 km — 자전거로도 닿는 가장 가까운 연결이에요!",
+    found: "부추전의 부추는 <b>우리 동네 텃밭</b>에서 약 3 km, 자전거로도 닿는 가장 가까운 연결이에요!",
   },
   {
     id: "nara", dish: "삶은 달걀", chip: "나라 연결", sub0: "달걀", sub1: "200 km!", dist: "약 200 km",
     color: "#FFC24D", ring: 122, ringName: "우리나라", ringLabW: 62,
     px: 201, py: 191, ox: 280, oy: 137, lx: 294, ly: 165, lw: 72, bow: 14,
     aria: "삶은 달걀 접시. 탭하면 재료가 온 길이 그려져요.",
-    found: "달걀은 <b>우리나라</b> 전북의 농장에서 약 200 km — 트럭이 고속도로를 달려 가져왔어요.",
+    found: "달걀은 <b>우리나라</b> 전북의 농장에서 약 200 km, 트럭이 고속도로를 달려 가져왔어요.",
   },
   {
     id: "segye", dish: "연어 구이", chip: "세계 연결", sub0: "연어", sub1: "8,000 km!", dist: "약 8,000 km",
     color: "#7EC8FF", ring: 158, ringName: "세계", ringLabW: 40,
     px: 180, py: 232, ox: 180, oy: 364, lx: 240, ly: 364, lw: 84, bow: 20,
     aria: "연어 구이 접시. 탭하면 재료가 온 길이 그려져요.",
-    found: "연어는 지구 반대편 <b>노르웨이</b>에서 약 8,000 km — 비행기로 바다를 건너 왔어요!",
+    found: "연어는 지구 반대편 <b>노르웨이</b>에서 약 8,000 km, 비행기로 바다를 건너 왔어요!",
   },
 ];
 
 const FINALE_HTML =
-  "한 밥상 위에 동네 3 km, 우리나라 200 km, 세계 8,000 km — <b>연결에는 크기(규모)가 있어요</b>. " +
+  "한 밥상 위에 동네 3 km, 우리나라 200 km, 세계 8,000 km, <b>연결에는 크기(규모)가 있어요</b>. " +
   "작은 동네부터 지구 전체까지, 우리는 겹겹의 연결 속에 살아요!";
 
 // ── 여정 경로(출발지 퍽 중심 → 접시 중심, 살짝 휜 2차 곡선 — 양끝은 퍽/접시가 덮는다) ──
@@ -286,7 +286,7 @@ export const tableLinkLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "오늘 아침 밥상이에요. <b>접시 세 개를 하나씩 탭</b>해서 재료가 어디서 왔는지 확인해 보세요 — 연결의 <b>규모</b>가 링으로 켜져요!",
+    html: "오늘 아침 밥상이에요. <b>접시 세 개를 하나씩 탭</b>해서 재료가 어디서 왔는지 확인해 보세요. 연결의 <b>규모</b>가 링으로 켜져요!",
   });
   const stage = el("div", { class: "stage tll-stage" });
   stage.innerHTML = buildScene();

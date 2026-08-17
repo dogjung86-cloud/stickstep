@@ -120,7 +120,7 @@ export function afTerrainFig(): string {
     <path d="M${(lonToX(25.85) - 3).toFixed(1)} ${(latToY(-17.92) - 2.6).toFixed(1)}h6M${(lonToX(25.85) - 2).toFixed(1)} ${(latToY(-17.92) - 2.6).toFixed(1)}v4.6M${lonToX(25.85).toFixed(1)} ${(latToY(-17.92) - 2.6).toFixed(1)}v4.6M${(lonToX(25.85) + 2).toFixed(1)} ${(latToY(-17.92) - 2.6).toFixed(1)}v4.6"
       stroke="#4E9AE8" stroke-width="1.2" stroke-linecap="round"/>
   `;
-  return mapShell(inner, { aria: "아프리카의 주요 지형 지도 — 산맥과 사막, 큰 강, 지구대, 호수, 폭포" });
+  return mapShell(inner, { aria: "아프리카의 주요 지형 지도, 산맥과 사막, 큰 강, 지구대, 호수, 폭포" });
 }
 
 /* ---------- L3: 기후 분포 지도(쾨펜 실데이터 오버레이) ---------- */
@@ -133,7 +133,7 @@ export function afClimateFig(opts?: { letters?: { lon: number; lat: number; t: s
     ${pal.map(([c, n], i) => `<g transform="translate(${CROP.x + 14 + i * 50} ${CROP.y + CROP.h + 22})">
       <rect x="0" y="-8" width="10" height="10" rx="3" fill="${c}"/><text x="13" y="1" fill="#4E5968">${n}</text></g>`).join("")}
   </g>`;
-  return mapShell(inner, { legend, aria: "아프리카의 기후 분포 지도 — 적도를 중심으로 남북이 비슷하게 배열된다" });
+  return mapShell(inner, { legend, aria: "아프리카의 기후 분포 지도, 적도를 중심으로 남북이 비슷하게 배열된다" });
 }
 
 /* ---------- L3: 카이로·다르에스살람 기후 그래프 페어(퀴즈 그림) ---------- */
@@ -189,7 +189,7 @@ export function afMirrorFig(): string {
   const labels = BANDS.map(
     ([y, h, , label]) => `<text x="140" y="${y + h / 2 + 3.4}" text-anchor="middle" font-size="9.5" font-weight="800" fill="#FFFFFF" stroke="rgba(0,0,0,.18)" stroke-width="2" paint-order="stroke">${label}</text>`,
   ).join("");
-  return `<svg viewBox="0 0 344 168" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="적도를 중심으로 남북이 대칭인 기후 배열 그림 — 우림, 사바나, 사막, 온대 순서">
+  return `<svg viewBox="0 0 344 168" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="적도를 중심으로 남북이 대칭인 기후 배열 그림, 우림, 사바나, 사막, 온대 순서">
     <rect x="0" y="0" width="344" height="168" rx="14" fill="#F7F9FC" stroke="#D8DEE8" stroke-width="1.2"/>
     ${rects}
     <line x1="48" y1="84" x2="232" y2="84" stroke="#E8590C" stroke-width="2.2" stroke-dasharray="6 4"/>
@@ -243,10 +243,10 @@ export function afPopRiseFig(): string {
   const gy = (v: number): number => 128 - (v / 40) * 100;
   const solid = vals.slice(0, 4).map((v, i) => `${i === 0 ? "M" : "L"}${gx(i).toFixed(1)} ${gy(v).toFixed(1)}`).join(" ");
   const dashed = vals.slice(3).map((v, i) => `${i === 0 ? "M" : "L"}${gx(i + 3).toFixed(1)} ${gy(v).toFixed(1)}`).join(" ");
-  return `<svg viewBox="0 0 344 158" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="아프리카 총인구 변화 그래프 — 1961년부터 2081년 추정까지">
+  return `<svg viewBox="0 0 344 158" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="아프리카 총인구 변화 그래프, 1961년부터 2081년 추정까지">
     <rect x="0" y="0" width="344" height="158" rx="14" fill="#F7F9FC" stroke="#D8DEE8" stroke-width="1.2"/>
     <text x="14" y="17" font-size="10" font-weight="900" fill="#333D4B">아프리카 총인구</text>
-    <text x="330" y="17" text-anchor="end" font-size="8" font-weight="700" fill="#8A94A6">(국제연합 — 2022년 이후는 추정)</text>
+    <text x="330" y="17" text-anchor="end" font-size="8" font-weight="700" fill="#8A94A6">(국제연합, 2022년 이후는 추정)</text>
     ${[0, 10, 20, 30, 40].map((v) => `<line x1="40" y1="${gy(v)}" x2="320" y2="${gy(v)}" stroke="#E2E8F0" stroke-width="1"/><text x="34" y="${gy(v) + 3}" text-anchor="end" font-size="7.5" font-weight="700" fill="#8A94A6">${v}</text>`).join("")}
     <text x="14" y="52" font-size="7.5" font-weight="700" fill="#8A94A6">(억 명)</text>
     <path d="${solid}" stroke="#E8590C" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
@@ -283,7 +283,7 @@ export function afResourceRankFig(): string {
     .join("");
   return `<svg viewBox="0 0 344 168" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="아프리카 주요 자원의 세계 생산 순위 표">
     <rect x="0" y="0" width="344" height="168" rx="14" fill="#F7F9FC" stroke="#D8DEE8" stroke-width="1.2"/>
-    <text x="14" y="18" font-size="10" font-weight="900" fill="#333D4B">아프리카의 자원 — 세계 생산 순위</text>
+    <text x="14" y="18" font-size="10" font-weight="900" fill="#333D4B">아프리카의 자원, 세계 생산 순위</text>
     <text x="330" y="18" text-anchor="end" font-size="8" font-weight="700" fill="#8A94A6">(미국 지질 조사국, 2023)</text>
     <text x="22" y="32" font-size="8" font-weight="800" fill="#8A94A6">자원</text>
     <text x="118" y="32" font-size="8" font-weight="800" fill="#8A94A6">생산 국가</text>
@@ -338,7 +338,7 @@ export function afFairFig(): string {
       ${seg(226, 90, "#4E5968", "판매점", false)}
       <text x="0" y="38" font-size="8" font-weight="800" fill="#C0471C">↑ 생산자 몫(작아요)</text>
     </g>
-    <text x="14" y="106" font-size="9" font-weight="800" fill="#1E6E3C">공정 무역 — 중간 단계를 줄여요</text>
+    <text x="14" y="106" font-size="9" font-weight="800" fill="#1E6E3C">공정 무역, 중간 단계를 줄여요</text>
     <g transform="translate(14 112)">
       ${seg(0, 108, "#2E9E5B", "생산자와 조합", false)}
       ${seg(108, 100, "#6B7684", "가공업자", false)}

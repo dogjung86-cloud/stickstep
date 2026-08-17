@@ -83,7 +83,7 @@ export function socWorldFig(opts?: {
     marks.length ? `위치 ${marks.map((m) => m.t).join("·")} 표시` : "",
     routes.length ? "두 지점을 잇는 경로 화살표" : "",
   ].filter(Boolean);
-  return `<svg viewBox="0 14 1000 400" ${NS} fill="none" role="img" aria-label="${ariaBits.join(" — ")}">
+  return `<svg viewBox="0 14 1000 400" ${NS} fill="none" role="img" aria-label="${ariaBits.join(", ")}">
     <defs><clipPath id="sxw-clip"><rect x="0" y="14" width="1000" height="400" rx="12"/></clipPath></defs>
     <rect x="0" y="14" width="1000" height="400" rx="12" fill="#D6EAF6"/>
     <g clip-path="url(#sxw-clip)">
@@ -362,7 +362,7 @@ export function socEraCardsFig(opts?: { hide?: boolean; marks?: string[] }): str
     </g>`,
     )
     .join("");
-  return `<svg viewBox="0 0 360 ${hide ? 104 : 122}" ${NS} fill="none" role="img" aria-label="세계를 이어 온 도구 카드 ${marks.join(", ")} 네 장${hide ? " — 이름 없이 그림만 있다" : ""}"><defs>${defs}</defs>${cards}</svg>`;
+  return `<svg viewBox="0 0 360 ${hide ? 104 : 122}" ${NS} fill="none" role="img" aria-label="세계를 이어 온 도구 카드 ${marks.join(", ")} 네 장${hide ? ", 이름 없이 그림만 있다" : ""}"><defs>${defs}</defs>${cards}</svg>`;
 }
 
 /* ================================================================
@@ -421,7 +421,7 @@ export function socScaleRingsFig(opts?: { labels?: string[]; dots?: { ring: 0 | 
       <text x="${x.toFixed(1)}" y="${(y + 4.4).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="900" fill="#FFFFFF">${d.t}</text>`;
     })
     .join("");
-  return `<svg viewBox="0 0 360 300" ${NS} fill="none" role="img" aria-label="가운데에서 바깥으로 넓어지는 세 겹 동심원 그림 — ${labels.join(", ")} 표시${dots.length ? `, 점 ${dots.map((d) => d.t).join("·")}` : ""}">
+  return `<svg viewBox="0 0 360 300" ${NS} fill="none" role="img" aria-label="가운데에서 바깥으로 넓어지는 세 겹 동심원 그림, ${labels.join(", ")} 표시${dots.length ? `, 점 ${dots.map((d) => d.t).join("·")}` : ""}">
     <circle cx="${CX}" cy="${CY}" r="10" fill="#333D4B"/>
     ${rings}${labelSvg}${dotSvg}
   </svg>`;
@@ -514,7 +514,7 @@ export function socFlowFig(steps: string[], opts?: { blank?: number }): string {
       return `<rect x="${x}" y="16" width="${BW}" height="${BH}" rx="12" fill="${isBlank ? "#FFF4E8" : "#FFFFFF"}" stroke="${isBlank ? "#E8590C" : "#DCE0E6"}" stroke-width="${isBlank ? 2 : 1.6}" ${isBlank ? 'stroke-dasharray="6 5"' : ""}/>${texts}${arrow}`;
     })
     .join("");
-  return `<svg viewBox="0 0 360 90" ${NS} fill="none" role="img" aria-label="차례를 나타낸 흐름도(칸 ${n}개)${opts?.blank !== undefined ? " — 한 칸은 ㉠로 비워져 있다" : ""}">${body}</svg>`;
+  return `<svg viewBox="0 0 360 90" ${NS} fill="none" role="img" aria-label="차례를 나타낸 흐름도(칸 ${n}개)${opts?.blank !== undefined ? ", 한 칸은 ㉠로 비워져 있다" : ""}">${body}</svg>`;
 }
 
 /* ================================================================
@@ -730,7 +730,7 @@ export function sxAsiaMapFig(opts?: {
     (opts?.letters ?? []).length ? `위치 ${(opts?.letters ?? []).map((m) => m.t).join("·")} 표시` : "",
     (opts?.arrows ?? []).length ? "이동 방향 화살표" : "",
   ].filter(Boolean);
-  return `<svg viewBox="${vx} ${vy} ${vw} ${vh}" ${NS} fill="none" role="img" aria-label="${ariaBits.join(" — ")}">
+  return `<svg viewBox="${vx} ${vy} ${vw} ${vh}" ${NS} fill="none" role="img" aria-label="${ariaBits.join(", ")}">
     <defs>
       <clipPath id="sx2-lclip"><path d="${WORLD_LAND_PATH}" fill-rule="evenodd"/></clipPath>
       <radialGradient id="sx2-sea" cx=".5" cy=".4" r=".95">
@@ -796,7 +796,7 @@ export function sxPyramidFig(kinds: SxPyramidKind[], opts?: { tags?: string[] })
     aged: "위쪽 막대가 넓은",
     migrant: "가운데 나이대의 왼쪽 막대만 길게 튀어나온",
   };
-  const aria = `인구 피라미드 그래프 ${n}개 — ${kinds.map((k, i) => `${tags[i]} ${kindWord[k]} 모양`).join(", ")}`;
+  const aria = `인구 피라미드 그래프 ${n}개, ${kinds.map((k, i) => `${tags[i]} ${kindWord[k]} 모양`).join(", ")}`;
   return `<svg viewBox="0 0 ${W} 170" ${NS} fill="none" role="img" aria-label="${aria}">
     ${kinds.slice(0, n).map((k, i) => panel(k, i * (PW + 8), tags[i])).join("")}
   </svg>`;

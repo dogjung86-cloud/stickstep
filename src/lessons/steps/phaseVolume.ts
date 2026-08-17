@@ -40,13 +40,13 @@ export const phaseVolume: StepRenderer = (host, step, api) => {
 
   const canvas = el("canvas", { class: "mstage-cvblock", style: "height:300px" });
   const countPill = el("div", { class: "pill" }, el("span", { class: "pdot", style: `background:rgb(${LIQ})` }), el("span", { text: `입자 ${N}개` }));
-  const massPill = el("div", { class: "pill" }, el("span", { text: "질량 2.0 g — 그대로" }));
+  const massPill = el("div", { class: "pill" }, el("span", { text: "질량 2.0 g, 그대로" }));
   const stage = el(
     "div",
     { class: "stage" },
     canvas,
     el("div", { class: "stage-hud" }, countPill, massPill),
-    el("div", { class: "stage-cap", text: "아세톤 1 mL — 풍선은 아직 쭈글쭈글" }),
+    el("div", { class: "stage-cap", text: "아세톤 1 mL, 풍선은 아직 쭈글쭈글" }),
   );
 
   const heatBtn = el("button", { class: "swapbtn", attrs: { type: "button" } }, el("span", { text: "꾹 눌러 따뜻한 바람 불기" }));
@@ -239,7 +239,7 @@ export const phaseVolume: StepRenderer = (host, step, api) => {
     }
 
     // ---- HUD 갱신 ----
-    countPill.querySelector("span:last-child")!.textContent = `입자 ${N}개 — 그대로`;
+    countPill.querySelector("span:last-child")!.textContent = `입자 ${N}개, 그대로`;
     if (tMs - massPulsed < 350) massPill.classList.add("pulse-soft");
     else massPill.classList.remove("pulse-soft");
 
@@ -248,7 +248,7 @@ export const phaseVolume: StepRenderer = (host, step, api) => {
       finished = true;
       haptic(HAPTIC.ctaUnlock);
       helper.innerHTML =
-        "풍선이 빵빵해졌어요! 그런데 HUD를 보세요 — <b>입자 수도 질량도 그대로</b>예요. 기화하면서 <b>입자 사이의 거리</b>가 멀어져 <b>부피만</b> 크게 늘어난 거예요.";
+        "풍선이 빵빵해졌어요! 그런데 HUD를 보세요. <b>입자 수도 질량도 그대로</b>예요. 기화하면서 <b>입자 사이의 거리</b>가 멀어져 <b>부피만</b> 크게 늘어난 거예요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }

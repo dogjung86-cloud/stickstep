@@ -265,7 +265,7 @@ export const diversityLab: StepRenderer = (host, step, api) => {
     style: `height:${CVH}px`,
     attrs: {
       role: "img",
-      "aria-label": "생태계 타일마다 여러 종류의 생물이 놓인 무대 — 생태계 수·생물 종류 수·변이 폭에 따라 구성이 바뀐다",
+      "aria-label": "생태계 타일마다 여러 종류의 생물이 놓인 무대, 생태계 수·생물 종류 수·변이 폭에 따라 구성이 바뀐다",
     },
   });
   const readPill = el("span", { text: "생태계 1곳 · 생물 1가지" });
@@ -483,9 +483,9 @@ export const diversityLab: StepRenderer = (host, step, api) => {
       touched.add(k);
       const chip = goalsEl.querySelector('[data-g="kinds"] span') as HTMLElement | null;
       if (chip && !goals.has("kinds")) chip.textContent = `${touched.size} / 3`;
-      if (k === "eco") toastMsg("생태계의 종류가 달라졌어요 — 첫 번째 다양함이에요");
-      else if (k === "species") toastMsg("한 생태계에 사는 생물의 종류가 달라졌어요 — 두 번째 다양함이에요");
-      else toastMsg("같은 종류 안에서도 크기와 색이 달라졌어요 — 세 번째 다양함이에요");
+      if (k === "eco") toastMsg("생태계의 종류가 달라졌어요. 첫 번째 다양함이에요");
+      else if (k === "species") toastMsg("한 생태계에 사는 생물의 종류가 달라졌어요. 두 번째 다양함이에요");
+      else toastMsg("같은 종류 안에서도 크기와 색이 달라졌어요. 세 번째 다양함이에요");
       if (touched.size === 3) {
         collect("kinds", "생태계 · 생물 종류 · 변이, 세 가지를 모두 만져 봤어요");
         helper.innerHTML = "세 가지를 모두 만져 봤어요. 이제 <b>세 가지를 모두 가장 높게</b> 올려 보세요. 하나라도 낮으면 게이지가 절반을 넘지 못해요.";

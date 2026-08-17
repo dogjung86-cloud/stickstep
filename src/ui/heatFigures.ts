@@ -236,7 +236,7 @@ export function heatingCurves3(): string {
     ${yt}${xt}
     <line x1="40" y1="26" x2="40" y2="186" stroke="#B0B8C1" stroke-width="1.6"/>
     <line x1="40" y1="186" x2="320" y2="186" stroke="#B0B8C1" stroke-width="1.6"/>
-    <!-- 세 선은 같은 색 — 색이 정답(비열 순서)의 단서가 되지 않게 한다 -->
+    <!-- 세 선은 같은 색, 색이 정답(비열 순서)의 단서가 되지 않게 한다 -->
     <line x1="${gx(0)}" y1="${gy(20)}" x2="${gx(5)}" y2="${gy(34)}" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
     <line x1="${gx(0)}" y1="${gy(20)}" x2="${gx(5)}" y2="${gy(52)}" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>
     <line x1="${gx(0)}" y1="${gy(20)}" x2="${gx(5)}" y2="${gy(76)}" stroke="#5E6B7E" stroke-width="3" stroke-linecap="round"/>

@@ -98,7 +98,7 @@ export function renderMorningLaw(scene: HTMLElement, helper: HTMLElement, s: Hoo
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = morninglawSvg(0, 1);
-  helper.innerHTML = "어느 평범한 아침 — 일어나자마자 <b>일기 예보</b>부터 확인했어요. 그런데 이 예보, 나라가 법에 따라 만들어 알려 주는 거래요. 하루를 계속 따라가 봐요!";
+  helper.innerHTML = "어느 평범한 아침, 일어나자마자 <b>일기 예보</b>부터 확인했어요. 그런데 이 예보, 나라가 법에 따라 만들어 알려 주는 거래요. 하루를 계속 따라가 봐요!";
   let stage = 0;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -107,7 +107,7 @@ export function renderMorningLaw(scene: HTMLElement, helper: HTMLElement, s: Hoo
     haptic(HAPTIC.select);
     if (stage === 1) {
       fig.innerHTML = morninglawSvg(1, 2);
-      helper.innerHTML = "점심 <b>급식</b> 시간 — 식단과 위생도 법이 정한 기준을 따라요. 도장이 하나 더 찍혔네요!";
+      helper.innerHTML = "점심 <b>급식</b> 시간, 식단과 위생도 법이 정한 기준을 따라요. 도장이 하나 더 찍혔네요!";
       btn.textContent = "다음 장면 보기 (2/3)";
     } else {
       fig.innerHTML = morninglawSvg(2, 3);
@@ -115,16 +115,16 @@ export function renderMorningLaw(scene: HTMLElement, helper: HTMLElement, s: Hoo
       btn.classList.add("done");
       btn.disabled = true;
       face("surprised");
-      helper.innerHTML = "하굣길 <b>횡단보도</b> — 신호도, 차가 멈추는 것도 법이 정한 규칙이에요. 잠깐, 오늘 하루 이런 도장이 대체 몇 개나 찍힌 걸까요?";
+      helper.innerHTML = "하굣길 <b>횡단보도</b>, 신호도, 차가 멈추는 것도 법이 정한 규칙이에요. 잠깐, 오늘 하루 이런 도장이 대체 몇 개나 찍힌 걸까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
-            "셀 수 없이 많다 — 생활 곳곳이 법과 닿아 있다",
+            "셀 수 없이 많다. 생활 곳곳이 법과 닿아 있다",
             "법을 어긴 적이 없으니 0개다",
             "재판을 받을 때만 법을 만난다",
           ],
-          good: "맞아요! 예보·급식·신호등처럼 <b>어기지 않아도</b> 우리 하루는 법과 촘촘히 닿아 있어요 — 지난 시간 예고했던 '길 위의 약속'의 정체, 이제 만나러 가요!",
-          bad: "법은 어겼을 때만 나타나는 게 아니에요 — 오늘 본 예보·급식·신호등 도장을 세어 봐요. 평범한 하루 곳곳에 법이 숨어 있답니다. 그 정체를 만나러 가요!",
+          good: "맞아요! 예보·급식·신호등처럼 <b>어기지 않아도</b> 우리 하루는 법과 촘촘히 닿아 있어요. 지난 시간 예고했던 '길 위의 약속'의 정체, 이제 만나러 가요!",
+          bad: "법은 어겼을 때만 나타나는 게 아니에요. 오늘 본 예보·급식·신호등 도장을 세어 봐요. 평범한 하루 곳곳에 법이 숨어 있답니다. 그 정체를 만나러 가요!",
           onDone: finish,
         });
       }, 900);
@@ -176,7 +176,7 @@ export function renderGoddess(scene: HTMLElement, helper: HTMLElement, s: HookOp
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = goddessSvg(false, false);
-  helper.innerHTML = "법원 앞에서 만난 <b>정의의 여신상</b> — 두 손에 무언가를 들고 있는데, 가려져 있네요. 하나씩 공개해 봐요!";
+  helper.innerHTML = "법원 앞에서 만난 <b>정의의 여신상</b>, 두 손에 무언가를 들고 있는데, 가려져 있네요. 하나씩 공개해 봐요!";
   let stage = 0;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -193,7 +193,7 @@ export function renderGoddess(scene: HTMLElement, helper: HTMLElement, s: HookOp
       btn.classList.add("done");
       btn.disabled = true;
       face("surprised");
-      helper.innerHTML = "오른손엔 <b>칼</b> — 법을 어기면 국가가 제재한다는 <b>강제성</b>의 상징이래요. 그렇다면 왼손의 저울은 무엇을 뜻할까요?";
+      helper.innerHTML = "오른손엔 <b>칼</b>, 법을 어기면 국가가 제재한다는 <b>강제성</b>의 상징이래요. 그렇다면 왼손의 저울은 무엇을 뜻할까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
@@ -201,8 +201,8 @@ export function renderGoddess(scene: HTMLElement, helper: HTMLElement, s: HookOp
             "무거운 물건을 재는 정확한 눈금",
             "저울처럼 튼튼한 법원 건물",
           ],
-          good: "맞아요! 수평을 이룬 저울은 누구든 <b>치우침 없이 공평하게</b> 판단한다는 뜻 — 법이 이루려는 '정의'의 상징이에요. 법이 무엇을 실현하려 하는지 배우러 가요!",
-          bad: "무게나 건물 이야기가 아니에요 — 양쪽 접시가 <b>나란한</b> 모습에 답이 있어요. 어느 쪽으로도 기울지 않는 공평함, 그게 법이 이루려는 정의랍니다!",
+          good: "맞아요! 수평을 이룬 저울은 누구든 <b>치우침 없이 공평하게</b> 판단한다는 뜻, 법이 이루려는 '정의'의 상징이에요. 법이 무엇을 실현하려 하는지 배우러 가요!",
+          bad: "무게나 건물 이야기가 아니에요. 양쪽 접시가 <b>나란한</b> 모습에 답이 있어요. 어느 쪽으로도 기울지 않는 공평함, 그게 법이 이루려는 정의랍니다!",
           onDone: finish,
         });
       }, 900);
@@ -244,7 +244,7 @@ export function renderTwoLoans(scene: HTMLElement, helper: HTMLElement, s: HookO
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = twoloansSvg(0);
-  helper.innerHTML = "돈을 빌리고 <b>약속한 날이 지나도 갚지 않은</b> 두 사람, A와 B — 겉보기엔 똑같은 상황이에요. 속사정을 하나씩 열어 봐요.";
+  helper.innerHTML = "돈을 빌리고 <b>약속한 날이 지나도 갚지 않은</b> 두 사람, A와 B, 겉보기엔 똑같은 상황이에요. 속사정을 하나씩 열어 봐요.";
   let stage = 0;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -253,7 +253,7 @@ export function renderTwoLoans(scene: HTMLElement, helper: HTMLElement, s: HookO
     haptic(HAPTIC.select);
     if (stage === 1) {
       fig.innerHTML = twoloansSvg(1);
-      helper.innerHTML = "A의 사정 — 갚으려 했지만 <b>형편이 어려워져</b> 못 갚고 있어요. 그럼 B는요?";
+      helper.innerHTML = "A의 사정, 갚으려 했지만 <b>형편이 어려워져</b> 못 갚고 있어요. 그럼 B는요?";
       btn.textContent = "B의 사정 보기";
     } else {
       fig.innerHTML = twoloansSvg(2);
@@ -261,16 +261,16 @@ export function renderTwoLoans(scene: HTMLElement, helper: HTMLElement, s: HookO
       btn.classList.add("done");
       btn.disabled = true;
       face("surprised");
-      helper.innerHTML = "B의 사정 — 빌릴 때부터 <b>갚을 생각이 아예 없었어요</b>. 똑같이 '안 갚은' 두 사람, 법도 똑같이 다룰까요?";
+      helper.innerHTML = "B의 사정, 빌릴 때부터 <b>갚을 생각이 아예 없었어요</b>. 똑같이 '안 갚은' 두 사람, 법도 똑같이 다룰까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
-            "다르다 — 하나는 개인 간 다툼, 하나는 남을 속인 범죄로 다룬다",
-            "같다 — 안 갚았다는 결과가 같으니 같은 법을 적용한다",
+            "다르다. 하나는 개인 간 다툼, 하나는 남을 속인 범죄로 다룬다",
+            "같다. 안 갚았다는 결과가 같으니 같은 법을 적용한다",
             "둘 다 법과는 상관없는 개인 사정이다",
           ],
-          good: "정확해요! A는 개인 간 약속(계약)의 문제라 <b>민법</b>이, 처음부터 속인 B는 범죄라 <b>형법</b>이 다뤄요 — 같은 '안 갚음'도 법의 구역이 갈리죠. 법의 지도를 펼치러 가요!",
-          bad: "결과는 같아 보여도 속사정이 달라요 — 형편 탓인 A는 개인 간 다툼(민법), 처음부터 속인 B는 범죄(형법)! 법에도 담당 구역이 있답니다. 그 지도를 보러 가요!",
+          good: "정확해요! A는 개인 간 약속(계약)의 문제라 <b>민법</b>이, 처음부터 속인 B는 범죄라 <b>형법</b>이 다뤄요. 같은 '안 갚음'도 법의 구역이 갈리죠. 법의 지도를 펼치러 가요!",
+          bad: "결과는 같아 보여도 속사정이 달라요. 형편 탓인 A는 개인 간 다툼(민법), 처음부터 속인 B는 범죄(형법)! 법에도 담당 구역이 있답니다. 그 지도를 보러 가요!",
           onDone: finish,
         });
       }, 900);
@@ -304,7 +304,7 @@ function jarcourtSvg(stage: number): string {
     <path d="M18 112q52-16 102-10t102 10v20H18z" fill="#C8A360" opacity=".5"/>
     <path d="M30 116q40-8 90-6t90 6" stroke="#8A6A3E" stroke-width="1.6" fill="none" opacity=".6"/>
     ${jarArt}${people}
-    <text x="120" y="138" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${stage >= 2 ? "\"항아리는 내 것!\" — 두 목소리가 맞섰어요" : stage === 1 ? "흙 속에서 반짝이는 항아리가!" : "산 지 얼마 안 된 밭을 일구는 중…"}</text>`);
+    <text x="120" y="138" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${stage >= 2 ? "\"항아리는 내 것!\", 두 목소리가 맞섰어요" : stage === 1 ? "흙 속에서 반짝이는 항아리가!" : "산 지 얼마 안 된 밭을 일구는 중…"}</text>`);
 }
 
 export function renderJarCourt(scene: HTMLElement, helper: HTMLElement, s: HookOpt, finish: () => void, face: Face): () => void {
@@ -313,7 +313,7 @@ export function renderJarCourt(scene: HTMLElement, helper: HTMLElement, s: HookO
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = jarcourtSvg(0);
-  helper.innerHTML = "동화 나라의 농부가 <b>새로 산 밭</b>을 일구고 있어요 — 옛날이야기 「요술 항아리」의 그 장면이죠. 흙을 뒤집어 봐요!";
+  helper.innerHTML = "동화 나라의 농부가 <b>새로 산 밭</b>을 일구고 있어요. 옛날이야기 「요술 항아리」의 그 장면이죠. 흙을 뒤집어 봐요!";
   let stage = 0;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -322,7 +322,7 @@ export function renderJarCourt(scene: HTMLElement, helper: HTMLElement, s: HookO
     haptic(HAPTIC.select);
     if (stage === 1) {
       fig.innerHTML = jarcourtSvg(1);
-      helper.innerHTML = "이럴 수가 — 흙 속에서 <b>요술 항아리</b>가 나왔어요! 넣은 것이 두 배가 되는 신비한 항아리래요.";
+      helper.innerHTML = "이럴 수가, 흙 속에서 <b>요술 항아리</b>가 나왔어요! 넣은 것이 두 배가 되는 신비한 항아리래요.";
       btn.textContent = "소문이 퍼진 뒤…";
     } else {
       fig.innerHTML = jarcourtSvg(2);
@@ -330,7 +330,7 @@ export function renderJarCourt(scene: HTMLElement, helper: HTMLElement, s: HookO
       btn.classList.add("done");
       btn.disabled = true;
       face("surprised");
-      helper.innerHTML = "소문을 들은 <b>밭을 판 옛 주인</b>이 달려왔어요 — \"밭은 팔았지만 항아리는 안 팔았다!\" vs \"밭에서 나왔으니 내 것!\" 이 다툼, 어떻게 끝내야 할까요?";
+      helper.innerHTML = "소문을 들은 <b>밭을 판 옛 주인</b>이 달려왔어요. \"밭은 팔았지만 항아리는 안 팔았다!\" vs \"밭에서 나왔으니 내 것!\" 이 다툼, 어떻게 끝내야 할까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
@@ -338,8 +338,8 @@ export function renderJarCourt(scene: HTMLElement, helper: HTMLElement, s: HookO
             "목소리 큰 쪽이 갖는다",
             "힘이 센 쪽이 갖는다",
           ],
-          good: "맞아요! 목소리나 힘으로 정하면 또 다른 다툼이 자라날 뿐 — 법원이 <b>법을 적용해 옳고 그름을 가리는 재판</b>이 평화로운 해결의 길이에요. 동화 나라 법정을 열러 가요!",
-          bad: "목소리와 힘으로 정하는 순간, 이긴 쪽 마음대로인 세상이 돼요 — 법원이 법을 적용해 가려 주는 <b>재판</b>이 다툼을 평화롭게 끝내는 길이랍니다. 법정을 열러 가요!",
+          good: "맞아요! 목소리나 힘으로 정하면 또 다른 다툼이 자라날 뿐, 법원이 <b>법을 적용해 옳고 그름을 가리는 재판</b>이 평화로운 해결의 길이에요. 동화 나라 법정을 열러 가요!",
+          bad: "목소리와 힘으로 정하는 순간, 이긴 쪽 마음대로인 세상이 돼요. 법원이 법을 적용해 가려 주는 <b>재판</b>이 다툼을 평화롭게 끝내는 길이랍니다. 법정을 열러 가요!",
           onDone: finish,
         });
       }, 900);
@@ -366,7 +366,7 @@ function oddtrialSvg(found: Set<string>): string {
       <rect x="30" y="88" width="180" height="32" fill="url(#hs11-paper)" opacity=".7"/>
       <rect x="30" y="86" width="180" height="34" fill="#8FA0B8" opacity=".9"/>
       <path d="M46 88v30M78 88v30M110 88v30M142 88v30M174 88v30M206 88v30" stroke="#5A6B86" stroke-width="1.5" opacity=".6"/>
-      <text x="120" y="106" text-anchor="middle" font-size="8.4" font-weight="800" fill="#EEF2F8">방청석 — 가림막</text>
+      <text x="120" y="106" text-anchor="middle" font-size="8.4" font-weight="800" fill="#EEF2F8">방청석, 가림막</text>
       ${curtain ? `<circle cx="120" cy="103" r="16" fill="none" stroke="#C0392E" stroke-width="2.2" class="hs8-noti"/>` : ""}
     </g>
     <g data-spot="evid" style="cursor:pointer">
@@ -387,9 +387,9 @@ export function renderOddTrial(scene: HTMLElement, helper: HTMLElement, s: HookO
   const found = new Set<string>();
   let timer = 0;
   const names: Record<string, string> = {
-    judge: "판사가 한쪽 당사자와 <b>단짝 친구</b>래요 — 벌써 그쪽으로 마음이 기울어 있죠",
-    curtain: "방청석이 <b>가림막</b>으로 막혀 있어요 — 재판을 아무도 지켜볼 수 없어요",
-    evid: "책상 위엔 증거 대신 <b>소문 쪽지</b>뿐이에요 — \"그 사람이 그랬대\"",
+    judge: "판사가 한쪽 당사자와 <b>단짝 친구</b>래요. 벌써 그쪽으로 마음이 기울어 있죠",
+    curtain: "방청석이 <b>가림막</b>으로 막혀 있어요. 재판을 아무도 지켜볼 수 없어요",
+    evid: "책상 위엔 증거 대신 <b>소문 쪽지</b>뿐이에요. \"그 사람이 그랬대\"",
   };
   const render = (): void => {
     fig.innerHTML = oddtrialSvg(found);
@@ -403,16 +403,16 @@ export function renderOddTrial(scene: HTMLElement, helper: HTMLElement, s: HookO
         helper.innerHTML = `이상한 점 발견! ${names[key]}. (${found.size}/3)`;
         if (found.size >= 3) {
           face("surprised");
-          helper.innerHTML = "세 가지 전부 찾았어요 — 친구 판사, 가림막, 소문 판결. 이 재판, 결과를 믿을 수 있을까요?";
+          helper.innerHTML = "세 가지 전부 찾았어요. 친구 판사, 가림막, 소문 판결. 이 재판, 결과를 믿을 수 있을까요?";
           timer = window.setTimeout(() => {
             ask(choicesBox, helper, {
               choices: s.choices ?? [
-                "믿기 어렵다 — 공정하게 판단할 장치가 하나도 없다",
+                "믿기 어렵다. 공정하게 판단할 장치가 하나도 없다",
                 "판사가 정했으니 무조건 믿어야 한다",
                 "재판은 원래 운에 달린 것이다",
               ],
-              good: "맞아요! 치우친 판사, 닫힌 방청석, 증거 없는 판결 — <b>공정한 재판의 장치</b>가 전부 빠져 있죠. 우리나라 법원이 갖춘 네 가지 장치를 직접 세우러 가요!",
-              bad: "판사도 사람이라 치우칠 수 있고, 운에 맡기면 억울한 사람이 생겨요 — 그래서 재판엔 <b>공정을 지키는 장치</b>가 필요하답니다. 그 네 가지 장치를 세우러 가요!",
+              good: "맞아요! 치우친 판사, 닫힌 방청석, 증거 없는 판결, <b>공정한 재판의 장치</b>가 전부 빠져 있죠. 우리나라 법원이 갖춘 네 가지 장치를 직접 세우러 가요!",
+              bad: "판사도 사람이라 치우칠 수 있고, 운에 맡기면 억울한 사람이 생겨요. 그래서 재판엔 <b>공정을 지키는 장치</b>가 필요하답니다. 그 네 가지 장치를 세우러 가요!",
               onDone: finish,
             });
           }, 1000);
@@ -445,7 +445,7 @@ function flipverdictSvg(flips: number): string {
     <path d="M184 80l6 4-6 4" fill="none" stroke="#8A93A6" stroke-width="1.8" stroke-linejoin="round"/>
     ${doc(206, 40, "대법원", flips >= 2 ? "clear" : "wait", flips === 2)}
     ${man(30, 118, { mood: flips >= 2 ? "joy" : "sad", arm: flips >= 2 ? "up" : "down", r: 5.8 })}
-    <text x="120" y="138" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${flips >= 2 ? "마지막 법원에서 판결이 뒤집혔어요!" : "\"저는 억울해요\" — 판결에 불복한 시민"}</text>`);
+    <text x="120" y="138" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${flips >= 2 ? "마지막 법원에서 판결이 뒤집혔어요!" : "\"저는 억울해요\", 판결에 불복한 시민"}</text>`);
 }
 
 export function renderFlipVerdict(scene: HTMLElement, helper: HTMLElement, s: HookOpt, finish: () => void, face: Face): () => void {
@@ -454,7 +454,7 @@ export function renderFlipVerdict(scene: HTMLElement, helper: HTMLElement, s: Ho
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = flipverdictSvg(0);
-  helper.innerHTML = "스틱 시의 한 시민이 <b>1심에서 유죄</b> 판결을 받았어요. 그런데 \"저는 정말 억울해요\"라고 호소하네요 — 이대로 끝일까요?";
+  helper.innerHTML = "스틱 시의 한 시민이 <b>1심에서 유죄</b> 판결을 받았어요. 그런데 \"저는 정말 억울해요\"라고 호소하네요. 이대로 끝일까요?";
   let stage = 0;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -463,7 +463,7 @@ export function renderFlipVerdict(scene: HTMLElement, helper: HTMLElement, s: Ho
     haptic(HAPTIC.select);
     if (stage === 1) {
       fig.innerHTML = flipverdictSvg(1);
-      helper.innerHTML = "<b>2심</b>에서도 유죄 — 하지만 시민은 포기하지 않고 <b>마지막 법원</b>의 문을 두드렸어요.";
+      helper.innerHTML = "<b>2심</b>에서도 유죄, 하지만 시민은 포기하지 않고 <b>마지막 법원</b>의 문을 두드렸어요.";
       btn.textContent = "마지막 법원으로";
     } else {
       fig.innerHTML = flipverdictSvg(2);
@@ -471,7 +471,7 @@ export function renderFlipVerdict(scene: HTMLElement, helper: HTMLElement, s: Ho
       btn.classList.add("done");
       btn.disabled = true;
       face("surprised");
-      helper.innerHTML = "<b>대법원에서 무죄</b> — 아래 법원들이 놓친 것을 최고 법원이 바로잡았어요! 그런데 왜 이렇게 여러 번 재판받을 수 있게 해 둔 걸까요?";
+      helper.innerHTML = "<b>대법원에서 무죄</b>, 아래 법원들이 놓친 것을 최고 법원이 바로잡았어요! 그런데 왜 이렇게 여러 번 재판받을 수 있게 해 둔 걸까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
@@ -479,8 +479,8 @@ export function renderFlipVerdict(scene: HTMLElement, helper: HTMLElement, s: Ho
             "재판을 오래 끌수록 법원이 유리해서",
             "세 번 정도는 해야 재판이 멋있어 보여서",
           ],
-          good: "맞아요! 법관도 사람이라 실수할 수 있죠 — 그래서 급이 다른 법원에서 <b>여러 번 재판받을 기회</b>를 열어 억울함을 바로잡아요. 이 계단의 이름을 배우러 가요!",
-          bad: "오래 끌거나 멋있으려는 게 아니에요 — 법관도 사람이라 잘못 판단할 수 있으니, <b>바로잡을 기회</b>를 제도로 보장하는 거죠. 세 계단의 이름을 배우러 가요!",
+          good: "맞아요! 법관도 사람이라 실수할 수 있죠. 그래서 급이 다른 법원에서 <b>여러 번 재판받을 기회</b>를 열어 억울함을 바로잡아요. 이 계단의 이름을 배우러 가요!",
+          bad: "오래 끌거나 멋있으려는 게 아니에요. 법관도 사람이라 잘못 판단할 수 있으니, <b>바로잡을 기회</b>를 제도로 보장하는 거죠. 세 계단의 이름을 배우러 가요!",
           onDone: finish,
         });
       }, 1000);

@@ -41,7 +41,7 @@ export function renderThumbJump(scene: HTMLElement, helper: HTMLElement, finish:
     </g>
     <circle cx="70" cy="88" r="12" fill="#69A869"/><circle cx="170" cy="86" r="12" fill="#69A869"/>
     <ellipse cx="120" cy="150" rx="86" ry="7" fill="#2A3A5E" opacity=".10"/>
-    <!-- 엄지(두 위치 — 눈에 따라 전환) -->
+    <!-- 엄지(두 위치, 눈에 따라 전환) -->
     <g class="hst-thumb L">
       <path d="M92 150 L92 108 Q92 96 102 96 Q112 96 112 108 L112 150 Z" fill="url(#tjThumb)" stroke="#8A5A30" stroke-width="1.5"/>
       <path d="M96 104 Q98 100 103 100" stroke="#C88E58" stroke-width="1.4"/>
@@ -71,12 +71,12 @@ export function renderThumbJump(scene: HTMLElement, helper: HTMLElement, finish:
     if (seen.size >= 2 && swaps >= 3 && !asked) {
       asked = true;
       face("surprised");
-      helper.innerHTML = "엄지가 나무 사이를 <b>폴짝폴짝 점프</b>해요! 그럼 — 팔을 굽혀 엄지를 <b>얼굴 가까이</b> 가져오면, 점프 폭은 어떻게 될까요?";
+      helper.innerHTML = "엄지가 나무 사이를 <b>폴짝폴짝 점프</b>해요! 그럼, 팔을 굽혀 엄지를 <b>얼굴 가까이</b> 가져오면, 점프 폭은 어떻게 될까요?";
       choicesBox.classList.add("show");
       ask(choicesBox, helper, {
         choices: ["점프 폭이 더 커진다", "점프 폭이 더 작아진다", "그대로다"],
-        good: "맞아요! <b>가까울수록 위치 차(시차)가 커져요</b>. 별도 똑같아요 — 이 점프 폭으로 <b>별까지의 거리</b>를 잰답니다.",
-        bad: "직접 해 보면 반대예요 — 엄지가 가까울수록 두 눈의 <b>보는 방향 차이가 커져서</b> 점프 폭도 커져요. 이 원리로 별까지 거리를 재요!",
+        good: "맞아요! <b>가까울수록 위치 차(시차)가 커져요</b>. 별도 똑같아요. 이 점프 폭으로 <b>별까지의 거리</b>를 잰답니다.",
+        bad: "직접 해 보면 반대예요. 엄지가 가까울수록 두 눈의 <b>보는 방향 차이가 커져서</b> 점프 폭도 커져요. 이 원리로 별까지 거리를 재요!",
         onDone: finish,
       });
     }
@@ -127,13 +127,13 @@ export function renderNightRoad(scene: HTMLElement, helper: HTMLElement, finish:
   </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "밤길의 가로등 — 전부 <b>똑같은 등</b>인데, 먼 등일수록 어둑해 보여요. 왜 그럴까요?";
+  helper.innerHTML = "밤길의 가로등, 전부 <b>똑같은 등</b>인데, 먼 등일수록 어둑해 보여요. 왜 그럴까요?";
   window.setTimeout(() => {
     choicesBox.classList.add("show");
     ask(choicesBox, helper, {
       choices: ["빛이 퍼져서 내 눈에 닿는 양이 줄어든다", "먼 등은 전기를 아껴서 약하게 켠다", "밤공기가 빛을 다 먹어 버린다"],
-      good: "정확해요! 빛은 <b>사방으로 퍼지며</b> 나아가서, 멀수록 같은 넓이가 받는 빛이 줄어요. 얼마나 줄어드는지 — 오늘 직접 재 봐요!",
-      bad: "등은 전부 같은 밝기로 켜져 있어요(공기도 빛을 그만큼 먹지 못해요). 진짜 이유는 <b>빛이 퍼지기 때문</b> — 멀수록 내 눈에 닿는 양이 줄어드는 거예요. 얼마나 줄어드는지 재 보러 가요!",
+      good: "정확해요! 빛은 <b>사방으로 퍼지며</b> 나아가서, 멀수록 같은 넓이가 받는 빛이 줄어요. 얼마나 줄어드는지, 오늘 직접 재 봐요!",
+      bad: "등은 전부 같은 밝기로 켜져 있어요(공기도 빛을 그만큼 먹지 못해요). 진짜 이유는 <b>빛이 퍼지기 때문</b>, 멀수록 내 눈에 닿는 양이 줄어드는 거예요. 얼마나 줄어드는지 재 보러 가요!",
       onDone: finish,
     });
     face("curious");
@@ -173,7 +173,7 @@ export function renderBrightLie(scene: HTMLElement, helper: HTMLElement, finish:
     <!-- 거리 공개 배지(처음엔 숨김) -->
     <g class="hst-dist">
       <rect x="30" y="128" width="92" height="20" rx="10" fill="#101A2E" stroke="#3A4A68"/>
-      <text x="76" y="142" fill="#7ED6FF" font-size="10.5" font-weight="800" text-anchor="middle">8.6광년 — 이웃!</text>
+      <text x="76" y="142" fill="#7ED6FF" font-size="10.5" font-weight="800" text-anchor="middle">8.6광년, 이웃!</text>
       <rect x="132" y="96" width="94" height="20" rx="10" fill="#101A2E" stroke="#3A4A68"/>
       <text x="179" y="110" fill="#F0A0B4" font-size="10.5" font-weight="800" text-anchor="middle">약 1,500광년!</text>
     </g>
@@ -184,9 +184,9 @@ export function renderBrightLie(scene: HTMLElement, helper: HTMLElement, finish:
   window.setTimeout(() => {
     choicesBox.classList.add("show");
     ask(choicesBox, helper, {
-      choices: ["아닐 수도 — 가까워서 밝아 보이는 걸 수도", "그렇다 — 밝게 보이면 강한 별", "별의 밝기는 전부 똑같다"],
-      good: "날카로워요! 거리를 보면 — 시리우스는 <b>8.6광년 이웃</b>, 데네브는 <b>약 1,500광년</b>. 데네브가 훨씬 먼데도 보인다는 건, 진짜 밝기는 데네브가 <b>압도적</b>이라는 뜻! 그래서 '공정한 비교 자'가 필요해요.",
-      bad: "함정이었어요! 거리를 공개하면 — 시리우스는 <b>8.6광년 이웃</b>이고 데네브는 <b>약 1,500광년</b>. 그렇게 먼데도 보이니, 진짜 밝기는 데네브의 압승이에요. '보이는 밝기'와 '진짜 밝기'를 가르는 자를 배워 봐요!",
+      choices: ["아닐 수도, 가까워서 밝아 보이는 걸 수도", "그렇다. 밝게 보이면 강한 별", "별의 밝기는 전부 똑같다"],
+      good: "날카로워요! 거리를 보면, 시리우스는 <b>8.6광년 이웃</b>, 데네브는 <b>약 1,500광년</b>. 데네브가 훨씬 먼데도 보인다는 건, 진짜 밝기는 데네브가 <b>압도적</b>이라는 뜻! 그래서 '공정한 비교 자'가 필요해요.",
+      bad: "함정이었어요! 거리를 공개하면, 시리우스는 <b>8.6광년 이웃</b>이고 데네브는 <b>약 1,500광년</b>. 그렇게 먼데도 보이니, 진짜 밝기는 데네브의 압승이에요. '보이는 밝기'와 '진짜 밝기'를 가르는 자를 배워 봐요!",
       onDone: () => {
         fig.classList.add("revealed");
         finish();
@@ -232,13 +232,13 @@ export function renderGasFlame(scene: HTMLElement, helper: HTMLElement, finish: 
   </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "부엌의 <b>파란 가스불</b>과 식탁의 <b>주황 촛불</b> — 색만 보고 고르면, 어느 불이 더 뜨거울까요?";
+  helper.innerHTML = "부엌의 <b>파란 가스불</b>과 식탁의 <b>주황 촛불</b>, 색만 보고 고르면, 어느 불이 더 뜨거울까요?";
   window.setTimeout(() => {
     choicesBox.classList.add("show");
     ask(choicesBox, helper, {
       choices: ["파란 가스불", "주황 촛불", "색과 온도는 상관없다"],
-      good: "맞아요! <b>파란 불꽃이 더 뜨거워요</b>(가스불 약 1,400 ℃ > 촛불 약 1,000 ℃). '빨강·주황 = 뜨겁다' 이미지와 반대죠? 별의 세계도 똑같답니다 — 오늘의 주제!",
-      bad: "빨강·주황이 '뜨거운 색'처럼 느껴지지만 실제론 반대예요 — <b>파란 가스불(약 1,400 ℃)이 촛불(약 1,000 ℃)보다 뜨거워요</b>. 색은 온도의 온도계 — 별에서도 똑같이 통해요!",
+      good: "맞아요! <b>파란 불꽃이 더 뜨거워요</b>(가스불 약 1,400 ℃ > 촛불 약 1,000 ℃). '빨강·주황 = 뜨겁다' 이미지와 반대죠? 별의 세계도 똑같답니다. 오늘의 주제!",
+      bad: "빨강·주황이 '뜨거운 색'처럼 느껴지지만 실제론 반대예요. <b>파란 가스불(약 1,400 ℃)이 촛불(약 1,000 ℃)보다 뜨거워요</b>. 색은 온도의 온도계, 별에서도 똑같이 통해요!",
       onDone: finish,
     });
     face("curious");
@@ -260,7 +260,7 @@ export function renderMilkyBand(scene: HTMLElement, helper: HTMLElement, finish:
     <rect x="4" y="4" width="232" height="128" rx="16" stroke="#3A4A68" stroke-width="1.6"/>
     <!-- 지평선 실루엣 -->
     <path d="M4 132 L48 122 L84 130 L130 118 L180 130 L236 124 L236 166 L4 166 Z" fill="#0E1626"/>
-    <!-- 올려다보는 스틱맨(손그림 라인 — stargaze 문법: 접촉 그림자 + 젖힌 고개 + 하늘 가리키는 팔) -->
+    <!-- 올려다보는 스틱맨(손그림 라인, stargaze 문법: 접촉 그림자 + 젖힌 고개 + 하늘 가리키는 팔) -->
     <ellipse cx="120" cy="163" rx="20" ry="3" fill="#000" opacity=".22"/>
     <g stroke="#E8EEF8" stroke-width="2.6" fill="none">
       <circle cx="117" cy="136" r="7.5" fill="#0E1626"/>
@@ -270,13 +270,13 @@ export function renderMilkyBand(scene: HTMLElement, helper: HTMLElement, finish:
   </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "불빛 없는 시골 밤하늘 — 하늘을 가로지르는 <b>뿌연 강</b> 같은 띠가 보여요. 저 띠의 정체는 뭘까요?";
+  helper.innerHTML = "불빛 없는 시골 밤하늘, 하늘을 가로지르는 <b>뿌연 강</b> 같은 띠가 보여요. 저 띠의 정체는 뭘까요?";
   window.setTimeout(() => {
     choicesBox.classList.add("show");
     ask(choicesBox, helper, {
-      choices: ["수천억 개 별의 무리 — 우리은하", "높은 하늘의 얇은 구름", "달빛이 공기에 번진 것"],
-      good: "맞아요! 저 뿌연 띠는 구름이 아니라 <b>셀 수 없이 많은 별</b> — 우리가 사는 별의 도시, <b>우리은하를 안에서 본 모습</b>이에요. 오늘 그 지도를 펼쳐 봐요!",
-      bad: "구름이나 달빛 번짐처럼 보이지만 — 망원경으로 보면 <b>전부 별</b>이에요! 수천억 개의 별이 모인 <b>우리은하를 안쪽에서 본 모습</b>이랍니다. 그 지도를 펼치러 가요!",
+      choices: ["수천억 개 별의 무리, 우리은하", "높은 하늘의 얇은 구름", "달빛이 공기에 번진 것"],
+      good: "맞아요! 저 뿌연 띠는 구름이 아니라 <b>셀 수 없이 많은 별</b>, 우리가 사는 별의 도시, <b>우리은하를 안에서 본 모습</b>이에요. 오늘 그 지도를 펼쳐 봐요!",
+      bad: "구름이나 달빛 번짐처럼 보이지만, 망원경으로 보면 <b>전부 별</b>이에요! 수천억 개의 별이 모인 <b>우리은하를 안쪽에서 본 모습</b>이랍니다. 그 지도를 펼치러 가요!",
       onDone: finish,
     });
     face("surprised");
@@ -316,13 +316,13 @@ export function renderOrionBlur(scene: HTMLElement, helper: HTMLElement, finish:
       </g>
       <circle cx="122" cy="108" r="36" stroke="#8FB3E8" stroke-width="2.4"/>
     </g>
-    <text x="120" y="158" fill="#8FA6D0" font-size="10.5" font-weight="700" text-anchor="middle">오리온자리 — 허리띠 아래를 봐요</text>
+    <text x="120" y="158" fill="#8FA6D0" font-size="10.5" font-weight="700" text-anchor="middle">오리온자리, 허리띠 아래를 봐요</text>
   </svg>`;
   const zoomBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "망원경으로 보기" }));
   const row = el("div", { class: "gp-controls" }, zoomBtn);
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, row, choicesBox);
-  helper.innerHTML = "겨울 밤하늘의 오리온자리. 허리띠 세 별 아래에 <b>뿌옇게 번진 얼룩</b>이 있어요 — 별이라기엔 흐릿해요.";
+  helper.innerHTML = "겨울 밤하늘의 오리온자리. 허리띠 세 별 아래에 <b>뿌옇게 번진 얼룩</b>이 있어요. 별이라기엔 흐릿해요.";
 
   let asked = false;
   const onZoom = (): void => {
@@ -332,13 +332,13 @@ export function renderOrionBlur(scene: HTMLElement, helper: HTMLElement, finish:
     if (asked) return;
     asked = true;
     face("surprised");
-    helper.innerHTML = "우와 — 별이 아니라 <b>붉게 빛나는 구름</b>이에요! 이 구름의 정체는 뭘까요?";
+    helper.innerHTML = "우와, 별이 아니라 <b>붉게 빛나는 구름</b>이에요! 이 구름의 정체는 뭘까요?";
     window.setTimeout(() => {
       choicesBox.classList.add("show");
       ask(choicesBox, helper, {
         choices: ["가스와 티끌(먼지)의 구름", "아주 멀리 있는 별 하나", "지구 대기의 수증기 구름"],
-        good: "맞아요! 별 사이 공간의 <b>가스와 티끌 구름 — 성운</b>이에요. 심지어 저곳은 <b>새 별이 태어나는 요람</b>이랍니다. 오늘은 별 무리(성단)와 이 구름(성운)을 구경해요!",
-        bad: "별 하나라기엔 너무 번져 있고, 지구의 구름이면 별과 함께 움직이지 않겠죠? 정체는 별 사이의 <b>가스와 티끌 구름 — 성운</b>! 심지어 새 별이 태어나는 요람이에요.",
+        good: "맞아요! 별 사이 공간의 <b>가스와 티끌 구름, 성운</b>이에요. 심지어 저곳은 <b>새 별이 태어나는 요람</b>이랍니다. 오늘은 별 무리(성단)와 이 구름(성운)을 구경해요!",
+        bad: "별 하나라기엔 너무 번져 있고, 지구의 구름이면 별과 함께 움직이지 않겠죠? 정체는 별 사이의 <b>가스와 티끌 구름, 성운</b>! 심지어 새 별이 태어나는 요람이에요.",
         onDone: finish,
       });
     }, 400);
@@ -401,13 +401,13 @@ export function renderMovingStar(scene: HTMLElement, helper: HTMLElement, finish
     if (asked) return;
     asked = true;
     face("surprised");
-    helper.innerHTML = "확대해 보니 — <b>거대한 인공 구조물</b>이에요! 저것의 정체는?";
+    helper.innerHTML = "확대해 보니, <b>거대한 인공 구조물</b>이에요! 저것의 정체는?";
     window.setTimeout(() => {
       choicesBox.classList.add("show");
       ask(choicesBox, helper, {
         choices: ["사람이 만든 우주 정거장(ISS)", "아주 가까운 행성", "높이 나는 인공조명 드론"],
-        good: "맞아요! <b>국제우주정거장(ISS)</b> — 축구장만 한 크기로 <b>90분에 지구 한 바퀴</b>를 돌아요. 안에는 지금도 사람이 살죠. 인류가 우주로 나간 이야기를 시작해요!",
-        bad: "행성은 저렇게 빨리 움직이지 않고, 드론은 저 높이(약 400 km)까지 못 올라가요. 정체는 <b>국제우주정거장(ISS)</b> — 90분에 지구를 한 바퀴 도는, 사람이 사는 우주 기지예요!",
+        good: "맞아요! <b>국제우주정거장(ISS)</b>, 축구장만 한 크기로 <b>90분에 지구 한 바퀴</b>를 돌아요. 안에는 지금도 사람이 살죠. 인류가 우주로 나간 이야기를 시작해요!",
+        bad: "행성은 저렇게 빨리 움직이지 않고, 드론은 저 높이(약 400 km)까지 못 올라가요. 정체는 <b>국제우주정거장(ISS)</b>, 90분에 지구를 한 바퀴 도는, 사람이 사는 우주 기지예요!",
         onDone: finish,
       });
     }, 400);

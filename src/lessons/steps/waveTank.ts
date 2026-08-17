@@ -147,7 +147,7 @@ export const waveLab: StepRenderer = (host, step, api) => {
       if (!speedHinted && showLabels && Math.abs(speed - SPEED0) > 40) {
         speedHinted = true;
         helper.innerHTML =
-          "속도를 바꾸면 <b>마루 사이 간격(파장)</b>도 변해요 — 같은 빠르기로 흔들어도 파동이 빨리 도망가면 간격이 넓어지죠!";
+          "속도를 바꾸면 <b>마루 사이 간격(파장)</b>도 변해요. 같은 빠르기로 흔들어도 파동이 빨리 도망가면 간격이 넓어지죠!";
       }
     },
     () => `${(speed / SPEED0).toFixed(1)}배`,
@@ -155,7 +155,7 @@ export const waveLab: StepRenderer = (host, step, api) => {
 
   const helper = el("div", {
     class: "helper",
-    html: "왼쪽 <b>진동 막대 손잡이를 잡고 위아래로</b> 흔들어 보세요 — 여러분의 손짓이 그대로 물결이 되어 퍼져 나가요!",
+    html: "왼쪽 <b>진동 막대 손잡이를 잡고 위아래로</b> 흔들어 보세요. 여러분의 손짓이 그대로 물결이 되어 퍼져 나가요!",
   });
   host.append(goalChips, helper, stage, btnRow, sliders, speedSliders); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   // 실험은 빠르게 지나가니 — 정지 그림으로 4요소를 붙잡아 두는 설명 카드
@@ -163,7 +163,7 @@ export const waveLab: StepRenderer = (host, step, api) => {
     labExplain({
       kicker: "천천히 보는 파동 지도",
       tone: "#8A6BFF",
-      lead: "움직이는 물결에서 놓쳤다면 여기서 확인 — <b>파동의 네 요소</b>예요.",
+      lead: "움직이는 물결에서 놓쳤다면 여기서 확인, <b>파동의 네 요소</b>예요.",
       fig: waveExplainFig(),
       rows: [
         { dot: "#E8961E", name: "마루", desc: "파동에서 <b>가장 높은 곳</b>이에요." },
@@ -203,14 +203,14 @@ export const waveLab: StepRenderer = (host, step, api) => {
     chip.querySelector("span")!.textContent = subText;
     haptic(HAPTIC.ctaUnlock);
     if (id === "make")
-      helper.innerHTML = "물결이 퍼져 나가죠? 이제 <b>탁구공</b>을 지켜보세요 — 물결을 따라 오른쪽으로 밀려갈까요?";
+      helper.innerHTML = "물결이 퍼져 나가죠? 이제 <b>탁구공</b>을 지켜보세요. 물결을 따라 오른쪽으로 밀려갈까요?";
     if (id === "ball")
       helper.innerHTML =
         "탁구공은 <b>제자리에서 위아래로 진동만</b> 해요(가로 이동 0!). 물(매질)은 이동하지 않고 <b>진동만 전달</b>하죠. 이제 <b>자동 진동</b>을 켜고 이름표도 봐요!";
     if (goals.size === 4 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 한곳의 진동이 퍼져 나가는 것이 <b>파동</b>, 파동을 전달하는 물질이 <b>매질</b> — 매질은 제자리에서 진동할 뿐이에요. 가장 높은 곳 <b>마루</b>, 낮은 곳 <b>골</b>, 마루~이웃 마루 <b>파장</b>, 중심~마루 <b>진폭</b>!";
+        "정리! 한곳의 진동이 퍼져 나가는 것이 <b>파동</b>, 파동을 전달하는 물질이 <b>매질</b>, 매질은 제자리에서 진동할 뿐이에요. 가장 높은 곳 <b>마루</b>, 낮은 곳 <b>골</b>, 마루~이웃 마루 <b>파장</b>, 중심~마루 <b>진폭</b>!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }

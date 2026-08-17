@@ -65,7 +65,7 @@ function renderLambskewer(scene: HTMLElement, helper: HTMLElement, s: HookOpts, 
     <button type="button" class="hh3-sk-btn" aria-label="양꼬치 굽기">꼬치 굽기</button>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "가족 외식으로 온 <b>양꼬치 가게</b> — 중국 음식점 단골 메뉴죠! 아래 버튼을 눌러 <b>꼬치를 구워</b> 볼까요?";
+  helper.innerHTML = "가족 외식으로 온 <b>양꼬치 가게</b>, 중국 음식점 단골 메뉴죠! 아래 버튼을 눌러 <b>꼬치를 구워</b> 볼까요?";
 
   let done = false;
   let timer = 0;
@@ -76,7 +76,7 @@ function renderLambskewer(scene: HTMLElement, helper: HTMLElement, s: HookOpts, 
     haptic(HAPTIC.tap);
     fig.classList.add("grilled");
     face("curious");
-    helper.innerHTML = "지글지글, 다 익었어요! 그런데 이상하죠 — <b>아주 옛날 중국의 한족은 양고기를 즐기지 않았고, 의자도 쓰지 않았대요</b>. 지금은 둘 다 중국 문화의 일부인데요?";
+    helper.innerHTML = "지글지글, 다 익었어요! 그런데 이상하죠. <b>아주 옛날 중국의 한족은 양고기를 즐기지 않았고, 의자도 쓰지 않았대요</b>. 지금은 둘 다 중국 문화의 일부인데요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -84,8 +84,8 @@ function renderLambskewer(scene: HTMLElement, helper: HTMLElement, s: HookOpts, 
           "실크로드로 유럽의 요리가 들어와서",
           "황제가 양고기를 먹으라는 법을 만들어서",
         ],
-        good: "맞아요! 중국이 여러 나라로 나뉘었던 시대, 북방 유목 민족이 화북에 나라를 세우고 한족과 어울려 살면서 <b>양고기·유제품·의자 문화가 한족에게 스며들었어요</b>. 거꾸로 유목 민족은 한족의 제도와 문화를 받아들였죠 — 분열의 시대가 곧 융합의 시대! 지금 만나러 가요.",
-        bad: "유럽도 황제의 법도 아니에요 — 답은 <b>이웃</b>이었어요. 중국이 분열됐던 시대에 북방 유목 민족이 화북에 나라를 세우고 한족과 어울려 살면서, 양고기와 의자 같은 유목 문화가 한족의 일상이 된 거랍니다. 분열 속에서 문화가 섞인 그 시대로 가 봐요!",
+        good: "맞아요! 중국이 여러 나라로 나뉘었던 시대, 북방 유목 민족이 화북에 나라를 세우고 한족과 어울려 살면서 <b>양고기·유제품·의자 문화가 한족에게 스며들었어요</b>. 거꾸로 유목 민족은 한족의 제도와 문화를 받아들였죠. 분열의 시대가 곧 융합의 시대! 지금 만나러 가요.",
+        bad: "유럽도 황제의 법도 아니에요. 답은 <b>이웃</b>이었어요. 중국이 분열됐던 시대에 북방 유목 민족이 화북에 나라를 세우고 한족과 어울려 살면서, 양고기와 의자 같은 유목 문화가 한족의 일상이 된 거랍니다. 분열 속에서 문화가 섞인 그 시대로 가 봐요!",
         onDone: finish,
       });
     }, 950);
@@ -105,7 +105,7 @@ function renderExamnotice(scene: HTMLElement, helper: HTMLElement, s: HookOpts, 
       <rect x="6" y="6" width="288" height="198" rx="12" fill="#F2EDE2"/>
       <rect x="26" y="20" width="248" height="150" rx="10" fill="url(#hh3-ex-board)" stroke="#1E4A30" stroke-width="2.4"/>
       <ellipse cx="150" cy="188" rx="120" ry="8" fill="#4A2A08" opacity=".12"/>
-      <g class="hh3-ex-note" role="button" tabindex="0" aria-label="시험 안내문 — 탭해서 크게 보기">
+      <g class="hh3-ex-note" role="button" tabindex="0" aria-label="시험 안내문, 탭해서 크게 보기">
         <rect x="96" y="40" width="108" height="112" rx="4" fill="url(#hh3-ex-pap)" stroke="#B9C1CC" stroke-width="1.8" transform="rotate(-2 150 96)"/>
         <circle cx="150" cy="48" r="4" fill="#E0524A"/>
         <text x="150" y="70" text-anchor="middle" font-size="13" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">중간고사</text>
@@ -131,7 +131,7 @@ function renderExamnotice(scene: HTMLElement, helper: HTMLElement, s: HookOpts, 
     haptic(HAPTIC.select);
     fig.classList.add("zoom");
     face("curious");
-    helper.innerHTML = "그런데 진짜로 발명한 나라가 있어요 — <b>약 1400년 전 중국의 수</b>가 세계에서 처음으로 <b>국가 차원의 시험</b>을 치르기 시작했거든요!";
+    helper.innerHTML = "그런데 진짜로 발명한 나라가 있어요. <b>약 1400년 전 중국의 수</b>가 세계에서 처음으로 <b>국가 차원의 시험</b>을 치르기 시작했거든요!";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -139,8 +139,8 @@ function renderExamnotice(scene: HTMLElement, helper: HTMLElement, s: HookOpts, 
           "황제의 요리를 맡을 요리사",
           "국경을 지킬 장군",
         ],
-        good: "맞아요! 시험으로 <b>관리</b>를 뽑는 과거제 — 가문이 아니라 <b>능력</b>으로 인재를 고르겠다는 발명품이에요. 시험 한 번으로 인생이 바뀌는 시대가 열렸죠. 수와 당의 이야기, 지금 시작해요!",
-        bad: "요리사도 장군도 아니라 <b>나라 일을 맡을 관리</b>였어요 — 수 문제가 시작한 과거제는 가문 대신 <b>시험 성적(능력)</b>으로 인재를 뽑는 발명품이었죠. 시험 한 번으로 인생이 바뀌는 시대! 수와 당의 이야기로 들어가요.",
+        good: "맞아요! 시험으로 <b>관리</b>를 뽑는 과거제, 가문이 아니라 <b>능력</b>으로 인재를 고르겠다는 발명품이에요. 시험 한 번으로 인생이 바뀌는 시대가 열렸죠. 수와 당의 이야기, 지금 시작해요!",
+        bad: "요리사도 장군도 아니라 <b>나라 일을 맡을 관리</b>였어요. 수 문제가 시작한 과거제는 가문 대신 <b>시험 성적(능력)</b>으로 인재를 뽑는 발명품이었죠. 시험 한 번으로 인생이 바뀌는 시대! 수와 당의 이야기로 들어가요.",
         onDone: finish,
       });
     }, 950);
@@ -166,7 +166,7 @@ function renderKanasign(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fi
       <rect x="30" y="34" width="180" height="150" rx="8" fill="#F5EFE2" stroke="#B9A47E" stroke-width="2"/>
       <path d="M22 34 h196 l-10 -16 h-176 z" fill="url(#hh3-kn-wood)" stroke="#5E4626" stroke-width="2"/>
       <ellipse cx="120" cy="192" rx="100" ry="7" fill="#4A2A08" opacity=".14"/>
-      <g class="hh3-kn-sign" role="button" tabindex="0" aria-label="가게 천막 간판 — 탭해서 자세히 보기">
+      <g class="hh3-kn-sign" role="button" tabindex="0" aria-label="가게 천막 간판, 탭해서 자세히 보기">
         <path d="M44 44 h152 v64 q-38 8 -76 0 q-38 8 -76 0 z" fill="url(#hh3-kn-noren)" stroke="#1E2C64" stroke-width="2"/>
         <path d="M95 44 v62 M146 44 v62" stroke="#1E2C64" stroke-width="1.6" opacity=".7"/>
         <text x="69" y="84" text-anchor="middle" font-size="26" font-weight="900" fill="#FFFFFF" font-family="Pretendard, sans-serif">う</text>
@@ -188,7 +188,7 @@ function renderKanasign(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fi
     </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "가족 일본 여행에서 만난 <b>우동 가게 간판</b> — 「うどん」. 동글동글한 이 글자, <b>간판을 탭</b>해서 자세히 봐요!";
+  helper.innerHTML = "가족 일본 여행에서 만난 <b>우동 가게 간판</b>, 「うどん」. 동글동글한 이 글자, <b>간판을 탭</b>해서 자세히 봐요!";
 
   let zoomed = false;
   let timer = 0;
@@ -199,7 +199,7 @@ function renderKanasign(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fi
     haptic(HAPTIC.select);
     fig.classList.add("zoom");
     face("curious");
-    helper.innerHTML = "첫 글자 「う」를 확대하니 — 한자 <b>「宇」</b>와 나란히 놓이네요? 생김새가 어딘가 닮았어요. 일본의 가나 문자, 어떻게 만들어졌을까요?";
+    helper.innerHTML = "첫 글자 「う」를 확대하니, 한자 <b>「宇」</b>와 나란히 놓이네요? 생김새가 어딘가 닮았어요. 일본의 가나 문자, 어떻게 만들어졌을까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -207,8 +207,8 @@ function renderKanasign(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fi
           "알파벳을 본떠서 만들었다",
           "다른 문자와 상관없이 완전히 새로 발명했다",
         ],
-        good: "맞아요! 가나는 <b>한자의 모양을 따오거나 흘려 써서</b> 만든 문자예요 — う는 宇에서 왔죠. 일본이 왜 한자를 알고 있었는지, 그 답은 바다를 건넌 교류의 역사에 있답니다. 지금 만나러 가요!",
-        bad: "알파벳도, 무에서의 발명도 아니에요 — 가나는 <b>한자를 따오거나 흘려 써서</b> 만들었답니다(う ← 宇). 그럼 일본은 한자를 어떻게 알고 있었을까요? 바다를 건넌 교류의 역사가 그 답이에요!",
+        good: "맞아요! 가나는 <b>한자의 모양을 따오거나 흘려 써서</b> 만든 문자예요. う는 宇에서 왔죠. 일본이 왜 한자를 알고 있었는지, 그 답은 바다를 건넌 교류의 역사에 있답니다. 지금 만나러 가요!",
+        bad: "알파벳도, 무에서의 발명도 아니에요. 가나는 <b>한자를 따오거나 흘려 써서</b> 만들었답니다(う ← 宇). 그럼 일본은 한자를 어떻게 알고 있었을까요? 바다를 건넌 교류의 역사가 그 답이에요!",
         onDone: finish,
       });
     }, 950);
@@ -231,7 +231,7 @@ function renderHanjahw(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fin
       </defs>
       <rect x="6" y="6" width="288" height="198" rx="12" fill="url(#hh3-hj-desk)"/>
       <ellipse cx="150" cy="176" rx="118" ry="9" fill="#4A2A08" opacity=".14"/>
-      <g class="hh3-hj-note" role="button" tabindex="0" aria-label="한자 숙제 공책 — 탭해서 넘겨 보기">
+      <g class="hh3-hj-note" role="button" tabindex="0" aria-label="한자 숙제 공책, 탭해서 넘겨 보기">
         <rect x="60" y="26" width="180" height="128" rx="6" fill="url(#hh3-hj-note)" stroke="#B9C1CC" stroke-width="2" transform="rotate(-2 150 90)"/>
         <path d="M150 30 v120" stroke="#D7DCE2" stroke-width="1.8" transform="rotate(-2 150 90)"/>
         <text x="98" y="70" text-anchor="middle" font-size="24" font-weight="900" fill="#33405A" font-family="Pretendard, sans-serif">一</text>
@@ -256,7 +256,7 @@ function renderHanjahw(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fin
     </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "한문 숙제 시간 — <b>一, 二, 三</b>을 쓰고 있어요. 공책을 <b>탭</b>해 볼까요?";
+  helper.innerHTML = "한문 숙제 시간, <b>一, 二, 三</b>을 쓰고 있어요. 공책을 <b>탭</b>해 볼까요?";
 
   let zoomed = false;
   let timer = 0;
@@ -275,8 +275,8 @@ function renderHanjahw(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fin
           "세 나라가 최근에 글자를 통일하기로 약속해서",
           "발음이 똑같아서 자연스럽게 퍼져서",
         ],
-        good: "맞아요! 천 년도 더 전에 <b>한자는 동아시아의 공용 문자</b>였어요 — 말이 달라도 글로 통했죠. 한자를 타고 유교와 불교, 율령까지 함께 퍼지며 <b>동아시아 문화권</b>이 만들어졌답니다. 그 이야기를 국제도시 장안에서 만나요!",
-        bad: "최근의 약속도, 같은 발음도 아니에요(세 나라의 발음은 서로 달라요!) — 답은 역사에 있어요. 천 년도 더 전에 <b>한자는 동아시아의 공용 문자</b>였고, 한자를 타고 유교·불교·율령까지 퍼지며 <b>동아시아 문화권</b>이 만들어졌답니다. 장안에서 확인해요!",
+        good: "맞아요! 천 년도 더 전에 <b>한자는 동아시아의 공용 문자</b>였어요. 말이 달라도 글로 통했죠. 한자를 타고 유교와 불교, 율령까지 함께 퍼지며 <b>동아시아 문화권</b>이 만들어졌답니다. 그 이야기를 국제도시 장안에서 만나요!",
+        bad: "최근의 약속도, 같은 발음도 아니에요(세 나라의 발음은 서로 달라요!) 답은 역사에 있어요. 천 년도 더 전에 <b>한자는 동아시아의 공용 문자</b>였고, 한자를 타고 유교·불교·율령까지 퍼지며 <b>동아시아 문화권</b>이 만들어졌답니다. 장안에서 확인해요!",
         onDone: finish,
       });
     }, 950);
@@ -300,7 +300,7 @@ function renderZeroscore(scene: HTMLElement, helper: HTMLElement, s: HookOpts, f
       <rect x="6" y="6" width="288" height="150" rx="12" fill="url(#hh3-zr-sky)"/>
       <rect x="6" y="132" width="288" height="72" rx="10" fill="url(#hh3-zr-pitch)"/>
       <path d="M20 168 h260 M150 140 v60 M150 176 m-18 0 a18 18 0 1 0 36 0 a18 18 0 1 0 -36 0" stroke="#EAF4EE" stroke-width="2" opacity=".55" fill="none"/>
-      <g class="hh3-zr-board" role="button" tabindex="0" aria-label="경기 전광판 — 탭해서 크게 보기">
+      <g class="hh3-zr-board" role="button" tabindex="0" aria-label="경기 전광판, 탭해서 크게 보기">
         <rect x="58" y="22" width="184" height="86" rx="10" fill="#10161E" stroke="#39424E" stroke-width="2.4"/>
         <rect x="64" y="28" width="172" height="74" rx="7" fill="#0A0E14"/>
         <text x="106" y="58" text-anchor="middle" font-size="12" font-weight="900" fill="#7FD6E2" font-family="Pretendard, sans-serif">우리 팀</text>
@@ -329,7 +329,7 @@ function renderZeroscore(scene: HTMLElement, helper: HTMLElement, s: HookOpts, f
     haptic(HAPTIC.select);
     fig.classList.add("zoom");
     face("curious");
-    helper.innerHTML = "생각해 보면 신기해요 — <b>0은 「아무것도 없음」인데 왜 숫자로 적을까요?</b> 옛날 로마 숫자(Ⅰ·Ⅱ·Ⅲ…)에는 0이 아예 없었답니다!";
+    helper.innerHTML = "생각해 보면 신기해요. <b>0은 「아무것도 없음」인데 왜 숫자로 적을까요?</b> 옛날 로마 숫자(Ⅰ·Ⅱ·Ⅲ…)에는 0이 아예 없었답니다!";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -337,8 +337,8 @@ function renderZeroscore(scene: HTMLElement, helper: HTMLElement, s: HookOpts, f
           "로마",
           "이집트",
         ],
-        good: "맞아요! <b>「없음」을 숫자 0으로 처음 쓴 곳은 인도</b> — 굽타 왕조 시대에 꽃핀 수학이에요. 0과 10진법 덕분에 아무리 큰 수도 숫자 열 개로 쓸 수 있게 됐죠. 수학까지 빛났던 인도의 황금기로 떠나요!",
-        bad: "로마 숫자에는 0이 없었고, 이집트도 아니에요 — 정답은 <b>인도</b>! 굽타 왕조 시대의 인도인이 「없음」을 숫자 0으로 만들었고, 0과 10진법은 오늘날 전 세계가 쓰죠. 수학까지 빛났던 인도의 황금기로 떠나 봐요!",
+        good: "맞아요! <b>「없음」을 숫자 0으로 처음 쓴 곳은 인도</b>, 굽타 왕조 시대에 꽃핀 수학이에요. 0과 10진법 덕분에 아무리 큰 수도 숫자 열 개로 쓸 수 있게 됐죠. 수학까지 빛났던 인도의 황금기로 떠나요!",
+        bad: "로마 숫자에는 0이 없었고, 이집트도 아니에요. 정답은 <b>인도</b>! 굽타 왕조 시대의 인도인이 「없음」을 숫자 0으로 만들었고, 0과 10진법은 오늘날 전 세계가 쓰죠. 수학까지 빛났던 인도의 황금기로 떠나 봐요!",
         onDone: finish,
       });
     }, 950);
@@ -374,7 +374,7 @@ function renderChessmate(scene: HTMLElement, helper: HTMLElement, s: HookOpts, f
         <path d="M186 126 l6 -14 4 8 6 -10 6 10 4 -8 6 14 z" fill="url(#hh3-ch-piece2)" stroke="#141C26" stroke-width="1.8" stroke-linejoin="round"/>
         <path d="M188 126 h28 l-4 22 h-20 z" fill="url(#hh3-ch-piece2)" stroke="#141C26" stroke-width="1.8" stroke-linejoin="round"/>
       </g>
-      <g class="hh3-ch-king" role="button" tabindex="0" aria-label="궁지에 몰린 킹 — 탭해서 승부 끝내기">
+      <g class="hh3-ch-king" role="button" tabindex="0" aria-label="궁지에 몰린 킹, 탭해서 승부 끝내기">
         <path d="M116 64 v-10 M111 59 h10" stroke="#141C26" stroke-width="2.6" stroke-linecap="round"/>
         <path d="M104 96 q0 -18 12 -18 q12 0 12 18 l-3 16 h-18 z" fill="url(#hh3-ch-piece)" stroke="#5C677D" stroke-width="1.8" stroke-linejoin="round"/>
         <ellipse cx="110" cy="82" rx="3.4" ry="6" fill="#fff" opacity=".7"/>
@@ -390,7 +390,7 @@ function renderChessmate(scene: HTMLElement, helper: HTMLElement, s: HookOpts, f
     </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "친구와 <b>체스</b> 한 판! 상대 킹이 궁지에 몰렸어요. <b>킹을 탭</b>해서 외쳐요 — 체크메이트!";
+  helper.innerHTML = "친구와 <b>체스</b> 한 판! 상대 킹이 궁지에 몰렸어요. <b>킹을 탭</b>해서 외쳐요. 체크메이트!";
 
   let done = false;
   let timer = 0;
@@ -409,8 +409,8 @@ function renderChessmate(scene: HTMLElement, helper: HTMLElement, s: HookOpts, f
           "고대 로마인이 만들어 유럽에 퍼뜨렸다",
           "바이킹이 항해 중에 발명했다",
         ],
-        good: "맞아요! 체스의 조상은 인도에서 태어나 <b>페르시아를 거쳐 이슬람 세계로, 다시 유럽으로</b> 여행했어요 — 그래서 페르시아어가 유럽 게임 용어에 남았죠. 이 릴레이의 무대, 서아시아로 떠나요!",
-        bad: "로마도 바이킹도 아니에요 — 체스는 인도에서 태어나 <b>페르시아 → 이슬람 세계 → 유럽</b> 순서로 전해졌어요. 그래서 페르시아어 「샤 마트」가 체크메이트로 남은 거죠. 문화를 실어 나른 서아시아의 이야기, 지금 시작해요!",
+        good: "맞아요! 체스의 조상은 인도에서 태어나 <b>페르시아를 거쳐 이슬람 세계로, 다시 유럽으로</b> 여행했어요. 그래서 페르시아어가 유럽 게임 용어에 남았죠. 이 릴레이의 무대, 서아시아로 떠나요!",
+        bad: "로마도 바이킹도 아니에요. 체스는 인도에서 태어나 <b>페르시아 → 이슬람 세계 → 유럽</b> 순서로 전해졌어요. 그래서 페르시아어 「샤 마트」가 체크메이트로 남은 거죠. 문화를 실어 나른 서아시아의 이야기, 지금 시작해요!",
         onDone: finish,
       });
     }, 950);
@@ -433,7 +433,7 @@ function renderArabnum(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fin
       </defs>
       <rect x="6" y="6" width="288" height="198" rx="12" fill="url(#hh3-nm-desk)"/>
       <ellipse cx="150" cy="180" rx="120" ry="9" fill="#2A3A5E" opacity=".1"/>
-      <g class="hh3-nm-book" role="button" tabindex="0" aria-label="수학책 표지 — 탭해서 넘겨 보기">
+      <g class="hh3-nm-book" role="button" tabindex="0" aria-label="수학책 표지, 탭해서 넘겨 보기">
         <rect x="64" y="30" width="172" height="130" rx="8" fill="url(#hh3-nm-book)" stroke="#B9C1CC" stroke-width="2" transform="rotate(-1.5 150 95)"/>
         <rect x="64" y="30" width="172" height="34" rx="8" fill="#3D5BC0" transform="rotate(-1.5 150 47)"/>
         <text x="150" y="54" text-anchor="middle" font-size="14" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif" transform="rotate(-1.5 150 47)">수학 1</text>
@@ -451,7 +451,7 @@ function renderArabnum(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fin
     </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "수학책에 매일 쓰는 <b>1, 2, 3</b> — 이름은 <b>아라비아 숫자</b>래요. <b>책을 탭</b>해 볼까요?";
+  helper.innerHTML = "수학책에 매일 쓰는 <b>1, 2, 3</b>, 이름은 <b>아라비아 숫자</b>래요. <b>책을 탭</b>해 볼까요?";
 
   let zoomed = false;
   let timer = 0;
@@ -462,7 +462,7 @@ function renderArabnum(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fin
     haptic(HAPTIC.select);
     fig.classList.add("zoom");
     face("curious");
-    helper.innerHTML = "그런데 반전 — 이 숫자를 <b>처음 만든 곳은 아라비아가 아니래요!</b> 그런데 왜 「아라비아 숫자」라고 부를까요?";
+    helper.innerHTML = "그런데 반전, 이 숫자를 <b>처음 만든 곳은 아라비아가 아니래요!</b> 그런데 왜 「아라비아 숫자」라고 부를까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -470,8 +470,8 @@ function renderArabnum(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fin
           "아라비아 사막에서 발견된 암호라서",
           "유럽 수학자가 아라비아를 여행하며 발명해서",
         ],
-        good: "맞아요! 고향은 <b>인도</b> — 그 숫자를 <b>이슬람 상인과 학자들이 받아들여 유럽에 전했고</b>, 유럽인들은 「아라비아에서 온 숫자」라고 불렀죠. 지식을 실어 나른 상인의 배낭 속으로 들어가 봐요!",
-        bad: "암호도, 유럽인의 발명도 아니에요 — 고향은 <b>인도</b>랍니다. 인도의 숫자를 <b>이슬람 세계가 받아들여 발전시키고 유럽에 전해 줘서</b>, 유럽인 눈엔 「아라비아에서 온 숫자」였던 거죠. 지식의 릴레이, 상인의 배낭에서 확인해요!",
+        good: "맞아요! 고향은 <b>인도</b>, 그 숫자를 <b>이슬람 상인과 학자들이 받아들여 유럽에 전했고</b>, 유럽인들은 「아라비아에서 온 숫자」라고 불렀죠. 지식을 실어 나른 상인의 배낭 속으로 들어가 봐요!",
+        bad: "암호도, 유럽인의 발명도 아니에요. 고향은 <b>인도</b>랍니다. 인도의 숫자를 <b>이슬람 세계가 받아들여 발전시키고 유럽에 전해 줘서</b>, 유럽인 눈엔 「아라비아에서 온 숫자」였던 거죠. 지식의 릴레이, 상인의 배낭에서 확인해요!",
         onDone: finish,
       });
     }, 950);
@@ -495,7 +495,7 @@ function renderFrancejersey(scene: HTMLElement, helper: HTMLElement, s: HookOpts
       <rect x="6" y="6" width="288" height="198" rx="12" fill="url(#hh3-js-bg)"/>
       <text x="150" y="34" text-anchor="middle" font-size="13" font-weight="900" fill="#7FD6E2" font-family="Pretendard, sans-serif">국가 대항전 생중계</text>
       <ellipse cx="150" cy="192" rx="110" ry="7" fill="#000" opacity=".25"/>
-      <g class="hh3-js-shirt" role="button" tabindex="0" aria-label="파란 유니폼 — 탭해서 자세히 보기">
+      <g class="hh3-js-shirt" role="button" tabindex="0" aria-label="파란 유니폼, 탭해서 자세히 보기">
         <path d="M104 66 l24 -14 q22 8 44 0 l24 14 -12 26 -12 -6 v78 q-22 8 -44 0 v-78 l-12 6 z" fill="url(#hh3-js-shirt)" stroke="#141C4E" stroke-width="2.4" stroke-linejoin="round"/>
         <path d="M128 52 q22 10 44 0" stroke="#141C4E" stroke-width="2" fill="none"/>
         <text x="150" y="102" text-anchor="middle" font-size="17" font-weight="900" fill="#FFFFFF" font-family="Pretendard, sans-serif" letter-spacing="1.5">FRANCE</text>
@@ -512,7 +512,7 @@ function renderFrancejersey(scene: HTMLElement, helper: HTMLElement, s: HookOpts
     </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "국가 대항전 축구 중계 — 파란 유니폼에 <b>FRANCE</b>가 큼직해요. <b>유니폼을 탭</b>해 봐요!";
+  helper.innerHTML = "국가 대항전 축구 중계, 파란 유니폼에 <b>FRANCE</b>가 큼직해요. <b>유니폼을 탭</b>해 봐요!";
 
   let zoomed = false;
   let timer = 0;
@@ -523,7 +523,7 @@ function renderFrancejersey(scene: HTMLElement, helper: HTMLElement, s: HookOpts
     haptic(HAPTIC.select);
     fig.classList.add("zoom");
     face("curious");
-    helper.innerHTML = "「프랑스」라는 나라 이름 — 사실 <b>천오백 년 전의 어떤 나라 이름</b>이 숨어 있대요. 어디서 왔을까요?";
+    helper.innerHTML = "「프랑스」라는 나라 이름, 사실 <b>천오백 년 전의 어떤 나라 이름</b>이 숨어 있대요. 어디서 왔을까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -531,8 +531,8 @@ function renderFrancejersey(scene: HTMLElement, helper: HTMLElement, s: HookOpts
           "수도 파리의 옛 이름에서",
           "'자유'를 뜻하는 라틴어 단어에서",
         ],
-        good: "맞아요! 게르만족의 하나인 <b>프랑크족이 세운 프랑크 왕국</b> — 그 이름이 오늘날 프랑스가 됐어요. 서로마 제국이 무너진 자리에서 새 유럽이 태어나는 이야기, 지금 시작해요!",
-        bad: "파리도 라틴어도 아니에요 — 정답은 <b>프랑크 왕국</b>! 게르만족의 하나인 프랑크족이 세운 나라 이름이 오늘날의 프랑스로 이어졌죠. 서로마 제국이 무너진 자리에서 새 유럽이 태어난 이야기로 들어가요!",
+        good: "맞아요! 게르만족의 하나인 <b>프랑크족이 세운 프랑크 왕국</b>, 그 이름이 오늘날 프랑스가 됐어요. 서로마 제국이 무너진 자리에서 새 유럽이 태어나는 이야기, 지금 시작해요!",
+        bad: "파리도 라틴어도 아니에요. 정답은 <b>프랑크 왕국</b>! 게르만족의 하나인 프랑크족이 세운 나라 이름이 오늘날의 프랑스로 이어졌죠. 서로마 제국이 무너진 자리에서 새 유럽이 태어난 이야기로 들어가요!",
         onDone: finish,
       });
     }, 950);
@@ -564,7 +564,7 @@ function renderPepper(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fini
         <circle cx="136" cy="132" r="1.8" fill="#33261A"/><circle cx="144" cy="127" r="1.5" fill="#33261A"/>
         <circle cx="121" cy="138" r="1.5" fill="#33261A"/><circle cx="139" cy="140" r="1.6" fill="#33261A"/>
       </g>
-      <g class="hh3-pp-mill" role="button" tabindex="0" aria-label="후추통 — 탭해서 갈아 뿌리기">
+      <g class="hh3-pp-mill" role="button" tabindex="0" aria-label="후추통, 탭해서 갈아 뿌리기">
         <path d="M206 60 q-8 10 0 18 q8 -8 0 -18 z" fill="#6E7684" opacity="0" class="puff"/>
         <rect x="222" y="58" width="34" height="16" rx="7" fill="url(#hh3-pp-mill)" stroke="#5C677D" stroke-width="2"/>
         <path d="M224 74 h30 l-4 60 q-11 6 -22 0 z" fill="url(#hh3-pp-mill)" stroke="#5C677D" stroke-width="2" stroke-linejoin="round"/>
@@ -578,7 +578,7 @@ function renderPepper(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fini
     </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "저녁 식탁의 수프 — 마무리는 후추죠! <b>후추통을 탭</b>해서 톡톡 뿌려 볼까요?";
+  helper.innerHTML = "저녁 식탁의 수프, 마무리는 후추죠! <b>후추통을 탭</b>해서 톡톡 뿌려 볼까요?";
 
   let done = false;
   let timer = 0;
@@ -589,7 +589,7 @@ function renderPepper(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fini
     haptic(HAPTIC.tap);
     fig.classList.add("ground");
     face("curious");
-    helper.innerHTML = "톡톡 — 까만 알갱이가 눈처럼! 그런데 이 흔한 후추가 <b>중세 유럽에서는 은과 맞바꿀 만큼 귀했대요</b>. 대체 왜였을까요?";
+    helper.innerHTML = "톡톡, 까만 알갱이가 눈처럼! 그런데 이 흔한 후추가 <b>중세 유럽에서는 은과 맞바꿀 만큼 귀했대요</b>. 대체 왜였을까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -597,8 +597,8 @@ function renderPepper(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fini
           "유럽 왕만 먹을 수 있다는 법이 있어서",
           "유럽 어디서나 자라지만 따기가 어려워서",
         ],
-        good: "맞아요! 후추는 인도 등 <b>먼 아시아에서만 나는데</b>, 사막과 바다를 건너 상인의 손을 여러 번 거쳐야 유럽에 닿았어요 — 그래서 값이 은값! 이 향신료 길을 활짝 연 사건과 달라진 유럽의 이야기, 마지막 여행을 떠나요.",
-        bad: "법도 아니고, 유럽에서 자라지도 않았어요 — 후추는 인도 등 <b>먼 아시아에서만 나서</b>, 사막과 바다를 건너 상인 손을 여러 번 거쳐야 했기에 은값이 됐답니다. 이 동방 무역이 유럽을 어떻게 바꿨는지, 마지막 이야기로 확인해요!",
+        good: "맞아요! 후추는 인도 등 <b>먼 아시아에서만 나는데</b>, 사막과 바다를 건너 상인의 손을 여러 번 거쳐야 유럽에 닿았어요. 그래서 값이 은값! 이 향신료 길을 활짝 연 사건과 달라진 유럽의 이야기, 마지막 여행을 떠나요.",
+        bad: "법도 아니고, 유럽에서 자라지도 않았어요. 후추는 인도 등 <b>먼 아시아에서만 나서</b>, 사막과 바다를 건너 상인 손을 여러 번 거쳐야 했기에 은값이 됐답니다. 이 동방 무역이 유럽을 어떻게 바꿨는지, 마지막 이야기로 확인해요!",
         onDone: finish,
       });
     }, 950);

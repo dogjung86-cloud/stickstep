@@ -731,7 +731,7 @@ export const classifyLab: StepRenderer = (host, step, api) => {
       ctx.stroke();
       ctx.restore();
     } else {
-      capsule(ctx, sc(DIV_X), sc(HEAD_Y), sc(286), "생물 12종 — 아직 나누지 않았어요", "#9CB2D2");
+      capsule(ctx, sc(DIV_X), sc(HEAD_Y), sc(286), "생물 12종, 아직 나누지 않았어요", "#9CB2D2");
     }
     // 생물
     for (const b of beings) {

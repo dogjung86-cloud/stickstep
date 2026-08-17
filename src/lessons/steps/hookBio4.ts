@@ -25,7 +25,7 @@ export function renderBreadFactory(
 ): void {
   const fig = el("div", { class: "hb4-stage hb4-bf" });
   fig.innerHTML = `
-  <svg viewBox="0 0 320 216" fill="none" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="빵 공장 단면 — 시설 세 곳을 탭해 보세요">
+  <svg viewBox="0 0 320 216" fill="none" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="빵 공장 단면, 시설 세 곳을 탭해 보세요">
     <defs>
       <linearGradient id="hb4bfWall" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#FFFBF2"/><stop offset="1" stop-color="#F6EBD6"/>
@@ -77,7 +77,7 @@ export function renderBreadFactory(
   </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "공장 단면이에요. <b>세 시설을 각각 탭</b>해서 가동해 보세요 — 무슨 일을 하는 곳인지 느낌이 올 거예요.";
+  helper.innerHTML = "공장 단면이에요. <b>세 시설을 각각 탭</b>해서 가동해 보세요. 무슨 일을 하는 곳인지 느낌이 올 거예요.";
 
   const MSG: Record<string, string> = {
     door: "출입문 개방! 밀가루가 <b>들어오고</b> 빵이 <b>나가요</b>. 벽은 공장 안을 지키죠.",
@@ -96,14 +96,14 @@ export function renderBreadFactory(
     if (onCnt.size === 1) face("curious");
     if (onCnt.size === rooms.length) {
       face("surprised");
-      helper.innerHTML = "세 시설 모두 가동! 그런데 궁금해요 — 눈에 안 보이게 작은 <b>세포</b> 속에도, 이런 시설이 있을까요?";
+      helper.innerHTML = "세 시설 모두 가동! 그런데 궁금해요. 눈에 안 보이게 작은 <b>세포</b> 속에도, 이런 시설이 있을까요?";
       ask(choicesBox, helper, {
         choices: s.choices ?? [
           "비슷한 역할을 맡은 부품들이 세포 속에 있다",
           "세포는 속이 빈 주머니라 아무것도 없다",
           "공장 같은 구조는 사람이 만든 것에만 있다",
         ],
-        good: "바로 그 직감! 세포 속엔 <b>문·통제실·발전기</b> 역할을 맡은 부품이 하나하나 들어 있어요 — 이름을 알아보러 가요.",
+        good: "바로 그 직감! 세포 속엔 <b>문·통제실·발전기</b> 역할을 맡은 부품이 하나하나 들어 있어요. 이름을 알아보러 가요.",
         bad: "직접 보면 놀랄걸요? 그 작은 세포 속에도 <b>문·통제실·발전기</b> 역할의 부품이 다 갖춰져 있답니다. 이름을 알아보러 가요!",
         onDone: finish,
       });
@@ -172,7 +172,7 @@ export function renderWaterLens(
     fig.classList.add("dropped");
     timer = window.setTimeout(() => {
       face("surprised");
-      helper.innerHTML = "우와 — 물방울 아래 글자만 <b>불쑥 커 보여요</b>! 그럼 글자보다 훨씬 작은 <b>세포</b>를 보려면, 무엇이 필요할까요?";
+      helper.innerHTML = "우와, 물방울 아래 글자만 <b>불쑥 커 보여요</b>! 그럼 글자보다 훨씬 작은 <b>세포</b>를 보려면, 무엇이 필요할까요?";
       timer = window.setTimeout(() => {
         face("curious");
         ask(choicesBox, helper, {
@@ -182,7 +182,7 @@ export function renderWaterLens(
             "눈을 최대한 가까이 대고 보기",
           ],
           good: "맞아요! 물방울처럼 <b>빛을 모아 확대하는 장치</b>를 정밀하게 다듬은 것이 <b>현미경</b>이에요. 오늘 직접 다뤄 봐요.",
-          bad: "밝게 비추거나 가까이 봐도 0.1 mm보다 작은 건 안 보여요 — 물방울처럼 <b>빛을 모아 확대하는</b> 도구, <b>현미경</b>이 필요하답니다.",
+          bad: "밝게 비추거나 가까이 봐도 0.1 mm보다 작은 건 안 보여요. 물방울처럼 <b>빛을 모아 확대하는</b> 도구, <b>현미경</b>이 필요하답니다.",
           onDone: finish,
         });
       }, 1100);
@@ -251,7 +251,7 @@ export function renderBloodDrop(
     fig.classList.add("zoomed");
     timer = window.setTimeout(() => {
       face("surprised");
-      helper.innerHTML = "우와, <b>붉은 원반</b>이 우글우글! 그렇다면 — 피가 빨간 까닭은 무엇일까요?";
+      helper.innerHTML = "우와, <b>붉은 원반</b>이 우글우글! 그렇다면, 피가 빨간 까닭은 무엇일까요?";
       timer = window.setTimeout(() => {
         face("curious");
         ask(choicesBox, helper, {
@@ -260,8 +260,8 @@ export function renderBloodDrop(
             "피라는 액체 자체가 빨간 잉크 같아서",
             "혈관이 빨간색이라 물들어서",
           ],
-          good: "맞아요! 피 한 방울에도 <b>수억 개의 붉은 원반 세포</b>가 들어 있어요 — 이름은 <b>적혈구</b>. 왜 하필 이 모양인지 알아보러 가요.",
-          bad: "피에서 세포를 걸러 내면 남는 액체는 <b>노르스름</b>해요 — 빨강의 정체는 액체가 아니라 <b>붉은 원반 세포(적혈구)</b>랍니다. 왜 이 모양인지 알아보러 가요!",
+          good: "맞아요! 피 한 방울에도 <b>수억 개의 붉은 원반 세포</b>가 들어 있어요. 이름은 <b>적혈구</b>. 왜 하필 이 모양인지 알아보러 가요.",
+          bad: "피에서 세포를 걸러 내면 남는 액체는 <b>노르스름</b>해요. 빨강의 정체는 액체가 아니라 <b>붉은 원반 세포(적혈구)</b>랍니다. 왜 이 모양인지 알아보러 가요!",
           onDone: finish,
         });
       }, 1100);
@@ -336,7 +336,7 @@ export function renderBrickHouse(
   helper.innerHTML = "탁자 위에 <b>블록</b>이 잔뜩 흩어져 있어요. <b>탭해서</b> 무언가를 만들어 볼까요?";
 
   let stage = 0;
-  const CAPS = ["블록들이 모여 꽃잎과 줄기 부품이 됐어요! 한 번 더!", "부품이 모여 — 짠, 화분 위 꽃 완성!"];
+  const CAPS = ["블록들이 모여 꽃잎과 줄기 부품이 됐어요! 한 번 더!", "부품이 모여, 짠, 화분 위 꽃 완성!"];
   const advance = (): void => {
     if (stage >= 2) return;
     stage += 1;
@@ -358,8 +358,8 @@ export function renderBrickHouse(
             "세포들이 녹아서 큰 세포 하나가 된다",
             "모여도 아무 일도 일어나지 않는다",
           ],
-          good: "바로 그 직감! 그 덩어리의 이름이 <b>조직</b>이에요 — 조직이 모이면 또 무엇이 될까요? 계단을 직접 쌓으며 확인해요.",
-          bad: "세포는 녹아 합쳐지지 않아요 — 각자 살아 있는 채로 <b>비슷한 것끼리 모여 덩어리(조직)</b>를 이루죠. 그다음 계단은 직접 쌓으며 확인해요!",
+          good: "바로 그 직감! 그 덩어리의 이름이 <b>조직</b>이에요. 조직이 모이면 또 무엇이 될까요? 계단을 직접 쌓으며 확인해요.",
+          bad: "세포는 녹아 합쳐지지 않아요. 각자 살아 있는 채로 <b>비슷한 것끼리 모여 덩어리(조직)</b>를 이루죠. 그다음 계단은 직접 쌓으며 확인해요!",
           onDone: finish,
         });
       }, 1200);
@@ -384,7 +384,7 @@ export function renderDokdoFriends(
 ): void {
   const fig = el("div", { class: "hb4-stage hb4-dk" });
   fig.innerHTML = `
-  <svg viewBox="0 0 320 210" fill="none" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="독도 풍경 — 숨은 생물을 탭해 보세요">
+  <svg viewBox="0 0 320 210" fill="none" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="독도 풍경, 숨은 생물을 탭해 보세요">
     <defs>
       <linearGradient id="hb4dkSea" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#A5D8FF"/><stop offset="1" stop-color="#4DABF7"/>
@@ -435,8 +435,8 @@ export function renderDokdoFriends(
 
   const NAME: Record<string, string> = {
     gull: "바위 꼭대기엔 <b>괭이갈매기</b>! 독도는 괭이갈매기의 대표 번식지예요.",
-    flower: "바위틈엔 보라색 <b>해국</b>이 피어요 — 바닷바람을 견디는 야무진 꽃이죠.",
-    fish: "물속엔 <b>돌돔</b>이 유유히 — 독도 바다는 물고기들의 아파트랍니다.",
+    flower: "바위틈엔 보라색 <b>해국</b>이 피어요. 바닷바람을 견디는 야무진 꽃이죠.",
+    fish: "물속엔 <b>돌돔</b>이 유유히, 독도 바다는 물고기들의 아파트랍니다.",
   };
   const found = new Set<string>();
   const spots = [...fig.querySelectorAll<SVGGElement>(".dk-spot")];
@@ -450,7 +450,7 @@ export function renderDokdoFriends(
     if (found.size === 1) face("curious");
     if (found.size === spots.length) {
       face("surprised");
-      helper.innerHTML = "새도, 꽃도, 물고기도! 그렇다면 — 이 작은 독도에 사는 생물은 <b>모두 몇 종류</b>나 될까요?";
+      helper.innerHTML = "새도, 꽃도, 물고기도! 그렇다면, 이 작은 독도에 사는 생물은 <b>모두 몇 종류</b>나 될까요?";
       ask(choicesBox, helper, {
         choices: s.choices ?? [
           "1,000종이 넘는다",
@@ -458,7 +458,7 @@ export function renderDokdoFriends(
           "새 말고는 거의 없다",
         ],
         good: "정답! 땅 위와 바닷속을 합치면 <b>1,000종이 훌쩍 넘는</b> 생물이 독도에 살아요. 이 '다양한 정도'를 재는 눈금을 배우러 가요.",
-        bad: "놀랍게도 <b>1,000종이 넘어요</b> — 땅 위의 새와 풀, 바닷속 물고기와 해조류까지! 이 '다양한 정도'를 재는 눈금을 배우러 가요.",
+        bad: "놀랍게도 <b>1,000종이 넘어요</b>. 땅 위의 새와 풀, 바닷속 물고기와 해조류까지! 이 '다양한 정도'를 재는 눈금을 배우러 가요.",
         onDone: finish,
       });
     }
@@ -485,7 +485,7 @@ export function renderMartShelf(
 ): () => void {
   const fig = el("div", { class: "hb4-stage hb4-ms" });
   fig.innerHTML = `
-  <svg viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="마트 진열대 — 토마토를 놓을 코너 고르기">
+  <svg viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="마트 진열대, 토마토를 놓을 코너 고르기">
     <ellipse cx="160" cy="188" rx="130" ry="8" fill="#2A3A5E" opacity="0.10"/>
     <g class="ms-shelf" data-side="fruit" role="button" tabindex="0" aria-label="과일 코너에 놓기">
       <rect x="14" y="44" width="136" height="112" rx="10" fill="#FFF4E0" stroke="#E8B04B" stroke-width="2.6"/>
@@ -515,7 +515,7 @@ export function renderMartShelf(
   </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "마트 알바 첫날 — 손에 <b>토마토</b>가 들려 있어요. 어느 코너에 놓을까요? <b>코너를 탭</b>해서 놓아 보세요!";
+  helper.innerHTML = "마트 알바 첫날, 손에 <b>토마토</b>가 들려 있어요. 어느 코너에 놓을까요? <b>코너를 탭</b>해서 놓아 보세요!";
 
   let placed = 0;
   let timer = 0;
@@ -542,8 +542,8 @@ export function renderMartShelf(
             "겉모습이 예쁜 순서",
             "크기가 큰 순서",
           ],
-          good: "맞아요! 생김새·한살이·번식 방법처럼 <b>생물이 가진 고유한 특징</b>이 기준이 되면, 누가 나눠도 같은 결과가 나와요 — 스위치를 눌러 직접 확인해요.",
-          bad: "예쁨·크기는 보는 사람마다 달라져요 — 과학의 기준은 <b>생물 고유의 특징</b>(생김새·한살이·번식 방법)이랍니다. 스위치로 직접 확인해요!",
+          good: "맞아요! 생김새·한살이·번식 방법처럼 <b>생물이 가진 고유한 특징</b>이 기준이 되면, 누가 나눠도 같은 결과가 나와요. 스위치를 눌러 직접 확인해요.",
+          bad: "예쁨·크기는 보는 사람마다 달라져요. 과학의 기준은 <b>생물 고유의 특징</b>(생김새·한살이·번식 방법)이랍니다. 스위치로 직접 확인해요!",
           onDone: finish,
         });
       }, 1200);
@@ -613,17 +613,17 @@ export function renderMushroomScan(
       fig.classList.add("done");
       face("surprised");
       haptic(HAPTIC.wrong);
-      helper.innerHTML = "판정 결과: <b>\"식물이 아님!\"</b> — 땅에 뿌리내린 것처럼 보이는데 왜 식물이 아닐까요?";
+      helper.innerHTML = "판정 결과: <b>\"식물이 아님!\"</b>, 땅에 뿌리내린 것처럼 보이는데 왜 식물이 아닐까요?";
       timer = window.setTimeout(() => {
         face("curious");
         ask(choicesBox, helper, {
           choices: s.choices ?? [
-            "광합성을 하지 못해서 — 스스로 양분을 만들 수 없다",
+            "광합성을 하지 못해서, 스스로 양분을 만들 수 없다",
             "꽃이 피지 않아서",
             "초록색이 아니어서",
           ],
           good: "정확해요! 버섯은 엽록체가 없어 <b>광합성을 못 하고</b>, 죽은 생물을 분해해 양분을 얻어요. 그럼 버섯의 진짜 왕국은 어디일까요? 검색표 여행에서 밝혀져요!",
-          bad: "꽃과 색은 결정적 기준이 아니에요(이끼도 꽃이 없지만 식물!). 열쇠는 <b>광합성</b> — 버섯은 스스로 양분을 못 만들고 죽은 생물을 분해해 얻죠. 진짜 왕국은 검색표 여행에서!",
+          bad: "꽃과 색은 결정적 기준이 아니에요(이끼도 꽃이 없지만 식물!). 열쇠는 <b>광합성</b>, 버섯은 스스로 양분을 못 만들고 죽은 생물을 분해해 얻죠. 진짜 왕국은 검색표 여행에서!",
           onDone: finish,
         });
       }, 1200);
@@ -695,7 +695,7 @@ export function renderBeeGone(
   </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "마트 과일 코너 옆에 이상한 <b>'꿀벌 스위치'</b>가 있어요 — 꿀벌이 세상에서 사라지면 어떻게 되는지 보여 주는 장치래요. <b>스위치를 탭</b>!";
+  helper.innerHTML = "마트 과일 코너 옆에 이상한 <b>'꿀벌 스위치'</b>가 있어요. 꿀벌이 세상에서 사라지면 어떻게 되는지 보여 주는 장치래요. <b>스위치를 탭</b>!";
 
   let flipped = false;
   let timer = 0;
@@ -715,8 +715,8 @@ export function renderBeeGone(
             "꿀벌이 과일을 마트로 배달하기 때문",
             "우연일 뿐, 꿀벌과 과일은 관계없다",
           ],
-          good: "맞아요! 과일나무 대부분은 <b>꿀벌이 꽃가루를 옮겨야</b> 열매를 맺어요. 생물 하나가 사라지면 그 영향이 <b>우리 식탁까지</b> 닿죠 — 생물다양성을 지켜야 하는 이유예요.",
-          bad: "배달 기사는 아니지만… 꿀벌은 <b>꽃가루를 옮겨 열매를 맺게</b> 해요. 한 생물이 사라지면 그 영향이 우리 식탁까지 닿는다는 것 — 그게 오늘의 주제랍니다.",
+          good: "맞아요! 과일나무 대부분은 <b>꿀벌이 꽃가루를 옮겨야</b> 열매를 맺어요. 생물 하나가 사라지면 그 영향이 <b>우리 식탁까지</b> 닿죠. 생물다양성을 지켜야 하는 이유예요.",
+          bad: "배달 기사는 아니지만… 꿀벌은 <b>꽃가루를 옮겨 열매를 맺게</b> 해요. 한 생물이 사라지면 그 영향이 우리 식탁까지 닿는다는 것, 그게 오늘의 주제랍니다.",
           onDone: finish,
         });
       }, 1300);

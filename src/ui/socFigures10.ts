@@ -62,7 +62,7 @@ export function voteControlFig(): string {
     <g transform="rotate(-14 216 48)"><rect x="209" y="40" width="14" height="17" rx="2" fill="#FFFFFF" stroke="#8A93A6" stroke-width="1.3"/><circle cx="216" cy="50" r="2.2" fill="none" stroke="#1864AB" stroke-width="1.3"/></g>
     ${tinyMan(184, 116, { arm: "up", mood: "joy", r: 5.2 })}${tinyMan(216, 120, { arm: "up", mood: "joy", r: 5.2 })}${tinyMan(248, 116, { arm: "up", mood: "joy", r: 5.2 })}
     <text x="224" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">다음 선거에서 표로 답하다</text>`;
-  return shell(300, 158, inner, "두 장면 비교 — 왼쪽은 찢어진 약속 문서와 시무룩한 사람들, 오른쪽은 투표함에 표를 넣으며 웃는 사람들");
+  return shell(300, 158, inner, "두 장면 비교, 왼쪽은 찢어진 약속 문서와 시무룩한 사람들, 오른쪽은 투표함에 표를 넣으며 웃는 사람들");
 }
 
 /* ---------- L2: 네 가지 제안 카드 — 원칙 위반 판별(라벨형) ---------- */
@@ -79,7 +79,7 @@ export function ruleCardsFig(): string {
     ${card(82, 112, "(다)", `<text x="-2" y="3" text-anchor="middle" font-size="11" font-weight="900" fill="#C0871C">x2</text><text x="24" y="4" text-anchor="middle" font-size="8.4" font-weight="700" fill="#5A6478">성적 우수 두 표</text>`)}
     ${card(218, 112, "(라)", `<path d="M-6 -5l10 10M4 -5l-10 10" stroke="#B84434" stroke-width="2" stroke-linecap="round"/><text x="24" y="4" text-anchor="middle" font-size="8.4" font-weight="700" fill="#5A6478">지각 3회 투표 금지</text>`)}
     <text x="150" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">학급 회의에 나온 선거 규칙 제안들</text>`;
-  return shell(300, 160, inner, "네 장의 제안 카드 — 스티커 붙이기, 대신 투표하기, 두 표 주기, 투표 금지하기");
+  return shell(300, 160, inner, "네 장의 제안 카드, 스티커 붙이기, 대신 투표하기, 두 표 주기, 투표 금지하기");
 }
 
 /* ---------- L3: 선거 과정 6단계 흐름도(㉠ 빈칸) ---------- */
@@ -108,7 +108,7 @@ export function electFlowFig(): string {
     <path d="M190 104l-7 4 7 4zM102 104l-7 4 7 4z" fill="#8FA86A"/>`;
   const inner = `${nodes}${arrows}
     <text x="150" y="146" text-anchor="middle" font-size="9.6" fill="#7E8AA0">선거가 진행되는 순서</text>`;
-  return shell(300, 156, inner, "여섯 칸 흐름도 — 명단 만들기부터 당선 결정까지 이어지는 화살표, 다섯 번째 칸은 빈칸");
+  return shell(300, 156, inner, "여섯 칸 흐름도, 명단 만들기부터 당선 결정까지 이어지는 화살표, 다섯 번째 칸은 빈칸");
 }
 
 /* ---------- L4: 스틱 시 쟁점 관계도 — 네 주체(라벨형) ---------- */
@@ -129,7 +129,7 @@ export function actorMapFig(): string {
     ${box(78, 128, "(다)", "방송:", "“찬반 의견을 전합니다”", "#8A5EC0")}
     ${box(222, 128, "(라)", "정치인 모임:", "“공약으로 해결하겠습니다”", "#2E8AC0")}
     <path d="M100 56l22 14M200 56l-22 14M100 112l22-14M200 112l-22-14" stroke="#C9D2E0" stroke-width="1.6" stroke-dasharray="4 4"/>`;
-  return shell(300, 160, inner, "가운데 쟁점 원을 둘러싼 네 개의 말풍선 상자 — 상인 단체, 시민 모임, 방송, 정치인 모임");
+  return shell(300, 160, inner, "가운데 쟁점 원을 둘러싼 네 개의 말풍선 상자, 상인 단체, 시민 모임, 방송, 정치인 모임");
 }
 
 /* ---------- L5: 정치과정 순환 도해(가~마 + 환류 화살표) ---------- */
@@ -160,7 +160,7 @@ export function processCycleFig(): string {
     <path d="M55 52l4-8 5 7z" fill="#C0871C"/>
     <text x="128" y="152" text-anchor="middle" font-size="8.4" font-weight="800" fill="#8A5A14">평가는 다시 처음으로</text>`;
   const inner = `${nodes}${arrows}`;
-  return shell(300, 162, inner, "다섯 칸이 화살표로 이어진 흐름도 — 마지막 칸에서 첫 칸으로 굽어 돌아가는 노란 점선 화살표");
+  return shell(300, 162, inner, "다섯 칸이 화살표로 이어진 흐름도, 마지막 칸에서 첫 칸으로 굽어 돌아가는 노란 점선 화살표");
 }
 
 /* ---------- L6: 지방 자치 단체 조직도(㉠·㉡) ----------
@@ -184,7 +184,7 @@ export function localOrgFig(): string {
     <text x="216" y="118" text-anchor="middle" font-size="12" font-weight="900" fill="#8A5A14">㉡</text>
     <text x="216" y="134" text-anchor="middle" font-size="8" font-weight="700" fill="#8A6A2E">행정을 처리하고 예산을 집행</text>
     <text x="150" y="158" text-anchor="middle" font-size="9.4" fill="#7E8AA0">우리나라 지방 자치의 짜임</text>`;
-  return shell(300, 166, inner, "조직도 — 지방 자치 단체가 광역과 기초로 나뉘고, 두 단체 모두에서 두 개의 빈칸 기관 상자로 점선이 이어짐");
+  return shell(300, 166, inner, "조직도, 지방 자치 단체가 광역과 기초로 나뉘고, 두 단체 모두에서 두 개의 빈칸 기관 상자로 점선이 이어짐");
 }
 
 /* ---------- L7: 주민 참여 제도 절차도 — 제안이 예산이 되기까지 ---------- */
@@ -205,7 +205,7 @@ export function participFlowFig(): string {
     ${tinyMan(250, 42, { mood: "joy" })}
     <path d="M56 96v18q42 18 96 12" stroke="#C9D2E0" stroke-width="1.4" fill="none" stroke-dasharray="4 4"/>
     <text x="150" y="146" text-anchor="middle" font-size="9.6" fill="#7E8AA0">주민이 예산 결정에 직접 참여하는 길</text>`;
-  return shell(300, 156, inner, "흐름도 — 주민의 제안이 투표를 거쳐 지역 예산에 반영되는 세 단계");
+  return shell(300, 156, inner, "흐름도, 주민의 제안이 투표를 거쳐 지역 예산에 반영되는 세 단계");
 }
 
 /* ================= recap 미니아트(64×64 플랫 — socFigures 관례) ================= */

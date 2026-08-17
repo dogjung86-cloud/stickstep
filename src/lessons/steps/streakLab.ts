@@ -276,7 +276,7 @@ export const streakLab: StepRenderer = (host, step, api) => {
 
   const helper = el("div", {
     class: "helper",
-    html: "겉색만으로는 광물을 가려내기 어려워요. <b>흑운모와 자철석</b>은 겉이 둘 다 까맣죠 — 조흔판에 문질러 <b>가루색</b>을 비교해 보세요!",
+    html: "겉색만으로는 광물을 가려내기 어려워요. <b>흑운모와 자철석</b>은 겉이 둘 다 까맣죠. 조흔판에 문질러 <b>가루색</b>을 비교해 보세요!",
   });
   host.append(goalChips, helper, tray, stage, ctrls); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -346,7 +346,7 @@ export const streakLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "겉색이 비슷해도 <b>조흔색·굳기·자성·염산 반응</b>이 달라요 — 광물의 특성으로 가려낼 수 있어요!";
+        "겉색이 비슷해도 <b>조흔색·굳기·자성·염산 반응</b>이 달라요. 광물의 특성으로 가려낼 수 있어요!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       return;
@@ -355,7 +355,7 @@ export const streakLab: StepRenderer = (host, step, api) => {
     if (id === "streak" && !goals.has("magnet")) {
       helper.innerHTML = "흑운모 가루는 희끗한데 <b>자철석 가루는 검어요</b>! 이번엔 <b>클립 대보기</b>로 자석 성질을 시험해 볼까요?";
     } else if (id === "magnet" && !goals.has("acid")) {
-      helper.innerHTML = "이제 <b>묽은 염산</b>을 떨어뜨려 봐요 — 어떤 광물에서 거품이 날까요? (힌트: 흰 광물 중 하나)";
+      helper.innerHTML = "이제 <b>묽은 염산</b>을 떨어뜨려 봐요. 어떤 광물에서 거품이 날까요? (힌트: 흰 광물 중 하나)";
     } else if (id === "acid" && !goals.has("streak")) {
       helper.innerHTML = "마지막 하나! <b>자철석</b>을 골라 조흔판에 문질러 <b>가루색</b>을 확인해 보세요.";
     }
@@ -427,7 +427,7 @@ export const streakLab: StepRenderer = (host, step, api) => {
           }
           if (now - squeakAt > 1700) {
             squeakAt = now;
-            toast("끼익 — 석영은 조흔판보다 단단해요!");
+            toast("끼익, 석영은 조흔판보다 단단해요!");
             haptic(HAPTIC.wrong);
           }
           lastRub = { x, y };
@@ -462,12 +462,12 @@ export const streakLab: StepRenderer = (host, step, api) => {
       });
     }
     if (sel.id === "magnetite" && acc >= STREAK_GOAL) {
-      collect("streak", "검은 가루!", "겉도 검고 가루도 검다 — 자철석의 조흔색!");
+      collect("streak", "검은 가루!", "겉도 검고 가루도 검다. 자철석의 조흔색!");
     } else if (acc >= STREAK_GOAL * 0.6 && !rubToasted.has(sel.id) && sel.id !== "magnetite") {
       rubToasted.add(sel.id);
       toast(
         sel.id === "biotite"
-          ? "흑운모 가루는 희끗해요 — 겉색과 달라요!"
+          ? "흑운모 가루는 희끗해요. 겉색과 달라요!"
           : `${sel.name} 가루는 흰색이에요`,
       );
     }
@@ -543,10 +543,10 @@ export const streakLab: StepRenderer = (host, step, api) => {
     if (strokes.length > 26) strokes.shift();
     streakDist.set(sel.id, acc);
     haptic(HAPTIC.tap);
-    if (sel.id === "magnetite" && acc >= STREAK_GOAL) collect("streak", "검은 가루!", "겉도 검고 가루도 검다 — 자철석의 조흔색!");
+    if (sel.id === "magnetite" && acc >= STREAK_GOAL) collect("streak", "검은 가루!", "겉도 검고 가루도 검다. 자철석의 조흔색!");
     else if (!rubToasted.has(sel.id) && sel.id !== "magnetite") {
       rubToasted.add(sel.id);
-      toast(sel.id === "biotite" ? "흑운모 가루는 희끗해요 — 겉색과 달라요!" : `${sel.name} 가루는 흰색이에요`);
+      toast(sel.id === "biotite" ? "흑운모 가루는 희끗해요. 겉색과 달라요!" : `${sel.name} 가루는 흰색이에요`);
     }
   };
   canvas.addEventListener("pointerdown", onDown);
@@ -558,7 +558,7 @@ export const streakLab: StepRenderer = (host, step, api) => {
   // ---- 버튼 동작 ----
   function busy(): boolean {
     if (fx) {
-      toast("실험 중이에요 — 잠깐만요");
+      toast("실험 중이에요. 잠깐만요");
       return true;
     }
     return false;
@@ -566,7 +566,7 @@ export const streakLab: StepRenderer = (host, step, api) => {
   clipBtn.addEventListener("click", () => {
     if (busy()) return;
     if (clipOn) {
-      toast("이미 착 붙어 있어요 — 자철석은 자석 성질!");
+      toast("이미 착 붙어 있어요. 자철석은 자석 성질!");
       return;
     }
     interacted = true;
@@ -887,7 +887,7 @@ export const streakLab: StepRenderer = (host, step, api) => {
           clipOn = true;
           fx = null;
           softGlow(ctx, sx + 20, sy + 14, 30, "226,242,255", 0.5);
-          collect("magnet", "자철석에 착!", "착 — 클립이 달라붙어요. 자석 성질!");
+          collect("magnet", "자철석에 착!", "착, 클립이 달라붙어요. 자석 성질!");
         }
       } else if (f.phase === "hold") {
         f.t = Math.min(1, f.t + dt / 22);
@@ -906,7 +906,7 @@ export const streakLab: StepRenderer = (host, step, api) => {
         f.rot += 0.09 * dt;
         if (f.y >= clipRestY + 26) {
           fx = null;
-          toast(`톡 — ${sel.name}에는 안 붙어요`);
+          toast(`톡, ${sel.name}에는 안 붙어요`);
           haptic(HAPTIC.wrong);
         }
       }
@@ -932,10 +932,10 @@ export const streakLab: StepRenderer = (host, step, api) => {
           f.hit = true;
           if (sel.id === "calcite") {
             fizzT = 2500;
-            collect("acid", "방해석 보글!", "보글보글 — 방해석이 염산과 반응해요!");
+            collect("acid", "방해석 보글!", "보글보글, 방해석이 염산과 반응해요!");
           } else {
             sheenA = 1;
-            toast(`${sel.name}은 조용해요 — 반응이 없어요`);
+            toast(`${sel.name}은 조용해요. 반응이 없어요`);
           }
         }
       }
@@ -960,10 +960,10 @@ export const streakLab: StepRenderer = (host, step, api) => {
           toast(
             sel.id === "calcite"
               ? "긁혔어요! 석영(굳기 7)이 방해석(3)보다 단단해요"
-              : `석영이 ${sel.name}에 흠집을 냈어요 — 더 단단하니까요`,
+              : `석영이 ${sel.name}에 흠집을 냈어요. 더 단단하니까요`,
           );
         } else {
-          toast("흠집이 안 나요 — 석영이 훨씬 단단해요!");
+          toast("흠집이 안 나요. 석영이 훨씬 단단해요!");
         }
       }
     }

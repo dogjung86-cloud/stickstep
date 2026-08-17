@@ -99,7 +99,7 @@ export function renderSearchAmerica(
     btn.classList.add("done");
     btn.disabled = true;
     face("surprised");
-    helper.innerHTML = "나라 하나가 아니라 <b>지도가 통째로</b> 켜졌어요! 북쪽 덩어리와 남쪽 덩어리가 가느다란 땅으로 이어진 <b>거대한 대륙</b> — 이 땅엔 나라가 몇 개나 있을까요?";
+    helper.innerHTML = "나라 하나가 아니라 <b>지도가 통째로</b> 켜졌어요! 북쪽 덩어리와 남쪽 덩어리가 가느다란 땅으로 이어진 <b>거대한 대륙</b>, 이 땅엔 나라가 몇 개나 있을까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -107,7 +107,7 @@ export function renderSearchAmerica(
           "미국·캐나다·멕시코 세 나라뿐이다",
           "'아메리카'라는 큰 나라 하나다",
         ],
-        good: "맞아요! 아메리카는 나라가 아니라 <b>35개 나라의 대륙</b> — 미국은 그중 하나일 뿐이에요. 두 덩어리 땅에 이름이 두 벌 붙는 이야기, 지금 펼치러 가요!",
+        good: "맞아요! 아메리카는 나라가 아니라 <b>35개 나라의 대륙</b>, 미국은 그중 하나일 뿐이에요. 두 덩어리 땅에 이름이 두 벌 붙는 이야기, 지금 펼치러 가요!",
         bad: "'아메리카 = 미국'은 흔한 착각! 아메리카는 <b>35개 나라</b>가 모인 거대한 대륙이고, 미국은 그중 하나예요. 두 덩어리 땅에 이름이 두 벌 붙는 이야기, 지금 펼치러 가요!",
         onDone: finish,
       });
@@ -312,7 +312,7 @@ export function renderPanRoad(
     haptic(HAPTIC.tap);
     show();
     if (state === 1) {
-      helper.innerHTML = "며칠을 달려 대륙의 잘록한 허리까지 왔어요. 그런데 창밖 풍경이 이상해요 — <b>서쪽엔 아까부터 계속 산</b>이잖아요? <b>한 번 더!</b>";
+      helper.innerHTML = "며칠을 달려 대륙의 잘록한 허리까지 왔어요. 그런데 창밖 풍경이 이상해요. <b>서쪽엔 아까부터 계속 산</b>이잖아요? <b>한 번 더!</b>";
     } else {
       btn.classList.add("done");
       btn.disabled = true;
@@ -326,8 +326,8 @@ export function renderPanRoad(
             "북쪽에만 있는 산맥이 남쪽까지 보인 것이다",
             "동쪽 산맥이 지도에 잘못 그려진 것이다",
           ],
-          good: "정확해요! 북쪽은 <b>로키산맥</b>, 남쪽은 <b>안데스산맥</b> — 이름은 달라도 둘 다 대륙 서쪽 가장자리를 따라 높고 험준하게 솟았어요. 아메리카의 등뼈를 훑으러 가요!",
-          bad: "착시도 오류도 아니에요 — 진짜로 산이 이어져요! 북쪽은 <b>로키산맥</b>, 남쪽은 <b>안데스산맥</b>. 둘 다 서쪽 가장자리를 따라 높고 험준하죠. 아메리카의 등뼈를 훑으러 가요!",
+          good: "정확해요! 북쪽은 <b>로키산맥</b>, 남쪽은 <b>안데스산맥</b>, 이름은 달라도 둘 다 대륙 서쪽 가장자리를 따라 높고 험준하게 솟았어요. 아메리카의 등뼈를 훑으러 가요!",
+          bad: "착시도 오류도 아니에요. 진짜로 산이 이어져요! 북쪽은 <b>로키산맥</b>, 남쪽은 <b>안데스산맥</b>. 둘 다 서쪽 가장자리를 따라 높고 험준하죠. 아메리카의 등뼈를 훑으러 가요!",
           onDone: finish,
         });
       }, REDUCED ? 750 : DRIVE_MS + 350);
@@ -418,7 +418,7 @@ export function renderQuitoPack(
   const btn = el("button", { class: "hs5-flipbtn", attrs: { type: "button" }, text: "현지 날씨 확인하기" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "방학에 <b>적도의 도시 키토</b>로 여행을 가요! 적도니까 완전 덥겠죠? 캐리어엔 반팔과 선크림뿐 — 출발 전에 <b>날씨 확인</b>!";
+  helper.innerHTML = "방학에 <b>적도의 도시 키토</b>로 여행을 가요! 적도니까 완전 덥겠죠? 캐리어엔 반팔과 선크림뿐, 출발 전에 <b>날씨 확인</b>!";
 
   let checked = false;
   let timer = 0;
@@ -437,7 +437,7 @@ export function renderQuitoPack(
     btn.classList.add("done");
     btn.disabled = true;
     face("surprised");
-    helper.innerHTML = "13℃?! 적도 바로 옆인데 <b>서늘한 봄 날씨</b>래요. 같은 위도의 다른 도시들은 푹푹 찌는데 — 키토만 왜 서늘할까요?";
+    helper.innerHTML = "13℃?! 적도 바로 옆인데 <b>서늘한 봄 날씨</b>래요. 같은 위도의 다른 도시들은 푹푹 찌는데, 키토만 왜 서늘할까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -445,8 +445,8 @@ export function renderQuitoPack(
           "적도의 태양이 사실은 약해서",
           "바다에서 찬 바람이 불어와서",
         ],
-        good: "정확해요! 키토는 안데스산맥 <b>해발 약 2,850m</b> 위의 도시 — 높이 올라가면 기온이 내려가요. 고도를 직접 조종하며 이 비밀을 확인하러 가요!",
-        bad: "적도의 태양은 세계에서 가장 강하고, 키토는 바다에서 멀어요 — 비밀은 <b>높이</b>! 키토는 해발 약 2,850m 산 위의 도시라 일 년 내내 서늘하답니다. 고도를 직접 조종하러 가요!",
+        good: "정확해요! 키토는 안데스산맥 <b>해발 약 2,850m</b> 위의 도시, 높이 올라가면 기온이 내려가요. 고도를 직접 조종하며 이 비밀을 확인하러 가요!",
+        bad: "적도의 태양은 세계에서 가장 강하고, 키토는 바다에서 멀어요. 비밀은 <b>높이</b>! 키토는 해발 약 2,850m 산 위의 도시라 일 년 내내 서늘하답니다. 고도를 직접 조종하러 가요!",
         onDone: finish,
       });
     }, 750);
@@ -523,7 +523,7 @@ export function renderTeamRoster(
   const btn = el("button", { class: "hs5-flipbtn", attrs: { type: "button" }, text: "명단 확대하기" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "국제 대회 축구 중계! 아메리카의 <b>한 나라 대표팀</b>이 나왔어요. 화면 아래 선수 명단 — <b>확대</b>해 볼까요?";
+  helper.innerHTML = "국제 대회 축구 중계! 아메리카의 <b>한 나라 대표팀</b>이 나왔어요. 화면 아래 선수 명단, <b>확대</b>해 볼까요?";
 
   let zoom = false;
   let timer = 0;
@@ -542,7 +542,7 @@ export function renderTeamRoster(
     btn.classList.add("done");
     btn.disabled = true;
     face("curious");
-    helper.innerHTML = "스미스, 가르시아, 김, 응우옌, 오코로 — <b>한 팀</b>인데 성씨의 고향이 유럽, 라틴, 아시아, 아프리카까지! 어떻게 이런 팀이 만들어졌을까요?";
+    helper.innerHTML = "스미스, 가르시아, 김, 응우옌, 오코로, <b>한 팀</b>인데 성씨의 고향이 유럽, 라틴, 아시아, 아프리카까지! 어떻게 이런 팀이 만들어졌을까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -550,8 +550,8 @@ export function renderTeamRoster(
           "이번 대회만 외국 선수를 빌려 와서",
           "성씨를 추첨으로 새로 정하는 나라라서",
         ],
-        good: "맞아요! 아메리카는 <b>이주가 만든 대륙</b> — 원주민의 땅에 유럽·아프리카·아시아에서 온 사람들이 더해져 오늘의 다양한 팀이 됐어요. 그 이주의 역사를 만나러 가요!",
-        bad: "빌린 것도 추첨도 아니에요 — 성씨는 <b>이주의 발자국</b>! 세계 곳곳에서 아메리카로 건너온 사람들의 역사가 명단 한 장에 담긴 거예요. 그 이야기를 만나러 가요!",
+        good: "맞아요! 아메리카는 <b>이주가 만든 대륙</b>, 원주민의 땅에 유럽·아프리카·아시아에서 온 사람들이 더해져 오늘의 다양한 팀이 됐어요. 그 이주의 역사를 만나러 가요!",
+        bad: "빌린 것도 추첨도 아니에요. 성씨는 <b>이주의 발자국</b>! 세계 곳곳에서 아메리카로 건너온 사람들의 역사가 명단 한 장에 담긴 거예요. 그 이야기를 만나러 가요!",
         onDone: finish,
       });
     }, 750);
@@ -613,7 +613,7 @@ export function renderDinnerTable(
   const fig = el("div", { class: "hs5-dinner", attrs: { role: "button", tabindex: "0", "aria-label": "탭해서 원산지 태그 켜기" } });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "저녁 밥상이에요. 김치, 감자볶음, 찐 옥수수, 토마토 — 익숙한 우리 밥상이죠? <b>밥상을 탭</b>해서 재료의 <b>고향 태그</b>를 켜 봐요.";
+  helper.innerHTML = "저녁 밥상이에요. 김치, 감자볶음, 찐 옥수수, 토마토, 익숙한 우리 밥상이죠? <b>밥상을 탭</b>해서 재료의 <b>고향 태그</b>를 켜 봐요.";
 
   let state: 0 | 1 | 2 = 0;
   let timer = 0;
@@ -630,7 +630,7 @@ export function renderDinnerTable(
     haptic(HAPTIC.tap);
     show();
     if (state === 1) {
-      helper.innerHTML = "감자, 옥수수, 토마토 — 셋 다 <b>아메리카가 고향</b>이래요! 그럼 김치는 당연히 우리 것이겠죠? <b>한 번 더 탭!</b>";
+      helper.innerHTML = "감자, 옥수수, 토마토, 셋 다 <b>아메리카가 고향</b>이래요! 그럼 김치는 당연히 우리 것이겠죠? <b>한 번 더 탭!</b>";
     } else {
       face("surprised");
       helper.innerHTML = "김치의 <b>고추</b>까지 아메리카에서 온 작물이라니! 원산지 아메리카의 작물들이 우리 밥상 곳곳에 있어요. 어떻게 여기까지 왔을까요?";
@@ -641,8 +641,8 @@ export function renderDinnerTable(
             "철새들이 씨앗을 물어다 퍼뜨려서",
             "우리나라에서 먼저 기르던 것이 아메리카로 간 것이라서",
           ],
-          good: "맞아요! 약 500년 전부터 사람들이 바다를 건너며 작물도, 음악도, 음식도 함께 실어 날랐어요. 문화가 만나 <b>섞이면 새것이 태어나죠</b> — 그 무대가 바로 아메리카랍니다!",
-          bad: "새도, 반대 방향도 아니에요 — 답은 <b>사람의 이동</b>! 아메리카 원산의 작물이 배를 타고 세계로 퍼졌고, 문화도 함께 건너가 섞였어요. 섞임이 만든 새 문화를 만나러 가요!",
+          good: "맞아요! 약 500년 전부터 사람들이 바다를 건너며 작물도, 음악도, 음식도 함께 실어 날랐어요. 문화가 만나 <b>섞이면 새것이 태어나죠</b>. 그 무대가 바로 아메리카랍니다!",
+          bad: "새도, 반대 방향도 아니에요. 답은 <b>사람의 이동</b>! 아메리카 원산의 작물이 배를 타고 세계로 퍼졌고, 문화도 함께 건너가 섞였어요. 섞임이 만든 새 문화를 만나러 가요!",
           onDone: finish,
         });
       }, 750);
@@ -726,7 +726,7 @@ export function renderFruitLogo(
   const btn = el("button", { class: "hs5-flipbtn", attrs: { type: "button" }, text: "로고 스티커 살펴보기" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "마트 과일 코너예요. 필리핀산 바나나, 타이산 망고, 코스타리카산 파인애플 — 그런데 과일마다 붙은 <b>파란 스티커</b>가 어딘가 닮았어요. <b>살펴보기!</b>";
+  helper.innerHTML = "마트 과일 코너예요. 필리핀산 바나나, 타이산 망고, 코스타리카산 파인애플, 그런데 과일마다 붙은 <b>파란 스티커</b>가 어딘가 닮았어요. <b>살펴보기!</b>";
 
   let zoom = false;
   let timer = 0;
@@ -745,7 +745,7 @@ export function renderFruitLogo(
     btn.classList.add("done");
     btn.disabled = true;
     face("curious");
-    helper.innerHTML = "세 과일의 스티커가 <b>전부 같은 회사 로고</b>예요! 나라도 대륙도 다른데 회사는 하나 — 이 회사의 정체는 뭘까요?";
+    helper.innerHTML = "세 과일의 스티커가 <b>전부 같은 회사 로고</b>예요! 나라도 대륙도 다른데 회사는 하나, 이 회사의 정체는 뭘까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -753,8 +753,8 @@ export function renderFruitLogo(
           "세 나라가 함께 세운 국제기구",
           "같은 로고를 몰래 베껴 쓰는 다른 회사들",
         ],
-        good: "정답! 국경을 넘어 기르고, 포장하고, 전 세계에 파는 <b>초국적 기업</b>이에요. 본사는 미국, 농장은 세계 곳곳 — 국경 없는 회사의 비밀을 파헤치러 가요!",
-        bad: "기구도 짝퉁도 아니에요 — <b>한 회사</b>가 여러 나라에 농장을 두고 기르고, 포장하고, 세계로 파는 거예요. 이런 회사를 <b>초국적 기업</b>이라 하죠. 그 비밀을 파헤치러 가요!",
+        good: "정답! 국경을 넘어 기르고, 포장하고, 전 세계에 파는 <b>초국적 기업</b>이에요. 본사는 미국, 농장은 세계 곳곳, 국경 없는 회사의 비밀을 파헤치러 가요!",
+        bad: "기구도 짝퉁도 아니에요. <b>한 회사</b>가 여러 나라에 농장을 두고 기르고, 포장하고, 세계로 파는 거예요. 이런 회사를 <b>초국적 기업</b>이라 하죠. 그 비밀을 파헤치러 가요!",
         onDone: finish,
       });
     }, 750);
@@ -824,7 +824,7 @@ export function renderMotorCity(
   const btn = el("button", { class: "hs5-flipbtn", attrs: { type: "button" }, text: "70년 뒤 기사 보기" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "도서관에서 찾은 1950년대 신문이에요. 공장 굴뚝에 김이 오르고 새 차가 쏟아지던 <b>'자동차의 도시'</b> — <b>70년 뒤 기사</b>로 넘겨 볼까요?";
+  helper.innerHTML = "도서관에서 찾은 1950년대 신문이에요. 공장 굴뚝에 김이 오르고 새 차가 쏟아지던 <b>'자동차의 도시'</b>, <b>70년 뒤 기사</b>로 넘겨 볼까요?";
 
   let after = false;
   let timer = 0;
@@ -851,8 +851,8 @@ export function renderMotorCity(
           "사람들이 자동차를 더 이상 타지 않게 되어서",
           "도시에 큰 지진이 일어나서",
         ],
-        good: "맞아요! 공장이 해외로 떠나자 일자리와 사람이 함께 빠져나갔어요 — 이 도시가 <b>디트로이트</b>랍니다. 기업의 이사가 도시의 운명을 바꾸는 이야기, 만나러 가요!",
-        bad: "자동차는 지금도 잘 팔리고, 지진도 아니었어요 — 열쇠는 <b>공장의 이사</b>! 임금이 싼 곳을 찾아 공장이 떠나자 도시가 흔들렸죠(디트로이트). 그 이야기를 만나러 가요!",
+        good: "맞아요! 공장이 해외로 떠나자 일자리와 사람이 함께 빠져나갔어요. 이 도시가 <b>디트로이트</b>랍니다. 기업의 이사가 도시의 운명을 바꾸는 이야기, 만나러 가요!",
+        bad: "자동차는 지금도 잘 팔리고, 지진도 아니었어요. 열쇠는 <b>공장의 이사</b>! 임금이 싼 곳을 찾아 공장이 떠나자 도시가 흔들렸죠(디트로이트). 그 이야기를 만나러 가요!",
         onDone: finish,
       });
     }, 750);

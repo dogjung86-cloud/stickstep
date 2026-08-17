@@ -94,7 +94,7 @@ export const starColorLab: StepRenderer = (host, step, api) => {
 
   const helper = el("div", {
     class: "helper",
-    html: "대장간의 쇠는 달굴수록 <b>빨강 → 노랑 → 흰색</b>으로 변해요. 별도 똑같아요 — 색이 곧 <b>표면 온도의 온도계</b>! 온도를 밀며 확인해 보세요.",
+    html: "대장간의 쇠는 달굴수록 <b>빨강 → 노랑 → 흰색</b>으로 변해요. 별도 똑같아요. 색이 곧 <b>표면 온도의 온도계</b>! 온도를 밀며 확인해 보세요.",
   });
   host.append(goalChips, helper, stage, sliders); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -124,7 +124,7 @@ export const starColorLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! <b>파란 별이 가장 뜨겁고, 붉은 별이 가장 차가워요</b> — 불꽃 이미지와 반대죠? 참고로 '차가운' 붉은 별도 표면이 <b>약 3,000 ℃</b>나 돼요. 색 순서: 적 → 주황 → 황 → 황백 → 백 → 청백 → 청(온도 오름차순).";
+        "정리! <b>파란 별이 가장 뜨겁고, 붉은 별이 가장 차가워요</b>. 불꽃 이미지와 반대죠? 참고로 '차가운' 붉은 별도 표면이 <b>약 3,000 ℃</b>나 돼요. 색 순서: 적 → 주황 → 황 → 황백 → 백 → 청백 → 청(온도 오름차순).";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }
@@ -257,7 +257,7 @@ export const starColorLab: StepRenderer = (host, step, api) => {
 
     // HUD
     const band = bandOf(K);
-    const pillTxt = `${K.toLocaleString()} K — ${band.name}`;
+    const pillTxt = `${K.toLocaleString()} K, ${band.name}`;
     if (pillTxt !== shownPill) {
       shownPill = pillTxt;
       (tempPill.lastElementChild as HTMLElement).textContent = pillTxt;
@@ -270,9 +270,9 @@ export const starColorLab: StepRenderer = (host, step, api) => {
     if (zone && zone === lastZone) {
       holdMs += dt * 16.7;
       if (holdMs > 400) {
-        if (zone === "red") collect("red", "베텔게우스급!", "붉은 별 — 가장 '차가운' 별이에요 (그래도 3,000 ℃!)");
-        if (zone === "sun") collect("sun", "태양과 같아요!", "약 5,800 K 황색 — 우리 태양의 색!");
-        if (zone === "blue") collect("blue", "리겔급!", "청백 별! 끝까지 밀면 청색 — 빨강보다 파랑이 뜨거워요");
+        if (zone === "red") collect("red", "베텔게우스급!", "붉은 별, 가장 '차가운' 별이에요 (그래도 3,000 ℃!)");
+        if (zone === "sun") collect("sun", "태양과 같아요!", "약 5,800 K 황색, 우리 태양의 색!");
+        if (zone === "blue") collect("blue", "리겔급!", "청백 별! 끝까지 밀면 청색, 빨강보다 파랑이 뜨거워요");
       }
     } else holdMs = 0;
     lastZone = zone;

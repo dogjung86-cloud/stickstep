@@ -87,7 +87,7 @@ export function renderTenBook(scene: HTMLElement, helper: HTMLElement, s: HookOp
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = tenbookSvg(0);
-  helper.innerHTML = "나라의 최고법이 적힌 두꺼운 책 — 온통 딱딱한 규칙만 있을 것 같죠? 한 장씩 펼쳐 봐요.";
+  helper.innerHTML = "나라의 최고법이 적힌 두꺼운 책, 온통 딱딱한 규칙만 있을 것 같죠? 한 장씩 펼쳐 봐요.";
   let stage = 0;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -96,7 +96,7 @@ export function renderTenBook(scene: HTMLElement, helper: HTMLElement, s: HookOp
     haptic(HAPTIC.select);
     if (stage === 1) {
       fig.innerHTML = tenbookSvg(1);
-      helper.innerHTML = "예상대로 빼곡한 조문들 — 그런데 계속 넘기다 보면 뜻밖의 단어가 나온대요.";
+      helper.innerHTML = "예상대로 빼곡한 조문들, 그런데 계속 넘기다 보면 뜻밖의 단어가 나온대요.";
       btn.textContent = "더 넘겨 보기 (2/3)";
     } else {
       fig.innerHTML = tenbookSvg(2);
@@ -104,16 +104,16 @@ export function renderTenBook(scene: HTMLElement, helper: HTMLElement, s: HookOp
       btn.classList.add("done");
       btn.disabled = true;
       face("surprised");
-      helper.innerHTML = "열 번째 조문에서 빛이 나요 — 이 안에 <b>'행복'</b>이라는 단어가 정말 적혀 있을까요?";
+      helper.innerHTML = "열 번째 조문에서 빛이 나요. 이 안에 <b>'행복'</b>이라는 단어가 정말 적혀 있을까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
-            "있다 — 행복을 추구할 권리가 국민의 권리로 적혀 있다",
-            "없다 — 법에는 딱딱한 규칙과 처벌만 적는다",
+            "있다. 행복을 추구할 권리가 국민의 권리로 적혀 있다",
+            "없다. 법에는 딱딱한 규칙과 처벌만 적는다",
             "동화책에나 나오는 이야기다",
           ],
-          good: "정말 있어요! \"모든 국민은 인간으로서의 존엄과 가치를 가지며, <b>행복을 추구할 권리</b>를 가진다\" — 최고법 한가운데에 행복이 살고 있죠. 이 조문이 오늘 이야기의 주인공이에요!",
-          bad: "놀랍게도 있답니다 — 최고법의 열 번째 조문이 \"모든 국민은 인간으로서의 존엄과 가치를 가지며, <b>행복을 추구할 권리</b>를 가진다\"예요. 법의 심장에 행복이 적혀 있는 이유, 지금 만나러 가요!",
+          good: "정말 있어요! \"모든 국민은 인간으로서의 존엄과 가치를 가지며, <b>행복을 추구할 권리</b>를 가진다\", 최고법 한가운데에 행복이 살고 있죠. 이 조문이 오늘 이야기의 주인공이에요!",
+          bad: "놀랍게도 있답니다. 최고법의 열 번째 조문이 \"모든 국민은 인간으로서의 존엄과 가치를 가지며, <b>행복을 추구할 권리</b>를 가진다\"예요. 법의 심장에 행복이 적혀 있는 이유, 지금 만나러 가요!",
           onDone: finish,
         });
       }, 900);
@@ -133,7 +133,7 @@ function schoolfreeSvg(beat: number): string {
       <circle cx="96" cy="46" r="6.4" fill="url(#hs12-gold)" stroke="#8A6034" stroke-width="1.3"/>
       ${man(148, 62, { mood: "ok" })}
       ${man(196, 84, { mood: "joy", r: 5.4 })}
-      <text x="120" y="128" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">공책 한 권 — 값을 치러야 내 것이 돼요</text>`);
+      <text x="120" y="128" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">공책 한 권, 값을 치러야 내 것이 돼요</text>`);
   }
   return wrap145(`
     <rect x="70" y="34" width="100" height="60" rx="6" fill="url(#hs12-paper)" stroke="#8A93A6" stroke-width="1.6"/>
@@ -155,7 +155,7 @@ export function renderSchoolFree(scene: HTMLElement, helper: HTMLElement, s: Hoo
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = schoolfreeSvg(0);
-  helper.innerHTML = "문구점에서 공책을 사면 값을 치르죠 — 세상 대부분의 것에는 값이 있어요. 그럼 매일 듣는 <b>학교 수업</b>은요?";
+  helper.innerHTML = "문구점에서 공책을 사면 값을 치르죠. 세상 대부분의 것에는 값이 있어요. 그럼 매일 듣는 <b>학교 수업</b>은요?";
   let done = false;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -167,7 +167,7 @@ export function renderSchoolFree(scene: HTMLElement, helper: HTMLElement, s: Hoo
     btn.classList.add("done");
     btn.disabled = true;
     face("surprised");
-    helper.innerHTML = "수업은 매일 듣는데 <b>수업료 고지서</b>는 한 번도 본 적이 없어요 — 중학교 수업, 왜 공짜일까요?";
+    helper.innerHTML = "수업은 매일 듣는데 <b>수업료 고지서</b>는 한 번도 본 적이 없어요. 중학교 수업, 왜 공짜일까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -175,8 +175,8 @@ export function renderSchoolFree(scene: HTMLElement, helper: HTMLElement, s: Hoo
           "학교가 저절로 운영되기 때문에",
           "공부는 원래 값을 매길 수 없어서",
         ],
-        good: "정확해요! 모든 국민에게 <b>교육을 받을 권리</b>가 있고, 의무 교육은 무상 — 국가가 보장할 의무를 지죠. 이렇게 '국가에 요구할 수 있는 권리'가 있다니, 오늘 그 서랍들을 열어 봐요!",
-        bad: "저절로 되는 건 없어요 — 선생님 월급도 교실 불빛도 나라 살림에서 나오죠. 모든 국민에게 <b>교육을 받을 권리</b>가 있어 국가가 무상 의무 교육을 보장하는 거예요. 이런 권리의 서랍들을 열어 봐요!",
+        good: "정확해요! 모든 국민에게 <b>교육을 받을 권리</b>가 있고, 의무 교육은 무상, 국가가 보장할 의무를 지죠. 이렇게 '국가에 요구할 수 있는 권리'가 있다니, 오늘 그 서랍들을 열어 봐요!",
+        bad: "저절로 되는 건 없어요. 선생님 월급도 교실 불빛도 나라 살림에서 나오죠. 모든 국민에게 <b>교육을 받을 권리</b>가 있어 국가가 무상 의무 교육을 보장하는 거예요. 이런 권리의 서랍들을 열어 봐요!",
         onDone: finish,
       });
     }, 900);
@@ -201,7 +201,7 @@ function seatbeltSvg(beat: number): string {
     ${man(96, 50, { mood: beat >= 1 ? "joy" : "ok", r: 6 })}
     <circle cx="146" cy="66" r="9" fill="none" stroke="#5A6478" stroke-width="2.4"/>
     ${belt}
-    <text x="120" y="128" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${beat >= 1 ? "찰칵 — 경고음이 멈추고 출발!" : "차에 타자마자 삑삑 — 안전띠 경고음이에요"}</text>`);
+    <text x="120" y="128" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${beat >= 1 ? "찰칵, 경고음이 멈추고 출발!" : "차에 타자마자 삑삑, 안전띠 경고음이에요"}</text>`);
 }
 
 export function renderSeatbelt(scene: HTMLElement, helper: HTMLElement, s: HookOpt, finish: () => void, face: Face): () => void {
@@ -210,7 +210,7 @@ export function renderSeatbelt(scene: HTMLElement, helper: HTMLElement, s: HookO
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = seatbeltSvg(0);
-  helper.innerHTML = "가족 차에 타자마자 <b>삑삑</b> — 안전띠를 매기 전엔 경고음이 멈추지 않아요. 법이 <b>모든 탑승자에게</b> 안전띠를 강제하고 있거든요.";
+  helper.innerHTML = "가족 차에 타자마자 <b>삑삑</b>, 안전띠를 매기 전엔 경고음이 멈추지 않아요. 법이 <b>모든 탑승자에게</b> 안전띠를 강제하고 있거든요.";
   let done = false;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -222,7 +222,7 @@ export function renderSeatbelt(scene: HTMLElement, helper: HTMLElement, s: HookO
     btn.classList.add("done");
     btn.disabled = true;
     face("curious");
-    helper.innerHTML = "그런데 잠깐 — 맬지 말지는 <b>내 자유</b> 아닌가요? 법이 자유를 강제로 제한해도 되는 걸까요?";
+    helper.innerHTML = "그런데 잠깐, 맬지 말지는 <b>내 자유</b> 아닌가요? 법이 자유를 강제로 제한해도 되는 걸까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -230,8 +230,8 @@ export function renderSeatbelt(scene: HTMLElement, helper: HTMLElement, s: HookO
           "어떤 이유로도 자유를 제한하면 안 되니 잘못된 법이다",
           "운전자를 감시하기 위한 장치일 뿐이다",
         ],
-        good: "바로 그거예요! 기본권도 <b>필요한 경우엔 법률로</b> 제한할 수 있어요 — 단, 아무 때나·아무렇게나는 아니죠. 오늘은 그 '제한의 규칙'을 판정하러 가요!",
-        bad: "자유가 소중한 건 맞아요 — 하지만 사고의 순간 안전띠는 생명을 지키는 마지막 손이죠. 이렇게 <b>꼭 필요한 경우, 법률로</b>라는 조건을 지키면 기본권도 제한할 수 있어요. 그 규칙을 판정하러 가요!",
+        good: "바로 그거예요! 기본권도 <b>필요한 경우엔 법률로</b> 제한할 수 있어요. 단, 아무 때나·아무렇게나는 아니죠. 오늘은 그 '제한의 규칙'을 판정하러 가요!",
+        bad: "자유가 소중한 건 맞아요. 하지만 사고의 순간 안전띠는 생명을 지키는 마지막 손이죠. 이렇게 <b>꼭 필요한 경우, 법률로</b>라는 조건을 지키면 기본권도 제한할 수 있어요. 그 규칙을 판정하러 가요!",
         onDone: finish,
       });
     }, 900);
@@ -260,7 +260,7 @@ function dormruleSvg(beat: number): string {
   const q = beat >= 2 ? `<text x="112" y="66" text-anchor="middle" font-size="14" font-weight="900" fill="#AE3EC9" class="hs8-noti">?</text>` : "";
   return wrap145(`
     ${board}${door}${lock}${kid}${q}
-    <text x="120" y="128" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${beat >= 2 ? "규정엔 된다는데 문은 잠겨 있어요 — 어디에 말하죠?" : beat >= 1 ? "그런데 주말 문이 잠겼어요 — 물어보지도 않고요" : "기숙사 규정판: 주말엔 외출할 수 있다고 적혀 있어요"}</text>`);
+    <text x="120" y="128" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${beat >= 2 ? "규정엔 된다는데 문은 잠겨 있어요. 어디에 말하죠?" : beat >= 1 ? "그런데 주말 문이 잠겼어요. 물어보지도 않고요" : "기숙사 규정판: 주말엔 외출할 수 있다고 적혀 있어요"}</text>`);
 }
 
 export function renderDormRule(scene: HTMLElement, helper: HTMLElement, s: HookOpt, finish: () => void, face: Face): () => void {
@@ -269,7 +269,7 @@ export function renderDormRule(scene: HTMLElement, helper: HTMLElement, s: HookO
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = dormruleSvg(0);
-  helper.innerHTML = "스틱 중학교 기숙사의 규정판 — <b>\"주말에는 외출할 수 있다\"</b>고 적혀 있어요. 그런데 이번 주말, 이상한 일이 벌어져요.";
+  helper.innerHTML = "스틱 중학교 기숙사의 규정판, <b>\"주말에는 외출할 수 있다\"</b>고 적혀 있어요. 그런데 이번 주말, 이상한 일이 벌어져요.";
   let stage = 0;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -278,7 +278,7 @@ export function renderDormRule(scene: HTMLElement, helper: HTMLElement, s: HookO
     haptic(HAPTIC.select);
     if (stage === 1) {
       fig.innerHTML = dormruleSvg(1);
-      helper.innerHTML = "학생들에게 <b>물어보지도 않고</b> 주말 외출문이 잠겼어요 — 규정과 다르게요.";
+      helper.innerHTML = "학생들에게 <b>물어보지도 않고</b> 주말 외출문이 잠겼어요. 규정과 다르게요.";
       btn.textContent = "다음 장면 보기 (2/2)";
     } else {
       fig.innerHTML = dormruleSvg(2);
@@ -286,16 +286,16 @@ export function renderDormRule(scene: HTMLElement, helper: HTMLElement, s: HookO
       btn.classList.add("done");
       btn.disabled = true;
       face("curious");
-      helper.innerHTML = "규정엔 된다는데 문은 잠겨 있다 — 학생들의 자유가 부당하게 막힌 걸지도 몰라요. 이럴 때 <b>도움을 청할 곳</b>이 있을까요?";
+      helper.innerHTML = "규정엔 된다는데 문은 잠겨 있다. 학생들의 자유가 부당하게 막힌 걸지도 몰라요. 이럴 때 <b>도움을 청할 곳</b>이 있을까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
-            "있다 — 침해를 조사해 바로잡도록 권고하는 국가기관이 있다",
-            "없다 — 학교 안의 일은 참는 수밖에 없다",
+            "있다. 침해를 조사해 바로잡도록 권고하는 국가기관이 있다",
+            "없다. 학교 안의 일은 참는 수밖에 없다",
             "졸업할 때까지 기다리는 방법뿐이다",
           ],
-          good: "있어요! 인권 침해를 <b>조사하고 개선을 권고</b>하는 국가기관에 진정을 넣을 수 있죠 — 방패가 뚫렸을 때 두드릴 문들, 오늘 전부 알려 드릴게요!",
-          bad: "참지 않아도 돼요 — 우리나라에는 이런 침해를 <b>조사하고 바로잡도록 권고</b>하는 국가기관이 있답니다. 방패가 뚫렸을 때 두드릴 문들, 오늘 전부 알려 드릴게요!",
+          good: "있어요! 인권 침해를 <b>조사하고 개선을 권고</b>하는 국가기관에 진정을 넣을 수 있죠. 방패가 뚫렸을 때 두드릴 문들, 오늘 전부 알려 드릴게요!",
+          bad: "참지 않아도 돼요. 우리나라에는 이런 침해를 <b>조사하고 바로잡도록 권고</b>하는 국가기관이 있답니다. 방패가 뚫렸을 때 두드릴 문들, 오늘 전부 알려 드릴게요!",
           onDone: finish,
         });
       }, 900);
@@ -323,7 +323,7 @@ function whoworkerSvg(hi: number): string {
     <text x="52" y="120" text-anchor="middle" font-size="8" font-weight="800" fill="#5A6478">주방 직원</text>
     <text x="104" y="120" text-anchor="middle" font-size="8" font-weight="800" fill="#5A6478">방학 알바생</text>
     <text x="182" y="126" text-anchor="middle" font-size="8" font-weight="800" fill="#5A6478">가게 주인</text>
-    <text x="120" y="140" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">스틱 분식의 세 사람 — 전부 부지런히 일하는 중!</text>`);
+    <text x="120" y="140" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">스틱 분식의 세 사람, 전부 부지런히 일하는 중!</text>`);
 }
 
 export function renderWhoWorker(scene: HTMLElement, helper: HTMLElement, s: HookOpt, finish: () => void, face: Face): () => void {
@@ -332,7 +332,7 @@ export function renderWhoWorker(scene: HTMLElement, helper: HTMLElement, s: Hook
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = whoworkerSvg(0);
-  helper.innerHTML = "스틱 분식의 점심시간 — <b>주방 직원</b>, <b>방학 동안만 일하는 아르바이트생</b>, <b>가게 주인</b> 세 사람 모두 바쁘게 일하고 있어요.";
+  helper.innerHTML = "스틱 분식의 점심시간, <b>주방 직원</b>, <b>방학 동안만 일하는 아르바이트생</b>, <b>가게 주인</b> 세 사람 모두 바쁘게 일하고 있어요.";
   let stage = 0;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -341,26 +341,26 @@ export function renderWhoWorker(scene: HTMLElement, helper: HTMLElement, s: Hook
     haptic(HAPTIC.select);
     fig.innerHTML = whoworkerSvg(stage);
     if (stage === 1) {
-      helper.innerHTML = "주방 직원 — 매달 <b>월급을 받고</b> 요리를 해요.";
+      helper.innerHTML = "주방 직원, 매달 <b>월급을 받고</b> 요리를 해요.";
       btn.textContent = "한 사람씩 보기 (2/3)";
     } else if (stage === 2) {
-      helper.innerHTML = "방학 알바생 — <b>한 달만</b> 일하고 시급을 받아요.";
+      helper.innerHTML = "방학 알바생, <b>한 달만</b> 일하고 시급을 받아요.";
       btn.textContent = "한 사람씩 보기 (3/3)";
     } else {
       btn.textContent = "세 사람 관찰 완료";
       btn.classList.add("done");
       btn.disabled = true;
       face("curious");
-      helper.innerHTML = "가게 주인 — 가게를 운영하고 <b>월급을 주는</b> 쪽이에요. 셋 다 열심히 일하지만, 법이 말하는 <b>'근로자'가 아닌 사람</b>이 한 명 있대요. 누굴까요?";
+      helper.innerHTML = "가게 주인, 가게를 운영하고 <b>월급을 주는</b> 쪽이에요. 셋 다 열심히 일하지만, 법이 말하는 <b>'근로자'가 아닌 사람</b>이 한 명 있대요. 누굴까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
-            "가게 주인 — 임금을 주는 쪽이라 근로자가 아니다",
-            "방학 알바생 — 잠깐 일하니 근로자가 아니다",
-            "주방 직원 — 주방에만 있으니 근로자가 아니다",
+            "가게 주인, 임금을 주는 쪽이라 근로자가 아니다",
+            "방학 알바생, 잠깐 일하니 근로자가 아니다",
+            "주방 직원, 주방에만 있으니 근로자가 아니다",
           ],
-          good: "정확해요! 근로자는 <b>임금을 받고</b> 일하는 사람 — 가게 주인은 임금을 <b>주는</b> 쪽이라 '사용자'예요. 한 달 알바생도 어엿한 근로자! 오늘은 근로자의 방패를 배우러 가요.",
-          bad: "일하는 곳이나 기간은 상관없어요 — 열쇠는 <b>임금을 받는가</b>예요. 알바생도 직원도 임금을 받으니 근로자, 가게 주인은 임금을 주는 쪽이라 '사용자'랍니다. 근로자의 방패를 배우러 가요!",
+          good: "정확해요! 근로자는 <b>임금을 받고</b> 일하는 사람, 가게 주인은 임금을 <b>주는</b> 쪽이라 '사용자'예요. 한 달 알바생도 어엿한 근로자! 오늘은 근로자의 방패를 배우러 가요.",
+          bad: "일하는 곳이나 기간은 상관없어요. 열쇠는 <b>임금을 받는가</b>예요. 알바생도 직원도 임금을 받으니 근로자, 가게 주인은 임금을 주는 쪽이라 '사용자'랍니다. 근로자의 방패를 배우러 가요!",
           onDone: finish,
         });
       }, 900);
@@ -379,7 +379,7 @@ function teenwageSvg(beat: number): string {
       <path d="M62 72h26" stroke="#AE3EC9" stroke-width="2" stroke-linecap="round"/>
       ${man(168, 66, { mood: "joy", r: 6.8 })}
       <path d="M150 84q-10 4-18 2" stroke="#8A93A6" stroke-width="1.5" fill="none" stroke-dasharray="3 3"/>
-      <text x="120" y="128" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">방학 아르바이트 모집 공고 — 설레는 첫 지원!</text>`);
+      <text x="120" y="128" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">방학 아르바이트 모집 공고, 설레는 첫 지원!</text>`);
   }
   return wrap145(`
     ${man(56, 60, { mood: "wow", r: 6.8 })}
@@ -393,7 +393,7 @@ function teenwageSvg(beat: number): string {
       <path d="M182 56h26M182 64h20M182 72h24" stroke="#E8C2F2" stroke-width="1.7" stroke-linecap="round"/>
       <path d="M195 30l1.8 3.8 3.8 1.8-3.8 1.8-1.8 3.8-1.8-3.8-3.8-1.8 3.8-1.8z" fill="#E4A8F0"/>
     </g>
-    <text x="120" y="128" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">"어리니까 조금만" — 그때 법의 책이 반짝!</text>`);
+    <text x="120" y="128" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">"어리니까 조금만", 그때 법의 책이 반짝!</text>`);
 }
 
 export function renderTeenWage(scene: HTMLElement, helper: HTMLElement, s: HookOpt, finish: () => void, face: Face): () => void {
@@ -402,7 +402,7 @@ export function renderTeenWage(scene: HTMLElement, helper: HTMLElement, s: HookO
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = teenwageSvg(0);
-  helper.innerHTML = "고등학생 사촌 언니·형이 <b>첫 방학 아르바이트</b>에 지원했어요 — 두근두근 면접 날!";
+  helper.innerHTML = "고등학생 사촌 언니·형이 <b>첫 방학 아르바이트</b>에 지원했어요. 두근두근 면접 날!";
   let done = false;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -414,7 +414,7 @@ export function renderTeenWage(scene: HTMLElement, helper: HTMLElement, s: HookO
     btn.classList.add("done");
     btn.disabled = true;
     face("surprised");
-    helper.innerHTML = "그런데 면접에서 이런 말을 들었어요 — <b>\"어리니까 시급은 조금만 받아.\"</b> 법은 이 말에 뭐라고 할까요?";
+    helper.innerHTML = "그런데 면접에서 이런 말을 들었어요. <b>\"어리니까 시급은 조금만 받아.\"</b> 법은 이 말에 뭐라고 할까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -422,8 +422,8 @@ export function renderTeenWage(scene: HTMLElement, helper: HTMLElement, s: HookO
           "어리면 시급을 적게 받는 것이 법에 맞다",
           "청소년은 원래 일할 수 없으니 시급도 없다",
         ],
-        good: "정확해요! 법이 정한 <b>최저 임금</b>은 나이와 상관없이 똑같이 적용돼요 — '어리니까 조금만'은 법 위반이죠. 일터에서 방패를 지키는 법, 오늘 배우러 가요!",
-        bad: "그렇지 않아요 — 15세 이상이면 청소년도 일할 수 있고, 이때 <b>성인과 같은 최저 임금</b>을 받아야 해요. '어리니까 조금만'은 법이 금지한 말이랍니다. 일터의 방패를 지키는 법, 배우러 가요!",
+        good: "정확해요! 법이 정한 <b>최저 임금</b>은 나이와 상관없이 똑같이 적용돼요. '어리니까 조금만'은 법 위반이죠. 일터에서 방패를 지키는 법, 오늘 배우러 가요!",
+        bad: "그렇지 않아요. 15세 이상이면 청소년도 일할 수 있고, 이때 <b>성인과 같은 최저 임금</b>을 받아야 해요. '어리니까 조금만'은 법이 금지한 말이랍니다. 일터의 방패를 지키는 법, 배우러 가요!",
         onDone: finish,
       });
     }, 900);

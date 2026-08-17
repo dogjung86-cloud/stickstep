@@ -73,7 +73,7 @@ export const radiation: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.ctaUnlock);
     if (goals.size === 1 && id !== "shield") return;
     if (goals.has("near") && goals.has("far") && !goals.has("shield") && !shieldOn)
-      helper.innerHTML = "가까우면 후끈, 멀면 미지근 — <b>복사는 멀어질수록 약해져요</b>. 이번엔 <b>가림판</b>을 넣으면 어떻게 될까요?";
+      helper.innerHTML = "가까우면 후끈, 멀면 미지근, <b>복사는 멀어질수록 약해져요</b>. 이번엔 <b>가림판</b>을 넣으면 어떻게 될까요?";
   }
 
   const FIRE_X = 0.17;
@@ -83,7 +83,7 @@ export const radiation: StepRenderer = (host, step, api) => {
     shieldOn = !shieldOn;
     if (shieldOn) shieldDrop = 0;
     shieldBtn.innerHTML = `<span>${shieldOn ? "가림판 빼기" : "가림판 넣기"}</span>`;
-    if (shieldOn) helper.innerHTML = "가림판을 넣었어요. 따뜻함 게이지를 보세요 — <b>바로</b> 달라지죠?";
+    if (shieldOn) helper.innerHTML = "가림판을 넣었어요. 따뜻함 게이지를 보세요. <b>바로</b> 달라지죠?";
   });
 
   // ---- 드래그(가림판·스틱맨) ----
@@ -349,7 +349,7 @@ export const radiation: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "이게 <b>복사</b>예요 — 열이 <b>물질을 통하지 않고 직접</b> 이동해요. 그래서 <b>멀어질수록 약해지고</b>, 사이를 막으면 <b>즉시 끊기죠</b>. 태양의 열도 텅 빈 우주를 건너 지구까지 와요.";
+        "이게 <b>복사</b>예요. 열이 <b>물질을 통하지 않고 직접</b> 이동해요. 그래서 <b>멀어질수록 약해지고</b>, 사이를 막으면 <b>즉시 끊기죠</b>. 태양의 열도 텅 빈 우주를 건너 지구까지 와요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }

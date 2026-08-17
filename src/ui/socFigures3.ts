@@ -99,7 +99,7 @@ export function euroTerrainFig(): string {
     ${volcano(-19, 64.6)}${volcano(15, 37.7)}
     <path d="M${lonToX(5.6).toFixed(1)} ${latToY(61.2).toFixed(1)}l3 1.4-2.2 1 3 1.3-2.2 1 3.2 1.4" stroke="#3F8FC8" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
   `;
-  return mapShell(inner, { aria: "유럽의 주요 지형 지도 — 두 산맥과 넓은 평원, 강, 화산" });
+  return mapShell(inner, { aria: "유럽의 주요 지형 지도, 두 산맥과 넓은 평원, 강, 화산" });
 }
 
 /* ---------- L3: 기후 분포 지도(교과서식 러프 재현) ---------- */
@@ -146,7 +146,7 @@ export function euroClimateFig(opts?: { letters?: { lon: number; lat: number; t:
     ${pal.map(([c, n], i) => `<g transform="translate(${CROP.x + 10 + i * 62} ${CROP.y + CROP.h + 22})">
       <rect x="0" y="-8" width="10" height="10" rx="3" fill="${c}"/><text x="13" y="1" fill="#4E5968">${n}</text></g>`).join("")}
   </g>`;
-  return mapShell(inner, { legend, aria: "유럽의 기후 분포 지도(러프) — 서안 해양성, 지중해성, 냉대, 한대" });
+  return mapShell(inner, { legend, aria: "유럽의 기후 분포 지도(러프), 서안 해양성, 지중해성, 냉대, 한대" });
 }
 
 /* ---------- L3: 런던·로마 기후 그래프 페어(퀴즈 그림) ---------- */
@@ -199,7 +199,7 @@ export function euTimelineFig(): string {
   const market = `<g><path d="M-11 -4h22l-3 12h-16z" fill="#E8B93C" stroke="#B8892E" stroke-width="1.4"/><path d="M-7 -4q0-8 7-8t7 8" stroke="#B8892E" stroke-width="1.8" fill="none"/></g>`;
   const stars = `<g>${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => `<circle cx="${(10 * Math.cos((i * Math.PI) / 6)).toFixed(1)}" cy="${(-2 + 10 * Math.sin((i * Math.PI) / 6)).toFixed(1)}" r="1.7" fill="#F2C24E"/>`).join("")}<circle cx="0" cy="-2" r="13.5" fill="none" stroke="#2E4E9E" stroke-width="2.4"/></g>`;
   const exit = `<g><rect x="-12" y="-12" width="15" height="22" rx="2" fill="#E8EEF6" stroke="#5A7896" stroke-width="1.6"/><path d="M-4 -1h14M6 -6l6 5-6 5" stroke="#C0392E" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>`;
-  return `<svg viewBox="0 0 344 108" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="유럽연합의 변천 — 석탄 철강 공동체에서 유럽연합, 그리고 영국의 탈퇴까지">
+  return `<svg viewBox="0 0 344 108" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="유럽연합의 변천, 석탄 철강 공동체에서 유럽연합, 그리고 영국의 탈퇴까지">
     <path d="M30 64H314" stroke="#C8D0DC" stroke-width="3" stroke-linecap="round"/>
     <path d="M304 64l10 0" stroke="#C8D0DC" stroke-width="3" stroke-linecap="round"/>
     ${node(52, "1952년", "석탄·철강 공동체", coal, "#5A6B7E")}
@@ -237,7 +237,7 @@ export function euroUnionFig(): string {
     <text x="0" y="6" text-anchor="middle" font-size="17" font-weight="900" fill="#8A6A1E">€</text>
     ${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<circle cx="${(14.5 * Math.cos((i * Math.PI) / 4)).toFixed(1)}" cy="${(14.5 * Math.sin((i * Math.PI) / 4)).toFixed(1)}" r="1" fill="#C2933A"/>`).join("")}
   </g>`;
-  return `<svg viewBox="0 0 344 112" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="유럽 통합의 세 장치 — 자유로운 이동, 관세 없는 무역, 단일 화폐">
+  return `<svg viewBox="0 0 344 112" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="유럽 통합의 세 장치, 자유로운 이동, 관세 없는 무역, 단일 화폐">
     ${panel(6, "국경 검문 없이 (솅겐 조약)", gate)}
     ${panel(120, "관세 없이 사고팔기", nofee)}
     ${panel(234, "화폐는 하나로 (유로)", euro)}

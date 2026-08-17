@@ -153,7 +153,7 @@ export const gasFizz: StepRenderer = (host, step, api) => {
     }
     if (finished) return;
     if (goals.has("warm") && goals.has("pump") && !goals.has("calm")) {
-      helper.innerHTML = "이제 반대로 — <b>차갑게 식히고 뚜껑을 열어 압력을 되돌린 뒤</b> 가만히 두면?";
+      helper.innerHTML = "이제 반대로, <b>차갑게 식히고 뚜껑을 열어 압력을 되돌린 뒤</b> 가만히 두면?";
     }
   }
 
@@ -203,7 +203,7 @@ export const gasFizz: StepRenderer = (host, step, api) => {
   // ---- 펌프 · 리셋 ----
   pumpBtn.addEventListener("click", () => {
     if (pStage >= 3) {
-      toast("더 못 빼요 — 최저 압력이에요!");
+      toast("더 못 빼요. 최저 압력이에요!");
       return;
     }
     pStage++;
@@ -213,18 +213,18 @@ export const gasFizz: StepRenderer = (host, step, api) => {
     hideCap();
     haptic(HAPTIC.tap);
     if (pStage === 3) collect("pump", "콸콸!", "압력을 빼니 기포가 콸콸!");
-    else toast(`슉 — 압력 ${STAGES[pStage].toFixed(1)}기압`);
+    else toast(`슉, 압력 ${STAGES[pStage].toFixed(1)}기압`);
   });
   resetBtn.addEventListener("click", () => {
     if (pStage === 0) {
-      toast("이미 새 공기 — 1.0기압이에요");
+      toast("이미 새 공기, 1.0기압이에요");
       return;
     }
     pStage = 0;
     kick = 1;
     hideCap();
     haptic(HAPTIC.tap);
-    toast("뚜껑을 열어 새 공기 — 1.0기압");
+    toast("뚜껑을 열어 새 공기, 1.0기압");
   });
 
   // ---- 프레임 ----
@@ -298,9 +298,9 @@ export const gasFizz: StepRenderer = (host, step, api) => {
     if (!calmCond) calmHint = false;
     if (calmCond && !calmHint && !goals.has("calm") && holdMs.calm > 200) {
       calmHint = true;
-      toast("좋아요 — 이대로 3초만 기다려요!");
+      toast("좋아요. 이대로 3초만 기다려요!");
     }
-    if (holdMs.calm > 3000) collect("calm", "잠잠…", "차갑게·압력 그대로 — 탄산이 오래가요");
+    if (holdMs.calm > 3000) collect("calm", "잠잠…", "차갑게·압력 그대로, 탄산이 오래가요");
 
     // ---- 그리기: 물중탕 비커 ----
     contactShadow(ctx, cx1, bkBot + 6, bkW * 0.55, 0.24);

@@ -118,7 +118,7 @@ const MINI: Record<string, () => string> = {
       <path d="M32 22 C46 30 50 44 45 54 C38 60 26 60 19 54 C14 44 18 30 32 22 Z" fill="#51CF66" stroke="#1E5A2A" stroke-width="2.6"/>
       <path d="M4 34 h14 M14 30 l8 4 -8 4 Z" stroke="${P3.co2}" stroke-width="2.8" fill="${P3.co2}" stroke-linecap="round"/>
       <path d="M46 34 h12 M52 30 l8 4 -8 4 Z" stroke="${P3.o2}" stroke-width="2.8" fill="${P3.o2}" stroke-linecap="round"/>
-    `, "낮의 잎 — 이산화 탄소 흡수·산소 방출"),
+    `, "낮의 잎, 이산화 탄소 흡수·산소 방출"),
   // L5: 달 아래 잎 — 방향 반대
   nightLeaf: () =>
     svg("0 0 64 64", `
@@ -127,7 +127,7 @@ const MINI: Record<string, () => string> = {
       <path d="M30 24 C44 32 48 44 43 54 C36 60 24 60 17 54 C12 44 16 32 30 24 Z" fill="#40A85C" stroke="#1E5A2A" stroke-width="2.6"/>
       <path d="M4 36 h12 M12 32 l8 4 -8 4 Z" stroke="${P3.o2}" stroke-width="2.8" fill="${P3.o2}" stroke-linecap="round"/>
       <path d="M44 36 h12 M50 32 l8 4 -8 4 Z" stroke="${P3.co2}" stroke-width="2.8" fill="${P3.co2}" stroke-linecap="round"/>
-    `, "밤의 잎 — 산소 흡수·이산화 탄소 방출"),
+    `, "밤의 잎, 산소 흡수·이산화 탄소 방출"),
   // L5: 좌우 대칭 비교표 아이콘
   vsTable: () =>
     svg("0 0 64 64", `
@@ -277,8 +277,8 @@ export function leafFactorySceneFig(o?: { mode?: "play" | "quiz"; blank?: "co2" 
         box(88, 34, 11, "산소", C.oxygen, "5s")}
     `,
     isQuiz
-      ? "잎 위 광합성 과정 — 빛에너지와 물, 그리고 ㉠이 잎으로 들어가고 포도당과 산소가 나온다"
-      : "잎 위 광합성 과정 장면 — 물과 이산화 탄소가 잎으로 들어오고 빛에너지가 더해져 포도당이 생기며, 포도당은 녹말로 저장되고 산소는 기공으로 나간다",
+      ? "잎 위 광합성 과정, 빛에너지와 물, 그리고 ㉠이 잎으로 들어가고 포도당과 산소가 나온다"
+      : "잎 위 광합성 과정 장면, 물과 이산화 탄소가 잎으로 들어오고 빛에너지가 더해져 포도당이 생기며, 포도당은 녹말로 저장되고 산소는 기공으로 나간다",
   );
 }
 
@@ -301,7 +301,7 @@ export function factorShapesFig(): string {
     ${panel(234, "(다)", "M18 82 L86 24", "#4DABF7")}
     <text x="8" y="12" font-size="10.5" font-weight="700" fill="#8B95A1">세로축: 광합성량 · 가로축: 요인 값</text>
     `,
-    "요인 값에 따른 광합성량 그래프 세 가지 모양 — (가) 증가 후 일정, (나) 정점 뒤 감소, (다) 계속 증가",
+    "요인 값에 따른 광합성량 그래프 세 가지 모양, (가) 증가 후 일정, (나) 정점 뒤 감소, (다) 계속 증가",
   );
 }
 
@@ -342,7 +342,7 @@ export function dayNightGasFig(o?: { blank?: "dayIn" | "dayOut" | "nightIn" | "n
     ${arrOut(254, P3.co2)}
     ${pill(292, 84, wOf("nightOut", 78), lab("nightOut", "이산화 탄소"), P3.co2, true)}
     `,
-    "낮과 밤 잎의 기체 출입 — 낮에는 이산화 탄소를 흡수하고 산소를 방출하며, 밤에는 반대",
+    "낮과 밤 잎의 기체 출입, 낮에는 이산화 탄소를 흡수하고 산소를 방출하며, 밤에는 반대",
   );
 }
 
@@ -401,6 +401,6 @@ export function psFlowFig(o?: { blanks?: PsFlowKey[] }): string {
     ${arrow(300, 98, 300, 116, "#8B95A1")}
     ${pill(300, 130, blanks.includes("starch") ? 40 : 54, name("starch", "녹말"), P3.starch)}
     `,
-    "광합성 과정 도식 — 빛에너지·이산화 탄소·물이 엽록체로 들어가고 포도당(녹말로 저장)과 산소가 나온다",
+    "광합성 과정 도식, 빛에너지·이산화 탄소·물이 엽록체로 들어가고 포도당(녹말로 저장)과 산소가 나온다",
   );
 }

@@ -40,15 +40,15 @@ export function cultMeanFig(): string {
       const x = 96;
       return `<g ${STICK}><circle cx="${x}" cy="106" r="6.4" fill="#F6EFE4"/><path d="M${x} 112v16M${x} 128l-5 10M${x} 128l5 10M${x} 118l-8 5M${x} 118l8 5"/></g>`;
     })()}
-    <text x="76" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">밥상 · 집 · 인사 — 살아가는 방식</text>
+    <text x="76" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">밥상 · 집 · 인사, 살아가는 방식</text>
     <!-- (나) 예술·교양: 무대와 음표 -->
     <rect x="186" y="66" width="76" height="44" rx="6" fill="#F3E9FA" stroke="#B98CD0" stroke-width="1.4"/>
     <path d="M186 66q38 12 76 0" stroke="#B98CD0" stroke-width="1.2" fill="none" opacity=".7"/>
     <path d="M206 96v-16q0-3 3-3l8-2v16" stroke="#6E2E86" stroke-width="2" fill="none"/>
     <circle cx="203" cy="97" r="3.4" fill="#6E2E86"/><circle cx="214" cy="93" r="3.4" fill="#6E2E86"/>
     <path d="M232 84l2.2 5 5 2.2-5 2.2-2.2 5-2.2-5-5-2.2 5-2.2z" fill="#F2C24E"/>
-    <text x="224" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">공연 · 예술 — 세련되고 교양 있는 것</text>`;
-  return shell(300, 158, inner, "두 장면 비교 — 왼쪽은 밥상과 집과 인사 등 생활 전체, 오른쪽은 공연 무대와 음표");
+    <text x="224" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">공연 · 예술, 세련되고 교양 있는 것</text>`;
+  return shell(300, 158, inner, "두 장면 비교, 왼쪽은 밥상과 집과 인사 등 생활 전체, 오른쪽은 공연 무대와 음표");
 }
 
 /* ---------- L2: 하나의 지붕, 두 개의 결혼식(보편성·특수성) ---------- */
@@ -76,7 +76,7 @@ export function univSpecFig(): string {
     <g ${STICK}><circle cx="252" cy="72" r="6" fill="#F6EFE4"/><path d="M252 78v14M252 92l-5 10M252 92l5 10M252 82l-8 4"/></g>
     <path d="M204 86q10 2 20 0" stroke="#8A93A6" stroke-width="1.2" opacity=".0"/>
     <text x="224" y="146" text-anchor="middle" font-size="9.6" fill="#7E8AA0">케이크를 자르며 축하해요</text>`;
-  return shell(300, 158, inner, "하나의 큰 지붕 아래 서로 다른 두 결혼식 장면 — 전통 혼례와 케이크가 있는 예식");
+  return shell(300, 158, inner, "하나의 큰 지붕 아래 서로 다른 두 결혼식 장면, 전통 혼례와 케이크가 있는 예식");
 }
 
 /* ---------- L3: 공중전화 → 스마트폰(속성 판별 그림) ---------- */
@@ -130,7 +130,7 @@ export function mediaFlowFig(): string {
       <path d="M216 60l-6 2 6 2zM232 64l6-2-6-2zM216 118l-6-2 6-2zM232 114l6 2-6 2z"/>
     </g>
     <text x="224" y="146" text-anchor="middle" font-size="9.8" fill="#7E8AA0">누구나 만들고 주고받는 그물</text>`;
-  return shell(300, 158, inner, "두 미디어 흐름 비교 — 왼쪽은 방송탑에서 여러 사람으로 한 방향 화살표, 오른쪽은 사람들끼리 얽힌 양방향 그물");
+  return shell(300, 158, inner, "두 미디어 흐름 비교, 왼쪽은 방송탑에서 여러 사람으로 한 방향 화살표, 오른쪽은 사람들끼리 얽힌 양방향 그물");
 }
 
 /* ---------- L5: 기사처럼 생긴 화면(구석의 작은 표시) ---------- */
@@ -147,8 +147,8 @@ export function adNewsFig(): string {
     <g fill="#DCE3EC"><rect x="188" y="62" width="64" height="7" rx="3.5"/><rect x="188" y="74" width="64" height="7" rx="3.5"/><rect x="188" y="86" width="46" height="7" rx="3.5"/></g>
     <rect x="188" y="100" width="64" height="20" rx="10" fill="#3182F6"/>
     <text x="220" y="114" text-anchor="middle" font-size="10" font-weight="800" fill="#FFFFFF">바로 구매</text>
-    <text x="150" y="152" text-anchor="middle" font-size="9.8" fill="#7E8AA0">기사처럼 보이는 화면 — 구석의 작은 표시를 찾았나요?</text>`;
-  return shell(300, 160, inner, "신문 기사처럼 생긴 화면 — 오른쪽 위에 작은 광고 표시, 아래에 구매 버튼");
+    <text x="150" y="152" text-anchor="middle" font-size="9.8" fill="#7E8AA0">기사처럼 보이는 화면, 구석의 작은 표시를 찾았나요?</text>`;
+  return shell(300, 160, inner, "신문 기사처럼 생긴 화면, 오른쪽 위에 작은 광고 표시, 아래에 구매 버튼");
 }
 
 /* ---------- L7: 두 개의 저울 없는 태도(가/나 — 깃발 은유) ---------- */
@@ -173,7 +173,7 @@ export function attitudeFig(): string {
     <g ${STICK}><circle cx="228" cy="84" r="6.4" fill="#F6EFE4"/><path d="M228 90v16M228 106l-5 11M228 106l5 11M228 95l11-7M228 95l-8 6"/></g>
     <path d="M226 81.6q1.4-1.6 2.8 0M230.4 81.6q1.4-1.6 2.8 0" stroke="#3C4654" stroke-width="1.2" fill="none"/>
     <text x="224" y="146" text-anchor="middle" font-size="9.8" fill="#7E8AA0">남의 것만 우러러보고 내 것을 버려요</text>`;
-  return shell(300, 158, inner, "깃발을 든 두 장면 — 왼쪽은 자기 깃발만 높이 들고, 오른쪽은 남의 깃발을 우러러보며 자기 깃발을 떨어뜨린 모습");
+  return shell(300, 158, inner, "깃발을 든 두 장면, 왼쪽은 자기 깃발만 높이 들고, 오른쪽은 남의 깃발을 우러러보며 자기 깃발을 떨어뜨린 모습");
 }
 
 /* ---------- recap 미니아트(64×64 플랫 — 전 카드 필수) ---------- */

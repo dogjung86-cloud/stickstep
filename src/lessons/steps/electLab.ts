@@ -126,7 +126,7 @@ function voteSvg(stamped: boolean): string {
     <text x="138" y="82" text-anchor="middle" font-size="8" font-weight="800" fill="#39455C">기호 ②</text>
     ${stamped ? `<g class="hs8-noti"><circle cx="102" cy="88" r="5" fill="none" stroke="#C0392E" stroke-width="1.8"/><circle cx="102" cy="88" r="1.6" fill="#C0392E"/></g>` : ""}
     ${stamped ? `<g transform="rotate(14 150 100)"><rect x="144" y="94" width="9" height="10" rx="2" fill="url(#elc-booth)" stroke="#47730A" stroke-width="1.2"/><rect x="142" y="104" width="13" height="3.4" rx="1.4" fill="#47730A"/></g>` : `<g transform="rotate(-8 150 96)"><rect x="144" y="90" width="9" height="10" rx="2" fill="url(#elc-booth)" stroke="#47730A" stroke-width="1.2"/><rect x="142" y="100" width="13" height="3.4" rx="1.4" fill="#47730A"/></g>`}
-    <text x="120" y="132" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">칸막이 안 — 나만 아는 한 표</text>`);
+    <text x="120" y="132" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">칸막이 안, 나만 아는 한 표</text>`);
 }
 
 // ⑤ 개표 — 막대 상승(round 0..3, 최종 7:5)
@@ -186,7 +186,7 @@ function stripSvg(): string {
     })
     .join("");
   return wrap(`${path}${nodes}
-    <text x="120" y="132" text-anchor="middle" font-size="9.6" font-weight="800" fill="#47730A">여섯 단계 완주 — 공정한 선거 한 판 완성!</text>`);
+    <text x="120" y="132" text-anchor="middle" font-size="9.6" font-weight="800" fill="#47730A">여섯 단계 완주, 공정한 선거 한 판 완성!</text>`);
 }
 
 interface ElcPhase {
@@ -202,54 +202,54 @@ const PHASES: ElcPhase[] = [
     id: "roster",
     fileLabel: "1단계",
     stageName: "선거인 명부 작성",
-    intro: "선거 관리 위원의 첫 임무 — <b>투표할 수 있는 사람의 명단</b>부터 만들어요. 우리 반 학생들을 한 명씩 확인해 명부에 올려요!",
+    intro: "선거 관리 위원의 첫 임무, <b>투표할 수 있는 사람의 명단</b>부터 만들어요. 우리 반 학생들을 한 명씩 확인해 명부에 올려요!",
   },
   {
     id: "register",
     fileLabel: "2단계",
     stageName: "후보자 등록",
-    intro: "명부 완성! 이제 <b>회장이 되고 싶은 사람</b>이 후보로 나설 차례 — 접수처에서 후보 등록을 받아요.",
+    intro: "명부 완성! 이제 <b>회장이 되고 싶은 사람</b>이 후보로 나설 차례, 접수처에서 후보 등록을 받아요.",
   },
   {
     id: "campaign",
     fileLabel: "3단계",
     stageName: "선거 운동",
-    intro: "후보들이 <b>선거 운동</b>을 시작했어요 — 포스터와 연설로 지지를 호소하죠. 유권자의 눈으로 두 공약을 모두 살펴봐요.",
+    intro: "후보들이 <b>선거 운동</b>을 시작했어요. 포스터와 연설로 지지를 호소하죠. 유권자의 눈으로 두 공약을 모두 살펴봐요.",
     quiz: {
       q: "유권자가 공약을 살필 때 가장 중요한 것은 무엇일까요?",
       options: ["실현 가능성이 있는지, 후보의 능력은 어떤지 꼼꼼히 따진다", "포스터가 예쁜 쪽을 고른다"],
-      good: "맞아요! 듣기 좋은 약속이 아니라 <b>지킬 수 있는 약속인지</b>, 후보의 능력과 자질은 어떤지 살피는 것 — 올바른 선택을 하는 유권자의 자세예요.",
-      wrong: "포스터 솜씨는 회장의 능력과 상관없죠 — 유권자는 <b>공약의 실현 가능성</b>과 후보의 능력·자질을 꼼꼼히 살펴야 해요. 다시 골라 봐요!",
+      good: "맞아요! 듣기 좋은 약속이 아니라 <b>지킬 수 있는 약속인지</b>, 후보의 능력과 자질은 어떤지 살피는 것, 올바른 선택을 하는 유권자의 자세예요.",
+      wrong: "포스터 솜씨는 회장의 능력과 상관없죠. 유권자는 <b>공약의 실현 가능성</b>과 후보의 능력·자질을 꼼꼼히 살펴야 해요. 다시 골라 봐요!",
     },
   },
   {
     id: "vote",
     fileLabel: "4단계",
     stageName: "투표",
-    intro: "드디어 <b>투표일</b>! 유권자가 기표소에 들어가 소중한 한 표를 행사해요 — 도장을 꾹 찍어 봐요.",
+    intro: "드디어 <b>투표일</b>! 유권자가 기표소에 들어가 소중한 한 표를 행사해요. 도장을 꾹 찍어 봐요.",
     quiz: {
       q: "기표소에 칸막이가 서 있는 까닭은 무엇일까요?",
       options: ["누구에게 투표했는지 다른 사람이 알지 못하게 하려고", "투표 도장을 잃어버리지 않게 하려고"],
-      good: "정확해요! 지난 시간에 배운 <b>비밀 선거</b>의 원칙이 기표소 칸막이로 지켜지고 있는 거예요 — 원칙은 종이 위가 아니라 현장에 살아 있죠.",
-      wrong: "도장은 끈에 묶여 있어서 괜찮아요! 칸막이의 진짜 임무는 <b>내 선택을 가려 주는 것</b> — 비밀 선거의 원칙을 지키는 장치랍니다. 다시 골라 봐요!",
+      good: "정확해요! 지난 시간에 배운 <b>비밀 선거</b>의 원칙이 기표소 칸막이로 지켜지고 있는 거예요. 원칙은 종이 위가 아니라 현장에 살아 있죠.",
+      wrong: "도장은 끈에 묶여 있어서 괜찮아요! 칸막이의 진짜 임무는 <b>내 선택을 가려 주는 것</b>, 비밀 선거의 원칙을 지키는 장치랍니다. 다시 골라 봐요!",
     },
   },
   {
     id: "count",
     fileLabel: "5단계",
     stageName: "개표",
-    intro: "투표 종료! 투표함을 열어 <b>표를 세는 개표</b>가 시작돼요 — 한 묶음씩 집계해 봐요.",
+    intro: "투표 종료! 투표함을 열어 <b>표를 세는 개표</b>가 시작돼요. 한 묶음씩 집계해 봐요.",
   },
   {
     id: "winner",
     fileLabel: "6단계",
     stageName: "당선인 결정",
-    intro: "개표 결과 <b>7 대 5</b> — 이제 마지막 단계, 당선인을 결정할 시간이에요!",
+    intro: "개표 결과 <b>7 대 5</b>, 이제 마지막 단계, 당선인을 결정할 시간이에요!",
     quiz: {
       q: "당선인은 어떻게 정해질까요?",
       options: ["가장 많은 표를 얻은 후보가 당선인이 된다", "선거 관리 위원이 마음에 드는 후보를 고른다"],
-      good: "맞아요! <b>가장 많은 표를 얻은 후보</b>가 당선 — 유권자들의 표가 대표자를 결정하는 거예요. 선거 관리 위원은 그 과정을 공정하게 지킬 뿐이죠.",
-      wrong: "선거 관리 위원은 심판이지 결정권자가 아니에요 — 당선인을 정하는 건 오직 <b>유권자들의 표</b>! 가장 많은 표를 얻은 후보가 당선된답니다. 다시 골라 봐요!",
+      good: "맞아요! <b>가장 많은 표를 얻은 후보</b>가 당선, 유권자들의 표가 대표자를 결정하는 거예요. 선거 관리 위원은 그 과정을 공정하게 지킬 뿐이죠.",
+      wrong: "선거 관리 위원은 심판이지 결정권자가 아니에요. 당선인을 정하는 건 오직 <b>유권자들의 표</b>! 가장 많은 표를 얻은 후보가 당선된답니다. 다시 골라 봐요!",
     },
   },
 ];
@@ -349,7 +349,7 @@ export const electLab: StepRenderer = (host, step, api) => {
       refreshScene(stripSvg());
       lightChip("final", "완주!");
       helper.innerHTML =
-        "선거 한 판 완주! <b>명부 작성 → 후보 등록 → 선거 운동 → 투표 → 개표 → 당선인 결정</b> — 이 여섯 단계가 공정한 선거의 길이에요. 나라의 선거도 똑같은 순서로 굴러간답니다!";
+        "선거 한 판 완주! <b>명부 작성 → 후보 등록 → 선거 운동 → 투표 → 개표 → 당선인 결정</b>, 이 여섯 단계가 공정한 선거의 길이에요. 나라의 선거도 똑같은 순서로 굴러간답니다!";
       api.recordQuiz(clean);
       api.enableCTA(s.cta ?? "역할 정리하러 가기");
       return;
@@ -405,7 +405,7 @@ export const electLab: StepRenderer = (host, step, api) => {
         if (n >= 3) {
           b.disabled = true;
           b.classList.add("done");
-          helper.innerHTML = "명부 완성! 선거 날 우리 반 학생이면 <b>누구나</b> 이 명단에 올라요 — 보통 선거의 원칙, 기억나죠?";
+          helper.innerHTML = "명부 완성! 선거 날 우리 반 학생이면 <b>누구나</b> 이 명단에 올라요. 보통 선거의 원칙, 기억나죠?";
           later(advance, 1200);
         }
       });
@@ -420,7 +420,7 @@ export const electLab: StepRenderer = (host, step, api) => {
         haptic(HAPTIC.select);
         refreshScene(registerSvg(n));
         b.textContent = `후보 등록 받기 (${n}/2)`;
-        helper.innerHTML = n === 1 ? "첫 번째 후보 등록 — <b>기호 ①</b>번이에요!" : "두 번째 후보까지 등록 완료 — <b>기호 ②</b>번! 이제 선거 운동이 시작돼요.";
+        helper.innerHTML = n === 1 ? "첫 번째 후보 등록, <b>기호 ①</b>번이에요!" : "두 번째 후보까지 등록 완료, <b>기호 ②</b>번! 이제 선거 운동이 시작돼요.";
         if (n >= 2) {
           b.disabled = true;
           b.classList.add("done");
@@ -444,14 +444,14 @@ export const electLab: StepRenderer = (host, step, api) => {
         if (seen.size >= 2) later(openQuiz, 900);
       };
       b1.addEventListener("click", () =>
-        look("a", b1, "기호 ①의 공약: \"<b>매일 급식에 디저트 열 가지!</b>\" — 와, 신나는데… 우리 반 힘으로 지킬 수 있는 약속일까요?"),
+        look("a", b1, "기호 ①의 공약: \"<b>매일 급식에 디저트 열 가지!</b>\", 와, 신나는데… 우리 반 힘으로 지킬 수 있는 약속일까요?"),
       );
       b2.addEventListener("click", () =>
-        look("b", b2, "기호 ②의 공약: \"<b>건의함을 만들어 매주 학급 회의에 올릴게요</b>\" — 구체적인 방법까지 담겨 있네요. 두 공약을 비교해 봐요!"),
+        look("b", b2, "기호 ②의 공약: \"<b>건의함을 만들어 매주 학급 회의에 올릴게요</b>\", 구체적인 방법까지 담겨 있네요. 두 공약을 비교해 봐요!"),
       );
     } else if (id === "vote") {
       refreshScene(voteSvg(false));
-      const b = actBtn("기표하기 — 도장 꾹!");
+      const b = actBtn("기표하기, 도장 꾹!");
       controls.appendChild(b);
       b.addEventListener("click", () => {
         if (b.disabled) return;
@@ -459,7 +459,7 @@ export const electLab: StepRenderer = (host, step, api) => {
         refreshScene(voteSvg(true));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "꾹 — 소중한 한 표가 찍혔어요. 접어서 투표함에 넣으면 끝! 그런데 이 칸막이, 왜 서 있는 걸까요?";
+        helper.innerHTML = "꾹, 소중한 한 표가 찍혔어요. 접어서 투표함에 넣으면 끝! 그런데 이 칸막이, 왜 서 있는 걸까요?";
         later(openQuiz, 800);
       });
     } else if (id === "count") {
@@ -468,9 +468,9 @@ export const electLab: StepRenderer = (host, step, api) => {
       const b = actBtn("개표하기 (0/3)");
       controls.appendChild(b);
       const msgs = [
-        "첫 묶음 — 기호 ① 3표, 기호 ② 2표!",
-        "두 번째 묶음 — 5 대 4, 초박빙이에요!",
-        "마지막 묶음까지 — <b>7 대 5</b>! 개표 완료, 이제 결과를 확정해요.",
+        "첫 묶음, 기호 ① 3표, 기호 ② 2표!",
+        "두 번째 묶음, 5 대 4, 초박빙이에요!",
+        "마지막 묶음까지, <b>7 대 5</b>! 개표 완료, 이제 결과를 확정해요.",
       ];
       b.addEventListener("click", () => {
         if (n >= 3) return;
@@ -495,7 +495,7 @@ export const electLab: StepRenderer = (host, step, api) => {
         refreshScene(winnerSvg());
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "더 많은 표를 얻은 <b>기호 ①</b>이 당선! 그런데 — 당선인은 무엇으로 정해진 걸까요? 마지막 판정이에요.";
+        helper.innerHTML = "더 많은 표를 얻은 <b>기호 ①</b>이 당선! 그런데… 당선인은 무엇으로 정해진 걸까요? 마지막 판정이에요.";
         later(openQuiz, 800);
       });
     }

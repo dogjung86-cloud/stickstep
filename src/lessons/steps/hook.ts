@@ -424,7 +424,7 @@ function renderCups(scene: HTMLElement, helper: HTMLElement, finish: () => void,
   const mk = (kind: "hot" | "cold", name: string): HTMLElement => {
     const label = el("div", { class: "hook-cup-label", text: "눌러서 만져 보기" });
     const art = sceneArt("cup-plain", cupSvg());
-    const cup = el("button", { class: "hook-cup", attrs: { "aria-label": `${name} — 눌러서 만져 보기` } }, art.el, label);
+    const cup = el("button", { class: "hook-cup", attrs: { "aria-label": `${name}, 눌러서 만져 보기` } }, art.el, label);
     cup.addEventListener("click", () => {
       if (touched.has(kind)) return;
       touched.add(kind);
@@ -432,7 +432,7 @@ function renderCups(scene: HTMLElement, helper: HTMLElement, finish: () => void,
       art.set(kind === "hot" ? "cup-hot" : "cup-cold");
       const result = kind === "hot" ? "앗, 뜨거워요! 55℃" : "얼음장이에요! 10℃";
       label.textContent = result;
-      cup.setAttribute("aria-label", `${name} — ${result}`);
+      cup.setAttribute("aria-label", `${name}, ${result}`);
       haptic(kind === "hot" ? HAPTIC.wrong : HAPTIC.select);
       if (touched.size === 2) {
         face("curious");
@@ -495,8 +495,8 @@ function renderEgg(scene: HTMLElement, helper: HTMLElement, s: HookStep, finish:
       helper.innerHTML = "퐁당! 시간이 지나면 달걀과 찬물은 <b>어떻게 될까요?</b> 예상을 골라 보세요.";
       ask(choicesBox, helper, {
         choices: s.choices ?? ["달걀은 식고, 물은 미지근해진다", "달걀만 식는다", "물만 미지근해진다"],
-        good: "좋은 예측이에요! 뜨거운 달걀은 <b>식고</b>, 찬물은 <b>미지근</b>해져요 — 둘 다 변해요. 무대에서 직접 확인!",
-        bad: "한쪽만 변하는 게 아니에요 — 뜨거운 달걀은 <b>식고</b>, 동시에 찬물은 <b>미지근</b>해져요. 열이 옮겨 가거든요. 무대에서 직접 확인해 봐요.",
+        good: "좋은 예측이에요! 뜨거운 달걀은 <b>식고</b>, 찬물은 <b>미지근</b>해져요. 둘 다 변해요. 무대에서 직접 확인!",
+        bad: "한쪽만 변하는 게 아니에요. 뜨거운 달걀은 <b>식고</b>, 동시에 찬물은 <b>미지근</b>해져요. 열이 옮겨 가거든요. 무대에서 직접 확인해 봐요.",
         onDone: finish,
       });
       api.snack("예상을 골라 보세요");
@@ -543,14 +543,14 @@ function renderBeach(scene: HTMLElement, helper: HTMLElement, finish: () => void
   const mk = (kind: "hot" | "cold", name: string, artNames: [string, string], svg: string, result: string): HTMLElement => {
     const label = el("div", { class: "hook-cup-label", text: "눌러 보기" });
     const art = sceneArt(artNames[0], svg);
-    const card = el("button", { class: "hook-cup", attrs: { "aria-label": `${name} — 눌러 보기` } }, art.el, label);
+    const card = el("button", { class: "hook-cup", attrs: { "aria-label": `${name}, 눌러 보기` } }, art.el, label);
     card.addEventListener("click", () => {
       if (touched.has(kind)) return;
       touched.add(kind);
       card.classList.add(kind);
       art.set(artNames[1]);
       label.textContent = result;
-      card.setAttribute("aria-label", `${name} — ${result}`);
+      card.setAttribute("aria-label", `${name}, ${result}`);
       haptic(kind === "hot" ? HAPTIC.wrong : HAPTIC.select);
       if (touched.size === 2) {
         face("curious");
@@ -606,7 +606,7 @@ function renderWire(scene: HTMLElement, helper: HTMLElement, s: HookStep, finish
   seg.append(summerBtn, winterBtn);
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, seg, choicesBox);
-  helper.innerHTML = "지금은 <b>여름</b> — 전깃줄이 축 늘어져 있어요. <b>겨울</b>로 바꾸면 어떻게 될까요?";
+  helper.innerHTML = "지금은 <b>여름</b>, 전깃줄이 축 늘어져 있어요. <b>겨울</b>로 바꾸면 어떻게 될까요?";
 
   const seen = new Set<string>(["summer"]);
   let asked = false;
@@ -625,11 +625,11 @@ function renderWire(scene: HTMLElement, helper: HTMLElement, s: HookStep, finish
     if (!asked && seen.size === 2) {
       asked = true;
       face("curious");
-      helper.innerHTML = "겨울엔 <b>팽팽</b>, 여름엔 <b>축 늘어짐</b> — 같은 전깃줄인데요! 왜 그럴지 예상을 골라 보세요.";
+      helper.innerHTML = "겨울엔 <b>팽팽</b>, 여름엔 <b>축 늘어짐</b>, 같은 전깃줄인데요! 왜 그럴지 예상을 골라 보세요.";
       ask(choicesBox, helper, {
         choices: s.choices ?? ["전깃줄이 열을 받아 길이가 늘어나서", "여름엔 전봇대 사이가 멀어져서", "여름엔 바람이 약해서"],
         good: "정확해요! 전깃줄이 <b>열을 받으면 길이가 늘어나</b> 여름엔 축 늘어져요. 실험실에서 직접 확인!",
-        bad: "전봇대 간격이나 바람 때문이 아니에요 — 같은 전깃줄이 <b>열을 받아 길이가 늘어난</b> 거예요. 그래서 더운 여름엔 축 늘어지죠. 실험실에서 확인해요.",
+        bad: "전봇대 간격이나 바람 때문이 아니에요. 같은 전깃줄이 <b>열을 받아 길이가 늘어난</b> 거예요. 그래서 더운 여름엔 축 늘어지죠. 실험실에서 확인해요.",
         onDone: finish,
       });
     } else if (!asked) {
@@ -705,7 +705,7 @@ function mealSvg(): string {
       <circle cx="130" cy="92" r="2.4"/>
       <circle cx="140" cy="86" r="2.2"/>
     </g>
-    <!-- 멀리 있는 스틱맨(코 킁킁) — 캐릭터는 손그림 라인 유지 -->
+    <!-- 멀리 있는 스틱맨(코 킁킁), 캐릭터는 손그림 라인 유지 -->
     <ellipse cx="196" cy="116" rx="17" ry="3.4" fill="#2A3A5E" opacity=".10"/>
     <g stroke="#3C4654" stroke-width="2.6">
       <circle cx="196" cy="70" r="9" fill="#fff"/>
@@ -748,7 +748,7 @@ function renderSmell(
       ask(choicesBox, helper, {
         choices: s.choices ?? ["냄새 입자가 스스로 움직여 퍼졌다", "바람이 냄새를 옮겨 줬다", "코가 냄새를 끌어당겼다"],
         good: "맞아요! 바람이 없어도 <b>냄새 입자가 스스로 움직여</b> 사방으로 퍼져요. 실험실에서 물속 잉크로 확인!",
-        bad: "바람이나 코가 끌어당긴 게 아니에요 — 바람 한 점 없었잖아요? <b>냄새 입자가 스스로 움직여</b> 퍼진 거예요. 실험실에서 물속 잉크로 확인해요.",
+        bad: "바람이나 코가 끌어당긴 게 아니에요. 바람 한 점 없었잖아요? <b>냄새 입자가 스스로 움직여</b> 퍼진 거예요. 실험실에서 물속 잉크로 확인해요.",
         onDone: finish,
       });
     }, 900);
@@ -821,14 +821,14 @@ function renderJuice(scene: HTMLElement, helper: HTMLElement, finish: () => void
   const mk = (kind: "ice" | "juice", name: string, artNames: [string, string], svg: string, result: string): HTMLElement => {
     const label = el("div", { class: "hook-cup-label", text: "눌러서 줍기" });
     const art = sceneArt(artNames[0], svg);
-    const card = el("button", { class: "hook-cup", attrs: { "aria-label": `${name} — 눌러서 줍기` } }, art.el, label);
+    const card = el("button", { class: "hook-cup", attrs: { "aria-label": `${name}, 눌러서 줍기` } }, art.el, label);
     card.addEventListener("click", () => {
       if (tried.has(kind)) return;
       tried.add(kind);
       card.classList.add(kind === "ice" ? "cold" : "spill");
       art.set(artNames[1]);
       label.textContent = result;
-      card.setAttribute("aria-label", `${name} — ${result}`);
+      card.setAttribute("aria-label", `${name}, ${result}`);
       haptic(kind === "ice" ? HAPTIC.select : HAPTIC.wrong);
       if (tried.size === 2) {
         face("curious");
@@ -928,7 +928,7 @@ function renderWrap(
       ask(choicesBox, helper, {
         choices: s.choices ?? ["국물이 수증기로 변하며 부피가 크게 늘어서", "랩이 열을 받아 스스로 늘어나서", "음식 입자의 크기가 커져서"],
         good: "좋은 예측! <b>국물이 수증기로 변하면 부피가 크게 늘어나</b> 랩을 밀어 올려요. 실험실에서 풍선 실험으로 확인!",
-        bad: "랩이 스스로 늘거나 입자가 커진 게 아니에요 — <b>액체(국물)가 기체(수증기)로 변하면 부피가 확 커져요</b>. 그 기체가 랩을 밀어 올린 거예요. 실험실에서 확인해요.",
+        bad: "랩이 스스로 늘거나 입자가 커진 게 아니에요. <b>액체(국물)가 기체(수증기)로 변하면 부피가 확 커져요</b>. 그 기체가 랩을 밀어 올린 거예요. 실험실에서 확인해요.",
         onDone: finish,
       });
     }, 800);
@@ -1024,7 +1024,7 @@ function renderRamen(
     done = true;
     fig.classList.add("fierce");
     art.set("pot-fierce");
-    fig.setAttribute("aria-label", "불을 최대로 — 물이 더 세차게 끓어요");
+    fig.setAttribute("aria-label", "불을 최대로, 물이 더 세차게 끓어요");
     fireBtn.classList.add("done-static");
     (fireBtn as HTMLButtonElement).disabled = true;
     haptic(HAPTIC.select);
@@ -1034,8 +1034,8 @@ function renderRamen(
       face("curious");
       ask(choicesBox, helper, {
         choices: s.choices ?? ["끓는 동안엔 온도가 더 오르지 않는다", "불이 세니까 온도가 계속 올라간다", "물이 줄어들면서 온도가 내려간다"],
-        good: "예리해요! <b>끓는 동안에는 온도가 더 오르지 않아요</b> — 불이 세도 그대로예요. 실험실에서 온도 그래프로 확인!",
-        bad: "불이 세다고 온도가 계속 오르진 않아요 — <b>끓는 동안에는 온도가 일정하게 유지</b>돼요. 화력은 물이 끓는 속도만 키울 뿐이에요. 실험실에서 온도 그래프로 확인해요.",
+        good: "예리해요! <b>끓는 동안에는 온도가 더 오르지 않아요</b>. 불이 세도 그대로예요. 실험실에서 온도 그래프로 확인!",
+        bad: "불이 세다고 온도가 계속 오르진 않아요. <b>끓는 동안에는 온도가 일정하게 유지</b>돼요. 화력은 물이 끓는 속도만 키울 뿐이에요. 실험실에서 온도 그래프로 확인해요.",
         onDone: finish,
       });
     }, 900);

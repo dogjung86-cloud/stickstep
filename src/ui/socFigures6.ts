@@ -76,7 +76,7 @@ export function ocRegionsFig(opts?: {
         .join("")
     : "";
   return mapShell(`${fills}${edges}${labels}${letterMarks(opts?.letters)}`, {
-    aria: "오세아니아의 지역 구분 지도 — 오스트레일리아·뉴질랜드와 멜라네시아·미크로네시아·폴리네시아",
+    aria: "오세아니아의 지역 구분 지도, 오스트레일리아·뉴질랜드와 멜라네시아·미크로네시아·폴리네시아",
   });
 }
 
@@ -238,7 +238,7 @@ export function wheatCalFig(): string {
       </g>`;
     })
     .join("");
-  return `<svg viewBox="0 0 344 158" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="나라별 밀 수확 시기 달력 — 남반구의 오스트레일리아만 11월에서 2월 사이에 수확한다">
+  return `<svg viewBox="0 0 344 158" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="나라별 밀 수확 시기 달력, 남반구의 오스트레일리아만 11월에서 2월 사이에 수확한다">
     <rect x="2" y="4" width="340" height="150" rx="12" fill="#F7F9FC" stroke="#D8DEE8" stroke-width="1.2"/>
     <text x="14" y="20" font-size="9" font-weight="800" fill="#8A94A6">수확 시기(월)</text>
     ${header}${body}
@@ -409,7 +409,7 @@ function polarDisc(south: boolean, cx: number, cy: number, R: number, opts?: { b
 export function polarFig(kind: "both" | "north" | "south" = "both", opts?: { bases?: boolean }): string {
   if (kind === "both") {
     return `<svg viewBox="0 0 344 206" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
-      aria-label="북극 지방과 남극 지방의 극중심 지도 — 북극은 대륙이 둘러싼 바다, 남극은 바다가 둘러싼 대륙">
+      aria-label="북극 지방과 남극 지방의 극중심 지도, 북극은 대륙이 둘러싼 바다, 남극은 바다가 둘러싼 대륙">
       ${polarDisc(false, 88, 92, 78)}
       ${polarDisc(true, 256, 92, 78)}
       <text x="88" y="192" text-anchor="middle" font-size="11" font-weight="900" fill="#333D4B">북극 지방</text>

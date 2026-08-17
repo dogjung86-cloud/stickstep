@@ -85,8 +85,8 @@ function renderSprout(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fini
           "농사가 사냥보다 재미있어서",
           "밭 근처에만 마실 물이 있어서",
         ],
-        good: "맞아요! 심은 작물은 물 주고 돌보고 거둘 때까지 <b>곁을 떠날 수 없어요</b>. 그래서 약 1만 년 전 농경을 시작한 사람들은 떠돌이 생활을 접고 <b>정착</b>했죠 — 인류의 생활을 통째로 바꾼 이 변화, 지금 만나러 가요!",
-        bad: "재미나 물 때문이 아니라 <b>돌봄의 시간</b> 때문이에요 — 심은 곡식이 열매 맺기까지 몇 달을 곁에서 지켜야 하니, 옮겨 다니던 사람들이 한곳에 눌러앉게 된 거죠. 이 변화가 인류의 생활을 통째로 바꿨답니다!",
+        good: "맞아요! 심은 작물은 물 주고 돌보고 거둘 때까지 <b>곁을 떠날 수 없어요</b>. 그래서 약 1만 년 전 농경을 시작한 사람들은 떠돌이 생활을 접고 <b>정착</b>했죠. 인류의 생활을 통째로 바꾼 이 변화, 지금 만나러 가요!",
+        bad: "재미나 물 때문이 아니라 <b>돌봄의 시간</b> 때문이에요. 심은 곡식이 열매 맺기까지 몇 달을 곁에서 지켜야 하니, 옮겨 다니던 사람들이 한곳에 눌러앉게 된 거죠. 이 변화가 인류의 생활을 통째로 바꿨답니다!",
         onDone: finish,
       });
     }, 950);
@@ -105,7 +105,7 @@ function renderReceipt(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fin
       </defs>
       <rect x="6" y="6" width="288" height="198" rx="12" fill="url(#hh2-rc-table)"/>
       <ellipse cx="150" cy="182" rx="110" ry="9" fill="#4A2A08" opacity=".2"/>
-      <g class="hh2-rc-folded" role="button" tabindex="0" aria-label="접힌 영수증 — 탭해서 펼치기">
+      <g class="hh2-rc-folded" role="button" tabindex="0" aria-label="접힌 영수증, 탭해서 펼치기">
         <path d="M96 96 l52 -14 56 10 -6 44 -52 12 -54 -8 z" fill="url(#hh2-rc-pap)" stroke="#B9C1CC" stroke-width="2"/>
         <path d="M148 82 l-4 56 M96 96 l54 10 54 -14" stroke="#C9D2DE" stroke-width="1.6" fill="none"/>
         <path d="M104 104 h28 M108 116 h22" stroke="#D7DCE2" stroke-width="2" stroke-linecap="round"/>
@@ -133,7 +133,7 @@ function renderReceipt(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fin
     </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "주머니에서 나온 <b>접힌 영수증</b> — 버리기 전에 <b>탭해서</b> 펼쳐 봐요!";
+  helper.innerHTML = "주머니에서 나온 <b>접힌 영수증</b>, 버리기 전에 <b>탭해서</b> 펼쳐 봐요!";
 
   let opened = false;
   let timer = 0;
@@ -144,7 +144,7 @@ function renderReceipt(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fin
     haptic(HAPTIC.select);
     fig.classList.add("open");
     face("curious");
-    helper.innerHTML = "무엇을 몇 개 샀는지, 언제 샀는지까지 또박또박 — 거래의 <b>완벽한 기록</b>이네요!";
+    helper.innerHTML = "무엇을 몇 개 샀는지, 언제 샀는지까지 또박또박, 거래의 <b>완벽한 기록</b>이네요!";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -152,8 +152,8 @@ function renderReceipt(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fin
           "왕을 찬양하는 웅장한 노래",
           "별자리를 관찰한 일기",
         ],
-        good: "맞아요! 남아 있는 인류의 <b>가장 오래된 문자 기록들 상당수가 거래와 회계 장부</b>예요 — 「양 열 마리, 보리 몇 자루」처럼요. 문자는 잊지 않기 위한 실용의 발명품이었죠. 5천 년 전 수메르 시장에서 직접 확인해요!",
-        bad: "멋진 노래나 일기를 상상하기 쉽지만 — 실제로 남은 최초의 기록들 상당수는 <b>「양 열 마리, 소 한 마리」 같은 거래 장부</b>였어요. 기억 대신 증거가 필요했으니까요. 문자가 태어나던 5천 년 전 시장으로 가 봐요!",
+        good: "맞아요! 남아 있는 인류의 <b>가장 오래된 문자 기록들 상당수가 거래와 회계 장부</b>예요. 「양 열 마리, 보리 몇 자루」처럼요. 문자는 잊지 않기 위한 실용의 발명품이었죠. 5천 년 전 수메르 시장에서 직접 확인해요!",
+        bad: "멋진 노래나 일기를 상상하기 쉽지만, 실제로 남은 최초의 기록들 상당수는 <b>「양 열 마리, 소 한 마리」 같은 거래 장부</b>였어요. 기억 대신 증거가 필요했으니까요. 문자가 태어나던 5천 년 전 시장으로 가 봐요!",
         onDone: finish,
       });
     }, 950);
@@ -179,7 +179,7 @@ function renderAptmap(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fini
       <path d="M6 168 h288 v36 h-288 z" fill="#CDE4D2"/>
       <ellipse cx="150" cy="186" rx="104" ry="7" fill="#2A3A5E" opacity=".1"/>
       <rect x="142" y="150" width="9" height="40" rx="3" fill="url(#hh2-ap-leg)"/>
-      <g class="hh2-ap-board" role="button" tabindex="0" aria-label="단지 안내판 — 탭해서 확대">
+      <g class="hh2-ap-board" role="button" tabindex="0" aria-label="단지 안내판, 탭해서 확대">
         <rect x="58" y="26" width="184" height="128" rx="10" fill="url(#hh2-ap-board)" stroke="#073E46" stroke-width="2.4"/>
         <rect x="68" y="48" width="164" height="96" rx="6" fill="url(#hh2-ap-pap)" stroke="#0A5F6B" stroke-width="1.6"/>
         <text x="150" y="42" text-anchor="middle" font-size="11" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">단지 안내도</text>
@@ -217,12 +217,12 @@ function renderAptmap(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fini
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
-          "있었다 — 도로와 하수 시설까지 갖춘 도시",
-          "없었다 — 계획 도시는 현대의 발명품이다",
+          "있었다. 도로와 하수 시설까지 갖춘 도시",
+          "없었다. 계획 도시는 현대의 발명품이다",
           "있었지만 건물은 왕궁 한 채뿐이었다",
         ],
-        good: "놀랍게도 <b>있었어요!</b> 4500년 전 인더스강의 <b>모헨조다로</b>는 바둑판 도로에 하수 시설, 대형 목욕장, 곡물 창고까지 갖춘 계획도시였답니다. 이집트·인도·중국 — 개성 만점 문명들을 만나러 가요!",
-        bad: "현대의 발명품 같지만 — 4500년 전 인더스강 유역의 <b>모헨조다로</b>가 이미 계획도시였어요! 바둑판 도로, 집집마다 이어진 하수 시설, 대형 목욕장과 곡물 창고까지. 왕궁 한 채가 아니라 <b>도시 전체가 설계</b>된 거죠. 직접 보러 가요!",
+        good: "놀랍게도 <b>있었어요!</b> 4500년 전 인더스강의 <b>모헨조다로</b>는 바둑판 도로에 하수 시설, 대형 목욕장, 곡물 창고까지 갖춘 계획도시였답니다. 이집트·인도·중국, 개성 만점 문명들을 만나러 가요!",
+        bad: "현대의 발명품 같지만, 4500년 전 인더스강 유역의 <b>모헨조다로</b>가 이미 계획도시였어요! 바둑판 도로, 집집마다 이어진 하수 시설, 대형 목욕장과 곡물 창고까지. 왕궁 한 채가 아니라 <b>도시 전체가 설계</b>된 거죠. 직접 보러 가요!",
         onDone: finish,
       });
     }, 950);
@@ -249,7 +249,7 @@ function renderParcel(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fini
       <circle cx="188" cy="92" r="4" fill="#39424E"/>
       <path d="M6 164 h288 v40 h-288 z" fill="#D8D2C2"/>
       <ellipse cx="150" cy="180" rx="96" ry="7" fill="#2A3A5E" opacity=".12"/>
-      <g class="hh2-pc-boxg" role="button" tabindex="0" aria-label="문 앞 택배 상자 — 탭해서 송장 보기">
+      <g class="hh2-pc-boxg" role="button" tabindex="0" aria-label="문 앞 택배 상자, 탭해서 송장 보기">
         <path d="M104 130 h72 v42 h-72 z" fill="url(#hh2-pc-box)" stroke="#6E4626" stroke-width="2.2"/>
         <path d="M104 130 h72 l-8 -14 h-56 z" fill="#D8A26E" stroke="#6E4626" stroke-width="2"/>
         <path d="M140 116 v56" stroke="#E8C48E" stroke-width="5"/>
@@ -301,8 +301,8 @@ function renderParcel(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fini
           "제국이 작아서 하루면 끝에서 끝까지 갔다",
           "전령 한 명이 같은 말로 쉬지 않고 달렸다",
         ],
-        good: "정확해요! 페르시아의 <b>「왕의 길」</b> — 약 2,400km 도로에 일정한 거리마다 <b>역</b>을 두고, 전령이 <b>말을 갈아타며</b> 밤낮으로 달렸어요. 오늘 새벽 택배의 허브 릴레이와 같은 원리죠! 이 길을 만든 제국을 만나러 가요.",
-        bad: "페르시아는 이집트에서 인더스강까지 이르는 <b>대제국</b>이었고, 말 한 마리로는 그 거리를 감당할 수 없어요. 비결은 시스템 — 「왕의 길」 위 <b>역마다 새 말로 갈아타는 릴레이</b>였답니다. 택배 허브와 같은 원리죠!",
+        good: "정확해요! 페르시아의 <b>「왕의 길」</b>, 약 2,400km 도로에 일정한 거리마다 <b>역</b>을 두고, 전령이 <b>말을 갈아타며</b> 밤낮으로 달렸어요. 오늘 새벽 택배의 허브 릴레이와 같은 원리죠! 이 길을 만든 제국을 만나러 가요.",
+        bad: "페르시아는 이집트에서 인더스강까지 이르는 <b>대제국</b>이었고, 말 한 마리로는 그 거리를 감당할 수 없어요. 비결은 시스템, 「왕의 길」 위 <b>역마다 새 말로 갈아타는 릴레이</b>였답니다. 택배 허브와 같은 원리죠!",
         onDone: finish,
       });
     }, 1000);
@@ -327,7 +327,7 @@ function renderOlympic(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fin
       </defs>
       <rect x="6" y="6" width="288" height="198" rx="12" fill="#F2EDE4"/>
       <rect x="30" y="20" width="240" height="150" rx="12" fill="url(#hh2-tv-body)"/>
-      <g class="hh2-tv-scrg" role="button" tabindex="0" aria-label="올림픽 중계 화면 — 탭해서 자세히 보기">
+      <g class="hh2-tv-scrg" role="button" tabindex="0" aria-label="올림픽 중계 화면, 탭해서 자세히 보기">
         <rect x="42" y="32" width="216" height="126" rx="7" fill="url(#hh2-tv-scr)"/>
         <path d="M42 122 h216 v36 h-216 z" fill="url(#hh2-tv-track)"/>
         <path d="M42 130 h216 M42 140 h216 M42 150 h216" stroke="#E8D4C2" stroke-width="1.4" opacity=".55"/>
@@ -376,8 +376,8 @@ function renderOlympic(scene: HTMLElement, helper: HTMLElement, s: HookOpts, fin
           "근대 유럽에서 처음 발명된 대회다",
           "고대 로마의 검투 경기에서",
         ],
-        good: "맞아요! 수많은 폴리스로 흩어져 살던 그리스인들이 4년마다 올림피아에 모여 열던 <b>올림피아 제전</b>이 뿌리예요 — 같은 그리스인임을 확인하던 축제였죠. 그 폴리스의 세계로 들어가요!",
-        bad: "1896년에 부활한 근대 올림픽의 <b>원조</b>는 2700여 년 전 그리스의 올림피아 제전이에요 — 폴리스로 흩어진 그리스인들이 결속을 다지던 축제였죠. 검투 경기는 로마 콜로세움의 것! 폴리스의 세계로 확인하러 가요.",
+        good: "맞아요! 수많은 폴리스로 흩어져 살던 그리스인들이 4년마다 올림피아에 모여 열던 <b>올림피아 제전</b>이 뿌리예요. 같은 그리스인임을 확인하던 축제였죠. 그 폴리스의 세계로 들어가요!",
+        bad: "1896년에 부활한 근대 올림픽의 <b>원조</b>는 2700여 년 전 그리스의 올림피아 제전이에요. 폴리스로 흩어진 그리스인들이 결속을 다지던 축제였죠. 검투 경기는 로마 콜로세움의 것! 폴리스의 세계로 확인하러 가요.",
         onDone: finish,
       });
     }, 950);
@@ -400,7 +400,7 @@ function renderRomanclock(scene: HTMLElement, helper: HTMLElement, s: HookOpts, 
         <linearGradient id="hh2-ck-rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C89A5E"/><stop offset=".55" stop-color="#A87A3E"/><stop offset="1" stop-color="#84582A"/></linearGradient>
       </defs>
       <rect x="6" y="6" width="288" height="198" rx="12" fill="url(#hh2-ck-wall)"/>
-      <g class="hh2-ck-body" role="button" tabindex="0" aria-label="벽시계 — 탭해서 숫자 확대">
+      <g class="hh2-ck-body" role="button" tabindex="0" aria-label="벽시계, 탭해서 숫자 확대">
         <circle cx="150" cy="100" r="74" fill="url(#hh2-ck-rim)" stroke="#5E4626" stroke-width="2.6"/>
         <circle cx="150" cy="100" r="64" fill="url(#hh2-ck-face)" stroke="#8A6A3E" stroke-width="1.6"/>
         <text x="150" y="55" text-anchor="middle" font-size="13" font-weight="900" fill="#33405A" font-family="Georgia, serif">XII</text>
@@ -425,7 +425,7 @@ function renderRomanclock(scene: HTMLElement, helper: HTMLElement, s: HookOpts, 
     </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "거실에 새로 건 벽시계 — 그런데 숫자가 1, 2, 3이 아니에요! <b>시계를 탭</b>해서 확대해요.";
+  helper.innerHTML = "거실에 새로 건 벽시계, 그런데 숫자가 1, 2, 3이 아니에요! <b>시계를 탭</b>해서 확대해요.";
 
   let zoomed = false;
   let timer = 0;
@@ -436,7 +436,7 @@ function renderRomanclock(scene: HTMLElement, helper: HTMLElement, s: HookOpts, 
     haptic(HAPTIC.select);
     fig.classList.add("zoom");
     face("surprised");
-    helper.innerHTML = "<b>XII, III, VI, IX</b> — 막대기와 브이(V), 엑스(X)로 조합된 낯선 글자들이에요!";
+    helper.innerHTML = "<b>XII, III, VI, IX</b>, 막대기와 브이(V), 엑스(X)로 조합된 낯선 글자들이에요!";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -444,8 +444,8 @@ function renderRomanclock(scene: HTMLElement, helper: HTMLElement, s: HookOpts, 
           "시계 회사가 만든 장식 무늬",
           "그리스 알파벳",
         ],
-        good: "맞아요! <b>로마 숫자</b>예요 — I은 1, V는 5, X는 10. 2천 년 전 로마인의 숫자가 지금도 시계판과 책 차례에 살아 있죠. 이렇게 흔적을 잔뜩 남긴 로마는 대체 어떤 나라였을까요?",
-        bad: "장식처럼 보이지만 뜻이 있는 <b>고대 로마의 숫자</b>랍니다 — I=1, V=5, X=10, 그래서 XII는 12! 그리스 알파벳(α, β)과는 달라요. 2천 년 전의 숫자가 아직 우리 곁에 있는 것처럼, 로마가 남긴 유산은 정말 많아요. 만나러 가요!",
+        good: "맞아요! <b>로마 숫자</b>예요. I은 1, V는 5, X는 10. 2천 년 전 로마인의 숫자가 지금도 시계판과 책 차례에 살아 있죠. 이렇게 흔적을 잔뜩 남긴 로마는 대체 어떤 나라였을까요?",
+        bad: "장식처럼 보이지만 뜻이 있는 <b>고대 로마의 숫자</b>랍니다. I=1, V=5, X=10, 그래서 XII는 12! 그리스 알파벳(α, β)과는 달라요. 2천 년 전의 숫자가 아직 우리 곁에 있는 것처럼, 로마가 남긴 유산은 정말 많아요. 만나러 가요!",
         onDone: finish,
       });
     }, 950);
@@ -474,7 +474,7 @@ function renderSilkscarf(scene: HTMLElement, helper: HTMLElement, s: HookOpts, f
       <path d="M96 108 q28 -18 54 0 q26 16 54 -2 q-6 30 -54 26 q-44 4 -54 -24 z" fill="url(#hh2-sc-silk)" stroke="#0A5964" stroke-width="1.8"/>
       <path d="M104 112 q24 -12 44 0 M112 126 q22 10 44 2" stroke="#EAF9FB" stroke-width="2" fill="none" opacity=".7"/>
       <ellipse cx="118" cy="106" rx="12" ry="4" fill="#fff" opacity=".45" transform="rotate(-14 118 106)"/>
-      <g class="hh2-sc-tagg" role="button" tabindex="0" aria-label="스카프에 달린 라벨 — 탭해서 확대">
+      <g class="hh2-sc-tagg" role="button" tabindex="0" aria-label="스카프에 달린 라벨, 탭해서 확대">
         <path d="M196 118 l14 -8" stroke="#8B95A1" stroke-width="1.8"/>
         <rect x="206" y="102" width="44" height="26" rx="5" fill="url(#hh2-sc-tag)" stroke="#8B95A1" stroke-width="1.8" transform="rotate(8 228 115)"/>
         <path d="M214 112 h26 M214 119 h18" stroke="#B9C1CC" stroke-width="2" stroke-linecap="round" transform="rotate(8 228 115)"/>
@@ -492,7 +492,7 @@ function renderSilkscarf(scene: HTMLElement, helper: HTMLElement, s: HookOpts, f
     </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "할머니 생신 선물로 고른 <b>스카프</b> — 유난히 부드럽고 반짝여요. <b>라벨을 탭</b>해 봐요!";
+  helper.innerHTML = "할머니 생신 선물로 고른 <b>스카프</b>, 유난히 부드럽고 반짝여요. <b>라벨을 탭</b>해 봐요!";
 
   let zoomed = false;
   let timer = 0;
@@ -511,8 +511,8 @@ function renderSilkscarf(scene: HTMLElement, helper: HTMLElement, s: HookOpts, f
           "길바닥이 비단처럼 부드러워서",
           "비단 장수들이 직접 길을 닦아서",
         ],
-        good: "맞아요! 그 길의 대표 상품이 이름이 됐어요 — 중국의 <b>비단</b>이 사막을 건너 로마까지 팔려 갔거든요. 비단만이 아니라 포도·석류, 그리고 <b>불교</b>까지 오간 길이죠. 길 위의 고대 세계로 떠나요!",
-        bad: "길바닥 촉감도, 길을 닦은 사람도 아니에요 — 이 길로 오간 <b>대표 상품이 중국의 비단</b>이라 붙은 이름이랍니다. 로마 사람들이 이 감촉에 반해 비단을 샀거든요! 비단과 함께 불교까지 여행한 그 길로 떠나 봐요.",
+        good: "맞아요! 그 길의 대표 상품이 이름이 됐어요. 중국의 <b>비단</b>이 사막을 건너 로마까지 팔려 갔거든요. 비단만이 아니라 포도·석류, 그리고 <b>불교</b>까지 오간 길이죠. 길 위의 고대 세계로 떠나요!",
+        bad: "길바닥 촉감도, 길을 닦은 사람도 아니에요. 이 길로 오간 <b>대표 상품이 중국의 비단</b>이라 붙은 이름이랍니다. 로마 사람들이 이 감촉에 반해 비단을 샀거든요! 비단과 함께 불교까지 여행한 그 길로 떠나 봐요.",
         onDone: finish,
       });
     }, 950);

@@ -72,12 +72,12 @@ export function renderWordHunt(scene: HTMLElement, helper: HTMLElement, s: HookO
   const btn = el("button", { class: "hs8-btn", attrs: { type: "button" }, text: "오늘 하루 되감기 (1/3)" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "오늘 하루, <b>'문화'</b>라는 말을 세 번이나 만났어요 — 하루를 되감으며 그 장면들을 다시 볼까요?";
+  helper.innerHTML = "오늘 하루, <b>'문화'</b>라는 말을 세 번이나 만났어요. 하루를 되감으며 그 장면들을 다시 볼까요?";
   fig.innerHTML = wordSvg(0);
   const caps = [
-    "① 생일 선물로 받은 <b>문화 상품권</b> — 책·영화·공연에 쓰라는 카드죠.",
-    "② 박물관 앞 <b>전통문화 축제</b> 포스터 — 조상들의 살아온 방식이래요.",
-    "③ 그리고 '<b>문화 시민</b>의 줄서기' 현수막 — 여기선 교양 있는 모습이란 뜻 같아요. 어라, 셋 다 '문화'인데…?",
+    "① 생일 선물로 받은 <b>문화 상품권</b>, 책·영화·공연에 쓰라는 카드죠.",
+    "② 박물관 앞 <b>전통문화 축제</b> 포스터, 조상들의 살아온 방식이래요.",
+    "③ 그리고 '<b>문화 시민</b>의 줄서기' 현수막, 여기선 교양 있는 모습이란 뜻 같아요. 어라, 셋 다 '문화'인데…?",
   ];
   helper.innerHTML = caps[0];
   let i = 0;
@@ -100,8 +100,8 @@ export function renderWordHunt(scene: HTMLElement, helper: HTMLElement, s: HookO
             "세 장면 모두 완전히 같은 뜻이다",
             "'문화'는 예술에만 쓸 수 있는 말이다",
           ],
-          good: "날카로워요! 예술·교양을 가리키는 <b>좁은 뜻</b>과 살아가는 방식 전체를 가리키는 <b>넓은 뜻</b>이 섞여 있었죠 — 그 정체를 판정소에서 갈라 봐요!",
-          bad: "세 장면을 다시 봐요 — 상품권의 문화(예술), 전통문화(생활 방식), 문화 시민(교양)… 같은 단어인데 가리키는 것이 달랐어요. '문화'에는 넓은 뜻과 좁은 뜻이 있답니다. 판정소에서 갈라 봐요!",
+          good: "날카로워요! 예술·교양을 가리키는 <b>좁은 뜻</b>과 살아가는 방식 전체를 가리키는 <b>넓은 뜻</b>이 섞여 있었죠. 그 정체를 판정소에서 갈라 봐요!",
+          bad: "세 장면을 다시 봐요. 상품권의 문화(예술), 전통문화(생활 방식), 문화 시민(교양)… 같은 단어인데 가리키는 것이 달랐어요. '문화'에는 넓은 뜻과 좁은 뜻이 있답니다. 판정소에서 갈라 봐요!",
           onDone: finish,
         });
       }, 900);
@@ -141,7 +141,7 @@ export function renderGreetMix(scene: HTMLElement, helper: HTMLElement, s: HookO
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = greetSvg(false);
   helper.innerHTML =
-    "높은 산의 나라를 여행 중이에요. 길에서 만난 분께 인사했더니 — 그분이 <b>혀를 살짝 내밀었어요?!</b> 나를 놀리는 걸까요…?";
+    "높은 산의 나라를 여행 중이에요. 길에서 만난 분께 인사했더니, 그분이 <b>혀를 살짝 내밀었어요?!</b> 나를 놀리는 걸까요…?";
   let fired = false;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -158,8 +158,8 @@ export function renderGreetMix(scene: HTMLElement, helper: HTMLElement, s: HookO
           "처음 본 사람을 놀리는 장난이다",
           "말이 통하지 않아 아무 뜻 없이 한 행동이다",
         ],
-        good: "정답! 티베트에서 혀를 살짝 내미는 건 <b>존중과 환영의 인사</b>래요. 우리에겐 '메롱'이어도 그곳에선 반가움 — 같은 행동, 다른 뜻! 어디에나 인사는 있는데 모습이 다 다르네요?",
-        bad: "안내 책자의 답 — 티베트에서 혀를 살짝 내미는 건 <b>존중과 환영의 인사</b>예요! 놀림도, 뜻 없는 행동도 아니었죠. 같은 '인사'인데 사회마다 모습이 이렇게 달라요.",
+        good: "정답! 티베트에서 혀를 살짝 내미는 건 <b>존중과 환영의 인사</b>래요. 우리에겐 '메롱'이어도 그곳에선 반가움, 같은 행동, 다른 뜻! 어디에나 인사는 있는데 모습이 다 다르네요?",
+        bad: "안내 책자의 답, 티베트에서 혀를 살짝 내미는 건 <b>존중과 환영의 인사</b>예요! 놀림도, 뜻 없는 행동도 아니었죠. 같은 '인사'인데 사회마다 모습이 이렇게 달라요.",
         onDone: finish,
       });
     }, 700);
@@ -212,7 +212,7 @@ export function renderBirthSoup(scene: HTMLElement, helper: HTMLElement, s: Hook
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = soupSvg(false);
-  helper.innerHTML = "오늘은 내 생일 — 아침 밥상에 어김없이 <b>미역국</b>이 올라왔어요. 그런데 문득, 다른 집들도 그럴까요?";
+  helper.innerHTML = "오늘은 내 생일, 아침 밥상에 어김없이 <b>미역국</b>이 올라왔어요. 그런데 문득, 다른 집들도 그럴까요?";
   let fired = false;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -231,8 +231,8 @@ export function renderBirthSoup(scene: HTMLElement, helper: HTMLElement, s: Hook
           "법으로 생일에는 미역국을 먹게 정해져 있어서",
           "미역국이 우리나라에서 가장 싼 음식이라서",
         ],
-        good: "바로 그거예요! 약속하지 않아도 통하는 건 <b>같은 문화를 함께 나누기 때문</b> — 김치 한 포기 속에서 이런 성질을 다섯 개나 찾아낼 수 있대요. 수사 시작!",
-        bad: "법도 가격도 아니에요 — 생일 미역국은 우리 사회 구성원들이 <b>함께 나누어 온 문화</b>라서 약속 없이도 통하는 거랍니다. 이런 성질, 김치 한 포기에서 다섯 개나 찾을 수 있대요!",
+        good: "바로 그거예요! 약속하지 않아도 통하는 건 <b>같은 문화를 함께 나누기 때문</b>, 김치 한 포기 속에서 이런 성질을 다섯 개나 찾아낼 수 있대요. 수사 시작!",
+        bad: "법도 가격도 아니에요. 생일 미역국은 우리 사회 구성원들이 <b>함께 나누어 온 문화</b>라서 약속 없이도 통하는 거랍니다. 이런 성질, 김치 한 포기에서 다섯 개나 찾을 수 있대요!",
         onDone: finish,
       });
     }, 900);
@@ -273,7 +273,7 @@ export function renderMyComment(scene: HTMLElement, helper: HTMLElement, s: Hook
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = videoSvg(0, 0, false);
-  helper.innerHTML = "어제 찍은 <b>춤 연습 영상</b>을 처음으로 공유 플랫폼에 올려 보려고 해요. 두근두근 — 올려 볼까요?";
+  helper.innerHTML = "어제 찍은 <b>춤 연습 영상</b>을 처음으로 공유 플랫폼에 올려 보려고 해요. 두근두근, 올려 볼까요?";
   let fired = false;
   const timers: number[] = [];
   btn.addEventListener("click", () => {
@@ -303,8 +303,8 @@ export function renderMyComment(scene: HTMLElement, helper: HTMLElement, s: Hook
                     "화면이 예전보다 커지고 선명해졌다",
                     "정보가 전달되는 속도가 예전보다 느려졌다",
                   ],
-                  good: "정확해요! 예전 미디어는 소수가 만들고 모두가 받기만 했지만, 이제는 <b>누구나 생산자</b>가 될 수 있죠 — 생산자와 소비자의 경계가 무너진 새 미디어 시대예요!",
-                  bad: "화면 크기나 속도의 문제가 아니에요 — 어제의 나는 받기만 했는데 오늘의 나는 <b>만들어 퍼뜨렸죠</b>. 생산자와 소비자의 경계가 무너진 것, 그게 새 미디어 시대의 심장이랍니다.",
+                  good: "정확해요! 예전 미디어는 소수가 만들고 모두가 받기만 했지만, 이제는 <b>누구나 생산자</b>가 될 수 있죠. 생산자와 소비자의 경계가 무너진 새 미디어 시대예요!",
+                  bad: "화면 크기나 속도의 문제가 아니에요. 어제의 나는 받기만 했는데 오늘의 나는 <b>만들어 퍼뜨렸죠</b>. 생산자와 소비자의 경계가 무너진 것, 그게 새 미디어 시대의 심장이랍니다.",
                   onDone: finish,
                 });
               }, 900),
@@ -354,7 +354,7 @@ export function renderMugwort(scene: HTMLElement, helper: HTMLElement, s: HookOp
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = mugwortSvg(false);
   helper.innerHTML =
-    "웹 게시판에서 이런 글을 봤어요 — <b>\"쑥과 마늘을 100일 동안 먹으면 지능이 높아진다\"</b>. 좋아요가 999개나 되는데요?!";
+    "웹 게시판에서 이런 글을 봤어요. <b>\"쑥과 마늘을 100일 동안 먹으면 지능이 높아진다\"</b>. 좋아요가 999개나 되는데요?!";
   let fired = false;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -373,8 +373,8 @@ export function renderMugwort(scene: HTMLElement, helper: HTMLElement, s: HookOp
           "여러 명이 봤고 좋아요도 많으니 사실로 믿는다",
           "재미있으니 일단 널리 공유부터 한다",
         ],
-        good: "좋은 습관이에요! <b>많이 퍼졌다 ≠ 사실</b> — 출처가 믿을 만한지, 근거가 튼튼한지부터 따지는 거죠. 마침 수상한 게시물이 하나 더 있는데… 수사대 출동!",
-        bad: "좋아요 수와 사실 여부는 별개예요 — 잘못된 정보일수록 자극적이라 더 빨리 퍼지기도 하거든요. <b>출처와 근거부터</b> 따져 보는 것! 마침 수상한 게시물이 하나 더 있어요. 수사대 출동!",
+        good: "좋은 습관이에요! <b>많이 퍼졌다 ≠ 사실</b>, 출처가 믿을 만한지, 근거가 튼튼한지부터 따지는 거죠. 마침 수상한 게시물이 하나 더 있는데… 수사대 출동!",
+        bad: "좋아요 수와 사실 여부는 별개예요. 잘못된 정보일수록 자극적이라 더 빨리 퍼지기도 하거든요. <b>출처와 근거부터</b> 따져 보는 것! 마침 수상한 게시물이 하나 더 있어요. 수사대 출동!",
         onDone: finish,
       });
     }, 900);
@@ -418,7 +418,7 @@ export function renderDoorbell(scene: HTMLElement, helper: HTMLElement, s: HookO
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = doorbellSvg(false);
   helper.innerHTML =
-    "딩동! 오늘 우리 집 저녁에 <b>세 나라에서 온 손님들</b>이 오기로 했어요 — 가족의 오랜 친구들이래요. 문을 열어 볼까요?";
+    "딩동! 오늘 우리 집 저녁에 <b>세 나라에서 온 손님들</b>이 오기로 했어요. 가족의 오랜 친구들이래요. 문을 열어 볼까요?";
   let fired = false;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -429,7 +429,7 @@ export function renderDoorbell(scene: HTMLElement, helper: HTMLElement, s: HookO
     btn.disabled = true;
     fig.innerHTML = doorbellSvg(true);
     face("cheer");
-    helper.innerHTML = "반가운 세 손님! 그런데 부엌의 나는 문득 고민에 빠져요 — <b>저녁상에 뭘 올리지?</b>";
+    helper.innerHTML = "반가운 세 손님! 그런데 부엌의 나는 문득 고민에 빠져요. <b>저녁상에 뭘 올리지?</b>";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -437,8 +437,8 @@ export function renderDoorbell(scene: HTMLElement, helper: HTMLElement, s: HookO
           "가장 비싼 재료로 무조건 화려하게 차린다",
           "우리가 늘 먹던 대로만 차리면 충분하다",
         ],
-        good: "사려 깊어요! 문화나 종교에 따라 <b>삼가는 음식</b>이 있을 수 있죠 — 다름을 먼저 알아보는 것이 진짜 환대의 시작이에요. 상 차리러 가요!",
-        bad: "비싼 상보다, 익숙한 상보다 먼저 할 일이 있어요 — 손님마다 문화나 종교에 따라 <b>먹지 않는 음식</b>이 있을 수 있거든요. 다름을 알아보는 것이 환대의 시작! 상 차리러 가요.",
+        good: "사려 깊어요! 문화나 종교에 따라 <b>삼가는 음식</b>이 있을 수 있죠. 다름을 먼저 알아보는 것이 진짜 환대의 시작이에요. 상 차리러 가요!",
+        bad: "비싼 상보다, 익숙한 상보다 먼저 할 일이 있어요. 손님마다 문화나 종교에 따라 <b>먹지 않는 음식</b>이 있을 수 있거든요. 다름을 알아보는 것이 환대의 시작! 상 차리러 가요.",
         onDone: finish,
       });
     }, 900);
@@ -490,7 +490,7 @@ export function renderSiesta(scene: HTMLElement, helper: HTMLElement, s: HookOpt
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = siestaSvg(false);
   helper.innerHTML =
-    "남부 유럽 여행 중, 오후 2시 — 배가 고파 식당에 갔더니 <b>문이 닫혀 있어요</b>. 한창 붐빌 시간인데요?";
+    "남부 유럽 여행 중, 오후 2시, 배가 고파 식당에 갔더니 <b>문이 닫혀 있어요</b>. 한창 붐빌 시간인데요?";
   let fired = false;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -509,8 +509,8 @@ export function renderSiesta(scene: HTMLElement, helper: HTMLElement, s: HookOpt
           "장사가 안되어 가게들이 모두 문을 닫은 것이라서",
           "게을러서 일할 시간에 자는 것이라서",
         ],
-        good: "그래요! 무더운 한낮을 피해 쉬고 저녁까지 일하는 <b>그 땅의 기후에 맞춘 생활 방식</b>이에요. 낯설다고 틀린 건 아니죠 — 문화를 보는 '안경' 이야기를 시작해 봐요!",
-        bad: "망한 것도, 게으른 것도 아니에요 — 무더운 한낮을 피해 쉬고 저녁 늦게까지 일하는, <b>그 땅의 기후에 맞춘 생활 방식</b>이랍니다. 낯선 문화를 어떤 눈으로 봐야 할지, 안경 이야기를 시작해 봐요!",
+        good: "그래요! 무더운 한낮을 피해 쉬고 저녁까지 일하는 <b>그 땅의 기후에 맞춘 생활 방식</b>이에요. 낯설다고 틀린 건 아니죠. 문화를 보는 '안경' 이야기를 시작해 봐요!",
+        bad: "망한 것도, 게으른 것도 아니에요. 무더운 한낮을 피해 쉬고 저녁 늦게까지 일하는, <b>그 땅의 기후에 맞춘 생활 방식</b>이랍니다. 낯선 문화를 어떤 눈으로 봐야 할지, 안경 이야기를 시작해 봐요!",
         onDone: finish,
       });
     }, 900);

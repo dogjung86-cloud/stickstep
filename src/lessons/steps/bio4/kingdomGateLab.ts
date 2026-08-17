@@ -36,7 +36,7 @@ const TRAVELERS: Traveler[] = [
   { name: "아메바", hints: ["대부분 세포 1개", "핵막으로 싸인 핵 있음", "균·식물·동물 어디에도 딱 맞지 않아요"], path: ["yes", "yes"], home: "원생생물계" },
   { name: "소나무", hints: ["세포 여러 개", "핵막 있음 · 세포벽 있음", "빛으로 스스로 양분을 만들어요"], path: ["yes", "no", "yes"], home: "식물계" },
   { name: "박새", hints: ["세포 여러 개 · 핵막 있음", "세포벽 없음", "날아다니며 먹이를 잡아먹어요"], path: ["yes", "no", "no", "yes"], home: "동물계" },
-  { name: "버섯", hints: ["세포 여러 개 · 핵막 있음", "세포벽 있음 · 움직이지 못해요", "광합성 못 함 — 죽은 생물을 분해"], path: ["yes", "no", "no", "no"], home: "균계" },
+  { name: "버섯", hints: ["세포 여러 개 · 핵막 있음", "세포벽 있음 · 움직이지 못해요", "광합성 못 함, 죽은 생물을 분해"], path: ["yes", "no", "no", "no"], home: "균계" },
 ];
 
 const ROOMS = ["원핵생물계", "원생생물계", "식물계", "동물계", "균계"];
@@ -133,7 +133,7 @@ export const kingdomGateLab: StepRenderer = (host, step, api) => {
       board.classList.add("shake");
       if (ti === 0) firstTravFirstTry = false;
       const g = GATES[gateIndex()];
-      helper.innerHTML = `특징 카드를 다시 봐요 — <b>${t.name}</b>: ${t.hints.join(" · ")}. ${g.q.replace(/<[^>]*>/g, "")} 답이 보일 거예요!`;
+      helper.innerHTML = `특징 카드를 다시 봐요. <b>${t.name}</b>: ${t.hints.join(" · ")}. ${g.q.replace(/<[^>]*>/g, "")} 답이 보일 거예요!`;
       later(() => board.classList.remove("shake"), 600);
       return;
     }
@@ -161,13 +161,13 @@ export const kingdomGateLab: StepRenderer = (host, step, api) => {
         gateQ.innerHTML = `<span class="kgt-gate-n">여행 완료</span> 다섯 왕국이 모두 찼어요!`;
         later(() => {
           helper.innerHTML =
-            "다섯 왕국 완성! 갈림길의 열쇠는 <b>핵막이 있는가 → 어느 무리에도 안 맞는가 → 광합성을 하는가 → 세포벽 없이 움직이는가</b> — 이 질문 사슬만 기억하면 어떤 생물이든 제 왕국을 찾아 줄 수 있어요.";
+            "다섯 왕국 완성! 갈림길의 열쇠는 <b>핵막이 있는가 → 어느 무리에도 안 맞는가 → 광합성을 하는가 → 세포벽 없이 움직이는가</b>, 이 질문 사슬만 기억하면 어떤 생물이든 제 왕국을 찾아 줄 수 있어요.";
           api.enableCTA(s.cta ?? "왕국 도감 펼치기");
         }, 900);
       }
     } else {
       gi += 1;
-      helper.innerHTML = `통과! 다음 관문으로 — <b>${t.name}</b>의 특징 카드를 계속 참고하세요.`;
+      helper.innerHTML = `통과! 다음 관문으로, <b>${t.name}</b>의 특징 카드를 계속 참고하세요.`;
       showGate();
     }
   }
@@ -176,11 +176,11 @@ export const kingdomGateLab: StepRenderer = (host, step, api) => {
 
   function arrivalNote(home: string): string {
     switch (home) {
-      case "원핵생물계": return "핵막이 없는 단세포 왕국 — 세균들의 나라예요.";
+      case "원핵생물계": return "핵막이 없는 단세포 왕국, 세균들의 나라예요.";
       case "원생생물계": return "핵막은 있지만 균·식물·동물 어디에도 안 맞는 '나머지' 왕국이에요.";
       case "식물계": return "광합성으로 스스로 양분을 만드는 왕국!";
       case "동물계": return "세포벽 없이 움직이며 먹이를 섭취하는 왕국!";
-      default: return "광합성 없이 죽은 생물을 분해해 양분을 얻는 왕국 — 버섯의 진짜 집이죠!";
+      default: return "광합성 없이 죽은 생물을 분해해 양분을 얻는 왕국, 버섯의 진짜 집이죠!";
     }
   }
 

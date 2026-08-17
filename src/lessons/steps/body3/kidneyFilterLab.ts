@@ -107,7 +107,7 @@ export const kidneyFilterLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "콩팥동맥을 타고 혈액이 도착했어요 — 큰 알갱이(<b>혈구·단백질</b>)와 작은 알갱이(<b>포도당·물·요소</b>)가 섞여 있죠. <b>1단계 여과</b> 버튼을 눌러 토리의 체를 돌려 보세요.",
+    html: "콩팥동맥을 타고 혈액이 도착했어요. 큰 알갱이(<b>혈구·단백질</b>)와 작은 알갱이(<b>포도당·물·요소</b>)가 섞여 있죠. <b>1단계 여과</b> 버튼을 눌러 토리의 체를 돌려 보세요.",
   });
 
   const board = el("div", { class: "b6-board kfl-board", html: stageScene() });
@@ -139,7 +139,7 @@ export const kidneyFilterLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정수 완료! <b>여과(크기로 거르기) → 재흡수(필요한 건 되찾기) → 분비(남은 노폐물 더하기)</b> — 세뇨관에 남은 액체가 <b>오줌</b>이 되어 콩팥깔때기로 모여요.";
+        "정수 완료! <b>여과(크기로 거르기) → 재흡수(필요한 건 되찾기) → 분비(남은 노폐물 더하기)</b>, 세뇨관에 남은 액체가 <b>오줌</b>이 되어 콩팥깔때기로 모여요.";
       api.enableCTA(s.cta ?? "정리하기");
     }
   }
@@ -161,7 +161,7 @@ export const kidneyFilterLab: StepRenderer = (host, step, api) => {
     applyMoves("fil");
     board.classList.add("filtered");
     helper.innerHTML =
-      "작은 알갱이들(포도당·물·요소)이 물과 함께 <b>보먼주머니로 빠져나갔어요</b>. 그런데 <b>혈구와 단백질</b>은 토리에 그대로 — 왜일까요?";
+      "작은 알갱이들(포도당·물·요소)이 물과 함께 <b>보먼주머니로 빠져나갔어요</b>. 그런데 <b>혈구와 단백질</b>은 토리에 그대로, 왜일까요?";
     later(() => {
       b4Ask(
         qBox,
@@ -173,8 +173,8 @@ export const kidneyFilterLab: StepRenderer = (host, step, api) => {
         ],
         (ok) => {
           helper.innerHTML = ok
-            ? "맞아요! 여과는 <b>크기 기준</b>이에요 — 소화(L2)에서 세포막 문이 그랬듯, 토리의 벽도 작은 것만 통과시키죠. 이제 <b>2단계 재흡수</b>!"
-            : "골라내는 게 아니라 <b>크기</b> 문제예요 — 토리의 벽은 체처럼 작은 물질만 통과시켜서, 큰 혈구·단백질은 혈액에 남는답니다. 이제 <b>2단계 재흡수</b>!";
+            ? "맞아요! 여과는 <b>크기 기준</b>이에요. 소화(L2)에서 세포막 문이 그랬듯, 토리의 벽도 작은 것만 통과시키죠. 이제 <b>2단계 재흡수</b>!"
+            : "골라내는 게 아니라 <b>크기</b> 문제예요. 토리의 벽은 체처럼 작은 물질만 통과시켜서, 큰 혈구·단백질은 혈액에 남는답니다. 이제 <b>2단계 재흡수</b>!";
           collect("fil", "크기로 걸렀다!");
           later(() => {
             qBox.style.display = "none";
@@ -196,7 +196,7 @@ export const kidneyFilterLab: StepRenderer = (host, step, api) => {
     board.dataset.phase = "";
     applyMoves("re");
     helper.innerHTML =
-      "여과액이 세뇨관을 지나는 동안 — <b>포도당은 전부</b>, <b>물은 대부분</b> 모세혈관으로 되돌아갔어요! 여과 안 됐던 혈구·단백질은 콩팥정맥으로 빠져나가고요.";
+      "여과액이 세뇨관을 지나는 동안, <b>포도당은 전부</b>, <b>물은 대부분</b> 모세혈관으로 되돌아갔어요! 여과 안 됐던 혈구·단백질은 콩팥정맥으로 빠져나가고요.";
     later(() => {
       b4Ask(
         qBox,
@@ -209,7 +209,7 @@ export const kidneyFilterLab: StepRenderer = (host, step, api) => {
         (ok) => {
           api.recordQuiz(ok);
           helper.innerHTML = ok
-            ? "정확해요! 포도당은 작아서 <b>여과는 되지만</b>, 몸에 필요한 연료라 세뇨관에서 <b>전부 재흡수</b>돼요 — 그래서 오줌엔 없죠. 마지막 <b>3단계 분비</b>!"
+            ? "정확해요! 포도당은 작아서 <b>여과는 되지만</b>, 몸에 필요한 연료라 세뇨관에서 <b>전부 재흡수</b>돼요. 그래서 오줌엔 없죠. 마지막 <b>3단계 분비</b>!"
             : "포도당은 작아서 <b>여과는 돼요</b>(방금 빠져나갔죠!). 하지만 소중한 연료라 세뇨관에서 <b>전부 재흡수</b>되기 때문에 오줌에 없는 거랍니다. 마지막 <b>3단계 분비</b>!";
           collect("re", "필요한 건 되찾기!");
           later(() => {
@@ -232,7 +232,7 @@ export const kidneyFilterLab: StepRenderer = (host, step, api) => {
     board.dataset.phase = "";
     applyMoves("sec");
     helper.innerHTML =
-      "여과되지 않고 혈액에 남아 있던 <b>노폐물(요소)</b>이 모세혈관에서 <b>세뇨관으로 분비</b>됐어요 — 마지막 청소죠.";
+      "여과되지 않고 혈액에 남아 있던 <b>노폐물(요소)</b>이 모세혈관에서 <b>세뇨관으로 분비</b>됐어요. 마지막 청소죠.";
     later(() => collect("sec", "노폐물 마무리!"), 1200);
   });
 

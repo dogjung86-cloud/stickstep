@@ -252,7 +252,7 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
     auto.addEventListener("click", () => {
       haptic(HAPTIC.tap);
       if (!weakIds.length) {
-        snack("아직 오답 기록이 없어요 — 소단원을 직접 골라 보세요");
+        snack("아직 오답 기록이 없어요. 소단원을 직접 골라 보세요");
         return;
       }
       for (const du of UNITS) {
@@ -593,7 +593,7 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
         "div",
         { class: "wd-fb-head" },
         el("span", { class: "wd-fb-ic", html: q.good ? icon("check", 13) : icon("xThick", 13) }),
-        el("span", { text: q.good ? "정답이에요!" : "아쉬워요 — 왜 그런지 뜯어봐요" }),
+        el("span", { text: q.good ? "정답이에요!" : "아쉬워요. 왜 그런지 뜯어봐요" }),
       ),
     );
     fb.appendChild(el("div", { class: "xr-expl-body", html: it.explain }));
@@ -649,7 +649,7 @@ export function weakDrillScreen(opts: WeakDrillOpts): Screen {
           ? "훌륭해요! 몇 문제만 다시 잡으면 돼요"
           : ratio >= 0.5
             ? "좋아요! 틀린 문제는 오답노트에 담아 뒀어요"
-            : "괜찮아요 — 약한 곳을 찾은 게 진짜 수확이에요";
+            : "괜찮아요. 약한 곳을 찾은 게 진짜 수확이에요";
     const scoreNum = el("span", { class: "ex-score-num", text: "0" });
     wrap.appendChild(
       el(

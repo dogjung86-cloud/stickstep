@@ -90,7 +90,7 @@ export const pairMatch: StepRenderer = (host, step, api) => {
           window.setTimeout(() => {
             api.openSheet({
               good: !wrongAny,
-              title: wrongAny ? "다 맞췄어요 — 몇 번 헷갈렸죠?" : "완벽한 짝 맞추기!",
+              title: wrongAny ? "다 맞췄어요. 몇 번 헷갈렸죠?" : "완벽한 짝 맞추기!",
               html: (wrongAny ? s.explainBad : s.explainGood) ?? "",
               onContinue: api.next,
             });

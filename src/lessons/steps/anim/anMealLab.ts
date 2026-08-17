@@ -141,7 +141,7 @@ export const anMealLab: StepRenderer = (host, step, api) => {
     const energy = gauge.carb >= FILLED && gauge.protein >= FILLED && gauge.fat >= FILLED;
     if (energy && lab.has("only") && !lab.has("energy")) {
       lab.collect("energy", "3대영양소 완성");
-      lab.setHelper("<b>탄수화물·단백질·지방</b> — 이 셋이 에너지원으로 쓰이는 <b>3대영양소</b>예요. 이제 <b>바이타민·무기염류·물</b>까지 채워 여섯 칸을 모두 완성해 봐요.");
+      lab.setHelper("<b>탄수화물·단백질·지방</b>, 이 셋이 에너지원으로 쓰이는 <b>3대영양소</b>예요. 이제 <b>바이타민·무기염류·물</b>까지 채워 여섯 칸을 모두 완성해 봐요.");
     }
     if (filledCount() === 6 && lab.has("energy")) lab.collect("balance", "6칸 모두 채움");
   }

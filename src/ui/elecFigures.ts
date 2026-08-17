@@ -28,7 +28,7 @@ export function rubBeforeAfterFig(): string {
       ${plus(66, 54, 6)}${minus(86, 54, 6)}${plus(106, 54, 6)}${minus(70, 74, 6)}${plus(86, 76, 6)}${minus(102, 74, 6)}
       ${balloon(86, 148)}
       ${plus(76, 140, 5.5)}${minus(96, 140, 5.5)}${minus(76, 160, 5.5)}${plus(96, 160, 5.5)}
-      <text x="86" y="210" text-anchor="middle" font-size="11" fill="#8B95A1">둘 다 (+)=(−) — 중성</text>
+      <text x="86" y="210" text-anchor="middle" font-size="11" fill="#8B95A1">둘 다 (+)=(−), 중성</text>
     </g>
     <path d="M158 110h28M178 104l8 6-8 6" stroke="#8B95A1" stroke-width="2.2" fill="none"/>
     <g>
@@ -38,7 +38,7 @@ export function rubBeforeAfterFig(): string {
       ${minus(244, 139, 5.5)}${plus(258, 139, 5.5)}${minus(272, 139, 5.5)}${minus(244, 158, 5.5)}${minus(258, 161, 5.5)}${plus(272, 158, 5.5)}
       <text x="258" y="210" text-anchor="middle" font-size="11" fill="#8B95A1">전자가 스웨터 → 풍선으로!</text>
     </g>
-    <text x="172" y="230" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">마찰 후 — 스웨터 ( ? )전기, 풍선 ( ? )전기</text>
+    <text x="172" y="230" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">마찰 후, 스웨터 ( ? )전기, 풍선 ( ? )전기</text>
   </svg>`;
 }
 
@@ -69,7 +69,7 @@ export function viGraphFig(): string {
   // 축 스케일: 전압 1V = 64px(0~4V), 전류 1mA = 0.55px(0~약 210mA) — 점은 I = V × 50mA 직선 위
   const px = (v: number): number => 52 + v * 64;
   const py = (ma: number): number => 170 - ma * 0.55;
-  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="원점을 지나는 직선 그래프 — 전압 4볼트에서 전류 200밀리암페어">
+  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="원점을 지나는 직선 그래프, 전압 4볼트에서 전류 200밀리암페어">
     <line x1="52" y1="20" x2="52" y2="170" stroke="#B0B8C1" stroke-width="1.6"/>
     <line x1="52" y1="170" x2="326" y2="170" stroke="#B0B8C1" stroke-width="1.6"/>
     ${[1, 2, 3, 4].map((v) => `<line x1="${px(v)}" y1="170" x2="${px(v)}" y2="174" stroke="#B0B8C1" stroke-width="1.4"/><text x="${px(v)}" y="188" text-anchor="middle" font-size="11" fill="#6B7684">${v}</text>`).join("")}
@@ -85,7 +85,7 @@ export function viGraphFig(): string {
 
 /** L3 — 회로 속 전류의 방향 도해((가)(나)는 전류 방향, 전자는 그 반대 — 현재 미사용 예비) */
 export function electronFlowFig(): string {
-  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="전지와 전구가 연결된 회로 — (가)와 (나)는 전류가 흐르는 방향">
+  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="전지와 전구가 연결된 회로, (가)와 (나)는 전류가 흐르는 방향">
     <path d="M92 156h-40V44h240v112h-40" stroke="#8B95A1" stroke-width="4" fill="none" stroke-linecap="round"/>
     <rect x="92" y="140" width="160" height="32" rx="7" fill="#AEBDD6" stroke="#4E5A70" stroke-width="1.8"/>
     <text x="132" y="161" font-size="15" font-weight="800" fill="#333D4B">+</text>
@@ -128,7 +128,7 @@ export function seriesWaterFig(): string {
   const wheel = (x: number, y: number, r: number): string => `
     <circle cx="${x}" cy="${y}" r="${r}" stroke="#C9A05E" stroke-width="4" fill="none"/>
     ${[0, 1, 2, 3].map((i) => `<line x1="${x}" y1="${y}" x2="${(x + Math.cos((i / 4) * Math.PI * 2 + 0.4) * r).toFixed(1)}" y2="${(y + Math.sin((i / 4) * Math.PI * 2 + 0.4) * r).toFixed(1)}" stroke="#8A6A34" stroke-width="3"/>`).join("")}`;
-  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="직렬 비유 — 하나의 물길이 두 물레방아를 차례로 돌린다. 높이차를 나눠 갖고 물살은 같다">
+  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="직렬 비유, 하나의 물길이 두 물레방아를 차례로 돌린다. 높이차를 나눠 갖고 물살은 같다">
     <path d="M36 28h60l14 40h60l14 40h60l14 40h50" stroke="#7FB0E8" stroke-width="9" fill="none" stroke-linecap="round"/>
     <path d="M36 28h60l14 40h60l14 40h60l14 40h50" stroke="#BFDCFF" stroke-width="4" fill="none" stroke-linecap="round"/>
     ${wheel(124, 62, 22)}
@@ -137,7 +137,7 @@ export function seriesWaterFig(): string {
     <text x="72" y="56" text-anchor="end" font-size="11" font-weight="800" fill="#E8961E">높이 ①</text>
     <path d="M170 74v34M170 91h-8M170 91h8" stroke="#F0A422" stroke-width="1.8"/>
     <text x="160" y="96" text-anchor="end" font-size="11" font-weight="800" fill="#E8961E">높이 ②</text>
-    <text x="172" y="176" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">물길은 하나 — <tspan font-weight="800">물살(전류)은 어디서나 같다!</tspan></text>
+    <text x="172" y="176" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">물길은 하나, <tspan font-weight="800">물살(전류)은 어디서나 같다!</tspan></text>
     <text x="172" y="196" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">전체 높이차(전압)는 방아 둘이 <tspan font-weight="800">나눠</tspan> 쓴다</text>
   </svg>`;
 }
@@ -147,7 +147,7 @@ export function parallelWaterFig(): string {
   const wheel = (x: number, y: number, r: number): string => `
     <circle cx="${x}" cy="${y}" r="${r}" stroke="#C9A05E" stroke-width="4" fill="none"/>
     ${[0, 1, 2, 3].map((i) => `<line x1="${x}" y1="${y}" x2="${(x + Math.cos((i / 4) * Math.PI * 2 + 0.4) * r).toFixed(1)}" y2="${(y + Math.sin((i / 4) * Math.PI * 2 + 0.4) * r).toFixed(1)}" stroke="#8A6A34" stroke-width="3"/>`).join("")}`;
-  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="병렬 비유 — 같은 높이에서 두 물길로 갈라져 물레방아를 하나씩 돌린다. 높이차는 같고 물이 나뉜다">
+  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="병렬 비유, 같은 높이에서 두 물길로 갈라져 물레방아를 하나씩 돌린다. 높이차는 같고 물이 나뉜다">
     <path d="M30 40h70" stroke="#7FB0E8" stroke-width="11" stroke-linecap="round"/>
     <path d="M100 40q30 0 30 26l0 20M100 40q60 8 96 8l60 0" stroke="#7FB0E8" stroke-width="9" fill="none" stroke-linecap="round"/>
     <path d="M130 86l0 34q0 26 40 26h130M256 48l0 72" stroke="#7FB0E8" stroke-width="9" fill="none" stroke-linecap="round"/>
@@ -157,13 +157,13 @@ export function parallelWaterFig(): string {
     <path d="M312 54v82M312 95h-8M312 95h8" stroke="#F0A422" stroke-width="1.8"/>
     <text x="312" y="48" text-anchor="middle" font-size="10.5" font-weight="800" fill="#E8961E">같은 높이!</text>
     <text x="172" y="176" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">두 방아 모두 <tspan font-weight="800">같은 높이차(전압)</tspan>에서 돈다</text>
-    <text x="172" y="196" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">대신 물(전류)은 두 길로 <tspan font-weight="800">나뉜다</tspan> — 합치면 전체!</text>
+    <text x="172" y="196" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">대신 물(전류)은 두 길로 <tspan font-weight="800">나뉜다</tspan>. 합치면 전체!</text>
   </svg>`;
 }
 
 /** L8 — 전동기 원리(코일 좌우 전류 반대 → 힘 반대 → 회전) */
 export function motorFig(): string {
-  return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="전동기 구조 — 자석 사이 코일의 왼쪽과 오른쪽에 반대 방향 전류가 흘러 반대 방향 힘을 받아 회전한다">
+  return `<svg viewBox="0 0 344 216" ${NS} fill="none" role="img" aria-label="전동기 구조, 자석 사이 코일의 왼쪽과 오른쪽에 반대 방향 전류가 흘러 반대 방향 힘을 받아 회전한다">
     <rect x="26" y="48" width="42" height="120" rx="8" fill="#E8836B" stroke="#A8442E" stroke-width="1.8"/>
     <text x="47" y="115" text-anchor="middle" font-size="17" font-weight="800" fill="#FFF">N</text>
     <rect x="276" y="48" width="42" height="120" rx="8" fill="#7FA6E8" stroke="#2E5AA8" stroke-width="1.8"/>

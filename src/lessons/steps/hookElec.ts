@@ -46,7 +46,7 @@ export function renderWinterShock(scene: HTMLElement, helper: HTMLElement, s: Ho
       el("img", { class: "calm", attrs: { src: `${IMG_BASE}elec/hook/${file}-calm.webp`, alt: "" } }),
       el("img", { class: "zap", attrs: { src: `${IMG_BASE}elec/hook/${file}-zap.webp`, alt: "" } }),
     );
-    const card = el("button", { class: "hook-cup he-wcard", attrs: { type: "button", "aria-label": `${name} — 탭해서 보기` } });
+    const card = el("button", { class: "hook-cup he-wcard", attrs: { type: "button", "aria-label": `${name}, 탭해서 보기` } });
     card.append(frame, label);
     card.addEventListener("click", () => {
       // 애니 재생(재탭 시 리플레이)
@@ -55,22 +55,22 @@ export function renderWinterShock(scene: HTMLElement, helper: HTMLElement, s: Ho
       card.classList.add("lit");
       haptic(HAPTIC.tap);
       label.textContent = after;
-      card.setAttribute("aria-label", `${name} — ${after}`);
+      card.setAttribute("aria-label", `${name}, ${after}`);
       if (seen.has(key)) return;
       seen.add(key);
       if (seen.size === 1) {
         face("surprised");
-        helper.innerHTML = "찌릿—! 나머지 <b>두 장면</b>도 탭해 봐요.";
+        helper.innerHTML = "찌릿! 나머지 <b>두 장면</b>도 탭해 봐요.";
       } else if (seen.size === 2) {
         helper.innerHTML = "또 찌릿! <b>마지막 장면</b>도 탭!";
       } else {
         face("curious");
-        helper.innerHTML = "하룻밤에 세 번이나 찌릿찌릿 — 세 장면의 <b>공통 범인</b>은 누구일까요?";
+        helper.innerHTML = "하룻밤에 세 번이나 찌릿찌릿, 세 장면의 <b>공통 범인</b>은 누구일까요?";
         timer = window.setTimeout(() => {
           ask(choicesBox, helper, {
             choices: s.choices ?? ["물체를 문지르거나 비빌 때 생긴 전기", "콘센트에서 새어 나온 전기", "몸속 자석의 힘"],
-            good: "맞아요! 스웨터도, 문손잡이를 잡은 손도(옷에 비벼진 몸!), 풍선도 — 모두 <b>문지르고 비빈 뒤</b>였어요. 이 전기의 정체를 실험실에서 파헤쳐요!",
-            bad: "콘센트의 전기도, 자석의 힘도 아니에요 — 세 장면 모두 <b>문지르거나 비빈 직후</b>였다는 게 단서예요! 마찰이 만든 전기랍니다. 실험실에서 확인해요.",
+            good: "맞아요! 스웨터도, 문손잡이를 잡은 손도(옷에 비벼진 몸!), 풍선도, 모두 <b>문지르고 비빈 뒤</b>였어요. 이 전기의 정체를 실험실에서 파헤쳐요!",
+            bad: "콘센트의 전기도, 자석의 힘도 아니에요. 세 장면 모두 <b>문지르거나 비빈 직후</b>였다는 게 단서예요! 마찰이 만든 전기랍니다. 실험실에서 확인해요.",
             onDone: finish,
           });
         }, 800);
@@ -111,7 +111,7 @@ function balloonDollSvg(): string {
     <path d="M34 120q4 -3 4 3M50 114q4 -3 4 3M66 114q4 -3 4 3M82 120q4 -3 4 3" stroke="#FFC9B8" stroke-width="1.4" opacity=".85"/>
     <path d="M32 114q13 -8 28 -7" stroke="#FFD8CC" stroke-width="2.4" opacity=".75"/>
     <ellipse cx="62" cy="106" rx="10" ry="3.4" fill="#C8503A" stroke="#8E2A1C" stroke-width="1.1"/>
-    <!-- 알루미늄박 인형(축 늘어짐 — CSS가 눕혀 둔다) -->
+    <!-- 알루미늄박 인형(축 늘어짐, CSS가 눕혀 둔다) -->
     <g class="he-doll">
       <circle cx="176" cy="99" r="7" fill="url(#heB-foil)"/>
       <circle cx="176" cy="99" r="7" stroke="#6E7E94" stroke-width="1.2"/>
@@ -150,7 +150,7 @@ export function renderBalloonDoll(scene: HTMLElement, helper: HTMLElement, s: Ho
   const fig = el("button", {
     class: "he-fig he-bd",
     html: balloonDollSvg(),
-    attrs: { type: "button", "aria-label": "풍선을 스웨터에 문지르기 — 세 번 탭" },
+    attrs: { type: "button", "aria-label": "풍선을 스웨터에 문지르기, 세 번 탭" },
   });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
@@ -169,8 +169,8 @@ export function renderBalloonDoll(scene: HTMLElement, helper: HTMLElement, s: Ho
     fig.classList.remove("rub");
     void fig.offsetWidth;
     fig.classList.add("rub");
-    if (rubs === 1) helper.innerHTML = "쓱싹— 좋아요! <b>두 번 더</b> 문질러요.";
-    else if (rubs === 2) helper.innerHTML = "쓱싹 쓱싹— <b>한 번 더!</b>";
+    if (rubs === 1) helper.innerHTML = "쓱싹… 좋아요! <b>두 번 더</b> 문질러요.";
+    else if (rubs === 2) helper.innerHTML = "쓱싹 쓱싹… <b>한 번 더!</b>";
     else {
       charged = true;
       (fig as HTMLButtonElement).disabled = true;
@@ -179,21 +179,21 @@ export function renderBalloonDoll(scene: HTMLElement, helper: HTMLElement, s: Ho
         fig.classList.remove("rub");
         fig.classList.add("charged");
       }, 600);
-      helper.innerHTML = "풍선이 <b>(−)전기를 띠었어요</b> — 전자가 옮겨 왔거든요(지난 시간!). 풍선이 인형 곁으로 가요…";
+      helper.innerHTML = "풍선이 <b>(−)전기를 띠었어요</b>. 전자가 옮겨 왔거든요(지난 시간!). 풍선이 인형 곁으로 가요…";
       later(() => {
         face("curious");
-        helper.innerHTML = "이제 이 풍선을 인형에 <b>가까이</b> 가져가면 — 어떻게 될까요?";
+        helper.innerHTML = "이제 이 풍선을 인형에 <b>가까이</b> 가져가면, 어떻게 될까요?";
         ask(choicesBox, helper, {
           choices: s.choices ?? ["인형이 풍선 쪽으로 끌려온다", "아무 일도 일어나지 않는다", "인형이 풍선에서 밀려난다"],
-          good: "좋은 예측! 정말 그런지 — 풍선을 조금만 더 가까이…",
-          bad: "인형은 문지르지 않아서 전기를 띠지 않았는데도, 결과는 <b>끌려온다</b>예요! 직접 봐요 — 풍선을 조금만 더 가까이…",
+          good: "좋은 예측! 정말 그런지, 풍선을 조금만 더 가까이…",
+          bad: "인형은 문지르지 않아서 전기를 띠지 않았는데도, 결과는 <b>끌려온다</b>예요! 직접 봐요. 풍선을 조금만 더 가까이…",
           onDone: () => {
             later(() => {
               fig.classList.add("attract");
               haptic(HAPTIC.correct);
               face("surprised");
               later(() => {
-                helper.innerHTML = "벌떡! 인형이 <b>풍선 쪽으로 끌려와 붙었어요</b>. 문지르지도 않은 금속이 왜 끌려올까요 — 깡통 실험에서 전자의 움직임으로 밝혀요!";
+                helper.innerHTML = "벌떡! 인형이 <b>풍선 쪽으로 끌려와 붙었어요</b>. 문지르지도 않은 금속이 왜 끌려올까요. 깡통 실험에서 전자의 움직임으로 밝혀요!";
                 finish();
               }, 950);
             }, 550);
@@ -279,7 +279,7 @@ export function renderDeadClock(scene: HTMLElement, helper: HTMLElement, s: Hook
   });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "한밤중, 벽시계가 <b>멈췄어요</b> — 초침이 꼼짝도 안 해요. 시계 아래 <b>전지 칸을 탭</b>해서 새 전지로 갈아 끼워요!";
+  helper.innerHTML = "한밤중, 벽시계가 <b>멈췄어요</b>. 초침이 꼼짝도 안 해요. 시계 아래 <b>전지 칸을 탭</b>해서 새 전지로 갈아 끼워요!";
 
   let swapped = false;
   const timers: number[] = [];
@@ -292,7 +292,7 @@ export function renderDeadClock(scene: HTMLElement, helper: HTMLElement, s: Hook
     (fig as HTMLButtonElement).disabled = true;
     fig.classList.add("swap");
     haptic(HAPTIC.select);
-    helper.innerHTML = "낡은 전지는 빼고, <b>새 전지</b>를 딸깍 —";
+    helper.innerHTML = "낡은 전지는 빼고, <b>새 전지</b>를 딸깍…";
     later(() => {
       fig.classList.add("alive");
       haptic(HAPTIC.correct);
@@ -305,7 +305,7 @@ export function renderDeadClock(scene: HTMLElement, helper: HTMLElement, s: Hook
       ask(choicesBox, helper, {
         choices: s.choices ?? ["전기를 밀어 보내는 힘", "정확한 시간 정보", "태엽을 감는 힘"],
         good: "좋은 예측! 전지 속엔 시간 정보가 아니라 <b>전기를 밀어 보내는 힘</b>이 들어 있어요. 그 힘의 정체를 물의 회로와 나란히 놓고 밝혀 봐요!",
-        bad: "전지 속에 시간 정보나 태엽은 없어요 — 전지가 주는 건 <b>전기를 밀어 보내는 힘</b>이에요! 그 힘이 다 떨어지면 시계도 멈추죠. 물의 회로에서 확인해요.",
+        bad: "전지 속에 시간 정보나 태엽은 없어요. 전지가 주는 건 <b>전기를 밀어 보내는 힘</b>이에요! 그 힘이 다 떨어지면 시계도 멈추죠. 물의 회로에서 확인해요.",
         onDone: finish,
       });
     }, 2100);
@@ -410,14 +410,14 @@ export function renderBrightPair(scene: HTMLElement, helper: HTMLElement, s: Hoo
     fig.classList.add("boost");
     haptic(HAPTIC.correct);
     face("surprised");
-    helper.innerHTML = "딸깍 — <b>확 밝아졌어요!</b> 흐름 점도 빨라졌죠?";
+    helper.innerHTML = "딸깍… <b>확 밝아졌어요!</b> 흐름 점도 빨라졌죠?";
     later(() => {
       face("curious");
       helper.innerHTML = "전지 2개 직렬 = 미는 힘(전압)이 커졌어요. 그럼 전구를 지나는 <b>전류</b>는 어떻게 됐을까요?";
       ask(choicesBox, helper, {
         choices: s.choices ?? ["전류도 함께 세졌다", "전류는 변하지 않았다", "전류는 오히려 줄었다"],
-        good: "맞아요! <b>밝기가 곧 전류의 증거</b> — 전압을 키우니 전류도 세진 거예요. 그럼 전압을 2배로 하면 전류는 정확히 몇 배일까요? 그래프로 밝혀 봐요!",
-        bad: "밝기를 다시 봐요 — 전구는 전류가 셀수록 밝아져요. <b>더 밝아졌다 = 전류가 세졌다</b>는 뜻! 전압을 키우면 전류도 커져요. 정확히 몇 배인지는 그래프로!",
+        good: "맞아요! <b>밝기가 곧 전류의 증거</b>, 전압을 키우니 전류도 세진 거예요. 그럼 전압을 2배로 하면 전류는 정확히 몇 배일까요? 그래프로 밝혀 봐요!",
+        bad: "밝기를 다시 봐요. 전구는 전류가 셀수록 밝아져요. <b>더 밝아졌다 = 전류가 세졌다</b>는 뜻! 전압을 키우면 전류도 커져요. 정확히 몇 배인지는 그래프로!",
         onDone: finish,
       });
     }, 1200);
@@ -527,12 +527,12 @@ export function renderMultiTap(scene: HTMLElement, helper: HTMLElement, s: HookO
   const fig = el("div", {
     class: "he-fig he-mt plugin off-lamp off-fan off-chg",
     html: multiTapSvg(),
-    attrs: { role: "img", "aria-label": "멀티탭 하나와 뽑혀 있는 플러그 셋 — 하나씩 탭해 꽂아 보기" },
+    attrs: { role: "img", "aria-label": "멀티탭 하나와 뽑혀 있는 플러그 셋, 하나씩 탭해 꽂아 보기" },
   });
   fig.querySelectorAll(".he-plug").forEach((g) => g.classList.add("out"));
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "스탠드·선풍기·충전기 — 셋 다 <b>멀티탭 하나</b>를 쓰는데 지금은 전부 뽑혀 있어요. 플러그를 <b>하나씩 탭해 꽂아</b> 보세요!";
+  helper.innerHTML = "스탠드·선풍기·충전기, 셋 다 <b>멀티탭 하나</b>를 쓰는데 지금은 전부 뽑혀 있어요. 플러그를 <b>하나씩 탭해 꽂아</b> 보세요!";
   face("curious");
 
   const NAME: Record<string, string> = { lamp: "스탠드", fan: "선풍기", chg: "충전기" };
@@ -553,23 +553,23 @@ export function renderMultiTap(scene: HTMLElement, helper: HTMLElement, s: HookO
     haptic(HAPTIC.select);
     if (phase === "plugin") {
       if (!out && !allIn()) {
-        helper.innerHTML = `딸깍 — <b>${NAME[d]}만 켜졌어요</b>! 다른 건 꿈쩍도 안 하죠. 나머지도 꽂아 봐요.`;
+        helper.innerHTML = `딸깍… <b>${NAME[d]}만 켜졌어요</b>! 다른 건 꿈쩍도 안 하죠. 나머지도 꽂아 봐요.`;
       } else if (allIn()) {
         phase = "asking";
         fig.classList.remove("plugin");
         face("curious");
-        helper.innerHTML = "셋 다 <b>따로따로</b> 켜졌어요 — 서로 눈치도 안 보네요. 그럼 이제, 이 중 <b>하나를 뽑으면</b> 나머지 둘은?";
+        helper.innerHTML = "셋 다 <b>따로따로</b> 켜졌어요. 서로 눈치도 안 보네요. 그럼 이제, 이 중 <b>하나를 뽑으면</b> 나머지 둘은?";
         ask(choicesBox, helper, {
           choices: s.choices ?? ["나머지 둘은 그대로 켜져 있다", "셋 다 함께 꺼진다", "나머지 둘이 더 세게 켜진다"],
-          good: "좋은 예측! 정말 그런지 — 플러그 <b>하나를 탭해서 뽑아</b> 봐요.",
-          bad: "한 줄로 이어졌다면 다 꺼지고, 나눠 쓰던 전기가 몰린다면 세지겠죠 — 과연 그럴까요? 플러그 <b>하나를 탭해서 뽑아</b> 직접 확인!",
+          good: "좋은 예측! 정말 그런지, 플러그 <b>하나를 탭해서 뽑아</b> 봐요.",
+          bad: "한 줄로 이어졌다면 다 꺼지고, 나눠 쓰던 전기가 몰린다면 세지겠죠. 과연 그럴까요? 플러그 <b>하나를 탭해서 뽑아</b> 직접 확인!",
           onDone: () => {
             phase = "pull";
             fig.classList.add("ready");
           },
         });
       } else {
-        helper.innerHTML = `${NAME[d]}를 도로 뽑았어요 — 그 기구만 꺼져요. 셋 다 꽂아 봐요!`;
+        helper.innerHTML = `${NAME[d]}를 도로 뽑았어요. 그 기구만 꺼져요. 셋 다 꽂아 봐요!`;
       }
       return;
     }
@@ -578,14 +578,14 @@ export function renderMultiTap(scene: HTMLElement, helper: HTMLElement, s: HookO
       confirmed = true;
       fig.classList.remove("ready");
       face("surprised");
-      helper.innerHTML = `쏙 — <b>${NAME[d]}만 꺼지고</b> 나머지 둘은 그대로 쌩쌩해요!`;
+      helper.innerHTML = `쏙, <b>${NAME[d]}만 꺼지고</b> 나머지 둘은 그대로 쌩쌩해요!`;
       later(() => {
         face("curious");
         helper.innerHTML = "콘센트끼리는 서로 영향이 없네요. 멀티탭 속 전선이 <b>어떻게</b> 이어져 있길래? 회로 실험대에서 두 연결을 비교해요! (다른 플러그도 뽑았다 꽂았다 해 보세요)";
         finish();
       }, 1300);
     } else if (confirmed) {
-      helper.innerHTML = out ? `${NAME[d]}를 뽑았어요 — 나머지는 그대로!` : `${NAME[d]}를 다시 꽂았어요 — 바로 켜져요!`;
+      helper.innerHTML = out ? `${NAME[d]}를 뽑았어요. 나머지는 그대로!` : `${NAME[d]}를 다시 꽂았어요. 바로 켜져요!`;
     }
   });
   return () => timers.forEach((t) => window.clearTimeout(t));
@@ -645,7 +645,7 @@ function lpChargerSvg(): string {
 export function renderLabelPeek(scene: HTMLElement, helper: HTMLElement, _s: HookOpts, finish: () => void, face: Face): () => void {
   const grid = el("div", { class: "hook-cups" });
   scene.appendChild(grid);
-  helper.innerHTML = "전기다리미와 휴대 전화 충전기 — 뒷면 라벨에 정체가 새겨져 있대요. <b>둘 다 눌러서 뒤집어</b> 봐요!";
+  helper.innerHTML = "전기다리미와 휴대 전화 충전기, 뒷면 라벨에 정체가 새겨져 있대요. <b>둘 다 눌러서 뒤집어</b> 봐요!";
 
   const seen = new Set<string>();
   const timers: number[] = [];
@@ -654,7 +654,7 @@ export function renderLabelPeek(scene: HTMLElement, helper: HTMLElement, _s: Hoo
   };
   const mk = (key: string, name: string, svg: string, after: string, firstMsg: string): HTMLElement => {
     const label = el("div", { class: "hook-cup-label", text: "뒤집어 보기" });
-    const card = el("button", { class: "hook-cup he-lcard", html: svg, attrs: { type: "button", "aria-label": `${name} — 눌러서 라벨 보기` } });
+    const card = el("button", { class: "hook-cup he-lcard", html: svg, attrs: { type: "button", "aria-label": `${name}, 눌러서 라벨 보기` } });
     card.appendChild(label);
     card.addEventListener("click", () => {
       if (seen.has(key)) return;
@@ -662,7 +662,7 @@ export function renderLabelPeek(scene: HTMLElement, helper: HTMLElement, _s: Hoo
       card.classList.add("flip");
       (card as HTMLButtonElement).disabled = true;
       label.textContent = after;
-      card.setAttribute("aria-label", `${name} — ${after}`);
+      card.setAttribute("aria-label", `${name}, ${after}`);
       haptic(HAPTIC.select);
       if (seen.size === 1) {
         face("surprised");
@@ -672,7 +672,7 @@ export function renderLabelPeek(scene: HTMLElement, helper: HTMLElement, _s: Hoo
         later(() => {
           face("curious");
           helper.innerHTML =
-            "둘 다 <b>220V</b>(전기를 밀어 주는 정도)는 똑같은데 — W는 <b>1800 대 5, 360배</b>! 이 <b>W(와트)</b>가 바로 오늘의 주인공, <b>1초에 쓰는 전기 에너지</b>의 단위랍니다.";
+            "둘 다 <b>220V</b>(전기를 밀어 주는 정도)는 똑같은데, W는 <b>1800 대 5, 360배</b>! 이 <b>W(와트)</b>가 바로 오늘의 주인공, <b>1초에 쓰는 전기 에너지</b>의 단위랍니다.";
           finish();
         }, 750);
       }
@@ -681,7 +681,7 @@ export function renderLabelPeek(scene: HTMLElement, helper: HTMLElement, _s: Hoo
   };
   grid.append(
     mk("iron", "전기다리미", lpIronSvg(), "220V · 1800W!", "<b>1800W</b>?! 숫자가 어마어마해요. 이제 <b>충전기</b>도 뒤집어 봐요."),
-    mk("chg", "휴대 전화 충전기", lpChargerSvg(), "220V · 5W!", "<b>5W</b> — 아담하네요. 이제 <b>다리미</b>도 뒤집어 봐요."),
+    mk("chg", "휴대 전화 충전기", lpChargerSvg(), "220V · 5W!", "<b>5W</b>, 아담하네요. 이제 <b>다리미</b>도 뒤집어 봐요."),
   );
   return () => timers.forEach((t) => window.clearTimeout(t));
 }
@@ -721,14 +721,14 @@ function compassWireSvg(): string {
     <circle cx="150" cy="92" r="24" stroke="#B8C6DA" stroke-width="1"/>
     ${ticks}
     <text x="150" y="79" text-anchor="middle" font-size="8.5" font-weight="800" fill="#D8352A">N</text>
-    <!-- 바늘(N 빨강 위 + 꼬리 회색) — CSS가 on에서 -74° 회전 -->
+    <!-- 바늘(N 빨강 위 + 꼬리 회색), CSS가 on에서 -74° 회전 -->
     <g class="he-ndl">
       <path d="M150 92 L145.5 78 L150 68 L154.5 78 Z" fill="url(#heO-red)" stroke="#A8261E" stroke-width="1"/>
       <path d="M150 92 L145.5 106 L150 116 L154.5 106 Z" fill="#C6D0DC" stroke="#8FA2B8" stroke-width="1"/>
       <circle cx="150" cy="92" r="3" fill="#31415C"/>
       <circle cx="149" cy="91" r="1" fill="#FFFFFF"/>
     </g>
-    <!-- 전선(나침반 '위'를 지남 — 그림자 + 심 + 코어 + 글로우) -->
+    <!-- 전선(나침반 '위'를 지남, 그림자 + 심 + 코어 + 글로우) -->
     <path d="M152 64 V122" stroke="#2A3A5E" stroke-width="3" opacity=".16"/>
     <g stroke="#4E5E78" stroke-width="3.4">
       <path d="M20 140 H16 Q10 140 10 132 V46 Q10 38 18 38 H142 Q150 38 150 46 V126 Q150 134 142 136 H120"/>
@@ -784,7 +784,7 @@ export function renderCompassWire(scene: HTMLElement, helper: HTMLElement, s: Ho
       fig.classList.remove("ready");
       face("surprised");
       haptic(HAPTIC.correct);
-      helper.innerHTML = "휙—! 전선은 자석도 아닌데 <b>바늘이 돌아갔어요</b>.";
+      helper.innerHTML = "휙! 전선은 자석도 아닌데 <b>바늘이 돌아갔어요</b>.";
       later(() => {
         face("curious");
         helper.innerHTML = "전선은 바늘에 닿지도 않았는데… <b>왜 움직였을까요?</b>";
@@ -794,8 +794,8 @@ export function renderCompassWire(scene: HTMLElement, helper: HTMLElement, s: Ho
             "전선이 뜨거워져 주변 공기가 바늘을 밀어서",
             "전지가 나침반 바늘을 직접 끌어당겨서",
           ],
-          good: "맞아요! 전류가 흐르는 전선 둘레엔 <b>자석 같은 성질</b>이 생겨요 — 200년 전 외르스테드도 강의 중에 우연히 이 장면을 봤죠. 스위치를 껐다 켰다 해 보세요, <b>전류가 흐를 때만</b> 바늘이 돌아요!",
-          bad: "열도, 전지의 끌어당김도 아니에요 — 스위치를 꺼 보면 바늘이 바로 돌아오거든요. 비밀은 <b>전류가 흐르는 전선 둘레에 생기는 자석 같은 성질</b>! 껐다 켰다 하며 확인하고, 코일로 크게 재현해 봐요.",
+          good: "맞아요! 전류가 흐르는 전선 둘레엔 <b>자석 같은 성질</b>이 생겨요. 200년 전 외르스테드도 강의 중에 우연히 이 장면을 봤죠. 스위치를 껐다 켰다 해 보세요, <b>전류가 흐를 때만</b> 바늘이 돌아요!",
+          bad: "열도, 전지의 끌어당김도 아니에요. 스위치를 꺼 보면 바늘이 바로 돌아오거든요. 비밀은 <b>전류가 흐르는 전선 둘레에 생기는 자석 같은 성질</b>! 껐다 켰다 하며 확인하고, 코일로 크게 재현해 봐요.",
           onDone: () => {
             answered = true;
             finish();
@@ -804,8 +804,8 @@ export function renderCompassWire(scene: HTMLElement, helper: HTMLElement, s: Ho
       }, 1200);
     } else if (answered) {
       helper.innerHTML = on
-        ? "켜짐 — 바늘이 <b>휙</b> 돌아가요!"
-        : "꺼짐 — 바늘이 <b>북쪽</b>으로 되돌아와요.";
+        ? "켜짐, 바늘이 <b>휙</b> 돌아가요!"
+        : "꺼짐, 바늘이 <b>북쪽</b>으로 되돌아와요.";
     }
   });
   return () => timers.forEach((t) => window.clearTimeout(t));
@@ -869,7 +869,7 @@ function ebikeSvg(): string {
       <rect x="124" y="136.2" width="10" height="3.6" rx="1.8" fill="#55647E"/>
       <!-- 발판(footboard) -->
       <path d="M101 106 H127" stroke="#55647E" stroke-width="3.4"/>
-      <!-- 스틱맨 라이더(손그림 라인) — 발은 발판 위 -->
+      <!-- 스틱맨 라이더(손그림 라인), 발은 발판 위 -->
       <g stroke="#3C4654" stroke-width="2.6" fill="none">
         <circle cx="110" cy="52" r="8" fill="#FFFFFF"/>
         <path d="M108 60 L102 86"/>
@@ -882,11 +882,11 @@ function ebikeSvg(): string {
 }
 
 export function renderEbike(scene: HTMLElement, helper: HTMLElement, s: HookOpts, finish: () => void, face: Face): () => void {
-  const fig = el("div", { class: "he-fig he-eb", html: ebikeSvg(), attrs: { role: "img", "aria-label": "전기 자전거에 앉은 스틱맨 — 발은 발판 위, 페달은 밟지 않음" } });
+  const fig = el("div", { class: "he-fig he-eb", html: ebikeSvg(), attrs: { role: "img", "aria-label": "전기 자전거에 앉은 스틱맨, 발은 발판 위, 페달은 밟지 않음" } });
   const btn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "출발!" }));
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "스틱맨이 <b>전기 자전거</b>에 탔어요. 발은 <b>발판 위</b> — 페달엔 올리지도 않았죠. 출발 버튼을 눌러 볼까요?";
+  helper.innerHTML = "스틱맨이 <b>전기 자전거</b>에 탔어요. 발은 <b>발판 위</b>, 페달엔 올리지도 않았죠. 출발 버튼을 눌러 볼까요?";
 
   let going = false;
   const timers: number[] = [];
@@ -898,17 +898,17 @@ export function renderEbike(scene: HTMLElement, helper: HTMLElement, s: HookOpts
     going = true;
     (btn as HTMLButtonElement).disabled = true;
     btn.classList.add("done-static");
-    (btn.querySelector("span") as HTMLElement).textContent = "슝 — 달린다!";
+    (btn.querySelector("span") as HTMLElement).textContent = "슝, 달린다!";
     fig.classList.add("go");
     haptic(HAPTIC.select);
     face("surprised");
-    helper.innerHTML = "달려요! 그런데 보세요 — 발은 여전히 <b>발판 위</b>, 페달은 <b>꼼짝도 안 해요</b>. 대체 무엇이 바퀴를 돌릴까요?";
+    helper.innerHTML = "달려요! 그런데 보세요. 발은 여전히 <b>발판 위</b>, 페달은 <b>꼼짝도 안 해요</b>. 대체 무엇이 바퀴를 돌릴까요?";
     later(() => {
       face("curious");
       ask(choicesBox, helper, {
         choices: s.choices ?? ["자석 사이에서 전류가 흐르는 코일이 받는 힘", "내리막길을 굴러 내려가는 힘", "뒤에서 불어 주는 바람의 힘"],
-        good: "정확해요! 뒷바퀴 통 속엔 <b>자석과 코일</b>이 숨어 있어요 — 자석 사이에 놓인 코일에 전류가 흐르면 코일이 <b>힘을 받아</b> 바퀴를 돌리죠. 3D 전기 그네에서 그 힘을 직접 만나요!",
-        bad: "길은 평평하고 바람도 잔잔해요 — 비밀은 <b>뒷바퀴 통 속</b>! 자석 사이에 놓인 코일에 전류가 흐르면 코일이 <b>힘을 받아</b> 바퀴를 돌린답니다. 3D 전기 그네에서 확인!",
+        good: "정확해요! 뒷바퀴 통 속엔 <b>자석과 코일</b>이 숨어 있어요. 자석 사이에 놓인 코일에 전류가 흐르면 코일이 <b>힘을 받아</b> 바퀴를 돌리죠. 3D 전기 그네에서 그 힘을 직접 만나요!",
+        bad: "길은 평평하고 바람도 잔잔해요. 비밀은 <b>뒷바퀴 통 속</b>! 자석 사이에 놓인 코일에 전류가 흐르면 코일이 <b>힘을 받아</b> 바퀴를 돌린답니다. 3D 전기 그네에서 확인!",
         onDone: finish,
       });
     }, 1400);

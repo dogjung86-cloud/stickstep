@@ -63,7 +63,7 @@ export function violCardFig(): string {
     <line x1="150" y1="14" x2="150" y2="146" stroke="#C9D2E0" stroke-width="1.2" stroke-dasharray="5 5"/>
     ${pill(76, 26, "(가)")}
     ${pill(224, 26, "(나)")}
-    <!-- (가) 게시판에 붙은 개인 점수 종이 — 열린 자물쇠(정보가 새어 나감) -->
+    <!-- (가) 게시판에 붙은 개인 점수 종이, 열린 자물쇠(정보가 새어 나감) -->
     <rect x="34" y="44" width="84" height="60" rx="6" fill="url(#s12-wood)" stroke="#6E4E26" stroke-width="1.6"/>
     <rect x="46" y="54" width="34" height="40" rx="3" fill="url(#s12-paper)" stroke="#8A93A6" stroke-width="1.3" transform="rotate(-3 63 74)"/>
     <path d="M52 64h20M52 72h14M52 80h18" stroke="#B8C2CE" stroke-width="1.7" stroke-linecap="round" transform="rotate(-3 63 74)"/>
@@ -73,7 +73,7 @@ export function violCardFig(): string {
     </g>
     ${tinyMan(76, 124, { mood: "sad", r: 5 })}
     <text x="76" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">내 점수가 모두에게 공개됐어요</text>
-    <!-- (나) 교통 요금 할인 안내 — 하트(배려) -->
+    <!-- (나) 교통 요금 할인 안내, 하트(배려) -->
     <rect x="182" y="44" width="84" height="60" rx="6" fill="url(#s12-paper)" stroke="#8A93A6" stroke-width="1.6"/>
     <rect x="192" y="54" width="40" height="14" rx="7" fill="#EAF2FA" stroke="#8A93A6" stroke-width="1.2"/>
     <path d="M198 61h28" stroke="#B8C2CE" stroke-width="1.8" stroke-linecap="round"/>
@@ -81,7 +81,7 @@ export function violCardFig(): string {
     <path d="M196 78h44M196 88h32" stroke="#C8D2DE" stroke-width="1.8" stroke-linecap="round"/>
     ${tinyMan(224, 124, { mood: "joy", r: 5 })}
     <text x="224" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">청소년은 요금을 적게 내요</text>`;
-  return shell(300, 158, inner, "두 장면 비교 — 왼쪽은 게시판에 붙은 개인 점수 종이와 열린 자물쇠, 오른쪽은 청소년 요금 안내와 하트 표시");
+  return shell(300, 158, inner, "두 장면 비교, 왼쪽은 게시판에 붙은 개인 점수 종이와 열린 자물쇠, 오른쪽은 청소년 요금 안내와 하트 표시");
 }
 
 /* ---------- L2: 다섯 방패와 ㉠ 토대(왕관 자리) ---------- */
@@ -172,7 +172,7 @@ export function threeDoorsFig(): string {
     ${door(150, "(나)", bookScale)}
     ${door(226, "(다)", hands)}
     <text x="150" y="24" text-anchor="middle" font-size="10" font-weight="800" fill="#5A6478">방패가 뚫렸을 때 두드리는 세 개의 문</text>`;
-  return shell(300, 158, inner, "세 개의 문 그림 — 각각 문 위에 작은 나무 망치, 책과 저울, 맞잡은 손 모양 간판이 걸려 있다");
+  return shell(300, 158, inner, "세 개의 문 그림, 각각 문 위에 작은 나무 망치, 책과 저울, 맞잡은 손 모양 간판이 걸려 있다");
 }
 
 /* ---------- L6: 세 걸음 장면 — 모임·테이블·담담한 멈춤 ---------- */
@@ -196,7 +196,7 @@ export function laborStepsFig(): string {
     <rect x="206" y="52" width="72" height="22" rx="4" fill="#7E8AA0" opacity=".45"/>
     ${tinyMan(222, 96, { r: 4.6, arm: "down" })}${tinyMan(242, 96, { r: 4.6, arm: "down" })}${tinyMan(262, 96, { r: 4.6, arm: "down" })}
     <text x="242" y="136" text-anchor="middle" font-size="9.4" fill="#7E8AA0">절차 거쳐 멈춤</text>`;
-  return shell(300, 152, inner, "세 장면 그림 — 흩어진 사람들이 단체로 모이는 장면, 같은 높이 테이블에 마주 앉은 장면, 작업을 멈추고 나란히 기다리는 장면");
+  return shell(300, 152, inner, "세 장면 그림, 흩어진 사람들이 단체로 모이는 장면, 같은 높이 테이블에 마주 앉은 장면, 작업을 멈추고 나란히 기다리는 장면");
 }
 
 /* ---------- L7: 침해 유형 → 도움 창구 배선도 ---------- */

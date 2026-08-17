@@ -156,7 +156,7 @@ export const judgeLab: StepRenderer = (host, step, api) => {
       card.classList.remove("shake");
       void card.offsetWidth;
       card.classList.add("shake");
-      helper.innerHTML = c.traps?.[conceptId] ?? "다시 봐요 — 카드의 상황이 어느 선반의 기준에 맞는지 힌트를 읽어 봐요!";
+      helper.innerHTML = c.traps?.[conceptId] ?? "다시 봐요. 카드의 상황이 어느 선반의 기준에 맞는지 힌트를 읽어 봐요!";
     }
   }
 

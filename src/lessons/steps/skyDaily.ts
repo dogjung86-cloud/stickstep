@@ -64,7 +64,7 @@ export const skyDaily: StepRenderer = (host, step, api) => {
   const choiceRow = el("div", { class: "hook-choices sky-choices" });
   const helper = el("div", {
     class: "helper",
-    html: "하룻밤 별 사진을 <b>길게 노출</b>해 찍으면 궤적이 남아요. 동쪽 하늘부터 — 별이 어느 쪽으로 흐르나요?",
+    html: "하룻밤 별 사진을 <b>길게 노출</b>해 찍으면 궤적이 남아요. 동쪽 하늘부터, 별이 어느 쪽으로 흐르나요?",
   });
   host.append(goalChips, helper, stage, choiceRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
@@ -104,7 +104,7 @@ export const skyDaily: StepRenderer = (host, step, api) => {
     }
     dirPill.textContent = d === "E" ? "동쪽 하늘" : d === "S" ? "남쪽 하늘" : d === "W" ? "서쪽 하늘" : "북쪽 하늘";
     haptic(HAPTIC.select);
-    if (d === "N" && !poleFound) helper.innerHTML = "북쪽 하늘은 특별해요 — 궤적이 <b>원</b>을 그려요! 돌지 않고 <b>가만히 있는 별</b>을 찾아 탭해 보세요.";
+    if (d === "N" && !poleFound) helper.innerHTML = "북쪽 하늘은 특별해요. 궤적이 <b>원</b>을 그려요! 돌지 않고 <b>가만히 있는 별</b>을 찾아 탭해 보세요.";
   }
 
   // 별 시드
@@ -146,10 +146,10 @@ export const skyDaily: StepRenderer = (host, step, api) => {
             });
             if (ok) {
               haptic(HAPTIC.correct);
-              helper.innerHTML = "정답 — <b>시계 반대 방향</b>! 궤적 화살표를 다시 확인해 보세요.";
+              helper.innerHTML = "정답, <b>시계 반대 방향</b>! 궤적 화살표를 다시 확인해 보세요.";
             } else {
               haptic(HAPTIC.wrong);
-              helper.innerHTML = "궤적을 다시 보면 <b>시계 반대 방향</b>으로 돌고 있어요 — 지구 자전의 반대 방향이죠.";
+              helper.innerHTML = "궤적을 다시 보면 <b>시계 반대 방향</b>으로 돌고 있어요. 지구 자전의 반대 방향이죠.";
             }
             collect("spin", "시계 반대!");
           });

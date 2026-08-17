@@ -133,7 +133,7 @@ export const zodiacRing: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "지구는 태양 둘레를 <b>1년에 한 바퀴</b> 돌아요(공전). 지구를 끌면서 — <b>태양 쪽</b> 별자리와 <b>반대쪽</b> 별자리가 어떻게 바뀌는지 보세요!",
+    html: "지구는 태양 둘레를 <b>1년에 한 바퀴</b> 돌아요(공전). 지구를 끌면서, <b>태양 쪽</b> 별자리와 <b>반대쪽</b> 별자리가 어떻게 바뀌는지 보세요!",
   });
   host.append(goalChips, helper, stage); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
@@ -195,7 +195,7 @@ export const zodiacRing: StepRenderer = (host, step, api) => {
     if (!st) {
       stage.classList.add("sp3-fallback");
       helper.innerHTML =
-        "이 기기에서 3D를 켤 수 없어요. 그림으로 기억해요 — 지구가 공전하면 <b>태양 쪽 별자리(못 봄)</b>와 <b>반대쪽 별자리(한밤에 잘 봄)</b>가 달마다 바뀌어요.";
+        "이 기기에서 3D를 켤 수 없어요. 그림으로 기억해요. 지구가 공전하면 <b>태양 쪽 별자리(못 봄)</b>와 <b>반대쪽 별자리(한밤에 잘 봄)</b>가 달마다 바뀌어요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       return;
@@ -247,8 +247,8 @@ export const zodiacRing: StepRenderer = (host, step, api) => {
     };
     sunLine = mkLine(0xffaa50, 0.55);
     nightLine = mkLine(0x8cbeff, 0.6);
-    sunTag = S.makeLabel("태양 쪽 — 못 봐요", { size: 1.35, color: "#FFC896" });
-    nightTag = S.makeLabel("한밤 남쪽 — 잘 보여요", { size: 1.35, color: "#BCD8FF" });
+    sunTag = S.makeLabel("태양 쪽, 못 봐요", { size: 1.35, color: "#FFC896" });
+    nightTag = S.makeLabel("한밤 남쪽, 잘 보여요", { size: 1.35, color: "#BCD8FF" });
     scene.add(sunTag, nightTag);
 
     // 카메라 — 비스듬히 내려다보는 입체 시점
@@ -314,7 +314,7 @@ export const zodiacRing: StepRenderer = (host, step, api) => {
     const norm = ((earthA % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
     const sunSideA = norm + Math.PI;
     month = Math.round((((sunSideA / (Math.PI * 2)) * 12) % 12 + 12) % 12) % 12;
-    monthPill.textContent = `${month + 1}월 — 태양 쪽 ${ZODIAC[month]}자리`;
+    monthPill.textContent = `${month + 1}월, 태양 쪽 ${ZODIAC[month]}자리`;
 
     const [ex, , ez] = posOf(norm, ORBIT_R);
     earth.position.set(ex, 0, ez);

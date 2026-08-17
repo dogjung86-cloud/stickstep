@@ -159,7 +159,7 @@ export const soundLab: StepRenderer = (host, step, api) => {
     labExplain({
       kicker: "천천히 보는 소리의 3요소",
       tone: "#8A6BFF",
-      lead: "왼쪽·오른쪽 그래프를 비교해 보세요 — <b>무엇이 달라졌는지</b>가 곧 답이에요.",
+      lead: "왼쪽·오른쪽 그래프를 비교해 보세요. <b>무엇이 달라졌는지</b>가 곧 답이에요.",
       rows: [
         {
           svg: soundMiniFig("amp"),
@@ -169,12 +169,12 @@ export const soundLab: StepRenderer = (host, step, api) => {
         {
           svg: soundMiniFig("freq"),
           name: "높낮이 = 진동수",
-          desc: "1초에 더 많이 떨릴수록(진동수↑) <b>높은 소리</b> — 파형이 <b>촘촘</b>해져요. 키는 그대로!",
+          desc: "1초에 더 많이 떨릴수록(진동수↑) <b>높은 소리</b>, 파형이 <b>촘촘</b>해져요. 키는 그대로!",
         },
         {
           svg: soundMiniFig("tone"),
           name: "음색 = 파형",
-          desc: "진폭·진동수가 같아도 <b>모양이 다르면 다른 소리</b>로 들려요 — 악기를 구별하는 지문이죠.",
+          desc: "진폭·진동수가 같아도 <b>모양이 다르면 다른 소리</b>로 들려요. 악기를 구별하는 지문이죠.",
         },
       ],
     }),
@@ -217,10 +217,10 @@ export const soundLab: StepRenderer = (host, step, api) => {
     if (wavesTried.size === 3) collect("tone", "파형이 음색!");
     helper.innerHTML =
       wv === "sine"
-        ? "매끈한 <b>사인 파형</b> — 소리굽쇠처럼 순수한 소리예요."
+        ? "매끈한 <b>사인 파형</b>, 소리굽쇠처럼 순수한 소리예요."
         : wv === "triangle"
-          ? "각진 <b>삼각 파형</b> — 같은 높이·세기여도 소리의 <b>느낌</b>이 다르죠? 이게 음색이에요."
-          : "톱니 파형 — 현악기처럼 <b>쏘는 느낌</b>! 진폭·진동수가 같아도 <b>파형이 다르면 다른 소리</b>예요.";
+          ? "각진 <b>삼각 파형</b>, 같은 높이·세기여도 소리의 <b>느낌</b>이 다르죠? 이게 음색이에요."
+          : "톱니 파형, 현악기처럼 <b>쏘는 느낌</b>! 진폭·진동수가 같아도 <b>파형이 다르면 다른 소리</b>예요.";
   }
 
   soundBtn.addEventListener("click", () => {
@@ -251,7 +251,7 @@ export const soundLab: StepRenderer = (host, step, api) => {
       if (!goals.has("amp"))
         helper.innerHTML = audioFail
           ? "이 기기에선 소리를 켤 수 없지만 <b>파형으로</b> 전부 볼 수 있어요. <b>세기</b> 슬라이더를 크게·작게 움직여 보세요!"
-          : "들리나요? 이제 <b>세기</b> 슬라이더를 끝까지 크게, 또 아주 작게 — 파형의 <b>키(진폭)</b>를 지켜보세요!";
+          : "들리나요? 이제 <b>세기</b> 슬라이더를 끝까지 크게, 또 아주 작게, 파형의 <b>키(진폭)</b>를 지켜보세요!";
     } else {
       soundOn = false;
       (soundBtn.querySelector("span") as HTMLElement).textContent = "소리 켜기";
@@ -269,13 +269,13 @@ export const soundLab: StepRenderer = (host, step, api) => {
     chip.querySelector("span")!.textContent = subText;
     haptic(HAPTIC.ctaUnlock);
     if (id === "amp" && !goals.has("freq"))
-      helper.innerHTML = "확인! 큰 소리 = <b>큰 진폭</b>. 이제 <b>높낮이</b> 슬라이더를 높게·낮게 움직여 보세요 — 파형이 <b>촘촘해지는지</b>!";
+      helper.innerHTML = "확인! 큰 소리 = <b>큰 진폭</b>. 이제 <b>높낮이</b> 슬라이더를 높게·낮게 움직여 보세요. 파형이 <b>촘촘해지는지</b>!";
     if (id === "freq" && !goals.has("tone"))
-      helper.innerHTML = "확인! 높은 소리 = <b>큰 진동수</b>(촘촘한 파형). 마지막 — 위의 <b>악기(파형)</b>를 바꿔 보세요!";
+      helper.innerHTML = "확인! 높은 소리 = <b>큰 진동수</b>(촘촘한 파형). 마지막, 위의 <b>악기(파형)</b>를 바꿔 보세요!";
     if (goals.size === 4 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리 — <b>소리의 3요소</b>! 세기는 <b>진폭</b>, 높낮이는 <b>진동수</b>, 음색은 <b>파형</b>이 정해요. 같은 '라' 음이라도 악기마다 다르게 들리는 이유, 이제 파형으로 설명할 수 있죠?";
+        "정리, <b>소리의 3요소</b>! 세기는 <b>진폭</b>, 높낮이는 <b>진동수</b>, 음색은 <b>파형</b>이 정해요. 같은 '라' 음이라도 악기마다 다르게 들리는 이유, 이제 파형으로 설명할 수 있죠?";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }

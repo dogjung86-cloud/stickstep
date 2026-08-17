@@ -39,7 +39,7 @@ export function magChainFig(): string {
   ${stars.join("")}
   <path d="M42 138 L302 100" stroke="#3A4A68" stroke-width="1.4" stroke-dasharray="4 5"/>
   ${labels.join("")}
-  <text x="172" y="186" fill="#556070" font-size="11.5" font-weight="700" text-anchor="middle">숫자가 작을수록 밝은 별 — 5계단(6→1등급)이면 약 100배!</text>
+  <text x="172" y="186" fill="#556070" font-size="11.5" font-weight="700" text-anchor="middle">숫자가 작을수록 밝은 별, 5계단(6→1등급)이면 약 100배!</text>
 </svg>`;
 }
 

@@ -130,8 +130,8 @@ export const expansion: StepRenderer = (host, step, api) => {
       sawCold = true;
       rodDone = true;
       helper.innerHTML =
-        "식히니 원래 길이로 <b>수축</b>했죠. 그런데 팽창하는 <b>정도</b>는 물질마다 달라요 — 그걸 이용한 발명품이 있어요!";
-      const nextBtn = el("button", { class: "swapbtn", html: "<span>다음 실험 — 바이메탈</span>" });
+        "식히니 원래 길이로 <b>수축</b>했죠. 그런데 팽창하는 <b>정도</b>는 물질마다 달라요. 그걸 이용한 발명품이 있어요!";
+      const nextBtn = el("button", { class: "swapbtn", html: "<span>다음 실험, 바이메탈</span>" });
       nextBtn.addEventListener("click", () => {
         haptic(HAPTIC.tap);
         toPick();
@@ -183,7 +183,7 @@ export const expansion: StepRenderer = (host, step, api) => {
         title: good ? "예측 성공! 철 쪽으로 휘었어요" : "철 쪽(아래)으로 휘어요",
         html:
           "가열하면 <b>알루미늄이 더 많이 늘어나</b> 바깥쪽이 되고, 덜 늘어난 <b>철 쪽(열팽창이 작은 금속 쪽)으로</b> 휘어요. " +
-          "이 성질로 온도가 오르면 회로를 <b>스스로 끊는</b> 온도 조절 장치를 만들죠 — 전기다리미·전기밥솥·화재경보기 속에 바이메탈이 들어 있어요.",
+          "이 성질로 온도가 오르면 회로를 <b>스스로 끊는</b> 온도 조절 장치를 만들죠. 전기다리미·전기밥솥·화재경보기 속에 바이메탈이 들어 있어요.",
       });
       helper.innerHTML = "바이메탈은 <b>열팽창이 작은 금속 쪽</b>으로 휘어요. 전기다리미의 과열 방지 스위치가 바로 이 원리!";
       api.enableCTA(s.cta ?? "개념 정리하기");
@@ -378,8 +378,8 @@ export const expansion: StepRenderer = (host, step, api) => {
     ctx.fillStyle = "rgba(220,236,255,.8)";
     ctx.font = "600 11.5px Pretendard, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("알루미늄 — 열팽창 큼", x0 + 6, y0 - 26);
-    ctx.fillText("철 — 열팽창 작음", x0 - 14, y0 + 52);
+    ctx.fillText("알루미늄, 열팽창 큼", x0 + 6, y0 - 26);
+    ctx.fillText("철, 열팽창 작음", x0 - 14, y0 + 52);
     // 불(주변 소프트 글로우)
     if (phase === "bend" || phase === "done") {
       softGlow(ctx, x0 + L * 0.45, h - 21, 44, "255,150,60", 0.2);

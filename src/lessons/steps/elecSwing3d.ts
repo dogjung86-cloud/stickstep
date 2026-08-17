@@ -119,7 +119,7 @@ export const swingLab3d: StepRenderer = (host, step, api) => {
       on: "그네가 힘을 받아 기울었어요! 자기장 속에서 <b>전류가 흐르는 코일은 힘을 받아요</b>.",
       dir: "전류 방향을 바꾸니 <b>힘의 방향도 반대</b>가 됐어요!",
       pole: "자석 극(자기장 방향)을 바꿔도 <b>힘의 방향이 반대</b>가 돼요!",
-      amp: "전류가 셀수록 <b>힘도 커져요</b> — 기움이 커진 것 보이죠?",
+      amp: "전류가 셀수록 <b>힘도 커져요</b>. 기움이 커진 것 보이죠?",
     };
     helper.innerHTML = MSG[id];
     if (goals.size === 4 && !finished) {
@@ -128,7 +128,7 @@ export const swingLab3d: StepRenderer = (host, step, api) => {
       api.enableCTA(s.cta ?? "전동기 원리로");
       window.setTimeout(() => {
         helper.innerHTML =
-          "정리! 힘의 방향은 <b>오른손</b>으로 찾아요 — 네 손가락을 <b>자기장</b> 방향으로 펴고 엄지를 <b>전류</b> 방향으로 향하면, <b>손바닥이 미는 쪽</b>이 힘의 방향! 전류·자기장이 셀수록 힘도 커요.";
+          "정리! 힘의 방향은 <b>오른손</b>으로 찾아요. 네 손가락을 <b>자기장</b> 방향으로 펴고 엄지를 <b>전류</b> 방향으로 향하면, <b>손바닥이 미는 쪽</b>이 힘의 방향! 전류·자기장이 셀수록 힘도 커요.";
       }, 2000);
     }
   }
@@ -161,7 +161,7 @@ export const swingLab3d: StepRenderer = (host, step, api) => {
     st = mod.createSpaceStage(canvas, { fov: 40 });
     if (!st) {
       helper.innerHTML =
-        "이 기기에서 3D 화면을 열 수 없어요. 핵심 — 자기장 속 전류가 흐르는 코일은 <b>힘</b>을 받고, <b>전류나 자기장의 방향을 바꾸면 힘의 방향도 반대</b>가 돼요.";
+        "이 기기에서 3D 화면을 열 수 없어요. 핵심, 자기장 속 전류가 흐르는 코일은 <b>힘</b>을 받고, <b>전류나 자기장의 방향을 바꾸면 힘의 방향도 반대</b>가 돼요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "전동기 원리로");
       return;
@@ -344,7 +344,7 @@ export const swingLab3d: StepRenderer = (host, step, api) => {
 
       // 상태 필
       const pillTxt = !on
-        ? "전류 꺼짐 — 그네가 가만히 있어요"
+        ? "전류 꺼짐, 그네가 가만히 있어요"
         : `힘의 방향: ${force >= 0 ? "자석 바깥쪽" : "자석 안쪽"} · 세기 ${Math.round(Math.abs(force) * 100)}%`;
       (statusPill.querySelectorAll("span")[1] as HTMLElement).textContent = pillTxt;
 
@@ -368,7 +368,7 @@ export const swingLab3d: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.select);
     if (on && goals.has("on")) {
       collect("dir", "힘도 반대로!");
-      helper.innerHTML = "전류의 방향을 바꿨어요 — 그네가 <b>반대쪽</b>으로 기우는 것 보이죠?";
+      helper.innerHTML = "전류의 방향을 바꿨어요. 그네가 <b>반대쪽</b>으로 기우는 것 보이죠?";
     }
   });
   poleBtn.addEventListener("click", () => {
@@ -384,7 +384,7 @@ export const swingLab3d: StepRenderer = (host, step, api) => {
     }
     if (on && goals.has("on")) {
       collect("pole", "자기장 반대 = 힘 반대!");
-      helper.innerHTML = "자석의 극(자기장 방향)을 바꿨어요 — 이번에도 힘이 <b>반대</b>!";
+      helper.innerHTML = "자석의 극(자기장 방향)을 바꿨어요. 이번에도 힘이 <b>반대</b>!";
     }
   });
   syncSlider();

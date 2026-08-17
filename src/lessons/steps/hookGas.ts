@@ -27,7 +27,7 @@ function polarSvg(): string {
     <g class="hg-cracks" stroke="#6E9CC4" stroke-width="1.8" opacity="0">
       <path d="M120 113l-10 5 6 4M120 113l12 4-4 5M120 113l-2 9"/>
     </g>
-    <!-- 북극곰(손그림 라인) — 서 있는 자세 -->
+    <!-- 북극곰(손그림 라인), 서 있는 자세 -->
     <g class="hg-bear">
       <g class="hg-bear-stand" stroke="#3C4654" stroke-width="2.4" fill="#FFFFFF">
         <ellipse cx="120" cy="86" rx="20" ry="14"/>
@@ -73,7 +73,7 @@ export function renderPolar(
     fig.classList.remove("cracking");
     void fig.offsetWidth;
     fig.classList.add("cracking");
-    helper.innerHTML = "쩌적—! 얼음에 <b>금이 가요</b>! 다른 방법을 골라 보세요.";
+    helper.innerHTML = "쩌적! 얼음에 <b>금이 가요</b>! 다른 방법을 골라 보세요.";
   });
   crawlBtn.addEventListener("click", () => {
     if (solved) return;
@@ -90,7 +90,7 @@ export function renderPolar(
       ask(choicesBox, helper, {
         choices: s.choices ?? ["바닥에 닿는 면적이 넓어져 한 곳에 실리는 힘이 줄었다", "엎드리면 몸무게가 가벼워진다", "얼음이 곰의 체온에 더 단단해진다"],
         good: "정확해요! 엎드리면 <b>닿는 면적이 넓어져 한 곳에 실리는 힘(압력)이 줄어요</b>. 실험실에서 힘과 면적, 기체의 압력까지 파헤쳐 봐요!",
-        bad: "몸무게가 줄거나 얼음이 단단해진 게 아니에요 — 엎드리면 <b>닿는 면적이 넓어져</b> 같은 몸무게라도 <b>한 곳에 실리는 힘(압력)이 줄어</b> 안전해요. 실험실에서 확인해요.",
+        bad: "몸무게가 줄거나 얼음이 단단해진 게 아니에요. 엎드리면 <b>닿는 면적이 넓어져</b> 같은 몸무게라도 <b>한 곳에 실리는 힘(압력)이 줄어</b> 안전해요. 실험실에서 확인해요.",
         onDone: finish,
       });
     }, 900);
@@ -146,7 +146,7 @@ export function renderBubblewrap(scene: HTMLElement, helper: HTMLElement, finish
     }
     if (popped >= 3) {
       face("curious");
-      helper.innerHTML = "이 <b>눌리면 되미는 성질</b> 덕분에 뽁뽁이가 충격을 받아 줘요. 압력과 부피의 관계 — 실험실에서 계속!";
+      helper.innerHTML = "이 <b>눌리면 되미는 성질</b> 덕분에 뽁뽁이가 충격을 받아 줘요. 압력과 부피의 관계, 실험실에서 계속!";
       finish();
     }
   });
@@ -210,7 +210,7 @@ export function renderFoilballoon(scene: HTMLElement, helper: HTMLElement, finis
       face(trips >= 2 ? "curious" : "smile");
       helper.innerHTML =
         trips >= 2
-          ? "바람이 샌 게 아니라 <b>온도</b> 때문이었어요 — 차가우면 쪼그라들고 따뜻하면 되살아나요. 실험실에서 정확히 재 봐요!"
+          ? "바람이 샌 게 아니라 <b>온도</b> 때문이었어요. 차가우면 쪼그라들고 따뜻하면 되살아나요. 실험실에서 정확히 재 봐요!"
           : "다시 <b>팽팽</b>! 신기하죠? 한 번 더 나갔다 와 볼까요?";
       if (trips >= 2) finish();
     }
@@ -325,7 +325,7 @@ export function renderPingpong(
           ask(choicesBox, helper, {
             choices: s.choices ?? ["공 속 기체가 데워져 부피가 늘며 밀어냈다", "뜨거운 물이 공 안으로 스며들었다", "플라스틱이 녹아서 저절로 펴졌다"],
             good: "맞아요! <b>공 속 기체가 데워져 부피가 늘며</b> 찌그러진 곳을 밀어 펴요. 실험실에서 열기구로 확인!",
-            bad: "물이 스며들거나 플라스틱이 녹은 게 아니에요 — <b>공 속 기체가 뜨거워지면 부피가 늘어</b> 안에서 밀어 펴는 거예요. 실험실에서 열기구로 확인해요.",
+            bad: "물이 스며들거나 플라스틱이 녹은 게 아니에요. <b>공 속 기체가 뜨거워지면 부피가 늘어</b> 안에서 밀어 펴는 거예요. 실험실에서 열기구로 확인해요.",
             onDone: finish,
           });
         }, 1100);

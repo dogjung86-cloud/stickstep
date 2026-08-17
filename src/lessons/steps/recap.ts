@@ -100,7 +100,7 @@ export const recap: StepRenderer = (host, step, api) => {
       "div",
       { class: "rc-outro" },
       el("div", { class: "rc-outro-man" }, stickAvatar("cheer")),
-      el("div", { class: "rc-outro-bubble", html: s.outro ?? "정리 끝! 이제 문제로 확인해 봐요. 틀려도 괜찮아요 — 틀린 문제가 오래 남거든요." }),
+      el("div", { class: "rc-outro-bubble", html: s.outro ?? "정리 끝! 이제 문제로 확인해 봐요. 틀려도 괜찮아요. 틀린 문제가 오래 남거든요." }),
     ),
   );
 

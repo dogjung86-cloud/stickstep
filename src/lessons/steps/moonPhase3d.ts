@@ -22,13 +22,13 @@ const ORBIT_R = 3.3;
 /** 위상 각(도, 0=삭 기준 반시계) → 위상 이름. */
 function phaseName(deg: number): { key: string; label: string } {
   const d = ((deg % 360) + 360) % 360;
-  if (d < 22 || d >= 338) return { key: "new", label: "삭 — 달이 안 보여요" };
+  if (d < 22 || d >= 338) return { key: "new", label: "삭, 달이 안 보여요" };
   if (d < 68) return { key: "waxc", label: "초승달" };
-  if (d < 112) return { key: "first", label: "상현 — 오른쪽 반달" };
+  if (d < 112) return { key: "first", label: "상현, 오른쪽 반달" };
   if (d < 158) return { key: "waxg", label: "상현 → 망 사이" };
-  if (d < 202) return { key: "full", label: "망 — 보름달" };
+  if (d < 202) return { key: "full", label: "망, 보름달" };
   if (d < 248) return { key: "wang", label: "망 → 하현 사이" };
-  if (d < 292) return { key: "last", label: "하현 — 왼쪽 반달" };
+  if (d < 292) return { key: "last", label: "하현, 왼쪽 반달" };
   return { key: "wanc", label: "그믐달" };
 }
 
@@ -90,9 +90,9 @@ export const moonPhase3d: StepRenderer = (host, step, api) => {
     chip.querySelector("span")!.textContent = subText;
     haptic(HAPTIC.ctaUnlock);
     const hints: Record<string, string> = {
-      new: "삭! 달이 <b>태양과 같은 방향</b>이라 밝은 면이 모두 저쪽 — 지구에선 안 보여요. 이제 <b>위쪽(직각)</b>으로 끌어 보세요.",
+      new: "삭! 달이 <b>태양과 같은 방향</b>이라 밝은 면이 모두 저쪽, 지구에선 안 보여요. 이제 <b>위쪽(직각)</b>으로 끌어 보세요.",
       first: "상현! 태양·지구·달이 <b>직각</b>이라 <b>오른쪽 반원</b>만 밝아요. 이제 <b>태양 반대쪽</b>으로!",
-      full: "망! 달이 <b>태양 반대쪽</b>이라 밝은 면 전체가 보여요 — 보름달. 마지막, <b>아래쪽 직각</b>으로!",
+      full: "망! 달이 <b>태양 반대쪽</b>이라 밝은 면 전체가 보여요. 보름달. 마지막, <b>아래쪽 직각</b>으로!",
       last: "하현! 이번엔 <b>왼쪽 반원</b>이 밝아요. 상현과 반대죠.",
     };
     if (!finished) helper.innerHTML = hints[id] ?? "";
@@ -128,7 +128,7 @@ export const moonPhase3d: StepRenderer = (host, step, api) => {
     if (!st) {
       stage.classList.add("sp3-fallback");
       helper.innerHTML =
-        "이 기기에서 3D를 켤 수 없어요. 그림으로 기억해요 — <b>삭=태양 쪽(안 보임)</b>, <b>상현=직각·오른쪽 반달</b>, <b>망=반대쪽·보름달</b>, <b>하현=직각·왼쪽 반달</b>.";
+        "이 기기에서 3D를 켤 수 없어요. 그림으로 기억해요. <b>삭=태양 쪽(안 보임)</b>, <b>상현=직각·오른쪽 반달</b>, <b>망=반대쪽·보름달</b>, <b>하현=직각·왼쪽 반달</b>.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       return;

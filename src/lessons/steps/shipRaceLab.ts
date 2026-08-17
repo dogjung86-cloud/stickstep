@@ -68,7 +68,7 @@ export const shipRaceLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "부산에서 로테르담(유럽)까지 — 배 두 척이 <b>남방 항로(기존)</b>와 <b>북동 항로(북극해)</b>로 동시에 출발해요. 어느 배가 먼저 도착할까요? <b>출발</b>을 눌러 확인!",
+    html: "부산에서 로테르담(유럽)까지, 배 두 척이 <b>남방 항로(기존)</b>와 <b>북동 항로(북극해)</b>로 동시에 출발해요. 어느 배가 먼저 도착할까요? <b>출발</b>을 눌러 확인!",
   });
   host.append(goalChips, helper);
 
@@ -77,7 +77,7 @@ export const shipRaceLab: StepRenderer = (host, step, api) => {
   const mapBox = el("div", { class: "shr-map" });
   mapBox.innerHTML = `
   <svg viewBox="${CX0} ${CY0} ${CW} ${CH}" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
-    aria-label="부산에서 로테르담까지의 두 항로 지도 — 남방 항로(수에즈 운하)와 북동 항로(북극해)">
+    aria-label="부산에서 로테르담까지의 두 항로 지도, 남방 항로(수에즈 운하)와 북동 항로(북극해)">
     <defs>
       <radialGradient id="shr-sea" cx=".5" cy=".35" r="1"><stop offset="0" stop-color="#D9EDF8"/><stop offset="1" stop-color="#B8D8EC"/></radialGradient>
       <clipPath id="shr-clip"><rect x="${CX0}" y="${CY0}" width="${CW}" height="${CH}" rx="12"/></clipPath>
@@ -88,7 +88,7 @@ export const shipRaceLab: StepRenderer = (host, step, api) => {
       <path d="${WORLD_LAND_PATH}" fill="#F2ECDE" fill-rule="evenodd"/>
       <path d="${WORLD_LAND_PATH}" stroke="rgba(74,88,110,.45)" stroke-width=".7" fill="none" fill-rule="evenodd"/>
       <line x1="${CX0}" y1="${iceY.toFixed(1)}" x2="${CX0 + CW}" y2="${iceY.toFixed(1)}" stroke="#8AB4D8" stroke-width=".8" stroke-dasharray="3 4" opacity=".7"/>
-      <text x="${CX0 + 6}" y="${(iceY - 4).toFixed(1)}" font-size="8.5" font-weight="800" fill="#5A7A96">북극권 — 얼음 바다(녹는 시기에 열려요)</text>
+      <text x="${CX0 + 6}" y="${(iceY - 4).toFixed(1)}" font-size="8.5" font-weight="800" fill="#5A7A96">북극권, 얼음 바다(녹는 시기에 열려요)</text>
       <line x1="1000" y1="${CY0}" x2="1000" y2="${CY0 + CH}" stroke="#D8484C" stroke-width="1" stroke-dasharray="5 4" opacity=".6"/>
       <path d="${pathOf(ROUTE_SOUTH)}" stroke="#3F8FC8" stroke-width="2.2" stroke-dasharray="7 5" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
       <path d="${pathOf(ROUTE_NE)}" stroke="#E8590C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity=".92"/>
@@ -135,7 +135,7 @@ export const shipRaceLab: StepRenderer = (host, step, api) => {
   const facts = el("div", { class: "shr-facts" }, factNe, factS);
 
   const quizQ = el("div", { class: "msn-q", html: "북동 항로의 배가 <b>먼저 도착</b>한 까닭은 뭘까요?" });
-  const optA = el("button", { class: "msn-opt", attrs: { type: "button" }, html: "북극해를 가로질러 <b>거리가 더 짧아서</b> — 약 20,000km → 약 13,000km" });
+  const optA = el("button", { class: "msn-opt", attrs: { type: "button" }, html: "북극해를 가로질러 <b>거리가 더 짧아서</b>, 약 20,000km → 약 13,000km" });
   const optB = el("button", { class: "msn-opt", attrs: { type: "button" }, html: "북쪽의 차가운 바다에서는 <b>배가 더 빨리 달릴 수 있어서</b>" });
   const quizCard = el("div", { class: "msn-quiz" }, quizQ, optA, optB);
 
@@ -173,7 +173,7 @@ export const shipRaceLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "같은 배, 다른 길 — <b>북극해를 가로지르면 약 13,000km(약 35% 단축)</b>이라 열흘을 아껴요. 다만 이 길은 <b>북극의 얼음이 녹는 시기에만</b> 지날 수 있어서, 기후변화로 얼음이 줄며 더 주목받고 있답니다.";
+        "같은 배, 다른 길, <b>북극해를 가로지르면 약 13,000km(약 35% 단축)</b>이라 열흘을 아껴요. 다만 이 길은 <b>북극의 얼음이 녹는 시기에만</b> 지날 수 있어서, 기후변화로 얼음이 줄며 더 주목받고 있답니다.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }
@@ -187,14 +187,14 @@ export const shipRaceLab: StepRenderer = (host, step, api) => {
     optA.classList.add("ok");
     optB.classList.add("dim");
     haptic(HAPTIC.correct);
-    quizQ.innerHTML = "정답! 배의 속력은 비슷해요 — <b>길이 짧았던 것</b>뿐! 지구본에서 보면 북극해 길이 유럽까지의 지름길이랍니다.";
+    quizQ.innerHTML = "정답! 배의 속력은 비슷해요. <b>길이 짧았던 것</b>뿐! 지구본에서 보면 북극해 길이 유럽까지의 지름길이랍니다.";
     collect("why", "정답!");
   });
   optB.addEventListener("click", () => {
     if (quizDone) return;
     haptic(HAPTIC.wrong);
     optB.classList.add("no");
-    quizQ.innerHTML = "속력의 차이가 아니에요 — 두 배는 비슷한 빠르기로 달렸어요. 팩트 카드의 <b>거리</b>를 비교해 보고 다시!";
+    quizQ.innerHTML = "속력의 차이가 아니에요. 두 배는 비슷한 빠르기로 달렸어요. 팩트 카드의 <b>거리</b>를 비교해 보고 다시!";
     later(() => optB.classList.remove("no"), 700);
   });
 
@@ -218,17 +218,17 @@ export const shipRaceLab: StepRenderer = (host, step, api) => {
       /* SMIL 미지원 폴백 — 경주 없이 판독·판정으로 진행 */
     }
     collect("start", "출발!");
-    toast("두 배가 동시에 출발했어요 — 주황(북동)과 파랑(남방)!");
+    toast("두 배가 동시에 출발했어요. 주황(북동)과 파랑(남방)!");
     later(() => {
       host.dataset.shr = "ne-done";
       factNe.classList.add("win");
-      toast("북동 항로 도착! 약 30일 — 아직 남방 항로는 인도양이에요.");
+      toast("북동 항로 도착! 약 30일, 아직 남방 항로는 인도양이에요.");
       collect("ne", "약 30일!");
       haptic(HAPTIC.correct);
     }, DUR_NE * 1000);
     later(() => {
       host.dataset.shr = "done";
-      toast("남방 항로 도착 — 약 40일. 열흘 차이가 났어요!");
+      toast("남방 항로 도착, 약 40일. 열흘 차이가 났어요!");
       racing = false;
       goBtn.removeAttribute("disabled");
       (goBtn.querySelector("span") as HTMLElement).textContent = "다시 경주";

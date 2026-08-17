@@ -195,7 +195,7 @@ export function cosmoScreen(o: { onExit: () => void }): Screen {
   syncGalaxy();
   galaxyPill.addEventListener("click", () => {
     const n = galaxyCount();
-    showToast(n === 0 ? "내 은하 — 태양을 만들면 별이 하나씩 박혀요" : `내 은하 — 지금까지 태양 ${n}개를 만들었어요`);
+    showToast(n === 0 ? "내 은하, 태양을 만들면 별이 하나씩 박혀요" : `내 은하, 지금까지 태양 ${n}개를 만들었어요`);
     haptic(HAPTIC.tap);
   });
 

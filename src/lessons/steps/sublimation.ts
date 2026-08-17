@@ -44,7 +44,7 @@ export const sublimation: StepRenderer = (host, step, api) => {
       el("div", { class: "pill" }, el("span", { class: "pdot", style: `background:rgb(${ICE})` }), el("span", { text: "드라이아이스 -78℃" })),
     ),
     toastEl,
-    el("div", { class: "stage-cap", text: "고체 이산화 탄소예요 — 컵 바닥을 잘 보세요" }),
+    el("div", { class: "stage-cap", text: "고체 이산화 탄소예요. 컵 바닥을 잘 보세요" }),
   );
 
   const filmBtn = el(
@@ -93,7 +93,7 @@ export const sublimation: StepRenderer = (host, step, api) => {
     filmBtn.classList.remove("pulse");
     (filmBtn as HTMLButtonElement).disabled = true;
     haptic(HAPTIC.select);
-    toast("비누막 완성 — 이제 지켜봐요");
+    toast("비누막 완성, 이제 지켜봐요");
     helper.innerHTML = "이제 기다려요. 드라이아이스가 <b>줄어드는데</b>, 물웅덩이는 <b>안 생겨요</b>. 어디로 가는 걸까요?";
   });
 
@@ -120,7 +120,7 @@ export const sublimation: StepRenderer = (host, step, api) => {
         bulge = Math.min(1, bulge + 0.09);
         if (!noticedNoMelt && bulge > 0.3) {
           noticedNoMelt = true;
-          toast("녹은 물이 없어요 — 곧장 기체로!");
+          toast("녹은 물이 없어요. 곧장 기체로!");
           haptic(HAPTIC.cross);
         }
       }

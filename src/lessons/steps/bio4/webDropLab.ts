@@ -149,7 +149,7 @@ export const webDropLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "결론 — 다양성이 <b>높은</b> 생태계는 한 생물이 사라져도 <b>대신할 수 있는 생물</b>이 있어 안정적으로 유지되고, <b>낮은</b> 생태계는 한 고리만 끊겨도 연쇄적으로 흔들려요. <b>다양할수록 튼튼하다</b>!";
+        "결론, 다양성이 <b>높은</b> 생태계는 한 생물이 사라져도 <b>대신할 수 있는 생물</b>이 있어 안정적으로 유지되고, <b>낮은</b> 생태계는 한 고리만 끊겨도 연쇄적으로 흔들려요. <b>다양할수록 튼튼하다</b>!";
       api.enableCTA(s.cta ?? "정리하기");
     }
   }
@@ -170,7 +170,7 @@ export const webDropLab: StepRenderer = (host, step, api) => {
       });
       helper.innerHTML =
         wi === 0
-          ? "(가)의 매는 먹이가 <b>뱀 하나뿐</b>이에요 — 외길 인생! (나)의 매도 탭해 봐요."
+          ? "(가)의 매는 먹이가 <b>뱀 하나뿐</b>이에요. 외길 인생! (나)의 매도 탭해 봐요."
           : "(나)의 매는 <b>뱀과 참새, 두 갈래</b>에서 먹이를 얻어요. 이 차이를 기억하세요!";
       if (readSet.size === 2) {
         collect("read", "외길 vs 두 갈래");
@@ -186,17 +186,17 @@ export const webDropLab: StepRenderer = (host, step, api) => {
     predictShown = true;
     b4Ask(
       askBox,
-      "이제 실험 — 두 생태계에서 <b>개구리가 사라진다면</b>, 어느 쪽 <b>매</b>가 더 위험해질까요?",
+      "이제 실험, 두 생태계에서 <b>개구리가 사라진다면</b>, 어느 쪽 <b>매</b>가 더 위험해질까요?",
       [
-        { t: "(가) — 개구리가 사라지면 뱀이 굶고, 매의 유일한 먹이가 끊겨서", ok: true },
-        { t: "(나) — 생물이 많아서 혼란이 더 커질 것이므로", ok: false },
+        { t: "(가), 개구리가 사라지면 뱀이 굶고, 매의 유일한 먹이가 끊겨서", ok: true },
+        { t: "(나), 생물이 많아서 혼란이 더 커질 것이므로", ok: false },
         { t: "둘 다 아무 변화가 없다", ok: false },
       ],
       (ok) => {
         api.recordQuiz(ok);
         helper.innerHTML = ok
           ? "논리적인 예측! 정말 그런지 <b>버튼을 눌러</b> 개구리를 빼 봐요."
-          : "그물을 다시 봐요 — (가)의 매는 <b>뱀 외길</b>, (나)의 매는 <b>두 갈래</b>였죠. 버튼을 눌러 직접 확인해요!";
+          : "그물을 다시 봐요. (가)의 매는 <b>뱀 외길</b>, (나)의 매는 <b>두 갈래</b>였죠. 버튼을 눌러 직접 확인해요!";
         collect("predict", ok ? "적중!" : "확인 완료");
         dropBtn.disabled = false;
         later(() => dropBtn.scrollIntoView({ behavior: "smooth", block: "nearest" }), 120);
@@ -228,7 +228,7 @@ export const webDropLab: StepRenderer = (host, step, api) => {
         if (id === "sparrow-hawk" || id === "sparrow-snake" || id === "hopper-sparrow" || id === "moth-sparrow") e.classList.add("alt");
       });
       helper.innerHTML =
-        "(가)는 <b>뱀도 매도 위험</b>(먹이 사슬이 통째로 끊김) — (나)는 <b>참새를 지나는 대체 경로</b>가 살아 있어 뱀도 매도 버텨요!";
+        "(가)는 <b>뱀도 매도 위험</b>(먹이 사슬이 통째로 끊김), (나)는 <b>참새를 지나는 대체 경로</b>가 살아 있어 뱀도 매도 버텨요!";
       later(showResult, 1400);
     }, 900);
   });
@@ -239,7 +239,7 @@ export const webDropLab: StepRenderer = (host, step, api) => {
     resultShown = true;
     b4Ask(
       resBox,
-      "실험 결과 — (나)의 매가 버틸 수 있었던 까닭은 무엇일까요?",
+      "실험 결과, (나)의 매가 버틸 수 있었던 까닭은 무엇일까요?",
       [
         { t: "개구리를 대신할 수 있는 생물(참새 먹이 경로)이 있어서", ok: true },
         { t: "(나)의 매가 더 힘이 세서", ok: false },
@@ -247,8 +247,8 @@ export const webDropLab: StepRenderer = (host, step, api) => {
       ],
       (ok) => {
         helper.innerHTML = ok
-          ? "정확해요! <b>대신할 수 있는 생물</b>의 존재 — 그게 다양성이 높은 생태계의 안전망이에요."
-          : "힘의 문제가 아니에요 — (나)에는 개구리를 <b>대신할 먹이 경로(참새)</b>가 있었죠. 다양성이 곧 안전망이랍니다.";
+          ? "정확해요! <b>대신할 수 있는 생물</b>의 존재, 그게 다양성이 높은 생태계의 안전망이에요."
+          : "힘의 문제가 아니에요. (나)에는 개구리를 <b>대신할 먹이 경로(참새)</b>가 있었죠. 다양성이 곧 안전망이랍니다.";
         collect("result", "안전망!");
       },
     );

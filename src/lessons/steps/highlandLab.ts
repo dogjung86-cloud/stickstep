@@ -52,14 +52,14 @@ export const highlandLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "적도 부근의 동서 단면이에요. 지금은 <b>아마존 저지(이키토스)</b> — 푹푹 찌네요. 화면을 <b>위로 끌어</b> 산을 올라 보세요. 목표는 <b>키토의 높이</b>!",
+    html: "적도 부근의 동서 단면이에요. 지금은 <b>아마존 저지(이키토스)</b>, 푹푹 찌네요. 화면을 <b>위로 끌어</b> 산을 올라 보세요. 목표는 <b>키토의 높이</b>!",
   });
   host.append(goalChips, helper);
 
   // 고도·기온 리드아웃은 pill 하나가 담당(tempread HUD는 우상단 인셋 지도와 겹쳐 제거 — 눈검수).
   const canvas = el("canvas", { class: "spring-canvas", style: `height:${CVH}px` });
   const pdot = el("span", { class: "pdot", style: "background:#9A8CD8" });
-  const pillTxt = el("span", { text: "저지 100m — 26℃ 무더위" });
+  const pillTxt = el("span", { text: "저지 100m, 26℃ 무더위" });
   const stage = el("div", { class: "stage" }, canvas, el("div", { class: "stage-hud" }, el("div", { class: "pill" }, pdot, pillTxt)));
   const capEl = el("div", { class: "stage-cap", text: "화면을 위아래로 끌면 고도가 변해요 · 기온은 모형 계산 (지도의 보라 띠 = 고산 기후)" });
   stage.appendChild(capEl);
@@ -86,7 +86,7 @@ export const highlandLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "고도가 만든 기후! 위도가 같아도 <b>높이 올라가면 기온이 내려가요</b> — 그래서 적도의 안데스엔 <b>연중 서늘한 고산 기후</b>가 나타나고, 키토·보고타·라파스 같은 <b>고산 도시</b>가 일찍부터 발달했답니다.";
+        "고도가 만든 기후! 위도가 같아도 <b>높이 올라가면 기온이 내려가요</b>. 그래서 적도의 안데스엔 <b>연중 서늘한 고산 기후</b>가 나타나고, 키토·보고타·라파스 같은 <b>고산 도시</b>가 일찍부터 발달했답니다.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }
@@ -113,14 +113,14 @@ export const highlandLab: StepRenderer = (host, step, api) => {
     optA.classList.add("ok");
     optB.classList.add("dim");
     haptic(HAPTIC.correct);
-    quizQ.innerHTML = "정답! 덥고 습한 저지대보다 <b>서늘한 산 위가 생활하기 좋아서</b> — 일찍부터 사람이 모여 고산 도시가 발달했어요.";
+    quizQ.innerHTML = "정답! 덥고 습한 저지대보다 <b>서늘한 산 위가 생활하기 좋아서</b>, 일찍부터 사람이 모여 고산 도시가 발달했어요.";
     collect("why", "정답!");
   });
   optB.addEventListener("click", () => {
     if (quizDone) return;
     haptic(HAPTIC.wrong);
     optB.classList.add("no");
-    quizQ.innerHTML = "태양과 가까우면 따뜻할 것 같지만 <b>반대</b>예요 — 방금 올라오며 봤죠? 높이 올라갈수록 기온은 <b>내려가요</b>. 다시 골라 봐요!";
+    quizQ.innerHTML = "태양과 가까우면 따뜻할 것 같지만 <b>반대</b>예요. 방금 올라오며 봤죠? 높이 올라갈수록 기온은 <b>내려가요</b>. 다시 골라 봐요!";
     later(() => optB.classList.remove("no"), 700);
   });
 
@@ -199,15 +199,15 @@ export const highlandLab: StepRenderer = (host, step, api) => {
       quitoMs += dt * 1000;
       if (quitoMs > 1100 && !goals.has("quito")) {
         collect("quito", "도착!");
-        pillTxt.textContent = "키토의 높이! 2,850m — 13℃ 안팎";
+        pillTxt.textContent = "키토의 높이! 2,850m, 13℃ 안팎";
         snowToastAt = runMs; // 전용 문구가 일반 리드아웃에 바로 덮이지 않게 3초 유지(눈검수)
       }
     } else if (!goals.has("quito")) quitoMs = 0;
     if (hCur > 4800 && runMs - snowToastAt > 6000) {
       snowToastAt = runMs;
-      pillTxt.textContent = "만년설 구간 — 적도인데 눈이 쌓여요!";
+      pillTxt.textContent = "만년설 구간, 적도인데 눈이 쌓여요!";
     } else if (runMs - snowToastAt > 3000) {
-      pillTxt.textContent = `${hCur < 600 ? "저지" : hCur < 2200 ? "온화한 사면" : hCur < 4000 ? "고산 도시의 높이" : hCur < 4800 ? "고산 초원" : "만년설"} ${(Math.round(hCur / 10) * 10).toLocaleString()}m — ${T.toFixed(0)}℃`;
+      pillTxt.textContent = `${hCur < 600 ? "저지" : hCur < 2200 ? "온화한 사면" : hCur < 4000 ? "고산 도시의 높이" : hCur < 4800 ? "고산 초원" : "만년설"} ${(Math.round(hCur / 10) * 10).toLocaleString()}m, ${T.toFixed(0)}℃`;
     }
 
     const yb = yBaseOf(H);

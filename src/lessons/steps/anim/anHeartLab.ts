@@ -208,7 +208,7 @@ export const anHeartLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     pickedChamber = hit;
     tapped.add(hit.ventricle ? "ventricle" : "atrium");
-    say(`${hit.name} — 벽 두께 ${hit.wall}단계 · ${hit.role}`, 4600);
+    say(`${hit.name}, 벽 두께 ${hit.wall}단계 · ${hit.role}`, 4600);
     if (tapped.has("atrium") && tapped.has("ventricle") && !lab.has("wall")) {
       lab.collect("wall", "심실이 더 두꺼움");
     }
@@ -320,7 +320,7 @@ export const anHeartLab: StepRenderer = (host, step, api) => {
     ctx.textBaseline = "middle";
     ctx.fillStyle = "#FFFFFF";
     ctx.fillText(
-      phase === "fill" ? "이완 — 정맥 → 심방 → 심실" : phase === "eject" ? "수축 — 심실 → 동맥" : "버튼을 눌러 심장을 움직여 보세요",
+      phase === "fill" ? "이완, 정맥 → 심방 → 심실" : phase === "eject" ? "수축, 심실 → 동맥" : "버튼을 눌러 심장을 움직여 보세요",
       20, 392,
     );
     ctx.fillStyle = withAlpha("#FFFFFF", 0.7);

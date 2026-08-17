@@ -36,7 +36,7 @@ interface LayerInfo {
 const LAYERS: LayerInfo[] = [
   {
     id: "crust", name: "지각", depth: "지표 ~ 약 35 km", state: "고체",
-    desc: "가장 바깥의 얇은 층 — 여러 암석으로 이루어져요. 대륙 지각(평균 약 35 km)이 해양 지각(평균 약 5 km)보다 두꺼워요. 그림은 알아보기 쉽게 두껍게 그렸어요.",
+    desc: "가장 바깥의 얇은 층, 여러 암석으로 이루어져요. 대륙 지각(평균 약 35 km)이 해양 지각(평균 약 5 km)보다 두꺼워요. 그림은 알아보기 쉽게 두껍게 그렸어요.",
     color: "#9CC97E",
   },
   {
@@ -51,7 +51,7 @@ const LAYERS: LayerInfo[] = [
   },
   {
     id: "inner", name: "내핵", depth: "약 5100 ~ 6400 km(중심)", state: "고체(추정)",
-    desc: "지구의 중심 — 고체 상태로 추정해요. 외핵과 함께 지구에서 가장 밀도가 큰 부분이에요.",
+    desc: "지구의 중심, 고체 상태로 추정해요. 외핵과 함께 지구에서 가장 밀도가 큰 부분이에요.",
     color: "#FFE27A",
   },
 ];
@@ -150,7 +150,7 @@ export const earthCut3d: StepRenderer = (host, step, api) => {
     if (goals.size === LAYERS.length && !finished) {
       finished = true;
       helper.innerHTML =
-        "네 층 탐사 완료! 시추와 화산 분출물 조사로는 <b>지표 부근</b>만 알 수 있어요. 깊은 속은 지구 내부를 통과하는 <b>지진파 연구</b>로 알아냈답니다 — 그래서 외핵·내핵의 상태도 '추정'이에요.";
+        "네 층 탐사 완료! 시추와 화산 분출물 조사로는 <b>지표 부근</b>만 알 수 있어요. 깊은 속은 지구 내부를 통과하는 <b>지진파 연구</b>로 알아냈답니다. 그래서 외핵·내핵의 상태도 '추정'이에요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -173,7 +173,7 @@ export const earthCut3d: StepRenderer = (host, step, api) => {
     const { enterRotateStage } = await import("../../ui/rotateStage");
     if (disposed) return;
     rot = enterRotateStage({
-      title: "지구 내부 — 층을 탭해 탐사해요",
+      title: "지구 내부, 층을 탭해 탐사해요",
       onLeave: () => leave(),
     });
     const canvas = el("canvas", { class: "sp3-canvas" }) as HTMLCanvasElement;
@@ -189,7 +189,7 @@ export const earthCut3d: StepRenderer = (host, step, api) => {
     if (!st) {
       pillText.textContent = "이 기기는 3D를 지원하지 않아요";
       helper.innerHTML =
-        "3D를 켤 수 없어요. 글로 기억해요 — 지구 속은 <b>지각(고체·가장 얇음) → 맨틀(고체·부피 80 %) → 외핵(액체 추정) → 내핵(고체 추정)</b> 네 층이에요.";
+        "3D를 켤 수 없어요. 글로 기억해요. 지구 속은 <b>지각(고체·가장 얇음) → 맨틀(고체·부피 80 %) → 외핵(액체 추정) → 내핵(고체 추정)</b> 네 층이에요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       return;
@@ -318,7 +318,7 @@ export const earthCut3d: StepRenderer = (host, step, api) => {
         `<div class="ic-row"><b>깊이</b>${L.depth}</div>` +
         `<div class="ic-row"><b>상태</b>${L.state}</div>` +
         `<div class="ic-desc">${L.desc}</div>`;
-      pillText.textContent = `${L.name} — ${L.state}`;
+      pillText.textContent = `${L.name}, ${L.state}`;
       collect(L.id, L.state);
     }
 
@@ -362,7 +362,7 @@ export const earthCut3d: StepRenderer = (host, step, api) => {
       enterBtn.querySelector("span")!.textContent = "다시 열어 보기";
       enterBtn.classList.remove("pulse");
     } else {
-      helper.innerHTML = "아직 탐사하지 못한 층이 있어요 — 다시 열어서 <b>네 층을 모두</b> 눌러 봐요!";
+      helper.innerHTML = "아직 탐사하지 못한 층이 있어요. 다시 열어서 <b>네 층을 모두</b> 눌러 봐요!";
     }
   }
 

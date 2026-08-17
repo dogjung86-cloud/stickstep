@@ -104,7 +104,7 @@ function selfruleSvg(mode: "none" | "direct" | "rep"): string {
   }
   return wrap(`
     ${citizen(48, 64, true, "ok")}${citizen(96, 60, true, "ok")}${citizen(144, 60, true, "ok")}${citizen(192, 64, true, "ok")}
-    <text x="120" y="118" text-anchor="middle" font-size="11" font-weight="800" fill="#7E8AA0">주인이 된 국민 — 나라는 누가 다스리죠?</text>
+    <text x="120" y="118" text-anchor="middle" font-size="11" font-weight="800" fill="#7E8AA0">주인이 된 국민, 나라는 누가 다스리죠?</text>
   `);
 }
 
@@ -214,21 +214,21 @@ const PHASES: Phase[] = [
     id: "sovereign",
     fileLabel: "첫 번째 장치",
     prop: "국민 주권",
-    intro: "스틱 왕국 — 큰 왕관을 쓴 한 사람이 명령 두루마리로 모든 것을 정하고 있어요. 아래 <b>주권 옮기기</b> 버튼으로 나라의 주인을 바꿔 봐요.",
+    intro: "스틱 왕국, 큰 왕관을 쓴 한 사람이 명령 두루마리로 모든 것을 정하고 있어요. 아래 <b>주권 옮기기</b> 버튼으로 나라의 주인을 바꿔 봐요.",
     q: "나라의 뜻을 정하는 최고의 힘은 누구에게 있어야 할까요?",
     options: ["국민 모두에게", "가장 힘센 한 사람에게"],
-    good: "맞아요! 국가의 의사를 결정하는 최고 권력, <b>주권이 국민에게</b> 있다는 원리 — <b>국민 주권</b>이에요. 모든 국가 권력은 국민의 동의와 지지를 바탕으로 해야 하죠.",
-    wrong: "한 사람이 최고의 힘을 쥐면 그 힘이 국민의 자유와 권리를 억누를 때 막을 방법이 없어요 — 방금 시무룩하던 시민들처럼요. 다시 골라 봐요!",
+    good: "맞아요! 국가의 의사를 결정하는 최고 권력, <b>주권이 국민에게</b> 있다는 원리, <b>국민 주권</b>이에요. 모든 국가 권력은 국민의 동의와 지지를 바탕으로 해야 하죠.",
+    wrong: "한 사람이 최고의 힘을 쥐면 그 힘이 국민의 자유와 권리를 억누를 때 막을 방법이 없어요. 방금 시무룩하던 시민들처럼요. 다시 골라 봐요!",
   },
   {
     id: "selfrule",
     fileLabel: "두 번째 장치",
     prop: "국민 자치",
-    intro: "주인이 된 국민 — 그럼 나랏일은 누가 다스리죠? <b>두 가지 방법을 모두</b> 눌러 체험해 봐요.",
+    intro: "주인이 된 국민, 그럼 나랏일은 누가 다스리죠? <b>두 가지 방법을 모두</b> 눌러 체험해 봐요.",
     q: "방금 체험한 두 방법(직접 정하기 · 대표 뽑아 맡기기)의 공통점은 무엇일까요?",
     options: ["주권을 가진 국민이 스스로 나라를 다스린다", "누군가 국민 대신 마음대로 정해 준다"],
-    good: "정확해요! 모두 모여 직접 정하든(직접 민주주의), 대표를 뽑아 맡기든(간접 민주주의) — <b>주권을 가진 국민이 스스로 다스린다</b>는 원리, <b>국민 자치</b>예요.",
-    wrong: "대표를 뽑는 쪽도 '마음대로'가 아니에요 — 국민이 뽑고, 국민이 지켜보죠. 두 방법 다 다스리는 힘의 뿌리는 국민이랍니다. 다시 골라 봐요!",
+    good: "정확해요! 모두 모여 직접 정하든(직접 민주주의), 대표를 뽑아 맡기든(간접 민주주의), <b>주권을 가진 국민이 스스로 다스린다</b>는 원리, <b>국민 자치</b>예요.",
+    wrong: "대표를 뽑는 쪽도 '마음대로'가 아니에요. 국민이 뽑고, 국민이 지켜보죠. 두 방법 다 다스리는 힘의 뿌리는 국민이랍니다. 다시 골라 봐요!",
   },
   {
     id: "constitution",
@@ -237,18 +237,18 @@ const PHASES: Phase[] = [
     intro: "그런데 뽑힌 대표가 명령 두루마리를 마구 뿌리기 시작했어요! <b>최고 규칙 세우기</b> 버튼으로 대표보다 높은 규칙을 올려 봐요.",
     q: "나라의 가장 높은 자리에 올린 이 '최고 규칙'이 하는 일은 무엇일까요?",
     options: ["국가기관을 구성하고 권력을 행사하는 기준이 된다", "대표가 더 마음대로 하도록 도와준다"],
-    good: "그거예요! 이 최고 규칙의 이름이 <b>헌법</b> — 헌법에 따라 국가기관을 만들고 권력을 행사해야 한다는 원리가 <b>입헌주의</b>예요. 권력의 남용을 막는 울타리죠.",
-    wrong: "방향이 반대예요 — 최고 규칙은 대표 '위'에 있어요. 대표의 힘이 규칙 아래에 놓이는 순간, 마음대로 뿌리던 두루마리가 멈췄죠. 다시 골라 봐요!",
+    good: "그거예요! 이 최고 규칙의 이름이 <b>헌법</b>, 헌법에 따라 국가기관을 만들고 권력을 행사해야 한다는 원리가 <b>입헌주의</b>예요. 권력의 남용을 막는 울타리죠.",
+    wrong: "방향이 반대예요. 최고 규칙은 대표 '위'에 있어요. 대표의 힘이 규칙 아래에 놓이는 순간, 마음대로 뿌리던 두루마리가 멈췄죠. 다시 골라 봐요!",
   },
   {
     id: "separate",
     fileLabel: "네 번째 장치",
     prop: "권력 분립",
-    intro: "마지막 위험 — 법을 만들고, 집행하고, 재판하는 힘이 전부 한곳에 쌓여 있어요! <b>일 나누기</b>를 세 번 눌러 힘을 나눠 봐요.",
+    intro: "마지막 위험, 법을 만들고, 집행하고, 재판하는 힘이 전부 한곳에 쌓여 있어요! <b>일 나누기</b>를 세 번 눌러 힘을 나눠 봐요.",
     q: "국가의 힘을 서로 다른 기관이 나누어 맡게 하는 까닭은 무엇일까요?",
     options: ["서로 견제하며 균형을 이루어 권력의 남용을 막으려고", "일을 세 배 빠르게 끝내려고"],
-    good: "정확해요! 법을 만드는 <b>입법부</b>, 집행하는 <b>행정부</b>, 적용·재판하는 <b>사법부</b>가 서로 <b>견제와 균형</b>을 이루게 하는 원리 — <b>권력 분립</b>이에요. 한곳에 모인 힘은 남용되기 쉬우니까요.",
-    wrong: "속도의 문제가 아니에요 — 오히려 서로 확인하느라 느려질 수도 있죠. 그래도 나누는 까닭은 한곳에 모인 힘이 국민의 자유와 권리를 침해하기 쉽기 때문이랍니다. 다시 골라 봐요!",
+    good: "정확해요! 법을 만드는 <b>입법부</b>, 집행하는 <b>행정부</b>, 적용·재판하는 <b>사법부</b>가 서로 <b>견제와 균형</b>을 이루게 하는 원리, <b>권력 분립</b>이에요. 한곳에 모인 힘은 남용되기 쉬우니까요.",
+    wrong: "속도의 문제가 아니에요. 오히려 서로 확인하느라 느려질 수도 있죠. 그래도 나누는 까닭은 한곳에 모인 힘이 국민의 자유와 권리를 침해하기 쉽기 때문이랍니다. 다시 골라 봐요!",
   },
 ];
 
@@ -356,7 +356,7 @@ export const principleLab: StepRenderer = (host, step, api) => {
       fileTag.textContent = "설계도 완성";
       refreshScene(templeSvg());
       helper.innerHTML =
-        "네 기둥이 전부 섰어요 — 그 위에 지붕이 얹혔네요. 이 신전이 지키려는 것이 무엇인지, 마지막 판정이에요!";
+        "네 기둥이 전부 섰어요. 그 위에 지붕이 얹혔네요. 이 신전이 지키려는 것이 무엇인지, 마지막 판정이에요!";
       setChip("roof", "판정 중");
       later(openQuiz, 900);
       return;
@@ -379,7 +379,7 @@ export const principleLab: StepRenderer = (host, step, api) => {
           quizOpen = false;
           setChip("roof", "완성!");
           helper.innerHTML =
-            "완성! 국민 주권·국민 자치·입헌주의·권력 분립 — 네 기둥이 받치는 지붕이 <b>인간의 존엄성·자유·평등</b>이에요. 원리는 이념을 지키는 장치랍니다!";
+            "완성! 국민 주권·국민 자치·입헌주의·권력 분립, 네 기둥이 받치는 지붕이 <b>인간의 존엄성·자유·평등</b>이에요. 원리는 이념을 지키는 장치랍니다!";
           api.recordQuiz(clean);
           api.enableCTA(s.cta ?? "설계도 정리하기");
           return;
@@ -392,7 +392,7 @@ export const principleLab: StepRenderer = (host, step, api) => {
         haptic(HAPTIC.wrong);
         btn.classList.add("no");
         helper.innerHTML = finaleMode
-          ? "속도라면 오히려 한 사람이 다 정하는 쪽이 빠르겠죠 — 그런데도 넷으로 나눠 지킨 것은 사람이에요. 다시 골라 봐요!"
+          ? "속도라면 오히려 한 사람이 다 정하는 쪽이 빠르겠죠. 그런데도 넷으로 나눠 지킨 것은 사람이에요. 다시 골라 봐요!"
           : PHASES[phase].wrong;
         later(() => btn.classList.remove("no"), 900);
       }
@@ -407,7 +407,7 @@ export const principleLab: StepRenderer = (host, step, api) => {
     controls.innerHTML = "";
     if (PHASES[phase].id === "sovereign") {
       refreshScene(sovereignSvg(false));
-      const b = actBtn("주권 옮기기 — 나라의 주인은 국민!");
+      const b = actBtn("주권 옮기기, 나라의 주인은 국민!");
       controls.appendChild(b);
       b.addEventListener("click", () => {
         if (phaseReady) return;
@@ -416,7 +416,7 @@ export const principleLab: StepRenderer = (host, step, api) => {
         refreshScene(sovereignSvg(true));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "큰 왕관이 사라지고 — 시민들 머리 위에 <b>작은 왕관이 하나씩</b>! 모두가 주인이 된 나라예요. 아래에서 뜻을 골라 봐요.";
+        helper.innerHTML = "큰 왕관이 사라지고, 시민들 머리 위에 <b>작은 왕관이 하나씩</b>! 모두가 주인이 된 나라예요. 아래에서 뜻을 골라 봐요.";
         later(openQuiz, 800);
       });
     } else if (PHASES[phase].id === "selfrule") {
@@ -443,10 +443,10 @@ export const principleLab: StepRenderer = (host, step, api) => {
         }
       };
       b1.addEventListener("click", () =>
-        tryMode("direct", b1, "광장에 모두 모여 <b>직접</b> 정했어요 — 아주 먼 옛날 아테네가 이 방식이었죠. 이제 다른 방법도 눌러 봐요!"),
+        tryMode("direct", b1, "광장에 모두 모여 <b>직접</b> 정했어요. 아주 먼 옛날 아테네가 이 방식이었죠. 이제 다른 방법도 눌러 봐요!"),
       );
       b2.addEventListener("click", () =>
-        tryMode("rep", b2, "투표로 <b>대표를 뽑아</b> 나랏일을 맡겼어요 — 국민은 대표를 지켜보고 있고요. 오늘날 대부분 나라의 방식이에요!"),
+        tryMode("rep", b2, "투표로 <b>대표를 뽑아</b> 나랏일을 맡겼어요. 국민은 대표를 지켜보고 있고요. 오늘날 대부분 나라의 방식이에요!"),
       );
     } else if (PHASES[phase].id === "constitution") {
       refreshScene(constitutionSvg(false));
@@ -459,7 +459,7 @@ export const principleLab: StepRenderer = (host, step, api) => {
         refreshScene(constitutionSvg(true));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "가장 높은 자리에 <b>파란 큰 책</b>이 올라갔어요 — 대표도 그 아래! 마구 날리던 두루마리가 멈췄네요. 이 책의 정체를 골라 봐요.";
+        helper.innerHTML = "가장 높은 자리에 <b>파란 큰 책</b>이 올라갔어요. 대표도 그 아래! 마구 날리던 두루마리가 멈췄네요. 이 책의 정체를 골라 봐요.";
         later(openQuiz, 800);
       });
     } else {
@@ -468,9 +468,9 @@ export const principleLab: StepRenderer = (host, step, api) => {
       const b = actBtn("일 나누기 (0/3)");
       controls.appendChild(b);
       const msgs = [
-        "첫 번째 기둥 — <b>법을 만드는 일</b>이 독립했어요!",
-        "두 번째 기둥 — <b>법을 집행하는 일</b>이 독립했어요!",
-        "세 번째 기둥 — <b>법을 적용해 재판하는 일</b>까지! 세 기둥 사이에 서로 지켜보는 화살표가 생겼어요.",
+        "첫 번째 기둥, <b>법을 만드는 일</b>이 독립했어요!",
+        "두 번째 기둥, <b>법을 집행하는 일</b>이 독립했어요!",
+        "세 번째 기둥, <b>법을 적용해 재판하는 일</b>까지! 세 기둥 사이에 서로 지켜보는 화살표가 생겼어요.",
       ];
       b.addEventListener("click", () => {
         if (phaseReady) return;

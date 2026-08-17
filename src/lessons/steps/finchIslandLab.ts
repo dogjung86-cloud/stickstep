@@ -445,7 +445,7 @@ export const finchIslandLab: StepRenderer = (host, step, api) => {
     if (meetT > 0) meetT = Math.min(1, meetT + dt * 0.012);
 
     if (phase === "vary") {
-      drawGround(ctx, LAND, "#12B886", "육지 — 한 종류의 무리", "none");
+      drawGround(ctx, LAND, "#12B886", "육지, 한 종류의 무리", "none");
       for (const b of mainland) {
         b.x += (b.tx - b.x) * Math.min(1, dt * 0.12);
         b.y += (b.ty - b.y) * Math.min(1, dt * 0.12);
@@ -455,12 +455,12 @@ export const finchIslandLab: StepRenderer = (host, step, api) => {
       ctx.textAlign = "center";
       ctx.font = `700 ${sc(12.5)}px Pretendard, sans-serif`;
       ctx.fillStyle = "#93A9C6";
-      ctx.fillText("부리가 세 가지예요 — 눌러서 확인해 보세요", sc(BASE_W / 2), sc(214));
+      ctx.fillText("부리가 세 가지예요. 눌러서 확인해 보세요", sc(BASE_W / 2), sc(214));
       ctx.restore();
     } else {
       const meeting = phase === "done";
-      drawGround(ctx, meeting ? { x: 30, y: 70, w: 128, h: 92 } : A_BOX, SEED_COLOR, meeting ? "섬 (가) 무리" : "섬 (가) — 단단한 씨앗", meeting ? "none" : "seed");
-      drawGround(ctx, meeting ? { x: 202, y: 70, w: 128, h: 92 } : B_BOX, BUG_COLOR, meeting ? "섬 (나) 무리" : "섬 (나) — 작은 곤충", meeting ? "none" : "bug");
+      drawGround(ctx, meeting ? { x: 30, y: 70, w: 128, h: 92 } : A_BOX, SEED_COLOR, meeting ? "섬 (가) 무리" : "섬 (가), 단단한 씨앗", meeting ? "none" : "seed");
+      drawGround(ctx, meeting ? { x: 202, y: 70, w: 128, h: 92 } : B_BOX, BUG_COLOR, meeting ? "섬 (나) 무리" : "섬 (나), 작은 곤충", meeting ? "none" : "bug");
       for (const f of fading) {
         f.t = Math.max(0, f.t - dt * 0.02);
         if (f.t > 0) drawBird(ctx, f.kind, f.x, f.y, tMs, 0, f.t * 0.55);

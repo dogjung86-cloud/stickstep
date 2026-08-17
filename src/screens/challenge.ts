@@ -81,7 +81,7 @@ export function challengeScreen(o: {
     );
     card.addEventListener("click", () => {
       haptic(HAPTIC.tap);
-      snack("준비 중이에요 — 곧 열려요");
+      snack("준비 중이에요. 곧 열려요");
     });
     return card;
   }
@@ -133,7 +133,7 @@ export function challengeScreen(o: {
     card.addEventListener("click", () => {
       haptic(HAPTIC.tap);
       if (!onPlay) {
-        snack("준비 중이에요 — 곧 열려요");
+        snack("준비 중이에요. 곧 열려요");
         return;
       }
       // ① 비프리미엄은 요금 없이 통과 — main.ts 게이트가 페이월을 띄운다
@@ -145,11 +145,11 @@ export function challengeScreen(o: {
       //    막힐 판에 스텝부터 걷지 않는다)
       if (!isReviewMode()) {
         if (playsToday() >= PLAY_CAP) {
-          snack("오늘 쉬는 시간은 끝났어요 — 내일 다시 열려요!");
+          snack("오늘 쉬는 시간은 끝났어요. 내일 다시 열려요!");
           return;
         }
         if (!spendXp(GAME_FEE)) {
-          snack(`스텝이 ${GAME_FEE} 필요해요 — 레슨을 완주하면 스텝이 쌓여요!`);
+          snack(`스텝이 ${GAME_FEE} 필요해요. 레슨을 완주하면 스텝이 쌓여요!`);
           return;
         }
         countPlay();

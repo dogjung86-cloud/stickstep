@@ -88,7 +88,7 @@ export const heatCurve: StepRenderer = (host, step, api) => {
   const helper = el("div", {
     class: "helper",
     html: heatMode
-      ? "버튼을 꾹 누르는 동안 <b>-20℃ 얼음</b>이 가열돼요. 그래프의 온도 곡선을 잘 보세요 — 어딘가에서 <b>이상한 일</b>이 벌어져요."
+      ? "버튼을 꾹 누르는 동안 <b>-20℃ 얼음</b>이 가열돼요. 그래프의 온도 곡선을 잘 보세요. 어딘가에서 <b>이상한 일</b>이 벌어져요."
       : "버튼을 꾹 누르는 동안 <b>120℃ 수증기</b>가 식어요. 온도가 <b>내려가다 멈추는 곳</b>이 있는지 잘 보세요.",
   });
   host.append(helper, stage.el, graphWrap, actBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
@@ -119,37 +119,37 @@ export const heatCurve: StepRenderer = (host, step, api) => {
   const ZONE_MSG: Record<string, { toast: string; helper: string }> = heatMode
     ? {
         melt: {
-          toast: "0℃ — 온도가 멈췄어요!",
-          helper: "가열 중인데 온도가 <b>0℃에서 꼼짝도 안 해요</b>. 흡수한 열에너지가 전부 <b>얼음→물 상태 변화</b>에 쓰이고 있거든요. 무대를 보세요 — 얼음이 녹는 중!",
+          toast: "0℃, 온도가 멈췄어요!",
+          helper: "가열 중인데 온도가 <b>0℃에서 꼼짝도 안 해요</b>. 흡수한 열에너지가 전부 <b>얼음→물 상태 변화</b>에 쓰이고 있거든요. 무대를 보세요. 얼음이 녹는 중!",
         },
         water: {
-          toast: "다 녹았다 — 온도가 다시 올라요",
+          toast: "다 녹았다. 온도가 다시 올라요",
           helper: "얼음이 전부 물이 되자 온도가 <b>다시 오르기 시작</b>했어요. 이제 흡수한 열에너지가 온도를 올리는 데 쓰여요.",
         },
         boil: {
-          toast: "100℃ — 또 멈췄어요!",
+          toast: "100℃, 또 멈췄어요!",
           helper: "이번엔 <b>100℃에서 멈춤</b>! 열에너지가 전부 <b>물→수증기 상태 변화</b>에 쓰이는 중이에요. 아무리 세게 끓여도 물은 100℃를 넘지 않아요.",
         },
         steam: {
-          toast: "다 끓었다 — 온도가 다시 올라요",
-          helper: "전부 수증기가 되자 온도가 다시 올라요. 수평 구간 두 개 — 이게 오늘의 발견이에요!",
+          toast: "다 끓었다. 온도가 다시 올라요",
+          helper: "전부 수증기가 되자 온도가 다시 올라요. 수평 구간 두 개, 이게 오늘의 발견이에요!",
         },
       }
     : {
         boil: {
-          toast: "100℃ — 온도가 멈췄어요!",
+          toast: "100℃, 온도가 멈췄어요!",
           helper: "식는 중인데 온도가 <b>100℃에서 멈췄어요</b>. 수증기가 물이 되면서(액화) <b>열에너지를 방출</b>해 온도를 붙잡고 있는 거예요.",
         },
         water: {
-          toast: "다 액화됐다 — 다시 식어요",
+          toast: "다 액화됐다. 다시 식어요",
           helper: "수증기가 전부 물이 되자 온도가 다시 내려가요.",
         },
         melt: {
-          toast: "0℃ — 또 멈췄어요!",
+          toast: "0℃, 또 멈췄어요!",
           helper: "이번엔 <b>0℃에서 멈춤</b>! 물이 얼면서(응고) <b>열에너지를 방출</b>하고 있어요. 사과나무에 물을 뿌리는 이유가 바로 이거예요.",
         },
         ice: {
-          toast: "다 얼었다 — 다시 식어요",
+          toast: "다 얼었다. 다시 식어요",
           helper: "전부 얼음이 되자 온도가 다시 내려가요. 방출 방향에서도 수평 구간은 두 개!",
         },
       };
@@ -253,11 +253,11 @@ export const heatCurve: StepRenderer = (host, step, api) => {
     const progressed = (heatMode ? E : E_MAX - E) / E_MAX;
     if (plateausSeen.has("melt") || progressed > (heatMode ? E_MELT : E_MAX - E_ICE) / E_MAX) {
       ctx.fillStyle = "rgba(220,236,255,.85)";
-      ctx.fillText(heatMode ? "융해 — 온도 일정" : "응고 — 온도 일정", meltX, yOf(0) - 8);
+      ctx.fillText(heatMode ? "융해, 온도 일정" : "응고, 온도 일정", meltX, yOf(0) - 8);
     }
     if (plateausSeen.has("boil") || progressed > (heatMode ? E_BOIL : E_MAX - E_WATER) / E_MAX) {
       ctx.fillStyle = "rgba(255,224,214,.9)";
-      ctx.fillText(heatMode ? "기화 — 온도 일정" : "액화 — 온도 일정", boilX, yOf(100) - 8);
+      ctx.fillText(heatMode ? "기화, 온도 일정" : "액화, 온도 일정", boilX, yOf(100) - 8);
     }
   }
 

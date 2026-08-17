@@ -85,14 +85,14 @@ export const seasonLab: StepRenderer = (host, step, api) => {
     },
   });
   const pdot = el("span", { class: "pdot", style: "background:#FFC24D" });
-  const pillTxt = el("span", { text: "3월 — 둘 다 봄가을 날씨" });
+  const pillTxt = el("span", { text: "3월, 둘 다 봄가을 날씨" });
   const stage = el("div", { class: "stage" }, canvas, el("div", { class: "stage-hud" }, el("div", { class: "pill" }, pdot, pillTxt)));
   const capEl = el("div", { class: "stage-cap", text: "좌우로 끌면 지구가 공전해요 · 옷차림·계절 표현은 모형" });
   stage.appendChild(capEl);
 
   // 판정 카드 — msn 문법(monsoonLab 계보)
   const quizQ = el("div", { class: "msn-q", html: "오스트레일리아의 <b>12월(크리스마스)</b>이 한여름인 까닭은 뭘까요?" });
-  const optA = el("button", { class: "msn-opt", attrs: { type: "button" }, html: "지구가 <b>기울어진 채 공전</b>해서 — 12월엔 남반구가 태양 쪽으로 기울어요" });
+  const optA = el("button", { class: "msn-opt", attrs: { type: "button" }, html: "지구가 <b>기울어진 채 공전</b>해서, 12월엔 남반구가 태양 쪽으로 기울어요" });
   const optB = el("button", { class: "msn-opt", attrs: { type: "button" }, html: "12월엔 지구가 태양과 <b>더 가까워져서</b>" });
   const quizCard = el("div", { class: "msn-quiz" }, quizQ, optA, optB);
 
@@ -130,7 +130,7 @@ export const seasonLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "지구가 <b>기울어진 채 공전</b>하니, 12월엔 남반구가·6월엔 북반구가 태양 쪽으로 기울어요 — 그래서 <b>남반구와 북반구는 계절이 반대</b>! 오스트레일리아의 밀이 12~2월에 익는 것도, 산타가 서핑을 하는 것도 이 기울기 덕분이에요.";
+        "지구가 <b>기울어진 채 공전</b>하니, 12월엔 남반구가·6월엔 북반구가 태양 쪽으로 기울어요. 그래서 <b>남반구와 북반구는 계절이 반대</b>! 오스트레일리아의 밀이 12~2월에 익는 것도, 산타가 서핑을 하는 것도 이 기울기 덕분이에요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }
@@ -148,14 +148,14 @@ export const seasonLab: StepRenderer = (host, step, api) => {
     optA.classList.add("ok");
     optB.classList.add("dim");
     haptic(HAPTIC.correct);
-    quizQ.innerHTML = "정답! 방금 실험 그대로예요 — <b>12월엔 남반구가 태양 쪽으로 기울어</b> 햇빛을 집중해서 받아요. 그래서 계절이 우리와 반대랍니다.";
+    quizQ.innerHTML = "정답! 방금 실험 그대로예요. <b>12월엔 남반구가 태양 쪽으로 기울어</b> 햇빛을 집중해서 받아요. 그래서 계절이 우리와 반대랍니다.";
     collect("why", "정답!");
   });
   optB.addEventListener("click", () => {
     if (quizDone) return;
     haptic(HAPTIC.wrong);
     optB.classList.add("no");
-    quizQ.innerHTML = "거리 때문이 아니에요 — 놀랍게도 지구는 <b>1월에 태양과 가장 가까워요</b>! 계절을 만드는 건 <b>기울기</b>: 게이지가 뒤집히던 순간을 떠올리며 다시!";
+    quizQ.innerHTML = "거리 때문이 아니에요. 놀랍게도 지구는 <b>1월에 태양과 가장 가까워요</b>! 계절을 만드는 건 <b>기울기</b>: 게이지가 뒤집히던 순간을 떠올리며 다시!";
     later(() => optB.classList.remove("no"), 700);
   });
 
@@ -304,11 +304,11 @@ export const seasonLab: StepRenderer = (host, step, api) => {
     const tick = dt * 16.7;
     if (showPhase <= Math.PI * 0.1) {
       decMs += tick;
-      if (decMs > 400) collect("dec", "여름!", "12월 — 시드니가 여름! 남반구가 태양 쪽으로 기울었어요");
+      if (decMs > 400) collect("dec", "여름!", "12월, 시드니가 여름! 남반구가 태양 쪽으로 기울었어요");
     } else decMs = 0;
     if (showPhase >= Math.PI * 0.9) {
       junMs += tick;
-      if (junMs > 400) collect("jun", "겨울!", "6월 — 이번엔 시드니가 겨울! 계절이 통째로 뒤집혔죠");
+      if (junMs > 400) collect("jun", "겨울!", "6월, 이번엔 시드니가 겨울! 계절이 통째로 뒤집혔죠");
     } else junMs = 0;
 
     // 1) 오른쪽 빛 유입 글로우 + 평행 광선 다발(latSun 시각 언어)
@@ -492,7 +492,7 @@ export const seasonLab: StepRenderer = (host, step, api) => {
     const fN = Math.max(0, Math.cos(rad(LAT_N - delta)));
     const fS = Math.max(0, Math.cos(rad(LAT_S - delta)));
     const seasonOf = (f: number): string => (f >= 0.85 ? "여름" : f < 0.6 ? "겨울" : "봄가을");
-    const pillNow = `${monthOf(showPhase)} — 서울 ${seasonOf(fN)} · 시드니 ${seasonOf(fS)}`;
+    const pillNow = `${monthOf(showPhase)}, 서울 ${seasonOf(fN)} · 시드니 ${seasonOf(fS)}`;
     if (pillNow !== shownPill) {
       shownPill = pillNow;
       pillTxt.textContent = pillNow;

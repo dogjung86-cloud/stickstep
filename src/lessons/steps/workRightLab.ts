@@ -81,7 +81,7 @@ function aloneSvg(tried: boolean): string {
     <rect x="124" y="66" width="30" height="20" rx="3" fill="url(#wrl-paper)" stroke="#8A93A6" stroke-width="1.3"/>
     <path d="M129 72h20M129 78h14" stroke="#B8C2CE" stroke-width="1.5" stroke-linecap="round"/>
     ${voice}
-    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${tried ? "목소리가 책상을 넘지 못해요 — 저울이 기울어 있어요" : "근로 조건을 바꾸고 싶은데, 혼자 마주 앉으면?"}</text>`);
+    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${tried ? "목소리가 책상을 넘지 못해요. 저울이 기울어 있어요" : "근로 조건을 바꾸고 싶은데, 혼자 마주 앉으면?"}</text>`);
 }
 
 // ① 단결권 — 흩어진 점들이 하나의 원으로
@@ -107,7 +107,7 @@ function unionSvg(step: number): string {
     ${miniScale(step >= 2 ? -6 : -10)}
     ${pos.map(([x, y]) => stickman(x, y, { mood: step >= 2 ? "joy" : "ok", arm: step >= 2 ? "up" : "out", r: 5.8 })).join("")}
     ${ring}
-    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${step >= 2 ? "하나의 단체가 됐어요 — 노동조합!" : step === 1 ? "한 사람씩 모여들어요 — 한 번 더!" : "같은 고민을 하는 사람들이 흩어져 있어요"}</text>`);
+    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${step >= 2 ? "하나의 단체가 됐어요. 노동조합!" : step === 1 ? "한 사람씩 모여들어요. 한 번 더!" : "같은 고민을 하는 사람들이 흩어져 있어요"}</text>`);
 }
 
 // ② 단체 교섭권 — 같은 높이의 테이블에 마주 앉다
@@ -128,7 +128,7 @@ function bargainSvg(done: boolean): string {
     <rect x="108" y="58" width="26" height="16" rx="3" fill="url(#wrl-paper)" stroke="#8A93A6" stroke-width="1.3"/>
     <path d="M112 63h18M112 68h12" stroke="#B8C2CE" stroke-width="1.4" stroke-linecap="round"/>
     ${talk}
-    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${done ? "같은 높이에서 조건을 이야기해요 — 저울이 수평!" : "이제 노동조합의 이름으로 마주 앉아요"}</text>`);
+    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${done ? "같은 높이에서 조건을 이야기해요. 저울이 수평!" : "이제 노동조합의 이름으로 마주 앉아요"}</text>`);
 }
 
 // ③ 단체 행동권 — 절차를 거친 담담한 멈춤 → 재교섭 → 악수
@@ -152,7 +152,7 @@ function actionSvg(step: number): string {
       <path d="M92 60h56M92 70h44M92 80h50" stroke="#C8D2DE" stroke-width="1.8" stroke-linecap="round"/>
       <g class="hs8-noti"><circle cx="146" cy="86" r="7.4" fill="#AE3EC9"/><path d="M142.4 86l2.6 2.8 4.4-5.2" stroke="#FFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>
       ${stickman(52, 76, { mood: "ok", r: 6 })}
-      <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">먼저 법이 정한 절차를 밟아요 — 아무 때나가 아니에요</text>`);
+      <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">먼저 법이 정한 절차를 밟아요. 아무 때나가 아니에요</text>`);
   }
   if (step === 2) {
     // 담담한 멈춤 — 어두워진 작업대, 나란히 서서 기다림(구호·팻말 0)
@@ -165,7 +165,7 @@ function actionSvg(step: number): string {
       ${stickman(70, 112, { mood: "ok", arm: "down", r: 5.6 })}
       ${stickman(104, 112, { mood: "ok", arm: "down", r: 5.6 })}
       ${stickman(138, 112, { mood: "ok", arm: "down", r: 5.6 })}
-      <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">일손을 멈추고 담담히 기다려요 — 이것도 헌법이 보장한 권리</text>`);
+      <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">일손을 멈추고 담담히 기다려요. 이것도 헌법이 보장한 권리</text>`);
   }
   // 타결 — 악수
   return wrap(`
@@ -195,42 +195,42 @@ const PHASES: WrlPhase[] = [
   {
     id: "alone",
     fileLabel: "관찰",
-    intro: "스틱 카페에서 일하는 스틱맨 — 근로 조건을 바꾸고 싶어 <b>혼자</b> 이야기하러 갔어요. Ⅺ 만화의 <b>기울어진 저울</b>, 기억나요? 목소리를 내 봐요.",
+    intro: "스틱 카페에서 일하는 스틱맨, 근로 조건을 바꾸고 싶어 <b>혼자</b> 이야기하러 갔어요. Ⅺ 만화의 <b>기울어진 저울</b>, 기억나요? 목소리를 내 봐요.",
   },
   {
     id: "union",
     fileLabel: "첫걸음",
     stageName: "단결권",
-    intro: "혼자서는 목소리가 책상을 넘지 못했어요 — 그런데 같은 고민을 하는 동료들이 곳곳에 있네요. <b>함께 모여</b> 단체를 만들어요!",
+    intro: "혼자서는 목소리가 책상을 넘지 못했어요. 그런데 같은 고민을 하는 동료들이 곳곳에 있네요. <b>함께 모여</b> 단체를 만들어요!",
     quiz: {
-      q: "방금 걸은 첫걸음 — 노동조합을 만들고 가입해 활동할 수 있는 권리의 이름은?",
+      q: "방금 걸은 첫걸음, 노동조합을 만들고 가입해 활동할 수 있는 권리의 이름은?",
       options: ["단결권", "단체 행동권"],
-      good: "맞아요! 근로 조건을 지키고 개선하려고 <b>노동조합을 만들고 가입해 활동</b>하는 권리가 <b>단결권</b> — 대등해지는 세 걸음의 출발점이에요.",
-      wrong: "행동은 아직이에요 — 지금은 흩어진 사람들이 <b>단체로 뭉친</b> 단계죠. 노동조합을 만들고 가입하는 권리는 단결권이랍니다. 다시 골라 봐요!",
+      good: "맞아요! 근로 조건을 지키고 개선하려고 <b>노동조합을 만들고 가입해 활동</b>하는 권리가 <b>단결권</b>, 대등해지는 세 걸음의 출발점이에요.",
+      wrong: "행동은 아직이에요. 지금은 흩어진 사람들이 <b>단체로 뭉친</b> 단계죠. 노동조합을 만들고 가입하는 권리는 단결권이랍니다. 다시 골라 봐요!",
     },
   },
   {
     id: "bargain",
     fileLabel: "두 걸음",
     stageName: "단체 교섭권",
-    intro: "이번엔 노동조합의 이름으로 <b>같은 높이의 테이블</b>에 마주 앉아요 — 임금·근로 시간 같은 근로 조건을 함께 이야기해요!",
+    intro: "이번엔 노동조합의 이름으로 <b>같은 높이의 테이블</b>에 마주 앉아요. 임금·근로 시간 같은 근로 조건을 함께 이야기해요!",
     quiz: {
       q: "노동조합이 사용자와 근로 조건에 관해 협의할 수 있는 권리는?",
       options: ["단체 교섭권", "단결권"],
-      good: "정확해요! 노동조합을 <b>통해</b> 사용자와 근로 조건을 <b>협의</b>하는 권리가 <b>단체 교섭권</b> — 뭉치는 힘(단결권) 다음의 두 번째 걸음이에요.",
-      wrong: "단결권은 조합을 '만들고 가입하는' 권리였죠 — 만들어진 조합이 사용자와 마주 앉아 <b>협의</b>하는 권리는 단체 교섭권이에요. 다시 골라 봐요!",
+      good: "정확해요! 노동조합을 <b>통해</b> 사용자와 근로 조건을 <b>협의</b>하는 권리가 <b>단체 교섭권</b>, 뭉치는 힘(단결권) 다음의 두 번째 걸음이에요.",
+      wrong: "단결권은 조합을 '만들고 가입하는' 권리였죠. 만들어진 조합이 사용자와 마주 앉아 <b>협의</b>하는 권리는 단체 교섭권이에요. 다시 골라 봐요!",
     },
   },
   {
     id: "action",
     fileLabel: "세 걸음",
     stageName: "단체 행동권",
-    intro: "그런데 여러 번 마주 앉아도 <b>협의가 이루어지지 않는다면</b>? 마지막 세 번째 걸음이 남아 있어요 — 한 단계씩 밟아 봐요.",
+    intro: "그런데 여러 번 마주 앉아도 <b>협의가 이루어지지 않는다면</b>? 마지막 세 번째 걸음이 남아 있어요. 한 단계씩 밟아 봐요.",
     quiz: {
       q: "협의가 원만하게 이루어지지 않았을 때, 근로자들은 어떻게 할 수 있을까요?",
       options: ["일정한 절차를 거쳐 파업 등의 단체 행동을 할 수 있다", "아무 때나 곧바로 일을 멈춰도 된다"],
-      good: "정확해요! <b>일정한 절차를 거쳐</b> 파업 같은 집단행동을 할 수 있는 권리가 <b>단체 행동권</b> — '절차를 거쳐'가 이 권리의 핵심 조건이랍니다.",
-      wrong: "'아무 때나'가 함정이에요 — 단체 행동권은 <b>일정한 절차를 거친</b> 뒤에야 쓸 수 있는 권리랍니다. 방금 도장 찍은 절차 서류가 그 증거! 다시 골라 봐요.",
+      good: "정확해요! <b>일정한 절차를 거쳐</b> 파업 같은 집단행동을 할 수 있는 권리가 <b>단체 행동권</b>, '절차를 거쳐'가 이 권리의 핵심 조건이랍니다.",
+      wrong: "'아무 때나'가 함정이에요. 단체 행동권은 <b>일정한 절차를 거친</b> 뒤에야 쓸 수 있는 권리랍니다. 방금 도장 찍은 절차 서류가 그 증거! 다시 골라 봐요.",
     },
   },
 ];
@@ -332,7 +332,7 @@ export const workRightLab: StepRenderer = (host, step, api) => {
       refreshScene(actionSvg(3));
       lightChip("final", "수평!");
       helper.innerHTML =
-        "저울이 수평이 됐어요! <b>단결권 · 단체 교섭권 · 단체 행동권</b> — 근로자가 사용자와 <b>대등한 위치</b>에서 근로 조건을 정할 수 있도록 헌법이 보장한 노동 3권이에요. 세 걸음의 끝은 언제나 협의와 타결이랍니다!";
+        "저울이 수평이 됐어요! <b>단결권 · 단체 교섭권 · 단체 행동권</b>, 근로자가 사용자와 <b>대등한 위치</b>에서 근로 조건을 정할 수 있도록 헌법이 보장한 노동 3권이에요. 세 걸음의 끝은 언제나 협의와 타결이랍니다!";
       api.recordQuiz(clean);
       api.enableCTA(s.cta ?? "권리 정리하러 가기");
       return;
@@ -384,7 +384,7 @@ export const workRightLab: StepRenderer = (host, step, api) => {
         refreshScene(aloneSvg(true));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "목소리가 책상을 넘지 못했어요 — 일자리가 필요한 쪽이 늘 약해지기 쉬운 <b>기울어진 저울</b>이죠. 그래서 헌법은 근로자에게 특별한 세 걸음을 마련해 뒀어요.";
+        helper.innerHTML = "목소리가 책상을 넘지 못했어요. 일자리가 필요한 쪽이 늘 약해지기 쉬운 <b>기울어진 저울</b>이죠. 그래서 헌법은 근로자에게 특별한 세 걸음을 마련해 뒀어요.";
         later(advance, 1700);
       });
     } else if (id === "union") {
@@ -400,8 +400,8 @@ export const workRightLab: StepRenderer = (host, step, api) => {
         b.textContent = `함께 모이기 (${n}/2)`;
         helper.innerHTML =
           n === 1
-            ? "한 사람, 두 사람 — 같은 고민이 모여들어요. 한 번 더!"
-            : "하나의 단체가 됐어요 — 근로 조건의 유지·개선을 위해 근로자들이 만든 단체, <b>노동조합</b>! 그럼 방금 걸은 이 첫걸음의 이름은?";
+            ? "한 사람, 두 사람, 같은 고민이 모여들어요. 한 번 더!"
+            : "하나의 단체가 됐어요. 근로 조건의 유지·개선을 위해 근로자들이 만든 단체, <b>노동조합</b>! 그럼 방금 걸은 이 첫걸음의 이름은?";
         if (n >= 2) {
           b.disabled = true;
           b.classList.add("done");
@@ -418,7 +418,7 @@ export const workRightLab: StepRenderer = (host, step, api) => {
         refreshScene(bargainSvg(true));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "같은 높이의 테이블 — 혼자일 때 닿지 않던 목소리가 이제 <b>협의</b>가 돼요. 우상단 저울도 수평! 이 두 번째 걸음의 이름은?";
+        helper.innerHTML = "같은 높이의 테이블, 혼자일 때 닿지 않던 목소리가 이제 <b>협의</b>가 돼요. 우상단 저울도 수평! 이 두 번째 걸음의 이름은?";
         later(openQuiz, 900);
       });
     } else {
@@ -434,8 +434,8 @@ export const workRightLab: StepRenderer = (host, step, api) => {
         b.textContent = n >= 2 ? "일손을 멈췄어요" : `다음 단계 밟기 (${n}/2)`;
         helper.innerHTML =
           n === 1
-            ? "곧바로 멈추는 게 아니에요 — 먼저 <b>법이 정한 절차</b>를 밟아 도장을 받아요."
-            : "절차를 거친 뒤, 일손을 멈추고 담담히 기다려요 — 파업 같은 <b>집단행동</b>도 헌법이 보장한 권리예요. 그럼 마지막 걸음의 조건을 판정해 봐요!";
+            ? "곧바로 멈추는 게 아니에요. 먼저 <b>법이 정한 절차</b>를 밟아 도장을 받아요."
+            : "절차를 거친 뒤, 일손을 멈추고 담담히 기다려요. 파업 같은 <b>집단행동</b>도 헌법이 보장한 권리예요. 그럼 마지막 걸음의 조건을 판정해 봐요!";
         if (n >= 2) {
           b.disabled = true;
           b.classList.add("done");

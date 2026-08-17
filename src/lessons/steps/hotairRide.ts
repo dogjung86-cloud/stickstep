@@ -85,7 +85,7 @@ export const hotairRide: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "완벽한 비행! 가열하면 풍선 속 기체의 <b>온도가 올라 부피가 늘고</b>(샤를 법칙), 기체 일부가 밖으로 밀려나 <b>가벼워져 떠올라요</b>. 식히면 반대 — 그래서 버너 하나로 조종한 거예요.";
+        "완벽한 비행! 가열하면 풍선 속 기체의 <b>온도가 올라 부피가 늘고</b>(샤를 법칙), 기체 일부가 밖으로 밀려나 <b>가벼워져 떠올라요</b>. 식히면 반대, 그래서 버너 하나로 조종한 거예요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -111,7 +111,7 @@ export const hotairRide: StepRenderer = (host, step, api) => {
     if (alt > 6) {
       flew = true;
       collect("lift", "떠올랐다!");
-      if (!goals.has("band")) helper.innerHTML = "좋아요! 이제 <b>55~85 m 목표 띠</b> 안에서 버텨 보세요 — 가열과 식힘을 번갈아!";
+      if (!goals.has("band")) helper.innerHTML = "좋아요! 이제 <b>55~85 m 목표 띠</b> 안에서 버텨 보세요. 가열과 식힘을 번갈아!";
     }
     bandMs = alt >= 55 && alt <= 85 ? bandMs + dt * 16.7 : 0;
     if (bandMs > 2000) {

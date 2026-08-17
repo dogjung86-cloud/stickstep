@@ -98,7 +98,7 @@ export function amRegionsFig(opts?: {
     : "";
   return mapShell(
     `<g clip-path="url(#s5-lclip)">${fills}</g>${bounds}${labels}${letterMarks(opts?.letters)}`,
-    { aria: "아메리카의 지역 구분 지도 — 세 지역과 두 경계(리오그란데강·파나마 지협)" },
+    { aria: "아메리카의 지역 구분 지도, 세 지역과 두 경계(리오그란데강·파나마 지협)" },
   );
 }
 
@@ -148,7 +148,7 @@ export function amTerrainFig(): string {
     ${mtn(-77.5, 6, 0.9)}${mtn(-78.5, 0, 1)}${mtn(-76, -7, 1)}${mtn(-71.5, -14, 1.1)}${mtn(-69, -20, 1.2)}${mtn(-70, -27, 1.1)}${mtn(-70.8, -34, 1.1)}${mtn(-72, -41, 1)}${mtn(-73, -48, 0.9)}
     <ellipse cx="${lonToX(-87).toFixed(1)}" cy="${latToY(45.5).toFixed(1)}" rx="7" ry="4" fill="#7EB2E8" stroke="#4E82B8" stroke-width=".7"/>
   `;
-  return mapShell(inner, { aria: "아메리카의 주요 지형 지도 — 서쪽의 높은 산맥과 동쪽의 낮은 산지·고원, 가운데의 평원과 큰 강" });
+  return mapShell(inner, { aria: "아메리카의 주요 지형 지도, 서쪽의 높은 산맥과 동쪽의 낮은 산지·고원, 가운데의 평원과 큰 강" });
 }
 
 /* ---------- L3: 기후 분포 지도(쾨펜 실데이터 오버레이) ---------- */
@@ -162,7 +162,7 @@ export function amClimateFig(opts?: { letters?: { lon: number; lat: number; t: s
     ${pal.map(([c, n], i) => `<g transform="translate(${CROP.x + 14 + i * 62} ${CROP.y + CROP.h + 24})">
       <rect x="0" y="-9" width="11" height="11" rx="3" fill="${c}"/><text x="15" y="1" fill="#4E5968">${n}</text></g>`).join("")}
   </g>`;
-  return mapShell(inner, { legend, aria: "아메리카의 기후 분포 지도 — 남북으로 길어 다양한 기후가 나타난다" });
+  return mapShell(inner, { legend, aria: "아메리카의 기후 분포 지도, 남북으로 길어 다양한 기후가 나타난다" });
 }
 
 /* ---------- L3: 이키토스·키토 기후 그래프 페어(퀴즈 그림) ---------- */
@@ -207,10 +207,10 @@ export function amClimateGraphFig(): string {
 /* ---------- L3: 고도-기온 다이어그램(concept·recap 겸용) ---------- */
 export function amAltitudeFig(): string {
   const steps: [number, string, string, string][] = [
-    [118, "#2E7E46", "0m — 약 26℃", "덥고 습한 저지"],
-    [88, "#8FBF5A", "약 1,500m — 약 19℃", "온화한 사면"],
-    [58, "#B0672A", "약 2,850m — 약 13℃", "고산 도시(키토)"],
-    [28, "#EAF2FA", "약 5,000m 위 — 0℃ 아래", "만년설"],
+    [118, "#2E7E46", "0m, 약 26℃", "덥고 습한 저지"],
+    [88, "#8FBF5A", "약 1,500m, 약 19℃", "온화한 사면"],
+    [58, "#B0672A", "약 2,850m, 약 13℃", "고산 도시(키토)"],
+    [28, "#EAF2FA", "약 5,000m 위, 0℃ 아래", "만년설"],
   ];
   const stair = steps
     .map(
@@ -225,13 +225,13 @@ export function amAltitudeFig(): string {
     </g>`,
     )
     .join("");
-  return `<svg viewBox="0 0 344 168" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="고도가 높아질수록 기온이 낮아지는 계단 그림 — 저지에서 만년설까지">
+  return `<svg viewBox="0 0 344 168" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="고도가 높아질수록 기온이 낮아지는 계단 그림, 저지에서 만년설까지">
     <rect x="0" y="0" width="344" height="168" rx="14" fill="#F7F9FC" stroke="#D8DEE8" stroke-width="1.2"/>
     <text x="14" y="17" font-size="10" font-weight="900" fill="#333D4B">높이 올라갈수록 서늘해져요 (모형)</text>
     ${stair}${labels}
     <path d="M40 124V32M40 32l-4 7M40 32l4 7" stroke="#8A5AC2" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     <text x="30" y="80" text-anchor="middle" font-size="8.5" font-weight="800" fill="#8A5AC2" transform="rotate(-90 30 80)">고도 상승</text>
-    <text x="14" y="160" font-size="8" font-weight="700" fill="#8A94A6">같은 적도라도 높이가 기후를 바꿔요 — 저위도 고산 기후</text>
+    <text x="14" y="160" font-size="8" font-weight="700" fill="#8A94A6">같은 적도라도 높이가 기후를 바꿔요. 저위도 고산 기후</text>
   </svg>`;
 }
 
@@ -295,7 +295,7 @@ export function amMigrantBarFig(): string {
     .join("");
   return `<svg viewBox="0 0 344 168" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="미국으로 유입된 이주자의 출신 대륙별 수를 나타낸 막대그래프">
     <rect x="0" y="0" width="344" height="168" rx="14" fill="#F7F9FC" stroke="#D8DEE8" stroke-width="1.2"/>
-    <text x="14" y="17" font-size="10" font-weight="900" fill="#333D4B">미국으로 온 이주자 — 어디에서 왔을까?</text>
+    <text x="14" y="17" font-size="10" font-weight="900" fill="#333D4B">미국으로 온 이주자, 어디에서 왔을까?</text>
     <text x="330" y="17" text-anchor="end" font-size="8" font-weight="700" fill="#8A94A6">(만 명, 2020년, 국제연합)</text>
     ${bars}
   </svg>`;
@@ -311,7 +311,7 @@ export function amHybridFig(): string {
     </g>`;
   return `<svg viewBox="0 0 344 168" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="서로 다른 문화가 만나 새로운 문화가 태어나는 과정을 나타낸 그림">
     <rect x="0" y="0" width="344" height="168" rx="14" fill="#F7F9FC" stroke="#D8DEE8" stroke-width="1.2"/>
-    <text x="14" y="18" font-size="10" font-weight="900" fill="#333D4B">문화 혼종성 — 만나서, 섞여서, 새것으로</text>
+    <text x="14" y="18" font-size="10" font-weight="900" fill="#333D4B">문화 혼종성, 만나서, 섞여서, 새것으로</text>
     ${card(14, 32, 100, "#B0672A", "원주민의 문화", "전통 신앙·풍습")}
     ${card(122, 32, 100, "#3F8FC8", "유럽의 문화", "언어·종교·악기")}
     ${card(230, 32, 100, "#2E7E4E", "아프리카의 문화", "리듬·춤")}
@@ -336,7 +336,7 @@ export function amDivisionFig(opts?: { letters?: boolean }): string {
     </g>`;
   return `<svg viewBox="0 0 344 168" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="초국적 기업의 여러 기능이 서로 다른 지역에 나뉘어 자리 잡는 모습을 나타낸 그림">
     <rect x="0" y="0" width="344" height="168" rx="14" fill="#F7F9FC" stroke="#D8DEE8" stroke-width="1.2"/>
-    <text x="14" y="18" font-size="10" font-weight="900" fill="#333D4B">한 회사의 기능이 세계로 나뉘어요 — 공간적 분업</text>
+    <text x="14" y="18" font-size="10" font-weight="900" fill="#333D4B">한 회사의 기능이 세계로 나뉘어요. 공간적 분업</text>
     ${box(102, 30, 140, 38, "#1E4E9E", L ? "㉠" : "본사", "정보와 자본이 풍부한 곳")}
     ${box(14, 92, 140, 38, "#8A5AC2", L ? "㉡" : "연구소", "기술 갖춘 고급 인력이 많은 곳")}
     ${box(190, 92, 140, 38, "#C0471C", L ? "㉢" : "생산 공장", "임금이 싸고 시장과 가까운 곳")}
@@ -356,7 +356,7 @@ export function amDetroitFig(): string {
   const gx = (yr: number): number => 40 + ((yr - 1920) / 100) * 282;
   const gy = (v: number): number => 128 - (v / 200) * 100;
   const line = data.map(([yr, v], i) => `${i === 0 ? "M" : "L"}${gx(yr).toFixed(1)} ${gy(v).toFixed(1)}`).join(" ");
-  return `<svg viewBox="0 0 344 158" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="디트로이트의 인구 변화 그래프 — 1920년부터 2020년까지">
+  return `<svg viewBox="0 0 344 158" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="디트로이트의 인구 변화 그래프, 1920년부터 2020년까지">
     <rect x="0" y="0" width="344" height="158" rx="14" fill="#F7F9FC" stroke="#D8DEE8" stroke-width="1.2"/>
     <text x="14" y="17" font-size="10" font-weight="900" fill="#333D4B">디트로이트의 인구</text>
     <text x="330" y="17" text-anchor="end" font-size="8" font-weight="700" fill="#8A94A6">(만 명, 미국 인구 센서스)</text>

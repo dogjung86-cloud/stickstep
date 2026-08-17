@@ -52,7 +52,7 @@ export function renderStargaze(
       <circle cx="163" cy="64" r="13" fill="url(#hsGlow)"/>
       <circle cx="163" cy="64" r="3.2" fill="#FFF3C4"/>
     </g>
-    <!-- 망원경 뷰(처음엔 숨김) — 카시니가 찍은 진짜 토성 -->
+    <!-- 망원경 뷰(처음엔 숨김), 카시니가 찍은 진짜 토성 -->
     <g class="hs-scope">
       <clipPath id="hsScopeClip"><circle cx="163" cy="64" r="34"/></clipPath>
       <circle cx="163" cy="64" r="34" fill="#04070E"/>
@@ -89,7 +89,7 @@ export function renderStargaze(
     btn.disabled = true;
     haptic(HAPTIC.select);
     face("surprised");
-    helper.innerHTML = "우아 — 점이 아니라 <b>고리를 두른 둥근 천체</b>예요! 별이 아니라 <b>행성(토성)</b>이었어요.";
+    helper.innerHTML = "우아, 점이 아니라 <b>고리를 두른 둥근 천체</b>예요! 별이 아니라 <b>행성(토성)</b>이었어요.";
     timer = window.setTimeout(() => {
       face("curious");
       helper.innerHTML = "밤하늘엔 스스로 빛나는 별 말고도 <b>태양 둘레를 도는 식구들</b>이 숨어 있어요. 태양계로 떠나 볼까요?";
@@ -123,7 +123,7 @@ export function renderPlanetSize(
     <rect x="4" y="4" width="232" height="162" rx="16" fill="url(#hpSky)"/>
     <circle cx="26" cy="26" r="1.4" fill="#DCE8FF"/><circle cx="212" cy="34" r="1.4" fill="#DCE8FF"/>
     <circle cx="196" cy="140" r="1.2" fill="#DCE8FF"/><circle cx="38" cy="140" r="1.2" fill="#DCE8FF"/>
-    <!-- 목성 — 허블 실사 -->
+    <!-- 목성, 허블 실사 -->
     <circle cx="120" cy="85" r="66" fill="url(#hpJupGlow)"/>
     <g clip-path="url(#hpJupClip)">
       <image href="${photo("jupiter.jpg")}" x="55.4" y="20.7" width="129.3" height="129.3" preserveAspectRatio="none"/>
@@ -131,7 +131,7 @@ export function renderPlanetSize(
     <circle cx="120" cy="85" r="57" stroke="rgba(124,78,51,.8)" stroke-width="1.4"/>
     <!-- 지구 줄(지름 위) -->
     <g class="hp-earthrow"></g>
-    <!-- 기준 지구 — 아폴로 17호 실사 -->
+    <!-- 기준 지구, 아폴로 17호 실사 -->
     <g clip-path="url(#hpEarthClip)">
       <image href="${photo("earth_apollo17.jpg")}" x="113.6" y="145.6" width="12.8" height="12.8" preserveAspectRatio="none"/>
     </g>
@@ -148,8 +148,8 @@ export function renderPlanetSize(
   const timers: number[] = [];
   ask(choicesBox, helper, {
     choices: s.choices ?? ["지구 11개", "지구 3개", "지구 6개"],
-    good: "직접 세어 볼까요? 지구가 한 줄로 들어갑니다 —",
-    bad: "3개나 6개로는 어림없어요 — 목성은 훨씬 커요. 지구를 한 줄로 세워 볼게요 —",
+    good: "직접 세어 볼까요? 지구가 한 줄로 들어갑니다…",
+    bad: "3개나 6개로는 어림없어요. 목성은 훨씬 커요. 지구를 한 줄로 세워 볼게요…",
     onDone: () => {
       // 지구 11개 애니메이션
       const R = 57;
@@ -170,7 +170,7 @@ export function renderPlanetSize(
             haptic(HAPTIC.tap);
             if (i === 10) {
               face("surprised");
-              helper.innerHTML = "정답은 <b>약 11개</b>! 목성 지름은 지구의 약 11배예요. 그런데 이렇게 큰 행성들끼리 <b>닮은 점</b>이 있대요 — 분류해 볼까요?";
+              helper.innerHTML = "정답은 <b>약 11개</b>! 목성 지름은 지구의 약 11배예요. 그런데 이렇게 큰 행성들끼리 <b>닮은 점</b>이 있대요. 분류해 볼까요?";
               timer = window.setTimeout(finish, 700);
             }
           }, 200 + i * 170),
@@ -233,7 +233,7 @@ export function renderShadowClock(
     <!-- 풀밭 -->
     <path d="M4 134h232v16a16 16 0 0 1-16 16H20a16 16 0 0 1-16-16z" fill="url(#scGrass)"/>
     <path d="M4 134q60 -7 116 0t116 0" stroke="#7FB368" stroke-width="1.4" opacity=".5"/>
-    <!-- 그림자(시각별) — 뿌리는 짙고 끝은 옅게 -->
+    <!-- 그림자(시각별), 뿌리는 짙고 끝은 옅게 -->
     <g>
       <path class="sc-sh sc-sh-m" d="M135 131l70 11-8 8-62-13z" fill="url(#scShM)"/>
       <path class="sc-sh sc-sh-n" d="M112 131h20l-2 6h-16z" fill="#2A3A5E" fill-opacity=".14"/>
@@ -301,7 +301,7 @@ export function renderShadowClock(
       ask(choicesBox, helper, {
         choices: s.choices ?? ["지구가 스스로 돈다", "태양이 지구 둘레를 돈다", "시계탑이 아주 조금씩 돈다"],
         good: "예리해요! 태양이 도는 게 아니라 <b>지구가 스스로 돌아서(자전)</b> 그림자가 하루 종일 돌아요. 우주에서 직접 확인!",
-        bad: "태양이나 시계탑이 도는 게 아니에요 — <b>지구가 스스로 하루 한 바퀴 돌아서(자전)</b> 해가 움직이는 것처럼 보이는 거예요. 우주에서 내려다보며 확인해요.",
+        bad: "태양이나 시계탑이 도는 게 아니에요. <b>지구가 스스로 하루 한 바퀴 돌아서(자전)</b> 해가 움직이는 것처럼 보이는 거예요. 우주에서 내려다보며 확인해요.",
         onDone: finish,
       });
     } else if (!asked) {
@@ -339,10 +339,10 @@ export function renderMoonPic(
     <rect x="100" y="14" width="40" height="5" rx="2.5" fill="#0D131D"/>
     <circle cx="90" cy="52" r="1.1" fill="#DCE8FF"/><circle cx="148" cy="44" r="1.2" fill="#DCE8FF"/>
     <circle cx="132" cy="118" r="1" fill="#DCE8FF"/><circle cx="96" cy="122" r="1" fill="#DCE8FF"/>
-    <!-- 진짜 달 사진(LRO 모자이크) — 위상은 명암 마스크로 -->
+    <!-- 진짜 달 사진(LRO 모자이크), 위상은 명암 마스크로 -->
     <g clip-path="url(#mpMoonClip)">
       <image href="${photo("moon_lro.jpg")}" x="94.5" y="58.5" width="51" height="51" preserveAspectRatio="none"/>
-      <!-- 사진 1: 오른쪽 반달(상현) — 왼쪽 절반이 밤 -->
+      <!-- 사진 1: 오른쪽 반달(상현), 왼쪽 절반이 밤 -->
       <rect class="mp-pic mp-pic0" x="94.5" y="58.5" width="31.5" height="51" fill="url(#mpTerm)"/>
     </g>
     <circle class="mp-ring" cx="120" cy="84" r="24" stroke="#A89A72" stroke-width="1.2" opacity=".7"/>
@@ -352,7 +352,7 @@ export function renderMoonPic(
   const swapBtn = el("button", { class: "swapbtn", attrs: { type: "button" } }, el("span", { text: "오늘 밤 사진 보기" }));
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(el("div", { class: "hk-space-wrap" }, fig), swapBtn, choicesBox);
-  helper.innerHTML = "지난주에 찍은 달 사진이에요 — <b>오른쪽 반쪽만</b> 빛나는 반달이네요. 오늘 밤 달과 비교해 볼까요?";
+  helper.innerHTML = "지난주에 찍은 달 사진이에요. <b>오른쪽 반쪽만</b> 빛나는 반달이네요. 오늘 밤 달과 비교해 볼까요?";
 
   let swapped = false;
   swapBtn.addEventListener("click", () => {
@@ -370,7 +370,7 @@ export function renderMoonPic(
       ask(choicesBox, helper, {
         choices: s.choices ?? ["태양 빛을 받아 밝은 부분이 달라 보인다", "달의 모양 자체가 변한다", "지구 그림자가 달을 가린다"],
         good: "맞아요! 달 모양이 변하는 게 아니라 <b>태양 빛을 받는 밝은 부분이 달라 보이는</b> 거예요. 3D 달로 확인!",
-        bad: "달이 실제로 변하거나 지구 그림자가 가린 게 아니에요 — 달은 늘 둥글어요. <b>태양 빛을 받는 밝은 부분</b>이 날마다 달라 보이는 거예요. 3D 달을 돌려 확인해요.",
+        bad: "달이 실제로 변하거나 지구 그림자가 가린 게 아니에요. 달은 늘 둥글어요. <b>태양 빛을 받는 밝은 부분</b>이 날마다 달라 보이는 거예요. 3D 달을 돌려 확인해요.",
         onDone: finish,
       });
     }, 800);
@@ -431,7 +431,7 @@ export function renderSunGlasses(
   const wearBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "태양 관측 안경 쓰기" }));
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(el("div", { class: "hk-space-wrap" }, fig), wearBtn, choicesBox);
-  helper.innerHTML = "한낮 하늘이 <b>이상하게 어둑</b>해졌어요. 태양은 맨눈으로 보면 절대 안 돼요 — <b>관측 안경</b>을 써 봐요!";
+  helper.innerHTML = "한낮 하늘이 <b>이상하게 어둑</b>해졌어요. 태양은 맨눈으로 보면 절대 안 돼요. <b>관측 안경</b>을 써 봐요!";
 
   let worn = false;
   wearBtn.addEventListener("click", () => {
@@ -449,8 +449,8 @@ export function renderSunGlasses(
       face("curious");
       ask(choicesBox, helper, {
         choices: s.choices ?? ["달이 태양 앞을 지나가는 중이다", "구름이 태양을 가리는 중이다", "태양이 실제로 조금씩 꺼지고 있다"],
-        good: "정확해요! <b>달이 태양 앞을 지나가며</b> 가린 거예요 — 이게 일식! 태양·달·지구를 일렬로 세워 확인!",
-        bad: "구름이나 태양이 꺼지는 게 아니에요 — <b>달이 태양 앞을 지나가며</b> 잠깐 가린 거예요(일식). 태양·달·지구를 직접 일렬로 세워 확인해요.",
+        good: "정확해요! <b>달이 태양 앞을 지나가며</b> 가린 거예요. 이게 일식! 태양·달·지구를 일렬로 세워 확인!",
+        bad: "구름이나 태양이 꺼지는 게 아니에요. <b>달이 태양 앞을 지나가며</b> 잠깐 가린 거예요(일식). 태양·달·지구를 직접 일렬로 세워 확인해요.",
         onDone: finish,
       });
     }, 900);

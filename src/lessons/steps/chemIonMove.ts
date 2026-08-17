@@ -19,8 +19,8 @@ function realPhotoPair(): string {
   const fig = (file: string, alt: string, cap: string): string =>
     `<figure style="margin:0 0 10px"><img src="${IMG_BASE}atom/quiz/${file}" alt="${alt}" style="display:block;width:100%;border-radius:12px"/><figcaption style="text-align:center;font-size:12px;font-weight:700;color:#4E5968;margin-top:5px">${cap}</figcaption></figure>`;
   return (
-    fig("ionmove.webp", "전류를 흘리기 전 — 파란 반점이 거름종이 가운데에 있다", "전류를 흘리기 전 — 파란 반점이 가운데") +
-    fig("ionmove-after.webp", "전류를 흘린 뒤 — 파란 반점이 (−)극 쪽으로 번져 갔다", "전류를 흘린 뒤 — (−)극 쪽으로 이동!")
+    fig("ionmove.webp", "전류를 흘리기 전, 파란 반점이 거름종이 가운데에 있다", "전류를 흘리기 전, 파란 반점이 가운데") +
+    fig("ionmove-after.webp", "전류를 흘린 뒤, 파란 반점이 (−)극 쪽으로 번져 갔다", "전류를 흘린 뒤, (−)극 쪽으로 이동!")
   );
 }
 
@@ -69,7 +69,7 @@ export const ionMoveLab: StepRenderer = (host, step, api) => {
   const row = el("div", { class: "gp-controls" }, powerBtn, flipBtn, ghostBtn);
   const helper = el("div", {
     class: "helper",
-    html: "거름종이 중앙에 <b>황산 구리(Ⅱ) 수용액</b>을 한 방울 떨어뜨렸어요. 파란색의 정체는 <b>구리 이온</b> — 전류를 켜면 어디로 갈까요?",
+    html: "거름종이 중앙에 <b>황산 구리(Ⅱ) 수용액</b>을 한 방울 떨어뜨렸어요. 파란색의 정체는 <b>구리 이온</b>, 전류를 켜면 어디로 갈까요?",
   });
   host.append(goalChips, helper, stage, row); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   // 실제 실험 사진 — 시뮬레이션과 같은 결과가 진짜 실험실에서도 나온다는 증거
@@ -77,7 +77,7 @@ export const ionMoveLab: StepRenderer = (host, step, api) => {
     labExplain({
       kicker: "실제 실험에서는",
       tone: "#7CB024",
-      lead: "같은 장치로 실제 실험을 하면 — 파란 구리 이온이 정말 <b>(−)극 쪽으로</b> 번져 가요.",
+      lead: "같은 장치로 실제 실험을 하면, 파란 구리 이온이 정말 <b>(−)극 쪽으로</b> 번져 가요.",
       fig: realPhotoPair(),
       rows: [],
     }),
@@ -123,7 +123,7 @@ export const ionMoveLab: StepRenderer = (host, step, api) => {
     if (goals.size === 4 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 이온은 <b>전하를 띠고 있어서</b> 전류를 흘리면 끌려가요 — <b>양이온은 (−)극으로, 음이온은 (+)극으로</b>. 색이 없는 이온도 똑같이 이동하고, 극을 바꾸면 방향도 바뀌죠. 이 이동이 이온이 전하를 띤다는 <b>증거</b>예요!";
+        "정리! 이온은 <b>전하를 띠고 있어서</b> 전류를 흘리면 끌려가요. <b>양이온은 (−)극으로, 음이온은 (+)극으로</b>. 색이 없는 이온도 똑같이 이동하고, 극을 바꾸면 방향도 바뀌죠. 이 이동이 이온이 전하를 띤다는 <b>증거</b>예요!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -135,7 +135,7 @@ export const ionMoveLab: StepRenderer = (host, step, api) => {
     (Object.keys(segBtns) as Drop[]).forEach((kk) => segBtns[kk].classList.toggle("on", kk === k));
     haptic(HAPTIC.select);
     const m = DROP_META[k];
-    helper.innerHTML = `중앙에 <b>${m.name} 수용액</b> 점적! ${k === "cuso4" ? "파란색 = 구리 이온(Cu²⁺)" : "보라색 = 과망가니즈산 이온(MnO₄⁻)"} — 전류를 켜고 지켜봐요.`;
+    helper.innerHTML = `중앙에 <b>${m.name} 수용액</b> 점적! ${k === "cuso4" ? "파란색 = 구리 이온(Cu²⁺)" : "보라색 = 과망가니즈산 이온(MnO₄⁻)"}, 전류를 켜고 지켜봐요.`;
   }
 
   powerBtn.addEventListener("click", () => {
@@ -149,7 +149,7 @@ export const ionMoveLab: StepRenderer = (host, step, api) => {
     flipped = !flipped;
     flipRef = null; // 다음 프레임에서 현재 평균 위치를 기준으로 잡는다
     haptic(HAPTIC.select);
-    showToast("전극이 뒤바뀌었어요 — 이온들이 방향을 트는지 보세요!");
+    showToast("전극이 뒤바뀌었어요. 이온들이 방향을 트는지 보세요!");
   });
   ghostBtn.addEventListener("click", () => {
     showGhost = !showGhost;
@@ -158,7 +158,7 @@ export const ionMoveLab: StepRenderer = (host, step, api) => {
     if (showGhost) {
       collect("ghost", "반대쪽으로!");
       const m = DROP_META[drop];
-      helper.innerHTML = `숨어 있던 <b>${m.ghost}${m.ghostCharge > 0 ? "⁺" : m.ghostCharge === -2 ? "²⁻" : "⁻"} 이온</b>이 보여요 — 색이 없을 뿐, ${m.ghostCharge > 0 ? "(−)극" : "(+)극"}으로 <b>똑같이 이동</b> 중이었어요!`;
+      helper.innerHTML = `숨어 있던 <b>${m.ghost}${m.ghostCharge > 0 ? "⁺" : m.ghostCharge === -2 ? "²⁻" : "⁻"} 이온</b>이 보여요. 색이 없을 뿐, ${m.ghostCharge > 0 ? "(−)극" : "(+)극"}으로 <b>똑같이 이동</b> 중이었어요!`;
     }
   });
 
@@ -283,10 +283,10 @@ export const ionMoveLab: StepRenderer = (host, step, api) => {
     if (on && !flipped && arrived(mainAvg, m.charge)) {
       if (drop === "cuso4") {
         collect("cu", "(−)극으로!");
-        if (!goals.has("mn")) helper.innerHTML = "파란 구리 이온이 <b>(−)극</b>에 모였어요 — (+)전하라서 (−)극에 끌린 거죠! 이제 <b>과망가니즈산 칼륨</b>으로 바꿔 봐요.";
+        if (!goals.has("mn")) helper.innerHTML = "파란 구리 이온이 <b>(−)극</b>에 모였어요. (+)전하라서 (−)극에 끌린 거죠! 이제 <b>과망가니즈산 칼륨</b>으로 바꿔 봐요.";
       } else {
         collect("mn", "(+)극으로!");
-        if (goals.has("cu")) helper.innerHTML = "보라 이온은 반대로 <b>(+)극</b>으로 — (−)전하니까요! 이제 <b>극 바꾸기</b>를 눌러 되돌아오는지 확인!";
+        if (goals.has("cu")) helper.innerHTML = "보라 이온은 반대로 <b>(+)극</b>으로, (−)전하니까요! 이제 <b>극 바꾸기</b>를 눌러 되돌아오는지 확인!";
       }
     }
     // flip 목표: 극을 바꾼 뒤 색 이온이 반대 방향으로 충분히(45px) 이동하면 인정
@@ -294,7 +294,7 @@ export const ionMoveLab: StepRenderer = (host, step, api) => {
       if (flipRef === null) flipRef = mainAvg;
       else if (Math.abs(mainAvg - flipRef) > 45) {
         collect("flip", "방향도 반대!");
-        if (!goals.has("ghost")) helper.innerHTML = "극을 바꾸니 이온들이 <b>방향을 틀어</b> 반대 극으로 향해요 — 끌림의 정체가 전하라는 확실한 증거! 마지막으로 <b>보이지 않는 이온</b>도 켜 봐요.";
+        if (!goals.has("ghost")) helper.innerHTML = "극을 바꾸니 이온들이 <b>방향을 틀어</b> 반대 극으로 향해요. 끌림의 정체가 전하라는 확실한 증거! 마지막으로 <b>보이지 않는 이온</b>도 켜 봐요.";
       }
     }
   });

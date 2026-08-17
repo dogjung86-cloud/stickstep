@@ -90,7 +90,7 @@ export const diverBubble: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "둘 다 같은 원리 — <b>둘러싼 압력이 작아지면 속 기체의 부피가 커져요</b>(보일 법칙). 방울은 올라갈수록 물의 압력이 줄어 커졌고, 마시멜로는 용기의 공기를 빼자 부풀었죠.";
+        "둘 다 같은 원리, <b>둘러싼 압력이 작아지면 속 기체의 부피가 커져요</b>(보일 법칙). 방울은 올라갈수록 물의 압력이 줄어 커졌고, 마시멜로는 용기의 공기를 빼자 부풀었죠.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }

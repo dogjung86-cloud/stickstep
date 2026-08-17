@@ -26,7 +26,7 @@ function mirrortownSvg(): string {
       <linearGradient id="hl-shade" x1="0" y1="0" x2="1" y2=".3"><stop offset="0" stop-color="#101A2E" stop-opacity=".38"/><stop offset="1" stop-color="#101A2E" stop-opacity=".16"/></linearGradient>
     </defs>
     <rect x="6" y="8" width="228" height="150" rx="12" fill="url(#hl-sky)"/>
-    <!-- 겨울 태양 — 하늘 왼쪽 위, 빛은 여기서 출발한다 -->
+    <!-- 겨울 태양, 하늘 왼쪽 위, 빛은 여기서 출발한다 -->
     <g class="hl-sunbody">
       <circle cx="30" cy="24" r="19" fill="url(#hl-sun)"/>
       <circle cx="30" cy="24" r="9" fill="#FFEEB0"/>
@@ -41,7 +41,7 @@ function mirrortownSvg(): string {
     <path d="M6 158L64 44l52 114z" fill="url(#hl-mt)"/>
     <path d="M64 44l14 28-9 3 13 26" stroke="#8FA6C8" stroke-width="2" opacity=".5" fill="none"/>
     <path d="M52 68q10-6 22 0" stroke="#EAF2FF" stroke-width="3" opacity=".8"/>
-    <!-- 산그늘 — 골짜기(마을 쪽)가 어두운 이유 -->
+    <!-- 산그늘, 골짜기(마을 쪽)가 어두운 이유 -->
     <path d="M64 44L234 130v28H96z" fill="url(#hl-shade)"/>
     <!-- 마을(그늘) -->
     <g class="hl-village">
@@ -53,9 +53,9 @@ function mirrortownSvg(): string {
       <rect class="hl-win" x="163" y="139" width="7" height="8" rx="1.5" fill="#3A4A66"/>
       <rect class="hl-win" x="193" y="143" width="7" height="7" rx="1.5" fill="#3A4A66"/>
     </g>
-    <!-- 태양 → 거울 입사광(항상 표시 — 빛의 출발점은 태양) -->
+    <!-- 태양 → 거울 입사광(항상 표시, 빛의 출발점은 태양) -->
     <path class="hl-bin" d="M38 26L64 28" stroke="url(#hl-beamg)" stroke-width="4"/>
-    <!-- 반사 빔(상태별) — 각 상태의 거울면 각도로 반사 법칙 검산 완료 -->
+    <!-- 반사 빔(상태별), 각 상태의 거울면 각도로 반사 법칙 검산 완료 -->
     <path class="hl-beam hl-b0" d="M38 26L64 28L93 8" stroke="url(#hl-beamg)" stroke-width="4" opacity="0"/>
     <path class="hl-beam hl-b1" d="M38 26L64 28L232 75" stroke="url(#hl-beamg)" stroke-width="4" opacity="0"/>
     <path class="hl-beam hl-b2" d="M38 26L64 28L182 130" stroke="url(#hl-beamg)" stroke-width="5" opacity="0"/>
@@ -96,7 +96,7 @@ export function renderMirrorTown(
       face("surprised");
       helper.innerHTML = "햇빛이 하늘로 튕겨 나갔어요! 거울이 너무 서 있네요. <b>한 번 더</b> 돌려 봐요.";
     } else if (stage === 2) {
-      helper.innerHTML = "아깝다 — 이번엔 마을 지붕 <b>위로 휙</b> 지나갔어요. 조금만 되돌려요!";
+      helper.innerHTML = "아깝다. 이번엔 마을 지붕 <b>위로 휙</b> 지나갔어요. 조금만 되돌려요!";
     } else {
       (btn as HTMLButtonElement).disabled = true;
       btn.classList.add("done-static");
@@ -104,7 +104,7 @@ export function renderMirrorTown(
       face("smile");
       haptic(HAPTIC.correct);
       helper.innerHTML =
-        "광장에 햇빛이 쏟아져요! 거울이 빛의 <b>방향을 꺾어</b> 준 거예요. 그런데 — 빛은 거울에서 <b>어떤 규칙</b>으로 꺾일까요? 실험실에서 각도를 재 봐요.";
+        "광장에 햇빛이 쏟아져요! 거울이 빛의 <b>방향을 꺾어</b> 준 거예요. 그런데… 빛은 거울에서 <b>어떤 규칙</b>으로 꺾일까요? 실험실에서 각도를 재 봐요.";
       timer = window.setTimeout(() => {
         face("curious");
         finish();
@@ -160,7 +160,7 @@ export function renderCoinMagic(
   finish: () => void,
   face: Face,
 ): () => void {
-  const fig = el("div", { class: "hlc", attrs: { role: "img", "aria-label": "빈 컵 바닥의 동전 — 컵 벽에 가려 보이지 않아요" } });
+  const fig = el("div", { class: "hlc", attrs: { role: "img", "aria-label": "빈 컵 바닥의 동전, 컵 벽에 가려 보이지 않아요" } });
   fig.innerHTML = coinSvg();
   const btn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "물 붓기" }));
   const choicesBox = el("div", { class: "hook-choices" });
@@ -178,13 +178,13 @@ export function renderCoinMagic(
     fig.classList.add("filled");
     haptic(HAPTIC.select);
     face("surprised");
-    helper.innerHTML = "우와 — 눈도 컵도 동전도 <b>그대로</b>인데 동전이 보여요! 왜일까요?";
+    helper.innerHTML = "우와, 눈도 컵도 동전도 <b>그대로</b>인데 동전이 보여요! 왜일까요?";
     timer = window.setTimeout(() => {
       face("curious");
       ask(choicesBox, helper, {
         choices: s.choices ?? ["동전의 빛이 수면에서 꺾여 눈까지 와서", "물이 돋보기처럼 컵 속을 키워서", "동전이 물에 살짝 떠올라서"],
         good: "정확해요! 동전은 그대로인데, 동전에서 온 빛이 <b>수면에서 꺾여</b> 눈에 들어온 거예요. 실험실에서 직접 쏘아 봐요!",
-        bad: "돋보기 효과도, 떠오른 것도 아니에요 — 금속 동전은 바닥에 <b>그대로</b> 있어요. 동전에서 온 빛이 <b>수면에서 꺾여</b> 눈까지 온 거죠. 실험실에서 직접 쏘아 확인해요!",
+        bad: "돋보기 효과도, 떠오른 것도 아니에요. 금속 동전은 바닥에 <b>그대로</b> 있어요. 동전에서 온 빛이 <b>수면에서 꺾여</b> 눈까지 온 거죠. 실험실에서 직접 쏘아 확인해요!",
         onDone: finish,
       });
     }, 850);
@@ -241,7 +241,7 @@ export function renderDarkroom(
   finish: () => void,
   face: Face,
 ): () => void {
-  const fig = el("div", { class: "hld", attrs: { role: "img", "aria-label": "캄캄한 방 — 무언가 부스럭거려요" } });
+  const fig = el("div", { class: "hld", attrs: { role: "img", "aria-label": "캄캄한 방, 무언가 부스럭거려요" } });
   fig.innerHTML = darkroomSvg();
   const btn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "전등 켜기" }));
   const choicesBox = el("div", { class: "hook-choices" });
@@ -259,7 +259,7 @@ export function renderDarkroom(
     fig.classList.add("lit");
     haptic(HAPTIC.select);
     face("surprised");
-    helper.innerHTML = "고양이가 책 위에! 그런데 이상하죠 — 고양이는 <b>아까도 거기 있었어요</b>. 빛이 있어야만 보이는 이유는 뭘까요?";
+    helper.innerHTML = "고양이가 책 위에! 그런데 이상하죠. 고양이는 <b>아까도 거기 있었어요</b>. 빛이 있어야만 보이는 이유는 뭘까요?";
     timer = window.setTimeout(() => {
       face("curious");
       ask(choicesBox, helper, {
@@ -317,7 +317,7 @@ export function renderCatMirror(
   finish: () => void,
   face: Face,
 ): () => void {
-  const fig = el("button", { class: "hlm", attrs: { type: "button", "aria-label": "거울 앞 고양이 — 눌러서 앞발 들기" } });
+  const fig = el("button", { class: "hlm", attrs: { type: "button", "aria-label": "거울 앞 고양이, 눌러서 앞발 들기" } });
   fig.innerHTML = catmirrorSvg();
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
@@ -338,12 +338,12 @@ export function renderCatMirror(
     } else if (taps === 3) {
       (fig as HTMLButtonElement).disabled = true;
       face("curious");
-      helper.innerHTML = "똑같이 따라 하는 거울 속 고양이 — 그런데 저 고양이는 <b>어디에 있는</b> 걸까요?";
+      helper.innerHTML = "똑같이 따라 하는 거울 속 고양이, 그런데 저 고양이는 <b>어디에 있는</b> 걸까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? ["거울 뒤쪽에 있는 것처럼 보일 뿐, 실제로는 없다", "거울 표면에 그려져 있다", "거울 뒤에 진짜 고양이 공간이 있다"],
-          good: "정확해요! 거울 뒤로 가 봐도 아무것도 없어요 — 반사된 빛이 <b>뒤쪽에서 온 것처럼</b> 보이게 할 뿐이죠. 그 정확한 위치를 실험실에서 작도해 봐요!",
-          bad: "거울 표면을 만져 봐도 유리뿐이고, 뒤로 돌아가 봐도 고양이는 없어요 — 반사된 빛이 <b>거울 뒤쪽에 있는 것처럼</b> 보이게 할 뿐이에요. 그 정확한 위치를 실험실에서 작도해 봐요!",
+          good: "정확해요! 거울 뒤로 가 봐도 아무것도 없어요. 반사된 빛이 <b>뒤쪽에서 온 것처럼</b> 보이게 할 뿐이죠. 그 정확한 위치를 실험실에서 작도해 봐요!",
+          bad: "거울 표면을 만져 봐도 유리뿐이고, 뒤로 돌아가 봐도 고양이는 없어요. 반사된 빛이 <b>거울 뒤쪽에 있는 것처럼</b> 보이게 할 뿐이에요. 그 정확한 위치를 실험실에서 작도해 봐요!",
           onDone: finish,
         });
       }, 500);
@@ -398,7 +398,7 @@ export function renderSpoon(
   const backBtn = el("button", { text: "볼록한 뒷면", attrs: { type: "button", "aria-pressed": "false" } });
   seg.append(frontBtn, backBtn);
   scene.append(fig, seg);
-  helper.innerHTML = "숟가락 <b>오목한 앞면</b>에 얼굴을 비추면 — 어라, <b>거꾸로</b>! 이제 <b>뒷면</b>으로 뒤집어 봐요.";
+  helper.innerHTML = "숟가락 <b>오목한 앞면</b>에 얼굴을 비추면, 어라, <b>거꾸로</b>! 이제 <b>뒷면</b>으로 뒤집어 봐요.";
 
   const seen = new Set<string>(["front"]);
   let timer = 0;
@@ -410,14 +410,14 @@ export function renderSpoon(
     backBtn.classList.toggle("on", side === "back");
     frontBtn.setAttribute("aria-pressed", String(side === "front"));
     backBtn.setAttribute("aria-pressed", String(side === "back"));
-    fig.setAttribute("aria-label", side === "front" ? "오목한 앞면 — 거꾸로 선 얼굴" : "볼록한 뒷면 — 바로 선 작은 얼굴");
+    fig.setAttribute("aria-label", side === "front" ? "오목한 앞면, 거꾸로 선 얼굴" : "볼록한 뒷면, 바로 선 작은 얼굴");
     haptic(HAPTIC.select);
     seen.add(side);
     if (side === "back") {
       face("surprised");
       helper.innerHTML = "뒷면(볼록)에선 <b>바로 선 작은 얼굴</b>! 같은 숟가락인데 면의 <b>휜 방향</b>만 달라요.";
     } else {
-      helper.innerHTML = "다시 앞면(오목) — <b>거꾸로</b>! 신기하죠?";
+      helper.innerHTML = "다시 앞면(오목), <b>거꾸로</b>! 신기하죠?";
     }
     if (seen.size === 2) {
       timer = window.setTimeout(() => {
@@ -467,7 +467,7 @@ function pointillismSvg(): string {
       <path d="M96 94q12 7 24 0" stroke="#D8A93C" stroke-width="2.4" stroke-linecap="round"/>
       <path d="M64 120q40 12 96 2" stroke="#7FB8D8" stroke-width="3" stroke-linecap="round" opacity=".5"/>
     </g>
-    <!-- 확대해 보면 — 점, 점, 점 -->
+    <!-- 확대해 보면, 점, 점, 점 -->
     <g class="hlp-near" opacity="0">
       ${dots.join("")}
       <circle cx="86" cy="76" r="4.2" fill="#3C4654"/>
@@ -488,7 +488,7 @@ export function renderPointillism(
   finish: () => void,
   face: Face,
 ): () => void {
-  const fig = el("button", { class: "hlp", attrs: { type: "button", "aria-label": "점묘화 속 노란 물고기 — 눌러서 확대" } });
+  const fig = el("button", { class: "hlp", attrs: { type: "button", "aria-label": "점묘화 속 노란 물고기, 눌러서 확대" } });
   fig.innerHTML = pointillismSvg();
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
@@ -503,13 +503,13 @@ export function renderPointillism(
     fig.classList.add("zoom");
     haptic(HAPTIC.select);
     face("surprised");
-    helper.innerHTML = "가까이 보니 — <b>빨간 점과 초록 점</b>뿐! 노란 물감은 한 방울도 안 썼어요. 그런데 왜 노랗게 보였을까요?";
+    helper.innerHTML = "가까이 보니, <b>빨간 점과 초록 점</b>뿐! 노란 물감은 한 방울도 안 썼어요. 그런데 왜 노랗게 보였을까요?";
     timer = window.setTimeout(() => {
       face("curious");
       ask(choicesBox, helper, {
         choices: s.choices ?? ["빨간 빛과 초록 빛이 눈에서 합쳐져 노랑으로 보였다", "빨강과 초록 물감이 종이에서 섞여 노랑이 됐다", "노란 조명이 그림을 비추고 있었다"],
         good: "정확해요! 점은 그대로인데, 빨간 점과 초록 점에서 온 <b>빛이 눈에서 합쳐져</b> 노랑으로 보인 거예요. 빛의 혼합은 물감 혼합과 달라요!",
-        bad: "확대해 보니 점은 <b>따로따로</b>였죠? 물감이 섞였다면 탁한 색이 됐을 테고, 노란 조명이라면 가까이서도 노랗게 보였을 거예요. 빨간 빛과 초록 빛이 <b>눈에서 합쳐지면</b> 노랑 — 빛의 혼합은 물감과 달라요!",
+        bad: "확대해 보니 점은 <b>따로따로</b>였죠? 물감이 섞였다면 탁한 색이 됐을 테고, 노란 조명이라면 가까이서도 노랗게 보였을 거예요. 빨간 빛과 초록 빛이 <b>눈에서 합쳐지면</b> 노랑, 빛의 혼합은 물감과 달라요!",
         onDone: finish,
       });
     }, 900);
@@ -562,10 +562,10 @@ export function renderFishing(
 ): () => void {
   const fig = el("div", { class: "hlf", attrs: { role: "img", "aria-label": "잔잔한 호수에 낚시찌가 떠 있어요" } });
   fig.innerHTML = fishingSvg();
-  const btn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "퐁당 — 돌 던지기" }));
+  const btn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "퐁당, 돌 던지기" }));
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "고요한 호수에 빨간 낚시찌가 <b>둥실</b>. 저 옆에 돌을 던지면 물결이 일 텐데 — 던져 볼까요?";
+  helper.innerHTML = "고요한 호수에 빨간 낚시찌가 <b>둥실</b>. 저 옆에 돌을 던지면 물결이 일 텐데, 던져 볼까요?";
 
   let timer = 0;
   let done = false;
@@ -678,15 +678,15 @@ export function renderKalimba(
     plucked.add(which);
     if (plucked.size === 1) {
       face("surprised");
-      helper.innerHTML = which === "long" ? "<b>둥—</b> 낮고 묵직한 소리! 이제 <b>짧은 막대</b>도!" : "<b>띵!</b> 높고 맑은 소리! 이제 <b>긴 막대</b>도!";
+      helper.innerHTML = which === "long" ? "<b>둥…</b> 낮고 묵직한 소리! 이제 <b>짧은 막대</b>도!" : "<b>띵!</b> 높고 맑은 소리! 이제 <b>긴 막대</b>도!";
     } else if (!choicesBox.classList.contains("show")) {
       face("curious");
-      helper.innerHTML = "긴 막대는 <b>낮은 소리</b>, 짧은 막대는 <b>높은 소리</b> — 같은 세기로 튕겼는데 왜 다를까요?";
+      helper.innerHTML = "긴 막대는 <b>낮은 소리</b>, 짧은 막대는 <b>높은 소리</b>, 같은 세기로 튕겼는데 왜 다를까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? ["막대 길이가 달라 1초에 떨리는 횟수가 달라서", "긴 막대가 더 무거워 소리가 커져서", "짧은 막대가 몸통에 더 가까워서"],
           good: "정확해요! 짧은 막대일수록 <b>1초에 더 많이 떨려서</b> 높은 소리가 나요. 소리 합성기에서 직접 돌려 봐요!",
-          bad: "소리가 <b>큰 것</b>과 <b>높은 것</b>은 달라요 — 높낮이는 무게나 위치가 아니라 <b>1초에 떨리는 횟수</b>가 정해요. 짧은 막대가 더 빨리 떨려 높은 소리가 나죠. 소리 합성기에서 직접 확인해요!",
+          bad: "소리가 <b>큰 것</b>과 <b>높은 것</b>은 달라요. 높낮이는 무게나 위치가 아니라 <b>1초에 떨리는 횟수</b>가 정해요. 짧은 막대가 더 빨리 떨려 높은 소리가 나죠. 소리 합성기에서 직접 확인해요!",
           onDone: finish,
         });
       }, 800);

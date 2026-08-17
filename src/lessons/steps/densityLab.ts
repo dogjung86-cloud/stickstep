@@ -117,9 +117,9 @@ export const densityLab: StepRenderer = (host, step, api) => {
     const nameCell = el("div", { class: "tstate" });
     nameCell.appendChild(el("i", { style: `background:${sp.mat === "fe" ? "#5E7290" : "#9FB3C8"}` }));
     nameCell.appendChild(el("span", { text: sp.name }));
-    const m = el("div", { class: "tv", style: "font-variant-numeric:tabular-nums", text: "—" });
-    const v = el("div", { class: "tv", style: "font-variant-numeric:tabular-nums", text: "—" });
-    const r = el("div", { class: "tv", style: "font-variant-numeric:tabular-nums", text: "—" });
+    const m = el("div", { class: "tv", style: "font-variant-numeric:tabular-nums", text: "-" });
+    const v = el("div", { class: "tv", style: "font-variant-numeric:tabular-nums", text: "-" });
+    const r = el("div", { class: "tv", style: "font-variant-numeric:tabular-nums", text: "-" });
     cells.set(sp.id, { m, v, r });
     tbl.appendChild(el("div", { class: "trow", style: grid }, nameCell, m, v, r));
   }
@@ -195,7 +195,7 @@ export const densityLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "크기가 달라도 질량÷부피는 그대로 — 이 값이 <b>밀도</b>, 물질의 지문이에요. 철 <b>7.87</b>, 알루미늄 <b>2.70 g/mL</b>.";
+        "크기가 달라도 질량÷부피는 그대로, 이 값이 <b>밀도</b>, 물질의 지문이에요. 철 <b>7.87</b>, 알루미늄 <b>2.70 g/mL</b>.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -225,16 +225,16 @@ export const densityLab: StepRenderer = (host, step, api) => {
     if (sp.mat === "fe") {
       const feDone = samples.filter((x) => x.mat === "fe" && x.volDone).length;
       if (feDone === 2) {
-        collect("iron2", "질량·부피 달라!", "철 두 조각 측정 완료 — 질량도 부피도 서로 달라요");
+        collect("iron2", "질량·부피 달라!", "철 두 조각 측정 완료, 질량도 부피도 서로 달라요");
         window.clearTimeout(sameTimer);
         sameTimer = window.setTimeout(() => {
           // 두 철 칩을 다시 반짝여 "같은 값"을 눈으로 못박는다
           for (const x of samples) if (x.mat === "fe" && x.volDone) fillRatio(x);
-          collect("same", "둘 다 7.87!", "나누면 둘 다 7.87 — 크기와 상관없어요!");
+          collect("same", "둘 다 7.87!", "나누면 둘 다 7.87, 크기와 상관없어요!");
         }, 1200);
       }
     } else {
-      collect("diff", "2.70 — 달라요!", "알루미늄은 2.70 — 물질이 다르면 값도 달라요!");
+      collect("diff", "2.70, 달라요!", "알루미늄은 2.70, 물질이 다르면 값도 달라요!");
     }
   }
 
@@ -361,7 +361,7 @@ export const densityLab: StepRenderer = (host, step, api) => {
     const sp = byId(drag.id);
     if (!drag.moved) {
       selected = selected === sp.id ? null : sp.id;
-      if (selected) toast(`${sp.name} 선택 — 저울이나 실린더를 탭해요`);
+      if (selected) toast(`${sp.name} 선택, 저울이나 실린더를 탭해요`);
       haptic(HAPTIC.select);
     } else {
       dropAt(drag.id, sp.x, sp.y);
@@ -384,7 +384,7 @@ export const densityLab: StepRenderer = (host, step, api) => {
       const sp = byId(selected);
       if (sp.state === "tray") placeToScale(sp.id);
       else if (sp.state === "scale") {
-        if (!sp.massDone) toast("질량을 재는 중이에요 — 잠깐만요");
+        if (!sp.massDone) toast("질량을 재는 중이에요. 잠깐만요");
         else placeToCyl(sp.id, cylX(), CYL_TOP - 10);
       }
       e.preventDefault();
@@ -517,7 +517,7 @@ export const densityLab: StepRenderer = (host, step, api) => {
         if (sp.splashed && !sp.volDone && sp.rested && Math.abs(waterTarget - water) < 0.4) {
           sp.volDone = true;
           fillVol(sp);
-          toast(`부피 ${sp.vol.toFixed(1)} mL — 물이 늘어난 만큼!`);
+          toast(`부피 ${sp.vol.toFixed(1)} mL, 물이 늘어난 만큼!`);
           onFullyMeasured(sp);
         }
       } else {
@@ -545,7 +545,7 @@ export const densityLab: StepRenderer = (host, step, api) => {
             haptic(HAPTIC.tap);
             if (!firstMassHinted && !finished) {
               firstMassHinted = true;
-              helper.innerHTML = "질량 확인! 이제 그 조각을 <b>눈금실린더</b>로 옮겨요 — 물이 <b>늘어난 만큼</b>이 부피예요.";
+              helper.innerHTML = "질량 확인! 이제 그 조각을 <b>눈금실린더</b>로 옮겨요. 물이 <b>늘어난 만큼</b>이 부피예요.";
             }
           }
         }

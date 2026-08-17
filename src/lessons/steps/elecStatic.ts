@@ -157,7 +157,7 @@ export const frictionLab: StepRenderer = (host, step, api) => {
 
   const helper = el("div", {
     class: "helper",
-    html: "핀에 꽂아 둔 <b>빨간 빨대</b> — 파란 빨대와 함께 <b>같은 털가죽으로 문질러</b> 뒀어요. 먼저 <b>파란 빨대를 잡아</b> 빨간 빨대 끝 가까이 가져가면 어떻게 될까요?",
+    html: "핀에 꽂아 둔 <b>빨간 빨대</b>, 파란 빨대와 함께 <b>같은 털가죽으로 문질러</b> 뒀어요. 먼저 <b>파란 빨대를 잡아</b> 빨간 빨대 끝 가까이 가져가면 어떻게 될까요?",
   });
   host.append(goalChips, helper, stage, seg); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -204,7 +204,7 @@ export const frictionLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! <b>다른 종류의 전기는 서로 끌어당기고, 같은 종류의 전기는 서로 밀어내요</b> — 이 힘이 <b>전기력</b>이에요. 그리고 가까울수록 세지죠!";
+        "정리! <b>다른 종류의 전기는 서로 끌어당기고, 같은 종류의 전기는 서로 밀어내요</b>. 이 힘이 <b>전기력</b>이에요. 그리고 가까울수록 세지죠!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -218,8 +218,8 @@ export const frictionLab: StepRenderer = (host, step, api) => {
     if (finished) return;
     helper.innerHTML =
       k === "fur"
-        ? "이번엔 <b>빨대들을 문지르는 데 썼던 그 털가죽</b> 차례예요. 전자를 빨대에 내주었으니 <b>(+)전기</b> — 빨간 빨대의 (−)와는 <b>다른 종류</b>죠. 끝에 가까이 대면 어떻게 될까요?"
-        : "파란 빨대는 빨간 빨대와 <b>같은 털가죽으로 문지른 짝꿍</b> — 똑같이 <b>(−)전기</b>를 띠어요. <b>같은 종류</b>끼리 만나면 어떻게 될까요?";
+        ? "이번엔 <b>빨대들을 문지르는 데 썼던 그 털가죽</b> 차례예요. 전자를 빨대에 내주었으니 <b>(+)전기</b>, 빨간 빨대의 (−)와는 <b>다른 종류</b>죠. 끝에 가까이 대면 어떻게 될까요?"
+        : "파란 빨대는 빨간 빨대와 <b>같은 털가죽으로 문지른 짝꿍</b>, 똑같이 <b>(−)전기</b>를 띠어요. <b>같은 종류</b>끼리 만나면 어떻게 될까요?";
   }
 
   // ---- 입력: 도구 드래그 ----
@@ -320,7 +320,7 @@ export const frictionLab: StepRenderer = (host, step, api) => {
     }
     if (attractAcc > 0.5) {
       collect(
-        "attract", "인력!", "끌려 왔어요 — 다른 종류의 전기!",
+        "attract", "인력!", "끌려 왔어요. 다른 종류의 전기!",
         "빨대가 털가죽 쪽으로 <b>끌려 왔어요</b>. (+)와 (−), <b>다른 종류의 전기 사이에는 인력</b>이 작용해요." +
           (goals.has("repel") ? " 이제 <b>더 가까이</b> 대며 세기를 비교해 봐요!" : " <b>파란 빨대</b>로도 확인해 봐요!"),
       );
@@ -328,7 +328,7 @@ export const frictionLab: StepRenderer = (host, step, api) => {
     }
     if (repelAcc > 0.5) {
       collect(
-        "repel", "척력!", "밀려났어요 — 같은 종류의 전기!",
+        "repel", "척력!", "밀려났어요. 같은 종류의 전기!",
         "빨대가 <b>밀려나요</b>! (−)와 (−), <b>같은 종류의 전기 사이에는 척력</b>이 작용해요." +
           (goals.has("attract") ? " 이제 도구를 <b>더 가까이</b> 대 보세요!" : " 이번엔 위에서 <b>문지른 털가죽</b>으로 바꿔 볼까요?"),
       );
@@ -459,10 +459,10 @@ export const frictionLab: StepRenderer = (host, step, api) => {
     if (st !== hudState) {
       hudState = st;
       if (st === "fur") {
-        stateTxt.textContent = "다른 전기 — 끌어당김!";
+        stateTxt.textContent = "다른 전기, 끌어당김!";
         stateDot.style.background = "#FFC45A";
       } else if (st === "blue") {
-        stateTxt.textContent = "같은 전기 — 밀어냄!";
+        stateTxt.textContent = "같은 전기, 밀어냄!";
         stateDot.style.background = "#7ED6FF";
       } else {
         stateTxt.textContent = "전기력 관찰 중";
@@ -512,7 +512,7 @@ export const rubLab: StepRenderer = (host, step, api) => {
     canvas,
     el("div", { class: "stage-hud" }, el("div", { class: "pill" }, el("span", { class: "pdot", style: "background:#4A90E0" }), countTxt)),
     toastEl,
-    el("div", { class: "stage-cap", text: "(+)알갱이는 제자리 — 이동하는 건 전자(−)뿐이에요" }),
+    el("div", { class: "stage-cap", text: "(+)알갱이는 제자리, 이동하는 건 전자(−)뿐이에요" }),
   );
 
   const goalChips = el(
@@ -533,7 +533,7 @@ export const rubLab: StepRenderer = (host, step, api) => {
 
   const helper = el("div", {
     class: "helper",
-    html: "털가죽도 빨대도 지금은 (+)4개·전자(−) 4개 — <b>중성</b>이에요. 빨대를 <b>잡아 털가죽 위로</b> 가져가 <b>좌우로 문질러</b> 보세요. 왕복 1회마다 전자가 한 개씩 넘어가요.",
+    html: "털가죽도 빨대도 지금은 (+)4개·전자(−) 4개, <b>중성</b>이에요. 빨대를 <b>잡아 털가죽 위로</b> 가져가 <b>좌우로 문질러</b> 보세요. 왕복 1회마다 전자가 한 개씩 넘어가요.",
   });
   host.append(goalChips, helper, stage, quizRow, pullRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -590,7 +590,7 @@ export const rubLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "마찰 전기 = <b>전자의 이사</b>예요! 전자를 <b>잃으면 (+), 얻으면 (−)</b>로 대전돼요 — 그리고 <b>원자핵(+)은 절대 움직이지 않아요</b>. 서로 다른 전기가 된 둘은 이렇게 끌어당기죠.";
+        "마찰 전기 = <b>전자의 이사</b>예요! 전자를 <b>잃으면 (+), 얻으면 (−)</b>로 대전돼요. 그리고 <b>원자핵(+)은 절대 움직이지 않아요</b>. 서로 다른 전기가 된 둘은 이렇게 끌어당기죠.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -685,12 +685,12 @@ export const rubLab: StepRenderer = (host, step, api) => {
     if (goals.has("kind")) return;
     haptic(HAPTIC.wrong);
     toast("다시 생각해 봐요!");
-    helper.innerHTML = "(+)는 전자를 <b>잃은</b> 쪽이에요. 빨대는 전자를 <b>얻었죠</b> — 전자의 전기는 (−)! 다시 골라 봐요.";
+    helper.innerHTML = "(+)는 전자를 <b>잃은</b> 쪽이에요. 빨대는 전자를 <b>얻었죠</b>. 전자의 전기는 (−)! 다시 골라 봐요.";
   });
   minusBtn.addEventListener("click", () => {
     if (goals.has("kind")) return;
     haptic(HAPTIC.correct);
-    collect("kind", "(−)전기!", "정답 — 전자를 얻으면 (−)!");
+    collect("kind", "(−)전기!", "정답, 전자를 얻으면 (−)!");
     helper.innerHTML =
       "맞아요! 전자(−)를 <b>얻은 빨대는 (−)전기</b>, <b>잃은 털가죽은 (+)전기</b>로 대전됐어요. 이제 두 물체 사이의 화살표를 확인!";
     quizRow.style.display = "none";
@@ -726,7 +726,7 @@ export const rubLab: StepRenderer = (host, step, api) => {
     if (returned && !quizShown) {
       quizShown = true;
       quizRow.style.display = "";
-      helper.innerHTML = "전자 3개가 이사를 마쳤어요. 그럼 퀴즈 — 전자를 얻은 <b>빨대는 어느 전기</b>를 띠게 됐을까요? 위에서 골라 보세요.";
+      helper.innerHTML = "전자 3개가 이사를 마쳤어요. 그럼 퀴즈, 전자를 얻은 <b>빨대는 어느 전기</b>를 띠게 됐을까요? 위에서 골라 보세요.";
       window.setTimeout(() => quizRow.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
     }
 
@@ -789,10 +789,10 @@ export const rubLab: StepRenderer = (host, step, api) => {
         countTxt.textContent = `전자 이동 ${landed}/3`;
         if (landed >= MAX_MOVE) {
           collect("move", "3개 완료!", "전자 3개 이동 완료!");
-          if (!goals.has("kind")) helper.innerHTML = "3개 이동 완료! <b>전자가 이사 가는 것</b> — 이게 마찰 전기의 정체예요. 빨대를 놓으면 결과를 정리해 볼게요.";
+          if (!goals.has("kind")) helper.innerHTML = "3개 이동 완료! <b>전자가 이사 가는 것</b>, 이게 마찰 전기의 정체예요. 빨대를 놓으면 결과를 정리해 볼게요.";
         } else {
           toast(`전자 이동! 털가죽 +${landed} · 빨대 −${landed}`);
-          helper.innerHTML = `전자 ${landed}개째! 털가죽은 전자를 잃어 <b>+${landed}</b>, 빨대는 얻어서 <b>−${landed}</b> — <b>(+)알갱이는 그대로</b>인 것 보이죠? 계속 문질러요.`;
+          helper.innerHTML = `전자 ${landed}개째! 털가죽은 전자를 잃어 <b>+${landed}</b>, 빨대는 얻어서 <b>−${landed}</b>, <b>(+)알갱이는 그대로</b>인 것 보이죠? 계속 문질러요.`;
         }
       }
     }

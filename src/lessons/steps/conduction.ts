@@ -71,7 +71,7 @@ export const conduction: StepRenderer = (host, step, api) => {
 
   function toPick(): void {
     mode = "pick";
-    (modePill.querySelector(".cd-mode") as HTMLElement).textContent = "전도 레이스 — 예측하기";
+    (modePill.querySelector(".cd-mode") as HTMLElement).textContent = "전도 레이스, 예측하기";
     clear(controls);
     const row = el("div", { class: "cd-pick" });
     RACERS.forEach((r, i) => {
@@ -99,7 +99,7 @@ export const conduction: StepRenderer = (host, step, api) => {
   function startRace(): void {
     window.setTimeout(() => {
       mode = "race";
-      (modePill.querySelector(".cd-mode") as HTMLElement).textContent = "전도 레이스 — 관찰";
+      (modePill.querySelector(".cd-mode") as HTMLElement).textContent = "전도 레이스, 관찰";
       helper.innerHTML = "세 막대를 동시에 가열하고 있어요. 열이 번져 가는 <b>속도 차이</b>를 보세요.";
     }, 350);
   }
@@ -237,7 +237,7 @@ export const conduction: StepRenderer = (host, step, api) => {
       helper.innerHTML =
         "반대쪽 끝까지 뜨거워졌어요! 입자는 <b>제자리에서 흔들리기만</b> 하는데, 그 <b>운동이 릴레이처럼</b> 전달돼 열이 이동했죠. 이것이 <b>전도</b>예요.";
       clear(controls);
-      const nextBtn = el("button", { class: "swapbtn", html: "<span>다음 실험 — 어떤 막대가 빠를까?</span>" });
+      const nextBtn = el("button", { class: "swapbtn", html: "<span>다음 실험, 어떤 막대가 빠를까?</span>" });
       nextBtn.addEventListener("click", () => {
         haptic(HAPTIC.tap);
         toPick();

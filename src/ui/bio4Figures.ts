@@ -233,7 +233,7 @@ export function cellFigAnimal(): string {
     ${mito(105, 80, -20)}
     ${mito(215, 160, 15)}
     ${mito(112, 168, 40, 0.9)}
-  `, "동물세포 도해 — 세포막 속에 핵과 마이토콘드리아");
+  `, "동물세포 도해, 세포막 속에 핵과 마이토콘드리아");
 }
 
 /** 식물세포 도해 — 육각형 세포벽(브라운) + 안쪽 세포막(앰버) + 핵·마이토콘드리아·엽록체.
@@ -253,7 +253,7 @@ export function cellFigPlant(): string {
     ${chloro(196, 168, -25)}
     ${mito(98, 160, 30, 0.85)}
     ${mito(238, 142, -12, 0.85)}
-  `, "식물세포 도해 — 육각형 세포벽 안에 세포막·핵·엽록체·마이토콘드리아");
+  `, "식물세포 도해, 육각형 세포벽 안에 세포막·핵·엽록체·마이토콘드리아");
 }
 
 /** 퀴즈용 — 식물세포에 (가)~(마) 태그만(이름 비표시, 정답 유출 차단).
@@ -282,7 +282,7 @@ export function cellPartsQuizFig(): string {
     ${lead(150, 148, 150, 240)}${tag(150, 246, "(다)")}
     ${lead(53, 182, 30, 226)}${tag(28, 238, "(라)")}
     ${lead(243, 158, 288, 216)}${tag(292, 228, "(마)")}
-  `, "식물세포 도해 — 다섯 구조에 (가)~(마) 표시");
+  `, "식물세포 도해, 다섯 구조에 (가)~(마) 표시");
 }
 
 // ── L4 다양한 세포 도해(카드 크기에서 사진풍은 뭉개짐 — 도해가 정답이라는 확정 관행) ──
@@ -297,13 +297,13 @@ export function cellTypeArt(kind: "nerve" | "rbc" | "epi"): string {
       <path d="M78 30 m-16 0 l7 -12 l10 -3 l9 6 l1 11 l-8 9 l-11 -1 Z" fill="#D0BFFF" stroke="#7048E8" stroke-width="3" stroke-linejoin="round"/>
       <circle cx="78" cy="30" r="6" fill="#7048E8"/>
       <path d="M88 15 l6 -9 M97 27 l11 -4 M94 40 l9 7 M66 16 l-4 -10" stroke="#9775FA" stroke-width="3.4" stroke-linecap="round"/>
-    `, "가늘고 긴 신경세포 — 신호를 전달해요");
+    `, "가늘고 긴 신경세포, 신호를 전달해요");
   if (kind === "rbc")
     return svg("0 0 120 120", `
       <ellipse cx="60" cy="64" rx="40" ry="34" fill="#FFA8A8" stroke="#E03131" stroke-width="3.4"/>
       <ellipse cx="60" cy="62" rx="20" ry="15" fill="#F03E3E" opacity="0.45"/>
       <path d="M32 44 C40 36 50 32 58 32" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" opacity="0.65"/>
-    `, "가운데가 오목한 원반 모양 적혈구 — 산소를 운반해요");
+    `, "가운데가 오목한 원반 모양 적혈구, 산소를 운반해요");
   return svg("0 0 120 120", `
     <path d="M12 74 L48 66 L58 88 L20 96 Z" fill="#A5D8FF" stroke="#1971C2" stroke-width="3" stroke-linejoin="round"/>
     <path d="M48 66 L88 62 L96 84 L58 88 Z" fill="#D0EBFF" stroke="#1971C2" stroke-width="3" stroke-linejoin="round"/>
@@ -312,7 +312,7 @@ export function cellTypeArt(kind: "nerve" | "rbc" | "epi"): string {
     <circle cx="52" cy="55" r="4" fill="#1971C2" opacity="0.6"/>
     <circle cx="88" cy="51" r="4" fill="#1971C2" opacity="0.6"/>
     <circle cx="36" cy="84" r="4" fill="#1971C2" opacity="0.6"/>
-  `, "납작하고 편평한 상피세포 — 표면을 덮어 보호해요");
+  `, "납작하고 편평한 상피세포, 표면을 덮어 보호해요");
 }
 
 // ── L8 분류체계 사다리(종속과목강문계 — 들고양이 예시, 교과서 그림 Ⅱ-9 구도) ──
@@ -366,12 +366,12 @@ export function sizeLadderFig(): string {
   const micro = `<path d="M292 50 l10 12 M302 62 l-7 6 -10 -12 Z" fill="#5A6B7F" stroke="#3E4C5C" stroke-width="1.6"/>
     <path d="M288 74 c0 8 6 12 12 12 M282 90 h32" stroke="#3E4C5C" stroke-width="2.6" stroke-linecap="round" fill="none"/>`;
   return `<svg viewBox="0 0 340 132" fill="none" xmlns="http://www.w3.org/2000/svg" role="img"
-    aria-label="큰 것부터 작은 것 순서의 크기 눈금 사다리">
+    aria-label="큰 것부터 작은 것 순서의 크기 눈금">
     ${box(16, "(가)", "약 1 m", person)}
     ${box(98, "(나)", "약 1 cm", coin)}
     ${box(180, "(다)", "약 0.1 mm", hair)}
     ${box(262, "(라)", "0.1 mm 미만", micro)}
     <path d="M92 76 h4 M174 76 h4 M256 76 h4" stroke="#8B95A1" stroke-width="2"/>
-    <text x="221" y="128" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8B95A1">(다)쯤이 맨눈의 한계 — 그보다 작으면 현미경!</text>
+    <text x="221" y="128" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8B95A1">(다)쯤이 맨눈의 한계, 그보다 작으면 현미경!</text>
   </svg>`;
 }

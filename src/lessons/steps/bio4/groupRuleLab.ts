@@ -65,7 +65,7 @@ const RULES: Rule[] = [
     id: "wing",
     label: "날개가 있다?",
     groupA: ["gull", "bat", "butterfly"],
-    note: "날개 기준이면 <b>갈매기·박쥐·나비</b>가 한 무리 — 새·젖먹이·곤충이 뒤죽박죽이에요. 뭔가 이상하죠?",
+    note: "날개 기준이면 <b>갈매기·박쥐·나비</b>가 한 무리, 새·젖먹이·곤충이 뒤죽박죽이에요. 뭔가 이상하죠?",
   },
   {
     id: "water",
@@ -77,7 +77,7 @@ const RULES: Rule[] = [
     id: "milk",
     label: "새끼를 낳아 젖을 먹인다?",
     groupA: ["bat", "squirrel", "whale"],
-    note: "번식 방법 기준 — <b>박쥐가 다람쥐·고래 곁으로</b>! 온몸의 털, 새끼, 젖… 이제야 진짜 가까운 사이가 보여요.",
+    note: "번식 방법 기준, <b>박쥐가 다람쥐·고래 곁으로</b>! 온몸의 털, 새끼, 젖… 이제야 진짜 가까운 사이가 보여요.",
   },
 ];
 
@@ -104,7 +104,7 @@ export const groupRuleLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "생물 여섯이 모여 있어요. <b>기준 스위치</b>를 차례로 눌러 — 기준이 바뀌면 무리가 어떻게 갈라지는지 보세요.",
+    html: "생물 여섯이 모여 있어요. <b>기준 스위치</b>를 차례로 눌러, 기준이 바뀌면 무리가 어떻게 갈라지는지 보세요.",
   });
 
   const board = el("div", { class: "b4-board grl-board" });
@@ -180,7 +180,7 @@ export const groupRuleLab: StepRenderer = (host, step, api) => {
     finalShown = true;
     b4Ask(
       askBox,
-      "세 스위치를 겪어 보니 — 생물을 분류할 때 기준으로 삼아야 하는 것은 무엇일까요?",
+      "세 스위치를 겪어 보니, 생물을 분류할 때 기준으로 삼아야 하는 것은 무엇일까요?",
       [
         { t: "몸의 생김새·한살이·번식 방법 같은 생물의 고유한 특징", ok: true },
         { t: "날개가 있는지 같은 겉모습 한 가지", ok: false },
@@ -189,8 +189,8 @@ export const groupRuleLab: StepRenderer = (host, step, api) => {
       (ok) => {
         api.recordQuiz(ok);
         helper.innerHTML = ok
-          ? "정답! <b>고유한 특징</b>을 기준으로 분류하면 생물 사이의 <b>멀고 가까운 관계</b>까지 보여요 — 박쥐의 진짜 가족을 찾아냈듯이요."
-          : "날개·사는 곳 스위치에서 이상한 짝이 생겼던 걸 떠올려요 — 기준은 <b>생물의 고유한 특징</b>(생김새·한살이·번식 방법)이어야 관계가 바로 보인답니다.";
+          ? "정답! <b>고유한 특징</b>을 기준으로 분류하면 생물 사이의 <b>멀고 가까운 관계</b>까지 보여요. 박쥐의 진짜 가족을 찾아냈듯이요."
+          : "날개·사는 곳 스위치에서 이상한 짝이 생겼던 걸 떠올려요. 기준은 <b>생물의 고유한 특징</b>(생김새·한살이·번식 방법)이어야 관계가 바로 보인답니다.";
         if (!finished) {
           finished = true;
           api.enableCTA(s.cta ?? "용어로 정리하기");

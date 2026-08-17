@@ -80,7 +80,7 @@ export function renderDawnSoccer(
   const fig = el("div", { class: "hs3-dawn", attrs: { role: "button", tabindex: "0", "aria-label": "탭해서 텔레비전 켜기" } });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "알람을 맞추고 일어난 새벽 4시 — 오늘은 유럽 축구 결승전 날! <b>TV를 탭</b>해서 켜 봐요.";
+  helper.innerHTML = "알람을 맞추고 일어난 새벽 4시, 오늘은 유럽 축구 결승전 날! <b>TV를 탭</b>해서 켜 봐요.";
 
   let state: 0 | 1 | 2 = 0;
   let timer = 0;
@@ -100,7 +100,7 @@ export function renderDawnSoccer(
       helper.innerHTML = "결승전 생중계! 그런데 TV 속 유럽 경기장은 <b>환한 저녁</b>이에요. <b>창밖도 탭</b>해 볼까요?";
     } else {
       face("curious");
-      helper.innerHTML = "우리 동네는 아직 한밤중, 유럽은 저녁 — <b>같은 순간인데 낮과 밤이 달라요.</b> 왜 유럽 경기는 늘 새벽에 봐야 할까요?";
+      helper.innerHTML = "우리 동네는 아직 한밤중, 유럽은 저녁, <b>같은 순간인데 낮과 밤이 달라요.</b> 왜 유럽 경기는 늘 새벽에 봐야 할까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
@@ -108,8 +108,8 @@ export function renderDawnSoccer(
             "유럽 사람들이 새벽 경기를 좋아하기 때문에",
             "우리나라 방송국이 새벽에만 중계할 수 있기 때문에",
           ],
-          good: "맞아요! 유럽은 우리나라에서 <b>서쪽으로 아주 먼</b> 대륙이라, 우리가 새벽일 때 그곳은 저녁이에요. 얼마나 멀고 어떤 땅인지 — 지도를 펼쳐 확인해 봐요!",
-          bad: "취향이나 방송국 사정이 아니에요 — TV 속 경기장은 환한 저녁이었죠? 유럽은 <b>서쪽으로 아주 멀리</b> 있어 우리와 낮·밤이 어긋나요. 그 먼 대륙의 위치부터 지도로 확인해 봐요!",
+          good: "맞아요! 유럽은 우리나라에서 <b>서쪽으로 아주 먼</b> 대륙이라, 우리가 새벽일 때 그곳은 저녁이에요. 얼마나 멀고 어떤 땅인지, 지도를 펼쳐 확인해 봐요!",
+          bad: "취향이나 방송국 사정이 아니에요. TV 속 경기장은 환한 저녁이었죠? 유럽은 <b>서쪽으로 아주 멀리</b> 있어 우리와 낮·밤이 어긋나요. 그 먼 대륙의 위치부터 지도로 확인해 봐요!",
           onDone: finish,
         });
       }, 750);
@@ -167,7 +167,7 @@ export function renderPeakHike(
   const btn = el("button", { class: "hs3-flipbtn", attrs: { type: "button" }, text: "더 오르기" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "8월의 알프스 여행 — 반팔 차림으로 출발! 꽃밭 너머 저 위가 오늘의 목표예요. <b>더 오르기</b>를 눌러요.";
+  helper.innerHTML = "8월의 알프스 여행, 반팔 차림으로 출발! 꽃밭 너머 저 위가 오늘의 목표예요. <b>더 오르기</b>를 눌러요.";
 
   let stage: 0 | 1 | 2 = 0;
   let timer = 0;
@@ -185,7 +185,7 @@ export function renderPeakHike(
       btn.disabled = true;
       btn.classList.add("done");
       face("surprised");
-      helper.innerHTML = "정상 부근 — 8월인데 <b>눈</b>이 쌓여 있어요! 덜덜… 한여름의 눈, 어떻게 된 걸까요?";
+      helper.innerHTML = "정상 부근, 8월인데 <b>눈</b>이 쌓여 있어요! 덜덜… 한여름의 눈, 어떻게 된 걸까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
@@ -193,8 +193,8 @@ export function renderPeakHike(
             "산꼭대기가 북극에 훨씬 가까워지기 때문에",
             "누군가 스키장을 만들려고 눈을 뿌려 두어서",
           ],
-          good: "정확해요! 4,000m가 넘는 알프스의 봉우리는 기온이 낮아 <b>내린 눈이 녹는 양보다 많아요</b> — 일 년 내내 남는 이 눈이 만년설이에요. 이렇게 높고 험준한 산이 유럽 남부의 뼈대랍니다!",
-          bad: "산을 올라도 북극에 가까워지진 않아요 — 위로 올라갈수록 <b>기온이 낮아져</b>, 내린 눈이 녹는 양보다 많으면 일 년 내내 남죠(만년설). 이 높고 험준한 알프스가 유럽 남부의 뼈대예요!",
+          good: "정확해요! 4,000m가 넘는 알프스의 봉우리는 기온이 낮아 <b>내린 눈이 녹는 양보다 많아요</b>. 일 년 내내 남는 이 눈이 만년설이에요. 이렇게 높고 험준한 산이 유럽 남부의 뼈대랍니다!",
+          bad: "산을 올라도 북극에 가까워지진 않아요. 위로 올라갈수록 <b>기온이 낮아져</b>, 내린 눈이 녹는 양보다 많으면 일 년 내내 남죠(만년설). 이 높고 험준한 알프스가 유럽 남부의 뼈대예요!",
           onDone: finish,
         });
       }, 750);
@@ -268,7 +268,7 @@ export function renderFrozenRiver(
   const btn = el("button", { class: "hs3-flipbtn", attrs: { type: "button" }, text: "채널 돌리기" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "1월의 저녁 뉴스 — 서울은 강이 꽁꽁 얼 만큼 춥대요. <b>채널을 돌려</b> 다른 나라 겨울도 볼까요?";
+  helper.innerHTML = "1월의 저녁 뉴스, 서울은 강이 꽁꽁 얼 만큼 춥대요. <b>채널을 돌려</b> 다른 나라 겨울도 볼까요?";
 
   let flips = 0;
   let timer = 0;
@@ -282,7 +282,7 @@ export function renderFrozenRiver(
     void fig.offsetWidth;
     fig.classList.add("flip");
     if (flips === 1) {
-      helper.innerHTML = "런던의 겨울 — 강물이 그대로 흐르고 사람들은 얇은 코트에 우산이에요. <b>한 번 더</b> 눌러 두 도시의 위치를 봐요!";
+      helper.innerHTML = "런던의 겨울, 강물이 그대로 흐르고 사람들은 얇은 코트에 우산이에요. <b>한 번 더</b> 눌러 두 도시의 위치를 봐요!";
     } else {
       btn.disabled = true;
       btn.classList.add("done");
@@ -295,8 +295,8 @@ export function renderFrozenRiver(
             "런던이 사실은 서울보다 남쪽에 있기 때문에",
             "런던은 건물 난방 열기로 도시 전체가 데워지기 때문에",
           ],
-          good: "좋은 직감이에요! 범인은 <b>따뜻한 바닷물과 일 년 내내 부는 바람</b> — 이 배달부들이 어떻게 일하는지, 랩에서 직접 꺼 보고 켜 보며 확인해요!",
-          bad: "위치 지도를 다시 봐요 — 런던은 분명 서울보다 북쪽이에요. 난방 열기로 도시 하나가 통째로 따뜻해질 수도 없죠. 비밀은 <b>바다와 바람</b>에 있어요 — 랩에서 직접 확인해 봐요!",
+          good: "좋은 직감이에요! 범인은 <b>따뜻한 바닷물과 일 년 내내 부는 바람</b>, 이 배달부들이 어떻게 일하는지, 랩에서 직접 꺼 보고 켜 보며 확인해요!",
+          bad: "위치 지도를 다시 봐요. 런던은 분명 서울보다 북쪽이에요. 난방 열기로 도시 하나가 통째로 따뜻해질 수도 없죠. 비밀은 <b>바다와 바람</b>에 있어요. 랩에서 직접 확인해 봐요!",
           onDone: finish,
         });
       }, 750);
@@ -366,7 +366,7 @@ export function renderCityFeed(
     if (idx === 1) helper.innerHTML = "이번 도시는 오래된 돌기둥과 카메라… 앞 도시와 분위기가 전혀 달라요. <b>한 장 더!</b>";
     if (idx === FEED_CARDS.length - 1) {
       face("curious");
-      helper.innerHTML = "빌딩의 도시, 유적의 도시, 태양광의 도시 — <b>같은 유럽인데 도시마다 사진이 전혀 달라요.</b> 왜 그럴까요?";
+      helper.innerHTML = "빌딩의 도시, 유적의 도시, 태양광의 도시, <b>같은 유럽인데 도시마다 사진이 전혀 달라요.</b> 왜 그럴까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
@@ -375,7 +375,7 @@ export function renderCityFeed(
             "유럽 도시는 원래 다 비슷한데 필터 때문에 달라 보여서",
           ],
           good: "정확해요! 유럽의 도시들은 역사·문화 배경이 달라 <b>도시마다 다른 기능과 매력</b>을 키워 왔어요. 어떤 명함들을 들고 있는지, 다섯 가지 얼굴을 만나러 가요!",
-          bad: "계절이나 필터로는 빌딩 숲이 돌기둥 유적이 되진 않죠. 유럽 도시들은 <b>서로 다른 역사와 기능</b>을 키워 와서 저마다 얼굴이 달라요 — 다섯 가지 얼굴을 만나러 가요!",
+          bad: "계절이나 필터로는 빌딩 숲이 돌기둥 유적이 되진 않죠. 유럽 도시들은 <b>서로 다른 역사와 기능</b>을 키워 와서 저마다 얼굴이 달라요. 다섯 가지 얼굴을 만나러 가요!",
           onDone: finish,
         });
       }, 750);
@@ -401,9 +401,9 @@ export function renderCityFeed(
 // 다른 사진 스왑을 줌이라 부르지 않는다 — 줌 연출은 반드시 같은 사진 위 scale 전환으로.
 // 사진 3장 전부 위키미디어 실물(photos/CREDITS.md), 후보 눈검수·탈락 기록은 qa/fetch-soc3-skislope.mjs.
 const SLOPE_BEATS = [
-  { img: "copenhill-mat.webp", tag: "여름 스키장 — 눈 대신 초록 매트", alt: "잔디 비탈에 초록 스키 매트가 깔린 여름 슬로프와 리프트 기둥" },
-  { img: "copenhill-peak.webp", tag: "꼭대기 — 벤치 옆에 웬 굴뚝?!", alt: "슬로프 꼭대기 쉼터 — 거대한 굴뚝이 솟아 있고 발아래로 공장과 항구가 펼쳐진다", zoom: false },
-  { img: "copenhill-aerial.webp", tag: "하늘에서 그 언덕을 다시 보면…", alt: "하늘에서 내려다본 언덕 — 초록 지붕을 얹은 거대한 건물과 김이 나는 굴뚝, 항구 도시", zoom: true },
+  { img: "copenhill-mat.webp", tag: "여름 스키장, 눈 대신 초록 매트", alt: "잔디 비탈에 초록 스키 매트가 깔린 여름 슬로프와 리프트 기둥" },
+  { img: "copenhill-peak.webp", tag: "꼭대기, 벤치 옆에 웬 굴뚝?!", alt: "슬로프 꼭대기 쉼터, 거대한 굴뚝이 솟아 있고 발아래로 공장과 항구가 펼쳐진다", zoom: false },
+  { img: "copenhill-aerial.webp", tag: "하늘에서 그 언덕을 다시 보면…", alt: "하늘에서 내려다본 언덕, 초록 지붕을 얹은 거대한 건물과 김이 나는 굴뚝, 항구 도시", zoom: true },
 ];
 
 export function renderSkiSlope(
@@ -417,7 +417,7 @@ export function renderSkiSlope(
   const btn = el("button", { class: "hs3-flipbtn", attrs: { type: "button" }, text: "리프트 타고 꼭대기로" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "유럽 친구가 여름 스키장 영상을 보냈어요 — 눈 대신 <b>초록 매트</b> 위로 슝! 그런데 이 스키장, 오를수록 수상해요. <b>리프트</b>를 타 봐요.";
+  helper.innerHTML = "유럽 친구가 여름 스키장 영상을 보냈어요. 눈 대신 <b>초록 매트</b> 위로 슝! 그런데 이 스키장, 오를수록 수상해요. <b>리프트</b>를 타 봐요.";
   for (const b of SLOPE_BEATS) new Image().src = `${BASE}soc/europe/${b.img}`; // 탭 전 프리로드
 
   const timers = new Set<number>();
@@ -459,7 +459,7 @@ export function renderSkiSlope(
       btn.disabled = true;
       btn.classList.add("done");
       face("surprised");
-      helper.innerHTML = "카메라가 물러날수록 드러나요 — 언덕이 아니라 <b>거대한 건물의 지붕</b>! 김이 솟는 굴뚝까지 달린 이 건물의 정체는 뭘까요?";
+      helper.innerHTML = "카메라가 물러날수록 드러나요. 언덕이 아니라 <b>거대한 건물의 지붕</b>! 김이 솟는 굴뚝까지 달린 이 건물의 정체는 뭘까요?";
       later(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
@@ -467,8 +467,8 @@ export function renderSkiSlope(
             "스키장으로 쓰려고 지은 초대형 실내 스키 돔",
             "곡식을 쌓아 두는 항구의 거대한 창고",
           ],
-          good: "믿기 어렵지만 정답! 덴마크 코펜하겐에 <b>실제로 있는</b> 쓰레기 소각장이에요 — 이름도 '코펜하겐의 언덕'이라는 뜻의 <b>코펜힐</b>. 쓰레기를 태운 열로 전기·난방을 공급하고, 굴뚝에선 연기 대신 김이 나죠. 기피 시설을 놀이터로 바꾼 상상력 — 지속가능한 도시예요!",
-          bad: "지붕의 스키장은 덤이에요 — 스키 돔도 창고도 아니라, 도시의 <b>쓰레기를 태워 전기와 난방열을 만드는 발전소</b>! 덴마크 코펜하겐에 <b>실제로 있는</b> 건물로, 이름은 코펜힐이랍니다. 기피 시설을 시민의 놀이터로 바꾼 상상력, 지속가능한 도시의 이야기예요!",
+          good: "믿기 어렵지만 정답! 덴마크 코펜하겐에 <b>실제로 있는</b> 쓰레기 소각장이에요. 이름도 '코펜하겐의 언덕'이라는 뜻의 <b>코펜힐</b>. 쓰레기를 태운 열로 전기·난방을 공급하고, 굴뚝에선 연기 대신 김이 나죠. 기피 시설을 놀이터로 바꾼 상상력, 지속가능한 도시예요!",
+          bad: "지붕의 스키장은 덤이에요. 스키 돔도 창고도 아니라, 도시의 <b>쓰레기를 태워 전기와 난방열을 만드는 발전소</b>! 덴마크 코펜하겐에 <b>실제로 있는</b> 건물로, 이름은 코펜힐이랍니다. 기피 시설을 시민의 놀이터로 바꾼 상상력, 지속가능한 도시의 이야기예요!",
           onDone: finish,
         });
       }, 1800);
@@ -563,7 +563,7 @@ export function renderTrainBorder(
   const btn = el("button", { class: "hs3-flipbtn", attrs: { type: "button" }, text: "기차 출발!" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "유럽 배낭여행 — 기차로 옆 나라까지 가요. 여권을 손에 꼭 쥐고… <b>출발</b>!";
+  helper.innerHTML = "유럽 배낭여행, 기차로 옆 나라까지 가요. 여권을 손에 꼭 쥐고… <b>출발</b>!";
 
   fig.innerHTML = trainSceneSvg();
   const mover = fig.querySelector(".hs3-loco") as SVGGElement;
@@ -584,7 +584,7 @@ export function renderTrainBorder(
     haptic(HAPTIC.tap);
     btn.disabled = true;
     fig.classList.add("ride");
-    status.textContent = "덜컹덜컹 — 국경을 향해 달려요";
+    status.textContent = "덜컹덜컹, 국경을 향해 달려요";
     mover.style.transform = `translate(${TRAIN_TX[pos]}px,0px)`;
     const arrived = pos;
     later(() => {
@@ -606,8 +606,8 @@ export function renderTrainBorder(
               "기차가 너무 빨라 검사원이 못 탔기 때문에",
               "여권 검사는 원래 비행기에서만 하기 때문에",
             ],
-            good: "정확해요! 유럽의 여러 나라는 <b>국경 검문 없이 자유롭게 오가기로 약속</b>했어요(솅겐 조약). 이 약속을 만든 '하나의 유럽' 이야기 — 유럽연합을 만나러 가요!",
-            bad: "기차 속도나 교통수단의 문제가 아니에요 — 걸어서 넘어도 검사가 없답니다. 유럽 나라들이 <b>국경을 자유롭게 오가기로 약속</b>했기 때문이죠. 그 약속의 이름과 이야기를 만나러 가요!",
+            good: "정확해요! 유럽의 여러 나라는 <b>국경 검문 없이 자유롭게 오가기로 약속</b>했어요(솅겐 조약). 이 약속을 만든 '하나의 유럽' 이야기, 유럽연합을 만나러 가요!",
+            bad: "기차 속도나 교통수단의 문제가 아니에요. 걸어서 넘어도 검사가 없답니다. 유럽 나라들이 <b>국경을 자유롭게 오가기로 약속</b>했기 때문이죠. 그 약속의 이름과 이야기를 만나러 가요!",
             onDone: finish,
           });
         }, 750);
@@ -701,7 +701,7 @@ export function renderFourShirts(
     if (count === 2) helper.innerHTML = "잉글랜드에 이어 스코틀랜드… 어? 둘 다 <b>영국</b> 아니었나요? <b>계속 탭!</b>";
     if (count === 4) {
       face("surprised");
-      helper.innerHTML = "잉글랜드·스코틀랜드·웨일스·북아일랜드 — <b>영국 하나에서 네 팀</b>이 나왔어요! 한 나라인데 왜 대표팀이 4개일까요?";
+      helper.innerHTML = "잉글랜드·스코틀랜드·웨일스·북아일랜드, <b>영국 하나에서 네 팀</b>이 나왔어요! 한 나라인데 왜 대표팀이 4개일까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
@@ -709,8 +709,8 @@ export function renderFourShirts(
             "영국은 인구가 많아 팀을 넷으로 나눠야 하기 때문에",
             "축구 협회가 실수로 팀을 네 개 등록했기 때문에",
           ],
-          good: "정확해요! 영국은 <b>잉글랜드·스코틀랜드·웨일스·북아일랜드</b> — 역사·문화가 다른 네 지역이 연합한 나라예요. 이 '서로 다름'이 유럽 곳곳의 통합과 분리 이야기로 이어진답니다.",
-          bad: "인구 규모나 실수가 아니에요 — 영국은 원래 <b>역사·문화가 다른 네 지역이 연합한 나라</b>라 축구도 각자 대표팀으로 나와요. 이 '서로 다름'이 유럽의 통합과 분리 이야기의 열쇠랍니다.",
+          good: "정확해요! 영국은 <b>잉글랜드·스코틀랜드·웨일스·북아일랜드</b>, 역사·문화가 다른 네 지역이 연합한 나라예요. 이 '서로 다름'이 유럽 곳곳의 통합과 분리 이야기로 이어진답니다.",
+          bad: "인구 규모나 실수가 아니에요. 영국은 원래 <b>역사·문화가 다른 네 지역이 연합한 나라</b>라 축구도 각자 대표팀으로 나와요. 이 '서로 다름'이 유럽의 통합과 분리 이야기의 열쇠랍니다.",
           onDone: finish,
         });
       }, 750);

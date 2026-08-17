@@ -133,7 +133,7 @@ export const strataLab: StepRenderer = (host, step, api) => {
   const compactBtn = el(
     "button",
     { class: "swapbtn", style: "opacity:.45", attrs: { type: "button", disabled: "true" } },
-    el("span", { text: "다지기 — 4층 넘게 쌓으면 열려요" }),
+    el("span", { text: "다지기, 4층 넘게 쌓으면 열려요" }),
   );
 
   const goalChips = el(
@@ -145,7 +145,7 @@ export const strataLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "고요한 바다 밑바닥이에요. <b>퇴적물 4가지</b> 중 하나를 골라 뿌리면 가라앉아 한 층이 돼요 — 서로 다른 종류로 쌓아 보세요!",
+    html: "고요한 바다 밑바닥이에요. <b>퇴적물 4가지</b> 중 하나를 골라 뿌리면 가라앉아 한 층이 돼요. 서로 다른 종류로 쌓아 보세요!",
   });
   host.append(goalChips, helper, stage, seg, compactBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -197,16 +197,16 @@ export const strataLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "입자 크기·색이 다른 퇴적물이 쌓여 만든 줄무늬가 <b>층리</b> — 화석도 퇴적암의 트레이드마크예요!";
+        "입자 크기·색이 다른 퇴적물이 쌓여 만든 줄무늬가 <b>층리</b>, 화석도 퇴적암의 트레이드마크예요!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       return;
     }
     if (finished) return;
     if (id === "stack") {
-      helper.innerHTML = "줄무늬가 생기기 시작했어요! <b>4층 이상</b> 쌓이면 다지기 버튼이 열려요 — 계속 쌓아 볼까요?";
+      helper.innerHTML = "줄무늬가 생기기 시작했어요! <b>4층 이상</b> 쌓이면 다지기 버튼이 열려요. 계속 쌓아 볼까요?";
     } else if (id === "press" && !goals.has("fossil")) {
-      helper.innerHTML = "단단히 굳었어요! 그런데 무대 어딘가 <b>반짝이는 곳</b>이 보이네요 — 눌러 보세요.";
+      helper.innerHTML = "단단히 굳었어요! 그런데 무대 어딘가 <b>반짝이는 곳</b>이 보이네요. 눌러 보세요.";
     }
   }
 
@@ -228,7 +228,7 @@ export const strataLab: StepRenderer = (host, step, api) => {
       compactBtn.className = "swapbtn done-static";
       compactBtn.style.opacity = "";
       (compactBtn as HTMLButtonElement).disabled = true;
-      span.textContent = `${rockName} 완성 — 층리!`;
+      span.textContent = `${rockName} 완성, 층리!`;
       return;
     }
     if (resetMode) {
@@ -242,12 +242,12 @@ export const strataLab: StepRenderer = (host, step, api) => {
       compactBtn.className = "swapbtn pulse";
       compactBtn.style.opacity = "";
       (compactBtn as HTMLButtonElement).disabled = false;
-      span.textContent = "다지기 — 꾹 눌러 굳히기";
+      span.textContent = "다지기, 꾹 눌러 굳히기";
     } else {
       compactBtn.className = "swapbtn";
       compactBtn.style.opacity = ".45";
       (compactBtn as HTMLButtonElement).disabled = true;
-      span.textContent = layers.length < 4 ? "다지기 — 4층 넘게 쌓으면 열려요" : "다지기 — 퇴적물 3가지가 필요해요";
+      span.textContent = layers.length < 4 ? "다지기, 4층 넘게 쌓으면 열려요" : "다지기, 퇴적물 3가지가 필요해요";
     }
   }
 
@@ -302,14 +302,14 @@ export const strataLab: StepRenderer = (host, step, api) => {
     pourKey = null;
     layerPill.textContent = `지층 ${layers.length}층`;
     if (!compacted && layers.length < MAX_LAYERS) setSeds(true);
-    if (layers.length >= 3 && distinct() >= 3) collect("stack", "3가지 지층!", "크기·색이 다른 층 — 줄무늬가 보여요!");
+    if (layers.length >= 3 && distinct() >= 3) collect("stack", "3가지 지층!", "크기·색이 다른 층, 줄무늬가 보여요!");
     if (layers.length === 1 && !goals.has("stack")) {
       helper.innerHTML = "한 층 완성! 입자가 <b>클수록 빨리</b> 가라앉는 것도 봤나요? 이번엔 <b>다른 퇴적물</b>로!";
     }
     if (layers.length >= MAX_LAYERS && distinct() < 3) {
       resetMode = true;
       setSeds(false);
-      helper.innerHTML = "바닥이 가득 찼는데 줄무늬가 안 보여요 — <b>서로 다른 퇴적물</b>이어야 층이 구분돼요. 다시 쌓아 볼까요?";
+      helper.innerHTML = "바닥이 가득 찼는데 줄무늬가 안 보여요. <b>서로 다른 퇴적물</b>이어야 층이 구분돼요. 다시 쌓아 볼까요?";
     }
     if (layers.length >= MAX_LAYERS) setSeds(false);
     refreshCompactBtn();
@@ -334,7 +334,7 @@ export const strataLab: StepRenderer = (host, step, api) => {
     setSeds(true);
     refreshCompactBtn();
     haptic(HAPTIC.tap);
-    toast("새 바다 — 다시 차근차근 쌓아요");
+    toast("새 바다, 다시 차근차근 쌓아요");
   }
 
   // ---- 다지기(꾹) ----
@@ -464,11 +464,11 @@ export const strataLab: StepRenderer = (host, step, api) => {
         compacted = true;
         holdingC = false;
         rockName = SEDS[layers[layers.length - 1].key].rock;
-        layerPill.textContent = `${rockName} — 층리 완성!`;
+        layerPill.textContent = `${rockName}, 층리 완성!`;
         setSeds(false);
         if (fossil.landed) canvas.style.cursor = "pointer";
         refreshCompactBtn();
-        collect("press", "층리 완성!", `${rockName} 완성 — 경계가 또렷해요!`);
+        collect("press", "층리 완성!", `${rockName} 완성, 경계가 또렷해요!`);
       }
     }
     for (let i = drops.length - 1; i >= 0; i--) {

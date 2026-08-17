@@ -116,7 +116,7 @@ export function renderThreeCities(
   fig.append(cam, tag, dots);
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "오늘은 <b>1월의 같은 날</b>. 세 도시의 라이브 캠을 연결했어요 — <b>탭해서</b> 다음 도시로!";
+  helper.innerHTML = "오늘은 <b>1월의 같은 날</b>. 세 도시의 라이브 캠을 연결했어요. <b>탭해서</b> 다음 도시로!";
 
   let idx = 0;
   const seen = new Set<number>([0]);
@@ -147,8 +147,8 @@ export function renderThreeCities(
             "남반구는 계절이 반대라서",
             "태양과의 거리가 도시마다 달라서",
           ],
-          good: "정확해요! 세 도시의 결정적 차이는 <b>위도</b> — 적도에 가까운 싱가포르(북위 1°)는 일 년 내내 덥고, 멀어질수록(서울 37°, 모스크바 56°) 추워져요. 왜 그런지 햇빛으로 직접 확인해 봐요!",
-          bad: "세 도시는 모두 <b>북반구</b>라 계절이 같고, 태양까지의 거리도 사실상 같아요. 다른 건 딱 하나 — <b>적도에서 떨어진 정도(위도)</b>예요. 적도에 가까울수록 더워요. 왜 그런지 햇빛으로 확인해 봐요!",
+          good: "정확해요! 세 도시의 결정적 차이는 <b>위도</b>, 적도에 가까운 싱가포르(북위 1°)는 일 년 내내 덥고, 멀어질수록(서울 37°, 모스크바 56°) 추워져요. 왜 그런지 햇빛으로 직접 확인해 봐요!",
+          bad: "세 도시는 모두 <b>북반구</b>라 계절이 같고, 태양까지의 거리도 사실상 같아요. 다른 건 딱 하나, <b>적도에서 떨어진 정도(위도)</b>예요. 적도에 가까울수록 더워요. 왜 그런지 햇빛으로 확인해 봐요!",
           onDone: finish,
         });
       }, 750);
@@ -208,7 +208,7 @@ export function renderStiltHouse(
   fig.innerHTML = stiltSvg();
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "일 년 내내 무더운 열대의 마을 — 그런데 집이 <b>공중에 떠</b> 있어요! 사다리 밑, <b>마루 아래를 탭</b>해 볼까요?";
+  helper.innerHTML = "일 년 내내 무더운 열대의 마을, 그런데 집이 <b>공중에 떠</b> 있어요! 사다리 밑, <b>마루 아래를 탭</b>해 볼까요?";
 
   let peeked = false;
   let timer = 0;
@@ -219,7 +219,7 @@ export function renderStiltHouse(
     face("surprised");
     fig.classList.add("peek");
     (fig.querySelector(".hs1-under") as SVGGElement).setAttribute("opacity", "1");
-    helper.innerHTML = "마루 밑으로 <b>후끈한 김</b>이 오르고, 뱀과 벌레가 스윽… 그렇다면 — <b>집을 왜 띄웠을까요?</b>";
+    helper.innerHTML = "마루 밑으로 <b>후끈한 김</b>이 오르고, 뱀과 벌레가 스윽… 그렇다면, <b>집을 왜 띄웠을까요?</b>";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -227,8 +227,8 @@ export function renderStiltHouse(
           "높은 곳이 경치가 잘 보여서",
           "땅이 물러서 가라앉지 않게 하려고",
         ],
-        good: "바로 그거예요! 덥고 비가 많은 곳에선 땅에서 <b>열기와 습기</b>가 올라오고 <b>해충</b>도 많아요. 바닥을 띄우면 그 모든 게 마루 아래로 지나가죠. 환경이 집의 모양을 바꾼 거예요 — 이런 지혜를 세계지도에서 직접 배치해 봐요!",
-        bad: "경치도, 무른 땅도 아니에요 — 방금 본 마루 밑을 떠올려 봐요. 덥고 습한 곳에선 <b>지면의 열기·습기·해충</b>이 문제라 바닥을 띄우는 거예요. 환경이 집의 모양을 바꾼 거죠 — 세계지도에서 직접 배치해 봐요!",
+        good: "바로 그거예요! 덥고 비가 많은 곳에선 땅에서 <b>열기와 습기</b>가 올라오고 <b>해충</b>도 많아요. 바닥을 띄우면 그 모든 게 마루 아래로 지나가죠. 환경이 집의 모양을 바꾼 거예요. 이런 지혜를 세계지도에서 직접 배치해 봐요!",
+        bad: "경치도, 무른 땅도 아니에요. 방금 본 마루 밑을 떠올려 봐요. 덥고 습한 곳에선 <b>지면의 열기·습기·해충</b>이 문제라 바닥을 띄우는 거예요. 환경이 집의 모양을 바꾼 거죠. 세계지도에서 직접 배치해 봐요!",
         onDone: finish,
       });
     }, 800);
@@ -285,12 +285,12 @@ export function renderSkyRoute(
       fig.querySelectorAll(".hs1-route").forEach((g) => g.classList.toggle("on", (g as SVGGElement).dataset.r === r.id));
       if (seen.size >= ROUTES.length && !choicesBox.classList.contains("show")) {
         face("curious");
-        helper.innerHTML = "대서양 횡단, 일본 국내선, 우리나라 국내선 — <b>이용객 세계 1위 하늘길</b>은 어디일까요?";
+        helper.innerHTML = "대서양 횡단, 일본 국내선, 우리나라 국내선, <b>이용객 세계 1위 하늘길</b>은 어디일까요?";
         timer = window.setTimeout(() => {
           ask(choicesBox, helper, {
             choices: s.choices ?? ["서울~제주", "뉴욕~런던", "도쿄~삿포로"],
-            good: "정답! 뜻밖에도 <b>서울~제주</b>가 이용객 수 세계 1위 하늘길이에요. 수도권 사람들이 비행기를 버스처럼 타고 제주를 오가죠. 사람과 물자가 오가는 이 흐름이 오늘의 주인공 — <b>연결</b>이에요!",
-            bad: "대서양 횡단이 유명하긴 하지만, 1위는 뜻밖에도 <b>서울~제주</b>예요! 수도권 사람들이 비행기를 버스처럼 타고 제주를 오가거든요. 사람과 물자가 오가는 이 흐름이 오늘의 주인공 — <b>연결</b>이에요!",
+            good: "정답! 뜻밖에도 <b>서울~제주</b>가 이용객 수 세계 1위 하늘길이에요. 수도권 사람들이 비행기를 버스처럼 타고 제주를 오가죠. 사람과 물자가 오가는 이 흐름이 오늘의 주인공, <b>연결</b>이에요!",
+            bad: "대서양 횡단이 유명하긴 하지만, 1위는 뜻밖에도 <b>서울~제주</b>예요! 수도권 사람들이 비행기를 버스처럼 타고 제주를 오가거든요. 사람과 물자가 오가는 이 흐름이 오늘의 주인공, <b>연결</b>이에요!",
             onDone: finish,
           });
         }, 700);
@@ -358,12 +358,12 @@ export function renderAvocado(
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
-          "약 12,000 km — 지구 둘레의 3분의 1 가까이",
-          "약 120 km — 이웃 도시쯤",
-          "약 1,200 km — 서울~부산 세 번쯤",
+          "약 12,000 km, 지구 둘레의 3분의 1 가까이",
+          "약 120 km, 이웃 도시쯤",
+          "약 1,200 km, 서울~부산 세 번쯤",
         ],
-        good: "맞아요! 멕시코에서 태평양을 건너 <b>약 12,000 km</b>. 마트 진열대는 사실 세계와 연결된 창구예요 — 오늘은 이 연결의 <b>크기(규모)</b>를 배워요!",
-        bad: "가격표를 다시 봐요 — <b>멕시코</b>예요! 태평양을 건너 <b>약 12,000 km</b>를 왔어요. 마트 진열대는 사실 세계와 연결된 창구예요 — 오늘은 이 연결의 <b>크기(규모)</b>를 배워요!",
+        good: "맞아요! 멕시코에서 태평양을 건너 <b>약 12,000 km</b>. 마트 진열대는 사실 세계와 연결된 창구예요. 오늘은 이 연결의 <b>크기(규모)</b>를 배워요!",
+        bad: "가격표를 다시 봐요. <b>멕시코</b>예요! 태평양을 건너 <b>약 12,000 km</b>를 왔어요. 마트 진열대는 사실 세계와 연결된 창구예요. 오늘은 이 연결의 <b>크기(규모)</b>를 배워요!",
         onDone: finish,
       });
     }, 800);
@@ -449,8 +449,8 @@ export function renderMaasai(
           "전통에 어긋나서 거의 쓰지 않는다",
           "전파가 안 터져서 사진기로만 쓴다",
         ],
-        good: "맞아요! 실제로 <b>가축 시세 확인, 휴대폰 송금, 날씨 검색</b>까지 — 초원의 생활 필수품이에요. 전통 복장 그대로, 최신 기술과 함께 살죠. 세계화는 이렇게 초원 깊숙이까지 닿아 있어요!",
-        bad: "초원에도 이동 통신망이 닿아서 <b>가축 시세 확인, 휴대폰 송금, 날씨 검색</b>까지 해요 — 생활 필수품이죠. 전통을 지키면서도 최신 기술과 함께 사는 거예요. 세계화는 초원 깊숙이까지 닿아 있답니다!",
+        good: "맞아요! 실제로 <b>가축 시세 확인, 휴대폰 송금, 날씨 검색</b>까지, 초원의 생활 필수품이에요. 전통 복장 그대로, 최신 기술과 함께 살죠. 세계화는 이렇게 초원 깊숙이까지 닿아 있어요!",
+        bad: "초원에도 이동 통신망이 닿아서 <b>가축 시세 확인, 휴대폰 송금, 날씨 검색</b>까지 해요. 생활 필수품이죠. 전통을 지키면서도 최신 기술과 함께 사는 거예요. 세계화는 초원 깊숙이까지 닿아 있답니다!",
         onDone: finish,
       });
     }, 800);
@@ -484,11 +484,11 @@ function nycSvg(): string {
       <ellipse cx="100" cy="60" rx="7" ry="3" fill="#fff" opacity=".7" transform="rotate(-24 100 60)"/>
     </g>
     <g class="hs1-mugface hs1-mugback">
-      <!-- 실물 기록 사진(DOCUMERICA 1973, PD — photos/CREDITS.md): 낙서 뒤덮인 타임스스퀘어 지하철.
+      <!-- 실물 기록 사진(DOCUMERICA 1973, PD, photos/CREDITS.md): 낙서 뒤덮인 타임스스퀘어 지하철.
            손그림 스카이라인은 "불황과 낙서"로 안 읽힌다는 실사용 피드백으로 교체. -->
       <image href="${BASE}soc/figs/nyc1970.webp" x="30" y="24" width="180" height="100" preserveAspectRatio="xMidYMid slice" clip-path="url(#hs1-nycclip)"/>
       <rect x="30" y="24" width="180" height="100" rx="8" fill="none" stroke="#5A6270" stroke-width="1.6"/>
-      <text x="120" y="145" text-anchor="middle" font-size="10.5" font-weight="800" fill="#5A6270">1970년대의 뉴욕 — 낙서로 뒤덮인 지하철(실제 기록 사진)</text>
+      <text x="120" y="145" text-anchor="middle" font-size="10.5" font-weight="800" fill="#5A6270">1970년대의 뉴욕, 낙서로 뒤덮인 지하철(실제 기록 사진)</text>
     </g>
   </svg>`;
 }
@@ -504,7 +504,7 @@ export function renderIloveNyc(
   fig.innerHTML = nycSvg();
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "전 세계에서 팔리는 뉴욕 기념품 — <b>I♥NY</b> 로고예요. 이 명랑한 로고의 출생의 비밀, <b>머그를 탭</b>해서 확인!";
+  helper.innerHTML = "전 세계에서 팔리는 뉴욕 기념품, <b>I♥NY</b> 로고예요. 이 명랑한 로고의 출생의 비밀, <b>머그를 탭</b>해서 확인!";
 
   let flipped = false;
   let timer = 0;
@@ -514,7 +514,7 @@ export function renderIloveNyc(
     haptic(HAPTIC.select);
     face("surprised");
     fig.classList.add("flip");
-    helper.innerHTML = "1970년대의 뉴욕 — 경제는 불황, 거리엔 낙서와 범죄… 이런 도시가 <b>왜 이 로고를 만들었을까요?</b>";
+    helper.innerHTML = "1970년대의 뉴욕, 경제는 불황, 거리엔 낙서와 범죄… 이런 도시가 <b>왜 이 로고를 만들었을까요?</b>";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -522,8 +522,8 @@ export function renderIloveNyc(
           "기념품을 팔아 돈을 벌려고",
           "유명 화가의 작품을 자랑하려고",
         ],
-        good: "정답! 위기의 뉴욕이 던진 승부수였어요. 로고 하나가 도시를 '사랑스러운 곳'으로 다시 보이게 했고, 관광객이 돌아왔죠. <b>지역의 이미지가 곧 경쟁력</b> — 오늘 배울 지역화 전략의 원조랍니다!",
-        bad: "기념품 판매도, 화가 자랑도 아니었어요 — 방금 본 1970년대 뉴욕을 떠올려 봐요. <b>나빠진 도시 이미지를 바꾸려던 승부수</b>였고, 실제로 관광객이 돌아왔죠. 지역의 이미지가 곧 경쟁력 — 오늘 배울 지역화 전략의 원조예요!",
+        good: "정답! 위기의 뉴욕이 던진 승부수였어요. 로고 하나가 도시를 '사랑스러운 곳'으로 다시 보이게 했고, 관광객이 돌아왔죠. <b>지역의 이미지가 곧 경쟁력</b>, 오늘 배울 지역화 전략의 원조랍니다!",
+        bad: "기념품 판매도, 화가 자랑도 아니었어요. 방금 본 1970년대 뉴욕을 떠올려 봐요. <b>나빠진 도시 이미지를 바꾸려던 승부수</b>였고, 실제로 관광객이 돌아왔죠. 지역의 이미지가 곧 경쟁력, 오늘 배울 지역화 전략의 원조예요!",
         onDone: finish,
       });
     }, 800);

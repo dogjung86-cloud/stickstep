@@ -458,8 +458,8 @@ export const kingdomKeyLab: StepRenderer = (host, step, api) => {
     helper.innerHTML = `${card.name}${josa(card.name)} <b>${card.kingdom}</b>예요.`;
     fb = { kind: "good", html: `<b>${card.name} · ${card.kingdom}</b><br>${card.reason}` };
     render();
-    if (card.kingdom === "원핵생물계") collect("pro", `${card.name} 완료`, "핵막이 없는 무리 — 원핵생물계를 찾았어요");
-    if (card.kingdom === "원생생물계") collect("prot", `${card.name} 완료`, "나머지 무리 — 원생생물계를 찾았어요");
+    if (card.kingdom === "원핵생물계") collect("pro", `${card.name} 완료`, "핵막이 없는 무리, 원핵생물계를 찾았어요");
+    if (card.kingdom === "원생생물계") collect("prot", `${card.name} 완료`, "나머지 무리, 원생생물계를 찾았어요");
     if (card.kingdom === "균계" || card.kingdom === "식물계" || card.kingdom === "동물계") {
       restDone.add(card.kingdom);
       const chip = goalsEl.querySelector('[data-g="rest"] span') as HTMLElement;

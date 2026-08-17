@@ -38,7 +38,7 @@ function noteContext(n: WrongNote): string {
       : "레슨 퀴즈";
   const ho = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ"];
   const lines = [
-    "[학생이 틀렸던 문제 — 지금 이 문제에 대해 물어보는 중이에요]",
+    "[학생이 틀렸던 문제, 지금 이 문제에 대해 물어보는 중이에요]",
     `출처: ${src}`,
     `문제: ${cut(plain(n.q), 600)}`,
   ];

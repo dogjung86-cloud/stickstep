@@ -39,11 +39,11 @@ const COUNTRIES: CountryDef[] = [
     axisMax: 8,
     m: [6.5, 6.1, 5.7, 5.5, 4.9, 4.3, 3.6, 3.0, 2.5, 2.1, 1.7, 1.4, 1.1, 0.9, 0.6, 0.35, 0.15, 0.06],
     f: [6.2, 5.8, 5.5, 5.5, 4.8, 4.2, 3.6, 3.0, 2.5, 2.1, 1.7, 1.4, 1.1, 0.9, 0.65, 0.4, 0.2, 0.08],
-    question: "그래프의 <b>아래(유소년층)</b>와 <b>위(노년층)</b> — 어느 쪽이 더 넓은가요? 그 층을 <b>그래프에서 탭</b>!",
+    question: "그래프의 <b>아래(유소년층)</b>와 <b>위(노년층)</b>, 어느 쪽이 더 넓은가요? 그 층을 <b>그래프에서 탭</b>!",
     mode: "band",
     answer: "young",
-    explain: "아래가 묵직한 피라미드형! 태어나는 아이가 많아 유소년층이 두껍죠 — 앞으로 일할 사람이 계속 늘어나는 구조예요.",
-    wrong: { old: "위(노년층)는 아주 좁아요 — 이 나라는 아래(유소년층)가 묵직한 피라미드형이에요.", mid: "가운데 말고, 아래(유소년층)와 위(노년층)를 비교해 봐요 — 어느 쪽이 넓나요?" },
+    explain: "아래가 묵직한 피라미드형! 태어나는 아이가 많아 유소년층이 두껍죠. 앞으로 일할 사람이 계속 늘어나는 구조예요.",
+    wrong: { old: "위(노년층)는 아주 좁아요. 이 나라는 아래(유소년층)가 묵직한 피라미드형이에요.", mid: "가운데 말고, 아래(유소년층)와 위(노년층)를 비교해 봐요. 어느 쪽이 넓나요?" },
   },
   {
     id: "jp",
@@ -51,11 +51,11 @@ const COUNTRIES: CountryDef[] = [
     axisMax: 5,
     m: [1.7, 2.0, 2.1, 2.3, 2.5, 2.5, 2.6, 2.9, 3.3, 3.9, 3.4, 2.9, 2.8, 2.9, 3.4, 2.4, 1.6, 1.2],
     f: [1.6, 1.9, 2.0, 2.2, 2.3, 2.4, 2.5, 2.8, 3.2, 3.8, 3.4, 3.0, 2.9, 3.1, 3.8, 3.0, 2.4, 2.9],
-    question: "이번엔 일본 — <b>아래(유소년층)</b>와 <b>위(노년층)</b>, 어느 쪽이 더 넓은가요? 그 층을 <b>탭</b>!",
+    question: "이번엔 일본, <b>아래(유소년층)</b>와 <b>위(노년층)</b>, 어느 쪽이 더 넓은가요? 그 층을 <b>탭</b>!",
     mode: "band",
     answer: "old",
     explain: "위가 더 넓은 역삼각형에 가까워요. 태어나는 아이는 줄고 노년층은 늘어나는 저출산·고령화의 모습이죠.",
-    wrong: { young: "아래(유소년층)가 홀쭉해요 — 파키스탄과 반대로, 일본은 위(노년층)가 더 넓답니다.", mid: "가운데 말고, 아래(유소년층)와 위(노년층)를 비교해 봐요!" },
+    wrong: { young: "아래(유소년층)가 홀쭉해요. 파키스탄과 반대로, 일본은 위(노년층)가 더 넓답니다.", mid: "가운데 말고, 아래(유소년층)와 위(노년층)를 비교해 봐요!" },
   },
   {
     id: "qa",
@@ -63,11 +63,11 @@ const COUNTRIES: CountryDef[] = [
     axisMax: 15,
     m: [1.5, 1.4, 1.2, 1.3, 4.5, 10.2, 13.0, 12.0, 9.5, 6.5, 4.5, 2.8, 1.5, 0.7, 0.3, 0.12, 0.05, 0.02],
     f: [1.5, 1.4, 1.3, 1.2, 1.7, 2.5, 3.0, 2.9, 2.4, 1.8, 1.3, 0.9, 0.5, 0.3, 0.15, 0.07, 0.03, 0.01],
-    question: "석유 부국 카타르 — <b>남자(왼쪽)</b>와 <b>여자(오른쪽)</b>, 어느 쪽이 불룩한가요? 그쪽을 <b>탭</b>!",
+    question: "석유 부국 카타르, <b>남자(왼쪽)</b>와 <b>여자(오른쪽)</b>, 어느 쪽이 불룩한가요? 그쪽을 <b>탭</b>!",
     mode: "sex",
     answer: "male",
-    explain: "청장년 남자만 불쑥! 건설 현장 등에서 일하려고 외국에서 온 남성 노동자가 많아서예요 — 태어나서가 아니라 이주해 와서 생긴 모양이죠.",
-    wrong: { female: "여자 쪽은 홀쭉해요 — 일자리를 찾아 이주해 온 청장년 남성 쪽이 불룩하답니다." },
+    explain: "청장년 남자만 불쑥! 건설 현장 등에서 일하려고 외국에서 온 남성 노동자가 많아서예요. 태어나서가 아니라 이주해 와서 생긴 모양이죠.",
+    wrong: { female: "여자 쪽은 홀쭉해요. 일자리를 찾아 이주해 온 청장년 남성 쪽이 불룩하답니다." },
   },
 ];
 
@@ -117,7 +117,7 @@ export const pyramidLab: StepRenderer = (host, step, api) => {
     if (goals.size === COUNTRIES.length && !finished) {
       finished = true;
       helper.innerHTML =
-        "세 나라 판독 완료! <b>아래가 넓으면 아이가 많은 나라, 위가 넓으면 노년이 많은 나라</b> — 피라미드의 모양이 그 나라의 오늘과 내일을 말해 줘요.";
+        "세 나라 판독 완료! <b>아래가 넓으면 아이가 많은 나라, 위가 넓으면 노년이 많은 나라</b>, 피라미드의 모양이 그 나라의 오늘과 내일을 말해 줘요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }
@@ -146,7 +146,7 @@ export const pyramidLab: StepRenderer = (host, step, api) => {
     }
     board.innerHTML = pyramidSvg(c, goals.has(c.id));
     qCard.classList.remove("ok");
-    qCard.innerHTML = goals.has(c.id) ? `<b>${c.name}</b> — ${c.explain}` : c.question;
+    qCard.innerHTML = goals.has(c.id) ? `<b>${c.name}</b>, ${c.explain}` : c.question;
     if (goals.has(c.id)) qCard.classList.add("ok");
     // 존 탭 바인딩
     board.querySelectorAll<SVGElement>(".pyr-zone").forEach((z) => {
@@ -161,7 +161,7 @@ export const pyramidLab: StepRenderer = (host, step, api) => {
           board.innerHTML = pyramidSvg(c, true);
         } else {
           haptic(HAPTIC.wrong);
-          qCard.innerHTML = c.wrong[zid] ?? "다시 봐요 — 질문이 가리키는 곳을 탭!";
+          qCard.innerHTML = c.wrong[zid] ?? "다시 봐요. 질문이 가리키는 곳을 탭!";
           window.clearTimeout(toastTimer);
           toastTimer = window.setTimeout(() => {
             if (!goals.has(c.id)) qCard.innerHTML = c.question;
@@ -211,7 +211,7 @@ function pyramidSvg(c: CountryDef, solved: boolean): string {
     <text x="${(AXIS_X - HALF_W).toFixed(1)}" y="${PH - 4}" class="pyr-axis" text-anchor="start">${c.axisMax}%</text>
     <text x="${(AXIS_X + HALF_W).toFixed(1)}" y="${PH - 4}" class="pyr-axis" text-anchor="end">${c.axisMax}%</text>`;
   return `<svg viewBox="0 0 ${PW} ${PH}" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
-      aria-label="${c.name}의 인구 피라미드 — 연령별 남녀 인구 비율 막대그래프">
+      aria-label="${c.name}의 인구 피라미드, 연령별 남녀 인구 비율 막대그래프">
     <line x1="${AXIS_X}" y1="${TOP - 2}" x2="${AXIS_X}" y2="${(y(0) + BAR_H + 3).toFixed(1)}" stroke="#C4CFDC" stroke-width="1.2"/>
     ${bars}
     ${bandGuides}

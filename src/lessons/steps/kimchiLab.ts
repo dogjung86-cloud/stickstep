@@ -202,20 +202,20 @@ const PHASES: Phase[] = [
     id: "share",
     fileLabel: "첫 번째 비밀",
     prop: "공유성",
-    intro: "김치찌개 앞에 두 사람 — 아래 <b>맛보기 버튼</b>으로 두 사람에게 국물을 맛보게 해요.",
+    intro: "김치찌개 앞에 두 사람, 아래 <b>맛보기 버튼</b>으로 두 사람에게 국물을 맛보게 해요.",
     q: "뜨거운 국물의 '시원하다'가 한국 사람들 사이에서 통하는 까닭은 무엇일까요?",
     options: ["같은 문화를 함께 나누고 있어서", "한국 사람의 혀가 남다르게 태어나서"],
-    good: "맞아요! 한 사회의 구성원들은 언어와 표현, 규범 같은 문화를 <b>함께 나누고</b> 있어요 — 그래서 서로 통하고, 행동을 예측할 수 있죠. 이 속성의 이름은 <b>공유성</b>!",
+    good: "맞아요! 한 사회의 구성원들은 언어와 표현, 규범 같은 문화를 <b>함께 나누고</b> 있어요. 그래서 서로 통하고, 행동을 예측할 수 있죠. 이 속성의 이름은 <b>공유성</b>!",
     wrong: "혀가 다르게 태어난다면 외국에서 자란 한국계 사람도 '시원하다'를 알아야겠죠? 이건 몸이 아니라 <b>함께 나눈 문화</b>의 문제랍니다. 다시 골라 봐요!",
   },
   {
     id: "learn",
     fileLabel: "두 번째 비밀",
     prop: "학습성",
-    intro: "김장 날이에요! 아이는 아직 서툴러요 — <b>함께 담가 보기</b>를 눌러 어른과 한 단계씩 배워 봐요.",
+    intro: "김장 날이에요! 아이는 아직 서툴러요. <b>함께 담가 보기</b>를 눌러 어른과 한 단계씩 배워 봐요.",
     q: "김장 솜씨는 어떻게 생긴 걸까요?",
     options: ["어른들과 함께하며 배워서", "태어날 때부터 유전자에 새겨져 있어서"],
-    good: "그렇죠! 문화는 태어나면서 저절로 갖게 되는 게 아니라, 자신이 속한 사회에서 <b>후천적으로 배워 익히는</b> 거예요 — 이 속성의 이름은 <b>학습성</b>!",
+    good: "그렇죠! 문화는 태어나면서 저절로 갖게 되는 게 아니라, 자신이 속한 사회에서 <b>후천적으로 배워 익히는</b> 거예요. 이 속성의 이름은 <b>학습성</b>!",
     wrong: "유전자에 새겨져 있다면 배추를 처음 본 아기도 김장을 해야겠죠? 방금 화면에서 아이는 어른과 <b>함께하며 배웠어요</b>. 다시 골라 봐요!",
   },
   {
@@ -225,8 +225,8 @@ const PHASES: Phase[] = [
     intro: "오래된 레시피 공책이에요. <b>세대 넘기기</b>를 눌러 지혜가 쌓이는 과정을 넘겨 봐요.",
     q: "김치가 세대를 거치며 점점 풍부해진 비결은 무엇일까요?",
     options: ["앞 세대의 지혜가 전해지고 그 위에 새것이 쌓여서", "세대마다 옛것을 버리고 처음부터 새로 만들어서"],
-    good: "정확해요! 앞선 세대의 지식과 경험이 말과 글로 <b>전해지고</b>, 그 위에 새로운 것이 <b>쌓여</b> 문화는 점점 풍부해져요 — 이 속성의 이름은 <b>축적성</b>!",
-    wrong: "공책을 다시 봐요 — 층이 하나씩 '위에' 쌓였지, 앞 장을 찢고 새로 쓰지 않았어요. 전해지고 쌓이는 것이 비결이랍니다. 다시 골라 봐요!",
+    good: "정확해요! 앞선 세대의 지식과 경험이 말과 글로 <b>전해지고</b>, 그 위에 새로운 것이 <b>쌓여</b> 문화는 점점 풍부해져요. 이 속성의 이름은 <b>축적성</b>!",
+    wrong: "공책을 다시 봐요. 층이 하나씩 '위에' 쌓였지, 앞 장을 찢고 새로 쓰지 않았어요. 전해지고 쌓이는 것이 비결이랍니다. 다시 골라 봐요!",
   },
   {
     id: "change",
@@ -235,18 +235,18 @@ const PHASES: Phase[] = [
     intro: "타임머신 항아리예요! 슬라이더를 <b>왼쪽 끝(옛날)까지</b> 밀어 보고, 다시 오늘로 돌아와 봐요.",
     q: "김치의 색이 바뀐 것처럼, 문화는 시간이 지나면 어떻게 될까요?",
     options: ["새 재료나 다른 문화와 만나며 계속 변한다", "처음 모습 그대로 영원히 멈춰 있다"],
-    good: "맞아요! 고추라는 <b>외래 작물과의 만남</b>이 김치의 색을 바꿨죠 — 문화는 새로운 발명이나 다른 문화와의 접촉으로 <b>끊임없이 변해요</b>. 이 속성의 이름은 <b>변동성</b>!",
-    wrong: "방금 시간 여행에서 봤죠 — 옛날 김치는 하얀색이었어요! 문화는 멈춰 있지 않고 계속 변한답니다. 다시 골라 봐요!",
+    good: "맞아요! 고추라는 <b>외래 작물과의 만남</b>이 김치의 색을 바꿨죠. 문화는 새로운 발명이나 다른 문화와의 접촉으로 <b>끊임없이 변해요</b>. 이 속성의 이름은 <b>변동성</b>!",
+    wrong: "방금 시간 여행에서 봤죠. 옛날 김치는 하얀색이었어요! 문화는 멈춰 있지 않고 계속 변한답니다. 다시 골라 봐요!",
   },
   {
     id: "whole",
     fileLabel: "다섯 번째 비밀",
     prop: "전체성",
-    intro: "마지막 비밀 — <b>세상이 변한다</b> 버튼을 눌러, 1인 가구가 늘어난 세상이 김치 문화에 어떤 물결을 일으키는지 봐요.",
+    intro: "마지막 비밀, <b>세상이 변한다</b> 버튼을 눌러, 1인 가구가 늘어난 세상이 김치 문화에 어떤 물결을 일으키는지 봐요.",
     q: "1인 가구 증가로 김치 문화가 변하자, 연결된 생활 모습들은 어떻게 됐나요?",
     options: ["연결된 다른 생활 모습도 함께 변한다", "김치만 변하고 나머지 생활은 그대로다"],
-    good: "그거예요! 문화의 요소들은 서로 <b>긴밀하게 연결</b>되어 있어서, 한 부분이 변하면 다른 부분도 함께 변해요 — 이 속성의 이름은 <b>전체성</b>!",
-    wrong: "연결망을 다시 봐요 — 소포장 김치, 김치냉장고, 배달까지 줄줄이 켜졌죠? 문화는 홀로 변하지 않아요. 다시 골라 봐요!",
+    good: "그거예요! 문화의 요소들은 서로 <b>긴밀하게 연결</b>되어 있어서, 한 부분이 변하면 다른 부분도 함께 변해요. 이 속성의 이름은 <b>전체성</b>!",
+    wrong: "연결망을 다시 봐요. 소포장 김치, 김치냉장고, 배달까지 줄줄이 켜졌죠? 문화는 홀로 변하지 않아요. 다시 골라 봐요!",
   },
 ];
 
@@ -337,7 +337,7 @@ export const kimchiLab: StepRenderer = (host, step, api) => {
     badges.appendChild(el("span", { class: "kcl-prop", text: PHASES[phase].prop }));
     if (done >= PHASES.length) {
       helper.innerHTML =
-        "다섯 비밀이 전부 풀렸어요 — <b>공유성·학습성·축적성·변동성·전체성</b>. 김치 한 포기가 품고 있던 문화의 다섯 속성이에요!";
+        "다섯 비밀이 전부 풀렸어요. <b>공유성·학습성·축적성·변동성·전체성</b>. 김치 한 포기가 품고 있던 문화의 다섯 속성이에요!";
       api.recordQuiz(clean);
       api.enableCTA(s.cta ?? "용어로 정리하기");
       return;
@@ -393,7 +393,7 @@ export const kimchiLab: StepRenderer = (host, step, api) => {
         b.disabled = true;
         b.classList.add("done");
         helper.innerHTML =
-          "한국 스틱맨은 <b>\"캬— 시원하다!\"</b> 그런데 옆 친구는 <b>\"뜨거운데 왜 시원해?!\"</b> — 같은 국물인데 반응이 갈렸어요. 아래에서 까닭을 골라 봐요!";
+          "한국 스틱맨은 <b>\"캬, 시원하다!\"</b> 그런데 옆 친구는 <b>\"뜨거운데 왜 시원해?!\"</b>, 같은 국물인데 반응이 갈렸어요. 아래에서 까닭을 골라 봐요!";
         later(openQuiz, 700);
       });
     } else if (PHASES[phase].id === "learn") {
@@ -401,7 +401,7 @@ export const kimchiLab: StepRenderer = (host, step, api) => {
       sceneBox.innerHTML = learnSvg(0);
       const b = actBtn("함께 담가 보기 (0/3)");
       controls.appendChild(b);
-      const stepsTxt = ["배추 절이기부터 — 소금을 골고루!", "양념 속 만들기 — 어른의 비율을 어깨너머로!", "속 바르기 — 아이의 손놀림이 제법이에요!"];
+      const stepsTxt = ["배추 절이기부터, 소금을 골고루!", "양념 속 만들기, 어른의 비율을 어깨너머로!", "속 바르기, 아이의 손놀림이 제법이에요!"];
       b.addEventListener("click", () => {
         if (phaseReady) return;
         n += 1;
@@ -413,7 +413,7 @@ export const kimchiLab: StepRenderer = (host, step, api) => {
           phaseReady = true;
           b.disabled = true;
           b.classList.add("done");
-          helper.innerHTML = "세 번 함께했더니 아이 손이 야무져졌어요 — 이 솜씨, 어디서 왔을까요?";
+          helper.innerHTML = "세 번 함께했더니 아이 손이 야무져졌어요. 이 솜씨, 어디서 왔을까요?";
           later(openQuiz, 700);
         }
       });
@@ -422,7 +422,7 @@ export const kimchiLab: StepRenderer = (host, step, api) => {
       sceneBox.innerHTML = stackSvg(1);
       const b = actBtn("세대 넘기기");
       controls.appendChild(b);
-      const gens = ["옛날엔 소금에 절인 채소였어요.", "고춧가루가 더해져 매콤해졌어요.", "젓갈의 감칠맛이 얹혔어요.", "오늘의 김치 — 층층이 쌓인 지혜예요!"];
+      const gens = ["옛날엔 소금에 절인 채소였어요.", "고춧가루가 더해져 매콤해졌어요.", "젓갈의 감칠맛이 얹혔어요.", "오늘의 김치, 층층이 쌓인 지혜예요!"];
       b.addEventListener("click", () => {
         if (phaseReady) return;
         n += 1;
@@ -449,17 +449,17 @@ export const kimchiLab: StepRenderer = (host, step, api) => {
         const v = Number(range.value);
         const red = sceneBox.querySelector(".kcl-red") as SVGGElement | null;
         if (red) red.style.opacity = String(v / 100);
-        lab.innerHTML = v <= 8 ? "새하얀 <b>절임 김치</b> — 고추가 오기 전!" : v >= 92 ? "<b>오늘</b>의 빨간 김치" : "시간을 건너는 중…";
+        lab.innerHTML = v <= 8 ? "새하얀 <b>절임 김치</b>, 고추가 오기 전!" : v >= 92 ? "<b>오늘</b>의 빨간 김치" : "시간을 건너는 중…";
         if (v <= 8 && !sawWhite) {
           sawWhite = true;
           haptic(HAPTIC.correct);
           setChip("time", "하양 발견!");
           helper.innerHTML =
-            "발견! 고추는 <b>다른 나라에서 전해진 작물</b>이에요 — 그 전의 김치는 하얀 절임이었죠. 이제 슬라이더를 <b>오늘</b>로 되돌려 봐요.";
+            "발견! 고추는 <b>다른 나라에서 전해진 작물</b>이에요. 그 전의 김치는 하얀 절임이었죠. 이제 슬라이더를 <b>오늘</b>로 되돌려 봐요.";
         }
         if (sawWhite && v >= 92 && !phaseReady) {
           phaseReady = true;
-          helper.innerHTML = "하양에서 빨강으로 — 시간 여행 완료! 아래에서 이 변화의 뜻을 골라 봐요.";
+          helper.innerHTML = "하양에서 빨강으로, 시간 여행 완료! 아래에서 이 변화의 뜻을 골라 봐요.";
           later(openQuiz, 500);
         }
       };
@@ -467,7 +467,7 @@ export const kimchiLab: StepRenderer = (host, step, api) => {
       paint();
     } else {
       sceneBox.innerHTML = wholeSvg(0);
-      const b = actBtn("세상이 변한다 — 1인 가구 증가!");
+      const b = actBtn("세상이 변한다. 1인 가구 증가!");
       controls.appendChild(b);
       b.addEventListener("click", () => {
         if (phaseReady) return;
@@ -476,7 +476,7 @@ export const kimchiLab: StepRenderer = (host, step, api) => {
         b.classList.add("done");
         haptic(HAPTIC.select);
         const msgs = [
-          "혼자 먹을 만큼만 — <b>소포장 김치</b>가 생겨나요.",
+          "혼자 먹을 만큼만, <b>소포장 김치</b>가 생겨나요.",
           "김장독 대신 <b>김치냉장고</b>가 자리를 잡아요.",
           "담그는 대신 <b>주문해 먹는 집</b>도 늘어나요.",
         ];

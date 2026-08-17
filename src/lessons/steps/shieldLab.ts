@@ -88,7 +88,7 @@ function equalSvg(fixed: boolean): string {
       ${bag(176, beamY + 8, fixed ? 2 : 1)}
     </g>
     ${fixed ? `<g class="hs8-noti">${shield(120, 28, 26, { glow: true })}</g>` : ""}
-    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${fixed ? "같은 일에는 같은 몫 — 첫 번째 방패가 섰어요" : "같은 일을 했는데 몫이 달라요 — 저울이 기울었어요"}</text>`);
+    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${fixed ? "같은 일에는 같은 몫, 첫 번째 방패가 섰어요" : "같은 일을 했는데 몫이 달라요. 저울이 기울었어요"}</text>`);
 }
 
 // ② 자유권 — 간섭 화살표에 둘러싸임 → 걷어 내면 길이 열린다
@@ -114,7 +114,7 @@ function freeSvg(step: number): string {
   return wrap(`
     ${stickman(120, 66, { mood: step >= 2 ? "joy" : step === 1 ? "ok" : "sad", arm: step >= 2 ? "up" : "down", r: 7 })}
     ${arrows}${roads}
-    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${step >= 2 ? "어디로 갈지, 무엇을 믿을지 — 내가 정해요" : step === 1 ? "간섭이 힘을 잃어 가요 — 한 번 더!" : "가는 곳·믿는 것·직업까지 참견하는 화살표들"}</text>`);
+    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${step >= 2 ? "어디로 갈지, 무엇을 믿을지, 내가 정해요" : step === 1 ? "간섭이 힘을 잃어 가요. 한 번 더!" : "가는 곳·믿는 것·직업까지 참견하는 화살표들"}</text>`);
 }
 
 // ③ 참정권 — 잠긴 투표함 → 열리고 도장이 찍힌다
@@ -138,7 +138,7 @@ function partSvg(step: number): string {
     <rect x="96" y="62" width="88" height="52" rx="7" fill="url(#sdl-wood)" stroke="#6E4E26" stroke-width="1.8"/>
     <rect x="124" y="70" width="32" height="6" rx="3" fill="#39455C"/>
     ${lock}${stamp}
-    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${step >= 2 ? "나라의 결정에 내 한 표 — Ⅸ·Ⅹ 단원의 그 상자!" : step === 1 ? "자물쇠가 풀리고 있어요 — 한 번 더!" : "나라의 일을 정하는 상자가 잠겨 있어요"}</text>`);
+    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${step >= 2 ? "나라의 결정에 내 한 표, Ⅸ·Ⅹ 단원의 그 상자!" : step === 1 ? "자물쇠가 풀리고 있어요. 한 번 더!" : "나라의 일을 정하는 상자가 잠겨 있어요"}</text>`);
 }
 
 // ④ 청구권 — 금 간 방패 → 구제 요청서 접수 → 수리
@@ -155,7 +155,7 @@ function claimSvg(done: boolean): string {
     ${stickman(36, 86, { mood: done ? "joy" : "sad", arm: done ? "up" : "out" })}
     ${shield(78, 66, 30, done ? { glow: true } : { crack: true })}
     ${desk}${stampOk}
-    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${done ? "접수 완료 — 방패를 고칠 길이 열렸어요" : "방패에 금이 갔어요 — 어디에 도움을 요청하죠?"}</text>`);
+    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${done ? "접수 완료, 방패를 고칠 길이 열렸어요" : "방패에 금이 갔어요. 어디에 도움을 요청하죠?"}</text>`);
 }
 
 // ⑤ 사회권 — 발밑이 불안 → 안전망 + 학교·집
@@ -180,7 +180,7 @@ function socialSvg(done: boolean): string {
   return wrap(`
     ${stickman(120, 84, { mood: done ? "joy" : "sad", arm: done ? "up" : "down", r: 7 })}
     ${net}${town}
-    <text x="120" y="146" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${done ? "배움도 살림도 국가에 요구할 수 있어요 — 다섯 번째 방패!" : "혼자 힘으론 발밑이 위태로울 때가 있어요"}</text>`);
+    <text x="120" y="146" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${done ? "배움도 살림도 국가에 요구할 수 있어요. 다섯 번째 방패!" : "혼자 힘으론 발밑이 위태로울 때가 있어요"}</text>`);
 }
 
 // 피날레 — 다섯 방패 문장(紋章): 골드 받침돌(존엄·행복 추구 = 토대) 위에 선 다섯 방패.
@@ -219,48 +219,48 @@ const PHASES: SdlPhase[] = [
     id: "equal",
     fileLabel: "방패 1",
     stageName: "평등권",
-    intro: "첫 장면 — 같은 일을 한 두 스틱맨의 <b>몫이 달라요</b>. 성별도 신분도 일과 상관없는데 저울이 기울었죠. <b>같은 잣대</b>를 세워요!",
+    intro: "첫 장면, 같은 일을 한 두 스틱맨의 <b>몫이 달라요</b>. 성별도 신분도 일과 상관없는데 저울이 기울었죠. <b>같은 잣대</b>를 세워요!",
     quiz: {
       q: "방금 세운 첫 번째 방패, 평등권이 지켜 주는 것은 무엇일까요?",
       options: ["차별받지 않고 동등하게 대우받는 것", "모두가 모든 것을 똑같이 나눠 갖는 것"],
-      good: "정확해요! 평등권은 성별·종교·사회적 신분 등을 이유로 <b>부당하게 차별받지 않을</b> 권리예요 — Ⅺ 단원 정의의 저울처럼, '다른 것은 다르게'까지 품는답니다.",
-      wrong: "'전부 똑같이 나누기'가 아니에요 — 더 일한 사람이 더 받는 건 정의였죠(Ⅺ 저울). 평등권의 심장은 <b>부당한 차별 없이 동등하게 대우받는 것</b>! 다시 골라 봐요.",
+      good: "정확해요! 평등권은 성별·종교·사회적 신분 등을 이유로 <b>부당하게 차별받지 않을</b> 권리예요. Ⅺ 단원 정의의 저울처럼, '다른 것은 다르게'까지 품는답니다.",
+      wrong: "'전부 똑같이 나누기'가 아니에요. 더 일한 사람이 더 받는 건 정의였죠(Ⅺ 저울). 평등권의 심장은 <b>부당한 차별 없이 동등하게 대우받는 것</b>! 다시 골라 봐요.",
     },
   },
   {
     id: "free",
     fileLabel: "방패 2",
     stageName: "자유권",
-    intro: "이번엔 스틱맨을 <b>간섭 화살표</b>가 둘러쌌어요 — 어디로 갈지, 무엇을 믿을지, 어떤 일을 할지까지 국가가 참견한다면? 화살표를 걷어 내요!",
+    intro: "이번엔 스틱맨을 <b>간섭 화살표</b>가 둘러쌌어요. 어디로 갈지, 무엇을 믿을지, 어떤 일을 할지까지 국가가 참견한다면? 화살표를 걷어 내요!",
   },
   {
     id: "part",
     fileLabel: "방패 3",
     stageName: "참정권",
-    intro: "나라의 일을 정하는 <b>상자가 잠겼어요</b> — 정치는 국가가 알아서 할 테니 국민은 구경만 하라네요. Ⅸ·Ⅹ 단원에서 지켜 온 그 상자, 다시 열어요!",
+    intro: "나라의 일을 정하는 <b>상자가 잠겼어요</b>. 정치는 국가가 알아서 할 테니 국민은 구경만 하라네요. Ⅸ·Ⅹ 단원에서 지켜 온 그 상자, 다시 열어요!",
   },
   {
     id: "claim",
     fileLabel: "방패 4",
     stageName: "청구권",
-    intro: "방패에 <b>금이 갔어요</b> — 권리를 침해당했는데 호소할 곳이 없다면 방패는 장식일 뿐이죠. 국가에 <b>구제 요청서</b>를 내요!",
+    intro: "방패에 <b>금이 갔어요</b>. 권리를 침해당했는데 호소할 곳이 없다면 방패는 장식일 뿐이죠. 국가에 <b>구제 요청서</b>를 내요!",
     quiz: {
-      q: "청구권에는 '수단적 성격의 권리'라는 별명이 있어요 — 왜일까요?",
+      q: "청구권에는 '수단적 성격의 권리'라는 별명이 있어요. 왜일까요?",
       options: ["다른 기본권을 지키기 위한 도구가 되기 때문", "다섯 권리 중 가장 오래된 권리이기 때문"],
-      good: "맞아요! 청구권은 다른 방패들이 깨졌을 때 <b>고쳐 달라고 요구하는 도구(수단)</b> — 방패를 지키는 방패인 셈이에요. 청원권·재판 청구권·국가 배상 청구권이 그 식구랍니다.",
-      wrong: "역사의 길이가 아니라 <b>역할</b>이 열쇠예요 — 다른 기본권이 침해될 때 구제를 요청하는 '도구'가 되어 주니 수단적 권리라 불러요. 다시 골라 봐요!",
+      good: "맞아요! 청구권은 다른 방패들이 깨졌을 때 <b>고쳐 달라고 요구하는 도구(수단)</b>, 방패를 지키는 방패인 셈이에요. 청원권·재판 청구권·국가 배상 청구권이 그 식구랍니다.",
+      wrong: "역사의 길이가 아니라 <b>역할</b>이 열쇠예요. 다른 기본권이 침해될 때 구제를 요청하는 '도구'가 되어 주니 수단적 권리라 불러요. 다시 골라 봐요!",
     },
   },
   {
     id: "social",
     fileLabel: "방패 5",
     stageName: "사회권",
-    intro: "마지막 장면 — 혼자 힘으론 <b>발밑이 위태로울 때</b>가 있어요. 배울 기회, 최소한의 살림살이까지 운에 맡겨야 한다면? 국가에 요구해 <b>안전망</b>을 펼쳐요!",
+    intro: "마지막 장면, 혼자 힘으론 <b>발밑이 위태로울 때</b>가 있어요. 배울 기회, 최소한의 살림살이까지 운에 맡겨야 한다면? 국가에 요구해 <b>안전망</b>을 펼쳐요!",
     quiz: {
       q: "다섯 번째 방패, 사회권은 국가에 무엇을 요구하는 권리일까요?",
       options: ["인간다운 생활의 보장", "간섭하지 말고 내버려 두는 것"],
-      good: "정확해요! 사회권은 국가에 '해 달라'고 요구하는 <b>적극적 권리</b> — 교육을 받을 권리, 근로의 권리, 쾌적한 환경에서 살 권리가 여기 살아요. '내버려 두라'는 자유권과 방향이 정반대죠!",
-      wrong: "'내버려 두라'는 자유권의 방향이에요 — 사회권은 거꾸로 국가에 인간다운 생활을 <b>보장해 달라</b>고 요구하는 적극적 권리랍니다. 다시 골라 봐요!",
+      good: "정확해요! 사회권은 국가에 '해 달라'고 요구하는 <b>적극적 권리</b>, 교육을 받을 권리, 근로의 권리, 쾌적한 환경에서 살 권리가 여기 살아요. '내버려 두라'는 자유권과 방향이 정반대죠!",
+      wrong: "'내버려 두라'는 자유권의 방향이에요. 사회권은 거꾸로 국가에 인간다운 생활을 <b>보장해 달라</b>고 요구하는 적극적 권리랍니다. 다시 골라 봐요!",
     },
   },
 ];
@@ -359,7 +359,7 @@ export const shieldLab: StepRenderer = (host, step, api) => {
       refreshScene(crestSvg());
       lightChip("final", "완성!");
       helper.innerHTML =
-        "다섯 방패 완성! <b>평등권 · 자유권 · 참정권 · 청구권 · 사회권</b> — 그리고 이 모든 방패의 받침이 헌법 제10조, <b>인간으로서의 존엄과 가치 및 행복 추구권</b>이에요. 인권 중에서 헌법에 적어 지키는 권리, 기본권의 문장이 완성됐어요!";
+        "다섯 방패 완성! <b>평등권 · 자유권 · 참정권 · 청구권 · 사회권</b>, 그리고 이 모든 방패의 받침이 헌법 제10조, <b>인간으로서의 존엄과 가치 및 행복 추구권</b>이에요. 인권 중에서 헌법에 적어 지키는 권리, 기본권의 문장이 완성됐어요!";
       api.recordQuiz(clean);
       api.enableCTA(s.cta ?? "방패 정리하러 가기");
       return;
@@ -411,7 +411,7 @@ export const shieldLab: StepRenderer = (host, step, api) => {
         refreshScene(equalSvg(true));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "저울이 수평이 됐어요 — 일과 상관없는 이유로 <b>차별받지 않고 동등하게 대우받을</b> 권리가 섰어요. 그럼 이 방패의 정체는?";
+        helper.innerHTML = "저울이 수평이 됐어요. 일과 상관없는 이유로 <b>차별받지 않고 동등하게 대우받을</b> 권리가 섰어요. 그럼 이 방패의 정체는?";
         later(openQuiz, 900);
       });
     } else if (id === "free") {
@@ -427,8 +427,8 @@ export const shieldLab: StepRenderer = (host, step, api) => {
         b.textContent = `간섭 걷어 내기 (${n}/2)`;
         helper.innerHTML =
           n === 1
-            ? "화살표가 힘을 잃어 가요 — 한 번 더!"
-            : "길이 열렸어요! <b>국가 권력의 간섭을 받지 않고</b> 자유롭게 사는 권리 — <b>자유권</b>이에요. 신체·종교·사생활·표현·직업 선택의 자유, 재산권이 이 방패 아래 살죠.";
+            ? "화살표가 힘을 잃어 가요. 한 번 더!"
+            : "길이 열렸어요! <b>국가 권력의 간섭을 받지 않고</b> 자유롭게 사는 권리, <b>자유권</b>이에요. 신체·종교·사생활·표현·직업 선택의 자유, 재산권이 이 방패 아래 살죠.";
         if (n >= 2) {
           b.disabled = true;
           b.classList.add("done");
@@ -448,8 +448,8 @@ export const shieldLab: StepRenderer = (host, step, api) => {
         b.textContent = `투표함 열기 (${n}/2)`;
         helper.innerHTML =
           n === 1
-            ? "자물쇠가 풀리고 있어요 — 한 번 더!"
-            : "열렸어요! <b>국가의 의사 결정에 참여할</b> 권리 — <b>참정권</b>이에요. 선거권, 공직을 맡는 공무 담임권, 국민 투표권이 이 방패의 식구랍니다. Ⅸ 단원 참정권 확대의 계단이 지킨 게 바로 이 상자였죠!";
+            ? "자물쇠가 풀리고 있어요. 한 번 더!"
+            : "열렸어요! <b>국가의 의사 결정에 참여할</b> 권리, <b>참정권</b>이에요. 선거권, 공직을 맡는 공무 담임권, 국민 투표권이 이 방패의 식구랍니다. Ⅸ 단원 참정권 확대의 계단이 지킨 게 바로 이 상자였죠!";
         if (n >= 2) {
           b.disabled = true;
           b.classList.add("done");
@@ -466,7 +466,7 @@ export const shieldLab: StepRenderer = (host, step, api) => {
         refreshScene(claimSvg(true));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "접수 완료! 침해된 권리의 <b>구제나 예방을 국가에 요청할</b> 권리 — 그런데 이 방패엔 특별한 별명이 있대요.";
+        helper.innerHTML = "접수 완료! 침해된 권리의 <b>구제나 예방을 국가에 요청할</b> 권리, 그런데 이 방패엔 특별한 별명이 있대요.";
         later(openQuiz, 900);
       });
     } else {
@@ -479,7 +479,7 @@ export const shieldLab: StepRenderer = (host, step, api) => {
         refreshScene(socialSvg(true));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "안전망이 펼쳐졌어요 — 학교(교육)와 살림(인간다운 생활)이 함께 왔네요. 그럼 이 다섯 번째 방패의 방향은?";
+        helper.innerHTML = "안전망이 펼쳐졌어요. 학교(교육)와 살림(인간다운 생활)이 함께 왔네요. 그럼 이 다섯 번째 방패의 방향은?";
         later(openQuiz, 900);
       });
     }

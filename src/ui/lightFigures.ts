@@ -178,7 +178,7 @@ export function twoLensFig(): string {
       <path d="M17 76h15" stroke="#A9B5C4" stroke-width="1.6" stroke-dasharray="3 3"/>
       <text x="0" y="166" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">${label}</text>
     </g>`;
-  return `<svg viewBox="0 0 344 176" ${NS} fill="none" role="img" aria-label="렌즈 두 개로 가까운 무당벌레를 본 모습 — 가는 크게, 나는 작게 보인다">
+  return `<svg viewBox="0 0 344 176" ${NS} fill="none" role="img" aria-label="렌즈 두 개로 가까운 무당벌레를 본 모습, 가는 크게, 나는 작게 보인다">
     ${lens(70, true, "(가)", 1.75)}
     ${lens(228, false, "(나)", 0.6)}
   </svg>`;
@@ -199,7 +199,7 @@ export function pixelRGFig(): string {
       )
       .join("");
   };
-  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="모니터 화면 확대 — 빨간색과 초록색 화소는 켜지고 파란색 화소는 꺼져 있다">
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="모니터 화면 확대, 빨간색과 초록색 화소는 켜지고 파란색 화소는 꺼져 있다">
     <rect x="42" y="16" width="260" height="150" rx="12" fill="#10161F"/>
     ${[0, 1].flatMap((r) => [0, 2].map((c) => cell(74 + c * 52, 32 + r * 66))).join("")}
     <rect x="42" y="16" width="260" height="150" rx="12" stroke="#8B95A1" stroke-width="2"/>
@@ -233,7 +233,7 @@ export function waveReadFig(): string {
     const y = 96 - Math.sin((x / 280) * Math.PI * 4) * 44; // 파장 140px = 2m
     d += `${d ? "L" : "M"}${x + 44} ${y.toFixed(1)}`;
   }
-  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="눈금이 있는 파동 그래프 — 가로 눈금 1미터, 세로 진폭 표시">
+  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="눈금이 있는 파동 그래프, 가로 눈금 1미터, 세로 진폭 표시">
     <line x1="44" y1="20" x2="44" y2="172" stroke="#B0B8C1" stroke-width="1.6"/>
     <line x1="44" y1="96" x2="330" y2="96" stroke="#D0D6DE" stroke-width="1.4"/>
     ${[0, 1, 2, 3, 4].map((i) => `<line x1="${44 + i * 70}" y1="96" x2="${44 + i * 70}" y2="172" stroke="#EDF0F4" stroke-width="1.2"/><text x="${44 + i * 70}" y="188" text-anchor="middle" font-size="10.5" fill="#8B95A1">${i}</text>`).join("")}
@@ -261,7 +261,7 @@ export function waveHotspotFig(): string {
     <line x1="24" y1="112" x2="320" y2="112" stroke="rgba(196,214,240,.45)" stroke-width="1.4" stroke-dasharray="5 6"/>
     <text x="28" y="104" font-size="10.5" fill="rgba(196,214,240,.8)">진동 중심</text>
     <path d="${d}" stroke="#8FD6FF" stroke-width="3.4" stroke-linecap="round"/>
-    <!-- 마루(첫 번째)·골(첫 번째) 점 — 곡선 위 정확한 위치 -->
+    <!-- 마루(첫 번째)·골(첫 번째) 점, 곡선 위 정확한 위치 -->
     <circle cx="65.5" cy="66" r="4.5" fill="#FFD978"/>
     <circle cx="136.5" cy="158" r="4.5" fill="#8FB6FF"/>
     <!-- 파장 브래킷: 마루 → 이웃 마루 -->
@@ -281,7 +281,7 @@ export function waveExplainFig(): string {
     const y = 96 - Math.sin(((x - 26) / 280) * Math.PI * 4) * 38;
     d += `${d ? "L" : "M"}${x} ${y.toFixed(1)}`;
   }
-  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="파동의 네 요소 — 마루, 골, 파장, 진폭">
+  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="파동의 네 요소, 마루, 골, 파장, 진폭">
     <line x1="20" y1="96" x2="320" y2="96" stroke="#C4CBD4" stroke-width="1.3" stroke-dasharray="5 6"/>
     <text x="320" y="88" text-anchor="end" font-size="10" fill="#8B95A1">진동 중심</text>
     <path d="${d}" stroke="#5AA2F8" stroke-width="3" stroke-linecap="round"/>
@@ -358,7 +358,7 @@ export function waveFourFig(): string {
       <line x1="${x + 18}" y1="${y + 40}" x2="${x + 134}" y2="${y + 40}" stroke="#E2E6EC" stroke-width="1.2"/>
       <path d="${d}" stroke="#5E6B7E" stroke-width="2.2" fill="none"/>`;
   };
-  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="파형 네 개 — 가는 진폭이 크고, 나는 진폭이 작고, 다는 진동수가 크고, 라는 진동수가 작다">
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="파형 네 개, 가는 진폭이 크고, 나는 진폭이 작고, 다는 진동수가 크고, 라는 진동수가 작다">
     ${cell(14, 8, "(가)", 30, 3)}
     ${cell(184, 8, "(나)", 10, 3)}
     ${cell(14, 100, "(다)", 19, 6)}
@@ -381,7 +381,7 @@ export function xyloBarsFig(): string {
     const cx = 40 + i * 38 + 13.5;
     return `<circle cx="${cx}" cy="88" r="10" fill="#EEF4FF" stroke="#3182F6" stroke-width="1.6"/><text x="${cx}" y="92.5" text-anchor="middle" font-size="11" font-weight="800" fill="#1B64DA">${t}</text>`;
   };
-  return `<svg viewBox="0 0 344 168" ${NS} fill="none" role="img" aria-label="실로폰 — 왼쪽의 긴 음판에 ㉠, 가운데 ㉡, 오른쪽의 짧은 음판에 ㉢ 표시">
+  return `<svg viewBox="0 0 344 168" ${NS} fill="none" role="img" aria-label="실로폰, 왼쪽의 긴 음판에 ㉠, 가운데 ㉡, 오른쪽의 짧은 음판에 ㉢ 표시">
     <path d="M32 24L303 54L303 122L32 152z" fill="#E7EBF0"/>
     ${Array.from({ length: 7 }, (_, i) => bar(i)).join("")}
     ${mark(0, "㉠")}${mark(3, "㉡")}${mark(6, "㉢")}

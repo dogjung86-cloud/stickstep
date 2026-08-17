@@ -146,7 +146,7 @@ export const latSunLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "위도가 높아질수록 같은 햇빛이 <b>넓은 땅에 나뉘어요</b> — 그래서 <b>적도는 덥고 극지방은 추워요</b>. 위치가 기후를 정하는 <b>첫 번째 열쇠</b>!";
+        "위도가 높아질수록 같은 햇빛이 <b>넓은 땅에 나뉘어요</b>. 그래서 <b>적도는 덥고 극지방은 추워요</b>. 위치가 기후를 정하는 <b>첫 번째 열쇠</b>!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "기후 지도 보러 가기");
     }
@@ -286,15 +286,15 @@ export const latSunLab: StepRenderer = (host, step, api) => {
     const tick = dt * 16.7;
     if (showLat <= 15) {
       eqMs += tick;
-      if (eqMs > 400) collect("eq", `${pct}%!`, "적도 — 좁은 땅에 쏙! 일 년 내내 더워요");
+      if (eqMs > 400) collect("eq", `${pct}%!`, "적도, 좁은 땅에 쏙! 일 년 내내 더워요");
     } else eqMs = 0;
     if (showLat >= 30 && showLat <= 60) {
       midMs += tick;
-      if (midMs > 400) collect("mid", `${pct}%!`, "중위도 — 비스듬히 닿아 더 넓게 나뉘어요");
+      if (midMs > 400) collect("mid", `${pct}%!`, "중위도, 비스듬히 닿아 더 넓게 나뉘어요");
     } else midMs = 0;
     if (showLat >= 70) {
       poleMs += tick;
-      if (poleMs > 400) collect("pole", `${pct}%!`, "극지방 — 아주 넓게 퍼져요. 그래서 추워요");
+      if (poleMs > 400) collect("pole", `${pct}%!`, "극지방, 아주 넓게 퍼져요. 그래서 추워요");
     } else poleMs = 0;
 
     // 1) 오른쪽 빛 유입 글로우(태양은 멀리 — 평행 광선이라 원반은 그리지 않는다)

@@ -157,7 +157,7 @@ export const bodyIntegrateLab: StepRenderer = (host, step, api) => {
     return [cx + ox, cy + oy];
   };
   const wrongMsg = (m: Mat, expected: SysId): string => {
-    if (expected === "hub") return "먼저 순환계로 옮겨요 — 모든 물질은 순환계가 실어 날라요";
+    if (expected === "hub") return "먼저 순환계로 옮겨요. 모든 물질은 순환계가 실어 날라요";
     if (m.id === "co2") return "이산화 탄소는 호흡계(허파)로 내보내요";
     if (m.id === "urea") return "요소 같은 노폐물은 배설계(콩팥)로 내보내요";
     return "영양소와 산소는 온몸의 조직세포로 전달돼요";

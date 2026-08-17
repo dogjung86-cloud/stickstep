@@ -124,7 +124,7 @@ export function gerFig(): string {
 
 /** 청바지 한 벌의 세계 — L5 hotspot 배경(부위별 원산지) */
 export function jeansFig(): string {
-  return `<svg viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="청바지 한 벌 — 부위마다 다른 나라에서 온 재료">
+  return `<svg viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="청바지 한 벌, 부위마다 다른 나라에서 온 재료">
     <defs>
       <linearGradient id="soc-denim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5E86C0"/><stop offset=".55" stop-color="#3E62A0"/><stop offset="1" stop-color="#2C4A80"/></linearGradient>
       <linearGradient id="soc-board" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBF7EE"/><stop offset="1" stop-color="#EEE6D4"/></linearGradient>
@@ -155,7 +155,7 @@ export function pizzaItalyFig(): string {
     <circle cx="104" cy="94" r="9" fill="#FFF6E8"/><circle cx="136" cy="100" r="9" fill="#FFF6E8"/><circle cx="118" cy="122" r="9" fill="#FFF6E8"/>
     <path d="M100 116q4-5 9-2M138 84q4-5 9-2M128 128q4-5 9-2" stroke="#2E8A4C" stroke-width="3" stroke-linecap="round"/>
     <ellipse cx="100" cy="76" rx="12" ry="5" fill="#fff" opacity=".35" transform="rotate(-22 100 76)"/>
-    <text x="160" y="176" text-anchor="middle" font-size="13" font-weight="900" fill="#7A5A28">이탈리아 나폴리 — 화덕에서 태어나다</text>
+    <text x="160" y="176" text-anchor="middle" font-size="13" font-weight="900" fill="#7A5A28">이탈리아 나폴리, 화덕에서 태어나다</text>
   </svg>`;
 }
 
@@ -171,7 +171,7 @@ export function pizzaUsaFig(): string {
     <path d="M62 122l54-76 54 76q-54 16-108 0z" fill="#E8B93C"/>
     <circle cx="106" cy="92" r="7" fill="#C24A3E"/><circle cx="130" cy="76" r="7" fill="#C24A3E"/><circle cx="120" cy="112" r="7" fill="#C24A3E"/><circle cx="98" cy="118" r="6" fill="#C24A3E"/><circle cx="140" cy="104" r="6" fill="#C24A3E"/>
     <path d="M48 128q68 22 136 0" stroke="#B0803A" stroke-width="3"/>
-    <text x="160" y="176" text-anchor="middle" font-size="13" font-weight="900" fill="#3E5170">미국 — 커지고 푸짐해지다</text>
+    <text x="160" y="176" text-anchor="middle" font-size="13" font-weight="900" fill="#3E5170">미국, 커지고 푸짐해지다</text>
   </svg>`;
 }
 
@@ -187,7 +187,7 @@ export function pizzaWorldFig(): string {
       <g transform="translate(82 134)"><circle r="13" fill="#E8B93C" stroke="#B0803A" stroke-width="1.6"/><path d="M-5-2q5-5 10 0M-4 4q4 3 8 0" stroke="#8A3E2E" stroke-width="2.2" fill="none"/></g>
       <g transform="translate(96 40)"><circle r="13" fill="#E8B93C" stroke="#B0803A" stroke-width="1.6"/><path d="M-5 2h10M0-4v10" stroke="#2E8A4C" stroke-width="2.4"/></g>
     </g>
-    <text x="160" y="176" text-anchor="middle" font-size="13" font-weight="900" fill="#DCE6FA">세계 어디서나 — 그 지역의 맛으로 변신</text>
+    <text x="160" y="176" text-anchor="middle" font-size="13" font-weight="900" fill="#DCE6FA">세계 어디서나, 그 지역의 맛으로 변신</text>
   </svg>`;
 }
 
@@ -212,7 +212,7 @@ export function cityCuritibaFig(): string {
       <ellipse cx="92" cy="124" rx="9" ry="3" fill="#fff" opacity=".4"/>
     </g>
     <path d="M196 132q4-16 18-18M214 114q-2 12 8 18" stroke="#2E8A4C" stroke-width="3" stroke-linecap="round"/>
-    <text x="160" y="26" text-anchor="middle" font-size="13" font-weight="900" fill="#1E5E38">브라질 쿠리치바 — 버스가 바꾼 도시</text>
+    <text x="160" y="26" text-anchor="middle" font-size="13" font-weight="900" fill="#1E5E38">브라질 쿠리치바, 버스가 바꾼 도시</text>
   </svg>`;
 }
 
@@ -236,7 +236,7 @@ export function cityGarstangFig(): string {
       <path d="M-8 2q8-12 16-2M-6 6q7 7 13 0" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/>
       <path d="M0-22v-8M-4-26h8" stroke="#2E6EA8" stroke-width="2.4" stroke-linecap="round"/>
     </g>
-    <text x="160" y="26" text-anchor="middle" font-size="13" font-weight="900" fill="#2E4A78">영국 가스탕 — 세계 최초 공정 무역 마을</text>
+    <text x="160" y="26" text-anchor="middle" font-size="13" font-weight="900" fill="#2E4A78">영국 가스탕, 세계 최초 공정 무역 마을</text>
     <text x="160" y="176" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">정당한 값을 치른 초콜릿·차만 팔기로 온 마을이 약속했어요</text>
   </svg>`;
 }
@@ -257,7 +257,7 @@ export function cityBolognaFig(): string {
     </g>
     <circle cx="176" cy="86" r="12" fill="#E8590C" opacity=".16"/>
     <path d="M170 86q6-7 12 0-6 8-12 0z" fill="#E8590C"/>
-    <text x="160" y="26" text-anchor="middle" font-size="13" font-weight="900" fill="#8A4A1E">이탈리아 볼로냐 — 손잡고 만든 협동조합 도시</text>
+    <text x="160" y="26" text-anchor="middle" font-size="13" font-weight="900" fill="#8A4A1E">이탈리아 볼로냐, 손잡고 만든 협동조합 도시</text>
   </svg>`;
 }
 

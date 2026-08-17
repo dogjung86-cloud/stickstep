@@ -82,7 +82,7 @@ export const salivaRaceLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "두 시험관에 <b>같은 녹말 용액</b>을 담고 — <b>(가)엔 증류수</b>, <b>(나)엔 침</b>을 넣었어요. 이제 <b>35~40℃ 물</b>에 담가 10분을 기다릴 차례. 아래 버튼으로 시작해요.",
+    html: "두 시험관에 <b>같은 녹말 용액</b>을 담고, <b>(가)엔 증류수</b>, <b>(나)엔 침</b>을 넣었어요. 이제 <b>35~40℃ 물</b>에 담가 10분을 기다릴 차례. 아래 버튼으로 시작해요.",
   });
 
   const board = el("div", { class: "b6-board slr-board", html: stageScene() });
@@ -112,7 +112,7 @@ export const salivaRaceLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "실험 종결! 침 속 소화효소 <b>아밀레이스</b>가 <b>녹말을 엿당 같은 당분으로</b> 분해했어요 — 밥을 오래 씹으면 달아지는 이유가 이거랍니다.";
+        "실험 종결! 침 속 소화효소 <b>아밀레이스</b>가 <b>녹말을 엿당 같은 당분으로</b> 분해했어요. 밥을 오래 씹으면 달아지는 이유가 이거랍니다.";
       api.enableCTA(s.cta ?? "소화계 지도 보기");
     }
   }
@@ -149,7 +149,7 @@ export const salivaRaceLab: StepRenderer = (host, step, api) => {
     later(() => {
       board.classList.remove("dripio");
       setLiq("ga", B6.iodine);
-      helper.innerHTML = "(가)는 <b>청람색</b> — 녹말이 그대로 남아 있어요!";
+      helper.innerHTML = "(가)는 <b>청람색</b>, 녹말이 그대로 남아 있어요!";
       later(() => {
         helper.innerHTML = "(가)는 <b>청람색</b>(녹말 있음), 그런데 침을 넣은 <b>(나)는 색이 변하지 않았어요</b>. 10분 사이 (나)에서 무슨 일이 있었던 걸까요?";
         later(() => {
@@ -163,8 +163,8 @@ export const salivaRaceLab: StepRenderer = (host, step, api) => {
             ],
             (ok) => {
               helper.innerHTML = ok
-                ? "그거예요! (나)의 <b>녹말이 사라졌다</b>는 뜻이죠 — 침이 녹말을 무언가 다른 것으로 바꿔 놓은 거예요. 그럼 무엇으로 바뀌었을까요? 이어서 <b>베네딕트 검사</b>!"
-                : "두 시험관의 녹말 용액은 처음에 <b>똑같이</b> 넣었어요. 달라진 건 침뿐 — 침이 <b>녹말을 다른 물질로 바꿔</b> 놓아서 아이오딘이 잡을 녹말이 없어진 거예요. 무엇으로 바뀌었는지 <b>베네딕트 검사</b>로 확인해요!";
+                ? "그거예요! (나)의 <b>녹말이 사라졌다</b>는 뜻이죠. 침이 녹말을 무언가 다른 것으로 바꿔 놓은 거예요. 그럼 무엇으로 바뀌었을까요? 이어서 <b>베네딕트 검사</b>!"
+                : "두 시험관의 녹말 용액은 처음에 <b>똑같이</b> 넣었어요. 달라진 건 침뿐, 침이 <b>녹말을 다른 물질로 바꿔</b> 놓아서 아이오딘이 잡을 녹말이 없어진 거예요. 무엇으로 바뀌었는지 <b>베네딕트 검사</b>로 확인해요!";
               collect("iodine", "(나)의 녹말 실종!");
               later(() => {
                 qBox.style.display = "none";
@@ -196,7 +196,7 @@ export const salivaRaceLab: StepRenderer = (host, step, api) => {
       board.classList.add("hotbath");
       later(() => {
         setLiq("na", B6.benedict);
-        helper.innerHTML = "이번엔 반대! 증류수 (가)는 그대로인데, 침을 넣은 <b>(나)만 황적색</b>이 됐어요. 황적색의 의미는 — <b>당분 발견</b>!";
+        helper.innerHTML = "이번엔 반대! 증류수 (가)는 그대로인데, 침을 넣은 <b>(나)만 황적색</b>이 됐어요. 황적색의 의미는, <b>당분 발견</b>!";
         later(() => {
           b4Ask(
             qBox,
@@ -209,8 +209,8 @@ export const salivaRaceLab: StepRenderer = (host, step, api) => {
             (ok) => {
               api.recordQuiz(ok);
               helper.innerHTML = ok
-                ? "정답! 침 속 소화효소 <b>아밀레이스</b>가 녹말을 <b>엿당</b>으로 분해한 거예요. 그런데 마지막 수수께끼 — 왜 하필 <b>35~40℃</b> 물에 담갔을까요?"
-                : "베네딕트가 잡는 건 <b>당분</b>이에요 — 침 속 <b>아밀레이스</b>가 녹말을 <b>엿당</b>으로 분해했답니다. 그런데 마지막 수수께끼 — 왜 하필 <b>35~40℃</b> 물에 담갔을까요?";
+                ? "정답! 침 속 소화효소 <b>아밀레이스</b>가 녹말을 <b>엿당</b>으로 분해한 거예요. 그런데 마지막 수수께끼, 왜 하필 <b>35~40℃</b> 물에 담갔을까요?"
+                : "베네딕트가 잡는 건 <b>당분</b>이에요. 침 속 <b>아밀레이스</b>가 녹말을 <b>엿당</b>으로 분해했답니다. 그런데 마지막 수수께끼, 왜 하필 <b>35~40℃</b> 물에 담갔을까요?";
               collect("benedict", "(나)에 당분 등장!");
               later(() => {
                 qBox.style.display = "none";
@@ -236,7 +236,7 @@ export const salivaRaceLab: StepRenderer = (host, step, api) => {
       (ok) => {
         helper.innerHTML = ok
           ? "맞아요! 침은 원래 <b>몸속(체온 안팎)</b>에서 일하는 소화액이니, 실험도 그 온도를 맞춰 준 거예요. 소화효소는 체온 근처에서 가장 활발하답니다."
-          : "열로 익히려는 게 아니에요 — 35~40℃는 <b>우리 몸속 온도</b>와 비슷한 값이죠. 침이 실제로 일하는 환경을 만들어 준 거예요. 소화효소는 체온 근처에서 가장 활발하답니다.";
+          : "열로 익히려는 게 아니에요. 35~40℃는 <b>우리 몸속 온도</b>와 비슷한 값이죠. 침이 실제로 일하는 환경을 만들어 준 거예요. 소화효소는 체온 근처에서 가장 활발하답니다.";
         collect("temp", "체온 맞춤 실험!");
       },
     );

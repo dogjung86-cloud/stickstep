@@ -161,7 +161,7 @@ export const refractLab: StepRenderer = (host, step, api) => {
     showToast("입사각 ↑ → 굴절각 ↑");
     helper.innerHTML = good
       ? "예측 적중! 입사각이 커지면 굴절각도 <b>함께 커져요</b>. 단, 굴절각은 <b>언제나 입사각보다 작죠</b>(공기→물). 이제 레이저를 <b>수직(0°)</b>으로 세워 보세요!"
-      : "직접 보니 — 입사각이 커지자 굴절각도 <b>함께 커졌어요</b>. 다만 굴절각은 <b>언제나 입사각보다 작아요</b>(공기→물). 이제 레이저를 <b>수직(0°)</b>으로 세워 보세요!";
+      : "직접 보니, 입사각이 커지자 굴절각도 <b>함께 커졌어요</b>. 다만 굴절각은 <b>언제나 입사각보다 작아요</b>(공기→물). 이제 레이저를 <b>수직(0°)</b>으로 세워 보세요!";
     phase = "zero";
     window.setTimeout(() => choices.classList.remove("show"), 400);
   }
@@ -170,9 +170,9 @@ export const refractLab: StepRenderer = (host, step, api) => {
     phase = "done";
     collect("zero", "직진!");
     haptic(HAPTIC.correct);
-    showToast("수직 입사 — 꺾이지 않고 직진!");
+    showToast("수직 입사, 꺾이지 않고 직진!");
     helper.innerHTML =
-      "정리! 빛이 <b>비스듬히</b> 물로 들어가면 경계면에서 <b>법선 쪽으로 꺾이고</b>(굴절각 < 입사각), 입사각이 커지면 굴절각도 커져요. <b>수직으로</b> 들어가면 꺾이지 않고 직진 — 이게 빛의 <b>굴절</b>이에요.";
+      "정리! 빛이 <b>비스듬히</b> 물로 들어가면 경계면에서 <b>법선 쪽으로 꺾이고</b>(굴절각 < 입사각), 입사각이 커지면 굴절각도 커져요. <b>수직으로</b> 들어가면 꺾이지 않고 직진, 이게 빛의 <b>굴절</b>이에요.";
     api.enableCTA(s.cta ?? "개념 정리하기");
   }
 

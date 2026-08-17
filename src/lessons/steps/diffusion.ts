@@ -37,7 +37,7 @@ export const diffusion: StepRenderer = (host, step, api) => {
   const canvas = el("canvas", { class: "mstage-cvblock", style: "height:250px" });
   const toastEl = el("div", { class: "toast" });
   const hudPill = el("div", { class: "pill" }, el("span", { class: "pdot", style: "background:#5AA2F8" }), el("span", { text: "물 + 잉크" }));
-  const stage = el("div", { class: "stage" }, canvas, el("div", { class: "stage-hud" }, hudPill), toastEl, el("div", { class: "stage-cap", text: "젓지 않은 물이에요 — 손대지 않고 지켜봐요" }));
+  const stage = el("div", { class: "stage" }, canvas, el("div", { class: "stage-hud" }, hudPill), toastEl, el("div", { class: "stage-cap", text: "젓지 않은 물이에요. 손대지 않고 지켜봐요" }));
 
   // ---- 예측 → 실행 컨트롤 ----
   const choices = el("div", { class: "hook-choices show" });
@@ -124,7 +124,7 @@ export const diffusion: StepRenderer = (host, step, api) => {
     dropBtn.classList.remove("pulse");
     dropInk();
     haptic(HAPTIC.select);
-    toastEl.textContent = "잉크 투하 — 이제 기다리기만!";
+    toastEl.textContent = "잉크 투하, 이제 기다리기만!";
     toastEl.classList.add("show");
     window.setTimeout(() => toastEl.classList.remove("show"), 1700);
     helper.innerHTML = "아무도 젓지 않았어요. 잉크 입자가 <b>스스로</b> 움직이는 걸 지켜보세요.";

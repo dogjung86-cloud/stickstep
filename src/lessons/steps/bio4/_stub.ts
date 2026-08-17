@@ -8,7 +8,7 @@ export function labStub(name: string): StepRenderer {
     const s = step as unknown as { title: string; lead?: string; cta?: string };
     host.appendChild(el("div", { class: "h1", html: s.title }));
     if (s.lead) host.appendChild(el("div", { class: "sub", html: s.lead }));
-    host.appendChild(el("div", { class: "helper", html: `${name} — 제작 중인 랩이에요.` }));
+    host.appendChild(el("div", { class: "helper", html: `${name}, 제작 중인 랩이에요.` }));
     api.recordQuiz(true);
     api.setCTA(s.cta ?? "다음", { enabled: true });
   };

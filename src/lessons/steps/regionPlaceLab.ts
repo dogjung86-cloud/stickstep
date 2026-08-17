@@ -97,7 +97,7 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        `${cont.name}의 지역 지도가 완성됐어요! <b>자연환경과 문화</b>가 지역을 나누는 기준이었죠 — 이 ${koCount(cont.regions.length)} 조각이 앞으로 배울 모든 이야기의 무대예요.`;
+        `${cont.name}의 지역 지도가 완성됐어요! <b>자연환경과 문화</b>가 지역을 나누는 기준이었죠. 이 ${koCount(cont.regions.length)} 조각이 앞으로 배울 모든 이야기의 무대예요.`;
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }
@@ -183,7 +183,7 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
   function buildTray(): { tray: HTMLElement; lensBtn: HTMLElement } {
     const lensBtn = el(
       "button",
-      { class: "rpl-lens", attrs: { type: "button", "aria-pressed": String(lensOn), "aria-label": "특징 안경 켜기 — 지역마다 특징 아이콘이 표시돼요" } },
+      { class: "rpl-lens", attrs: { type: "button", "aria-pressed": String(lensOn), "aria-label": "특징 안경 켜기, 지역마다 특징 아이콘이 표시돼요" } },
       el("span", { class: "rpl-lens-ico", html: lensIco() }),
       el("span", { text: "특징 안경" }),
     );
@@ -193,7 +193,7 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
     for (const r of cont.regions) {
       const tok = el(
         "button",
-        { class: "rpl-token", dataset: { r: r.id }, attrs: { type: "button", "aria-label": `${r.name} — ${r.hint}` } },
+        { class: "rpl-token", dataset: { r: r.id }, attrs: { type: "button", "aria-label": `${r.name}, ${r.hint}` } },
         el("span", { class: "rpl-token-ico", style: `background:${r.color}1F;color:${r.color}`, html: r.hintIcon }),
         el("span", { class: "rpl-token-name", text: r.name }),
       );
@@ -212,7 +212,7 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.tap);
       if (lensOn) {
         collect("lens", "장착!");
-        showToast("특징 안경 장착 — 지역마다 특징 아이콘이 떠올라요. 이름표의 아이콘과 짝을 맞춰 봐요!");
+        showToast("특징 안경 장착, 지역마다 특징 아이콘이 떠올라요. 이름표의 아이콘과 짝을 맞춰 봐요!");
       }
     });
     return { tray, lensBtn };
@@ -254,7 +254,7 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
     if (climateAt(lon, lat) === 0) {
       haptic(HAPTIC.wrong);
       splashAt(sx, sy);
-      showToast(cont.seaMsg ?? "풍덩! 바다에 빠졌어요 — 육지에 붙여 주세요.");
+      showToast(cont.seaMsg ?? "풍덩! 바다에 빠졌어요. 육지에 붙여 주세요.");
       return;
     }
     const droppedLand = cont.oceanRegions ? undefined : cont.regions.find((r) => pointInPoly(lon, lat, r.poly));
@@ -272,7 +272,7 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
     shakeToken(tokenEls.get(regionId));
     const dir = dirWord(dropped.anchor[0], dropped.anchor[1], target.anchor[0], target.anchor[1]);
     // 지역명 조사도 계산(topicJosa) — "동아시아은"으로 깨지던 하드코딩을 소급 교정.
-    showToast(`여긴 ${dropped.name} — ${dropped.trait} 땅이에요. ${target.name}${topicJosa(target.name)} 여기서 ${dir}!`);
+    showToast(`여긴 ${dropped.name}, ${dropped.trait} 땅이에요. ${target.name}${topicJosa(target.name)} 여기서 ${dir}!`);
   }
 
   /** 지역 채움·도장(라벨+도시)을 그린다 — settle과 재진입 복원이 공용. */
@@ -342,7 +342,7 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
     armed = id;
     const r = cont.regions.find((k) => k.id === id)!;
     tokenEls.get(id)?.classList.add("armed");
-    setPill(`${r.name} 선택 — 지도에서 자리를 탭!`);
+    setPill(`${r.name} 선택, 지도에서 자리를 탭!`);
   }
   function disarm(): void {
     if (!armed) return;
@@ -406,7 +406,7 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
       drag = { id, ghost: ghostFor(r) };
       moveGhost(e.clientX, e.clientY);
       tokBtn.classList.add("lift");
-      setPill(`${r.name} — ${r.hint}`);
+      setPill(`${r.name}, ${r.hint}`);
       haptic(HAPTIC.tap);
     }
     function onMove(e: PointerEvent): void {
@@ -450,7 +450,7 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
         judge(id, c.sx, c.sy);
       } else if (!finished && !drag) {
         haptic(HAPTIC.tap);
-        showToast("먼저 아래에서 지역 이름표를 골라 주세요 — 끌어 놓거나, 탭한 뒤 지도를 탭!");
+        showToast("먼저 아래에서 지역 이름표를 골라 주세요. 끌어 놓거나, 탭한 뒤 지도를 탭!");
       }
     });
     // 키보드 접근: 토큰에서 Enter/Space = click(detail 0) → 무장 토글
@@ -494,7 +494,7 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
       try {
         const { enterRotateStage } = await import("../../ui/rotateStage");
         if (disposed) return;
-        rot = enterRotateStage({ title: `${cont.name} 조립하기 — ${koCount(cont.regions.length)} 지역 붙이기`, onLeave: () => leaveStage() });
+        rot = enterRotateStage({ title: `${cont.name} 조립하기, ${koCount(cont.regions.length)} 지역 붙이기`, onLeave: () => leaveStage() });
         buildStage(rot);
       } catch {
         // 개발 서버 스테일 캐시 등으로 동적 import가 실패하면 버튼이 조용히 죽는다 — 안내로 살린다
@@ -534,7 +534,7 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
     // 재진입 복원 — 이미 배치한 지역의 채움·도장·비활성 토큰, 안경 상태
     for (const r of cont.regions) if (placed.has(r.id)) paintRegion(r);
     applyLens();
-    if (placed.size > 0) setPill(`${placed.size}/${cont.regions.length} 지역 배치됨 — 이어서 붙여요`);
+    if (placed.size > 0) setPill(`${placed.size}/${cont.regions.length} 지역 배치됨, 이어서 붙여요`);
 
     // ---- 레이아웃(rAF 없이 — resize 때만) ----
     const aspect = crop.w / crop.h;
@@ -592,7 +592,7 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
       const p = rt.mapPoint(e);
       moveGhost(p.x, p.y);
       tokBtn.classList.add("lift");
-      setPill(`${r.name} — ${r.hint}`);
+      setPill(`${r.name}, ${r.hint}`);
       haptic(HAPTIC.tap);
     }
     function onMove(e: PointerEvent): void {
@@ -612,7 +612,7 @@ export const regionPlaceLab: StepRenderer = (host, step, api) => {
             judge(id, c.sx, c.sy);
           } else if (c && !finished) {
             haptic(HAPTIC.tap);
-            showToast("먼저 아래에서 지역 이름표를 골라 주세요 — 끌어 놓거나, 탭한 뒤 지도를 탭!");
+            showToast("먼저 아래에서 지역 이름표를 골라 주세요. 끌어 놓거나, 탭한 뒤 지도를 탭!");
           }
         }
         return;

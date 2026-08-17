@@ -42,7 +42,7 @@ export const seeLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "캄캄한 밤, 랜턴 하나만 켜져 있어요. 첫 미션 — 우리는 <b>랜턴</b>을 어떻게 볼까요? 빛의 경로를 <b>출발점부터</b> 순서대로 탭!",
+    html: "캄캄한 밤, 랜턴 하나만 켜져 있어요. 첫 미션, 우리는 <b>랜턴</b>을 어떻게 볼까요? 빛의 경로를 <b>출발점부터</b> 순서대로 탭!",
   });
   host.append(goalChips, helper, stage); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -154,17 +154,17 @@ export const seeLab: StepRenderer = (host, step, api) => {
     if (m === 0) {
       chipOn(0, "빛이 눈으로!");
       helper.innerHTML =
-        "<b>광원</b>(랜턴)은 스스로 낸 빛이 눈에 <b>바로</b> 들어와서 보여요. 다음 — 스스로 빛을 못 내는 <b>텐트</b>는 어떻게 보일까요? 경로를 탭!";
+        "<b>광원</b>(랜턴)은 스스로 낸 빛이 눈에 <b>바로</b> 들어와서 보여요. 다음, 스스로 빛을 못 내는 <b>텐트</b>는 어떻게 보일까요? 경로를 탭!";
     } else if (m === 1) {
       chipOn(1, "반사 → 눈!");
       helper.innerHTML =
-        "랜턴 빛이 텐트에서 <b>반사</b>한 뒤 눈으로 들어와요 — 텐트가 밝아졌죠? 이번엔 <b>연못 속 물고기</b>! 경로를 탭해 봐요.";
+        "랜턴 빛이 텐트에서 <b>반사</b>한 뒤 눈으로 들어와요. 텐트가 밝아졌죠? 이번엔 <b>연못 속 물고기</b>! 경로를 탭해 봐요.";
     } else if (m === 2) {
       chipOn(2, "굴절 → 눈!");
       ghost = computeGhost();
       mission = 3;
       helper.innerHTML =
-        "물고기의 빛은 수면에서 <b>굴절</b>하며 꺾여 눈에 들어와요. 그래서 물고기는 <b>실제와 다른 곳</b>에 보이죠! 이제 실전 — <b>작살로 물고기를 잡아 보세요.</b> 밝게 보이는 곳? 아니면…?";
+        "물고기의 빛은 수면에서 <b>굴절</b>하며 꺾여 눈에 들어와요. 그래서 물고기는 <b>실제와 다른 곳</b>에 보이죠! 이제 실전, <b>작살로 물고기를 잡아 보세요.</b> 밝게 보이는 곳? 아니면…?";
       showToast("물 밖에서는 밝은 쪽이 '보이는 위치'예요");
       return;
     }
@@ -187,7 +187,7 @@ export const seeLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.wrong);
     if (k === "eye" && tapped.length === 0) {
       helper.innerHTML =
-        "앗 — <b>눈에서 빛이 나가는 게 아니에요!</b> 옛날 사람들도 그렇게 생각했지만, 빛은 언제나 <b>광원에서 출발</b>해요. <b>랜턴</b>부터 탭!";
+        "앗, <b>눈에서 빛이 나가는 게 아니에요!</b> 옛날 사람들도 그렇게 생각했지만, 빛은 언제나 <b>광원에서 출발</b>해요. <b>랜턴</b>부터 탭!";
       showToast("빛의 출발점은 광원!");
     } else {
       const name = expected === "lantern" ? "랜턴" : expected === "tent" ? "텐트" : expected === "fish" ? "물고기" : "눈";
@@ -575,12 +575,12 @@ export const seeLab: StepRenderer = (host, step, api) => {
             chipOn(3, "명중!");
             showToast("명중! 굴절까지 계산했네요");
             helper.innerHTML =
-              "명중! 물고기는 <b>보이는 곳보다 더 깊고 먼 곳</b>에 있었어요. 정리 — 광원은 <b>직접</b>, 물체는 <b>반사된 빛</b>, 물속 물체는 <b>굴절된 빛</b>이 눈에 들어와 보여요.";
+              "명중! 물고기는 <b>보이는 곳보다 더 깊고 먼 곳</b>에 있었어요. 정리, 광원은 <b>직접</b>, 물체는 <b>반사된 빛</b>, 물속 물체는 <b>굴절된 빛</b>이 눈에 들어와 보여요.";
             window.setTimeout(() => api.enableCTA(s.cta ?? "개념 정리하기"), 500);
           } else if (!spear.hit) {
             haptic(HAPTIC.wrong);
             helper.innerHTML =
-              "텅 — 거기엔 물고기가 <b>없어요</b>! 밝게 보이는 건 굴절이 만든 <b>겉보기 위치</b>예요. 실제 물고기는 <b>더 깊고 왼쪽</b> — 다시 겨냥!";
+              "텅, 거기엔 물고기가 <b>없어요</b>! 밝게 보이는 건 굴절이 만든 <b>겉보기 위치</b>예요. 실제 물고기는 <b>더 깊고 왼쪽</b>, 다시 겨냥!";
             window.setTimeout(() => {
               if (!finished) spear = null;
             }, 900);

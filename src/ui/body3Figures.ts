@@ -68,7 +68,7 @@ export function digestReviewFig(): string {
       <text x="${px(p.x)}" y="${y + (p.sub ? 14.5 : 15.5)}" text-anchor="middle" font-size="12" font-weight="800" fill="${p.hot ? "#C9303E" : "#333D4B"}">${p.name}</text>
       ${p.sub ? `<text x="${px(p.x)}" y="${y + 28}" text-anchor="middle" font-size="9.5" font-weight="700" fill="${p.hot ? "#E23B4B" : "#8B95A1"}">${p.sub}</text>` : ""}`;
   }).join("");
-  return `<svg viewBox="0 0 ${W} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="소화계 복습 — 기관별 분해 요약">
+  return `<svg viewBox="0 0 ${W} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="소화계 복습, 기관별 분해 요약">
     <image href="${IMG_BASE}body/figs/digestive.webp" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/>
     ${parts}
   </svg>`;
@@ -89,7 +89,7 @@ export function villusLabeledFig(): string {
   const lead = (x1: number, y1: number, x2: number, y2: number, c: string): string =>
     `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="1.8"/>
      <circle cx="${x2}" cy="${y2}" r="3" fill="${c}" stroke="#FFFFFF" stroke-width="1.4"/>`;
-  return `<svg viewBox="0 0 ${W} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="융털 확대 — 양분이 흡수되는 두 길">
+  return `<svg viewBox="0 0 ${W} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="융털 확대, 양분이 흡수되는 두 길">
     <image href="${IMG_BASE}body/figs/v2/villus-absorption.webp" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/>
     <rect x="6" y="6" width="74" height="20" rx="10" fill="#E23B4B"/>
     <text x="43" y="20" text-anchor="middle" font-size="11" font-weight="800" fill="#FFFFFF">융털 확대</text>
@@ -135,7 +135,7 @@ export function digestMapFig(): string {
     ${arrow("M215 180 l-52 -16")}
     <text x="250" y="222" text-anchor="middle" font-size="11" font-weight="700" fill="#8B95A1">침·쓸개즙·이자액이</text>
     <text x="250" y="237" text-anchor="middle" font-size="11" font-weight="700" fill="#8B95A1">소화관으로 분비돼요</text>`,
-    "소화계 모식도 — 소화관과 부속 기관",
+    "소화계 모식도, 소화관과 부속 기관",
   );
 }
 
@@ -185,7 +185,7 @@ export function heartMapFig(): string {
   const BLU = ["#5B84B5", "#245B9B"] as const;
   const RED = ["#D06A76", "#B7353E"] as const;
   const GRY = ["#9AA4B2", "#5A6472"] as const;
-  return `<svg viewBox="0 0 340 368" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="심장의 구조 — 두 심방과 두 심실, 판막">
+  return `<svg viewBox="0 0 340 368" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="심장의 구조, 두 심방과 두 심실, 판막">
     <image href="${IMG_BASE}body/figs/heart.webp" x="0" y="0" width="340" height="340" preserveAspectRatio="xMidYMid slice"/>
     ${rpill(99, 44, "대정맥", BLU[0], BLU[1])}
     ${rpill(160, 20, "대동맥", RED[0], RED[1])}
@@ -250,7 +250,7 @@ export function gasExchangeFig(blanks: string[] = []): string {
   const hideO2 = blanks.includes("o2");
   const H = hideO2 ? 227 : 318;
   const cellStrip = `
-    <text x="170" y="243" text-anchor="middle" font-size="10.5" font-weight="800" fill="#8B95A1">조직세포 승강장 — 방향이 반대!</text>
+    <text x="170" y="243" text-anchor="middle" font-size="10.5" font-weight="800" fill="#8B95A1">조직세포 승강장, 방향이 반대!</text>
     <rect x="14" y="252" width="112" height="52" rx="14" fill="#FFF7E8" stroke="#E3C58A" stroke-width="2.6"/>
     <text x="70" y="282" text-anchor="middle" font-size="12.5" font-weight="800" fill="#A9832B">조직세포</text>
     <rect x="214" y="252" width="112" height="52" rx="14" fill="#FDE2E5" stroke="#E07A85" stroke-width="2.6"/>

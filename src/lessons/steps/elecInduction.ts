@@ -80,7 +80,7 @@ export const inductionLab: StepRenderer = (host, step, api) => {
   const hudTxt = el("span", { text: "전하 치우침 없음" });
   const hudPill = el("div", { class: "pill", style: "white-space:nowrap" }, hudDot, hudTxt);
   const toastEl = el("div", { class: "toast" });
-  const capEl = el("div", { class: "stage-cap", style: "transition:opacity .4s", text: "눕힌 깡통을 정면에서 봐요 — 막대를 잡고 좌우로 끌어 보세요" });
+  const capEl = el("div", { class: "stage-cap", style: "transition:opacity .4s", text: "눕힌 깡통을 정면에서 봐요. 막대를 잡고 좌우로 끌어 보세요" });
   const stage = el(
     "div",
     { class: "stage" },
@@ -147,7 +147,7 @@ export const inductionLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 대전체와 <b>가까운 쪽은 다른 종류</b>, 먼 쪽은 같은 종류의 전기가 유도돼요. 다른 종류끼리 더 가까우니 — 막대가 (−)든 (+)든 깡통은 <b>언제나 끌려와요</b>. 이게 바로 정전기 유도!";
+        "정리! 대전체와 <b>가까운 쪽은 다른 종류</b>, 먼 쪽은 같은 종류의 전기가 유도돼요. 다른 종류끼리 더 가까우니, 막대가 (−)든 (+)든 깡통은 <b>언제나 끌려와요</b>. 이게 바로 정전기 유도!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       return;
@@ -162,9 +162,9 @@ export const inductionLab: StepRenderer = (host, step, api) => {
     segPlus.classList.toggle("on", m === 1);
     haptic(HAPTIC.select);
     if (m === 1) {
-      toast("(+)막대로 바꿨어요 — 전자들은 어디로 갈까요?");
+      toast("(+)막대로 바꿨어요. 전자들은 어디로 갈까요?");
       if (!finished && goals.has("roll") && !goals.has("plus"))
-        helper.innerHTML = "이번엔 막대가 <b>(+)전기</b>를 띠어요. 깡통에 가까이 가져가 보세요 — 그래도 끌려올까요?";
+        helper.innerHTML = "이번엔 막대가 <b>(+)전기</b>를 띠어요. 깡통에 가까이 가져가 보세요. 그래도 끌려올까요?";
     } else {
       toast("(−)막대로 돌아왔어요");
     }
@@ -445,10 +445,10 @@ export const inductionLab: StepRenderer = (host, step, api) => {
         collect(
           "shift",
           "전자 이동!",
-          mode === -1 ? "전자들이 먼 쪽으로 우르르 — 가까운 쪽은 (+)!" : "전자들이 가까운 쪽으로 우르르 — 가까운 쪽은 (−)!",
+          mode === -1 ? "전자들이 먼 쪽으로 우르르, 가까운 쪽은 (+)!" : "전자들이 가까운 쪽으로 우르르, 가까운 쪽은 (−)!",
           mode === -1
-            ? "막대의 (−)전기가 전자를 밀어내 <b>먼 쪽</b>으로 보냈어요. 그래서 가까운 쪽은 (+) — 서로 다른 전기끼리는 당겨요. 더 가까이 가져가면?"
-            : "막대의 (+)전기가 전자를 <b>가까운 쪽</b>으로 끌어왔어요. 그래서 가까운 쪽은 (−) — 서로 다른 전기끼리는 당겨요. 더 가까이 가져가면?",
+            ? "막대의 (−)전기가 전자를 밀어내 <b>먼 쪽</b>으로 보냈어요. 그래서 가까운 쪽은 (+), 서로 다른 전기끼리는 당겨요. 더 가까이 가져가면?"
+            : "막대의 (+)전기가 전자를 <b>가까운 쪽</b>으로 끌어왔어요. 그래서 가까운 쪽은 (−), 서로 다른 전기끼리는 당겨요. 더 가까이 가져가면?",
         );
       }
     } else shiftMs = 0;
@@ -456,14 +456,14 @@ export const inductionLab: StepRenderer = (host, step, api) => {
       collect(
         "roll",
         "끌려왔다!",
-        "깡통이 막대 쪽으로 굴러와요 — 인력!",
+        "깡통이 막대 쪽으로 굴러와요. 인력!",
         goals.has("plus")
           ? undefined
           : "가까운 쪽에 유도된 전기와 막대 사이의 <b>인력</b>이 깡통을 끌었어요. 이제 위 토글에서 <b>(+)막대</b>로 바꿔 다시 해 봐요!",
       );
     }
     if (mode === 1 && plusRoll > 42 && !goals.has("plus")) {
-      collect("plus", "역시 인력!", "(+)막대인데도 끌려와요 — 어느 쪽이든 인력!");
+      collect("plus", "역시 인력!", "(+)막대인데도 끌려와요. 어느 쪽이든 인력!");
     }
 
     // ---- 그리기 ----

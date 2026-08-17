@@ -126,7 +126,7 @@ export const anEnzymeLab: StepRenderer = (host, step, api) => {
     drag = null;
     if (next === 1) lab.setHelper("<b>위</b>예요. 위액에는 <b>펩신</b>과 <b>염산</b>이 들어 있어요. 둘 다 단백질에 놓아 보고 차이를 확인해요.");
     if (next === 2) lab.setHelper("<b>작은창자</b>예요. 이자액(아밀레이스·트립신·라이페이스)과 쓸개즙이 들어와요. 세 영양소를 <b>최종 산물</b>까지 분해해 보세요.");
-    say(`${ORGANS[next]}으로 이동했어요 — ${LIQUID[next]}`);
+    say(`${ORGANS[next]}으로 이동했어요. ${LIQUID[next]}`);
   }
 
   // ── 입력 ────────────────────────────────────────────────────────────────
@@ -302,7 +302,7 @@ export const anEnzymeLab: StepRenderer = (host, step, api) => {
     ctx.font = "800 10.5px Pretendard, sans-serif";
     ctx.textAlign = "left";
     ctx.fillStyle = withAlpha("#FFFFFF", 0.62);
-    ctx.fillText(`${ORGANS[organ]}에서 나오는 소화액 — ${LIQUID[organ]}`, 18, 298);
+    ctx.fillText(`${ORGANS[organ]}에서 나오는 소화액, ${LIQUID[organ]}`, 18, 298);
     tools().forEach((tool, i) => {
       if (held?.id === tool.id && drag) return;
       const p = toolPos(i);

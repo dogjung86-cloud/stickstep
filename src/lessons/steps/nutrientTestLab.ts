@@ -20,10 +20,10 @@ const BASE_W = 360;
 
 interface Tube { id: TestId; food: string; reagent: string; color: string; result: string; needHeat: boolean; }
 const TUBES: Tube[] = [
-  { id: "starch", food: "밥물", reagent: "아이오딘", color: "#2E4BA8", result: "청람색 — 녹말", needHeat: false },
-  { id: "protein", food: "달걀흰자", reagent: "뷰렛", color: "#8B3FA8", result: "보라색 — 단백질", needHeat: false },
-  { id: "fat", food: "식용유", reagent: "수단 III", color: "#E23B4B", result: "선홍색 — 지방", needHeat: false },
-  { id: "sugar", food: "과일즙", reagent: "베네딕트", color: "#E07B2E", result: "황적색 — 당류", needHeat: true },
+  { id: "starch", food: "밥물", reagent: "아이오딘", color: "#2E4BA8", result: "청람색, 녹말", needHeat: false },
+  { id: "protein", food: "달걀흰자", reagent: "뷰렛", color: "#8B3FA8", result: "보라색, 단백질", needHeat: false },
+  { id: "fat", food: "식용유", reagent: "수단 III", color: "#E23B4B", result: "선홍색, 지방", needHeat: false },
+  { id: "sugar", food: "과일즙", reagent: "베네딕트", color: "#E07B2E", result: "황적색, 당류", needHeat: true },
 ];
 const TUBE_X = [64, 148, 232, 316]; // 논리 x
 const BOTTLE_HOME: [number, number][] = [[52, 250], [136, 250], [220, 250], [304, 250]];
@@ -169,7 +169,7 @@ export const nutrientTestLab: StepRenderer = (host, step, api) => {
     heatBtn.disabled = true;
     revealed.add("sugar");
     haptic(HAPTIC.select);
-    toastMsg("가열하니 황적색 — 당류 확인!");
+    toastMsg("가열하니 황적색, 당류 확인!");
     checkReveal("sugar");
   };
   heatBtn.addEventListener("click", onHeat);

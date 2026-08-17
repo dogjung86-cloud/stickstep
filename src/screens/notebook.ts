@@ -274,8 +274,8 @@ export function notebookScreen(
         el("div", {
           class: "nb-fignote",
           text: lessonAlive
-            ? "그림이 있는 문제예요 — 원문은 아래 복습 버튼으로 볼 수 있어요."
-            : "그림이 있는 문제예요 — 콘텐츠가 업데이트되어 그림을 불러올 수 없어요.",
+            ? "그림이 있는 문제예요. 원문은 아래 복습 버튼으로 볼 수 있어요."
+            : "그림이 있는 문제예요. 콘텐츠가 업데이트되어 그림을 불러올 수 없어요.",
         }),
       );
     }
@@ -341,7 +341,7 @@ export function notebookScreen(
       } else {
         const { key, kind, srcId, lessonId, type, q, bogi, opts, answer, explain, core, hasFigure } = n;
         recordWrongNote({ key, kind, srcId, lessonId, type, q, bogi, opts, answer, explain, core, hasFigure });
-        snack("괜찮아요 — 해설을 읽고 다음에 다시 도전해요.");
+        snack("괜찮아요. 해설을 읽고 다음에 다시 도전해요.");
         haptic(HAPTIC.wrong);
       }
       zone.appendChild(explainBox(n));

@@ -113,7 +113,7 @@ export const anOrganLab: StepRenderer = (host, step, api) => {
     if (Math.hypot(x - o.x, y - o.y) <= 46) {
       placed.add(o.id);
       haptic(HAPTIC.tap);
-      say(`${o.name} — ${o.note}`);
+      say(`${o.name}, ${o.note}`);
       checkBuild();
     } else {
       const near = ORGANS.find((t) => !placed.has(t.id) && Math.hypot(x - t.x, y - t.y) <= 34);
@@ -148,7 +148,7 @@ export const anOrganLab: StepRenderer = (host, step, api) => {
       if (hit.tract) {
         if (!picked.has(hit.id)) {
           picked.add(hit.id);
-          say(`${hit.name} — 음식물이 지나가요.`);
+          say(`${hit.name}, 음식물이 지나가요.`);
           if (picked.size === 6) {
             lab.collect("sort", "소화관 6곳");
           }

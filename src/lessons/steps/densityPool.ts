@@ -121,7 +121,7 @@ export const densityPool: StepRenderer = (host, step, api) => {
   const seg = el("div", { class: "seg" });
   const palBtns = new Map<ObjKey, HTMLButtonElement>();
   for (const d of PALETTE) {
-    const b = el("button", { attrs: { type: "button", "aria-label": `${d.name} 밀도 ${d.rho} — 떨어뜨리기` } });
+    const b = el("button", { attrs: { type: "button", "aria-label": `${d.name} 밀도 ${d.rho}, 떨어뜨리기` } });
     b.innerHTML = `${d.name.replace(" 조각", "")}<span style="margin-left:4px;font-size:12px;font-weight:800;opacity:.62">${d.rho.toFixed(d.key === "coin" ? 1 : 2)}</span>`;
     seg.appendChild(b);
     palBtns.set(d.key, b);
@@ -167,7 +167,7 @@ export const densityPool: StepRenderer = (host, step, api) => {
     el(
       "div",
       { style: "display:flex;align-items:center;justify-content:space-between;gap:8px" },
-      el("span", { style: "font-size:12.5px;font-weight:800;color:var(--ink)", text: "미스터리 큐브 — 밀도를 정해서" }),
+      el("span", { style: "font-size:12.5px;font-weight:800;color:var(--ink)", text: "미스터리 큐브, 밀도를 정해서" }),
       el("span", { style: "display:inline-flex;align-items:center;gap:6px" }, swatch, valB),
     ),
     el("div", { style: "display:flex;align-items:center;gap:12px" }, slWrap, dropBtn),
@@ -175,7 +175,7 @@ export const densityPool: StepRenderer = (host, step, api) => {
 
   const helper = el("div", {
     class: "helper",
-    html: "아래로 갈수록 밀도가 큰 액체예요 — <b>에탄올 0.79 → 식용유 0.91 → 물 1.00</b>. 물체는 <b>자기보다 밀도가 큰 첫 액체의 표면</b>에 떠요.",
+    html: "아래로 갈수록 밀도가 큰 액체예요. <b>에탄올 0.79 → 식용유 0.91 → 물 1.00</b>. 물체는 <b>자기보다 밀도가 큰 첫 액체의 표면</b>에 떠요.",
   });
   host.append(goalChips, helper, stage, seg, cubeCard); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -219,15 +219,15 @@ export const densityPool: StepRenderer = (host, step, api) => {
     toast(msg);
     if (!finished) {
       const hints: Record<string, string> = {
-        coin: "모든 액체보다 밀도가 크면 <b>바닥까지</b> 가라앉아요. 이번엔 <b>얼음</b> — 식용유(0.91)와 물(1.00) 사이 어디쯤일까요?",
-        ice: "얼음(0.92)은 식용유보다 <b>아주 조금</b> 크고 물보다는 작아요 — 그래서 둘 사이에 떠요. 이제 <b>미스터리 큐브</b>를 0.79~0.91로 맞춰 봐요!",
+        coin: "모든 액체보다 밀도가 크면 <b>바닥까지</b> 가라앉아요. 이번엔 <b>얼음</b>, 식용유(0.91)와 물(1.00) 사이 어디쯤일까요?",
+        ice: "얼음(0.92)은 식용유보다 <b>아주 조금</b> 크고 물보다는 작아요. 그래서 둘 사이에 떠요. 이제 <b>미스터리 큐브</b>를 0.79~0.91로 맞춰 봐요!",
         cube: "밀도를 내 손으로 정해 <b>원하는 층</b>에 세웠어요!",
       };
       helper.innerHTML = hints[id] ?? "";
     }
     if (goals.size === 3 && !finished) {
       finished = true;
-      helper.innerHTML = "밀도가 작으면 위로, 크면 아래로 — <b>뜨고 가라앉기만 봐도 밀도를 비교</b>할 수 있어요.";
+      helper.innerHTML = "밀도가 작으면 위로, 크면 아래로, <b>뜨고 가라앉기만 봐도 밀도를 비교</b>할 수 있어요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -267,12 +267,12 @@ export const densityPool: StepRenderer = (host, step, api) => {
     const zone = zoneAtY(o);
     resPill.textContent = `${o.name.replace(" 조각", "")} → ${ZONE_LABEL[zone]}`;
     if (o.key === "coin") {
-      collect("coin", "셋보다 커요!", "동전 8.9 — 어떤 액체보다 커서 바닥까지!");
+      collect("coin", "셋보다 커요!", "동전 8.9, 어떤 액체보다 커서 바닥까지!");
     } else if (o.key === "ice") {
-      collect("ice", "기름·물 사이!", "얼음 0.92 — 식용유(0.91)보다 크고 물(1.00)보다 작아요!");
+      collect("ice", "기름·물 사이!", "얼음 0.92, 식용유(0.91)보다 크고 물(1.00)보다 작아요!");
     } else if (o.key === "cube") {
       if (zone === "ethoil") {
-        collect("cube", "내가 만든 층!", `큐브 ${o.rho.toFixed(2)} — 에탄올과 식용유 사이에 딱!`);
+        collect("cube", "내가 만든 층!", `큐브 ${o.rho.toFixed(2)}, 에탄올과 식용유 사이에 딱!`);
       } else {
         toast(`큐브 ${o.rho.toFixed(2)} → ${ZONE_LABEL[zone]}`);
         if (!goals.has("cube") && !finished)
@@ -280,8 +280,8 @@ export const densityPool: StepRenderer = (host, step, api) => {
       }
     } else if (!announcedInfo.has(o.key)) {
       announcedInfo.add(o.key);
-      if (o.key === "wood") toast("나무 0.45 — 가장 가벼워서 맨 위에 둥실");
-      else toast("포도알 1.05 — 물(1.00)보다 커서 바닥까지");
+      if (o.key === "wood") toast("나무 0.45, 가장 가벼워서 맨 위에 둥실");
+      else toast("포도알 1.05, 물(1.00)보다 커서 바닥까지");
     }
   }
 

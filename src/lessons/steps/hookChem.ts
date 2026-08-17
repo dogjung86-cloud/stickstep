@@ -73,7 +73,7 @@ export function renderRings(
     g.classList.add("spin");
     if (!spun.has(id)) {
       spun.add(id);
-      if (spun.size === 1) helper.innerHTML = "반짝— 은백색이네요. <b>다른 쪽</b>도 굴려 봐요.";
+      if (spun.size === 1) helper.innerHTML = "반짝… 은백색이네요. <b>다른 쪽</b>도 굴려 봐요.";
       if (spun.size === 2) {
         face("surprised");
         helper.innerHTML = "굴려 봐도 <b>색도 광택도 똑같아요</b>! 겉모습 말고, 뭘 비교해야 할까요?";
@@ -81,8 +81,8 @@ export function renderRings(
           face("curious");
           ask(choicesBox, helper, {
             choices: s.choices ?? ["같은 부피일 때 질량이 다른지 잰다", "돋보기로 색을 더 자세히 본다", "두드려서 소리를 비교한다"],
-            good: "좋은 예측이에요! 양이 아니라 <b>물질 고유의 성질</b>을 재야 해요 — 실험실에서 확인!",
-            bad: "색과 소리로는 이 둘을 못 갈라요 — 방금 굴려 봤듯 겉모습이 똑같거든요. 열쇠는 <b>같은 부피일 때의 질량</b> 같은 고유 성질! 실험실에서 확인해요.",
+            good: "좋은 예측이에요! 양이 아니라 <b>물질 고유의 성질</b>을 재야 해요. 실험실에서 확인!",
+            bad: "색과 소리로는 이 둘을 못 갈라요. 방금 굴려 봤듯 겉모습이 똑같거든요. 열쇠는 <b>같은 부피일 때의 질량</b> 같은 고유 성질! 실험실에서 확인해요.",
             onDone: finish,
           });
         }, 800);
@@ -142,7 +142,7 @@ export function renderDeadsea(
   fig.innerHTML = deadseaSvg();
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "여기는 소금 호수 <b>사해</b>. 신문을 읽으며 둥둥— <b>꾹 눌러서</b> 물에 넣어 보세요!";
+  helper.innerHTML = "여기는 소금 호수 <b>사해</b>. 신문을 읽으며 둥둥… <b>꾹 눌러서</b> 물에 넣어 보세요!";
 
   let dunks = 0;
   let timer = 0;
@@ -169,8 +169,8 @@ export function renderDeadsea(
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? ["소금물이라 물보다 밀도가 커서", "사해의 물이 특별히 따뜻해서", "바람이 아래에서 받쳐 줘서"],
-          good: "바로 그거예요! 소금이 잔뜩 녹아 <b>밀도가 큰 물</b> — 사람이 그 위에 떠요. 실험실에서 확인!",
-          bad: "온도나 바람 때문이 아니에요 — 비밀은 물에 잔뜩 녹은 <b>소금</b>! 소금물은 밀도가 커서 사람이 위에 떠요. 실험실에서 확인해요.",
+          good: "바로 그거예요! 소금이 잔뜩 녹아 <b>밀도가 큰 물</b>, 사람이 그 위에 떠요. 실험실에서 확인!",
+          bad: "온도나 바람 때문이 아니에요. 비밀은 물에 잔뜩 녹은 <b>소금</b>! 소금물은 밀도가 커서 사람이 위에 떠요. 실험실에서 확인해요.",
           onDone: finish,
         });
       }, 700);
@@ -245,7 +245,7 @@ export function renderCocoa(
     void fig.offsetWidth;
     fig.classList.add("pour");
     if (n <= 2) {
-      helper.innerHTML = n === 1 ? "스르륵— <b>잘 녹아요</b>. 한 숟갈 더!" : "아직도 잘 녹네요. 계속!";
+      helper.innerHTML = n === 1 ? "스르륵… <b>잘 녹아요</b>. 한 숟갈 더!" : "아직도 잘 녹네요. 계속!";
     } else {
       const p = pile();
       if (p) {
@@ -263,8 +263,8 @@ export function renderCocoa(
         timer = window.setTimeout(() => {
           ask(choicesBox, helper, {
             choices: s.choices ?? ["코코아를 따뜻하게 데운다", "숟가락으로 더 세게 젓는다", "더 큰 컵에 옮겨 담는다"],
-            good: "좋은 예측! <b>녹는 양의 한계</b>가 온도에 따라 정말 달라지는지 — 실험실에서 확인해요!",
-            bad: "세게 젓거나 컵을 바꿔도 한계는 그대로예요 — 젓기는 빨리 녹게 할 뿐, 더 많이 녹게 하진 못해요. 열쇠는 <b>온도</b>! 실험실에서 확인해요.",
+            good: "좋은 예측! <b>녹는 양의 한계</b>가 온도에 따라 정말 달라지는지, 실험실에서 확인해요!",
+            bad: "세게 젓거나 컵을 바꿔도 한계는 그대로예요. 젓기는 빨리 녹게 할 뿐, 더 많이 녹게 하진 못해요. 열쇠는 <b>온도</b>! 실험실에서 확인해요.",
             onDone: finish,
           });
         }, 800);
@@ -346,8 +346,8 @@ export function renderFishmouth(
         face("curious");
         ask(choicesBox, helper, {
           choices: s.choices ?? ["물이 따뜻해지면 녹아 있던 산소가 줄어들어서", "물고기가 햇볕을 쬐고 싶어서", "수면의 먹이가 많아져서"],
-          good: "예리해요! 온도가 오르면 <b>기체가 물에 덜 녹아요</b> — 산소가 부족해진 거예요. 실험실로!",
-          bad: "햇볕도 먹이도 아니에요 — 물이 따뜻해지면 <b>산소가 물에 덜 녹아서</b> 숨쉬기가 힘들어진 거예요. 그래서 산소가 많은 수면으로! 실험실에서 확인해요.",
+          good: "예리해요! 온도가 오르면 <b>기체가 물에 덜 녹아요</b>. 산소가 부족해진 거예요. 실험실로!",
+          bad: "햇볕도 먹이도 아니에요. 물이 따뜻해지면 <b>산소가 물에 덜 녹아서</b> 숨쉬기가 힘들어진 거예요. 그래서 산소가 많은 수면으로! 실험실에서 확인해요.",
           onDone: finish,
         });
       }, 900);
@@ -473,13 +473,13 @@ export function renderGallium(
         fig.classList.add("melted");
         face("surprised");
         haptic(HAPTIC.correct);
-        helper.innerHTML = "사르르— 갈륨 동전이 <b>손바닥 위에서 녹아</b> 버렸어요! 철 동전은 멀쩡한데, 왜죠?";
+        helper.innerHTML = "사르르… 갈륨 동전이 <b>손바닥 위에서 녹아</b> 버렸어요! 철 동전은 멀쩡한데, 왜죠?";
         timer = window.setTimeout(() => {
           face("curious");
           ask(choicesBox, helper, {
             choices: s.choices ?? ["갈륨의 녹는점이 체온보다 낮아서", "손에 힘을 너무 세게 줘서", "손바닥의 땀에 녹은 것이라서"],
-            good: "정확해요! 갈륨의 <b>녹는점은 약 30 °C</b> — 체온(36.5 °C)이면 충분히 녹아요. 실험실로!",
-            bad: "힘도 땀도 금속을 못 녹여요 — 갈륨은 <b>녹는점이 약 30 °C</b>라서 체온(36.5 °C)만으로 녹은 거예요. 물질마다 녹는점이 달라요. 실험실로!",
+            good: "정확해요! 갈륨의 <b>녹는점은 약 30 °C</b>, 체온(36.5 °C)이면 충분히 녹아요. 실험실로!",
+            bad: "힘도 땀도 금속을 못 녹여요. 갈륨은 <b>녹는점이 약 30 °C</b>라서 체온(36.5 °C)만으로 녹은 거예요. 물질마다 녹는점이 달라요. 실험실로!",
             onDone: finish,
           });
         }, 900);
@@ -572,13 +572,13 @@ export function renderMilkzoom(
     haptic(HAPTIC.tap);
     fig.classList.add("zoom");
     face("surprised");
-    helper.innerHTML = "우와 — 물속에 <b>지방 방울, 단백질 알갱이</b>가 잔뜩! 겉은 하나처럼 보였는데요.";
+    helper.innerHTML = "우와, 물속에 <b>지방 방울, 단백질 알갱이</b>가 잔뜩! 겉은 하나처럼 보였는데요.";
     timer = window.setTimeout(() => {
       face("curious");
       ask(choicesBox, helper, {
         choices: s.choices ?? ["여러 물질이 섞여 있는 혼합물이다", "우유라는 한 가지 순물질이다", "물이 하얗게 변한 것이다"],
         good: "맞아요! 우유는 물·지방·단백질이 <b>제 성질을 지닌 채 섞인</b> 혼합물이에요. 실험실로!",
-        bad: "확대경을 다시 봐요 — 방울과 알갱이가 <b>따로따로</b> 보였죠? 우유는 한 가지 물질이 아니라 물·지방·단백질이 섞인 <b>혼합물</b>이에요. 실험실로!",
+        bad: "확대경을 다시 봐요. 방울과 알갱이가 <b>따로따로</b> 보였죠? 우유는 한 가지 물질이 아니라 물·지방·단백질이 섞인 <b>혼합물</b>이에요. 실험실로!",
         onDone: finish,
       });
     }, 900);
@@ -659,13 +659,13 @@ export function renderSoysauce(
         fig.classList.add("settle");
         face("surprised");
         haptic(HAPTIC.correct);
-        helper.innerHTML = "스르륵— 다시 <b>두 층으로</b>! 기름은 위, 간장은 아래. 따로 담으려면 어떻게 할까요?";
+        helper.innerHTML = "스르륵… 다시 <b>두 층으로</b>! 기름은 위, 간장은 아래. 따로 담으려면 어떻게 할까요?";
         t2 = window.setTimeout(() => {
           face("curious");
           ask(choicesBox, helper, {
             choices: s.choices ?? ["아래층부터 조심히 따라 낸다", "다시 세게 흔들어 섞는다", "빨대로 가운데를 뽑는다"],
-            good: "좋은 감각이에요! <b>밀도 차</b>로 나뉜 두 층 — 분별 깔때기로 아래층부터! 실험실로!",
-            bad: "흔들면 도로 섞이고, 가운데를 뽑으면 두 층이 함께 딸려 와요 — 이미 <b>밀도 차</b>로 나뉜 층을 살려서 <b>아래층부터</b> 받아 내는 게 정석! 실험실로!",
+            good: "좋은 감각이에요! <b>밀도 차</b>로 나뉜 두 층, 분별 깔때기로 아래층부터! 실험실로!",
+            bad: "흔들면 도로 섞이고, 가운데를 뽑으면 두 층이 함께 딸려 와요. 이미 <b>밀도 차</b>로 나뉜 층을 살려서 <b>아래층부터</b> 받아 내는 게 정석! 실험실로!",
             onDone: finish,
           });
         }, 1000);
@@ -754,8 +754,8 @@ export function renderSyrup(
       face("curious");
       ask(choicesBox, helper, {
         choices: s.choices ?? ["차가워지자 녹을 수 있는 양이 줄어서", "설탕이 상해서 굳은 것이라서", "물이 증발해 시럽이 마른 것이라서"],
-        good: "정확해요! 온도가 내려가면 <b>용해도가 작아져</b> 넘친 설탕이 결정으로 — 이게 <b>석출</b>이에요!",
-        bad: "상하거나 마른 게 아니에요 — 밀폐된 병인데도 생겼잖아요? 차가워지며 <b>녹을 수 있는 한계(용해도)가 줄어</b> 넘친 설탕이 결정으로 나온 거예요. 이게 <b>석출</b>!",
+        good: "정확해요! 온도가 내려가면 <b>용해도가 작아져</b> 넘친 설탕이 결정으로, 이게 <b>석출</b>이에요!",
+        bad: "상하거나 마른 게 아니에요. 밀폐된 병인데도 생겼잖아요? 차가워지며 <b>녹을 수 있는 한계(용해도)가 줄어</b> 넘친 설탕이 결정으로 나온 거예요. 이게 <b>석출</b>!",
         onDone: finish,
       });
     }, 900);
@@ -863,8 +863,8 @@ export function renderPerfume(
           face("curious");
           ask(choicesBox, helper, {
             choices: s.choices ?? ["향 성분이 기체가 됐다가 식어서 다시 액체가 됐다", "향기 입자가 관 속을 걸어 넘어왔다", "꽃잎이 아주 작게 부서져 넘어왔다"],
-            good: "완벽한 예측! <b>기화 → 냉각(액화)</b> — 이게 바로 <b>증류</b>의 원리예요. 실험실로!",
-            bad: "입자가 걸어오지도, 꽃잎이 부서져 넘어오지도 않았어요 — 김을 봤죠? 향 성분이 <b>기체가 됐다가 식어서 다시 액체</b>가 된 거예요. 이게 <b>증류</b>! 실험실로!",
+            good: "완벽한 예측! <b>기화 → 냉각(액화)</b>, 이게 바로 <b>증류</b>의 원리예요. 실험실로!",
+            bad: "입자가 걸어오지도, 꽃잎이 부서져 넘어오지도 않았어요. 김을 봤죠? 향 성분이 <b>기체가 됐다가 식어서 다시 액체</b>가 된 거예요. 이게 <b>증류</b>! 실험실로!",
             onDone: finish,
           });
         }, 1000);

@@ -34,7 +34,7 @@ export const windSoccer: StepRenderer = (host, step, api) => {
 
   const canvas = el("canvas", { class: "mstage-cvblock", style: "height:236px" });
   const spdVal = el("span", { text: "0" });
-  const statePill = el("span", { text: "공이 굴러갑니다 — 위에서 본 모습" });
+  const statePill = el("span", { text: "공이 굴러갑니다. 위에서 본 모습" });
   const toastEl = el("div", { class: "toast" });
   const stage = el(
     "div",
@@ -114,7 +114,7 @@ export const windSoccer: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "삼종 완성! 알짜힘이 0이 아니면 물체의 운동은 반드시 변해요 — 나란하면 <b>속력</b>, 수직이면 <b>방향</b>, 비스듬하면 <b>둘 다</b>. 반대로 힘이 없으면? 계속 그대로 굴러가죠.";
+        "삼종 완성! 알짜힘이 0이 아니면 물체의 운동은 반드시 변해요. 나란하면 <b>속력</b>, 수직이면 <b>방향</b>, 비스듬하면 <b>둘 다</b>. 반대로 힘이 없으면? 계속 그대로 굴러가죠.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     } else if (!finished) {
@@ -175,7 +175,7 @@ export const windSoccer: StepRenderer = (host, step, api) => {
 
     // HUD
     spdVal.textContent = Math.hypot(ball.vx, ball.vy).toFixed(1);
-    statePill.textContent = wd ? `${wd.name} 부는 중 — ${wd.effect}?` : "공이 굴러갑니다 — 위에서 본 모습";
+    statePill.textContent = wd ? `${wd.name} 부는 중, ${wd.effect}?` : "공이 굴러갑니다. 위에서 본 모습";
 
     // ---- 그리기: 잔디 운동장(위에서 본) ----
     const turf = ctx.createLinearGradient(0, 0, 0, H);

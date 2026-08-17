@@ -78,7 +78,7 @@ export const anBreathLab: StepRenderer = (host, step, api) => {
     const v = volume();
     if (v >= 138 && !lab.has("inhale")) {
       lab.collect("inhale", "공기 들어옴");
-      lab.setHelper("공기가 들어왔어요! 부피가 커지니 압력이 <b>낮아져</b> 몸 밖 공기가 밀려 들어온 거예요. 이번엔 반대로 — 고무 막을 <b>위로</b> 올리고 <b>갈비뼈 내리기</b>를 눌러 보세요.");
+      lab.setHelper("공기가 들어왔어요! 부피가 커지니 압력이 <b>낮아져</b> 몸 밖 공기가 밀려 들어온 거예요. 이번엔 반대로, 고무 막을 <b>위로</b> 올리고 <b>갈비뼈 내리기</b>를 눌러 보세요.");
       say("들숨! 갈비뼈 올라가고 가로막 내려감 → 부피 커짐 → 압력 낮아짐 → 공기가 들어와요.", 5200);
     }
     if (v <= 68 && !lab.has("exhale")) {
@@ -126,7 +126,7 @@ export const anBreathLab: StepRenderer = (host, step, api) => {
         if (matched.has(PAIRS[li].part)) { say("이미 짝지었어요."); return; }
         pickedPart = PAIRS[li].part;
         haptic(HAPTIC.tap);
-        say(`${pickedPart} — 몸의 어느 부분일까요?`);
+        say(`${pickedPart}, 몸의 어느 부분일까요?`);
         return;
       }
       const ri = PAIRS.findIndex((_, i) => p.x >= 192 && p.x <= 346 && p.y >= 90 + i * 52 && p.y <= 90 + i * 52 + 44);
@@ -428,7 +428,7 @@ export const anBreathLab: StepRenderer = (host, step, api) => {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = withAlpha("#FFFFFF", 0.56);
-    ctx.fillText("허파에는 근육이 없어요 — 컵과 고무 막이 움직여 줘야 부풀어요", BASE_W / 2, 486);
+    ctx.fillText("허파에는 근육이 없어요. 컵과 고무 막이 움직여 줘야 부풀어요", BASE_W / 2, 486);
 
     if (toast && t < toastUntil) {
       labelChip(ctx, BASE_W / 2, phase === "run" ? 336 : 470, toast, {

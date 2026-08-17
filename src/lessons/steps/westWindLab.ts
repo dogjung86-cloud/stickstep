@@ -111,7 +111,7 @@ export const westWindLab: StepRenderer = (host, step, api) => {
   const canvas = el("canvas", { class: "spring-canvas", style: `height:${CVH}px` });
   const pdot = el("span", { class: "pdot", style: "background:#FF9A5E" });
   // ON 필 문구는 짧게 유지 — 길면 필 오른끝이 캔버스 화살촉(화면 x≈263~)을 덮는다(HUD 가림 실사고).
-  const pillTxt = el("span", { text: "난류 흐르는 중 — 온기를 실어요" });
+  const pillTxt = el("span", { text: "난류 흐르는 중, 온기를 실어요" });
   const monthRead = el("div", { class: "tempread" }, el("span", { text: "1월" }));
   const stage = el("div", { class: "stage" }, canvas, el("div", { class: "stage-hud" }, el("div", { class: "pill" }, pdot, pillTxt), monthRead));
   const capEl = el("div", { class: "stage-cap", text: "주황 띠 = 따뜻한 바닷물(난류) · 흰 줄 = 편서풍 · 아래 = 1월 온도계" });
@@ -145,7 +145,7 @@ export const westWindLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "<b>서안 해양성 기후</b> — 북대서양 난류와 일 년 내내 부는 편서풍 덕분에, 서부 유럽은 비슷한 위도의 대륙 동안보다 <b>겨울이 따뜻하고 강수량이 연중 골라요</b>.";
+        "<b>서안 해양성 기후</b>, 북대서양 난류와 일 년 내내 부는 편서풍 덕분에, 서부 유럽은 비슷한 위도의 대륙 동안보다 <b>겨울이 따뜻하고 강수량이 연중 골라요</b>.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }
@@ -172,14 +172,14 @@ export const westWindLab: StepRenderer = (host, step, api) => {
     optA.classList.add("ok");
     optB.classList.add("dim");
     haptic(HAPTIC.correct);
-    quizQ.innerHTML = "정답! 방금 실험 그대로예요 — <b>난류를 끄자 런던이 꽁꽁</b> 얼었죠. 바다와 바람이 유럽의 겨울 난방을 맡고 있답니다.";
+    quizQ.innerHTML = "정답! 방금 실험 그대로예요. <b>난류를 끄자 런던이 꽁꽁</b> 얼었죠. 바다와 바람이 유럽의 겨울 난방을 맡고 있답니다.";
     collect("why", "정답!");
   });
   optB.addEventListener("click", () => {
     if (quizDone) return;
     haptic(HAPTIC.wrong);
     optB.classList.add("no");
-    quizQ.innerHTML = "훅의 위치 지도를 떠올려요 — 런던은 분명 서울보다 <b>북쪽</b>이었어요. 위도가 아니라 방금 끈 <b>그것</b>이 범인이에요. 다시!";
+    quizQ.innerHTML = "훅의 위치 지도를 떠올려요. 런던은 분명 서울보다 <b>북쪽</b>이었어요. 위도가 아니라 방금 끈 <b>그것</b>이 범인이에요. 다시!";
     later(() => optB.classList.remove("no"), 700);
   });
 
@@ -197,10 +197,10 @@ export const westWindLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.select);
     if (on) {
       pdot.style.background = "#FF9A5E";
-      pillTxt.textContent = "난류 흐르는 중 — 온기를 실어요";
+      pillTxt.textContent = "난류 흐르는 중, 온기를 실어요";
     } else {
       pdot.style.background = "#8FB6D8";
-      pillTxt.textContent = "난류 정지(모형) — 바람이 빈손이에요";
+      pillTxt.textContent = "난류 정지(모형), 바람이 빈손이에요";
     }
   }
   btnOn.addEventListener("click", () => setCurrent(true));
@@ -402,7 +402,7 @@ export const westWindLab: StepRenderer = (host, step, api) => {
     ctx.textAlign = "left";
     ctx.textBaseline = "bottom";
     ctx.fillStyle = "rgba(220,230,250,.85)";
-    ctx.fillText(currentOn ? "편서풍: 서 → 동 (일 년 내내)" : "난류 정지 — 모형 실험", mapX + 10, mapY + mapH - 8);
+    ctx.fillText(currentOn ? "편서풍: 서 → 동 (일 년 내내)" : "난류 정지, 모형 실험", mapX + 10, mapY + mapH - 8);
     ctx.restore();
 
     // ---- 온도계 패널(하단 stage-cap 자리 34px 비움 — 겹침 실사고) ----

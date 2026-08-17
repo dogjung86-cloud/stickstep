@@ -632,7 +632,7 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
     }
 
     const expl = el("div", { class: "xr-expl" });
-    expl.appendChild(el("div", { class: "xr-expl-head", text: q.good ? "해설 — 이렇게 푸는 문제였어요" : "해설 — 왜 그런지 뜯어봐요" }));
+    expl.appendChild(el("div", { class: "xr-expl-head", text: q.good ? "해설, 이렇게 푸는 문제였어요" : "해설, 왜 그런지 뜯어봐요" }));
     expl.appendChild(el("div", { class: "xr-expl-body", html: it.explain }));
     box.appendChild(expl);
 
@@ -640,7 +640,7 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
 
     if (lessonInfo) {
       const go = el("button", { class: "xr-lesson-btn" });
-      go.innerHTML = `<span>이 레슨 복습하기 — ${lessonInfo.lesson.label ?? lessonInfo.lesson.title}</span>${icon("chevron", 15)}`;
+      go.innerHTML = `<span>이 레슨 복습하기, ${lessonInfo.lesson.label ?? lessonInfo.lesson.title}</span>${icon("chevron", 15)}`;
       go.addEventListener("click", () => {
         haptic(HAPTIC.tap);
         opts.onOpenLesson(it.lessonId);

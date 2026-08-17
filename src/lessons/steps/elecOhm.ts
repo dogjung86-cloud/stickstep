@@ -115,7 +115,7 @@ export const ohmLab: StepRenderer = (host, step, api) => {
   const recordBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "이 지점 기록" }));
   const helper = el("div", {
     class: "helper",
-    html: "전압을 바꿔 가며 <b>이 지점 기록</b>을 눌러 (전압, 전류) 점을 모아요 — 한 니크롬선에서 <b>서로 다른 전압 4점</b>이면 규칙이 보여요!",
+    html: "전압을 바꿔 가며 <b>이 지점 기록</b>을 눌러 (전압, 전류) 점을 모아요. 한 니크롬선에서 <b>서로 다른 전압 4점</b>이면 규칙이 보여요!",
   });
 
   host.append(goalChips, helper, stage, modeSeg, seg, lenSeg, sliders, recordBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
@@ -164,7 +164,7 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     if (goals.size === 4 && !finished) {
       finished = true;
       helper.innerHTML =
-        "전압이 커질수록 전류도 커졌죠?(<b>비례</b>) 저항이 커질수록 전류는 줄었죠?(<b>반비례</b>) 네, 맞아요 — 이 둘을 한 줄로 합친 게 <b>I = V/R</b>, 옴의 법칙이에요! 다음 개념에서 차근차근 정리해요.";
+        "전압이 커질수록 전류도 커졌죠?(<b>비례</b>) 저항이 커질수록 전류는 줄었죠?(<b>반비례</b>) 네, 맞아요. 이 둘을 한 줄로 합친 게 <b>I = V/R</b>, 옴의 법칙이에요! 다음 개념에서 차근차근 정리해요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -186,7 +186,7 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     if (finished) return;
     helper.innerHTML =
       m === "res"
-        ? "이번엔 <b>전압을 3V에 고정</b>하고 <b>저항(니크롬선 길이)</b>을 바꿔요. 길이 1배·2배·3배 — <b>세 점을 모두 기록</b>하면 곡선이 나타나요!"
+        ? "이번엔 <b>전압을 3V에 고정</b>하고 <b>저항(니크롬선 길이)</b>을 바꿔요. 길이 1배·2배·3배, <b>세 점을 모두 기록</b>하면 곡선이 나타나요!"
         : "전압을 바꿔 가며 점을 기록해 <b>직선 두 개</b>(긴·짧은)와 <b>2배 쌍</b>을 모아요.";
   }
   modeVolt.addEventListener("click", () => setMode("volt"));
@@ -216,7 +216,7 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     });
     haptic(HAPTIC.select);
     if (!finished && !goals.has("inverse"))
-      helper.innerHTML = `길이 ${i + 1}배 = 저항 ${LEN_R[i]}Ω — 전류계를 읽고 <b>이 지점 기록</b>!`;
+      helper.innerHTML = `길이 ${i + 1}배 = 저항 ${LEN_R[i]}Ω, 전류계를 읽고 <b>이 지점 기록</b>!`;
   }
 
   // ---- 전압 슬라이더(px-sl 문법, 0.5V 스냅) ----
@@ -273,7 +273,7 @@ export const ohmLab: StepRenderer = (host, step, api) => {
     if (expMode === "res") {
       const R = LEN_R[lenIdx];
       if (recsR.has(R)) {
-        toast("이미 기록한 길이예요 — 다른 길이로 바꿔 봐요");
+        toast("이미 기록한 길이예요. 다른 길이로 바꿔 봐요");
         haptic(HAPTIC.tap);
         return;
       }
@@ -286,19 +286,19 @@ export const ohmLab: StepRenderer = (host, step, api) => {
         span.textContent = `${Math.min(recsR.size, 3)}/3점`;
       }
       if (recsR.size === 1 && !finished) helper.innerHTML = "첫 점! 위 세그에서 <b>다른 길이</b>로 바꿔 두 점 더 기록해요.";
-      else if (recsR.size === 2 && !finished && !goals.has("inverse")) helper.innerHTML = "좋아요 — <b>남은 길이</b>도 기록하면 곡선이 완성돼요!";
+      else if (recsR.size === 2 && !finished && !goals.has("inverse")) helper.innerHTML = "좋아요. <b>남은 길이</b>도 기록하면 곡선이 완성돼요!";
       if (recsR.size >= 3 && !goals.has("inverse")) {
         collect("inverse", "곡선 완성!", "저항 2배 → 전류 절반, 반비례!");
         if (!finished)
           helper.innerHTML =
-            "보이죠? 저항이 2배·3배가 되니 전류는 <b>1/2·1/3</b>(300→150→100mA)로 줄었어요 — 이런 관계가 <b>반비례</b>! 그래프도 직선이 아니라 <b>곡선</b>으로 휘어요.";
+            "보이죠? 저항이 2배·3배가 되니 전류는 <b>1/2·1/3</b>(300→150→100mA)로 줄었어요. 이런 관계가 <b>반비례</b>! 그래프도 직선이 아니라 <b>곡선</b>으로 휘어요.";
       }
       return;
     }
     const key = Math.round(V * 2);
     const set = recs[wire];
     if (set.has(key)) {
-      toast("이미 기록한 지점이에요 — 전압을 바꿔 봐요");
+      toast("이미 기록한 지점이에요. 전압을 바꿔 봐요");
       haptic(HAPTIC.tap);
       return;
     }
@@ -322,17 +322,17 @@ export const ohmLab: StepRenderer = (host, step, api) => {
         collect("prop", "2배 → 2배!", "전압 2배 → 전류 2배!");
         if (!finished)
           helper.innerHTML =
-            "전압이 커질수록 전류가 커졌죠? 네, 맞아요 — 전압이 딱 <b>2배</b>가 되니 전류도 딱 <b>2배</b>! 이런 관계가 <b>비례</b>이고, 그래프에선 <b>원점을 지나는 직선</b>으로 나타나요." +
+            "전압이 커질수록 전류가 커졌죠? 네, 맞아요. 전압이 딱 <b>2배</b>가 되니 전류도 딱 <b>2배</b>! 이런 관계가 <b>비례</b>이고, 그래프에선 <b>원점을 지나는 직선</b>으로 나타나요." +
             (goals.has("lineL") && goals.has("lineS") ? " 이제 위 세그에서 <b>② 저항 바꾸기</b>!" : "");
       }
     }
     // 직선 목표 — 서로 다른 전압 4점
     if (set.size >= 4 && !goals.has(gid)) {
       const second = goals.has("lineL") || goals.has("lineS");
-      collect(gid, "직선 완성!", second ? "두 직선 완성 — 기울기 비교!" : "직선이에요 — 전압에 비례!");
+      collect(gid, "직선 완성!", second ? "두 직선 완성, 기울기 비교!" : "직선이에요. 전압에 비례!");
       if (!finished)
         helper.innerHTML = second
-          ? "두 직선 비교 — <b>같은 전압에서 짧은 선의 전류가 2배</b>! 길이가 절반이라 전류를 방해하는 정도, <b>저항이 절반</b>이기 때문이에요." +
+          ? "두 직선 비교, <b>같은 전압에서 짧은 선의 전류가 2배</b>! 길이가 절반이라 전류를 방해하는 정도, <b>저항이 절반</b>이기 때문이에요." +
             (goals.has("prop") ? " 이제 위 세그에서 <b>② 저항 바꾸기</b>로 반비례를 눈으로 확인해요!" : " 같은 선에 <b>2배 쌍(예: 2V·4V)</b>도 찍어 보세요!")
           : "점 네 개가 <b>원점을 지나는 직선</b> 위에! 전류는 전압에 <b>비례</b>해요. 이제 <b>다른 니크롬선</b>으로 바꿔 직선을 하나 더 완성해요.";
     }

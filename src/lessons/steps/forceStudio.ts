@@ -29,7 +29,7 @@ export const forceStudio: StepRenderer = (host, step, api) => {
 
   const canvas = el("canvas", { class: "mstage-cvblock spring-canvas", style: "height:250px" });
   const nVal = el("span", { text: "0" });
-  const modePill = el("span", { text: "작용점에서 드래그 — 방향과 크기" });
+  const modePill = el("span", { text: "작용점에서 드래그, 방향과 크기" });
   const toastEl = el("div", { class: "toast" });
   const stage = el(
     "div",
@@ -97,7 +97,7 @@ export const forceStudio: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리하면 — 힘은 물체의 <b>운동 상태</b>(살살=천천히, 세게=빠르게, 방향대로)와 <b>모양</b>(찰흙 움푹)을 바꿔요. 그리고 그 힘은 화살표 하나로: <b>작용점에서, 방향으로, 크기만큼</b>.";
+        "정리하면, 힘은 물체의 <b>운동 상태</b>(살살=천천히, 세게=빠르게, 방향대로)와 <b>모양</b>(찰흙 움푹)을 바꿔요. 그리고 그 힘은 화살표 하나로: <b>작용점에서, 방향으로, 크기만큼</b>.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -117,7 +117,7 @@ export const forceStudio: StepRenderer = (host, step, api) => {
           ? "공 위에서 드래그해 <b>힘 화살표</b>를 그려 보세요. 길수록 큰 힘!"
           : "찰흙을 <b>꾹꾹 눌러</b> 보세요. 힘이 모양을 바꿔요.";
     }
-    modePill.textContent = m === "ball" ? "작용점에서 드래그 — 방향과 크기" : "누르는 곳이 움푹 — 모양 변화";
+    modePill.textContent = m === "ball" ? "작용점에서 드래그, 방향과 크기" : "누르는 곳이 움푹, 모양 변화";
   }
   ballBtn.addEventListener("click", () => setMode("ball"));
   clayBtn.addEventListener("click", () => setMode("clay"));
@@ -147,7 +147,7 @@ export const forceStudio: StepRenderer = (host, step, api) => {
       dents[(idx + 11) % 12] = Math.min(clayR * 0.3, dents[(idx + 11) % 12] + 4.5);
       dentCount++;
       haptic(HAPTIC.select);
-      if (dentCount >= 3) collect("clay", "모양이 변했어요 — 힘의 효과!");
+      if (dentCount >= 3) collect("clay", "모양이 변했어요. 힘의 효과!");
     }
   };
   const onMove = (e: PointerEvent): void => {
@@ -172,8 +172,8 @@ export const forceStudio: StepRenderer = (host, step, api) => {
     ball.vy = aimDy * 0.055;
     ball.flying = true;
     haptic(HAPTIC.correct);
-    if (n <= 15) collect("soft", "살살 — 천천히 굴러가요");
-    else if (n >= 25) collect("hard", "세게 — 빠르게 날아가요!");
+    if (n <= 15) collect("soft", "살살, 천천히 굴러가요");
+    else if (n >= 25) collect("hard", "세게, 빠르게 날아가요!");
     aimDx = 0;
     aimDy = 0;
   };

@@ -84,7 +84,7 @@ export function renderAsianGames(
   const nameTag = el("div", { class: "hs2-gamestag" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, nameTag, choicesBox);
-  helper.innerHTML = "아시안 게임 개막식 생중계! 선수단이 끝없이 들어와요 — <b>탭해서</b> 다음 선수단을 맞이해요.";
+  helper.innerHTML = "아시안 게임 개막식 생중계! 선수단이 끝없이 들어와요. <b>탭해서</b> 다음 선수단을 맞이해요.";
 
   const counts = [3, 12, 27, 38, 45];
   let idx = 0;
@@ -105,12 +105,12 @@ export function renderAsianGames(
     if (idx === 2) helper.innerHTML = "벌써 27번째… 아직도 줄이 안 끝나요! <b>계속 탭!</b>";
     if (idx >= counts.length - 1) {
       face("surprised");
-      helper.innerHTML = "45번째 선수단까지! 그런데 문득 궁금해요 — <b>아시아에는 나라가 몇 개나 있을까요?</b>";
+      helper.innerHTML = "45번째 선수단까지! 그런데 문득 궁금해요. <b>아시아에는 나라가 몇 개나 있을까요?</b>";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? ["약 45개국", "약 15개국", "약 100개국"],
-          good: "맞아요! 아시안 게임에는 <b>45개 나라·지역</b>이 모여요. 세계에서 가장 큰 대륙답게 나라도, 사람도, 문화도 가장 많죠 — 이 큰 대륙을 어떻게 나눠 볼지부터 시작해요!",
-          bad: "개막식 카운터를 떠올려요 — 45번째 선수단까지 들어왔죠! 아시안 게임에 모이는 나라·지역이 <b>약 45개</b>예요. 이 넓은 대륙을 통째로 볼 순 없으니, 지역을 나누는 것부터 시작해요!",
+          good: "맞아요! 아시안 게임에는 <b>45개 나라·지역</b>이 모여요. 세계에서 가장 큰 대륙답게 나라도, 사람도, 문화도 가장 많죠. 이 큰 대륙을 어떻게 나눠 볼지부터 시작해요!",
+          bad: "개막식 카운터를 떠올려요. 45번째 선수단까지 들어왔죠! 아시안 게임에 모이는 나라·지역이 <b>약 45개</b>예요. 이 넓은 대륙을 통째로 볼 순 없으니, 지역을 나누는 것부터 시작해요!",
           onDone: finish,
         });
       }, 750);
@@ -139,7 +139,7 @@ function calendarSvg(month: 5 | 6 | 7): string {
     <g>
       <rect x="24" y="22" width="104" height="118" rx="8" fill="#FFFFFF" stroke="#B8AE96" stroke-width="1.6"/>
       <rect x="24" y="22" width="104" height="30" rx="8" fill="#E8590C"/>
-      <!-- 헤더 아래 라운드만 가리는 패치(rx 8 = y44~52) — 넓게 잡으면 흰 글자를 덮는다(실사고) -->
+      <!-- 헤더 아래 라운드만 가리는 패치(rx 8 = y44~52), 넓게 잡으면 흰 글자를 덮는다(실사고) -->
       <rect x="25.5" y="44" width="101" height="8" fill="#FFFFFF"/>
       <text x="76" y="39.5" text-anchor="middle" font-size="15" font-weight="900" fill="#FFFFFF">${month}월</text>
       <g fill="#C4BCA6">${[0, 1, 2, 3].map((r) => [0, 1, 2, 3, 4, 5, 6].map((c) => `<rect x="${32 + c * 13}" y="${60 + r * 18}" width="9" height="9" rx="2"/>`).join("")).join("")}</g>
@@ -178,7 +178,7 @@ export function renderMonsoonRain(
   const btn = el("button", { class: "hs2-flipbtn", attrs: { type: "button" } }, el("span", { text: "달력 넘기기" }));
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "5월의 교실 — 창밖이 아직 화창해요. <b>달력을 넘겨</b> 여름으로 가 봐요.";
+  helper.innerHTML = "5월의 교실, 창밖이 아직 화창해요. <b>달력을 넘겨</b> 여름으로 가 봐요.";
 
   const months: (5 | 6 | 7)[] = [5, 6, 7];
   let mi = 0;
@@ -192,17 +192,17 @@ export function renderMonsoonRain(
     fig.classList.remove("flip");
     void fig.offsetWidth;
     fig.classList.add("flip");
-    if (mi === 1) helper.innerHTML = "6월 말 — 달력에 동그라미 친 그날부터 <b>장마</b>가 시작됐어요. 한 장 더!";
+    if (mi === 1) helper.innerHTML = "6월 말, 달력에 동그라미 친 그날부터 <b>장마</b>가 시작됐어요. 한 장 더!";
     if (mi >= months.length - 1) {
       btn.setAttribute("disabled", "true");
       btn.classList.add("off");
       face("surprised");
-      helper.innerHTML = "7월 — 매년 여름이면 어김없이 찾아오는 이 큰비! <b>비를 몰고 오는 바람은 어디서 불어올까요?</b>";
+      helper.innerHTML = "7월, 매년 여름이면 어김없이 찾아오는 이 큰비! <b>비를 몰고 오는 바람은 어디서 불어올까요?</b>";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? ["남쪽 바다에서", "북쪽 대륙(내륙)에서", "바람과는 상관없다"],
           good: "정확해요! 여름엔 <b>남쪽 바다에서 물기를 잔뜩 머금은 바람</b>이 불어와 큰비를 뿌려요. 계절 따라 방향이 뒤집히는 이 바람의 정체를 지금부터 파헤쳐 봐요!",
-          bad: "북쪽 대륙에서 오는 바람은 겨울의 <b>건조한 칼바람</b>이에요. 여름의 큰비는 <b>남쪽 바다에서 물기를 머금고 온 바람</b>의 선물 — 계절 따라 방향이 뒤집히는 이 바람을 직접 확인해 봐요!",
+          bad: "북쪽 대륙에서 오는 바람은 겨울의 <b>건조한 칼바람</b>이에요. 여름의 큰비는 <b>남쪽 바다에서 물기를 머금고 온 바람</b>의 선물, 계절 따라 방향이 뒤집히는 이 바람을 직접 확인해 봐요!",
           onDone: finish,
         });
       }, 750);
@@ -309,7 +309,7 @@ export function renderTempleTrip(
   fig.append(cam, tag, dots);
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "아시아 여행 브이로그를 몰아 보는 중이에요. 근사한 건물이 계속 나와요 — <b>탭해서</b> 다음 장면!";
+  helper.innerHTML = "아시아 여행 브이로그를 몰아 보는 중이에요. 근사한 건물이 계속 나와요. <b>탭해서</b> 다음 장면!";
 
   let idx = 0;
   const seen = new Set<number>([0]);
@@ -336,8 +336,8 @@ export function renderTempleTrip(
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? ["모두 신에게 기도하는 종교 건물이다", "모두 왕이 사는 궁전이다", "모두 오래된 박물관이다"],
-          good: "맞아요! 셋 다 <b>종교 건물</b> — 불교 사원, 이슬람교의 모스크, 크리스트교의 성당이에요. 아시아는 세계 주요 종교가 모두 태어난 대륙이라 종교의 경관도 다양하답니다!",
-          bad: "궁전도 박물관도 아니에요 — 셋 다 <b>신에게 기도하는 종교 건물</b>이랍니다. 황금 탑은 불교 사원, 하얀 돔은 이슬람교의 모스크, 돌탑은 크리스트교의 성당! 아시아는 세계 주요 종교가 모두 태어난 대륙이에요.",
+          good: "맞아요! 셋 다 <b>종교 건물</b>, 불교 사원, 이슬람교의 모스크, 크리스트교의 성당이에요. 아시아는 세계 주요 종교가 모두 태어난 대륙이라 종교의 경관도 다양하답니다!",
+          bad: "궁전도 박물관도 아니에요. 셋 다 <b>신에게 기도하는 종교 건물</b>이랍니다. 황금 탑은 불교 사원, 하얀 돔은 이슬람교의 모스크, 돌탑은 크리스트교의 성당! 아시아는 세계 주요 종교가 모두 태어난 대륙이에요.",
           onDone: finish,
         });
       }, 750);
@@ -369,7 +369,7 @@ function snackSvg(back: boolean): string {
       <path d="M70 36q50 8 100 0M70 134q50 8 100 0" stroke="#B0A488" stroke-width="1.4" opacity=".5"/>
       <path d="M82 52h56M82 62h64M82 72h48M82 82h60" stroke="#8A8270" stroke-width="2.4" stroke-linecap="round" opacity=".55"/>
       <g class="hs2-halal">
-        <!-- 실물 할랄 인증 마크(위키미디어 PD) — 손그림 아랍 문자 흉내는 어색·오기 리스크(눈검수 교체) -->
+        <!-- 실물 할랄 인증 마크(위키미디어 PD), 손그림 아랍 문자 흉내는 어색·오기 리스크(눈검수 교체) -->
         <clipPath id="hs2-halclip"><circle cx="138" cy="112" r="19"/></clipPath>
         <image href="${base}soc/asia/halal.webp" x="118.5" y="92.5" width="39" height="39" preserveAspectRatio="xMidYMid slice" clip-path="url(#hs2-halclip)"/>
         <circle cx="138" cy="112" r="19" fill="none" stroke="#1E9E50" stroke-width="1.4"/>
@@ -425,8 +425,8 @@ export function renderHalalMark(
           "채소만 들어 있다는 채식 표시",
           "매운맛의 등급을 알려 주는 표시",
         ],
-        good: "정확해요! 이슬람 율법이 허용한 음식이라는 <b>할랄 인증</b>이에요. 우리 동네 편의점 과자에도 붙을 만큼, 종교는 멀리 있지 않죠 — 서로 다른 종교와 함께 사는 법을 배워 봐요!",
-        bad: "채식·매운맛 표시가 아니라 <b>할랄 인증</b> — 이슬람 율법이 허용한 음식이라는 뜻이에요. 무슬림 친구도 안심하고 먹으라는 배려의 마크죠. 종교와 함께 사는 법, 지금부터예요!",
+        good: "정확해요! 이슬람 율법이 허용한 음식이라는 <b>할랄 인증</b>이에요. 우리 동네 편의점 과자에도 붙을 만큼, 종교는 멀리 있지 않죠. 서로 다른 종교와 함께 사는 법을 배워 봐요!",
+        bad: "채식·매운맛 표시가 아니라 <b>할랄 인증</b>, 이슬람 율법이 허용한 음식이라는 뜻이에요. 무슬림 친구도 안심하고 먹으라는 배려의 마크죠. 종교와 함께 사는 법, 지금부터예요!",
         onDone: finish,
       });
     }, 750);
@@ -479,7 +479,7 @@ export function renderTrainRide(
   const fig = el("div", { class: "hs2-train", attrs: { role: "button", tabindex: "0", "aria-label": "탭해서 영상 재생" } });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "알고리즘이 띄워 준 화제의 영상 — 남부 아시아의 출근 기차래요. <b>탭해서 재생!</b>";
+  helper.innerHTML = "알고리즘이 띄워 준 화제의 영상, 남부 아시아의 출근 기차래요. <b>탭해서 재생!</b>";
   fig.innerHTML = trainSvg(false);
 
   let played = false;
@@ -497,8 +497,8 @@ export function renderTrainRide(
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? ["약 6명", "약 3명", "약 9명"],
-        good: "맞아요! 세계 인구 10명 중 <b>약 6명이 아시아 사람</b> — 세계 인구의 60% 가까이가 이 대륙에 살아요. 어디에, 왜 이렇게 모여 사는지 지도로 확인해 봐요!",
-        bad: "3명은 너무 적고 9명은 너무 많아요 — 정답은 <b>약 6명</b>! 세계 인구의 60% 가까이가 아시아에 살아요. 어디에, 왜 이렇게 모여 사는지 지도로 확인해 봐요!",
+        good: "맞아요! 세계 인구 10명 중 <b>약 6명이 아시아 사람</b>, 세계 인구의 60% 가까이가 이 대륙에 살아요. 어디에, 왜 이렇게 모여 사는지 지도로 확인해 봐요!",
+        bad: "3명은 너무 적고 9명은 너무 많아요. 정답은 <b>약 6명</b>! 세계 인구의 60% 가까이가 아시아에 살아요. 어디에, 왜 이렇게 모여 사는지 지도로 확인해 봐요!",
         onDone: finish,
       });
     }, 900);
@@ -555,7 +555,7 @@ export function renderEmptyClass(
   const btn = el("button", { class: "hs2-flipbtn", attrs: { type: "button" } }, el("span", { text: "오늘의 교실 보기" }));
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, tag, btn, choicesBox);
-  helper.innerHTML = "학교 복도에 걸린 <b>20년 전 사진</b> — 책상마다 학생이 빼곡해요. 지금 우리 교실은 어떨까요?";
+  helper.innerHTML = "학교 복도에 걸린 <b>20년 전 사진</b>, 책상마다 학생이 빼곡해요. 지금 우리 교실은 어떨까요?";
   fig.innerHTML = classSvg(false);
   tag.textContent = "20년 전, 같은 교실";
 
@@ -571,12 +571,12 @@ export function renderEmptyClass(
     void fig.offsetWidth;
     fig.classList.add("flip");
     face("curious");
-    helper.innerHTML = "같은 교실인데 <b>빈 책상</b>이 늘었어요. 신입생이 줄고 있대요 — <b>왜 그럴까요?</b>";
+    helper.innerHTML = "같은 교실인데 <b>빈 책상</b>이 늘었어요. 신입생이 줄고 있대요. <b>왜 그럴까요?</b>";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? ["태어나는 아이 수가 줄어들어서", "학생들이 모두 전학을 가서", "학교 건물이 새로 늘어나서"],
-        good: "맞아요 — <b>태어나는 아이가 줄어드는 저출산</b> 때문이에요. 그런데 아시아엔 정반대로 교실이 미어터지는 나라도 있죠. 나라마다 다른 인구의 모양, '인구 피라미드'로 읽어 봐요!",
-        bad: "전학이나 새 학교 때문이라면 다른 학교는 붐벼야겠죠? 진짜 이유는 <b>태어나는 아이 수 자체가 줄어드는 저출산</b>이에요. 반대로 교실이 미어터지는 나라도 있어요 — 인구의 모양을 그래프로 읽어 봐요!",
+        good: "맞아요. <b>태어나는 아이가 줄어드는 저출산</b> 때문이에요. 그런데 아시아엔 정반대로 교실이 미어터지는 나라도 있죠. 나라마다 다른 인구의 모양, '인구 피라미드'로 읽어 봐요!",
+        bad: "전학이나 새 학교 때문이라면 다른 학교는 붐벼야겠죠? 진짜 이유는 <b>태어나는 아이 수 자체가 줄어드는 저출산</b>이에요. 반대로 교실이 미어터지는 나라도 있어요. 인구의 모양을 그래프로 읽어 봐요!",
         onDone: finish,
       });
     }, 750);
@@ -653,8 +653,8 @@ export function renderMadeIn(
                 "아시아에서만 옷감이 나기 때문에",
                 "우리나라에서 가장 가까운 대륙이라서",
               ],
-              good: "정확해요! 옷 만들기는 <b>많은 손</b>이 필요한 일 — 노동력이 풍부한 아시아가 세계의 옷 공장이 됐어요. 자원·공장·첨단까지, 아시아 산업의 세 기둥을 만나러 가요!",
-              bad: "옷감은 세계 곳곳에서 나고, 거리 때문도 아니에요. 진짜 이유는 <b>풍부한 노동력</b> — 옷 만들기는 많은 손이 필요한 일이라, 일할 사람이 많은 아시아에 공장이 모였답니다!",
+              good: "정확해요! 옷 만들기는 <b>많은 손</b>이 필요한 일, 노동력이 풍부한 아시아가 세계의 옷 공장이 됐어요. 자원·공장·첨단까지, 아시아 산업의 세 기둥을 만나러 가요!",
+              bad: "옷감은 세계 곳곳에서 나고, 거리 때문도 아니에요. 진짜 이유는 <b>풍부한 노동력</b>, 옷 만들기는 많은 손이 필요한 일이라, 일할 사람이 많은 아시아에 공장이 모였답니다!",
               onDone: finish,
             });
           }, 750);
@@ -710,7 +710,7 @@ export function renderFanchant(
   const btn = el("button", { class: "hs2-flipbtn", attrs: { type: "button" } }, el("span", { text: "무대 조명 켜기" }));
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "지구 반대편의 콘서트장 — 우리나라 가수의 공연이 곧 시작돼요. <b>조명을 켜 볼까요?</b>";
+  helper.innerHTML = "지구 반대편의 콘서트장, 우리나라 가수의 공연이 곧 시작돼요. <b>조명을 켜 볼까요?</b>";
   fig.innerHTML = concertSvg(false);
 
   let timer = 0;
@@ -732,8 +732,8 @@ export function renderFanchant(
           "우리나라의 석유 생산 산업",
           "우리나라의 사막 농업",
         ],
-        good: "맞아요! 노래가 좋아지면 그 나라가 궁금해지죠 — 공연을 보러, 촬영지를 걸으러 <b>관광객</b>이 찾아와요. 문화 산업이 다른 산업까지 끌어 주는 힘, 아시아 산업의 큰 변화를 살펴봐요!",
-        bad: "우리나라엔 유전도 사막도 없죠! 정답은 <b>관광 산업</b> — 노래가 좋아지면 그 나라가 궁금해져서, 공연을 보러 촬영지를 걸으러 관광객이 찾아와요. 문화가 산업을 끌어 주는 거예요!",
+        good: "맞아요! 노래가 좋아지면 그 나라가 궁금해지죠. 공연을 보러, 촬영지를 걸으러 <b>관광객</b>이 찾아와요. 문화 산업이 다른 산업까지 끌어 주는 힘, 아시아 산업의 큰 변화를 살펴봐요!",
+        bad: "우리나라엔 유전도 사막도 없죠! 정답은 <b>관광 산업</b>, 노래가 좋아지면 그 나라가 궁금해져서, 공연을 보러 촬영지를 걸으러 관광객이 찾아와요. 문화가 산업을 끌어 주는 거예요!",
         onDone: finish,
       });
     }, 900);

@@ -53,7 +53,7 @@ export function splashScreen(o: { signedIn: boolean; instant?: boolean; onStart:
   const teacherBtn = el("button", { class: "ld-teacher", text: "학부모·선생님이신가요?" }) as HTMLButtonElement;
   teacherBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
-    snack("선생님·학부모 공간은 준비 중이에요 — 곧 열려요");
+    snack("선생님·학부모 공간은 준비 중이에요. 곧 열려요");
   });
   const buttons = [startBtn, loginBtn, teacherBtn];
   for (const b of buttons) b.disabled = true; // 정착(settle) 때 함께 열린다

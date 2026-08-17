@@ -118,7 +118,7 @@ export const recrystal: StepRenderer = (host, step, api) => {
   const filterBtn = el(
     "button",
     { class: "swapbtn", style: "opacity:.45", attrs: { type: "button", disabled: "true" } },
-    el("span", { text: "거르기 — 결정 분리" }),
+    el("span", { text: "거르기-결정 분리" }),
   );
 
   const goalChips = el(
@@ -130,7 +130,7 @@ export const recrystal: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "물 10 mL에 <b>질산 칼륨 10 g + 염화 나트륨 2 g</b>을 넣고 저었어요. 질산 칼륨은 일부만 녹고 가라앉았네요 — 온도를 올려 볼까요?",
+    html: "물 10 mL에 <b>질산 칼륨 10 g + 염화 나트륨 2 g</b>을 넣고 저었어요. 질산 칼륨은 일부만 녹고 가라앉았네요. 온도를 올려 볼까요?",
   });
   host.append(goalChips, helper, stage, slider, filterBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -176,7 +176,7 @@ export const recrystal: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "온도에 따른 <b>용해도 차가 큰</b> 질산 칼륨이 먼저 석출돼요 — 이렇게 순수한 고체를 얻는 방법이 <b>재결정</b>이에요.";
+        "온도에 따른 <b>용해도 차가 큰</b> 질산 칼륨이 먼저 석출돼요. 이렇게 순수한 고체를 얻는 방법이 <b>재결정</b>이에요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       return;
@@ -265,10 +265,10 @@ export const recrystal: StepRenderer = (host, step, api) => {
     const crystal = melted ? solid : 0;
 
     // 목표 판정
-    if (melted) collect("melt", "10 g 용해!", "전부 녹았어요 — 점이 곡선 아래로!");
+    if (melted) collect("melt", "10 g 용해!", "전부 녹았어요. 점이 곡선 아래로!");
     if (melted && crystal > 0.15 && !sparkToast) {
       sparkToast = true;
-      toast("반짝 — 질산 칼륨 결정이 자라기 시작해요!");
+      toast("반짝, 질산 칼륨 결정이 자라기 시작해요!");
     }
     if (crystal < 0.05) sparkToast = false;
     if (melted && T <= 20 && crystal >= 6.0) collect("cool", "결정 탄생!", "질산 칼륨만 결정으로 돌아왔어요!");

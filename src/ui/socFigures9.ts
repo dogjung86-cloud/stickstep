@@ -56,15 +56,15 @@ export function polMeanFig(): string {
     ${tinyMan(52, 98, { arm: "up", mood: "joy" })}
     ${tinyMan(78, 102, { arm: "up" })}
     ${tinyMan(104, 98, { arm: "out" })}
-    <text x="76" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">교실의 회의 — 함께 정해요</text>
+    <text x="76" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">교실의 회의, 함께 정해요</text>
     <!-- (나) 국회 의사당: 돔 + 단상 -->
     <path d="M188 74a36 22 0 0 1 72 0z" fill="#DCE8F2" stroke="#7E9EC2" stroke-width="1.8"/>
     <circle cx="224" cy="49" r="4" fill="#7E9EC2"/>
     <rect x="182" y="74" width="84" height="34" rx="3" fill="#EDF3FA" stroke="#7E9EC2" stroke-width="1.6"/>
     ${[196, 212, 228, 244].map((x) => `<rect x="${x - 3.4}" y="80" width="6.8" height="22" rx="2.2" fill="#FFFFFF" stroke="#9EB4CE" stroke-width="1.2"/>`).join("")}
     <rect x="196" y="114" width="56" height="10" rx="3" fill="#D8E4F0" stroke="#9EB4CE" stroke-width="1.2"/>
-    <text x="224" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">법을 만드는 곳 — 나라의 활동</text>`;
-  return shell(300, 158, inner, "두 장면 비교 — 왼쪽은 칠판 앞에서 손을 들고 회의하는 교실, 오른쪽은 돔 지붕의 큰 건물");
+    <text x="224" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">법을 만드는 곳, 나라의 활동</text>`;
+  return shell(300, 158, inner, "두 장면 비교, 왼쪽은 칠판 앞에서 손을 들고 회의하는 교실, 오른쪽은 돔 지붕의 큰 건물");
 }
 
 /* ---------- L2: 두 마을의 결정 — (가) 일방 통보 vs (나) 토론 합의 ---------- */
@@ -81,7 +81,7 @@ export function decideFig(): string {
     ${tinyMan(48, 106, { arm: "down", mood: "sad", r: 5.4 })}
     ${tinyMan(76, 110, { arm: "down", mood: "sad", r: 5.4 })}
     ${tinyMan(104, 106, { arm: "down", mood: "sad", r: 5.4 })}
-    <text x="76" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">위에서 아래로 — 통보</text>
+    <text x="76" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">위에서 아래로, 통보</text>
     <!-- (나) 토론 합의: 원탁 + 체크 문서 -->
     <ellipse cx="224" cy="92" rx="42" ry="14" fill="#EDE0C8" stroke="#B8A278" stroke-width="1.4"/>
     ${tinyMan(190, 66, { arm: "out", mood: "joy", r: 5.4 })}
@@ -89,8 +89,8 @@ export function decideFig(): string {
     ${tinyMan(258, 66, { arm: "out", mood: "ok", r: 5.4 })}
     <rect x="214" y="84" width="20" height="14" rx="2.4" fill="#FFFFFF" stroke="#1864AB" stroke-width="1.4"/>
     <path d="M218 91l3 3 5.4-6" stroke="#1864AB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="224" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">둘러앉아 함께 — 합의</text>`;
-  return shell(300, 158, inner, "두 장면 비교 — 왼쪽은 높은 단 위에서 종이를 내려보내는 모습과 시무룩한 사람들, 오른쪽은 둥근 탁자에 둘러앉아 웃으며 합의 문서를 만든 사람들");
+    <text x="224" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">둘러앉아 함께, 합의</text>`;
+  return shell(300, 158, inner, "두 장면 비교, 왼쪽은 높은 단 위에서 종이를 내려보내는 모습과 시무룩한 사람들, 오른쪽은 둥근 탁자에 둘러앉아 웃으며 합의 문서를 만든 사람들");
 }
 
 /* ---------- L3: 클레로테리온 도해 — 추첨 기계의 작동 ---------- */
@@ -157,7 +157,7 @@ export function suffStepFig(): string {
     `${inner}
     <path d="M24 34 Q150 6 280 22" stroke="#1864AB" stroke-width="1.8" fill="none" stroke-dasharray="6 5" opacity=".6"/>
     <path d="M276 18l7 3-5 5z" fill="#1864AB" opacity=".7"/>`,
-    "다섯 단의 계단 — 연도가 오를수록 계단 위에 서서 손을 든 사람이 한 명씩 늘어난다",
+    "다섯 단의 계단, 연도가 오를수록 계단 위에 서서 손을 든 사람이 한 명씩 늘어난다",
   );
 }
 
@@ -179,7 +179,7 @@ export function pillarFig(): string {
     ${cols}
     <rect x="18" y="124" width="264" height="10" rx="4" fill="#E2D2A8" stroke="#B8A472" stroke-width="1.3"/>
     <text x="150" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">이념의 지붕을 받치는 네 개의 기둥</text>`;
-  return shell(300, 158, inner, "삼각 지붕을 네 개의 기둥이 받치는 신전 도해 — 각 기둥에 가나다라 라벨");
+  return shell(300, 158, inner, "삼각 지붕을 네 개의 기둥이 받치는 신전 도해, 각 기둥에 가나다라 라벨");
 }
 
 /* ---------- L5: 헌법 제1조 카드 ---------- */
@@ -194,7 +194,7 @@ export function article1Fig(): string {
     <text x="58" y="108" font-size="10.5" font-weight="700" fill="#39455C">모든 권력은 국민으로부터 나온다.</text>
     <path d="M244 100l2 4.4 4.4 2-4.4 2-2 4.4-2-4.4-4.4-2 4.4-2z" fill="#F2C24E"/>
     <text x="150" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">나라의 최고법, 그 첫 조항</text>`;
-  return shell(300, 158, inner, "헌법 제1조가 적힌 카드 — 1항 대한민국은 민주 공화국이다, 2항 주권은 국민에게 있다");
+  return shell(300, 158, inner, "헌법 제1조가 적힌 카드, 1항 대한민국은 민주 공화국이다, 2항 주권은 국민에게 있다");
 }
 
 /* ---------- L6: 스틱 나라 투표율 그래프(가상 수치 — 하락 추세) ---------- */
@@ -225,7 +225,7 @@ export function turnoutFig(): string {
     <path d="M70 58 Q150 66 238 92" stroke="#C0392E" stroke-width="1.8" fill="none" stroke-dasharray="5 4" opacity=".8"/>
     <path d="M234 88l7 4-6 4z" fill="#C0392E" opacity=".9"/>
     <text x="150" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">선거를 거듭할수록 투표함 앞이 한산해져요</text>`;
-  return shell(300, 158, inner, "네 번의 선거 투표율 막대그래프 — 78, 71, 62, 54퍼센트로 점점 낮아진다");
+  return shell(300, 158, inner, "네 번의 선거 투표율 막대그래프, 78, 71, 62, 54퍼센트로 점점 낮아진다");
 }
 
 /* ---------- L7: 공론장 흐름도 — 토론에서 정책까지 ---------- */
@@ -252,7 +252,7 @@ export function forumFig(): string {
     <rect x="272" y="72" width="10" height="8" rx="1.6" fill="#FFFFFF" stroke="#9EB4CE" stroke-width="1"/>
     <text x="269" y="108" text-anchor="middle" font-size="9.6" font-weight="800" fill="#39455C">정책 반영</text>
     <text x="150" y="146" text-anchor="middle" font-size="9.6" fill="#7E8AA0">시민의 뜻이 정책까지 닿는 길</text>`;
-  return shell(300, 158, inner, "흐름도 — 사람들이 둘러앉아 토론하는 원, 화살표, 확정된 합의 문서, 화살표, 건물");
+  return shell(300, 158, inner, "흐름도, 사람들이 둘러앉아 토론하는 원, 화살표, 확정된 합의 문서, 화살표, 건물");
 }
 
 /* ================= recap 미니아트(64×64 플랫 — socFigures 관례) ================= */

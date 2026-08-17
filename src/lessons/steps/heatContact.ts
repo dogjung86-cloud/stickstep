@@ -167,7 +167,7 @@ export const heatContact: StepRenderer = (host, step, api) => {
     runBtn.innerHTML = "<span>다시 실험하기</span>";
     const eqT = Math.round(mean);
     helper.innerHTML =
-      `물 전체의 온도가 <b>약 ${eqT}℃로 고르게 같아졌어요</b> — 이 상태가 <b>열평형</b>이에요. ` +
+      `물 전체의 온도가 <b>약 ${eqT}℃로 고르게 같아졌어요</b>. 이 상태가 <b>열평형</b>이에요. ` +
       "달걀과 찬물처럼 <b>섞이지 않는 두 물체도</b>, 맞닿아 있기만 하면 경계에서 입자들이 부딪히며 똑같이 열이 이동해요.";
     if (!firstDone) {
       firstDone = true;

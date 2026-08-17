@@ -52,12 +52,12 @@ export const elementLab: StepRenderer = (host, step, api) => {
     el("div", { class: "pn-badge", dataset: { g: "water" } }, el("b", { text: "물" }), el("span", { text: "원소? 화합물?" })),
     el("div", { class: "pn-badge", dataset: { g: "nacl" } }, el("b", { text: "염화 나트륨" }), el("span", { text: "원소? 화합물?" })),
   );
-  const elemBtn = el("button", { class: "swapbtn", attrs: { type: "button" } }, el("span", { text: "원소다! — 한 종류" }));
-  const compBtn = el("button", { class: "swapbtn", attrs: { type: "button" } }, el("span", { text: "화합물이다! — 두 종류 이상" }));
+  const elemBtn = el("button", { class: "swapbtn", attrs: { type: "button" } }, el("span", { text: "원소다! 한 종류" }));
+  const compBtn = el("button", { class: "swapbtn", attrs: { type: "button" } }, el("span", { text: "화합물이다! 두 종류 이상" }));
   const btnRow = el("div", { class: "gp-controls" }, elemBtn, compBtn);
   const helper = el("div", {
     class: "helper",
-    html: "구리를 원자 수준까지 확대했어요. 입자들을 잘 보고 — <b>몇 종류의 원자</b>로 이루어졌는지 아래에서 판정!",
+    html: "구리를 원자 수준까지 확대했어요. 입자들을 잘 보고, <b>몇 종류의 원자</b>로 이루어졌는지 아래에서 판정!",
   });
   host.append(goalChips, helper, stage, btnRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -82,10 +82,10 @@ export const elementLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.select);
     helper.innerHTML =
       k === "cu"
-        ? "구리 확대 중 — 입자들의 <b>생김새</b>를 비교해 보세요. 다 같나요, 다른가요?"
+        ? "구리 확대 중, 입자들의 <b>생김새</b>를 비교해 보세요. 다 같나요, 다른가요?"
         : k === "water"
-          ? "물 확대 중 — 알갱이 하나(<b>물 분자</b>)를 자세히 보세요. 몇 <b>종류</b>의 원자가 보이나요?"
-          : "염화 나트륨 확대 중 — 두 크기의 입자가 <b>번갈아 규칙적으로</b> 쌓여 있어요. 몇 종류일까요?";
+          ? "물 확대 중, 알갱이 하나(<b>물 분자</b>)를 자세히 보세요. 몇 <b>종류</b>의 원자가 보이나요?"
+          : "염화 나트륨 확대 중, 두 크기의 입자가 <b>번갈아 규칙적으로</b> 쌓여 있어요. 몇 종류일까요?";
   }
 
   function judge(sayElem: boolean): void {
@@ -102,15 +102,15 @@ export const elementLab: StepRenderer = (host, step, api) => {
     chip.querySelector("span")!.textContent = ANSWER[sample] ? "원소!" : "화합물!";
     const why: Record<Sample, string> = {
       cu: "구리는 <b>구리 원자 한 종류</b>가 규칙적으로 배열된 <b>원소</b>예요.",
-      water: "물 분자 하나엔 <b>수소(H)와 산소(O), 두 종류</b>의 원자가 들어 있어요 — <b>화합물</b>! 그래서 수소와 산소로 분해할 수 있죠.",
+      water: "물 분자 하나엔 <b>수소(H)와 산소(O), 두 종류</b>의 원자가 들어 있어요. <b>화합물</b>! 그래서 수소와 산소로 분해할 수 있죠.",
       nacl: "나트륨과 염소, <b>두 종류의 입자</b>가 번갈아 쌓여 있으니 <b>화합물</b>이에요. 성질은 나트륨과도 염소와도 전혀 다르죠!",
     };
-    helper.innerHTML = (correct ? "정답! " : "아쉬워요 — ") + why[sample] + (judged.size < 3 ? " 다음 시료도 판정!" : "");
+    helper.innerHTML = (correct ? "정답! " : "아쉬워요. ") + why[sample] + (judged.size < 3 ? " 다음 시료도 판정!" : "");
     if (judged.size === 3 && !finished) {
       finished = true;
       api.recordQuiz(!wrongAny);
       helper.innerHTML =
-        "정리! <b>한 가지 종류</b>의 입자로 된 순물질이 <b>원소</b>(구리·산소), <b>서로 다른 종류</b>가 결합해 새로운 성질을 갖게 된 물질이 <b>화합물</b>(물·염화 나트륨) — 화합물은 성분 원소로 <b>분해할 수 있어요</b>.";
+        "정리! <b>한 가지 종류</b>의 입자로 된 순물질이 <b>원소</b>(구리·산소), <b>서로 다른 종류</b>가 결합해 새로운 성질을 갖게 된 물질이 <b>화합물</b>(물·염화 나트륨), 화합물은 성분 원소로 <b>분해할 수 있어요</b>.";
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
   }
@@ -165,7 +165,7 @@ export const elementLab: StepRenderer = (host, step, api) => {
       ctx.font = "700 10.5px Pretendard, sans-serif";
       ctx.textAlign = "left";
       ctx.fillStyle = "rgba(174,196,228,.85)";
-      ctx.fillText("작은 양이온과 큰 음이온이 번갈아 — 규칙적 배열", 18, H - 16);
+      ctx.fillText("작은 양이온과 큰 음이온이 번갈아, 규칙적 배열", 18, H - 16);
     }
   });
 
@@ -317,7 +317,7 @@ export const moleculeLab: StepRenderer = (host, step, api) => {
       chip.classList.add("on");
       chip.querySelector("span")!.textContent = "조립 완료!";
       const detail = Object.entries(t.comp).map(([k, n]) => `${ELEMS[k].name} 원자 ${n}개`).join(" + ");
-      helper.innerHTML = `<b>${t.name}</b> 완성 — ${detail}. 화학식 ${formulaHtml(t.formula)}의 작은 숫자가 바로 <b>원자의 개수</b>예요!`;
+      helper.innerHTML = `<b>${t.name}</b> 완성, ${detail}. 화학식 ${formulaHtml(t.formula)}의 작은 숫자가 바로 <b>원자의 개수</b>예요!`;
       window.setTimeout(() => {
         animating = false;
         if (s.split && ti === s.targets.length - 1 && t.formula === "H_2O") {
@@ -334,8 +334,8 @@ export const moleculeLab: StepRenderer = (host, step, api) => {
       }, 1300);
     } else if (over()) {
       haptic(HAPTIC.wrong);
-      showToast("목표 화학식보다 많아요 — 하나 빼기!");
-      helper.innerHTML = `${formulaHtml(t.formula)}를 다시 읽어 봐요 — <b>종류별 개수</b>가 딱 맞아야 분자가 완성돼요.`;
+      showToast("목표 화학식보다 많아요. 하나 빼기!");
+      helper.innerHTML = `${formulaHtml(t.formula)}를 다시 읽어 봐요. <b>종류별 개수</b>가 딱 맞아야 분자가 완성돼요.`;
     } else {
       helper.innerHTML = `좋아요, 계속! 목표 ${formulaHtml(t.formula)} = ` +
         Object.entries(t.comp).map(([k, n]) => `${k} ${n}개`).join(", ") + `. 지금 담은 것: ${pool.length ? pool.join(", ") : "없음"}`;
@@ -359,7 +359,7 @@ export const moleculeLab: StepRenderer = (host, step, api) => {
     chip?.classList.add("on");
     chip?.querySelector("span") && (chip.querySelector("span")!.textContent = "성질이 사라짐!");
     helper.innerHTML =
-      "수소 원자와 산소 원자로 갈라졌어요 — 이제 이건 <b>물이 아니에요</b>! 분자는 <b>물질의 성질을 나타내는 가장 작은 입자</b>라서, 원자로 나누어지면 그 성질이 사라져요.";
+      "수소 원자와 산소 원자로 갈라졌어요. 이제 이건 <b>물이 아니에요</b>! 분자는 <b>물질의 성질을 나타내는 가장 작은 입자</b>라서, 원자로 나누어지면 그 성질이 사라져요.";
     window.setTimeout(finishAll, 1600);
   });
 
@@ -413,7 +413,7 @@ export const moleculeLab: StepRenderer = (host, step, api) => {
         ctx.font = "800 12.5px Pretendard, sans-serif";
         ctx.textAlign = "center";
         ctx.fillStyle = "rgba(255,160,140,.95)";
-        ctx.fillText("이제 '물'이 아니에요 — 성질이 사라졌어요", cx, cy + 78);
+        ctx.fillText("이제 '물'이 아니에요. 성질이 사라졌어요", cx, cy + 78);
       }
     } else {
       // 조립 중 — 담은 원자들이 중앙 주위를 맴돈다

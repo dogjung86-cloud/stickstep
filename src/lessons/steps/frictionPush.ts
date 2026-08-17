@@ -129,7 +129,7 @@ export const frictionPush: StepRenderer = (host, step, api) => {
     if (!finished) {
       helper.innerHTML =
         boxes > 1
-          ? `상자 <b>${boxes}개</b> — 더 무거워졌어요. 같은 바닥인데 움직이는 데 필요한 힘이 어떻게 달라질까요?`
+          ? `상자 <b>${boxes}개</b>, 더 무거워졌어요. 같은 바닥인데 움직이는 데 필요한 힘이 어떻게 달라질까요?`
           : "다시 1개로. 가벼우면 살살 밀어도 움직여요.";
     }
   });
@@ -165,7 +165,7 @@ export const frictionPush: StepRenderer = (host, step, api) => {
       if (!slidHere) {
         slidHere = true;
         haptic(HAPTIC.correct);
-        toast(`${Math.round(limit)} N을 넘는 순간 — 움직인다!`);
+        toast(`${Math.round(limit)} N을 넘는 순간, 움직인다!`);
         if (!goals.has(floor)) {
           goals.add(floor);
           (goalChips.querySelector(`[data-g="${floor}"]`) as HTMLElement).classList.add("on");

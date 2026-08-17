@@ -160,7 +160,7 @@ export const springLab: StepRenderer = (host, step, api) => {
         haptic(HAPTIC.ctaUnlock);
         if (snapped.size === SNAPS.length && !releaseSeen) {
           helper.innerHTML =
-            "세 점이 <b>한 직선 위</b>에! 늘어난 길이가 2배, 3배가 되니 탄성력도 정확히 2배, 3배예요. 이제 <b>손을 놓아</b> 보세요 — 용수철이 어떻게 돌아가는지!";
+            "세 점이 <b>한 직선 위</b>에! 늘어난 길이가 2배, 3배가 되니 탄성력도 정확히 2배, 3배예요. 이제 <b>손을 놓아</b> 보세요. 용수철이 어떻게 돌아가는지!";
         }
       }
     }
@@ -171,7 +171,7 @@ export const springLab: StepRenderer = (host, step, api) => {
     if (finished || !releaseSeen || snapped.size < SNAPS.length) return;
     finished = true;
     helper.innerHTML =
-      "다 모았어요! 변형이 클수록 탄성력이 <b>비례해서</b> 커지고, 손을 놓으면 <b>원래 모양으로 되돌아가려는 방향</b>으로 힘이 작용했어요 — 이게 탄성력이에요.";
+      "다 모았어요! 변형이 클수록 탄성력이 <b>비례해서</b> 커지고, 손을 놓으면 <b>원래 모양으로 되돌아가려는 방향</b>으로 힘이 작용했어요. 이게 탄성력이에요.";
     api.recordQuiz(true);
     api.enableCTA(s.cta ?? "개념 정리하기");
   }

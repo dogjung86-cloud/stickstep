@@ -35,16 +35,16 @@ const HALF_COL = "156,168,255"; // 연주 시차(스타 라벤더)
 const SCRIPT: { cap: string; help: string; btn?: string }[] = [
   {
     cap: "지구가 태양 둘레를 돌고 있어요",
-    help: "우리의 관측소는 <b>지구</b> — 그런데 지구는 1년에 태양을 한 바퀴 돌아요. <b>여섯 달이 지나면 궤도 반대편</b>, 관측소가 통째로 자리를 옮기는 셈이에요.",
+    help: "우리의 관측소는 <b>지구</b>, 그런데 지구는 1년에 태양을 한 바퀴 돌아요. <b>여섯 달이 지나면 궤도 반대편</b>, 관측소가 통째로 자리를 옮기는 셈이에요.",
     btn: "3월의 지구에서 관측",
   },
   {
-    cap: "3월 — 첫 번째 관측",
+    cap: "3월, 첫 번째 관측",
     help: "3월의 지구에서 별을 보면, 별은 멀리 있는 <b>배경별 사이 노란 ▼ 위치</b>에 보여요. 이 위치를 기억해 두세요.",
     btn: "여섯 달 뒤 다시 관측",
   },
   {
-    cap: "9월 — 궤도 반대편에서",
+    cap: "9월, 궤도 반대편에서",
     help: "여섯 달 뒤, 지구는 궤도 반대편에 왔어요. 같은 별인데 <b>파란 ▼ 위치</b>로 옮겨 보여요! 별이 움직인 게 아니라 <b>우리가 움직여서 방향이 달라진 것</b>이에요.",
     btn: "두 방향의 차이는?",
   },
@@ -55,12 +55,12 @@ const SCRIPT: { cap: string; help: string; btn?: string }[] = [
   },
   {
     cap: "시차의 절반 = 연주 시차",
-    help: "지구 공전 때문에 생기는 이 시차의 <b>절반</b>을 <b>연주 시차</b>라고 해요. 6개월 간격 관측으로 재고, 절반(태양–별 기준)으로 약속한 거예요. 실제 별의 연주 시차는 <b>1°의 3600분의 1(1″)보다도 작아서</b> 이 그림은 아주 크게 과장했어요.",
+    help: "지구 공전 때문에 생기는 이 시차의 <b>절반</b>을 <b>연주 시차</b>라고 해요. 6개월 간격 관측으로 재고, 절반(태양-별 기준)으로 약속한 거예요. 실제 별의 연주 시차는 <b>1°의 3600분의 1(1″)보다도 작아서</b> 이 그림은 아주 크게 과장했어요.",
     btn: "별을 움직여 실험!",
   },
   {
     cap: "별을 잡고 위(멀리)·아래(가까이)로!",
-    help: "이제 <b>별을 드래그</b>해 보세요. 별이 <b>가까울수록 연주 시차가 커지고</b>, 멀수록 작아져요 — 그래서 연주 시차를 재면 <b>별까지의 거리</b>를 알 수 있어요(반비례!).",
+    help: "이제 <b>별을 드래그</b>해 보세요. 별이 <b>가까울수록 연주 시차가 커지고</b>, 멀수록 작아져요. 그래서 연주 시차를 재면 <b>별까지의 거리</b>를 알 수 있어요(반비례!).",
   },
 ];
 
@@ -135,7 +135,7 @@ export const parallaxLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 지구 공전 궤도의 <b>양 끝에서 본 별의 방향 차(시차)의 절반</b>이 연주 시차 — 별이 <b>가까울수록 크고, 멀수록 작아요</b>. 그래서 연주 시차는 별까지의 <b>거리를 재는 자</b>가 돼요.";
+        "정리! 지구 공전 궤도의 <b>양 끝에서 본 별의 방향 차(시차)의 절반</b>이 연주 시차, 별이 <b>가까울수록 크고, 멀수록 작아요</b>. 그래서 연주 시차는 별까지의 <b>거리를 재는 자</b>가 돼요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }
@@ -303,7 +303,7 @@ export const parallaxLab: StepRenderer = (host, step, api) => {
     const atB = Math.abs(((theta % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2)) < 0.02 || Math.abs(theta - Math.PI * 2) < 0.02;
     if (stepIdx >= 1 && atA && thetaTarget == null) growA = Math.min(1, growA + dt * 0.028);
     if (stepIdx >= 2 && atB && thetaTarget == null) growB = Math.min(1, growB + dt * 0.028);
-    if (stepIdx >= 2 && growB >= 1) collect("two", "관측 완료!", "같은 별이 다른 곳에 — 시차 발견!");
+    if (stepIdx >= 2 && growB >= 1) collect("two", "관측 완료!", "같은 별이 다른 곳에, 시차 발견!");
     if (stepIdx >= 3) growArc = Math.min(1, growArc + dt * 0.03);
     if (stepIdx >= 4) {
       growHalf = Math.min(1, growHalf + dt * 0.03);

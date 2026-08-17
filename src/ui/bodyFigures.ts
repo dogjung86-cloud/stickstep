@@ -250,7 +250,7 @@ export function villusAbsorptionFig(): string {
      <path d="M56 65 C58 76 62 84 68 90" stroke="var(--n400)" stroke-width="1.2" fill="none"/>
      <text x="180" y="228" text-anchor="middle" font-size="11.5" font-weight="850" fill="var(--n700)">주름 위에 융털이 빽빽해 흡수할 표면적이 매우 넓어요</text>`,
     `<linearGradient id="va-tissue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="var(--body-tissue-hi)"/><stop offset=".55" stop-color="var(--body-tissue)"/><stop offset="1" stop-color="var(--body-tissue-lo)"/></linearGradient>${bodyArrow("va-b", "var(--body-nutrient)")}${bodyArrow("va-l", "var(--body-fat)")}`,
-    "작은창자 융털의 속 구조 도해 — 주름 위에 솟은 융털과 그 안의 모세혈관·암죽관",
+    "작은창자 융털의 속 구조 도해, 주름 위에 솟은 융털과 그 안의 모세혈관·암죽관",
     "0 0 360 240",
   );
 }

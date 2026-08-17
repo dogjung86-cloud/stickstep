@@ -40,7 +40,7 @@ export const phaseNames: StepRenderer = (host, step, api) => {
   BADGES.forEach((b) => {
     const chip = el(
       "div",
-      { class: "pn-badge", attrs: { "aria-label": `${b.name} — ${b.dir}` } },
+      { class: "pn-badge", attrs: { "aria-label": `${b.name}, ${b.dir}` } },
       el("b", { text: b.name }),
       el("span", { text: b.dir }),
     );
@@ -88,7 +88,7 @@ export const phaseNames: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "지금은 25℃ 물이에요. 먼저 온도를 <b>0℃ 아래로</b> 내려 보세요 — 액체가 고체로 변하는 순간, 첫 이름을 얻어요!",
+    html: "지금은 25℃ 물이에요. 먼저 온도를 <b>0℃ 아래로</b> 내려 보세요. 액체가 고체로 변하는 순간, 첫 이름을 얻어요!",
   });
   host.append(badges, helper, stage.el, slider); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -103,8 +103,8 @@ export const phaseNames: StepRenderer = (host, step, api) => {
 
   const NEXT_HINT: Record<number, string> = {
     1: "하나 모았어요! 이제 온도를 <b>올려서</b> 반대 방향 이름도 모아 봐요.",
-    2: "둘! 이번엔 <b>100℃ 너머</b>로 — 액체가 기체가 되는 순간이에요.",
-    3: "셋! 마지막 하나 — 다시 <b>100℃ 아래로</b> 내려 보세요.",
+    2: "둘! 이번엔 <b>100℃ 너머</b>로, 액체가 기체가 되는 순간이에요.",
+    3: "셋! 마지막 하나, 다시 <b>100℃ 아래로</b> 내려 보세요.",
   };
 
   function collect(id: BadgeId, msg: string): void {
@@ -123,7 +123,7 @@ export const phaseNames: StepRenderer = (host, step, api) => {
       helper.innerHTML =
         "네 이름 수집 완료! <b>가열 방향</b>(융해·기화)과 <b>냉각 방향</b>(응고·액화)이 서로 짝이에요. 그런데 고체가 <b>액체를 건너뛰고</b> 바로 기체가 될 수도 있을까요? 다음 실험에서!";
       api.recordQuiz(true);
-      api.enableCTA(s.cta ?? "다음 실험 — 승화");
+      api.enableCTA(s.cta ?? "다음 실험, 승화");
     } else if (!finished) {
       helper.innerHTML = NEXT_HINT[got.size] ?? "";
     }
@@ -138,12 +138,12 @@ export const phaseNames: StepRenderer = (host, step, api) => {
     phaseDot.style.boxShadow = `0 0 8px ${colFor(T, 60, 0.8)}`;
     (thumb.firstChild as HTMLElement).style.background = colFor(T, 54, 1);
     slider.setAttribute("aria-valuenow", String(Math.round(T)));
-    slider.setAttribute("aria-valuetext", `${Math.round(T)}도 — ${NAMES[ph]}`);
+    slider.setAttribute("aria-valuetext", `${Math.round(T)}도, ${NAMES[ph]}`);
     if (prev == null) return;
-    if (prev >= 0 && T < 0) collect("solidify", "응고 — 액체가 고체로");
-    if (prev < 0 && T >= 0) collect("fusion", "융해 — 고체가 액체로");
-    if (prev < 100 && T >= 100) collect("vaporize", "기화 — 액체가 기체로");
-    if (prev >= 100 && T < 100) collect("liquefy", "액화 — 기체가 액체로");
+    if (prev >= 0 && T < 0) collect("solidify", "응고, 액체가 고체로");
+    if (prev < 0 && T >= 0) collect("fusion", "융해, 고체가 액체로");
+    if (prev < 100 && T >= 100) collect("vaporize", "기화, 액체가 기체로");
+    if (prev >= 100 && T < 100) collect("liquefy", "액화, 기체가 액체로");
   }
 
   // ---- 입력 ----

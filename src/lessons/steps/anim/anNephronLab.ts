@@ -114,13 +114,13 @@ export const anNephronLab: StepRenderer = (host, step, api) => {
       for (const p of parts) if (p.where === "bowman") p.where = "tubule";
       parts.filter((p) => p.where === "tubule").forEach(layout);
       lab.setHelper("여과된 액체가 <b>세뇨관</b>을 지나요. 몸에 <b>필요한</b> 물질을 골라 <b>모세혈관</b>으로 되돌려 보내세요.");
-      say("재흡수 단계 — 필요한 것만 되돌려요.");
+      say("재흡수 단계, 필요한 것만 되돌려요.");
     } else if (ph === 2) {
       lab.setHelper("마지막이에요. <b>모세혈관에 남아 있던 요소</b>를 탭해 <b>세뇨관</b>으로 보내세요.");
-      say("분비 단계 — 혈액에 남은 노폐물을 세뇨관으로.");
+      say("분비 단계, 혈액에 남은 노폐물을 세뇨관으로.");
     } else {
       lab.setHelper("<b>토리</b>의 물질을 탭해 고르고 <b>보먼주머니</b>를 탭해 밀어 보내요.");
-      say("여과 단계 — 크기가 작은 물질만 빠져나가요.");
+      say("여과 단계, 크기가 작은 물질만 빠져나가요.");
     }
     nextBtn.textContent = ph === 2 ? "처음 단계로" : "다음 단계";
   }
@@ -159,7 +159,7 @@ export const anNephronLab: StepRenderer = (host, step, api) => {
             lab.collect("filter", "작은 것만 통과");
             lab.setHelper("여과 완료! <b>혈구와 단백질은 크기가 커서 여과되지 않아요</b>. <b>다음 단계</b>를 눌러 재흡수로 가요.");
           } else {
-            say("작은 물질은 모두 여과됐어요. 큰 물질(혈구·단백질)도 한번 보내 보세요 — 어떻게 될까요?", 5200);
+            say("작은 물질은 모두 여과됐어요. 큰 물질(혈구·단백질)도 한번 보내 보세요. 어떻게 될까요?", 5200);
           }
         } else say(`${tok.name}이(가) 보먼주머니로 여과됐어요.`, 3000);
         return;

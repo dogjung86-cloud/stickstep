@@ -126,11 +126,11 @@ export const anBloodLab: StepRenderer = (host, step, api) => {
       if (p.y > 96 && p.y < 226) {
         layerSeen.add("plasma");
         haptic(HAPTIC.tap);
-        say("혈장 — 대부분 물이고, 영양소·이산화 탄소·노폐물을 운반해요.", 4800);
+        say("혈장, 대부분 물이고, 영양소·이산화 탄소·노폐물을 운반해요.", 4800);
       } else if (p.y >= 226 && p.y < 330) {
         layerSeen.add("cells");
         haptic(HAPTIC.tap);
-        say("혈구 — 세포 성분이에요. 적혈구·백혈구·혈소판이 여기 모여 있어요.", 4800);
+        say("혈구, 세포 성분이에요. 적혈구·백혈구·혈소판이 여기 모여 있어요.", 4800);
       }
       if (layerSeen.size === 2 && !lab.has("split")) {
         lab.collect("split", "두 층 확인");
@@ -146,7 +146,7 @@ export const anBloodLab: StepRenderer = (host, step, api) => {
           if (cell.kind === bin.kind) {
             placed.set(cell.id, bin.kind);
             haptic(HAPTIC.correct);
-            say(`${KIND_NAME[cell.kind]} — ${KIND_NOTE[cell.kind]}`, 4600);
+            say(`${KIND_NAME[cell.kind]}, ${KIND_NOTE[cell.kind]}`, 4600);
             if (placed.size === SAMPLE.length && !lab.has("sort")) {
               lab.collect("sort", "6개 모두");
               lab.setHelper("크기는 <b>백혈구 &gt; 적혈구 &gt; 혈소판</b>, 핵은 <b>백혈구만</b> 있었죠. <b>다음 단계</b>에서 각자 맡은 일을 찾아봐요.");
@@ -238,11 +238,11 @@ export const anBloodLab: StepRenderer = (host, step, api) => {
     ctx.restore();
 
     if (spun && spinT >= 0.5) {
-      labelChip(ctx, 180, 160, layerSeen.has("plasma") ? "혈장 — 액체 성분" : "위층을 탭해 보세요", {
+      labelChip(ctx, 180, 160, layerSeen.has("plasma") ? "혈장, 액체 성분" : "위층을 탭해 보세요", {
         size: 10.5,
         bg: withAlpha(layerSeen.has("plasma") ? "#8A6A18" : "#0B1524", 0.9),
       });
-      labelChip(ctx, 180, 278, layerSeen.has("cells") ? "혈구 — 세포 성분" : "아래층을 탭해 보세요", {
+      labelChip(ctx, 180, 278, layerSeen.has("cells") ? "혈구, 세포 성분" : "아래층을 탭해 보세요", {
         size: 10.5,
         bg: withAlpha(layerSeen.has("cells") ? VESSEL.rich.lo : "#0B1524", 0.9),
       });

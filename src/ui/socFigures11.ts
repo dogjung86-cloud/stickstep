@@ -69,7 +69,7 @@ export function lawMoralFig(): string {
       <circle cx="260" cy="110" r="4.6" fill="none" stroke="#C0392E" stroke-width="1.5"/>
     </g>
     <text x="224" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">국가가 정한 제재를 받아요</text>`;
-  return shell(300, 158, inner, "두 장면 비교 — 왼쪽은 무거운 마음과 주변의 시선, 오른쪽은 신호등 앞에서 제재 문서를 받는 장면");
+  return shell(300, 158, inner, "두 장면 비교, 왼쪽은 무거운 마음과 주변의 시선, 오른쪽은 신호등 앞에서 제재 문서를 받는 장면");
 }
 
 /* ---------- L2: 정의의 두 얼굴 — 같은 것은 같게, 다른 것은 다르게 ---------- */
@@ -91,7 +91,7 @@ export function justiceFig(): string {
     <rect x="234" y="84" width="36" height="24" rx="3" fill="url(#s11-gold)" stroke="#8A6034" stroke-width="1.5"/>
     <path d="M244 78q8-6 16 0" stroke="#A8781E" stroke-width="1.6" fill="none"/>
     <text x="224" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">노력한 만큼 다른 몫</text>`;
-  return shell(300, 158, inner, "두 장면 비교 — 왼쪽은 두 사람이 똑같은 카드를 받는 장면, 오른쪽은 더 많이 일한 사람이 더 큰 몫을 받는 장면");
+  return shell(300, 158, inner, "두 장면 비교, 왼쪽은 두 사람이 똑같은 카드를 받는 장면, 오른쪽은 더 많이 일한 사람이 더 큰 몫을 받는 장면");
 }
 
 /* ---------- L3: 법의 두 구역 지도 — ㉠ 공적 관계 / ㉡ 사적 관계 ---------- */
@@ -119,7 +119,7 @@ export function lawZoneFig(): string {
     ${tinyMan(210, 104, { r: 5.4 })}${tinyMan(244, 104, { r: 5.4 })}
     <path d="M218 116q9 4 18 0" stroke="#3C4654" stroke-width="1.8" fill="none" stroke-linecap="round"/>
     <text x="224" y="146" text-anchor="middle" font-size="9.6" fill="#7E8AA0">개인끼리 어울리는 생활</text>`;
-  return shell(300, 158, inner, "가운데 점선으로 나뉜 두 구역 — 왼쪽은 기둥 건물과 투표함과 문서, 오른쪽은 집과 가게와 악수하는 두 사람");
+  return shell(300, 158, inner, "가운데 점선으로 나뉜 두 구역, 왼쪽은 기둥 건물과 투표함과 문서, 오른쪽은 집과 가게와 악수하는 두 사람");
 }
 
 /* ---------- L4: 사회법의 세 갈래 — 우산 아래 ㉠㉡㉢ ---------- */
@@ -149,7 +149,7 @@ export function socialLawFig(): string {
     <path d="M248 100l12 0m-6-6v12" stroke="#5A6478" stroke-width="1.8" stroke-linecap="round"/>
     <text x="235" y="128" text-anchor="middle" font-size="8.6" fill="#7E8AA0">어려울 때의 버팀목</text>
     <text x="150" y="150" text-anchor="middle" font-size="9.6" fill="#7E8AA0">하나의 큰 우산 아래 세 갈래 길</text>`;
-  return shell(300, 160, inner, "큰 우산 아래 세 칸 — 일하는 사람의 칸, 저울과 시장의 칸, 하트와 도움의 칸");
+  return shell(300, 160, inner, "큰 우산 아래 세 칸, 일하는 사람의 칸, 저울과 시장의 칸, 하트와 도움의 칸");
 }
 
 /* ---------- L5: 두 법정의 자리 배치 — (가) 민사 / (나) 형사 ---------- */
@@ -176,7 +176,7 @@ export function trialCompareFig(): string {
     <rect x="234" y="112" width="52" height="8" rx="2.6" fill="#8FA0B8"/>
     <text x="258" y="134" text-anchor="middle" font-size="8.4" font-weight="700" fill="#5A6478">재판받는 쪽·조력자</text>
     <text x="150" y="150" text-anchor="middle" font-size="0" fill="#7E8AA0"> </text>`;
-  return shell(300, 158, inner, "두 법정 자리 배치 비교 — 왼쪽 법정은 두 개인이 마주 서고, 오른쪽 법정은 국가 쪽 자리와 재판받는 쪽 자리가 마주 선다");
+  return shell(300, 158, inner, "두 법정 자리 배치 비교, 왼쪽 법정은 두 개인이 마주 서고, 오른쪽 법정은 국가 쪽 자리와 재판받는 쪽 자리가 마주 선다");
 }
 
 /* ---------- L6: 공정한 재판의 네 장치 카드 — (가)~(라) 아이콘 ---------- */
@@ -211,7 +211,7 @@ export function fairDeviceFig(): string {
       <rect x="2" y="-14" width="16" height="31" rx="2.2" fill="#C89A4E" stroke="#8A6034" stroke-width="1.3"/>
       <path d="M-22 2l11-7M-7 -9l11-7" stroke="#8C5A16" stroke-width="1.7" stroke-linecap="round" stroke-dasharray="3 3"/>`)}
     <text x="150" y="152" text-anchor="middle" font-size="9.6" fill="#7E8AA0">스틱 시 법원이 갖춘 네 가지 장치</text>`;
-  return shell(300, 162, inner, "네 장의 장치 카드 — 판사석 양옆 바람막이, 열린 커튼과 방청객, 돋보기와 채택 도장 찍힌 서류, 세 단의 계단");
+  return shell(300, 162, inner, "네 장의 장치 카드, 판사석 양옆 바람막이, 열린 커튼과 방청객, 돋보기와 채택 도장 찍힌 서류, 세 단의 계단");
 }
 
 /* ---------- L7: 세 계단 심급 구조 — ㉠(1심→2심)·㉡(2심→대법원) 화살표 ----------
@@ -234,7 +234,7 @@ export function appealLadderFig(): string {
     <text x="64" y="148" text-anchor="middle" font-size="9" fill="#7E8AA0">처음 재판</text>
     <text x="150" y="112" text-anchor="middle" font-size="9" fill="#7E8AA0">다시 한 번</text>
     <text x="236" y="74" text-anchor="middle" font-size="9" fill="#7E8AA0">마지막 판단</text>`;
-  return shell(300, 158, inner, "계단처럼 놓인 세 법원 상자 — 첫 상자에서 둘째 상자로 가는 화살표와 둘째 상자에서 셋째 상자로 가는 화살표에 각각 빈 라벨");
+  return shell(300, 158, inner, "계단처럼 놓인 세 법원 상자, 첫 상자에서 둘째 상자로 가는 화살표와 둘째 상자에서 셋째 상자로 가는 화살표에 각각 빈 라벨");
 }
 
 /* ---------- recap 카드 미니아트 — 64×64 플랫(soc 관례) ---------- */

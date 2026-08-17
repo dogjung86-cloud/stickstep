@@ -164,7 +164,7 @@ export function tamguFlowFig(o?: { hide?: number }): string {
 /** 연호 = 국왕 즉위 해에 붙인 연대 이름. 영락 1년 = 391년 대응만 그린다(9년 문제의 정답은 인쇄하지 않는다). */
 export function yeonhoFig(): string {
   return `<svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg" fill="none" role="img"
-    aria-label="비석에 새긴 연호와 오늘날 연도의 대응을 나타낸 그림 — 영락 1년이 391년과 화살표로 이어져 있다">
+    aria-label="비석에 새긴 연호와 오늘날 연도의 대응을 나타낸 그림, 영락 1년이 391년과 화살표로 이어져 있다">
     <defs>
       <linearGradient id="hf-stone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B9C4D4"/><stop offset=".55" stop-color="#8FA0B6"/><stop offset="1" stop-color="#6E8098"/></linearGradient>
       <linearGradient id="hf-cal2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9EEF4"/></linearGradient>
@@ -222,7 +222,7 @@ export function millenniumFig(): string {
     aria-label="기원전 4000년부터 기원전 1500년까지를 500년 칸으로 나눈 연표 띠에 네 문명의 시작 시점이 점으로 찍혀 있는 그림">
     <rect x="0" y="0" width="${W}" height="186" rx="16" fill="#F7FAFC"/>
     <rect x="${L}" y="${top - 46}" width="${W - L - R}" height="18" rx="6" fill="rgba(168,122,62,.18)"/>
-    <text x="${W / 2}" y="${top - 33}" text-anchor="middle" font-size="12" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">모두 기원전 — 한 칸이 500년!</text>
+    <text x="${W / 2}" y="${top - 33}" text-anchor="middle" font-size="12" font-weight="900" fill="#8F5A1D" font-family="Pretendard, sans-serif">모두 기원전, 한 칸이 500년!</text>
     ${cells}${ticks}${evtEls}
     <text x="${W - R}" y="${top + h + 34}" text-anchor="end" font-size="10.5" font-weight="700" fill="#8B95A1" font-family="Pretendard, sans-serif">(연도 단위: 년)</text>
   </svg>`;

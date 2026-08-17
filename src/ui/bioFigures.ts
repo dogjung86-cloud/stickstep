@@ -46,7 +46,7 @@ const ORG: Record<string, string> = {
     <path d="M78 30q-14-10-26 2M122 30q14-10 26 2" stroke="#C43A50" stroke-width="4" fill="none" stroke-linecap="round"/>
     ${hi(76, 44, 16, 12, 0.4)}`,
   systemCirc: `
-    <!-- 온몸으로 뻗는 혈관 나무(동맥 빨강 · 정맥 파랑 나란히) — 위로 목·팔, 아래로 다리 -->
+    <!-- 온몸으로 뻗는 혈관 나무(동맥 빨강 · 정맥 파랑 나란히), 위로 목·팔, 아래로 다리 -->
     <path d="M96 70 V 20 M96 40 C 72 40 58 28 46 18 M96 40 C 120 40 134 28 146 18 M96 78 V 132 M96 96 C 74 96 62 110 54 132 M96 96 C 118 96 130 110 138 132" fill="none" stroke="#D3455E" stroke-width="3.6" stroke-linecap="round"/>
     <path d="M104 70 V 22 M104 44 C 128 44 142 32 154 22 M104 44 C 80 44 66 32 54 22 M104 78 V 132 M104 100 C 126 100 138 112 146 132 M104 100 C 82 100 70 112 62 132" fill="none" stroke="#5A8FE0" stroke-width="3.2" stroke-linecap="round"/>
     <!-- 중앙 심장 -->
@@ -131,7 +131,7 @@ export function classStagesFig(): string {
       `<text x="${cx}" y="${yt + h / 2 + 4.5}" text-anchor="middle" font-size="13" font-weight="800" fill="${ink}" font-family="Pretendard, sans-serif">${RANK[i]}</text>` +
       `<text x="${cx + wt / 2 + 8}" y="${yt + h / 2 + 4}" font-size="10.5" font-weight="700" fill="#4E5968" font-family="Pretendard, sans-serif">${DOG[i]}</text>`;
   }
-  return `<svg viewBox="0 0 360 232" ${NS} fill="none" role="img" aria-label="개의 분류 단계 — 위 계에서 아래 종까지, 위로 갈수록 더 많은 생물을 포함해요">
+  return `<svg viewBox="0 0 360 232" ${NS} fill="none" role="img" aria-label="개의 분류 단계, 위 계에서 아래 종까지, 위로 갈수록 더 많은 생물을 포함해요">
     <rect x="2" y="2" width="356" height="228" rx="14" fill="#F4FBF6"/>
     <text x="12" y="20" font-size="11.5" font-weight="800" fill="#2E8C4A" font-family="Pretendard, sans-serif">개의 분류 단계</text>
     <path d="M14 32 V 214" stroke="#8FD0A6" stroke-width="1.5"/>

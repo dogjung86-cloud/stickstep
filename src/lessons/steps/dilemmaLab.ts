@@ -84,7 +84,7 @@ export const dilemmaLab: StepRenderer = (host, step, api) => {
   const sceneTxt = el("div", { class: "dlm-scene" });
   const gainCol = el("div", { class: "dlm-col gain" });
   const lossCol = el("div", { class: "dlm-col loss" });
-  const rewind = el("button", { class: "dlm-rewind", attrs: { type: "button" }, html: "시간 되감기 — 갈림길로 돌아가기" });
+  const rewind = el("button", { class: "dlm-rewind", attrs: { type: "button" }, html: "시간 되감기, 갈림길로 돌아가기" });
   const result = el("div", { class: "dlm-result" }, sceneTxt, el("div", { class: "dlm-cols" }, gainCol, lossCol), rewind);
 
   const stage = el("div", { class: "stage dlm-stage" }, when, stakesRow, man, choicesRow, result);
@@ -164,7 +164,7 @@ export const dilemmaLab: StepRenderer = (host, step, api) => {
     if (walked.size >= def.choices.length) {
       rewind.classList.add("hide");
       later(() => {
-        helper.innerHTML = "두 갈래를 모두 걸었어요 — 어느 쪽도 <b>가볍지 않았죠</b>. 이 곤란함의 정체를 아래에서 밝혀 봐요!";
+        helper.innerHTML = "두 갈래를 모두 걸었어요. 어느 쪽도 <b>가볍지 않았죠</b>. 이 곤란함의 정체를 아래에서 밝혀 봐요!";
         openNaming();
       }, 1700);
     } else {
@@ -190,7 +190,7 @@ export const dilemmaLab: StepRenderer = (host, step, api) => {
     stage.classList.remove("chosen");
     result.classList.remove("show");
     rewind.classList.add("hide");
-    helper.innerHTML = `다시 ${def.when} — 이번엔 <b>아직 걷지 않은 길</b>을 골라 봐요.`;
+    helper.innerHTML = `다시 ${def.when}, 이번엔 <b>아직 걷지 않은 길</b>을 골라 봐요.`;
   });
 
   opts.forEach((btn, i) => {

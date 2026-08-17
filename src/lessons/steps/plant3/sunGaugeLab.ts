@@ -125,7 +125,7 @@ export const sunGaugeLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 기체의 방향을 정하는 건 <b>광합성량과 호흡량의 크기 비교</b>예요. 낮엔 광합성이 커서 <b>이산화 탄소 흡수·산소 방출</b>, 밤엔 호흡만 남아 <b>산소 흡수·이산화 탄소 방출</b> — 잎이 변덕을 부리는 게 아니라 산수가 바뀌는 거죠.";
+        "정리! 기체의 방향을 정하는 건 <b>광합성량과 호흡량의 크기 비교</b>예요. 낮엔 광합성이 커서 <b>이산화 탄소 흡수·산소 방출</b>, 밤엔 호흡만 남아 <b>산소 흡수·이산화 탄소 방출</b>, 잎이 변덕을 부리는 게 아니라 산수가 바뀌는 거죠.";
       api.enableCTA(s.cta ?? "하루 정리하기");
     }
   }
@@ -190,7 +190,7 @@ export const sunGaugeLab: StepRenderer = (host, step, api) => {
     if (t >= 10 && t <= 14) {
       if (!goals.has("noon")) {
         collect("noon", "광합성 > 호흡!");
-        if (!finished) helper.innerHTML = "한낮이에요 — 광합성 게이지가 호흡을 <b>훌쩍 넘었죠</b>. 그래서 잎은 <b>이산화 탄소를 마시고 산소를 내놓아요</b>. 이제 슬라이더를 <b>한밤중</b>으로 돌려 보세요.";
+        if (!finished) helper.innerHTML = "한낮이에요. 광합성 게이지가 호흡을 <b>훌쩍 넘었죠</b>. 그래서 잎은 <b>이산화 탄소를 마시고 산소를 내놓아요</b>. 이제 슬라이더를 <b>한밤중</b>으로 돌려 보세요.";
       }
     }
     if ((t <= 4 || t >= 21) && goals.has("noon") && !goals.has("night")) {
@@ -206,7 +206,7 @@ export const sunGaugeLab: StepRenderer = (host, step, api) => {
     asked = true;
     b4Ask(
       qBox,
-      "깜깜한 한밤중 — 이 잎의 기체 출입으로 옳은 것은?",
+      "깜깜한 한밤중, 이 잎의 기체 출입으로 옳은 것은?",
       [
         { t: "산소를 흡수하고 이산화 탄소를 방출한다", ok: true },
         { t: "이산화 탄소를 흡수하고 산소를 방출한다", ok: false },
@@ -216,7 +216,7 @@ export const sunGaugeLab: StepRenderer = (host, step, api) => {
         api.recordQuiz(ok);
         helper.innerHTML = ok
           ? "정확해요! 밤엔 광합성이 멈추고 <b>호흡만</b> 남으니, 우리처럼 <b>산소를 마시고 이산화 탄소를 내놓아요</b>."
-          : "게이지를 봐요 — 밤엔 광합성 게이지가 0이고 <b>호흡 게이지만</b> 남았죠. 그래서 잎은 <b>산소를 흡수하고 이산화 탄소를 방출</b>한답니다. 기체가 안 드나드는 순간은 없어요!";
+          : "게이지를 봐요. 밤엔 광합성 게이지가 0이고 <b>호흡 게이지만</b> 남았죠. 그래서 잎은 <b>산소를 흡수하고 이산화 탄소를 방출</b>한답니다. 기체가 안 드나드는 순간은 없어요!";
         collect("judge", "호흡의 방향!");
       },
     );

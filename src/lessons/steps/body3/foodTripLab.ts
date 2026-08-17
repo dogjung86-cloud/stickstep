@@ -50,9 +50,9 @@ const NUTS: Record<NutId, {
     final: "포도당",
     states: ["piece", "piece", "grain", "grain"],
     msgs: {
-      mouth: "입에서 <b>침</b>이 섞였어요 — 침 속 <b>아밀레이스</b>가 녹말 사슬을 잘라 <b>엿당</b>으로! 여행의 첫 가위질이에요.",
+      mouth: "입에서 <b>침</b>이 섞였어요. 침 속 <b>아밀레이스</b>가 녹말 사슬을 잘라 <b>엿당</b>으로! 여행의 첫 가위질이에요.",
       stomach: "위에서는… 아무 일도 없어요. 위의 소화효소(펩신)는 <b>녹말 담당이 아니거든요</b>. 엿당인 채로 통과!",
-      small: "작은창자에서 <b>이자액의 아밀레이스</b>가 마지막 가위질 — 엿당이 <b>포도당</b> 낱알로 완전히 분해됐어요!",
+      small: "작은창자에서 <b>이자액의 아밀레이스</b>가 마지막 가위질, 엿당이 <b>포도당</b> 낱알로 완전히 분해됐어요!",
       arrive: "여행 끝! 녹말은 <b>포도당</b>이 되어 작은창자에서 흡수될 준비를 마쳤어요.",
     },
     badge: { mouth: "아밀레이스(침)", small: "아밀레이스(이자액)" },
@@ -63,9 +63,9 @@ const NUTS: Record<NutId, {
     final: "아미노산",
     states: ["chain", "piece", "grain", "grain"],
     msgs: {
-      mouth: "입에서는 이로 잘게 부서지고 침과 섞일 뿐 — 침의 아밀레이스는 <b>단백질을 못 잘라요</b>. 사슬 그대로 통과!",
-      stomach: "위에 도착! 위액 속 <b>펩신</b>이 <b>염산의 도움</b>을 받아 단백질 사슬을 싹둑싹둑 — 첫 분해예요. 염산은 음식물 속 세균도 잡아 주죠.",
-      small: "작은창자에서 <b>이자액의 트립신</b>이 이어받아 조각을 더 잘게 — 마침내 <b>아미노산</b> 낱알이 됐어요!",
+      mouth: "입에서는 이로 잘게 부서지고 침과 섞일 뿐, 침의 아밀레이스는 <b>단백질을 못 잘라요</b>. 사슬 그대로 통과!",
+      stomach: "위에 도착! 위액 속 <b>펩신</b>이 <b>염산의 도움</b>을 받아 단백질 사슬을 싹둑싹둑, 첫 분해예요. 염산은 음식물 속 세균도 잡아 주죠.",
+      small: "작은창자에서 <b>이자액의 트립신</b>이 이어받아 조각을 더 잘게, 마침내 <b>아미노산</b> 낱알이 됐어요!",
       arrive: "여행 끝! 단백질은 <b>아미노산</b>이 되어 흡수될 준비 완료.",
     },
     badge: { stomach: "펩신+염산", small: "트립신(이자액)" },
@@ -76,8 +76,8 @@ const NUTS: Record<NutId, {
     final: "지방산·모노글리세라이드",
     states: ["blob", "blob", "fatFinal", "fatFinal"],
     msgs: {
-      mouth: "입에서는 변화 없음 — 침의 아밀레이스는 <b>지방 담당이 아니에요</b>. 기름 방울 그대로 출발!",
-      stomach: "위에서도 변화 없음 — 펩신은 <b>단백질 전담</b>이라 지방은 건드리지 못해요. 끝까지 버티는 기름 방울!",
+      mouth: "입에서는 변화 없음, 침의 아밀레이스는 <b>지방 담당이 아니에요</b>. 기름 방울 그대로 출발!",
+      stomach: "위에서도 변화 없음, 펩신은 <b>단백질 전담</b>이라 지방은 건드리지 못해요. 끝까지 버티는 기름 방울!",
       small: "드디어 작은창자! <b>쓸개즙</b>이 기름 방울을 잘게 흩어 주고(소화효소는 아니지만 소화를 돕죠), <b>이자액의 라이페이스</b>가 <b>지방산과 모노글리세라이드</b>로 분해했어요!",
       arrive: "여행 끝! 지방은 <b>지방산과 모노글리세라이드</b>가 되어 흡수될 준비를 마쳤어요.",
     },
@@ -164,7 +164,7 @@ export const foodTripLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "세 여행 완주! 소화효소는 <b>자기 담당 영양소에만</b> 작용해요 — 녹말은 <b>입·작은창자</b>, 단백질은 <b>위·작은창자</b>, 지방은 <b>작은창자</b>에서 분해된답니다.";
+        "세 여행 완주! 소화효소는 <b>자기 담당 영양소에만</b> 작용해요. 녹말은 <b>입·작은창자</b>, 단백질은 <b>위·작은창자</b>, 지방은 <b>작은창자</b>에서 분해된답니다.";
       api.enableCTA(s.cta ?? "흡수 이야기로");
     }
   }
@@ -232,25 +232,25 @@ export const foodTripLab: StepRenderer = (host, step, api) => {
     starch: {
       q: "방금 여행에서, 녹말이 <b>처음으로 분해되기 시작한</b> 정거장은 어디였나요?",
       c: [
-        { t: "입 — 침의 아밀레이스", ok: true },
-        { t: "위 — 펩신", ok: false },
-        { t: "작은창자 — 이자액", ok: false },
+        { t: "입, 침의 아밀레이스", ok: true },
+        { t: "위, 펩신", ok: false },
+        { t: "작은창자, 이자액", ok: false },
       ],
       sub: "입에서 첫 가위질!",
     },
     protein: {
       q: "단백질이 <b>처음으로 분해된</b> 정거장은 어디였나요?",
       c: [
-        { t: "위 — 펩신이 염산의 도움으로", ok: true },
-        { t: "입 — 침의 아밀레이스", ok: false },
-        { t: "식도 — 지나가면서 저절로", ok: false },
+        { t: "위, 펩신이 염산의 도움으로", ok: true },
+        { t: "입, 침의 아밀레이스", ok: false },
+        { t: "식도, 지나가면서 저절로", ok: false },
       ],
       sub: "위에서 첫 분해!",
     },
     fat: {
       q: "지방이 소화효소에 분해된 정거장은 어디<b>뿐</b>이었나요?",
       c: [
-        { t: "작은창자 — 라이페이스(+쓸개즙의 도움)", ok: true },
+        { t: "작은창자, 라이페이스(+쓸개즙의 도움)", ok: true },
         { t: "입에서부터 줄곧 분해됐다", ok: false },
         { t: "위와 작은창자 두 곳", ok: false },
       ],
@@ -264,8 +264,8 @@ export const foodTripLab: StepRenderer = (host, step, api) => {
       if (id === "starch") api.recordQuiz(ok);
       const n = NUTS[id];
       helper.innerHTML = ok
-        ? `정답! ${n.msgs.arrive} 최종 산물 이름표 — <b>${n.final}</b>, 꼭 기억해요.`
-        : `여행 장면을 되감아 봐요 — ${n.msgs.arrive} 정답 정거장과 최종 산물 <b>${n.final}</b>을 함께 붙잡아 두세요.`;
+        ? `정답! ${n.msgs.arrive} 최종 산물 이름표, <b>${n.final}</b>, 꼭 기억해요.`
+        : `여행 장면을 되감아 봐요. ${n.msgs.arrive} 정답 정거장과 최종 산물 <b>${n.final}</b>을 함께 붙잡아 두세요.`;
       collect(id, `${n.final}!`);
       later(() => {
         qBox.style.display = "none";
@@ -274,7 +274,7 @@ export const foodTripLab: StepRenderer = (host, step, api) => {
         cur = null;
         if (!finished) {
           const next = (Object.keys(NUTS) as NutId[]).find((k) => !goals.has(k));
-          if (next) helper.innerHTML = `다음 여행자 — <b>${NUTS[next].name}</b> 카드를 골라 주세요!`;
+          if (next) helper.innerHTML = `다음 여행자, <b>${NUTS[next].name}</b> 카드를 골라 주세요!`;
         }
       }, 1500);
     });

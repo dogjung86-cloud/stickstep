@@ -43,7 +43,7 @@ export const balloonUniverse: StepRenderer = (host, step, api) => {
   const canvas = el("canvas", { class: "mstage-cvblock", style: `height:${CVH}px` });
   const statusPill = el("div", { class: "pill" }, el("span", { class: "pdot", style: "background:#9CA8FF" }), el("span", { text: "은하 딱지를 탭해 보세요" }));
   const toastEl = el("div", { class: "toast" });
-  const capEl = el("div", { class: "stage-cap", text: "펌프를 꾹 — 풍선 표면의 은하들을 관찰!" });
+  const capEl = el("div", { class: "stage-cap", text: "펌프를 꾹, 풍선 표면의 은하들을 관찰!" });
   const stage = el("div", { class: "stage" }, canvas, el("div", { class: "stage-hud" }, statusPill), toastEl, capEl);
 
   const pumpBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "바람 넣기 (꾹)" }));
@@ -52,7 +52,7 @@ export const balloonUniverse: StepRenderer = (host, step, api) => {
 
   const helper = el("div", {
     class: "helper",
-    html: "풍선 표면 = 우주, 딱지 = 은하. 풍선이 부풀면 <b>모든 딱지 사이가 한꺼번에</b> 멀어져요 — 은하가 움직이는 게 아니라 <b>공간 자체가 늘어나는</b> 거예요.",
+    html: "풍선 표면 = 우주, 딱지 = 은하. 풍선이 부풀면 <b>모든 딱지 사이가 한꺼번에</b> 멀어져요. 은하가 움직이는 게 아니라 <b>공간 자체가 늘어나는</b> 거예요.",
   });
   host.append(goalChips, helper, stage, btnRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -93,7 +93,7 @@ export const balloonUniverse: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 우주가 팽창하면 <b>모든 은하가 서로에게서</b> 멀어져요 — 어느 은하에서 봐도 똑같으니 <b>특별한 중심은 없어요</b>. 그리고 <b>멀리 있는 은하일수록 더 빨리</b> 멀어졌죠(같은 시간에 더 많이 늘어나니까).";
+        "정리! 우주가 팽창하면 <b>모든 은하가 서로에게서</b> 멀어져요. 어느 은하에서 봐도 똑같으니 <b>특별한 중심은 없어요</b>. 그리고 <b>멀리 있는 은하일수록 더 빨리</b> 멀어졌죠(같은 시간에 더 많이 늘어나니까).";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }
@@ -131,8 +131,8 @@ export const balloonUniverse: StepRenderer = (host, step, api) => {
         lawBaseR = R;
         viewSet.add(i);
         haptic(HAPTIC.tap);
-        (statusPill.lastElementChild as HTMLElement).textContent = "이 은하에서 보면 — 모두 나에게서 멀어져요!";
-        if (viewSet.size >= 2) collect("view", "어디서 봐도 같아!", "시점을 바꿔도 똑같이 멀어져요 — 중심이 없어요!");
+        (statusPill.lastElementChild as HTMLElement).textContent = "이 은하에서 보면, 모두 나에게서 멀어져요!";
+        if (viewSet.size >= 2) collect("view", "어디서 봐도 같아!", "시점을 바꿔도 똑같이 멀어져요. 중심이 없어요!");
         return;
       }
     }
@@ -188,7 +188,7 @@ export const balloonUniverse: StepRenderer = (host, step, api) => {
       R = clamp(R + dt * 0.62, R0, R_MAX);
       if (R >= R0 * 1.5) collect("grow", "모두 멀어졌어요!", "풍선이 커지자 모든 딱지 사이가 멀어졌어요!");
       if (picked >= 0 && R >= lawBaseR * 1.3 && lawBaseR > 0) {
-        collect("law", "긴 화살표 = 먼 은하!", "먼 은하일수록 화살표가 길어요 — 더 빨리 멀어진다!");
+        collect("law", "긴 화살표 = 먼 은하!", "먼 은하일수록 화살표가 길어요. 더 빨리 멀어진다!");
       }
     }
 

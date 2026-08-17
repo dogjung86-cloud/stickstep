@@ -510,9 +510,9 @@ export const cellScaleLab: StepRenderer = (host, step, api) => {
     // 무대 폭(논리 360)을 넘지 않게 짧게 — 캔버스 텍스트는 줄바꿈이 없다.
     // 문턱은 배율이 아니라 실제 눈금 길이(px)로 — FIELD_1X가 바뀌어도 문구가 따라온다.
     const note = barPx < 2
-      ? "점보다 작아요 — 맨눈으로는 안 보여요"
+      ? "점보다 작아요. 맨눈으로는 안 보여요"
       : barPx < 16
-        ? "겨우 보이기 시작했어요 — 아직 작아요"
+        ? "겨우 보이기 시작했어요. 아직 작아요"
         : "이제 눈금과 세포가 나란해요";
     ctx.font = `700 ${fpx(12)}px Pretendard, sans-serif`;
     ctx.fillStyle = "#7E93B3";

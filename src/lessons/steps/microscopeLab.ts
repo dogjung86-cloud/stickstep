@@ -654,7 +654,7 @@ export const microscopeLab: StepRenderer = (host, step, api) => {
   function drawCaption(ctx: CanvasRenderingContext2D): void {
     const sharp = foc > 0.9;
     const line = stage2 === "focus" && !sharp
-      ? "아직 흐려요 — 조동나사를 돌려 초점을 맞춰요"
+      ? "아직 흐려요. 조동나사를 돌려 초점을 맞춰요"
       : spec === "cheek"
         ? "납작하고 불규칙한 다각형 · 파랗게 물든 핵이 하나"
         : "벽돌처럼 각진 직사각형 · 초록 엽록체가 가득";
@@ -780,7 +780,7 @@ export const microscopeLab: StepRenderer = (host, step, api) => {
     if (Math.abs(dial - DIAL_TARGET) < 0.045) dial = DIAL_TARGET;
     foc = focusOf(dial);
     if (stage2 !== "focus" || foc < 0.95) return;
-    collect("focus", "초점이 맞았어요 — 세포가 선명해졌어요");
+    collect("focus", "초점이 맞았어요. 세포가 선명해졌어요");
     stage2 = "high";
     afterStage();
   }

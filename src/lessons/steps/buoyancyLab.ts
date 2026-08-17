@@ -134,7 +134,7 @@ export const buoyancyLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "발견 완료! 저울 눈금이 <b>줄어든 만큼이 부력</b>이에요 (20 − 14 = 6 N). 그래프처럼 부력은 <b>물에 잠긴 부피</b>를 따라 커지다가, 완전히 잠긴 뒤엔 더 깊어져도 <b>평평 — 그대로</b>였죠.";
+        "발견 완료! 저울 눈금이 <b>줄어든 만큼이 부력</b>이에요 (20 − 14 = 6 N). 그래프처럼 부력은 <b>물에 잠긴 부피</b>를 따라 커지다가, 완전히 잠긴 뒤엔 더 깊어져도 <b>평평, 그대로</b>였죠.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -280,10 +280,10 @@ export const buoyancyLab: StepRenderer = (host, step, api) => {
     // 목표 판정 (기하 기준)
     if (f > 0.38 && f < 0.66) {
       halfMs += dt * 16.7;
-      if (halfMs > 360) collect("half", "17 N!", "절반 잠김 — 저울이 17 N");
+      if (halfMs > 360) collect("half", "17 N!", "절반 잠김, 저울이 17 N");
     } else halfMs = 0;
-    if (f >= 0.995) collect("full", "14 N!", "완전 잠김 — 부력이 6 N");
-    if (goals.has("full") && deepPx() > 16) collect("deep", "그대로 14 N", "더 깊어도 14 N — 잠긴 부피가 같으니까!");
+    if (f >= 0.995) collect("full", "14 N!", "완전 잠김, 부력이 6 N");
+    if (goals.has("full") && deepPx() > 16) collect("deep", "그대로 14 N", "더 깊어도 14 N, 잠긴 부피가 같으니까!");
 
     // ---- 그리기: 스탠드(고정) ----
     ctx.strokeStyle = "rgba(196,212,236,.65)";
@@ -409,7 +409,7 @@ export const buoyancyLab: StepRenderer = (host, step, api) => {
       shown = txt;
       readVal.textContent = txt;
       const b = W_AIR - reading;
-      buoyPill.textContent = b < 0.05 ? "부력 0.0 N — 아직 물 밖" : `부력 ${b.toFixed(1)} N = 20 − ${txt}`;
+      buoyPill.textContent = b < 0.05 ? "부력 0.0 N, 아직 물 밖" : `부력 ${b.toFixed(1)} N = 20 − ${txt}`;
     }
   });
 

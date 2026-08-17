@@ -74,7 +74,7 @@ export function renderMapPuzzle(
   const fig = el("div", { class: "hs4-puzzle", attrs: { role: "button", tabindex: "0", "aria-label": "탭해서 퍼즐 조각 놓기" } });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "거실 바닥에 세계지도 퍼즐을 펼쳤어요. 대륙 조각이 하나씩 — <b>퍼즐판을 탭</b>해서 맞춰 볼까요?";
+  helper.innerHTML = "거실 바닥에 세계지도 퍼즐을 펼쳤어요. 대륙 조각이 하나씩, <b>퍼즐판을 탭</b>해서 맞춰 볼까요?";
 
   let state: 0 | 1 | 2 = 0;
   let timer = 0;
@@ -91,7 +91,7 @@ export function renderMapPuzzle(
     haptic(HAPTIC.tap);
     show();
     if (state === 1) {
-      helper.innerHTML = "가장 큰 유라시아 조각을 놓았어요. 다음은 트레이의 <b>주황 조각</b> — 어라, 꽤 큰데요? <b>한 번 더 탭!</b>";
+      helper.innerHTML = "가장 큰 유라시아 조각을 놓았어요. 다음은 트레이의 <b>주황 조각</b>, 어라, 꽤 큰데요? <b>한 번 더 탭!</b>";
     } else {
       face("curious");
       helper.innerHTML = "주황 조각이 딱! 지도 앱에선 작아 보이던 <b>아프리카</b>… 조각으로 만지니 느낌이 달라요. 얼마나 큰 대륙일까요?";
@@ -103,7 +103,7 @@ export function renderMapPuzzle(
             "가장 작은 대륙 중 하나다",
           ],
           good: "맞아요! 아시아 다음, <b>세계에서 두 번째로 큰 대륙</b>이에요. 이 큰 땅을 다섯 조각으로 나눠 하나씩 정복해 봐요!",
-          bad: "퍼즐 조각을 다시 봐요 — 유라시아 다음으로 큰 조각이었죠? 아프리카는 <b>세계 두 번째 대륙</b>이에요. 흔한 지도가 크기를 작아 보이게 했을 뿐! 다섯 조각으로 나눠 정복해 봐요!",
+          bad: "퍼즐 조각을 다시 봐요. 유라시아 다음으로 큰 조각이었죠? 아프리카는 <b>세계 두 번째 대륙</b>이에요. 흔한 지도가 크기를 작아 보이게 했을 뿐! 다섯 조각으로 나눠 정복해 봐요!",
           onDone: finish,
         });
       }, 750);
@@ -175,7 +175,7 @@ export function renderSatNile(
   const btn = el("button", { class: "hs4-flipbtn", attrs: { type: "button" }, text: "돋보기로 확대하기" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "위성 지도 앱으로 아프리카 구경 중이에요. 북쪽의 거대한 모래빛 땅 — <b>확대</b>해 볼까요?";
+  helper.innerHTML = "위성 지도 앱으로 아프리카 구경 중이에요. 북쪽의 거대한 모래빛 땅, <b>확대</b>해 볼까요?";
 
   let state: 0 | 1 | 2 = 0;
   let timer = 0;
@@ -197,7 +197,7 @@ export function renderSatNile(
       btn.classList.add("done");
       btn.disabled = true;
       face("curious");
-      helper.innerHTML = "사막 한가운데 <b>초록 리본</b>이 강을 따라 이어져요 — 비도 거의 안 오는 사막에 이 큰 강은 어떻게 흐를까요?";
+      helper.innerHTML = "사막 한가운데 <b>초록 리본</b>이 강을 따라 이어져요. 비도 거의 안 오는 사막에 이 큰 강은 어떻게 흐를까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
@@ -205,8 +205,8 @@ export function renderSatNile(
             "사막 밑에서 바닷물이 솟아나기 때문에",
             "사막에도 사실은 비가 많이 오기 때문에",
           ],
-          good: "정확해요! 이 강이 <b>나일강</b> — 비 많은 적도 부근에서 출발해, 사막을 가로질러 지중해까지 흘러요. 강도 산도 사막도 — 아프리카의 지형을 통째로 훑으러 가요!",
-          bad: "사막의 하늘도 땅도 물을 주지 않아요 — 비밀은 강의 <b>출발점</b>! 이 강(나일강)은 비가 많은 적도 부근에서 시작해 사막을 가로질러요. 아프리카의 지형을 통째로 훑으러 가요!",
+          good: "정확해요! 이 강이 <b>나일강</b>, 비 많은 적도 부근에서 출발해, 사막을 가로질러 지중해까지 흘러요. 강도 산도 사막도, 아프리카의 지형을 통째로 훑으러 가요!",
+          bad: "사막의 하늘도 땅도 물을 주지 않아요. 비밀은 강의 <b>출발점</b>! 이 강(나일강)은 비가 많은 적도 부근에서 시작해 사막을 가로질러요. 아프리카의 지형을 통째로 훑으러 가요!",
           onDone: finish,
         });
       }, 750);
@@ -263,7 +263,7 @@ export function renderHerdMove(
   const btn = el("button", { class: "hs4-flipbtn", attrs: { type: "button" }, text: "여섯 달 뒤로" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "자연 다큐를 보고 있어요. 1월의 세렝게티 초원 — 풀이 무성하고 <b>누 떼</b>가 가득해요. <b>여섯 달 뒤</b>엔 어떨까요?";
+  helper.innerHTML = "자연 다큐를 보고 있어요. 1월의 세렝게티 초원, 풀이 무성하고 <b>누 떼</b>가 가득해요. <b>여섯 달 뒤</b>엔 어떨까요?";
 
   let dry = false;
   let timer = 0;
@@ -282,7 +282,7 @@ export function renderHerdMove(
     btn.classList.add("done");
     btn.disabled = true;
     face("surprised");
-    helper.innerHTML = "같은 곳 맞아요?! 풀은 바싹 마르고, 누 떼는 <b>수백 km 북쪽</b>으로 떠났대요. 해마다 반복되는 대이동 — 왜일까요?";
+    helper.innerHTML = "같은 곳 맞아요?! 풀은 바싹 마르고, 누 떼는 <b>수백 km 북쪽</b>으로 떠났대요. 해마다 반복되는 대이동, 왜일까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -290,8 +290,8 @@ export function renderHerdMove(
           "더위를 피해 시원한 곳으로 피서를 가는 것",
           "천적이 늘어나 도망을 다니는 것",
         ],
-        good: "맞아요! 비의 띠가 계절 따라 움직여요 — 풀은 비를 따르고, 누 떼는 풀을 따르죠. 그 <b>움직이는 비 띠</b>를 직접 조종해 봐요!",
-        bad: "더위나 천적 때문이라기엔 매년 같은 길을 왕복해요 — 비밀은 <b>비</b>! 비 내리는 곳이 계절 따라 바뀌고, 풀과 누 떼가 그 뒤를 따르죠. 움직이는 비 띠를 직접 조종해 봐요!",
+        good: "맞아요! 비의 띠가 계절 따라 움직여요. 풀은 비를 따르고, 누 떼는 풀을 따르죠. 그 <b>움직이는 비 띠</b>를 직접 조종해 봐요!",
+        bad: "더위나 천적 때문이라기엔 매년 같은 길을 왕복해요. 비밀은 <b>비</b>! 비 내리는 곳이 계절 따라 바뀌고, 풀과 누 떼가 그 뒤를 따르죠. 움직이는 비 띠를 직접 조종해 봐요!",
         onDone: finish,
       });
     }, 750);
@@ -363,7 +363,7 @@ export function renderShadeLane(
   const btn = el("button", { class: "hs4-flipbtn", attrs: { type: "button" }, text: "골목으로 들어가기" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "여행 브이로그 속 사막 마을이에요. 한낮의 땡볕 — 그런데 집들이 <b>다닥다닥</b> 붙어 있네요? <b>골목으로 들어가</b> 봐요.";
+  helper.innerHTML = "여행 브이로그 속 사막 마을이에요. 한낮의 땡볕, 그런데 집들이 <b>다닥다닥</b> 붙어 있네요? <b>골목으로 들어가</b> 봐요.";
 
   let inside = false;
   let timer = 0;
@@ -390,8 +390,8 @@ export function renderShadeLane(
           "땅값이 비싸서 좁게 지을 수밖에 없어서",
           "옆집에 빨리 놀러 가려고",
         ],
-        good: "정확해요! 해가 조금만 기울어도 골목에 그늘이 지도록 <b>촘촘하게</b> — 두꺼운 흙벽, 평평한 지붕까지 전부 환경에 맞춘 지혜랍니다. 아프리카의 생활 문화를 만나러 가요!",
-        bad: "땅값이나 이웃 때문이 아니에요 — 방금 골목의 그늘을 느꼈죠? 집을 붙여 지으면 <b>그늘</b>이 생겨 더위를 피할 수 있어요. 환경에 맞춘 지혜, 아프리카의 생활 문화를 만나러 가요!",
+        good: "정확해요! 해가 조금만 기울어도 골목에 그늘이 지도록 <b>촘촘하게</b>, 두꺼운 흙벽, 평평한 지붕까지 전부 환경에 맞춘 지혜랍니다. 아프리카의 생활 문화를 만나러 가요!",
+        bad: "땅값이나 이웃 때문이 아니에요. 방금 골목의 그늘을 느꼈죠? 집을 붙여 지으면 <b>그늘</b>이 생겨 더위를 피할 수 있어요. 환경에 맞춘 지혜, 아프리카의 생활 문화를 만나러 가요!",
         onDone: finish,
       });
     }, 750);
@@ -467,7 +467,7 @@ export function renderMovieNight(
   const fig = el("div", { class: "hs4-ott", attrs: { role: "button", tabindex: "0", "aria-label": "탭해서 다음 순위 공개하기" } });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "자기 전 영화 다큐 시청 중 — 화면에 <b>한 해 영화 편수 TOP 3</b> 순위표가 떴어요! <b>화면을 탭</b>해서 3위부터 공개해요.";
+  helper.innerHTML = "자기 전 영화 다큐 시청 중, 화면에 <b>한 해 영화 편수 TOP 3</b> 순위표가 떴어요! <b>화면을 탭</b>해서 3위부터 공개해요.";
 
   let state: 0 | 1 | 2 | 3 = 0;
   let timer = 0;
@@ -487,12 +487,12 @@ export function renderMovieNight(
       helper.innerHTML = "3위가 <b>미국</b>?! 영화 하면 할리우드인데, 1위가 아니었어요. 한 번 더 탭!";
     } else {
       face("curious");
-      helper.innerHTML = "1위는 노래와 춤의 영화 왕국 <b>인도</b>! 그런데 <b>가려진 2위</b>, 막대가 미국보다 훨씬 길어요 — 어느 나라일까요?";
+      helper.innerHTML = "1위는 노래와 춤의 영화 왕국 <b>인도</b>! 그런데 <b>가려진 2위</b>, 막대가 미국보다 훨씬 길어요. 어느 나라일까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? ["나이지리아", "중국", "프랑스"],
-          good: "정답! <b>나이지리아</b>예요 — 적은 예산으로 빠르게, 한 해 2,500편 넘게 만들죠. 우리에게 낯설다고 없는 게 아니에요. 세계로 흐른 아프리카 예술을 만나러 가요!",
-          bad: "이름난 영화 강국을 떠올렸다면 반전! 2위는 <b>나이지리아</b> — 한 해 2,500편 넘게 만들어 미국을 제쳤어요. 우리에게 낯설다고 없는 게 아니죠. 세계로 흐른 아프리카 예술을 만나러 가요!",
+          good: "정답! <b>나이지리아</b>예요. 적은 예산으로 빠르게, 한 해 2,500편 넘게 만들죠. 우리에게 낯설다고 없는 게 아니에요. 세계로 흐른 아프리카 예술을 만나러 가요!",
+          bad: "이름난 영화 강국을 떠올렸다면 반전! 2위는 <b>나이지리아</b>, 한 해 2,500편 넘게 만들어 미국을 제쳤어요. 우리에게 낯설다고 없는 게 아니죠. 세계로 흐른 아프리카 예술을 만나러 가요!",
           onDone: () => {
             state = 3;
             show();
@@ -553,7 +553,7 @@ export function renderClassPhoto(
   const fig = el("div", { class: "hs4-class", attrs: { role: "button", tabindex: "0", "aria-label": "탭해서 다음 반 사진 보기" } });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "대륙을 <b>한 반</b>이라고 상상해 봐요. 반 사람들을 나이 순으로 줄 세웠을 때 <b>딱 한가운데 사람의 나이</b>를 '중위 연령'이라 해요. 첫 번째는 유럽 반 — <b>탭해서</b> 넘겨 봐요!";
+  helper.innerHTML = "대륙을 <b>한 반</b>이라고 상상해 봐요. 반 사람들을 나이 순으로 줄 세웠을 때 <b>딱 한가운데 사람의 나이</b>를 '중위 연령'이라 해요. 첫 번째는 유럽 반, <b>탭해서</b> 넘겨 봐요!";
 
   let state: 0 | 1 | 2 = 0;
   let timer = 0;
@@ -570,15 +570,15 @@ export function renderClassPhoto(
     haptic(HAPTIC.tap);
     show();
     if (state === 1) {
-      helper.innerHTML = "이번엔 아시아 반 — 어른과 아이가 고루 섞여 있어요. <b>한 번 더 탭</b>, 마지막 반!";
+      helper.innerHTML = "이번엔 아시아 반, 어른과 아이가 고루 섞여 있어요. <b>한 번 더 탭</b>, 마지막 반!";
     } else {
       face("curious");
       helper.innerHTML = "아프리카 반은 아이들과 청년이 유난히 많아요! 그럼 세 반 중 <b>중위 연령이 가장 낮은(어린) 반</b>은 어디일까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? ["아프리카", "아시아", "유럽"],
-          good: "맞아요! 아프리카의 중위 연령은 <b>약 19세</b> — 세계에서 가장 젊은 대륙이에요. 젊다는 건 일하고 소비할 사람이 계속 늘어난다는 것. 이 대륙의 잠재력을 파헤쳐 봐요!",
-          bad: "사진을 다시 봐요 — 아이와 청년이 가장 많던 반은 아프리카였죠? 중위 연령 <b>약 19세</b>, 세계에서 가장 젊은 대륙이에요. 젊음이 곧 힘 — 그 잠재력을 파헤쳐 봐요!",
+          good: "맞아요! 아프리카의 중위 연령은 <b>약 19세</b>, 세계에서 가장 젊은 대륙이에요. 젊다는 건 일하고 소비할 사람이 계속 늘어난다는 것. 이 대륙의 잠재력을 파헤쳐 봐요!",
+          bad: "사진을 다시 봐요. 아이와 청년이 가장 많던 반은 아프리카였죠? 중위 연령 <b>약 19세</b>, 세계에서 가장 젊은 대륙이에요. 젊음이 곧 힘, 그 잠재력을 파헤쳐 봐요!",
           onDone: finish,
         });
       }, 750);
@@ -638,7 +638,7 @@ export function renderFlagStars(
   const btn = el("button", { class: "hs4-flipbtn", attrs: { type: "button" }, text: "깃발 확대하기" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "국제 뉴스의 정상 회의 장면 — 각국 정상들 사이에 낯선 <b>초록 깃발</b>이 보여요. <b>확대</b>해 볼까요?";
+  helper.innerHTML = "국제 뉴스의 정상 회의 장면, 각국 정상들 사이에 낯선 <b>초록 깃발</b>이 보여요. <b>확대</b>해 볼까요?";
 
   let zoom = false;
   let timer = 0;
@@ -665,8 +665,8 @@ export function renderFlagStars(
           "아프리카 하늘에서 보이는 별자리",
           "아프리카에서 가장 높은 산들",
         ],
-        good: "맞아요! 별 하나가 나라 하나 — <b>아프리카연합(AU)</b>의 55개 회원국이에요. 유럽연합처럼 아프리카도 손을 잡았죠. 어떤 청사진을 그리는지 보러 가요!",
-        bad: "별자리도 산도 아니에요 — 별 하나가 <b>나라 하나</b>! 아프리카 55개국이 모인 <b>아프리카연합(AU)</b>의 깃발이랍니다. 손을 잡은 대륙의 청사진을 보러 가요!",
+        good: "맞아요! 별 하나가 나라 하나, <b>아프리카연합(AU)</b>의 55개 회원국이에요. 유럽연합처럼 아프리카도 손을 잡았죠. 어떤 청사진을 그리는지 보러 가요!",
+        bad: "별자리도 산도 아니에요. 별 하나가 <b>나라 하나</b>! 아프리카 55개국이 모인 <b>아프리카연합(AU)</b>의 깃발이랍니다. 손을 잡은 대륙의 청사진을 보러 가요!",
         onDone: finish,
       });
     }, 750);
@@ -710,7 +710,7 @@ export function renderGreenLine(
   const btn = el("button", { class: "hs4-flipbtn", attrs: { type: "button" }, text: "몇 년 뒤 모습 보기" });
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
-  helper.innerHTML = "위성 지도로 <b>사하라 사막의 남쪽 가장자리</b>를 보고 있어요. 메마른 모래와 흙의 땅 — <b>몇 년 뒤</b> 모습으로 넘겨 볼까요?";
+  helper.innerHTML = "위성 지도로 <b>사하라 사막의 남쪽 가장자리</b>를 보고 있어요. 메마른 모래와 흙의 땅, <b>몇 년 뒤</b> 모습으로 넘겨 볼까요?";
 
   let after = false;
   let timer = 0;
@@ -729,7 +729,7 @@ export function renderGreenLine(
     btn.classList.add("done");
     btn.disabled = true;
     face("surprised");
-    helper.innerHTML = "같은 곳에 <b>가느다란 초록 선</b>이 생겼어요 — 지도를 가로질러 쭉! 이 선의 정체는 뭘까요?";
+    helper.innerHTML = "같은 곳에 <b>가느다란 초록 선</b>이 생겼어요. 지도를 가로질러 쭉! 이 선의 정체는 뭘까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -737,8 +737,8 @@ export function renderGreenLine(
           "우연히 자라난 거대한 잡초 밭",
           "초록색으로 포장한 고속도로",
         ],
-        good: "정답! <b>그레이트 그린 월</b> — 사하라 남쪽 가장자리를 따라 아프리카 20개 나라가 함께 만드는 거대한 '초록 벽'이에요. 세계가 함께하는 노력들을 만나러 가요!",
-        bad: "잡초도 도로도 저렇게 곧고 길 순 없죠 — 정체는 <b>나무의 벽</b>! 사막화를 막으려고 20개 나라가 함께 심는 <b>그레이트 그린 월</b>이에요. 세계가 함께하는 노력들을 만나러 가요!",
+        good: "정답! <b>그레이트 그린 월</b>, 사하라 남쪽 가장자리를 따라 아프리카 20개 나라가 함께 만드는 거대한 '초록 벽'이에요. 세계가 함께하는 노력들을 만나러 가요!",
+        bad: "잡초도 도로도 저렇게 곧고 길 순 없죠. 정체는 <b>나무의 벽</b>! 사막화를 막으려고 20개 나라가 함께 심는 <b>그레이트 그린 월</b>이에요. 세계가 함께하는 노력들을 만나러 가요!",
         onDone: finish,
       });
     }, 750);

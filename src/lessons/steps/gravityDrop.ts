@@ -40,7 +40,7 @@ export const gravityDrop: StepRenderer = (host, step, api) => {
 
   const canvas = el("canvas", { class: "mstage-cvblock", style: "height:260px" });
   const weightVal = el("span", { text: EARTH_W.toFixed(1) });
-  const massPill = el("span", { text: "질량 3 kg — 어디서나 그대로" });
+  const massPill = el("span", { text: "질량 3 kg, 어디서나 그대로" });
   const toastEl = el("div", { class: "toast" });
   const stage = el(
     "div",
@@ -107,7 +107,7 @@ export const gravityDrop: StepRenderer = (host, step, api) => {
     if (goals.size === 4 && !finished) {
       finished = true;
       helper.innerHTML =
-        "확인 완료! 중력은 <b>어디서나 지구(달) 중심 방향</b>으로 물체를 당겨요. 그리고 달에서는 중력이 약해서 <b>무게만 1/6</b>이 되고, 사과라는 물질의 양 — <b>질량 3 kg — 은 변하지 않았어요</b>.";
+        "확인 완료! 중력은 <b>어디서나 지구(달) 중심 방향</b>으로 물체를 당겨요. 그리고 달에서는 중력이 약해서 <b>무게만 1/6</b>이 되고, 사과라는 물질의 양, <b>질량 3 kg, 은 변하지 않았어요</b>.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -138,7 +138,7 @@ export const gravityDrop: StepRenderer = (host, step, api) => {
     moonBtn.setAttribute("aria-pressed", String(v === "moon"));
     weightVal.textContent = v === "earth" ? EARTH_W.toFixed(1) : MOON_W.toFixed(1);
     haptic(HAPTIC.tap);
-    toast(v === "earth" ? "지구 — 사과 무게 29.4 N" : "달 — 같은 사과, 무게는 4.9 N");
+    toast(v === "earth" ? "지구, 사과 무게 29.4 N" : "달, 같은 사과, 무게는 4.9 N");
     if (!finished) {
       helper.innerHTML =
         v === "moon"
@@ -298,7 +298,7 @@ export const gravityDrop: StepRenderer = (host, step, api) => {
   function judgeDrop(ang: number): void {
     const deg = ((ang * 180) / Math.PI + 360) % 360;
     if (world === "moon") {
-      collect("moon", "달에서도 중심으로 — 무게는 4.9 N!");
+      collect("moon", "달에서도 중심으로, 무게는 4.9 N!");
       return;
     }
     if (deg > 210 && deg < 330) collect("top", "위에서 놓아도 중심으로!");

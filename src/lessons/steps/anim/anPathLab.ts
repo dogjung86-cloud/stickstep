@@ -74,7 +74,7 @@ export const anPathLab: StepRenderer = (host, step, api) => {
       { id: "oxy", title: "산소가 적은 곳", sub: "골라내기" },
     ],
     helper: "적혈구가 <b>좌심실</b>에 있어요. 다음에 지나갈 혈관을 탭해 보세요.",
-    finish: "완주! <b>온몸순환</b>은 좌심실 → 대동맥 → 온몸 모세혈관 → 대정맥 → 우심방, <b>허파순환</b>은 우심실 → 폐동맥 → 허파 모세혈관 → 폐정맥 → 좌심방이에요. <b>폐동맥에는 산소가 적은 혈액</b>이, <b>폐정맥에는 산소가 많은 혈액</b>이 흘러요 — 이름이 아니라 어디를 지나왔는지가 산소량을 정해요.",
+    finish: "완주! <b>온몸순환</b>은 좌심실 → 대동맥 → 온몸 모세혈관 → 대정맥 → 우심방, <b>허파순환</b>은 우심실 → 폐동맥 → 허파 모세혈관 → 폐정맥 → 좌심방이에요. <b>폐동맥에는 산소가 적은 혈액</b>이, <b>폐정맥에는 산소가 많은 혈액</b>이 흘러요. 이름이 아니라 어디를 지나왔는지가 산소량을 정해요.",
     cta: s.cta ?? "개념 정리하기",
     waitingCta: "세 가지 목표를 모두 달성해 보세요",
     curio: s.curio,
@@ -122,7 +122,7 @@ export const anPathLab: StepRenderer = (host, step, api) => {
     if (idx >= ORDER.length - 1) {
       phase = "judge";
       judgeBtn.style.display = "";
-      lab.setHelper("한 바퀴 완성! 마지막이에요 — <b>산소를 적게 포함한 혈액이 흐르는 곳</b>을 모두 탭해 보세요. 네 곳이에요.");
+      lab.setHelper("한 바퀴 완성! 마지막이에요. <b>산소를 적게 포함한 혈액이 흐르는 곳</b>을 모두 탭해 보세요. 네 곳이에요.");
       say("이제 산소가 적은 혈액이 흐르는 곳을 골라내요. 네 곳이에요.", 5000);
     }
   }
@@ -136,7 +136,7 @@ export const anPathLab: StepRenderer = (host, step, api) => {
       if (POOR_SET.has(hit.id)) {
         if (picked.has(hit.id)) return;
         picked.add(hit.id);
-        say(`${hit.name} — 산소를 적게 포함한 혈액이 흘러요.`, 3400);
+        say(`${hit.name}, 산소를 적게 포함한 혈액이 흘러요.`, 3400);
         if (picked.size === POOR_SET.size) {
           lab.collect("oxy", "네 곳 모두");
         }

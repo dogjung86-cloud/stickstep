@@ -109,28 +109,28 @@ const TOKENS: TokenDef[] = [
 // 오답 코미디 — 고른 기후의 오개념을 짚고 옳은 방향을 알려 준다(빈 칸은 GENERIC 폴백).
 const WRONG: Record<string, Partial<Record<number, string>>> = {
   reindeer: {
-    1: "순록이 더위에 헉헉! 두꺼운 털옷을 입은 순록에게 열대는 한증막이에요 — 훨씬 추운 북쪽으로.",
+    1: "순록이 더위에 헉헉! 두꺼운 털옷을 입은 순록에게 열대는 한증막이에요. 훨씬 추운 북쪽으로.",
     2: "사막엔 순록이 먹을 이끼가 없어요. 모래바람 대신 눈바람 부는 곳으로!",
     3: "여기도 나쁘진 않지만… 순록의 털옷은 사계절 온화한 곳엔 너무 더워요. 더 북쪽으로!",
-    4: "거의 다 왔어요! 조금 더 북쪽 — 나무도 자라기 힘든, 여름이 아주 짧은 곳이 순록의 고향이에요.",
+    4: "거의 다 왔어요! 조금 더 북쪽, 나무도 자라기 힘든, 여름이 아주 짧은 곳이 순록의 고향이에요.",
     6: "높은 산도 춥긴 한데, 순록 떼가 몰려다니기엔 너무 가팔라요. 북극 근처의 넓은 벌판으로!",
   },
   oasis: {
-    1: "여긴 비가 쏟아지는걸요! 물이 넘치는 곳엔 오아시스가 필요 없어요 — 물이 귀한 사막으로.",
+    1: "여긴 비가 쏟아지는걸요! 물이 넘치는 곳엔 오아시스가 필요 없어요. 물이 귀한 사막으로.",
     3: "비가 넉넉히 오는 곳이라 우물 곁에 모여 살 이유가 없어요. 훨씬 메마른 곳으로!",
-    4: "숲과 눈이 있는 곳이에요 — 오아시스 마을은 비가 거의 안 오는 사막의 지혜랍니다.",
+    4: "숲과 눈이 있는 곳이에요. 오아시스 마을은 비가 거의 안 오는 사막의 지혜랍니다.",
     5: "꽁꽁 언 땅에선 대추야자가 못 자라요. 뜨겁고 메마른 사막으로!",
     6: "산꼭대기엔 오아시스 대신 눈 녹은 물이 흘러요. 모래사막 한가운데로!",
   },
   olive: {
     1: "너무 덥고 습해서 올리브가 지쳐요. 여름은 따갑고 겨울은 부드러운 온화한 곳으로!",
     2: "올리브가 튼튼해도 사막은 너무 메말라요. 비가 어느 정도는 오는 온화한 곳으로!",
-    4: "겨울이 너무 길고 추워요 — 올리브나무가 겨울을 못 넘겨요. 더 따뜻한 곳으로!",
+    4: "겨울이 너무 길고 추워요. 올리브나무가 겨울을 못 넘겨요. 더 따뜻한 곳으로!",
     5: "얼음 위 올리브나무라니! 뿌리가 꽁꽁 얼어 버려요. 사계절이 온화한 곳으로!",
     6: "높은 산 위는 밤마다 서늘해요. 올리브는 햇살 좋은 낮은 언덕을 좋아해요!",
   },
   stilt: {
-    2: "사막은 오히려 습기 걱정이 없는걸요 — 바닥 띄우기는 덥고 '습한' 곳의 지혜예요.",
+    2: "사막은 오히려 습기 걱정이 없는걸요. 바닥 띄우기는 덥고 '습한' 곳의 지혜예요.",
     3: "이곳 집들은 바닥을 땅에 붙여요. 일 년 내내 무덥고 비가 쏟아지는 곳으로!",
     4: "추운 곳에서 바닥을 띄우면 찬바람이 마루 밑으로 슝슝! 더운 곳의 지혜는 더운 곳에서.",
     5: "여기서 바닥을 띄우면 냉동고 위에 사는 셈이에요. 일 년 내내 더운 곳으로!",
@@ -138,12 +138,12 @@ const WRONG: Record<string, Partial<Record<number, string>>> = {
   },
 };
 const GENERIC_WRONG: Record<number, string> = {
-  1: "여긴 일 년 내내 덥고 비가 많은 열대예요 — 이 친구의 살 곳은 아니네요.",
-  2: "여긴 비가 거의 없는 건조 지역이에요 — 다른 곳을 찾아봐요.",
-  3: "여긴 사계절이 뚜렷한 온대예요 — 이 친구에겐 안 맞아요.",
-  4: "여긴 겨울이 길고 추운 냉대예요 — 다른 곳을 찾아봐요.",
-  5: "여긴 일 년 내내 몹시 추운 한대예요 — 이 친구에겐 가혹해요.",
-  6: "여긴 적도 근처인데도 서늘한 고산 지역이에요 — 다른 곳을 찾아봐요.",
+  1: "여긴 일 년 내내 덥고 비가 많은 열대예요. 이 친구의 살 곳은 아니네요.",
+  2: "여긴 비가 거의 없는 건조 지역이에요. 다른 곳을 찾아봐요.",
+  3: "여긴 사계절이 뚜렷한 온대예요. 이 친구에겐 안 맞아요.",
+  4: "여긴 겨울이 길고 추운 냉대예요. 다른 곳을 찾아봐요.",
+  5: "여긴 일 년 내내 몹시 추운 한대예요. 이 친구에겐 가혹해요.",
+  6: "여긴 적도 근처인데도 서늘한 고산 지역이에요. 다른 곳을 찾아봐요.",
 };
 
 const LENS_PAL: Record<number, string> = {
@@ -166,7 +166,7 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "순록 유목민, 오아시스 마을, 올리브 농부, 고상 가옥 — 네 친구를 <b>살기 알맞은 기후</b>에 정착시켜 주세요. 막히면 <b>기후 안경</b>이 힌트!",
+    html: "순록 유목민, 오아시스 마을, 올리브 농부, 고상 가옥, 네 친구를 <b>살기 알맞은 기후</b>에 정착시켜 주세요. 막히면 <b>기후 안경</b>이 힌트!",
   });
   const preview = el(
     "div",
@@ -190,7 +190,7 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "네 친구 모두 정착 완료! <b>위치가 기후를 정하고, 기후가 사는 모습을 빚어요</b> — 옷도, 집도, 기르는 것도 환경에 맞춘 지혜였어요.";
+        "네 친구 모두 정착 완료! <b>위치가 기후를 정하고, 기후가 사는 모습을 빚어요</b>. 옷도, 집도, 기르는 것도 환경에 맞춘 지혜였어요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -216,7 +216,7 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
       try {
         const { enterRotateStage } = await import("../../ui/rotateStage");
         if (disposed) return;
-        rot = enterRotateStage({ title: "지구에 살아 보기 — 네 친구의 보금자리 찾기", onLeave: () => leave() });
+        rot = enterRotateStage({ title: "지구에 살아 보기, 네 친구의 보금자리 찾기", onLeave: () => leave() });
         buildStage(rot);
       } catch {
         // 개발 서버 스테일 캐시 등으로 동적 import가 실패하면 버튼이 조용히 죽는다 — 안내로 살린다
@@ -288,7 +288,7 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.tap);
       if (lensOn) {
         collect("lens", "장착!");
-        showToast("기후 안경 장착 — 색깔이 기후 지역이에요. 범례를 보고 골라 봐요!");
+        showToast("기후 안경 장착, 색깔이 기후 지역이에요. 범례를 보고 골라 봐요!");
       }
     });
 
@@ -316,7 +316,7 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
     for (const t of TOKENS) {
       const tok = el(
         "button",
-        { class: "wpl-token", dataset: { t: t.id }, attrs: { type: "button", "aria-label": `${t.name} — ${t.hint}` } },
+        { class: "wpl-token", dataset: { t: t.id }, attrs: { type: "button", "aria-label": `${t.name}, ${t.hint}` } },
         el("span", { class: "wpl-token-art", html: t.art }),
         el("span", { class: "wpl-token-name", text: t.name }),
       );
@@ -394,12 +394,12 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
       if (code === 0) {
         haptic(HAPTIC.wrong);
         splashAt(sx, sy);
-        showToast("풍덩! 바다에 빠졌어요 — 육지에 놓아 주세요.");
+        showToast("풍덩! 바다에 빠졌어요. 육지에 놓아 주세요.");
         return;
       }
       haptic(HAPTIC.wrong);
       shakeToken(tokenEls.get(tokenId)!);
-      showToast(WRONG[tokenId]?.[code] ?? GENERIC_WRONG[code] ?? "여긴 안 맞아요 — 다른 곳을 찾아봐요.");
+      showToast(WRONG[tokenId]?.[code] ?? GENERIC_WRONG[code] ?? "여긴 안 맞아요. 다른 곳을 찾아봐요.");
     }
 
     function settle(t: TokenDef, sx: number, sy: number): void {
@@ -421,12 +421,12 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
       tok.classList.add("done");
       tok.setAttribute("disabled", "true");
       pillText.textContent = `${t.name} 정착! (${settled.size}/4)`;
-      showToast(`${CLIMATE_LABEL[t.target]} — ${t.success}`);
+      showToast(`${CLIMATE_LABEL[t.target]}, ${t.success}`);
       collect("first", "성공!");
       if (settled.size >= TOKENS.length) {
         collect("all", "완료!");
         pillText.textContent = "네 친구 모두 정착 완료!";
-        later(() => showToast("환경이 삶의 모습을 빚어요 — 세로로 돌아가 정리해 봐요!"), 3100);
+        later(() => showToast("환경이 삶의 모습을 빚어요. 세로로 돌아가 정리해 봐요!"), 3100);
       }
     }
 
@@ -475,7 +475,7 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
       const p = rt.mapPoint(e);
       moveGhost(p.x, p.y);
       tokBtn.classList.add("lift");
-      pillText.textContent = `${t.name} — ${t.hint}`;
+      pillText.textContent = `${t.name}, ${t.hint}`;
       haptic(HAPTIC.tap);
     }
     function onMove(e: PointerEvent): void {
@@ -496,7 +496,7 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
           } else if (c && !finished) {
             // 무응답 방지 — 토큰 없이 지도를 먼저 탭하는 것이 첫 사용자의 자연스러운 조작이다
             haptic(HAPTIC.tap);
-            showToast("먼저 아래에서 친구를 골라 주세요 — 끌어 놓거나, 탭한 뒤 지도를 탭!");
+            showToast("먼저 아래에서 친구를 골라 주세요. 끌어 놓거나, 탭한 뒤 지도를 탭!");
           }
         }
         return;
@@ -529,7 +529,7 @@ export const worldPlaceLab: StepRenderer = (host, step, api) => {
       armed = id;
       const t = TOKENS.find((k) => k.id === id)!;
       tokenEls.get(id)!.classList.add("armed");
-      pillText.textContent = `${t.name} 선택 — 지도에서 살 곳을 탭!`;
+      pillText.textContent = `${t.name} 선택, 지도에서 살 곳을 탭!`;
     }
     function disarm(): void {
       if (!armed) return;

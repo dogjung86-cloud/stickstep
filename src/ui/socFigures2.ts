@@ -120,7 +120,7 @@ export function asiaTerrainFig(): string {
     ${volcano(138.5, 36)}${volcano(121, 13.5)}${volcano(110, -7.5)}
     <ellipse cx="${lonToX(50.5)}" cy="${latToY(41.5)}" rx="9" ry="16" fill="#9CCBE8" stroke="#5A94BE" stroke-width=".8" opacity=".95" transform="rotate(-12 ${lonToX(50.5)} ${latToY(41.5)})"/>
   `;
-  return mapShell(inner, { pad: 12, aria: "아시아의 주요 지형 지도 — 산맥, 고원, 사막, 강, 화산대" });
+  return mapShell(inner, { pad: 12, aria: "아시아의 주요 지형 지도, 산맥, 고원, 사막, 강, 화산대" });
 }
 
 /* ---------- L2: 아시아 기후 지도(퀴즈) ---------- */
@@ -155,7 +155,7 @@ export function monsoonPairFig(): string {
       <text x="86" y="16" text-anchor="middle" font-size="12.5" font-weight="900" fill="${summer ? "#2E6EA8" : "#8A6A2E"}">${summer ? "(가)" : "(나)"}</text>
     </g>`;
   };
-  return `<svg viewBox="0 0 344 160" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="계절풍의 두 방향 — (가)와 (나) 비교 그림">
+  return `<svg viewBox="0 0 344 160" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="계절풍의 두 방향, (가)와 (나) 비교 그림">
     ${panel(0, true)}${panel(172, false)}
   </svg>`;
 }
@@ -211,7 +211,7 @@ export function asiaPopFig(): string {
       ${cluster(110, -7, 3.2, 15)}${cluster(103, 14.5, 5, 11)}${cluster(121, 14.5, 3, 7)}
       ${cluster(45, 31, 5, 6)}${cluster(51, 26, 4, 4)}${cluster(66, 41, 6, 5)}${cluster(92, 50, 8, 3)}
     </g>`;
-  return mapShell(inner, { aria: "아시아의 인구 분포 점 지도 — 점이 빽빽할수록 사람이 많이 사는 곳" });
+  return mapShell(inner, { aria: "아시아의 인구 분포 점 지도, 점이 빽빽할수록 사람이 많이 사는 곳" });
 }
 
 /* ---------- L6: 인구 구조 실루엣 비교(퀴즈) ---------- */
@@ -233,7 +233,7 @@ export function pyramidPairFig(): string {
       <text x="80" y="30" text-anchor="middle" font-size="12.5" font-weight="900" fill="#2E3A50">${tag}</text>
     </g>`;
   };
-  return `<svg viewBox="0 0 320 162" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="두 인구 구조 그래프 비교 — 아래가 넓은 (가), 위가 넓은 (나)">
+  return `<svg viewBox="0 0 320 162" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="두 인구 구조 그래프 비교, 아래가 넓은 (가), 위가 넓은 (나)">
     ${panel(0, "pyr", "(가)")}${panel(160, "inv", "(나)")}
   </svg>`;
 }
@@ -310,7 +310,7 @@ export function factoryMoveFig(): string {
     <text x="${lonToX(103)}" y="${latToY(11.5)}" text-anchor="middle" font-size="11.5" font-weight="900" fill="#2E3A50">㉡</text>
     <text x="${lonToX(77)}" y="${latToY(17)}" text-anchor="middle" font-size="11.5" font-weight="900" fill="#2E3A50">㉢</text>
   `;
-  return mapShell(inner, { aria: "공장이 옮겨 가는 방향을 나타낸 아시아 지도 — 한 나라에서 화살표가 두 지역으로 뻗어 있다" });
+  return mapShell(inner, { aria: "공장이 옮겨 가는 방향을 나타낸 아시아 지도, 한 나라에서 화살표가 두 지역으로 뻗어 있다" });
 }
 
 /* ---------- L4: 공존의 도시 figTabs 아트 ---------- */
@@ -321,7 +321,7 @@ export function singaporeFig(): string {
     <g>
       <rect x="22" y="26" width="130" height="140" rx="10" fill="#FFFFFF" stroke="#C4CFDC" stroke-width="1.6"/>
       <rect x="22" y="26" width="130" height="30" rx="10" fill="#E8590C"/>
-      <!-- 헤더 아래 라운드만 가리는 패치 — 넓게 잡으면 흰 글자 밑이 잘린다(달력 훅과 같은 실사고) -->
+      <!-- 헤더 아래 라운드만 가리는 패치, 넓게 잡으면 흰 글자 밑이 잘린다(달력 훅과 같은 실사고) -->
       <rect x="23.5" y="46" width="127" height="10" fill="#FFFFFF"/>
       <text x="87" y="41" text-anchor="middle" font-size="14" font-weight="900" fill="#fff">공휴일 달력</text>
       <g>${[0, 1, 2, 3].map((r2) => [0, 1, 2, 3, 4, 5, 6].map((c) => `<rect x="${32 + c * 16}" y="${66 + r2 * 24}" width="11" height="11" rx="2.4" fill="#E8ECF2"/>`).join("")).join("")}</g>
@@ -359,7 +359,7 @@ export function malaysiaFig(): string {
     <ellipse cx="160" cy="154" rx="120" ry="8" fill="#2A3A5E" opacity=".1"/>
     ${person(70, "#2E9E5B")}${person(115, "#E8B93C")}${person(160, "#E8590C")}${person(205, "#7A5CB8")}${person(250, "#3F8FC8")}
     <path d="M92 118q10-8 18 0M182 118q10-8 18 0" stroke="#8A93A6" stroke-width="1.6" fill="none" opacity=".6"/>
-    <text x="160" y="180" text-anchor="middle" font-size="12.5" font-weight="900" fill="#8A4A1E">서로 다른 옷과 종교가 한 행렬로 — 문화 화합 행진</text>
+    <text x="160" y="180" text-anchor="middle" font-size="12.5" font-weight="900" fill="#8A4A1E">서로 다른 옷과 종교가 한 행렬로, 문화 화합 행진</text>
   </svg>`;
 }
 
@@ -413,7 +413,7 @@ export function dubaiOilFig(): string {
       <path d="M62 124v10M62 127l-7 4M62 127l9 2M62 134l-6 10M62 134l6 10"/>
       <path d="M71 128l10-4" stroke="#8A93A6"/>
     </g>
-    <text x="160" y="176" text-anchor="middle" font-size="12.5" font-weight="900" fill="#8A5A18">석유 발견 — 검은 황금의 시대</text>
+    <text x="160" y="176" text-anchor="middle" font-size="12.5" font-weight="900" fill="#8A5A18">석유 발견, 검은 황금의 시대</text>
   </svg>`;
 }
 
@@ -436,7 +436,7 @@ export function dubaiNowFig(): string {
     <path d="M28 44l20-6-4 8q10 0 14 6l-24 4q-8-6-6-12z" fill="#E8EEF6" stroke="#7A8698" stroke-width="1.4"/>
     <path d="M44 56q10 6 22 6" stroke="#C4CFDC" stroke-width="1.8" stroke-linecap="round"/>
     <path d="M262 152q10-6 20 0M234 158q10-6 20 0" stroke="#5BB8E8" stroke-width="2.2" stroke-linecap="round"/>
-    <text x="160" y="180" text-anchor="middle" font-size="12.5" font-weight="900" fill="#2E4A78">관광·금융의 도시로 — 석유 이후를 준비해요</text>
+    <text x="160" y="180" text-anchor="middle" font-size="12.5" font-weight="900" fill="#2E4A78">관광·금융의 도시로, 석유 이후를 준비해요</text>
   </svg>`;
 }
 

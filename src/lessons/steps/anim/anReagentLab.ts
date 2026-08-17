@@ -82,7 +82,7 @@ export const anReagentLab: StepRenderer = (host, step, api) => {
       { id: "control", title: "대조군 확인", sub: "증류수" },
     ],
     helper: "시약병을 끌어 시험관 위에 놓으면 몇 방울이 떨어져요. 먼저 <b>밥물</b>에 아이오딘 용액을 떨어뜨려 볼까요?",
-    finish: "정리! <b>아이오딘 → 청람색(녹말)</b>, <b>뷰렛 → 보라색(단백질)</b>, <b>수단 Ⅲ → 선홍색(지방)</b>, <b>베네딕트 + 가열 → 황적색(당분)</b>. 아무것도 없는 증류수는 어떤 시약에도 변하지 않았죠 — 그게 비교의 기준이 되어 줘요.",
+    finish: "정리! <b>아이오딘 → 청람색(녹말)</b>, <b>뷰렛 → 보라색(단백질)</b>, <b>수단 Ⅲ → 선홍색(지방)</b>, <b>베네딕트 + 가열 → 황적색(당분)</b>. 아무것도 없는 증류수는 어떤 시약에도 변하지 않았죠. 그게 비교의 기준이 되어 줘요.",
     cta: s.cta ?? "개념 정리하기",
     waitingCta: "세 가지 목표를 모두 달성해 보세요",
     curio: s.curio,
@@ -146,7 +146,7 @@ export const anReagentLab: StepRenderer = (host, step, api) => {
     life.later(() => {
       if (SAMPLES[i].hits.includes(r.id) && !r.needHeat) {
         foundBy.add(r.finds);
-        say(`${SAMPLES[i].name}이(가) ${r.hitName}으로 변했어요 — ${r.finds}이(가) 들어 있어요!`);
+        say(`${SAMPLES[i].name}이(가) ${r.hitName}으로 변했어요. ${r.finds}이(가) 들어 있어요!`);
         checkGoals();
       } else if (r.needHeat) {
         say("베네딕트 용액은 그냥 두면 변하지 않아요. 뜨거운 물에 담가 볼까요?");
@@ -154,7 +154,7 @@ export const anReagentLab: StepRenderer = (host, step, api) => {
         if (SAMPLES[i].id === "water") {
           if (!lab.has("control")) {
             lab.collect("control", "변화 없음 확인");
-            say("증류수는 어떤 시약에도 변하지 않아요 — 이게 비교의 기준(대조군)이에요.");
+            say("증류수는 어떤 시약에도 변하지 않아요. 이게 비교의 기준(대조군)이에요.");
           }
         } else {
           say(`${SAMPLES[i].name}은(는) ${r.short}에 변하지 않았어요. ${r.finds}은(는) 없나 봐요.`);
@@ -228,7 +228,7 @@ export const anReagentLab: StepRenderer = (host, step, api) => {
         any = true;
         if (SAMPLES[i].hits.includes("benedict")) {
           foundBy.add("당분");
-          say(`${SAMPLES[i].name}이(가) 황적색으로 변했어요 — 당분이 들어 있어요!`);
+          say(`${SAMPLES[i].name}이(가) 황적색으로 변했어요. 당분이 들어 있어요!`);
         }
       }
     });

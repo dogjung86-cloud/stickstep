@@ -251,13 +251,13 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
   }
 
   function coachFor(): string {
-    if (pz.kind === "white") return "빨강·초록·파랑 세 빛이 모두 모이면 하얀빛 — 빛의 삼원색이에요!";
+    if (pz.kind === "white") return "빨강·초록·파랑 세 빛이 모두 모이면 하얀빛, 빛의 삼원색이에요!";
     if (pz.kind === "pair" && pz.pairReq) {
       const parts = [1, 2, 4].filter((b) => (pz.pairReq! & b) !== 0).map((b) => COLOR_NAME[b]);
       return `${parts[0]} 빛과 ${parts[1]} 빛이 한 보석에 모이면 ${COLOR_NAME[pz.pairReq]}빛이 돼요!`;
     }
     if (pz.pieces.some((p) => p.kind === "glass")) return "유리 블록은 빛을 반은 통과, 반은 반사시켜 둘로 나눠요.";
-    if (stageNo < 5) return "빛은 블록 면에 부딪혀 튕겨요 — 입사각과 반사각이 언제나 같아요.";
+    if (stageNo < 5) return "빛은 블록 면에 부딪혀 튕겨요. 입사각과 반사각이 언제나 같아요.";
     return "블록 자리를 잘 골라 보세요. 몇 번을 옮겨도 괜찮아요.";
   }
 
@@ -373,7 +373,7 @@ export function laserMazeScreen(o: { onExit: () => void }): Screen {
       pz.kind === "white"
         ? "빨강·초록·파랑이 모두 도착해야 켜져요. 한 빛씩 차례로 맞춰 보세요."
         : pz.kind === "pair"
-          ? "두 빛을 한 보석으로 — 한 빛을 먼저 도착시키고 나머지를 맞춰 보세요."
+          ? "두 빛을 한 보석으로, 한 빛을 먼저 도착시키고 나머지를 맞춰 보세요."
           : pz.pieces.some((p) => p.kind === "glass")
             ? "유리 블록은 빛을 둘로 나눠요. 갈라진 가지가 어디로 가는지 먼저 보세요."
             : "빛이 꺾여야 하는 자리를 먼저 정하고, 그 칸에 블록을 놓아 보세요.";

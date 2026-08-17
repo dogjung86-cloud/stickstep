@@ -100,7 +100,7 @@ export const meltCurve: StepRenderer = (host, step, api) => {
 
   const helper = el("div", {
     class: "helper",
-    html: "시험관 속 <b>흰 고체</b>를 물중탕으로 천천히 데워요. 그래프의 온도 곡선 — 어딘가에서 <b>이상한 일</b>이 벌어져요.",
+    html: "시험관 속 <b>흰 고체</b>를 물중탕으로 천천히 데워요. 그래프의 온도 곡선, 어딘가에서 <b>이상한 일</b>이 벌어져요.",
   });
   host.append(goalChips, helper, stage, ctrls, heatBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -141,7 +141,7 @@ export const meltCurve: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "플래토(평평한 구간)의 온도가 <b>녹는점</b> — 물질마다 고유하고 양과 무관해요. 그래서 물질의 특성이에요.";
+        "플래토(평평한 구간)의 온도가 <b>녹는점</b>, 물질마다 고유하고 양과 무관해요. 그래서 물질의 특성이에요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -177,7 +177,7 @@ export const meltCurve: StepRenderer = (host, step, api) => {
     archived.push({ sub, mass, pts: samples });
     samples = [];
     (heatBtn.firstChild as HTMLElement).textContent = "다시 가열하기";
-    if (!finished) toast("곡선 완성 — 조건을 바꿔 겹쳐 봐요");
+    if (!finished) toast("곡선 완성, 조건을 바꿔 겹쳐 봐요");
   }
 
   // ---- 컨트롤 이벤트 ----
@@ -192,28 +192,28 @@ export const meltCurve: StepRenderer = (host, step, api) => {
     sub = "la";
     pick(btnLa, btnPa);
     haptic(HAPTIC.tap);
-    resetRun(running || samples.length ? "물질을 바꿨어요 — 새 시험관으로!" : undefined);
+    resetRun(running || samples.length ? "물질을 바꿨어요. 새 시험관으로!" : undefined);
   };
   const onPa = (): void => {
     if (sub === "pa") return;
     sub = "pa";
     pick(btnPa, btnLa);
     haptic(HAPTIC.tap);
-    resetRun(running || samples.length ? "물질을 바꿨어요 — 새 시험관으로!" : undefined);
+    resetRun(running || samples.length ? "물질을 바꿨어요. 새 시험관으로!" : undefined);
   };
   const on1g = (): void => {
     if (mass === 1) return;
     mass = 1;
     pick(btn1g, btn2g);
     haptic(HAPTIC.tap);
-    resetRun(running || samples.length ? "양을 바꿨어요 — 새 시험관으로!" : undefined);
+    resetRun(running || samples.length ? "양을 바꿨어요. 새 시험관으로!" : undefined);
   };
   const on2g = (): void => {
     if (mass === 2) return;
     mass = 2;
     pick(btn2g, btn1g);
     haptic(HAPTIC.tap);
-    resetRun(running || samples.length ? "양을 바꿨어요 — 새 시험관으로!" : undefined);
+    resetRun(running || samples.length ? "양을 바꿨어요. 새 시험관으로!" : undefined);
   };
   btnLa.addEventListener("click", onLa);
   btnPa.addEventListener("click", onPa);
@@ -448,7 +448,7 @@ export const meltCurve: StepRenderer = (host, step, api) => {
       ctx.fillStyle = "#FFD9E6";
       ctx.font = "700 10.5px Pretendard, sans-serif";
       ctx.textAlign = "left";
-      ctx.fillText("녹는 중 — 고체+액체", chipX + 11, chipY + 14.5);
+      ctx.fillText("녹는 중, 고체+액체", chipX + 11, chipY + 14.5);
     }
   }
 
@@ -576,7 +576,7 @@ export const meltCurve: StepRenderer = (host, step, api) => {
         if (T >= mp - 1e-6) {
           zone = "melt";
           haptic(HAPTIC.cross);
-          toast(`${mp}℃ — 온도가 멈췄어요! 녹는 중`);
+          toast(`${mp}℃, 온도가 멈췄어요! 녹는 중`);
           if (!finished)
             helper.innerHTML =
               "가열 중인데 온도가 <b>꼼짝도 안 해요</b>. 열이 전부 <b>고체→액체 변화</b>에 쓰이는 중이거든요. 이 온도가 바로 <b>녹는점</b>!";
@@ -587,14 +587,14 @@ export const meltCurve: StepRenderer = (host, step, api) => {
         if (!observed && melt >= 0.5) {
           observed = true;
           seen[sub].add(mass);
-          if (sub === "la") collect("la", "43.8℃!", "로르산의 녹는점 — 43.8℃!");
-          else collect("pa", "62.5℃!", "물질이 다르면 녹는점도 달라요 — 62.5℃!");
+          if (sub === "la") collect("la", "43.8℃!", "로르산의 녹는점, 43.8℃!");
+          else collect("pa", "62.5℃!", "물질이 다르면 녹는점도 달라요. 62.5℃!");
           if (seen.la.size === 2 || seen.pa.size === 2)
             collect("amt", "그대로!", "양을 바꿔도 플래토 온도는 그대로!");
         }
         if (melt >= 1) {
           zone = "liquid";
-          toast("다 녹았어요 — 온도가 다시 올라요");
+          toast("다 녹았어요. 온도가 다시 올라요");
         }
       } else {
         T += rate * dtSec;

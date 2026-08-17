@@ -222,14 +222,14 @@ export const coilFieldLab: StepRenderer = (host, step, api) => {
     toast(msg);
     if (id === "on")
       helper.innerHTML =
-        "잘 봐요 — <b>코일 축 위</b>의 바늘은 축 방향, <b>코일 위·아래</b> 바늘은 그 <b>반대 방향</b>이죠? 이제 <b>전류 방향 바꾸기</b>!";
+        "잘 봐요. <b>코일 축 위</b>의 바늘은 축 방향, <b>코일 위·아래</b> 바늘은 그 <b>반대 방향</b>이죠? 이제 <b>전류 방향 바꾸기</b>!";
     if (id === "flip")
       helper.innerHTML =
-        "이번엔 <b>전류 세기</b> 슬라이더를 양끝까지 움직여 보세요 — 셀수록 곡선이 밝아지고 바늘이 빠르고 굳건하게 정렬해요!";
+        "이번엔 <b>전류 세기</b> 슬라이더를 양끝까지 움직여 보세요. 셀수록 곡선이 밝아지고 바늘이 빠르고 굳건하게 정렬해요!";
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "전류가 흐르는 코일 주위엔 <b>자기장</b>! 나침반 <b>N극이 가리키는 방향</b>이 그 지점의 자기장 방향 — <b>전류를 뒤집으면 자기장도 뒤집혀요</b>.";
+        "전류가 흐르는 코일 주위엔 <b>자기장</b>! 나침반 <b>N극이 가리키는 방향</b>이 그 지점의 자기장 방향, <b>전류를 뒤집으면 자기장도 뒤집혀요</b>.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -249,9 +249,9 @@ export const coilFieldLab: StepRenderer = (host, step, api) => {
     }
     if (on && !goals.has("on"))
       helper.innerHTML =
-        "바늘들이 <b>스르르 돌아가</b> 제각각 새 방향에 멈춰요 — 그 방향이 바로 그 지점의 <b>자기장 방향</b>이에요.";
+        "바늘들이 <b>스르르 돌아가</b> 제각각 새 방향에 멈춰요. 그 방향이 바로 그 지점의 <b>자기장 방향</b>이에요.";
     else if (!on && !finished)
-      helper.innerHTML = "전류가 끊기면 자기장도 사라져요 — 바늘은 다시 <b>북쪽</b>으로 슬금슬금 돌아가요.";
+      helper.innerHTML = "전류가 끊기면 자기장도 사라져요. 바늘은 다시 <b>북쪽</b>으로 슬금슬금 돌아가요.";
   }
 
   btnPower.addEventListener("click", () => setPower(!on));
@@ -259,7 +259,7 @@ export const coilFieldLab: StepRenderer = (host, step, api) => {
     pol = pol === 1 ? -1 : 1;
     btnFlip.setAttribute("aria-pressed", String(pol === -1));
     haptic(HAPTIC.select);
-    toast(on ? "전류 방향 반대로 — 바늘을 보세요!" : "방향을 바꿨어요 — 전류를 켜야 보여요");
+    toast(on ? "전류 방향 반대로, 바늘을 보세요!" : "방향을 바꿨어요. 전류를 켜야 보여요");
   });
 
   // 무대 속 스위치 탭 → 전원 토글
@@ -433,14 +433,14 @@ export const coilFieldLab: StepRenderer = (host, step, api) => {
         loMs += dt * 16.7;
         if (!loToasted && loMs > 350) {
           loToasted = true;
-          if (!goals.has("power")) toast("약한 전류 — 곡선이 흐려지고 바늘이 굼떠요");
+          if (!goals.has("power")) toast("약한 전류, 곡선이 흐려지고 바늘이 굼떠요");
         }
       }
       if (cur >= 0.96) {
         hiMs += dt * 16.7;
         if (!hiToasted && hiMs > 350) {
           hiToasted = true;
-          if (!goals.has("power")) toast("강한 전류 — 곡선이 밝고 바늘이 굳건해요");
+          if (!goals.has("power")) toast("강한 전류, 곡선이 밝고 바늘이 굳건해요");
         }
       }
       if (!goals.has("power") && loMs > 350 && hiMs > 350)

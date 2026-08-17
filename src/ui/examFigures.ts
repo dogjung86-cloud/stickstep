@@ -2287,7 +2287,7 @@ export function lightPixelExamFig(o: { on: [boolean, boolean, boolean] }): strin
     bars.map(([c], k) => `<rect x="${x + k * 26}" y="${y}" width="18" height="52" rx="4" fill="${c}" opacity="${o.on[k] ? 1 : 0.24}"/>`).join("");
   const onNames = bars.filter((_, k) => o.on[k]).map(([, n]) => n).join("과 ");
   const offNames = bars.filter((_, k) => !o.on[k]).map(([, n]) => n).join("과 ");
-  return `<svg viewBox="0 0 344 190" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="화면 한 부분을 확대한 모습 — ${onNames} 화소는 켜져 있고 ${offNames} 화소는 꺼져 있어요">
+  return `<svg viewBox="0 0 344 190" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="화면 한 부분을 확대한 모습, ${onNames} 화소는 켜져 있고 ${offNames} 화소는 꺼져 있어요">
     <rect x="42" y="16" width="260" height="150" rx="12" fill="#10161F"/>
     ${[0, 1].flatMap((r) => [0, 2].map((c) => cell(74 + c * 52, 32 + r * 66))).join("")}
     <rect x="42" y="16" width="260" height="150" rx="12" stroke="#8B95A1" stroke-width="2"/>
@@ -2400,7 +2400,7 @@ export function lightPipesFig(o: { marks: [number, number, number] }): string {
     })
     .join("");
   // aria는 중립 — 기호가 붙은 관의 길이 서열을 말하지 않는다(길이 비교가 곧 문항의 과제, lightWave4Fig와 동일 문법)
-  return `<svg viewBox="0 0 344 200" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="길이가 서로 다른 관 여섯 개를 나란히 묶은 악기 그림. 세 관에 ㉠, ㉡, ㉢ 기호가 붙어 있어요 — 기호가 붙은 관의 길이를 비교해 보세요">
+  return `<svg viewBox="0 0 344 200" xmlns="http://www.w3.org/2000/svg" fill="none" role="img" aria-label="길이가 서로 다른 관 여섯 개를 나란히 묶은 악기 그림. 세 관에 ㉠, ㉡, ㉢ 기호가 붙어 있어요. 기호가 붙은 관의 길이를 비교해 보세요">
     <path d="M48 44 L302 44" stroke="#B0846A" stroke-width="5" stroke-linecap="round" opacity=".55"/>
     ${Array.from({ length: 6 }, (_, i) => pipe(i)).join("")}
     ${marks}
@@ -2461,7 +2461,7 @@ export function atomMolsFig(mols: { key: "H2" | "O2" | "O3" | "CO" | "CO2" | "H2
       return molecule + `<text x="${cx}" y="${cy + 56}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4E5968">${m.label}</text>`;
     })
     .join("");
-  return `<svg viewBox="0 0 344 ${H}" ${NS} fill="none" role="img" aria-label="분자 모형 ${mols.map((m) => m.label).join(", ")} — 각 모형을 이루는 공(원자)의 색깔 종류와 개수를 살펴보세요">${cells}</svg>`;
+  return `<svg viewBox="0 0 344 ${H}" ${NS} fill="none" role="img" aria-label="분자 모형 ${mols.map((m) => m.label).join(", ")}, 각 모형을 이루는 공(원자)의 색깔 종류와 개수를 살펴보세요">${cells}</svg>`;
 }
 
 /** 원자 구조 ㉠㉡㉢ 판독(파라미터형) — 원자핵 속 밝은 알갱이(양성자)·회색 알갱이(중성자)와 궤도의 전자에
@@ -2499,7 +2499,7 @@ export function atomStructQuizFig(o: { p: number; n: number; e: number } = { p: 
   const pT: [number, number] = [cx + spots[pIdx][0], cy + spots[pIdx][1]];
   const nT: [number, number] = [cx + spots[nIdx][0], cy + spots[nIdx][1]];
   const eT = ePos.reduce((best, p) => (Math.hypot(p[0] - 310, p[1] - 146) < Math.hypot(best[0] - 310, best[1] - 146) ? p : best), ePos[0]);
-  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="원자 모형 — 가운데 덩어리(원자핵) 속에 밝은 알갱이와 회색 알갱이가 섞여 있고, 주위 점선 궤도에 작은 알갱이들이 있어요. 세 종류의 알갱이에 ㉠, ㉡, ㉢ 기호가 붙어 있어요">
+  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="원자 모형, 가운데 덩어리(원자핵) 속에 밝은 알갱이와 회색 알갱이가 섞여 있고, 주위 점선 궤도에 작은 알갱이들이 있어요. 세 종류의 알갱이에 ㉠, ㉡, ㉢ 기호가 붙어 있어요">
     <ellipse cx="${cx}" cy="${cy}" rx="112" ry="62" stroke="#C9D2DC" stroke-width="1.6" stroke-dasharray="5 6"/>
     <circle cx="${cx}" cy="${cy}" r="30" fill="#F6E3DC" stroke="#D8A08C" stroke-width="1.6"/>
     ${grainSvg}
@@ -2532,7 +2532,7 @@ export function atomPeriodicExamFig(o: { cells: { g: number; period: number; t: 
         <text x="${bx(c.g) + 15}" y="${by(c.period) + 24}" text-anchor="middle" font-size="${c.t.length > 1 ? 12 : 14}" font-weight="800" fill="${tint[2]}">${c.t}</text>`;
     })
     .join("");
-  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="주기율표 일부(1~3주기, 1·2·13~18족 칸만 있는 단축형) — 몇 개의 칸에 기호가 적혀 있어요. 각 기호가 놓인 세로줄과 가로줄 위치를 살펴보세요">
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="주기율표 일부(1~3주기, 1·2·13~18족 칸만 있는 단축형), 몇 개의 칸에 기호가 적혀 있어요. 각 기호가 놓인 세로줄과 가로줄 위치를 살펴보세요">
     ${["1", "2", "13", "14", "15", "16", "17", "18"].map((g, i) => `<text x="${49 + i * 34}" y="22" text-anchor="middle" font-size="9.5" fill="#8B95A1">${g}족</text>`).join("")}
     <text x="16" y="52" font-size="9.5" fill="#8B95A1">1</text><text x="16" y="92" font-size="9.5" fill="#8B95A1">2</text><text x="16" y="132" font-size="9.5" fill="#8B95A1">3</text>
     <text x="14" y="176" font-size="9" fill="#B0B8C1">주기</text>
@@ -2544,7 +2544,7 @@ export function atomPeriodicExamFig(o: { cells: { g: number; period: number; t: 
 /** 주기율표 한 칸 확대 ㉠㉡㉢ — 칸 속 세 자리(위 숫자·가운데 기호·아래 이름)의 뜻을 묻는 문항용.
  *  cellAnatomyFig(개념용)와 달리 정답 라벨을 전부 감춘 시험판. */
 export function atomCellQuizFig(): string {
-  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="수소의 주기율표 한 칸을 확대한 그림 — 위 왼쪽의 원자 번호 1을 ㉠이, 가운데 원소 기호 H를 ㉡이 가리켜요">
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="수소의 주기율표 한 칸을 확대한 그림, 위 왼쪽의 원자 번호 1을 ㉠이, 가운데 원소 기호 H를 ㉡이 가리켜요">
     <rect x="130" y="24" width="96" height="132" rx="10" fill="#F0F4F9"/>
     <rect x="124" y="18" width="96" height="132" rx="10" fill="#FAFCFF" stroke="#B8C2CE" stroke-width="1.6"/>
     <text x="138" y="42" font-size="16" font-weight="800" fill="#C43A2E">1</text>
@@ -2574,7 +2574,7 @@ export function atomFlowFig(o: { start: string; q1: string; q2: string }): strin
     return `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="#8B95A1" stroke-width="1.7"/>
       <path d="M${x1} ${y1 + 1} l-4.5 -8 h9 z" fill="#8B95A1" transform="rotate(${deg} ${x1} ${y1})"/>`;
   };
-  return `<svg viewBox="0 0 344 232" ${NS} fill="none" role="img" aria-label="물질 분류 순서도 — 시작 상자의 물질들을 질문 두 개로 차례로 갈라 (가), (나), (다), (라) 네 칸으로 나눠요. 두 질문의 예와 아니요가 각각 다른 칸으로 이어져요">
+  return `<svg viewBox="0 0 344 232" ${NS} fill="none" role="img" aria-label="물질 분류 순서도, 시작 상자의 물질들을 질문 두 개로 차례로 갈라 (가), (나), (다), (라) 네 칸으로 나눠요. 두 질문의 예와 아니요가 각각 다른 칸으로 이어져요">
     <rect x="62" y="8" width="220" height="30" rx="15" fill="#F2F4F6" stroke="#C4CAD2" stroke-width="1.4"/>
     <text x="172" y="27" text-anchor="middle" font-size="11.5" font-weight="800" fill="#333D4B">${o.start}</text>
     <line x1="172" y1="38" x2="172" y2="50" stroke="#8B95A1" stroke-width="1.7"/>
@@ -2669,7 +2669,7 @@ export function atomPieFig(o: { slices: { label: string; pct: number; hex: strin
     })
     .join("");
   const spoken = o.slices.map((s) => (s.hide ? `${s.label} ㉠ 퍼센트` : `${s.label} ${s.pct} 퍼센트`)).join(", ");
-  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="이온 조성 원그래프 — ${spoken}">
+  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="이온 조성 원그래프, ${spoken}">
     ${paths}
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#DCE0E6" stroke-width="1.4"/>
     ${legend}
@@ -2699,7 +2699,7 @@ export function atomCondFig(o: { cups: { label: string; on: boolean }[] }): stri
     })
     .join("");
   const spoken = o.cups.map((c) => `${c.label}의 전구는 ${c.on ? "켜졌어요" : "켜지지 않았어요"}`).join(", ");
-  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="전극과 전구를 꽂은 비커 실험 — ${spoken}">${cups}</svg>`;
+  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="전극과 전구를 꽂은 비커 실험, ${spoken}">${cups}</svg>`;
 }
 
 /** 이온 생성 전·후 모형(파라미터형) — 왼쪽 중성 원자(양성자 p·전자 p), 오른쪽 이온(전자 after).
@@ -2712,7 +2712,7 @@ export function atomIonFormExamFig(o: { p: number; after: number; tell?: boolean
     }).join("");
   const diff = o.after - o.p;
   const text = o.tell ? `<text x="172" y="44" text-anchor="middle" font-size="10.5" font-weight="700" fill="${diff < 0 ? "#F04452" : "#3182F6"}">전자 ${Math.abs(diff)}개 ${diff < 0 ? "잃음" : "얻음"}</text>` : "";
-  return `<svg viewBox="0 0 344 130" ${NS} fill="none" role="img" aria-label="원자가 이온으로 변하는 모형 — 왼쪽은 변하기 전 원자, 오른쪽은 변한 뒤의 입자예요. 원자핵의 숫자와 주위 알갱이 개수를 비교해 보세요">
+  return `<svg viewBox="0 0 344 130" ${NS} fill="none" role="img" aria-label="원자가 이온으로 변하는 모형, 왼쪽은 변하기 전 원자, 오른쪽은 변한 뒤의 입자예요. 원자핵의 숫자와 주위 알갱이 개수를 비교해 보세요">
     ${xnuc(80, 66, o.p, 15)}${ring(80, 66, o.p, 36, 26)}
     <path d="M140 66h56M188 60l8 6-8 6" stroke="#8B95A1" stroke-width="2.2" fill="none"/>
     ${text}
@@ -2778,7 +2778,7 @@ export function elecRubExamFig(o: { moved: number }): string {
 export function elecCanExamFig(o?: { pol?: "+" | "-" }): string {
   const pol = o?.pol ?? "-";
   const sign = pol === "-" ? eminus : eplus;
-  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="대전된 플라스틱 막대를 눕힌 알루미늄 깡통의 오른쪽에서 가까이 가져가는 그림 — ㉠은 막대와 가까운 쪽, ㉡은 먼 쪽">
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="대전된 플라스틱 막대를 눕힌 알루미늄 깡통의 오른쪽에서 가까이 가져가는 그림, ㉠은 막대와 가까운 쪽, ㉡은 먼 쪽">
     <line x1="20" y1="158" x2="324" y2="158" stroke="#C9D2DC" stroke-width="2"/>
     <g>
       <rect x="46" y="88" width="128" height="66" rx="33" fill="#D8E2EE" stroke="#8B99AC" stroke-width="2"/>
@@ -2800,7 +2800,7 @@ export function elecCanExamFig(o?: { pol?: "+" | "-" }): string {
 
 /** 검전기(자기완결 문항용) — 금속판·금속박 구조 라벨 + 대전체 접근. 금속박은 접근 전 닫힌 상태. */
 export function elecScopeFig(): string {
-  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="금속판과 금속박으로 이루어진 검전기에 대전된 막대를 가까이 가져가는 그림 — 금속박은 아직 닫혀 있다">
+  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="금속판과 금속박으로 이루어진 검전기에 대전된 막대를 가까이 가져가는 그림, 금속박은 아직 닫혀 있다">
     <g transform="rotate(24 234 46)">
       <rect x="188" y="38" width="96" height="16" rx="8" fill="#C8DCEC" stroke="#7A94AC" stroke-width="1.6"/>
       ${eminus(206, 46, 5.5)}${eminus(228, 46, 5.5)}${eminus(250, 46, 5.5)}${eminus(268, 46, 5.5)}
@@ -2843,7 +2843,7 @@ export function elecViExamFig(o: {
     })
     .join("");
   const dots = (o.dots ?? []).map(([v, ma]) => `<circle cx="${gx(v)}" cy="${gy(ma)}" r="4.5" fill="#E8636B"/>`).join("");
-  return `<svg viewBox="0 0 344 214" ${NS} fill="none" role="img" aria-label="니크롬선에 걸어 준 전압에 따른 전류의 세기 그래프 — 축의 눈금 숫자로 값을 읽어요">
+  return `<svg viewBox="0 0 344 214" ${NS} fill="none" role="img" aria-label="니크롬선에 걸어 준 전압에 따른 전류의 세기 그래프, 축의 눈금 숫자로 값을 읽어요">
     ${grid}
     <line x1="52" y1="26" x2="52" y2="178" stroke="#B0B8C1" stroke-width="1.6"/>
     <line x1="52" y1="178" x2="320" y2="178" stroke="#B0B8C1" stroke-width="1.6"/>
@@ -2864,7 +2864,7 @@ export function elecViChoicesFig(): string {
       <line x1="12" y1="68" x2="58" y2="68" stroke="#B0B8C1" stroke-width="1.3"/>
       <path d="${path}" stroke="#3182F6" stroke-width="2" fill="none" stroke-linecap="round"/>
     </g>`;
-  return `<svg viewBox="0 0 344 96" ${NS} fill="none" role="img" aria-label="전압에 따른 전류 그래프의 모양 다섯 가지 — 번호 ①부터 ⑤ 중에서 골라요">
+  return `<svg viewBox="0 0 344 96" ${NS} fill="none" role="img" aria-label="전압에 따른 전류 그래프의 모양 다섯 가지, 번호 ①부터 ⑤ 중에서 골라요">
     ${cell(2, "①", "M12 46 L54 26")}
     ${cell(70, "②", "M12 68 L54 28")}
     ${cell(138, "③", "M12 64 Q20 34 54 30")}
@@ -2896,7 +2896,7 @@ export function elecTwoCircuitFig(o: { right: "series" | "parallel" }): string {
     ${ebulb(254, 36, 12)}
     ${ebattery(228, 138, 50, 22)}
     <text x="254" y="14" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">(나)</text>`;
-  return `<svg viewBox="0 0 344 172" ${NS} fill="none" role="img" aria-label="전지 한 개짜리 회로 두 개 — (가)는 전구 한 개, (나)는 전구 두 개가 연결되어 있다">
+  return `<svg viewBox="0 0 344 172" ${NS} fill="none" role="img" aria-label="전지 한 개짜리 회로 두 개, (가)는 전구 한 개, (나)는 전구 두 개가 연결되어 있다">
     ${left}${right}
   </svg>`;
 }
@@ -2907,7 +2907,7 @@ export function elecPointsFig(o: { mode: "series" | "parallel" }): string {
     `<circle cx="${x}" cy="${y}" r="5" fill="#F0A422" stroke="#B87700" stroke-width="1.6"/>
      <text x="${x}" y="${y - 12}" text-anchor="middle" font-size="13.5" font-weight="800" fill="#4E5968">${t}</text>`;
   if (o.mode === "series")
-    return `<svg viewBox="0 0 344 178" ${NS} fill="none" role="img" aria-label="전지에 전구 두 개가 한 줄로 연결된 회로 — 도선 위 세 지점에 ㉠㉡㉢ 표시가 있다">
+    return `<svg viewBox="0 0 344 178" ${NS} fill="none" role="img" aria-label="전지에 전구 두 개가 한 줄로 연결된 회로, 도선 위 세 지점에 ㉠㉡㉢ 표시가 있다">
       <path d="M130 152H56V52h232v100h-100" stroke="#8B95A1" stroke-width="3.6" fill="none" stroke-linecap="round"/>
       ${ebulb(140, 52, 14)}
       ${ebulb(216, 52, 14)}
@@ -2916,7 +2916,7 @@ export function elecPointsFig(o: { mode: "series" | "parallel" }): string {
       ${dot(178, 52, "㉡")}
       ${dot(262, 52, "㉢")}
     </svg>`;
-  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="전지에 전구 두 개가 두 갈래로 연결된 회로 — 갈라지기 전 도선에 ㉠, 두 갈래에 ㉡㉢ 표시가 있다">
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="전지에 전구 두 개가 두 갈래로 연결된 회로, 갈라지기 전 도선에 ㉠, 두 갈래에 ㉡㉢ 표시가 있다">
     <path d="M132 164H56V64h232v100h-100" stroke="#8B95A1" stroke-width="3.6" fill="none" stroke-linecap="round"/>
     <path d="M120 64v-34h104v34" stroke="#8B95A1" stroke-width="3.6" fill="none" stroke-linecap="round"/>
     ${ebulb(172, 64, 13)}
@@ -2958,7 +2958,7 @@ export function elecFlowFig(o: { q1: string; q2: string }): string {
 
 /** 전기 기구 표시 라벨(명판) — 정격 전압·소비 전력 해석 문항용. aria는 수치를 낭독하지 않는다. */
 export function elecLabelFig(o: { volt: number; watt: number }): string {
-  return `<svg viewBox="0 0 344 140" ${NS} fill="none" role="img" aria-label="전기 기구 뒷면에 붙은 표시 라벨 — 적힌 값을 읽어 해석해요">
+  return `<svg viewBox="0 0 344 140" ${NS} fill="none" role="img" aria-label="전기 기구 뒷면에 붙은 표시 라벨, 적힌 값을 읽어 해석해요">
     <rect x="70" y="18" width="204" height="104" rx="14" fill="#F4F6F9" stroke="#B7C2CE" stroke-width="2.2"/>
     <rect x="84" y="32" width="176" height="44" rx="8" fill="#FFFFFF" stroke="#D9DFE6" stroke-width="1.4"/>
     <text x="172" y="62" text-anchor="middle" font-size="24" font-weight="800" fill="#333D4B">${o.volt}V - ${o.watt}W</text>
@@ -2983,7 +2983,7 @@ export function elecMotorExamFig(o?: { reverse?: boolean }): string {
     const ang = (Math.atan2(b2 - b1, a2 - a1) * 180) / Math.PI;
     return `<g transform="rotate(${ang} ${mx} ${my})"><path d="M${mx + 6.5} ${my}l-9 -5.5v11z" fill="#FFD400" stroke="#6E3F16" stroke-width="1.1" stroke-linejoin="round"/></g>`;
   };
-  return `<svg viewBox="0 0 344 214" ${NS} fill="none" role="img" aria-label="왼쪽 N극과 오른쪽 S극 자석 사이에 수평으로 놓인 사각 코일 — 전류의 방향이 화살표로 표시되어 있고 (가)는 왼쪽 변, (나)는 오른쪽 변이에요">
+  return `<svg viewBox="0 0 344 214" ${NS} fill="none" role="img" aria-label="왼쪽 N극과 오른쪽 S극 자석 사이에 수평으로 놓인 사각 코일, 전류의 방향이 화살표로 표시되어 있고 (가)는 왼쪽 변, (나)는 오른쪽 변이에요">
     <path d="M30 58l16 -12h20v96l-16 12h-20z" fill="#E8836B" stroke="#A8442E" stroke-width="1.8"/>
     <text x="58" y="100" text-anchor="middle" font-size="16" font-weight="800" fill="#FFF">N</text>
     <path d="M278 58l16 -12h20v96l-16 12h-20z" fill="#7FA6E8" stroke="#2E5AA8" stroke-width="1.8"/>
@@ -3081,7 +3081,7 @@ export function starShiftPairFig(o: { g1: string; g2: string }): string {
       <text x="${(ax + bx) / 2}" y="82" text-anchor="middle" font-size="11" font-weight="800" fill="#8FB3E8">${gap}</text>
     </g>`;
   };
-  return `<svg viewBox="0 0 344 172" ${NS} fill="none" role="img" aria-label="6개월 간격으로 같은 하늘을 관측한 두 장면 — 배경별 ㉯에 대한 별 ㉮의 위치와 두 별 사이 각이 표시되어 있어요">
+  return `<svg viewBox="0 0 344 172" ${NS} fill="none" role="img" aria-label="6개월 간격으로 같은 하늘을 관측한 두 장면, 배경별 ㉯에 대한 별 ㉮의 위치와 두 별 사이 각이 표시되어 있어요">
     ${panel(6, "6개월 전", 44, o.g1)}
     <path d="M166 94h12M174 90l6 4-6 4" stroke="#5E7398" stroke-width="1.6" fill="none"/>
     ${panel(178, "현재", 88, o.g2)}
@@ -3210,7 +3210,7 @@ export function starExpandArrowFig(): string {
   const arrow = (x1: number, x2: number): string =>
     `<line x1="${x1}" y1="72" x2="${x2}" y2="72" stroke="#F0A0B4" stroke-width="2.6"/>
      <path d="M${x2} 72l-9 -5v10z" fill="#F0A0B4"/>`;
-  return `<svg viewBox="0 0 344 160" ${NS} fill="none" role="img" aria-label="은하 A에서 은하 B와 C를 관측한 그림 — 각 은하의 움직임이 화살표로 표시되어 있어요">
+  return `<svg viewBox="0 0 344 160" ${NS} fill="none" role="img" aria-label="은하 A에서 은하 B와 C를 관측한 그림, 각 은하의 움직임이 화살표로 표시되어 있어요">
     ${gal(56, "#4A5E92")}
     <circle cx="56" cy="96" r="24" stroke="#FFE9A8" stroke-width="1.4" stroke-dasharray="4 4" fill="none"/>
     <text x="56" y="140" text-anchor="middle" font-size="12.5" font-weight="800" fill="#DCE8FF">A</text>
@@ -3229,7 +3229,7 @@ export function elecCoilCompassFig(): string {
   const turns = [0, 1, 2, 3, 4]
     .map((i) => `<ellipse cx="${132 + i * 22}" cy="96" rx="11" ry="20" stroke="#C97F3A" stroke-width="4" fill="none"/>`)
     .join("");
-  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="코일과 전지, 열린 스위치로 이루어진 회로 — 코일의 왼쪽 끝에 나침반 ㉠이 놓여 있다">
+  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="코일과 전지, 열린 스위치로 이루어진 회로, 코일의 왼쪽 끝에 나침반 ㉠이 놓여 있다">
     <path d="M121 96h-11v66h58M231 96h25v66h-30" stroke="#8B95A1" stroke-width="3" fill="none" stroke-linecap="round"/>
     ${turns}
     ${ebattery(168, 150, 58, 24)}

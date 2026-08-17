@@ -92,7 +92,7 @@ export const atomLab: StepRenderer = (host, step, api) => {
 
   const helper = el("div", {
     class: "helper",
-    html: "부품은 셋 — <b>양성자(+)</b>와 <b>중성자</b>는 원자핵에, <b>전자(−)</b>는 그 주위에 들어가요. 첫 미션: <b>수소</b>(양성자 1, 중성자 0, 전자 1)!",
+    html: "부품은 셋, <b>양성자(+)</b>와 <b>중성자</b>는 원자핵에, <b>전자(−)</b>는 그 주위에 들어가요. 첫 미션: <b>수소</b>(양성자 1, 중성자 0, 전자 1)!",
   });
   host.append(goalChips, helper, stage, steppers); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -151,11 +151,11 @@ export const atomLab: StepRenderer = (host, step, api) => {
           if (mission === 1)
             helper.innerHTML = "수소 완성! (+)1 = (−)1, <b>중성</b>이죠. 다음: <b>탄소</b>(양성자 6, 중성자 6, 전자 6).";
           else if (mission === 2)
-            helper.innerHTML = "탄소 완성! 이제 마지막 — <b>산소</b>(양성자 8, 중성자 8, 전자 8).";
+            helper.innerHTML = "탄소 완성! 이제 마지막, <b>산소</b>(양성자 8, 중성자 8, 전자 8).";
           else {
             finished = true;
             helper.innerHTML =
-              "정리! 원자 = <b>원자핵(양성자+중성자)</b> + <b>전자</b>. 양성자수와 전자 수가 같아 <b>전기적으로 중성</b>이고, 원자의 <b>종류는 양성자수</b>가 정해요 — 방금 1개면 수소, 6개면 탄소, 8개면 산소였죠!";
+              "정리! 원자 = <b>원자핵(양성자+중성자)</b> + <b>전자</b>. 양성자수와 전자 수가 같아 <b>전기적으로 중성</b>이고, 원자의 <b>종류는 양성자수</b>가 정해요. 방금 1개면 수소, 6개면 탄소, 8개면 산소였죠!";
             api.recordQuiz(true);
             api.enableCTA(s.cta ?? "개념 정리하기");
           }
@@ -213,7 +213,7 @@ export const ionLab: StepRenderer = (host, step, api) => {
   const btnRow = el("div", { class: "gp-controls" }, loseBtn, gainBtn);
   const helper = el("div", {
     class: "helper",
-    html: "나트륨 원자예요 — (+)11과 (−)11로 지금은 중성. 나트륨은 전자 <b>1개를 잃고 싶어</b> 해요. 떼어 볼까요?",
+    html: "나트륨 원자예요. (+)11과 (−)11로 지금은 중성. 나트륨은 전자 <b>1개를 잃고 싶어</b> 해요. 떼어 볼까요?",
   });
   host.append(goalChips, helper, stage, btnRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -233,10 +233,10 @@ export const ionLab: StepRenderer = (host, step, api) => {
     const m = ION_META[k];
     helper.innerHTML =
       k === "Na"
-        ? "나트륨 원자 — 전자 <b>1개를 잃으면</b> 어떤 전하를 띨까요?"
+        ? "나트륨 원자, 전자 <b>1개를 잃으면</b> 어떤 전하를 띨까요?"
         : k === "Cl"
-          ? `염소 원자 — 염소는 전자 <b>1개를 얻고 싶어</b> 해요. 붙여 보세요!`
-          : `산소 원자 — 이번엔 전자를 <b>2개</b>나 얻어요. 두 번 붙이기!`;
+          ? `염소 원자, 염소는 전자 <b>1개를 얻고 싶어</b> 해요. 붙여 보세요!`
+          : `산소 원자, 이번엔 전자를 <b>2개</b>나 얻어요. 두 번 붙이기!`;
     void m;
   }
 
@@ -256,21 +256,21 @@ export const ionLab: StepRenderer = (host, step, api) => {
       chip.querySelector("span")!.textContent = "완성!";
       helper.innerHTML =
         sample === "Na"
-          ? "완성! (+)11 vs (−)10 — (+)가 1 많아져 <b>양이온 Na⁺</b>. 이름은 그대로 '나트륨 이온'이에요."
+          ? "완성! (+)11 vs (−)10, (+)가 1 많아져 <b>양이온 Na⁺</b>. 이름은 그대로 '나트륨 이온'이에요."
           : sample === "Cl"
-            ? "완성! (+)17 vs (−)18 — (−)가 1 많아져 <b>음이온 Cl⁻</b>. 음이온은 '~화 이온', 그래서 <b>염화 이온</b>!"
-            : "완성! 전자 2개를 얻어 <b>O²⁻</b> — '소'를 빼고 <b>산화 이온</b>이라 읽어요. 잃거나 얻은 전자 수를 오른쪽 위에 쓰죠.";
+            ? "완성! (+)17 vs (−)18, (−)가 1 많아져 <b>음이온 Cl⁻</b>. 음이온은 '~화 이온', 그래서 <b>염화 이온</b>!"
+            : "완성! 전자 2개를 얻어 <b>O²⁻</b>, '소'를 빼고 <b>산화 이온</b>이라 읽어요. 잃거나 얻은 전자 수를 오른쪽 위에 쓰죠.";
       if (doneSet.size === 3 && !finished) {
         finished = true;
         api.recordQuiz(true);
         window.setTimeout(() => {
           helper.innerHTML =
-            "정리! 원자가 전자를 <b>잃으면 (+) 양이온</b>, <b>얻으면 (−) 음이온</b>. 변한 건 <b>전자 수뿐</b> — 양성자수(원자의 정체)는 그대로예요!";
+            "정리! 원자가 전자를 <b>잃으면 (+) 양이온</b>, <b>얻으면 (−) 음이온</b>. 변한 건 <b>전자 수뿐</b>, 양성자수(원자의 정체)는 그대로예요!";
           api.enableCTA(s.cta ?? "개념 정리하기");
         }, 900);
       }
     } else if (net !== 0 && net !== m.goal) {
-      helper.innerHTML = `지금 전하: ${net > 0 ? "+" : ""}${net}. 목표는 <b>${m.read}</b> — ${m.goal > 0 ? "전자를 잃어" : "전자를 얻어"} ${Math.abs(m.goal)}만큼 차이 나게!`;
+      helper.innerHTML = `지금 전하: ${net > 0 ? "+" : ""}${net}. 목표는 <b>${m.read}</b>, ${m.goal > 0 ? "전자를 잃어" : "전자를 얻어"} ${Math.abs(m.goal)}만큼 차이 나게!`;
     }
   }
   loseBtn.addEventListener("click", () => change(-1));

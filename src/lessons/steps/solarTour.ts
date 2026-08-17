@@ -36,10 +36,10 @@ const BODIES: Body[] = [
   {
     key: "sun", kind: "sun", name: "태양", d: 0, r: 9, group: "star",
     fact: "태양계에서 <b>유일하게 스스로 빛을 내는</b> 천체예요. 주로 수소와 헬륨으로 이루어져 있어요.",
-    dist: "지구에서 약 1억 5천만 km — 빛으로 8분 20초",
+    dist: "지구에서 약 1억 5천만 km, 빛으로 8분 20초",
     size: "지름 약 139만 km · 지구의 109배",
     grav: "표면 중력 지구의 약 28배",
-    more: "태양계 전체 질량의 99.8%가 태양 몫이에요. 표면(광구)에는 흑점이, 대기에서는 홍염과 플레어가 나타나요. 태양의 중력이 여덟 행성과 소행성·혜성을 전부 붙잡아 두고 있죠 — 태양계의 중심이자 우리와 가장 가까운 별!",
+    more: "태양계 전체 질량의 99.8%가 태양 몫이에요. 표면(광구)에는 흑점이, 대기에서는 홍염과 플레어가 나타나요. 태양의 중력이 여덟 행성과 소행성·혜성을 전부 붙잡아 두고 있죠. 태양계의 중심이자 우리와 가장 가까운 별!",
   },
   {
     key: "mercury", kind: "mercury", name: "수성", d: 16, r: 1.0, group: "terra",
@@ -47,31 +47,31 @@ const BODIES: Body[] = [
     dist: "지구와 가장 가까울 때 약 7,700만 km",
     size: "지름 4,880 km · 지구의 0.38배",
     grav: "중력 지구의 0.38배",
-    more: "태양에 가장 가까운 첫 번째 행성. 대기가 거의 없어 낮에는 약 430℃, 밤에는 약 −180℃ — 온도 차가 600℃를 넘어요. 88일 만에 태양을 한 바퀴 도는 잰걸음 행성이에요.",
+    more: "태양에 가장 가까운 첫 번째 행성. 대기가 거의 없어 낮에는 약 430℃, 밤에는 약 −180℃, 온도 차가 600℃를 넘어요. 88일 만에 태양을 한 바퀴 도는 잰걸음 행성이에요.",
   },
   {
     key: "venus", kind: "venus", name: "금성", d: 22, r: 1.55, group: "terra",
     fact: "<b>이산화 탄소로 이루어진 두꺼운 대기</b>가 있어서 표면 온도가 매우 높아요.",
-    dist: "가장 가까울 때 약 4,100만 km — 행성 중 최단",
+    dist: "가장 가까울 때 약 4,100만 km, 행성 중 최단",
     size: "지름 12,104 km · 지구의 0.95배",
     grav: "중력 지구의 0.9배",
-    more: "크기는 지구와 쌍둥이지만 환경은 정반대 — 두꺼운 이산화 탄소 대기의 온실 효과로 표면이 약 470℃예요. 태양에서 두 번째인데도 수성보다 뜨거운 이유죠. 자전이 아주 느려서 하루가 1년보다 길고, 다른 행성과 반대 방향으로 돌아요.",
+    more: "크기는 지구와 쌍둥이지만 환경은 정반대, 두꺼운 이산화 탄소 대기의 온실 효과로 표면이 약 470℃예요. 태양에서 두 번째인데도 수성보다 뜨거운 이유죠. 자전이 아주 느려서 하루가 1년보다 길고, 다른 행성과 반대 방향으로 돌아요.",
   },
   {
     key: "earth", kind: "earth", name: "지구", d: 29, r: 1.65, group: "terra",
     fact: "표면에 <b>액체 상태의 물</b>이 있고, 생명체가 살아요. 옆을 도는 달은 지구의 <b>위성</b>!",
-    dist: "우리 집 — 태양에서 약 1억 5천만 km",
+    dist: "우리 집, 태양에서 약 1억 5천만 km",
     size: "지름 12,756 km · 비교 기준(=1)",
     grav: "중력 = 1 (기준)",
     more: "표면에 액체 상태의 물이 넉넉히 있는 유일한 행성이자, 지금까지 생명체가 확인된 유일한 곳이에요. 적당한 태양과의 거리, 적당한 대기가 만든 기적 같은 균형이죠. 커다란 위성인 달이 함께 돌아요.",
   },
   {
     key: "mars", kind: "mars", name: "화성", d: 36, r: 1.3, group: "terra",
-    fact: "<b>붉은 표면</b> — 과거에 물이 흘렀던 흔적이 있고, 얼음과 드라이아이스로 된 <b>극관</b>이 있어요.",
+    fact: "<b>붉은 표면</b>, 과거에 물이 흘렀던 흔적이 있고, 얼음과 드라이아이스로 된 <b>극관</b>이 있어요.",
     dist: "가장 가까울 때 약 5,500만 km",
     size: "지름 6,792 km · 지구의 0.53배",
     grav: "중력 지구의 0.38배",
-    more: "표면을 덮은 붉은 녹(산화 철) 먼지 때문에 붉게 보여요. 물이 흘렀던 골짜기 흔적, 계절마다 커졌다 작아지는 극관, 그리고 높이 약 22km로 태양계에서 가장 큰 화산까지 — 탐사 로봇이 가장 많이 굴러다니는 행성이에요.",
+    more: "표면을 덮은 붉은 녹(산화 철) 먼지 때문에 붉게 보여요. 물이 흘렀던 골짜기 흔적, 계절마다 커졌다 작아지는 극관, 그리고 높이 약 22km로 태양계에서 가장 큰 화산까지, 탐사 로봇이 가장 많이 굴러다니는 행성이에요.",
   },
   {
     key: "jupiter", kind: "jupiter", name: "목성", d: 58, r: 5.2, group: "jovian",
@@ -87,15 +87,15 @@ const BODIES: Body[] = [
     dist: "가장 가까울 때 약 12억 km",
     size: "지름 120,536 km · 지구의 9.4배",
     grav: "중력 지구의 1.07배",
-    more: "고리는 판이 아니라 수많은 얼음 조각과 돌 부스러기의 무리예요. 그리고 토성은 밀도가 물보다 작은 유일한 행성 — 토성이 들어갈 만큼 큰 욕조가 있다면 물에 둥둥 뜰 거예요!",
+    more: "고리는 판이 아니라 수많은 얼음 조각과 돌 부스러기의 무리예요. 그리고 토성은 밀도가 물보다 작은 유일한 행성, 토성이 들어갈 만큼 큰 욕조가 있다면 물에 둥둥 뜰 거예요!",
   },
   {
     key: "uranus", kind: "uranus", name: "천왕성", d: 84, r: 2.8, group: "jovian",
-    fact: "청록색 행성. <b>자전축이 공전 궤도면과 거의 나란</b>해서 누워서 도는 셈이에요 — 고리도 세로로!",
+    fact: "청록색 행성. <b>자전축이 공전 궤도면과 거의 나란</b>해서 누워서 도는 셈이에요. 고리도 세로로!",
     dist: "가장 가까울 때 약 26억 km",
     size: "지름 51,118 km · 지구의 4배",
     grav: "중력 지구의 0.89배",
-    more: "자전축이 궤도면과 거의 나란해서 옆으로 누운 채 굴러가듯 공전해요 — 그래서 고리도 세로로 서 있죠. 태양계에서 가장 추운 대기(약 −224℃)를 가진 얼음 행성이에요.",
+    more: "자전축이 궤도면과 거의 나란해서 옆으로 누운 채 굴러가듯 공전해요. 그래서 고리도 세로로 서 있죠. 태양계에서 가장 추운 대기(약 −224℃)를 가진 얼음 행성이에요.",
   },
   {
     key: "neptune", kind: "neptune", name: "해왕성", d: 94, r: 2.7, group: "jovian",
@@ -110,7 +110,7 @@ const BODIES: Body[] = [
     // BODIES에 있어도 미션(TERRA/JOVIAN/belt)에는 안 잡힘 — 목표 로직 불변.
     key: "pluto", kind: "moon", name: "명왕성", d: 104, r: 0.55, group: "etc",
     fact: "해왕성 바깥을 도는 작은 얼음 천체, <b>왜소 행성</b>이에요. 둥글지만 자기 궤도 주변을 <b>홀로 지배하지 못해서</b> 행성과 달라요.",
-    dist: "태양에서 약 59억 km — 지구의 약 40배",
+    dist: "태양에서 약 59억 km, 지구의 약 40배",
     size: "지름 2,377 km · 달보다 작아요",
     grav: "중력 지구의 약 1/15",
     more: "2006년까지는 아홉 번째 행성으로 불렸어요. 하지만 명왕성 곁에서 비슷한 얼음 천체들이 잇달아 발견되면서, '둥글지만 궤도 주변을 홀로 지배하지 못하는 천체'는 왜소 행성으로 새로 분류하게 됐죠. 태양계 가장자리엔 이런 얼음 천체가 아주 많답니다.",
@@ -121,10 +121,10 @@ const EXTRA: Record<string, Pick<Body, "name" | "fact" | "dist" | "size" | "grav
   moon: {
     name: "달",
     fact: "지구 주위를 도는 <b>위성</b>이에요. 위성은 태양이 아니라 <b>행성</b> 주위를 돌아요!",
-    dist: "지구에서 약 38만 km — 빛으로 1.3초",
+    dist: "지구에서 약 38만 km, 빛으로 1.3초",
     size: "지름 3,475 km · 지구의 0.27배",
     grav: "중력 지구의 1/6",
-    more: "지구의 하나뿐인 위성. 스스로 빛나지 않고 태양 빛을 반사해서 보여요. 중력이 지구의 1/6이라 달에서는 몸무게가 1/6로 줄어요 — 우주인이 껑충껑충 뛰어다니는 이유죠.",
+    more: "지구의 하나뿐인 위성. 스스로 빛나지 않고 태양 빛을 반사해서 보여요. 중력이 지구의 1/6이라 달에서는 몸무게가 1/6로 줄어요. 우주인이 껑충껑충 뛰어다니는 이유죠.",
   },
   belt: {
     name: "소행성대",
@@ -137,10 +137,10 @@ const EXTRA: Record<string, Pick<Body, "name" | "fact" | "dist" | "size" | "grav
   comet: {
     name: "혜성",
     fact: "얼음과 먼지 덩어리. 태양에 가까워지면 녹으면서 꼬리가 생기는데, 꼬리는 늘 <b>태양 반대쪽</b>을 향해요!",
-    dist: "길쭉한 타원 궤도 — 가까워졌다 멀어졌다",
+    dist: "길쭉한 타원 궤도, 가까워졌다 멀어졌다",
     size: "핵의 지름은 보통 수 km",
     grav: "아주 약해요",
-    more: "태양에 가까워지면 얼음이 녹아 가스와 먼지를 뿜고, 그게 태양풍에 밀려 태양 반대쪽으로 긴 꼬리를 만들어요. 유명한 핼리 혜성은 약 76년마다 돌아와요 — 다음 방문은 2061년이에요!",
+    more: "태양에 가까워지면 얼음이 녹아 가스와 먼지를 뿜고, 그게 태양풍에 밀려 태양 반대쪽으로 긴 꼬리를 만들어요. 유명한 핼리 혜성은 약 76년마다 돌아와요. 다음 방문은 2061년이에요!",
   },
 };
 
@@ -219,7 +219,7 @@ export const solarTour: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.select);
     const { enterRotateStage } = await import("../../ui/rotateStage");
     if (disposed) return;
-    rot = enterRotateStage({ title: "태양계 순항 — 드래그 회전 · 핀치 줌 · 탭 방문", onLeave: () => leave() });
+    rot = enterRotateStage({ title: "태양계 순항, 드래그 회전 · 핀치 줌 · 탭 방문", onLeave: () => leave() });
     const canvas = el("canvas", { class: "sp3-canvas" }) as HTMLCanvasElement;
     const pill = el("div", { class: "pill sp3-pill" }, el("span", { class: "pdot", style: "background:#FFB03A" }), el("span", { text: "방문 0곳" }));
     missionEl = el(
@@ -243,7 +243,7 @@ export const solarTour: StepRenderer = (host, step, api) => {
     st = S.createSpaceStage(canvas, { fov: 38 });
     if (!st) {
       pillText.textContent = "이 기기는 3D를 지원하지 않아요";
-      helper.innerHTML = "3D를 켤 수 없어요. 표로 기억해요 — 태양 곁부터 <b>수·금·지·화·목·토·천·해</b> 8개 행성이 돌고 있어요.";
+      helper.innerHTML = "3D를 켤 수 없어요. 표로 기억해요. 태양 곁부터 <b>수·금·지·화·목·토·천·해</b> 8개 행성이 돌고 있어요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       return;
@@ -495,7 +495,7 @@ export const solarTour: StepRenderer = (host, step, api) => {
       );
       card.classList.add("show");
       (card.querySelector(".sp3-cardclose") as HTMLButtonElement).addEventListener("click", closeCard);
-      pillText.textContent = `방문 ${visited.size}곳 — ${info.name}`;
+      pillText.textContent = `방문 ${visited.size}곳, ${info.name}`;
       checkGoals();
     }
     function statChip(k: string, v: string): HTMLElement {
@@ -568,7 +568,7 @@ export const solarTour: StepRenderer = (host, step, api) => {
         targetGoal.copy(wp);
       }
       if (!focus) {
-        pillText.textContent = visited.size ? `방문 ${visited.size}곳 — 천체를 탭!` : "돌리고 · 줌하고 · 탭해 보세요";
+        pillText.textContent = visited.size ? `방문 ${visited.size}곳, 천체를 탭!` : "돌리고 · 줌하고 · 탭해 보세요";
       }
 
       applyCamera();
@@ -589,7 +589,7 @@ export const solarTour: StepRenderer = (host, step, api) => {
       enterBtn.querySelector("span")!.textContent = "다시 순항하기";
       enterBtn.classList.remove("pulse");
     } else {
-      helper.innerHTML = "아직 방문할 곳이 남았어요 — 다시 출발해서 <b>미션 세 개</b>를 채워 봐요!";
+      helper.innerHTML = "아직 방문할 곳이 남았어요. 다시 출발해서 <b>미션 세 개</b>를 채워 봐요!";
     }
   }
 

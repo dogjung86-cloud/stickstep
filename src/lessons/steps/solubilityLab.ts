@@ -151,7 +151,7 @@ export const solubilityLab: StepRenderer = (host, step, api) => {
     }
     if (finished) return;
     if (id === "limit" && !goals.has("differ")) {
-      helper.innerHTML = "한계 발견! 이제 용질을 <b>황산 구리(Ⅱ)</b>로 바꿔 보세요 — 한계가 똑같을까요?";
+      helper.innerHTML = "한계 발견! 이제 용질을 <b>황산 구리(Ⅱ)</b>로 바꿔 보세요. 한계가 똑같을까요?";
     } else if (id === "differ" && !goals.has("heat")) {
       helper.innerHTML = "물질마다 한계가 달라요! 이번엔 가루가 쌓인 채로 <b>60℃</b>에 올려 보세요.";
     }
@@ -195,9 +195,9 @@ export const solubilityLab: StepRenderer = (host, step, api) => {
     coldBtn.setAttribute("aria-pressed", "true");
     hotBtn.setAttribute("aria-pressed", "false");
     haptic(HAPTIC.tap);
-    toast(v === "kno3" ? "질산 칼륨 — 새 물 10 g!" : "황산 구리(Ⅱ) — 새 물 10 g!");
+    toast(v === "kno3" ? "질산 칼륨, 새 물 10 g!" : "황산 구리(Ⅱ), 새 물 10 g!");
     if (!finished && v === "cuso4" && !goals.has("differ")) {
-      helper.innerHTML = "황산 구리(Ⅱ)는 녹으면서 물을 <b>파랗게</b> 물들여요. 다시 0.5 g씩 — 한계는 몇 g일까요?";
+      helper.innerHTML = "황산 구리(Ⅱ)는 녹으면서 물을 <b>파랗게</b> 물들여요. 다시 0.5 g씩, 한계는 몇 g일까요?";
     }
   }
   kBtn.addEventListener("click", () => setSolute("kno3"));
@@ -205,7 +205,7 @@ export const solubilityLab: StepRenderer = (host, step, api) => {
 
   addBtn.addEventListener("click", () => {
     if (added >= addCap() - 1e-6) {
-      toast("이만하면 충분해요 — 온도를 바꿔 봐요!");
+      toast("이만하면 충분해요. 온도를 바꿔 봐요!");
       return;
     }
     added = Math.round((added + 0.5) * 10) / 10;
@@ -293,7 +293,7 @@ export const solubilityLab: StepRenderer = (host, step, api) => {
             g.mode = "sink";
             if (!satToastShown) {
               satToastShown = true;
-              toast("더 이상 녹지 않아요 — 바닥에 쌓여요");
+              toast("더 이상 녹지 않아요. 바닥에 쌓여요");
             }
           }
         }
@@ -325,7 +325,7 @@ export const solubilityLab: StepRenderer = (host, step, api) => {
     }
 
     // 목표 판정
-    if (solute === "kno3" && temp === 20 && settled >= 0.045) collect("limit", "3.2 g!", "여기까지 — 더는 안 녹아요!");
+    if (solute === "kno3" && temp === 20 && settled >= 0.045) collect("limit", "3.2 g!", "여기까지, 더는 안 녹아요!");
     if (solute === "cuso4" && temp === 20 && settled >= 0.045) collect("differ", "2.0 g!", "황산 구리(Ⅱ)는 2.0 g이 한계!");
     if (temp === 60 && settled > 0.06) heatPile = true;
     const pending = grains.some((g) => g.mode !== "melt");

@@ -55,7 +55,7 @@ export const mirrorLens: StepRenderer = (host, step, api) => {
     el("div", { class: "sp3-enter-art", html: enterArtSvg() }),
     el("div", {
       class: "sp3-enter-txt",
-      html: "<b>심화 실험실</b> — 촛불을 광축 위에서 끌면 <b>빛의 경로(작도)</b>와 상이 실시간으로 변해요.<br>화면이 자동으로 <b>가로</b>로 돌아가요.",
+      html: "<b>심화 실험실</b>, 촛불을 광축 위에서 끌면 <b>빛의 경로(작도)</b>와 상이 실시간으로 변해요.<br>화면이 자동으로 <b>가로</b>로 돌아가요.",
     }),
   );
   const enterBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "가로 화면으로 크게 열기" }));
@@ -104,16 +104,16 @@ export const mirrorLens: StepRenderer = (host, step, api) => {
     chip.querySelector("span")!.textContent = "관찰 완료!";
     missionEls?.[m].classList.add("on");
     const MSG: Record<Mode, string> = {
-      cvMirror: "볼록 거울 — <b>언제나 작고 바로 선 상</b>. 대신 넓게 보여요(도로 반사경!)",
-      ccMirror: "오목 거울 — 가까이선 <b>크고 바로</b>, 멀어지면 <b>거꾸로</b> 뒤집혀요!",
-      cvLens: "볼록 렌즈 — 가까이선 <b>크고 바로</b>(돋보기!), 멀어지면 <b>거꾸로</b>!",
-      ccLens: "오목 렌즈 — <b>언제나 작고 바로 선 상</b>이에요.",
+      cvMirror: "볼록 거울, <b>언제나 작고 바로 선 상</b>. 대신 넓게 보여요(도로 반사경!)",
+      ccMirror: "오목 거울, 가까이선 <b>크고 바로</b>, 멀어지면 <b>거꾸로</b> 뒤집혀요!",
+      cvLens: "볼록 렌즈, 가까이선 <b>크고 바로</b>(돋보기!), 멀어지면 <b>거꾸로</b>!",
+      ccLens: "오목 렌즈, <b>언제나 작고 바로 선 상</b>이에요.",
     };
     showToast(MSG[m], 3000);
     if (doneModes.size === MODES.length && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! <b>볼록 거울·오목 렌즈</b>는 언제나 작고 바로 선 상, <b>오목 거울·볼록 렌즈</b>는 가까우면 크고 바로 — 멀어지면 <b>거꾸로</b> 뒤집혀요. 상의 변신은 전부 거리가 결정해요!";
+        "정리! <b>볼록 거울·오목 렌즈</b>는 언제나 작고 바로 선 상, <b>오목 거울·볼록 렌즈</b>는 가까우면 크고 바로… 멀어지면 <b>거꾸로</b> 뒤집혀요. 상의 변신은 전부 거리가 결정해요!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       window.setTimeout(() => showToast("네 장치 모두 관찰 완료! 세로로 돌아가 계속해요", 3600), 3200);
@@ -128,8 +128,8 @@ export const mirrorLens: StepRenderer = (host, step, api) => {
     updateSeg();
     const GUIDE: Record<Mode, string> = {
       cvMirror: "볼록 거울이에요. 촛불을 <b>가까이, 또 멀리</b> 끌어 보세요.",
-      ccMirror: "오목 거울! 멀리서 시작 — 천천히 <b>가까이</b> 끌며 상을 지켜보세요. 어느 순간…?",
-      cvLens: "볼록 렌즈예요. <b>가까이, 또 멀리</b> — 뒤집히는 순간을 찾아보세요.",
+      ccMirror: "오목 거울! 멀리서 시작, 천천히 <b>가까이</b> 끌며 상을 지켜보세요. 어느 순간…?",
+      cvLens: "볼록 렌즈예요. <b>가까이, 또 멀리</b>, 뒤집히는 순간을 찾아보세요.",
       ccLens: "오목 렌즈예요. 거리를 바꿔도 상이 어떤지 확인!",
     };
     showToast(GUIDE[m], 2600);
@@ -164,7 +164,7 @@ export const mirrorLens: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.select);
     const { enterRotateStage } = await import("../../ui/rotateStage");
     if (disposed) return;
-    rot = enterRotateStage({ title: "심화 · 상 작도 벤치 — 촛불을 끌어 보세요", onLeave: () => leave() });
+    rot = enterRotateStage({ title: "심화 · 상 작도 벤치, 촛불을 끌어 보세요", onLeave: () => leave() });
 
     const canvas = el("canvas", { class: "sp3-canvas" });
     statusPill = el("div", { class: "pill sp3-pill" }, el("span", { class: "pdot", style: "background:#E86FCE" }), el("span", { text: "" }));
@@ -198,7 +198,7 @@ export const mirrorLens: StepRenderer = (host, step, api) => {
     toastEl = el("div", { class: "sp3-toast" });
     rot.stage.append(canvas, statusPill, seg, rayBtn, missions, toastEl);
     updateSeg();
-    showToast("촛불을 <b>좌우로 끌어</b> 보세요 — 빛의 경로가 함께 움직여요!", 2800);
+    showToast("촛불을 <b>좌우로 끌어</b> 보세요. 빛의 경로가 함께 움직여요!", 2800);
 
     // 포인터(회전 리매핑)
     let dragging = false;

@@ -150,7 +150,7 @@ export const charlesSyringe: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "이게 <b>샤를 법칙</b> — 압력이 일정할 때 온도가 높아지면 부피가 <b>일정한 비율로</b> 늘어나요. 입자 수는 그대로, <b>운동이 빨라져 세게 충돌</b>하면서 피스톤을 밀어 올린 거예요!";
+        "이게 <b>샤를 법칙</b>, 압력이 일정할 때 온도가 높아지면 부피가 <b>일정한 비율로</b> 늘어나요. 입자 수는 그대로, <b>운동이 빨라져 세게 충돌</b>하면서 피스톤을 밀어 올린 거예요!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -235,8 +235,8 @@ export const charlesSyringe: StepRenderer = (host, step, api) => {
     holdMs.t50 = nearT(50) ? holdMs.t50 + dt * 16.7 : 0;
     holdMs.t80 = temp >= 78 ? holdMs.t80 + dt * 16.7 : 0;
     holdMs.cool = temp <= 22 ? holdMs.cool + dt * 16.7 : 0;
-    if (holdMs.t50 > 500) collect("t50", "33.0 mL!", "50℃ — 딱 33.0 mL");
-    if (goals.has("t50") && holdMs.t80 > 500) collect("t80", "36.0 mL!", "80℃ — 36.0 mL까지 팽창");
+    if (holdMs.t50 > 500) collect("t50", "33.0 mL!", "50℃, 딱 33.0 mL");
+    if (goals.has("t50") && holdMs.t80 > 500) collect("t80", "36.0 mL!", "80℃, 36.0 mL까지 팽창");
     if (goals.has("t80") && holdMs.cool > 500) collect("cool", "30.0 mL!", "식히니 그대로 돌아왔어요");
 
     // 샘플

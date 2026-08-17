@@ -45,9 +45,9 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
   const goalChips = el(
     "div",
     { class: "pn-badges force3" },
-    el("div", { class: "pn-badge", dataset: { g: "solar" } }, el("b", { text: "일식" }), el("span", { text: "태양—달—지구" })),
+    el("div", { class: "pn-badge", dataset: { g: "solar" } }, el("b", { text: "일식" }), el("span", { text: "태양-달-지구" })),
     el("div", { class: "pn-badge", dataset: { g: "ground" } }, el("b", { text: "지상에서" }), el("span", { text: "가려진 태양" })),
-    el("div", { class: "pn-badge", dataset: { g: "lunar" } }, el("b", { text: "월식" }), el("span", { text: "태양—지구—달" })),
+    el("div", { class: "pn-badge", dataset: { g: "lunar" } }, el("b", { text: "월식" }), el("span", { text: "태양-지구-달" })),
   );
 
   // 세로 화면: 진입 카드
@@ -60,7 +60,7 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
   const enterBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "가로 화면으로 크게 열기" }));
   const helper = el("div", {
     class: "helper",
-    html: "달이 지구를 돌다 보면 <b>태양·지구와 일렬</b>이 되는 순간이 있어요 — 그때 무슨 일이 생기는지 직접 만들어 봐요!",
+    html: "달이 지구를 돌다 보면 <b>태양·지구와 일렬</b>이 되는 순간이 있어요. 그때 무슨 일이 생기는지 직접 만들어 봐요!",
   });
   host.append(goalChips, helper, preview, enterBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
@@ -77,7 +77,7 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! <b>일식 = 태양—달—지구</b>(삭) — 달이 태양을 가려요. <b>월식 = 태양—지구—달</b>(망) — 달이 지구 그림자에 들어가 <b>붉게</b> 보여요. 매달 안 생기는 건 달 궤도가 살짝 기울어 있어서예요.";
+        "정리! <b>일식 = 태양-달-지구</b>(삭), 달이 태양을 가려요. <b>월식 = 태양-지구-달</b>(망), 달이 지구 그림자에 들어가 <b>붉게</b> 보여요. 매달 안 생기는 건 달 궤도가 살짝 기울어 있어서예요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -111,7 +111,7 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
     const { enterRotateStage } = await import("../../ui/rotateStage");
     if (disposed) return;
     rot = enterRotateStage({
-      title: "일식과 월식 — 달을 끌어서 일렬로",
+      title: "일식과 월식, 달을 끌어서 일렬로",
       onLeave: () => {
         leave();
       },
@@ -130,7 +130,7 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
     st = S.createSpaceStage(canvas, { fov: 34 });
     if (!st) {
       pillText.textContent = "이 기기는 3D를 지원하지 않아요";
-      helper.innerHTML = "3D를 켤 수 없어요. 그림으로 기억해요 — <b>일식 = 태양—달—지구(삭)</b>, <b>월식 = 태양—지구—달(망), 붉은 달</b>.";
+      helper.innerHTML = "3D를 켤 수 없어요. 그림으로 기억해요. <b>일식 = 태양-달-지구(삭)</b>, <b>월식 = 태양-지구-달(망), 붉은 달</b>.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       return;
@@ -252,7 +252,7 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
         lastT = t;
         if (!hintShown) {
           hintShown = true;
-          showToast("빈 우주를 끌거나 탭해도 달이 움직여요 — 손가락으로 달을 가리지 않아도 돼요!");
+          showToast("빈 우주를 끌거나 탭해도 달이 움직여요. 손가락으로 달을 가리지 않아도 돼요!");
         }
       } else if (t != null) phi = t;
       try {
@@ -299,7 +299,7 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
       if (tiltOn) {
         showToast("달 궤도는 지구 궤도면보다 약 5° 기울어 있어요(그림은 과장). 달을 태양 쪽으로 끌어 보세요!");
       } else {
-        showToast("궤도를 다시 평평하게 — 이제 일렬 정렬을 만들 수 있어요");
+        showToast("궤도를 다시 평평하게, 이제 일렬 정렬을 만들 수 있어요");
       }
     });
 
@@ -387,15 +387,15 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
       // 재정렬할 때 접근 중 문구("부분일식")에 갇힌다(2026-07-26 사용자 실기기 리포트).
       if (!groundView) {
         pillText.textContent = nearMiss
-          ? "그림자가 비껴가요 — 궤도가 기울어 있으니까!"
+          ? "그림자가 비껴가요. 궤도가 기울어 있으니까!"
           : solarAligned
-            ? "일식 — 태양·달·지구가 일렬!"
+            ? "일식, 태양·달·지구가 일렬!"
             : lunarAligned
-              ? "월식 — 태양·지구·달이 일렬!"
+              ? "월식, 태양·지구·달이 일렬!"
               : partialSolar
-                ? "부분일식 — 태양 쪽으로 조금만 더!"
+                ? "부분일식, 태양 쪽으로 조금만 더!"
                 : partialLunar
-                  ? "부분월식 — 더 깊이 넣어 보세요!"
+                  ? "부분월식, 더 깊이 넣어 보세요!"
                   : dSolar < 40
                     ? "태양 쪽으로 조금만 더…"
                     : dLunar < 40
@@ -406,19 +406,19 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
       // 상태 토스트 — 달이 그 자리에 머무는 동안 설명이 계속 떠 있는다
       const stateToast: [string, string] | null =
         groundView && solarAligned
-          ? ["ground", "개기일식 — 달이 태양을 완전히 가리면, 평소 안 보이던 태양의 대기가 드러나요"]
+          ? ["ground", "개기일식, 달이 태양을 완전히 가리면, 평소 안 보이던 태양의 대기가 드러나요"]
           : nearMiss
             ? dSolar < 9
-              ? ["miss-s", "빗나갔어요! 삭이어도 달 그림자가 지구 위·아래로 비껴가요 — 그래서 일식은 가끔만 일어나요"]
-              : ["miss-l", "빗나갔어요! 망이어도 달이 지구 그림자를 위·아래로 비껴가요 — 그래서 월식도 드물죠"]
+              ? ["miss-s", "빗나갔어요! 삭이어도 달 그림자가 지구 위·아래로 비껴가요. 그래서 일식은 가끔만 일어나요"]
+              : ["miss-l", "빗나갔어요! 망이어도 달이 지구 그림자를 위·아래로 비껴가요. 그래서 월식도 드물죠"]
             : solarAligned
-              ? ["solar", "일식! 달 그림자가 닿은 지역에서 태양이 가려져요 — 이때 달의 위상은 삭"]
+              ? ["solar", "일식! 달 그림자가 닿은 지역에서 태양이 가려져요. 이때 달의 위상은 삭"]
               : lunarAligned
-                ? ["lunar", "월식! 달이 지구 그림자에 들어가 붉게 보여요 — 이때 달의 위상은 망"]
+                ? ["lunar", "월식! 달이 지구 그림자에 들어가 붉게 보여요. 이때 달의 위상은 망"]
                 : partialSolar
-                  ? ["p-solar", "태양이 일부만 가려졌어요 — 부분일식! 더 정확히 일렬로 맞추면 개기일식이 돼요"]
+                  ? ["p-solar", "태양이 일부만 가려졌어요. 부분일식! 더 정확히 일렬로 맞추면 개기일식이 돼요"]
                   : partialLunar
-                    ? ["p-lunar", "달이 지구 그림자에 일부만 걸쳤어요 — 부분월식! 더 깊이 넣으면 개기월식이 돼요"]
+                    ? ["p-lunar", "달이 지구 그림자에 일부만 걸쳤어요. 부분월식! 더 깊이 넣으면 개기월식이 돼요"]
                     : null;
       eventToastMs = Math.max(0, eventToastMs - dt * 16.7);
       if (eventToastMs === 0) {
@@ -479,7 +479,7 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
         st.camera.updateProjectionMatrix();
         corona.material.opacity = Math.min(0.95, corona.material.opacity + 0.05 * dt);
         sunGlow.material.opacity = 0.1; // 개기 순간엔 하늘이 어두워진다 — 코로나가 주인공
-        pillText.textContent = "개기일식 — 검은 해 둘레로 코로나!";
+        pillText.textContent = "개기일식, 검은 해 둘레로 코로나!";
         if (groundMs > 900 && !goals.has("ground")) collect("ground", "코로나!");
       } else {
         groundMs = 0;
@@ -516,7 +516,7 @@ export const eclipse3d: StepRenderer = (host, step, api) => {
       enterBtn.querySelector("span")!.textContent = "다시 열어 보기";
       enterBtn.classList.remove("pulse");
     } else {
-      helper.innerHTML = "아직 목표가 남았어요 — 다시 열어서 <b>일식·월식</b>을 마저 만들어 봐요!";
+      helper.innerHTML = "아직 목표가 남았어요. 다시 열어서 <b>일식·월식</b>을 마저 만들어 봐요!";
     }
   }
 

@@ -96,7 +96,7 @@ function msuSvg(filed: boolean): string {
       ${filed ? `<circle cx="168" cy="95" r="4.6" fill="none" stroke="#C0392E" stroke-width="1.6"/><path d="M165.6 95l1.8 1.9 3-3.6" stroke="#C0392E" stroke-width="1.4" stroke-linecap="round" fill="none"/>` : ""}
     </g>
     ${jar(72, 116, 0.9)}
-    <text x="120" y="140" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${filed ? "소장 접수 완료 — 민사 재판이 시작돼요" : "밭에서 나온 항아리, 누구의 것일까요?"}</text>`);
+    <text x="120" y="140" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${filed ? "소장 접수 완료, 민사 재판이 시작돼요" : "밭에서 나온 항아리, 누구의 것일까요?"}</text>`);
 }
 
 // ② 답변서·변론 — 법정(round 0=답변서, 1=원고 변론, 2=피고 변론)
@@ -126,7 +126,7 @@ function mjudSvg(done: boolean): string {
       ? `<g class="hs8-noti">${jar(64, 122, 0.9)}<path d="M108 96q-18 4-34 14" stroke="#8C5A16" stroke-width="2" stroke-dasharray="4 4" fill="none"/><path d="M78 108l-6 3 3-6" fill="none" stroke="#8C5A16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>`
       : jar(120, 116, 0.85)}
     ${done ? `<g class="hs8-noti"><rect x="96" y="72" width="48" height="16" rx="8" fill="url(#trl-seal)"/><text x="120" y="83" text-anchor="middle" font-size="8.6" font-weight="900" fill="#FFF">판결 선고</text></g>` : ""}
-    <text x="120" y="140" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${done ? "밭을 팔면 그 안의 것도 함께 — 항아리는 원고의 것!" : "양쪽 이야기를 다 들었어요 — 이제 판결의 시간"}</text>`);
+    <text x="120" y="140" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${done ? "밭을 팔면 그 안의 것도 함께, 항아리는 원고의 것!" : "양쪽 이야기를 다 들었어요. 이제 판결의 시간"}</text>`);
 }
 
 // ── 형사 트랙 ──
@@ -141,7 +141,7 @@ function crepSvg(round: number): string {
     ${jar(78, 112, 0.8, true)}
     ${round >= 1 ? `<g class="hs8-noti"><rect x="140" y="66" width="26" height="18" rx="2.6" fill="url(#trl-paper)" stroke="#8A93A6" stroke-width="1.4"/><path d="M145 72h16M145 77h10" stroke="#A8B2C2" stroke-width="1.3" stroke-linecap="round"/><circle cx="170" cy="82" r="4.4" fill="none" stroke="#C0392E" stroke-width="1.5"/><path d="M167.8 82l1.7 1.8 2.8-3.4" stroke="#C0392E" stroke-width="1.3" stroke-linecap="round" fill="none"/></g>` : ""}
     ${round >= 2 ? `<g class="hs8-noti"><circle cx="176" cy="102" r="9" fill="none" stroke="#39455C" stroke-width="2"/><path d="M183 109l7 7" stroke="#39455C" stroke-width="2.6" stroke-linecap="round"/><path d="M172 100q4-3 8 0" stroke="#8A93A6" stroke-width="1.3" fill="none"/></g>` : ""}
-    <text x="120" y="140" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${round >= 2 ? "가짜 항아리 증거 확보 — 수사 마무리!" : round >= 1 ? "고소 접수 — 수사가 시작돼요" : "가짜 요술 항아리에 속아 돈을 잃었어요"}</text>`);
+    <text x="120" y="140" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${round >= 2 ? "가짜 항아리 증거 확보, 수사 마무리!" : round >= 1 ? "고소 접수, 수사가 시작돼요" : "가짜 요술 항아리에 속아 돈을 잃었어요"}</text>`);
 }
 
 // ⑤ 기소 — 검사가 법원에 재판 요구(done)
@@ -155,7 +155,7 @@ function cindSvg(done: boolean): string {
     <path d="M144 48h56" stroke="#8A93A6" stroke-width="2" stroke-linecap="round"/>
     <text x="172" y="90" text-anchor="middle" font-size="9" font-weight="800" fill="#5A6478">법원</text>
     ${done ? `<g class="hs8-noti" transform="rotate(8 118 78)"><rect x="104" y="70" width="26" height="18" rx="2.6" fill="url(#trl-paper)" stroke="#8C5A16" stroke-width="1.6"/><path d="M109 76h16M109 81h11" stroke="#C8A360" stroke-width="1.4" stroke-linecap="round"/></g><path d="M92 86q14-4 40-4" stroke="#8C5A16" stroke-width="2" stroke-dasharray="4 4" fill="none"/><path d="M126 79l7 3-6 4" fill="none" stroke="#8C5A16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>` : ""}
-    <text x="120" y="140" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${done ? "기소! 법원에 형사 재판을 요구했어요" : "수사 결과를 검토한 검사 — 재판을 열어야 할까요?"}</text>`);
+    <text x="120" y="140" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${done ? "기소! 법원에 형사 재판을 요구했어요" : "수사 결과를 검토한 검사, 재판을 열어야 할까요?"}</text>`);
 }
 
 // ⑥ 공판·판결(형사) — round 0=개정, 1=공판, 2=선고
@@ -170,7 +170,7 @@ function cjudSvg(round: number): string {
     <rect x="132" y="118" width="76" height="10" rx="3" fill="url(#trl-desk)" stroke="#8A6A3E" stroke-width="1.3"/>
     <text x="148" y="140" text-anchor="middle" font-size="7.6" font-weight="800" fill="#5A6478">피고인</text>
     <text x="192" y="140" text-anchor="middle" font-size="7.6" font-weight="800" fill="#5A6478">변호인</text>
-    ${round >= 2 ? `<g class="hs8-noti"><rect x="92" y="70" width="56" height="16" rx="8" fill="url(#trl-seal)"/><text x="120" y="81" text-anchor="middle" font-size="8.6" font-weight="900" fill="#FFF">유죄 — 선고</text></g>` : ""}
+    ${round >= 2 ? `<g class="hs8-noti"><rect x="92" y="70" width="56" height="16" rx="8" fill="url(#trl-seal)"/><text x="120" y="81" text-anchor="middle" font-size="8.6" font-weight="900" fill="#FFF">유죄, 선고</text></g>` : ""}
     ${round === 1 ? `<g class="hs8-noti">${jar(120, 112, 0.8, true)}</g>` : ""}`);
 }
 
@@ -200,7 +200,7 @@ function stripSvg(): string {
   return wrap(`
     ${row(40, "#2E6AC0", "민사", ["소장 제출", "답변서", "변론", "판결"])}
     ${row(102, "#8A5EC0", "형사", ["고소·수사", "기소", "공판", "판결"])}
-    <text x="120" y="142" text-anchor="middle" font-size="9.2" font-weight="800" fill="#6E4610">두 무대 완주 — 분쟁도 범죄도 법정에서 풀려요!</text>`);
+    <text x="120" y="142" text-anchor="middle" font-size="9.2" font-weight="800" fill="#6E4610">두 무대 완주, 분쟁도 범죄도 법정에서 풀려요!</text>`);
 }
 
 interface TrlPhase {
@@ -216,55 +216,55 @@ const PHASES: TrlPhase[] = [
     id: "msu",
     fileLabel: "민사 1",
     stageName: "소장 제출",
-    intro: "사건 하나 — 밭을 산 농부가 밭에서 <b>요술 항아리</b>를 발견했는데, 밭을 판 옛 주인이 \"항아리는 내 것\"이라며 다투게 됐어요. 주먹 대신 법원으로! 농부가 <b>소장</b>을 내며 재판을 청구해요.",
+    intro: "사건 하나, 밭을 산 농부가 밭에서 <b>요술 항아리</b>를 발견했는데, 밭을 판 옛 주인이 \"항아리는 내 것\"이라며 다투게 됐어요. 주먹 대신 법원으로! 농부가 <b>소장</b>을 내며 재판을 청구해요.",
     quiz: {
-      q: "재판을 청구하며 소장을 낸 농부 — 민사 재판에서 뭐라고 부를까요?",
+      q: "재판을 청구하며 소장을 낸 농부, 민사 재판에서 뭐라고 부를까요?",
       options: ["소송을 제기한 원고", "소송을 당한 피고"],
-      good: "맞아요! 소송을 <b>제기한</b> 쪽이 원고, 소송을 <b>당한</b> 쪽이 피고 — 민사 재판은 원고의 소장 제출로 시작된답니다.",
-      wrong: "피고는 소송을 '당한' 옛 주인 쪽이에요 — 먼저 법원 문을 두드린 농부는 소송을 '제기한' 원고랍니다. 다시 골라 봐요!",
+      good: "맞아요! 소송을 <b>제기한</b> 쪽이 원고, 소송을 <b>당한</b> 쪽이 피고, 민사 재판은 원고의 소장 제출로 시작된답니다.",
+      wrong: "피고는 소송을 '당한' 옛 주인 쪽이에요. 먼저 법원 문을 두드린 농부는 소송을 '제기한' 원고랍니다. 다시 골라 봐요!",
     },
   },
   {
     id: "mans",
     fileLabel: "민사 2",
     stageName: "답변서·변론",
-    intro: "소장을 받은 법원이 피고에게 알렸어요 — 피고는 <b>답변서</b>로 응답하고, 법정에서 양쪽이 <b>변론</b>을 펼쳐요. 한 쪽씩 이야기를 들어 봐요!",
+    intro: "소장을 받은 법원이 피고에게 알렸어요. 피고는 <b>답변서</b>로 응답하고, 법정에서 양쪽이 <b>변론</b>을 펼쳐요. 한 쪽씩 이야기를 들어 봐요!",
   },
   {
     id: "mjud",
     fileLabel: "민사 3",
     stageName: "판결(민사)",
-    intro: "증거와 주장을 모두 살핀 판사 — 이제 <b>판결</b>을 선고할 시간이에요.",
+    intro: "증거와 주장을 모두 살핀 판사, 이제 <b>판결</b>을 선고할 시간이에요.",
     quiz: {
       q: "민사 재판에서 판사가 하는 일은 무엇일까요?",
       options: ["양쪽 주장을 살펴 누구 말이 옳은지 가리고, 배상이나 지급을 명한다", "죄를 지은 사람에게 징역 같은 형벌을 내린다"],
-      good: "정확해요! 민사 재판은 <b>개인 사이의 분쟁을 해결</b>하는 무대 — 판사는 옳고 그름을 가려 배상·지급을 명해요. 형벌은 다음 무대의 일이랍니다.",
-      wrong: "형벌은 범죄를 다루는 <b>형사 재판</b>의 일이에요 — 민사 재판의 판사는 개인 간 다툼에서 누구 말이 옳은지 가리고 배상·지급을 명한답니다. 다시 골라 봐요!",
+      good: "정확해요! 민사 재판은 <b>개인 사이의 분쟁을 해결</b>하는 무대, 판사는 옳고 그름을 가려 배상·지급을 명해요. 형벌은 다음 무대의 일이랍니다.",
+      wrong: "형벌은 범죄를 다루는 <b>형사 재판</b>의 일이에요. 민사 재판의 판사는 개인 간 다툼에서 누구 말이 옳은지 가리고 배상·지급을 명한답니다. 다시 골라 봐요!",
     },
   },
   {
     id: "crep",
     fileLabel: "형사 1",
     stageName: "고소·수사",
-    intro: "사건 둘 — 이번엔 <b>가짜 요술 항아리</b>를 진짜라고 속여 판 상인이 나타났어요. 속아서 돈을 잃은 피해자가 <b>고소</b>하면, 수사 기관이 <b>수사</b>를 시작해요.",
+    intro: "사건 둘, 이번엔 <b>가짜 요술 항아리</b>를 진짜라고 속여 판 상인이 나타났어요. 속아서 돈을 잃은 피해자가 <b>고소</b>하면, 수사 기관이 <b>수사</b>를 시작해요.",
   },
   {
     id: "cind",
     fileLabel: "형사 2",
     stageName: "기소",
-    intro: "수사가 끝났어요 — 이제 누군가 법원에 \"재판을 열어 주세요\"라고 요구해야 해요. 이 요구를 <b>기소</b>라고 하죠.",
+    intro: "수사가 끝났어요. 이제 누군가 법원에 \"재판을 열어 주세요\"라고 요구해야 해요. 이 요구를 <b>기소</b>라고 하죠.",
     quiz: {
       q: "범죄 사건의 재판을 법원에 요구(기소)하는 사람은 누구일까요?",
       options: ["국가를 대표하는 검사", "피해자가 직접"],
-      good: "맞아요! 형사 재판은 <b>검사의 기소</b>로 시작돼요 — 범죄는 피해자만의 일이 아니라 사회 질서를 흔드는 일이라, 국가를 대표하는 검사가 나선답니다.",
-      wrong: "피해자는 <b>고소</b>로 수사를 요청할 뿐, 재판을 여는 <b>기소</b>는 국가를 대표하는 검사의 일이에요 — 민사 재판과 갈리는 결정적 차이랍니다. 다시 골라 봐요!",
+      good: "맞아요! 형사 재판은 <b>검사의 기소</b>로 시작돼요. 범죄는 피해자만의 일이 아니라 사회 질서를 흔드는 일이라, 국가를 대표하는 검사가 나선답니다.",
+      wrong: "피해자는 <b>고소</b>로 수사를 요청할 뿐, 재판을 여는 <b>기소</b>는 국가를 대표하는 검사의 일이에요. 민사 재판과 갈리는 결정적 차이랍니다. 다시 골라 봐요!",
     },
   },
   {
     id: "cjud",
     fileLabel: "형사 3",
     stageName: "공판·판결(형사)",
-    intro: "기소된 사람 — 이제 <b>피고인</b>이라 불러요. 법정에서 <b>공판</b>이 열리고, 피고인은 <b>변호인</b>의 도움을 받을 수 있어요. 재판을 끝까지 진행해요!",
+    intro: "기소된 사람, 이제 <b>피고인</b>이라 불러요. 법정에서 <b>공판</b>이 열리고, 피고인은 <b>변호인</b>의 도움을 받을 수 있어요. 재판을 끝까지 진행해요!",
   },
 ];
 
@@ -362,7 +362,7 @@ export const trialLab: StepRenderer = (host, step, api) => {
       refreshScene(stripSvg());
       lightChip("final", "완주!");
       helper.innerHTML =
-        "두 무대 완주! <b>민사 = 소장 제출 → 답변서 → 변론 → 판결</b>, <b>형사 = 고소·수사 → 기소 → 공판 → 판결</b> — 시작하는 사람도(원고 vs 검사), 마주 서는 사람도(피고 vs 피고인) 다르지만, 둘 다 법정에서 다툼을 평화롭게 끝낸답니다!";
+        "두 무대 완주! <b>민사 = 소장 제출 → 답변서 → 변론 → 판결</b>, <b>형사 = 고소·수사 → 기소 → 공판 → 판결</b>, 시작하는 사람도(원고 vs 검사), 마주 서는 사람도(피고 vs 피고인) 다르지만, 둘 다 법정에서 다툼을 평화롭게 끝낸답니다!";
       api.recordQuiz(clean);
       api.enableCTA(s.cta ?? "재판 정리하러 가기");
       return;
@@ -414,7 +414,7 @@ export const trialLab: StepRenderer = (host, step, api) => {
         refreshScene(msuSvg(true));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "접수 도장 꾹 — 소장이 법원에 들어갔어요. 그런데 소장을 낸 농부, 재판에서는 특별한 이름으로 불려요.";
+        helper.innerHTML = "접수 도장 꾹, 소장이 법원에 들어갔어요. 그런데 소장을 낸 농부, 재판에서는 특별한 이름으로 불려요.";
         later(openQuiz, 800);
       });
     } else if (id === "mans") {
@@ -422,7 +422,7 @@ export const trialLab: StepRenderer = (host, step, api) => {
       let n = 0;
       const b = actBtn("변론 듣기 (0/2)");
       controls.appendChild(b);
-      helper.innerHTML = "피고의 <b>답변서</b>가 도착했어요 — \"항아리는 내 밭에 있었으니 내 것\"이라는 주장! 이제 법정에서 양쪽 변론을 들어요.";
+      helper.innerHTML = "피고의 <b>답변서</b>가 도착했어요. \"항아리는 내 밭에 있었으니 내 것\"이라는 주장! 이제 법정에서 양쪽 변론을 들어요.";
       b.addEventListener("click", () => {
         if (n >= 2) return;
         n += 1;
@@ -431,8 +431,8 @@ export const trialLab: StepRenderer = (host, step, api) => {
         b.textContent = `변론 듣기 (${n}/2)`;
         helper.innerHTML =
           n === 1
-            ? "원고(농부)의 변론 — \"밭을 <b>산 뒤에</b> 나온 항아리이니, 밭과 함께 제 것이 되었어요.\""
-            : "피고(옛 주인)의 변론 — \"항아리를 <b>판 적은 없으니</b> 여전히 제 것이에요.\" 양쪽 주장이 팽팽하네요!";
+            ? "원고(농부)의 변론, \"밭을 <b>산 뒤에</b> 나온 항아리이니, 밭과 함께 제 것이 되었어요.\""
+            : "피고(옛 주인)의 변론, \"항아리를 <b>판 적은 없으니</b> 여전히 제 것이에요.\" 양쪽 주장이 팽팽하네요!";
         if (n >= 2) {
           b.disabled = true;
           b.classList.add("done");
@@ -449,7 +449,7 @@ export const trialLab: StepRenderer = (host, step, api) => {
         refreshScene(mjudSvg(true));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "\"밭을 팔 때는 그 안에 묻힌 것도 함께 넘어간다\" — 항아리는 <b>원고(농부)의 것</b>으로 판결! 그런데 이 판사가 한 일은 무엇이었을까요?";
+        helper.innerHTML = "\"밭을 팔 때는 그 안에 묻힌 것도 함께 넘어간다\", 항아리는 <b>원고(농부)의 것</b>으로 판결! 그런데 이 판사가 한 일은 무엇이었을까요?";
         later(openQuiz, 900);
       });
     } else if (id === "crep") {
@@ -465,8 +465,8 @@ export const trialLab: StepRenderer = (host, step, api) => {
         b.textContent = `수사 진행하기 (${n}/2)`;
         helper.innerHTML =
           n === 1
-            ? "피해자의 <b>고소</b>가 접수됐어요 — 수사 기관이 사건 조사를 시작해요."
-            : "가짜 항아리와 거래 기록까지 — <b>증거</b>를 확보했어요! 수사 완료, 다음은 법원으로 가는 관문이에요.";
+            ? "피해자의 <b>고소</b>가 접수됐어요. 수사 기관이 사건 조사를 시작해요."
+            : "가짜 항아리와 거래 기록까지, <b>증거</b>를 확보했어요! 수사 완료, 다음은 법원으로 가는 관문이에요.";
         if (n >= 2) {
           b.disabled = true;
           b.classList.add("done");
@@ -483,7 +483,7 @@ export const trialLab: StepRenderer = (host, step, api) => {
         refreshScene(cindSvg(true));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "공소장이 법원으로 — <b>기소</b> 완료! 그런데 방금 기소한 사람, 누구였을까요?";
+        helper.innerHTML = "공소장이 법원으로, <b>기소</b> 완료! 그런데 방금 기소한 사람, 누구였을까요?";
         later(openQuiz, 800);
       });
     } else {
@@ -499,8 +499,8 @@ export const trialLab: StepRenderer = (host, step, api) => {
         b.textContent = `재판 진행하기 (${n}/2)`;
         helper.innerHTML =
           n === 1
-            ? "<b>공판</b>이 열렸어요 — 검사가 증거를 내보이고, 피고인은 변호인의 도움을 받아 자신을 변호해요."
-            : "증거에 따라 <b>유죄 판결</b> — 속여 판 값을 치르게 됐어요. 범죄를 가리고 형벌을 정하는 것, 이게 형사 재판이에요!";
+            ? "<b>공판</b>이 열렸어요. 검사가 증거를 내보이고, 피고인은 변호인의 도움을 받아 자신을 변호해요."
+            : "증거에 따라 <b>유죄 판결</b>, 속여 판 값을 치르게 됐어요. 범죄를 가리고 형벌을 정하는 것, 이게 형사 재판이에요!";
         if (n >= 2) {
           b.disabled = true;
           b.classList.add("done");

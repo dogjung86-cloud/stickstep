@@ -70,7 +70,7 @@ function trackSvg(at: number, loop: boolean): string {
   const feedback = loop
     ? `<path d="M212 30 q10 22 -12 26 H44 q-24 -2 -14 -24" stroke="#C0871C" stroke-width="2.2" fill="none" stroke-dasharray="6 5" class="hs8-noti"/>
        <path d="M28 36l-4 7 8 1z" fill="#C0871C" class="hs8-noti"/>
-       <text x="120" y="52" text-anchor="middle" font-size="7.6" font-weight="800" fill="#8A5A14">평가가 다시 첫 정거장으로 — 환류</text>`
+       <text x="120" y="52" text-anchor="middle" font-size="7.6" font-weight="800" fill="#8A5A14">평가가 다시 첫 정거장으로, 환류</text>`
     : "";
   return `<g>${lines}${nodes}${feedback}</g>`;
 }
@@ -103,7 +103,7 @@ function voiceSvg(heard: number): string {
     )
     .join("");
   return `${men}${bubbles}
-    <text x="120" y="122" text-anchor="middle" font-size="8.4" font-weight="700" fill="#7E8AA0">스틱 시 학교 앞 — 흩어져 있던 목소리들</text>`;
+    <text x="120" y="122" text-anchor="middle" font-size="8.4" font-weight="700" fill="#7E8AA0">스틱 시 학교 앞, 흩어져 있던 목소리들</text>`;
 }
 
 // ② 이익 집약 — 말풍선 3 → 문서 1
@@ -111,7 +111,7 @@ function gatherSvg(merged: boolean): string {
   if (!merged) {
     return `${[52, 120, 188].map((x, i) => `<g transform="rotate(${-8 + i * 8} ${x} 48)"><rect x="${x - 28}" y="34" width="56" height="18" rx="8" fill="#FFF" stroke="#8A93A6" stroke-width="1.4"/><path d="M${x - 14} 43h28" stroke="#B8C2CE" stroke-width="1.6"/></g>`).join("")}
       <path d="M62 62q58 26 116 0" stroke="#C9D2DC" stroke-width="1.8" stroke-dasharray="5 5" fill="none"/>
-      <text x="120" y="112" text-anchor="middle" font-size="8.4" font-weight="700" fill="#7E8AA0">흩어진 목소리 — 이대로는 힘이 약해요</text>`;
+      <text x="120" y="112" text-anchor="middle" font-size="8.4" font-weight="700" fill="#7E8AA0">흩어진 목소리, 이대로는 힘이 약해요</text>`;
   }
   return `<g class="hs8-noti">
       <rect x="76" y="22" width="88" height="66" rx="6" fill="url(#pcy-paper)" stroke="#5C940D" stroke-width="1.8"/>
@@ -133,7 +133,7 @@ function decideSvg(decided: boolean): string {
     <rect x="56" y="72" width="128" height="8" rx="3" fill="url(#pcy-hall)" stroke="#8A7648" stroke-width="1.4"/>`;
   if (!decided) {
     return `${hall}
-      <text x="120" y="100" text-anchor="middle" font-size="8.8" font-weight="800" fill="#5A6478">회의장 — 요구안이 도착했어요</text>
+      <text x="120" y="100" text-anchor="middle" font-size="8.8" font-weight="800" fill="#5A6478">회의장, 요구안이 도착했어요</text>
       <g transform="rotate(-6 120 112)"><rect x="104" y="104" width="32" height="20" rx="3" fill="url(#pcy-paper)" stroke="#5C940D" stroke-width="1.5"/><path d="M110 111h20M110 117h13" stroke="#A8B2C2" stroke-width="1.4"/></g>`;
   }
   return `${hall}
@@ -143,7 +143,7 @@ function decideSvg(decided: boolean): string {
       <path d="M112 88l-4-4M120 86v-6M104 88l2-6" stroke="#E2A020" stroke-width="1.6" stroke-linecap="round"/>
     </g>
     <rect x="60" y="112" width="120" height="18" rx="6" fill="url(#pcy-lime)"/>
-    <text x="120" y="124.5" text-anchor="middle" font-size="8.4" font-weight="800" fill="#FFF">"학교 앞 보호 구역을 정한다" — 통과!</text>`;
+    <text x="120" y="124.5" text-anchor="middle" font-size="8.4" font-weight="800" fill="#FFF">"학교 앞 보호 구역을 정한다", 통과!</text>`;
 }
 
 // ④ 정책 집행 — 표지판·바닥 설치
@@ -154,7 +154,7 @@ function executeSvg(built: boolean): string {
     return `${road}
       ${stickman(60, 62, { arm: "out", r: 5.6 })}
       <g transform="rotate(8 168 66)"><rect x="152" y="54" width="32" height="24" rx="3" fill="url(#pcy-paper)" stroke="#8A93A6" stroke-width="1.4"/><path d="M158 62h20M158 68h14" stroke="#A8B2C2" stroke-width="1.4"/></g>
-      <text x="120" y="128" text-anchor="middle" font-size="8.4" font-weight="700" fill="#7E8AA0">결정문이 현장에 도착 — 이제 실행할 차례</text>`;
+      <text x="120" y="128" text-anchor="middle" font-size="8.4" font-weight="700" fill="#7E8AA0">결정문이 현장에 도착, 이제 실행할 차례</text>`;
   }
   return `${road}
     <g class="hs8-noti">
@@ -203,55 +203,55 @@ const PHASES: PcyPhase[] = [
     id: "voice",
     fileLabel: "정거장 ①",
     stageName: "이익 표출",
-    intro: "스틱 시 학교 앞 — 걱정하는 사람들이 있어요. <b>목소리 모으기</b> 버튼으로 한 명씩 들어 봐요.",
+    intro: "스틱 시 학교 앞, 걱정하는 사람들이 있어요. <b>목소리 모으기</b> 버튼으로 한 명씩 들어 봐요.",
   },
   {
     id: "gather",
     fileLabel: "정거장 ②",
     stageName: "이익 집약",
-    intro: "목소리가 셋 — 그런데 흩어져 있으면 힘이 약해요. <b>하나로 모으기</b>를 눌러 요구안으로 묶어 봐요.",
+    intro: "목소리가 셋, 그런데 흩어져 있으면 힘이 약해요. <b>하나로 모으기</b>를 눌러 요구안으로 묶어 봐요.",
     quiz: {
       q: "흩어진 목소리를 모아 요약하고 대안을 제시하는 일은 주로 누가 할까요?",
       options: ["정당과 언론", "국회와 정부"],
-      good: "맞아요! 이익을 모아 요약하는 <b>이익 집약</b>은 주로 <b>정당과 언론</b>의 몫이에요 — 국회와 정부는 그다음 정거장에서 결정을 맡죠. 시험에 잘 나오는 함정이랍니다!",
-      wrong: "국회와 정부는 '결정'의 정거장에서 만나요 — 그 전에 목소리를 모아 다듬는 건 <b>정당과 언론</b>의 일이에요. 단계마다 주인공이 다르답니다. 다시 골라 봐요!",
+      good: "맞아요! 이익을 모아 요약하는 <b>이익 집약</b>은 주로 <b>정당과 언론</b>의 몫이에요. 국회와 정부는 그다음 정거장에서 결정을 맡죠. 시험에 잘 나오는 함정이랍니다!",
+      wrong: "국회와 정부는 '결정'의 정거장에서 만나요. 그 전에 목소리를 모아 다듬는 건 <b>정당과 언론</b>의 일이에요. 단계마다 주인공이 다르답니다. 다시 골라 봐요!",
     },
   },
   {
     id: "decide",
     fileLabel: "정거장 ③",
     stageName: "정책 결정",
-    intro: "요구안이 회의장에 도착했어요 — <b>회의 열기</b>를 눌러 결정의 순간을 지켜봐요.",
+    intro: "요구안이 회의장에 도착했어요. <b>회의 열기</b>를 눌러 결정의 순간을 지켜봐요.",
     quiz: {
       q: "요구를 바탕으로 법을 만들어 정책을 결정하는 국가기관은 어디일까요?",
-      options: ["국회 — 정부와 함께 정책을 결정한다", "시장 상인들의 단체"],
-      good: "정확해요! <b>국회</b>가 관련 법률을 만들고 <b>정부와 함께</b> 정책을 결정해요 — 개인과 집단의 요구가 드디어 나라의 약속이 되는 정거장이죠.",
-      wrong: "단체는 요구를 '내는' 쪽이에요 — 그 요구로 법을 만들어 정책을 '결정'하는 공식 기관은 <b>국회</b>(정부와 함께)랍니다. 다시 골라 봐요!",
+      options: ["국회, 정부와 함께 정책을 결정한다", "시장 상인들의 단체"],
+      good: "정확해요! <b>국회</b>가 관련 법률을 만들고 <b>정부와 함께</b> 정책을 결정해요. 개인과 집단의 요구가 드디어 나라의 약속이 되는 정거장이죠.",
+      wrong: "단체는 요구를 '내는' 쪽이에요. 그 요구로 법을 만들어 정책을 '결정'하는 공식 기관은 <b>국회</b>(정부와 함께)랍니다. 다시 골라 봐요!",
     },
   },
   {
     id: "execute",
     fileLabel: "정거장 ④",
     stageName: "정책 집행",
-    intro: "결정됐다고 끝이 아니에요 — 누군가 현장에서 <b>실행</b>해야 진짜가 되죠. <b>정책 실행하기</b>를 눌러요.",
+    intro: "결정됐다고 끝이 아니에요. 누군가 현장에서 <b>실행</b>해야 진짜가 되죠. <b>정책 실행하기</b>를 눌러요.",
     quiz: {
       q: "결정된 정책을 현장에서 실제로 실행하는 곳은 어디일까요?",
       options: ["정부", "국회"],
-      good: "맞아요! 표지판을 세우고 바닥을 칠하는 <b>집행</b>은 <b>정부</b>의 일이에요 — 국회는 법을 만들고, 정부는 그 법을 현실로 만들죠. 이것도 단골 함정!",
-      wrong: "국회의 일은 법을 만드는 것까지 — 그 법을 들고 현장에서 실행하는 건 <b>정부</b>랍니다. 결정과 집행의 주인공을 가르는 게 이 단원의 열쇠예요. 다시 골라 봐요!",
+      good: "맞아요! 표지판을 세우고 바닥을 칠하는 <b>집행</b>은 <b>정부</b>의 일이에요. 국회는 법을 만들고, 정부는 그 법을 현실로 만들죠. 이것도 단골 함정!",
+      wrong: "국회의 일은 법을 만드는 것까지, 그 법을 들고 현장에서 실행하는 건 <b>정부</b>랍니다. 결정과 집행의 주인공을 가르는 게 이 단원의 열쇠예요. 다시 골라 봐요!",
     },
   },
   {
     id: "evaluate",
     fileLabel: "정거장 ⑤",
     stageName: "정책 평가",
-    intro: "표지판이 선 지 한 달 — 시민들이 <b>성적표</b>를 매길 차례예요. <b>별점 남기기</b>를 눌러요.",
+    intro: "표지판이 선 지 한 달, 시민들이 <b>성적표</b>를 매길 차례예요. <b>별점 남기기</b>를 눌러요.",
   },
 ];
 
 const FINALE_Q = "평가에서 나온 새로운 목소리(\"아침엔 아직 위험해요\")는 이제 어떻게 될까요?";
 const FINALE_OPTS: [string, string] = [
-  "다시 정치과정에 반영된다 — 과정은 한 바퀴로 끝나지 않고 순환한다",
+  "다시 정치과정에 반영된다. 과정은 한 바퀴로 끝나지 않고 순환한다",
   "정책이 이미 정해졌으니 그냥 사라진다",
 ];
 
@@ -350,7 +350,7 @@ export const policyLab: StepRenderer = (host, step, api) => {
       fileTag.textContent = "숨은 정거장";
       refreshScene(wrap(4, true, evalSvg(true)));
       helper.innerHTML =
-        "그런데 트랙을 봐요 — 평가 정거장에서 <b>첫 정거장으로 되감기는 화살표</b>가 생겼어요! 새 목소리의 운명, 마지막 판정이에요.";
+        "그런데 트랙을 봐요. 평가 정거장에서 <b>첫 정거장으로 되감기는 화살표</b>가 생겼어요! 새 목소리의 운명, 마지막 판정이에요.";
       later(openQuiz, 1000);
       return;
     }
@@ -371,7 +371,7 @@ export const policyLab: StepRenderer = (host, step, api) => {
         if (finaleMode) {
           lightChip("loop", "순환 확인!");
           helper.innerHTML =
-            "완주! <b>이익 표출 → 이익 집약 → 정책 결정 → 정책 집행 → 정책 평가</b>, 그리고 평가가 다시 표출로 이어지는 <b>환류</b>까지 — 목소리가 정책이 되는 길은 <b>순환하는 길</b>이에요. 시민의 목소리가 멈추지 않는 한, 정치과정도 멈추지 않죠!",
+            "완주! <b>이익 표출 → 이익 집약 → 정책 결정 → 정책 집행 → 정책 평가</b>, 그리고 평가가 다시 표출로 이어지는 <b>환류</b>까지, 목소리가 정책이 되는 길은 <b>순환하는 길</b>이에요. 시민의 목소리가 멈추지 않는 한, 정치과정도 멈추지 않죠!",
           quizCard.classList.remove("show");
           api.recordQuiz(clean);
           api.enableCTA(s.cta ?? "길 이름 정리하기");
@@ -388,7 +388,7 @@ export const policyLab: StepRenderer = (host, step, api) => {
         haptic(HAPTIC.wrong);
         btn.classList.add("no");
         helper.innerHTML = finaleMode
-          ? "사라지기엔 아까운 목소리죠 — 트랙의 노란 화살표를 봐요. 평가에서 나온 의견은 다시 첫 정거장(표출)으로 들어가 과정을 한 바퀴 더 돌려요. 다시 골라 봐요!"
+          ? "사라지기엔 아까운 목소리죠. 트랙의 노란 화살표를 봐요. 평가에서 나온 의견은 다시 첫 정거장(표출)으로 들어가 과정을 한 바퀴 더 돌려요. 다시 골라 봐요!"
           : PHASES[phase].quiz!.wrong;
         later(() => btn.classList.remove("no"), 900);
       }
@@ -408,9 +408,9 @@ export const policyLab: StepRenderer = (host, step, api) => {
       const b = actBtn("목소리 모으기 (0/3)");
       controls.appendChild(b);
       const msgs = [
-        "\"<b>등하굣길이 위험해요</b>\" — 학부모의 걱정이 첫 목소리예요.",
-        "\"<b>세워 둔 차 때문에 아이들이 안 보여요</b>\" — 운전자도 목소리를 냈어요.",
-        "\"<b>건널목 신호가 너무 짧아요</b>\" — 학생의 목소리까지, 셋! 이렇게 요구를 자유롭게 표현하는 게 첫 정거장이에요.",
+        "\"<b>등하굣길이 위험해요</b>\", 학부모의 걱정이 첫 목소리예요.",
+        "\"<b>세워 둔 차 때문에 아이들이 안 보여요</b>\", 운전자도 목소리를 냈어요.",
+        "\"<b>건널목 신호가 너무 짧아요</b>\", 학생의 목소리까지, 셋! 이렇게 요구를 자유롭게 표현하는 게 첫 정거장이에요.",
       ];
       b.addEventListener("click", () => {
         if (n >= 3) return;
@@ -435,7 +435,7 @@ export const policyLab: StepRenderer = (host, step, api) => {
         refreshScene(wrap(1, false, gatherSvg(true)));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "세 목소리가 <b>하나의 요구안</b>으로! 모아서 요약하니 힘이 세졌어요 — 그런데 이 일은 주로 누가 할까요?";
+        helper.innerHTML = "세 목소리가 <b>하나의 요구안</b>으로! 모아서 요약하니 힘이 세졌어요. 그런데 이 일은 주로 누가 할까요?";
         later(openQuiz, 800);
       });
     } else if (id === "decide") {
@@ -448,7 +448,7 @@ export const policyLab: StepRenderer = (host, step, api) => {
         refreshScene(wrap(2, false, decideSvg(true)));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "탕탕탕 — \"학교 앞을 보호 구역으로 정한다\", <b>통과</b>! 요구가 드디어 나라의 약속이 됐어요. 이 결정은 어디의 일일까요?";
+        helper.innerHTML = "탕탕탕, \"학교 앞을 보호 구역으로 정한다\", <b>통과</b>! 요구가 드디어 나라의 약속이 됐어요. 이 결정은 어디의 일일까요?";
         later(openQuiz, 800);
       });
     } else if (id === "execute") {
@@ -461,7 +461,7 @@ export const policyLab: StepRenderer = (host, step, api) => {
         refreshScene(wrap(3, false, executeSvg(true)));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "노란 표지판이 서고 바닥이 칠해졌어요 — 훅에서 본 <b>그 표지판</b>이 바로 이 순간 태어난 거예요! 실행은 누구의 일일까요?";
+        helper.innerHTML = "노란 표지판이 서고 바닥이 칠해졌어요. 훅에서 본 <b>그 표지판</b>이 바로 이 순간 태어난 거예요! 실행은 누구의 일일까요?";
         later(openQuiz, 800);
       });
     } else {
@@ -474,7 +474,7 @@ export const policyLab: StepRenderer = (host, step, api) => {
         refreshScene(wrap(4, false, evalSvg(true)));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "별 넷 — \"많이 안전해졌어요!\" 그런데 그때, <b>새로운 목소리</b>가 들려요: \"아침엔 아직 위험해요!\"";
+        helper.innerHTML = "별 넷, \"많이 안전해졌어요!\" 그런데 그때, <b>새로운 목소리</b>가 들려요: \"아침엔 아직 위험해요!\"";
         later(advance, 1400);
       });
     }

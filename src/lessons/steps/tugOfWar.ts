@@ -30,7 +30,7 @@ export const tugOfWar: StepRenderer = (host, step, api) => {
   // ---- 무대 ----
   const canvas = el("canvas", { class: "mstage-cvblock", style: "height:232px" });
   const netVal = el("span", { text: "0" });
-  const netPill = el("span", { text: "알짜힘 0 N — 아직 아무도 없어요" });
+  const netPill = el("span", { text: "알짜힘 0 N, 아직 아무도 없어요" });
   const toastEl = el("div", { class: "toast" });
   const stage = el(
     "div",
@@ -100,8 +100,8 @@ export const tugOfWar: StepRenderer = (host, step, api) => {
     const R = nR * N_PER;
     const net = R - L;
     netVal.textContent = String(Math.abs(net));
-    if (nL + nR === 0) netPill.textContent = "알짜힘 0 N — 아직 아무도 없어요";
-    else if (net === 0) netPill.textContent = `${L} N ↔ ${R} N — 힘의 평형!`;
+    if (nL + nR === 0) netPill.textContent = "알짜힘 0 N, 아직 아무도 없어요";
+    else if (net === 0) netPill.textContent = `${L} N ↔ ${R} N, 힘의 평형!`;
     else netPill.textContent = `알짜힘 ${Math.abs(net)} N ${net > 0 ? "→" : "←"} (${R} N − ${L} N)`;
   }
 
@@ -114,7 +114,7 @@ export const tugOfWar: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "완벽해요! 반대 방향 두 힘의 합력은 <b>큰 힘 − 작은 힘</b>, 방향은 <b>큰 힘 쪽</b>. 그리고 크기가 같아지면 알짜힘이 0 — 아무리 세게 당겨도 줄은 <b>움직이지 않아요</b>. 이게 <b>힘의 평형</b>!";
+        "완벽해요! 반대 방향 두 힘의 합력은 <b>큰 힘 − 작은 힘</b>, 방향은 <b>큰 힘 쪽</b>. 그리고 크기가 같아지면 알짜힘이 0, 아무리 세게 당겨도 줄은 <b>움직이지 않아요</b>. 이게 <b>힘의 평형</b>!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     } else if (!finished) {
@@ -159,15 +159,15 @@ export const tugOfWar: StepRenderer = (host, step, api) => {
 
     // 승리 판정
     if (!finished && Math.abs(ribbonX) > winDist && nL + nR > 0) {
-      if (ribbonX > 0) collect("right", "오른쪽 팀 승리 — 알짜힘이 오른쪽!");
-      else collect("left", "왼쪽 팀 승리 — 알짜힘이 왼쪽!");
+      if (ribbonX > 0) collect("right", "오른쪽 팀 승리, 알짜힘이 오른쪽!");
+      else collect("left", "왼쪽 팀 승리, 알짜힘이 왼쪽!");
       ribbonX = 0;
       vx = 0;
     }
     // 평형 판정: 양쪽 같고(0명 제외) 리본 거의 정지 1.4초
     if (nL === nR && nL > 0 && Math.abs(vx) < 0.05) {
       balancedMs += dt * 16.7;
-      if (balancedMs > 1400) collect("bal", "알짜힘 0 — 힘의 평형이에요!");
+      if (balancedMs > 1400) collect("bal", "알짜힘 0, 힘의 평형이에요!");
     } else {
       balancedMs = 0;
     }
@@ -259,7 +259,7 @@ export const tugOfWar: StepRenderer = (host, step, api) => {
       ctx.font = "700 12px Pretendard, sans-serif";
       ctx.textAlign = "center";
       ctx.fillStyle = "#FFD98A";
-      ctx.fillText("알짜힘 0 — 평형", w / 2, arrowY - 34);
+      ctx.fillText("알짜힘 0, 평형", w / 2, arrowY - 34);
     }
   });
 

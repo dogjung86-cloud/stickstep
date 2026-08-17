@@ -144,7 +144,7 @@ export const flipEngineLab: StepRenderer = (host, step, api) => {
     board.classList.add("rev");
     flipBtn.disabled = true;
     helper.innerHTML =
-      "식이 뒤집혔어요! 이번엔 <b>포도당과 산소가 들어가고, 이산화 탄소와 물이 나와요</b>. 그리고 위쪽에 처음 보는 것이 하나 — 반짝이는 <b>번개</b>를 탭해 보세요.";
+      "식이 뒤집혔어요! 이번엔 <b>포도당과 산소가 들어가고, 이산화 탄소와 물이 나와요</b>. 그리고 위쪽에 처음 보는 것이 하나, 반짝이는 <b>번개</b>를 탭해 보세요.";
     later(() => collect("flip", "거꾸로 방향!"), 700);
   });
 
@@ -157,7 +157,7 @@ export const flipEngineLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.correct);
     board.classList.add("boom");
     helper.innerHTML =
-      "이게 호흡의 목적 — <b>에너지</b>예요! 양분(포도당)에 저장돼 있던 에너지를 꺼내는 거죠. 식물은 이 에너지로 <b>자라고, 꽃을 피우고, 살아가요</b>. 그럼 이 엔진은 언제 돌까요? 아래 <b>낮·밤 버튼</b>으로 시험해 보세요.";
+      "이게 호흡의 목적, <b>에너지</b>예요! 양분(포도당)에 저장돼 있던 에너지를 꺼내는 거죠. 식물은 이 에너지로 <b>자라고, 꽃을 피우고, 살아가요</b>. 그럼 이 엔진은 언제 돌까요? 아래 <b>낮·밤 버튼</b>으로 시험해 보세요.";
     collect("energy", "양분 속 에너지!");
     segRow.style.display = "";
     later(() => segRow.scrollIntoView({ behavior: "smooth", block: "nearest" }), 120);
@@ -184,8 +184,8 @@ export const flipEngineLab: StepRenderer = (host, step, api) => {
     if (!goals.has("always")) {
       helper.innerHTML =
         mode === "night"
-          ? "깜깜한 밤 — 그런데 엔진 표시등은 <b>여전히 초록불</b>이에요. 호흡이 계속되고 있다는 뜻!"
-          : "환한 낮 — 광합성이 활발한 시간이지만, 엔진 표시등은 <b>이때도 켜져 있어요</b>.";
+          ? "깜깜한 밤, 그런데 엔진 표시등은 <b>여전히 초록불</b>이에요. 호흡이 계속되고 있다는 뜻!"
+          : "환한 낮, 광합성이 활발한 시간이지만, 엔진 표시등은 <b>이때도 켜져 있어요</b>.";
     }
     if (seen.size === 2 && !goals.has("always")) later(showAsk, 900);
   }
@@ -208,7 +208,7 @@ export const flipEngineLab: StepRenderer = (host, step, api) => {
         api.recordQuiz(ok);
         helper.innerHTML = ok
           ? "정확해요! 살아 있는 세포는 에너지가 <b>항상</b> 필요하니, 호흡도 낮밤 없이 계속돼요. 광합성이 '주로 낮'인 것과 대비되는 포인트죠."
-          : "표시등을 다시 봐요 — 낮에도 밤에도 초록불이었죠? 세포는 에너지가 <b>항상</b> 필요해서, 호흡은 낮과 밤을 가리지 않고 계속된답니다.";
+          : "표시등을 다시 봐요. 낮에도 밤에도 초록불이었죠? 세포는 에너지가 <b>항상</b> 필요해서, 호흡은 낮과 밤을 가리지 않고 계속된답니다.";
         collect("always", "낮에도 밤에도!");
       },
     );

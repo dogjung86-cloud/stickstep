@@ -113,7 +113,7 @@ export function renderCellZoom(
     (zoomBtn as HTMLButtonElement).disabled = true;
     haptic(HAPTIC.select);
     face("surprised");
-    helper.innerHTML = "우아 — 매끈한 줄 알았던 팔이 <b>작은 방들</b>로 가득 차 있어요! 이 방 하나하나가 바로 <b>세포</b>예요.";
+    helper.innerHTML = "우아, 매끈한 줄 알았던 팔이 <b>작은 방들</b>로 가득 차 있어요! 이 방 하나하나가 바로 <b>세포</b>예요.";
     window.setTimeout(() => {
       face("smile");
       helper.innerHTML = "나도, 너도, 지구의 <b>모든 생물</b>이 이런 세포로 이루어져 있어요. 세포 속으로 더 들어가 볼까요?";
@@ -370,15 +370,15 @@ export function renderFingerprint(
       if (tapped >= 3 && !asked) {
         asked = true;
         face("surprised");
-        helper.innerHTML = "봤죠? <b>지문 무늬가 다 달라요!</b> 같은 사람인데도 개체마다 특징이 다른 것 — 이걸 뭐라고 부를까요?";
+        helper.innerHTML = "봤죠? <b>지문 무늬가 다 달라요!</b> 같은 사람인데도 개체마다 특징이 다른 것, 이걸 뭐라고 부를까요?";
         ask(choicesBox, helper, {
-          choices: ["변이 — 같은 종 안의 차이", "돌연변이 딱 하나", "서로 다른 종이라서"],
+          choices: ["변이, 같은 종 안의 차이", "돌연변이 딱 하나", "서로 다른 종이라서"],
           good: "맞아요, <b>변이</b>예요! 지문처럼 <b>같은 종류의 생물</b>에서 개체마다 나타나는 서로 다른 특징을 변이라고 해요. 랩에서 환경과 어떤 관계가 있는지 확인해 봐요.",
           bad: "돌연변이 하나 때문도, 서로 다른 종이기 때문도 아니에요. <b>같은 종류의 생물</b>에서 개체마다 나타나는 특징의 차이가 바로 <b>변이</b>예요.",
           onDone: finish,
         });
       } else if (tapped < 3) {
-        helper.innerHTML = `${tapped}명 스캔 — 무늬 모양을 비교해 보세요. 세 명은 눌러 봐요!`;
+        helper.innerHTML = `${tapped}명 스캔, 무늬 모양을 비교해 보세요. 세 명은 눌러 봐요!`;
       }
     });
   });

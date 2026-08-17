@@ -46,7 +46,7 @@ export const gasPressure: StepRenderer = (host, step, api) => {
     el("div", { class: "stage-hud" }, el("div", { class: "pill" }, el("span", { class: "pdot", style: "background:#5AA2F8" }), countPill), gauge),
   );
 
-  const pumpBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "펌프 — 공기 넣기" }));
+  const pumpBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "펌프, 공기 넣기" }));
   const ventBtn = el("button", { class: "swapbtn", attrs: { type: "button" } }, el("span", { text: "공기 빼기" }));
   const btnRow = el("div", { class: "gp-controls" }, pumpBtn, ventBtn);
 
@@ -59,7 +59,7 @@ export const gasPressure: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "타이어 단면이에요. 속 입자들이 <b>벽에 부딪히는 순간</b>을 잘 보세요 — 그리고 <b>펌프</b>를 눌러 보세요!",
+    html: "타이어 단면이에요. 속 입자들이 <b>벽에 부딪히는 순간</b>을 잘 보세요. 그리고 <b>펌프</b>를 눌러 보세요!",
   });
   host.append(goalChips, helper, stage, btnRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
@@ -82,7 +82,7 @@ export const gasPressure: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 기체 입자는 <b>모든 방향으로 끊임없이 운동</b>하며 벽에 충돌해요. 이 충돌이 벽을 미는 힘 — 그게 <b>기체의 압력</b>이에요. 입자가 많을수록 충돌이 잦아 압력이 커지죠(바람 넣은 타이어!).";
+        "정리! 기체 입자는 <b>모든 방향으로 끊임없이 운동</b>하며 벽에 충돌해요. 이 충돌이 벽을 미는 힘, 그게 <b>기체의 압력</b>이에요. 입자가 많을수록 충돌이 잦아 압력이 커지죠(바람 넣은 타이어!).";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }

@@ -72,13 +72,13 @@ export const waterCircuit: StepRenderer = (host, step, api) => {
     el("div", { class: "sp3-enter-art", html: enterArtSvg() }),
     el("div", {
       class: "sp3-enter-txt",
-      html: "물을 끌어올리는 <b>펌프</b>와 물을 받아 도는 <b>물레방아</b> — 전기 회로와 나란히 놓고 <b>같은 것끼리</b> 이어 봐요.<br>화면이 자동으로 <b>가로</b>로 돌아가요.",
+      html: "물을 끌어올리는 <b>펌프</b>와 물을 받아 도는 <b>물레방아</b>, 전기 회로와 나란히 놓고 <b>같은 것끼리</b> 이어 봐요.<br>화면이 자동으로 <b>가로</b>로 돌아가요.",
     }),
   );
   const enterBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "가로 화면으로 크게 열기" }));
   const helper = el("div", {
     class: "helper",
-    html: "물이 계속 흐르려면 <b>높이 차</b>를 만들어 주는 펌프가 필요해요 — 전기 회로에서 그 역할을 하는 게 <b>전지(전압)</b>랍니다.",
+    html: "물이 계속 흐르려면 <b>높이 차</b>를 만들어 주는 펌프가 필요해요. 전기 회로에서 그 역할을 하는 게 <b>전지(전압)</b>랍니다.",
   });
   host.append(goalChips, helper, preview, enterBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
@@ -122,7 +122,7 @@ export const waterCircuit: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! <b>전압은 전류를 흐르게 하는 능력</b> — 펌프가 만든 높이 차가 물을 흐르게 하듯, 전지의 전압이 전류를 흐르게 해요. 펌프를 세게 = 전압을 크게 = <b>전류도 세게</b>!";
+        "정리! <b>전압은 전류를 흐르게 하는 능력</b>, 펌프가 만든 높이 차가 물을 흐르게 하듯, 전지의 전압이 전류를 흐르게 해요. 펌프를 세게 = 전압을 크게 = <b>전류도 세게</b>!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       window.setTimeout(() => showToast("비유 완성! 세로로 돌아가 계속해요", 3200), 1400);
@@ -135,7 +135,7 @@ export const waterCircuit: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.select);
     const { enterRotateStage } = await import("../../ui/rotateStage");
     if (disposed) return;
-    rot = enterRotateStage({ title: "물의 흐름 ↔ 전류 — 같은 것끼리 탭!", onLeave: () => leave() });
+    rot = enterRotateStage({ title: "물의 흐름 ↔ 전류, 같은 것끼리 탭!", onLeave: () => leave() });
 
     const canvas = el("canvas", { class: "sp3-canvas" });
     statusPill = el("div", { class: "pill sp3-pill" }, el("span", { class: "pdot", style: "background:#37B6D8" }), el("span", { text: "" }));
@@ -163,10 +163,10 @@ export const waterCircuit: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.select);
       if (!open) {
         valveDone.closed = true;
-        showToast("길이 막히면 — <b>물도 전류도 함께 멈춰요</b>", 2400);
+        showToast("길이 막히면, <b>물도 전류도 함께 멈춰요</b>", 2400);
       } else if (valveDone.closed) {
         valveDone.reopened = true;
-        showToast("다시 열면 — 둘 다 <b>동시에</b> 다시 흘러요!", 2200);
+        showToast("다시 열면, 둘 다 <b>동시에</b> 다시 흘러요!", 2200);
         collect("valve", "함께 멈춘다!");
       }
     });
@@ -232,14 +232,14 @@ export const waterCircuit: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.select);
       if (hit.side === "water") {
         selWater = hit.id;
-        showToast(`<b>${hit.label}</b> — 전기 회로에서 같은 역할은?`, 2200);
+        showToast(`<b>${hit.label}</b>, 전기 회로에서 같은 역할은?`, 2200);
       } else if (selWater) {
         const pair = PAIRS.find(([w]) => w === selWater);
         if (pair && pair[1] === hit.id) {
           if (!matched.has(selWater)) {
             matched.set(selWater, matched.size % MATCH_COLORS.length);
             haptic(HAPTIC.correct);
-            showToast(`정답! <b>${SPOTS.find((x) => x.id === pair[0])!.label} = ${hit.label}</b> — ${pair[2]}`, 2600);
+            showToast(`정답! <b>${SPOTS.find((x) => x.id === pair[0])!.label} = ${hit.label}</b>, ${pair[2]}`, 2600);
             if (matched.size === PAIRS.length) collect("match", "5쌍 완성!");
           }
           selWater = null;
@@ -282,8 +282,8 @@ export const waterCircuit: StepRenderer = (host, step, api) => {
 
       if (statusPill) {
         (statusPill.querySelectorAll("span")[1] as HTMLElement).textContent = open
-          ? `펌프 세기(전압) ${Math.round(power * 100)}% — 물살과 전류가 함께 ${power > 0.85 ? "콸콸!" : power < 0.4 ? "졸졸" : "흘러요"}`
-          : "밸브·스위치 잠김 — 물도 전류도 정지";
+          ? `펌프 세기(전압) ${Math.round(power * 100)}%, 물살과 전류가 함께 ${power > 0.85 ? "콸콸!" : power < 0.4 ? "졸졸" : "흘러요"}`
+          : "밸브·스위치 잠김, 물도 전류도 정지";
       }
     });
     loop.start();

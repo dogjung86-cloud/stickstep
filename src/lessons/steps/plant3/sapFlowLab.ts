@@ -48,9 +48,9 @@ function stageScene(): string {
         <feDropShadow dx="0" dy="1.4" stdDeviation="1.6" flood-color="#2A3A5E" flood-opacity="0.28"/>
       </filter>
     </defs>
-    <!-- 무대 = 발주 실사(토마토 전신 — 꽃·열매·잎·줄기·뿌리 단면) -->
+    <!-- 무대 = 발주 실사(토마토 전신, 꽃·열매·잎·줄기·뿌리 단면) -->
     <image href="${base}plant/figs/whole-plant.webp" x="0" y="0" width="340" height="340"/>
-    <!-- 밤 베일(multiply — 수채화를 살린 채 어둡게) -->
+    <!-- 밤 베일(multiply, 수채화를 살린 채 어둡게) -->
     <rect class="sfr-veil" x="0" y="0" width="340" height="340" fill="#2C3B6E"/>
     <!-- 달 + 별(밤에만) -->
     <g class="sfr-moon">
@@ -65,7 +65,7 @@ function stageScene(): string {
       <rect x="98" y="212" width="46" height="20" rx="10" fill="#FFFFFF" fill-opacity="0.95" stroke="${P3.sugar}" stroke-width="2"/>
       <text x="121" y="226" text-anchor="middle" font-size="11" font-weight="800" fill="#8A6D1A">체관</text>
     </g>
-    <!-- 원천 잎(왼쪽 중간 큰 잎) 위 알갱이 — 낮 녹말 ↔ 밤 설탕 -->
+    <!-- 원천 잎(왼쪽 중간 큰 잎) 위 알갱이, 낮 녹말 ↔ 밤 설탕 -->
     <g class="sfr-grain sfr-starch">
       <rect x="78" y="130" width="11" height="11" rx="3" fill="${P3.starch}" stroke="#FFFFFF" stroke-width="1.8"/>
       <rect x="94" y="137" width="11" height="11" rx="3" fill="${P3.starch}" stroke="#FFFFFF" stroke-width="1.8"/>
@@ -173,7 +173,7 @@ export const sapFlowLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "배송 종료! 잎의 양분은 <b>설탕으로 바뀌어 체관을 타고</b>, 정해진 방향 없이 <b>필요한 기관을 향해 위로도 아래로도</b> 이동했어요. 도착해서는 쓰이거나(꽃) 다시 모습을 바꿔 저장되죠(뿌리의 녹말 — 고구마의 정체!).";
+        "배송 종료! 잎의 양분은 <b>설탕으로 바뀌어 체관을 타고</b>, 정해진 방향 없이 <b>필요한 기관을 향해 위로도 아래로도</b> 이동했어요. 도착해서는 쓰이거나(꽃) 다시 모습을 바꿔 저장되죠(뿌리의 녹말, 고구마의 정체!).";
       api.enableCTA(s.cta ?? "저장과 이용 정리하기");
     }
   }
@@ -186,7 +186,7 @@ export const sapFlowLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     board.classList.add("night");
     nightBtn.disabled = true;
-    helper.innerHTML = "밤이 되자 잎의 녹말이 물에 <b>녹는 설탕</b>(둥근 알갱이)으로 변신했어요! 이제 이동할 수 있어요. 그런데 — 설탕은 <b>어느 쪽으로</b> 흐를 수 있을까요?";
+    helper.innerHTML = "밤이 되자 잎의 녹말이 물에 <b>녹는 설탕</b>(둥근 알갱이)으로 변신했어요! 이제 이동할 수 있어요. 그런데… 설탕은 <b>어느 쪽으로</b> 흐를 수 있을까요?";
     later(() => {
       b4Ask(
         qBox,
@@ -200,7 +200,7 @@ export const sapFlowLab: StepRenderer = (host, step, api) => {
           api.recordQuiz(ok);
           helper.innerHTML = ok
             ? "정답! 체관의 설탕은 <b>필요한 기관을 향해 위·아래 어디로든</b> 이동해요. 정말 그런지 아래 <b>배송 버튼</b>으로 확인해 봐요."
-            : "설탕의 목적지는 중력도 해도 아니에요 — <b>양분이 필요한 기관</b>이죠. 그래서 위로도 아래로도 갈 수 있답니다. 아래 <b>배송 버튼</b>으로 확인해 봐요.";
+            : "설탕의 목적지는 중력도 해도 아니에요. <b>양분이 필요한 기관</b>이죠. 그래서 위로도 아래로도 갈 수 있답니다. 아래 <b>배송 버튼</b>으로 확인해 봐요.";
           collect("dir", "위로도 아래로도!");
           shipRow.style.display = "";
           later(() => shipRow.scrollIntoView({ behavior: "smooth", block: "nearest" }), 120);
@@ -231,9 +231,9 @@ export const sapFlowLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.correct);
       ams.forEach((am) => (am.parentElement as unknown as SVGCircleElement | null)?.setAttribute("opacity", "0"));
       const msg: Record<string, string> = {
-        flower: "설탕이 <b>위로</b> 올라가 꽃에 도착 — 꽃을 피우는 데 <b>이용</b>됐어요!",
-        fruit: "이번엔 <b>아래쪽</b> 열매로 — 도착한 양분이 열매에 <b>저장</b>돼요. 열매가 굵어지죠!",
-        root: "땅속 <b>뿌리까지 아래로</b> — 도착한 설탕은 다시 <b>녹말</b>로 바뀌어 차곡차곡 저장돼요. 고구마의 살이 이렇게 붙는답니다!",
+        flower: "설탕이 <b>위로</b> 올라가 꽃에 도착, 꽃을 피우는 데 <b>이용</b>됐어요!",
+        fruit: "이번엔 <b>아래쪽</b> 열매로, 도착한 양분이 열매에 <b>저장</b>돼요. 열매가 굵어지죠!",
+        root: "땅속 <b>뿌리까지 아래로</b>, 도착한 설탕은 다시 <b>녹말</b>로 바뀌어 차곡차곡 저장돼요. 고구마의 살이 이렇게 붙는답니다!",
       };
       if (!finished) helper.innerHTML = msg[key];
       btn.classList.add("done");

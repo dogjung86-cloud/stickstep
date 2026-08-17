@@ -78,7 +78,7 @@ const PROD_MS = 700;  // 생산 애니메이션 길이
 const HELP_START =
   "흙 속 <b>물방울</b>을 물관을 따라 잎까지 끌어올리고, 공중의 <b>이산화 탄소</b>를 기공에 넣어 보세요.";
 const HELP_LIGHT = "재료가 다 들어왔어요. 이제 <b>빛 비추기</b>를 눌러 공장을 돌려 보세요.";
-const HELP_DARK = "빛에너지가 없으면 공장이 멈춰 있어요 — <b>빛 비추기</b>를 눌러 보세요.";
+const HELP_DARK = "빛에너지가 없으면 공장이 멈춰 있어요. <b>빛 비추기</b>를 눌러 보세요.";
 const HELP_OUT = "엽록체에서 <b>포도당</b>과 <b>산소</b>가 만들어졌어요. 산소를 기공 밖으로 끌어내 보세요.";
 const HELP_ALL =
   "빛에너지로 <b>이산화 탄소와 물</b>이 <b>포도당과 산소</b>로 바뀌었어요. " +
@@ -117,7 +117,7 @@ export const photoBuildLab: StepRenderer = (host, step, api) => {
     read: "물 0/2 · 이산화 탄소 0/2",
     curio: s.curio,
     ariaLabel:
-      "잎 단면과 뿌리가 함께 보이는 무대 — 물과 이산화 탄소를 잎세포로 옮기고 빛을 비춰 포도당과 산소를 만드는 광합성 실험",
+      "잎 단면과 뿌리가 함께 보이는 무대, 물과 이산화 탄소를 잎세포로 옮기고 빛을 비춰 포도당과 산소를 만드는 광합성 실험",
     onAll: () => {
       allDone = true;
       shell.helper.innerHTML = HELP_ALL;
@@ -212,7 +212,7 @@ export const photoBuildLab: StepRenderer = (host, step, api) => {
     if (on) {
       window.clearTimeout(hintTimer);
       if (waterIn < 2 || co2In < 2) {
-        if (announce) say("재료가 모자라요 — 물과 이산화 탄소가 모두 필요해요");
+        if (announce) say("재료가 모자라요. 물과 이산화 탄소가 모두 필요해요");
       } else maybeProduce();
     }
     updateRead();

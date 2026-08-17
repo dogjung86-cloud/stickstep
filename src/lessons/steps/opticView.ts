@@ -160,10 +160,10 @@ export const opticView: StepRenderer = (host, step, api) => {
     chip.classList.add("on");
     chip.querySelector("span")!.textContent = "관찰 완료!";
     const MSG: Record<Mode, string> = {
-      cvMirror: "볼록 거울 — <b>언제나 작고 바로 선 모습</b>, 대신 한 화면에 넓게 담겨요(도로 반사경!).",
-      ccMirror: "오목 거울 — 가까이선 <b>크고 바로</b>(화장 거울!), 멀어지면 <b>거꾸로</b> 뒤집혀요.",
-      cvLens: "볼록 렌즈 — 가까이선 <b>크고 바로</b>(돋보기!), 멀어지면 <b>작고 거꾸로</b> 보여요.",
-      ccLens: "오목 렌즈 — <b>언제나 작고 바로 선 모습</b>. 볼록 거울과 닮은꼴이에요.",
+      cvMirror: "볼록 거울, <b>언제나 작고 바로 선 모습</b>, 대신 한 화면에 넓게 담겨요(도로 반사경!).",
+      ccMirror: "오목 거울, 가까이선 <b>크고 바로</b>(화장 거울!), 멀어지면 <b>거꾸로</b> 뒤집혀요.",
+      cvLens: "볼록 렌즈, 가까이선 <b>크고 바로</b>(돋보기!), 멀어지면 <b>작고 거꾸로</b> 보여요.",
+      ccLens: "오목 렌즈, <b>언제나 작고 바로 선 모습</b>. 볼록 거울과 닮은꼴이에요.",
     };
     helper.innerHTML = MSG[m];
     if (doneModes.size === MODES.length && !finished) {
@@ -172,7 +172,7 @@ export const opticView: StepRenderer = (host, step, api) => {
       api.enableCTA(s.cta ?? "개념 정리하기");
       window.setTimeout(() => {
         helper.innerHTML =
-          "정리! <b>볼록 거울·오목 렌즈</b>는 언제나 작고 바로, <b>오목 거울·볼록 렌즈</b>는 가까우면 크고 바로 — 멀어지면 <b>거꾸로</b>. '왜' 그런지 빛의 경로가 궁금하면 다음 <b>심화 벤치</b>에서 작도로 확인해요!";
+          "정리! <b>볼록 거울·오목 렌즈</b>는 언제나 작고 바로, <b>오목 거울·볼록 렌즈</b>는 가까우면 크고 바로… 멀어지면 <b>거꾸로</b>. '왜' 그런지 빛의 경로가 궁금하면 다음 <b>심화 벤치</b>에서 작도로 확인해요!";
       }, 2200);
     }
   }
@@ -186,8 +186,8 @@ export const opticView: StepRenderer = (host, step, api) => {
     updateSeg();
     applyMode();
     const GUIDE: Record<Mode, string> = {
-      cvMirror: "볼록 거울이에요. 촛불을 <b>가까이, 또 멀리</b> — 거울 속 크기를 지켜봐요.",
-      ccMirror: "오목 거울! 멀리서 천천히 <b>가까이</b> — 어느 순간 거울 속 모습이…?",
+      cvMirror: "볼록 거울이에요. 촛불을 <b>가까이, 또 멀리</b>, 거울 속 크기를 지켜봐요.",
+      ccMirror: "오목 거울! 멀리서 천천히 <b>가까이</b>, 어느 순간 거울 속 모습이…?",
       cvLens: "볼록 렌즈예요. 렌즈 <b>너머의 촛불</b>이 렌즈 속에서 어떻게 보이는지! 가까이·멀리!",
       ccLens: "오목 렌즈예요. 거리를 바꿔도 렌즈 속 모습이 어떤지 확인!",
     };
@@ -282,7 +282,7 @@ export const opticView: StepRenderer = (host, step, api) => {
     st = mod.createSpaceStage(canvas, { fov: 42 });
     if (!st) {
       helper.innerHTML =
-        "이 기기에서 3D 화면을 열 수 없어요. 핵심만 정리하면 — <b>볼록 거울·오목 렌즈는 언제나 작고 바로</b>, <b>오목 거울·볼록 렌즈는 가까우면 크게, 멀면 거꾸로</b>예요.";
+        "이 기기에서 3D 화면을 열 수 없어요. 핵심만 정리하면, <b>볼록 거울·오목 렌즈는 언제나 작고 바로</b>, <b>오목 거울·볼록 렌즈는 가까우면 크게, 멀면 거꾸로</b>예요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       return;

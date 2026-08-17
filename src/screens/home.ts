@@ -90,7 +90,7 @@ export function homeScreen(
       const on = toggleReviewMode();
       haptic(HAPTIC.done);
       brandEl.classList.toggle("review", on);
-      snack(on ? "검토 모드 ON — 모든 레슨이 열렸어요" : "검토 모드 OFF — 잠금이 되돌아왔어요");
+      snack(on ? "검토 모드 ON, 모든 레슨이 열렸어요" : "검토 모드 OFF, 잠금이 되돌아왔어요");
       rebuild();
     }
   });
@@ -561,8 +561,8 @@ export function homeScreen(
         class: cls.join(" "),
         style: `--splay:${splay}deg`,
         attrs: now || done || prem
-          ? { "aria-label": `${lesson.label ?? lesson.title} — ${stateLabel}` }
-          : { "aria-label": `${lesson.label ?? lesson.title} — ${stateLabel}`, "aria-disabled": "true" },
+          ? { "aria-label": `${lesson.label ?? lesson.title}, ${stateLabel}` }
+          : { "aria-label": `${lesson.label ?? lesson.title}, ${stateLabel}`, "aria-disabled": "true" },
       }, med);
       // 현재 노드 "시작/학습" 리본은 제거(5차 확정) — 워커+펄스 링이 같은 신호를 준다.
       if (prem && !premRibbon) {
@@ -602,7 +602,7 @@ export function homeScreen(
       const node = el("button", {
         class: `gm-node exam bsn ${theme} ${rec.conquered ? "conq" : ""}`,
         style: `--splay:${splay}deg`,
-        attrs: { "aria-label": `단원 종합 평가 — ${rec.best > 0 ? `최고 ${rec.best}점` : "언제든 도전 가능"}` },
+        attrs: { "aria-label": `단원 종합 평가, ${rec.best > 0 ? `최고 ${rec.best}점` : "언제든 도전 가능"}` },
       }, med);
       if (rec.conquered) node.appendChild(el("div", { class: "gm-ribbon gold", text: "정복 인증" }));
       node.appendChild(el("div", { class: "gm-label", text: "단원 종합 평가" }));

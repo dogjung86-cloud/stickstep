@@ -192,7 +192,7 @@ export const gasSensorLab: StepRenderer = (host, step, api) => {
     phase = "done";
     elapsed = TOTAL_MIN;
     setBtnLabel(lightBtn, "관찰 끝");
-    setRead("10분이 지났어요 — 두 곡선을 확인해요");
+    setRead("10분이 지났어요. 두 곡선을 확인해요");
     shell.helper.innerHTML =
       "곡선이 다 그려졌어요. 두 그래프 중 <b>산소 농도 그래프</b>를 탭해 지목해 보세요.";
     shell.collect("watch", "이산화 탄소는 줄고 산소는 늘었어요");

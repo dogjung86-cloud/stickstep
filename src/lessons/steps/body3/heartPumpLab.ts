@@ -50,17 +50,17 @@ function stageScene(): string {
       </radialGradient>
     </defs>
     <ellipse cx="170" cy="238" rx="104" ry="7" fill="#2A3A5E" opacity="0.10"/>
-    <!-- 정맥(바깥 두 개 — 심방으로 들어옴): 대정맥(파랑)·폐정맥(빨강) -->
+    <!-- 정맥(바깥 두 개, 심방으로 들어옴): 대정맥(파랑)·폐정맥(빨강) -->
     <rect x="100" y="14" width="17" height="52" rx="8.5" fill="url(#hppVe)" stroke="#5F7FA8" stroke-width="1.6"/>
     <rect x="223" y="14" width="17" height="52" rx="8.5" fill="url(#hppAr)" stroke="#C2485C" stroke-width="1.6"/>
-    <!-- 심근 벽(외벽) — 아래로 갈수록 두꺼운 근육 -->
+    <!-- 심근 벽(외벽), 아래로 갈수록 두꺼운 근육 -->
     <path d="M170 56 C160 44 130 38 108 45 C84 53 76 74 78 102 C79 130 85 162 103 191 C119 216 146 229 170 233 C194 229 221 216 237 191 C255 162 261 130 262 102 C264 74 256 53 232 45 C210 38 180 44 170 56 Z"
       fill="url(#hppWall)" stroke="#C2626F" stroke-width="2.4"/>
     <path d="M96 60 C103 51 120 47 133 51" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" opacity="0.35"/>
-    <!-- 동맥 통로(사이막 곁 — 심실에서 위로 나감): 폐동맥(파랑)·대동맥(빨강) -->
+    <!-- 동맥 통로(사이막 곁, 심실에서 위로 나감): 폐동맥(파랑)·대동맥(빨강) -->
     <rect x="150" y="12" width="16" height="120" rx="8" fill="url(#hppVe)" stroke="#5F7FA8" stroke-width="1.6"/>
     <rect x="174" y="12" width="16" height="120" rx="8" fill="url(#hppAr)" stroke="#C2485C" stroke-width="1.6"/>
-    <!-- 방 4개 공동 — 심방(위·벽 얇음), 심실(아래·벽 두꺼워 공동이 안쪽으로 좁다) -->
+    <!-- 방 4개 공동, 심방(위·벽 얇음), 심실(아래·벽 두꺼워 공동이 안쪽으로 좁다) -->
     <rect x="88" y="56" width="56" height="54" rx="15" fill="#FFF0F2" stroke="#E2A0A9" stroke-width="1.5"/>
     <rect x="196" y="56" width="56" height="54" rx="15" fill="#FFF0F2" stroke="#E2A0A9" stroke-width="1.5"/>
     <path class="hpp-vent" d="M110 126 H158 Q166 126 166 138 V186 Q166 206 144 210 L128 212 Q100 214 98 184 V140 Q98 126 110 126 Z" fill="#FFF0F2" stroke="#E2A0A9" stroke-width="1.5"/>
@@ -105,7 +105,7 @@ export const heartPumpLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "심장의 단면이에요 — 위 두 방이 <b>심방</b>(받는 곳), 아래 두 방이 <b>심실</b>(내보내는 곳·벽이 더 두껍죠). 아래 <b>이완·수축</b> 버튼으로 심장을 직접 뛰게 해 보세요.",
+    html: "심장의 단면이에요. 위 두 방이 <b>심방</b>(받는 곳), 아래 두 방이 <b>심실</b>(내보내는 곳·벽이 더 두껍죠). 아래 <b>이완·수축</b> 버튼으로 심장을 직접 뛰게 해 보세요.",
   });
 
   const board = el("div", { class: "b6-board hpp-board", html: stageScene() });
@@ -153,8 +153,8 @@ export const heartPumpLab: StepRenderer = (host, step, api) => {
     if (!goals.has("pump")) {
       helper.innerHTML =
         mode === "dia"
-          ? "<b>이완</b> — 심장이 느슨해지면 정맥을 타고 온 혈액이 <b>심방으로</b> 들어오고, 심방과 심실 사이 판막이 열려 <b>심실까지</b> 채워져요."
-          : "<b>수축</b> — 벽이 두꺼운 <b>심실</b>이 힘차게 조이면, 위쪽 판막이 열리며 혈액이 <b>동맥으로</b> 뿜어져 나가요! 이때 심방 쪽 판막은 꽉 닫히죠.";
+          ? "<b>이완</b>, 심장이 느슨해지면 정맥을 타고 온 혈액이 <b>심방으로</b> 들어오고, 심방과 심실 사이 판막이 열려 <b>심실까지</b> 채워져요."
+          : "<b>수축</b>, 벽이 두꺼운 <b>심실</b>이 힘차게 조이면, 위쪽 판막이 열리며 혈액이 <b>동맥으로</b> 뿜어져 나가요! 이때 심방 쪽 판막은 꽉 닫히죠.";
     }
     if (seen.size === 2 && !goals.has("pump")) {
       collect("pump", "이완·수축 완주!");
@@ -183,7 +183,7 @@ export const heartPumpLab: StepRenderer = (host, step, api) => {
     diaBtn.classList.remove("cur");
     sysBtn.classList.remove("cur");
     board.classList.add("revfail");
-    helper.innerHTML = "혈액을 심방 쪽으로 밀어 봤지만 — <b>판막이 탁! 닫히며 길을 막았어요.</b> 거꾸로 가는 문은 열리지 않네요.";
+    helper.innerHTML = "혈액을 심방 쪽으로 밀어 봤지만, <b>판막이 탁! 닫히며 길을 막았어요.</b> 거꾸로 가는 문은 열리지 않네요.";
     later(() => {
       busy = false;
       board.classList.remove("revfail");
@@ -208,7 +208,7 @@ export const heartPumpLab: StepRenderer = (host, step, api) => {
         api.recordQuiz(ok);
         helper.innerHTML = ok
           ? "정확해요! <b>판막</b>은 한쪽으로만 열리는 문이라, 혈액이 거꾸로 흐르려 하면 꽉 닫혀 버려요. 방금 실험에서 본 그대로죠."
-          : "기울기나 무게 때문이 아니에요 — 방금 실험을 떠올려요. 거꾸로 밀자 <b>판막</b>이 닫히며 길을 막았죠? 판막이 한 방향 흐름의 비밀이랍니다.";
+          : "기울기나 무게 때문이 아니에요. 방금 실험을 떠올려요. 거꾸로 밀자 <b>판막</b>이 닫히며 길을 막았죠? 판막이 한 방향 흐름의 비밀이랍니다.";
         collect("why", "판막 = 일방통행!");
       },
     );

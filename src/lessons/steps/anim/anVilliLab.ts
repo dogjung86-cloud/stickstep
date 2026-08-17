@@ -115,14 +115,14 @@ export const anVilliLab: StepRenderer = (host, step, api) => {
     taken = 0;
     running = false;
     modeBtns.forEach((b) => b.classList.toggle("on", b.dataset.m === String(m)));
-    say(`${MODE_NAME[m]} — 닿는 길이 ${(LEN[m] / LEN[0]).toFixed(1)}배`);
+    say(`${MODE_NAME[m]}, 닿는 길이 ${(LEN[m] / LEN[0]).toFixed(1)}배`);
   }
 
   function finishRun(): void {
     running = false;
     const pct = sent ? Math.round((taken / sent) * 100) : 0;
     rate[mode] = pct;
-    say(`${MODE_NAME[mode]}: 흘려보낸 ${sent}개 중 ${taken}개 흡수 — 흡수율 ${pct}%`, 5200);
+    say(`${MODE_NAME[mode]}: 흘려보낸 ${sent}개 중 ${taken}개 흡수, 흡수율 ${pct}%`, 5200);
     if (mode === 0 && !lab.has("flat")) {
       lab.collect("flat", `흡수율 ${pct}%`);
       lab.setHelper(`매끈한 벽은 흡수율이 <b>${pct}%</b>밖에 안 돼요. 이제 <b>주름 + 융털</b>로 바꿔 같은 실험을 해 보세요.`);
@@ -236,7 +236,7 @@ export const anVilliLab: StepRenderer = (host, step, api) => {
     ctx.font = "700 10.5px Pretendard, sans-serif";
     ctx.textAlign = "center";
     ctx.fillStyle = withAlpha("#FFFFFF", 0.3);
-    ctx.fillText("작은창자 안쪽 — 소화된 영양소가 지나가는 공간", BASE_W / 2, 52);
+    ctx.fillText("작은창자 안쪽, 소화된 영양소가 지나가는 공간", BASE_W / 2, 52);
     ctx.textAlign = "left";
 
     if (running && sent < 60) {

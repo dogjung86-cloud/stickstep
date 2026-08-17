@@ -188,7 +188,7 @@ export const timelineLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.done);
       task.innerHTML = "";
       helper.innerHTML =
-        "연표 완성! <b>기원후는 오른쪽으로, 기원전은 왼쪽으로 갈수록 큰 수</b> — 이제 어떤 연도든 세기 칸을 찾을 수 있어요.";
+        "연표 완성! <b>기원후는 오른쪽으로, 기원전은 왼쪽으로 갈수록 큰 수</b>, 이제 어떤 연도든 세기 칸을 찾을 수 있어요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "정리하러 가기");
       later(() => stage.classList.remove("finale"), 3200);
@@ -215,13 +215,13 @@ export const timelineLab: StepRenderer = (host, step, api) => {
           if (doneOf.read === readTasks.length) chipOn("read");
         } else {
           doneOf.rev += 1;
-          helper.innerHTML = `거꾸로 세기 성공! <b>${fmtCentury(t.century)} = ${fmtRange(t.century)}</b> — 기원전은 큰 수에서 작은 수로 흘러요.`;
+          helper.innerHTML = `거꾸로 세기 성공! <b>${fmtCentury(t.century)} = ${fmtRange(t.century)}</b>, 기원전은 큰 수에서 작은 수로 흘러요.`;
           if (doneOf.rev === revTasks.length) chipOn("rev");
         }
       } else {
         doneOf.place += 1;
         stampEvent(t.year, t.label, doneOf.place);
-        helper.innerHTML = `<b>${fmtYear(t.year)} = ${fmtCentury(target)}</b>(${fmtRange(target)}) — 연표에 도장 쾅!`;
+        helper.innerHTML = `<b>${fmtYear(t.year)} = ${fmtCentury(target)}</b>(${fmtRange(target)}), 연표에 도장 쾅!`;
         if (doneOf.place === placeTasks.length) chipOn("place");
       }
       advance();
@@ -234,7 +234,7 @@ export const timelineLab: StepRenderer = (host, step, api) => {
       if (t.kind === "century") {
         const dir = target < c ? "왼쪽" : "오른쪽";
         helper.innerHTML = `방금 칸은 <b>${fmtCentury(c)}</b>(${fmtRange(c)})예요. ${
-          t.century < 0 ? "기원전은 왼쪽으로 갈수록 숫자가 커져요 — " : ""
+          t.century < 0 ? "기원전은 왼쪽으로 갈수록 숫자가 커져요… " : ""
         }<b>${fmtCentury(t.century)}</b>는 더 ${dir}!`;
       } else {
         helper.innerHTML = `그 칸은 <b>${fmtRange(c)}</b> 구간이에요. <b>${fmtYear(t.year)}</b>이 그 사이에 있는지 눈금을 다시 읽어 봐요!`;

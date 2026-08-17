@@ -55,7 +55,7 @@ const GUESTS: Guest[] = [
     note: "이슬람교를 믿어 <b>돼지고기</b>를 먹지 않아요.",
     ok: ["bulgogi", "bibim", "dubu", "eggroll"],
     wrong: {
-      suyuk: "아민은 이슬람교를 믿어 <b>돼지고기를 먹지 않아요</b> — 종교에 따라 삼가는 음식이 있답니다. 다른 요리를 골라 봐요!",
+      suyuk: "아민은 이슬람교를 믿어 <b>돼지고기를 먹지 않아요</b>. 종교에 따라 삼가는 음식이 있답니다. 다른 요리를 골라 봐요!",
     },
   },
   {
@@ -64,17 +64,17 @@ const GUESTS: Guest[] = [
     note: "힌두교를 믿어 <b>소고기</b>를 먹지 않아요.",
     ok: ["suyuk", "bibim", "dubu", "eggroll"],
     wrong: {
-      bulgogi: "프리야는 힌두교를 믿어 <b>소고기를 먹지 않아요</b> — 힌두교에서 소는 특별한 동물이거든요. 다른 요리를 골라 봐요!",
+      bulgogi: "프리야는 힌두교를 믿어 <b>소고기를 먹지 않아요</b>. 힌두교에서 소는 특별한 동물이거든요. 다른 요리를 골라 봐요!",
     },
   },
   {
     id: "ria",
     name: "리아",
-    note: "채식을 실천해 <b>고기</b>를 먹지 않아요 — 달걀과 채소는 먹어요.",
+    note: "채식을 실천해 <b>고기</b>를 먹지 않아요. 달걀과 채소는 먹어요.",
     ok: ["bibim", "dubu", "eggroll"],
     wrong: {
-      bulgogi: "리아는 고기를 먹지 않는 <b>채식</b>을 실천 중이에요 — 달걀과 채소 요리라면 좋아한답니다!",
-      suyuk: "리아는 고기를 먹지 않는 <b>채식</b>을 실천 중이에요 — 두부나 나물, 달걀 요리를 골라 봐요!",
+      bulgogi: "리아는 고기를 먹지 않는 <b>채식</b>을 실천 중이에요. 달걀과 채소 요리라면 좋아한답니다!",
+      suyuk: "리아는 고기를 먹지 않는 <b>채식</b>을 실천 중이에요. 두부나 나물, 달걀 요리를 골라 봐요!",
     },
   },
 ];
@@ -192,16 +192,16 @@ export const feastLab: StepRenderer = (host, step, api) => {
       void id;
     }
     guestEls.forEach((gEl, id) => gEl.classList.toggle("live", id === g.id));
-    noteEl.innerHTML = `<b>${g.name}</b> — ${g.note}`;
-    helper.innerHTML = `${g.name}에게 <b>대접할 수 있는 요리를 전부</b> 골라 봐요 — 접시에 ${g.ok.length}가지가 올라가면 완성!`;
+    noteEl.innerHTML = `<b>${g.name}</b>, ${g.note}`;
+    helper.innerHTML = `${g.name}에게 <b>대접할 수 있는 요리를 전부</b> 골라 봐요. 접시에 ${g.ok.length}가지가 올라가면 완성!`;
   }
 
   function mountCommon(): void {
     picked = new Set();
     plate.innerHTML = "";
     guestEls.forEach((gEl) => gEl.classList.add("live"));
-    noteEl.innerHTML = "<b>모두의 한 상</b> — 이제 세 손님이 한 상에 둘러앉아요!";
-    helper.innerHTML = "마지막 미션 — <b>세 손님이 모두 함께</b> 먹을 수 있는 요리만 골라 한 상을 차려 봐요!";
+    noteEl.innerHTML = "<b>모두의 한 상</b>, 이제 세 손님이 한 상에 둘러앉아요!";
+    helper.innerHTML = "마지막 미션, <b>세 손님이 모두 함께</b> 먹을 수 있는 요리만 골라 한 상을 차려 봐요!";
     for (const [id, b] of foodBtns) {
       b.classList.remove("on", "dim", "shake");
       b.disabled = false;
@@ -241,11 +241,11 @@ export const feastLab: StepRenderer = (host, step, api) => {
               later(mountGuest, 900);
             } else {
               gi += 1;
-              helper.innerHTML = "세 접시 모두 완성! 그런데 따로 먹으면 쓸쓸하죠 —";
+              helper.innerHTML = "세 접시 모두 완성! 그런데 따로 먹으면 쓸쓸하죠…";
               later(mountCommon, 1000);
             }
           } else {
-            helper.innerHTML = `좋아요! <b>${picked.size} / ${g.ok.length}</b> — 더 대접할 수 있는 요리가 남아 있어요.`;
+            helper.innerHTML = `좋아요! <b>${picked.size} / ${g.ok.length}</b>, 더 대접할 수 있는 요리가 남아 있어요.`;
           }
         } else {
           if (picked.size >= COMMON.length) {
@@ -254,7 +254,7 @@ export const feastLab: StepRenderer = (host, step, api) => {
             foodBtns.get("bulgogi")!.classList.add("dim");
             foodBtns.get("suyuk")!.classList.add("dim");
             helper.innerHTML =
-              "<b>나물 비빔밥·두부김치·달걀말이</b> — 서로 다른 세 사람이 함께 웃으며 먹을 수 있는 한 상이 차려졌어요! 다름을 알면 배려가 되고, 배려가 모이면 한 상이 돼요.";
+              "<b>나물 비빔밥·두부김치·달걀말이</b>, 서로 다른 세 사람이 함께 웃으며 먹을 수 있는 한 상이 차려졌어요! 다름을 알면 배려가 되고, 배려가 모이면 한 상이 돼요.";
             finalOpen = true;
             later(() => {
               quizCard.classList.add("show");
@@ -276,9 +276,9 @@ export const feastLab: StepRenderer = (host, step, api) => {
           // 받침 유무로 은/는 계산(regionPlaceLab topicJosa 관행)
           const last = f.name.charCodeAt(f.name.length - 1);
           const josa = (last - 0xac00) % 28 > 0 ? "은" : "는";
-          helper.innerHTML = `${f.name}${josa} <b>${who}</b>가 먹지 않아요 — 셋 모두 함께 먹을 수 있는 요리만 골라 봐요!`;
+          helper.innerHTML = `${f.name}${josa} <b>${who}</b>가 먹지 않아요. 셋 모두 함께 먹을 수 있는 요리만 골라 봐요!`;
         } else {
-          helper.innerHTML = GUESTS[gi].wrong[fid] ?? "이 요리는 이 손님에게는 곤란해요 — 소개 글을 다시 읽어 봐요!";
+          helper.innerHTML = GUESTS[gi].wrong[fid] ?? "이 요리는 이 손님에게는 곤란해요. 소개 글을 다시 읽어 봐요!";
         }
       }
     });
@@ -293,7 +293,7 @@ export const feastLab: StepRenderer = (host, step, api) => {
         optBtns[1].classList.add("dim");
         setChip("why", "정리 완료");
         helper.innerHTML =
-          "맞아요! 사람들은 자신이 속한 <b>문화와 종교</b>에 따라 먹는 것도, 삼가는 것도 달라요 — 다름을 알고 존중하는 것이 <b>다문화 사회를 살아가는 첫걸음</b>이랍니다.";
+          "맞아요! 사람들은 자신이 속한 <b>문화와 종교</b>에 따라 먹는 것도, 삼가는 것도 달라요. 다름을 알고 존중하는 것이 <b>다문화 사회를 살아가는 첫걸음</b>이랍니다.";
         finalOpen = false;
         api.recordQuiz(clean);
         api.enableCTA(s.cta ?? "용어로 정리하기");
@@ -302,7 +302,7 @@ export const feastLab: StepRenderer = (host, step, api) => {
         haptic(HAPTIC.wrong);
         btn.classList.add("no");
         helper.innerHTML =
-          "까다로움의 문제가 아니에요 — 세 손님 모두 자신이 속한 문화·종교의 방식을 따르고 있을 뿐이죠. 다시 골라 봐요!";
+          "까다로움의 문제가 아니에요. 세 손님 모두 자신이 속한 문화·종교의 방식을 따르고 있을 뿐이죠. 다시 골라 봐요!";
         later(() => btn.classList.remove("no"), 900);
       }
     });

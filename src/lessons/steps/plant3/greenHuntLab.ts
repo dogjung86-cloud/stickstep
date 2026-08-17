@@ -101,8 +101,8 @@ function chloroScene(): string {
 const SCENES = [leafScene, cellScene, chloroScene];
 const HINTS = [
   "잎이에요. 어디를 봐도 온통 초록이죠. 빛나는 고리를 <b>탭</b>해서 더 가까이!",
-  "세포 벽돌담이 나타났어요 — 그런데 초록이 세포 전체가 아니라 <b>알갱이들</b>에만 몰려 있네요! 고리를 탭해 알갱이 하나를 크게 봐요.",
-  "이 알갱이가 <b>엽록체</b> — 속의 초록 색소 <b>엽록소</b>가 빛에너지를 붙잡고 있어요(반짝!). 아래 질문에 답해 보세요.",
+  "세포 벽돌담이 나타났어요. 그런데 초록이 세포 전체가 아니라 <b>알갱이들</b>에만 몰려 있네요! 고리를 탭해 알갱이 하나를 크게 봐요.",
+  "이 알갱이가 <b>엽록체</b>, 속의 초록 색소 <b>엽록소</b>가 빛에너지를 붙잡고 있어요(반짝!). 아래 질문에 답해 보세요.",
 ];
 
 export const greenHuntLab: StepRenderer = (host, step, api) => {
@@ -179,7 +179,7 @@ export const greenHuntLab: StepRenderer = (host, step, api) => {
     qShown = true;
     b4Ask(
       qBox,
-      "그렇다면 — 식물이 양분을 만드는 <b>광합성</b>은 어디에서 일어날까요?",
+      "그렇다면, 식물이 양분을 만드는 <b>광합성</b>은 어디에서 일어날까요?",
       [
         { t: "세포 속 초록 알갱이, 엽록체에서", ok: true },
         { t: "세포 안 어디서나 골고루", ok: false },
@@ -189,7 +189,7 @@ export const greenHuntLab: StepRenderer = (host, step, api) => {
         api.recordQuiz(ok);
         helper.innerHTML = ok
           ? "정확해요! 광합성은 세포 어디서나가 아니라 <b>엽록체 안에서만</b> 일어나요. 초록이 알갱이에 몰려 있던 이유죠."
-          : "방금 본 장면을 떠올려요 — 초록은 세포 전체가 아니라 <b>알갱이(엽록체)</b>에만 몰려 있었죠? 광합성도 바로 그 엽록체 안에서만 일어난답니다.";
+          : "방금 본 장면을 떠올려요. 초록은 세포 전체가 아니라 <b>알갱이(엽록체)</b>에만 몰려 있었죠? 광합성도 바로 그 엽록체 안에서만 일어난답니다.";
         collect("judge", "엽록체!");
       },
     );

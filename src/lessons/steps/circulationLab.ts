@@ -207,8 +207,8 @@ export const circulationLab: StepRenderer = (host, step, api) => {
       readPill.textContent = "조직에 산소를 주어 파란색으로 변했어요";
     }
     if (prog > 0.985) {
-      if (active === "lung") collect("lung", "허파순환 완주 — 허파에서 산소를 얻어 선홍색이 됐어요");
-      else collect("body", "온몸순환 완주 — 조직에 산소를 주고 암적색이 됐어요");
+      if (active === "lung") collect("lung", "허파순환 완주, 허파에서 산소를 얻어 선홍색이 됐어요");
+      else collect("body", "온몸순환 완주, 조직에 산소를 주고 암적색이 됐어요");
       dragging = false; active = null;
     }
   };

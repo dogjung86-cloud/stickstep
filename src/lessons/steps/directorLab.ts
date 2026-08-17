@@ -176,7 +176,7 @@ export const directorLab: StepRenderer = (host, step, api) => {
           idx: i,
           msg:
             d.temp <= 5
-              ? `<b>${d.name}(${d.temp}℃)</b>의 입자가 완전히 멈춰 있어요. <b>차가워도 입자는 멈추지 않아요</b> — 둔하게라도 움직이게 해 주세요.`
+              ? `<b>${d.name}(${d.temp}℃)</b>의 입자가 완전히 멈춰 있어요. <b>차가워도 입자는 멈추지 않아요</b>. 둔하게라도 움직이게 해 주세요.`
               : `<b>${d.name}(${d.temp}℃)</b>의 입자가 멈춰 있어요. 온도가 있다는 건 곧 <b>입자가 움직이고 있다</b>는 뜻이에요.`,
         };
     }
@@ -185,11 +185,11 @@ export const directorLab: StepRenderer = (host, step, api) => {
       if (d.s !== 1)
         return {
           idx: i,
-          msg: `<b>${d.name}</b>의 입자 <b>크기</b>를 바꿨네요. 온도가 달라져도 입자 하나하나의 크기는 <b>그대로</b>예요 — 변하는 건 <b>움직임과 사이 간격</b>! 크기를 ‘그대로’로 되돌려 주세요.`,
+          msg: `<b>${d.name}</b>의 입자 <b>크기</b>를 바꿨네요. 온도가 달라져도 입자 하나하나의 크기는 <b>그대로</b>예요. 변하는 건 <b>움직임과 사이 간격</b>! 크기를 ‘그대로’로 되돌려 주세요.`,
         };
     }
-    if (j.m > 2) return { idx: 0, msg: `냉장고에서 막 나온 <b>${j.temp}℃ 주스</b>치고는 입자가 너무 활발해요 — 더 둔하게 연출해 주세요.` };
-    if (c.m < 4) return { idx: 2, msg: `<b>${c.temp}℃ 온장 커피</b>치고는 입자가 조용해요 — 훨씬 활발하게!` };
+    if (j.m > 2) return { idx: 0, msg: `냉장고에서 막 나온 <b>${j.temp}℃ 주스</b>치고는 입자가 너무 활발해요. 더 둔하게 연출해 주세요.` };
+    if (c.m < 4) return { idx: 2, msg: `<b>${c.temp}℃ 온장 커피</b>치고는 입자가 조용해요. 훨씬 활발하게!` };
     const pairs: [Drink, Drink, number][] = [
       [j, w, 0],
       [w, c, 1],
@@ -205,7 +205,7 @@ export const directorLab: StepRenderer = (host, step, api) => {
       if (cold.g >= hot.g)
         return {
           idx: ci + 1,
-          msg: `움직임은 좋아요! 그런데 <b>간격</b>도 온도를 따라가요 — 온도가 높을수록 입자 사이가 <b>멀어져요</b>. <b>${hot.name}</b>의 간격을 <b>${cold.name}</b>보다 넓게 연출해 주세요.`,
+          msg: `움직임은 좋아요! 그런데 <b>간격</b>도 온도를 따라가요. 온도가 높을수록 입자 사이가 <b>멀어져요</b>. <b>${hot.name}</b>의 간격을 <b>${cold.name}</b>보다 넓게 연출해 주세요.`,
         };
     }
     return null;
@@ -231,7 +231,7 @@ export const directorLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.done);
     toast("재촬영 성공!");
     helper.innerHTML =
-      "완벽한 연출이에요! 움직임도 간격도 온도를 따라갔죠. 그리고 눈치챘나요? <b>입자 크기</b> 다이얼은 건드릴 필요가 없었어요 — 온도가 변해도 입자의 크기는 <b>그대로</b>거든요. 변하는 건 <b>활발함과 간격</b>, 그게 카드 세 장의 핵심이에요.";
+      "완벽한 연출이에요! 움직임도 간격도 온도를 따라갔죠. 그리고 눈치챘나요? <b>입자 크기</b> 다이얼은 건드릴 필요가 없었어요. 온도가 변해도 입자의 크기는 <b>그대로</b>거든요. 변하는 건 <b>활발함과 간격</b>, 그게 카드 세 장의 핵심이에요.";
     shootBtn.classList.add("done-static");
     (shootBtn.querySelector("span") as HTMLElement).textContent = "재촬영 완료";
     api.recordQuiz(true);

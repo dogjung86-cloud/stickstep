@@ -101,7 +101,7 @@ export const mirrorImageLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 평면거울의 상은 <b>실물과 같은 크기</b>로, 거울 뒤 <b>같은 거리</b>에 생겨요. 반사 광선의 연장선이 만나는 점 — 우리 눈이 \"빛이 저기서 왔구나\" 하고 여기는 곳이 바로 <b>상</b>이에요.";
+        "정리! 평면거울의 상은 <b>실물과 같은 크기</b>로, 거울 뒤 <b>같은 거리</b>에 생겨요. 반사 광선의 연장선이 만나는 점, 우리 눈이 \"빛이 저기서 왔구나\" 하고 여기는 곳이 바로 <b>상</b>이에요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -128,7 +128,7 @@ export const mirrorImageLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.select);
       if (!goals.has("size")) {
         collect("size", "2칸 = 2칸!");
-        helper.innerHTML = "쟀어요 — 물체 <b>2칸</b>, 상도 <b>2칸</b>. 평면거울의 상은 <b>실물과 크기가 같아요</b>. 페넌트 방향은 반대죠(좌우 바뀜)!";
+        helper.innerHTML = "쟀어요. 물체 <b>2칸</b>, 상도 <b>2칸</b>. 평면거울의 상은 <b>실물과 크기가 같아요</b>. 페넌트 방향은 반대죠(좌우 바뀜)!";
       }
     }
   });
@@ -149,7 +149,7 @@ export const mirrorImageLab: StepRenderer = (host, step, api) => {
     if (seenDist.size >= 3 && !goals.has("dist")) {
       collect("dist", "언제나 같음!");
       helper.innerHTML =
-        "몇 번을 옮겨도 두 거리는 <b>항상 똑같죠</b>? 이유가 숨어 있어요 — 아래 버튼으로 <b>반사 광선을 연장</b>해 보세요!";
+        "몇 번을 옮겨도 두 거리는 <b>항상 똑같죠</b>? 이유가 숨어 있어요. 아래 버튼으로 <b>반사 광선을 연장</b>해 보세요!";
       extBtn.classList.add("pulse");
     }
   };
@@ -276,7 +276,7 @@ export const mirrorImageLab: StepRenderer = (host, step, api) => {
     ctx.font = "700 10.5px Pretendard, sans-serif";
     ctx.textAlign = "right";
     ctx.fillStyle = "rgba(150,176,210,.6)";
-    ctx.fillText("거울 뒤 — 실제 빛은 없어요", W - 18, 30);
+    ctx.fillText("거울 뒤, 실제 빛은 없어요", W - 18, 30);
 
     // 거울(세로) — 뒷면 빗금은 오른쪽
     mirrorProp(ctx, mx, 18, mx, H - 32, { back: -1 });

@@ -72,7 +72,7 @@ export const rainBeltLab: StepRenderer = (host, step, api) => {
 
   const canvas = el("canvas", { class: "spring-canvas", style: `height:${CVH}px` });
   const pdot = el("span", { class: "pdot", style: "background:#6EA8FF" });
-  const pillTxt = el("span", { text: "1월 — 비 띠가 적도 남쪽에" });
+  const pillTxt = el("span", { text: "1월, 비 띠가 적도 남쪽에" });
   const monthRead = el("div", { class: "tempread" }, el("span", { text: "1월" }));
   const stage = el("div", { class: "stage" }, canvas, el("div", { class: "stage-hud" }, el("div", { class: "pill" }, pdot, pillTxt), monthRead));
   const capEl = el("div", { class: "stage-cap", text: "파란 띠 = 비구름 띠 · 초록↔갈색 = 사바나의 우기↔건기 (모형)" });
@@ -86,7 +86,7 @@ export const rainBeltLab: StepRenderer = (host, step, api) => {
 
   // 판정 카드 — monsoonLab msn- 문법 재사용
   const quizQ = el("div", { class: "msn-q", html: "초원(사바나)에는 <b>우기와 건기</b>가 번갈아 나타나요. 까닭이 뭘까요?" });
-  const optA = el("button", { class: "msn-opt", attrs: { type: "button" }, html: "<b>태양을 따라 비 띠</b>가 남북으로 오가서 — 비 띠가 오면 우기" });
+  const optA = el("button", { class: "msn-opt", attrs: { type: "button" }, html: "<b>태양을 따라 비 띠</b>가 남북으로 오가서, 비 띠가 오면 우기" });
   const optB = el("button", { class: "msn-opt", attrs: { type: "button" }, html: "나무가 적어서 비구름이 아예 만들어지지 못해서" });
   const quizCard = el("div", { class: "msn-quiz" }, quizQ, optA, optB);
 
@@ -106,7 +106,7 @@ export const rainBeltLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "비 띠가 오간 자리를 봐요 — <b>적도의 우림 → 우기·건기의 사바나 → 사막</b> 순서가 남북으로 <b>데칼코마니(대칭)</b>! 태양과 비 띠가 적도를 오가기 때문이랍니다.";
+        "비 띠가 오간 자리를 봐요. <b>적도의 우림 → 우기·건기의 사바나 → 사막</b> 순서가 남북으로 <b>데칼코마니(대칭)</b>! 태양과 비 띠가 적도를 오가기 때문이랍니다.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }
@@ -133,14 +133,14 @@ export const rainBeltLab: StepRenderer = (host, step, api) => {
     optA.classList.add("ok");
     optB.classList.add("dim");
     haptic(HAPTIC.correct);
-    quizQ.innerHTML = "정답! 방금 실험 그대로예요 — <b>1월엔 남쪽, 7월엔 북쪽</b>. 비 띠가 머무는 계절이 우기, 떠나 있는 계절이 건기랍니다.";
+    quizQ.innerHTML = "정답! 방금 실험 그대로예요. <b>1월엔 남쪽, 7월엔 북쪽</b>. 비 띠가 머무는 계절이 우기, 떠나 있는 계절이 건기랍니다.";
     collect("why", "정답!");
   });
   optB.addEventListener("click", () => {
     if (quizDone) return;
     haptic(HAPTIC.wrong);
     optB.classList.add("no");
-    quizQ.innerHTML = "나무 때문이 아니에요 — 7월 버튼을 눌렀을 때 <b>비 띠가 통째로 북쪽으로</b> 옮겨 갔죠? 비 띠가 떠나 있는 계절이 건기예요. 다시!";
+    quizQ.innerHTML = "나무 때문이 아니에요. 7월 버튼을 눌렀을 때 <b>비 띠가 통째로 북쪽으로</b> 옮겨 갔죠? 비 띠가 떠나 있는 계절이 건기예요. 다시!";
     later(() => optB.classList.remove("no"), 700);
   });
 
@@ -156,7 +156,7 @@ export const rainBeltLab: StepRenderer = (host, step, api) => {
     btnJan.setAttribute("aria-pressed", String(!toJul));
     btnJul.setAttribute("aria-pressed", String(toJul));
     monthRead.querySelector("span")!.textContent = toJul ? "7월" : "1월";
-    pillTxt.textContent = toJul ? "7월 — 비 띠가 적도 북쪽으로!" : "1월 — 비 띠가 적도 남쪽에";
+    pillTxt.textContent = toJul ? "7월, 비 띠가 적도 북쪽으로!" : "1월, 비 띠가 적도 남쪽에";
     haptic(HAPTIC.select);
   }
   btnJan.addEventListener("click", () => setSeason(false));
@@ -404,7 +404,7 @@ export const rainBeltLab: StepRenderer = (host, step, api) => {
     ctx.textAlign = "left";
     ctx.textBaseline = "bottom";
     ctx.fillStyle = "rgba(220,230,250,.85)";
-    ctx.fillText(july ? "7월 — 태양·비 띠가 북쪽으로" : "1월 — 태양·비 띠가 남쪽에", mapX + 10, mapY + mapH - 8);
+    ctx.fillText(july ? "7월, 태양·비 띠가 북쪽으로" : "1월, 태양·비 띠가 남쪽에", mapX + 10, mapY + mapH - 8);
     ctx.restore();
   });
 

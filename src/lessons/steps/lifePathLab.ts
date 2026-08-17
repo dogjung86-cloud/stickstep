@@ -180,7 +180,7 @@ export const lifePathLab: StepRenderer = (host, step, api) => {
         placed.add("media");
         card.classList.add("gone");
         band.classList.add("on");
-        band.querySelector(".lfp-band-t")!.textContent = "대중 매체 — 평생 함께";
+        band.querySelector(".lfp-band-t")!.textContent = "대중 매체, 평생 함께";
         haptic(HAPTIC.correct);
         helper.innerHTML = def.mediaDone;
         chipOn("media", "평생 함께!");
@@ -217,7 +217,7 @@ export const lifePathLab: StepRenderer = (host, step, api) => {
     } else if (slotId === "media") {
       clean = false;
       haptic(HAPTIC.wrong);
-      helper.innerHTML = `<b>${agency.name}</b> 카드를 평생 띠에? 마음은 알지만 이 긴 띠의 주인은 따로 있어요 — <b>${agency.name}</b>에는 중심이 되는 <b>시기(정거장)</b>가 있답니다!`;
+      helper.innerHTML = `<b>${agency.name}</b> 카드를 평생 띠에? 마음은 알지만 이 긴 띠의 주인은 따로 있어요. <b>${agency.name}</b>에는 중심이 되는 <b>시기(정거장)</b>가 있답니다!`;
     } else {
       clean = false;
       haptic(HAPTIC.wrong);
@@ -243,7 +243,7 @@ export const lifePathLab: StepRenderer = (host, step, api) => {
       picked = picked === id ? null : id;
       haptic(HAPTIC.tap);
       refreshPicked();
-      if (picked) helper.innerHTML = `<b>${(card.textContent ?? "").trim()}</b> 카드를 골랐어요 — 트랙에서 <b>알맞은 자리를 탭</b>하세요!`;
+      if (picked) helper.innerHTML = `<b>${(card.textContent ?? "").trim()}</b> 카드를 골랐어요. 트랙에서 <b>알맞은 자리를 탭</b>하세요!`;
     });
   }
   const slotTap = (slotId: string): void => {

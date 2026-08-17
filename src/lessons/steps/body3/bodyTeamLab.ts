@@ -32,7 +32,7 @@ function stageScene(): string {
       <text x="${x}" y="${y + 5}" text-anchor="middle" font-size="13.5" font-weight="800" fill="#333D4B">${label}</text>
     </g>`;
   return `<svg viewBox="0 0 340 256" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <!-- 순환 고리(도로) — 네 상자의 중심을 관통해 전부 도로 위에 얹힌다 -->
+    <!-- 순환 고리(도로), 네 상자의 중심을 관통해 전부 도로 위에 얹힌다 -->
     <rect x="62" y="60" width="216" height="136" rx="34" fill="none" stroke="#F3C0C6" stroke-width="14" opacity="0.6"/>
     <text x="170" y="48" text-anchor="middle" font-size="12" font-weight="800" fill="#C9303E">순환계(운반 도로)</text>
     ${box(62, 60, 92, "소화계", "#FFF4E6", "#F3C9A8", "dig")}
@@ -75,7 +75,7 @@ const ORDERS: {
     cargo: B6.glucose,
     dir: "pick",
     done: "<b>소화계</b>가 흡수한 포도당을 순환 트럭이 세포까지 배달했어요!",
-    fix: "영양소를 흡수해 들여오는 곳은 <b>소화계</b>예요 — 음식물을 소화해 포도당을 만드는 그 길이죠.",
+    fix: "영양소를 흡수해 들여오는 곳은 <b>소화계</b>예요. 음식물을 소화해 포도당을 만드는 그 길이죠.",
   },
   {
     id: "o2",
@@ -84,7 +84,7 @@ const ORDERS: {
     cargo: B6.o2,
     dir: "pick",
     done: "<b>호흡계</b>가 들숨으로 받은 산소를 트럭이 실어 왔어요!",
-    fix: "산소를 몸속으로 받아들이는 곳은 <b>호흡계</b> — 허파꽈리 승강장에서 산소가 혈액에 탔었죠.",
+    fix: "산소를 몸속으로 받아들이는 곳은 <b>호흡계</b>, 허파꽈리 승강장에서 산소가 혈액에 탔었죠.",
   },
   {
     id: "co2",
@@ -93,7 +93,7 @@ const ORDERS: {
     cargo: B6.co2,
     dir: "drop",
     done: "세포가 내놓은 이산화 탄소를 트럭이 <b>호흡계</b>로 날라 날숨으로 내보냈어요!",
-    fix: "이산화 탄소는 기체 — 날숨으로 내보내는 <b>호흡계</b>의 몫이에요. 배설계는 요소 담당이죠.",
+    fix: "이산화 탄소는 기체, 날숨으로 내보내는 <b>호흡계</b>의 몫이에요. 배설계는 요소 담당이죠.",
   },
   {
     id: "urea",
@@ -102,7 +102,7 @@ const ORDERS: {
     cargo: B6.urea,
     dir: "drop",
     done: "요소를 트럭이 <b>배설계</b>로 날라 오줌으로 내보냈어요! 주문 전부 완료!",
-    fix: "요소는 콩팥 정수장에서 오줌으로 걸러 내보내죠 — 담당은 <b>배설계</b>예요.",
+    fix: "요소는 콩팥 정수장에서 오줌으로 걸러 내보내죠. 담당은 <b>배설계</b>예요.",
   },
 ];
 
@@ -151,7 +151,7 @@ export const bodyTeamLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! <b>소화계(영양소)·호흡계(산소↔이산화 탄소)·배설계(요소)</b>가 각자 문을 맡고, 그 사이 모든 운반은 <b>순환계</b>가 해요 — 넷의 협력이 세포호흡을 떠받치죠.";
+        "정리! <b>소화계(영양소)·호흡계(산소↔이산화 탄소)·배설계(요소)</b>가 각자 문을 맡고, 그 사이 모든 운반은 <b>순환계</b>가 해요. 넷의 협력이 세포호흡을 떠받치죠.";
       api.enableCTA(s.cta ?? "정리하기");
     }
   }
@@ -170,7 +170,7 @@ export const bodyTeamLab: StepRenderer = (host, step, api) => {
 
   function showOrder(): void {
     if (oi >= ORDERS.length) return;
-    orderCard.textContent = `주문 ${oi + 1} — ${ORDERS[oi].card}`;
+    orderCard.textContent = `주문 ${oi + 1}, ${ORDERS[oi].card}`;
     orderCard.classList.remove("pop");
     void orderCard.offsetWidth;
     orderCard.classList.add("pop");
@@ -243,7 +243,7 @@ export const bodyTeamLab: StepRenderer = (host, step, api) => {
     if (oi < ORDERS.length) {
       later(showOrder, 1100);
     } else {
-      orderCard.textContent = "주문 완료 — 세포호흡 가동 중!";
+      orderCard.textContent = "주문 완료, 세포호흡 가동 중!";
       later(askHub, 1200);
     }
   }
@@ -256,15 +256,15 @@ export const bodyTeamLab: StepRenderer = (host, step, api) => {
       qBox,
       "주문 네 건이 전부 끝났어요. 기관계들 <b>사이에서 물질을 실어 나른</b> 주인공은 누구였나요?",
       [
-        { t: "순환계 — 모든 배달은 혈액의 몫", ok: true },
-        { t: "소화계 — 영양소를 만드니까", ok: false },
-        { t: "호흡계 — 산소를 들여오니까", ok: false },
+        { t: "순환계, 모든 배달은 혈액의 몫", ok: true },
+        { t: "소화계, 영양소를 만드니까", ok: false },
+        { t: "호흡계, 산소를 들여오니까", ok: false },
       ],
       (ok) => {
         api.recordQuiz(ok);
         helper.innerHTML = ok
-          ? "정확해요! 소화계·호흡계·배설계는 각자의 <b>문</b>이고, 문과 세포 사이 <b>모든 운반은 순환계</b>가 맡아요 — 트럭이 늘 같은 도로 위를 달렸죠."
-          : "소화계와 호흡계는 물질을 <b>들여오는 문</b>일 뿐, 문에서 세포까지 나른 건 언제나 도로 위의 <b>순환계</b>였어요 — 트럭이 달린 그 분홍 고리요!";
+          ? "정확해요! 소화계·호흡계·배설계는 각자의 <b>문</b>이고, 문과 세포 사이 <b>모든 운반은 순환계</b>가 맡아요. 트럭이 늘 같은 도로 위를 달렸죠."
+          : "소화계와 호흡계는 물질을 <b>들여오는 문</b>일 뿐, 문에서 세포까지 나른 건 언제나 도로 위의 <b>순환계</b>였어요. 트럭이 달린 그 분홍 고리요!";
         collect("hub", "순환계가 허브!");
       },
     );

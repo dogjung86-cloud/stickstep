@@ -84,7 +84,7 @@ export function renderSeatWar(scene: HTMLElement, helper: HTMLElement, s: HookOp
   const caps = [
     "① \"<b>창가 자리</b>가 좋아! 햇살 드는 자리가 최고야.\"",
     "② \"난 <b>칠판 앞</b>! 여기가 제일 잘 보이거든.\"",
-    "③ \"뭐니 뭐니 해도 <b>친구 옆</b>이 최고지!\" — 어이쿠, 세 의견이 정면충돌이에요!",
+    "③ \"뭐니 뭐니 해도 <b>친구 옆</b>이 최고지!\", 어이쿠, 세 의견이 정면충돌이에요!",
   ];
   let i = 0;
   let timer = 0;
@@ -107,8 +107,8 @@ export function renderSeatWar(scene: HTMLElement, helper: HTMLElement, s: HookOp
             "목소리가 가장 큰 사람 말대로 한다",
             "아무도 못 바꾸게 자리를 영영 고정한다",
           ],
-          good: "좋은 감각이에요! 서로 다른 의견을 모아 <b>함께 조정하는 것</b> — 사실 이런 활동에는 어엿한 이름이 붙어 있답니다. 그 이름이 무엇인지, 판정소에서 확인하러 가요!",
-          bad: "목소리 크기로 정하면 나머지는 그 결정에 따르기 어렵고, 자리를 영영 고정하면 문제를 미룰 뿐이에요 — 답은 <b>모두의 의견을 모아 함께 조정하는 것</b>! 이런 활동에 붙은 이름을 판정소에서 확인하러 가요.",
+          good: "좋은 감각이에요! 서로 다른 의견을 모아 <b>함께 조정하는 것</b>, 사실 이런 활동에는 어엿한 이름이 붙어 있답니다. 그 이름이 무엇인지, 판정소에서 확인하러 가요!",
+          bad: "목소리 크기로 정하면 나머지는 그 결정에 따르기 어렵고, 자리를 영영 고정하면 문제를 미룰 뿐이에요. 답은 <b>모두의 의견을 모아 함께 조정하는 것</b>! 이런 활동에 붙은 이름을 판정소에서 확인하러 가요.",
           onDone: finish,
         });
       }, 900);
@@ -170,7 +170,7 @@ export function renderOneWay(scene: HTMLElement, helper: HTMLElement, s: HookOpt
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = onewaySvg(0);
-  helper.innerHTML = "복도가 웅성웅성 — <b>체험 학습 장소</b>가 정해졌대요. 그런데 누구에게도 물어본 적이 없다는데요? 게시판부터 보러 가요.";
+  helper.innerHTML = "복도가 웅성웅성, <b>체험 학습 장소</b>가 정해졌대요. 그런데 누구에게도 물어본 적이 없다는데요? 게시판부터 보러 가요.";
   let stage = 0;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -179,13 +179,13 @@ export function renderOneWay(scene: HTMLElement, helper: HTMLElement, s: HookOpt
     haptic(HAPTIC.select);
     fig.innerHTML = onewaySvg(stage);
     if (stage === 1) {
-      helper.innerHTML = "쿵! 공고 한 장이 붙었어요 — 지도 핀과 화살표가 그려져 있네요. 장소는 <b>이미 결정</b>, 안내는 이 종이 한 장뿐이래요.";
+      helper.innerHTML = "쿵! 공고 한 장이 붙었어요. 지도 핀과 화살표가 그려져 있네요. 장소는 <b>이미 결정</b>, 안내는 이 종이 한 장뿐이래요.";
       btn.textContent = "반 친구들 표정 보기";
     } else {
       btn.classList.add("done");
       btn.disabled = true;
       face("curious");
-      helper.innerHTML = "모여든 친구들 머리 위로 물음표가 둥둥, 어깨는 축 처졌어요. 나쁜 곳도 아닌 것 같은데 — 왜 다들 시큰둥할까요?";
+      helper.innerHTML = "모여든 친구들 머리 위로 물음표가 둥둥, 어깨는 축 처졌어요. 나쁜 곳도 아닌 것 같은데, 왜 다들 시큰둥할까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
@@ -193,8 +193,8 @@ export function renderOneWay(scene: HTMLElement, helper: HTMLElement, s: HookOpt
             "장소가 나빠서",
             "공고 종이가 작아서",
           ],
-          good: "바로 그거예요! <b>함께 정하지 않은 결정</b>은 따르고 싶은 마음이 잘 생기지 않아요. 그래서 여럿이 함께 정하는 데에는 기술이 필요하답니다 — 그 기술을 배우러 가요!",
-          bad: "장소나 종이 크기의 문제가 아니에요 — 아무도 의견을 묻지 않고 <b>일방적으로 정해졌다</b>는 게 핵심이죠. 함께 정하지 않은 결정은 따르기 어렵거든요. 여럿이 함께 정하는 기술을 배우러 가요!",
+          good: "바로 그거예요! <b>함께 정하지 않은 결정</b>은 따르고 싶은 마음이 잘 생기지 않아요. 그래서 여럿이 함께 정하는 데에는 기술이 필요하답니다. 그 기술을 배우러 가요!",
+          bad: "장소나 종이 크기의 문제가 아니에요. 아무도 의견을 묻지 않고 <b>일방적으로 정해졌다</b>는 게 핵심이죠. 함께 정하지 않은 결정은 따르기 어렵거든요. 여럿이 함께 정하는 기술을 배우러 가요!",
           onDone: finish,
         });
       }, 900);
@@ -250,7 +250,7 @@ export function renderLotClass(scene: HTMLElement, helper: HTMLElement, s: HookO
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = lotSvg(0);
-  helper.innerHTML = "만약 우리 반 반장을 투표가 아니라 <b>제비뽑기</b>로 뽑는다면? 교탁 위에 반 전체의 이름표가 든 상자가 놓였어요 — 상상만 해도 아찔한데…";
+  helper.innerHTML = "만약 우리 반 반장을 투표가 아니라 <b>제비뽑기</b>로 뽑는다면? 교탁 위에 반 전체의 이름표가 든 상자가 놓였어요. 상상만 해도 아찔한데…";
   let stage = 0;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -259,22 +259,22 @@ export function renderLotClass(scene: HTMLElement, helper: HTMLElement, s: HookO
     haptic(HAPTIC.select);
     fig.innerHTML = lotSvg(stage);
     if (stage === 1) {
-      helper.innerHTML = "달그락달그락 — 상자 속에서 이름표들이 뒤섞여요. 누가 나올지 아무도 몰라요. 이제 한 장 뽑아 볼까요?";
+      helper.innerHTML = "달그락달그락, 상자 속에서 이름표들이 뒤섞여요. 누가 나올지 아무도 몰라요. 이제 한 장 뽑아 볼까요?";
       btn.textContent = "한 장 뽑기";
     } else {
       btn.classList.add("done");
       btn.disabled = true;
       face("surprised");
-      helper.innerHTML = "뽑힌 이름표 한 장 — 이 사람이 오늘부터 반장?! 그런데 말이죠, 아주 먼 옛날에 나랏일 맡을 사람을 정말 '제비뽑기'로 정한 나라가 있었을까요?";
+      helper.innerHTML = "뽑힌 이름표 한 장, 이 사람이 오늘부터 반장?! 그런데 말이죠, 아주 먼 옛날에 나랏일 맡을 사람을 정말 '제비뽑기'로 정한 나라가 있었을까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
-            "있었다 — 추첨으로 나랏일을 맡겼다",
-            "없었다 — 나랏일은 언제나 시험으로 뽑았다",
-            "없었다 — 왕이 전부 정했다",
+            "있었다. 추첨으로 나랏일을 맡겼다",
+            "없었다. 나랏일은 언제나 시험으로 뽑았다",
+            "없었다. 왕이 전부 정했다",
           ],
           good: "놀랍게도 <b>있었어요</b>! 2500년 전 어느 도시 나라는 나랏일 맡을 사람 상당수를 정말 추첨으로 정했답니다. 어떻게 그런 일이 가능했는지, 만화로 확인하러 가요!",
-          bad: "시험으로 뽑는 건 다른 시대, 다른 곳의 이야기고, 왕이 다 정한 나라도 많았지만 — 2500년 전 어느 도시 나라는 정말 <b>제비뽑기로 나랏일을 맡겼어요</b>. 모두가 번갈아 맡는 나라! 만화로 확인하러 가요.",
+          bad: "시험으로 뽑는 건 다른 시대, 다른 곳의 이야기고, 왕이 다 정한 나라도 많았지만, 2500년 전 어느 도시 나라는 정말 <b>제비뽑기로 나랏일을 맡겼어요</b>. 모두가 번갈아 맡는 나라! 만화로 확인하러 가요.",
           onDone: finish,
         });
       }, 900);
@@ -328,7 +328,7 @@ export function renderHundredMen(scene: HTMLElement, helper: HTMLElement, s: Hoo
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = hundredSvg(false);
-  helper.innerHTML = "약 200년 전, <b>1832년 무렵의 영국</b> 어느 마을이에요. 마을 사람이 100명이라면 — 그중 나랏일에 투표할 수 있던 사람은 몇 명이었을까요? 버튼으로 켜서 확인해 봐요.";
+  helper.innerHTML = "약 200년 전, <b>1832년 무렵의 영국</b> 어느 마을이에요. 마을 사람이 100명이라면, 그중 나랏일에 투표할 수 있던 사람은 몇 명이었을까요? 버튼으로 켜서 확인해 봐요.";
   let fired = false;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -348,7 +348,7 @@ export function renderHundredMen(scene: HTMLElement, helper: HTMLElement, s: Hoo
           "투표소가 너무 멀어서",
         ],
         good: "정확해요! 그 시절에는 <b>재산 같은 조건</b>을 갖춘 사람에게만 투표권을 줬어요. 재산·성별 같은 조건의 벽이 어떻게 낮아져 왔는지, 타임라인 여행으로 따라가 봐요!",
-        bad: "귀찮아서도, 멀어서도 아니에요 — <b>재산 등 조건을 갖춘 사람에게만</b> 투표권을 주던 시대였거든요. 그 조건의 벽이 어떻게 낮아져 왔는지, 타임라인 여행으로 따라가 봐요!",
+        bad: "귀찮아서도, 멀어서도 아니에요. <b>재산 등 조건을 갖춘 사람에게만</b> 투표권을 주던 시대였거든요. 그 조건의 벽이 어떻게 낮아져 왔는지, 타임라인 여행으로 따라가 봐요!",
         onDone: finish,
       });
     }, 900);
@@ -417,7 +417,7 @@ export function renderKingNope(scene: HTMLElement, helper: HTMLElement, s: HookO
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = kingSvg(false);
-  helper.innerHTML = "옛날 왕은 높은 단 위에서 <b>명령 두루마리</b>를 뿌리면 그만이었대요 — 뭐든 마음대로! 그런데 오늘날 나라의 지도자는 마음대로 못 하는 일이 훨씬 많아요. 왜일까요?";
+  helper.innerHTML = "옛날 왕은 높은 단 위에서 <b>명령 두루마리</b>를 뿌리면 그만이었대요. 뭐든 마음대로! 그런데 오늘날 나라의 지도자는 마음대로 못 하는 일이 훨씬 많아요. 왜일까요?";
   let fired = false;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -428,7 +428,7 @@ export function renderKingNope(scene: HTMLElement, helper: HTMLElement, s: HookO
     btn.disabled = true;
     fig.innerHTML = kingSvg(true);
     face("curious");
-    helper.innerHTML = "오늘 카드에선 단이 낮아지고, 사람들은 엎드리는 대신 서서 지켜봐요. 그리고 지도자 머리 위 — <b>커다란 책 한 권</b>! 지도자도 그 아래에 있네요. 오늘날, 나라를 움직이는 힘(권력)은 어디서 나올까요?";
+    helper.innerHTML = "오늘 카드에선 단이 낮아지고, 사람들은 엎드리는 대신 서서 지켜봐요. 그리고 지도자 머리 위, <b>커다란 책 한 권</b>! 지도자도 그 아래에 있네요. 오늘날, 나라를 움직이는 힘(권력)은 어디서 나올까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -436,8 +436,8 @@ export function renderKingNope(scene: HTMLElement, helper: HTMLElement, s: HookO
           "가장 힘센 사람에게서 나온다",
           "옛날부터 내려온 전통에서 나온다",
         ],
-        good: "그래요! 오늘날 나라를 움직이는 힘은 <b>국민에게서</b> 나와요. 그래서 지도자도 규칙 아래에 있는 거죠 — 이 답은 나라의 최고 규칙 첫 장에 또렷이 적혀 있답니다. 설계도를 열어 보러 가요!",
-        bad: "힘센 사람도, 오래된 전통도 아니에요 — 오늘날 그 힘은 <b>국민에게서</b> 나온답니다. 그래서 지도자도 커다란 책, 그러니까 나라의 최고 규칙 아래에 있는 거예요. 그 첫 장에 적힌 답을 설계도에서 확인하러 가요!",
+        good: "그래요! 오늘날 나라를 움직이는 힘은 <b>국민에게서</b> 나와요. 그래서 지도자도 규칙 아래에 있는 거죠. 이 답은 나라의 최고 규칙 첫 장에 또렷이 적혀 있답니다. 설계도를 열어 보러 가요!",
+        bad: "힘센 사람도, 오래된 전통도 아니에요. 오늘날 그 힘은 <b>국민에게서</b> 나온답니다. 그래서 지도자도 커다란 책, 그러니까 나라의 최고 규칙 아래에 있는 거예요. 그 첫 장에 적힌 답을 설계도에서 확인하러 가요!",
         onDone: finish,
       });
     }, 900);
@@ -499,7 +499,7 @@ export function renderIdiotWord(scene: HTMLElement, helper: HTMLElement, s: Hook
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = idiotSvg(false);
-  helper.innerHTML = "'<b>idiot(이디어트)</b>'라는 영어 단어 — 지금은 '바보'라는 뜻으로 쓰이죠. 그런데 이 단어의 고향은 아주 먼 옛날 그리스래요. 한번 가 볼까요?";
+  helper.innerHTML = "'<b>idiot(이디어트)</b>'라는 영어 단어, 지금은 '바보'라는 뜻으로 쓰이죠. 그런데 이 단어의 고향은 아주 먼 옛날 그리스래요. 한번 가 볼까요?";
   let fired = false;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -510,7 +510,7 @@ export function renderIdiotWord(scene: HTMLElement, helper: HTMLElement, s: Hook
     btn.disabled = true;
     fig.innerHTML = idiotSvg(true);
     face("curious");
-    helper.innerHTML = "언덕 위 모임 장소로 걸어가는 사람, 그리고 등을 돌린 채 자기 집 앞에만 서 있는 사람 — 그리스 사람들은 <b>등 돌린 쪽</b>을 '이디오테스'라고 불렀대요. 옛 그리스에서 이 말은 원래 어떤 사람을 가리켰을까요?";
+    helper.innerHTML = "언덕 위 모임 장소로 걸어가는 사람, 그리고 등을 돌린 채 자기 집 앞에만 서 있는 사람, 그리스 사람들은 <b>등 돌린 쪽</b>을 '이디오테스'라고 불렀대요. 옛 그리스에서 이 말은 원래 어떤 사람을 가리켰을까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -518,8 +518,8 @@ export function renderIdiotWord(scene: HTMLElement, helper: HTMLElement, s: Hook
           "머리가 나쁜 사람",
           "달리기가 느린 사람",
         ],
-        good: "맞아요! 원래는 <b>공동체의 일에 관심을 끄고 자기 일만 돌보는 사람</b>을 가리키는 말이었어요. 그리고 이 무관심은 오늘날에도 민주주의의 큰 숙제랍니다 — 왜 그런지 이번 시간에 들여다봐요!",
-        bad: "머리도, 달리기도 아니에요 — 옛 그리스에서 이 말은 <b>공동체의 일에 관심 없이 자기 일만 돌보는 사람</b>을 가리켰어요. 그 무관심이 오늘날에도 민주주의의 큰 숙제라는 것, 이번 시간에 들여다봐요!",
+        good: "맞아요! 원래는 <b>공동체의 일에 관심을 끄고 자기 일만 돌보는 사람</b>을 가리키는 말이었어요. 그리고 이 무관심은 오늘날에도 민주주의의 큰 숙제랍니다. 왜 그런지 이번 시간에 들여다봐요!",
+        bad: "머리도, 달리기도 아니에요. 옛 그리스에서 이 말은 <b>공동체의 일에 관심 없이 자기 일만 돌보는 사람</b>을 가리켰어요. 그 무관심이 오늘날에도 민주주의의 큰 숙제라는 것, 이번 시간에 들여다봐요!",
         onDone: finish,
       });
     }, 900);
@@ -583,7 +583,7 @@ export function renderUniformDay(scene: HTMLElement, helper: HTMLElement, s: Hoo
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = uniformSvg(false);
-  helper.innerHTML = "요즘 학교엔 <b>편안한 교복</b>이 늘고 있어요. 몸에 딱 붙는 정장형 대신 활동하기 좋은 옷 — 어느 날 갑자기 바뀐 걸까요?";
+  helper.innerHTML = "요즘 학교엔 <b>편안한 교복</b>이 늘고 있어요. 몸에 딱 붙는 정장형 대신 활동하기 좋은 옷, 어느 날 갑자기 바뀐 걸까요?";
   let fired = false;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -594,7 +594,7 @@ export function renderUniformDay(scene: HTMLElement, helper: HTMLElement, s: Hoo
     btn.disabled = true;
     fig.innerHTML = uniformSvg(true);
     face("curious");
-    helper.innerHTML = "두 옷 사이에 숨어 있던 장면 — <b>원탁</b>에 학생도 어른도 함께 둘러앉아 있었네요. '편안한 교복'은 누가 만들었을까요?";
+    helper.innerHTML = "두 옷 사이에 숨어 있던 장면, <b>원탁</b>에 학생도 어른도 함께 둘러앉아 있었네요. '편안한 교복'은 누가 만들었을까요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -602,8 +602,8 @@ export function renderUniformDay(scene: HTMLElement, helper: HTMLElement, s: Hoo
           "교복 회사가 정해서 통보했다",
           "어느 날 하늘에서 뚝 떨어졌다",
         ],
-        good: "정답! 학생·학부모·교사·시민이 한자리에 모여 <b>토론으로 합의</b>를 만든 결과래요. 그렇게 여럿이 모여 이야기하는 자리에는 이름이 있답니다 — 이번 시간에 배워요!",
-        bad: "회사의 통보도, 하늘에서 떨어진 것도 아니에요 — 학생·학부모·교사·시민이 <b>함께 토론해 합의</b>를 만든 결과랍니다. 그렇게 여럿이 모여 이야기하는 자리에 붙은 이름, 이번 시간에 배워요!",
+        good: "정답! 학생·학부모·교사·시민이 한자리에 모여 <b>토론으로 합의</b>를 만든 결과래요. 그렇게 여럿이 모여 이야기하는 자리에는 이름이 있답니다. 이번 시간에 배워요!",
+        bad: "회사의 통보도, 하늘에서 떨어진 것도 아니에요. 학생·학부모·교사·시민이 <b>함께 토론해 합의</b>를 만든 결과랍니다. 그렇게 여럿이 모여 이야기하는 자리에 붙은 이름, 이번 시간에 배워요!",
         onDone: finish,
       });
     }, 900);

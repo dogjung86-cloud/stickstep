@@ -59,7 +59,7 @@ export const anGasSwapLab: StepRenderer = (host, step, api) => {
       { id: "route", title: "나가는 순서", sub: "이산화 탄소" },
     ],
     helper: "<b>산소</b> 알갱이를 탭해 고르고, 가야 할 곳을 탭해 옮겨 보세요. 이산화 탄소도 함께요.",
-    finish: "정리됐어요! <b>허파꽈리</b>에서는 산소가 모세혈관으로, 이산화 탄소가 허파꽈리로 이동해요. <b>조직세포</b>에서는 산소가 조직세포로, 이산화 탄소가 모세혈관으로 이동하죠. 두 곳 모두 <b>모세혈관을 거쳐</b> 일어나요 — 호흡계와 순환계가 함께 일하는 거예요.",
+    finish: "정리됐어요! <b>허파꽈리</b>에서는 산소가 모세혈관으로, 이산화 탄소가 허파꽈리로 이동해요. <b>조직세포</b>에서는 산소가 조직세포로, 이산화 탄소가 모세혈관으로 이동하죠. 두 곳 모두 <b>모세혈관을 거쳐</b> 일어나요. 호흡계와 순환계가 함께 일하는 거예요.",
     cta: s.cta ?? "개념 정리하기",
     waitingCta: "세 가지 목표를 모두 달성해 보세요",
     curio: s.curio,
@@ -107,7 +107,7 @@ export const anGasSwapLab: StepRenderer = (host, step, api) => {
     } else {
       build(sc);
       if (sc === 1) lab.setHelper("이번엔 <b>조직세포</b> 쪽이에요. 여기서는 산소와 이산화 탄소가 어느 쪽으로 갈까요?");
-      say(`${SCENE_NAME[sc]} — 알갱이를 옮겨 보세요.`);
+      say(`${SCENE_NAME[sc]}, 알갱이를 옮겨 보세요.`);
     }
     nextBtn.textContent = sc === 2 ? "처음 장소로" : "다음 장소로";
   }
@@ -137,7 +137,7 @@ export const anGasSwapLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.tap);
       if (i === orderIdx) {
         orderIdx++;
-        say(`${ORDER_CARDS[i]} — 좋아요.`, 2400);
+        say(`${ORDER_CARDS[i]}, 좋아요.`, 2400);
         if (orderIdx === ORDER_CARDS.length) {
           lab.collect("route", "순서 완성");
           say("이산화 탄소는 조직세포에서 생겨 혈액을 타고 허파꽈리로 가 숨으로 나가요.", 5200);

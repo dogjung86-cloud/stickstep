@@ -151,7 +151,7 @@ export const formulaLab: StepRenderer = (host, step, api) => {
       if (finished) return;
       const last = tokens[tokens.length - 1];
       if (!last || last.startsWith("_")) {
-        helper.innerHTML = "아래 숫자는 <b>원소 기호 뒤에만</b> 붙일 수 있어요 — 기호부터!";
+        helper.innerHTML = "아래 숫자는 <b>원소 기호 뒤에만</b> 붙일 수 있어요. 기호부터!";
         return;
       }
       tokens.push(`_${n}`);
@@ -206,7 +206,7 @@ export const formulaLab: StepRenderer = (host, step, api) => {
         finished = true;
         api.recordQuiz(!wrongAny);
         helper.innerHTML =
-          "네 분자 모두 완성! 화학식 쓰는 법 — 원소 <b>기호</b>를 쓰고, 그 원자의 <b>개수</b>를 오른쪽 아래 작은 숫자로(1은 생략). 이제 화학식만 봐도 분자 속 원자가 보이죠?";
+          "네 분자 모두 완성! 화학식 쓰는 법, 원소 <b>기호</b>를 쓰고, 그 원자의 <b>개수</b>를 오른쪽 아래 작은 숫자로(1은 생략). 이제 화학식만 봐도 분자 속 원자가 보이죠?";
         api.enableCTA(s.cta ?? "다음으로");
       } else {
         window.setTimeout(loadRound, 900);
@@ -224,11 +224,11 @@ export const formulaLab: StepRenderer = (host, step, api) => {
       Object.keys(r.comp).length === Object.keys(comp).length &&
       Object.entries(r.comp).every(([k, v]) => comp[k] === v);
     if (same) {
-      helper.innerHTML = `원자 개수는 완벽해요! 다만 쓰는 <b>순서</b>가 달라요 — 이 분자는 <b>${fmtHtml(tokenize(r.formula))}</b> 순서로 써요.`;
+      helper.innerHTML = `원자 개수는 완벽해요! 다만 쓰는 <b>순서</b>가 달라요. 이 분자는 <b>${fmtHtml(tokenize(r.formula))}</b> 순서로 써요.`;
     } else if (comp && Object.keys(r.comp).every((k) => k in comp) && Object.keys(comp).every((k) => k in r.comp)) {
-      helper.innerHTML = "원자 <b>종류</b>는 맞았어요 — <b>개수</b>를 다시 세어 봐요. 같은 원자가 몇 개 보이나요? 개수는 기호 <b>오른쪽 아래 숫자</b>로!";
+      helper.innerHTML = "원자 <b>종류</b>는 맞았어요. <b>개수</b>를 다시 세어 봐요. 같은 원자가 몇 개 보이나요? 개수는 기호 <b>오른쪽 아래 숫자</b>로!";
     } else {
-      helper.innerHTML = "모형 속 공 색깔을 힌트로 — 어떤 <b>종류</b>의 원자가 있는지부터 다시 확인해요!";
+      helper.innerHTML = "모형 속 공 색깔을 힌트로, 어떤 <b>종류</b>의 원자가 있는지부터 다시 확인해요!";
     }
   });
 

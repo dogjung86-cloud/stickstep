@@ -97,7 +97,7 @@ export const lifeStackLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "두 계단 완성! 공통 뼈대는 <b>세포 → 조직 → 기관 → 개체</b> — 거기에 식물은 <b>조직계</b>(조직과 기관 사이), 동물은 <b>기관계</b>(기관과 개체 사이)가 한 칸씩 끼어들어요.";
+        "두 계단 완성! 공통 뼈대는 <b>세포 → 조직 → 기관 → 개체</b>, 거기에 식물은 <b>조직계</b>(조직과 기관 사이), 동물은 <b>기관계</b>(기관과 개체 사이)가 한 칸씩 끼어들어요.";
       api.enableCTA(s.cta ?? "용어로 정리하기");
     }
   }
@@ -158,7 +158,7 @@ export const lifeStackLab: StepRenderer = (host, step, api) => {
         helper.innerHTML = `<b>${r.name}</b>은(는) <b>${r.rank}</b> 단계! 다음으로 큰 단계는 뭘까요?`;
       } else if (course === "animal") {
         collect("animal", "완성!");
-        helper.innerHTML = "동물 계단 완성 — <b>세포→조직→기관→기관계→개체</b>! 이번엔 <b>식물 코스</b>예요. 같은 순서일까요?";
+        helper.innerHTML = "동물 계단 완성, <b>세포→조직→기관→기관계→개체</b>! 이번엔 <b>식물 코스</b>예요. 같은 순서일까요?";
         later(() => {
           course = "plant";
           buildCourse();
@@ -175,8 +175,8 @@ export const lifeStackLab: StepRenderer = (host, step, api) => {
       const want = rungs[idx];
       helper.innerHTML =
         idx === 0
-          ? "첫 칸은 <b>가장 작은 단위</b>부터 — 무엇으로 시작해야 할까요?"
-          : `지금 칸은 <b>${want.rank}</b> 차례예요 — 방금 놓은 것<b>들이 모여</b> 만들어지는 걸 골라 봐요.`;
+          ? "첫 칸은 <b>가장 작은 단위</b>부터, 무엇으로 시작해야 할까요?"
+          : `지금 칸은 <b>${want.rank}</b> 차례예요. 방금 놓은 것<b>들이 모여</b> 만들어지는 걸 골라 봐요.`;
       later(() => {
         card.classList.remove("nope");
         board.classList.remove("shake");
@@ -192,15 +192,15 @@ export const lifeStackLab: StepRenderer = (host, step, api) => {
       askBox,
       "동물 계단에는 <b>없고</b>, 식물 계단에만 있던 단계는 무엇이었나요?",
       [
-        { t: "조직계 — 조직과 기관 사이에 있었다", ok: true },
-        { t: "기관계 — 기관과 개체 사이에 있었다", ok: false },
-        { t: "세포 — 맨 첫 칸에 있었다", ok: false },
+        { t: "조직계, 조직과 기관 사이에 있었다", ok: true },
+        { t: "기관계, 기관과 개체 사이에 있었다", ok: false },
+        { t: "세포, 맨 첫 칸에 있었다", ok: false },
       ],
       (ok) => {
         api.recordQuiz(ok);
         helper.innerHTML = ok
-          ? "정확해요! <b>조직계는 식물</b>(조직과 기관 사이), <b>기관계는 동물</b>(기관과 개체 사이) — 자리까지 기억했네요."
-          : "계단을 다시 떠올려요 — 기관계와 세포는 <b>동물 계단에도</b> 있었죠. 식물에만 있던 건 <b>조직계</b>(조직과 기관 사이)예요.";
+          ? "정확해요! <b>조직계는 식물</b>(조직과 기관 사이), <b>기관계는 동물</b>(기관과 개체 사이), 자리까지 기억했네요."
+          : "계단을 다시 떠올려요. 기관계와 세포는 <b>동물 계단에도</b> 있었죠. 식물에만 있던 건 <b>조직계</b>(조직과 기관 사이)예요.";
         collect("diff", "조직계!");
       },
     );

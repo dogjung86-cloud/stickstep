@@ -118,7 +118,7 @@ export const slideMakeLab: StepRenderer = (host, step, api) => {
   const segRow = el("div", { class: "smk-segrow" }, segCheek, segElodea);
   const viewImg = el("img", {
     class: "smk-view",
-    attrs: { src: `${BASE}exam/u2/cheek-cells.webp`, alt: "현미경 시야 — 초점을 맞춰 보세요" },
+    attrs: { src: `${BASE}exam/u2/cheek-cells.webp`, alt: "현미경 시야, 초점을 맞춰 보세요" },
   }) as HTMLImageElement;
   const viewWrap = el("div", { class: "b4-board dark smk-viewwrap" }, viewImg);
   const focusLabel = el("div", { class: "smk-focus-cap", html: "초점 손잡이를 천천히 돌려 보세요" });
@@ -176,14 +176,14 @@ export const slideMakeLab: StepRenderer = (host, step, api) => {
         { t: "물을 더 많이 넣는다", ok: false },
       ], (ok) => {
         helper.innerHTML = ok
-          ? "정답! <b>메틸렌 블루</b> 용액을 한 방울 떨어뜨리고 <b>1분쯤 놓아두면</b> — 유전물질이 <b>푸른색</b>으로 물들어 핵이 또렷해져요."
-          : "빛을 밝게 해도 투명한 건 투명해요. 답은 <b>염색</b> — 메틸렌 블루를 한 방울 떨어뜨리고 <b>1분쯤 놓아두면</b> 유전물질이 <b>푸른색</b>으로 물들어 핵이 또렷해져요.";
+          ? "정답! <b>메틸렌 블루</b> 용액을 한 방울 떨어뜨리고 <b>1분쯤 놓아두면</b>, 유전물질이 <b>푸른색</b>으로 물들어 핵이 또렷해져요."
+          : "빛을 밝게 해도 투명한 건 투명해요. 답은 <b>염색</b>, 메틸렌 블루를 한 방울 떨어뜨리고 <b>1분쯤 놓아두면</b> 유전물질이 <b>푸른색</b>으로 물들어 핵이 또렷해져요.";
         q<SVGGElement>(".smk-drop").setAttribute("opacity", "1");
         advanceTool();
       });
     } else if (id === "cover") {
       toolBtns[2].disabled = true;
-      helper.innerHTML = "이제 덮개 유리를 덮을 차례 — <b>어떻게 덮을까요?</b>";
+      helper.innerHTML = "이제 덮개 유리를 덮을 차례, <b>어떻게 덮을까요?</b>";
       showAsk(askBox, [
         { t: "비스듬히 기울여서 천천히 덮는다", ok: true },
         { t: "위에서 한 번에 바로 덮는다", ok: false },
@@ -211,7 +211,7 @@ export const slideMakeLab: StepRenderer = (host, step, api) => {
       later(() => q<SVGGElement>(".smk-paper").setAttribute("opacity", "0"), 900);
       advanceTool();
       collect("make", "완성!");
-      helper.innerHTML = "여분의 용액까지 정리 — <b>현미경표본 완성</b>! 이제 현미경에 올려요.";
+      helper.innerHTML = "여분의 용액까지 정리, <b>현미경표본 완성</b>! 이제 현미경에 올려요.";
       later(() => {
         slideStage.style.display = "none";
         toolRow.style.display = "none";
@@ -285,8 +285,8 @@ export const slideMakeLab: StepRenderer = (host, step, api) => {
           spec.found = true;
           haptic(HAPTIC.correct);
           focusLabel.innerHTML = curSpec === "cheek"
-            ? "<b>선명!</b> 파랗게 염색된 <b>핵</b>이 점처럼 또렷해요 — 납작하고 편평한 상피세포죠."
-            : "<b>선명!</b> 각진 칸이 벽돌담처럼 — 칸마다 <b>초록 알갱이(엽록체)</b>가 가득해요.";
+            ? "<b>선명!</b> 파랗게 염색된 <b>핵</b>이 점처럼 또렷해요. 납작하고 편평한 상피세포죠."
+            : "<b>선명!</b> 각진 칸이 벽돌담처럼, 칸마다 <b>초록 알갱이(엽록체)</b>가 가득해요.";
           if (SPECIMENS.cheek.found && SPECIMENS.elodea.found) {
             collect("focus", "둘 다 선명!");
             later(showCompare, 900);
@@ -309,7 +309,7 @@ export const slideMakeLab: StepRenderer = (host, step, api) => {
     segElodea.classList.toggle("cur", k === "elodea");
     viewImg.src = `${BASE}${SPECIMENS[k].img}`;
     focus.value = String(k === "cheek" ? 16 : 84); // 새 표본 = 초점이 다시 흐려진다
-    focusLabel.innerHTML = `<b>${SPECIMENS[k].name}</b> 표본 — 초점을 다시 맞춰요`;
+    focusLabel.innerHTML = `<b>${SPECIMENS[k].name}</b> 표본, 초점을 다시 맞춰요`;
     applyFocus();
   }
   segCheek.addEventListener("click", () => swapSpec("cheek"));
@@ -319,7 +319,7 @@ export const slideMakeLab: StepRenderer = (host, step, api) => {
   function showCompare(): void {
     if (compareShown) return;
     compareShown = true;
-    helper.innerHTML = "두 표본을 모두 봤어요 — 마지막 질문!";
+    helper.innerHTML = "두 표본을 모두 봤어요. 마지막 질문!";
     compareBox.style.display = "";
     compareBox.classList.add("show");
     compareBox.appendChild(el("div", { class: "hook-q", html: "두 세포에서 <b>다르게</b> 보인 것은 무엇이었나요?" }));
@@ -355,7 +355,7 @@ export const slideMakeLab: StepRenderer = (host, step, api) => {
         api.recordQuiz(c.ok);
         helper.innerHTML = c.ok
           ? "정확한 관찰! <b>세포벽과 엽록체</b>는 식물세포에만 있어서, 현미경 사진만으로도 동물/식물을 구별할 수 있어요."
-          : "사진을 다시 떠올려요 — 각진 칸과 초록 알갱이는 <b>검정말잎(식물)</b> 쪽이었죠. 세포벽·엽록체가 식물세포의 증거예요.";
+          : "사진을 다시 떠올려요. 각진 칸과 초록 알갱이는 <b>검정말잎(식물)</b> 쪽이었죠. 세포벽·엽록체가 식물세포의 증거예요.";
         collect("compare", "세포벽·엽록체!");
       });
       compareBox.appendChild(b);

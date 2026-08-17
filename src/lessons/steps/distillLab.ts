@@ -68,7 +68,7 @@ export const distillLab: StepRenderer = (host, step, api) => {
   const tubeDot = el("span", { class: "pdot", style: "background:#FF8FB0" });
   const readVal = el("span", { text: "20" });
   const toastEl = el("div", { class: "toast" });
-  const capEl = el("div", { class: "stage-cap", text: "가지 달린 플라스크 — 가열을 시작해 보세요" });
+  const capEl = el("div", { class: "stage-cap", text: "가지 달린 플라스크, 가열을 시작해 보세요" });
   const stage = el(
     "div",
     { class: "stage" },
@@ -150,7 +150,7 @@ export const distillLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "끓는점이 낮은 에탄올이 먼저 기화해 나와요 — 이렇게 끓는점 차로 분리하는 방법이 <b>증류</b>예요.";
+        "끓는점이 낮은 에탄올이 먼저 기화해 나와요. 이렇게 끓는점 차로 분리하는 방법이 <b>증류</b>예요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -172,7 +172,7 @@ export const distillLab: StepRenderer = (host, step, api) => {
       updateRunLabel();
       capEl.style.transition = "opacity .4s";
       capEl.style.opacity = "0";
-      toast("가열 시작 — 온도계를 지켜보세요");
+      toast("가열 시작, 온도계를 지켜보세요");
       return;
     }
     if (phase === "run") {
@@ -186,9 +186,9 @@ export const distillLab: StepRenderer = (host, step, api) => {
       tubePill.textContent = `(${TUBES[cur]})에 받는 중`;
       if (cur === segIdx) {
         btnMain.classList.remove("pulse");
-        toast(`좋아요 — (${TUBES[cur]})에 받아요`);
+        toast(`좋아요. (${TUBES[cur]})에 받아요`);
       } else if (cur > segIdx) {
-        toast(`조금 일찍 바꿨어요 — 아직 (${TUBES[segIdx]}) 구간`);
+        toast(`조금 일찍 바꿨어요. 아직 (${TUBES[segIdx]}) 구간`);
       }
       return;
     }
@@ -199,10 +199,10 @@ export const distillLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.tap);
       btnMain.classList.add("done-static");
       mainLabel("(나) 알코올 냄새!");
-      toast("손으로 바람을 일으켜 킁킁 — 알코올 냄새!");
+      toast("손으로 바람을 일으켜 킁킁, 알코올 냄새!");
       if (!finished)
-        helper.innerHTML = "(나)에 모인 액체는 <b>에탄올</b> — 78℃ 구간에서 나온 기체가 얼음물에 식어 액화된 거예요.";
-      if (cobaltDone) collect("id", "확인 완료!", "(나) 에탄올 · (라) 물 — 정체 확인!");
+        helper.innerHTML = "(나)에 모인 액체는 <b>에탄올</b>, 78℃ 구간에서 나온 기체가 얼음물에 식어 액화된 거예요.";
+      if (cobaltDone) collect("id", "확인 완료!", "(나) 에탄올 · (라) 물, 정체 확인!");
     }
   };
   const onB = (): void => {
@@ -211,9 +211,9 @@ export const distillLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     btnB.classList.add("done-static");
     (btnB.firstChild as HTMLElement).textContent = "(라) 푸른 종이가 붉게!";
-    toast("염화 코발트 종이가 붉게 — 물이에요!");
-    if (!finished) helper.innerHTML = "(라)의 액체에 푸른 염화 코발트 종이가 <b>붉게</b> 변했어요 — 물이라는 증거!";
-    if (smellDone) collect("id", "확인 완료!", "(나) 에탄올 · (라) 물 — 정체 확인!");
+    toast("염화 코발트 종이가 붉게, 물이에요!");
+    if (!finished) helper.innerHTML = "(라)의 액체에 푸른 염화 코발트 종이가 <b>붉게</b> 변했어요. 물이라는 증거!";
+    if (smellDone) collect("id", "확인 완료!", "(나) 에탄올 · (라) 물, 정체 확인!");
   };
   btnMain.addEventListener("click", onMain);
   btnB.addEventListener("click", onB);
@@ -237,17 +237,17 @@ export const distillLab: StepRenderer = (host, step, api) => {
     const need = cur !== seg;
     if (seg === 1) {
       haptic(HAPTIC.cross);
-      toast(need ? "78℃ 구간! 시험관 바꾸기 → (나)" : "78℃ — (나)에 받는 중");
+      toast(need ? "78℃ 구간! 시험관 바꾸기 → (나)" : "78℃, (나)에 받는 중");
       if (!finished)
         helper.innerHTML =
-          "온도가 <b>78℃에서 멈췄어요</b> — 에탄올의 끓는점! 지금 나오는 기체는 거의 다 에탄올이에요.";
+          "온도가 <b>78℃에서 멈췄어요</b>. 에탄올의 끓는점! 지금 나오는 기체는 거의 다 에탄올이에요.";
     } else if (seg === 2) {
-      toast(need ? "온도가 다시 올라요 — (다)로!" : "온도가 다시 올라요");
-      if (!finished) helper.innerHTML = "에탄올이 거의 다 나갔어요 — 온도가 <b>다시 올라가요</b>.";
+      toast(need ? "온도가 다시 올라요. (다)로!" : "온도가 다시 올라요");
+      if (!finished) helper.innerHTML = "에탄올이 거의 다 나갔어요. 온도가 <b>다시 올라가요</b>.";
     } else if (seg === 3) {
       haptic(HAPTIC.cross);
-      toast(need ? "100℃ 구간! 시험관 바꾸기 → (라)" : "100℃ — (라)에 받는 중");
-      if (!finished) helper.innerHTML = "이번엔 <b>100℃에서 멈춤</b> — 물이 끓어서 나오는 중이에요!";
+      toast(need ? "100℃ 구간! 시험관 바꾸기 → (라)" : "100℃, (라)에 받는 중");
+      if (!finished) helper.innerHTML = "이번엔 <b>100℃에서 멈춤</b>, 물이 끓어서 나오는 중이에요!";
     }
     if (need) btnMain.classList.add("pulse");
     else btnMain.classList.remove("pulse");
@@ -264,7 +264,7 @@ export const distillLab: StepRenderer = (host, step, api) => {
     capEl.textContent = "시험관 (나)와 (라)를 직접 탭해도 돼요";
     capEl.style.opacity = "1";
     toast("증류 완료! 시험관 속 정체를 확인해요");
-    if (!finished) helper.innerHTML = "받아 낸 액체의 <b>정체를 확인</b>할 차례 — (나)는 냄새로, (라)는 염화 코발트 종이로!";
+    if (!finished) helper.innerHTML = "받아 낸 액체의 <b>정체를 확인</b>할 차례, (나)는 냄새로, (라)는 염화 코발트 종이로!";
   }
 
   // ---- 그리기 ----
@@ -602,8 +602,8 @@ export const distillLab: StepRenderer = (host, step, api) => {
 
     // 발견한 끓는점 안내선
     const guides: [string, number, string, string][] = [
-      ["e78", 78, "78℃ — 에탄올", "255,143,176"],
-      ["w100", 100, "100℃ — 물", "120,180,240"],
+      ["e78", 78, "78℃, 에탄올", "255,143,176"],
+      ["w100", 100, "100℃, 물", "120,180,240"],
     ];
     for (const [gid, tv, label, rgb] of guides) {
       if (!goals.has(gid)) continue;
@@ -669,11 +669,11 @@ export const distillLab: StepRenderer = (host, step, api) => {
       // 플래토 관찰 목표
       if (segIdx === 1) {
         platMs1 += dtSec * 1000;
-        if (platMs1 > 1200) collect("e78", "78℃!", "첫 번째 평평 — 에탄올의 끓는점 78℃!");
+        if (platMs1 > 1200) collect("e78", "78℃!", "첫 번째 평평, 에탄올의 끓는점 78℃!");
       }
       if (segIdx === 3) {
         platMs2 += dtSec * 1000;
-        if (platMs2 > 1200) collect("w100", "100℃!", "두 번째 평평 — 물의 끓는점 100℃!");
+        if (platMs2 > 1200) collect("w100", "100℃!", "두 번째 평평, 물의 끓는점 100℃!");
       }
       // 증기 발생(플래토 구간)
       if (segIdx === 1 || segIdx === 3) {
@@ -715,7 +715,7 @@ export const distillLab: StepRenderer = (host, step, api) => {
           wrongCnt += 1;
           if (wrongCnt >= 3) {
             wrongCnt = -4;
-            toast(`앗 — 지금은 (${TUBES[segIdx]})에 받아야 해요!`);
+            toast(`앗, 지금은 (${TUBES[segIdx]})에 받아야 해요!`);
           }
         }
       }

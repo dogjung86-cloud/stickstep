@@ -48,7 +48,7 @@ export const starLight3d: StepRenderer = (host, step, api) => {
     el("span", { text: "스크린을 옆으로 밀어 보세요" }),
   );
   const toastEl = el("div", { class: "toast" });
-  const capEl = el("div", { class: "stage-cap", text: "격자판을 잡고 좌우로 — 별에서 멀리, 또 가까이" });
+  const capEl = el("div", { class: "stage-cap", text: "격자판을 잡고 좌우로, 별에서 멀리, 또 가까이" });
   const stage = el("div", { class: "stage" }, canvas, statusPill, toastEl, capEl);
 
   const helper = el("div", {
@@ -90,7 +90,7 @@ export const starLight3d: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 광원에서 나온 빛알의 <b>개수는 어디서든 그대로</b> — 다만 거리가 멀어질수록 <b>거리×거리 칸</b>으로 퍼질 뿐이에요. 그래서 밝기는 <b>거리의 제곱에 반비례</b>(×2 → 1/4, ×3 → 1/9)해요.";
+        "정리! 광원에서 나온 빛알의 <b>개수는 어디서든 그대로</b>, 다만 거리가 멀어질수록 <b>거리×거리 칸</b>으로 퍼질 뿐이에요. 그래서 밝기는 <b>거리의 제곱에 반비례</b>(×2 → 1/4, ×3 → 1/9)해요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }
@@ -166,14 +166,14 @@ export const starLight3d: StepRenderer = (host, step, api) => {
     visited.add(snap);
     if (snap === 2) {
       if (ghost1) ghost1.visible = true;
-      collect("x2", "4칸 · ¼ 밝기", "2배 멀어지니 2×2 = 4칸 — 한 칸은 1/4 밝기!");
+      collect("x2", "4칸 · ¼ 밝기", "2배 멀어지니 2×2 = 4칸, 한 칸은 1/4 밝기!");
     }
     if (snap === 3) {
       if (ghost2) ghost2.visible = true;
-      collect("x3", "9칸 · 1/9 밝기", "3배 — 3×3 = 9칸, 한 칸은 1/9!");
+      collect("x3", "9칸 · 1/9 밝기", "3배, 3×3 = 9칸, 한 칸은 1/9!");
     }
     if (snap === 1 && goals.has("x3")) {
-      collect("back", "240알 그대로!", "빛알은 한 알도 안 사라졌어요 — 퍼졌을 뿐!");
+      collect("back", "240알 그대로!", "빛알은 한 알도 안 사라졌어요. 퍼졌을 뿐!");
     }
   }
 
@@ -185,7 +185,7 @@ export const starLight3d: StepRenderer = (host, step, api) => {
       const frac = snap === 1 ? "그대로" : `1/${cells}`;
       span.textContent = `거리 ×${snap} → ${cells}칸 → 한 칸 밝기 ${frac}`;
     } else {
-      span.textContent = `거리 ×${d.toFixed(1)} — 눈금에 맞춰 보세요`;
+      span.textContent = `거리 ×${d.toFixed(1)}, 눈금에 맞춰 보세요`;
     }
   }
 
@@ -197,7 +197,7 @@ export const starLight3d: StepRenderer = (host, step, api) => {
     st = mod.createSpaceStage(canvas, { fov: 44 });
     if (!st) {
       helper.innerHTML =
-        "이 기기에서 3D 화면을 열 수 없어요. 핵심 — 별빛은 퍼지며 나아가 거리 2배에서 <b>4칸(밝기 1/4)</b>, 3배에서 <b>9칸(1/9)</b>을 비춰요. 밝기는 <b>거리 제곱에 반비례</b>!";
+        "이 기기에서 3D 화면을 열 수 없어요. 핵심, 별빛은 퍼지며 나아가 거리 2배에서 <b>4칸(밝기 1/4)</b>, 3배에서 <b>9칸(1/9)</b>을 비춰요. 밝기는 <b>거리 제곱에 반비례</b>!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
       return;

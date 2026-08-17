@@ -38,14 +38,14 @@ interface ElemInfo {
 type Row = [number, string, string, number, number, St, Kind, string?];
 const ROWS: Row[] = [
   [1, "H", "수소", 1, 1, "기체", "nonmetal", "우주에서 가장 많은 원소. 1족 자리지만 금속인 다른 1족과 성질이 다른 예외예요"],
-  [2, "He", "헬륨", 18, 1, "기체", "nonmetal", "풍선을 띄우는 기체 — 다른 물질과 거의 반응하지 않아요"],
+  [2, "He", "헬륨", 18, 1, "기체", "nonmetal", "풍선을 띄우는 기체, 다른 물질과 거의 반응하지 않아요"],
   [3, "Li", "리튬", 1, 2, "고체", "metal", "물과 활발히 반응하는 무른 금속. 스마트폰 배터리의 주인공!"],
   [4, "Be", "베릴륨", 2, 2, "고체", "metal", "가볍고 단단해 우주 망원경 거울에 쓰여요"],
   [5, "B", "붕소", 13, 2, "고체", "semi", "내열 유리를 단단하게 만들어 줘요"],
   [6, "C", "탄소", 14, 2, "고체", "nonmetal", "연필심(흑연)도 다이아몬드도 전부 탄소! 생명체의 뼈대 원소"],
   [7, "N", "질소", 15, 2, "기체", "nonmetal", "공기의 약 78%. 과자 봉지를 빵빵하게 채우는 기체"],
   [8, "O", "산소", 16, 2, "기체", "nonmetal", "숨 쉴 때 꼭 필요한 기체. 지각에서 가장 많은 원소이기도 해요"],
-  [9, "F", "플루오린", 17, 2, "기체", "nonmetal", "치약 속 '불소'의 정체 — 반응성이 아주 큰 기체"],
+  [9, "F", "플루오린", 17, 2, "기체", "nonmetal", "치약 속 '불소'의 정체, 반응성이 아주 큰 기체"],
   [10, "Ne", "네온", 18, 2, "기체", "nonmetal", "네온사인의 주황빛. 거의 반응하지 않는 조용한 기체"],
   [11, "Na", "나트륨", 1, 3, "고체", "metal", "물과 격렬히 반응! 염소와 만나면 소금(NaCl)이 돼요"],
   [12, "Mg", "마그네슘", 2, 3, "고체", "metal", "불꽃놀이의 눈부신 흰 빛. 엽록소의 중심 원소"],
@@ -54,7 +54,7 @@ const ROWS: Row[] = [
   [15, "P", "인", 15, 3, "고체", "nonmetal", "성냥 머리에 들어 있어요. 뼈와 DNA에도!"],
   [16, "S", "황", 16, 3, "고체", "nonmetal", "온천 냄새의 범인. 노란 결정으로 나는 원소"],
   [17, "Cl", "염소", 17, 3, "기체", "nonmetal", "수돗물과 수영장 소독에 쓰여요. 나트륨과 만나면 소금!"],
-  [18, "Ar", "아르곤", 18, 3, "기체", "nonmetal", "전구 속을 채우는 기체 — 필라멘트가 타지 않게 지켜 줘요"],
+  [18, "Ar", "아르곤", 18, 3, "기체", "nonmetal", "전구 속을 채우는 기체, 필라멘트가 타지 않게 지켜 줘요"],
   [19, "K", "칼륨", 1, 4, "고체", "metal", "물에 넣으면 보라 불꽃까지! 바나나에 많은 원소"],
   [20, "Ca", "칼슘", 2, 4, "고체", "metal", "뼈·치아·조개껍데기의 성분"],
   [21, "Sc", "스칸듐", 3, 4, "고체", "metal", "가볍고 튼튼해 자전거 프레임에 쓰이기도 해요"],
@@ -65,10 +65,10 @@ const ROWS: Row[] = [
   [26, "Fe", "철", 8, 4, "고체", "metal", "인류가 가장 많이 쓰는 금속. 혈액 속 헤모글로빈에도!"],
   [27, "Co", "코발트", 9, 4, "고체", "metal", "파란 유리·도자기 물감의 원료. 배터리에도 쓰여요"],
   [28, "Ni", "니켈", 10, 4, "고체", "metal", "동전과 스테인리스에 들어가는 은백색 금속"],
-  [29, "Cu", "구리", 11, 4, "고체", "metal", "전선의 주인공 — 전기가 아주 잘 통해요. 10원 동전에도!"],
+  [29, "Cu", "구리", 11, 4, "고체", "metal", "전선의 주인공, 전기가 아주 잘 통해요. 10원 동전에도!"],
   [30, "Zn", "아연", 12, 4, "고체", "metal", "철을 녹슬지 않게 감싸 주는 금속(함석). 건전지에도!"],
-  [31, "Ga", "갈륨", 13, 4, "고체", "metal", "손바닥 위에서 녹는 금속(녹는점 약 30℃) — 멘델레예프가 예언했던 그 원소!"],
-  [32, "Ge", "저마늄", 14, 4, "고체", "semi", "규소와 함께 반도체에 쓰여요 — 이것도 예언됐던 원소!"],
+  [31, "Ga", "갈륨", 13, 4, "고체", "metal", "손바닥 위에서 녹는 금속(녹는점 약 30℃), 멘델레예프가 예언했던 그 원소!"],
+  [32, "Ge", "저마늄", 14, 4, "고체", "semi", "규소와 함께 반도체에 쓰여요. 이것도 예언됐던 원소!"],
   [33, "As", "비소", 15, 4, "고체", "semi", "옛날 이야기 속 독약으로 유명하지만 반도체에도 쓰여요"],
   [34, "Se", "셀레늄", 16, 4, "고체", "nonmetal", "복사기와 태양 전지에 쓰이는 원소"],
   [35, "Br", "브로민", 17, 4, "액체", "nonmetal", "상온에서 액체인 단 두 원소 중 하나! 붉은 갈색 액체예요"],
@@ -81,7 +81,7 @@ const ROWS: Row[] = [
   [42, "Mo", "몰리브데넘", 6, 5, "고체", "metal", "아주 높은 온도를 견디는 금속"],
   [43, "Tc", "테크네튬", 7, 5, "고체", "metal", "자연에 거의 없어 인공적으로 처음 만든 원소"],
   [44, "Ru", "루테늄", 8, 5, "고체", "metal", "하드디스크와 전자 부품에 쓰여요"],
-  [45, "Rh", "로듐", 9, 5, "고체", "metal", "금보다 비싼 금속 — 자동차 매연 정화 장치에!"],
+  [45, "Rh", "로듐", 9, 5, "고체", "metal", "금보다 비싼 금속, 자동차 매연 정화 장치에!"],
   [46, "Pd", "팔라듐", 10, 5, "고체", "metal", "매연 정화 장치와 치과 재료에 쓰여요"],
   [47, "Ag", "은", 11, 5, "고체", "metal", "모든 금속 중 전기가 가장 잘 통해요. 수저와 장신구로!"],
   [48, "Cd", "카드뮴", 12, 5, "고체", "metal", "충전지에 쓰였지만 독성이 있어 점점 퇴출 중"],
@@ -97,18 +97,18 @@ const ROWS: Row[] = [
   [73, "Ta", "탄탈럼", 5, 6, "고체", "metal", "스마트폰 부품(축전기)에 꼭 들어가는 금속"],
   [74, "W", "텅스텐", 6, 6, "고체", "metal", "모든 금속 중 녹는점 최고(3400℃)! 전구 필라멘트의 주인공"],
   [75, "Re", "레늄", 7, 6, "고체", "metal", "제트 엔진 부품에 쓰이는 초내열 금속"],
-  [76, "Os", "오스뮴", 8, 6, "고체", "metal", "밀도가 가장 큰 원소 — 같은 부피면 물의 22배 무게!"],
+  [76, "Os", "오스뮴", 8, 6, "고체", "metal", "밀도가 가장 큰 원소, 같은 부피면 물의 22배 무게!"],
   [77, "Ir", "이리듐", 9, 6, "고체", "metal", "공룡 멸종 증거! 운석에 많아 지층 속 이리듐 층이 단서가 됐어요"],
-  [78, "Pt", "백금", 10, 6, "고체", "metal", "귀금속이자 최고의 촉매 — 매연 정화 장치의 핵심"],
+  [78, "Pt", "백금", 10, 6, "고체", "metal", "귀금속이자 최고의 촉매, 매연 정화 장치의 핵심"],
   [79, "Au", "금", 11, 6, "고체", "metal", "녹슬지 않고 얇게 펴지는 노란 금속. 라틴어 이름 aurum에서 Au"],
   [80, "Hg", "수은", 12, 6, "액체", "metal", "상온에서 액체인 유일한 금속! 옛날 체온계 속 은빛 액체"],
   [81, "Tl", "탈륨", 13, 6, "고체", "metal", "독성이 강해 취급 주의! 특수 유리에 쓰여요"],
   [82, "Pb", "납", 14, 6, "고체", "metal", "무겁고 무른 금속. 자동차 배터리에 쓰여요"],
   [83, "Bi", "비스무트", 15, 6, "고체", "metal", "무지갯빛 계단 모양 결정으로 유명한 금속"],
-  [84, "Po", "폴로늄", 16, 6, "고체", "metal", "퀴리 부부가 발견 — 조국 폴란드의 이름을 붙였어요"],
+  [84, "Po", "폴로늄", 16, 6, "고체", "metal", "퀴리 부부가 발견, 조국 폴란드의 이름을 붙였어요"],
   [85, "At", "아스타틴", 17, 6, "고체", "semi", "지구 전체에 몇 g뿐인 가장 희귀한 자연 원소"],
-  [86, "Rn", "라돈", 18, 6, "기체", "nonmetal", "땅에서 나오는 방사성 기체 — 환기가 중요한 이유!"],
-  [87, "Fr", "프랑슘", 1, 7, "고체", "metal", "가장 불안정한 자연 원소 — 발견자 조국 프랑스의 이름"],
+  [86, "Rn", "라돈", 18, 6, "기체", "nonmetal", "땅에서 나오는 방사성 기체, 환기가 중요한 이유!"],
+  [87, "Fr", "프랑슘", 1, 7, "고체", "metal", "가장 불안정한 자연 원소, 발견자 조국 프랑스의 이름"],
   [88, "Ra", "라듐", 2, 7, "고체", "metal", "퀴리 부부가 발견한 방사성 원소. '방사능'이란 말이 여기서!"],
   [104, "Rf", "러더포듐", 4, 7, "고체", "metal"],
   [105, "Db", "더브늄", 5, 7, "고체", "metal"],
@@ -133,11 +133,11 @@ const E: ElemInfo[] = ROWS.map(([z, sym, name, group, period, state, kind, note]
 const MERGED = [
   {
     key: "lan", label: "57~71", name: "란타넘족", period: 6,
-    info: "<b>란타넘족(57~71번)</b> — 15개 원소가 이 한 칸에 들어가요. 스마트폰·전기차 모터에 꼭 필요한 <b>희토류</b> 원소가 많아요.",
+    info: "<b>란타넘족(57~71번)</b>, 15개 원소가 이 한 칸에 들어가요. 스마트폰·전기차 모터에 꼭 필요한 <b>희토류</b> 원소가 많아요.",
   },
   {
     key: "act", label: "89~103", name: "악티늄족", period: 7,
-    info: "<b>악티늄족(89~103번)</b> — 15개 원소가 이 한 칸에 들어가요. 원자력 발전에 쓰이는 <b>우라늄(92번)</b>이 여기 속해요.",
+    info: "<b>악티늄족(89~103번)</b>, 15개 원소가 이 한 칸에 들어가요. 원자력 발전에 쓰이는 <b>우라늄(92번)</b>이 여기 속해요.",
   },
 ];
 const KIND_NAME: Record<Kind, string> = { metal: "금속", nonmetal: "비금속", semi: "준금속" };
@@ -163,13 +163,13 @@ export const periodicLab: StepRenderer = (host, step, api) => {
     el("div", { class: "sp3-enter-art", html: previewSvg() }),
     el("div", {
       class: "sp3-enter-txt",
-      html: "1번 수소부터 <b>118번 오가네손까지</b> — 칸을 눌러 성질을 탐험하고, 같은 족의 <b>닮은꼴</b>을 확인해요.<br>화면이 자동으로 <b>가로</b>로 돌아가요.",
+      html: "1번 수소부터 <b>118번 오가네손까지</b>, 칸을 눌러 성질을 탐험하고, 같은 족의 <b>닮은꼴</b>을 확인해요.<br>화면이 자동으로 <b>가로</b>로 돌아가요.",
     }),
   );
   const enterBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "가로 화면으로 크게 열기" }));
   const helper = el("div", {
     class: "helper",
-    html: "세로줄이 <b>족</b>(1~18), 가로줄이 <b>주기</b>(1~7) — 원소들은 <b>원자 번호(=양성자수)</b> 순서로 줄을 서 있어요.",
+    html: "세로줄이 <b>족</b>(1~18), 가로줄이 <b>주기</b>(1~7), 원소들은 <b>원자 번호(=양성자수)</b> 순서로 줄을 서 있어요.",
   });
   host.append(goalChips, helper, preview, enterBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -199,7 +199,7 @@ export const periodicLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 주기율표는 원소를 <b>원자 번호(양성자수) 순</b>으로 배열한 표 — 가로줄이 <b>주기</b>, 세로줄이 <b>족</b>이고, <b>같은 족은 성질이 비슷</b>해요. 위치만 봐도 성질이 예측되죠!";
+        "정리! 주기율표는 원소를 <b>원자 번호(양성자수) 순</b>으로 배열한 표, 가로줄이 <b>주기</b>, 세로줄이 <b>족</b>이고, <b>같은 족은 성질이 비슷</b>해요. 위치만 봐도 성질이 예측되죠!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -214,7 +214,7 @@ export const periodicLab: StepRenderer = (host, step, api) => {
     gridEl?.querySelectorAll(".ptx-cell").forEach((c) => c.classList.remove("sel"));
     cellOf[elem.z].classList.add("sel");
     const fallback = elem.est
-      ? "실험실에서 인공적으로 만든 원소예요 — 상온 상태는 추정값이랍니다."
+      ? "실험실에서 인공적으로 만든 원소예요. 상온 상태는 추정값이랍니다."
       : `${elem.group}족 ${elem.period}주기의 ${KIND_NAME[elem.kind]} 원소예요.`;
     setInfo(
       `<b>${elem.name} (${elem.sym})</b> · 원자 번호 <b>${elem.z}</b> = 양성자 ${elem.z}개 · <b>${elem.group}족 ${elem.period}주기</b> · 상온 ${elem.state}${elem.est ? "(추정)" : ""} · ${KIND_NAME[elem.kind]}<br><span class="ptx-note">${elem.note ?? fallback}</span>`,
@@ -226,7 +226,7 @@ export const periodicLab: StepRenderer = (host, step, api) => {
       if (found1.size === 3 && !goals.has("g1")) {
         E.filter((x) => x.group === 1 && x.z !== 1).forEach((x) => cellOf[x.z].classList.add("g1"));
         setInfo(
-          `<b>1족 삼형제 완성!</b> 리튬·나트륨·칼륨은 같은 <b>세로줄(1족)</b> — 셋 다 <b>무른 금속</b>이고 <b>물과 활발히 반응</b>해요. 아래 루비듐·세슘은 더 격렬하죠. 같은 족 = 닮은 성질!`,
+          `<b>1족 삼형제 완성!</b> 리튬·나트륨·칼륨은 같은 <b>세로줄(1족)</b>, 셋 다 <b>무른 금속</b>이고 <b>물과 활발히 반응</b>해요. 아래 루비듐·세슘은 더 격렬하죠. 같은 족 = 닮은 성질!`,
         );
         collect("g1", "물과 활발!");
       }
@@ -237,7 +237,7 @@ export const periodicLab: StepRenderer = (host, step, api) => {
       if (found18.size === 3 && !goals.has("g18")) {
         E.filter((x) => x.group === 18).forEach((x) => cellOf[x.z].classList.add("g18"));
         setInfo(
-          `<b>18족 삼형제 완성!</b> 헬륨·네온·아르곤은 다른 물질과 <b>거의 반응하지 않는</b> 조용한 기체들 — 풍선(He)·네온사인(Ne)·전구(Ar)에 안심하고 쓰죠.`,
+          `<b>18족 삼형제 완성!</b> 헬륨·네온·아르곤은 다른 물질과 <b>거의 반응하지 않는</b> 조용한 기체들, 풍선(He)·네온사인(Ne)·전구(Ar)에 안심하고 쓰죠.`,
         );
         collect("g18", "조용한 기체!");
       }
@@ -246,7 +246,7 @@ export const periodicLab: StepRenderer = (host, step, api) => {
       cellOf[elem.z].classList.add("p2on");
       p2i++;
       if (p2i >= P2_ORDER.length) {
-        setInfo(`<b>2주기 완주!</b> 리튬부터 네온까지 — 가로줄 하나(<b>주기</b>)를 원자 번호 순서로 걸었어요. 번호가 곧 줄 서는 순서!`);
+        setInfo(`<b>2주기 완주!</b> 리튬부터 네온까지, 가로줄 하나(<b>주기</b>)를 원자 번호 순서로 걸었어요. 번호가 곧 줄 서는 순서!`);
         collect("p2", "Li→Ne 완주!");
       } else if (p2i >= 2 && missionEls?.p2) {
         missionEls.p2.textContent = `2주기 ${p2i}/8`;
@@ -260,7 +260,7 @@ export const periodicLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.select);
     const { enterRotateStage } = await import("../../ui/rotateStage");
     if (disposed) return;
-    rot = enterRotateStage({ title: "주기율표 탐험 — 칸을 눌러 보세요", onLeave: () => leave() });
+    rot = enterRotateStage({ title: "주기율표 탐험, 칸을 눌러 보세요", onLeave: () => leave() });
 
     const wrap = el("div", { class: "ptx-wrap" });
     const grid = el("div", { class: "ptx-grid" });
@@ -308,7 +308,7 @@ export const periodicLab: StepRenderer = (host, step, api) => {
         grid.appendChild(cell);
       }
     }
-    infoBar = el("div", { class: "ptx-info", html: "칸을 눌러 원소를 살펴보세요 — 먼저 <b>1족 세로줄</b>의 리튬·나트륨·칼륨부터!" });
+    infoBar = el("div", { class: "ptx-info", html: "칸을 눌러 원소를 살펴보세요. 먼저 <b>1족 세로줄</b>의 리튬·나트륨·칼륨부터!" });
 
     const paintBtn = el("button", { class: "sp3-tiltbtn", attrs: { type: "button", "aria-pressed": "false" } }, el("span", { text: PAINT_LABEL.none }));
     paintBtn.addEventListener("click", () => {
@@ -321,10 +321,10 @@ export const periodicLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.select);
       if (paint === "state")
         setInfo(
-          "상온 상태 칠하기 — <b>고체는 파랑, 액체는 초록, 기체는 살구색</b>. 액체는 단 둘(브로민·수은)! 104번~는 추정값이에요.",
+          "상온 상태 칠하기, <b>고체는 파랑, 액체는 초록, 기체는 살구색</b>. 액체는 단 둘(브로민·수은)! 104번~는 추정값이에요.",
         );
       if (paint === "kind")
-        setInfo("금속·비금속 칠하기 — <b>왼쪽·아래는 금속</b>(파랑), <b>오른쪽 위는 비금속</b>(주황), 경계엔 <b>준금속</b>(보라). 위치가 곧 성질!");
+        setInfo("금속·비금속 칠하기, <b>왼쪽·아래는 금속</b>(파랑), <b>오른쪽 위는 비금속</b>(주황), 경계엔 <b>준금속</b>(보라). 위치가 곧 성질!");
     });
 
     const missions = el("div", { class: "sp3-missions lb" });

@@ -186,7 +186,7 @@ export const circuitLab: StepRenderer = (host, step, api) => {
     if (goals.size === 4 && !finished) {
       finished = true;
       helper.innerHTML =
-        "<b>직렬은 전류의 길이 하나</b> — 저항이 늘수록 전류가 줄고 하나만 끊겨도 끝. <b>병렬은 길이 여러 개</b> — 각자 같은 전압을 받아 밝기가 그대로!";
+        "<b>직렬은 전류의 길이 하나</b>, 저항이 늘수록 전류가 줄고 하나만 끊겨도 끝. <b>병렬은 길이 여러 개</b>, 각자 같은 전압을 받아 밝기가 그대로!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -195,8 +195,8 @@ export const circuitLab: StepRenderer = (host, step, api) => {
   function pullProgress(): void {
     if (goals.has("pull")) return;
     if (pullSeries && pullParallel) {
-      collect("pull", "전멸·생존!", "직렬은 전멸, 병렬은 생존 — 빼기 실험 완료");
-      if (!finished) helper.innerHTML = "빼기 실험 완료 — <b>직렬은 전멸, 병렬은 생존</b>! 남은 목표도 마저 확인해 봐요.";
+      collect("pull", "전멸·생존!", "직렬은 전멸, 병렬은 생존, 빼기 실험 완료");
+      if (!finished) helper.innerHTML = "빼기 실험 완료, <b>직렬은 전멸, 병렬은 생존</b>! 남은 목표도 마저 확인해 봐요.";
     } else {
       const spanEl = goalChips.querySelector('[data-g="pull"] span') as HTMLElement;
       spanEl.textContent = pullSeries ? "병렬에서도!" : "직렬에서도!";
@@ -216,10 +216,10 @@ export const circuitLab: StepRenderer = (host, step, api) => {
     });
     haptic(HAPTIC.select);
     if (finished) return;
-    if (k === "single") helper.innerHTML = "<b>전구 1개</b> — 스위치를 닫으면 이 밝기가 비교 기준이 돼요.";
+    if (k === "single") helper.innerHTML = "<b>전구 1개</b>, 스위치를 닫으면 이 밝기가 비교 기준이 돼요.";
     else if (k === "series")
-      helper.innerHTML = "<b>직렬 2개</b> — 전류가 지나는 길이 <b>하나</b>뿐이에요. 1개일 때보다 밝을까요, 어두울까요?";
-    else helper.innerHTML = "<b>병렬 2개</b> — 길이 <b>두 갈래</b>로 나뉘어요. 이번엔 밝기가 어떻게 될까요?";
+      helper.innerHTML = "<b>직렬 2개</b>, 전류가 지나는 길이 <b>하나</b>뿐이에요. 1개일 때보다 밝을까요, 어두울까요?";
+    else helper.innerHTML = "<b>병렬 2개</b>, 길이 <b>두 갈래</b>로 나뉘어요. 이번엔 밝기가 어떻게 될까요?";
   }
 
   function toggleSwitch(): void {
@@ -227,8 +227,8 @@ export const circuitLab: StepRenderer = (host, step, api) => {
     everSwitched = true;
     litMs = 0;
     haptic(HAPTIC.tap);
-    if (closed) toast(currentI() > 0 ? "스위치 닫힘 — 전류가 흘러요" : "스위치 닫힘 — 그런데 회로가 끊겨 있어요");
-    else toast("스위치 열림 — 전류가 멈췄어요");
+    if (closed) toast(currentI() > 0 ? "스위치 닫힘, 전류가 흘러요" : "스위치 닫힘, 그런데 회로가 끊겨 있어요");
+    else toast("스위치 열림, 전류가 멈췄어요");
   }
 
   function toggleBulb(i: number): void {
@@ -243,7 +243,7 @@ export const circuitLab: StepRenderer = (host, step, api) => {
     everRemoved = true;
     const otherIn = mode !== "single" && bulbIn[1 - i];
     if (mode === "series" && closed && wasI > 0) {
-      toast("직렬에서 하나를 빼니 — 전부 꺼졌어요(전류 0×)");
+      toast("직렬에서 하나를 빼니, 전부 꺼졌어요(전류 0×)");
       if (!pullSeries) {
         pullSeries = true;
         if (!finished && !pullParallel)
@@ -251,16 +251,16 @@ export const circuitLab: StepRenderer = (host, step, api) => {
         pullProgress();
       }
     } else if (mode === "parallel" && closed && otherIn && wasI > 0) {
-      toast("병렬에서 하나를 빼도 — 나머지는 그대로!(전류 1×)");
+      toast("병렬에서 하나를 빼도, 나머지는 그대로!(전류 1×)");
       if (!pullParallel) {
         pullParallel = true;
         if (!finished && !pullSeries)
           helper.innerHTML =
-            "병렬은 하나가 빠져도 <b>나머지 가지로 전류가 계속</b> 흘러요 — 남은 전구는 그대로 밝죠(전체 전류 1×). <b>직렬</b>에서도 빼 보면?";
+            "병렬은 하나가 빠져도 <b>나머지 가지로 전류가 계속</b> 흘러요. 남은 전구는 그대로 밝죠(전체 전류 1×). <b>직렬</b>에서도 빼 보면?";
         pullProgress();
       }
     } else {
-      toast(closed && wasI > 0 ? "전구를 뺐어요 — 회로가 끊겼어요" : "전구를 뺐어요");
+      toast(closed && wasI > 0 ? "전구를 뺐어요. 회로가 끊겼어요" : "전구를 뺐어요");
     }
   }
 
@@ -312,23 +312,23 @@ export const circuitLab: StepRenderer = (host, step, api) => {
     else litMs = 0;
     if (I > 0 && litMs > 550) {
       if (mode === "single" && !goals.has("one")) {
-        collect("one", "1× 기준!", "기준 밝기 확인 — 전체 전류 1×");
+        collect("one", "1× 기준!", "기준 밝기 확인, 전체 전류 1×");
         if (!finished) helper.innerHTML = "이 밝기(전류 1×)가 <b>기준</b>이에요. 위 세그에서 <b>직렬 2개</b>로 바꿔 비교해 보세요.";
       } else if (mode === "series" && bulbIn[0] && bulbIn[1] && !goals.has("series")) {
         if (goals.has("one")) {
-          collect("series", "어두워짐!", "직렬 2개 — 둘 다 어두워요(전류 0.5×)");
+          collect("series", "어두워짐!", "직렬 2개, 둘 다 어두워요(전류 0.5×)");
           if (!finished)
-            helper.innerHTML = "직렬은 <b>전체 저항이 늘어 전류가 절반</b>(0.5×) — 그래서 둘 다 어두워요. 다음은 <b>병렬 2개</b>!";
+            helper.innerHTML = "직렬은 <b>전체 저항이 늘어 전류가 절반</b>(0.5×), 그래서 둘 다 어두워요. 다음은 <b>병렬 2개</b>!";
         } else if (!nudged) {
           nudged = true;
           toast("먼저 전구 1개에서 기준 밝기를 봐 두세요");
         }
       } else if (mode === "parallel" && bulbIn[0] && bulbIn[1] && !goals.has("parallel")) {
         if (goals.has("one")) {
-          collect("parallel", "같은 밝기!", "병렬 2개 — 1개일 때와 같은 밝기(전체 전류 2×)");
+          collect("parallel", "같은 밝기!", "병렬 2개, 1개일 때와 같은 밝기(전체 전류 2×)");
           if (!finished)
             helper.innerHTML =
-              "병렬은 각 전구가 <b>같은 전압</b>을 그대로 받아 <b>같은 밝기</b>(전체 전류는 2×)! 이제 <b>전구를 탭해 빼기 실험</b> — 직렬과 병렬이 다를까요?";
+              "병렬은 각 전구가 <b>같은 전압</b>을 그대로 받아 <b>같은 밝기</b>(전체 전류는 2×)! 이제 <b>전구를 탭해 빼기 실험</b>, 직렬과 병렬이 다를까요?";
         } else if (!nudged) {
           nudged = true;
           toast("먼저 전구 1개에서 기준 밝기를 봐 두세요");

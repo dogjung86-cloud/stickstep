@@ -105,7 +105,7 @@ export function renderStripemount(
             "햇빛과 바람에 바래서 생긴 얼룩",
           ],
           good: "좋은 예측이에요! 색과 알갱이가 다른 <b>퇴적물이 한 겹 한 겹 쌓여 굳으면</b> 이런 줄무늬가 남아요. 실험실에서 직접 쌓아 봐요!",
-          bad: "용암 자국도, 바랜 얼룩도 아니에요 — 방금 한 겹씩 드러났듯 <b>서로 다른 퇴적물이 차곡차곡 쌓여 굳은</b> 무늬예요. 실험실에서 직접 쌓아 봐요!",
+          bad: "용암 자국도, 바랜 얼룩도 아니에요. 방금 한 겹씩 드러났듯 <b>서로 다른 퇴적물이 차곡차곡 쌓여 굳은</b> 무늬예요. 실험실에서 직접 쌓아 봐요!",
           onDone: finish,
         });
       }, 750);
@@ -181,7 +181,7 @@ export function renderFoolsgold(
   row.style.display = "none";
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, row, choicesBox);
-  helper.innerHTML = "금빛으로 반짝이는 돌을 주웠어요 — 이름은 <b>황철석</b>. 진짜 금과 꼭 닮았대요! <b>탭해서 뒤집어</b> 보세요.";
+  helper.innerHTML = "금빛으로 반짝이는 돌을 주웠어요. 이름은 <b>황철석</b>. 진짜 금과 꼭 닮았대요! <b>탭해서 뒤집어</b> 보세요.";
 
   let flips = 0;
   let rubbed = false;
@@ -193,10 +193,10 @@ export function renderFoolsgold(
     fig.classList.remove("spin");
     void fig.offsetWidth;
     fig.classList.add("spin");
-    if (flips === 1) helper.innerHTML = "반짝—! 뒷면도 온통 금빛이에요. <b>한 번 더</b> 굴려 봐요.";
+    if (flips === 1) helper.innerHTML = "반짝! 뒷면도 온통 금빛이에요. <b>한 번 더</b> 굴려 봐요.";
     if (flips === 2) {
       face("curious");
-      helper.innerHTML = "아무리 봐도 금 같아요. 가리는 법이 있대요 — 흰 사기판, <b>조흔판</b>에 문질러 가루 색을 보는 거예요!";
+      helper.innerHTML = "아무리 봐도 금 같아요. 가리는 법이 있대요. 흰 사기판, <b>조흔판</b>에 문질러 가루 색을 보는 거예요!";
       row.style.display = "";
     }
   });
@@ -210,7 +210,7 @@ export function renderFoolsgold(
     timer = window.setTimeout(() => {
       face("surprised");
       haptic(HAPTIC.correct);
-      helper.innerHTML = "쓱싹— 긁힌 자리에 <b>검은 가루</b>가 남았어요! 겉은 금빛인데 가루는 검다니. 이 돌, 진짜 금일까요?";
+      helper.innerHTML = "쓱싹… 긁힌 자리에 <b>검은 가루</b>가 남았어요! 겉은 금빛인데 가루는 검다니. 이 돌, 진짜 금일까요?";
       timer = window.setTimeout(() => {
         face("curious");
         ask(choicesBox, helper, {
@@ -219,8 +219,8 @@ export function renderFoolsgold(
             "겉이 이렇게 반짝이니 진짜 금이 맞다",
             "검은 가루는 조흔판이 긁혀 나온 부스러기다",
           ],
-          good: "예리해요! 겉모습은 속여도 <b>가루의 색</b>은 못 속여요 — 진짜 금은 가루도 <b>노란색</b>인데 이 돌은 검은 가루를 남겼거든요. 실험실에서 확인!",
-          bad: "반짝임은 겉모습일 뿐이에요. 흰 판이 부스러졌다면 가루도 흰색이어야죠 — 검은 가루는 <b>돌 자신의 가루 색</b>! 진짜 금이라면 가루도 <b>노란색</b>이에요. 실험실에서 확인!",
+          good: "예리해요! 겉모습은 속여도 <b>가루의 색</b>은 못 속여요. 진짜 금은 가루도 <b>노란색</b>인데 이 돌은 검은 가루를 남겼거든요. 실험실에서 확인!",
+          bad: "반짝임은 겉모습일 뿐이에요. 흰 판이 부스러졌다면 가루도 흰색이어야죠. 검은 가루는 <b>돌 자신의 가루 색</b>! 진짜 금이라면 가루도 <b>노란색</b>이에요. 실험실에서 확인!",
           onDone: finish,
         });
       }, 900);
@@ -318,11 +318,11 @@ export function renderDolstatue(
   finish: () => void,
   face: Face,
 ): () => void {
-  const fig = el("div", { class: "hg2-statues", attrs: { role: "img", "aria-label": "돌하르방과 해태상 — 탭해서 확대 관찰" } });
+  const fig = el("div", { class: "hg2-statues", attrs: { role: "img", "aria-label": "돌하르방과 해태상, 탭해서 확대 관찰" } });
   fig.innerHTML = dolstatueSvg();
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "왼쪽은 제주도 <b>돌하르방</b>, 오른쪽은 궁궐 앞 <b>해태상</b> — 둘 다 돌로 만들었어요. <b>번갈아 탭</b>해서 돋보기로 관찰!";
+  helper.innerHTML = "왼쪽은 제주도 <b>돌하르방</b>, 오른쪽은 궁궐 앞 <b>해태상</b>, 둘 다 돌로 만들었어요. <b>번갈아 탭</b>해서 돋보기로 관찰!";
 
   const seen = new Set<string>();
   let asked = false;
@@ -346,7 +346,7 @@ export function renderDolstatue(
       } else {
         asked = true;
         face("curious");
-        helper.innerHTML = "한쪽은 구멍 숭숭, 한쪽은 반짝 알갱이 — 같은 돌인데 <b>왜 이렇게 다를까요?</b>";
+        helper.innerHTML = "한쪽은 구멍 숭숭, 한쪽은 반짝 알갱이, 같은 돌인데 <b>왜 이렇게 다를까요?</b>";
         timer = window.setTimeout(() => {
           ask(choicesBox, helper, {
             choices: s.choices ?? [
@@ -355,7 +355,7 @@ export function renderDolstatue(
               "만든 장인의 조각 솜씨가 달라서",
             ],
             good: "좋은 예측! 구멍도 반짝임도 조각 솜씨가 아니라 <b>돌이 태어난 과정</b>이 남긴 흔적이에요. 실험실에서 두 돌의 비밀을 파헤쳐요!",
-            bad: "바람도 솜씨도 아니에요 — 구멍과 반짝 알갱이는 돌이 <b>처음 만들어질 때부터</b> 지닌 무늬거든요. <b>만들어진 과정이 다른</b> 거예요. 실험실에서 파헤쳐요!",
+            bad: "바람도 솜씨도 아니에요. 구멍과 반짝 알갱이는 돌이 <b>처음 만들어질 때부터</b> 지닌 무늬거든요. <b>만들어진 과정이 다른</b> 거예요. 실험실에서 파헤쳐요!",
             onDone: finish,
           });
         }, 900);
@@ -420,7 +420,7 @@ export function renderBookcliff(
   fig.innerHTML = bookcliffSvg();
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "전북 부안의 <b>채석강</b> — 절벽이 꼭 책 수만 권을 쌓은 것 같아요. 아래에서 <b>위로 쓸어 넘기며</b> 몇 겹인지 세어 봐요!";
+  helper.innerHTML = "전북 부안의 <b>채석강</b>, 절벽이 꼭 책 수만 권을 쌓은 것 같아요. 아래에서 <b>위로 쓸어 넘기며</b> 몇 겹인지 세어 봐요!";
 
   const count = fig.querySelector(".hg2-count") as SVGTextElement;
   let dragging = false;
@@ -453,8 +453,8 @@ export function renderBookcliff(
             "파도가 절벽을 여러 번 깎아 줄을 새겨서",
             "큰 지진이 날 때마다 금이 한 줄씩 가서",
           ],
-          good: "맞아요! 한 겹 한 겹이 <b>퇴적물이 쌓인 세월의 기록</b>이에요 — 절벽 전체가 수만 년짜리 책이죠. 실험실에서 확인!",
-          bad: "파도와 지진이 새긴 게 아니에요 — 파도는 절벽을 <b>드러냈을 뿐</b>, 줄무늬 자체는 <b>퇴적물이 오랜 시간 차곡차곡 쌓여 굳은</b> 거예요. 실험실에서 확인!",
+          good: "맞아요! 한 겹 한 겹이 <b>퇴적물이 쌓인 세월의 기록</b>이에요. 절벽 전체가 수만 년짜리 책이죠. 실험실에서 확인!",
+          bad: "파도와 지진이 새긴 게 아니에요. 파도는 절벽을 <b>드러냈을 뿐</b>, 줄무늬 자체는 <b>퇴적물이 오랜 시간 차곡차곡 쌓여 굳은</b> 거예요. 실험실에서 확인!",
           onDone: finish,
         });
       }, 900);
@@ -592,7 +592,7 @@ export function renderPressrock(
         fig.classList.add("done");
         face("surprised");
         haptic(HAPTIC.correct);
-        helper.innerHTML = "납작—! 제멋대로 기울어 있던 칩들이 <b>옆으로 나란히 누웠어요</b>. 그럼 깊은 땅속에서 암석이 이렇게 눌리면요?";
+        helper.innerHTML = "납작! 제멋대로 기울어 있던 칩들이 <b>옆으로 나란히 누웠어요</b>. 그럼 깊은 땅속에서 암석이 이렇게 눌리면요?";
         timer = window.setTimeout(() => {
           face("curious");
           ask(choicesBox, helper, {
@@ -602,7 +602,7 @@ export function renderPressrock(
               "알갱이가 모두 가루가 되어 사라진다",
             ],
             good: "완벽한 예측! 땅속 깊은 곳에서 큰 힘을 받은 암석도 초코칩처럼 <b>알갱이가 힘과 수직으로 줄지어</b> 서요. 실험실에서 확인!",
-            bad: "꿈쩍 않지도, 가루가 되어 사라지지도 않아요 — 방금 초코칩처럼 알갱이들이 <b>누르는 힘과 수직 방향으로 나란히</b> 눕는답니다. 실험실에서 확인!",
+            bad: "꿈쩍 않지도, 가루가 되어 사라지지도 않아요. 방금 초코칩처럼 알갱이들이 <b>누르는 힘과 수직 방향으로 나란히</b> 눕는답니다. 실험실에서 확인!",
             onDone: finish,
           });
         }, 900);
@@ -754,8 +754,8 @@ export function renderCappadocia(
             "바위는 단단해서 이 모습 그대로 남는다",
             "깎인 만큼 돌이 다시 자라 되돌아온다",
           ],
-          good: "그래요 — 단단한 바위도 바람과 물에 <b>쉬지 않고 깎여요</b>. 지표의 모습은 끊임없이 변한답니다. 실험실에서 확인!",
-          bad: "돌은 다시 자라지 않고, 영원히 버티지도 못해요 — 방금처럼 <b>조금씩 계속 깎여</b> 언젠가 무너져요. 지표는 끊임없이 변한답니다. 실험실에서 확인!",
+          good: "그래요. 단단한 바위도 바람과 물에 <b>쉬지 않고 깎여요</b>. 지표의 모습은 끊임없이 변한답니다. 실험실에서 확인!",
+          bad: "돌은 다시 자라지 않고, 영원히 버티지도 못해요. 방금처럼 <b>조금씩 계속 깎여</b> 언젠가 무너져요. 지표는 끊임없이 변한답니다. 실험실에서 확인!",
           onDone: finish,
         });
       }, 900);
@@ -866,14 +866,14 @@ export function renderGravestone(
     haptic(HAPTIC.tap);
     fig.classList.add(`st${stage}`);
     yearEl.textContent = `${YEARS[stage - 1]}년 뒤`;
-    if (stage === 1) helper.innerHTML = "100년 — 획이 살짝 <b>옅어졌어요</b>. 계속 탭!";
-    else if (stage === 2) helper.innerHTML = "200년 — 돌에 가는 <b>금</b>이 갔어요!";
+    if (stage === 1) helper.innerHTML = "100년, 획이 살짝 <b>옅어졌어요</b>. 계속 탭!";
+    else if (stage === 2) helper.innerHTML = "200년, 돌에 가는 <b>금</b>이 갔어요!";
     else if (stage === 3) {
       face("surprised");
-      helper.innerHTML = "350년 — <b>이끼</b>가 끼고 글자가 흐릿…";
+      helper.innerHTML = "350년, <b>이끼</b>가 끼고 글자가 흐릿…";
     } else {
       face("curious");
-      helper.innerHTML = "500년 — 그 또렷하던 글자가 <b>거의 사라졌어요</b>. 아무도 건드리지 않았는데, 누가 지운 걸까요?";
+      helper.innerHTML = "500년, 그 또렷하던 글자가 <b>거의 사라졌어요</b>. 아무도 건드리지 않았는데, 누가 지운 걸까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
@@ -882,7 +882,7 @@ export function renderGravestone(
             "새길 때 칠한 먹물이 빗물에 씻겨서",
           ],
           good: "정확해요! 빗물·공기·이끼 같은 것들이 <b>아주 천천히 돌을 부수고 녹였어요</b>. 눈에 안 보여도 쉬지 않는 작용이죠. 실험실에서 확인!",
-          bad: "손길도 먹물도 아니에요 — 깊게 <b>새긴 홈 자체</b>가 얕아졌잖아요. 물·공기·생물이 오랜 세월 <b>돌을 부수고 녹인</b> 거예요. 실험실에서 확인!",
+          bad: "손길도 먹물도 아니에요. 깊게 <b>새긴 홈 자체</b>가 얕아졌잖아요. 물·공기·생물이 오랜 세월 <b>돌을 부수고 녹인</b> 거예요. 실험실에서 확인!",
           onDone: finish,
         });
       }, 900);
@@ -928,7 +928,7 @@ function puzzlemapSvg(): string {
       <path d="M72 54 q10 -9 24 -11" stroke="#E2F4D4" stroke-width="3" opacity=".8"/>
     </g>
     <!-- 아프리카(드래그): 북부(사하라)가 넓고, 동쪽에 작은 뿔, 남쪽 끝은 둥글게.
-         서해안(왼쪽)은 공유 곡선 E의 역방향 — 기니만 홈이 브라질 어깨를 문다 -->
+         서해안(왼쪽)은 공유 곡선 E의 역방향, 기니만 홈이 브라질 어깨를 문다 -->
     <g class="hg2-africa" style="cursor:grab">
       <ellipse cx="130" cy="144" rx="30" ry="5" fill="#2A3A5E" opacity=".10"/>
       <path d="M96 134 ${DRIFT_EDGE_REV} Q120 32 138 33 Q157 35 163 47 Q167 54 171 59 Q163 67 157 75 Q152 96 142 112 Q131 129 119 137 Q104 144 96 134 Z" fill="url(#hg2-land2)"/>
@@ -985,7 +985,7 @@ export function renderPuzzlemap(
     applyPos();
     haptic(HAPTIC.correct);
     face("surprised");
-    helper.innerHTML = "딱—! 해안선이 <b>퍼즐처럼 들어맞아요</b>. 대서양을 사이에 두고 수천 km 떨어진 두 대륙인데… 우연일까요?";
+    helper.innerHTML = "딱! 해안선이 <b>퍼즐처럼 들어맞아요</b>. 대서양을 사이에 두고 수천 km 떨어진 두 대륙인데… 우연일까요?";
     timer = window.setTimeout(() => {
       face("curious");
       ask(choicesBox, helper, {
@@ -994,7 +994,7 @@ export function renderPuzzlemap(
           "우연히 모양이 비슷할 뿐이다",
           "파도가 양쪽 해안을 비슷하게 깎았다",
         ],
-        good: "대담한 예측 — 과학자들도 그렇게 생각했어요! 두 대륙은 <b>원래 한 덩어리</b>였다가 갈라져 이동했어요. 그 초대륙의 이름이 <b>판게아</b>! 실험실에서 증거를 모아요.",
+        good: "대담한 예측, 과학자들도 그렇게 생각했어요! 두 대륙은 <b>원래 한 덩어리</b>였다가 갈라져 이동했어요. 그 초대륙의 이름이 <b>판게아</b>! 실험실에서 증거를 모아요.",
         bad: "우연이나 파도로 보기엔 너무 딱 맞죠? 두 대륙은 <b>원래 한 덩어리였다가 갈라져</b> 지금 자리로 이동한 거예요. 그 초대륙이 바로 <b>판게아</b>! 실험실에서 증거를 모아요.",
         onDone: finish,
       });
@@ -1142,8 +1142,8 @@ export function renderQuakenews(
             "그 나라들의 날씨가 유독 사나워서",
             "우연히 이번에 차례가 겹쳤을 뿐이라서",
           ],
-          good: "날카로운 예측! 지진이 잦은 곳을 이어 보면 <b>띠 모양</b> — 바로 <b>판과 판이 만나는 경계</b>예요. 실험실에서 지도에 점을 찍어 확인!",
-          bad: "날씨도 우연도 아니에요 — 지진 소식이 온 곳들을 지도에 이어 보면 <b>띠 모양</b>이 나타나요. 그 띠가 <b>판과 판이 만나는 경계</b>랍니다. 실험실에서 확인!",
+          good: "날카로운 예측! 지진이 잦은 곳을 이어 보면 <b>띠 모양</b>, 바로 <b>판과 판이 만나는 경계</b>예요. 실험실에서 지도에 점을 찍어 확인!",
+          bad: "날씨도 우연도 아니에요. 지진 소식이 온 곳들을 지도에 이어 보면 <b>띠 모양</b>이 나타나요. 그 띠가 <b>판과 판이 만나는 경계</b>랍니다. 실험실에서 확인!",
           onDone: finish,
         });
       }, 900);
@@ -1236,7 +1236,7 @@ export function renderEggearth(
     timer = window.setTimeout(() => {
       face("surprised");
       haptic(HAPTIC.correct);
-      helper.innerHTML = "쫙—! 겉은 한 겹 같았는데 속은 <b>껍데기·흰자·노른자 세 겹</b>! 그럼 우리가 밟고 선 <b>지구 속</b>은 어떨까요?";
+      helper.innerHTML = "쫙! 겉은 한 겹 같았는데 속은 <b>껍데기·흰자·노른자 세 겹</b>! 그럼 우리가 밟고 선 <b>지구 속</b>은 어떨까요?";
       timer = window.setTimeout(() => {
         face("curious");
         ask(choicesBox, helper, {
@@ -1245,8 +1245,8 @@ export function renderEggearth(
             "속까지 전부 같은 암석으로 꽉 차 있다",
             "속은 텅 비어 있다",
           ],
-          good: "바로 그 직감! 지구도 달걀처럼 <b>겹겹의 층</b>이에요 — 몇 겹인지 직접 뜯어 보러 가요.",
-          bad: "겉만 보면 그렇게 보이죠 — 하지만 지구도 달걀처럼 <b>속이 여러 겹</b>이에요. 몇 겹인지 직접 뜯어 확인하러 가요!",
+          good: "바로 그 직감! 지구도 달걀처럼 <b>겹겹의 층</b>이에요. 몇 겹인지 직접 뜯어 보러 가요.",
+          bad: "겉만 보면 그렇게 보이죠. 하지만 지구도 달걀처럼 <b>속이 여러 겹</b>이에요. 몇 겹인지 직접 뜯어 확인하러 가요!",
           onDone: finish,
         });
       }, 1000);

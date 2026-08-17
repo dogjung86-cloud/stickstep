@@ -97,7 +97,7 @@ export function renderOneVote(scene: HTMLElement, helper: HTMLElement, s: HookOp
     haptic(HAPTIC.select);
     if (stage === 1) {
       fig.innerHTML = onevoteSvg(1, false);
-      helper.innerHTML = "첫 묶음 개표 — <b>3 대 3</b>, 팽팽해요! 남은 표를 마저 열어 봐요.";
+      helper.innerHTML = "첫 묶음 개표, <b>3 대 3</b>, 팽팽해요! 남은 표를 마저 열어 봐요.";
       btn.textContent = "개표하기 (1/2)";
     } else {
       fig.innerHTML = onevoteSvg(2, true);
@@ -105,7 +105,7 @@ export function renderOneVote(scene: HTMLElement, helper: HTMLElement, s: HookOp
       btn.classList.add("done");
       btn.disabled = true;
       face("surprised");
-      helper.innerHTML = "<b>5 대 5 동률</b> — 그런데 상자 바닥에 <b>딱 한 장</b>이 남아 있어요! 교실이 조용해졌네요…";
+      helper.innerHTML = "<b>5 대 5 동률</b>, 그런데 상자 바닥에 <b>딱 한 장</b>이 남아 있어요! 교실이 조용해졌네요…";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
@@ -113,8 +113,8 @@ export function renderOneVote(scene: HTMLElement, helper: HTMLElement, s: HookOp
             "한 표쯤은 결과에 영향이 없다",
             "동점이니 무조건 다시 뽑아야 한다",
           ],
-          good: "맞아요! 동률의 순간, 마지막 <b>한 표가 곧 당선</b>을 가르죠. 실제 큰 선거에서도 한 표 차이로 당선이 갈린 일이 있답니다 — '겨우 한 표'가 아니라 '결정적 한 표'예요!",
-          bad: "상자 바닥의 저 한 장을 봐요 — 5 대 5에서 저 표가 열리는 순간 승부가 끝나요. 다시 뽑기 전에, 한 표가 결과를 바꾸는 순간이죠. 한 표의 힘을 확인하러 가요!",
+          good: "맞아요! 동률의 순간, 마지막 <b>한 표가 곧 당선</b>을 가르죠. 실제 큰 선거에서도 한 표 차이로 당선이 갈린 일이 있답니다. '겨우 한 표'가 아니라 '결정적 한 표'예요!",
+          bad: "상자 바닥의 저 한 장을 봐요. 5 대 5에서 저 표가 열리는 순간 승부가 끝나요. 다시 뽑기 전에, 한 표가 결과를 바꾸는 순간이죠. 한 표의 힘을 확인하러 가요!",
           onDone: finish,
         });
       }, 900);
@@ -173,12 +173,12 @@ export function renderRulePoster(scene: HTMLElement, helper: HTMLElement, s: Hoo
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = ruleposterSvg(0);
-  helper.innerHTML = "게시판에 <b>회장 선거 새 규칙(안)</b>이 붙었어요 — 네 줄인데, 읽던 친구의 표정이 심상치 않네요. 한 줄씩 읽어 봐요.";
+  helper.innerHTML = "게시판에 <b>회장 선거 새 규칙(안)</b>이 붙었어요. 네 줄인데, 읽던 친구의 표정이 심상치 않네요. 한 줄씩 읽어 봐요.";
   const caps = [
-    "① \"투표는 칠판에 <b>스티커를 붙이는</b> 방식으로 한다\" — 누가 누굴 찍는지 다 보이겠는데요?",
-    "② \"아픈 친구 몫은 <b>짝꿍이 대신</b> 투표한다\" — 내 표를 남이 찍는다고요?",
-    "③ \"성적 우수자는 <b>두 표</b>를 받는다\" — 표에 무게가 달라지네요?!",
-    "④ \"지각 3회면 <b>투표 금지</b>\" — 이제 투표를 아예 못 하는 친구까지! 어딘가 단단히 이상해요.",
+    "① \"투표는 칠판에 <b>스티커를 붙이는</b> 방식으로 한다\", 누가 누굴 찍는지 다 보이겠는데요?",
+    "② \"아픈 친구 몫은 <b>짝꿍이 대신</b> 투표한다\", 내 표를 남이 찍는다고요?",
+    "③ \"성적 우수자는 <b>두 표</b>를 받는다\", 표에 무게가 달라지네요?!",
+    "④ \"지각 3회면 <b>투표 금지</b>\", 이제 투표를 아예 못 하는 친구까지! 어딘가 단단히 이상해요.",
   ];
   let i = 0;
   let timer = 0;
@@ -196,12 +196,12 @@ export function renderRulePoster(scene: HTMLElement, helper: HTMLElement, s: Hoo
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
-            "아니 — 규칙이 불공정하면 결과도 인정받기 어렵다",
-            "그렇다 — 어쨌든 표만 세면 된다",
+            "아니, 규칙이 불공정하면 결과도 인정받기 어렵다",
+            "그렇다. 어쨌든 표만 세면 된다",
             "회장이 착한 사람이면 문제없다",
           ],
-          good: "정확한 감각이에요! 뽑는 <b>규칙이 공정해야</b> 결과에 모두가 승복할 수 있어요. 사실 민주 선거에는 꼭 지켜야 할 <b>네 가지 기본 원칙</b>이 있답니다 — 네 규칙이 각각 무엇을 어겼는지 판정하러 가요!",
-          bad: "표를 세는 것보다 먼저인 게 있어요 — <b>어떻게 뽑느냐</b>죠. 규칙이 기울어져 있으면 아무리 착한 회장이 뽑혀도 결과를 인정받기 어려워요. 민주 선거의 네 가지 기본 원칙, 판정소에서 확인해요!",
+          good: "정확한 감각이에요! 뽑는 <b>규칙이 공정해야</b> 결과에 모두가 승복할 수 있어요. 사실 민주 선거에는 꼭 지켜야 할 <b>네 가지 기본 원칙</b>이 있답니다. 네 규칙이 각각 무엇을 어겼는지 판정하러 가요!",
+          bad: "표를 세는 것보다 먼저인 게 있어요. <b>어떻게 뽑느냐</b>죠. 규칙이 기울어져 있으면 아무리 착한 회장이 뽑혀도 결과를 인정받기 어려워요. 민주 선거의 네 가지 기본 원칙, 판정소에서 확인해요!",
           onDone: finish,
         });
       }, 900);
@@ -271,7 +271,7 @@ export function renderElectLetter(scene: HTMLElement, helper: HTMLElement, s: Ho
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = electletterSvg(0);
-  helper.innerHTML = "내 자리에 <b>초록 도장이 찍힌 봉투</b>가 놓여 있어요 — 두근두근, 열어 볼까요?";
+  helper.innerHTML = "내 자리에 <b>초록 도장이 찍힌 봉투</b>가 놓여 있어요. 두근두근, 열어 볼까요?";
   let stage = 0;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -280,13 +280,13 @@ export function renderElectLetter(scene: HTMLElement, helper: HTMLElement, s: Ho
     haptic(HAPTIC.select);
     fig.innerHTML = electletterSvg(stage);
     if (stage === 1) {
-      helper.innerHTML = "<b>위촉장</b>?! 이번 회장 선거를 처음부터 끝까지 관리하는 <b>선거 관리 위원</b>이 됐대요 — 공정한 선거가 내 손에 달렸어요.";
+      helper.innerHTML = "<b>위촉장</b>?! 이번 회장 선거를 처음부터 끝까지 관리하는 <b>선거 관리 위원</b>이 됐대요. 공정한 선거가 내 손에 달렸어요.";
       btn.textContent = "할 일 확인하기";
     } else {
       btn.classList.add("done");
       btn.disabled = true;
       face("surprised");
-      helper.innerHTML = "할 일 카드가 우르르 — 명단, 등록, 운동, 투표, 개표, 당선 결정… 여섯 장이나요! 그런데 <b>무엇부터</b> 해야 하죠?";
+      helper.innerHTML = "할 일 카드가 우르르, 명단, 등록, 운동, 투표, 개표, 당선 결정… 여섯 장이나요! 그런데 <b>무엇부터</b> 해야 하죠?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
@@ -294,8 +294,8 @@ export function renderElectLetter(scene: HTMLElement, helper: HTMLElement, s: Ho
             "투표함부터 열어 둔다",
             "당선자를 미리 정해 둔다",
           ],
-          good: "정확해요! <b>누가 투표할 수 있는지</b>부터 정해야 그다음이 전부 굴러가요 — 이 명단의 이름이 <b>선거인 명부</b>랍니다. 여섯 단계를 순서대로, 선거 한 판을 직접 굴려 봐요!",
-          bad: "투표함은 한참 뒤의 일이고, 당선자를 미리 정하는 건 선거가 아니죠! 출발점은 <b>투표할 수 있는 사람의 명단</b>이에요 — 누가 유권자인지부터 정해야 하거든요. 여섯 단계를 순서대로 굴려 봐요!",
+          good: "정확해요! <b>누가 투표할 수 있는지</b>부터 정해야 그다음이 전부 굴러가요. 이 명단의 이름이 <b>선거인 명부</b>랍니다. 여섯 단계를 순서대로, 선거 한 판을 직접 굴려 봐요!",
+          bad: "투표함은 한참 뒤의 일이고, 당선자를 미리 정하는 건 선거가 아니죠! 출발점은 <b>투표할 수 있는 사람의 명단</b>이에요. 누가 유권자인지부터 정해야 하거든요. 여섯 단계를 순서대로 굴려 봐요!",
           onDone: finish,
         });
       }, 900);
@@ -343,7 +343,7 @@ function cablecarSvg(heard: number): string {
       <rect x="122" y="38" width="8" height="8" rx="1.6" fill="#FDF4E0" stroke="#8A5A14" stroke-width="1"/>
       <ellipse cx="113" cy="37" rx="5" ry="1.4" fill="#fff" opacity=".5"/>
     </g>
-    <text x="120" y="74" text-anchor="middle" font-size="8.6" font-weight="800" fill="#39455C">스틱 시 — 바다 케이블카를 지을까?</text>
+    <text x="120" y="74" text-anchor="middle" font-size="8.6" font-weight="800" fill="#39455C">스틱 시, 바다 케이블카를 지을까?</text>
     <ellipse cx="120" cy="143" rx="100" ry="5" fill="#2A3A5E" opacity=".1"/>
     ${men}${bubbles}
   </svg>`;
@@ -355,12 +355,12 @@ export function renderCableCar(scene: HTMLElement, helper: HTMLElement, s: HookO
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = cablecarSvg(0);
-  helper.innerHTML = "가상의 도시 <b>스틱 시</b>가 시끌시끌 — 바다 위 <b>케이블카</b>를 지을지 말지를 두고 온 도시가 들썩여요. 한 목소리씩 들어 봐요.";
+  helper.innerHTML = "가상의 도시 <b>스틱 시</b>가 시끌시끌, 바다 위 <b>케이블카</b>를 지을지 말지를 두고 온 도시가 들썩여요. 한 목소리씩 들어 봐요.";
   const caps = [
     "① 시장 상인들의 단체: \"케이블카는 <b>우리 가게들의 희망</b>입니다! 꼭 지어 주세요.\"",
     "② 자연을 아끼는 시민 모임: \"공사로 <b>바다와 숲이 다칠까</b> 걱정돼요. 반대합니다.\"",
     "③ 방송: \"찬성과 반대, <b>양쪽의 목소리</b>를 모두 취재해 전해 드립니다.\"",
-    "④ 어느 정치인 모임: \"피해를 줄이는 방안을 <b>다음 선거 공약</b>에 담겠습니다.\" — 네 목소리가 한 쟁점에 모였어요!",
+    "④ 어느 정치인 모임: \"피해를 줄이는 방안을 <b>다음 선거 공약</b>에 담겠습니다.\", 네 목소리가 한 쟁점에 모였어요!",
   ];
   let i = 0;
   let timer = 0;
@@ -382,8 +382,8 @@ export function renderCableCar(scene: HTMLElement, helper: HTMLElement, s: HookO
             "케이블카가 유난히 특별한 시설이라서",
             "누가 참여할지 추첨으로 정해져서",
           ],
-          good: "그거예요! 상인 단체도, 시민 모임도, 방송도, 정치인 모임도 — 저마다의 방식으로 <b>정치에 참여하는 주체</b>들이에요. 이 목소리의 주인공들을 판정소에서 정확히 가려 봐요!",
-          bad: "케이블카가 아니라 학교 급식이었어도 목소리는 쏟아졌을 거예요 — 핵심은 <b>정치에 참여하는 주체가 다양하다</b>는 것! 추첨이 아니라 저마다 스스로 나선 거랍니다. 그 주인공들을 가려 보러 가요!",
+          good: "그거예요! 상인 단체도, 시민 모임도, 방송도, 정치인 모임도, 저마다의 방식으로 <b>정치에 참여하는 주체</b>들이에요. 이 목소리의 주인공들을 판정소에서 정확히 가려 봐요!",
+          bad: "케이블카가 아니라 학교 급식이었어도 목소리는 쏟아졌을 거예요. 핵심은 <b>정치에 참여하는 주체가 다양하다</b>는 것! 추첨이 아니라 저마다 스스로 나선 거랍니다. 그 주인공들을 가려 보러 가요!",
           onDone: finish,
         });
       }, 900);
@@ -432,7 +432,7 @@ function schoolzoneSvg(stage: number): string {
       <circle cx="194" cy="46" r="10" fill="#FFF" stroke="#2E8AC0" stroke-width="1.5"/>
       <path d="M191 54l3 5 3-5z" fill="#FFF" stroke="#2E8AC0" stroke-width="1.1"/>
       <path d="M190 46h8M194 42v8" stroke="#2E8AC0" stroke-width="1.6" stroke-linecap="round"/></g>
-    <text x="120" y="20" text-anchor="middle" font-size="10" font-weight="800" fill="#39455C">"등하굣길이 위험해요!" — 목소리가 시작됐어요</text>
+    <text x="120" y="20" text-anchor="middle" font-size="10" font-weight="800" fill="#39455C">"등하굣길이 위험해요!" 목소리가 시작됐어요</text>
   </svg>`;
 }
 
@@ -442,7 +442,7 @@ export function renderSchoolZone(scene: HTMLElement, helper: HTMLElement, s: Hoo
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = schoolzoneSvg(0);
-  helper.innerHTML = "학교 앞 길목의 <b>노란 어린이 보호 표지판</b> — 늘 있던 것 같지만, 처음부터 있었을까요? 시간을 되감아 봐요.";
+  helper.innerHTML = "학교 앞 길목의 <b>노란 어린이 보호 표지판</b>, 늘 있던 것 같지만, 처음부터 있었을까요? 시간을 되감아 봐요.";
   let stage = 0;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -451,13 +451,13 @@ export function renderSchoolZone(scene: HTMLElement, helper: HTMLElement, s: Hoo
     haptic(HAPTIC.select);
     fig.innerHTML = schoolzoneSvg(stage);
     if (stage === 1) {
-      helper.innerHTML = "몇 해 전으로 — <b>표지판이 없어요!</b> 차가 씽씽 달리고, 등굣길이 아슬아슬하네요. 한 번 더 되감아 봐요.";
+      helper.innerHTML = "몇 해 전으로, <b>표지판이 없어요!</b> 차가 씽씽 달리고, 등굣길이 아슬아슬하네요. 한 번 더 되감아 봐요.";
       btn.textContent = "시간 되감기 (1/2)";
     } else {
       btn.classList.add("done");
       btn.disabled = true;
       face("curious");
-      helper.innerHTML = "그때 — 걱정하던 사람들이 <b>목소리를 내기 시작</b>했어요. \"등하굣길이 위험해요!\" 이 목소리와 오늘의 표지판 사이엔 무슨 일이 있었을까요?";
+      helper.innerHTML = "그때, 걱정하던 사람들이 <b>목소리를 내기 시작</b>했어요. \"등하굣길이 위험해요!\" 이 목소리와 오늘의 표지판 사이엔 무슨 일이 있었을까요?";
       timer = window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [
@@ -466,7 +466,7 @@ export function renderSchoolZone(scene: HTMLElement, helper: HTMLElement, s: Hoo
             "목소리와 표지판은 아무 상관이 없다",
           ],
           good: "맞아요! 흩어진 목소리가 <b>모이고 → 다듬어지고 → 결정되고 → 실행되는 길</b>을 걸어 표지판이 된 거예요. 그 길의 이름과 정거장들을 지금부터 직접 따라가 봐요!",
-          bad: "표지판은 저절로 생기지 않아요 — 시작은 분명 저 목소리들이었죠. 목소리가 표지판이 되기까지 거친 <b>길</b>이 있답니다. 그 길을 직접 따라가 봐요!",
+          bad: "표지판은 저절로 생기지 않아요. 시작은 분명 저 목소리들이었죠. 목소리가 표지판이 되기까지 거친 <b>길</b>이 있답니다. 그 길을 직접 따라가 봐요!",
           onDone: finish,
         });
       }, 900);
@@ -515,9 +515,9 @@ export function renderBikeName(scene: HTMLElement, helper: HTMLElement, s: HookO
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = bikenameSvg(0);
-  helper.innerHTML = "여행하다 보면 도시마다 <b>공공 자전거</b>가 달라요 — 우리 스틱 시의 자전거는 초록색 \"씽씽이\". 옆 도시는 어떨까요?";
+  helper.innerHTML = "여행하다 보면 도시마다 <b>공공 자전거</b>가 달라요. 우리 스틱 시의 자전거는 초록색 \"씽씽이\". 옆 도시는 어떨까요?";
   const caps = [
-    "이웃 바다 시의 자전거는 파란색 <b>\"바람이\"</b> — 색도 이름도 다르네요?",
+    "이웃 바다 시의 자전거는 파란색 <b>\"바람이\"</b>, 색도 이름도 다르네요?",
     "산골 마을 군은 노란색 <b>\"구름이\"</b>! 같은 나라인데 도시마다 전부 달라요. 대체 왜일까요?",
   ];
   let i = 0;
@@ -540,8 +540,8 @@ export function renderBikeName(scene: HTMLElement, helper: HTMLElement, s: HookO
             "나라에서 지역마다 다르게 만들라고 시켜서",
             "자전거 공장이 지역마다 달라서",
           ],
-          good: "정확해요! 공공 자전거는 <b>그 지역이 스스로</b> 계획하고 운영하는 사업이라 이름도 색도 지역의 개성을 담아요 — 지역의 일을 지역이 정하는 이 제도, 이번 시간의 주인공이랍니다!",
-          bad: "나라가 시킨 것도, 공장 문제도 아니에요 — 공공 자전거는 <b>각 지역이 스스로</b> 계획하고 운영하는 사업이거든요. 지역의 일을 지역이 정하는 제도, 그 이름을 배우러 가요!",
+          good: "정확해요! 공공 자전거는 <b>그 지역이 스스로</b> 계획하고 운영하는 사업이라 이름도 색도 지역의 개성을 담아요. 지역의 일을 지역이 정하는 이 제도, 이번 시간의 주인공이랍니다!",
+          bad: "나라가 시킨 것도, 공장 문제도 아니에요. 공공 자전거는 <b>각 지역이 스스로</b> 계획하고 운영하는 사업이거든요. 지역의 일을 지역이 정하는 제도, 그 이름을 배우러 가요!",
           onDone: finish,
         });
       }, 900);
@@ -588,7 +588,7 @@ export function renderYellowCarpet(scene: HTMLElement, helper: HTMLElement, s: H
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, btn, choicesBox);
   fig.innerHTML = yellowcarpetSvg(0);
-  helper.innerHTML = "학교 앞 횡단보도에 어느 날 <b>노란 바닥</b>이 생겼어요 — 그 위에 서면 운전자 눈에 잘 띄어 안전하대요. 이건 대체 누가 만들었을까요?";
+  helper.innerHTML = "학교 앞 횡단보도에 어느 날 <b>노란 바닥</b>이 생겼어요. 그 위에 서면 운전자 눈에 잘 띄어 안전하대요. 이건 대체 누가 만들었을까요?";
   let stage = 0;
   let timer = 0;
   btn.addEventListener("click", () => {
@@ -600,7 +600,7 @@ export function renderYellowCarpet(scene: HTMLElement, helper: HTMLElement, s: H
     btn.classList.add("done");
     btn.disabled = true;
     face("curious");
-    helper.innerHTML = "시청 알림판에서 단서 발견 — \"올해 예산으로 할 일을 <b>주민 여러분이 직접 제안</b>해 주세요!\" 제안을 모아 투표까지 했다는데요?";
+    helper.innerHTML = "시청 알림판에서 단서 발견, \"올해 예산으로 할 일을 <b>주민 여러분이 직접 제안</b>해 주세요!\" 제안을 모아 투표까지 했다는데요?";
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
@@ -608,8 +608,8 @@ export function renderYellowCarpet(scene: HTMLElement, helper: HTMLElement, s: H
           "페인트가 남아서 아무나 칠해 둔 것이다",
           "학생들이 밤에 몰래 칠했다",
         ],
-        good: "정답이에요! 이 노란 바닥은 <b>주민이 예산 쓰임새를 직접 제안</b>해 태어난 안전 장치예요 — 이렇게 주민이 지역의 일에 참여하는 길이 여럿 있답니다. 마지막 시간, 그 길들을 모두 배워 봐요!",
-          bad: "몰래 칠한 낙서라면 금방 지워졌겠죠! 알림판이 단서예요 — <b>주민들이 예산 회의에 참여해 제안</b>했고, 투표로 뽑혀 진짜 정책이 된 거랍니다. 주민이 참여하는 길들을 배우러 가요!",
+        good: "정답이에요! 이 노란 바닥은 <b>주민이 예산 쓰임새를 직접 제안</b>해 태어난 안전 장치예요. 이렇게 주민이 지역의 일에 참여하는 길이 여럿 있답니다. 마지막 시간, 그 길들을 모두 배워 봐요!",
+          bad: "몰래 칠한 낙서라면 금방 지워졌겠죠! 알림판이 단서예요. <b>주민들이 예산 회의에 참여해 제안</b>했고, 투표로 뽑혀 진짜 정책이 된 거랍니다. 주민이 참여하는 길들을 배우러 가요!",
         onDone: finish,
       });
     }, 900);

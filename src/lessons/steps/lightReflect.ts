@@ -166,8 +166,8 @@ export const reflectLab: StepRenderer = (host, step, api) => {
     collect("law", "입사각 = 반사각");
     showToast("반사각도 정확히 60°!");
     helper.innerHTML = good
-      ? "예측 적중! 입사각을 키우면 반사각도 <b>똑같이</b> 커져요. 이제 마지막 미션 — 레이저를 조준해 <b>반사광으로 과녁</b>을 맞혀 봐요!"
-      : "직접 보니 어때요? 반사각은 멈추지도, 두 배가 되지도 않고 <b>입사각과 똑같이 60°</b>가 됐어요. 이제 마지막 미션 — <b>반사광으로 과녁</b>을 맞혀 봐요!";
+      ? "예측 적중! 입사각을 키우면 반사각도 <b>똑같이</b> 커져요. 이제 마지막 미션, 레이저를 조준해 <b>반사광으로 과녁</b>을 맞혀 봐요!"
+      : "직접 보니 어때요? 반사각은 멈추지도, 두 배가 되지도 않고 <b>입사각과 똑같이 60°</b>가 됐어요. 이제 마지막 미션, <b>반사광으로 과녁</b>을 맞혀 봐요!";
     phase = "aim";
     window.setTimeout(() => choices.classList.remove("show"), 400);
   }
@@ -179,7 +179,7 @@ export const reflectLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.correct);
     showToast("명중! 반사 법칙 마스터");
     helper.innerHTML =
-      "정리! 빛이 반사할 때 <b>입사각과 반사각의 크기는 항상 같아요</b>. 입사각이 커지면 반사각도 함께 커지죠 — 이것이 <b>빛의 반사 법칙</b>이에요.";
+      "정리! 빛이 반사할 때 <b>입사각과 반사각의 크기는 항상 같아요</b>. 입사각이 커지면 반사각도 함께 커지죠. 이것이 <b>빛의 반사 법칙</b>이에요.";
     api.enableCTA(s.cta ?? "다음 실험으로");
   }
 
@@ -356,7 +356,7 @@ export const diffuseLab: StepRenderer = (host, step, api) => {
     if (goals.size === 2 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 매끈한 면의 <b>정반사</b>는 빛을 나란히 보내 <b>모습이 비치고</b>, 거친 면의 <b>난반사</b>는 사방으로 흩어 <b>어느 방향에서나 물체가 보여요</b>. 그리고 흩어져도 — 빛줄기 하나하나는 <b>반사 법칙</b>을 지키죠!";
+        "정리! 매끈한 면의 <b>정반사</b>는 빛을 나란히 보내 <b>모습이 비치고</b>, 거친 면의 <b>난반사</b>는 사방으로 흩어 <b>어느 방향에서나 물체가 보여요</b>. 그리고 흩어져도, 빛줄기 하나하나는 <b>반사 법칙</b>을 지키죠!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -374,8 +374,8 @@ export const diffuseLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.select);
     helper.innerHTML =
       m === "rough"
-        ? "빛이 <b>사방으로 흩어져요</b>(난반사) — 표면이 종이처럼 울퉁불퉁하거든요. 반짝이는 <b>반사점을 눌러</b> 돋보기로 확대해 보세요!"
-        : "다시 매끈한 거울(정반사) — 나란히 들어온 빛이 <b>나란히</b> 나가요. 그래서 얼굴이 <b>또렷하게 비치죠</b>.";
+        ? "빛이 <b>사방으로 흩어져요</b>(난반사), 표면이 종이처럼 울퉁불퉁하거든요. 반짝이는 <b>반사점을 눌러</b> 돋보기로 확대해 보세요!"
+        : "다시 매끈한 거울(정반사), 나란히 들어온 빛이 <b>나란히</b> 나가요. 그래서 얼굴이 <b>또렷하게 비치죠</b>.";
     if (seen.size === 2) collect("both", "확인 완료!");
   }
   smoothBtn.addEventListener("click", () => setMode("smooth"));
@@ -421,7 +421,7 @@ export const diffuseLab: StepRenderer = (host, step, api) => {
     inspected.add(best);
     haptic(HAPTIC.select);
     const deg = Math.round(localAngle(best) / D2R);
-    helper.innerHTML = `확대! 이 지점의 <b>비스듬한 법선</b> 기준으로 재면 — 입사각 <b>${deg}°</b> = 반사각 <b>${deg}°</b>. 울퉁불퉁해서 방향이 제각각일 뿐, <b>빛줄기 하나하나는 반사 법칙을 지켜요</b>.`;
+    helper.innerHTML = `확대! 이 지점의 <b>비스듬한 법선</b> 기준으로 재면, 입사각 <b>${deg}°</b> = 반사각 <b>${deg}°</b>. 울퉁불퉁해서 방향이 제각각일 뿐, <b>빛줄기 하나하나는 반사 법칙을 지켜요</b>.`;
     if (inspected.size >= 2) collect("zoom", "법칙 그대로!");
   });
 
@@ -620,7 +620,7 @@ export const diffuseLab: StepRenderer = (host, step, api) => {
     ctx.font = "800 11.5px Pretendard, sans-serif";
     ctx.textAlign = "left";
     ctx.fillStyle = "rgba(174,196,228,.85)";
-    ctx.fillText(mode === "smooth" ? "정반사 — 나란히 들어와 나란히 나감" : "난반사 — 사방으로 흩어짐", 18, H - 18);
+    ctx.fillText(mode === "smooth" ? "정반사, 나란히 들어와 나란히 나감" : "난반사, 사방으로 흩어짐", 18, H - 18);
   });
 
   api.setCTA("두 표면을 비교해 보세요", { enabled: false });

@@ -23,7 +23,7 @@ function balloonSvg(): string {
       <path d="M116 87l4-5 4 5z" fill="#C43A32"/>
       <path class="hf-string" d="M120 88q-3 26 0 52" stroke="#8B95A1" stroke-width="2"/>
     </g>
-    <!-- 스틱맨(손그림 라인) — 줄 끝을 잡음 -->
+    <!-- 스틱맨(손그림 라인), 줄 끝을 잡음 -->
     <g stroke="#3C4654" stroke-width="2.6">
       <circle cx="120" cy="118" r="9" fill="#fff"/>
       <path d="M120 127v22M120 133l-11 5M120 133l9-9M120 149l-8 14M120 149l8 14"/>
@@ -66,7 +66,7 @@ export function renderBalloon(scene: HTMLElement, helper: HTMLElement, finish: (
       face(rounds >= 2 ? "curious" : "surprised");
       if (rounds === 1) helper.innerHTML = "쑥 내려왔다가 <b>다시 위로</b>! 한 번 더 해 보세요.";
       if (rounds === 2) {
-        helper.innerHTML = "당길 때 <b>내려오고</b>, 놓으면 <b>올라가요</b> — 풍선의 움직임이 계속 변하고 있어요.";
+        helper.innerHTML = "당길 때 <b>내려오고</b>, 놓으면 <b>올라가요</b>. 풍선의 움직임이 계속 변하고 있어요.";
         finish();
       }
     }
@@ -135,8 +135,8 @@ export function renderTugRope(
       face("curious");
       ask(choicesBox, helper, {
         choices: s.choices ?? ["두 힘이 똑같아서 합쳐서 0이 됐다", "줄이 무거워서 못 움직인다", "둘 다 사실 힘을 안 주고 있다"],
-        good: "정확해요! <b>두 힘의 크기가 같고 방향이 반대</b>라 합이 0 — 그래서 안 움직여요. 실험실에서 직접 확인!",
-        bad: "줄이 무겁거나 힘을 안 준 게 아니에요 — 양쪽이 <b>똑같은 크기의 힘을 반대로</b> 줘서 <b>합이 0</b>이 된 거예요. 그래서 꿈쩍 안 하죠. 실험실에서 확인해요.",
+        good: "정확해요! <b>두 힘의 크기가 같고 방향이 반대</b>라 합이 0, 그래서 안 움직여요. 실험실에서 직접 확인!",
+        bad: "줄이 무겁거나 힘을 안 준 게 아니에요. 양쪽이 <b>똑같은 크기의 힘을 반대로</b> 줘서 <b>합이 0</b>이 된 거예요. 그래서 꿈쩍 안 하죠. 실험실에서 확인해요.",
         onDone: finish,
       });
     }, 1100);
@@ -362,7 +362,7 @@ export function renderIceslip(
       ask(choicesBox, helper, {
         choices: s.choices ?? ["매끄러운 바닥에서는 미끄럼을 막아 주는 힘이 약해진다", "빙판이 차가워서 다리에 힘이 빠진다", "자갈이 신발을 끌어당긴다"],
         good: "좋은 예측! 빙판은 <b>미끄럼을 막아 주는 힘(마찰)이 약해</b> 넘어져요. 실험실에서 바닥을 바꿔 가며 확인!",
-        bad: "차가워서나 자갈이 당겨서가 아니에요 — 자갈길은 <b>미끄럼을 막는 힘(마찰)이 크고</b> 빙판은 그 힘이 약해요. 그래서 빙판에서 미끄러지죠. 실험실에서 확인해요.",
+        bad: "차가워서나 자갈이 당겨서가 아니에요. 자갈길은 <b>미끄럼을 막는 힘(마찰)이 크고</b> 빙판은 그 힘이 약해요. 그래서 빙판에서 미끄러지죠. 실험실에서 확인해요.",
         onDone: finish,
       });
     }
@@ -511,7 +511,7 @@ export function renderRollStop(
       ask(choicesBox, helper, {
         choices: s.choices ?? ["잔디와 공 사이의 힘이 운동을 방해했다", "공이 힘을 다 써 버렸다", "지구가 공을 뒤로 당겼다"],
         good: "맞아요! <b>잔디와 공 사이의 힘(마찰)</b>이 운동을 방해해 멈춰요. 실험실에서 힘과 운동을 확인!",
-        bad: "힘을 다 쓰거나 지구가 뒤로 당긴 게 아니에요 — <b>잔디와 공 사이의 마찰</b>이 운동을 조금씩 방해해 멈춘 거예요. 실험실에서 바람으로 힘을 줘 가며 확인해요.",
+        bad: "힘을 다 쓰거나 지구가 뒤로 당긴 게 아니에요. <b>잔디와 공 사이의 마찰</b>이 운동을 조금씩 방해해 멈춘 거예요. 실험실에서 바람으로 힘을 줘 가며 확인해요.",
         onDone: finish,
       });
     }, 2400);

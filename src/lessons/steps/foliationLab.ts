@@ -150,7 +150,7 @@ export const foliationLab: StepRenderer = (host, step, api) => {
   const pressBtn = el(
     "button",
     { class: "swapbtn", style: "opacity:.45", attrs: { type: "button", disabled: "true" } },
-    el("span", { text: "조이기 — 지하 깊은 곳에서 열려요" }),
+    el("span", { text: "조이기, 지하 깊은 곳에서 열려요" }),
   );
 
   const goalChips = el(
@@ -162,7 +162,7 @@ export const foliationLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "변성암 공장에 왔어요. 먼저 <b>슬라이더</b>로 암석을 지하 깊은 곳까지 내려요 — 온도·압력 게이지를 지켜보세요!",
+    html: "변성암 공장에 왔어요. 먼저 <b>슬라이더</b>로 암석을 지하 깊은 곳까지 내려요. 온도·압력 게이지를 지켜보세요!",
   });
   host.append(goalChips, helper, stage, seg, slider, pressBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -232,18 +232,18 @@ export const foliationLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "광물이 압력에 <b>수직</b>으로 늘어선 줄무늬가 엽리 — 층리(쌓인 무늬)와 태생이 달라요!";
+        "광물이 압력에 <b>수직</b>으로 늘어선 줄무늬가 엽리, 층리(쌓인 무늬)와 태생이 달라요!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       return;
     }
     if (finished) return;
     if (id === "deep") {
-      helper.innerHTML = "여기가 변성 작용의 무대! 이제 <b>꾹 눌러</b> 화강암을 조여 봐요 — 광물 막대들의 방향을 잘 보세요.";
+      helper.innerHTML = "여기가 변성 작용의 무대! 이제 <b>꾹 눌러</b> 화강암을 조여 봐요. 광물 막대들의 방향을 잘 보세요.";
     } else if (id === "fol") {
-      helper.innerHTML = "가로 줄무늬(엽리) 완성! 이번엔 <b>사암이나 석회암</b>으로 바꿔 같은 압력을 줘 보세요 — 결과가 같을까요?";
+      helper.innerHTML = "가로 줄무늬(엽리) 완성! 이번엔 <b>사암이나 석회암</b>으로 바꿔 같은 압력을 줘 보세요. 결과가 같을까요?";
     } else if (id === "nofol" && !goals.has("fol")) {
-      helper.innerHTML = "줄무늬 없이 <b>치밀</b>해지기만 했죠? 이번엔 <b>화강암</b>으로 바꿔 조여 보세요 — 뭔가 다를 거예요.";
+      helper.innerHTML = "줄무늬 없이 <b>치밀</b>해지기만 했죠? 이번엔 <b>화강암</b>으로 바꿔 조여 보세요. 뭔가 다를 거예요.";
     }
   }
 
@@ -255,14 +255,14 @@ export const foliationLab: StepRenderer = (host, step, api) => {
       pressBtn.className = "swapbtn done-static";
       pressBtn.style.opacity = "";
       (pressBtn as HTMLButtonElement).disabled = true;
-      span.textContent = `변성 완료 — ${ROCKS[mode].out}!`;
+      span.textContent = `변성 완료, ${ROCKS[mode].out}!`;
       return;
     }
     const on = depth01 >= DEEP_AT;
     pressBtn.className = on ? "swapbtn pulse" : "swapbtn";
     pressBtn.style.opacity = on ? "" : ".45";
     (pressBtn as HTMLButtonElement).disabled = !on;
-    span.textContent = on ? "꾹 눌러 조이기" : "조이기 — 지하 깊은 곳에서 열려요";
+    span.textContent = on ? "꾹 눌러 조이기" : "조이기, 지하 깊은 곳에서 열려요";
   }
 
   function setMode(k: RockKey): void {
@@ -282,7 +282,7 @@ export const foliationLab: StepRenderer = (host, step, api) => {
       helper.innerHTML =
         k === "granite"
           ? "화강암 속 <b>광물 막대</b>들이 제멋대로죠? 깊은 곳에서 꾹 조이면 어떻게 될까요?"
-          : `${ROCKS[k].name}을 골랐어요. 같은 열·압력을 받으면 <b>${ROCKS[k].out}</b>이 돼요 — 줄무늬가 생길지 지켜보세요!`;
+          : `${ROCKS[k].name}을 골랐어요. 같은 열·압력을 받으면 <b>${ROCKS[k].out}</b>이 돼요. 줄무늬가 생길지 지켜보세요!`;
     }
   }
   const rockHandlers = new Map<RockKey, () => void>();
@@ -384,7 +384,7 @@ export const foliationLab: StepRenderer = (host, step, api) => {
     const gs = genGrains(mode);
 
     // 깊이 목표
-    if (depth01 >= DEEP_AT) collect("deep", "열·압력 ↑!", "지하 깊은 곳 — 온도와 압력이 세져요");
+    if (depth01 >= DEEP_AT) collect("deep", "열·압력 ↑!", "지하 깊은 곳, 온도와 압력이 세져요");
 
     // 조이기 진행 — 누르는 도중 얕아지면 홀드를 풀고 힌트(비활성 버튼은 pointerup을 삼킬 수 있다)
     if (holding && depth01 < DEEP_AT) {
@@ -402,7 +402,7 @@ export const foliationLab: StepRenderer = (host, step, api) => {
         rockPill.textContent = `${rock.name} → ${rock.out}`;
         refreshPressBtn();
         if (rock.foliate) collect("fol", "편마암!", "광물이 눌려 가로 줄무늬(엽리)로!");
-        else collect("nofol", `${rock.out}!`, `${rock.out} 완성 — 엽리 없이 치밀!`);
+        else collect("nofol", `${rock.out}!`, `${rock.out} 완성, 엽리 없이 치밀!`);
       }
     }
     plateEng += ((holding ? 1 : 0.35) - plateEng) * Math.min(1, 0.1 * dt);
@@ -657,7 +657,7 @@ export const foliationLab: StepRenderer = (host, step, api) => {
     if (doneNow) {
       ctx.font = "700 10px Pretendard, sans-serif";
       ctx.fillStyle = rock.foliate ? "rgba(255,214,138,.9)" : "rgba(160,226,214,.9)";
-      ctx.fillText(rock.foliate ? "엽리 줄무늬!" : "엽리 없음 — 치밀!", cx + 52, ly + 15);
+      ctx.fillText(rock.foliate ? "엽리 줄무늬!" : "엽리 없음, 치밀!", cx + 52, ly + 15);
     }
 
     // ---- HUD ----

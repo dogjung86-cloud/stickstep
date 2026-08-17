@@ -160,7 +160,7 @@ export function southTrailFig(): string {
     150,
     `
     ${lines}
-    <!-- 남쪽 하늘: 별은 동(왼쪽)→서(오른쪽)로 흐른다 — 화살촉은 오른쪽 -->
+    <!-- 남쪽 하늘: 별은 동(왼쪽)→서(오른쪽)로 흐른다. 화살촉은 오른쪽 -->
     <path d="M96 122h84" stroke="#FFD25E" stroke-width="2.4"/>
     <path d="M189 122l-9-4.5v9z" fill="#FFD25E"/>
     <path d="M6 134q80-20 140-8t128 0v10a14 14 0 0 1-14 14H20a14 14 0 0 1-14-14z" fill="#0A1428"/>
@@ -313,7 +313,7 @@ export function eclipseModelFig(): string {
     <path d="M128 96V79" stroke="#5A6C8E" stroke-width="2.4"/>
     <circle cx="128" cy="62" r="17" fill="url(#spf-ball2)"/>
     <path d="M128 45a17 17 0 0 1 0 34z" fill="rgba(10,16,32,.5)"/>
-    <!-- 작은 공(달 역, 중심 y=62) — 그림자 속이라 통째로 어둡다 -->
+    <!-- 작은 공(달 역, 중심 y=62), 그림자 속이라 통째로 어둡다 -->
     <path d="M205 96V71" stroke="#5A6C8E" stroke-width="2.4"/>
     <circle cx="205" cy="62" r="9" fill="url(#spf-ball1)"/>
     <circle cx="205" cy="62" r="9" fill="rgba(10,14,26,.6)"/>
@@ -359,7 +359,7 @@ export function lunarPathFig(): string {
     </g>
     <path d="M64 56l6-3.4v6.8zM64 74l6-3.4v6.8zM64 92l6-3.4v6.8z" fill="#FFC24E"/>
     <text x="58" y="42" fill="#FFD79E" font-size="10" text-anchor="middle" font-family="Pretendard, sans-serif">태양 빛</text>
-    <!-- 지구 그림자(본그림자 쐐기 — 꼭짓점은 화면 밖) -->
+    <!-- 지구 그림자(본그림자 쐐기, 꼭짓점은 화면 밖) -->
     <path d="M112 57L278 66.2V81.8L112 91z" fill="rgba(10,16,32,.55)"/>
     <path d="M112 57L278 66.2M112 91L278 81.8" stroke="#3D5378" stroke-width="1.1" stroke-dasharray="3 4"/>
     <!-- 지구 -->
@@ -369,11 +369,11 @@ export function lunarPathFig(): string {
     <!-- 달의 이동 경로(직선) + 진행 화살표 -->
     <path d="M${p0x.toFixed(1)} ${p0y.toFixed(1)}L${p1x.toFixed(1)} ${p1y.toFixed(1)}" stroke="#3D5378" stroke-width="1.3" stroke-dasharray="4 4"/>
     <path d="M${(p1x + 6.4).toFixed(1)} ${(p1y + 2.9).toFixed(1)}L${(p1x - 1.6).toFixed(1)} ${(p1y + 3.5).toFixed(1)}L${(p1x + 1.6).toFixed(1)} ${(p1y - 3.5).toFixed(1)}z" fill="#5A78A8"/>
-    <!-- (나) 본그림자 깊숙이 — 붉은 달 -->
+    <!-- (나) 본그림자 깊숙이, 붉은 달 -->
     <circle cx="${nx.toFixed(1)}" cy="${ny.toFixed(1)}" r="7" fill="#E8DCB8"/>
     <circle cx="${nx.toFixed(1)}" cy="${ny.toFixed(1)}" r="7" fill="rgba(120,30,16,.78)"/>
     <text x="${(nx - 4).toFixed(1)}" y="${(ny + 25).toFixed(1)}" fill="#FFD0B4" font-size="11" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">(나)</text>
-    <!-- (가) 아래 경계 걸치기 — 위 절반(그림자 안)만 붉게 -->
+    <!-- (가) 아래 경계 걸치기, 위 절반(그림자 안)만 붉게 -->
     <circle cx="${gx.toFixed(1)}" cy="${gy.toFixed(1)}" r="7" fill="#E8DCB8"/>
     <path d="M${(gx - 7).toFixed(1)} ${gy.toFixed(1)}a7 7 0 0 1 14 0z" fill="rgba(120,30,16,.78)" transform="rotate(-3.2 ${gx.toFixed(1)} ${gy.toFixed(1)})"/>
     <text x="${gx.toFixed(1)}" y="${(gy + 22).toFixed(1)}" fill="#FFD0B4" font-size="11" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">(가)</text>
@@ -405,7 +405,7 @@ export function sunAnatomyFig(): string {
     </defs>
     <rect x="2" y="2" width="276" height="186" rx="14" fill="url(#spf-ansky)"/>
     ${star(20, 22)}${star(140, 16, 1, 0.6)}${star(262, 26)}${star(266, 166, 1, 0.55)}${star(16, 164, 1, 0.55)}
-    <!-- 왼쪽: 평소의 태양(백색광 사진 — 광구와 흑점) -->
+    <!-- 왼쪽: 평소의 태양(백색광 사진, 광구와 흑점) -->
     <circle cx="72" cy="92" r="60" fill="url(#spf-anGlow)"/>
     <g clip-path="url(#spf-anL)">
       <image href="${photo("sun_whitelight.jpg")}" x="5.7" y="27.9" width="131.3" height="127.5" preserveAspectRatio="none"/>
@@ -421,7 +421,7 @@ export function sunAnatomyFig(): string {
     <text x="72" y="163" fill="#FFD79E" font-size="10" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">평소</text>
     <rect x="172" y="150" width="72" height="18" rx="9" fill="rgba(14,24,46,.78)" stroke="rgba(170,192,232,.4)" stroke-width="1"/>
     <text x="208" y="163" fill="#C8D8F8" font-size="10" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">개기일식 때</text>
-    <text x="140" y="182" fill="#8FA6CE" font-size="9" text-anchor="middle" font-family="Pretendard, sans-serif">실제 관측 사진이에요 — 평소엔 광구가 눈부셔서 대기는 개기일식 때 드러나요</text>
+    <text x="140" y="182" fill="#8FA6CE" font-size="9" text-anchor="middle" font-family="Pretendard, sans-serif">실제 관측 사진이에요. 평소엔 광구가 눈부셔서 대기는 개기일식 때 드러나요</text>
   </svg>`;
 }
 

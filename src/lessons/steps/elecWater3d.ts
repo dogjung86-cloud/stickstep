@@ -85,7 +85,7 @@ const ELEMS: ElemDef[] = [
   },
   {
     id: "battery", side: "elec", name: "전지", at: [PUMP_X, 58, 4], r: 26, lab: [PUMP_X - 34, 58, 4],
-    role: "<b>전압</b>을 만들어요. 전압은 전류를 흐르게 하는 능력이에요 — 전지가 없으면 전류도 없어요.",
+    role: "<b>전압</b>을 만들어요. 전압은 전류를 흐르게 하는 능력이에요. 전지가 없으면 전류도 없어요.",
   },
   {
     id: "switch", side: "elec", name: "스위치", at: [GATE_X, 112, -32], r: 20, lab: [GATE_X, 142, -32],
@@ -172,13 +172,13 @@ export const waterCircuit3d: StepRenderer = (host, step, api) => {
     el("div", {
       class: "sp3-enter-txt",
       html:
-        "물을 끌어올리는 <b>펌프</b>와 떨어지는 물을 받아 도는 <b>물레방아</b> — 똑같이 생긴 전기 회로와 나란히 놓고 <b>같은 것끼리</b> 이어 봐요.<br>화면이 자동으로 <b>가로</b>로 돌아가요.",
+        "물을 끌어올리는 <b>펌프</b>와 떨어지는 물을 받아 도는 <b>물레방아</b>, 똑같이 생긴 전기 회로와 나란히 놓고 <b>같은 것끼리</b> 이어 봐요.<br>화면이 자동으로 <b>가로</b>로 돌아가요.",
     }),
   );
   const enterBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "가로 화면으로 크게 열기" }));
   const helper = el("div", {
     class: "helper",
-    html: "물이 계속 흐르려면 <b>높이 차</b>를 만들어 주는 펌프가 필요해요 — 전기 회로에서 그 역할을 하는 게 <b>전지(전압)</b>랍니다.",
+    html: "물이 계속 흐르려면 <b>높이 차</b>를 만들어 주는 펌프가 필요해요. 전기 회로에서 그 역할을 하는 게 <b>전지(전압)</b>랍니다.",
   });
   host.append(goalChips, helper, preview, enterBtn); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -206,7 +206,7 @@ export const waterCircuit3d: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! <b>전압은 전류를 흐르게 하는 능력</b> — 펌프가 만든 높이 차가 물을 흐르게 하듯, 전지의 전압이 전류를 흐르게 해요. 펌프를 세게 = 전압을 크게 = <b>전류도 세게</b>!";
+        "정리! <b>전압은 전류를 흐르게 하는 능력</b>, 펌프가 만든 높이 차가 물을 흐르게 하듯, 전지의 전압이 전류를 흐르게 해요. 펌프를 세게 = 전압을 크게 = <b>전류도 세게</b>!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       window.setTimeout(() => showToast("비유 완성! 세로로 돌아가 계속해요", 3200), 1400);
@@ -268,8 +268,8 @@ export const waterCircuit3d: StepRenderer = (host, step, api) => {
       return;
     }
     const rest: string[] = [];
-    if (!goals.has("power")) rest.push("아래 <b>세기</b>를 <b>약하게</b>와 <b>세게</b>로 모두 바꿔 보기 — 물의 높이 차가 커지면 물살도 전류도 세져요");
-    if (!goals.has("valve")) rest.push("<b>밸브·스위치</b>를 잠갔다 다시 열어 보기 — 물과 전류가 함께 멈추고 함께 흘러요");
+    if (!goals.has("power")) rest.push("아래 <b>세기</b>를 <b>약하게</b>와 <b>세게</b>로 모두 바꿔 보기, 물의 높이 차가 커지면 물살도 전류도 세져요");
+    if (!goals.has("valve")) rest.push("<b>밸브·스위치</b>를 잠갔다 다시 열어 보기, 물과 전류가 함께 멈추고 함께 흘러요");
     if (!rest.length) return;
     showCard(
       `<div class="ew-cname">5쌍 완성! 남은 미션</div><div class="ew-crole">${rest.map((r) => `· ${r}`).join("<br>")}</div>`,
@@ -281,7 +281,7 @@ export const waterCircuit3d: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.select);
     const { enterRotateStage } = await import("../../ui/rotateStage");
     if (disposed) return;
-    rot = enterRotateStage({ title: "물의 흐름 ↔ 전류 — 같은 것끼리 탭!", onLeave: () => leave() });
+    rot = enterRotateStage({ title: "물의 흐름 ↔ 전류, 같은 것끼리 탭!", onLeave: () => leave() });
 
     const canvas = el("canvas", { class: "sp3-canvas" }) as HTMLCanvasElement;
     statusPill = el("div", { class: "pill sp3-pill" }, el("span", { class: "pdot", style: "background:#37B6D8" }), el("span", { text: "" }));
@@ -322,9 +322,9 @@ export const waterCircuit3d: StepRenderer = (host, step, api) => {
         else
           showToast(
             i === 2
-              ? "물을 <b>더 높이</b> 끌어올렸어요 — 높이 차가 커지니 물살도, 전류도 세져요!"
+              ? "물을 <b>더 높이</b> 끌어올렸어요. 높이 차가 커지니 물살도, 전류도 세져요!"
               : i === 0
-                ? "펌프를 약하게 — 높이 차가 작아지니 물살이 <b>졸졸</b>, 전구도 어두워져요."
+                ? "펌프를 약하게, 높이 차가 작아지니 물살이 <b>졸졸</b>, 전구도 어두워져요."
                 : "가운데 세기예요. 양 끝(약하게·세게)도 눌러 비교해 봐요!",
             2600,
           );
@@ -343,10 +343,10 @@ export const waterCircuit3d: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.select);
       if (!open) {
         valveDone.closed = true;
-        showToast("길이 막히면 — <b>물도 전류도 함께 멈춰요</b>", 2400);
+        showToast("길이 막히면, <b>물도 전류도 함께 멈춰요</b>", 2400);
       } else if (valveDone.closed) {
         valveDone.reopened = true;
-        showToast("다시 열면 — 둘 다 <b>동시에</b> 다시 흘러요!", 2200);
+        showToast("다시 열면, 둘 다 <b>동시에</b> 다시 흘러요!", 2200);
         collect("valve", "함께 멈춘다!");
       }
     });
@@ -364,7 +364,7 @@ export const waterCircuit3d: StepRenderer = (host, step, api) => {
     if (!st) {
       (statusPill.querySelectorAll("span")[1] as HTMLElement).textContent = "이 기기는 3D를 지원하지 않아요";
       helper.innerHTML =
-        "3D를 열 수 없어요. 글로 기억해요 — <b>펌프=전지 · 물의 흐름=전류 · 물레방아=전구 · 수로=전선 · 밸브=스위치</b>. 펌프가 만든 높이 차가 물을 흐르게 하듯, 전지의 <b>전압</b>이 전류를 흐르게 해요.";
+        "3D를 열 수 없어요. 글로 기억해요. <b>펌프=전지 · 물의 흐름=전류 · 물레방아=전구 · 수로=전선 · 밸브=스위치</b>. 펌프가 만든 높이 차가 물을 흐르게 하듯, 전지의 <b>전압</b>이 전류를 흐르게 해요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       return;
@@ -776,7 +776,7 @@ export const waterCircuit3d: StepRenderer = (host, step, api) => {
           matched.set(pair.w, matched.size % MATCH_COLORS.length);
           haptic(HAPTIC.correct);
           pairCard(pair);
-          showToast(`정답! <b>${elemOf(pair.w).name} = ${elemOf(pair.e).name}</b> — ${pair.tag}`, 2400);
+          showToast(`정답! <b>${elemOf(pair.w).name} = ${elemOf(pair.e).name}</b>, ${pair.tag}`, 2400);
           if (matched.size === PAIRS.length) {
             collect("match", "5쌍 완성!");
             // 마지막 짝 설명을 읽을 시간을 준 뒤 남은 미션을 안내한다
@@ -970,7 +970,7 @@ export const waterCircuit3d: StepRenderer = (host, step, api) => {
       if (statusPill) {
         (statusPill.querySelectorAll("span")[1] as HTMLElement).textContent = open
           ? `높이 차 ${sd.hi} ↔ 전압 ${sd.volt}`
-          : "잠김 — 물도 전류도 정지";
+          : "잠김, 물도 전류도 정지";
       }
 
       st.render();
@@ -993,7 +993,7 @@ export const waterCircuit3d: StepRenderer = (host, step, api) => {
     window.clearTimeout(guideTimer);
     enterBtn.classList.remove("pulse");
     (enterBtn.querySelector("span") as HTMLElement).textContent = finished ? "비유 실험 다시 열기" : "가로 화면으로 이어서 열기";
-    if (!finished) helper.innerHTML = "아직 남은 미션이 있어요 — 다시 열어서 <b>세기·밸브·대응 5쌍</b>을 모두 마쳐 봐요!";
+    if (!finished) helper.innerHTML = "아직 남은 미션이 있어요. 다시 열어서 <b>세기·밸브·대응 5쌍</b>을 모두 마쳐 봐요!";
   }
 
   enterBtn.addEventListener("click", () => void enter());

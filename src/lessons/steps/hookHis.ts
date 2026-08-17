@@ -72,7 +72,7 @@ export function renderSaveIcon(
     haptic(HAPTIC.tap);
     fig.classList.add("saved");
     face("surprised");
-    helper.innerHTML = "잠깐 — 저장 버튼의 <b>네모난 모양</b>… 어디서 온 걸까요? 그때, 책상 서랍에서 나온 물건 하나!";
+    helper.innerHTML = "잠깐, 저장 버튼의 <b>네모난 모양</b>… 어디서 온 걸까요? 그때, 책상 서랍에서 나온 물건 하나!";
     timer = window.setTimeout(() => {
       floppy.classList.add("in");
       helper.innerHTML = "저장 아이콘과 <b>똑같이 생긴 실물</b>이 있었어요! 이 모양의 정체는 뭘까요?";
@@ -83,8 +83,8 @@ export function renderSaveIcon(
             "네모가 그리기 쉬워서 정한 디자인일 뿐",
             "요즘 새로 나온 최신 장치의 모습",
           ],
-          good: "맞아요! 아이콘이 먼저가 아니라 <b>물건이 먼저</b> — 30년 전 저장 장치 '플로피 디스크'의 모습이 버튼에 그대로 남았어요. 우리가 매일 누르는 버튼에도 과거가 살아 있죠. 그런데 이런 '과거의 이야기', 즉 <b>역사</b>란 정확히 뭘까요? 두 역사가의 대결로 확인해요!",
-          bad: "순서가 반대예요 — 아이콘이 먼저가 아니라 <b>물건이 먼저</b>랍니다. 옛날 컴퓨터의 저장 장치 '플로피 디스크' 모습이 그대로 아이콘이 된 거예요. 일상 곳곳에 이렇게 과거가 남아 있어요. 그렇다면 '역사'란 정확히 뭘까요? 두 역사가의 대결로 확인해요!",
+          good: "맞아요! 아이콘이 먼저가 아니라 <b>물건이 먼저</b>, 30년 전 저장 장치 '플로피 디스크'의 모습이 버튼에 그대로 남았어요. 우리가 매일 누르는 버튼에도 과거가 살아 있죠. 그런데 이런 '과거의 이야기', 즉 <b>역사</b>란 정확히 뭘까요? 두 역사가의 대결로 확인해요!",
+          bad: "순서가 반대예요. 아이콘이 먼저가 아니라 <b>물건이 먼저</b>랍니다. 옛날 컴퓨터의 저장 장치 '플로피 디스크' 모습이 그대로 아이콘이 된 거예요. 일상 곳곳에 이렇게 과거가 남아 있어요. 그렇다면 '역사'란 정확히 뭘까요? 두 역사가의 대결로 확인해요!",
           onDone: finish,
         });
       }, 900);
@@ -105,7 +105,7 @@ export function renderGameChar(
   const fig = el("div", { class: "hh1-game" });
   fig.innerHTML = `
     <div class="hh1-hud"><span>전설의 장수전</span><i>NEW</i></div>
-    <button type="button" class="hh1-cardflip" aria-label="캐릭터 카드 — 탭해서 정보 보기">
+    <button type="button" class="hh1-cardflip" aria-label="캐릭터 카드, 탭해서 정보 보기">
       <span class="hh1-cardface front">
         <svg viewBox="0 0 150 190" fill="none" aria-hidden="true">
           <defs>
@@ -162,8 +162,8 @@ export function renderGameChar(
           "전부 상상으로만 지어낸 인물",
           "게임 회사 사장님을 그린 것",
         ],
-        good: "맞아요! 게임·드라마·영화는 <b>역사에서 이야기를 빌려</b> 와요. 역사를 알면 그 재미가 두 배가 되죠. 그런데 역사는 재미 말고도 우리에게 주는 게 많아요 — 왜 배우는지 지금부터 알아봐요!",
-        bad: "카드 뒷면을 다시 봐요 — <b>천 년 전 기록에 남은 실존 인물</b>이래요! 게임·드라마·영화 속 인물과 사건은 실제 역사에서 온 경우가 많답니다. 역사를 알면 재미가 두 배 — 그리고 역사가 주는 건 재미만이 아니에요!",
+        good: "맞아요! 게임·드라마·영화는 <b>역사에서 이야기를 빌려</b> 와요. 역사를 알면 그 재미가 두 배가 되죠. 그런데 역사는 재미 말고도 우리에게 주는 게 많아요. 왜 배우는지 지금부터 알아봐요!",
+        bad: "카드 뒷면을 다시 봐요. <b>천 년 전 기록에 남은 실존 인물</b>이래요! 게임·드라마·영화 속 인물과 사건은 실제 역사에서 온 경우가 많답니다. 역사를 알면 재미가 두 배, 그리고 역사가 주는 건 재미만이 아니에요!",
         onDone: finish,
       });
     }, 950);
@@ -201,7 +201,7 @@ export function renderTimeCapsule(
       <path d="M198 70 l-8 14" stroke="#8A6A3E" stroke-width="3" stroke-linecap="round"/>
       <text x="223" y="47" text-anchor="middle" font-size="11" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">타임캡슐</text>
       <text x="223" y="61" text-anchor="middle" font-size="9.5" font-weight="800" fill="#0A5964" font-family="Pretendard, sans-serif">2394년에 열어 주세요</text>
-      <g class="hh1-tc-boxg" role="button" tabindex="0" aria-label="땅속 타임캡슐 상자 — 탭해서 열기">
+      <g class="hh1-tc-boxg" role="button" tabindex="0" aria-label="땅속 타임캡슐 상자, 탭해서 열기">
         <ellipse cx="150" cy="172" rx="46" ry="8" fill="#000" opacity=".25"/>
         <rect x="112" y="128" width="76" height="44" rx="8" fill="url(#hh1-tc-box)" stroke="#4E6078" stroke-width="2.2"/>
         <rect class="hh1-tc-lid" x="106" y="118" width="88" height="16" rx="7" fill="url(#hh1-tc-lid)" stroke="#4E6078" stroke-width="2.2"/>
@@ -236,7 +236,7 @@ export function renderTimeCapsule(
           "그냥 오래된 쓰레기가 된다",
           "미래에도 흔한 물건이라 아무 의미 없다",
         ],
-        good: "정확해요! 미래 사람들에게 오늘의 물건은 <b>과거를 알려 주는 보물</b>이 돼요. 역사가들이 옛사람이 남긴 흔적으로 과거를 연구하는 것과 똑같죠 — 그 재료의 이름이 <b>사료</b>랍니다. 어떤 것들이 사료가 되는지 만나러 가요!",
+        good: "정확해요! 미래 사람들에게 오늘의 물건은 <b>과거를 알려 주는 보물</b>이 돼요. 역사가들이 옛사람이 남긴 흔적으로 과거를 연구하는 것과 똑같죠. 그 재료의 이름이 <b>사료</b>랍니다. 어떤 것들이 사료가 되는지 만나러 가요!",
         bad: "지금 보면 평범해도, 400년 뒤엔 2026년의 교실·놀이·생활을 생생히 알려 주는 <b>귀한 자료</b>가 돼요. 실제로 서울시는 1994년에 물건 600점을 묻었고 2394년에 열 예정이랍니다. 이런 '과거의 흔적'을 역사가는 <b>사료</b>라고 불러요!",
         onDone: finish,
       });
@@ -278,7 +278,7 @@ export function renderDangi(
         <rect x="70" y="52" width="160" height="12" fill="url(#hh1-ca-pap)"/>
         <text x="150" y="52" text-anchor="middle" font-size="17" font-weight="900" fill="#fff" font-family="Pretendard, sans-serif">2026년 7월</text>
         ${[0, 1, 2, 3, 4].map((r) => [0, 1, 2, 3, 4, 5, 6].map((c) => `<rect x="${82 + c * 20}" y="${74 + r * 17}" width="16" height="13" rx="3" fill="${c === 0 ? "#FBE3E3" : "#F1F4F8"}"/>`).join("")).join("")}
-        <g class="hh1-ca-small" role="button" tabindex="0" aria-label="달력 아래 작은 글씨 — 탭해서 확대">
+        <g class="hh1-ca-small" role="button" tabindex="0" aria-label="달력 아래 작은 글씨, 탭해서 확대">
           <rect x="88" y="162" width="124" height="18" rx="9" fill="#F1F4F8" stroke="#D7DCE2" stroke-width="1.2"/>
           <text x="150" y="174.5" text-anchor="middle" font-size="9" font-weight="800" fill="#8B95A1" font-family="Pretendard, sans-serif">단기 4359년 · 7월</text>
         </g>
@@ -295,7 +295,7 @@ export function renderDangi(
     </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "할머니 댁 벽걸이 달력이에요. 그런데 아래에 <b>작은 글씨</b>가 있네요 — <b>탭해서 확대</b>해 봐요!";
+  helper.innerHTML = "할머니 댁 벽걸이 달력이에요. 그런데 아래에 <b>작은 글씨</b>가 있네요. <b>탭해서 확대</b>해 봐요!";
 
   let zoomed = false;
   let timer = 0;
@@ -310,12 +310,12 @@ export function renderDangi(
     timer = window.setTimeout(() => {
       ask(choicesBox, helper, {
         choices: s.choices ?? [
-          "연도를 세는 기준이 달라서 — 고조선 건국부터 세면 4359년",
+          "연도를 세는 기준이 달라서, 고조선 건국부터 세면 4359년",
           "달력이 잘못 인쇄된 것",
           "미래의 연도를 미리 적어 둔 것",
         ],
-        good: "맞아요! 연도는 <b>기준을 정해</b> 세요. 2026은 예수가 태어난 해 기준(서기), 4359는 고조선 건국(기원전 2333년) 기준(단기) — 2333+2026=4359, 계산도 딱 맞죠? 시간을 세는 법, 지금부터 정복해요!",
-        bad: "오타가 아니에요 — 연도는 <b>기준</b>을 정해 세는 거예요. 2026은 예수 탄생 기준(서기), 4359는 고조선 건국(기원전 2333년) 기준(단기)! 2333+2026=4359, 계산도 딱 맞아요. 기준이 다르면 같은 해도 숫자가 달라진답니다.",
+        good: "맞아요! 연도는 <b>기준을 정해</b> 세요. 2026은 예수가 태어난 해 기준(서기), 4359는 고조선 건국(기원전 2333년) 기준(단기), 2333+2026=4359, 계산도 딱 맞죠? 시간을 세는 법, 지금부터 정복해요!",
+        bad: "오타가 아니에요. 연도는 <b>기준</b>을 정해 세는 거예요. 2026은 예수 탄생 기준(서기), 4359는 고조선 건국(기원전 2333년) 기준(단기)! 2333+2026=4359, 계산도 딱 맞아요. 기준이 다르면 같은 해도 숫자가 달라진답니다.",
         onDone: finish,
       });
     }, 950);
@@ -349,7 +349,7 @@ export function renderMilmyeon(
       </defs>
       <rect x="6" y="6" width="288" height="150" rx="12" fill="url(#hh1-nd-wall)"/>
       <path d="M6 156 h288 v58 h-288 z" fill="url(#hh1-nd-table)"/>
-      <g class="hh1-nd-frameg" role="button" tabindex="0" aria-label="벽의 낡은 액자 — 탭해서 확대">
+      <g class="hh1-nd-frameg" role="button" tabindex="0" aria-label="벽의 낡은 액자, 탭해서 확대">
         <rect x="96" y="22" width="108" height="76" rx="6" fill="url(#hh1-nd-frame)" stroke="#5E4626" stroke-width="2.2"/>
         <rect x="106" y="32" width="88" height="56" rx="3" fill="#FBF3DC" stroke="#8A6A3E" stroke-width="1.4"/>
         <path d="M114 46 h72 M114 58 h72 M114 70 h48" stroke="#B99B66" stroke-width="3" stroke-linecap="round" opacity=".8"/>
@@ -360,7 +360,7 @@ export function renderMilmyeon(
         <rect x="48" y="27" width="204" height="92" rx="5" fill="#FBF3DC" stroke="#8A6A3E" stroke-width="1.6"/>
         <text x="150" y="56" text-anchor="middle" font-size="14.5" font-weight="900" fill="#4A3410" font-family="Pretendard, sans-serif">1953년, 피란살이 부엌에서</text>
         <text x="150" y="80" text-anchor="middle" font-size="12" font-weight="800" fill="#7A5A2E" font-family="Pretendard, sans-serif">고향의 국수를 그리며 만들었습니다</text>
-        <text x="150" y="103" text-anchor="middle" font-size="10.5" font-weight="800" fill="#9A7A46" font-family="Pretendard, sans-serif">— 삼 대째 잇는 밀면 —</text>
+        <text x="150" y="103" text-anchor="middle" font-size="10.5" font-weight="800" fill="#9A7A46" font-family="Pretendard, sans-serif">삼 대째 잇는 밀면</text>
       </g>
       <g class="hh1-nd-bowlg">
         <ellipse cx="150" cy="196" rx="58" ry="8" fill="#4A2A08" opacity=".3"/>
@@ -380,7 +380,7 @@ export function renderMilmyeon(
     </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
-  helper.innerHTML = "부산의 오래된 <b>밀면집</b>이에요. 벽에 낡은 액자가 걸려 있네요 — <b>탭해서</b> 읽어 봐요!";
+  helper.innerHTML = "부산의 오래된 <b>밀면집</b>이에요. 벽에 낡은 액자가 걸려 있네요. <b>탭해서</b> 읽어 봐요!";
 
   let zoomed = false;
   let timer = 0;
@@ -399,8 +399,8 @@ export function renderMilmyeon(
           "부산 사람들이 원래 밀가루 음식을 좋아해서",
           "외국 요리사가 새로 개발한 요리라서",
         ],
-        good: "맞아요! 6·25 전쟁 때 부산으로 피란 온 사람들이 고향의 냉면을 그리워했지만 재료(메밀)를 구하기 어려웠고, 구호물자로 흔했던 <b>밀가루</b>로 면을 뽑아 밀면이 태어났어요. 음식 한 그릇에도 역사가 담겨 있죠 — 이런 궁금증을 푸는 방법이 바로 <b>역사 탐구</b>예요!",
-        bad: "취향이나 우연이 아니라 <b>역사가 배경</b>이에요 — 6·25 전쟁 때 부산으로 피란 온 사람들이 냉면 재료(메밀)를 구하기 어려워, 구호물자로 흔했던 밀가루로 고향의 맛을 다시 만든 게 밀면의 시작이랍니다. 이런 궁금증을 푸는 방법이 <b>역사 탐구</b>예요!",
+        good: "맞아요! 6·25 전쟁 때 부산으로 피란 온 사람들이 고향의 냉면을 그리워했지만 재료(메밀)를 구하기 어려웠고, 구호물자로 흔했던 <b>밀가루</b>로 면을 뽑아 밀면이 태어났어요. 음식 한 그릇에도 역사가 담겨 있죠. 이런 궁금증을 푸는 방법이 바로 <b>역사 탐구</b>예요!",
+        bad: "취향이나 우연이 아니라 <b>역사가 배경</b>이에요. 6·25 전쟁 때 부산으로 피란 온 사람들이 냉면 재료(메밀)를 구하기 어려워, 구호물자로 흔했던 밀가루로 고향의 맛을 다시 만든 게 밀면의 시작이랍니다. 이런 궁금증을 푸는 방법이 <b>역사 탐구</b>예요!",
         onDone: finish,
       });
     }, 1000);

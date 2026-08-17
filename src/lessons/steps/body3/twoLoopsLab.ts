@@ -102,7 +102,7 @@ export const twoLoopsLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "당신은 <b>좌심실</b>에서 출발하는 혈액 방울! 산소를 가득 실었어요(선홍색). 첫 갈림길 — 좌심실의 문을 나서면 어느 혈관일까요? 아래에서 골라요.",
+    html: "당신은 <b>좌심실</b>에서 출발하는 혈액 방울! 산소를 가득 실었어요(선홍색). 첫 갈림길, 좌심실의 문을 나서면 어느 혈관일까요? 아래에서 골라요.",
   });
 
   const board = el("div", { class: "b6-board tlp-board", html: stageScene() });
@@ -129,7 +129,7 @@ export const twoLoopsLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "완주! <b>온몸순환</b>(좌심실→대동맥→온몸→대정맥→우심방)과 <b>허파순환</b>(우심실→폐동맥→허파→폐정맥→좌심방)은 이어진 한 길 — 한 바퀴에 심장을 <b>두 번</b> 지나요.";
+        "완주! <b>온몸순환</b>(좌심실→대동맥→온몸→대정맥→우심방)과 <b>허파순환</b>(우심실→폐동맥→허파→폐정맥→좌심방)은 이어진 한 길, 한 바퀴에 심장을 <b>두 번</b> 지나요.";
       api.enableCTA(s.cta ?? "정리하기");
     }
   }
@@ -157,7 +157,7 @@ export const twoLoopsLab: StepRenderer = (host, step, api) => {
     {
       good: "대동맥으로 나간다",
       bad: "폐동맥으로 나간다",
-      fix: "폐동맥은 <b>우심실</b>의 문이에요. 좌심실의 문은 온몸을 향한 가장 굵은 혈관 — <b>대동맥</b>이랍니다.",
+      fix: "폐동맥은 <b>우심실</b>의 문이에요. 좌심실의 문은 온몸을 향한 가장 굵은 혈관, <b>대동맥</b>이랍니다.",
       go: (): void => {
         helper.innerHTML = "<b>대동맥</b>을 타고 힘차게 출발! 온몸의 모세혈관으로 향해요.";
         moveTo("aorta");
@@ -167,7 +167,7 @@ export const twoLoopsLab: StepRenderer = (host, step, api) => {
             setBlood(false);
             showBadge("산소·영양소 배달 완료!");
             helper.innerHTML =
-              "온몸의 조직세포에 <b>산소와 영양소</b>를 내려 주고, <b>이산화 탄소와 노폐물</b>을 받았어요 — 색이 어두워졌죠(산소 부족). 이제 심장으로 돌아갈 길은?";
+              "온몸의 조직세포에 <b>산소와 영양소</b>를 내려 주고, <b>이산화 탄소와 노폐물</b>을 받았어요. 색이 어두워졌죠(산소 부족). 이제 심장으로 돌아갈 길은?";
             later(nextDecision, 900);
           }, 900);
         }, 800);
@@ -185,11 +185,11 @@ export const twoLoopsLab: StepRenderer = (host, step, api) => {
           later(() => {
             collect("bodyLoop", "좌심실→우심방!");
             helper.innerHTML =
-              "<b>우심방</b> 도착 — 온몸순환 완주! 심장 안에서 판막 문을 지나 <b>우심실</b>로 내려가요. 숨 고르고, 다음 여행 준비!";
+              "<b>우심방</b> 도착, 온몸순환 완주! 심장 안에서 판막 문을 지나 <b>우심실</b>로 내려가요. 숨 고르고, 다음 여행 준비!";
             later(() => {
               moveTo("RV");
               later(() => {
-                helper.innerHTML = "이제 <b>우심실</b>에서 두 번째 출발이에요. 아직 산소가 부족한 상태(암적색) — 어디로 가야 산소를 채울까요?";
+                helper.innerHTML = "이제 <b>우심실</b>에서 두 번째 출발이에요. 아직 산소가 부족한 상태(암적색), 어디로 가야 산소를 채울까요?";
                 later(nextDecision, 700);
               }, 900);
             }, 1200);
@@ -210,7 +210,7 @@ export const twoLoopsLab: StepRenderer = (host, step, api) => {
             setBlood(true);
             showBadge("이산화 탄소 내리고, 산소 싣고!");
             helper.innerHTML =
-              "허파의 모세혈관에서 <b>이산화 탄소를 내보내고 산소를 받았어요</b> — 다시 선홍색! 이제 심장으로 돌아갈 길은?";
+              "허파의 모세혈관에서 <b>이산화 탄소를 내보내고 산소를 받았어요</b>. 다시 선홍색! 이제 심장으로 돌아갈 길은?";
             later(nextDecision, 900);
           }, 900);
         }, 800);
@@ -227,7 +227,7 @@ export const twoLoopsLab: StepRenderer = (host, step, api) => {
           moveTo("LA");
           later(() => {
             collect("lungLoop", "우심실→좌심방!");
-            helper.innerHTML = "<b>좌심방</b> 도착 — 허파순환 완주! 판막을 지나 <b>좌심실</b>로 내려가면… 처음 그 자리예요.";
+            helper.innerHTML = "<b>좌심방</b> 도착, 허파순환 완주! 판막을 지나 <b>좌심실</b>로 내려가면… 처음 그 자리예요.";
             later(() => {
               moveTo("LV");
               later(() => {
@@ -282,15 +282,15 @@ export const twoLoopsLab: StepRenderer = (host, step, api) => {
       qBox,
       "방금 여행처럼, 혈액이 우리 몸을 <b>한 바퀴</b>(온몸+허파) 도는 동안 심장을 <b>몇 번</b> 지날까요?",
       [
-        { t: "두 번 — 온몸순환과 허파순환 사이마다", ok: true },
-        { t: "한 번 — 출발할 때 한 번뿐", ok: false },
-        { t: "네 번 — 방을 지날 때마다 한 번씩", ok: false },
+        { t: "두 번, 온몸순환과 허파순환 사이마다", ok: true },
+        { t: "한 번, 출발할 때 한 번뿐", ok: false },
+        { t: "네 번, 방을 지날 때마다 한 번씩", ok: false },
       ],
       (ok) => {
         api.recordQuiz(ok);
         helper.innerHTML = ok
-          ? "정확해요! 온몸을 돌고 <b>한 번</b>(우심방·우심실), 허파를 돌고 <b>또 한 번</b>(좌심방·좌심실) — 두 순환은 이어진 과정이라 심장을 <b>두 번</b> 지나죠."
-          : "여행을 되감아 봐요 — 온몸을 돌고 심장에 들렀고(우심방·우심실), 허파를 돌고 또 들렀죠(좌심방·좌심실). 방 4개를 지나지만 심장이라는 역은 <b>두 번</b> 거치는 거랍니다.";
+          ? "정확해요! 온몸을 돌고 <b>한 번</b>(우심방·우심실), 허파를 돌고 <b>또 한 번</b>(좌심방·좌심실), 두 순환은 이어진 과정이라 심장을 <b>두 번</b> 지나죠."
+          : "여행을 되감아 봐요. 온몸을 돌고 심장에 들렀고(우심방·우심실), 허파를 돌고 또 들렀죠(좌심방·좌심실). 방 4개를 지나지만 심장이라는 역은 <b>두 번</b> 거치는 거랍니다.";
         collect("twice", "심장은 두 번!");
       },
     );

@@ -107,22 +107,22 @@ export const matterTemp: StepRenderer = (host, step, api) => {
     // 끓이기 목표 전까지는 상태 해설, 그 뒤엔 "다시 얼리기" 미션 안내를 유지
     if (!finished && !doneBoil) helper.innerHTML = HELPERS[ph];
     slider.setAttribute("aria-valuenow", String(Math.round(T)));
-    slider.setAttribute("aria-valuetext", `${Math.round(T)}도 — ${NAMES[ph]}`);
+    slider.setAttribute("aria-valuetext", `${Math.round(T)}도, ${NAMES[ph]}`);
     if (prev != null) {
       if (prev < 0 && T >= 0) {
-        stage.toast("0℃ — 얼음이 녹기 시작해요");
+        stage.toast("0℃, 얼음이 녹기 시작해요");
         haptic(HAPTIC.cross);
       }
       if (prev >= 0 && T < 0) {
-        stage.toast("0℃ — 물이 다시 얼기 시작해요");
+        stage.toast("0℃, 물이 다시 얼기 시작해요");
         haptic(HAPTIC.cross);
       }
       if (prev < 100 && T >= 100) {
-        stage.toast("100℃ — 물이 끓어 수증기로!");
+        stage.toast("100℃, 물이 끓어 수증기로!");
         haptic(HAPTIC.cross);
       }
       if (prev >= 100 && T < 100) {
-        stage.toast("100℃ — 수증기가 다시 물방울로!");
+        stage.toast("100℃, 수증기가 다시 물방울로!");
         haptic(HAPTIC.cross);
       }
     }
@@ -196,7 +196,7 @@ export const matterTemp: StepRenderer = (host, step, api) => {
   stage.el.querySelector(".mstage-toggle")?.addEventListener("click", () => {
     if (toggleHinted) return;
     toggleHinted = true;
-    stageWithHint.toast(stage.view() === "particle" ? "입자의 눈 — 입자 배열이 보여요" : "물질 뷰로 돌아왔어요");
+    stageWithHint.toast(stage.view() === "particle" ? "입자의 눈, 입자 배열이 보여요" : "물질 뷰로 돌아왔어요");
   });
 
   // ---- 루프 ----

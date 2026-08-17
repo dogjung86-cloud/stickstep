@@ -30,9 +30,9 @@ const ERAS = [
   { ma: 120, file: "ma120.webp", label: "약 1억 2천만 년 전" },
   { ma: 150, file: "Map33a_LtJ_Tithonian_150.webp", label: "약 1억 5천만 년 전" },
   { ma: 175, file: "ma175.webp", label: "약 1억 7천5백만 년 전" },
-  { ma: 200, file: "Map43a_Triassic-Jurassic_Boundary_200.webp", label: "약 2억 년 전 — 분리 시작" },
+  { ma: 200, file: "Map43a_Triassic-Jurassic_Boundary_200.webp", label: "약 2억 년 전, 분리 시작" },
   { ma: 240, file: "ma240.webp", label: "약 2억 4천만 년 전" },
-  { ma: 280, file: "Map54a_EP_Artinskian_280.webp", label: "약 2억 8천만 년 전 — 판게아" },
+  { ma: 280, file: "Map54a_EP_Artinskian_280.webp", label: "약 2억 8천만 년 전, 판게아" },
 ];
 const MAX_MA = 280;
 
@@ -138,7 +138,7 @@ export const driftLab: StepRenderer = (host, step, api) => {
 
   const helper = el("div", {
     class: "helper",
-    html: "베게너의 눈으로 봐요 — 타임라인을 <b>과거로</b> 밀면 대륙들이 모여요. <b>증거</b>를 켜고 무슨 일이 생기는지 지켜봐요!",
+    html: "베게너의 눈으로 봐요. 타임라인을 <b>과거로</b> 밀면 대륙들이 모여요. <b>증거</b>를 켜고 무슨 일이 생기는지 지켜봐요!",
   });
   host.append(goalChips, helper, stage, timeline, evRow); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));

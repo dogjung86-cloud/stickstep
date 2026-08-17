@@ -82,7 +82,7 @@ function indepSvg(guarded: boolean): string {
   return wrap(`
     ${bench(120, 62, guarded ? 0 : -3)}
     ${arrows}${walls}
-    <text x="120" y="126" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${guarded ? "바람막이 완성 — 판사석이 흔들리지 않아요" : "힘센 기관·여론의 압력 화살표가 판사석을 흔들어요"}</text>
+    <text x="120" y="126" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${guarded ? "바람막이 완성, 판사석이 흔들리지 않아요" : "힘센 기관·여론의 압력 화살표가 판사석을 흔들어요"}</text>
     <text x="42" y="40" text-anchor="middle" font-size="8" font-weight="800" fill="#C0392E" opacity="${guarded ? 0.35 : 1}">압력</text>
     <text x="198" y="40" text-anchor="middle" font-size="8" font-weight="800" fill="#C0392E" opacity="${guarded ? 0.35 : 1}">간섭</text>`);
 }
@@ -106,7 +106,7 @@ function openCourtSvg(open: number): string {
       ${curtainW > 20 ? `<path d="M${120 - curtainW + 12} 24v68M${120 - 24} 24v68M${120 + 24} 24v68M${120 + curtainW - 12} 24v68" stroke="#4A5A74" stroke-width="1.4" opacity=".6"/>` : ""}
     </g>
     ${gallery}
-    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${open >= 2 ? "누구나 지켜보는 재판 — 몰래 판결할 수 없어요" : open === 1 ? "커튼이 열리는 중…" : "커튼 뒤 밀실 재판 — 안이 보이지 않아요"}</text>`);
+    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${open >= 2 ? "누구나 지켜보는 재판, 몰래 판결할 수 없어요" : open === 1 ? "커튼이 열리는 중…" : "커튼 뒤 밀실 재판, 안이 보이지 않아요"}</text>`);
 }
 
 // ③ 증거 재판주의 — 소문 카드 기각(rej), 증거 카드 채택(acc)
@@ -145,7 +145,7 @@ function evidenceSvg(rej: boolean, acc: boolean): string {
     ${rumor}${proof}
     <text x="64" y="126" text-anchor="middle" font-size="8" font-weight="800" fill="#5A6478">"그 사람이래" 소문</text>
     <text x="176" y="126" text-anchor="middle" font-size="8" font-weight="800" fill="#5A6478">적법하게 수집한 증거</text>
-    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${rej && acc ? "판결의 근거는 오직 증거!" : "판사의 책상 앞 — 무엇으로 판단해야 할까요?"}</text>`);
+    <text x="120" y="142" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${rej && acc ? "판결의 근거는 오직 증거!" : "판사의 책상 앞, 무엇으로 판단해야 할까요?"}</text>`);
 }
 
 // ④ 심급 제도 — 3계단(climb 0..2)
@@ -161,7 +161,7 @@ function appealSvg(climb: number): string {
     ${climb >= 1 ? `<path d="M74 92q18-14 32-14" stroke="#8C5A16" stroke-width="2" stroke-dasharray="4 4" fill="none"/>` : ""}
     ${climb >= 2 ? `<path d="M134 70q18-14 32-14" stroke="#8C5A16" stroke-width="2" stroke-dasharray="4 4" fill="none"/>` : ""}
     ${man}
-    <text x="120" y="148" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${climb >= 2 ? "세 번까지 저울질 — 잘못된 판결을 바로잡을 기회" : climb === 1 ? "항소! 2심 법원이 다시 살펴봐요" : "1심 판결 — 그런데 억울함이 남는다면?"}</text>`);
+    <text x="120" y="148" text-anchor="middle" font-size="8.6" font-weight="700" fill="#7E8AA0">${climb >= 2 ? "세 번까지 저울질, 잘못된 판결을 바로잡을 기회" : climb === 1 ? "항소! 2심 법원이 다시 살펴봐요" : "1심 판결, 그런데 억울함이 남는다면?"}</text>`);
 }
 
 // 피날레 — 4기둥 위 수평 저울
@@ -200,42 +200,42 @@ const PHASES: FtlPhase[] = [
     id: "indep",
     fileLabel: "장치 1",
     stageName: "사법권의 독립",
-    intro: "스틱 시 법원에 이상 신호 — 힘센 기관과 들끓는 여론이 <b>판사석을 흔들어요</b>. 이대로면 판결이 압력에 휘둘리고 말아요. 판사석 양옆에 <b>바람막이</b>를 세워요!",
+    intro: "스틱 시 법원에 이상 신호, 힘센 기관과 들끓는 여론이 <b>판사석을 흔들어요</b>. 이대로면 판결이 압력에 휘둘리고 말아요. 판사석 양옆에 <b>바람막이</b>를 세워요!",
     quiz: {
       q: "바람막이 안의 법관은 오직 무엇에 따라 심판해야 할까요?",
       options: ["헌법과 법률, 그리고 법관의 양심", "힘센 기관과 여론의 뜻"],
-      good: "맞아요! 법관은 <b>헌법과 법률에 의하여 그 양심에 따라 독립</b>하여 심판해요 — 법원의 독립과 법관의 신분 보장이 이 바람막이의 정체랍니다.",
-      wrong: "그 뜻을 따르는 순간 재판은 저울이 아니라 바람개비가 돼요 — 법관이 따를 것은 <b>헌법과 법률, 그리고 양심</b>뿐! 다시 골라 봐요.",
+      good: "맞아요! 법관은 <b>헌법과 법률에 의하여 그 양심에 따라 독립</b>하여 심판해요. 법원의 독립과 법관의 신분 보장이 이 바람막이의 정체랍니다.",
+      wrong: "그 뜻을 따르는 순간 재판은 저울이 아니라 바람개비가 돼요. 법관이 따를 것은 <b>헌법과 법률, 그리고 양심</b>뿐! 다시 골라 봐요.",
     },
   },
   {
     id: "open",
     fileLabel: "장치 2",
     stageName: "공개 재판주의",
-    intro: "이번엔 법정에 <b>커튼</b>이 쳐졌어요 — 안에서 무슨 일이 벌어지는지 아무도 볼 수 없죠. 몰래 하는 재판은 몰래 기울 수 있어요. 커튼을 활짝 걷어요!",
+    intro: "이번엔 법정에 <b>커튼</b>이 쳐졌어요. 안에서 무슨 일이 벌어지는지 아무도 볼 수 없죠. 몰래 하는 재판은 몰래 기울 수 있어요. 커튼을 활짝 걷어요!",
   },
   {
     id: "evid",
     fileLabel: "장치 3",
     stageName: "증거 재판주의",
-    intro: "판사의 책상에 카드 두 장 — \"그 사람이 그랬대\"라는 <b>소문</b>과, 적법하게 수집한 <b>증거</b>. 판결의 근거가 될 자격이 있는 쪽만 남겨요!",
+    intro: "판사의 책상에 카드 두 장, \"그 사람이 그랬대\"라는 <b>소문</b>과, 적법하게 수집한 <b>증거</b>. 판결의 근거가 될 자격이 있는 쪽만 남겨요!",
     quiz: {
       q: "재판에서 사실을 인정하는 근거가 되어야 하는 것은 무엇일까요?",
       options: ["적법한 절차에 따라 수집한 증거", "많은 사람이 믿는 소문"],
-      good: "정확해요! 아무리 널리 퍼진 이야기라도 소문은 소문 — 재판은 <b>적법한 절차로 수집한 증거</b>로만 사실을 인정해요. 이게 증거 재판주의랍니다.",
-      wrong: "믿는 사람이 많다고 사실이 되진 않아요 — 소문으로 판결하면 억울한 사람이 생기죠. 재판의 근거는 <b>적법하게 수집한 증거</b>뿐! 다시 골라 봐요.",
+      good: "정확해요! 아무리 널리 퍼진 이야기라도 소문은 소문, 재판은 <b>적법한 절차로 수집한 증거</b>로만 사실을 인정해요. 이게 증거 재판주의랍니다.",
+      wrong: "믿는 사람이 많다고 사실이 되진 않아요. 소문으로 판결하면 억울한 사람이 생기죠. 재판의 근거는 <b>적법하게 수집한 증거</b>뿐! 다시 골라 봐요.",
     },
   },
   {
     id: "appeal",
     fileLabel: "장치 4",
     stageName: "심급 제도",
-    intro: "장치를 다 갖춰도 사람인 법관은 <b>잘못된 판결</b>을 내릴 수 있어요. 그래서 마지막 장치 — 급이 다른 법원에서 <b>여러 번 재판받을 기회</b>를 열어 둬요. 계단을 올라 봐요!",
+    intro: "장치를 다 갖춰도 사람인 법관은 <b>잘못된 판결</b>을 내릴 수 있어요. 그래서 마지막 장치, 급이 다른 법원에서 <b>여러 번 재판받을 기회</b>를 열어 둬요. 계단을 올라 봐요!",
     quiz: {
-      q: "1심 판결에 불복해 2심 재판을 청구하는 것 — 뭐라고 부를까요?",
+      q: "1심 판결에 불복해 2심 재판을 청구하는 것, 뭐라고 부를까요?",
       options: ["항소", "상고"],
-      good: "맞아요! <b>1심 → 2심 청구가 항소</b>, <b>2심 → 대법원 청구가 상고</b> — 우리나라는 이렇게 세 번까지 재판받을 수 있는 3심제가 원칙이에요.",
-      wrong: "상고는 <b>2심 판결에 불복해 대법원으로</b> 갈 때의 이름이에요 — 1심에서 2심으로 가는 첫 계단은 항소랍니다. 다시 골라 봐요!",
+      good: "맞아요! <b>1심 → 2심 청구가 항소</b>, <b>2심 → 대법원 청구가 상고</b>, 우리나라는 이렇게 세 번까지 재판받을 수 있는 3심제가 원칙이에요.",
+      wrong: "상고는 <b>2심 판결에 불복해 대법원으로</b> 갈 때의 이름이에요. 1심에서 2심으로 가는 첫 계단은 항소랍니다. 다시 골라 봐요!",
     },
   },
 ];
@@ -334,7 +334,7 @@ export const fairTrialLab: StepRenderer = (host, step, api) => {
       refreshScene(templeSvg());
       lightChip("final", "완성!");
       helper.innerHTML =
-        "네 장치 완성! <b>사법권의 독립 · 공개 재판주의 · 증거 재판주의 · 심급 제도</b> — 이 네 기둥이 받치고 있어야 재판의 저울이 기울지 않아요. 공정한 재판은 국민의 자유와 권리를 지키는 마지막 울타리랍니다!";
+        "네 장치 완성! <b>사법권의 독립 · 공개 재판주의 · 증거 재판주의 · 심급 제도</b>, 이 네 기둥이 받치고 있어야 재판의 저울이 기울지 않아요. 공정한 재판은 국민의 자유와 권리를 지키는 마지막 울타리랍니다!";
       api.recordQuiz(clean);
       api.enableCTA(s.cta ?? "제도 정리하러 가기");
       return;
@@ -386,7 +386,7 @@ export const fairTrialLab: StepRenderer = (host, step, api) => {
         refreshScene(indepSvg(true));
         b.disabled = true;
         b.classList.add("done");
-        helper.innerHTML = "압력 화살표가 힘을 잃었어요 — 법원을 다른 기관에서 <b>독립</b>시키고 법관의 <b>신분을 보장</b>한 거예요. 그럼 이 안의 법관은 무엇을 따라야 할까요?";
+        helper.innerHTML = "압력 화살표가 힘을 잃었어요. 법원을 다른 기관에서 <b>독립</b>시키고 법관의 <b>신분을 보장</b>한 거예요. 그럼 이 안의 법관은 무엇을 따라야 할까요?";
         later(openQuiz, 900);
       });
     } else if (id === "open") {
@@ -402,8 +402,8 @@ export const fairTrialLab: StepRenderer = (host, step, api) => {
         b.textContent = `커튼 걷기 (${n}/2)`;
         helper.innerHTML =
           n === 1
-            ? "커튼이 조금 열렸어요 — 조금 더!"
-            : "활짝! <b>방청석</b>에 시민들이 앉았어요 — 누구나 재판 과정을 지켜볼 수 있으면 몰래 기울이는 판결이 설 자리를 잃죠. 이게 <b>공개 재판주의</b>예요.";
+            ? "커튼이 조금 열렸어요. 조금 더!"
+            : "활짝! <b>방청석</b>에 시민들이 앉았어요. 누구나 재판 과정을 지켜볼 수 있으면 몰래 기울이는 판결이 설 자리를 잃죠. 이게 <b>공개 재판주의</b>예요.";
         if (n >= 2) {
           b.disabled = true;
           b.classList.add("done");
@@ -419,7 +419,7 @@ export const fairTrialLab: StepRenderer = (host, step, api) => {
       let acc = false;
       const done = (): void => {
         if (rej && acc) {
-          helper.innerHTML = "책상 위에 남은 건 증거뿐 — 그렇다면 판결의 근거가 될 자격, 어느 쪽에 있을까요?";
+          helper.innerHTML = "책상 위에 남은 건 증거뿐, 그렇다면 판결의 근거가 될 자격, 어느 쪽에 있을까요?";
           later(openQuiz, 900);
         }
       };
@@ -456,8 +456,8 @@ export const fairTrialLab: StepRenderer = (host, step, api) => {
         b.textContent = n >= 2 ? "대법원 도착!" : `다시 재판 청구하기 (${n}/2)`;
         helper.innerHTML =
           n === 1
-            ? "1심 판결에 불복 — 한 계단 위 법원이 사건을 <b>다시</b> 살펴봐요. 아직 한 계단이 더 남았어요!"
-            : "마지막 계단 — 최고 법원인 <b>대법원</b>이에요. 이렇게 급을 달리하는 법원에서 세 번까지 재판받을 수 있는 게 <b>심급 제도(3심제)</b>! 그런데 방금 오른 첫 계단의 이름은?";
+            ? "1심 판결에 불복, 한 계단 위 법원이 사건을 <b>다시</b> 살펴봐요. 아직 한 계단이 더 남았어요!"
+            : "마지막 계단, 최고 법원인 <b>대법원</b>이에요. 이렇게 급을 달리하는 법원에서 세 번까지 재판받을 수 있는 게 <b>심급 제도(3심제)</b>! 그런데 방금 오른 첫 계단의 이름은?";
         if (n >= 2) {
           b.disabled = true;
           b.classList.add("done");

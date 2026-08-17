@@ -14,7 +14,7 @@ const electron = (x: number, y: number, r = 7): string =>
 export function atomModelFig(p: number, e: number): string {
   const pos = [[-58, -26], [58, -20], [-30, 46], [44, 44], [0, -58], [-62, 22], [62, 22], [0, 58]].slice(0, e);
   // aria는 중립 — 핵 라벨 값·전자 수가 곧 문항의 판독 과제라 수치를 말하지 않는다(시험 aria 유출 규칙 소급).
-  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="원자 모형 — 가운데 원자핵에 전하 라벨이 적혀 있고, 주위 점선 궤도에 전자 알갱이들이 있어요. 라벨 값과 알갱이 수를 살펴보세요">
+  return `<svg viewBox="0 0 344 170" ${NS} fill="none" role="img" aria-label="원자 모형, 가운데 원자핵에 전하 라벨이 적혀 있고, 주위 점선 궤도에 전자 알갱이들이 있어요. 라벨 값과 알갱이 수를 살펴보세요">
     <ellipse cx="172" cy="85" rx="96" ry="66" stroke="#C9D2DC" stroke-width="1.6" stroke-dasharray="5 6"/>
     ${nucleus(172, 85, p, 22)}
     ${pos.map(([dx, dy]) => electron(172 + dx, 85 + dy)).join("")}
@@ -31,7 +31,7 @@ export function miniTableFig(): string {
       ${z ? `<text x="${x + 4}" y="${y + 11}" font-size="8.5" fill="#8B95A1">${z}</text>` : ""}
       <text x="${x + 15}" y="${y + 27}" text-anchor="middle" font-size="13" font-weight="800" fill="#333D4B">${sym}</text>`;
   };
-  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="주기율표 일부 — 1주기 수소 헬륨, 2주기 베릴륨 산소 네온, 3주기 나트륨">
+  return `<svg viewBox="0 0 344 190" ${NS} fill="none" role="img" aria-label="주기율표 일부, 1주기 수소 헬륨, 2주기 베릴륨 산소 네온, 3주기 나트륨">
     ${["1", "2", "13", "14", "15", "16", "17", "18"].map((g, i) => `<text x="${49 + i * 34}" y="22" text-anchor="middle" font-size="9.5" fill="#8B95A1">${g}족</text>`).join("")}
     <text x="16" y="52" font-size="9.5" fill="#8B95A1">1</text><text x="16" y="92" font-size="9.5" fill="#8B95A1">2</text><text x="16" y="132" font-size="9.5" fill="#8B95A1">3</text>
     ${cell(0, 0, 1, "H")}${cell(7, 0, 2, "He")}
@@ -50,7 +50,7 @@ export function fourModelFig(): string {
   const na = (x: number, y: number): string => ball(x, y, 7.5, "#C0A2E8", "#7A54B0");
   const cl = (x: number, y: number): string => ball(x, y, 12, "#8ED0A0", "#3E8A54");
   // aria는 중립 — 입자 종류(분자/원자/이온) 판정이 곧 문항의 과제라 종류를 말하지 않는다(시험 aria 유출 규칙 소급).
-  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="산소, 물, 철, 염화 나트륨 네 가지 물질의 입자 모형 — 각 모형에서 알갱이들이 어떻게 배열되어 있는지 살펴보세요">
+  return `<svg viewBox="0 0 344 210" ${NS} fill="none" role="img" aria-label="산소, 물, 철, 염화 나트륨 네 가지 물질의 입자 모형, 각 모형에서 알갱이들이 어떻게 배열되어 있는지 살펴보세요">
     <g><line x1="66" y1="52" x2="94" y2="52" stroke="#9AA5B4" stroke-width="4"/>${O(60, 52)}${O(100, 52)}
       <text x="80" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#4E5968">산소</text></g>
     <g><line x1="252" y1="44" x2="224" y2="66" stroke="#9AA5B4" stroke-width="4"/><line x1="252" y1="44" x2="280" y2="66" stroke="#9AA5B4" stroke-width="4"/>
@@ -125,7 +125,7 @@ export function formulaAnatomyFig(): string {
     <text x="152" y="134" text-anchor="middle" font-size="12.5" font-weight="800" fill="#0B9E62">수소 원자 2개 (기호 오른쪽 아래!)</text>
     <text x="226" y="92" text-anchor="middle" font-size="26" font-weight="800" fill="#C9D2DC">1</text>
     <path d="M226 44v22" stroke="#B0B8C1" stroke-width="1.6" stroke-dasharray="3 4"/>
-    <text x="226" y="34" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">산소 원자 1개 — 1은 생략!</text>
+    <text x="226" y="34" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8B95A1">산소 원자 1개, 1은 생략!</text>
   </svg>`;
 }
 
@@ -135,8 +135,8 @@ export function cellAnatomyFig(): string {
     <text x="118" y="${y + 4}" text-anchor="end" font-size="13" font-weight="800" fill="${color}">${label}</text>
     <line x1="126" y1="${y}" x2="${tx}" y2="${ty}" stroke="${color}" stroke-width="1.6"/>
     <circle cx="${tx}" cy="${ty}" r="2.6" fill="${color}"/>`;
-  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="주기율표 칸 읽는 법 — 위 숫자는 원자 번호, 가운데는 원소 기호, 아래는 원소 이름">
-    <!-- 수소 칸(살구 카드 — 입체감) -->
+  return `<svg viewBox="0 0 344 208" ${NS} fill="none" role="img" aria-label="주기율표 칸 읽는 법, 위 숫자는 원자 번호, 가운데는 원소 기호, 아래는 원소 이름">
+    <!-- 수소 칸(살구 카드, 입체감) -->
     <rect x="186" y="34" width="96" height="132" rx="10" fill="#E8C4B0"/>
     <rect x="180" y="28" width="96" height="132" rx="10" fill="#FBDCCB" stroke="#D8A88E" stroke-width="1.6"/>
     <path d="M188 38q30 -6 60 0" stroke="#FFF0E4" stroke-width="3" opacity=".8"/>
@@ -148,7 +148,7 @@ export function cellAnatomyFig(): string {
     ${callout(142, "원소 이름", 206, 142, "#0B8A5E")}
     <text x="118" y="66" text-anchor="end" font-size="10" fill="#8B95A1">= 양성자수</text>
     <rect x="20" y="176" width="304" height="26" rx="9" fill="#F7F9FC"/>
-    <text x="172" y="193" text-anchor="middle" font-size="11" font-weight="700" fill="#4E5968">위에서부터 번호 → 기호 → 이름 — 어떤 칸이든 똑같이 읽어요!</text>
+    <text x="172" y="193" text-anchor="middle" font-size="11" font-weight="700" fill="#4E5968">위에서부터 번호 → 기호 → 이름, 어떤 칸이든 똑같이 읽어요!</text>
   </svg>`;
 }
 
@@ -160,7 +160,7 @@ export function ionNotationFig(): string {
     <text x="${x + 74}" y="${y}" text-anchor="middle" font-size="30" font-weight="800" fill="#333D4B">${to}</text>
     <text x="${x + 74 + (to.length > 1 ? 26 : 17)}" y="${y - 16}" font-size="19" font-weight="800" fill="${supColor}">${sup}</text>
     <text x="${x + 40}" y="${y + 22}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#6B7684">${note}</text>`;
-  return `<svg viewBox="0 0 344 236" ${NS} fill="none" role="img" aria-label="이온식 쓰는 법 — 전자를 잃으면 +, 얻으면 −를 원소 기호 오른쪽 위에 쓴다">
+  return `<svg viewBox="0 0 344 236" ${NS} fill="none" role="img" aria-label="이온식 쓰는 법, 전자를 잃으면 +, 얻으면 −를 원소 기호 오른쪽 위에 쓴다">
     <rect x="10" y="10" width="158" height="30" rx="15" fill="#FDEBEA"/>
     <text x="89" y="30" text-anchor="middle" font-size="12.5" font-weight="800" fill="#C43A2E">전자를 잃으면 → 양이온 +</text>
     <rect x="176" y="10" width="158" height="30" rx="15" fill="#E8F1FD"/>
@@ -170,7 +170,7 @@ export function ionNotationFig(): string {
     ${ex(196, 84, "Cl", "Cl", "−", "#2E5AA8", "전자 1개 얻음 · 염화 이온")}
     ${ex(196, 152, "O", "O", "2−", "#2E5AA8", "전자 2개 얻음 · 산화 이온")}
     <rect x="24" y="196" width="296" height="30" rx="10" fill="#F7F9FC"/>
-    <text x="172" y="216" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">자리는 언제나 기호의 <tspan font-weight="800">오른쪽 위</tspan> — 아래 숫자(원자 개수)와 헷갈리지 않기!</text>
+    <text x="172" y="216" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">자리는 언제나 기호의 <tspan font-weight="800">오른쪽 위</tspan>, 아래 숫자(원자 개수)와 헷갈리지 않기!</text>
   </svg>`;
 }
 

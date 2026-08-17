@@ -61,7 +61,7 @@ export function twinFig(): string {
     <ellipse cx="76" cy="112" rx="14" ry="2.4" fill="#2A3A5E" opacity=".08"/>
     <ellipse cx="224" cy="114" rx="14" ry="2.4" fill="#2A3A5E" opacity=".08"/>`;
   const defs = `<radialGradient id="s7-bowl" cx=".4" cy=".35" r=".85"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".6" stop-color="#F3EBDA"/><stop offset="1" stop-color="#DCCDB0"/></radialGradient>`;
-  return shell(300, 152, inner, "같은 얼굴의 쌍둥이 두 사람 — 인사법과 식사 도구가 서로 다른 모습", defs);
+  return shell(300, 152, inner, "같은 얼굴의 쌍둥이 두 사람, 인사법과 식사 도구가 서로 다른 모습", defs);
 }
 
 /* ---------- L2: 생애 트랙 도해(hide = 기관 이름 ㉠~㉣ 가림 — 퀴즈 유출 방지판) ---------- */
@@ -75,7 +75,7 @@ export function lifeAgencyFig(opts?: { hide?: boolean }): string {
   ];
   const inner = `
     <rect x="18" y="26" width="264" height="20" rx="10" fill="#EAF4FE" stroke="#7EB8E8" stroke-width="1.3"/>
-    <text x="150" y="40" text-anchor="middle" font-size="10.5" font-weight="800" fill="#2E6EA8">${hide ? "㉤ — 평생에 걸쳐 영향" : "대중 매체 — 평생에 걸쳐 영향"}</text>
+    <text x="150" y="40" text-anchor="middle" font-size="10.5" font-weight="800" fill="#2E6EA8">${hide ? "㉤, 평생에 걸쳐 영향" : "대중 매체, 평생에 걸쳐 영향"}</text>
     <path d="M20 108h260" stroke="#8FA2BC" stroke-width="2.4" stroke-linecap="round"/>
     <path d="M272 104l8 4-8 4" stroke="#8FA2BC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
     ${stations
@@ -89,7 +89,7 @@ export function lifeAgencyFig(opts?: { hide?: boolean }): string {
       )
       .join("")}
     <path d="M45 52v46M115 50v48M185 48v50M255 46v52" stroke="#C9D2E0" stroke-width="1" stroke-dasharray="3 4"/>`;
-  return shell(300, 158, inner, hide ? "인생 트랙 위 네 시기와 가려진 기관 이름표, 위에는 전체를 덮는 띠" : "인생 트랙 — 아기·어린이·청소년·어른 시기별 사회화 기관과 평생을 덮는 대중 매체 띠");
+  return shell(300, 158, inner, hide ? "인생 트랙 위 네 시기와 가려진 기관 이름표, 위에는 전체를 덮는 띠" : "인생 트랙, 아기·어린이·청소년·어른 시기별 사회화 기관과 평생을 덮는 대중 매체 띠");
 }
 
 /* ---------- L4: 지위 이름표 도해(letters = ㉠㉡ 가림) ---------- */
@@ -116,7 +116,7 @@ export function statusFig(opts?: { letters?: boolean }): string {
     <text x="48" y="140" font-size="10" fill="#5A6B84">태어나면서 주어진 지위</text>
     <rect x="176" y="130" width="12" height="12" rx="4" fill="#E8F3FB" stroke="#2E8AC0" stroke-width="1.5"/>
     <text x="194" y="140" font-size="10" fill="#5A6B84">노력으로 얻은 지위</text>`;
-  return shell(300, 152, inner, lt ? "한 사람에게 붙은 네 개의 지위 이름표 — 이름이 가려져 있고 색으로 두 종류가 구분됨" : "한 사람에게 붙은 네 개의 지위 이름표 — 두 색으로 나뉜 모습");
+  return shell(300, 152, inner, lt ? "한 사람에게 붙은 네 개의 지위 이름표, 이름이 가려져 있고 색으로 두 종류가 구분됨" : "한 사람에게 붙은 네 개의 지위 이름표, 두 색으로 나뉜 모습");
 }
 
 /* ---------- L5: 역할 갈등 도해(퀴즈 그림) ---------- */
@@ -137,7 +137,7 @@ export function roleClashFig(): string {
     <path d="M132 95l6 4-6 4" stroke="#2E8AC0" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M196 99l-30 0" stroke="#C0871C" stroke-width="2" stroke-dasharray="4 4"/>
     <path d="M168 95l-6 4 6 4" stroke="#C0871C" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
-  return shell(300, 152, inner, "같은 시각, 한 사람을 양쪽에서 부르는 두 역할 — 반주 담당의 역할과 손주의 역할이 화살표로 당기는 모습");
+  return shell(300, 152, inner, "같은 시각, 한 사람을 양쪽에서 부르는 두 역할, 반주 담당의 역할과 손주의 역할이 화살표로 당기는 모습");
 }
 
 /* ---------- L6: 차이 vs 차별 두 장면(퀴즈 그림 — (가)(나)) ---------- */
@@ -152,15 +152,15 @@ export function diffDiscFig(): string {
     <ellipse cx="100" cy="100" rx="10" ry="2.2" fill="#2A3A5E" opacity=".08"/>
     <path d="M60 44q8-8 16-2M92 50q6-6 12-1" stroke="#8FB88F" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0"/>
     <text x="76" y="128" text-anchor="middle" font-size="9.6" fill="#5A7A5E">키도 좋아하는 것도 서로 달라요</text>
-    <text x="76" y="141" text-anchor="middle" font-size="9.6" font-weight="800" fill="#2E7E46">— 함께 어울려요</text>
+    <text x="76" y="141" text-anchor="middle" font-size="9.6" font-weight="800" fill="#2E7E46">- 함께 어울려요</text>
     <rect x="248" y="42" width="34" height="66" rx="4" fill="#EDE4D4" stroke="#B49A6E" stroke-width="1.6"/>
     <circle cx="254" cy="76" r="2" fill="#8A7246"/>
     ${tinyMan(210, 64, 8, "sad")}
     <ellipse cx="210" cy="104" rx="12" ry="2.2" fill="#2A3A5E" opacity=".08"/>
     <path d="M236 60l-8 8M228 60l8 8" stroke="#C0392E" stroke-width="2.4" stroke-linecap="round"/>
     <text x="224" y="128" text-anchor="middle" font-size="9.6" fill="#8A5A5A">다르다는 이유로 못 들어가게 해요</text>
-    <text x="224" y="141" text-anchor="middle" font-size="9.6" font-weight="800" fill="#B03030">— 부당한 대우</text>`;
-  return shell(300, 156, inner, "두 장면 비교 — 가는 서로 다른 두 사람이 어울리는 모습, 나는 다르다는 이유로 문 앞에서 거절당하는 모습");
+    <text x="224" y="141" text-anchor="middle" font-size="9.6" font-weight="800" fill="#B03030">- 부당한 대우</text>`;
+  return shell(300, 156, inner, "두 장면 비교, 가는 서로 다른 두 사람이 어울리는 모습, 나는 다르다는 이유로 문 앞에서 거절당하는 모습");
 }
 
 /* ---------- L3: 자아 정체성 마인드맵(미래엔 134쪽 활동 계승 — 퀴즈 그림) ---------- */
@@ -177,7 +177,7 @@ export function idMapFig(): string {
     ${leaf(236, 44, 96, "내가 잘하는 것", "#4CB878")}
     ${leaf(60, 124, 104, "소중하게 여기는 것", "#E8940A")}
     ${leaf(238, 124, 100, "내가 바라는 모습", "#C08ADC")}`;
-  return shell(300, 152, inner, "가운데 '나는 어떤 사람일까' 물음에서 네 갈래로 뻗은 마인드맵 — 성격, 잘하는 것, 소중한 것, 바라는 모습");
+  return shell(300, 152, inner, "가운데 '나는 어떤 사람일까' 물음에서 네 갈래로 뻗은 마인드맵, 성격, 잘하는 것, 소중한 것, 바라는 모습");
 }
 
 /* ---------- L7: 대처의 두 차원(퀴즈·정리 그림) ---------- */
@@ -205,7 +205,7 @@ export function civicFig(): string {
     <text x="208" y="95" font-size="9.6" fill="#39455C">모두를 위한</text>
     <text x="208" y="106" font-size="9.6" fill="#39455C">시설·디자인</text>
     <text x="172" y="132" font-size="9.6" fill="#39455C">함께 겪는 문제는 제도 개선</text>`;
-  return shell(300, 158, inner, "차별에 대처하는 두 차원 — 개인적 차원의 마음가짐과 사회적 차원의 법·제도");
+  return shell(300, 158, inner, "차별에 대처하는 두 차원, 개인적 차원의 마음가짐과 사회적 차원의 법·제도");
 }
 
 /* ---------- recap 미니아트(64×64 플랫 — 전 카드 필수) ---------- */

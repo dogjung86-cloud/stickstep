@@ -164,11 +164,11 @@ export const objectColorLab: StepRenderer = (host, step, api) => {
       }
     } else if (k === "blue") {
       if (goals.has("green")) {
-        helper.innerHTML = "파란 조명 아래선 장미 전체가 <b>검게</b> — 빨강도 초록도 파란 빛을 반사하지 못하거든요. 흰 공만 <b>파랗게</b> 빛나요!";
+        helper.innerHTML = "파란 조명 아래선 장미 전체가 <b>검게</b>, 빨강도 초록도 파란 빛을 반사하지 못하거든요. 흰 공만 <b>파랗게</b> 빛나요!";
         collect("blue", "흰 공만 파랑!");
       }
     } else {
-      helper.innerHTML = "백색광 — 모든 색의 빛이 들어 있어 물체가 <b>제 색</b>으로 보여요.";
+      helper.innerHTML = "백색광, 모든 색의 빛이 들어 있어 물체가 <b>제 색</b>으로 보여요.";
     }
   }
 
@@ -336,7 +336,7 @@ export const colorMixLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "무대 스크린에 <b>빨강·초록·파랑</b> 조명 세 개가 켜져 있어요. 조명을 <b>끌어서 겹쳐</b> 보세요 — 겹친 곳의 색은 진짜 빛의 덧셈이에요!",
+    html: "무대 스크린에 <b>빨강·초록·파랑</b> 조명 세 개가 켜져 있어요. 조명을 <b>끌어서 겹쳐</b> 보세요. 겹친 곳의 색은 진짜 빛의 덧셈이에요!",
   });
   host.append(goalChips, helper, stage); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -374,7 +374,7 @@ export const colorMixLab: StepRenderer = (host, step, api) => {
     if (goals.size === 4 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 빛은 섞을수록 <b>밝아져요</b>. 빨강+초록=<b>노랑</b>, 빨강+파랑=<b>자홍</b>, 초록+파랑=<b>청록</b>, 셋 다 겹치면 <b>백색광</b> — 이 세 가지가 <b>빛의 삼원색</b>이에요.";
+        "정리! 빛은 섞을수록 <b>밝아져요</b>. 빨강+초록=<b>노랑</b>, 빨강+파랑=<b>자홍</b>, 초록+파랑=<b>청록</b>, 셋 다 겹치면 <b>백색광</b>, 이 세 가지가 <b>빛의 삼원색</b>이에요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음 실험으로");
     }
@@ -476,7 +476,7 @@ export const colorMixLab: StepRenderer = (host, step, api) => {
     };
     if (allIn) {
       label((rr.x + gg.x + bb.x) / 3, (rr.y + gg.y + bb.y) / 3, "흰색!");
-      collect("white", "세 빛이 모두 겹치면 — 백색광!");
+      collect("white", "세 빛이 모두 겹치면, 백색광!");
     } else {
       if (dRG < th) {
         label((rr.x + gg.x) / 2, (rr.y + gg.y) / 2, "노랑");
@@ -550,13 +550,13 @@ export const pixelLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "영상 속 <b>노란 물고기</b> — 화면엔 노란 빛이 없어요! <b>돋보기를 끌어서</b> 노란 부분을 확대해 보세요.",
+    html: "영상 속 <b>노란 물고기</b>, 화면엔 노란 빛이 없어요! <b>돋보기를 끌어서</b> 노란 부분을 확대해 보세요.",
   });
 
   // 화소 조종 슬라이더(3곳 검사 후 등장)
   const sliders = el("div", { class: "px-sliders" });
   const patch = el("div", { class: "px-patch" });
-  const goalTxt = el("div", { class: "px-goal-txt", html: "미션: 슬라이더로 <b>주황</b>을 만들어 보세요. 힌트 — 빨강 가득, 초록 절반!" });
+  const goalTxt = el("div", { class: "px-goal-txt", html: "미션: 슬라이더로 <b>주황</b>을 만들어 보세요. 힌트, 빨강 가득, 초록 절반!" });
   const goalCard = el("div", { class: "px-goal", style: "display:none" }, patch, goalTxt);
   host.append(goalChips, helper, stage, sliders, goalCard); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -671,7 +671,7 @@ export const pixelLab: StepRenderer = (host, step, api) => {
     if (goals.size === 4 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 화면의 모든 색은 <b>빨강·초록·파랑 화소</b>의 밝기 조합이에요. 노랑 = 빨강+초록 켜짐, 자홍 = 빨강+파랑, 흰색 = 셋 다 — 멀리서 보면 눈이 <b>합성된 색</b>으로 느끼죠.";
+        "정리! 화면의 모든 색은 <b>빨강·초록·파랑 화소</b>의 밝기 조합이에요. 노랑 = 빨강+초록 켜짐, 자홍 = 빨강+파랑, 흰색 = 셋 다. 멀리서 보면 눈이 <b>합성된 색</b>으로 느끼죠.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -701,7 +701,7 @@ export const pixelLab: StepRenderer = (host, step, api) => {
       probed.add(key);
       const c = PX_COLORS[key];
       const onTxt = ["빨강", "초록", "파랑"].filter((_, i) => c.on[i]).join(" + ");
-      helper.innerHTML = `<b>${c.name}</b>의 정체 — 켜진 화소는 <b>${onTxt}</b>! ${key === "white" ? "세 화소가 모두 켜지면 흰색이에요." : `${c.name} 빛을 내는 화소는 없어요 — 눈이 합성한 색이죠.`}`;
+      helper.innerHTML = `<b>${c.name}</b>의 정체, 켜진 화소는 <b>${onTxt}</b>! ${key === "white" ? "세 화소가 모두 켜지면 흰색이에요." : `${c.name} 빛을 내는 화소는 없어요. 눈이 합성한 색이죠.`}`;
       collect(key, "정체 확인!");
       if (probed.size === 3 && !goals.has("orange")) {
         window.setTimeout(() => {

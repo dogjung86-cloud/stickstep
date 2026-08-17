@@ -151,7 +151,7 @@ export const convection: StepRenderer = (host, step, api) => {
             (good
               ? "맞아요. 난방기가 <b>아래</b>에 있으면 데워진 공기가 위로 올라가고 찬 공기가 내려와 <b>대류 순환</b>이 생겨요. "
               : "난방기가 <b>위</b>에 있으면 데워진 가벼운 공기가 천장에 머물러 <b>순환이 생기지 않아요</b>. 난방기는 <b>아래</b>가 좋아요. ") +
-            "반대로 냉방기는 <b>위</b>에 달아요 — 차가워진 공기가 아래로 내려오며 방 전체가 시원해지거든요.",
+            "반대로 냉방기는 <b>위</b>에 달아요. 차가워진 공기가 아래로 내려오며 방 전체가 시원해지거든요.",
         });
         api.enableCTA(s.cta ?? "개념 정리하기");
         // 다른 위치도 실험해 볼 수 있게 선택 버튼을 되살린다
@@ -213,7 +213,7 @@ export const convection: StepRenderer = (host, step, api) => {
       helper.innerHTML =
         "이렇게 <b>입자들이 직접 이동</b>하면서 열을 전달하는 것이 <b>대류</b>예요. 액체뿐 아니라 <b>기체(공기)</b>에서도 일어나요.";
       clear(controls);
-      const nextBtn = el("button", { class: "swapbtn", html: "<span>다음 실험 — 난방기는 어디에?</span>" });
+      const nextBtn = el("button", { class: "swapbtn", html: "<span>다음 실험, 난방기는 어디에?</span>" });
       nextBtn.addEventListener("click", () => {
         haptic(HAPTIC.tap);
         toPick();

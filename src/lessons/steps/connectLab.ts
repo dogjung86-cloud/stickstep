@@ -32,7 +32,7 @@ const ERAS: { id: EraId; name: string; means: string; intro: string }[] = [
     id: "tel",
     name: "1900년대",
     means: "전신",
-    intro: "<b>1900년대</b>예요. 바다 밑에 <b>전신 케이블</b>이 깔렸어요 — 편지 대신 전기 신호로 안부를 보내요!",
+    intro: "<b>1900년대</b>예요. 바다 밑에 <b>전신 케이블</b>이 깔렸어요. 편지 대신 전기 신호로 안부를 보내요!",
   },
   {
     id: "phone",
@@ -97,7 +97,7 @@ function sceneSvg(): string {
     <circle cx="96" cy="24" r="16" fill="#F0EAD8" opacity=".07"/>
     <circle cx="96" cy="24" r="10" fill="#EDE6D2" mask="url(#cnl-mmask)"/>
 
-    <!-- 안부가 다니는 아치 경로(점선) — 전파 편이 이 길을 난다 -->
+    <!-- 안부가 다니는 아치 경로(점선), 전파 편이 이 길을 난다 -->
     <path class="cnl-arch" d="M58 78 Q 200 -14 342 78" stroke="#7FA8D8" stroke-width="1.5" stroke-dasharray="3 8"/>
 
     <!-- 바다 -->
@@ -128,7 +128,7 @@ function sceneSvg(): string {
       <circle cx="22.5" cy="74" r=".8" fill="#F5C86A"/><circle cx="26" cy="74.8" r=".8" fill="#F5C86A"/><circle cx="29.5" cy="74" r=".8" fill="#F5C86A"/>
       <path d="M26 71.2 V56" stroke="#26364A" stroke-width="1.3"/>
       <circle class="cnl-beacon" cx="26" cy="55" r="1.4" fill="#FF6E62"/>
-      <!-- 나(밤 스틱맨 — 지구 반대편을 향해 손 흔드는 포즈) -->
+      <!-- 나(밤 스틱맨, 지구 반대편을 향해 손 흔드는 포즈) -->
       <ellipse cx="56.5" cy="113.5" rx="10" ry="2" fill="#000" opacity=".25"/>
       <g stroke="#E8EEF8" stroke-width="2.4">
         <circle cx="54" cy="86" r="5.5" fill="#0E1E32"/>
@@ -155,7 +155,7 @@ function sceneSvg(): string {
       <path d="M373 87 Q 392 85 400 97 Q 386 91 374 90 Z" fill="url(#cnl-palmL)" stroke="#1C3A1E" stroke-width="1.2"/>
       <circle cx="370" cy="90" r="2.1" fill="#6E4E2A" stroke="#3A280F" stroke-width=".9"/>
       <circle cx="376" cy="92" r="1.8" fill="#6E4E2A" stroke="#3A280F" stroke-width=".9"/>
-      <!-- 친구(밤 스틱맨 — 나를 향해 손 흔드는 포즈) -->
+      <!-- 친구(밤 스틱맨, 나를 향해 손 흔드는 포즈) -->
       <ellipse cx="340" cy="119.5" rx="10" ry="2" fill="#000" opacity=".25"/>
       <g stroke="#E8EEF8" stroke-width="2.4">
         <circle cx="342" cy="92" r="5.5" fill="#0E1E32"/>
@@ -237,7 +237,7 @@ function sceneSvg(): string {
       </g>
     </g>
 
-    <!-- 전파 편(아치를 나는 봉투) — 최상단 -->
+    <!-- 전파 편(아치를 나는 봉투), 최상단 -->
     <g transform="translate(58 78)">
       <g class="cnl-fly">
         <g class="cnl-fly-x">
@@ -269,7 +269,7 @@ export const connectLab: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "지구 반대편 <b>브라질 친구</b>에게 안부를 전해 볼 거예요. 시대마다 걸리는 시간을 재 봐요 — 먼저 <b>1800년대 돛단배</b>부터! 「안부 전하기」를 눌러요.",
+    html: "지구 반대편 <b>브라질 친구</b>에게 안부를 전해 볼 거예요. 시대마다 걸리는 시간을 재 봐요. 먼저 <b>1800년대 돛단배</b>부터! 「안부 전하기」를 눌러요.",
   });
 
   // 무대(SVG + HTML 오버레이: 달력·결과 필)
@@ -279,7 +279,7 @@ export const connectLab: StepRenderer = (host, step, api) => {
   const calCap = el("div", { class: "cnl-cal-cap", text: "출발!" });
   const calPage = el("div", { class: "cnl-cal-page" }, calDay, calCap);
   const cal = el("div", { class: "cnl-cal", attrs: { "aria-hidden": "true" } }, el("div", { class: "cnl-cal-head" }), calPage);
-  const resultV = el("b", { class: "cnl-result-v", text: "—" });
+  const resultV = el("b", { class: "cnl-result-v", text: "-" });
   const result = el(
     "div",
     { class: "cnl-result", attrs: { "aria-live": "polite" } },
@@ -413,7 +413,7 @@ export const connectLab: StepRenderer = (host, step, api) => {
       finished = true;
       later(() => {
         helper.innerHTML =
-          "돛단배 <b>두 달</b>이 스마트폰 <b>1초</b>가 됐어요 — 교통과 통신이 발달할수록 세계는 더 자주, 더 빠르게 연결돼요. 이렇게 지역 사이에 사람·물자·정보가 오가는 것을 <b>공간적 상호 작용</b>이라고 해요!";
+          "돛단배 <b>두 달</b>이 스마트폰 <b>1초</b>가 됐어요. 교통과 통신이 발달할수록 세계는 더 자주, 더 빠르게 연결돼요. 이렇게 지역 사이에 사람·물자·정보가 오가는 것을 <b>공간적 상호 작용</b>이라고 해요!";
         haptic(HAPTIC.done);
         api.recordQuiz(true);
         api.enableCTA(s.cta ?? "개념 정리하기");
@@ -428,7 +428,7 @@ export const connectLab: StepRenderer = (host, step, api) => {
     calSet(1, "돛 올려 출발!");
     boatMv.style.transition = "transform 2800ms cubic-bezier(.45,.05,.55,.95)";
     boatMv.style.transform = "translateX(140px)"; // 항로 x 128→268
-    helper.innerHTML = "편지를 실은 돛단배가 <b>천천히</b> 바다를 건너요 — 위 달력이 팔랑팔랑 넘어가요!";
+    helper.innerHTML = "편지를 실은 돛단배가 <b>천천히</b> 바다를 건너요. 위 달력이 팔랑팔랑 넘어가요!";
     const days = [4, 9, 15, 22, 30, 38, 46, 53, 60];
     days.forEach((d, i) => {
       later(() => calSet(d, d < 30 ? "바다 위 항해 중…" : d < 60 ? "벌써 한 달째…" : "두 달째!"), 300 + i * 270);
@@ -452,7 +452,7 @@ export const connectLab: StepRenderer = (host, step, api) => {
       p.style.transition = "stroke-dashoffset 1200ms linear";
       p.style.setProperty("stroke-dashoffset", "-606"); // 34 → -606: 케이블을 훑고 지나간다
     }
-    helper.innerHTML = "따다다닥 — 전기 신호가 <b>바다 밑 케이블</b>을 타고 지구 반대편으로 달려가요!";
+    helper.innerHTML = "따다다닥, 전기 신호가 <b>바다 밑 케이블</b>을 타고 지구 반대편으로 달려가요!";
     later(() => {
       lampR.classList.add("blink");
       slip.classList.add("show");
@@ -475,7 +475,7 @@ export const connectLab: StepRenderer = (host, step, api) => {
     flyX.style.transform = "translateX(284px)"; // 아치 58→342
     flyY.style.transition = "transform 125ms cubic-bezier(.3,.6,.55,1)";
     flyY.style.transform = "translateY(-46px)"; // 아치 봉우리
-    helper.innerHTML = "번쩍 — 전파가 빛의 빠르기로 날아가요!";
+    helper.innerHTML = "번쩍, 전파가 빛의 빠르기로 날아가요!";
     later(() => {
       flyY.style.transition = "transform 125ms cubic-bezier(.45,0,.7,.4)";
       flyY.style.transform = "translateY(0px)";

@@ -70,7 +70,7 @@ export const monsoonLab: StepRenderer = (host, step, api) => {
 
   const canvas = el("canvas", { class: "spring-canvas", style: `height:${CVH}px` });
   const pdot = el("span", { class: "pdot", style: "background:#5BB8E8" });
-  const pillTxt = el("span", { text: "여름 — 바다에서 육지로, 습한 바람" });
+  const pillTxt = el("span", { text: "여름, 바다에서 육지로, 습한 바람" });
   const seasonRead = el("div", { class: "tempread" }, el("span", { text: "여름" }));
   const stage = el("div", { class: "stage" }, canvas, el("div", { class: "stage-hud" }, el("div", { class: "pill" }, pdot, pillTxt), seasonRead));
   const capEl = el("div", { class: "stage-cap", text: "화살표 = 바람의 방향 · 여름 파란 점 = 습한 공기 · 겨울 흰 줄 = 건조한 바람" });
@@ -84,8 +84,8 @@ export const monsoonLab: StepRenderer = (host, step, api) => {
 
   // 판정 카드(두 계절 관찰 후 등장)
   const quizQ = el("div", { class: "msn-q", html: "동남·남부 아시아의 <b>벼농사에 필요한 비</b>를 몰고 오는 바람은 어느 쪽일까요?" });
-  const optA = el("button", { class: "msn-opt", attrs: { type: "button" }, html: "<b>여름</b> — 바다에서 불어오는 습한 바람" });
-  const optB = el("button", { class: "msn-opt", attrs: { type: "button" }, html: "<b>겨울</b> — 대륙에서 불어오는 건조한 바람" });
+  const optA = el("button", { class: "msn-opt", attrs: { type: "button" }, html: "<b>여름</b>, 바다에서 불어오는 습한 바람" });
+  const optB = el("button", { class: "msn-opt", attrs: { type: "button" }, html: "<b>겨울</b>, 대륙에서 불어오는 건조한 바람" });
   const quizCard = el("div", { class: "msn-quiz" }, quizQ, optA, optB);
 
   host.append(stage, seg, quizCard);
@@ -104,7 +104,7 @@ export const monsoonLab: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "<b>계절풍</b> — 계절에 따라 방향이 바뀌는 바람이에요. 여름엔 바다의 습한 바람이 비를 몰고 와 <b>벼농사</b>를 키우고, 겨울엔 대륙의 건조한 바람이 불어요.";
+        "<b>계절풍</b>, 계절에 따라 방향이 바뀌는 바람이에요. 여름엔 바다의 습한 바람이 비를 몰고 와 <b>벼농사</b>를 키우고, 겨울엔 대륙의 건조한 바람이 불어요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "다음");
     }
@@ -138,7 +138,7 @@ export const monsoonLab: StepRenderer = (host, step, api) => {
     if (quizDone) return;
     haptic(HAPTIC.wrong);
     optB.classList.add("no");
-    quizQ.innerHTML = "겨울 바람은 <b>대륙에서 나온 건조한 바람</b>이라 비가 거의 없어요 — 방금 겨울 화면에서 비가 내렸나요? 다시 골라 봐요!";
+    quizQ.innerHTML = "겨울 바람은 <b>대륙에서 나온 건조한 바람</b>이라 비가 거의 없어요. 방금 겨울 화면에서 비가 내렸나요? 다시 골라 봐요!";
     later(() => optB.classList.remove("no"), 700);
   });
 
@@ -156,11 +156,11 @@ export const monsoonLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.select);
     if (next === "summer") {
       pdot.style.background = "#5BB8E8";
-      pillTxt.textContent = "여름 — 바다에서 육지로, 습한 바람";
+      pillTxt.textContent = "여름, 바다에서 육지로, 습한 바람";
       (seasonRead.firstChild as HTMLElement).textContent = "여름";
     } else {
       pdot.style.background = "#B8C6DA";
-      pillTxt.textContent = "겨울 — 대륙에서 바다로, 건조한 바람";
+      pillTxt.textContent = "겨울, 대륙에서 바다로, 건조한 바람";
       (seasonRead.firstChild as HTMLElement).textContent = "겨울";
     }
     // 계절이 바뀌면 파티클을 새 흐름으로 자연 교체(수명 리셋)

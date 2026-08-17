@@ -1,4 +1,4 @@
-// [중1 Ⅱ v3] L1 zoomRulerLab — 「양파 줌 사다리」.
+// [중1 Ⅱ v3] L1 zoomRulerLab — 「양파 줌」(제목에 '사다리' 금지: 화면에 사다리가 없다 — 제작 은어).
 // 한 통찰: 배율을 올릴수록 보이는 폭이 그만큼 좁아지고(시야 폭 = 1배 폭 ÷ 배율),
 // ×40에서 처음으로 세포 벽돌담이 드러난다 — 세포는 0.1 mm대, 맨눈으로는 못 보는 크기.
 // 시야 검산: ×1 = 80 mm → ×10 = 8 mm → ×40 = 2 mm → ×400 = 0.2 mm(= 200 µm, 세포 1~2칸).
@@ -20,9 +20,9 @@ interface ZrlStep {
 /** 배율 사다리 — view = 보이는 폭 라벨(1배 80 mm에서 정확히 ÷배율). */
 const LEVELS = [
   { mag: "×1", view: "8 cm", hint: "맨눈으로 본 양파예요. 더 가까이!" },
-  { mag: "×10", view: "8 mm", hint: "얇게 벗긴 속껍질 한 장 — 아직은 매끈해 보여요." },
+  { mag: "×10", view: "8 mm", hint: "얇게 벗긴 속껍질 한 장, 아직은 매끈해 보여요." },
   { mag: "×40", view: "2 mm", hint: "벽돌담이 나타났어요! 이 칸 하나하나가 세포예요." },
-  { mag: "×400", view: "0.2 mm (= 200 µm)", hint: "세포 한 칸이 화면 가득 — 아래 질문에 답해 보세요." },
+  { mag: "×400", view: "0.2 mm (= 200 µm)", hint: "세포 한 칸이 화면 가득, 아래 질문에 답해 보세요." },
 ] as const;
 
 // ── 레이어 SVG(파운드리 문법: 그라데이션 면·좌상단 키라이트·접촉 그림자·최암색 외곽선) ──
@@ -190,7 +190,7 @@ export const zoomRulerLab: StepRenderer = (host, step, api) => {
       b.classList.toggle("cur", k === i);
       b.disabled = reached < LEVELS.length - 1 ? !(k === cur || k === cur + 1) : false;
     });
-    if (!finished) helper.innerHTML = `<b>${LEVELS[i].mag}</b> — ${LEVELS[i].hint}`;
+    if (!finished) helper.innerHTML = `<b>${LEVELS[i].mag}</b>, ${LEVELS[i].hint}`;
     if (i === 2) collect("wall", "벽돌담!");
     if (i === 3) {
       collect("close", "세포 한 칸!");
@@ -205,7 +205,7 @@ export const zoomRulerLab: StepRenderer = (host, step, api) => {
     qBox.style.display = "";
     qBox.classList.add("show"); // ui.css .hook-choices는 .show일 때만 표시(b4Ask .show 사고의 로컬판)
     qBox.appendChild(
-      el("div", { class: "hook-q", html: "화면을 거의 꽉 채운 <b>세포 한 칸</b> — 실제 크기는 어느 정도일까요? 눈금으로 어림해 보세요." }),
+      el("div", { class: "hook-q", html: "화면을 거의 꽉 채운 <b>세포 한 칸</b>, 실제 크기는 어느 정도일까요? 눈금으로 어림해 보세요." }),
     );
     const choices = [
       { t: "머리카락 굵기쯤 (약 0.1 mm)", ok: true },
@@ -238,8 +238,8 @@ export const zoomRulerLab: StepRenderer = (host, step, api) => {
         }
         api.recordQuiz(c.ok);
         helper.innerHTML = c.ok
-          ? "정확해요! 보이는 폭이 <b>0.2 mm</b>인데 세포가 화면을 거의 채우니, 세포 한 칸은 <b>약 0.1 mm대</b> — 머리카락 굵기 언저리예요. 맨눈으로 낱낱이 보기엔 너무 작죠."
-          : "눈금을 다시 봐요 — 화면 전체가 <b>0.2 mm</b>밖에 안 돼요. 그 안을 거의 채운 세포는 <b>약 0.1 mm대</b>, 머리카락 굵기 언저리랍니다. 쌀알(5 mm)과는 50배 차이예요.";
+          ? "정확해요! 보이는 폭이 <b>0.2 mm</b>인데 세포가 화면을 거의 채우니, 세포 한 칸은 <b>약 0.1 mm대</b>, 머리카락 굵기 언저리예요. 맨눈으로 낱낱이 보기엔 너무 작죠."
+          : "눈금을 다시 봐요. 화면 전체가 <b>0.2 mm</b>밖에 안 돼요. 그 안을 거의 채운 세포는 <b>약 0.1 mm대</b>, 머리카락 굵기 언저리랍니다. 쌀알(5 mm)과는 50배 차이예요.";
         collect("size", "약 0.1 mm!");
       });
       qBox.appendChild(b);

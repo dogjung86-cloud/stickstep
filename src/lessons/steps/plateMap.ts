@@ -201,7 +201,7 @@ export const plateMap: StepRenderer = (host, step, api) => {
   const playBtn = el(
     "button",
     { class: "swapbtn pulse", attrs: { type: "button" } },
-    el("span", { text: "재생 — 시간 순서대로 뿌리기" }),
+    el("span", { text: "재생, 시간 순서대로 뿌리기" }),
   );
 
   const goalChips = el(
@@ -266,7 +266,7 @@ export const plateMap: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "화산·지진은 아무 데서나가 아니라 <b>판의 경계</b>를 따라 띠로 일어나요 — 태평양 둘레가 바로 '불의 고리'!";
+        "화산·지진은 아무 데서나가 아니라 <b>판의 경계</b>를 따라 띠로 일어나요. 태평양 둘레가 바로 '불의 고리'!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
       return;
@@ -354,7 +354,7 @@ export const plateMap: StepRenderer = (host, step, api) => {
     ringFound = true;
     ringT = 0;
     haptic(HAPTIC.correct);
-    collect("ring", "링 발견!", "태평양 둘레 — 불의 고리!");
+    collect("ring", "링 발견!", "태평양 둘레, 불의 고리!");
   }
   const onCvDown = (e: PointerEvent): void => {
     if (!played) {

@@ -69,7 +69,7 @@ export const boyleSyringe: StepRenderer = (host, step, api) => {
   );
   const helper = el("div", {
     class: "helper",
-    html: "24 mL·1기압에서 시작. 피스톤을 <b>천천히 눌러</b> 보세요 — 입자 충돌이 어떻게 변하는지도 관찰!",
+    html: "24 mL·1기압에서 시작. 피스톤을 <b>천천히 눌러</b> 보세요. 입자 충돌이 어떻게 변하는지도 관찰!",
   });
   host.append(goalChips, helper, stage); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
 
@@ -118,7 +118,7 @@ export const boyleSyringe: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "이게 <b>보일 법칙</b> — 온도가 일정할 때 압력과 부피는 <b>반비례</b>해요 (1기압×24 = 2기압×12 = 4기압×6). 입자의 <b>속력은 그대로</b>, 공간이 좁아져 <b>충돌이 잦아진</b> 것뿐!";
+        "이게 <b>보일 법칙</b>, 온도가 일정할 때 압력과 부피는 <b>반비례</b>해요 (1기압×24 = 2기압×12 = 4기압×6). 입자의 <b>속력은 그대로</b>, 공간이 좁아져 <b>충돌이 잦아진</b> 것뿐!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -253,9 +253,9 @@ export const boyleSyringe: StepRenderer = (host, step, api) => {
     holdMs.p2 = near(12) ? holdMs.p2 + dt * 16.7 : 0;
     holdMs.p4 = near(6.2) || vol <= 6.4 ? holdMs.p4 + dt * 16.7 : 0;
     holdMs.back = near(24) || vol >= 23.4 ? holdMs.back + dt * 16.7 : 0;
-    if (holdMs.p2 > 400) collect("p2", "12 mL!", "2기압 — 부피가 절반(12 mL)");
-    if (goals.has("p2") && holdMs.p4 > 400) collect("p4", "6 mL!", "4기압 — 부피가 1/4(6 mL)");
-    if (goals.has("p4") && holdMs.back > 400) collect("back", "24 mL!", "당기면 도로 1기압 — 반비례!");
+    if (holdMs.p2 > 400) collect("p2", "12 mL!", "2기압, 부피가 절반(12 mL)");
+    if (goals.has("p2") && holdMs.p4 > 400) collect("p4", "6 mL!", "4기압, 부피가 1/4(6 mL)");
+    if (goals.has("p4") && holdMs.back > 400) collect("back", "24 mL!", "당기면 도로 1기압, 반비례!");
 
     // 샘플 기록
     const last = samples[samples.length - 1];

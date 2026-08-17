@@ -51,7 +51,7 @@ export const sepFunnel: StepRenderer = (host, step, api) => {
   });
   const waterPill = el("span", { text: "아래층 물 100%" });
   const toastEl = el("div", { class: "toast" });
-  const capEl = el("div", { class: "stage-cap", text: "방금 흔들어 뿌옇게 섞였어요 — 가만히 두면?" });
+  const capEl = el("div", { class: "stage-cap", text: "방금 흔들어 뿌옇게 섞였어요. 가만히 두면?" });
   const stage = el(
     "div",
     { class: "stage" },
@@ -70,13 +70,13 @@ export const sepFunnel: StepRenderer = (host, step, api) => {
   );
 
   const btnAct = el("button", { class: "swapbtn", attrs: { type: "button" } }, el("span", { text: "가만히 두기" }));
-  const chOil = el("button", { class: "hook-choice", attrs: { type: "button" }, text: "위층 식용유 — 왜 위에 뜰까?" });
-  const chWat = el("button", { class: "hook-choice", attrs: { type: "button" }, text: "아래층 물 — 왜 가라앉을까?" });
+  const chOil = el("button", { class: "hook-choice", attrs: { type: "button" }, text: "위층 식용유, 왜 위에 뜰까?" });
+  const chWat = el("button", { class: "hook-choice", attrs: { type: "button" }, text: "아래층 물, 왜 가라앉을까?" });
   const choices = el("div", { class: "hook-choices" }, chOil, chWat);
 
   const helper = el("div", {
     class: "helper",
-    html: "물과 식용유를 넣고 <b>방금 흔든</b> 분별 깔때기예요. 뿌연 혼합물 — 가만히 두면 어떻게 될까요?",
+    html: "물과 식용유를 넣고 <b>방금 흔든</b> 분별 깔때기예요. 뿌연 혼합물, 가만히 두면 어떻게 될까요?",
   });
   host.append(goalChips, helper, stage, btnAct, choices); // 지시(helper)는 조작 요소 위, 사용자 확정(2026-07-10)
   if (s.curio) host.appendChild(curioCard(s.curio));
@@ -133,7 +133,7 @@ export const sepFunnel: StepRenderer = (host, step, api) => {
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "밀도가 큰 물은 아래층, 작은 식용유는 위층 — 서로 섞이지 않는 액체는 <b>밀도 차</b>로 분리해요.";
+        "밀도가 큰 물은 아래층, 작은 식용유는 위층, 서로 섞이지 않는 액체는 <b>밀도 차</b>로 분리해요.";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -147,7 +147,7 @@ export const sepFunnel: StepRenderer = (host, step, api) => {
       span.textContent = "분리 완료!";
       btnAct.classList.add("done-static");
     } else if (waterDone) span.textContent = "기울여 (나)에 따르기 (꾹)";
-    else if (stopperOpen) span.textContent = "꼭지 꾹 — 경계 직전에 손 떼기!";
+    else if (stopperOpen) span.textContent = "꼭지 꾹, 경계 직전에 손 떼기!";
     else if (settled) span.textContent = "마개 열기";
     else if (settling) span.textContent = "층이 나뉘는 중…";
     else span.textContent = "가만히 두기";
@@ -166,8 +166,8 @@ export const sepFunnel: StepRenderer = (host, step, api) => {
     if (!settled || stopperOpen) return;
     stopperOpen = true;
     haptic(HAPTIC.tap);
-    toast("마개 열림 — 이제 공기가 들어올 수 있어요");
-    capEl.textContent = "꼭지를 꾹 — 경계면이 꼭지에 닿기 직전에 손 떼요!";
+    toast("마개 열림, 이제 공기가 들어올 수 있어요");
+    capEl.textContent = "꼭지를 꾹, 경계면이 꼭지에 닿기 직전에 손 떼요!";
     updateBtn();
   }
   function startHold(): void {
@@ -177,7 +177,7 @@ export const sepFunnel: StepRenderer = (host, step, api) => {
       dribbleT = 0.9;
       if (!dribbleToasted) {
         dribbleToasted = true;
-        toast("콸콸 안 나와요 — 마개를 먼저 열어야 해요");
+        toast("콸콸 안 나와요. 마개를 먼저 열어야 해요");
       }
     } else haptic(HAPTIC.tap);
   }
@@ -190,11 +190,11 @@ export const sepFunnel: StepRenderer = (host, step, api) => {
     if (dist <= 8) {
       waterDone = true;
       successT = 0.7;
-      capEl.textContent = "이제 위층 — 깔때기를 기울여 입구로!";
-      collect("water", "딱 맞춤!", "딱 맞췄어요 — 물만 (가)에 받았어요!");
+      capEl.textContent = "이제 위층, 깔때기를 기울여 입구로!";
+      collect("water", "딱 맞춤!", "딱 맞췄어요. 물만 (가)에 받았어요!");
       updateBtn();
     } else if (boundaryY > B0 + 4) {
-      toast("아직 물이 남았어요 — 경계가 꼭지에 닿기 직전까지!");
+      toast("아직 물이 남았어요. 경계가 꼭지에 닿기 직전까지!");
     }
   }
   function fail(): void {
@@ -203,7 +203,7 @@ export const sepFunnel: StepRenderer = (host, step, api) => {
     holding = false;
     haptic(HAPTIC.wrong);
     toast("기름까지 내려왔어요! 처음부터 다시");
-    capEl.textContent = "경계를 지나치면 (가)가 오염돼요 — 다시!";
+    capEl.textContent = "경계를 지나치면 (가)가 오염돼요. 다시!";
   }
   function layerTap(kind: "oil" | "water"): void {
     if (!settled) return;
@@ -211,13 +211,13 @@ export const sepFunnel: StepRenderer = (host, step, api) => {
     if (kind === "oil") {
       oilTapped = true;
       chOil.classList.add("sel");
-      toast("식용유 밀도 약 0.91 — 가벼워서 위층!");
+      toast("식용유 밀도 약 0.91, 가벼워서 위층!");
     } else {
       watTapped = true;
       chWat.classList.add("sel");
-      toast("물 밀도 1.00 — 무거워서 아래층!");
+      toast("물 밀도 1.00, 무거워서 아래층!");
     }
-    if (oilTapped && watTapped) collect("layer", "밀도 차!", "섞이지 않는 두 액체 — 밀도 큰 쪽이 아래!");
+    if (oilTapped && watTapped) collect("layer", "밀도 차!", "섞이지 않는 두 액체, 밀도 큰 쪽이 아래!");
   }
 
   // ---- 버튼 이벤트(키보드 대체 경로 포함) ----
@@ -273,7 +273,7 @@ export const sepFunnel: StepRenderer = (host, step, api) => {
     const py = e.clientY - r.top;
     const fx = fxOf();
     if (!settled) {
-      if (Math.abs(px - fx) < 70 && py > 40 && py < 260 && !settling) toast("뿌옇게 섞여 있어요 — 먼저 가만히 두기!");
+      if (Math.abs(px - fx) < 70 && py > 40 && py < 260 && !settling) toast("뿌옇게 섞여 있어요. 먼저 가만히 두기!");
       return;
     }
     // 마개
@@ -742,7 +742,7 @@ export const sepFunnel: StepRenderer = (host, step, api) => {
         settled = true;
         blobs.length = 0;
         haptic(HAPTIC.cross);
-        toast("층이 나뉘었어요 — 물 아래, 식용유 위!");
+        toast("층이 나뉘었어요. 물 아래, 식용유 위!");
         capEl.textContent = "마개를 먼저 연 다음, 꼭지로 아래층만!";
         choices.classList.add("show");
         window.setTimeout(() => choices.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80); // 화면 밖 등장 보정
@@ -770,7 +770,7 @@ export const sepFunnel: StepRenderer = (host, step, api) => {
         failing = false;
         failT = 0;
         boundaryY = B0;
-        toast("층은 그대로 — 다시 도전!");
+        toast("층은 그대로, 다시 도전!");
       }
     }
     // 꼭지 손잡이 회전
@@ -784,10 +784,10 @@ export const sepFunnel: StepRenderer = (host, step, api) => {
       if (oilVol <= 0) {
         oilDone = true;
         pourHold = false;
-        capEl.textContent = "물은 (가), 식용유는 (나) — 분리 성공!";
-        collect("oil", "따라 냄!", "위층은 입구로 — 경계 부근 액체가 섞이지 않게!");
+        capEl.textContent = "물은 (가), 식용유는 (나), 분리 성공!";
+        collect("oil", "따라 냄!", "위층은 입구로, 경계 부근 액체가 섞이지 않게!");
         if (!finished && !goals.has("layer"))
-          helper.innerHTML = "마지막 하나 — <b>층 라벨</b>을 탭해 밀도를 비교해 보세요.";
+          helper.innerHTML = "마지막 하나, <b>층 라벨</b>을 탭해 밀도를 비교해 보세요.";
         updateBtn();
       }
     }

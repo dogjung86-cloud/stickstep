@@ -133,13 +133,13 @@ export const sunLab: StepRenderer = (host, step, api) => {
     const hints: Record<string, string> = {
       spot: "그게 <b>흑점</b>! 주위보다 <b>온도가 낮아서</b> 어둡게 보여요. 흑점 수는 약 <b>11년 주기</b>로 변해요. 이제 <b>개기일식</b> 버튼을 눌러 봐요.",
       corona: "광구가 가려지니 <b>붉고 얇은 채층</b>과 <b>진주색 코로나</b>가 드러났어요! 가장자리의 불꽃(<b>홍염</b>)도 보이죠? 이제 슬라이더를 <b>활발한 시기</b>로!",
-      storm: "아래 그래프를 봐요 — 흑점 수가 늘자 <b>오로라·무선 통신 장애·정전</b>이 나란히 치솟았죠? 활발한 시기엔 <b>태양풍</b>이 강해져 지구까지 영향을 줘요.",
+      storm: "아래 그래프를 봐요. 흑점 수가 늘자 <b>오로라·무선 통신 장애·정전</b>이 나란히 치솟았죠? 활발한 시기엔 <b>태양풍</b>이 강해져 지구까지 영향을 줘요.",
     };
     if (!finished) helper.innerHTML = hints[id] ?? "";
     if (goals.size === 3 && !finished) {
       finished = true;
       helper.innerHTML =
-        "정리! 표면(광구)엔 <b>쌀알 무늬·흑점</b>, 대기(채층·코로나)에선 <b>홍염·플레어</b>. 활동이 활발하면 <b>흑점 수↑ · 코로나 커짐 · 태양풍 강해짐</b> — 그 영향이 지구까지 닿아요. 아래 <b>궁금해요 카드</b>도 눌러 보세요!";
+        "정리! 표면(광구)엔 <b>쌀알 무늬·흑점</b>, 대기(채층·코로나)에선 <b>홍염·플레어</b>. 활동이 활발하면 <b>흑점 수↑ · 코로나 커짐 · 태양풍 강해짐</b>, 그 영향이 지구까지 닿아요. 아래 <b>궁금해요 카드</b>도 눌러 보세요!";
       api.recordQuiz(true);
       api.enableCTA(s.cta ?? "개념 정리하기");
     }
@@ -362,7 +362,7 @@ export const sunLab: StepRenderer = (host, step, api) => {
         ctx.font = "700 11px Pretendard, sans-serif";
         ctx.textAlign = "center";
         ctx.fillStyle = "rgba(255,236,200,.95)";
-        ctx.fillText("흑점 — 주위보다 온도가 낮아요", cx, cy + R + 26);
+        ctx.fillText("흑점, 주위보다 온도가 낮아요", cx, cy + R + 26);
       }
     }
 
