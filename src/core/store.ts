@@ -11,6 +11,10 @@ export interface ExamRecord {
   attempts: number; // 제출 완료 횟수 — 1회 무료, 재응시는 프리미엄
   best: number; // 최고 점수(100점 만점)
   conquered: boolean; // 단원 100% 정복 상태로 응시해 얻은 인증 배지
+  // 무중복 순환 출제 이력(2026-08-22) — 제출 완료한 시험지의 문항 id를 출제 순서대로 누적.
+  // drawFreshExamItems가 이걸 빼고 뽑아 재응시마다 새 문제를 보장하고, 은행을 한 바퀴 돌면
+  // 직전 응시분만 남기고 리셋한다. 구버전 저장분엔 없다(없으면 빈 이력으로 취급).
+  seen?: string[];
 }
 
 /** 오답노트 한 항목 — 채점 순간의 문항 스냅샷(콘텐츠가 수정·삭제돼도 노트는 스스로 렌더 가능). */
@@ -374,12 +378,15 @@ export function isExamRetakeLocked(examId: string): boolean {
   return examRecordOf(examId).attempts >= 1 && !isPremium() && !state.reviewMode;
 }
 
-/** 시험 제출 처리 — 응시 횟수·최고 점수·정복 인증 기록.
- *  XP는 스타 게임 문법: 신기록 갱신분(새 최고점 − 이전 최고점)만 지급해 파밍을 막는다. */
+/** 시험 제출 처리 — 응시 횟수·최고 점수·정복 인증·출제 이력 기록.
+ *  XP는 스타 게임 문법: 신기록 갱신분(새 최고점 − 이전 최고점)만 지급해 파밍을 막는다.
+ *  seenIds = drawFreshExamItems가 응시 시작 때 계산한 새 출제 이력 전문(누적분 포함) —
+ *  제출 시점에 통째로 교체 저장한다(append가 아님 — 리셋 트림도 이 값에 이미 반영돼 있다). */
 export function recordExamResult(
   examId: string,
   score: number,
   conqueredNow: boolean,
+  seenIds?: string[],
 ): { gained: number; newBest: boolean } {
   if (!state.exams) state.exams = {};
   const prev = examRecordOf(examId);
@@ -389,6 +396,7 @@ export function recordExamResult(
     attempts: prev.attempts + 1,
     best: Math.max(prev.best, score),
     conquered: prev.conquered || conqueredNow,
+    seen: seenIds ?? prev.seen,
   };
   touchStudyDay();
   state.totalXp += gained;

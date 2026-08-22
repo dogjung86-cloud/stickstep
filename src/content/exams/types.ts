@@ -82,6 +82,66 @@ export function drawExamItems(def: ExamDef): ExamItem[] {
   return chosen.slice(0, def.pick);
 }
 
+/** 무중복 순환 추출(2026-08-22 — 레슨 균형판) — 재응시마다 새로운 시험지를 주되, 소단원 균형은
+ *  drawExamItems와 같은 쿼터 문법(레슨당 floor(pick/n) + 잔여 1개씩 랜덤 서로 다른 레슨)을 모든
+ *  응시에서 그대로 지킨다. 방법 = 각 레슨 쿼터를 **그 레슨에서 아직 안 나온 문항(unseen)부터**
+ *  채운다 → 같은 문항은 그 레슨 은행을 다 돌 때까지 다시 나오지 않는다(레슨 32문항·쿼터 4 = 8응시).
+ *  (초판의 전역 필터·전역 리셋은 은행 마지막 응시가 "남은 문항 전부"라 레슨 풀이 비균등한 시험에서
+ *  파트가 통째로 비는 편중이 생겨 폐기 — u3 실측 8/6/4/2/0.)
+ *  레슨 은행이 바닥나면 그 레슨만 이력을 리셋하되, **직전 완주 시험지(seen 꼬리 pick개)는 어느
+ *  경로로도 제외**해 연속 응시 무중복을 절대 조건으로 유지한다(리셋 직전 시험지의 그 레슨 문항은
+ *  다음 한 바퀴를 쉬어 간다 — 의도). 리셋 채움은 옛 기출 **셔플**(오래된 순 고정은 두 바퀴째가
+ *  첫 바퀴의 재방송이 된다). seen에는 풀 개편(v2 재출제)으로 사라진 id가 남을 수 있어 먼저 걸러낸다.
+ *  반환 seen = 리셋 정리 + 이번 출제분까지 반영된 새 목록 — 호출자(exam.ts)가 **제출 완료
+ *  시점에만** 저장한다(중도 이탈한 시험지는 은행을 소진하지 않는다). */
+export function drawFreshExamItems(def: ExamDef, seen: readonly string[]): { items: ExamItem[]; seen: string[] } {
+  const byId = new Map(def.pool.map((it) => [it.id, it]));
+  const eff = seen.filter((id) => byId.has(id));
+  const tail = new Set(eff.slice(-def.pick)); // 직전 완주 시험지
+  const seenSet = new Set(eff);
+
+  const byLesson = new Map<string, ExamItem[]>();
+  for (const it of def.pool) {
+    const g = byLesson.get(it.lessonId);
+    if (g) g.push(it);
+    else byLesson.set(it.lessonId, [it]);
+  }
+  const lessonIds = [...byLesson.keys()];
+  const per = Math.floor(def.pick / Math.max(1, lessonIds.length));
+  const extra = def.pick - per * lessonIds.length;
+  const extraPicks = new Set(shuffle([...lessonIds]).slice(0, extra));
+
+  const chosen: ExamItem[] = [];
+  const spareFresh: ExamItem[] = []; // 쿼터 밖 잔여 — 레슨 풀이 쿼터보다 작은 합성 풀 방어(실풀 미도달)
+  const spareOld: ExamItem[] = [];
+  const reset = new Set<string>();
+  for (const lid of lessonIds) {
+    const g = byLesson.get(lid)!;
+    const want = per + (extraPicks.has(lid) ? 1 : 0);
+    const unseen = shuffle(g.filter((it) => !seenSet.has(it.id)));
+    const old = shuffle(g.filter((it) => seenSet.has(it.id) && !tail.has(it.id)));
+    const last = g.filter((it) => tail.has(it.id)); // 최후 수단 — 레슨 은행 ≥ 2×쿼터인 실풀에선 도달 불가
+    if (unseen.length < want) reset.add(lid); // 이 레슨 은행 한 바퀴 완료
+    chosen.push(...[...unseen, ...old, ...last].slice(0, want));
+    spareFresh.push(...unseen.slice(want));
+    spareOld.push(...old.slice(Math.max(0, want - unseen.length)));
+  }
+  shuffle(spareFresh);
+  shuffle(spareOld);
+  while (chosen.length < def.pick && spareFresh.length) chosen.push(spareFresh.pop()!);
+  while (chosen.length < def.pick && spareOld.length) chosen.push(spareOld.pop()!);
+
+  const order = new Map(lessonIds.map((l, i) => [l, i]));
+  // sort는 안정 정렬 — 시험지는 진도 순, 같은 레슨 안은 랜덤(drawExamItems와 동일)
+  chosen.sort((a, b) => order.get(a.lessonId)! - order.get(b.lessonId)!);
+  const items = chosen.slice(0, def.pick);
+
+  const drawn = new Set(items.map((it) => it.id));
+  // 리셋된 레슨은 옛 이력을 걷어낸다 — 직전 시험지(tail)만 예외로 남긴다(연속 무중복의 근거)
+  const kept = eff.filter((id) => !drawn.has(id) && (!reset.has(byId.get(id)!.lessonId) || tail.has(id)));
+  return { items, seen: [...kept, ...items.map((it) => it.id)] };
+}
+
 function shuffle<T>(arr: T[]): T[] {
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

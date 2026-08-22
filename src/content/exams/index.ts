@@ -32,7 +32,7 @@ import { S1U1_EXAM } from "./s1u1";
 import { S1U2_EXAM } from "./s1u2";
 
 export type { ExamDef, ExamItem, ExamItemType } from "./types";
-export { drawExamItems } from "./types";
+export { drawExamItems, drawFreshExamItems } from "./types";
 
 const EXAMS: Record<string, ExamDef> = {
   u1: U1_EXAM, // 신규 출제 v2 — 160제 = 32×5(num 0 · word 0, u1.ts 헤더 참조)

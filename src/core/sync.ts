@@ -78,10 +78,21 @@ function mergeExams(a: Record<string, ExamRecord>, b: Record<string, ExamRecord>
           attempts: Math.max(ea.attempts, eb.attempts),
           best: Math.max(ea.best, eb.best),
           conquered: ea.conquered || eb.conquered,
+          seen: mergeSeen(ea.seen, eb.seen),
         }
       : eb;
   }
   return out;
+}
+
+// 무중복 출제 이력 — 합집합(로컬 순서 먼저, 서버의 새 항목을 뒤에). 두 기기가 서로 다른 시험지를
+// 풀었어도 "이미 나온 문제"를 잃지 않는다. 합쳐진 이력이 은행을 다 덮으면 다음 draw가 알아서
+// 리셋하므로(drawFreshExamItems) 상한 관리가 따로 필요 없다.
+function mergeSeen(a?: string[], b?: string[]): string[] | undefined {
+  if (!a?.length) return b?.length ? b : undefined;
+  if (!b?.length) return a;
+  const has = new Set(a);
+  return [...a, ...b.filter((id) => !has.has(id))];
 }
 
 function mergeMinigame(a: Record<string, number>, b: Record<string, number>): Record<string, number> {

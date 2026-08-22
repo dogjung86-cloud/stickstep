@@ -5,7 +5,7 @@ import { el, clear, countUp } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { makeAnswerPad, checkAnswer } from "../ui/mathKit";
-import { examForUnit, drawExamItems } from "../content/exams";
+import { examForUnit, drawFreshExamItems } from "../content/exams";
 import type { ExamDef, ExamItem } from "../content/exams";
 import { findUnit, unitProgress, findLesson } from "../content/curriculum";
 import type { Unit } from "../content/curriculum";
@@ -144,7 +144,7 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
     const rules = el(
       "div",
       { class: "ex-rules" },
-      ruleRow("layers", `매번 새로운 ${def.pick}문제`, `문제 은행에서 ${partWord} 파트를 골고루 섞어 새로 뽑아요`),
+      ruleRow("layers", `매번 새로운 ${def.pick}문제`, `${partWord} 파트를 골고루 섞고, 이미 나온 문제는 피해서 새 문제부터 뽑아요`),
       ruleRow("play", "푸는 동안 해설 없음", "실전처럼 몰입해서 끝까지 풀어요. 채점은 제출 후 한 번에!"),
       ruleRow("route", "제출하면 약점 진단", "점수와 함께 파트별 정오표, 전 문항 해설을 받아요"),
     );
@@ -220,8 +220,13 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
     return order;
   }
 
+  // 이번 시험지까지 반영된 출제 이력(무중복 순환) — 제출 완료 때만 store에 실린다(중도 이탈 미기록).
+  let pendingSeen: string[] | null = null;
+
   function startExam(): void {
-    session = drawExamItems(def).map((item) => ({ item, order: displayOrder(item), resp: null, good: false }));
+    const fresh = drawFreshExamItems(def, examRecordOf(def.id).seen ?? []);
+    pendingSeen = fresh.seen;
+    session = fresh.items.map((item) => ({ item, order: displayOrder(item), resp: null, good: false }));
     qi = 0;
     phase = "exam";
     cta.classList.remove("gold");
@@ -410,7 +415,7 @@ function buildExamScreen(def: ExamDef, unit: Unit, opts: ExamScreenOpts): Screen
     const correct = session.filter((q) => q.good).length;
     const score = Math.round((correct / session.length) * 100);
     const conqueredNow = unitProgress(unit) === 100;
-    const { gained, newBest } = recordExamResult(def.id, score, conqueredNow);
+    const { gained, newBest } = recordExamResult(def.id, score, conqueredNow, pendingSeen ?? undefined);
     later(() => {
       haptic(HAPTIC.done);
       renderResult(score, correct, gained, newBest, conqueredNow);
