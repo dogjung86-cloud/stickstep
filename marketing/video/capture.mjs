@@ -644,6 +644,59 @@ BEATS.exam = async (page, rec) => {
   await rec.stop();
 };
 
+// bEr — 단원 종합 평가 GIF 전용(2026-08-22, 유튜브 커뮤니티 짤): 인트로 카드 → 시작 →
+// 문항 3개를 **실탭**으로 푼다(보기 선택 .sel 하이라이트·CTA 팝이 화면에 남게 — 본편 bE-exam은
+// evaluate 즉발 클릭 2문항이라 GIF 호흡이 없다. 본편을 늘리면 카드 길이가 변하므로 별도 비트).
+// 시험 화면은 흰 UI — make-gifs.mjs의 full 크롭 모드(무대 검출 비적용)와 세트다.
+BEATS.examgif = async (page, rec) => {
+  await injectKit(page);
+  await page.evaluate(async () => {
+    const { nav } = await import("/src/core/router.ts");
+    const { examScreen } = await import("/src/screens/exam.ts");
+    nav.go(examScreen("u3", { onExit: () => {}, onOpenLesson: () => {}, onPaywall: () => {} }));
+  });
+  await sleep(1000);
+  await rec.start("bEr-exam");
+  await sleep(1200); // 인트로 카드(단원 종합 평가 히어로 + 규칙 3줄)
+  const start = await box(page, ".btn.cta");
+  await tap(page, start.x + start.width / 2, start.y + start.height / 2, { settle: 1000 });
+  for (let i = 0; i < 3; i++) {
+    await page.waitForSelector(".screen.active .ex-q", { timeout: 8000 });
+    await sleep(i === 0 ? 950 : 800); // 문제 읽는 호흡
+    const kind = await page.evaluate(() => {
+      const a = document.querySelector(".screen.active");
+      if (a.querySelector(".opts .opt")) return "opt";
+      if (a.querySelector(".ex-chip")) return "chip";
+      if (a.querySelector(".mnp-k")) return "num";
+      return "none";
+    });
+    // 그림 문항은 조작부가 폴드 밑 — 부드럽게 스크롤해 프레임에 넣는다
+    const target = kind === "opt" ? ".opts" : kind === "chip" ? ".ex-bank" : ".mnp-k";
+    await page.evaluate((sel) => {
+      document.querySelector(`.screen.active ${sel}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, target);
+    await sleep(700);
+    if (kind === "opt") {
+      const n = await page.locator(".screen.active .opts .opt").count();
+      const b = await page.locator(".screen.active .opts .opt").nth(Math.min(i, n - 1)).boundingBox();
+      await tap(page, b.x + b.width / 2, b.y + Math.min(b.height / 2, 40), { settle: 650 });
+    } else if (kind === "chip") {
+      const b = await page.locator(".screen.active .ex-chip").first().boundingBox();
+      await tap(page, b.x + b.width / 2, b.y + b.height / 2, { settle: 650 });
+    } else if (kind === "num") {
+      for (const d of ["2", "5"]) {
+        const b = await page.locator(".screen.active .mnp-k").filter({ hasText: new RegExp(`^${d}$`) }).first().boundingBox();
+        await tap(page, b.x + b.width / 2, b.y + b.height / 2, { settle: 280 });
+      }
+      await sleep(300);
+    }
+    const cta = await box(page, ".btn.cta");
+    await tap(page, cta.x + cta.width / 2, cta.y + cta.height / 2, { settle: 550 });
+  }
+  await sleep(800); // 4번째 문항이 뜬 상태로 마무리
+  await rec.stop();
+};
+
 // bN — 오답노트 (wrongNotes 시딩된 페이지: 복습 탭 → 목록 → 다시 풀기 → 해결)
 BEATS.notebook = async (page, rec) => {
   await injectKit(page);
@@ -710,10 +763,11 @@ const bootHome = async (page) => {
 const pageB = await makePage(false);
 const recB = makeRecorder(pageB);
 await recB.attach();
-if (runOn("enter") || runOn("exam")) {
+if (runOn("enter") || runOn("exam") || runOn("examgif")) {
   await bootHome(pageB);
   if (runOn("enter")) await BEATS.enter(pageB, recB);
   if (runOn("exam")) await BEATS.exam(pageB, recB); // enter 직후 — 지도가 시험 노드에 스크롤된 상태
+  if (runOn("examgif")) await BEATS.examgif(pageB, recB); // GIF 전용(문항 3개 실탭)
 }
 if (runOn("notebook")) {
   const pageC = await makePage(false, { wrongNotes: WRONG_NOTES });

@@ -29,6 +29,7 @@ const SEQ = [
   ["b5-laser", 0.35, 0.7],
   ["b8-quiz", 0.1, 1.2],
   // GIF 전용 비트(make-gifs.mjs만 사용 — 본편 조립에는 안 들어간다)
+  ["bEr-exam", 0.15, 0.4],
   ["b1r-heat", 0.3, 0.5],
   ["b2r-matter", 0.3, 0.5],
   ["b6r-color", 0.2, 0.5],
@@ -38,8 +39,12 @@ const SEQ = [
   ["b10r-leaf", 0.2, 0.3],
 ];
 
+// 한 비트만 다시: BEAT=bEr-exam node rebuild-beats.mjs (폴더명 기준 — capture의 비트 키와 다르다)
+const ONLY = (process.env.BEAT || "").split(",").filter(Boolean);
+
 const FPS = 30;
 for (const [name, trim, tail, cap] of SEQ) {
+  if (ONLY.length && !ONLY.includes(name)) continue;
   const dir = path.join(CAP, name);
   if (!fs.existsSync(dir)) { console.log(name, "SKIP(캡처 없음)"); continue; }
   const times = JSON.parse(fs.readFileSync(path.join(dir, "times.json"), "utf8"));

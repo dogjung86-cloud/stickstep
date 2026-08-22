@@ -53,6 +53,10 @@ const JOBS = [
   { name: "gif-wave", src: "b9r-wave.mp4", ss: 0.4, t: 7.5, w: 460, fps: 13 },
   // 밸브를 하나씩 여는 전 과정을 담아 길다 — 폭·fps를 조금 낮춰 용량을 잡는다
   { name: "gif-photosynthesis", src: "b10r-leaf.mp4", ss: 0.3, t: 9.4, w: 450, fps: 13, controls: true },
+  // full: true = **풀스크린 크롭**(2026-08-22): 시험처럼 화면 전체가 흰 UI인 비트는 다크 무대
+  // 검출(detectCrop·stageTrack)이 안 통한다 — 1080×1920 프레임을 통째로 쓴다(헤더 진행바·CTA까지가
+  // 곧 장면). 길고 폭이 커서 fps·폭을 낮춰 용량을 잡는다.
+  { name: "gif-exam", src: "bEr-exam.mp4", ss: 0.0, t: 16, w: 400, fps: 12, full: true },
 ];
 const PAD = 24; // 조작부 포함 크롭의 흰 프레임 두께(device px — 버튼 아랫변이 잘리지 않게)
 
@@ -176,13 +180,19 @@ function detectCrop(mp4, at, withControls, ctrlH) {
   return { x, y, w: even(x2 - x + 1), h: even(y2 - y + 1), note: `무대+조작부 · 조작 ${bot + 1}~${cBot}` };
 }
 
+// 한 GIF만 다시: GIF=gif-exam node make-gifs.mjs
+const ONLY = (process.env.GIF || "").split(",").filter(Boolean);
+
 for (const j of JOBS) {
+  if (ONLY.length && !ONLY.includes(j.name)) continue;
   const src = path.join(RAW, j.src);
   if (!fs.existsSync(src)) { console.log(`SKIP ${j.name} — ${j.src} 없음(해당 비트를 먼저 캡처·빌드할 것)`); continue; }
   const dur = probeDur(src);
   const t = Math.min(j.t, Math.max(1.5, dur - j.ss - 0.05));
-  const segs = stageTrack(src, j.ss, t);
-  const box = detectCrop(src, j.ss + 0.1, !!j.controls, j.ctrlH); // 기준 = 첫 구간
+  const segs = j.full ? [{ at: j.ss, top: 0 }] : stageTrack(src, j.ss, t);
+  const box = j.full
+    ? { x: 0, y: 0, w: W, h: H, note: "풀스크린(흰 UI — 무대 검출 비적용)" }
+    : detectCrop(src, j.ss + 0.1, !!j.controls, j.ctrlH); // 기준 = 첫 구간
 
   // 크롭 y를 구간마다 보정해 무대를 고정. h는 전 구간이 화면 안에 들어오도록 줄인다.
   const deltas = segs.map((s) => s.top - segs[0].top);

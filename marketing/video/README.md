@@ -114,7 +114,10 @@ node assemble2.mjs
 
 - **`NOCAP=1 NOFINGER=1`은 항상 붙인다** — 앱 화면에 굽는 구식 자막 필과 터치 링을 끈다(v3에서 폐기).
 - 한 비트만 다시: `BEAT=moon` (capture·compose 공통, 쉼표 구분).
-  키 = `intro enter exam notebook heat matter boyle moon laser quiz` (+ compose는 `end`).
+  키 = `intro enter exam notebook heat matter boyle moon laser quiz` (+ compose는 `end`,
+  + GIF 전용 `examgif heatrt matterrt colorgif molgif atomgif wavegif leafgif`).
+  rebuild-beats·make-gifs도 부분 실행 지원(2026-08-22): `BEAT=<폴더명> node rebuild-beats.mjs`
+  (예 `bEr-exam` — capture의 비트 키가 아니라 cap/ 폴더명 기준), `GIF=<잡 이름> node make-gifs.mjs`.
 - 카피만 고칠 때는 **③④만** 다시 돌리면 된다(2분). 캡처는 그대로 재사용.
 - BGM 교체는 `BGM=<mp3 경로> node assemble2.mjs`. 기본값은 전용 발주곡 `audio/bgm-edu-c.mp3`
   (모던 테크 프로모 톤), 대안 후보는 `BGM=audio/bgm-edu-d.mp3`(신스팝, 더 통통 튐).
@@ -178,9 +181,10 @@ node assemble2.mjs
 
 ## 3.5 GIF 짤 (유튜브 커뮤니티·SNS) — `make-gifs.mjs`
 
-**10종**: heat-particles(분자 운동) · ice-boil(상태 변화) · boyle-syringe(기체 압력) · moon-phase(달 위상 3D) ·
+**11종**: heat-particles(분자 운동) · ice-boil(상태 변화) · boyle-syringe(기체 압력) · moon-phase(달 위상 3D) ·
 laser-reflect(반사) · color-mix(빛의 삼원색) · molecule(분자 조립) · atom(원자 조립) · wave(파동) ·
-**photosynthesis(광합성 — 생물 트랙)**.
+**photosynthesis(광합성 — 생물 트랙)** · **exam(단원 종합 평가 풀이 — 2026-08-22, 유튜브 커뮤니티
+개발 근황 글용)**.
 산출 `out/gifs/*.gif` + `chk-*.jpg`(중간 프레임 눈검수 샷), 로컬 보존은 `output/marketing-video/`.
 
 - **크롭은 자동 검출**(2026-08-05 — 손으로 적어 둔 좌표가 전부 어긋나 있었다: ice-boil은 무대 아래
@@ -218,11 +222,22 @@ laser-reflect(반사) · color-mix(빛의 삼원색) · molecule(분자 조립) 
   (차순위 후보 = `cellJobLab` u2l4 — 신경 신호·적혈구 운반·상피 타일링이 동시에 도는 세포 랩, 드래그 3회.
   `circulationLab`·`digestJourneyLab`은 손을 떼면 멈춰 GIF 부적합. `anHeartLab`(뛰는 심장)은 registry에만
   있고 살아 있는 레슨에 없어 제외 — 앱에서 갈 수 없는 화면은 마케팅에 쓰지 않는다.)
+- **exam GIF = `BEATS.examgif`(bEr-exam) + make-gifs `full: true` 크롭 모드**(2026-08-22): 시험 화면은
+  흰 UI 전면이라 다크 무대 검출(detectCrop·stageTrack)이 안 통한다 → 1080×1920 프레임을 통째로 쓴다
+  (헤더 진행바 "N / 20"·하단 CTA까지가 곧 장면). 비트는 examScreen("u3") 직접 진입(함정 9) →
+  인트로 카드 1.2s → 시험 시작 → **문항 3개 실탭**(보기 .sel 하이라이트·CTA 팝이 남게 — 본편
+  bE-exam은 evaluate 즉발 클릭 2문항이라 GIF 호흡이 없고, 본편을 늘리면 카드 길이가 변하므로 전용
+  비트. 왕복 비트와 같은 이유). 유형 무관 자동 응답(opt는 문항마다 다른 보기·chip 첫 칩·num은
+  2→5 두 키), 그림 문항은 조작부로 smooth scrollIntoView. 문항 추출이 매번 랜덤이라 캡처마다 구성이
+  달라진다 — 그림 문항이 하나는 걸리게 나올 때까지 재캡처해도 되고, 2026-08-22 출하분은 2번에 입자
+  운동 모형(다크 그림)이 걸린 테이크. 문항 전환 순간 흰 화면 1프레임(~0.08s)은 DOM 스왑 페인트라
+  자연 깜빡임으로 수용. 재생성 = `BEAT=examgif` 캡처 → `BEAT=bEr-exam node rebuild-beats.mjs` →
+  `GIF=gif-exam node make-gifs.mjs`(13.2s·400px·12fps·1.5MB).
 - **GIF 전용 랩 5종은 `capture.mjs`의 `BEATS.colorgif/molgif/atomgif/wavegif/leafgif`**. 랩 스텝 진입은
   `toLab(page, 레슨id, 스텝type)` — 스텝 배열에서 타입으로 인덱스를 찾으므로 콘텐츠가 바뀌어도 안 깨진다.
   **대상 레슨은 `DONE_IDS`에 반드시 넣을 것**(완료 시딩 → freeNav → `.xbtn.fwd`가 생겨야 점프된다).
-- 재생성: `BEAT=heatrt,matterrt,colorgif,molgif,atomgif,wavegif,leafgif` 캡처 → `node rebuild-beats.mjs`
-  → `node make-gifs.mjs`.
+- 재생성: `BEAT=examgif,heatrt,matterrt,colorgif,molgif,atomgif,wavegif,leafgif` 캡처 →
+  `node rebuild-beats.mjs` → `node make-gifs.mjs`.
 
 ## 4. 기각된 안 (재제안 금지)
 
