@@ -12,7 +12,9 @@ import { UNIT3 } from "./unit3";
 import { UNIT3_V3 } from "./unit3v3";
 const u3v3On = (() => {
   try {
-    return sessionStorage.getItem("ss.u3v3") === "1" || new URLSearchParams(location.search).has("u3v3");
+    // 주소 ?u3v3로 켜면 세션에도 심어 둔다(해시 라우팅이 주소를 다시 쓰거나 새로고침해도 같은 탭에선 유지).
+    if (new URLSearchParams(location.search).has("u3v3")) sessionStorage.setItem("ss.u3v3", "1");
+    return sessionStorage.getItem("ss.u3v3") === "1";
   } catch {
     return false;
   }
