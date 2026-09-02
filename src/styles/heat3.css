@@ -1,0 +1,144 @@
+/* heat3.css — 중1 Ⅲ 「열」 v3 재제작(2026-09-03) 공용 크롬(랩 공통 뼈대) + 랩별 세부.
+   접두 규약: 킷 공통 .ht3-*, 랩별 .pdl-(입자 다이얼) .cgl-(열량계 그래프) .rrl-(막대 경주)
+   .apl-(냉난방기 설치) .hrl-(가열 레이스) .bml-(바이메탈). 훅은 heat3-hook.css(.hk3-).
+   선점 검사(2026-09-03): src/styles·steps·ui 전수 grep에서 위 접두 0건(hh3-는 타 시트 선점이라 회피). */
+
+/* ── 공통: 밝은 관찰 보드(plant3 .p3-board 문법 — 다크 .stage가 과한 소형 랩용) ── */
+.ht3-board {
+  background: linear-gradient(180deg, #FFF9F5, #FFF1EA);
+  border: 1px solid #F5D9CD;
+  border-radius: var(--r-lg, 20px);
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.ht3-board svg { width: 100%; height: auto; display: block; }
+.ht3-board.ht3-dark {
+  background: #101A33;
+  border-color: rgba(120, 150, 190, 0.3);
+  padding: 0;
+}
+
+/* 목표 칩 톤(열 계열) */
+.pn-badge.h3 b { color: var(--subj-heat, #FF6B4A); }
+.pn-badge.h3.on {
+  border-color: var(--subj-heat, #FF6B4A);
+  box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.14);
+}
+
+/* 공용 버튼·세그·슬라이더 */
+.ht3-btnrow { display: grid; margin-top: 12px; }
+.ht3-btn {
+  height: 50px;
+  border-radius: 15px;
+  border: 1.5px solid var(--subj-heat, #FF6B4A);
+  background: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--subj-heat-press, #E8431F);
+  box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.1);
+  transition: transform 0.12s ease, opacity 0.25s;
+}
+.ht3-btn:active { transform: scale(0.97); }
+.ht3-btn:disabled { opacity: 0.4; box-shadow: none; border-color: var(--n200, #E5E8EB); color: var(--n600, #6B7684); }
+.ht3-segrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.ht3-seg {
+  height: 46px;
+  border-radius: 13px;
+  border: 1.5px solid var(--subj-heat, #FF6B4A);
+  background: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--subj-heat-press, #E8431F);
+  box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.1);
+  transition: transform 0.12s ease, border-color 0.2s, color 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+.ht3-seg:active { transform: scale(0.97); }
+.ht3-seg:disabled { opacity: 0.4; box-shadow: none; border-color: var(--n200, #E5E8EB); color: var(--n600, #6B7684); }
+.ht3-sliderrow { margin-top: 10px; padding: 0 4px; display: grid; gap: 2px; }
+.ht3-sliderlabels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 800; color: var(--n600, #6B7684); }
+.ht3-sliderlabels span:nth-child(2) { color: var(--ink, #191F28); font-size: 13px; }
+.ht3-slider { width: 100%; height: 34px; accent-color: var(--subj-heat, #FF6B4A); }
+.ht3-slider:disabled { opacity: 0.45; }
+
+/* ── L1 particleDialLab(.pdl-) ──────────────────────────────────── */
+.pdl-board { padding: 8px; }
+.pdl-p { transition: cx 0.08s linear, cy 0.08s linear, fill 0.3s ease; }
+.pdl-flame { opacity: 0; transition: opacity 0.35s ease, transform 0.35s ease; }
+.pdl-snow { transition: opacity 0.35s ease; }
+.pdl-merc { transition: transform 0.35s ease; }
+.pdl-liq { transition: fill 0.4s ease; }
+.pdl-q { margin-top: 12px; }
+
+/* ── L2 contactGraphLab(.cgl-) ──────────────────────────────────── */
+.cgl-board { padding: 8px; display: grid; gap: 8px; }
+.cgl-graph {
+  background: #FFFFFF;
+  border: 1px solid #F1E0D8;
+  border-radius: 12px;
+  padding: 6px 6px 2px;
+}
+.cgl-hotliq, .cgl-coldliq { transition: fill 0.2s linear; }
+.cgl-ph, .cgl-pc { transition: cx 0.09s linear, cy 0.09s linear, fill 0.3s ease; }
+.cgl-eq { transition: opacity 0.4s ease; }
+.cgl-q { margin-top: 12px; }
+
+/* ── L3 rodRaceLab(.rrl-) ───────────────────────────────────────── */
+.rrl-board { padding: 0; }
+.rrl-front { transition: width 0.15s linear; }
+.rrl-flame { opacity: 0.35; transition: opacity 0.3s ease; }
+.rrl-board.heating .rrl-flame { opacity: 1; animation: ht3Flicker 0.7s ease-in-out infinite; }
+@keyframes ht3Flicker {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.12); }
+}
+.rrl-q { margin-top: 12px; }
+
+/* ── L3 acPlaceLab(.apl-) ──────────────────────────────────────── */
+.apl-board { padding: 8px; transition: background 0.5s ease; }
+.apl-board.flowing { background: linear-gradient(180deg, #FFF3EC, #FFF9F5); }
+.apl-board.stuck { background: linear-gradient(180deg, #F1F3F5, #FFF1EA); }
+.apl-slot { transition: opacity 0.3s ease; }
+.apl-dev { animation: ht3Pop 0.4s var(--spring-soft, ease-out) both; transform-box: fill-box; transform-origin: center; }
+@keyframes ht3Pop {
+  0% { transform: scale(0.6); opacity: 0.3; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.apl-q { margin-top: 12px; }
+
+/* ── L4 heatRaceLab(.hrl-) ──────────────────────────────────────── */
+.hrl-board { padding: 8px; display: grid; gap: 8px; }
+.hrl-graph {
+  background: #FFFFFF;
+  border: 1px solid #F1E0D8;
+  border-radius: 12px;
+  padding: 6px 6px 2px;
+}
+.hrlfw-flame, .hrlfo-flame { opacity: 0; transition: opacity 0.35s ease; }
+.hrl-board.heating .hrlfw-flame, .hrl-board.heating .hrlfo-flame { opacity: 1; animation: ht3Flicker 0.7s ease-in-out infinite; }
+.hrlw-liq, .hrlo-liq { transition: fill 0.2s linear; }
+.hrl-offline, .hrl-offtxt { transition: opacity 0.3s ease; }
+.hrl-q { margin-top: 12px; }
+
+/* ── L5 bimetalLab(.bml-) ───────────────────────────────────────── */
+.bml-board { padding: 8px; }
+.bml-flame, .bmlc-flame { opacity: 0; transition: opacity 0.35s ease; }
+.bml-board.heating .bml-flame, .bml-board.hot .bmlc-flame { opacity: 1; animation: ht3Flicker 0.7s ease-in-out infinite; }
+.bml-tape-straight { transition: opacity 0.6s ease; }
+.bml-tape-bent { opacity: 0; transition: opacity 0.9s ease 0.4s; }
+.bml-board.bent .bml-tape-straight { opacity: 0; }
+.bml-board.bent .bml-tape-bent { opacity: 1; }
+.bml-strip { transform-box: fill-box; transform-origin: 0% 50%; transition: transform 0.9s cubic-bezier(0.3, 0, 0.4, 1); }
+.bml-board.hot .bml-strip { transform: rotate(9deg); }
+.bml-bulb { transition: fill 0.4s ease; }
+.bml-glow { transition: opacity 0.3s ease; }
+.bml-board.hot .bml-bulb { fill: #E9EDF2; }
+.bml-board.hot .bml-glow { opacity: 0; }
+.bml-q { margin-top: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rrl-board.heating .rrl-flame, .hrl-board.heating .hrlfw-flame, .hrl-board.heating .hrlfo-flame,
+  .bml-board.heating .bml-flame, .bml-board.hot .bmlc-flame { animation: none; }
+  .apl-dev { animation: none; }
+  .bml-strip { transition-duration: 0.2s; }
+}

@@ -1,0 +1,76 @@
+/* heat3-hook.css — 중1 Ⅲ v3 훅 4장면(hookHeat3.ts, .hk3- 접두).
+   장면: rubhands(손 비비기) · beepthermo(체온계 삐) · hotsand(모래와 바닷물) · livingwall(스스로 움직이는 벽). */
+
+.hk3-stage {
+  border-radius: 16px;
+  overflow: hidden;
+  background: #FFFBF8;
+  border: 1px solid #F0DDD3;
+}
+.hk3-stage svg { display: block; width: 100%; height: auto; }
+.hk3-stage[role="button"] { cursor: pointer; }
+.hk3-stage[role="button"]:focus-visible { outline: 2px solid var(--subj-heat, #FF6B4A); outline-offset: 2px; }
+.hk3-btnrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
+.hk3-btn {
+  height: 44px;
+  border-radius: 13px;
+  border: 1.5px solid var(--subj-heat, #FF6B4A);
+  background: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--subj-heat-press, #E8431F);
+  box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.1);
+  transition: transform 0.12s ease;
+}
+.hk3-btn:active { transform: scale(0.97); }
+
+/* rubhands — 비빌 때 손 흔들림, 두 번째부터 열 선, 온도계 상승 */
+.hk3-rh .rh-lines { opacity: 0; transition: opacity 0.4s ease; }
+.hk3-rh.warm .rh-lines { opacity: 1; }
+.hk3-rh .rh-cold { transition: opacity 0.5s ease; }
+.hk3-rh.warm .rh-cold { opacity: 0.25; }
+.hk3-rh .hk3rh-merc { transition: transform 0.5s ease; }
+.hk3-rh.rubbing .rh-handL { animation: hk3RubL 0.4s ease; }
+.hk3-rh.rubbing .rh-handR { animation: hk3RubR 0.4s ease; }
+@keyframes hk3RubL {
+  0%, 100% { transform: translate(0, 0); }
+  30% { transform: translate(8px, -4px); }
+  70% { transform: translate(-6px, 3px); }
+}
+@keyframes hk3RubR {
+  0%, 100% { transform: translate(0, 0); }
+  30% { transform: translate(-8px, 4px); }
+  70% { transform: translate(6px, -3px); }
+}
+
+/* beepthermo — 측정 중 표시 → 삐 소리 파동 */
+.hk3-bt .bt-beep { opacity: 0; transition: opacity 0.2s ease; }
+.hk3-bt.beep .bt-beep { opacity: 1; animation: hk3Beep 0.6s ease 2; transform-box: fill-box; transform-origin: left center; }
+@keyframes hk3Beep {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.18); }
+}
+.hk3-bt.measuring .bt-read { fill: #0A8F4E; }
+.hk3-bt.beep .bt-read { fill: var(--subj-heat-press, #E8431F); }
+
+/* hotsand — 온도 태그 팝 */
+.hk3-hs .hs-hit { cursor: pointer; }
+.hk3-hs .hs-tag { opacity: 0; transform: translateY(8px) scale(0.7); transform-box: fill-box; transform-origin: center; transition: opacity 0.35s ease, transform 0.45s var(--spring-soft, ease-out); }
+.hk3-hs.on-sand .hs-tag-sand { opacity: 1; transform: translateY(0) scale(1); }
+.hk3-hs.on-sea .hs-tag-sea { opacity: 1; transform: translateY(0) scale(1); }
+
+/* livingwall — 햇볕이면 조각이 휘고 틈이 벌어진다, 그늘이면 펴진다 */
+.hk3-lw .lw-strip { transition: transform 0.9s var(--spring-soft, ease-out); }
+.hk3-lw.sunny .lw-strip { transform: rotate(-12deg); }
+.hk3-lw .lw-gaps { opacity: 0; transition: opacity 0.6s ease 0.3s; }
+.hk3-lw.sunny .lw-gaps { opacity: 1; }
+.hk3-lw .lw-sun { opacity: 0.35; transition: opacity 0.5s ease; transform-box: fill-box; transform-origin: center; }
+.hk3-lw.sunny .lw-sun { opacity: 1; animation: hk3Spin 14s linear infinite; }
+.hk3-lw .lw-cloud { transition: opacity 0.5s ease; }
+.hk3-lw.sunny .lw-cloud { opacity: 0; }
+@keyframes hk3Spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .hk3-rh.rubbing .rh-handL, .hk3-rh.rubbing .rh-handR, .hk3-bt.beep .bt-beep, .hk3-lw.sunny .lw-sun { animation: none; }
+  .hk3-lw .lw-strip, .hk3-hs .hs-tag { transition-duration: 0.2s; }
+}

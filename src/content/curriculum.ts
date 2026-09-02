@@ -7,6 +7,17 @@ import { UNIT1 } from "./unit1";
 // 구판(content/unit2.ts)·v2류 보존 규칙은 Ⅴ·Ⅵ과 동일 — 파일은 남기고 배선만 끊는다.
 import { UNIT2_V3 } from "./unit2v3";
 import { UNIT3 } from "./unit3";
+// 중1 Ⅲ 열 = v3 재제작(2026-09-03, Fable 5.1 비교 실험) 병행 배선 — DEV 토글 sessionStorage "ss.u3v3"="1"
+// 또는 주소 ?u3v3 (U2_ACTIVE 문법). 사용자 판정 합격 시 U3_ACTIVE를 UNIT3_V3로 교체가 전부. 구판 unit3.ts는 보존.
+import { UNIT3_V3 } from "./unit3v3";
+const u3v3On = (() => {
+  try {
+    return sessionStorage.getItem("ss.u3v3") === "1" || new URLSearchParams(location.search).has("u3v3");
+  } catch {
+    return false;
+  }
+})();
+const U3_ACTIVE = u3v3On ? UNIT3_V3 : UNIT3;
 import { UNIT4 } from "./unit4";
 import { UNIT5 } from "./unit5";
 import { UNIT6 } from "./unit6";
@@ -42,7 +53,7 @@ export interface Unit {
 export type GradeId = "g1" | "g2";
 export const GRADE_LABEL: Record<GradeId, string> = { g1: "중1", g2: "중2" };
 
-export const CURRICULUM: Unit[] = [UNIT1, UNIT2_V3, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7];
+export const CURRICULUM: Unit[] = [UNIT1, UNIT2_V3, U3_ACTIVE, UNIT4, UNIT5, UNIT6, UNIT7];
 
 // 중2 — 대단원 8개.
 export const CURRICULUM_G2: Unit[] = [

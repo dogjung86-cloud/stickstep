@@ -689,3 +689,33 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
   심실→동맥 통로(공이 scale 0.72로 짜부라져 관을 지나는 유체 연출)→상단 소실, 거꾸로 밀기는 닫힌
   판막 앞 되튕김+X. 다점(3점 무리) 페이드 연출은 "이동이 이상하다"는 실사용 판정으로 폐기 —
   **알갱이 무리보다 공 하나가 경로 서사를 명확히 전달한다**(kfl 알갱이는 종류 구분이 본질이라 예외).
+
+## 중1 Ⅲ 열 — v3 재제작(2026-09-03, Fable 5.1 비교 실험 · 병행 배선 · 사용자 판정 대기)
+- **목적**: 이전 제작본(Fable 5)과 새 모델(Fable 5.1)의 결과 차이를 보기 위한 실험. 설계 원천은
+  교과서 원문(과학_중1_미래엔_교과서(일반)/03_열_텍스트보존.pdf, pypdf 추출)뿐이며 현행 unit3.ts 본문은
+  보지 않았다(Ⅴ·Ⅵ v2 원복 사고의 재발 방지 수칙 그대로).
+- **배선**: `content/unit3v3.ts`(UNIT3_V3). curriculum.ts의 **DEV 토글 `sessionStorage "ss.u3v3"="1"` 또는
+  주소 `?u3v3`**(U3_ACTIVE, U2_ACTIVE 문법). 레슨 id u3l1~u3l5·5레슨·전부 무료(중1 정책)라 시험 풀 u3
+  160제와 호환. **합격 시 U3_ACTIVE를 UNIT3_V3로 교체가 전부**, 구판 unit3.ts·thermo·heatFigures는 보존.
+- **파일**: 랩 6종 `steps/heat3/*`(particleDialLab 입자 다이얼 · contactGraphLab 열량계 그래프 ·
+  rodRaceLab 열화상 막대 경주 · acPlaceLab 냉난방기 설치 · heatRaceLab 물 vs 식용유 · bimetalLab 테이프→바이메탈)
+  + 공용 뼈대 `steps/heat3/h3Lab.ts`(h3Timers·h3Goals·h3AskBox·h3Helper) · 훅 4장면 `steps/hookHeat3.ts`
+  (rubhands 손 비비기·beepthermo 체온계·hotsand 모래와 바닷물·livingwall 움직이는 벽. L3은 만화로 열어 훅 없음) ·
+  `ui/heat3Kit.ts`(H3 팔레트·tempColor 램프·particleGrid·seededRandom·thermoSvg·flameSvg·burnerSvg·beakerSvg) ·
+  `ui/heat3Figures.ts`(그림 14종 + h3MiniArt 20키, 문제용은 blank 인자) · `styles/heat3.css`(.ht3- 공용,
+  랩별 .pdl- .cgl- .rrl- .apl- .hrl- .bml-) / `heat3-hook.css`(.hk3-). 접두 선점 검사 완료(hh3-는 타 시트 선점이라 회피).
+- **랩 문법**: rAF·캔버스 0(입자 흔들림은 자가 예약 setTimeout + 시드 고정 난수, 순환 입자는 SMIL animateMotion),
+  판정은 bio4Kit.b4Ask 공용, 목표 3개가 켜지면 CTA. 예측형 판정(테이프 휘는 방향)은 recordQuiz 없이 통과.
+- **자산**: 개념 컷 6장 `public/heat3/cuts`(u3l1·u3l2·u3l3·u3l3b·u3l4·u3l5. 발주 `bash qa/order-u3v3-cuts.sh`
+  + `qa/u3v3_cuts_prompts.txt`, process-geo ASPECT_DIRS 등록, 눈검수 6/6 합격) · 만화는 구작 `comics/u3l3`
+  7컷(캠핑장 열의 이동) 재사용·캡션 신작·말풍선 미저작 · 사진은 `exam/u3` 8종 재사용(전깃줄 여름/겨울·철로 틈·
+  다리 이음매·뚝배기·서리 난간). 온돌·열화상 막대·바이메탈·플라스크 등 라벨이 본질인 도해는 SVG.
+- **수치 관행**: 열량계 70℃/10℃ → 40℃(지수 접근 30틱), 가열 레이스 물 1℃/틱·식용유 2℃/틱(3분 44/68℃),
+  상대 비열은 CRC 값(철 0.11 · 모래 0.19 · 알루미늄 0.21 · 콩기름 0.47 · 얼음 0.50 · 에탄올 0.57 · 물 1.00),
+  문제 그래프는 별도 수치(50/10 → 30℃, 4분). 라벨형 보기 "첫 칸 정답" 회피: 열화상 문제는 blank 모드에서
+  구리를 두 번째 줄(나)에 둔다.
+- **QA**: `PORT=<포트> node qa/e2e-u3v3.mjs`(5레슨 실플레이 **77검증 ALL PASS·pageErrors 0**) ·
+  `qa/check-u3v3-real.mjs`(스플래시→지도→레슨 trusted click, 토글 off=구판 .hook-cups / on=v3 .hk3-,
+  판정 질문 가시성 **13검증 ALL PASS**) · `qa/shot-u3v3.mjs`(눈검수 18샷 → qa/shots/u3v3-*.png). tsc·build 통과.
+- **잔여**: 사용자 판정 → 합격 시 정본 교체(curriculum 한 줄)·시험 풀 스팟 검산(레슨 문구 verbatim)·
+  이 섹션을 정본 기록으로 갱신. 백로그 = 만화 말풍선(화자 머리 실측 관행), 훅 손 그림(rubhands) 재질 격상 후보.

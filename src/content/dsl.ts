@@ -135,6 +135,8 @@ export const hook = (o: {
     | "potatodrop" | "winterberry" | "veggiebag" | "tropicalnight" | "sweetpotato"
     // 중2 Ⅵ v3 훅 5장면(hookBody3.ts, 2026-08-10 재제작)
     | "bodyscan" | "dripbag" | "hiccup" | "peetest" | "warmbody"
+    // 중1 Ⅲ 열 v3 훅 4장면(hookHeat3.ts, 2026-09-03 재제작) — 현행 열 장면(cups·egg·beach·wire)과 무충돌
+    | "rubhands" | "beepthermo" | "hotsand" | "livingwall"
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
     | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
@@ -579,6 +581,15 @@ export const twoLoopsLab = (o: B4LabOpt): Step => ({ type: "twoLoopsLab", ...o }
 export const chestModelLab = (o: B4LabOpt): Step => ({ type: "chestModelLab", ...o });
 export const kidneyFilterLab = (o: B4LabOpt): Step => ({ type: "kidneyFilterLab", ...o });
 export const bodyTeamLab = (o: B4LabOpt): Step => ({ type: "bodyTeamLab", ...o });
+
+// ── 중1 Ⅲ 열 v3 랩 6종(2026-09-03 재제작 — steps/heat3/*) ──
+// 병행 배선(unit3v3.ts + ss.u3v3 토글) 전용 — 현행 unit3 계열(heatParticles·heatContact 등)과 이름이 겹치지 않는다.
+export const particleDialLab = (o: B4LabOpt): Step => ({ type: "particleDialLab", ...o });
+export const contactGraphLab = (o: B4LabOpt): Step => ({ type: "contactGraphLab", ...o });
+export const rodRaceLab = (o: B4LabOpt): Step => ({ type: "rodRaceLab", ...o });
+export const acPlaceLab = (o: B4LabOpt): Step => ({ type: "acPlaceLab", ...o });
+export const heatRaceLab = (o: B4LabOpt): Step => ({ type: "heatRaceLab", ...o });
+export const bimetalLab = (o: B4LabOpt): Step => ({ type: "bimetalLab", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

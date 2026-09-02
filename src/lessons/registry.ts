@@ -55,6 +55,13 @@ import { twoLoopsLab } from "./steps/body3/twoLoopsLab";
 import { chestModelLab } from "./steps/body3/chestModelLab";
 import { kidneyFilterLab } from "./steps/body3/kidneyFilterLab";
 import { bodyTeamLab } from "./steps/body3/bodyTeamLab";
+// ── 중1 Ⅲ 열 v3 랩 6종(2026-09-03 재제작, steps/heat3/*) — 병행 배선(unit3v3) 전용 ──
+import { particleDialLab } from "./steps/heat3/particleDialLab";
+import { contactGraphLab } from "./steps/heat3/contactGraphLab";
+import { rodRaceLab } from "./steps/heat3/rodRaceLab";
+import { acPlaceLab } from "./steps/heat3/acPlaceLab";
+import { heatRaceLab } from "./steps/heat3/heatRaceLab";
+import { bimetalLab } from "./steps/heat3/bimetalLab";
 import { comic } from "./steps/comic";
 import { hook } from "./steps/hook";
 import { recap } from "./steps/recap";
@@ -626,6 +633,13 @@ const R: Record<string, StepRenderer> = {
   chestModelLab,
   kidneyFilterLab,
   bodyTeamLab,
+  // 중1 Ⅲ 열 v3 랩(2026-09-03 재제작)
+  particleDialLab,
+  contactGraphLab,
+  rodRaceLab,
+  acPlaceLab,
+  heatRaceLab,
+  bimetalLab,
 };
 
 export function getRenderer(type: string): StepRenderer | undefined {

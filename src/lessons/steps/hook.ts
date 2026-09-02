@@ -79,6 +79,8 @@ import {
 import {
   renderBodyScan, renderDripBag, renderHiccup, renderPeeTest, renderWarmBody,
 } from "./hookBody3";
+// 중1 Ⅲ 열 v3 훅 4장면(2026-09-03 재제작) — 현행 열 장면(cups·egg·beach·wire)과 병존, v3 단원 전용.
+import { renderRubHands, renderBeepThermo, renderHotSand, renderLivingWall } from "./hookHeat3";
 import {
   renderThreeCities, renderStiltHouse, renderSkyRoute, renderAvocado, renderMaasai, renderIloveNyc,
 } from "./hookSoc";
@@ -154,6 +156,7 @@ interface HookStep {
     | "potatodrop" | "winterberry" | "veggiebag" | "tropicalnight" | "sweetpotato"
     // 중2 Ⅵ v3 훅 5장면(hookBody3.ts, 2026-08-10 재제작)
     | "bodyscan" | "dripbag" | "hiccup" | "peetest" | "warmbody"
+    | "rubhands" | "beepthermo" | "hotsand" | "livingwall"
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
     | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
@@ -293,6 +296,10 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "hiccup") renderHiccup(scene, helper, s, finish, face);
   else if (s.scene === "peetest") renderPeeTest(scene, helper, s, finish, face);
   else if (s.scene === "warmbody") renderWarmBody(scene, helper, s, finish, face);
+  else if (s.scene === "rubhands") renderRubHands(scene, helper, s, finish, face);
+  else if (s.scene === "beepthermo") renderBeepThermo(scene, helper, s, finish, face);
+  else if (s.scene === "hotsand") renderHotSand(scene, helper, s, finish, face);
+  else if (s.scene === "livingwall") renderLivingWall(scene, helper, s, finish, face);
   else if (s.scene === "threecities") sceneCleanup = renderThreeCities(scene, helper, s, finish, face);
   else if (s.scene === "stilthouse") sceneCleanup = renderStiltHouse(scene, helper, s, finish, face);
   else if (s.scene === "skyroute") sceneCleanup = renderSkyRoute(scene, helper, s, finish, face);
