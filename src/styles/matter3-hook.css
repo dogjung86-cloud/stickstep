@@ -1,0 +1,52 @@
+/* matter3-hook.css — 중1 Ⅳ v3 훅 4장면(hookMatter3.ts, .hk4- 접두).
+   장면: bakerylane(빵집 골목 냄새) · tiltbottles(세 병 눕히기) · frozenbottle(냉동실 생수병) · icewatch(얼음물 온도계).
+   선점 검사(2026-09-03): src/styles·steps·ui 전수 grep에서 .hk4- 0건. */
+
+.hk4-stage {
+  border-radius: 16px;
+  overflow: hidden;
+  background: #FBFBFE;
+  border: 1px solid #E3DDF5;
+}
+.hk4-stage svg { display: block; width: 100%; height: auto; }
+.hk4-stage[role="button"] { cursor: pointer; }
+.hk4-stage[role="button"]:focus-visible { outline: 2px solid var(--subj-matter, #7C6BFF); outline-offset: 2px; }
+
+/* bakerylane — 냄새 입자는 걸음마다 한 단계씩 나타난다(스스로 퍼짐), 걷는 스틱맨은 transform 전환 */
+.hk4-bl .bl-dot { transition: opacity 0.6s ease; }
+.hk4-bl.on1 .bl-k1, .hk4-bl.on2 .bl-k2, .hk4-bl.on3 .bl-k3 { opacity: 0.9; animation: hk4Drift 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.hk4-bl.on2 .bl-k1, .hk4-bl.on3 .bl-k1 { opacity: 0.55; }
+.hk4-bl.on3 .bl-k2 { opacity: 0.7; }
+@keyframes hk4Drift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(2px, -3px); }
+}
+.hk4-bl .bl-walker { transform-box: view-box; }
+
+/* tiltbottles — 회전·물·돌은 hookMatter3가 매 틱 계산(경로 d 보간). 여기서는 병 유리 채움만 */
+.hk4-tb .tb-body { fill: url(#hk4tbGlass); fill-opacity: 0.55; stroke: none; }
+.hk4-tb .tb-edge { fill: none; stroke: #9DB2C4; stroke-width: 2.4; }
+.hk4-tb .tb-wisp { animation: hk4Wisp 3s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes hk4Wisp {
+  0%, 100% { opacity: 0.55; transform: translateY(0); }
+  50% { opacity: 0.85; transform: translateY(-3px); }
+}
+
+/* frozenbottle — 냉동실 배경·서리 페이드, 병의 부풂은 경로 보간 */
+.hk4-fb .fb-coldbg, .hk4-fb .fb-frost { transition: opacity 0.8s ease; }
+.hk4-fb.cold .fb-coldbg { opacity: 1; }
+.hk4-fb.cold .fb-frost { opacity: 1; }
+.hk4-fb .fb-water { transition: opacity 0.8s ease; }
+.hk4-fb.frozen .fb-water { opacity: 0.35; }
+.hk4-fb .fb-crack { transition: opacity 0.5s ease; }
+.hk4-fb.frozen .fb-crack { opacity: 0.8; }
+.hk4-fb .fb-cap { transition: transform 0.2s linear; }
+
+/* icewatch — 얼음은 제자리에서 줄어든다(순간 소멸 금지) */
+.hk4-iw .iw-ice { transform-box: fill-box; transform-origin: center; transition: transform 0.7s ease, opacity 0.5s ease 0.3s; }
+.hk4-iw .iw-read { transition: fill 0.4s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hk4-bl.on1 .bl-k1, .hk4-bl.on2 .bl-k2, .hk4-bl.on3 .bl-k3, .hk4-tb .tb-wisp { animation: none; }
+  .hk4-iw .iw-ice { transition-duration: 0.2s; }
+}

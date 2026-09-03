@@ -1,0 +1,201 @@
+/* matter3.css — 중1 Ⅳ 「물질의 상태 변화」 v3 재제작(2026-09-03) 공용 크롬(랩 공통 뼈대) + 랩별 세부.
+   접두 규약: 킷 공통 .mt3-*, 랩별 .ink-(잉크 확산) .esl-(소독제 저울) .m3s-(세 상태 무대) .wgl-(시계 접시)
+   .dil-(드라이아이스) .ofl-(올리브유 얼리기) .abl-(아세톤 풍선) .mbl-(가열 곡선 무대) .frz-(냉각 곡선) .stl-(주변 온도).
+   훅은 matter3-hook.css(.hk4-). 선점 검사(2026-09-03): src/styles·steps·ui 전수 grep에서 위 접두 0건
+   (.tsl-·.fcl-은 타 시트 선점이라 회피). */
+
+/* ── 공통: 밝은 관찰 보드(heat3 .ht3-board 문법 — 다크 .stage가 과한 소형 랩용) ── */
+.mt3-board {
+  background: linear-gradient(180deg, #FBFAFF, #F3F0FF);
+  border: 1px solid #DED7F7;
+  border-radius: var(--r-lg, 20px);
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.mt3-board svg { width: 100%; height: auto; display: block; }
+.mt3-board.mt3-dark {
+  background: #101A33;
+  border-color: rgba(120, 150, 190, 0.3);
+  padding: 0;
+}
+.mt3-graph {
+  background: #FFFFFF;
+  border: 1px solid #E5DFF7;
+  border-radius: 12px;
+  padding: 6px 6px 2px;
+}
+
+/* 목표 칩 톤(물질 계열) — 켜진 칩은 공용 보라 그라데이션(흰 글자) 대신 틴트 배경 + 진한 글자(사용자 확정 2026-09-03) */
+.pn-badge.m3 b { color: var(--subj-matter, #7C6BFF); }
+.pn-badge.m3.on {
+  border-color: var(--subj-matter, #7C6BFF);
+  background: var(--subj-matter-tint, #F0ECFF);
+  color: var(--subj-matter-press, #5F4BE8);
+  box-shadow: 0 0 0 3px rgba(124, 107, 255, 0.14);
+}
+.pn-badge.m3.on b { color: var(--subj-matter-press, #5F4BE8); }
+.pn-badge.m3.on span { color: var(--ink, #191F28); }
+
+/* 공용 버튼·세그·슬라이더 */
+.mt3-btnrow { display: grid; margin-top: 12px; gap: 8px; }
+.mt3-btn {
+  height: 50px;
+  border-radius: 15px;
+  border: 1.5px solid var(--subj-matter, #7C6BFF);
+  background: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--subj-matter-press, #5F4BE8);
+  box-shadow: 0 0 0 3px rgba(124, 107, 255, 0.1);
+  transition: transform 0.12s ease, opacity 0.25s;
+}
+.mt3-btn:active { transform: scale(0.97); }
+.mt3-btn:disabled { opacity: 0.4; box-shadow: none; border-color: var(--n200, #E5E8EB); color: var(--n600, #6B7684); }
+.mt3-segrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.mt3-segrow.three { grid-template-columns: 1fr 1fr 1fr; }
+.mt3-seg {
+  height: 46px;
+  border-radius: 13px;
+  border: 1.5px solid var(--subj-matter, #7C6BFF);
+  background: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--subj-matter-press, #5F4BE8);
+  box-shadow: 0 0 0 3px rgba(124, 107, 255, 0.1);
+  transition: transform 0.12s ease, border-color 0.2s, color 0.2s, box-shadow 0.2s, opacity 0.2s, background 0.2s;
+}
+.mt3-seg:active { transform: scale(0.97); }
+.mt3-seg.on { background: var(--subj-matter, #7C6BFF); color: #fff; }
+.mt3-seg:disabled { opacity: 0.4; box-shadow: none; border-color: var(--n200, #E5E8EB); color: var(--n600, #6B7684); }
+.mt3-seglabel { margin: 12px 4px 0; font-size: 12px; font-weight: 800; color: var(--n600, #6B7684); }
+.mt3-seglabel + .mt3-segrow { margin-top: 6px; }
+.mt3-q { margin-top: 12px; }
+
+/* 메타볼 무대 위 상태 필(stage-hud 안) */
+.mt3-pill {
+  position: absolute; left: 10px; top: 10px;
+  padding: 6px 11px; border-radius: 999px;
+  background: rgba(14, 24, 46, 0.66); border: 1px solid rgba(155, 140, 255, 0.4);
+  color: #EDE9FF; font-size: 12px; font-weight: 800; letter-spacing: -0.01em;
+  pointer-events: none;
+}
+.mt3-pill b { color: #C9BEFF; }
+
+/* ── L1 inkSpreadLab(.ink-) ───────────────────────────────────── */
+.ink-board { padding: 8px; }
+.ink-part { transition: cx 0.2s linear, cy 0.2s linear, opacity 0.4s ease; }
+.ink-blob { transition: r 0.2s linear, opacity 0.3s ease; }
+.ink-dropper { transition: transform 0.4s ease, opacity 0.4s ease; }
+.ink-side { transition: opacity 0.4s ease; }
+.ink-btb { transition: fill 0.5s ease; }
+.ink-vin { transition: opacity 0.3s ease; }
+
+/* ── L1 evapScaleLab(.esl-) ───────────────────────────────────── */
+.esl-board { padding: 8px; }
+.esl-gel { transition: opacity 0.5s ease, height 0.2s linear, y 0.2s linear; }
+.esl-fly { transition: cx 0.25s linear, cy 0.25s linear, opacity 0.35s ease; }
+.esl-bottle { transition: transform 0.5s ease; }
+.esl-board.applied .esl-bottle { transform: translate(0, -6px) rotate(18deg); transform-box: fill-box; transform-origin: bottom center; }
+
+/* ── L2 threeStatesLab(.m3s-) — 메타볼 무대 + 상태·그릇 세그 ──── */
+.m3s-stage { margin-top: 10px; }
+.m3s-stage .mstage-box { border-radius: 14px; overflow: hidden; }
+
+/* ── L3 watchGlassLab(.wgl-) ──────────────────────────────────── */
+.wgl-board { padding: 8px; }
+.wgl-steam { opacity: 0; transition: opacity 0.6s ease; }
+.wgl-board.running .wgl-steam { opacity: 0.8; animation: mt3Steam 2.2s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom center; }
+@keyframes mt3Steam {
+  0% { transform: translateY(0) scale(1); opacity: 0.35; }
+  50% { opacity: 0.85; }
+  100% { transform: translateY(-16px) scale(1.15); opacity: 0.1; }
+}
+.wgl-ice { transform-box: fill-box; transform-origin: bottom center; transition: transform 0.25s linear, opacity 0.4s ease; }
+.wgl-drop { transform-box: fill-box; transform-origin: top center; transition: transform 0.25s linear, opacity 0.3s ease; }
+.wgl-tag { opacity: 0; transition: opacity 0.4s ease; }
+.wgl-tag.on { opacity: 1; }
+.wgl-strip { transition: fill 1s ease, transform 0.5s ease, opacity 0.4s ease; }
+.wgl-flame { opacity: 0.3; transition: opacity 0.4s ease; }
+.wgl-board.running .wgl-flame { opacity: 1; animation: mt3Flicker 0.7s ease-in-out infinite; }
+@keyframes mt3Flicker {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.12); }
+}
+
+/* ── L3 dryIceLab(.dil-) ──────────────────────────────────────── */
+.dil-board { padding: 8px; }
+.dil-string { transition: transform 0.8s ease; }
+.dil-film { transition: opacity 0.4s ease; }
+.dil-fog { animation: mt3Fog 3s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes mt3Fog {
+  0%, 100% { opacity: 0.55; transform: translateX(0); }
+  50% { opacity: 0.85; transform: translateX(4px); }
+}
+.dil-chunk { transform-box: fill-box; transform-origin: bottom center; transition: transform 0.3s linear; }
+.dil-tag { opacity: 0; transition: opacity 0.4s ease; }
+.dil-tag.on { opacity: 1; }
+
+/* ── L4 oliveFreezeLab(.ofl-) ─────────────────────────────────── */
+.ofl-board { padding: 8px; }
+.ofl-jar { transition: transform 0.9s cubic-bezier(.22,1,.36,1); }
+.ofl-oil { transition: fill 0.8s ease, height 0.3s linear, y 0.3s linear; }
+.ofl-tape2 { opacity: 0; transition: opacity 0.4s ease; }
+.ofl-board.tape2 .ofl-tape2 { opacity: 1; }
+.ofl-p { transition: cx 0.3s linear, cy 0.3s linear; }
+.ofl-frost { opacity: 0; transition: opacity 0.6s ease; }
+.ofl-board.frozen .ofl-frost { opacity: 1; }
+
+/* ── L4 acetoneBalloonLab(.abl-) ──────────────────────────────── */
+.abl-board { padding: 8px; }
+.abl-wind { opacity: 0; transition: opacity 0.4s ease; }
+.abl-board.blowing .abl-wind { opacity: 0.9; animation: mt3Wind 0.6s linear infinite; }
+@keyframes mt3Wind {
+  0% { transform: translateX(0); opacity: 0.4; }
+  100% { transform: translateX(10px); opacity: 0.9; }
+}
+.abl-balloon { transition: rx 0.25s linear, ry 0.25s linear, cy 0.25s linear; }
+.abl-liq { transition: height 0.25s linear, y 0.25s linear, opacity 0.4s; }
+.abl-p { transition: cx 0.3s linear, cy 0.3s linear; }
+.abl-dryer { transition: transform 0.4s ease; }
+.abl-board.blowing .abl-dryer { transform: translate(6px, 0); transform-box: fill-box; }
+
+/* ── L5 meltBoilLab(.mbl-) — 메타볼 무대 + 가열 곡선 ──────────── */
+.mbl-stage { margin-top: 10px; }
+.mbl-stage .mstage-box { border-radius: 14px; overflow: hidden; }
+.mbl-graph { margin-top: 8px; }
+.mbl-zone { transition: opacity 0.4s ease; }
+
+/* ── L6 freezeCurveLab(.frz-) ─────────────────────────────────── */
+.frz-board { padding: 8px; display: grid; gap: 8px; }
+.frz-ice { transition: height 0.25s linear, y 0.25s linear, opacity 0.3s ease; }
+.frz-p { transition: cx 0.3s linear, cy 0.3s linear; }
+.frz-frost { opacity: 0; transition: opacity 0.6s ease; }
+.frz-board.cooling .frz-frost { opacity: 1; }
+.frz-zone { transition: opacity 0.4s ease; }
+
+/* ── L6 surroundTempLab(.stl-) ────────────────────────────────── */
+.stl-board { padding: 8px; }
+.stl-scene { transition: opacity 0.35s ease; }
+.stl-merc { transition: transform 1.2s cubic-bezier(.22,1,.36,1); }
+.stl-fx { opacity: 0; transition: opacity 0.5s ease; }
+.stl-board.run .stl-fx { opacity: 1; }
+.stl-mist { animation: mt3Steam 2s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom center; }
+.stl-flake { animation: mt3Fall 2.4s linear infinite; transform-box: fill-box; }
+@keyframes mt3Fall {
+  0% { transform: translateY(-6px); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(22px); opacity: 0; }
+}
+.stl-tabs { display: flex; gap: 6px; margin-top: 10px; }
+.stl-tab {
+  flex: 1; height: 34px; border-radius: 10px; border: 1.5px solid #DED7F7; background: #fff;
+  font-size: 12px; font-weight: 800; color: var(--n600, #6B7684);
+}
+.stl-tab.cur { border-color: var(--subj-matter, #7C6BFF); color: var(--subj-matter-press, #5F4BE8); background: var(--subj-matter-tint, #F0ECFF); }
+.stl-tab.done { border-color: var(--subj-matter, #7C6BFF); color: #fff; background: var(--subj-matter, #7C6BFF); }
+
+@media (prefers-reduced-motion: reduce) {
+  .wgl-board.running .wgl-steam, .wgl-board.running .wgl-flame, .dil-fog, .abl-board.blowing .abl-wind,
+  .stl-mist, .stl-flake { animation: none; }
+}
