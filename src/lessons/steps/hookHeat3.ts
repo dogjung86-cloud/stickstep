@@ -41,20 +41,29 @@ export function renderRubHands(scene: HTMLElement, helper: HTMLElement, s: HookL
       <path d="M232 26 l6 6 M244 20 l0 8 M256 26 l-6 6" stroke="#74B9F0" stroke-width="2.4" stroke-linecap="round"/>
     </g>
     <g class="rh-handL">
-      <path d="M52 132 c-2 -34 10 -60 40 -62 l6 0 c10 0 18 8 18 18 l0 46 c0 20 -14 30 -32 30 c-18 0 -32 -12 -32 -32 Z" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="3"/>
-      <path d="M70 76 v-24 a7 7 0 0 1 14 0 v24 M88 72 v-30 a7 7 0 0 1 14 0 v30" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="3"/>
-      <path d="M62 100 c6 -8 16 -12 26 -12" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+      <rect x="52" y="52" width="14" height="60" rx="7" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="2.6"/>
+      <rect x="70" y="42" width="14" height="70" rx="7" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="2.6"/>
+      <rect x="88" y="36" width="14" height="76" rx="7" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="2.6"/>
+      <rect x="106" y="44" width="14" height="68" rx="7" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="2.6"/>
+      <path d="M50 104 h72 a8 8 0 0 1 8 8 v40 c0 16 -14 26 -34 26 h-20 c-18 0 -30 -10 -30 -26 v-40 a8 8 0 0 1 4 -8 Z" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="2.8"/>
+      <path d="M128 118 c10 -12 24 -18 30 -8 c4 8 -4 20 -18 30 l-12 7 Z" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="2.6"/>
+      <path d="M62 128 c14 6 30 8 48 4 M66 148 c12 5 26 6 42 2" stroke="#D9A07A" stroke-width="2" stroke-linecap="round" fill="none"/>
     </g>
-    <g class="rh-handR">
-      <path d="M240 96 c2 34 -10 60 -40 62 l-6 0 c-10 0 -18 -8 -18 -18 l0 -46 c0 -20 14 -30 32 -30 c18 0 32 12 32 32 Z" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="3"/>
-      <path d="M222 152 v24 a7 7 0 0 1 -14 0 v-24 M204 156 v30 a7 7 0 0 1 -14 0 v-30" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="3"/>
+    <g class="rh-handR" transform="translate(320 0) scale(-1 1)">
+      <rect x="52" y="52" width="14" height="60" rx="7" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="2.6"/>
+      <rect x="70" y="42" width="14" height="70" rx="7" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="2.6"/>
+      <rect x="88" y="36" width="14" height="76" rx="7" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="2.6"/>
+      <rect x="106" y="44" width="14" height="68" rx="7" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="2.6"/>
+      <path d="M50 104 h72 a8 8 0 0 1 8 8 v40 c0 16 -14 26 -34 26 h-20 c-18 0 -30 -10 -30 -26 v-40 a8 8 0 0 1 4 -8 Z" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="2.8"/>
+      <path d="M128 118 c10 -12 24 -18 30 -8 c4 8 -4 20 -18 30 l-12 7 Z" fill="url(#hk3rhSkin)" stroke="#C77B4A" stroke-width="2.6"/>
+      <path d="M62 128 c14 6 30 8 48 4 M66 148 c12 5 26 6 42 2" stroke="#D9A07A" stroke-width="2" stroke-linecap="round" fill="none"/>
     </g>
     <g class="rh-lines">
-      <path d="M128 92 q6 -8 12 0 M128 110 q6 -8 12 0 M128 128 q6 -8 12 0" stroke="${H3.hot}" stroke-width="2.6" fill="none" stroke-linecap="round"/>
-      <path d="M160 96 q6 -8 12 0 M160 114 q6 -8 12 0" stroke="${H3.warm}" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <path d="M154 96 q6 -8 12 0 M154 114 q6 -8 12 0 M154 132 q6 -8 12 0" stroke="${H3.hot}" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <path d="M154 78 q6 -8 12 0 M154 150 q6 -8 12 0" stroke="${H3.warm}" stroke-width="2.6" fill="none" stroke-linecap="round"/>
     </g>
-    ${thermoSvg(276, 30, 110, "hk3rh")}
-    <text class="rh-read" x="283" y="200" text-anchor="middle" font-size="12" font-weight="800" fill="${H3.sub}">31℃</text>
+    ${thermoSvg(288, 30, 110, "hk3rh")}
+    <text class="rh-read" x="295" y="200" text-anchor="middle" font-size="12" font-weight="800" fill="${H3.sub}">31℃</text>
   </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
   scene.append(fig, choicesBox);
