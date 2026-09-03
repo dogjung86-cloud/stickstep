@@ -121,14 +121,14 @@ console.log("L1 온도의 정체, 입자의 움직임");
   await cta(); // → concept
   ok(await imgLoaded("img[alt*='돋보기']"), "L1 개념 컷 로드");
   await cta(); // → particleDialLab
-  await setSlider(".pdl-slider", 60);
-  await setSlider(".pdl-slider", 90);
+  await setSlider(".pdi-slider", 60);
+  await setSlider(".pdi-slider", 90);
   await W(400);
   ok((await goalsOn()) === 1, "가열 목표 점등");
-  await setSlider(".pdl-slider", 40);
-  await setSlider(".pdl-slider", 5);
+  await setSlider(".pdi-slider", 40);
+  await setSlider(".pdi-slider", 5);
   await W(900);
-  ok(await pickChoice(".pdl-q", "더 활발하게"), "입자 판정");
+  ok(await pickChoice(".pdi-q", "더 활발하게"), "입자 판정");
   ok((await goalsOn()) === 3, "입자 다이얼 목표 3");
   ok(await ctaEnabled(), "랩 CTA 개방");
   await cta(); // → recap

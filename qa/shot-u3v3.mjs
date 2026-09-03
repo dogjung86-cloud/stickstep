@@ -51,7 +51,7 @@ await pick("", "입자들의 움직임"); await cta();
 await scrollTop(); await W(300);
 await shot("l1-concept");
 await cta();
-await setSlider(".pdl-slider", 90); await W(500);
+await setSlider(".pdi-slider", 90); await W(500);
 await scrollTop(); await W(200);
 await shot("l1-particledial-hot", true);
 await cta(); await W(300);
