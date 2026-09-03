@@ -68,8 +68,7 @@ export const UNIT4_V3: Unit = {
           cta: "잉크 실험 시작",
         }),
         inkSpreadLab({
-          title: "젓지 않아도 퍼진다,<br>잉크와 식초",
-          lead: "비커의 잉크와 접시의 식초가 어떻게 퍼지는지, 두 실험을 이어서 봐요.",
+          title: "젓지 않아도 퍼지는 잉크",
           cta: "증발 알아보기",
           curio: {
             q: "뜨거운 물에서는 확산이 더 빠를까요?",
@@ -90,8 +89,7 @@ export const UNIT4_V3: Unit = {
           cta: "저울 실험 시작",
         }),
         evapScaleLab({
-          title: "저울 위에서<br>줄어드는 손 소독제",
-          lead: "거름종이에 손 소독제를 바르고 시간이 흐르면 저울의 숫자가 어떻게 될까요?",
+          title: "저울 위 손 소독제",
           cta: "입자의 운동 정리하기",
           curio: {
             q: "뚜껑을 덮어 두면 증발이 멈출까요?",
@@ -225,8 +223,7 @@ export const UNIT4_V3: Unit = {
           cta: "상태 관찰소 열기",
         }),
         threeStatesLab({
-          title: "세 가지 상태 관찰소,<br>입자의 눈으로",
-          lead: "상태를 바꾸고 그릇을 바꾸면서 입자의 배열과 움직임을 직접 확인해요.",
+          title: "세 가지 상태 관찰소",
           cta: "특징 한눈에 보기",
           curio: {
             q: "물질은 꼭 세 가지 상태뿐일까요?",
@@ -408,8 +405,7 @@ export const UNIT4_V3: Unit = {
           cta: "시계 접시 실험",
         }),
         watchGlassLab({
-          title: "시계 접시 실험,<br>변하는 것과 변하지 않는 것",
-          lead: "얼음이 녹고 물이 수증기가 되고 다시 물방울이 되어도, 물은 물일까요?",
+          title: "시계 접시 실험",
           cta: "승화 실험으로",
           curio: {
             q: "촛농이 흘러내리다 굳는 것도 상태 변화일까요?",
@@ -417,8 +413,7 @@ export const UNIT4_V3: Unit = {
           },
         }),
         dryIceLab({
-          title: "드라이아이스 컵의<br>비누막",
-          lead: "고체가 액체를 거치지 않고 기체가 될 수 있을까요? 컵 입구의 비누막이 답해 줘요.",
+          title: "드라이아이스 컵의 비누막",
           cta: "상태 변화 정리하기",
           curio: {
             q: "냉동실에 오래 둔 얼음은 왜 작아질까요?",
@@ -535,8 +530,7 @@ export const UNIT4_V3: Unit = {
           cta: "올리브유 실험 시작",
         }),
         oliveFreezeLab({
-          title: "올리브유 얼리기,<br>저울과 색 테이프",
-          lead: "액체를 얼렸을 때 질량과 부피가 각각 어떻게 되는지 저울과 테이프로 잡아요.",
+          title: "올리브유 얼리기",
           cta: "기화 실험으로",
           curio: {
             q: "얼음은 왜 물 위에 뜰까요?",
@@ -544,8 +538,7 @@ export const UNIT4_V3: Unit = {
           },
         }),
         acetoneBalloonLab({
-          title: "아세톤 풍선,<br>기화하면 얼마나 커질까",
-          lead: "액체가 기체가 될 때 부피가 얼마나 늘어나는지 풍선으로 잡아요.",
+          title: "아세톤 풍선 부풀리기",
           cta: "입자 배열 정리하기",
           curio: {
             q: "라면 냄비 뚜껑은 왜 들썩일까요?",
@@ -690,8 +683,7 @@ export const UNIT4_V3: Unit = {
           cta: "가열 실험 시작",
         }),
         meltBoilLab({
-          title: "얼음을 끝까지 가열하면,<br>온도 곡선",
-          lead: "얼음이 녹고 물이 끓을 때까지 가열하면서 온도 곡선을 그려요. 무대의 입자도 함께 보세요.",
+          title: "얼음을 끝까지 가열하면",
           cta: "흡수하는 상태 변화 정리하기",
           curio: {
             q: "물을 더 세게 끓이면 면이 더 빨리 익을까요?",
@@ -848,8 +840,7 @@ export const UNIT4_V3: Unit = {
           cta: "냉각 실험 시작",
         }),
         freezeCurveLab({
-          title: "물이 얼 때의<br>온도 곡선",
-          lead: "얼음과 소금 속 시험관의 물이 얼어 가는 동안 온도 센서가 무엇을 보여 줄까요?",
+          title: "물이 얼 때의 온도",
           cta: "주변 온도 예측하러",
           curio: {
             q: "과일 창고에 물통을 두는 까닭은?",
@@ -857,8 +848,7 @@ export const UNIT4_V3: Unit = {
           },
         }),
         surroundTempLab({
-          title: "주변 온도 예측 랩,<br>시원해질까 따뜻해질까",
-          lead: "살수차, 파라핀 온열 치료, 눈 오는 날. 상태 변화가 주변 온도를 어떻게 바꾸는지 예측하고 확인해요.",
+          title: "주변 온도 예측하기",
           cta: "이용 정리하기",
           curio: {
             q: "땀은 왜 날까요?",

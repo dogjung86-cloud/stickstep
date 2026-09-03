@@ -701,18 +701,31 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
   워크트리 `app-u4-v3`, 전용 포트 5463(launch.json science-app-5463).
 - **파일**: 소형 랩 10종 `steps/matter3/*`(inkSpreadLab 잉크·식초 확산 · evapScaleLab 손 소독제 저울 ·
   threeStatesLab 세 상태 관찰소(메타볼) · watchGlassLab 시계 접시+염화 코발트 · dryIceLab 비누막 ·
-  oliveFreezeLab 응고 질량·부피 · acetoneBalloonLab 기화 풍선 · meltBoilLab 가열 곡선(메타볼) · freezeCurveLab
-  냉각 곡선 · surroundTempLab 주변 온도 예측 3장면) + 공용 뼈대 `steps/matter3/m3Lab.ts`(h3Lab 복제, .pn-badge.m3) ·
+  oliveFreezeLab 응고 질량·부피 · acetoneBalloonLab 기화 풍선 · meltBoilLab 가열 곡선(그래프+입자 창) · freezeCurveLab
+  냉각 곡선(그래프+입자 창) · surroundTempLab 주변 온도 예측 3장면) + 공용 뼈대 `steps/matter3/m3Lab.ts`(h3Lab 복제, .pn-badge.m3) ·
   훅 4장면 `steps/hookMatter3.ts`(bakerylane 빵집 골목 · tiltbottles 세 병 눕히기 · frozenbottle 냉동실 생수병 ·
   icewatch 얼음물 온도계. L3·L6은 만화로 열어 훅 없음) · `ui/matter3Kit.ts`(M3 팔레트·stateParticles 상태별 배치·
   seededRandom·비커/플라스크/저울/온도계 조각·stickSvg) · `ui/matter3Figures.ts`(그림 13종 + m3MiniArt 18키, 문제용은
   blank/quiz 인자) · `styles/matter3.css`(.mt3- 공용, 랩별 .ink- .esl- .m3s- .wgl- .dil- .ofl- .abl- .mbl- .frz- .stl-) /
   `matter3-hook.css`(.hk4-). 접두 선점 검사에서 .tsl-·.fcl-이 타 시트 선점이라 .m3s-·.frz-로 회피.
-- **메타볼 재사용(엔진 예외)**: threeStatesLab·meltBoilLab만 `ui/matterStage`를 킷으로 쓴다(수치 불변, count 44 ≤ 48,
-  cols 8, walls 함수로 컵/넓은 통/비커, cleanup에서 loop.stop()+stage.dispose()). **목표 판정은 상태값**(방문한 상태
-  집합·그릇 전환·틱 스케줄 index)으로만 하고 렌더 루프에 의존하지 않는다. 표시 온도와 시뮬 온도를 분리해
-  평평한 구간(0℃·100℃) 동안 시뮬 T만 −2→3·96→104를 스윕하면 "온도는 일정한데 상태가 바뀌는" 장면이 된다.
-  **무대 캡션(.stage-cap)은 그릇 바닥(y1)을 0.74~0.78h로 올려야 겹치지 않는다**(처음 0.9h로 두었다가 눈검수 적발).
+- **메타볼 재사용(엔진 예외)**: threeStatesLab만 `ui/matterStage`를 킷으로 쓴다(수치 불변, count 44 ≤ 48, cols 8,
+  walls 함수로 컵/넓은 통, 무대 172px, cleanup에서 loop.stop()+stage.dispose()). **목표 판정은 상태값**(방문한 상태
+  집합·그릇 전환)으로만 하고 렌더 루프에 의존하지 않는다. 가열·냉각 곡선 랩은 초판에 메타볼 무대+그래프를 세로로
+  쌓았다가(폰에서 1.5화면) **그래프 한 장 + 곡선이 지나지 않는 빈 자리의 작은 입자 창**(얼음→물→수증기 배열 보간,
+  틱 스케줄이 곧 상태값)으로 바꿨다. **무대 캡션(.stage-cap)은 그릇 바닥(y1)을 0.8h로 올려야 겹치지 않는다**.
+- **한 화면 예산(2026-09-03 사용자 피드백 "모바일에서 요소가 너무 많고 한 화면에 안 들어온다" → 랩 10종 재제작)**:
+  390×700 폰 뷰포트(헤더·CTA 빼면 스크롤 영역 554px)에서 **마운트 직후와 판정 질문이 뜬 시점 모두 스텝 총높이가
+  스크롤 영역 안**이어야 한다. 실측: 초판 618~875px(1.1~1.6화면, 무대 시작 y 247~324) → 재제작 435~544px(무대
+  시작 y 163, 구판 521~724·y 179보다 낮음). 규칙 = ① 랩 스텝은 **제목 한 줄, 리드 없음** ② 목표 칩 압축
+  (`.pn-badges.m3` 위 여백 10·패딩 6/5) ③ **helper 2줄(56자) 이하** — 지시만, 설명은 판정 뒤 helper와 recap 몫
+  ④ 보드 viewBox 340×180(패딩 8, 200px 이하) ⑤ **조작 슬롯 하나(m3Slot)** — 판정 질문(slot.ask)은 버튼 줄을 숨기고
+  같은 자리에 뜬다, 다음 국면 버튼은 slot.showBtn()으로 되돌린다(아래에 덧붙이지 않아 판정 국면에도 높이가 안 는다.
+  슬롯 안 선택지는 압축 패딩 9/12) ⑥ **궁금증 카드(curio)는 목표 3개를 다 채운 뒤에 붙인다**(판정 시점 예산 밖)
+  ⑦ 무대 안 요소는 통찰에 필요한 것만 — 장면은 한 번에 하나(잉크 비커 ↔ 접시 교체), 안내 글자·태그·보조 소품
+  (얼음 비커·머리 말리개 본체·장면 탭 줄·끈 스윕) 제거, **입자 창은 배열 변화가 통찰인 랩에만**(소독제·올리브유·
+  아세톤·곡선 2종). 기계 검사 = `PORT=<포트> node qa/check-u4v3-fit.mjs`(20검증 + 폰 크기 샷 20장 →
+  qa/shots/u4v3-fit-*.png, 몽타주는 Pillow로) — 눈검수 샷(shot-u4v3 420×900)만으로는 이 결함이 안 보였다
+  (실제 폰보다 200px 긴 화면). 구판과의 비교 실측 스크립트 = `qa/measure-u4-compare.mjs`.
 - **훅 물리 형태 규칙의 Ⅳ 판**: tiltbottles는 병을 회전시키되 **물은 매 틱 수평면을 유지하며 부피가 같도록**
   회전 사각형을 수평선으로 자른 넓이를 이분법으로 맞춘다(clipBelow·polyArea) — 순간 교체·통째 회전 금지의
   구현 예. 층 순서는 **유리(반투명 fill) → 내용물 → 윤곽선**(처음 유리를 위에 그려 내용물이 가려진 실사고).
@@ -730,6 +743,7 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
 - **QA**: `PORT=5463 node qa/e2e-u4v3.mjs`(6레슨 실플레이 **113검증 ALL PASS·pageErrors 0**, 긴 연출은 pickChoice/
   clickWhenEnabled 폴링) · `qa/check-u4v3-real.mjs`(스플래시→지도→trusted click, 토글 off=구판 .hook-meal /
   on=v3 .hk4-bl, 판정 질문 가시성 **13검증 ALL PASS**) · `qa/shot-u4v3.mjs`(눈검수 21샷 → qa/shots/u4v3-*.png) ·
-  `qa/shot-u4v3-figs.mjs`(그림 18종+미니아트 18 한 장). tsc·build 통과.
+  `qa/shot-u4v3-figs.mjs`(그림 18종+미니아트 18 한 장) · `qa/check-u4v3-fit.mjs`(한 화면 예산 **20검증 ALL PASS**).
+  tsc·build 통과.
 - **잔여**: 사용자 판정 → 합격 시 정본 교체(curriculum 한 줄)·이 섹션 정본 갱신. 백로그 = 만화 말풍선(화자 머리
   실측 관행), 시험 풀 사후 스팟 검산(재출제 없이 레슨 문구만 교체했으므로 풀 자체는 불변).
