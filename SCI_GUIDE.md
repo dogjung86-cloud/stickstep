@@ -689,3 +689,47 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
   심실→동맥 통로(공이 scale 0.72로 짜부라져 관을 지나는 유체 연출)→상단 소실, 거꾸로 밀기는 닫힌
   판막 앞 되튕김+X. 다점(3점 무리) 페이드 연출은 "이동이 이상하다"는 실사용 판정으로 폐기 —
   **알갱이 무리보다 공 하나가 경로 서사를 명확히 전달한다**(kfl 알갱이는 종류 구분이 본질이라 예외).
+
+## 중1 Ⅳ 물질의 상태 변화 — v3 재제작(2026-09-03, Fable 5.1 비교 실험 · 병행 배선 · 사용자 판정 대기)
+- **목적**: 이전 제작본(Fable 5, 2026-07-06)과 새 모델(Fable 5.1)의 결과 차이를 보기 위한 실험. 설계 원천은
+  교과서 원문(과학_중1_미래엔_교과서(일반)/04_물질의_상태_변화_텍스트보존.pdf, pypdf 추출)뿐이며 현행 unit4.ts와
+  그 랩·훅·그림은 보지 않았다(중1 Ⅲ v3와 같은 수칙). 이 교과서의 중단원 뼈대는 1(입자의 운동·물질의 상태·
+  상태 변화·입자 배열의 변화) + 2(흡수·방출·이용) — 레슨 6개 id는 현행과 동일(u4l1~u4l6, 전부 무료, 시험 풀 160제 호환).
+- **배선**: `content/unit4v3.ts`(UNIT4_V3). curriculum.ts의 **DEV 토글 `sessionStorage "ss.u4v3"="1"` 또는
+  주소 `?u4v3`**(U4_ACTIVE, U3_ACTIVE 문법 — ?u4v3 진입 시 세션에 심어 새로고침에도 유지). **합격 시 U4_ACTIVE를
+  UNIT4_V3로 교체가 전부**, 구판 unit4.ts·matterFigures·labProps·현행 랩 9종은 보존. 브랜치 `sci-u4-v3`(from main),
+  워크트리 `app-u4-v3`, 전용 포트 5463(launch.json science-app-5463).
+- **파일**: 소형 랩 10종 `steps/matter3/*`(inkSpreadLab 잉크·식초 확산 · evapScaleLab 손 소독제 저울 ·
+  threeStatesLab 세 상태 관찰소(메타볼) · watchGlassLab 시계 접시+염화 코발트 · dryIceLab 비누막 ·
+  oliveFreezeLab 응고 질량·부피 · acetoneBalloonLab 기화 풍선 · meltBoilLab 가열 곡선(메타볼) · freezeCurveLab
+  냉각 곡선 · surroundTempLab 주변 온도 예측 3장면) + 공용 뼈대 `steps/matter3/m3Lab.ts`(h3Lab 복제, .pn-badge.m3) ·
+  훅 4장면 `steps/hookMatter3.ts`(bakerylane 빵집 골목 · tiltbottles 세 병 눕히기 · frozenbottle 냉동실 생수병 ·
+  icewatch 얼음물 온도계. L3·L6은 만화로 열어 훅 없음) · `ui/matter3Kit.ts`(M3 팔레트·stateParticles 상태별 배치·
+  seededRandom·비커/플라스크/저울/온도계 조각·stickSvg) · `ui/matter3Figures.ts`(그림 13종 + m3MiniArt 18키, 문제용은
+  blank/quiz 인자) · `styles/matter3.css`(.mt3- 공용, 랩별 .ink- .esl- .m3s- .wgl- .dil- .ofl- .abl- .mbl- .frz- .stl-) /
+  `matter3-hook.css`(.hk4-). 접두 선점 검사에서 .tsl-·.fcl-이 타 시트 선점이라 .m3s-·.frz-로 회피.
+- **메타볼 재사용(엔진 예외)**: threeStatesLab·meltBoilLab만 `ui/matterStage`를 킷으로 쓴다(수치 불변, count 44 ≤ 48,
+  cols 8, walls 함수로 컵/넓은 통/비커, cleanup에서 loop.stop()+stage.dispose()). **목표 판정은 상태값**(방문한 상태
+  집합·그릇 전환·틱 스케줄 index)으로만 하고 렌더 루프에 의존하지 않는다. 표시 온도와 시뮬 온도를 분리해
+  평평한 구간(0℃·100℃) 동안 시뮬 T만 −2→3·96→104를 스윕하면 "온도는 일정한데 상태가 바뀌는" 장면이 된다.
+  **무대 캡션(.stage-cap)은 그릇 바닥(y1)을 0.74~0.78h로 올려야 겹치지 않는다**(처음 0.9h로 두었다가 눈검수 적발).
+- **훅 물리 형태 규칙의 Ⅳ 판**: tiltbottles는 병을 회전시키되 **물은 매 틱 수평면을 유지하며 부피가 같도록**
+  회전 사각형을 수평선으로 자른 넓이를 이분법으로 맞춘다(clipBelow·polyArea) — 순간 교체·통째 회전 금지의
+  구현 예. 층 순서는 **유리(반투명 fill) → 내용물 → 윤곽선**(처음 유리를 위에 그려 내용물이 가려진 실사고).
+  frozenbottle은 병 옆면 경로 d 보간으로 곡선 부풂. 손은 손가락 5개 실루엣 한 경로(surroundTempLab HAND_D).
+- **언어 가드 grep 0건**: 분자·녹는점·어는점·끓는점·교과서·미래엔·em/en 대시(주석 제거 후 스캔). 승화는 양방향
+  같은 이름, 질량 불변·부피 변화(물의 응고 예외는 원문 범위), 흡수(융해·기화·승화 고→기)/방출(응고·액화·승화
+  기→고) 쌍, 확산·증발은 "입자가 스스로 운동"(바람·젓기는 오답 선지로만).
+- **시험 풀 verbatim 스팟 스캔(16자)**: 초판 121런 → 실질 겹침 21곳 문구 교체 → 잔여 3런은 전부 문두 관용구
+  ("~에 대한 설명으로 옳은 것은?", "~을 모두 고르세요", "구간에 대한 설명"). 교체 요령 = 정의문·정답 문장은 어순이나
+  동사를 바꾼다("공기 중으로 날아가" → "공기 속으로 흩어져", "예외적인 물질" → "특별한 물질").
+- **자산**: 개념 컷 7장 `public/matter3/cuts`(u4l1·u4l1b·u4l2·u4l3·u4l4·u4l5·u4l6, `bash qa/order-u4v3-cuts.sh` +
+  `qa/u4v3_cuts_prompts.txt`, process-geo ASPECT_DIRS 등록, 눈검수 7/7 합격) · 만화 2편 구작 재사용(comics/u4l3 물방울의
+  여행 · comics/u4l6 이글루와 물주머니 — 컷 불변·캡션 신작·말풍선 미저작) · 사진 exam/u4 3종(squid-dry·frost-leaf·
+  dew-grass)+recap/u4-ice-lattice 재사용.
+- **QA**: `PORT=5463 node qa/e2e-u4v3.mjs`(6레슨 실플레이 **113검증 ALL PASS·pageErrors 0**, 긴 연출은 pickChoice/
+  clickWhenEnabled 폴링) · `qa/check-u4v3-real.mjs`(스플래시→지도→trusted click, 토글 off=구판 .hook-meal /
+  on=v3 .hk4-bl, 판정 질문 가시성 **13검증 ALL PASS**) · `qa/shot-u4v3.mjs`(눈검수 21샷 → qa/shots/u4v3-*.png) ·
+  `qa/shot-u4v3-figs.mjs`(그림 18종+미니아트 18 한 장). tsc·build 통과.
+- **잔여**: 사용자 판정 → 합격 시 정본 교체(curriculum 한 줄)·이 섹션 정본 갱신. 백로그 = 만화 말풍선(화자 머리
+  실측 관행), 시험 풀 사후 스팟 검산(재출제 없이 레슨 문구만 교체했으므로 풀 자체는 불변).
