@@ -55,6 +55,17 @@ import { twoLoopsLab } from "./steps/body3/twoLoopsLab";
 import { chestModelLab } from "./steps/body3/chestModelLab";
 import { kidneyFilterLab } from "./steps/body3/kidneyFilterLab";
 import { bodyTeamLab } from "./steps/body3/bodyTeamLab";
+// ── 중1 Ⅳ 물질의 상태 변화 v3 랩 10종(2026-09-03 재제작, steps/matter3/*) — 병행 배선(unit4v3) 전용 ──
+import { inkSpreadLab } from "./steps/matter3/inkSpreadLab";
+import { evapScaleLab } from "./steps/matter3/evapScaleLab";
+import { threeStatesLab } from "./steps/matter3/threeStatesLab";
+import { watchGlassLab } from "./steps/matter3/watchGlassLab";
+import { dryIceLab } from "./steps/matter3/dryIceLab";
+import { oliveFreezeLab } from "./steps/matter3/oliveFreezeLab";
+import { acetoneBalloonLab } from "./steps/matter3/acetoneBalloonLab";
+import { meltBoilLab } from "./steps/matter3/meltBoilLab";
+import { freezeCurveLab } from "./steps/matter3/freezeCurveLab";
+import { surroundTempLab } from "./steps/matter3/surroundTempLab";
 import { comic } from "./steps/comic";
 import { hook } from "./steps/hook";
 import { recap } from "./steps/recap";
@@ -626,6 +637,16 @@ const R: Record<string, StepRenderer> = {
   chestModelLab,
   kidneyFilterLab,
   bodyTeamLab,
+  inkSpreadLab,
+  evapScaleLab,
+  threeStatesLab,
+  watchGlassLab,
+  dryIceLab,
+  oliveFreezeLab,
+  acetoneBalloonLab,
+  meltBoilLab,
+  freezeCurveLab,
+  surroundTempLab,
 };
 
 export function getRenderer(type: string): StepRenderer | undefined {

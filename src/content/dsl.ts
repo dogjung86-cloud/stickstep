@@ -135,6 +135,8 @@ export const hook = (o: {
     | "potatodrop" | "winterberry" | "veggiebag" | "tropicalnight" | "sweetpotato"
     // 중2 Ⅵ v3 훅 5장면(hookBody3.ts, 2026-08-10 재제작)
     | "bodyscan" | "dripbag" | "hiccup" | "peetest" | "warmbody"
+    // 중1 Ⅳ 물질의 상태 변화 v3 훅 4장면(hookMatter3.ts, 2026-09-03 재제작) — 현행 Ⅳ 장면(smell·juice·wrap·ramen)과 무충돌
+    | "bakerylane" | "tiltbottles" | "frozenbottle" | "icewatch"
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
     | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
@@ -579,6 +581,19 @@ export const twoLoopsLab = (o: B4LabOpt): Step => ({ type: "twoLoopsLab", ...o }
 export const chestModelLab = (o: B4LabOpt): Step => ({ type: "chestModelLab", ...o });
 export const kidneyFilterLab = (o: B4LabOpt): Step => ({ type: "kidneyFilterLab", ...o });
 export const bodyTeamLab = (o: B4LabOpt): Step => ({ type: "bodyTeamLab", ...o });
+
+// ── 중1 Ⅳ 물질의 상태 변화 v3 랩 10종(2026-09-03 재제작 — steps/matter3/*) ──
+// 병행 배선(unit4v3.ts + ss.u4v3 토글) 전용 — 현행 unit4 계열(diffusion·matterTemp·heatCurve 등)·중2 Ⅲ diffuseLab과 이름이 겹치지 않는다.
+export const inkSpreadLab = (o: B4LabOpt): Step => ({ type: "inkSpreadLab", ...o });
+export const evapScaleLab = (o: B4LabOpt): Step => ({ type: "evapScaleLab", ...o });
+export const threeStatesLab = (o: B4LabOpt): Step => ({ type: "threeStatesLab", ...o });
+export const watchGlassLab = (o: B4LabOpt): Step => ({ type: "watchGlassLab", ...o });
+export const dryIceLab = (o: B4LabOpt): Step => ({ type: "dryIceLab", ...o });
+export const oliveFreezeLab = (o: B4LabOpt): Step => ({ type: "oliveFreezeLab", ...o });
+export const acetoneBalloonLab = (o: B4LabOpt): Step => ({ type: "acetoneBalloonLab", ...o });
+export const meltBoilLab = (o: B4LabOpt): Step => ({ type: "meltBoilLab", ...o });
+export const freezeCurveLab = (o: B4LabOpt): Step => ({ type: "freezeCurveLab", ...o });
+export const surroundTempLab = (o: B4LabOpt): Step => ({ type: "surroundTempLab", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

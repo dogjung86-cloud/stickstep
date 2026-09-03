@@ -8,6 +8,19 @@ import { UNIT1 } from "./unit1";
 import { UNIT2_V3 } from "./unit2v3";
 import { UNIT3 } from "./unit3";
 import { UNIT4 } from "./unit4";
+// 중1 Ⅳ 물질의 상태 변화 = v3 재제작(2026-09-03, Fable 5.1 비교 실험) 병행 배선 — DEV 토글 sessionStorage "ss.u4v3"="1"
+// 또는 주소 ?u4v3 (U2_ACTIVE 문법). 사용자 판정 합격 시 U4_ACTIVE를 UNIT4_V3로 교체가 전부. 구판 unit4.ts는 보존.
+import { UNIT4_V3 } from "./unit4v3";
+const u4v3On = (() => {
+  try {
+    // 주소 ?u4v3로 켜면 세션에도 심어 둔다(해시 라우팅이 주소를 다시 쓰거나 새로고침해도 같은 탭에선 유지).
+    if (new URLSearchParams(location.search).has("u4v3")) sessionStorage.setItem("ss.u4v3", "1");
+    return sessionStorage.getItem("ss.u4v3") === "1";
+  } catch {
+    return false;
+  }
+})();
+const U4_ACTIVE = u4v3On ? UNIT4_V3 : UNIT4;
 import { UNIT5 } from "./unit5";
 import { UNIT6 } from "./unit6";
 import { UNIT7 } from "./unit7";
@@ -42,7 +55,7 @@ export interface Unit {
 export type GradeId = "g1" | "g2";
 export const GRADE_LABEL: Record<GradeId, string> = { g1: "중1", g2: "중2" };
 
-export const CURRICULUM: Unit[] = [UNIT1, UNIT2_V3, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7];
+export const CURRICULUM: Unit[] = [UNIT1, UNIT2_V3, UNIT3, U4_ACTIVE, UNIT5, UNIT6, UNIT7];
 
 // 중2 — 대단원 8개.
 export const CURRICULUM_G2: Unit[] = [

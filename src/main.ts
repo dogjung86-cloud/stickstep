@@ -9,6 +9,8 @@ import "./styles/plant3.css"; // 중2 Ⅴ v3 재제작(2026-08-10) 공용 크롬
 import "./styles/plant3-hook.css"; // v3 훅 5장면(hookPlant3)
 import "./styles/body3.css"; // 중2 Ⅵ v3 재제작(2026-08-10) 공용 크롬 — ss.g2u6v3 병행 배선
 import "./styles/body3-hook.css"; // v3 훅 5장면(hookBody3)
+import "./styles/matter3.css"; // 중1 Ⅳ 물질의 상태 변화 v3 재제작(2026-09-03) 공용 크롬 — ss.u4v3 병행 배선
+import "./styles/matter3-hook.css"; // v3 훅 4장면(hookMatter3)
 import "./styles/math.css";
 import "./styles/math2.css";
 import "./styles/body-hook.css";

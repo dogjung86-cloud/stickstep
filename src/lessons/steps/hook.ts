@@ -79,6 +79,8 @@ import {
 import {
   renderBodyScan, renderDripBag, renderHiccup, renderPeeTest, renderWarmBody,
 } from "./hookBody3";
+// 중1 Ⅳ v3 훅 4장면(2026-09-03 재제작) — 병행 배선(unit4v3) 전용
+import { renderBakeryLane, renderTiltBottles, renderFrozenBottle, renderIceWatch } from "./hookMatter3";
 import {
   renderThreeCities, renderStiltHouse, renderSkyRoute, renderAvocado, renderMaasai, renderIloveNyc,
 } from "./hookSoc";
@@ -154,6 +156,8 @@ interface HookStep {
     | "potatodrop" | "winterberry" | "veggiebag" | "tropicalnight" | "sweetpotato"
     // 중2 Ⅵ v3 훅 5장면(hookBody3.ts, 2026-08-10 재제작)
     | "bodyscan" | "dripbag" | "hiccup" | "peetest" | "warmbody"
+    // 중1 Ⅳ 물질의 상태 변화 v3 훅 4장면(hookMatter3.ts, 2026-09-03 재제작) — 현행 Ⅳ 장면(smell·juice·wrap·ramen)과 무충돌
+    | "bakerylane" | "tiltbottles" | "frozenbottle" | "icewatch"
     | "wintershock" | "balloondoll" | "deadclock" | "brightpair" | "multitap" | "labelpeek" | "compasswire" | "ebike"
     | "thumbjump" | "nightroad" | "brightlie" | "gasflame" | "milkyband" | "orionblur" | "movingstar"
     | "breadonly" | "chewrice" | "pulse" | "deepbreath" | "peecolor" | "afterrun"
@@ -293,6 +297,10 @@ export const hook: StepRenderer = (host, step, api) => {
   else if (s.scene === "hiccup") renderHiccup(scene, helper, s, finish, face);
   else if (s.scene === "peetest") renderPeeTest(scene, helper, s, finish, face);
   else if (s.scene === "warmbody") renderWarmBody(scene, helper, s, finish, face);
+  else if (s.scene === "bakerylane") renderBakeryLane(scene, helper, s, finish, face);
+  else if (s.scene === "tiltbottles") sceneCleanup = renderTiltBottles(scene, helper, s, finish, face);
+  else if (s.scene === "frozenbottle") sceneCleanup = renderFrozenBottle(scene, helper, s, finish, face);
+  else if (s.scene === "icewatch") sceneCleanup = renderIceWatch(scene, helper, s, finish, face);
   else if (s.scene === "threecities") sceneCleanup = renderThreeCities(scene, helper, s, finish, face);
   else if (s.scene === "stilthouse") sceneCleanup = renderStiltHouse(scene, helper, s, finish, face);
   else if (s.scene === "skyroute") sceneCleanup = renderSkyRoute(scene, helper, s, finish, face);
