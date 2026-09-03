@@ -246,16 +246,23 @@ export function renderHotSand(scene: HTMLElement, helper: HTMLElement, s: HookLi
   fig.appendChild(btnRow);
 }
 
-/** L5 livingwall — 두 금속을 붙인 조각으로 만든 건축물이 햇볕에 휘고 그늘에서 펴진다. */
+/** L5 livingwall — 두 금속을 붙인 조각으로 만든 건축물이 햇볕에 곡선으로 휘고 그늘에서 펴진다.
+ *  사용자 피드백(2026-09-03): 통째로 기우는 게 아니라 바이메탈답게 곡선으로 휘어야 한다 → 경로 d 보간. */
 export function renderLivingWall(scene: HTMLElement, helper: HTMLElement, s: HookLike, finish: () => void, face: Face): void {
   const fig = el("div", { class: "hk3-stage hk3-lw", attrs: { role: "button", tabindex: "0", "aria-label": "햇볕 비추기" } });
-  const strips = [0, 1, 2, 3, 4].map((i) => {
-    const x = 70 + i * 40;
-    return `<g class="lw-strip" style="transform-origin: ${x + 10}px 44px">
-      <rect x="${x}" y="44" width="10" height="110" fill="#F5B301" stroke="#B8860B" stroke-width="1.6"/>
-      <rect x="${x + 10}" y="44" width="10" height="110" fill="#C3CBD4" stroke="#8B95A1" stroke-width="1.6"/>
-    </g>`;
-  }).join("");
+  const TOP = 44, LEN = 108, HALF = 5.5;
+  const xs = [62, 108, 154, 200, 246];
+  // 휨 정도 k(0~1): 위 끝 고정, 아래 끝이 오른쪽(열팽창 정도가 작은 금속 쪽)으로 곡선을 그리며 들린다.
+  const stripD = (cx: number, k: number, off: number): string => {
+    const x0 = cx + off;
+    const qx = x0 + 6 * k, qy = TOP + LEN * 0.62;
+    const ex = x0 + 26 * k, ey = TOP + LEN - 8 * k;
+    return `M${x0} ${TOP} Q${qx.toFixed(1)} ${qy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
+  };
+  const strips = xs.map((cx, i) => `<g class="lw-strip" data-i="${i}">
+      <path class="lw-a" d="${stripD(cx, 0, -HALF)}" stroke="#F5B301" stroke-width="11" fill="none"/>
+      <path class="lw-b" d="${stripD(cx, 0, HALF)}" stroke="#C3CBD4" stroke-width="11" fill="none"/>
+    </g>`).join("");
   fig.innerHTML = `
   <svg viewBox="0 0 320 210" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
@@ -264,11 +271,10 @@ export function renderLivingWall(scene: HTMLElement, helper: HTMLElement, s: Hoo
       </linearGradient>
     </defs>
     <rect x="0" y="0" width="320" height="210" fill="url(#hk3lwSky)"/>
-    <g class="lw-sun"><circle cx="270" cy="34" r="18" fill="#FFD43B"/><g stroke="#FFD43B" stroke-width="3" stroke-linecap="round"><path d="M270 4 v8 M270 56 v8 M240 34 h8 M292 34 h8 M249 13 l6 6 M285 49 l6 6 M291 13 l-6 6 M255 49 l-6 6"/></g></g>
-    <g class="lw-cloud"><path d="M236 40 a14 14 0 0 1 26 -6 a12 12 0 0 1 22 8 a10 10 0 0 1 -6 18 h-42 a10 10 0 0 1 0 -20 Z" fill="#FFFFFF" stroke="#B9C2CC" stroke-width="2"/></g>
-    <rect x="40" y="36" width="240" height="126" rx="6" fill="#E9EDF2" stroke="#8B95A1" stroke-width="2.4"/>
-    <rect x="40" y="36" width="240" height="8" fill="#8B95A1"/>
-    <g class="lw-gaps">${[0, 1, 2, 3, 4].map((i) => `<rect x="${70 + i * 40 + 20}" y="44" width="20" height="110" fill="#39445B" opacity="0.18"/>`).join("")}</g>
+    <g class="lw-sun"><circle cx="280" cy="30" r="16" fill="#FFD43B"/><g stroke="#FFD43B" stroke-width="3" stroke-linecap="round"><path d="M280 4 v6 M280 50 v6 M254 30 h6 M300 30 h6 M262 12 l4 4 M294 44 l4 4 M298 12 l-4 4 M266 44 l-4 4"/></g></g>
+    <g class="lw-cloud"><path d="M246 36 a14 14 0 0 1 26 -6 a12 12 0 0 1 22 8 a10 10 0 0 1 -6 18 h-42 a10 10 0 0 1 0 -20 Z" fill="#FFFFFF" stroke="#B9C2CC" stroke-width="2"/></g>
+    <rect x="34" y="36" width="252" height="126" rx="6" fill="#5C6B7A" stroke="#4E5968" stroke-width="2.4"/>
+    <rect x="34" y="36" width="252" height="8" fill="#39445B"/>
     ${strips}
     <rect x="0" y="162" width="320" height="48" fill="#C9D3DE"/>
     <text class="lw-note" x="160" y="190" text-anchor="middle" font-size="12" font-weight="800" fill="${H3.sub}">탭해서 햇볕 비추기</text>
@@ -279,16 +285,43 @@ export function renderLivingWall(scene: HTMLElement, helper: HTMLElement, s: Hoo
 
   let sunny = false;
   let asked = false;
+  let bend = 0;
+  let tweenId = 0;
   const note = fig.querySelector(".lw-note") as SVGTextElement;
+  const paths = xs.map((cx, i) => ({
+    cx,
+    a: fig.querySelector(`.lw-strip[data-i="${i}"] .lw-a`) as SVGPathElement,
+    b: fig.querySelector(`.lw-strip[data-i="${i}"] .lw-b`) as SVGPathElement,
+  }));
+  const tween = (to: number): void => {
+    const from = bend;
+    const steps = 18;
+    let n = 0;
+    const id = ++tweenId;
+    const stepFn = (): void => {
+      if (id !== tweenId || !fig.isConnected) return;
+      n += 1;
+      const t = n / steps;
+      const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      bend = from + (to - from) * e;
+      for (const p of paths) {
+        p.a.setAttribute("d", stripD(p.cx, bend, -HALF));
+        p.b.setAttribute("d", stripD(p.cx, bend, HALF));
+      }
+      if (n < steps) window.setTimeout(stepFn, 40);
+    };
+    stepFn();
+  };
   const toggle = (): void => {
     sunny = !sunny;
     haptic(HAPTIC.tap);
     fig.classList.toggle("sunny", sunny);
-    note.textContent = sunny ? "햇볕이 쨍쨍, 조각이 휘어져요" : "그늘이 지자 조각이 펴져요";
+    note.textContent = sunny ? "햇볕이 쨍쨍, 조각이 휘어져 틈이 벌어져요" : "그늘이 지자 조각이 펴져요";
+    tween(sunny ? 1 : 0);
     if (sunny && !asked) {
       asked = true;
       face("surprised");
-      helper.innerHTML = "햇볕이 닿자 조각들이 <b>휘어지면서 틈이 생겼어요</b>. 아무도 건드리지 않았는데, 왜 휘어졌을까요?";
+      helper.innerHTML = "햇볕이 닿자 조각들이 <b>곡선으로 휘어지면서 틈이 벌어졌어요</b>. 아무도 건드리지 않았는데, 왜 휘어졌을까요?";
       window.setTimeout(() => {
         ask(choicesBox, helper, {
           choices: s.choices ?? [

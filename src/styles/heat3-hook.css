@@ -59,11 +59,7 @@
 .hk3-hs.on-sand .hs-tag-sand { opacity: 1; transform: translateY(0) scale(1); }
 .hk3-hs.on-sea .hs-tag-sea { opacity: 1; transform: translateY(0) scale(1); }
 
-/* livingwall — 햇볕이면 조각이 휘고 틈이 벌어진다, 그늘이면 펴진다 */
-.hk3-lw .lw-strip { transition: transform 0.9s var(--spring-soft, ease-out); }
-.hk3-lw.sunny .lw-strip { transform: rotate(-12deg); }
-.hk3-lw .lw-gaps { opacity: 0; transition: opacity 0.6s ease 0.3s; }
-.hk3-lw.sunny .lw-gaps { opacity: 1; }
+/* livingwall — 조각의 휨은 hookHeat3가 경로 d를 보간한다(곡선). 여기서는 해·구름만 */
 .hk3-lw .lw-sun { opacity: 0.35; transition: opacity 0.5s ease; transform-box: fill-box; transform-origin: center; }
 .hk3-lw.sunny .lw-sun { opacity: 1; animation: hk3Spin 14s linear infinite; }
 .hk3-lw .lw-cloud { transition: opacity 0.5s ease; }
@@ -72,5 +68,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hk3-rh.rubbing .rh-handL, .hk3-rh.rubbing .rh-handR, .hk3-bt.beep .bt-beep, .hk3-lw.sunny .lw-sun { animation: none; }
-  .hk3-lw .lw-strip, .hk3-hs .hs-tag { transition-duration: 0.2s; }
+  .hk3-hs .hs-tag { transition-duration: 0.2s; }
 }

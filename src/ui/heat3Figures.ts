@@ -291,10 +291,10 @@ export function liquidFlaskFig(state: "before" | "after"): string {
     <rect x="166" y="${level}" width="8" height="${126 - level}" fill="${H3.hot}" opacity="0.75"/>
     <line x1="182" y1="96" x2="200" y2="96" stroke="#8B95A1" stroke-width="1.8"/>${TXT(204, 100, "처음 높이", 10, "start")}
     ${state === "after" ? `<line x1="182" y1="40" x2="200" y2="40" stroke="${H3.hot}" stroke-width="1.8"/>${TXT(204, 44, "나중 높이", 10, "start", H3.hot)}` : ""}
-    ${state === "after" ? `${flameSvg(170, 224, 0.9, "lf")}${burnerSvg(170, 224, 60)}` : `${burnerSvg(170, 224, 60)}`}
+    ${state === "after" ? `${flameSvg(170, 200, 0.9, "lf")}${burnerSvg(170, 200, 60)}` : `${burnerSvg(170, 200, 60)}`}
     ${TXT(170, 250, state === "after" ? "가열 후: 액체가 유리관을 타고 올라와요" : "가열 전", 11, "middle", H3.ink)}
   `;
-  return svg("0 0 340 258", body, state === "after" ? "가열한 뒤 액체가 유리관 위로 올라온 플라스크" : "가열하기 전 액체가 담긴 플라스크");
+  return svg("0 0 340 262", body, state === "after" ? "가열한 뒤 액체가 유리관 위로 올라온 플라스크" : "가열하기 전 액체가 담긴 플라스크");
 }
 
 /** 알루미늄 테이프(종이+알루미늄박) 가열 전·후. */
@@ -304,13 +304,13 @@ export function tapeBendFig(): string {
     <rect x="70" y="14" width="10" height="130" fill="${H3.alu}" stroke="#8B95A1" stroke-width="1.6"/>
     <rect x="80" y="14" width="10" height="130" fill="${H3.paper}" stroke="#C9B37A" stroke-width="1.6"/>
     ${TXT(80, 166, "가열 전", 11, "middle", H3.ink)}
-    <path d="M226 14 c-4 40 -6 76 -34 118" stroke="${H3.alu}" stroke-width="10" fill="none"/>
-    <path d="M221 14 c-4 40 -6 76 -34 118" stroke="#8B95A1" stroke-width="1.6" fill="none"/>
-    <path d="M236 14 c-4 40 -8 80 -38 124" stroke="${H3.paper}" stroke-width="10" fill="none"/>
-    <path d="M241 14 c-4 40 -8 80 -38 124" stroke="#C9B37A" stroke-width="1.6" fill="none"/>
+    <path d="M226 14 c4 40 8 80 38 124" stroke="${H3.alu}" stroke-width="10" fill="none"/>
+    <path d="M221 14 c4 40 8 80 38 124" stroke="#8B95A1" stroke-width="1.6" fill="none"/>
+    <path d="M236 14 c4 40 6 76 34 118" stroke="${H3.paper}" stroke-width="10" fill="none"/>
+    <path d="M241 14 c4 40 6 76 34 118" stroke="#C9B37A" stroke-width="1.6" fill="none"/>
     ${flameSvg(232, 178, 0.8, "tb")}${burnerSvg(232, 178, 44)}
     ${TXT(232, 214, "가열 후", 11, "middle", H3.ink)}
-    ${TXT(150, 44, "알루미늄박", 9.5, "end", H3.sub)}${TXT(250, 44, "종이", 9.5, "start", H3.sub)}
+    ${TXT(218, 44, "알루미늄박", 9.5, "end", H3.sub)}${TXT(248, 44, "종이", 9.5, "start", H3.sub)}
   `;
   return svg("0 0 340 224", body, "종이를 붙인 알루미늄 테이프를 가열하기 전과 후의 모습");
 }

@@ -112,7 +112,7 @@ await cta(); await W(800);
 await pick(".bml-q", "종이 쪽으로"); await clickSel(".bml-btn"); await W(1800);
 await scrollTop(); await W(200);
 await shot("l5-bimetal-tape", true);
-await W(1800); await clickSel(".bml-btn"); await W(1300);
+await clickSel(".bml-btn"); await W(700); await clickSel(".bml-btn"); await W(1500);
 await scrollTop(); await W(200);
 await shot("l5-bimetal-hot", true);
 

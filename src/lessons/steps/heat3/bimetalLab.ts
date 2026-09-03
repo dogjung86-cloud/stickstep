@@ -1,8 +1,10 @@
 // [중1 Ⅲ v3] L5 bimetalLab — 「알루미늄 테이프에서 바이메탈까지」(교과서 해 보기 + 바이메탈 활용).
 // 한 통찰: 같은 열을 받아도 물질마다 열팽창 정도가 다르다. 두 물질을 붙이면 덜 늘어나는 쪽으로 휘고,
 // 이 성질로 온도 조절 장치(바이메탈)를 만든다.
-// 조작: 예측(b4Ask) → 가열 버튼(테이프) → 온도 올리기·식히기 버튼(바이메탈 회로).
+// 조작: 예측(b4Ask) → 가열 버튼(테이프) → 회로로 넘어가기 버튼 → 온도 올리기·식히기 버튼(바이메탈 회로).
 // 목표 3: 테이프 실험 → 바이메탈 회로 → 휘는 방향 판정.
+// 사용자 피드백(2026-09-03) 반영: 테이프 결과 설명을 읽을 시간을 주려고 자동 전환 대신 버튼으로 넘어가고,
+// 바이메탈은 통째로 기울지 않고 곡선으로 휜다(경로 d를 자가 예약 setTimeout으로 보간).
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -28,14 +30,29 @@ function tapeScene(): string {
       <rect x="170" y="18" width="10" height="120" fill="${H3.paper}" stroke="#C9B37A" stroke-width="1.6"/>
     </g>
     <g class="bml-tape-bent">
-      <path d="M165 18 c-2 40 -4 70 -30 106" stroke="${H3.alu}" stroke-width="10" fill="none"/>
-      <path d="M175 18 c-2 42 -6 74 -34 112" stroke="${H3.paper}" stroke-width="10" fill="none"/>
-      <path d="M175 18 c-2 42 -6 74 -34 112" stroke="#C9B37A" stroke-width="1.2" fill="none" transform="translate(5 0)"/>
+      <path d="M165 18 c2 42 6 74 34 112" stroke="${H3.alu}" stroke-width="10" fill="none"/>
+      <path d="M175 18 c2 40 4 70 30 106" stroke="${H3.paper}" stroke-width="10" fill="none"/>
+      <path d="M180 18 c2 40 4 70 30 106" stroke="#C9B37A" stroke-width="1.2" fill="none"/>
     </g>
     <text x="150" y="44" text-anchor="end" font-size="10.5" font-weight="800" fill="${H3.sub}">알루미늄박</text>
     <text x="190" y="44" text-anchor="start" font-size="10.5" font-weight="800" fill="${H3.sub}">종이</text>
     ${flameSvg(170, 188, 1, "bml")}${burnerSvg(170, 188, 70)}
   </svg>`;
+}
+
+// 바이메탈 띠의 고정 끝·길이(회로 장면 좌표)
+const STRIP_X0 = 46;
+const STRIP_LEN = 150;
+const STRIP_Y = 69; // 중심선
+const HALF = 4.5; // 금속 한 층의 절반 두께
+
+/** 휨 정도 k(0~1)에 따른 두 금속 경로 — 고정 끝은 그대로, 자유 끝이 아래로 처지는 완만한 곡선. */
+function stripPath(k: number, offset: number): string {
+  const x0 = STRIP_X0, x1 = STRIP_X0 + STRIP_LEN;
+  const y0 = STRIP_Y + offset;
+  const cx = x0 + STRIP_LEN * 0.55, cy = y0 + 6 * k;
+  const ex = x1 - 3 * k, ey = y0 + 40 * k;
+  return `M${x0} ${y0} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
 }
 
 function circuitScene(): string {
@@ -51,18 +68,15 @@ function circuitScene(): string {
       <text x="300" y="98" text-anchor="middle" font-size="10" font-weight="800" fill="${H3.sub}">전구</text>
     </g>
     <rect x="34" y="52" width="12" height="36" rx="2" fill="#4E5968"/>
-    <g class="bml-strip">
-      <rect x="46" y="60" width="150" height="9" fill="#F5B301"/>
-      <rect x="46" y="69" width="150" height="9" fill="#8B95A1"/>
-    </g>
-    <path d="M196 40 v22" stroke="#4E5968" stroke-width="3.5"/>
-    <path d="M196 40 h104" stroke="#4E5968" stroke-width="3.5"/>
+    <path class="bml-strip-top" d="${stripPath(0, -HALF)}" stroke="#F5B301" stroke-width="9" fill="none"/>
+    <path class="bml-strip-bot" d="${stripPath(0, HALF)}" stroke="#8B95A1" stroke-width="9" fill="none"/>
+    <path d="M196 40 v20 M196 40 h104" stroke="#4E5968" stroke-width="3.5" fill="none"/>
     <circle cx="196" cy="60" r="4" fill="#4E5968"/>
-    <text x="120" y="50" text-anchor="middle" font-size="10" font-weight="800" fill="#B8860B">열팽창 정도가 큰 금속(위)</text>
-    <text x="120" y="96" text-anchor="middle" font-size="10" font-weight="800" fill="#5C6B7A">열팽창 정도가 작은 금속(아래)</text>
+    <text x="96" y="48" text-anchor="middle" font-size="10" font-weight="800" fill="#B8860B">열팽창 정도가 큰 금속(위)</text>
+    <text x="90" y="106" text-anchor="middle" font-size="10" font-weight="800" fill="#5C6B7A">열팽창 정도가 작은 금속(아래)</text>
     <text x="214" y="30" text-anchor="start" font-size="9.5" font-weight="800" fill="${H3.sub}">접점</text>
-    ${flameSvg(120, 150, 0.9, "bmlc")}${burnerSvg(120, 150, 70)}
-    <text class="bml-state" x="120" y="128" text-anchor="middle" font-size="11" font-weight="800" fill="${H3.ink}">온도가 낮을 때: 접점에 닿아 전구가 켜져요</text>
+    ${flameSvg(110, 150, 0.9, "bmlc")}${burnerSvg(110, 150, 70)}
+    <text class="bml-state" x="232" y="142" text-anchor="middle" font-size="10.5" font-weight="800" fill="${H3.ink}">온도 낮음: 접점에 닿아 전구가 켜져요</text>
   </svg>`;
 }
 
@@ -94,9 +108,10 @@ export const bimetalLab: StepRenderer = (host, step, api) => {
   const btnRow = el("div", { class: "ht3-btnrow" }, btn);
   const qBox = h3AskBox("bml-q");
 
-  let phase: "predict" | "tape" | "circuit" | "done" = "predict";
+  let phase: "predict" | "tape" | "tapeDone" | "circuit" | "done" = "predict";
   let hot = false;
   let heatedOnce = false;
+  let bend = 0; // 현재 휨 정도 0~1
 
   // 1) 예측(채점 없음) → 가열 버튼 개방
   tm.later(() => {
@@ -120,39 +135,68 @@ export const bimetalLab: StepRenderer = (host, step, api) => {
 
   function heatTape(): void {
     haptic(HAPTIC.tap);
-    btn.disabled = true;
     board.classList.add("heating", "bent");
-    helper.innerHTML = "가열하자 테이프가 <b>종이 쪽으로</b> 휘었어요! 종이도 알루미늄박도 늘어나지만, <b>알루미늄의 열팽창 정도가 종이보다 커서</b> 바깥쪽이 된 거예요. 물질마다 열팽창 정도가 다르다는 증거죠.";
+    helper.innerHTML = "가열하자 테이프가 <b>종이 쪽으로</b> 휘었어요! 종이도 알루미늄박도 늘어나지만, <b>알루미늄의 열팽창 정도가 종이보다 커서</b> 바깥쪽이 된 거예요. 물질마다 열팽창 정도가 다르다는 증거죠. 다 읽었으면 아래 버튼으로 다음 실험으로 넘어가요.";
     goals.collect("tape", "종이 쪽으로!");
-    tm.later(() => {
-      phase = "circuit";
-      board.classList.remove("heating", "bent");
-      stage.innerHTML = circuitScene();
-      btn.disabled = false;
-      btn.textContent = "온도 올리기";
-      helper.innerHTML = "이 성질을 이용한 장치가 <b>바이메탈</b>이에요. 열팽창 정도가 다른 두 금속을 붙여 회로에 넣었어요. 지금은 접점에 닿아 전구가 켜져 있죠. <b>온도를 올려</b> 보세요.";
-    }, 3000);
+    phase = "tapeDone";
+    btn.textContent = "바이메탈 회로로 넘어가기";
+  }
+
+  function toCircuit(): void {
+    haptic(HAPTIC.tap);
+    phase = "circuit";
+    board.classList.remove("heating", "bent");
+    stage.innerHTML = circuitScene();
+    btn.textContent = "온도 올리기";
+    helper.innerHTML = "이 성질을 이용한 장치가 <b>바이메탈</b>이에요. 열팽창 정도가 다른 두 금속을 붙여 회로에 넣었어요. 지금은 접점에 닿아 전구가 켜져 있죠. <b>온도를 올려</b> 보세요.";
+  }
+
+  // 휨 보간 — 곡선 경로 d를 18틱으로 보간(자가 예약 setTimeout, rAF 없음).
+  function tweenBend(to: number, done?: () => void): void {
+    const from = bend;
+    const steps = 18;
+    let n = 0;
+    const top = stage.querySelector(".bml-strip-top") as SVGPathElement | null;
+    const bot = stage.querySelector(".bml-strip-bot") as SVGPathElement | null;
+    const step = (): void => {
+      n += 1;
+      const t = n / steps;
+      const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      bend = from + (to - from) * e;
+      top?.setAttribute("d", stripPath(bend, -HALF));
+      bot?.setAttribute("d", stripPath(bend, HALF));
+      if (n < steps) tm.later(step, 40);
+      else done?.();
+    };
+    step();
   }
 
   function toggleHeat(): void {
     haptic(HAPTIC.tap);
     hot = !hot;
+    btn.disabled = true;
     board.classList.toggle("hot", hot);
     const state = stage.querySelector(".bml-state") as SVGTextElement | null;
     if (hot) {
       heatedOnce = true;
-      btn.textContent = "식히기";
-      if (state) state.textContent = "온도가 높을 때: 휘어져 접점에서 떨어져요";
+      if (state) state.textContent = "온도 높음: 휘어져 접점에서 떨어져요";
       helper.innerHTML = "온도가 오르자 바이메탈이 <b>아래로 휘면서 접점에서 떨어졌고</b>, 회로가 끊겨 전구가 꺼졌어요. 이번엔 <b>식혀</b> 보세요.";
+      tweenBend(1, () => {
+        btn.textContent = "식히기";
+        btn.disabled = false;
+      });
     } else {
-      btn.textContent = "온도 올리기";
-      if (state) state.textContent = "온도가 낮을 때: 접점에 닿아 전구가 켜져요";
+      if (state) state.textContent = "온도 낮음: 접점에 닿아 전구가 켜져요";
       helper.innerHTML = "식히자 다시 곧게 펴지며 접점에 닿아 전구가 켜졌어요. 온도에 따라 <b>스스로 회로를 껐다 켜는</b> 장치, 그래서 온도 조절에 쓰인답니다.";
-      if (heatedOnce && !goals.has("circuit")) {
-        goals.collect("circuit", "껐다 켰다!");
-        btn.disabled = true;
-        tm.later(askDir, 900);
-      }
+      tweenBend(0, () => {
+        btn.textContent = "온도 올리기";
+        if (heatedOnce && !goals.has("circuit")) {
+          goals.collect("circuit", "껐다 켰다!");
+          tm.later(askDir, 900);
+        } else {
+          btn.disabled = false;
+        }
+      });
     }
   }
 
@@ -177,7 +221,9 @@ export const bimetalLab: StepRenderer = (host, step, api) => {
   }
 
   btn.addEventListener("click", () => {
+    if (btn.disabled) return;
     if (phase === "tape") heatTape();
+    else if (phase === "tapeDone") toCircuit();
     else if (phase === "circuit") toggleHeat();
   });
 

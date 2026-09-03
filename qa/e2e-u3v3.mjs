@@ -272,12 +272,15 @@ console.log("L5 열팽창, 늘어나는 입자의 거리");
   await W(800);
   ok(await pickChoice(".bml-q", "종이 쪽으로"), "테이프 예측");
   await clickSel(".bml-btn"); // 가열
-  await W(3600);
+  await W(1800);
   ok((await goalsOn()) === 1, "테이프 목표 점등");
-  await clickSel(".bml-btn"); // 온도 올리기
-  await W(1200);
-  await clickSel(".bml-btn"); // 식히기
+  await clickSel(".bml-btn"); // 바이메탈 회로로 넘어가기(자동 전환 아님)
+  await W(700);
+  ok(await page.evaluate(() => !!document.querySelector(".screen.active .bml-strip-top")), "회로 장면 전환");
+  await clickSel(".bml-btn"); // 온도 올리기(곡선 휨 보간 ~0.8s)
   await W(1400);
+  await clickSel(".bml-btn"); // 식히기
+  await W(1600);
   ok(await pickChoice(".bml-q", "작은 금속 쪽"), "휘는 방향 판정");
   ok((await goalsOn()) === 3, "바이메탈 목표 3");
   ok(await ctaEnabled(), "바이메탈 CTA");
