@@ -125,8 +125,8 @@ export const acetoneBalloonLab: StepRenderer = (host, step, api) => {
           ? "정확해요! 바람은 플라스크 바깥에만 닿았어요. <b>기화</b>로 입자 사이가 멀어져 부피가 늘어난 거죠."
           : "풍선이 입구를 막고 있어 바람은 못 들어가요. <b>기화</b>로 입자 사이가 매우 멀어져 부피가 늘어난 거예요.";
         goals.collect("vol", ok ? "정확한 판정!" : "판정 완료");
-        tm.later(askCount, 1400);
       },
+      { why: "바람은 못 들어가요. <b>기화</b>로 입자 사이가 매우 멀어져 부피가 늘어난 거예요.", onNext: askCount },
     );
   }
 
@@ -147,6 +147,7 @@ export const acetoneBalloonLab: StepRenderer = (host, step, api) => {
         goals.collect("count", ok ? "정확한 판정!" : "판정 완료");
         phase = "done";
       },
+      { why: "처음에도 나중에도 <b>12개, 같은 입자</b>예요. 달라진 건 거리와 배열뿐이에요." },
     );
   }
 

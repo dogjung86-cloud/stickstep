@@ -723,9 +723,21 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
   슬롯 안 선택지는 압축 패딩 9/12) ⑥ **궁금증 카드(curio)는 목표 3개를 다 채운 뒤에 붙인다**(판정 시점 예산 밖)
   ⑦ 무대 안 요소는 통찰에 필요한 것만 — 장면은 한 번에 하나(잉크 비커 ↔ 접시 교체), 안내 글자·태그·보조 소품
   (얼음 비커·머리 말리개 본체·장면 탭 줄·끈 스윕) 제거, **입자 창은 배열 변화가 통찰인 랩에만**(소독제·올리브유·
-  아세톤·곡선 2종). 기계 검사 = `PORT=<포트> node qa/check-u4v3-fit.mjs`(20검증 + 폰 크기 샷 20장 →
+  아세톤·곡선 2종). 기계 검사 = `PORT=<포트> node qa/check-u4v3-fit.mjs`(초판 20검증 → 오답 시점 추가로 30검증 + 폰 크기 샷 30장 →
   qa/shots/u4v3-fit-*.png, 몽타주는 Pillow로) — 눈검수 샷(shot-u4v3 420×900)만으로는 이 결함이 안 보였다
   (실제 폰보다 200px 긴 화면). 구판과의 비교 실측 스크립트 = `qa/measure-u4-compare.mjs`.
+- **오답 정답 카드(2026-09-04 사용자 피드백 "랩에서 답이 틀리면 클릭한 보기 밑에 정답이 떠야")**: 실측하니 오답 시 제자리
+  초록 표시가 **1.48초 뒤 다음 질문에 덮이고**(랩 전부 tm.later(askNext, 0.6~1.5s)), 해설은 270px 위 helper에 써서 학생이
+  정답을 못 봤다. 수정 = 공용 bio4Kit.b4Ask 5번째 인자 `B4AskOpts{why, onNext, nextDelay, predict}` — 오답이면 정답 보기를
+  **누른 보기 바로 아래 초록 카드**(`.hook-choice.reveal.hook-ans`: "정답" 태그 + 문장 + 이유 `why`(40자 이하) + "다음" 필)로
+  바꾸고 나머지 보기는 `.gone`으로 접는다(판정 국면 높이 = 보기 3개 상태). 정답이면 `.sel` + 1.1초 뒤 자동 onNext.
+  **랩 10종은 다음 질문·showBtn을 타이머로 예약하지 않고 `slot.ask(..., { why, onNext })`로 넘긴다**(m3Slot.ask 4번째 인자,
+  surroundTemp는 SceneDef.why). CSS는 ui.css 공용(.hook-ans*, .hook-why, .hook-next, .hook-choice.gone). 게이트 =
+  `check-u4v3-fit.mjs` **3시점 30검증 ALL PASS**(오답 시점은 카드 가시성 포함, 마지막 질문의 궁금증 카드 높이는 예산 밖
+  제외)·e2e 113/113·check-real 13/13·build. **e2e 함정**: 장면 전환(주변 온도) 때 pickChoice가 직전 질문의 여전히
+  enabled인 누른 보기를 새 질문으로 착각해 누르던 경합 → 헬퍼가 `.sel/.miss`가 있는 상자의 보기는 제외. Ⅲ v3(sci-u3-v3)에도
+  동일 패치 — 두 브랜치의 bio4Kit.ts·ui.css 변경은 바이트 동일(병합 충돌 0 설계). 예산 규칙의 한계도 같은 날 확인: Ⅲ 열량계
+  랩은 "너무 간단해졌다"는 피드백으로 실험 장면을 한 보드 안에 되살렸다 — 통찰이 장치에서 나오는 랩은 장치를 남긴다.
 - **훅 물리 형태 규칙의 Ⅳ 판**: tiltbottles는 병을 회전시키되 **물은 매 틱 수평면을 유지하며 부피가 같도록**
   회전 사각형을 수평선으로 자른 넓이를 이분법으로 맞춘다(clipBelow·polyArea) — 순간 교체·통째 회전 금지의
   구현 예. 층 순서는 **유리(반투명 fill) → 내용물 → 윤곽선**(처음 유리를 위에 그려 내용물이 가려진 실사고).
@@ -743,7 +755,7 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
 - **QA**: `PORT=5463 node qa/e2e-u4v3.mjs`(6레슨 실플레이 **113검증 ALL PASS·pageErrors 0**, 긴 연출은 pickChoice/
   clickWhenEnabled 폴링) · `qa/check-u4v3-real.mjs`(스플래시→지도→trusted click, 토글 off=구판 .hook-meal /
   on=v3 .hk4-bl, 판정 질문 가시성 **13검증 ALL PASS**) · `qa/shot-u4v3.mjs`(눈검수 21샷 → qa/shots/u4v3-*.png) ·
-  `qa/shot-u4v3-figs.mjs`(그림 18종+미니아트 18 한 장) · `qa/check-u4v3-fit.mjs`(한 화면 예산 **20검증 ALL PASS**).
+  `qa/shot-u4v3-figs.mjs`(그림 18종+미니아트 18 한 장) · `qa/check-u4v3-fit.mjs`(한 화면 예산 **30검증 ALL PASS**).
   tsc·build 통과.
 - **잔여**: 사용자 판정 → 합격 시 정본 교체(curriculum 한 줄)·이 섹션 정본 갱신. 백로그 = 만화 말풍선(화자 머리
   실측 관행), 시험 풀 사후 스팟 검산(재출제 없이 레슨 문구만 교체했으므로 풀 자체는 불변).

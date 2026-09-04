@@ -157,6 +157,7 @@ export const inkSpreadLab: StepRenderer = (host, step, api) => {
           : "젓지도 불지도 않았고 빨아들인 것도 아니에요. 입자가 <b>스스로 끊임없이 움직여</b> 퍼졌어요.";
         goals.collect("judge", ok ? "정확한 판정!" : "판정 완료");
       },
+      { why: "젓지도 불지도 않았는데 퍼졌죠. 입자가 <b>스스로 끊임없이</b> 움직여서예요." },
     );
   }
 

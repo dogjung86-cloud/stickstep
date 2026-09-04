@@ -42,11 +42,27 @@ export interface B4Choice {
   ok: boolean;
 }
 
+/** b4Ask 부가 옵션(2026-09-04 오답 피드백 재설계 — 사용자 피드백 "오답이면 누른 보기 밑에 정답이 떠야").
+ *  why: 오답일 때 정답 카드 안에 붙는 이유 한 줄(HTML 허용, 40자 이하 — 폰에서 2줄).
+ *  onNext: 다음 국면 콜백. 정답이면 nextDelay(기본 1100ms) 뒤 자동, 오답이면 정답 카드의 "다음" 필을 눌러야 넘어간다.
+ *    (랩이 tm.later(askNext, 1400)로 다음 질문을 덮어쓰면 정답 표시를 1.5초 만에 잃던 결함의 수정 — 랩은 타이머 대신 이걸 쓴다.)
+ *  predict: 예측 질문(정답 공개 없음) — 어느 보기를 골라도 기록만 하고 다음 국면으로 자동 진행. 실험이 답을 보여주는 자리에. */
+export interface B4AskOpts {
+  why?: string;
+  onNext?: () => void;
+  nextDelay?: number;
+  predict?: boolean;
+}
+
+/** 랩 판정 상자. 오답이면 정답 보기를 누른 보기 바로 아래로 옮겨 초록 카드("정답" 태그 + 문장 + 이유 + "다음" 필)로
+ *  바꾸고 나머지 보기는 접는다(.gone) — 판정 국면 높이가 보기 3개 상태를 넘지 않아 한 화면 예산이 유지된다.
+ *  카드는 .hook-choice.reveal(div)이라 기존 e2e 선택자(.hook-choice.reveal / .miss)가 그대로 맞는다. */
 export function b4Ask(
   box: HTMLElement,
   question: string,
   choices: B4Choice[],
   onPick: (ok: boolean) => void,
+  opts: B4AskOpts = {},
 ): void {
   box.innerHTML = "";
   box.style.display = "";
@@ -54,32 +70,80 @@ export function b4Ask(
   // 이 줄이 빠지면 판정 질문이 DOM에만 있고 화면엔 안 보인다 — 합성 클릭 e2e는 보이지 않는
   // 버튼도 눌러 통과하므로 가시성 검증은 offsetParent로 해야 한다(2026-08-10 실사용 적발).
   box.classList.add("show");
-  box.appendChild(el("div", { class: "hook-q", html: question }));
+  const qEl = el("div", { class: "hook-q", html: question });
+  box.appendChild(qEl);
   const order = choices.map((_, i) => i);
   for (let i = order.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [order[i], order[j]] = [order[j], order[i]];
   }
+  const good = choices.find((y) => y.ok);
   let picked = false;
+  // 자동 진행(정답·예측) — 그 사이 랩이 상자를 갈아치웠으면(showBtn 등) 건너뛴다.
+  const goNext = (): void => {
+    const fn = opts.onNext;
+    if (!fn) return;
+    window.setTimeout(() => {
+      if (box.isConnected && box.contains(qEl)) fn();
+    }, opts.nextDelay ?? 1100);
+  };
   order.forEach((idx) => {
     const c = choices[idx];
     const b = el("button", { class: "hook-choice", text: c.t, attrs: { type: "button" } }) as HTMLButtonElement;
     b.addEventListener("click", () => {
       if (picked) return;
       picked = true;
-      haptic(c.ok ? HAPTIC.correct : HAPTIC.wrong);
       const btns = [...box.querySelectorAll<HTMLButtonElement>(".hook-choice")];
+      if (opts.predict) {
+        // 예측: 정오 표시 없이 고른 보기만 남기고 다음 국면으로(실험이 답을 보여준다).
+        haptic(HAPTIC.tap);
+        btns.forEach((x) => {
+          x.classList.add(x === b ? "sel" : "dim");
+          x.disabled = true;
+        });
+        onPick(c.ok);
+        goNext();
+        return;
+      }
+      haptic(c.ok ? HAPTIC.correct : HAPTIC.wrong);
       btns.forEach((x) => {
         const mine = x === b;
         x.classList.add(mine ? (c.ok ? "sel" : "miss") : "dim");
         x.disabled = !mine;
       });
-      if (!c.ok) {
-        const goodBtn = btns.find((x) => x.textContent === choices.find((y) => y.ok)?.t);
-        goodBtn?.classList.remove("dim");
-        goodBtn?.classList.add("reveal");
+      if (c.ok) {
+        onPick(true);
+        goNext();
+        return;
       }
-      onPick(c.ok);
+      // 오답 — 정답 보기를 누른 보기 바로 아래의 초록 카드로 바꾸고, 나머지 보기는 접는다.
+      const goodBtn = btns.find((x) => x.textContent === good?.t);
+      btns.forEach((x) => {
+        if (x !== b && x !== goodBtn) x.classList.add("gone");
+      });
+      const card = el(
+        "div",
+        { class: "hook-choice reveal hook-ans" },
+        el("span", { class: "hook-ans-row" }, el("span", { class: "hook-ans-tag", text: "정답" }), el("span", { class: "hook-ans-t", text: good?.t ?? "" })),
+      );
+      if (opts.why || opts.onNext) {
+        const foot = el("span", { class: "hook-ans-foot" });
+        if (opts.why) foot.appendChild(el("span", { class: "hook-why", html: opts.why }));
+        const fn = opts.onNext;
+        if (fn) {
+          const next = el("button", { class: "hook-next", text: "다음", attrs: { type: "button" } }) as HTMLButtonElement;
+          next.addEventListener("click", () => {
+            next.disabled = true;
+            haptic(HAPTIC.tap);
+            fn();
+          });
+          foot.appendChild(next);
+        }
+        card.appendChild(foot);
+      }
+      goodBtn?.remove();
+      b.after(card);
+      onPick(false);
     });
     box.appendChild(b);
   });

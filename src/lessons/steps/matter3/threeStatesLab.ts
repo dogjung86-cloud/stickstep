@@ -184,6 +184,7 @@ export const threeStatesLab: StepRenderer = (host, step, api) => {
           : "사방으로 날아다니는 건 <b>기체</b>예요. 액체 입자는 <b>서로 가까이 붙어</b> 있어 부피가 그대로랍니다.";
         goals.collect("judge", ok ? "정확한 판정!" : "판정 완료");
       },
+      { why: "사방으로 날아다니는 건 <b>기체</b>예요. 액체 입자는 <b>서로 가까이 붙어</b> 있어요." },
     );
   }
 

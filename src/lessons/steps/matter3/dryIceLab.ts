@@ -110,6 +110,7 @@ export const dryIceLab: StepRenderer = (host, step, api) => {
           : "컵 안에 물이 없었죠? 녹은 게 아니에요. <b>곧장 기체</b>가 되어 컵을 채우며 비누막을 밀어 올린 거예요.";
         goals.collect("judge", ok ? "정확한 판정!" : "판정 완료");
       },
+      { why: "컵 안에 물이 없었죠. 녹지 않고 <b>곧장 기체</b>가 되어 비누막을 밀어 올렸어요." },
     );
   }
 

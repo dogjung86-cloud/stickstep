@@ -131,6 +131,7 @@ export const evapScaleLab: StepRenderer = (host, step, api) => {
           : "스며들었다면 여전히 저울 위라 질량은 그대로예요. <b>표면의 입자</b>가 기체가 되어 흩어진 거예요.";
         goals.collect("judge", ok ? "정확한 판정!" : "판정 완료");
       },
+      { why: "<b>표면의 입자</b>가 기체가 되어 저울 밖으로 흩어졌어요." },
     );
   }
 

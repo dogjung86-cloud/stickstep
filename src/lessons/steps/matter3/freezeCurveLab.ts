@@ -128,8 +128,8 @@ export const freezeCurveLab: StepRenderer = (host, step, api) => {
           ? "정확해요! 어는 동안은 <b>일정</b>했어요. 이 동안 열에너지는 어떻게 되고 있었을까요?"
           : "평평한 구간을 보세요. 어는 동안 온도는 <b>일정</b>했어요. 이 동안 열에너지는 어떻게 되고 있었을까요?";
         goals.collect("temp", ok ? "정확한 판정!" : "판정 완료");
-        tm.later(askEnergy, 1400);
       },
+      { why: "평평한 구간을 보세요. 어는 동안 온도는 <b>일정</b>했어요.", onNext: askEnergy },
     );
   }
 
@@ -148,6 +148,7 @@ export const freezeCurveLab: StepRenderer = (host, step, api) => {
           : "냉각 중이니 흡수가 아니라 <b>방출</b>이에요. 내보낸 열에너지가 상태 변화 몫이라 온도가 그대로였죠.";
         goals.collect("energy", ok ? "정확한 판정!" : "판정 완료");
       },
+      { why: "냉각 중이니 흡수가 아니라 <b>방출</b>이에요. 내보낸 열이 상태 변화 몫이었어요." },
     );
   }
 

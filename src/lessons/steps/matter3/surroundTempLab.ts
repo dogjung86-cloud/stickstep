@@ -29,6 +29,7 @@ interface SceneDef {
   after: number;
   explainGood: string;
   explainBad: string;
+  why: string; // 오답 정답 카드의 이유 한 줄(40자 이하)
   art: (ns: string) => string;
 }
 
@@ -48,6 +49,7 @@ const SCENES: SceneDef[] = [
     after: 30,
     explainGood: "정답! 물이 기화하려면 <b>열에너지를 흡수</b>해야 해요. 주변에서 빼앗아 가니 시원해지죠.",
     explainBad: "기화할 때는 <b>열에너지를 흡수</b>해요. 주변에서 빼앗아 가니 온도는 <b>낮아져요</b>. 34℃ → 30℃.",
+    why: "기화할 때는 <b>열에너지를 흡수</b>해요. 주변에서 빼앗아 가니 온도가 낮아져요.",
     art: (ns) => `
       <rect x="0" y="118" width="248" height="62" fill="#8B95A1"/><path d="M0 150 h248" stroke="#FFF3BF" stroke-width="3" stroke-dasharray="14 10"/>
       <rect x="18" y="66" width="98" height="50" rx="8" fill="#4DABF7" stroke="#1C7ED6" stroke-width="2.4"/>
@@ -70,6 +72,7 @@ const SCENES: SceneDef[] = [
     after: 34,
     explainGood: "정답! 굳을 때는 <b>열에너지를 방출</b>해요. 그 열을 손이 받아 따뜻해지죠. 파라핀 온열 치료의 원리예요.",
     explainBad: "응고할 때 물질은 <b>열에너지를 방출</b>해요. 그 열이 손으로 오니 온도는 <b>높아져요</b>. 30℃ → 34℃.",
+    why: "응고할 때는 <b>열에너지를 방출</b>해요. 그 열이 손으로 오니 온도가 높아져요.",
     art: (ns) => `
       <rect x="22" y="106" width="122" height="62" rx="10" fill="#FFF3BF" stroke="#E0B93A" stroke-width="2.4"/>
       <rect x="28" y="114" width="110" height="48" rx="7" fill="#FFE066" opacity="0.9"/>
@@ -90,6 +93,7 @@ const SCENES: SceneDef[] = [
     after: 1,
     explainGood: "정답! 기체 → 고체 승화도 <b>열에너지를 방출</b>해요. 눈 오는 날이 포근하게 느껴지는 까닭이죠.",
     explainBad: "기체가 곧장 고체가 되는 승화는 <b>열에너지를 방출</b>해요. 그래서 눈이 오면 <b>포근해져요</b>. −3℃ → 1℃.",
+    why: "기체가 곧장 고체가 되는 승화도 <b>열에너지를 방출</b>해요. 그래서 포근해져요.",
     art: (ns) => `
       <rect x="0" y="0" width="248" height="180" rx="12" fill="#101A33"/>
       <path d="M0 140 q60 -14 124 0 t124 0 v40 h-248 Z" fill="#E9F2FA"/>
@@ -166,11 +170,10 @@ export const surroundTempLab: StepRenderer = (host, step, api) => {
         phase = "ready";
         btn.disabled = false;
         btn.textContent = "다음 장면";
-        tm.later(() => slot.showBtn(), 1200);
       } else {
         phase = "done";
       }
-    });
+    }, { why: sc.why, onNext: idx < SCENES.length - 1 ? () => slot.showBtn() : undefined });
   }
 
   btn.addEventListener("click", () => {

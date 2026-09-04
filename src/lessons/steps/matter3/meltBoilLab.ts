@@ -150,8 +150,8 @@ export const meltBoilLab: StepRenderer = (host, step, api) => {
         helper.innerHTML = ok
           ? "정확해요! 상태가 변하는 동안 온도는 <b>일정</b>해요. 그런데 열은 계속 줬죠. 그 열은 어디로 갔을까요?"
           : "평평한 두 구간을 보세요. 온도는 <b>일정</b>했어요. 그런데 열은 계속 줬죠. 그 열은 어디로 갔을까요?";
-        tm.later(askEnergy, 1400);
       },
+      { why: "평평한 두 구간을 보세요. 상태가 변하는 동안 온도는 <b>일정</b>했어요.", onNext: askEnergy },
     );
   }
 
@@ -170,6 +170,7 @@ export const meltBoilLab: StepRenderer = (host, step, api) => {
           : "되돌아가지도 사라지지도 않았어요. <b>상태 변화에 모두</b> 쓰여서 온도를 올릴 몫이 없었던 거예요.";
         goals.collect("judge", ok ? "정확한 판정!" : "판정 완료");
       },
+      { why: "열은 <b>상태 변화에 모두</b> 쓰여서 온도를 올릴 몫이 남지 않았어요." },
     );
   }
 

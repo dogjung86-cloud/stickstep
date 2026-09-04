@@ -119,8 +119,8 @@ export const watchGlassLab: StepRenderer = (host, step, api) => {
         phase = "paperReady";
         btn.textContent = "염화 코발트 종이 대기";
         btn.disabled = false;
-        slot.showBtn();
       },
+      { why: "<b>기화</b>한 수증기가 차가운 접시에 닿아 다시 물이 됐어요(<b>액화</b>).", onNext: () => slot.showBtn() },
     );
   }
 
@@ -156,6 +156,7 @@ export const watchGlassLab: StepRenderer = (host, step, api) => {
         goals.collect("paper", ok ? "정확한 판정!" : "판정 완료");
         phase = "done";
       },
+      { why: "상태가 두 번 변했어도 <b>물의 성질은 그대로</b>였다는 뜻이에요." },
     );
   }
 

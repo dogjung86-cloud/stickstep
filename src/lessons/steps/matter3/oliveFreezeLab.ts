@@ -135,8 +135,8 @@ export const oliveFreezeLab: StepRenderer = (host, step, api) => {
           ? "정확해요! 저울도 <b>" + MASS + "</b> 그대로예요. 입자의 종류도 개수도 그대로니까요. 그럼 부피는 왜 줄었을까요?"
           : "저울을 보세요. <b>" + MASS + "</b> 그대로예요. 입자의 종류도 개수도 그대로니까요. 그럼 부피는 왜 줄었을까요?";
         goals.collect("mass", ok ? "정확한 판정!" : "판정 완료");
-        tm.later(askVol, 1400);
       },
+      { why: "저울은 <b>" + MASS + "</b> 그대로예요. 입자의 종류도 개수도 그대로니까요.", onNext: askVol },
     );
   }
 
@@ -157,6 +157,7 @@ export const oliveFreezeLab: StepRenderer = (host, step, api) => {
         goals.collect("vol", ok ? "정확한 판정!" : "판정 완료");
         phase = "done";
       },
+      { why: "입자 개수는 그대로예요. <b>사이가 가까워지고 규칙적</b>으로 모여 부피가 줄었어요." },
     );
   }
 
