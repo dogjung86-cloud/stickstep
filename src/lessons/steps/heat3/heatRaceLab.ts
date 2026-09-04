@@ -156,8 +156,8 @@ export const heatRaceLab: StepRenderer = (host, step, api) => {
         goals.collect("judge", ok ? "정확한 판정!" : "판정 완료");
         btn.disabled = false;
         btn.textContent = "불 끄고 식히기";
-        slot.showBtn();
       },
+      { why: "그래프에서 더 가파르게 오른 쪽이 <b>식용유</b>예요. 온도 변화가 물보다 커요.", onNext: () => slot.showBtn() },
     );
   }
 
@@ -176,6 +176,7 @@ export const heatRaceLab: StepRenderer = (host, step, api) => {
           : "식용유는 조금만 데워도 금방 뜨거워졌죠? 온도가 잘 안 변하는 <b>물에 더 많은 열</b>이 필요해요.";
         goals.collect("cool", ok ? "정확한 판정!" : "판정 완료");
       },
+      { why: "온도가 잘 안 변하는 <b>물</b>이 같은 만큼 오르려면 열이 더 필요해요." },
     );
   }
 

@@ -43,7 +43,7 @@ const pickChoice = async (scope, text, tries = 20) => {
   for (let t = 0; t < tries; t++) {
     const done = await page.evaluate(({ scope, text }) => {
       const btns = [...document.querySelectorAll(`.screen.active ${scope} .hook-choice`)]
-        .filter((b) => !b.disabled && b.offsetParent !== null);
+        .filter((b) => !b.disabled && b.offsetParent !== null && !b.closest(".hook-choices")?.querySelector(".hook-choice.sel, .hook-choice.miss")); // 이미 답한 질문의 보기는 제외(장면 전환 경합 — 새 질문이 뜰 때까지 폴링)
       const b = btns.find((x) => x.textContent.includes(text));
       if (b) { b.click(); return true; }
       return false;

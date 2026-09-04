@@ -3,7 +3,8 @@
    .apl-(냉난방기 설치) .hrl-(가열 레이스) .bml-(바이메탈). 훅은 heat3-hook.css(.hk3-).
    선점 검사(2026-09-03): src/styles·steps·ui 전수 grep에서 위 접두 0건(hh3-는 타 시트 선점이라 회피).
    한 화면 예산(2026-09-03 사용자 피드백, Ⅳ v3와 같은 문법): 칩 압축·보드 8px 패딩·슬롯 1개(조작부 ↔ 판정 교체) —
-   390×700에서 마운트·판정 두 시점 모두 스크롤 영역(554px) 안. 검사 qa/check-u3v3-fit.mjs. */
+   390×700에서 마운트·판정·오답 세 시점 모두 스크롤 영역(554px) 안. 검사 qa/check-u3v3-fit.mjs.
+   오답 정답 카드(.hook-ans)는 ui.css 공용(bio4Kit.b4Ask, 2026-09-04). */
 
 /* ── 공통: 밝은 관찰 보드(plant3 .p3-board 문법 — 다크 .stage가 과한 소형 랩용) ── */
 .ht3-board {
@@ -86,6 +87,7 @@
 .pdi-liq { transition: fill 0.4s ease; }
 
 /* ── L2 contactGraphLab(.cgl-) ──────────────────────────────────── */
+.cgl-hotliq, .cgl-coldliq { transition: fill 0.2s linear; }
 .cgl-ph, .cgl-pc { transition: cx 0.09s linear, cy 0.09s linear, fill 0.3s ease; }
 
 /* ── L3 rodRaceLab(.rrl-) ───────────────────────────────────────── */

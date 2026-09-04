@@ -730,6 +730,19 @@
 /* 오답 예측 — 부드럽게 붉히고, 옳은 예측은 나란히 초록으로 밝힌다(hookAsk) */
 .hook-choice.miss { border-color: var(--red); background: #FFF2F3; box-shadow: 0 0 0 1px var(--red) inset; opacity: .92; }
 .hook-choice.reveal { border-color: var(--green); background: #EFFBF4; box-shadow: 0 0 0 1px var(--green) inset; opacity: 1 !important; }
+/* 오답 정답 카드(bio4Kit.b4Ask, 2026-09-04) — 누른 보기 바로 아래에 "정답" 태그 + 문장 + 이유 + "다음" 필.
+   나머지 보기는 .gone으로 접어 판정 국면 높이가 보기 3개 상태를 넘지 않는다(한 화면 예산). */
+.hook-choice.gone { display: none; }
+.hook-choice.hook-ans { display: grid; gap: 5px; animation: rcIn .3s var(--ease-out) both; }
+.hook-ans-row { display: flex; align-items: center; gap: 8px; }
+.hook-ans-tag { flex: none; font-size: 11px; font-weight: 800; line-height: 1; color: #fff; background: var(--green); border-radius: 999px; padding: 4px 8px; }
+.hook-ans-t { font-weight: 700; }
+.hook-ans-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
+.hook-why { flex: 1; font-size: 12.5px; font-weight: 500; line-height: 1.45; color: var(--n700); }
+.hook-why b { font-weight: 800; color: var(--ink); }
+.hook-next { flex: none; height: 28px; padding: 0 14px; border-radius: 999px; border: 0; background: var(--green); color: #fff; font-size: 12.5px; font-weight: 800; box-shadow: 0 2px 6px rgba(4, 180, 95, .28); }
+.hook-next:active { transform: scale(.96); }
+.hook-next:disabled { opacity: .5; }
 
 /* ============================================================
    recap — 통일 개념 정리(스틱맨 + 카드)

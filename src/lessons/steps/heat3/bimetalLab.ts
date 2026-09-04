@@ -123,8 +123,8 @@ export const bimetalLab: StepRenderer = (host, step, api) => {
           : "예측은 채점하지 않아요. 정말 어느 쪽으로 휘는지 <b>가열해서</b> 확인해 봐요.";
         phase = "tape";
         btn.disabled = false;
-        tm.later(() => slot.showBtn(), 900);
       },
+      { predict: true, onNext: () => slot.showBtn() },
     );
   }, 400);
 
@@ -208,6 +208,7 @@ export const bimetalLab: StepRenderer = (host, step, api) => {
           : "테이프를 떠올려요. 더 늘어난 알루미늄박이 <b>바깥쪽</b>이 됐죠. <b>열팽창 정도가 작은 금속 쪽으로</b> 휘어요.";
         goals.collect("dir", ok ? "정확한 판정!" : "판정 완료");
       },
+      { why: "더 늘어난 금속이 <b>바깥쪽</b>이 되니 열팽창 정도가 <b>작은 금속 쪽</b>으로 휘어요." },
     );
   }
 

@@ -128,6 +128,7 @@ export const particleDialLab: StepRenderer = (host, step, api) => {
             : "가열할수록 입자는 <b>더 활발</b>해지고 사이가 <b>멀어졌죠</b>. 개수는 그대로였고요.";
           goals.collect("judge", ok ? "정확한 판정!" : "판정 완료");
         },
+        { why: "가열할수록 입자는 <b>더 활발</b>해지고 사이가 <b>멀어져요</b>. 개수는 그대로예요." },
       );
     }, 500);
   }

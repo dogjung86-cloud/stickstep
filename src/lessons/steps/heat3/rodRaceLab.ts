@@ -110,8 +110,8 @@ export const rodRaceLab: StepRenderer = (host, step, api) => {
           ? "맞아요! 유리보다 <b>금속</b>에서, 금속 중에도 <b>구리</b>가 철보다 빨라요. 막대 속에선 무슨 일이?"
           : "붉은 앞머리가 가장 멀리 간 <b>구리</b>예요. 유리보다 금속이, 금속 중에도 구리가 빨라요. 막대 속에선 무슨 일이?";
         goals.collect("fast", ok ? "정확한 판정!" : "판정 완료");
-        tm.later(askWhy, 1300);
       },
+      { why: "붉은 앞머리가 가장 멀리 간 막대가 <b>구리</b>예요. 금속 중에도 구리가 빨라요.", onNext: askWhy },
     );
   }
 
@@ -130,6 +130,7 @@ export const rodRaceLab: StepRenderer = (host, step, api) => {
           : "고체 입자는 자리를 옮기지 못해요. <b>옆 입자를 덩달아</b> 흔들어 차례로 전달할 뿐이죠. 이게 <b>전도</b>예요.";
         goals.collect("why", ok ? "정확한 판정!" : "판정 완료");
       },
+      { why: "고체 입자는 제자리에서 <b>옆 입자를 차례로</b> 흔들어요. 이게 <b>전도</b>예요." },
     );
   }
 

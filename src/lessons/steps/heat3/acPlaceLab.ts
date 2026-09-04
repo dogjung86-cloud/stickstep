@@ -187,6 +187,7 @@ export const acPlaceLab: StepRenderer = (host, step, api) => {
           : "공기 입자들이 방 안을 <b>직접 돌았죠</b>. 입자가 움직여 열을 실어 나른 거예요. 이게 <b>대류</b>예요.";
         goals.collect("why", ok ? "정확한 판정!" : "판정 완료");
       },
+      { why: "공기 입자들이 방 안을 <b>직접 돌며</b> 열을 실어 날랐어요. 이게 <b>대류</b>예요." },
     );
   }
 
