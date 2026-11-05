@@ -6,6 +6,27 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
 공식·훅 예측 규칙·아트 파이프라인·만화 발주·퀴즈 유형)은 앱 전체 표준으로 CLAUDE.md 본문에 남아
 있다 — 여기엔 단원 전용 관례(중2 중심)만 담는다. 과학 단원 종합 평가는 EXAM_GUIDE.md도 함께 읽는다.
 
+## 코드 스틱맨 = 잉크 리그(ui/stickArt.ts) · 과학 트랙 전용
+- **최종 화풍과 일괄 교체 계획은 design/stickart-rollout.md**(2026-11-05 사용자 확정: 얼굴 없음·흰 바탕 여백·평평한
+  무광 색·굵은 사인펜 선. 아래 규칙은 그 전 1차 격상 기준이라, 교체 때 함께 고친다).
+- **범위(2026-11-04 사용자 지시)**: 코드로 그리는 스틱맨의 화풍 격상은 **과학에만 적용**한다. "다른 과목은
+  하지마" — 수학·사회·역사 파일은 사용자가 꺼내기 전까지 손대지 않는다. 그래서 옛 `drawStickman`·`poseStand`는
+  사회 랩(latSunLab·seasonLab)이 쓰는 그대로 두고, 과학 캔버스 랩만 `drawInkStickman`·`poseStandInk`를 쓴다.
+- **문법**: 붓 획(굵기가 변하는 도형) + 피부색 머리 + 결 있는 머리카락 + 파운드리 소품. 사용자가 보여 준 참고 이미지의
+  화풍 문법만 따르고, 특정 캐릭터를 베끼지 않는다. 표정은 남긴다(참고 이미지는 얼굴이 없지만 레슨이 표정으로 반응을 전달).
+- **저작 창구**: 새 과학 장면의 스틱맨은 `<circle>`+`<path>`를 쓰지 말고 `inkStick(x, y, r, 몸통path, { look, mood, facing, scheme })`.
+  좌표는 머리 원·몸통 path 그대로라 레이아웃이 안 바뀐다. 관절·머리를 CSS로 따로 움직이면 `inkLimb`·`inkHead`·`inkBody`
+  (빙판길 hfw-*, 멈춘 시계 he-shead가 기준), 캔버스는 `paintFigure`·`drawInkStickman`(머리는 캐시, 인물 1명 약 0.08ms).
+- **다크 무대는 `scheme: "dark"` 필수**: 몸 선이 밝아지고 얼굴은 어두운 선 유지. 머리 외곽선은 몸 선의 절반(`darkRing`) —
+  같은 굵기로 두면 흰 테가 우주 헬멧처럼 보인다(눈검수 사고).
+- **표정 기본값 calm(눈만)**: 장면의 분위기를 단정하지 않는다. 원본에 얼굴이 따로 있으면 `mood: "none"`.
+- **대상 아님**: 표지판 픽토그램(화장실 등), 신체 실루엣(bodyscan), 발주 이미지(만화·개념 컷). 코드모드가 표지판을
+  사람으로 오인한 실사고가 있으니 일괄 전환 뒤 반드시 눈검수한다.
+- **미적용(전 과목 공용이라 보류)**: 지도 워커(soleMap)·마이 탭 아바타(stickParts)·figures.stickman 폴백.
+- **도구**: 일괄 전환 `node qa/codemod-stick.mjs --only "<파일 정규식>" [--write]`, 장면 모음 `public/qa-stickscenes.html`
+  (`?subject=sci&kind=hook|labs|ink&page=N`, `?scenes=`, `?types=`) + `qa/shot-stickscenes.mjs`, 룩 도감 `public/qa-stickart.html`,
+  전후 비교판 `qa/shot-stick-compare.mjs`, 동작 검증 `PORT=<포트> node qa/e2e-stickart.mjs`(14검증).
+
 ## 중2 과학 공통 — 콘텐츠 규칙·지권 에셋·컷 표현 관례(구 '중2 트랙' 섹션 후반부)
 - **중2 콘텐츠 규칙**: 중2 교과서는 녹는점·끓는점·용해도 등 용어를 정식 도입한다(중1 '입자' 제약과 별개).
   교과서 원본: `D:\brilliant\중학교 교과서\중2 단원별 - 텍스트 보존(OCR)\` PDF — poppler가 한글 CMap이 없어

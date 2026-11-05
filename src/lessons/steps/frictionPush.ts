@@ -8,7 +8,7 @@ import { el, clamp } from "../../core/dom";
 import { createLoop, type Loop } from "../../core/anim";
 import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
-import { drawStickman, posePush, poseStand } from "../../ui/stick";
+import { drawInkStickman, posePush, poseStandInk } from "../../ui/stick";
 import { drawForceArrow, drawCrate } from "../../ui/forceProps";
 import { contactShadow } from "../../ui/labProps";
 import type { StepRenderer } from "../types";
@@ -253,7 +253,7 @@ export const frictionPush: StepRenderer = (host, step, api) => {
     const eff = clamp(pushN / Math.max(60, limit), 0, 1);
     const manX = crateX - crateW / 2 - 34;
     contactShadow(ctx, manX, groundY + 4, 26, 0.22);
-    drawStickman(ctx, manX, groundY, 80, pushing || pushN > 2 ? posePush(eff, tMs) : poseStand(tMs), { face: "dot" });
+    drawInkStickman(ctx, manX, groundY, 80, pushing || pushN > 2 ? posePush(eff, tMs) : poseStandInk(tMs), { look: "swept", mood: pushing ? "focus" : "ok" });
 
     // 힘 화살표: 미는 힘(파랑→, 상자 위쪽 공중), 마찰력(빨강←, 바닥 접촉면 아래 라벨)
     if (pushN > 3) {

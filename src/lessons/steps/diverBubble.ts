@@ -10,7 +10,7 @@ import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { GasBox } from "../../ui/gasKit";
 import { glassStrokeStyle, contactShadow, softGlow } from "../../ui/labProps";
-import { drawStickman } from "../../ui/stick";
+import { drawInkStickman } from "../../ui/stick";
 import type { StepRenderer } from "../types";
 
 interface DiverStep {
@@ -187,7 +187,7 @@ export const diverBubble: StepRenderer = (host, step, api) => {
     ctx.beginPath();
     ctx.roundRect(dx - 20, dy - 58, 10, 30, 5);
     ctx.fill();
-    drawStickman(ctx, dx, dy, 62, { lean: 0.05, armF: -0.4, armB: 0.9, legF: 0.2, legB: -0.2 }, { color: "rgba(232,240,250,.95)" });
+    drawInkStickman(ctx, dx, dy, 62, { lean: 0.05, armF: -0.4, armB: 0.9, legF: 0.2, legB: -0.2 }, { look: { hair: "crop", hairColor: "#2B2C35", goggles: true }, mood: "calm" });
     // 마스크 기포 느낌
     softGlow(ctx, dx + 10, dy - 52, 10, "180,220,255", 0.15);
 

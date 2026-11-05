@@ -9,6 +9,7 @@ import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
+import { inkStick } from "../../ui/stickArt";
 
 interface HookStepLike {
   choices?: string[];
@@ -143,8 +144,7 @@ export function renderSpeaker(
     <!-- 스틱맨(손그림) -->
     <ellipse cx="52" cy="150" rx="16" ry="2.8" fill="#2A3A5E" opacity=".12"/>
     <g stroke="#3C4654" stroke-width="2.4">
-      <circle cx="52" cy="106" r="7.5" fill="#fff"/>
-      <path d="M52 114v14M52 119l-9 3M52 119l11-5M52 128l-6 12M52 128l7 12"/>
+      ${inkStick(52, 106, 7.5, "M52 114v14M52 119l-9 3M52 119l11-5M52 128l-6 12M52 128l7 12", { look: "spiky" })}
     </g>
   </svg>`;
   const talkBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "“신나는 음악 틀어 줘!” 말 걸기" }));

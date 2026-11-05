@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QA · 잉크 스틱맨 리그</title>
+<style>
+  body { font-family: Pretendard, system-ui, sans-serif; background: #F2F4F6; padding: 20px; margin: 0; color: #333D4B; }
+  h1 { font-size: 15px; color: #4E5968; margin: 22px 0 8px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+  .c { text-align: center; font-size: 11px; color: #556; background: #fff; border-radius: 14px; padding: 8px; }
+  .c.dark { background: #0B1524; color: #8FA2C4; }
+  .c svg { display: block; }
+</style>
+</head>
+<body>
+<div id="out"></div>
+<script type="module">
+  import { inkFigure, LOOKS, paintInk, figureOps } from "/src/ui/stickArt.ts";
+
+  const out = document.getElementById("out");
+  const h = (t) => { const e = document.createElement("h1"); e.textContent = t; out.appendChild(e); };
+  const row = () => { const d = document.createElement("div"); d.className = "row"; out.appendChild(d); return d; };
+  const cell = (p, html, cap, dark) => {
+    const c = document.createElement("div");
+    c.className = "c" + (dark ? " dark" : "");
+    c.innerHTML = html + (cap ? `<div>${cap}</div>` : "");
+    p.appendChild(c);
+  };
+
+  /* 기준 뼈대(큰 그림): 머리 r40, 키 ~250 */
+  const BODY_L = "M110 106V196M110 126L66 170M110 126L156 92M110 196L84 268M110 196L138 268";
+  const big = (look, mood, facing = 0) => {
+    const svg = inkFigure({ head: { x: 110, y: 66, r: 40 }, body: BODY_L, look, mood, facing, ground: 270 });
+    return `<svg viewBox="0 0 220 284" width="176" height="227" fill="none">${svg}</svg>`;
+  };
+
+  h("A. 현재(왼쪽) vs 리그(오른쪽): 같은 뼈대, 그리는 법만 교체");
+  {
+    const r = row();
+    const BODY = "M120 127v22M120 133l-11 5M120 133l9-9M120 149l-8 14M120 149l8 14";
+    const old = `<g stroke="#3C4654" stroke-width="2.6" stroke-linecap="round" fill="none"><circle cx="120" cy="118" r="9" fill="#fff"/><path d="${BODY}"/></g>`;
+    for (const z of [1, 2, 4]) {
+      const w = 60 * z, ht = 76 * z;
+      cell(r, `<svg viewBox="90 104 60 76" width="${w}" height="${ht}" fill="none">${old}</svg>`, `현재 ×${z}`);
+      cell(r, `<svg viewBox="90 104 60 76" width="${w}" height="${ht}" fill="none">${inkFigure({ head: { x: 120, y: 118, r: 9 }, body: BODY, look: "crop", mood: "ok" })}</svg>`, `리그 ×${z}`);
+    }
+  }
+
+  h("B. 룩(큰 그림 r40)");
+  {
+    const r = row();
+    for (const k of Object.keys(LOOKS)) cell(r, big(k, "ok"), k);
+    cell(r, big({ hair: "swept", hairColor: "#5F3C27", goggles: true }, "joy"), "goggles");
+  }
+
+  h("C. 표정 + 방향");
+  {
+    const r = row();
+    for (const m of ["none", "ok", "joy", "sad", "wow", "hmm", "worry", "focus", "mad"]) cell(r, big("crop", m), m);
+    cell(r, big("ponytail", "ok", 1), "오른쪽");
+    cell(r, big("ponytail", "ok", -1), "왼쪽");
+    cell(r, big("teacher", "ok", 1), "쌤 오른쪽");
+  }
+
+  h("D. 실제 랩 크기(r 6, 7, 9, 13) ×1 / 흰 배경");
+  {
+    for (const [rad, z] of [[6, 1], [7, 1], [9, 1], [13, 1], [9, 3]]) {
+      const r = row();
+      for (const k of ["plain", "crop", "swept", "spiky", "bob", "long", "ponytail", "pigtails", "curly", "afro", "bun", "beanie", "cap", "teacher", "elder"]) {
+        const cy = rad + 12;
+        const body = `M40 ${cy + rad}v${rad * 2.3}M40 ${cy + rad + 3}l-${rad * 1.2} ${rad * .9}M40 ${cy + rad + 3}l${rad * 1.2} -${rad * .4}M40 ${cy + rad * 3.3}l-${rad * .8} ${rad * 1.5}M40 ${cy + rad * 3.3}l${rad * .8} ${rad * 1.5}`;
+        const ht = cy + rad * 5;
+        cell(r, `<svg viewBox="0 0 80 ${ht}" width="${80 * z}" height="${ht * z}" fill="none">${inkFigure({ head: { x: 40, y: cy, r: rad }, body, look: k, mood: "ok" })}</svg>`, z > 1 ? "" : (rad === 6 ? k : ""));
+      }
+    }
+  }
+
+  h("E. 다크 무대(r 9, 13)");
+  {
+    for (const [rad, z] of [[9, 1], [13, 1], [9, 3]]) {
+      const r = row();
+      for (const k of ["plain", "crop", "ponytail", "curly", "beanie", "teacher"]) {
+        const cy = rad + 12;
+        const body = `M40 ${cy + rad}v${rad * 2.3}M40 ${cy + rad + 3}l-${rad * 1.2} ${rad * .9}M40 ${cy + rad + 3}l${rad * 1.2} -${rad * .4}M40 ${cy + rad * 3.3}l-${rad * .8} ${rad * 1.5}M40 ${cy + rad * 3.3}l${rad * .8} ${rad * 1.5}`;
+        const ht = cy + rad * 5;
+        cell(r, `<svg viewBox="0 0 80 ${ht}" width="${80 * z}" height="${ht * z}" fill="none">${inkFigure({ head: { x: 40, y: cy, r: rad }, body, look: k, mood: "ok", scheme: "dark" })}</svg>`, "", true);
+      }
+    }
+  }
+
+  h("F. 캔버스 출력(paintInk)");
+  {
+    const r = row();
+    const c = document.createElement("div");
+    c.className = "c dark";
+    const cv = document.createElement("canvas");
+    const dpr = 2;
+    cv.width = 360 * dpr; cv.height = 120 * dpr; cv.style.width = "360px"; cv.style.height = "120px";
+    const ctx = cv.getContext("2d");
+    ctx.scale(dpr, dpr);
+    ["crop", "ponytail", "teacher", "curly"].forEach((k, i) => {
+      const x = 50 + i * 86;
+      paintInk(ctx, figureOps({ head: { x, y: 30, r: 12 }, body: `M${x} 42v30M${x} 48l-14 12M${x} 48l14 -6M${x} 72l-10 22M${x} 72l10 22`, look: k, mood: "ok", scheme: "dark" }));
+    });
+    c.appendChild(cv);
+    r.appendChild(c);
+  }
+</script>
+</body>
+</html>

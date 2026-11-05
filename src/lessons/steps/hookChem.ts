@@ -15,6 +15,7 @@ import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
+import { inkStick } from "../../ui/stickArt";
 
 type Face = (k: AvatarKind) => void;
 
@@ -113,12 +114,7 @@ function deadseaSvg(): string {
     </g>
     <!-- 둥둥 뜬 스틱맨(손그림 라인) + 신문 -->
     <g class="hc-floatman">
-      <g stroke="#3C4654" stroke-width="2.4" fill="none">
-        <circle cx="96" cy="84" r="9" fill="#FFFFFF"/>
-        <path d="M104 88q18 0 34 1" />
-        <path d="M138 89q10 6 18 2"/>
-        <path d="M112 90l8-10M126 90l7-9"/>
-      </g>
+      ${inkStick(96, 84, 9, "M104 88q18 0 34 1M138 89q10 6 18 2M112 90l8-10M126 90l7-9", { look: "curly", mood: "ok" })}
       <g class="hc-news" transform="rotate(-18 122 70)">
         <rect x="112" y="60" width="22" height="16" rx="2" fill="#FFF8EC" stroke="#C9BFA8" stroke-width="1.3"/>
         <path d="M115 65h16M115 69h16M115 73h10" stroke="#B9AE94" stroke-width="1.2"/>

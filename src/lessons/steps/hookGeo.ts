@@ -16,6 +16,7 @@ import { el, clamp } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
+import { inkStick } from "../../ui/stickArt";
 
 type Face = (k: AvatarKind) => void;
 
@@ -56,8 +57,7 @@ function stripemountSvg(): string {
     <path d="M58 66 L84 92 M120 34 L156 88" stroke="#5A5E6E" stroke-width="1.2" opacity=".5"/>
     <!-- 산 아래 스틱맨(손그림 라인) -->
     <g stroke="#3C4654" stroke-width="2.4" fill="none">
-      <circle cx="32" cy="118" r="7" fill="#FFFFFF"/>
-      <path d="M32 125v14M32 130l-7 4M32 130l8-6M32 139l-6 9M32 139l6 9"/>
+      ${inkStick(32, 118, 7, "M32 125v14M32 130l-7 4M32 130l8-6M32 139l-6 9M32 139l6 9", { look: "bob" })}
     </g>
     <path d="M10 138h220" stroke="#B8AE9E" stroke-width="2"/>
   </svg>`;
@@ -400,8 +400,7 @@ function bookcliffSvg(): string {
     </g>
     <!-- 절벽 위 스틱맨 -->
     <g stroke="#3C4654" stroke-width="2.4" fill="none">
-      <circle cx="30" cy="96" r="7" fill="#FFFFFF"/>
-      <path d="M30 103v13M30 108l-7 3M30 108l8-4M30 116l-6 10M30 116l6 10"/>
+      ${inkStick(30, 96, 7, "M30 103v13M30 108l-7 3M30 108l8-4M30 116l-6 10M30 116l6 10", { look: "pigtails" })}
     </g>
   </svg>`;
 }

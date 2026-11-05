@@ -17,6 +17,7 @@ import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
+import { inkStick, inkHead, inkBody } from "../../ui/stickArt";
 
 type Face = (k: AvatarKind) => void;
 interface HookOpts {
@@ -262,10 +263,8 @@ function deadClockSvg(): string {
     <circle class="he-ring" cx="120" cy="105" r="17" stroke="#FFC45A" stroke-width="2" stroke-dasharray="5 5"/>
     <!-- 갸웃하는 스틱맨(밤 손그림 라인) -->
     <ellipse cx="196" cy="158" rx="18" ry="3" fill="#000" opacity=".18"/>
-    <g stroke="#E8EEF8" stroke-width="2.4" fill="none">
-      <g class="he-shead"><circle cx="196" cy="108" r="8" fill="#101B34"/></g>
-      <path d="M196 116v16M196 121l-8 6M196 121l8 6M196 132l-6 13M196 132l6 13"/>
-    </g>
+    ${inkBody(196, 108, 8, "M196 116v16M196 121l-8 6M196 121l8 6M196 132l-6 13M196 132l6 13", { scheme: "dark" })}
+    <g class="he-shead">${inkHead(196, 108, 8, { look: "crop", scheme: "dark", mood: "hmm" })}</g>
     <text class="he-q" x="212" y="94" font-size="13" font-weight="800" fill="#8FA6C8">?</text>
     <text class="he-q" x="221" y="82" font-size="9" font-weight="800" fill="#8FA6C8" opacity=".8">?</text>
   </svg>`;
@@ -870,13 +869,7 @@ function ebikeSvg(): string {
       <!-- 발판(footboard) -->
       <path d="M101 106 H127" stroke="#55647E" stroke-width="3.4"/>
       <!-- 스틱맨 라이더(손그림 라인), 발은 발판 위 -->
-      <g stroke="#3C4654" stroke-width="2.6" fill="none">
-        <circle cx="110" cy="52" r="8" fill="#FFFFFF"/>
-        <path d="M108 60 L102 86"/>
-        <path d="M106 66 Q138 64 168 76"/>
-        <path d="M102 86 Q113 96 110 105"/>
-        <path d="M102 86 Q122 98 117 105"/>
-      </g>
+      ${inkStick(110, 52, 8, "M108 60 L102 86M106 66 Q138 64 168 76M102 86 Q113 96 110 105M102 86 Q122 98 117 105", { look: "cap", mood: "ok", facing: 1 })}
     </g>
   </svg>`;
 }

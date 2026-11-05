@@ -8,10 +8,14 @@ import { el, clamp } from "../../core/dom";
 import { createLoop, type Loop } from "../../core/anim";
 import { fitCanvas } from "../../ui/canvas";
 import { haptic, HAPTIC } from "../../core/haptics";
-import { drawStickman, posePull } from "../../ui/stick";
+import { drawInkStickman, posePull } from "../../ui/stick";
 import { drawRope, drawForceArrow, drawGround } from "../../ui/forceProps";
 import { contactShadow } from "../../ui/labProps";
 import type { StepRenderer } from "../types";
+import type { LookName } from "../../ui/stickArt";
+
+const TEAM_L: LookName[] = ["crop", "ponytail", "curly", "beanie"];
+const TEAM_R: LookName[] = ["spiky", "bob", "cap", "swept"];
 
 interface TugStep {
   title: string;
@@ -202,13 +206,13 @@ export const tugOfWar: StepRenderer = (host, step, api) => {
     for (let i = 0; i < nL; i++) {
       const bx = w / 2 - 78 - i * SP + ribbonX;
       contactShadow(ctx, bx, groundY + 4, 26, 0.22);
-      const j = drawStickman(ctx, bx, groundY, 74, posePull(effL, tMs, i * 3 + 1), { flip: false, face: "dot" });
+      const j = drawInkStickman(ctx, bx, groundY, 74, posePull(effL, tMs, i * 3 + 1), { flip: false, mood: effL > 0.6 ? "focus" : "ok", look: TEAM_L[i % TEAM_L.length] });
       handsL.push(j.handF);
     }
     for (let i = 0; i < nR; i++) {
       const bx = w / 2 + 78 + i * SP + ribbonX;
       contactShadow(ctx, bx, groundY + 4, 26, 0.22);
-      const j = drawStickman(ctx, bx, groundY, 74, posePull(effR, tMs, i * 3 + 2), { flip: true, face: "dot" });
+      const j = drawInkStickman(ctx, bx, groundY, 74, posePull(effR, tMs, i * 3 + 2), { flip: true, mood: effR > 0.6 ? "focus" : "ok", look: TEAM_R[i % TEAM_R.length] });
       handsR.push(j.handF);
     }
 

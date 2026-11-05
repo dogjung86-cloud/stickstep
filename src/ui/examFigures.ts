@@ -1,6 +1,7 @@
 // 단원 종합 평가 그림 — 손코딩 교육용 SVG (u3 열 파일럿).
 // heatFigures 문법 계승: 색은 답의 단서가 되지 않게(비교 곡선은 같은 색, 라벨만 구분),
 // 그래프·표는 파라미터형으로 만들어 문항마다 수치를 달리 쓴다. 새 단원 시험 그림은 섹션을 나눠 추가.
+import { inkStick } from "./stickArt";
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
 
@@ -4351,8 +4352,7 @@ export function htSceneFig(scene: "hearth" | "kitchen"): string {
         <path d="M162 152 q8 -4 16 0 q8 4 16 0"/>
       </g>
       <g stroke="#4E5968" stroke-width="2.6" stroke-linecap="round" fill="none">
-        <circle cx="284" cy="96" r="13" stroke-width="2.4"/>
-        <path d="M284 109 v40 M284 122 l-24 -8 M284 122 l-22 14 M284 149 l-14 22 M284 149 l14 22"/>
+        ${inkStick(284, 96, 13, "M284 109 v40 M284 122 l-24 -8 M284 122 l-22 14 M284 149 l-14 22 M284 149 l14 22", { look: "cap" })}
         <path d="M260 114 l-14 4 M262 136 l-16 -2"/>
       </g>
       <ellipse cx="284" cy="176" rx="26" ry="5" fill="#2A3A5E" opacity=".10"/>
@@ -5613,11 +5613,9 @@ export function winterSceneFig(): string {
       <path d="M28 42l12 12M40 42l-12 12M34 38v20M26 48h16"/>
       <path d="M84 108l14 14M98 108l-14 14M91 104v22M80 115h22"/>
     </g>
-    <circle cx="196" cy="76" r="16" fill="#FBE8D8" stroke="#C99B72" stroke-width="1.8"/>
-    <path d="M186 96q10 10 20 0" stroke="#C99B72" stroke-width="1.8" fill="none"/>
-    <path d="M180 68q-4 4 0 8M212 68q4 4 0 8" stroke="#C99B72" stroke-width="1.6" fill="none"/>
+    ${inkStick(196, 76, 16, "M196 92v34l-10 34M196 126l12 34M196 104l-16 8M196 104l18 6", { look: "beanie", mood: "ok", facing: 1 })}
     <path d="M214 84 q16 -4 26 4 q12 -2 16 6" stroke="#D9E2EC" stroke-width="8" stroke-linecap="round" fill="none" opacity=".85"/>
-    <path d="M196 92v34l-10 34M196 126l12 34M196 104l-16 8M196 104l18 6" stroke="#C99B72" stroke-width="3.4" stroke-linecap="round"/>
+    
     <path d="M258 60 L338 54" stroke="#8B95A1" stroke-width="2.2"/>
     <path d="M268 60 l-3 34 h26 l-3 -35" fill="#F4F7FA" stroke="#9AA6B4" stroke-width="1.8" stroke-linejoin="round"/>
     <path d="M304 58 l-2 26 h20 l-2 -27" fill="#F4F7FA" stroke="#9AA6B4" stroke-width="1.8" stroke-linejoin="round"/>
@@ -6302,8 +6300,8 @@ export function xLSR(kind: "smooth" | "rough" | "dir"): string {
           <path d="M${px} 160L${px + 54} 58" stroke="#F0A422" stroke-width="2.6" stroke-linecap="round"/>${ar(px, 160, px + 54, 58, 0.6, "#F0A422")}`;
       }).join("")}
       <g stroke="#3C4654" stroke-width="2.4" fill="none">
-        <circle cx="222" cy="46" r="9"/><path d="M222 55v26M222 64l-11 12M222 64l11 12M222 81l-9 16M222 81l9 16"/>
-        <circle cx="296" cy="86" r="9"/><path d="M296 95v26M296 104l-11 12M296 104l11 12M296 121l-9 16M296 121l9 16"/>
+        ${inkStick(222, 46, 9, "M222 55v26M222 64l-11 12M222 64l11 12M222 81l-9 16M222 81l9 16", { look: "crop" })}
+        ${inkStick(296, 86, 9, "M296 95v26M296 104l-11 12M296 104l11 12M296 121l-9 16M296 121l9 16", { look: "ponytail" })}
       </g>
       <text x="222" y="30" text-anchor="middle" font-size="12.5" font-weight="800" fill="#1B64DA">A</text>
       <text x="296" y="70" text-anchor="middle" font-size="12.5" font-weight="800" fill="#1B64DA">B</text>
@@ -6589,7 +6587,7 @@ export function xLSEE(mode: "lamp" | "torch" | "moon" | "window" | "water"): str
       <circle cx="52" cy="44" r="18" fill="#FFD470"/><text x="52" y="78" text-anchor="middle" font-size="11" fill="#AFC3E3">태양</text>
       <circle cx="196" cy="42" r="14" fill="#E8ECF3"/><text x="196" y="24" text-anchor="middle" font-size="11" fill="#AFC3E3">달</text>
       <g stroke="#AFC3E3" stroke-width="2.4" fill="none">
-        <circle cx="284" cy="122" r="9"/><path d="M284 131v24M284 139l-10 11M284 139l10 11M284 155l-8 15M284 155l8 15"/></g>
+        ${inkStick(284, 122, 9, "M284 131v24M284 139l-10 11M284 139l10 11M284 155l-8 15M284 155l8 15", { look: "swept", scheme: "dark" })}</g>
       ${ray(74, 44, 178, 42, "㉠", 126, 30)}
       ${ray(206, 54, 278, 112, "㉡", 246, 78)}
     </svg>`;
@@ -6718,8 +6716,7 @@ export function xLMRfull(hcm: number): string {
     <line x1="${MX}" y1="20" x2="${MX}" y2="196" stroke="#C4CBD4" stroke-width="3"/>
     <line x1="${MX}" y1="${m1}" x2="${MX}" y2="${m2}" stroke="#3182F6" stroke-width="5"/>
     <g stroke="#3C4654" stroke-width="2.6" fill="none">
-      <circle cx="${px}" cy="${top + 8}" r="9"/>
-      <path d="M${px} ${top + 17}v52M${px} ${top + 30}l-13 14M${px} ${top + 30}l13 14M${px} ${top + 69}l-11 ${foot - top - 69 - 11}M${px} ${top + 69}l11 ${foot - top - 69 - 11}"/>
+      ${inkStick(px, top + 8, 9, `M${px} ${top + 17}v52M${px} ${top + 30}l-13 14M${px} ${top + 30}l13 14M${px} ${top + 69}l-11 ${foot - top - 69 - 11}M${px} ${top + 69}l11 ${foot - top - 69 - 11}`, { look: "curly", mood: "none" })}
     </g>
     <path d="M${px} ${top}L${MX} ${m1}" stroke="#F0A422" stroke-width="2.4"/>${ar(px, top, MX, m1, 0.55, "#F0A422")}
     <path d="M${MX} ${m1}L${px + 6} ${eyeY}" stroke="#F0A422" stroke-width="2.4"/>${ar(MX, m1, px + 6, eyeY, 0.6, "#F0A422")}
@@ -6848,7 +6845,7 @@ export function xLSW(vary: "amp" | "freq"): string {
     }
     return `<g>
       <g stroke="#3C4654" stroke-width="2.2" fill="none">
-        <circle cx="46" cy="${y - 26}" r="7"/><path d="M46 ${y - 19}v20M46 ${y - 12}l-8 9M46 ${y - 12}l9 8M46 ${y + 1}l-7 13M46 ${y + 1}l7 13"/>
+        ${inkStick(46, y - 26, 7, `M46 ${y - 19}v20M46 ${y - 12}l-8 9M46 ${y - 12}l9 8M46 ${y + 1}l-7 13M46 ${y + 1}l7 13`, { look: "curly" })}
       </g>
       <path d="M62 ${y - arrowH}v${arrowH * 2}" stroke="#37B6D8" stroke-width="2.2"/>
       <path d="M58 ${y - arrowH + 5}l4 -5 4 5M58 ${y + arrowH - 5}l4 5 4 -5" stroke="#37B6D8" stroke-width="2" fill="none"/>
@@ -7694,8 +7691,7 @@ export function rescueMatFig(): string {
     <path d="M10 12 h76" stroke="#6E7A8B" stroke-width="3"/>
     ${[30, 62, 94, 126].map((y) => `<rect x="22" y="${y}" width="20" height="18" rx="2" fill="#DCEBFB" stroke="#93A3B8" stroke-width="1.2"/><rect x="52" y="${y}" width="20" height="18" rx="2" fill="#DCEBFB" stroke="#93A3B8" stroke-width="1.2"/>`).join("")}
     <g stroke="#333D4B" stroke-width="2.6" stroke-linecap="round" fill="none">
-      <circle cx="176" cy="52" r="8" fill="#fff"/>
-      <path d="M176 60 v24 M176 66 l-16 -8 M176 66 l16 -8 M176 84 l-11 16 M176 84 l12 15"/>
+      ${inkStick(176, 52, 8, "M176 60 v24 M176 66 l-16 -8 M176 66 l16 -8 M176 84 l-11 16 M176 84 l12 15", { look: "long" })}
     </g>
     <path d="M156 34 q10 -6 20 -4 M198 40 q8 6 8 16" stroke="#B0B8C1" stroke-width="1.8" fill="none" stroke-linecap="round"/>
     <ellipse cx="216" cy="174" rx="104" ry="7" fill="#2A3A5E" opacity=".11"/>

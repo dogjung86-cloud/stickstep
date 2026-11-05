@@ -11,6 +11,7 @@ import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
+import { inkStick } from "../../ui/stickArt";
 
 // 천체는 실제 관측 사진(public/photos/, NASA — CREDITS.md)을 쓴다. 배경·소품만 SVG.
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
@@ -66,8 +67,7 @@ export function renderStargaze(
     <!-- 스틱맨 + 망원경(손그림 라인) -->
     <ellipse cx="60" cy="158" rx="26" ry="3.6" fill="#000" opacity=".18"/>
     <g stroke="#E8EEF8" stroke-width="2.6">
-      <circle cx="52" cy="118" r="8" fill="#101B34"/>
-      <path d="M52 126v18M52 132l-9 6M52 132l12-4M52 144l-7 12M52 144l8 11"/>
+      ${inkStick(52, 118, 8, "M52 126v18M52 132l-9 6M52 132l12-4M52 144l-7 12M52 144l8 11", { look: "swept", scheme: "dark" })}
       <path d="M62 126l22-12" stroke-width="4"/>
       <path d="M84 112l6-3" stroke-width="6"/>
     </g>
@@ -267,8 +267,7 @@ export function renderShadowClock(
     <!-- 관찰하는 스틱맨(손그림 라인) -->
     <ellipse cx="66" cy="147" rx="15" ry="2.6" fill="#2A3A5E" opacity=".12"/>
     <g stroke="#3C4654" stroke-width="2.4">
-      <circle cx="62" cy="112" r="7.5" fill="#fff"/>
-      <path d="M62 120v15M62 125l-8 4M62 125l12-7M62 135l-6 11M62 135l7 11"/>
+      ${inkStick(62, 112, 7.5, "M62 120v15M62 125l-8 4M62 125l12-7M62 135l-6 11M62 135l7 11", { look: "bun" })}
     </g>
   </svg>`;
   const seg = el("div", { class: "seg" });
@@ -423,8 +422,7 @@ export function renderSunGlasses(
     <!-- 스틱맨(손그림) -->
     <ellipse cx="52" cy="160" rx="20" ry="3.2" fill="#2A3A5E" opacity=".12"/>
     <g stroke="#3C4654" stroke-width="2.6">
-      <circle cx="52" cy="118" r="8.5" fill="#fff"/>
-      <path d="M52 127v17M52 133l-10 5M52 133l10 5M52 144l-7 13M52 144l7 13"/>
+      ${inkStick(52, 118, 8.5, "M52 127v17M52 133l-10 5M52 133l10 5M52 144l-7 13M52 144l7 13")}
     </g>
     <path class="sg-glass" d="M44 116h16v5h-16z" fill="#101B34" stroke="#101B34" stroke-width="1.4"/>
   </svg>`;

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QA · 앗, 집게가 뜨거워! 직접 그리기</title>
+<style>
+  html, body { margin: 0; background: #F9F9F9; }
+  #stage { width: 1000px; }
+  #stage svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module">
+// 만화 u3l3 2번째 컷 "앗, 집게가 뜨거워!" 코드 드로잉 시안(Minute Earth 문법).
+// 문법: 흰 바탕 + 넉넉한 여백 + 얼굴 없는 스틱맨 + 사인펜 굵기의 검은 선 + 차분한 평면색과 옅은 그늘.
+// 원리가 주인공: 불 → 집게 끝 → 손잡이로 열이 번지는 것만 눈에 들어오게 나머지는 덜어 낸다.
+import { brush } from "/src/ui/stickArt.ts";
+
+const W = 1000;
+const H = 750;
+const INK = "#171516";
+const BG = "#F9F9F9";
+
+/* ── 도구 ─────────────────────────────────────────────── */
+const mul = (seed) => {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+};
+const rnd = mul(20261105);
+const rr = (a, b) => a + (b - a) * rnd();
+const lerp = (a, b, t) => a + (b - a) * t;
+const f = (n) => Math.round(n * 100) / 100;
+let sd = 200;
+const nextSeed = () => ++sd;
+let uid = 0;
+const newId = (p = "i") => `${p}${++uid}`;
+const defs = [];
+const layers = [];
+const add = (...s) => layers.push(...s);
+
+const chaikin = (pts, n, closed = true) => {
+  let cur = pts;
+  for (let k = 0; k < n; k++) {
+    const next = [];
+    const m = cur.length;
+    if (!closed) next.push(cur[0]);
+    const last = closed ? m : m - 1;
+    for (let i = 0; i < last; i++) {
+      const a = cur[i];
+      const b = cur[(i + 1) % m];
+      next.push([lerp(a[0], b[0], 0.25), lerp(a[1], b[1], 0.25)]);
+      next.push([lerp(a[0], b[0], 0.75), lerp(a[1], b[1], 0.75)]);
+    }
+    if (!closed) next.push(cur[m - 1]);
+    cur = next;
+  }
+  return cur;
+};
+const dL = (pts, close = true) => "M" + pts.map((p) => `${f(p[0])} ${f(p[1])}`).join("L") + (close ? "Z" : "");
+const noise = (seed, knots = 6) => {
+  const r = mul(seed * 31 + 5);
+  const v = Array.from({ length: knots + 1 }, () => r() * 2 - 1);
+  return (t) => {
+    const x = Math.max(0, Math.min(0.9999, t)) * knots;
+    const i = Math.floor(x);
+    const u = x - i;
+    const s = u * u * (3 - 2 * u);
+    return v[i] * (1 - s) + v[i + 1] * s;
+  };
+};
+/** 사인펜 외곽선: 굵기 변화가 작고 선이 살짝 흔들린다. */
+const ringD = (p, w, closed = true) => {
+  const n = p.length;
+  const nz = noise(nextSeed());
+  const wob = noise(nextSeed(), 5);
+  const A = [];
+  const B = [];
+  for (let i = 0; i < n; i++) {
+    const a = closed ? p[(i - 1 + n) % n] : p[Math.max(0, i - 1)];
+    const b = closed ? p[(i + 1) % n] : p[Math.min(n - 1, i + 1)];
+    const dx = b[0] - a[0];
+    const dy = b[1] - a[1];
+    const l = Math.hypot(dx, dy) || 1;
+    const h = (w / 2) * (1 + 0.1 * nz(i / n));
+    const off = 0.5 * wob(i / n);
+    A.push([p[i][0] - (dy / l) * (h + off), p[i][1] + (dx / l) * (h + off)]);
+    B.push([p[i][0] + (dy / l) * (h - off), p[i][1] - (dx / l) * (h - off)]);
+  }
+  return closed ? dL(A) + dL(B.reverse()) : dL([...A, ...B.reverse()]);
+};
+const roundPoly = (pts, r) => {
+  const out = [];
+  const n = pts.length;
+  for (let i = 0; i < n; i++) {
+    const a = pts[(i - 1 + n) % n];
+    const b = pts[i];
+    const c = pts[(i + 1) % n];
+    const la = Math.hypot(a[0] - b[0], a[1] - b[1]) || 1;
+    const lc = Math.hypot(c[0] - b[0], c[1] - b[1]) || 1;
+    const ra = Math.min(r, la * 0.45);
+    const rc = Math.min(r, lc * 0.45);
+    const p0 = [b[0] + ((a[0] - b[0]) / la) * ra, b[1] + ((a[1] - b[1]) / la) * ra];
+    const p2 = [b[0] + ((c[0] - b[0]) / lc) * rc, b[1] + ((c[1] - b[1]) / lc) * rc];
+    for (let k = 0; k <= 5; k++) {
+      const t = k / 5;
+      const u = 1 - t;
+      out.push([u * u * p0[0] + 2 * u * t * b[0] + t * t * p2[0], u * u * p0[1] + 2 * u * t * b[1] + t * t * p2[1]]);
+    }
+  }
+  return out;
+};
+const shape = (pts, fill, o = {}) => {
+  const { w = 4.4, c = INK, smooth = 2, round } = o;
+  const p = round ? roundPoly(pts, round) : smooth ? chaikin(pts, smooth, true) : pts;
+  return `<path d="${dL(p)}" fill="${fill}"/>` + (w > 0 ? `<path d="${ringD(p, w)}" fill="${c}" fill-rule="evenodd"/>` : "");
+};
+/** 사인펜 한 획: 끝이 둥글고 거의 안 가늘어진다. */
+const pen = (pts, w = 4, o = {}) => {
+  const { c = INK, smooth = 0, bow = 0, tOut = 0.92, tIn = 0.95 } = o;
+  const p = smooth ? chaikin(pts, smooth, false) : pts;
+  return `<path d="${brush(p, w, nextSeed(), { tIn, tOut, bow, wob: 0.005, vary: 0.08 })}" fill="${c}"/>`;
+};
+const ellipsePts = (cx, cy, rx, ry, n = 40, a0 = 0, a1 = Math.PI * 2) => {
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const t = a0 + ((a1 - a0) * i) / n;
+    out.push([cx + Math.cos(t) * rx, cy + Math.sin(t) * ry]);
+  }
+  return out;
+};
+const blob = (cx, cy, rx, ry, amp = 0.05, n = 18, rot = 0) => {
+  const p1 = rr(0, 6.28);
+  const p2 = rr(0, 6.28);
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const t = (i / n) * Math.PI * 2;
+    const k = 1 + amp * Math.cos(2 * t + p1) + amp * 0.7 * Math.cos(3 * t + p2);
+    const x = Math.cos(t) * rx * k;
+    const y = Math.sin(t) * ry * k;
+    out.push([cx + x * Math.cos(rot) - y * Math.sin(rot), cy + x * Math.sin(rot) + y * Math.cos(rot)]);
+  }
+  return out;
+};
+const lg = (stops, x1 = 0, y1 = 0, x2 = 0, y2 = 1, user = false) => {
+  const id = newId("g");
+  defs.push(`<linearGradient id="${id}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"${user ? ' gradientUnits="userSpaceOnUse"' : ""}>${stops.map(([o, c, a]) => `<stop offset="${o}" stop-color="${c}"${a !== undefined ? ` stop-opacity="${a}"` : ""}/>`).join("")}</linearGradient>`);
+  return `url(#${id})`;
+};
+const rg = (stops, cx = 0.5, cy = 0.5, r = 0.5) => {
+  const id = newId("r");
+  defs.push(`<radialGradient id="${id}" cx="${cx}" cy="${cy}" r="${r}">${stops.map(([o, c, a]) => `<stop offset="${o}" stop-color="${c}"${a !== undefined ? ` stop-opacity="${a}"` : ""}/>`).join("")}</radialGradient>`);
+  return `url(#${id})`;
+};
+const clipOf = (pts) => {
+  const id = newId("c");
+  defs.push(`<clipPath id="${id}"><path d="${dL(pts)}"/></clipPath>`);
+  return id;
+};
+const stroke = (d, c, w, a = 1) => `<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" opacity="${a}"/>`;
+defs.push(`<filter id="air6"><feGaussianBlur stdDeviation="6"/></filter><filter id="air3"><feGaussianBlur stdDeviation="3"/></filter>`);
+
+add(`<rect width="${W}" height="${H}" fill="${BG}"/>`);
+
+/* ── 화로 ─────────────────────────────────────────────── */
+const G = { x: 292, y: 424, rx: 126, ry: 34, depth: 112, ground: 624 };
+const metal = (a, b, w = 6.4) => pen([a, b], w + 8.4, { tOut: 1, tIn: 1 }) + pen([a, b], w, { c: "#8E8A84", tOut: 1, tIn: 1 });
+
+function drawGrill() {
+  const { x, y, rx, ry, depth, ground } = G;
+  // 다리 셋(가운데 → 양옆)
+  add(metal([x + 2, y + depth - 6], [x + 4, ground - 14]));
+  add(metal([x - 76, y + 76], [x - 112, ground]), metal([x + 76, y + 76], [x + 112, ground]));
+  // 몸통: 평평한 벽돌색 + 아래쪽 그늘 + 손으로 칠한 밝은 자리
+  const bowl = [];
+  for (let i = 0; i <= 30; i++) {
+    const a = (i / 30) * Math.PI;
+    bowl.push([x + Math.cos(a) * rx, y + Math.sin(a) * depth]);
+  }
+  add('<path d="' + dL(bowl) + '" fill="#A65F48"/>');
+  const cid = clipOf(bowl);
+  add('<g clip-path="url(#' + cid + ')"><ellipse cx="' + (x + 58) + '" cy="' + (y + 112) + '" rx="120" ry="44" fill="#7B4334" opacity=".8" filter="url(#air6)"/></g>');
+  add('<path d="' + dL(chaikin([[x - 98, y + 30], [x - 72, y + 38], [x - 54, y + 62], [x - 66, y + 66], [x - 88, y + 50]], 2)) + '" fill="#B3725A"/>');
+  add('<path d="' + ringD(bowl, 5) + '" fill="' + INK + '" fill-rule="evenodd"/>');
+  // 공기구멍 하나
+  add('<ellipse cx="' + (x + 36) + '" cy="' + (y + 72) + '" rx="11" ry="6.4" fill="' + INK + '"/>');
+  // 옆 손잡이
+  for (const sgn of [-1, 1]) {
+    const hx = x + sgn * (rx - 1);
+    const d = "M" + hx + " " + (y + 6) + "q" + sgn * 22 + " 1 " + sgn * 19 + " 15q" + -sgn * 3 + " 9 " + -sgn * 21 + " 6";
+    add(stroke(d, INK, 10), stroke(d, "#8E8A84", 3.2));
+  }
+  // 안쪽: 어두운 재 위에 달아오른 자리 몇 곳
+  const rim = ellipsePts(x, y, rx, ry, 56);
+  const rimId = clipOf(rim);
+  add('<path d="' + dL(rim) + '" fill="#3C3431"/>');
+  let glow = "";
+  for (const [gx, gy, grx, gry] of [[x - 78, y + 6, 26, 10], [x - 22, y - 12, 30, 9], [x + 34, y + 14, 34, 10], [x + 84, y - 4, 22, 9], [x - 8, y + 18, 18, 6]]) {
+    glow += '<path d="' + dL(chaikin(blob(gx, gy, grx, gry, 0.1, 10), 2)) + '" fill="#D5743C"/>';
+    glow += '<path d="' + dL(chaikin(blob(gx, gy, grx * 0.5, gry * 0.5, 0.1, 8), 2)) + '" fill="#EDB25F"/>';
+  }
+  add('<g clip-path="url(#' + rimId + ')">' + glow + "</g>");
+  // 불꽃(뒤쪽): 평면 두 색 + 검은 선
+  const flame = (fx, fy, h, w2) => {
+    const pts = [[fx - w2, fy], [fx - w2 * 0.86, fy - h * 0.34], [fx - w2 * 0.34, fy - h * 0.58], [fx - w2 * 0.08, fy - h], [fx + w2 * 0.22, fy - h * 0.62], [fx + w2 * 0.66, fy - h * 0.74], [fx + w2 * 0.76, fy - h * 0.3], [fx + w2, fy]];
+    const inner = pts.map(([px, py]) => [fx + (px - fx) * 0.55, fy + (py - fy) * 0.54]);
+    return shape(pts, "#DE7F3D", { w: 3.8, smooth: 2 }) + '<path d="' + dL(chaikin(inner, 2)) + '" fill="#F1C25E"/>';
+  };
+  for (const [fx, fy, h, w2] of [[x - 76, y - 4, 42, 19], [x - 20, y - 8, 50, 21], [x + 42, y - 8, 62, 24], [x + 90, y - 2, 44, 17]]) add(flame(fx, fy, h, w2));
+  // 석쇠: 줄을 줄이고 굵게
+  let bars = "";
+  for (let i = 0; i < 6; i++) {
+    const by = y - ry + ((i + 0.5) / 6) * ry * 2;
+    const half = rx * Math.sqrt(1 - Math.pow((by - y) / ry, 2));
+    bars += "M" + f(x - half) + " " + f(by) + "H" + f(x + half);
+  }
+  add(stroke(bars, INK, 3.6));
+  // 소시지 둘
+  const sausage = (sx, sy, rot, len = 29) => {
+    const c = [];
+    for (let i = 0; i < 20; i++) {
+      const a = (i / 20) * Math.PI * 2;
+      c.push([Math.cos(a) * (len + 1.5 * Math.cos(a * 2)), Math.sin(a) * 8.6]);
+    }
+    return '<g transform="translate(' + sx + " " + sy + ") rotate(" + rot + ')"><path d="' + dL(c) + '" fill="#A86C4C"/><path d="' + ringD(c, 3.8) + '" fill="' + INK + '" fill-rule="evenodd"/>' + stroke("M" + -len * 0.38 + " -3.6l-2.6 7M" + len * 0.04 + " -4l-2.6 8M" + len * 0.44 + " -3.6l-2.6 7", INK, 2.8) + "</g>";
+  };
+  add(sausage(x - 72, y + 6, -8), sausage(x - 10, y + 14, 5));
+  // 앞 테두리
+  add('<path d="' + ringD(rim, 8.8) + '" fill="' + INK + '" fill-rule="evenodd"/>', '<path d="' + ringD(rim, 3) + '" fill="#B3AEA6" fill-rule="evenodd"/>');
+}
+
+/* ── 집게: 열이 불 쪽 끝에서 손잡이로 번진다 ─────────────── */
+const TONGS = { A: [572, 352], T: [362, 402] };
+function drawTongs() {
+  const { A, T } = TONGS;
+  const dx = T[0] - A[0];
+  const dy = T[1] - A[1];
+  const L = Math.hypot(dx, dy);
+  const ux = dx / L;
+  const uy = dy / L;
+  const nx = -uy;
+  const ny = ux;
+  // 집게 끝이 뒤집던 스테이크
+  const sx = T[0] + ux * 26;
+  const sy = T[1] + uy * 26 + 2;
+  const meat = chaikin(blob(0, 0, 37, 15, 0.08, 14), 2);
+  const inner = chaikin(blob(-1, -1, 30, 10.5, 0.07, 12), 2);
+  add(`<g transform="translate(${f(sx)} ${f(sy)}) rotate(-11)"><path d="${dL(meat)}" fill="#E8D5BC"/><path d="${ringD(meat, 4.2)}" fill="${INK}" fill-rule="evenodd"/><path d="${dL(inner)}" fill="#8F5A41"/>${stroke("M-14 -5l-4 10M-2 -6l-4 12M10 -6l-4 12", INK, 3)}</g>`);
+  // 금속: 끝(뜨거움) → 손잡이로 갈수록 식어 가는 색
+  const heat = lg([[0, "#C9C4BC"], [0.26, "#DDB48A"], [0.6, "#E08F52"], [1, "#D2603A"]], A[0], A[1], T[0], T[1], true);
+  const arm = (s) => {
+    const pts = [];
+    for (let i = 0; i <= 14; i++) {
+      const t = i / 14;
+      const off = s * (3 + 10 * Math.sin(t * Math.PI * 0.62));
+      pts.push([A[0] + dx * t + nx * off, A[1] + dy * t + ny * off]);
+    }
+    return pts;
+  };
+  for (const s of [-1, 1]) {
+    const p = arm(s);
+    add(`<path d="${dL(p, false)}" fill="none" stroke="${INK}" stroke-width="11.4" stroke-linecap="round" stroke-linejoin="round"/>`);
+    add(`<path d="${dL(p, false)}" fill="none" stroke="${heat}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`);
+  }
+  // 손잡이 고리
+  add(`<circle cx="${f(A[0] + ux * 4)}" cy="${f(A[1] + uy * 4)}" r="8" fill="#C9C4BC" stroke="${INK}" stroke-width="4.2"/>`);
+
+  // 열 물결: 불 쪽은 크고 진하게, 손잡이 쪽은 작고 옅게
+  const cols = ["#D2603A", "#D87443", "#DD8A50", "#E19F63", "#E4B37A"];
+  for (let i = 0; i < 5; i++) {
+    const t = 0.94 - i * 0.165;
+    const bx = A[0] + dx * t + nx * 18;
+    const by = A[1] + dy * t + ny * 18 - 2;
+    const h = lerp(60, 32, i / 4);
+    const wav = [];
+    for (let k = 0; k <= 12; k++) {
+      const u = k / 12;
+      wav.push([bx + Math.sin(u * 8.4) * lerp(6.4, 4.4, i / 4), by - u * h]);
+    }
+    add(pen(wav, lerp(6, 5, i / 4), { c: cols[i], tIn: 0.95, tOut: 0.85 }));
+  }
+  // 열이 가는 쪽을 가리키는 화살표
+  const a0 = [392, 306];
+  const a2 = [566, 272];
+  const am = [480, 268];
+  const arrow = [];
+  for (let i = 0; i <= 16; i++) {
+    const t = i / 16;
+    const u = 1 - t;
+    arrow.push([u * u * a0[0] + 2 * u * t * am[0] + t * t * a2[0], u * u * a0[1] + 2 * u * t * am[1] + t * t * a2[1]]);
+  }
+  add(pen(arrow, 6, { c: "#D2603A", tIn: 0.9, tOut: 1 }));
+  add(pen([[a2[0] - 18, a2[1] - 14], a2, [a2[0] - 21, a2[1] + 9]], 6, { c: "#D2603A", tIn: 0.95, tOut: 0.95 }));
+}
+
+/* ── 스틱맨 쌤 ────────────────────────────────────────── */
+function drawTeacher() {
+  const hx = 710;
+  const hy = 218;
+  const r = 58;
+  const N = [692, 276];
+  const Hip = [648, 410];
+  const LW = 5.2;
+  // 다리: 뒤로 물러나며 앞발이 들린다
+  add(pen([Hip, [592, 476], [556, 590]], LW, { smooth: 2 }));
+  add(pen([Hip, [692, 514], [740, 622]], LW, { smooth: 2 }));
+  // 몸통
+  add(pen([N, Hip], LW, { bow: 0.012 }));
+  // 실험복(짧고 단순하게, 앞이 열려 몸통 선이 보인다)
+  const L = Math.hypot(Hip[0] - N[0], Hip[1] - N[1]);
+  const ux = (Hip[0] - N[0]) / L;
+  const uy = (Hip[1] - N[1]) / L;
+  const vx = uy;
+  const vy = -ux;
+  const at = (t, s) => [N[0] + ux * L * t + vx * s, N[1] + uy * L * t + vy * s];
+  const left = chaikin([at(0.03, -6), at(0.12, -28), at(0.5, -38), at(1.04, -45), at(1.18, -48), at(1.18, -11), at(0.6, -8), at(0.26, -4)], 2);
+  const right = chaikin([at(0.03, 6), at(0.12, 28), at(0.5, 38), at(1.04, 45), at(1.18, 50), at(1.2, 11), at(0.6, 8), at(0.26, 4)], 2);
+  add(`<path d="${dL(right)}" fill="#FEFEFC"/><path d="${dL(left)}" fill="#FEFEFC"/>`);
+  const cidR = clipOf(right);
+  add(`<g clip-path="url(#${cidR})"><path d="${dL([at(0.1, 26), at(1.25, 40), at(1.25, 60), at(0.1, 46)])}" fill="#D8D8D5" filter="url(#air3)"/></g>`);
+  add(`<path d="${ringD(left, 4.4)}" fill="${INK}" fill-rule="evenodd"/><path d="${ringD(right, 4.4)}" fill="${INK}" fill-rule="evenodd"/>`);
+  // 깃
+  add(pen([at(0.04, -9), at(0.2, -20), at(0.27, -5)], 3.8, { tOut: 0.95 }), pen([at(0.04, 9), at(0.2, 20), at(0.27, 5)], 3.8, { tOut: 0.95 }));
+  // 주머니 한 칸
+  add(pen([at(0.74, 15), at(0.74, 30)], 3.4, { tIn: 1, tOut: 1 }));
+  // 머리(얼굴 없음)
+  const headPts = chaikin(blob(hx, hy, r, r, 0.012, 34), 1);
+  add(`<path d="${dL(headPts)}" fill="#F0D8C9"/>`);
+  add(`<path d="${ringD(headPts, 5.6)}" fill="${INK}" fill-rule="evenodd"/>`);
+  // 머리카락: 옆을 보는 머리에 맞춰 직접 그린다(앞머리는 왼쪽, 뒤통수는 오른쪽)
+  const P = (x, y) => [hx + x * r, hy + y * r];
+  const crown = [[-0.9, -0.38], [-0.74, -0.84], [-0.24, -1.1], [0.34, -1.1], [0.84, -0.78], [1.07, -0.24], [1.05, 0.2]];
+  const hairline = [[0.84, 0.14], [0.8, -0.14], [0.66, -0.34], [0.5, -0.42], [0.42, -0.34], [0.26, -0.5], [0.1, -0.44], [-0.04, -0.56], [-0.2, -0.46], [-0.34, -0.56], [-0.5, -0.42], [-0.66, -0.46], [-0.76, -0.3]];
+  const hairPts = chaikin([...crown, ...hairline].map(([x, y]) => P(x, y)), 2);
+  add(`<path d="${dL(hairPts)}" fill="#2A2726"/>`);
+  let strands = "";
+  for (const [ax, ay, bx, by] of [[0.1, -1, -0.6, -0.56], [0.14, -1.02, -0.32, -0.66], [0.18, -1.02, -0.04, -0.68], [0.24, -1.02, 0.2, -0.62], [0.32, -1.02, 0.46, -0.56], [0.42, -1, 0.7, -0.48], [0.56, -0.92, 0.9, -0.2]]) {
+    const a = P(ax, ay);
+    const b = P(bx, by);
+    const m = P((ax + bx) / 2 + (bx - ax) * 0.1, (ay + by) / 2 - 0.1);
+    strands += `M${f(a[0])} ${f(a[1])}Q${f(m[0])} ${f(m[1])} ${f(b[0])} ${f(b[1])}`;
+  }
+  add(stroke(strands, "#4F4A46", 2, 0.9));
+  add(`<path d="${ringD(hairPts, 4.8)}" fill="${INK}" fill-rule="evenodd"/>`);
+  // 안경: 고리 두 개 + 코다리 + 다리(옆을 보므로 앞쪽으로 치우친다)
+  const lens = [[hx - 30, hy + 4], [hx + 12, hy + 3]];
+  for (const [lx, ly] of lens) add(`<path d="${ringD(ellipsePts(lx, ly, 15.5, 16, 26), 4.4)}" fill="${INK}" fill-rule="evenodd"/>`);
+  add(pen([[hx - 14.5, hy + 1], [hx - 8, hy - 3], [hx - 3.5, hy + 1]], 4, { smooth: 1 }));
+  add(pen([[hx + 27.5, hy + 1], [hx + 50, hy - 4]], 4, { tOut: 1 }));
+  // 집게 쥔 팔(왼쪽 어깨에서)
+  add(pen([at(0.12, -27), [612, 338], [576, 352]], LW, { smooth: 2 }));
+  // 쥔 손가락(손잡이를 감싼 세 마디)
+  for (const [x0, y0, x1, y1] of [[568, 343], [576, 343], [584, 344]].map(([a, b]) => [a, b, a - 3, b + 18])) add(pen([[x0, y0], [x1, y1]], 4));
+  // 흔드는 팔(오른쪽 어깨에서) + 쫙 편 손
+  const handX = 820;
+  const handY = 286;
+  add(pen([at(0.14, 27), [772, 360], [handX, handY]], LW, { smooth: 2 }));
+  for (const a of [-2.5, -2.05, -1.62, -1.2, -0.76]) {
+    const l = a === -0.76 ? 13 : 18;
+    add(pen([[handX, handY], [handX + Math.cos(a) * l, handY + Math.sin(a) * l]], 4.2, { tOut: 0.92 }));
+  }
+  // 흔들림 표시
+  for (const d of [`M${handX - 34} ${handY - 2}q-9 10 -6 24`, `M${handX - 46} ${handY - 10}q-13 15 -9 36`, `M${handX + 26} ${handY - 2}q9 10 6 24`, `M${handX + 38} ${handY - 10}q13 15 9 36`]) add(stroke(d, INK, 3.8));
+  // 놀람 표시 !!
+  const bang = (x, y, rot) => `<g transform="translate(${x} ${y}) rotate(${rot})">${pen([[0, -30], [0, -2]], 7.4, { tOut: 0.72, tIn: 1 })}<circle cx="0" cy="9" r="4.2" fill="${INK}"/></g>`;
+  add(bang(702, 116, -4), bang(726, 116, 5));
+  // 손끝 찌릿(열이 손에 닿은 자리)
+  for (const [x0, y0, x1, y1] of [[566, 322, 558, 302], [588, 318, 594, 298], [608, 330, 622, 316]]) add(pen([[x0, y0], [x1, y1]], 5, { c: "#D2603A", tOut: 0.85 }));
+}
+
+/* ── 발밑 표시(바닥 없이 잔선만) ──────────────────────── */
+function drawTicks() {
+  for (const [x, y, l, a] of [[148, 628, 11, -1.9], [162, 630, 8, -1.3], [424, 630, 10, -1.2], [438, 628, 7, -1.8], [760, 626, 12, -1.3], [776, 628, 8, -1.8], [528, 612, 10, -1.9], [540, 616, 7, -1.3]]) {
+    add(pen([[x, y], [x + Math.cos(a) * l, y + Math.sin(a) * l]], 3.8, { tOut: 0.85 }));
+  }
+}
+
+drawGrill();
+drawTongs();
+drawTeacher();
+drawTicks();
+
+document.getElementById("stage").innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg"><defs>${defs.join("")}</defs>${layers.join("")}</svg>`;
+window.__done = true;
+</script>
+</body>
+</html>

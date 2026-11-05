@@ -9,6 +9,7 @@ import {
   SH, wrapSvg, lg3, rg3, mount, once, later, every,
   registerAnimalScenes, type AnimalSceneFn,
 } from "./hookAnimal";
+import { inkStick } from "../../ui/stickArt";
 
 const q = <T extends Element>(fig: HTMLElement, sel: string): T => fig.querySelector(sel) as T;
 const show = (fig: HTMLElement, sel: string, v = "1"): void => {
@@ -320,8 +321,7 @@ export const renderAfterswim: AnimalSceneFn = (scene, helper, finish, face, choi
       `<rect x="8" y="10" width="344" height="180" rx="16" fill="url(#as-bg)"/>
       <path d="M8 132 q45 -12 90 0 t90 0 t90 0 t74 0 v58 H8 Z" fill="url(#as-water)" opacity=".9"/>
       <g class="as-kid" style="transition:transform .8s var(--ease)">
-        <circle cx="112" cy="98" r="15" fill="url(#as-skin)" stroke="#B07A56" stroke-width="1.5"/>
-        <path d="M112 113 v26 M112 120 l-18 12 M112 120 l18 12 M112 139 l-12 20 M112 139 l12 20" stroke="#40506A" stroke-width="4" stroke-linecap="round"/>
+        ${inkStick(112, 98, 15, "M112 113 v26 M112 120 l-18 12 M112 120 l18 12 M112 139 l-12 20 M112 139 l12 20", { look: "ponytail", mood: "worry" })}
         <ellipse cx="112" cy="128" rx="26" ry="13" fill="url(#as-tube)" stroke="#C4531C" stroke-width="1.5"/>
       </g>
       <g class="as-pant" style="opacity:1;transition:opacity .5s">

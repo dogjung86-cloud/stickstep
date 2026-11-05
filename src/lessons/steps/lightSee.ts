@@ -12,6 +12,7 @@ import { haptic, HAPTIC } from "../../core/haptics";
 import { drawBeam, eyeProp, TAU, type Pt } from "../../ui/lightKit";
 import { curioCard, type Curio } from "../../ui/curio";
 import type { StepRenderer } from "../types";
+import { paintFigure } from "../../ui/stickArt";
 
 interface LabStep {
   title: string;
@@ -457,22 +458,20 @@ export const seeLab: StepRenderer = (host, step, api) => {
 
     // 사람(스틱맨 — 손그림 라인 정체성 유지, 다크 무대용 밝은 선)
     const bodyTop = E.y + 14;
-    ctx.strokeStyle = "#E8EEF6";
-    ctx.lineWidth = 2.6;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.arc(E.x + 4, E.y, 13, 0, TAU); // 머리
-    ctx.moveTo(E.x + 4, bodyTop);
-    ctx.lineTo(E.x + 4, bodyTop + 34); // 몸
-    ctx.moveTo(E.x + 4, bodyTop + 10);
-    ctx.lineTo(E.x - 12, bodyTop + 24); // 왼팔(연못 쪽)
-    ctx.moveTo(E.x + 4, bodyTop + 10);
-    ctx.lineTo(E.x + 20, bodyTop + 26); // 오른팔
-    ctx.moveTo(E.x + 4, bodyTop + 34);
-    ctx.lineTo(E.x - 8, gy); // 왼다리
-    ctx.moveTo(E.x + 4, bodyTop + 34);
-    ctx.lineTo(E.x + 16, gy); // 오른다리
-    ctx.stroke();
+    paintFigure(ctx, {
+      head: { x: E.x + 4, y: E.y, r: 13 },
+      body: [
+        [[E.x + 4, bodyTop - 1], [E.x + 4, bodyTop + 34]],
+        [[E.x + 4, bodyTop + 34], [E.x - 8, gy]],
+        [[E.x + 4, bodyTop + 34], [E.x + 16, gy]],
+        [[E.x + 4, bodyTop + 10], [E.x - 12, bodyTop + 24]],
+        [[E.x + 4, bodyTop + 10], [E.x + 20, bodyTop + 26]],
+      ],
+      look: "swept",
+      mood: "none",
+      facing: -1,
+      scheme: "dark",
+    });
     // 눈(왼쪽을 바라봄) — 탭 노드
     eyeProp(ctx, E.x - 4, E.y - 2, Math.PI, 8.5);
 

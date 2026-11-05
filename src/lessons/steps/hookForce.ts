@@ -5,6 +5,7 @@ import { el, clamp } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
+import { inkStick, inkHead, inkLimb } from "../../ui/stickArt";
 
 type Face = (k: AvatarKind) => void;
 
@@ -25,8 +26,7 @@ function balloonSvg(): string {
     </g>
     <!-- 스틱맨(손그림 라인), 줄 끝을 잡음 -->
     <g stroke="#3C4654" stroke-width="2.6">
-      <circle cx="120" cy="118" r="9" fill="#fff"/>
-      <path d="M120 127v22M120 133l-11 5M120 133l9-9M120 149l-8 14M120 149l8 14"/>
+      ${inkStick(120, 118, 9, "M120 127v22M120 133l-11 5M120 133l9-9M120 149l-8 14M120 149l8 14", { look: "swept" })}
     </g>
   </svg>`;
 }
@@ -85,8 +85,7 @@ function tugSvg(): string {
   const man = (x: number, flip: boolean): string => {
     const d = flip ? -1 : 1;
     return `<g stroke="#3C4654" stroke-width="2.6" class="hf-tugman">
-      <circle cx="${x}" cy="96" r="8" fill="#fff"/>
-      <path d="M${x} 104 l${-6 * d} 16 M${x - 6 * d} 120 l${13 * d} -4 M${x} 104 l${-2 * d} 18 M${x - 2 * d} 122 l${10 * d} 12 M${x - 2 * d} 122 l${-10 * d} 10"/>
+      ${inkStick(x, 96, 8, `M${x} 104 l${-6 * d} 16 M${x - 6 * d} 120 l${13 * d} -4 M${x} 104 l${-2 * d} 18 M${x - 2 * d} 122 l${10 * d} 12 M${x - 2 * d} 122 l${-10 * d} 10`, { look: flip ? "spiky" : "curly" })}
     </g>`;
   };
   return `<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -167,8 +166,7 @@ function bowSvg(): string {
     </g>
     <!-- 스틱맨(손그림 라인) -->
     <g class="hf-archer" stroke="#3C4654" stroke-width="2.6">
-      <circle cx="34" cy="74" r="8.5" fill="#fff"/>
-      <path d="M34 83v32M34 90l32 5M34 92l20 8M34 115l-9 26M34 115l11 25"/>
+      ${inkStick(34, 74, 8.5, "M34 83v32M34 90l32 5M34 92l20 8M34 115l-9 26M34 115l11 25", { look: "curly" })}
     </g>
     <!-- 활: 림 + 시위 + 화살 (JS가 d를 갱신) -->
     <path class="hf-limbs" d="" stroke="url(#hf-limb)" stroke-width="5"/>
@@ -312,13 +310,13 @@ function iceslipSvg(): string {
     <!-- 스틱맨(발끝 기준, 이동은 .hfw, 넘어짐은 .hfw-body 회전) -->
     <g class="hfw">
       <ellipse class="hfw-sh" cx="0" cy="130" rx="14" ry="3" fill="#2A3A5E" opacity=".14"/>
-      <g class="hfw-body" stroke="#3C4654" stroke-width="2.6">
-        <circle cx="0" cy="70" r="8.5" fill="#fff"/>
-        <path d="M0 79v33"/>
-        <path class="hfw-armF" d="M0 88l10 12"/>
-        <path class="hfw-armB" d="M0 88l-10 11"/>
-        <path class="hfw-legF" d="M0 112l8 16"/>
-        <path class="hfw-legB" d="M0 112l-8 16"/>
+      <g class="hfw-body">
+        ${inkLimb("M0 79v33", { r: 8.5, kind: "torso" })}
+        ${inkLimb("M0 112l8 16", { r: 8.5, kind: "leg", attrs: 'class="hfw-legF"' })}
+        ${inkLimb("M0 112l-8 16", { r: 8.5, kind: "leg", attrs: 'class="hfw-legB"' })}
+        ${inkLimb("M0 88l10 12", { r: 8.5, attrs: 'class="hfw-armF"', bow: 0.07 })}
+        ${inkLimb("M0 88l-10 11", { r: 8.5, attrs: 'class="hfw-armB"', bow: -0.07 })}
+        ${inkHead(0, 70, 8.5, { look: "beanie", mood: "ok" })}
       </g>
       <g class="hfw-burst" stroke="#F0A422" stroke-width="2.2" opacity="0">
         <path d="M14 118l7-6M18 126l9-2M12 110l4-8"/>
@@ -477,8 +475,7 @@ function rollSvg(): string {
     </g>
     <!-- 발로 찬 스틱맨 -->
     <g stroke="#3C4654" stroke-width="2.6">
-      <circle cx="26" cy="58" r="8" fill="#fff"/>
-      <path d="M26 66v20M26 72l-9 7M26 72l10 3M26 86l-7 14M26 86l12 8"/>
+      ${inkStick(26, 58, 8, "M26 66v20M26 72l-9 7M26 72l10 3M26 86l-7 14M26 86l12 8", { look: "beanie" })}
     </g>
   </svg>`;
 }

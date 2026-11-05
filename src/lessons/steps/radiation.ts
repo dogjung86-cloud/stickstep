@@ -12,6 +12,7 @@ import { tempColor, drawFlame } from "../../ui/thermo";
 import { contactShadow, glassStrokeStyle, softGlow, windStrokeStyle } from "../../ui/labProps";
 import { curioCard, type Curio } from "../../ui/curio";
 import type { StepRenderer } from "../types";
+import { paintFigure } from "../../ui/stickArt";
 
 interface RadiationStep {
   title: string;
@@ -126,43 +127,21 @@ export const radiation: StepRenderer = (host, step, api) => {
       ctx.arc(0, -26, 54, 0, Math.PI * 2);
       ctx.fill();
     }
-    ctx.strokeStyle = "#DCE8FA";
-    ctx.lineWidth = 2.6;
-    ctx.lineCap = "round";
-    // 머리
-    ctx.beginPath();
-    ctx.arc(0, -46, 11, 0, Math.PI * 2);
-    ctx.stroke();
-    // 표정
-    ctx.lineWidth = 1.8;
-    ctx.beginPath();
-    ctx.arc(-3.6, -48, 1.1, 0, Math.PI * 2);
-    ctx.moveTo(4.8, -48);
-    ctx.arc(3.6, -48, 1.1, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.beginPath();
-    if (warm > 0.4) ctx.arc(0, -44.5, 4.4, 0.25, Math.PI - 0.25);
-    else {
-      ctx.moveTo(-3.4, -41.5);
-      ctx.lineTo(3.4, -41.5);
-    }
-    ctx.stroke();
-    // 몸(앉은 자세, 불 쪽으로 손)
-    ctx.lineWidth = 2.6;
-    ctx.beginPath();
-    ctx.moveTo(0, -35);
-    ctx.lineTo(0, -12);
-    ctx.moveTo(0, -28);
-    ctx.lineTo(-15, -20);
-    ctx.moveTo(0, -26);
-    ctx.lineTo(-14, -14);
-    ctx.moveTo(0, -12);
-    ctx.lineTo(-13, -4);
-    ctx.lineTo(-13, 4);
-    ctx.moveTo(0, -12);
-    ctx.lineTo(9, -3);
-    ctx.lineTo(9, 4);
-    ctx.stroke();
+    paintFigure(ctx, {
+      head: { x: 0, y: -46, r: 11 },
+      // 앉은 자세, 불 쪽으로 손
+      body: [
+        [[0, -35], [0, -12]],
+        [[0, -12], [-13, -4], [-13, 4]],
+        [[0, -12], [9, -3], [9, 4]],
+        [[0, -28], [-15, -20]],
+        [[0, -26], [-14, -14]],
+      ],
+      look: "beanie",
+      mood: warm > 0.4 ? "ok" : warm < 0.18 ? "worry" : "focus",
+      facing: -1,
+      scheme: "dark",
+    });
     // 추울 때 덜덜 마크
     if (warm < 0.18) {
       ctx.strokeStyle = "rgba(160,190,235,.8)";

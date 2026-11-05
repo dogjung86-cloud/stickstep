@@ -3,6 +3,7 @@
 // 퀴즈용 그림은 정답 유출 가림 인자를 받고, concept·recap용은 무인자 완성본을 쓴다.
 
 import { B4 } from "./bio4Kit";
+import { inkStick } from "./stickArt";
 
 /** 공통 SVG 래퍼 — 루트에 fill="none"(사진·rect 검정 채움 사고 방지). */
 const svg = (vb: string, body: string, aria = ""): string =>
@@ -86,8 +87,7 @@ const MINI: Record<string, () => string> = {
       <circle cx="14" cy="48" r="4.5" fill="${B4.membrane}"/>
       <circle cx="24" cy="38" r="3" fill="${B4.bio}"/><circle cx="30" cy="40" r="3" fill="${B4.bio}"/>
       <path d="M38 24 c-4 3 -4 8 0 10 c4 -2 4 -7 0 -10 Z" fill="${B4.mito}"/>
-      <circle cx="54" cy="12" r="6.5" fill="none" stroke="${B4.ink}" stroke-width="2.4"/>
-      <path d="M54 18 v9 M54 21 l-5 4 M54 21 l5 4" stroke="${B4.ink}" stroke-width="2.4" stroke-linecap="round"/>
+      ${inkStick(54, 12, 6.5, "M54 18 v9 M54 21 l-5 4 M54 21 l5 4", { look: "beanie" })}
     `, "세포에서 개체까지 오르는 계단"),
   // L5: 두 갈래 경로 — 식물(조직계)·동물(기관계)
   twoPath: () => svg("0 0 64 64", `
@@ -132,8 +132,7 @@ const MINI: Record<string, () => string> = {
   ruleKey: () => svg("0 0 64 64", `
       <rect x="30" y="24" width="26" height="22" rx="6" fill="#FFE9B8" stroke="#C9A040" stroke-width="2.6"/>
       <path d="M43 33 a4 4 0 1 0 0.1 0 Z M43 36 v6" stroke="#8A6A1E" stroke-width="2.4" fill="none"/>
-      <circle cx="14" cy="26" r="7" fill="none" stroke="${B4.bioDeep}" stroke-width="3"/>
-      <path d="M19 31 l9 9 M24 36 l4 -3 M28 41 l4 -3" stroke="${B4.bioDeep}" stroke-width="3" stroke-linecap="round"/>
+      ${inkStick(14, 26, 7, "M19 31 l9 9 M24 36 l4 -3 M28 41 l4 -3", { look: "beanie" })}
     `, "자물쇠에 맞는 열쇠"),
   // L8: 7단 사다리 미니(종→계)
   rank7: () => svg("0 0 64 64", `
@@ -357,8 +356,7 @@ export function sizeLadderFig(): string {
       <text x="${x + 36}" y="108" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">${size}</text>
     </g>`;
   // 기준 아이콘(글자 없음): 사람 · 동전 · 머리카락 확대 · 현미경
-  const person = `<circle cx="52" cy="52" r="7" fill="none" stroke="#333D4B" stroke-width="2.4"/>
-    <path d="M52 59 v18 M52 64 l-9 7 M52 64 l9 7 M52 77 l-7 12 M52 77 l7 12" stroke="#333D4B" stroke-width="2.4" stroke-linecap="round" fill="none"/>`;
+  const person = `${inkStick(52, 52, 7, "M52 59 v18 M52 64 l-9 7 M52 64 l9 7 M52 77 l-7 12 M52 77 l7 12", { look: "long" })}`;
   const coin = `<circle cx="134" cy="68" r="15" fill="#FFE9B8" stroke="#C9A040" stroke-width="2.6"/>
     <circle cx="134" cy="68" r="9" fill="none" stroke="#C9A040" stroke-width="1.8" opacity=".7"/>`;
   const hair = `<circle cx="216" cy="68" r="16" fill="#F4F7FA" stroke="#8B95A1" stroke-width="1.8" stroke-dasharray="3 3"/>

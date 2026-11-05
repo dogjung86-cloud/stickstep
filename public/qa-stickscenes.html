@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QA · 스틱맨 장면 모음</title>
+<style>
+  .qa-grid { display: grid; grid-template-columns: repeat(auto-fill, 380px); gap: 12px; }
+  .qa-card { background: #fff; border-radius: 14px; padding: 10px; width: 380px; box-sizing: border-box; overflow: hidden; }
+  .qa-card > h2 { font: 700 11px/1.3 system-ui, sans-serif; color: #8B95A1; margin: 0 0 6px; word-break: break-all; }
+  .qa-card .h1, .qa-card .sub, .qa-card .comic-narrator, .qa-card .helper, .qa-card .hook-q { display: none; }
+</style>
+</head>
+<body>
+<div class="qa-grid" id="g"></div>
+<script type="module">
+  // 쿼리: ?types=tugOfWar,trialLab  ?scenes=cinema,nines  ?kind=hook&page=0&per=24  ?step=<lessonId>:<인덱스>
+  // 스틱맨 일괄 교체의 눈검수·전후 비교 전용(프로덕션 dist에서는 qa- 접두로 제거된다).
+  import "/src/styles/tokens.css";
+  import "/src/styles/base.css";
+  import "/src/styles/ui.css";
+  import "/src/styles/bio3.css";
+  import "/src/styles/bio3-hook.css";
+  import "/src/styles/bio4.css";
+  import "/src/styles/bio4-hook.css";
+  import "/src/styles/plant3.css";
+  import "/src/styles/plant3-hook.css";
+  import "/src/styles/body3.css";
+  import "/src/styles/body3-hook.css";
+  import "/src/styles/math.css";
+  import "/src/styles/math2.css";
+  import "/src/styles/body-hook.css";
+  import "/src/styles/body.css";
+  import "/src/styles/plant2.css";
+  import "/src/styles/soc.css";
+  import "/src/styles/his.css";
+  import { getRenderer } from "/src/lessons/registry.ts";
+  import { CURRICULA_OF } from "/src/content/curriculum.ts";
+
+  document.documentElement.style.height = "auto";
+  document.body.style.cssText += ";height:auto;min-height:100vh;overflow:auto;display:block;place-items:unset;background:#EEF1F5;padding:14px;";
+
+  const q = new URLSearchParams(location.search);
+  const list = (k) => (q.get(k) ? q.get(k).split(",").map((s) => s.trim()).filter(Boolean) : null);
+  const types = list("types");
+  const scenes = list("scenes");
+  const stepsQ = list("step");
+  const kind = q.get("kind");
+  const page = Number(q.get("page") || 0);
+  const per = Number(q.get("per") || 24);
+  const firstOnly = q.get("first") !== "0"; // 같은 type은 첫 등장만(기본)
+
+  const all = [];
+  const onlySubj = q.get("subject");
+  for (const [subjKey, subj] of Object.entries(CURRICULA_OF).filter(([k]) => !onlySubj || k === onlySubj))
+    for (const grade of Object.values(subj))
+      for (const unit of grade)
+        for (const lesson of unit.lessons ?? [])
+          lesson.steps.forEach((step, idx) => all.push({ subjKey, unit, lesson, step, idx }));
+
+  const isHook = (s) => /hook/i.test(s.type);
+  let picked = [];
+  if (stepsQ) {
+    for (const key of stepsQ) {
+      const [lid, i] = key.split(":");
+      const hit = all.find((a) => a.lesson.id === lid && a.idx === Number(i));
+      if (hit) picked.push(hit);
+    }
+  } else if (scenes) {
+    for (const sc of scenes) {
+      const hit = all.find((a) => a.step.scene === sc);
+      if (hit) picked.push(hit);
+    }
+  } else if (types) {
+    const seen = new Set();
+    for (const t of types)
+      for (const a of all)
+        if (a.step.type === t) {
+          if (firstOnly && seen.has(t)) continue;
+          seen.add(t);
+          picked.push(a);
+        }
+  } else if (kind === "hook") {
+    picked = all.filter((a) => isHook(a.step)).slice(page * per, page * per + per);
+  } else if (kind === "labs") {
+    // 스텝 타입별 첫 등장 하나씩(훅·개념·문제류 제외)
+    const skip = /^(comic|recap|quiz|order|hook|binSort|concept|hotspot|pairMatch|figTabs|table|dataGraph|techCards|mathDrill)$/;
+    const seen = new Set();
+    const labs = [];
+    for (const a of all) {
+      if (skip.test(a.step.type) || seen.has(a.step.type)) continue;
+      seen.add(a.step.type);
+      labs.push(a);
+    }
+    picked = labs.slice(page * per, page * per + per);
+  } else if (kind === "ink") {
+    // 데이터에 잉크 스틱맨이 박힌 스텝(문제 그림·정리 카드 등)
+    picked = all.filter((a) => JSON.stringify(a.step).includes("data-ink")).slice(page * per, page * per + per);
+  }
+  window.__qa = { total: all.length, hooks: all.filter((a) => isHook(a.step)).length, picked: picked.length, ink: all.filter((a) => JSON.stringify(a.step).includes("data-ink")).length };
+
+  const mockApi = (lesson, idx) => ({
+    lesson, index: idx, total: lesson.steps.length,
+    setCTA() {}, enableCTA() {}, disableCTA() {}, next() {}, openSheet() {}, recordQuiz() {}, snack() {},
+  });
+  const g = document.getElementById("g");
+  for (const a of picked) {
+    const card = document.createElement("div");
+    card.className = "qa-card";
+    card.dataset.key = `${a.lesson.id}:${a.idx}`;
+    card.innerHTML = `<h2>${a.lesson.id}:${a.idx} · ${a.step.type}${a.step.scene ? " · " + a.step.scene : ""}</h2>`;
+    const host = document.createElement("div");
+    card.appendChild(host);
+    g.appendChild(card);
+    const r = getRenderer(a.step.type);
+    try {
+      if (r) r(host, a.step, mockApi(a.lesson, a.idx));
+      else host.textContent = "no renderer";
+    } catch (e) {
+      host.textContent = "render error: " + e.message;
+    }
+  }
+</script>
+</body>
+</html>

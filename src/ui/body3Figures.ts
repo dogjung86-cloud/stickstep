@@ -2,6 +2,7 @@
 // 규약: 퀴즈용 그림은 정답 유출 차단 인자(blanks)를 받고, concept·recap은 무인자.
 // 색은 body3Kit.B6 시맨틱만 사용. 어두운 면 위 라벨은 흰 글자 + 그 면의 최암색 할로.
 import { B6 } from "./body3Kit";
+import { inkStick } from "./stickArt";
 
 const SVG = (w: number, h: number, inner: string, label?: string): string =>
   `<svg viewBox="0 0 ${w} ${h}" fill="none" xmlns="http://www.w3.org/2000/svg"${label ? ` role="img" aria-label="${label}"` : ` aria-hidden="true"`}>${inner}</svg>`;
@@ -391,7 +392,7 @@ MINI.peePath = `<path d="M14 12 q20 2 22 16 q2 12 14 14" stroke="#F5D664" stroke
 MINI.cellFire = `<rect x="10" y="12" width="44" height="40" rx="12" fill="#FFF7E8" stroke="#E3C58A" stroke-width="2.6"/><path d="M26 44 c4 -10 7 -13 10 -17 c3 4 6 7 10 17 a10 10 0 0 1 -20 0 Z" fill="#FF922B"/><path d="M31 45 c2 -5 3.4 -7 5 -9 c1.6 2 3 4 5 9 a5 5 0 0 1 -10 0 Z" fill="${B6.energy}"/><circle cx="20" cy="20" r="3" fill="${B6.glucose}"/><circle cx="46" cy="20" r="3" fill="${B6.o2}"/>`;
 
 /** 에너지의 쓰임(온도계+달리기) */
-MINI.energyUse = `<rect x="12" y="10" width="8" height="30" rx="4" fill="#FFFFFF" stroke="#B9C2CC" stroke-width="2"/><rect x="14.5" y="22" width="3" height="16" fill="#F03E3E"/><circle cx="16" cy="44" r="6" fill="#F03E3E" stroke="#B9C2CC" stroke-width="2"/><g stroke="#333D4B" stroke-width="2.6" stroke-linecap="round" fill="none"><circle cx="42" cy="18" r="6" fill="#FFFFFF"/><path d="M42 24 l-2 12 M40 36 l-6 10 M40 36 l8 8 M42 28 l-8 2 M42 28 l9 -3"/></g><path d="M52 48 h6 M50 52 h8" stroke="#FFB005" stroke-width="2" stroke-linecap="round"/>`;
+MINI.energyUse = `<rect x="12" y="10" width="8" height="30" rx="4" fill="#FFFFFF" stroke="#B9C2CC" stroke-width="2"/><rect x="14.5" y="22" width="3" height="16" fill="#F03E3E"/><circle cx="16" cy="44" r="6" fill="#F03E3E" stroke="#B9C2CC" stroke-width="2"/><g stroke="#333D4B" stroke-width="2.6" stroke-linecap="round" fill="none">${inkStick(42, 18, 6, "M42 24 l-2 12 M40 36 l-6 10 M40 36 l8 8 M42 28 l-8 2 M42 28 l9 -3", { look: "beanie" })}</g><path d="M52 48 h6 M50 52 h8" stroke="#FFB005" stroke-width="2" stroke-linecap="round"/>`;
 
 /** 네 기관계 퍼즐(통합) */
 MINI.teamFour = `<rect x="10" y="10" width="20" height="20" rx="5" fill="#FFF4E6" stroke="#F3C9A8" stroke-width="2"/><rect x="34" y="10" width="20" height="20" rx="5" fill="#E3F2FB" stroke="#7CB2D4" stroke-width="2"/><rect x="10" y="34" width="20" height="20" rx="5" fill="#FBF3DC" stroke="#D9C08C" stroke-width="2"/><rect x="34" y="34" width="20" height="20" rx="5" fill="#FFF7E8" stroke="#E3C58A" stroke-width="2"/><circle cx="32" cy="32" r="8" fill="#FDE2E5" stroke="#E07A85" stroke-width="2.4"/>`;

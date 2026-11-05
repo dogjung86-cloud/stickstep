@@ -13,6 +13,7 @@ import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
+import { inkStick } from "../../ui/stickArt";
 
 type Face = (k: AvatarKind) => void;
 
@@ -121,8 +122,7 @@ export function renderNightRoad(scene: HTMLElement, helper: HTMLElement, finish:
     <!-- 밤길을 걷다 가로등을 바라보는 스틱맨(손그림 라인) -->
     <ellipse cx="30" cy="160" rx="17" ry="2.8" fill="#000" opacity=".2"/>
     <g stroke="#E8EEF8" stroke-width="2.6" fill="none">
-      <circle cx="33" cy="119" r="7.5" fill="#16223E"/>
-      <path d="M31 127l-2 17M30 132l-9 7M30 132l12 3M29 144l-7 13M29 144l10 12"/>
+      ${inkStick(33, 119, 7.5, "M31 127l-2 17M30 132l-9 7M30 132l12 3M29 144l-7 13M29 144l10 12", { look: "bob", scheme: "dark" })}
     </g>
   </svg>`;
   const choicesBox = el("div", { class: "hook-choices" });
@@ -263,8 +263,7 @@ export function renderMilkyBand(scene: HTMLElement, helper: HTMLElement, finish:
     <!-- 올려다보는 스틱맨(손그림 라인, stargaze 문법: 접촉 그림자 + 젖힌 고개 + 하늘 가리키는 팔) -->
     <ellipse cx="120" cy="163" rx="20" ry="3" fill="#000" opacity=".22"/>
     <g stroke="#E8EEF8" stroke-width="2.6" fill="none">
-      <circle cx="117" cy="136" r="7.5" fill="#0E1626"/>
-      <path d="M120 143l2 17M121 148l-10 4M121 148l14-10M122 160l-9 11M122 160l7 12"/>
+      ${inkStick(117, 136, 7.5, "M120 143l2 17M121 148l-10 4M121 148l14-10M122 160l-9 11M122 160l7 12", { look: "pigtails", scheme: "dark" })}
     </g>
     <text x="120" y="30" fill="#DCE8FF" font-size="11" font-weight="700" text-anchor="middle" opacity=".85">깜깜한 시골 밤하늘</text>
   </svg>`;
@@ -383,8 +382,7 @@ export function renderMovingStar(scene: HTMLElement, helper: HTMLElement, finish
     <!-- 움직이는 점을 가리키는 스틱맨(손그림 라인) -->
     <ellipse cx="52" cy="164" rx="17" ry="2.6" fill="#000" opacity=".22"/>
     <g stroke="#E8EEF8" stroke-width="2.6" fill="none">
-      <circle cx="49" cy="140" r="7.2" fill="#0E1626"/>
-      <path d="M52 147l1 13M53 151l-9 5M53 151l13-9M53 160l-7 5M53 160l8 4"/>
+      ${inkStick(49, 140, 7.2, "M52 147l1 13M53 151l-9 5M53 151l13-9M53 160l-7 5M53 160l8 4", { look: "fringe", scheme: "dark" })}
     </g>
   </svg>`;
   const zoomBtn = el("button", { class: "swapbtn pulse", attrs: { type: "button" } }, el("span", { text: "망원경으로 보기" }));

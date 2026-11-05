@@ -5,6 +5,7 @@ import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { ask } from "./hookAsk";
 import type { AvatarKind } from "../../ui/avatar";
+import { inkStick } from "../../ui/stickArt";
 
 type Face = (k: AvatarKind) => void;
 
@@ -182,8 +183,7 @@ function foilSvg(): string {
     </g>
     <!-- 스틱맨(줄 잡음) -->
     <g stroke="#3C4654" stroke-width="2.6">
-      <circle cx="88" cy="132" r="8.5" fill="#fff"/>
-      <path d="M88 141v20M88 146l-10 5M88 146l9-8M88 161l-8 13M88 161l8 13"/>
+      ${inkStick(88, 132, 8.5, "M88 141v20M88 146l-10 5M88 146l9-8M88 161l-8 13M88 161l8 13", { look: "bob" })}
     </g>
   </svg>`;
 }

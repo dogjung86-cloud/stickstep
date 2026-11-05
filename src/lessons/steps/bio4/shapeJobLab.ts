@@ -9,6 +9,7 @@ import { haptic, HAPTIC } from "../../../core/haptics";
 import { curioCard, type Curio } from "../../../ui/curio";
 import { cellTypeArt } from "../../../ui/bio4Figures";
 import type { StepRenderer } from "../../types";
+import { inkStick } from "../../../ui/stickArt";
 
 interface SjbStep {
   title: string;
@@ -24,9 +25,7 @@ const STAGES: Record<string, string> = {
   signal: `
   <svg viewBox="0 0 320 190" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <ellipse cx="160" cy="178" rx="120" ry="8" fill="#2A3A5E" opacity="0.10"/>
-    <circle cx="92" cy="38" r="17" fill="none" stroke="#333D4B" stroke-width="3.4"/>
-    <path d="M92 55 v52 M92 74 l-26 18 M92 74 l26 18 M92 107 l-22 52 M92 107 l22 52"
-      stroke="#333D4B" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+    ${inkStick(92, 38, 17, "M92 55 v52 M92 74 l-26 18 M92 74 l26 18 M92 107 l-22 52 M92 107 l22 52", { look: "swept", mood: "ok" })}
     <path d="M118 30 l-9 15 h7 l-7 14 l15 -18 h-7 l7 -11 Z" fill="#FFD43B" stroke="#E8A80C" stroke-width="1.8" stroke-linejoin="round"/>
     <path class="sjb-route" d="M96 52 C150 70 180 100 196 124 C208 142 216 152 228 158"
       stroke="#C9CDD2" stroke-width="3" stroke-dasharray="7 7" fill="none"/>

@@ -2,6 +2,8 @@
 // 다크 무대 위에 흰 잉크로 그린다. 포즈는 파라미터(기울기·팔다리 각도)로 물리에 반응한다.
 // 좌표계: (x, y) = 발바닥 기준점(지면), h = 키. flip = true면 왼쪽을 보고 섬.
 
+import { paintFigure, type Look, type LookName, type Mood, type Pt } from "./stickArt";
+
 const TAU = Math.PI * 2;
 
 export interface StickPose {
@@ -123,12 +125,89 @@ export function drawStickman(
   return { head, shoulder, hip, handF, handB };
 }
 
+/** 잉크 스틱맨 옵션(과학 랩). 옛 StickOpts의 color 대신 룩·표정을 받는다. */
+export interface InkStickmanOpts {
+  flip?: boolean;
+  mood?: Mood;
+  look?: Look | LookName;
+  /** 캔버스 랩은 전부 다크 무대라 기본 dark. */
+  scheme?: "light" | "dark";
+  lineWidth?: number;
+  alpha?: number;
+}
+
+/** 과학 캔버스 랩용 스틱맨: 뼈대 계산은 drawStickman과 같고(밧줄·상자 부착 좌표 불변) 그리기만 ui/stickArt에 맡긴다. */
+export function drawInkStickman(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  h: number,
+  pose: StickPose,
+  opts: InkStickmanOpts = {},
+): StickJoints {
+  const dir = opts.flip ? -1 : 1;
+  const kb = pose.kneeBend ?? 0;
+  const headR = h * 0.14;
+  const legLen = h * 0.34 * (1 - kb * 0.18);
+  const torsoLen = h * 0.34;
+  const armLen = h * 0.3;
+  const hip = { x, y: y - legLen };
+  const shoulder = { x: hip.x + Math.sin(pose.lean) * torsoLen * dir, y: hip.y - Math.cos(pose.lean) * torsoLen };
+  const head = {
+    x: shoulder.x + Math.sin(pose.lean) * headR * 1.7 * dir,
+    y: shoulder.y - Math.cos(pose.lean) * headR * 1.7 + (pose.headBob ?? 0),
+  };
+  const armPt = (ang: number): { x: number; y: number } => ({
+    x: shoulder.x + Math.cos(ang) * armLen * dir,
+    y: shoulder.y + Math.sin(ang) * armLen,
+  });
+  const legPt = (spread: number): { x: number; y: number } => ({ x: hip.x + Math.sin(spread) * legLen * dir, y });
+  const handF = armPt(pose.armF);
+  const handB = armPt(pose.armB);
+  const footF = legPt(pose.legF);
+  const footB = legPt(pose.legB);
+
+  // 목: 몸통을 머리 아랫변까지 잇는다(옛 그림은 머리가 어깨 위에 떠 있었다)
+  const nl = Math.hypot(head.x - hip.x, head.y - hip.y) || 1;
+  const neck: Pt = [head.x + ((hip.x - head.x) / nl) * headR * 0.9, head.y + ((hip.y - head.y) / nl) * headR * 0.9];
+  const leg = (foot: { x: number; y: number }): Pt[] =>
+    kb <= 0.04
+      ? [[hip.x, hip.y], [foot.x, foot.y]]
+      : [[hip.x, hip.y], [(hip.x + foot.x) / 2 + kb * h * 0.07 * dir, (hip.y + y) / 2 + kb * h * 0.03], [foot.x, foot.y]];
+
+  ctx.save();
+  ctx.globalAlpha = opts.alpha ?? 1;
+  paintFigure(ctx, {
+    head: { x: head.x, y: head.y, r: headR },
+    body: [
+      [neck, [hip.x, hip.y]],
+      leg(footB),
+      leg(footF),
+      [[shoulder.x, shoulder.y], [handB.x, handB.y]],
+      [[shoulder.x, shoulder.y], [handF.x, handF.y]],
+    ],
+    look: opts.look ?? "crop",
+    mood: opts.mood ?? "ok",
+    facing: opts.flip ? -1 : 1,
+    scheme: opts.scheme ?? "dark",
+    lw: opts.lineWidth,
+  });
+  ctx.restore();
+  return { head, shoulder, hip, handF, handB };
+}
+
 // ── 프리셋 포즈 ─────────────────────────────────────────────
 
 /** 가만히 서서 미세하게 숨쉬기 */
 export function poseStand(tMs: number, seed = 0): StickPose {
   const b = Math.sin(tMs / 600 + seed) * 0.02;
   return { lean: b, armF: 1.15, armB: 1.35, legF: 0.14, legB: -0.14, headBob: Math.sin(tMs / 600 + seed) * 0.8 };
+}
+
+/** 가만히 서기(잉크 스틱맨용): 두 팔을 몸 양쪽으로 내린다. */
+export function poseStandInk(tMs: number, seed = 0): StickPose {
+  const b = Math.sin(tMs / 600 + seed) * 0.02;
+  return { lean: b, armF: 1.12, armB: 2.02, legF: 0.16, legB: -0.16, headBob: Math.sin(tMs / 600 + seed) * 0.8 };
 }
 
 /** 줄다리기 — 뒤로 젖혀 버티며 당김. effort 0~1(힘 쓸수록 더 젖히고 떨림) */

@@ -110,6 +110,7 @@ src/
                       캔버스에서도 파운드리 재질 문법을 지키는 헬퍼. 단색 스트로크 소품 금지),
              forceProps(V 공용: drawForceArrow 힘 화살표·drawSpring 3패스 코일·drawRope·drawCrate),
              stick(캔버스 스틱맨 — posePull/posePush/poseKick, 관절 좌표 반환),
+             stickArt(잉크 스틱맨 리그 — 과학 트랙 코드 스틱맨의 단일 진실 공급원, 규칙은 SCI_GUIDE.md),
              forceFigures(V 퀴즈 SVG + recap 미니아트),
              gasKit(VI 공용 — GasBox 자유 입자 물리 + 발광 입자·벽 충돌 플래시·충돌률 게이지),
              gasFigures(VI 퀴즈 SVG + recap 미니아트),
@@ -571,6 +572,7 @@ src/
   ① 근-동조 3스톱 그라데이션 면 ② 좌상단 키라이트(radial 하이라이트·스펙큘러 스트릭)
   ③ 바닥 접촉 그림자(`#2A3A5E` 타원, opacity .10~.12) ④ 외곽선은 재질별 최암색 1.4~1.6px.
   스틱맨 캐릭터만 의도적으로 손그림 라인 유지(만화·아바타와 같은 정체성). 기준 구현: hook.ts IV 장면 4종.
+  단, 과학 트랙의 코드 스틱맨은 잉크 리그(ui/stickArt)로 격상했다(2026-11-04, 과학 한정. SCI_GUIDE.md).
   캔버스 랩 소품도 동일 문법 — `ui/labProps.ts`(유리 용기·플라스크·저울·접촉 그림자·바람)만 쓴다.
   검수: `public/qa-u4art.html`(훅 장면 + 랩 자동 진행 마운트) + `node qa/shot-u4art.mjs`(dev 서버 필요).
   주의: 다크 무대(.stage)의 우하단은 '입자의 눈' 토글 자리 — 목표 칩·상태 필은 좌하단(`.hp-goals.left`)에.

@@ -11,6 +11,7 @@ import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import type { AvatarKind } from "../../ui/avatar";
 import { ask } from "./hookAsk";
+import { inkStick } from "../../ui/stickArt";
 
 type Finish = () => void;
 type Face = (kind: AvatarKind) => void;
@@ -108,7 +109,6 @@ const LEAF_LO = "#0B7E5D";
 const NUC_LO = "#3B4CA8";
 const ICE_LO = "#6E9CC4";
 const CLAY_LO = "#A55A3C";
-const INK = "#26364A";
 
 const DEFS = `<linearGradient id="hb2-bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFFFF"/><stop offset=".54" stop-color="#F1FBF7"/><stop offset="1" stop-color="#DFF3EA"/></linearGradient>
 <linearGradient id="hb2-glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFFFF" stop-opacity=".96"/><stop offset=".55" stop-color="#E2F0FA" stop-opacity=".66"/><stop offset="1" stop-color="#C3DCEE" stop-opacity=".46"/></linearGradient>
@@ -350,9 +350,7 @@ function signalRunSvg(): string {
 ${contact(146, 143, 46, 5)}
 <g class="hb2-sr-tack" filter="url(#hb2-drop)"><path d="M126 142l4-14" stroke="${METAL_LO}" stroke-width="3"/><ellipse cx="130" cy="126" rx="11" ry="5" fill="url(#hb2-metal)" stroke="${METAL_LO}" stroke-width="1.5"/><ellipse cx="127" cy="124.5" rx="4" ry="1.6" fill="#FFFFFF" opacity=".8"/></g>
 <text x="130" y="160" text-anchor="middle" font-size="12" font-weight="850" fill="#4E5968">압정</text>
-<g class="hb2-sr-stick" stroke="${INK}" stroke-width="3.2" fill="none">
-<circle cx="152" cy="38" r="13" fill="#FFFFFF"/><path d="M147 36h.4M157 36h.4" stroke-width="3.4"/><path d="M147 44q5 4 10 0"/>
-<path d="M152 51v36"/><path d="M152 60l-18 12M152 60l19 10"/><path d="M152 87l-22 55M152 87l19 55"/></g>
+<g class="hb2-sr-stick">${inkStick(152, 38, 13, "M152 51v36M152 60l-18 12M152 60l19 10M152 87l-22 55M152 87l19 55", { look: "swept", mood: "ok" })}</g>
 <path class="hb2-sr-signal" d="M130 140l-4-34 26-19v-38" stroke="url(#hb2-spark)" stroke-width="5.5" stroke-dasharray="120" stroke-dashoffset="120"/>
 <g class="hb2-sr-bang"><rect x="176" y="16" width="46" height="26" rx="13" fill="#FFFFFF" stroke="#DCE0E6" stroke-width="1.4"/><path d="M180 34l-6 8 9-3Z" fill="#FFFFFF" stroke="#DCE0E6" stroke-width="1.4"/><text x="199" y="34" text-anchor="middle" font-size="13" font-weight="900" fill="#E8590C">앗!</text></g>
 <g class="hb2-sr-fast"><rect x="14" y="112" width="98" height="26" rx="13" fill="#FFFFFF" stroke="#DCE0E6" stroke-width="1.4"/><text x="63" y="129" text-anchor="middle" font-size="12" font-weight="900" fill="#0B7E5D">눈 깜짝할 사이</text></g></svg>`;

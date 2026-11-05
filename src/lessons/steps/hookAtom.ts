@@ -5,6 +5,7 @@ import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import type { AvatarKind } from "../../ui/avatar";
 import { ask } from "./hookAsk";
+import { inkStick, inkLimb } from "../../ui/stickArt";
 
 type Face = (k: AvatarKind) => void;
 
@@ -259,12 +260,7 @@ function springSvg(): string {
     <path d="M46 126q42 14 88 0v14q-44 12-88 0z" fill="url(#hcw-w)" opacity=".8"/>
     <!-- 스틱맨(손그림 라인 유지) -->
     <ellipse cx="184" cy="153" rx="24" ry="4" fill="#2A3A5E" opacity=".12"/>
-    <g stroke="#2B3442" stroke-width="3" fill="none">
-      <circle cx="184" cy="62" r="13" fill="#FFF" stroke-width="3"/>
-      <path d="M184 75v38"/>
-      <path d="M184 113l-13 36M184 113l13 36"/>
-      <path d="M184 84l17 15"/>
-    </g>
+    ${inkStick(184, 62, 13, "M184 75v38M184 113l-13 36M184 113l13 36M184 84l17 15", { look: "ponytail", mood: "none" })}
     <!-- 얼굴 A(기대) / B(어라?) -->
     <g class="hcw-pose hcw-pose-a">
       <circle cx="179.5" cy="60" r="1.7" fill="#2B3442"/><circle cx="188.5" cy="60" r="1.7" fill="#2B3442"/>
@@ -276,12 +272,12 @@ function springSvg(): string {
     </g>
     <!-- 팔+바가지 A: 물을 뜨려고 내림 -->
     <g class="hcw-pose hcw-pose-a">
-      <path d="M184 84l-20 20" stroke="#2B3442" stroke-width="3" fill="none"/>
+      ${inkLimb("M184 84l-20 20", { r: 13, bow: -0.08 })}
       <path d="M150 104q12-5 24 0l-3 13q-9 4-18 0z" fill="url(#hcw-g)" stroke="#8A7A4E" stroke-width="2"/>
     </g>
     <!-- 팔+바가지 B: 입가로 들어 올려 마심 -->
     <g class="hcw-pose hcw-pose-b" opacity="0">
-      <path d="M184 84l-12-11" stroke="#2B3442" stroke-width="3" fill="none"/>
+      ${inkLimb("M184 84l-12-11", { r: 13, bow: -0.08 })}
       <g transform="rotate(-34 170 72)">
         <path d="M158 68q12-5 24 0l-3 13q-9 4-18 0z" fill="url(#hcw-g)" stroke="#8A7A4E" stroke-width="2"/>
         <path d="M162 72q10-3 17 0" stroke="#9CC8F2" stroke-width="2.4"/>

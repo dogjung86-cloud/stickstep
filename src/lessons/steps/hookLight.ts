@@ -6,6 +6,7 @@ import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import type { AvatarKind } from "../../ui/avatar";
 import { ask } from "./hookAsk";
+import { inkStick } from "../../ui/stickArt";
 
 type Face = (k: AvatarKind) => void;
 
@@ -531,8 +532,7 @@ function fishingSvg(): string {
     <path d="M6 90h228" stroke="#BFDCFF" stroke-width="2" opacity=".7"/>
     <!-- 스틱맨 낚시꾼 -->
     <g stroke="#E8EEF6" stroke-width="2.4" fill="none">
-      <circle cx="34" cy="40" r="8"/>
-      <path d="M34 48v18M34 53l10 6M34 53l-8 7M34 66l-7 12M34 66l8 12"/>
+      ${inkStick(34, 40, 8, "M34 48v18M34 53l10 6M34 53l-8 7M34 66l-7 12M34 66l8 12", { look: "cap", scheme: "dark" })}
       <path d="M44 59L84 36" stroke-width="2"/>
       <path d="M84 36q2 22-4 46" stroke="#AFC2D8" stroke-width="1.4" stroke-dasharray="3 4"/>
     </g>

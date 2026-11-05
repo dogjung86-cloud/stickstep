@@ -1,5 +1,6 @@
 // 중2 III(빛과 파동) 퀴즈·개념 그림 — 손코딩 교육용 SVG. 라이트(흰 카드) 기준.
 // 색이 정답의 단서가 되지 않게 설계(경로 후보는 전부 같은 색). recap 미니아트 포함.
+import { inkStick } from "./stickArt";
 
 const NS = `xmlns="http://www.w3.org/2000/svg"`;
 
@@ -338,8 +339,7 @@ export function poolTubeFig(): string {
       <path d="M-17 -4q5 -4 11 -3" stroke="#FCC7CE" stroke-width="2.2" fill="none"/>
     </g>
     <g stroke="#3C4654" stroke-width="2.2" fill="none">
-      <circle cx="52" cy="34" r="8"/>
-      <path d="M52 42v16M52 47l9 5M52 47l-8 6M52 58l-6 11M52 58l7 11"/>
+      ${inkStick(52, 34, 8, "M52 42v16M52 47l9 5M52 47l-8 6M52 58l-6 11M52 58l7 11", { look: "cap" })}
     </g>
     <text x="120" y="122" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">튜브</text>
     <text x="252" y="122" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4E5968">공</text>

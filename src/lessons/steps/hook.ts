@@ -112,6 +112,7 @@ import { renderSoc10 } from "./hookSoc10";
 import { renderSoc11 } from "./hookSoc11";
 import { renderSoc12 } from "./hookSoc12";
 import type { StepAPI, StepRenderer } from "../types";
+import { inkStick } from "../../ui/stickArt";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
@@ -708,8 +709,7 @@ function mealSvg(): string {
     <!-- 멀리 있는 스틱맨(코 킁킁), 캐릭터는 손그림 라인 유지 -->
     <ellipse cx="196" cy="116" rx="17" ry="3.4" fill="#2A3A5E" opacity=".10"/>
     <g stroke="#3C4654" stroke-width="2.6">
-      <circle cx="196" cy="70" r="9" fill="#fff"/>
-      <path d="M196 79v22M196 86l-10 7M196 86l10 7M196 101l-8 12M196 101l8 12"/>
+      ${inkStick(196, 70, 9, "M196 79v22M196 86l-10 7M196 86l10 7M196 101l-8 12M196 101l8 12", { look: "long" })}
     </g>
     <g class="hk-sniff" stroke="#12B8A6" stroke-width="2.2">
       <path d="M182 66q-4 3 0 6"/>

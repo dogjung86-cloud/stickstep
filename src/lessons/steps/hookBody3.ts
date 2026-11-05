@@ -8,6 +8,7 @@
 import { el } from "../../core/dom";
 import { haptic, HAPTIC } from "../../core/haptics";
 import { ask } from "./hookAsk";
+import { inkStick, inkHead } from "../../ui/stickArt";
 
 type Face = (kind: "smile" | "surprised" | "curious") => void;
 interface HookLike {
@@ -119,12 +120,7 @@ export function renderDripBag(
     <rect x="18" y="150" width="200" height="42" rx="10" fill="url(#hb3dpBed)" stroke="#D9BE93" stroke-width="3"/>
     <rect x="18" y="140" width="46" height="26" rx="8" fill="#FFFFFF" stroke="#D9C7A8" stroke-width="2.6"/>
     <rect x="24" y="192" width="8" height="14" rx="3" fill="#C9A876"/><rect x="196" y="192" width="8" height="14" rx="3" fill="#C9A876"/>
-    <g stroke="#333D4B" stroke-width="3" stroke-linecap="round" fill="none">
-      <circle cx="52" cy="128" r="13" fill="#FFFFFF"/>
-      <path d="M65 138 c22 -4 44 -4 66 0 M131 138 l28 4"/>
-    </g>
-    <circle cx="48" cy="126" r="2" fill="#333D4B"/><circle cx="57" cy="126" r="2" fill="#333D4B"/>
-    <path d="M49 133 q4 3 8 0" stroke="#333D4B" stroke-width="2" stroke-linecap="round" fill="none"/>
+    ${inkStick(52, 128, 13, "M65 138 c22 -4 44 -4 66 0 M131 138 l28 4", { look: "swept", mood: "ok" })}
     <rect x="64" y="136" width="112" height="16" rx="8" fill="#B7E3F5" stroke="#7CC0DE" stroke-width="2.4"/>
     <!-- 링거 폴대 + 수액 팩 -->
     <path d="M262 200 v-160 h-30" stroke="#8B95A1" stroke-width="4" stroke-linecap="round"/>
@@ -199,10 +195,7 @@ export function renderHiccup(
     </defs>
     <ellipse cx="160" cy="208" rx="140" ry="8" fill="#2A3A5E" opacity="0.10"/>
     <g class="hc-body">
-      <g stroke="#333D4B" stroke-width="3" stroke-linecap="round" fill="none">
-        <circle cx="120" cy="46" r="15" fill="#FFFFFF"/>
-        <path d="M120 61 v14"/>
-      </g>
+      ${inkStick(120, 46, 15, "M120 61 v14", { look: "crop", mood: "none" })}
       <circle cx="115" cy="44" r="2.2" fill="#333D4B"/><circle cx="125" cy="44" r="2.2" fill="#333D4B"/>
       <ellipse class="hc-mouth" cx="120" cy="52" rx="3" ry="4" fill="#333D4B"/>
       <!-- 몸통 반투명 뷰(몸속) -->
@@ -371,11 +364,7 @@ export function renderWarmBody(
     <!-- 침대 + 이불 속 스틱맨 -->
     <ellipse cx="170" cy="204" rx="140" ry="8" fill="#2A3A5E" opacity="0.10"/>
     <rect x="60" y="182" width="230" height="18" rx="8" fill="#D9BE93" stroke="#B99A66" stroke-width="3"/>
-    <g stroke="#333D4B" stroke-width="3" stroke-linecap="round" fill="none">
-      <circle cx="100" cy="152" r="14" fill="#FFFFFF"/>
-    </g>
-    <circle cx="95" cy="150" r="2.2" fill="#333D4B"/><circle cx="105" cy="150" r="2.2" fill="#333D4B"/>
-    <path d="M96 158 q4 3 8 0" stroke="#333D4B" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    ${inkHead(100, 152, 14, { look: "fringe", mood: "ok" })}
     <path d="M118 148 q60 -22 150 -8 q14 2 14 20 v10 q0 12 -14 12 h-138 q-14 0 -14 -14 Z" fill="url(#hb3wmQuilt)" stroke="#D06070" stroke-width="3"/>
     <path d="M150 150 q8 14 0 30 M192 146 q8 14 0 30 M234 146 q8 14 0 30" stroke="#FFD3D9" stroke-width="2.6" fill="none"/>
     <!-- 열 아지랑이(답 공개 연출) -->
