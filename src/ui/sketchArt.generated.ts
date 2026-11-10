@@ -381,6 +381,78 @@ export const COMIC_ART: Record<string, SketchPanelArt[]> = {
         }
       ]
     }
+  ],
+  "u4l3": [
+    {
+      "img": "sketch/comics/u4l3/0.svg",
+      "bubbles": [
+        {
+          "text": "오늘의<br>주인공!",
+          "x": 26.6,
+          "y": 34.8
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u4l3/1.svg",
+      "bubbles": [
+        {
+          "text": "녹는다,<br>녹아!",
+          "x": 44.9,
+          "y": 34.8
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u4l3/2.svg",
+      "bubbles": [
+        {
+          "text": "어디<br>갔지?",
+          "x": 22,
+          "y": 35.4
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u4l3/3.svg",
+      "bubbles": [
+        {
+          "text": "앞이 안<br>보여!",
+          "x": 56.7,
+          "y": 33.2
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u4l3/4.svg",
+      "bubbles": [
+        {
+          "text": "꽁꽁<br>얼었네!",
+          "x": 35.1,
+          "y": 33.2
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u4l3/5.svg",
+      "bubbles": [
+        {
+          "text": "물방울이<br>없네?",
+          "x": 21.4,
+          "y": 33.8
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u4l3/6.svg",
+      "bubbles": [
+        {
+          "text": "둘 다<br>붉어졌어!",
+          "x": 44.9,
+          "y": 33.7
+        }
+      ]
+    }
   ]
 };
 
