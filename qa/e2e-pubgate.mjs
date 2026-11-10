@@ -7,6 +7,8 @@
 //          [C] dev + ss.pub=1 + premium(취약 드릴 피커: 과목 세그 없음·중1 과학 헤더)
 //          [D] 프로덕션 번들(vite preview. DEV 게이트가 실제로 닫히는지: 신규 유저 과학 직행·과목 탭 없음·
 //              페이월, 검토 모드를 켜면 과목 탭이 그 자리에서 열리고 끄면 닫힘)
+//          [E] 운영 계정 로그인·로그아웃(떠 있는 탭바가 그 자리에서 바뀌고, 닫힌 과목 탭 위에 서 있었다면
+//              학습 탭으로 옮겨 준다. dev 모듈 두 개를 응답 단계에서 손봐 운영 번들과 인증 상태를 흉내 낸다)
 // 2026-11-11: 과목 탭은 고를 과목이 둘 이상일 때만 선다(store.hasSubjectChoice). 일반 사용자에게는 과학 하나라
 //            탭이 없고, 과목 허브 화면도 닿을 길이 없다(허브 1카드 검사는 탭 구성 검사로 바뀌었다).
 // 실행: PORT=<dev포트> PPORT=<preview포트> node qa/e2e-pubgate.mjs (PPORT 없으면 [D] 생략)
@@ -209,6 +211,75 @@ const subjCards = (page) =>
   const firstSec = await page.evaluate(() => document.querySelector(".wd-sec")?.textContent?.trim());
   ok(!!firstSec && firstSec.includes("과학"), `피커 첫 섹션 = 과학: ${firstSec}`);
   await page.screenshot({ path: "qa/shots/pubgate-drill.png" });
+  await page.close();
+}
+
+// ───────────── [E] 운영 계정 로그인·로그아웃: 탭바가 그 자리에서 열리고 닫힌다 ─────────────
+// 이 워크트리에는 로그인 설정이 없어 실제 로그인을 못 한다. 그래서 dev 서버가 내주는 모듈 두 개를
+// 응답 단계에서만 손본다(소스는 그대로다).
+//  - store.ts: 공개 게이트에서 dev 항을 뺀다. 운영 번들처럼 운영 계정·검토 모드에서만 열린다.
+//  - auth.ts: 인증 상태를 바꿔 알리는 시험용 손잡이 window.__qaAuth를 단다. 운영 계정 주소는
+//    모듈 안의 표(PRIVILEGED_EMAILS)에서 꺼내 쓴다(이 파일에 주소를 적지 않는다).
+{
+  console.log("[E] 운영 계정 로그인·로그아웃: 떠 있는 탭바가 그 자리에서 바뀜");
+  const page = await newPage({ seed: { ...SEED_BASE, viewSubject: "sci" }, pub: false, dev: true });
+  let patched = 0;
+  await page.route("**/src/core/store.ts*", async (route) => {
+    const res = await route.fetch();
+    const src = await res.text();
+    const out = src.replace(/\s*\|\|\s*!!import\.meta\.env\.DEV/, "");
+    if (out !== src) patched += 1;
+    await route.fulfill({ response: res, body: out });
+  });
+  await page.route("**/src/core/auth.ts*", async (route) => {
+    const res = await route.fetch();
+    const src = await res.text();
+    if (/\bPRIVILEGED_EMAILS\b/.test(src) && /function emit\(/.test(src)) patched += 1;
+    const hook =
+      ';window.__qaAuth = (admin) => { user = admin ? { id: "qa-admin", email: [...PRIVILEGED_EMAILS][0], name: "QA", provider: "qa" } : null; emit(); };';
+    await route.fulfill({ response: res, body: src + "\n" + hook + "\n" });
+  });
+  await boot(page, PORT);
+  ok(patched === 2, `시험용 모듈 손질 적용: ${patched}/2`);
+  const activeId = () => page.evaluate(() => document.querySelector(".screen.active")?.id ?? "");
+  const setAdmin = async (on) => {
+    await page.evaluate((on) => window.__qaAuth(on), on);
+    await page.waitForTimeout(600);
+  };
+  ok((await tabLabels(page)) === "학습,복습,도전,마이", `로그인 전: 탭 4개: ${await tabLabels(page)}`);
+
+  // 학습 탭에 선 채로 운영 계정이 로그인되면(세션 복원이 화면보다 늦은 경우 포함) 과목 탭이 그 자리에서 생긴다
+  await setAdmin(true);
+  ok(
+    (await tabLabels(page)) === "학습,과목,복습,도전,마이" && (await activeId()) === "sc-home",
+    `운영 계정 로그인 → 학습 탭에 선 채 과목 탭 열림: ${await tabLabels(page)}`,
+  );
+  await openSubjectsTab(page);
+  const cards = await subjCards(page);
+  ok(cards.length === 4, `운영 계정: 과목 허브 4카드: ${cards.join(",")}`);
+
+  // 과목 탭에 서 있는데 로그아웃되면(다른 창에서 로그아웃한 경우) 학습 탭으로 옮겨 준다
+  await setAdmin(false);
+  const st = await page.evaluate(() => ({
+    id: document.querySelector(".screen.active")?.id,
+    hub: !!document.querySelector("#sc-subjects"),
+    hash: location.hash,
+  }));
+  ok(st.id === "sc-home" && !st.hub && st.hash === "#/subject/sci", `과목 탭에서 로그아웃 → 학습 탭(${st.id}, ${st.hash})`);
+  ok((await tabLabels(page)) === "학습,복습,도전,마이", `로그아웃 뒤 탭 4개: ${await tabLabels(page)}`);
+
+  // 마이 탭에 서 있을 때는 화면을 옮기지 않고 탭바만 바꾼다(계정 화면에서 로그아웃하는 흔한 길)
+  await tapTab(page, "마이");
+  await setAdmin(true);
+  ok(
+    (await tabLabels(page)) === "학습,과목,복습,도전,마이" && (await activeId()) === "sc-my",
+    `마이 탭에서 로그인 → 마이에 선 채 과목 탭 열림: ${await tabLabels(page)}`,
+  );
+  await setAdmin(false);
+  ok(
+    (await tabLabels(page)) === "학습,복습,도전,마이" && (await activeId()) === "sc-my",
+    `마이 탭에서 로그아웃 → 마이에 선 채 과목 탭 닫힘: ${await tabLabels(page)}`,
+  );
   await page.close();
 }
 
