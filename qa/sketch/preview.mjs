@@ -8,8 +8,9 @@ const cols = Number(process.argv[3] ?? 3), scale = Number(process.argv[4] ?? 1);
 // 만화: node qa/sketch/preview.mjs u1l1 [열 수] [배율] 처럼 레슨 이름을 주면 그 편만 찍는다
 if (which === "comic" || /^(u|g2u)\d/.test(which)) {
   const id = which === "comic" ? "u1l1" : which;
-  const { panels } = await import(`./scenes/comic-${id}.mjs`);
-  const items = panels().map((p, i) => ({ svg: p.sk.svg(), label: `컷 ${i + 1}` }));
+  const mod = await import(`./scenes/comic-${id}.mjs`);
+  const items = mod.panels().map((p, i) => ({ svg: p.sk.svg(), label: `컷 ${i + 1}` }));
+  for (const x of mod.extras?.() ?? []) items.push({ svg: x.sk.svg(), label: `덤: ${x.name}` }); // 문제 그림처럼 만화 밖에서 쓰는 그림
   await sheet(items, `qa/shots/sketch-comic-${id}.png`, { cols, cw: 480, ch: 360, scale, label: true });
   console.log(id, items.map(i => (i.svg.length / 1024).toFixed(1) + "KB").join(" "));
 }

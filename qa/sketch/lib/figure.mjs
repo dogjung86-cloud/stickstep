@@ -276,6 +276,13 @@ export function drawHead(sk, o = {}) {
     sk.fill(band, mix(col, "#ffffff", 0.45), { dx: 1, dy: 1.4, wob: 0.8, seed: seed + 162 });
     sk.ink(band, { w: 10, wob: 0.9, seed: seed + 163 });
   }
+  if (o.beard) {
+    // 턱수염: 머리 아래쪽을 덮는 복슬복슬한 덩어리(얼굴 없는 인물의 나이를 알려 준다)
+    const b = curve([[-98, 6], [-66, 26], [-30, 40], [0, 34], [30, 40], [66, 26], [98, 6], [110, 62], [92, 124], [48, 168], [0, 182], [-48, 168], [-92, 124], [-110, 62]], true, 4);
+    sk.fill(b, o.beard, { dx: 1.5, dy: 2, wob: 1.6, seed: seed + 230 });
+    sk.ink(b, { w: 10, wob: 1.6, seed: seed + 231 });
+    for (const [bx, by, i] of [[-48, 84, 0], [0, 100, 1], [48, 84, 2], [-22, 138, 3], [24, 138, 4]]) sk.ink(curve([[bx - 14, by - 8], [bx, by + 6], [bx + 14, by - 8]]), { w: 5, wob: 0.4, seed: seed + 232 + i, color: mix(o.beard, "#000000", 0.22) });
+  }
   if (o.hat === "brim") {
     // 챙 넓은 모자(머리 모양 위에 겹쳐 쓴다): 낮고 둥근 통 + 넓은 챙
     const col = o.hatColor ?? "#6B4A32";
@@ -411,3 +418,12 @@ export const ENGINEER = { hair: "tophat", hairColor: "#5B463A", coat: { color: "
 export const FLEMING = { hair: "short", hairColor: "#9A9A9A", coat: { color: C.white }, bowtie: C.red, seed: 121 };
 // 레이우엔훅: 챙 넓은 모자 + 긴 머리 + 풀빛 조끼
 export const LEEUWENHOEK = { hair: "curls", hairColor: "#8A6A4A", hat: "brim", hatColor: "#4E3B2E", coat: { color: "#5E7B5A", buttons: C.gold, seam: "#3E5540", len: 34 }, seed: 131 };
+// 젊은 다윈: 짧은 갈색 머리 + 푸른 외투. 나이 든 다윈: 민머리 + 흰 턱수염 + 짙은 외투
+export const DARWIN = { hair: "short", hairColor: "#8A5A33", coat: { color: "#3E5C76", buttons: C.gold, seam: "#2A3F52" }, seed: 141 };
+export const DARWIN_OLD = { hair: "bald", beard: "#F4F1EA", coat: { color: "#4A4A52", buttons: C.gold, seam: "#2E2E33" }, seed: 141 };
+// 로슨(섬의 관리): 실크해트 + 붉은 제복. 굴드(새 전문가): 안경 + 나비넥타이
+export const LAWSON = { hair: "tophat", hairColor: "#5B463A", bandColor: C.gold, coat: { color: "#B5483B", buttons: C.gold, seam: "#7E2E25" }, seed: 151 };
+export const GOULD = { hair: "short", hairColor: "#3F3A36", glasses: true, coat: { color: "#3E5A47", seam: "#2A3F31" }, bowtie: C.orange, seed: 161 };
+// 그랜트 부부: 챙 넓은 햇볕 모자
+export const GRANT_A = { hair: "short", hairColor: "#9A9A9A", fringe: 24, hat: "brim", hatColor: "#E9D9B0", seed: 171 };
+export const GRANT_B = { hair: "bob", hairColor: "#B9B3A7", hat: "brim", hatColor: "#E9D9B0", seed: 181 };

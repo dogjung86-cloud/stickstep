@@ -229,6 +229,81 @@ export const COMIC_ART: Record<string, SketchPanelArt[]> = {
         }
       ]
     }
+  ],
+  "u2l7": [
+    {
+      "img": "sketch/comics/u2l7/0.svg",
+      "bubbles": [
+        {
+          "text": "드디어<br>출발이다!",
+          "x": 18.7,
+          "y": 25.3
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u2l7/1.svg",
+      "bubbles": [
+        {
+          "text": "상자가<br>꽉 찼네!",
+          "x": 20.1,
+          "y": 28.8
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u2l7/2.svg",
+      "bubbles": [
+        {
+          "text": "등딱지만<br>봐도 알지!",
+          "x": 21.3,
+          "y": 53
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u2l7/3.svg",
+      "bubbles": [
+        {
+          "text": "모두 핀치<br>무리요!",
+          "x": 16.1,
+          "y": 39.4
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u2l7/4.svg",
+      "bubbles": [
+        {
+          "text": "어떻게<br>달라졌지?",
+          "x": 21.6,
+          "y": 33.3
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u2l7/5.svg"
+    },
+    {
+      "img": "sketch/comics/u2l7/6.svg",
+      "bubbles": [
+        {
+          "text": "드디어<br>책으로!",
+          "x": 21.5,
+          "y": 34.1
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u2l7/7.svg",
+      "bubbles": [
+        {
+          "text": "부리 큰 새가<br>살아남았어!",
+          "x": 72.3,
+          "y": 33.3
+        }
+      ]
+    }
   ]
 };
 

@@ -459,3 +459,11 @@ export function petri(sk, cx, cy, r, o = {}) {
   sk.ink(dish, { w: o.w ?? Math.max(7, r * 0.07), seed: sd + 6 });
   sk.ink(circ(cx, cy, r * 0.9, { over: 0, seed: sd + 7 }), { w: Math.max(3, r * 0.02), color: C.grayLight, wob: 0.4, seed: sd + 8 });
 }
+
+// 책상(옆에서 본 모습): 상판 + 다리 둘. (x, y) = 상판 왼쪽 위
+export function desk(sk, x, y, w, o = {}) {
+  const sd = o.seed ?? 981, bottom = o.bottom ?? 706;
+  sk.ink(dense([[x + 40, y + 24], [x + 32, bottom]]), { w: 12, seed: sd }); sk.ink(dense([[x + w - 40, y + 24], [x + w - 32, bottom]]), { w: 12, seed: sd + 1 });
+  const top = rrect(x, y, w, 28, 10);
+  sk.fill(top, o.color ?? C.wood, { seed: sd + 2, tex: true, texAng: 0.02 }); sk.ink(top, { w: 11, seed: sd + 3 });
+}

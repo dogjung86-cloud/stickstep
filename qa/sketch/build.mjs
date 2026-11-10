@@ -64,6 +64,8 @@ for (const f of readdirSync(join(HERE, "scenes")).filter(n => /^comic-.+\.mjs$/.
     if (p.bubbles?.length) e.bubbles = p.bubbles.map(b => placeBubble(p.sk, b, `${id} 컷 ${i + 1}`));
     return e;
   });
+  // 덤 그림(문제 그림처럼 만화 밖에서 쓰는 것): extras() 가 [{ name, sk }] 를 돌려주면 comics/<레슨>/<name>.svg 로 쓴다
+  for (const x of mod.extras?.() ?? []) { const rel = `comics/${id}/${x.name}.svg`; sizes[rel] = put(rel, x.sk.svg()); }
 }
 
 // 스플래시

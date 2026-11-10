@@ -25,7 +25,7 @@ const seed = () => {
   for (let l = 1; l <= 12; l++) lessons[`u2v3l${l}`] = { done: true, acc: 95, bestXp: 60 };
   localStorage.setItem("science-app.v1", JSON.stringify({
     version: 1, onboarded: true, grade: "중1", goalMin: 10, streak: 2,
-    lastStudyDay: "2026-11-10", totalXp: 300, lessons, minigame: {},
+    lastStudyDay: "2026-11-10", totalXp: 300, lessons, minigame: {}, premium: true, // 프리미엄 레슨의 만화도 찍으려고
   }));
 };
 
