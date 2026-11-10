@@ -453,6 +453,69 @@ export const COMIC_ART: Record<string, SketchPanelArt[]> = {
         }
       ]
     }
+  ],
+  "u4l6": [
+    {
+      "img": "sketch/comics/u4l6/0.svg",
+      "bubbles": [
+        {
+          "text": "어, 시원해!",
+          "x": 25.3,
+          "y": 33.4
+        },
+        {
+          "text": "마셔 봐요",
+          "x": 66.7,
+          "y": 31.6
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u4l6/1.svg"
+    },
+    {
+      "img": "sketch/comics/u4l6/2.svg",
+      "bubbles": [
+        {
+          "text": "지켜봐요",
+          "x": 39.2,
+          "y": 37.2
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u4l6/3.svg",
+      "bubbles": [
+        {
+          "text": "꽃이<br>멀쩡해!",
+          "x": 20.7,
+          "y": 33.8
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u4l6/4.svg",
+      "bubbles": [
+        {
+          "text": "이슬도<br>같은 편!",
+          "x": 21,
+          "y": 32.4
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u4l6/5.svg",
+      "bubbles": [
+        {
+          "text": "의외로<br>안 춥네!",
+          "x": 50.6,
+          "y": 27.1
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u4l6/6.svg"
+    }
   ]
 };
 
