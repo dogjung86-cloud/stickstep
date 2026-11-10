@@ -58,6 +58,19 @@ export function earlyBirdActive(): boolean {
   return EARLY_BIRD.active;
 }
 
+/** 판매 스위치(2026-11-10 사용자 확정: 토스 카드 결제 승인은 끝났지만 판매 개시는 아직, 시작하면 과학만).
+ *  false면 페이월 CTA가 "곧 판매를 시작해요"로 잠기고 buyPremium이 결제를 시작하지 않는다.
+ *  서버 pay-order의 SALES_OPEN과 반드시 같은 값(qa/e2e-pay [P]가 대조). 판매 개시 = 두 값을 true로 바꾸고
+ *  pay-order 재배포 + main 배포(절차는 PAYMENTS.md "판매 스위치"). 판매 과목 제한(과학)은 서버 ON_SALE 몫. */
+export const SALES_OPEN = false;
+
+/** 판매 개시 여부. 운영 빌드는 SALES_OPEN만 본다. DEV는 기본 열림(전 e2e·QA 계약 불변, 과목 공개 게이트와
+ *  같은 문법)이고 sessionStorage "ss.sales"="0"이면 닫힘을 강제한다(운영 시점 눈검수·e2e용). */
+export function salesOpen(): boolean {
+  if (isDev) return sessionStorage.getItem("ss.sales") !== "0";
+  return SALES_OPEN;
+}
+
 /** 플랜별 n과목 합계 판매가(얼리버드 반영). 정가 취소선·할인액 비교는 priceOf(n)로 계산한다. */
 export function priceOfPlan(plan: PlanId, n: number): number {
   const k = Math.max(n, 1);
@@ -241,6 +254,7 @@ export type PurchaseOutcome =
   | { r: "redirect" } // 토스 결제창으로 이동 중(페이지가 곧 떠난다)
   | { r: "login" } // 로그인 필요
   | { r: "unavailable" } // 결제 환경 미구성(env 없음 등)
+  | { r: "closed" } // 판매 개시 전(salesOpen() false): 주문·결제창 모두 시작하지 않는다
   | { r: "fail"; msg: string };
 
 const PENDING_KEY = "ss.payPending"; // successUrl 복귀분의 승인 재료 — 승인 완료·확정 실패 시 제거
@@ -256,6 +270,7 @@ export async function buyPremium(selection?: {
 }): Promise<PurchaseOutcome> {
   const subjectIds = [...new Set(selection?.subjectIds ?? [])];
   const plan: PlanId = selection?.plan ?? "own";
+  if (!salesOpen()) return { r: "closed" }; // 페이월이 CTA를 잠그지만 다른 진입로에 대비한 최종 관문
   if (isDev && !devRealPay()) {
     setPremium(true, subjectIds);
     return { r: "ok" };

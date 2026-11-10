@@ -7,6 +7,8 @@
 // [C] failUrl 복귀 — 취소 스낵 + 주소 청소(OAuth ?code 오인 차단)
 // [E] 키 짝 가드(2026-11-10 라이브 전환): 서버가 mode_mismatch(503)를 주면 결제창을 열지 않고 시트에
 //     점검 안내만 띄운다(SDK 미요청·승인 재료 미생성). [P]는 폴백 키 제거·가드 존재를 소스로 확인한다.
+// [F] 판매 스위치 닫힘(ss.sales="0" = 운영 SALES_OPEN false 시점): CTA "곧 판매를 시작해요" 잠금·시트 미개시·
+//     buyPremium closed·주문 요청 0. [P]는 클라 SALES_OPEN ↔ 서버 SALES_OPEN 동기와 서버 판매 과목(과학 2종)도 대조.
 // 토스·엣지 함수는 전부 page.route 스텁 — 네트워크 밖으로 나가지 않는다.
 import { readFileSync } from "node:fs";
 import { chromium } from "playwright-core";
@@ -41,7 +43,7 @@ const SEED = {
 const HMR_STUB =
   "export const createHotContext=()=>({accept(){},dispose(){},prune(){},on(){},send(){}});export function updateStyle(id,css){let s=document.querySelector(`style[data-vite-dev-id=\"${id}\"]`);if(!s){s=document.createElement('style');s.setAttribute('data-vite-dev-id',id);document.head.appendChild(s)}s.textContent=css}export function removeStyle(){}export function injectQuery(u){return u}";
 
-async function newPage({ payreal = false, fakeUser = null, routes = null } = {}) {
+async function newPage({ payreal = false, fakeUser = null, routes = null, salesClosed = false } = {}) {
   const page = await browser.newPage({ viewport: { width: 420, height: 900 }, deviceScaleFactor: 2 });
   page.on("pageerror", (e) => {
     fails += 1;
@@ -50,12 +52,13 @@ async function newPage({ payreal = false, fakeUser = null, routes = null } = {})
   await page.route("**/@vite/client", (route) => route.fulfill({ contentType: "application/javascript", body: HMR_STUB }));
   if (routes) await routes(page);
   await page.addInitScript(
-    ({ seed, payreal, fakeUser }) => {
+    ({ seed, payreal, fakeUser, salesClosed }) => {
       localStorage.setItem("science-app.v1", JSON.stringify(seed));
       if (payreal) sessionStorage.setItem("ss.payreal", "1");
       if (fakeUser) sessionStorage.setItem("ss.payFakeUser", fakeUser);
+      if (salesClosed) sessionStorage.setItem("ss.sales", "0");
     },
-    { seed: SEED, payreal, fakeUser },
+    { seed: SEED, payreal, fakeUser, salesClosed },
   );
   return page;
 }
@@ -112,8 +115,14 @@ async function openSheet(page) {
       pass: m.PASS30.price,
       eb: m.EARLY_BIRD.perSubject,
       own: [1, 2, 3, 4, 5, 6].map((n) => m.priceOf(n)),
+      open: m.SALES_OPEN,
     };
   });
+  // 판매 스위치·판매 과목(2026-11-10): 클라 SALES_OPEN과 서버 SALES_OPEN이 같아야 하고, 서버는 과학 2종만 판다.
+  const svOpen = (src.match(/const SALES_OPEN = (true|false);/) ?? [])[1];
+  check(svOpen === String(cli.open), `판매 스위치 동기: 클라 ${cli.open} = 서버 ${svOpen}`);
+  const onSale = [...((src.match(/const ON_SALE = new Set\(\[([^\]]*)\]\)/) ?? [])[1] ?? "").matchAll(/"([^"]+)"/g)].map((x) => x[1]);
+  check(onSale.join() === "sci-g1,sci-g2" && onSale.every((id) => serverIds.includes(id)), `서버 판매 과목 = 과학 2종(${onSale.join(",")})`);
   check(cli.ids.join() === serverIds.join(), `판매 카탈로그 동일: ${serverIds.join(",")}`);
   check(cli.pass === pass, `30일 패스 가격 동일(${pass})`);
   check(cli.eb === eb, `얼리버드 균일가 동일(${eb})`);
@@ -306,6 +315,64 @@ async function openSheet(page) {
   check(label.includes("결제하기"), `결제 버튼 원상 복귀: "${label}"`);
   const pending = await page.evaluate(() => localStorage.getItem("ss.payPending"));
   check(pending === null, "승인 재료(pending) 미생성");
+  await page.close();
+}
+
+// ───────────────────── [F] 판매 스위치 닫힘 — CTA 잠금·시트 미개시·buyPremium closed ─────────────────────
+{
+  console.log("[F] 판매 스위치 닫힘(ss.sales=0 = 운영 SALES_OPEN false 시점)");
+  const seen = { order: 0 };
+  const routes = async (page) => {
+    await page.route("**/functions/v1/pay-order", async (route) => {
+      seen.order += 1;
+      await route.fulfill({
+        status: 403,
+        contentType: "application/json",
+        body: JSON.stringify({ error: "sales_closed", message: "곧 판매를 시작해요. 조금만 기다려 주세요." }),
+      });
+    });
+  };
+  const page = await newPage({ salesClosed: true, routes });
+  await boot(page);
+  await openPaywall(page);
+  const st = await page.evaluate(() => {
+    const cta = document.querySelector(".screen.active .btn.cta");
+    return {
+      label: cta.textContent,
+      disabled: cta.disabled,
+      secure: document.querySelector(".screen.active .pwx-secure")?.textContent ?? "",
+      receipt: !!document.querySelector(".screen.active .pwx-subs"),
+    };
+  });
+  check(st.label.includes("곧 판매를 시작해요"), `닫힘 CTA 문구: "${st.label}"`);
+  check(st.disabled === true, "닫힘 CTA 비활성");
+  check(st.secure.includes("판매 준비 중"), `CTA 아래 안내: "${st.secure}"`);
+  check(st.receipt, "과목·가격 안내는 그대로 노출");
+  await page.screenshot({ path: "qa/shots/pay-closed.png" });
+  // 과목 선택을 바꿔도(refresh) 잠금 유지
+  await page.evaluate(() => document.querySelectorAll(".screen.active .pwx-sub")[1]?.click());
+  await page.waitForTimeout(250);
+  const after = await page.evaluate(() => {
+    const c = document.querySelector(".screen.active .btn.cta");
+    return { label: c.textContent, disabled: c.disabled };
+  });
+  check(after.disabled === true && after.label.includes("곧 판매"), "과목 선택 변경 뒤에도 잠금 유지");
+  // disabled를 걷어 낸 강제 클릭에도 주문 확인 시트가 열리지 않는다
+  await page.evaluate(() => {
+    const c = document.querySelector(".screen.active .btn.cta");
+    c.disabled = false;
+    c.click();
+  });
+  await page.waitForTimeout(400);
+  check(!(await page.evaluate(() => !!document.querySelector(".pwx-scrim.on"))), "강제 클릭에도 주문 확인 시트 미개시");
+  // 최종 관문: buyPremium 직접 호출 → closed, 주문 요청 0, DEV 즉시 해금 스텁도 막힘
+  const r = await page.evaluate(async () =>
+    (await import("/src/core/purchase.ts")).buyPremium({ subjectIds: ["sci-g1"], plan: "own", guardianConsent: true }),
+  );
+  check(r?.r === "closed", `buyPremium 직접 호출 = closed(${JSON.stringify(r)})`);
+  check(seen.order === 0, `pay-order 요청 0회(${seen.order})`);
+  const prem = await page.evaluate(() => JSON.parse(localStorage.getItem("science-app.v1")).premium);
+  check(prem === false, "프리미엄 미해금(DEV 스텁 포함)");
   await page.close();
 }
 

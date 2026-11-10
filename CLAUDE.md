@@ -254,8 +254,11 @@ src/
   ="1"·가짜 유저 = "ss.payFakeUser"(e2e 스텁용). **라이브 전환(2026-11-10 착수)**: 운영 = live 키 짝
   (클라 키는 Vercel Production env, 시크릿은 supabase secrets), "테스트 결제" 배지는 테스트 키 빌드(dev·
   프리뷰)에서만 뜬다. pay-order **키 짝 가드**(클라 clientMode ↔ 서버 시크릿 모드가 다르면 503, 결제창
-  미개시. GET = 모드 점검)·pay-confirm 폴백 키 없음. 전환 절차·진행 상태·확인법은 PAYMENTS.md 2단계. QA =
-  `PORT=<포트> node qa/e2e-pay.mjs`(46검증). Capacitor 포장 시 이 파일만 IAP 브리지로 교체.
+  미개시. GET = 모드 점검)·pay-confirm 폴백 키 없음. **판매 스위치 `SALES_OPEN`(2026-11-10, 현재 닫힘)**:
+  클라 purchase.ts와 서버 pay-order 두 곳 동기, 닫힘이면 페이월 CTA "곧 판매를 시작해요" 잠금·서버 403, 서버
+  판매 과목 ON_SALE = 과학 2종. DEV는 기본 열림(e2e 계약 불변), "ss.sales"="0"이면 닫힘 강제. 전환·개시
+  절차·진행 상태는 PAYMENTS.md 2단계·판매 스위치 절. QA = `PORT=<포트> node qa/e2e-pay.mjs`(58검증).
+  Capacitor 포장 시 이 파일만 IAP 브리지로 교체.
 - **[백로그 — 부모님께 요청하기(2026-07-21 사용자 확정, 토스PG 결제 오픈과 세트)]**: 페이월 CTA 아래
   보조 버튼 → 시스템 공유(Web Share)/링크 복사 → **부모용 페이지**(아이 학습 리포트 요약 + 가격 +
   자동결제 없음·환불 문구 + 결제 버튼). 결제 결정자(부모)와 사용자(학생)의 간극을 잇는 핵심 전환

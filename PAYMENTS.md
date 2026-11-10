@@ -61,9 +61,9 @@ NOT_FOUND_PAYMENT_SESSION, UNAUTHORIZED 아님). 이후 테스트 결제는 개�
 
 | 순서 | 할 일 | 담당 | 상태 |
 |---|---|---|---|
-| ① | 키 짝 가드·폴백 제거 코드 선배포(엣지 함수 v4 + main) | 세션 | ✓ 2026-11-10 |
-| ② | 수파베이스 Secrets `TOSS_SECRET_KEY` → live_sk_ | 사용자(대시보드) | 대기 |
-| ③ | Vercel Production env `VITE_TOSS_CLIENT_KEY` → live_ck_ | 사용자(대시보드) | 대기 |
+| ① | 키 짝 가드·폴백 제거 코드 선배포(엣지 함수 v4 + main) + 판매 스위치 닫힘 배포(아래 절) | 세션 | ✓ 2026-11-10 |
+| ② | 수파베이스 Secrets `TOSS_SECRET_KEY` → live_sk_ | 사용자(대시보드) | 보류(사용자 "아직 라이브 키 하지 말 것", 2026-11-10) |
+| ③ | Vercel Production env `VITE_TOSS_CLIENT_KEY` → live_ck_ | 사용자(대시보드) | 보류(같음) |
 | ④ | 재배포(main push 또는 Vercel Redeploy) | 세션 또는 사용자 | 대기 |
 | ⑤ | 확인: GET pay-order mode=live · 운영 번들 live_ck_ 접두 · 시트 테스트 배지 소멸 | 세션 | 대기 |
 | ⑥ | 실카드 소액 결제 → orders paid·test_mode false·entitlements 확인 → 상점관리자 취소 → 이용권 회수 | 사용자 결제 + 세션 확인 | 대기 |
@@ -77,6 +77,22 @@ NOT_FOUND_PAYMENT_SESSION, UNAUTHORIZED 아님). 이후 테스트 결제는 개�
   ② 얼리버드 개시면 purchase.ts EARLY_BIRD.active=true ③ 이용약관 명문화(환불은 refund.html 참조 연결)
   ④ 위 ⑥ 실카드 소액 결제·취소 1회 검증.
 
+### 판매 스위치(2026-11-10 사용자 확정: 판매 개시는 아직, 시작하면 과학만)
+
+- **현재 닫힘.** 클라 `src/core/purchase.ts`의 `SALES_OPEN`과 서버 `pay-order`의 `SALES_OPEN`이 둘 다 false다
+  (두 값의 동기는 qa/e2e-pay [P]가 대조). 닫힘이면 페이월은 혜택·과목·가격 안내를 그대로 보여 주고 CTA만
+  "곧 판매를 시작해요"로 잠근다(아래 줄: "판매 준비 중이에요 · 무료 레슨은 지금 바로 이용할 수 있어요").
+  buyPremium은 `{r:"closed"}`를 돌려주고, 서버는 모든 주문을 403 `sales_closed`로 거절한다(주문 행 미생성).
+- **판매 과목 = 과학 2종(sci-g1·sci-g2)**: 서버 `ON_SALE`이 강제한다(위반 403 `not_on_sale`). 화면은 과목 공개
+  게이트가 이미 일반 사용자에게 과학만 보여 준다. 수학을 팔 때는 ON_SALE 추가와 공개 게이트 결정을 함께 한다.
+- DEV는 기본 열림(전 e2e 계약 불변), `sessionStorage "ss.sales"="0"`이면 닫힘을 강제한다(눈검수·e2e [F]).
+- 운영 확인: `GET .../functions/v1/pay-order` → `{"ok":true,"mode":…,"open":false,"onSale":["sci-g1","sci-g2"]}`.
+- **판매 개시 절차(순서를 지킬 것)**: ① 라이브 키 입력(위 표 ②③, 스위치가 닫혀 있으니 먼저 해도 안전)
+  ② 얼리버드 여부 결정 ③ 두 `SALES_OPEN`을 true로, pay-order 재배포, main 배포 ④ 운영 확인(GET open:true·
+  mode:live, 시트 테스트 배지 소멸) ⑤ 본인 카드 소액 결제 → 상점관리자 취소 → 이용권 회수.
+- 왜 스위치가 먼저였나: Vercel에 live_ck_를 넣어 둔 상태에서 스위치 없이 아무 main 푸시가 나가면 그 배포부터
+  바로 실판매가 열린다. 스위치가 닫혀 있으면 키를 미리 넣어도 판매는 열리지 않는다.
+
 ## 서버 배포·스키마
 
 - 엣지 함수 소스 정본 = `supabase/functions/pay-order|pay-confirm/index.ts`(단일 파일, Deno).
@@ -84,8 +100,9 @@ NOT_FOUND_PAYMENT_SESSION, UNAUTHORIZED 아님). 이후 테스트 결제는 개�
   multipart(metadata{entrypoint_path:"index.ts", verify_jwt:false} + file). CORS·JWT는 함수 코드가 처리.
 - 테이블 정본 = `supabase/schema.sql`의 "결제" 블록(orders·entitlements·RLS·터치 트리거) —
   적용 완료(2026-08-13). 재적용도 관리 API database/query로(블록 전체 멱등).
-- 결제 e2e: `PORT=<dev포트> node qa/e2e-pay.mjs`(46검증: 가격 동기·폴백 키 0·키 짝 가드 소스·시트 계약·
-  로그인 게이트·스텁 왕복(clientMode 포함)·실패 복귀·[E] mode_mismatch 시 결제창 미개시).
+- 결제 e2e: `PORT=<dev포트> node qa/e2e-pay.mjs`(58검증: 가격·판매 스위치·판매 과목 동기, 폴백 키 0, 키 짝 가드
+  소스, 시트 계약(통신판매업 번호 포함), 로그인 게이트, 스텁 왕복(clientMode 포함), 실패 복귀, [E] mode_mismatch 시
+  결제창 미개시, [F] 판매 닫힘 시 CTA 잠금·시트 미개시·buyPremium closed).
   **라이브 전환 뒤에는 실서버 테스트 결제가 불가**하다(서버 시크릿이 live라 테스트 키 결제는 키 짝 가드가
   차단). 흐름 검증은 e2e 스텁으로, 실서버 검증은 실카드 소액 결제·취소로 한다.
 

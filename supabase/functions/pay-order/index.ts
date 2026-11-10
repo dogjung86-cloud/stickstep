@@ -7,7 +7,8 @@
 //   (가격표 자체를 바꿀 때는 이 파일도 함께 — qa/check-pay.mjs가 두 파일의 일치를 기계 검증.)
 // - 배포: Supabase 엣지 함수(관리 API), verify_jwt=false(CORS preflight 통과) + 코드에서 JWT 직접 검증.
 // - 키 짝 가드(2026-11-10 라이브 전환): 클라이언트 키 모드(clientMode: live/test)와 서버 시크릿 모드가
-//   다르면 결제창을 열기 전에 503으로 막는다. GET은 운영 점검용으로 서버 모드만 돌려준다(키 값은 비공개).
+//   다르면 결제창을 열기 전에 503으로 막는다. GET은 운영 점검용으로 서버 모드·판매 상태만 돌려준다(키 값은 비공개).
+// - 판매 스위치(2026-11-10): SALES_OPEN false면 모든 주문을 403(sales_closed), 판매 과목은 ON_SALE(과학 2종)만.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 // ── 가격표 — app/src/core/purchase.ts와 반드시 동기(qa/check-pay.mjs) ──
@@ -21,6 +22,13 @@ const SELLABLE: Record<string, string> = {
   "sci-g2": "중2 과학",
   "math-g2": "중2 수학",
 };
+
+// 판매 스위치와 판매 과목(2026-11-10 사용자 확정): 카드 결제 승인은 끝났지만 판매 개시는 아직이다.
+// SALES_OPEN은 app/src/core/purchase.ts의 같은 이름 상수와 반드시 같은 값(qa/e2e-pay [P]가 대조).
+// 판매 과목은 우선 과학 2종만 받는다(SELLABLE은 상품명용 카탈로그라 전 과목 유지).
+const SALES_OPEN = false;
+const ON_SALE = new Set(["sci-g1", "sci-g2"]);
+const CLOSED_MSG = "곧 판매를 시작해요. 조금만 기다려 주세요.";
 
 const priceRegular = (n: number): number => (n <= 3 ? PLAN_TIERS[n - 1] : Math.round(PER_SUBJECT_FLOOR * n));
 
@@ -42,8 +50,11 @@ const SETUP_MSG = "결제 설정을 점검하고 있어요. 잠시 후 다시 �
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
   // 운영 점검용(라이브 전환 확인): 서버가 어떤 모드의 시크릿을 쥐고 있는지만 알려 준다.
-  if (req.method === "GET") return json(200, { ok: true, mode: tossMode() ?? "unset" });
+  if (req.method === "GET")
+    return json(200, { ok: true, mode: tossMode() ?? "unset", open: SALES_OPEN, onSale: [...ON_SALE] });
   if (req.method !== "POST") return json(405, { error: "method_not_allowed" });
+  // 판매 개시 전에는 로그인·가격 검증보다 먼저 거절한다(주문 행도 만들지 않는다).
+  if (!SALES_OPEN) return json(403, { error: "sales_closed", message: CLOSED_MSG });
 
   const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const jwt = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
@@ -62,6 +73,8 @@ Deno.serve(async (req) => {
   const ids = Array.isArray(body.subjectIds) ? [...new Set(body.subjectIds.filter((v) => typeof v === "string"))] : [];
   if (!plan || ids.length < 1 || ids.length > 8 || ids.some((id) => !(id in SELLABLE)))
     return json(400, { error: "bad_request", message: "주문 정보가 올바르지 않아요." });
+  if (ids.some((id) => !ON_SALE.has(id)))
+    return json(403, { error: "not_on_sale", message: "아직 판매하지 않는 과목이 들어 있어요." });
   // 보호자 동의·주문 확인 체크는 결제 진입의 필수 관문(전상법 13조 2항 증적) — 서버도 강제한다.
   if (body.guardianConsent !== true)
     return json(400, { error: "consent_required", message: "주문 확인과 동의에 체크해 주세요." });

@@ -28,6 +28,7 @@ import {
   priceOf,
   priceOfPlan,
   saveOf,
+  salesOpen,
   won,
   type PlanId,
 } from "../core/purchase";
@@ -260,7 +261,7 @@ export function paywallScreen(opts: {
   // 기록) + 결제 시점 사업자 정보 표기. 실제 결제창은 토스가 연다(카드/간편결제 통합결제창).
   const cta = el("button", { class: "btn cta" });
   cta.addEventListener("click", () => {
-    if (picked.size === 0) return;
+    if (picked.size === 0 || !salesOpen()) return; // 판매 개시 전에는 주문 확인 시트를 열지 않는다
     haptic(HAPTIC.tap);
     openCheckout();
   });
@@ -369,7 +370,12 @@ export function paywallScreen(opts: {
         }
         return;
       }
-      msg.textContent = r.r === "unavailable" ? "지금은 결제를 시작할 수 없어요. 잠시 후 다시 시도해 주세요." : r.msg;
+      msg.textContent =
+        r.r === "unavailable"
+          ? "지금은 결제를 시작할 수 없어요. 잠시 후 다시 시도해 주세요."
+          : r.r === "closed"
+            ? "곧 판매를 시작해요. 조금만 기다려 주세요."
+            : r.msg;
     });
 
     elm.appendChild(scrim);
@@ -380,7 +386,12 @@ export function paywallScreen(opts: {
     "div",
     { class: "pwx-secure" },
     el("span", { class: "pwx-secure-ic", html: icon("lock", 12) }),
-    el("span", { text: "안전한 결제 · 이용 전 과목은 7일 내 전액 환불" }),
+    // 판매 개시 전(salesOpen() false)에는 잠긴 CTA의 이유를 같은 자리에서 알린다.
+    el("span", {
+      text: salesOpen()
+        ? "안전한 결제 · 이용 전 과목은 7일 내 전액 환불"
+        : "판매 준비 중이에요 · 무료 레슨은 지금 바로 이용할 수 있어요",
+    }),
   );
   const restore = el("button", { class: "pw-restore", text: "이미 구매했나요? 구매 복원" });
   restore.addEventListener("click", async () => {
@@ -470,6 +481,11 @@ export function paywallScreen(opts: {
         : n === 1
           ? `${firstName} 소장하기`
           : `${n}과목 소장하기`;
+    // 판매 스위치(core/purchase.ts SALES_OPEN): 개시 전에는 가격 안내는 그대로 두고 CTA만 잠근다.
+    if (!salesOpen()) {
+      cta.textContent = "곧 판매를 시작해요";
+      cta.disabled = true;
+    }
     if (pop) {
       amount.classList.remove("pwx-pop");
       void amount.offsetWidth;
