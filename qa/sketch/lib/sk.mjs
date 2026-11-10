@@ -434,3 +434,13 @@ export function dizzy(sk, x, y, s = 1, o = {}) {
     for (let i = 0; i < (o.n ?? 2); i++) sk.ink(squiggle(-14 + i * 28, 0, 44, 7, 2, i * 1.6), { w: o.w ?? 6, color: o.color ?? C.gray, wob: 0, seed: 90 + i });
   });
 }
+
+// 하트
+export function heart(sk, x, y, s = 1, o = {}) {
+  const col = o.color ?? "#F0627A";
+  const pts = curve([[0, 22], [-26, -2], [-24, -22], [-10, -26], [0, -14], [10, -26], [24, -22], [26, -2]], true, 3);
+  sk.at(x, y, s, () => {
+    sk.fill(pts, col, { dx: 0, dy: 0, wob: 0.4, seed: o.seed ?? 111 });
+    sk.ink(pts, { w: o.w ?? 6, wob: 0.4, seed: (o.seed ?? 111) + 1 });
+  }, o.rot ?? 0);
+}

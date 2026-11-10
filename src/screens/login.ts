@@ -6,7 +6,7 @@ import { el } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { stickAvatar } from "../ui/avatar";
-import { sketchSrc } from "../ui/sketchArt";
+import { ACCOUNT_ART, STUDY_ART } from "../ui/sketchArt";
 import { getState, currentStreak, wrongNoteCount, applySyncedState } from "../core/store";
 import type { Screen } from "../core/router";
 import { consumeAuthError, currentUser, deleteAccount, isAuthConfigured, onAuthChange, signInWith, signInWithEmailPassword } from "../core/auth";
@@ -25,12 +25,12 @@ const PROVIDER_LABEL: Record<string, string> = { google: "Google", kakao: "카�
 
 const base = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/";
 
-/** 비로그인 히어로 — 스플래시 정착 컷과 같은 "공부하자!" 머리띠 스틱맨(발주본, 앱 아이콘 원본).
+/** 비로그인 히어로 — 스플래시 정착 컷과 같은 "공부하자!" 머리띠 스틱맨(코드 그림 public/sketch/splash/study.svg).
  *  파란 원 프레임에 가두지 않고 흰 배경 그대로 둔다(사용자 확정 2026-07-21).
- *  lazy 금지(발주 이미지 공통 규칙), 로드 실패 시 파란 원 + 벡터 스틱맨 폴백. */
+ *  lazy 금지(.scroll 안 이미지 공통 규칙), 로드 실패 시 파란 원 + 스틱맨 쌤 폴백. */
 function heroArt(): HTMLElement {
   const host = el("div", { class: "login-study", attrs: { "aria-hidden": "true" } });
-  const img = el("img", { attrs: { src: base + (sketchSrc("study") ?? "brand/study.webp"), alt: "" } }) as HTMLImageElement;
+  const img = el("img", { attrs: { src: base + STUDY_ART, alt: "" } }) as HTMLImageElement;
   img.addEventListener("error", () => {
     host.className = "login-ava"; // 폴백은 기존 원형 프레임 문법으로
     host.replaceChildren(stickAvatar("wave"));
@@ -39,10 +39,10 @@ function heroArt(): HTMLElement {
   return host;
 }
 
-/** 로그인 계정 관리 히어로 — 책을 펼쳐 놓고 읽는 스틱맨(brand/loading/8.webp). */
+/** 로그인 계정 관리 히어로: 책을 펼쳐 놓고 읽는 스틱맨(코드 그림 public/sketch/account.svg). */
 function accountHeroArt(): HTMLElement {
   const host = el("div", { class: "login-study login-account-study", attrs: { "aria-hidden": "true" } });
-  const img = el("img", { attrs: { src: base + (sketchSrc("account") ?? "brand/loading/8.webp"), alt: "" } }) as HTMLImageElement;
+  const img = el("img", { attrs: { src: base + ACCOUNT_ART, alt: "" } }) as HTMLImageElement;
   img.addEventListener("error", () => {
     host.className = "login-ava";
     host.replaceChildren(stickAvatar("wave"));

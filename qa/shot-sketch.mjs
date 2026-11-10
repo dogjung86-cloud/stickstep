@@ -1,6 +1,7 @@
-// 코드 그림 샘플 전후 비교 샷.
-// 같은 화면을 토글 끈 상태(현행 래스터, ?sketch=0)와 켠 상태(코드 그림, ?sketch)로 찍는다.
-// 실행: PORT=5537 node qa/shot-sketch.mjs [출력 폴더]   (dev 서버 필요)
+// 코드로 그린 스틱맨 그림이 실제 화면에 들어간 모습을 폰 크기 두 가지로 찍는다.
+// 스플래시, 과목 탭, 만화 컷과 말풍선, 정리 화면, 둘째 레슨의 도입, 로그인 화면, 계정 관리 화면.
+// 실행: PORT=5537 node qa/shot-sketch.mjs [출력 폴더]   (dev 서버 필요. ONLY=390x700 처럼 한 크기만 찍을 수 있다)
+//       COMIC="u1l1:과학적 탐구 방법" 처럼 레슨 id와 지도 노드 이름을 주면 그 만화를 찍는다(기본 u1l1).
 import { chromium } from "playwright-core";
 import { mkdirSync, renameSync } from "node:fs";
 import { join } from "node:path";
@@ -9,15 +10,19 @@ const PORT = process.env.PORT || "5537";
 const OUT = process.argv[2] ?? "qa/shots/sketch";
 mkdirSync(OUT, { recursive: true });
 const BASE = `http://localhost:${PORT}`;
-const VPS = [{ name: "390x700", width: 390, height: 700 }, { name: "375x812", width: 375, height: 812 }];
-const MODES = [{ key: "before", q: "?sketch=0" }, { key: "after", q: "?sketch" }];
+const VPS = [{ name: "390x700", width: 390, height: 700 }, { name: "375x812", width: 375, height: 812 }].filter((v) => !process.env.ONLY || process.env.ONLY === v.name);
+const MODES = [{ key: "now", q: "" }];
+const [COMIC_ID, COMIC_LABEL] = (process.env.COMIC || "u1l1:과학적 탐구 방법").split(":");
+const UNIT_TAB = process.env.UNIT || "I."; // 지도의 단원 탭 머리글자(예: "II.", "III.")
 
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 
 // 중1 Ⅰ 완료 상태(둘째 레슨의 훅까지 열어 보려고). 날짜는 고정값이라 화면에 영향이 없다.
 const seed = () => {
   const lessons = {};
-  ["u1l1", "u1l2", "u1l3", "u1l4", "u1l5"].forEach((id) => (lessons[id] = { done: true, acc: 95, bestXp: 60 }));
+  // 중1 과학 전 레슨을 완료 상태로(어느 단원의 만화든 바로 열 수 있게)
+  for (let u = 1; u <= 7; u++) for (let l = 1; l <= 12; l++) lessons[`u${u}l${l}`] = { done: true, acc: 95, bestXp: 60 };
+  for (let l = 1; l <= 12; l++) lessons[`u2v3l${l}`] = { done: true, acc: 95, bestXp: 60 };
   localStorage.setItem("science-app.v1", JSON.stringify({
     version: 1, onboarded: true, grade: "중1", goalMin: 10, streak: 2,
     lastStudyDay: "2026-11-10", totalXp: 300, lessons, minigame: {},
@@ -62,22 +67,23 @@ async function run(vp, mode) {
   await page.waitForSelector("#sc-home", { timeout: 15000 });
   await page.waitForTimeout(700);
   const openLesson = async (label) => {
-    await page.evaluate(() => [...document.querySelectorAll(".unit-tab")].find((b) => b.textContent.trim().startsWith("I."))?.click());
+    await page.evaluate((u) => [...document.querySelectorAll(".unit-tab")].find((b) => b.textContent.trim().startsWith(u))?.click(), UNIT_TAB);
     await page.waitForTimeout(600);
     await page.evaluate((label) => [...document.querySelectorAll(".screen.active .gm-node")].find((x) => (x.getAttribute("aria-label") || "").includes(label))?.click(), label);
     await page.waitForTimeout(900);
   };
   const exit = async () => { await page.evaluate(() => document.querySelector(".screen.active .xbtn[aria-label='닫기']")?.click()); await page.waitForTimeout(700); };
 
-  await openLesson("과학적 탐구 방법");
+  await openLesson(COMIC_LABEL);
   await page.waitForTimeout(3400); // "완료한 레슨이에요" 안내가 사라질 때까지
-  for (let i = 0; i < 7; i++) {
+  const nCuts = await page.evaluate(() => document.querySelectorAll(".screen.active .comic-dots i").length);
+  for (let i = 0; i < nCuts; i++) {
     await imgsReady(".screen.active .comic-img");
     await page.waitForTimeout(250);
     // 두 상태가 같은 자리에서 시작하도록 컷 번호 점을 화면 위에 맞춘다
     await scrollTo(".screen.active .comic-dots");
     await page.waitForTimeout(150);
-    await shot(`comic${i}`);
+    await shot(`${COMIC_ID}-cut${i + 1}`);
     await page.evaluate(() => document.querySelector(".screen.active .btn.cta")?.click());
     await page.waitForTimeout(500);
   }
@@ -89,16 +95,25 @@ async function run(vp, mode) {
   await shot("recap-outro");
   await exit();
 
-  // 4) 둘째 레슨의 훅: 원형 스틱맨이 반응에 따라 표정을 바꾼다
-  await openLesson("직접 탐구하기");
-  await page.waitForTimeout(3400);
-  await shot("hook-start");
-  await clickText("검은색 컵");
-  await page.waitForTimeout(2200);
-  await scrollTo(".screen.active .comic-narrator");
-  await page.waitForTimeout(200);
-  await shot("hook-after");
-  await exit();
+  // 4) 둘째 레슨의 훅: 원형 스틱맨이 반응에 따라 표정을 바꾼다 (Ⅰ단원을 찍을 때만)
+  if (COMIC_ID === "u1l1") {
+    await openLesson("직접 탐구하기");
+    await page.waitForTimeout(3400);
+    await shot("hook-start");
+    await clickText("검은색 컵");
+    await page.waitForTimeout(2200);
+    await scrollTo(".screen.active .comic-narrator");
+    await page.waitForTimeout(200);
+    await shot("hook-after");
+    await exit();
+  }
+
+  // 과목 탭: 과목 카드 그림
+  await page.evaluate(() => { location.hash = "#/subjects"; });
+  await page.waitForSelector("#sc-subjects", { timeout: 10000 }).catch(() => {});
+  await imgsReady("#sc-subjects .subj-ava img").catch(() => console.log("  ! 과목 카드 그림을 찾지 못했다"));
+  await page.waitForTimeout(500);
+  await shot("subjects");
 
   // 5) 로그인 화면(비로그인)
   await page.evaluate(() => { location.hash = "#/login"; });
@@ -145,6 +160,6 @@ async function record(mode) {
 }
 
 for (const vp of VPS) for (const mode of MODES) await run(vp, mode);
-for (const mode of MODES) await record(mode);
+if (!process.env.NOVIDEO) for (const mode of MODES) await record(mode);
 await browser.close();
 console.log("DONE");

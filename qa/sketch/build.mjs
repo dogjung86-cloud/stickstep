@@ -1,16 +1,16 @@
 // 코드 그림 빌드: 장면 코드 → 정적 SVG(public/sketch) + 앱이 읽는 표(src/ui/sketchArt.generated.ts).
 // 실행: node qa/sketch/build.mjs
-//   만화 컷, 스플래시 컷, 계정 화면 그림 = 정적 SVG 파일(<img>로 싣는다. 실행 중 그리는 비용 0)
-//   원형 스틱맨 5종 = 생성 표에 SVG 문자열로(작고, 표정을 바꿀 때 바로 갈아 끼워야 해서)
+//   만화 컷, 스플래시 컷, 로그인과 계정 그림, 과목 카드 그림 = 정적 SVG 파일(<img>로 싣는다. 실행 중 그리는 비용 0)
+//   원형 스틱맨 쌤 5종 = 생성 표에 SVG 문자열로(작고, 표정을 바꿀 때 바로 갈아 끼워야 해서)
 //   말풍선 = 그림이 기록한 화자 머리 기준점에서 % 좌표를 계산해 표에 싣는다
 import { mkdirSync, writeFileSync, readFileSync, existsSync, readdirSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-import { panels } from "./scenes/comic-u1l1.mjs";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { frames } from "./scenes/splash.mjs";
 import { avatars, reading } from "./scenes/avatars.mjs";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+const HERE = dirname(fileURLToPath(import.meta.url));
+const ROOT = join(HERE, "..", "..");
 const PUB = join(ROOT, "public", "sketch");
 // 내용이 바뀐 파일만 다시 쓴다(dev 서버가 켜져 있을 때 쓸데없는 새로고침을 막는다)
 const writeIfChanged = (f, text) => { if (!existsSync(f) || readFileSync(f, "utf8") !== text) writeFileSync(f, text); };
@@ -20,26 +20,29 @@ const put = (rel, text) => { const f = join(PUB, rel); mkdirSync(dirname(f), { r
 /* ---------- 말풍선 자리 계산 ----------
    앱의 .cut-bubble 은 (x%, y%)가 몸통의 아래 가운데다. 가운데 꼬리는 몸통 아래로 약 7px,
    뿔 꼬리(tail left/right)는 몸통 끝에서 16px 바깥, 27px 아래에 끝이 온다(ui.css, figures.cutTailHorn).
-   폰 화면의 컷 폭(350px)을 기준으로 몸통 크기를 어림해 컷 밖으로 나가지 않는 자리를 고른다. */
+   폰 화면의 컷 폭(350px)을 기준으로 몸통 크기를 어림해 컷 밖으로 나가지 않는 자리를 고른다.
+   b = { who: 기준점 이름, text, side?: "left" | "right"(뿔 꼬리를 강제), dx?, dy?(px 미세 조정) } */
 const FRAME_W = 350;
 function textWidth(line) {
   let w = 0;
-  for (const ch of line) w += /[가-힣]/.test(ch) ? 12.5 : ch === " " ? 3.4 : /[0-9A-Za-z]/.test(ch) ? 7.5 : 5;
+  for (const ch of line.replace(/<[^>]+>/g, "")) w += /[가-힣]/.test(ch) ? 12.5 : ch === " " ? 3.4 : /[0-9A-Za-z]/.test(ch) ? 7.5 : 5;
   return w;
 }
 function placeBubble(sk, b, where) {
   const a = sk.anchors[b.who];
   if (!a) throw new Error(`${where}: 기준점 '${b.who}' 가 없다`);
   const FH = FRAME_W * sk.h / sk.w;
-  const ax = a.x / sk.w * FRAME_W, ay = a.y / sk.h * FH;
+  const ax = a.x / sk.w * FRAME_W + (b.dx ?? 0), ay = a.y / sk.h * FH + (b.dy ?? 0);
   const lines = b.text.split("<br>");
   const bw = Math.min(FRAME_W * 0.52, Math.max(84, Math.max(...lines.map(textWidth)) + 25.2));
   const bh = lines.length * 15.6 + 16.2;
-  let cx = ax, by = ay - 9, tail;
-  if (ax - bw / 2 < 5) { tail = "left"; cx = ax + 16 + bw / 2; by = ay - 29; }
-  else if (ax + bw / 2 > FRAME_W - 5) { tail = "right"; cx = ax - 16 - bw / 2; by = ay - 29; }
+  let cx = ax, by = ay - 9, tail = b.side;
+  if (!tail && ax - bw / 2 < 5) tail = "left";
+  else if (!tail && ax + bw / 2 > FRAME_W - 5) tail = "right";
+  if (tail === "left") { cx = ax + 16 + bw / 2; by = ay - 29; }
+  if (tail === "right") { cx = ax - 16 - bw / 2; by = ay - 29; }
   const box = { l: cx - bw / 2, r: cx + bw / 2, t: by - bh, b: by };
-  if (box.l < 2 || box.r > FRAME_W - 2 || box.t < 2) console.warn(`  ! ${where}: 말풍선이 컷 밖으로 나간다`, box);
+  if (box.l < 2 || box.r > FRAME_W - 2 || box.t < 2) console.warn(`  ! ${where}: 말풍선 "${b.text}" 이 컷 밖으로 나간다`, JSON.stringify(box));
   const out = { text: b.text, x: +(cx / FRAME_W * 100).toFixed(1), y: +(by / FH * 100).toFixed(1) };
   if (tail) out.tail = tail;
   return out;
@@ -47,15 +50,19 @@ function placeBubble(sk, b, where) {
 
 const sizes = {};
 
-// 만화
+// 만화: scenes/comic-<레슨>.mjs 마다 한 편. panels() 가 [{ sk, bubbles? }] 를 돌려준다.
 const comic = {};
-panels().forEach((p, i) => {
-  const rel = `comics/u1l1/${i}.svg`;
-  sizes[rel] = put(rel, p.sk.svg());
-  const e = { img: `sketch/${rel}` };
-  if (p.bubbles) e.bubbles = p.bubbles.map(b => placeBubble(p.sk, b, `u1l1 컷 ${i}`));
-  comic[`comics/u1l1/${i}.webp`] = e;
-});
+for (const f of readdirSync(join(HERE, "scenes")).filter(n => /^comic-.+\.mjs$/.test(n)).sort()) {
+  const id = f.replace(/^comic-|\.mjs$/g, "");
+  const mod = await import(pathToFileURL(join(HERE, "scenes", f)).href);
+  comic[id] = mod.panels().map((p, i) => {
+    const rel = `comics/${id}/${i}.svg`;
+    sizes[rel] = put(rel, p.sk.svg());
+    const e = { img: `sketch/${rel}` };
+    if (p.bubbles?.length) e.bubbles = p.bubbles.map(b => placeBubble(p.sk, b, `${id} 컷 ${i + 1}`));
+    return e;
+  });
+}
 
 // 스플래시
 const splash = { frames: [], study: "" };
@@ -68,26 +75,37 @@ for (const f of frames()) {
 // 계정 관리 화면
 sizes["account.svg"] = put("account.svg", reading().svg());
 
+// 과목 카드
+const subject = {};
+if (existsSync(join(HERE, "scenes", "subjects.mjs"))) {
+  const { subjects } = await import(pathToFileURL(join(HERE, "scenes", "subjects.mjs")).href);
+  for (const s of subjects()) { const rel = `subj/${s.name}.svg`; sizes[rel] = put(rel, s.sk.svg()); subject[s.name] = `sketch/${rel}`; }
+}
+
 // 원형 스틱맨
 const avatar = {};
 for (const a of avatars()) avatar[a.name] = a.sk.svg({ inline: true });
 
 const ts = `// 자동 생성물: node qa/sketch/build.mjs 가 만든다. 손으로 고치지 않는다.
-// 코드 그림 샘플(?sketch)의 표. 그림 원본은 qa/sketch/scenes/ 의 장면 코드다.
+// 코드로 그린 스틱맨 그림의 표. 그림 원본은 qa/sketch/scenes/ 의 장면 코드다.
 
 export interface SketchBubble { text: string; x: number; y: number; flip?: boolean; tail?: "left" | "right" }
+export interface SketchPanelArt { img: string; bubbles?: SketchBubble[] }
 
 /** 원형 스틱맨 쌤 5종(인라인 SVG) */
-export const SKETCH_AVATAR: Record<string, string> = ${JSON.stringify(avatar, null, 2)};
+export const TEACHER_SVG: Record<string, string> = ${JSON.stringify(avatar, null, 2)};
 
-/** 만화 컷: 현행 래스터 경로 → 코드 그림 경로와 말풍선(머리 기준점에서 계산) */
-export const SKETCH_COMIC: Record<string, { img: string; bubbles?: SketchBubble[] }> = ${JSON.stringify(comic, null, 2)};
+/** 만화 컷: 레슨별 그림 경로와 말풍선(화자 머리 기준점에서 계산한 자리) */
+export const COMIC_ART: Record<string, SketchPanelArt[]> = ${JSON.stringify(comic, null, 2)};
 
-/** 스플래시 플립북 */
-export const SKETCH_SPLASH: { frames: string[]; study: string } = ${JSON.stringify(splash, null, 2)};
+/** 스플래시 플립북(놀이 컷은 넘기는 순서대로) */
+export const SPLASH_ART: { frames: string[]; study: string } = ${JSON.stringify(splash, null, 2)};
 
 /** 계정 관리 화면 그림 */
-export const SKETCH_ACCOUNT = "sketch/account.svg";
+export const ACCOUNT_ART = "sketch/account.svg";
+
+/** 과목 카드 그림 */
+export const SUBJECT_ART: Record<string, string> = ${JSON.stringify(subject, null, 2)};
 `;
 writeIfChanged(join(ROOT, "src", "ui", "sketchArt.generated.ts"), ts);
 
@@ -103,5 +121,5 @@ sweep(PUB);
 
 const kb = n => (n / 1024).toFixed(1) + "KB";
 const sum = pre => Object.entries(sizes).filter(([k]) => k.startsWith(pre)).reduce((s, [, v]) => s + v, 0);
-console.log("만화 7컷", kb(sum("comics/")), "| 스플래시 7컷", kb(sum("splash/")), "| 계정", kb(sizes["account.svg"]), "| 아바타 5종(인라인)", kb(Object.values(avatar).join("").length));
-for (const [k, v] of Object.entries(comic)) if (v.bubbles) console.log(" ", k, JSON.stringify(v.bubbles));
+for (const id of Object.keys(comic)) console.log(`만화 ${id}: ${comic[id].length}컷 ${kb(sum(`comics/${id}/`))}` + comic[id].map((p, i) => (p.bubbles ? ` [${i + 1}:${p.bubbles.map(b => b.text.replace("<br>", " ")).join(" / ")}]` : "")).join(""));
+console.log("스플래시", splash.frames.length + 1, "컷", kb(sum("splash/")), "| 계정", kb(sizes["account.svg"]), "| 과목 카드", Object.keys(subject).length, kb(sum("subj/")), "| 원형 스틱맨 5종(인라인)", kb(Object.values(avatar).join("").length));

@@ -7,6 +7,7 @@ import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { BRAND } from "../core/brand";
 import { stickAvatar } from "../ui/avatar";
+import { subjectArt } from "../ui/sketchArt";
 import { getState, canSeeAllSubjects } from "../core/store";
 import { CURRICULA_OF, type SubjectId } from "../content/curriculum";
 import { isDone } from "../core/store";
@@ -72,11 +73,11 @@ export function subjectScreen(opts: {
     text: showAll ? "과학·수학·사회·역사가 열려 있어요. 골라 볼까요?" : "실험하며 개념을 배우는 과학이 열려 있어요.",
   });
 
-  // 과목 카드 스틱맨 — 발주 일러스트(public/brand/subj, 과목 소품 든 상반신) 우선, 로드 실패 시
-  // 기존 stickAvatar 폴백. lazy 금지(.scroll 컨테이너에서 안 뜨는 사고 14 계보).
+  // 과목 카드 스틱맨: 코드로 그린 그림(public/sketch/subj, 과목 소품 든 쌤 상반신. 원본 qa/sketch/scenes/subjects.mjs),
+  // 로드 실패 시 stickAvatar 폴백. lazy 금지(.scroll 컨테이너에서 안 뜨는 사고 14 계보).
   const subjArt = (key: string, fallback: Parameters<typeof stickAvatar>[0]): HTMLElement => {
     const img = document.createElement("img");
-    img.src = `${import.meta.env.BASE_URL}brand/subj/${key}.webp`;
+    img.src = `${import.meta.env.BASE_URL}${subjectArt(key) ?? `brand/subj/${key}.webp`}`;
     img.alt = "";
     img.addEventListener("error", () => img.replaceWith(stickAvatar(fallback)));
     return img;
