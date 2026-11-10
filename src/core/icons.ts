@@ -50,6 +50,7 @@ const ICONS: Record<string, IconDef> = {
   globe: { v: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/>', sw: 1.8 },
   recycle: { v: '<path d="M7 8l-3 5 3 1.5"/><path d="M12 4l3 5-3 1.5"/><path d="M17 11l2.5 4a2 2 0 0 1-1.7 3H13"/><path d="M9 18H6a2 2 0 0 1-1.7-3"/><path d="M15 5l-3-2-2.5 2.5"/>', sw: 1.9 },
   swap: { v: '<path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5"/>', sw: 2.2 },
+  undo: { v: '<path d="M8.5 13.5L4 9l4.5-4.5"/><path d="M4 9h10.2a5.3 5.3 0 0 1 0 10.6H10.5"/>', sw: 2.2 },
   plus: { v: '<path d="M12 6v12M6 12h12"/>', sw: 2.4 },
   route: { v: '<circle cx="6.5" cy="18.5" r="2.2"/><circle cx="17.5" cy="5.5" r="2.2"/><path d="M8.7 18.5H14a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h5.3"/>', sw: 2 },
   compass: { v: '<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>', sw: 2 },

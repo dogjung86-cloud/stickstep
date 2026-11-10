@@ -44,6 +44,16 @@ export interface StickAvatarCfg {
   mouth: number;
   glasses: number;
   acc: number;
+  // v2(2026-11) 슬롯: 색·볼·옷·손에 든 것·배경. 구버전 저장분에는 없어서 선택형이고,
+  // stickParts.normStick이 0으로 채운다(0번 = 예전 모습이라 예전 조합이 그대로 보인다).
+  skin?: number;
+  hairColor?: number;
+  cheek?: number;
+  top?: number;
+  topColor?: number;
+  accColor?: number;
+  prop?: number;
+  bg?: number;
 }
 
 export interface AppState {
@@ -228,7 +238,23 @@ export function canSeeAllSubjects(): boolean {
   } catch {
     /* 사생활 보호 모드 등 — 무시 */
   }
-  return adminOverride || state.reviewMode || !!import.meta.env.DEV;
+  return adminOverride || reviewOrDev();
+}
+
+/** 검수·개발 환경 신호: 검토 모드(브랜드 7연타)이거나 로컬 dev. 운영 계정 여부와는 무관하다. */
+function reviewOrDev(): boolean {
+  return state.reviewMode || !!import.meta.env.DEV;
+}
+
+/** 과목 탭(과목 허브)을 세우는 조건. 지금은 검토 모드와 로컬 dev에서만 선다(2026-11-11 사용자 확정).
+ *  일반 사용자에게 공개된 과목이 과학 하나라 고를 것이 없어 탭을 닫았고, 운영 계정도 일반 사용자와
+ *  같은 화면을 보도록 함께 닫았다(전 과목이 보인다는 이유만으로는 탭이 서지 않는다).
+ *  운영 계정이 다른 과목을 보려면 검토 모드를 켜거나 주소 #/subject/<과목>으로 간다.
+ *  dev는 QA 스크립트가 이 탭으로 수학·사회·역사에 들어가므로 열어 둔다. "ss.pub"="1"에서는 닫힌다.
+ *  과목을 추가로 공개하는 날에는 이 함수가 "공개된 과목이 둘 이상"을 돌려주게 고치면 탭이 다시 선다.
+ *  탭바(ui/gnav.ts)·탭 전환(main.ts goTab)·주소(#/subjects)가 전부 이 함수 하나를 본다. */
+export function hasSubjectChoice(): boolean {
+  return canSeeAllSubjects() && reviewOrDev();
 }
 
 export function isReviewMode(): boolean {
