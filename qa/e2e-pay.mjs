@@ -5,6 +5,8 @@
 // [B] 실플로우 전체 왕복(ss.payreal + ss.payFakeUser + 엣지·SDK 스텁) — 주문 바디(guardianConsent·
 //     서버 금액) → requestPayment 파라미터 → successUrl 리다이렉트 → 부팅 승인 → 이용권 반영·스낵
 // [C] failUrl 복귀 — 취소 스낵 + 주소 청소(OAuth ?code 오인 차단)
+// [E] 키 짝 가드(2026-11-10 라이브 전환): 서버가 mode_mismatch(503)를 주면 결제창을 열지 않고 시트에
+//     점검 안내만 띄운다(SDK 미요청·승인 재료 미생성). [P]는 폴백 키 제거·가드 존재를 소스로 확인한다.
 // 토스·엣지 함수는 전부 page.route 스텁 — 네트워크 밖으로 나가지 않는다.
 import { readFileSync } from "node:fs";
 import { chromium } from "playwright-core";
@@ -118,6 +120,10 @@ async function openSheet(page) {
   check(floorBase === tiers[2], "서버 floor 기준 = 3과목 정가");
   for (const n of [1, 2, 3, 4, 5, 6])
     check(cli.own[n - 1] === svRegular(n), `소장 ${n}과목 정가 동일(${svRegular(n)})`);
+  // 라이브 전환 가드(소스 검사): 승인 함수에 시크릿 키 하드코딩·폴백이 없고, 주문 함수에 키 짝 가드가 있다.
+  const confirmSrc = readFileSync(new URL("../supabase/functions/pay-confirm/index.ts", import.meta.url), "utf8");
+  check(!/(test|live)_sk_[A-Za-z0-9]/.test(confirmSrc), "pay-confirm 시크릿 키 하드코딩 0(폴백 제거)");
+  check(/clientMode/.test(src) && /mode_mismatch/.test(src) && /req\.method === "GET"/.test(src), "pay-order 키 짝 가드 + GET 모드 점검");
   await page.close();
 }
 
@@ -229,6 +235,7 @@ async function openSheet(page) {
   check(seen.order?.plan === "own" && JSON.stringify(seen.order?.subjectIds) === '["sci-g1"]', "주문 바디: plan·과목");
   check(seen.order?.amount === 14900, `주문 바디: 표시 금액 대조(${seen.order?.amount})`);
   check(seen.order?.guardianConsent === true, "주문 바디: 보호자 동의 기록");
+  check(seen.order?.clientMode === "test", `주문 바디: 클라이언트 키 모드(${seen.order?.clientMode})`);
 
   const req = await page.evaluate(() => window.__tossReq ?? null);
   // 리다이렉트로 페이지가 바뀌어 __tossReq는 사라졌을 수 있다 — 승인 바디로 파라미터 전달을 검증.
@@ -260,6 +267,44 @@ async function openSheet(page) {
   check(snack.includes("취소"), `취소 스낵: "${snack}"`);
   const urlClean = await page.evaluate(() => location.search === "");
   check(urlClean, "failUrl 쿼리 청소(OAuth ?code 오인 차단)");
+  await page.close();
+}
+
+// ───────────────────── [E] 키 짝 가드 — 모드 불일치면 결제창 미개시 ─────────────────────
+{
+  console.log("[E] 키 짝 가드(mode_mismatch → 결제창 미개시)");
+  const seen = { order: null, sdk: 0 };
+  const routes = async (page) => {
+    await page.route("**/functions/v1/pay-order", async (route) => {
+      seen.order = JSON.parse(route.request().postData());
+      await route.fulfill({
+        status: 503,
+        contentType: "application/json",
+        body: JSON.stringify({ error: "mode_mismatch", message: "결제 설정을 점검하고 있어요. 잠시 후 다시 시도해 주세요." }),
+      });
+    });
+    await page.route("https://js.tosspayments.com/**", (route) => {
+      seen.sdk += 1;
+      return route.fulfill({ contentType: "application/javascript", body: "" });
+    });
+  };
+  const page = await newPage({ payreal: true, fakeUser: "e2e-user-2", routes });
+  await boot(page);
+  await openPaywall(page);
+  await openSheet(page);
+  await page.evaluate(() => document.querySelector(".pwx-consent input").click());
+  await page.evaluate(() => document.querySelector(".pwx-paybtn").click());
+  await page.waitForFunction(() => (document.querySelector(".pwx-sheet-msg")?.textContent ?? "").length > 0, null, {
+    timeout: 10000,
+  });
+  const msg = await page.evaluate(() => document.querySelector(".pwx-sheet-msg").textContent);
+  check(msg.includes("점검"), `시트 점검 안내: "${msg}"`);
+  check(seen.order?.clientMode === "test", "가드 요청에도 clientMode 전달");
+  check(seen.sdk === 0, `토스 SDK 미요청(결제창 미개시, 요청 ${seen.sdk}회)`);
+  const label = await page.evaluate(() => document.querySelector(".pwx-paybtn").textContent);
+  check(label.includes("결제하기"), `결제 버튼 원상 복귀: "${label}"`);
+  const pending = await page.evaluate(() => localStorage.getItem("ss.payPending"));
+  check(pending === null, "승인 재료(pending) 미생성");
   await page.close();
 }
 

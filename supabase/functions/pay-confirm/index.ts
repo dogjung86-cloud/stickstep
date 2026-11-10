@@ -1,13 +1,11 @@
 // 스틱스텝 결제 2단계 — 승인 + 이용권 지급. successUrl 쿼리(paymentKey·orderId·amount)를 받아
 // ① 주문 대조(소유자·금액) ② 토스 승인 API 호출 ③ orders paid 갱신 ④ entitlements 지급 순서로 처리한다.
-// - 시크릿 키는 TOSS_SECRET_KEY 시크릿(없으면 문서 테스트 키 폴백 — 라이브 전환 시 반드시 설정, PAYMENTS.md).
+// - 시크릿 키는 supabase secrets의 TOSS_SECRET_KEY만 쓴다. 코드 안 폴백 키는 없다(2026-11-10 라이브
+//   전환 때 제거: 시크릿이 빠지면 "문서 테스트 상점으로 승인 시도"가 되는 사고를 막는다). 미설정이면 503.
 // - 같은 주문 재호출(성공 페이지 새로고침 등)은 지급 상태를 그대로 돌려주는 멱등 동작.
 // - 배포: Supabase 엣지 함수(관리 API), verify_jwt=false + 코드에서 JWT 직접 검증.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-// 토스 문서 공개 테스트 시크릿 키(docs.tosspayments.com 예제 키 — 비밀 아님, 테스트 결제 전용).
-// 라이브 키는 절대 코드에 넣지 않는다 — supabase secrets(TOSS_SECRET_KEY)로만.
-const DOCS_TEST_SECRET = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R";
 const PASS30_DAYS = 30;
 
 const CORS = {
@@ -105,8 +103,11 @@ Deno.serve(async (req) => {
     return json(400, { error: "amount_mismatch", message: "결제 금액이 주문과 달라요. 다시 시도해 주세요." });
   }
 
-  // 토스 결제 승인 — Basic base64("시크릿키:"). 멱등 키로 orderId를 실어 네트워크 재시도에도 안전.
-  const secret = (Deno.env.get("TOSS_SECRET_KEY") ?? "").trim() || DOCS_TEST_SECRET;
+  // 토스 결제 승인: Basic base64("시크릿키:"). 멱등 키로 orderId를 실어 네트워크 재시도에도 안전.
+  const secret = (Deno.env.get("TOSS_SECRET_KEY") ?? "").replace(/﻿/g, "").trim();
+  // 서버 설정 누락은 주문을 failed로 만들지 않는다(5xx라 클라이언트가 승인 재료를 남기고 재시도한다).
+  if (!secret)
+    return json(503, { error: "pay_not_configured", message: "결제 설정을 점검하고 있어요. 잠시 후 다시 시도해 주세요." });
   const auth = "Basic " + btoa(`${secret}:`);
   let pay: Record<string, unknown>;
   try {

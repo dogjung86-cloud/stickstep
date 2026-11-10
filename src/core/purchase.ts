@@ -1,4 +1,4 @@
-// 결제 — 토스페이먼츠 v2 결제창 실연동(2026-08-13, PG 심사 대비 테스트 키 가동).
+// 결제: 토스페이먼츠 v2 결제창 실연동(2026-08-13 테스트 키 가동 → 2026-11-10 라이브 키 전환).
 // 흐름: 주문 생성(pay-order 엣지 함수 — 가격은 서버가 재계산) → 토스 결제창(리다이렉트) →
 // successUrl 복귀 → 승인(pay-confirm 엣지 함수 — 토스 승인 API + 과목별 이용권 지급) →
 // entitlements(서버 진실)를 store에 반영. 라이브 전환 = 키 2개 교체(절차는 app/PAYMENTS.md).
@@ -90,9 +90,10 @@ export function ownedPremiumSubjectIds(): string[] {
 const isDev = (import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV === true;
 
 // ---------- 토스페이먼츠 연동 환경 ----------
-// 클라이언트 키는 공개 식별값(토스 문서 명시) — 기본값은 문서 공개 테스트 키라 심사·개발 중에도
-// 결제창이 항상 뜬다. 라이브 전환 시 Vercel 환경변수 VITE_TOSS_CLIENT_KEY(live_ck_…)로 교체하고,
-// 서버 시크릿(supabase secrets TOSS_SECRET_KEY)을 같은 상점의 live_sk_…로 함께 바꾼다(PAYMENTS.md).
+// 클라이언트 키는 공개 식별값(토스 문서 명시). 운영(Production) 빌드는 Vercel 환경변수
+// VITE_TOSS_CLIENT_KEY(live_ck_…)를 쓰고, 서버 시크릿(supabase secrets TOSS_SECRET_KEY)은 같은 상점의
+// live_sk_…다(PAYMENTS.md). 아래 기본값(테스트 키)은 dev·프리뷰 빌드 몫이며, 운영 서버가 라이브인데
+// 테스트 키로 빌드되면 pay-order 키 짝 가드(clientMode)가 결제창을 열기 전에 막는다.
 const env = (import.meta as unknown as { env?: Record<string, unknown> }).env ?? {};
 const cleanEnv = (v: unknown): string => (typeof v === "string" ? v.replace(/﻿/g, "").trim() : "");
 // 기본값 = 내 상점(MID sticksbzvn)의 테스트 클라이언트 키(2026-08-14 사용자 제공 — 공개 식별값이라
@@ -272,6 +273,7 @@ export async function buyPremium(selection?: {
     subjectIds,
     amount,
     guardianConsent: selection?.guardianConsent === true,
+    clientMode: isTossTestMode() ? "test" : "live", // 키 짝 가드: 서버 시크릿 모드와 다르면 503(결제창 미개시)
   });
   if (order.status !== 200 || !order.body) {
     if (order.status === 401) return { r: "login" };

@@ -2,6 +2,7 @@
 
 PG 심사 대기 기간에 **테스트 키로 전 구간을 가동**해 두고, 계약 완료 후 **키 2개만 교체**하면
 실결제가 열리는 구조다. 이 문서가 결제 관련 구조·키 교체·운영 절차의 단일 정본이다.
+**2026-11-10 토스 카드 결제 승인 완료 → 라이브 전환 착수**(진행 상태는 아래 2단계 표가 정본).
 
 ## 구조 — "주문은 서버가, 가격도 서버가"
 
@@ -30,17 +31,24 @@ PG 심사 대기 기간에 **테스트 키로 전 구간을 가동**해 두고, 
 
 ## 키 체계 — 지금 어떤 키로 돌고 있나
 
-| 자리 | 현재 값 | 교체 방법 |
+| 자리 | 값 | 교체 방법 |
 |---|---|---|
-| 클라이언트 키 | **내 상점(MID sticksbzvn) 테스트 키**(코드 기본값, purchase.ts) | `VITE_TOSS_CLIENT_KEY` env가 있으면 그걸 사용 |
-| 시크릿 키 | supabase secrets `TOSS_SECRET_KEY` = **sticksbzvn 테스트 키** | supabase 대시보드 → Edge Functions → Secrets에서 교체 |
-| 보안 키(웹훅 서명) | supabase secrets `TOSS_WEBHOOK_SECRET`에 보관(아직 미사용 — 웹훅 도입 대비) | 〃 |
+| 클라이언트 키 | 운영 = Vercel env `VITE_TOSS_CLIENT_KEY`(live_ck_, **Production 환경만**). 코드 기본값(sticksbzvn 테스트 키, purchase.ts)은 dev·프리뷰 빌드 몫 | Vercel 대시보드 → stickstep → Settings → Environment Variables. **빌드 때 주입**되므로 바꾼 뒤 재배포(main push 또는 Redeploy)해야 반영 |
+| 시크릿 키 | supabase secrets `TOSS_SECRET_KEY`(운영 = live_sk_) | 수파베이스 대시보드 → Edge Functions → Secrets. 저장하면 함수 재배포 없이 반영 |
+| 보안 키(웹훅 서명) | supabase secrets `TOSS_WEBHOOK_SECRET`에 보관(아직 미사용, 웹훅 도입 대비) | 〃 |
 
 - 우리 연동(v2 통합결제창 requestPayment)이 쓰는 키는 개발자센터의 **"API 개별 연동 키"**(test_ck_/test_sk_,
   MID별)다 — "주문서형·결제창형 연동 키"(test_gck_/gsk_)는 결제위젯용이라 해당 없음.
 - 클라이언트 키는 **공개 식별값**(토스 문서 명시)이라 코드·번들 노출 무해. 시크릿 키는 서버(엣지 함수)에만.
 - 두 키는 **같은 상점 짝**이어야 한다(짝이 어긋나면 승인 단계에서 상점 불일치 오류).
 - 테스트 키 가동 중에는 체크아웃 시트에 "테스트 결제" 배지가 뜬다(live_ck_ 키면 자동 소멸).
+- **키 짝 가드(2026-11-10)**: 클라가 주문 바디에 `clientMode`(클라 키 접두로 판별한 live/test)를 싣고,
+  pay-order가 서버 시크릿 접두와 대조해 **다르거나 시크릿이 없으면 503**("결제 설정을 점검하고 있어요")으로
+  결제창을 열기 전에 막는다. 두 키 교체 사이의 틈, 한쪽만 바뀐 설정 사고, 프리뷰 빌드(테스트 키)가 라이브
+  서버를 만나는 경우가 모두 "카드 인증 뒤 승인 실패" 대신 사전 차단이 된다. clientMode 없는 구버전 클라는 통과.
+- **운영 점검**: `GET https://<ref>.supabase.co/functions/v1/pay-order` → `{"ok":true,"mode":"live|test|unset"}`
+  (키 값은 비공개, 접두만 판별). 라이브 확인 = 이 응답 + 운영 번들의 `live_ck_` 접두 + 시트 테스트 배지 소멸.
+- **pay-confirm에는 폴백 키가 없다**(2026-11-10 제거): 시크릿 미설정이면 503(주문을 failed로 만들지 않음).
 
 ### 1단계 — 내 상점(MID: sticksbzvn) 테스트 키로 교체 ✓ 완료(2026-08-14)
 
@@ -49,13 +57,25 @@ TOSS_SECRET_KEY 시크릿, 보안 키 = TOSS_WEBHOOK_SECRET 시크릿. 검증: �
 설정(간편결제 목록 카카오페이·토스페이)으로 렌더 + 승인 API 인증 정상(가짜 키 프로브 =
 NOT_FOUND_PAYMENT_SESSION, UNAUTHORIZED 아님). 이후 테스트 결제는 개발자센터 테스트 결제내역에 찍힌다.
 
-### 2단계 — 라이브 전환(계약·심사 완료 후)
+### 2단계: 라이브 전환(2026-11-10 착수, 카드 결제 승인 완료)
 
-1. `VITE_TOSS_CLIENT_KEY=live_ck_…`(Vercel), `TOSS_SECRET_KEY=live_sk_…`(supabase secrets) — 같은 상점 짝.
-2. **결제 오픈 체크리스트**: ① 통신판매업 신고번호를 brand.ts BIZ_INFO에 추가
-   ② 얼리버드 개시면 purchase.ts EARLY_BIRD.active=true ③ 이용약관 명문화(환불은 refund.html 참조 연결)
-   ④ 실카드 소액 결제·취소 1회 검증.
-3. 라이브 키는 어떤 파일에도 커밋 금지(시크릿은 supabase secrets, 클라 키는 Vercel env).
+| 순서 | 할 일 | 담당 | 상태 |
+|---|---|---|---|
+| ① | 키 짝 가드·폴백 제거 코드 선배포(엣지 함수 v4 + main) | 세션 | ✓ 2026-11-10 |
+| ② | 수파베이스 Secrets `TOSS_SECRET_KEY` → live_sk_ | 사용자(대시보드) | 대기 |
+| ③ | Vercel Production env `VITE_TOSS_CLIENT_KEY` → live_ck_ | 사용자(대시보드) | 대기 |
+| ④ | 재배포(main push 또는 Vercel Redeploy) | 세션 또는 사용자 | 대기 |
+| ⑤ | 확인: GET pay-order mode=live · 운영 번들 live_ck_ 접두 · 시트 테스트 배지 소멸 | 세션 | 대기 |
+| ⑥ | 실카드 소액 결제 → orders paid·test_mode false·entitlements 확인 → 상점관리자 취소 → 이용권 회수 | 사용자 결제 + 세션 확인 | 대기 |
+
+- ②와 ③ 사이의 틈은 키 짝 가드가 "점검 중"으로 막는다(카드 인증 전 단계). 어느 쪽을 먼저 바꿔도 안전.
+- 두 키는 개발자센터 → API 키 → **"API 개별 연동 키"** 탭의 라이브 키, **같은 상점(MID sticksbzvn)** 짝이다.
+  결제위젯 연동 키(live_gck_/live_gsk_)는 해당 없음.
+- 라이브 키는 어떤 파일에도 커밋 금지(시크릿은 supabase secrets, 클라 키는 Vercel env). 세션(에이전트)은
+  라이브 키 값을 다루지 않는다: 대시보드 입력은 사용자가 하고, 확인은 모드·접두로만 한다.
+- **결제 오픈 체크리스트**(전환과 함께 결정): ① 통신판매업 신고번호를 brand.ts BIZ_INFO + about.html 푸터에 추가
+  ② 얼리버드 개시면 purchase.ts EARLY_BIRD.active=true ③ 이용약관 명문화(환불은 refund.html 참조 연결)
+  ④ 위 ⑥ 실카드 소액 결제·취소 1회 검증.
 
 ## 서버 배포·스키마
 
@@ -64,9 +84,10 @@ NOT_FOUND_PAYMENT_SESSION, UNAUTHORIZED 아님). 이후 테스트 결제는 개�
   multipart(metadata{entrypoint_path:"index.ts", verify_jwt:false} + file). CORS·JWT는 함수 코드가 처리.
 - 테이블 정본 = `supabase/schema.sql`의 "결제" 블록(orders·entitlements·RLS·터치 트리거) —
   적용 완료(2026-08-13). 재적용도 관리 API database/query로(블록 전체 멱등).
-- 결제 e2e: `PORT=<dev포트> node qa/e2e-pay.mjs`(38검증 — 가격 동기·시트 계약·로그인 게이트·
-  스텁 왕복·실패 복귀). 실서버 왕복 검증은 테스트 유저 시딩(관리 API로 auth 유저 생성 → password
-  grant 세션 주입) 후 실플레이 — 세부 패턴은 메모리 project-toss-payments 참조.
+- 결제 e2e: `PORT=<dev포트> node qa/e2e-pay.mjs`(46검증: 가격 동기·폴백 키 0·키 짝 가드 소스·시트 계약·
+  로그인 게이트·스텁 왕복(clientMode 포함)·실패 복귀·[E] mode_mismatch 시 결제창 미개시).
+  **라이브 전환 뒤에는 실서버 테스트 결제가 불가**하다(서버 시크릿이 live라 테스트 키 결제는 키 짝 가드가
+  차단). 흐름 검증은 e2e 스텁으로, 실서버 검증은 실카드 소액 결제·취소로 한다.
 
 ## PG 심사 대응 (2026-08-14 — 토스 계약 담당자 필수질문 회신 세트)
 
@@ -87,14 +108,15 @@ NOT_FOUND_PAYMENT_SESSION, UNAUTHORIZED 아님). 이후 테스트 결제는 개�
   계정 포함)·하단 사업자정보·환불규정·로그인 경로·상품 구매과정·카드 결제경로(비씨는 인증 직전까지),
   전 캡처에 주소창 도메인 + PC 시계 노출 의무.
 - **잔여**: 통신판매업 신고번호(사용자 신고 예정 — 나오면 brand.ts BIZ_INFO + about.html 푸터 두 곳).
-- **라이브 전환 시 추가 확인**: pay-confirm의 `DOCS_TEST_SECRET` 폴백(index.ts:10·:109 — 시크릿
-  미설정 시 문서 공개 테스트 키로 조용히 폴백) 제거 또는 미설정 500 처리 — 라이브에서 시크릿 누락이
-  "문서 상점으로 승인 시도"가 되는 사고 방지.
+- **pay-confirm 폴백 키 제거 ✓(2026-11-10)**: 시크릿 미설정이면 503. 라이브에서 시크릿 누락이
+  "문서 상점으로 승인 시도"가 되는 사고를 막는다.
 
 ## 운영 메모
 
 - **주문 원장 조회**: orders(user_id·plan·subject_ids·amount·status·receipt_url·test_mode).
-  매출전표 URL = receipt_url. 테스트 결제는 test_mode=true로 구분.
+  매출전표 URL = receipt_url. 테스트 결제는 test_mode=true로 구분. 2026-11-10부터 test_mode는 **주문
+  생성 시점**에 서버 모드로 기록한다(이전엔 승인 때만 기록, 대기 주문은 컬럼 기본값 true). 전환 전 주문은
+  심사 기간 테스트 주문 26건(pending·test_mode true·결제 0건, entitlements 0행)이 전부다.
 - **환불 처리(수동, 취소 API 미구현)**: 토스 상점관리자에서 결제 취소 → entitlements에서 해당
   과목 행 삭제(또는 expires_at를 과거로) → orders.status='canceled'로 갱신. 정책은 refund.html 정본.
 - 30일 패스 재구매(만료 후)는 정상 동작. **활성 패스 중 소장 업그레이드는 페이월이 "이용중"으로

@@ -251,9 +251,11 @@ src/
   pay-confirm 엣지 함수(토스 승인 API + **entitlements 지급 — 이용권 서버 진실**, 소장 = 기간 없음·
   패스 = 승인 시각+30일 앵커, 로그인 시 refreshEntitlements가 교체 반영 = 패스 만료 집행 지점).
   **DEV 기본은 즉시 해금 스텁 유지**(전 e2e 계약 불변), 실플로우 강제 = sessionStorage "ss.payreal"
-  ="1"·가짜 유저 = "ss.payFakeUser"(e2e 스텁용). 현재 문서 공용 테스트 키 가동(시트에 "테스트 결제"
-  배지) — 내 상점(sticksbzvn) 키·라이브 키 교체는 PAYMENTS.md 절차. QA =
-  `PORT=<포트> node qa/e2e-pay.mjs`(38검증). Capacitor 포장 시 이 파일만 IAP 브리지로 교체.
+  ="1"·가짜 유저 = "ss.payFakeUser"(e2e 스텁용). **라이브 전환(2026-11-10 착수)**: 운영 = live 키 짝
+  (클라 키는 Vercel Production env, 시크릿은 supabase secrets), "테스트 결제" 배지는 테스트 키 빌드(dev·
+  프리뷰)에서만 뜬다. pay-order **키 짝 가드**(클라 clientMode ↔ 서버 시크릿 모드가 다르면 503, 결제창
+  미개시. GET = 모드 점검)·pay-confirm 폴백 키 없음. 전환 절차·진행 상태·확인법은 PAYMENTS.md 2단계. QA =
+  `PORT=<포트> node qa/e2e-pay.mjs`(46검증). Capacitor 포장 시 이 파일만 IAP 브리지로 교체.
 - **[백로그 — 부모님께 요청하기(2026-07-21 사용자 확정, 토스PG 결제 오픈과 세트)]**: 페이월 CTA 아래
   보조 버튼 → 시스템 공유(Web Share)/링크 복사 → **부모용 페이지**(아이 학습 리포트 요약 + 가격 +
   자동결제 없음·환불 문구 + 결제 버튼). 결제 결정자(부모)와 사용자(학생)의 간극을 잇는 핵심 전환
