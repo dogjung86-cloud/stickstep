@@ -514,11 +514,12 @@ src/
   `qa/sketch/scenes/splash.mjs`이고 넘기는 순서는 그 파일의 `frames()` 순서다(splash.ts는 `SPLASH_FRAMES`만 읽는다).
   컷을 고치거나 더하려면 장면 파일을 고치고 `node qa/sketch/build.mjs`. 그림 속 글자는 머리띠 하나만 예외
   (글꼴 없이 획으로 긋는다. 음표·하트 같은 기호는 허용). 옛 발주본 `public/brand/loading/*.webp`·`brand/study.webp`는
-  파일만 남아 있고 화면에서는 쓰지 않는다(study.webp는 앱 아이콘을 다시 만드는 make-icon.mjs의 원본이라 지우지 않는다).
+  앱 화면에서는 쓰지 않지만 **지우지 않는다**: 마케팅 영상의 엔드카드(`marketing/video/endcard2.html`)가 이 플립북
+  프레임을 읽고, study.webp는 앱 아이콘을 다시 만드는 make-icon.mjs의 원본이다.
 - **과목 허브 카드 스틱맨 4종**: 과목 소품(플라스크·삼각자·지구본·두루마리)을 든 쌤 상반신. **코드 그림(2026-11-11
   교체)**: `public/sketch/subj/{sci,math,soc,his}.svg`, 원본 `qa/sketch/scenes/subjects.mjs`. subject.ts subjArt()가
   `subjectArt(key)`를 읽고 로드 실패 시 stickAvatar 폴백(lazy 금지). 카드 문구 확정본(2026-07-21 사용자 선택)은
-  subject.ts가 정본. 옛 발주본 public/brand/subj/*.webp는 파일만 남아 있다.
+  subject.ts가 정본. 옛 발주본 public/brand/subj/*.webp는 2026-11-11에 지웠다.
 - **파비콘 = 발자국 마크(사용자 확정 2026-07-16)**: 블루 그라데이션 라운드 사각 + 흰 발자국 2개
   지그재그(홈 트레일 도장 #bsfp 실루엣) + 입체 옆면(#175BC4 — 지도 스텝 노드 문법) + 키라이트.
   재생성 `node qa/make-favicon.mjs` → public/favicon.ico(16·32·48 PNG-in-ICO)+brand/favicon-{크기}.png,
@@ -709,6 +710,12 @@ src/
 - **QA**: `node qa/sketch/preview.mjs <레슨> 4 1`(그림만 시트) → `bash qa/sketch/board.sh <레슨> "<지도 노드 이름>"
   "<단원 탭 머리글자>" <출력 png>`(앱 화면에서 한 편을 한 장으로) → `PORT=<포트> node qa/sketch/check-comics.mjs`
   (열 편을 폰 두 크기에서 끝까지 넘기며 그림 로드·말풍선이 컷 밖으로 나가는지와 서로 겹치는지·페이지 오류 확인).
+- **옛 만화 그림은 지웠다(2026-11-11)**: `public/comics/`의 u1l1·u1l3·u2v3l1·u2v3l7·u3l3·u4l3·u4l6·u5l3·u6l2·u7l3
+  열 폴더(webp 70장)와 `public/brand/subj`. 남긴 것은 `comics/avatar/*.png`(구버전 프로필 저장분과 스플래시 폴백),
+  `brand/loading`·`brand/study.webp`(위 스플래시 항목), `comics/u2l1`(배선 해제된 옛 unit2.ts). **병합하지 않은
+  병행 재제작 브랜치(sci-u3-v3·sci-u4-v3·sci-u2-v4·codex/u3-astra)의 새 단원 파일은 만화 블록이 아직 옛 webp
+  경로를 가리킨다.** 그 브랜치를 합칠 때는 만화 블록을 main의 `comicArt(...)` 블록(그림과 서술 글 모두)으로 바꿔야
+  한다. 그대로 합치면 그림이 뜨지 않고 폴백 스틱맨만 보인다(오류가 나지 않아 눈에 안 띈다).
 - **프리미엄 레슨의 문제 그림**: u2l7 거북 문제는 만화 장면 파일의 `extras()`가 뽑는 인물 없는 두 섬 그림
   (`sketch/comics/u2l7/island-a.svg`·`island-b.svg`)을 `ppair`로 쓴다. 3컷의 구도를 바꿀 때 함께 본다.
 

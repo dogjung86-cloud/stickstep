@@ -74,10 +74,12 @@ export function subjectScreen(opts: {
   });
 
   // 과목 카드 스틱맨: 코드로 그린 그림(public/sketch/subj, 과목 소품 든 쌤 상반신. 원본 qa/sketch/scenes/subjects.mjs),
-  // 로드 실패 시 stickAvatar 폴백. lazy 금지(.scroll 컨테이너에서 안 뜨는 사고 14 계보).
+  // 그림이 없는 과목이거나 로드에 실패하면 stickAvatar 폴백. lazy 금지(.scroll 컨테이너에서 안 뜨는 사고 14 계보).
   const subjArt = (key: string, fallback: Parameters<typeof stickAvatar>[0]): HTMLElement => {
+    const art = subjectArt(key);
+    if (!art) return stickAvatar(fallback);
     const img = document.createElement("img");
-    img.src = `${import.meta.env.BASE_URL}${subjectArt(key) ?? `brand/subj/${key}.webp`}`;
+    img.src = `${import.meta.env.BASE_URL}${art}`;
     img.alt = "";
     img.addEventListener("error", () => img.replaceWith(stickAvatar(fallback)));
     return img;
