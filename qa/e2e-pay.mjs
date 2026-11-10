@@ -144,6 +144,7 @@ async function openSheet(page) {
   check(sheetText.includes("14,900원"), "소장 1과목 금액 = 14,900원");
   check(sheetText.includes("법정대리인이 동의하지 않은"), "전상법 13조 2항 고지 원문");
   check(sheetText.includes("사업자등록번호"), "시트 사업자 정보");
+  check(sheetText.includes("통신판매업신고번호"), "시트 통신판매업 신고번호(전상법 표기)");
   check(!sheetText.includes("평생"), "'평생' 워딩 0(시트)");
   await page.screenshot({ path: "qa/shots/pay-sheet.png" });
 

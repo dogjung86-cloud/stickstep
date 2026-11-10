@@ -73,7 +73,7 @@ NOT_FOUND_PAYMENT_SESSION, UNAUTHORIZED 아님). 이후 테스트 결제는 개�
   결제위젯 연동 키(live_gck_/live_gsk_)는 해당 없음.
 - 라이브 키는 어떤 파일에도 커밋 금지(시크릿은 supabase secrets, 클라 키는 Vercel env). 세션(에이전트)은
   라이브 키 값을 다루지 않는다: 대시보드 입력은 사용자가 하고, 확인은 모드·접두로만 한다.
-- **결제 오픈 체크리스트**(전환과 함께 결정): ① 통신판매업 신고번호를 brand.ts BIZ_INFO + about.html 푸터에 추가
+- **결제 오픈 체크리스트**(전환과 함께 결정): ① 통신판매업 신고번호를 brand.ts BIZ_INFO + about.html 푸터에 추가 ✓(2026-11-10)
   ② 얼리버드 개시면 purchase.ts EARLY_BIRD.active=true ③ 이용약관 명문화(환불은 refund.html 참조 연결)
   ④ 위 ⑥ 실카드 소액 결제·취소 1회 검증.
 
@@ -107,7 +107,8 @@ NOT_FOUND_PAYMENT_SESSION, UNAUTHORIZED 아님). 이후 테스트 결제는 개�
 - **결제경로 PPT**: `D:\Brilliant Science\output\toss-pg\` — 가이드 요건 = 표지 가맹점 정보(테스트
   계정 포함)·하단 사업자정보·환불규정·로그인 경로·상품 구매과정·카드 결제경로(비씨는 인증 직전까지),
   전 캡처에 주소창 도메인 + PC 시계 노출 의무.
-- **잔여**: 통신판매업 신고번호(사용자 신고 예정 — 나오면 brand.ts BIZ_INFO + about.html 푸터 두 곳).
+- **통신판매업 신고번호 ✓(2026-11-10)**: 2026-경기시흥-2497. brand.ts BIZ_INFO(스플래시·페이월·주문 시트)와
+  about.html 푸터 두 곳에 기입. 국민카드 계약 조건(신고번호)도 이로써 충족.
 - **pay-confirm 폴백 키 제거 ✓(2026-11-10)**: 시크릿 미설정이면 503. 라이브에서 시크릿 누락이
   "문서 상점으로 승인 시도"가 되는 사고를 막는다.
 
