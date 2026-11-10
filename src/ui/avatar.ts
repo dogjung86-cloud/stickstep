@@ -1,13 +1,13 @@
-// 스틱맨 쌤 아바타 — 만화 컷과 같은 손그림 래스터(발주본)를 앱 전역에서 공용.
-// 만화·hook·recap 어디서든 같은 얼굴이 나오도록 여기서만 가져다 쓴다.
-// 이미지가 없거나 로드에 실패하면 기존 SVG(stickmanHead/stickman)로 우아하게 폴백.
-// 파일: public/comics/avatar/0..4.png (발주 프롬프트 qa/avatar_prompts.txt)
+// 스틱맨 쌤 아바타: 만화 컷과 같은 인물을 코드로 그린 인라인 SVG(ui/sketchArt, 원본 qa/sketch/scenes/avatars.mjs).
+// 만화·hook·recap 어디서든 같은 얼굴이 나오도록 여기서만 가져다 쓴다. 내려받기가 없어 표정이 바로 바뀐다.
+// 예전 발주본 public/comics/avatar/0..4.png 는 구버전 프로필 저장분(avatarId 0..4)과의 호환용으로만 남아 있다.
 // + 유저 프로필 아바타(선생님과 별개의 학생 캐릭터들)는 아래 PROFILE 섹션 — public/avatars/*.webp.
 
 import { el } from "../core/dom";
 import type { StickAvatarCfg } from "../core/store";
 import { stickman, stickmanHead } from "./figures";
 import { DEFAULT_STICK, normPreset, STICK_PRESETS, stickAvatarSvg } from "./stickParts";
+import { teacherSvg } from "./sketchArt";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
@@ -125,12 +125,6 @@ export function setStickAvatar(wrap: HTMLElement, kind: AvatarKind): void {
 }
 
 function mount(wrap: HTMLElement, kind: AvatarKind): void {
-  wrap.innerHTML = "";
-  const img = el("img", {
-    attrs: { src: `${base}comics/avatar/${FILE[kind]}.png`, alt: "", loading: "eager", "aria-hidden": "true" },
-  });
-  img.addEventListener("error", () => {
-    wrap.innerHTML = FULL_BODY.includes(kind) ? stickman() : stickmanHead();
-  });
-  wrap.appendChild(img);
+  wrap.classList.add("sk"); // 인라인 SVG용 크기 규칙(styles/sketch.css)
+  wrap.innerHTML = teacherSvg(kind);
 }

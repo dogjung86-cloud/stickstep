@@ -9,15 +9,15 @@ import { haptic, HAPTIC } from "../core/haptics";
 import { BRAND, BIZ_INFO } from "../core/brand";
 import type { Screen } from "../core/router";
 import { stepMarkSvg } from "../ui/stepMark";
+import { SPLASH_FRAMES, STUDY_ART } from "../ui/sketchArt";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
-// 몽타주 순서 — 놀이 컷 13장을 리듬 있게 섞고, '아차! 시계'(6)는 항상 마지막에 온다.
-// 0 먹기 · 1 티비 · 2 게임 · 3 컴퓨터 · 4 친구들 · 5 공놀이 · 6 아차!시계 ·
-// 7 폰 낄낄 · 8 만화책 · 9 낮잠 · 10 과자 · 11 노래방 · 12 자전거 · 13 강아지
-const FLIP_SEQ = [0, 1, 7, 2, 8, 3, 9, 10, 4, 11, 5, 12, 13, 6];
-const FLIP_FRAMES = FLIP_SEQ.map((i) => `${base}brand/loading/${i}.webp`);
-const STUDY = `${base}brand/study.webp`;
+// 플립북 컷은 코드로 그린 SVG(public/sketch/splash, 원본 qa/sketch/scenes/splash.mjs).
+// 넘기는 순서는 장면 파일의 frames() 순서다: 먹기 · 티비 · 폰 · 게임 · 만화책 · 컴퓨터 · 낮잠 · 과자 ·
+// 친구 · 노래 · 공놀이 · 자전거 · 강아지 · 아차! 시계(항상 마지막) → 정착 컷 "공부하자!".
+const FLIP_FRAMES = SPLASH_FRAMES.map((f) => base + f);
+const STUDY = base + STUDY_ART;
 // 발주 전 폴백 — 만화 아바타(손그림 스틱맨 5종)
 const FALLBACK_FRAMES = [0, 1, 2, 3, 4].map((i) => `${base}comics/avatar/${i}.png`);
 const FALLBACK_STUDY = `${base}comics/avatar/4.png`;
@@ -153,7 +153,7 @@ export function splashScreen(o: { signedIn: boolean; instant?: boolean; onStart:
     settle(true);
   } else {
     void (async () => {
-      const ok = await preload([...FLIP_FRAMES, STUDY]);
+      const ok = await preload([...frames, study]);
       if (!ok) {
         const fbOk = await preload([...FALLBACK_FRAMES, FALLBACK_STUDY]);
         if (!fbOk) {
