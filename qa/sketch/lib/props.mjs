@@ -380,9 +380,10 @@ export function cellsView(sk, cx, cy, r, o = {}) {
     const cell = rrect(x - cw * 0.44, y - ch * 0.42, cw * 0.88, ch * 0.84, cw * 0.16);
     if (!o.empty) sk.fill(cell, o.fill ?? "#E9D2A6", { dx: 0, dy: 0, wob: 0.5, seed: sd + 2 + n });
     sk.ink(cell, { w: o.w ?? 5, color: o.wall ?? "#A9773F", wob: 0.7, seed: sd + 3 + n });
+    if (o.nucleus) sk.dot(x + cw * 0.08, y, cw * 0.11, o.nucleus);
     n++;
   }
-  sk.ink(ring, { w: o.ringW ?? 11, seed: sd + 200 });
+  sk.ink(ring, { w: o.ringW ?? 11, seed: sd + 200, color: o.ringColor });
 }
 // 주전자: 몸통, 주둥이, 손잡이, 들썩이는 뚜껑. 원점 = 바닥 가운데
 export function kettle(sk, x, y, s = 1, o = {}) {

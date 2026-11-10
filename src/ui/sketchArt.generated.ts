@@ -164,6 +164,71 @@ export const COMIC_ART: Record<string, SketchPanelArt[]> = {
         }
       ]
     }
+  ],
+  "u2l1": [
+    {
+      "img": "sketch/comics/u2l1/0.svg",
+      "bubbles": [
+        {
+          "text": "오늘은<br>뭘 볼까?",
+          "x": 18.9,
+          "y": 33.3
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u2l1/1.svg",
+      "bubbles": [
+        {
+          "text": "왜 이리<br>가볍지?",
+          "x": 23.8,
+          "y": 31.8
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u2l1/2.svg",
+      "bubbles": [
+        {
+          "text": "더 얇게,<br>더 얇게",
+          "x": 18.6,
+          "y": 37.4
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u2l1/3.svg",
+      "bubbles": [
+        {
+          "text": "온통<br>작은 방!",
+          "x": 19.9,
+          "y": 31.7
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u2l1/4.svg"
+    },
+    {
+      "img": "sketch/comics/u2l1/5.svg",
+      "bubbles": [
+        {
+          "text": "움직인다!",
+          "x": 21.3,
+          "y": 26.8
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u2l1/6.svg",
+      "bubbles": [
+        {
+          "text": "내 몸도<br>칸칸이?",
+          "x": 21.9,
+          "y": 32.2
+        }
+      ]
+    }
   ]
 };
 

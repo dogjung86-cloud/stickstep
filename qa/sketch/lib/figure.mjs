@@ -276,6 +276,16 @@ export function drawHead(sk, o = {}) {
     sk.fill(band, mix(col, "#ffffff", 0.45), { dx: 1, dy: 1.4, wob: 0.8, seed: seed + 162 });
     sk.ink(band, { w: 10, wob: 0.9, seed: seed + 163 });
   }
+  if (o.hat === "brim") {
+    // 챙 넓은 모자(머리 모양 위에 겹쳐 쓴다): 낮고 둥근 통 + 넓은 챙
+    const col = o.hatColor ?? "#6B4A32";
+    const crown = curve([[-70, -84], [-62, -150], [0, -168], [62, -150], [70, -84]], false, 4);
+    sk.fill([...crown, crown[0]], col, { dx: 1.5, dy: 2, wob: 1, seed: seed + 220, tex });
+    sk.ink([...crown, crown[0]], { w: 10, wob: 1, seed: seed + 221 });
+    const brim = curve([[-160, -76], [-90, -98], [0, -102], [90, -98], [160, -76], [90, -68], [0, -64], [-90, -68]], true, 4);
+    sk.fill(brim, col, { dx: 1, dy: 1.4, wob: 0.8, seed: seed + 222 });
+    sk.ink(brim, { w: 10, wob: 1, seed: seed + 223 });
+  }
   if (style === "tophat") {
     // 실크해트: 높은 통 + 납작한 챙 + 띠
     const col = o.capColor ?? "#2E2E33";
@@ -318,6 +328,7 @@ export function drawHead(sk, o = {}) {
 // 머리 중심에서 머리 꼭대기(모자, 삐친 머리 포함)까지의 거리. 말풍선 꼬리가 닿을 자리다.
 export function headTop(o = {}) {
   const st = o.hair ?? "sprout";
+  if (o.hat === "brim") return 172;
   return st === "tricorn" ? 146 : st === "tophat" ? 212 : st === "gat" ? 174 : st === "curls" ? R + 28 : st === "sprout" ? R + 54 : st === "cap" ? R + 24 : st === "bald" ? R + 6 : R + 14;
 }
 
@@ -398,3 +409,5 @@ export const HOOKE = { hair: "curls", hairColor: "#6B4A32", coat: { color: "#7A5
 export const ENGINEER = { hair: "tophat", hairColor: "#5B463A", coat: { color: "#4A5568", buttons: C.gold, seam: "#2D3748", len: 34 }, seed: 111 };
 // 플레밍: 짧은 회색 머리 + 흰 가운 + 나비넥타이
 export const FLEMING = { hair: "short", hairColor: "#9A9A9A", coat: { color: C.white }, bowtie: C.red, seed: 121 };
+// 레이우엔훅: 챙 넓은 모자 + 긴 머리 + 풀빛 조끼
+export const LEEUWENHOEK = { hair: "curls", hairColor: "#8A6A4A", hat: "brim", hatColor: "#4E3B2E", coat: { color: "#5E7B5A", buttons: C.gold, seam: "#3E5540", len: 34 }, seed: 131 };
