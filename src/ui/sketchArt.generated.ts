@@ -516,6 +516,71 @@ export const COMIC_ART: Record<string, SketchPanelArt[]> = {
     {
       "img": "sketch/comics/u4l6/6.svg"
     }
+  ],
+  "u5l3": [
+    {
+      "img": "sketch/comics/u5l3/0.svg",
+      "bubbles": [
+        {
+          "text": "사과가<br>떨어졌네?",
+          "x": 28,
+          "y": 38.4
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u5l3/1.svg"
+    },
+    {
+      "img": "sketch/comics/u5l3/2.svg",
+      "bubbles": [
+        {
+          "text": "쭉<br>늘어났죠?",
+          "x": 25.3,
+          "y": 33.2
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u5l3/3.svg",
+      "bubbles": [
+        {
+          "text": "조금만<br>늘어나네!",
+          "x": 26,
+          "y": 36.4
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u5l3/4.svg",
+      "bubbles": [
+        {
+          "text": "여기서도<br>수평!",
+          "x": 22.9,
+          "y": 36.4
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u5l3/5.svg",
+      "bubbles": [
+        {
+          "text": "저 달까지<br>닿을까?",
+          "x": 49.2,
+          "y": 36.6
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u5l3/6.svg",
+      "bubbles": [
+        {
+          "text": "사과에서<br>달까지!",
+          "x": 26.6,
+          "y": 33.7
+        }
+      ]
+    }
   ]
 };
 
