@@ -60,14 +60,17 @@ export function profileIdOf(id: number | null | undefined): number {
 /** 프로필 아바타 요소 생성(원형 프레임 안에서 object-fit cover).
  *  우선순위: preset(캐릭터 프리셋) → custom(직접 꾸민 조합) → 래스터 avatarId(구버전 저장 호환)
  *  → 게스트 스틱(DEFAULT_STICK 벡터 — 프리셋 '기본'과 같은 캐릭터. 사용자 확정 2026-07-16:
- *  처음 아바타와 픽커의 '기본'이 같은 캐릭터여야 "기본으로 되돌리기"가 성립한다). */
+ *  처음 아바타와 픽커의 '기본'이 같은 캐릭터여야 "기본으로 되돌리기"가 성립한다).
+ *  view: "bust"(기본, 상반신) · "head"(얼굴 확대). 탭바 21px처럼 아주 작은 자리는 "head"로 그려야
+ *  얼굴이 읽힌다(상반신을 그대로 줄이면 얼굴이 10px 남짓이 된다). 래스터 폴백에는 영향이 없다. */
 export function profileAvatar(
   id: number | null | undefined,
   custom?: StickAvatarCfg | null,
   preset?: number | null,
+  view: "bust" | "head" = "bust",
 ): HTMLElement {
   const wrap = el("span", { class: "stick-avatar" });
-  setProfileAvatar(wrap, id, custom, preset);
+  setProfileAvatar(wrap, id, custom, preset, view);
   return wrap;
 }
 
@@ -77,22 +80,23 @@ export function setProfileAvatar(
   id: number | null | undefined,
   custom?: StickAvatarCfg | null,
   preset?: number | null,
+  view: "bust" | "head" = "bust",
 ): void {
   const p = normPreset(preset);
   if (p != null) {
     wrap.classList.remove("full");
-    wrap.innerHTML = stickAvatarSvg(STICK_PRESETS[p].cfg);
+    wrap.innerHTML = stickAvatarSvg(STICK_PRESETS[p].cfg, { view });
     return;
   }
   if (custom) {
     wrap.classList.remove("full");
-    wrap.innerHTML = stickAvatarSvg(custom);
+    wrap.innerHTML = stickAvatarSvg(custom, { view });
     return;
   }
   // 아무것도 고른 적 없음 = 게스트 스틱(프리셋 '기본'과 동일 벡터). 래스터는 저장된 avatarId 전용.
   if (id == null) {
     wrap.classList.remove("full");
-    wrap.innerHTML = stickAvatarSvg(DEFAULT_STICK);
+    wrap.innerHTML = stickAvatarSvg(DEFAULT_STICK, { view });
     return;
   }
   const i = profileIdOf(id);

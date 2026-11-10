@@ -44,6 +44,16 @@ export interface StickAvatarCfg {
   mouth: number;
   glasses: number;
   acc: number;
+  // v2(2026-11) 슬롯: 색·볼·옷·손에 든 것·배경. 구버전 저장분에는 없어서 선택형이고,
+  // stickParts.normStick이 0으로 채운다(0번 = 예전 모습이라 예전 조합이 그대로 보인다).
+  skin?: number;
+  hairColor?: number;
+  cheek?: number;
+  top?: number;
+  topColor?: number;
+  accColor?: number;
+  prop?: number;
+  bg?: number;
 }
 
 export interface AppState {

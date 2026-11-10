@@ -1,57 +1,136 @@
-/* 파츠 조합형 스틱맨 아바타 — 마이 탭 '아바타 꾸미기' 시트 내부 전용(공유 시트 오염 금지 원칙).
-   시트 껍데기(.mysheet-*)·스크림 전환은 ui.css 마이 탭 섹션과 base.css 소유 — 여기는
-   미리보기·모드 세그·캐릭터 프리셋 그리드·직접 꾸미기(카테고리 칩 + 파츠 그리드)만.
-   캐릭터 고르기와 직접 꾸미기는 상태가 완전 분리(2026-07-15 사용자 확정) — 스타일도 패널별로 나눈다. */
+/* 파츠 조합형 스틱맨 아바타: 마이 탭 '아바타 꾸미기' 시트 전용(공유 시트 오염 금지 원칙).
+   v2(2026-11): 미리보기 무대(되돌리기·랜덤) + 방식 탭 + 캐릭터 격자 + 직접 꾸미기(범주 칩 · 색 줄 · 파츠 격자).
+   시트 껍데기(.mysheet-*)·스크림 전환은 ui.css 마이 탭 섹션과 base.css 소유이고, 여기서는 이 시트에만
+   거는 변형(.mysheet.ava)과 본문(ui/avatarEditor.ts)만 다룬다.
+   캐릭터 고르기와 직접 꾸미기는 상태가 완전 분리(2026-07-15 사용자 확정)라 스타일도 패널별로 나눈다. */
 
-.avs-preview { width: 92px; height: 92px; margin: 2px auto 12px; border-radius: 50%; background: var(--blue-tint, #EEF4FF); border: 1.5px solid #DCE6FA; overflow: hidden; }
-.avs-preview .stick-avatar svg { width: 100%; height: 100%; }
+/* ── 시트 변형 ───────────────────────────────────────────────
+   편집기는 높이가 고정이다. 범주마다 파츠 수가 달라(4~17개) 내용 높이에 맡기면 칩을 누를 때마다
+   시트가 출렁인다. 화면 위 28px만 남기고(뒤 화면이 살짝 보여 시트임을 안다) 최대 760px까지 쓴다. */
+.mysheet.ava { top: max(28px, calc(100% - 760px)); }
+.mysheet.ava .mysheet-card { height: 100%; max-height: none; }
+.mysheet-body.avs { display: flex; flex-direction: column; min-height: 0; overflow: hidden; padding: 2px 18px 0; }
+/* 머리말의 글자 닫기 버튼("완료"): 풋의 큰 버튼 자리를 파츠 격자에 돌려주기 위한 것 */
+.mysheet-x.txt { width: auto; height: 32px; top: -6px; right: 14px; padding: 0 14px; border-radius: var(--r-pill); background: var(--blue-tint); color: var(--blue); font-size: 13.5px; font-weight: 800; }
+.mysheet-x.txt:active { background: var(--blue-tint-2); }
+/* 닫힌 시트는 아예 그리지 않는다: 세 시트(아바타·장화·닉네임)가 같은 자리에 포개져 있어서,
+   전환이 얼어붙는 환경(미리보기 하니스 등)에서 다른 시트가 비쳐 보이던 것을 막는다. */
+.mysheet { visibility: hidden; transition: transform .22s var(--ease-out), visibility 0s linear .22s; }
+.mysheet.open { visibility: visible; transition: transform .42s var(--spring), visibility 0s; }
 
-.ava-mode { display: flex; gap: 8px; }
+/* ── 미리보기 무대 ─────────────────────────────────────────── */
+.avs-stage { flex: none; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 16px; padding-top: 2px; }
+.avs-preview { grid-column: 2; grid-row: 1; width: 108px; height: 108px; border-radius: 50%; overflow: hidden; background: var(--blue-tint); box-shadow: 0 0 0 1.5px var(--n200), var(--sh-raise); }
+.avs-preview .stick-avatar svg { width: 100%; height: 100%; display: block; }
+/* 키가 큰 화면에서는 남는 높이를 미리보기에 준다(격자는 그래도 세 줄 넘게 보인다) */
+@media (min-height: 780px) { .avs-preview { width: 132px; height: 132px; } }
+.avs-preview.pop { animation: avsPop .32s var(--spring-soft); }
+@keyframes avsPop { 0% { transform: scale(.93); } 55% { transform: scale(1.04); } 100% { transform: scale(1); } }
+.avs-tag { grid-column: 1 / -1; grid-row: 2; margin-top: 7px; min-height: 17px; text-align: center; font-size: 12.5px; font-weight: 700; color: var(--n600); }
+.avs-act { grid-row: 1; display: grid; justify-items: center; gap: 4px; width: 60px; padding: 6px 0; border-radius: var(--r-md); color: var(--n700); transition: transform .12s var(--spring-soft), opacity .15s; }
+.avs-act:first-child { justify-self: end; }
+.avs-act:nth-child(3) { justify-self: start; }
+.avs-act-ic { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--n50); border: 1.5px solid var(--n200); transition: background .15s, border-color .15s; }
+.avs-act-tx { font-size: 11px; font-weight: 700; color: var(--n600); }
+.avs-act:active { transform: scale(.92); }
+.avs-act:active .avs-act-ic { background: var(--n100); }
+.avs-act:disabled { opacity: .36; pointer-events: none; }
+
+/* 미리보기만 살아 있다(숨쉬기 + 눈 깜빡임). 시트가 열려 있을 때만 돌고, 카드·탭바의 아바타는 정지 그림이다. */
+.sheet.open .stick-avatar.live .sa-bob { animation: saBob 3.8s ease-in-out infinite; }
+.sheet.open .stick-avatar.live .sa-eyes { transform-box: view-box; transform-origin: 48px 44px; animation: saBlink 4.8s infinite; }
+@keyframes saBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-.9px); } }
+@keyframes saBlink { 0%, 93.5%, 100% { transform: scaleY(1); } 96.5% { transform: scaleY(.08); } }
+
+/* ── 방식 탭 ───────────────────────────────────────────────── */
+.ava-mode { flex: none; display: flex; gap: 4px; margin-top: 9px; padding: 4px; border-radius: 14px; background: var(--n100); }
 .avm {
-  flex: 1; padding: 9px 0; border-radius: 12px;
-  border: 1.5px solid var(--n200, #E5EAF0); background: #fff;
-  font-size: 13px; font-weight: 700; color: var(--n600, #6B7684);
-  transition: transform .12s var(--ease), background .15s, color .15s, border-color .15s;
+  flex: 1; padding: 8px 0; border-radius: 11px;
+  font-size: 13.5px; font-weight: 700; color: var(--n600);
+  transition: transform .12s var(--ease), background .15s, color .15s, box-shadow .15s;
 }
 .avm:active { transform: scale(.97); }
-.avm.on { background: var(--ink, #191F28); border-color: var(--ink, #191F28); color: #fff; }
+.avm.on { background: var(--n0); color: var(--ink); box-shadow: var(--sh-card); }
 
-.avp-grid.hidden, .avc-panel.hidden { display: none; }
+.avp-pane.hidden, .avc-pane.hidden, .avc-colors.hidden { display: none; }
 
-/* 캐릭터 고르기 — 완성 캐릭터 프리셋 카드(3열, 이름 병기) */
-.avp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+/* ── 캐릭터 고르기: 완성 캐릭터 카드(3열) + 맨 앞 '내 캐릭터' ─── */
+.avp-pane { flex: 1; min-height: 0; margin: 8px -18px 0; padding: 4px 18px calc(18px + var(--safe-b)); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.avp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
 .avp {
-  border: 1.5px solid var(--n200, #E5EAF0); background: var(--n50, #F9FAFB);
-  border-radius: 14px; padding: 9px 4px 8px;
+  display: grid; justify-items: center; gap: 7px; padding: 12px 4px 10px;
+  border: 1.5px solid var(--n200); background: var(--n0); border-radius: var(--r-md);
   transition: border-color .15s, background .15s, box-shadow .15s, transform .12s var(--ease);
 }
 .avp:active { transform: scale(.95); }
-.avp.sel { border-color: var(--blue, #3182F6); background: var(--blue-tint, #EEF4FF); box-shadow: 0 0 0 3px rgba(49, 130, 246, .13); }
-.avp svg { width: 56px; height: 56px; display: block; margin: 0 auto; }
-.avp-name { display: block; margin-top: 4px; text-align: center; font-size: 11.5px; font-weight: 700; color: var(--n600, #6B7684); }
-.avp.sel .avp-name { color: var(--blue, #3182F6); }
+.avp.sel { border-color: var(--blue); background: var(--blue-tint); box-shadow: 0 0 0 3px rgba(49, 130, 246, .13); }
+.avp-ava { display: block; width: 68px; height: 68px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 0 1.5px var(--n200); }
+.avp-ava svg { width: 100%; height: 100%; display: block; }
+.avp-name { font-size: 12.5px; font-weight: 700; color: var(--n700); }
+.avp.sel .avp-name { color: var(--blue); }
+.avp.mine { border-style: dashed; border-color: var(--n300); }
+.avp.mine.sel { border-style: solid; border-color: var(--blue); }
 
-/* 직접 꾸미기 — 카테고리 칩 한 줄 + 해당 파츠 그리드(4열).
-   썸네일 = 현재 조합에서 그 파츠만 바꾼 모습(효과가 문맥 속에서 바로 보인다). */
-.avc-cats { display: flex; gap: 6px; overflow-x: auto; margin: 14px -18px 0; padding: 0 18px 4px; scrollbar-width: none; }
-.avc-cats::-webkit-scrollbar { display: none; }
+/* ── 직접 꾸미기: 범주 칩 한 줄 + 색 줄 + 파츠 격자 ───────────
+   썸네일 = 지금 내 스틱맨에서 그 파츠만 바꾼 모습. 눈·입처럼 작은 파츠는 그 부위만 확대해서 보여 준다
+   (상반신 전체를 60px로 줄이면 눈 모양 차이가 안 보인다: v1의 문제). */
+.avc-pane { flex: 1; min-height: 0; display: flex; flex-direction: column; margin-top: 9px; }
+.avc-cats, .avc-colors-row { display: flex; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.avc-cats::-webkit-scrollbar, .avc-colors-row::-webkit-scrollbar { display: none; }
+.avc-cats { flex: none; gap: 6px; margin: 0 -18px; padding: 0 18px 2px; }
 .avc-cat {
-  flex: none; border: 1.5px solid var(--n200, #E5EAF0); background: #fff;
-  font-size: 13px; font-weight: 700; color: var(--n600, #6B7684);
-  border-radius: 999px; padding: 7px 13px;
+  flex: none; border: 1.5px solid var(--n200); background: var(--n0);
+  font-size: 13px; font-weight: 700; color: var(--n600);
+  border-radius: var(--r-pill); padding: 7px 13px;
   transition: transform .12s var(--ease), background .15s, color .15s, border-color .15s;
 }
 .avc-cat:active { transform: scale(.96); }
-.avc-cat.on { background: var(--ink, #191F28); border-color: var(--ink, #191F28); color: #fff; }
-.avc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+.avc-cat.on { background: var(--ink); border-color: var(--ink); color: var(--n0); }
+
+.avc-colors { flex: none; display: flex; align-items: center; gap: 10px; margin: 7px -18px 0; padding-left: 18px; }
+.avc-colors-tx { flex: none; font-size: 12px; font-weight: 700; color: var(--n500); }
+.avc-colors-row { flex: 1; gap: 8px; padding: 5px 18px 5px 5px; }
+.avc-sw { position: relative; flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1.5px rgba(25, 31, 40, .13); transition: transform .12s var(--spring-soft); }
+.avc-sw:active { transform: scale(.88); }
+.avc-sw.sel::after { content: ""; position: absolute; inset: -4.5px; border-radius: 50%; border: 2.5px solid var(--blue); }
+
+.avc-scroll { flex: 1; min-height: 0; margin: 6px -18px 0; padding: 4px 18px calc(18px + var(--safe-b)); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.avc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(74px, 1fr)); gap: 8px; }
 .avc-opt {
-  aspect-ratio: 1; border-radius: 14px; padding: 4px; overflow: hidden;
-  background: var(--n50, #F9FAFB); border: 1.5px solid var(--n200, #E5EAF0);
+  display: grid; justify-items: center; gap: 4px; padding: 4px 4px 6px; min-width: 0;
+  border-radius: var(--r-md); background: var(--n0); border: 1.5px solid var(--n200);
   transition: border-color .15s, background .15s, box-shadow .15s, transform .12s var(--ease);
 }
-.avc-opt:active { transform: scale(.93); }
-.avc-opt.sel { border-color: var(--blue, #3182F6); background: var(--blue-tint, #EEF4FF); box-shadow: 0 0 0 3px rgba(49, 130, 246, .13); }
-.avc-opt svg { width: 100%; height: 100%; display: block; }
+.avc-opt:active { transform: scale(.94); }
+.avc-opt.sel { border-color: var(--blue); background: var(--blue-tint); box-shadow: 0 0 0 3px rgba(49, 130, 246, .13); }
+.avc-thumb { display: block; width: 100%; aspect-ratio: 1; border-radius: 11px; overflow: hidden; background: var(--n50); }
+.avc-thumb.round { width: 86%; margin: 7% 0; border-radius: 50%; box-shadow: 0 0 0 1.5px var(--n200); }
+.avc-opt.sel .avc-thumb { background: var(--n0); }
+.avc-thumb svg { width: 100%; height: 100%; display: block; }
+.avc-name { max-width: 100%; font-size: 11px; font-weight: 700; color: var(--n600); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.avc-opt.sel .avc-name { color: var(--blue); }
 
-/* 커스텀 아바타 SVG가 원형 프레임을 꽉 채우도록 — .login-ava svg(62px 고정, 폴백 스틱맨용)보다 우선 */
+/* 마우스로 쓰는 화면(PC 브라우저)에서는 가로로 굴릴 수단이 없다: 범주 칩과 색 줄을 줄바꿈으로 편다.
+   (오답노트 단원 칩과 같은 교훈, 2026-07-20. 손가락으로 쓰는 기기는 한 줄 가로 스크롤 그대로) */
+@media (hover: hover) and (pointer: fine) {
+  .avc-cats { flex-wrap: wrap; row-gap: 6px; overflow-x: visible; }
+  .avc-colors { align-items: flex-start; }
+  .avc-colors-tx { margin-top: 13px; }
+  .avc-colors-row { flex-wrap: wrap; row-gap: 9px; overflow-x: visible; }
+}
+
+/* 프로필 카드의 아바타는 누르면 꾸미기 시트가 열린다(연필과 같은 동작) */
+.mypf-ava { cursor: pointer; transition: transform .12s var(--spring-soft); }
+.mypf-ava:active { transform: scale(.95); }
+
+/* 커스텀 아바타 SVG가 원형 프레임을 꽉 채우도록: .login-ava svg(62px 고정, 폴백 스틱맨용)보다 우선 */
 .login-ava .stick-avatar svg { width: 100%; height: 100%; }
+
+/* 움직임 줄이기: 이동·튕김은 끄고 시트의 200ms 페이드만 남긴다(base.css 원칙 ④) */
+@media (prefers-reduced-motion: reduce) {
+  .mysheet { transition: opacity .2s ease, visibility 0s linear .2s !important; }
+  .mysheet.open { transition: opacity .2s ease, visibility 0s !important; }
+  .avs-preview.pop,
+  .sheet.open .stick-avatar.live .sa-bob,
+  .sheet.open .stick-avatar.live .sa-eyes { animation: none; }
+}
