@@ -2,6 +2,7 @@
 // 그림 안 글자는 12px 이상, 정답을 드러내는 이름표는 넣지 않는다.
 
 import { ONION_TILE_MM, bvSrc } from "./bio6Kit";
+import { webGroup } from "./bio6Web";
 
 /** 양파 껍질 현미경 사진 + 0.1 mm 눈금자(문제용). 세포 한 칸의 양 끝에서 점선을 내려 눈금자로 읽게 한다.
  *  축척은 랩(magnifyLab)과 같은 자다(거울 타일 한 장 = ONION_TILE_MM). 여기서는 1 mm = 460px(눈금 한 칸 0.1 mm = 46px).
@@ -43,3 +44,10 @@ export function onionRulerFig(): string {
     </div>
   </div>`;
 }
+
+/** (나) 생태계의 먹이 관계 그림(u2l10 문제). 랩의 무대와 같은 자리, 같은 화살표를 밝은 바탕에 그린다.
+ *  화살표는 먹히는 생물에서 먹는 생물 쪽을 가리킨다. 그림 칸에서 폭에 맞춰 늘어나도 비율은 그대로다. */
+export function foodWebFig(): string {
+  return `<svg class="fwb-fig" viewBox="96 38 248 186" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="아홉 가지 생물의 먹이 관계. 화살표는 먹히는 생물에서 먹는 생물 쪽을 가리킨다">${webGroup("B")}</svg>`;
+}
+

@@ -13,6 +13,7 @@ const FILES = [
   "src/content/unit2v5.ts",
   "src/ui/bio6Kit.ts",
   "src/ui/bio6Figures.ts",
+  "src/ui/bio6Web.ts",
   "src/styles/bio6.css",
   ...fs.readdirSync(path.join(ROOT, "src/lessons/steps/bio6")).filter((f) => f.endsWith(".ts")).map((f) => `src/lessons/steps/bio6/${f}`),
   ...fs.readdirSync(path.join(ROOT, "qa")).filter((f) => /u2v5|make-bio6|audit-g1-labs|shot-g1-lab-play/.test(f)).map((f) => `qa/${f}`),

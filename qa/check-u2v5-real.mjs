@@ -2,6 +2,7 @@
 // 랩의 막대와 카드도 실제 마우스 입력(누르고, 끌고, 떼기)으로 조작한다. e2e-u2v5가 합성 이벤트로 보지 못하는 것을 본다.
 //   ① 토글 없음 = 정본 v3(u2l1 만화 뒤 랩이 배율 버튼) ② 주소 ?u2v5 = 새 판(확대 막대)
 //   ③ u2l1 확대 랩을 마우스 끌기로 끝까지 ④ u2l3 표본 만들기(덮개 유리 막대를 천천히 끌기)와 관찰 랩(초점 막대, 핵 누르기)을 끝까지
+//   ⑤ u2l5 구성 단계 랩(모으기 막대를 단계마다 끌어 놓기) ⑥ u2l7 두 섬의 새 랩(시간 막대 끌기) ⑦ u2l9 검색표 랩(예, 아니요 실제 클릭)
 //   PORT=5547 node qa/check-u2v5-real.mjs
 import { chromium } from "playwright-core";
 
@@ -197,6 +198,105 @@ console.log("u2l3 표본 만들기 · 관찰 랩");
   ok(await done(page), "관찰 랩 결론");
   await W(page, 300);
   ok(await ctaOpen(page), "u2l3 랩 둘 완료, 아래 버튼이 열린다");
+  await page.close();
+}
+
+// ⑤ u2l5: 구성 단계 랩을 실제 끌기로
+console.log("u2l5 구성 단계 랩");
+{
+  const page = await newPage();
+  await boot(page, "?u2v5");
+  await openNode(page, 4);
+  await page.locator(`${A} .hb4-bh`).click();
+  await W(page, 600);
+  await page.locator(`${A} .hb4-bh`).click();
+  await W(page, 1600);
+  await page.locator(`${A} .hook-choice`, { hasText: "비슷한 세포끼리" }).first().click();
+  await W(page, 600);
+  await cta(page);
+  ok(await page.locator(`${A} .bv-step .blv-range`).isVisible(), "훅 뒤에 구성 단계 랩이 열린다");
+  for (const [to, lv] of [[0.25, "1"], [0.5, "2"], [0.75, "3"], [1, "4"]]) {
+    await dragRange(page, ".blv-range", to, 380);
+    await waitDs(page, "blvLevel", lv);
+  }
+  ok((await page.locator(`${A} .blv-rung.on`).count()) === 5 && (await ds(page, "blvDone")) === "animal", "동물: 막대를 단계마다 끌어 놓으면 계단 다섯 칸이 쌓인다");
+  await page.locator(`${A} .bv-card[data-k="plant"]`).click();
+  await waitDs(page, "blvRoute", "plant");
+  await W(page, 300);
+  ok((await page.locator(`${A} .blv-rung.on`).count()) === 1, "식물을 고르면 계단이 세포 한 칸부터 다시 시작한다");
+  // 한 번에 끝까지 끌어도 지나간 단계가 모두 쌓인다
+  await dragRange(page, ".blv-range", 1, 900);
+  await waitDs(page, "blvLevel", "4");
+  ok((await page.locator(`${A} .blv-rung.on`).count()) === 5 && (await ds(page, "blvDone")) === "animal,plant", "식물: 한 번에 끝까지 끌어도 다섯 칸이 쌓인다");
+  await page.locator(`${A} .blv-cmp`).waitFor({ state: "visible", timeout: 6000 });
+  await page.locator(`${A} .blv-cmp`).click();
+  await waitAsk(page);
+  const q1 = await page.locator(`${A} .bv-qt`).textContent();
+  await choice(page, true).click();
+  await page.waitForFunction((q) => { const e = document.querySelector(".screen.active .bv-q.show .bv-qt"); return !!e && e.textContent !== q; }, q1, { timeout: 8000 });
+  await W(page, 400);
+  await choice(page, true).click();
+  ok(await done(page), "구성 단계 랩 결론");
+  await W(page, 300);
+  ok(await ctaOpen(page), "u2l5 랩 완료, 아래 버튼이 열린다");
+  await page.close();
+}
+
+// ⑥ u2l7: 시간 막대를 실제로 끈다
+console.log("u2l7 두 섬의 새 랩");
+{
+  const page = await newPage();
+  await boot(page, "?u2v5");
+  await openNode(page, 6);
+  await cta(page, 8);
+  ok(await page.locator(`${A} .bv-step .bki-svg`).isVisible(), "만화와 개념 뒤에 두 섬의 새 랩이 열린다");
+  await waitAsk(page);
+  await page.locator(`${A} .bv-q.show .bv-choice`, { hasText: "두꺼운 부리" }).click();
+  await page.locator(`${A} .bki-range`).waitFor({ state: "visible", timeout: 6000 });
+  await W(page, 300);
+  await dragRange(page, ".bki-range", 1 / 3, 300);
+  ok((await ds(page, "bkiStep")) === "1" && (await ds(page, "bkiA")) === "5,2,2", "시간 막대를 한 눈금 끌면 두꺼운 부리가 5마리로 는다");
+  await dragRange(page, ".bki-range", 1, 700);
+  ok((await ds(page, "bkiStep")) === "3" && (await ds(page, "bkiA")) === "9,0,0" && (await ds(page, "bkiB")) === "0,9,0", "끝까지 끌면 섬마다 한 가지 부리만 남는다");
+  await waitAsk(page);
+  const q1 = await page.locator(`${A} .bv-qt`).textContent();
+  await choice(page, true).click();
+  await page.waitForFunction((q) => { const e = document.querySelector(".screen.active .bv-q.show .bv-qt"); return !!e && e.textContent !== q; }, q1, { timeout: 8000 });
+  await W(page, 400);
+  await choice(page, true).click();
+  ok(await done(page), "두 섬의 새 랩 결론");
+  await page.close();
+}
+
+// ⑦ u2l9: 검색표의 예, 아니요를 실제로 누른다
+console.log("u2l9 검색표 랩");
+{
+  const page = await newPage();
+  await boot(page, "?u2v5");
+  await openNode(page, 8);
+  await page.locator(`${A} .hb4-mr`).click();
+  await page.locator(`${A} .hook-choice`, { hasText: "광합성" }).first().click();
+  await W(page, 600);
+  await cta(page);
+  ok(await page.locator(`${A} .bv-step .kpl-card`).isVisible(), "훅 뒤에 검색표 랩이 열린다");
+  const idle = async () => { await W(page, 150); await waitDs(page, "kplBusy", "0"); await W(page, 250); };
+  const PLAN = [[[1, false]], [[1, true]], [[1, true], [3, true]], [[1, true], [3, false], [4, true]], [[1, true], [3, false], [4, false]]];
+  for (let i = 0; i < PLAN.length; i++) {
+    for (const [g, yes] of PLAN[i]) {
+      await waitDs(page, "kplGate", String(g));
+      await idle();
+      await page.locator(`${A} ${yes ? ".kpl-yes" : ".kpl-no"}`).click();
+    }
+    await waitDs(page, "kplLanded", String(i + 1));
+    await W(page, 300);
+    await page.locator(`${A} .kpl-next`).click();
+  }
+  ok((await page.locator(`${A} .kpl-box.full`).count()) === 5, "생물 다섯이 모두 제 계의 칸에 들어간다");
+  await waitAsk(page);
+  await choice(page, true).click();
+  ok(await done(page), "검색표 랩 결론");
+  await W(page, 300);
+  ok(await ctaOpen(page), "u2l9 랩 완료, 아래 버튼이 열린다");
   await page.close();
 }
 

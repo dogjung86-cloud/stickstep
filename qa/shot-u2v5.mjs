@@ -1,8 +1,9 @@
 // 중1 Ⅱ v5 눈검수·판정 자료용 캡처(390×700, 2배 선명도).
-//   v5: 랩 다섯 판의 주요 시점 + 새 문제 화면(각 문제의 첫 화면)
+//   v5: 랩 열세 판의 주요 시점 + 문제 화면(각 문제의 첫 화면)
 //   v3: 같은 레슨의 랩 첫 화면(토글을 끈 같은 서버)
 //   v4: 같은 레슨의 랩 첫 화면(v4 워크트리 서버, PORT4. 없으면 건너뛴다)
 //   PORT=5547 PORT4=5503 node qa/shot-u2v5.mjs <출력 폴더>
+//   LESSONS=4-10 을 붙이면 그 레슨만 찍는다(1부터 센다).
 import fs from "node:fs";
 import path from "node:path";
 import { chromium } from "playwright-core";
@@ -11,13 +12,15 @@ import { LABS, launch, openLesson, goStep, W } from "./u2v5-lib.mjs";
 const OUT = process.argv[2];
 if (!OUT) throw new Error("출력 폴더를 적어 주세요");
 const PORT4 = process.env.PORT4 || "";
+const [L0, L1] = (process.env.LESSONS || "1-10").split("-").map(Number);
+const LIS = Array.from({ length: 10 }, (_, i) => i).filter((i) => i + 1 >= L0 && i + 1 <= (L1 || L0));
 for (const d of ["v5", "v3", "v4"]) fs.mkdirSync(path.join(OUT, d), { recursive: true });
 const clean = (page) => page.evaluate(() => document.querySelectorAll(".snack, .toast").forEach((e) => e.remove()));
 
 // ── v5: 랩 ──
 {
   const { browser, page } = await launch();
-  for (const lab of LABS) {
+  for (const lab of LABS.filter((l) => LIS.includes(l.li))) {
     await openLesson(page, lab.li);
     await goStep(page, lab.si);
     const on = async (label) => {
@@ -28,7 +31,7 @@ const clean = (page) => page.evaluate(() => document.querySelectorAll(".snack, .
     console.log("v5", lab.key);
   }
   // ── v5: 문제 화면 ──
-  for (const li of [0, 1, 2]) {
+  for (const li of LIS) {
     const meta = await openLesson(page, li);
     for (let si = 0; si < meta.types.length; si++) {
       if (si > 0) {
@@ -58,7 +61,7 @@ async function mounts(tag, port, flagKey, modPath, exportName) {
   }, flagKey);
   await page.goto(`http://localhost:${port}/`, { waitUntil: "domcontentloaded" });
   await page.waitForTimeout(1200);
-  for (const li of [0, 1, 2]) {
+  for (const li of LIS) {
     const meta = await page.evaluate(async ({ li, modPath, exportName }) => {
       const { nav } = await import("/src/core/router.ts");
       const { createLessonPlayer } = await import("/src/lessons/player.ts");

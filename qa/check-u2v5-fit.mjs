@@ -1,5 +1,6 @@
 // 중1 Ⅱ v5 한 화면 예산 기계 검사.
-// 랩 다섯 판을 실제로 조작하면서 마운트, 조작 중, 판정, 오답 시점마다 치수를 잰다.
+// 랩 열세 판을 실제로 조작하면서 마운트, 조작 중, 판정, 오답 시점마다 치수를 잰다.
+//   ONLY=l4-fit,l5-level 처럼 랩을 골라 돌릴 수 있다.
 //   ① 스텝 전체 높이 ≤ 스크롤 영역(390×700에서 554px). 완료 뒤(궁금증 카드가 붙은 뒤)는 예외로 둔다.
 //   ② 무대는 150px 안에서 시작하고, 조작 칸 자리는 처음부터 끝까지 움직이지 않는다(화면 밀림 0)
 //   ③ 도움말은 두 줄 안, 조작 칸 안의 내용은 칸을 넘지 않는다
@@ -14,6 +15,7 @@ import { LABS, BUDGET, launch, openLesson, goStep, measure } from "./u2v5-lib.mj
 
 const SHOTS = process.argv[2] || "";
 if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
+const PICK = (process.env.ONLY || "").split(",").map((x) => x.trim()).filter(Boolean);
 const VIEWS = [
   { w: 390, h: 700, name: "390×700", minFont: 12 },
   { w: 360, h: 700, name: "360×700", minFont: 11 },
@@ -35,7 +37,7 @@ const check = (cond, label) => {
 for (const view of VIEWS) {
   console.log(`\n■ ${view.name}`);
   const { browser, page, errors } = await launch({ width: view.w, height: view.h });
-  for (const lab of LABS) {
+  for (const lab of LABS.filter((l) => !PICK.length || PICK.includes(l.key))) {
     const meta = await openLesson(page, lab.li);
     await goStep(page, lab.si);
     let slotTop = null;
@@ -62,7 +64,7 @@ for (const view of VIEWS) {
     };
     check(meta.types[lab.si].endsWith("Lab"), `[${view.name}] ${lab.key} 스텝 타입 ${meta.types[lab.si]}`);
     await lab.play(page, { wrong: true, on });
-    console.log(`  ${lab.key.padEnd(11)} ${rows.join("  ")}`);
+    console.log(`  ${lab.key.padEnd(11)} ${rows.length}시점 최대 ${Math.max(...rows.map((r) => Number(r.split(":")[1])))}px`);
   }
   check(errors.length === 0, `[${view.name}] 페이지 오류 ${errors.length}건 ${errors.slice(0, 2).join(" / ")}`);
   await browser.close();
