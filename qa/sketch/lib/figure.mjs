@@ -293,6 +293,15 @@ export function drawHead(sk, o = {}) {
     sk.fill(brim, col, { dx: 1, dy: 1.4, wob: 0.8, seed: seed + 222 });
     sk.ink(brim, { w: 10, wob: 1, seed: seed + 223 });
   }
+  if (o.hat === "bokdu") {
+    // 고려 관리의 관모(복두): 앞은 낮고 뒤가 솟은 두 단의 검은 모자 + 옆으로 뻗은 두 날개
+    const col = o.hatColor ?? "#2E2E33";
+    for (const sg of [-1, 1]) { const wing = curve([[sg * 86, -104], [sg * 150, -116], [sg * 184, -108], [sg * 150, -94], [sg * 90, -90]], true, 3); sk.fill(wing, col, { dx: 0.8, dy: 1, wob: 0.6, seed: seed + 240 }); sk.ink(wing, { w: 8, wob: 0.7, seed: seed + 241 + (sg > 0 ? 1 : 0) }); }
+    const back = curve([[-70, -92], [-64, -166], [0, -184], [64, -166], [70, -92]], false, 4);
+    sk.fill([...back, back[0]], col, { dx: 1.5, dy: 2, wob: 1, seed: seed + 243, tex }); sk.ink([...back, back[0]], { w: 10, wob: 1, seed: seed + 244 });
+    const front = curve([[-98, -58], [-88, -116], [0, -134], [88, -116], [98, -58], [50, -72], [0, -76], [-50, -72]], true, 4);
+    sk.fill(front, col, { dx: 1.5, dy: 2, wob: 1, seed: seed + 245, tex }); sk.ink(front, { w: 10, wob: 1, seed: seed + 246 });
+  }
   if (style === "tophat") {
     // 실크해트: 높은 통 + 납작한 챙 + 띠
     const col = o.capColor ?? "#2E2E33";
@@ -336,6 +345,7 @@ export function drawHead(sk, o = {}) {
 export function headTop(o = {}) {
   const st = o.hair ?? "sprout";
   if (o.hat === "brim") return 172;
+  if (o.hat === "bokdu") return 188;
   return st === "tricorn" ? 146 : st === "tophat" ? 212 : st === "gat" ? 174 : st === "curls" ? R + 28 : st === "sprout" ? R + 54 : st === "cap" ? R + 24 : st === "bald" ? R + 6 : R + 14;
 }
 
@@ -427,3 +437,5 @@ export const GOULD = { hair: "short", hairColor: "#3F3A36", glasses: true, coat:
 // 그랜트 부부: 챙 넓은 햇볕 모자
 export const GRANT_A = { hair: "short", hairColor: "#9A9A9A", fringe: 24, hat: "brim", hatColor: "#E9D9B0", seed: 171 };
 export const GRANT_B = { hair: "bob", hairColor: "#B9B3A7", hat: "brim", hatColor: "#E9D9B0", seed: 181 };
+// 고려의 천문 관리: 관모(복두) + 붉은 관복
+export const OFFICIAL = { hair: "bald", hat: "bokdu", coat: { color: "#B0504A", seam: "#7A2F2B", len: 74 }, seed: 251 };

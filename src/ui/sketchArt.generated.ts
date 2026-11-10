@@ -674,6 +674,102 @@ export const COMIC_ART: Record<string, SketchPanelArt[]> = {
         }
       ]
     }
+  ],
+  "u7l3": [
+    {
+      "img": "sketch/comics/u7l3/0.svg",
+      "bubbles": [
+        {
+          "text": "해에 점이<br>있다!",
+          "x": 66.6,
+          "y": 31.5
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u7l3/1.svg",
+      "bubbles": [
+        {
+          "text": "종이에<br>비춰 봐요!",
+          "x": 35.6,
+          "y": 36.5
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u7l3/2.svg",
+      "bubbles": [
+        {
+          "text": "지구보다<br>커요!",
+          "x": 21.5,
+          "y": 33.7
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u7l3/3.svg",
+      "bubbles": [
+        {
+          "text": "대류,<br>기억나요?",
+          "x": 73.1,
+          "y": 32.7,
+          "tail": "right"
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u7l3/4.svg",
+      "bubbles": [
+        {
+          "text": "왕관<br>같아요!",
+          "x": 67.5,
+          "y": 47.9,
+          "tail": "right"
+        },
+        {
+          "text": "늘 있던<br>거예요",
+          "x": 16.3,
+          "y": 53.4
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u7l3/5.svg",
+      "bubbles": [
+        {
+          "text": "홍염과<br>플레어!",
+          "x": 29.5,
+          "y": 37.9,
+          "tail": "left"
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u7l3/6.svg",
+      "bubbles": [
+        {
+          "text": "기록을 모았더니",
+          "x": 20.8,
+          "y": 59.7
+        },
+        {
+          "text": "박자가 보여요!",
+          "x": 59.5,
+          "y": 54,
+          "tail": "right"
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u7l3/7.svg",
+      "bubbles": [
+        {
+          "text": "우주 날씨도<br>예보해요",
+          "x": 15.1,
+          "y": 53.7
+        }
+      ]
+    }
   ]
 };
 
