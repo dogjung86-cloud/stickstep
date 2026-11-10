@@ -304,6 +304,83 @@ export const COMIC_ART: Record<string, SketchPanelArt[]> = {
         }
       ]
     }
+  ],
+  "u3l3": [
+    {
+      "img": "sketch/comics/u3l3/0.svg",
+      "bubbles": [
+        {
+          "text": "등이 뜨끈해!",
+          "x": 46.5,
+          "y": 35.6,
+          "tail": "right"
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u3l3/1.svg",
+      "bubbles": [
+        {
+          "text": "앗, 뜨거!",
+          "x": 25.2,
+          "y": 34.8
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u3l3/2.svg"
+    },
+    {
+      "img": "sketch/comics/u3l3/3.svg",
+      "bubbles": [
+        {
+          "text": "나무는<br>멀쩡해!",
+          "x": 18.3,
+          "y": 35.4
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u3l3/4.svg",
+      "bubbles": [
+        {
+          "text": "물이 돌고<br>있었네!",
+          "x": 21.4,
+          "y": 34.8
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u3l3/5.svg",
+      "bubbles": [
+        {
+          "text": "연기가<br>위로 가!",
+          "x": 17.2,
+          "y": 36.4
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u3l3/6.svg",
+      "bubbles": [
+        {
+          "text": "어, 온기가<br>뚝!",
+          "x": 67.9,
+          "y": 26.4,
+          "tail": "right"
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u3l3/7.svg",
+      "bubbles": [
+        {
+          "text": "깜깜한데<br>보여!",
+          "x": 19.3,
+          "y": 35.4
+        }
+      ]
+    }
   ]
 };
 
