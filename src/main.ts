@@ -25,7 +25,7 @@ import "./styles/desktop.css"; // 데스크톱 셸(옵트인·≥1024px) — htm
 import { nav } from "./core/router";
 import { parseRoute, writeHash } from "./core/route";
 import type { AppRoute } from "./core/route";
-import { getState, completeLesson, setOnboarding, setViewSubject, setViewGrade, getViewSubject, isPremium, isReviewMode, setPremiumOverride, setAdminOverride, canSeeAllSubjects, isDone, setLastUnit, recentUnit } from "./core/store";
+import { getState, completeLesson, setOnboarding, setViewSubject, setViewGrade, getViewSubject, isPremium, isReviewMode, setPremiumOverride, setAdminOverride, canSeeAllSubjects, hasSubjectChoice, isDone, setLastUnit, recentUnit } from "./core/store";
 import type { WrongNote } from "./core/store";
 import { isTutorConfigured } from "./core/tutor";
 import { tutorScreen } from "./screens/tutor";
@@ -95,6 +95,9 @@ function resumeLearning(): void {
 
 /** 하단 탭 전환(2026-07-12 IA 개편) — 탭은 스택을 쌓지 않고 reset으로 갈아끼운다. */
 function goTab(k: GnavKey): void {
+  // 과목 탭은 지금 검토 모드와 dev에서만 선다(store.hasSubjectChoice). 닫혀 있는데 들어오는 길
+  // (예전 주소 #/subjects)은 학습 탭으로 돌린다.
+  if (k === "subjects" && !hasSubjectChoice()) k = "home";
   currentTab = k;
   if (k === "home") {
     goHome();
