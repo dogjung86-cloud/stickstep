@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>코드 그림 샘플 한눈에 보기</title>
+<style>
+  body { margin: 0; background: #F3F5F8; color: #1E2A38; font: 15px/1.5 Pretendard, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+  main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 60px; }
+  h1 { font-size: 24px; margin: 0 0 6px; } h2 { font-size: 19px; margin: 34px 0 6px; }
+  p { margin: 4px 0 12px; color: #55606E; }
+  .tag { display: inline-block; font-weight: 800; font-size: 13px; padding: 3px 12px; border-radius: 999px; }
+  .old { background: #E4E7EC; color: #475467; } .new { background: #DDF3EF; color: #0B7A6E; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 10px 0 18px; }
+  .card { background: #fff; border: 1px solid #D0D5DD; border-radius: 16px; overflow: hidden; display: grid; place-items: center; }
+  .card img { width: 100%; height: auto; display: block; }
+  .cap { font-weight: 700; margin-top: 14px; }
+  .flip { width: 190px; height: 190px; margin: 14px auto; display: grid; place-items: center; }
+  .flip img { width: 100%; height: 100%; object-fit: contain; }
+  button { font: inherit; font-weight: 800; color: #fff; background: #3182F6; border: 0; border-radius: 12px; padding: 10px 18px; cursor: pointer; }
+  .av { width: 44px; height: 44px; border-radius: 50%; background: #fff; border: 2px solid #E4E7EC; display: inline-grid; place-items: center; overflow: hidden; box-sizing: border-box; margin-right: 12px; }
+  .av img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.22); object-position: 50% 30%; }
+  .fu { width: 54px; display: inline-block; vertical-align: bottom; margin-right: 12px; } .fu img, .fu svg { width: 100%; height: auto; display: block; }
+  .av svg { width: 100%; height: 100%; display: block; }
+  .big svg, .big img { width: 150px; height: 150px; object-fit: contain; }
+  .line { padding: 14px; } .small { max-width: 300px; }
+  a { color: #1B64DA; }
+</style>
+</head>
+<body>
+<main>
+  <h1>코드 그림 샘플 한눈에 보기</h1>
+  <p>왼쪽은 현행 그림(생성형 이미지), 오른쪽은 코드로 그린 그림이에요. 실제 화면에서는 주소에 <b>?sketch</b>를 붙여 열면 코드 그림으로 바뀌어요.
+    <a href="./?sketch">코드 그림으로 앱 열기</a> · <a href="./?sketch=0">현행 그림으로 앱 열기</a></p>
+
+  <h2>1. 도입 만화 (중1 과학 첫 레슨, 7컷)</h2>
+  <div id="comic"></div>
+
+  <h2>2. 홈 시작 장면 (125ms 간격 플립북)</h2>
+  <p><button id="replay">다시 재생</button></p>
+  <div class="pair">
+    <div><span class="tag old">현행</span><div class="card"><div class="flip"><img id="f-old" alt=""></div></div></div>
+    <div><span class="tag new">코드 그림</span><div class="card"><div class="flip"><img id="f-new" alt=""></div></div></div>
+  </div>
+
+  <h2>3. 개념 설명의 원형 스틱맨 5종</h2>
+  <p>위 줄은 앱에서 쓰이는 실제 크기(지름 44px 원, 온몸은 폭 54px), 아래 줄은 크게 본 모습이에요.</p>
+  <div class="pair">
+    <div><span class="tag old">현행</span><div class="card"><div class="line" id="av-old"></div><div class="line big" id="avb-old"></div></div></div>
+    <div><span class="tag new">코드 그림</span><div class="card"><div class="line" id="av-new"></div><div class="line big" id="avb-new"></div></div></div>
+  </div>
+
+  <h2>4. 로그인 화면과 계정 관리 화면</h2>
+  <div class="pair">
+    <div><span class="tag old">현행</span><div class="card"><img class="small" src="./brand/study.webp" alt=""></div></div>
+    <div><span class="tag new">코드 그림</span><div class="card"><img class="small" src="./sketch/splash/study.svg" alt=""></div></div>
+    <div><div class="card"><img class="small" src="./brand/loading/8.webp" alt=""></div></div>
+    <div><div class="card"><img class="small" src="./sketch/account.svg" alt=""></div></div>
+  </div>
+</main>
+<script type="module">
+  const STAGE = ["인트로", "문제 인식", "가설 설정", "탐구 설계", "탐구 수행", "자료 해석", "결론 도출"];
+  const comic = document.getElementById("comic");
+  STAGE.forEach((s, i) => {
+    comic.insertAdjacentHTML("beforeend", `<div class="cap">컷 ${i + 1}. ${s}</div><div class="pair">
+      <div class="card"><img src="./comics/u1l1/${i}.webp" alt=""></div><div class="card"><img src="./sketch/comics/u1l1/${i}.svg" alt=""></div></div>`);
+  });
+
+  // 플립북: 앱(splash.ts)과 같은 순서와 박자
+  const OLD = [0, 1, 7, 2, 8, 3, 9, 10, 4, 11, 5, 12, 13, 6].map(n => `./brand/loading/${n}.webp`);
+  const NEW = ["eat", "game", "kick", "sing", "nap", "oops"].map(n => `./sketch/splash/${n}.svg`);
+  const preload = list => Promise.all(list.map(src => new Promise(r => { const im = new Image(); im.onload = im.onerror = r; im.src = src; })));
+  let timers = [];
+  function play(img, list, last) {
+    let i = 0; img.src = list[0];
+    const t = setInterval(() => { i += 1; if (i >= list.length) { clearInterval(t); img.src = last; return; } img.src = list[i]; }, 125);
+    timers.push(t);
+  }
+  async function run() {
+    timers.forEach(clearInterval); timers = [];
+    await preload([...OLD, ...NEW, "./brand/study.webp", "./sketch/splash/study.svg"]);
+    play(document.getElementById("f-old"), OLD, "./brand/study.webp");
+    play(document.getElementById("f-new"), NEW, "./sketch/splash/study.svg");
+  }
+  document.getElementById("replay").addEventListener("click", run);
+  run();
+
+  // 원형 스틱맨: 코드 그림은 앱과 똑같이 인라인 SVG로 넣는다
+  const { SKETCH_AVATAR } = await import("/src/ui/sketchArt.generated.ts").catch(() => ({ SKETCH_AVATAR: null }));
+  const KINDS = ["smile", "surprised", "curious", "wave", "cheer"];
+  KINDS.forEach((k, i) => {
+    const full = i >= 3;
+    document.getElementById("av-old").insertAdjacentHTML("beforeend", `<span class="${full ? "fu" : "av"}"><img src="./comics/avatar/${i}.png" alt=""></span>`);
+    document.getElementById("avb-old").insertAdjacentHTML("beforeend", `<img src="./comics/avatar/${i}.png" alt="">`);
+    if (SKETCH_AVATAR) {
+      document.getElementById("av-new").insertAdjacentHTML("beforeend", `<span class="${full ? "fu" : "av"}">${SKETCH_AVATAR[k]}</span>`);
+      document.getElementById("avb-new").insertAdjacentHTML("beforeend", SKETCH_AVATAR[k]);
+    }
+  });
+</script>
+</body>
+</html>

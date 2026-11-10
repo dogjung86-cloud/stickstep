@@ -8,6 +8,7 @@ import { el } from "../core/dom";
 import type { StickAvatarCfg } from "../core/store";
 import { stickman, stickmanHead } from "./figures";
 import { DEFAULT_STICK, normPreset, STICK_PRESETS, stickAvatarSvg } from "./stickParts";
+import { mountSketchAvatar } from "./sketchArt";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
@@ -121,6 +122,7 @@ export function setStickAvatar(wrap: HTMLElement, kind: AvatarKind): void {
 }
 
 function mount(wrap: HTMLElement, kind: AvatarKind): void {
+  if (mountSketchAvatar(wrap, kind)) return; // 코드 그림 샘플(?sketch)
   wrap.innerHTML = "";
   const img = el("img", {
     attrs: { src: `${base}comics/avatar/${FILE[kind]}.png`, alt: "", loading: "eager", "aria-hidden": "true" },

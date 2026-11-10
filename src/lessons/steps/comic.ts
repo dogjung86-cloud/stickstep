@@ -7,6 +7,7 @@ import { haptic, HAPTIC } from "../../core/haptics";
 import { renderBlock } from "../../ui/blocks";
 import { cutTailHorn, stickman } from "../../ui/figures";
 import { stickAvatar } from "../../ui/avatar";
+import { sketchPanel } from "../../ui/sketchArt";
 import type { StepRenderer } from "../types";
 
 /** 컷 위 한글 말풍선 — dsl.ts CutBubble 하이브리드 표준의 comic판.
@@ -155,7 +156,8 @@ export const comic: StepRenderer = (host, step, api) => {
     const art = el("div", { class: "comic-art" });
     if (artRatio) art.style.aspectRatio = artRatio;
     if (p.img) {
-      const img = el("img", { class: "comic-img", attrs: { src: base + p.img, alt: p.title, loading: "eager" } }) as HTMLImageElement;
+      const sk = sketchPanel(p.img); // 코드 그림 샘플(?sketch): 그림과 말풍선 자리를 함께 바꾼다
+      const img = el("img", { class: "comic-img", attrs: { src: base + (sk?.img ?? p.img), alt: p.title, loading: "eager" } }) as HTMLImageElement;
       const applyRatio = () => {
         if (!img.naturalWidth || !img.naturalHeight) return;
         artRatio = `${img.naturalWidth} / ${img.naturalHeight}`;
@@ -171,7 +173,7 @@ export const comic: StepRenderer = (host, step, api) => {
       art.appendChild(img);
       // 말풍선 하이브리드 — 이미지 % 좌표에 얹는 HTML(로드 실패 시 clear(art)가 함께 걷어낸다).
       // wrap 변형: cut()의 nowrap 한 줄과 달리 만화 대사는 2줄까지 줄바꿈 허용(폰 폭 390 가독성).
-      for (const b of p.bubbles ?? []) {
+      for (const b of (sk ? sk.bubbles : p.bubbles) ?? []) {
         art.appendChild(
           el("span", {
             class: `cut-bubble wrap${b.flip ? " flip" : ""}${b.tail ? ` tail-${b.tail === "right" ? "r" : "l"}` : ""}`,

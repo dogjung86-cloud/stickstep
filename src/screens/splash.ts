@@ -9,6 +9,7 @@ import { haptic, HAPTIC } from "../core/haptics";
 import { BRAND, BIZ_INFO } from "../core/brand";
 import type { Screen } from "../core/router";
 import { stepMarkSvg } from "../ui/stepMark";
+import { sketchSplash } from "../ui/sketchArt";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
@@ -101,8 +102,9 @@ export function splashScreen(o: { signedIn: boolean; instant?: boolean; onStart:
   }
 
   // ---- 프레임 프리로드(발주본 → 폴백) ----
-  let frames = FLIP_FRAMES;
-  let study = STUDY;
+  const sk = sketchSplash(); // 코드 그림 샘플(?sketch)
+  let frames = sk ? sk.frames.map((f) => base + f) : FLIP_FRAMES;
+  let study = sk ? base + sk.study : STUDY;
   let timer = 0;
   let settled = false;
 
@@ -153,7 +155,7 @@ export function splashScreen(o: { signedIn: boolean; instant?: boolean; onStart:
     settle(true);
   } else {
     void (async () => {
-      const ok = await preload([...FLIP_FRAMES, STUDY]);
+      const ok = await preload([...frames, study]);
       if (!ok) {
         const fbOk = await preload([...FALLBACK_FRAMES, FALLBACK_STUDY]);
         if (!fbOk) {

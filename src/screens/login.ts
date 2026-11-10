@@ -6,6 +6,7 @@ import { el } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { stickAvatar } from "../ui/avatar";
+import { sketchSrc } from "../ui/sketchArt";
 import { getState, currentStreak, wrongNoteCount, applySyncedState } from "../core/store";
 import type { Screen } from "../core/router";
 import { consumeAuthError, currentUser, deleteAccount, isAuthConfigured, onAuthChange, signInWith, signInWithEmailPassword } from "../core/auth";
@@ -29,7 +30,7 @@ const base = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BA
  *  lazy 금지(발주 이미지 공통 규칙), 로드 실패 시 파란 원 + 벡터 스틱맨 폴백. */
 function heroArt(): HTMLElement {
   const host = el("div", { class: "login-study", attrs: { "aria-hidden": "true" } });
-  const img = el("img", { attrs: { src: `${base}brand/study.webp`, alt: "" } }) as HTMLImageElement;
+  const img = el("img", { attrs: { src: base + (sketchSrc("study") ?? "brand/study.webp"), alt: "" } }) as HTMLImageElement;
   img.addEventListener("error", () => {
     host.className = "login-ava"; // 폴백은 기존 원형 프레임 문법으로
     host.replaceChildren(stickAvatar("wave"));
@@ -41,7 +42,7 @@ function heroArt(): HTMLElement {
 /** 로그인 계정 관리 히어로 — 책을 펼쳐 놓고 읽는 스틱맨(brand/loading/8.webp). */
 function accountHeroArt(): HTMLElement {
   const host = el("div", { class: "login-study login-account-study", attrs: { "aria-hidden": "true" } });
-  const img = el("img", { attrs: { src: `${base}brand/loading/8.webp`, alt: "" } }) as HTMLImageElement;
+  const img = el("img", { attrs: { src: base + (sketchSrc("account") ?? "brand/loading/8.webp"), alt: "" } }) as HTMLImageElement;
   img.addEventListener("error", () => {
     host.className = "login-ava";
     host.replaceChildren(stickAvatar("wave"));
