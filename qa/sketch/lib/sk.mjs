@@ -444,3 +444,12 @@ export function heart(sk, x, y, s = 1, o = {}) {
     sk.ink(pts, { w: o.w ?? 6, wob: 0.4, seed: (o.seed ?? 111) + 1 });
   }, o.rot ?? 0);
 }
+
+// 가위표
+export function xmark(sk, x, y, s = 1, o = {}) {
+  const col = o.color ?? C.red, w = o.w ?? 13;
+  sk.at(x, y, s, () => {
+    sk.ink(dense([[-30, -30], [30, 30]]), { w, color: col, seed: o.seed ?? 121, wob: 0.8 });
+    sk.ink(dense([[30, -30], [-30, 30]]), { w, color: col, seed: (o.seed ?? 121) + 1, wob: 0.8 });
+  }, o.rot ?? 0);
+}

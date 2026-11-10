@@ -17,10 +17,24 @@ export const TEACHER_SVG: Record<string, string> = {
 export const COMIC_ART: Record<string, SketchPanelArt[]> = {
   "u1l1": [
     {
-      "img": "sketch/comics/u1l1/0.svg"
+      "img": "sketch/comics/u1l1/0.svg",
+      "bubbles": [
+        {
+          "text": "다리에 힘이<br>없어요",
+          "x": 73.9,
+          "y": 20.6
+        }
+      ]
     },
     {
-      "img": "sketch/comics/u1l1/1.svg"
+      "img": "sketch/comics/u1l1/1.svg",
+      "bubbles": [
+        {
+          "text": "무엇이 진짜<br>들을까?",
+          "x": 18,
+          "y": 24.2
+        }
+      ]
     },
     {
       "img": "sketch/comics/u1l1/2.svg"
@@ -29,27 +43,45 @@ export const COMIC_ART: Record<string, SketchPanelArt[]> = {
       "img": "sketch/comics/u1l1/3.svg",
       "bubbles": [
         {
-          "text": "처방 하나만<br>다르게!",
+          "text": "다른 건<br>처방뿐!",
           "x": 15.2,
           "y": 37.1
         }
       ]
     },
     {
-      "img": "sketch/comics/u1l1/4.svg"
+      "img": "sketch/comics/u1l1/4.svg",
+      "bubbles": [
+        {
+          "text": "과일이 다<br>떨어졌어요",
+          "x": 71.6,
+          "y": 42.2,
+          "tail": "right"
+        }
+      ]
     },
     {
-      "img": "sketch/comics/u1l1/5.svg"
+      "img": "sketch/comics/u1l1/5.svg",
+      "bubbles": [
+        {
+          "text": "이 줄만<br>확 달라!",
+          "x": 14.4,
+          "y": 37.1
+        }
+      ]
     },
     {
       "img": "sketch/comics/u1l1/6.svg",
       "bubbles": [
         {
-          "text": "다시 힘이 나요!",
-          "x": 81.3,
-          "y": 34.8
+          "text": "신맛 때문은<br>아니었어!",
+          "x": 31.6,
+          "y": 25.3
         }
       ]
+    },
+    {
+      "img": "sketch/comics/u1l1/7.svg"
     }
   ]
 };

@@ -25,7 +25,7 @@ const put = (rel, text) => { const f = join(PUB, rel); mkdirSync(dirname(f), { r
 const FRAME_W = 350;
 function textWidth(line) {
   let w = 0;
-  for (const ch of line.replace(/<[^>]+>/g, "")) w += /[가-힣]/.test(ch) ? 12.5 : ch === " " ? 3.4 : /[0-9A-Za-z]/.test(ch) ? 7.5 : 5;
+  for (const ch of line.replace(/<[^>]+>/g, "")) w += /[가-힣]/.test(ch) ? 11.6 : ch === " " ? 3.2 : /[0-9A-Za-z]/.test(ch) ? 7.2 : 4.8;
   return w;
 }
 function placeBubble(sk, b, where) {
@@ -43,6 +43,8 @@ function placeBubble(sk, b, where) {
   if (tail === "right") { cx = ax - 16 - bw / 2; by = ay - 29; }
   const box = { l: cx - bw / 2, r: cx + bw / 2, t: by - bh, b: by };
   if (box.l < 2 || box.r > FRAME_W - 2 || box.t < 2) console.warn(`  ! ${where}: 말풍선 "${b.text}" 이 컷 밖으로 나간다`, JSON.stringify(box));
+  // 말풍선은 left 기준으로 놓이므로 오른쪽에 남은 폭보다 넓으면 브라우저가 줄을 더 나눈다. <br> 로 줄을 직접 나눠 맞춘다.
+  if (bw > Math.max(84, FRAME_W - cx) + 1) console.warn(`  ! ${where}: 말풍선 "${b.text}" 이 오른쪽 폭(${Math.round(FRAME_W - cx)}px)보다 넓다(${Math.round(bw)}px). <br> 로 줄을 나누거나 side: "right" 를 줄 것`);
   const out = { text: b.text, x: +(cx / FRAME_W * 100).toFixed(1), y: +(by / FH * 100).toFixed(1) };
   if (tail) out.tail = tail;
   return out;
