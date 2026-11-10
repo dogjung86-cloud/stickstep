@@ -1,0 +1,434 @@
+/* 중1 Ⅱ v5(2026-11-11) 랩 전용 시트. ?u2v5(ss.u2v5) 병행 배선에서만 쓰인다.
+   접두: 뼈대 .bv- · 확대 랩 .mgf- · 세포 구조 랩 .cwk- · 표본 만들기 랩 .sbd- · 현미경 비교 랩 .scp-
+   (.b6-은 중2 Ⅵ v3 body3.css가 쓰고 있어 쓰지 않는다.)
+   한 화면 예산(390×700, 스크롤 영역 554px): 위 6 + 제목 30 + 도움말 50 + 무대 240 + 조작 칸 218 + 아래 10 = 554 */
+
+/* ── 뼈대 ───────────────────────────────────────────── */
+.step.bv-step { padding: 6px 22px 10px; }
+.bv-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 30px; }
+.bv-title {
+  font-size: 20px; line-height: 30px; font-weight: 800; letter-spacing: -.03em; color: var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.bv-pips { display: flex; gap: 5px; flex: none; }
+.bv-pips i { width: 8px; height: 8px; border-radius: 50%; background: var(--n300); transition: background .3s, transform .3s var(--spring); }
+.bv-pips i.on { background: var(--subj-bio); transform: scale(1.15); }
+
+.bv-helper {
+  margin-top: 8px; height: 42px; overflow: hidden;
+  padding-left: 11px; border-left: 3px solid var(--subj-bio); border-radius: 2px;
+  font-size: 14px; line-height: 21px; color: var(--sub); word-break: keep-all;
+}
+.bv-helper b { color: var(--ink); font-weight: 700; }
+
+.bv-stage {
+  position: relative; margin-top: 10px; height: 230px; border-radius: 20px; overflow: hidden;
+  background: radial-gradient(130% 100% at 50% -10%, #182B4D 0%, #0B1524 64%);
+  outline: 1px solid #20334F; outline-offset: -1px; user-select: none; -webkit-user-select: none;
+}
+.bv-stage > svg { display: block; width: 100%; height: 100%; }
+/* 346×230 고정 설계 판. 무대 폭이 달라도 통째로 비율을 맞춘다(bio6Kit.bvCanvas). */
+.bv-canvas { position: absolute; left: 50%; top: 50%; width: 346px; height: 230px; transform: translate(-50%, -50%); transform-origin: 50% 50%; }
+.bv-pill {
+  position: absolute; display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px;
+  border-radius: 999px; background: rgba(255, 255, 255, .09); border: 1px solid rgba(255, 255, 255, .13);
+  color: #E8EEF9; font-size: 12.5px; font-weight: 700; white-space: nowrap;
+}
+.bv-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--pc, #63E6BE); }
+
+/* ── 조작 칸(높이 고정) ───────────────────────────── */
+.bv-slot { position: relative; margin-top: 10px; height: 208px; }
+.bv-ctl { display: grid; gap: 8px; align-content: start; }
+.bv-ctl[hidden] { display: none; }
+@keyframes bvIn { 0% { opacity: 0; transform: translateY(6px); } 100% { opacity: 1; transform: none; } }
+
+.bv-btn {
+  width: 100%; height: 50px; border-radius: 16px; border: 1.5px solid var(--n300); background: #fff;
+  font-size: 15px; font-weight: 800; color: var(--ink); box-shadow: var(--sh-card);
+  transition: transform .12s, border-color .2s, background .2s;
+}
+.bv-btn:active { transform: scale(.975); }
+.bv-btn.main { border-color: var(--subj-bio); background: #ECFBF5; color: #087F5B; }
+.bv-btn:disabled { opacity: .45; }
+.bv-btn[hidden] { display: none; }
+
+.bv-cards { display: grid; gap: 8px; }
+.bv-card {
+  position: relative; height: 60px; padding: 0 10px; border-radius: 16px; border: 1.5px solid var(--n300);
+  background: #fff; display: flex; align-items: center; gap: 8px; text-align: left; min-width: 0;
+  box-shadow: var(--sh-card); transition: transform .12s, border-color .2s, background .2s, opacity .2s;
+}
+.bv-card:active { transform: scale(.97); }
+.bv-card.on { border-color: var(--subj-bio); background: #ECFBF5; box-shadow: 0 0 0 1px var(--subj-bio) inset; }
+.bv-card:disabled { opacity: .5; }
+.bv-card.done::after {
+  content: ""; position: absolute; top: -6px; right: -5px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--subj-bio) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.6 6.3l2.3 2.2 4.5-4.9' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px no-repeat;
+  box-shadow: 0 0 0 2px #fff;
+}
+.bv-card-ic { flex: none; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; overflow: hidden; }
+.bv-card-ic svg { display: block; width: 100%; height: 100%; }
+.bv-card-tx { min-width: 0; }
+.bv-card b { display: block; font-size: 14px; font-weight: 800; color: var(--ink); line-height: 1.25; white-space: nowrap; }
+.bv-card i { display: block; margin-top: 1px; font-style: normal; font-size: 11.5px; font-weight: 600; color: var(--ter); line-height: 1.3; white-space: nowrap; }
+
+.bv-range { position: relative; padding-top: 2px; }
+.bv-range-cap { font-size: 12.5px; font-weight: 800; color: var(--n700); padding: 0 2px; }
+.bv-range-in {
+  -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 48px; margin: 0;
+  background: transparent; cursor: pointer; touch-action: pan-y;
+}
+.bv-range-in::-webkit-slider-runnable-track {
+  height: 12px; border-radius: 999px;
+  background: linear-gradient(90deg, var(--subj-bio) 0, var(--subj-bio) var(--p, 0%), var(--n200) var(--p, 0%), var(--n200) 100%);
+}
+.bv-range-in::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 36px; height: 36px; margin-top: -12px; border-radius: 50%;
+  background: #fff; border: 3px solid var(--subj-bio); box-shadow: 0 2px 8px rgba(18, 184, 134, .35);
+}
+.bv-range-in::-moz-range-track { height: 12px; border-radius: 999px; background: var(--n200); }
+.bv-range-in::-moz-range-progress { height: 12px; border-radius: 999px; background: var(--subj-bio); }
+.bv-range-in::-moz-range-thumb { width: 30px; height: 30px; border-radius: 50%; background: #fff; border: 3px solid var(--subj-bio); box-shadow: 0 2px 8px rgba(18, 184, 134, .35); }
+.bv-ticks { display: flex; justify-content: space-between; margin-top: -4px; padding: 0 2px; font-size: 12px; font-weight: 700; color: var(--ter); }
+/* 로그 눈금: 글자를 막대의 실제 자리에 놓는다. 엄지 반지름(18px)만큼 양끝을 들여 막대 눈금과 맞춘다. */
+.bv-ticks.placed { display: block; position: relative; height: 16px; margin: -4px 18px 0; padding: 0; }
+.bv-ticks.placed span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+
+/* ── 판정 상자 ─────────────────────────────────────── */
+.bv-q { display: none; flex-direction: column; gap: 6px; }
+.bv-q.show { display: flex; animation: bvIn .28s var(--ease-out) both; }
+.bv-qt {
+  min-height: 42px; display: flex; align-items: center; padding: 0 4px;
+  font-size: 14.5px; font-weight: 700; line-height: 21px; color: var(--ink); word-break: keep-all;
+}
+.bv-qt b { color: #087F5B; }
+.bv-choice {
+  flex: none; height: 48px; padding: 0 14px; border-radius: 14px; border: 1.5px solid var(--n300); background: #fff;
+  display: flex; align-items: center; text-align: left; font-size: 14.5px; font-weight: 600; color: var(--ink);
+  box-shadow: var(--sh-card); transition: transform .12s, opacity .2s, border-color .2s, background .2s;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.bv-choice:active { transform: scale(.98); }
+.bv-choice.ok { border-color: var(--green); background: #EFFBF4; box-shadow: 0 0 0 1px var(--green) inset; }
+.bv-choice.sel { border-color: var(--blue); background: var(--blue-tint); box-shadow: 0 0 0 1px var(--blue) inset; }
+.bv-choice.dim { opacity: .42; }
+.bv-choice.miss { height: 40px; border-color: var(--red); background: #FFF2F3; color: #C92A3A; box-shadow: 0 0 0 1px var(--red) inset; }
+.bv-choice.gone { display: none; }
+.bv-ans {
+  flex: none; display: grid; gap: 6px; padding: 9px 10px 9px 12px; border-radius: 14px;
+  border: 1.5px solid var(--green); background: #EFFBF4; animation: bvIn .3s var(--ease-out) both;
+}
+.bv-ans-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.bv-ans-tag { flex: none; padding: 4px 8px; border-radius: 999px; background: var(--green); color: #fff; font-size: 11.5px; font-weight: 800; line-height: 1; }
+.bv-ans-t { font-size: 14.5px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bv-ans-foot { display: flex; align-items: center; gap: 10px; min-height: 48px; }
+.bv-why { flex: 1; font-size: 13px; line-height: 1.45; color: var(--n700); word-break: keep-all; }
+.bv-why b { color: var(--ink); font-weight: 800; }
+.bv-next {
+  flex: none; width: 76px; height: 48px; border-radius: 14px; border: 0; background: var(--green); color: #fff;
+  font-size: 15px; font-weight: 800; box-shadow: 0 2px 8px rgba(4, 180, 95, .3);
+}
+.bv-next:active { transform: scale(.96); }
+.bv-next:disabled { opacity: .5; }
+
+/* ── 결론 ──────────────────────────────────────────── */
+.bv-done { display: none; }
+.bv-done.show {
+  display: block; padding: 14px 16px; border-radius: 16px; background: #ECFBF5; border: 1.5px solid #B6EBD6;
+  animation: bvIn .35s var(--ease-out) both;
+}
+.bv-done-k { font-size: 12px; font-weight: 800; color: #087F5B; }
+.bv-done-t { margin-top: 5px; font-size: 15.5px; line-height: 1.5; font-weight: 700; color: var(--ink); word-break: keep-all; }
+.bv-done-t b { color: #087F5B; }
+.step.bv-step .curio { margin-top: 12px; }
+
+/* ── 관찰 창(현미경 시야) ─────────────────────────── */
+.bv-field {
+  position: absolute; border-radius: 50%; overflow: hidden; background: #0A111C;
+  box-shadow: 0 0 0 3px #2B3F5C, 0 0 0 6px rgba(120, 150, 200, .16), 0 8px 26px rgba(0, 0, 0, .45);
+  isolation: isolate;
+}
+.bv-field > * { position: absolute; }
+.bv-field-shade { inset: 0; border-radius: 50%; pointer-events: none; background: radial-gradient(circle, transparent 58%, rgba(6, 12, 22, .34) 100%); z-index: 9; }
+.bv-field img { display: block; user-select: none; -webkit-user-drag: none; pointer-events: none; }
+
+/* 세로 카드(아이콘 위, 이름 아래). 세 칸에 이름이 긴 카드를 넣을 때 */
+.bv-card.col { flex-direction: column; justify-content: center; gap: 2px; padding: 0 4px; text-align: center; }
+.bv-card.col .bv-card-ic { width: 28px; height: 28px; border-radius: 9px; }
+.bv-card.col b { font-size: 13px; }
+
+/* ── u2l1 확대 랩(.mgf-) ───────────────────────────── */
+.mgf-layer { inset: 0; }
+.mgf-layer > svg { display: block; width: 100%; height: 100%; }
+.mgf-onion { background-repeat: repeat; filter: saturate(.62) brightness(1.08); }
+/* 낮은 배율의 양파 세포 무늬(그림). 사진처럼 살짝 기울인다 */
+.mgf-oniond { inset: -34px; background-repeat: repeat; transform: rotate(6deg); }
+.mgf-corkbase { background: radial-gradient(circle at 42% 38%, #F3E3C2 0%, #E6D0A6 70%, #D9BF90 100%); }
+.mgf-cork { inset: -30px; background-repeat: repeat; transform: rotate(-7deg); filter: blur(.3px); }
+.mgf-bar { left: 0; right: 0; bottom: 20px; z-index: 10; display: grid; justify-items: center; gap: 3px; pointer-events: none; }
+.mgf-bar-t { font-size: 12.5px; font-weight: 800; color: #fff; text-shadow: 0 1px 3px rgba(5, 12, 24, .9), 0 0 2px rgba(5, 12, 24, .9); }
+.mgf-bar i { display: block; height: 4px; border-radius: 2px; background: #fff; box-shadow: 0 0 0 1.5px rgba(5, 12, 24, .7); }
+.mgf-name { left: 226px; top: 16px; --pc: #63E6BE; }
+.mgf-read { position: absolute; left: 228px; display: grid; gap: 2px; }
+.mgf-read span { font-size: 12.5px; font-weight: 700; color: #9FB3D1; }
+.mgf-mag { top: 60px; }
+.mgf-mag b { font-size: 32px; line-height: 1.1; font-weight: 800; color: #fff; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.mgf-mag.eye b { font-size: 26px; }
+.mgf-wid { top: 124px; }
+.mgf-wid b { font-size: 19px; line-height: 1.2; font-weight: 800; color: #B8F2DC; font-variant-numeric: tabular-nums; }
+.mgf-find {
+  position: absolute; left: 226px; top: 186px; height: 28px; padding: 0 11px; border-radius: 999px;
+  display: inline-flex; align-items: center; font-size: 12.5px; font-weight: 800; color: #06281C; background: #63E6BE;
+  opacity: 0; transform: translateY(4px); transition: opacity .25s, transform .25s var(--spring); white-space: nowrap;
+}
+.mgf-find.show { opacity: 1; transform: none; }
+.mgf-find.none { background: #FFD8A8; color: #4A2B00; }
+
+/* ── u2l2 세포 구조 랩(.cwk-) ─────────────────────── */
+.cwk-svg text { font-family: inherit; }
+.cwk-hit { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+path.cwk-hit { pointer-events: stroke; }
+circle.cwk-hit { pointer-events: all; }
+.cwk-part { transition: filter .35s, opacity .35s; }
+
+/* 살아 있는 움직임: 세포의 숨, 속을 떠도는 알갱이 */
+@keyframes cwkBreath { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.014); } }
+.cwk-cellg { transform-box: view-box; transform-origin: 173px 118px; animation: cwkBreath 2.6s ease-in-out infinite; }
+@keyframes cwkJig {
+  0%, 100% { transform: translate(0, 0); } 25% { transform: translate(3px, -2px); }
+  50% { transform: translate(-2px, 3px); } 75% { transform: translate(-3px, -1px); }
+}
+.cwk-jig { animation: cwkJig 1.9s ease-in-out infinite; animation-delay: var(--d, 0s); }
+
+/* 핵: 조절의 고리가 퍼진다 */
+@keyframes cwkRing { 0% { transform: scale(1); opacity: .85; } 100% { transform: scale(1.85); opacity: 0; } }
+.cwk-ring { transform-box: fill-box; transform-origin: center; animation: cwkRing 2.4s ease-out infinite; }
+.cwk-ring2 { animation-delay: -1.2s; }
+
+/* 마이토콘드리아: 에너지 불꽃과 빛무리 */
+@keyframes cwkSpark {
+  0% { transform: translate(0, 0) scale(.4); opacity: 0; } 14% { opacity: 1; }
+  72% { transform: translate(var(--sx), var(--sy)) scale(1.1); opacity: 1; }
+  100% { transform: translate(var(--sx), var(--sy)) scale(1.1); opacity: 0; }
+}
+.cwk-spark { animation: cwkSpark 1.4s ease-out infinite; animation-delay: var(--d, 0s); }
+@keyframes cwkGlow { 0%, 100% { opacity: .16; } 50% { opacity: .5; } }
+.cwk-mglow { animation: cwkGlow 1.4s ease-in-out infinite; }
+.cwk-fx { transition: opacity .5s; }
+
+/* 엽록체: 빛을 받아 일하는 맥박 */
+@keyframes cwkChl { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+.cwk-chlb { transform-box: fill-box; transform-origin: center; animation: cwkChl 1.6s ease-in-out infinite; animation-delay: var(--d, 0s); }
+@keyframes cwkRay { 0%, 100% { opacity: .1; } 50% { opacity: .3; } }
+.cwk-ray { animation: cwkRay 1.8s ease-in-out infinite; animation-delay: var(--d, 0s); }
+
+/* 양분 알갱이: 밖 → 세포막 → 마이토콘드리아(식물은 엽록체 → 마이토콘드리아) */
+@keyframes cwkNutr {
+  0% { transform: translate(var(--x0), var(--y0)) scale(1); opacity: 0; } 10% { opacity: 1; }
+  48% { transform: translate(var(--xm), var(--ym)) scale(1); opacity: 1; }
+  88% { transform: translate(var(--x1), var(--y1)) scale(1); opacity: 1; }
+  100% { transform: translate(var(--x1), var(--y1)) scale(.2); opacity: 0; }
+}
+/* 세포막이 멈췄을 때: 막 바로 바깥에서 튕겨 돌아간다 */
+@keyframes cwkBounce {
+  0% { transform: translate(var(--x0), var(--y0)) scale(1); opacity: 0; } 12% { opacity: 1; }
+  46% { transform: translate(var(--xb), var(--yb)) scale(1); opacity: 1; }
+  56% { transform: translate(var(--xb), var(--yb)) scale(1.3); opacity: 1; }
+  100% { transform: translate(var(--x0), var(--y0)) scale(1); opacity: 0; }
+}
+/* 마이토콘드리아가 멈췄을 때: 들어오기는 하지만 쓰이지 못하고 곁에 머문다 */
+@keyframes cwkPile {
+  0% { transform: translate(var(--x0), var(--y0)) scale(1); opacity: 0; } 10% { opacity: 1; }
+  48% { transform: translate(var(--xm), var(--ym)) scale(1); opacity: 1; }
+  80% { transform: translate(var(--x1), var(--y1)) scale(1); opacity: 1; }
+  100% { transform: translate(var(--x1), var(--y1)) scale(1); opacity: 0; }
+}
+.cwk-nutr { animation: cwkNutr 3.7s linear infinite; animation-delay: var(--d, 0s); }
+.off-mem .cwk-nutr { animation-name: cwkBounce; animation-duration: 2.4s; }
+.off-mito .cwk-nutr { animation-name: cwkPile; }
+.off-chl .cwk-nutr.from-chl { display: none; }
+
+/* 멈춘 구조는 회색(고장 난 곳 찾기 국면 .diag에서는 칠하지 않는다. 증상만 보고 찾게) */
+.cwk-svg:not(.diag).off-mem .cwk-mem,
+.cwk-svg:not(.diag).off-nuc .cwk-nuc,
+.cwk-svg:not(.diag).off-mito .cwk-mito,
+.cwk-svg:not(.diag).off-chl .cwk-chl { filter: grayscale(1) brightness(.74); }
+.off-chl .cwk-chlb { animation-play-state: paused; }
+
+/* 에너지가 끊긴 세포: 불꽃이 꺼지고 움직임이 멎는다(마이토콘드리아가 멈췄거나, 양분이 끊겨 굶었거나) */
+.off-mito .cwk-fx, .starve .cwk-fx { opacity: 0; }
+.off-mito .cwk-jig, .starve .cwk-jig, .off-mito .cwk-cellg, .starve .cwk-cellg { animation-play-state: paused; }
+
+/* 핵이 멈춘 세포: 조절이 안 돼 뒤죽박죽(어떤 곳은 지나치게, 어떤 곳은 멎고, 온 세포가 떤다) */
+.off-nuc .cwk-ring { display: none; }
+.off-nuc .cwk-fx.m0 .cwk-spark, .off-nuc .cwk-fx.m0 .cwk-mglow { animation-duration: .42s; }
+.off-nuc .cwk-fx.m1 { opacity: 0; }
+.off-nuc .cwk-fx.m2 .cwk-spark, .off-nuc .cwk-fx.m2 .cwk-mglow { animation-duration: 2.9s; }
+.off-nuc .cwk-jig { animation-duration: .38s; }
+.off-nuc .cwk-nutr:nth-child(odd) { animation-duration: 1.5s; }
+.off-nuc .cwk-nutr:nth-child(even) { animation-duration: 7s; }
+@keyframes cwkShiver {
+  0%, 100% { transform: translate(0, 0); } 20% { transform: translate(1.6px, -1px); } 40% { transform: translate(-1.4px, 1.2px); }
+  60% { transform: translate(1px, 1.4px); } 80% { transform: translate(-1.6px, -.8px); }
+}
+.off-nuc .cwk-cellg { animation: cwkShiver .36s linear infinite; }
+
+/* 세포벽이 멈춘 세포: 벽이 흐려지고 모양이 무너진다(모양 보간은 랩 코드가 한다) */
+.cwk-wallp, .cwk-wallhi { transition: opacity .4s; }
+.off-wall .cwk-wallp { opacity: .3; stroke-dasharray: 9 9; }
+.off-wall .cwk-wallhi { opacity: 0; }
+
+.cwk-legend {
+  position: absolute; left: 12px; bottom: 9px; display: flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700; color: #C9D6EA; pointer-events: none;
+}
+.cwk-legend i { width: 9px; height: 9px; border-radius: 50%; background: #FFD43B; box-shadow: 0 0 0 1px #E8A800 inset; }
+.cwk-legend svg { margin-left: 8px; }
+
+/* 구조 카드: 누르면 그 구조가 멈춘다 */
+.bv-card.cwk-card.col { height: 88px; gap: 3px; }
+.bv-card.cwk-card.col .bv-card-ic { width: 34px; height: 34px; border-radius: 10px; }
+.bv-card.cwk-card:not(.col) { height: 66px; }
+.cwk-card i { color: #087F5B; }
+.cwk-card.stopped { border-color: #C3CCD9; background: #F1F4F8; box-shadow: 0 0 0 1px #C3CCD9 inset; }
+.cwk-card.stopped .bv-card-ic { filter: grayscale(1) brightness(.85); }
+.cwk-card.stopped i { color: #C92A3A; font-weight: 800; }
+
+/* ── u2l3 표본 만들기 랩(.sbd-) ───────────────────── */
+.sbd-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sbd-svg text { font-family: inherit; }
+.sbd-smear { opacity: 0; transition: opacity .5s; }
+.has-smear .sbd-smear { opacity: 1; }
+.sbd-liq { opacity: 0; transition: opacity .35s; }
+.has-drop .sbd-liq { opacity: .95; }
+.sbd-excess { opacity: 0; transition: opacity .45s; }
+.covered .sbd-excess { opacity: .95; }
+.covered.wiped .sbd-excess { opacity: 0; }
+.sbd-bubs { opacity: 0; transition: opacity .3s; }
+.bubbled .sbd-bubs { opacity: 1; }
+/* 덮개 유리: 왼쪽 끝(62, 165)을 받침점으로 돈다. 각도는 랩 코드가 --ang(도)로 넣는다. */
+.sbd-cover {
+  opacity: 0; transition: opacity .25s;
+  transform-box: view-box; transform-origin: 62px 165px; transform: rotate(calc(var(--ang, 40) * -1deg));
+}
+.has-cover .sbd-cover { opacity: 1; }
+.sbd-covertag { opacity: 0; transition: opacity .25s; }
+.has-cover:not(.covered) .sbd-covertag { opacity: 1; }
+
+/* 도구는 쓸 때만 들어왔다 나간다 */
+.sbd-swab, .sbd-dropper, .sbd-droplet, .sbd-paper, .sbd-finger { opacity: 0; }
+@keyframes sbdSwab {
+  0% { transform: translate(66px, 78px); opacity: 0; } 14% { transform: translate(88px, 167px); opacity: 1; }
+  30% { transform: translate(134px, 167px); opacity: 1; } 46% { transform: translate(90px, 167px); opacity: 1; }
+  62% { transform: translate(134px, 167px); opacity: 1; } 78% { transform: translate(110px, 167px); opacity: 1; }
+  100% { transform: translate(92px, 92px); opacity: 0; }
+}
+.do-swab .sbd-swab { animation: sbdSwab 1.7s ease-in-out both; }
+@keyframes sbdDropper {
+  0% { transform: translate(110px, 100px); opacity: 0; } 22% { transform: translate(110px, 130px); opacity: 1; }
+  72% { transform: translate(110px, 130px); opacity: 1; } 100% { transform: translate(110px, 100px); opacity: 0; }
+}
+.do-drop .sbd-dropper { animation: sbdDropper 1.5s ease-in-out both; }
+@keyframes sbdDroplet {
+  0%, 34% { transform: translate(110px, 134px); opacity: 0; } 36% { transform: translate(110px, 134px); opacity: 1; }
+  54% { transform: translate(110px, 162px); opacity: 1; } 56%, 100% { transform: translate(110px, 162px); opacity: 0; }
+}
+.do-drop .sbd-droplet { animation: sbdDroplet 1.5s ease-in both; }
+@keyframes sbdPaper {
+  0% { transform: translateY(-56px); opacity: 0; } 24% { transform: translateY(0); opacity: 1; }
+  42% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(2px); opacity: 1; }
+  62% { transform: translateY(0); opacity: 1; } 76% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-56px); opacity: 0; }
+}
+.do-paper .sbd-paper { animation: sbdPaper 2.3s ease-in-out both; }
+@keyframes sbdFinger {
+  0%, 24% { transform: translate(110px, 92px); opacity: 0; } 40% { transform: translate(110px, 141px); opacity: 1; }
+  50% { transform: translate(110px, 143.5px); opacity: 1; } 62% { transform: translate(110px, 141px); opacity: 1; }
+  78%, 100% { transform: translate(110px, 92px); opacity: 0; }
+}
+.do-paper .sbd-finger { animation: sbdFinger 2.3s ease-in-out both; }
+.sbd-blot { opacity: 0; transition: opacity .5s; }
+.wiped .sbd-blot { opacity: .85; }
+
+/* 오른쪽 창: 지금 표본을 현미경으로 보면 */
+.sbd-cap { position: absolute; left: 220px; top: 14px; width: 128px; text-align: center; font-size: 12.5px; font-weight: 700; color: #9FB3D1; white-space: nowrap; }
+.sbd-field .sbd-f-bg { inset: 0; background: radial-gradient(circle at 45% 40%, #F6FAFD 0%, #DCE8F2 100%); }
+.sbd-field .sbd-f-plain, .sbd-field .sbd-f-cells { inset: 0; background: center / 190% no-repeat; opacity: 0; }
+.sbd-field .sbd-f-plain { transition: opacity .6s; }
+.sbd-field .sbd-f-cells { transition: opacity 1.7s; }
+.sbd-field.v-faint .sbd-f-plain, .sbd-field.v-blue .sbd-f-plain { opacity: 1; }
+.sbd-field.v-blue .sbd-f-cells { opacity: 1; }
+.sbd-field .sbd-f-tint { inset: 0; background: rgba(76, 139, 234, .3); opacity: 0; transition: opacity .5s; }
+.sbd-field.v-tint .sbd-f-tint { opacity: 1; }
+.sbd-field .sbd-f-bub { inset: 0; opacity: 0; transition: opacity .3s; }
+.sbd-field.v-bub .sbd-f-bub { opacity: 1; }
+.sbd-say { position: absolute; left: 214px; top: 148px; width: 132px; text-align: center; font-size: 12.5px; font-weight: 800; color: #E8EEF9; white-space: nowrap; }
+
+.bv-wait {
+  position: absolute; left: 14px; top: 14px; height: 28px; padding: 0 11px; border-radius: 999px;
+  display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .16);
+  color: #E8EEF9; font-size: 12.5px; font-weight: 800; white-space: nowrap; opacity: 0; transition: opacity .25s; pointer-events: none;
+}
+.bv-wait.on { opacity: 1; }
+.bv-wait i { width: 46px; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .18); overflow: hidden; }
+.bv-wait b { display: block; height: 100%; width: 0; border-radius: 3px; background: #63E6BE; }
+.bv-wait.on b { width: 100%; transition: width 1.8s linear; }
+.sbd-if { background: rgba(255, 216, 168, .16); border-color: rgba(255, 216, 168, .4); color: #FFE8CC; }
+
+@keyframes sbdNo { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.sbd-card.no { animation: sbdNo .3s; }
+
+/* ── u2l3 현미경 비교 랩(.scp-) ───────────────────── */
+.scp-solo, .scp-duo { position: absolute; inset: 0; }
+.scp-duo { display: none; }
+.scp-stage.duo .scp-solo { display: none; }
+.scp-stage.duo .scp-duo { display: block; animation: bvIn .3s var(--ease-out) both; }
+.scp-field { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.scp-imgs { inset: 0; filter: blur(var(--blur, 0px)); }
+.scp-im { position: absolute; inset: 0; background: center / 100% no-repeat; opacity: 0; transition: opacity .3s; }
+.sp-cheek .scp-im.cheek { opacity: 1; }
+.sp-water .scp-im.water, .sp-stain .scp-im.water { opacity: 1; }
+.sp-stain.stained .scp-im.stain { opacity: 1; }
+/* 아세트올세인이 스며드는 5분: 핵이 천천히 붉게 드러난다 */
+.scp-field.staining .scp-im.stain { transition: opacity 1.9s; }
+@keyframes scpSwap { 0% { filter: blur(7px); } 100% { filter: blur(0); } }
+.scp-field.swap .scp-imgs { animation: scpSwap .42s ease-out; }
+@keyframes scpMiss {
+  0% { transform: translate(-50%, -50%) scale(.4); opacity: .95; }
+  100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+}
+.scp-miss { width: 26px; height: 26px; border-radius: 50%; border: 2.5px solid #FF8787; animation: scpMiss .55s ease-out both; pointer-events: none; z-index: 10; }
+
+.scp-lead { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+@keyframes scpRing { 0% { transform: scale(1.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.scp-ring { transform-box: fill-box; transform-origin: center; animation: scpRing .36s var(--spring) both; }
+
+.scp-side { position: absolute; left: 222px; top: 16px; width: 122px; }
+.scp-k { font-size: 12.5px; line-height: 16px; font-weight: 700; color: #9FB3D1; }
+.scp-k.k2, .scp-k.k3 { margin-top: 10px; }
+.scp-v { margin-top: 2px; font-size: 14.5px; line-height: 20px; font-weight: 800; color: #fff; white-space: nowrap; letter-spacing: -.02em; }
+.scp-v.sol { font-size: 13.5px; }
+.scp-v.sol[data-sol="cheek"] { color: #A5C8FF; }
+.scp-v.sol[data-sol="water"] { color: #D0E4F5; }
+.scp-v.sol[data-sol="stain"] { color: #FFB3C1; }
+.scp-chip {
+  position: absolute; left: 222px; height: 24px; padding: 0 9px 0 7px; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 5px; background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .18);
+  color: #EAF0FA; font-size: 12.5px; font-weight: 800; white-space: nowrap;
+  opacity: 0; transform: translateX(6px); transition: opacity .25s, transform .25s var(--spring);
+}
+.scp-chip.on { opacity: 1; transform: none; }
+.scp-chip i { width: 8px; height: 8px; border-radius: 50%; }
+.scp-wait { left: 108px; top: 176px; transform: translateX(-50%); background: rgba(11, 21, 36, .8); border-color: rgba(255, 255, 255, .22); z-index: 12; }
+
+/* 두 시야를 나란히 */
+.scp-dimg { inset: 0; background: center / 100% no-repeat; }
+.scp-dcap { position: absolute; top: 168px; width: 150px; display: grid; gap: 1px; text-align: center; }
+.scp-dcap b { font-size: 14px; line-height: 19px; font-weight: 800; color: #fff; }
+.scp-dcap span { font-size: 12.5px; line-height: 16px; font-weight: 700; color: #9FB3D1; }
+
+.bv-card.scp-card.col { height: 78px; gap: 2px; }
+.bv-card.scp-card.col .bv-card-ic { width: 30px; height: 30px; }
+@keyframes scpTodo { 0%, 100% { border-color: var(--n300); } 50% { border-color: var(--subj-bio); } }
+.scp-card.todo:not(.on):not(.done) { animation: scpTodo 1.6s ease-in-out infinite; }
+.scp-no.no { animation: sbdNo .3s; }

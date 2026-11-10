@@ -38,6 +38,11 @@ import { beakIslandsLab } from "./steps/bio4/beakIslandsLab";
 import { groupRuleLab } from "./steps/bio4/groupRuleLab";
 import { kingdomGateLab } from "./steps/bio4/kingdomGateLab";
 import { webDropLab } from "./steps/bio4/webDropLab";
+// ── 중1 Ⅱ v5 랩 4종(2026-11-11, steps/bio6/*): 병행 배선(unit2v5 + ss.u2v5) 전용 ──
+import { magnifyLab } from "./steps/bio6/magnifyLab";
+import { cellWorkLab } from "./steps/bio6/cellWorkLab";
+import { slideBuildLab } from "./steps/bio6/slideBuildLab";
+import { scopeCompareLab } from "./steps/bio6/scopeCompareLab";
 // ── 중2 Ⅴ v3 랩 7종(2026-08-10 재제작, steps/plant3/*) — 병행 배선(unit5v3) 전용 ──
 import { greenHuntLab } from "./steps/plant3/greenHuntLab";
 import { gasCrossLab } from "./steps/plant3/gasCrossLab";
@@ -609,6 +614,11 @@ const R: Record<string, StepRenderer> = {
   groupRuleLab,
   kingdomGateLab,
   webDropLab,
+  // 중1 Ⅱ v5 랩(2026-11-11)
+  magnifyLab,
+  cellWorkLab,
+  slideBuildLab,
+  scopeCompareLab,
   // 중2 Ⅴ v3 랩(2026-08-10 재제작)
   greenHuntLab,
   gasCrossLab,

@@ -559,6 +559,15 @@ export const groupRuleLab = (o: B4LabOpt): Step => ({ type: "groupRuleLab", ...o
 export const kingdomGateLab = (o: B4LabOpt): Step => ({ type: "kingdomGateLab", ...o });
 export const webDropLab = (o: B4LabOpt): Step => ({ type: "webDropLab", ...o });
 
+// ── 중1 Ⅱ v5 랩 4종(2026-11-11, steps/bio6/*) ──
+// 병행 배선(unit2v5.ts + ss.u2v5 토글, 주소 ?u2v5) 전용. 제목은 학생이 답할 질문 한 줄이고 리드는 없다.
+// cellWorkLab만 mode("animal"|"plant")를 받는다(한 레슨에서 동물, 식물 두 번 쓴다).
+export type B6LabOpt = { title: string; cta?: string; curio?: CurioOpt };
+export const magnifyLab = (o: B6LabOpt): Step => ({ type: "magnifyLab", ...o });
+export const cellWorkLab = (o: B6LabOpt & { mode: "animal" | "plant" }): Step => ({ type: "cellWorkLab", ...o });
+export const slideBuildLab = (o: B6LabOpt): Step => ({ type: "slideBuildLab", ...o });
+export const scopeCompareLab = (o: B6LabOpt): Step => ({ type: "scopeCompareLab", ...o });
+
 // ── 중2 Ⅴ 식물과 에너지 v3 랩 7종(2026-08-10 재제작 — steps/plant3/*) ──
 // 병행 배선(unit5v3.ts + ss.g2u5v3 토글) 전용 — 현행 unit5 계열·v2(plant2)와 이름이 겹치지 않는다.
 export const greenHuntLab = (o: B4LabOpt): Step => ({ type: "greenHuntLab", ...o });

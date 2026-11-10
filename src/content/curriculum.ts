@@ -5,7 +5,21 @@ import { isDone, isPremium, isReviewMode } from "../core/store";
 import { UNIT1 } from "./unit1";
 // 중1 Ⅱ = v3 재제작본이 정본(2026-08-10 사용자 판정 합격 — 병행 토글 ss.u2v3 폐기, 직배선).
 // 구판(content/unit2.ts)·v2류 보존 규칙은 Ⅴ·Ⅵ과 동일 — 파일은 남기고 배선만 끊는다.
-import { UNIT2_V3 } from "./unit2v3";
+// 중1 Ⅱ v5(2026-11-11, 랩과 뒤따르는 문제 재제작. 앞의 세 레슨만 새 판) 병행 배선: 세션 "ss.u2v5"="1" 또는 주소 ?u2v5.
+// CURRICULUM 줄은 건드리지 않는다(Ⅲ·Ⅳ v3 브랜치가 그 줄을 고친다). 정본 import에 별칭을 주고 같은 이름 자리에 켜진 판을 꽂는다.
+// 꺼져 있으면 지금과 완전히 같다. 합격하면 이 블록을 지우고 CURRICULUM의 UNIT2_V3를 UNIT2_V5로 바꾼다(v3 파일은 보존).
+import { UNIT2_V3 as UNIT2_CANON } from "./unit2v3";
+import { UNIT2_V5 } from "./unit2v5";
+const u2v5On = (() => {
+  try {
+    // 주소 ?u2v5로 켜면 세션에도 심어 둔다(해시 라우팅이 주소를 다시 쓰거나 새로고침해도 같은 탭에선 유지된다).
+    if (new URLSearchParams(location.search).has("u2v5")) sessionStorage.setItem("ss.u2v5", "1");
+    return sessionStorage.getItem("ss.u2v5") === "1";
+  } catch {
+    return false;
+  }
+})();
+const UNIT2_V3 = u2v5On ? UNIT2_V5 : UNIT2_CANON;
 import { UNIT3 } from "./unit3";
 import { UNIT4 } from "./unit4";
 import { UNIT5 } from "./unit5";
