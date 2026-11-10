@@ -83,6 +83,87 @@ export const COMIC_ART: Record<string, SketchPanelArt[]> = {
     {
       "img": "sketch/comics/u1l1/7.svg"
     }
+  ],
+  "u1l3": [
+    {
+      "img": "sketch/comics/u1l3/0.svg",
+      "bubbles": [
+        {
+          "text": "시간 여행 출발!",
+          "x": 24.6,
+          "y": 37.5
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u1l3/1.svg",
+      "bubbles": [
+        {
+          "text": "빨대가<br>부러졌나?",
+          "x": 29,
+          "y": 47.3,
+          "tail": "left"
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u1l3/2.svg",
+      "bubbles": [
+        {
+          "text": "작은 방이<br>가득해!",
+          "x": 26.8,
+          "y": 35.6
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u1l3/3.svg",
+      "bubbles": [
+        {
+          "text": "이 힘으로<br>달리자!",
+          "x": 36.4,
+          "y": 38.6
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u1l3/4.svg",
+      "bubbles": [
+        {
+          "text": "세균이<br>사라졌네?",
+          "x": 22.2,
+          "y": 31.8
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u1l3/5.svg",
+      "bubbles": [
+        {
+          "text": "지금 보여?",
+          "x": 28.3,
+          "y": 33.1,
+          "tail": "left"
+        },
+        {
+          "text": "잘 보여!",
+          "x": 71.6,
+          "y": 33.9,
+          "tail": "right"
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u1l3/6.svg",
+      "bubbles": [
+        {
+          "text": "다음은<br>여러분 차례!",
+          "x": 67.4,
+          "y": 32.7,
+          "tail": "right"
+        }
+      ]
+    }
   ]
 };
 

@@ -2,7 +2,7 @@
 // 만화에서는 얼굴을 비우고(face 없음) 머리 모양, 모자, 안경, 옷으로 인물을 구분한다.
 // 스플래시, 원형 아바타, 로그인 그림에서는 같은 인물에 face 를 켠다.
 // 좌표는 발 사이가 원점, 위쪽이 음수. 자세는 관절 좌표 묶음이다.
-import { C, curve, dense, circ, ell, poly, lerp, lerp2, TAU, mix } from "./sk.mjs";
+import { C, curve, dense, circ, ell, poly, rrect, lerp, lerp2, TAU, mix } from "./sk.mjs";
 
 export const R = 100; // 머리 반지름. 키는 약 536 (머리가 키의 37%)
 const PI = Math.PI;
@@ -151,6 +151,13 @@ export function drawHead(sk, o = {}) {
     sk.ink(tail, { w: 11, wob: 1.2, seed: seed + 61 });
   }
 
+  if (style === "curls") {
+    // 어깨까지 내려오는 곱슬 긴 머리(17세기 가발 느낌): 머리 뒤에 큰 덩어리
+    const mass = curve([[0, -124], [64, -114], [116, -68], [138, 0], [142, 72], [124, 126], [88, 146], [54, 128], [62, 86], [0, 96], [-62, 86], [-54, 128], [-88, 146], [-124, 126], [-142, 72], [-138, 0], [-116, -68], [-64, -114]], true, 4);
+    sk.fill(mass, hairCol, { dx: 1.5, dy: 2, wob: 1.6, seed: seed + 180, tex });
+    sk.ink(mass, { w: 11, wob: 1.6, seed: seed + 181 });
+    for (const sg of [-1, 1]) for (const [cy, i] of [[20, 0], [62, 1], [104, 2]]) sk.ink(curve([[sg * 104, cy - 14], [sg * 122, cy], [sg * 106, cy + 14]]), { w: 5, wob: 0.4, seed: seed + 182 + i, color: mix(hairCol, "#000000", 0.3) });
+  }
   sk.fill(circ(0, 0, R - 3, { over: 0, seed: seed + 5 }), o.skin ?? C.skin, { dx: 2.2, dy: 2.6, wob: 1.8, seed: seed + 6 });
   sk.ink(circ(0, 0, R, { seed: seed + 5 }), { w: LW, wob: 1.3, seed: seed + 7 });
 
@@ -173,6 +180,17 @@ export function drawHead(sk, o = {}) {
     const outer = arcPts(R + 11, PI - 0.9, TAU + 0.9);
     const e = outer[outer.length - 1];
     capShape(sk, outer, [e, [78, 44], [74, -26], [46, -6], [14, -42], [-22, -12], [-56, -40], [-76, -22], [-80, 44], [-e[0], e[1]]], hairCol, seed + 20, 11, false, tex);
+  } else if (style === "curls") {
+    const outer = arcPts(R + 8, PI + 0.02, TAU - 0.02);
+    const e = outer[outer.length - 1];
+    capShape(sk, outer, [e, [74, -50], [40, -38], [4, -54], [-34, -38], [-74, -50]], hairCol, seed + 184, 11, true, tex);
+  } else if (style === "tophat" || style === "gat") {
+    // 모자 아래로 보이는 옆머리
+    for (const sg of [-1, 1]) {
+      const side = [[-104, -14], [-108, 22], [-92, 6], [-86, 30], [-70, -4], [-66, -30], [-104, -14]].map(([x, y]) => [sg * x, y]);
+      sk.fill(dense(side, 4), hairCol, { dx: 1, dy: 1.5, wob: 0.9, seed: seed + 186 });
+      sk.ink(dense(side, 4), { w: 9, wob: 0.9, seed: seed + 187 });
+    }
   } else if (style === "tricorn") {
     // 귀 옆 가발 롤
     for (const sg of [-1, 1]) {
@@ -258,6 +276,29 @@ export function drawHead(sk, o = {}) {
     sk.fill(band, mix(col, "#ffffff", 0.45), { dx: 1, dy: 1.4, wob: 0.8, seed: seed + 162 });
     sk.ink(band, { w: 10, wob: 0.9, seed: seed + 163 });
   }
+  if (style === "tophat") {
+    // 실크해트: 높은 통 + 납작한 챙 + 띠
+    const col = o.capColor ?? "#2E2E33";
+    const crown = poly([[-68, -80], [-62, -206], [62, -206], [68, -80]], 4);
+    sk.fill(crown, col, { dx: 1.5, dy: 2, wob: 1.1, seed: seed + 190, tex });
+    sk.ink(crown, { w: 11, wob: 1.1, seed: seed + 191 });
+    sk.ink(dense([[-66, -112], [66, -112]]), { w: 9, wob: 0.6, seed: seed + 192, color: o.bandColor ?? C.red });
+    const brim = rrect(-116, -94, 232, 24, 12);
+    sk.fill(brim, col, { dx: 1, dy: 1.4, wob: 0.8, seed: seed + 193 });
+    sk.ink(brim, { w: 11, wob: 1, seed: seed + 194 });
+  }
+  if (style === "gat") {
+    // 갓: 넓고 납작한 양태 + 둥근 통(대우), 턱 끈
+    const col = o.capColor ?? "#2E2E33";
+    const top = poly([[-52, -92], [-46, -168], [46, -168], [52, -92]], 4);
+    sk.fill(top, col, { dx: 1.5, dy: 2, wob: 1, seed: seed + 196, tex });
+    sk.ink(top, { w: 10, wob: 1, seed: seed + 197 });
+    const brim = curve([[-168, -78], [-90, -96], [0, -100], [90, -96], [168, -78], [90, -70], [0, -66], [-90, -70]], true, 4);
+    sk.fill(brim, col, { dx: 1, dy: 1.4, wob: 0.8, seed: seed + 198, alpha: 0.92 });
+    sk.ink(brim, { w: 10, wob: 1, seed: seed + 199 });
+    sk.ink(curve([[-84, -66], [-70, 40], [0, 112]]), { w: 5, wob: 0.6, seed: seed + 200, color: "#3A3A40" });
+    sk.ink(curve([[84, -66], [70, 40], [0, 112]]), { w: 5, wob: 0.6, seed: seed + 201, color: "#3A3A40" });
+  }
   if (style === "tricorn") {
     // 삼각모: 가운데가 솟고 양 끝이 뾰족한 남색 모자 + 금색 테
     const col = o.capColor ?? C.navy;
@@ -277,7 +318,7 @@ export function drawHead(sk, o = {}) {
 // 머리 중심에서 머리 꼭대기(모자, 삐친 머리 포함)까지의 거리. 말풍선 꼬리가 닿을 자리다.
 export function headTop(o = {}) {
   const st = o.hair ?? "sprout";
-  return st === "tricorn" ? 146 : st === "sprout" ? R + 54 : st === "cap" ? R + 24 : st === "bald" ? R + 6 : R + 14;
+  return st === "tricorn" ? 146 : st === "tophat" ? 212 : st === "gat" ? 174 : st === "curls" ? R + 28 : st === "sprout" ? R + 54 : st === "cap" ? R + 24 : st === "bald" ? R + 6 : R + 14;
 }
 
 // 몸통 축 기준의 겉옷(가운, 제복). 어깨 점을 돌려준다.
@@ -318,6 +359,10 @@ export function drawFigure(sk, x, y, s, p, o = {}) {
   sk.ink(curve([p.hip, p.knR, p.ftR]), { w: lw, seed: seed + 1, wob: 1.6 });
   sk.ink(curve([p.neck, lerp2(p.neck, p.hip, 0.5), p.hip]), { w: lw + 1, seed: seed + 2, wob: 1.6 });
   if (o.coat) ({ shL, shR } = drawCoat(sk, p, o.coat, seed));
+  if (o.bowtie) {
+    const [nx, ny] = [p.neck[0], p.neck[1] + 16];
+    for (const sg of [-1, 1]) { const t = poly([[nx, ny], [nx + sg * 26, ny - 14], [nx + sg * 26, ny + 14]], 3); sk.fill(t, o.bowtie, { dx: 0, dy: 0, wob: 0.4, seed: seed + 210 }); sk.ink(t, { w: 6, wob: 0.4, seed: seed + 211 }); }
+  }
   if (o.under) o.under(); // 팔보다 뒤, 몸보다 앞에 놓일 소품
   sk.ink(curve([shL, p.elL, p.haL]), { w: lw, seed: seed + 3, wob: 1.6 });
   sk.ink(curve([shR, p.elR, p.haR]), { w: lw, seed: seed + 4, wob: 1.6 });
@@ -345,3 +390,11 @@ export const LIND = { hair: "tricorn", coat: { color: C.navy, buttons: C.gold, s
 export const SAILOR_A = { hair: "kerchief", capColor: C.red, seed: 61 };
 export const SAILOR_B = { hair: "knit", capColor: "#3F7CC0", seed: 71 };
 export const SAILOR_C = { hair: "short", hairColor: "#C58B3A", seed: 81 };
+// 만화의 학생: 영상 샘플의 노란 모자 아이
+export const STUDENT = { hair: "cap", seed: 31 };
+// 로버트 훅: 어깨까지 내려오는 곱슬 긴 머리 + 갈색 외투
+export const HOOKE = { hair: "curls", hairColor: "#6B4A32", coat: { color: "#7A5A45", buttons: C.gold, seam: "#4E382B" }, seed: 101 };
+// 증기 시대 기술자: 실크해트 + 짙은 조끼
+export const ENGINEER = { hair: "tophat", hairColor: "#5B463A", coat: { color: "#4A5568", buttons: C.gold, seam: "#2D3748", len: 34 }, seed: 111 };
+// 플레밍: 짧은 회색 머리 + 흰 가운 + 나비넥타이
+export const FLEMING = { hair: "short", hairColor: "#9A9A9A", coat: { color: C.white }, bowtie: C.red, seed: 121 };

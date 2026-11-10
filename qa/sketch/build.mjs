@@ -38,7 +38,7 @@ function placeBubble(sk, b, where) {
   const bh = lines.length * 15.6 + 16.2;
   let cx = ax, by = ay - 9, tail = b.side;
   if (!tail && ax - bw / 2 < 5) tail = "left";
-  else if (!tail && ax + bw / 2 > FRAME_W - 5) tail = "right";
+  else if (!tail && (ax + bw / 2 > FRAME_W - 5 || FRAME_W - ax < Math.max(84, bw) - 1)) tail = "right"; // 오른쪽 폭이 모자라면 몸통을 왼쪽으로
   if (tail === "left") { cx = ax + 16 + bw / 2; by = ay - 29; }
   if (tail === "right") { cx = ax - 16 - bw / 2; by = ay - 29; }
   const box = { l: cx - bw / 2, r: cx + bw / 2, t: by - bh, b: by };

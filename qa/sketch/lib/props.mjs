@@ -345,3 +345,116 @@ export function pencil(sk, x, y, s, o = {}) {
     sk.ink(er, { w: 7, wob: 0.4, seed: sd + 5 });
   }, o.rot ?? 0);
 }
+
+/* ---------- 과학 도구와 탈것 ---------- */
+
+// 훅 시대의 현미경: 받침 + 기둥 + 기울어진 놋쇠 통. 원점 = 받침 바닥 가운데, 통은 왼쪽 위로 기운다
+export function microscope(sk, x, y, s = 1, o = {}) {
+  const sd = o.seed ?? 881, BR = "#D2A84A";
+  sk.at(x, y, s, () => {
+    const base = rrect(-70, -22, 140, 22, 8);
+    sk.fill(base, C.woodDark, { seed: sd, tex: true, texAng: 0.02 }); sk.ink(base, { w: 9, seed: sd + 1 });
+    sk.ink(dense([[34, -22], [34, -150]]), { w: 11, seed: sd + 2 });
+    sk.ink(dense([[34, -120], [-2, -112]]), { w: 9, seed: sd + 3 });
+    const tube = poly([[-30, -70], [14, -86], [-36, -226], [-80, -210]], 4);
+    sk.fill(tube, BR, { seed: sd + 4, tex: true, texAng: 1.2 }); sk.ink(tube, { w: 9, seed: sd + 5 });
+    const eye = poly([[-78, -204], [-42, -218], [-52, -246], [-88, -232]], 3);
+    sk.fill(eye, "#8A6A2A", { dx: 0.6, dy: 0.8, wob: 0.5, seed: sd + 6 }); sk.ink(eye, { w: 8, seed: sd + 7 });
+    const tip = poly([[-22, -66], [6, -76], [10, -58], [-14, -50]], 3);
+    sk.fill(tip, "#8A6A2A", { dx: 0.6, dy: 0.8, wob: 0.5, seed: sd + 8 }); sk.ink(tip, { w: 7, seed: sd + 9 });
+    // 재물대와 시료
+    sk.ink(dense([[-44, -40], [30, -40]]), { w: 8, seed: sd + 10 });
+    if (o.sample !== false) { const c = rrect(-26, -50, 30, 10, 3); sk.fill(c, "#C99A62", { dx: 0, dy: 0, wob: 0.3, seed: sd + 11 }); sk.ink(c, { w: 5, seed: sd + 12, wob: 0.3 }); }
+  });
+}
+// 확대해 본 코르크: 둥근 창 안에 벌집 같은 작은 칸. o.empty 면 칸 속을 비워 "벽만 남은" 모습
+export function cellsView(sk, cx, cy, r, o = {}) {
+  const sd = o.seed ?? 901;
+  const ring = circ(cx, cy, r, { over: 0.12, seed: sd });
+  sk.fill(ring, o.bg ?? "#FBF3E2", { dx: 0, dy: 0, wob: 0.6, seed: sd + 1 });
+  const cw = r / 3.1, ch = cw * 0.82;
+  let n = 0;
+  for (let row = -6; row <= 6; row++) for (let col = -6; col <= 6; col++) {
+    const x = cx + col * cw + (row % 2 ? cw / 2 : 0), y = cy + row * ch;
+    if (Math.hypot(x - cx, y - cy) > r - cw * 0.72) continue;
+    const cell = rrect(x - cw * 0.44, y - ch * 0.42, cw * 0.88, ch * 0.84, cw * 0.16);
+    if (!o.empty) sk.fill(cell, o.fill ?? "#E9D2A6", { dx: 0, dy: 0, wob: 0.5, seed: sd + 2 + n });
+    sk.ink(cell, { w: o.w ?? 5, color: o.wall ?? "#A9773F", wob: 0.7, seed: sd + 3 + n });
+    n++;
+  }
+  sk.ink(ring, { w: o.ringW ?? 11, seed: sd + 200 });
+}
+// 주전자: 몸통, 주둥이, 손잡이, 들썩이는 뚜껑. 원점 = 바닥 가운데
+export function kettle(sk, x, y, s = 1, o = {}) {
+  const sd = o.seed ?? 921, col = o.color ?? "#9FB4C7";
+  sk.at(x, y, s, () => {
+    sk.ink(curve([[-58, -96], [-96, -150], [-30, -168], [40, -150], [66, -100]]), { w: 10, seed: sd });
+    const spout = curve([[62, -70], [112, -96], [122, -128], [104, -130], [92, -108], [58, -96]], true, 3);
+    sk.fill(spout, col, { dx: 0.8, dy: 1, wob: 0.6, seed: sd + 1 }); sk.ink(spout, { w: 9, seed: sd + 2 });
+    const body = curve([[-70, -100], [-84, -50], [-70, -6], [-40, 0], [40, 0], [70, -6], [84, -50], [70, -100]], false, 4);
+    sk.fill([...body, body[0]], col, { seed: sd + 3, tex: true }); sk.ink([...body, body[0]], { w: 10, seed: sd + 4 });
+    const lift = o.lift ?? 14;
+    const lid = curve([[-52, -104 - lift], [-30, -124 - lift], [30, -124 - lift], [52, -104 - lift]], false, 3);
+    sk.fill([...lid, lid[0]], mix(col, "#000000", 0.14), { dx: 0.6, dy: 0.8, wob: 0.5, seed: sd + 5 }); sk.ink([...lid, lid[0]], { w: 9, seed: sd + 6 });
+    const knob = circ(0, -132 - lift, 9, { over: 0.2, seed: sd + 7 });
+    sk.fill(knob, C.ink, { dx: 0, dy: 0, wob: 0.3 });
+  });
+}
+// 지구: 파란 원 + 초록 땅. 원점 = 가운데
+export function earth(sk, cx, cy, r, o = {}) {
+  const sd = o.seed ?? 941;
+  const g = circ(cx, cy, r, { over: 0.1, seed: sd });
+  sk.fill(g, o.sea ?? "#7CC4F0", { dx: 0, dy: 0, wob: 0.8, seed: sd + 1, tex: true });
+  const land = (pts, i) => { const l = curve(pts.map(([x, y]) => [cx + x * r, cy + y * r]), true, 4); sk.fill(l, C.green, { dx: 0, dy: 0, wob: 0.6, seed: sd + 2 + i, tex: 0.8 }); };
+  land([[-0.56, -0.62], [-0.2, -0.78], [0.08, -0.6], [-0.02, -0.34], [-0.3, -0.24], [-0.56, -0.38]], 0);
+  land([[0.3, -0.5], [0.62, -0.46], [0.7, -0.2], [0.48, -0.06], [0.28, -0.22]], 1);
+  land([[-0.2, 0.06], [0.1, 0.02], [0.2, 0.3], [0.02, 0.56], [-0.2, 0.36]], 2);
+  sk.ink(g, { w: o.w ?? 11, seed: sd + 9 });
+}
+// 인공위성: 몸통 + 양 날개(태양 전지판) + 접시. 원점 = 몸통 가운데
+export function satellite(sk, x, y, s = 1, o = {}) {
+  const sd = o.seed ?? 961;
+  sk.at(x, y, s, () => {
+    for (const sg of [-1, 1]) {
+      sk.ink(dense([[sg * 26, 0], [sg * 46, 0]]), { w: 8, seed: sd + (sg > 0 ? 1 : 0) });
+      const pan = poly([[sg * 46, -24], [sg * 118, -24], [sg * 118, 24], [sg * 46, 24]], 4);
+      sk.fill(pan, "#4D7FD1", { seed: sd + 2, tex: true, texAng: 1.5 }); sk.ink(pan, { w: 8, seed: sd + 3 });
+      sk.ink(dense([[sg * 82, -24], [sg * 82, 24]]), { w: 5, seed: sd + 4, wob: 0.3 });
+    }
+    const body = rrect(-28, -30, 56, 60, 10);
+    sk.fill(body, "#E5E9EF", { seed: sd + 5 }); sk.ink(body, { w: 9, seed: sd + 6 });
+    sk.ink(dense([[0, 30], [0, 52]]), { w: 7, seed: sd + 7 });
+    sk.ink(curve([[-22, 50], [0, 64], [22, 50]]), { w: 8, seed: sd + 8 });
+  }, o.rot ?? -0.2);
+}
+// 휴대전화. 원점 = 가운데. o.icon: "note" | "play" 를 화면에 띄운다
+export function phone(sk, x, y, s = 1, o = {}) {
+  const sd = o.seed ?? 981;
+  sk.at(x, y, s, () => {
+    const b = rrect(-20, -34, 40, 68, 8);
+    sk.fill(b, "#39424E", { seed: sd, dx: 0.8, dy: 1 });
+    sk.fill(rrect(-14, -26, 28, 48, 4), "#9FD8F5", { seed: sd + 1, dx: 0, dy: 0, wob: 0.4 });
+    sk.ink(b, { w: 7, seed: sd + 2 });
+    if (o.icon === "play") sk.fill(poly([[-6, -12], [9, -2], [-6, 8]], 2), C.white, { dx: 0, dy: 0, wob: 0.2, seed: sd + 3 });
+  }, o.rot ?? 0);
+}
+// 배양 접시: 푸른곰팡이 둘레에만 세균이 자라지 못한 빈 고리. 원점 = 가운데
+export function petri(sk, cx, cy, r, o = {}) {
+  const sd = o.seed ?? 1001;
+  const dish = circ(cx, cy, r, { over: 0.1, seed: sd });
+  sk.fill(dish, "#FBF6E6", { dx: 0, dy: 0, wob: 0.6, seed: sd + 1 });
+  // 세균(노란 점): 곰팡이에서 먼 곳에만
+  const mx = cx - r * 0.3, my = cy - r * 0.22, clear = r * 0.56;
+  for (let i = 0; i < 60; i++) {
+    const a = hash(sd + i * 3.1) * TAU, d = Math.sqrt(hash(sd + i * 7.7)) * r * 0.86;
+    const x = cx + d * Math.cos(a), y = cy + d * Math.sin(a);
+    if (Math.hypot(x - mx, y - my) < clear) continue;
+    sk.dot(x, y, r * (0.04 + 0.02 * hash(sd + i)), "#E3B23C");
+  }
+  if (o.ring !== false) sk.ink(circ(mx, my, clear * 0.94, { over: 0, seed: sd + 2 }), { w: Math.max(3, r * 0.022), color: C.gray, dash: [r * 0.08, r * 0.07], wob: 0.4, seed: sd + 3 });
+  const mold = curve([[-0.3, -0.42], [-0.1, -0.36], [-0.08, -0.14], [-0.22, -0.02], [-0.44, -0.06], [-0.52, -0.26]].map(([x, y]) => [cx + x * r, cy + y * r]), true, 3);
+  sk.fill(mold, "#3FA7A0", { dx: 0, dy: 0, wob: 0.8, seed: sd + 4, tex: 0.7 });
+  sk.ink(mold, { w: Math.max(4, r * 0.035), color: "#22716C", wob: 0.8, seed: sd + 5 });
+  sk.ink(dish, { w: o.w ?? Math.max(7, r * 0.07), seed: sd + 6 });
+  sk.ink(circ(cx, cy, r * 0.9, { over: 0, seed: sd + 7 }), { w: Math.max(3, r * 0.02), color: C.grayLight, wob: 0.4, seed: sd + 8 });
+}
