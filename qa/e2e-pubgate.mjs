@@ -7,10 +7,12 @@
 //          [C] dev + ss.pub=1 + premium(취약 드릴 피커: 과목 세그 없음·중1 과학 헤더)
 //          [D] 프로덕션 번들(vite preview. DEV 게이트가 실제로 닫히는지: 신규 유저 과학 직행·과목 탭 없음·
 //              페이월, 검토 모드를 켜면 과목 탭이 그 자리에서 열리고 끄면 닫힘)
-//          [E] 운영 계정 로그인·로그아웃(떠 있는 탭바가 그 자리에서 바뀌고, 닫힌 과목 탭 위에 서 있었다면
-//              학습 탭으로 옮겨 준다. dev 모듈 두 개를 응답 단계에서 손봐 운영 번들과 인증 상태를 흉내 낸다)
-// 2026-11-11: 과목 탭은 고를 과목이 둘 이상일 때만 선다(store.hasSubjectChoice). 일반 사용자에게는 과학 하나라
-//            탭이 없고, 과목 허브 화면도 닿을 길이 없다(허브 1카드 검사는 탭 구성 검사로 바뀌었다).
+//          [E] 운영 계정(로그인해도 탭은 4개 그대로. 다른 과목은 주소 #/subject/<과목>으로 열거나
+//              검토 모드를 켜서 과목 탭으로 간다. dev 모듈 두 개를 응답 단계에서 손봐 운영 번들과
+//              인증 상태를 흉내 낸다)
+// 2026-11-11: 과목 탭을 닫았다(store.hasSubjectChoice). 일반 사용자에게는 과학 하나라 고를 것이 없고,
+//            운영 계정도 같은 화면을 보도록 함께 닫았다. 탭은 검토 모드와 dev에서만 선다
+//            (허브 1카드 검사는 탭 구성 검사로 바뀌었다).
 // 실행: PORT=<dev포트> PPORT=<preview포트> node qa/e2e-pubgate.mjs (PPORT 없으면 [D] 생략)
 import { chromium } from "playwright-core";
 import fs from "node:fs";
@@ -214,21 +216,21 @@ const subjCards = (page) =>
   await page.close();
 }
 
-// ───────────── [E] 운영 계정 로그인·로그아웃: 탭바가 그 자리에서 열리고 닫힌다 ─────────────
+// ───────────── [E] 운영 계정: 로그인해도 과목 탭은 서지 않는다 ─────────────
 // 이 워크트리에는 로그인 설정이 없어 실제 로그인을 못 한다. 그래서 dev 서버가 내주는 모듈 두 개를
 // 응답 단계에서만 손본다(소스는 그대로다).
-//  - store.ts: 공개 게이트에서 dev 항을 뺀다. 운영 번들처럼 운영 계정·검토 모드에서만 열린다.
+//  - store.ts: dev 항을 뺀다. 운영 번들처럼 공개 게이트는 운영 계정·검토 모드에서만, 과목 탭은 검토 모드에서만 열린다.
 //  - auth.ts: 인증 상태를 바꿔 알리는 시험용 손잡이 window.__qaAuth를 단다. 운영 계정 주소는
 //    모듈 안의 표(PRIVILEGED_EMAILS)에서 꺼내 쓴다(이 파일에 주소를 적지 않는다).
 {
-  console.log("[E] 운영 계정 로그인·로그아웃: 떠 있는 탭바가 그 자리에서 바뀜");
+  console.log("[E] 운영 계정: 탭은 4개 그대로, 다른 과목은 주소와 검토 모드로");
   const page = await newPage({ seed: { ...SEED_BASE, viewSubject: "sci" }, pub: false, dev: true });
   let patched = 0;
   await page.route("**/src/core/store.ts*", async (route) => {
     const res = await route.fetch();
     const src = await res.text();
     const out = src.replace(/\s*\|\|\s*!!import\.meta\.env\.DEV/, "");
-    if (out !== src) patched += 1;
+    if (out !== src && !/\|\|\s*!!import\.meta\.env\.DEV/.test(out)) patched += 1; // dev 항이 한 군데도 남지 않아야 한다
     await route.fulfill({ response: res, body: out });
   });
   await page.route("**/src/core/auth.ts*", async (route) => {
@@ -246,39 +248,67 @@ const subjCards = (page) =>
     await page.evaluate((on) => window.__qaAuth(on), on);
     await page.waitForTimeout(600);
   };
-  ok((await tabLabels(page)) === "학습,복습,도전,마이", `로그인 전: 탭 4개: ${await tabLabels(page)}`);
+  const goHash = async (hash) => {
+    await page.evaluate((hash) => (location.hash = hash), hash);
+    await page.waitForTimeout(800);
+  };
+  const sevenTaps = async () => {
+    for (let i = 0; i < 7; i++) await page.click("#sc-home .brand", { delay: 20 });
+    await page.waitForTimeout(500);
+  };
+  const FOUR = "학습,복습,도전,마이";
+  const FIVE = "학습,과목,복습,도전,마이";
+  const SCI = "과학과 인류의 지속가능한 삶";
+  ok((await tabLabels(page)) === FOUR, `로그인 전: 탭 4개: ${await tabLabels(page)}`);
 
-  // 학습 탭에 선 채로 운영 계정이 로그인되면(세션 복원이 화면보다 늦은 경우 포함) 과목 탭이 그 자리에서 생긴다
+  // 운영 계정으로 로그인해도 탭은 그대로 넷이다(일반 사용자와 같은 화면)
   await setAdmin(true);
   ok(
-    (await tabLabels(page)) === "학습,과목,복습,도전,마이" && (await activeId()) === "sc-home",
-    `운영 계정 로그인 → 학습 탭에 선 채 과목 탭 열림: ${await tabLabels(page)}`,
+    (await tabLabels(page)) === FOUR && (await activeId()) === "sc-home",
+    `운영 계정 로그인 뒤에도 탭 4개: ${await tabLabels(page)}`,
   );
-  await openSubjectsTab(page);
-  const cards = await subjCards(page);
-  ok(cards.length === 4, `운영 계정: 과목 허브 4카드: ${cards.join(",")}`);
-
-  // 과목 탭에 서 있는데 로그아웃되면(다른 창에서 로그아웃한 경우) 학습 탭으로 옮겨 준다
-  await setAdmin(false);
+  // 예전 주소 #/subjects는 운영 계정에게도 학습 탭이다
+  await goHash("#/subjects");
   const st = await page.evaluate(() => ({
     id: document.querySelector(".screen.active")?.id,
     hub: !!document.querySelector("#sc-subjects"),
     hash: location.hash,
   }));
-  ok(st.id === "sc-home" && !st.hub && st.hash === "#/subject/sci", `과목 탭에서 로그아웃 → 학습 탭(${st.id}, ${st.hash})`);
-  ok((await tabLabels(page)) === "학습,복습,도전,마이", `로그아웃 뒤 탭 4개: ${await tabLabels(page)}`);
+  ok(st.id === "sc-home" && !st.hub && st.hash === "#/subject/sci", `운영 계정: #/subjects → 학습 탭(${st.id}, ${st.hash})`);
 
-  // 마이 탭에 서 있을 때는 화면을 옮기지 않고 탭바만 바꾼다(계정 화면에서 로그아웃하는 흔한 길)
-  await tapTab(page, "마이");
-  await setAdmin(true);
+  // 운영 계정은 주소로 다른 과목을 열 수 있다(탭은 계속 넷)
+  await goHash("#/subject/math");
   ok(
-    (await tabLabels(page)) === "학습,과목,복습,도전,마이" && (await activeId()) === "sc-my",
-    `마이 탭에서 로그인 → 마이에 선 채 과목 탭 열림: ${await tabLabels(page)}`,
+    (await bandTitle(page)) === "수와 연산" && (await tabLabels(page)) === FOUR,
+    `운영 계정: #/subject/math → 수학 지도, 탭 4개: ${await bandTitle(page)}`,
   );
-  await setAdmin(false);
+  // 검토 모드를 켜면 과목 탭이 그 자리에서 서고, 그 탭으로 과학에 돌아온다
+  await sevenTaps();
+  ok((await tabLabels(page)) === FIVE, `운영 계정 + 검토 모드 ON → 과목 탭 열림: ${await tabLabels(page)}`);
+  await openSubjectsTab(page);
+  const cards = await subjCards(page);
+  ok(cards.length === 4, `검토 모드: 과목 허브 4카드: ${cards.join(",")}`);
+  await page.evaluate(() => {
+    [...document.querySelectorAll("#sc-subjects .subj-card")]
+      .find((c) => c.querySelector(".subj-name")?.textContent?.trim() === "과학")
+      ?.click();
+  });
+  await page.waitForSelector("#sc-home.active", { timeout: 8000 });
+  await page.waitForTimeout(500);
+  ok((await bandTitle(page)) === SCI, `과목 탭에서 과학 선택 → 과학 지도: ${await bandTitle(page)}`);
+  // 검토 모드를 끄면 과목 탭이 닫히고 보던 과목은 그대로다
+  await sevenTaps();
   ok(
-    (await tabLabels(page)) === "학습,복습,도전,마이" && (await activeId()) === "sc-my",
-    `마이 탭에서 로그아웃 → 마이에 선 채 과목 탭 닫힘: ${await tabLabels(page)}`,
+    (await tabLabels(page)) === FOUR && (await bandTitle(page)) === SCI,
+    `검토 모드 OFF → 과목 탭 닫힘, 과학 지도 유지: ${await tabLabels(page)}`,
+  );
+
+  // 로그아웃하면 일반 사용자다. 주소로 수학을 불러도 과학 지도에 선다(공개 게이트 클램프)
+  await setAdmin(false);
+  await goHash("#/subject/math");
+  ok(
+    (await bandTitle(page)) === SCI && (await tabLabels(page)) === FOUR,
+    `로그아웃 뒤 #/subject/math → 과학 지도, 탭 4개: ${await bandTitle(page)}`,
   );
   await page.close();
 }

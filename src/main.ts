@@ -38,7 +38,7 @@ import { doneScreen } from "./screens/done";
 import { reviewScreen } from "./screens/review";
 import { challengeScreen } from "./screens/challenge";
 import { myScreen } from "./screens/my";
-import { refreshGnav, type GnavKey } from "./ui/gnav";
+import type { GnavKey } from "./ui/gnav";
 import { paywallScreen } from "./screens/paywall";
 import { policyScreen } from "./screens/policy";
 import { examScreen } from "./screens/exam";
@@ -95,8 +95,8 @@ function resumeLearning(): void {
 
 /** 하단 탭 전환(2026-07-12 IA 개편) — 탭은 스택을 쌓지 않고 reset으로 갈아끼운다. */
 function goTab(k: GnavKey): void {
-  // 과목 탭은 고를 과목이 둘 이상일 때만 선다(store.hasSubjectChoice). 닫혀 있는데 들어오는 길
-  // (예전 주소 #/subjects, 운영 계정 로그아웃 직후)은 학습 탭으로 돌린다.
+  // 과목 탭은 지금 검토 모드와 dev에서만 선다(store.hasSubjectChoice). 닫혀 있는데 들어오는 길
+  // (예전 주소 #/subjects)은 학습 탭으로 돌린다.
   if (k === "subjects" && !hasSubjectChoice()) k = "home";
   currentTab = k;
   if (k === "home") {
@@ -625,19 +625,9 @@ if (import.meta.env.DEV) {
 // initSync가 먼저 리스너를 배선해야 initAuth의 세션 복원 이벤트를 놓치지 않는다.
 // 운영 계정 프리미엄 겹층 — 지정 이메일 로그인 시 결제 없이 전 기능(로그아웃하면 자동 해제).
 // 과목 공개 게이트도 같은 지점에서 주입 — 운영 계정만 수학·사회·역사가 보인다(store.canSeeAllSubjects).
-let wasAdmin = false;
 onAuthChange((u) => {
-  const admin = isPrivilegedUser(u);
-  setPremiumOverride(admin);
-  setAdminOverride(admin);
-  // 운영 계정으로 들어오거나 나가면 과목 탭이 열리고 닫힌다. 떠 있는 탭바를 그 자리에서 다시 그리고,
-  // 닫힌 과목 탭 위에 서 있었다면 학습 탭으로 옮긴다(화면을 통째로 다시 그리지는 않는다.
-  // 마이 탭을 다시 그리면 로그아웃 직후 로그인 화면이 얹혀 버린다).
-  if (admin !== wasAdmin) {
-    wasAdmin = admin;
-    if (currentTab === "subjects" && nav.depth === 1 && !hasSubjectChoice()) goTab("home");
-    else refreshGnav();
-  }
+  setPremiumOverride(isPrivilegedUser(u));
+  setAdminOverride(isPrivilegedUser(u));
   // 저장된 세션은 initAuth 복원 전에도 로그인 사용자 버튼을 먼저 보여 줘 깜빡임을 막는다.
   updateSplashAuth?.(!!u || hasStoredSession());
 });

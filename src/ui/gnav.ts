@@ -1,13 +1,13 @@
 // 하단 글로벌 탭바: 학습(홈)·과목·복습·도전·마이 최상위 화면 공용(2026-07-12 IA 개편,
 // 과목 탭 신설 2026-07-20 사용자 확정 — 홈 앱바 좌상단 subj-box 단독 진입은 발견성이 나빠 폐기).
-// 과목 탭은 고를 과목이 둘 이상일 때만 선다(2026-11-11 사용자 확정, store.hasSubjectChoice).
-// 일반 사용자에게는 과학만 공개돼 있어 탭이 넷(학습·복습·도전·마이)이고, 운영 계정·검토 모드·dev는 다섯이다.
+// 과목 탭은 지금 닫혀 있다(2026-11-11 사용자 확정, store.hasSubjectChoice). 공개된 과목이 과학 하나라
+// 일반 사용자와 운영 계정 모두 탭이 넷(학습·복습·도전·마이)이고, 검토 모드와 dev에서만 다섯이다.
 // 탭 전환은 main.ts의 goTab(nav.reset)이 담당 — 여기서는 콜백만 쏜다. 활성 탭 재탭은 무시.
 // 마이 탭 아이콘 = 로그인 시 내 아바타 원형 미니(2026-07-16 프로필 진입 단일화 — 우상단
 // 프로필 버튼이 하던 로그인 상태 표시·아바타 노출을 이 아이콘이 흡수, 인스타·유튜브 You 탭 패턴).
 // gnav는 화면마다 새로 그려져 렌더 시점 상태 반영이 기본이다. 아바타 픽커 직후의 즉시 갱신만
-// refreshGnavMyIcon(마이 화면 콜백)이 보조하고, 탭 구성이 바뀌는 순간(운영 계정 로그인·로그아웃,
-// 검토 모드 토글)은 refreshGnav가 떠 있는 탭바를 그 자리에서 다시 그린다.
+// refreshGnavMyIcon(마이 화면 콜백)이 보조하고, 탭 구성이 바뀌는 순간(검토 모드 토글)은
+// refreshGnav가 떠 있는 탭바를 그 자리에서 다시 그린다.
 // e2e 계약: .gnav-item 구조·.gnav-tx 라벨 불변.
 
 import { el } from "../core/dom";
@@ -54,7 +54,7 @@ function fill(bar: HTMLElement): void {
   if (!ctx) return;
   bar.replaceChildren();
   for (const it of ITEMS) {
-    if (it.key === "subjects" && !hasSubjectChoice()) continue; // 고를 과목이 하나뿐이면 과목 탭은 서지 않는다
+    if (it.key === "subjects" && !hasSubjectChoice()) continue; // 과목 탭이 닫혀 있으면 건너뛴다
     const on = it.key === ctx.active;
     const ic = el("span", { class: `gnav-ic ${it.key === "my" ? "my" : ""}` });
     if (it.key === "my") fillMyIcon(ic);
@@ -82,7 +82,7 @@ export function gnav(active: GnavKey, go: (k: GnavKey) => void): HTMLElement {
 }
 
 /** 탭 구성이 바뀌었을 때 화면에 떠 있는 탭바를 그 자리에서 다시 그린다.
- *  과목 탭이 열리고 닫히는 순간(운영 계정 로그인·로그아웃, 검토 모드 토글)에 부른다. */
+ *  과목 탭이 열리고 닫히는 순간(검토 모드 토글)에 부른다. */
 export function refreshGnav(root: ParentNode = document): void {
   root.querySelectorAll<HTMLElement>(".gnav").forEach(fill);
 }
