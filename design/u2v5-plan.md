@@ -178,7 +178,7 @@ u2l2의 그림에서 찾기(hotspot)는 넣지 않았다(공용 hotspot의 누�
 ## 6. 검증 게이트
 
 `npx tsc --noEmit`, `npm run build` · `qa/check-u2v5-fit.mjs`(랩 5스텝을 실제로 조작하며 시점마다 잰다. 화면 세 가지. 전체 높이, 무대 시작 높이, 조작 칸 자리, 누르는 곳 크기, 잘린 글자, 무대 글자 크기) ·
-`qa/e2e-u2v5.mjs`(세 레슨 정답 경로와 오답 경로, 토글을 끄면 v3) · `qa/check-u2v5-lang.mjs`(대시, 교과서, 출판사, 분자, 이모지,
+`qa/e2e-u2v5.mjs`(세 레슨 정답 경로와 오답 경로, 토글을 끄면 v3) · `qa/check-u2v5-real.mjs`(스플래시부터 실제 클릭과 마우스 끌기) · `qa/check-u2v5-lang.mjs`(대시, 교과서, 출판사, 분자, 이모지,
 미도입 용어) · `qa/check-u2v5-overlap.mjs`(시험 풀 16자 대조) · `qa/shot-u2v5.mjs`(폰 크기 눈검수 샷과 v3, v4 비교 이미지).
 
 ## 7. 눈검수 합격 기준(처음 보는 중1 학생의 눈으로)

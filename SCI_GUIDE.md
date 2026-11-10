@@ -730,7 +730,8 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
   - 덮개 유리처럼 도는 SVG 그룹은 `transform-box: view-box`와 px `transform-origin`을 함께 쓴다.
   - 새 CSS 접두는 모든 워크트리의 `src`에서 0건을 확인하고 쓴다(`.b6-` 충돌을 미리 피한 사례).
 - **QA**: `PORT=5547 node qa/check-u2v5-fit.mjs`(랩 다섯 판을 실제로 조작하며 시점마다 잰다. 화면 세 가지, 1670검사) ·
-  `PORT=5547 node qa/e2e-u2v5.mjs`(정답 경로, 오답 경로, 토글, 화면 글 검사) · `node qa/check-u2v5-lang.mjs`(정적 언어 검사) ·
+  `PORT=5547 node qa/e2e-u2v5.mjs`(정답 경로, 오답 경로, 토글, 화면 글 검사, 143검사) ·
+  `PORT=5547 node qa/check-u2v5-real.mjs`(스플래시부터 실제 클릭과 마우스 끌기로, 23검사) · `node qa/check-u2v5-lang.mjs`(정적 언어 검사) ·
   `PORT=5547 node qa/check-u2v5-overlap.mjs`(시험 풀과 16자 대조) · `PORT=5547 PORT4=5503 node qa/shot-u2v5.mjs <폴더>`(캡처).
   조작 헬퍼는 `qa/u2v5-lib.mjs` 하나를 함께 쓴다. 랩은 `data-sbd-stage`, `data-scp-phase` 같은 표식을 스텝 요소에 남긴다.
   개발 중 엿보기는 `PORT=5547 node qa/u2v5-peek.mjs <레슨> <스텝> <출력.png> [조작 스크립트]`.
