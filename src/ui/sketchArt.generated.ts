@@ -581,6 +581,99 @@ export const COMIC_ART: Record<string, SketchPanelArt[]> = {
         }
       ]
     }
+  ],
+  "u6l2": [
+    {
+      "img": "sketch/comics/u6l2/0.svg",
+      "bubbles": [
+        {
+          "text": "눌러도<br>버텨요!",
+          "x": 24.6,
+          "y": 34.3
+        },
+        {
+          "text": "그럴<br>리가요?",
+          "x": 61.5,
+          "y": 22.1,
+          "tail": "right"
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u6l2/1.svg",
+      "bubbles": [
+        {
+          "text": "아래엔<br>상자를!",
+          "x": 25.1,
+          "y": 45.2
+        },
+        {
+          "text": "꽉 묶었어요",
+          "x": 70.5,
+          "y": 16.7
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u6l2/2.svg",
+      "bubbles": [
+        {
+          "text": "줄어든다,<br>줄어들어!",
+          "x": 26.9,
+          "y": 45.3
+        },
+        {
+          "text": "더 붓습니다!",
+          "x": 70.3,
+          "y": 16.7
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u6l2/3.svg",
+      "bubbles": [
+        {
+          "text": "절반까지는<br>봤어요",
+          "x": 22.5,
+          "y": 45.2
+        },
+        {
+          "text": "으악, 관이!",
+          "x": 73.9,
+          "y": 16.7
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u6l2/4.svg",
+      "bubbles": [
+        {
+          "text": "2배면<br>절반!",
+          "x": 23.5,
+          "y": 35.9
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u6l2/5.svg",
+      "bubbles": [
+        {
+          "text": "당기면<br>늘어나네!",
+          "x": 42.2,
+          "y": 35.8
+        }
+      ]
+    },
+    {
+      "img": "sketch/comics/u6l2/6.svg",
+      "bubbles": [
+        {
+          "text": "개수는<br>그대로!",
+          "x": 25.6,
+          "y": 33.7
+        }
+      ]
+    }
   ]
 };
 
