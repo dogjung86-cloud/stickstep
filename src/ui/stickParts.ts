@@ -120,7 +120,7 @@ export const STICK_SLOTS: StickSlot[] = [
   { key: "eyes", label: "눈", parts: EYES, view: "28 26 40 40", hide: ["glasses"] },
   { key: "mouth", label: "입", parts: MOUTHS, view: "31 38 34 34" },
   { key: "cheek", label: "볼", parts: CHEEKS, view: "23 25 50 50", hide: ["glasses"] },
-  { key: "glasses", label: "안경", parts: GLASSES, view: "22 20 52 52" },
+  { key: "glasses", label: "안경", parts: GLASSES, view: "22 22.6 52 52" },
   {
     key: "acc",
     label: "모자·장식",
