@@ -241,6 +241,15 @@ export function canSeeAllSubjects(): boolean {
   return adminOverride || state.reviewMode || !!import.meta.env.DEV;
 }
 
+/** 과목 탭(과목 허브)을 여는 조건: 고를 과목이 둘 이상일 때만(2026-11-11 사용자 확정).
+ *  지금 일반 사용자에게 공개된 과목은 과학 하나라 탭을 닫아 둔다(고를 것이 없는 탭은 자리만 차지한다).
+ *  운영 계정·검토 모드·dev는 전 과목이 보이므로 열린다(과목 전환 창구가 이 탭뿐이다).
+ *  과목을 추가로 공개할 때는 이 함수가 "공개된 과목 수 > 1"을 돌려주게만 고치면 탭이 다시 열린다.
+ *  탭바(ui/gnav.ts)·탭 전환(main.ts goTab)·딥링크(#/subjects)가 전부 이 함수 하나를 본다. */
+export function hasSubjectChoice(): boolean {
+  return canSeeAllSubjects();
+}
+
 export function isReviewMode(): boolean {
   return state.reviewMode;
 }

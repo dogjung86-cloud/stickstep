@@ -1,15 +1,19 @@
-// 하단 글로벌 탭바 — 학습(홈)·과목·복습·도전·마이 5개 최상위 화면 공용(2026-07-12 IA 개편,
+// 하단 글로벌 탭바: 학습(홈)·과목·복습·도전·마이 최상위 화면 공용(2026-07-12 IA 개편,
 // 과목 탭 신설 2026-07-20 사용자 확정 — 홈 앱바 좌상단 subj-box 단독 진입은 발견성이 나빠 폐기).
+// 과목 탭은 고를 과목이 둘 이상일 때만 선다(2026-11-11 사용자 확정, store.hasSubjectChoice).
+// 일반 사용자에게는 과학만 공개돼 있어 탭이 넷(학습·복습·도전·마이)이고, 운영 계정·검토 모드·dev는 다섯이다.
 // 탭 전환은 main.ts의 goTab(nav.reset)이 담당 — 여기서는 콜백만 쏜다. 활성 탭 재탭은 무시.
 // 마이 탭 아이콘 = 로그인 시 내 아바타 원형 미니(2026-07-16 프로필 진입 단일화 — 우상단
 // 프로필 버튼이 하던 로그인 상태 표시·아바타 노출을 이 아이콘이 흡수, 인스타·유튜브 You 탭 패턴).
-// gnav는 화면마다 새로 그려져 렌더 시점 상태 반영이 기본 — 아바타 픽커 직후의 즉시 갱신만
-// refreshGnavMyIcon(마이 화면 콜백)이 보조한다. e2e 계약: .gnav-item 구조·.gnav-tx 라벨 불변.
+// gnav는 화면마다 새로 그려져 렌더 시점 상태 반영이 기본이다. 아바타 픽커 직후의 즉시 갱신만
+// refreshGnavMyIcon(마이 화면 콜백)이 보조하고, 탭 구성이 바뀌는 순간(운영 계정 로그인·로그아웃,
+// 검토 모드 토글)은 refreshGnav가 떠 있는 탭바를 그 자리에서 다시 그린다.
+// e2e 계약: .gnav-item 구조·.gnav-tx 라벨 불변.
 
 import { el } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
-import { getState } from "../core/store";
+import { getState, hasSubjectChoice } from "../core/store";
 import { currentUser } from "../core/auth";
 import { profileAvatar } from "./avatar";
 
@@ -42,10 +46,16 @@ export function refreshGnavMyIcon(bar: HTMLElement): void {
   if (host) fillMyIcon(host);
 }
 
-export function gnav(active: GnavKey, go: (k: GnavKey) => void): HTMLElement {
-  const bar = el("nav", { class: "gnav", attrs: { "aria-label": "주 메뉴" } });
+/** 탭바마다 "어느 탭이 켜져 있고 누르면 어디로 가는지"를 기억해 둔다(refreshGnav가 다시 그릴 때 쓴다). */
+const BARS = new WeakMap<HTMLElement, { active: GnavKey; go: (k: GnavKey) => void }>();
+
+function fill(bar: HTMLElement): void {
+  const ctx = BARS.get(bar);
+  if (!ctx) return;
+  bar.replaceChildren();
   for (const it of ITEMS) {
-    const on = it.key === active;
+    if (it.key === "subjects" && !hasSubjectChoice()) continue; // 고를 과목이 하나뿐이면 과목 탭은 서지 않는다
+    const on = it.key === ctx.active;
     const ic = el("span", { class: `gnav-ic ${it.key === "my" ? "my" : ""}` });
     if (it.key === "my") fillMyIcon(ic);
     else ic.innerHTML = icon(it.ic, 21);
@@ -56,11 +66,23 @@ export function gnav(active: GnavKey, go: (k: GnavKey) => void): HTMLElement {
       el("span", { class: "gnav-tx", text: it.label }),
     );
     b.addEventListener("click", () => {
-      if (it.key === active) return;
+      if (it.key === ctx.active) return;
       haptic(HAPTIC.navTap); // 8ms tap은 실기기에서 안 느껴져 격상(2026-07-21)
-      go(it.key);
+      ctx.go(it.key);
     });
     bar.appendChild(b);
   }
+}
+
+export function gnav(active: GnavKey, go: (k: GnavKey) => void): HTMLElement {
+  const bar = el("nav", { class: "gnav", attrs: { "aria-label": "주 메뉴" } });
+  BARS.set(bar, { active, go });
+  fill(bar);
   return bar;
+}
+
+/** 탭 구성이 바뀌었을 때 화면에 떠 있는 탭바를 그 자리에서 다시 그린다.
+ *  과목 탭이 열리고 닫히는 순간(운영 계정 로그인·로그아웃, 검토 모드 토글)에 부른다. */
+export function refreshGnav(root: ParentNode = document): void {
+  root.querySelectorAll<HTMLElement>(".gnav").forEach(fill);
 }

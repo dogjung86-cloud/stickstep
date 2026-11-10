@@ -480,7 +480,8 @@ src/
   **바로 중1 과학 홈**(main.ts enterOnboarding이 기본값 중1·과학·하루 10분을 저장하고 goHome —
   학년은 홈 상단 세그로 전환). 구 학년·과목·학습량 설문(screens/onboarding.ts)은 배선 해제,
   파일만 보존. **과목 허브 진입은 하단 과목 탭**(2026-07-20 — 구 앱바 과목 상자
-  subj-box는 폐기, CSS·코드 제거됨). 우상단 프로필
+  subj-box는 폐기, CSS·코드 제거됨). 이 탭은 고를 과목이 둘 이상일 때만 선다(2026-11-11, 아래 IA의
+  "하단 탭바" 항목. 일반 사용자에게는 과학 하나라 탭도 허브도 보이지 않는다). 우상단 프로필
   버튼은 제거(2026-07-16 프로필 진입 단일화) — 로그인·아바타 노출은 탭바 마이 아이콘(gnav)이 담당하고,
   로그인 화면 진입은 마이 > "계정 관리 · 로그인"이 유일 경로다.
 - **로그인 정책(결정)**: 로그인을 강요하지 않는다 — 학습·구매 모두 무로그인 가능, 기록은 기기 저장.
@@ -817,15 +818,17 @@ src/
 - **과목 공개 게이트(2026-08-11 사용자 확정 — 일반 사용자에게는 과학만)**: `store.canSeeAllSubjects()`
   가 단일 게이트 — **운영 계정(auth.ts PRIVILEGED_EMAILS) 로그인·검토 모드(7연타)·로컬 dev**에서만
   수학·사회·역사가 보인다(운영 주입은 main.ts onAuthChange의 `setAdminOverride` — premiumOverride와
-  같은 런타임 겹층, 저장·동기화 없음·로그아웃 시 해제). 거르는 표면 = 과목 허브 카드(subject.ts)·
+  같은 런타임 겹층, 저장·동기화 없음·로그아웃 시 해제). 거르는 표면 = **하단 과목 탭(ui/gnav.ts,
+  2026-11-11. `store.hasSubjectChoice()`가 닫는다. 아래 "하단 탭바" 항목)**·과목 허브 카드(subject.ts)·
   페이월 판매 SKU(paywall.ts sellable — 카탈로그 SELLABLE_SUBJECTS는 불변)·취약 드릴 문제 은행
   (weakDrill.ts drillUnits)·`getViewSubject()` 클램프(항상 "sci", 저장값은 보존)·resumeLearning 복귀
   목적지. 오답노트는 실제 오답에서 과목을 유도하므로 그대로(과거 수학 오답은 계속 열람 가능 — 데이터
   존중). **e2e·QA 전 스크립트는 dev 서버로 돌므로 게이트가 항상 열려 있어 계약 불변**; 공개(실사용자)
   뷰 검수는 sessionStorage `"ss.pub"="1"`(ss.eb 문법 — 어디서든 실사용자 시점 강제, 여는 방향은 없음).
   전용 QA = `PORT=<dev포트> PPORT=<preview포트> node qa/e2e-pubgate.mjs`(dev 게이트 열림 + ss.pub
-  공개 뷰 + 프로덕션 번들 실동작 14검증). 새 화면이 과목을 열거하게 되면 반드시 이 게이트를 지날 것.
-  과목을 다시 공개할 때는 게이트에서 그 과목만 여는 게 아니라 노출 표면별 필터를 함께 검토한다. **e2e는 goto 직후 "둘러보기" 클릭 우회를 반드시 넣는다**(우회 도입 = qa/e2e-exam-m2u5.mjs
+  공개 뷰 + 프로덕션 번들 실동작 24검증). 새 화면이 과목을 열거하게 되면 반드시 이 게이트를 지날 것.
+  과목을 다시 공개할 때는 게이트에서 그 과목만 여는 게 아니라 노출 표면별 필터를 함께 검토한다(과목 탭은
+  `hasSubjectChoice()`가 "공개된 과목이 둘 이상"을 돌려주게 고치는 것이 여는 방법이다). **e2e는 goto 직후 "둘러보기" 클릭 우회를 반드시 넣는다**(우회 도입 = qa/e2e-exam-m2u5.mjs
   seed(), **베끼는 정본은 하드닝판 qa/e2e-soc7.mjs 부팅부**): `#sc-splash` 대기 → 플립북 스킵 탭 →
   둘러보기 버튼 대기·클릭 → `#sc-home` 대기. 고정 sleep보다 이 조건 대기가 안전하다(실측 2026-07-26:
   goto(networkidle) 뒤 둘러보기 버튼까지 ~1.5초라 구 "1.2s+0.5s" 고정 대기는 여유가 거의 없다).
@@ -837,12 +840,21 @@ src/
   실행마다 달라진다(m2u4가 두 번 다른 곳에서 죽고 `@vite/client` 스텁을 물리자 10레슨 완주). 동시 작업
   중이라면 미니게임 e2e의 함정 ③ 스텁(`page.route("**/@vite/client", fulfill)`)을 함께 물릴 것.
   모듈 직접 import(router.ts + nav.go — 예: qa/e2e-g2u6v2.mjs)는 스플래시를 안 거쳐 우회가 필요 없다.
-- **하단 탭바 5개**(ui/gnav.ts, main.ts goTab이 nav.reset으로 전환): 학습(기존 홈)·**과목(2026-07-20
+- **하단 탭바(일반 사용자 4개 · 전 과목이 보이는 사람 5개)**(ui/gnav.ts, main.ts goTab이 nav.reset으로 전환): 학습(기존 홈)·**과목(2026-07-20
   신설, 사용자 확정 — subject.ts 허브의 탭 화면화(tabscr·#sc-subjects·gnav 장착), 런처형: 과목을
   고르면 pickSubject가 학습 탭으로 점프. 구 홈 앱바 subj-box 진입은 폐기 — 발견성 문제)**·
   복습(review.ts)·도전(challenge.ts — 랭킹 준비 중·미니게임 준비 중+프리미엄 크라운)·마이(my.ts —
   아바타 픽커·닉네임 바꾸기·장화 레벨·스텝 요약·계정/프리미엄/과제함 진입).
   **과목·복습·도전·마이 탭 상단엔 뒤로가기(.tab-back → 학습 탭 복귀, 2026-07-20)**.
+  **과목 탭은 고를 과목이 둘 이상일 때만 선다(2026-11-11 사용자 확정: "지금은 과목 탭이 필요 없다.
+  우선 없애고 과목이 추가되면 연다")**. `store.hasSubjectChoice()` 하나가 탭바(gnav fill이 과목 항목을
+  건너뛴다)·탭 전환(goTab이 닫힌 과목 탭 요청을 학습 탭으로 돌린다)·주소(#/subjects)를 함께 닫는다.
+  지금은 `canSeeAllSubjects()`와 같은 값이라 일반 사용자는 탭 넷(학습·복습·도전·마이)이고, 운영 계정·
+  검토 모드·dev는 다섯이다(전 과목이 보이는 사람에게는 과목 전환 창구가 이 탭뿐이라 남긴다. dev가 다섯이라
+  기존 QA 계약도 그대로다). 탭 구성이 바뀌는 순간(운영 계정 로그인·로그아웃, 검토 모드 7연타)에는
+  `refreshGnav()`가 떠 있는 탭바를 그 자리에서 다시 그린다(gnav가 탭바마다 active·go를 WeakMap에 기억한다).
+  과목을 추가로 공개하는 날 `hasSubjectChoice()`만 "공개된 과목이 둘 이상"으로 고치면 탭이 다시 선다.
+  탭 수를 CSS나 QA 인덱스에 박지 말 것(.gnav-item은 flex: 1 균등 분할, QA는 .gnav-tx 라벨로 집는다).
   프리미엄을 여섯 번째 탭으로 넣는 안은 **기각**(2026-07-21 사용자 확정 — 탭바는 목적지 내비, 전환은
   지도 크라운·복습 잠금·재응시·게임 게이트 등 욕구 순간의 기존 터치포인트 몫. 재제안 금지). **비로그인 유저가 마이
   탭을 열면 로그인 화면을 위에 얹는다**(2026-07-20 사용자 확정 — 닫으면 마이. auth 스텁 모드(env 없음
@@ -852,7 +864,8 @@ src/
   비홈 탭이면 goTab home → 루트면 무장 해제 = 다음 back이 사이트 이탈). nav.setOnChange(router.ts
   onChange 훅)가 무장·반납을 소유 — Capacitor WebView back도 같은 경로.
 - **URL 해시 라우팅(2026-08-14 토스PG 심사 대응 — 계약 전문은 core/route.ts 헤더)**: 주소 있는
-  화면 = 탭 5종(#/home·#/subjects·#/review·#/challenge·#/my)·과목(#/subject/sci|math|soc|his)·
+  화면 = 탭 5종(#/home·#/subjects·#/review·#/challenge·#/my. 단 #/subjects는 과목 탭이 닫혀 있으면
+  학습 탭으로 돌아가고 주소도 #/subject/sci로 고쳐 쓴다)·과목(#/subject/sci|math|soc|his)·
   학년(#/grade/g1|g2)·로그인(#/login)·상품(#/pricing)·정책(#/refund·#/privacy). 심사 제출 URL =
   /#/pricing(상품)·/refund.html(환불 정본). 쓰기는 전부 writeHash(replaceState — **pushState 금지**,
   뒤로가기 가드가 히스토리 깊이를 소유), 읽기는 부팅 딥링크(스플래시 생략 + 미온보딩이면 둘러보기

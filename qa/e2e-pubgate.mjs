@@ -1,9 +1,14 @@
 // 과목 공개 게이트(2026-08-11) E2E — 일반 사용자에게는 과학만, 운영 계정·검토 모드·dev는 전 과목.
-// 검증 4구획: [A] dev 기본(게이트 열림 — 기존 e2e 계약 불변 증명: 수학 홈·허브 4카드)
-//            [B] dev + ss.pub=1(실사용자 시점 강제 — 신규 유저 둘러보기 → 설문 없이 중1 과학 홈 직행,
-//                허브 1카드, 페이월 과학 SKU 2종, 저장된 viewSubject=math도 과학으로 클램프)
-//            [C] dev + ss.pub=1 + premium(취약 드릴 피커 — 과목 세그 없음·중1 과학 헤더)
-//            [D] 프로덕션 번들(vite preview — DEV 게이트가 실제로 닫히는지: 신규 유저 과학 직행·허브 1카드·페이월)
+// 검증 구획: [A] dev 기본(게이트 열림. 기존 e2e 계약 불변 증명: 수학 홈·탭 5개·허브 4카드·주소 #/subjects)
+//          [B] dev + ss.pub=1(실사용자 시점 강제. 신규 유저 둘러보기 → 설문 없이 중1 과학 홈 직행,
+//              과목 탭 없음(탭 4개), 예전 주소 #/subjects는 학습 탭으로, 페이월 과학 SKU 2종)
+//          [B2] 저장된 viewSubject=math도 과학으로 클램프
+//          [B3] 부팅 딥링크 #/subjects(북마크·공유 링크)도 학습 탭으로
+//          [C] dev + ss.pub=1 + premium(취약 드릴 피커: 과목 세그 없음·중1 과학 헤더)
+//          [D] 프로덕션 번들(vite preview. DEV 게이트가 실제로 닫히는지: 신규 유저 과학 직행·과목 탭 없음·
+//              페이월, 검토 모드를 켜면 과목 탭이 그 자리에서 열리고 끄면 닫힘)
+// 2026-11-11: 과목 탭은 고를 과목이 둘 이상일 때만 선다(store.hasSubjectChoice). 일반 사용자에게는 과학 하나라
+//            탭이 없고, 과목 허브 화면도 닿을 길이 없다(허브 1카드 검사는 탭 구성 검사로 바뀌었다).
 // 실행: PORT=<dev포트> PPORT=<preview포트> node qa/e2e-pubgate.mjs (PPORT 없으면 [D] 생략)
 import { chromium } from "playwright-core";
 import fs from "node:fs";
@@ -95,6 +100,8 @@ const openSubjectsTab = async (page) => {
   await page.waitForSelector("#sc-subjects", { timeout: 8000 });
   await page.waitForTimeout(350);
 };
+/** 지금 화면의 탭바 라벨들(왼쪽부터). */
+const tabLabels = (page) => page.evaluate(() => [...document.querySelectorAll(".screen.active .gnav-tx")].map((e) => e.textContent).join(","));
 const subjCards = (page) =>
   page.evaluate(() => [...document.querySelectorAll("#sc-subjects .subj-card")].map((c) => c.querySelector(".subj-name")?.textContent?.trim()));
 
@@ -104,10 +111,19 @@ const subjCards = (page) =>
   const page = await newPage({ seed: { ...SEED_BASE, viewSubject: "math", premium: true }, pub: false, dev: true });
   await boot(page, PORT);
   ok((await bandTitle(page)) === "수와 연산", `홈 = 수학 지도(시드 viewSubject 존중): ${await bandTitle(page)}`);
+  ok((await tabLabels(page)) === "학습,과목,복습,도전,마이", `탭 5개(과목 탭 열림): ${await tabLabels(page)}`);
   await openSubjectsTab(page);
   const cards = await subjCards(page);
   ok(cards.length === 4 && cards.join() === "과학,수학,사회,역사", `과목 허브 4카드: ${cards.join(",")}`);
   await page.close();
+  // 게이트가 열려 있으면 주소 #/subjects도 그대로 과목 허브를 연다
+  const deep = await newPage({ seed: { ...SEED_BASE, viewSubject: "sci" }, pub: false, dev: true });
+  await deep.goto(`http://localhost:${PORT}/#/subjects`, { waitUntil: "networkidle" });
+  await deep.waitForSelector("#sc-subjects", { timeout: 20000 });
+  await deep.waitForTimeout(400);
+  const deepHash = await deep.evaluate(() => location.hash);
+  ok(deepHash === "#/subjects", `부팅 딥링크 #/subjects → 과목 허브(${deepHash})`);
+  await deep.close();
 }
 
 // ───────────────────── [B] dev + ss.pub — 실사용자 시점(신규 유저 직행·과학만) ─────────────────────
@@ -121,15 +137,24 @@ const subjCards = (page) =>
   const grade = await page.evaluate(() => JSON.parse(localStorage.getItem("science-app.v1")).grade);
   const onb = await page.evaluate(() => JSON.parse(localStorage.getItem("science-app.v1")).onboarded);
   ok(grade === "g1" && onb === true, `기본값 저장(onboarded·g1): grade=${grade}`);
-  await openSubjectsTab(page);
-  const cards = await subjCards(page);
-  ok(cards.length === 1 && cards[0] === "과학", `과목 허브 과학 1카드: ${cards.join(",")}`);
-  const noOthers = await page.evaluate(() => {
-    const t = document.querySelector("#sc-subjects").textContent;
-    return !t.includes("수학") && !t.includes("사회") && !t.includes("역사");
-  });
-  ok(noOthers, "허브에 수학·사회·역사 문구 없음");
-  await page.screenshot({ path: "qa/shots/pubgate-hub.png" });
+  // 과목 탭은 고를 과목이 둘 이상일 때만 선다. 일반 사용자에게는 탭이 넷이다
+  ok((await tabLabels(page)) === "학습,복습,도전,마이", `탭 4개(과목 탭 없음): ${await tabLabels(page)}`);
+  await page.screenshot({ path: "qa/shots/pubgate-tabs.png" });
+  // 다른 탭 화면의 탭바도 같다
+  for (const t of ["복습", "도전", "마이"]) {
+    await tapTab(page, t);
+    ok((await tabLabels(page)) === "학습,복습,도전,마이", `${t} 탭의 탭바도 4개`);
+  }
+  await tapTab(page, "학습");
+  // 예전 주소(#/subjects)로 들어와도 과목 허브가 아니라 학습 탭에 선다
+  await page.evaluate(() => (location.hash = "#/subjects"));
+  await page.waitForTimeout(700);
+  const afterLink = await page.evaluate(() => ({
+    hub: !!document.querySelector("#sc-subjects"),
+    home: !!document.querySelector("#sc-home.active"),
+    hash: location.hash,
+  }));
+  ok(!afterLink.hub && afterLink.home && afterLink.hash === "#/subject/sci", `#/subjects → 학습 탭(${afterLink.hash})`);
 
   // 페이월(도전 탭 게임 게이트 경유 — 비프리미엄) — 판매 SKU도 과학 2종만
   await tapTab(page, "도전");
@@ -148,6 +173,23 @@ const subjCards = (page) =>
   const page = await newPage({ seed: { ...SEED_BASE, viewSubject: "math" }, pub: true, dev: true });
   await boot(page, PORT);
   ok((await bandTitle(page)) === "과학과 인류의 지속가능한 삶", `홈 = 과학 지도(클램프): ${await bandTitle(page)}`);
+  await page.close();
+}
+
+// [B3] 부팅 딥링크: 예전 주소 #/subjects로 곧장 들어와도(북마크·공유 링크) 학습 탭에 선다
+{
+  console.log("[B3] dev + ss.pub=1 + 부팅 딥링크 #/subjects");
+  const page = await newPage({ seed: { ...SEED_BASE, viewSubject: "sci" }, pub: true, dev: true });
+  await page.goto(`http://localhost:${PORT}/#/subjects`, { waitUntil: "networkidle" });
+  await page.waitForFunction(() => !!document.querySelector("#sc-home.active, #sc-subjects.active"), { timeout: 20000 });
+  await page.waitForTimeout(500);
+  const st = await page.evaluate(() => ({
+    hub: !!document.querySelector("#sc-subjects"),
+    home: !!document.querySelector("#sc-home.active"),
+    hash: location.hash,
+  }));
+  ok(!st.hub && st.home && st.hash === "#/subject/sci", `부팅 딥링크 #/subjects → 학습 탭(${st.hash})`);
+  ok((await tabLabels(page)) === "학습,복습,도전,마이", `탭 4개: ${await tabLabels(page)}`);
   await page.close();
 }
 
@@ -176,15 +218,26 @@ if (PPORT) {
   const page = await newPage({ seed: null, pub: false, dev: false }); // ss.pub 없이 — 번들 자체가 공개 모드
   await boot(page, PPORT);
   ok((await bandTitle(page)) === "과학과 인류의 지속가능한 삶", `홈 = 중1 과학 지도: ${await bandTitle(page)}`);
+  ok((await tabLabels(page)) === "학습,복습,도전,마이", `탭 4개(과목 탭 없음): ${await tabLabels(page)}`);
+  await page.screenshot({ path: "qa/shots/pubgate-prod-home.png", fullPage: false });
+  // 검토 모드(브랜드 7연타)는 전 과목을 연다. 과목 탭이 그 자리에서 열리고, 끄면 닫힌다
+  const sevenTaps = async () => {
+    for (let i = 0; i < 7; i++) await page.click("#sc-home .brand", { delay: 20 });
+    await page.waitForTimeout(500);
+  };
+  await sevenTaps();
+  ok((await tabLabels(page)) === "학습,과목,복습,도전,마이", `검토 모드 ON → 과목 탭 열림: ${await tabLabels(page)}`);
   await openSubjectsTab(page);
   const cards = await subjCards(page);
-  ok(cards.length === 1 && cards[0] === "과학", `과목 허브 과학 1카드: ${cards.join(",")}`);
+  ok(cards.length === 4, `검토 모드: 과목 허브 4카드: ${cards.join(",")}`);
+  await tapTab(page, "학습");
+  await sevenTaps();
+  ok((await tabLabels(page)) === "학습,복습,도전,마이", `검토 모드 OFF → 과목 탭 닫힘: ${await tabLabels(page)}`);
   await tapTab(page, "도전");
   await page.evaluate(() => document.querySelector("#btn-cosmo")?.click());
   await page.waitForSelector(".pwx-subs", { timeout: 8000 });
   const skus = await page.evaluate(() => [...document.querySelectorAll(".pwx-sub")].map((b) => b.textContent.trim()));
   ok(skus.length === 2 && skus.every((s) => s.includes("과학")), `페이월 SKU = 과학 2종: ${skus.join(" | ")}`);
-  await page.screenshot({ path: "qa/shots/pubgate-prod-home.png", fullPage: false });
   await page.close();
 } else {
   console.log("[D] 생략 — PPORT 미지정(프로덕션 preview 검증은 PPORT=<포트>로)");
