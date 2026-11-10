@@ -23,11 +23,12 @@ const ITEMS: { key: GnavKey; label: string; ic: Parameters<typeof icon>[0] }[] =
   { key: "my", label: "마이", ic: "user" },
 ];
 
-/** 마이 탭 아이콘 채우기 — 로그인이면 내 아바타 미니(≈21px 원형), 로그아웃이면 user 아이콘. */
+/** 마이 탭 아이콘 채우기: 로그인이면 내 아바타 미니(≈21px 원형), 로그아웃이면 user 아이콘.
+ *  21px에는 상반신이 아니라 얼굴 확대("head")를 넣는다(2026-11, 상반신 축소는 얼굴이 뭉개졌다). */
 function fillMyIcon(host: HTMLElement): void {
   if (currentUser()) {
     const s = getState();
-    const ava = profileAvatar(s.avatarId, s.avatarCustom, s.avatarPreset);
+    const ava = profileAvatar(s.avatarId, s.avatarCustom, s.avatarPreset, "head");
     ava.classList.add("gnav-ava");
     host.replaceChildren(ava);
   } else {

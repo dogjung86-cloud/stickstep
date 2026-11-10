@@ -1,22 +1,22 @@
 // 마이 탭 — "프로필 카드 → 스텝 요약 → 메뉴" 한 화면 구성(2026-07-15 리디자인).
-// 아바타 편집은 인라인 픽커 대신 바텀시트로 분리: 프로필 카드의 연필 버튼이 연다.
-// 시트 안 '캐릭터 고르기'(파츠 프리셋)와 '직접 꾸미기'(파츠 조합)는 완전히 분리된 상태 —
-// 프리셋을 골라도 내가 꾸민 조합(avatarCustom)은 남고, 파츠를 만지는 순간 커스텀이 대표가
-// 된다(사용자 확정: 고른 캐릭터를 이어서 꾸미게 하지 않는다). 선택은 즉시 적용(앱 관례 —
-// 저장 버튼 없음, 시트의 '완료'는 닫기일 뿐). 스텝 장화 단계표도 같은 시트 문법으로 연다.
+// 아바타 편집은 인라인 픽커 대신 바텀시트로 분리: 프로필 카드의 아바타(또는 연필 버튼)가 연다.
+// 시트 본문은 ui/avatarEditor.ts(v2, 2026-11)가 그린다. '캐릭터 고르기'와 '직접 꾸미기'는 완전히
+// 분리된 상태다. 프리셋을 골라도 내가 꾸민 조합(avatarCustom)은 남고, 파츠를 만지는 순간 커스텀이
+// 대표가 된다(사용자 확정: 고른 캐릭터를 이어서 꾸미게 하지 않는다). 선택은 즉시 적용(앱 관례,
+// 저장 버튼 없음. 시트의 '완료'는 닫기일 뿐). 스텝 장화 단계표도 같은 시트 문법으로 연다.
 // 소셜 프로필 사진은 쓰지 않는다(미성년 개인정보). 하단에는 개인정보처리방침과 로그인 상태의
 // 로그아웃만 작게 두고, 사업자 정보는 로그인 없이 볼 수 있는 공개 스플래시가 전담한다.
 
-import { el, clear } from "../core/dom";
+import { el } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
-import { getState, currentStreak, setAvatarPreset, setAvatarCustom, setNickname, isDesktopMode, setDesktopMode, isPremium } from "../core/store";
+import { getState, currentStreak, setNickname, isDesktopMode, setDesktopMode, isPremium } from "../core/store";
 import { onAuthChange, currentUser, pushNickname, signOut } from "../core/auth";
 import { ownedPremiumSubjectIds, SELLABLE_SUBJECTS } from "../core/purchase";
 import { bootLevel, BOOT_TIERS } from "../core/level";
 import { bootArt } from "../ui/boots";
 import { profileAvatar, setProfileAvatar } from "../ui/avatar";
-import { STICK_SLOTS, STICK_PRESETS, DEFAULT_STICK, normStick, stickAvatarSvg } from "../ui/stickParts";
+import { avatarEditor } from "../ui/avatarEditor";
 import { gnav, refreshGnavMyIcon, type GnavKey } from "../ui/gnav";
 import type { Screen } from "../core/router";
 
@@ -30,14 +30,13 @@ export function myScreen(o: {
   const st = getState();
   const lv = bootLevel(st.lifeXp);
 
-  // ---- 아바타(프로필 카드 + 시트 미리보기 + 탭바 마이 아이콘이 함께 갱신) ----
+  // ---- 아바타(프로필 카드 + 탭바 마이 아이콘이 함께 갱신. 시트 미리보기는 편집기가 스스로 그린다) ----
   const bigAva = profileAvatar(st.avatarId, st.avatarCustom, st.avatarPreset);
-  const preview = profileAvatar(st.avatarId, st.avatarCustom, st.avatarPreset);
+  const avaFrame = el("div", { class: "mypf-ava" }, bigAva);
   const bar = gnav("my", o.onTab);
   function refreshAvatars(): void {
     const s = getState();
     setProfileAvatar(bigAva, s.avatarId, s.avatarCustom, s.avatarPreset);
-    setProfileAvatar(preview, s.avatarId, s.avatarCustom, s.avatarPreset);
     refreshGnavMyIcon(bar); // 로그인 상태면 탭바 아바타도 그 자리에서 바뀐다(재렌더 없이)
   }
 
@@ -80,7 +79,7 @@ export function myScreen(o: {
     el(
       "div",
       { class: "mypf-top" },
-      el("div", { class: "mypf-avawrap" }, el("div", { class: "mypf-ava" }, bigAva), editBtn),
+      el("div", { class: "mypf-avawrap" }, avaFrame, editBtn),
       el("div", { class: "mypf-who" }, el("div", { class: "mypf-name-row" }, nameEl, nickBtn), badge),
     ),
     prog,
@@ -121,8 +120,11 @@ export function myScreen(o: {
   };
   document.addEventListener("keydown", onKey);
 
-  function sheetShell(title: string, body: HTMLElement, foot?: HTMLElement): HTMLElement {
-    const x = el("button", { class: "mysheet-x", attrs: { "aria-label": "닫기" }, html: icon("x", 15) });
+  /** doneLabel을 주면 닫기 X 대신 글자 버튼("완료")을 머리말에 둔다(풋 없이 본문을 끝까지 쓰는 시트용). */
+  function sheetShell(title: string, body: HTMLElement, foot?: HTMLElement, doneLabel?: string): HTMLElement {
+    const x = doneLabel
+      ? el("button", { class: "mysheet-x txt", text: doneLabel })
+      : el("button", { class: "mysheet-x", attrs: { "aria-label": "닫기" }, html: icon("x", 15) });
     x.addEventListener("click", () => {
       haptic(HAPTIC.tap);
       closeSheet();
@@ -141,122 +143,20 @@ export function myScreen(o: {
     );
   }
 
-  // ---- 아바타 시트: 캐릭터 고르기 ⇄ 직접 꾸미기 ----
-  // 시작 탭은 저장 상태가 진실(커스텀이 대표면 커스텀 탭). 탭을 구경만 해서는 대표가 안 바뀐다.
-  let mode: "preset" | "custom" = st.avatarPreset == null && st.avatarCustom ? "custom" : "preset";
-  const presetBtn = el("button", { class: "avm", text: "캐릭터 고르기", attrs: { role: "tab" } });
-  const customBtn = el("button", { class: "avm", text: "직접 꾸미기", attrs: { role: "tab" } });
-  const modeSeg = el("div", { class: "ava-mode", attrs: { role: "tablist", "aria-label": "꾸미기 방식" } }, presetBtn, customBtn);
-
-  // 캐릭터 고르기 — 완성 캐릭터 프리셋. 골라도 내가 꾸민 조합은 그대로 남는다.
-  const presetGrid = el("div", { class: "avp-grid", attrs: { role: "group", "aria-label": "캐릭터 프리셋" } });
-  function renderPresets(): void {
-    clear(presetGrid);
-    const cur = getState().avatarPreset;
-    STICK_PRESETS.forEach((p, i) => {
-      const on = cur === i;
-      const b = el("button", { class: `avp ${on ? "sel" : ""}`, attrs: { "aria-pressed": String(on) } });
-      b.innerHTML = stickAvatarSvg(p.cfg) + `<span class="avp-name">${p.name}</span>`;
-      b.addEventListener("click", () => {
-        haptic(HAPTIC.tap);
-        setAvatarPreset(i);
-        refreshAvatars();
-        renderPresets();
-      });
-      presetGrid.appendChild(b);
-    });
-  }
-
-  // 직접 꾸미기 — 한 번에 한 카테고리(칩)씩. 썸네일 = 현재 조합에서 그 파츠만 바꾼 모습.
-  let slotKey = STICK_SLOTS[0].key;
-  const cats = el("div", { class: "avc-cats", attrs: { role: "tablist", "aria-label": "꾸미기 항목" } });
-  const optGrid = el("div", { class: "avc-grid", attrs: { role: "group" } });
-  const customPanel = el("div", { class: "avc-panel" }, cats, optGrid);
-  const draft = () => normStick(getState().avatarCustom ?? DEFAULT_STICK);
-  function renderCats(): void {
-    clear(cats);
-    for (const slot of STICK_SLOTS) {
-      const on = slot.key === slotKey;
-      const b = el("button", {
-        class: `avc-cat ${on ? "on" : ""}`,
-        text: slot.label,
-        attrs: { role: "tab", "aria-selected": String(on) },
-      });
-      b.addEventListener("click", () => {
-        if (slot.key === slotKey) return;
-        haptic(HAPTIC.tap);
-        slotKey = slot.key;
-        renderCats();
-        renderOptions();
-      });
-      cats.appendChild(b);
-    }
-  }
-  function renderOptions(): void {
-    clear(optGrid);
-    const slot = STICK_SLOTS.find((s) => s.key === slotKey) ?? STICK_SLOTS[0];
-    const cfg = draft();
-    slot.parts.forEach((p, i) => {
-      const on = cfg[slot.key] === i;
-      const b = el("button", {
-        class: `avc-opt ${on ? "sel" : ""}`,
-        attrs: { "aria-label": `${slot.label}: ${p.name}`, title: p.name, "aria-pressed": String(on) },
-      });
-      b.innerHTML = stickAvatarSvg({ ...cfg, [slot.key]: i });
-      b.addEventListener("click", () => {
-        haptic(HAPTIC.tap);
-        // 파츠를 만지는 순간 커스텀이 대표가 된다(setAvatarCustom이 프리셋을 해제).
-        setAvatarCustom({ ...draft(), [slot.key]: i });
-        refreshAvatars();
-        renderOptions();
-        renderPresets(); // 프리셋 선택 표시 해제 반영
-      });
-      optGrid.appendChild(b);
-    });
-  }
-
-  function applyMode(): void {
-    presetBtn.classList.toggle("on", mode === "preset");
-    customBtn.classList.toggle("on", mode === "custom");
-    presetBtn.setAttribute("aria-selected", String(mode === "preset"));
-    customBtn.setAttribute("aria-selected", String(mode === "custom"));
-    presetGrid.classList.toggle("hidden", mode !== "preset");
-    customPanel.classList.toggle("hidden", mode !== "custom");
-  }
-  presetBtn.addEventListener("click", () => {
-    if (mode === "preset") return;
+  // ---- 아바타 시트: 본문은 ui/avatarEditor(미리보기 무대 + 캐릭터 고르기 ⇄ 직접 꾸미기) ----
+  // 선택은 즉시 저장되므로 저장 버튼은 없다. 머리말의 "완료"는 닫기일 뿐이고, 풋을 비운 만큼
+  // 파츠 격자가 화면 아래까지 내려간다(폰 한 화면에서 세 줄 이상 보이게).
+  const editor = avatarEditor(refreshAvatars);
+  const avaSheet = sheetShell("아바타 꾸미기", editor.el, undefined, "완료");
+  avaSheet.classList.add("ava");
+  const openAvatarSheet = (): void => {
     haptic(HAPTIC.tap);
-    mode = "preset";
-    renderPresets();
-    applyMode();
-  });
-  customBtn.addEventListener("click", () => {
-    if (mode === "custom") return;
-    haptic(HAPTIC.tap);
-    mode = "custom";
-    renderCats();
-    renderOptions();
-    applyMode();
-  });
-  renderPresets();
-  renderCats();
-  renderOptions();
-  applyMode();
-
-  const doneBtn = el("button", { class: "mysheet-done", text: "완료" });
-  doneBtn.addEventListener("click", () => {
-    haptic(HAPTIC.tap);
-    closeSheet();
-  });
-  const avaSheet = sheetShell(
-    "아바타 꾸미기",
-    el("div", { class: "mysheet-body" }, el("div", { class: "avs-preview", attrs: { "aria-hidden": "true" } }, preview), modeSeg, presetGrid, customPanel),
-    el("div", { class: "mysheet-foot" }, doneBtn),
-  );
-  editBtn.addEventListener("click", () => {
-    haptic(HAPTIC.tap);
+    editor.sync();
     openSheet(avaSheet, editBtn);
-  });
+  };
+  editBtn.addEventListener("click", openAvatarSheet);
+  // 아바타 자체도 누르면 열린다(연필 27px보다 큰 과녁). 연필은 키보드·보조기기용 이름 있는 버튼으로 남긴다.
+  avaFrame.addEventListener("click", openAvatarSheet);
 
   // ---- 장화 레벨 시트(단계표) ----
   const dex = el("div", { class: "bdex" });
