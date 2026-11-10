@@ -888,7 +888,7 @@ src/
   상반신 버스트 — 성별·헤어·안경·주근깨·장신구·표정 다양화. 발주 qa/order-avatars.sh + avatar2_prompts.txt,
   변환 node qa/process-avatars.mjs). 캐릭터 추가는 USER_FILES에 append만 — 픽커·앱바 자동 확장.
   선생님 연출(comic·hook·recap의 stickAvatar/AvatarKind)은 프로필과 별개 체계로 불변.
-- **아바타 꾸미기 v2(2026-11-11, avatar-v2 브랜치, 사용자 판정 대기)**: 사용자가 준 기준 그림(굵은 잉크 외곽선에
+- **아바타 꾸미기 v2(2026-11-11 사용자 판정 합격, main 병합)**: 사용자가 준 기준 그림(굵은 잉크 외곽선에
   평면 색을 채운 막대 인물 팀 일러스트)에 맞춰 흑백 선화를 색 있는 캐릭터로 올렸다. 파일 셋이 역할을 나눈다.
   ui/stickArt.ts(팔레트와 파츠 그림만) · ui/stickParts.ts(정규화·슬롯 메타·프리셋·합성 stickAvatarSvg) ·
   ui/avatarEditor.ts(시트 본문). 슬롯 14개 = 옛 6(얼굴형 5·머리 17·눈 14·입 12·안경 9·모자·장식 14) +
