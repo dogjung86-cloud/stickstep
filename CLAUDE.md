@@ -486,7 +486,7 @@ src/
 - **로그인 정책(결정)**: 로그인을 강요하지 않는다 — 학습·구매 모두 무로그인 가능, 기록은 기기 저장.
   로그인 화면은 진입 장치만(소셜 3종 스텁, 출시 시 OAuth+동기화 백엔드 연결). 강한 프롬프트를 붙인다면
   "첫 레슨 완료 직후"가 최적 시점(가치 먼저, Duolingo 방식) — 단원 진입을 로그인으로 막지 말 것.
-  **비로그인 로그인 화면 구성(2026-07-21 사용자 확정)**: 히어로 = brand/study.webp "공부하자!" 스틱맨
+  **비로그인 로그인 화면 구성(2026-07-21 사용자 확정)**: 히어로 = 스플래시 정착 컷과 같은 "공부하자!" 스틱맨(코드 그림 sketch/splash/study.svg)
   (스플래시 정착 컷과 동일, **파란 원 프레임 없이 흰 배경 그대로**(.login-study 156px), multiply
   블렌드 + 로드 실패 시 파란 원 벡터 폴백) + 구글·카카오 버튼만 — 오답노트 카드 제거(본론은 로그인
   CTA, 프리미엄 결제 버튼 추가안은 "전환은 욕구 순간 터치포인트" 원칙으로 보류), 안내 문구는
@@ -506,18 +506,18 @@ src/
   풀리고 브랜드가 로즈색으로 표시된다(store.reviewMode, 기기 저장). 켜져 있으면 **미완료 레슨도 자유
   모드**(player.ts freeNav — 앞으로 가기 화살표로 문제까지 전 스텝 검수 가능, 사용자 요청 반영).
   **출시 전 유지/제거 여부 결정 필요**(남기면 QA 편리하지만 발견 시 프리미엄 우회 구멍).
-- 스플래시(screens/splash.ts) = **스틱맨 플립북 v2 "실컷 놀다가 → 공부하자!"**: `public/brand/loading/0..13.webp`
-  놀이 14컷(먹기·티비·게임·컴퓨터·친구·공놀이·폰·만화책·낮잠·과자·노래방·자전거·강아지·아차!)을
-  `FLIP_SEQ` 몽타주 순서로 125ms 간격 **1바퀴**(서사라 반복 금지, '아차! 시계' 컷이 항상 마지막) →
-  `study.webp`(책상 앞 **상체 샷** — 머리띠 질끈, 띠에 한글 "공부하자!", 성별 중립 민머리+안경)로 탁 정착 →
-  워드마크 페이드업. 프레임이 없으면 만화 아바타 5종으로 폴백, 그것도 없으면 정적 로고. 탭하면 건너뛰기.
-  재발주: `bash qa/order-splash2-tower.sh`(0..6+study+증류탑) / `bash qa/order-splash2b.sh`(7..13+study 상체 수정) →
-  `node qa/process-loading2.mjs`(512 webp 경량화, 프레임당 11~33KB). 이미지 속 글자는 study 머리띠 단 하나만 예외
-  (잠자는 컷의 Zzz도 금지 — 코 방울로, 음표·하트는 허용).
-- **과목 허브 카드 스틱맨 4종(2026-07-21)**: public/brand/subj/{sci,math,soc,his}.webp — 과목 소품 든
-  상반신(플라스크·컴퍼스 원호·지구본·두루마리, 손그림+teal 원포인트·글자 금지). subject.ts subjArt()가
-  발주본 우선 + stickAvatar 폴백(lazy 금지). 재발주 = bash qa/order-subj.sh → node qa/process-subj.mjs
-  (프롬프트 qa/subj_prompts.txt). 카드 문구 확정본(2026-07-21 사용자 선택)은 subject.ts가 정본.
+- 스플래시(screens/splash.ts) = **스틱맨 플립북 "실컷 놀다가 → 공부하자!"**: 놀이 14컷(먹기·티비·폰·게임·만화책·
+  컴퓨터·낮잠·과자·친구·노래·공놀이·자전거·강아지·아차! 시계)을 125ms 간격 **1바퀴**(서사라 반복 금지, '아차! 시계'
+  컷이 항상 마지막) → 정착 컷(책상 앞 상체, 머리띠에 한글 "공부하자!")으로 탁 정착 → 워드마크 페이드업. 탭하면 건너뛰기.
+  **그림은 코드 그림(2026-11-11 교체, 아래 "코드 그림" 섹션)**: `public/sketch/splash/*.svg`, 원본은
+  `qa/sketch/scenes/splash.mjs`이고 넘기는 순서는 그 파일의 `frames()` 순서다(splash.ts는 `SPLASH_FRAMES`만 읽는다).
+  컷을 고치거나 더하려면 장면 파일을 고치고 `node qa/sketch/build.mjs`. 그림 속 글자는 머리띠 하나만 예외
+  (글꼴 없이 획으로 긋는다. 음표·하트 같은 기호는 허용). 옛 발주본 `public/brand/loading/*.webp`·`brand/study.webp`는
+  파일만 남아 있고 화면에서는 쓰지 않는다(study.webp는 앱 아이콘을 다시 만드는 make-icon.mjs의 원본이라 지우지 않는다).
+- **과목 허브 카드 스틱맨 4종**: 과목 소품(플라스크·삼각자·지구본·두루마리)을 든 쌤 상반신. **코드 그림(2026-11-11
+  교체)**: `public/sketch/subj/{sci,math,soc,his}.svg`, 원본 `qa/sketch/scenes/subjects.mjs`. subject.ts subjArt()가
+  `subjectArt(key)`를 읽고 로드 실패 시 stickAvatar 폴백(lazy 금지). 카드 문구 확정본(2026-07-21 사용자 선택)은
+  subject.ts가 정본. 옛 발주본 public/brand/subj/*.webp는 파일만 남아 있다.
 - **파비콘 = 발자국 마크(사용자 확정 2026-07-16)**: 블루 그라데이션 라운드 사각 + 흰 발자국 2개
   지그재그(홈 트레일 도장 #bsfp 실루엣) + 입체 옆면(#175BC4 — 지도 스텝 노드 문법) + 키라이트.
   재생성 `node qa/make-favicon.mjs` → public/favicon.ico(16·32·48 PNG-in-ICO)+brand/favicon-{크기}.png,
@@ -682,11 +682,40 @@ src/
 - **원칙: 개념을 다 가르친 뒤 문제.** 개념 하나 → 바로 퀴즈 금지. (단원 I L1이 이 원칙의 기준.)
 - `comic` 스텝 = 스틱맨 쌤이 과학사 이야기를 만화 컷으로 들려주며 개념을 가르침. 하단 CTA로 컷을 한 장씩
   넘기다가 마지막 컷에서 다음 단계로. 각 컷: stage 배지 + 제목 + 이미지 + 캡션(+ 용어 카드).
-- **컷 이미지는 raster(Imagen 발주), SVG 아님.** 이미지 없거나 로드 실패 시 `figures.stickman()` SVG로 우아하게 폴백.
-  경로: `public/comics/<lesson>/<n>.webp`, 렌더러가 `import.meta.env.BASE_URL` 접두.
+- **컷 이미지는 두 종류다.** 중1 과학 만화 열 편은 **코드 그림 SVG**(`public/sketch/comics/<레슨>/<n>.svg`, 아래 "코드 그림"
+  섹션), 중2 과학·사회·역사 만화는 발주 래스터(`public/comics/<lesson>/<n>.webp`). 렌더러는 어느 쪽이든 `<img>`로 싣고
+  `import.meta.env.BASE_URL`을 붙인다. 이미지가 없거나 로드에 실패하면 `figures.stickman()` SVG로 폴백.
 - 컷 전환은 rAF 아닌 reflow 기반(헤드리스에서도 항상 보이게). 스틱맨 캐릭터는 `stickman()`/`stickmanHead()`.
 
+## 코드 그림 (2026-11-11, 스틱맨 그림을 생성형 이미지 대신 코드로)
+- **무엇이 바뀌었나**: 스플래시 15컷, 로그인·계정 그림, 소개 페이지 대표 그림, 원형 스틱맨 쌤 5종, 과목 카드 4종,
+  **중1 과학 만화 열 편**(u1l1·u1l3·u2l1·u2l7·u3l3·u4l3·u4l6·u5l3·u6l2·u7l3)이 코드로 그린 SVG다. 이미지 생성 모델을
+  쓰지 않는다. 중2 과학·사회·역사 만화와 개념 컷(`cut()`)은 아직 발주 그림 그대로다.
+- **구조**: 그리는 코드는 번들 밖 `qa/sketch/`에 있다(엔진 lib/sk.mjs, 인물 lib/figure.mjs, 소품 lib/props.mjs,
+  장면 scenes/*.mjs). `node qa/sketch/build.mjs`가 `public/sketch/**.svg`와 `src/ui/sketchArt.generated.ts`를 만든다.
+  앱은 `src/ui/sketchArt.ts`만 본다(`comicArt(레슨, i)`·`teacherSvg(kind)`·`SPLASH_FRAMES`·`STUDY_ART`·`ACCOUNT_ART`·
+  `subjectArt(key)`). **생성물(SVG와 generated.ts)은 손으로 고치지 않는다.** 원형 스틱맨만 인라인 SVG(작고, 표정을
+  바로 갈아 끼워야 해서), 나머지는 정적 SVG를 `<img>`로 싣는다.
+- **만화 콘텐츠 문법**: 패널은 `{ ...comicArt("u3l3", 0), stage, title, caption, term? }`. 그림 경로와 말풍선이 함께
+  온다. **말풍선 좌표를 손으로 적지 않는다**: 장면 코드에서 인물에 `name`을 주고 `BUBBLES`에 `{ who, text }`를 적으면
+  빌드가 머리 꼭대기 좌표에서 자리를 계산한다(컷 밖으로 나가면 빌드가 경고). 줄은 `<br>`로 직접 나눈다.
+- **만화를 새로 만들거나 고칠 때**: 먼저 `qa/sketch/research/<레슨>.md`(내용 조사: 레슨에서의 역할, 사실 확인과 출처,
+  재편성안)를 읽는다. 내용 재조사를 에이전트에 맡길 때는 Opus로(사용자 지시). 순서와 그릴 때의 요령(큰 머리 비례에서
+  읽히는 자세, 말풍선 자리 비워 두기, 어두운 배경은 위쪽 띠로만)은 **qa/sketch/README.md가 정본**이다.
+- **화풍 규칙**: 만화의 인물은 **얼굴을 비우고** 머리 모양·모자·안경·옷으로 구분한다(쌤 = 삐친 머리 + 둥근 안경 + 흰
+  가운, 학생 = 노란 모자). 표정은 스플래시·원형 스틱맨·로그인 그림에서만 켠다. 그림 속 글자와 숫자 금지(기호는 허용),
+  과학자가 나오면 그 과학자를 따로 그린다(쌤이 역을 맡지 않는다). 비율은 4:3(960×720).
+- **QA**: `node qa/sketch/preview.mjs <레슨> 4 1`(그림만 시트) → `bash qa/sketch/board.sh <레슨> "<지도 노드 이름>"
+  "<단원 탭 머리글자>" <출력 png>`(앱 화면에서 한 편을 한 장으로) → `PORT=<포트> node qa/sketch/check-comics.mjs`
+  (열 편을 폰 두 크기에서 끝까지 넘기며 그림 로드·말풍선이 컷 밖으로 나가는지와 서로 겹치는지·페이지 오류 확인).
+- **프리미엄 레슨의 문제 그림**: u2l7 거북 문제는 만화 장면 파일의 `extras()`가 뽑는 인물 없는 두 섬 그림
+  (`sketch/comics/u2l7/island-a.svg`·`island-b.svg`)을 `ppair`로 쓴다. 3컷의 구도를 바꿀 때 함께 본다.
+
 ## 만화 컷 이미지 발주 (codex auth → ChatGPT 이미지 생성)
+- **중1 과학 만화 열 편은 2026-11-11에 코드 그림으로 바뀌었다(위 섹션).** 아래 발주 절차와 편별 기록 가운데 중1 과학
+  (u1l1·u3l3·u4l3·u4l6·u5l3·u6l2·u7l3) 부분은 옛 그림의 기록이고, 이야기 편성과 사실 관계도 조사 뒤 새로 짰으므로
+  내용의 정본이 아니다(정본은 qa/sketch/research와 장면 코드). 발주 절차 자체는 중2 과학·사회·역사 만화와 개념 컷에
+  여전히 쓴다.
 - **만화 프레임 원비율 추종(2026-08-03 완료 — 구 1:1 고정 크롭 폐지)**: `.comic-art`는 로드 전
   4:3 예약(폴백 프레임 겸)이고, comic.ts가 로드 후 naturalWidth/Height 실비율을 주입한다(한 만화 =
   한 비율이라 첫 컷 이후 전환 높이 점프 없음). 4:3 발주분(역사 13편+사회 장영실+과학 u1l3·u2l1·u7l3)
@@ -887,7 +916,8 @@ src/
   0..4 기존 선생님 발주본(하위 호환 — 순서 변경·삭제 금지), 5..16 **학생 캐릭터 12종**(public/avatars/*.webp,
   상반신 버스트 — 성별·헤어·안경·주근깨·장신구·표정 다양화. 발주 qa/order-avatars.sh + avatar2_prompts.txt,
   변환 node qa/process-avatars.mjs). 캐릭터 추가는 USER_FILES에 append만 — 픽커·앱바 자동 확장.
-  선생님 연출(comic·hook·recap의 stickAvatar/AvatarKind)은 프로필과 별개 체계로 불변.
+  선생님 연출(comic·hook·recap의 stickAvatar/AvatarKind)은 프로필과 별개 체계다(2026-11-11부터 코드로 그린
+  인라인 SVG. ui/sketchArt의 teacherSvg, 원본 qa/sketch/scenes/avatars.mjs).
 - **과제 배너**: 학급(코드) 소속 + 과제가 있을 때만 홈 상단에 렌더할 예정(후속 교사 기능) — 개별 유저에겐 안 뜬다.
 
 ## 데스크톱 셸 (옵트인 · ≥1024px — 2026-07-20 방향 확정 B, **레일까지 완성**)

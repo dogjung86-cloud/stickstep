@@ -314,7 +314,7 @@ console.log("L7 변이, 그리고 살아남는 것들");
   await openLesson(6);
   await W(700);
   ok(await imgLoaded(".comic-art img"), "다윈 만화 이미지 로드");
-  for (let i = 0; i < 7; i++) await cta();
+  for (let i = 0; i < 8; i++) await cta(); // 만화 8컷(2026-11-11 코드 그림으로 다시 편성하며 7 → 8)
   await cta(); // concept → lab
   await W(900);
   await pickChoice(".bkl-ask", "두꺼운 부리");

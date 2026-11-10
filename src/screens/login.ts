@@ -25,7 +25,7 @@ const PROVIDER_LABEL: Record<string, string> = { google: "Google", kakao: "카�
 
 const base = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL || "/";
 
-/** 비로그인 히어로 — 스플래시 정착 컷과 같은 "공부하자!" 머리띠 스틱맨(코드 그림 public/sketch/splash/study.svg).
+/** 비로그인 히어로: 스플래시 정착 컷과 같은 "공부하자!" 머리띠 스틱맨(코드 그림 public/sketch/splash/study.svg).
  *  파란 원 프레임에 가두지 않고 흰 배경 그대로 둔다(사용자 확정 2026-07-21).
  *  lazy 금지(.scroll 안 이미지 공통 규칙), 로드 실패 시 파란 원 + 스틱맨 쌤 폴백. */
 function heroArt(): HTMLElement {

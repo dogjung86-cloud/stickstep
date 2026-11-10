@@ -273,8 +273,8 @@ await finishLesson();
 
 // ════════ L3 태양의 활동 ════════
 log("=== u7l3 ===", await openLesson("태양의 활동"));
-// comic 7컷: CTA 연타
-for (let i = 0; i < 7; i++) {
+// comic 8컷(2026-11-11 코드 그림으로 다시 편성하며 7 → 8): CTA 연타
+for (let i = 0; i < 8; i++) {
   await clickCTA();
   await page.waitForTimeout(350);
 }

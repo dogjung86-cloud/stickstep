@@ -1,26 +1,64 @@
-# 코드 그림 (샘플)
+# 코드 그림
 
-스틱맨 그림을 이미지 생성 모델 없이 코드로 그려 SVG로 뽑는 도구다. `sketch-art-sample` 브랜치의 판정용 샘플이고, 평가와 수치, 전체 교체의 어림은 `D:\Brilliant Science\output\sketch-art-sample\README.md`에 있다.
+스틱맨 그림을 이미지 생성 모델 없이 코드로 그려 SVG로 뽑는 도구다. 그리는 코드는 번들 밖(`qa/sketch`)에 있고, 앱은 미리 뽑아 둔 정적 SVG만 싣는다.
 
-- 앱에서 보기: 주소에 `?sketch`를 붙인다(끄기는 `?sketch=0`). 한눈에 보기는 `/qa-sketch.html`.
-- 그림 원본은 `scenes/`의 장면 코드다. `public/sketch/*.svg`와 `src/ui/sketchArt.generated.ts`는 생성물이라 손으로 고치지 않는다.
+지금 코드 그림으로 바뀐 곳(2026-11-11, `sketch-art-sample` 브랜치)
+
+- 스플래시 플립북 14컷과 정착 컷, 로그인과 계정 화면 그림, 소개 페이지 대표 그림
+- 원형 스틱맨 쌤 5종(만화, 훅, 정리 화면의 얼굴)
+- 과목 카드 그림 4종
+- 중1 과학 만화 열 편: u1l1, u1l3, u2l1, u2l7, u3l3, u4l3, u4l6, u5l3, u6l2, u7l3
+
+중2 과학, 역사, 사회 만화와 개념 컷(`cut()`)은 아직 발주 그림 그대로다.
+
+## 파일
 
 | 파일 | 하는 일 |
 | --- | --- |
-| `lib/sk.mjs` | 손그림 SVG 엔진: 떨리는 굵은 선(`ink`), 살짝 어긋난 채움과 마커 결(`fill`), 경로 단순화, 기준점 기록(`mark`) |
-| `lib/figure.mjs` | 막대 인물: 머리 모양, 안경, 표정, 머리띠, 겉옷, 관절 좌표 자세. 인물 설정(TEACHER, KID, LIND, SAILOR_*) |
-| `lib/props.mjs` | 소품 |
-| `scenes/*.mjs` | 장면: 만화 u1l1 7컷, 스플래시 7컷, 원형 스틱맨 5종과 계정 화면 그림 |
-| `build.mjs` | 장면 → 정적 SVG와 앱이 읽는 표. 말풍선 자리는 화자 머리 기준점에서 계산한다 |
-| `preview.mjs`, `one.mjs`, `sheet-characters.mjs` | 눈검수용 시트 |
-| `compare.mjs`, `bench.mjs`, `../shot-sketch.mjs` | 전후 비교 자료와 측정 |
+| `lib/sk.mjs` | 손그림 SVG 엔진: 떨리는 굵은 선(`ink`), 살짝 어긋난 채움과 마커 결(`fill`), 경로 단순화, 기준점 기록(`mark`), 기호(물음표, 느낌표, 화살표, 반짝임 등) |
+| `lib/figure.mjs` | 막대 인물: 머리 모양과 모자, 안경, 수염, 표정, 머리띠, 겉옷, 관절 좌표 자세. 인물 설정(TEACHER, STUDENT, LIND, HOOKE, DARWIN, OFFICIAL 등) |
+| `lib/props.mjs` | 여러 장면이 함께 쓰는 소품(책상, 책, 지구, 구름, 해와 달, 현미경 등). 한 편에서만 쓰는 소품은 그 장면 파일 안에 둔다 |
+| `scenes/comic-<레슨>.mjs` | 만화 한 편. `panels()`가 `[{ sk, bubbles? }]`를 돌려준다. `extras()`를 두면 문제 그림처럼 만화 밖에서 쓰는 그림도 함께 뽑는다 |
+| `scenes/splash.mjs`, `avatars.mjs`, `subjects.mjs` | 스플래시, 원형 스틱맨과 계정 그림, 과목 카드 |
+| `research/<레슨>.md` | 만화마다의 내용 조사(레슨에서의 역할, 사실 확인과 출처, 재편성안). 캡션이나 장면을 고칠 때 먼저 읽는다 |
+| `build.mjs` | 장면 → `public/sketch/**.svg`와 `src/ui/sketchArt.generated.ts`. 말풍선 자리는 화자 머리 기준점에서 계산한다. 바뀐 파일만 다시 쓴다 |
+| `preview.mjs`, `one.mjs`, `sheet-characters.mjs` | 눈검수용 시트(앱 없이 그림만) |
+| `board.sh`, `../shot-sketch.mjs` | 앱 화면에서 만화 한 편을 찍어 한 장으로 모은다(말풍선과 글까지 확인) |
+| `check-comics.mjs` | 열 편을 폰 두 크기에서 끝까지 넘기며 그림 로드, 말풍선이 컷 밖으로 나가는지와 서로 겹치는지, 페이지 오류를 기계로 확인 |
+
+`public/sketch/*.svg`와 `src/ui/sketchArt.generated.ts`는 생성물이라 손으로 고치지 않는다.
+
+## 자주 쓰는 명령
 
 ```bash
 node qa/sketch/build.mjs
 ```
 
 ```bash
-node qa/sketch/preview.mjs all
+node qa/sketch/preview.mjs u3l3 4 1
 ```
 
-새 만화를 그릴 때: `scenes/`에 장면 파일을 만들고(`comic-u1l1.mjs`가 본보기), `build.mjs`에 한 줄을 더한 다음, `preview.mjs`로 찍어 보며 좌표를 고친다. 인물에 `name`을 주면 머리 꼭대기 좌표가 기록되고, `BUBBLES`에 `{ who, text }`를 적으면 말풍선 자리가 계산된다.
+```bash
+bash qa/sketch/board.sh u3l3 "열의 이동" "III." "D:/Brilliant Science/output/sketch-art-sample/만화/u3l3.png"
+```
+
+```bash
+PORT=5537 node qa/sketch/check-comics.mjs
+```
+
+## 만화 한 편을 만드는 순서
+
+1. `research/<레슨>.md`의 사실 확인과 재편성안을 읽고 컷을 정한다. 뒤 스텝(개념, 정리, 문제)이 쓰는 용어를 만화가 먼저 겪게 하는지 본다.
+2. `scenes/comic-<레슨>.mjs`를 쓴다. 한 컷은 960×720. 인물에 `name`을 주면 머리 꼭대기 좌표가 기록되고, `BUBBLES`에 `{ who, text }`를 적으면 말풍선 자리가 계산된다. 줄은 `<br>`로 직접 나눈다.
+3. `preview.mjs`로 찍어 보며 좌표를 고친다.
+4. 콘텐츠 파일의 패널을 `{ ...comicArt("<레슨>", i), stage, title, caption, term? }`로 쓰고 `build.mjs`, `npx tsc --noEmit`을 돌린다.
+5. `board.sh`로 앱 화면을 찍어 말풍선이 그림을 가리지 않는지 본다. 마지막에 `check-comics.mjs`.
+
+## 그릴 때 지킬 것
+
+- 그림 속에 글자와 숫자를 넣지 않는다(기호는 된다). 예외는 머리띠의 "공부하자!" 하나다.
+- 만화의 인물은 얼굴을 비우고 머리 모양, 모자, 안경, 옷으로 구분한다. 표정이 필요한 그림(스플래시, 원형 스틱맨, 로그인)에서만 `face`를 켠다.
+- 머리가 큰 비례라 쪼그려 앉기나 무릎 안기는 읽히지 않는다. 서기, 눕기, 걸터앉기, 팔 들기, 가리키기, 들기만 쓴다. 든 팔은 넓게 벌려야 머리 뒤에 숨지 않고, 야구 모자 챙 쪽으로 팔을 들면 챙에 가린다(`mirror`로 뒤집는다).
+- 말풍선은 화자 머리 위에 앉으므로 그 자리에 해, 달, 소품을 두지 않는다. 층계 위처럼 머리가 컷 꼭대기에 가까운 인물에게는 한 줄짜리만 준다.
+- 어두운 배경(밤하늘, 달의 하늘)은 위쪽 띠로만 깔고 인물의 몸은 밝은 땅 위에 둔다. 검은 선이 어두운 바탕에 묻히기 때문이다.
+- 크게 키운 소품의 선이 두꺼워지면 `sk.lwK`를 잠시 낮춘다(`thin` 헬퍼).
