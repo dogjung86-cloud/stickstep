@@ -73,7 +73,8 @@ const STRING_RULES = [
 const COMMENT_RULES = [["주석의 대시", /[—–]|(?<=[가-힣])\s-\s(?=[가-힣])/]];
 // 검사 스크립트의 규칙 표는 금지어를 '인용'한 것이라 문자열 검사에서 뺀다.
 const QUOTED = (file) => /qa\/(check-u2v5-lang|e2e-u2v5)\.mjs$/.test(file);
-// v3 원문에서 고쳐 낼 문장을 그대로 적어 둔 것(patch의 앞쪽 글)도 인용이다: v3 파일에 똑같이 있는 문자열은 건너뛴다.
+// v3에서 이어받아 옮겨 적은 글(도입, 개념, 정리, 일부 문제)은 이 검사의 대상이 아니다: v3 파일에 똑같이 있는 문자열은 건너뛴다.
+// (이어받은 글에는 그림 설명의 '스틱맨', 이름의 내력을 알려 주는 '미토콘드리아' 인용처럼 그때의 약속으로 쓴 말이 있다. v5에서 고쳐 쓰면 검사 대상이 된다.)
 const V3_SRC = fs.readFileSync(path.join(ROOT, "src/content/unit2v3.ts"), "utf8");
 
 let checked = 0;

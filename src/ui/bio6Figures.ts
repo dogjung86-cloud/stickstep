@@ -7,15 +7,19 @@ import { webGroup } from "./bio6Web";
 
 /** 식물세포 도해에 (가)~(마)를 붙인 문제 그림. v3의 그림(cellPartsQuizFig)을 쓰되 (라) 세포막의 지시선만 주황 선(세포막)까지 잇는다.
  *  v3 그림은 (라)의 선이 갈색 세포벽의 바깥 가장자리에서 끝나, (나) 세포벽과 같은 곳을 가리키는 것처럼 보인다(v3 그림은 정본이라 건드리지 않는다).
- *  새 끝점은 꼬리표에서 오던 방향 그대로 늘여 세포막 선과 만나는 자리다. v3 그림이 바뀌어 바꿀 곳을 못 찾으면 조용히 넘어가지 않고 멈춘다. */
+ *  새 끝점은 꼬리표에서 오던 방향 그대로 늘여 세포막 선과 만나는 자리다.
+ *  v3 그림(bio4Figures)이 바뀌어 바꿀 곳을 못 찾으면 그 그림을 그대로 돌려주고 콘솔에 알린다. 이 함수는 단원 파일이 읽히는 순간
+ *  불리므로 여기서 던지면 앱이 뜨지 않는다. 바뀐 그림이 (라)의 선을 이미 고쳤다면 이 감싸기는 지워도 된다(e2e-u2v5의 C가 이 선을 본다). */
 export function cellPartsFigV5(): string {
   const from = `x1="53" y1="182"`;
   const fig = cellPartsQuizFig();
-  if (!fig.includes(from)) throw new Error("bio6Figures: v3 식물세포 도해에서 (라)의 지시선을 찾지 못했다(v3 그림이 바뀌었다)");
+  const end = fig.lastIndexOf("</svg>");
+  if (!fig.includes(from) || end < 0) {
+    console.error("[u2v5] 식물세포 도해에서 (라)의 지시선을 찾지 못했어요. bio4Figures.cellPartsQuizFig가 바뀌었는지 보고 bio6Figures.cellPartsFigV5를 맞춰 주세요.");
+    return fig;
+  }
   // 지시선이 닿는 자리에 점을 찍는다. 세포벽(갈색 띠)과 세포막(주황 선)은 붙어 있어서 선 끝만으로는 어느 쪽인지 헷갈린다.
   const dots = [[105, 92], [268, 92], [150, 148], [60, 169], [243, 158]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.6" fill="#4E5968" stroke="#fff" stroke-width="1"/>`).join("");
-  const end = fig.lastIndexOf("</svg>");
-  if (end < 0) throw new Error("bio6Figures: v3 식물세포 도해가 svg가 아니다");
   const out = fig.replace(from, `x1="60" y1="169"`);
   return out.slice(0, out.lastIndexOf("</svg>")) + dots + "</svg>";
 }

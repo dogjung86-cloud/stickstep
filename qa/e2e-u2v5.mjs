@@ -2,7 +2,7 @@
 //   A. 정답 경로: 열 레슨을 도입부터 마지막 문제까지 CTA로만 걸어간다(랩 열세 판 + 문제 51개).
 //   B. 오답 경로: 랩의 채점 판정을 일부러 틀리고(오답 카드가 누른 보기 바로 아래에 뜨는지, '다음'을 눌러야만 넘어가는지),
 //      차례 틀리기, 덮개 유리 빨리 덮기, 엉뚱한 곳 누르기, 알맞지 않은 세포 맡기기, 되돌리기를 해 본 뒤, 문제도 한 번씩 틀려 본다.
-//   C. 정본 배선(2026-11-11 병행 토글을 없앴다): 아무 표식 없이 열어도 CURRICULUM의 Ⅱ단원이 v5다(v3로 물러나지 않았다).
+//   C. 정본 배선(2026-11-11 병행 토글을 없앴다): 아무 표식 없이 열어도 CURRICULUM의 Ⅱ단원이 v5다. 앱은 v3 파일을 읽지 않는다(v5는 혼자 선다).
 //      레슨 열 개의 id, 제목, 이름표, 쪽수, 잠금은 v3와 같다(진도 기록과 시험 풀이 이 id에 묶여 있다). 옛 주소 ?u2v5는 아무 일도 하지 않는다.
 //   D. 화면 글 검사: 걷는 동안 화면에 뜬 글을 모아 대시, '교과서', 출판사 이름, '분자', 이모지, 이 책에 없는 용어를 찾는다.
 // 랩 조작은 qa/u2v5-lib.mjs의 것을 쓴다(한 화면 검사와 같은 조작). 레슨은 CURRICULUM에서 꺼내 연다.
@@ -532,6 +532,8 @@ console.log("\n══ C. 정본 배선 ══");
   const probe = (page) =>
     page.evaluate(async () => {
       const c = await import("/src/content/curriculum.ts");
+      // v5는 혼자 서는 파일이다. 앱이 뜨는 동안 v3 파일을 읽지 않았어야 한다(아래에서 견주려고 따로 들여오기 전에 본다).
+      const v3Loaded = performance.getEntriesByType("resource").some((r) => r.name.includes("/src/content/unit2v3.ts"));
       const v3 = await import("/src/content/unit2v3.ts");
       const u = c.CURRICULUM.find((x) => x.id === "u2");
       // 내용이 글자 하나까지 같은지로 견준다. (객체가 같은지로 보면 안 된다: dev 서버는 고친 파일을 들여오는 주소에
@@ -539,8 +541,12 @@ console.log("\n══ C. 정본 배선 ══");
       // 문제 번호(n, of)는 curriculum.ts가 CURRICULUM에 실린 판의 문제 스텝에 나중에 써 넣는 값이라 견줄 때 뺀다.
       const j = (x) => JSON.stringify(x, (k, v) => (k === "n" || k === "of" ? undefined : v));
       return {
-        // 조립이 실패하면 curriculum.ts가 v3로 물러난다. 그러면 여기가 참이 된다.
-        fellBack: j(u) === j(v3.UNIT2_V3),
+        // 지도에 실린 것이 v3와 같은 내용이면 참(v5가 실려 있으면 거짓)
+        isV3: j(u) === j(v3.UNIT2_V3),
+        v3Loaded,
+        // u2l2 문제 그림: v3 식물세포 도해를 감싸 (라)의 지시선을 세포막까지 이은 것(bio6Figures.cellPartsFigV5).
+        // v3 그림이 바뀌어 감싸기가 헛돌면 원래 그림이 그대로 나온다. 그때 여기서 드러난다.
+        partsLine: (await import("/src/ui/bio6Figures.ts")).cellPartsFigV5().includes('x1="60" y1="169"'),
         n: u.lessons.length,
         ids: u.lessons.map((l) => l.id).join(","),
         l1: u.lessons[0].steps.map((s) => s.type).join(","),
@@ -552,7 +558,9 @@ console.log("\n══ C. 정본 배선 ══");
     });
   const plain = await launch();
   const a = await probe(plain.page);
-  ok(!a.fellBack && a.l1.includes("magnifyLab") && !a.l1.includes("zoomRulerLab"), `아무 표식 없이 열어도 CURRICULUM의 Ⅱ단원은 v5(${a.l1})`);
+  ok(!a.isV3 && a.l1.includes("magnifyLab") && !a.l1.includes("zoomRulerLab"), `아무 표식 없이 열어도 CURRICULUM의 Ⅱ단원은 v5(${a.l1})`);
+  ok(!a.v3Loaded, "앱이 뜨는 동안 v3 파일(unit2v3.ts)을 읽지 않음(v5는 혼자 선다)");
+  ok(a.partsLine, "u2l2 식물세포 도해의 (라) 지시선이 세포막까지 이어져 있음(v3 그림 감싸기가 먹고 있다)");
   const meta = await openLesson(plain.page, 0);
   ok(meta.types[1] === "magnifyLab", "레슨을 열면 새 랩 화면");
   ok(a.n === 10 && a.ids === "u2l1,u2l2,u2l3,u2l4,u2l5,u2l6,u2l7,u2l8,u2l9,u2l10", `레슨 수와 id 불변(${a.n}개)`);
@@ -565,7 +573,7 @@ console.log("\n══ C. 정본 배선 ══");
   await plain.page.goto(`http://localhost:${PORT}/?u2v5`, { waitUntil: "domcontentloaded" });
   await plain.page.waitForTimeout(1200);
   const b = await probe(plain.page);
-  ok(b.flag === null && !b.fellBack && b.l1 === a.l1, "옛 주소 ?u2v5는 아무 일도 하지 않음(같은 판, 세션 표식 없음)");
+  ok(b.flag === null && !b.isV3 && b.l1 === a.l1, "옛 주소 ?u2v5는 아무 일도 하지 않음(같은 판, 세션 표식 없음)");
   await plain.browser.close();
 }
 

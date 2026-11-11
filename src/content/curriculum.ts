@@ -4,20 +4,9 @@ import type { Lesson } from "../lessons/types";
 import { isDone, isPremium, isReviewMode } from "../core/store";
 import { UNIT1 } from "./unit1";
 // 중1 Ⅱ = v5가 정본(2026-11-11 사용자 판정 "정본으로 올리기". 병행 토글 ss.u2v5와 주소 ?u2v5는 없앴다).
-// v5(content/unit2v5.ts)는 v3(content/unit2v3.ts)의 도입, 개념, 정리와 일부 문제 스텝을 가져와 쓰는 판이라 v3 파일을 함께 읽는다.
-// v3의 랩(steps/bio4/*)과 그 앞의 판(content/unit2.ts 등)은 Ⅴ·Ⅵ과 같은 규칙으로 파일만 남긴다(배선 없음).
-// v3의 글이나 스텝 차례가 바뀌면 v5 조립이 실패한다(unit2v5.ts의 v3, patch). 그때 화면이 멈추지 않게 v3로 물러나고 콘솔에 알린다.
-// 고치는 법은 SCI_GUIDE의 v5 절에 있다.
-import { UNIT2_V3 } from "./unit2v3";
-import { unit2v5 } from "./unit2v5";
-const UNIT2_V5 = (() => {
-  try {
-    return unit2v5();
-  } catch (e) {
-    console.error("[u2v5] v5 조립 실패. v3로 물러났어요. unit2v3.ts에서 바뀐 스텝이나 문장을 unit2v5.ts에 맞춰 주세요.", e);
-    return UNIT2_V3;
-  }
-})();
+// v5(content/unit2v5.ts)는 혼자 서는 파일이다. v3(content/unit2v3.ts, steps/bio4/*)와 그 앞의 판(content/unit2.ts 등)은
+// Ⅴ·Ⅵ과 같은 규칙으로 파일만 남긴다(배선 없음). Ⅱ단원의 글을 고칠 때는 unit2v5.ts를 고친다.
+import { UNIT2_V5 } from "./unit2v5";
 import { UNIT3 } from "./unit3";
 import { UNIT4 } from "./unit4";
 import { UNIT5 } from "./unit5";
