@@ -173,7 +173,7 @@ export const u4WatchLab: StepRenderer = (host, step, api) => {
           haptic(HAPTIC.correct);
           done.add(cls);
           f.say(`${where}에 댄 종이가 <b>붉게</b> 변했어요.${done.size < 2 ? " 다른 곳에도 대 보세요." : ""}`);
-          if (done.size === 2) tm.later(() => lab.finish("두 곳 모두 종이가 붉게 변했어요. 둘 다 물이에요. 상태가 변해도 <b>물질의 성질은 변하지 않아요</b>."), 1100);
+          if (done.size === 2) tm.later(() => lab.finish("두 곳 모두 종이가 붉게 변했어요. 둘 다 물이에요. 물질의 상태가 변해도 <b>성질은 변하지 않아요</b>."), 1100);
         }, 1200);
       });
       return b;
