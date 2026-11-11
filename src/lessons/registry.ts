@@ -324,6 +324,13 @@ import { factLab } from "./steps/factLab";
 import { feastLab } from "./steps/feastLab";
 import { timelineLab } from "./steps/timelineLab";
 import { opener } from "./steps/opener/opener";
+// 중1 과학 v5(랩과 도입 재제작, 2026-11-12): 단원마다 자기 등록표(steps/uNv5/index.ts)를 채운다. 이 파일은 고치지 않는다.
+import { U1V5_STEPS } from "./steps/u1v5";
+import { U3V5_STEPS } from "./steps/u3v5";
+import { U4V5_STEPS } from "./steps/u4v5";
+import { U5V5_STEPS } from "./steps/u5v5";
+import { U6V5_STEPS } from "./steps/u6v5";
+import { U7V5_STEPS } from "./steps/u7v5";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -655,6 +662,13 @@ const R: Record<string, StepRenderer> = {
   bodyTeamLab,
   // 중1 Ⅱ 도입 샘플(2026-11-11, 병행 토글 ss.u2intro)
   opener,
+  // 중1 과학 v5 단원별 등록표(타입 이름은 단원 접두 "u3…"로 시작해 위의 것과 겹치지 않는다)
+  ...U1V5_STEPS,
+  ...U3V5_STEPS,
+  ...U4V5_STEPS,
+  ...U5V5_STEPS,
+  ...U6V5_STEPS,
+  ...U7V5_STEPS,
 };
 
 export function getRenderer(type: string): StepRenderer | undefined {
