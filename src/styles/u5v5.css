@@ -110,3 +110,16 @@
 .u5x-tug-b.sm { width: 48px; height: 48px; }
 .u5x-sum-n { text-align: center; font-size: 14.5px; font-weight: 800; color: var(--ink); white-space: nowrap; }
 .u5x-sum.tall { height: 84px; font-size: 13.5px; line-height: 20px; padding: 11px 13px; }
+
+/* ── 측정 표(u5l3) ─────────────────────────────────── */
+.u5x-table { display: grid; grid-template-columns: 92px 1fr 1fr; gap: 4px; align-items: stretch; }
+.u5x-th { height: 20px; font-size: 12.5px; font-weight: 800; color: var(--sub); display: flex; align-items: center; justify-content: center; }
+.u5x-th.row { height: 32px; justify-content: flex-start; padding-left: 4px; color: var(--ink); }
+.u5x-td {
+  height: 32px; border-radius: 10px; border: 1.5px dashed var(--n300); background: var(--n50); display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: var(--subj-force-press);
+}
+.u5x-td.on { border-style: solid; background: #fff; }
+.u5x-td.cur { border-color: var(--subj-force); box-shadow: 0 0 0 1px var(--subj-force) inset; }
+.u5x-graph.short { height: 146px; }
+.u5x-graph text.pt.b { fill: var(--blue); }

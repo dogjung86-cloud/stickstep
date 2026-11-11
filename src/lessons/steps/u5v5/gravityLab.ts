@@ -1,29 +1,34 @@
 // [중1 Ⅴ v5] u5l3 gravityLab: 「사과는 어느 쪽으로 떨어질까요?」
+// 책의 어디에서: 해 보기 '중력의 방향 찾기', 무게와 질량, 달에서 잰 무게.
 // 한 통찰: 중력은 어디서나 지구 중심 쪽으로 당긴다. 그 크기(무게)는 달에서 약 6분의 1이 되지만 질량은 그대로다.
-// 조작: (1) 지구 둘레의 빈 곳을 눌러 사과를 놓는다(위, 옆, 아래). (2) 같은 상자를 지구와 달에서 용수철저울에 매단다.
-// 흐름: 예측(아래쪽에서 놓으면?) → 세 곳에서 놓기 → 지구와 달에서 재기 → 판정(60 N짜리 가방을 달에서 재면) → 결론.
-// 무대는 옛 gravityDrop의 것(지구, 사과, 중력 화살표, 용수철저울)을 살렸다. 수치는 정본과 같다(3 kg, 29.4 N, 4.9 N).
+// 학생이 정하는 것: (1) 지구 둘레 세 곳의 사과마다 떨어질 방향을 화살표로 겨눈 뒤 놓는다. (2) 저울(용수철저울, 양팔저울)과 곳(지구, 달)을 골라 같은 상자를 잰다.
+// 실패하는 길: 겨눈 쪽과 다르게 떨어지면 겨눈 화살표(점선)와 실제로 떨어진 길이 어긋나 보인다. 다시 겨눠야 한다.
+// 흐름: 위쪽 사과 → 오른쪽 사과 → 아래쪽 사과 → 저울 둘, 곳 둘의 표 네 칸 채우기 → 판정(60 N짜리 가방을 달에서) → 결론.
+// 옛 랩(gravityDrop)은 빈 곳을 눌러 떨어뜨리고 구경했다. 여기서는 먼저 겨누고, 저울을 바꿔 가며 직접 잰다. 수치는 3 kg, 29.4 N, 4.9 N.
 
+import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { drawCrate, drawForceArrow, drawSpring } from "../../../ui/forceProps";
-import type { StepRenderer } from "../../types";
-import { bvCard, bvCards, bvTimers } from "../bio6/b6Lab";
-import { el } from "../../../core/dom";
 import { curioCard, type Curio } from "../../../ui/curio";
-import { U5, u5Canvas, u5Frame, u5Log, u5Pill, u5Read, u5Text } from "./u5Kit";
+import type { StepRenderer } from "../../types";
+import { bvCapture, bvTimers } from "../bio6/b6Lab";
+import { U5, u5Canvas, u5Frame, u5Pill, u5Read, u5Text } from "./u5Kit";
 
 interface S {
   title: string;
   cta?: string;
   curio?: Curio;
 }
-interface Apple {
-  x: number;
-  y: number;
-  v: number;
-  landed: boolean;
-}
-const RE = 44; // 지구 반지름(px)
+const RE = 40; // 지구 반지름(px)
+const DIST = RE + 50; // 사과가 놓인 거리
+const SPOTS = [
+  { name: "위쪽", ang: -Math.PI / 2 },
+  { name: "오른쪽", ang: 0 },
+  { name: "아래쪽", ang: Math.PI / 2 },
+];
+type Tool = "spring" | "balance";
+type Place = "earth" | "moon";
+const CELL: Record<string, string> = { "spring-earth": "29.4 N", "spring-moon": "4.9 N", "balance-earth": "3 kg", "balance-moon": "3 kg" };
 
 export const gravityLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as S;
@@ -31,95 +36,150 @@ export const gravityLab: StepRenderer = (host, step, api) => {
   const st = u5Canvas(f.stage);
   const tm = bvTimers();
 
-  let scene: "earth" | "scale" = "earth";
-  let ready = false; // 예측을 마쳐야 사과를 놓을 수 있다
-  const apples: Apple[] = [];
-  const done = { top: false, side: false, bottom: false };
-  const log = u5Log([{ name: "지구 위쪽에서" }, { name: "지구 옆쪽에서" }, { name: "지구 아래쪽에서" }]);
-  let place: "earth" | "moon" = "earth";
-  let shown = 29.4; // 저울이 가리키는 값(부드럽게 따라간다)
-  const tried = { earth: false, moon: false };
-  let finished = false;
-
-  const center = (): { x: number; y: number } => ({ x: st.w() / 2, y: st.h() / 2 + 8 });
-  const count = (): number => Number(done.top) + Number(done.side) + Number(done.bottom);
+  // ── 첫 장면: 겨누고 놓기 ──
+  let scene: "aim" | "scale" = "aim";
+  let spot = 0;
+  let aim: number | null = null; // 겨눈 각도(화면 좌표)
+  let dragging = false;
+  let fall = 0; // 0 제자리, 0~1 떨어지는 중
+  let failAim: number | null = null; // 틀린 겨눔(점선으로 남긴다)
+  let busy = false;
+  const doneSpots: number[] = [];
+  const hint = el("div", { class: "u5x-sum tall" });
+  f.slot.setControls(hint);
+  const paintHint = (): void => {
+    hint.innerHTML = SPOTS.map((p, i) => `${p.name} 사과: <b>${doneSpots.includes(i) ? "지구 중심 쪽으로 떨어짐" : i === spot ? "겨누는 중" : "아직"}</b>`).join("<br>");
+  };
+  const center = (): { x: number; y: number } => ({ x: st.w() / 2, y: st.h() / 2 + 10 });
+  const applePos = (i: number, k = 0): { x: number; y: number } => {
+    const c = center();
+    const d = DIST - (DIST - RE - 7) * k;
+    return { x: c.x + Math.cos(SPOTS[i].ang) * d, y: c.y + Math.sin(SPOTS[i].ang) * d };
+  };
 
   st.cv.addEventListener("pointerdown", (e) => {
-    if (scene !== "earth" || !ready) return;
+    if (scene !== "aim" || busy) return;
     const p = st.pt(e);
-    const c = center();
-    const d = Math.hypot(p.x - c.x, p.y - c.y);
-    if (d < RE + 16) {
-      f.say("지구에서 조금 떨어진 <b>빈 곳</b>을 눌러 보세요.");
-      return;
-    }
-    if (apples.filter((a) => !a.landed).length >= 2) return;
+    const a = applePos(spot);
+    if (Math.hypot(p.x - a.x, p.y - a.y) > 60) return;
+    bvCapture(st.cv, e.pointerId);
+    dragging = true;
+    failAim = null;
     haptic(HAPTIC.tap);
-    apples.push({ x: p.x, y: Math.max(62, p.y), v: 0, landed: false });
-    if (apples.length > 7) apples.shift();
   });
-
-  const landed = (a: Apple): void => {
-    const c = center();
-    const ang = Math.atan2(a.y - c.y, a.x - c.x); // 화면 좌표(아래가 +)
-    const zone: "top" | "side" | "bottom" = ang < -Math.PI / 4 && ang > (-3 * Math.PI) / 4 ? "top" : ang > Math.PI / 4 && ang < (3 * Math.PI) / 4 ? "bottom" : "side";
-    if (!done[zone]) {
-      done[zone] = true;
-      haptic(HAPTIC.correct);
-      log.set(zone === "top" ? 0 : zone === "side" ? 1 : 2, "지구 중심 쪽으로");
-      f.pips(count());
-      if (count() === 3) {
-        f.say("어디서 놓아도 사과는 <b>지구 중심 쪽</b>으로 떨어졌어요. 지구가 당기는 이 힘이 <b>중력</b>이에요.");
-        tm.later(toScale, 2200);
-      } else {
-        const left = [!done.top && "위쪽", !done.side && "옆쪽", !done.bottom && "아래쪽"].filter(Boolean).join(", ");
-        f.say(`지구 쪽으로 떨어졌어요. 이번에는 지구 <b>${left}</b>의 빈 곳을 눌러 보세요.`);
+  st.cv.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    const p = st.pt(e);
+    const a = applePos(spot);
+    if (Math.hypot(p.x - a.x, p.y - a.y) > 10) aim = Math.atan2(p.y - a.y, p.x - a.x);
+  });
+  const release = (): void => {
+    if (!dragging) return;
+    dragging = false;
+    if (aim === null) return;
+    busy = true;
+    const toCenter = SPOTS[spot].ang + Math.PI;
+    let diff = Math.abs(aim - toCenter) % (Math.PI * 2);
+    if (diff > Math.PI) diff = Math.PI * 2 - diff;
+    const good = diff < 0.45;
+    const t0 = performance.now();
+    const tick = (): void => {
+      const k = Math.min(1, (performance.now() - t0) / 700);
+      fall = k * k;
+      if (k < 1) {
+        tm.later(tick, 16);
+        return;
       }
-    }
+      if (good) {
+        haptic(HAPTIC.correct);
+        doneSpots.push(spot);
+        f.pips(doneSpots.length);
+        aim = null;
+        fall = 0;
+        if (doneSpots.length === 3) {
+          paintHint();
+          f.say("어디서 놓아도 사과는 <b>지구 중심 쪽</b>으로 떨어졌어요. 지구가 당기는 이 힘이 <b>중력</b>이에요.");
+          tm.later(toScale, 2200);
+        } else {
+          spot += 1;
+          busy = false;
+          paintHint();
+          f.say(`겨눈 대로 떨어졌어요. 이번에는 지구 <b>${SPOTS[spot].name}</b> 사과예요. 떨어질 쪽으로 화살표를 겨눠 보세요.`);
+        }
+      } else {
+        haptic(HAPTIC.wrong);
+        failAim = aim;
+        f.say("겨눈 쪽(점선)과 다르게 떨어졌어요. 사과가 <b>어디를 향해</b> 갔는지 보고 다시 겨눠 보세요.");
+        tm.later(() => {
+          fall = 0;
+          aim = null;
+          busy = false;
+        }, 1300);
+      }
+    };
+    tick();
   };
+  st.cv.addEventListener("pointerup", release);
+  st.cv.addEventListener("pointercancel", release);
 
-  // 두 번째 장면: 지구와 달에서 무게 재기
-  const cE = bvCard("u5x-g", { name: "지구에서 재기", sub: "눌러서 재요", key: "earth" });
-  const cM = bvCard("u5x-g", { name: "달에서 재기", sub: "눌러서 재요", key: "moon" });
-  const note = el("div", { class: "u5x-sum" });
-  const paintNote = (): void => {
-    note.innerHTML = place === "earth" ? "지구: 질량 <b>3 kg</b>, 무게 <b>29.4 N</b><br>용수철이 길게 늘어났어요." : "달: 질량 <b>3 kg</b>, 무게 <b>4.9 N</b><br>용수철이 조금만 늘어났어요. 지구의 약 6분의 1이에요.";
+  // ── 둘째 장면: 저울 둘, 곳 둘 ──
+  let tool: Tool = "spring";
+  let place: Place = "earth";
+  let shown = 29.4;
+  const got = new Set<string>();
+  let finished = false;
+  const seg = (text: string, key: string): HTMLButtonElement => {
+    const b = el("button", { class: "u5x-seg", text, attrs: { type: "button" } }) as HTMLButtonElement;
+    b.dataset.k = key;
+    return b;
   };
-  const pick = (k: "earth" | "moon"): void => {
-    if (finished) return;
-    haptic(HAPTIC.tap);
-    place = k;
-    cE.on(k === "earth");
-    cM.on(k === "moon");
-    tried[k] = true;
-    (k === "earth" ? cE : cM).done();
-    (k === "earth" ? cE : cM).sub(k === "earth" ? "29.4 N" : "4.9 N");
-    paintNote();
-    if (tried.earth && tried.moon) {
+  const tS = seg("용수철저울", "spring");
+  const tB = seg("양팔저울", "balance");
+  const pE = seg("지구에서", "earth");
+  const pM = seg("달에서", "moon");
+  const table = el("div", { class: "u5x-table" });
+  const paintTable = (): void => {
+    const cell = (k: string): string => `<span class="u5x-td${got.has(k) ? " on" : ""}${k === `${tool}-${place}` ? " cur" : ""}">${got.has(k) ? CELL[k] : ""}</span>`;
+    table.innerHTML = `<span class="u5x-th"></span><span class="u5x-th">지구</span><span class="u5x-th">달</span><span class="u5x-th row">용수철저울</span>${cell("spring-earth")}${cell("spring-moon")}<span class="u5x-th row">양팔저울</span>${cell("balance-earth")}${cell("balance-moon")}`;
+    tS.classList.toggle("on", tool === "spring");
+    tB.classList.toggle("on", tool === "balance");
+    pE.classList.toggle("on", place === "earth");
+    pM.classList.toggle("on", place === "moon");
+  };
+  const measure = (): void => {
+    got.add(`${tool}-${place}`);
+    paintTable();
+    if (got.size === 4 && !finished) {
       finished = true;
       f.pips(4);
-      f.say("같은 상자인데 저울 눈금이 달라요. <b>질량</b>은 그대로이고 <b>무게</b>만 달라졌어요.");
-      tm.later(askFinal, 2400);
-    }
+      f.say("용수철저울의 값은 달에서 줄었는데 양팔저울의 값은 <b>그대로</b>예요. 달라진 것은 <b>무게</b>뿐이에요.");
+      tm.later(askFinal, 2600);
+    } else if (!finished) f.say(tool === "spring" ? "용수철저울은 당기는 힘의 크기, <b>무게</b>를 재요. 다른 칸도 채워 보세요." : "양팔저울은 추와 견주어 <b>질량</b>을 재요. 다른 칸도 채워 보세요.");
   };
-  cE.el.addEventListener("click", () => pick("earth"));
-  cM.el.addEventListener("click", () => pick("moon"));
+  const pick = (t: Tool | null, p: Place | null): void => {
+    if (finished) return;
+    haptic(HAPTIC.tap);
+    if (t) tool = t;
+    if (p) place = p;
+    measure();
+  };
+  tS.addEventListener("click", () => pick("spring", null));
+  tB.addEventListener("click", () => pick("balance", null));
+  pE.addEventListener("click", () => pick(null, "earth"));
+  pM.addEventListener("click", () => pick(null, "moon"));
 
   function toScale(): void {
     scene = "scale";
-    f.say("이 당기는 힘의 크기를 재 봐요. 같은 상자를 <b>지구</b>와 <b>달</b>에서 용수철저울에 매달아 보세요.");
-    cE.on(true);
-    tried.earth = true;
-    cE.done();
-    cE.sub("29.4 N");
-    paintNote();
-    f.slot.setControls(bvCards(2, cE, cM), note);
-    api.setCTA("달에서도 재 보세요", { enabled: false });
+    got.add("spring-earth");
+    paintTable();
+    f.say("이 당기는 힘을 재 봐요. <b>저울</b>과 <b>곳</b>을 바꿔 가며 같은 상자를 재서 표 네 칸을 채워 보세요.");
+    f.slot.setControls(el("div", { class: "u5x-segs" }, tS, tB), el("div", { class: "u5x-segs" }, pE, pM), table);
+    api.setCTA("표 네 칸을 채워 보세요", { enabled: false });
   }
   function askFinal(): void {
     f.slot.ask(
       "지구에서 무게가 60 N인 가방을 달에 가져가 용수철저울로 재면?",
-      [{ t: "10 N" }, { t: "60 N" }, { t: "360 N" }].map((c, i) => ({ ...c, ok: i === 0 })),
+      [{ t: "10 N", ok: true }, { t: "60 N" }, { t: "360 N" }],
       (ok) => api.recordQuiz(ok),
       { why: "달의 중력은 지구의 약 <b>6분의 1</b>이라 60÷6=10 N이에요.", onNext: finish },
     );
@@ -131,7 +191,7 @@ export const gravityLab: StepRenderer = (host, step, api) => {
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
 
-  const drawApple = (ctx: CanvasRenderingContext2D, x: number, y: number, r = 7): void => {
+  const drawApple = (ctx: CanvasRenderingContext2D, x: number, y: number, r = 8): void => {
     const g = ctx.createRadialGradient(x - 2, y - 3, 1, x, y, r);
     g.addColorStop(0, "#FF9D8A");
     g.addColorStop(0.6, "#F25757");
@@ -140,12 +200,6 @@ export const gravityLab: StepRenderer = (host, step, api) => {
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = "#6FCF97";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(x, y - r);
-    ctx.lineTo(x + 3, y - r - 4);
-    ctx.stroke();
   };
   const drawBody = (ctx: CanvasRenderingContext2D, x: number, y: number, r: number, moon: boolean): void => {
     const g = ctx.createRadialGradient(x - r * 0.4, y - r * 0.45, r * 0.1, x, y, r);
@@ -177,9 +231,8 @@ export const gravityLab: StepRenderer = (host, step, api) => {
   };
 
   st.run((ctx, w, h, t, dt) => {
-    if (scene === "earth") {
+    if (scene === "aim") {
       const c = center();
-      // 별
       ctx.fillStyle = "rgba(232,238,249,.35)";
       for (let i = 0; i < 26; i++) ctx.fillRect((i * 97) % w, 14 + ((i * 53) % (h - 28)), 1.5, 1.5);
       drawBody(ctx, c.x, c.y, RE, false);
@@ -188,99 +241,123 @@ export const gravityLab: StepRenderer = (host, step, api) => {
       ctx.arc(c.x, c.y, 2.5, 0, Math.PI * 2);
       ctx.fill();
       u5Text(ctx, "지구 중심", c.x, c.y + 13, { px: 12 });
-      apples.forEach((a) => {
-        const dx = c.x - a.x;
-        const dy = c.y - a.y;
-        const d = Math.hypot(dx, dy);
-        if (!a.landed) {
-          a.v += 0.07 * dt;
-          const stepLen = Math.min(a.v * dt, d - RE - 6);
-          a.x += (dx / d) * stepLen;
-          a.y += (dy / d) * stepLen;
-          if (d - RE - 6 <= 0.6) {
-            a.landed = true;
-            landed(a);
-          }
-          drawForceArrow(ctx, a.x, a.y, (dx / d) * 30, (dy / d) * 30, { color: U5.back, width: 3.5 });
-        }
-        drawApple(ctx, a.x, a.y);
-      });
-      u5Pill(ctx, !ready ? "먼저 예상해 봐요" : count() === 3 ? "모두 지구 중심 쪽으로" : "빈 곳을 눌러 사과 놓기", U5.back);
-      if (ready && count() < 3) {
-        // 아직 안 해 본 쪽에 깜빡이는 자리 표시
-        const pulse = 0.5 + 0.5 * Math.sin(t / 320);
-        const spots: [boolean, number, number][] = [
-          [done.top, c.x, c.y - RE - 34],
-          [done.side, c.x + RE + 62, c.y],
-          [done.bottom, c.x, c.y + RE + 34],
-        ];
-        spots.forEach(([d, x, y]) => {
-          if (d) return;
-          ctx.strokeStyle = `rgba(240,164,34,${0.4 + pulse * 0.5})`;
+      SPOTS.forEach((_, i) => {
+        const done = doneSpots.includes(i);
+        const a = applePos(i, done ? 1 : i === spot ? fall : 0);
+        if (i > spot && !done) ctx.globalAlpha = 0.35;
+        if (done) {
+          // 떨어진 길을 남긴다(세 길이 모두 중심을 향한다)
+          const a0 = applePos(i, 0);
+          ctx.setLineDash([3, 4]);
+          ctx.strokeStyle = "rgba(242,87,87,.7)";
           ctx.lineWidth = 2;
-          ctx.setLineDash([4, 4]);
           ctx.beginPath();
-          ctx.arc(x, y, 11 + pulse * 2, 0, Math.PI * 2);
+          ctx.moveTo(a0.x, a0.y);
+          ctx.lineTo(a.x, a.y);
           ctx.stroke();
           ctx.setLineDash([]);
-        });
-      }
-    } else {
-      // 용수철저울에 매단 상자. 늘어난 길이는 무게에 비례한다(1 N에 3.2px).
-      const target = place === "earth" ? 29.4 : 4.9;
-      shown += (target - shown) * Math.min(1, 0.12 * dt);
-      const x = w / 2 + 6;
-      const top = 22;
-      const len = 26 + shown * 3.2;
-      drawBody(ctx, w / 2, h + 150, 190, place === "moon");
-      // 받침대
-      ctx.strokeStyle = "rgba(200,214,238,.8)";
-      ctx.lineWidth = 4;
-      ctx.lineCap = "round";
-      ctx.beginPath();
-      ctx.moveTo(x - 62, h - 34);
-      ctx.lineTo(x - 62, top);
-      ctx.lineTo(x + 10, top);
-      ctx.stroke();
-      drawSpring(ctx, x, top, x, top + len, { coils: 9, radius: 9, endLen: 8 });
-      const by = top + len + 34;
-      drawCrate(ctx, x, by, 40, 34, t, 0);
-      u5Text(ctx, "질량 3 kg", x + 28, by + 13, { px: 12.5, align: "left" });
-      drawForceArrow(ctx, x + 34, by - 17, 0, 10 + shown * 1.6, { color: U5.back, width: 4 });
-      u5Text(ctx, "중력", x + 62, by - 6 + shown * 0.8, { color: "#FFB3B3" });
-      // 눈금자(늘어난 길이를 견주는 자리)
-      ctx.strokeStyle = "rgba(232,238,249,.4)";
-      ctx.lineWidth = 1.5;
-      for (let n = 0; n <= 30; n += 5) {
-        const y = top + 26 + n * 3.2;
+        }
+        drawApple(ctx, a.x, a.y);
+        ctx.globalAlpha = 1;
+      });
+      const a0 = applePos(spot, 0);
+      if (failAim !== null) drawForceArrow(ctx, a0.x, a0.y, Math.cos(failAim) * 38, Math.sin(failAim) * 38, { color: "#9FB0CC", width: 3, alpha: 0.75 });
+      if (aim !== null && fall === 0) drawForceArrow(ctx, a0.x, a0.y, Math.cos(aim) * 38, Math.sin(aim) * 38, { color: U5.back, width: 4.5 });
+      else if (!busy && !dragging && doneSpots.length < 3) {
+        const pulse = 0.5 + 0.5 * Math.sin(t / 300);
+        ctx.strokeStyle = `rgba(240,164,34,${0.4 + pulse * 0.5})`;
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(x - 40, y);
-        ctx.lineTo(x - (n % 10 === 0 ? 28 : 33), y);
+        ctx.arc(a0.x, a0.y, 14 + pulse * 3, 0, Math.PI * 2);
         ctx.stroke();
-        if (n % 10 === 0) u5Text(ctx, String(n), x - 50, y, { px: 12, color: U5.dim });
       }
-      u5Read(ctx, w, shown.toFixed(1), "N", "저울 눈금(무게)");
-      u5Pill(ctx, place === "earth" ? "지구에서" : "달에서", place === "earth" ? U5.push : "#C9D1DE");
+      u5Pill(ctx, doneSpots.length === 3 ? "모두 지구 중심 쪽으로" : dragging ? "손을 떼면 사과를 놓아요" : `${SPOTS[spot].name} 사과: 떨어질 쪽 겨누기`, U5.back);
+    } else {
+      const moon = place === "moon";
+      drawBody(ctx, w / 2, h + 150, 190, moon);
+      const x = w / 2 + 6;
+      if (tool === "spring") {
+        // 용수철저울: 늘어난 길이가 무게에 비례한다(1 N에 3.2px)
+        const target = moon ? 4.9 : 29.4;
+        shown += (target - shown) * Math.min(1, 0.12 * dt);
+        const top = 22;
+        const len = 26 + shown * 3.2;
+        ctx.strokeStyle = "rgba(200,214,238,.8)";
+        ctx.lineWidth = 4;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(x - 62, h - 34);
+        ctx.lineTo(x - 62, top);
+        ctx.lineTo(x + 10, top);
+        ctx.stroke();
+        drawSpring(ctx, x, top, x, top + len, { coils: 9, radius: 9, endLen: 8 });
+        const by = top + len + 34;
+        drawCrate(ctx, x, by, 40, 34, t, 0);
+        drawForceArrow(ctx, x + 34, by - 17, 0, 10 + shown * 1.6, { color: U5.back, width: 4 });
+        u5Text(ctx, "중력", x + 62, by - 6 + shown * 0.8, { color: "#FFB3B3" });
+        ctx.strokeStyle = "rgba(232,238,249,.4)";
+        ctx.lineWidth = 1.5;
+        for (let n = 0; n <= 30; n += 5) {
+          const y = top + 26 + n * 3.2;
+          ctx.beginPath();
+          ctx.moveTo(x - 40, y);
+          ctx.lineTo(x - (n % 10 === 0 ? 28 : 33), y);
+          ctx.stroke();
+          if (n % 10 === 0) u5Text(ctx, String(n), x - 50, y, { px: 12, color: U5.dim });
+        }
+        u5Read(ctx, w, shown.toFixed(1), "N", "용수철저울(무게)");
+      } else {
+        // 양팔저울: 왼쪽 접시에 상자, 오른쪽 접시에 1 kg 추 셋. 지구에서도 달에서도 수평이다.
+        const py = 150;
+        ctx.strokeStyle = "rgba(200,214,238,.85)";
+        ctx.lineWidth = 4;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(x, py + 40);
+        ctx.lineTo(x, 78);
+        ctx.moveTo(x - 22, py + 40);
+        ctx.lineTo(x + 22, py + 40);
+        ctx.moveTo(x - 84, 80);
+        ctx.lineTo(x + 84, 80);
+        ctx.stroke();
+        [-84, 84].forEach((dx) => {
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(x + dx, 80);
+          ctx.lineTo(x + dx - 24, py - 22);
+          ctx.moveTo(x + dx, 80);
+          ctx.lineTo(x + dx + 24, py - 22);
+          ctx.stroke();
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(x + dx - 28, py - 22);
+          ctx.quadraticCurveTo(x + dx, py - 12, x + dx + 28, py - 22);
+          ctx.stroke();
+        });
+        drawCrate(ctx, x - 84, py - 22, 34, 28, t, 0);
+        for (let i = 0; i < 3; i++) {
+          const wx = x + 84 - 15 + i * 15;
+          const g = ctx.createLinearGradient(wx - 6, 0, wx + 6, 0);
+          g.addColorStop(0, "#B98A1E");
+          g.addColorStop(0.4, "#FFE08A");
+          g.addColorStop(1, "#A8780F");
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.roundRect(wx - 6, py - 40, 12, 18, 2);
+          ctx.fill();
+        }
+        u5Text(ctx, "상자", x - 84, py - 2, { px: 12, color: U5.dim });
+        u5Text(ctx, "1 kg 추 셋", x + 84, py - 2, { px: 12, color: U5.dim });
+        u5Text(ctx, "수평", x, 66, { px: 12.5, color: "#9BE8C4" });
+        u5Read(ctx, w, "3", "kg", "양팔저울(질량)");
+      }
+      u5Pill(ctx, moon ? "달에서" : "지구에서", moon ? "#C9D1DE" : U5.push);
     }
   });
 
-  // 시작: 예측부터
-  f.say("사과를 지구 <b>아래쪽</b> 우주에서 놓으면 어디로 갈까요? 먼저 예상해 봐요.");
-  f.slot.setControls(log.el);
-  f.slot.ask(
-    "지구 아래쪽에서 사과를 놓으면 어디로 갈까요?",
-    [{ t: "지구 쪽으로 올라가요" }, { t: "더 아래로 멀어져요" }, { t: "그 자리에 떠 있어요" }],
-    () => undefined,
-    {
-      predict: true,
-      onNext: () => {
-        f.slot.showControls();
-        ready = true;
-        f.say("확인해 봐요. 지구 <b>위쪽, 옆쪽, 아래쪽</b>의 빈 곳을 눌러 사과를 놓아 보세요.");
-      },
-    },
-  );
-  api.setCTA("세 곳에서 사과를 놓아 보세요", { enabled: false });
+  paintHint();
+  f.say("지구 <b>위쪽</b> 우주에 사과가 있어요. 사과에서 끌어 <b>떨어질 쪽</b>으로 화살표를 겨누고 손을 떼 보세요.");
+  api.setCTA("세 사과가 떨어질 쪽을 겨눠 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

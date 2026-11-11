@@ -101,37 +101,63 @@ LABS.u5l2 = async () => {
   await endLab();
 };
 LABS.u5l3 = async () => {
-  await at("predict");
-  await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
-  await W(page, 1500);
   await at("start");
-  for (const [fx, fy, n] of [[0.5, 0.15, 1], [0.85, 0.55, 2], [0.5, 0.93, 3]]) {
-    const p = await stageAt(page, fx, fy);
-    await page.mouse.click(p.x, p.y);
-    if (n === 2) { await W(page, 500); await at("fall"); }
-    ok(await waitPips(n), "u5l3: 사과 " + n);
-  }
+  // 사과(무대 가운데에서 dx, dy만큼 떨어진 곳)에서 (ax, ay) 쪽으로 겨눈다. 무대 가운데는 (0.5, 125px)
+  const aimAt = async (dx, dy, ax, ay) => {
+    const p = await stageAt(page, 0.5, 125);
+    await drag(page, { x: p.x + dx, y: p.y + dy }, { x: p.x + dx + ax, y: p.y + dy + ay });
+  };
+  await aimAt(0, -90, 0, 40);
+  ok(await waitPips(1), "u5l3: 위쪽 사과");
+  await W(page, 300);
+  await aimAt(90, 0, 0, 40); // 틀리게: 아래로 겨눈다
+  await W(page, 900);
+  await at("fail");
+  await W(page, 1800);
+  await aimAt(90, 0, -40, 0);
+  ok(await waitPips(2), "u5l3: 오른쪽 사과");
+  await W(page, 300);
+  await aimAt(0, 90, 0, -40);
+  ok(await waitPips(3), "u5l3: 아래쪽 사과");
   await W(page, 2600);
   await at("scale");
-  await click(page, '.bv-card[data-k="moon"]');
-  await W(page, 1200);
+  await click(page, '.u5x-seg[data-k="moon"]');
+  await W(page, 900);
   await at("moon");
+  await click(page, '.u5x-seg[data-k="balance"]');
+  await W(page, 400);
+  await at("balance");
+  await click(page, '.u5x-seg[data-k="earth"]');
+  ok(await waitPips(4), "u5l3: 표 네 칸");
   await judge(true);
   await endLab();
 };
 LABS.u5l4 = async () => {
   await at("start");
-  const a = await stageAt(page, 28 + 74 + 12, 104);
-  await page.mouse.move(a.x, a.y);
-  await page.mouse.down();
-  for (const [cm, n] of [[4, 1], [8, 2], [12, 3]]) {
-    for (let i = 0; i < 8; i++) { await page.mouse.move(a.x + (cm - 4 + (i + 1) / 2) * 13, a.y); await W(page, 20); }
-    ok(await waitPips(n), "u5l4: " + cm + " cm");
-    if (n === 2) await at("mid");
-  }
-  await page.mouse.up();
+  // 고리를 from cm에서 to cm까지 끈다(벽 28 + 처음 길이 74 + 고리 12, 1 cm = 13px)
+  const pull = async (from, to) => {
+    const a = await stageAt(page, 28 + 74 + 12 + from * 13, 104);
+    await drag(page, a, { x: a.x + (to - from) * 13, y: a.y });
+    await W(page, 150);
+  };
+  const rec = () => click(page, ".u5x-rec");
+  await rec(); // 늘이지 않고 기록: 실패
+  await pull(0, 3); await rec();
+  ok(await waitPips(1), "u5l4: 3 cm");
+  await rec(); // 같은 길이 또 기록: 실패
+  await W(page, 300);
+  await at("dup");
+  await pull(3, 6); await rec();
+  await pull(6, 9); await rec();
+  ok(await waitPips(3), "u5l4: 세 번 기록");
   await W(page, 400);
   await at("line");
+  await pull(9, 8); await rec(); // 틀린 길이: 4 N이 드러난다
+  await W(page, 400);
+  await at("goalmiss");
+  await W(page, 1500);
+  await pull(8, 10); await rec();
+  ok(await waitPips(4), "u5l4: 5 N 맞히기");
   await judge(true);
   await endLab();
 };

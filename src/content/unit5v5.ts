@@ -73,7 +73,7 @@ export const UNIT5_V5: Unit | null = remakeUnit(UNIT5, {
   u5l4: {
     after: then(rebuild("u5l4")),
     intro: opener({ title: "뒤로 당긴 화살은 왜 앞으로 갈까요?", scene: "u5-bow", wait: "두 가지로 쏴 보세요", cta: "실험실 열기" }),
-    swap: { springLab: springLab5({ title: "많이 늘이면 힘도 커질까요?", cta: "개념 정리하기" }) },
+    swap: { springLab: springLab5({ title: "늘일수록 힘은 어떻게 변할까요?", cta: "개념 정리하기" }) },
   },
   u5l5: {
     after: then(rebuild("u5l5")),
