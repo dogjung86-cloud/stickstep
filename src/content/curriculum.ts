@@ -7,7 +7,7 @@ import { UNIT1 } from "./unit1";
 // v5(content/unit2v5.ts)는 혼자 서는 파일이다. v3(content/unit2v3.ts, steps/bio4/*)와 그 앞의 판(content/unit2.ts 등)은
 // Ⅴ·Ⅵ과 같은 규칙으로 파일만 남긴다(배선 없음). Ⅱ단원의 글을 고칠 때는 unit2v5.ts를 고친다.
 import { UNIT2_V5 } from "./unit2v5";
-// 중1 Ⅱ 도입 샘플(2026-11-11) 병행 배선: 세션 "ss.u2intro"="1" 또는 주소 ?u2intro. 꺼져 있으면 UNIT2_V5 그대로다(같은 객체).
+// 중1 Ⅰ·Ⅱ 새 도입(opener, 2026-11-12 정본): 기본 켜짐. 주소 ?u2intro=0으로 끄면 UNIT2_V5 그대로다(같은 객체).
 import { withU2IntroSamples } from "./unit2intro";
 import { withU1IntroSamples } from "./unit1intro"; // 중1 Ⅰ 도입(같은 토글). 꺼져 있으면 UNIT1 그대로다
 import { UNIT3 } from "./unit3";

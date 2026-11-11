@@ -121,15 +121,18 @@ export function dokdoBase() {
     });
   });
   g(sk, "opn-dk-c c2", () => {
-    // 돌돔: 밝은 몸에 검은 세로 줄무늬
+    // 태평줄새우: 굽은 반투명 몸에 어두운 줄무늬, 긴 더듬이(2025년 조사에서 독도에 처음 확인된 해안무척추동물)
     sk.at(DK.spots[2][0], DK.spots[2][1], 1, () => {
-      const tail = poly([[52, 0], [96, -32], [90, 32]], 3);
-      sk.fill(tail, "#8E99A6", { dx: 0, dy: 0, wob: 0.4, seed: 111 }); sk.ink(tail, { w: 7, seed: 112, wob: 0.5 });
-      const body = curve([[-78, 0], [-46, -40], [6, -48], [48, -22], [60, 0], [48, 22], [6, 46], [-46, 38]], true, 3);
-      sk.fill(body, "#E6EBF0", { dx: 0, dy: 0, wob: 0.5, seed: 113 });
-      for (const [x, hh, i] of [[-34, 34, 0], [-4, 42, 1], [26, 32, 2]]) sk.ink(dense([[x, -hh], [x + 4, hh]]), { w: 13, color: "#3A3F47", seed: 115 + i, wob: 0.6 });
+      const fan = poly([[62, 26], [100, 14], [98, 46], [70, 44]], 3);
+      sk.fill(fan, "#F2C9B8", { dx: 0, dy: 0, wob: 0.4, seed: 111 }); sk.ink(fan, { w: 6, seed: 112, wob: 0.5 });
+      const body = curve([[-74, -6], [-52, -32], [-10, -40], [34, -26], [66, 6], [78, 36], [58, 40], [40, 16], [8, 2], [-30, 4], [-62, 10]], true, 3);
+      sk.fill(body, "#FBE3D6", { dx: 0, dy: 0, wob: 0.5, seed: 113 });
+      for (const [x0, y0, x1, y1, i] of [[-22, -38, -18, 2, 0], [8, -36, 14, 2, 1], [36, -24, 30, 10, 2], [58, 0, 46, 22, 3]]) sk.ink(dense([[x0, y0], [x1, y1]]), { w: 8, color: "#7A4A3C", seed: 115 + i, wob: 0.5 });
       sk.ink(body, { w: 8, seed: 119, wob: 0.6 });
-      sk.dot(-56, -8, 5);
+      for (const [x, i] of [[-34, 0], [-8, 1], [16, 2]]) sk.ink(curve([[x, 4], [x - 6, 22], [x - 14, 30]]), { w: 5, seed: 121 + i, wob: 0.4 });
+      sk.ink(curve([[-72, -10], [-104, -34], [-128, -30]]), { w: 5, seed: 125, wob: 0.4 });
+      sk.ink(curve([[-72, -4], [-108, -6], [-132, 8]]), { w: 5, seed: 126, wob: 0.4 });
+      sk.dot(-56, -14, 5);
     });
   });
   // 반짝이는 곳(찾으면 사라진다)
