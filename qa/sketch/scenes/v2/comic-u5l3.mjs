@@ -77,7 +77,6 @@ function moonStage(sk, horizon, sd) {
   const land = [...curve([[-12, horizon + 8], [230, horizon - 6], [480, horizon + 6], [720, horizon - 4], [972, horizon + 10]], false, 5), [972, 732], [-12, 732]];
   land.push(land[0]);
   sk.fill(land, MOON_LAND, { dx: 0, dy: 0, wob: 0, seed: sd + 1, tex: 0.5, texAng: 0.05 });
-  for (const [x, y, i] of [[120, 120, 0], [330, 60, 1], [560, 150, 2], [700, 40, 3]]) sparkle(sk, x, y, 5, { seed: sd + 8 + i, color: "#FFF3C4", w: 3 });
 }
 function crater(sk, x, y, rx, sd) { const c = ell(x, y, rx, rx * 0.3); sk.fill(c, "#BFC4CC", { dx: 0, dy: 0, wob: 0.5, seed: sd }); sk.ink(c, { w: 6, color: "#8A9099", seed: sd + 1, wob: 0.5 }); }
 // 달 착륙선(멀리): 금박 싼 아랫단 + 다리 넷 + 흰 위층 선실. (x, y) = 바닥 가운데
@@ -188,7 +187,7 @@ function weight(sk, x, y, s, sd) {
 // 회색 돌(월석). (x, y) = 바닥 가운데
 function moonRock(sk, x, y, s, sd) {
   sk.at(x, y, s, () => {
-    const r = curve([[-40, 0], [-46, -26], [-24, -52], [10, -56], [40, -36], [46, -6], [30, 4]], true, 4);
+    const r = poly([[-42, 0], [-48, -22], [-34, -40], [-20, -38], [-10, -56], [12, -50], [26, -58], [42, -38], [38, -20], [48, -6], [30, 4]], 4);
     sk.fill(r, "#9DA3AC", { seed: sd, tex: true, texAng: 0.4 }); sk.ink(r, { w: 8, seed: sd + 1 });
     sk.ink(circ(-10, -30, 7, { seed: sd + 2 }), { w: 4, color: "#6E747D", seed: sd + 3, wob: 0.2 });
   });
@@ -222,16 +221,16 @@ function p2() {
   earth(sk, ex, ey, er, { seed: 941 });
   sk.dot(ex, ey, 9, C.ink);
   apple(sk, ex, 268, 24, 123);
-  sk.ink(dense([[ex, 300], [ex, ey - 12]]), { w: 6, color: C.teal, dash: [12, 10], seed: 124, wob: 0 });
-  arrow(sk, [[ex, 296], [ex, 336]], { w: 9, color: C.teal, seed: 125, straight: true, head: 22, wob: 0.3 });
+  sk.ink(dense([[ex, 300], [ex, ey - 12]]), { w: 6, color: C.red, dash: [12, 10], seed: 124, wob: 0, alpha: 0.7 });
+  arrow(sk, [[ex, 296], [ex, 336]], { w: 9, color: C.red, seed: 125, straight: true, head: 22, wob: 0.3 });
   arrow(sk, [[ex - 34, 262], [ex - 112, 250]], { w: 7, color: C.gray, seed: 126, straight: true, head: 17, wob: 0.3 });
   arrow(sk, [[ex + 26, 236], [ex + 70, 182]], { w: 7, color: C.gray, seed: 127, straight: true, head: 17, wob: 0.3 });
   xmark(sk, ex - 136, 248, 0.38, { w: 12, seed: 128 }); xmark(sk, ex + 88, 160, 0.38, { w: 12, seed: 130 });
   // 뉴턴: 주운 사과를 들고 땅을 가리킨다
-  const P = pose({ elR: [74, -316], haR: [110, -384], elL: [-56, -250], haL: [-70, -170], tilt: 0.08 });
-  const fx = 262, fy = 700, fs = 0.76;
+  const P = pose({ elR: [110, -286], haR: [214, -292], elL: [-56, -250], haL: [-70, -170], tilt: 0.08 });
+  const fx = 220, fy = 700, fs = 0.76;
   drawFigure(sk, fx, fy, fs, P, { ...NEWTON, name: "newton", face: "curious", hands: "L" });
-  const hx = fx + fs * 110, hy = fy - fs * 384;
+  const hx = fx + fs * 214, hy = fy - fs * 292;
   apple(sk, hx + 4, hy - 30, 24, 133);
   handDot(sk, [hx, hy], C.skin, 135, 11);
   return sk;
@@ -272,7 +271,7 @@ function p4() {
   moonStage(sk, 300, 161);
   earth(sk, 860, 110, 44, { seed: 943, w: 7 });
   lander(sk, 150, 470, 0.72, 165);
-  crater(sk, 400, 640, 70, 167); crater(sk, 880, 600, 50, 169);
+  crater(sk, 380, 650, 70, 167);
   // 발자국
   for (let i = 0; i < 6; i++) { const fx = 300 + i * 52, fy = 560 + (i % 2) * 18; sk.fill(rrect(fx - 14, fy - 7, 28, 14, 6), "#A9AFB8", { dx: 0, dy: 0, wob: 0.3, seed: 171 + i }); }
   // 한 사람은 성큼 걷고, 한 사람은 껑충 뛴다(발이 땅에서 떴다)
@@ -280,7 +279,8 @@ function p4() {
   astronaut(sk, 500, 700, 0.6, walk, { name: "astro" });
   const hop = pose({ elR: [96, -330], haR: [150, -400], elL: [-80, -300], haL: [-130, -340], knL: [-30, -120], ftL: [-60, -40], knR: [40, -130], ftR: [70, -50], tilt: -0.04 });
   astronaut(sk, 820, 640, 0.56, hop, { name: "astro2", mirror: true, seed: 301 });
-  sk.fill(ell(840, 700, 50, 10), "#A9AFB8", { dx: 0, dy: 0, wob: 0.3, seed: 305, alpha: 0.7 });
+  sk.fill(ell(842, 700, 46, 9), "#A9AFB8", { dx: 0, dy: 0, wob: 0.3, seed: 305, alpha: 0.8 });
+  for (const [dx, i] of [[-22, 0], [8, 1], [38, 2]]) sk.ink(dense([[842 + dx, 676], [842 + dx, 650]]), { w: 5, color: C.gray, seed: 307 + i, wob: 0.2 });
   return sk;
 }
 
@@ -323,7 +323,7 @@ function p6() {
   moonRock(sk, pans[0][0], pans[0][1] + 4, 0.8, 207);
   weight(sk, pans[1][0] - 18, pans[1][1] + 4, 0.8, 209); weight(sk, pans[1][0] + 18, pans[1][1] + 4, 0.8, 211);
   // 생각 구름: 같은 저울을 달에 가져가도 수평이다(구름 속은 달의 하늘과 땅)
-  cloud(sk, 700, 186, 470, 330, { seed: 491, tail: [[520, 360, 14, 0], [492, 388, 9, 1]] });
+  cloud(sk, 700, 186, 470, 330, { seed: 491, tail: [[440, 300, 14, 0], [380, 330, 9, 1]] });
   const sky = rrect(510, 60, 380, 110, 18);
   sk.fill(sky, MOON_SKY, { dx: 0, dy: 0, wob: 0.3, seed: 212 });
   sk.fill(rrect(510, 160, 380, 120, 18), MOON_LAND, { dx: 0, dy: 0, wob: 0.3, seed: 213 });
@@ -348,12 +348,12 @@ export const META = {
 const CUTS = [
   {
     fn: p1, when: "1666년 무렵, 영국 울즈소프", stage: "궁금증", title: "과수원의 젊은이",
-    caption: "전염병이 돌아 대학이 문을 닫자, 스물세 살 <b>아이작 뉴턴</b>은 고향 울즈소프에 내려와 지냈어요. 생각에 잠겨 앉아 있던 어느 날, 사과 하나가 툭 떨어졌대요. 사과가 머리에 맞았다는 이야기는 훨씬 뒤에 덧붙은 거예요.",
+    caption: "전염병이 돌아 대학이 문을 닫자, 젊은 <b>아이작 뉴턴</b>은 고향 울즈소프에 내려와 지냈어요. 스물세 살이던 1666년 무렵의 어느 날, 생각에 잠겨 앉아 있는데 사과 하나가 툭 떨어졌대요. 사과가 머리에 맞았다는 이야기는 훨씬 뒤에 덧붙은 거예요.",
     bubbles: [{ who: "newton", text: "사과가<br>떨어지네" }],
   },
   {
     fn: p2, when: "1666년 무렵, 영국 울즈소프", stage: "뉴턴의 질문", title: "왜 늘 땅 쪽으로 떨어질까",
-    caption: "사과는 왜 옆이나 위로 가지 않고 늘 땅 쪽, 곧 <b>지구의 중심 쪽</b>으로 떨어질까? 뉴턴은 지구가 사과를 끌어당긴다고 생각했어요. 노년의 뉴턴이 1726년에 친구 스터클리에게 들려준 이야기로 전해져요.",
+    caption: "사과는 왜 옆이나 위로 가지 않고 늘 땅 쪽, 곧 <b>지구의 중심 쪽</b>으로 떨어질까요? 뉴턴은 지구가 사과를 끌어당긴다고 생각했어요. 노년의 뉴턴이 1726년에 친구 스터클리에게 들려준 이야기로 전해져요.",
     term: { name: "중력", def: "지구가 물체를 지구 중심 방향으로 끌어당기는 힘." },
     bubbles: [{ who: "newton", text: "왜 늘<br>땅 쪽으로?" }],
   },
