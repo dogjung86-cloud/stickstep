@@ -81,6 +81,24 @@ const mouseDrag = async (from, to, steps = 10) => {
 };
 const webgl = () => page.evaluate(() => !document.querySelector(".screen.active .bv-stage.u7x-fallback"));
 
+/** 새로 쓴 문제: 지금 스텝에서 skip번 앞으로 가서 정답 보기(저작 번호 ans)를 누르고 정답으로 채점되는지 본다. */
+async function newQuiz(id, skip, ans) {
+  await goStep(page, skip);
+  const has = await page.evaluate((a) => !!document.querySelector(`.screen.active .opts .opt[data-oi="${a}"]`), ans);
+  ok(has, `${id}: 새 문제 자리에 선택형 문제가 없음`);
+  if (!has) return;
+  texts.push(await stepText(page));
+  ok(await page.evaluate(() => (document.querySelector(".screen.active .scroll")?.scrollHeight ?? 0) > 0), `${id}: 새 문제 화면이 비어 있음`);
+  await page.evaluate((a) => document.querySelector(`.screen.active .opts .opt[data-oi="${a}"]`).click(), ans);
+  await W(page, 250);
+  await cta(page);
+  await W(page, 700);
+  const good = await page.evaluate((a) => document.querySelector(`.screen.active .opts .opt[data-oi="${a}"]`)?.classList.contains("ok") ?? false, ans);
+  ok(good, `${id}: 새 문제의 정답 보기가 정답으로 채점되지 않음`);
+  texts.push(await stepText(page));
+  await shot(`${id}-9newq`);
+}
+
 // ── 랩 ─────────────────────────────────────────────────────────────
 const LABS = {
   // u7l1: 태양계의 천체 여섯 가지(가로 3D)
@@ -115,7 +133,8 @@ const LABS = {
       await W(page, 700);
       await judge(id);
     }
-    await finish(id, "개념 정리하기");
+    await finish(id, "이름표 붙이기");
+    await newQuiz(id, 5, 1);
   },
   // u7l2: 행성을 두 무리로
   async u7l2(id) {
@@ -134,8 +153,8 @@ const LABS = {
     await setRange(page, ".u7x-range", 4);
     await tap(page, ".bv-btn.main");
     await judge(id);
-    await finish(id, "표로 정리하기");
-    ok(!!(await page.evaluate(() => document.querySelector(".screen.active .step table, .screen.active .step .tbl, .screen.active .step .dt"))) || true, "");
+    await finish(id, "용어로 정리하기");
+    await newQuiz(id, 3, 0);
   },
   // u7l3: 태양(만화 다음)
   async u7l3(id) {
@@ -156,7 +175,8 @@ const LABS = {
     await W(page, 400);
     await at(id, "2corona");
     await judge(id);
-    await finish(id, "구조 라벨 붙이기", { curio: true });
+    await finish(id, "사진에 이름 붙이기", { curio: true });
+    await newQuiz(id, 3, 0);
   },
   // u7l4: 별의 움직임, 계절과 별자리
   async u7l4(id) {
@@ -178,9 +198,9 @@ const LABS = {
     const pole = await stagePt(page, 173, 96);
     await page.mouse.click(pole.x, pole.y);
     await judge(id + "a");
-    await finish(id + "a", "다음으로");
+    await finish(id + "a", "이름 붙이기");
 
-    await goStep(page, 1); // 그림 문제를 건너 별자리 랩으로
+    await goStep(page, 2); // 개념과 그림 문제를 건너 별자리 랩으로
     await isLab(id);
     await W(page, 1800);
     await at(id + "b", "1first");
@@ -196,7 +216,8 @@ const LABS = {
       await judge(id + "b");
     } else console.log(`  ${id}b: 3D를 켜지 못해 조작은 건너뜀`);
     ok(await waitDone(page), `${id}b: 결론이 뜨지 않음`);
-    await finish(id + "b", "개념 정리하기");
+    await finish(id + "b", "이름 붙이기");
+    await newQuiz(id, 3, 0);
   },
   // u7l5: 달의 위상
   async u7l5(id) {
@@ -214,7 +235,8 @@ const LABS = {
       await judge(id);
     } else console.log(`  ${id}: 3D를 켜지 못해 조작은 건너뜀`);
     ok(await waitDone(page), `${id}: 결론이 뜨지 않음`);
-    await finish(id, "개념 정리하기");
+    await finish(id, "이름 정리하기");
+    await newQuiz(id, 4, 0);
   },
   // u7l6: 일식과 월식(가로 3D)
   async u7l6(id) {
@@ -248,7 +270,8 @@ const LABS = {
       await W(page, 700);
       await judge(id);
     }
-    await finish(id, "개념 정리하기");
+    await finish(id, "이름 정리하기");
+    await newQuiz(id, 6, 0);
   },
 };
 
@@ -291,7 +314,7 @@ async function playOpener(id, { pick, mid, rest, want }) {
 }
 const OPENERS = {
   u7l1: (id) => playOpener(id, { pick: "아주 밝은 별", want: "태양계로 출발", mid: () => holdOn(".opn-u7-hit", 800), rest: () => holdOn(".opn-u7-hit", 1500) }),
-  u7l2: (id) => playOpener(id, { pick: "6개쯤", want: "두 무리로 나누기", mid: () => holdOn(".opn-u7-btn.hold", 1100), rest: () => holdOn(".opn-u7-btn.hold", 2200) }),
+  u7l2: (id) => playOpener(id, { pick: "6개쯤", want: "여덟 행성 견주기", mid: () => holdOn(".opn-u7-btn.hold", 1100), rest: () => holdOn(".opn-u7-btn.hold", 2200) }),
   u7l4: (id) => playOpener(id, { pick: "왼쪽으로", want: "밤하늘 살펴보기", mid: async () => { await tap(page, '.opn-u7-btn[data-n="2"]'); await W(page, 600); }, rest: () => tap(page, '.opn-u7-btn[data-n="3"]') }),
   u7l5: (id) => playOpener(id, { pick: "가느다란", want: "달을 직접 옮겨 보기", mid: () => holdOn(".opn-u7-btn.hold", 1300), rest: () => holdOn(".opn-u7-btn.hold", 2300) }),
   u7l6: (id) => playOpener(id, { pick: "구름", want: "세 천체를 한 줄로", mid: () => holdOn(".opn-u7-btn.hold", 1100), rest: () => holdOn(".opn-u7-btn.hold", 2200) }),
@@ -315,6 +338,16 @@ if (!ONLY.length) {
   await goStep(page, 1);
   ok(await page.evaluate(() => !!document.querySelector(".screen.active .step .sp3-enter") && !document.querySelector(".screen.active .step.u7x-step")), "토글을 끈 u7l1의 랩이 정본이 아님");
   await shot("off-u7l1-lab");
+}
+
+// 내용 파일의 글(개념, 정리, 문제)도 같은 규칙으로 본다
+{
+  const fs = await import("node:fs");
+  const src = fs.readFileSync("src/content/unit7v5.ts", "utf8").replace(/^\s*\/\/.*$/gm, "");
+  const lits = [...src.matchAll(/"((?:[^"\\\n]|\\.)*)"/g)].map((m) => m[1]).filter((t) => /[가-힣]/.test(t)).join("\n");
+  ok(!/[—–]/.test(lits), "내용 파일에 대시");
+  ok(!/교과서|분자/.test(lits), "내용 파일에 '교과서'나 '분자'");
+  ok(!/\p{Extended_Pictographic}/u.test(lits), "내용 파일에 이모지");
 }
 
 // 화면 글 검사

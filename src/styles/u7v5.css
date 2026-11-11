@@ -25,11 +25,12 @@
 
 /* 달의 위상: 오른쪽 위 창(지구에서 본 달). 창의 그림은 캔버스가 그 자리에 그린다 */
 .u7x-inset {
-  position: absolute; right: 8px; top: 8px; width: 84px; height: 84px; border-radius: 14px; pointer-events: none;
+  position: absolute; right: 8px; top: 8px; width: 88px; height: 88px; border-radius: 14px; pointer-events: none;
   border: 1.5px solid rgba(255, 255, 255, .34); box-shadow: 0 0 0 1px rgba(0, 0, 0, .4);
 }
 .u7x-inset span {
-  position: absolute; right: 0; top: 100%; margin-top: 4px; font-size: 12.5px; font-weight: 800; color: #DCE7FB; white-space: nowrap;
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 2px 0 3px; border-radius: 0 0 12px 12px; background: rgba(7, 13, 26, .72);
+  font-size: 12.5px; line-height: 16px; font-weight: 800; color: #DCE7FB; text-align: center; white-space: nowrap; letter-spacing: -.04em;
   text-shadow: 0 1px 3px rgba(0, 0, 0, .8);
 }
 .u7x-moon-sun, .u7x-moon-earth { left: 0; top: 0; will-change: transform; }
@@ -70,7 +71,8 @@
 }
 .u7x-rotdone-btn { height: 48px; padding: 0 16px; border: 0; border-radius: 12px; background: #fff; color: var(--ink); font-size: 14px; font-weight: 800; }
 .u7x-rotdone-btn:active { transform: scale(.965); }
-.sp3-card.show ~ .u7x-rotdone { display: none; } /* 천체 카드를 읽는 동안에는 가리지 않는다 */
+.sp3-card.show ~ .u7x-rotdone { display: none; }
+.u7x-toast { word-break: keep-all; } /* 천체 카드를 읽는 동안에는 가리지 않는다 */
 
 /* ── 조작 칸 안 ──────────────────────────────────────── */
 .u7x-cap { font-size: 12.5px; line-height: 18px; font-weight: 800; color: var(--n700); padding: 0 2px; }

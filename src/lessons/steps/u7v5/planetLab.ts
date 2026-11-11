@@ -44,7 +44,7 @@ export const u7PlanetLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as PlanetStep;
   const tm = bvTimers();
   const f = u7Frame(host, { title: s.title, steps: 4, cls: "u7x-planet", api });
-  const doneCta = s.cta ?? "표로 정리하기";
+  const doneCta = s.cta ?? "용어로 정리하기";
   const photo = (file: string): string => `${import.meta.env.BASE_URL}photos/${file}`;
 
   let metric: MetricKey = "radius";
@@ -173,7 +173,7 @@ export const u7PlanetLab: StepRenderer = (host, step, api) => {
     phase = "done";
     host.dataset.u7Phase = phase;
     f.pips(4);
-    f.say("두 무리에는 이름이 있어요. 표면과 고리도 서로 다른지 이어서 봐요.");
+    f.say("두 무리에는 이름이 있어요. 이어서 이름과 특징을 정리해요.");
     f.slot.conclude("작고 가볍고 위성이 적은 수성, 금성, 지구, 화성은 <b>지구형 행성</b>, 크고 무겁고 위성이 많은 목성, 토성, 천왕성, 해왕성은 <b>목성형 행성</b>이에요.");
     api.enableCTA(doneCta);
   }

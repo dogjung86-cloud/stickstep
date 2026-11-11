@@ -96,7 +96,7 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
   function conclude(): void {
     host.dataset.u7Phase = "done";
     f.pips(3);
-    f.say("가로 화면의 '왜 매달 안 일어날까?' 버튼도 눌러 보면 좋아요.");
+    f.say("가로 화면의 <b>왜 매달 일어나지 않을까요?</b> 단추도 눌러 보면 좋아요.");
     f.slot.conclude("<b>태양, 달, 지구</b> 차례로 한 줄이면 달이 태양을 가리는 <b>일식</b>, <b>태양, 지구, 달</b> 차례로 한 줄이면 달이 지구 그림자에 드는 <b>월식</b>이에요.");
     api.enableCTA(doneCta);
   }
@@ -137,8 +137,8 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
     const canvas = el("canvas", { class: "sp3-canvas" }) as HTMLCanvasElement;
     const phasePill = el("div", { class: "pill sp3-pill" }, el("span", { class: "pdot", style: "background:#FFB03A" }), el("span", { text: "달을 좌우로 끌어 보세요" }));
     const groundBtn = el("button", { class: "sp3-groundbtn hide", attrs: { type: "button" } }, el("span", { text: "지상에서 보기" }));
-    const tiltBtn = el("button", { class: "sp3-tiltbtn", attrs: { type: "button", "aria-pressed": "false" } }, el("span", { text: "왜 매달 안 일어날까?" }));
-    const toast = el("div", { class: "sp3-toast" });
+    const tiltBtn = el("button", { class: "sp3-tiltbtn", attrs: { type: "button", "aria-pressed": "false" } }, el("span", { text: "왜 매달 일어나지 않을까요?" }));
+    const toast = el("div", { class: "sp3-toast u7x-toast" });
     rot.stage.append(canvas, phasePill, groundBtn, tiltBtn, toast);
     const pillText = phasePill.querySelectorAll("span")[1] as HTMLElement;
 
@@ -314,7 +314,7 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
 
     tiltBtn.addEventListener("click", () => {
       tiltOn = !tiltOn;
-      tiltBtn.querySelector("span")!.textContent = tiltOn ? "궤도 평평하게 되돌리기" : "왜 매달 안 일어날까?";
+      tiltBtn.querySelector("span")!.textContent = tiltOn ? "궤도 평평하게 되돌리기" : "왜 매달 일어나지 않을까요?";
       tiltBtn.setAttribute("aria-pressed", String(tiltOn));
       tiltBtn.classList.toggle("on", tiltOn);
       haptic(HAPTIC.select);
@@ -575,11 +575,8 @@ function enterArtSvg(): string {
     <circle cx="30" cy="30" r="1.2" fill="#DCE8FF"/><circle cx="250" cy="20" r="1.2" fill="#DCE8FF"/>
     <circle cx="212" cy="76" r="1" fill="#DCE8FF"/><circle cx="120" cy="14" r="1" fill="#DCE8FF"/>
     <circle cx="34" cy="48" r="15" fill="url(#ec-sun)"/>
-    <path d="M106 48h40" stroke="#3D5378" stroke-width="1.6" stroke-dasharray="3 4"/>
-    <circle cx="130" cy="48" r="9" fill="url(#ec-moon)"/>
-    <path d="M140 43l45 13v-16z" fill="#0A1020" opacity=".55"/>
+    <circle cx="160" cy="20" r="8" fill="url(#ec-moon)"/>
     <circle cx="200" cy="48" r="16" fill="url(#ec-earth)"/>
-    <ellipse cx="186.5" cy="48" rx="3.4" ry="5.2" fill="#060A14" opacity=".7"/>
     <path d="M258 40l8 8-8 8" stroke="#8FB3E8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>`;
 }

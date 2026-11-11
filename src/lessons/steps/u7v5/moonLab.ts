@@ -21,7 +21,7 @@ interface MoonStep {
 
 const ORBIT_R = 3.3;
 const STAGE_H = 230;
-const INSET = 84; // 지구에서 본 달 창(px)
+const INSET = 88; // 지구에서 본 달 창(px)
 const INSET_PAD = 8;
 
 type Key = "new" | "first" | "full" | "last";
@@ -102,7 +102,7 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     f.say("네 모습을 모두 찾았어요. 무대의 달을 보면서 답해 보세요.");
     f.slot.ask(
       "달의 <b>모양이 달라 보인</b> 까닭은 무엇일까요?",
-      [{ t: "보는 방향이 달라져서", ok: true }, { t: "지구 그림자가 가려서" }, { t: "달이 내는 빛이 변해서" }],
+      [{ t: "밝은 쪽을 보는 방향이 달라져서", ok: true }, { t: "지구 그림자가 가려서" }, { t: "달이 내는 빛이 변해서" }],
       (ok) => api.recordQuiz(ok),
       { why: "달의 절반은 어느 자리에서나 햇빛을 받아 밝았어요.", onNext: conclude },
     );
@@ -143,11 +143,11 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     const { scene, camera } = st;
     scene.add(S.makeStars(600, 120));
     const sunBall = S.makePlanet("sun", 0.8, 36);
-    sunBall.position.set(5.5, 0, 0);
+    sunBall.position.set(6.5, 0, 0);
     scene.add(sunBall);
     sunParts.push(sunBall);
     const glow = S.makeGlow(4.6, "rgba(255,190,80,.85)", 0.14);
-    glow.position.set(5.5, 0, 0);
+    glow.position.set(6.5, 0, 0);
     scene.add(glow);
     sunParts.push(glow);
     const light = new THREE.DirectionalLight(0xfff2dc, 2.5);
@@ -156,7 +156,7 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     scene.add(new THREE.AmbientLight(0x3a4a68, 0.55));
     // 햇빛의 방향(태양에서 지구 쪽으로)
     for (const z of [-1.5, 0, 1.5]) {
-      const a = new THREE.ArrowHelper(new THREE.Vector3(-1, 0, 0), new THREE.Vector3(4.55, 0, z), 0.95, 0xffc24e, 0.34, 0.2);
+      const a = new THREE.ArrowHelper(new THREE.Vector3(-1, 0, 0), new THREE.Vector3(5.5, 0, z), 0.95, 0xffc24e, 0.34, 0.2);
       for (const m of [a.line.material, a.cone.material] as T.Material[]) {
         m.transparent = true;
         m.opacity = 0.7;
@@ -175,8 +175,8 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     // 구도(가로 346, 세로 230): 궤도 왼쪽 끝(-3.7)부터 태양 오른쪽 끝(6.3)까지 x 10이 들어와야 한다.
     // 가로 시야 반각 = atan(tan(23°) × 1.5) = 32.5°, 필요한 거리 = 5 / tan(32.5°) = 7.9. 여유를 두고 9.4.
     // 오른쪽 위에 창이 있으므로 장면을 왼쪽 아래로 조금 내려 태양이 창 아래에 오게 한다.
-    camera.position.set(1.75, 7.0, 5.5);
-    camera.lookAt(1.75, 0, -0.45);
+    camera.position.set(1.8, 7.3, 6.5);
+    camera.lookAt(1.8, 0, 0.15);
     earthCam = new THREE.PerspectiveCamera(22, 1, 0.05, 300);
 
     loop = createLoop((dt) => frame(dt));
@@ -248,7 +248,7 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
       const v = new THREE!.Vector3(x, 0, z).project(st!.camera);
       tag.style.transform = `translate(-50%, 0) translate(${(((v.x + 1) / 2) * w).toFixed(1)}px, ${(((1 - v.y) / 2) * h + dy).toFixed(1)}px)`;
     };
-    place(sunTag, 5.5, 0, 30);
+    place(sunTag, 6.5, 0, 28);
     place(earthTag, 0, 0, 30);
 
     const r = st.renderer;

@@ -206,8 +206,8 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
     f.pips(2);
     f.say("여섯 가지를 모두 만났어요. 본 것을 떠올리며 답해 보세요.");
     f.slot.ask(
-      "<b>달</b>은 무엇의 둘레를 돌고 있었나요?",
-      [{ t: "지구의 둘레", ok: true }, { t: "태양의 둘레" }, { t: "화성의 둘레" }],
+      "<b>달</b>이 바로 곁에서 둘레를 돌던 천체는 무엇인가요?",
+      [{ t: "지구", ok: true }, { t: "태양" }, { t: "화성" }],
       (ok) => api.recordQuiz(ok),
       { why: "달처럼 행성의 둘레를 도는 천체가 위성이에요.", onNext: conclude },
     );

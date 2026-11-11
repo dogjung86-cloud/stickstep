@@ -85,8 +85,8 @@ TOUR_HEAD = '''  const f = u7Frame(host, { title: s.title, steps: 3, cls: "u7x-e
     f.pips(2);
     f.say("여섯 가지를 모두 만났어요. 본 것을 떠올리며 답해 보세요.");
     f.slot.ask(
-      "<b>달</b>은 무엇의 둘레를 돌고 있었나요?",
-      [{ t: "지구의 둘레", ok: true }, { t: "태양의 둘레" }, { t: "화성의 둘레" }],
+      "<b>달</b>이 바로 곁에서 둘레를 돌던 천체는 무엇인가요?",
+      [{ t: "지구", ok: true }, { t: "태양" }, { t: "화성" }],
       (ok) => api.recordQuiz(ok),
       { why: "달처럼 행성의 둘레를 도는 천체가 위성이에요.", onNext: conclude },
     );
@@ -225,7 +225,7 @@ ECL_HEAD = '''  const f = u7Frame(host, { title: s.title, steps: 3, cls: "u7x-en
   function conclude(): void {
     host.dataset.u7Phase = "done";
     f.pips(3);
-    f.say("가로 화면의 '왜 매달 안 일어날까?' 버튼도 눌러 보면 좋아요.");
+    f.say("가로 화면의 <b>왜 매달 일어나지 않을까요?</b> 단추도 눌러 보면 좋아요.");
     f.slot.conclude("<b>태양, 달, 지구</b> 차례로 한 줄이면 달이 태양을 가리는 <b>일식</b>, <b>태양, 지구, 달</b> 차례로 한 줄이면 달이 지구 그림자에 드는 <b>월식</b>이에요.");
     api.enableCTA(doneCta);
   }
@@ -273,6 +273,14 @@ def port_eclipse():
 ''', "eclipse 폴백")
     s = once(s, "    const { scene, camera } = st;\n", "    const { scene, camera } = st;\n    showDone();\n", "eclipse 다시 열 때")
     s = between(s, "  function leave(): void {\n", '  enterBtn.addEventListener("click"', ECL_LEAVE + "\n", "eclipse leave")
+    # 세로 화면의 그림: 일식 배치(태양, 달, 지구 한 줄)로 그려져 있어 판정 질문의 오답 보기와 겹친다. 달을 줄 밖으로 뺀다
+    s = between(s, '    <path d="M106 48h40"', '    <circle cx="200" cy="48" r="16"', '    <circle cx="160" cy="20" r="8" fill="url(#ec-moon)"/>\n', "eclipse 그림의 달")
+    s = between(s, '    <ellipse cx="186.5"', '    <path d="M258 40l8 8-8 8"', "", "eclipse 그림의 그림자")
+    # 가로 화면의 글: 낱말 가운데서 줄이 끊기지 않게, 단추는 해요체로
+    s = once(s, 'class: "sp3-toast"', 'class: "sp3-toast u7x-toast"', "eclipse 자막")
+    if s.count("왜 매달 안 일어날까?") != 2:
+        sys.exit("[port] eclipse 단추 글")
+    s = s.replace("왜 매달 안 일어날까?", "왜 매달 일어나지 않을까요?")
     s = once(s, '  enterBtn.addEventListener("click", () => void enter());\n', '  enterBtn.addEventListener("click", () => void enter());\n  // 검사용(개발 서버에서만): 달을 주어진 각도에 놓는다(180 = 태양 쪽, 0 = 태양 반대쪽)\n  u7Dev(host, { phi: (deg: number) => (phi = (deg * Math.PI) / 180) });\n', "eclipse 검사 손잡이")
     io.open(OUT + "eclipseLab.ts", "w", encoding="utf-8", newline="\n").write(s)
 

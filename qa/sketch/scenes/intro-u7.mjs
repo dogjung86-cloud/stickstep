@@ -63,7 +63,7 @@ export function jupiterrowBase() {
   const sk = new Sk(W, H, { id: "jr" });
   const { cx, cy, r, n } = JR;
   const er = r / 11.2;
-  const ball = circ(cx, cy, r, { over: 0.06, seed: 11 });
+  const ball = circ(cx, cy, r, { over: 0.25, seed: 11 });
   sk.fill(ball, "#EAD2A8", { dx: 0, dy: 0, wob: 0.8, seed: 12, tex: true });
   [-150, -92, 78, 138].forEach((dy, i) => {
     const hc = Math.sqrt(r * r - dy * dy) - 16;
@@ -97,7 +97,7 @@ export function shadowturnBase() {
   // 그림자 셋(앱이 하나만 켠다)
   const shade = (cls, pts, seed) => g(sk, `opn-u7-st-sh ${cls}`, () => sk.fill(pts, "#6B7385", { dx: 0, dy: 0, wob: 0.6, seed, tex: false }));
   shade("h1", ell(tx + 196, gy + 34, 206, 24), 11);
-  shade("h2", ell(tx, gy + 26, 92, 20), 12);
+  shade("h2", ell(tx - 48, gy + 26, 98, 20), 12);
   shade("h3", ell(tx - 196, gy + 34, 206, 24), 13);
   // 나무
   const trunk = poly([[tx - 15, gy + 4], [tx - 12, gy - 128], [tx + 12, gy - 128], [tx + 15, gy + 4]], 4);
