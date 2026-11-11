@@ -3,7 +3,13 @@
 // 랩 뼈대는 ../bio6/b6Lab 의 bvFrame 을 그대로 쓴다(뼈대 파일과 bio6.css 는 고치지 않는다). 공용 부품은 ./u5Kit.
 import type { StepRenderer } from "../../types";
 import { forceLab } from "./forceLab";
+import { tugLab } from "./tugLab";
+import { gravityLab } from "./gravityLab";
+import { springLab5 } from "./springLab5";
 
 export const U5V5_STEPS: Record<string, StepRenderer> = {
   u5ForceLab: forceLab,
+  u5TugLab: tugLab,
+  u5GravityLab: gravityLab,
+  u5SpringLab: springLab5,
 };

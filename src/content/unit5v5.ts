@@ -6,11 +6,24 @@ import type { Step } from "../lessons/types";
 import { UNIT5 } from "./unit5";
 import { remakeUnit } from "./v5remake";
 
-const lab = (type: string) => (o: { title: string; cta?: string }): Step => ({ type, ...o }) as unknown as Step;
+const lab = (type: string) => (o: { title: string; cta?: string; curio?: unknown }): Step => ({ type, ...o }) as unknown as Step;
 const forceLab = lab("u5ForceLab");
+const tugLab = lab("u5TugLab");
+const gravityLab = lab("u5GravityLab");
+const springLab5 = lab("u5SpringLab");
 
 export const UNIT5_V5: Unit | null = remakeUnit(UNIT5, {
   u5l1: {
     swap: { forceStudio: forceLab({ title: "힘을 화살표로 어떻게 나타낼까요?", cta: "개념 정리하기" }) },
+  },
+  u5l2: {
+    swap: { tugOfWar: tugLab({ title: "리본은 언제 움직이고 언제 멈출까요?", cta: "개념 정리하기" }) },
+  },
+  u5l3: {
+    // 만화로 시작하는 레슨이라 도입은 그대로 둔다. 랩 끝의 궁금증 카드(우주 정거장)는 정본의 것을 이어 쓴다.
+    swap: { gravityDrop: (old) => gravityLab({ title: "사과는 어느 쪽으로 떨어질까요?", cta: "개념 정리하기", curio: (old as unknown as { curio?: unknown }).curio }) },
+  },
+  u5l4: {
+    swap: { springLab: springLab5({ title: "많이 늘이면 힘도 커질까요?", cta: "개념 정리하기" }) },
   },
 });

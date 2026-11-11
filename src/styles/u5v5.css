@@ -21,3 +21,32 @@
 .u5x-hold.on { border-color: var(--subj-force); background: var(--subj-force-tint); color: var(--subj-force-press); transform: scale(.975); }
 .u5x-row { display: grid; gap: 8px; }
 .u5x-cap { font-size: 12.5px; font-weight: 700; color: var(--sub); line-height: 18px; }
+
+/* ── u5l2 줄다리기 ─────────────────────────────────── */
+.u5x-tug { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.u5x-tug-team { padding: 8px 10px 10px; border-radius: 16px; background: #fff; border: 1.5px solid var(--n300); box-shadow: var(--sh-card); }
+.u5x-tug-team.L { border-color: #F7C4C4; }
+.u5x-tug-team.R { border-color: #BCD7FB; }
+.u5x-tug-name { display: block; font-size: 13px; font-weight: 800; color: var(--sub); line-height: 20px; }
+.u5x-tug-team.L .u5x-tug-name { color: #D64545; }
+.u5x-tug-team.R .u5x-tug-name { color: #2B7CE0; }
+.u5x-tug-row { margin-top: 4px; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.u5x-tug-b {
+  flex: none; width: 50px; height: 50px; border-radius: 14px; border: 1.5px solid var(--n300); background: var(--n50);
+  font-size: 24px; font-weight: 700; color: var(--ink); line-height: 1; transition: transform .12s, opacity .2s;
+}
+.u5x-tug-b:active { transform: scale(.94); }
+.u5x-tug-b:disabled { opacity: .35; }
+.u5x-tug-n { font-size: 17px; font-weight: 800; color: var(--ink); }
+.u5x-sum {
+  height: 62px; padding: 9px 14px; border-radius: 14px; background: var(--n50); border: 1.5px solid var(--n200);
+  font-size: 14px; line-height: 21px; color: var(--sub); word-break: keep-all; overflow: hidden;
+}
+.u5x-sum b { color: var(--ink); font-weight: 800; }
+
+/* ── u5l4 용수철: 그래프 ───────────────────────────── */
+.u5x-graph { height: 200px; border-radius: 16px; background: #fff; border: 1.5px solid var(--n200); box-shadow: var(--sh-card); overflow: hidden; }
+.u5x-graph svg { display: block; width: 100%; height: 100%; }
+.u5x-graph text { font-size: 12.5px; font-weight: 600; fill: var(--sub); }
+.u5x-graph text.ax { font-size: 12px; font-weight: 700; fill: var(--ink); }
+.u5x-graph text.pt { font-size: 13px; font-weight: 800; fill: var(--subj-force-press); }

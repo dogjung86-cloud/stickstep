@@ -9,7 +9,7 @@ import { launch, openLesson, fwd, fit, stageAt, drag, holdBtn, click, waitAsk, a
 const args = process.argv.slice(2);
 const oi = args.indexOf("--out");
 const OUT = oi >= 0 ? args[oi + 1] : "qa/shots/u5v5";
-const only = args.filter((a) => /^u5ld$/.test(a));
+const only = args.filter((a) => /^u5l\d$/.test(a));
 const skipIntro = args.includes("--lab");
 mkdirSync(OUT, { recursive: true });
 
@@ -20,6 +20,8 @@ const seen = [];
 let cur = "";
 const at = async (mark, shot = true) => {
   const m = await fit(page);
+  // 결론 뒤에 붙는 궁금증 카드(펼쳐 읽는 덤)는 한 화면 예산 밖이다
+  m.content -= await page.evaluate(() => { const c = document.querySelector(".screen.active .step > .curio, .screen.active .step > [class*='curio']"); if (!c) return 0; const cs = getComputedStyle(c); return c.offsetHeight + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom); });
   ok(m.content <= m.view && m.top === 0, `${cur} ${mark}: 스크롤 ${m.content}/${m.view}, 밀림 ${m.top}`);
   seen.push(...(await texts(page)).map((t) => `${cur} ${mark}: ${t}`));
   if (shot) await page.screenshot({ path: join(OUT, `${cur}-${mark}.png`) });
@@ -72,6 +74,59 @@ const LABS = {
     await judge(true);
     await endLab();
   },
+};
+LABS.u5l2 = async () => {
+  await at("start");
+  await click(page, '.u5x-tug-b[data-k="L+"]');
+  await click(page, '.u5x-tug-b[data-k="R+"]');
+  await click(page, '.u5x-tug-b[data-k="R+"]');
+  await W(page, 600);
+  await at("mid");
+  ok(await waitPips(1), "u5l2: 오른쪽 승리");
+  await W(page, 300);
+  await click(page, '.u5x-tug-b[data-k="L+"]');
+  await W(page, 800);
+  await at("bal");
+  ok(await waitPips(2), "u5l2: 평형");
+  await judge(true);
+  await W(page, 800);
+  await at("confirm");
+  await endLab();
+};
+LABS.u5l3 = async () => {
+  await at("predict");
+  await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
+  await W(page, 1500);
+  await at("start");
+  for (const [fx, fy, n] of [[0.5, 0.15, 1], [0.85, 0.55, 2], [0.5, 0.93, 3]]) {
+    const p = await stageAt(page, fx, fy);
+    await page.mouse.click(p.x, p.y);
+    if (n === 2) { await W(page, 500); await at("fall"); }
+    ok(await waitPips(n), "u5l3: 사과 " + n);
+  }
+  await W(page, 2600);
+  await at("scale");
+  await click(page, '.bv-card[data-k="moon"]');
+  await W(page, 1200);
+  await at("moon");
+  await judge(true);
+  await endLab();
+};
+LABS.u5l4 = async () => {
+  await at("start");
+  const a = await stageAt(page, 28 + 74 + 12, 104);
+  await page.mouse.move(a.x, a.y);
+  await page.mouse.down();
+  for (const [cm, n] of [[4, 1], [8, 2], [12, 3]]) {
+    for (let i = 0; i < 8; i++) { await page.mouse.move(a.x + (cm - 4 + (i + 1) / 2) * 13, a.y); await W(page, 20); }
+    ok(await waitPips(n), "u5l4: " + cm + " cm");
+    if (n === 2) await at("mid");
+  }
+  await page.mouse.up();
+  await W(page, 400);
+  await at("line");
+  await judge(true);
+  await endLab();
 };
 const INTROS = {};
 
