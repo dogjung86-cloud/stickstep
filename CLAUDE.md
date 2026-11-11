@@ -667,6 +667,20 @@ src/
   (전 트랙 스캔 → naturalWidth>0). **중2 III(빛과 파동)은 concept 스텝이 0개**(훅→랩→recap 구조)라 컷 대상 아님.
 - hotspot 스텝은 `spot.photo`(+photoCredit)로 부위별 실사 사진 카드를 설명 아래에 띄울 수 있다(태양 지도가 기준).
 
+## 새 도입 틀 opener (중1 과학 Ⅰ·Ⅱ, 2026-11-12 정본)
+- 중1 과학 Ⅰ단원 셋(u1l2·u1l4·u1l5)과 Ⅱ단원 여덟(u2l2~u2l6·u2l8~u2l10)은 첫 스텝이 `hook`이 아니라 **`opener`**로 열린다
+  (사용자 확정 2026-11-12). 단원 파일(unit1.ts, unit2v5.ts)의 `hook` 스텝은 그대로 두고 `content/unit1intro.ts`·`unit2intro.ts`가
+  첫 스텝만 바꿔 끼운다(기본 켜짐, 주소 `?u2intro=0`이면 옛 훅으로 보인다. 같은 탭에서 유지). **이 열한 레슨의 도입 글과
+  장면을 고칠 때는 단원 파일의 hook이 아니라 opener 쪽을 고친다.**
+- 틀: 제목(질문 한 줄) → 손그림 무대 → 아래 칸(조작 줄, 예측 보기, 쌤의 말). 장면은 `steps/opener/<장면>.ts`, 시트는
+  `styles/opener*.css`(접두 `.opn-`), 그림은 `qa/sketch/scenes/intro-*.mjs` → `node qa/sketch/build-intro.mjs` →
+  `ui/introArt.generated.ts`(생성물). 예측 보기는 공용 `hookAsk.ask()` 그대로다.
+- 장면 규칙(사용자 확정): 폰 한 화면(390×700) 안에 모든 시점, 물체 다섯 개 안쪽, 쌤의 말은 한 번에 두 줄 안쪽, 예측은 결과보다
+  앞에, 긴 끌기 금지(누르기·짧은 끌기·꾹 누르기). 만드는 법과 걸렸던 것은 design/u2-intro-samples.md.
+- 주소로 레슨 바로 열기(`?u2intro=u2l4`)는 개발 서버에서만 된다. 간소 검사: `PORT=<포트> node qa/check-u2intro-rest.mjs`,
+  `node qa/check-u1intro.mjs`. **옛 훅을 전제로 한 검사(e2e-u2v5 등의 도입 구간, check-u2intro-fit, e2e-u2intro)는 아직 새 틀에
+  맞추지 않았다**(돌리려면 `?u2intro=0`으로 끄거나 고친다).
+
 ## 훅 예측 규칙 (steps/hookAsk.ts — 위반 금지)
 - 훅의 예측 선택지는 **반드시 공용 `hookAsk.ask()`**로 만든다(장면 파일 안에 로컬 ask 복제 금지).
 - 데이터 규약: **choices[0]이 항상 과학적으로 옳은 예측**(content에서 커스텀 choices를 넘길 때도 동일).
