@@ -245,7 +245,7 @@ export const gravityLab: StepRenderer = (host, step, api) => {
       drawSpring(ctx, x, top, x, top + len, { coils: 9, radius: 9, endLen: 8 });
       const by = top + len + 34;
       drawCrate(ctx, x, by, 40, 34, t, 0);
-      u5Text(ctx, "질량 3 kg", x, by + 13, { px: 12.5 });
+      u5Text(ctx, "질량 3 kg", x + 28, by + 13, { px: 12.5, align: "left" });
       drawForceArrow(ctx, x + 34, by - 17, 0, 10 + shown * 1.6, { color: U5.back, width: 4 });
       u5Text(ctx, "중력", x + 62, by - 6 + shown * 0.8, { color: "#FFB3B3" });
       // 눈금자(늘어난 길이를 견주는 자리)

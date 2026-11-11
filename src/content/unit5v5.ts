@@ -9,8 +9,8 @@ import { opener } from "./dsl";
 import { U5_PARTS } from "./unit5v5parts";
 
 const lab = (type: string) => (o: { title: string; cta?: string; curio?: unknown }): Step => ({ type, ...o }) as unknown as Step;
-const forceLab = lab("u5ForceLab");
-const tugLab = lab("u5TugLab");
+const arrowLab = lab("u5ArrowLab");
+const sumLab = lab("u5SumLab");
 const gravityLab = lab("u5GravityLab");
 const springLab5 = lab("u5SpringLab");
 const frictionLab = lab("u5FrictionLab");
@@ -58,12 +58,12 @@ export const UNIT5_V5: Unit | null = remakeUnit(UNIT5, {
   u5l1: {
     after: then(rebuild("u5l1")),
     intro: opener({ title: "당겼다 놓은 풍선은 어디로 갈까요?", scene: "u5-balloon", wait: "풍선 줄을 당겼다 놓아 보세요", cta: "실험실 열기" }),
-    swap: { forceStudio: forceLab({ title: "힘을 화살표로 어떻게 나타낼까요?", cta: "개념 정리하기" }) },
+    swap: { forceStudio: arrowLab({ title: "힘을 화살표로 어떻게 나타낼까요?", cta: "개념 정리하기" }) },
   },
   u5l2: {
     after: then(rebuild("u5l2")),
     intro: opener({ title: "세게 당기는데 왜 안 움직일까요?", scene: "u5-tug", wait: "더 세게 당기게 해 보세요", cta: "실험실 열기" }),
-    swap: { tugOfWar: tugLab({ title: "리본은 언제 움직이고 언제 멈출까요?", cta: "개념 정리하기" }) },
+    swap: { tugOfWar: sumLab({ title: "두 힘을 합치면 얼마일까요?", cta: "개념 정리하기" }) },
   },
   u5l3: {
     after: then(retext([["행성 과수원에서 옆·아래에서 놓은 사과를 떠올려 봐요!", "실험에서 지구 옆과 아래에서 놓은 사과를 떠올려 봐요!"]]), rebuild("u5l3")),

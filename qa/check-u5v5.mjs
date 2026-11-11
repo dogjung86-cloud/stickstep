@@ -54,22 +54,25 @@ async function endLab(wantCta = "개념 정리하기") {
 const LABS = {
   u5l1: async () => {
     await at("start");
-    const ball = async (dx) => {
-      const a = await stageAt(page, dx > 0 ? 70 : 0, 173);
-      const from = dx > 0 ? a : { x: a.x + a.w - 70, y: a.y };
-      await drag(page, from, { x: from.x + dx, y: from.y });
+    // 상자(칸 번호 col)에서 가로로 n칸 끌기. 한 칸 28px, 0번 칸의 가운데는 무대 왼쪽에서 33px
+    const pushBox = async (col, n) => {
+      const a = await stageAt(page, 33 + col * 28, 186);
+      await drag(page, a, { x: a.x + n * 28, y: a.y });
     };
-    await ball(30);
-    ok(await waitPips(1), "u5l1: 살살 밀기");
-    await ball(110);
-    await W(page, 300);
+    await pushBox(2, 1); // 모자라게: 실패가 보인다
+    await W(page, 700);
+    await at("fail");
+    await W(page, 1200);
+    await pushBox(2, 3);
+    ok(await waitPips(1), "u5l1: 오른쪽 점선");
+    await W(page, 1300);
+    await pushBox(9, -4);
+    ok(await waitPips(2), "u5l1: 왼쪽 점선");
+    await W(page, 1300);
     await at("mid");
-    ok(await waitPips(2), "u5l1: 세게 밀기");
-    await ball(-80);
-    ok(await waitPips(3), "u5l1: 반대쪽");
-    const c = await stageAt(page, 0.5, 120);
-    await drag(page, c, { x: c.x, y: c.y + 50 });
-    await W(page, 400);
+    const c = await stageAt(page, 0.5, 144);
+    await drag(page, c, { x: c.x, y: c.y + 56 });
+    await W(page, 800);
     await at("clay");
     await judge(true);
     await endLab();
@@ -77,20 +80,24 @@ const LABS = {
 };
 LABS.u5l2 = async () => {
   await at("start");
-  await click(page, '.u5x-tug-b[data-k="L+"]');
-  await click(page, '.u5x-tug-b[data-k="R+"]');
-  await click(page, '.u5x-tug-b[data-k="R+"]');
+  const k = (key) => click(page, `.u5x-frow [data-k="${key}"]`);
+  // 주문 1: 오른쪽 500 N. 먼저 모자라게(가 100 + 나 200) 만들어 본다
+  await k("1+"); await k("1+");
+  await W(page, 500);
+  await at("short");
+  await k("0+"); await k("1+");
+  ok(await waitPips(1), "u5l2: 오른쪽 500 N");
+  // 주문 2: 반대로 밀어 왼쪽 100 N (가 오른쪽 200, 나 왼쪽 300)
+  await k("1L");
   await W(page, 600);
   await at("mid");
-  ok(await waitPips(1), "u5l2: 오른쪽 승리");
-  await W(page, 300);
-  await click(page, '.u5x-tug-b[data-k="L+"]');
-  await W(page, 800);
+  ok(await waitPips(2), "u5l2: 왼쪽 100 N");
+  // 주문 3: 평형 (가 오른쪽 200, 나 왼쪽 200)
+  await k("1-");
+  await W(page, 600);
   await at("bal");
-  ok(await waitPips(2), "u5l2: 평형");
+  ok(await waitPips(3), "u5l2: 평형");
   await judge(true);
-  await W(page, 800);
-  await at("confirm");
   await endLab();
 };
 LABS.u5l3 = async () => {

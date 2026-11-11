@@ -101,3 +101,12 @@
 .opn-stage.splash .opn-u5-splash { animation: opnU5Splash .9s ease-out both; }
 @keyframes opnU5Splash { 0% { opacity: 0; transform: translateY(20px); } 30% { opacity: 1; transform: translateY(-14px); } 100% { opacity: 0; transform: translateY(6px); } }
 @media (prefers-reduced-motion: reduce) { .opn-stage.play .opn-u5-hit::after, .opn-stage.shake .opn-u5-rib { animation: none; } }
+
+/* ── u5l2 두 힘 합치기 ─────────────────────────────── */
+.u5x-frow { display: grid; grid-template-columns: 30px 1fr 48px 54px 48px; gap: 6px; align-items: center; height: 52px; }
+.u5x-who { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 14px; font-weight: 800; color: #1B2B45; }
+.u5x-dirs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.u5x-seg.u5x-dir { font-size: 13px; padding: 0; white-space: nowrap; }
+.u5x-tug-b.sm { width: 48px; height: 48px; }
+.u5x-sum-n { text-align: center; font-size: 14.5px; font-weight: 800; color: var(--ink); white-space: nowrap; }
+.u5x-sum.tall { height: 84px; font-size: 13.5px; line-height: 20px; padding: 11px 13px; }
