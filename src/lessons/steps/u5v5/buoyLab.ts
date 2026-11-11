@@ -221,11 +221,11 @@ export const buoyLab: StepRenderer = (host, step, api) => {
     ctx.lineTo(bx1, 96);
     ctx.lineTo(bx1 + 4, 92);
     ctx.stroke();
-    // 두 힘: 중력(아래, 늘 20 N)과 물이 미는 힘(위, 잠긴 만큼). 중력은 1 N에 2.2px.
-    drawForceArrow(ctx, cx + Z.w / 2 + 12, y - Z.h / 2, 0, AIR * 2.2, { color: U5.back, width: 4 });
+    // 두 힘: 중력(아래, 늘 20 N)과 물이 미는 힘(위, 잠긴 만큼). 두 화살표 모두 1 N에 2.6px(길이가 크기다).
+    drawForceArrow(ctx, cx + Z.w / 2 + 12, y - Z.h, 0, AIR * 2.6, { color: U5.back, width: 4 });
     u5Text(ctx, "중력 20 N", bx1 + 14, Math.min(y + 14, h - 16), { color: "#FFB3B3", px: 12, align: "left" });
     if (sb > 0.05 && !asking) {
-      drawForceArrow(ctx, cx - Z.w / 2 - 12, y - Z.h / 2, 0, -(6 + Z.lift * sb * 3), { color: U5.up, width: 4 });
+      drawForceArrow(ctx, cx - Z.w / 2 - 12, y - Z.h / 2, 0, -Z.lift * sb * 2.6, { color: U5.up, width: 4 });
       u5Text(ctx, "물이 미는 힘", 14, 56, { color: "#9BE8C4", px: 12, align: "left" });
       u5Text(ctx, `${(Z.lift * sb).toFixed(1)} N`, 14, 73, { color: "#9BE8C4", px: 13, align: "left" });
     }

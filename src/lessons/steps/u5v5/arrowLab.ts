@@ -147,10 +147,10 @@ export const arrowLab: StepRenderer = (host, step, api) => {
 
   function askFinal(): void {
     f.slot.ask(
-      "같은 방향으로 화살표를 2배 길게 그렸어요. 무엇이 달라졌을까요?",
+      "상자를 3칸 보낸 화살표를 같은 방향으로 6칸까지 늘여 그리면 무엇이 달라질까요?",
       [{ t: "힘의 크기가 2배가 됐어요", ok: true }, { t: "힘의 방향이 반대가 됐어요" }, { t: "힘이 작용하는 곳이 바뀌었어요" }],
       (ok) => api.recordQuiz(ok),
-      { why: "길이가 <b>힘의 크기</b>예요. 3칸은 30 N, 4칸은 40 N이었어요.", onNext: finish },
+      { why: "길이가 <b>힘의 크기</b>예요. 3칸은 30 N, 6칸은 60 N이에요.", onNext: finish },
     );
   }
   function finish(): void {
@@ -188,7 +188,7 @@ export const arrowLab: StepRenderer = (host, step, api) => {
     // 성공한 화살표는 흐리게 남는다(길이를 견주는 근거)
     kept.forEach((k, i) => {
       // 상자 임무 중에는 그린 자리에, 찰흙 임무부터는 위쪽에 나란히 올려 둔다(찰흙과 겹치지 않게)
-      const ky = m >= 2 ? 92 + i * 30 : gy - C / 2;
+      const ky = m >= 2 ? 80 + i * 26 : gy - C / 2;
       const x = cx(k.col) + (k.dir * C) / 2;
       ctx.strokeStyle = "rgba(201,219,245,.35)";
       ctx.lineWidth = 1.5;
@@ -249,6 +249,11 @@ export const arrowLab: StepRenderer = (host, step, api) => {
       draw(live, false);
       draw(CLAY_NEED, true);
       const top = gy - (2 * C - live * (C / 2));
+      if (m === 3) {
+        // 찰흙을 누른 화살표도 남긴다(시작점은 찰흙의 처음 윗면)
+        drawForceArrow(ctx, mid + 60, gy - 2 * C, 0, CLAY_NEED * C, { color: U5.push, alpha: 0.75, width: 3.5 });
+        u5Text(ctx, "20 N", mid + 86, gy - C - 4, { color: U5.dim, px: 12 });
+      }
       if (bad > 0) {
         ctx.fillStyle = `rgba(242,87,87,${bad * 0.35})`;
         ctx.fillRect(mid - 70, top, 140, gy - top);
@@ -262,7 +267,7 @@ export const arrowLab: StepRenderer = (host, step, api) => {
         ctx.beginPath();
         ctx.arc(mid, gy - 2 * C - 10, 6 + pulse * 2, 0, Math.PI * 2);
         ctx.fill();
-        u5Text(ctx, "여기서 아래로", mid, gy - 2 * C - 30, { color: U5.dim });
+        u5Text(ctx, "여기서 아래로", mid + 14, gy - 2 * C - 10, { color: U5.dim, align: "left" });
       }
     }
     u5Pill(ctx, m === 0 ? "오른쪽 점선까지" : m === 1 ? "왼쪽 점선까지" : m === 2 ? "점선 모양으로 누르기" : "그린 화살표 견주기", U5.push);

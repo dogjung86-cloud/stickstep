@@ -170,6 +170,8 @@ export const gravityLab: StepRenderer = (host, step, api) => {
 
   function toScale(): void {
     scene = "scale";
+    const titleEl = host.querySelector(".bv-title");
+    if (titleEl) titleEl.textContent = "지구와 달에서 재면 어떻게 다를까요?";
     got.add("spring-earth");
     paintTable();
     f.say("이 당기는 힘을 재 봐요. <b>저울</b>과 <b>곳</b>을 바꿔 가며 같은 상자를 재서 표 네 칸을 채워 보세요.");
@@ -261,7 +263,26 @@ export const gravityLab: StepRenderer = (host, step, api) => {
         ctx.globalAlpha = 1;
       });
       const a0 = applePos(spot, 0);
-      if (failAim !== null) drawForceArrow(ctx, a0.x, a0.y, Math.cos(failAim) * 38, Math.sin(failAim) * 38, { color: "#9FB0CC", width: 3, alpha: 0.75 });
+      if (failAim !== null) {
+        // 틀린 겨눔은 점선으로, 실제로 떨어진 길은 빨간 실선으로 나란히 보여 준다
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = "#C9D8F2";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(a0.x, a0.y);
+        ctx.lineTo(a0.x + Math.cos(failAim) * 44, a0.y + Math.sin(failAim) * 44);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        if (fall > 0) {
+          const a1 = applePos(spot, fall);
+          ctx.strokeStyle = U5.back;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(a0.x, a0.y);
+          ctx.lineTo(a1.x, a1.y);
+          ctx.stroke();
+        }
+      }
       if (aim !== null && fall === 0) drawForceArrow(ctx, a0.x, a0.y, Math.cos(aim) * 38, Math.sin(aim) * 38, { color: U5.back, width: 4.5 });
       else if (!busy && !dragging && doneSpots.length < 3) {
         const pulse = 0.5 + 0.5 * Math.sin(t / 300);
@@ -271,7 +292,7 @@ export const gravityLab: StepRenderer = (host, step, api) => {
         ctx.arc(a0.x, a0.y, 14 + pulse * 3, 0, Math.PI * 2);
         ctx.stroke();
       }
-      u5Pill(ctx, doneSpots.length === 3 ? "모두 지구 중심 쪽으로" : dragging ? "손을 떼면 사과를 놓아요" : `${SPOTS[spot].name} 사과: 떨어질 쪽 겨누기`, U5.back);
+      u5Pill(ctx, doneSpots.length === 3 ? "모두 지구 중심 쪽으로" : dragging ? "손을 떼면 놓아요" : `${SPOTS[spot].name} 사과 겨누기`, U5.back);
     } else {
       const moon = place === "moon";
       drawBody(ctx, w / 2, h + 150, 190, moon);

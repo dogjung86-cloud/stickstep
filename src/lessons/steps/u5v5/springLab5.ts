@@ -50,7 +50,7 @@ export const springLab5: StepRenderer = (host, step, api) => {
     g += `<line x1="46" x2="316" y1="112" y2="112" stroke="#8B95A1" stroke-width="1.5"/><line x1="46" x2="46" y1="22" y2="112" stroke="#8B95A1" stroke-width="1.5"/>`;
     g += `<text x="46" y="14" text-anchor="start" class="ax">세로: 힘(N), 가로: 늘어난 길이(cm)</text>`;
     if (got.length >= 3) g += `<line x1="${GX(0)}" y1="${GY(0)}" x2="${GX(12)}" y2="${GY(6)}" stroke="#F0A422" stroke-width="3" stroke-linecap="round"/>`;
-    if (phase === "goal") g += `<line x1="46" x2="316" y1="${GY(GOAL)}" y2="${GY(GOAL)}" stroke="#3182F6" stroke-width="1.5" stroke-dasharray="4 4"/><text x="312" y="${GY(GOAL) - 6}" text-anchor="end" class="pt b">5 N</text>`;
+    if (phase === "goal") g += `<line x1="46" x2="316" y1="${GY(GOAL)}" y2="${GY(GOAL)}" stroke="#3182F6" stroke-width="1.5" stroke-dasharray="4 4"/><text x="52" y="${GY(GOAL) - 6}" text-anchor="start" class="pt b">5 N</text>`;
     got.forEach((m) => {
       g += `<circle cx="${GX(m)}" cy="${GY(m * K)}" r="6" fill="#F0A422" stroke="#fff" stroke-width="2"/>`;
     });

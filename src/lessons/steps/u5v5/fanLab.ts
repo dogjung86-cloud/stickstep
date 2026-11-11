@@ -17,7 +17,7 @@ interface S {
   cta?: string;
 }
 type Fan = "none" | "back" | "front" | "side";
-const V0 = 1.6; // 손으로 밀어 보낸 처음 속력(px/프레임). 화면에는 2.0으로 보인다
+const V0 = 1.6; // 손으로 밀어 보낸 처음 속력(px/프레임). 화면에는 처음 속력의 몇 배인지로 보인다
 const A = 0.013; // 바람이 주는 가속(px/프레임²)
 const WIND: Record<Fan, [number, number]> = { none: [0, 0], back: [1, 0], front: [-1, 0], side: [0, 1] };
 const COLOR: Record<Fan, string> = { none: "#C9D1DE", back: "#8FC0FF", front: "#FF9D8A", side: "#9BE8C4" };
@@ -209,12 +209,12 @@ export const fanLab: StepRenderer = (host, step, api) => {
     ctx.arc(bx, by, 11, 0, Math.PI * 2);
     ctx.fill();
     const sp = rolling ? Math.hypot(ball.vx, ball.vy) : live.length ? Math.hypot(ball.vx, ball.vy) : 0;
-    u5Read(ctx, w, ((sp / V0) * 2).toFixed(1), "m/s", "공의 속력");
+    u5Read(ctx, w, (sp / V0).toFixed(1), "배", "처음 속력의 몇 배");
     u5Pill(ctx, rolling ? (fan === "none" ? "바람 없이 굴러가요" : "바람을 받으며 굴러가요") : live.length ? RESULT[fan] : fan === "none" ? "선풍기 없음" : fan === "back" ? "선풍기: 공의 뒤" : fan === "front" ? "선풍기: 공의 앞" : "선풍기: 공의 옆", fan === "none" ? U5.up : U5.back);
   });
 
   paint();
-  f.say("위에서 본 모습이에요. 먼저 <b>선풍기 없이</b> 공을 굴려 보고, 선풍기 자리를 바꿔 가며 굴려 견줘 보세요.");
+  f.say("마찰이 거의 없는 매끈한 바닥을 위에서 본 모습이에요. 먼저 <b>선풍기 없이</b> 굴려 보고, 자리를 바꿔 가며 견줘 보세요.");
   api.setCTA("네 가지로 공을 굴려 보세요", { enabled: false });
   return () => {
     tm.clear();

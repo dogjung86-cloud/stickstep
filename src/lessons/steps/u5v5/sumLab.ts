@@ -111,7 +111,7 @@ export const sumLab: StepRenderer = (host, step, api) => {
 
   function askFinal(): void {
     f.slot.ask(
-      "수레가 멈춰 있어요. 한 사람이 오른쪽으로 200 N으로 밀고 있다면 다른 사람은?",
+      "마찰이 없는 바닥에 수레가 멈춰 있어요. 한 사람이 오른쪽으로 200 N으로 밀면 다른 사람은?",
       [{ t: "왼쪽으로 200 N으로 밀어요", ok: true }, { t: "오른쪽으로 200 N으로 밀어요" }, { t: "밀지 않고 있어요" }],
       (ok) => api.recordQuiz(ok),
       { why: "멈춰 있으려면 합친 힘이 0이어야 해요. <b>같은 크기, 반대 방향</b>이에요.", onNext: finish },
@@ -119,7 +119,7 @@ export const sumLab: StepRenderer = (host, step, api) => {
   }
   function finish(): void {
     f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("같은 방향의 두 힘은 <b>더하고</b>, 반대 방향의 두 힘은 큰 힘에서 작은 힘을 <b>빼요</b>. 크기가 같고 방향이 반대면 합친 힘이 0이라 물체가 움직이지 않아요.");
+    f.slot.conclude("같은 방향의 두 힘은 <b>더하고</b>, 반대 방향의 두 힘은 큰 힘에서 작은 힘을 <b>빼요</b>. 크기가 같고 방향이 반대면 합친 힘이 0이라 멈춰 있던 물체는 그대로 멈춰 있어요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -172,7 +172,7 @@ export const sumLab: StepRenderer = (host, step, api) => {
     F.forEach((x, i) => {
       const k = x.dir > 0 ? "L" : "R";
       const slot = used[k]++;
-      const px = cx - x.dir * (28 + 34 + slot * 30);
+      const px = cx - x.dir * (28 + 30 + slot * 24); // 같은 쪽에 둘이 서면 나란히 붙어 함께 민다
       drawStickman(ctx, px, gy, 56, x.n ? posePush(x.n / 3, t, i) : poseStand(t, i), { flip: x.dir < 0, color: COL[i], alpha: x.n ? 1 : 0.45 });
       u5Text(ctx, NAMES[i], px - x.dir * 4, gy - 68, { color: COL[i], px: 13 });
     });

@@ -259,7 +259,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
         ctx.beginPath();
         ctx.arc(P.x, P.y, 54, -r, 0);
         ctx.stroke();
-        u5Text(ctx, `${Math.round(ang)}도`, P.x + 78, P.y - 12 - ang * 0.25, { color: U5.gold, px: 13 });
+        u5Text(ctx, `${Math.round(ang)}도`, P.x + 66, P.y + 15, { color: U5.gold, px: 13 });
       }
       ctx.save();
       ctx.translate(P.x, P.y);
@@ -270,7 +270,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
       ctx.fill();
       const bx = 176 - slide * 130;
       block(ctx, bx, -9, 46, 28, face);
-      if (ang > 1 && !sliding) drawForceArrow(ctx, bx + 23, -4, 14 + ang * 1.3, 0, { color: U5.back, width: 4 });
+      if (ang > 1 && !sliding) drawForceArrow(ctx, bx, -9, 30 + ang * 1.3, 0, { color: U5.back, width: 4 });
       if (sliding) drawForceArrow(ctx, bx - 23, -24, -30, 0, { color: U5.dim, width: 3 });
       ctx.restore();
       // 손잡이
@@ -336,8 +336,8 @@ export const slopeLab: StepRenderer = (host, step, api) => {
         const ay = gy - 9 - blocks * 28 - 12;
         drawForceArrow(ctx, bx, ay, 14 + shown * 8, 0, { color: U5.push, width: 4 });
         u5Text(ctx, "끄는 힘", bx + 30, ay - 14, { color: "#B5D4FF", px: 12 });
-        drawForceArrow(ctx, bx - 23, gy + 9, -(14 + shown * 8), 0, { color: U5.back, width: 4 });
-        u5Text(ctx, "방해하는 힘", bx + 20, gy + 20, { color: "#FFD9D9", px: 12, align: "left" });
+        drawForceArrow(ctx, bx, gy - 9, -(30 + shown * 8), 0, { color: U5.back, width: 4 });
+        u5Text(ctx, "방해하는 힘", bx - 30, gy + 14, { color: "#FFD9D9", px: 12 });
       }
       u5Read(ctx, w, shown.toFixed(1), "N", "힘 센서");
       u5Pill(ctx, pulling ? `${need} N에서 움직였어요` : force > 0.1 ? "아직 꼼짝 않아요" : `도막 ${blocks}개`, pulling ? U5.up : U5.gold);
