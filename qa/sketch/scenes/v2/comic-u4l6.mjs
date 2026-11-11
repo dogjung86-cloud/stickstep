@@ -6,6 +6,7 @@
 //   4 새벽 과수원: 얼음 옷 속 꽃은 0 ℃ 가까이에 머물러 멀쩡하다
 //   5 이슬(액화도 방출) → 6 함박눈(승화도 방출) → 7 사막의 물주머니(반대로 기화는 흡수)
 //   → 8 열이 나오는 길(빨강)과 들어가는 길(파랑)
+// 화살표 색: 빨강 = 상태가 변하는 물질에서 열이 나온다(방출), 파랑 = 상태가 변하는 물질로 열이 들어간다(흡수). 찬 공기는 화살촉 없는 옅은 바람 선.
 // 이글루 벽에 물을 뿌려 집을 데운다는 이야기는 근거가 약해 쓰지 않는다.
 // 블랙의 과냉각 이야기(파렌하이트가 본, 0 ℃ 아래에서도 얼지 않은 물)는 0 ℃에서 온도가 멈추는 냉각 곡선 랩과 헷갈릴 수 있어 쓰지 않는다.
 import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, emark, qmark, sparkle, drop, squiggle, arrow } from "../../lib/sk.mjs";
@@ -34,12 +35,14 @@ const vapor = (sk, x, y, len, sd, o = {}) => {
   sk.ink(pts, { w: o.w ?? 5, color: VAPOR, dash: [9, 11], seed: Math.round(sd * 10), wob: 0 });
 };
 // 열이 드나드는 표시: 가운데에서 바깥으로(out) 또는 바깥에서 가운데로(inward) 향하는 짧은 빨간 화살표
-function heatArrows(sk, x, y, r0, r1, angs, sd, inward = false) {
+function heatArrows(sk, x, y, r0, r1, angs, sd, inward = false, color = HOT) {
   angs.forEach((a, i) => {
     const p0 = [x + r0 * Math.cos(a), y + r0 * Math.sin(a)], p1 = [x + r1 * Math.cos(a), y + r1 * Math.sin(a)];
-    arrow(sk, inward ? [p1, p0] : [p0, p1], { w: 6, color: HOT, seed: sd + i, straight: true, head: 14, wob: 0.3 });
+    arrow(sk, inward ? [p1, p0] : [p0, p1], { w: 6, color, seed: sd + i, straight: true, head: 14, wob: 0.3 });
   });
 }
+// 찬 바람: 화살촉 없는 옅은 물결 선(차가움이 들어온다고 읽히지 않게)
+const wind = (sk, x, y, len, sd) => sk.ink(curve([[x, y], [x + len * 0.33, y - 8], [x + len * 0.66, y + 6], [x + len, y - 4]]), { w: 5, color: "#B9CCDB", seed: sd, wob: 0.3 });
 // 유리 온도계(세로). (x, y) = 둥근 알, level 0~1. 숫자 없이 눈금만
 function thermo(sk, x, y, len, level, sd, o = {}) {
   const tw = o.w ?? 16, br = o.br ?? 14;
@@ -187,22 +190,27 @@ function p3() {
   ground(sk, 704, 201);
   // 생각 구름 속: 얼어 가는 통. 얼음이 생기는 물 위로 열이 빠져나오고, 온도계는 같은 눈금에 머문다
   cloud(sk, 600, 300, 600, 470, { seed: 211, tail: [[330, 520, 18, 0], [300, 570, 12, 1]] });
-  const tx = 600, top = 330;
-  thin(sk, 0.8, () => {
-    const tub = poly([[tx - 120, top], [tx + 120, top], [tx + 104, 470], [tx - 104, 470]], 4);
-    sk.fill(tub, C.wood, { seed: 213, tex: true, texAng: 1.5 }); sk.ink(tub, { w: 10, seed: 214 });
-  });
-  const water = ell(tx, top, 118, 24);
-  sk.fill(water, "#9FD0EE", { dx: 0, dy: 0, wob: 0.4, seed: 215 });
-  const iceSheet = ell(tx - 10, top + 2, 92, 17);
-  sk.fill(iceSheet, C.white, { dx: 0, dy: 0, wob: 0.4, seed: 216 }); sk.ink(iceSheet, { w: 4, color: ICELINE, seed: 217, wob: 0.4 });
-  sk.ink(water, { w: 6, seed: 218, wob: 0.4 });
-  // 찬 공기(파랑)가 열을 가져가도, 얼어 가는 물이 열을 내놓는다(빨강)
-  for (const [x, i] of [[tx - 70, 0], [tx, 1], [tx + 70, 2]]) arrow(sk, [[x, top - 18], [x + (i - 1) * 14, top - 120]], { w: 8, color: HOT, seed: 221 + i, straight: true, head: 18, wob: 0.3 });
-  for (const [a, b, i] of [[[420, 150], [470, 210], 0], [[790, 150], [740, 210], 1]]) arrow(sk, [a, b], { w: 7, color: COOL, seed: 225 + i, straight: true, head: 16, wob: 0.3 });
-  const t = thermo(sk, tx + 150, 440, 200, 0.42, 231, { w: 14, br: 12 });
-  sk.ink(dense([[tx + 128, t.top], [tx + 172, t.top]]), { w: 4, color: C.gray, dash: [6, 6], seed: 241, wob: 0 });
-  for (const [dy, i] of [[-7, 0], [7, 1]]) sk.ink(dense([[tx + 186, t.top + dy], [tx + 214, t.top + dy]]), { w: 6, color: C.ink, seed: 243 + i, wob: 0.2 });
+  // 왼쪽 통은 이제 막 살얼음, 오른쪽 통은 얼음이 많이 생겼다. 두 온도계는 같은 눈금(=)
+  const tubAt = (cx, iceW, sd) => {
+    const top = 360;
+    thin(sk, 0.8, () => {
+      const tub = poly([[cx - 84, top], [cx + 84, top], [cx + 72, 470], [cx - 72, 470]], 4);
+      sk.fill(tub, C.wood, { seed: sd, tex: true, texAng: 1.5 }); sk.ink(tub, { w: 10, seed: sd + 1 });
+    });
+    const water = ell(cx, top, 82, 18);
+    sk.fill(water, "#9FD0EE", { dx: 0, dy: 0, wob: 0.4, seed: sd + 2 });
+    const ice = ell(cx - (82 - iceW) * 0.4, top + 1, iceW, Math.max(8, iceW * 0.2));
+    sk.fill(ice, C.white, { dx: 0, dy: 0, wob: 0.4, seed: sd + 3 }); sk.ink(ice, { w: 4, color: ICELINE, seed: sd + 4, wob: 0.4 });
+    sk.ink(water, { w: 6, seed: sd + 5, wob: 0.4 });
+    for (const [x, i] of [[cx - 50, 0], [cx + 10, 1]]) arrow(sk, [[x, top - 16], [x + (i ? 8 : -8), top - 96]], { w: 7, color: HOT, seed: sd + 6 + i, straight: true, head: 16, wob: 0.3 });
+    return top;
+  };
+  const top = tubAt(470, 26, 251);
+  tubAt(730, 70, 271);
+  const tl = thermo(sk, 520, 440, 190, 0.42, 291, { w: 14, br: 11 });
+  thermo(sk, 780, 440, 190, 0.42, 311, { w: 14, br: 11 });
+  for (const [dy, i] of [[-7, 0], [7, 1]]) sk.ink(dense([[566, tl.top + dy], [598, tl.top + dy]]), { w: 6, color: C.ink, seed: 331 + i, wob: 0.2 });
+  for (const [x, y, len, i] of [[352, 210, 74, 0], [360, 250, 60, 1], [790, 196, 66, 2], [800, 236, 56, 3]]) wind(sk, x, y, len, 341 + i);
   // 블랙: 손가락을 세운다
   const P = pose({ elR: [70, -330], haR: [86, -420], elL: [-50, -262], haL: [-18, -222], tilt: -0.04 });
   black(sk, 190, 704, 0.74, P, { face: "smile" });
@@ -221,11 +229,14 @@ function p4() {
     blossom(sk, x, y, r, 311 + i * 30, true);
     heatArrows(sk, x, y, r * 1.5, r * 1.5 + 40, [-2.6, -1.57, -0.5, 0.6, 2.5].slice(0, i === 2 ? 4 : 5), 411 + i * 6);
   }
-  // 얼음 옷 곁에 매단 온도계: 얼음이 생기는 동안 같은 눈금
+  // 얼음 옷을 입은 온도계(가지에 매달아 물을 함께 맞았다): 눈금이 공기보다 높다
   sk.ink(dense([[880, 300], [880, 330]]), { w: 3, seed: 421, wob: 0 });
   thermo(sk, 880, 520, 180, 0.42, 431, { w: 14, br: 12 });
-  // 쌤과 농부
-  const F = pose({ elL: [-56, -262], haL: [-96, -232], elR: [50, -262], haR: [24, -218] });
+  const shell = curve([[858, 548], [852, 470], [866, 420], [894, 420], [908, 470], [902, 548], [880, 560]], true, 4);
+  sk.fill(shell, ICE, { dx: 0, dy: 0, wob: 0.5, seed: 441, alpha: 0.32 }); sk.ink(shell, { w: 5, color: ICELINE, seed: 442, wob: 0.5 });
+  // 농부: 공기 속 온도를 재는 온도계를 든다(눈금이 낮다)
+  thermo(sk, 194, 590, 150, 0.16, 451, { w: 13, br: 11 });
+  const F = pose({ elR: [70, -330], haR: [136, -416], elL: [-56, -262], haL: [-96, -232] });
   drawFigure(sk, 110, 704, 0.62, F, FARMER);
   const P = pose({ elR: [96, -340], haR: [176, -360], elL: [-50, -262], haL: [-18, -222], tilt: 0.06 });
   drawFigure(sk, 290, 704, 0.74, P, SSAM);
@@ -252,9 +263,14 @@ function p5() {
 function p6() {
   const sk = new Sk(W, H, { id: "f" });
   snowGround(sk, 664, 601);
-  const flakes = [[330, 300, 40, 0.2], [760, 160, 46, 0.1], [880, 360, 36, 0.4], [690, 440, 28, 0.3], [520, 200, 30, 0.5], [860, 560, 24, 0.2], [440, 470, 26, 0.6]];
-  flakes.forEach(([x, y, r, rot], i) => snowflake(sk, x, y, r, 611 + i * 12, rot));
-  heatArrows(sk, 330, 300, 54, 92, [-0.5, 0.7, 2.4], 711); heatArrows(sk, 760, 160, 60, 98, [0.6, 2.2, 3.4], 715); heatArrows(sk, 880, 360, 48, 84, [-2.4, 2.2], 719); heatArrows(sk, 520, 200, 42, 76, [-0.9, 2.6], 723);
+  const cl = [[-12, -12], [972, -12], ...curve([[972, 196], [880, 214], [800, 196], [700, 218], [600, 198], [500, 220], [400, 200], [300, 220], [200, 198], [100, 216], [-12, 198]], false, 5)];
+  cl.push(cl[0]);
+  sk.fill(cl, "#E4E9EF", { dx: 0, dy: 0, wob: 0, seed: 603 });
+  sk.ink(curve([[972, 196], [880, 214], [800, 196], [700, 218], [600, 198], [500, 220], [400, 200], [300, 220], [200, 198], [100, 216], [-12, 198]], false, 5), { w: 8, color: "#9AA6B4", seed: 604 });
+  // 구름 속: 수증기가 곧장 얼음 알갱이가 되며 열을 내놓는다
+  for (const [x, y, r, rot, i] of [[520, 104, 30, 0.3, 0], [700, 120, 34, 0.1, 1], [880, 92, 28, 0.5, 2]]) { snowflake(sk, x, y, r, 611 + i * 12, rot); heatArrows(sk, x, y, r + 14, r + 46, [-0.4, 2.7, 3.6], 711 + i * 4); }
+  // 땅으로 내리는 눈
+  for (const [x, y, r, rot, i] of [[330, 320, 30, 0.2, 0], [880, 380, 28, 0.4, 1], [690, 460, 24, 0.3, 2], [440, 480, 22, 0.6, 3], [860, 570, 20, 0.2, 4], [540, 300, 22, 0.1, 5]]) snowflake(sk, x, y, r, 651 + i * 12, rot);
   // 쌤: 두 팔을 벌린다. 학생: 손바닥으로 눈을 받는다
   const T = pose({ elL: [-96, -300], haL: [-164, -318], elR: [96, -300], haR: [164, -318], tilt: -0.04 });
   drawFigure(sk, 600, 668, 0.74, T, { ...SSAM, under: scarf(sk, C.red, 5) });
@@ -275,12 +291,12 @@ function p7() {
   const wx = 510, wy = 400, ws = 1.5;
   waterbag(sk, wx, wy, ws, { seed: 811, cut: true, drops: [[-62, 24, 0.9], [60, 30, 0.9], [-40, 62, 0.8], [40, 64, 0.8], [68, -20, 0.8], [-66, -22, 0.8]] });
   for (const [x, y, i] of [[400, 330, 0], [420, 440, 1], [612, 320, 2], [600, 450, 3]]) vapor(sk, x, y, 90, 2.2 + i * 1.3, { amp: 7 });
-  heatArrows(sk, wx, wy + 26, 50, 112, [Math.PI - 0.2, Math.PI + 0.3, -0.3, 0.2, Math.PI / 2 - 0.5, Math.PI / 2 + 0.5], 821);
+  heatArrows(sk, wx, wy + 26, 50, 112, [Math.PI - 0.2, Math.PI + 0.3, -0.3, 0.2, Math.PI / 2 - 0.5, Math.PI / 2 + 0.5], 821, false, COOL);
   const Tp = pose({ elL: [-70, -300], haL: [-130, -300], elR: [50, -262], haR: [24, -218], tilt: -0.04 });
   drawFigure(sk, 740, 680, 0.7, Tp, { ...TRAVELER, name: "traveler" });
   sk.ink(curve([[740 - 0.7 * 130, 680 - 0.7 * 300], [wx + 110, wy - 120], [wx + 14, wy - 150]]), { w: 6, color: "#6B4A32", seed: 831, wob: 0.5 });
-  const P = pose({ elR: [92, -300], haR: [160, -290], elL: [-50, -262], haL: [-18, -222], tilt: 0.06 });
-  drawFigure(sk, 200, 680, 0.72, P, SSAM);
+  const P = pose({ elR: [96, -330], haR: [156, -362], elL: [-50, -262], haL: [-18, -222], tilt: 0.06 });
+  drawFigure(sk, 290, 680, 0.72, P, SSAM);
   return sk;
 }
 
@@ -332,12 +348,12 @@ const TEXT = [
   },
   {
     when: "1761년 겨울, 영국 글래스고", stage: "실마리", title: "블랙의 온도계",
-    caption: "1761년 겨울, 스코틀랜드의 과학자 조지프 블랙은 아무리 추워도 연못이 한꺼번에 얼지 않는 까닭이 궁금했어요. 찬 공기 속에 있던 온도계를 얼어 가는 물에 넣으면 눈금이 오히려 올라갔어요.",
+    caption: "1761년 겨울, 스코틀랜드의 과학자 조지프 블랙은 아무리 추워도 연못이 한꺼번에 얼지 않는 것을 궁금해했어요. 제자가 남긴 기록에 따르면, 찬 공기 속 온도계를 얼어 가는 물에 넣으면 눈금이 오히려 올라가고, 물이 다 얼 때까지 그 눈금에 머물렀어요.",
     bubbles: [{ who: "black", text: "눈금이<br>올라가네?" }],
   },
   {
     when: "1761년 겨울, 영국 글래스고", stage: "응고 = 방출", title: "얼면서 내놓는 열",
-    caption: "블랙은 물이 얼 때 품고 있던 열을 내놓는다고 결론 내렸어요. 그래서 얼어 가는 물은 찬 공기에 열을 빼앗기면서도 다 얼 때까지 온도가 더 내려가지 않고, 연못도 천천히 얼어요. 오늘날에도 이렇게 설명해요.",
+    caption: "블랙은 이렇게 생각했어요. 얼어 가는 물은 찬 공기에 계속 열을 빼앗기는데도 온도가 내려가지 않아요. 물이 얼면서 품고 있던 열을 내놓기 때문이에요. 그래서 다 얼 때까지 온도가 일정하고, 연못도 천천히 얼어요. 오늘날에도 이렇게 설명해요.",
     term: { name: "응고 = 열에너지 방출", def: "액체가 고체로 변할 때는 열에너지를 <b>방출</b>해요. 다 얼 때까지 온도가 일정하고, 둘레의 온도는 덜 내려가요." },
   },
   {
@@ -347,12 +363,12 @@ const TEXT = [
   },
   {
     when: "여름 새벽, 풀밭", stage: "액화도 방출", title: "이슬이 맺힐 때",
-    caption: "풀잎에 맺히는 이슬도 같은 편이에요. 공기 속 수증기가 차가운 풀잎에 닿아 물방울로 맺힐 때(액화)에도 열에너지를 내놓아요. 그래서 이슬이 맺히는 밤에는 기온이 조금 덜 내려가요.",
+    caption: "풀잎에 이슬이 맺힐 때도 열에너지가 나와요. 공기 속 수증기가 차가운 풀잎에 닿아 물방울로 맺히는(액화) 동안 열을 내놓거든요. 그래서 이슬이 맺히는 밤에는 기온이 조금 덜 내려가요.",
     bubbles: [{ who: "student", text: "이슬이<br>맺혔어요!" }],
   },
   {
     when: "겨울, 함박눈 오는 날", stage: "승화도 방출", title: "눈 오는 날은 포근해",
-    caption: "함박눈이 오는 날은 생각보다 포근하게 느껴지곤 해요. 하늘에서 수증기가 물을 거치지 않고 곧장 얼음 알갱이가 될 때(승화) 내놓는 열에너지도 한몫해요.",
+    caption: "함박눈이 오는 날은 생각보다 포근하게 느껴지곤 해요. 하늘의 구름 속에서 수증기가 물을 거치지 않고 곧장 얼음 알갱이(눈)가 될 때(승화) 내놓는 열에너지도 한몫해요.",
     bubbles: [{ who: "student", text: "생각보다<br>포근해요!" }],
   },
   {
@@ -362,7 +378,7 @@ const TEXT = [
   },
   {
     stage: "정리", title: "열이 나오는 길, 들어가는 길",
-    caption: "물이 얼 때, 수증기가 물방울이나 얼음이 될 때는 열이 나와 둘레가 따뜻해져요(빨간 화살표). 거꾸로 얼음이 녹거나 물이 마를 때는 열이 들어가 둘레가 시원해져요(파란 화살표). 이제 수증기를 식히면서 온도가 멈추는 순간을 직접 찾아봐요.",
+    caption: "물이 얼 때, 수증기가 물방울이나 얼음이 될 때는 열이 나와 둘레가 덜 추워져요(빨간 화살표). 얼음이 녹거나, 물이 마르거나, 얼음이 곧장 수증기가 될 때는 열이 들어가 둘레가 시원해져요(파란 화살표). 이제 수증기를 식히며 온도가 멈추는 순간을 찾아봐요.",
     term: { name: "열에너지를 방출하는 상태 변화", def: "<b>응고, 액화, 승화(기체 → 고체)</b>. 일어나는 동안 둘레의 온도가 높아지거나 덜 내려가요." },
   },
 ];
