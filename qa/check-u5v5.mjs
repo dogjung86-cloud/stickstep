@@ -204,7 +204,36 @@ LABS.u5l7 = async () => {
   await judge(true);
   await endLab();
 };
-const INTROS = {};
+async function intro(play) {
+  await W(page, 300);
+  await at("ask");
+  await choose(page, 0);
+  await W(page, 600);
+  await at("picked");
+  await play();
+  ok(await waitPhase(page, "done", 90), `${cur}: 도입이 끝나지 않음`);
+  await W(page, 1000);
+  await at("done");
+  const c = await ctaState(page);
+  ok(c.enabled && c.text === "실험실 열기", `${cur}: 끝 버튼 "${c.text}" enabled=${c.enabled}`);
+  const lines = await page.evaluate(() => { const b = document.querySelector(".screen.active .opn-bubble"); const cs = getComputedStyle(b); return Math.round((b.getBoundingClientRect().height - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)) / parseFloat(cs.lineHeight)); });
+  ok(lines <= 2, `${cur}: 끝말 ${lines}줄`);
+  await cta(page);
+}
+const holdStage = async (fx, fy, ms) => {
+  const p = await stageAt(page, fx, fy, ".opn-stage");
+  await page.mouse.move(p.x, p.y);
+  await page.mouse.down();
+  await W(page, ms);
+};
+const INTROS = {
+  u5l1: () => intro(async () => { await holdStage(0.38, 0.3, 500); await at("mid"); await W(page, 700); await page.mouse.up(); }),
+  u5l2: () => intro(async () => { for (let i = 0; i < 3; i++) { await click(page, '.opn-u5-btn[data-k="more"]'); await W(page, 500); if (i === 1) await at("mid"); } }),
+  u5l4: () => intro(async () => { await click(page, '.opn-u5-btn[data-k="small"]'); await W(page, 1500); await at("mid"); await W(page, 700); await click(page, '.opn-u5-btn[data-k="big"]'); }),
+  u5l5: () => intro(async () => { await click(page, '.opn-u5-btn[data-k="dirt"]'); await W(page, 1400); await click(page, '.opn-u5-btn[data-k="ice"]'); await W(page, 1200); await at("mid"); }),
+  u5l6: () => intro(async () => { await holdStage(0.51, 0.5, 600); await at("mid"); await W(page, 700); await page.mouse.up(); }),
+  u5l7: () => intro(async () => { await click(page, '.opn-u5-btn[data-k="kick"]'); await W(page, 1200); await at("mid"); }),
+};
 
 const ids = only.length ? only : ["u5l1", "u5l2", "u5l3", "u5l4", "u5l5", "u5l6", "u5l7"];
 for (const id of ids) {

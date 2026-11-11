@@ -69,3 +69,35 @@
 .u5x-step .bv-btn.u5x-wind { height: 60px; font-size: 14.5px; }
 .u5x-log.tight { gap: 6px; }
 .u5x-log.tight .u5x-log-row { height: 40px; }
+
+/* ── 도입(opener) 여섯 장면 ────────────────────────── */
+.opn-u5-hit { position: absolute; background: none; border: 0; padding: 0; border-radius: 16px; touch-action: none; cursor: pointer; -webkit-tap-highlight-color: transparent; z-index: 3; }
+.opn-stage:not(.play) .opn-u5-hit { pointer-events: none; }
+.opn-stage.play:not(.touched) .opn-u5-hit::after {
+  content: ""; position: absolute; inset: 4px; border-radius: 14px; border: 2.5px dashed var(--subj-force); animation: opnU5Hint 1.2s ease-in-out infinite;
+}
+@keyframes opnU5Hint { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+.opn-controls.opn-u5-two { grid-template-columns: 1fr 1fr; }
+.opn-u5-btn {
+  min-height: 56px; padding: 6px 4px; border-radius: var(--r-md); border: 1.5px solid var(--n300); background: var(--n0);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; box-shadow: var(--sh-card);
+  transition: border-color .16s, background .16s, transform .12s var(--spring-soft), opacity .2s;
+}
+.opn-u5-btn.wide { grid-column: 1 / -1; }
+.opn-u5-btn:active { transform: scale(.97); }
+.opn-u5-btn b { font-size: 14.5px; line-height: 20px; font-weight: 800; color: var(--ink); }
+.opn-u5-btn span { font-size: 12.5px; line-height: 17px; font-weight: 600; color: var(--sub); }
+.opn-u5-btn.tried { border-color: var(--subj-force); background: var(--subj-force-tint); }
+.opn-u5-btn:disabled { opacity: .5; }
+.opn-u5-bal.rise { transition: transform .7s cubic-bezier(.3, 1.5, .5, 1); }
+.opn-u5-eff { opacity: 0; transition: opacity .25s; }
+.opn-stage.lv-1 .opn-u5-eff.e1, .opn-stage.lv-2 .opn-u5-eff.e1, .opn-stage.lv-2 .opn-u5-eff.e2, .opn-stage.lv-3 .opn-u5-eff { opacity: 1; }
+.opn-stage.shake .opn-u5-rib { animation: opnU5Shake .7s ease-in-out; }
+@keyframes opnU5Shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-7px); } 45% { transform: translateX(6px); } 70% { transform: translateX(-4px); } 88% { transform: translateX(2px); } }
+.opn-u5-btl.pop { transition: transform .55s cubic-bezier(.3, 1.9, .5, 1); }
+.opn-u5-hand { opacity: 0; transition: opacity .15s; }
+.opn-stage.press .opn-u5-hand { opacity: 1; }
+.opn-u5-splash { opacity: 0; }
+.opn-stage.splash .opn-u5-splash { animation: opnU5Splash .9s ease-out both; }
+@keyframes opnU5Splash { 0% { opacity: 0; transform: translateY(20px); } 30% { opacity: 1; transform: translateY(-14px); } 100% { opacity: 0; transform: translateY(6px); } }
+@media (prefers-reduced-motion: reduce) { .opn-stage.play .opn-u5-hit::after, .opn-stage.shake .opn-u5-rib { animation: none; } }

@@ -1,0 +1,11 @@
+import { chromium } from "playwright-core";
+import { readFileSync, writeFileSync } from "node:fs";
+const src = readFileSync("src/ui/introArt.u5.generated.ts", "utf8");
+const m = src.match(/INTRO_ART: Record<string, string> = (\{[\s\S]*?\n\});/);
+const art = JSON.parse(m[1]);
+const html = `<body style="margin:0;display:grid;grid-template-columns:repeat(3,480px);gap:8px;background:#ddd">${Object.values(art).map((s) => `<div style="background:#fff;width:480px;height:272px">${s}</div>`).join("")}<style>svg{width:100%;height:100%}</style></body>`;
+const b = await chromium.launch({ channel: "chrome" });
+const p = await b.newPage({ viewport: { width: 1456, height: 552 } });
+await p.setContent(html);
+await p.screenshot({ path: process.argv[2] });
+await b.close();
