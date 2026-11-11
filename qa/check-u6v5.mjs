@@ -71,6 +71,37 @@ for (const L of LESSONS) {
   }
 }
 
+// 새로 쓴 문제(선택형, 복수 선택, OX): 정답을 눌러 정답으로 채점되는지 본다(차례 놓기 두 문제는 누르지 않는다)
+const QUIZ = {
+  u6l1: [[4, [0, 1, 2]], [7, 0], [8, "o"]],
+  u6l2: [[7, 0], [9, 0]],
+  u6l3: [[4, 2], [8, "x"]],
+  u6l4: [[4, 2], [5, [0, 1, 2]], [8, "x"]],
+  u6l5: [[6, 0]],
+};
+const tapSel = (sel) => page.evaluate((s) => document.querySelector(`.screen.active ${s}`)?.dispatchEvent(new MouseEvent("click", { bubbles: true })), sel);
+for (const [id, list] of Object.entries(QUIZ)) {
+  for (const [si, ans] of list) {
+    await open(page, id);
+    for (let i = 0; i < si; i++) {
+      await page.evaluate(() => document.querySelector(".screen.active .xbtn.fwd")?.click());
+      await W(page, 430);
+    }
+    await W(page, 500);
+    if (ans === "o" || ans === "x") await tapSel(`.ox-btn.${ans}`);
+    else for (const i of [].concat(ans)) {
+      await tapSel(`.opts .opt[data-oi="${i}"]`);
+      await W(page, 140);
+    }
+    await W(page, 250);
+    await cta(page);
+    const good = await page.evaluate(() => [...document.querySelectorAll(".sheet")].some((s) => s.className.includes("open") && s.className.includes("good")));
+    ok(good, `${id} 스텝 ${si + 1}: 정답을 눌렀는데 정답 시트가 아님`);
+    const m = await measure(page);
+    m.text.forEach((t) => texts.add(t));
+  }
+}
+
 // 화면 글 검사
 const all = [...texts];
 for (const t of all) for (const re of BAD) ok(!re.test(t), `금지 표현 ${re}: ${t.slice(0, 60)}`);
