@@ -1,3 +1,120 @@
 /* 중1 Ⅳ 물질의 상태 변화 v5(랩과 도입 재제작)의 시트. main.ts가 이미 싣는다.
    이 단원의 클래스는 .u4x- 로 시작한다. 도입 장면은 .opn-u4- 로 시작한다.
-   공용 뼈대(.bv-, .opn-)의 치수를 조정할 때는 이 단원의 클래스 아래에서만 한다(예: .u4x-step .bv-stage). 전역 규칙은 덮어쓰지 않는다. */
+   공용 뼈대(.bv-, .opn-)의 치수와 색은 이 단원의 클래스 아래에서만 고친다(.u4x-step … , .opn-u4-…). 전역 규칙은 덮어쓰지 않는다.
+   한 화면 예산은 뼈대 그대로다(390×700의 스크롤 영역 554px 안에 제목, 도움말, 무대 230, 높이 고정 조작 칸 208). */
+
+/* ── 뼈대의 색을 단원 색(보라)으로 ───────────────────── */
+.u4x-step .bv-pips i.on { background: var(--subj-matter); }
+.u4x-step .bv-helper { border-left-color: var(--subj-matter); }
+.u4x-step .bv-btn.main { border-color: var(--subj-matter); background: var(--subj-matter-tint); color: var(--subj-matter-press); }
+.u4x-step .bv-card.on { border-color: var(--subj-matter); background: var(--subj-matter-tint); box-shadow: 0 0 0 1px var(--subj-matter) inset; }
+.u4x-step .bv-card.done::after { background-color: var(--subj-matter); }
+.u4x-step .bv-card:disabled { opacity: .62; }
+.u4x-step .bv-qt b { color: var(--subj-matter-press); }
+.u4x-step .bv-done.show { background: var(--subj-matter-tint); border-color: #D9D2FF; }
+.u4x-step .bv-done-k, .u4x-step .bv-done-t b { color: var(--subj-matter-press); }
+.u4x-step .bv-range-in::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--subj-matter) 0, var(--subj-matter) var(--p, 0%), var(--n200) var(--p, 0%), var(--n200) 100%);
+}
+.u4x-step .bv-range-in::-webkit-slider-thumb { border-color: var(--subj-matter); box-shadow: 0 2px 8px rgba(124, 107, 255, .35); }
+.u4x-step .bv-range-in::-moz-range-progress { background: var(--subj-matter); }
+.u4x-step .bv-range-in::-moz-range-thumb { border-color: var(--subj-matter); box-shadow: 0 2px 8px rgba(124, 107, 255, .35); }
+.u4x-step .bv-range-in:disabled { opacity: .55; }
+
+/* ── 꾹 누르는 버튼, 입자의 눈 버튼 ─────────────────── */
+.u4x-hold { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; height: 56px; }
+.u4x-hold.on { transform: scale(.975); background: var(--subj-matter); color: #fff; }
+.u4x-view { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.u4x-view-ic { display: grid; place-items: center; color: var(--subj-matter); }
+.u4x-view.on { border-color: var(--subj-matter); background: var(--subj-matter-tint); color: var(--subj-matter-press); }
+.u4x-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* ── 메타볼 무대를 뼈대의 무대 칸에 올린다 ─────────── */
+.u4x-stage .stage.mstage { position: absolute; inset: 0; margin: 0; border: 0; border-radius: 0; background: none; }
+.u4x-stage .mstage-box { height: 100%; }
+.u4x-stage .stage-hud { top: 10px; left: 12px; right: 12px; }
+.u4x-stage .tempread { font-size: 24px; }
+.u4x-stage .toast { top: 46px; }
+.u4x-stage text { font-family: inherit; }
+
+/* 무대 위에 얹는 글(12px 이상) */
+.u4x-chips { position: absolute; left: 10px; right: 10px; bottom: 9px; display: flex; gap: 6px; justify-content: center; pointer-events: none; }
+.u4x-chip {
+  flex: 1; min-width: 0; height: 30px; border-radius: 999px; display: grid; place-items: center;
+  background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .14);
+  color: #8CA2C0; font-size: 12.5px; font-weight: 800; white-space: nowrap; transition: background .25s, color .25s, border-color .25s;
+}
+.u4x-chip.on { background: rgba(124, 107, 255, .32); border-color: rgba(170, 157, 255, .7); color: #fff; }
+.u4x-chip.now { border-color: #FFD43B; color: #FFE58A; }
+.u4x-chip.on.now { color: #fff; }
+
+/* ── 증발 랩 ─────────────────────────────────────── */
+.u4x-evap-log { position: absolute; left: 12px; top: 10px; display: grid; gap: 3px; pointer-events: none; }
+.u4x-evap-log div { font-size: 12.5px; line-height: 17px; font-weight: 600; color: #B9C8DE; white-space: nowrap; }
+.u4x-evap-log b { color: #7CF29C; font-weight: 800; }
+.u4x-evap-card { height: 64px; }
+.u4x-ink-dropper { transition: transform .5s var(--ease-out); }
+
+/* ══════════ 도입 장면(.opn-u4-) ══════════ */
+.opn-step[data-opn-scene^="u4-"] .hook-choices .hook-q b { color: var(--subj-matter-press); }
+.opn-u4-btn {
+  grid-column: 1 / -1; height: 52px; border-radius: 16px; border: 1.5px solid var(--subj-matter);
+  background: var(--subj-matter-tint); color: var(--subj-matter-press); font-size: 15px; font-weight: 800;
+  box-shadow: var(--sh-card); transition: transform .12s, background .15s, color .15s;
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.opn-u4-btn:active, .opn-u4-btn.on { transform: scale(.975); background: var(--subj-matter); color: #fff; }
+.opn-u4-btn:disabled { opacity: .45; }
+.opn-u4-hit { position: absolute; z-index: 4; background: none; border: 0; padding: 0; border-radius: 14px; cursor: pointer; -webkit-tap-highlight-color: transparent; display: none; }
+.opn-u4-hit:focus-visible { outline: 2px solid var(--subj-matter); outline-offset: -3px; }
+
+/* 1. 뚜껑 */
+.opn-u4-ld-lid { transform-box: fill-box; transform-origin: 100% 100%; }
+.opn-u4-ld-sm, .opn-u4-ld-em { opacity: 0; transition: opacity .35s; }
+.opn-u4-ld-sm.on { opacity: 1; animation: opnU4Waft 1.6s ease-in-out infinite alternate; }
+.opn-u4-ld-em.on { opacity: 1; }
+@keyframes opnU4Waft { 0% { transform: translate(0, 4px); } 100% { transform: translate(6px, -6px); } }
+
+/* 2. 쏟아진 얼음과 주스 */
+.opn-u4-spill.play .opn-u4-hit.ice { display: block; }
+.opn-u4-spill.juice .opn-u4-hit.ice { display: none; }
+.opn-u4-spill.juice .opn-u4-hit.juice { display: block; }
+.opn-u4-spill.done .opn-u4-hit { display: none; }
+.opn-u4-sp-ice { transition: transform .55s var(--ease-out); }
+.opn-u4-spill.play:not(.juice) .opn-u4-sp-ice { animation: opnU4Nudge 1.4s ease-in-out infinite; }
+.opn-u4-sp-scoop, .opn-u4-sp-q { opacity: 0; }
+.opn-u4-spill.scoop .opn-u4-sp-scoop { animation: opnU4Scoop 1.5s ease-in-out both; }
+.opn-u4-spill.done .opn-u4-sp-q { opacity: 1; transition: opacity .3s; }
+@keyframes opnU4Nudge { 0%, 100% { translate: 0 0; } 50% { translate: 0 -5px; } }
+@keyframes opnU4Scoop {
+  0% { opacity: 0; transform: translateY(30px); }
+  25% { opacity: 1; transform: translateY(-46px); }
+  55% { opacity: 1; transform: translateY(-46px); }
+  100% { opacity: 0; transform: translateY(34px); }
+}
+
+/* 3. 랩 */
+.opn-u4-wr-wrap { transform-box: fill-box; transform-origin: 50% 100%; }
+.opn-u4-wr-steam { opacity: 0; transition: opacity .5s; }
+.opn-u4-wrap.hot .opn-u4-wr-steam { opacity: 1; }
+.opn-u4-wr-q { opacity: 0; transition: opacity .3s; }
+.opn-u4-wrap.done .opn-u4-wr-q { opacity: 1; }
+
+/* 4. 끓는 물 */
+.opn-u4-rm-flame { transform-box: fill-box; transform-origin: 50% 100%; transition: transform .35s var(--spring); }
+.opn-u4-rm-bub, .opn-u4-rm-steam { opacity: 0; transition: opacity .3s; }
+.opn-u4-ramen .opn-u4-rm-bub.v1 { opacity: 1; }
+.opn-u4-ramen[data-lv="2"] .opn-u4-rm-bub.v2, .opn-u4-ramen[data-lv="3"] .opn-u4-rm-bub.v2, .opn-u4-ramen[data-lv="4"] .opn-u4-rm-bub.v2,
+.opn-u4-ramen[data-lv="3"] .opn-u4-rm-bub.v3, .opn-u4-ramen[data-lv="4"] .opn-u4-rm-bub.v3,
+.opn-u4-ramen[data-lv="4"] .opn-u4-rm-bub.v4 { opacity: 1; }
+.opn-u4-ramen[data-lv="2"] .opn-u4-rm-steam.v1, .opn-u4-ramen[data-lv="3"] .opn-u4-rm-steam.v1, .opn-u4-ramen[data-lv="4"] .opn-u4-rm-steam.v1,
+.opn-u4-ramen[data-lv="3"] .opn-u4-rm-steam.v2, .opn-u4-ramen[data-lv="4"] .opn-u4-rm-steam.v2,
+.opn-u4-ramen[data-lv="4"] .opn-u4-rm-steam.v3 { opacity: 1; }
+.opn-u4-rm-bub { animation: opnU4Bub 1s ease-in-out infinite alternate; }
+.opn-u4-rm-bub.v2, .opn-u4-rm-bub.v4 { animation-delay: .4s; }
+@keyframes opnU4Bub { 0% { translate: 0 3px; } 100% { translate: 0 -4px; } }
+.opn-u4-rm-mark { opacity: 0; transition: opacity .3s; }
+.opn-u4-ramen.done .opn-u4-rm-mark { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .opn-u4-ld-sm.on, .opn-u4-sp-ice, .opn-u4-rm-bub { animation: none !important; }
+}

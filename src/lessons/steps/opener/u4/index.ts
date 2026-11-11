@@ -1,10 +1,13 @@
 // 중1 Ⅳ 도입(opener) 장면 묶음. opener.ts가 이 묶음을 싣는다(opener.ts와 dsl.ts를 고치지 않는다).
-// 장면 이름은 "u4-"로 시작한다. 예: scenes: { "u4-campfire": campfire }  →  내용 파일에서 opener({ title, scene: "u4-campfire", wait, cta })
-// 그림: qa/sketch/scenes/intro-u4.mjs 에 build(add)를 내보내고 `node qa/sketch/build-intro.mjs u4` 을 돌리면
-//       src/ui/introArt.u4.generated.ts 가 생긴다. 그 뒤 아래에 art 를 단다:
-//       art: () => import("../../../../ui/introArt.u4.generated"),
-// 장면 코드는 c.art(그림 표)와 c.meta(좌표)를 받는다. c.meta 는 이 단원의 표다:
-//       const M = c.meta as unknown as typeof import("../../../../ui/introArt.u4.generated")["INTRO_META"];
+// 장면 이름은 "u4-"로 시작한다. 내용 파일에서 opener({ title, scene: "u4-lid", wait, cta }).
+// 그림: qa/sketch/scenes/intro-u4.mjs → node qa/sketch/build-intro.mjs u4 → src/ui/introArt.u4.generated.ts
 import type { OpenerPack } from "../opener";
+import { lid } from "./lid";
+import { spill } from "./spill";
+import { wrap } from "./wrap";
+import { ramen } from "./ramen";
 
-export const U4_OPENERS: OpenerPack = { scenes: {} };
+export const U4_OPENERS: OpenerPack = {
+  scenes: { "u4-lid": lid, "u4-spill": spill, "u4-wrap": wrap, "u4-ramen": ramen },
+  art: () => import("../../../../ui/introArt.u4.generated"),
+};
