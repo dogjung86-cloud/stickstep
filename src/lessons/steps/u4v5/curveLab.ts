@@ -32,7 +32,7 @@ interface Model {
 const lin = (m: number, m0: number, t0: number, k: number): number => t0 + (m - m0) * k;
 const MODELS: Record<Kind, Model> = {
   melt: {
-    T: (m) => (m < 2 ? lin(m, 0, -5, 2.5) : m < 7 ? 0 : lin(m, 7, 0, 1.5)),
+    T: (m) => (m < 2 ? lin(m, 0, -5, 2.5) : m < 7 ? 0 : lin(m, 7, 0, 5 / 3)),
     sim: (m) => (m < 2 ? lin(m, 0, -8, 3) : m < 7 ? -2 + (m - 2) : 3 + (m - 7) * 5),
     flat: [2, 7],
     end: 10,
@@ -41,7 +41,7 @@ const MODELS: Record<Kind, Model> = {
   },
   weak: {
     T: (m) => (m < 8 ? lin(m, 0, 20, 10) : 100),
-    sim: (m) => (m < 8 ? lin(m, 0, 20, 9) : 96 + (m - 8) * 2.6),
+    sim: (m) => (m < 8 ? lin(m, 0, 20, 9) : 96.5 + (m - 8) * 0.9),
     flat: [8, 10],
     end: 10,
     state: (m) => (m < 8 ? "물" : "물과 수증기"),
@@ -49,7 +49,7 @@ const MODELS: Record<Kind, Model> = {
   },
   strong: {
     T: (m) => (m < 4 ? lin(m, 0, 20, 20) : 100),
-    sim: (m) => (m < 4 ? lin(m, 0, 20, 18) : 96 + (m - 4) * 1.1),
+    sim: (m) => (m < 4 ? lin(m, 0, 20, 18) : 96.5 + (m - 4) * 0.33),
     flat: [4, 10],
     end: 10,
     state: (m) => (m < 4 ? "물" : "물과 수증기"),
@@ -102,6 +102,7 @@ export const u4CurveLab: StepRenderer = (host, step, api) => {
   let holding = false;
   let flatSeen = false;
   let zones = false; // 구간 이름표 (가)(나)(다)
+  let chosen = mode === "melt"; // 데우거나 식히는 것을 정했는가(정하기 전에는 이름표를 그리지 않는다)
   let pred = "";
   const past: { kind: Kind; pts: number[] }[] = []; // 끝낸 실험의 1분마다의 온도
   let pts: number[] = [];
@@ -110,20 +111,56 @@ export const u4CurveLab: StepRenderer = (host, step, api) => {
   const name = el("span", { text: "" });
   const mt = u4Matter(lab, {
     box: simBox,
-    sim: { count: 36, r: 6, temp: MODELS[kind].sim(0), walls: (w, h) => ({ x0: 4, y0: 4, x1: w - 4, y1: h - 44 }) },
+    sim: { count: 32, r: 6, temp: MODELS[kind].sim(0), walls: (w, h) => ({ x0: 18, y0: 40, x1: w - 18, y1: h - 50 }) },
     overlay: (ctx, w, h) => bath(ctx, w, h),
     onFrame: () => paint(),
   });
   mt.pill.append(dot, name);
   mt.read.remove();
 
-  /** 용기 아래의 띠: 무엇으로 데우거나 식히는지(찬물, 불, 얼음) */
+  /** 안쪽 용기(플라스크, 시험관)의 윤곽과, 그것을 데우거나 식히는 것(바깥 통의 찬물이나 얼음, 아래의 불). */
   function bath(ctx: CanvasRenderingContext2D, w: number, h: number): void {
-    const y = h - 38;
-    const b = MODELS[kind].bath;
-    ctx.font = "800 12.5px Pretendard, sans-serif";
-    ctx.textAlign = "center";
+    const x0 = 14, x1 = w - 14, top = 34, bot = h - 46;
+    const label = (t: string, color: string): void => {
+      ctx.font = "800 12.5px Pretendard, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillStyle = color;
+      ctx.fillText(t, w / 2, h - 7);
+    };
+    // 바깥 통: 안쪽 용기의 아랫부분을 감싼다
+    if (mode !== "boil") {
+      ctx.fillStyle = mode === "melt" ? "rgba(77,171,247,.22)" : chosen ? "rgba(197,228,255,.14)" : "rgba(255,255,255,.04)";
+      ctx.strokeStyle = "rgba(169,193,220,.55)";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.roundRect(3, h - 104, w - 6, 82, 9);
+      ctx.fill();
+      ctx.stroke();
+      if (mode === "freeze" && chosen) {
+        for (let i = 0; i < 5; i++) {
+          ctx.fillStyle = "rgba(221,239,255,.9)";
+          ctx.fillRect(i % 2 ? w - 12 : 5, h - 98 + i * 14, 7, 7);
+        }
+        if (kind === "salt") {
+          ctx.fillStyle = "#fff";
+          for (let i = 0; i < 10; i++) ctx.fillRect(i % 2 ? w - 9 - (i % 3) : 6 + (i % 3), h - 94 + i * 7, 2, 2);
+        }
+      }
+    }
+    // 안쪽 용기의 유리 벽
+    ctx.strokeStyle = "rgba(200,220,245,.85)";
+    ctx.lineWidth = 2.2;
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(x0, top);
+    ctx.lineTo(x0, bot - 8);
+    ctx.quadraticCurveTo(x0, bot + 2, x0 + 10, bot + 2);
+    ctx.lineTo(x1 - 10, bot + 2);
+    ctx.quadraticCurveTo(x1, bot + 2, x1, bot - 8);
+    ctx.lineTo(x1, top);
+    ctx.stroke();
     if (mode === "boil") {
+      if (!chosen) return;
       const n = kind === "strong" ? 5 : 3;
       const fh = kind === "strong" ? 20 : 11;
       for (let i = 0; i < n; i++) {
@@ -131,31 +168,15 @@ export const u4CurveLab: StepRenderer = (host, step, api) => {
         const flick = holding ? Math.sin(performance.now() / 90 + i) * 2.5 : 0;
         ctx.fillStyle = "#FF922B";
         ctx.beginPath();
-        ctx.moveTo(x - 6, y + 22);
-        ctx.quadraticCurveTo(x - 7, y + 22 - fh * 0.5, x, y + 22 - fh - flick);
-        ctx.quadraticCurveTo(x + 7, y + 22 - fh * 0.5, x + 6, y + 22);
+        ctx.moveTo(x - 6, h - 20);
+        ctx.quadraticCurveTo(x - 7, h - 20 - fh * 0.5, x, h - 20 - fh - flick);
+        ctx.quadraticCurveTo(x + 7, h - 20 - fh * 0.5, x + 6, h - 20);
         ctx.fill();
       }
-      ctx.fillStyle = "#FFD8A8";
-      ctx.fillText(b, w / 2, h - 5);
+      label(MODELS[kind].bath, "#FFD8A8");
       return;
     }
-    ctx.fillStyle = mode === "melt" ? "rgba(77,171,247,.28)" : "rgba(197,228,255,.16)";
-    ctx.beginPath();
-    ctx.roundRect(6, y, w - 12, 34, 8);
-    ctx.fill();
-    if (mode === "freeze") {
-      for (let i = 0; i < 6; i++) {
-        ctx.fillStyle = "#DDEFFF";
-        ctx.fillRect(12 + i * ((w - 30) / 5.4), y + 4 + (i % 2) * 3, 9, 9);
-      }
-      if (kind === "salt") {
-        ctx.fillStyle = "#fff";
-        for (let i = 0; i < 12; i++) ctx.fillRect(10 + ((i * 37) % (w - 24)), y + 5 + ((i * 11) % 12), 2, 2);
-      }
-    }
-    ctx.fillStyle = "#CFE3FF";
-    ctx.fillText(b, w / 2, h - 7);
+    if (chosen) label(MODELS[kind].bath, "#CFE3FF");
   }
 
   function paint(): void {
@@ -306,6 +327,7 @@ export const u4CurveLab: StepRenderer = (host, step, api) => {
 
   function begin(k: Kind): void {
     kind = k;
+    chosen = true;
     m = 0;
     pts = [MODELS[k].T(0)];
     flatSeen = false;

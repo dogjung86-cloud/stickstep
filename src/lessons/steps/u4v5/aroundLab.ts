@@ -26,7 +26,7 @@ const CHANGES: Change[] = [
   { k: "subl", name: "승화", from: "sol", to: "gas", absorb: true, ex: "상자 속의 드라이아이스가 작아진다" },
   { k: "frz", name: "응고", from: "liq", to: "sol", absorb: false, ex: "손에 묻은 액체 파라핀이 굳는다" },
   { k: "vap", name: "기화", from: "liq", to: "gas", absorb: true, ex: "더운 날 도로에 뿌린 물이 마른다" },
-  { k: "depo", name: "승화", from: "gas", to: "sol", absorb: false, ex: "수증기가 얼어 눈이 되어 내린다" },
+  { k: "depo", name: "승화", from: "gas", to: "sol", absorb: false, ex: "수증기가 바로 얼음이 되어 눈으로 내린다" },
 ];
 const WORD: Record<Ph, string> = { sol: "고체", liq: "액체", gas: "기체" };
 const BOX = { x: 14, y: 46, w: 168, h: 132 }; // 물질의 입자 창

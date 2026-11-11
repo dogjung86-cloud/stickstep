@@ -40,7 +40,6 @@ export const u4DryIceLab: StepRenderer = (host, step, api) => {
     <g class="u4x-dry-cube"><rect x="${I - 30}" y="${BOT - 26}" width="26" height="24" rx="5" fill="url(#u4dCube)" stroke="#7FB6E2" stroke-width="1.4"/></g>
     <g class="u4x-dry-cube"><rect x="${I + 2}" y="${BOT - 24}" width="26" height="22" rx="5" fill="url(#u4dCube)" stroke="#7FB6E2" stroke-width="1.4"/></g>
     ${cup(D)}
-    <g class="u4x-dry-fogs">${[[D - 18, BOT - 26, 22], [D + 20, BOT - 22, 24]].map(([x, y, r], i) => `<circle style="animation-delay:${i * 0.5}s" cx="${x}" cy="${y}" r="${r}" fill="url(#u4dFog)"/>`).join("")}</g>
     <g class="u4x-dry-chunk"><path d="M${D - 32} ${BOT - 2} l5 -17 l22 -6 l12 9 l-3 14 Z" fill="url(#u4dIce)" stroke="#8FB3D8" stroke-width="1.4"/></g>
     <g class="u4x-dry-chunk"><path d="M${D + 2} ${BOT - 2} l4 -15 l19 -7 l15 10 l-2 12 Z" fill="url(#u4dIce)" stroke="#8FB3D8" stroke-width="1.4"/></g>
     <path class="u4x-dry-film fi" d="${dome(I, 0)}" stroke="url(#u4dFilm)" stroke-width="4" stroke-linecap="round" opacity="0"/>
