@@ -188,48 +188,69 @@ const PLAYS = {
     await at(id, "intro-mid");
     await L.click(page, ".opn-u4-hit.juice");
     await endOpener(id, "실험실 열기");
-    // 온도 랩
-    await W(600);
-    await at(id, "temp-start");
-    await L.sweep(page, ".u4x-temp-range", -20, 50, 7, 80);
-    await W(900);
-    await at(id, "temp-liq");
-    await L.sweep(page, ".u4x-temp-range", 50, 120, 7, 80);
-    await W(1200);
-    await at(id, "temp-gas");
-    await L.click(page, ".u4x-view");
-    await W(900);
-    await at(id, "temp-eye");
-    await L.sweep(page, ".u4x-temp-range", 120, 40, 8, 80);
-    await W(1200);
-    await wrongOnce(id, "temp");
-    await endLab(id, "temp", "다음, 그릇 실험");
-    // 그릇 랩
+    // 옮겨 담기 랩: 두 그릇에 담아 보고 기록한다. 물에서 한 번 틀리게 기록해 본다
     await W(700);
-    await at(id, "shape-start");
-    await L.click(page, ".u4x-shape-swap");
+    await at(id, "move-start");
+    const record = async (shape, vol) => {
+      await L.click(page, ".u4x-move-rec");
+      await W(250);
+      await L.click(page, `.u4x-seg[data-k="shape"] .u4x-seg-b[data-v="${shape}"]`);
+      await L.click(page, `.u4x-seg[data-k="vol"] .u4x-seg-b[data-v="${vol}"]`);
+    };
+    await L.click(page, ".u4x-move-swap");
     await W(1200);
-    await L.click(page, '.u4x-shape-card[data-k="liq"]');
+    await at(id, "move-ice-dish");
+    await record("same", "same");
+    await at(id, "move-form");
+    await L.click(page, ".u4x-move-ok");
+    await W(400);
+    await L.click(page, '.u4x-move-card[data-k="liq"]');
+    await W(1300);
+    await at(id, "move-water-dish");
+    await L.click(page, ".u4x-move-swap");
+    await W(1300);
+    await at(id, "move-water-cup");
+    await record("diff", "diff"); // 일부러 부피를 틀리게 적는다
+    await L.click(page, ".u4x-move-ok");
+    await W(400);
+    await at(id, "move-slip");
+    await record("diff", "same");
+    await L.click(page, ".u4x-move-ok");
+    await W(400);
+    await L.click(page, '.u4x-move-card[data-k="gas"]');
     await W(1500);
-    await at(id, "shape-liq-dish");
-    await L.click(page, ".u4x-shape-swap");
+    await at(id, "move-gas-cup");
+    await L.click(page, ".u4x-move-swap");
+    await W(1200);
+    await at(id, "move-gas-dish");
+    await record("diff", "diff");
+    await L.click(page, ".u4x-move-ok");
+    await endLab(id, "move", "다음, 입자 모형 만들기");
+    // 입자 모형 만들기 랩: 먼저 일부러 고체인 채로 낸다
+    await W(900);
+    await at(id, "build-start");
+    await L.click(page, ".u4x-build-fix");
+    await W(400);
+    ok((await L.ds(page, "u4Build")) === "0", `${id} build: 다른 상태의 모형인데 넘어감`);
+    await at(id, "build-slip");
+    await L.sweep(page, ".u4x-build-range", 0, 45, 6, 80);
     await W(1500);
-    await at(id, "shape-liq-cup");
-    await L.click(page, '.u4x-shape-card[data-k="gas"]');
+    await at(id, "build-liq");
+    await L.click(page, ".u4x-build-fix");
+    await W(900);
+    await at(id, "build-liq-ok");
+    ok(await L.waitVisible(page, ".u4x-build-fix"), `${id} build: 다음 주문으로 넘어가지 않음`);
+    await L.sweep(page, ".u4x-build-range", 45, 100, 6, 80);
     await W(1500);
-    await at(id, "shape-gas-cup");
-    await L.click(page, ".u4x-shape-swap");
-    await W(1000);
-    await at(id, "shape-gas-dish");
-    await wrongOnce(id, "shape");
-    await endLab(id, "shape", "입자 모형 가려내기");
-    // 입자 모형 랩
-    await wrongOnce(id, "model1");
-    ok(await L.waitAsk(page), `${id} model: 두 번째 모형의 질문이 뜨지 않음`);
-    await at(id, "model2-ask");
-    await rightOnce(id, "model2");
-    await rightOnce(id, "model3");
-    await endLab(id, "model", "개념 정리하기");
+    await at(id, "build-gas");
+    await L.click(page, ".u4x-build-fix");
+    ok(await L.waitVisible(page, ".u4x-build-fix"), `${id} build: 세 번째 주문으로 넘어가지 않음`);
+    await L.sweep(page, ".u4x-build-range", 100, 0, 8, 80);
+    await W(2500);
+    await at(id, "build-sol");
+    await L.click(page, ".u4x-build-fix");
+    await endLab(id, "build", "이름 붙이기");
+    await tail(id);
   },
   u4l3: async (id) => {
     ok((await L.stepKind(page)) === "comic", `${id}: 만화로 시작하지 않음(${await L.stepKind(page)})`);

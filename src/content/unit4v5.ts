@@ -5,7 +5,7 @@
 import type { Unit } from "./curriculum";
 import type { Step } from "../lessons/types";
 import type { Curio } from "../ui/curio";
-import { concept, mcq, opener, recap } from "./dsl";
+import { concept, mcq, multi, opener, recap } from "./dsl";
 import { miniArt } from "../ui/matterFigures";
 import { UNIT4 } from "./unit4";
 import { remakeUnit } from "./v5remake";
@@ -19,9 +19,8 @@ interface LabProps {
 const lab = (type: string) => (o: LabProps & Record<string, unknown>): Step => ({ type, ...o }) as unknown as Step;
 const inkLab = lab("u4InkLab");
 const evapLab = lab("u4EvapLab");
-const tempLab = lab("u4TempLab");
-const shapeLab = lab("u4ShapeLab");
-const modelLab = lab("u4ModelLab");
+const moveLab = lab("u4MoveLab");
+const buildLab = lab("u4BuildLab");
 const namesLab = lab("u4NamesLab");
 const watchLab = lab("u4WatchLab");
 const dryIceLab = lab("u4DryIceLab");
@@ -54,6 +53,19 @@ function problems(steps: Step[], make: (keep: (needle: string) => Step) => Step[
   const of = next.filter((st) => st.type === "quiz").length;
   let n = 0;
   return [...steps.slice(0, at + 1), ...next.map((st) => (st.type === "quiz" ? ({ ...st, n: ++n, of } as Step) : st))];
+}
+
+/** 남긴 정본 문항에서 옛 랩을 가리키는 말만 새 랩에 맞춘다(글 조각을 찾아 바꾼 새 스텝을 돌려준다). */
+function reword(st: Step, pairs: [string, string][]): Step {
+  const walk = (v: unknown): unknown => {
+    if (typeof v === "string") return pairs.reduce((out, [a, b]) => out.split(a).join(b), v);
+    if (Array.isArray(v)) return v.map(walk);
+    if (v && typeof v === "object") return Object.fromEntries(Object.entries(v as Record<string, unknown>).map(([k, x]) => [k, walk(x)]));
+    return v;
+  };
+  const text = JSON.stringify(st);
+  for (const [a] of pairs) if (!text.includes(a)) warn(`맞출 문장을 찾지 못했다: ${a}`);
+  return walk(st) as Step;
 }
 
 type Block = NonNullable<Parameters<typeof concept>[0]["blocks"]>[number];
@@ -125,14 +137,82 @@ export const UNIT4_V5: Unit | null = remakeUnit(UNIT4, {
         keep("스스로 끊임없이 운동한다</b>는 증거"),
       ]),
   },
-  // ══ 2. 물질의 상태(랩을 갈아 끼우는 중) ══
+  // ══ 2. 물질의 상태: 쏟아진 얼음과 주스(도입) → 옮겨 담고 기록하기 → 입자 모형 만들기 → 용어 → 정리 → 문제 ══
   u4l2: {
     intro: opener({ title: "얼음은 줍는데 주스는요?", scene: "u4-spill", wait: "먼저 얼음과 주스를 주워 보세요", cta: "실험실 열기" }),
     swap: {
-      matterTemp: tempLab({ title: "얼음을 데우면 어떻게 될까요?", cta: "다음, 그릇 실험" }),
-      matterShape: shapeLab({ title: "그릇을 바꾸면 모양이 변할까요?", cta: "입자 모형 가려내기" }),
-      matterCompare: modelLab({ title: "입자 모형은 어떤 상태일까요?", cta: "개념 정리하기" }),
+      matterTemp: moveLab({ title: "옮겨 담으면 무엇이 달라질까요?", cta: "다음, 입자 모형 만들기" }),
+      matterShape: [
+        buildLab({ title: "입자 모형을 만들어 볼까요?", cta: "이름 붙이기" }),
+        words({
+          title: "고체, 액체, 기체,<br>세 가지 상태",
+          lead: "옮겨 담을 때 달랐던 성질과 직접 만든 입자 모형을 하나로 이어요.",
+          blocks: [
+            term("고체", "<b>모양과 부피가 일정한</b> 상태예요. 입자들이 매우 가까이에서 <b>규칙적으로</b> 늘어서 제자리에서만 움직여요. 얼음, 돌, 나무가 고체예요."),
+            term("액체", "담는 그릇에 따라 <b>모양은 달라지지만 부피는 일정한</b> 상태예요. 입자들이 고체보다 불규칙하게 놓여 비교적 자유롭게 움직이므로 흐를 수 있어요."),
+            term("기체", "담는 그릇에 따라 <b>모양과 부피가 모두 달라지는</b> 상태예요. 입자들이 서로 매우 멀리 떨어져 자유롭게 움직이며 그릇 안에 고르게 퍼져요."),
+            note("고체의 입자도 멈춰 있지 않아요. 입자 모형에서 본 것처럼 <b>제자리에서 계속 떨고</b> 있어요. 자리를 옮기지 못할 뿐이에요."),
+          ],
+          cta: "정리하기",
+        }),
+      ],
+      matterCompare: null,
+      recap: recap({
+        title: "세 가지 상태,<br>카드 세 장으로 정리",
+        narrator: "옮겨 담으며 기록한 성질과 직접 만든 입자 모형을 <b>카드 세 장</b>으로 이어요.",
+        cards: [
+          {
+            name: "고체",
+            color: "#4E9BF5",
+            art: miniArt("solid"),
+            text: "<b>모양과 부피가 일정</b>해요. 입자들이 매우 가까이, <b>규칙적으로</b> 늘어서 제자리에서만 움직여요.",
+            examples: ["얼음", "돌", "나무"],
+            more: "<b class='rm-h'>왜 그럴까요?</b>고체의 입자들은 서로 매우 가까이에서 <b>규칙적으로</b> 늘어서 있고 제자리를 벗어나지 못해요. 직접 만든 고체의 입자 모형에서 입자들은 가지런히 줄을 선 채 제자리에서 떨기만 했죠. 입자가 모두 제자리를 지키니 전체의 모양도, 차지하는 공간도 변하지 않아요.<b class='rm-h'>예를 들면</b>얼음은 컵에 담아도 접시에 담아도 모양이 그대로였고 부피 눈금도 100 mL 그대로였어요. 돌, 나무, 필통처럼 단단한 물체는 어디에 두어도 제 모양을 지켜요.<b class='rm-h'>헷갈리지 마세요</b>고체의 입자가 완전히 멈춰 있다고 생각하기 쉬워요. 하지만 입자는 <b>제자리에서 끊임없이 움직여요</b>. 자리를 옮기지 못할 뿐이에요.",
+          },
+          {
+            name: "액체",
+            color: "#9A7CF7",
+            art: miniArt("liquid"),
+            text: "그릇에 따라 <b>모양은 달라지고 부피는 일정</b>해요. 입자들이 불규칙하게 놓여 <b>자리를 바꾸며</b> 움직여요.",
+            examples: ["물", "주스", "식용유"],
+            more: "<b class='rm-h'>왜 그럴까요?</b>액체의 입자들은 고체보다 불규칙하게 놓여 있고, 서로 붙은 채 <b>자리를 바꾸며</b> 움직여요. 그래서 액체는 흐르고, 담는 그릇의 모양대로 담겨요. 하지만 입자 사이의 거리는 거의 달라지지 않아서 부피는 그대로예요.<b class='rm-h'>예를 들면</b>물은 컵에서는 컵 모양, 접시에서는 넓게 퍼진 모양이 됐지만 부피 눈금은 두 번 다 100 mL였어요. 주스를 길쭉한 컵에서 넓은 그릇으로 옮겨도 양은 같아요.<b class='rm-h'>헷갈리지 마세요</b>넓은 접시에 담긴 물은 얕아서 적어 보이고, 좁은 컵에서는 높이 차올라 많아 보여요. 겉보기 높이에 속지 마세요. 달라진 것은 <b>모양뿐</b>이에요.",
+          },
+          {
+            name: "기체",
+            color: "#F0705E",
+            art: miniArt("gas"),
+            text: "그릇에 따라 <b>모양과 부피가 모두 달라져요</b>. 입자들이 <b>매우 멀리</b> 떨어져 자유롭게 움직여요.",
+            examples: ["공기", "수증기"],
+            more: "<b class='rm-h'>왜 그럴까요?</b>기체의 입자들은 서로 <b>매우 멀리</b> 떨어져 사방으로 자유롭게 움직여요. 그래서 담긴 그릇 안에 고르게 퍼져 그릇을 가득 채워요. 그릇이 크면 큰 대로, 작으면 작은 대로 채우니 모양도 부피도 그릇을 따라가요.<b class='rm-h'>예를 들면</b>공기는 뚜껑 덮은 컵에서는 300 mL, 접시에서는 200 mL를 가득 채웠어요. 풍선 속의 공기가 풍선 구석구석까지 차 있는 것도, 방 한쪽의 방향제 냄새가 방 전체에서 나는 것도 기체 입자가 고르게 퍼지기 때문이에요.<b class='rm-h'>헷갈리지 마세요</b>눈에 보이지 않는다고 아무것도 없는 것이 아니에요. 공기도 입자로 이루어진 <b>물질</b>이에요. 뚜껑이 없는 그릇이라면 기체는 그릇 밖으로 퍼져 나가요.",
+          },
+        ],
+        note: { icon: "sparkle", tone: "violet", title: "쏟아진 얼음과 주스", html: "얼음은 입자들이 <b>제자리를 지켜서</b> 모양 그대로 주워 담을 수 있었어요. 주스는 입자들이 <b>자리를 바꾸며 움직여서</b> 손가락 사이로 흘러내렸고요." },
+        cta: "문제 풀기",
+      }),
     },
+    after: (steps) =>
+      problems(steps, (keep) => [
+        keep("교실에서 찾은<br>세 가지 상태"),
+        mcq({
+          prompt: "주스 200 mL를 길쭉한 컵에서 넓은 접시로 <b>남김없이</b> 옮겨 담았어요. 옮겨 담은 뒤의 주스에 대한 설명으로 옳은 것은?",
+          options: ["모양은 달라지고 부피는 그대로다", "모양과 부피가 모두 달라진다", "모양과 부피가 모두 그대로다", "모양은 그대로이고 부피만 줄어든다", "모양은 그대로이고 부피만 늘어난다"],
+          answer: 0,
+          explainGood: "맞아요. 주스는 액체라서 <b>접시 모양대로</b> 퍼지지만, 입자 사이의 거리는 거의 그대로라 부피는 200 mL 그대로예요. 물을 컵에서 접시로 옮겼을 때와 같아요.",
+          explainBad: "주스는 액체예요. 액체는 담는 그릇에 따라 <b>모양만</b> 달라지고 <b>부피는 일정</b>해요. 넓은 접시에서 얕아 보여도 양은 200 mL 그대로예요. 모양과 부피가 모두 달라지는 것은 기체, 모두 그대로인 것은 고체예요.",
+        }),
+        keep("물질의 세 가지 상태를 입자 모형으로"),
+        reword(keep("<b>고체</b> 상태의 입자에 대한 설명"), [
+          ["무대의 -20℃ 얼음에서 본 떨림이 그거예요.", "직접 만든 고체의 입자 모형에서 본 떨림이 그거예요."],
+          ["무대의 -20℃ 얼음을 떠올려요. 입자들이", "직접 만든 고체의 입자 모형을 떠올려요. 입자들이"],
+        ]),
+        multi({
+          prompt: "<b>기체</b>에 대한 설명으로 옳은 것을 <b>모두</b> 고르세요.",
+          options: ["입자 사이의 거리가 매우 멀다", "담는 그릇에 따라 부피가 달라진다", "입자들이 제자리에서만 움직인다"],
+          answer: [0, 1],
+          explainGood: "정확해요. 기체의 입자들은 서로 <b>매우 멀리</b> 떨어져 자유롭게 움직이고, 그릇을 가득 채우므로 <b>부피가 그릇에 따라</b> 달라져요. 제자리에서만 움직이는 것은 고체의 입자예요.",
+          explainBad: "기체의 입자들은 서로 <b>매우 멀리</b> 떨어져 사방으로 자유롭게 움직여요. 그래서 그릇을 가득 채우고 <b>부피가 그릇에 따라</b> 달라지죠. 입자들이 제자리에서만 움직이는 것은 고체예요.",
+        }),
+      ]),
   },
   // ══ 3. 물질의 상태 변화 ══
   u4l3: {

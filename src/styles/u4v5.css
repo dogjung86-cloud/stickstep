@@ -59,8 +59,19 @@
 .u4x-ink-rod.stir { animation: u4xStir .32s ease-in-out infinite alternate; }
 @keyframes u4xStir { 0% { transform: rotate(-9deg); } 100% { transform: rotate(9deg); } }
 
-/* ── 그릇 랩 ─────────────────────────────────────── */
-.u4x-shape-card.col { height: 60px; }
+/* ── 옮겨 담기 랩 ─────────────────────────────────── */
+.u4x-move-card.col { height: 60px; }
+.u4x-move .tempread small { font-size: 14px; margin-left: 2px; }
+.u4x-rec { display: grid; gap: 8px; }
+.u4x-rec-row { display: grid; grid-template-columns: 62px 1fr; align-items: center; gap: 8px; }
+.u4x-rec-l { font-size: 15px; font-weight: 800; color: var(--ink); }
+.u4x-seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.u4x-seg-b {
+  height: 50px; border-radius: 14px; border: 1.5px solid var(--n300); background: #fff; color: var(--ink);
+  font-size: 15px; font-weight: 700; box-shadow: var(--sh-card); transition: transform .12s, border-color .2s, background .2s;
+}
+.u4x-seg-b:active { transform: scale(.97); }
+.u4x-seg-b.on { border-color: var(--subj-matter); background: var(--subj-matter-tint); color: var(--subj-matter-press); box-shadow: 0 0 0 1px var(--subj-matter) inset; }
 
 /* ── 시계 접시 랩 ─────────────────────────────────── */
 .u4x-watch-dish { transition: transform .5s var(--ease-out), opacity .3s; }
