@@ -19,9 +19,12 @@ const contactLab = lab("u3ContactLab");
 const rodLab = lab("u3RodLab");
 const convLab = lab("u3ConvLab");
 const radLab = lab("u3RadLab");
+const raceLab = lab("u3RaceLab");
+const expandLab = lab("u3ExpandLab");
+const tapeLab = lab("u3TapeLab");
 
 /** 정본 랩 스텝에 달려 있던 궁금증 카드를 새 랩으로 옮겨 단다(글의 주인은 정본이다). */
-const withCurio = (make: (curio?: Curio) => Step) => (old: Step): Step => make(old.curio as Curio | undefined);
+const withCurio = (make: (curio?: Curio) => Step | Step[]) => (old: Step): Step | Step[] => make(old.curio as Curio | undefined);
 
 export const UNIT3_V5: Unit | null = remakeUnit(UNIT3, {
   u3l1: {
@@ -37,6 +40,17 @@ export const UNIT3_V5: Unit | null = remakeUnit(UNIT3, {
       conduction: withCurio((curio) => rodLab({ title: "어느 막대가 열을 빨리 전할까?", cta: "다음, 대류", curio })),
       convection: withCurio((curio) => convLab({ title: "아래만 데워도 왜 다 따뜻해질까?", cta: "다음, 복사", curio })),
       radiation: withCurio((curio) => radLab({ title: "난로 곁에 서면 왜 따뜻할까?", cta: "표로 정리하기", curio })),
+    },
+  },
+  u3l4: {
+    intro: opener({ title: "한낮의 해변, 어느 쪽이 더 뜨거울까?", scene: "u3-beach", wait: "해를 꾹 눌러 햇볕을 비춰 보세요", cta: "물과 식용유로 실험하기" }),
+    swap: { specificHeat: withCurio((curio) => raceLab({ title: "같은 불에 어느 쪽이 빨리 뜨거워질까?", cta: "개념 정리하기", curio })) },
+  },
+  u3l5: {
+    intro: opener({ title: "한여름의 전깃줄은 어떻게 될까?", scene: "u3-wire", wait: "여름과 겨울을 오가 보세요", cta: "금속 막대 가열해 보기" }),
+    swap: {
+      // 랩 하나를 둘로: 막대와 입자(열팽창의 까닭) 뒤에 두 띠 붙이기(물질마다 다르다, 바이메탈)
+      expansion: withCurio((curio) => [expandLab({ title: "가열하면 막대는 왜 길어질까?", cta: "다음, 두 띠 붙이기" }), tapeLab({ title: "붙인 두 띠는 어느 쪽으로 휠까?", cta: "개념 정리하기", curio })]),
     },
   },
 });

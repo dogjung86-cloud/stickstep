@@ -300,6 +300,77 @@ const LESSONS = {
     await judge(id, 3, true);
     await conclude(id, 3);
   },
+  u3l4: async (id) => {
+    await opener(id, "바닷물", async () => {
+      await holdAt(150, 118, 900);
+      await W(page, 400);
+      await atOpn(id, "mid", true);
+      await holdAt(150, 118, 2500);
+    });
+    await isLab(id, 1, "같은 불에 어느 쪽이 빨리 뜨거워질까?");
+    await atLab(id, 1, "predict", true);
+    await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
+    await W(page, 1500);
+    await atLab(id, 1, "mount", true);
+    const box = await page.locator(".screen.active .u3x-hold").boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await W(page, 1300);
+    await atLab(id, 1, "heating", true);
+    await page.mouse.up();
+    await W(page, 300);
+    await holdBtn(".u3x-hold", async () => (await phase()) === "water");
+    ok((await phase()) === "water", `${id}: 식용유가 60℃에 닿지 않음`);
+    await W(page, 1200);
+    await atLab(id, 1, "oil", true);
+    await holdBtn(".u3x-hold", async () => (await phase()) === "ask");
+    await W(page, 500);
+    await atLab(id, 1, "water", true);
+    await judge(id, 1, true);
+    await conclude(id, 1);
+  },
+  u3l5: async (id) => {
+    await opener(id, "팽팽", async () => {
+      await page.evaluate(() => [...document.querySelectorAll(".screen.active .opn-u3-btn")].find((b) => b.textContent.includes("여름"))?.click());
+      await W(page, 1500);
+      await atOpn(id, "mid", true);
+      await page.evaluate(() => [...document.querySelectorAll(".screen.active .opn-u3-btn")].find((b) => b.textContent.includes("겨울"))?.click());
+    });
+    // 1 막대와 입자
+    await isLab(id, 1, "가열하면 막대는 왜 길어질까?");
+    await atLab(id, 1, "mount", true);
+    await setRange(page, ".u3x-range", 200, false);
+    await W(page, 900);
+    await atLab(id, 1, "hot", true);
+    await setRange(page, ".u3x-range", 20);
+    await W(page, 400);
+    await atLab(id, 1, "cool");
+    await judge(id, 1, true);
+    await conclude(id, 1);
+    // 2 두 띠
+    await isLab(id, 2, "붙인 두 띠는 어느 쪽으로 휠까?");
+    await atLab(id, 2, "predict", true);
+    await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
+    await W(page, 1500);
+    await atLab(id, 2, "mount", true);
+    const reached = async () => (await dsU3("u3Reached")) === "1";
+    await holdBtn(".u3x-hold", reached);
+    ok(await reached(), `${id}: 띠가 끝까지 휘지 않음`);
+    await atLab(id, 2, "al-top", true);
+    await tapText("띠 뒤집기 (종이를 위로)");
+    await W(page, 500);
+    await holdBtn(".u3x-hold", reached);
+    await atLab(id, 2, "paper-top", true);
+    await tapText("다리미 속 장치 보기");
+    await W(page, 500);
+    await atLab(id, 2, "iron", true);
+    await tapText("전원 켜기");
+    ok(await waitFor(page, () => document.querySelector(".screen.active .step")?.dataset.u3Cuts === "1", null, 80, 100), `${id}: 바이메탈이 전기를 끊지 않음`);
+    await W(page, 300);
+    await atLab(id, 2, "cut", true);
+    await judge(id, 2, true);
+    await conclude(id, 2);
+  },
 };
 
 for (const [id, play] of Object.entries(LESSONS)) {

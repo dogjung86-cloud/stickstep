@@ -7,6 +7,9 @@ import { contactLab } from "./contactLab";
 import { rodLab } from "./rodLab";
 import { convLab } from "./convLab";
 import { radLab } from "./radLab";
+import { raceLab } from "./raceLab";
+import { expandLab } from "./expandLab";
+import { tapeLab } from "./tapeLab";
 
 export const U3V5_STEPS: Record<string, StepRenderer> = {
   u3TempLab: tempLab,
@@ -14,4 +17,7 @@ export const U3V5_STEPS: Record<string, StepRenderer> = {
   u3RodLab: rodLab,
   u3ConvLab: convLab,
   u3RadLab: radLab,
+  u3RaceLab: raceLab,
+  u3ExpandLab: expandLab,
+  u3TapeLab: tapeLab,
 };
