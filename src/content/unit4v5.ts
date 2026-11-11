@@ -26,6 +26,28 @@ const dryIceLab = lab("u4DryIceLab");
 const oliveLab = lab("u4OliveLab");
 const balloonLab = lab("u4BalloonLab");
 const heatLab = lab("u4HeatLab");
+// 랩이 바뀌어 어긋난 정본의 문장만 맞춘다(옛 랩의 화면 이름을 가리키는 말). 글자열을 찾아 바꾼 새 스텝 배열을 돌려준다.
+function reword(steps: Step[], pairs: [string, string][]): Step[] {
+  const hit = new Set<string>();
+  const walk = (v: unknown): unknown => {
+    if (typeof v === "string") {
+      let out = v;
+      for (const [a, b] of pairs) {
+        if (out.includes(a)) {
+          hit.add(a);
+          out = out.split(a).join(b);
+        }
+      }
+      return out;
+    }
+    if (Array.isArray(v)) return v.map(walk);
+    if (v && typeof v === "object") return Object.fromEntries(Object.entries(v as Record<string, unknown>).map(([k, x]) => [k, walk(x)]));
+    return v;
+  };
+  const next = steps.map((st) => walk(st) as Step);
+  if (import.meta.env.DEV) for (const [a] of pairs) if (!hit.has(a)) console.warn(`[v5] u4: 맞출 문장을 찾지 못했다: ${a}`);
+  return next;
+}
 const curioOf = (old: Step): Curio | undefined => (old as unknown as { curio?: Curio }).curio;
 
 export const UNIT4_V5: Unit | null = remakeUnit(UNIT4, {
@@ -45,6 +67,7 @@ export const UNIT4_V5: Unit | null = remakeUnit(UNIT4, {
       matterShape: shapeLab({ title: "그릇을 바꾸면 모양이 변할까요?", cta: "입자 모형 가려내기" }),
       matterCompare: modelLab({ title: "입자 모형은 어떤 상태일까요?", cta: "개념 정리하기" }),
     },
+    after: (steps) => reword(steps, [["비교 무대에서 봤듯", "입자 모형에서 봤듯"]]),
   },
   // 3. 물질의 상태 변화: 만화(그대로) → 이름 넷을 손으로 일으키기 → 시계 접시 실험(새로 넣음) → 드라이아이스와 비누막
   u4l3: {
@@ -65,6 +88,12 @@ export const UNIT4_V5: Unit | null = remakeUnit(UNIT4, {
         balloonLab({ title: "풍선은 어떻게 될까요?", cta: "개념 정리하기" }),
       ],
     },
+    after: (steps) =>
+      reword(steps, [
+        ["HUD의 질량 숫자는", "저울의 숫자는"],
+        ["내내 HUD의 입자 수는", "내내 입자 창의 입자 수는"],
+        ["풍선 실험의 HUD에서", "풍선 실험의 입자 창에서"],
+      ]),
   },
   // 5. 열에너지를 흡수하는 상태 변화: 끓는 물과 센 불(도입) → 가열 곡선
   u4l5: {

@@ -27,6 +27,7 @@ export interface U4Step {
 export interface U4Lab {
   f: BvFrame;
   tm: BvTimers;
+  api: StepAPI;
   onCleanup: (fn: () => void) => void;
   cleanup: () => void;
   /** 랩의 끝: 진행 점을 다 켜고, 결론 한 문장을 조작 칸에 띄우고, 끝 버튼을 연다. */
@@ -43,6 +44,7 @@ export function u4Lab(host: HTMLElement, api: StepAPI, s: U4Step, o: { steps: nu
   return {
     f,
     tm,
+    api,
     onCleanup: (fn) => fns.push(fn),
     cleanup: () => {
       tm.clear();
@@ -69,6 +71,7 @@ export function u4Predict(lab: U4Lab, question: string, choices: string[], next:
     if (b && !picked) picked = b.textContent?.trim() ?? "";
   };
   lab.f.slot.qBox.addEventListener("click", grab, true);
+  lab.api.setCTA("먼저 예측을 골라 보세요", { enabled: false });
   lab.f.slot.ask(question, choices.map((t) => ({ t })), () => undefined, {
     predict: true,
     nextDelay: delay,
