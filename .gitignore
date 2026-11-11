@@ -25,3 +25,4 @@ tmp/
 # QA 디버그 스크린샷(세션 산출물)
 qa/u2-*.png
 qa/e2e-u2-fail.png
+.u6v5-dev/
