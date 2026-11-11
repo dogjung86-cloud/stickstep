@@ -142,9 +142,9 @@ export const u7ZodiacLab: StepRenderer = (host, step, api) => {
     sunLine = mkLine(0xffaa50);
     nightLine = mkLine(0x8cbeff);
     // 구도(가로 346, 세로 230): 고리의 가로 반폭 11 + 그림 반폭 1.6 = 12.6. 가로 시야 반각 32.5°에서 필요한 거리 19.8.
-    // 세로는 내려다보는 각을 44°로 낮춰 고리가 납작하게 들어오게 한다. 거리 23. 가까운 쪽 별자리와 이름표가 아래로 잘리지 않게 보는 점을 앞으로 당겼다.
-    camera.position.set(0, 15.8, 17.6);
-    camera.lookAt(0, -0.6, 1.7);
+    // 세로는 내려다보는 각을 44°로 낮춰 고리가 납작하게 들어오게 한다. 거리 24. 가까운 쪽 별자리와 이름표가 아래로 잘리지 않게 보는 점을 앞으로 당겼다.
+    camera.position.set(0, 16.9, 19.0);
+    camera.lookAt(0, -0.6, 2.7);
     loop = createLoop((dt) => frame(dt));
     loop.start();
   })();

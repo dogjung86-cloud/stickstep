@@ -9,6 +9,7 @@
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { launch, openLesson, stepType, ds, waitDs, dev, stagePt, stepText, BUDGET, W, cta, ctaState, tap, waitFor, setRange, waitAsk, pickWrong, tapNext, pickRight, waitDone, measure, goStep } from "./u7v5-lib.mjs";
+import { measure as omeasure, choose, waitPhase, stagePt as opnPt } from "./u2intro-lib.mjs";
 
 const OUT = process.argv[2] ?? "qa/shots/u7v5";
 mkdirSync(OUT, { recursive: true });
@@ -84,7 +85,6 @@ const webgl = () => page.evaluate(() => !document.querySelector(".screen.active 
 const LABS = {
   // u7l1: 태양계의 천체 여섯 가지(가로 3D)
   async u7l1(id) {
-    await goStep(page, 1);
     await isLab(id);
     await at(id, "1first");
     await tap(page, ".u7x-enterbtn");
@@ -119,7 +119,6 @@ const LABS = {
   },
   // u7l2: 행성을 두 무리로
   async u7l2(id) {
-    await goStep(page, 1);
     await isLab(id);
     await at(id, "1first");
     await tap(page, '.bv-card[data-k="mass"]');
@@ -140,7 +139,6 @@ const LABS = {
   },
   // u7l3: 태양(만화 다음)
   async u7l3(id) {
-    await goStep(page, 1);
     await isLab(id);
     await W(page, 400);
     await at(id, "1first");
@@ -162,7 +160,6 @@ const LABS = {
   },
   // u7l4: 별의 움직임, 계절과 별자리
   async u7l4(id) {
-    await goStep(page, 1);
     await isLab(id);
     await W(page, 300);
     await at(id + "a", "1first");
@@ -203,7 +200,6 @@ const LABS = {
   },
   // u7l5: 달의 위상
   async u7l5(id) {
-    await goStep(page, 1);
     await isLab(id);
     await W(page, 1800);
     await at(id, "1first");
@@ -222,7 +218,6 @@ const LABS = {
   },
   // u7l6: 일식과 월식(가로 3D)
   async u7l6(id) {
-    await goStep(page, 1);
     await isLab(id);
     await at(id, "1first");
     await tap(page, ".u7x-enterbtn");
@@ -257,11 +252,69 @@ const LABS = {
   },
 };
 
+
+// ── 도입 ───────────────────────────────────────────────────────────
+async function oat(id, mark) {
+  const m = await omeasure(page);
+  ok(m.content <= m.view && m.scrollTop === 0, `${id} 도입 ${mark}: 높이 ${m.content}/${m.view}, 밀림 ${m.scrollTop}`);
+  ok(m.titleLines === 1, `${id} 도입 ${mark}: 제목 ${m.titleLines}줄`);
+  ok(m.clipped.length === 0, `${id} 도입 ${mark}: 잘린 글 ${m.clipped.join(" | ")}`);
+  ok(m.taps.every((t) => t.h >= 44), `${id} 도입 ${mark}: 낮은 버튼 ${m.taps.filter((t) => t.h < 44).map((t) => t.t + t.h).join(",")}`);
+  ok(m.bubbleLines <= 3, `${id} 도입 ${mark}: 말이 ${m.bubbleLines}줄`);
+  texts.push(await stepText(page));
+  console.log(`  ${id} 도입 ${mark}: ${m.content}/${m.view}px, 말 ${m.bubbleLines}줄`);
+  await shot(`${id}-0${mark}`);
+}
+const holdOn = async (sel, ms) => {
+  const r = await page.evaluate((s) => { const b = document.querySelector(`.screen.active ${s}`).getBoundingClientRect(); return { x: b.left + b.width / 2, y: b.top + b.height / 2 }; }, sel);
+  await page.mouse.move(r.x, r.y);
+  await page.mouse.down();
+  await W(page, ms);
+  await page.mouse.up();
+  await W(page, 250);
+};
+async function playOpener(id, { pick, mid, rest, want }) {
+  ok((await stepType(page)) === "opener", `${id}: 새 도입이 아님(${await stepType(page)})`);
+  await oat(id, "ask");
+  ok(!!(await choose(page, pick)), `${id}: 예측 보기 "${pick}"를 누르지 못함`);
+  await W(page, 600);
+  await mid();
+  await oat(id, "mid");
+  await rest();
+  ok(await waitPhase(page, "done", 80), `${id}: 도입이 끝나지 않음(${await ds(page, "opnPhase")})`);
+  await W(page, 1400);
+  await oat(id, "done");
+  const c = await ctaState(page);
+  ok(c.enabled && c.text === want, `${id}: 도입 끝 버튼 "${c.text}" enabled=${c.enabled}`);
+  await cta(page);
+  await W(page, 500);
+}
+const OPENERS = {
+  u7l1: (id) => playOpener(id, { pick: "아주 밝은 별", want: "태양계로 출발", mid: () => holdOn(".opn-u7-hit", 800), rest: () => holdOn(".opn-u7-hit", 1500) }),
+  u7l2: (id) => playOpener(id, { pick: "6개쯤", want: "두 무리로 나누기", mid: () => holdOn(".opn-u7-btn.hold", 1100), rest: () => holdOn(".opn-u7-btn.hold", 2200) }),
+  u7l4: (id) => playOpener(id, { pick: "왼쪽으로", want: "밤하늘 살펴보기", mid: async () => { await tap(page, '.opn-u7-btn[data-n="2"]'); await W(page, 600); }, rest: () => tap(page, '.opn-u7-btn[data-n="3"]') }),
+  u7l5: (id) => playOpener(id, { pick: "가느다란", want: "달을 직접 옮겨 보기", mid: () => holdOn(".opn-u7-btn.hold", 1300), rest: () => holdOn(".opn-u7-btn.hold", 2300) }),
+  u7l6: (id) => playOpener(id, { pick: "구름", want: "세 천체를 한 줄로", mid: () => holdOn(".opn-u7-btn.hold", 1100), rest: () => holdOn(".opn-u7-btn.hold", 2200) }),
+};
+
 for (const id of Object.keys(LABS)) {
   if (ONLY.length && !ONLY.includes(id)) continue;
   console.log(id);
   await openLesson(page, id);
+  if (OPENERS[id]) await OPENERS[id](id);
+  else await goStep(page, 1); // 만화로 시작하는 레슨은 만화를 건너 랩으로
   await LABS[id](id);
+}
+
+// 토글을 끄면 지금의 화면 그대로(정본 훅과 정본 랩)
+if (!ONLY.length) {
+  await openLesson(page, "u7l1", { on: false });
+  const t0 = await stepType(page);
+  ok(t0 !== "opener" && t0 !== "u7lab", `토글을 껐는데 새 도입이 열림(${t0})`);
+  ok(await page.evaluate(() => !!document.querySelector(".screen.active .step .hook-scene, .screen.active .step .hk-space-wrap, .screen.active .step .helper")), "토글을 끈 u7l1의 첫 스텝이 정본 훅이 아님");
+  await goStep(page, 1);
+  ok(await page.evaluate(() => !!document.querySelector(".screen.active .step .sp3-enter") && !document.querySelector(".screen.active .step.u7x-step")), "토글을 끈 u7l1의 랩이 정본이 아님");
+  await shot("off-u7l1-lab");
 }
 
 // 화면 글 검사
