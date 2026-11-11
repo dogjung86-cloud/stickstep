@@ -52,57 +52,43 @@
 .opn-bubble b { color: var(--ink); font-weight: 700; }
 .opn-bubble:empty { visibility: hidden; }
 
-/* ══════════ 1. 유난히 긴 세포 (longcell) ══════════ */
-.opn-longcell.pull { cursor: grab; }
-.opn-longcell.pull:active { cursor: grabbing; }
-.opn-lc-band { position: absolute; overflow: hidden; pointer-events: none; }
-/* 띠의 오른쪽은 아직 따라가지 않은 곳이라 가려 둔다. 왼쪽 끝은 아이 뒤로 스며들게 */
-.opn-lc-band::before, .opn-lc-band::after { content: ""; position: absolute; top: 0; bottom: 0; z-index: 2; pointer-events: none; }
-.opn-lc-band::before { left: 0; width: 9%; background: linear-gradient(90deg, #fff 20%, rgba(255, 255, 255, 0)); }
-.opn-lc-band::after { right: 0; width: 17.5%; background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff 58%); transition: opacity .5s; }
-.opn-longcell.done .opn-lc-band::after { opacity: 0; }
-.opn-lc-world { position: absolute; left: 0; top: 0; height: 100%; will-change: transform; }
-.opn-lc-num text { font-family: inherit; }
-.opn-lc-hint { animation: opnNudge 1.3s ease-in-out infinite; opacity: 0; transition: opacity .3s; }
-.opn-longcell.pull .opn-lc-hint { opacity: 1; }
-.opn-longcell.pull.moved .opn-lc-hint { opacity: 0; }
-@keyframes opnNudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-26px); } }
-/* 내 예측 깃발: 띠와 함께 움직인다 */
-.opn-lc-pin { position: absolute; top: 2%; height: 56%; width: 0; border-left: 2px dashed var(--blue); display: none; z-index: 3; }
-.opn-longcell.pull .opn-lc-pin, .opn-longcell.done .opn-lc-pin { display: block; }
-.opn-lc-pin span {
-  position: absolute; right: 0; top: 0; white-space: nowrap;
-  padding: 1px 6px; border-radius: 8px 4px 0 8px; background: var(--blue); color: #fff;
-  font-size: 12.5px; line-height: 17px; font-weight: 800;
-}
-/* 아이: 허리의 세포 몸, 다리를 따라 자라는 선, 끝점 */
+/* ══════════ 1. 유난히 긴 세포 (longcell) ══════════
+   그림은 아이 하나와 세포 하나. 오른쪽에 길이 숫자, 아래에 꾹 누르는 버튼 */
 .opn-lc-trace { stroke-dasharray: 0 100; }
 .opn-lc-ring { transform-box: fill-box; transform-origin: center; animation: opnPulse 1.6s ease-out infinite; }
 @keyframes opnPulse { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(1.5); opacity: 0; } }
+.opn-longcell.done .opn-lc-ring { animation: none; opacity: 0; }
 .opn-lc-tip { opacity: 0; transition: opacity .2s; }
 .opn-longcell.pull .opn-lc-tip, .opn-longcell.done .opn-lc-tip { opacity: 1; }
 .opn-lc-arrive { opacity: 0; }
 .opn-longcell.done .opn-lc-arrive { opacity: 1; animation: opnPop .5s var(--spring) both; transform-box: fill-box; transform-origin: 0% 100%; }
 @keyframes opnPop { 0% { transform: scale(.3); } 100% { transform: scale(1); } }
-.opn-lc-link { transition: opacity .3s; }
-.opn-longcell.moved .opn-lc-link { opacity: 0; }
-.opn-lc-q { transition: opacity .3s; }
-.opn-longcell.pull .opn-lc-q, .opn-longcell.done .opn-lc-q { opacity: 0; }
-/* 오른쪽 위의 길이 읽기 */
-.opn-lc-read { position: absolute; right: 5%; top: 9%; display: flex; flex-direction: column; align-items: flex-end; pointer-events: none; }
-.opn-lc-cap { font-size: 12.5px; line-height: 17px; font-weight: 700; color: var(--ter); }
-.opn-lc-val { font-size: 15px; font-weight: 800; color: var(--ink); line-height: 40px; }
-.opn-lc-cm { font-size: 34px; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
-.opn-lc-where { font-size: 13px; line-height: 18px; font-weight: 700; color: var(--subj-bio-deep, #0CA678); min-height: 18px; }
-.opn-tag.opn-lc-waist { transform: translateY(-50%); font-size: 12.5px; color: #B86A1E; transition: opacity .3s; }
-.opn-longcell.moved .opn-lc-waist { opacity: 0; }
-/* 그림의 축척 알림: 길이만 줄자에 맞고 굵기는 키웠다 */
-.opn-lc-note { font-size: 12.5px; line-height: 16px; font-weight: 700; color: var(--sub); }
-.opn-lc-about { display: none; }
-.opn-longcell.done .opn-lc-about { display: inline; }
+/* 오른쪽의 길이 숫자 */
+.opn-lc-read { position: absolute; left: 54%; right: 4%; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+.opn-lc-val { font-size: 20px; font-weight: 800; color: var(--ink); line-height: 60px; white-space: nowrap; }
+.opn-lc-cm { font-size: 56px; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.opn-lc-about, .opn-lc-cap { visibility: hidden; }
+.opn-longcell.done .opn-lc-about, .opn-longcell.done .opn-lc-cap { visibility: visible; }
+.opn-lc-cap { font-size: 13px; line-height: 18px; font-weight: 700; color: var(--subj-bio-deep, #0CA678); }
+/* 내 예측: 다리 위의 파란 점과 이름표 */
+.opn-lc-pin { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 2px #fff; display: none; }
+.opn-longcell.pull .opn-lc-pin, .opn-longcell.done .opn-lc-pin { display: block; }
+.opn-lc-pin span {
+  position: absolute; right: 16px; top: 50%; transform: translateY(-50%); white-space: nowrap;
+  padding: 1px 6px; border-radius: 8px; background: var(--blue); color: #fff;
+  font-size: 12px; line-height: 17px; font-weight: 800;
+}
+/* 꾹 누르는 버튼 */
+.opn-lc-hold {
+  grid-column: 1 / -1; width: 100%; min-height: 52px; border: 0; border-radius: var(--r-md); cursor: pointer;
+  background: var(--grad-blue); color: #fff; font: inherit; font-size: 16px; font-weight: 800; letter-spacing: -.02em;
+  box-shadow: var(--sh-cta); transition: transform .12s var(--ease), filter .12s;
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+}
+.opn-lc-hold.on { transform: scale(.965); filter: brightness(.92); }
 
 @media (prefers-reduced-motion: reduce) {
-  .opn-lc-hint, .opn-lc-ring { animation: none; }
+  .opn-lc-ring { animation: none; }
 }
 
 /* ══════════ 2. 두 바구니 (baskets) ══════════ */

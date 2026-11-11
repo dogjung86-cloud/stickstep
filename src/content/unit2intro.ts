@@ -56,6 +56,37 @@ const SAMPLES: Record<string, Step> = {
     wait: "버섯을 바구니에 넣어 보세요",
     cta: "검색표에 생물 보내기",
   }),
+  // ── Ⅱ단원 나머지 다섯(2026-11-12) ──
+  u2l3: opener({
+    title: "물방울 속 글자, 어떻게 보일까?",
+    scene: "droplens",
+    wait: "물방울을 글자 위로 옮겨 보세요",
+    cta: "표본 만들러 가기",
+  }),
+  u2l5: opener({
+    title: "블록으로 꽃 만들기, 몇 번 모을까?",
+    scene: "blockbloom",
+    wait: "꾹 눌러 블록을 모아 보세요",
+    cta: "계단 쌓으러 가기",
+  }),
+  u2l6: opener({
+    title: "작은 바위섬 독도, 몇 종이 살까?",
+    scene: "dokdo",
+    wait: "반짝이는 세 곳을 눌러 보세요",
+    cta: "땅의 다양함 재어 보기",
+  }),
+  u2l8: opener({
+    title: "토마토, 과일 칸일까 채소 칸일까?",
+    scene: "shelves",
+    wait: "토마토를 상자에 놓아 보세요",
+    cta: "박쥐의 특징 조사하기",
+  }),
+  u2l10: opener({
+    title: "꿀벌이 사라지면, 무엇이 그대로일까?",
+    scene: "beeswitch",
+    wait: "꿀벌 스위치를 껐다 켜 보세요",
+    cta: "먹이 그물 실험 열기",
+  }),
 };
 
 /** 토글이 켜져 있으면 세 레슨의 첫 스텝(hook)을 샘플 도입으로 바꾼 단원을, 꺼져 있으면 받은 단원을 그대로 돌려준다. */

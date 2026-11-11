@@ -1,0 +1,95 @@
+/* opener-u1.css: 중1 Ⅰ 도입 세 장면(steps/opener/sunCups · speakerTeach · gasBlanket). 틀은 opener.css 그대로다.
+   접두: .opn-sc-(햇빛과 세 컵) · .opn-sp-(스피커) · .opn-bl-(지구를 덮은 기체) · .opn-u1-(세 장면 공용 버튼)
+   그림의 묶음은 좌표가 미리 곱해진 평평한 경로라 CSS 변형을 바로 건다(transform-box: fill-box). */
+
+/* 예측을 고른 뒤에는 질문을 접는다(고른 보기와 쌤의 말만 남는다) */
+.opn-step[data-opn-scene="suncups"].opn-picked .hook-q,
+.opn-step[data-opn-scene="speaker"].opn-picked .hook-q,
+.opn-step[data-opn-scene="blanket"].opn-picked .hook-q { display: none; }
+
+/* 조작 줄의 버튼(두 줄: 굵은 이름 + 작은 풀이) */
+.opn-u1-btn {
+  min-height: 52px; padding: 5px 4px; border-radius: var(--r-md); border: 1.5px solid var(--n200); background: var(--n0);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0;
+  transition: border-color .16s, background .16s, opacity .16s, transform .12s var(--spring-soft);
+}
+.opn-u1-btn:active { transform: scale(.965); }
+.opn-u1-btn b { font-size: 15px; line-height: 21px; font-weight: 800; color: var(--ink); }
+.opn-u1-btn span { font-size: 12.5px; line-height: 17px; font-weight: 700; color: var(--blue); }
+.opn-u1-btn:disabled { opacity: .45; }
+.opn-u1-btn.tried { border-color: var(--n300); }
+.opn-u1-btn.tried span { color: var(--ter); }
+.opn-step[data-opn-scene="blanket"] .opn-controls { grid-template-columns: 1fr 1fr; }
+
+/* ══════════ 1. 햇빛과 세 컵 (suncups) ══════════ */
+.opn-sc-col, .opn-bl-col { transform-box: fill-box; transform-origin: 50% 100%; }
+.opn-bl-col { transition: transform .6s var(--ease-out); }
+.opn-sc-rays { opacity: 0; transition: opacity .2s; }
+.opn-suncups.lit .opn-sc-rays { opacity: 1; }
+.opn-suncups.lit .opn-sc-rays path { animation: opnScFlow .5s linear infinite; }
+@keyframes opnScFlow { to { stroke-dashoffset: -38; } }
+.opn-sc-shade { opacity: .45; transition: opacity .3s; }
+.opn-suncups.lit .opn-sc-shade, .opn-suncups.done .opn-sc-shade { opacity: 1; }
+.opn-sc-sun { transform-box: fill-box; transform-origin: center; transition: transform .25s var(--spring); }
+.opn-suncups.lit .opn-sc-sun { transform: scale(1.14) rotate(12deg); }
+.opn-sc-mark { opacity: 0; }
+.opn-suncups.done .opn-sc-mark { opacity: 1; animation: opnScMark 1.2s ease-in-out infinite alternate; }
+@keyframes opnScMark { from { opacity: .45; } to { opacity: 1; } }
+.opn-sc-hit {
+  position: absolute; background: none; border: 0; padding: 0; border-radius: 50%; cursor: pointer;
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+}
+.opn-suncups:not(.play) .opn-sc-hit, .opn-suncups.done .opn-sc-hit { pointer-events: none; }
+.opn-sc-hit:focus-visible { outline: 2px solid var(--blue); outline-offset: -4px; }
+/* 누르라는 손짓: 해 둘레의 고리가 퍼진다(한 번 누르면 사라진다) */
+.opn-sc-hit::after {
+  content: ""; position: absolute; inset: 16%; border-radius: 50%; border: 3px solid var(--blue); opacity: 0; pointer-events: none;
+}
+.opn-suncups.play:not(.touched) .opn-sc-hit::after { animation: opnScRing 1.3s ease-out infinite; }
+@keyframes opnScRing { 0% { transform: scale(.7); opacity: .9; } 100% { transform: scale(1.35); opacity: 0; } }
+
+/* ══════════ 2. 말을 배우는 스피커 (speaker) ══════════ */
+.opn-sp-wave { opacity: 0; }
+.opn-speaker.send-1 .opn-sp-wave.w1 { animation: opnSpGo .9s ease-in 1 both; }
+.opn-speaker.send-2 .opn-sp-wave { animation: opnSpGo .46s linear 3 both; }
+.opn-speaker.send-3 .opn-sp-wave { animation: opnSpGo .2s linear 11 both; }
+.opn-speaker.send-2 .opn-sp-wave.w2, .opn-speaker.send-3 .opn-sp-wave.w2 { animation-delay: .07s; }
+.opn-speaker.send-2 .opn-sp-wave.w3, .opn-speaker.send-3 .opn-sp-wave.w3 { animation-delay: .13s; }
+@keyframes opnSpGo { 0% { transform: translateX(0); opacity: 0; } 15% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateX(250px); opacity: 0; } }
+.opn-sp-body { transform-box: fill-box; transform-origin: 50% 100%; }
+.opn-speaker.send-1 .opn-sp-body, .opn-speaker.send-2 .opn-sp-body, .opn-speaker.send-3 .opn-sp-body { animation: opnSpHear .3s ease-in-out infinite alternate; }
+@keyframes opnSpHear { from { transform: scale(1); } to { transform: scale(1.025, .985); } }
+.opn-sp-lamp { transition: fill .25s; }
+.opn-speaker.lv-1 .opn-sp-lamp.l1 { fill: #FFE7A3; }
+.opn-speaker.lv-2 .opn-sp-lamp.l1 { fill: #FFC83D; }
+.opn-speaker.lv-3 .opn-sp-lamp { fill: #2CD4A0; }
+.opn-sp-q, .opn-sp-notes { opacity: 0; transform-box: fill-box; transform-origin: 50% 100%; }
+.opn-speaker.huh .opn-sp-q { opacity: 1; animation: opnSpPop .4s var(--spring) both; }
+.opn-speaker.ok .opn-sp-notes { opacity: 1; }
+.opn-speaker.ok .opn-sp-note { transform-box: fill-box; transform-origin: center; animation: opnSpNote 1s ease-in-out infinite alternate; }
+.opn-speaker.ok .opn-sp-note.n2 { animation-delay: -.35s; }
+.opn-speaker.ok .opn-sp-note.n3 { animation-delay: -.7s; }
+@keyframes opnSpPop { from { transform: scale(.3); } to { transform: scale(1); } }
+@keyframes opnSpNote { from { transform: translateY(5px) rotate(-6deg); } to { transform: translateY(-7px) rotate(6deg); } }
+
+/* ══════════ 3. 지구를 덮은 기체 (blanket) ══════════ */
+.opn-bl-layer { opacity: 0; transition: opacity .45s; }
+.opn-blanket.lv-1 .opn-bl-layer.l1,
+.opn-blanket.lv-2 .opn-bl-layer.l1, .opn-blanket.lv-2 .opn-bl-layer.l2,
+.opn-blanket.lv-3 .opn-bl-layer { opacity: 1; }
+.opn-bl-out, .opn-bl-back { transition: opacity .35s; }
+.opn-bl-back { opacity: 0; }
+.opn-blanket.lv-1 .opn-bl-out.a1, .opn-blanket.lv-2 .opn-bl-out.a1, .opn-blanket.lv-3 .opn-bl-out.a1,
+.opn-blanket.lv-2 .opn-bl-out.a2, .opn-blanket.lv-3 .opn-bl-out.a2,
+.opn-blanket.lv-3 .opn-bl-out.a3 { opacity: 0; }
+.opn-blanket.lv-1 .opn-bl-back.a1, .opn-blanket.lv-2 .opn-bl-back.a1, .opn-blanket.lv-3 .opn-bl-back.a1,
+.opn-blanket.lv-2 .opn-bl-back.a2, .opn-blanket.lv-3 .opn-bl-back.a2,
+.opn-blanket.lv-3 .opn-bl-back.a3 { opacity: 1; }
+.opn-bl-puff { opacity: 0; }
+.opn-blanket.puff .opn-bl-puff { animation: opnBlPuff .8s ease-out 1 both; }
+@keyframes opnBlPuff { 0% { transform: translateY(14px) scale(.6); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(-16px) scale(1.2); opacity: 0; } }
+.opn-bl-puff { transform-box: fill-box; transform-origin: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .opn-suncups.lit .opn-sc-rays path, .opn-sc-hit::after, .opn-speaker .opn-sp-body, .opn-speaker.ok .opn-sp-note, .opn-suncups.done .opn-sc-mark { animation: none; }
+}

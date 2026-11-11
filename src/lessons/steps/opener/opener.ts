@@ -16,10 +16,18 @@ import type { StepRenderer } from "../../types";
 import { longCell } from "./longCell";
 import { baskets } from "./baskets";
 import { factoryOff } from "./factoryOff";
+import { sunCups } from "./sunCups";
+import { speakerTeach } from "./speakerTeach";
+import { gasBlanket } from "./gasBlanket";
+import { dropLens } from "./dropLens";
+import { blockBloom } from "./blockBloom";
+import { dokdo } from "./dokdo";
+import { shelves } from "./shelves";
+import { beeSwitch } from "./beeSwitch";
 
 export interface OpenerStep {
   title: string;
-  scene: "longcell" | "baskets" | "factory";
+  scene: "longcell" | "baskets" | "factory" | "suncups" | "speaker" | "blanket" | "droplens" | "blockbloom" | "dokdo" | "shelves" | "beeswitch";
   /** 조작을 마치기 전 아래 버튼의 글 */
   wait?: string;
   cta?: string;
@@ -49,7 +57,7 @@ export interface OpenerCtx {
 }
 
 export type OpenerScene = (c: OpenerCtx) => void;
-const scenes: Record<OpenerStep["scene"], OpenerScene> = { longcell: longCell, baskets, factory: factoryOff };
+const scenes: Record<OpenerStep["scene"], OpenerScene> = { longcell: longCell, baskets, factory: factoryOff, suncups: sunCups, speaker: speakerTeach, blanket: gasBlanket, droplens: dropLens, blockbloom: blockBloom, dokdo, shelves, beeswitch: beeSwitch };
 
 export const opener: StepRenderer = (host, step, api) => {
   const s = step as unknown as OpenerStep;

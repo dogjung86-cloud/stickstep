@@ -1,7 +1,7 @@
 // 중1 과학 Ⅱ 도입 샘플 세 장면의 그림(손그림 코드 그림). 만화와 같은 엔진, 같은 인물을 쓴다.
 // 만화와 다른 점: 그림을 겹(레이어)으로 나눠 뽑고, 움직일 부분을 <g class="...">로 묶는다.
 // 앱은 이 SVG를 문서에 직접 넣고(src/ui/introArt.generated.ts) CSS와 코드로 그 묶음을 움직인다.
-//   longcell  (u2l4) 가장 긴 세포: 아이(고정) + 옆으로 긴 띠(세포와 줄자)
+//   longcell  (u2l4) 유난히 긴 세포: 선 아이 하나와 다리를 따라 자라는 세포
 //   baskets   (u2l9) 두 바구니: 바구니 둘(고정) + 버섯(끌 수 있는 묶음)
 //   factory   (u2l2) 빵 공장: 건물(고정) + 문, 통제실, 발전기, 빵 줄(상태에 따라 바뀌는 묶음)
 // 무대의 좌표계는 960×544(앱에서는 폭 346px 안팎으로 줄어든다). 글자는 넣지 않는다(앱이 얹는다).
@@ -16,21 +16,16 @@ const NERVE = "#F6B26B", NERVE_EDGE = "#B86A1E", NUC = "#7048E8";
 const g = (sk, cls, fn) => { sk.raw(`<g class="${cls}">`); fn(); sk.raw("</g>"); };
 const r1 = (v) => Math.round(v * 10) / 10;
 
-/* ══════════ 1. 가장 긴 세포 (u2l4) ══════════
-   아이 겹: 왼쪽 기둥(0~330)에 선 아이. 허리의 세포 몸에서 다리를 따라 발끝까지 주황 선이 자란다(앱이 길이를 정한다).
-   띠 겹: 오른쪽 아래 창(330~960 × 344~544)에 비치는 긴 그림. 1 cm = 26. 세포 몸의 오른쪽 끝이 0 cm. */
-export const LC = {
-  kidX: 165, kidY: 520, kidS: 0.9,
-  bandX: 330, bandY: 344, bandW: 630, bandH: 200, // 무대 안에서 띠가 비치는 창
-  cm: 26, zeroX: 504, bodyX: 470, fiberY: 76, // 띠 좌표
-  worldW: 3300, veil: 110, // 창의 오른쪽 끝 110은 가려 둔다
-};
+/* ══════════ 1. 유난히 긴 세포 (u2l4) ══════════
+   그림은 한 겹이다: 선 아이 하나, 허리의 세포 몸, 다리를 따라 발끝까지 자라는 주황 선(앱이 길이를 정한다).
+   오른쪽 절반은 비워 둔다(앱이 길이 숫자를 크게 얹는다). */
+export const LC = { kidX: 290, kidY: 520, kidS: 0.9 };
 
 export function longcellKid() {
   const sk = new Sk(STAGE_W, STAGE_H, { id: "lk" });
   const { kidX: x, kidY: y, kidS: s } = LC;
   // 바닥
-  sk.ink(dense([[34, y + 6], [318, y + 8]]), { w: 9, seed: 5, color: C.grayLight, wob: 1.2 });
+  sk.ink(dense([[120, y + 6], [470, y + 8]]), { w: 9, seed: 5, color: C.grayLight, wob: 1.2 });
   const p = pose({ elL: [-44, -262], haL: [-64, -192], elR: [50, -268], haR: [84, -214] });
   drawFigure(sk, x, y, s, p, { ...STUDENT });
   // 다리를 따라 자라는 주황 선(세포). 다리 선과 같은 곡선 위에 얹는다.
@@ -38,17 +33,17 @@ export function longcellKid() {
   const back = P([0, -236]);
   const leg = [back, P(p.hip), ...curve([p.hip, p.knR, p.ftR], false, 6).map(P)];
   const d = pathD(leg, false, 0.4);
-  sk.raw(`<path class="opn-lc-trace" d="${d}" pathLength="100" stroke="${NERVE}" stroke-width="7"/>`);
+  sk.raw(`<path class="opn-lc-trace" d="${d}" pathLength="100" stroke="${NERVE}" stroke-width="11"/>`);
   // 허리의 세포 몸
   g(sk, "opn-lc-seed", () => {
-    sk.raw(`<circle class="opn-lc-ring" cx="${r1(back[0])}" cy="${r1(back[1])}" r="26" stroke="${NERVE}" stroke-width="5"/>`);
-    const b = circ(back[0], back[1], 15, { over: 0.2, seed: 61 });
+    sk.raw(`<circle class="opn-lc-ring" cx="${r1(back[0])}" cy="${r1(back[1])}" r="28" stroke="${NERVE}" stroke-width="5"/>`);
+    const b = circ(back[0], back[1], 17, { over: 0.2, seed: 61 });
     sk.fill(b, NERVE, { dx: 0, dy: 0, wob: 0.5, seed: 62 });
     sk.ink(b, { w: 6, color: NERVE_EDGE, wob: 0.6, seed: 63 });
-    sk.dot(back[0] + 1, back[1], 5, NUC);
+    sk.dot(back[0] + 1, back[1], 5.5, NUC);
   });
   // 끝점(앱이 선 위로 옮긴다)
-  sk.raw(`<circle class="opn-lc-tip" cx="${r1(back[0])}" cy="${r1(back[1])}" r="9" fill="#FFE066" stroke="${NERVE_EDGE}" stroke-width="4"/>`);
+  sk.raw(`<circle class="opn-lc-tip" cx="${r1(back[0])}" cy="${r1(back[1])}" r="11" fill="#FFE066" stroke="${NERVE_EDGE}" stroke-width="4"/>`);
   // 발끝에 닿았을 때의 반짝임
   const ft = P(p.ftR);
   g(sk, "opn-lc-arrive", () => {
@@ -56,70 +51,7 @@ export function longcellKid() {
       sk.ink(dense([[ft[0] + 24 * Math.cos(a), ft[1] - 6 + 24 * Math.sin(a)], [ft[0] + 46 * Math.cos(a), ft[1] - 6 + 46 * Math.sin(a)]]), { w: 6, color: C.orange, seed: 71 + i, wob: 0.4 });
     }
   });
-  // 허리의 세포를 오른쪽 아래에 크게 꺼내 보인다는 점선(밀기 시작하면 사라진다)
-  g(sk, "opn-lc-link", () => {
-    arrow(sk, [[352, 318], [480, 324], [618, 338], [716, 376]], { w: 7, color: NERVE_EDGE, seed: 81, dash: [4, 20], head: 26, alpha: 0.85 });
-  });
-  // 아이 머리 옆의 물음표(예측하기 전)
-  g(sk, "opn-lc-q", () => qmark(sk, 322, 62, 0.72, { color: C.teal, w: 13, seed: 77 }));
   return { sk, meta: { back, foot: ft } };
-}
-
-export function longcellWorld() {
-  const { cm, zeroX, bodyX, fiberY, worldW } = LC;
-  const sk = new Sk(worldW, LC.bandH, { id: "lw" });
-  const endX = zeroX + 100 * cm;
-  // 밀라는 손짓(처음 화면의 빈 자리)
-  g(sk, "opn-lc-hint", () => {
-    arrow(sk, [[392, 158], [250, 154], [112, 158]], { w: 10, color: C.gray, seed: 91, head: 30 });
-  });
-  // 줄자: 노란 띠와 눈금
-  const tape = poly([[zeroX - 14, 120], [endX + 60, 120], [endX + 60, 192], [zeroX - 14, 192]], 12);
-  sk.fill(tape, "#FFE27A", { dx: 0, dy: 0, wob: 0.8, seed: 11 });
-  sk.ink(dense([[zeroX - 14, 120], [endX + 60, 120]], 12), { w: 7, seed: 12, wob: 1.2, color: "#8A6A1E" });
-  sk.ink(dense([[zeroX - 14, 192], [endX + 60, 192]], 12), { w: 7, seed: 13, wob: 1.2, color: "#8A6A1E" });
-  sk.ink(dense([[zeroX - 14, 120], [zeroX - 14, 192]], 6), { w: 7, seed: 14, wob: 0.6, color: "#8A6A1E" });
-  sk.ink(dense([[endX + 60, 120], [endX + 60, 192]], 6), { w: 7, seed: 15, wob: 0.6, color: "#8A6A1E" });
-  let ticks = "";
-  for (let c = 0; c <= 100; c++) {
-    const x = zeroX + c * cm, len = c % 10 === 0 ? 30 : c % 5 === 0 ? 21 : 12;
-    ticks += `M${r1(x)} 122v${len}`;
-  }
-  sk.raw(`<path d="${ticks}" stroke="#8A6A1E" stroke-width="3.2" stroke-linecap="butt"/>`);
-  // 눈금 숫자(자의 숫자는 그림의 일부라 여기서 넣는다. 글꼴은 앱의 것을 물려받는다)
-  let nums = "";
-  for (let c = 0; c <= 100; c += 10) nums += `<text x="${r1(zeroX + c * cm + (c === 0 ? 6 : 0))}" y="185">${c}</text>`;
-  sk.raw(`<g class="opn-lc-num" fill="#5C4A10" stroke="none" font-size="36" font-weight="800" text-anchor="middle">${nums}</g>`);
-  // 세포: 가지 돌기 → 긴 줄(바깥 선 + 속) → 몸 → 핵
-  for (const [a, len, i] of [[2.2, 44, 0], [2.9, 52, 1], [3.6, 46, 2], [4.4, 38, 3], [1.5, 36, 4]]) {
-    const ex = bodyX + (30 + len) * Math.cos(a), ey = fiberY + (30 + len) * Math.sin(a) * 0.8;
-    const mx = bodyX + (30 + len * 0.5) * Math.cos(a + 0.12), my = fiberY + (30 + len * 0.5) * Math.sin(a + 0.12) * 0.8;
-    sk.ink(curve([[bodyX + 22 * Math.cos(a), fiberY + 22 * Math.sin(a) * 0.8], [mx, my], [ex, ey]]), { w: 9, color: NERVE_EDGE, seed: 21 + i, wob: 0.6 });
-    sk.ink(curve([[bodyX + 22 * Math.cos(a), fiberY + 22 * Math.sin(a) * 0.8], [mx, my], [ex, ey]]), { w: 4, color: NERVE, seed: 21 + i, wob: 0.6 });
-  }
-  const fiber = [];
-  for (let x = bodyX + 26; x <= endX; x += 13) fiber.push([x, fiberY + 5 * Math.sin((x - bodyX) / 120)]);
-  fiber.push([endX, fiberY + 5 * Math.sin((endX - bodyX) / 120)]);
-  sk.ink(fiber, { w: 8, color: NERVE_EDGE, seed: 31, wob: 1.2, freq: 1 / 200 });
-  sk.ink(fiber, { w: 3, color: NERVE, seed: 31, wob: 1.2, freq: 1 / 200 });
-  // 끝: 짧은 가지 셋과 동그란 끝
-  const ey = fiber[fiber.length - 1][1];
-  for (const [dy, i] of [[-26, 0], [0, 1], [26, 2]]) {
-    const tip = [endX + 52, ey + dy];
-    sk.ink(curve([[endX - 2, ey], [endX + 22, ey + dy * 0.5], tip]), { w: 9, color: NERVE_EDGE, seed: 41 + i, wob: 0.5 });
-    sk.ink(curve([[endX - 2, ey], [endX + 22, ey + dy * 0.5], tip]), { w: 4, color: NERVE, seed: 41 + i, wob: 0.5 });
-    const k = circ(tip[0], tip[1], 8, { over: 0.2, seed: 45 + i });
-    sk.fill(k, NERVE, { dx: 0, dy: 0, wob: 0.3, seed: 48 + i }); sk.ink(k, { w: 4, color: NERVE_EDGE, wob: 0.3, seed: 51 + i });
-  }
-  const body = curve([[bodyX - 34, fiberY - 4], [bodyX - 18, fiberY - 30], [bodyX + 12, fiberY - 32], [bodyX + 34, fiberY - 8], [bodyX + 30, fiberY + 20], [bodyX + 2, fiberY + 34], [bodyX - 26, fiberY + 24]], true, 4);
-  sk.fill(body, NERVE, { dx: 0.5, dy: 0.8, wob: 0.8, seed: 55 });
-  sk.ink(body, { w: 8, color: NERVE_EDGE, wob: 0.8, seed: 56 });
-  const nuc = circ(bodyX - 2, fiberY - 2, 11, { over: 0.2, seed: 57 });
-  sk.fill(nuc, NUC, { dx: 0, dy: 0, wob: 0.3, seed: 58 }); sk.ink(nuc, { w: 4, color: "#4A2FB0", wob: 0.3, seed: 59 });
-  // 돋보기 테: 세포의 몸은 크게 키워 본 모습이라는 표시(손잡이는 왼쪽 아래로)
-  sk.ink(circ(bodyX - 6, fiberY, 66, { over: 0.12, seed: 65 }), { w: 8, color: "#5A6B7F", seed: 66, wob: 0.8 });
-  sk.ink(dense([[bodyX - 54, fiberY + 46], [bodyX - 92, fiberY + 92]]), { w: 13, color: "#5A6B7F", seed: 67, wob: 0.6 });
-  return { sk, meta: { endX } };
 }
 
 /* ══════════ 2. 두 바구니 (u2l9) ══════════

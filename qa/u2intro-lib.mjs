@@ -188,7 +188,7 @@ export const measure = (page) =>
 // on(mark)는 시점마다 불린다: "mount"(처음), "ask"(예측이 뜬 때), "picked"(답한 뒤), "mid"(조작 중), "done"(끝)
 const noop = async () => {};
 
-/** u2l4 유난히 긴 세포. pick: 예측 보기의 낱말. how: "drag"(실제 끌기) | "key"(방향 키) | "tap"(누르기) */
+/** u2l4 유난히 긴 세포. pick: 예측 보기의 낱말. how: "key"(스페이스 키를 누르고 있기) | 그 밖(마우스로 버튼을 누르고 있기) */
 export async function playLongCell(page, { pick = "한 뼘", how = "drag", on = noop } = {}) {
   await waitPhase(page, "ask");
   await W(page, 300);
@@ -198,28 +198,21 @@ export async function playLongCell(page, { pick = "한 뼘", how = "drag", on = 
   await waitPhase(page, "pull");
   await W(page, 350);
   await on("picked");
+  // 버튼을 누르고 있는다(how "key"는 스페이스 키, 그 밖은 마우스). 40 cm쯤에서 한 번 떼어 멈추는지 보고 다시 누른다
+  const sel = ".screen.active .opn-lc-hold";
+  const box = await page.locator(sel).boundingBox();
+  const down = async () => { if (how === "key") { await page.focus(sel); await page.keyboard.down("Space"); } else { await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.down(); } };
+  const up = async () => { if (how === "key") await page.keyboard.up("Space"); else await page.mouse.up(); };
+  await down();
   let guard = 0;
-  let mid = false;
-  while ((await ds(page, "opnPhase")) === "pull" && guard++ < 60) {
-    if (how === "drag") {
-      const a = await stagePt(page, 860, 440), b = await stagePt(page, 400, 440);
-      await drag(page, a, b, 6);
-      await W(page, 120);
-    } else if (how === "key") {
-      await page.focus(".screen.active .opn-stage");
-      await page.keyboard.press("ArrowRight");
-      await W(page, 190);
-    } else {
-      const a = await stagePt(page, 700, 300);
-      await page.mouse.click(a.x, a.y);
-      await W(page, 200);
-    }
-    if (!mid && Number(await ds(page, "opnCm")) >= 40) {
-      mid = true;
-      await W(page, 500);
-      await on("mid");
-    }
-  }
+  while (Number(await ds(page, "opnCm")) < 40 && guard++ < 200) await W(page, 50);
+  await up();
+  await W(page, 400);
+  await on("mid");
+  await down();
+  guard = 0;
+  while ((await ds(page, "opnPhase")) === "pull" && guard++ < 300) await W(page, 50);
+  await up();
   await waitPhase(page, "done");
   await W(page, 700);
   await on("done");

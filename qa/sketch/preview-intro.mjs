@@ -11,13 +11,7 @@ const cells = [];
 
 if (which === "longcell" || which === "all") {
   const kid = S.longcellKid().sk.svg({ inline: true });
-  const world = S.longcellWorld().sk.svg({ inline: true });
-  const k = W / S.STAGE_W, L = S.LC;
-  const band = (pos) =>
-    `<div style="position:absolute;left:${L.bandX * k}px;top:${L.bandY * k}px;width:${L.bandW * k}px;height:${L.bandH * k}px;overflow:hidden">` +
-    `<div style="position:absolute;left:0;top:0;width:${L.worldW * k}px;height:${L.bandH * k}px;transform:translateX(${-pos * k}px)">${world}</div>` +
-    `<div style="position:absolute;right:0;top:0;bottom:0;width:${L.veil * k}px;background:linear-gradient(90deg,rgba(255,255,255,0),#fff 55%)"></div></div>`;
-  for (const [pos, t] of [[0, "처음"], [26 * 30, "30 cm"], [26 * 100, "끝"]]) cells.push(page(`longcell ${t}`, full(kid) + band(pos)));
+  cells.push(page("longcell", full(kid)));
 }
 if ((which === "baskets" || which === "all") && S.basketsBase) {
   const base = S.basketsBase().sk.svg({ inline: true });
