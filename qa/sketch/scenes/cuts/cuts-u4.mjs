@@ -52,11 +52,13 @@ function cutU4l1() {
   // 증발: 수건에서 물 알갱이가 떨어져 나와 위로 날아오른다
   const ev = [[680, 222], [736, 190], [796, 214], [852, 186], [898, 222], [704, 130], [768, 112], [830, 136], [890, 100], [740, 52], [822, 60]];
   ev.forEach(([x, y], i) => bead(sk, x, y, 11, "#5FAEDD", 81 + i * 3));
+  // 수건 겉면 곳곳에서도 알갱이가 떠난다
+  for (const [x, y, i] of [[700, 300, 0], [790, 352, 1], [866, 286, 2]]) { sk.ink(circ(x, y, 15, { over: 0, seed: 111 + i }), { w: 6, color: C.white, seed: 114 + i, wob: 0.1 }); bead(sk, x, y, 11, "#3F8FC4", 117 + i * 3); }
   for (const [x, y, i] of [[704, 176, 0], [872, 150, 1], [794, 86, 2]]) arrow(sk, [[x, y + 26], [x, y - 8]], { w: 5, color: C.gray, straight: true, seed: 121 + i, head: 12, wob: 0.1 });
   // 확산: 꽃에서 향기 알갱이가 방 안으로 퍼진다(꽃 가까이 빽빽, 멀수록 성글게)
-  const sc = [], src = [vx + 24, vy - 160];
+  const sc = [], src = [vx + 4, vy - 166];
   for (let i = 0; i < 18; i++) {
-    const t = (i + 0.5) / 18, d = 46 + 250 * Math.pow(t, 0.85), a = -0.45 + 1.3 * hash(i * 7.31 + 2.2);
+    const t = (i + 0.5) / 18, d = 30 + 270 * Math.pow(t, 0.8), a = -0.5 + 1.3 * hash(i * 7.31 + 2.2);
     sc.push([src[0] + d * Math.cos(a), src[1] + d * Math.sin(a) * 0.85]);
   }
   sc.forEach(([x, y], i) => bead(sk, x, y, 9, "#F28DB2", 141 + i * 3));
@@ -129,40 +131,47 @@ function cutU4l3() {
   const sk = new Sk(W, H, { id: "c" });
   const P0 = [16, 472], P1 = [488, 944], PT = 16, PB = 704, GY = 646;
   [[P0, "#EAF3FB"], [P1, "#FFF1E3"]].forEach(([[a, b], c], i) => { const r = rrect(a, PT, b - a, PB - PT, 22); sk.fill(r, c, { dx: 0, dy: 0, wob: 0.3, seed: 11 + i }); thin(sk, 0.6, () => sk.ink(r, { w: 9, seed: 13 + i, color: "#C9CED6" })); });
-  // 왼쪽: 냉장고 위 칸(냉동실) 문을 열고 물을 부은 얼음 틀을 넣는다
-  const fx0 = 96, fx1 = 260, ft = 356, fm = 486;
-  thin(sk, 0.78, () => {
-    const body = rrect(fx0, ft, fx1 - fx0, GY - ft, 14);
+  // 왼쪽: 쌤보다 큰 냉장고. 위 칸(냉동실) 문을 열고 물을 부은 얼음 틀을 넣는다
+  ground(sk, GY, 20, 36, 452);
+  const fx0 = 66, fx1 = 236, ft = 150, fm = 334;
+  thin(sk, 0.6, () => {
+    const body = rrect(fx0, ft, fx1 - fx0, GY - ft, 16);
     sk.fill(body, "#F4F6F8", { dx: 0, dy: 0, wob: 0.3, seed: 21 });
-    const inside = rrect(fx0 + 14, ft + 14, fx1 - fx0 - 28, fm - ft - 26, 8);
+    const inside = rrect(fx0 + 14, ft + 14, fx1 - fx0 - 28, fm - ft - 28, 8);
     sk.fill(inside, "#CFE8F7", { dx: 0, dy: 0, wob: 0.3, seed: 22 });
-    for (const [x, y, i] of [[fx0 + 36, ft + 36, 0], [fx1 - 40, ft + 92, 1]]) sparkle(sk, x, y, 10, { color: C.white, seed: 24 + i * 2, w: 3 });
-    sk.ink(inside, { w: 8, seed: 30 });
-    sk.ink(body, { w: 12, seed: 31 });
-    sk.ink(dense([[fx0, fm], [fx1, fm]]), { w: 10, seed: 32 });
-    sk.ink(dense([[fx1 - 24, fm + 30], [fx1 - 24, fm + 100]]), { w: 9, seed: 33, color: "#8A9099" });
-    // 열린 냉동실 문(왼쪽으로 활짝)
-    const door = poly([[fx0, ft + 4], [fx0 - 62, ft + 28], [fx0 - 62, fm - 14], [fx0, fm - 4]], 4);
-    sk.fill(door, "#E3E8EE", { dx: 0, dy: 0, wob: 0.3, seed: 34 }); sk.ink(door, { w: 10, seed: 35 });
+    // 성에와 고드름, 선반
+    sk.ink(curve([[fx0 + 18, ft + 24], [fx0 + 50, ft + 30], [fx0 + 84, ft + 22], [fx0 + 118, ft + 30], [fx1 - 18, ft + 24]]), { w: 7, color: C.white, seed: 23, wob: 0.2 });
+    for (const [x, i] of [[fx0 + 40, 0], [fx0 + 92, 1], [fx0 + 134, 2]]) { const ic = poly([[x - 7, ft + 26], [x + 7, ft + 26], [x, ft + 48]], 2); sk.fill(ic, C.white, { dx: 0, dy: 0, wob: 0.1, seed: 24 + i }); sk.ink(ic, { w: 4, color: "#8FC3E8", seed: 27 + i, wob: 0.1 }); }
+    sk.ink(dense([[fx0 + 16, ft + 104], [fx1 - 16, ft + 104]]), { w: 7, color: "#9DB6C8", seed: 30, wob: 0.3 });
+    sk.ink(inside, { w: 8, seed: 31 });
+    sk.ink(body, { w: 12, seed: 32 });
+    sk.ink(dense([[fx0, fm], [fx1, fm]]), { w: 10, seed: 33 });
+    sk.ink(dense([[fx1 - 22, fm + 40], [fx1 - 22, fm + 150]]), { w: 9, seed: 34, color: "#8A9099" });
+    // 열린 냉동실 문(왼쪽으로)
+    const door = poly([[fx0, ft + 4], [fx0 - 48, ft + 26], [fx0 - 48, fm - 18], [fx0, fm - 4]], 4);
+    sk.fill(door, "#E3E8EE", { dx: 0, dy: 0, wob: 0.3, seed: 35 }); sk.ink(door, { w: 10, seed: 36 });
   });
-  // 쌤: 물을 부은 얼음 틀을 냉동실로 밀어 넣는다(왼쪽을 본다)
-  const fs = 0.6, px = 384, hy = 444, hx = 292;
-  const P = pose({ elR: [78, -350], haR: [(px - hx) / fs, -(GY - hy) / fs], elL: [70, -330], haL: [(px - hx - 14) / fs, -(GY - hy - 10) / fs], tilt: -0.04 });
-  drawFigure(sk, px, GY, fs, P, { ...TEACHER, name: "teacher", mirror: true, hands: false });
-  const tray = [hx - 70, hy + 4];
-  const tr = rrect(tray[0] - 64, tray[1] - 14, 128, 28, 6);
-  sk.fill(tr, "#BFE2F4", { dx: 0, dy: 0, wob: 0.3, seed: 41 });
-  for (let k = 1; k < 4; k++) sk.ink(dense([[tray[0] - 64 + k * 32, tray[1] - 12], [tray[0] - 64 + k * 32, tray[1] + 12]]), { w: 4, color: "#5FAEDD", seed: 42 + k, wob: 0.1 });
-  sk.ink(tr, { w: 8, seed: 46 });
-  handDot(sk, [hx, hy], C.skin, 47, 11); handDot(sk, [hx + 14, hy + 10], C.skin, 48, 11);
   // 열린 냉동실에서 흘러나오는 찬 김
-  for (const [x, i] of [[fx0 - 30, 0], [fx0 - 6, 1]]) sk.ink(curve([[x, ft + 60], [x - 10, ft + 90], [x + 2, ft + 120], [x - 12, ft + 150]]), { w: 5, color: "#9FC9E6", seed: 49 + i, wob: 0.1 });
+  for (const [x, i] of [[fx0 - 18, 0], [fx0 + 2, 1]]) sk.ink(curve([[x, fm - 6], [x - 10, fm + 26], [x + 2, fm + 56], [x - 12, fm + 86]]), { w: 5, color: "#9FC9E6", seed: 37 + i, wob: 0.1 });
+  // 쌤: 물을 부은 얼음 틀을 냉동실 선반에 밀어 넣는다(왼쪽을 본다). 든 팔은 머리 밖으로
+  const fs = 0.6, px = 336, hy = 300, hx = 252;
+  const P = pose({ elR: [170, -420], haR: [(px - hx) / fs, -(GY - hy) / fs], elL: [150, -400], haL: [(px - hx - 16) / fs, -(GY - hy - 10) / fs], tilt: -0.04 });
+  drawFigure(sk, px, GY, fs, P, { ...TEACHER, name: "teacher", mirror: true, hands: false });
+  // 얼음 틀: 위에서 비스듬히 본 칸마다 물이 찼다
+  const tx0 = hx - 150, tx1 = hx - 4, ty = hy - 4;
+  const trTop = poly([[tx0 + 10, ty - 16], [tx1 + 8, ty - 16], [tx1, ty + 10], [tx0, ty + 10]], 3);
+  const trSide = poly([[tx0, ty + 10], [tx1, ty + 10], [tx1, ty + 20], [tx0, ty + 20]], 2);
+  sk.fill(trSide, "#BFD3E2", { dx: 0, dy: 0, wob: 0.2, seed: 41 });
+  sk.fill(trTop, "#EAF4FA", { dx: 0, dy: 0, wob: 0.2, seed: 42 });
+  for (let r = 0; r < 2; r++) for (let k = 0; k < 4; k++) { const cxk = lerpx(tx0 + 22, tx1 - 12, (k + 0.5) / 4) + (1 - r) * 4, cyk = ty - 8 + r * 12; const cell = rrect(cxk - 13, cyk - 4, 26, 9, 3); sk.fill(cell, "#7DB3F0", { dx: 0, dy: 0, wob: 0.1, seed: 43 + r * 4 + k }); }
+  sk.ink(trTop, { w: 6, seed: 52 }); sk.ink(trSide, { w: 6, seed: 53 });
+  handDot(sk, [hx, hy], C.skin, 54, 11); handDot(sk, [hx + 16, hy + 10], C.skin, 55, 11);
   // 가운데: 양방향 화살표(얼리면 →, 녹이면 ←)
   arrow(sk, [[432, 190], [528, 190]], { w: 10, color: C.teal, straight: true, seed: 51, head: 22, wob: 0.2 });
   arrow(sk, [[528, 190], [432, 190]], { w: 10, color: C.teal, straight: true, seed: 52, head: 22, wob: 0.2 });
   // 오른쪽: 따뜻한 창가 탁자 위 컵 속 얼음이 녹아 간다
   sun(sk, 852, 112, 40, { seed: 61 });
-  thin(sk, 0.8, () => {
+  thin(sk, 0.6, () => {
     for (const [x, i] of [[560, 0], [880, 1]]) sk.ink(dense([[x, 520], [x - 4, GY]]), { w: 12, seed: 71 + i });
     const top = rrect(520, 496, 400, 24, 8);
     sk.fill(top, C.wood, { seed: 73, tex: true, texAng: 0.02 }); sk.ink(top, { w: 11, seed: 74 });
@@ -180,9 +189,8 @@ function cutU4l3() {
   }
   sk.ink(dense([[cx - 62, wl], [cx + 62, wl]]), { w: 5, color: "#2F6DB5", seed: 89, wob: 0.3 });
   sk.ink(dense([[cx - 52, cb - 170], [cx - 44, cb - 30]]), { w: 5, color: C.white, seed: 90, wob: 0.2 });
-  sk.ink(dense([[cx - 70, cb - 196], [cx - 56, cb], [cx + 56, cb], [cx + 70, cb - 196]]), { w: 9, seed: 91 });
-  // 컵 겉의 물방울과 얼음에서 흘러내리는 물
-  drop(sk, cx + 84, cb - 120, 0.8, { rot: 0.1 }); drop(sk, cx - 86, cb - 70, 0.7, { rot: -0.1 });
+  sk.ink(dense([[cx - 70, cb - 196], [cx - 56, cb], [cx + 56, cb], [cx + 70, cb - 196]]), { w: 8, seed: 91 });
+  // 얼음에서 흘러내리는 물(컵 겉 물방울은 액화라 그리지 않는다)
   for (const [x, i] of [[cx - 30, 0], [cx + 26, 1]]) sk.ink(dense([[x, wl - 36 + i * 8], [x + 2, wl - 4]]), { w: 4, color: "#5FAEDD", seed: 92 + i, wob: 0.1 });
   // 햇살(주황 물결)
   for (const [y, i] of [[180, 0], [236, 1]]) sk.ink(curve([[812, y - 30], [786, y - 4], [760, y + 12]]), { w: 6, color: C.orange, seed: 95 + i, wob: 0.2 });
@@ -213,22 +221,21 @@ function cutU4l5() {
   // 쌤(가슴 위로 크게): 얼음 컵을 오른쪽 볼에 대고 있다
   const fx = 400, s = 1.12, fy = 300 + s * 436;
   const hc = [fx + s * 10, fy - s * 436], R = 100 * s;
-  const cw = 132, ch = 172, ccx = hc[0] + R + cw * 0.36, ccb = hc[1] + R * 0.86;
+  const cw = 132, ch = 172, ccx = hc[0] + R + cw * 0.47, ccb = hc[1] + R * 0.86;
   const P = pose({ elR: [136, -270], haR: [(ccx - fx) / s, -(fy - ccb - 14) / s], elL: [-60, -262], haL: [-30, -214], head: [10, -436], tilt: 0.06 });
   drawFigure(sk, fx, fy, s, P, { ...TEACHER, name: "teacher", hands: "L" });
   iceGlass(sk, ccx, ccb, cw, ch, 31);
   handDot(sk, [ccx, ccb + 14], C.skin, 41, 15);
   // 볼에서 컵으로 가는 열(주황 물결 화살표)
-  ray(sk, [hc[0] + R * 0.5, hc[1] + R * 0.5], [ccx - 8, ccb - ch * 0.42], 43, { amp: 5, waves: 2.5, w: 7 });
-  // 컵 겉의 물방울과 이마의 땀
-  drop(sk, ccx + cw * 0.56, ccb - ch * 0.5, 0.8, { rot: 0.1 });
+  ray(sk, [hc[0] + R - 8, hc[1] + R * 0.44], [ccx + 18, ccb - ch * 0.46], 43, { amp: 4, waves: 2, w: 7 });
+  // 더워서 흐르는 땀(컵 겉 물방울은 액화라 그리지 않는다)
   drop(sk, hc[0] - R - 26, hc[1] - R * 0.3, 1.1, { rot: -0.3 });
   return sk;
 }
 
 /* ---------- u4l6: 추운 날, 굳어 가는 촛농 옆에 손을 쬔다 ---------- */
 function candle(sk, cx, cb, sd) {
-  // 받침 접시 + 초 + 흘러내려 굳는 촛농 + 작은 불꽃. (cx, cb) = 받침 바닥 가운데. 돌려주는 값 = 촛농 끝자리들
+  // 받침 접시 + 막 끈 초 + 흘러내려 굳는 촛농. (cx, cb) = 받침 바닥 가운데. 돌려주는 값 = 촛농 끝자리들
   const dish = curve([[cx - 120, cb - 26], [cx - 104, cb - 4], [cx, cb + 2], [cx + 104, cb - 4], [cx + 120, cb - 26]], false, 3);
   sk.fill([...dish, dish[0]], "#C9D1D9", { dx: 0.6, dy: 0.8, wob: 0.3, seed: sd });
   sk.ink([...dish, dish[0]], { w: 9, seed: sd + 1 });
@@ -247,11 +254,9 @@ function candle(sk, cx, cb, sd) {
   // 받침 위에 고여 굳는 촛농
   const pool = curve([[cx - 92, cb - 20], [cx - 60, cb - 34], [cx + 40, cb - 32], [cx + 96, cb - 20], [cx + 40, cb - 12], [cx - 60, cb - 12]], true, 3);
   sk.fill(pool, "#F4E4C4", { dx: 0, dy: 0, wob: 0.3, seed: sd + 10 }); sk.ink(pool, { w: 6, seed: sd + 11, wob: 0.3 });
-  // 심지와 작은 불꽃
+  // 막 끈 심지와 가는 연기(불꽃은 없다)
   sk.ink(dense([[cx, top], [cx + 2, top - 20]]), { w: 6, seed: sd + 12 });
-  const fl = curve([[cx + 2, top - 86], [cx + 18, top - 52], [cx + 14, top - 26], [cx + 2, top - 18], [cx - 12, top - 26], [cx - 14, top - 50]], true, 3);
-  sk.fill(fl, C.orange, { dx: 0, dy: 0, wob: 0.4, seed: sd + 13 }); sk.ink(fl, { w: 6, color: C.red, seed: sd + 14, wob: 0.4 });
-  sk.fill(curve([[cx + 2, top - 60], [cx + 9, top - 40], [cx + 2, top - 28], [cx - 6, top - 40]], true, 3), C.lemon, { dx: 0, dy: 0, wob: 0.3, seed: sd + 15 });
+  sk.ink(squiggle(cx + 2, top - 26, 90, 8, 1.6, 0.4), { w: 5, color: "#B8BDC4", seed: sd + 13, wob: 0 });
   return drips.map(([x, len]) => [x, top + (cb - top) * len - 20]);
 }
 function cutU4l6() {
@@ -271,7 +276,7 @@ function cutU4l6() {
     const top = rrect(440, 536, 500, 24, 8);
     sk.fill(top, C.wood, { seed: 33, tex: true, texAng: 0.02 }); sk.ink(top, { w: 11, seed: 34 });
   });
-  sk.ink(curve([[14, GY + 2], [300, GY - 2], [480, GY + 1]]), { w: 9, seed: 35 });
+  ground(sk, GY, 35);
   const cx = 676;
   const drips = candle(sk, cx, 536, 41);
   // 쌤: 초 옆에 두 손을 쬔다(오른쪽을 본다). 손은 촛농 쪽, 불꽃보다 낮게
@@ -282,8 +287,6 @@ function cutU4l6() {
   // 굳는 촛농에서 손 쪽으로 가는 열(주황 물결 화살표)
   ray(sk, [drips[0][0] - 16, drips[0][1] - 10], [cx - 124, hy + 2], 61, { amp: 5, waves: 2.5, w: 7 });
   ray(sk, [drips[0][0] - 16, drips[0][1] + 34], [cx - 134, hy + 42], 62, { amp: 5, waves: 2.5, w: 7 });
-  // 찬 공기에 하얀 입김
-  sk.ink(curve([[fx + s * 120, GY - s * 410], [fx + s * 150, GY - s * 420], [fx + s * 170, GY - s * 404]]), { w: 5, color: "#B8BDC4", seed: 63, wob: 0.2 });
   return sk;
 }
 
@@ -293,6 +296,6 @@ export function cuts() {
     { name: "u4l2", theme: "matter4", orig: null, sk: cutU4l2(), alt: "이삿짐을 싸는 스틱맨: 벽돌은 그대로 상자에, 물은 병에 따라 담고, 풍선 속 공기는 풍선째 끌어안는다", cap: "벽돌, 물, 공기. 나르는 법이 다 달라요" },
     { name: "u4l3", theme: "matter4", orig: null, sk: cutU4l3(), alt: "얼음 틀에 물을 부어 냉동실에 넣는 쌤과 컵 속에서 녹아 가는 얼음, 그 사이의 양방향 화살표", cap: "얼리면 얼음, 꺼내 두면 다시 물. 방향마다 이름이 있어요" },
     { name: "u4l5", theme: "matter4", orig: null, sk: cutU4l5(), alt: "더운 날 얼음이 든 컵을 볼에 댄 스틱맨, 볼에서 컵 쪽으로 물결 화살표", cap: "얼음이 녹을 때 내 볼의 열을 가져가요" },
-    { name: "u4l6", theme: "matter4", orig: null, sk: cutU4l6(), alt: "추운 날 굳어 가는 촛농이 흐르는 초 옆에 손을 쬐는 스틱맨, 굳는 촛농에서 손 쪽으로 물결 화살표", cap: "촛농이 굳을 때 열을 내놓아요" },
+    { name: "u4l6", theme: "matter4", orig: null, sk: cutU4l6(), alt: "추운 날 막 끈 초에서 흘러내려 굳어 가는 촛농 옆에 손을 쬐는 스틱맨, 굳는 촛농에서 손 쪽으로 물결 화살표", cap: "촛농이 굳을 때 열을 내놓아요" },
   ];
 }
