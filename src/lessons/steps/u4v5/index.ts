@@ -4,8 +4,26 @@
 import type { StepRenderer } from "../../types";
 import { u4InkLab } from "./inkLab";
 import { u4EvapLab } from "./evapLab";
+import { u4TempLab } from "./tempLab";
+import { u4ShapeLab } from "./shapeLab";
+import { u4ModelLab } from "./modelLab";
+import { u4NamesLab } from "./namesLab";
+import { u4WatchLab } from "./watchLab";
+import { u4DryIceLab } from "./dryIceLab";
+import { u4OliveLab } from "./oliveLab";
+import { u4BalloonLab } from "./balloonLab";
+import { u4HeatLab } from "./heatLab";
 
 export const U4V5_STEPS: Record<string, StepRenderer> = {
   u4InkLab,
   u4EvapLab,
+  u4TempLab,
+  u4ShapeLab,
+  u4ModelLab,
+  u4NamesLab,
+  u4WatchLab,
+  u4DryIceLab,
+  u4OliveLab,
+  u4BalloonLab,
+  u4HeatLab,
 };

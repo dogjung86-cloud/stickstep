@@ -18,7 +18,8 @@ export async function launch({ width = 390, height = 700 } = {}) {
   const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  page.on("console", (m) => { if (m.type() === "error" && !/navigator\.vibrate|favicon|net::ERR/.test(m.text())) errors.push("console: " + m.text()); });
+  page.on("console", (m) => { if (m.type() === "error" && !/navigator\.vibrate|favicon|net::ERR|status of 404/.test(m.text())) errors.push("console: " + m.text()); });
+  page.on("response", (r) => { if (r.status() === 404 && !/favicon/.test(r.url())) errors.push("404: " + r.url()); });
   await page.addInitScript(() => {
     localStorage.setItem("science-app.v1", JSON.stringify({
       version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci",
@@ -203,6 +204,7 @@ export const measure = (page) =>
     return {
       content: sc.scrollHeight, view: sc.clientHeight, scrollTop: Math.round(sc.scrollTop),
       taps, cut, small,
+      curio: (() => { const c = step.querySelector(".curio"); return c ? Math.ceil(c.getBoundingClientRect().height) + 12 : 0; })(),
       helperOver: helper ? helper.scrollHeight > helper.clientHeight + 1 : false,
       text: step.innerText + " " + (document.querySelector(".screen.active .btn.cta")?.textContent ?? ""),
     };

@@ -60,7 +60,7 @@ export const SP = {
   ice: [[548, 452], [640, 462], [724, 448]], // 바닥의 얼음 가운데
   to: [[792, 300], [846, 292], [900, 302]], // 접시 위의 자리
   iceHit: 104,
-  juiceHit: [150, 392, 330, 120],
+  juiceHit: [150, 366, 340, 150],
 };
 const JUICE = "#F7A93B";
 export function spillBase() {

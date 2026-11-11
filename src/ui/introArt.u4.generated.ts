@@ -56,9 +56,9 @@ export const INTRO_META = {
     "iceHit": 104,
     "juiceHit": [
       150,
-      392,
-      330,
-      120
+      366,
+      340,
+      150
     ]
   },
   "wrap": {
