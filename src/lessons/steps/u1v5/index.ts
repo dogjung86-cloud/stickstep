@@ -4,7 +4,9 @@
 //   u1FairLab  u1l2 「색깔만 달라지게 하려면?」            조건 카드 셋을 정하고 실험을 돌린다(변인 통제)
 //   u1GraphLab u1l2 「표를 그래프로 옮기면 무엇이 보일까?」 표의 값을 그래프에 찍는다(자료 해석)
 //   u1TechLab  u1l4 「기술을 켜면 무엇이 달라질까?」        네 장면에서 기술을 끄고 켠다(첨단 과학기술 네 가지)
+//   u1CleanLab u1l5 「온실 기체를 줄이려면 무엇을 바꿀까?」  발전소, 자동차, 공장 굴뚝을 바꾼다(과학기술의 역할)
 import type { StepRenderer } from "../../types";
+import { cleanLab } from "./cleanLab";
 import { fairLab } from "./fairLab";
 import { graphLab } from "./graphLab";
 import { techLab } from "./techLab";
@@ -13,4 +15,5 @@ export const U1V5_STEPS: Record<string, StepRenderer> = {
   u1FairLab: fairLab,
   u1GraphLab: graphLab,
   u1TechLab: techLab,
+  u1CleanLab: cleanLab,
 };

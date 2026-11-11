@@ -16,6 +16,7 @@ import { remakeUnit } from "./v5remake";
 const fairLab = (o: { title: string; cta?: string }): Step => ({ type: "u1FairLab", ...o });
 const graphLab = (o: { title: string; cta?: string }): Step => ({ type: "u1GraphLab", ...o });
 const techLab = (o: { title: string; cta?: string }): Step => ({ type: "u1TechLab", ...o });
+const cleanLab = (o: { title: string; cta?: string }): Step => ({ type: "u1CleanLab", ...o });
 
 export const UNIT1_V5: Unit | null = remakeUnit(UNIT1, {
   u1l2: {
@@ -28,5 +29,10 @@ export const UNIT1_V5: Unit | null = remakeUnit(UNIT1, {
   u1l4: {
     intro: opener({ title: "말을 알아듣는 스피커, 비결은?", scene: "speaker", wait: "말을 들려주며 확인해 보세요", cta: "기술 켜 보기" }),
     swap: { techCards: techLab({ title: "기술을 켜면 무엇이 달라질까?", cta: "정리하기" }) },
+  },
+  u1l5: {
+    intro: opener({ title: "지구를 덮은 기체, 두꺼워지면?", scene: "blanket", wait: "기체를 늘렸다 줄여 보세요", cta: "온실 기체 줄여 보기" }),
+    // 실천 분류(binSort)는 그대로 두고 그 앞에 랩을 넣는다
+    swap: { binSort: (old) => [cleanLab({ title: "온실 기체를 줄이려면?", cta: "실천 분류하기" }), old] },
   },
 });
