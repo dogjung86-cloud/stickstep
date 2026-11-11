@@ -1,3 +1,123 @@
 /* 중1 Ⅶ 태양계 v5(랩과 도입 재제작)의 시트. main.ts가 이미 싣는다.
    이 단원의 클래스는 .u7x- 로 시작한다. 도입 장면은 .opn-u7- 로 시작한다.
    공용 뼈대(.bv-, .opn-)의 치수를 조정할 때는 이 단원의 클래스 아래에서만 한다(예: .u7x-step .bv-stage). 전역 규칙은 덮어쓰지 않는다. */
+
+/* ── 뼈대의 색을 단원 색(밤하늘 남색)으로 ─────────────── */
+.u7x-step { --subj-bio: var(--subj-space); }
+.u7x-step .bv-card.on { background: var(--subj-space-tint); }
+.u7x-step .bv-btn.main { background: var(--subj-space-tint); color: var(--subj-space-press); }
+.u7x-step .bv-qt b { color: var(--subj-space-press); }
+.u7x-step .bv-range-in::-webkit-slider-thumb { box-shadow: 0 2px 8px rgba(74, 84, 225, .35); }
+.u7x-step .bv-range-in::-moz-range-thumb { box-shadow: 0 2px 8px rgba(74, 84, 225, .35); }
+.u7x-step .curio { margin-top: 12px; }
+
+/* ── 무대 안 ─────────────────────────────────────────── */
+.u7x-cv { position: absolute; inset: 0; display: block; width: 100%; height: 100%; touch-action: none; }
+.u7x-pill { left: 10px; top: 10px; --pc: #FFC24E; pointer-events: none; }
+.u7x-tag {
+  position: absolute; pointer-events: none; font-size: 12.5px; font-weight: 800; color: #FFE9B8; white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .8), 0 0 6px rgba(0, 0, 0, .6);
+}
+.u7x-fallback canvas, .u7x-fallback .u7x-tag, .u7x-fallback .u7x-inset, .u7x-fallback .u7x-znames { display: none; }
+.u7x-shake { animation: u7xShake .34s ease-out both; }
+@keyframes u7xShake { 0%, 100% { transform: none; } 25% { transform: translateX(-5px); } 60% { transform: translateX(4px); } }
+@media (prefers-reduced-motion: reduce) { .u7x-shake { animation: none; } }
+
+/* 달의 위상: 오른쪽 위 창(지구에서 본 달). 창의 그림은 캔버스가 그 자리에 그린다 */
+.u7x-inset {
+  position: absolute; right: 8px; top: 8px; width: 84px; height: 84px; border-radius: 14px; pointer-events: none;
+  border: 1.5px solid rgba(255, 255, 255, .34); box-shadow: 0 0 0 1px rgba(0, 0, 0, .4);
+}
+.u7x-inset span {
+  position: absolute; right: 0; top: 100%; margin-top: 4px; font-size: 12.5px; font-weight: 800; color: #DCE7FB; white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .8);
+}
+.u7x-moon-sun, .u7x-moon-earth { left: 0; top: 0; will-change: transform; }
+.u7x-moon-earth { color: #CFE0FF; }
+
+/* 계절과 별자리: 별자리 이름(화면 글자가 3D 그림을 따라다닌다) */
+.u7x-znames { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.u7x-zname {
+  position: absolute; left: 0; top: 0; font-size: 12.5px; font-weight: 700; color: #AEBFDD; white-space: nowrap; will-change: transform;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .85);
+}
+.u7x-zname.sun { color: #FFB877; font-weight: 800; }
+.u7x-zname.night { color: #FFE08C; font-weight: 800; }
+
+/* 행성 그래프 */
+.u7x-val { font: 800 12.5px Pretendard, sans-serif; fill: #E8EEF9; text-anchor: middle; }
+.u7x-pname { font: 700 12.5px Pretendard, sans-serif; fill: #C6D3EA; text-anchor: middle; }
+
+/* 가로 화면으로 들어가는 무대(태양계 순항, 일식과 월식) */
+.u7x-enter { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px 14px; }
+.u7x-enter-art { flex: none; width: 100%; height: 96px; }
+.u7x-enter-art svg { display: block; width: 100%; height: 100%; }
+.u7x-enterbtn {
+  height: 56px; padding: 0 24px; border: 0; border-radius: 16px; background: var(--subj-space); color: #fff;
+  font-size: 16px; font-weight: 800; box-shadow: 0 6px 18px rgba(74, 84, 225, .45); transition: transform .12s;
+}
+.u7x-enterbtn:active { transform: scale(.965); }
+.u7x-enterbtn.pulse { animation: u7xPulse 1.8s ease-in-out infinite; }
+@keyframes u7xPulse { 0%, 100% { box-shadow: 0 6px 18px rgba(74, 84, 225, .45); } 50% { box-shadow: 0 6px 18px rgba(74, 84, 225, .45), 0 0 0 7px rgba(110, 120, 255, .22); } }
+@media (prefers-reduced-motion: reduce) { .u7x-enterbtn.pulse { animation: none; } }
+.u7x-credit { font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, .5); white-space: nowrap; }
+
+/* 가로 화면 안: 다 해냈을 때의 알림과 돌아가는 버튼 */
+.u7x-rotdone {
+  position: absolute; left: 50%; top: 58px; transform: translateX(-50%); z-index: 8; display: flex; align-items: center; gap: 12px;
+  padding: 8px 8px 8px 16px; border-radius: 16px; background: rgba(14, 22, 42, .94); border: 1px solid rgba(255, 255, 255, .22);
+  color: #fff; font-size: 14px; font-weight: 800; white-space: nowrap; box-shadow: 0 8px 24px rgba(0, 0, 0, .45);
+}
+.u7x-rotdone-btn { height: 48px; padding: 0 16px; border: 0; border-radius: 12px; background: #fff; color: var(--ink); font-size: 14px; font-weight: 800; }
+.u7x-rotdone-btn:active { transform: scale(.965); }
+.sp3-card.show ~ .u7x-rotdone { display: none; } /* 천체 카드를 읽는 동안에는 가리지 않는다 */
+
+/* ── 조작 칸 안 ──────────────────────────────────────── */
+.u7x-cap { font-size: 12.5px; line-height: 18px; font-weight: 800; color: var(--n700); padding: 0 2px; }
+
+/* 찾을 것 목록(버튼이 아니다) */
+.u7x-goals { display: grid; gap: 8px; }
+.u7x-goal {
+  position: relative; min-width: 0; height: 52px; padding: 0 10px; border-radius: 14px; border: 1.5px dashed var(--n300); background: #fff;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.u7x-goal b { font-size: 14px; line-height: 19px; font-weight: 800; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.u7x-goal i { font-style: normal; font-size: 12px; line-height: 17px; font-weight: 600; color: var(--ter); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.u7x-goal.done { border-style: solid; border-color: var(--subj-space); background: var(--subj-space-tint); }
+.u7x-goal.done i { color: var(--subj-space-press); font-weight: 800; }
+.u7x-goal.done::after, .u7x-segbtn.done::after {
+  content: ""; position: absolute; top: -6px; right: -5px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--subj-space) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.6 6.3l2.3 2.2 4.5-4.9' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px no-repeat;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+/* 고르는 버튼 줄(하늘의 방위, 태양을 보는 두 가지 방법) */
+.u7x-seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.u7x-seg.two { grid-template-columns: repeat(2, 1fr); }
+.u7x-segbtn {
+  position: relative; height: 48px; border-radius: 14px; border: 1.5px solid var(--n300); background: #fff;
+  font-size: 14.5px; font-weight: 800; color: var(--ink); box-shadow: var(--sh-card); transition: transform .12s, border-color .2s, background .2s;
+}
+.u7x-segbtn:active { transform: scale(.965); }
+.u7x-segbtn.on { border-color: var(--subj-space); background: var(--subj-space-tint); color: var(--subj-space-press); box-shadow: 0 0 0 1px var(--subj-space) inset; }
+.u7x-segbtn:disabled { opacity: .5; }
+
+/* 태양: 지구에 생기는 일(흑점 수에 따라 켜진다) */
+.u7x-lamps { display: flex; align-items: center; gap: 6px; height: 36px; }
+.u7x-lamps i { flex: none; font-style: normal; font-size: 12.5px; font-weight: 800; color: var(--n700); margin-right: 2px; }
+.u7x-lamp {
+  flex: 1; min-width: 0; height: 32px; border-radius: 999px; display: grid; place-items: center; white-space: nowrap;
+  font-size: 12.5px; font-weight: 800; color: var(--n500); background: var(--n100); border: 1px solid var(--n200); transition: background .25s, color .25s, border-color .25s;
+}
+.u7x-lamp.on { background: #FFF3D6; color: #9A5B00; border-color: #F5C56B; }
+
+/* 계절과 별자리: 읽을 값 두 줄 */
+.u7x-read { display: grid; gap: 6px; }
+.u7x-read-row {
+  display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; border-radius: 12px; background: #fff; border: 1.5px solid var(--n200); min-width: 0;
+}
+.u7x-read-row span { flex: none; font-size: 12.5px; font-weight: 800; }
+.u7x-read-row b { flex: none; font-size: 15px; font-weight: 800; color: var(--ink); }
+.u7x-read-row i { margin-left: auto; font-style: normal; font-size: 12.5px; font-weight: 700; color: var(--ter); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.u7x-read-row.sun span { color: #C46A00; }
+.u7x-read-row.night span { color: #2B62C9; }
