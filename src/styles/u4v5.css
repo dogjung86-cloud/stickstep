@@ -94,7 +94,8 @@
 .u4x-watch-paper { font-size: 14px; }
 
 /* ── 승화 랩 ─────────────────────────────────────── */
-.u4x-dry-chunk { transform-box: fill-box; transform-origin: 50% 100%; }
+.u4x-dry-chunk, .u4x-dry-cube { transform-box: fill-box; transform-origin: 50% 100%; }
+.u4x-watch-water { height: 64px; }
 .u4x-dry-fogs circle { animation: u4xFog 2.6s ease-in-out infinite alternate; }
 @keyframes u4xFog { 0% { opacity: .25; } 100% { opacity: .7; } }
 .u4x-dry-lace { transition: opacity .25s; }

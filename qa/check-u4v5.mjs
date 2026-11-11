@@ -255,28 +255,17 @@ const PLAYS = {
   u4l3: async (id) => {
     ok((await L.stepKind(page)) === "comic", `${id}: 만화로 시작하지 않음(${await L.stepKind(page)})`);
     for (let i = 0; i < 12 && (await L.stepKind(page)) === "comic"; i++) await L.cta(page);
-    ok((await L.stepKind(page)) === "u4lab:u4x-names", `${id}: 만화 다음이 이름 랩이 아님(${await L.stepKind(page)})`);
-    // 이름 랩: 먼저 일부러 다른 변화(응고)를 일으켜 본다
-    await W(700);
-    await at(id, "names-start");
-    await L.sweep(page, ".u4x-names-range", 50, -10, 6, 70);
-    await W(600);
-    ok((await L.ds(page, "u4Mission")) === "0", `${id} names: 다른 변화를 일으켰는데 넘어감`);
-    await at(id, "names-slip");
-    await L.sweep(page, ".u4x-names-range", -10, 115, 10, 70); // 융해(되돌아오기) → 기화
-    await W(700);
-    ok((await L.ds(page, "u4Mission")) === "1", `${id} names: 기화가 인정되지 않음`);
-    await at(id, "names-vapor");
-    await L.sweep(page, ".u4x-names-range", 115, 60, 5, 70); // 액화
-    await W(500);
-    await L.sweep(page, ".u4x-names-range", 60, -15, 6, 70); // 응고
-    await W(700);
-    await at(id, "names-freeze");
-    await L.sweep(page, ".u4x-names-range", -15, 30, 5, 70); // 융해
-    await endLab(id, "names", "다음 실험, 얼음 접시");
-    // 시계 접시 랩
+    ok((await L.stepKind(page)) === "u4lab:u4x-watch", `${id}: 만화 다음이 얼음 접시 랩이 아님(${await L.stepKind(page)})`);
+    // 얼음 접시 랩: 먼저 일부러 찬물을 담아 본다
     await W(500);
     await at(id, "watch-start");
+    await L.click(page, '.u4x-watch-water[data-k="cold"]');
+    await W(300);
+    await L.click(page, ".u4x-watch-put");
+    ok(await L.waitVisible(page, ".u4x-watch-redo"), `${id} watch: 찬물인데 다시 하기가 뜨지 않음`);
+    await at(id, "watch-cold");
+    await L.click(page, ".u4x-watch-redo");
+    await W(300);
     await L.click(page, ".u4x-watch-put");
     ok(await L.waitVisible(page, '.u4x-watch-spot[data-k="top"]'), `${id} watch: 살필 곳이 뜨지 않음`);
     await at(id, "watch-look");
@@ -293,17 +282,42 @@ const PLAYS = {
     await L.click(page, ".u4x-watch-paper.sb");
     await W(900);
     await at(id, "watch-red");
-    await endLab(id, "watch", "다음 실험, 승화");
-    // 승화 랩
+    await endLab(id, "watch", "다음 실험, 두 컵");
+    // 두 컵(얼음과 드라이아이스) 랩
     await W(500);
-    await at(id, "dry-start");
+    await at(id, "dry-first");
     await L.click(page, ".u4x-dry-cover");
-    await predict(id, "dry", "그대로");
+    await predict(id, "dry", "두 컵 모두");
     await L.hold(page, ".u4x-hold", 1500);
     await at(id, "dry-mid");
     await L.hold(page, ".u4x-hold", 2200);
     await wrongOnce(id, "dry");
-    await endLab(id, "dry", "개념 정리하기");
+    await endLab(id, "dry", "이름 붙이기");
+    // 용어 스텝을 지나 이름 랩으로
+    await W(500);
+    await page.screenshot({ path: join(OUT, `${id}-words.png`) });
+    texts.push((await L.readStep(page)).text);
+    await L.cta(page);
+    ok((await L.stepKind(page)) === "u4lab:u4x-names", `${id}: 용어 다음이 이름 랩이 아님(${await L.stepKind(page)})`);
+    // 이름 랩: 먼저 일부러 다른 변화(응고)를 일으켜 본다
+    await W(700);
+    await at(id, "names-start");
+    await L.sweep(page, ".u4x-names-range", 50, -10, 6, 70);
+    await W(600);
+    ok((await L.ds(page, "u4Mission")) === "0", `${id} names: 다른 변화를 일으켰는데 넘어감`);
+    await at(id, "names-slip");
+    await L.sweep(page, ".u4x-names-range", -10, 115, 10, 70); // 되돌아와서 기화
+    await W(700);
+    ok((await L.ds(page, "u4Mission")) === "1", `${id} names: 기화가 인정되지 않음`);
+    await at(id, "names-vapor");
+    await L.sweep(page, ".u4x-names-range", 115, 60, 5, 70); // 액화
+    await W(500);
+    await L.sweep(page, ".u4x-names-range", 60, -15, 6, 70); // 응고
+    await W(700);
+    await at(id, "names-freeze");
+    await L.sweep(page, ".u4x-names-range", -15, 30, 5, 70); // 융해
+    await endLab(id, "names", "개념 정리하기");
+    await tail(id);
   },
   u4l4: async (id) => {
     ok((await L.stepKind(page)) === "opener:u4-wrap", `${id}: 새 도입이 아님(${await L.stepKind(page)})`);
