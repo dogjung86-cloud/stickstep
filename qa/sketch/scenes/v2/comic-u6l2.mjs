@@ -26,8 +26,9 @@ function jtube(sk, o) {
   const path = (yL, yS) => [...dense([[xl, yL], [xl, yb]], 6), ...bend, ...dense([[xs, yb], [xs, yS]], 6)];
   const yS = sTop + air;
   thin(sk, o.k ?? 1, () => {
-    sk.ink(path(top, sTop), { w: tw + 12, seed: sd, wob: 0.5 });
-    sk.ink(path(top - 9, sTop + 4), { w: tw, color: GLASS, seed: sd, wob: 0.5, cap: "butt" });
+    sk.ink(path(top, sTop), { w: tw + 12, seed: sd, wob: 0.5, cap: "butt" });
+    sk.ink(path(top, sTop + 4), { w: tw, color: GLASS, seed: sd, wob: 0.5, cap: "butt" });
+    for (const sg of [-1, 1]) sk.ink(dense([[xl + sg * (tw / 2 + 3), top + 2], [xl + sg * (tw / 2 + 13), top - 6]]), { w: 6, seed: sd + 7 + sg, wob: 0.2 });
     sk.ink(path(o.hgL ?? yS, yS), { w: tw - 6, color: HG, seed: sd, wob: 0.5, cap: "butt" });
     sk.ink(dense([[xs, yS], [xs, sTop + 7]], 6), { w: tw - 6, color: o.airColor ?? AIR, seed: sd, wob: 0.5, cap: "butt" });
     sk.fill(circ(xs, sTop - 2, tw * 0.62, { over: 0, seed: sd + 2 }), GLASS, { dx: 0, dy: 0, wob: 0.3, seed: sd + 3 });
@@ -81,14 +82,15 @@ function table(sk, x0, x1, y, sd, bottom = 704) {
     const top = rrect(x0, y, x1 - x0, 24, 8); sk.fill(top, C.wood, { seed: sd, tex: true, texAng: 0.02 }); sk.ink(top, { w: 10, seed: sd + 1 });
   });
 }
-// 유리를 구부리던 등잔: 놋쇠 받침 + 유리 갓 + 불꽃. (x, y) = 바닥 가운데
+// 유리를 구부리던 기름 등잔: 놋쇠 몸통 + 주둥이 심지의 맨 불꽃(유리 갓 없음). (x, y) = 바닥 가운데
 function oilLamp(sk, x, y, s, sd) {
   sk.at(x, y, s, () => {
     const base = curve([[-40, 0], [-34, -30], [-14, -44], [14, -44], [34, -30], [40, 0]], false, 3);
     sk.fill([...base, base[0]], "#C9A24A", { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd }); sk.ink([...base, base[0]], { w: 8, seed: sd + 1 });
-    const glass = curve([[-16, -44], [-26, -84], [-14, -120], [14, -120], [26, -84], [16, -44]], false, 3);
-    sk.fill([...glass, glass[0]], "#EAF4F8", { dx: 0, dy: 0, wob: 0.4, seed: sd + 2, alpha: 0.9 }); sk.ink([...glass, glass[0]], { w: 6, seed: sd + 3 });
-    const fl = curve([[0, -58], [-12, -78], [0, -108], [12, -78]], true, 3); sk.fill(fl, C.orange, { dx: 0, dy: 0, wob: 0.3, seed: sd + 4 }); sk.ink(fl, { w: 5, color: C.red, seed: sd + 5, wob: 0.3 });
+    const spout = poly([[24, -40], [62, -52], [64, -44], [30, -30]], 3);
+    sk.fill(spout, "#C9A24A", { dx: 0, dy: 0, wob: 0.3, seed: sd + 2 }); sk.ink(spout, { w: 6, seed: sd + 3 });
+    const fl = curve([[62, -52], [50, -74], [62, -104], [74, -74]], true, 3); sk.fill(fl, C.orange, { dx: 0, dy: 0, wob: 0.3, seed: sd + 4 }); sk.ink(fl, { w: 5, color: C.red, seed: sd + 5, wob: 0.3 });
+    const core = curve([[62, -58], [56, -70], [62, -86], [68, -70]], true, 3); sk.fill(core, C.yellow, { dx: 0, dy: 0, wob: 0.2, seed: sd + 6 });
   });
 }
 // 촛불. (x, y) = 촛대 바닥
@@ -133,8 +135,10 @@ function syringe(sk, x0, y, len, px, sd, hit) {
   sk.fill(poly([[px + 14, y - 42], [x1 - 8, y - 42], [x1 - 8, y + 42], [px + 14, y + 42]], 4), "#E4F6F3", { dx: 0, dy: 0, wob: 0.3, seed: sd + 1 });
   sk.ink(barrel, { w: 9, seed: sd + 2 });
   const pis = rrect(px - 10, y - 46, 24, 92, 6); sk.fill(pis, "#5A5F68", { dx: 0, dy: 0, wob: 0.3, seed: sd + 3 }); sk.ink(pis, { w: 6, seed: sd + 4 });
-  sk.ink(dense([[px - 10, y], [x0 - 90, y]]), { w: 12, color: "#8A9099", seed: sd + 5, wob: 0.3 });
-  sk.ink(dense([[x0 - 90, y - 44], [x0 - 90, y + 44]]), { w: 12, seed: sd + 6, wob: 0.4 });
+  const hx = px - 250; // 손잡이는 피스톤과 함께 움직인다(막대 길이 일정)
+  sk.ink(dense([[px - 10, y], [hx, y]]), { w: 12, color: "#8A9099", seed: sd + 5, wob: 0.3 });
+  sk.ink(dense([[hx, y - 44], [hx, y + 44]]), { w: 12, seed: sd + 6, wob: 0.4 });
+  sk.ink(dense([[x0, y - 62], [x0, y + 62]]), { w: 9, seed: sd + 11, wob: 0.4 });
   const tip = rrect(x1, y - 12, 40, 24, 6); sk.fill(tip, GLASS, { dx: 0, dy: 0, wob: 0.3, seed: sd + 7 }); sk.ink(tip, { w: 7, seed: sd + 8 });
   const cap = rrect(x1 + 36, y - 18, 22, 36, 6); sk.fill(cap, C.red, { dx: 0, dy: 0, wob: 0.3, seed: sd + 9 }); sk.ink(cap, { w: 7, seed: sd + 10 });
   // 입자 여덟 개: 피스톤과 끝 사이에 고르게
@@ -216,30 +220,42 @@ function box(sk, x0, x1, y, sd = 341) {
     sk.ink(dense([[x0 + 3, y - 38], [x1 - 3, y - 38]]), { w: 5, color: C.woodDark, seed: sd + 2, wob: 0.4 });
   });
 }
+// 깨진 첫 관: 굽은 토막 + 곧은 토막(끝이 들쭉날쭉) + 흩어진 수은
+function brokenTube(sk, sd) {
+  sk.at(150, 662, 1, () => {
+    const bend = ell(0, 0, 34, 34, 0, Math.PI);
+    const legs = [...dense([[34, -70], [34, 0]], 6), ...bend, ...dense([[-34, 0], [-34, -40]], 6)];
+    sk.ink(legs, { w: 30, seed: sd, wob: 0.4, cap: "butt" }); sk.ink(legs, { w: 18, color: GLASS, seed: sd, wob: 0.4, cap: "butt" });
+    for (const [x, y] of [[34, -70], [-34, -40]]) sk.ink(dense([[x - 15, y], [x - 6, y - 12], [x + 3, y + 2], [x + 15, y - 10]], 3), { w: 5, seed: sd + x, wob: 0.2 });
+  }, 1.35);
+  sk.at(70, 690, 1, () => {
+    sk.ink(dense([[0, 0], [110, -6]]), { w: 30, seed: sd + 5, wob: 0.4, cap: "butt" }); sk.ink(dense([[0, 0], [110, -6]]), { w: 18, color: GLASS, seed: sd + 5, wob: 0.4, cap: "butt" });
+    sk.ink(dense([[110, -21], [100, -10], [114, -2], [106, 9]], 3), { w: 5, seed: sd + 6, wob: 0.2 });
+  }, -0.05);
+  beads(sk, [[230, 694, 14], [262, 690, 9], [196, 698, 8], [290, 696, 7], [120, 700, 6]], sd + 10);
+}
 function p4() {
   const sk = new Sk(W, H, { id: "d" });
   ground(sk, 704, 71);
-  stairs(sk, 620, 704, 6, 76, 60, 321);
-  // 끈으로 매단 긴 관: 굽은 곳은 상자 안
-  const xs = 520, xl = 580, sTop = 500, yb = 660;
-  for (const [y, i] of [[150, 0], [330, 1]]) { sk.ink(dense([[xl, y], [700, y - 90]]), { w: 3.5, color: "#8A6A4A", seed: 73 + i, wob: 0.3 }); sk.ink(dense([[xl - 18, y], [xl + 18, y + 2]]), { w: 6, color: "#8A6A4A", seed: 75 + i, wob: 0.3 }); }
-  const t = jtube(sk, { xl, xs, top: 70, sTop, yb, air: 44, hgL: 380, sd: 305, tw: 22 });
+  stairs(sk, 430, 704, 6, 62, 54, 321);
+  // 끈으로 층계참 난간에 매단 긴 관: 굽은 곳은 나무 상자 안, 입구는 층계참 바로 위
+  const xs = 630, xl = 700, sTop = 520, yb = 660;
+  for (const [y, i] of [[330, 0], [470, 1]]) { sk.ink(dense([[xl + 2, y], [790, y - 120]]), { w: 3.5, color: "#8A6A4A", seed: 73 + i, wob: 0.3 }); sk.ink(dense([[xl - 18, y], [xl + 18, y + 2]]), { w: 6, color: "#8A6A4A", seed: 75 + i, wob: 0.3 }); }
+  jtube(sk, { xl, xs, top: 296, sTop, yb, air: 44, hgL: 470, sd: 305, tw: 22 });
   scaleStrip(sk, xs - 30, sTop + 4, sTop + 64, 8, 313);
-  box(sk, 470, 640, 704, 341);
-  // 깨진 첫 관과 흩어진 수은 방울
-  shards(sk, [[90, 690, 0.4], [130, 676, -0.6], [62, 664, 1.1]], 77);
-  beads(sk, [[150, 694, 9], [108, 698, 7], [176, 688, 6]], 81);
-  // 조수: 계단 위에서 조금씩 붓는다
-  const hp = pose({ elL: [-96, -380], haL: [-150, -440], elR: [56, -268], haR: [30, -220], tilt: -0.08 });
-  const hx0 = 740, hy0 = 704 - 3 * 76, hs = 0.5;
+  box(sk, 580, 750, 704, 341);
+  brokenTube(sk, 77);
+  // 조수: 층계참에 서서 관 입구 위에서 조금씩 붓는다
+  const hp = pose({ elL: [-70, -360], haL: [-150, -330], elR: [56, -268], haR: [30, -220], tilt: -0.1 });
+  const hx0 = 806, hy0 = 704 - 6 * 62, hs = 0.48;
   drawFigure(sk, hx0, hy0, hs, hp, { ...HELPER, name: "helper", hands: "R" });
-  const fx = hx0 - hs * 150, fy = hy0 - hs * 440;
-  sk.at(fx - 8, fy - 6, 1, () => { const fl = curve([[-14, -30], [-20, 6], [0, 22], [20, 6], [14, -30]], false, 3); sk.fill([...fl, fl[0]], "#DCE4EA", { dx: 0, dy: 0, wob: 0.4, seed: 85 }); sk.ink([...fl, fl[0]], { w: 7, seed: 86 }); }, -2.2);
-  sk.ink(curve([[fx - 30, fy + 4], [xl + 6, fy + 20], [xl, 78]]), { w: 6, color: HG, seed: 87, wob: 0.4 });
-  handDot(sk, [fx + 6, fy + 2], C.skin, 88, 8);
+  const fx = hx0 - hs * 150, fy = hy0 - hs * 330;
+  sk.at(fx - 10, fy + 4, 1, () => { const fl = curve([[-14, -30], [-20, 6], [0, 22], [20, 6], [14, -30]], false, 3); sk.fill([...fl, fl[0]], "#DCE4EA", { dx: 0, dy: 0, wob: 0.4, seed: 85 }); sk.ink([...fl, fl[0]], { w: 7, seed: 86 }); }, -2.0);
+  sk.ink(curve([[fx - 30, fy + 18], [xl + 8, fy + 40], [xl, 300]]), { w: 6, color: HG, seed: 87, wob: 0.3 });
+  handDot(sk, [fx + 4, fy + 4], C.skin, 88, 8);
   // 보일: 아래에서 손거울로 짧은 쪽 수은 면을 보며 알려 준다
   const bp = pose({ elR: [80, -300], haR: [150, -330], elL: [-50, -260], haL: [-24, -218], tilt: 0.08 });
-  const bx = 330, bs = 0.6;
+  const bx = 400, bs = 0.6;
   drawFigure(sk, bx, 704, bs, bp, { ...BOYLE, name: "boyle", hands: "L" });
   handMirror(sk, bx + bs * 150, 704 - bs * 330, 0.8, 0.3, 89);
   handDot(sk, [bx + bs * 150, 704 - bs * 330], C.skin, 91, 9);
@@ -276,14 +292,14 @@ function p6() {
   sk.ink(dense([[xs - 60, sTop + 6], [xs - 60, sTop + 92]]), { w: 5, color: C.gray, dash: [9, 9], seed: 123, wob: 0 });
   sk.ink(dense([[xs - 70, sTop + 92], [xs - 50, sTop + 92]]), { w: 5, color: C.gray, seed: 124, wob: 0 });
   arrow(sk, [[xs + 46, t.yS - 40], [xs + 46, t.yS + 20]], { w: 7, color: C.orange, seed: 125, straight: true, head: 16, wob: 0.2 });
-  for (const [dx, i] of [[-30, 0], [0, 1], [30, 2]]) sk.ink(curve([[xs + dx - 100, 470], [xs + dx - 110, 440], [xs + dx - 96, 410], [xs + dx - 108, 380]]), { w: 5, color: C.orange, seed: 127 + i, wob: 0.4, alpha: 0.8 });
-  // 보일: 촛불을 들고 깨질까 걱정한다
-  const P = pose({ elR: [90, -300], haR: [160, -300], elL: [-50, -260], haL: [-24, -218], tilt: 0.04 });
-  const fx = 260, fy = 704, fs = 0.66;
+  for (const [y, i] of [[206, 0], [234, 1], [262, 2]]) sk.ink(curve([[420, y], [440, y - 8], [462, y + 6], [484, y - 6], [506, y + 4], [524, y]]), { w: 5, color: C.orange, seed: 127 + i, wob: 0.3, alpha: 0.85 });
+  // 보일: 촛불을 갇힌 공기 높이로 들고, 깨질까 걱정한다
+  const P = pose({ elR: [100, -430], haR: [176, -540], elL: [-50, -260], haL: [-24, -218], tilt: 0.04 });
+  const fx = 300, fy = 704, fs = 0.66;
   drawFigure(sk, fx, fy, fs, P, { ...BOYLE, name: "boyle", face: "wide", hands: "L" });
-  candle(sk, fx + fs * 160 + 4, fy - fs * 300 + 40, 0.7, 131);
-  handDot(sk, [fx + fs * 160, fy - fs * 300], C.skin, 133, 10);
-  drop(sk, 360, 330, 1);
+  candle(sk, fx + fs * 176 + 2, fy - fs * 540 + 44, 0.6, 131);
+  handDot(sk, [fx + fs * 176, fy - fs * 540 + 30], C.skin, 133, 10);
+  drop(sk, 206, 336, 1);
   return sk;
 }
 
@@ -323,9 +339,9 @@ function p8() {
   const sk = new Sk(W, H, { id: "h" });
   ground(sk, 704, 161);
   // 끝을 막은 주사기 둘: 피스톤을 누르면 입자의 개수는 그대로, 사이만 가까워지고 벽에 더 자주 부딪힌다
-  syringe(sk, 470, 220, 420, 500, 163, false);
-  syringe(sk, 470, 470, 420, 700, 201, true);
-  arrow(sk, [[300, 300], [300, 420]], { w: 9, color: C.red, seed: 241, straight: true, head: 22, wob: 0.3 });
+  syringe(sk, 520, 220, 380, 556, 163, false);
+  syringe(sk, 520, 480, 380, 746, 201, true);
+  arrow(sk, [[396, 480], [478, 480]], { w: 9, color: C.red, seed: 241, straight: true, head: 22, wob: 0.3 });
   const P = pose({ elR: [88, -316], haR: [158, -340], elL: [-50, -260], haL: [-24, -218], tilt: 0.06 });
   drawFigure(sk, 150, 704, 0.66, P, { ...TEACHER, name: "teacher" });
   return sk;
@@ -357,11 +373,11 @@ const CUTS = [
   {
     fn: p4, when: "1661년, 영국", stage: "다시 도전", title: "계단에 매단 더 긴 관",
     caption: "그런데 첫 관이 그만 깨지고 말았어요. 보일은 방에 세울 수 없을 만큼 긴 관을 구해 밝은 계단에 끈으로 매달고, 아래에는 수은을 받을 나무 상자를 두었어요. 두 사람이 함께했는데, 한 사람은 위에서 수은을 붓고 다른 한 사람은 아래에서 눈금을 보며 조금씩 부으라고 알려 주었어요.",
-    bubbles: [{ who: "boyle", text: "조금씩<br>부어요!" }, { who: "helper", text: "네!" }],
+    bubbles: [{ who: "boyle", text: "조금씩<br>부어요!" }],
   },
   {
     fn: p5, when: "1661년, 영국", stage: "더 세게", title: "4분의 1이 된 공기",
-    caption: "수은을 88인치(약 2.2 m)나 더 부어 누르는 힘을 처음의 4배로 만들자, 공기는 처음의 <b>4분의 1</b>이 되었어요. 2배로 누르면 절반, 4배로 누르면 4분의 1. 보일이 표에 적은 값은 이 규칙으로 짐작한 값과 100분의 1쯤밖에 다르지 않았어요.",
+    caption: "긴 쪽 수은이 짧은 쪽보다 88인치(약 2.25 m)나 높아지도록 부어 누르는 힘을 처음의 4배로 만들자, 공기는 처음의 <b>4분의 1</b>이 되었어요. 2배로 누르면 절반, 4배로 누르면 4분의 1. 보일이 표에 적은 값은 이 규칙으로 짐작한 값과 100분의 1쯤밖에 다르지 않았어요.",
     bubbles: [{ who: "boyle", text: "4배면<br>4분의 1!" }],
   },
   {
@@ -372,12 +388,12 @@ const CUTS = [
   {
     fn: p7, when: "1661년, 영국", stage: "반대로 늘이면", title: "늘어나는 공기",
     caption: "이번엔 수은 속에 꽂은 가는 관을 끌어올려 갇힌 공기를 늘였어요. 조수 <b>훅</b>이 도운 것으로 보여요. 누르는 힘이 절반으로 줄자 부피는 2배가 되었어요. 한쪽이 2배가 되면 다른 쪽은 절반이 되는 <b>반비례</b>예요. 친구 타운리가 짐작한 규칙을 보일이 실험으로 확인한 거예요.",
-    term: { name: "보일 법칙", def: "온도가 일정할 때, 기체의 압력과 부피는 반비례한다." },
-    bubbles: [{ who: "boyle", text: "늘이면<br>늘어나네!" }],
+    term: { name: "보일 법칙", def: "온도가 일정할 때, 기체의 압력과 부피는 반비례해요." },
+    bubbles: [{ who: "boyle", text: "늘이면<br>늘어나네!", side: "right" }],
   },
   {
     fn: p8, stage: "오늘날", title: "입자로 보면",
-    caption: "보일은 이 힘을 '공기의 용수철'이라고 불렀지만 왜 그런지는 정하지 못했어요. 오늘날에는 <b>입자</b>로 설명해요. 끝을 막은 주사기를 누르면 입자의 개수는 그대로인 채 사이만 가까워져, 벽에 더 자주 부딪혀요. 그래서 압력이 커지지요.",
+    caption: "보일은 눌린 공기가 되밀어 내는 힘을 '공기의 용수철'이라고 불렀지만 왜 그런지는 정하지 못했어요. 오늘날에는 <b>입자</b>로 설명해요. 끝을 막은 주사기를 누르면 입자의 개수는 그대로인 채 사이만 가까워져, 벽에 더 자주 부딪혀요. 그래서 압력이 커지지요.",
     bubbles: [{ who: "teacher", text: "개수는<br>그대로!" }],
   },
 ];
