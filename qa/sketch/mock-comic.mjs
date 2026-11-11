@@ -65,6 +65,7 @@ function pickCss() {
   const tokens = readFileSync(join(ROOT, "src", "styles", "tokens.css"), "utf8");
   return tokens + "\n" + keep.join("\n");
 }
+const BULB = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 18h5"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 4 10.5c-.7.7-1 1.5-1 2.5H9c0-1-.3-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg>`;
 const TAIL = `<svg class="cut-tail" viewBox="0 0 70 34" aria-hidden="true"><path d="M1 0 L62 27 L30 0 Z" fill="#FFFFFF"/><path d="M1 0 L62 27 L30 0" fill="none" stroke="#39424E" stroke-width="1.6" stroke-linejoin="miter" stroke-miterlimit="8"/></svg>`;
 // 배선 때 ui.css 에 옮길 새 규칙(때와 곳 상자)과 미리보기 전용 틀
 const EXTRA = `
@@ -81,8 +82,6 @@ body { margin: 0; background: #E9ECEF; font-family: "Pretendard Variable", Prete
 .phone.head .narr { margin-top: 14px; background: var(--n0, #fff); border: 1px solid var(--n200, #E5E8EB); border-radius: 16px; padding: 12px 14px; font-size: 14.5px; line-height: 1.6; color: var(--sub); }
 .phone.head .cta { margin-top: 18px; color: var(--n500, #8B95A1); font-size: 13px; }
 .comic-art svg { display: block; width: 100%; height: 100%; }
-.term-mock { margin-top: 14px; border-radius: 16px; background: #FFF8E6; border: 1px solid #F5DFA8; padding: 12px 14px; font-size: 14px; line-height: 1.55; color: var(--sub); }
-.term-mock b { color: var(--ink); display: block; margin-bottom: 2px; font-size: 15px; }
 .warn { font: 12px/1.4 monospace; color: #C92A2A; margin-top: 8px; white-space: pre-wrap; }
 `;
 const STAGE_TINT = ["#3182F6", "#FF9500", "#8A6BFF", "#12B886", "#0CA6C0", "#04B45F", "#F04452", "#E8850C"];
@@ -110,7 +109,8 @@ export async function mockComic(modPath, out, cols = 4) {
     if (/\d/.test(p.stage ?? "")) warn(`${where}: 단계 배지 "${p.stage}" 에 숫자가 있다(연도는 when 으로)`);
     if (!stageColor.has(p.stage)) stageColor.set(p.stage, STAGE_TINT[stageColor.size % STAGE_TINT.length]);
     const bubbleHtml = bs.map(b => `<span class="cut-bubble wrap${b.tail ? ` tail-${b.tail === "right" ? "r" : "l"}` : ""}" style="left:${b.x}%;top:${b.y}%">${b.tail ? b.text + TAIL : b.text}</span>`).join("");
-    const term = p.term ? `<div class="term-mock"><b>${p.term.name}</b>${p.term.def}</div>` : "";
+    // 용어 카드: 앱(blocks.ts 의 term)과 같은 구조. 규칙은 ui.css 에서 뽑아 온 .term-card 그대로
+    const term = p.term ? `<div class="term-card"><div class="term-ic">${BULB}</div><div><div class="term-name">${p.term.name}</div><div class="term-def">${p.term.def}</div></div></div>` : "";
     const myWarn = warnings.filter(w => w.startsWith(where + ":"));
     cells.push(`<div class="phone"><div class="comic-panel in"><div class="comic-head"><span class="comic-badge" style="--bc:${stageColor.get(p.stage)}">${p.stage ?? ""}</span><span class="comic-nav"><span class="comic-count">${i + 1} / ${list.length}</span></span></div>
       <div class="comic-title">${p.title ?? ""}</div>
