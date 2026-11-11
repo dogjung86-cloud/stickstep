@@ -10,7 +10,7 @@ import { cloud, earth, openBook } from "../lib/props.mjs";
 
 const W = 960, H = 720;
 // 뉴턴: 어깨까지 오는 밝은 긴 머리 + 붉은 갈색 외투
-const NEWTON = { hair: "curls", hairColor: "#C4AC80", coat: { color: "#7E3B45", buttons: C.gold, seam: "#55242C" }, seed: 191 };
+const NEWTON = { hair: "curls", hairColor: "#C4AC80", coat: { color: "#7E3B45", buttons: C.gold, seam: "#55242C" }, seed: 191, mini: true, face: "calm" };
 const ground = (sk, y, sd) => sk.ink(curve([[14, y + 3], [300, y - 2], [640, y + 2], [946, y - 2]]), { w: 9, seed: sd });
 
 function apple(sk, x, y, r, sd = 11) {
@@ -106,7 +106,7 @@ function p1() {
   const rock = curve([[fx - 96, fy], [fx - 100, seatY + 20], [fx - 40, seatY - 6], [fx + 40, seatY - 2], [fx + 84, seatY + 26], [fx + 90, fy]], false, 4);
   sk.fill([...rock, rock[0]], "#B9BDC4", { seed: 109, tex: true, texAng: 0.4 }); sk.ink(rock, { w: 10, seed: 110 });
   const sit = pose({ hip: [0, -212], neck: [6, -340], head: [12, -434], tilt: 0.12, elL: [50, -262], haL: [112, -250], elR: [72, -300], haR: [136, -280], knL: [96, -224], ftL: [106, -4], knR: [116, -212], ftR: [138, -2] });
-  drawFigure(sk, fx, fy, fs, sit, { ...NEWTON, name: "newton", hands: false, coat: { ...NEWTON.coat, len: 26 } });
+  drawFigure(sk, fx, fy, fs, sit, { ...NEWTON, name: "newton", face: "wide", hands: false, coat: { ...NEWTON.coat, len: 26 } });
   openBook(sk, fx + fs * 150, fy - fs * 236, 0.62, { color: "#5E7B5A", rot: -0.1, seed: 113 });
   handDot(sk, [fx + fs * 112, fy - fs * 250], C.skin, 115, 10); handDot(sk, [fx + fs * 136 + 40, fy - fs * 280 + 26], C.skin, 116, 10);
   return sk;
@@ -127,7 +127,7 @@ function p2() {
   // 뉴턴: 사과를 들고 땅을 가리킨다
   const P = pose({ elR: [70, -312], haR: [104, -384], elL: [-60, -260], haL: [-84, -196], tilt: 0.1 });
   const fx = 210, fy = 700, fs = 0.78;
-  drawFigure(sk, fx, fy, fs, P, { ...NEWTON, name: "newton", hands: "L" });
+  drawFigure(sk, fx, fy, fs, P, { ...NEWTON, name: "newton", face: "curious", hands: "L" });
   const hx = fx + fs * 104, hy = fy - fs * 384;
   apple(sk, hx + 6, hy - 34, 26, 133);
   handDot(sk, [hx, hy], C.skin, 135, 12);
@@ -208,7 +208,7 @@ function p6() {
   }, rot);
   // 뉴턴: 달을 가리킨다
   const P = pose({ elR: [124, -356], haR: [204, -462], elL: [-50, -260], haL: [-24, -218], tilt: -0.08 });
-  drawFigure(sk, 480, 694, 0.72, P, { ...NEWTON, name: "newton" });
+  drawFigure(sk, 480, 694, 0.72, P, { ...NEWTON, name: "newton", face: "smile" });
   drop(sk, 372, 330, 1.1);
   return sk;
 }

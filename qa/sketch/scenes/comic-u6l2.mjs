@@ -10,7 +10,7 @@ import { notebook, quill } from "../lib/props.mjs";
 
 const W = 960, H = 720;
 // 보일: 밝은 곱슬 가발 + 푸른 외투. 훅은 세포 만화의 그 훅(갈색 곱슬머리 + 갈색 외투). 다른 학자: 챙 넓은 모자 + 잿빛 망토
-const BOYLE = { hair: "curls", hairColor: "#DAD3C3", coat: { color: "#3F5E8C", buttons: C.gold, seam: "#2A3F5F" }, seed: 231 };
+const BOYLE = { hair: "curls", hairColor: "#DAD3C3", coat: { color: "#3F5E8C", buttons: C.gold, seam: "#2A3F5F" }, seed: 231, mini: true, face: "calm" };
 const CRITIC = { hair: "short", hairColor: "#5B463A", fringe: 24, hat: "brim", hatColor: "#3A3A40", coat: { color: "#7A7F88", seam: "#55595F" }, seed: 241 };
 const AIR = "#BFE9E2", HG = "#AEB6C0", GLASS = "#F6FBFD";
 const ground = (sk, y, sd) => sk.ink(curve([[14, y + 3], [300, y - 2], [640, y + 2], [946, y - 2]]), { w: 9, seed: sd });
@@ -59,7 +59,7 @@ function p1() {
   // 보일: 두 손 사이의 공기를 누른다(공기는 용수철처럼 되밀어낸다)
   const P = pose({ elL: [10, -300], haL: [84, -328], elR: [60, -262], haR: [240, -328] });
   const fx = 236, fy = 700, fs = 0.76;
-  drawFigure(sk, fx, fy, fs, P, { ...BOYLE, name: "boyle", hands: false });
+  drawFigure(sk, fx, fy, fs, P, { ...BOYLE, name: "boyle", face: "smile", hands: false });
   const ax = fx + fs * 162, ay = fy - fs * 328;
   const blob = circ(ax, ay, 46, { over: 0.15, seed: 13, lump: 0.08 });
   sk.fill(blob, AIR, { dx: 0, dy: 0, wob: 0.8, seed: 14 }); sk.ink(blob, { w: 7, color: "#5FB7AA", seed: 15, dash: [10, 9], wob: 0.5 });
@@ -105,7 +105,7 @@ function p3() {
   // 훅: 위에서 수은을 붓는다
   const hp = pose({ elL: [-96, -372], haL: [-150, -436], elR: [50, -260], haR: [24, -218], tilt: -0.08 });
   const hx0 = 680, hy0 = 404, hs = 0.46;
-  drawFigure(sk, hx0, hy0, hs, hp, { ...HOOKE, name: "hooke", hands: "R" });
+  drawFigure(sk, hx0, hy0, hs, hp, { ...HOOKE, name: "hooke", face: "curious", hands: "R" });
   const fx = hx0 - hs * 150, fy = hy0 - hs * 436;
   sk.at(fx - 8, fy - 6, 1, () => { const fl = curve([[-14, -30], [-20, 6], [0, 22], [20, 6], [14, -30]], false, 3); sk.fill([...fl, fl[0]], "#DCE4EA", { dx: 0, dy: 0, wob: 0.4, seed: 43 }); sk.ink([...fl, fl[0]], { w: 7, seed: 44 }); }, -2.2);
   sk.ink(curve([[fx - 32, fy + 4], [XL + 4, fy + 14], [XL, TOP + 4]]), { w: 7, color: HG, seed: 45, wob: 0.4 });
@@ -134,12 +134,12 @@ function p4() {
   beads(sk, [[384, 684, 17], [338, 690, 12], [416, 652, 10], [296, 694, 9], [640, 688, 12], [470, 616, 11], [540, 620, 9], [592, 614, 8]], 65);
   // 훅: 두 팔을 번쩍
   const hp = pose({ elL: [-104, -362], haL: [-156, -448], elR: [104, -362], haR: [156, -448], tilt: 0.06 });
-  drawFigure(sk, 706, 404, 0.46, hp, { ...HOOKE, name: "hooke" });
+  drawFigure(sk, 706, 404, 0.46, hp, { ...HOOKE, name: "hooke", face: "shock" });
   drop(sk, 800, 190, 1);
   // 보일: 기록을 꼭 쥔다
   const bp = pose({ elR: [56, -262], haR: [70, -210], elL: [-56, -262], haL: [-70, -206], tilt: -0.05 });
   const bx = 220, by = 700, bs = 0.62;
-  drawFigure(sk, bx, by, bs, bp, { ...BOYLE, name: "boyle", hands: "L" });
+  drawFigure(sk, bx, by, bs, bp, { ...BOYLE, name: "boyle", face: "wide", hands: "L" });
   notebook(sk, bx + bs * 70 + 14, by - bs * 210 - 10, 0.7, { rot: 0.1, seed: 95, check: true });
   handDot(sk, [bx + bs * 70, by - bs * 210], C.skin, 96, 9);
   emark(sk, 372, 300, 0.8, { color: C.red, rot: -0.1 });
@@ -177,7 +177,7 @@ function p5() {
   for (const dy of [0, 16]) sk.ink(dense([[706, 372 + dy], [740, 372 + dy]]), { w: 7, color: C.orange, seed: 119 + dy, wob: 0.2 });
   // 보일
   const bp = pose({ elR: [86, -300], haR: [160, -300], elL: [-50, -260], haL: [-24, -218], tilt: 0.06 });
-  drawFigure(sk, 220, 700, 0.74, bp, { ...BOYLE, name: "boyle" });
+  drawFigure(sk, 220, 700, 0.74, bp, { ...BOYLE, name: "boyle", face: "wide" });
   emark(sk, 380, 300, 0.8, { color: C.red, rot: 0.1 });
   return sk;
 }
@@ -212,7 +212,7 @@ function p6() {
   // 보일: 가는 관을 끌어올린다
   const bp = pose({ elR: [140, -372], haR: [246, -432], elL: [128, -316], haL: [234, -360], tilt: 0.05 });
   const fx = 400, fy = 700, fs = 0.74;
-  drawFigure(sk, fx, fy, fs, bp, { ...BOYLE, name: "boyle" });
+  drawFigure(sk, fx, fy, fs, bp, { ...BOYLE, name: "boyle", face: "smile" });
   return sk;
 }
 
