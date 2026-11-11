@@ -312,7 +312,7 @@ export const tempFixLab: StepRenderer = (host, step, api) => {
     ctx.setLineDash([6, 6]);
     ctx.lineWidth = 1.2;
     ctx.beginPath();
-    ctx.moveTo(176, cy);
+    ctx.moveTo(214, cy);
     ctx.lineTo(346, cy);
     ctx.stroke();
     ctx.setLineDash([]);
