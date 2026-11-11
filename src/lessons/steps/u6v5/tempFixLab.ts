@@ -3,7 +3,7 @@
 //          그림 "열기구의 원리"(가열하면 풍선이 부풀고, 기체 일부가 밖으로 밀려 나가 가벼워져 떠오른다).
 // 학생이 정하는 것: 문제 1 달걀을 어떻게 삶을지(끓는 물에 바로 넣기, 찬물부터 천천히 데우기). 문제 2 풍선 속 공기의 온도(막대).
 // 실패하는 길: 끓는 물에 바로 넣으면 껍데기 안쪽의 공기가 갑자기 데워져 빠르게 부풀고 껍데기에 금이 간다.
-//             열기구는 덜 데우면 뜨지 않고, 식히지 않으면 내려오지 않는다.
+//             (구름 높이는 바구니 바닥이 오른쪽 점선에 닿는 높이다.) 열기구는 덜 데우면 뜨지 않고, 식히지 않으면 내려오지 않는다.
 // 판정: 바로 넣은 달걀이 터지기 쉬운 까닭 → 떠오를 때 풍선 속 입자 수(무대에 남은 두 기록으로 답한다).
 // 입자 수는 온도에 맞춰 셈한다(20 ℃ 30개 기준, 풍선이 다 부푼 뒤에는 절대 온도에 반비례).
 // 옛 판(버너를 꾹 눌러 목표 높이 띠에 맞추는 비행 놀이)과 다른 점: 온도를 어느 쪽으로, 얼마나 빨리 바꿀지를 학생이 정해 문제를 푼다.
@@ -120,7 +120,7 @@ export const tempFixLab: StepRenderer = (host, step, api) => {
     lab.phase("ask2");
     frame.pips(2);
     range.input.disabled = true;
-    frame.say("무대에 남은 두 기록을 견줘 보세요. 땅에서와 구름 높이에서예요.");
+    frame.say("무대에 남은 두 기록을 견줘 보세요. 땅에서와 가장 높이 떴을 때예요.");
     frame.slot.ask(
       "떠오를 때 풍선 속 <b>입자 수</b>는 어떻게 됐나요?",
       [{ t: "줄었어요", ok: true }, { t: "늘었어요" }, { t: "그대로였어요" }],
@@ -272,7 +272,7 @@ export const tempFixLab: StepRenderer = (host, step, api) => {
     alt = ease(alt, lift, 0.035, dt);
     if (alt < 0.004 && lift === 0) alt = 0;
     const n = countAt(temp);
-    if (phase === "up") minN = Math.min(minN, n);
+    minN = Math.min(minN, n);
     const R = 24 + 9 * fill;
     while (ps.length > n) {
       ps.pop();
@@ -312,7 +312,7 @@ export const tempFixLab: StepRenderer = (host, step, api) => {
     ctx.setLineDash([6, 6]);
     ctx.lineWidth = 1.2;
     ctx.beginPath();
-    ctx.moveTo(0, cy);
+    ctx.moveTo(176, cy);
     ctx.lineTo(346, cy);
     ctx.stroke();
     ctx.setLineDash([]);
@@ -367,7 +367,7 @@ export const tempFixLab: StepRenderer = (host, step, api) => {
     }
     for (let i = leaving.length - 1; i >= 0; i--) if (leaving[i].a <= 0) leaving.splice(i, 1);
     pill(ctx, `땅에서 입자 ${N0}개`, 334, 7, { dot: "#5AA2F8", align: "right" });
-    if (phase !== "up") pill(ctx, `구름 높이에서 ${minN}개`, 334, 38, { dot: "#FF9F5A", align: "right" });
+    if (phase !== "up") pill(ctx, `가장 높이 떴을 때 ${minN}개`, 334, 38, { dot: "#FF9F5A", align: "right" });
     txt(ctx, `${Math.round(temp)} ℃`, bx + R + 10, by - 4, { size: 14, weight: 800, color: "#FFFFFF" });
     txt(ctx, `입자 ${n}개`, bx + R + 10, by + 13, { color: "#C9D6EC" });
   };

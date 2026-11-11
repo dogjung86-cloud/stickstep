@@ -150,7 +150,7 @@ export const seaSkyLab: StepRenderer = (host, step, api) => {
     ctx.strokeStyle = "rgba(190,225,255,.8)";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    for (let x = 0; x <= 346; x += 6) {
+    for (let x = 0; x <= 198; x += 6) {
       const wy = SEA + Math.sin(x / 22 + tMs / 600) * 1.4;
       if (x === 0) ctx.moveTo(x, wy);
       else ctx.lineTo(x, wy);
@@ -175,7 +175,7 @@ export const seaSkyLab: StepRenderer = (host, step, api) => {
     ctx.lineWidth = 2.4;
     for (let k = 0; k < 4; k++) {
       const a = (k * Math.PI) / 2 + Math.PI / 4;
-      const len = 5 + pShown * 5;
+      const len = 3 + pShown * 7;
       const x1 = bx + Math.cos(a) * (r + 5);
       const y1 = by + Math.sin(a) * (r + 5);
       const x0 = bx + Math.cos(a) * (r + 5 + len);
@@ -199,7 +199,7 @@ export const seaSkyLab: StepRenderer = (host, step, api) => {
     drawDots(ctx, ps, bx, by, 205, 2.4);
     // 값: 물속에서는 풍선의 오른쪽에, 물 위에서는 풍선의 아래에 적는다
     const under = idx >= 3;
-    const lx = under ? Math.max(48, bx) : bx + r + 14 + pShown * 4;
+    const lx = under ? Math.max(48, bx) : bx + r + 12 + pShown * 7;
     const ly = under ? by + r + 30 : by;
     txt(ctx, `부피 ${fmtV(STOPS[idx].p)}`, lx, ly - 8, { color: "#FFFFFF", size: 13, weight: 800, align: under ? "center" : "left" });
     txt(ctx, "입자 8개", lx, ly + 8, { color: "#C9D6EC", align: under ? "center" : "left" });

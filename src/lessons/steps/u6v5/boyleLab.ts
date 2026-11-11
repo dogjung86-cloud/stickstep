@@ -132,7 +132,7 @@ export const boyleLab: StepRenderer = (host, step, api) => {
       box.setCount(N, bounds(vol));
       recs.set(24, 1);
       api.setCTA("부피를 줄이며 값을 기록해 보세요", { enabled: false });
-      frame.say("센서가 끝을 막았어요. 24 mL에서 1기압. 피스톤을 밀고 <b>세 번 넘게</b> 기록해 보세요.");
+      frame.say("센서가 끝을 막았어요. 24 mL에서 1기압. 피스톤을 밀며 다른 부피에서 <b>세 번</b> 기록해 보세요.");
       sync();
       return;
     }

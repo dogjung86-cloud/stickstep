@@ -88,6 +88,15 @@ if (cmd === "blind") {
       q += `**${no}.** (${l.id}, ${s.mode === "multi" ? "모두 고르기" : "하나 고르기"}) ${strip(s.prompt)}\n\n${opts.map(([v], i) => `- ${L[i]} ${strip(v)}`).join("\n")}\n\n`;
       const ans = [].concat(s.answer).map((ai) => L[opts.findIndex(([, i]) => i === ai)]).sort();
       k += `${no}. ${ans.join(", ")}\n`;
+    } else if (s.type === "binSort") {
+      const items = shuffle(s.items);
+      q += `**${no}.** (${l.id}, 나눠 담기) ${strip(s.lead)} 통: ${s.bins.map((b) => `[${strip(b.label)}: ${strip(b.hint)}]`).join(" ")}
+
+${items.map(([v], i) => `- (${"가나다라마바사"[i]}) ${strip(v.label)}`).join("\n")}
+
+`;
+      k += `${no}. ${items.map(([v], i) => `${"가나다라마바사"[i]} ${s.bins.find((b) => b.id === v.bin).label}`).join(", ")}
+`;
     } else if (s.type === "order") {
       const items = shuffle(s.items);
       q += `**${no}.** (${l.id}, 차례대로 놓기) ${strip(s.lead)}\n\n${items.map(([v], i) => `- (${"가나다라마"[i]}) ${strip(v)}`).join("\n")}\n\n`;

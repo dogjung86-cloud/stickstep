@@ -58,7 +58,7 @@ export const strawLab: StepRenderer = (host, step, api) => {
     frame.say("오른쪽 그림을 보세요. 화살표의 길이가 <b>한 칸이 받는 힘</b>이에요.");
     frame.slot.ask(
       "같은 힘으로 눌렀는데 <b>뾰족한 쪽만</b> 뚫린 까닭은?",
-      [{ t: "힘을 받는 면적이 좁아서", ok: true }, { t: "누르는 힘이 더 커져서" }, { t: "빨대가 더 무거워져서" }],
+      [{ t: "힘을 받는 면적이 좁아서", ok: true }, { t: "뾰족한 쪽을 더 세게 눌러서" }, { t: "빨대가 더 무거워져서" }],
       (ok) => lab.grade(ok),
       {
         why: "같은 힘이 좁은 면적에 몰려 그 자리를 세게 눌러요.",
@@ -191,9 +191,9 @@ export const strawLab: StepRenderer = (host, step, api) => {
     // 오른쪽: 뚜껑에 닿는 면적과 한 칸이 받는 힘
     txt(ctx, "뚜껑에 닿는 면적", 268, 22, { align: "center", color: "#9FB2D0" });
     const n = AREA[e];
-    const cols = n === 1 ? 1 : 3;
-    const rows = n === 1 ? 1 : 2;
-    const cell = 20;
+    const cols = n;
+    const rows = 1;
+    const cell = 15;
     const gx = 268 - (cols * cell) / 2;
     const gy = 86;
     const per = f / n;
@@ -208,7 +208,7 @@ export const strawLab: StepRenderer = (host, step, api) => {
         ctx.strokeRect(x + 0.5, y + 0.5, cell - 1, cell - 1);
         if (r === 0) {
           // 칸마다 받는 힘의 화살표
-          const len = Math.max(4, per * 9);
+          const len = Math.max(5, per * 9);
           const ax = x + cell / 2;
           ctx.strokeStyle = "#FFD68A";
           ctx.fillStyle = "#FFD68A";

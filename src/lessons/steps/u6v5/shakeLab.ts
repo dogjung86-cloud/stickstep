@@ -83,7 +83,7 @@ export const shakeLab: StepRenderer = (host, step, api) => {
     gn += 12;
     blown += 1;
     haptic(HAPTIC.tap);
-    gas.push(...dots(12, 20, 1.3));
+    gas.push(...dots(12, R, 1.3));
     gasNote.set(`풍선 속 입자 <b>${gn}개</b>`, gn >= 38 ? "팽팽해요" : "조금 더 커졌어요");
     blow.disabled = gn >= 38;
     if (blown === 1) {
@@ -221,7 +221,7 @@ export const shakeLab: StepRenderer = (host, step, api) => {
     txt(ctx, "손바닥이", 308, 40, { align: "center", color: "#9FB2D0" });
     txt(ctx, "받는 힘", 308, 56, { align: "center", color: "#9FB2D0" });
     vbar(ctx, 297, 70, 22, 112, force, force > 0.6 ? "#FF9F5A" : "#FFD68A");
-    txt(ctx, force < 0.03 ? "없음" : force > 0.6 ? "세요" : force > 0.25 ? "보통" : "약해요", 308, 198, { align: "center", size: 13, weight: 800, color: "#E8EEF9" });
+    txt(ctx, lv === 0 && force < 0.05 ? "없음" : force > 0.6 ? "세요" : force > 0.25 ? "보통" : "약해요", 308, 198, { align: "center", size: 13, weight: 800, color: "#E8EEF9" });
   };
 
   const drawGas = (ctx: CanvasRenderingContext2D, dt: number): void => {
