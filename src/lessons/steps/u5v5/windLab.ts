@@ -34,6 +34,12 @@ export const windLab: StepRenderer = (host, step, api) => {
   const log = u5Log([{ name: "뒤에서 불 때" }, { name: "앞에서 불 때" }, { name: "옆에서 불 때" }]);
   log.el.classList.add("tight");
 
+  /** 바람이 미는 방향. 옆바람은 지금 운동 방향의 오른쪽 직각 방향이다(화면에서는 아래로 휘게 한다). */
+  const windDir = (): [number, number] => {
+    if (wind !== "side") return DIR[wind ?? "back"];
+    const sp = Math.hypot(ball.vx, ball.vy) || 1;
+    return [-ball.vy / sp, ball.vx / sp];
+  };
   const restart = (): void => {
     ball.x = 24;
     ball.y = st.h() / 2 + 6;
@@ -61,13 +67,13 @@ export const windLab: StepRenderer = (host, step, api) => {
     if (seen[k]) return;
     seen[k] = true;
     haptic(HAPTIC.correct);
-    log.set(k === "back" ? 0 : k === "front" ? 1 : 2, k === "back" ? "점점 빨라짐" : k === "front" ? "점점 느려짐" : "가는 방향이 휘어짐");
+    log.set(k === "back" ? 0 : k === "front" ? 1 : 2, k === "back" ? "점점 빨라짐" : k === "front" ? "점점 느려짐" : "방향이 휘어짐 · 속력 그대로");
     f.pips(count());
     if (count() === 3) {
       finished = true;
       tm.later(() => {
         wind = null;
-        f.say("바람이 운동 방향과 <b>나란하면</b> 속력이, <b>나란하지 않으면</b> 가는 방향이 변했어요.");
+        f.say("바람이 운동 방향과 <b>나란하면</b> 속력이, 옆에서 <b>직각으로</b> 불면 가는 방향이 변했어요.");
         tm.later(askFinal, 2200);
       }, 900);
     } else {
@@ -100,10 +106,17 @@ export const windLab: StepRenderer = (host, step, api) => {
     }
     // 바람의 힘
     if (wind) {
-      const [dx, dy] = DIR[wind];
+      const [dx, dy] = windDir();
+      const before = Math.hypot(ball.vx, ball.vy);
       ball.vx += dx * 0.02 * dt;
       ball.vy += dy * 0.02 * dt;
       if (wind === "front" && ball.vx < 0) ball.vx = 0;
+      if (wind === "side") {
+        // 옆바람은 늘 운동 방향에 수직이다: 방향만 바뀌고 속력은 그대로다
+        const now = Math.hypot(ball.vx, ball.vy) || 1;
+        ball.vx *= before / now;
+        ball.vy *= before / now;
+      }
       const sp = Math.hypot(ball.vx, ball.vy);
       if (wind === "back" && sp > V0 * 1.7) observe("back");
       if (wind === "front" && sp < V0 * 0.35) observe("front");
@@ -130,14 +143,14 @@ export const windLab: StepRenderer = (host, step, api) => {
     u5Text(ctx, "처음 가던 길", w - 14, mid - 12, { color: U5.dim, px: 12, align: "right" });
     // 바람 줄기
     if (wind) {
-      const [dx, dy] = DIR[wind];
+      const [dx, dy] = windDir();
       streak += 4 * dt;
       ctx.strokeStyle = "rgba(160,205,255,.5)";
       ctx.lineWidth = 2;
       ctx.lineCap = "round";
       for (let i = 0; i < 9; i++) {
-        const bx = (i * 83 + (dx ? streak * dx : 0) + 2000 * w) % w;
-        const by = 64 + ((i * 47 + (dy ? streak * dy : 0)) % (h - 80));
+        const bx = (((i * 83 + streak * dx) % w) + w) % w;
+        const by = 64 + ((((i * 47 + streak * dy) % (h - 80)) + (h - 80)) % (h - 80));
         ctx.beginPath();
         ctx.moveTo(bx, by);
         ctx.lineTo(bx + dx * 22, by + dy * 22);
@@ -161,9 +174,9 @@ export const windLab: StepRenderer = (host, step, api) => {
     ctx.arc(ball.x, ball.y, 12, 0, Math.PI * 2);
     ctx.fill();
     if (wind) {
-      const [dx, dy] = DIR[wind];
+      const [dx, dy] = windDir();
       drawForceArrow(ctx, ball.x, ball.y, dx * 34, dy * 34, { color: U5.back, width: 4 });
-      u5Text(ctx, "바람의 힘", ball.x + dx * 20 + (dy ? 40 : 0), ball.y + (dy ? 26 : -22), { color: "#FFB3B3", px: 12 });
+      u5Text(ctx, "바람의 힘", ball.x + dx * 20 + (wind === "side" ? 44 : 0), ball.y + (wind === "side" ? dy * 30 : -22), { color: "#FFB3B3", px: 12 });
     }
     const sp = Math.hypot(ball.vx, ball.vy);
     u5Read(ctx, w, ((sp / V0) * 2).toFixed(1), "m/s", "속력");

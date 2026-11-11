@@ -33,6 +33,7 @@ export const forceLab: StepRenderer = (host, step, api) => {
   const ball = { x: 70, v: 0, home: 70, spin: 0, from: 70 };
   let squash = 0; // 찰흙이 눌린 정도 0~1
   let squashTo = 0;
+  let view: "ball" | "clay" = "ball"; // 무대에 놓인 물체. 판정 때는 공으로 되돌린다(질문이 공을 묻는다)
 
   const GY = (h: number): number => h - 40;
   const R = 17;
@@ -49,6 +50,7 @@ export const forceLab: StepRenderer = (host, step, api) => {
       f.say(says[p]);
       log.mark(p);
     }
+    if (p === 3) view = "clay";
     if (p === 2) {
       ball.home = st.w() - 70;
       ball.x = ball.home;
@@ -131,6 +133,9 @@ export const forceLab: StepRenderer = (host, step, api) => {
   st.cv.addEventListener("pointercancel", release);
 
   function askFinal(): void {
+    view = "ball";
+    ball.home = 70;
+    ball.x = 70;
     f.say("그린 화살표 세 개를 견줘 보세요. 길이가 서로 달라요.");
     f.slot.ask(
       "화살표를 길게 그리면 공이 더 멀리 갔어요. 화살표의 길이는 무엇을 나타낼까요?",
@@ -152,10 +157,15 @@ export const forceLab: StepRenderer = (host, step, api) => {
     ghosts.forEach((g, i) => {
       const y = 76 + i * 22;
       const x0 = g.dir > 0 ? 40 : w - 40;
-      drawForceArrow(ctx, x0, y, g.len * g.dir, 0, { color: U5.push, alpha: 0.55, width: 3 });
+      // 기록한 화살표도 물체(작은 공)에서 시작하게 그린다: 시작점이 힘이 작용하는 곳이다
+      ctx.fillStyle = "rgba(201,219,245,.75)";
+      ctx.beginPath();
+      ctx.arc(x0 - 7 * g.dir, y, 7, 0, Math.PI * 2);
+      ctx.fill();
+      drawForceArrow(ctx, x0, y, g.len * g.dir, 0, { color: U5.push, alpha: 0.7, width: 3 });
       u5Text(ctx, `${toN(g.len)} N`, x0 + (g.len + 26) * g.dir, y, { color: U5.dim, px: 12 });
     });
-    if (phase <= 2) {
+    if (view === "ball") {
       // 공
       if (Math.abs(ball.v) > 0.02) {
         ball.x += ball.v * dt;
@@ -187,7 +197,7 @@ export const forceLab: StepRenderer = (host, step, api) => {
       if (drag && drag.len > 4) {
         drawForceArrow(ctx, ball.x, by, drag.len * drag.dir, 0, { color: U5.push, width: 5 });
         u5Read(ctx, w, String(toN(drag.len)), "N", "힘의 크기");
-      } else if (!busy) {
+      } else if (!busy && phase <= 2) {
         const pulse = 0.5 + 0.5 * Math.sin(t / 300);
         ctx.strokeStyle = `rgba(90,162,248,${0.35 + pulse * 0.4})`;
         ctx.lineWidth = 2;
@@ -195,7 +205,7 @@ export const forceLab: StepRenderer = (host, step, api) => {
         ctx.arc(ball.x, by, R + 6 + pulse * 3, 0, Math.PI * 2);
         ctx.stroke();
       }
-      u5Pill(ctx, phase === 2 ? "왼쪽으로 밀기" : phase === 0 ? "살살 밀기" : "세게 밀기", U5.push);
+      u5Pill(ctx, phase > 2 ? "그린 화살표 견주기" : phase === 2 ? "왼쪽으로 밀기" : phase === 0 ? "살살 밀기" : "세게 밀기", U5.push);
     } else {
       // 찰흙: 눌린 만큼 낮고 넓어진다(부피는 그대로)
       squash += (squashTo - squash) * Math.min(1, 0.18 * dt);

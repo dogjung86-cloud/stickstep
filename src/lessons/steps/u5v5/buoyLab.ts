@@ -36,6 +36,7 @@ export const buoyLab: StepRenderer = (host, step, api) => {
   let dwell = 0;
   let lock = false;
   let predicted = false;
+  let asking = false; // 마지막 판정이 떠 있는 동안에는 무대의 답(물이 미는 힘의 값)을 가린다
 
   const sub = (): number => clamp((y - WY) / WH, 0, 1); // 잠긴 비율
   const read = (): number => AIR - LIFT * sub();
@@ -122,6 +123,7 @@ export const buoyLab: StepRenderer = (host, step, api) => {
   };
 
   function askFinal(): void {
+    asking = true;
     f.slot.ask(
       "추가 완전히 잠겼을 때, 물이 추를 위로 밀어 올린 힘은 몇 N일까요?",
       [{ t: "6 N", ok: true }, { t: "14 N" }, { t: "20 N" }],
@@ -130,6 +132,7 @@ export const buoyLab: StepRenderer = (host, step, api) => {
     );
   }
   function finish(): void {
+    asking = false;
     f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
     f.slot.conclude("물이 물체를 위로 밀어 올리는 힘이 <b>부력</b>이에요. 크기는 줄어든 눈금만큼이고, 물에 <b>잠긴 부피</b>가 클수록 커요.");
     api.enableCTA(s.cta ?? "다음");
@@ -227,7 +230,7 @@ export const buoyLab: StepRenderer = (host, step, api) => {
     // 두 힘: 중력(아래, 늘 20 N)과 물이 미는 힘(위, 잠긴 만큼). 1 N에 2.2px.
     drawForceArrow(ctx, cx + 30, y - WH / 2, 0, AIR * 2.2, { color: U5.back, width: 4 });
     u5Text(ctx, "중력 20 N", bx1 + 14, Math.min(y + 14, h - 16), { color: "#FFB3B3", px: 12, align: "left" });
-    if (sb > 0.05) {
+    if (sb > 0.05 && !asking) {
       drawForceArrow(ctx, cx - 30, y - WH / 2, 0, -(6 + LIFT * sb * 4.2), { color: U5.up, width: 4 });
       u5Text(ctx, `물이 미는 힘 ${(LIFT * sb).toFixed(1)} N`, 14, 58, { color: "#9BE8C4", px: 12.5, align: "left" });
     }
