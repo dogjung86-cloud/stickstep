@@ -88,7 +88,7 @@ export const raceLab: StepRenderer = (host, step, api) => {
     }
     glow += ((heating ? 1 : 0) - glow) * Math.min(1, 0.15 * dt);
     const oilOn = phase === "predict" || phase === "setup" || phase === "oil";
-    drawBeaker(ctx, 16, "물", waterT(), "rgba(90,169,255,.42)", C_WATER, glow, false);
+    drawBeaker(ctx, 16, "물", waterT(), "rgba(90,169,255,.42)", C_WATER, glow, phase === "ask" || phase === "done");
     drawBeaker(ctx, 90, "식용유", oilT(), "rgba(255,214,102,.45)", C_OIL, oilOn ? glow : 0, !oilOn, oilMass / 200);
     txt(ctx, oilMass ? `물 200 g · 식용유 ${oilMass} g` : "물 200 g · 식용유 ?", 79, 22, { size: 12.5, color: oilMass === 100 ? "#FF8F8F" : SUB });
     host.dataset.u3Oil = String(oilMass);

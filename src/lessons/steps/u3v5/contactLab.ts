@@ -261,7 +261,7 @@ export const contactLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.ctaUnlock);
     const fin = Math.round(run0.fin);
     const d = run0.cup - OUT0;
-    if (Math.abs(d) < 6) f.say("두 물의 온도가 거의 같아서 열이 이동하지 않았어요. 컵을 꺼내 온도 차이를 크게 해 봐요.");
+    if (Math.abs(d) < 1.5) f.say("두 물의 온도가 같아서 열이 이동하지 않았어요. 컵을 꺼내 온도 차이를 크게 해 봐요.");
     else if (d <= -20) {
       coldDone = true;
       f.say(`열이 <b>바깥 물에서 컵으로</b> 이동했어요. 바깥 물은 식고 컵 속 물은 데워져 <b>${fin}℃</b>에서 같아졌어요.`);
