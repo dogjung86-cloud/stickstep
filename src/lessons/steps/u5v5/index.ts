@@ -8,7 +8,7 @@ import { gravityLab } from "./gravityLab";
 import { springLab5 } from "./springLab5";
 import { slopeLab } from "./slopeLab";
 import { buoyLab } from "./buoyLab";
-import { windLab } from "./windLab";
+import { fanLab } from "./fanLab";
 
 export const U5V5_STEPS: Record<string, StepRenderer> = {
   u5ArrowLab: arrowLab,
@@ -17,5 +17,5 @@ export const U5V5_STEPS: Record<string, StepRenderer> = {
   u5SpringLab: springLab5,
   u5SlopeLab: slopeLab,
   u5BuoyLab: buoyLab,
-  u5WindLab: windLab,
+  u5FanLab: fanLab,
 };

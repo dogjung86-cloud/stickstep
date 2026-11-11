@@ -15,7 +15,7 @@ const gravityLab = lab("u5GravityLab");
 const springLab5 = lab("u5SpringLab");
 const slopeLab = lab("u5SlopeLab");
 const buoyLab = lab("u5BuoyLab");
-const windLab = lab("u5WindLab");
+const fanLab = lab("u5FanLab");
 
 // 남겨 쓰는 정본 문제의 해설에서 옛 랩의 이름을 가리키던 글귀만 맞춘다(개념, 정리, 새 문제는 unit5v5parts.ts).
 // 스텝 객체를 고치지 않고 글자만 바꾼 새 객체를 만든다. 찾지 못한 글귀는 개발 서버 콘솔에 알린다.
@@ -88,6 +88,6 @@ export const UNIT5_V5: Unit | null = remakeUnit(UNIT5, {
   u5l7: {
     after: then(retext([["바람 축구장에서 바람(힘)을 거는 순간", "실험에서 바람(힘)을 보내는 순간"], ["실험실에서 건 바람과 똑같아요.", "실험에서 보낸 바람과 똑같아요."]]), rebuild("u5l7")),
     intro: opener({ title: "찬 공은 끝까지 굴러갈까요?", scene: "u5-roll", wait: "공을 차고 지켜보세요", cta: "실험실 열기" }),
-    swap: { windSoccer: windLab({ title: "힘을 받으면 공은 어떻게 될까요?", cta: "개념 정리하기" }) },
+    swap: { windSoccer: fanLab({ title: "바람은 공을 어떻게 바꿀까요?", cta: "개념 정리하기" }) },
   },
 });

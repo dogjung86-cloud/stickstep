@@ -239,22 +239,18 @@ LABS.u5l6 = async () => {
   await endLab();
 };
 LABS.u5l7 = async () => {
-  await W(page, 600);
   await at("start");
-  await holdBtn(page, '.u5x-wind[data-k="back"]', 1300);
-  ok(await waitPips(1), "u5l7: 뒤에서");
-  await W(page, 1800);
-  await holdBtn(page, '.u5x-wind[data-k="front"]', 1500);
-  ok(await waitPips(2), "u5l7: 앞에서");
-  await W(page, 1800);
-  const r = await page.evaluate(() => { const q = document.querySelector('.screen.active .u5x-wind[data-k="side"]').getBoundingClientRect(); return { x: q.left + q.width / 2, y: q.top + q.height / 2 }; });
-  await page.mouse.move(r.x, r.y);
-  await page.mouse.down();
-  await W(page, 900);
-  await at("side");
-  await W(page, 500);
-  await page.mouse.up();
-  ok(await waitPips(3), "u5l7: 옆에서");
+  const run = async (k, n, ms, shot) => {
+    if (k !== "none") await click(page, `.bv-card[data-k="${k}"]`);
+    await click(page, ".u5x-roll");
+    if (shot) { await W(page, ms); await at(shot); }
+    ok(await waitPips(n), "u5l7: " + k);
+    await W(page, 300);
+  };
+  await run("none", 1, 1200, "none");
+  await run("back", 2, 0);
+  await run("front", 3, 1500, "front");
+  await run("side", 4, 1500, "side");
   await judge(true);
   await endLab();
 };
