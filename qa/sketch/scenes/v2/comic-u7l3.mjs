@@ -67,6 +67,13 @@ function stream(sk, a, b, sd, n = 7) {
 }
 // 흐린 안개(가로 물결 줄)
 const haze = (sk, x0, x1, ys, sd) => ys.forEach((y, i) => sk.ink(curve([[x0 + i * 14, y], [(x0 + x1) / 2 - 60, y - 8], [(x0 + x1) / 2 + 60, y + 6], [x1 - i * 18, y - 2]]), { w: 16, color: "#ECE6DA", seed: sd + i, wob: 0.8, alpha: 0.92 }));
+// 밤하늘의 별: 밝은 네 갈래 빛(외곽선도 밝은 색)
+function star(sk, x, y, r, sd) {
+  const pts = [];
+  for (let i = 0; i < 8; i++) { const a = -Math.PI / 2 + i * Math.PI / 4, rr = i % 2 ? r * 0.32 : r; pts.push([x + rr * Math.cos(a), y + rr * Math.sin(a)]); }
+  sk.fill(poly(pts, 3), "#FFF3C4", { dx: 0, dy: 0, wob: 0.3, seed: sd });
+  sk.ink(poly(pts, 3), { w: 2.5, color: "#FFE7A0", wob: 0.3, seed: sd + 1 });
+}
 // 오로라 커튼: 아래 테두리를 따라 위로 뻗는 빛 줄기. 넓고 옅은 줄 위에 가늘고 조금 진한 줄을 겹쳐 부드럽게
 function aurora(sk, pts, len, cols, sd, alpha = 0.85) {
   pts.forEach(([x, y], i) => {
@@ -106,10 +113,10 @@ function soupBowl(sk, x, y, rx, sd) {
     const body = [...curve([[x - rx - 12, y], [x - rx + 6, y + 70], [x - rx * 0.6, y + 120], [x + rx * 0.6, y + 120], [x + rx - 6, y + 70], [x + rx + 12, y]], false, 4)];
     sk.fill([...body, body[0]], "#6B4A32", { seed: sd, tex: true, texAng: 0.05 }); sk.ink([...body, body[0]], { w: 10, seed: sd + 1 });
     const surf = ell(x, y, rx + 6, rx * 0.26);
-    sk.fill(surf, "#8A5226", { dx: 0, dy: 0, wob: 0.4, seed: sd + 2 });
-    // 구름 같은 칸(밝은 곳은 올라오는 국물, 어두운 틈은 가라앉는 국물)
-    let n = 0;
-    for (const [u, v] of [[-0.74, 0.05], [-0.46, -0.5], [-0.42, 0.5], [-0.14, 0], [0.16, -0.52], [0.18, 0.52], [0.46, 0], [0.74, -0.3], [0.72, 0.36]]) { const c = circ(x + u * rx, y + v * rx * 0.2, rx * 0.15, { over: 0, seed: sd + 10 + n, lump: 0.25, sy: 0.55 }); sk.fill(c, "#E8C080", { dx: 0, dy: 0, wob: 0.5, seed: sd + 20 + n }); n++; }
+    // 국물 면: 쌀알 무늬와 같은 칸(밝은 칸은 올라오는 국물, 어두운 틈은 가라앉는 국물)을 비스듬히 본 모습
+    sk.save(); sk.translate(x, y); sk.scale(1, 0.26);
+    granules(sk, 0, 0, rx + 4, 40, sd + 50, "#E2B36A", "#8A5226", "#EFC985");
+    sk.restore();
     sk.ink(surf, { w: 9, seed: sd + 3 });
     for (const sg of [-1, 1]) sk.ink(dense([[x + sg * (rx + 10), y + 30], [x + sg * (rx + 34), y + 30]]), { w: 12, seed: sd + 4 + sg, wob: 0.4 });
   });
@@ -224,7 +231,11 @@ function p2() {
 function p3() {
   const sk = new Sk(W, H, { id: "c" });
   ground(sk, 704, 71);
-  const cx = 262, cy = 346, r = 200;
+  const cx = 330, cy = 390, r = 190;
+  // 작은 해와 그 한 조각을 크게 본다는 확대 선
+  sunDisc(sk, 110, 110, 64, { seed: 421, tex: false, w: 7, spots: [[0.3, 0.2, 0.14]] });
+  sk.ink(poly([[118, 72], [150, 72], [150, 104], [118, 104]], 3), { w: 5, color: C.ink, seed: 168, wob: 0.2 });
+  for (const [a, b, i] of [[[150, 72], [cx + r * 0.71, cy - r * 0.71]], [[118, 104], [cx - r * 0.71, cy + r * 0.71]]].map((v, i) => [...v, i])) sk.ink(dense([a, b]), { w: 4, color: C.gray, dash: [10, 9], seed: 166 + i, wob: 0 });
   granules(sk, cx, cy, r, 52, 501);
   // 알갱이 하나를 크게: 가운데로 올라오고(빨강) 가장자리로 내려간다(파랑)
   const g = []; for (let k = 0; k < 6; k++) { const a = k * Math.PI / 3 + Math.PI / 6; g.push([cx + 62 * Math.cos(a), cy + 62 * Math.sin(a)]); }
@@ -232,9 +243,9 @@ function p3() {
   arrow(sk, [[cx, cy + 30], [cx, cy - 34]], { w: 8, color: C.red, seed: 171, straight: true, head: 18, wob: 0.2 });
   for (const sg of [-1, 1]) arrow(sk, [[cx + sg * 72, cy - 34], [cx + sg * 72, cy + 30]], { w: 7, color: C.blue, seed: 172 + sg, straight: true, head: 16, wob: 0.2 });
   sk.ink(circ(cx, cy, r, { over: 0.1, seed: 73 }), { w: 13, color: "#B8892E", seed: 175 });
-  sk.ink(dense([[cx + r * 0.72, cy + r * 0.72], [cx + r * 0.72 + 64, cy + r * 0.72 + 70]]), { w: 16, color: "#8A5A33", seed: 176, wob: 0.5 });
+  sk.ink(dense([[cx - r * 0.72, cy + r * 0.72], [cx - r * 0.72 - 60, cy + r * 0.72 + 66]]), { w: 16, color: "#8A5A33", seed: 176, wob: 0.5 });
   // 뚝배기의 된장국에도 같은 대류 무늬
-  soupBowl(sk, 640, 540, 120, 181);
+  soupBowl(sk, 700, 560, 110, 181);
   const P = pose({ elL: [-86, -300], haL: [-150, -318], elR: [50, -260], haR: [24, -218], tilt: -0.05 });
   drawFigure(sk, 856, 704, 0.62, P, { ...TEACHER, name: "teacher" });
   return sk;
@@ -270,17 +281,17 @@ function p5() {
   // 관측실 창 너머의 해(빛은 망원경으로만 들어간다)
   thin(sk, 0.85, () => { const win = rrect(690, 40, 240, 230, 12); sk.fill(win, "#CFE6F5", { dx: 0, dy: 0, wob: 0.4, seed: 94 }); sk.ink(win, { w: 10, seed: 95 }); sk.ink(dense([[810, 40], [810, 270]]), { w: 8, seed: 96, wob: 0.3 }); });
   sunDisc(sk, 872, 112, 36, { seed: 451, w: 6, tex: false });
-  telescope(sk, 640, 476, 800, 250, 36, 704, 97);
-  sk.ink(dense([[810, 234], [850, 140]]), { w: 5, color: C.yellow, dash: [8, 8], seed: 102, wob: 0 });
+  telescope(sk, 730, 490, 862, 286, 36, 704, 97);
+  sk.ink(dense([[868, 268], [872, 152]]), { w: 5, color: C.yellow, dash: [8, 8], seed: 102, wob: 0 });
   // 흰 판에 비춘 해: 큰 흑점 무리 옆에서 하얀 빛 두 점이 터졌다
-  sk.ink(dense([[636, 480], [404, 462]]), { w: 6, color: "#5A5F68", seed: 104, wob: 0.3 });
+  sk.ink(dense([[726, 494], [404, 462]]), { w: 6, color: "#5A5F68", seed: 104, wob: 0.3 });
   board(sk, [[120, 300], [400, 284], [410, 600], [130, 616]], 105);
   const bx = 265, by = 450, br = 118;
   sunDisc(sk, bx, by, br, { seed: 461, color: "#FFE48A", w: 6, tex: false, spots: [[0.06, -0.3, 0.13], [0.3, -0.36, 0.09], [-0.12, -0.42, 0.07], [0.24, -0.16, 0.06], [-0.42, 0.34, 0.06]] });
   for (const [dx, dy, rr, i] of [[0.12, 0.06, 30, 0], [0.5, -0.12, 25, 1]]) { sk.glow(bx + dx * br, by + dy * br, rr * 1.9, "#FFFFFF", 0.95, 0.3); flash(sk, bx + dx * br, by + dy * br, rr, 107 + i * 2); }
   // 캐링턴: 판 쪽으로 돌아서서 놀란다
   const P = pose({ elL: [-90, -320], haL: [-160, -350], elR: [56, -262], haR: [40, -210], tilt: -0.06 });
-  drawFigure(sk, 500, 704, 0.62, P, { ...CARRINGTON, name: "carrington", face: "shock" });
+  drawFigure(sk, 488, 704, 0.62, P, { ...CARRINGTON, name: "carrington", face: "shock" });
   return sk;
 }
 
@@ -293,14 +304,15 @@ function p6() {
   sk.fill(rrect(wx0, wy0, wx1 - wx0, wy1 - wy0, 12), NIGHT, { dx: 0, dy: 0, wob: 0.3, seed: 113 });
   const base = []; for (let i = 0; i < 16; i++) base.push([wx0 + 30 + i * 24, 250 + 18 * Math.sin(i * 0.7)]);
   aurora(sk, base, 150, ["#E0503A", "#F07A5A", "#4ED28A", "#7BE0A8"], 115, 0.8);
-  for (const [x, y, rr, i] of [[560, 80, 5, 0], [700, 64, 6, 1], [890, 90, 5, 2], [620, 140, 4, 3]]) sparkle(sk, x, y, rr, { seed: 130 + i, color: "#FFF3C4", w: 3 });
+  for (const [x, y, rr, i] of [[560, 80, 7, 0], [700, 64, 8, 1], [890, 90, 7, 2], [620, 140, 6, 3]]) star(sk, x, y, rr, 130 + i);
   thin(sk, 0.85, () => { sk.ink(rrect(wx0, wy0, wx1 - wx0, wy1 - wy0, 12), { w: 10, seed: 134 }); sk.ink(dense([[(wx0 + wx1) / 2, wy0], [(wx0 + wx1) / 2, wy1]]), { w: 8, seed: 135, wob: 0.3 }); });
   // 전신 책상: 누름쇠에서 불꽃이 튀고, 벽을 타고 나가는 전선
   thin(sk, 0.85, () => {
     sk.ink(dense([[150, 540], [150, 704]]), { w: 11, color: "#6B4A32", seed: 137, wob: 0.3 }); sk.ink(dense([[470, 540], [470, 704]]), { w: 11, color: "#6B4A32", seed: 138, wob: 0.3 });
     const top = rrect(120, 516, 380, 26, 8); sk.fill(top, C.wood, { seed: 139, tex: true, texAng: 0.02 }); sk.ink(top, { w: 10, seed: 140 });
   });
-  sk.ink(curve([[400, 470], [430, 420], [500, 380], [540, 340]]), { w: 6, color: C.ink, seed: 141, wob: 0.3 });
+  sk.ink(curve([[318, 500], [250, 470], [150, 440], [70, 380], [56, 300]]), { w: 6, color: C.ink, seed: 141, wob: 0.3 });
+  const ins = rrect(44, 280, 26, 22, 6); sk.fill(ins, "#FBF6E6", { dx: 0, dy: 0, wob: 0.3, seed: 142 }); sk.ink(ins, { w: 5, seed: 142 });
   telegraphKey(sk, 370, 516, 143);
   zap(sk, 446, 444, 0.9, 147, 0.3); zap(sk, 338, 430, 0.7, 149, -0.4);
   // 종이 띠에 붙은 작은 불
@@ -322,7 +334,7 @@ function p7() {
   for (const [x, y, rr] of [[140, 250, 170], [380, 230, 200], [640, 240, 190], [870, 250, 170]]) sk.glow(x, y, rr, "#E0503A", 0.42, 0.15);
   const rays = []; for (let i = 0; i < 18; i++) rays.push([90 + i * 46, 290 + 8 * Math.sin(i * 0.9)]);
   aurora(sk, rays, 170, ["#E0503A", "#C0392B", "#E26A6A"], 203, 0.5);
-  for (const [x, y, rr, i] of [[470, 50, 6, 0], [620, 100, 5, 1], [880, 60, 6, 2], [760, 26, 4, 3], [520, 140, 4, 4]]) sparkle(sk, x, y, rr, { seed: 230 + i, color: "#FFF3C4", w: 3 });
+  for (const [x, y, rr, i] of [[470, 50, 8, 0], [620, 100, 7, 1], [880, 60, 8, 2], [760, 26, 6, 3], [520, 140, 6, 4]]) star(sk, x, y, rr, 230 + i);
   const hill = [...curve([[-12, 330], [140, 282], [300, 318], [470, 276], [640, 312], [820, 284], [972, 310]], false, 5), [972, 372], [-12, 372]];
   hill.push(hill[0]);
   sk.fill(hill, "#3E4E5E", { dx: 0, dy: 0, wob: 0, seed: 240 });
@@ -377,12 +389,12 @@ export const META = {
 const CUTS = [
   {
     fn: p1, when: "1151년 3월, 고려", stage: "옛 기록", title: "해에 검은 점이 있다",
-    caption: "「고려사」에 1151년 3월의 이런 기록이 있어요. 해에 <b>검은 점</b>이 있는데 크기가 달걀만 하다. 열흘 뒤와 그다음 날에도 같은 기록이 이어져요. 지금 남아 있는 우리나라 기록 가운데 가장 이른 흑점 기록이에요.",
+    caption: "「고려사」에 1151년 3월의 이런 기록이 있어요. “해에 <b>검은 점</b>이 있는데 크기가 달걀만 하다.” 열흘 뒤와 그다음 날에도 같은 기록이 이어져요. 지금 남아 있는 우리나라 기록 가운데 가장 이른 흑점 기록이에요.",
     bubbles: [{ who: "official", text: "해에 검은<br>점이 있다!" }],
   },
   {
     fn: p2, stage: "점의 정체", title: "흰 판에 비추어 보면",
-    caption: "해를 맨눈이나 망원경으로 바로 보면 눈을 다쳐요. 망원경에 비친 해를 <b>흰 판</b>에 받아 보면 안전해요. 해의 밝은 표면이 <b>광구</b>, 그 위의 검은 점이 <b>흑점</b>이에요. 흑점은 구멍이 아니라 주위보다 온도가 낮은 곳이에요. 그래도 3000 ℃가 넘어요.",
+    caption: "해를 맨눈이나 망원경으로 바로 보면 눈을 다쳐요. 망원경을 지난 햇빛을 <b>흰 판</b>에 비추어 보면 안전해요. 해의 밝은 표면이 <b>광구</b>, 그 위의 검은 점이 <b>흑점</b>이에요. 흑점은 구멍이 아니라 주위보다 온도가 낮은 곳이에요. 그래도 3000 ℃가 넘어요.",
     term: { name: "흑점", def: "광구에서 주위보다 온도가 낮아 어둡게 보이는 무늬. 지구보다 큰 것도 있어요." },
     bubbles: [{ who: "teacher", text: "지구보다<br>커요!" }],
   },
@@ -405,7 +417,7 @@ const CUTS = [
   },
   {
     fn: p6, when: "1859년 9월 2일 새벽, 미국", stage: "지구까지", title: "다음 날 밤하늘과 전신기",
-    caption: "하루도 안 되어 해에서 쏟아진 전기를 띤 입자의 흐름, <b>태양풍</b>이 거세게 지구에 닿았어요. 쿠바와 하와이처럼 따뜻한 곳의 하늘에도 <b>오로라</b>가 번졌고, 전보를 보내는 전신기에서 불꽃이 튀어 통신이 끊긴 곳이 많았어요.",
+    caption: "캐링턴이 섬광을 본 지 하루도 안 되어, 해에서 쏟아진 전기를 띤 입자의 흐름인 <b>태양풍</b>이 거세게 지구에 닿았어요. 쿠바와 하와이처럼 따뜻한 곳의 하늘에도 <b>오로라</b>가 번졌고, 전보를 보내는 전신기에서 불꽃이 튀어 통신이 끊긴 곳이 많았어요.",
     term: { name: "태양풍", def: "태양에서 우주로 흘러나오는 전기를 띤 입자의 흐름. 태양이 활발할수록 거세져요." },
     bubbles: [{ who: "operator", text: "앗,<br>불꽃이!" }],
   },
