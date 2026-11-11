@@ -9,7 +9,7 @@ import io, os, re, sys
 out = sys.argv[1]
 os.makedirs(out, exist_ok=True)
 rd = lambda p: io.open(p, encoding="utf-8").read()
-strip = lambda h: re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", h)).strip()
+strip = lambda h: re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", h.replace("<br>", " ").replace("<b class='rm-h'>", " [").replace("</b>", "</b>").replace("?</b>", "?] ") if False else re.sub(r"<b class='rm-h'>(.*?)</b>", r" [] ", h.replace("<br>", " ")))).strip()
 STR = r'"((?:[^"\\]|\\.)*)"'
 
 old = rd("src/content/unit7.ts")
