@@ -44,3 +44,67 @@
 .u6x-step .bv-range-in.u6x-rg-temp::-webkit-slider-runnable-track {
   background: linear-gradient(90deg, #5AA2F8 0, #B9A6E8 45%, #FF9F5A 100%);
 }
+
+/* ══════════ 도입 네 장면(.opn-u6-) ══════════
+   그림의 묶음은 좌표가 미리 곱해진 평평한 경로라 CSS 변형을 바로 건다(transform-box: fill-box). */
+.opn-step[data-opn-scene^="u6-"].opn-picked .hook-q { display: none; }
+.opn-step[data-opn-scene^="u6-"] .opn-controls { grid-template-columns: 1fr 1fr; }
+.opn-step[data-opn-scene="u6-foil"] .opn-controls { grid-template-columns: 1fr; }
+.opn-u6-btn {
+  min-height: 52px; padding: 5px 4px; border-radius: var(--r-md); border: 1.5px solid var(--n200); background: var(--n0);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0;
+  transition: border-color .16s, background .16s, opacity .16s, transform .12s var(--spring-soft);
+}
+.opn-u6-btn:active { transform: scale(.965); }
+.opn-u6-btn b { font-size: 15px; line-height: 21px; font-weight: 800; color: var(--ink); }
+.opn-u6-btn span { font-size: 12.5px; line-height: 17px; font-weight: 700; color: var(--blue); }
+.opn-u6-btn:disabled { opacity: .45; }
+.opn-u6-btn.tried { border-color: var(--n300); }
+.opn-u6-btn.tried span { color: var(--ter); }
+/* 무대 위의 꾹 누르는 자리 */
+.opn-u6-hit {
+  position: absolute; background: none; border: 0; padding: 0; border-radius: 28px; cursor: pointer; z-index: 3;
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+}
+.opn-stage:not(.play) .opn-u6-hit, .opn-step[data-opn-phase="done"] .opn-u6-hit { pointer-events: none; }
+.opn-u6-hit:focus-visible { outline: 2px solid var(--blue); outline-offset: -4px; }
+.opn-u6-hit::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 84px; height: 84px; margin: -42px 0 0 -42px;
+  border-radius: 50%; border: 3px solid var(--blue); opacity: 0; pointer-events: none;
+}
+.opn-stage.play:not(.touched) .opn-u6-hit::after { animation: opnU6Ring 1.3s ease-out infinite; }
+@keyframes opnU6Ring { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(1.3); opacity: 0; } }
+
+/* 1. 얼음판 위의 북극곰 */
+.opn-u6-ice-bear { transition: transform .7s var(--ease-out); }
+.opn-u6-ice.flat .opn-u6-ice-bear { transition-duration: 1.4s; }
+.opn-u6-ice-flat, .opn-u6-ice.flat .opn-u6-ice-stand { opacity: 0; }
+.opn-u6-ice.flat .opn-u6-ice-flat { opacity: 1; }
+.opn-u6-ice-crack { opacity: 0; }
+.opn-u6-ice.cracked .opn-u6-ice-crack { opacity: 1; }
+.opn-u6-ice.cracked .opn-u6-ice-stand { transform-box: fill-box; transform-origin: 50% 100%; animation: opnU6Shake .3s ease-in-out 3; }
+@keyframes opnU6Shake { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-1.6deg); } 70% { transform: rotate(1.6deg); } }
+
+/* 2. 뽁뽁이 */
+.opn-u6-wrap-cap { transform-box: fill-box; transform-origin: 50% 100%; }
+
+/* 3. 은박 풍선 */
+.opn-u6-foil-kid { transition: transform 1.1s var(--ease-out); }
+.opn-u6-foil.out .opn-u6-foil-kid { transform: translateX(400px); }
+.opn-u6-foil-full, .opn-u6-foil-limp { transition: opacity .5s .7s; }
+.opn-u6-foil-limp, .opn-u6-foil.out .opn-u6-foil-full { opacity: 0; }
+.opn-u6-foil.out .opn-u6-foil-limp { opacity: 1; }
+.opn-u6-foil-snow path { animation: opnU6Snow 2.4s ease-in-out infinite alternate; }
+@keyframes opnU6Snow { from { transform: translateY(-4px); } to { transform: translateY(6px); } }
+
+/* 4. 탁구공 */
+.opn-u6-pong-round, .opn-u6-pong-pop { opacity: 0; }
+.opn-u6-pong.popped .opn-u6-pong-round { opacity: 1; }
+.opn-u6-pong.popped .opn-u6-pong-dent { opacity: 0; }
+.opn-u6-pong.popped .opn-u6-pong-pop { opacity: 1; transform-box: fill-box; transform-origin: center; animation: opnU6Pop .5s var(--spring) both; }
+@keyframes opnU6Pop { from { transform: scale(.3); } to { transform: scale(1); } }
+.opn-u6-pong-steam path { animation: opnU6Steam 1.8s ease-in-out infinite alternate; }
+@keyframes opnU6Steam { from { transform: translateY(4px); opacity: .5; } to { transform: translateY(-6px); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .opn-u6-hit::after, .opn-u6-foil-snow path, .opn-u6-pong-steam path, .opn-u6-ice.cracked .opn-u6-ice-stand { animation: none; }
+}

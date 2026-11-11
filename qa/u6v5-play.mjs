@@ -99,6 +99,63 @@ export const PLAY = {
     await answer(page, on, "l5lab-q1", true);
     await done(page, on, "l5lab");
   },
+  // ── 도입 ──
+  async l1op(page, on) {
+    await on("l1op-ask");
+    await choose(page, "서서");
+    await W(page, 500);
+    await on("l1op-picked");
+    await click(page, ".opn-u6-btn.stand");
+    await W(page, 1500);
+    await on("l1op-mid");
+    await click(page, ".opn-u6-btn.flat");
+    await opDone(page, on, "l1op");
+  },
+  async l3op(page, on) {
+    await on("l3op-ask");
+    await choose(page, "납작해진 채");
+    await W(page, 500);
+    await on("l3op-picked");
+    await page.mouse.move(...Object.values(await hitPt(page)));
+    await page.mouse.down();
+    await W(page, 900);
+    await on("l3op-pressed");
+    await page.mouse.up();
+    await W(page, 700);
+    await on("l3op-mid");
+    await hold(page, ".opn-u6-hit", 900);
+    await opDone(page, on, "l3op");
+  },
+  async l4op(page, on) {
+    await on("l4op-ask");
+    await choose(page, "그대로");
+    await W(page, 500);
+    await on("l4op-picked");
+    await click(page, ".opn-u6-btn.door");
+    await W(page, 2000);
+    await on("l4op-mid");
+    await click(page, ".opn-u6-btn.door");
+    await opDone(page, on, "l4op");
+  },
+  async l5op(page, on) {
+    await on("l5op-ask");
+    await choose(page, "더 찌그러져요");
+    await W(page, 500);
+    await on("l5op-picked");
+    await hold(page, ".opn-u6-hit", 500); // 중간에 손을 뗀다
+    await W(page, 500);
+    await on("l5op-early");
+    await page.mouse.move(...Object.values(await hitPt(page)));
+    await page.mouse.down();
+    await W(page, 2100);
+    await on("l5op-popped");
+    await page.mouse.up();
+    await opDone(page, on, "l5op");
+  },
 };
-void choose;
-void hold;
+const hitPt = (page) => page.evaluate(() => { const r = document.querySelector(".screen.active .opn-u6-hit").getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+async function opDone(page, on, label) {
+  if (!(await waitDs(page, "opnPhase", "done", 100))) throw new Error(`${label}: 끝에 닿지 못함(${await ds(page, "opnPhase")})`);
+  await W(page, 1500);
+  await on(`${label}-done`);
+}
