@@ -614,12 +614,12 @@ if (import.meta.env.DEV && new URLSearchParams(location.search).get("preview") =
     });
     nav.go(player);
   });
-} else if (U2_INTRO_OPEN && findLesson(U2_INTRO_OPEN) && (import.meta.env.DEV || !isPremiumLocked(findLesson(U2_INTRO_OPEN)!.lesson))) {
-  // [도입 샘플 판정용] ?u2intro=u2l4 처럼 레슨을 주면 그 레슨을 바로 연다(완료를 기록하지 않는다).
+} else if (import.meta.env.DEV && U2_INTRO_OPEN && findLesson(U2_INTRO_OPEN)) {
+  // [도입 검수용, 개발 서버에서만] ?u2intro=u2l4 처럼 레슨을 주면 그 레슨을 바로 연다(완료를 기록하지 않는다).
   // 운영 번들에서는 프리미엄 잠금이 걸린 레슨을 열지 않는다(주소로 잠금을 건너뛰지 못하게). 개발 서버에서는 잠금과 무관하게 연다.
   const player = createLessonPlayer(findLesson(U2_INTRO_OPEN)!.lesson, { onExit: goHome, onComplete: () => goHome() });
   nav.go({ el: player.el });
-} else if (U1_INTRO_OPEN && findLesson(U1_INTRO_OPEN) && (import.meta.env.DEV || !isPremiumLocked(findLesson(U1_INTRO_OPEN)!.lesson))) {
+} else if (import.meta.env.DEV && U1_INTRO_OPEN && findLesson(U1_INTRO_OPEN)) {
   // [도입 판정용] ?u2intro=u1l2 처럼 Ⅰ단원 레슨을 주면 그 레슨을 바로 연다(위 Ⅱ단원 분기와 같은 규칙).
   const player = createLessonPlayer(findLesson(U1_INTRO_OPEN)!.lesson, { onExit: goHome, onComplete: () => goHome() });
   nav.go({ el: player.el });
