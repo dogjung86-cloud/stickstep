@@ -20,7 +20,7 @@ const thin = (sk, k, fn) => { const o = sk.lwK; sk.lwK = k; fn(); sk.lwK = o; };
 /* ---------- 18세기 인물: 분을 바른 머리 + 귀 옆 말림, 긴 외투 ---------- */
 // 머리 꼭대기는 밝은 회색 "short" 머리, 귀 옆 말림은 wigRolls 로 덧그린다(drawFigure 와 같은 변환)
 const FRANKLIN = { hair: "short", hairColor: "#E2DDD2", fringe: 24, coat: { color: "#8A6A4A", buttons: "#D8C49A", seam: "#5E4630", len: 40 }, seed: 501, mini: true, face: "calm" };
-const INGEN = { hair: "short", hairColor: "#ECE8E0", fringe: 24, coat: { color: "#3F4F63", buttons: C.gold, seam: "#28323F", len: 40 }, seed: 511, mini: true, face: "calm" };
+const INGEN = { hair: "short", hairColor: "#ECE8E0", fringe: 24, coat: { color: "#3E6B4A", buttons: "#D8C49A", seam: "#28462F", len: 40 }, seed: 511, mini: true, face: "calm" };
 const RUMFORD = { hair: "short", hairColor: "#F1EEE8", fringe: 24, coat: { color: C.navy, buttons: C.gold, seam: "#1E2B49", len: 40 }, seed: 521, mini: true, face: "calm" };
 function wigRolls(sk, x, y, s, p, o = {}) {
   const col = o.wig ?? "#ECE8E0", sd = o.seed ?? 901;
@@ -137,15 +137,16 @@ const WAX = "#F3E6BF", WAXLINE = "#B49A5E";
 function p2() {
   const sk = new Sk(W, H, { id: "b" });
   floor(sk, 700, 51);
-  // 뜨거운 기름이 든 통과 아래의 등잔불
+  // 뜨거운 물이 든 통과 아래의 등잔불
   const tx = 150, ty = 320, tw = 150, th = 230;
   thin(sk, 0.82, () => {
     for (const [lx, i] of [[tx + 22, 0], [tx + tw - 22, 1]]) sk.ink(dense([[lx, ty + th], [lx + (i ? 10 : -10), 700]]), { w: 11, seed: 53 + i });
     const box = poly([[tx, ty], [tx + tw, ty], [tx + tw, ty + th], [tx, ty + th]], 4);
     sk.fill(box, "#B7BEC7", { dx: 0, dy: 0, wob: 0.4, seed: 54 });
-    const oil = poly([[tx + 10, ty + 34], [tx + tw - 10, ty + 34], [tx + tw - 10, ty + th - 10], [tx + 10, ty + th - 10]], 4);
-    sk.fill(oil, "#F0B54C", { dx: 0, dy: 0, wob: 0.4, seed: 55 });
-    sk.ink(dense([[tx + 10, ty + 34], [tx + tw - 10, ty + 34]]), { w: 6, color: "#C9862A", seed: 58, wob: 0.4 });
+    const hot = poly([[tx + 10, ty + 34], [tx + tw - 10, ty + 34], [tx + tw - 10, ty + th - 10], [tx + 10, ty + th - 10]], 4);
+    sk.fill(hot, "#9FD0EE", { dx: 0, dy: 0, wob: 0.4, seed: 55 });
+    sk.ink(dense([[tx + 10, ty + 34], [tx + tw - 10, ty + 34]]), { w: 6, color: "#5B8BB0", seed: 58, wob: 0.4 });
+    for (const [bx, by, br] of [[tx + 40, ty + 150, 8], [tx + 92, ty + 110, 10], [tx + 64, ty + 196, 7], [tx + 112, ty + 172, 6]]) sk.ink(circ(bx, by, br, { over: 0.1, seed: 59 + bx }), { w: 4, color: C.white, seed: 60, wob: 0.2 });
     sk.ink(box, { w: 11, seed: 56 });
   });
   for (const [x, i] of [[tx + 40, 0], [tx + 75, 1], [tx + 110, 2]]) sk.ink(squiggle(x, ty + 30, 70, 6, 2, i * 1.4), { w: 5, color: C.red, seed: 57 + i, wob: 0 });
@@ -153,7 +154,7 @@ function p2() {
   sk.fill(fl, C.orange, { dx: 0, dy: 0, wob: 0.6, seed: 61 }); sk.ink(fl, { w: 6, color: C.red, seed: 62, wob: 0.6 });
   const lamp = rrect(tx + 40, ty + th + 76, 70, 34, 10);
   sk.fill(lamp, "#8A9099", { dx: 0.6, dy: 0.8, wob: 0.4, seed: 63 }); sk.ink(lamp, { w: 7, seed: 64, wob: 0.4 });
-  // 통 옆으로 나란히 꽂힌 철사 여섯: 통 쪽부터 밀랍이 녹아 맨 금속이 드러났다
+  // 통 옆으로 나란히 꽂힌 철사 여섯: 통 쪽부터 밀랍이 녹아 맨 금속이 드러났다(장치는 단순하게 그렸다)
   const x0 = tx + tw, x1 = 610;
   METALS.forEach(([col, melt], i) => {
     const y = ty + 66 + i * 30, xm = x0 + (x1 - x0) * melt * 0.92;
@@ -173,12 +174,12 @@ function p2() {
 /* ---------- 3. 전도: 흔들림의 릴레이(오늘날의 설명) ---------- */
 function p3() {
   const sk = new Sk(W, H, { id: "c" });
-  // 아래: 뜨거운 기름 통에 꽂힌 구리 철사 한 가닥(오른쪽은 아직 밀랍)
+  // 아래: 뜨거운 물 통에 꽂힌 구리 철사 한 가닥(오른쪽은 아직 밀랍)
   thin(sk, 0.82, () => {
     const box = poly([[-10, 560], [120, 560], [120, 730], [-10, 730]], 4);
     sk.fill(box, "#B7BEC7", { dx: 0, dy: 0, wob: 0.4, seed: 110 });
-    sk.fill(poly([[-10, 588], [108, 588], [108, 730], [-10, 730]], 4), "#F0B54C", { dx: 0, dy: 0, wob: 0.4, seed: 111 });
-    sk.ink(dense([[-10, 588], [108, 588]]), { w: 6, color: "#C9862A", seed: 109, wob: 0.4 });
+    sk.fill(poly([[-10, 588], [108, 588], [108, 730], [-10, 730]], 4), "#9FD0EE", { dx: 0, dy: 0, wob: 0.4, seed: 111 });
+    sk.ink(dense([[-10, 588], [108, 588]]), { w: 6, color: "#5B8BB0", seed: 109, wob: 0.4 });
     sk.ink(box, { w: 11, seed: 112 });
   });
   sk.ink(dense([[116, 640], [930, 640]]), { w: 22, seed: 113, wob: 0.3 });
@@ -186,7 +187,7 @@ function p3() {
   for (let i = 0; i < n; i++) { const u0 = i / n, u1 = (i + 1) / n + 0.02; sk.ink(dense([[120 + 810 * u0, 640], [120 + 810 * Math.min(1, u1), 640]]), { w: 11, color: heat(Math.max(0.12, 0.95 - u0 * 1.2)), seed: 114, wob: 0, cap: "butt" }); }
   const wax = rrect(700, 626, 232, 28, 12);
   sk.fill(wax, WAX, { dx: 0, dy: 0, wob: 0.3, seed: 115 }); sk.ink(wax, { w: 4, color: WAXLINE, seed: 116, wob: 0.3 });
-  // 크게 본 철사 속: 입자 세 줄. 기름 쪽(왼쪽)은 크게 흔들리고 빨갛다
+  // 크게 본 철사 속: 입자 세 줄. 데우는 쪽(왼쪽)은 크게 흔들리고 빨갛다
   const cx = 480, cy = 300, r = 250;
   leader(sk, [352, 628], [cx - 160, cy + 192], 117); leader(sk, [608, 628], [cx + 160, cy + 192], 118);
   lensFill(sk, cx, cy, r, 119);
@@ -316,7 +317,7 @@ function p6() {
   });
   // 백작이 되기 전의 럼퍼드: 올라가는 눈금을 가리킨다
   const P = pose({ elR: [96, -330], haR: [176, -372], elL: [-50, -262], haL: [-18, -222], tilt: 0.06 });
-  person(sk, 250, 704, 0.74, P, RUMFORD, { name: "rumford", face: "shock" });
+  person(sk, 250, 704, 0.74, P, RUMFORD, { name: "rumford", face: "shock", under: sash(sk) });
   return sk;
 }
 
@@ -403,17 +404,17 @@ export const META = {
 const TEXT = [
   {
     when: "1757년, 뉴욕", stage: "궁금증", title: "쇠가 더 차가운 까닭",
-    caption: "1757년, 벤저민 프랭클린이 편지를 쓰다가 나무 책상과 쇠 자물쇠를 번갈아 만졌어요. 같은 방에 오래 있었으니 온도는 같을 텐데 자물쇠가 훨씬 차갑게 느껴졌어요. 프랭클린은 쇠가 나무보다 손의 열을 빨리 가져가기 때문이라고 생각했어요.",
+    caption: "1757년, 벤저민 프랭클린은 친구에게 이런 편지를 썼어요. 같은 방에 있어 온도가 같은 나무 책상과 쇠 자물쇠에 번갈아 손을 대 보면 자물쇠가 훨씬 차갑게 느껴진다고요. 쇠가 나무보다 손의 열을 빨리 가져가기 때문이라고 보았어요.",
     bubbles: [{ who: "franklin", text: "자물쇠가<br>더 차갑네?" }],
   },
   {
     when: "1780년, 오스트리아 빈", stage: "실험", title: "밀랍이 녹은 거리",
-    caption: "1780년, 의사이자 과학자인 잉엔하우스는 프랭클린의 생각대로 여러 금속 철사에 밀랍을 입히고 한쪽 끝을 뜨거운 기름에 함께 담갔어요. 열이 철사를 타고 퍼지며 밀랍이 녹았는데, 은과 구리에서는 멀리까지, 쇠와 납에서는 조금만 녹았어요.",
+    caption: "1780년, 의사이자 과학자인 잉엔하우스는 프랭클린의 생각대로 여러 금속 철사에 밀랍을 입히고 한쪽 끝을 함께 뜨겁게 데웠어요. 열이 철사를 타고 퍼지며 밀랍이 녹았는데, 은과 구리에서는 멀리까지, 쇠와 납에서는 조금만 녹았어요.",
     bubbles: [{ who: "ingen", text: "녹은 거리가<br>다 달라!" }],
   },
   {
     stage: "전도", title: "흔들림의 릴레이",
-    caption: "오늘날에는 이렇게 설명해요. 철사를 이루는 입자는 제자리에서 흔들려요. 뜨거운 쪽 입자가 활발하게 흔들리면 그 흔들림이 <b>이웃한 입자에 차례로</b> 전해지며 열이 이동해요. 이 빠르기가 물질마다 달라서 같은 온도라도 쇠가 손의 열을 더 빨리 가져가요.",
+    caption: "오늘날에는 이렇게 설명해요. 철사를 이루는 입자는 제자리에서 흔들려요. 뜨거운 쪽 입자가 활발하게 흔들리면 그 흔들림이 <b>이웃한 입자에 차례로</b> 전해지며 열이 이동해요. 이 빠르기가 물질마다 달라서 같은 온도라도 쇠가 나무보다 손의 열을 더 빨리 가져가요.",
     term: { name: "전도", def: "입자의 운동이 <b>이웃한 입자에 차례로 전달</b>되어 열이 이동하는 현상. 주로 고체에서 일어나요." },
   },
   {
