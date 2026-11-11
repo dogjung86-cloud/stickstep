@@ -46,7 +46,7 @@ function p1() {
   // 훅: 벼룩을 크게 그린 종이를 들어 보인다
   const show = pose({ elR: [72, -312], haR: [104, -388], elL: [-56, -262], haL: [-22, -222], tilt: 0.05 });
   const fx = 176, fy = 704, fs = 0.78;
-  drawFigure(sk, fx, fy, fs, show, { ...HOOKE, name: "hooke", hands: "L" });
+  drawFigure(sk, fx, fy, fs, show, { ...HOOKE, name: "hooke", face: "smile", hands: "L" });
   const paper = poly([[250, 196], [436, 186], [444, 398], [258, 408]], 5);
   sk.fill(paper, "#FBF6E6", { seed: 15, dx: 1.5, dy: 2 }); sk.ink(paper, { w: 9, seed: 16 });
   // 벼룩 그림(먹)
@@ -80,7 +80,7 @@ function p2() {
   // 훅: 코르크 조각을 들고 갸웃
   const hold = pose({ elR: [74, -312], haR: [118, -384], elL: [-56, -262], haL: [-22, -222], tilt: 0.14 });
   const fx = 214, fy = 704, fs = 0.8;
-  drawFigure(sk, fx, fy, fs, hold, { ...HOOKE, name: "hooke", hands: "L" });
+  drawFigure(sk, fx, fy, fs, hold, { ...HOOKE, name: "hooke", face: "curious", hands: "L" });
   const hx = fx + fs * 118, hy = fy - fs * 384;
   const c2 = rrect(hx - 8, hy - 52, 56, 40, 9);
   sk.fill(c2, CORK, { seed: 52, tex: true }); sk.ink(c2, { w: 8, seed: 53 });
@@ -125,7 +125,7 @@ function p4() {
   cellsView(sk, 672, 346, 262, { seed: 901, empty: true, wall: "#A9773F", w: 7, ringColor: "#B8892E", ringW: 14 });
   sparkle(sk, 930, 96, 16, { seed: 91 });
   const joy = pose({ elL: [-104, -362], haL: [-156, -452], elR: [104, -362], haR: [156, -452], tilt: -0.05 });
-  drawFigure(sk, 196, 704, 0.8, joy, { ...HOOKE, name: "hooke" });
+  drawFigure(sk, 196, 704, 0.8, joy, { ...HOOKE, name: "hooke", face: "happy" });
   emark(sk, 372, 250, 0.9, { color: C.red });
   return sk;
 }
@@ -153,7 +153,7 @@ function p5() {
   sk.ink(dense([[662, 270], [954, 270]], 5), { w: 11, seed: 139 });
   // 훅: 둘을 가리킨다
   const show = pose({ elR: [84, -318], haR: [156, -334], elL: [-54, -262], haL: [-20, -222], tilt: 0.04 });
-  drawFigure(sk, 186, 704, 0.8, show, { ...HOOKE, name: "hooke" });
+  drawFigure(sk, 186, 704, 0.8, show, { ...HOOKE, name: "hooke", face: "smile" });
   return sk;
 }
 
@@ -176,7 +176,7 @@ function p6() {
   // 레이우엔훅: 손바닥만 한 현미경을 눈앞에
   const P = pose({ elR: [70, -322], haR: [96, -402], elL: [-56, -262], haL: [-22, -222], tilt: 0.06 });
   const fx = 196, fy = 704, fs = 0.8;
-  drawFigure(sk, fx, fy, fs, P, { ...LEEUWENHOEK, name: "leeu", hands: "L" });
+  drawFigure(sk, fx, fy, fs, P, { ...LEEUWENHOEK, name: "leeu", face: "curious", hands: "L" });
   const hx = fx + fs * 96, hy = fy - fs * 402;
   const plate = rrect(hx - 6, hy - 76, 40, 66, 8);
   sk.fill(plate, "#D2A84A", { seed: 164, tex: true }); sk.ink(plate, { w: 7, seed: 165 });

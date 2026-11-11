@@ -90,7 +90,7 @@ function p2() {
   });
   // 린드: 턱에 손
   const think = pose({ elR: [54, -292], haR: [24, -350], elL: [-56, -262], haL: [-18, -222], tilt: 0.06 });
-  drawFigure(sk, 166, 664, 0.8, think, { ...LIND, name: "lind" });
+  drawFigure(sk, 166, 664, 0.8, think, { ...LIND, name: "lind", face: "curious" });
   return sk;
 }
 
@@ -133,7 +133,7 @@ function p3() {
   // 린드: 옛 항해 기록을 펼쳐 들고, 한 손을 번쩍
   const aha = pose({ elL: [-98, -354], haL: [-150, -450], elR: [60, -272], haR: [104, -246], tilt: 0.07 });
   const fx = 210, fy = 684, fs = 0.86;
-  drawFigure(sk, fx, fy, fs, aha, { ...LIND, name: "lind", hands: "L" });
+  drawFigure(sk, fx, fy, fs, aha, { ...LIND, name: "lind", face: "wide", hands: "L" });
   openBook(sk, fx + fs * 122, fy - fs * 214, 0.62, { color: "#8A5A33", seed: 67, rot: 0.1 });
   handDot(sk, [fx + fs * 104, fy - fs * 246], C.skin, 69, 12);
   rays(sk, fx - fs * 150, fy - fs * 450, 34, 62, 5, { a0: -3.6, a1: -0.9, color: C.gold, w: 7 });
@@ -162,7 +162,7 @@ function p4() {
   for (let i = 0; i < 6; i++) station(cols[i % 3], rows[Math.floor(i / 3)], i);
   // 린드: 여섯 쌍을 가리킨다
   const show = pose({ elR: [84, -318], haR: [156, -334], elL: [-54, -262], haL: [-20, -222], tilt: 0.04 });
-  drawFigure(sk, 142, 676, 0.66, show, { ...LIND, name: "lind" });
+  drawFigure(sk, 142, 676, 0.66, show, { ...LIND, name: "lind", face: "smile" });
   return sk;
 }
 
@@ -237,7 +237,7 @@ function p6() {
   // 린드: 지시봉으로 귤 줄을 짚는다
   const P = pose({ elR: [60, -300], haR: [118, -326], elL: [-54, -262], haL: [-20, -222], tilt: 0.04 });
   const fx = 134, fy = 676, fs = 0.66;
-  drawFigure(sk, fx, fy, fs, P, { ...LIND, name: "lind", hands: "L" });
+  drawFigure(sk, fx, fy, fs, P, { ...LIND, name: "lind", face: "smile", hands: "L" });
   const hr = [fx + fs * 118, fy - fs * 326];
   sk.ink(dense([[hr[0] - 10, hr[1] + 4], [PX + 22, hy + rh * 0.56]]), { w: 9, seed: 281, wob: 1 });
   handDot(sk, hr, C.skin, 283, 10.5);
@@ -250,7 +250,7 @@ function p7() {
   // 린드: 한 손에 오렌지, 한 손에 레몬
   const up = pose({ elL: [-110, -330], haL: [-196, -372], elR: [110, -330], haR: [196, -372], tilt: 0.03 });
   const fx = 300, fy = 684, fs = 0.82;
-  drawFigure(sk, fx, fy, fs, up, { ...LIND, name: "lind", hands: false });
+  drawFigure(sk, fx, fy, fs, up, { ...LIND, name: "lind", face: "happy", hands: false });
   const hl = [fx - fs * 196, fy - fs * 372], hr = [fx + fs * 196, fy - fs * 372];
   orange(sk, hl[0] - 4, hl[1] - 48, 46, { seed: 51 });
   lemon(sk, hr[0] + 8, hr[1] - 44, 42, { seed: 55, rot: -0.2 });
@@ -271,7 +271,7 @@ function p8() {
   const FY = 652, FS = 0.72;
   // ① 책으로 펴내다
   const hold = pose({ elL: [-56, -272], haL: [-34, -236], elR: [56, -272], haR: [34, -236] });
-  drawFigure(sk, 132, FY, FS, hold, { ...LIND, name: "lind", hands: false });
+  drawFigure(sk, 132, FY, FS, hold, { ...LIND, name: "lind", face: "smile", hands: false });
   const bk = rrect(84, 420, 96, 124, 8);
   sk.fill(bk, "#9A4A3A", { seed: 311, tex: true }); sk.ink(bk, { w: 10, seed: 312 });
   sk.ink(dense([[100, 444], [164, 444]]), { w: 5, color: C.gold, seed: 313, wob: 0.4 });

@@ -138,7 +138,7 @@ function p1() {
   // 다윈: 상자를 들고 배 쪽으로 걷는다
   const walk = pose({ knL: [-32, -104], ftL: [-74, 0], knR: [36, -110], ftR: [66, 0], elR: [66, -262], haR: [112, -232], elL: [-48, -256], haL: [-66, -190], tilt: 0.05 });
   const fx = 176, fy = 548, fs = 0.62;
-  drawFigure(sk, fx, fy, fs, walk, { ...DARWIN, name: "darwin", hands: "L", under: satchel(sk) });
+  drawFigure(sk, fx, fy, fs, walk, { ...DARWIN, name: "darwin", face: "smile", hands: "L", under: satchel(sk) });
   const hx = fx + fs * 112, hy = fy - fs * 232;
   const box = poly([[hx - 4, hy - 30], [hx + 84, hy - 34], [hx + 86, hy + 30], [hx - 2, hy + 32]], 4);
   sk.fill(box, C.woodLight ?? "#D9B07A", { seed: 44, tex: true, texAng: 0.04 }); sk.ink(box, { w: 8, seed: 45 });
@@ -171,7 +171,7 @@ function p2() {
   const hoop = ell(NX, NY, 44, 52);
   sk.fill(hoop, C.white, { dx: 0, dy: 0, wob: 0.5, seed: 62, alpha: 0.7 }); sk.ink(hoop, { w: 8, seed: 63 });
   for (const k of [-0.5, 0, 0.5]) sk.ink(curve([[NX + k * 60, NY - 40], [NX + k * 40, NY], [NX + k * 60, NY + 40]]), { w: 3, color: C.gray, seed: 64 + k * 10, wob: 0.2 });
-  drawFigure(sk, fx, fy, fs, P, { ...DARWIN, name: "darwin", under: satchel(sk) });
+  drawFigure(sk, fx, fy, fs, P, { ...DARWIN, name: "darwin", face: "curious", under: satchel(sk) });
   // 가득 찬 표본 상자
   const bx = 420, by = 604;
   for (const [dx, col, i] of [[-48, "#72B25E", 0], [0, "#E9D9B0", 1], [46, "#C96A4A", 2]]) { const it = circ(bx + dx, by - 74, 24, { over: 0.15, seed: 66 + i, lump: 0.1 }); sk.fill(it, col, { dx: 0, dy: 0, wob: 0.6, seed: 69 + i }); sk.ink(it, { w: 7, seed: 72 + i, wob: 0.6 }); }
@@ -199,7 +199,7 @@ function p3() {
   handDot(sk, [rx, ry], C.skin, 86, 9);
   // 로슨: 거북을 가리킨다
   const point = pose({ elR: [84, -312], haR: [160, -330], elL: [-50, -260], haL: [-24, -218], tilt: 0.05 });
-  drawFigure(sk, 200, 704, 0.46, point, { ...LAWSON, name: "lawson" });
+  drawFigure(sk, 200, 704, 0.46, point, { ...LAWSON, name: "lawson", face: "smile" });
   return sk;
 }
 
@@ -215,9 +215,9 @@ function p4() {
     finch(sk, x - 6, 524, 0.46, { beak: k, seed: 301 + i * 13, color: i % 2 ? "#6E5A4A" : BIRD });
   });
   const point = pose({ elR: [86, -300], haR: [150, -292], elL: [-50, -260], haL: [-24, -218], tilt: 0.05 });
-  drawFigure(sk, 150, 704, 0.72, point, { ...GOULD, name: "gould" });
+  drawFigure(sk, 150, 704, 0.72, point, { ...GOULD, name: "gould", face: "smile" });
   const wow = pose({ elL: [-104, -362], haL: [-158, -448], elR: [104, -362], haR: [158, -448], tilt: 0.04 });
-  drawFigure(sk, 812, 704, 0.72, wow, { ...DARWIN, name: "darwin" });
+  drawFigure(sk, 812, 704, 0.72, wow, { ...DARWIN, name: "darwin", face: "shock" });
   emark(sk, 640, 250, 0.9, { color: C.red, rot: -0.12 });
   return sk;
 }
@@ -238,7 +238,7 @@ function p5() {
   qmark(sk, 668, 330, 0.72, { color: C.teal, seed: 115 });
   // 다윈: 턱에 손을 대고 생각한다
   const think = pose({ elR: [70, -300], haR: [44, -356], elL: [-50, -262], haL: [-16, -226], tilt: 0.12 });
-  drawFigure(sk, 196, 704, 0.8, think, { ...DARWIN, name: "darwin", under: satchel(sk) });
+  drawFigure(sk, 196, 704, 0.8, think, { ...DARWIN, name: "darwin", face: "curious", under: satchel(sk) });
   return sk;
 }
 
@@ -272,7 +272,7 @@ function p7() {
   // 나이 든 다윈: 두꺼운 책을 들어 올린다
   const up = pose({ elR: [96, -340], haR: [150, -428], elL: [-52, -262], haL: [-22, -222], tilt: -0.04 });
   const fx = 210, fy = 704, fs = 0.8;
-  drawFigure(sk, fx, fy, fs, up, { ...DARWIN_OLD, name: "darwin", hands: "L" });
+  drawFigure(sk, fx, fy, fs, up, { ...DARWIN_OLD, name: "darwin", face: "smile", hands: "L" });
   const hx = fx + fs * 150, hy = fy - fs * 428;
   sk.at(hx + 44, hy - 46, 1, () => {
     const pages = poly([[-50, -58], [58, -58], [58, 62], [-50, 62]], 4);
@@ -299,7 +299,7 @@ function p8() {
   // 한 사람은 새를 손에 얹고, 다른 사람은 부리를 잰다
   const hold = pose({ elR: [84, -288], haR: [140, -300], elL: [-50, -260], haL: [-24, -218], tilt: 0.05 });
   const ax = 250, ay = 702, as = 0.72;
-  drawFigure(sk, ax, ay, as, hold, { ...GRANT_A, name: "grantA" });
+  drawFigure(sk, ax, ay, as, hold, { ...GRANT_A, name: "grantA", face: "smile" });
   const bx0 = ax + as * 140, by0 = ay - as * 300;
   finch(sk, bx0 + 44, by0 - 12, 0.56, { beak: 1, seed: 351, legs: false });
   const meas = pose({ elL: [-86, -296], haL: [-150, -318], elR: [50, -260], haR: [24, -218], tilt: -0.05 });
