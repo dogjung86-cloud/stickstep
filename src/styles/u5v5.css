@@ -123,3 +123,6 @@
 .u5x-td.cur { border-color: var(--subj-force); box-shadow: 0 0 0 1px var(--subj-force) inset; }
 .u5x-graph.short { height: 146px; }
 .u5x-graph text.pt.b { fill: var(--blue); }
+.u5x-log.mini { gap: 6px; }
+.u5x-log.mini .u5x-log-row { height: 33px; font-size: 13px; border-radius: 11px; padding: 0 12px; }
+.u5x-log.mini .u5x-log-v { font-size: 13px; }

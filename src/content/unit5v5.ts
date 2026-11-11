@@ -13,7 +13,7 @@ const arrowLab = lab("u5ArrowLab");
 const sumLab = lab("u5SumLab");
 const gravityLab = lab("u5GravityLab");
 const springLab5 = lab("u5SpringLab");
-const frictionLab = lab("u5FrictionLab");
+const slopeLab = lab("u5SlopeLab");
 const buoyLab = lab("u5BuoyLab");
 const windLab = lab("u5WindLab");
 
@@ -78,12 +78,12 @@ export const UNIT5_V5: Unit | null = remakeUnit(UNIT5, {
   u5l5: {
     after: then(rebuild("u5l5")),
     intro: opener({ title: "썰매는 어느 길에서 멀리 갈까요?", scene: "u5-sled", wait: "두 길에서 밀어 보세요", cta: "실험실 열기" }),
-    swap: { frictionPush: frictionLab({ title: "어떤 때 상자를 밀기 더 힘들까요?", cta: "개념 정리하기" }) },
+    swap: { frictionPush: slopeLab({ title: "어느 때 더 잘 버틸까요?", cta: "개념 정리하기" }) },
   },
   u5l6: {
     after: then(rebuild("u5l6")),
     intro: opener({ title: "눌러 넣은 병은 어떻게 될까요?", scene: "u5-bottle", wait: "병을 눌렀다 놓아 보세요", cta: "실험실 열기" }),
-    swap: { buoyancyLab: buoyLab({ title: "물에 담그면 눈금은 어떻게 될까요?", cta: "개념 정리하기" }) },
+    swap: { buoyancyLab: buoyLab({ title: "물속에서 눈금은 왜 줄어들까요?", cta: "개념 정리하기" }) },
   },
   u5l7: {
     after: then(retext([["바람 축구장에서 바람(힘)을 거는 순간", "실험에서 바람(힘)을 보내는 순간"], ["실험실에서 건 바람과 똑같아요.", "실험에서 보낸 바람과 똑같아요."]]), rebuild("u5l7")),

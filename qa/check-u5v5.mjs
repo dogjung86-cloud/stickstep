@@ -162,58 +162,79 @@ LABS.u5l4 = async () => {
   await endLab();
 };
 LABS.u5l5 = async () => {
+  await at("predict");
+  await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
+  await W(page, 1500);
   await at("start");
-  await holdBtn(page, ".u5x-push", 250);
-  await W(page, 300);
-  await at("short");
-  await holdBtn(page, ".u5x-push", 900);
-  ok(await waitPips(1), "u5l5: 얼음판");
-  await W(page, 1700);
-  await click(page, '.bv-card[data-k="wood"]');
-  await holdBtn(page, ".u5x-push", 1500);
-  ok(await waitPips(2), "u5l5: 나무 바닥");
-  await W(page, 1700);
-  await click(page, '.bv-card[data-k="sand"]');
-  await page.mouse.down();
-  await W(page, 1000);
-  await at("push");
-  await W(page, 1200);
+  // 나무판의 오른쪽 끝(받침점에서 250px)을 deg도까지 들어 올린다. 받침점은 무대의 (34, 200)
+  const lift = async (deg, from = 0) => {
+    const P = await stageAt(page, 34, 200);
+    const pt = (d) => ({ x: P.x + 250 * Math.cos((d * Math.PI) / 180), y: P.y - 250 * Math.sin((d * Math.PI) / 180) });
+    await page.mouse.move(pt(from).x, pt(from).y - 4);
+    await page.mouse.down();
+    for (let d = from + 2; d <= deg; d += 2) { await page.mouse.move(pt(d).x, pt(d).y); await W(page, 20); }
+  };
+  await lift(12); // 덜 기울이면 버틴다
+  await W(page, 200);
+  await at("hold");
   await page.mouse.up();
-  ok(await waitPips(3), "u5l5: 모래밭");
+  await lift(24, 12);
+  await page.mouse.up();
+  ok(await waitPips(1), "u5l5: 나무 면");
+  await W(page, 400);
+  await click(page, '.bv-card[data-k="sand"]');
+  await lift(30);
+  await at("sand");
+  await page.mouse.up();
+  await lift(38, 30);
+  await page.mouse.up();
+  ok(await waitPips(2), "u5l5: 사포 면");
+  await W(page, 2800);
+  await at("pull");
+  await holdBtn(page, ".u5x-push", 500); // 일찍 떼면 안 움직인다
+  await W(page, 600);
+  await holdBtn(page, ".u5x-push", 1700);
+  ok(await waitPips(3), "u5l5: 도막 1개");
   await W(page, 1700);
   await click(page, '.u5x-seg[data-k="2"]');
-  await holdBtn(page, ".u5x-push", 3600);
-  await W(page, 300);
+  await page.mouse.down();
+  await W(page, 1500);
   await at("two");
-  ok(await waitPips(4), "u5l5: 상자 2개");
+  await W(page, 1500);
+  await page.mouse.up();
+  ok(await waitPips(4), "u5l5: 도막 2개");
   await judge(true);
   await endLab();
 };
 LABS.u5l6 = async () => {
   await at("start");
-  ok(await waitPips(1), "u5l6: 잠기기 전");
-  const a = await stageAt(page, 0.56, 82);
-  const to = async (y, n) => {
-    for (let i = 0; i < 10; i++) { await page.mouse.move(a.x, a.y + ((y - 104) * (i + 1)) / 10); await W(page, 16); }
-    ok(await waitPips(n), "u5l6: 기록 " + n);
+  const rec = async () => { await click(page, ".u5x-rec"); await W(page, 250); };
+  // 추의 바닥을 from에서 to(무대의 y)로 옮긴다. half는 추 높이의 절반(잡는 자리)
+  const move = async (from, to, half = 22) => {
+    const a = await stageAt(page, 0.56, from - half);
+    await drag(page, a, { x: a.x, y: a.y + (to - from) });
+    await W(page, 150);
   };
-  await page.mouse.move(a.x, a.y);
-  await page.mouse.down();
-  await to(148, 2);
+  await rec();
+  ok(await waitPips(1), "u5l6: 잠기기 전");
+  await move(100, 136); // 어중간한 자리
+  await rec();
+  await at("between");
+  await move(136, 146);
+  await rec();
+  ok(await waitPips(2), "u5l6: 절반");
   await at("half");
-  await to(180, 3);
-  await page.mouse.up();
-  await W(page, 1400);
+  await move(146, 180);
+  await rec();
+  ok(await waitPips(3), "u5l6: 완전히");
+  await W(page, 2400);
   await at("predict");
   await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
   await W(page, 1500);
-  const b = await stageAt(page, 0.56, 158);
-  await page.mouse.move(b.x, b.y);
-  await page.mouse.down();
-  for (let i = 0; i < 10; i++) { await page.mouse.move(b.x, b.y + 3 * (i + 1)); await W(page, 16); }
-  ok(await waitPips(4), "u5l6: 더 깊이");
-  await page.mouse.up();
-  await at("deep");
+  await move(100, 196, 31);
+  await rec();
+  ok(await waitPips(4), "u5l6: 큰 추");
+  await at("big");
   await judge(true);
   await endLab();
 };
