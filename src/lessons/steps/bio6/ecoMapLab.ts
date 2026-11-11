@@ -36,7 +36,7 @@ const BUG_DOTS = ["#E03131", "#F76707", "#C92A2A", "#F03E3E", "#E8590C"];
 export const ecoMapLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as EmpStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: 4, cls: "emp-stage", qCls: "emp-q" });
+  const f = bvFrame(host, { title: s.title, steps: 4, cls: "emp-stage", qCls: "emp-q", api });
   const canvas = bvCanvas(f.stage);
 
   // ── 무대: 땅 세 칸 ───────────────────────────────────────────────

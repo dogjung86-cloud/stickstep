@@ -102,8 +102,22 @@ const pickBy = (page, okVal) =>
     b.click();
     return t;
   }, okVal);
-export const pickRight = (page) => pickBy(page, "1");
 export const pickWrong = (page) => pickBy(page, "0");
+/** 판정 카드의 '다음'이 뜰 때까지 기다렸다가 누른다. */
+export const tapNext = async (page) => {
+  await waitFor(page, () => {
+    const b = document.querySelector(".screen.active .bv-q.show .bv-next");
+    return !!b && !b.disabled && b.offsetParent !== null;
+  });
+  return tap(page, ".bv-q.show .bv-next");
+};
+/** 맞는 보기를 누르고 '다음'까지 누른다(맞혀도 '다음'을 눌러야 넘어간다). 고른 글을 돌려준다. */
+export const pickRight = async (page) => {
+  const t = await pickBy(page, "1");
+  await W(page, 350);
+  await tapNext(page);
+  return t;
+};
 export const pickText = (page, text) =>
   page.evaluate((t) => {
     const b = [...document.querySelectorAll(".screen.active .bv-q.show .bv-choice")].filter((x) => !x.disabled && x.offsetParent !== null).find((x) => x.textContent.includes(t));
@@ -111,24 +125,37 @@ export const pickText = (page, text) =>
     b.click();
     return true;
   }, text);
-/** 오답 카드의 모습: 누른 보기 바로 아래에 정답 카드가 붙었는가, 다른 보기는 접혔는가, '다음'이 있는가. */
-export const wrongCard = (page) =>
-  page.evaluate(() => {
+/** 답한 뒤의 모습(kind: "miss" 오답, "ok" 정답): 누른 보기에 결과가 새겨졌는가, 바로 아래에 카드가 붙었는가,
+ *  다른 보기는 접혔는가, '다음'이 있는가. 색은 화면에 그려진 값으로 읽는다(빨강인지 초록인지). */
+const verdictCard = (page, kind) =>
+  page.evaluate((k) => {
     const q = document.querySelector(".screen.active .bv-q.show");
-    const miss = q?.querySelector(".bv-choice.miss");
+    const mine = q?.querySelector(`.bv-choice.${k}`);
     const card = q?.querySelector(".bv-ans");
     const next = card?.querySelector(".bv-next");
-    const others = [...(q?.querySelectorAll(".bv-choice") ?? [])].filter((b) => b !== miss);
+    const others = [...(q?.querySelectorAll(".bv-choice") ?? [])].filter((b) => b !== mine);
     const r = next?.getBoundingClientRect();
+    const rgb = (e, prop) => (e ? getComputedStyle(e)[prop].match(/\d+/g).slice(0, 3).map(Number) : [0, 0, 0]);
+    const hue = ([r0, g0, b0]) => (r0 > g0 + 60 && r0 > b0 + 60 ? "red" : g0 > r0 + 40 && g0 > b0 + 20 ? "green" : "other");
+    const ic = mine?.querySelector(".bv-vd-ic");
     return {
-      has: !!miss && !!card,
-      adjacent: !!miss && miss.nextElementSibling === card,
+      has: !!mine && !!card,
+      adjacent: !!mine && mine.nextElementSibling === card,
       othersGone: others.every((b) => b.offsetParent === null),
+      word: mine?.querySelector(".bv-vd")?.textContent?.trim() ?? "",
+      mine: mine?.querySelector(".bv-choice-t")?.textContent?.trim() ?? "",
+      icon: !!ic?.querySelector("svg") && ic.getBoundingClientRect().width >= 20,
+      rowHue: hue(rgb(mine, "borderTopColor")),
+      iconHue: hue(rgb(ic, "backgroundColor")),
+      cardHue: hue(rgb(card, "backgroundColor")),
+      answerShown: !!card?.querySelector(".bv-ans-t"),
       answer: card?.querySelector(".bv-ans-t")?.textContent?.trim() ?? "",
       why: card?.querySelector(".bv-why")?.textContent?.trim() ?? "",
       nextH: r ? Math.round(r.height) : 0,
     };
-  });
+  }, kind);
+export const wrongCard = (page) => verdictCard(page, "miss");
+export const rightCard = (page) => verdictCard(page, "ok");
 export const concluded = (page) => page.evaluate(() => {
   const d = document.querySelector(".screen.active .bv-done.show");
   return d && d.offsetParent !== null ? d.textContent.trim() : "";
@@ -166,7 +193,7 @@ export const measure = (page) =>
         return { h: Math.round(r.height), w: Math.round(r.width), t: (e.textContent || e.getAttribute("aria-label") || "").trim().slice(0, 16) };
       });
     // 잘린 글자(한 줄 말줄임)
-    const cut = [...wrap.querySelectorAll(".bv-choice, .bv-ans-t, .bv-card b, .bv-card i, .bv-title, .bv-btn")]
+    const cut = [...wrap.querySelectorAll(".bv-choice-t, .bv-ans-t, .bv-card b, .bv-card i, .bv-title, .bv-btn")]
       .filter(vis)
       .filter((e) => e.scrollWidth > e.clientWidth + 1)
       .map((e) => e.textContent.trim());
@@ -215,17 +242,13 @@ export const measure = (page) =>
 // on(label)은 그 시점에 부르는 콜백(측정, 캡처, 검사). wrong이면 채점 판정을 일부러 틀린다.
 const noop = async () => {};
 
-/** 판정 한 번: 맞히거나 틀린다. 틀리면 on("wrong") 뒤 '다음'을 누른다. */
+/** 판정 한 번: 맞히거나 틀린다. 어느 쪽이든 결과가 뜬 화면에서 on("...-wrong" 또는 "...-right")을 부른 뒤 '다음'을 누른다. */
 async function answer(page, wrong, on, label) {
   await on(label);
-  if (wrong) {
-    await pickWrong(page);
-    await W(page, 550);
-    await on(`${label}-wrong`);
-    await tap(page, ".bv-next");
-  } else {
-    await pickRight(page);
-  }
+  await pickBy(page, wrong ? "0" : "1");
+  await W(page, 550);
+  await on(`${label}-${wrong ? "wrong" : "right"}`);
+  await tapNext(page);
 }
 
 /** u2l1 확대 랩. */
@@ -279,8 +302,7 @@ export async function playCellWork(page, mode, { wrong = false, on = noop } = {}
   await answer(page, wrong, on, "ask");
   await waitAsk(page, q1);
   await W(page, 500);
-  await on("ask2");
-  await pickRight(page);
+  await answer(page, false, on, "ask2");
   await waitDone(page);
   await W(page, 350);
   await on("done");
@@ -351,17 +373,7 @@ export async function playSlide(page, { wrong = false, fast = false, order = fal
   await on("complete");
   await waitAsk(page);
   await W(page, 350);
-  await on("ask");
-  if (wrong) {
-    await pickWrong(page);
-    await W(page, 600);
-    await on("ask-wrong");
-    await tap(page, ".bv-next");
-  } else {
-    await pickRight(page);
-    await W(page, 700);
-    await on("ask-right");
-  }
+  await answer(page, wrong, on, "ask");
   await waitDone(page);
   await W(page, 350);
   await on("done");
@@ -436,8 +448,7 @@ export async function playScope(page, { wrong = false, miss = false, on = noop }
   await answer(page, wrong, on, "ask");
   await waitAsk(page, q1);
   await W(page, 450);
-  await on("ask2");
-  await pickRight(page);
+  await answer(page, false, on, "ask2");
   await waitDone(page);
   await W(page, 350);
   await on("done");
@@ -512,8 +523,7 @@ export async function playLevelBuild(page, { wrong = false, on = noop } = {}) {
   await answer(page, wrong, on, "ask");
   await waitAsk(page, q1);
   await W(page, 450);
-  await on("ask2");
-  await pickRight(page);
+  await answer(page, false, on, "ask2");
   await waitDone(page);
   await W(page, 350);
   await on("done");
@@ -591,8 +601,7 @@ export async function playBeakIsles(page, { wrong = false, miss = false, on = no
   await answer(page, wrong, on, "ask");
   await waitAsk(page, q1);
   await W(page, 450);
-  await on("ask2");
-  await pickRight(page);
+  await answer(page, false, on, "ask2");
   await waitDone(page);
   await W(page, 350);
   await on("done");

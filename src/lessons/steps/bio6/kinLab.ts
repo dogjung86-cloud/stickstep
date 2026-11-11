@@ -77,7 +77,7 @@ const ICON: Record<Key, string> = {
 export const kinLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as KnlStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: KEYS.length + 1, cls: "knl-stage", qCls: "knl-q" });
+  const f = bvFrame(host, { title: s.title, steps: KEYS.length + 1, cls: "knl-stage", qCls: "knl-q", api });
   const canvas = bvCanvas(f.stage);
 
   // ── 무대: 세 동물 ────────────────────────────────────────────────

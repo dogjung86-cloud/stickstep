@@ -275,7 +275,7 @@ function stageSvg(): string {
 export const cellFitLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as CftStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: JOBS.length + 1, cls: "cft-stage", qCls: "cft-q" });
+  const f = bvFrame(host, { title: s.title, steps: JOBS.length + 1, cls: "cft-stage", qCls: "cft-q", api });
   f.stage.innerHTML = stageSvg();
   const svg = f.stage.querySelector("svg") as SVGSVGElement;
   const actors = svg.querySelector(".cft-actors") as SVGGElement;

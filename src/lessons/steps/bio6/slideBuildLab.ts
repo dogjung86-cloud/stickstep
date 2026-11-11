@@ -125,7 +125,7 @@ const BUBBLES = `<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="ht
 export const slideBuildLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as SbdStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: 5, cls: "sbd-stage", qCls: "sbd-q" });
+  const f = bvFrame(host, { title: s.title, steps: 5, cls: "sbd-stage", qCls: "sbd-q", api });
 
   // ── 무대 ─────────────────────────────────────────────────────────
   const canvas = bvCanvas(f.stage);

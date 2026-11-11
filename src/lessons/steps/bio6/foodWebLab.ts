@@ -51,7 +51,7 @@ const ICON: Record<Key, string> = {
 export const foodWebLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as FwbStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: 4, cls: "fwb-stage", qCls: "fwb-q" });
+  const f = bvFrame(host, { title: s.title, steps: 4, cls: "fwb-stage", qCls: "fwb-q", api });
   f.stage.innerHTML = stageSvg();
   const svg = f.stage.querySelector("svg") as SVGSVGElement;
 

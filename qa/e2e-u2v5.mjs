@@ -11,7 +11,7 @@
 //   PORT=5547 FROM=4 node qa/e2e-u2v5.mjs      (4번 레슨부터. A, B만 해당)
 import {
   PORT, launch, openLesson, W, cta, ctaState, tap, waitFor, measure,
-  playMagnify, playCellWork, playSlide, playScope, wrongCard, concluded, ds,
+  playMagnify, playCellWork, playSlide, playScope, wrongCard, rightCard, concluded, ds,
   playCellFit, playLevelBuild, playEcoMap, playBeakIsles, playKin, playRankWiden, playKingdomPath, playFoodWeb,
 } from "./u2v5-lib.mjs";
 
@@ -161,6 +161,9 @@ async function lab(page, label, play, opts, ctaLabel, wrong) {
   const marks = [];
   let card = null;
   let stuck = null;
+  let good = null;
+  let goodStuck = null;
+  let goodFit = null;
   const on = async (m) => {
     marks.push(m);
     await grab(page, `${label} ${m}`);
@@ -171,6 +174,14 @@ async function lab(page, label, play, opts, ctaLabel, wrong) {
       await W(page, 2200);
       const again = await wrongCard(page);
       stuck = again.has && again.answer === card.answer;
+    }
+    if (m.endsWith("-right") && !good) {
+      // 맞혔을 때도 결과가 눈에 보이고, 기다려도 저절로 넘어가지 않는다
+      good = await rightCard(page);
+      goodFit = await measure(page);
+      await W(page, 2200);
+      const again = await rightCard(page);
+      goodStuck = again.has && again.mine === good.mine;
     }
   };
   await play(page, { ...opts, wrong, on });
@@ -186,6 +197,15 @@ async function lab(page, label, play, opts, ctaLabel, wrong) {
     ok(card?.othersGone, `${label} 오답: 다른 보기는 접힘`);
     ok((card?.why ?? "").length >= 8 && card.nextH >= 48, `${label} 오답: 이유 한 줄 + '다음' ${card?.nextH}px`);
     ok(stuck === true, `${label} 오답: 기다려도 덮이지 않고 '다음'을 눌러야 넘어감`);
+    ok(card?.word === "오답이에요" && card.icon && card.rowHue === "red" && card.iconHue === "red", `${label} 오답: 누른 보기에 빨간 가위표와 "${card?.word}"`);
+    ok(card?.answerShown && card.answer.length > 0 && card.answer !== card.mine && card.cardHue !== "green", `${label} 오답: 정답 카드는 초록 상자가 아니고 정답("${card?.answer}")을 따로 알려 준다`);
+  }
+  if (good) {
+    ok(good.has && good.adjacent && good.othersGone, `${label} 정답: 누른 보기 바로 아래에 카드, 다른 보기는 접힘`);
+    ok(good.word === "정답이에요" && good.icon && good.rowHue === "green" && good.iconHue === "green", `${label} 정답: 누른 보기에 초록 체크와 "${good.word}"`);
+    ok(!good.answerShown && good.why.length >= 8 && good.nextH >= 48, `${label} 정답: 이유 한 줄 + '다음' ${good.nextH}px(정답을 다시 적지 않는다)`);
+    ok(goodStuck === true, `${label} 정답: 기다려도 넘어가지 않고 '다음'을 눌러야 넘어감`);
+    ok(goodFit.total <= goodFit.usable && !goodFit.slotOver && goodFit.cut.length === 0, `${label} 정답: 한 화면 안(${goodFit.total} ≤ ${goodFit.usable}), 잘린 글자 없음`);
   }
   await grab(page, `${label} 끝`);
   return marks;
