@@ -21,11 +21,11 @@ const ok = (cond, msg) => {
   }
 };
 const LESSONS = [
-  { id: "u6l1", op: "l1op", lab: "l1lab", labAt: 1 },
-  { id: "u6l2", op: null, lab: "l2lab", labAt: 1 },
-  { id: "u6l3", op: "l3op", lab: "l3lab", labAt: 1 },
-  { id: "u6l4", op: "l4op", lab: "l4lab", labAt: 1 },
-  { id: "u6l5", op: "l5op", lab: "l5lab", labAt: 1 },
+  { id: "u6l1", op: "l1op", labs: ["l1labA", "l1labB"] },
+  { id: "u6l2", op: null, labs: ["l2lab"] },
+  { id: "u6l3", op: "l3op", labs: ["l3lab"] },
+  { id: "u6l4", op: "l4op", labs: ["l4labA", "l4labB"] },
+  { id: "u6l5", op: "l5op", labs: ["l5lab"] },
 ];
 const BAD = [/[—–]/, /\s-\s/, /교과서/, /분자/, /\p{Extended_Pictographic}/u];
 const { browser, page, errors } = await launch();
@@ -59,11 +59,13 @@ for (const L of LESSONS) {
       await page.evaluate(() => document.querySelector(".screen.active .xbtn.fwd")?.click());
       await W(page, 700);
     }
-    ok((await stepKind(page)) === "lab", `${L.id}: 새 랩이 열리지 않음(${await stepKind(page)})`);
-    await PLAY[L.lab](page, at);
-    const c = await ctaState(page);
-    ok(c.enabled, `${L.id}: 랩 끝 버튼이 열리지 않음("${c.text}")`);
-    await cta(page);
+    for (const name of L.labs) {
+      ok((await stepKind(page)) === "lab", `${L.id} ${name}: 새 랩이 열리지 않음(${await stepKind(page)})`);
+      await PLAY[name](page, at);
+      const c = await ctaState(page);
+      ok(c.enabled, `${L.id} ${name}: 랩 끝 버튼이 열리지 않음("${c.text}")`);
+      await cta(page);
+    }
     const k = await stepKind(page);
     ok(k !== "lab" && k !== "opener" && k !== "", `${L.id}: 랩 뒤의 스텝이 열리지 않음(${k})`);
   } catch (e) {
@@ -73,10 +75,10 @@ for (const L of LESSONS) {
 
 // 새로 쓴 문제(선택형, 복수 선택, OX): 정답을 눌러 정답으로 채점되는지 본다(차례 놓기 두 문제는 누르지 않는다)
 const QUIZ = {
-  u6l1: [[4, [0, 1, 2]], [7, 0], [8, "o"]],
+  u6l1: [[5, [0, 1, 2]], [8, 0], [9, "o"]],
   u6l2: [[7, 0], [9, 0]],
   u6l3: [[4, 2], [8, "x"]],
-  u6l4: [[4, 2], [5, [0, 1, 2]], [8, "x"]],
+  u6l4: [[5, 2], [6, [0, 1, 2]], [9, "x"]],
   u6l5: [[6, 0]],
 };
 const tapSel = (sel) => page.evaluate((s) => document.querySelector(`.screen.active ${s}`)?.dispatchEvent(new MouseEvent("click", { bubbles: true })), sel);

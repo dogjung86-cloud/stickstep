@@ -152,17 +152,27 @@ export const PLAY = {
   async l5lab(page, on) {
     await W(page, 900);
     await on("l5lab-start");
-    await page.evaluate(() => document.querySelector(".screen.active .u6x-hold").scrollIntoView({ block: "nearest" }));
-    const p = await page.evaluate(() => { const r = document.querySelector(".screen.active .u6x-hold").getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
-    await page.mouse.move(p.x, p.y);
-    await page.mouse.down();
-    await W(page, 1400);
-    await on("l5lab-heating");
-    if (!(await waitDs(page, "u6Phase", "down", 80))) throw new Error("l5lab: 구름 높이에 닿지 못함");
+    await click(page, '.bv-card[data-k="fast"]'); // 끓는 물에 바로: 터진다
+    await waitDs(page, "u6Cooked", "1", 120);
     await W(page, 300);
-    await on("l5lab-cloud");
-    await page.mouse.up();
+    await on("l5lab-crack");
+    await click(page, '.bv-card[data-k="slow"]');
+    await W(page, 1500);
+    await on("l5lab-slow");
+    await waitDs(page, "u6Cooked", "2", 150);
+    await W(page, 300);
+    await on("l5lab-safe");
+    await click(page, ".bv-btn.main");
     await answer(page, on, "l5lab-q1", true);
+    await waitDs(page, "u6Phase", "up");
+    await W(page, 500);
+    await on("l5lab-balloon");
+    await setRange(page, 12);
+    if (!(await waitDs(page, "u6Phase", "down", 150))) throw new Error("l5lab: 구름 높이에 닿지 못함");
+    await W(page, 600);
+    await on("l5lab-cloud");
+    await setRange(page, 2);
+    await answer(page, on, "l5lab-q2", false);
     await done(page, on, "l5lab");
   },
   // ── 도입 ──
