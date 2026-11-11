@@ -78,7 +78,7 @@ export const charlesLab: StepRenderer = (host, step, api) => {
           lab.phase("done");
           frame.pips(3);
           frame.say("점들이 반듯한 직선 위에 놓였어요.");
-          frame.slot.conclude("압력이 같을 때 온도가 오르면 입자가 <b>빨라져</b> 벽을 더 세게 밀고, 기체의 부피가 <b>일정하게</b> 늘어요. 식히면 그만큼 줄어요.");
+          frame.slot.conclude("압력이 같을 때 온도가 오르면 입자가 <b>빨라져</b> 벽을 더 세게 밀고, 기체의 부피가 <b>일정한 비율로</b> 늘어요. 식히면 그만큼 줄어요.");
           api.enableCTA(s.cta ?? "개념 정리하기");
         },
       },
@@ -131,7 +131,12 @@ export const charlesLab: StepRenderer = (host, step, api) => {
     if (asked) line = Math.min(1, line + 0.02 * dt);
     const v = volOf(shownT);
     const b = bounds(v);
-    for (const p of box.parts) p.y = Math.max(b.y0 + 5, p.y);
+    for (const p of box.parts) {
+      if (p.y < b.y0 + 5) {
+        p.y = b.y0 + 5;
+        p.vy = Math.abs(p.vy); // 내려오는 피스톤에 밀린 입자는 아래로 튕긴다
+      }
+    }
     const k = Math.sqrt((273 + shownT) / 293);
     const sp = 0.55 + (k - 0.965) * 6.2; // 빠르기 차이를 눈에 보이게 벌린다(0 ℃ 0.55배, 80 ℃ 1.35배쯤)
     box.step(dt, b, sp);

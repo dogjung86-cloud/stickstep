@@ -9,7 +9,7 @@ import { haptic, HAPTIC } from "../../../core/haptics";
 import { GasBox, type GasBounds } from "../../../ui/gasKit";
 import { bvBtn } from "../bio6/b6Lab";
 import type { StepRenderer } from "../../types";
-import { u6Lab, rr, txt, pill, vbar, clamp01, ease } from "./u6Kit";
+import { u6Lab, rr, txt, pill, vbar, clamp01, ease, HitRate } from "./u6Kit";
 
 const N0 = 12;
 const N_MIN = 6;
@@ -26,6 +26,7 @@ export const pressureLab: StepRenderer = (host, step, api) => {
   let n = N0;
   let fat = (N0 - N_MIN) / (N_MAX - N_MIN); // 타이어가 부푼 정도(0~1), 부드럽게 따라간다
   let gauge = 0.3;
+  const hr = new HitRate();
   let phase: "pump" | "vent" | "ask" | "done" = "pump";
   const bounds = (): GasBounds => {
     const inset = 14 * (1 - fat);
@@ -94,6 +95,8 @@ export const pressureLab: StepRenderer = (host, step, api) => {
     if (phase === "pump" && n >= FULL) {
       phase = "vent";
       lab.phase("vent");
+      plus.classList.remove("main");
+      minus.classList.add("main");
       api.setCTA("이번에는 공기를 빼 보세요", { enabled: false });
       frame.say("번쩍임이 잦아지고 타이어가 <b>팽팽</b>해졌어요. 이번에는 <b>공기 빼기</b>를 눌러 보세요.");
     } else if (phase === "vent" && n <= SOFT) {
@@ -115,8 +118,8 @@ export const pressureLab: StepRenderer = (host, step, api) => {
       p.x = Math.max(b.x0 + 5, Math.min(b.x1 - 5, p.x));
       p.y = Math.max(b.y0 + 5, Math.min(b.y1 - 5, p.y));
     }
-    box.step(dt, b);
-    gauge = ease(gauge, clamp01(box.hitRate() / 30), 0.1, dt);
+    hr.push(box.step(dt, b), dt);
+    gauge = ease(gauge, clamp01(hr.value() / 0.42), 0.1, dt); // 입자 36개일 때 프레임마다 0.46번쯤 부딪힌다
 
     // 타이어 고무 벽
     const pad = 9;

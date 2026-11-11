@@ -8,7 +8,7 @@ import { haptic, HAPTIC } from "../../../core/haptics";
 import { GasBox, type GasBounds } from "../../../ui/gasKit";
 import { bvBtn, bvRange } from "../bio6/b6Lab";
 import type { StepRenderer } from "../../types";
-import { u6Lab, rr, txt, pill, clamp01, ease, noteRow } from "./u6Kit";
+import { u6Lab, rr, txt, pill, clamp01, ease, noteRow, HitRate } from "./u6Kit";
 
 const PV = 24;
 const V_MAX = 24;
@@ -29,7 +29,7 @@ export const boyleLab: StepRenderer = (host, step, api) => {
   let shown = V_MAX; // 그림 속 피스톤(부드럽게 따라간다)
   let rate = 0.2;
   let lastLR = 0;
-  const win: number[] = [];
+  const hr = new HitRate();
   const recs = new Map<number, number>([[V_MAX, 1]]);
   let phase: "play" | "ask" | "done" = "play";
   let curve = 0; // 곡선이 그려진 정도(0~1)
@@ -59,7 +59,7 @@ export const boyleLab: StepRenderer = (host, step, api) => {
   function sync(): void {
     const has = recs.has(vol);
     rec.disabled = has || phase !== "play";
-    rec.textContent = has ? "기록한 값이에요" : `${vol} mL · ${fmtP(vol)}기압 기록하기`;
+    rec.textContent = has ? `${vol} mL는 기록했어요` : `${vol} mL · ${fmtP(vol)}기압 기록하기`;
     note.set(`부피 <b>${vol} mL</b>`, `압력 <b>${fmtP(vol)}기압</b>`);
     host.dataset.u6V = String(vol);
     range.input.setAttribute("aria-valuetext", `${vol} mL`);
@@ -131,13 +131,17 @@ export const boyleLab: StepRenderer = (host, step, api) => {
   lab.run((ctx, dt) => {
     shown = ease(shown, vol, 0.3, dt);
     const b = bounds(shown);
-    for (const p of box.parts) p.x = Math.max(b.x0 + 5, p.x);
+    for (const p of box.parts) {
+      if (p.x < b.x0 + 5) {
+        p.x = b.x0 + 5;
+        p.vx = Math.abs(p.vx); // 피스톤에 밀린 입자는 안쪽으로 튕긴다
+      }
+    }
     box.step(dt, b);
     const lr = box.hits.L + box.hits.R;
-    win.push(lr - lastLR);
+    hr.push(lr - lastLR, dt);
     lastLR = lr;
-    if (win.length > 100) win.shift();
-    rate = ease(rate, clamp01(win.reduce((a, x) => a + x, 0) / 58), 0.06, dt);
+    rate = ease(rate, clamp01(hr.value() / 0.4), 0.1, dt); // 6 mL에서 프레임마다 0.42번쯤 부딪힌다
     if (recs.has(12) && recs.has(6)) curve = Math.min(1, curve + 0.02 * dt);
 
     // 주사기 통
@@ -199,7 +203,7 @@ export const boyleLab: StepRenderer = (host, step, api) => {
     txt(ctx, "부피(mL)", GX0 - 34, GY0 - 17, { color: "#9FB2D0" });
     txt(ctx, "압력(기압)", GX1 + 6, GY1 + 13, { color: "#9FB2D0" });
     for (const p of [1, 2, 3, 4]) txt(ctx, String(p), gx(p), GY1 + 13, { align: "center", color: "#8FA3C4" });
-    for (const v of [6, 12, 24]) txt(ctx, String(v), GX0 - 7, gy(v), { align: "right", color: "#8FA3C4" });
+    for (const v of [12, 24]) txt(ctx, String(v), GX0 - 7, gy(v), { align: "right", color: "#8FA3C4" });
     if (curve > 0) {
       ctx.strokeStyle = "rgba(125,211,252,.75)";
       ctx.lineWidth = 2;

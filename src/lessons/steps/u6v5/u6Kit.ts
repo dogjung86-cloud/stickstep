@@ -221,3 +221,24 @@ export function chip(text: string): { el: HTMLElement; done: () => void } {
   const node = el("div", { class: "u6x-chip", text });
   return { el: node, done: () => node.classList.add("done") };
 }
+
+/** 벽 충돌의 잦기: 최근 한동안(프레임 100개 분량의 시간)의 충돌 수를 흐른 시간으로 나눈다. 화면이 느려도 값이 같다. */
+export class HitRate {
+  private win: [number, number][] = [];
+  private hits = 0;
+  private time = 0;
+  push(hits: number, dt: number): void {
+    this.win.push([hits, dt]);
+    this.hits += hits;
+    this.time += dt;
+    while (this.time > 100 && this.win.length > 1) {
+      const [h, t] = this.win.shift()!;
+      this.hits -= h;
+      this.time -= t;
+    }
+  }
+  /** 프레임 하나(1/60초)마다의 충돌 수 */
+  value(): number {
+    return this.time > 0 ? this.hits / this.time : 0;
+  }
+}

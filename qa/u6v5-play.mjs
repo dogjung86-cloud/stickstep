@@ -26,10 +26,10 @@ export const PLAY = {
   async l1lab(page, on) {
     await W(page, 900);
     await on("l1lab-start");
-    for (let i = 0; i < 3; i++) { await click(page, ".bv-btn.main"); await W(page, 350); }
+    for (let i = 0; i < 3; i++) { await click(page, ".u6x-row2 .bv-btn:last-child"); await W(page, 350); }
     await W(page, 600);
     await on("l1lab-full");
-    for (let i = 0; i < 3; i++) { await click(page, ".u6x-row2 .bv-btn:not(.main)"); await W(page, 350); }
+    for (let i = 0; i < 3; i++) { await click(page, ".u6x-row2 .bv-btn:first-child"); await W(page, 350); }
     const q = await answer(page, on, "l1lab-q1", true);
     await answer(page, on, "l1lab-q2", false, q);
     await done(page, on, "l1lab");

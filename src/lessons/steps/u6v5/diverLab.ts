@@ -1,7 +1,7 @@
 // u6DiverLab (u6l3): 「둘레의 압력이 낮아지면 기체는?」
 // 두 장면에서 같은 일을 손으로 한다: 기체를 둘러싼 압력을 낮추면 부피가 커지고, 다시 높이면 줄어든다.
 //   1 바닷속 30 m(4기압)에서 나온 공기 방울을 막대로 수면(1기압)까지 올린다. 방울의 부피가 4배가 된다(내리면 다시 준다)
-//   2 판정: 방울이 커진 까닭(둘러싼 물의 압력이 작아져서)
+//   2 판정: 방울이 커진 까닭(방울을 누르는 압력이 작아져서. 수면의 1기압은 공기가 누르는 압력이라 "물의 압력"이라고 쓰지 않는다)
 //   3 감압 용기(공기를 빼는 통) 속 마시멜로: 공기를 빼면 부풀고, 다시 넣으면 줄어든다
 // 수치는 자연값이다: 물속에서는 10 m 내려갈 때마다 약 1기압씩 더해진다. 그림 속 방울과 마시멜로는 넓이가 부피에 비례하게 그린다.
 // 방울 속 입자의 수는 그대로다(사이만 벌어진다).
@@ -56,7 +56,7 @@ export const diverLab: StepRenderer = (host, step, api) => {
   });
   function syncSea(): void {
     const p = 1 + depth / 10;
-    note.set(`깊이 <b>${depth} m</b>`, `물의 압력 <b>${p.toFixed(1)}기압</b>`);
+    note.set(`깊이 <b>${depth} m</b>`, `방울이 받는 압력 <b>${p.toFixed(1)}기압</b>`);
     host.dataset.u6D = String(depth);
   }
   frame.slot.setControls(range.el, note.el);
@@ -100,8 +100,8 @@ export const diverLab: StepRenderer = (host, step, api) => {
       lab.phase("done");
       tm.later(() => {
         frame.pips(3);
-        frame.say("공기를 다시 넣자 마시멜로가 처음 크기로 돌아왔어요.");
-        frame.slot.conclude("기체를 둘러싼 압력이 <b>작아지면</b> 기체의 부피가 커지고, <b>커지면</b> 부피가 줄어요. 방울도 마시멜로 속 공기도 같아요.");
+        frame.say("공기를 다시 넣자 마시멜로가 도로 줄어들었어요.");
+        frame.slot.conclude("온도가 같을 때 기체를 누르는 압력이 <b>작아지면</b> 기체의 부피가 커지고, <b>커지면</b> 부피가 줄어요. 방울도 마시멜로 속 공기도 같아요.");
         api.enableCTA(s.cta ?? "개념 정리하기");
       }, 900);
     }
@@ -121,12 +121,12 @@ export const diverLab: StepRenderer = (host, step, api) => {
   const askWhy = (): void => {
     lab.phase("ask");
     frame.pips(1);
-    frame.say("깊이마다 적힌 <b>물의 압력</b>과 방울의 크기를 견줘 보세요.");
+    frame.say("깊이마다 적힌 <b>압력</b>과 방울의 크기를 견줘 보세요.");
     frame.slot.ask(
       "방울이 올라가며 <b>커진</b> 까닭은 무엇일까요?",
-      [{ t: "둘러싼 물의 압력이 작아져서", ok: true }, { t: "방울 속 입자가 늘어나서" }, { t: "방울 속 입자가 커져서" }],
+      [{ t: "방울을 누르는 압력이 작아져서", ok: true }, { t: "방울 속 입자가 늘어나서" }, { t: "방울 속 입자가 커져서" }],
       (ok) => lab.grade(ok),
-      { why: "얕을수록 물이 누르는 압력이 작아요. 입자 수는 그대로예요.", onNext: toJar },
+      { why: "얕을수록 방울을 누르는 압력이 작아요. 입자 수는 그대로예요.", onNext: toJar },
     );
   };
 

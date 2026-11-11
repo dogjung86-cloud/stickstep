@@ -328,6 +328,7 @@ export function pingPong(c: OpenerCtx): void {
       c.face("surprised");
       haptic(HAPTIC.correct);
       c.step.dataset.opnPopped = "1";
+      c.say("어, 찌그러진 곳이 <b>펴지고</b> 있어요!");
       c.later(wrapUp, 1300); // 손을 떼지 않아도 끝난다
     }
     if (ball) ball.style.transform = `translateY(${M.dip * dip}px)`;
