@@ -45,15 +45,15 @@ const TECH: Record<Key, { card: string; name: string; off: string; on: string }>
 };
 
 // 방 한 칸(벽, 바닥, 창, 화분). ox, oy는 왼쪽 위, k는 크기 비.
-const room = (ox: number, oy: number, w: number, h: number): string => {
+const room = (ox: number, oy: number, w: number, h: number, px = 0.8): string => {
   const fy = oy + h * 0.68;
   return `<rect x="${ox}" y="${oy}" width="${w}" height="${h}" rx="8" fill="#1B2E4C"/>
     <rect x="${ox}" y="${fy}" width="${w}" height="${oy + h - fy}" fill="#2A3F63"/>
     <line x1="${ox}" y1="${fy}" x2="${ox + w}" y2="${fy}" stroke="#4A618A" stroke-width="1.4"/>
     <rect x="${ox + w * 0.12}" y="${oy + h * 0.14}" width="${w * 0.3}" height="${h * 0.3}" rx="3" fill="#8FC5FF" opacity=".75"/>
     <line x1="${ox + w * 0.27}" y1="${oy + h * 0.14}" x2="${ox + w * 0.27}" y2="${oy + h * 0.44}" stroke="#1B2E4C" stroke-width="1.6"/>
-    <rect x="${ox + w * 0.8}" y="${fy - 12}" width="12" height="12" rx="2" fill="#C98B5B"/>
-    <path d="M${ox + w * 0.8 + 6} ${fy - 12} q-9 -12 -2 -22 q2 10 2 22 q0 -12 8 -18 q0 10 -8 18" fill="#3FBF7F"/>`;
+    <rect x="${ox + w * px}" y="${fy - 12}" width="12" height="12" rx="2" fill="#C98B5B"/>
+    <path d="M${ox + w * px + 6} ${fy - 12} q-9 -12 -2 -22 q2 10 2 22 q0 -12 8 -18 q0 10 -8 18" fill="#3FBF7F"/>`;
 };
 
 const SCENE: Record<Key, string> = {
@@ -62,9 +62,9 @@ const SCENE: Record<Key, string> = {
     ${room(14, 42, 140, 138)}
     <path d="M160 112 h24 m-7 -6 l7 6 l-7 6" fill="none" stroke="#8FA3C2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     <rect x="196" y="20" width="128" height="192" rx="16" fill="#0A1220" stroke="#C9D5E8" stroke-width="2"/>
-    ${room(204, 40, 112, 150)}
+    ${room(204, 40, 112, 150, 0.87)}
     <text x="260" y="34" text-anchor="middle" class="u1x-lb sm">폰 화면</text>
-    <g class="on">
+    <g class="on" transform="translate(-6 0)">
       <rect x="222" y="112" width="66" height="26" rx="7" fill="#FF8FA3"/>
       <rect x="216" y="124" width="78" height="24" rx="8" fill="#FF6F8B"/>
       <rect x="212" y="118" width="14" height="30" rx="6" fill="#FF8FA3"/>

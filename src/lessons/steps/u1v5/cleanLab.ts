@@ -1,7 +1,7 @@
 // [중1 Ⅰ v5] u1l5 cleanLab: 「온실 기체를 줄이려면 무엇을 바꿀까?」
 // 한 통찰: 과학기술(태양광 발전, 전기 자동차, 탄소 포집 장치)로 에너지는 그대로 쓰면서 온실 기체를 줄일 수 있다.
 // 도입(blanket)이 "기체 층을 얇게 하려면 어떻게 할까요"로 넘긴 물음을 받는다. 하늘의 기체 층이 도입의 담요다.
-// 조작: 카드 셋(발전소, 자동차, 공장 굴뚝)을 눌러 바꾼다. 다시 누르면 되돌아간다. 손을 대면 연기와 기체 층, 배출량 막대가 바로 바뀐다.
+// 조작: 카드 셋(발전소, 자동차, 공장 굴뚝)을 눌러 바꾼다. 다시 누르면 되돌아간다. 손을 대면 나오는 기체와 기체 층, 배출량 막대가 바로 바뀐다. 이산화 탄소는 보이지 않으므로 "연기"라고 부르지 않는다(눈검수 지적).
 //       발전소가 석탄인 채 전기 자동차로 바꾸면 발전소 연기가 조금 는다(충전할 전기를 석탄으로 만든다). 틀린 차례도 해 볼 수 있다.
 // 흐름: 셋을 모두 바꾼다 → 판정 → 결론.
 // 배출량(막대의 길이, 숫자는 화면에 쓰지 않는다): 발전소 45, 자동차 25, 공장 30. 전기 자동차 + 석탄 발전이면 발전소 +10. 포집 뒤 공장 5.
@@ -22,7 +22,7 @@ const KEYS: Key[] = ["plant", "car", "fac"];
 const INFO: Record<Key, { name: string; old: string; neo: string }> = {
   plant: { name: "발전소", old: "석탄 발전", neo: "태양광 발전" },
   car: { name: "자동차", old: "휘발유 자동차", neo: "전기 자동차" },
-  fac: { name: "공장 굴뚝", old: "연기 그대로", neo: "탄소 포집 장치" },
+  fac: { name: "공장 굴뚝", old: "그대로 배출", neo: "탄소 포집 장치" },
 };
 
 const puffs = (cls: string, x: number, y: number, n = 3, r = 7): string =>
@@ -123,12 +123,12 @@ export const cleanLab: StepRenderer = (host, step, api) => {
   }
 
   function sayFor(k: Key): string {
-    if (k === "plant") return clean.plant ? "햇빛으로 전기를 만들어요. <b>석탄을 태우지 않아</b> 굴뚝 연기가 사라졌어요." : "다시 석탄을 태워 전기를 만들어요. 굴뚝에서 연기가 나와요.";
+    if (k === "plant") return clean.plant ? "햇빛으로 전기를 만들어요. <b>석탄을 태우지 않아</b> 온실 기체가 나오지 않아요." : "다시 석탄을 태워 전기를 만들어요. 굴뚝에서 온실 기체가 나와요.";
     if (k === "car") {
-      if (!clean.car) return "다시 휘발유를 태우며 달려요. 배기구에서 연기가 나와요.";
-      return clean.plant ? "햇빛으로 만든 전기로 달려요. 자동차에서도 발전소에서도 연기가 없어요." : "달릴 때는 연기가 없어요. 그런데 충전할 전기를 만드느라 <b>발전소 연기</b>가 늘었어요.";
+      if (!clean.car) return "다시 휘발유를 태우며 달려요. 배기구에서 온실 기체가 나와요.";
+      return clean.plant ? "햇빛으로 만든 전기로 달려요. 자동차도 발전소도 온실 기체를 내지 않아요." : "달릴 때는 온실 기체가 안 나와요. 그런데 충전할 전기를 만드느라 <b>발전소</b>에서 더 나와요.";
     }
-    return clean.fac ? "굴뚝에서 나오는 이산화 탄소를 <b>붙잡아 모아요</b>. 하늘로 올라가는 양이 줄었어요." : "장치를 떼자 굴뚝의 연기가 다시 하늘로 올라가요.";
+    return clean.fac ? "굴뚝에서 나오는 이산화 탄소를 <b>붙잡아 모아요</b>. 하늘로 올라가는 양이 줄었어요." : "장치를 떼자 굴뚝의 이산화 탄소가 다시 하늘로 올라가요.";
   }
 
   KEYS.forEach((k) =>
@@ -166,7 +166,7 @@ export const cleanLab: StepRenderer = (host, step, api) => {
     api.enableCTA(s.cta ?? "다음");
   }
 
-  f.slot.setControls(bvCards(3, cards.plant, cards.car, cards.fac), el("div", { class: "u1x-cap center", text: "카드를 누르면 바뀌고, 다시 누르면 되돌아가요." }));
+  f.slot.setControls(bvCards(3, cards.plant, cards.car, cards.fac), el("div", { class: "u1x-cap center", text: "카드를 누르면 바뀌고, 다시 누르면 되돌아가요." }), el("div", { class: "u1x-cap center", text: "온실 기체는 눈에 보이지 않아요. 알아보기 쉽게 그렸어요." }));
   paint();
   f.say("카드를 눌러 <b>발전소, 자동차, 공장 굴뚝</b>을 하나씩 바꿔 봐요. 하늘의 기체 층을 지켜봐요.");
   api.setCTA("세 가지를 모두 바꿔 보세요", { enabled: false });

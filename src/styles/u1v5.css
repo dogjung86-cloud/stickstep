@@ -54,10 +54,12 @@
 /* ── 그래프 랩 ── */
 .u1g-stage { cursor: ns-resize; }
 .u1g-ax { font-size: 12px; font-weight: 700; fill: #9FB0C8; }
+.u1g-ax.lg { fill: #C9D5E8; }
 .u1g-gt { font-size: 13px; font-weight: 800; fill: #3A2A00; }
 .u1g-ghost.bad .u1g-gc, .u1g-ghost.bad .u1g-gb { fill: #FF6B6B; }
 .u1g-ghost.bad .u1g-gl { stroke: #FF6B6B; }
-.u1g-ghost.bad .u1g-gt { fill: #fff; }
+.u1g-ghost.bad .u1g-ax.lg { fill: #C9D5E8; }
+.u1g-gt { fill: #fff; }
 .u1g-pop { animation: u1gPop .32s var(--ease-out); }
 @keyframes u1gPop { 0% { opacity: 0; } 100% { opacity: 1; } }
 .u1x-cap { height: 20px; padding: 0 2px; font-size: 12.5px; font-weight: 700; line-height: 20px; color: var(--n700); white-space: nowrap; }

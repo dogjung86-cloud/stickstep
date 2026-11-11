@@ -40,6 +40,7 @@ function stageSvg(): string {
   return `<svg viewBox="0 0 346 230" role="img" aria-label="시간에 따른 물의 온도 그래프">
     ${minor}${grid}${cols}
     <text x="14" y="14" class="u1g-ax">온도(℃)</text>
+    ${SERIES.map((sr, i) => `<circle cx="${150 + i * 64}" cy="10" r="5" fill="${sr.dot}" stroke="${sr.ring}" stroke-width="1.6"/><text x="${159 + i * 64}" y="14.5" class="u1g-ax lg">${sr.name}</text>`).join("")}
     <line x1="52" y1="${yOf(40) - 6}" x2="52" y2="${Y20}" stroke="#8FA3C2" stroke-width="1.6"/>
     <line x1="52" y1="${Y20}" x2="330" y2="${Y20}" stroke="#8FA3C2" stroke-width="1.6"/>
     <rect class="u1g-col" x="0" y="${yOf(40) - 6}" width="56" height="${Y20 - yOf(40) + 12}" rx="10" fill="#4C9BFF" opacity="0"/>
@@ -217,7 +218,7 @@ export const graphLab: StepRenderer = (host, step, api) => {
       "2시간 동안 온도가 <b>가장 많이 오른</b> 컵의 선은 어떤 모습인가요?",
       [{ t: "가장 가파르게 올라간다", ok: true }, { t: "가장 완만하게 올라간다" }, { t: "가장 아래쪽에 놓인다" }],
       (ok) => api.recordQuiz(ok),
-      { why: "검은색 선이 가장 가팔라요. <b>많이 오를수록</b> 선이 가파르게 서요.", onNext: finish },
+      { why: "검은색 컵의 선이 가장 가팔라요. <b>많이 오를수록</b> 가파르게 서요.", onNext: finish },
     );
   }
 

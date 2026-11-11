@@ -221,13 +221,22 @@ export const fairLab: StepRenderer = (host, step, api) => {
 
   function askFinal(): void {
     setPhase("ask");
-    f.say("공정한 실험에 성공했어요. <b>맨 처음에 본 실험</b>을 떠올리며 골라 봐요.");
+    // 판정의 근거를 무대에 남긴다: 검은 컵만 그늘에 둔 실험의 결과를 다시 보여 준다
+    diff.color = true;
+    diff.water = false;
+    diff.place = true;
+    paintSetup();
+    temps.forEach((t) => t.classList.remove("top"));
+    showTemps(finalTemps());
+    verdictEl.textContent = "공정하지 않아요";
+    verdictEl.className = "u1x-verdict show no";
+    f.say("공정한 실험에 성공했어요. 이번에는 무대의 <b>검은 컵만 그늘에 둔 실험</b>을 보고 골라 봐요.");
     f.slot.ask(
-      "검은 컵만 그늘에 두었더니 파란 컵이 가장 뜨거웠어요. 알 수 있는 것은?",
+      "검은 컵만 그늘에 두었더니 검은 컵이 가장 덜 뜨거웠어요. 알 수 있는 것은?",
       [
         { t: "색깔 때문인지 알 수 없다", ok: true },
-        { t: "파란색이 가장 잘 데워진다" },
         { t: "검은색은 잘 데워지지 않는다" },
+        { t: "그늘에 두면 더 잘 데워진다" },
       ],
       (ok) => api.recordQuiz(ok),
       { why: "색깔과 <b>놓는 곳</b>이 함께 달라서 원인을 가릴 수 없어요.", onNext: finish },
@@ -238,7 +247,7 @@ export const fairLab: StepRenderer = (host, step, api) => {
     setPhase("done");
     f.pips(3);
     f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("알아보려는 조건 <b>하나만 다르게</b> 하고 나머지는 모두 같게 맞춰요. 이렇게 조건을 맞추는 일이 <b>변인 통제</b>예요.");
+    f.slot.conclude("알아보려는 것 <b>하나만 다르게</b> 두고 나머지 조건은 모두 같게 맞춰요. 이렇게 조건을 맞추는 일이 <b>변인 통제</b>예요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
