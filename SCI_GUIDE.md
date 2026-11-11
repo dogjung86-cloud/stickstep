@@ -816,3 +816,24 @@ v5는 v3의 도입, 개념, 정리와 일부 문제를 이어받아 제 파일(`
   개발 중 엿보기는 `PORT=5547 node qa/u2v5-peek.mjs <레슨> <스텝> <출력.png> [조작 스크립트]`.
   검산용 문제지는 `PORT=5547 node qa/u2v5-blind.mjs <문제지 폴더> <정답표 폴더>`가 뽑는다(새로 쓰거나 고쳐 쓴 문제 스텝을 정답 없이 적고, 정답표는 다른 폴더에 둔다).
   전체 실플레이는 13분쯤 걸린다. 도는 동안 `src`와 `public`을 고치지 않는다(화면이 통째로 다시 열린다).
+
+## 중1 Ⅱ 랩의 다른 느낌 샘플(2026-11-11, 판정 대기, 병행 토글 뒤)
+
+사용자 물음 "점선면 구성 말고, 다른 느낌으로 상호작용 랩을 구성해 볼 수 있나"에 답하는 샘플 세 판이다. **정본이 아니다.** 판정 자료는 `output/lab-style-samples/README.md`.
+
+| 샘플 | 표현 | 다시 만든 랩 | 파일 |
+|---|---|---|---|
+| collage | 종이 콜라주 | u2l8 `kinLab` | `steps/style/kinCollage.ts` · `public/labstyle/collage/` |
+| sketch | 손그림 공책 | u2l7 `beakIslesLab` | `steps/style/beakIslesSketch.ts` · `ui/labSketch.generated.ts`(뽑는 코드 `qa/labstyle/sketch-beak.mjs`) |
+| model | 입체 모형 | u2l2 `cellWorkLab`(동물세포) | `steps/style/cellWorkModel.ts` |
+
+- **토글**: 주소 `?u2style`(값이 없으면 셋 모두. `?u2style=collage,sketch`처럼 골라 켠다. 끄기 `?u2style=0`), 세션 `ss.u2style`. `registry.ts` 끝의 `withLabStyle(R)`이 세 스텝 타입을 "켜져 있으면 샘플, 아니면 정본"으로 감싼다. 꺼져 있으면 정본 렌더러가 같은 인자로 불린다.
+- **지킨 계약**: 뼈대는 정본의 `b6Lab.bvFrame` 그대로(무대 230, 조작 칸 208). 글(질문, 도움말, 판정, 결론)은 정본과 글자 하나까지 같다. 조작부 클래스와 표식(`.bv-card[data-k]`, `.bki-range`, `.cwk-diag`, `data-knl-*`, `data-bki-*`)도 같아서 `qa/u2v5-lib.mjs`의 조작 스크립트가 샘플에서 그대로 돈다.
+- **CSS 접두**: 공용 `.ls-`, 콜라주 `.lsc-`, 손그림 `.lsh-`, 입체 `.lsm-`(`.lsk-`는 다른 랩이 쓰고 있다). 시트 `styles/labstyle.css`.
+- **견주어 보는 화면**: `public/qa-labstyle.html`(개발 서버 전용. 지금 랩과 샘플을 폰 크기로 나란히 띄운다. `public/qa-*`는 빌드에서 걷힌다).
+- **만들며 정한 것**
+  - 손그림 랩은 그리는 코드를 번들 밖에 두고 조각만 싣는다(코드 그림의 규칙 그대로). 조각은 `<defs>`에 넣고 `<use>`로 자리에 놓는다. 좌표는 무대 설계 판의 세 배(1038×690)다.
+  - 스티커는 `python qa/make-labstyle-stickers.py`가 흰 바탕 발주 그림에서 다시 오린다(새 발주 없음).
+  - 입체 랩은 `ui/space3d`를 동적 import로 싣고, 진행은 타이머에, 그리기는 `createLoop`에 나눠 맡긴다. WebGL이 없으면 정본 평면 랩으로 물러난다. **이 샘플은 위 "3D 우주 랩" 절의 "장식용 3D 금지"와 부딪친다**(받아들일지는 사용자 판정).
+  - 눈검수에서 걸린 것: 한 색에 뜻을 둘 주지 않는다. 빨강은 오답의 색이라 강조에 쓰지 않는다(콜라주의 마커를 초록으로). 설명 없는 표식(물방울) 대신 장면 속의 것(부리에 문 먹이)으로 보여 준다. 움직이는 그림의 이름표는 제 칸에 둔다. 입체에서 멈춘 구조를 회색으로 칠할 때 전체가 바래지 않게 가장자리만 칠한다.
+- **QA**: `PORT=5567 node qa/check-labstyle.mjs`(토글, 한 화면 세 가지, 정답 경로와 오답 경로, 입체 모형, 화면 글. 835검사) · `PORT=5567 node qa/e2e-u2v5.mjs`(토글을 끈 정본, 409) · `npm run build` 뒤 `PPORT=4567 node qa/check-labstyle-dist.mjs`(빌드 번들, 17) · `node qa/check-labstyle-lang.mjs` · 캡처 `PORT=5567 node qa/shot-labstyle.mjs <폴더>`와 `python qa/make-labstyle-compare.py <캡처 폴더> <출력 폴더>` · 엿보기 `PORT=5567 node qa/labstyle-peek.mjs <레슨> <스텝> <출력.png> [조작 스크립트]`.

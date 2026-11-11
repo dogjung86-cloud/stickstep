@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>랩의 다른 느낌 샘플</title>
+<style>
+  :root { --ink: #191F28; --sub: #5B6675; --line: #E2E6EC; --bg: #F5F6F8; --accent: #12B886; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif; letter-spacing: -.012em; }
+  header { max-width: 980px; margin: 0 auto; padding: 28px 16px 8px; }
+  h1 { margin: 0 0 6px; font-size: 24px; letter-spacing: -.03em; }
+  header p { margin: 0; color: var(--sub); word-break: keep-all; }
+  nav { max-width: 980px; margin: 14px auto 0; padding: 0 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  nav button {
+    flex: 1 1 180px; min-height: 64px; padding: 10px 14px; border-radius: 14px; border: 1.5px solid var(--line); background: #fff;
+    font: inherit; text-align: left; cursor: pointer; color: var(--ink);
+  }
+  nav button b { display: block; font-size: 15.5px; }
+  nav button span { display: block; font-size: 13px; color: var(--sub); }
+  nav button[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; background: #ECFBF5; }
+  main { max-width: 980px; margin: 0 auto; padding: 14px 16px 40px; }
+  .about { margin: 0 0 14px; padding: 14px 16px; border-radius: 14px; background: #fff; border: 1px solid var(--line); }
+  .about h2 { margin: 0 0 4px; font-size: 17px; }
+  .about p { margin: 0; color: var(--sub); word-break: keep-all; }
+  .about ul { margin: 8px 0 0; padding-left: 18px; color: var(--sub); }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; justify-items: center; }
+  @media (max-width: 760px) { .pair { grid-template-columns: 1fr; } }
+  figure { margin: 0; width: 100%; display: grid; justify-items: center; gap: 8px; }
+  figcaption { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 15px; }
+  figcaption i { font-style: normal; padding: 2px 9px; border-radius: 999px; font-size: 12.5px; background: #E9ECF1; color: #46546A; }
+  figure.new figcaption i { background: #D3F4E7; color: #087F5B; }
+  figcaption button { border: 1px solid var(--line); background: #fff; border-radius: 9px; padding: 4px 10px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; color: var(--ink); }
+  .phone-box { position: relative; width: 390px; height: 700px; transform-origin: 0 0; }
+  .phone-wrap { overflow: hidden; border-radius: 26px; box-shadow: 0 0 0 1px #D5DAE2, 0 10px 30px rgba(20, 30, 50, .12); background: #fff; }
+  iframe { display: block; width: 390px; height: 700px; border: 0; background: #fff; }
+  .note { margin-top: 18px; color: var(--sub); font-size: 13.5px; word-break: keep-all; }
+  .note code { background: #E9ECF1; padding: 1px 6px; border-radius: 6px; font-size: 12.5px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>랩의 다른 느낌 샘플 세 가지</h1>
+  <p>왼쪽은 지금 랩이고, 오른쪽은 같은 내용과 같은 질문을 다른 표현으로 다시 만든 샘플이에요. 둘 다 처음부터 결론까지 직접 해 볼 수 있어요.</p>
+</header>
+<nav id="tabs"></nav>
+<main>
+  <div class="about" id="about"></div>
+  <div class="pair">
+    <figure class="old"><figcaption><i>지금</i><span id="capOld"></span><button type="button" data-re="0">처음부터</button></figcaption><div class="phone-wrap"><div class="phone-box"><iframe id="frOld" title="지금 랩"></iframe></div></div></figure>
+    <figure class="new"><figcaption><i>샘플</i><span id="capNew"></span><button type="button" data-re="1">처음부터</button></figcaption><div class="phone-wrap"><div class="phone-box"><iframe id="frNew" title="샘플 랩"></iframe></div></div></figure>
+  </div>
+  <p class="note">레슨 흐름 안에서 보려면 주소 끝에 <code>?u2style</code>을 붙여 앱을 열고, 중1 과학 Ⅱ단원의 지도에서 세포 구조(2번), 변이와 적응(7번), 분류와 종(8번) 레슨에 들어가면 돼요. 끄려면 <code>?u2style=0</code>으로 한 번 열어요. 이 화면은 저장된 진행 기록이 없을 때만 모든 레슨이 열리는 검토용 기록을 넣어요.</p>
+</main>
+<script>
+  // 샘플 셋: 레슨 번호(li), 스텝 번호(si)는 Ⅱ단원 정본(unit2v5)의 자리다.
+  const SAMPLES = [
+    {
+      key: "collage", name: "종이 콜라주", lab: "박쥐는 누구와 더 가까울까?", li: 7, si: 1,
+      about: "모눈 공책 위에 동물을 오려 붙이고, 조사한 특징을 쪽지로 붙여요. 같은 특징에는 노란 형광펜을 긋고 빨간 마커로 이어요.",
+      points: ["동물이 지금보다 두 배쯤 크게 보여요", "새로 주문한 그림은 없어요(있는 그림을 스티커 모양으로 다시 오렸어요)"],
+    },
+    {
+      key: "sketch", name: "손그림 공책", lab: "두 섬의 새는 어떻게 달라질까?", li: 6, si: 2,
+      about: "이 레슨의 도입 만화와 같은 손으로 그린 장면이에요. 먹이를 잘 먹지 못하는 새에게 물방울이 맺히고, 그 새가 사라진 자리에서 새끼가 태어나 자라요.",
+      points: ["그림은 모두 코드로 그려요(주문한 그림 없음)", "자리의 주인이 바뀌는 과정이 눈에 보여요"],
+    },
+    {
+      key: "model", name: "입체 모형", lab: "세포의 구조, 멈추면 어떻게 될까?", li: 1, si: 2,
+      about: "손으로 돌려 볼 수 있는 입체 세포 모형이에요. 무대를 가로로 끌면 모형이 돌고, 모형의 구조를 눌러도 멈춰요.",
+      points: ["세포막이 세포를 온통 둘러싼 막으로 보여요", "입체 그림 도구를 처음 열 때 한 번 내려받아요"],
+    },
+  ];
+  const $ = (id) => document.getElementById(id);
+  // 저장된 기록이 없을 때만 검토용 기록을 넣는다(스플래시와 온보딩을 건너뛰고, 모든 레슨이 열린다)
+  try {
+    if (!localStorage.getItem("science-app.v1")) {
+      localStorage.setItem("science-app.v1", JSON.stringify({
+        version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci",
+        premium: true, reviewMode: true, goalMin: 10, streak: 1, totalXp: 0, lessons: {}, minigame: {},
+      }));
+    }
+  } catch (e) { /* 저장소를 못 쓰는 환경이면 그대로 간다 */ }
+
+  let cur = SAMPLES[0];
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  async function openIn(frame, style) {
+    const win = frame.contentWindow;
+    for (let i = 0; i < 80 && !(win.__u2styleOpen && win.document.querySelector(".screen.active")); i++) await wait(150);
+    await wait(500);
+    if (win.__u2styleOpen) await win.__u2styleOpen(cur.li, cur.si, style);
+  }
+  function load(frame, style) {
+    frame.onload = () => openIn(frame, style);
+    frame.src = `./?u2style=${style}&v=${Date.now()}`;
+  }
+  function show(s) {
+    cur = s;
+    [...$("tabs").children].forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.k === s.key)));
+    $("about").innerHTML = `<h2>${s.name}</h2><p>${s.about}</p><ul>${s.points.map((p) => `<li>${p}</li>`).join("")}</ul>`;
+    $("capOld").textContent = s.lab;
+    $("capNew").textContent = s.lab;
+    load($("frOld"), "0");
+    load($("frNew"), s.key);
+    history.replaceState(null, "", `#${s.key}`);
+  }
+  SAMPLES.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.dataset.k = s.key;
+    b.innerHTML = `<b>${i + 1}. ${s.name}</b><span>${s.lab}</span>`;
+    b.addEventListener("click", () => show(s));
+    $("tabs").appendChild(b);
+  });
+  document.querySelectorAll("[data-re]").forEach((b) => b.addEventListener("click", () => {
+    const isNew = b.dataset.re === "1";
+    openIn(isNew ? $("frNew") : $("frOld"), isNew ? cur.key : "0");
+  }));
+  // 폰 그림을 화면 폭에 맞춰 줄인다
+  function fit() {
+    document.querySelectorAll(".phone-wrap").forEach((w) => {
+      const avail = w.parentElement.clientWidth;
+      const k = Math.min(1, avail / 390);
+      const box = w.firstElementChild;
+      box.style.transform = `scale(${k})`;
+      w.style.width = `${390 * k}px`;
+      w.style.height = `${700 * k}px`;
+    });
+  }
+  addEventListener("resize", fit);
+  fit();
+  show(SAMPLES.find((s) => `#${s.key}` === location.hash) || SAMPLES[0]);
+</script>
+</body>
+</html>
