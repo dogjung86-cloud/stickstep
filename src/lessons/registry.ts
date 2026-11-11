@@ -51,7 +51,6 @@ import { kinLab } from "./steps/bio6/kinLab";
 import { rankWidenLab } from "./steps/bio6/rankWidenLab";
 import { kingdomPathLab } from "./steps/bio6/kingdomPathLab";
 import { foodWebLab } from "./steps/bio6/foodWebLab";
-import { withLabStyle } from "./steps/style/labStyle"; // 랩의 다른 느낌 샘플(병행 토글)
 // ── 중2 Ⅴ v3 랩 7종(2026-08-10 재제작, steps/plant3/*) — 병행 배선(unit5v3) 전용 ──
 import { greenHuntLab } from "./steps/plant3/greenHuntLab";
 import { gasCrossLab } from "./steps/plant3/gasCrossLab";
@@ -654,9 +653,6 @@ const R: Record<string, StepRenderer> = {
   kidneyFilterLab,
   bodyTeamLab,
 };
-
-// 랩의 다른 느낌 샘플(2026-11-11, 병행 토글 ss.u2style / 주소 ?u2style). 꺼져 있으면 위의 정본 렌더러가 그대로 불린다.
-withLabStyle(R);
 
 export function getRenderer(type: string): StepRenderer | undefined {
   return R[type];

@@ -73,7 +73,7 @@ const ramp = (a: number, b: number, x: number): number => {
 export const levelBuildLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as BlvStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: 3, cls: "blv-stage", qCls: "blv-q" });
+  const f = bvFrame(host, { title: s.title, steps: 3, cls: "blv-stage", qCls: "blv-q", api });
   const canvas = bvCanvas(f.stage);
 
   // ── 무대: 왼쪽 그림 상자, 오른쪽 계단 ─────────────────────────────

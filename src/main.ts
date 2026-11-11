@@ -5,7 +5,6 @@ import "./styles/bio3.css"; // 중1 Ⅱ 재제작 전용 시트(공용 크롬) �
 import "./styles/bio3-hook.css"; // 훅 10종(hookBio2)은 자체 import를 하지 않아 여기서 싣는다
 import "./styles/bio4.css"; // 중1 Ⅱ v3 재제작(2026-08-10) 공용 크롬 — ss.u2v3 병행 배선
 import "./styles/bio6.css"; // 중1 Ⅱ v5(2026-11-11 정본) 랩 뼈대와 랩 12종
-import "./styles/labstyle.css"; // 랩의 다른 느낌 샘플(2026-11-11, 병행 토글 ss.u2style). 꺼져 있으면 쓰이지 않는다
 import "./styles/bio4-hook.css"; // v3 훅 8장면(hookBio4)
 import "./styles/plant3.css"; // 중2 Ⅴ v3 재제작(2026-08-10) 공용 크롬 — ss.g2u5v3 병행 배선
 import "./styles/plant3-hook.css"; // v3 훅 5장면(hookPlant3)
@@ -552,7 +551,7 @@ function openLesson(id: string): void {
       nav.go(doneScreen(r, gained, note, goHome));
     },
   });
-  nav.go({ el: player.el });
+  nav.go(player); // 화면이 치워질 때 스텝의 정리(onExit)까지 라우터에 넘긴다(뒤로가기로 나가도 타이머와 WebGL을 돌려준다)
 }
 
 function showSplash(instant = false): void {
@@ -608,7 +607,7 @@ if (import.meta.env.DEV && new URLSearchParams(location.search).get("preview") =
       onExit: goHome,
       onComplete: () => goHome(), // 프리뷰는 완료를 기록하지 않는다(store 오염 방지)
     });
-    nav.go({ el: player.el });
+    nav.go(player);
   });
 } else if (bootRoute) {
   enterFromRoute(bootRoute); // 딥링크(#/pricing·#/login 등) — 스플래시를 건너뛰고 해당 화면으로(2026-08-14)

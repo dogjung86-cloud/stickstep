@@ -79,6 +79,12 @@ async function dragRange(page, sel, to, ms = 500) {
   await W(page, 250);
 }
 const choice = (page, ok1) => page.locator(`${A} .bv-q.show .bv-choice[data-ok="${ok1 ? 1 : 0}"]`).first();
+/** 맞는 보기를 누르고, 누른 보기에 "정답이에요"가 새겨진 것을 본 뒤 '다음'을 누른다(맞혀도 '다음'을 눌러야 넘어간다). */
+const pickAndNext = async (page) => {
+  await choice(page, true).click();
+  await page.locator(`${A} .bv-q.show .bv-choice.ok .bv-vd`, { hasText: "정답이에요" }).waitFor({ state: "visible", timeout: 5000 });
+  await page.locator(`${A} .bv-q.show .bv-ans .bv-next`).click();
+};
 const waitAsk = (page) => page.locator(`${A} .bv-q.show .bv-choice`).first().waitFor({ state: "visible", timeout: 9000 });
 const ds = (page, k) => page.evaluate((key) => document.querySelector(".screen.active .step.bv-step")?.dataset[key] ?? null, k);
 const waitDs = async (page, k, v) => {
@@ -127,7 +133,7 @@ console.log("표식 없음 = 새 판(정본) · u2l1 확대 랩");
   await dragRange(page, ".mgf-range", 1, 500);
   await W(page, 1100);
   await waitAsk(page);
-  await choice(page, true).click();
+  await pickAndNext(page);
   ok(await done(page), "판정을 맞히면 결론이 뜬다");
   await W(page, 300);
   ok(await ctaOpen(page), "u2l1 랩 완료, 아래 버튼이 열린다");
@@ -163,7 +169,7 @@ console.log("u2l3 표본 만들기 · 관찰 랩");
   await page.locator(`${A} .bv-card[data-k="paper"]`).click();
   ok(await waitDs(page, "sbdStage", "4"), "거름종이: 표본 완성");
   await waitAsk(page);
-  await choice(page, true).click();
+  await pickAndNext(page);
   ok(await done(page), "표본 만들기 결론");
   await W(page, 300);
   await cta(page);
@@ -191,10 +197,10 @@ console.log("u2l3 표본 만들기 · 관찰 랩");
   await page.locator(`${A} .scp-cmp`).click();
   await waitAsk(page);
   const q1 = await page.locator(`${A} .bv-qt`).textContent();
-  await choice(page, true).click();
+  await pickAndNext(page);
   await page.waitForFunction((q) => { const e = document.querySelector(".screen.active .bv-q.show .bv-qt"); return !!e && e.textContent !== q; }, q1, { timeout: 8000 });
   await W(page, 400);
-  await choice(page, true).click();
+  await pickAndNext(page);
   ok(await done(page), "관찰 랩 결론");
   await W(page, 300);
   ok(await ctaOpen(page), "u2l3 랩 둘 완료, 아래 버튼이 열린다");
@@ -232,10 +238,10 @@ console.log("u2l5 구성 단계 랩");
   await page.locator(`${A} .blv-cmp`).click();
   await waitAsk(page);
   const q1 = await page.locator(`${A} .bv-qt`).textContent();
-  await choice(page, true).click();
+  await pickAndNext(page);
   await page.waitForFunction((q) => { const e = document.querySelector(".screen.active .bv-q.show .bv-qt"); return !!e && e.textContent !== q; }, q1, { timeout: 8000 });
   await W(page, 400);
-  await choice(page, true).click();
+  await pickAndNext(page);
   ok(await done(page), "구성 단계 랩 결론");
   await W(page, 300);
   ok(await ctaOpen(page), "u2l5 랩 완료, 아래 버튼이 열린다");
@@ -260,10 +266,10 @@ console.log("u2l7 두 섬의 새 랩");
   ok((await ds(page, "bkiStep")) === "3" && (await ds(page, "bkiA")) === "9,0,0" && (await ds(page, "bkiB")) === "0,9,0", "끝까지 끌면 섬마다 한 가지 부리만 남는다");
   await waitAsk(page);
   const q1 = await page.locator(`${A} .bv-qt`).textContent();
-  await choice(page, true).click();
+  await pickAndNext(page);
   await page.waitForFunction((q) => { const e = document.querySelector(".screen.active .bv-q.show .bv-qt"); return !!e && e.textContent !== q; }, q1, { timeout: 8000 });
   await W(page, 400);
-  await choice(page, true).click();
+  await pickAndNext(page);
   ok(await done(page), "두 섬의 새 랩 결론");
   await page.close();
 }
@@ -293,7 +299,7 @@ console.log("u2l9 검색표 랩");
   }
   ok((await page.locator(`${A} .kpl-box.full`).count()) === 5, "생물 다섯이 모두 제 계의 칸에 들어간다");
   await waitAsk(page);
-  await choice(page, true).click();
+  await pickAndNext(page);
   ok(await done(page), "검색표 랩 결론");
   await W(page, 300);
   ok(await ctaOpen(page), "u2l9 랩 완료, 아래 버튼이 열린다");
