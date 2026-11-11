@@ -1,4 +1,5 @@
-// 스플래시 플립북: 놀이 컷 열네 장 + "공부하자!" 정착 컷. 표정이 있는 그림이다.
+// 스플래시 플립북: 놀이 컷 열네 장 + "공부하자!" 정착 장면(한 손으로 안경을 살짝 올린다, 자세 다섯).
+// 모든 인물은 눈동자 없이 안경만 쓴 얼굴이다(bare, 2026-11-12 사용자 결정).
 // 주인공은 만화의 쌤과 같은 얼굴(삐친 머리 + 둥근 안경)에 가운만 벗은 모습.
 // 머리 크기와 자리를 컷마다 비슷하게 두어, 넘길 때 한 사람이 이것저것 하는 것처럼 보이게 한다.
 // 그림 속 글자는 머리띠의 "공부하자!" 하나뿐이다(획으로 긋는다).
@@ -7,7 +8,7 @@ import { drawFigure, drawHead, handDot, pose, KID } from "../lib/figure.mjs";
 import { bowl, ball, note, clock, openBook, pencil } from "../lib/props.mjs";
 
 const S = 512;
-const kid = (face, extra = {}) => ({ ...KID, face, ...extra });
+const kid = (face, extra = {}) => ({ ...KID, face, bare: true, ...extra });
 
 // 먹기: 책상다리로 앉아 라면 후루룩
 function eat() {
@@ -266,7 +267,7 @@ function friends() {
   const A = pose({ elR: [100, -388], haR: [160, -506], elL: [-56, -262], haL: [-22, -222], tilt: -0.04, knL: [-26, -108], ftL: [-56, 0], knR: [26, -108], ftR: [52, 0] });
   const B = pose({ elL: [-100, -388], haL: [-160, -506], elR: [62, -272], haR: [96, -212], tilt: 0.04, knL: [-26, -108], ftL: [-52, 0], knR: [26, -108], ftR: [56, 0] });
   drawFigure(sk, 150, y, fs, A, { ...kid("happy"), look: 0.5 });
-  drawFigure(sk, 362, y, fs, B, { hair: "bob", hairColor: "#3F322C", face: "happy", look: -0.5, seed: 51 });
+  drawFigure(sk, 362, y, fs, B, { hair: "bob", hairColor: "#3F322C", glasses: true, bare: true, face: "happy", look: -0.5, seed: 51 });
   sparkle(sk, 256, 104, 24, { seed: 321 });
   rays(sk, 256, 150, 40, 62, 5, { a0: -2.7, a1: -0.44, color: C.orange, w: 7 });
   return sk;
@@ -336,17 +337,27 @@ function dog() {
   return sk;
 }
 
-// 정착 컷: 머리띠 질끈, 책상 앞 상체
-export function study() {
+// 정착 장면: 머리띠를 두르고 책상 앞에 앉아, 한 손으로 안경을 살짝 올린다. 앱이 자세 다섯을 차례로 넘기고 push 에서 안경을 반짝인다.
+// v: elL/haL(화면 왼쪽 팔), elR/haR, lookY(안경 높이), mouth, lift(왼손이 안경에 올라가 있는가)
+const DESK_R = { elR: [80, -306], haR: [132, -294] };
+const SETTLE = {
+  rest:  { ...DESK_R, elL: [-80, -306], haL: [-132, -294], lookY: 0, mouth: "flat" },
+  reach: { ...DESK_R, elL: [-128, -318], haL: [-116, -366], lookY: 0, mouth: "flat", lift: true },
+  touch: { ...DESK_R, elL: [-132, -330], haL: [-78, -403], lookY: 0, mouth: "flat", lift: true },
+  push:  { ...DESK_R, elL: [-132, -336], haL: [-78, -413], lookY: -8, mouth: "grin", lift: true },
+  final: { ...DESK_R, elL: [-132, -334], haL: [-78, -410], lookY: -5, mouth: "grin", lift: true },
+};
+export function study(which = "final") {
+  const v = SETTLE[which];
   const sk = new Sk(S, S, { id: "sg" });
   const fs = 1.28, hx = 256, hy = 206, fy = hy + 436 * fs;
-  const P = pose({ elL: [-88, -292], haL: [-112, -360], elR: [88, -292], haR: [112, -360] });
-  drawFigure(sk, hx, fy, fs, P, { ...kid("determined"), band: true, hands: false });
-  handDot(sk, [hx - fs * 112, fy - fs * 360], C.skin, 101, 24);
-  handDot(sk, [hx + fs * 112, fy - fs * 360], C.skin, 103, 24);
-  // 불끈 쥔 주먹 옆 힘 표시
-  sk.ink(curve([[70, 300], [58, 316], [60, 336]]), { w: 6, color: C.red, seed: 105, wob: 0.3 });
-  sk.ink(curve([[442, 300], [454, 316], [452, 336]]), { w: 6, color: C.red, seed: 106, wob: 0.3 });
+  const P = pose({ elL: v.elL, haL: v.haL, elR: v.elR, haR: v.haR });
+  const scr = p => [hx + fs * p[0], fy + fs * p[1]];
+  drawFigure(sk, hx, fy, fs, P, { ...kid("determined"), mouth: v.mouth, band: true, hands: false, lookY: v.lookY });
+  // 안경에 올린 팔은 머리 앞에 보여야 하므로 아래팔을 머리 위에 한 번 더 긋는다
+  if (v.lift) sk.ink(curve([scr(v.elL), scr([(v.elL[0] + v.haL[0]) / 2 - 4, (v.elL[1] + v.haL[1]) / 2]), scr(v.haL)]), { w: 13 * fs, seed: 14, wob: 1.2 });
+  handDot(sk, scr(v.haL), C.skin, 101, 24);
+  handDot(sk, scr(v.haR), C.skin, 103, 24);
   // 책상
   const desk = poly([[-10, 416], [522, 416], [522, 522], [-10, 522]], 5);
   sk.fill(desk, C.woodLight, { seed: 107, tex: true, texAng: 0.02, dx: 0, dy: 0 });
@@ -363,6 +374,8 @@ export function frames() {
     { name: "comics", sk: comics() }, { name: "computer", sk: computer() }, { name: "nap", sk: nap() }, { name: "snack", sk: snack() },
     { name: "friends", sk: friends() }, { name: "sing", sk: sing() }, { name: "kick", sk: kick() }, { name: "bike", sk: bike() },
     { name: "dog", sk: dog() }, { name: "oops", sk: oops() },
-    { name: "study", sk: study() },
+    // 정착 장면: study-* 넷을 차례로 넘긴 뒤 study(마지막 자세)에서 멈춘다. study 는 로그인 화면과 소개 페이지도 쓴다.
+    { name: "study-rest", sk: study("rest") }, { name: "study-reach", sk: study("reach") }, { name: "study-touch", sk: study("touch") }, { name: "study-push", sk: study("push") },
+    { name: "study", sk: study("final") },
   ];
 }
