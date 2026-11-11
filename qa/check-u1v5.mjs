@@ -275,6 +275,24 @@ async function playClean(id) {
   await judgeWrong(id);
 }
 
+/** 개념 스텝: 용어 카드가 떴는지 보고 화면 글을 모은 뒤 끝 버튼으로 넘어간다. */
+async function concept(id, term, wantCta, wantNext) {
+  const has = await page.evaluate((t) => {
+    const s = document.querySelector(".screen.active .step");
+    return !!s && s.textContent.includes("과학 용어 정복하기") && s.textContent.includes(t);
+  }, term);
+  ok(has, `${id}: 개념 스텝(${term})이 열리지 않음`);
+  await collect();
+  await shot(`${id}-concept-${term.replace(/\s+/g, "")}`);
+  await leave(`${id} 개념(${term})`, wantCta, wantNext);
+}
+/** 정리 스텝의 첫 화면을 찍고 글을 모은다. */
+async function recapShot(id) {
+  await W(page, 500);
+  await collect();
+  await shot(`${id}-recap`);
+}
+
 const open = async (id, on = true) => {
   await page.goto(`${BASE}/?u1v5${on ? "" : "=0"}&open=${id}`, { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => {
@@ -284,25 +302,115 @@ const open = async (id, on = true) => {
   await W(page, 600);
 };
 
+
+// ── 새로 쓴 문제: 정답을 한 번씩 눌러 정답으로 채점되는지만 본다(개발 모드의 data-oi) ──
+// key는 문두의 한 토막, ans는 저작 인덱스(복수 선택은 배열), OX는 "o" 또는 "x". 분류, 순서, 짝 잇기는 건너간다.
+const QUIZ = {
+  u1l1: [
+    { key: "실험을 하기 전에 세운", ans: 0 },
+    { key: "다르게’ 준 조건", ans: 2 },
+    { key: "규칙을 찾은", ans: 3 },
+    { key: "식초는 듣지 않았어요", ans: 0 },
+  ],
+  u1l2: [
+    { key: "같게 맞춰야 할 조건", ans: [0, 1, 2] },
+    { key: "컵의 재질", ans: 0 },
+    { key: "두 컵 (가)와 (나)", ans: 0, figure: true },
+  ],
+  u1l3: [
+    { key: "㉠에 들어갈 기기", ans: 1 },
+    { key: "감염된 뒤에", ans: "x" },
+  ],
+  u1l4: [
+    { key: "쓸수록 말을 더 잘", ans: 0 },
+    { key: "새로운 문제", ans: [0, 1] },
+  ],
+  u1l5: [
+    { key: "생각보다 적게 줄었어요", ans: 0 },
+    { key: "늦추는 데 쓰이는", ans: [0, 1, 2] },
+    { key: "업사이클링(새활용)", ans: 0 },
+  ],
+};
+const onQuiz = (key) =>
+  page.evaluate((k) => {
+    const s = document.querySelector(".screen.active .step");
+    return !!s && s.textContent.includes(k) && !!s.querySelector(".opts .opt, .ox-btn");
+  }, key);
+async function playQuizzes(id) {
+  for (const [qi, q] of QUIZ[id].entries()) {
+    let found = await onQuiz(q.key);
+    for (let i = 0; i < 8 && !found; i++) {
+      await page.evaluate(() => document.querySelector(".screen.active .xbtn.fwd")?.click());
+      await W(page, 520);
+      found = await onQuiz(q.key);
+    }
+    ok(found, `${id} 문제 ${qi + 1}: 찾지 못함("${q.key}")`);
+    if (!found) continue;
+    await page.evaluate(() => document.querySelectorAll(".snack, .toast").forEach((e) => e.remove()));
+    await collect();
+    if (q.figure) {
+      const figOk = await page.evaluate(() => {
+        const f = document.querySelector(".screen.active .q-figure");
+        return !!f && !!f.querySelector("svg") && f.getBoundingClientRect().height > 60;
+      });
+      ok(figOk, `${id} 문제 ${qi + 1}: 그림이 뜨지 않음`);
+    }
+    await shot(`${id}-q${qi + 1}`);
+    if (q.ans === "o" || q.ans === "x") await tap(page, `.ox-btn.${q.ans}`);
+    else for (const i of [].concat(q.ans)) {
+      await tap(page, `.opts .opt[data-oi="${i}"]`);
+      await W(page, 140);
+    }
+    await W(page, 250);
+    await cta(page);
+    await W(page, 300);
+    const good = await page.evaluate(() => [...document.querySelectorAll(".sheet")].some((s) => s.className.includes("open") && s.className.includes("good")));
+    ok(good, `${id} 문제 ${qi + 1}: 정답 시트가 아님("${q.key}")`);
+    await collect();
+    await page.evaluate(() => {
+      const s = [...document.querySelectorAll(".sheet")].find((x) => x.className.includes("open"));
+      [...(s?.querySelectorAll("button") ?? [])].pop()?.click();
+    });
+    await W(page, 560);
+  }
+}
+
+console.log("u1l1");
+await open("u1l1");
+await playQuizzes("u1l1");
+console.log("u1l3");
+await open("u1l3");
+await playQuizzes("u1l3");
+
 console.log("u1l2");
 await open("u1l2");
 await playOpener("u1l2", "공정하게 다시 실험하기");
 await playFair("u1l2-fair");
-await leave("u1l2-fair", "결과를 그래프로", (k) => k === "lab:u1g-stage");
+await leave("u1l2-fair", "용어로 정리하기", (k) => k.startsWith("other"));
+await concept("u1l2", "변인 통제", "결과를 그래프로", (k) => k === "lab:u1g-stage");
 await playGraph("u1l2-graph");
-await leave("u1l2-graph", "정리하기", (k) => k.startsWith("other"));
+await leave("u1l2-graph", "용어로 정리하기", (k) => k.startsWith("other"));
+await concept("u1l2", "자료 해석", "정리하기", (k) => k.startsWith("other"));
+await recapShot("u1l2");
+await playQuizzes("u1l2");
 
 console.log("u1l4");
 await open("u1l4");
 await playOpener("u1l4", "기술 켜 보기");
 await playTech("u1l4-tech");
-await leave("u1l4-tech", "정리하기", (k) => k.startsWith("other"));
+await leave("u1l4-tech", "용어로 정리하기", (k) => k.startsWith("other"));
+await concept("u1l4", "인공지능", "나머지 두 기술", (k) => k.startsWith("other"));
+await concept("u1l4", "사물 인터넷", "정리하기", (k) => k.startsWith("other"));
+await recapShot("u1l4");
+await playQuizzes("u1l4");
 
 console.log("u1l5");
 await open("u1l5");
 await playOpener("u1l5", "온실 기체 줄여 보기");
 await playClean("u1l5-clean");
-await leave("u1l5-clean", "실천 분류하기", (k) => k.startsWith("other"));
+await leave("u1l5-clean", "용어로 정리하기", (k) => k.startsWith("other"));
+await concept("u1l5", "지구 온난화", "실천 분류하기", (k) => k.startsWith("other"));
+await playQuizzes("u1l5");
 await collect();
 
 // 글 검사
