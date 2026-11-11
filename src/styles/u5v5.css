@@ -63,3 +63,9 @@
 .u5x-step .bv-btn.main { border-color: var(--blue); background: var(--blue-tint); color: var(--blue-press, #1B64DA); }
 .u5x-step .bv-btn.main.on { background: var(--blue); color: #fff; }
 .u5x-step .bv-card.on { border-color: var(--subj-force); background: var(--subj-force-tint); }
+
+/* ── u5l7 바람 ─────────────────────────────────────── */
+.u5x-winds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.u5x-step .bv-btn.u5x-wind { height: 60px; font-size: 14.5px; }
+.u5x-log.tight { gap: 6px; }
+.u5x-log.tight .u5x-log-row { height: 40px; }

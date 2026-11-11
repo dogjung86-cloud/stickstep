@@ -13,6 +13,7 @@ const gravityLab = lab("u5GravityLab");
 const springLab5 = lab("u5SpringLab");
 const frictionLab = lab("u5FrictionLab");
 const buoyLab = lab("u5BuoyLab");
+const windLab = lab("u5WindLab");
 
 export const UNIT5_V5: Unit | null = remakeUnit(UNIT5, {
   u5l1: {
@@ -33,5 +34,8 @@ export const UNIT5_V5: Unit | null = remakeUnit(UNIT5, {
   },
   u5l6: {
     swap: { buoyancyLab: buoyLab({ title: "물에 담그면 눈금은 어떻게 될까요?", cta: "개념 정리하기" }) },
+  },
+  u5l7: {
+    swap: { windSoccer: windLab({ title: "힘을 받으면 공은 어떻게 될까요?", cta: "개념 정리하기" }) },
   },
 });

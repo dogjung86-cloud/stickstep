@@ -184,6 +184,26 @@ LABS.u5l6 = async () => {
   await judge(true);
   await endLab();
 };
+LABS.u5l7 = async () => {
+  await W(page, 600);
+  await at("start");
+  await holdBtn(page, '.u5x-wind[data-k="back"]', 1300);
+  ok(await waitPips(1), "u5l7: 뒤에서");
+  await W(page, 1800);
+  await holdBtn(page, '.u5x-wind[data-k="front"]', 1500);
+  ok(await waitPips(2), "u5l7: 앞에서");
+  await W(page, 1800);
+  const r = await page.evaluate(() => { const q = document.querySelector('.screen.active .u5x-wind[data-k="side"]').getBoundingClientRect(); return { x: q.left + q.width / 2, y: q.top + q.height / 2 }; });
+  await page.mouse.move(r.x, r.y);
+  await page.mouse.down();
+  await W(page, 900);
+  await at("side");
+  await W(page, 500);
+  await page.mouse.up();
+  ok(await waitPips(3), "u5l7: 옆에서");
+  await judge(true);
+  await endLab();
+};
 const INTROS = {};
 
 const ids = only.length ? only : ["u5l1", "u5l2", "u5l3", "u5l4", "u5l5", "u5l6", "u5l7"];
