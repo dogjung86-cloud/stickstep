@@ -342,6 +342,9 @@ const PLAYS = {
     await L.hold(page, ".u4x-hold", 2200);
     ok(await L.waitVisible(page, ".u4x-olive-again"), `${id} olive: 다시 재기 버튼이 뜨지 않음`);
     await at(id, "olive-frozen");
+    await L.click(page, ".u4x-olive-rush"); // 일부러 닦지 않고 바로 잰다
+    await W(400);
+    await at(id, "olive-wet");
     await L.click(page, ".u4x-olive-again");
     await wrongOnce(id, "olive");
     await endLab(id, "olive", "다음 실험, 풍선");
@@ -355,6 +358,7 @@ const PLAYS = {
     await at(id, "balloon-cool");
     await L.hold(page, ".u4x-hold", 3600);
     await endLab(id, "balloon", "개념 정리하기");
+    await tail(id);
   },
   u4l5: async (id) => {
     ok((await L.stepKind(page)) === "opener:u4-ramen", `${id}: 새 도입이 아님(${await L.stepKind(page)})`);

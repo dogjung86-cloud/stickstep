@@ -7,7 +7,7 @@
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
-import { A, flask, grid, partWin, scale, seeded, svgOpen, u4Hold, u4Lab, u4Predict, type U4Step } from "./u4Kit";
+import { A, flask, grid, loose, partWin, scale, seeded, svgOpen, u4Hold, u4Lab, u4Predict, type U4Step } from "./u4Kit";
 
 const MASS = "86.40 g";
 const FX = 97, BASE = 160, FH = 62; // 플라스크 바닥 가운데와 높이
@@ -22,7 +22,7 @@ export const u4BalloonLab: StepRenderer = (host, step, api) => {
   const rnd = seeded(91);
 
   const cx = WIN.x + WIN.w / 2;
-  const liq = grid(4, 3, cx, WIN.y + WIN.h - 44, 17).map((p) => ({ x: p.x + (rnd() - 0.5) * 5, y: p.y + (rnd() - 0.5) * 5 }));
+  const liq = loose(4, 3, cx, WIN.y + WIN.h - 30, 18, rnd).concat(loose(1, 1, cx, WIN.y + WIN.h - 30 - 18 * 2.7, 18, rnd));
   const gas = grid(3, 4, cx, WIN.y + 28 + (WIN.h - 28) / 2, 40).map((p) => ({ x: p.x + (rnd() - 0.5) * 14, y: p.y + (rnd() - 0.5) * 14 }));
 
   f.stage.innerHTML = `${svgOpen}

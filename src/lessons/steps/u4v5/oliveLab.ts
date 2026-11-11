@@ -1,16 +1,19 @@
 // [중1 Ⅳ v5] u4l4 올리브유 랩: 「얼리면 질량과 부피는 어떻게 될까요?」
 // 책의 탐구를 손으로 한다: 유리병의 올리브유 높이를 색 테이프로 표시하고 질량을 잰 뒤, 얼음과 소금에 넣어 얼리고, 높이를 다시 표시하고 질량을 다시 잰다.
 // 지금 단원에는 이 탐구를 해 보는 랩이 없는데 문제가 이 실험을 묻고 있어서 새로 넣었다.
-// 조작: 높이 표시하고 재기 → 예측(질량) → 꾹 눌러 얼리기 → 물기 닦고 다시 재기 → 판정 하나(부피가 줄어든 까닭).
+// 조작: 높이 표시하고 재기 → 예측(질량) → 꾹 눌러 얼리기 → 바로 잴지 물기를 닦고 잴지 고르기 → 판정 하나(부피가 줄어든 까닭).
+// 닦지 않고 바로 재면 차가운 병 겉에 맺힌 물방울 때문에 숫자가 커진다(책의 주의: 물기를 닦은 후 즉시 측정). 닦고 다시 재게 한다.
 // 통찰 하나: 응고해도 질량은 그대로이고 부피만 준다. 입자 창에서 입자의 수는 그대로이고 사이만 가까워진다.
 // 수치(12.60 g)는 이 랩에서 정한 값이다.
 
+import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvBtn } from "../bio6/b6Lab";
-import { A, grid, partWin, scale, seeded, svgOpen, u4Hold, u4Lab, u4Predict, type U4Step } from "./u4Kit";
+import { A, grid, loose, partWin, scale, seeded, svgOpen, u4Hold, u4Lab, u4Predict, type U4Step } from "./u4Kit";
 
 const MASS = "12.60 g";
+const WET = "12.74 g"; // 닦지 않고 쟀을 때(겉에 맺힌 물방울의 질량이 더해진다)
 const WIN = { x: 196, y: 12, w: 138, h: 206 };
 const JX = 75, JW = 44, JTOP = 96, JBOT = 160; // 병 안쪽
 const DROP = 7; // 얼었을 때 내려가는 높이
@@ -23,7 +26,8 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
   const rnd = seeded(77);
 
   const cx = WIN.x + WIN.w / 2;
-  const liq = grid(4, 3, cx, WIN.y + WIN.h - 62, 24).map((p) => ({ x: p.x + (rnd() - 0.5) * 9, y: p.y + (rnd() - 0.5) * 8 }));
+  // 액체는 가깝지만 가지런하지 않게, 고체는 더 가까이 가지런하게(입자의 수는 같다)
+  const liq = loose(4, 3, cx, WIN.y + WIN.h - 34, 19, rnd).concat(loose(1, 1, cx, WIN.y + WIN.h - 34 - 19 * 2.7, 19, rnd));
   const sol = grid(4, 3, cx, WIN.y + WIN.h - 48, 15);
 
   f.stage.innerHTML = `${svgOpen}
@@ -38,6 +42,7 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
       <rect x="${JX + 2}" y="72" width="${JW - 4}" height="13" rx="3" fill="#8B9BB0" stroke="#5C6B7A" stroke-width="1.2"/>
       <path d="M${JX + 5} 100 v52" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
       <rect class="u4x-olive-tape1" x="${JX - 8}" y="${JTOP - 2}" width="${JW + 16}" height="4" rx="1.5" fill="#F0705E" opacity="0"/>
+      <g class="u4x-olive-dew">${[[JX - 1, 104], [JX + JW + 1, 118], [JX - 1, 134], [JX + JW + 1, 146], [JX + 8, 152]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="2.6" ry="3.6" fill="#BFE6FF" stroke="#6FB9E0" stroke-width="0.8"/>`).join("")}</g>
       <rect class="u4x-olive-tape2" x="${JX - 8}" y="${JTOP + DROP - 2}" width="${JW + 16}" height="4" rx="1.5" fill="#6C8CFF" opacity="0"/>
     </g>
     ${partWin(WIN.x, WIN.y, WIN.w, WIN.h, liq, "u4x-olive")}
@@ -83,12 +88,23 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
     hold.disabled = true;
     tape2.setAttribute("opacity", "1");
     f.pips(1);
-    f.say("하얗게 굳었어요. 높이가 <b>내려가</b> 파란 테이프를 새로 붙였어요. 질량은 어떨까요?");
-    f.slot.setControls(again);
+    f.stage.classList.add("dew");
+    f.say("하얗게 굳었어요. 높이가 <b>내려가</b> 파란 테이프를 붙였어요. 이제 질량을 다시 재요.");
+    f.slot.setControls(el("div", { class: "u4x-row" }, rush, again));
     api.setCTA("다시 재 보세요", { enabled: false });
     return false;
   });
-  const again = bvBtn("main u4x-olive-again", "물기를 닦고 다시 재기");
+  // 얼린 병을 어떻게 잴지는 학생이 정한다. 닦지 않고 바로 재면 겉에 맺힌 물방울 때문에 숫자가 커진다(책의 주의).
+  const again = bvBtn("u4x-olive-again", "물기를 닦고 재기");
+  const rush = bvBtn("u4x-olive-rush", "꺼내서 바로 재기");
+  rush.addEventListener("click", () => {
+    rush.disabled = true;
+    haptic(HAPTIC.wrong);
+    bath.setAttribute("opacity", "0");
+    read.setAttribute("opacity", "1");
+    read.textContent = WET;
+    f.say(`숫자가 <b>${WET}</b>으로 커졌어요. 차가운 병 겉에 <b>물방울</b>이 맺혀서예요. 닦고 다시 재요.`);
+  });
 
   weigh.addEventListener("click", () => {
     weigh.disabled = true;
@@ -109,6 +125,8 @@ export const u4OliveLab: StepRenderer = (host, step, api) => {
   });
   again.addEventListener("click", () => {
     again.disabled = true;
+    rush.disabled = true;
+    f.stage.classList.remove("dew");
     haptic(HAPTIC.correct);
     bath.setAttribute("opacity", "0");
     read.setAttribute("opacity", "1");

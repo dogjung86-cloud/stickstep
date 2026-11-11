@@ -11,6 +11,7 @@ const FLAT = 0.05;
 export function wrap(c: OpenerCtx): void {
   layer(c, "wrapBase");
   const dome = c.stage.querySelector<SVGGElement>(".opn-u4-wr-wrap");
+  const dent = c.stage.querySelector<SVGGElement>(".opn-u4-wr-dent");
   const set = (k: number): void => {
     if (dome) dome.style.transform = `scaleY(${k.toFixed(3)})`;
     c.step.dataset.opnWrap = k.toFixed(2);
@@ -32,13 +33,19 @@ export function wrap(c: OpenerCtx): void {
         c.say("랩이 <b>볼록</b>해졌어요! 이제 국이 식을 때까지 더 눌러 보세요.");
         const b2 = ctlBtn(c, "꾹 눌러 식히기");
         hold(c, b2, 2600, (p) => {
-          set(1 - 1.4 * p);
+          // 앞의 절반은 볼록한 랩이 내려앉고, 뒤의 절반은 그릇 안쪽으로 오목하게 처진다
+          set(Math.max(FLAT, 1 - 2 * p));
+          if (dent) {
+            dent.style.opacity = p > 0.5 ? "1" : "0";
+            dent.style.transform = `scaleY(${Math.max(0, (p - 0.5) * 2).toFixed(3)})`;
+          }
+          if (dome) dome.style.opacity = p > 0.5 ? "0" : "1";
           if (p > 0.3) c.stage.classList.remove("hot");
         }, () => {
           haptic(HAPTIC.correct);
           c.face("surprised");
           c.stage.classList.add("done");
-          const head = picked.startsWith("볼록") ? "예측대로 볼록해졌다가" : "예측과 달리 볼록해졌다가";
+          const head = picked.startsWith("볼록") ? "예측대로 볼록해졌다가" : picked.startsWith("오목") ? "먼저 볼록해졌다가" : "예측과 달리 볼록해졌다가";
           c.say(`${head} 식으니 <b>오목</b>해졌어요. 무엇이 랩을 밀어 올렸을까요?`);
           c.finish();
         });

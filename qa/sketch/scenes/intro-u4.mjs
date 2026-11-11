@@ -131,6 +131,12 @@ export function wrapBase() {
   // 랩 가장자리(그릇 밖으로 늘어진 부분)
   sk.ink(curve([[286, 300], [268, 318], [262, 344]]), { w: 8, color: C.blue, wob: 0.5, seed: 35 });
   sk.ink(curve([[674, 300], [692, 318], [698, 344]]), { w: 8, color: C.blue, wob: 0.5, seed: 36 });
+  // 식은 뒤의 랩: 그릇 안쪽으로 오목하게 처진다(앱이 위쪽 기준으로 폈다 접는다)
+  g(sk, "opn-u4-wr-dent", () => {
+    const dent = curve([[286, 300], [370, 334], [480, 346], [590, 334], [674, 300]], false, 4);
+    sk.fill([...dent, ...dense([[674, 300], [286, 300]], 6)], "#BFE2F4", { dx: 0, dy: 0, wob: 0.4, seed: 37, alpha: 0.5, tex: false });
+    sk.ink(dent, { w: 9, color: C.blue, wob: 0.7, seed: 38 });
+  });
   g(sk, "opn-u4-wr-q", () => qmark(sk, 800, 240, 0.8, { color: C.orange, seed: 45 }));
   return { sk };
 }

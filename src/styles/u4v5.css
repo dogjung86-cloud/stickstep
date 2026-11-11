@@ -165,6 +165,9 @@
 
 /* 3. 랩 */
 .opn-u4-wr-wrap { transform-box: fill-box; transform-origin: 50% 100%; }
+.opn-u4-wr-dent { transform-box: fill-box; transform-origin: 50% 0%; opacity: 0; }
+.u4x-olive-dew { opacity: 0; transition: opacity .3s; }
+.u4x-olive.dew .u4x-olive-dew { opacity: 1; }
 .opn-u4-wr-steam { opacity: 0; transition: opacity .5s; }
 .opn-u4-wrap.hot .opn-u4-wr-steam { opacity: 1; }
 .opn-u4-wr-q { opacity: 0; transition: opacity .3s; }
