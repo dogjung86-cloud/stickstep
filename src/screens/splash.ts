@@ -9,15 +9,30 @@ import { haptic, HAPTIC } from "../core/haptics";
 import { BRAND, BIZ_INFO } from "../core/brand";
 import type { Screen } from "../core/router";
 import { stepMarkSvg } from "../ui/stepMark";
-import { SPLASH_FRAMES, STUDY_ART } from "../ui/sketchArt";
+import { SPLASH_FRAMES, SPLASH_SETTLE, STUDY_ART } from "../ui/sketchArt";
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
 // 플립북 컷은 코드로 그린 SVG(public/sketch/splash, 원본 qa/sketch/scenes/splash.mjs).
 // 넘기는 순서는 장면 파일의 frames() 순서다: 먹기 · 티비 · 폰 · 게임 · 만화책 · 컴퓨터 · 낮잠 · 과자 ·
-// 친구 · 노래 · 공놀이 · 자전거 · 강아지 · 아차! 시계(항상 마지막) → 정착 컷 "공부하자!".
+// 친구 · 노래 · 공놀이 · 자전거 · 강아지 · 아차! 시계(항상 마지막) → 정착 장면 "공부하자!".
+// 정착 장면(2026-11-12 사용자 확정): 책상 앞에 앉아(rest) 한 손을 올려(reach, touch) 안경을 살짝 올리는 순간(push)
+// 안경이 반짝이고, 마지막 자세(STUDY)에서 멈춘다. 인물은 모두 눈동자 없이 안경만 쓴 얼굴이다.
 const FLIP_FRAMES = SPLASH_FRAMES.map((f) => base + f);
 const STUDY = base + STUDY_ART;
+const SETTLE_FRAMES = SPLASH_SETTLE.map((f) => base + f); // rest, reach, touch, push
+// 자세마다 머무는 시간(ms): 앉아서 한 박자 쉬고, 손이 빠르게 올라가, 올린 채 잠깐 멈춘다
+const SETTLE_MS = [620, 85, 110, 170];
+const FINAL_HOLD_MS = 330; // 마지막 자세가 자리 잡은 뒤 워드마크와 버튼이 뜬다
+// 안경 반짝: 그림(512 좌표) 위에 겹치는 층. 안경알 안쪽(반지름 31)에서만 푸른 빛과 흰 사선이 지나가고 별이 튄다.
+// 반지름을 안경테 안쪽으로 잡고 사선을 알 밖까지 보내야 흰 줄이 테를 덮은 채 남지 않는다.
+const GLINT_SVG = `<svg class="flip-glint" viewBox="0 0 512 512" aria-hidden="true">
+<defs><clipPath id="splash-lens"><circle cx="210" cy="210" r="31"/><circle cx="302" cy="210" r="31"/></clipPath></defs>
+<g clip-path="url(#splash-lens)"><rect class="tint" x="160" y="164" width="200" height="92" fill="#8CC4FF"/>
+<g class="bar"><polygon points="196,154 232,154 196,266 160,266" fill="#fff"/><polygon points="246,154 258,154 222,266 210,266" fill="#fff"/></g></g>
+<path class="star a" d="M340 136 L349 166 L379 175 L349 184 L340 214 L331 184 L301 175 L331 166 Z" fill="#FFD84A" stroke="#1c1c1e" stroke-width="6" stroke-linejoin="round"/>
+<path class="star b" d="M262 232 L267 246 L281 251 L267 256 L262 270 L257 256 L243 251 L257 246 Z" fill="#fff" stroke="#1c1c1e" stroke-width="5" stroke-linejoin="round"/>
+</svg>`;
 // 발주 전 폴백 — 만화 아바타(손그림 스틱맨 5종)
 const FALLBACK_FRAMES = [0, 1, 2, 3, 4].map((i) => `${base}comics/avatar/${i}.png`);
 const FALLBACK_STUDY = `${base}comics/avatar/4.png`;
@@ -34,6 +49,8 @@ export interface SplashScreen extends Screen {
 export function splashScreen(o: { signedIn: boolean; instant?: boolean; onStart: () => void; onLogin: () => void }): SplashScreen {
   const img = el("img", { class: "flip-img", attrs: { alt: "", "aria-hidden": "true" } }) as HTMLImageElement;
   const book = el("div", { class: "flipbook" }, img);
+  book.insertAdjacentHTML("beforeend", GLINT_SVG);
+  const glint = book.querySelector(".flip-glint") as SVGElement;
   const word = el("div", { class: "wordmark", text: BRAND.name });
   const tag = el("div", { class: "tagline", text: BRAND.tagline });
   const note = el("div", { class: "splash-note", text: BRAND.note });
@@ -103,7 +120,9 @@ export function splashScreen(o: { signedIn: boolean; instant?: boolean; onStart:
   // ---- 프레임 프리로드(발주본 → 폴백) ----
   let frames = FLIP_FRAMES;
   let study = STUDY;
+  let settleFrames = SETTLE_FRAMES;
   let timer = 0;
+  const settleTimers: number[] = [];
   let settled = false;
 
   function preload(srcs: string[]): Promise<boolean> {
@@ -124,12 +143,45 @@ export function splashScreen(o: { signedIn: boolean; instant?: boolean; onStart:
     if (settled) return;
     settled = true;
     window.clearInterval(timer);
+    for (const t of settleTimers) window.clearTimeout(t);
     img.src = study;
     book.classList.add("settled");
     mid.classList.add("done");
     foot.classList.add("done"); // 버튼 3개가 워드마크에 이어 샥 나타난다
     if (!quiet) haptic(HAPTIC.ctaUnlock);
     for (const b of buttons) b.disabled = false;
+  }
+
+  // 놀이 컷이 끝나면: 카드에 탁 갇히며 앉은 자세 → 손이 올라가 안경을 살짝 올리며 반짝 → 마지막 자세에서 settle().
+  // 도중에 탭하면 settle()이 타이머를 끊고 마지막 자세로 바로 간다. 움직임 줄이기 설정이면 건너뛴다.
+  function settleSequence(): void {
+    window.clearInterval(timer);
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (settleFrames.length < 4 || reduce) {
+      settle();
+      return;
+    }
+    let t = 0;
+    settleFrames.forEach((src, k) => {
+      settleTimers.push(
+        window.setTimeout(() => {
+          if (settled) return;
+          img.src = src;
+          if (k === 0) book.classList.add("settled");
+          if (k === 3) {
+            glint.classList.add("on");
+            haptic(HAPTIC.tap);
+          }
+        }, t),
+      );
+      t += SETTLE_MS[k];
+    });
+    settleTimers.push(
+      window.setTimeout(() => {
+        if (!settled) img.src = study;
+      }, t),
+    );
+    settleTimers.push(window.setTimeout(() => settle(), t + FINAL_HOLD_MS));
   }
 
   function play(): void {
@@ -139,7 +191,7 @@ export function splashScreen(o: { signedIn: boolean; instant?: boolean; onStart:
     timer = window.setInterval(() => {
       i += 1;
       if (i >= total) {
-        settle();
+        settleSequence();
         return;
       }
       img.src = frames[i % frames.length];
@@ -153,7 +205,7 @@ export function splashScreen(o: { signedIn: boolean; instant?: boolean; onStart:
     settle(true);
   } else {
     void (async () => {
-      const ok = await preload([...frames, study]);
+      const ok = await preload([...frames, ...settleFrames, study]);
       if (!ok) {
         const fbOk = await preload([...FALLBACK_FRAMES, FALLBACK_STUDY]);
         if (!fbOk) {
@@ -167,6 +219,7 @@ export function splashScreen(o: { signedIn: boolean; instant?: boolean; onStart:
         }
         frames = FALLBACK_FRAMES;
         study = FALLBACK_STUDY;
+        settleFrames = [];
       }
       play();
     })();

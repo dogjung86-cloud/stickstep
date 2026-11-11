@@ -46,7 +46,7 @@ const X0 = 5;
 export const rankWidenLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as RkwStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: 2, cls: "rkw-stage", qCls: "rkw-q" });
+  const f = bvFrame(host, { title: s.title, steps: 2, cls: "rkw-stage", qCls: "rkw-q", api });
   const canvas = bvCanvas(f.stage);
 
   // ── 무대 ─────────────────────────────────────────────────────────

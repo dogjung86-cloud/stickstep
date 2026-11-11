@@ -65,7 +65,7 @@ const FOCUS = 64; // 초점이 맞는 막대 값
 export const scopeCompareLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as ScpStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: 5, cls: "scp-stage", qCls: "scp-q" });
+  const f = bvFrame(host, { title: s.title, steps: 5, cls: "scp-stage", qCls: "scp-q", api });
 
   // ── 무대: 한 시야 ────────────────────────────────────────────────
   const canvas = bvCanvas(f.stage);

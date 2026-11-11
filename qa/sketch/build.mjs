@@ -69,11 +69,11 @@ for (const f of readdirSync(join(HERE, "scenes")).filter(n => /^comic-.+\.mjs$/.
 }
 
 // 스플래시
-const splash = { frames: [], study: "" };
+const splash = { frames: [], settle: [], study: "" };
 for (const f of frames()) {
   const rel = `splash/${f.name}.svg`;
   sizes[rel] = put(rel, f.sk.svg());
-  if (f.name === "study") splash.study = `sketch/${rel}`; else splash.frames.push(`sketch/${rel}`);
+  if (f.name === "study") splash.study = `sketch/${rel}`; else if (f.name.startsWith("study-")) splash.settle.push(`sketch/${rel}`); else splash.frames.push(`sketch/${rel}`);
 }
 
 // 계정 관리 화면
@@ -103,7 +103,7 @@ export const TEACHER_SVG: Record<string, string> = ${JSON.stringify(avatar, null
 export const COMIC_ART: Record<string, SketchPanelArt[]> = ${JSON.stringify(comic, null, 2)};
 
 /** 스플래시 플립북(놀이 컷은 넘기는 순서대로) */
-export const SPLASH_ART: { frames: string[]; study: string } = ${JSON.stringify(splash, null, 2)};
+export const SPLASH_ART: { frames: string[]; settle: string[]; study: string } = ${JSON.stringify(splash, null, 2)};
 
 /** 계정 관리 화면 그림 */
 export const ACCOUNT_ART = "sketch/account.svg";

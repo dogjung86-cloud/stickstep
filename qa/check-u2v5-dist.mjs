@@ -206,6 +206,74 @@ console.log("④ 열 레슨의 모든 스텝");
   await ctx.close();
 }
 
+// ⑤ 세포 구조 랩: 입체 무대가 서고(three 조각을 따로 내려받는다), 판정에서 맞혔는지 틀렸는지가 보인다
+console.log("⑤ 세포 구조 랩의 입체 무대, 판정의 정답과 오답 표시");
+{
+  const { ctx, page, errors } = await newContext();
+  await boot(page);
+  await openNode(page, 1);
+  await forward(page);
+  await forward(page); // 도입, 개념 다음이 동물세포 랩
+  const dsv = (k) => page.evaluate((key) => document.querySelector(".screen.active .step.bv-step")?.dataset[key] ?? null, k);
+  const ready = async () => {
+    for (let i = 0; i < 80; i++) {
+      if ((await dsv("cwkReady")) === "1") return true;
+      await W(page, 150);
+    }
+    return false;
+  };
+  const verdict = () =>
+    page.evaluate(() => {
+      const q = document.querySelector(".screen.active .bv-q.show");
+      const row = q?.querySelector(".bv-choice.ok, .bv-choice.miss");
+      const card = q?.querySelector(".bv-ans");
+      const bg = card ? getComputedStyle(card).backgroundColor.match(/\d+/g).slice(0, 3).map(Number) : [0, 0, 0];
+      return {
+        kind: row?.classList.contains("ok") ? "ok" : row?.classList.contains("miss") ? "miss" : "",
+        word: row?.querySelector(".bv-vd")?.textContent ?? "",
+        icon: !!row?.querySelector(".bv-vd-ic svg"),
+        answer: card?.querySelector(".bv-ans-t")?.textContent ?? "",
+        cardWhite: bg[0] > 250 && bg[1] > 250 && bg[2] > 250,
+        next: !!card?.querySelector(".bv-next"),
+        q: q?.querySelector(".bv-qt")?.textContent ?? "",
+      };
+    });
+  ok((await dsv("cwkStage")) === "3d" && (await ready()), "동물세포 랩: 입체 무대가 그려진다");
+  ok(!/돌리|돌려/.test(await page.locator(`${A} .bv-stage`).textContent()), "손으로 돌리라는 안내가 없다");
+  for (const k of ["mem", "nuc", "mito"]) {
+    await page.locator(`${A} .bv-card[data-k="${k}"]`).click();
+    await W(page, 500);
+  }
+  await page.locator(`${A} .cwk-diag`).waitFor({ state: "visible", timeout: 8000 });
+  await page.locator(`${A} .cwk-diag`).click();
+  await page.locator(`${A} .bv-q.show .bv-choice`).first().waitFor({ state: "visible", timeout: 9000 });
+  // 첫 판정은 일부러 틀린다(정답은 마이토콘드리아)
+  await page.locator(`${A} .bv-q.show .bv-choice`, { hasText: "핵" }).click();
+  await W(page, 500);
+  const wrong = await verdict();
+  ok(wrong.kind === "miss" && wrong.word === "오답이에요" && wrong.icon, `틀리면 누른 보기에 가위표와 "${wrong.word}"가 붙는다`);
+  ok(wrong.answer === "마이토콘드리아" && wrong.cardWhite && wrong.next, `그 아래 흰 카드에 정답("${wrong.answer}")과 '다음'이 있다(초록 상자가 아니다)`);
+  await W(page, 2200);
+  ok((await verdict()).q === wrong.q, "기다려도 저절로 넘어가지 않는다(오답)");
+  await page.locator(`${A} .bv-q.show .bv-next`).click();
+  await page.waitForFunction((q) => { const e = document.querySelector(".screen.active .bv-q.show .bv-qt"); return !!e && e.textContent !== q; }, wrong.q, { timeout: 8000 });
+  await W(page, 400);
+  // 둘째 판정은 맞힌다(정답은 세포막)
+  await page.locator(`${A} .bv-q.show .bv-choice`, { hasText: "세포막" }).click();
+  await W(page, 500);
+  const right = await verdict();
+  ok(right.kind === "ok" && right.word === "정답이에요" && right.icon && right.next, `맞히면 누른 보기에 체크와 "${right.word}"가 붙고 '다음'이 있다`);
+  await W(page, 2200);
+  ok((await verdict()).q === right.q, "기다려도 저절로 넘어가지 않는다(정답)");
+  await page.locator(`${A} .bv-q.show .bv-next`).click();
+  ok(await page.locator(`${A} .bv-done.show`).waitFor({ state: "visible", timeout: 8000 }).then(() => true, () => false), "'다음'을 누르면 결론이 뜬다");
+  await forward(page);
+  await forward(page); // 개념 다음이 식물세포 랩
+  ok((await dsv("cwkStage")) === "3d" && (await ready()), "식물세포 랩: 입체 무대가 그려진다");
+  ok(errors.length === 0, `오류 없음${errors.length ? ": " + errors.slice(0, 2).join(" / ") : ""}`);
+  await ctx.close();
+}
+
 await browser.close();
 console.log(`운영 번들 검사: PASS ${PASS} · FAIL ${FAIL}`);
 process.exit(FAIL ? 1 : 0);

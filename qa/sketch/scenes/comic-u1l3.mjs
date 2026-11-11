@@ -92,7 +92,7 @@ function p3() {
   sparkle(sk, 918, 86, 17, { seed: 57 });
   // 훅: 현미경을 들여다본다
   const lean = pose({ neck: [26, -336], head: [66, -420], tilt: 0.3, elR: [84, -272], haR: [138, -262], elL: [-40, -258], haL: [-52, -186] });
-  drawFigure(sk, 176, 704, 0.78, lean, { ...HOOKE, name: "hooke" });
+  drawFigure(sk, 176, 704, 0.78, lean, { ...HOOKE, name: "hooke", face: "curious" });
   emark(sk, 86, 246, 0.9, { color: C.red, rot: -0.12 });
   return sk;
 }
@@ -152,7 +152,7 @@ function p5() {
   // 플레밍: 접시를 들어 올려 본다
   const up = pose({ elR: [74, -316], haR: [118, -400], elL: [-56, -262], haL: [-22, -222], tilt: 0.08 });
   const fx = 206, fy = 704, fs = 0.82;
-  drawFigure(sk, fx, fy, fs, up, { ...FLEMING, name: "fleming", hands: "L" });
+  drawFigure(sk, fx, fy, fs, up, { ...FLEMING, name: "fleming", face: "smile", hands: "L" });
   const hx = fx + fs * 118, hy = fy - fs * 400;
   thin(sk, 0.7, () => petri(sk, hx + 26, hy - 20, 34, { seed: 1001, ring: false, w: 7 }));
   handDot(sk, [hx, hy + 6], C.skin, 123, 12);

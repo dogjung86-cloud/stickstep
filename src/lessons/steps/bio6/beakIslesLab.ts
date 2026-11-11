@@ -109,7 +109,7 @@ function stageSvg(): string {
 export const beakIslesLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as BkiStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: 3, cls: "bki-stage", qCls: "bki-q" });
+  const f = bvFrame(host, { title: s.title, steps: 3, cls: "bki-stage", qCls: "bki-q", api });
   f.stage.innerHTML = stageSvg();
   const svg = f.stage.querySelector("svg") as SVGSVGElement;
 
@@ -180,7 +180,8 @@ export const beakIslesLab: StepRenderer = (host, step, api) => {
       "섬 (가)에 두꺼운 부리의 새만 남은 까닭은?",
       [{ t: "두꺼운 부리의 새가 더 많이 살아남아서", ok: true }, { t: "새들이 부리를 두껍게 바꿔서" }, { t: "다른 새들이 섬 (나)로 날아가서" }],
       (ok) => api.recordQuiz(ok),
-      { why: "부리를 바꾼 새는 없었어요. <b>씨앗을 잘 깨는 새</b>가 살아남아 새끼를 낳았죠.", onNext: ask2 },
+      // 이유는 어느 오답을 골랐든, 맞혔든 같은 글이 보인다. 한 오답만 받아치지 않게 쓴다(2026-11-11 눈검수)
+      { why: "<b>씨앗을 잘 깨는 새</b>가 살아남아 새끼를 낳았어요. 부리를 바꾸거나 떠난 새는 없어요.", onNext: ask2 },
     );
   }
   function ask2(): void {

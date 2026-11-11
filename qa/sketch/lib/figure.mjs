@@ -1,5 +1,6 @@
 // 막대 인물: 큰 둥근 머리 + 짧은 몸통 + 가는 팔다리. 영상 샘플(src/figure.js)과 같은 비례다.
-// 만화에서는 얼굴을 비우고(face 없음) 머리 모양, 모자, 안경, 옷으로 인물을 구분한다.
+// 만화에서 쌤, 학생, 이름 없는 인물은 얼굴을 비우고(face 없음) 머리 모양, 모자, 안경, 옷으로 구분한다.
+// 이름 있는 실존 인물(린드, 훅, 다윈 등)만 작은 얼굴(mini: 점 눈 + 짧은 입)을 켠다.
 // 스플래시, 원형 아바타, 로그인 그림에서는 같은 인물에 face 를 켠다.
 // 좌표는 발 사이가 원점, 위쪽이 음수. 자세는 관절 좌표 묶음이다.
 import { C, curve, dense, circ, ell, poly, rrect, lerp, lerp2, TAU, mix } from "./sk.mjs";
@@ -39,6 +40,56 @@ function capShape(sk, outer, inner, color, seed, lw = 11, soft = false, tex = tr
   const pts = [...outer, ...(soft ? curve(inner, false, 4) : dense(inner, 4)), outer[0]];
   sk.fill(pts, color, { dx: 1.5, dy: 2, wob: 1.4, seed, tex });
   sk.ink(pts, { w: lw, wob: 1.3, seed: seed + 1 });
+}
+
+/* ---------- 작은 얼굴 (만화 속 실존 인물) ----------
+   점 눈 두 개 + 짧은 입 하나. 표정은 입과 짧은 눈썹으로만 바꾼다. 볼 터치는 없다.
+   kind: calm | smile | happy | wide | shock | curious | determined
+   수염이 있으면 입은 수염에 가려 그리지 않는다. */
+function drawMiniFace(sk, o, seed, look, g) {
+  const kind = o.face;
+  const ey = o.glasses ? g.ey : 12;
+  const xl = (o.glasses ? -g.lx : -28) + look, xr = (o.glasses ? g.lx : 28) + look;
+  const mx = (xl + xr) / 2, my = ey + 40;
+  const lo = { w: 6, wob: 0.3 };
+  const S = n => seed + 400 + n;
+  const by = o.glasses ? -17 : 0; // 안경을 쓰면 눈썹을 안경테 위로 올린다
+  const eyes = (dx = 0, dy = 0, big = 0) => { sk.dot(xl + dx, ey + dy, 5.2 + big * 0.35); sk.dot(xr + dx, ey + dy, 5.2 + big * 0.35); };
+  const mouth = pts => { if (!o.beard) sk.ink(curve(pts, false, 2), { ...lo, seed: S(6) }); };
+  const oMouth = (rx, ry) => { if (!o.beard) sk.ink(ell(mx, my + 4, rx, ry), { ...lo, w: 5, seed: S(8) }); };
+  if (kind === "smile") { eyes(); mouth([[mx - 15, my - 2], [mx, my + 8], [mx + 15, my - 2]]); }
+  else if (kind === "happy") { eyes(); mouth([[mx - 21, my - 5], [mx - 10, my + 8], [mx, my + 11], [mx + 10, my + 8], [mx + 21, my - 5]]); }
+  else if (kind === "wide" || kind === "shock") { eyes(0, -2, kind === "shock" ? 4 : 3); oMouth(kind === "shock" ? 8 : 6, kind === "shock" ? 10 : 7.5); }
+  else if (kind === "curious") {
+    eyes(4, -2);
+    sk.ink(dense([[xr - 7, ey - 24 + by], [xr + 13, ey - 29 + by]], 2), { ...lo, w: 5, seed: S(9) });
+    mouth([[mx - 9, my + 5], [mx + 2, my + 3], [mx + 12, my - 2]]);
+  }
+  else if (kind === "determined") {
+    eyes(0, 2);
+    sk.ink(dense([[xl - 12, ey - 23 + by], [xl + 9, ey - 16 + by]], 2), { ...lo, w: 5.5, seed: S(10) });
+    sk.ink(dense([[xr + 12, ey - 23 + by], [xr - 9, ey - 16 + by]], 2), { ...lo, w: 5.5, seed: S(11) });
+    mouth([[mx - 12, my + 3], [mx, my + 5], [mx + 12, my + 2]]);
+  }
+  else { eyes(); mouth([[mx - 10, my], [mx, my + 4], [mx + 10, my]]); } // calm
+}
+
+/* ---------- 안경만 쓴 얼굴 (스플래시, 로그인 그림) ----------
+   눈동자와 눈썹 없이 안경알이 눈 노릇을 한다. 볼 터치와 입 하나만 그린다. 안경 쓴 인물에만 쓴다(bare: true).
+   o.mouth 가 있으면 face 대신 그 입 모양을 쓴다: flat | happy | sing | shock | wide | grin | 그 밖은 작은 웃음 */
+function drawBareFace(sk, o, seed, look, g) {
+  const kind = o.mouth ?? o.face;
+  const mx = look, my = g.ey + 44;
+  const lo = { w: 7, wob: 0.4 };
+  if (o.blush !== false) for (const [bx, i] of [[-g.lx - 30 + look, 0], [g.lx + 30 + look, 1]]) sk.fill(ell(bx, g.ey + 34, 15, 10), "#F5A9A0", { dx: 0, dy: 0, wob: 0.5, seed: seed + 120 + i, alpha: 0.6 });
+  const arc = (w, d) => sk.ink(curve([[mx - w, my - 1], [mx, my + d], [mx + w, my - 1]], false, 2), { ...lo, seed: seed + 103 });
+  const hole = (rx, ry) => { const m = ell(mx, my + 6, rx, ry); sk.fill(m, "#7A2E2E", { dx: 0, dy: 0, wob: 0.3, seed: seed + 96 }); sk.ink(m, { ...lo, w: 6, seed: seed + 97 }); };
+  if (kind === "flat") sk.ink(dense([[mx - 11, my + 2], [mx + 11, my + 2]], 2), { ...lo, seed: seed + 103 });
+  else if (kind === "happy") arc(20, 12);
+  else if (kind === "sing") hole(13, 16);
+  else if (kind === "shock" || kind === "wide") hole(10, 13);
+  else if (kind === "grin") arc(19, 11);
+  else arc(16, 9);
 }
 
 /* ---------- 얼굴 (표정이 필요한 그림에서만) ----------
@@ -204,13 +255,15 @@ export function drawHead(sk, o = {}) {
   }
 
   // 안경과 얼굴
-  const ey = 8, lx = 36, lr = 30;
+  const ey = 8 + (o.lookY ?? 0), lx = 36, lr = 30; // lookY: 안경을 위아래로 조금 옮긴다(안경 올리기)
   if (o.glasses) {
     for (const [sg, i] of [[-1, 0], [1, 1]]) {
       sk.fill(circ(sg * lx + look, ey, lr - 2, { over: 0, seed: seed + 130 + i }), C.white, { dx: 0, dy: 0, wob: 0.6, seed: seed + 131 + i, alpha: 0.92 });
     }
   }
-  if (o.face) drawFace(sk, o.face, seed, o.glasses ? [-lx + look, lx + look] : [-30 + look, 30 + look], o.glasses ? ey : 10, { blush: o.blush });
+  if (o.face && o.bare) drawBareFace(sk, o, seed, look, { ey, lx });
+  else if (o.face && o.mini) drawMiniFace(sk, o, seed, look, { ey, lx });
+  else if (o.face) drawFace(sk, o.face, seed, o.glasses ? [-lx + look, lx + look] : [-30 + look, 30 + look], o.glasses ? ey : 10, { blush: o.blush });
   if (o.glasses) {
     for (const [sg, i] of [[-1, 0], [1, 1]]) sk.ink(circ(sg * lx + look, ey, lr, { seed: seed + 132 + i, lump: 0.03 }), { w: 8, wob: 0.7, seed: seed + 133 + i });
     sk.ink(curve([[-lx + lr + look - 1, ey - 5], [look, ey - 11], [lx - lr + look + 1, ey - 5]]), { w: 7, wob: 0.3, seed: seed + 135 });
@@ -413,7 +466,7 @@ export const TEACHER = { hair: "sprout", glasses: true, coat: { color: C.white, 
 // 스플래시와 로그인 그림의 주인공: 같은 얼굴에 가운만 벗은 모습
 export const KID = { hair: "sprout", glasses: true, seed: 21 };
 // 제임스 린드: 남색 삼각모 + 흰 가발 + 남색 제복
-export const LIND = { hair: "tricorn", coat: { color: C.navy, buttons: C.gold, seam: "#1E2B49" }, seed: 41 };
+export const LIND = { hair: "tricorn", coat: { color: C.navy, buttons: C.gold, seam: "#1E2B49" }, seed: 41, mini: true, face: "calm" };
 // 선원: 머릿수건이나 털모자
 export const SAILOR_A = { hair: "kerchief", capColor: C.red, seed: 61 };
 export const SAILOR_B = { hair: "knit", capColor: "#3F7CC0", seed: 71 };
@@ -421,21 +474,21 @@ export const SAILOR_C = { hair: "short", hairColor: "#C58B3A", seed: 81 };
 // 만화의 학생: 영상 샘플의 노란 모자 아이
 export const STUDENT = { hair: "cap", seed: 31 };
 // 로버트 훅: 어깨까지 내려오는 곱슬 긴 머리 + 갈색 외투
-export const HOOKE = { hair: "curls", hairColor: "#6B4A32", coat: { color: "#7A5A45", buttons: C.gold, seam: "#4E382B" }, seed: 101 };
+export const HOOKE = { hair: "curls", hairColor: "#6B4A32", coat: { color: "#7A5A45", buttons: C.gold, seam: "#4E382B" }, seed: 101, mini: true, face: "calm" };
 // 증기 시대 기술자: 실크해트 + 짙은 조끼
 export const ENGINEER = { hair: "tophat", hairColor: "#5B463A", coat: { color: "#4A5568", buttons: C.gold, seam: "#2D3748", len: 34 }, seed: 111 };
 // 플레밍: 짧은 회색 머리 + 흰 가운 + 나비넥타이
-export const FLEMING = { hair: "short", hairColor: "#9A9A9A", coat: { color: C.white }, bowtie: C.red, seed: 121 };
+export const FLEMING = { hair: "short", hairColor: "#9A9A9A", coat: { color: C.white }, bowtie: C.red, seed: 121, mini: true, face: "calm" };
 // 레이우엔훅: 챙 넓은 모자 + 긴 머리 + 풀빛 조끼
-export const LEEUWENHOEK = { hair: "curls", hairColor: "#8A6A4A", hat: "brim", hatColor: "#4E3B2E", coat: { color: "#5E7B5A", buttons: C.gold, seam: "#3E5540", len: 34 }, seed: 131 };
+export const LEEUWENHOEK = { hair: "curls", hairColor: "#8A6A4A", hat: "brim", hatColor: "#4E3B2E", coat: { color: "#5E7B5A", buttons: C.gold, seam: "#3E5540", len: 34 }, seed: 131, mini: true, face: "calm" };
 // 젊은 다윈: 짧은 갈색 머리 + 푸른 외투. 나이 든 다윈: 민머리 + 흰 턱수염 + 짙은 외투
-export const DARWIN = { hair: "short", hairColor: "#8A5A33", coat: { color: "#3E5C76", buttons: C.gold, seam: "#2A3F52" }, seed: 141 };
-export const DARWIN_OLD = { hair: "bald", beard: "#F4F1EA", coat: { color: "#4A4A52", buttons: C.gold, seam: "#2E2E33" }, seed: 141 };
+export const DARWIN = { hair: "short", hairColor: "#8A5A33", coat: { color: "#3E5C76", buttons: C.gold, seam: "#2A3F52" }, seed: 141, mini: true, face: "calm" };
+export const DARWIN_OLD = { hair: "bald", beard: "#F4F1EA", coat: { color: "#4A4A52", buttons: C.gold, seam: "#2E2E33" }, seed: 141, mini: true, face: "calm" };
 // 로슨(섬의 관리): 실크해트 + 붉은 제복. 굴드(새 전문가): 안경 + 나비넥타이
-export const LAWSON = { hair: "tophat", hairColor: "#5B463A", bandColor: C.gold, coat: { color: "#B5483B", buttons: C.gold, seam: "#7E2E25" }, seed: 151 };
-export const GOULD = { hair: "short", hairColor: "#3F3A36", glasses: true, coat: { color: "#3E5A47", seam: "#2A3F31" }, bowtie: C.orange, seed: 161 };
+export const LAWSON = { hair: "tophat", hairColor: "#5B463A", bandColor: C.gold, coat: { color: "#B5483B", buttons: C.gold, seam: "#7E2E25" }, seed: 151, mini: true, face: "calm" };
+export const GOULD = { hair: "short", hairColor: "#3F3A36", glasses: true, coat: { color: "#3E5A47", seam: "#2A3F31" }, bowtie: C.orange, seed: 161, mini: true, face: "calm" };
 // 그랜트 부부: 챙 넓은 햇볕 모자
-export const GRANT_A = { hair: "short", hairColor: "#9A9A9A", fringe: 24, hat: "brim", hatColor: "#E9D9B0", seed: 171 };
-export const GRANT_B = { hair: "bob", hairColor: "#B9B3A7", hat: "brim", hatColor: "#E9D9B0", seed: 181 };
+export const GRANT_A = { hair: "short", hairColor: "#9A9A9A", fringe: 24, hat: "brim", hatColor: "#E9D9B0", seed: 171, mini: true, face: "calm" };
+export const GRANT_B = { hair: "bob", hairColor: "#B9B3A7", hat: "brim", hatColor: "#E9D9B0", seed: 181, mini: true, face: "calm" };
 // 고려의 천문 관리: 관모(복두) + 붉은 관복
 export const OFFICIAL = { hair: "bald", hat: "bokdu", coat: { color: "#B0504A", seam: "#7A2F2B", len: 74 }, seed: 251 };

@@ -216,7 +216,7 @@ const fmtWidth = (mm: number): string => {
 export const magnifyLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as MgfStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: 4, cls: "mgf-stage", qCls: "mgf-q" });
+  const f = bvFrame(host, { title: s.title, steps: 4, cls: "mgf-stage", qCls: "mgf-q", api });
   const cv = bvCanvas(f.stage);
 
   // ── 관찰 창 ────────────────────────────────────────────────────────

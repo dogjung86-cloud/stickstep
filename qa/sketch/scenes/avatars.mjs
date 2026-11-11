@@ -59,7 +59,7 @@ export function reading() {
   const fx = 232, fy = 468, fs = 1.04;
   const P = pose({ hip: [0, -36], neck: [0, -164], head: [0, -258], tilt: 0.04, knL: [-104, -36], ftL: [34, -4], knR: [104, -36], ftR: [-34, -4],
     elL: [-96, -112], haL: [-118, -66], elR: [96, -112], haR: [118, -66] });
-  drawFigure(sk, fx, fy, fs, P, { ...KID, face: "happy", hands: false });
+  drawFigure(sk, fx, fy, fs, P, { ...KID, face: "happy", bare: true, hands: false });
   openBook(sk, fx, fy - fs * 22, 1.46, { color: C.teal, seed: 41 });
   sparkle(sk, 60, 150, 15, { seed: 45 });
   sparkle(sk, 402, 96, 12, { seed: 47 });

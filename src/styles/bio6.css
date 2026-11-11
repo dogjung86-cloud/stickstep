@@ -1,5 +1,5 @@
 /* 중1 Ⅱ v5(2026-11-11 정본) 랩 전용 시트.
-   접두: 뼈대 .bv- · 확대 랩 .mgf- · 세포 구조 랩 .cwk- · 표본 만들기 랩 .sbd- · 현미경 비교 랩 .scp-
+   접두: 뼈대 .bv- · 확대 랩 .mgf- · 세포 구조 랩 .cwk-(입체 무대는 .cwm-) · 표본 만들기 랩 .sbd- · 현미경 비교 랩 .scp-
    4~10번 레슨: 세포 모양 .cft- · 구성 단계 .blv- · 생물다양성 .emp- · 두 섬의 새 .bki- · 가까운 사이 .knl- · 무리 넓히기 .rkw- · 검색표 .kpl- · 먹이 관계 .fwb-
    (.b6-은 중2 Ⅵ v3 body3.css가 쓰고 있어 쓰지 않는다.)
    한 화면 예산(390×700, 스크롤 영역 554px): 위 6 + 제목 30 + 도움말 50 + 무대 240 + 조작 칸 218 + 아래 10 = 554 */
@@ -110,15 +110,31 @@
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .bv-choice:active { transform: scale(.98); }
-.bv-choice.ok { border-color: var(--green); background: #EFFBF4; box-shadow: 0 0 0 1px var(--green) inset; }
+.bv-choice-t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bv-choice.sel { border-color: var(--blue); background: var(--blue-tint); box-shadow: 0 0 0 1px var(--blue) inset; }
 .bv-choice.dim { opacity: .42; }
-.bv-choice.miss { height: 40px; border-color: var(--red); background: #FFF2F3; color: #C92A3A; box-shadow: 0 0 0 1px var(--red) inset; }
 .bv-choice.gone { display: none; }
+/* 답한 뒤: 누른 보기에 결과를 새긴다(동그란 표시 + "정답이에요"/"오답이에요" + 고른 답). 초록은 맞음, 빨강은 틀림 한 가지 뜻만 진다. */
+.bv-choice.ok, .bv-choice.miss { height: 46px; gap: 10px; padding: 0 12px; }
+.bv-choice.ok { border-color: var(--green); background: #EFFBF4; box-shadow: 0 0 0 1px var(--green) inset; animation: bvOk .32s var(--ease-out) both; }
+.bv-choice.miss { border-color: var(--red); background: #FFF2F3; box-shadow: 0 0 0 1px var(--red) inset; animation: bvMiss .34s ease-out both; }
+@keyframes bvOk { 0% { transform: scale(.985); } 55% { transform: scale(1.012); } 100% { transform: none; } }
+@keyframes bvMiss { 0%, 100% { transform: none; } 22% { transform: translateX(-4px); } 55% { transform: translateX(3px); } 80% { transform: translateX(-1px); } }
+.bv-vd-ic { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; color: #fff; }
+.bv-vd-ic svg { display: block; width: 13px; height: 13px; }
+.bv-choice.ok .bv-vd-ic { background: var(--green); }
+.bv-choice.miss .bv-vd-ic { background: var(--red); }
+.bv-vd-tx { min-width: 0; display: grid; }
+.bv-vd { font-size: 12.5px; line-height: 15px; font-weight: 800; }
+.bv-choice.ok .bv-vd { color: var(--green-press); }
+.bv-choice.miss .bv-vd { color: var(--red-press); }
+.bv-choice.ok .bv-choice-t, .bv-choice.miss .bv-choice-t { font-size: 14px; line-height: 19px; font-weight: 700; color: var(--ink); }
+/* 그 바로 아래 카드. 맞혔을 때는 옅은 초록, 틀렸을 때는 흰 바탕(초록 상자가 "맞혔다"로 읽히지 않게). */
 .bv-ans {
   flex: none; display: grid; gap: 6px; padding: 9px 10px 9px 12px; border-radius: 14px;
-  border: 1.5px solid var(--green); background: #EFFBF4; animation: bvIn .3s var(--ease-out) both;
+  border: 1.5px solid var(--n300); background: #fff; animation: bvIn .3s var(--ease-out) both;
 }
+.bv-ans.ok { border-color: #B6EBD6; background: #F4FCF8; }
 .bv-ans-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .bv-ans-tag { flex: none; padding: 4px 8px; border-radius: 999px; background: var(--green); color: #fff; font-size: 11.5px; font-weight: 800; line-height: 1; }
 .bv-ans-t { font-size: 14.5px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -131,6 +147,10 @@
 }
 .bv-next:active { transform: scale(.96); }
 .bv-next:disabled { opacity: .5; }
+.bv-ans.no .bv-next { background: var(--ink); box-shadow: 0 2px 8px rgba(25, 31, 40, .22); }
+@media (prefers-reduced-motion: reduce) {
+  .bv-choice.ok, .bv-choice.miss { animation: none; }
+}
 
 /* ── 결론 ──────────────────────────────────────────── */
 .bv-done { display: none; }
@@ -285,6 +305,33 @@ circle.cwk-hit { pointer-events: all; }
 }
 .cwk-legend i { width: 9px; height: 9px; border-radius: 50%; background: #FFD43B; box-shadow: 0 0 0 1px #E8A800 inset; }
 .cwk-legend svg { margin-left: 8px; }
+
+/* 입체 무대(.cwm-, steps/bio6/cellStage3d.ts): 같은 어두운 무대 위에 three.js 캔버스를 놓는다.
+   이름표와 범례는 평면 무대와 같은 자리, 같은 모양이다. 손으로 돌리지 않는다(누르기만 받는다). */
+.cwm-canvas {
+  position: absolute; inset: 0; display: block; width: 100%; height: 100%; touch-action: pan-y; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; opacity: 0; transition: opacity .35s;
+}
+.cwm-over { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity .35s; }
+.cwm-stage.ready .cwm-canvas, .cwm-stage.ready .cwm-over { opacity: 1; }
+.cwm-lead line { stroke: #9FB3D1; stroke-width: 1.2; }
+.cwm-lead circle { fill: #fff; }
+.cwm-ray { stroke: #FFE066; stroke-width: 6; stroke-linecap: round; }
+/* 무대 바로 아래의 svg는 뼈대 규칙(.bv-stage > svg)이 무대 크기로 늘리므로 같은 무게로 크기를 되잡는다 */
+.bv-stage > svg.cwm-sun { position: absolute; left: 0; top: 0; width: 60px; height: 56px; pointer-events: none; }
+.cwm-tag {
+  position: absolute; height: 22px; padding: 0 8px; border-radius: 11px; pointer-events: none; white-space: nowrap;
+  background: rgba(13, 24, 44, .82); outline: 1px solid rgba(255, 255, 255, .22); outline-offset: -1px;
+  font-size: 12.5px; line-height: 22px; font-weight: 800; color: #EAF0FA;
+}
+/* 이름표가 곧 답이 되는 질문에서는 이름표를 가린다(두 무대 공통) */
+.cwm-tag, .cwm-lead, .cwk-tag { transition: opacity .25s; }
+.cwm-stage.notag .cwm-tag, .cwm-stage.notag .cwm-lead, .cwk-svg.notag .cwk-tag { opacity: 0; }
+.cwm-tag.t-mem { left: 8px; top: 41px; }
+.cwm-tag.t-nuc { right: 8px; top: 49px; }
+.cwm-tag.t-mito { right: 8px; bottom: 19px; }
+.cwm-tag.t-chl { right: 8px; top: 15px; }
+.cwm-tag.t-wall { right: 8px; bottom: 15px; }
 
 /* 구조 카드: 누르면 그 구조가 멈춘다 */
 .bv-card.cwk-card.col { height: 88px; gap: 3px; }

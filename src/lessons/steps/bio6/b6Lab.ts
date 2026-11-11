@@ -7,13 +7,19 @@
 //
 // 한 화면 예산: 390×700 화면의 스크롤 영역 554px에서 랩 스텝 위아래 여백(6, 10)을 뺀 538px.
 // 조작 칸 높이가 고정이라 국면이 바뀌어도 무대와 버튼 자리가 움직이지 않는다(조작 중 화면 밀림 0).
-// 판정: 정답이면 초록 표시 뒤 자동 진행, 오답이면 누른 보기 바로 아래에 정답 카드(정답, 이유, '다음')가 뜨고
-// 다른 보기는 접힌다. 타이머로 다음 질문을 덮지 않는다. 예측 질문(predict)은 정오를 밝히지 않는다.
+// 판정(2026-11-11 사용자 피드백으로 고침): 맞혔는지 틀렸는지를 누른 보기에 새긴다.
+//   정답: 누른 보기가 초록이 되고 체크와 "정답이에요"가 붙는다. 그 아래에 이유 한 줄과 '다음'.
+//   오답: 누른 보기가 빨강이 되고 가위표와 "오답이에요"가 붙는다. 그 아래 카드에 정답, 이유 한 줄, '다음'.
+//   어느 쪽이든 다른 보기는 접히고, '다음'을 눌러야 넘어간다(타이머로 다음 질문을 덮지 않는다).
+//   고치기 전에는 오답일 때 초록 "정답" 상자만 눈에 띄어 맞힌 것처럼 읽혔고, 정답일 때는 1초 뒤 말없이 넘어갔다.
+//   예측 질문(predict)은 정오를 밝히지 않는다(고른 보기만 남기고 잠깐 뒤 넘어간다).
 // 움직임은 CSS와 setTimeout만 쓴다(캔버스, rAF 없음. 화면 캡처가 멈춘 환경에서도 끝까지 진행된다).
 // CSS 접두는 .bv-(styles/bio6.css). .b6-은 중2 Ⅵ v3(body3)가 쓰고 있어 피했다.
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
+import { icon } from "../../../core/icons";
+import type { StepAPI } from "../../types";
 
 // ── 타이머 묶음 ─────────────────────────────────────────────────────
 export interface BvTimers {
@@ -69,18 +75,24 @@ export interface BvChoice {
   ok?: boolean;
 }
 export interface BvAskOpts {
-  /** 오답일 때 정답 카드에 붙는 이유 한 줄(HTML, 40자 안쪽). */
+  /** 답한 뒤 카드에 붙는 이유 한 줄(HTML, 40자 안쪽). 맞혔을 때도 틀렸을 때도 같은 글이 보이므로 "아니에요"로 시작하지 않는다. */
   why?: string;
-  /** 다음 국면. 정답이면 잠깐 뒤 자동, 오답이면 '다음'을 눌러야 넘어간다. */
+  /** 다음 국면. 맞히든 틀리든 '다음'을 눌러야 넘어간다(예측 질문만 잠깐 뒤 저절로 넘어간다). */
   onNext?: () => void;
   /** 예측 질문. 정오를 밝히지 않고 고른 보기만 남긴 채 넘어간다(답은 실험이 보여 준다). */
   predict?: boolean;
+  /** 예측 질문이 넘어가기까지의 시간(ms). */
   nextDelay?: number;
 }
 
-function ask(box: HTMLElement, question: string, choices: BvChoice[], onPick: (ok: boolean) => void, opts: BvAskOpts): void {
+/** 판정이 뜨는 동안 맨 아래 큰 버튼(잠긴 채 지금 할 일을 알려 주는 글)에 쓸 말. 이미 끝낸 조작을 시키는 글이 남지 않게 한다. */
+const CTA_ASK = "질문에 답해 보세요";
+const CTA_NEXT = "'다음'을 눌러 이어 가요";
+
+function ask(box: HTMLElement, question: string, choices: BvChoice[], onPick: (ok: boolean) => void, opts: BvAskOpts, api?: Pick<StepAPI, "setCTA">): void {
   box.innerHTML = "";
   box.classList.add("show");
+  if (!opts.predict) api?.setCTA(CTA_ASK, { enabled: false });
   // 질문 글자는 span 하나로 감싼다(.bv-qt가 flex라 굵은 글씨 앞뒤의 띄어쓰기가 사라지는 것을 막는다).
   const qEl = el("div", { class: "bv-qt" }, el("span", { html: question }));
   box.appendChild(qEl);
@@ -102,7 +114,8 @@ function ask(box: HTMLElement, question: string, choices: BvChoice[], onPick: (o
   const btns: HTMLButtonElement[] = [];
   order.forEach((idx) => {
     const c = choices[idx];
-    const b = el("button", { class: "bv-choice", text: c.t, attrs: { type: "button" } }) as HTMLButtonElement;
+    const label = el("span", { class: "bv-choice-t", text: c.t });
+    const b = el("button", { class: "bv-choice", attrs: { type: "button" } }, label) as HTMLButtonElement;
     // 검사 도구가 섞인 차례와 무관하게 보기를 집는 열쇠. 개발 서버에서만 붙인다(quiz.ts의 data-oi와 같은 약속. 운영 화면에는 정답 표식을 남기지 않는다).
     if (import.meta.env.DEV) b.dataset.ok = c.ok ? "1" : "0";
     btns.push(b);
@@ -117,38 +130,38 @@ function ask(box: HTMLElement, question: string, choices: BvChoice[], onPick: (o
         goNext();
         return;
       }
-      haptic(c.ok ? HAPTIC.correct : HAPTIC.wrong);
-      if (c.ok) {
-        btns.forEach((x) => x.classList.add(x === b ? "ok" : "dim"));
-        onPick(true);
-        goNext();
-        return;
-      }
-      // 오답: 누른 보기는 빨갛게 남기고, 그 바로 아래에 정답 카드를 붙인다. 나머지는 접는다.
-      b.classList.add("miss");
+      const ok = !!c.ok;
+      haptic(ok ? HAPTIC.correct : HAPTIC.wrong);
+      // 맞혔는지 틀렸는지를 누른 보기에 새긴다(동그란 표시 + 말 + 고른 답). 나머지 보기는 접는다.
+      b.classList.add(ok ? "ok" : "miss");
+      b.replaceChildren(
+        el("span", { class: "bv-vd-ic", html: icon(ok ? "check" : "xThick", 13), attrs: { "aria-hidden": "true" } }),
+        el("span", { class: "bv-vd-tx" }, el("span", { class: "bv-vd", text: ok ? "정답이에요" : "오답이에요" }), label),
+      );
       btns.forEach((x) => {
         if (x !== b) x.classList.add("gone");
       });
-      const card = el(
-        "div",
-        { class: "bv-ans" },
-        el("div", { class: "bv-ans-row" }, el("span", { class: "bv-ans-tag", text: "정답" }), el("span", { class: "bv-ans-t", text: good?.t ?? "" })),
-      );
-      const foot = el("div", { class: "bv-ans-foot" });
-      foot.appendChild(el("span", { class: "bv-why", html: opts.why ?? "" }));
+      // 그 바로 아래 카드: 틀렸으면 정답을 먼저 알려 주고, 어느 쪽이든 이유 한 줄과 '다음'.
       const fn = opts.onNext;
-      if (fn) {
-        const next = el("button", { class: "bv-next", text: "다음", attrs: { type: "button" } }) as HTMLButtonElement;
-        next.addEventListener("click", () => {
-          next.disabled = true;
-          haptic(HAPTIC.tap);
-          fn();
-        });
-        foot.appendChild(next);
+      if (!ok || opts.why || fn) {
+        const card = el("div", { class: `bv-ans ${ok ? "ok" : "no"}`, attrs: { role: "status" } });
+        if (!ok) card.appendChild(el("div", { class: "bv-ans-row" }, el("span", { class: "bv-ans-tag", text: "정답" }), el("span", { class: "bv-ans-t", text: good?.t ?? "" })));
+        const foot = el("div", { class: "bv-ans-foot" });
+        foot.appendChild(el("span", { class: "bv-why", html: opts.why ?? "" }));
+        if (fn) {
+          const next = el("button", { class: "bv-next", text: "다음", attrs: { type: "button" } }) as HTMLButtonElement;
+          next.addEventListener("click", () => {
+            next.disabled = true;
+            haptic(HAPTIC.tap);
+            fn();
+          });
+          foot.appendChild(next);
+        }
+        card.appendChild(foot);
+        b.after(card);
+        if (fn) api?.setCTA(CTA_NEXT, { enabled: false });
       }
-      card.appendChild(foot);
-      b.after(card);
-      onPick(false);
+      onPick(ok);
     });
     box.appendChild(b);
   });
@@ -169,7 +182,7 @@ export interface BvSlot {
   conclude: (html: string) => void;
 }
 
-function makeSlot(qCls: string): BvSlot {
+function makeSlot(qCls: string, api?: Pick<StepAPI, "setCTA">): BvSlot {
   const ctl = el("div", { class: "bv-ctl" });
   const qBox = el("div", { class: `bv-q ${qCls}` });
   const done = el("div", { class: "bv-done" });
@@ -191,7 +204,7 @@ function makeSlot(qCls: string): BvSlot {
     ask(question, choices, onPick, opts = {}) {
       ctl.hidden = true;
       done.classList.remove("show");
-      ask(qBox, question, choices, onPick, opts);
+      ask(qBox, question, choices, onPick, opts, api);
     },
     showControls,
     conclude(html) {
@@ -216,14 +229,15 @@ export interface BvFrame {
   pips: (n: number) => void;
 }
 
-/** 랩 한 판의 뼈대를 host에 놓는다. cls는 무대에 붙는 랩 전용 클래스, qCls는 판정 상자 클래스. */
-export function bvFrame(host: HTMLElement, o: { title: string; steps: number; cls: string; qCls: string }): BvFrame {
+/** 랩 한 판의 뼈대를 host에 놓는다. cls는 무대에 붙는 랩 전용 클래스, qCls는 판정 상자 클래스.
+ *  api를 넘기면 판정이 뜨는 동안 맨 아래 큰 버튼의 글을 "질문에 답해 보세요", 답한 뒤에는 "'다음'을 눌러 이어 가요"로 바꾼다. */
+export function bvFrame(host: HTMLElement, o: { title: string; steps: number; cls: string; qCls: string; api?: Pick<StepAPI, "setCTA"> }): BvFrame {
   host.classList.add("bv-step");
   const pipEls = Array.from({ length: o.steps }, () => el("i"));
   const head = el("div", { class: "bv-head" }, el("div", { class: "bv-title", html: o.title }), el("div", { class: "bv-pips", attrs: { "aria-hidden": "true" } }, ...pipEls));
   const helper = el("div", { class: "bv-helper" });
   const stage = el("div", { class: `bv-stage ${o.cls}` });
-  const slot = makeSlot(o.qCls);
+  const slot = makeSlot(o.qCls, o.api);
   host.append(head, helper, stage, slot.el);
   let lastSay = "";
   return {

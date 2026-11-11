@@ -120,7 +120,7 @@ function pathSvg(): string {
 export const kingdomPathLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as KplStep;
   const tm = bvTimers();
-  const f = bvFrame(host, { title: s.title, steps: ORGS.length + 1, cls: "kpl-stage", qCls: "kpl-q" });
+  const f = bvFrame(host, { title: s.title, steps: ORGS.length + 1, cls: "kpl-stage", qCls: "kpl-q", api });
   const canvas = bvCanvas(f.stage);
 
   // ── 무대: 검색표 ─────────────────────────────────────────────────

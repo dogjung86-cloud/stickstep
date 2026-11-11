@@ -556,7 +556,7 @@ function openLesson(id: string): void {
       nav.go(doneScreen(r, gained, note, goHome));
     },
   });
-  nav.go({ el: player.el });
+  nav.go(player); // 화면이 치워질 때 스텝의 정리(onExit)까지 라우터에 넘긴다(뒤로가기로 나가도 타이머와 WebGL을 돌려준다)
 }
 
 function showSplash(instant = false): void {
@@ -612,7 +612,7 @@ if (import.meta.env.DEV && new URLSearchParams(location.search).get("preview") =
       onExit: goHome,
       onComplete: () => goHome(), // 프리뷰는 완료를 기록하지 않는다(store 오염 방지)
     });
-    nav.go({ el: player.el });
+    nav.go(player);
   });
 } else if (U2_INTRO_OPEN && findLesson(U2_INTRO_OPEN) && (import.meta.env.DEV || !isPremiumLocked(findLesson(U2_INTRO_OPEN)!.lesson))) {
   // [도입 샘플 판정용] ?u2intro=u2l4 처럼 레슨을 주면 그 레슨을 바로 연다(완료를 기록하지 않는다).
