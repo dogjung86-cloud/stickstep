@@ -21,7 +21,7 @@ export interface LessonResult {
 export function createLessonPlayer(
   lesson: Lesson,
   hooks: { onExit: () => void; onComplete: (r: LessonResult) => void },
-): { el: HTMLElement } {
+): { el: HTMLElement; onExit: () => void } {
   const steps = lesson.steps;
   let idx = 0;
   let gen = 0; // 스텝 세대 토큰 — 떠난 스텝의 지연 콜백(setTimeout 등)이 현재 스텝을 조작하지 못하게 한다
@@ -269,6 +269,7 @@ export function createLessonPlayer(
     window.clearTimeout(finishTimer);
     stopAllLoops();
     if (typeof cleanup === "function") cleanup();
+    cleanup = undefined;
     hooks.onExit();
   });
 
@@ -285,5 +286,14 @@ export function createLessonPlayer(
       600,
     );
 
-  return { el: section };
+  // 화면이 치워질 때(하드웨어 뒤로가기, 다른 화면으로 리셋) 스텝이 잡고 있던 것을 돌려준다: 타이머, 그리기 루프, WebGL.
+  // 닫기 버튼과 완료는 스스로 정리하므로 여기서는 아직 남아 있을 때만 한다. 이것이 없던 때에는 뒤로가기로 나가면
+  // 스텝의 타이머가 남고 3D 랩의 WebGL 컨텍스트가 반납되지 않았다(2026-11-11, 세포 구조 랩을 입체로 올리며 찾았다).
+  const onExit = (): void => {
+    gen += 1;
+    window.clearTimeout(finishTimer);
+    if (typeof cleanup === "function") cleanup();
+    cleanup = undefined;
+  };
+  return { el: section, onExit };
 }

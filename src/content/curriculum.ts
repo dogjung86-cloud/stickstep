@@ -3,9 +3,10 @@
 import type { Lesson } from "../lessons/types";
 import { isDone, isPremium, isReviewMode } from "../core/store";
 import { UNIT1 } from "./unit1";
-// 중1 Ⅱ = v3 재제작본이 정본(2026-08-10 사용자 판정 합격 — 병행 토글 ss.u2v3 폐기, 직배선).
-// 구판(content/unit2.ts)·v2류 보존 규칙은 Ⅴ·Ⅵ과 동일 — 파일은 남기고 배선만 끊는다.
-import { UNIT2_V3 } from "./unit2v3";
+// 중1 Ⅱ = v5가 정본(2026-11-11 사용자 판정 "정본으로 올리기". 병행 토글 ss.u2v5와 주소 ?u2v5는 없앴다).
+// v5(content/unit2v5.ts)는 혼자 서는 파일이다. v3(content/unit2v3.ts, steps/bio4/*)와 그 앞의 판(content/unit2.ts 등)은
+// Ⅴ·Ⅵ과 같은 규칙으로 파일만 남긴다(배선 없음). Ⅱ단원의 글을 고칠 때는 unit2v5.ts를 고친다.
+import { UNIT2_V5 } from "./unit2v5";
 import { UNIT3 } from "./unit3";
 import { UNIT4 } from "./unit4";
 import { UNIT5 } from "./unit5";
@@ -42,7 +43,8 @@ export interface Unit {
 export type GradeId = "g1" | "g2";
 export const GRADE_LABEL: Record<GradeId, string> = { g1: "중1", g2: "중2" };
 
-export const CURRICULUM: Unit[] = [UNIT1, UNIT2_V3, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7];
+// Ⅲ·Ⅳ v3 브랜치도 이 줄을 고친다(U3_ACTIVE, U4_ACTIVE). 합칠 때 한 줄 충돌이 나면 두 쪽의 이름을 다 살리면 된다.
+export const CURRICULUM: Unit[] = [UNIT1, UNIT2_V5, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7];
 
 // 중2 — 대단원 8개.
 export const CURRICULUM_G2: Unit[] = [
