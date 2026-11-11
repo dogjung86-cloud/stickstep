@@ -171,14 +171,16 @@ export const convLab: StepRenderer = (host, step, api) => {
           ctx.stroke();
           ctx.setLineDash([]);
         }
+        // 이름표: 달린 기기에는 이름, 빈 자리에는 자리 이름
+        txt(ctx, on ? (scene === "heater" ? "난방기" : "냉방기") : pl === "top" ? "위쪽 자리" : "아래쪽 자리", R.x + 24, y + 14, { size: 12, align: "left", weight: 700, color: on ? "#E8EEF9" : SUB });
       }
     }
     // 입자(온도 색, 흐를 때는 짧은 꼬리)
     for (const p of ps) drawGlowParticle(ctx, R.x + p.u * R.w, R.y + p.v * R.h, 3.8, p.T, 1.7);
     // 위쪽과 아래쪽의 온도
     const tx = scene === "pot" ? 300 : 286;
-    pill(ctx, `위쪽 ${toC(scene, zone(true))}℃`, tx, scene === "pot" ? 84 : 52, { size: 12, dot: tempColor(zone(true)) });
-    pill(ctx, `아래쪽 ${toC(scene, zone(false))}℃`, tx, scene === "pot" ? 150 : 150, { size: 12, dot: tempColor(zone(false)) });
+    pill(ctx, `위쪽 ${toC(scene, zone(true))}℃`, tx, scene === "pot" ? 84 : 52, { size: 12, dot: tempColor(zone(true)), bg: "rgba(11,21,36,.9)" });
+    pill(ctx, `아래쪽 ${toC(scene, zone(false))}℃`, tx, 150, { size: 12, dot: tempColor(zone(false)), bg: "rgba(11,21,36,.9)" });
     // 결과 판단
     if (running && !judged) {
       const base = BASE[scene];
@@ -274,7 +276,16 @@ export const convLab: StepRenderer = (host, step, api) => {
 
   function askFinal(): void {
     phase = "ask";
-    f.say("냄비, 난방기, 냉방기를 모두 해 봤어요. 입자가 한 일을 떠올리며 골라 봐요.");
+    // 질문이 묻는 장면(난방기를 아래에 단 방)을 무대에 다시 돌린다
+    scene = "heater";
+    place = "bottom";
+    running = true;
+    judged = true;
+    flow = 0;
+    runT = 0;
+    seed();
+    row.hidden = true;
+    f.say("난방기를 아래에 단 방을 다시 돌렸어요. 무대의 공기 입자를 보고 골라 봐요.");
     f.slot.ask(
       "난방기를 아래에 달았을 때 방 전체가 따뜻해진 까닭은?",
       [{ t: "데워진 공기 입자가 직접 이동해서", ok: true }, { t: "공기 입자가 제자리에서 떨기만 해서" }, { t: "열이 공기 없이 날아가서" }],

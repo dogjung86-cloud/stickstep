@@ -83,7 +83,7 @@
 .opn-stage.summer .opn-u3-summer { opacity: 1; }
 .opn-stage.summer .opn-u3-winter { opacity: 0; }
 .opn-u3-tight { opacity: 0; }
-.opn-stage.touched.tight .opn-u3-tight { opacity: 1; }
+/* 팽팽해졌을 때의 반짝이는 쓰지 않는다(눈검수: 줄 아래의 작은 표시가 무엇인지 읽히지 않았다) */
 .opn-step[data-opn-scene="u3-wire"] .opn-controls { grid-template-columns: 1fr 1fr; }
 .opn-u3-btn {
   min-height: 50px; border-radius: var(--r-md); border: 1.5px solid var(--n300); background: var(--n0);

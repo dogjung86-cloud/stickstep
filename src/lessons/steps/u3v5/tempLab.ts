@@ -161,7 +161,7 @@ export const tempLab: StepRenderer = (host, step, api) => {
 
   function hint(): void {
     if (phase === "explore") {
-      if (!hot && !cold) f.say("<b>온도 막대</b>를 밀어 물을 데워 봐요. 물속 입자가 어떻게 달라지나요?");
+      if (!hot && !cold) f.say("<b>물의 온도</b> 막대를 밀어 물을 데워 봐요. 물속 입자가 어떻게 달라지나요?");
       else if (hot && !cold) f.say(T >= 85 ? "입자가 빠르게 움직이고 서로 멀어졌어요. 이번엔 <b>차갑게</b> 식혀 봐요." : "이번엔 막대를 왼쪽 끝까지 밀어 <b>차갑게</b> 식혀 봐요.");
       else if (!hot && cold) f.say(T <= 12 ? "입자가 둔해지고 서로 가까워졌어요. 이번엔 <b>뜨겁게</b> 데워 봐요." : "이번엔 막대를 오른쪽 끝까지 밀어 <b>뜨겁게</b> 데워 봐요.");
     } else if (phase === "match" && !solved) {
