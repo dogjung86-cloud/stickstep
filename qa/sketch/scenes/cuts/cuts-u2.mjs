@@ -125,9 +125,500 @@ function cutU2l2b() {
   return sk;
 }
 
+/* ---------- 공용 소품(Ⅱ단원) ---------- */
+const GRASS = ["#4E9A46", "#6BB55A"];
+const ground = (sk, y, sd, x0 = 14, x1 = 946) => sk.ink(curve([[x0, y + 2], [lerpx(x0, x1, 0.35), y - 2], [lerpx(x0, x1, 0.7), y + 1], [x1, y - 1]]), { w: 9, seed: sd });
+const tuft = (sk, x, y, sd, n = 4, h = 26) => { for (let i = 0; i < n; i++) { const gx = x + i * 10, lean = ((i * 37 + sd) % 5 - 2) * 4; sk.ink(curve([[gx, y], [gx + lean * 0.5, y - h * 0.6], [gx + lean, y - h - (i % 3) * 6]]), { w: 6, color: GRASS[i % 2], seed: sd + i, wob: 0.4 }); } };
+// 세포 벽돌: 둥근 네모 + 핵(벽돌 하나하나가 세포)
+function cellBrick(sk, x, y, w, h, sd, col = "#F6BFAE") {
+  const b = rrect(x - w / 2, y - h / 2, w, h, Math.min(w, h) * 0.32);
+  sk.fill(b, col, { seed: sd, dx: 0.8, dy: 1, wob: 0.6 });
+  sk.ink(b, { w: 7, seed: sd + 1, wob: 0.6 });
+  sk.dot(x + w * 0.1, y - h * 0.04, Math.min(w, h) * 0.16, "#B0476A");
+}
+// 작은 동물 그림(카드, 표지판용). 원점 = 가운데, s = 크기
+function bird(sk, x, y, s, sd, col = "#7FA7D9") {
+  sk.at(x, y, s, () => {
+    const b = curve([[-34, 4], [-20, -22], [10, -26], [30, -8], [26, 16], [0, 26], [-26, 20]], true, 3);
+    sk.fill(b, col, { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd });
+    sk.ink(b, { w: 7, wob: 0.4, seed: sd + 1 });
+    const wing = curve([[-16, -2], [4, -10], [14, 6], [-4, 12]], true, 3);
+    sk.fill(wing, mix(col, "#000000", 0.2), { dx: 0, dy: 0, wob: 0.3, seed: sd + 2 }); sk.ink(wing, { w: 5, wob: 0.3, seed: sd + 3 });
+    const beak = poly([[28, -10], [46, -4], [28, 2]], 2);
+    sk.fill(beak, C.orange, { dx: 0, dy: 0, wob: 0.2, seed: sd + 4 }); sk.ink(beak, { w: 5, wob: 0.2, seed: sd + 5 });
+    sk.dot(16, -12, 3.6);
+    sk.ink(dense([[-4, 26], [-6, 40]]), { w: 5, seed: sd + 6, wob: 0.2 }); sk.ink(dense([[8, 25], [8, 40]]), { w: 5, seed: sd + 7, wob: 0.2 });
+  });
+}
+function fish(sk, x, y, s, sd, col = "#F2A65A") {
+  sk.at(x, y, s, () => {
+    const b = curve([[-34, 0], [-10, -20], [20, -16], [36, 0], [20, 16], [-10, 20]], true, 3);
+    const tail = poly([[-32, 0], [-52, -18], [-48, 0], [-52, 18]], 2);
+    sk.fill(tail, mix(col, "#000000", 0.15), { dx: 0, dy: 0, wob: 0.3, seed: sd }); sk.ink(tail, { w: 6, wob: 0.3, seed: sd + 1 });
+    sk.fill(b, col, { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd + 2 }); sk.ink(b, { w: 7, wob: 0.4, seed: sd + 3 });
+    sk.dot(20, -4, 3.6);
+    sk.ink(curve([[-6, -14], [0, 0], [-6, 14]]), { w: 4, seed: sd + 4, wob: 0.2 });
+  });
+}
+function bat(sk, x, y, s, sd) {
+  sk.at(x, y, s, () => {
+    const w = curve([[-58, -14], [-38, -22], [-14, -8], [0, -14], [14, -8], [38, -22], [58, -14], [46, 0], [34, 10], [24, 2], [12, 14], [0, 8], [-12, 14], [-24, 2], [-34, 10], [-46, 0]], true, 3);
+    sk.fill(w, "#5B5470", { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd }); sk.ink(w, { w: 6, wob: 0.4, seed: sd + 1 });
+    const h = circ(0, -14, 10, { over: 0.1, seed: sd + 2 });
+    sk.fill(h, "#5B5470", { dx: 0, dy: 0, wob: 0.3, seed: sd + 3 }); sk.ink(h, { w: 5, wob: 0.3, seed: sd + 4 });
+    for (const sg of [-1, 1]) sk.fill(poly([[sg * 4, -22], [sg * 10, -32], [sg * 10, -20]], 2), "#5B5470", { dx: 0, dy: 0, wob: 0.2, seed: sd + 5 });
+  });
+}
+function squirrel(sk, x, y, s, sd) {
+  sk.at(x, y, s, () => {
+    const tail = curve([[-8, 10], [-36, 4], [-44, -24], [-30, -44], [-14, -34], [-22, -16], [-6, -8]], true, 3);
+    sk.fill(tail, "#C58B4E", { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd }); sk.ink(tail, { w: 6, wob: 0.4, seed: sd + 1 });
+    const b = curve([[-10, 20], [-12, -4], [4, -22], [20, -16], [22, 4], [14, 22]], true, 3);
+    sk.fill(b, "#B5763E", { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd + 2 }); sk.ink(b, { w: 6, wob: 0.4, seed: sd + 3 });
+    sk.fill(poly([[8, -20], [12, -32], [16, -18]], 2), "#B5763E", { dx: 0, dy: 0, wob: 0.2, seed: sd + 4 });
+    sk.dot(14, -10, 3.2);
+  });
+}
+function frog(sk, x, y, s, sd) {
+  sk.at(x, y, s, () => {
+    const b = curve([[-30, 10], [-26, -12], [-10, -20], [10, -20], [26, -12], [30, 10], [10, 18], [-10, 18]], true, 3);
+    sk.fill(b, "#6BBF59", { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd }); sk.ink(b, { w: 6, wob: 0.4, seed: sd + 1 });
+    for (const sg of [-1, 1]) { const e = circ(sg * 12, -20, 8, { over: 0.1, seed: sd + 2 }); sk.fill(e, "#6BBF59", { dx: 0, dy: 0, wob: 0.2, seed: sd + 3 }); sk.ink(e, { w: 5, wob: 0.2, seed: sd + 4 }); sk.dot(sg * 12, -21, 3); }
+    sk.ink(curve([[-30, 12], [-40, 20], [-30, 22]]), { w: 5, wob: 0.2, seed: sd + 5 }); sk.ink(curve([[30, 12], [40, 20], [30, 22]]), { w: 5, wob: 0.2, seed: sd + 6 });
+  });
+}
+function rabbit(sk, x, y, s, sd) {
+  sk.at(x, y, s, () => {
+    for (const [ex, r] of [[-8, -0.12], [8, 0.12]]) sk.at(ex, -40, 1, () => { const e = curve([[-6, 0], [-7, -26], [0, -36], [7, -26], [6, 0]], true, 3); sk.fill(e, "#F1EEE8", { dx: 0, dy: 0, wob: 0.3, seed: sd }); sk.ink(e, { w: 5, wob: 0.3, seed: sd + 1 }); }, r);
+    const h = circ(0, -30, 16, { over: 0.1, seed: sd + 2 });
+    const b = curve([[-24, 20], [-26, -4], [-12, -16], [12, -16], [26, -4], [24, 20]], true, 3);
+    sk.fill(b, "#F1EEE8", { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd + 3 }); sk.ink(b, { w: 6, wob: 0.4, seed: sd + 4 });
+    sk.fill(h, "#F1EEE8", { dx: 0, dy: 0, wob: 0.3, seed: sd + 5 }); sk.ink(h, { w: 6, wob: 0.3, seed: sd + 6 });
+    sk.dot(-6, -32, 2.8); sk.dot(6, -32, 2.8);
+  });
+}
+// 무당벌레(위에서 본 모습). kind: "many" 점 많은 빨강 | "few" 점 몇 개 | "none" 민무늬 빨강 | "black2" 검정 바탕에 빨간 점 둘
+function ladybug(sk, x, y, r, kind, sd, rot = 0) {
+  sk.at(x, y, r / 30, () => {
+    const red = kind === "black2" ? "#2B2B30" : "#E0503A";
+    const h = curve([[-12, -26], [0, -36], [12, -26]], false, 3);
+    sk.fill([...h, [12, -24], [-12, -24]], "#2B2B30", { dx: 0, dy: 0, wob: 0.2, seed: sd });
+    const body = circ(0, 2, 30, { over: 0.1, seed: sd + 1, sy: 1.05 });
+    sk.fill(body, red, { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd + 2 });
+    sk.ink(dense([[0, -26], [0, 32]]), { w: 4, seed: sd + 3, wob: 0.2 });
+    const spots = kind === "many" ? [[-14, -10], [14, -10], [-18, 8], [18, 8], [-10, 20], [10, 20], [-6, -2], [6, -2], [-20, -2], [20, -2]]
+      : kind === "few" ? [[-13, -6], [13, -6], [-10, 16], [10, 16]] : kind === "black2" ? [[-13, -4], [13, -4]] : [];
+    for (const [sx, sy] of spots) sk.dot(sx, sy, kind === "black2" ? 8 : 5, kind === "black2" ? "#E0503A" : "#2B2B30");
+    sk.ink(body, { w: 6, seed: sd + 4, wob: 0.3 });
+    sk.ink(curve([[-14, -14], [-8, -20], [0, -22]]), { w: 3, color: C.white, seed: sd + 5, wob: 0.2, alpha: 0.8 });
+  }, rot);
+}
+// 개(옆모습, 오른쪽을 본다). 원점 = 발 사이 바닥
+function dog(sk, x, y, s, sd) {
+  sk.at(x, y, s, () => {
+    sk.ink(curve([[-64, -66], [-86, -88], [-84, -108]]), { w: 9, seed: sd, wob: 0.4 });
+    for (const [lx, i] of [[-48, 0], [40, 1], [-34, 2], [54, 3]]) { const leg = poly([[lx - 9, -56], [lx + 9, -56], [lx + 7, 0], [lx - 7, 0]], 3); sk.fill(leg, i < 2 ? "#C9944F" : "#D9A55E", { dx: 0, dy: 0, wob: 0.3, seed: sd + 1 + i }); sk.ink(leg, { w: 6, seed: sd + 5 + i, wob: 0.3 }); }
+    const body = curve([[-70, -66], [-40, -84], [40, -84], [72, -66], [66, -44], [-64, -44]], true, 3);
+    sk.fill(body, "#D9A55E", { seed: sd + 9, dx: 0.8, dy: 1 }); sk.ink(body, { w: 8, seed: sd + 10 });
+    const head = curve([[50, -84], [64, -116], [96, -120], [118, -100], [112, -84], [80, -76]], true, 3);
+    sk.fill(head, "#D9A55E", { seed: sd + 11, dx: 0.8, dy: 1 }); sk.ink(head, { w: 8, seed: sd + 12 });
+    const ear = curve([[66, -112], [56, -92], [64, -76], [74, -98]], true, 3);
+    sk.fill(ear, "#9C6A33", { dx: 0, dy: 0, wob: 0.3, seed: sd + 13 }); sk.ink(ear, { w: 6, seed: sd + 14, wob: 0.3 });
+    sk.dot(94, -106, 4.2); sk.dot(117, -98, 4.6);
+  });
+}
+
+/* ---------- u2l1: 생물은 세포라는 벽돌로 지어진 집 ---------- */
+function cutU2l1() {
+  const sk = new Sk(W, H, { id: "g" });
+  const GY = 668;
+  ground(sk, GY, 11);
+  const X = 664, bw = 62, bh = 43;
+  const B = [];
+  // 다리, 몸통, 팔, 머리(머리 왼쪽 위 한 칸이 비어 있다)
+  for (const dx of [-bw / 2 - 2, bw / 2 + 2]) for (let k = 0; k < 3; k++) B.push([X + dx, GY - bh / 2 - k * bh]);
+  for (const dx of [-bw, 0, bw]) for (let k = 0; k < 3; k++) B.push([X + dx, GY - bh * 3.5 - k * bh]);
+  B.push([X - bw * 2.07, GY - bh * 5.2], [X - bw * 2.96, GY - bh * 4.5], [X + bw * 2.07, GY - bh * 5.2], [X + bw * 2.96, GY - bh * 4.5]);
+  const HY = GY - bh * 6.5 - 8;
+  B.push([X - bw / 2 - 1, HY], [X + bw / 2 + 1, HY], [X + bw / 2 + 1, HY - bh]);
+  B.forEach(([x, y], i) => cellBrick(sk, x, y, bw, bh, 300 + i * 7));
+  // 빈자리 표시(점선)
+  sk.ink(rrect(X - bw - 1, HY - bh - bh / 2, bw, bh, 12), { w: 4, color: C.gray, dash: [8, 7], seed: 401, wob: 0.3 });
+  // 바닥에 쌓인 벽돌 몇 개
+  for (const [x, y, i] of [[886, GY - bh / 2, 0], [886 - bw - 2, GY - bh / 2, 1], [886 - bw / 2 - 1, GY - bh * 1.5, 2]]) cellBrick(sk, x, y, bw, bh, 410 + i * 7);
+  // 쌤: 벽돌 하나를 들어 머리 빈자리에 끼우려 한다
+  const P = pose({ elR: [118, -350], haR: [196, -446], elL: [-50, -260], haL: [-24, -218], tilt: 0.08 });
+  const fx = 330, fs = 0.72;
+  drawFigure(sk, fx, GY, fs, P, { ...TEACHER, name: "teacher", hands: "L" });
+  const hx = fx + fs * 196, hy = GY - fs * 446;
+  cellBrick(sk, hx + 30, hy - 14, bw, bh, 430);
+  handDot(sk, [hx, hy], C.skin, 431, 12);
+  arrow(sk, [[hx + 70, hy - 54], [X - bw * 1.5, HY - bh - 52], [X - bw * 0.9, HY - bh - 30]], { w: 6, color: C.teal, seed: 433, wob: 0.3, head: 16 });
+  return sk;
+}
+
+/* ---------- u2l2: 세포는 초소형 공장 ---------- */
+function cutU2l2() {
+  const sk = new Sk(W, H, { id: "h" });
+  const GY = 676;
+  ground(sk, GY, 11, 14, 300);
+  // 세포 공장: 세포막(두 겹 띠) 안에 통제실(핵)과 발전기(마이토콘드리아)
+  const cell = curve([[330, 400], [370, 210], [560, 128], [800, 160], [920, 330], [890, 560], [700, 650], [470, 640], [350, 560]], true, 5);
+  sk.fill(cell, "#FFF3E6", { dx: 0, dy: 0, wob: 0.6, seed: 21 });
+  thin(sk, 0.8, () => {
+    sk.ink(cell, { w: 26, color: "#F4B8A0", seed: 22, wob: 0.5 });
+    sk.ink(cell, { w: 11, seed: 23 });
+  });
+  // 문(세포막의 출입구): 왼쪽 벽에 열린 문
+  const door = rrect(316, 440, 52, 96, 10);
+  sk.fill(door, "#FFF3E6", { dx: 0, dy: 0, wob: 0.3, seed: 24 });
+  sk.ink(dense([[316, 444], [316, 536]]), { w: 9, seed: 25 }); sk.ink(dense([[368, 444], [368, 536]]), { w: 9, seed: 26 });
+  const leaf = poly([[368, 446], [404, 430], [404, 552], [368, 536]], 3);
+  sk.fill(leaf, "#C99A62", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 27 }); sk.ink(leaf, { w: 8, seed: 28 });
+  sk.dot(396, 494, 5);
+  arrow(sk, [[250, 470], [300, 480]], { w: 6, color: C.teal, straight: true, seed: 29, head: 14 });
+  arrow(sk, [[300, 520], [250, 530]], { w: 6, color: C.gray, straight: true, seed: 30, head: 14 });
+  // 통제실(핵): 둥근 방 + 계기판
+  const nuc = circ(610, 320, 112, { over: 0.1, seed: 31 });
+  sk.fill(nuc, "#E4D3F0", { dx: 0, dy: 0, wob: 0.6, seed: 32 });
+  thin(sk, 0.8, () => sk.ink(nuc, { w: 12, seed: 33 }));
+  const desk = rrect(536, 330, 150, 52, 8);
+  sk.fill(desk, "#8A9099", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 34 }); sk.ink(desk, { w: 7, seed: 35 });
+  for (const [x, c] of [[562, C.red], [596, C.yellow], [630, C.green]]) sk.dot(x, 348, 8, c);
+  const scr = rrect(560, 252, 104, 62, 8);
+  sk.fill(scr, "#9FD8F5", { dx: 0, dy: 0, wob: 0.3, seed: 36 }); sk.ink(scr, { w: 7, seed: 37 });
+  sk.ink(curve([[572, 296], [592, 272], [612, 288], [634, 262], [652, 280]]), { w: 5, color: C.navy, seed: 38, wob: 0.2 });
+  // 발전기(마이토콘드리아): 캡슐 + 안쪽 주름 + 번개
+  sk.at(760, 520, 1, () => {
+    const m = rrect(-98, -40, 196, 80, 40);
+    sk.fill(m, "#F6C177", { dx: 0.6, dy: 0.8, wob: 0.4, seed: 41 });
+    sk.ink(curve([[-74, 10], [-56, -20], [-38, 18], [-20, -20], [-2, 18], [16, -20], [34, 18], [52, -20], [70, 10]]), { w: 6, color: "#B5741F", seed: 42, wob: 0.3 });
+    sk.ink(m, { w: 9, seed: 43 });
+  }, -0.12);
+  const bolt = poly([[778, 400], [748, 448], [770, 448], [752, 486], [800, 432], [776, 432], [796, 400]], 2);
+  sk.fill(bolt, C.yellow, { dx: 0, dy: 0, wob: 0.2, seed: 44 }); sk.ink(bolt, { w: 6, seed: 45, wob: 0.2 });
+  // 쌤(안내)과 학생: 문 앞에서 안을 가리킨다
+  const P = pose({ elR: [92, -300], haR: [170, -322], elL: [-50, -260], haL: [-24, -218], tilt: 0.05 });
+  drawFigure(sk, 216, GY, 0.6, P, { ...TEACHER, name: "teacher" });
+  const S = pose({ elL: [-50, -262], haL: [-26, -220], elR: [50, -262], haR: [26, -220], tilt: 0.1 });
+  drawFigure(sk, 62, GY, 0.5, S, { ...STUDENT, name: "student" });
+  return sk;
+}
+
+/* ---------- u2l3: 얇게, 물들이고, 비스듬히 ---------- */
+function cutU2l3() {
+  const sk = new Sk(W, H, { id: "i" });
+  const GY = 676, TOP = 500;
+  ground(sk, GY, 11, 14, 300);
+  // 탁자
+  for (const [x, i] of [[360, 0], [880, 1]]) sk.ink(dense([[x, TOP + 24], [x - 6, GY]]), { w: 12, seed: 21 + i });
+  const top = rrect(320, TOP, 600, 26, 10);
+  sk.fill(top, C.wood, { seed: 23, tex: true, texAng: 0.02 }); sk.ink(top, { w: 11, seed: 24 });
+  // 받침 유리 + 재료(얇은 막) + 떨어지는 파란 염색약(메틸렌 블루)
+  const slide = rrect(450, TOP - 14, 220, 16, 3);
+  sk.fill(slide, "#DDEEF7", { dx: 0, dy: 0, wob: 0.3, seed: 25 }); sk.ink(slide, { w: 6, seed: 26 });
+  sk.fill(ell(560, TOP - 15, 26, 5), "#F3C9C0", { dx: 0, dy: 0, wob: 0.2, seed: 27 });
+  drop(sk, 560, TOP - 66, 1.0, { color: "#7DB3F0", line: "#2F6DB5" });
+  // 스포이트(고무 꼭지 + 유리관)
+  sk.at(560, TOP - 112, 1, () => {
+    const tube = poly([[-8, -70], [8, -70], [4, 0], [-4, 0]], 2);
+    sk.fill(tube, "#E3F1FA", { dx: 0, dy: 0, wob: 0.2, seed: 28 }); sk.fill(poly([[-6, -24], [6, -24], [4, 0], [-4, 0]], 2), "#7DB3F0", { dx: 0, dy: 0, wob: 0.2, seed: 29 });
+    sk.ink(tube, { w: 6, seed: 30, wob: 0.3 });
+    const bulb = curve([[-14, -70], [-18, -100], [0, -118], [18, -100], [14, -70]], true, 3);
+    sk.fill(bulb, "#C0392B", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 31 }); sk.ink(bulb, { w: 7, seed: 32, wob: 0.3 });
+  });
+  // 덮개 유리(비스듬히 기다리는 중)와 핀셋, 염색약 병
+  sk.at(760, TOP - 30, 1, () => { const g = rrect(-34, -4, 68, 8, 2); sk.fill(g, "#DDEEF7", { dx: 0, dy: 0, wob: 0.2, seed: 33 }); sk.ink(g, { w: 5, seed: 34, wob: 0.2 }); }, -0.42);
+  sk.ink(dense([[722, TOP - 10], [790, TOP - 52]]), { w: 6, color: "#8A9099", seed: 35, wob: 0.2 });
+  sk.ink(dense([[728, TOP - 4], [796, TOP - 44]]), { w: 6, color: "#8A9099", seed: 36, wob: 0.2 });
+  sk.at(860, TOP, 1, () => {
+    const bot = curve([[-22, -6], [-24, -60], [-10, -74], [-10, -92], [10, -92], [10, -74], [24, -60], [22, -6]], true, 3);
+    sk.fill(bot, "#7DB3F0", { seed: 37, dx: 0.6, dy: 0.8 }); sk.ink(bot, { w: 7, seed: 38 });
+    sk.fill(rrect(-12, -104, 24, 14, 4), "#3A3F47", { dx: 0, dy: 0, wob: 0.2, seed: 39 });
+  });
+  // 쌤: 탁자 옆에서 팔을 뻗어 스포이트를 든다
+  const P = pose({ elR: [112, -404], haR: [210, -488], elL: [-50, -260], haL: [-24, -218], tilt: 0.1 });
+  const fx = 395, fs = 0.72;
+  drawFigure(sk, fx, GY, fs, P, { ...TEACHER, name: "teacher", hands: "L" });
+  handDot(sk, [fx + fs * 210, GY - fs * 488], C.skin, 42, 12);
+  return sk;
+}
+
+/* ---------- u2l4: 모양이 곧 이력서(세 세포의 면접) ---------- */
+function chair(sk, x, y, sd) {
+  sk.ink(dense([[x - 50, y], [x - 50, y - 104]]), { w: 9, seed: sd, color: C.woodDark });
+  sk.ink(dense([[x + 46, y], [x + 46, y - 104]]), { w: 9, seed: sd + 1, color: C.woodDark });
+  const seat = rrect(x - 62, y - 116, 124, 16, 6);
+  sk.fill(seat, C.wood, { dx: 0.6, dy: 0.8, wob: 0.3, seed: sd + 2 }); sk.ink(seat, { w: 8, seed: sd + 3 });
+  sk.ink(dense([[x - 56, y - 116], [x - 62, y - 262]]), { w: 9, seed: sd + 4, color: C.woodDark });
+  return y - 116;
+}
+const eyes = (sk, x, y, gap = 14, r = 4.6) => { sk.dot(x - gap / 2, y, r); sk.dot(x + gap / 2, y, r); };
+function cutU2l4() {
+  const sk = new Sk(W, H, { id: "j" });
+  const GY = 668;
+  ground(sk, GY, 11);
+  // 지원자 1: 신경세포(가늘고 길다). 세포체에서 가지가 뻗고, 긴 꼬리(축삭)가 의자 아래 바닥까지 늘어진다
+  const s1 = chair(sk, 128, GY, 21), sy = s1 - 42;
+  sk.ink(curve([[146, sy + 10], [196, sy + 34], [222, sy + 92], [252, sy + 138], [306, sy + 152]]), { w: 11, color: "#C77DBA", seed: 24, wob: 0.4 });
+  for (const [a2, l, i] of [[-2.5, 70, 0], [-1.9, 82, 1], [-1.2, 76, 2], [-0.6, 62, 3], [-3.0, 60, 4]]) sk.ink(curve([[128, sy], [128 + Math.cos(a2) * l * 0.6, sy + Math.sin(a2) * l * 0.6], [128 + Math.cos(a2 + 0.22) * l, sy + Math.sin(a2 + 0.22) * l]]), { w: 9, color: "#C77DBA", seed: 25 + i, wob: 0.3 });
+  const soma = circ(128, sy, 40, { over: 0.1, seed: 31, lump: 0.08 });
+  sk.fill(soma, "#E7B2DE", { dx: 0.6, dy: 0.8, wob: 0.4, seed: 32 }); sk.ink(soma, { w: 8, seed: 33, wob: 0.4 });
+  eyes(sk, 128, sy - 6);
+  // 지원자 2: 적혈구(가운데가 오목한 둥근 원반)
+  const s2 = chair(sk, 342, GY, 41);
+  sk.at(342, s2 - 64, 1, () => {
+    const d = ell(0, 0, 64, 60);
+    sk.fill(d, "#E0503A", { dx: 0.6, dy: 0.8, wob: 0.4, seed: 42 });
+    sk.fill(ell(0, 6, 32, 28), "#F07D6B", { dx: 0, dy: 0, wob: 0.3, seed: 43 });
+    sk.ink(d, { w: 9, seed: 44, wob: 0.4 });
+    eyes(sk, 0, -24, 16, 5);
+  });
+  // 지원자 3: 상피세포(납작하고 편평한 타일)
+  const s3 = chair(sk, 560, GY, 51);
+  sk.at(560, s3 - 22, 1, () => {
+    const t = rrect(-74, -22, 148, 44, 12);
+    sk.fill(t, "#F6D37A", { dx: 0.6, dy: 0.8, wob: 0.4, seed: 52 }); sk.ink(t, { w: 8, seed: 53, wob: 0.4 });
+    sk.dot(24, 0, 8, "#B5741F");
+    eyes(sk, -24, -2, 16, 5);
+  });
+  // 면접관(쌤): 책상 뒤에서 서류판을 든다
+  const P = pose({ elR: [96, -300], haR: [110, -352], elL: [-64, -282], haL: [-104, -262], tilt: -0.06 });
+  const fx = 800, fs = 0.72;
+  drawFigure(sk, fx, GY, fs, P, { ...TEACHER, name: "teacher", hands: "L" });
+  const hx = fx + fs * 110, hy = GY - fs * 352;
+  const clip = rrect(hx - 6, hy - 92, 72, 96, 6);
+  sk.fill(clip, C.white, { dx: 0.6, dy: 0.8, wob: 0.3, seed: 61 }); sk.ink(clip, { w: 7, seed: 62 });
+  sk.fill(rrect(hx + 16, hy - 98, 28, 12, 3), "#8A9099", { dx: 0, dy: 0, wob: 0.2, seed: 60 });
+  for (let i = 0; i < 3; i++) sk.ink(dense([[hx + 6, hy - 66 + i * 20], [hx + 54, hy - 66 + i * 20]]), { w: 4, color: C.gray, seed: 63 + i, wob: 0.2 });
+  handDot(sk, [hx, hy], C.skin, 66, 11);
+  const desk = rrect(688, GY - 156, 250, 156, 10);
+  thin(sk, 0.78, () => { sk.fill(desk, "#E2C49A", { seed: 68, tex: 0.6, texAng: 0.04 }); sk.ink(desk, { w: 11, seed: 69 }); });
+  sk.ink(dense([[688, GY - 120], [938, GY - 120]]), { w: 5, color: C.woodDark, seed: 70, wob: 0.3 });
+  return sk;
+}
+
+/* ---------- u2l5: 한 칸씩 오르면 세포에서 개체까지 ---------- */
+function cutU2l5() {
+  const sk = new Sk(W, H, { id: "k" });
+  const GY = 676, steps = 5, x0 = 250, sw = 138, sh = 70;
+  ground(sk, GY, 11, 14, x0 + 20);
+  thin(sk, 0.78, () => {
+    for (let i = 0; i < steps; i++) {
+      const x = x0 + i * sw, y = GY - (i + 1) * sh;
+      const blk = poly([[x, y], [x0 + steps * sw, y], [x0 + steps * sw, y + sh], [x, y + sh]], 4);
+      sk.fill(blk, i % 2 ? "#E9DCC6" : "#F1E6D3", { dx: 0, dy: 0, wob: 0.4, seed: 21 + i });
+      sk.ink(dense([[x, y + sh], [x, y], [x + sw, y]]), { w: 11, seed: 26 + i });
+    }
+    sk.ink(dense([[x0 + steps * sw, GY - steps * sh], [x0 + steps * sw, GY]]), { w: 11, seed: 31 });
+    sk.ink(dense([[x0, GY], [x0 + steps * sw, GY]]), { w: 11, seed: 32 });
+  });
+  const at = i => [x0 + i * sw + sw * 0.5, GY - (i + 1) * sh];
+  const cellDot = (x, y, r, sd) => { const c = circ(x, y, r, { over: 0.1, seed: sd }); sk.fill(c, "#F6BFAE", { dx: 0.6, dy: 0.8, wob: 0.3, seed: sd + 1 }); sk.ink(c, { w: Math.max(5, r * 0.26), seed: sd + 2 }); sk.dot(x + r * 0.15, y, r * 0.3, "#B0476A"); };
+  // 1 세포
+  { const [x, y] = at(0); cellDot(x, y - 34, 32, 41); }
+  // 2 조직: 모양이 비슷한 세포가 모인 덩어리
+  { const [x, y] = at(1); [[-38, -22], [0, -22], [38, -22], [-19, -56], [19, -56], [0, -88]].forEach(([dx, dy], i) => cellDot(x + dx, y + dy, 20, 50 + i * 4)); }
+  // 3 기관: 위(식도에서 이어지는 주머니)
+  const stomach = (x, y, k, sd) => sk.at(x, y, k, () => {
+    sk.ink(curve([[-6, -84], [-8, -104], [-12, -122]]), { w: 12, color: "#E78A96", seed: sd, wob: 0.3 });
+    const st = curve([[-14, -84], [4, -86], [8, -66], [16, -52], [34, -48], [48, -32], [42, -10], [16, 0], [-16, -2], [-36, -18], [-42, -42], [-32, -64]], true, 3);
+    sk.fill(st, "#F49AA4", { dx: 0.6, dy: 0.8, wob: 0.3, seed: sd + 1 }); sk.ink(st, { w: 7, seed: sd + 2 });
+    sk.ink(curve([[40, -12], [54, -6], [62, 4]]), { w: 10, color: "#E78A96", seed: sd + 3, wob: 0.3 });
+    sk.ink(curve([[-20, -40], [0, -24], [26, -26]]), { w: 4, color: "#D96C7B", seed: sd + 4, wob: 0.2 });
+  });
+  { const [x, y] = at(2); stomach(x - 8, y - 8, 0.9, 61); }
+  // 4 기관계: 소화계(식도, 위, 작은창자와 큰창자)
+  { const [x, y] = at(3); stomach(x - 10, y - 76, 0.52, 71);
+    sk.ink(curve([[x - 38, y - 6], [x - 42, y - 54], [x - 20, y - 66], [x + 22, y - 64], [x + 42, y - 50], [x + 40, y - 6]]), { w: 14, color: "#E9B66B", seed: 76 });
+    sk.ink(curve([[x - 38, y - 6], [x - 42, y - 54], [x - 20, y - 66], [x + 22, y - 64], [x + 42, y - 50], [x + 40, y - 6]]), { w: 4, color: "#B5741F", seed: 77, wob: 0.2 });
+    sk.ink(curve([[x - 22, y - 46], [x + 18, y - 48], [x + 20, y - 36], [x - 20, y - 34], [x - 20, y - 22], [x + 22, y - 22], [x + 16, y - 10]]), { w: 8, color: "#F2A6A0", seed: 78 });
+    sk.ink(curve([[x - 22, y - 46], [x + 18, y - 48], [x + 20, y - 36], [x - 20, y - 34], [x - 20, y - 22], [x + 22, y - 22], [x + 16, y - 10]]), { w: 3, color: "#C0566B", seed: 79, wob: 0.2 }); }
+  // 5 개체: 강아지 한 마리
+  { const [x, y] = at(4); dog(sk, x - 30, y, 0.72, 80); }
+  // 학생: 계단 앞 땅에서 위를 가리킨다(모자챙은 왼쪽, 든 팔은 오른쪽)
+  const P = pose({ elL: [-96, -360], haL: [-150, -440], elR: [50, -262], haR: [26, -220], tilt: -0.08 });
+  drawFigure(sk, 160, GY, 0.62, P, { ...STUDENT, name: "student", mirror: true });
+  return sk;
+}
+
+/* ---------- u2l6: 다양성은 눈금 세 개로 잰다 ---------- */
+function gauge(sk, x, y, r, level, sd, gy = 668) {
+  sk.ink(dense([[x, y + r], [x, gy]]), { w: 10, seed: sd, color: "#8A9099" });
+  const face = circ(x, y, r, { over: 0.1, seed: sd + 1 });
+  sk.fill(face, C.white, { dx: 0.6, dy: 0.8, wob: 0.3, seed: sd + 2 });
+  const arcs = [["#E0503A", Math.PI * 1.0, Math.PI * 1.33], ["#F2D03B", Math.PI * 1.33, Math.PI * 1.66], ["#3FAE5A", Math.PI * 1.66, Math.PI * 2.0]];
+  for (const [c, a0, a1] of arcs) sk.ink(ell(x, y + 8, r * 0.72, r * 0.72, a0, a1), { w: 10, color: c, seed: sd + 3, wob: 0.2, cap: "butt" });
+  const a = Math.PI * (1 + level);
+  sk.ink(dense([[x, y + 8], [x + Math.cos(a) * r * 0.62, y + 8 + Math.sin(a) * r * 0.62]]), { w: 7, seed: sd + 4, wob: 0.1 });
+  sk.dot(x, y + 8, 7);
+  sk.ink(face, { w: 9, seed: sd + 5 });
+}
+function cutU2l6() {
+  const sk = new Sk(W, H, { id: "l" });
+  const GY = 668;
+  ground(sk, GY, 11);
+  tuft(sk, 300, GY, 401); tuft(sk, 900, GY, 411);
+  const G = [[420, 404], [612, 404], [804, 404]];
+  G.forEach(([x, y], i) => gauge(sk, x, y, 70, 0.8, 21 + i * 10));
+  // 눈금마다 무엇을 재는지: 생태계(숲과 물), 생물 종류(새, 물고기, 개구리), 변이(무늬가 다른 무당벌레)
+  { const [x, y] = G[0]; const pond = ell(x + 30, y - 112, 52, 16); sk.fill(pond, "#9FD8F5", { dx: 0, dy: 0, wob: 0.3, seed: 51 }); sk.ink(pond, { w: 6, seed: 52 }); sk.ink(dense([[x - 40, y - 108], [x - 40, y - 132]]), { w: 9, color: C.woodDark, seed: 53 }); const tr = curve([[x - 66, y - 130], [x - 84, y - 162], [x - 64, y - 198], [x - 32, y - 192], [x - 20, y - 158], [x - 36, y - 128]], true, 3); sk.fill(tr, C.green, { dx: 0, dy: 0, wob: 0.3, seed: 54 }); sk.ink(tr, { w: 7, seed: 55 }); }
+  { const [x, y] = G[1]; bird(sk, x - 54, y - 150, 0.72, 61); fish(sk, x + 8, y - 120, 0.72, 65); frog(sk, x + 62, y - 136, 0.82, 69); }
+  { const [x, y] = G[2]; ladybug(sk, x - 50, y - 136, 22, "many", 71); ladybug(sk, x, y - 152, 22, "few", 77, 0.3); ladybug(sk, x + 50, y - 136, 22, "black2", 83, -0.2); }
+  // 검사관(쌤): 서류판을 들고 바늘을 가리킨다
+  const P = pose({ elR: [96, -306], haR: [176, -330], elL: [-60, -270], haL: [-40, -300], tilt: 0.06 });
+  drawFigure(sk, 170, GY, 0.72, P, { ...TEACHER, name: "teacher" });
+  return sk;
+}
+
+/* ---------- u2l7: 같은 무당벌레인데 무늬가 다르다(변이) ---------- */
+function cutU2l7() {
+  const sk = new Sk(W, H, { id: "m" });
+  const GY = 668;
+  ground(sk, GY, 11);
+  tuft(sk, 60, GY, 401); tuft(sk, 880, GY, 411);
+  // 그루터기 위의 큰 잎
+  const stump = poly([[560, GY], [580, 520], [820, 520], [840, GY]], 4);
+  thin(sk, 0.8, () => { sk.fill(stump, "#B5763E", { seed: 21, tex: true, texAng: 1.5 }); sk.ink(stump, { w: 11, seed: 22 }); });
+  sk.fill(ell(700, 520, 120, 20), "#E9C9A0", { dx: 0, dy: 0, wob: 0.3, seed: 23 });
+  thin(sk, 0.8, () => sk.ink(ell(700, 520, 120, 20), { w: 9, seed: 24 }));
+  const leaf = curve([[470, 430], [560, 352], [700, 330], [850, 360], [930, 430], [840, 492], [700, 506], [560, 492]], true, 4);
+  sk.fill(leaf, "#7CC36A", { seed: 25, tex: true, texAng: 0.2 });
+  sk.ink(curve([[480, 432], [640, 424], [800, 426], [920, 430]]), { w: 6, color: "#4E9A46", seed: 26, wob: 0.3 });
+  thin(sk, 0.85, () => sk.ink(leaf, { w: 11, seed: 27 }));
+  // 무늬가 제각각인 무당벌레 넷(같은 종 안의 변이)
+  ladybug(sk, 580, 404, 30, "many", 31, -0.3);
+  ladybug(sk, 680, 392, 30, "few", 37, 0.1);
+  ladybug(sk, 776, 410, 30, "none", 43, 0.3);
+  ladybug(sk, 862, 438, 30, "black2", 49, -0.1);
+  // 쌤: 돋보기로 들여다본다
+  const P = pose({ elR: [96, -300], haR: [160, -320], elL: [-50, -260], haL: [-24, -218], tilt: 0.12, head: [10, -436] });
+  const fx = 230, fs = 0.72;
+  drawFigure(sk, fx, GY, fs, P, { ...TEACHER, name: "teacher", hands: "L" });
+  const hand = [fx + fs * 160, GY - fs * 320];
+  const cx = 470, cy = 300, r = 60;
+  sk.ink(dense([[cx - r * 0.72, cy + r * 0.72], hand]), { w: 16, color: "#8A5A33", seed: 61, wob: 0.5 });
+  const lens = circ(cx, cy, r, { over: 0.12, seed: 62 });
+  sk.fill(lens, "#EAF6FF", { dx: 0, dy: 0, wob: 0.4, seed: 63, alpha: 0.8 });
+  sk.ink(curve([[cx - r * 0.6, cy - r * 0.3], [cx - r * 0.4, cy - r * 0.62], [cx - r * 0.08, cy - r * 0.74]]), { w: 6, color: C.white, seed: 64, wob: 0.2 });
+  sk.ink(lens, { w: 13, color: "#B8892E", seed: 65 });
+  handDot(sk, hand, C.skin, 66, 13);
+  return sk;
+}
+
+/* ---------- u2l8: 좋은 기준이 좋은 분류를 만든다 ---------- */
+function card(sk, x, y, sd, draw, rot = 0) {
+  sk.at(x, y, 1, () => {
+    const c = rrect(-46, -58, 92, 116, 10);
+    sk.fill(c, C.white, { dx: 0.8, dy: 1, wob: 0.4, seed: sd });
+    sk.ink(c, { w: 7, seed: sd + 1, wob: 0.4 });
+    draw();
+  }, rot);
+}
+function box(sk, x, y, w, h, sd) {
+  const back = poly([[x - w / 2 + 14, y - h], [x + w / 2 - 14, y - h], [x + w / 2 - 14, y - h - 22], [x - w / 2 + 14, y - h - 22]], 3);
+  sk.fill(back, "#B5895A", { dx: 0, dy: 0, wob: 0.3, seed: sd });
+  const front = poly([[x - w / 2, y - h], [x + w / 2, y - h], [x + w / 2, y], [x - w / 2, y]], 4);
+  return { done: () => { sk.fill(front, "#D2A672", { seed: sd + 1, tex: true, texAng: 0.05 }); sk.ink(front, { w: 9, seed: sd + 2 }); sk.ink(dense([[x - w / 2, y - h], [x - w / 2 + 14, y - h - 22], [x + w / 2 - 14, y - h - 22], [x + w / 2, y - h]]), { w: 7, seed: sd + 3 }); } };
+}
+function cutU2l8() {
+  const sk = new Sk(W, H, { id: "n" });
+  const GY = 676, TOP = 520;
+  ground(sk, GY, 11, 14, 300);
+  for (const [x, i] of [[372, 0], [884, 1]]) sk.ink(dense([[x, TOP + 24], [x - 6, GY]]), { w: 12, seed: 21 + i });
+  const top = rrect(330, TOP, 600, 26, 10);
+  sk.fill(top, C.wood, { seed: 23, tex: true, texAng: 0.02 }); sk.ink(top, { w: 11, seed: 24 });
+  // 상자 둘: 한쪽엔 물고기 카드, 한쪽엔 박쥐 카드가 먼저 들어가 있다
+  const b1 = box(sk, 520, TOP, 170, 96, 31), b2 = box(sk, 740, TOP, 170, 96, 41);
+  card(sk, 520, TOP - 120, 51, () => fish(sk, 0, 0, 0.7, 53), -0.08);
+  card(sk, 740, TOP - 120, 55, () => bat(sk, 0, 0, 0.7, 57), 0.08);
+  b1.done(); b2.done();
+  // 다음 차례를 기다리는 카드(다람쥐)
+  card(sk, 878, TOP - 58, 61, () => squirrel(sk, 0, 2, 0.8, 63), 0.12);
+  // 쌤: 새 카드를 들고 어느 상자에 넣을지 고민
+  const P = pose({ elR: [96, -330], haR: [150, -390], elL: [-50, -262], haL: [-24, -220], tilt: 0.1 });
+  const fx = 200, fs = 0.72;
+  drawFigure(sk, fx, GY, fs, P, { ...TEACHER, name: "teacher", hands: "L" });
+  const hx = fx + fs * 150, hy = GY - fs * 390;
+  card(sk, hx + 34, hy - 50, 71, () => bird(sk, -2, -4, 0.62, 73), 0.12);
+  handDot(sk, [hx, hy], C.skin, 75, 12);
+  qmark(sk, 360, 190, 0.6, { color: C.teal, seed: 77, rot: 0.1 });
+  return sk;
+}
+
+/* ---------- u2l9: 생물의 왕국은 다섯 ---------- */
+function cutU2l9() {
+  const sk = new Sk(W, H, { id: "o" });
+  const GY = 668;
+  ground(sk, GY, 11);
+  const cols = ["#7FB2E5", "#B39DDB", "#C8A27A", "#7CC36A", "#F08C7E"];
+  const xs = [254, 400, 546, 692, 838], dw = 126, dh = 330, base = GY - 6;
+  xs.forEach((x, i) => {
+    const arch = [...dense([[x - dw / 2, base], [x - dw / 2, base - dh + dw / 2]]), ...ell(x, base - dh + dw / 2, dw / 2, dw / 2, Math.PI, Math.PI * 2), ...dense([[x + dw / 2, base - dh + dw / 2], [x + dw / 2, base]])];
+    sk.fill(arch, "#F4F1EA", { dx: 0, dy: 0, wob: 0.4, seed: 21 + i });
+    thin(sk, 0.8, () => { sk.ink(arch, { w: 22, color: cols[i], seed: 26 + i, wob: 0.3 }); sk.ink(arch, { w: 9, seed: 31 + i, wob: 0.3 }); });
+  });
+  // 문 앞의 생물: 세균(원핵), 아메바(원생), 버섯(균), 새싹 식물(식물), 토끼(동물)
+  { const x = xs[0], y = base - 70; sk.at(x, y, 1.3, () => { const b = rrect(-30, -12, 60, 24, 12); sk.fill(b, "#8FD18A", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 41 }); sk.ink(b, { w: 7, seed: 42 }); sk.ink(curve([[30, 0], [44, -10], [56, 4], [70, -6]]), { w: 5, seed: 43, wob: 0.2 }); }, -0.2); }
+  { const x = xs[1], y = base - 64; const am = curve([[x - 40, y + 4], [x - 30, y - 22], [x - 4, y - 18], [x + 10, y - 34], [x + 34, y - 14], [x + 40, y + 12], [x + 8, y + 24], [x - 20, y + 20]], true, 3); sk.fill(am, "#CDB6E8", { dx: 0.6, dy: 0.8, wob: 0.4, seed: 44 }); sk.ink(am, { w: 7, seed: 45, wob: 0.4 }); sk.dot(x + 2, y, 7, "#7A5AA6"); }
+  { const x = xs[2], y = base; sk.ink(dense([[x, y], [x, y - 52]]), { w: 18, color: "#F4E6CF", seed: 46 }); sk.ink(dense([[x - 9, y], [x - 9, y - 50]]), { w: 6, seed: 47 }); sk.ink(dense([[x + 9, y], [x + 9, y - 50]]), { w: 6, seed: 48 }); const cap = curve([[x - 46, y - 46], [x - 30, y - 86], [x, y - 96], [x + 30, y - 86], [x + 46, y - 46]], false, 3); sk.fill([...cap, cap[0]], "#E0503A", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 49 }); sk.ink([...cap, cap[0]], { w: 7, seed: 50 }); for (const [dx, dy] of [[-18, -70], [8, -80], [24, -60]]) sk.dot(x + dx, y + dy, 6, C.white); }
+  { const x = xs[3], y = base; sk.ink(curve([[x, y], [x + 2, y - 50], [x - 2, y - 88]]), { w: 8, color: "#4E9A46", seed: 51 }); for (const [sg, i] of [[-1, 0], [1, 1]]) { const lf = curve([[x, y - 64 - i * 18], [x + sg * 30, y - 86 - i * 18], [x + sg * 50, y - 70 - i * 18], [x + sg * 22, y - 58 - i * 18]], true, 3); sk.fill(lf, "#7CC36A", { dx: 0, dy: 0, wob: 0.3, seed: 52 + i }); sk.ink(lf, { w: 6, seed: 54 + i }); } }
+  { rabbit(sk, xs[4], base - 26, 1.35, 56); }
+  // 문지기(쌤): 왼쪽 앞에서 깃발을 든다
+  const P = pose({ elR: [70, -330], haR: [86, -420], elL: [-50, -262], haL: [-24, -220], tilt: -0.04 });
+  const fx = 96, fs = 0.62;
+  drawFigure(sk, fx, GY, fs, P, { ...TEACHER, name: "teacher", hands: "L" });
+  const hx = fx + fs * 86, hy = GY - fs * 420;
+  sk.ink(dense([[hx, hy + 40], [hx, hy - 120]]), { w: 7, color: C.woodDark, seed: 61 });
+  const flag = poly([[hx, hy - 120], [hx + 70, hy - 100], [hx, hy - 76]], 3);
+  sk.fill(flag, C.teal, { dx: 0, dy: 0, wob: 0.3, seed: 62 }); sk.ink(flag, { w: 6, seed: 63 });
+  handDot(sk, [hx, hy], C.skin, 64, 11);
+  return sk;
+}
+
+/* ---------- u2l10: 그물코가 많을수록 잘 버틴다 ---------- */
+function cutU2l10() {
+  const sk = new Sk(W, H, { id: "p" });
+  const GY = 676;
+  ground(sk, GY, 11);
+  const L = 110, R = 850, TY = 300;
+  // 그물: 양쪽 기둥 사이에 처진 그물(위 가장자리 직선, 아래는 처짐)
+  const topY = u => TY + 14 * Math.sin(u * Math.PI), botY = u => TY + 120 + 70 * Math.sin(u * Math.PI);
+  const P = (u, v) => [lerpx(L, R, u), lerpx(topY(u), botY(u), v)];
+  const hole = (u, v) => Math.hypot((u - 0.5) * 2.2, v - 0.55) < 0.26;
+  const NU = 16, NV = 5;
+  for (let i = 0; i <= NU; i++) { const u = i / NU; const seg = []; for (let k = 0; k <= 20; k++) { const v = k / 20; if (hole(u, v)) { if (seg.length > 1) sk.ink(seg.slice(), { w: 5, color: "#6B5A45", seed: 21 + i, wob: 0.3 }); seg.length = 0; continue; } seg.push(P(u, v)); } if (seg.length > 1) sk.ink(seg, { w: 5, color: "#6B5A45", seed: 21 + i, wob: 0.3 }); }
+  for (let j = 0; j <= NV; j++) { const v = j / NV; const seg = []; for (let k = 0; k <= 60; k++) { const u = k / 60; if (hole(u, v)) { if (seg.length > 1) sk.ink(seg.slice(), { w: 5, color: "#6B5A45", seed: 41 + j, wob: 0.3 }); seg.length = 0; continue; } seg.push(P(u, v)); } if (seg.length > 1) sk.ink(seg, { w: 5, color: "#6B5A45", seed: 41 + j, wob: 0.3 }); }
+  sk.ink(Array.from({ length: 25 }, (_, k) => P(k / 24, 0)), { w: 8, color: "#6B5A45", seed: 51 });
+  // 기둥
+  for (const [x, i] of [[L, 0], [R, 1]]) { const p = rrect(x - 14, TY - 40, 28, GY - TY + 40, 6); thin(sk, 0.85, () => { sk.fill(p, C.woodDark, { seed: 52 + i, dx: 0.6, dy: 0.8 }); sk.ink(p, { w: 10, seed: 54 + i }); }); }
+  // 그물 위의 생물들
+  bird(sk, 250, TY - 26, 0.7, 61); frog(sk, 640, TY - 2, 0.85, 65); rabbit(sk, 760, TY - 4, 0.95, 69);
+  // 쌤: 바늘과 청록 실로 구멍을 깁는다
+  const hc = P(0.5, 0.55);
+  const Pz = pose({ elR: [96, -330], haR: [150, -400], elL: [-76, -282], haL: [-118, -300], tilt: 0.1 });
+  const fx = 300, fs = 0.66;
+  drawFigure(sk, fx, GY, fs, Pz, { ...TEACHER, name: "teacher", hands: "L" });
+  const hx = fx + fs * 150, hy = GY - fs * 400;
+  sk.ink(curve([[hx + 4, hy - 4], [hx + 50, hy - 40], [hc[0] - 10, hc[1] + 10], [hc[0] + 20, hc[1] - 20], [hc[0] + 34, hc[1] + 16]]), { w: 5, color: C.teal, seed: 71, wob: 0.3 });
+  sk.ink(dense([[hx - 18, hy + 16], [hx + 30, hy - 30]]), { w: 6, color: "#8A9099", seed: 72, wob: 0.1 });
+  handDot(sk, [hx, hy], C.skin, 73, 12);
+  return sk;
+}
+
 export function cuts() {
   return [
+    { name: "u2l1", theme: "bio4", sk: cutU2l1(), alt: "세포 벽돌을 쌓아 사람 모양을 만드는 스틱맨", cap: "생물은 세포라는 벽돌로 지어진 집이에요" },
+    { name: "u2l2", theme: "bio4", sk: cutU2l2(), alt: "세포 공장을 견학하는 스틱맨. 문·통제실·발전기가 세포 속에도", cap: "세포는 초소형 공장이에요. 부품마다 맡은 일이 있죠" },
     { name: "u2l2b", theme: "bio4", sk: cutU2l2b(), alt: "육각형 성벽 안 마당에 태양 전지판을 들이는 스틱맨들", cap: "식물 공장엔 태양 전지판과 담장이 추가!" },
+    { name: "u2l3", theme: "bio4", sk: cutU2l3(), alt: "받침 유리에 스포이트로 염색액을 떨어뜨리는 스틱맨", cap: "얇게, 물들이고, 비스듬히. 표본의 3원칙" },
+    { name: "u2l4", theme: "bio4", sk: cutU2l4(), alt: "세포 지원자들의 면접을 보는 스틱맨 면접관", cap: "모양이 곧 이력서. 면접관은 한눈에 알아봐요" },
+    { name: "u2l5", theme: "bio4", sk: cutU2l5(), alt: "세포 블록으로 계단을 쌓아 올라가는 스틱맨", cap: "한 칸씩 오르면 세포에서 개체까지" },
+    { name: "u2l6", theme: "bio4", sk: cutU2l6(), alt: "세 개의 눈금 저울로 자연을 재는 스틱맨 검사관", cap: "다양성은 눈금 세 개로 잰다!" },
+    { name: "u2l7", theme: "bio4", sk: cutU2l7(), alt: "무늬가 다른 무당벌레들을 돋보기로 견주는 스틱맨", cap: "같은 무당벌레인데 무늬가 달라요. 그게 변이!" },
+    { name: "u2l8", theme: "bio4", sk: cutU2l8(), alt: "생물 카드를 기준에 따라 상자에 나눠 담는 스틱맨", cap: "좋은 기준이 좋은 분류를 만든다" },
     { name: "u2l8b", theme: "bio4", sk: cutU2l8b(), alt: "당나귀와 말과 노새를 견주어 보는 스틱맨", cap: "새끼를 낳을 수 있어도 같은 종이 아닐 수 있다?" },
+    { name: "u2l9", theme: "bio4", sk: cutU2l9(), alt: "다섯 개의 문 앞에서 생물들을 안내하는 스틱맨 문지기", cap: "생물의 왕국은 다섯. 문지기의 질문만 기억하면 돼요" },
+    { name: "u2l10", theme: "bio4", sk: cutU2l10(), alt: "구멍 난 그물을 기워 생물들을 지키는 스틱맨", cap: "그물코가 많을수록 잘 버텨요. 다양성이 안전망!" },
   ];
 }
