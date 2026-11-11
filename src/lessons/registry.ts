@@ -323,6 +323,7 @@ import { workRightLab } from "./steps/workRightLab";
 import { factLab } from "./steps/factLab";
 import { feastLab } from "./steps/feastLab";
 import { timelineLab } from "./steps/timelineLab";
+import { opener } from "./steps/opener/opener";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -652,6 +653,8 @@ const R: Record<string, StepRenderer> = {
   chestModelLab,
   kidneyFilterLab,
   bodyTeamLab,
+  // 중1 Ⅱ 도입 샘플(2026-11-11, 병행 토글 ss.u2intro)
+  opener,
 };
 
 export function getRenderer(type: string): StepRenderer | undefined {
