@@ -15,6 +15,7 @@ import { remakeUnit } from "./v5remake";
 
 const fairLab = (o: { title: string; cta?: string }): Step => ({ type: "u1FairLab", ...o });
 const graphLab = (o: { title: string; cta?: string }): Step => ({ type: "u1GraphLab", ...o });
+const techLab = (o: { title: string; cta?: string }): Step => ({ type: "u1TechLab", ...o });
 
 export const UNIT1_V5: Unit | null = remakeUnit(UNIT1, {
   u1l2: {
@@ -23,5 +24,9 @@ export const UNIT1_V5: Unit | null = remakeUnit(UNIT1, {
       binSort: fairLab({ title: "색깔만 달라지게 하려면?", cta: "결과를 그래프로" }),
       dataGraph: graphLab({ title: "표를 그래프로 옮기면?", cta: "정리하기" }),
     },
+  },
+  u1l4: {
+    intro: opener({ title: "말을 알아듣는 스피커, 비결은?", scene: "speaker", wait: "말을 들려주며 확인해 보세요", cta: "기술 켜 보기" }),
+    swap: { techCards: techLab({ title: "기술을 켜면 무엇이 달라질까?", cta: "정리하기" }) },
   },
 });
