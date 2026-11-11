@@ -44,9 +44,9 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
   const enterBtn = el("button", { class: "u7x-enterbtn pulse", attrs: { type: "button" } }, el("span", { text: "가로 화면으로 크게 열기" })) as HTMLButtonElement;
   f.stage.append(el("div", { class: "u7x-enter-art", html: enterArtSvg() }), enterBtn);
   const goalsUi = u7Goals(1, [
-    { id: "solar", name: "달로 태양 가리기", sub: "세 천체를 한 줄로" },
-    { id: "ground", name: "땅에서 올려다보기", sub: "가려진 태양은 어떤 모습일까요" },
-    { id: "lunar", name: "달을 지구 그림자 속으로", sub: "세 천체를 한 줄로" },
+    { id: "solar", name: "지구에 달의 그림자 만들기", sub: "달을 어디에 두면 될까요" },
+    { id: "ground", name: "그림자 속 땅에서 올려다보기", sub: "태양은 어떤 모습일까요" },
+    { id: "lunar", name: "달을 지구의 그림자 속으로", sub: "달을 어디에 두면 될까요" },
   ]);
   const FOUND: Record<string, string> = { solar: "일식이에요", ground: "개기일식이에요", lunar: "월식이에요" };
   f.slot.setControls(el("div", { class: "u7x-cap", text: "가로 화면에서 세 가지를 해 봐요" }), goalsUi.el);
@@ -84,12 +84,23 @@ export const u7EclipseLab: StepRenderer = (host, step, api) => {
     asked = true;
     host.dataset.u7Phase = "ask";
     f.pips(2);
-    f.say("일식과 월식을 모두 만들었어요. 본 것을 떠올리며 답해 보세요.");
+    // 교과서의 기록 두 칸: 지구에 그림자가 생길 때와 달에 그림자가 생길 때 세 천체의 자리
+    f.say("두 가지를 모두 만들었어요. 그때 세 천체의 자리를 떠올려 적어 봐요.");
     f.slot.ask(
-      "달이 <b>붉게</b> 보였을 때 세 천체가 놓인 차례는?",
-      [{ t: "태양, 지구, 달", ok: true }, { t: "태양, 달, 지구" }, { t: "지구, 태양, 달" }],
+      "<b>지구에 달의 그림자</b>가 생겼을 때, 가운데에 있던 천체는?",
+      [{ t: "달", ok: true }, { t: "지구" }, { t: "태양" }],
       (ok) => api.recordQuiz(ok),
-      { why: "지구가 가운데 있어야 달이 지구 그림자에 들어가요.", onNext: conclude },
+      { why: "태양, 달, 지구의 차례로 한 줄이었어요.", onNext: askLunar },
+    );
+  }
+
+  function askLunar(): void {
+    host.dataset.u7Phase = "ask2";
+    f.slot.ask(
+      "<b>달이 지구의 그림자</b>에 들어갔을 때, 가운데에 있던 천체는?",
+      [{ t: "지구", ok: true }, { t: "달" }, { t: "태양" }],
+      () => undefined,
+      { why: "태양, 지구, 달의 차례로 한 줄이었어요.", onNext: conclude },
     );
   }
 

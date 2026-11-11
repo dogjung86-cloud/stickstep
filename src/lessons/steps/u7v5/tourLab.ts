@@ -153,6 +153,12 @@ const KINDS: { id: string; name: string; found: string; keys: string[] }[] = [
   { id: "dwarf", name: "왜소 행성", found: "명왕성을 만났어요", keys: ["pluto"] },
 ];
 const DEV_KEYS = ["sun", "earth", "moon", "belt", "comet", "pluto"];
+// 특징 표의 세 칸(교과서 탐구의 표). ok는 그 특징에 해당하는 갈래, hint는 틀렸을 때 가로 화면에서 본 것을 짚는 말
+const FEATURES: { id: string; head: string; q: string; ok: string[]; hint: string }[] = [
+  { id: "shine", head: "스스로 빛남", q: "<b>스스로 빛을 내는</b> 천체를 모두 고르고 <b>표에 적기</b>를 눌러요.", ok: ["sun"], hint: "행성과 달은 태양을 향한 쪽만 밝았어요. 스스로 빛난 것을 다시 골라 보세요." },
+  { id: "sun", head: "태양 둘레", q: "이번에는 <b>태양의 둘레를 도는</b> 천체를 모두 골라요.", ok: ["planet", "belt", "comet", "dwarf"], hint: "달은 지구 곁에서 지구 둘레를 돌았어요. 태양은 가운데에 있었고요. 다시 골라 보세요." },
+  { id: "planet", head: "행성 둘레", q: "마지막으로 <b>행성의 둘레를 도는</b> 천체를 모두 골라요.", ok: ["moon"], hint: "행성 곁에 붙어 그 둘레를 돈 천체는 하나뿐이었어요. 다시 골라 보세요." },
+];
 
 
 export const u7TourLab: StepRenderer = (host, step, api) => {
@@ -200,23 +206,82 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
     syncMission();
   }
 
-  function askMoon(): void {
+  // 돌아온 뒤: 교과서 탐구의 특징 표를 채운다(특징마다 해당하는 천체를 모두 고른다. 틀리면 본 것을 짚어 주고 다시 고르게 한다)
+  function startTable(): void {
     asked = true;
-    host.dataset.u7Phase = "ask";
+    host.dataset.u7Phase = "table";
     f.pips(2);
-    f.say("여섯 가지를 모두 만났어요. 본 것을 떠올리며 답해 보세요.");
-    f.slot.ask(
-      "<b>달</b>이 바로 곁에서 둘레를 돌던 천체는 무엇인가요?",
-      [{ t: "지구", ok: true }, { t: "태양" }, { t: "화성" }],
-      (ok) => api.recordQuiz(ok),
-      { why: "달처럼 행성의 둘레를 도는 천체가 위성이에요.", onNext: conclude },
-    );
+    api.setCTA("특징 표를 채워 보세요", { enabled: false });
+    const cells = new Map<string, HTMLElement>();
+    const grid = el("div", { class: "u7x-ftable" }, el("i"), ...FEATURES.map((ft) => el("b", { text: ft.head })));
+    for (const k of KINDS) {
+      grid.appendChild(el("span", { text: k.name }));
+      for (const ft of FEATURES) {
+        const c = el("em", { dataset: { f: ft.id, k: k.id } });
+        cells.set(`${ft.id}:${k.id}`, c);
+        grid.appendChild(c);
+      }
+    }
+    f.stage.replaceChildren(grid);
+    f.stage.classList.add("u7x-tablestage");
+    const picked = new Set<string>();
+    const chips = KINDS.map((k) => {
+      const b = el("button", { class: "u7x-segbtn", attrs: { type: "button", "aria-pressed": "false" }, dataset: { k: k.id } }, el("span", { text: k.name })) as HTMLButtonElement;
+      b.addEventListener("click", () => {
+        if (picked.has(k.id)) picked.delete(k.id);
+        else picked.add(k.id);
+        b.classList.toggle("on", picked.has(k.id));
+        b.setAttribute("aria-pressed", String(picked.has(k.id)));
+        haptic(HAPTIC.tap);
+      });
+      return b;
+    });
+    const row = el("div", { class: "u7x-seg three" }, ...chips);
+    const confirm = el("button", { class: "bv-btn main", attrs: { type: "button" }, text: "표에 적기" }) as HTMLButtonElement;
+    f.slot.setControls(row, confirm);
+    let fi = 0;
+    let graded = false;
+    const show = (): void => {
+      picked.clear();
+      chips.forEach((b) => {
+        b.classList.remove("on");
+        b.setAttribute("aria-pressed", "false");
+      });
+      host.dataset.u7Feature = String(fi);
+      f.say(FEATURES[fi].q);
+    };
+    confirm.addEventListener("click", () => {
+      const ft = FEATURES[fi];
+      const right = picked.size === ft.ok.length && ft.ok.every((x) => picked.has(x));
+      if (!graded) {
+        graded = true;
+        api.recordQuiz(right); // 채점은 첫 특징의 첫 답 한 번
+      }
+      if (!right) {
+        haptic(HAPTIC.wrong);
+        f.stage.classList.remove("u7x-shake");
+        void f.stage.offsetWidth;
+        f.stage.classList.add("u7x-shake");
+        f.say(ft.hint);
+        host.dataset.u7Miss = String(Number(host.dataset.u7Miss ?? "0") + 1);
+        return;
+      }
+      haptic(HAPTIC.correct);
+      for (const k of KINDS) cells.get(`${ft.id}:${k.id}`)?.classList.add(ft.ok.includes(k.id) ? "yes" : "no");
+      fi += 1;
+      if (fi < FEATURES.length) show();
+      else {
+        confirm.disabled = true;
+        window.setTimeout(() => !disposed && conclude(), 900);
+      }
+    });
+    show();
   }
 
   function conclude(): void {
     host.dataset.u7Phase = "done";
     f.pips(3);
-    f.say("다시 둘러보고 싶으면 가로 화면을 한 번 더 열어도 좋아요.");
+    f.say("표를 다 채웠어요. 여섯 갈래의 특징이 한눈에 보여요.");
     f.slot.conclude("태양계에는 스스로 빛나는 <b>태양</b>과, 그 둘레를 도는 <b>행성, 왜소 행성, 소행성, 혜성</b>이 있어요. <b>위성</b>은 행성의 둘레를 돌아요.");
     api.enableCTA(doneCta);
   }
@@ -602,7 +667,7 @@ export const u7TourLab: StepRenderer = (host, step, api) => {
     enterBtn.classList.remove("pulse");
     if (finished) {
       enterBtn.querySelector("span")!.textContent = "다시 둘러보기";
-      if (!asked) askMoon();
+      if (!asked) startTable();
     } else {
       enterBtn.querySelector("span")!.textContent = "다시 출발하기";
       f.say("아직 못 만난 천체가 있어요. 다시 출발해서 <b>남은 천체</b>를 찾아 눌러 보세요.");

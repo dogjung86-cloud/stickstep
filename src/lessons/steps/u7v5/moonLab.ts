@@ -1,18 +1,19 @@
-// u7MoonLab: 달의 위상 랩(u7l5). 교과서 탐구 "모형을 이용하여 달의 위상 변화 관찰하기"(248~249쪽)를 손으로 한다.
-//   교과서: 가운데 스마트 기기(지구), 둘레 여덟 자리에 반쪽을 칠한 공(달), 노란 쪽이 늘 태양을 향한다. 자리마다 사진을 찍어 견준다.
-//   랩   : 달을 궤도에서 끌면 오른쪽 위 창(지구에서 본 달)이 그 자리의 모습을 바로 보여 준다.
-// 무대는 정본 moonPhase3d의 3D(실사 질감의 지구와 달, 오른쪽의 태양)를 살리고 틀과 흐름을 고쳤다:
-//   한 화면(무대 230, 조작 칸 208) · 찾을 것은 모양으로 먼저 부르고 찾은 뒤에 이름(삭, 상현달, 보름달, 하현달)을 붙인다
-//   · 까닭은 판정으로 묻고(근거는 무대에 남는다: 달의 절반은 늘 밝다) · 결론은 조작 칸에 뜬다.
-// 무대 어디를 눌러도 달이 그 방향으로 온다(달 자체는 작아도 누르는 곳은 무대 전체다).
+// u7MoonLab: 달의 위상 랩(u7l5). 교과서 탐구 "모형을 이용하여 달의 위상 변화 관찰하기"(248~249쪽)를 학생이 직접 한다.
+//   교과서: 가운데 스마트 기기(지구), 둘레 여덟 자리에 반쪽을 칠한 공(달). 노란 쪽이 늘 태양을 향하게 놓고 자리마다 사진을 찍어
+//           찍힌 모습을 차례로 늘어놓고 견준다.
+//   랩   : 달을 궤도의 여덟 자리로 옮기고 자리마다 "사진 찍기"를 누른다. 오른쪽 위 창이 지구에서 본 모습(카메라)이고,
+//           찍은 사진이 조작 칸의 여덟 칸에 자리 차례대로 쌓인다. 여덟 장이 모이면 달라지는 모양이 한 줄로 보인다.
+// 판(흐름)은 교과서 탐구에서 새로 짰다. 3D 킷(ui/space3d, 실사 질감)은 도구로 쓴다(명암이 곧 개념이라 3D로 만든다).
+// 정본 moonPhase3d는 네 위상의 이름을 목표로 걸고 그 자리에 머물면 모았다. 여기서는 학생이 자리를 정해 찍고, 이름은 사진이 모인 뒤에 붙는다.
+// 무대 어디를 눌러도 달이 그 방향으로 오고, 손을 떼면 가장 가까운 자리에 선다.
 
 import { el } from "../../../core/dom";
 import { createLoop, type Loop } from "../../../core/anim";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import type { SpaceStage, THREE as T } from "../../../ui/space3d";
-import { bvCapture } from "../bio6/b6Lab";
-import { u7Frame, u7Goals, u7Dev } from "./kit";
+import { bvBtn, bvCapture } from "../bio6/b6Lab";
+import { u7Frame, u7Dev } from "./kit";
 
 interface MoonStep {
   title: string;
@@ -23,37 +24,20 @@ const ORBIT_R = 3.3;
 const STAGE_H = 230;
 const INSET = 88; // 지구에서 본 달 창(px)
 const INSET_PAD = 8;
+const N = 8; // 자리 수(45° 간격). 0번이 태양 쪽이고 반시계로 센다
+const STEP = (Math.PI * 2) / N;
 
-type Key = "new" | "first" | "full" | "last";
-const LOOK: Record<string, string> = {
-  new: "안 보여요",
-  waxc: "오른쪽이 가늘게 밝아요",
-  first: "오른쪽 반달",
-  waxg: "오른쪽이 볼록해요",
-  full: "둥근 달",
-  wang: "왼쪽이 볼록해요",
-  last: "왼쪽 반달",
-  wanc: "왼쪽이 가늘게 밝아요",
-};
-const NAME: Record<Key, string> = { new: "삭", first: "상현달", full: "보름달", last: "하현달" };
-const FOUND: Record<Key, string> = {
-  new: "달이 <b>태양 쪽</b>에 있으면 밝은 면이 반대편이라 안 보여요. 이때가 <b>삭</b>이에요.",
-  first: "태양과 <b>직각</b>인 자리에서는 오른쪽 절반만 보여요. <b>상현달</b>이에요.",
-  full: "달이 <b>태양 반대쪽</b>에 있으면 밝은 면이 다 보여요. <b>보름달</b>이에요.",
-  last: "반대편 <b>직각</b> 자리에서는 왼쪽 절반만 보여요. <b>하현달</b>이에요.",
-};
-
-function lookKey(deg: number): string {
-  const d = ((deg % 360) + 360) % 360;
-  if (d < 20 || d >= 340) return "new";
-  if (d < 70) return "waxc";
-  if (d < 110) return "first";
-  if (d < 160) return "waxg";
-  if (d < 200) return "full";
-  if (d < 250) return "wang";
-  if (d < 290) return "last";
-  return "wanc";
-}
+// 자리마다: 찍힌 모습을 부르는 말, 사진 아래 이름표(네 자리만), 찍은 뒤 도움말
+const SPOTS: { look: string; name: string; say: string }[] = [
+  { look: "안 보여요", name: "삭", say: "달이 <b>태양 쪽</b>에 있으면 밝은 면이 반대편이라 안 보여요." },
+  { look: "오른쪽이 가늘게 밝아요", name: "", say: "오른쪽이 가늘게 밝아요. <b>초승달</b>이에요." },
+  { look: "오른쪽 반달", name: "상현달", say: "태양과 <b>직각</b>인 자리에서는 오른쪽 절반이 보여요." },
+  { look: "오른쪽이 볼록해요", name: "", say: "밝은 부분이 더 차올랐어요. 둥근 달에 가까워요." },
+  { look: "둥근 달", name: "보름달", say: "달이 <b>태양 반대쪽</b>에 있으면 밝은 면이 다 보여요." },
+  { look: "왼쪽이 볼록해요", name: "", say: "이번에는 오른쪽부터 줄어들어요. 왼쪽이 볼록해요." },
+  { look: "왼쪽 반달", name: "하현달", say: "반대편 <b>직각</b> 자리에서는 왼쪽 절반이 보여요." },
+  { look: "왼쪽이 가늘게 밝아요", name: "", say: "왼쪽이 가늘게 밝아요. <b>그믐달</b>이에요." },
+];
 
 export const u7MoonLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as MoonStep;
@@ -65,32 +49,41 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
   const sunTag = el("div", { class: "u7x-tag u7x-moon-sun", text: "태양" });
   const earthTag = el("div", { class: "u7x-tag u7x-moon-earth", text: "지구" });
   const inset = el("div", { class: "u7x-inset", attrs: { "aria-hidden": "true" } }, el("span", { text: "지구에서 본 달" }));
-  f.stage.append(canvas, pill, sunTag, earthTag, inset);
+  const dots = Array.from({ length: N }, () => el("i", { class: "u7x-mpos" }));
+  f.stage.append(canvas, ...dots, pill, sunTag, earthTag, inset);
 
-  const goals = u7Goals(2, [
-    { id: "new", name: "안 보이는 달", sub: "어디에 두면 될까요" },
-    { id: "first", name: "오른쪽 반달", sub: "어디에 두면 될까요" },
-    { id: "full", name: "둥근 달", sub: "어디에 두면 될까요" },
-    { id: "last", name: "왼쪽 반달", sub: "어디에 두면 될까요" },
-  ]);
-  f.slot.setControls(el("div", { class: "u7x-cap", text: "달을 옮겨 네 가지 모습을 만들어요" }), goals.el);
-  f.say("달을 궤도에서 끌어 보세요. 오른쪽 위 창이 <b>지구에서 본 달</b>이에요.");
+  // 조작 칸: 사진 여덟 칸(자리 차례) + 사진 찍기
+  const films = SPOTS.map((_, k) => {
+    const cv = el("canvas", { class: "u7x-film-cv", attrs: { width: "76", height: "76" } }) as HTMLCanvasElement;
+    const nm = el("i", { text: "" });
+    const cell = el("div", { class: "u7x-film", dataset: { k: String(k) } }, cv, nm);
+    return { cell, cv, nm, taken: false };
+  });
+  const strip = el("div", { class: "u7x-films" }, ...films.map((x) => x.cell));
+  const shutter = bvBtn("main", "이 자리에서 사진 찍기");
+  shutter.classList.add("u7x-shutter");
+  f.slot.setControls(el("div", { class: "u7x-cap", text: "찍은 사진(자리 차례대로 놓여요)" }), strip, shutter);
+  f.say("달을 끌어 자리에 놓고 <b>사진 찍기</b>를 눌러요. 여덟 자리를 모두 찍어 견줘 봐요.");
   f.pips(1);
-  api.setCTA("달의 네 모습을 찾아요", { enabled: false });
+  api.setCTA("여덟 자리의 달을 찍어요", { enabled: false });
   host.dataset.u7Phase = "play";
+  host.dataset.u7Found = "0";
 
-  let theta = Math.PI * 0.72; // 0 = 태양 쪽(삭), 반시계로 커진다
+  let theta = STEP * 3; // 0 = 태양 쪽(삭), 반시계로 커진다
+  let target: number | null = null; // 손을 뗀 뒤 가서 설 각도
   let dragging = false;
-  let heldKey = "";
-  let heldMs = 0;
-  let phase: "play" | "ask" | "done" = "play";
+  let wantShot = false;
+  let phase: "play" | "wait" | "ask" | "done" = "play";
   let disposed = false;
+  const norm = (a: number): number => ((a % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+  const spotOf = (a: number): number => Math.round(norm(a) / STEP) % N;
+  const count = (): number => films.filter((x) => x.taken).length;
 
   function conclude(): void {
     phase = "done";
     host.dataset.u7Phase = "done";
     f.pips(3);
-    f.say("달을 다시 끌어 보며 확인해도 좋아요. 달의 <b>절반</b>은 늘 밝아요.");
+    f.say("달을 다시 옮겨 보며 확인해도 좋아요. 달의 <b>절반</b>은 늘 밝아요.");
     f.slot.conclude("달은 <b>햇빛을 받는 절반</b>만 밝아요. 달이 지구 둘레를 돌면 그 절반을 <b>보는 방향</b>이 달라져서, 달의 모양이 날마다 달라 보여요.");
     api.enableCTA(doneCta);
   }
@@ -99,7 +92,7 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     phase = "ask";
     host.dataset.u7Phase = "ask";
     f.pips(2);
-    f.say("네 모습을 모두 찾았어요. 무대의 달을 보면서 답해 보세요.");
+    f.say("여덟 장을 모두 찍었어요. 무대의 달을 보면서 답해 보세요.");
     f.slot.ask(
       "달의 <b>모양이 달라 보인</b> 까닭은 무엇일까요?",
       [{ t: "밝은 쪽을 보는 방향이 달라져서", ok: true }, { t: "지구 그림자가 가려서" }, { t: "달이 내는 빛이 변해서" }],
@@ -108,13 +101,36 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     );
   }
 
-  function found(key: Key): void {
-    if (!goals.done(key, `이름은 ${NAME[key]}`)) return;
+  shutter.addEventListener("click", () => {
+    if (phase !== "play" || !st) return;
+    const k = spotOf(target ?? theta);
+    theta = k * STEP; // 자리에 정확히 세우고 찍는다
+    target = null;
+    if (films[k].taken) {
+      haptic(HAPTIC.tap);
+      f.say("이 자리는 이미 찍었어요. 달을 <b>빈 자리</b>로 옮겨 보세요.");
+      return;
+    }
+    wantShot = true;
+  });
+
+  function took(k: number): void {
+    films[k].taken = true;
+    films[k].cell.classList.add("on");
+    dots[k].classList.add("on");
     haptic(HAPTIC.ctaUnlock);
-    host.dataset.u7Found = String(goals.count());
-    if (phase !== "play") return;
-    f.say(FOUND[key]);
-    if (goals.count() === goals.total) window.setTimeout(() => !disposed && phase === "play" && askWhy(), 1500);
+    host.dataset.u7Found = String(count());
+    if (count() < N) {
+      f.say(`${SPOTS[k].say} 달을 다음 자리로 옮겨요.`);
+      return;
+    }
+    // 여덟 장이 모였다: 네 자리에 이름을 붙이고 까닭을 묻는다
+    phase = "wait";
+    host.dataset.u7Phase = "wait";
+    shutter.disabled = true;
+    films.forEach((x, i) => (x.nm.textContent = SPOTS[i].name));
+    f.say("여덟 장이 모였어요. 밝은 부분이 <b>오른쪽부터 차올랐다가 오른쪽부터 줄어요</b>.");
+    window.setTimeout(() => !disposed && askWhy(), 2200);
   }
 
   // ---- 3D(동적 로드) ----
@@ -172,9 +188,9 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     halo = S.makeGlow(2.1, "rgba(150,190,255,.5)", 0.34);
     scene.add(halo);
 
-    // 구도(가로 346, 세로 230): 궤도 왼쪽 끝(-3.7)부터 태양 오른쪽 끝(6.3)까지 x 10이 들어와야 한다.
-    // 가로 시야 반각 = atan(tan(23°) × 1.5) = 32.5°, 필요한 거리 = 5 / tan(32.5°) = 7.9. 여유를 두고 9.4.
-    // 오른쪽 위에 창이 있으므로 장면을 왼쪽 아래로 조금 내려 태양이 창 아래에 오게 한다.
+    // 구도(가로 346, 세로 230): 궤도 왼쪽 끝(-3.7)부터 태양 오른쪽 끝(7.3)까지 들어와야 한다.
+    // 가로 시야 반각 = atan(tan(23°) × 1.5) = 32.5°, 필요한 거리 = 5.5 / tan(32.5°) = 8.6. 지금 거리 9.8.
+    // 오른쪽 위에 창이 있으므로 태양이 창 아래에 오게 한다.
     camera.position.set(1.8, 7.3, 6.5);
     camera.lookAt(1.8, 0, 0.15);
     earthCam = new THREE.PerspectiveCamera(22, 1, 0.05, 300);
@@ -196,6 +212,7 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
   }
   canvas.addEventListener("pointerdown", (e) => {
     dragging = true;
+    target = null;
     const t = pointerTheta(e);
     if (t != null) theta = t;
     bvCapture(canvas, e.pointerId);
@@ -206,11 +223,19 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     if (t != null) theta = t;
   });
   const end = (): void => {
+    if (!dragging) return;
     dragging = false;
+    target = spotOf(theta) * STEP; // 가장 가까운 자리에 선다
   };
   canvas.addEventListener("pointerup", end);
   canvas.addEventListener("pointercancel", end);
-  u7Dev(host, { set: (deg: number) => (theta = (deg * Math.PI) / 180) });
+  // 검사용: 자리 번호(0~7)를 주면 달을 그 자리에 세운다
+  u7Dev(host, {
+    spot: (k: number) => {
+      theta = k * STEP;
+      target = null;
+    },
+  });
 
   function frame(dt: number): void {
     if (!st || !THREE || !earth || !moon || !earthCam || !halo) return;
@@ -218,6 +243,14 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     const h = canvas.clientHeight || STAGE_H;
     st.resize(w, h);
 
+    if (target != null) {
+      let d = target - theta;
+      d = Math.atan2(Math.sin(d), Math.cos(d));
+      if (Math.abs(d) < 0.01) {
+        theta = target;
+        target = null;
+      } else theta += d * Math.min(1, 0.25 * dt);
+    }
     earth.rotation.y += 0.0035 * dt;
     const px = Math.cos(theta) * ORBIT_R;
     const pz = -Math.sin(theta) * ORBIT_R;
@@ -231,25 +264,22 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     earthCam.up.set(0, 1, 0);
     earthCam.lookAt(px, 0, pz);
 
-    const deg = ((theta * 180) / Math.PI + 360) % 360;
-    const key = lookKey(deg);
-    const named = (key === "new" || key === "first" || key === "full" || key === "last") && goals.has(key);
-    pill.textContent = named ? `${LOOK[key]}, ${NAME[key as Key]}` : LOOK[key];
-    host.dataset.u7Look = key;
-    if (key === heldKey) heldMs += dt * 16.7;
-    else {
-      heldKey = key;
-      heldMs = 0;
-    }
-    if (heldMs > 320 && (key === "new" || key === "first" || key === "full" || key === "last")) found(key);
+    const k = spotOf(theta);
+    pill.textContent = films[k].taken && SPOTS[k].name && phase !== "play" ? `${SPOTS[k].look}, ${SPOTS[k].name}` : SPOTS[k].look;
+    host.dataset.u7Spot = String(k);
 
-    // 이름표는 화면 글자로 따라붙는다
+    // 이름표와 자리 표시는 화면 글자로 따라붙는다
+    const v = new THREE.Vector3();
     const place = (tag: HTMLElement, x: number, z: number, dy: number): void => {
-      const v = new THREE!.Vector3(x, 0, z).project(st!.camera);
-      tag.style.transform = `translate(-50%, 0) translate(${(((v.x + 1) / 2) * w).toFixed(1)}px, ${(((1 - v.y) / 2) * h + dy).toFixed(1)}px)`;
+      v.set(x, 0, z).project(st!.camera);
+      tag.style.transform = `translate(-50%, -50%) translate(${(((v.x + 1) / 2) * w).toFixed(1)}px, ${(((1 - v.y) / 2) * h + dy).toFixed(1)}px)`;
     };
-    place(sunTag, 6.5, 0, 28);
-    place(earthTag, 0, 0, 30);
+    place(sunTag, 6.5, 0, 36);
+    place(earthTag, 0, 0, 38);
+    dots.forEach((d, i) => {
+      place(d, Math.cos(i * STEP) * ORBIT_R, -Math.sin(i * STEP) * ORBIT_R, 0);
+      d.classList.toggle("here", i === k && !dragging);
+    });
 
     const r = st.renderer;
     r.setScissorTest(false);
@@ -268,6 +298,19 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     for (const o of sunParts) o.visible = true;
     r.setScissorTest(false);
     r.setClearColor(0x000000, 0);
+
+    // 사진 찍기: 방금 그린 창을 그 자리의 칸에 옮겨 담는다(같은 프레임 안이라 그림이 남아 있다)
+    if (wantShot) {
+      wantShot = false;
+      const pr = canvas.width / w;
+      const ctx = films[k].cv.getContext("2d");
+      if (ctx) {
+        ctx.fillStyle = "#070d1a";
+        ctx.fillRect(0, 0, 76, 76);
+        ctx.drawImage(canvas, (ix + 12) * pr, (INSET_PAD + 4) * pr, (INSET - 24) * pr, (INSET - 24) * pr, 0, 0, 76, 76);
+      }
+      took(k);
+    }
   }
 
   return () => {

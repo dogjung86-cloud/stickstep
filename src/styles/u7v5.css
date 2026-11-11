@@ -36,6 +36,26 @@
 .u7x-moon-sun, .u7x-moon-earth { left: 0; top: 0; will-change: transform; }
 .u7x-moon-earth { color: #CFE0FF; }
 
+/* 달의 위상: 궤도의 여덟 자리 표시와 찍은 사진 여덟 칸 */
+.u7x-mpos { position: absolute; left: 0; top: 0; width: 11px; height: 11px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .6); pointer-events: none; will-change: transform; }
+.u7x-mpos.on { background: #FFE08A; border-color: #FFE08A; }
+.u7x-mpos.here { box-shadow: 0 0 0 4px rgba(255, 224, 138, .3); }
+.u7x-films { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; }
+.u7x-film { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
+.u7x-film-cv { display: block; width: 100%; aspect-ratio: 1; border-radius: 9px; background: var(--n100); border: 1.5px dashed var(--n300); }
+.u7x-film.on .u7x-film-cv { border: 1.5px solid var(--subj-space); }
+.u7x-film i { height: 16px; font-style: normal; font-size: 12px; line-height: 16px; font-weight: 800; color: var(--subj-space-press); white-space: nowrap; letter-spacing: -.07em; }
+
+/* 태양계: 돌아온 뒤 채우는 특징 표 */
+.u7x-seg.three { grid-template-columns: repeat(3, 1fr); }
+.u7x-tablestage { display: block; padding: 8px 12px; }
+.u7x-ftable { display: grid; grid-template-columns: 86px repeat(3, 1fr); align-items: center; height: 100%; }
+.u7x-ftable b { font-size: 12.5px; font-weight: 800; color: #FFE9B8; text-align: center; white-space: nowrap; }
+.u7x-ftable span { font-size: 13px; font-weight: 800; color: #E8EEF9; white-space: nowrap; }
+.u7x-ftable em { justify-self: center; width: 22px; height: 22px; border-radius: 50%; border: 1.5px dashed rgba(255, 255, 255, .28); }
+.u7x-ftable em.yes { border: 0; background: #FFD25E; box-shadow: 0 0 0 3px rgba(255, 210, 94, .22); }
+.u7x-ftable em.no { border: 0; background: rgba(255, 255, 255, .1); transform: scale(.42); }
+
 /* 계절과 별자리: 별자리 이름(화면 글자가 3D 그림을 따라다닌다) */
 .u7x-znames { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .u7x-zname {

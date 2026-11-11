@@ -8,7 +8,7 @@
 // 실행(개발 서버): PORT=5577 node qa/check-u7v5.mjs [캡처 폴더]
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { launch, openLesson, stepType, ds, waitDs, dev, stagePt, stepText, BUDGET, W, cta, ctaState, tap, waitFor, setRange, waitAsk, pickWrong, tapNext, pickRight, waitDone, measure, goStep } from "./u7v5-lib.mjs";
+import { launch, openLesson, stepType, ds, waitDs, dev, stagePt, stepText, BUDGET, W, cta, ctaState, tap, waitFor, setRange, waitAsk, askText, pickWrong, tapNext, pickRight, waitDone, measure, goStep } from "./u7v5-lib.mjs";
 import { measure as omeasure, choose, waitPhase, stagePt as opnPt } from "./u2intro-lib.mjs";
 
 const OUT = process.argv[2] ?? "qa/shots/u7v5";
@@ -38,7 +38,7 @@ async function at(id, mark, { cap = true, curio = false } = {}) {
 }
 
 /** 판정: 한 번 틀리고(오답 화면을 잰다) '다음'으로 결론까지. */
-async function judge(id) {
+async function judge(id, { second = false } = {}) {
   ok(await waitAsk(page), `${id}: 판정 질문이 뜨지 않음`);
   await W(page, 300);
   await at(id, "3ask");
@@ -54,7 +54,14 @@ async function judge(id) {
   ok(card.miss && /정답/.test(card.ans), `${id}: 오답 표시나 정답 카드가 없음`);
   await W(page, 1500);
   ok(!!(await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice.miss"))), `${id}: 기다리자 저절로 넘어감`);
+  const first = await askText(page);
   await tapNext(page);
+  if (second) {
+    ok(await waitAsk(page, first), `${id}: 둘째 질문이 뜨지 않음`);
+    await W(page, 300);
+    await at(id, "3ask2");
+    await pickRight(page);
+  }
   ok(await waitDone(page), `${id}: 결론이 뜨지 않음`);
   await W(page, 400);
 }
@@ -131,10 +138,25 @@ const LABS = {
       texts.push(await stepText(page));
       await page.evaluate(() => document.querySelector(".rot-overlay .u7x-rotdone-btn")?.click());
       await W(page, 700);
-      await judge(id);
+      ok(await waitDs(page, "u7Phase", "table"), `${id}: 특징 표가 열리지 않음(${await ds(page, "u7Phase")})`);
+      await W(page, 300);
+      await at(id, "3table");
+      const chip = (k) => tap(page, `.u7x-segbtn[data-k="${k}"]`);
+      await chip("sun"); await chip("planet"); await tap(page, ".bv-btn.main"); // 틀린 답: 태양과 행성이 스스로 빛난다
+      await W(page, 500);
+      ok((await ds(page, "u7Feature")) === "0" && (await ds(page, "u7Miss")) === "1", `${id}: 틀린 표가 그대로 적힘`);
+      await at(id, "4wrong");
+      await chip("planet"); await tap(page, ".bv-btn.main");
+      ok(await waitDs(page, "u7Feature", "1", 20), `${id}: 첫 특징이 적히지 않음`);
+      for (const k of ["planet", "belt", "comet", "dwarf"]) await chip(k);
+      await tap(page, ".bv-btn.main");
+      ok(await waitDs(page, "u7Feature", "2", 20), `${id}: 둘째 특징이 적히지 않음`);
+      await chip("moon"); await tap(page, ".bv-btn.main");
+      ok(await waitDone(page), `${id}: 결론이 뜨지 않음`);
+      await W(page, 400);
     }
     await finish(id, "이름표 붙이기");
-    await newQuiz(id, 5, 1);
+    await newQuiz(id, 4, 1);
   },
   // u7l2: 행성을 두 무리로
   async u7l2(id) {
@@ -227,11 +249,16 @@ const LABS = {
     if (await webgl()) {
       const a = await stagePt(page, 60, 150), b = await stagePt(page, 110, 190);
       await mouseDrag(a, b, 8);
+      await W(page, 700);
+      const shootAt = async (k) => { await dev(page, "spot", k); await W(page, 250); await tap(page, ".u7x-shutter"); await W(page, 350); };
+      for (const k of [0, 1, 2, 3]) await shootAt(k);
+      ok((await ds(page, "u7Found")) === "4", `${id}: 네 자리를 찍지 못함(${await ds(page, "u7Found")})`);
+      await tap(page, ".u7x-shutter"); // 이미 찍은 자리에서 한 번 더
       await W(page, 300);
-      for (const deg of [180, 90, 0]) { await dev(page, "set", deg); await W(page, 700); }
-      ok(Number(await ds(page, "u7Found")) >= 3, `${id}: 세 모습을 찾지 못함(${await ds(page, "u7Found")})`);
-      await at(id, "2three");
-      await dev(page, "set", 270);
+      ok((await ds(page, "u7Found")) === "4", `${id}: 찍은 자리를 다시 찍었는데 장수가 늘어남`);
+      await at(id, "2half");
+      for (const k of [4, 5, 6, 7]) await shootAt(k);
+      ok((await ds(page, "u7Found")) === "8", `${id}: 여덟 자리를 찍지 못함(${await ds(page, "u7Found")})`);
       await judge(id);
     } else console.log(`  ${id}: 3D를 켜지 못해 조작은 건너뜀`);
     ok(await waitDone(page), `${id}: 결론이 뜨지 않음`);
@@ -268,7 +295,7 @@ const LABS = {
       texts.push(await stepText(page));
       await page.evaluate(() => document.querySelector(".rot-overlay .u7x-rotdone-btn")?.click());
       await W(page, 700);
-      await judge(id);
+      await judge(id, { second: true });
     }
     await finish(id, "이름 정리하기");
     await newQuiz(id, 6, 0);

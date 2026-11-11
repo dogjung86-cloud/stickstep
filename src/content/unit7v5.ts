@@ -4,7 +4,7 @@
 // 설계와 교과서 대응표는 design/u7v5-plan.md.
 //
 //   레슨   도입(opener 장면)   랩(스텝 타입)                        개념 스텝                문제(새로 쓴 것)
-//   u7l1   u7-brightdot        u7TourLab(가로 3D)                    둘(태양계 / 작은 천체)   세 천체 짝 짓기(옛 OX는 랩의 판정과 겹쳐 뺐다)
+//   u7l1   u7-brightdot        u7TourLab(가로 3D)                    둘(태양계 / 작은 천체)   세 천체 짝 짓기(옛 OX와 분류는 랩의 표와 겹쳐 뺐다)
 //   u7l2   u7-jupiterrow       u7PlanetLab(새 랩. 옛 표는 뺐다)      하나                     낯선 행성 분류(옛 분류 상자는 랩과 겹쳐 뺐다)
 //   u7l3   (만화 그대로)       u7SunLab                              없음(만화가 용어를 정의) 코로나가 평소에 안 보이는 까닭
 //   u7l4   u7-shadowturn       u7SkyLab, u7ZodiacLab(3D)             둘(자전 / 공전)          세 시간 뒤 별의 자리
@@ -318,10 +318,10 @@ export const UNIT7_V5: Unit | null = remakeUnit(UNIT7, {
   u7l1: {
     intro: opener({ title: "저 밝은 점도 별일까요?", scene: "u7-brightdot", wait: "먼저 밝은 점을 확대해 보세요", cta: "태양계로 출발" }),
     swap: { solarTour: lab("u7TourLab", { title: "태양계에는 누가 살까요?", cta: "이름표 붙이기" }) },
-    // 문제: 분류(무엇의 둘레를 도는가) → 옳지 않은 것(혜성의 꼬리) → 새 문제(세 천체 짝 짓기) → 그림(천왕성). 옛 OX는 랩의 판정과 같은 것을 물어 뺐다
+    // 문제: 옳지 않은 것(혜성의 꼬리) → 새 문제(세 천체 짝 짓기) → 그림(천왕성). 옛 OX와 분류 상자는 랩의 특징 표와 같은 것을 물어 뺐다
     after: (st) => {
       const q = of(st, "quiz");
-      return [st[0], ...of(st, "u7TourLab"), C1A, C1B, R1, ...of(st, "binSort"), q[0], Q1, q[2]];
+      return [st[0], ...of(st, "u7TourLab"), C1A, C1B, R1, q[0], Q1, q[2]];
     },
   },
   u7l2: {
