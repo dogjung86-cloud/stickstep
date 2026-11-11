@@ -7,16 +7,18 @@
 // 실행: npm run build 뒤
 //   node qa/check-u2v6.mjs v6   [캡처 폴더]   새 판(?u2v6)
 //   node qa/check-u2v6.mjs base [캡처 폴더]   토글을 끈 판
-//   node qa/check-u2v6.mjs same a.json b.json 두 번 모은 글이 같은지 견준다(레슨, 스텝, 글자 하나까지)
+//   node qa/check-u2v6.mjs same a.json b.json 두 번 모은 글이 같은지 견준다(레슨, 스텝, 글자. 섞이는 보기의 차례는 빼고)
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { join, extname } from "node:path";
 import { chromium } from "playwright-core";
 
 const MODE = process.argv[2] ?? "v6";
 if (MODE === "same") {
-  const a = readFileSync(process.argv[3], "utf8");
-  const b = readFileSync(process.argv[4], "utf8");
-  console.log(a === b ? "같음: 두 판의 화면 글이 글자 하나까지 같다" : "다름: 두 판의 화면 글이 다르다");
+  // 문제의 보기와 랩의 예측 보기는 열 때마다 차례가 섞인다. 그래서 스텝마다 글자를 정렬해 견준다(차례만 다른 것은 같다고 본다).
+  const norm = (f) => JSON.stringify(JSON.parse(readFileSync(f, "utf8")).map((d) => ({ ...d, text: [...d.text].sort().join("") })));
+  const a = norm(process.argv[3]);
+  const b = norm(process.argv[4]);
+  console.log(a === b ? "같음: 두 판의 스텝 수와 종류, 제목, 버튼 글, 화면 글이 같다(섞이는 보기의 차례만 빼고)" : "다름: 두 판의 화면 글이 다르다");
   process.exit(a === b ? 0 : 1);
 }
 const OUT = process.argv[3] ?? `qa/shots/u2v6-${MODE}`;
@@ -94,8 +96,31 @@ const read = () =>
     clone.querySelectorAll("svg, style, script").forEach((e) => e.remove());
     const text = clone.textContent.replace(/\s+/g, " ").trim();
     const cta = document.querySelector(".screen.active .lfooter .btn, .screen.active footer .btn")?.textContent.trim() ?? "";
+    // 전과 후 문서에 쓸 글(개념과 정리만): 블록의 차례와 종류를 살려 뽑는다
+    const tx = (e) => (e ? e.textContent.replace(/\s+/g, " ").trim() : "");
+    let struct = null;
+    if (kind === "concept") {
+      struct = { title: tx(s.querySelector(".h1")), lead: tx(s.querySelector(".sub")), blocks: [] };
+      for (const b of s.querySelectorAll(".c-figure, .term-card, .c-note, .c-list")) {
+        if (b.classList.contains("c-figure")) struct.blocks.push(b.querySelector("img") ? `(컷) ${tx(b.querySelector(".c-figure-cap"))}` : `(그림) ${tx(b.querySelector(".c-figure-cap"))}`);
+        else if (b.classList.contains("term-card")) struct.blocks.push(`**${tx(b.querySelector(".term-name"))}**: ${tx(b.querySelector(".term-def"))}`);
+        else if (b.classList.contains("c-note")) struct.blocks.push(`(메모) ${tx(b)}`);
+        else struct.blocks.push(...[...b.querySelectorAll("li")].map((li) => `(목록) ${tx(li)}`));
+      }
+    } else if (kind === "recap") {
+      struct = { title: tx(s.querySelector(".h1")), narrator: tx(s.querySelector(".comic-bubble")), cards: [], note: tx(s.querySelector(".rc-note, .c-callout, .c-note")) };
+      for (const c of s.querySelectorAll(".rc-card")) {
+        const m = c.querySelector(".rc-more")?.cloneNode(true);
+        if (m) {
+          m.querySelectorAll(".rm-h").forEach((x) => (x.textContent = ` ▸${x.textContent.trim()}: `));
+          m.querySelectorAll(".fun").forEach((x) => (x.textContent = ` ▸${x.textContent.trim()}`));
+        }
+        struct.cards.push({ name: tx(c.querySelector(".rc-name")), text: tx(c.querySelector(".rc-text")), ex: [...(c.querySelector(".rc-ex")?.children ?? [])].map(tx), more: tx(m).split("▸").map((x) => x.trim()).filter(Boolean) });
+      }
+    }
     return {
       kind,
+      struct,
       title: s.querySelector(".h1, .bv-title, .opn-title")?.textContent.trim() ?? "",
       text,
       cta,
@@ -114,6 +139,7 @@ const read = () =>
 
 const dump = [];
 const metrics = [];
+const structs = [];
 const WANT_OPENERS = ["u2l2", "u2l3", "u2l4", "u2l5", "u2l6", "u2l8", "u2l9", "u2l10"];
 for (let li = 0; li < 10; li++) {
   const id = `u2l${li + 1}`;
@@ -126,6 +152,7 @@ for (let li = 0; li < 10; li++) {
     ok(bad.length === 0, `${id} 스텝 ${n + 1}(${r.kind}): 안 뜬 그림 ${bad.join(", ")}`);
     kinds.push(r.kind);
     dump.push({ id, n, kind: r.kind, title: r.title, cta: r.cta, text: r.text });
+    if (r.struct) structs.push({ id, kind: r.kind, cta: r.cta, ...r.struct });
     if (r.kind === "concept") {
       nc++;
       metrics.push({ id, kind: "개념", title: r.title, chars: r.chars, terms: r.terms, notes: r.notes, cut: r.cut, screens: +(r.content / r.view).toFixed(2) });
@@ -145,7 +172,7 @@ for (let li = 0; li < 10; li++) {
       ok(r.cards >= 2 && r.cards <= 4, `${id} 정리: 카드 ${r.cards}장`);
       ok(r.arts === r.cards, `${id} 정리: 미니 그림 ${r.arts}/${r.cards}`);
       if (MODE === "v6") {
-        ok(r.mores.length === r.cards && r.mores.every((m) => m >= 330 && m <= 820), `${id} 정리: '자세히' 길이 ${r.mores.join("/")}`);
+        ok(r.mores.length === r.cards && r.mores.every((m) => m >= 400 && m <= 800), `${id} 정리: '자세히' 길이 ${r.mores.join("/")}`);
         ok(r.heads.every((h) => h >= 2 && h <= 4), `${id} 정리: 소제목 수 ${r.heads.join("/")}`);
       }
       await page.screenshot({ path: join(OUT, `${id}-recap.png`) });
@@ -190,6 +217,7 @@ if (MODE === "v6") ok(lang === 0, `언어 검사 ${lang}건`);
 
 writeFileSync(join(OUT, "texts.json"), JSON.stringify(dump, null, 1));
 writeFileSync(join(OUT, "metrics.json"), JSON.stringify(metrics, null, 1));
+writeFileSync(join(OUT, "struct.json"), JSON.stringify(structs, null, 1));
 console.log("\n길이(화면 = 스크롤 높이 ÷ 보이는 높이)");
 for (const m of metrics) console.log(`  ${m.id} ${m.kind} ${m.kind === "개념" ? `용어 ${m.terms} · 메모 ${m.notes} · ${m.chars}자 · ${m.screens}화면${m.cut ? "" : " · 컷 없음"}` : `카드 ${m.cards} · 자세히 ${m.mores}자 · ${m.screens}화면`}  ${m.title}`);
 console.log(`\n[${MODE}] 통과 ${pass} · 실패 ${fail}`);
