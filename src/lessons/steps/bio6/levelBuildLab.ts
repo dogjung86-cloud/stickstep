@@ -193,7 +193,22 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
       }
     }
     f.say(say);
+    sayKey = `L${level}`;
     mark(level);
+  }
+
+  /** 막대를 끄는 동안의 안내 글: 그림이 어느 단계에 와 있으면 그 단계의 글, 단계 사이를 지나는 중이면 '막대를 미는 중'.
+   *  (그림은 다음 단계로 넘어갔는데 글은 앞 단계를 말하는 일이 없게 한다. 경계에서 깜빡이지 않게 들어올 때와 나갈 때의 문턱을 달리 둔다.) */
+  let sayKey = "L0";
+  const MOVING = "막대를 미는 중이에요. 손을 떼면 무엇이 됐는지 알 수 있어요.";
+  function narrate(v: number): void {
+    const near = Math.round(v / 100);
+    const dist = Math.abs(v - near * 100);
+    const at = sayKey === `L${near}` ? dist <= 26 : dist <= 14;
+    const key = at ? `L${near}` : "moving";
+    if (key === sayKey) return;
+    sayKey = key;
+    f.say(at ? ROUTES[route].levels[near].say : MOVING);
   }
 
   const range = bvRange({
@@ -206,6 +221,7 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
     onInput: (v) => {
       if (phase !== "build") return;
       paint(v);
+      if (!snapping) narrate(v);
       // 지나간 단계는 그 자리에서 계단에 쌓인다
       const passed = Math.floor((v + 6) / 100);
       if (passed > top[route]) {
@@ -241,6 +257,7 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
     paint(0);
     drawLadder();
     f.say(ROUTES[r].levels[0].say);
+    sayKey = "L0";
     mark(0);
   }
   ORDER.forEach((r) =>

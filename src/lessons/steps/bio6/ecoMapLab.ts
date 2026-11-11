@@ -4,7 +4,7 @@
 // 무대: 땅 세 칸(처음에는 모두 숲)과 눈금 셋, 그리고 생물의 수. 생물의 수는 끝까지 60 그대로다.
 // 조작(카드 셋, 누를 때마다 바뀌고 다시 누르면 되돌아간다):
 //   습지로 바꾸기(가운데 칸) · 갯벌로 바꾸기(오른쪽 칸): 사는 환경이 한 가지 늘고 그곳의 생물 4종류가 더해진다. 되돌리면 함께 사라진다.
-//   무당벌레 보기: 숲 속 무당벌레 다섯 마리를 가까이 본다. 겉날개의 색과 무늬가 저마다 다르다(세 번째 눈금).
+//   무당벌레 보기: 숲속 무당벌레 다섯 마리를 가까이 본다. 겉날개의 색과 무늬가 저마다 다르다(세 번째 눈금).
 // 처음 환경을 바꿀 때 예측 질문(채점하지 않음). 셋을 다 해 보면 확인 버튼 → 판정(채점): 환경을 바꾸자 종류가 늘어난 까닭.
 // 그림: 구작 생태계 그림(bio3/eco)과 무당벌레 사진(exam/u2/ladybug-variation). 칸마다 적힌 생물은 그 그림에 실제로 보이는 것만 썼다.
 // 눈금의 '생물의 종류'는 그림에 적힌 생물을 센 값(칸마다 4)이다. 모형이라는 점은 도움말이 "이 땅"이라고 부르는 것으로 드러낸다.
@@ -69,7 +69,7 @@ export const ecoMapLab: StepRenderer = (host, step, api) => {
   // 무당벌레를 가까이 본 모습(땅 위에 겹쳐 뜬다)
   const bugImg = el("div", { class: "emp-bug-img" });
   bugImg.style.backgroundImage = `url(${bvSrc("exam/u2/ladybug-variation.webp")})`;
-  const bug = el("div", { class: "emp-bug" }, bugImg, el("div", { class: "emp-chip", text: "숲 속의 무당벌레 다섯 마리" }));
+  const bug = el("div", { class: "emp-bug" }, bugImg, el("div", { class: "emp-chip", text: "숲속의 무당벌레 다섯 마리" }));
 
   // ── 무대: 눈금 셋과 생물의 수 ────────────────────────────────────
   const envCells = [0, 1, 2].map(() => el("i"));
@@ -104,7 +104,7 @@ export const ecoMapLab: StepRenderer = (host, step, api) => {
   const cards = {} as Record<Key, BvCard>;
   cards.wet = bvCard("emp-card col", { name: "습지로 바꾸기", sub: "가운데 칸", icon: `<img src="${bvSrc(HAB.wet.img)}" alt="" draggable="false" />`, key: "wet" });
   cards.flat = bvCard("emp-card col", { name: "갯벌로 바꾸기", sub: "오른쪽 칸", icon: `<img src="${bvSrc(HAB.flat.img)}" alt="" draggable="false" />`, key: "flat" });
-  cards.bug = bvCard("emp-card col bug", { name: "무당벌레 보기", sub: "숲 속에서", icon: `<img src="${bvSrc("exam/u2/ladybug-variation.webp")}" alt="" draggable="false" />`, key: "bug" });
+  cards.bug = bvCard("emp-card col bug", { name: "무당벌레 보기", sub: "숲속에서", icon: `<img src="${bvSrc("exam/u2/ladybug-variation.webp")}" alt="" draggable="false" />`, key: "bug" });
   const doneBtn = bvBtn("main emp-check", "알게 된 것 확인하기");
   doneBtn.hidden = true;
 
@@ -126,6 +126,8 @@ export const ecoMapLab: StepRenderer = (host, step, api) => {
     kindFill.style.width = `${(n / 3) * 100}%`;
     kindVal.textContent = `${n * 4}가지`;
     gauges.classList.toggle("seen", tried.bug);
+    // 환경을 한 번이라도 바꾼 뒤에는 '그대로'가 생물의 수 아래에 남는다(판정의 근거)
+    count.classList.toggle("kept", tried.wet || tried.flat);
     varVal.textContent = tried.bug ? "다양해요" : "?";
     f.stage.classList.toggle("bug", on.bug);
     cards.wet.on(on.wet);
@@ -133,7 +135,7 @@ export const ecoMapLab: StepRenderer = (host, step, api) => {
     cards.bug.on(on.bug);
     cards.wet.sub(on.wet ? "누르면 다시 숲" : "가운데 칸");
     cards.flat.sub(on.flat ? "누르면 다시 숲" : "오른쪽 칸");
-    cards.bug.sub(on.bug ? "누르면 닫기" : "숲 속에서");
+    cards.bug.sub(on.bug ? "누르면 닫기" : "숲속에서");
     host.dataset.empEnv = String(n);
     host.dataset.empKinds = String(n * 4);
     host.dataset.empTried = KEYS.filter((k) => tried[k]).join(",");

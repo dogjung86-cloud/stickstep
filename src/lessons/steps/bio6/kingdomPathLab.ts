@@ -1,5 +1,6 @@
 // [중1 Ⅱ v5] u2l9 kingdomPathLab: 「이 생물은 어느 계일까?」
-// 한 통찰: 생물은 핵막, 광합성, 세포벽과 운동성을 차례로 따져 다섯 계로 나눈다(버섯은 광합성을 하지 못해 식물계가 아니다).
+// 한 통찰: 생물은 핵막, 광합성, 세포벽과 움직임을 차례로 따져 다섯 계로 나눈다(버섯은 광합성을 하지 못해 식물계가 아니다).
+//   화면 글은 '운동성'이 아니라 '움직임'으로 쓴다(이 레슨의 개념 글이 쓰는 말).
 // 무대: 검색표. 물음 넷이 한 줄로 놓이고, 물음마다 아래로 갈리는 길 끝에 계가 있다(마지막 물음의 '아니요'는 균계).
 //   ① 유전물질이 핵막으로 싸여 있는가: 아니요 → 원핵생물계      ② 균계, 식물계, 동물계가 아닌 무리인가: 예 → 원생생물계
 //   ③ 광합성을 하는가: 예 → 식물계      ④ 세포벽이 없고 운동성이 있는가: 예 → 동물계, 아니요 → 균계
@@ -178,8 +179,8 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
   };
   const place = (x: number, y: number, jump = false): void => {
     token.classList.toggle("jump", jump);
-    token.style.left = `${x - 17}px`;
-    token.style.top = `${y - 17}px`;
+    token.style.left = `${x - 15}px`;
+    token.style.top = `${y - 15}px`;
     if (jump) void token.offsetWidth;
   };
 
@@ -350,7 +351,8 @@ export const kingdomPathLab: StepRenderer = (host, step, api) => {
     mark();
     f.pips(ORGS.length + 1);
     f.say("다섯 생물이 모두 제 계를 찾았어요. 아래에서 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("생물은 <b>핵막, 광합성, 세포벽과 운동성</b>을 차례로 따져 다섯 계로 나눠요. 버섯은 균계예요.");
+    // 원생생물계는 광합성, 세포벽, 움직임으로 가를 수 없는 무리라 결론에 따로 적는다(해캄은 광합성을 하고 짚신벌레는 세포벽 없이 움직인다)
+    f.slot.conclude("핵막이 없으면 원핵생물계, 있으면 <b>광합성, 세포벽과 움직임</b>으로 식물계, 동물계, 균계를 갈라요. 어디에도 들지 않으면 원생생물계예요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));
   }

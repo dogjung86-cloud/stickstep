@@ -88,8 +88,8 @@ function panel(isle: "A" | "B"): string {
       <path d="M14 112q70 -44 140 0q-70 -20 -140 0Z" fill="#9CCB6B" opacity=".85"/>
     </g>
     <rect x="0" y="6" width="${PANEL_W}" height="170" rx="14" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.5"/>
-    <text x="10" y="27" font-size="13.5" font-weight="800" fill="#fff">${name}</text>
-    <text x="10" y="46" font-size="12.5" font-weight="700" fill="#FFE8A3">먹이: ${food}</text>
+    <text x="10" y="27" font-size="13.5" font-weight="800" fill="#0B2545">${name}</text>
+    <text x="10" y="46" font-size="12.5"><tspan font-weight="700" fill="#234A75">먹이: </tspan><tspan font-weight="800" fill="#0B2545">${food}</tspan></text>
     ${isle === "A" ? SEEDS : TREE}
     ${slots}
     ${segs}
@@ -188,9 +188,10 @@ export const beakIslesLab: StepRenderer = (host, step, api) => {
     f.say("이번에는 새 한 마리 한 마리를 떠올려 봐요. 부리가 달라진 새가 있었나요?");
     f.slot.ask(
       "그동안 새 한 마리 한 마리의 부리 모양은?",
-      [{ t: "태어날 때 모양 그대로였다", ok: true }, { t: "먹이에 맞게 조금씩 변했다" }, { t: "나이가 들수록 두꺼워졌다" }],
+      // 새는 자라면서 부리도 커지므로 '태어날 때', '나이가 들수록' 같은 말은 쓰지 않는다(타고난 모양이 먹이에 맞춰 바뀌지 않는다는 것만 묻는다)
+      [{ t: "타고난 모양 그대로였다", ok: true }, { t: "먹이에 맞게 조금씩 변했다" }, { t: "많이 쓸수록 모양이 달라졌다" }],
       () => undefined,
-      { why: "새의 부리는 변하지 않았어요. 달라진 것은 <b>무리를 이루는 새</b>예요.", onNext: finish },
+      { why: "새 한 마리의 부리는 타고난 모양 그대로였어요. 달라진 것은 <b>무리를 이루는 새</b>예요.", onNext: finish },
     );
   }
   function finish(): void {

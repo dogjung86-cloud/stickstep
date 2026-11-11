@@ -219,7 +219,7 @@ for (const wrong of ONLY ? [] : [false, true]) {
     await cta(page);
     await grab(page, "u2l1 정리");
     await cta(page);
-    const sortGood = [["양파 껍질", "cell"], ["쇠못", "none"], ["버섯", "cell"], ["유리구슬", "none"], ["나뭇잎", "cell"], ["모래알", "none"], ["달팽이", "cell"], ["물방울", "none"]];
+    const sortGood = [["양파 껍질", "cell"], ["쇠못", "none"], ["버섯", "cell"], ["유리구슬", "none"], ["나뭇잎", "cell"], ["모래알", "none"], ["달팽이", "cell"], ["동전", "none"]];
     const sortBad = sortGood.map(([k, b], i) => (i === 2 ? [k, "none"] : [k, b]));
     ok(want(await binSort(page, wrong ? sortBad : sortGood, "u2l1 분류")), `u2l1 분류 ${tag}`);
     ok(await figureOk(page), "u2l1 눈금 그림");
@@ -329,7 +329,7 @@ for (const wrong of ONLY ? [] : [false, true]) {
     const sortBad = sortGood.map(([k, b], i) => (i === 0 ? [k, "rbc"] : [k, b]));
     ok(want(await binSort(page, wrong ? sortBad : sortGood, "u2l4 분류")), `u2l4 특징 카드 분류 ${tag}`);
     ok(await figureOk(page), "u2l4 세 세포 그림");
-    ok(want(await quiz(page, "mcq", wrong ? 1 : 0, "u2l4 세 세포 짝")), `u2l4 세 세포 짝 ${tag}`);
+    ok(want(await quiz(page, "mcq", wrong ? 0 : 1, "u2l4 세 세포 짝")), `u2l4 세 세포 짝 ${tag}`); // 보기 차례가 고정이라 정답은 둘째 칸
     ok(want(await quiz(page, "mcq", wrong ? 1 : 0, "u2l4 길게 뻗은 세포의 일")), `u2l4 길게 뻗은 세포의 일 ${tag}`);
     ok(want(await quiz(page, wrong ? "ox-o" : "ox-x", null, "u2l4 적혈구 모양 ox")), `u2l4 적혈구 모양 ox ${tag}`);
     ok(want(await quiz(page, "mcq", wrong ? 2 : 0, "u2l4 납작해서 좋은 점")), `u2l4 납작해서 좋은 점 ${tag}`);
@@ -385,7 +385,7 @@ for (const wrong of ONLY ? [] : [false, true]) {
     await cta(page);
     await grab(page, "u2l6 정리");
     await cta(page);
-    const sortGood = [["사막이 함께", "eco"], ["오리와 개구리", "kind"], ["무당벌레마다", "vary"], ["다람쥐와 사슴", "kind"], ["바지락마다", "vary"], ["강과 바다", "eco"]];
+    const sortGood = [["갯벌, 사막", "eco"], ["오리와 개구리", "kind"], ["무당벌레마다", "vary"], ["다람쥐와 사슴", "kind"], ["바지락마다", "vary"], ["강과 바다", "eco"]];
     const sortBad = sortGood.map(([k, b], i) => (i === 1 ? [k, "eco"] : [k, b]));
     ok(want(await binSort(page, wrong ? sortBad : sortGood, "u2l6 분류")), `u2l6 어떤 다양함일까 ${tag}`);
     ok(await figureOk(page), "u2l6 습지 두 모습 그림");

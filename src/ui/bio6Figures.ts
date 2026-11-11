@@ -1,8 +1,34 @@
 // bio6Figures: 중1 Ⅱ v5 문제 그림(2026-11-11). 개념과 정리의 그림은 v3(bio4Figures)를 그대로 쓴다.
 // 그림 안 글자는 12px 이상, 정답을 드러내는 이름표는 넣지 않는다.
 
+import { cellPartsQuizFig } from "./bio4Figures";
 import { ONION_TILE_MM, bvSrc } from "./bio6Kit";
 import { webGroup } from "./bio6Web";
+
+/** 식물세포 도해에 (가)~(마)를 붙인 문제 그림. v3의 그림(cellPartsQuizFig)을 쓰되 (라) 세포막의 지시선만 주황 선(세포막)까지 잇는다.
+ *  v3 그림은 (라)의 선이 갈색 세포벽의 바깥 가장자리에서 끝나, (나) 세포벽과 같은 곳을 가리키는 것처럼 보인다(v3 그림은 정본이라 건드리지 않는다).
+ *  새 끝점은 꼬리표에서 오던 방향 그대로 늘여 세포막 선과 만나는 자리다. v3 그림이 바뀌어 바꿀 곳을 못 찾으면 조용히 넘어가지 않고 멈춘다. */
+export function cellPartsFigV5(): string {
+  const from = `x1="53" y1="182"`;
+  const fig = cellPartsQuizFig();
+  if (!fig.includes(from)) throw new Error("bio6Figures: v3 식물세포 도해에서 (라)의 지시선을 찾지 못했다(v3 그림이 바뀌었다)");
+  // 지시선이 닿는 자리에 점을 찍는다. 세포벽(갈색 띠)과 세포막(주황 선)은 붙어 있어서 선 끝만으로는 어느 쪽인지 헷갈린다.
+  const dots = [[105, 92], [268, 92], [150, 148], [60, 169], [243, 158]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.6" fill="#4E5968" stroke="#fff" stroke-width="1"/>`).join("");
+  const end = fig.lastIndexOf("</svg>");
+  if (end < 0) throw new Error("bio6Figures: v3 식물세포 도해가 svg가 아니다");
+  const out = fig.replace(from, `x1="60" y1="169"`);
+  return out.slice(0, out.lastIndexOf("</svg>")) + dots + "</svg>";
+}
+
+/** 세 세포 그림(u2l4 문제): 신경세포, 적혈구, 상피세포를 나란히 놓고 (가)~(다)를 붙인다.
+ *  v3의 세 폭 그림은 상피세포가 연두색이라 식물의 세포처럼 보여서, 랩(cellFitLab)에서 본 분홍 상피세포와 같은 그림으로 맞춘다.
+ *  이름표에 세포 이름을 쓰지 않는다(정답이 드러난다). 바탕은 구작 두 장의 종이색(#FCF6ED)에 맞춘다.
+ *  img로 넣는다(실플레이 검사가 문제 그림의 img가 떴는지 본다). lazy 로딩은 쓰지 않는다. */
+export function cellTrioFig(): string {
+  const cell = (path: string, lab: string): string =>
+    `<figure style="margin:0"><img src="${bvSrc(path)}" alt="세포 그림 ${lab}" draggable="false" style="display:block;width:100%;aspect-ratio:1;object-fit:contain;border-radius:12px;background:#FCF6ED"/><figcaption style="text-align:center;font-size:12px;font-weight:700;color:#4E5968;margin-top:5px">${lab}</figcaption></figure>`;
+  return `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${cell("bio3/figs/cell-nerve.webp", "(가)")}${cell("bio3/figs/cell-rbc.webp", "(나)")}${cell("bio6/levels/epi-tissue.webp", "(다)")}</div>`;
+}
 
 /** 양파 껍질 현미경 사진 + 0.1 mm 눈금자(문제용). 세포 한 칸의 양 끝에서 점선을 내려 눈금자로 읽게 한다.
  *  축척은 랩(magnifyLab)과 같은 자다(거울 타일 한 장 = ONION_TILE_MM). 여기서는 1 mm = 460px(눈금 한 칸 0.1 mm = 46px).
