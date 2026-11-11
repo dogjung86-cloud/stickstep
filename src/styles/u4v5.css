@@ -110,20 +110,35 @@
 .u4x-balloon.warm .u4x-balloon-wind.warm, .u4x-balloon.cool .u4x-balloon-wind.cool { opacity: 1; animation: u4xWind .5s linear infinite; }
 @keyframes u4xWind { 0% { translate: -6px 0; } 100% { translate: 8px 0; } }
 
-/* ── 가열, 냉각 곡선 랩: 왼쪽 물질, 오른쪽 그래프 ─── */
+/* ── 온도 측정 랩(녹이기, 끓이기, 얼리기): 왼쪽 물질, 오른쪽 그래프 ─── */
 .u4x-heat-sim { position: absolute; left: 0; top: 0; bottom: 0; width: 42%; border-right: 1px solid rgba(255, 255, 255, .08); }
 .u4x-heat-graph { position: absolute; right: 0; top: 0; width: 58%; height: 100%; display: block; }
-.u4x-heat .stage-hud { left: 8px; right: 8px; top: 9px; }
-.u4x-heat .pill { padding: 6px 10px; font-size: 12.5px; }
-.u4x-heat .toast { top: auto; bottom: 44px; font-size: 12px; padding: 7px 10px; }
+.u4x-curve .stage-hud { left: 8px; right: 8px; top: 9px; }
+.u4x-curve .pill { padding: 6px 10px; font-size: 12.5px; }
+.u4x-curve .toast { top: 76px; font-size: 12px; padding: 7px 10px; }
 .u4x-heat-temp { position: absolute; right: 12px; top: 8px; font-size: 24px; font-weight: 800; color: #F4F8FD; font-variant-numeric: tabular-nums; letter-spacing: -.03em; pointer-events: none; }
 .u4x-heat-tag {
-  position: absolute; left: 8px; bottom: 9px; height: 26px; padding: 0 10px; border-radius: 999px; display: grid; place-items: center;
+  position: absolute; left: 8px; top: 44px; height: 26px; padding: 0 10px; border-radius: 999px; display: grid; place-items: center;
   font-size: 12px; font-weight: 800; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .2s;
+  background: rgba(240, 112, 94, .28); border: 1px solid rgba(255, 170, 150, .6); color: #FFE0D8;
 }
-.u4x-heat.is-heat .u4x-heat-tag { background: rgba(240, 112, 94, .28); border: 1px solid rgba(255, 170, 150, .6); color: #FFE0D8; }
-.u4x-heat.is-cool .u4x-heat-tag { background: rgba(116, 192, 252, .25); border: 1px solid rgba(160, 210, 255, .6); color: #DDF0FF; }
-.u4x-heat.act .u4x-heat-tag { opacity: 1; }
+.u4x-curve.is-freeze .u4x-heat-tag { background: rgba(116, 192, 252, .25); border-color: rgba(160, 210, 255, .6); color: #DDF0FF; }
+.u4x-curve.act .u4x-heat-tag { opacity: 1; }
+.u4x-curve-pick { height: 64px; }
+
+/* ── 주변 온도 랩 ─────────────────────────────────── */
+.u4x-around-p { transition: transform .9s var(--ease-out); }
+.u4x-around-col { transform-box: fill-box; transform-origin: 50% 100%; transition: transform 1s var(--ease-out), fill .6s; }
+.u4x-around-bulb { transition: fill .6s; }
+.u4x-around-flow { opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; }
+.u4x-around.in .u4x-around-flow { opacity: 1; transform: scaleX(-1); }
+.u4x-around.out .u4x-around-flow { opacity: 1; }
+.u4x-around.in .u4x-around-flow path, .u4x-around.out .u4x-around-flow path { animation: u4xFlow .8s ease-in-out infinite; }
+@keyframes u4xFlow { 0% { opacity: .2; translate: -8px 0; } 60% { opacity: 1; } 100% { opacity: .2; translate: 10px 0; } }
+.u4x-around-ex { position: absolute; left: 14px; bottom: 9px; max-width: 236px; font-size: 12.5px; line-height: 17px; font-weight: 700; color: #B9C8DE; white-space: nowrap; pointer-events: none; }
+.u4x-around-card.col { height: 60px; }
+.u4x-around-card.cool { border-color: #74C0FC; background: #EEF7FF; }
+.u4x-around-card.warm { border-color: #F7A08F; background: #FFF3F0; }
 
 /* ══════════ 도입 장면(.opn-u4-) ══════════ */
 .opn-step[data-opn-scene^="u4-"] .hook-choices .hook-q b { color: var(--subj-matter-press); }

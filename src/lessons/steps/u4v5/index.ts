@@ -11,7 +11,8 @@ import { u4WatchLab } from "./watchLab";
 import { u4DryIceLab } from "./dryIceLab";
 import { u4OliveLab } from "./oliveLab";
 import { u4BalloonLab } from "./balloonLab";
-import { u4HeatLab } from "./heatLab";
+import { u4CurveLab } from "./curveLab";
+import { u4AroundLab } from "./aroundLab";
 
 export const U4V5_STEPS: Record<string, StepRenderer> = {
   u4InkLab,
@@ -23,5 +24,6 @@ export const U4V5_STEPS: Record<string, StepRenderer> = {
   u4DryIceLab,
   u4OliveLab,
   u4BalloonLab,
-  u4HeatLab,
+  u4CurveLab,
+  u4AroundLab,
 };

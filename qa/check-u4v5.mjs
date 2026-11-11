@@ -66,11 +66,11 @@ async function endLab(id, mark, wantCta) {
   await at(id, mark + "-done");
   const c = await L.ctaState(page);
   ok(c.enabled && (!wantCta || c.text === wantCta), `${id} ${mark}: 끝 버튼 "${c.text}" enabled=${c.enabled}`);
-  const before = await L.stepKind(page);
+  const before = (await L.stepKind(page)) + " " + (await L.readStep(page)).title;
   await L.cta(page);
   await W(500);
-  const after = await L.stepKind(page);
-  ok(after !== before && after !== "", `${id} ${mark}: 다음 스텝이 열리지 않음(${before} → ${after})`);
+  const after = (await L.stepKind(page)) + " " + (await L.readStep(page)).title;
+  ok(after !== before && after.trim() !== "", `${id} ${mark}: 다음 스텝이 열리지 않음(${before} → ${after})`);
 }
 async function endOpener(id, wantCta) {
   ok(await L.waitPhase(page, "done"), `${id} 도입: 끝에 닿지 못함(${await L.ds(page, "opnPhase")})`);
@@ -372,27 +372,82 @@ const PLAYS = {
     await W(400);
     await L.click(page, ".opn-u4-btn");
     await endOpener(id, "실험실 열기");
-    await heatPlay(id, "heat");
+    // 녹이기
+    await predict(id, "melt", "계속 올라간다");
+    await L.hold(page, ".u4x-hold", 900);
+    await at(id, "melt-go");
+    await runTo(id, "melt", 5);
+    await at(id, "melt-flat");
+    await runTo(id, "melt", 10);
+    await wrongOnce(id, "melt");
+    await endLab(id, "melt", "다음 실험, 물 끓이기");
+    // 끓이기: 센 불 먼저, 그다음 약한 불
+    await W(600);
+    await at(id, "boil-start");
+    await L.click(page, '.u4x-curve-pick[data-k="strong"]');
+    await W(300);
+    await runTo(id, "boil", 10);
+    ok(await L.waitVisible(page, ".u4x-curve-redo"), `${id} boil: 불을 바꿔 다시 하기가 뜨지 않음`);
+    await at(id, "boil-first");
+    await L.click(page, ".u4x-curve-redo");
+    await W(300);
+    await runTo(id, "boil", 6);
+    await at(id, "boil-second");
+    await runTo(id, "boil", 10);
+    await wrongOnce(id, "boil");
+    await endLab(id, "boil", "이름 붙이기");
+    await tail(id);
   },
   u4l6: async (id) => {
     ok((await L.stepKind(page)) === "comic", `${id}: 만화로 시작하지 않음(${await L.stepKind(page)})`);
     for (let i = 0; i < 12 && (await L.stepKind(page)) === "comic"; i++) await L.cta(page);
-    ok((await L.stepKind(page)) === "u4lab:u4x-heat", `${id}: 만화 다음이 냉각 곡선 랩이 아님(${await L.stepKind(page)})`);
-    await heatPlay(id, "cool");
+    ok((await L.stepKind(page)) === "u4lab:u4x-curve", `${id}: 만화 다음이 얼리기 랩이 아님(${await L.stepKind(page)})`);
+    // 얼리기: 먼저 일부러 얼음만 채운다
+    await predict(id, "freeze", "계속 내려간다");
+    ok(await L.waitVisible(page, '.u4x-curve-pick[data-k="ice"]'), `${id} freeze: 비커 고르기가 뜨지 않음`);
+    await at(id, "freeze-pick");
+    await L.click(page, '.u4x-curve-pick[data-k="ice"]');
+    await W(300);
+    await runTo(id, "freeze", 8);
+    ok(await L.waitVisible(page, ".u4x-curve-redo"), `${id} freeze: 얼음만인데 다시 하기가 뜨지 않음`);
+    await at(id, "freeze-fail");
+    await L.click(page, ".u4x-curve-redo");
+    await W(300);
+    await runTo(id, "freeze", 5);
+    await at(id, "freeze-flat");
+    await runTo(id, "freeze", 10);
+    await wrongOnce(id, "freeze");
+    await endLab(id, "freeze", "다음, 주변의 온도");
+    // 주변 온도 랩: 먼저 일부러 방출하는 변화(응고)를 고른다
+    await W(500);
+    await at(id, "around-start");
+    const press = async (k) => {
+      await L.click(page, `.u4x-around-card[data-k="${k}"]`);
+      await W(1900);
+    };
+    await press("frz");
+    await at(id, "around-slip");
+    await press("melt");
+    await at(id, "around-cool");
+    await press("vap");
+    await press("subl");
+    await W(1500);
+    await at(id, "around-found");
+    await press("cond");
+    await press("depo");
+    await endLab(id, "around", "이름 붙이기");
+    await tail(id);
   },
 };
-async function heatPlay(id, mark) {
-  await predict(id, mark, "쉬지 않고");
-  await L.hold(page, ".u4x-hold", 400);
-  await W(200);
-  await at(id, mark + "-go");
-  for (let i = 0; i < 20 && !(await L.waitAsk(page, 1)); i++) await L.hold(page, ".u4x-hold", 500);
-  await wrongOnce(id, mark);
-  ok(await L.waitVisible(page, ".u4x-hold"), `${id} ${mark}: 판정 뒤 버튼이 돌아오지 않음`);
-  await L.hold(page, ".u4x-hold", 3500);
-  await at(id, mark + "-second");
-  for (let i = 0; i < 12 && !(await L.waitDone(page, 1)); i++) await L.hold(page, ".u4x-hold", 900);
-  await endLab(id, mark, "개념 정리하기");
+/** 꾹 눌러 지금 실험의 시간을 to분까지 보낸다. */
+async function runTo(id, mark, to) {
+  for (let i = 0; i < 40; i++) {
+    const m = Number(await L.ds(page, "u4M"));
+    if (!(await L.visible(page, ".u4x-hold"))) return; // 실험이 끝나 버튼이 걷혔다
+    if (to < 8 && m >= to - 0.05) return; // 중간 시점(끝까지 가는 호출은 버튼이 걷힐 때까지 누른다)
+    await L.hold(page, ".u4x-hold", Math.min(1500, Math.max(250, (to - m) * 560 + (to >= 8 ? 200 : 0))));
+  }
+  ok(false, `${id} ${mark}: ${to}분까지 가지 못함`);
 }
 
 for (const [id, play] of Object.entries(PLAYS)) {
