@@ -11,6 +11,7 @@ import "./styles/opener-u2rest.css"; // 중1 Ⅱ 도입의 나머지 다섯 장�
 import "./styles/opener-u1.css"; // 중1 Ⅰ 도입 세 장면(같은 opener 틀)
 // 중1 과학 v5(랩과 도입 재제작, 2026-11-12) 단원별 시트. 단원을 맡은 세션은 자기 시트만 채운다(접두 .uNx-, 도입은 .opn-uN-)
 import "./styles/u1v5.css";
+import "./styles/u2v6.css"; // Ⅱ단원 개념 글을 다시 쓴 판(v6, 접두 .u2x-)
 import "./styles/u3v5.css";
 import "./styles/u4v5.css";
 import "./styles/u5v5.css";
