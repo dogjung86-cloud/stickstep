@@ -15,7 +15,7 @@ import { serpentine, smoothPath } from "../ui/serpentine";
 import { mapDecorArt } from "../ui/mapDecor";
 import { soleDefs, soleSvg, stampTrail, stampOne, walkerSvg, themeInk, type SoleState } from "../ui/soleMap";
 import type { Screen } from "../core/router";
-import { gnav, type GnavKey } from "../ui/gnav";
+import { gnav, refreshGnav, type GnavKey } from "../ui/gnav";
 
 // 단원별 지도/배너 테마 클래스 — 새 단원을 추가하면 여기와 ui.css에 테마를 등록한다.
 const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter", u5: "force", u6: "gas", u7: "space", g2u1: "chem", g2u2: "geo", g2u3: "light", g2u4: "atom", g2u5: "plant", g2u6: "body", g2u7: "elec", g2u8: "star", m1u1: "num", m1u2: "alge", m1u3: "grph", m1u4: "geom", m1u5: "solid", m1u6: "data", m2u1: "calc", m2u2: "ineq", m2u3: "func", m2u4: "prove", m2u5: "sim", m2u6: "dice", s1u1: "world", s1u2: "asia", s1u3: "euro", s1u4: "afri", s1u5: "amer", s1u6: "ocea", s1u7: "civic", s1u8: "fest", s1u9: "vote", s1u10: "voice", s1u11: "law", s1u12: "dign", h1u1: "his", h1u2: "civ", h1u3: "faith", h1u4: "silk" };
@@ -92,6 +92,7 @@ export function homeScreen(
       brandEl.classList.toggle("review", on);
       snack(on ? "검토 모드 ON, 모든 레슨이 열렸어요" : "검토 모드 OFF, 잠금이 되돌아왔어요");
       rebuild();
+      refreshGnav(); // 검토 모드는 전 과목을 여니 과목 탭도 함께 열리고 닫힌다
     }
   });
   const splashBtn = el("button", { class: "abtn home-entry", attrs: { "aria-label": "처음 화면으로" }, html: icon("home", 18) });

@@ -26,7 +26,7 @@ import "./styles/desktop.css"; // 데스크톱 셸(옵트인·≥1024px) — htm
 import { nav } from "./core/router";
 import { parseRoute, writeHash } from "./core/route";
 import type { AppRoute } from "./core/route";
-import { getState, completeLesson, setOnboarding, setViewSubject, setViewGrade, getViewSubject, isPremium, isReviewMode, setPremiumOverride, setAdminOverride, canSeeAllSubjects, isDone, setLastUnit, recentUnit } from "./core/store";
+import { getState, completeLesson, setOnboarding, setViewSubject, setViewGrade, getViewSubject, isPremium, isReviewMode, setPremiumOverride, setAdminOverride, canSeeAllSubjects, hasSubjectChoice, isDone, setLastUnit, recentUnit } from "./core/store";
 import type { WrongNote } from "./core/store";
 import { isTutorConfigured } from "./core/tutor";
 import { tutorScreen } from "./screens/tutor";
@@ -96,6 +96,9 @@ function resumeLearning(): void {
 
 /** 하단 탭 전환(2026-07-12 IA 개편) — 탭은 스택을 쌓지 않고 reset으로 갈아끼운다. */
 function goTab(k: GnavKey): void {
+  // 과목 탭은 지금 검토 모드와 dev에서만 선다(store.hasSubjectChoice). 닫혀 있는데 들어오는 길
+  // (예전 주소 #/subjects)은 학습 탭으로 돌린다.
+  if (k === "subjects" && !hasSubjectChoice()) k = "home";
   currentTab = k;
   if (k === "home") {
     goHome();
@@ -204,6 +207,11 @@ window.addEventListener("popstate", (e) => {
     histIdx = s;
     historyArmed = false;
     appBack(); // 이동이 일어나면 nav 변경 훅이 필요 시 다시 무장한다
+    // 되돌아온 엔트리에는 예전에 써 둔 해시가 그대로 있다. 지금 화면에 맞춰 다시 쓴다(2026-11-11).
+    // 가드 반납(루트 복귀 때의 history.back)은 화면 이동이 없어 nav 변경 훅이 돌지 않는다. 그 사이
+    // 학습 탭의 과목이 바뀌었으면 주소만 이전 과목으로 남아, 같은 주소를 다시 쳐도 아무 일이 없고
+    // 새로고침하면 이전 과목으로 돌아갔다. writeHash는 같은 주소면 아무것도 하지 않는다.
+    syncHash();
     return;
   }
   // 인덱스 없음(새 해시 엔트리)·증가(브라우저 앞으로가기) = 주소 이동 — 라우트로 처리.
@@ -624,8 +632,17 @@ if (import.meta.env.DEV) {
 // 운영 계정 프리미엄 겹층 — 지정 이메일 로그인 시 결제 없이 전 기능(로그아웃하면 자동 해제).
 // 과목 공개 게이트도 같은 지점에서 주입 — 운영 계정만 수학·사회·역사가 보인다(store.canSeeAllSubjects).
 onAuthChange((u) => {
+  const shown = getViewSubject(); // 지금 학습 탭이 보여 주는 과목(게이트가 닫혀 있으면 과학으로 걸러진 값)
   setPremiumOverride(isPrivilegedUser(u));
   setAdminOverride(isPrivilegedUser(u));
+  // 운영 계정 여부가 바뀌면 과목 공개 게이트가 열리고 닫혀, 학습 탭이 보여 줄 과목이 달라질 수 있다.
+  // 대표 사례: 운영 계정이 #/subject/math 주소로 새로 열면 로그인 복원보다 화면이 먼저 그려져 과학
+  // 지도가 뜬다. 학습 탭이 맨 위에 떠 있을 때만 그 자리에서 다시 그린다(2026-11-11). 과목이 그대로면
+  // 아무것도 하지 않으므로, 토큰 갱신처럼 같은 사용자로 다시 오는 인증 알림에는 반응하지 않는다.
+  if (getViewSubject() !== shown && nav.depth === 1 && currentTab === "home" && nav.top?.el.id === "sc-home") {
+    lastUnitId = undefined; // pickSubject와 같은 이유: 직전 과목의 단원 포커스를 버린다
+    goHome();
+  }
   // 저장된 세션은 initAuth 복원 전에도 로그인 사용자 버튼을 먼저 보여 줘 깜빡임을 막는다.
   updateSplashAuth?.(!!u || hasStoredSession());
 });
