@@ -1,3 +1,103 @@
-/* 중1 Ⅰ 과학과 인류의 지속가능한 삶 v5(랩과 도입 재제작)의 시트. main.ts가 이미 싣는다.
-   이 단원의 클래스는 .u1x- 로 시작한다.
-   공용 뼈대(.bv-, .opn-)의 치수를 조정할 때는 이 단원의 클래스 아래에서만 한다(예: .u1x-step .bv-stage). 전역 규칙은 덮어쓰지 않는다. */
+/* 중1 Ⅰ 과학과 인류의 지속가능한 삶 v5(랩 재제작)의 시트. main.ts가 이미 싣는다.
+   이 단원의 클래스는 .u1x- 로 시작한다(랩별 무대 안 요소는 .u1f- 공정한 실험, .u1g- 그래프, .u1t- 기술, .u1c- 온실 기체).
+   공용 뼈대(.bv-)는 고치지 않고, 이 단원의 랩(.u1x-step) 아래에서만 강조색을 단원색(파랑)으로 덮는다. 치수는 뼈대 그대로다. */
+
+/* ── 뼈대 강조색: 초록(Ⅱ단원) → 파랑(Ⅰ단원) ── */
+.u1x-step .bv-pips i.on { background: var(--blue); }
+.u1x-step .bv-helper { border-left-color: var(--blue); }
+.u1x-step .bv-btn.main { border-color: var(--blue); background: var(--blue-tint); color: var(--blue-press); }
+.u1x-step .bv-card.on { border-color: var(--blue); background: var(--blue-tint); box-shadow: 0 0 0 1px var(--blue) inset; }
+.u1x-step .bv-card.done::after { background-color: var(--blue); }
+.u1x-step .bv-qt b { color: var(--blue-press); }
+.u1x-step .bv-done.show { background: var(--blue-tint); border-color: #C5DBFF; }
+.u1x-step .bv-done-k, .u1x-step .bv-done-t b { color: var(--blue-press); }
+.u1x-step .bv-done-t { font-size: 15px; }
+.u1x-step .bv-stage { touch-action: none; }
+
+/* ── 무대 안 글자(SVG) ── */
+.u1x-lb { font-size: 13px; font-weight: 700; fill: #C9D5E8; }
+.u1x-lb.sm { font-size: 12px; fill: #9FB0C8; }
+.u1x-lb.dim { fill: #8494AD; }
+.u1x-lb.hi { fill: #FFD766; }
+.u1x-lb.big { font-size: 19px; font-weight: 800; fill: #fff; }
+.u1x-lb.q { font-size: 30px; font-weight: 800; fill: #55678A; }
+
+/* 무대 위 결과 표시(가운데 위) */
+.u1x-verdict {
+  position: absolute; left: 50%; top: 9px; transform: translateX(-50%); display: none; height: 28px; padding: 0 12px;
+  border-radius: 999px; align-items: center; font-size: 13px; font-weight: 800; white-space: nowrap;
+}
+.u1x-verdict.show { display: inline-flex; }
+.u1x-verdict.ok { background: #0E3B2A; color: #7CF0BF; border: 1px solid #1E7A55; }
+.u1x-verdict.no { background: #43201F; color: #FFB3B0; border: 1px solid #8A3A38; }
+
+/* ── 공정한 실험 랩 ── */
+.u1f-time { right: 10px; top: 10px; }
+.u1f-time::before { background: #FFD766; }
+.u1f-temp { font-size: 15px; font-weight: 800; fill: #fff; stroke: #0B1524; stroke-width: 4px; paint-order: stroke; }
+.u1f-temp.top { fill: #FFD766; }
+.u1f-ml { font-size: 12px; font-weight: 700; fill: #9FB0C8; }
+.u1f-ml.odd { fill: #FFB27A; }
+.u1f-cup.dim .u1f-paper, .u1f-cup.dim .u1f-water { filter: brightness(.72); }
+.u1x-conds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.u1x-cond {
+  height: 84px; padding: 0 4px; border-radius: 16px; border: 1.5px solid var(--n300); background: #fff; box-shadow: var(--sh-card);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-width: 0;
+  transition: transform .12s, border-color .2s, background .2s;
+}
+.u1x-cond:active { transform: scale(.97); }
+.u1x-cond b { font-size: 13.5px; font-weight: 800; color: var(--ink); white-space: nowrap; }
+.u1x-cond i { font-style: normal; font-size: 11.5px; font-weight: 600; color: var(--ter); white-space: nowrap; }
+.u1x-tag { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; line-height: 1; background: var(--n100); color: var(--n700); }
+.u1x-tag.diff { background: var(--blue); color: #fff; }
+
+/* ── 그래프 랩 ── */
+.u1g-stage { cursor: ns-resize; }
+.u1g-ax { font-size: 12px; font-weight: 700; fill: #9FB0C8; }
+.u1g-ax.lg { fill: #C9D5E8; }
+.u1g-gt { font-size: 13px; font-weight: 800; fill: #3A2A00; }
+.u1g-ghost.bad .u1g-gc, .u1g-ghost.bad .u1g-gb { fill: #FF6B6B; }
+.u1g-ghost.bad .u1g-gl { stroke: #FF6B6B; }
+.u1g-ghost.bad .u1g-ax.lg { fill: #C9D5E8; }
+.u1g-gt { fill: #fff; }
+.u1g-pop { animation: u1gPop .32s var(--ease-out); }
+@keyframes u1gPop { 0% { opacity: 0; } 100% { opacity: 1; } }
+.u1x-cap { height: 20px; padding: 0 2px; font-size: 12.5px; font-weight: 700; line-height: 20px; color: var(--n700); white-space: nowrap; }
+.u1x-cap.center { text-align: center; color: var(--ter); }
+.u1x-table {
+  display: grid; grid-template-columns: 1.15fr 1fr 1fr 1fr; border: 1.5px solid var(--n300); border-radius: 14px; overflow: hidden; background: #fff;
+}
+.u1x-th, .u1x-td { height: 40px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13.5px; font-weight: 700; color: var(--ink); border-top: 1px solid var(--n200); }
+.u1x-th { height: 34px; border-top: 0; background: var(--n100); font-size: 12.5px; color: var(--n700); }
+.u1x-td { color: var(--n500); }
+.u1x-td.name { justify-content: flex-start; padding-left: 12px; color: var(--ink); }
+.u1x-td.done { color: var(--ink); }
+.u1x-td.now { background: var(--blue); color: #fff; font-weight: 800; }
+.u1x-sw { flex: none; width: 13px; height: 13px; border-radius: 50%; border: 2px solid; box-shadow: 0 0 0 1px var(--n400); }
+
+/* ── 기술 랩 ── */
+.u1t-scene .on { display: none; }
+.u1t-scene.is-on .on { display: inline; }
+.u1t-scene.is-on .off { display: none; }
+.u1t-name { left: 10px; bottom: 9px; }
+.u1t-name::before { background: #55678A; }
+.u1t-name.lit { background: rgba(255, 215, 102, .16); border-color: rgba(255, 215, 102, .5); color: #FFE9A8; }
+.u1t-name.lit::before { background: #FFD766; }
+.u1t-wave { animation: u1tWave 1.2s ease-in-out infinite; }
+.u1t-wave.w2 { animation-delay: .2s; }
+.u1t-wave.w3 { animation-delay: .4s; }
+@keyframes u1tWave { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+.u1x-step .bv-card.u1t-card { height: 54px; padding: 0 12px; }
+.u1x-seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* ── 온실 기체 랩 ── */
+.u1c-gaslb { font-size: 12px; font-weight: 800; fill: #2B1D0A; }
+.u1c-gas { transition: height .6s var(--ease-out); }
+.u1c-bar { transition: width .6s var(--ease-out), fill .4s; }
+.u1c-puff { opacity: 0; transform-box: fill-box; transform-origin: center; animation: u1cPuff 2.7s linear infinite; }
+@keyframes u1cPuff { 0% { opacity: 0; translate: 0 0; scale: .5; } 15% { opacity: .75; } 100% { opacity: 0; translate: 6px -46px; scale: 1.5; } }
+.u1x-step .bv-card.u1c-card.col { height: 84px; gap: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  .u1c-puff { animation: none; opacity: .6; }
+  .u1t-wave { animation: none; opacity: 1; }
+}
