@@ -8,7 +8,7 @@ import { rodLab } from "./rodLab";
 import { convLab } from "./convLab";
 import { radLab } from "./radLab";
 import { raceLab } from "./raceLab";
-import { expandLab } from "./expandLab";
+import { railLab } from "./railLab";
 import { tapeLab } from "./tapeLab";
 
 export const U3V5_STEPS: Record<string, StepRenderer> = {
@@ -18,6 +18,6 @@ export const U3V5_STEPS: Record<string, StepRenderer> = {
   u3ConvLab: convLab,
   u3RadLab: radLab,
   u3RaceLab: raceLab,
-  u3ExpandLab: expandLab,
+  u3RailLab: railLab,
   u3TapeLab: tapeLab,
 };

@@ -2,10 +2,14 @@
 // 한 통찰: 온도가 다른 두 물체가 닿으면 열은 온도가 높은 쪽에서 낮은 쪽으로 이동하고, 두 온도가 같아지면 멈춘다(열평형).
 // 책의 탐구(열량계의 뜨거운 물에 찬물이 든 알루미늄 컵을 넣고 온도 센서로 두 온도를 잰다)를 한 무대에 옮겼다.
 //   왼쪽: 열량계와 컵(두 물의 입자, 벽을 건너는 열 화살표)   오른쪽: 시간과 온도 그래프(두 선이 만난다)
-// 학생이 정하는 것: 컵 속 물의 온도. 컵이 바깥 물보다 차가울 때와 뜨거울 때를 한 번씩 넣어 보면 열의 방향이 뒤집힌다.
-// 흐름: 찬 컵 넣기 → (예측) → 뜨거운 컵 넣기 → 판정 → 결론. 순서는 학생이 바꿔도 된다.
+// 학생이 정하는 것: 컵 속 물의 온도, 그리고 실험의 차례(컵 넣기 → 뚜껑 닫기 → 측정 시작).
+//   컵이 바깥 물보다 차가울 때와 뜨거울 때를 한 번씩 넣어 보면 열의 방향이 뒤집힌다.
+// 실패하는 길: 뚜껑을 닫지 않고 측정하면 열이 공기 중으로 빠져나가 두 온도가 만난 뒤에도 계속 내려간다(그 실험은 세지 않는다).
+//   컵과 바깥 물의 온도가 거의 같으면 열이 이동하지 않는다.
+// 흐름: 찬 컵 실험 → (예측) → 뜨거운 컵 실험 → 판정 → 결론. 순서는 학생이 바꿔도 된다.
 // 셈: 바깥 물이 컵 속 물의 두 배라고 두었다. 같아지는 온도 = (2 × 바깥 + 컵) ÷ 3.
 
+import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { curioCard, type Curio } from "../../../ui/curio";
 import { tempColor, drawGlowParticle, makeParticles, stepFree, type Box, type FreeParticle } from "../../../ui/thermo";
@@ -24,6 +28,7 @@ const TAU = 62; // 온도 차가 줄어드는 빠르기(프레임)
 const RUN = 230; // 한 번의 실험 길이(프레임)
 const C_OUT = "#FFA25E";
 const C_CUP = "#6FD3FF";
+const ROOM = 20; // 방 온도
 const LIFT = 74; // 넣기 전 컵이 떠 있는 높이
 const speedOf = (T: number): number => 0.16 + Math.pow(T / 100, 1.5) * 2.6;
 
@@ -38,6 +43,9 @@ export const contactLab: StepRenderer = (host, step, api) => {
   let t = 0; // 넣은 뒤 흐른 시간(프레임)
   let run0 = { cup: cup0, fin: 0 };
   let settled = false;
+  let lid = false; // 열량계의 뚜껑
+  let measuring = false; // 측정 시작을 눌렀는가
+  let leaky = false; // 뚜껑 없이 측정한 실험
   let coldDone = false;
   let hotDone = false;
   let predicted = false;
@@ -48,7 +56,9 @@ export const contactLab: StepRenderer = (host, step, api) => {
   const finOf = (c: number): number => (2 * OUT0 + c) / 3;
   const tempsAt = (tt: number): { out: number; cup: number } => {
     const k = Math.exp(-tt / TAU);
-    return { out: run0.fin + (OUT0 - run0.fin) * k, cup: run0.fin + (run0.cup - run0.fin) * k };
+    // 뚜껑이 없으면 두 물 모두 방 온도(20℃) 쪽으로 식어 간다
+    const leak = (v: number): number => (leaky ? ROOM + (v - ROOM) * Math.exp(-tt / 260) : v);
+    return { out: leak(run0.fin + (OUT0 - run0.fin) * k), cup: leak(run0.fin + (run0.cup - run0.fin) * k) };
   };
 
   // 입자: 바깥 물은 컵 양옆 두 칸, 컵 속은 한 칸
@@ -102,7 +112,7 @@ export const contactLab: StepRenderer = (host, step, api) => {
     ctx.stroke();
     // 열 화살표: 컵 벽을 건넌다(온도가 높은 쪽에서 낮은 쪽으로). 온도 차가 클수록 굵다.
     const diff = out - cup;
-    if (inserted && lift < 0.05 && Math.abs(diff) > 1.5) {
+    if (measuring && lift < 0.05 && Math.abs(diff) > 1.5) {
       const into = diff > 0; // 바깥에서 컵으로
       const a = Math.min(1, Math.abs(diff) / 25);
       const sl = ((tMs / 500) % 1) * 8;
@@ -128,6 +138,23 @@ export const contactLab: StepRenderer = (host, step, api) => {
       }
       txt(ctx, "열", cx + 26, cy + 96, { size: 12.5, color: "#FFD666", weight: 800 });
     }
+    // 뚜껑: 닫으면 덮개가 놓이고, 연 채로 측정하면 열이 위로 빠져나간다
+    if (lid) {
+      rr(ctx, 6, 94, 168, 13, 5);
+      ctx.fillStyle = "#6B7C96";
+      ctx.fill();
+      txt(ctx, "뚜껑", 150, 84, { size: 12, color: SUB, weight: 600 });
+    } else if (measuring && leaky && !settled) {
+      ctx.strokeStyle = "rgba(255,150,70,.8)";
+      ctx.lineWidth = 2;
+      for (const x of [34, 48, 132, 146]) {
+        const ph = tMs / 220 + x;
+        ctx.beginPath();
+        ctx.moveTo(x, 104);
+        ctx.quadraticCurveTo(x + 5 * Math.sin(ph), 92, x, 80);
+        ctx.stroke();
+      }
+    }
     pill(ctx, `컵 ${Math.round(cup)}℃`, 50, 15, { size: 12, dot: C_CUP });
     pill(ctx, `바깥 ${Math.round(out)}℃`, 128, 15, { size: 12, dot: C_OUT });
   }
@@ -139,7 +166,8 @@ export const contactLab: StepRenderer = (host, step, api) => {
 
   function drawGraph(ctx: Ctx): void {
     const g = graphAxes(ctx, { x: 212, y: 46, w: 122, h: 132, tMax: RUN, vMin: 0, vMax: 100, ticks: [0, 50, 100], xLabel: "시간", yLabel: "온도(℃)" });
-    if (settled) {
+    if (settled && leaky) txt(ctx, "계속 내려가요", 276, 55, { size: 12.5, color: "#FF8F8F", weight: 800 });
+    if (settled && !leaky) {
       ctx.setLineDash([4, 4]);
       ctx.strokeStyle = "rgba(123,224,176,.8)";
       ctx.lineWidth = 1.5;
@@ -152,7 +180,7 @@ export const contactLab: StepRenderer = (host, step, api) => {
     }
     graphLine(ctx, g, curveOut, C_OUT);
     graphLine(ctx, g, curveCup, C_CUP);
-    if (!curveOut.length) txt(ctx, "컵을 넣으면 그려져요", 273, 112, { size: 12, color: SUB, weight: 600 });
+    if (!curveOut.length) txt(ctx, "측정하면 그려져요", 273, 112, { size: 12, color: SUB, weight: 600 });
     // 범례
     ctx.fillStyle = C_OUT;
     ctx.fillRect(214, 213, 12, 3);
@@ -164,21 +192,21 @@ export const contactLab: StepRenderer = (host, step, api) => {
 
   const cv = u3Canvas(f.stage, (ctx, dt, tMs) => {
     host.dataset.u3Phase = phase;
-    host.dataset.u3Settled = settled ? "1" : "0";
+    host.dataset.u3Settled = settled ? (leaky ? "leak" : "1") : "0";
     const target = inserted ? 0 : 1;
     lift += (target - lift) * Math.min(1, 0.16 * dt);
     if (Math.abs(target - lift) < 0.004) lift = target;
     let out = OUT0;
     let cup = cup0;
     if (inserted) {
-      if (lift < 0.2 && !settled) {
+      if (measuring && lift < 0.2 && !settled) {
         t = Math.min(RUN, t + dt);
         const v = tempsAt(t);
         curveOut.push([t, v.out]);
         curveCup.push([t, v.cup]);
         if (t >= RUN) onSettled();
       }
-      const v = tempsAt(t);
+      const v = measuring ? tempsAt(t) : { out: OUT0, cup: cup0 };
       out = v.out;
       cup = v.cup;
     }
@@ -198,17 +226,35 @@ export const contactLab: StepRenderer = (host, step, api) => {
       hint();
     },
   });
-  const btn = bvBtn("main", "컵을 열량계에 넣기");
+  const put = bvBtn("", "컵 넣기");
+  const lidBtn = bvBtn("", "뚜껑 닫기");
+  const btn = bvBtn("main", "측정 시작");
+  const row = el("div", { class: "u3x-row" }, put, lidBtn);
+  const sync = (): void => {
+    put.textContent = inserted ? "컵 꺼내기" : "컵 넣기";
+    put.disabled = measuring && !settled;
+    lidBtn.textContent = lid ? "뚜껑 열기" : "뚜껑 닫기";
+    lidBtn.classList.toggle("on", lid);
+    lidBtn.disabled = !inserted || measuring;
+    btn.disabled = !inserted || measuring;
+    range.input.disabled = inserted;
+  };
 
   function hint(): void {
     if (phase !== "play" || inserted) return;
-    if (!coldDone && !hotDone) f.say("열량계에 <b>60℃ 물</b>이 있어요. 컵 속 물의 온도를 정하고 컵을 넣어 두 물의 온도를 지켜봐요.");
-    else if (coldDone && !hotDone) f.say(cup0 >= 80 ? "좋아요. 이제 컵을 넣어 예측이 맞는지 확인해 봐요." : "이번엔 온도 막대를 올려 컵 속 물을 <b>바깥 물보다 뜨겁게</b>(80℃ 이상) 만들고 넣어 봐요.");
-    else if (!coldDone && hotDone) f.say(cup0 <= 40 ? "좋아요. 이제 컵을 넣어 예측이 맞는지 확인해 봐요." : "이번엔 온도 막대를 내려 컵 속 물을 <b>바깥 물보다 차갑게</b>(40℃ 이하) 만들고 넣어 봐요.");
+    if (!coldDone && !hotDone) f.say("<b>60℃ 물</b>이 든 열량계예요. 컵의 온도를 정해 넣고, 뚜껑을 닫은 뒤 측정을 시작해요.");
+    else if (coldDone && !hotDone) f.say(cup0 >= 80 ? "좋아요. 컵을 넣고 뚜껑을 닫은 뒤 측정해 예측을 확인해 봐요." : "이번엔 온도 막대를 올려 컵 속 물을 <b>바깥 물보다 뜨겁게</b>(80℃ 이상) 만들고 넣어 봐요.");
+    else if (!coldDone && hotDone) f.say(cup0 <= 40 ? "좋아요. 컵을 넣고 뚜껑을 닫은 뒤 측정해 예측을 확인해 봐요." : "이번엔 온도 막대를 내려 컵 속 물을 <b>바깥 물보다 차갑게</b>(40℃ 이하) 만들고 넣어 봐요.");
   }
 
   function onSettled(): void {
     settled = true;
+    if (leaky) {
+      haptic(HAPTIC.wrong);
+      f.say("뚜껑이 열려 있어 열이 <b>공기 중으로</b> 빠져나갔어요. 두 온도가 만난 뒤에도 계속 내려가요. 컵을 꺼내 다시 해 봐요.");
+      sync();
+      return;
+    }
     t = 1e6; // 두 온도를 같아진 값에 딱 맞춘다
     curveOut.push([RUN, run0.fin]);
     curveCup.push([RUN, run0.fin]);
@@ -224,21 +270,20 @@ export const contactLab: StepRenderer = (host, step, api) => {
       f.say(`열이 <b>컵에서 바깥 물로</b> 이동했어요. 컵 속 물은 식고 바깥 물은 데워져 <b>${fin}℃</b>에서 같아졌어요.`);
     } else f.say(`<b>${fin}℃</b>에서 같아졌어요. 온도 차이가 작아 변화도 작네요. 컵을 꺼내 차이를 크게 해 봐요.`);
     f.pips((coldDone ? 1 : 0) + (hotDone ? 1 : 0));
+    sync();
     if (coldDone && hotDone) {
-      btn.disabled = true;
+      put.disabled = true;
       tm.later(askFinal, 2600);
-    } else {
-      btn.textContent = "컵 꺼내기";
-      btn.disabled = false;
     }
   }
 
   function takeOut(): void {
     inserted = false;
     settled = false;
+    measuring = false;
+    lid = false;
     t = 0;
-    range.input.disabled = false;
-    btn.textContent = "컵을 열량계에 넣기";
+    sync();
     if ((coldDone || hotDone) && !predicted) {
       predicted = true;
       const toHot = coldDone;
@@ -259,29 +304,42 @@ export const contactLab: StepRenderer = (host, step, api) => {
           onNext: () => {
             f.slot.showControls();
             hint();
-            api.setCTA("컵을 넣어 예측을 확인해 보세요", { enabled: false });
+            api.setCTA("실험으로 예측을 확인해 보세요", { enabled: false });
           },
         },
       );
     } else hint();
   }
 
-  btn.addEventListener("click", () => {
-    if (phase !== "play") return;
+  put.addEventListener("click", () => {
+    if (phase !== "play" || (measuring && !settled)) return;
     haptic(HAPTIC.tap);
     if (inserted) {
-      if (settled) takeOut();
+      takeOut();
       return;
     }
     inserted = true;
+    sync();
+    f.say("컵을 넣었어요. 열이 밖으로 새지 않게 <b>뚜껑</b>을 닫고 <b>측정 시작</b>을 눌러요.");
+  });
+  lidBtn.addEventListener("click", () => {
+    if (phase !== "play" || !inserted || measuring) return;
+    haptic(HAPTIC.tap);
+    lid = !lid;
+    sync();
+  });
+  btn.addEventListener("click", () => {
+    if (phase !== "play" || !inserted || measuring) return;
+    haptic(HAPTIC.tap);
+    measuring = true;
+    leaky = !lid;
     settled = false;
     t = 0;
     run0 = { cup: cup0, fin: finOf(cup0) };
     curveOut = [[0, OUT0]];
     curveCup = [[0, cup0]];
-    range.input.disabled = true;
-    btn.disabled = true;
-    f.say("컵을 넣었어요. 벽을 건너는 <b>열 화살표</b>와 두 온도의 그래프를 지켜봐요.");
+    sync();
+    f.say("측정을 시작했어요. 컵의 벽을 건너는 <b>열 화살표</b>와 두 온도의 그래프를 지켜봐요.");
   });
 
   function askFinal(): void {
@@ -304,9 +362,10 @@ export const contactLab: StepRenderer = (host, step, api) => {
     if (s.curio) host.appendChild(curioCard(s.curio));
   }
 
-  f.slot.setControls(range.el, btn);
+  f.slot.setControls(range.el, row, btn);
+  sync();
   hint();
-  api.setCTA("컵을 열량계에 넣어 보세요", { enabled: false });
+  api.setCTA("찬 컵과 뜨거운 컵으로 실험해 보세요", { enabled: false });
   return () => {
     tm.clear();
     cv.stop();

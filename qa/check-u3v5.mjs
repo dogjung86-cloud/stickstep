@@ -197,23 +197,41 @@ const LESSONS = {
     await isLab(id, 1, "뜨거운 물과 찬물이 닿으면?");
     await W(page, 600);
     await atLab(id, 1, "mount", true);
-    const settled = () => waitFor(page, () => document.querySelector(".screen.active .step")?.dataset.u3Settled === "1", null, 100, 100);
-    await tap(page, ".bv-ctl .bv-btn");
+    const settledIs = (v) => waitFor(page, (x) => document.querySelector(".screen.active .step")?.dataset.u3Settled === x, v, 100, 100);
+    // 뚜껑을 닫지 않고 측정한다(실패하는 길)
+    await tapText("컵 넣기");
+    await W(page, 700);
+    await atLab(id, 1, "in", true);
+    await tapText("측정 시작");
+    await W(page, 1500);
+    ok(await settledIs("leak"), `${id}: 뚜껑 없는 실험이 실패로 끝나지 않음(${await dsU3("u3Settled")})`);
+    await W(page, 300);
+    await atLab(id, 1, "leak", true);
+    await tapText("컵 꺼내기");
+    await W(page, 500);
+    // 찬 컵
+    await tapText("컵 넣기");
+    await W(page, 500);
+    await tapText("뚜껑 닫기");
+    await tapText("측정 시작");
     await W(page, 1500);
     await atLab(id, 1, "run", true);
-    ok(await settled(), `${id}: 찬 컵 실험이 끝나지 않음`);
+    ok(await settledIs("1"), `${id}: 찬 컵 실험이 끝나지 않음`);
     await W(page, 300);
     await atLab(id, 1, "cold", true);
-    await tap(page, ".bv-ctl .bv-btn"); // 컵 꺼내기 → 예측
+    await tapText("컵 꺼내기"); // 꺼내면 예측이 뜬다
     await W(page, 700);
     await atLab(id, 1, "predict", true);
     await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
     await W(page, 1500);
     await atLab(id, 1, "ready");
-    await tap(page, ".bv-ctl .bv-btn");
+    await tapText("컵 넣기");
+    await W(page, 500);
+    await tapText("뚜껑 닫기");
+    await tapText("측정 시작");
     await W(page, 1200);
     await atLab(id, 1, "run2", true);
-    ok(await settled(), `${id}: 뜨거운 컵 실험이 끝나지 않음`);
+    ok(await settledIs("1"), `${id}: 뜨거운 컵 실험이 끝나지 않음`);
     await W(page, 300);
     await atLab(id, 1, "hot", true);
     await judge(id, 1, true);
@@ -312,6 +330,14 @@ const LESSONS = {
     await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
     await W(page, 1500);
     await atLab(id, 1, "mount", true);
+    // 식용유를 절반만 담는다(공정하지 않은 실험)
+    await tapText("식용유 100 g");
+    await W(page, 300);
+    await holdBtn(".u3x-hold", async () => (await dsU3("u3Oil")) === "0", 8000);
+    ok((await dsU3("u3Oil")) === "0", `${id}: 공정하지 않은 실험이 되돌려지지 않음`);
+    await atLab(id, 1, "unfair", true);
+    await tapText("식용유 200 g");
+    await W(page, 300);
     const box = await page.locator(".screen.active .u3x-hold").boundingBox();
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
     await page.mouse.down();
@@ -336,15 +362,23 @@ const LESSONS = {
       await atOpn(id, "mid", true);
       await page.evaluate(() => [...document.querySelectorAll(".screen.active .opn-u3-btn")].find((b) => b.textContent.includes("겨울"))?.click());
     });
-    // 1 막대와 입자
-    await isLab(id, 1, "가열하면 막대는 왜 길어질까?");
+    // 1 철로 놓기
+    await isLab(id, 1, "한여름의 철로에는 무슨 일이 생길까?");
     await atLab(id, 1, "mount", true);
-    await setRange(page, ".u3x-range", 200, false);
+    await tapText("틈 없이 붙여 놓기");
+    await W(page, 300);
+    await setRange(page, ".u3x-range", 60, false);
     await W(page, 900);
-    await atLab(id, 1, "hot", true);
-    await setRange(page, ".u3x-range", 20);
-    await W(page, 400);
-    await atLab(id, 1, "cool");
+    await atLab(id, 1, "buckled", true);
+    ok((await dsU3("u3Rail")) === "tight:buckled", `${id}: 틈 없는 철로가 휘지 않음(${await dsU3("u3Rail")})`);
+    await setRange(page, ".u3x-range", -10);
+    await W(page, 700);
+    await atLab(id, 1, "relay");
+    await tapText("틈을 두고 놓기");
+    await W(page, 300);
+    await setRange(page, ".u3x-range", 60);
+    await W(page, 900);
+    await atLab(id, 1, "gap-summer", true);
     await judge(id, 1, true);
     await conclude(id, 1);
     // 2 두 띠
