@@ -1,6 +1,6 @@
 // 중1 Ⅵ v5의 랩 다섯 판과 도입 네 장면을 처음부터 끝까지 한 길로 조작한다.
 // on(label)은 그 시점에 부르는 콜백(측정, 캡처). 랩의 첫 판정은 일부러 한 번 틀린다(오답 화면을 본다).
-import { W, click, choose, setRange, waitAsk, askText, pick, tapNext, waitDs, waitFor, hold, ds } from "./u6v5-lib.mjs";
+import { W, click, choose, setRange, waitAsk, askText, pick, tapNext, waitDs, waitFor, hold, ds, stagePt } from "./u6v5-lib.mjs";
 
 /** 판정 한 번. wrong이면 틀린 보기를 누른다. 결과가 뜬 화면에서 on을 부르고 '다음'을 누른다. */
 async function answer(page, on, label, wrong = false, prev = "") {
@@ -62,14 +62,22 @@ export const PLAY = {
   async l2lab(page, on) {
     await W(page, 900);
     await on("l2lab-start");
-    await setRange(page, 12);
-    await W(page, 600);
-    await click(page, ".bv-btn.main");
+    await setRange(page, 2); // 센서를 연결하기 전에 민다: 공기가 샌다
+    await W(page, 700);
+    await on("l2lab-leak");
+    await click(page, ".bv-btn.main"); // 되돌리지 않고 연결: 거절된다
+    await W(page, 300);
+    await setRange(page, 0);
     await W(page, 400);
-    await on("l2lab-mid");
-    await setRange(page, 18);
-    await W(page, 600);
     await click(page, ".bv-btn.main");
+    await waitDs(page, "u6Phase", "play");
+    for (const i of [2, 3, 4]) {
+      await setRange(page, i);
+      await W(page, 500);
+      await click(page, ".bv-btn.main");
+      await W(page, 350);
+      if (i === 2) await on("l2lab-mid");
+    }
     await W(page, 700);
     await on("l2lab-curve");
     const q = await answer(page, on, "l2lab-q1", true);
@@ -79,34 +87,67 @@ export const PLAY = {
   async l3lab(page, on) {
     await W(page, 900);
     await on("l3lab-start");
-    await setRange(page, 15);
-    await W(page, 600);
-    await on("l3lab-mid");
-    await setRange(page, 30);
+    await setRange(page, 0);
     await W(page, 900);
-    await on("l3lab-top");
-    await answer(page, on, "l3lab-q1", true);
-    await waitDs(page, "u6Phase", "pump");
-    await W(page, 500);
-    await on("l3lab-jar");
-    for (let i = 0; i < 3; i++) { await click(page, ".bv-btn.main"); await W(page, 450); }
-    await W(page, 600);
-    await on("l3lab-puffed");
-    for (let i = 0; i < 3; i++) { await click(page, ".u6x-row2 .bv-btn:not(.main)"); await W(page, 450); }
+    await on("l3lab-deep");
+    await setRange(page, 4);
+    await W(page, 700);
+    await on("l3lab-mid");
+    await setRange(page, 5);
+    await W(page, 900);
+    await on("l3lab-high");
+    const q = await answer(page, on, "l3lab-q1", true);
+    await answer(page, on, "l3lab-q2", false, q);
     await done(page, on, "l3lab");
   },
-  async l4lab(page, on) {
+  async l4labA(page, on) {
+    await W(page, 700);
+    await on("l4labA-predict");
+    await pick(page, true); // 예측(정오 없음): 아무 보기나
+    await waitDs(page, "u6Phase", "play");
+    await W(page, 500);
+    await on("l4labA-start");
+    await click(page, '.bv-card[data-k="hot"]'); // 마개 없이 넣는다: 실패
+    await W(page, 1500);
+    await on("l4labA-open");
+    await click(page, '.bv-card[data-k="table"]');
     await W(page, 900);
-    await on("l4lab-start");
-    await setRange(page, 8);
-    await W(page, 2200);
-    await on("l4lab-hot");
-    await setRange(page, 0);
-    await W(page, 2600);
-    await on("l4lab-ice");
-    const q = await answer(page, on, "l4lab-q1", true);
-    await answer(page, on, "l4lab-q2", false, q);
-    await done(page, on, "l4lab");
+    await click(page, ".bv-btn.main");
+    await W(page, 300);
+    await click(page, '.bv-card[data-k="hot"]');
+    await W(page, 3200);
+    await on("l4labA-hot");
+    await click(page, '.bv-card[data-k="ice"]');
+    await W(page, 3600);
+    await on("l4labA-ice");
+    await answer(page, on, "l4labA-q1", true);
+    await done(page, on, "l4labA");
+  },
+  async l4labB(page, on) {
+    const tapGraph = async (t, v) => {
+      // 그래프의 설계 좌표(346×230)를 화면 좌표로 바꿔 누른다
+      const x = 176 + 22 + ((t - 20) / 60) * (330 - 176 - 40);
+      const y = 188 - 12 - ((v - 28) / 10) * (188 - 48 - 24);
+      const p = await stagePt(page, x / 346, y / 230);
+      await page.mouse.click(p.x, p.y);
+      await W(page, 350);
+    };
+    await W(page, 900);
+    await on("l4labB-start");
+    await tapGraph(20, 34); // 일부러 잘못 읽는다
+    await on("l4labB-miss");
+    await tapGraph(20, 30);
+    for (const [t, v] of [[40, 32], [60, 34], [80, 36]]) {
+      await click(page, ".bv-btn.main");
+      await W(page, 2300);
+      await tapGraph(t, v);
+      if (t === 40) await on("l4labB-mid");
+    }
+    await W(page, 900);
+    await on("l4labB-line");
+    const q = await answer(page, on, "l4labB-q1", true);
+    await answer(page, on, "l4labB-q2", false, q);
+    await done(page, on, "l4labB");
   },
   async l5lab(page, on) {
     await W(page, 900);

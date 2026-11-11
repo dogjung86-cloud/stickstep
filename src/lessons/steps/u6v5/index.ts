@@ -5,15 +5,17 @@ import type { StepRenderer } from "../../types";
 import { strawLab } from "./strawLab";
 import { shakeLab } from "./shakeLab";
 import { boyleLab } from "./boyleLab";
-import { diverLab } from "./diverLab";
-import { charlesLab } from "./charlesLab";
+import { seaSkyLab } from "./seaSkyLab";
+import { dipLab } from "./dipLab";
+import { chartLab } from "./chartLab";
 import { balloonLab } from "./balloonLab";
 
 export const U6V5_STEPS: Record<string, StepRenderer> = {
   u6StrawLab: strawLab,
   u6ShakeLab: shakeLab,
   u6BoyleLab: boyleLab,
-  u6DiverLab: diverLab,
-  u6CharlesLab: charlesLab,
+  u6SeaSkyLab: seaSkyLab,
+  u6DipLab: dipLab,
+  u6ChartLab: chartLab,
   u6BalloonLab: balloonLab,
 };
