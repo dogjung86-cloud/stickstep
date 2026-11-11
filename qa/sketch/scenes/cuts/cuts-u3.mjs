@@ -1,7 +1,10 @@
-// 중1 과학 Ⅲ단원(열) 개념 컷 코드 그림. 원본은 재제작 브랜치 sci-u3-v3 의 public/heat3/cuts/*.webp(unit3v3.ts 의 cut("heat3", …)).
-// 정본(main)의 unit3.ts 에는 개념 스텝이 없다. Ⅲ단원 v5 가 새 개념 스텝을 넣으면 그 목록에 맞춰 더하거나 바꾼다.
-import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, emark, qmark, drop, squiggle, arrow, hash } from "../../lib/sk.mjs";
+// 중1 과학 Ⅲ단원(열) 개념 컷 코드 그림.
+// 목록은 Ⅲ단원 v5 세션이 새 개념 스텝을 쓰며 낸 것(D:\Brilliant Science\output\g1-v5\u3\concept-cuts.md): u3l1 ~ u3l5.
+// u3l1 과 u3l5 는 재제작 브랜치 sci-u3-v3 의 발주 컷(public/heat3/cuts)과 같은 장면이다.
+// v3 목록에만 있던 장면(숟가락, 온돌방, 두 냄비)은 v3- 이름으로 남겨 둔다(사용자가 본 샘플. 지금 v5 목록에는 없다).
+import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, emark, qmark, drop, squiggle, arrow, hash, check } from "../../lib/sk.mjs";
 import { drawFigure, handDot, pose, TEACHER, STUDENT, KID } from "../../lib/figure.mjs";
+import { kettle } from "../../lib/props.mjs";
 import { W, H, lerpx, lerp2, heat, jiggle, thin, wavy, ray, steam } from "./common.mjs";
 
 /* ---------- u3l1: 돋보기로 보면 뜨거운 물속은 입자들의 운동회 ---------- */
@@ -102,7 +105,7 @@ function metalSpoon(sk, a, b, sd) {
   sk.ink(dense([P(30, -2), P(L - 30, -5)]), { w: 4, color: C.white, seed: sd + 1, wob: 0.2 });
   sk.ink(shape, { w: 8, seed: sd + 2, wob: 0.5 });
 }
-function cutU3l3() {
+function cutV3U3l3() {
   const sk = new Sk(W, H, { id: "b" });
   const GY = 676;
   sk.ink(curve([[14, GY + 2], [480, GY - 2], [946, GY + 2]]), { w: 9, seed: 11 });
@@ -134,7 +137,7 @@ function flame(sk, x, y, s, sd) {
     sk.fill(fi, C.lemon, { dx: 0, dy: 0, wob: 0.5, seed: sd + 2 });
   });
 }
-function cutU3l3b() {
+function cutV3U3l3b() {
   const sk = new Sk(W, H, { id: "c" });
   const L = 150, Rt = 830, FLOOR = 508, SLAB = 50, BOT = 640;
   sk.ink(curve([[14, BOT + 3], [480, BOT - 1], [946, BOT + 2]]), { w: 9, seed: 9 });
@@ -225,7 +228,7 @@ function stopwatch(sk, x, y, r, sd) {
   sk.ink(dense([[x, y], [x + r * 0.5, y - r * 0.45]]), { w: 6, seed: sd + 6, wob: 0.1 });
   sk.dot(x, y, 4);
 }
-function cutU3l4() {
+function cutV3U3l4() {
   const sk = new Sk(W, H, { id: "d" });
   const GY = 684;
   sk.ink(curve([[14, GY + 2], [480, GY - 2], [946, GY + 2]]), { w: 9, seed: 11 });
@@ -244,11 +247,149 @@ function cutU3l4() {
   return sk;
 }
 
+/* ---------- v5 목록: u3l2 손난로(열과 열평형) ---------- */
+const KNIT = { hair: "knit", capColor: "#3F7CC0", seed: 171 };
+function snowflake(sk, x, y, r, sd) { for (let i = 0; i < 3; i++) { const a = i * Math.PI / 3 + 0.3; sk.ink(dense([[x - Math.cos(a) * r, y - Math.sin(a) * r], [x + Math.cos(a) * r, y + Math.sin(a) * r]]), { w: 4, color: "#8FC3E8", seed: sd + i, wob: 0.1 }); } }
+function cutU3l2() {
+  const sk = new Sk(W, H, { id: "e" });
+  const GY = 668;
+  // 눈 덮인 땅과 눈송이
+  sk.fill(poly([[14, GY], [946, GY], [946, 712], [14, 712]], 3), "#EEF5FB", { dx: 0, dy: 0, wob: 0.3, seed: 11 });
+  sk.ink(curve([[14, GY + 2], [330, GY - 3], [660, GY + 2], [946, GY - 2]]), { w: 9, seed: 12 });
+  [[90, 120], [210, 70], [760, 90], [880, 180], [140, 300], [840, 330], [600, 60], [300, 200]].forEach(([x, y], i) => snowflake(sk, x, y, 12, 20 + i * 3));
+  // 학생: 두 손바닥을 벌려 가운데의 손난로를 감싼다
+  const P = pose({ elL: [-110, -262], haL: [-162, -300], elR: [110, -262], haR: [162, -300], tilt: 0.04 });
+  const fx = 470, fs = 0.86;
+  drawFigure(sk, fx, GY, fs, P, { ...KNIT, name: "student", hands: false });
+  const cx = fx, cy = GY - fs * 300;
+  sk.glow(cx, cy, 100, "#FFB46B", 0.4, 0.1);
+  const pad = rrect(cx - 40, cy - 28, 80, 56, 16);
+  sk.fill(pad, "#F58A2E", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 41 }); sk.ink(pad, { w: 8, seed: 42 });
+  const hl = [cx - fs * 162, cy], hr = [cx + fs * 162, cy];
+  handDot(sk, hl, C.skin, 43, 16); handDot(sk, hr, C.skin, 44, 16);
+  // 손난로에서 두 손으로 흐르는 열(물결 화살표)
+  ray(sk, [cx - 46, cy - 2], [hl[0] + 22, cy - 2], 45, { amp: 5, waves: 3, w: 7 });
+  ray(sk, [cx + 46, cy - 2], [hr[0] - 22, cy - 2], 46, { amp: 5, waves: 3, w: 7 });
+  return sk;
+}
+
+/* ---------- v5 목록: u3l3 공을 전하는 세 방법(전도, 대류, 복사) ---------- */
+const BALL = (sk, x, y, r, sd) => { const b = circ(x, y, r, { over: 0.1, seed: sd }); sk.fill(b, C.orange, { dx: 0.6, dy: 0.8, wob: 0.3, seed: sd + 1 }); sk.ink(curve([[x - r * 0.5, y - r * 0.2], [x, y - r * 0.6], [x + r * 0.5, y - r * 0.2]]), { w: 3, color: "#B5741F", seed: sd + 2, wob: 0.2 }); sk.ink(b, { w: 6, seed: sd + 3 }); };
+function cutU3l3() {
+  const sk = new Sk(W, H, { id: "f" });
+  const bands = [[16, 236], [244, 464], [472, 704]];
+  const tints = ["#FFF1EC", "#EEF6FF", "#FFF6E5"];
+  bands.forEach(([t, b], i) => { const r = rrect(16, t, 928, b - t, 18); sk.fill(r, tints[i], { dx: 0, dy: 0, wob: 0.3, seed: 11 + i }); thin(sk, 0.6, () => sk.ink(r, { w: 9, seed: 14 + i, color: "#C9CED6" })); });
+  const KIDS = [{ hair: "short", hairColor: "#3F3A36", seed: 141 }, { hair: "bob", hairColor: "#8A5A33", seed: 151 }, STUDENT, { hair: "knit", capColor: "#3F7CC0", seed: 171 }];
+  const s = 0.34;
+  // 1 줄 서서 옆 사람에게 건네기(전도): 사람은 제자리, 공만 옆으로
+  { const gy = bands[0][1] - 18; sk.ink(dense([[40, gy], [920, gy]]), { w: 7, seed: 21 });
+    const xs = [150, 330, 510, 690];
+    const reach = pose({ elL: [-60, -270], haL: [-112, -260], elR: [60, -270], haR: [112, -260] });
+    xs.forEach((x, i) => drawFigure(sk, x, gy, s, reach, { ...KIDS[i], seed: 30 + i }));
+    BALL(sk, (xs[1] + xs[2]) / 2, gy - s * 270, 16, 41);
+    for (let i = 0; i < 3; i++) arrow(sk, [[xs[i] + 40, gy - s * 330], [xs[i + 1] - 40, gy - s * 330]], { w: 5, color: C.teal, straight: true, seed: 44 + i, head: 12 }); }
+  // 2 공을 들고 직접 달려가기(대류): 사람이 공을 품고 움직인다
+  { const gy = bands[1][1] - 18; sk.ink(dense([[40, gy], [920, gy]]), { w: 7, seed: 51 });
+    const run = pose({ hip: [0, -200], neck: [26, -324], head: [44, -414], tilt: 0.2, elL: [-30, -270], haL: [10, -250], elR: [70, -270], haR: [92, -300], knL: [-60, -110], ftL: [-110, -40], knR: [60, -100], ftR: [40, 0] });
+    drawFigure(sk, 520, gy, s * 1.1, run, { ...STUDENT, seed: 55 });
+    BALL(sk, 520 + s * 1.1 * 100, gy - s * 1.1 * 300, 16, 56);
+    for (let i = 0; i < 3; i++) sk.ink(dense([[420 - i * 6, gy - 120 + i * 28], [340 - i * 6, gy - 120 + i * 28]]), { w: 5, color: C.gray, seed: 57 + i, wob: 0.2 });
+    arrow(sk, [[160, gy - 12], [860, gy - 12]], { w: 5, color: C.teal, straight: true, seed: 60, head: 14, dash: [14, 10] }); }
+  // 3 멀리 던지기(복사): 공이 사이를 날아간다
+  { const gy = bands[2][1] - 18; sk.ink(dense([[40, gy], [920, gy]]), { w: 7, seed: 61 });
+    const throwP = pose({ elR: [80, -330], haR: [130, -400], elL: [-60, -270], haL: [-90, -230], tilt: 0.1 });
+    drawFigure(sk, 160, gy, s * 1.05, throwP, { ...KIDS[0], seed: 62 });
+    const catchP = pose({ elL: [-70, -330], haL: [-110, -390], elR: [70, -330], haR: [40, -400], tilt: -0.06 });
+    drawFigure(sk, 800, gy, s * 1.05, catchP, { ...KIDS[1], seed: 63 });
+    sk.ink(curve([[200, gy - 150], [480, gy - 196], [740, gy - 150]]), { w: 5, color: C.gray, dash: [12, 10], seed: 64, wob: 0.2 });
+    BALL(sk, 520, gy - 190, 16, 65); }
+  return sk;
+}
+
+/* ---------- v5 목록: u3l4 뚝배기와 얇은 금속 냄비(열량과 비열) ---------- */
+function cutU3l4() {
+  const sk = new Sk(W, H, { id: "g" });
+  const GY = 676, TOP = 500;
+  for (const [x, i] of [[170, 0], [790, 1]]) sk.ink(dense([[x, TOP + 24], [x - 6, GY]]), { w: 12, seed: 21 + i });
+  sk.ink(dense([[14, GY], [946, GY]]), { w: 9, seed: 20 });
+  const top = rrect(120, TOP, 720, 26, 10);
+  sk.fill(top, C.wood, { seed: 23, tex: true, texAng: 0.02 }); sk.ink(top, { w: 11, seed: 24 });
+  // 뚝배기(두껍고 짙은 질그릇): 아직 김이 오른다
+  sk.at(300, TOP, 1, () => {
+    const body = curve([[-110, -96], [-104, -40], [-76, -6], [76, -6], [104, -40], [110, -96]], false, 4);
+    sk.fill([...body, body[0]], "#6B4A32", { seed: 31, tex: true, texAng: 0.1 });
+    sk.ink([...body, body[0]], { w: 11, seed: 32 });
+    const rim = ell(0, -96, 112, 20);
+    sk.fill(rim, "#4E382B", { dx: 0, dy: 0, wob: 0.3, seed: 33 });
+    sk.fill(ell(0, -94, 96, 14), "#E3A04E", { dx: 0, dy: 0, wob: 0.3, seed: 34 });
+    sk.ink(rim, { w: 9, seed: 35 });
+    for (const sg of [-1, 1]) sk.ink(curve([[sg * 108, -70], [sg * 132, -74], [sg * 130, -54], [sg * 106, -52]]), { w: 9, seed: 36 + (sg > 0 ? 1 : 0) });
+  });
+  steam(sk, 300, TOP - 130, 3, 120, 41, 40);
+  // 얇은 금속 냄비: 김이 없고, 학생이 맨손으로 만진다
+  sk.at(610, TOP, 1, () => {
+    const body = poly([[-96, -110], [96, -110], [90, -6], [-90, -6]], 4);
+    sk.fill(body, "#C9D1D9", { seed: 51, tex: 0.6, texAng: 0.05 });
+    sk.ink(dense([[-84, -96], [-82, -18]]), { w: 5, color: C.white, seed: 52, wob: 0.2 });
+    sk.ink(body, { w: 8, seed: 53 });
+    sk.fill(ell(0, -110, 96, 14), "#DDE4EA", { dx: 0, dy: 0, wob: 0.3, seed: 54 }); sk.ink(ell(0, -110, 96, 14), { w: 7, seed: 55 });
+    for (const sg of [-1, 1]) sk.ink(curve([[sg * 96, -88], [sg * 122, -92], [sg * 122, -74], [sg * 96, -70]]), { w: 8, seed: 56 + (sg > 0 ? 1 : 0) });
+  });
+  // 학생: 오른쪽에서 금속 냄비 옆면에 손을 댄다(괜찮다는 표시)
+  const P = pose({ elR: [90, -300], haR: [150, -294], elL: [-50, -262], haL: [-26, -220], tilt: 0.06 });
+  const fx = 860, fs = 0.66;
+  drawFigure(sk, fx, GY, fs, P, { ...STUDENT, name: "student", mirror: true });
+  check(sk, 740, 300, 0.9);
+  return sk;
+}
+
+/* ---------- v5 목록: u3l5 병뚜껑에 따뜻한 물(열팽창) ---------- */
+function cutU3l5() {
+  const sk = new Sk(W, H, { id: "h" });
+  const GY = 676, TOP = 520;
+  for (const [x, i] of [[300, 0], [860, 1]]) sk.ink(dense([[x, TOP + 24], [x - 6, GY]]), { w: 12, seed: 21 + i });
+  sk.ink(dense([[14, GY], [946, GY]]), { w: 9, seed: 20 });
+  const top = rrect(250, TOP, 660, 26, 10);
+  sk.fill(top, C.wood, { seed: 23, tex: true, texAng: 0.02 }); sk.ink(top, { w: 11, seed: 24 });
+  // 대야 속 유리병(잼)과 금속 뚜껑
+  const bx = 640;
+  const basin = curve([[bx - 150, TOP - 70], [bx - 136, TOP - 20], [bx - 110, TOP], [bx + 110, TOP], [bx + 136, TOP - 20], [bx + 150, TOP - 70]], false, 4);
+  sk.fill([...basin, basin[0]], "#9FC6E8", { seed: 31, tex: 0.6 }); sk.ink([...basin, basin[0]], { w: 10, seed: 32 });
+  sk.ink(ell(bx, TOP - 70, 150, 16), { w: 8, seed: 33 });
+  const jar = rrect(bx - 54, TOP - 210, 108, 176, 24);
+  sk.fill(jar, "#DDEEF7", { dx: 0, dy: 0, wob: 0.3, seed: 34 });
+  sk.fill(rrect(bx - 46, TOP - 150, 92, 108, 18), "#C0392B", { dx: 0, dy: 0, wob: 0.3, seed: 35 });
+  sk.ink(jar, { w: 9, seed: 36 });
+  const lid = rrect(bx - 62, TOP - 246, 124, 40, 8);
+  sk.fill(lid, "#C9D1D9", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 37 });
+  for (let i = 0; i < 6; i++) sk.ink(dense([[bx - 50 + i * 20, TOP - 240], [bx - 50 + i * 20, TOP - 212]]), { w: 4, color: "#8A9099", seed: 38 + i, wob: 0.1 });
+  sk.ink(lid, { w: 9, seed: 44 });
+  // 뚜껑이 늘어나 헐거워진다(바깥쪽 화살표)와 돌아가는 화살표
+  for (const sg of [-1, 1]) arrow(sk, [[bx + sg * 70, TOP - 226], [bx + sg * 100, TOP - 226]], { w: 6, color: C.red, straight: true, seed: 45 + (sg > 0 ? 1 : 0), head: 14 });
+  arrow(sk, ell(bx, TOP - 266, 84, 22, Math.PI * 0.95, Math.PI * 2.05), { w: 7, color: C.teal, seed: 47, wob: 0.2, head: 18, straight: true });
+  // 쌤: 주전자로 따뜻한 물을 뚜껑에 붓는다
+  const P = pose({ elR: [96, -340], haR: [160, -392], elL: [-40, -290], haL: [40, -330], tilt: 0.08 });
+  const fx = 300, fs = 0.7;
+  drawFigure(sk, fx, GY, fs, P, { ...TEACHER, name: "teacher", hands: false });
+  const hx = fx + fs * 160, hy = GY - fs * 392;
+  kettle(sk, hx + 60, hy + 60, 0.62, { seed: 51, lift: 4 });
+  handDot(sk, [hx, hy], C.skin, 52, 12);
+  const sx = hx + 60 + 0.62 * 118, sy = hy + 60 - 0.62 * 128;
+  sk.ink(curve([[sx, sy], [sx + 30, sy + 20], [bx - 30, TOP - 252]]), { w: 9, color: "#7DB3F0", seed: 53, wob: 0.3 });
+  steam(sk, bx - 20, TOP - 290, 2, 50, 54, 26);
+  return sk;
+}
+
 export function cuts() {
   return [
-    { name: "u3l1", theme: "heat3", sk: cutU3l1(), alt: "돋보기로 김이 나는 컵 속을 들여다보니 작은 입자들이 흔들리는 스틱맨", cap: "돋보기로 보면 뜨거운 물속은 입자들의 운동회예요" },
-    { name: "u3l3", theme: "heat3", sk: cutU3l3(), alt: "뜨거운 국에 꽂힌 금속 숟가락 손잡이를 잡았다가 깜짝 놀라는 스틱맨, 옆에는 멀쩡한 나무 숟가락", cap: "금속 숟가락은 열의 고속도로, 나무 숟가락은 비포장길이에요" },
-    { name: "u3l3b", theme: "heat3", sk: cutU3l3b(), alt: "아궁이 불이 구들장을 데우고 방 안 공기가 도는 온돌방에 팔베개를 하고 누운 스틱맨 단면", cap: "온돌방 하나에 전도·대류·복사가 다 들어 있어요" },
-    { name: "u3l4", theme: "heat3", sk: cutU3l4(), alt: "똑같은 두 냄비를 똑같은 불에 올렸는데 한쪽만 펄펄 끓어 어리둥절한 초시계 든 스틱맨", cap: "같은 불, 같은 시간인데 한쪽만 펄펄, 물질이 다르기 때문이에요" },
+    { name: "u3l1", theme: "heat3", orig: "u3l1", sk: cutU3l1(), alt: "돋보기로 김이 나는 찻잔 속을 들여다보니 작은 입자들이 바쁘게 움직이는 장면", cap: "돋보기로 보면 뜨거운 물속은 입자들의 운동회예요" },
+    { name: "u3l2", theme: "heat3", orig: null, sk: cutU3l2(), alt: "추운 날 따뜻한 손난로를 두 손으로 감싸 쥔 학생, 손난로에서 손으로 열이 흐른다", cap: "따뜻한 쪽에서 차가운 쪽으로, 열이 흘러요" },
+    { name: "u3l3", theme: "heat3", orig: null, sk: cutU3l3(), alt: "공을 전하는 세 가지 방법: 줄 서서 건네기, 들고 달려가기, 멀리 던지기", cap: "건네고, 들고 가고, 던지고. 열이 가는 세 가지 길" },
+    { name: "u3l4", theme: "heat3", orig: null, sk: cutU3l4(), alt: "김이 오르는 뚝배기와 이미 식어 맨손으로 만지는 얇은 금속 냄비", cap: "뚝배기는 천천히 식고, 얇은 금속 냄비는 금방 식어요" },
+    { name: "u3l5", theme: "heat3", orig: "u3l5", sk: cutU3l5(), alt: "꽉 닫힌 유리병의 금속 뚜껑에 따뜻한 물을 붓자 뚜껑이 헐거워지는 장면", cap: "안 열리는 병뚜껑엔 따뜻한 물, 금속이 늘어나 헐거워져요" },
+    { name: "v3-u3l3", theme: "heat3", orig: "u3l3", sk: cutV3U3l3(), alt: "뜨거운 국에 꽂힌 금속 숟가락 손잡이를 잡았다가 깜짝 놀라는 스틱맨, 옆에는 멀쩡한 나무 숟가락", cap: "금속 숟가락은 열의 고속도로, 나무 숟가락은 비포장길이에요" },
+    { name: "v3-u3l3b", theme: "heat3", orig: "u3l3b", sk: cutV3U3l3b(), alt: "아궁이 불이 구들장을 데우고 방 안 공기가 도는 온돌방에 팔베개를 하고 누운 스틱맨 단면", cap: "온돌방 하나에 전도·대류·복사가 다 들어 있어요" },
+    { name: "v3-u3l4", theme: "heat3", orig: "u3l4", sk: cutV3U3l4(), alt: "똑같은 두 냄비를 똑같은 불에 올렸는데 한쪽만 펄펄 끓어 어리둥절한 초시계 든 스틱맨", cap: "같은 불, 같은 시간인데 한쪽만 펄펄, 물질이 다르기 때문이에요" },
   ];
 }

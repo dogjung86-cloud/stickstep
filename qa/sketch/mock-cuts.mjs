@@ -1,7 +1,8 @@
 // 배선 전 개념 컷 미리보기: 단원 파일(scenes/cuts/cuts-uN.mjs)의 그림을 폰 화면(390px)의 개념 카드 모양으로 찍는다.
 // 실행: node qa/sketch/mock-cuts.mjs cuts/cuts-u2 [출력 PNG] [--compare] [--only=u2l1,u2l2]
 //   --compare: 원본 발주 그림(public/<테마>/cuts/<컷>.webp, 없으면 재제작 브랜치의 같은 경로)을 왼쪽에 나란히 둔다.
-//   단원 파일 형식: export function cuts() { return [{ name, theme, sk, cap, alt }] }
+//   단원 파일 형식: export function cuts() { return [{ name, theme, orig?, sk, cap, alt }] }
+//     orig: 원본 그림 이름(없으면 name). null 이면 원본이 없는 새 장면
 //   카드 모양은 앱의 개념 블록(ui.css 의 .c-figure)과 cut() 의 이미지 모서리(12px)를 그대로 따른다.
 import { readFileSync, existsSync, mkdirSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -32,7 +33,7 @@ export async function mockCuts(modPath, out, o = {}) {
   const cells = [];
   for (const c of list) {
     if (o.compare) {
-      const org = original(c.theme, c.name);
+      const org = c.orig === null ? null : original(c.theme, c.orig ?? c.name);
       cells.push(org ? card(org, c.cap, `${c.name} 원본`) : `<div class="cell"><div class="lab">${c.name} 원본 없음</div></div>`);
     }
     cells.push(card(svgUri(c.sk.svg()), c.cap, o.compare ? `${c.name} 새 그림` : c.name));
