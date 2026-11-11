@@ -108,3 +108,6 @@
 @media (prefers-reduced-motion: reduce) {
   .opn-u6-hit::after, .opn-u6-foil-snow path, .opn-u6-pong-steam path, .opn-u6-ice.cracked .opn-u6-ice-stand { animation: none; }
 }
+.u6x-step .bv-card.on { border-color: var(--subj-gas); background: var(--subj-gas-tint); box-shadow: 0 0 0 1px var(--subj-gas) inset; }
+.u6x-step .bv-card.done::after { background-color: var(--subj-gas); }
+.u6x-step .bv-card.u6x-end { justify-content: center; text-align: center; }

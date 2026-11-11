@@ -23,16 +23,41 @@ const done = async (page, on, label) => {
 
 export const PLAY = {
   // ── 랩 ──
-  async l1lab(page, on) {
+  async l1labA(page, on) {
     await W(page, 900);
-    await on("l1lab-start");
-    for (let i = 0; i < 3; i++) { await click(page, ".u6x-row2 .bv-btn:last-child"); await W(page, 350); }
-    await W(page, 600);
-    await on("l1lab-full");
-    for (let i = 0; i < 3; i++) { await click(page, ".u6x-row2 .bv-btn:first-child"); await W(page, 350); }
-    const q = await answer(page, on, "l1lab-q1", true);
-    await answer(page, on, "l1lab-q2", false, q);
-    await done(page, on, "l1lab");
+    await on("l1labA-start");
+    await click(page, ".bv-btn.main"); // 편평한 쪽, 힘 3
+    await waitDs(page, "u6Tries", "1", 80);
+    await W(page, 300);
+    await on("l1labA-flat");
+    await click(page, '.bv-card[data-k="sharp"]');
+    await W(page, 250);
+    await click(page, ".bv-btn.main");
+    await waitDs(page, "u6Tries", "2", 80);
+    await W(page, 300);
+    await on("l1labA-sharp");
+    await answer(page, on, "l1labA-q1", true);
+    await done(page, on, "l1labA");
+  },
+  async l1labB(page, on) {
+    await W(page, 900);
+    await on("l1labB-start");
+    await setRange(page, 1);
+    await W(page, 900);
+    await on("l1labB-soft");
+    await click(page, '.bv-card[data-k="20"]');
+    await setRange(page, 3);
+    await W(page, 1200);
+    await on("l1labB-hard");
+    const q = await answer(page, on, "l1labB-q1", true);
+    await waitDs(page, "u6Phase", "gas");
+    await W(page, 700);
+    await on("l1labB-gas");
+    await click(page, ".bv-btn.main");
+    await W(page, 1200);
+    await on("l1labB-blown");
+    await answer(page, on, "l1labB-q2", false, q);
+    await done(page, on, "l1labB");
   },
   async l2lab(page, on) {
     await W(page, 900);
