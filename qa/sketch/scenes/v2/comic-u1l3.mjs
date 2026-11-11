@@ -124,12 +124,12 @@ function p2() {
   const give = pose({ elR: [84, -300], haR: [150, -316], elL: [-44, -258], haL: [-60, -196], tilt: 0.05 });
   drawFigure(sk, 380, 690, 0.66, give, { ...CRAFT });
   // 늙은 수도사: 안경을 눈앞에 대고 책을 읽는다
-  const read = pose({ elL: [-70, -300], haL: [-50, -380], elR: [62, -262], haR: [100, -250], tilt: -0.08 });
+  const read = pose({ elL: [-62, -300], haL: [-5, -348], elR: [62, -262], haR: [100, -250], tilt: -0.08 });
   const fx = 640, fy = 690, fs = 0.8;
   drawFigure(sk, fx, fy, fs, read, { ...FRIAR, name: "friar", hands: "R" });
   const h = headAt(fx, fy, fs, read);
   rivetGlasses(sk, h.x - 4, h.y + 6 * fs, 0.78, 271);
-  handDot(sk, [fx - fs * 50, fy - fs * 380 + 30], C.skin, 281, 12);
+  handDot(sk, [h.x - 4, h.y + 6 * fs + 84 * 0.78], C.skin, 281, 11);
   openBook(sk, fx + fs * 150, fy - fs * 232, 0.86, { color: "#8A5A33", seed: 291, rot: -0.1 });
   sparkle(sk, h.x - 104, h.y - 70, 15, { seed: 301 });
   sparkle(sk, h.x + 92, h.y - 92, 12, { seed: 303 });
@@ -141,7 +141,7 @@ function p3() {
   const sk = new Sk(W, H, { id: "c" });
   room(sk, "#F4ECDD", "#E2CDA6");
   table(sk, 300, 860, 560, 31);
-  microscope(sk, 452, 560, 1.12, { seed: 881 });
+  thin(sk, 0.78, () => microscope(sk, 452, 560, 1.12, { seed: 881 }));
   // 밤에 쓴 조명: 작은 등잔 + 맑은 소금물을 채운 유리공으로 빛을 모았다
   const lx = 660, ly = 560;
   const lamp = curve([[lx - 30, ly], [lx - 26, ly - 26], [lx + 22, ly - 30], [lx + 34, ly - 22], [lx + 30, ly]], true, 3);
@@ -169,12 +169,12 @@ const WORKER = { hair: "short", hairColor: "#8A5A33", coat: { color: "#B9A57E", 
 function p4() {
   const sk = new Sk(W, H, { id: "d" });
   room(sk, "#F1E8D8", "#D8C6A2");
-  thin(sk, 0.75, () => {
-    // 위쪽 굴대: 증기 기관의 힘을 기계로 나른다
-    sk.ink(dense([[150, 150], [760, 150]]), { w: 11, seed: 11, color: "#5B5F66" });
-    for (const [x, i] of [[280, 0], [460, 1], [700, 2]]) { const pl = circ(x, 150, 24, { over: 0.1, seed: 12 + i }); sk.fill(pl, "#8A8F98", { dx: 0, dy: 0, wob: 0.3, seed: 15 + i }); sk.ink(pl, { w: 8, seed: 18 + i }); }
-    for (const [x, i] of [[280, 0], [460, 1]]) { sk.ink(dense([[x - 22, 156], [x - 22, 382]]), { w: 6, color: "#6B4A32", seed: 21 + i, wob: 0.3 }); sk.ink(dense([[x + 22, 156], [x + 22, 382]]), { w: 6, color: "#6B4A32", seed: 23 + i, wob: 0.3 }); }
-    // 증기 기관(오른쪽): 벽돌 화덕 위의 둥근 보일러, 굴뚝, 실린더, 큰 바퀴
+  thin(sk, 0.62, () => {
+    // 위쪽 굴대: 증기 기관의 힘을 기계로 나른다(말풍선 자리를 비켜 오른쪽 위에)
+    sk.ink(dense([[330, 112], [760, 112]]), { w: 11, seed: 11, color: "#5B5F66" });
+    for (const [x, i] of [[400, 0], [500, 1], [700, 2]]) { const pl = circ(x, 112, 22, { over: 0.1, seed: 12 + i }); sk.fill(pl, "#8A8F98", { dx: 0, dy: 0, wob: 0.3, seed: 15 + i }); sk.ink(pl, { w: 8, seed: 18 + i }); }
+    for (const [x, i] of [[400, 0], [500, 1]]) { sk.ink(dense([[x - 20, 118], [x - 20, 382]]), { w: 6, color: "#6B4A32", seed: 21 + i, wob: 0.3 }); sk.ink(dense([[x + 20, 118], [x + 20, 382]]), { w: 6, color: "#6B4A32", seed: 23 + i, wob: 0.3 }); }
+    // 증기 기관(오른쪽): 벽돌 화덕 위의 둥근 보일러, 굴뚝, 누운 실린더
     const brick = rrect(784, 560, 166, 130, 8);
     sk.fill(brick, "#B5533C", { seed: 31, tex: true, texAng: 0.02 }); sk.ink(brick, { w: 10, seed: 32 });
     const mouth = rrect(828, 600, 70, 50, 10); sk.fill(mouth, C.orange, { dx: 0, dy: 0, wob: 0.4, seed: 33 }); sk.ink(mouth, { w: 8, seed: 34 });
@@ -182,33 +182,47 @@ function p4() {
     sk.fill(boiler, "#7E8794", { seed: 35, tex: true, texAng: 0.02 }); sk.ink(boiler, { w: 10, seed: 36 });
     const chim = poly([[892, 456], [892, -10], [930, -10], [930, 456]], 4);
     sk.fill(chim, "#6B4A32", { seed: 37, tex: true, texAng: 1.5 }); sk.ink(chim, { w: 10, seed: 38 });
-    const cyl = rrect(736, 470, 44, 120, 8); sk.fill(cyl, "#5B5F66", { seed: 39 }); sk.ink(cyl, { w: 9, seed: 40 });
-    // 큰 바퀴(플라이휠)와 굴대로 오르는 벨트
+    const cyl = rrect(748, 488, 64, 46, 10); sk.fill(cyl, "#5B5F66", { seed: 39 }); sk.ink(cyl, { w: 9, seed: 40 });
+    // 큰 바퀴(플라이휠): 피스톤 막대 → 연결대 → 굴대에서 떨어진 크랭크 핀
     const fw = circ(640, 470, 100, { over: 0.1, seed: 41 });
     sk.ink(fw, { w: 13, seed: 42 });
     for (let i = 0; i < 6; i++) { const a = i * PI / 3 + 0.2; sk.ink(dense([[640, 470], [640 + 96 * Math.cos(a), 470 + 96 * Math.sin(a)]]), { w: 8, seed: 43 + i, wob: 0.2 }); }
-    sk.dot(640, 470, 14, "#5B5F66");
-    sk.ink(dense([[750, 490], [640, 470]]), { w: 9, seed: 50, color: "#5B5F66" });
-    sk.ink(dense([[676, 150], [618, 372]]), { w: 6, color: "#6B4A32", seed: 51, wob: 0.3 });
-    sk.ink(dense([[724, 150], [662, 372]]), { w: 6, color: "#6B4A32", seed: 52, wob: 0.3 });
+    const pin = [640 + 58 * Math.cos(0.5), 470 + 58 * Math.sin(0.5)];
+    sk.ink(dense([[640, 470], pin]), { w: 14, seed: 49, color: "#5B5F66", wob: 0.1 });
+    sk.dot(640, 470, 12, "#5B5F66");
+    sk.ink(dense([[748, 511], [724, 511]]), { w: 8, seed: 50, color: "#5B5F66", wob: 0.1 });
+    sk.ink(dense([[724, 511], pin]), { w: 9, seed: 51, color: "#3E4450", wob: 0.1 });
+    sk.dot(pin[0], pin[1], 9, C.ink);
+    sk.ink(dense([[680, 118], [620, 372]]), { w: 6, color: "#6B4A32", seed: 52, wob: 0.3 });
+    sk.ink(dense([[720, 118], [660, 372]]), { w: 6, color: "#6B4A32", seed: 53, wob: 0.3 });
   });
   // 돌아가는 바퀴와 피어오르는 증기
   for (const [r, a0, j] of [[122, -0.6, 0], [122, 2.5, 1]]) sk.ink(arc(640, 470, r, a0, a0 + 0.9), { w: 5, color: C.gray, seed: 60 + j, wob: 0.2 });
-  for (const [x, y, rr, i] of [[800, 430, 24, 0], [830, 404, 30, 1], [866, 420, 22, 2], [760, 452, 18, 3]]) { const c = circ(x, y, rr, { over: 0.2, seed: 64 + i, lump: 0.1 }); sk.fill(c, "#F4F6F8", { dx: 0, dy: 0, wob: 0.6, seed: 68 + i }); sk.ink(c, { w: 6, color: C.gray, seed: 72 + i, wob: 0.6 }); }
-  // 방적기(가운데): 실패가 줄지어 돌며 실을 뽑는다
-  thin(sk, 0.8, () => {
+  for (const [x, y, rr, i] of [[806, 430, 24, 0], [836, 404, 30, 1], [870, 420, 22, 2]]) { const c = circ(x, y, rr, { over: 0.2, seed: 64 + i, lump: 0.1 }); sk.fill(c, "#F4F6F8", { dx: 0, dy: 0, wob: 0.6, seed: 68 + i }); sk.ink(c, { w: 6, color: C.gray, seed: 72 + i, wob: 0.6 }); }
+  // 방적기(가운데): 가는 실톳이 줄지어 돌며 실을 뽑는다
+  thin(sk, 0.7, () => {
     const fr = rrect(176, 382, 360, 180, 10);
     sk.fill(fr, "#C99A62", { seed: 76, tex: true, texAng: 0.02 }); sk.ink(fr, { w: 10, seed: 77 });
     for (const [x, i] of [[206, 0], [506, 1]]) sk.ink(dense([[x, 562], [x, 690]]), { w: 11, seed: 78 + i });
-    for (let row = 0; row < 2; row++) for (let i = 0; i < 8; i++) {
-      const bx = 212 + i * 42, by = 420 + row * 74;
-      const bob = rrect(bx - 11, by, 22, 40, 6);
-      sk.fill(bob, row ? "#F4F0E6" : "#EAD9B6", { dx: 0, dy: 0, wob: 0.3, seed: 80 + row * 9 + i }); sk.ink(bob, { w: 5, seed: 100 + row * 9 + i, wob: 0.3 });
-      sk.ink(dense([[bx, by], [bx, by - 22]]), { w: 3, color: C.gray, seed: 120 + row * 9 + i, wob: 0.1 });
+    sk.ink(dense([[186, 404], [526, 404]]), { w: 6, seed: 79, color: "#8E6A3E", wob: 0.3 });
+    for (let row = 0; row < 2; row++) for (let i = 0; i < 9; i++) {
+      const bx = 206 + i * 38, by = 470 + row * 70;
+      sk.ink(dense([[bx, by - 56], [bx, by + 6]]), { w: 4, color: "#6B4A32", seed: 140 + row * 9 + i, wob: 0.1 });
+      const cop = curve([[bx - 9, by], [bx - 7, by - 30], [bx, by - 44], [bx + 7, by - 30], [bx + 9, by]], true, 2);
+      sk.fill(cop, "#F6EBD0", { dx: 0, dy: 0, wob: 0.3, seed: 80 + row * 9 + i }); sk.ink(cop, { w: 4.5, seed: 100 + row * 9 + i, wob: 0.3 });
+      sk.ink(dense([[bx, by - 44], [bx + 4, 404]]), { w: 2.5, color: "#B9A57E", seed: 160 + row * 9 + i, wob: 0.1 });
     }
   });
-  // 실 뭉치와 옷감 두루마리(방적기 아래)
-  for (const [x, y, c, i] of [[290, 652, "#F4F0E6", 0], [376, 652, "#E9D9F0", 1], [332, 612, "#DCE9F5", 2], [450, 652, "#F4F0E6", 3]]) { const roll = ell(x, y, 42, 28); sk.fill(roll, c, { dx: 0.6, dy: 0.8, wob: 0.4, seed: 130 + i, tex: true }); sk.ink(roll, { w: 8, seed: 134 + i }); sk.ink(ell(x, y, 15, 10), { w: 5, seed: 138 + i }); }
+  // 옷감 두루마리(옆에서 본 원통) 셋과 늘어진 천
+  for (const [x, y, c, i] of [[248, 664, "#F4F0E6", 0], [360, 664, "#E9D9F0", 1], [304, 624, "#DCE9F5", 2]]) {
+    const body = rrect(x - 50, y - 22, 100, 44, 8);
+    sk.fill(body, c, { dx: 0.6, dy: 0.8, wob: 0.4, seed: 130 + i, tex: true, texAng: 0.02 }); sk.ink(body, { w: 6, seed: 134 + i });
+    const end = ell(x - 50, y, 11, 22);
+    sk.fill(end, mix(c, "#000000", 0.08), { dx: 0, dy: 0, wob: 0.3, seed: 138 + i }); sk.ink(end, { w: 5, seed: 141 + i });
+    sk.ink(ell(x - 50, y, 5, 10), { w: 3, seed: 144 + i, wob: 0.1 });
+  }
+  const drape = curve([[410, 664], [450, 660], [470, 690], [430, 690]], true, 3);
+  sk.fill(drape, "#E9D9F0", { dx: 0.6, dy: 0.8, wob: 0.4, seed: 147 }); sk.ink(drape, { w: 6, seed: 148 });
   // 일꾼(왼쪽): 쏟아지는 실과 옷감을 가리킨다
   const P = pose({ elR: [76, -300], haR: [136, -330], elL: [-50, -262], haL: [-30, -204], tilt: 0.05 });
   drawFigure(sk, 96, 690, 0.62, P, { ...WORKER, name: "worker" });
@@ -254,17 +268,18 @@ function p5() {
   cow(sk, WX + 104, WY + 184, 0.52, 351);
   thin(sk, 0.8, () => { sk.ink(win, { w: 11, seed: 23 }); sk.ink(dense([[WX + WW / 2, WY], [WX + WW / 2, WY + WH]]), { w: 8, seed: 24 }); });
   // 제너: 소년의 팔에 우두 고름을 살짝 넣는다
-  const P = pose({ elR: [74, -290], haR: [136, -300], elL: [-50, -262], haL: [-24, -210], tilt: 0.06 });
-  const fx = 300, fy = 690, fs = 0.8;
+  const P = pose({ elR: [92, -300], haR: [170, -268], elL: [-50, -262], haL: [-24, -210], tilt: 0.08 });
+  const fx = 352, fy = 690, fs = 0.8;
   drawFigure(sk, fx, fy, fs, P, { ...JENNER, name: "jenner", face: "calm", look: 0.6 });
   wigRolls(sk, headAt(fx, fy, fs, P));
-  const hand = [fx + fs * 136, fy - fs * 300];
-  sk.ink(dense([[hand[0] + 4, hand[1] - 4], [hand[0] + 34, hand[1] - 18]]), { w: 5, color: "#8A8F98", seed: 361, wob: 0.1 });
+  const hand = [fx + fs * 170, fy - fs * 268];
   // 소년(여덟 살쯤): 소매를 걷은 팔을 내민다
   const B = pose({ elL: [-62, -300], haL: [-118, -300], elR: [44, -258], haR: [60, -196], tilt: -0.06 });
   const bx = 540, bs = 0.6;
   drawFigure(sk, bx, fy, bs, B, { ...BOY, name: "boy", coat: { color: C.white, seam: "#9AA3AE", len: 30 } });
-  sk.dot(bx - bs * 92, fy - bs * 300 - 4, 6, "#D2554A");
+  const arm = [bx - bs * 31, fy - bs * 316];
+  sk.dot(arm[0], arm[1], 5.5, "#D2554A");
+  sk.ink(dense([[hand[0] + 6, hand[1] + 4], [arm[0] - 4, arm[1] - 6]]), { w: 5, color: "#8A8F98", seed: 361, wob: 0.1 });
   return sk;
 }
 
@@ -309,7 +324,7 @@ function telstar(sk, x, y, s, sd = 401) {
 // 접시 안테나(옆에서 본 모습): 기둥 위의 오목한 포물면 접시 + 초점의 수신기. (x, y) = 기둥 바닥 가운데
 //   dir = 1 이면 오른쪽 위, -1 이면 왼쪽 위를 본다
 function dish(sk, x, y, s, dir = 1, sd = 481) {
-  sk.at(x, y, s, () => {
+  thin(sk, 0.5, () => sk.at(x, y, s, () => {
     const base = poly([[-46, 0], [46, 0], [30, -26], [-30, -26]], 4);
     sk.fill(base, "#9AA3AE", { seed: sd, dx: 0.6, dy: 0.8 }); sk.ink(base, { w: 9, seed: sd + 1 });
     sk.ink(dense([[0, -26], [0, -120]]), { w: 14, seed: sd + 2, wob: 0.2 });
@@ -324,7 +339,7 @@ function dish(sk, x, y, s, dir = 1, sd = 481) {
     for (const sg of [-1, 1]) sk.ink(dense([[sg * 70, -a * 4900], [0, -60]]), { w: 5, seed: sd + 5 + (sg > 0 ? 1 : 0), wob: 0.2 });
     const feed = rrect(-10, -76, 20, 20, 5); sk.fill(feed, "#5B5F66", { dx: 0, dy: 0, wob: 0.3, seed: sd + 7 }); sk.ink(feed, { w: 6, seed: sd + 8 });
     sk.restore();
-  });
+  }));
 }
 function p7() {
   const sk = new Sk(W, H, { id: "g" });
@@ -332,7 +347,7 @@ function p7() {
   // 대서양과 양쪽 땅
   sk.fill(poly([[-10, 500], [970, 500], [970, 730], [-10, 730]], 8), C.sea, { dx: 0, dy: 0, wob: 0, seed: 4, tex: true, texAng: 0.02 });
   for (let i = 0; i < 3; i++) { const wx = 380 + i * 80, wy = 570 + (i % 2) * 54; sk.ink(curve([[wx, wy], [wx + 20, wy - 8], [wx + 40, wy], [wx + 60, wy - 8]]), { w: 6, color: C.white, seed: 5 + i, wob: 0.3 }); }
-  thin(sk, 0.75, () => {
+  thin(sk, 0.6, () => {
     for (const [pts, i] of [[[[-10, 470], [150, 452], [330, 470], [360, 730], [-10, 730]], 0], [[[644, 476], [800, 456], [970, 466], [970, 730], [610, 730]], 1]]) {
       const land = curve(pts, true, 4);
       sk.fill(land, "#B9DE9B", { dx: 0, dy: 0, wob: 0.5, seed: 11 + i, tex: true, texAng: 0.02 });
@@ -340,28 +355,30 @@ function p7() {
     }
   });
   // 미국 쪽: 손 흔드는 사람을 찍는 카메라와 하늘로 쏘아 올리는 접시 안테나
-  const wave = pose({ elR: [70, -330], haR: [96, -410], elL: [-44, -258], haL: [-58, -196], tilt: 0.04 });
-  drawFigure(sk, 66, 690, 0.44, wave, { hair: "short", hairColor: "#3F322C", seed: 431 });
-  thin(sk, 0.85, () => {
-    for (const [dx, i] of [[-30, 0], [0, 1], [30, 2]]) sk.ink(dense([[176, 560], [176 + dx, 690]]), { w: 9, seed: 421 + i });
-    const cam = rrect(140, 500, 90, 62, 10); sk.fill(cam, "#5B5F66", { seed: 424, tex: true }); sk.ink(cam, { w: 9, seed: 425 });
-    const lens = rrect(110, 514, 34, 34, 6); sk.fill(lens, "#39424E", { dx: 0, dy: 0, wob: 0.3, seed: 426 }); sk.ink(lens, { w: 8, seed: 427 });
+  const wave = pose({ elL: [-70, -330], haL: [-96, -410], elR: [44, -258], haR: [58, -196], tilt: 0.04 });
+  drawFigure(sk, 84, 690, 0.44, wave, { hair: "short", hairColor: "#3F322C", seed: 431 });
+  thin(sk, 0.62, () => {
+    for (const [dx, i] of [[-30, 0], [0, 1], [30, 2]]) sk.ink(dense([[226, 560], [226 + dx, 690]]), { w: 9, seed: 421 + i });
+    const cam = rrect(190, 500, 90, 62, 10); sk.fill(cam, "#5B5F66", { seed: 424, tex: true }); sk.ink(cam, { w: 9, seed: 425 });
+    const lens = rrect(160, 514, 34, 34, 6); sk.fill(lens, "#39424E", { dx: 0, dy: 0, wob: 0.3, seed: 426 }); sk.ink(lens, { w: 8, seed: 427 });
   });
-  dish(sk, 280, 560, 0.86, 1, 481);
+  dish(sk, 318, 560, 0.8, 1, 481);
   // 텔스타와 신호
   telstar(sk, 480, 168, 0.9);
-  arrow(sk, [[312, 392], [432, 206]], { w: 6, color: C.blue, dash: [14, 12], seed: 441, head: 18, wob: 0.2 });
-  arrow(sk, [[528, 206], [664, 392]], { w: 6, color: C.blue, dash: [14, 12], seed: 443, head: 18, wob: 0.2 });
-  // 유럽 쪽: 받는 접시 안테나, 텔레비전 앞의 사람. 화면 속에 바다 건너의 손 흔드는 사람
-  dish(sk, 662, 560, 0.74, -1, 491);
-  const tv = rrect(812, 488, 130, 106, 14);
-  sk.fill(tv, "#8A6A44", { seed: 451, tex: true }); sk.ink(tv, { w: 9, seed: 452 });
-  const scr = rrect(826, 502, 86, 78, 10); sk.fill(scr, "#BFE3F5", { dx: 0, dy: 0, wob: 0.3, seed: 453 }); sk.ink(scr, { w: 6, seed: 454 });
-  sk.at(869, 574, 0.15, () => { sk.ink(dense([[0, -150], [0, -64]]), { w: 18, seed: 455 }); sk.ink(curve([[0, -138], [40, -160], [62, -220]]), { w: 18, seed: 456 }); sk.ink(curve([[0, -138], [-40, -150], [-58, -110]]), { w: 18, seed: 457 }); sk.ink(dense([[0, -64], [-26, 0]]), { w: 18, seed: 458 }); sk.ink(dense([[0, -64], [26, 0]]), { w: 18, seed: 459 }); const hd = circ(0, -196, 44, { over: 0.2, seed: 460 }); sk.fill(hd, C.skin, { dx: 0, dy: 0, wob: 0.5, seed: 461 }); sk.ink(hd, { w: 18, seed: 462 }); });
-  thin(sk, 0.85, () => { sk.ink(dense([[836, 594], [830, 690]]), { w: 10, seed: 465 }); sk.ink(dense([[918, 594], [924, 690]]), { w: 10, seed: 466 }); });
-  for (const [sg, i] of [[-1, 0], [1, 1]]) sk.ink(dense([[877, 488], [877 + sg * 32, 446]]), { w: 5, seed: 463 + i, wob: 0.2 });
+  arrow(sk, [[350, 396], [436, 210]], { w: 6, color: C.blue, dash: [14, 12], seed: 441, head: 18, wob: 0.2 });
+  arrow(sk, [[524, 206], [628, 404]], { w: 6, color: C.blue, dash: [14, 12], seed: 443, head: 18, wob: 0.2 });
+  // 유럽 쪽: 받는 접시 안테나, 텔레비전 앞의 사람(화면 속에 바다 건너의 손 흔드는 사람)
+  dish(sk, 652, 560, 0.74, -1, 491);
+  thin(sk, 0.62, () => {
+    const tv = rrect(728, 488, 130, 106, 14);
+    sk.fill(tv, "#8A6A44", { seed: 451, tex: true }); sk.ink(tv, { w: 9, seed: 452 });
+    const scr = rrect(742, 502, 86, 78, 10); sk.fill(scr, "#BFE3F5", { dx: 0, dy: 0, wob: 0.3, seed: 453 }); sk.ink(scr, { w: 6, seed: 454 });
+    sk.ink(dense([[752, 594], [746, 690]]), { w: 10, seed: 465 }); sk.ink(dense([[834, 594], [840, 690]]), { w: 10, seed: 466 });
+    for (const [sg, i] of [[-1, 0], [1, 1]]) sk.ink(dense([[793, 488], [793 + sg * 32, 446]]), { w: 5, seed: 463 + i, wob: 0.2 });
+  });
+  sk.at(785, 574, 0.15, () => { sk.ink(dense([[0, -150], [0, -64]]), { w: 18, seed: 455 }); sk.ink(curve([[0, -138], [40, -160], [62, -220]]), { w: 18, seed: 456 }); sk.ink(curve([[0, -138], [-40, -150], [-58, -110]]), { w: 18, seed: 457 }); sk.ink(dense([[0, -64], [-26, 0]]), { w: 18, seed: 458 }); sk.ink(dense([[0, -64], [26, 0]]), { w: 18, seed: 459 }); const hd = circ(0, -196, 44, { over: 0.2, seed: 460 }); sk.fill(hd, C.skin, { dx: 0, dy: 0, wob: 0.5, seed: 461 }); sk.ink(hd, { w: 18, seed: 462 }); });
   const look = pose({ elR: [66, -290], haR: [112, -300], elL: [-50, -262], haL: [-30, -204], tilt: 0.05 });
-  drawFigure(sk, 770, 690, 0.46, look, { hair: "bob", hairColor: "#8A5A33", seed: 471, name: "viewer" });
+  drawFigure(sk, 884, 690, 0.46, look, { hair: "bob", hairColor: "#8A5A33", seed: 471, name: "viewer", mirror: true });
   return sk;
 }
 
@@ -379,24 +396,26 @@ function p8() {
   });
   // 가상 현실 속 붓질: 공중에 그린 빛나는 선
   const strokes = [
-    [[[500, 330], [580, 240], [680, 250], [720, 330], [670, 390]], "#3FA7E0", 0],
-    [[[480, 450], [570, 380], [680, 360], [770, 290]], "#F08A2E", 1],
-    [[[600, 214], [660, 166], [730, 164], [780, 118]], "#12A594", 2],
+    [[[560, 360], [630, 290], [720, 300], [750, 380], [700, 430]], "#3FA7E0", 0],
+    [[[620, 214], [680, 166], [750, 164], [800, 118]], "#12A594", 2],
   ];
   for (const [pts, col, i] of strokes) { sk.ink(curve(pts), { w: 26, color: mix(col, "#ffffff", 0.55), seed: 31 + i, wob: 0.3 }); sk.ink(curve(pts), { w: 13, color: col, seed: 34 + i, wob: 0.3 }); }
   heart(sk, 744, 420, 1.2, { seed: 41 });
   for (const [x, y, r, c, i] of [[540, 190, 16, C.yellow, 0], [812, 214, 14, C.teal, 1], [600, 480, 12, C.orange, 2]]) sparkle(sk, x, y, r, { seed: 42 + i, color: c });
   // 학생: 가상 현실 기기를 쓰고 손에 든 조종기로 그린다
-  const P = pose({ elR: [76, -330], haR: [118, -404], elL: [-60, -270], haL: [-90, -224], tilt: 0.04 });
+  const P = pose({ elL: [-76, -330], haL: [-118, -404], elR: [60, -270], haR: [90, -224], tilt: -0.04 });
   const fx = 340, fy = 690, fs = 0.66;
-  drawFigure(sk, fx, fy, fs, P, { ...STUDENT, name: "student", hands: "L" });
-  const h = headAt(fx, fy, fs, P);
+  drawFigure(sk, fx, fy, fs, P, { ...STUDENT, name: "student", hands: "R", mirror: true });
+  const h = headAt(fx, fy, fs, P, true);
   sk.at(h.x, h.y, h.s, () => {
     const visor = rrect(-96, -28, 192, 76, 26);
     sk.fill(visor, "#39424E", { seed: 51, tex: true }); sk.ink(visor, { w: 11, seed: 52 });
     sk.ink(dense([[-56, 8], [56, 8]]), { w: 9, color: C.teal, seed: 53, wob: 0.3 });
   }, h.rot);
   const hc = [fx + fs * 118, fy - fs * 404];
+  // 지금 긋고 있는 선: 조종기 끝에서 시작한다
+  sk.ink(curve([[hc[0] + 4, hc[1] - 52], [hc[0] + 70, hc[1] - 96], [hc[0] + 170, hc[1] - 80], [hc[0] + 250, hc[1] - 150]]), { w: 26, color: mix("#F08A2E", "#ffffff", 0.55), seed: 57, wob: 0.3 });
+  sk.ink(curve([[hc[0] + 4, hc[1] - 52], [hc[0] + 70, hc[1] - 96], [hc[0] + 170, hc[1] - 80], [hc[0] + 250, hc[1] - 150]]), { w: 13, color: "#F08A2E", seed: 58, wob: 0.3 });
   const ctl = rrect(hc[0] - 12, hc[1] - 44, 24, 56, 8);
   sk.fill(ctl, "#39424E", { dx: 0, dy: 0, wob: 0.3, seed: 54 }); sk.ink(ctl, { w: 7, seed: 55 });
   sk.glow(hc[0], hc[1] - 50, 34, "#FFE07A", 0.8, 0.2);
@@ -421,22 +440,22 @@ const BUBBLES = [
   [{ who: "worker", text: "한꺼번에<br>이렇게나!" }],
   [{ who: "boy", text: "따끔해요!" }],
   [{ who: "fleming", text: "곰팡이 둘레만<br>깨끗하네?" }],
-  [{ who: "viewer", text: "바다 건너가<br>바로 보여!" }],
+  [{ who: "viewer", text: "바로 보여!" }],
   [{ who: "student", text: "그림 속에<br>들어왔어!" }],
 ];
 
 const P = [
   {
     fn: p1, when: "11세기 전반, 이집트 카이로", stage: "원리의 발견", title: "빛은 꺾여서 나아가요",
-    caption: "11세기 전반 이집트 카이로의 과학자 <b>이븐 알하이삼</b>은 빛이 공기에서 물이나 유리로 들어갈 때 어떻게 꺾이는지 연구했어요. 눈금을 새긴 원판을 물에 반쯤 담가, 꺾인 빛이 닿는 자리를 읽는 장치도 고안했지요. 빛이 이렇게 꺾이는 성질을 <b>굴절</b>이라고 해요.",
+    caption: "11세기 전반 이집트 카이로의 과학자 <b>이븐 알하이삼</b>은 빛이 공기에서 물이나 유리로 들어갈 때 어떻게 꺾이는지 연구했어요. 눈금을 새긴 원판을 물에 반쯤 담가, 꺾인 빛이 닿는 자리를 읽는 장치도 고안했지요. 빛이 이렇게 꺾이는 현상을 <b>굴절</b>이라고 해요.",
   },
   {
     fn: p2, when: "1280년대, 이탈리아", stage: "기술의 발달", title: "유리를 갈아 만든 렌즈",
     caption: "유리를 가운데가 볼록하게 갈면, 지나가는 빛이 꺾여 글자가 크게 보여요. 1280년대 이탈리아에서는 이렇게 간 <b>렌즈</b> 두 알을 이어 <b>안경</b>을 만들었어요(누가 처음 만들었는지는 알려지지 않았어요). 눈이 침침해진 노인도 다시 책을 읽을 수 있게 되었지요.",
   },
   {
-    fn: p3, when: "1663년, 영국 런던", stage: "기기의 발명", title: "현미경 속 작은 방들",
-    caption: "렌즈를 통 안에 여러 장 겹친 <b>현미경</b>은 1600년 무렵 네덜란드에서 나왔어요. 1663년 런던의 <b>로버트 훅</b>은 현미경으로 얇게 저민 코르크를 보다가 벌집처럼 작은 칸이 가득한 것을 발견했지요. 훅은 1665년에 펴낸 책에서 이 칸을 '작은 방'이라는 뜻의 <b>셀(cell)</b>이라 불렀어요. 오늘날 우리가 <b>세포</b>라고 부르는 것이에요.",
+    fn: p3, when: "1663년, 영국 런던", stage: "기기의 발명과 쓰임", title: "현미경 속 작은 방들",
+    caption: "렌즈 여러 장을 통에 겹친 <b>현미경</b>은 1600년 무렵 네덜란드에서 나왔어요. 1663년 런던의 <b>로버트 훅</b>은 현미경으로 얇은 코르크를 보다가 벌집 같은 작은 칸을 발견했지요. 훅은 1665년에 펴낸 책에서 이 칸을 '작은 방'이라는 뜻의 <b>셀(cell)</b>이라 불렀어요. 오늘날 <b>세포</b>라고 부르는 것이에요.",
     term: { name: "현미경", def: "렌즈로 빛을 꺾어 <b>아주 작은 것을 크게</b> 보여 주는 기기. 먼 것을 크게 보는 망원경도 같은 렌즈 기술에서 나왔어요." },
   },
   {
@@ -446,7 +465,7 @@ const P = [
   },
   {
     fn: p5, when: "1796년, 영국 버클리", stage: "문명의 변화: 의학", title: "병을 미리 막는 백신",
-    caption: "소가 앓는 가벼운 병인 <b>우두</b>를 앓은 사람은 무서운 천연두에 잘 걸리지 않는다는 이야기가 있었어요. 1796년 영국의 의사 <b>에드워드 제너</b>는 우두 고름을 여덟 살쯤 된 소년의 팔에 살짝 넣었고, 그 뒤 소년은 천연두에 걸리지 않았어요. 병에 걸리기 전에 <b>미리 막는</b> 백신의 시작이에요.",
+    caption: "소가 앓는 가벼운 병인 <b>우두</b>를 앓은 사람은 무서운 천연두에 잘 걸리지 않는다는 이야기가 있었어요. 1796년 영국의 의사 <b>에드워드 제너</b>는 우두 고름을 여덟 살쯤 된 소년의 팔에 넣었어요. 몇 주 뒤 천연두 고름을 넣어 보았지만 소년은 병에 걸리지 않았지요. 병에 걸리기 전에 <b>미리 막는</b> 백신의 시작이에요.",
     term: { name: "백신", def: "병에 걸리기 전에 미리 맞아 그 병을 막는 것. 백신이라는 이름은 '소'를 뜻하는 라틴어에서 왔어요." },
   },
   {
@@ -456,12 +475,12 @@ const P = [
   },
   {
     fn: p7, when: "1962년 7월, 대서양 위", stage: "문명의 변화: 통신", title: "바다 건너 그 순간 그대로",
-    caption: "1957년 첫 <b>인공위성</b>이 지구를 돌기 시작한 뒤, 1962년 7월에는 통신 위성 텔스타가 미국의 텔레비전 화면을 대서양 건너 유럽에 그 순간 그대로 전했어요. 1969년에는 오늘날 <b>인터넷</b>의 시작이 된 컴퓨터 연결망도 처음 이어졌지요. 이런 정보 통신 기술 덕분에 지금은 지구 반대편 소식도 <b>실시간</b>으로 봐요.",
+    caption: "1957년 첫 <b>인공위성</b>이 오른 뒤, 1962년 7월에는 통신 위성 텔스타가 미국의 텔레비전 화면을 대서양 건너 유럽에 그 순간 그대로 전했어요. 1969년에는 <b>인터넷</b>의 시작이 된 컴퓨터 연결망도 처음 이어졌지요. 이런 정보 통신 기술로 지금은 지구 반대편 소식도 <b>실시간</b>으로 봐요.",
     term: { name: "정보 통신", def: "전기와 전파를 이용해 정보를 <b>실시간으로 주고받는</b> 기술. 대륙 사이의 인터넷 자료는 대부분 바다 밑에 깐 통신선으로 오가요." },
   },
   {
     fn: p8, when: "오늘날, 우리 곁", stage: "문명의 변화: 예술", title: "예술까지 바꾼 과학",
-    caption: "과학은 예술도 바꿨어요. 1839년 파리에서 빛으로 장면을 남기는 <b>사진</b>이 처음 공개되었고, 뒤이어 영화가 나왔어요. 오늘은 <b>가상 현실</b> 속에서 그림을 그리기도 해요. 지금까지의 여행에는 규칙이 있었지요. <b>과학 원리의 발견</b>이 <b>기술</b>을 낳고, 기술이 <b>기기</b>가 되어 <b>문명</b>을 바꿔요.",
+    caption: "과학은 예술도 바꿨어요. 1839년 파리에서 빛으로 장면을 남기는 <b>사진</b>이 처음 공개되었고, 그 뒤 영화도 나왔어요. 오늘날에는 <b>가상 현실</b> 속에서 그림을 그리기도 해요. 지금까지의 여행에는 규칙이 있었지요. <b>과학 원리의 발견</b>이 <b>기술</b>을 낳고, 기술이 <b>기기</b>가 되어 <b>문명</b>을 바꿔요.",
     term: { name: "과학과 문명", def: "<b>원리 발견 → 기술 발달 → 기기 발명 → 문명의 변화</b>로 이어지는 흐름. 산업, 의학, 통신, 예술처럼 과학 밖의 분야까지 바꿔요." },
   },
 ];
