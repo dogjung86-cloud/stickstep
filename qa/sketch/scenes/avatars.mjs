@@ -1,12 +1,13 @@
 // 개념 설명의 원형 스틱맨 쌤 5종 + 계정 관리 화면의 책 읽는 그림.
-// 쌤은 만화와 같은 인물(삐친 머리 + 둥근 안경 + 흰 가운)에 표정을 켠 모습이다.
+// 쌤은 만화와 같은 인물(삐친 머리 + 둥근 안경 + 흰 가운)이고, 얼굴은 눈동자 없이 안경만 쓴 모습이다
+// (bare: 볼 터치와 입만 그린다, 2026-11-12 사용자 결정. 스플래시와 로그인 그림과 같은 얼굴).
 // 44px 원 안에서도 읽히도록 작은 그림은 떨림을 줄이고 선을 굵게 긋는다(wobK, lwK).
 import { Sk, C, curve, dense, poly, rrect, qmark, rays, sparkle } from "../lib/sk.mjs";
 import { drawFigure, drawHead, pose, TEACHER, KID } from "../lib/figure.mjs";
 import { openBook } from "../lib/props.mjs";
 
 const SMALL = { wobK: 0.45, lwK: 1.22, tex: false, tol: 0.2 };
-const T = (face, extra = {}) => ({ ...TEACHER, face, ...extra });
+const T = (face, extra = {}) => ({ ...TEACHER, face, bare: true, ...extra });
 
 // 상반신: 240×240. 지름 44px 원에 들어가므로 머리가 원을 거의 채우게 잡는다. 어깨는 가운 깃만 보인다.
 const BH = { s: 0.92, x: 120, y: 143 };
