@@ -84,16 +84,18 @@ export function u3Hold(text: string, on: (down: boolean) => void): HTMLButtonEle
     if (v) haptic(HAPTIC.tap);
     on(v);
   };
-  b.addEventListener("pointerdown", (e) => {
-    try {
-      b.setPointerCapture(e.pointerId);
-    } catch {
-      /* 합성 이벤트에는 붙잡을 포인터가 없다 */
-    }
+  // 누르는 동안 버튼이 잠기면(disabled) 버튼은 떼는 이벤트를 받지 못한다. 그래서 떼는 것은 창에서 듣는다.
+  const up = (): void => {
+    window.removeEventListener("pointerup", up);
+    window.removeEventListener("pointercancel", up);
+    set(false);
+  };
+  b.addEventListener("pointerdown", () => {
+    if (b.disabled) return;
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
     set(true);
   });
-  b.addEventListener("pointerup", () => set(false));
-  b.addEventListener("pointercancel", () => set(false));
   b.addEventListener("contextmenu", (e) => e.preventDefault());
   b.addEventListener("keydown", (e) => {
     if (e.key === " " || e.key === "Enter") set(true);

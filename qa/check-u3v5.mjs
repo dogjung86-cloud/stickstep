@@ -144,6 +144,13 @@ async function conclude(id, n) {
   await cta(page);
   await W(page, 500);
 }
+const tapText = (text) =>
+  page.evaluate((t) => {
+    const b = [...document.querySelectorAll(".screen.active .bv-ctl button")].find((x) => x.offsetParent !== null && !x.disabled && x.textContent.trim() === t);
+    if (!b) return false;
+    b.click();
+    return true;
+  }, text);
 const isLab = async (id, n, title) => ok((await stepKind()) === "u3lab:" + title, `${id} 랩${n}: 다음 스텝이 "${title}"가 아님(${await stepKind()})`);
 
 // ── 레슨마다의 길 ────────────────────────────────────────────────
@@ -211,6 +218,87 @@ const LESSONS = {
     await atLab(id, 1, "hot", true);
     await judge(id, 1, true);
     await conclude(id, 1);
+  },
+  u3l3: async (id) => {
+    // 만화는 그대로다. 검토 모드의 앞으로 가기로 첫 랩까지 건너간다
+    ok(await page.evaluate(() => !!document.querySelector(".screen.active .step .comic-art, .screen.active .step [class*=comic]")), `${id}: 첫 스텝이 만화가 아님`);
+    await page.evaluate(() => document.querySelector(".screen.active .xbtn.fwd")?.click());
+    await W(page, 900);
+    // 1 전도
+    await isLab(id, 1, "어느 막대가 열을 빨리 전할까?");
+    await atLab(id, 1, "predict", true);
+    await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
+    await W(page, 1500);
+    await atLab(id, 1, "mount", true);
+    for (const k of ["cu", "fe", "glass"]) {
+      await tap(page, `.bv-card[data-k=${k}]`);
+      await W(page, 300);
+      if (k === "cu") {
+        const box = await page.locator(".screen.active .u3x-hold").boundingBox();
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        await page.mouse.down();
+        await W(page, 1000);
+        await atLab(id, 1, "heating", true);
+        await page.mouse.up();
+        await W(page, 300);
+      }
+      await holdBtn(".u3x-hold", async () => (await dsU3("u3Rod")) === `${k}:done`);
+      ok((await dsU3("u3Rod")) === `${k}:done`, `${id}: ${k} 막대가 끝나지 않음`);
+      await W(page, 300);
+      await atLab(id, 1, `rod-${k}`, k !== "fe");
+    }
+    await judge(id, 1, true);
+    await conclude(id, 1);
+    // 2 대류
+    await isLab(id, 2, "아래만 데워도 왜 다 따뜻해질까?");
+    await atLab(id, 2, "mount", true);
+    const sceneIs = (v) => waitFor(page, (x) => document.querySelector(".screen.active .step")?.dataset.u3Scene === x, v, 130, 100);
+    await tapText("불 켜기");
+    await W(page, 2200);
+    await atLab(id, 2, "pot-run", true);
+    ok(await sceneIs("pot:ok"), `${id}: 냄비가 끝나지 않음(${await dsU3("u3Scene")})`);
+    await atLab(id, 2, "pot-ok");
+    await tapText("다음 실험으로");
+    await W(page, 500);
+    await atLab(id, 2, "heater", true);
+    await tapText("위쪽에 달기");
+    ok(await sceneIs("heater:fail"), `${id}: 난방기 위쪽이 실패로 끝나지 않음(${await dsU3("u3Scene")})`);
+    await W(page, 300);
+    await atLab(id, 2, "heater-fail", true);
+    await tapText("아래쪽에 달기");
+    ok(await sceneIs("heater:ok"), `${id}: 난방기 아래쪽이 끝나지 않음(${await dsU3("u3Scene")})`);
+    await W(page, 300);
+    await atLab(id, 2, "heater-ok", true);
+    await tapText("다음 실험으로");
+    await W(page, 500);
+    await tapText("위쪽에 달기");
+    ok(await sceneIs("cooler:ok"), `${id}: 냉방기 위쪽이 끝나지 않음(${await dsU3("u3Scene")})`);
+    await W(page, 300);
+    await atLab(id, 2, "cooler-ok", true);
+    await judge(id, 2, true);
+    await conclude(id, 2);
+    // 3 복사
+    await isLab(id, 3, "난로 곁에 서면 왜 따뜻할까?");
+    await atLab(id, 3, "mount", true);
+    await setRange(page, ".u3x-range", 5);
+    await W(page, 500);
+    await atLab(id, 3, "near", true);
+    ok(Number(await dsU3("u3Warm")) >= 4, `${id}: 가까이 갔는데 받는 열이 작음`);
+    await tapText("가림판 세우기");
+    await W(page, 500);
+    await atLab(id, 3, "shield", true);
+    ok(Number(await dsU3("u3Warm")) === 0, `${id}: 가림판을 세웠는데 열을 받음`);
+    await tapText("다음 실험: 유리 상자");
+    await W(page, 600);
+    await atLab(id, 3, "predict", true);
+    await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
+    await W(page, 1500);
+    await atLab(id, 3, "box", true);
+    await holdBtn(".u3x-hold", async () => (await dsU3("u3Air")) === "0.00");
+    await W(page, 400);
+    await atLab(id, 3, "empty", true);
+    await judge(id, 3, true);
+    await conclude(id, 3);
   },
 };
 

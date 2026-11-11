@@ -16,6 +16,9 @@ type Curio = { q: string; a: string };
 const lab = (type: string) => (o: { title: string; cta?: string; curio?: Curio }): Step => ({ type, ...o });
 const tempLab = lab("u3TempLab");
 const contactLab = lab("u3ContactLab");
+const rodLab = lab("u3RodLab");
+const convLab = lab("u3ConvLab");
+const radLab = lab("u3RadLab");
 
 /** 정본 랩 스텝에 달려 있던 궁금증 카드를 새 랩으로 옮겨 단다(글의 주인은 정본이다). */
 const withCurio = (make: (curio?: Curio) => Step) => (old: Step): Step => make(old.curio as Curio | undefined);
@@ -28,5 +31,12 @@ export const UNIT3_V5: Unit | null = remakeUnit(UNIT3, {
   u3l2: {
     intro: opener({ title: "갓 삶은 달걀을 찬물에 넣으면?", scene: "u3-egg", wait: "달걀을 꾹 눌러 물에 담가 보세요", cta: "열량계로 실험하기" }),
     swap: { heatContact: withCurio((curio) => contactLab({ title: "뜨거운 물과 찬물이 닿으면?", cta: "개념 정리하기", curio })) },
+  },
+  u3l3: {
+    swap: {
+      conduction: withCurio((curio) => rodLab({ title: "어느 막대가 열을 빨리 전할까?", cta: "다음, 대류", curio })),
+      convection: withCurio((curio) => convLab({ title: "아래만 데워도 왜 다 따뜻해질까?", cta: "다음, 복사", curio })),
+      radiation: withCurio((curio) => radLab({ title: "난로 곁에 서면 왜 따뜻할까?", cta: "표로 정리하기", curio })),
+    },
   },
 });

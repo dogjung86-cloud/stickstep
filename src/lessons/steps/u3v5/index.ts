@@ -4,8 +4,14 @@
 import type { StepRenderer } from "../../types";
 import { tempLab } from "./tempLab";
 import { contactLab } from "./contactLab";
+import { rodLab } from "./rodLab";
+import { convLab } from "./convLab";
+import { radLab } from "./radLab";
 
 export const U3V5_STEPS: Record<string, StepRenderer> = {
   u3TempLab: tempLab,
   u3ContactLab: contactLab,
+  u3RodLab: rodLab,
+  u3ConvLab: convLab,
+  u3RadLab: radLab,
 };

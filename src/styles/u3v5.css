@@ -26,6 +26,7 @@
 /* 버튼 여럿을 한 줄에 */
 .u3x-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .u3x-row.three { grid-template-columns: 1fr 1fr 1fr; }
+.u3x-row[hidden] { display: none; }
 .u3x-step .bv-btn.on { border-color: var(--subj-heat); background: var(--subj-heat-tint); color: var(--subj-heat-press); box-shadow: 0 0 0 1px var(--subj-heat) inset; }
 /* 카드의 한 줄 설명이 결과(걸린 시간 따위)로 바뀔 때 */
 .u3x-step .bv-card.done i { color: var(--subj-heat-press); font-weight: 800; }
