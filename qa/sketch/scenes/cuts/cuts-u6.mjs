@@ -93,7 +93,7 @@ function cutU6l2() {
   const ks = 0.72, seatK = at(250), hipK = [seatK[0], seatK[1] - 12], gK = at(300);
   const PK = pose(local(hipK[0], GY, ks, { hip: hipK, neck: [hipK[0] - 6, hipK[1] - 94], head: [hipK[0] - 12, hipK[1] - 162],
     knL: [hipK[0] - 54, hipK[1] + 2], ftL: [hipK[0] - 60, hipK[1] + 78], knR: [hipK[0] - 48, hipK[1] - 4], ftR: [hipK[0] - 46, hipK[1] + 72],
-    elL: [hipK[0] + 34, hipK[1] - 50], haL: [gK[0], gK[1] - 6], elR: [hipK[0] + 62, hipK[1] - 150], haR: [hipK[0] + 96, hipK[1] - 222], tilt: -0.06 }));
+    elL: [hipK[0] + 34, hipK[1] - 50], haL: [gK[0], gK[1] - 6], elR: [hipK[0] + 92, hipK[1] - 128], haR: [hipK[0] + 128, hipK[1] - 208], tilt: -0.06 }));
   drawFigure(sk, hipK[0], GY, ks, PK, { ...STUDENT, name: "student", mirror: false, flip: -1 });
   // 내려간 만큼 올라간다(같은 길이의 청록 화살표)
   arrow(sk, [[118, PV[1] - 36], [118, PV[1] + 50]], { w: 9, color: C.teal, straight: true, seed: 41, head: 24, wob: 0.2 });
@@ -142,8 +142,8 @@ function cutU6l3() {
   const sk = new Sk(W, H, { id: "c" });
   // 먼 산줄기
   thin(sk, 0.7, () => {
-    const far = curve([[14, 470], [90, 400], [170, 440], [260, 370], [360, 430], [440, 400], [520, 460]], false, 4);
-    sk.fill([...far, [520, 712], [14, 712], far[0]], "#EEF1F4", { dx: 0, dy: 0, wob: 0.3, seed: 11 });
+    const far = curve([[14, 470], [90, 400], [170, 440], [260, 370], [360, 430], [440, 400], [540, 450], [640, 404], [740, 440], [840, 396], [946, 430]], false, 4);
+    sk.fill([...far, [946, 712], [14, 712], far[0]], "#EEF1F4", { dx: 0, dy: 0, wob: 0.3, seed: 11 });
     sk.ink(far, { w: 8, color: "#B9C2CC", seed: 12 });
   });
   // 골짜기의 작은 마을
@@ -155,12 +155,12 @@ function cutU6l3() {
   cloud(sk, 230, 560, 170, 56, { seed: 71, w: 6 });
   cloud(sk, 420, 610, 120, 42, { seed: 75, w: 6 });
   // 큰 산: 꼭대기는 오른쪽
-  const PT = 480;
+  const PT = 516;
   thin(sk, 0.8, () => {
-    const m = curve([[300, 712], [380, 640], [470, 560], [548, PT + 6], [580, PT], [800, PT - 2], [830, PT + 8], [900, 560], [946, 600]], false, 4);
+    const m = curve([[300, 712], [380, 650], [470, 590], [548, PT + 6], [580, PT], [800, PT - 2], [830, PT + 8], [900, 600], [946, 630]], false, 4);
     sk.fill([...m, [946, 712], [300, 712], m[0]], "#D9D2C4", { seed: 81, tex: true, texAng: 0.3 });
     sk.ink(m, { w: 11, seed: 82 });
-    for (const [a, b, i] of [[[520, 560], [600, 590]], [[700, 540], [780, 520]], [[620, 650], [720, 640]]].map((p, i) => [...p, i])) sk.ink(curve([a, lerp2(a, b, 0.5).map((v, k) => v + (k ? -6 : 0)), b]), { w: 5, color: "#A79E8C", seed: 83 + i, wob: 0.3 });
+    for (const [a, b, i] of [[[540, 600], [610, 622]], [[700, 572], [780, 556]], [[620, 670], [720, 660]]].map((p, i) => [...p, i])) sk.ink(curve([a, lerp2(a, b, 0.5).map((v, k) => v + (k ? -6 : 0)), b]), { w: 5, color: "#A79E8C", seed: 83 + i, wob: 0.3 });
   });
   // 배낭과 학생
   backpack(sk, 590, PT, 91);
@@ -173,22 +173,25 @@ function cutU6l3() {
   handDot(sk, hand, C.skin, 111, 12);
   // 부풀어 오른 봉지 둘레의 작은 선과 놀람
   for (const [a, i] of [[-2.6, 0], [-1.6, 1], [-0.6, 2], [0.2, 3]]) { const c = [hand[0] + 34, hand[1] - 58]; sk.ink(dense([[c[0] + Math.cos(a) * 92, c[1] + Math.sin(a) * 84], [c[0] + Math.cos(a) * 118, c[1] + Math.sin(a) * 108]]), { w: 6, color: C.gray, seed: 121 + i, wob: 0.2 }); }
-  emark(sk, 548, 126, 0.85, { color: C.red, rot: -0.15 });
+  emark(sk, 548, 162, 0.85, { color: C.red, rot: -0.15 });
   return sk;
 }
 
 /* ---------- u6l4: 겨울 운동장의 찌그러진 공, 난로 옆에서 다시 탱탱 ---------- */
 function dentedBall(sk, x, y, r, sd, bg) {
-  // 축구공 그림의 왼쪽 위를 바탕색으로 오목하게 파내 쑥 들어간 자리를 만든다
-  ball(sk, x, y, r, { seed: sd });
-  const a0 = -2.62, a1 = -0.82, am = (a0 + a1) / 2;
-  const P = (a, rr) => [x + rr * Math.cos(a), y + rr * Math.sin(a)];
-  const inner = curve([P(a0, r), P(a0 + 0.3 * (a1 - a0), r * 0.5), P(am, r * 0.3), P(a1 - 0.3 * (a1 - a0), r * 0.5), P(a1, r)], false, 3);
-  sk.fill([...ell(x, y, r + 10, r + 10, a1, a0), ...inner], bg, { dx: 0, dy: 0, wob: 0, seed: sd + 20 });
+  // 바람이 빠진 듯 쭈글한 축구공: 아래로 조금 퍼지고, 위가 얕게 꺼졌다(깊게 파면 하트나 깨문 공으로 읽힌다)
+  const cy = y + r * 0.06, kx = 1.08, ky = 0.9;
+  sk.save(); sk.translate(x, cy); sk.scale(kx, ky); ball(sk, 0, 0, r, { seed: sd }); sk.restore();
+  const P = (a, k) => [x + kx * r * k * Math.cos(a), cy + ky * r * k * Math.sin(a)];
+  const a0 = -2.6, a1 = -0.55, am = (a0 + a1) / 2, d = a1 - a0;
+  const inner = curve([P(a0, 1), P(a0 + 0.25 * d, 0.88), P(am, 0.76), P(a1 - 0.25 * d, 0.88), P(a1, 1)], false, 3);
+  const outer = []; for (let i = 0; i <= 24; i++) outer.push(P(a1 + (a0 - a1) * i / 24, 1.22));
+  sk.fill([...outer, ...inner], bg, { dx: 0, dy: 0, wob: 0, seed: sd + 20 });
   sk.ink(inner, { w: 9, seed: sd + 21, wob: 0.4 });
-  // 눌린 자리 안쪽 그늘과 둘레 주름
-  sk.ink(curve([P(a0 + 0.22 * (a1 - a0), r * 0.5), P(am, r * 0.17), P(a1 - 0.22 * (a1 - a0), r * 0.5)]), { w: 5, color: C.grayLight, seed: sd + 22, wob: 0.2 });
-  for (const [t, i] of [[0.3, 0], [0.7, 1]]) { const a = a0 + t * (a1 - a0); sk.ink(dense([P(a, r * 0.42), P(a + (t < 0.5 ? -0.3 : 0.3), r * 0.12)]), { w: 4.5, color: C.gray, seed: sd + 23 + i, wob: 0.2 }); }
+  // 꺼진 자리 둘레와 옆구리의 주름
+  for (const [t, i] of [[0.3, 0], [0.55, 1], [0.78, 2]]) { const a = a0 + t * d; sk.ink(curve([P(a, 0.74), P(a + 0.06, 0.6), P(a - 0.02, 0.48)]), { w: 4.5, color: C.gray, seed: sd + 22 + i, wob: 0.2 }); }
+  sk.ink(curve([P(2.5, 0.92), P(2.65, 0.78), P(2.85, 0.84)]), { w: 4.5, color: C.gray, seed: sd + 26, wob: 0.2 });
+  sk.ink(curve([P(0.65, 0.92), P(0.5, 0.78), P(0.3, 0.84)]), { w: 4.5, color: C.gray, seed: sd + 27, wob: 0.2 });
 }
 function heater(sk, x, y, sd) {
   // 둥근 석유난로. (x, y) = 바닥 가운데
