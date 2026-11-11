@@ -68,7 +68,7 @@ function cutU5l1() {
 const BOOKS = ["#E0503A", "#3F7CC0", "#3FAE5A", "#F2D03B", "#8E6BBF", "#F58A2E", "#2F8EE0", "#C0392B"];
 function bookcase(sk, x0, x1, top, bot, sd) {
   const mid = top + 236;
-  thin(sk, 0.8, () => {
+  thin(sk, 0.72, () => {
     const body = rrect(x0, top, x1 - x0, bot - top, 8);
     sk.fill(body, "#B98652", { seed: sd, tex: true, texAng: 0.03 });
     // 책 칸 셋
@@ -122,40 +122,39 @@ function cutU5l2() {
   return sk;
 }
 
-/* ---------- u5l4: 눌렸던 트램펄린이 되돌아가며 밀어 올린다 ---------- */
+/* ---------- u5l4: 눌린 트램펄린이 되돌아가며 밀어 올린다 ---------- */
+// 발이 아직 매트에 닿아 있는 순간을 그린다(탄성력은 닿아 있는 동안 작용한다). 화살표 꼬리는 발이 닿은 곳
 function cutU5l4() {
   const sk = new Sk(W, H, { id: "c" });
-  const GY = 690, MY = 548, M0 = 262, M1 = 698, MX = (M0 + M1) / 2;
+  const GY = 690, MY = 520, M0 = 252, M1 = 708, MX = (M0 + M1) / 2, DIP = 70;
   ground(sk, GY, 11);
   // 틀: 다리 둘씩 + 테두리 관
-  thin(sk, 0.8, () => {
-    for (const [x, i] of [[226, 0], [734, 1]]) {
-      sk.ink(dense([[x, MY + 8], [x - 34, GY]]), { w: 12, seed: 21 + i, color: "#4A5568" });
-      sk.ink(dense([[x, MY + 8], [x + 34, GY]]), { w: 12, seed: 23 + i, color: "#4A5568" });
+  thin(sk, 0.55, () => {
+    for (const [x, i] of [[216, 0], [744, 1]]) {
+      sk.ink(dense([[x, MY + 8], [x - 40, GY]]), { w: 12, seed: 21 + i, color: "#4A5568" });
+      sk.ink(dense([[x, MY + 8], [x + 40, GY]]), { w: 12, seed: 23 + i, color: "#4A5568" });
     }
-    sk.ink(dense([[206, MY + 6], [754, MY + 6]]), { w: 16, seed: 25, color: "#4A5568" });
-    // 용수철(테두리와 매트 사이)
-    for (const [a, b, i] of [[212, M0, 0], [M1, 748, 1]]) {
-      const pts = []; const n = 7;
-      for (let k = 0; k <= n * 2; k++) pts.push([lerpx(a, b, k / (n * 2)), MY - 2 + (k % 2 ? -9 : 9) * (k > 0 && k < n * 2 ? 1 : 0)]);
-      sk.ink(pts, { w: 5, seed: 27 + i, wob: 0.2, color: "#8A9099" });
-    }
+    sk.ink(dense([[196, MY + 6], [764, MY + 6]]), { w: 16, seed: 25, color: "#4A5568" });
   });
-  // 눌렸던 자리(회색 점선)와 되돌아온 평평한 매트(실선)
-  const dip = curve([[M0, MY - 2], [M0 + 110, MY + 52], [MX, MY + 76], [M1 - 110, MY + 52], [M1, MY - 2]], false, 4);
-  sk.ink(dip, { w: 7, color: C.gray, dash: [14, 11], seed: 31, wob: 0.3 });
-  sk.ink(dense([[M0, MY - 2], [M1, MY - 2]]), { w: 13, color: C.navy, seed: 33, wob: 0.4 });
-  // 매트가 제자리로 돌아오는 움직임(회색 작은 화살표)
-  for (const [x, i] of [[M0 + 96, 0], [M1 - 96, 1]]) arrow(sk, [[x, MY + 40], [x, MY + 12]], { w: 6, color: C.gray, straight: true, seed: 35 + i, head: 14, wob: 0.2 });
-  // 탄성력: 매트가 학생을 위로 밀어 준다
-  force(sk, [MX, MY + 64], [MX, MY - 118], 41, { w: 14, head: 34, halo: false });
-  // 튕겨 오르는 학생(두 팔 번쩍)
-  const fy = MY - 118, s = 0.67;
+  // 용수철(테두리와 매트 사이)
+  for (const [a, b, i] of [[202, M0, 0], [M1, 758, 1]]) {
+    const pts = []; const n = 7;
+    for (let k = 0; k <= n * 2; k++) pts.push([lerpx(a, b, k / (n * 2)), MY - 2 + (k % 2 ? -8 : 8) * (k > 0 && k < n * 2 ? 1 : 0)]);
+    sk.ink(pts, { w: 5, seed: 27 + i, wob: 0.2, color: "#8A9099" });
+  }
+  // 되돌아갈 평평한 자리(회색 점선)와 아직 눌린 매트(실선)
+  sk.ink(dense([[M0, MY - 2], [M1, MY - 2]]), { w: 6, color: C.gray, dash: [14, 11], seed: 31, wob: 0.2 });
+  const matPts = curve([[M0, MY - 2], [M0 + 110, MY + DIP * 0.62], [MX, MY + DIP], [M1 - 110, MY + DIP * 0.62], [M1, MY - 2]], false, 4);
+  sk.ink(matPts, { w: 10, color: C.navy, seed: 33, wob: 0.3 });
+  // 매트가 제자리로 돌아가는 움직임(회색 작은 화살표)
+  for (const [x, i] of [[M0 + 92, 0], [M1 - 92, 1]]) arrow(sk, [[x, MY + DIP * 0.5], [x, MY + 10]], { w: 6, color: C.gray, straight: true, seed: 35 + i, head: 14, wob: 0.2 });
+  // 학생: 눌린 매트 바닥에 발을 딛고 두 팔을 번쩍 들며 튀어 오르려 한다
+  const fy = MY + DIP - 4, s = 0.66;
   const P = pose({ elL: [-100, -432], haL: [-168, -548], elR: [100, -432], haR: [168, -548],
-    knL: [-14, -106], ftL: [-18, 0], knR: [14, -106], ftR: [20, 0], tilt: -0.04 });
+    knL: [-12, -106], ftL: [-16, 0], knR: [12, -106], ftR: [18, 0], tilt: -0.04 });
   drawFigure(sk, MX, fy, s, P, { ...STUDENT, name: "student" });
-  // 위로 솟는 움직임 선
-  for (const [x, i] of [[MX - 68, 0], [MX + 68, 1]]) sk.ink(dense([[x, fy - 30], [x, fy + 26]]), { w: 6, color: C.gray, seed: 45 + i, wob: 0.2 });
+  // 탄성력: 발이 닿은 곳에서 위로(다리 옆으로 비켜 그린다)
+  force(sk, [MX + 30, fy - 4], [MX + 30, fy - 150], 41, { w: 13, head: 30 });
   return sk;
 }
 
@@ -195,7 +194,7 @@ function cutU5l5() {
   const kn0 = at(hip, 74), ft = at(hip, 146), kn = [kn0[0], kn0[1] - 24];
   const sit = pose(local(ox, oy, s, { hip, neck: [hip[0] - 14, hip[1] - 94], head: [hip[0] - 22, hip[1] - 162],
     knL: [kn[0], kn[1]], ftL: [ft[0], ft[1] - 8], knR: [kn[0] + 8, kn[1] - 6], ftR: [ft[0] + 10, ft[1] - 14],
-    elL: [hip[0] - 50, hip[1] - 50], haL: [hip[0] - 66, hip[1] - 6], elR: [hip[0] + 52, hip[1] - 106], haR: [hip[0] + 98, hip[1] - 156], tilt: -0.1 }));
+    elL: [hip[0] + 26, hip[1] - 40], haL: [kn[0] - 6, kn[1] - 10], elR: [hip[0] + 52, hip[1] - 106], haR: [hip[0] + 98, hip[1] - 156], tilt: -0.1 }));
   drawFigure(sk, ox, oy, s, sit, { ...TEACHER, name: "teacher", coat: { ...TEACHER.coat, len: 18 } });
   drop(sk, hip[0] + 64, hip[1] - 236, 1, { rot: 0.3 });
   // 마찰력: 맞닿은 곳에서 미끄러지려는 쪽과 반대(비탈 위쪽)로
@@ -221,27 +220,28 @@ function cutU5l6() {
   });
   // 학생(물속 다리는 물빛 아래로 비친다)
   const fx = 420, s = 0.72, hipY = WL - 4, fy = hipY + s * 212;
-  const P = pose({ elL: [-112, -300], haL: [-166, -296], elR: [112, -300], haR: [166, -296], tilt: 0.06,
+  const P = pose({ elL: [-118, -262], haL: [-166, -250], elR: [118, -262], haR: [166, -250], tilt: 0.06,
     knL: [-30, -104], ftL: [-44, 0], knR: [36, -110], ftR: [64, -14] });
-  drawFigure(sk, fx, fy, s, P, { ...STUDENT, name: "student", hands: false });
+  drawFigure(sk, fx, fy, s, P, { ...STUDENT, name: "student", hands: false, mirror: true });
   // 물
   const top = []; for (let x = 14; x <= EDGE; x += 6) top.push([x, wave(x)]);
   sk.fill([...top, [EDGE, 712], [14, 712], top[0]], "#9ED3F2", { dx: 0, dy: 0, wob: 0, seed: 31, alpha: 0.62 });
   // 튜브(빨강 흰 줄무늬), 물에 반쯤 잠겨 뜬다
-  const TX0 = fx - 128, TX1 = fx + 128, TY = WL - 34, TH = 68;
+  const TX0 = fx - 150, TX1 = fx + 150, TY = WL - 34, TH = 68;
   const tube = rrect(TX0, TY, TX1 - TX0, TH, 34);
-  sk.fill(tube, "#F25C54", { dx: 0.8, dy: 1, wob: 0.4, seed: 33 });
-  for (const [x, i] of [[TX0 + 44, 0], [fx - 16, 1], [TX1 - 76, 2]]) sk.fill(poly([[x, TY + 3], [x + 34, TY + 3], [x + 27, TY + TH - 3], [x - 7, TY + TH - 3]], 3), C.white, { dx: 0, dy: 0, wob: 0.3, seed: 34 + i });
-  sk.ink(curve([[TX0 + 30, TY + 15], [fx, TY + 9], [TX1 - 30, TY + 15]]), { w: 5, color: "#FFC2BC", seed: 37, wob: 0.3 });
+  sk.fill(tube, "#F7C548", { dx: 0.8, dy: 1, wob: 0.4, seed: 33 });
+  for (const [x, i] of [[TX0 + 50, 0], [fx - 16, 1], [TX1 - 84, 2]]) sk.fill(poly([[x, TY + 3], [x + 34, TY + 3], [x + 27, TY + TH - 3], [x - 7, TY + TH - 3]], 3), C.white, { dx: 0, dy: 0, wob: 0.3, seed: 34 + i });
+  sk.ink(curve([[TX0 + 30, TY + 15], [fx, TY + 9], [TX1 - 30, TY + 15]]), { w: 5, color: "#FFF1AE", seed: 37, wob: 0.3 });
   sk.ink(tube, { w: 9, seed: 38 });
   // 튜브 위에 얹은 손
-  for (const [sg, i] of [[-1, 0], [1, 1]]) handDot(sk, [fx + sg * s * 166, fy - s * 296], C.skin, 39 + i, 13);
+  for (const [sg, i] of [[-1, 0], [1, 1]]) handDot(sk, [fx + sg * s * 166, fy - s * 250], C.skin, 39 + i, 13);
   // 물높이 선(튜브 뒤는 지나지 않는다)과 잔물결
   sk.ink(top.filter(([x]) => x < TX0 - 4), { w: 8, color: "#3F8FC4", seed: 41, wob: 0.3 });
   sk.ink(top.filter(([x]) => x > TX1 + 4), { w: 8, color: "#3F8FC4", seed: 42, wob: 0.3 });
   for (const [x, i] of [[TX0 - 56, 0], [TX1 + 48, 1]]) sk.ink(curve([[x - 24, WL + 20], [x, WL + 13], [x + 24, WL + 20]]), { w: 5, color: "#3F8FC4", seed: 43 + i, wob: 0.2 });
-  // 부력: 물이 튜브를 아래에서 위로 떠받친다
-  for (const [x, i] of [[TX0 + 30, 0], [TX1 - 30, 1]]) force(sk, [x, TY + TH + 124], [x, TY + TH + 6], 51 + i * 4, { w: 14, head: 32, halo: false });
+  // 부력: 물에 닿은 튜브 바닥에서 위로 하나(꼬리 = 작용점)
+  const ax = TX1 - 14;
+  force(sk, [ax, TY + TH - 10], [ax, TY - 118], 51, { w: 14, head: 32 });
   return sk;
 }
 
@@ -304,7 +304,7 @@ export function cuts() {
     { name: "u5l2", theme: "force5", orig: null, sk: cutU5l2(), alt: "무거운 책장을 학생과 쌤이 양쪽에서 같은 크기로 밀어 꼼짝 않아 둘 다 어리둥절한 장면, 양쪽 화살표의 길이가 같다", cap: "양쪽에서 똑같이 밀면 남는 힘이 없어요" },
     { name: "u5l4", theme: "force5", orig: null, sk: cutU5l4(), alt: "학생이 트램펄린에서 튕겨 오르고, 눌렸던 매트가 평평하게 돌아가며 위쪽 화살표로 밀어 주는 장면", cap: "눌린 트램펄린은 되돌아가며 나를 밀어 올려요" },
     { name: "u5l5", theme: "force5", orig: null, sk: cutU5l5(), alt: "미끄럼틀 중간에서 멈춰 버린 쌤, 바지와 미끄럼판이 맞닿은 곳에 비탈 위쪽을 향한 화살표, 꼭대기에서 기다리는 학생", cap: "맞닿은 곳에서 미끄러짐을 막는 힘이 있어요" },
-    { name: "u5l6", theme: "force5", orig: null, sk: cutU5l6(), alt: "수영장에서 튜브를 끼고 떠 있는 학생, 물이 튜브를 아래에서 위로 떠받치는 화살표", cap: "물이 아래에서 위로 떠받쳐 줘요" },
+    { name: "u5l6", theme: "force5", orig: null, sk: cutU5l6(), alt: "수영장에서 튜브를 끼고 떠 있는 학생, 물이 튜브를 위로 떠받치는 화살표가 튜브 바닥에서 위로 뻗는다", cap: "물이 아래에서 위로 떠받쳐 줘요" },
     { name: "u5l7", theme: "force5", orig: null, sk: cutU5l7(), alt: "얼음판 위를 곧게 미끄러지던 퍽을 학생이 스틱으로 옆에서 톡 쳐서 길이 꺾이는 장면, 가던 길은 점선이고 꺾인 길은 실선", cap: "옆에서 톡, 힘을 받으면 가던 길이 꺾여요" },
   ];
 }
