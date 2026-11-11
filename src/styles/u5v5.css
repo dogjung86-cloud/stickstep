@@ -1,0 +1,128 @@
+/* 중1 Ⅴ 힘의 작용 v5(랩과 도입 재제작)의 시트. main.ts가 이미 싣는다.
+   이 단원의 클래스는 .u5x- 로 시작한다. 도입 장면은 .opn-u5- 로 시작한다.
+   공용 뼈대(.bv-, .opn-)의 치수를 조정할 때는 이 단원의 클래스 아래에서만 한다(예: .u5x-step .bv-stage). 전역 규칙은 덮어쓰지 않는다. */
+
+/* ── 랩 공용 ───────────────────────────────────────── */
+.u5x-step .bv-pips i.on { background: var(--subj-force); }
+.u5x-step .bv-helper { border-left-color: var(--subj-force); }
+.u5x-cv { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: pointer; }
+.u5x-log { display: grid; gap: 8px; }
+.u5x-log-row {
+  height: 46px; padding: 0 14px; border-radius: 14px; border: 1.5px dashed var(--n300); background: var(--n50);
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0;
+  font-size: 14px; color: var(--sub); transition: border-color .2s, background .2s;
+}
+.u5x-log-row.cur { border-style: solid; border-color: var(--subj-force); background: var(--subj-force-tint); color: var(--ink); }
+.u5x-log-row.on { border-style: solid; border-color: var(--n300); background: #fff; color: var(--ink); box-shadow: var(--sh-card); }
+.u5x-log-n { font-weight: 700; white-space: nowrap; }
+.u5x-log-v { font-weight: 800; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13.5px; }
+.u5x-log-row.on .u5x-log-v { color: var(--subj-force-press); }
+.u5x-hold { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.u5x-hold.on { border-color: var(--subj-force); background: var(--subj-force-tint); color: var(--subj-force-press); transform: scale(.975); }
+.u5x-row { display: grid; gap: 8px; }
+.u5x-cap { font-size: 12.5px; font-weight: 700; color: var(--sub); line-height: 18px; }
+
+/* ── u5l2 줄다리기 ─────────────────────────────────── */
+.u5x-tug { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.u5x-tug-team { padding: 8px 10px 10px; border-radius: 16px; background: #fff; border: 1.5px solid var(--n300); box-shadow: var(--sh-card); }
+.u5x-tug-team.L { border-color: #F7C4C4; }
+.u5x-tug-team.R { border-color: #BCD7FB; }
+.u5x-tug-name { display: block; font-size: 13px; font-weight: 800; color: var(--sub); line-height: 20px; }
+.u5x-tug-team.L .u5x-tug-name { color: #D64545; }
+.u5x-tug-team.R .u5x-tug-name { color: #2B7CE0; }
+.u5x-tug-row { margin-top: 4px; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.u5x-tug-b {
+  flex: none; width: 50px; height: 50px; border-radius: 14px; border: 1.5px solid var(--n300); background: var(--n50);
+  font-size: 24px; font-weight: 700; color: var(--ink); line-height: 1; transition: transform .12s, opacity .2s;
+}
+.u5x-tug-b:active { transform: scale(.94); }
+.u5x-tug-b:disabled { opacity: .35; }
+.u5x-tug-n { font-size: 17px; font-weight: 800; color: var(--ink); }
+.u5x-sum {
+  height: 62px; padding: 9px 14px; border-radius: 14px; background: var(--n50); border: 1.5px solid var(--n200);
+  font-size: 14px; line-height: 21px; color: var(--sub); word-break: keep-all; overflow: hidden;
+}
+.u5x-sum b { color: var(--ink); font-weight: 800; }
+
+/* ── u5l4 용수철: 그래프 ───────────────────────────── */
+.u5x-graph { height: 200px; border-radius: 16px; background: #fff; border: 1.5px solid var(--n200); box-shadow: var(--sh-card); overflow: hidden; }
+.u5x-graph svg { display: block; width: 100%; height: 100%; }
+.u5x-graph text { font-size: 12.5px; font-weight: 600; fill: var(--sub); }
+.u5x-graph text.ax { font-size: 12px; font-weight: 700; fill: var(--ink); }
+.u5x-graph text.pt { font-size: 13px; font-weight: 800; fill: var(--subj-force-press); }
+
+/* ── u5l5 마찰력, 공용 고르기 버튼 ─────────────────── */
+.u5x-segs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.u5x-seg {
+  height: 48px; border-radius: 14px; border: 1.5px solid var(--n300); background: #fff; font-size: 14.5px; font-weight: 800; color: var(--sub);
+  box-shadow: var(--sh-card); transition: transform .12s, border-color .2s, background .2s, opacity .2s;
+}
+.u5x-seg:active { transform: scale(.97); }
+.u5x-seg.on { border-color: var(--subj-force); background: var(--subj-force-tint); color: var(--subj-force-press); }
+.u5x-seg:disabled { opacity: .4; }
+.u5x-step .bv-btn.main { border-color: var(--blue); background: var(--blue-tint); color: var(--blue-press, #1B64DA); }
+.u5x-step .bv-btn.main.on { background: var(--blue); color: #fff; }
+.u5x-step .bv-card.on { border-color: var(--subj-force); background: var(--subj-force-tint); }
+
+/* ── u5l7 바람 ─────────────────────────────────────── */
+.u5x-winds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.u5x-step .bv-btn.u5x-wind { height: 60px; font-size: 14.5px; }
+.u5x-log.tight { gap: 6px; }
+.u5x-log.tight .u5x-log-row { height: 40px; }
+
+/* ── 도입(opener) 여섯 장면 ────────────────────────── */
+.opn-u5-hit { position: absolute; background: none; border: 0; padding: 0; border-radius: 16px; touch-action: none; cursor: pointer; -webkit-tap-highlight-color: transparent; z-index: 3; }
+.opn-stage:not(.play) .opn-u5-hit { pointer-events: none; }
+.opn-stage.play:not(.touched) .opn-u5-hit::after {
+  content: ""; position: absolute; inset: 4px; border-radius: 14px; border: 2.5px dashed var(--subj-force); animation: opnU5Hint 1.2s ease-in-out infinite;
+}
+@keyframes opnU5Hint { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+.opn-controls.opn-u5-two { grid-template-columns: 1fr 1fr; }
+.opn-u5-btn {
+  min-height: 56px; padding: 6px 4px; border-radius: var(--r-md); border: 1.5px solid var(--n300); background: var(--n0);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; box-shadow: var(--sh-card);
+  transition: border-color .16s, background .16s, transform .12s var(--spring-soft), opacity .2s;
+}
+.opn-u5-btn.wide { grid-column: 1 / -1; }
+.opn-u5-btn:active { transform: scale(.97); }
+.opn-u5-btn b { font-size: 14.5px; line-height: 20px; font-weight: 800; color: var(--ink); }
+.opn-u5-btn span { font-size: 12.5px; line-height: 17px; font-weight: 600; color: var(--sub); }
+.opn-u5-btn.tried { border-color: var(--subj-force); background: var(--subj-force-tint); }
+.opn-u5-btn:disabled { opacity: .5; }
+.opn-u5-bal.rise { transition: transform .7s cubic-bezier(.3, 1.5, .5, 1); }
+.opn-u5-eff { opacity: 0; transition: opacity .25s; }
+.opn-stage.lv-1 .opn-u5-eff.e1, .opn-stage.lv-2 .opn-u5-eff.e1, .opn-stage.lv-2 .opn-u5-eff.e2, .opn-stage.lv-3 .opn-u5-eff { opacity: 1; }
+.opn-stage.shake .opn-u5-rib { animation: opnU5Shake .7s ease-in-out; }
+@keyframes opnU5Shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-7px); } 45% { transform: translateX(6px); } 70% { transform: translateX(-4px); } 88% { transform: translateX(2px); } }
+.opn-u5-btl.pop { transition: transform .55s cubic-bezier(.3, 1.9, .5, 1); }
+.opn-u5-hand { opacity: 0; transition: opacity .15s; }
+.opn-stage.press .opn-u5-hand { opacity: 1; }
+.opn-u5-splash { opacity: 0; }
+.opn-stage.splash .opn-u5-splash { animation: opnU5Splash .9s ease-out both; }
+@keyframes opnU5Splash { 0% { opacity: 0; transform: translateY(20px); } 30% { opacity: 1; transform: translateY(-14px); } 100% { opacity: 0; transform: translateY(6px); } }
+@media (prefers-reduced-motion: reduce) { .opn-stage.play .opn-u5-hit::after, .opn-stage.shake .opn-u5-rib { animation: none; } }
+
+/* ── u5l2 두 힘 합치기 ─────────────────────────────── */
+.u5x-frow { display: grid; grid-template-columns: 30px 1fr 48px 54px 48px; gap: 6px; align-items: center; height: 52px; }
+.u5x-who { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 14px; font-weight: 800; color: #1B2B45; }
+.u5x-dirs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.u5x-seg.u5x-dir { font-size: 13px; padding: 0; white-space: nowrap; }
+.u5x-tug-b.sm { width: 48px; height: 48px; }
+.u5x-sum-n { text-align: center; font-size: 14.5px; font-weight: 800; color: var(--ink); white-space: nowrap; }
+.u5x-sum.tall { height: 84px; font-size: 13.5px; line-height: 20px; padding: 11px 13px; }
+
+/* ── 측정 표(u5l3) ─────────────────────────────────── */
+.u5x-table { display: grid; grid-template-columns: 92px 1fr 1fr; gap: 4px; align-items: stretch; }
+.u5x-th { height: 20px; font-size: 12.5px; font-weight: 800; color: var(--sub); display: flex; align-items: center; justify-content: center; }
+.u5x-th.row { height: 32px; justify-content: flex-start; padding-left: 4px; color: var(--ink); }
+.u5x-td {
+  height: 32px; border-radius: 10px; border: 1.5px dashed var(--n300); background: var(--n50); display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: var(--subj-force-press);
+}
+.u5x-td.on { border-style: solid; background: #fff; }
+.u5x-td.cur { border-color: var(--subj-force); box-shadow: 0 0 0 1px var(--subj-force) inset; }
+.u5x-graph.short { height: 146px; }
+.u5x-graph text.pt.b { fill: var(--blue); }
+.u5x-log.mini { gap: 6px; }
+.u5x-log.mini .u5x-log-row { height: 33px; font-size: 13px; border-radius: 11px; padding: 0 12px; }
+.u5x-log.mini .u5x-log-v { font-size: 13px; }

@@ -15,6 +15,16 @@ import { UNIT4 } from "./unit4";
 import { UNIT5 } from "./unit5";
 import { UNIT6 } from "./unit6";
 import { UNIT7 } from "./unit7";
+// 중1 과학 랩과 도입 재제작(v5, 2026-11-12) 병행 배선: 단원마다 주소 ?u3v5 (세션 "ss.u3v5") 로 켠다(v5toggle.ts).
+// 단원 파일(unitNv5.ts)이 null이거나 토글이 꺼져 있으면 정본이 그대로 실린다. 단원을 맡은 세션은 자기 unitNv5.ts만 채운다.
+import { pickV5 } from "./v5toggle";
+import { UNIT1_V5 } from "./unit1v5";
+import { UNIT2_V6 } from "./unit2v6"; // Ⅱ단원은 v5가 정본이고, 개념 글을 다시 쓴 판(v6)이 ?u2v6 뒤에 선다
+import { UNIT3_V5 } from "./unit3v5";
+import { UNIT4_V5 } from "./unit4v5";
+import { UNIT5_V5 } from "./unit5v5";
+import { UNIT6_V5 } from "./unit6v5";
+import { UNIT7_V5 } from "./unit7v5";
 import { G2_UNIT1 } from "./g2/unit1";
 import { G2_UNIT2 } from "./g2/unit2";
 import { G2_UNIT3 } from "./g2/unit3";
@@ -47,7 +57,15 @@ export type GradeId = "g1" | "g2";
 export const GRADE_LABEL: Record<GradeId, string> = { g1: "중1", g2: "중2" };
 
 // Ⅲ·Ⅳ v3 브랜치도 이 줄을 고친다(U3_ACTIVE, U4_ACTIVE). 합칠 때 한 줄 충돌이 나면 두 쪽의 이름을 다 살리면 된다.
-export const CURRICULUM: Unit[] = [withU1IntroSamples(UNIT1), withU2IntroSamples(UNIT2_V5), UNIT3, UNIT4, UNIT5, UNIT6, UNIT7];
+export const CURRICULUM: Unit[] = [
+  pickV5("u1", withU1IntroSamples(UNIT1), UNIT1_V5),
+  pickV5("u2", withU2IntroSamples(UNIT2_V5), UNIT2_V6),
+  pickV5("u3", UNIT3, UNIT3_V5),
+  pickV5("u4", UNIT4, UNIT4_V5),
+  pickV5("u5", UNIT5, UNIT5_V5),
+  pickV5("u6", UNIT6, UNIT6_V5),
+  pickV5("u7", UNIT7, UNIT7_V5),
+];
 
 // 중2 — 대단원 8개.
 export const CURRICULUM_G2: Unit[] = [

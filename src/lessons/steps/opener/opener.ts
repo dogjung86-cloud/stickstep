@@ -24,10 +24,19 @@ import { blockBloom } from "./blockBloom";
 import { dokdo } from "./dokdo";
 import { shelves } from "./shelves";
 import { beeSwitch } from "./beeSwitch";
+// 중1 Ⅲ~Ⅶ 도입 장면 묶음(2026-11-12): 단원마다 자기 묶음(./uN/index.ts)을 채운다. 이 파일은 고치지 않는다.
+import { U3_OPENERS } from "./u3";
+import { U4_OPENERS } from "./u4";
+import { U5_OPENERS } from "./u5";
+import { U6_OPENERS } from "./u6";
+import { U7_OPENERS } from "./u7";
+
+type BuiltinScene = "longcell" | "baskets" | "factory" | "suncups" | "speaker" | "blanket" | "droplens" | "blockbloom" | "dokdo" | "shelves" | "beeswitch";
 
 export interface OpenerStep {
   title: string;
-  scene: "longcell" | "baskets" | "factory" | "suncups" | "speaker" | "blanket" | "droplens" | "blockbloom" | "dokdo" | "shelves" | "beeswitch";
+  /** Ⅰ·Ⅱ단원의 장면 이름, 또는 단원 묶음에 등록한 "u3-…" 꼴의 이름 */
+  scene: BuiltinScene | `u${number}-${string}`;
   /** 조작을 마치기 전 아래 버튼의 글 */
   wait?: string;
   cta?: string;
@@ -57,7 +66,16 @@ export interface OpenerCtx {
 }
 
 export type OpenerScene = (c: OpenerCtx) => void;
-const scenes: Record<OpenerStep["scene"], OpenerScene> = { longcell: longCell, baskets, factory: factoryOff, suncups: sunCups, speaker: speakerTeach, blanket: gasBlanket, droplens: dropLens, blockbloom: blockBloom, dokdo, shelves, beeswitch: beeSwitch };
+const scenes: Record<BuiltinScene, OpenerScene> = { longcell: longCell, baskets, factory: factoryOff, suncups: sunCups, speaker: speakerTeach, blanket: gasBlanket, droplens: dropLens, blockbloom: blockBloom, dokdo, shelves, beeswitch: beeSwitch };
+
+/** 단원 묶음: 장면 코드와 그 단원의 그림 표. 묶음의 장면은 c.art, c.meta로 자기 단원의 표를 받는다. */
+export interface OpenerPack {
+  /** 장면 이름("u3-…" 꼴) → 장면 코드 */
+  scenes: Record<string, OpenerScene>;
+  /** 그림 표(node qa/sketch/build-intro.mjs u3 이 만든 introArt.u3.generated.ts). 없으면 빈 표로 장면을 돌린다 */
+  art?: () => Promise<{ INTRO_ART: Record<string, string>; INTRO_META: unknown }>;
+}
+const packs: OpenerPack[] = [U3_OPENERS, U4_OPENERS, U5_OPENERS, U6_OPENERS, U7_OPENERS];
 
 export const opener: StepRenderer = (host, step, api) => {
   const s = step as unknown as OpenerStep;
@@ -87,14 +105,22 @@ export const opener: StepRenderer = (host, step, api) => {
     return id;
   };
 
-  void import("../../../ui/introArt.generated").then((m) => {
+  const pack = packs.find((p) => s.scene in p.scenes);
+  const scene: OpenerScene | undefined = pack ? pack.scenes[s.scene] : (scenes as Record<string, OpenerScene | undefined>)[s.scene];
+  const table: Promise<{ INTRO_ART: Record<string, string>; INTRO_META: unknown }> = pack
+    ? pack.art
+      ? pack.art()
+      : Promise.resolve({ INTRO_ART: {}, INTRO_META: {} })
+    : import("../../../ui/introArt.generated");
+
+  void table.then((m) => {
     if (!on) return;
     const ctx: OpenerCtx = {
       step: host,
       stage,
       controls,
       art: m.INTRO_ART,
-      meta: m.INTRO_META,
+      meta: m.INTRO_META as IntroArt["INTRO_META"], // 묶음의 장면은 자기 단원의 표 타입으로 다시 읽는다(uN/index.ts 머리말)
       say: (html) => {
         bubble.innerHTML = html;
       },
@@ -126,7 +152,12 @@ export const opener: StepRenderer = (host, step, api) => {
       onCleanup: (fn) => cleanups.push(fn),
     };
     host.dataset.opnPhase = "ready";
-    scenes[s.scene](ctx);
+    if (scene) scene(ctx);
+    else {
+      // 등록되지 않은 장면 이름: 레슨이 멈추지 않게 바로 끝 버튼을 연다(개발 중에 콘솔로 알린다)
+      console.warn(`[opener] 등록되지 않은 장면: ${s.scene}`);
+      ctx.finish();
+    }
   });
 
   return () => {

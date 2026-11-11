@@ -1,0 +1,21 @@
+// 중1 Ⅵ v5 랩의 등록표. registry.ts가 이 표를 통째로 싣는다(registry.ts를 고치지 않는다).
+// 스텝 타입 이름은 "u6"로 시작한다(다른 단원, 기존 랩과 겹치지 않게).
+// 랩 뼈대는 ../bio6/b6Lab 의 bvFrame 을 그대로 쓴다(뼈대 파일과 bio6.css 는 고치지 않는다). 무대 도구는 ./u6Kit.
+import type { StepRenderer } from "../../types";
+import { strawLab } from "./strawLab";
+import { shakeLab } from "./shakeLab";
+import { boyleLab } from "./boyleLab";
+import { seaSkyLab } from "./seaSkyLab";
+import { dipLab } from "./dipLab";
+import { chartLab } from "./chartLab";
+import { tempFixLab } from "./tempFixLab";
+
+export const U6V5_STEPS: Record<string, StepRenderer> = {
+  u6StrawLab: strawLab,
+  u6ShakeLab: shakeLab,
+  u6BoyleLab: boyleLab,
+  u6SeaSkyLab: seaSkyLab,
+  u6DipLab: dipLab,
+  u6ChartLab: chartLab,
+  u6TempFixLab: tempFixLab,
+};

@@ -1,0 +1,95 @@
+/* 중1 Ⅲ 열 v5(랩과 도입 재제작)의 시트. main.ts가 이미 싣는다.
+   이 단원의 클래스는 .u3x- 로 시작한다. 도입 장면은 .opn-u3- 로 시작한다.
+   공용 뼈대(.bv-, .opn-)의 치수를 조정할 때는 이 단원의 클래스 아래에서만 한다(예: .u3x-step .bv-stage). 전역 규칙은 덮어쓰지 않는다. */
+
+/* ── 랩 뼈대의 색(Ⅱ단원의 초록을 열 단원 색으로 덮는다) ───────────────── */
+.u3x-step .bv-pips i.on { background: var(--subj-heat); }
+.u3x-step .bv-helper { border-left-color: var(--subj-heat); }
+.u3x-step .bv-qt b { color: var(--subj-heat-press); }
+.u3x-step .bv-btn.main { border-color: var(--subj-heat); background: var(--subj-heat-tint); color: var(--subj-heat-press); }
+.u3x-step .bv-card.on { border-color: var(--subj-heat); background: var(--subj-heat-tint); box-shadow: 0 0 0 1px var(--subj-heat) inset; }
+.u3x-step .bv-card.done::after { background-color: var(--subj-heat); }
+.u3x-step .bv-range-in::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--subj-heat) 0, var(--subj-heat) var(--p, 0%), var(--n200) var(--p, 0%), var(--n200) 100%);
+}
+.u3x-step .bv-range-in::-webkit-slider-thumb { border-color: var(--subj-heat); box-shadow: 0 2px 8px rgba(255, 107, 74, .35); }
+.u3x-step .bv-range-in::-moz-range-progress { background: var(--subj-heat); }
+.u3x-step .bv-range-in::-moz-range-thumb { border-color: var(--subj-heat); box-shadow: 0 2px 8px rgba(255, 107, 74, .35); }
+.u3x-step .bv-range-in:disabled { opacity: .5; }
+.u3x-step .bv-ticks { font-size: 12.5px; }
+
+/* 무대: 캔버스 하나(설계 좌표 346×230) */
+.u3x-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* 꾹 누르는 버튼 */
+.u3x-hold { height: 58px; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.u3x-step .bv-btn.u3x-hold.down { transform: scale(.975); background: var(--subj-heat); color: #fff; }
+/* 버튼 여럿을 한 줄에 */
+.u3x-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.u3x-row.three { grid-template-columns: 1fr 1fr 1fr; }
+.u3x-row[hidden] { display: none; }
+.u3x-step .bv-btn.on { border-color: var(--subj-heat); background: var(--subj-heat-tint); color: var(--subj-heat-press); box-shadow: 0 0 0 1px var(--subj-heat) inset; }
+/* 카드의 한 줄 설명이 결과(걸린 시간 따위)로 바뀔 때 */
+.u3x-step .bv-card.done i { color: var(--subj-heat-press); font-weight: 800; }
+
+/* ── 도입(opener) 네 장면 ──────────────────────────────────────── */
+.opn-step[data-opn-scene^="u3-"].opn-picked .hook-q { display: none; }
+.opn-u3-hit {
+  position: absolute; z-index: 5; background: none; border: 0; padding: 0; border-radius: 18px; cursor: pointer;
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+}
+.opn-u3-hit.round { border-radius: 50%; }
+.opn-u3-hit.cup { touch-action: manipulation; }
+.opn-stage:not(.play) .opn-u3-hit, .opn-stage.done .opn-u3-hit { pointer-events: none; }
+.opn-u3-hit:focus-visible { outline: 2px solid var(--blue); outline-offset: -4px; }
+/* 누르라는 손짓: 고리가 퍼진다(한 번 누르면 사라진다) */
+.opn-u3-hit::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px;
+  border-radius: 50%; border: 3px solid var(--blue); opacity: 0; pointer-events: none;
+}
+.opn-stage.play:not(.touched) .opn-u3-hit::after { animation: opnU3Ring 1.3s ease-out infinite; }
+.opn-stage.play.touched:not(.done) .opn-u3-hit.cup::after { animation: opnU3Ring 1.3s ease-out infinite; }
+.opn-stage.open-left .opn-u3-hit.cup:nth-of-type(1)::after,
+.opn-stage.open-right .opn-u3-hit.cup:nth-of-type(2)::after { animation: none; }
+@keyframes opnU3Ring { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(1.4); opacity: 0; } }
+.opn-u3-col { transform-box: fill-box; transform-origin: 50% 100%; }
+
+/* 1. 두 컵 */
+.opn-u3-lid { transform-box: fill-box; transform-origin: 100% 100%; transition: transform .5s var(--spring); }
+.opn-stage.open-left .opn-u3-lid.cold, .opn-stage.open-right .opn-u3-lid.hot { transform: translate(74px, -64px) rotate(28deg); }
+.opn-u3-in { opacity: 0; transition: opacity .4s .12s; }
+.opn-stage.open-left .opn-u3-in.cold, .opn-stage.open-right .opn-u3-in.hot { opacity: 1; }
+.opn-stage.open-right .opn-u3-in.hot path { animation: opnU3Steam 1.6s ease-in-out infinite alternate; }
+@keyframes opnU3Steam { from { transform: translateY(4px); } to { transform: translateY(-8px); } }
+
+/* 2. 달걀과 찬물 */
+.opn-u3-egg { transition: transform .5s var(--ease-out); }
+.opn-stage.dip .opn-u3-egg, .opn-stage.done .opn-u3-egg { transform: translateY(224px); }
+.opn-u3-level { opacity: 0; }
+.opn-stage.done .opn-u3-level { opacity: 1; }
+
+/* 3. 해변 */
+.opn-u3-rays { opacity: 0; transition: opacity .2s; }
+.opn-stage.lit .opn-u3-rays { opacity: 1; }
+.opn-stage.lit .opn-u3-rays path { animation: opnU3Flow .5s linear infinite; }
+@keyframes opnU3Flow { to { stroke-dashoffset: -38; } }
+.opn-u3-sun { transform-box: fill-box; transform-origin: center; transition: transform .25s var(--spring); }
+.opn-stage.lit .opn-u3-sun { transform: scale(1.12) rotate(12deg); }
+.opn-u3-hotmark { opacity: 0; transition: opacity .4s; }
+.opn-stage.done .opn-u3-hotmark { opacity: 1; }
+
+/* 4. 전깃줄 */
+.opn-u3-summer, .opn-u3-winter { transition: opacity .5s; }
+.opn-u3-summer { opacity: 0; }
+.opn-stage.summer .opn-u3-summer { opacity: 1; }
+.opn-stage.summer .opn-u3-winter { opacity: 0; }
+.opn-u3-tight { opacity: 0; }
+/* 팽팽해졌을 때의 반짝이는 쓰지 않는다(눈검수: 줄 아래의 작은 표시가 무엇인지 읽히지 않았다) */
+.opn-step[data-opn-scene="u3-wire"] .opn-controls { grid-template-columns: 1fr 1fr; }
+.opn-u3-btn {
+  min-height: 50px; border-radius: var(--r-md); border: 1.5px solid var(--n300); background: var(--n0);
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color .16s, background .16s, opacity .16s, transform .12s var(--spring-soft);
+}
+.opn-u3-btn:active { transform: scale(.965); }
+.opn-u3-btn b { font-size: 15px; line-height: 21px; font-weight: 800; color: var(--ink); }
+.opn-u3-btn:disabled { opacity: .4; }
