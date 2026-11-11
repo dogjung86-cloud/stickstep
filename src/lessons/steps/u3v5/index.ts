@@ -3,7 +3,9 @@
 // 랩 뼈대는 ../bio6/b6Lab 의 bvFrame 을 그대로 쓴다(뼈대 파일과 bio6.css 는 고치지 않는다). 무대 부품은 ./kit.ts.
 import type { StepRenderer } from "../../types";
 import { tempLab } from "./tempLab";
+import { contactLab } from "./contactLab";
 
 export const U3V5_STEPS: Record<string, StepRenderer> = {
   u3TempLab: tempLab,
+  u3ContactLab: contactLab,
 };

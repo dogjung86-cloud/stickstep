@@ -15,6 +15,7 @@ import { remakeUnit } from "./v5remake";
 type Curio = { q: string; a: string };
 const lab = (type: string) => (o: { title: string; cta?: string; curio?: Curio }): Step => ({ type, ...o });
 const tempLab = lab("u3TempLab");
+const contactLab = lab("u3ContactLab");
 
 /** 정본 랩 스텝에 달려 있던 궁금증 카드를 새 랩으로 옮겨 단다(글의 주인은 정본이다). */
 const withCurio = (make: (curio?: Curio) => Step) => (old: Step): Step => make(old.curio as Curio | undefined);
@@ -23,5 +24,9 @@ export const UNIT3_V5: Unit | null = remakeUnit(UNIT3, {
   u3l1: {
     intro: opener({ title: "똑같아 보이는 두 컵, 무엇이 다를까?", scene: "u3-cups", wait: "두 컵의 뚜껑을 열어 보세요", cta: "물속을 크게 확대해 보기" }),
     swap: { heatParticles: withCurio((curio) => tempLab({ title: "온도가 오르면 입자는 어떻게 될까?", cta: "개념 정리하기", curio })) },
+  },
+  u3l2: {
+    intro: opener({ title: "갓 삶은 달걀을 찬물에 넣으면?", scene: "u3-egg", wait: "달걀을 꾹 눌러 물에 담가 보세요", cta: "열량계로 실험하기" }),
+    swap: { heatContact: withCurio((curio) => contactLab({ title: "뜨거운 물과 찬물이 닿으면?", cta: "개념 정리하기", curio })) },
   },
 });

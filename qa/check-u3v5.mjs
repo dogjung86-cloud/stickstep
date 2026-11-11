@@ -180,6 +180,38 @@ const LESSONS = {
     await judge(id, 1, true);
     await conclude(id, 1);
   },
+  u3l2: async (id) => {
+    await opener(id, "달걀만", async () => {
+      await holdAt(330, 300, 900); // 중간에 손을 뗀다
+      await W(page, 400);
+      await atOpn(id, "mid", true);
+      await holdAt(330, 300, 2600);
+    });
+    await isLab(id, 1, "뜨거운 물과 찬물이 닿으면?");
+    await W(page, 600);
+    await atLab(id, 1, "mount", true);
+    const settled = () => waitFor(page, () => document.querySelector(".screen.active .step")?.dataset.u3Settled === "1", null, 100, 100);
+    await tap(page, ".bv-ctl .bv-btn");
+    await W(page, 1500);
+    await atLab(id, 1, "run", true);
+    ok(await settled(), `${id}: 찬 컵 실험이 끝나지 않음`);
+    await W(page, 300);
+    await atLab(id, 1, "cold", true);
+    await tap(page, ".bv-ctl .bv-btn"); // 컵 꺼내기 → 예측
+    await W(page, 700);
+    await atLab(id, 1, "predict", true);
+    await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
+    await W(page, 1500);
+    await atLab(id, 1, "ready");
+    await tap(page, ".bv-ctl .bv-btn");
+    await W(page, 1200);
+    await atLab(id, 1, "run2", true);
+    ok(await settled(), `${id}: 뜨거운 컵 실험이 끝나지 않음`);
+    await W(page, 300);
+    await atLab(id, 1, "hot", true);
+    await judge(id, 1, true);
+    await conclude(id, 1);
+  },
 };
 
 for (const [id, play] of Object.entries(LESSONS)) {
