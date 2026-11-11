@@ -7,6 +7,9 @@ import { UNIT1 } from "./unit1";
 // v5(content/unit2v5.ts)는 혼자 서는 파일이다. v3(content/unit2v3.ts, steps/bio4/*)와 그 앞의 판(content/unit2.ts 등)은
 // Ⅴ·Ⅵ과 같은 규칙으로 파일만 남긴다(배선 없음). Ⅱ단원의 글을 고칠 때는 unit2v5.ts를 고친다.
 import { UNIT2_V5 } from "./unit2v5";
+// 중1 Ⅱ 도입 샘플(2026-11-11) 병행 배선: 세션 "ss.u2intro"="1" 또는 주소 ?u2intro. 꺼져 있으면 UNIT2_V5 그대로다(같은 객체).
+import { withU2IntroSamples } from "./unit2intro";
+import { withU1IntroSamples } from "./unit1intro"; // 중1 Ⅰ 도입(같은 토글). 꺼져 있으면 UNIT1 그대로다
 import { UNIT3 } from "./unit3";
 import { UNIT4 } from "./unit4";
 import { UNIT5 } from "./unit5";
@@ -44,7 +47,7 @@ export type GradeId = "g1" | "g2";
 export const GRADE_LABEL: Record<GradeId, string> = { g1: "중1", g2: "중2" };
 
 // Ⅲ·Ⅳ v3 브랜치도 이 줄을 고친다(U3_ACTIVE, U4_ACTIVE). 합칠 때 한 줄 충돌이 나면 두 쪽의 이름을 다 살리면 된다.
-export const CURRICULUM: Unit[] = [UNIT1, UNIT2_V5, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7];
+export const CURRICULUM: Unit[] = [withU1IntroSamples(UNIT1), withU2IntroSamples(UNIT2_V5), UNIT3, UNIT4, UNIT5, UNIT6, UNIT7];
 
 // 중2 — 대단원 8개.
 export const CURRICULUM_G2: Unit[] = [
