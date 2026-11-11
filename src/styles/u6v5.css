@@ -1,3 +1,46 @@
 /* 중1 Ⅵ 기체의 성질 v5(랩과 도입 재제작)의 시트. main.ts가 이미 싣는다.
    이 단원의 클래스는 .u6x- 로 시작한다. 도입 장면은 .opn-u6- 로 시작한다.
    공용 뼈대(.bv-, .opn-)의 치수를 조정할 때는 이 단원의 클래스 아래에서만 한다(예: .u6x-step .bv-stage). 전역 규칙은 덮어쓰지 않는다. */
+
+/* ── 랩 공통: 뼈대(.bv-)의 초록을 이 단원의 색으로 바꾼다 ── */
+.u6x-step .bv-pips i.on { background: var(--subj-gas); }
+.u6x-step .bv-helper { border-left-color: var(--subj-gas); }
+.u6x-step .bv-qt b { color: #0B7285; }
+.u6x-step .bv-btn.main { border-color: var(--subj-gas); background: var(--subj-gas-tint); color: #0B7285; }
+.u6x-step .bv-done.show { background: var(--subj-gas-tint); border-color: #A5E4F0; }
+.u6x-step .bv-done-k, .u6x-step .bv-done-t b { color: #0B7285; }
+.u6x-step .bv-range-in::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--subj-gas) 0, var(--subj-gas) var(--p, 0%), var(--n200) var(--p, 0%), var(--n200) 100%);
+}
+.u6x-step .bv-range-in::-webkit-slider-thumb { border-color: var(--subj-gas); box-shadow: 0 2px 8px rgba(31, 182, 212, .35); }
+.u6x-step .bv-range-in::-moz-range-progress { background: var(--subj-gas); }
+.u6x-step .bv-range-in::-moz-range-thumb { border-color: var(--subj-gas); }
+.u6x-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
+.u6x-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.u6x-step .bv-btn.u6x-half { height: 56px; font-size: 16px; }
+.u6x-note {
+  height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 14px;
+  background: var(--n100); font-size: 14px; font-weight: 600; color: var(--sub);
+}
+.u6x-note b { color: var(--ink); font-weight: 800; }
+.u6x-note span + span::before { content: "·"; margin-right: 6px; color: var(--n400); }
+.u6x-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.u6x-chip {
+  height: 40px; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 12px;
+  border: 1.5px dashed var(--n300); font-size: 13.5px; font-weight: 700; color: var(--ter); white-space: nowrap; overflow: hidden;
+}
+.u6x-chip.done { border-style: solid; border-color: var(--subj-gas); background: var(--subj-gas-tint); color: #0B7285; }
+.u6x-chip.done::before {
+  content: ""; width: 16px; height: 16px; flex: none; border-radius: 50%;
+  background: var(--subj-gas) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.6 6.3l2.3 2.2 4.5-4.9' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 10px no-repeat;
+}
+/* 꾹 누르는 버튼(열기구의 버너) */
+.u6x-step .bv-btn.u6x-hold {
+  height: 76px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 17px;
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.u6x-step .bv-btn.u6x-hold small { font-size: 12.5px; font-weight: 700; color: var(--sub); }
+.u6x-step .bv-btn.u6x-hold.on { border-color: #FF8A3D; background: #FFF1E3; color: #C2500A; transform: scale(.975); }
+.u6x-step .bv-range-in.u6x-rg-temp::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, #5AA2F8 0, #B9A6E8 45%, #FF9F5A 100%);
+}
