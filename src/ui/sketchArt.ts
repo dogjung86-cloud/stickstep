@@ -26,6 +26,8 @@ export function teacherSvg(kind: string): string {
 /** 스플래시 플립북: 놀이 컷(넘기는 순서)과 "공부하자!" 정착 컷 */
 export const SPLASH_FRAMES: string[] = SPLASH_ART.frames;
 export const STUDY_ART: string = SPLASH_ART.study;
+/** 정착 장면의 앞 자세 넷(앉음, 손 올림, 안경테에 닿음, 살짝 올림). 이어서 STUDY_ART(마지막 자세)에서 멈춘다. */
+export const SPLASH_SETTLE: string[] = SPLASH_ART.settle;
 
 /** 계정 관리 화면의 책 읽는 그림 */
 export { ACCOUNT_ART };

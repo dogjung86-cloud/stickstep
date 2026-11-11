@@ -774,7 +774,7 @@ export const COMIC_ART: Record<string, SketchPanelArt[]> = {
 };
 
 /** 스플래시 플립북(놀이 컷은 넘기는 순서대로) */
-export const SPLASH_ART: { frames: string[]; study: string } = {
+export const SPLASH_ART: { frames: string[]; settle: string[]; study: string } = {
   "frames": [
     "sketch/splash/eat.svg",
     "sketch/splash/tv.svg",
@@ -790,6 +790,12 @@ export const SPLASH_ART: { frames: string[]; study: string } = {
     "sketch/splash/bike.svg",
     "sketch/splash/dog.svg",
     "sketch/splash/oops.svg"
+  ],
+  "settle": [
+    "sketch/splash/study-rest.svg",
+    "sketch/splash/study-reach.svg",
+    "sketch/splash/study-touch.svg",
+    "sketch/splash/study-push.svg"
   ],
   "study": "sketch/splash/study.svg"
 };

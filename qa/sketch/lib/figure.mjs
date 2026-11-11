@@ -74,6 +74,24 @@ function drawMiniFace(sk, o, seed, look, g) {
   else { eyes(); mouth([[mx - 10, my], [mx, my + 4], [mx + 10, my]]); } // calm
 }
 
+/* ---------- 안경만 쓴 얼굴 (스플래시, 로그인 그림) ----------
+   눈동자와 눈썹 없이 안경알이 눈 노릇을 한다. 볼 터치와 입 하나만 그린다. 안경 쓴 인물에만 쓴다(bare: true).
+   o.mouth 가 있으면 face 대신 그 입 모양을 쓴다: flat | happy | sing | shock | wide | grin | 그 밖은 작은 웃음 */
+function drawBareFace(sk, o, seed, look, g) {
+  const kind = o.mouth ?? o.face;
+  const mx = look, my = g.ey + 44;
+  const lo = { w: 7, wob: 0.4 };
+  if (o.blush !== false) for (const [bx, i] of [[-g.lx - 30 + look, 0], [g.lx + 30 + look, 1]]) sk.fill(ell(bx, g.ey + 34, 15, 10), "#F5A9A0", { dx: 0, dy: 0, wob: 0.5, seed: seed + 120 + i, alpha: 0.6 });
+  const arc = (w, d) => sk.ink(curve([[mx - w, my - 1], [mx, my + d], [mx + w, my - 1]], false, 2), { ...lo, seed: seed + 103 });
+  const hole = (rx, ry) => { const m = ell(mx, my + 6, rx, ry); sk.fill(m, "#7A2E2E", { dx: 0, dy: 0, wob: 0.3, seed: seed + 96 }); sk.ink(m, { ...lo, w: 6, seed: seed + 97 }); };
+  if (kind === "flat") sk.ink(dense([[mx - 11, my + 2], [mx + 11, my + 2]], 2), { ...lo, seed: seed + 103 });
+  else if (kind === "happy") arc(20, 12);
+  else if (kind === "sing") hole(13, 16);
+  else if (kind === "shock" || kind === "wide") hole(10, 13);
+  else if (kind === "grin") arc(19, 11);
+  else arc(16, 9);
+}
+
 /* ---------- 얼굴 (표정이 필요한 그림에서만) ----------
    kind: smile | happy | wide | curious | determined | sleepy | sing | shock
    ex: 두 눈의 x 자리, ey: 눈 높이 */
@@ -237,13 +255,14 @@ export function drawHead(sk, o = {}) {
   }
 
   // 안경과 얼굴
-  const ey = 8, lx = 36, lr = 30;
+  const ey = 8 + (o.lookY ?? 0), lx = 36, lr = 30; // lookY: 안경을 위아래로 조금 옮긴다(안경 올리기)
   if (o.glasses) {
     for (const [sg, i] of [[-1, 0], [1, 1]]) {
       sk.fill(circ(sg * lx + look, ey, lr - 2, { over: 0, seed: seed + 130 + i }), C.white, { dx: 0, dy: 0, wob: 0.6, seed: seed + 131 + i, alpha: 0.92 });
     }
   }
-  if (o.face && o.mini) drawMiniFace(sk, o, seed, look, { ey, lx });
+  if (o.face && o.bare) drawBareFace(sk, o, seed, look, { ey, lx });
+  else if (o.face && o.mini) drawMiniFace(sk, o, seed, look, { ey, lx });
   else if (o.face) drawFace(sk, o.face, seed, o.glasses ? [-lx + look, lx + look] : [-30 + look, 30 + look], o.glasses ? ey : 10, { blush: o.blush });
   if (o.glasses) {
     for (const [sg, i] of [[-1, 0], [1, 1]]) sk.ink(circ(sg * lx + look, ey, lr, { seed: seed + 132 + i, lump: 0.03 }), { w: 8, wob: 0.7, seed: seed + 133 + i });
