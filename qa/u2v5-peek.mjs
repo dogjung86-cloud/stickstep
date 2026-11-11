@@ -16,13 +16,12 @@ const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage({ viewport: { width: W_, height: H_ }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
 page.on("pageerror", (e) => console.log("PAGEERROR:", e.message));
 page.on("console", (m) => { if (m.type() === "error") console.log("CONSOLE:", m.text().slice(0, 200)); });
-await page.addInitScript((v) => {
+await page.addInitScript(() => {
   localStorage.setItem("science-app.v1", JSON.stringify({
     version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci",
     premium: true, reviewMode: true, goalMin: 10, streak: 1, totalXp: 800, lessons: {}, minigame: {},
   }));
-  if (v !== "off") sessionStorage.setItem("ss.u2v5", "1");
-}, process.env.V5 || "on");
+});
 await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
 await page.waitForTimeout(1200);
 await page.evaluate(async ({ li, si }) => {

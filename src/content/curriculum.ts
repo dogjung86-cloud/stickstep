@@ -3,35 +3,21 @@
 import type { Lesson } from "../lessons/types";
 import { isDone, isPremium, isReviewMode } from "../core/store";
 import { UNIT1 } from "./unit1";
-// 중1 Ⅱ = v3 재제작본이 정본(2026-08-10 사용자 판정 합격 — 병행 토글 ss.u2v3 폐기, 직배선).
-// 구판(content/unit2.ts)·v2류 보존 규칙은 Ⅴ·Ⅵ과 동일 — 파일은 남기고 배선만 끊는다.
-// 중1 Ⅱ v5(2026-11-11, 열 레슨의 랩과 뒤따르는 문제 재제작) 병행 배선: 세션 "ss.u2v5"="1" 또는 주소 ?u2v5.
-// CURRICULUM 줄은 건드리지 않는다(Ⅲ·Ⅳ v3 브랜치가 그 줄을 고친다). 정본 import에 별칭을 주고 같은 이름 자리에 켜진 판을 꽂는다.
-// 꺼져 있으면 지금과 완전히 같다. 합격하면 이 블록을 지우고 CURRICULUM의 UNIT2_V3를 unit2v5()로 바꾼다(v3 파일은 보존).
-import { UNIT2_V3 as UNIT2_CANON } from "./unit2v3";
+// 중1 Ⅱ = v5가 정본(2026-11-11 사용자 판정 "정본으로 올리기". 병행 토글 ss.u2v5와 주소 ?u2v5는 없앴다).
+// v5(content/unit2v5.ts)는 v3(content/unit2v3.ts)의 도입, 개념, 정리와 일부 문제 스텝을 가져와 쓰는 판이라 v3 파일을 함께 읽는다.
+// v3의 랩(steps/bio4/*)과 그 앞의 판(content/unit2.ts 등)은 Ⅴ·Ⅵ과 같은 규칙으로 파일만 남긴다(배선 없음).
+// v3의 글이나 스텝 차례가 바뀌면 v5 조립이 실패한다(unit2v5.ts의 v3, patch). 그때 화면이 멈추지 않게 v3로 물러나고 콘솔에 알린다.
+// 고치는 법은 SCI_GUIDE의 v5 절에 있다.
+import { UNIT2_V3 } from "./unit2v3";
 import { unit2v5 } from "./unit2v5";
-const u2v5On = (() => {
-  try {
-    // 주소 ?u2v5로 켜면 세션에도 심어 둔다(해시 라우팅이 주소를 다시 쓰거나 새로고침해도 같은 탭에선 유지된다).
-    if (new URLSearchParams(location.search).has("u2v5")) sessionStorage.setItem("ss.u2v5", "1");
-    return sessionStorage.getItem("ss.u2v5") === "1";
-  } catch {
-    return false;
-  }
-})();
-// v5는 v3 스텝을 찾아 고쳐 쓰는 판이라, v3의 글이나 구성이 바뀌면 조립이 실패한다(unit2v5.ts의 v3, patch).
-// 그 실패가 v5를 켜지 않은 화면까지 멈추면 안 된다. 그래서 켜졌을 때만 조립하고, 실패하면 정본으로 물러난다.
-// 개발 서버에서는 꺼져 있어도 한 번 조립해 본다. v3를 고친 사람이 콘솔에서 바로 알 수 있다.
-const u2v5Unit = (() => {
-  if (!u2v5On && !import.meta.env.DEV) return null;
+const UNIT2_V5 = (() => {
   try {
     return unit2v5();
   } catch (e) {
-    console.error("[u2v5] v5 조립 실패. unit2v3.ts에서 바뀐 스텝이나 문장을 unit2v5.ts에 맞춰 주세요.", e);
-    return null;
+    console.error("[u2v5] v5 조립 실패. v3로 물러났어요. unit2v3.ts에서 바뀐 스텝이나 문장을 unit2v5.ts에 맞춰 주세요.", e);
+    return UNIT2_V3;
   }
 })();
-const UNIT2_V3 = u2v5On && u2v5Unit ? u2v5Unit : UNIT2_CANON;
 import { UNIT3 } from "./unit3";
 import { UNIT4 } from "./unit4";
 import { UNIT5 } from "./unit5";
@@ -68,7 +54,8 @@ export interface Unit {
 export type GradeId = "g1" | "g2";
 export const GRADE_LABEL: Record<GradeId, string> = { g1: "중1", g2: "중2" };
 
-export const CURRICULUM: Unit[] = [UNIT1, UNIT2_V3, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7];
+// Ⅲ·Ⅳ v3 브랜치도 이 줄을 고친다(U3_ACTIVE, U4_ACTIVE). 합칠 때 한 줄 충돌이 나면 두 쪽의 이름을 다 살리면 된다.
+export const CURRICULUM: Unit[] = [UNIT1, UNIT2_V5, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7];
 
 // 중2 — 대단원 8개.
 export const CURRICULUM_G2: Unit[] = [

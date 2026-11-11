@@ -1,8 +1,8 @@
 // 중1 Ⅱ v5 "운영 번들" 검사: 개발 서버에서는 보이지 않는 것을 빌드한 번들에서 확인한다.
-//   ① 토글 없음 = 정본 v3 그대로(만화 뒤 v3 랩, 세션 표식 없음)
-//   ② 주소 ?u2v5 = 새 판. 같은 탭은 새로 고쳐도 새 판이 남는다
+//   ① 아무 표식 없이 열면 새 판(v5가 정본이다. 2026-11-11에 병행 토글을 없앴다). 조립이 실패해 v3로 물러난 것이 아닌지도 여기서 드러난다
+//   ② 옛 주소 ?u2v5로 들어와도 같은 판이고 세션에 표식을 남기지 않는다. 새로 고쳐도 같다
 //   ③ 운영 화면에는 정답 표식이 없다(판정 보기의 data-ok, 문제 보기의 data-oi는 개발 서버 전용)
-//   ④ 새 판 열 레슨의 모든 스텝이 오류 없이 열리고, 랩 열세 판이 서고, 그림이 뜬다
+//   ④ 열 레슨의 모든 스텝이 오류 없이 열리고, 랩 열세 판이 서고, 그림이 뜬다
 //   npm run build 뒤 vite preview를 띄우고:  PPORT=4547 node qa/check-u2v5-dist.mjs
 //   배포된 주소를 보려면:  BASE=https://<주소> node qa/check-u2v5-dist.mjs  (읽기만 한다. 검사용 브라우저의 저장소만 쓴다)
 import { chromium } from "playwright-core";
@@ -111,26 +111,26 @@ async function dragRange(page, sel, to, ms = 500) {
 
 console.log(`[${BASE}] 운영 번들 검사`);
 
-// ① 토글 없음 = 정본 v3
-console.log("① 토글 없음 = 정본 v3");
+// ① 아무 표식 없이 = 새 판(정본)
+console.log("① 표식 없음 = 새 판(정본)");
 {
   const { ctx, page, errors } = await newContext();
   await boot(page);
   await openNode(page, 0);
   await forward(page);
   const f = await flags(page);
-  ok(f.v3lab && !f.v5lab, "u2l1 만화 다음 스텝이 v3 랩이다(새 랩이 아니다)");
+  ok(f.v5lab && !f.v3lab, "u2l1 만화 다음 스텝이 새 랩이다(v3 랩이 아니다)");
   ok(f.session === null, "세션 표식이 없다");
   ok(errors.length === 0, `오류 없음${errors.length ? ": " + errors[0] : ""}`);
   await ctx.close();
 }
 
-// ② ③ 주소 ?u2v5 = 새 판
-console.log("② ③ 주소 ?u2v5 = 새 판, 정답 표식 없음");
+// ② ③ 옛 주소 ?u2v5 = 같은 판
+console.log("② ③ 옛 주소 ?u2v5 = 같은 판, 정답 표식 없음");
 {
   const { ctx, page, errors } = await newContext();
   await boot(page, "?u2v5");
-  ok((await flags(page)).session === "1", "주소 ?u2v5가 세션 표식을 켠다");
+  ok((await flags(page)).session === null, "옛 주소 ?u2v5는 세션에 표식을 남기지 않는다");
   await openNode(page, 0);
   await forward(page);
   ok(await page.locator(`${A} .bv-step .mgf-range`).isVisible(), "u2l1 만화 다음 스텝이 새 랩(확대 막대)이다");
@@ -161,7 +161,7 @@ console.log("② ③ 주소 ?u2v5 = 새 판, 정답 표식 없음");
     }
   }
   ok(oi === 0, "문제 보기에 저작 차례 표식(data-oi)이 없다");
-  // 같은 탭을 새로 고쳐도 새 판이 남는다(주소에 #/home이 붙어 있으면 스플래시 없이 지도로 바로 간다)
+  // 새로 고쳐도 같은 판이다(주소에 #/home이 붙어 있으면 스플래시 없이 지도로 바로 간다)
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.waitForSelector("#sc-home, #sc-splash", { timeout: 15000 });
   if (await page.locator("#sc-splash").isVisible()) await enter(page);
@@ -169,16 +169,16 @@ console.log("② ③ 주소 ?u2v5 = 새 판, 정답 표식 없음");
   await openNode(page, 0);
   await forward(page);
   const f = await flags(page);
-  ok(f.session === "1" && f.v5lab, "새로 고친 뒤에도 같은 탭은 새 판이다");
+  ok(f.session === null && f.v5lab, "새로 고친 뒤에도 새 판이다");
   ok(errors.length === 0, `오류 없음${errors.length ? ": " + errors[0] : ""}`);
   await ctx.close();
 }
 
-// ④ 새 판 열 레슨의 모든 스텝
-console.log("④ 새 판 열 레슨의 모든 스텝");
+// ④ 열 레슨의 모든 스텝
+console.log("④ 열 레슨의 모든 스텝");
 {
   const { ctx, page, errors } = await newContext();
-  await boot(page, "?u2v5");
+  await boot(page);
   let totalSteps = 0;
   let totalLabs = 0;
   for (let li = 0; li < 10; li++) {

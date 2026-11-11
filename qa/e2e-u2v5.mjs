@@ -2,12 +2,12 @@
 //   A. 정답 경로: 열 레슨을 도입부터 마지막 문제까지 CTA로만 걸어간다(랩 열세 판 + 문제 51개).
 //   B. 오답 경로: 랩의 채점 판정을 일부러 틀리고(오답 카드가 누른 보기 바로 아래에 뜨는지, '다음'을 눌러야만 넘어가는지),
 //      차례 틀리기, 덮개 유리 빨리 덮기, 엉뚱한 곳 누르기, 알맞지 않은 세포 맡기기, 되돌리기를 해 본 뒤, 문제도 한 번씩 틀려 본다.
-//   C. 토글: ss.u2v5가 꺼져 있으면 Ⅱ단원이 정본 v3와 글자 하나까지 같다. 주소 ?u2v5가 세션 표식을 켠다.
-//      켜져 있어도 레슨 열 개의 id, 제목, 이름표, 쪽수, 잠금은 v3와 같다(진도 기록과 시험 풀이 이 id에 묶여 있다).
+//   C. 정본 배선(2026-11-11 병행 토글을 없앴다): 아무 표식 없이 열어도 CURRICULUM의 Ⅱ단원이 v5다(v3로 물러나지 않았다).
+//      레슨 열 개의 id, 제목, 이름표, 쪽수, 잠금은 v3와 같다(진도 기록과 시험 풀이 이 id에 묶여 있다). 옛 주소 ?u2v5는 아무 일도 하지 않는다.
 //   D. 화면 글 검사: 걷는 동안 화면에 뜬 글을 모아 대시, '교과서', 출판사 이름, '분자', 이모지, 이 책에 없는 용어를 찾는다.
 // 랩 조작은 qa/u2v5-lib.mjs의 것을 쓴다(한 화면 검사와 같은 조작). 레슨은 CURRICULUM에서 꺼내 연다.
 //   PORT=5547 node qa/e2e-u2v5.mjs            (전부)
-//   PORT=5547 ONLY=C node qa/e2e-u2v5.mjs     (토글만 빨리 볼 때)
+//   PORT=5547 ONLY=C node qa/e2e-u2v5.mjs     (배선만 빨리 볼 때)
 //   PORT=5547 FROM=4 node qa/e2e-u2v5.mjs      (4번 레슨부터. A, B만 해당)
 import {
   PORT, launch, openLesson, W, cta, ctaState, tap, waitFor, measure,
@@ -526,8 +526,8 @@ for (const wrong of ONLY ? [] : [false, true]) {
   await browser.close();
 }
 
-// ═════════════════════════════ C. 토글 ═════════════════════════════
-console.log("\n══ C. 토글 ══");
+// ═════════════════════════════ C. 정본 배선 ═════════════════════════════
+console.log("\n══ C. 정본 배선 ══");
 {
   const probe = (page) =>
     page.evaluate(async () => {
@@ -539,34 +539,34 @@ console.log("\n══ C. 토글 ══");
       // 문제 번호(n, of)는 curriculum.ts가 CURRICULUM에 실린 판의 문제 스텝에 나중에 써 넣는 값이라 견줄 때 뺀다.
       const j = (x) => JSON.stringify(x, (k, v) => (k === "n" || k === "of" ? undefined : v));
       return {
-        same: j(u) === j(v3.UNIT2_V3),
+        // 조립이 실패하면 curriculum.ts가 v3로 물러난다. 그러면 여기가 참이 된다.
+        fellBack: j(u) === j(v3.UNIT2_V3),
         n: u.lessons.length,
         ids: u.lessons.map((l) => l.id).join(","),
         l1: u.lessons[0].steps.map((s) => s.type).join(","),
-        // 진도 기록, 잠금, 시험 풀이 기대는 머리 정보는 켜도 v3와 같아야 한다(부제와 완료 문구는 새 랩에 맞춰 고친 레슨이 있다)
+        // 진도 기록, 잠금, 시험 풀이 기대는 머리 정보는 v3와 같아야 한다(부제와 완료 문구는 새 랩에 맞춰 고친 레슨이 있다)
         meta: ["id", "unitId", "premium", "standard", "title", "label", "icon"].every((k) => j(u.lessons.map((l) => l[k])) === j(v3.UNIT2_V3.lessons.map((l) => l[k]))),
         labs: u.lessons.map((l) => l.steps.filter((s) => s.type.endsWith("Lab")).map((s) => s.type).join("+")).join(","),
         flag: sessionStorage.getItem("ss.u2v5"),
       };
     });
-  const off = await launch({ v5: false });
-  const a = await probe(off.page);
-  ok(a.same && a.flag === null, "토글이 꺼져 있으면 CURRICULUM의 Ⅱ단원은 정본 v3와 글자 하나까지 같음");
-  ok(a.l1.includes("zoomRulerLab") && !a.l1.includes("magnifyLab"), `꺼진 상태의 u2l1은 v3 랩(${a.l1})`);
-  const meta = await openLesson(off.page, 0);
-  ok(meta.types[1] === "zoomRulerLab", "꺼진 상태로 레슨을 열면 v3 화면");
-  // 주소로 켜기
-  await off.page.goto(`http://localhost:${PORT}/?u2v5`, { waitUntil: "domcontentloaded" });
-  await off.page.waitForTimeout(1200);
-  const b = await probe(off.page);
-  ok(b.flag === "1" && !b.same && b.l1.includes("magnifyLab"), "주소 ?u2v5가 세션 표식을 켜고 새 판이 열림");
-  ok(b.n === 10 && b.ids === "u2l1,u2l2,u2l3,u2l4,u2l5,u2l6,u2l7,u2l8,u2l9,u2l10", `레슨 수와 id 불변(${b.n}개)`);
-  ok(b.meta, "켜진 상태에서도 열 레슨의 id, 제목, 이름표, 쪽수, 잠금은 v3와 같음");
+  const plain = await launch();
+  const a = await probe(plain.page);
+  ok(!a.fellBack && a.l1.includes("magnifyLab") && !a.l1.includes("zoomRulerLab"), `아무 표식 없이 열어도 CURRICULUM의 Ⅱ단원은 v5(${a.l1})`);
+  const meta = await openLesson(plain.page, 0);
+  ok(meta.types[1] === "magnifyLab", "레슨을 열면 새 랩 화면");
+  ok(a.n === 10 && a.ids === "u2l1,u2l2,u2l3,u2l4,u2l5,u2l6,u2l7,u2l8,u2l9,u2l10", `레슨 수와 id 불변(${a.n}개)`);
+  ok(a.meta, "열 레슨의 id, 제목, 이름표, 쪽수, 잠금은 v3와 같음");
   ok(
-    b.labs === "magnifyLab,cellWorkLab+cellWorkLab,slideBuildLab+scopeCompareLab,cellFitLab,levelBuildLab,ecoMapLab,beakIslesLab,kinLab+rankWidenLab,kingdomPathLab,foodWebLab",
-    `켜진 상태의 랩 열세 판(${b.labs})`,
+    a.labs === "magnifyLab,cellWorkLab+cellWorkLab,slideBuildLab+scopeCompareLab,cellFitLab,levelBuildLab,ecoMapLab,beakIslesLab,kinLab+rankWidenLab,kingdomPathLab,foodWebLab",
+    `랩 열세 판(${a.labs})`,
   );
-  await off.browser.close();
+  // 옛 주소(병행 토글 때 쓰던 ?u2v5)로 들어와도 같은 판이고, 세션에 아무것도 남기지 않는다
+  await plain.page.goto(`http://localhost:${PORT}/?u2v5`, { waitUntil: "domcontentloaded" });
+  await plain.page.waitForTimeout(1200);
+  const b = await probe(plain.page);
+  ok(b.flag === null && !b.fellBack && b.l1 === a.l1, "옛 주소 ?u2v5는 아무 일도 하지 않음(같은 판, 세션 표식 없음)");
+  await plain.browser.close();
 }
 
 // ═════════════════════════════ D. 화면 글 ═════════════════════════════

@@ -2,6 +2,9 @@
 // 훅 조작·랩 목표 3개 점등·CTA 개방·recap·전 문제 정답 시트까지 전부 실제 조작으로 확인한다.
 // 레슨은 모듈 직접 import로 연다(스플래시 우회 불필요 — e2e-g2u6v2 문법).
 //   PORT=5411 node qa/e2e-u2v3.mjs
+// 2026-11-11: 중1 Ⅱ의 정본은 v5다(content/unit2v5.ts, 검사는 qa/e2e-u2v5.mjs). v3는 지도에 실리지 않는다.
+// 이 검사는 v3 모듈의 레슨을 바로 올리므로 그대로 돈다. v5가 v3에서 가져다 쓰는 스텝(도입, 개념, 정리, 일부 문제)의
+// 회귀 검사로 남긴다. v3 랩(steps/bio4)은 이제 학생 화면에 나오지 않는다.
 import { chromium } from "playwright-core";
 
 const PORT = process.env.PORT || "5173";

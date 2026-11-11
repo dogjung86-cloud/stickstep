@@ -1,6 +1,6 @@
 // 중1 Ⅱ v5 "실사용 경로" 검사: 스플래시 → 둘러보기 → 지도 → 레슨 노드까지 실제 클릭으로 들어가고,
 // 랩의 막대와 카드도 실제 마우스 입력(누르고, 끌고, 떼기)으로 조작한다. e2e-u2v5가 합성 이벤트로 보지 못하는 것을 본다.
-//   ① 토글 없음 = 정본 v3(u2l1 만화 뒤 랩이 배율 버튼) ② 주소 ?u2v5 = 새 판(확대 막대)
+//   ① 옛 주소 ?u2v5로 들어와도 같은 판(병행 토글은 2026-11-11에 없앴다) ② 아무 표식 없이 열면 새 판(u2l1 만화 뒤 확대 막대)
 //   ③ u2l1 확대 랩을 마우스 끌기로 끝까지 ④ u2l3 표본 만들기(덮개 유리 막대를 천천히 끌기)와 관찰 랩(초점 막대, 핵 누르기)을 끝까지
 //   ⑤ u2l5 구성 단계 랩(모으기 막대를 단계마다 끌어 놓기) ⑥ u2l7 두 섬의 새 랩(시간 막대 끌기) ⑦ u2l9 검색표 랩(예, 아니요 실제 클릭)
 //   PORT=5547 node qa/check-u2v5-real.mjs
@@ -91,24 +91,24 @@ const waitDs = async (page, k, v) => {
 const done = (page) => page.locator(`${A} .bv-done.show`).waitFor({ state: "visible", timeout: 9000 }).then(() => true, () => false);
 const ctaOpen = (page) => page.evaluate(() => { const b = document.querySelector(".screen.active .btn.cta"); return !!b && !b.disabled; });
 
-// ① 토글 없음 → 정본 v3
-console.log(`[PORT ${PORT}] 토글 없음 = 정본 v3`);
-{
-  const page = await newPage();
-  await boot(page);
-  await openNode(page, 0);
-  await cta(page, 7);
-  const r = await page.evaluate(() => ({ v3: !!document.querySelector(".screen.active .zrl-mag"), v5: !!document.querySelector(".screen.active .bv-step") }));
-  ok(r.v3 && !r.v5, "u2l1 만화 뒤에 v3 랩(배율 버튼)이 열린다");
-  await page.close();
-}
-
-// ② ③ 주소 ?u2v5 → 새 판, u2l1 확대 랩을 실제 입력으로
-console.log("주소 ?u2v5 = 새 판 · u2l1 확대 랩");
+// ① 옛 주소(병행 토글 때 쓰던 ?u2v5)로 들어와도 같은 판
+console.log(`[PORT ${PORT}] 옛 주소 ?u2v5 = 같은 판`);
 {
   const page = await newPage();
   await boot(page, "?u2v5");
-  ok((await page.evaluate(() => sessionStorage.getItem("ss.u2v5"))) === "1", "주소 ?u2v5가 세션 표식을 켠다");
+  await openNode(page, 0);
+  await cta(page, 7);
+  const r = await page.evaluate(() => ({ v3: !!document.querySelector(".screen.active .zrl-mag"), v5: !!document.querySelector(".screen.active .bv-step"), flag: sessionStorage.getItem("ss.u2v5") }));
+  ok(r.v5 && !r.v3 && r.flag === null, "옛 주소로 들어와도 u2l1 만화 뒤에 새 랩이 열리고 세션 표식은 남지 않는다");
+  await page.close();
+}
+
+// ② ③ 아무 표식 없이 → 새 판(정본), u2l1 확대 랩을 실제 입력으로
+console.log("표식 없음 = 새 판(정본) · u2l1 확대 랩");
+{
+  const page = await newPage();
+  await boot(page);
+  ok((await page.evaluate(() => sessionStorage.getItem("ss.u2v5"))) === null, "세션 표식 없이 연다");
   await openNode(page, 0);
   await cta(page, 7);
   ok(await page.locator(`${A} .bv-step .mgf-range`).isVisible(), "u2l1 만화 뒤에 새 랩(확대 막대)이 열린다");
@@ -140,7 +140,7 @@ console.log("주소 ?u2v5 = 새 판 · u2l1 확대 랩");
 console.log("u2l3 표본 만들기 · 관찰 랩");
 {
   const page = await newPage();
-  await boot(page, "?u2v5");
+  await boot(page);
   await openNode(page, 2);
   await page.locator(`${A} .hb4-wl`).click();
   await page.locator(`${A} .hook-choice`, { hasText: "현미경" }).first().click();
@@ -205,7 +205,7 @@ console.log("u2l3 표본 만들기 · 관찰 랩");
 console.log("u2l5 구성 단계 랩");
 {
   const page = await newPage();
-  await boot(page, "?u2v5");
+  await boot(page);
   await openNode(page, 4);
   await page.locator(`${A} .hb4-bh`).click();
   await W(page, 600);
@@ -246,7 +246,7 @@ console.log("u2l5 구성 단계 랩");
 console.log("u2l7 두 섬의 새 랩");
 {
   const page = await newPage();
-  await boot(page, "?u2v5");
+  await boot(page);
   await openNode(page, 6);
   await cta(page, 9); // 만화 여덟 컷(코드 그림으로 다시 편성하며 7 → 8) + 개념
   ok(await page.locator(`${A} .bv-step .bki-svg`).isVisible(), "만화와 개념 뒤에 두 섬의 새 랩이 열린다");
@@ -272,7 +272,7 @@ console.log("u2l7 두 섬의 새 랩");
 console.log("u2l9 검색표 랩");
 {
   const page = await newPage();
-  await boot(page, "?u2v5");
+  await boot(page);
   await openNode(page, 8);
   await page.locator(`${A} .hb4-mr`).click();
   await page.locator(`${A} .hook-choice`, { hasText: "광합성" }).first().click();

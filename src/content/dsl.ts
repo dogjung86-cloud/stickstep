@@ -560,7 +560,7 @@ export const kingdomGateLab = (o: B4LabOpt): Step => ({ type: "kingdomGateLab", 
 export const webDropLab = (o: B4LabOpt): Step => ({ type: "webDropLab", ...o });
 
 // ── 중1 Ⅱ v5 랩 12종(2026-11-11, steps/bio6/*) ──
-// 병행 배선(unit2v5.ts + ss.u2v5 토글, 주소 ?u2v5) 전용. 제목은 학생이 답할 질문 한 줄이고 리드는 없다.
+// 정본 unit2v5.ts가 쓴다. 제목은 학생이 답할 질문 한 줄이고 리드는 없다.
 // cellWorkLab만 mode("animal"|"plant")를 받는다(한 레슨에서 동물, 식물 두 번 쓴다).
 export type B6LabOpt = { title: string; cta?: string; curio?: CurioOpt };
 export const magnifyLab = (o: B6LabOpt): Step => ({ type: "magnifyLab", ...o });

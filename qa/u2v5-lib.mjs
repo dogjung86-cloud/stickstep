@@ -1,23 +1,22 @@
 // 중1 Ⅱ v5 검증 공용 부품: 부팅, 레슨 열기, 측정, 랩 열세 판의 조작.
 // 한 화면 검사(check-u2v5-fit), 실플레이(e2e-u2v5), 눈검수 캡처(shot-u2v5)가 같은 조작을 쓴다.
-// 레슨은 CURRICULUM에서 꺼내 연다(ss.u2v5 토글 배선이 실제로 먹는지까지 함께 본다).
+// 레슨은 CURRICULUM에서 꺼내 연다(v5가 정본으로 실려 있는지까지 함께 본다. 2026-11-11에 병행 토글을 없앴다).
 import { chromium } from "playwright-core";
 
 export const PORT = process.env.PORT || "5547";
 export const BUDGET = 554; // 390×700 화면의 스크롤 영역 높이
 
-export async function launch({ width = 390, height = 700, v5 = true } = {}) {
+export async function launch({ width = 390, height = 700 } = {}) {
   const browser = await chromium.launch({ channel: "chrome", headless: true });
   const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.addInitScript((on) => {
+  await page.addInitScript(() => {
     localStorage.setItem("science-app.v1", JSON.stringify({
       version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci",
       premium: true, reviewMode: true, goalMin: 10, streak: 1, totalXp: 800, lessons: {}, minigame: {},
     }));
-    if (on) sessionStorage.setItem("ss.u2v5", "1");
-  }, v5);
+  });
   await page.goto(`http://localhost:${PORT}/`, { waitUntil: "domcontentloaded" });
   await page.waitForTimeout(1200);
   return { browser, page, errors };
