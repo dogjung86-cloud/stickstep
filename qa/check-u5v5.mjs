@@ -1,0 +1,318 @@
+// 중1 Ⅴ v5 단원 검사: 390×700에서 레슨마다 도입과 랩을 처음부터 끝까지 한 길로 가며
+// 시점마다 스크롤 높이가 한 화면 안인지, 페이지 오류가 없는지, 끝 버튼으로 다음 스텝이 열리는지 본다.
+// 랩의 판정에서는 한 번 틀려 본다(오답 화면도 한 화면 안인지). 그 길에서 모은 글에 금지어가 없는지도 본다.
+// 실행: PORT=5575 node qa/check-u5v5.mjs [레슨 id ...] [--out 폴더]   (개발 서버 필요)
+import { mkdirSync } from "node:fs";
+import { join } from "node:path";
+import { launch, openLesson, fwd, fit, stageAt, drag, holdBtn, click, waitAsk, answer, next, texts, W, waitFor, ctaState, cta, stepType, choose, ds, waitPhase } from "./u5v5-lib.mjs";
+
+const args = process.argv.slice(2);
+const oi = args.indexOf("--out");
+const OUT = oi >= 0 ? args[oi + 1] : "qa/shots/u5v5";
+const only = args.filter((a) => /^u5l\d$/.test(a));
+const skipIntro = args.includes("--lab");
+mkdirSync(OUT, { recursive: true });
+
+let pass = 0, fail = 0;
+const ok = (c, msg) => { if (c) pass++; else { fail++; console.log("  FAIL " + msg); } };
+const { browser, page, errors } = await launch();
+const seen = [];
+let cur = "";
+const at = async (mark, shot = true) => {
+  const m = await fit(page);
+  // 결론 뒤에 붙는 궁금증 카드(펼쳐 읽는 덤)는 한 화면 예산 밖이다
+  m.content -= await page.evaluate(() => { const c = document.querySelector(".screen.active .step > .curio, .screen.active .step > [class*='curio']"); if (!c) return 0; const cs = getComputedStyle(c); return c.offsetHeight + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom); });
+  ok(m.content <= m.view && m.top === 0, `${cur} ${mark}: 스크롤 ${m.content}/${m.view}, 밀림 ${m.top}`);
+  seen.push(...(await texts(page)).map((t) => `${cur} ${mark}: ${t}`));
+  if (shot) await page.screenshot({ path: join(OUT, `${cur}-${mark}.png`) });
+  console.log(`  ${cur} ${mark}: ${m.content}/${m.view}`);
+};
+const pips = () => page.evaluate(() => document.querySelectorAll(".screen.active .bv-pips i.on").length);
+const waitPips = (n, tries = 100) => waitFor(page, (n) => document.querySelectorAll(".screen.active .bv-pips i.on").length >= n, n, tries);
+
+/** 랩의 마지막: 판정에서 한 번 틀리고(wrong) 결론까지 간 뒤 큰 버튼으로 다음 스텝을 연다. */
+async function judge(wrong, wantCta = "개념 정리하기") {
+  ok(await waitAsk(page), `${cur}: 판정이 뜨지 않음`);
+  await W(page, 400);
+  await at("ask");
+  await answer(page, !wrong);
+  await W(page, 500);
+  await at(wrong ? "miss" : "hit");
+  await next(page);
+  await W(page, 700);
+}
+async function endLab(wantCta = "개념 정리하기") {
+  ok(await waitFor(page, () => !!document.querySelector(".screen.active .bv-done.show"), null, 60), `${cur}: 결론이 뜨지 않음`);
+  await W(page, 500);
+  await at("done");
+  const c = await ctaState(page);
+  ok(c.enabled && c.text === wantCta, `${cur}: 끝 버튼 "${c.text}" enabled=${c.enabled}`);
+  await cta(page);
+  ok(!(await page.evaluate(() => document.querySelector(".screen.active .step")?.classList.contains("bv-step"))), `${cur}: 다음 스텝이 열리지 않음`);
+}
+
+const LABS = {
+  u5l1: async () => {
+    await at("start");
+    // 상자(칸 번호 col)에서 가로로 n칸 끌기. 한 칸 28px, 0번 칸의 가운데는 무대 왼쪽에서 33px
+    const pushBox = async (col, n) => {
+      const a = await stageAt(page, 33 + col * 28, 186);
+      await drag(page, a, { x: a.x + n * 28, y: a.y });
+    };
+    await pushBox(2, 1); // 모자라게: 실패가 보인다
+    await W(page, 700);
+    await at("fail");
+    await W(page, 1200);
+    await pushBox(2, 3);
+    ok(await waitPips(1), "u5l1: 오른쪽 점선");
+    await W(page, 1300);
+    await pushBox(9, -4);
+    ok(await waitPips(2), "u5l1: 왼쪽 점선");
+    await W(page, 1300);
+    await at("mid");
+    const c = await stageAt(page, 0.5, 144);
+    await drag(page, c, { x: c.x, y: c.y + 56 });
+    await W(page, 800);
+    await at("clay");
+    await judge(true);
+    await endLab();
+  },
+};
+LABS.u5l2 = async () => {
+  await at("start");
+  const k = (key) => click(page, `.u5x-frow [data-k="${key}"]`);
+  // 주문 1: 오른쪽 500 N. 먼저 모자라게(가 100 + 나 200) 만들어 본다
+  await k("1+"); await k("1+");
+  await W(page, 500);
+  await at("short");
+  await k("0+"); await k("1+");
+  ok(await waitPips(1), "u5l2: 오른쪽 500 N");
+  // 주문 2: 반대로 밀어 왼쪽 100 N (가 오른쪽 200, 나 왼쪽 300)
+  await k("1L");
+  await W(page, 600);
+  await at("mid");
+  ok(await waitPips(2), "u5l2: 왼쪽 100 N");
+  // 주문 3: 평형 (가 오른쪽 200, 나 왼쪽 200)
+  await k("1-");
+  await W(page, 600);
+  await at("bal");
+  ok(await waitPips(3), "u5l2: 평형");
+  await judge(true);
+  await endLab();
+};
+LABS.u5l3 = async () => {
+  await at("start");
+  // 사과(무대 가운데에서 dx, dy만큼 떨어진 곳)에서 (ax, ay) 쪽으로 겨눈다. 무대 가운데는 (0.5, 125px)
+  const aimAt = async (dx, dy, ax, ay) => {
+    const p = await stageAt(page, 0.5, 125);
+    await drag(page, { x: p.x + dx, y: p.y + dy }, { x: p.x + dx + ax, y: p.y + dy + ay });
+  };
+  await aimAt(0, -90, 0, 40);
+  ok(await waitPips(1), "u5l3: 위쪽 사과");
+  await W(page, 300);
+  await aimAt(90, 0, 0, 40); // 틀리게: 아래로 겨눈다
+  await W(page, 900);
+  await at("fail");
+  await W(page, 1800);
+  await aimAt(90, 0, -40, 0);
+  ok(await waitPips(2), "u5l3: 오른쪽 사과");
+  await W(page, 300);
+  await aimAt(0, 90, 0, -40);
+  ok(await waitPips(3), "u5l3: 아래쪽 사과");
+  await W(page, 2600);
+  await at("scale");
+  await click(page, '.u5x-seg[data-k="moon"]');
+  await W(page, 900);
+  await at("moon");
+  await click(page, '.u5x-seg[data-k="balance"]');
+  await W(page, 400);
+  await at("balance");
+  await click(page, '.u5x-seg[data-k="earth"]');
+  ok(await waitPips(4), "u5l3: 표 네 칸");
+  await judge(true);
+  await endLab();
+};
+LABS.u5l4 = async () => {
+  await at("start");
+  // 고리를 from cm에서 to cm까지 끈다(벽 28 + 처음 길이 74 + 고리 12, 1 cm = 13px)
+  const pull = async (from, to) => {
+    const a = await stageAt(page, 28 + 74 + 12 + from * 13, 104);
+    await drag(page, a, { x: a.x + (to - from) * 13, y: a.y });
+    await W(page, 150);
+  };
+  const rec = () => click(page, ".u5x-rec");
+  await rec(); // 늘이지 않고 기록: 실패
+  await pull(0, 3); await rec();
+  ok(await waitPips(1), "u5l4: 3 cm");
+  await rec(); // 같은 길이 또 기록: 실패
+  await W(page, 300);
+  await at("dup");
+  await pull(3, 6); await rec();
+  await pull(6, 9); await rec();
+  ok(await waitPips(3), "u5l4: 세 번 기록");
+  await W(page, 400);
+  await at("line");
+  await pull(9, 8); await rec(); // 틀린 길이: 4 N이 드러난다
+  await W(page, 400);
+  await at("goalmiss");
+  await W(page, 1500);
+  await pull(8, 10); await rec();
+  ok(await waitPips(4), "u5l4: 5 N 맞히기");
+  await judge(true);
+  await endLab();
+};
+LABS.u5l5 = async () => {
+  await at("predict");
+  await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
+  await W(page, 1500);
+  await at("start");
+  // 나무판의 오른쪽 끝(받침점에서 250px)을 deg도까지 들어 올린다. 받침점은 무대의 (34, 200)
+  const lift = async (deg, from = 0) => {
+    const P = await stageAt(page, 34, 200);
+    const pt = (d) => ({ x: P.x + 250 * Math.cos((d * Math.PI) / 180), y: P.y - 250 * Math.sin((d * Math.PI) / 180) });
+    await page.mouse.move(pt(from).x, pt(from).y - 4);
+    await page.mouse.down();
+    for (let d = from + 2; d <= deg; d += 2) { await page.mouse.move(pt(d).x, pt(d).y); await W(page, 20); }
+  };
+  await lift(12); // 덜 기울이면 버틴다
+  await W(page, 200);
+  await at("hold");
+  await page.mouse.up();
+  await lift(24, 12);
+  await page.mouse.up();
+  ok(await waitPips(1), "u5l5: 나무 면");
+  await W(page, 400);
+  await click(page, '.bv-card[data-k="sand"]');
+  await lift(30);
+  await at("sand");
+  await page.mouse.up();
+  await lift(38, 30);
+  await page.mouse.up();
+  ok(await waitPips(2), "u5l5: 사포 면");
+  await W(page, 2800);
+  await at("pull");
+  await holdBtn(page, ".u5x-push", 500); // 일찍 떼면 안 움직인다
+  await W(page, 600);
+  await holdBtn(page, ".u5x-push", 1700);
+  ok(await waitPips(3), "u5l5: 도막 1개");
+  await W(page, 1700);
+  await click(page, '.u5x-seg[data-k="2"]');
+  await page.mouse.down();
+  await W(page, 1500);
+  await at("two");
+  await W(page, 1500);
+  await page.mouse.up();
+  ok(await waitPips(4), "u5l5: 도막 2개");
+  await judge(true);
+  await endLab();
+};
+LABS.u5l6 = async () => {
+  await at("start");
+  const rec = async () => { await click(page, ".u5x-rec"); await W(page, 250); };
+  // 추의 바닥을 from에서 to(무대의 y)로 옮긴다. half는 추 높이의 절반(잡는 자리)
+  const move = async (from, to, half = 22) => {
+    const a = await stageAt(page, 0.56, from - half);
+    await drag(page, a, { x: a.x, y: a.y + (to - from) });
+    await W(page, 150);
+  };
+  await rec();
+  ok(await waitPips(1), "u5l6: 잠기기 전");
+  await move(100, 136); // 어중간한 자리
+  await rec();
+  await at("between");
+  await move(136, 146);
+  await rec();
+  ok(await waitPips(2), "u5l6: 절반");
+  await at("half");
+  await move(146, 180);
+  await rec();
+  ok(await waitPips(3), "u5l6: 완전히");
+  await W(page, 2400);
+  await at("predict");
+  await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
+  await W(page, 1500);
+  await move(100, 196, 31);
+  await rec();
+  ok(await waitPips(4), "u5l6: 큰 추");
+  await at("big");
+  await judge(true);
+  await endLab();
+};
+LABS.u5l7 = async () => {
+  await at("start");
+  const run = async (k, n, ms, shot) => {
+    if (k !== "none") await click(page, `.bv-card[data-k="${k}"]`);
+    await click(page, ".u5x-roll");
+    if (shot) { await W(page, ms); await at(shot); }
+    ok(await waitPips(n), "u5l7: " + k);
+    await W(page, 300);
+  };
+  await run("none", 1, 1200, "none");
+  await run("back", 2, 0);
+  await run("front", 3, 1500, "front");
+  await run("side", 4, 1500, "side");
+  await judge(true);
+  await endLab();
+};
+async function intro(play) {
+  await W(page, 300);
+  await at("ask");
+  await choose(page, 0);
+  await W(page, 600);
+  await at("picked");
+  await play();
+  ok(await waitPhase(page, "done", 90), `${cur}: 도입이 끝나지 않음`);
+  await W(page, 1000);
+  await at("done");
+  const c = await ctaState(page);
+  ok(c.enabled && c.text === "실험실 열기", `${cur}: 끝 버튼 "${c.text}" enabled=${c.enabled}`);
+  const lines = await page.evaluate(() => { const b = document.querySelector(".screen.active .opn-bubble"); const cs = getComputedStyle(b); return Math.round((b.getBoundingClientRect().height - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)) / parseFloat(cs.lineHeight)); });
+  ok(lines <= 2, `${cur}: 끝말 ${lines}줄`);
+  await cta(page);
+}
+const holdStage = async (fx, fy, ms) => {
+  const p = await stageAt(page, fx, fy, ".opn-stage");
+  await page.mouse.move(p.x, p.y);
+  await page.mouse.down();
+  await W(page, ms);
+};
+const INTROS = {
+  u5l1: () => intro(async () => { await holdStage(0.38, 0.3, 500); await at("mid"); await W(page, 700); await page.mouse.up(); }),
+  u5l2: () => intro(async () => { for (let i = 0; i < 3; i++) { await click(page, '.opn-u5-btn[data-k="more"]'); await W(page, 500); if (i === 1) await at("mid"); } }),
+  u5l4: () => intro(async () => { await click(page, '.opn-u5-btn[data-k="small"]'); await W(page, 1500); await at("mid"); await W(page, 700); await click(page, '.opn-u5-btn[data-k="big"]'); }),
+  u5l5: () => intro(async () => { await click(page, '.opn-u5-btn[data-k="dirt"]'); await W(page, 1400); await click(page, '.opn-u5-btn[data-k="ice"]'); await W(page, 1200); await at("mid"); }),
+  u5l6: () => intro(async () => { await holdStage(0.51, 0.5, 600); await at("mid"); await W(page, 700); await page.mouse.up(); }),
+  u5l7: () => intro(async () => { await click(page, '.opn-u5-btn[data-k="kick"]'); await W(page, 1200); await at("mid"); }),
+};
+
+const ids = only.length ? only : ["u5l1", "u5l2", "u5l3", "u5l4", "u5l5", "u5l6", "u5l7"];
+for (const id of ids) {
+  console.log(id);
+  cur = id;
+  await openLesson(page, id);
+  if (INTROS[id] && !skipIntro) {
+    ok((await stepType(page)) === "opener", `${id}: 새 도입으로 열리지 않음`);
+    cur = id + "i";
+    await INTROS[id]();
+    cur = id;
+  } else await fwd(page);
+  if (LABS[id]) {
+    ok(await page.evaluate(() => !!document.querySelector(".screen.active .step.u5x-step")), `${id}: 새 랩으로 열리지 않음`);
+    await LABS[id]();
+  }
+}
+// 토글을 끄면 첫 레슨이 지금과 같이 열린다
+if (!only.length) {
+  await openLesson(page, "u5l1", false);
+  ok((await stepType(page)) === "hook", "토글을 껐는데 정본 훅이 아님");
+  await fwd(page);
+  ok(await page.evaluate(() => !document.querySelector(".screen.active .step.u5x-step") && !!document.querySelector(".screen.active .step canvas")), "토글을 껐는데 정본 랩이 아님");
+}
+// 금지어: 대시, '교과서', '분자', 이모지
+const bad = seen.filter((t) => /[—–]|교과서|분자|\p{Extended_Pictographic}/u.test(t.replace(/^[^:]+: /, "")));
+ok(bad.length === 0, `금지어 ${bad.length}건: ${bad.slice(0, 5).join(" / ")}`);
+ok(errors.length === 0, `페이지 오류 ${errors.length}건: ${errors.slice(0, 3).join(" / ")}`);
+await browser.close();
+console.log(`\n${fail ? "FAIL" : "PASS"} ${pass}/${pass + fail}`);
+process.exit(fail ? 1 : 0);
+
