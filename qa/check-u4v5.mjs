@@ -18,6 +18,7 @@ const ok = (cond, msg) => { if (cond) pass++; else { fail++; console.log("  FAIL
 const { browser, page, errors } = await L.launch();
 const W = (ms) => L.W(page, ms);
 let texts = [];
+let quizzes = 0;
 
 async function at(id, mark, shot = true) {
   const m = await L.measure(page);
@@ -81,6 +82,29 @@ async function endOpener(id, wantCta) {
   await W(500);
   ok((await L.stepKind(page)).startsWith("u4lab"), `${id} 도입: 다음이 새 랩이 아님(${await L.stepKind(page)})`);
 }
+/** 랩 뒤의 개념, 정리, 문제를 끝까지 간다. 개념과 정리는 한 화면에 다 들어오지 않아도 된다(읽는 화면). 문제는 정답을 눌러 정답으로 채점되는지 본다. */
+async function tail(id) {
+  for (let guard = 0; guard < 30; guard++) {
+    await W(500);
+    const k = await L.readStep(page);
+    if (!k.kind || k.kind === "home") break;
+    texts.push(k.text);
+    if (k.kind === "quiz") {
+      const r = await L.answerQuiz(page);
+      ok(r === "ok", `${id} 문제 "${k.title.slice(0, 20)}": ${r}`);
+      quizzes += 1;
+    } else if (k.kind === "read") {
+      // 개념, 정리, 끌어 놓는 활동: 캡처만 하고 끝 버튼(잠겨 있으면 검토 모드의 앞으로 가기)으로 지나간다
+      await page.screenshot({ path: join(OUT, `${id}-tail${guard}.png`) });
+      const c = await L.ctaState(page);
+      if (c.enabled) await L.cta(page);
+      else await L.click(page, ".xbtn.fwd");
+    } else {
+      ok(false, `${id}: 랩 뒤에 랩이 또 나옴(${k.title})`);
+      break;
+    }
+  }
+}
 async function predict(id, mark, word) {
   ok(await L.waitAsk(page), `${id} ${mark}: 예측이 뜨지 않음`);
   await W(300);
@@ -104,6 +128,17 @@ const PLAYS = {
     // 확산 랩
     await predict(id, "ink", "바닥에만");
     await L.click(page, ".u4x-ink-add");
+    // 먼저 일부러 저어 본다(금방 섞이지만 새 물로 다시 해야 한다)
+    ok(await L.waitVisible(page, '.u4x-ink-way[data-k="stir"]'), `${id} ink: 젓기와 가만히 두기 선택이 뜨지 않음`);
+    await at(id, "ink-choose");
+    await L.click(page, '.u4x-ink-way[data-k="stir"]');
+    ok(await L.waitVisible(page, ".u4x-ink-redo"), `${id} ink: 저은 뒤 다시 하기 버튼이 뜨지 않음`);
+    await at(id, "ink-stirred");
+    await L.click(page, ".u4x-ink-redo");
+    await W(200);
+    await L.click(page, ".u4x-ink-add");
+    ok(await L.waitVisible(page, '.u4x-ink-way[data-k="wait"]'), `${id} ink: 두 번째 선택이 뜨지 않음`);
+    await L.click(page, '.u4x-ink-way[data-k="wait"]');
     ok(await L.waitVisible(page, ".u4x-ink-ta"), `${id} ink: 시간 막대가 뜨지 않음`);
     await L.sweep(page, ".u4x-ink-ta", 0, 55, 6);
     await at(id, "ink-mid");
@@ -135,7 +170,8 @@ const PLAYS = {
     await W(300);
     await L.hold(page, ".u4x-hold", 3600);
     await wrongOnce(id, "evap");
-    await endLab(id, "evap", "개념 정리하기");
+    await endLab(id, "evap", "이름 붙이기");
+    await tail(id);
   },
   u4l2: async (id) => {
     ok((await L.stepKind(page)) === "opener:u4-spill", `${id}: 새 도입이 아님(${await L.stepKind(page)})`);

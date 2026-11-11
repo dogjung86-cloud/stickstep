@@ -209,3 +209,50 @@ export const measure = (page) =>
       text: step.innerText + " " + (document.querySelector(".screen.active .btn.cta")?.textContent ?? ""),
     };
   });
+
+// ── 랩 뒤의 스텝(개념, 정리, 문제) ──
+/** 지금 스텝이 무엇인지(문제인지 아닌지)와 화면 글. 레슨이 끝나 완료 화면이나 홈이면 kind가 "home". */
+export const readStep = (page) =>
+  page.evaluate(() => {
+    const sc = document.querySelector(".screen.active");
+    if (!sc || sc.id === "sc-done" || sc.id === "sc-home") return { kind: "home", title: "", text: "" };
+    const s = sc.querySelector(".step");
+    if (!s) return { kind: "", title: "", text: "" };
+    const text = s.innerText + " " + (sc.querySelector(".btn.cta")?.textContent ?? "");
+    const kind = s.querySelector(".opts, .ox-grid") ? "quiz" : s.classList.contains("bv-step") || s.classList.contains("opn-step") ? "lab" : "read";
+    return { kind, title: s.innerText.trim().split("\n")[0], text };
+  });
+/** 문제의 정답을 누르고 채점 결과를 돌려준다("ok" 또는 까닭). 정답은 개발 모드 번들이 내놓는 단원 표(window.__u4v5)에서 문두로 찾는다. */
+export async function answerQuiz(page) {
+  const found = await page.evaluate(() => {
+    const strip = (h) => { const d = document.createElement("div"); d.innerHTML = h; return d.textContent.replace(/\s+/g, ""); };
+    const s = document.querySelector(".screen.active .step");
+    const here = s.innerText.replace(/\s+/g, "");
+    const unit = window.__u4v5;
+    if (!unit) return { err: "단원 표(window.__u4v5)가 없음" };
+    for (const l of unit.lessons) for (const st of l.steps) {
+      if (st.type !== "quiz") continue;
+      if (!here.includes(strip(st.prompt).slice(0, 40))) continue;
+      const mode = st.mode ?? "mcq";
+      if (mode === "ox") s.querySelector(st.answer ? ".ox-btn.o" : ".ox-btn.x")?.click();
+      else for (const a of Array.isArray(st.answer) ? st.answer : [st.answer]) s.querySelector(`.opt[data-oi="${a}"]`)?.click();
+      return { mode };
+    }
+    return { err: "단원 표에서 이 문항을 찾지 못함" };
+  });
+  if (found.err) return found.err;
+  await page.waitForTimeout(250);
+  const c = await ctaState(page);
+  if (!c.enabled) return "확인하기가 열리지 않음";
+  await cta(page);
+  const okTitle = await waitFor(page, () => {
+    const t = document.querySelector(".screen.active .sheet-title");
+    return !!t && t.offsetParent !== null && t.textContent.trim().length > 0;
+  }, null, 40);
+  if (!okTitle) return "채점 시트가 뜨지 않음";
+  const title = await page.evaluate(() => document.querySelector(".screen.active .sheet-title").textContent.trim());
+  await page.waitForTimeout(300);
+  await page.evaluate(() => [...document.querySelectorAll(".screen.active .sheet-card .btn")].find((b) => b.offsetParent !== null)?.click());
+  await page.waitForTimeout(500);
+  return title === "정답이에요" ? "ok" : `"${title}"로 채점됨`;
+}

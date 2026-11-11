@@ -9,7 +9,7 @@ import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvCard, bvCards } from "../bio6/b6Lab";
-import { A, grid, scale, seeded, svgOpen, u4Hold, u4Lab, u4Predict, type Pt, type U4Step } from "./u4Kit";
+import { A, loose, scale, seeded, svgOpen, u4Hold, u4Lab, u4Predict, type Pt, type U4Step } from "./u4Kit";
 
 type Way = "spread" | "lump";
 const M0 = 0.5;
@@ -59,12 +59,13 @@ export const u4EvapLab: StepRenderer = (host, step, api) => {
     t = 0;
     flown.clear();
     const baseY = WIN.y + WIN.h - 34;
+    // 액체라서 가깝지만 가지런하지 않게 놓는다. 맨 윗줄이 표면이다(뒤에서부터 윗줄).
     if (w === "spread") {
-      pts = grid(6, 2, WIN.x + WIN.w / 2, baseY - 9, 19);
-      fly = [1, 4, 0, 3, 5, 2];
+      pts = loose(6, 2, WIN.x + WIN.w / 2, baseY, 19, rnd);
+      fly = [6, 9, 7, 10, 8, 3];
     } else {
-      pts = grid(3, 4, WIN.x + WIN.w / 2, baseY - 28, 19);
-      fly = [1, 0];
+      pts = loose(3, 4, WIN.x + WIN.w / 2, baseY, 19, rnd);
+      fly = [8, 9];
     }
     ps.innerHTML = pts.map((p) => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="6.5" fill="${A.part}" stroke="${A.partEdge}" stroke-width="1.2"/>`).join("");
     pEls = Array.from(ps.querySelectorAll("circle"));

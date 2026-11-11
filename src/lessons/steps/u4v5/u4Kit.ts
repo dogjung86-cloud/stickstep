@@ -241,6 +241,17 @@ export function grid(cols: number, rows: number, cx: number, cy: number, gap: nu
   return pts;
 }
 
+/** 액체의 입자 자리: 서로 가깝지만 가지런하지 않게(줄마다 반 칸 어긋나고 조금씩 흩어진다). 바닥 가운데가 (cx, baseY). */
+export function loose(cols: number, rows: number, cx: number, baseY: number, gap: number, rnd: () => number): Pt[] {
+  const pts: Pt[] = [];
+  for (let r = 0; r < rows; r++) {
+    const n = cols - (r % 2);
+    const x0 = cx - ((n - 1) * gap) / 2;
+    for (let c = 0; c < n; c++) pts.push({ x: x0 + c * gap + (rnd() - 0.5) * gap * 0.34, y: baseY - r * gap * 0.9 + (rnd() - 0.5) * gap * 0.3 });
+  }
+  return pts;
+}
+
 /** 비커. 왼쪽 위 (x, y), 폭 w, 높이 h. 액체는 class="<ns>-liq". */
 export function beaker(x: number, y: number, w: number, h: number, fill: string, ns: string, level = 0.8): string {
   const lh = h * level;

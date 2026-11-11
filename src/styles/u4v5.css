@@ -54,6 +54,10 @@
 .u4x-evap-log b { color: #7CF29C; font-weight: 800; }
 .u4x-evap-card { height: 64px; }
 .u4x-ink-dropper { transition: transform .5s var(--ease-out); }
+.u4x-ink-way { height: 64px; }
+.u4x-ink-rod { transform-box: fill-box; transform-origin: 50% 0%; }
+.u4x-ink-rod.stir { animation: u4xStir .32s ease-in-out infinite alternate; }
+@keyframes u4xStir { 0% { transform: rotate(-9deg); } 100% { transform: rotate(9deg); } }
 
 /* ── 그릇 랩 ─────────────────────────────────────── */
 .u4x-shape-card.col { height: 60px; }
