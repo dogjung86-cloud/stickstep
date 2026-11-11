@@ -1,3 +1,23 @@
 /* 중1 Ⅴ 힘의 작용 v5(랩과 도입 재제작)의 시트. main.ts가 이미 싣는다.
    이 단원의 클래스는 .u5x- 로 시작한다. 도입 장면은 .opn-u5- 로 시작한다.
    공용 뼈대(.bv-, .opn-)의 치수를 조정할 때는 이 단원의 클래스 아래에서만 한다(예: .u5x-step .bv-stage). 전역 규칙은 덮어쓰지 않는다. */
+
+/* ── 랩 공용 ───────────────────────────────────────── */
+.u5x-step .bv-pips i.on { background: var(--subj-force); }
+.u5x-step .bv-helper { border-left-color: var(--subj-force); }
+.u5x-cv { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: pointer; }
+.u5x-log { display: grid; gap: 8px; }
+.u5x-log-row {
+  height: 46px; padding: 0 14px; border-radius: 14px; border: 1.5px dashed var(--n300); background: var(--n50);
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0;
+  font-size: 14px; color: var(--sub); transition: border-color .2s, background .2s;
+}
+.u5x-log-row.cur { border-style: solid; border-color: var(--subj-force); background: var(--subj-force-tint); color: var(--ink); }
+.u5x-log-row.on { border-style: solid; border-color: var(--n300); background: #fff; color: var(--ink); box-shadow: var(--sh-card); }
+.u5x-log-n { font-weight: 700; white-space: nowrap; }
+.u5x-log-v { font-weight: 800; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13.5px; }
+.u5x-log-row.on .u5x-log-v { color: var(--subj-force-press); }
+.u5x-hold { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.u5x-hold.on { border-color: var(--subj-force); background: var(--subj-force-tint); color: var(--subj-force-press); transform: scale(.975); }
+.u5x-row { display: grid; gap: 8px; }
+.u5x-cap { font-size: 12.5px; font-weight: 700; color: var(--sub); line-height: 18px; }

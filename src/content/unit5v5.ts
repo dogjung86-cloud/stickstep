@@ -1,7 +1,16 @@
-// 중1 Ⅴ 힘의 작용: 랩과 도입 재제작(v5)의 자리. 이 단원을 맡은 세션이 이 파일을 채운다.
-// 지금은 비어 있다(null). 채우면 주소 ?u5v5 를 붙였을 때만 보인다(배선은 curriculum.ts와 v5toggle.ts에 이미 있다).
-// 정본(unit5.ts)을 베끼지 않는다. v5remake.ts의 remakeUnit(UNIT5, { ... })으로 도입과 랩 스텝만 바꿔 끼운다
-// (레슨의 id와 수, 제목, 쪽수, 잠금, 개념, 정리, 문제는 정본 그대로 따라온다). 새 스텝의 팩토리는 이 파일 안에 둔다(dsl.ts를 고치지 않는다).
+// 중1 Ⅴ 힘의 작용: 랩과 도입 재제작(v5). 주소에 ?u5v5 를 붙였을 때만 보인다(배선은 curriculum.ts와 v5toggle.ts).
+// 정본(unit5.ts)을 베끼지 않는다. remakeUnit으로 도입과 랩 스텝만 바꿔 끼운다(개념, 정리, 문제, 만화는 정본 그대로).
+// 설계 근거: design/u5v5-plan.md. 랩의 수치는 정본과 같다(용수철 4 cm에 2 N, 부력 20 N에서 14 N, 지구 29.4 N과 달 4.9 N).
 import type { Unit } from "./curriculum";
+import type { Step } from "../lessons/types";
+import { UNIT5 } from "./unit5";
+import { remakeUnit } from "./v5remake";
 
-export const UNIT5_V5: Unit | null = null;
+const lab = (type: string) => (o: { title: string; cta?: string }): Step => ({ type, ...o }) as unknown as Step;
+const forceLab = lab("u5ForceLab");
+
+export const UNIT5_V5: Unit | null = remakeUnit(UNIT5, {
+  u5l1: {
+    swap: { forceStudio: forceLab({ title: "힘을 화살표로 어떻게 나타낼까요?", cta: "개념 정리하기" }) },
+  },
+});
