@@ -41,9 +41,9 @@ function deck(sk, o = {}) {
     }
     for (let i = 0; i < 14; i++) { const x = 480 + (i * 67) % 470, y = 200 + ((i * 41) % 80); sk.ink(dense([[x, y], [x - 12, y + 30]]), { w: 4, color: "#A9B5C2", seed: 20 + i, wob: 0.2 }); }
   } else {
-    sun(sk, 868, 96, 42, { seed: 701 });
+    thin(sk, 0.55, () => sun(sk, 868, 96, 42, { seed: 701 }));
   }
-  sea(sk, -10, 970, 300, 440, { seed: sunny ? 25 : 27, color: sunny ? C.sea : "#9DBCCF", waves: 3 });
+  thin(sk, 0.75, () => sea(sk, -10, 970, 300, 440, { seed: sunny ? 25 : 27, color: sunny ? C.sea : "#9DBCCF", waves: 3 }));
   thin(sk, 0.72, () => {
     // 뱃전(나무 벽)과 난간
     const wall = poly([[-10, 432], [970, 432], [970, 574], [-10, 574]], 6);
@@ -172,9 +172,9 @@ function barrel(sk, x, y, w = 104, h = 118, sd = 26) {
   const b = curve([[x - w / 2, y - h], [x - w / 2 - 12, y - h / 2], [x - w / 2 - 2, y], [x + w / 2 + 2, y], [x + w / 2 + 12, y - h / 2], [x + w / 2, y - h]], false, 4);
   const shape = [...b, b[0]];
   sk.fill(shape, C.wood, { seed: sd, tex: true, texAng: 1.5 });
-  sk.ink(curve([[x - w / 2 - 8, y - h * 0.72], [x, y - h * 0.68], [x + w / 2 + 8, y - h * 0.72]]), { w: 7, seed: sd + 1 });
-  sk.ink(curve([[x - w / 2 - 8, y - h * 0.28], [x, y - h * 0.22], [x + w / 2 + 8, y - h * 0.28]]), { w: 7, seed: sd + 2 });
-  sk.ink(shape, { w: 10, seed: sd + 3 });
+  sk.ink(curve([[x - w / 2 - 8, y - h * 0.72], [x, y - h * 0.68], [x + w / 2 + 8, y - h * 0.72]]), { w: 5, seed: sd + 1 });
+  sk.ink(curve([[x - w / 2 - 8, y - h * 0.28], [x, y - h * 0.22], [x + w / 2 + 8, y - h * 0.28]]), { w: 5, seed: sd + 2 });
+  sk.ink(shape, { w: 7, seed: sd + 3 });
 }
 
 /* ---------- 1. 갑판에 번진 병 ---------- */
@@ -190,10 +190,10 @@ function p1() {
   handDot(sk, [fx + fs * 96, FLOOR - fs * 252], C.skin, 33, 9.5);
   // 통에 걸터앉아 축 늘어진 선원(가운데): 무릎에 힘이 없고 팔에 검붉은 반점
   const BX = 566;
-  barrel(sk, BX, FLOOR, 100, 118, 26);
+  barrel(sk, BX, FLOOR, 96, 100, 26);
   const slump = pose({ hip: [0, -232], neck: [-22, -352], head: [-62, -432], tilt: -0.42,
-    elL: [-52, -298], haL: [-84, -236], elR: [-30, -292], haR: [-62, -228], knL: [-130, -236], ftL: [-140, -4], knR: [-112, -226], ftR: [-118, 0] });
-  const ss = 0.58, sx = BX + 6, sy = FLOOR - 118 + 232 * ss;
+    elL: [-52, -298], haL: [-84, -236], elR: [-30, -292], haR: [-62, -228], knL: [-150, -222], ftL: [-162, -4], knR: [-134, -214], ftR: [-140, 0] });
+  const ss = 0.58, sx = BX + 10, sy = FLOOR - 100 + 238 * ss;
   drawFigure(sk, sx, sy, ss, slump, { ...SAILOR_B, skin: SICK, handL: SICK, handR: SICK, name: "sailor" });
   for (const [dx, dy] of [[-58, -284], [-66, -268], [-74, -252]]) sk.dot(sx + dx * ss + 6, sy + dy * ss, 5, "#9A3B3B");
   // 갑판에 누운 선원(오른쪽, 머리가 왼쪽): 말아 둔 담요를 베었다
@@ -208,7 +208,7 @@ function p1() {
   return sk;
 }
 
-/* ---------- 2. 문제 인식: 무엇이 정말 들을까? ---------- */
+/* ---------- 2. 문제 인식: 무엇이 정말 효과가 있을까? ---------- */
 function p2() {
   const sk = new Sk(W, H, { id: "b" });
   hold(sk);
@@ -264,22 +264,22 @@ function p4() {
   hold(sk, { beam: false });
   const rows = [{ beam: 138, cot: 252, shelf: 326 }, { beam: 404, cot: 518, shelf: 600 }];
   thin(sk, 0.7, () => rows.forEach((r, j) => {
-    const beam = poly([[262, r.beam - 14], [970, r.beam - 14], [970, r.beam + 14], [262, r.beam + 14]], 6);
+    const beam = poly([[388, r.beam - 14], [970, r.beam - 14], [970, r.beam + 14], [388, r.beam + 14]], 6);
     sk.fill(beam, "#C9A774", { seed: 10 + j, tex: true, texAng: 0.02 }); sk.ink(beam, { w: 9, seed: 12 + j });
   }));
-  const cols = [380, 600, 820];
+  const cols = [502, 684, 866];
   for (let i = 0; i < 6; i++) {
     const r = rows[Math.floor(i / 3)], cx = cols[i % 3];
     // 한 쌍: 나란히 매단 침상 둘
-    for (const [dx, j] of [[-100, 0], [6, 1]]) cot(sk, cx + dx, r.cot, 94, { beamY: r.beam + 14, who: (i + j) % 2 ? SAILOR_B : SAILOR_A, seed: 300 + i * 20 + j * 9, h: 36, headS: 0.28 });
+    for (const [dx, j] of [[-88, 0], [4, 1]]) cot(sk, cx + dx, r.cot, 84, { beamY: r.beam + 14, who: (i + j) % 2 ? SAILOR_B : SAILOR_A, seed: 300 + i * 20 + j * 9, h: 36, headS: 0.28 });
     // 쌍마다: 모두 같은 죽(회색) + 다른 처방(색)
-    thin(sk, 0.8, () => { const sh = rrect(cx - 96, r.shelf, 192, 16, 6); sk.fill(sh, C.woodDark, { seed: 400 + i, tex: true, texAng: 0.02 }); sk.ink(sh, { w: 7, seed: 410 + i }); });
-    bowl(sk, cx - 46, r.shelf, 0.58, { food: GRUEL, seed: 120 });
-    REMEDY[i](sk, cx + 46, r.shelf, 0.74);
+    thin(sk, 0.8, () => { const sh = rrect(cx - 86, r.shelf, 172, 16, 6); sk.fill(sh, C.woodDark, { seed: 400 + i, tex: true, texAng: 0.02 }); sk.ink(sh, { w: 7, seed: 410 + i }); });
+    bowl(sk, cx - 42, r.shelf, 0.54, { food: GRUEL, seed: 120 });
+    REMEDY[i](sk, cx + 42, r.shelf, 0.68);
   }
   // 린드: 여섯 쌍을 가리킨다
   const show = pose({ elR: [84, -318], haR: [156, -334], elL: [-54, -262], haL: [-20, -222], tilt: 0.04 });
-  drawFigure(sk, 132, 690, 0.64, show, { ...LIND, name: "lind", face: "determined", look: 0.5 });
+  drawFigure(sk, 150, 690, 0.64, show, { ...LIND, name: "lind", face: "determined", look: 0.5 });
   return sk;
 }
 
@@ -338,7 +338,7 @@ function p5() {
 function p6() {
   const sk = new Sk(W, H, { id: "f" });
   const PX = 318, PY = 112, PW = 604, PH = 584;
-  paper(sk, PX, PY, PW, PH);
+  thin(sk, 0.7, () => paper(sk, PX, PY, PW, PH));
   const top = PY + 24, rh = (PH - 48) / 6, split = PX + 128, split2 = PX + 420;
   // 오렌지와 레몬 줄 강조(형광펜)
   const hy = top + rh * 4;
@@ -400,7 +400,7 @@ function p8() {
   deck(sk, { sunny: true, mastX: 596, portX: 760, cannon: false });
   const FLOOR = 694;
   // 레몬 상자(왼쪽)
-  thin(sk, 0.85, () => {
+  thin(sk, 0.66, () => {
     for (const [x, y, r, rot, i] of [[86, 586, 30, 0.1, 0], [140, 580, 30, -0.3, 1], [196, 588, 30, 0.25, 2], [112, 552, 30, -0.1, 3], [170, 548, 30, 0.35, 4]]) lemon(sk, x, y, r, { seed: 321 + i * 4, rot });
     const c = poly([[44, 596], [240, 596], [232, FLOOR], [52, FLOOR]], 4);
     sk.fill(c, C.woodLight, { seed: 331, tex: true, texAng: 0.04 }); sk.ink(c, { w: 11, seed: 333 });
@@ -412,7 +412,7 @@ function p8() {
   drawFigure(sk, TX - 12, FLOOR - 40, 0.56, ladle, { ...SAILOR_C, hands: "L" });
   const lh = [TX - 12 + 0.56 * 104, FLOOR - 40 - 0.56 * 250];
   // 나눠 주는 통: 레몬즙을 탄 물
-  thin(sk, 0.85, () => {
+  thin(sk, 0.66, () => {
     const tub = poly([[TX - 92, 584], [TX + 92, 584], [TX + 80, FLOOR], [TX - 80, FLOOR]], 4);
     sk.fill(tub, C.wood, { seed: 341, tex: true, texAng: 1.5 }); sk.ink(tub, { w: 11, seed: 342 });
     for (const [y, i] of [[612, 0], [664, 1]]) sk.ink(dense([[TX - 90, y], [TX + 88, y]]), { w: 8, color: "#6B7480", seed: 343 + i, wob: 0.4 });
@@ -448,12 +448,12 @@ export const META = {
 // 말풍선(앱이 얹는다). who = 인물에 준 기준점 이름
 const BUBBLES = [
   [{ who: "sailor", text: "다리에<br>힘이 없어요" }],
-  [{ who: "lind", text: "무엇이 정말<br>들을까?" }],
+  [{ who: "lind", text: "무엇이 정말<br>효과가 있을까?" }],
   null,
   [{ who: "lind", text: "처방만<br>다르게!" }],
   [{ who: "sailor", text: "과일 더<br>없나요?" }],
   [{ who: "lind", text: "이 줄만<br>확 달라!" }],
-  [{ who: "lind", text: "오렌지와 레몬이<br>가장 잘 들어!" }],
+  [{ who: "lind", text: "오렌지와 레몬이<br>가장 잘 낫게 해!" }],
   [{ who: "drinker", text: "새콤해!" }],
 ];
 
@@ -463,7 +463,7 @@ const P = [
     caption: "1747년 봄, 영국 군함 솔즈베리호가 바다에 나간 지 두 달쯤 되자 선원들이 하나둘 쓰러졌어요. 잇몸이 상하고, 피부에 검붉은 반점이 생기고, 무릎에 힘이 빠지는 병, <b>괴혈병</b>이었지요. 이 배의 군의관 <b>제임스 린드</b>가 그 모습을 지켜보고 있었어요.",
   },
   {
-    fn: p2, when: "1747년 5월, 솔즈베리호", stage: "문제 인식", title: "무엇이 정말 들을까?",
+    fn: p2, when: "1747년 5월, 솔즈베리호", stage: "문제 인식", title: "무엇이 정말 효과가 있을까?",
     caption: "배에는 사과술, 식초, 묽은 황산이 든 약, 바닷물처럼 괴혈병에 좋다는 처방이 여럿 있었어요. 하지만 무엇이 정말 듣는지는 분명하지 않았지요. 린드는 막연한 걱정을 <b>“이 처방들 가운데 무엇이 괴혈병을 낫게 할까?”</b>라는 또렷한 질문으로 바꿨어요.",
     term: { name: "문제 인식", def: "관찰하다 생긴 궁금증을 <b>실험으로 답할 수 있는 또렷한 질문</b>(탐구 문제)으로 만드는 단계." },
   },
