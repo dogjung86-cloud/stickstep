@@ -50,3 +50,16 @@
 .u5x-graph text { font-size: 12.5px; font-weight: 600; fill: var(--sub); }
 .u5x-graph text.ax { font-size: 12px; font-weight: 700; fill: var(--ink); }
 .u5x-graph text.pt { font-size: 13px; font-weight: 800; fill: var(--subj-force-press); }
+
+/* ── u5l5 마찰력, 공용 고르기 버튼 ─────────────────── */
+.u5x-segs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.u5x-seg {
+  height: 48px; border-radius: 14px; border: 1.5px solid var(--n300); background: #fff; font-size: 14.5px; font-weight: 800; color: var(--sub);
+  box-shadow: var(--sh-card); transition: transform .12s, border-color .2s, background .2s, opacity .2s;
+}
+.u5x-seg:active { transform: scale(.97); }
+.u5x-seg.on { border-color: var(--subj-force); background: var(--subj-force-tint); color: var(--subj-force-press); }
+.u5x-seg:disabled { opacity: .4; }
+.u5x-step .bv-btn.main { border-color: var(--blue); background: var(--blue-tint); color: var(--blue-press, #1B64DA); }
+.u5x-step .bv-btn.main.on { background: var(--blue); color: #fff; }
+.u5x-step .bv-card.on { border-color: var(--subj-force); background: var(--subj-force-tint); }

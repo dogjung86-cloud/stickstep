@@ -11,6 +11,8 @@ const forceLab = lab("u5ForceLab");
 const tugLab = lab("u5TugLab");
 const gravityLab = lab("u5GravityLab");
 const springLab5 = lab("u5SpringLab");
+const frictionLab = lab("u5FrictionLab");
+const buoyLab = lab("u5BuoyLab");
 
 export const UNIT5_V5: Unit | null = remakeUnit(UNIT5, {
   u5l1: {
@@ -25,5 +27,11 @@ export const UNIT5_V5: Unit | null = remakeUnit(UNIT5, {
   },
   u5l4: {
     swap: { springLab: springLab5({ title: "많이 늘이면 힘도 커질까요?", cta: "개념 정리하기" }) },
+  },
+  u5l5: {
+    swap: { frictionPush: frictionLab({ title: "어떤 때 상자를 밀기 더 힘들까요?", cta: "개념 정리하기" }) },
+  },
+  u5l6: {
+    swap: { buoyancyLab: buoyLab({ title: "물에 담그면 눈금은 어떻게 될까요?", cta: "개념 정리하기" }) },
   },
 });

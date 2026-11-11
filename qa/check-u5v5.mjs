@@ -128,6 +128,62 @@ LABS.u5l4 = async () => {
   await judge(true);
   await endLab();
 };
+LABS.u5l5 = async () => {
+  await at("start");
+  await holdBtn(page, ".u5x-push", 250);
+  await W(page, 300);
+  await at("short");
+  await holdBtn(page, ".u5x-push", 900);
+  ok(await waitPips(1), "u5l5: 얼음판");
+  await W(page, 1700);
+  await click(page, '.bv-card[data-k="wood"]');
+  await holdBtn(page, ".u5x-push", 1500);
+  ok(await waitPips(2), "u5l5: 나무 바닥");
+  await W(page, 1700);
+  await click(page, '.bv-card[data-k="sand"]');
+  await page.mouse.down();
+  await W(page, 1000);
+  await at("push");
+  await W(page, 1200);
+  await page.mouse.up();
+  ok(await waitPips(3), "u5l5: 모래밭");
+  await W(page, 1700);
+  await click(page, '.u5x-seg[data-k="2"]');
+  await holdBtn(page, ".u5x-push", 3600);
+  await W(page, 300);
+  await at("two");
+  ok(await waitPips(4), "u5l5: 상자 2개");
+  await judge(true);
+  await endLab();
+};
+LABS.u5l6 = async () => {
+  await at("start");
+  ok(await waitPips(1), "u5l6: 잠기기 전");
+  const a = await stageAt(page, 0.56, 82);
+  const to = async (y, n) => {
+    for (let i = 0; i < 10; i++) { await page.mouse.move(a.x, a.y + ((y - 104) * (i + 1)) / 10); await W(page, 16); }
+    ok(await waitPips(n), "u5l6: 기록 " + n);
+  };
+  await page.mouse.move(a.x, a.y);
+  await page.mouse.down();
+  await to(148, 2);
+  await at("half");
+  await to(180, 3);
+  await page.mouse.up();
+  await W(page, 1400);
+  await at("predict");
+  await page.evaluate(() => document.querySelector(".screen.active .bv-q.show .bv-choice")?.click());
+  await W(page, 1500);
+  const b = await stageAt(page, 0.56, 158);
+  await page.mouse.move(b.x, b.y);
+  await page.mouse.down();
+  for (let i = 0; i < 10; i++) { await page.mouse.move(b.x, b.y + 3 * (i + 1)); await W(page, 16); }
+  ok(await waitPips(4), "u5l6: 더 깊이");
+  await page.mouse.up();
+  await at("deep");
+  await judge(true);
+  await endLab();
+};
 const INTROS = {};
 
 const ids = only.length ? only : ["u5l1", "u5l2", "u5l3", "u5l4", "u5l5", "u5l6", "u5l7"];

@@ -6,10 +6,14 @@ import { forceLab } from "./forceLab";
 import { tugLab } from "./tugLab";
 import { gravityLab } from "./gravityLab";
 import { springLab5 } from "./springLab5";
+import { frictionLab } from "./frictionLab";
+import { buoyLab } from "./buoyLab";
 
 export const U5V5_STEPS: Record<string, StepRenderer> = {
   u5ForceLab: forceLab,
   u5TugLab: tugLab,
   u5GravityLab: gravityLab,
   u5SpringLab: springLab5,
+  u5FrictionLab: frictionLab,
+  u5BuoyLab: buoyLab,
 };
