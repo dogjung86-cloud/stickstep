@@ -103,7 +103,8 @@ function ask(box: HTMLElement, question: string, choices: BvChoice[], onPick: (o
   order.forEach((idx) => {
     const c = choices[idx];
     const b = el("button", { class: "bv-choice", text: c.t, attrs: { type: "button" } }) as HTMLButtonElement;
-    b.dataset.ok = c.ok ? "1" : "0";
+    // 검사 도구가 섞인 차례와 무관하게 보기를 집는 열쇠. 개발 서버에서만 붙인다(quiz.ts의 data-oi와 같은 약속. 운영 화면에는 정답 표식을 남기지 않는다).
+    if (import.meta.env.DEV) b.dataset.ok = c.ok ? "1" : "0";
     btns.push(b);
     b.addEventListener("click", () => {
       if (picked) return;

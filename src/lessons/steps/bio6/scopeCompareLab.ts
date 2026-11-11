@@ -141,9 +141,11 @@ export const scopeCompareLab: StepRenderer = (host, step, api) => {
     host.dataset.scpCur = cur;
     host.dataset.scpSolved = SPS.filter((sp) => solved[sp]).join(",");
     host.dataset.scpWait = waiting ? "1" : "0";
-    // e2e용: 지금 표본에서 시야 가운데에 가장 가까운 핵의 자리(시야의 %)
-    const mid = [...NUCLEI[cur]].sort((a, b) => Math.hypot(a[0] - 50, a[1] - 50) - Math.hypot(b[0] - 50, b[1] - 50))[0];
-    host.dataset.scpNuc = mid ? mid.map((v) => v.toFixed(1)).join(",") : "";
+    // e2e용: 지금 표본에서 시야 가운데에 가장 가까운 핵의 자리(시야의 %). 눌러야 할 자리라 개발 서버에서만 남긴다.
+    if (import.meta.env.DEV) {
+      const mid = [...NUCLEI[cur]].sort((a, b) => Math.hypot(a[0] - 50, a[1] - 50) - Math.hypot(b[0] - 50, b[1] - 50))[0];
+      host.dataset.scpNuc = mid ? mid.map((v) => v.toFixed(1)).join(",") : "";
+    }
   };
 
   const px = (p: Pt): Pt => [FX + (p[0] * FD) / 100, FY + (p[1] * FD) / 100];

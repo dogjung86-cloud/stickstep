@@ -5,11 +5,11 @@ import { isDone, isPremium, isReviewMode } from "../core/store";
 import { UNIT1 } from "./unit1";
 // 중1 Ⅱ = v3 재제작본이 정본(2026-08-10 사용자 판정 합격 — 병행 토글 ss.u2v3 폐기, 직배선).
 // 구판(content/unit2.ts)·v2류 보존 규칙은 Ⅴ·Ⅵ과 동일 — 파일은 남기고 배선만 끊는다.
-// 중1 Ⅱ v5(2026-11-11, 랩과 뒤따르는 문제 재제작. 앞의 세 레슨만 새 판) 병행 배선: 세션 "ss.u2v5"="1" 또는 주소 ?u2v5.
+// 중1 Ⅱ v5(2026-11-11, 열 레슨의 랩과 뒤따르는 문제 재제작) 병행 배선: 세션 "ss.u2v5"="1" 또는 주소 ?u2v5.
 // CURRICULUM 줄은 건드리지 않는다(Ⅲ·Ⅳ v3 브랜치가 그 줄을 고친다). 정본 import에 별칭을 주고 같은 이름 자리에 켜진 판을 꽂는다.
-// 꺼져 있으면 지금과 완전히 같다. 합격하면 이 블록을 지우고 CURRICULUM의 UNIT2_V3를 UNIT2_V5로 바꾼다(v3 파일은 보존).
+// 꺼져 있으면 지금과 완전히 같다. 합격하면 이 블록을 지우고 CURRICULUM의 UNIT2_V3를 unit2v5()로 바꾼다(v3 파일은 보존).
 import { UNIT2_V3 as UNIT2_CANON } from "./unit2v3";
-import { UNIT2_V5 } from "./unit2v5";
+import { unit2v5 } from "./unit2v5";
 const u2v5On = (() => {
   try {
     // 주소 ?u2v5로 켜면 세션에도 심어 둔다(해시 라우팅이 주소를 다시 쓰거나 새로고침해도 같은 탭에선 유지된다).
@@ -19,7 +19,19 @@ const u2v5On = (() => {
     return false;
   }
 })();
-const UNIT2_V3 = u2v5On ? UNIT2_V5 : UNIT2_CANON;
+// v5는 v3 스텝을 찾아 고쳐 쓰는 판이라, v3의 글이나 구성이 바뀌면 조립이 실패한다(unit2v5.ts의 v3, patch).
+// 그 실패가 v5를 켜지 않은 화면까지 멈추면 안 된다. 그래서 켜졌을 때만 조립하고, 실패하면 정본으로 물러난다.
+// 개발 서버에서는 꺼져 있어도 한 번 조립해 본다. v3를 고친 사람이 콘솔에서 바로 알 수 있다.
+const u2v5Unit = (() => {
+  if (!u2v5On && !import.meta.env.DEV) return null;
+  try {
+    return unit2v5();
+  } catch (e) {
+    console.error("[u2v5] v5 조립 실패. unit2v3.ts에서 바뀐 스텝이나 문장을 unit2v5.ts에 맞춰 주세요.", e);
+    return null;
+  }
+})();
+const UNIT2_V3 = u2v5On && u2v5Unit ? u2v5Unit : UNIT2_CANON;
 import { UNIT3 } from "./unit3";
 import { UNIT4 } from "./unit4";
 import { UNIT5 } from "./unit5";

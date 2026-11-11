@@ -248,7 +248,7 @@ console.log("u2l7 두 섬의 새 랩");
   const page = await newPage();
   await boot(page, "?u2v5");
   await openNode(page, 6);
-  await cta(page, 8);
+  await cta(page, 9); // 만화 여덟 컷(코드 그림으로 다시 편성하며 7 → 8) + 개념
   ok(await page.locator(`${A} .bv-step .bki-svg`).isVisible(), "만화와 개념 뒤에 두 섬의 새 랩이 열린다");
   await waitAsk(page);
   await page.locator(`${A} .bv-q.show .bv-choice`, { hasText: "두꺼운 부리" }).click();
