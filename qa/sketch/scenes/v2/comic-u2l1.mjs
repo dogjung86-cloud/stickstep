@@ -1,12 +1,14 @@
 // 중1 과학 u2l1 도입 만화(v2, 배선 전): 코르크 속 작은 방의 발견. 8컷.
 // 조사와 콘티는 qa/sketch/research/v2/u2l1.md (출처: 「마이크로그라피아」 관찰 18 원문, 버치 「왕립학회사」 1권의 1663년 회의록).
-//   1 왕립학회의 숙제(1663년 4월) → 2 코르크는 왜 가볍고 탱탱할까 → 3 면도칼처럼 간 칼, 검은 받침, 모은 불빛
-//   → 4 벌집 같은 빈 칸과 얇은 벽 → 5 책 「마이크로그라피아」(1665)와 '셀' → 6 1인치에 1000칸, 12억 칸
+//   1 왕립학회의 숙제(1663년 4월, 8일에 보인 이끼 그림) → 2 코르크는 왜 가볍고 탱탱할까 → 3 면도칼처럼 간 칼, 검은 받침, 모은 불빛
+//   → 4 벌집 같은 빈 칸과 얇은 벽 → 5 책 「마이크로그라피아」(1665)와 '셀'이라는 말의 뜻 → 6 책에 실린 칸 수 셈
 //   → 7 레이우엔훅의 호수 물(1674) → 8 오늘날, 사람의 몸도 세포로
 // 그림 속에는 글자와 숫자를 넣지 않는다. 때와 곳은 when 으로 앱이 상자를 얹는다(왼쪽 위 약 400×100은 비워 둔다).
-import { Sk, C, curve, dense, circ, ell, poly, rrect, lerp, mix, emark, qmark, sparkle, arrow } from "../../lib/sk.mjs";
+// 코르크 칸은 벽을 나눠 쓰는 불규칙한 그물로 그린다(훅의 그림과 확대 랩이 그렇다. 떨어진 상자로 그리면 '얇은 벽'이 안 읽힌다).
+// 수도원 방 이야기는 근거가 없어 훅이 방을 떠올리는 그림(생각 구름)은 쓰지 않는다. 5컷의 방 그림은 '말의 뜻' 카드다.
+import { Sk, C, curve, dense, circ, ell, poly, rrect, lerp, mix, hash, emark, qmark, sparkle, arrow } from "../../lib/sk.mjs";
 import { drawFigure, handDot, pose, HOOKE, LEEUWENHOEK, STUDENT } from "../../lib/figure.mjs";
-import { microscope, cellsView, cloud } from "../../lib/props.mjs";
+import { microscope } from "../../lib/props.mjs";
 
 const W = 960, H = 720;
 const CORK = "#D9A866", CORK_DARK = "#A9773F", PAPER = "#FBF6E6", INK = "#3A3A40";
@@ -15,6 +17,57 @@ const CORK = "#D9A866", CORK_DARK = "#A9773F", PAPER = "#FBF6E6", INK = "#3A3A40
 // 왕립학회 회원(이름 없는 인물이라 얼굴을 비운다): 가발과 짙은 외투
 const MEMBER_A = { hair: "curls", hairColor: "#D8D2C6", coat: { color: "#4A5568", buttons: C.gold, seam: "#2D3748" }, seed: 601 };
 const MEMBER_B = { hair: "curls", hairColor: "#7A5A3C", coat: { color: "#6B4F6E", buttons: C.gold, seam: "#45324A" }, seed: 611 };
+
+/* ---------- 세포 그림 ---------- */
+// 벽을 나눠 쓰는 불규칙한 칸의 그물(코르크). 육각 타일의 꼭짓점을 살짝 흔들어, 이웃 칸이 같은 벽을 쓴다.
+//   inside(x, y): 이 점이 그릴 자리 안인가. b: 타일을 깔 범위 { x0, y0, x1, y1 }, a: 칸 하나의 반지름
+function cellNet(sk, inside, b, a, o = {}) {
+  const sd = o.seed ?? 1, jit = (o.jit ?? 0.2) * a, dx = Math.sqrt(3) * a, dy = 1.5 * a;
+  const V = new Map(), E = new Set();
+  const vert = (x, y) => {
+    const k = Math.round(x * 4) + "," + Math.round(y * 4);
+    if (!V.has(k)) V.set(k, [x + (hash(sd + x * 0.37 + y * 1.13) - 0.5) * 2 * jit, y + (hash(sd * 1.7 + x * 1.91 + y * 0.29) - 0.5) * 2 * jit]);
+    return k;
+  };
+  const rows = Math.ceil((b.y1 - b.y0) / dy) + 1, cols = Math.ceil((b.x1 - b.x0) / dx) + 1;
+  for (let r = -1; r <= rows; r++) for (let c = -1; c <= cols; c++) {
+    const cx = b.x0 + c * dx + (r % 2 ? dx / 2 : 0), cy = b.y0 + r * dy;
+    const ks = [0, 1, 2, 3, 4, 5].map(k => { const th = Math.PI / 180 * (60 * k - 30); return vert(cx + a * Math.cos(th), cy + a * Math.sin(th)); });
+    ks.forEach((p, k) => { const q = ks[(k + 1) % 6]; E.add(p < q ? p + "|" + q : q + "|" + p); });
+  }
+  let i = 0;
+  for (const e of E) {
+    const [p, q] = e.split("|").map(k => V.get(k));
+    if (!inside(p[0], p[1]) || !inside(q[0], q[1])) continue;
+    sk.ink(dense([p, q], 3), { w: o.w ?? 6, color: o.wall ?? CORK_DARK, wob: 0.5, seed: sd + (i++ % 89) });
+  }
+}
+// 렌즈 속 코르크: 둥근 창 안에 벽을 나눠 쓰는 빈 칸
+function corkView(sk, cx, cy, r, o = {}) {
+  const sd = o.seed ?? 901;
+  const ring = circ(cx, cy, r, { over: 0.12, seed: sd });
+  sk.fill(ring, "#FBF3E2", { dx: 0, dy: 0, wob: 0.6, seed: sd + 1 });
+  cellNet(sk, (x, y) => Math.hypot(x - cx, y - cy) < r - 14, { x0: cx - r, y0: cy - r, x1: cx + r, y1: cy + r }, o.a ?? 30, { seed: sd + 2, w: o.w ?? 6 });
+  sk.ink(ring, { w: 14, seed: sd + 3, color: "#B8892E" });
+}
+// 사람(동물)의 세포: 둥글고 고르지 않은 세포에 핵이 하나씩(벽돌처럼 줄 맞춰 쌓지 않는다. 그건 식물세포의 표지다)
+function bodyCellsView(sk, cx, cy, r, o = {}) {
+  const sd = o.seed ?? 951, s = o.s ?? 46;
+  const ring = circ(cx, cy, r, { over: 0.12, seed: sd });
+  sk.fill(ring, "#FFF4F6", { dx: 0, dy: 0, wob: 0.6, seed: sd + 1 });
+  let n = 0;
+  for (let row = -6; row <= 6; row++) for (let col = -6; col <= 6; col++) {
+    const x = cx + col * s * 1.04 + (row % 2 ? s * 0.52 : 0) + (hash(sd + n * 3.1) - 0.5) * s * 0.3;
+    const y = cy + row * s * 0.92 + (hash(sd + n * 7.7) - 0.5) * s * 0.3;
+    n++;
+    const rc = s * (0.4 + 0.1 * hash(sd + n * 5.3));
+    if (Math.hypot(x - cx, y - cy) > r - rc - 12) continue;
+    const c = curve([0, 1, 2, 3, 4, 5, 6].map(k => { const a = k / 7 * Math.PI * 2, rr = rc * (0.86 + 0.24 * hash(sd + n * 11 + k)); return [x + rr * Math.cos(a), y + rr * 0.86 * Math.sin(a)]; }), true, 3);
+    sk.fill(c, "#F9D3DA", { dx: 0, dy: 0, wob: 0.5, seed: sd + 20 + n }); sk.ink(c, { w: 5, color: "#D9788A", wob: 0.5, seed: sd + 40 + n });
+    sk.dot(x + rc * 0.1, y, rc * 0.24, "#B24C63");
+  }
+  sk.ink(ring, { w: 11, seed: sd + 2 });
+}
 
 /* ---------- 소품 ---------- */
 // 탁자(옆모습): 상판 + 다리 둘. (x, y) = 상판 왼쪽 위
@@ -101,8 +154,8 @@ function openBook(sk, cx, y, s = 1, sd = 91) {
       sk.fill(pg, PAPER, { seed: sd + (sg > 0 ? 1 : 0), dx: 1, dy: 1.2 }); sk.ink(pg, { w: 8, seed: sd + 2 + (sg > 0 ? 1 : 0) });
     }
     sk.ink(dense([[0, -180], [0, 0]]), { w: 6, seed: sd + 4, color: "#8A7A60" });
-    // 왼쪽 쪽: 코르크의 작은 칸
-    for (let r = 0; r < 4; r++) for (let c = 0; c < 3; c++) { const cell = rrect(-122 + c * 34 + (r % 2 ? 8 : 0), -158 + r * 34, 28, 28, 6); sk.ink(cell, { w: 4.5, color: CORK_DARK, seed: sd + 5 + r * 3 + c, wob: 0.5 }); }
+    // 왼쪽 쪽: 코르크의 작은 칸(벽을 나눠 쓰는 그물)
+    cellNet(sk, (x, y) => x > -128 && x < -16 && y > -164 && y < -18, { x0: -134, y0: -170, x1: -10, y1: -12 }, 14, { seed: sd + 5, w: 4 });
     // 오른쪽 쪽: 벼룩
     const body = curve([[34, -92], [50, -122], [92, -128], [116, -108], [116, -80], [90, -62], [50, -64]], true, 3);
     sk.fill(body, "#8A8A90", { dx: 0, dy: 0, wob: 0.5, seed: sd + 20 }); sk.ink(body, { w: 5, color: INK, seed: sd + 21, wob: 0.5 });
@@ -110,48 +163,78 @@ function openBook(sk, cx, y, s = 1, sd = 91) {
     for (const [x0, i] of [[56, 0], [78, 1], [100, 2]]) sk.ink(dense([[x0, -66], [x0 - 10, -44], [x0 + (i === 2 ? 22 : 4), -30]], 3), { w: 4, color: INK, seed: sd + 24 + i, wob: 0.3 });
   });
 }
-// 벼룩을 크게 그린 종이(훅의 관찰 그림). (x, y) = 종이 왼쪽 위, w×h
-function fleaSheet(sk, x, y, w, h, sd = 111) {
+// 이끼를 크게 그린 종이(1663년 4월 8일 모임에서 훅이 보인 관찰 그림). (x, y) = 종이 왼쪽 위, w×h
+function mossSheet(sk, x, y, w, h, sd = 111) {
   const paper = poly([[x, y + 6], [x + w, y], [x + w + 6, y + h], [x + 6, y + h + 6]], 5);
   sk.fill(paper, PAPER, { seed: sd, dx: 1.5, dy: 2 }); sk.ink(paper, { w: 9, seed: sd + 1 });
-  const k = w / 186, ox = x - 250 * k + 4, oy = y - 196 * k + 4;
-  const P = ([px, py]) => [ox + px * k, oy + py * k];
-  const body = curve([[296, 300], [316, 262], [366, 252], [400, 276], [404, 310], [372, 336], [322, 336]].map(P), true, 3);
-  sk.fill(body, "#8A8A90", { dx: 0, dy: 0, wob: 0.6, seed: sd + 2 }); sk.ink(body, { w: 6, color: INK, seed: sd + 3, wob: 0.6 });
-  for (const [px, i] of [[330, 0], [352, 1], [376, 2]]) sk.ink(dense([P([px, 258 + i * 3]), P([px + 4, 332])]), { w: 4, color: INK, seed: sd + 4 + i, wob: 0.3 });
-  sk.ink(circ(...P([290, 290]), 15 * k, { over: 0.2, seed: sd + 7 }), { w: 6, color: INK, seed: sd + 8 });
-  sk.ink(curve([[282, 278], [268, 262], [262, 244]].map(P)), { w: 4, color: INK, seed: sd + 9, wob: 0.3 });
-  for (const [x0, i] of [[322, 0], [348, 1], [376, 2]]) sk.ink(dense([[x0, 334], [x0 - 14, 362], [x0 + (i === 2 ? 30 : 6), 384]].map(P), 3), { w: 5, color: INK, seed: sd + 10 + i, wob: 0.4 });
+  const G = "#4E9A46", GD = "#2F6B33", base = y + h - 16;
+  // 포자 주머니를 단 가는 줄기 둘(이끼의 열매처럼 보이는 부분)
+  for (const [bx, tx, ty, i] of [[x + w * 0.36, x + w * 0.28, y + 40, 0], [x + w * 0.62, x + w * 0.74, y + 30, 1]]) {
+    sk.ink(curve([[bx, base - 50], [lerp(bx, tx, 0.5) + 6, lerp(base - 50, ty, 0.5)], [tx, ty + 16]]), { w: 4, color: "#8A5A33", seed: sd + 2 + i, wob: 0.3 });
+    const cap = ell(tx, ty, 9, 15);
+    sk.fill(cap, "#B5814C", { dx: 0, dy: 0, wob: 0.3, seed: sd + 4 + i }); sk.ink(cap, { w: 4.5, seed: sd + 6 + i, wob: 0.3 });
+  }
+  // 잎이 촘촘한 줄기 셋
+  for (const [sx, lean, hgt, i] of [[x + w * 0.24, -6, 64, 0], [x + w * 0.5, 4, 78, 1], [x + w * 0.76, 8, 58, 2]]) {
+    sk.ink(dense([[sx, base], [sx + lean, base - hgt]]), { w: 5, color: GD, seed: sd + 10 + i, wob: 0.3 });
+    for (let j = 0; j < 5; j++) {
+      const ly = base - 10 - j * (hgt - 10) / 5, lx = sx + lean * (j / 5);
+      for (const sg of [-1, 1]) { const lf = ell(lx + sg * 10, ly - 4, 10, 4.5); sk.fill(lf, G, { dx: 0, dy: 0, wob: 0.2, seed: sd + 20 + i * 10 + j }); sk.ink(lf, { w: 3, color: GD, seed: sd + 50 + i * 10 + j, wob: 0.2 }); }
+    }
+  }
+  sk.ink(curve([[x + 16, base + 2], [x + w * 0.5, base - 4], [x + w - 12, base + 2]]), { w: 5, color: "#8A6A3E", seed: sd + 90, wob: 0.4 });
 }
-// 작은 방(문과 창이 하나씩 있는 방 한 칸). (x, y) = 왼쪽 위
-function tinyRoom(sk, x, y, w, h, sd = 131) {
-  const room = poly([[x, y], [x + w, y], [x + w, y + h], [x, y + h]], 4);
-  sk.fill(room, "#EDE6D8", { seed: sd, tex: true }); sk.ink(room, { w: 8, seed: sd + 1 });
-  const door = [...ell(x + w * 0.34, y + h * 0.62, w * 0.16, h * 0.2, Math.PI, Math.PI * 2), [x + w * 0.5, y + h], [x + w * 0.18, y + h]];
-  door.push(door[0]);
-  sk.fill(door, "#7A5A45", { dx: 0, dy: 0, wob: 0.4, seed: sd + 2 }); sk.ink(door, { w: 6, seed: sd + 3, wob: 0.4 });
-  const win = rrect(x + w * 0.62, y + h * 0.24, w * 0.24, h * 0.24, 5);
-  sk.fill(win, "#BFE2F4", { dx: 0, dy: 0, wob: 0.3, seed: sd + 4 }); sk.ink(win, { w: 5, seed: sd + 5, wob: 0.3 });
+// 방 한 칸의 단면(뒷벽, 양옆 벽, 바닥이 보이는 작은 방). (x, y) = 왼쪽 위, w×h
+function roomSection(sk, x, y, w, h, sd = 131) {
+  const ix0 = x + w * 0.22, ix1 = x + w * 0.78, iy0 = y + h * 0.2, iy1 = y + h * 0.7;
+  const back = poly([[ix0, iy0], [ix1, iy0], [ix1, iy1], [ix0, iy1]], 4);
+  const left = poly([[x, y], [ix0, iy0], [ix0, iy1], [x, y + h]], 4);
+  const right = poly([[x + w, y], [ix1, iy0], [ix1, iy1], [x + w, y + h]], 4);
+  const floor = poly([[x, y + h], [ix0, iy1], [ix1, iy1], [x + w, y + h]], 4);
+  sk.fill(back, "#F1EADB", { seed: sd, dx: 0.6, dy: 0.8 });
+  sk.fill(left, "#E2D6C0", { seed: sd + 1, dx: 0.6, dy: 0.8 }); sk.fill(right, "#E2D6C0", { seed: sd + 2, dx: 0.6, dy: 0.8 });
+  sk.fill(floor, "#C9A27A", { seed: sd + 3, tex: true, texAng: 0.05 });
+  for (const [p, i] of [[back, 0], [left, 1], [right, 2], [floor, 3]]) sk.ink(p, { w: 6, seed: sd + 4 + i, wob: 0.5 });
+  const win = rrect(lerp(ix0, ix1, 0.32), lerp(iy0, iy1, 0.2), (ix1 - ix0) * 0.36, (iy1 - iy0) * 0.36, 4);
+  sk.fill(win, "#BFE2F4", { dx: 0, dy: 0, wob: 0.3, seed: sd + 8 }); sk.ink(win, { w: 4.5, seed: sd + 9, wob: 0.3 });
+}
+// '셀'이라는 말의 뜻 카드: 코르크의 칸 하나 = 작은 방 하나. (x, y) = 왼쪽 위
+function meaningCard(sk, x, y, w, h, sd = 141) {
+  const card = rrect(x, y, w, h, 22);
+  sk.fill(card, "#FFFDF6", { seed: sd, dx: 1, dy: 1.4 }); sk.ink(card, { w: 8, seed: sd + 1, color: "#B8892E" });
+  // 왼쪽: 벽을 나눠 쓰는 코르크 칸 몇 개, 가운데 칸만 연하게 칠한다
+  const cx = x + w * 0.25, cy = y + h * 0.52, a = h * 0.14;
+  const hex = (px, py) => poly([0, 1, 2, 3, 4, 5].map(k => { const th = Math.PI / 180 * (60 * k - 30); return [px + a * Math.cos(th), py + a * Math.sin(th)]; }), 3);
+  const mid = hex(cx, cy);
+  sk.fill(mid, "#F6E7C8", { dx: 0, dy: 0, wob: 0.3, seed: sd + 2 });
+  for (const [dx, dy, i] of [[0, 0, 0], [Math.sqrt(3) * a, 0, 1], [-Math.sqrt(3) * a, 0, 2], [Math.sqrt(3) * a / 2, -1.5 * a, 3], [-Math.sqrt(3) * a / 2, 1.5 * a, 4]]) {
+    const hx = hex(cx + dx, cy + dy);
+    if (i === 0) sk.ink(hx, { w: 6, color: CORK_DARK, seed: sd + 3, wob: 0.4 });
+    else sk.ink(hx, { w: 4, color: mix(CORK_DARK, "#ffffff", 0.45), seed: sd + 3 + i, wob: 0.4 });
+  }
+  // 가운데: 같다는 기호
+  for (const dy of [-9, 9]) sk.ink(dense([[x + w * 0.46, y + h * 0.52 + dy], [x + w * 0.56, y + h * 0.52 + dy]]), { w: 8, color: C.gray, seed: sd + 10 + dy, wob: 0.2 });
+  // 오른쪽: 작은 방의 단면
+  roomSection(sk, x + w * 0.62, y + h * 0.22, w * 0.32, h * 0.6, sd + 20);
 }
 
 /* ---------- 1. 1663년 4월, 런던: 왕립학회의 숙제 ---------- */
 function p1() {
   const sk = new Sk(W, H, { id: "a" });
-  // 탁자 뒤에 선 회원 둘(앞사람은 손을 들어 다음 관찰을 청한다)
+  // 탁자 뒤에 선 회원 둘(앞사람은 손을 들어 다음 관찰을 청한다). 훅과 같은 크기로 그린다(작게 그리면 아이처럼 보인다)
   const fold = pose({ elL: [-30, -262], haL: [8, -270], elR: [36, -262], haR: [-4, -282], tilt: 0.07 });
-  drawFigure(sk, 852, 690, 0.64, fold, { ...MEMBER_B, hands: false });
-  const pt = pose({ elL: [-104, -352], haL: [-176, -452], elR: [44, -262], haR: [40, -226], tilt: -0.06 });
-  drawFigure(sk, 708, 690, 0.64, pt, { ...MEMBER_A, name: "memberA", hands: "L" });
-  table(sk, 540, 520, 410, 11);
+  drawFigure(sk, 842, 692, 0.74, fold, { ...MEMBER_B, hands: false });
+  const pt = pose({ elL: [-110, -352], haL: [-180, -446], elR: [44, -262], haR: [40, -226], tilt: -0.06 });
+  drawFigure(sk, 680, 692, 0.74, pt, { ...MEMBER_A, name: "memberA", hands: "L" });
+  table(sk, 520, 530, 430, 11);
   // 탁자 위의 지난 관찰 그림들
-  for (let i = 0; i < 3; i++) { const sh = poly([[640 + i * 8, 508 - i * 7], [742 + i * 6, 506 - i * 8], [744 + i * 6, 520 - i * 6], [638 + i * 8, 522 - i * 5]], 3); sk.fill(sh, i === 1 ? "#EDE8DC" : PAPER, { dx: 0, dy: 0, wob: 0.4, seed: 21 + i }); sk.ink(sh, { w: 6, seed: 24 + i, wob: 0.4 }); }
-  // 훅: 새로 그린 벼룩 그림을 들어 보인다
+  for (let i = 0; i < 3; i++) { const sh = poly([[700 + i * 8, 518 - i * 7], [802 + i * 6, 516 - i * 8], [804 + i * 6, 530 - i * 6], [698 + i * 8, 532 - i * 5]], 3); sk.fill(sh, i === 1 ? "#EDE8DC" : PAPER, { dx: 0, dy: 0, wob: 0.4, seed: 21 + i }); sk.ink(sh, { w: 6, seed: 24 + i, wob: 0.4 }); }
+  // 훅: 현미경으로 본 이끼를 크게 그린 종이를 들어 보인다
   const show = pose({ elR: [74, -316], haR: [112, -392], elL: [-56, -262], haL: [-22, -222], tilt: 0.05 });
   const fx = 196, fy = 704, fs = 0.78;
   drawFigure(sk, fx, fy, fs, show, { ...HOOKE, name: "hooke", face: "smile", hands: "L" });
-  fleaSheet(sk, 266, 214, 176, 196, 31);
+  mossSheet(sk, 262, 230, 176, 196, 31);
   handDot(sk, [fx + fs * 112, fy - fs * 392], C.skin, 41, 12);
-  sparkle(sk, 470, 236, 13, { seed: 42 });
   return sk;
 }
 
@@ -195,45 +278,47 @@ function p3() {
     sk.ink(dense([[ex - 10, ey + dy * 0.8], [552, 490]]), { w: 5, color: C.yellow, seed: 106 + i, wob: 0.3 });
   }
   sparkle(sk, 548, 474, 10, { seed: 109, color: C.lemon, w: 4 });
-  // 왼쪽: 코르크를 칼로 얇게 저민다
-  const block = rrect(318, 494, 72, 54, 10);
+  // 왼쪽: 코르크 덩이 윗면을 칼로 얇게 저민다(칼날이 지나간 자리에서 얇은 조각이 말려 올라온다)
+  const block = rrect(330, 500, 96, 48, 10);
   sk.fill(block, CORK, { seed: 110, tex: true }); sk.ink(block, { w: 8, seed: 111 });
-  // 막 저며 낸 얇은 조각(말려 올라간 얇은 띠)
-  const peel = [...curve([[392, 496], [404, 478], [420, 470], [434, 474]], false, 3), ...curve([[434, 474], [422, 478], [410, 486], [398, 500]], false, 3)];
-  sk.fill(peel, "#F6E7C8", { dx: 0, dy: 0, wob: 0.2, seed: 112 }); sk.ink(peel, { w: 4, color: CORK_DARK, seed: 113, wob: 0.2 });
-  const cutP = pose({ neck: [14, -338], head: [34, -428], tilt: 0.18, elR: [86, -276], haR: [150, -250], elL: [-48, -260], haL: [-58, -188] });
+  const cutP = pose({ neck: [14, -338], head: [34, -428], tilt: 0.18, elR: [86, -284], haR: [146, -272], elL: [-48, -260], haL: [-58, -188] });
   const fx = 132, fy = 704, fs = 0.74;
   drawFigure(sk, fx, fy, fs, cutP, { ...HOOKE, name: "hooke", face: "determined", hands: "L" });
-  const hx = fx + fs * 150, hy = fy - fs * 250;
-  const blade = poly([[hx + 4, hy - 6], [hx + 104, hy + 6], [hx + 104, hy + 18], [hx + 6, hy + 8]], 3);
-  sk.fill(blade, "#C9CED6", { dx: 0, dy: 0, wob: 0.3, seed: 114 }); sk.ink(blade, { w: 6, seed: 115, wob: 0.3 });
-  sk.ink(dense([[hx + 30, hy + 3], [hx + 92, hy + 11]]), { w: 3.5, color: C.white, seed: 116, wob: 0.2 });
-  handDot(sk, [hx, hy], C.skin, 117, 11);
+  const hx = fx + fs * 146, hy = fy - fs * 272;
+  // 칼: 갈색 손잡이 + 덩이 윗면을 따라 미는 칼날
+  const handle = poly([[hx - 14, hy - 8], [hx + 34, hy - 12], [hx + 36, hy + 4], [hx - 12, hy + 8]], 3);
+  sk.fill(handle, "#8A5A33", { dx: 0, dy: 0, wob: 0.3, seed: 112 }); sk.ink(handle, { w: 6, seed: 113, wob: 0.3 });
+  const blade = poly([[hx + 34, hy - 10], [hx + 128, hy - 6], [hx + 136, hy + 2], [hx + 36, hy + 4]], 3);
+  sk.fill(blade, "#C9CED6", { dx: 0, dy: 0, wob: 0.3, seed: 114 }); sk.ink(blade, { w: 5, seed: 115, wob: 0.3 });
+  sk.ink(dense([[hx + 50, hy - 4], [hx + 120, hy - 2]]), { w: 3, color: C.white, seed: 116, wob: 0.2 });
+  // 칼날 끝에서 말려 올라오는 얇은 조각
+  const tx = hx + 134, ty = hy - 6;
+  const peel = [...curve([[tx - 6, ty + 4], [tx + 8, ty - 14], [tx + 26, ty - 22], [tx + 36, ty - 14]], false, 3), ...curve([[tx + 36, ty - 14], [tx + 24, ty - 12], [tx + 10, ty - 4], [tx + 2, ty + 6]], false, 3)];
+  sk.fill(peel, "#F6E7C8", { dx: 0, dy: 0, wob: 0.2, seed: 117 }); sk.ink(peel, { w: 4, color: CORK_DARK, seed: 118, wob: 0.2 });
+  handDot(sk, [hx, hy], C.skin, 119, 11);
   return sk;
 }
 
 /* ---------- 4. 발견: 벌집 같은 빈 칸과 얇은 벽 ---------- */
 function p4() {
   const sk = new Sk(W, H, { id: "d" });
-  cellsView(sk, 318, 424, 240, { seed: 901, empty: true, wall: CORK_DARK, w: 7, ringColor: "#B8892E", ringW: 14 });
-  // 훅: 한 손에 벌집 조각을 들어 견주고, 한 손은 번쩍
-  const P = pose({ elL: [-96, -312], haL: [-190, -338], elR: [100, -360], haR: [150, -446], tilt: -0.04 });
-  const fx = 816, fy = 704, fs = 0.8;
+  corkView(sk, 318, 424, 240, { seed: 901, a: 30, w: 6 });
+  // 훅: 한 손에 벌집 조각을 들어 견주고, 한 손은 머리 바깥으로 번쩍
+  const P = pose({ elL: [-96, -312], haL: [-190, -338], elR: [138, -330], haR: [206, -430], tilt: -0.04 });
+  const fx = 800, fy = 704, fs = 0.8;
   drawFigure(sk, fx, fy, fs, P, { ...HOOKE, name: "hooke", face: "happy", hands: "R" });
   const hx = fx - fs * 190, hy = fy - fs * 338;
   honeycomb(sk, hx - 6, hy - 62, 54, 121);
   handDot(sk, [hx, hy], C.skin, 131, 12);
-  emark(sk, 936, 250, 0.8, { color: C.red, rot: 0.14 });
-  sparkle(sk, 590, 168, 14, { seed: 132 });
+  emark(sk, 936, 236, 0.8, { color: C.red, rot: 0.14 });
   return sk;
 }
 
 /* ---------- 5. 1665년: 책 「마이크로그라피아」와 '셀' ---------- */
 function p5() {
   const sk = new Sk(W, H, { id: "e" });
-  // 생각 구름: 작은 방 한 칸('셀'이라는 말의 뜻)
-  cloud(sk, 690, 250, 300, 214, { seed: 141, tail: [[452, 302, 9, 0], [498, 284, 14, 1]] });
-  tinyRoom(sk, 618, 182, 146, 132, 142);
+  // '셀'이라는 말의 뜻 카드(훅의 생각이 아니라 말풀이다): 코르크의 칸 하나 = 작은 방 하나
+  meaningCard(sk, 560, 300, 360, 200, 142);
   // 훅: 책을 펴서 옆으로 들어 보인다
   const P = pose({ elR: [92, -300], haR: [204, -318], elL: [-56, -262], haL: [-22, -222], tilt: 0.04 });
   const fx = 224, fy = 704, fs = 0.8;
@@ -247,23 +332,30 @@ function p5() {
 /* ---------- 6. 셈해 보기: 1인치에 1000칸 ---------- */
 function p6() {
   const sk = new Sk(W, H, { id: "f" });
-  // 코르크 마개와, 그 한 줄을 크게 늘여 본 칸의 줄
+  // 코르크 마개와, 윗면의 아주 짧은 한 토막(점 하나 크기)을 크게 늘여 본 칸의 줄.
+  // 축척: 마개 지름 약 24 mm, 훅의 셈으로 1 mm에 약 43칸. 띠의 24칸은 0.6 mm쯤이라 마개 지름의 40분의 1, 점 하나다.
   corkPlug(sk, 236, 660, 180, 250, 171);
-  const sy = 236, x0 = 84, x1 = 700, n = 26, cw = (x1 - x0) / n;
-  const strip = rrect(x0 - 12, sy - 40, x1 - x0 + 24, 80, 16);
+  const sy = 236, x0 = 84, x1 = 600, n = 24, cw = (x1 - x0) / n, top = sy - 30, bot = sy + 30;
+  const strip = rrect(x0 - 20, sy - 44, x1 - x0 + 40, 88, 18);
   sk.fill(strip, "#FBF3E2", { dx: 0, dy: 0, wob: 0.5, seed: 172 });
-  for (let i = 0; i < n; i++) sk.ink(rrect(x0 + i * cw + 2, sy - 26, cw - 4, 52, 5), { w: 4.5, color: CORK_DARK, seed: 173 + i, wob: 0.4 });
+  // 벽을 나눠 쓰는 한 줄의 칸: 위아래 벽은 길게 이어지고, 칸 사이 벽은 하나씩. 양 끝은 흐려져 줄이 더 이어짐을 보인다
+  const fade = i => (i < 3 ? (3 - i) / 3.6 : i > n - 3 ? (i - n + 3) / 3.6 : 0);
+  for (let i = 0; i < n; i++) {
+    const col = mix(CORK_DARK, "#FBF3E2", fade(i));
+    const xa = x0 + i * cw, xb = xa + cw, j = (hash(173 + i) - 0.5) * cw * 0.3;
+    sk.ink(dense([[xa, top + (hash(180 + i) - 0.5) * 6], [xb, top + (hash(181 + i) - 0.5) * 6]]), { w: 5, color: col, seed: 190 + i, wob: 0.3 });
+    sk.ink(dense([[xa, bot + (hash(182 + i) - 0.5) * 6], [xb, bot + (hash(183 + i) - 0.5) * 6]]), { w: 5, color: col, seed: 220 + i, wob: 0.3 });
+    if (i > 0) sk.ink(dense([[xa + j, top], [xa - j, bot]]), { w: 5, color: col, seed: 250 + i, wob: 0.3 });
+  }
   sk.ink(strip, { w: 10, color: "#B8892E", seed: 200 });
-  // 마개 윗면의 짧은 한 토막에서 칸의 줄로 이어지는 점선
-  const ax = 214, bx = 258, ty = 660 - 250;
-  sk.ink(dense([[ax - 4, ty - 6], [ax + 4, ty + 6]]), { w: 9, color: C.red, seed: 201 });
-  sk.ink(dense([[bx - 4, ty - 6], [bx + 4, ty + 6]]), { w: 9, color: C.red, seed: 202 });
-  sk.ink(dense([[ax, ty - 10], [x0 - 4, sy + 46]]), { w: 5, color: C.gray, dash: [12, 10], seed: 203, wob: 0.3 });
-  sk.ink(dense([[bx, ty - 10], [x1 + 4, sy + 46]]), { w: 5, color: C.gray, dash: [12, 10], seed: 204, wob: 0.3 });
-  // 훅: 놀라서 두 손을 든다
-  const P = pose({ elL: [-96, -350], haL: [-140, -428], elR: [96, -350], haR: [140, -428], tilt: 0.04 });
-  drawFigure(sk, 790, 704, 0.78, P, { ...HOOKE, name: "hooke", face: "shock" });
-  emark(sk, 930, 330, 0.8, { color: C.red, rot: 0.14 });
+  // 마개 윗면 가운데의 아주 작은 빨간 점에서 칸의 줄로 이어지는 점선
+  const ax = 236, ty = 660 - 250;
+  sk.dot(ax, ty, 6, C.red);
+  sk.ink(dense([[ax - 4, ty - 6], [x0 - 18, sy + 44]]), { w: 5, color: C.gray, dash: [12, 10], seed: 203, wob: 0.3 });
+  sk.ink(dense([[ax + 4, ty - 6], [x1 + 18, sy + 44]]), { w: 5, color: C.gray, dash: [12, 10], seed: 204, wob: 0.3 });
+  // 훅: 놀라서 두 손을 머리 바깥으로 넓게 든다
+  const P = pose({ elL: [-134, -330], haL: [-206, -432], elR: [134, -330], haR: [206, -432], tilt: 0.04 });
+  drawFigure(sk, 764, 704, 0.74, P, { ...HOOKE, name: "hooke", face: "shock" });
   return sk;
 }
 
@@ -296,16 +388,19 @@ function p7() {
   sk.ink(zig, { w: 4, color: "#2F7D46", seed: 282, wob: 0.2 });
   for (const [x, y, rot, i] of [[656, 236, 0.6, 0], [800, 432, -0.4, 1], [540, 520, 0.2, 2]]) sk.ink(curve([[x, y], [x + 14 * Math.cos(rot), y + 14 * Math.sin(rot) - 10], [x + 26 * Math.cos(rot), y + 26 * Math.sin(rot)]]), { w: 4, color: C.gray, seed: 290 + i, wob: 0.2 });
   sk.ink(ring, { w: 13, seed: 293, color: "#B8892E" });
-  // 레이우엔훅: 손바닥만 한 현미경을 눈앞에
-  const P = pose({ elR: [70, -322], haR: [96, -402], elL: [-56, -262], haL: [-22, -222], tilt: 0.06 });
+  // 레이우엔훅: 손바닥만 한 금속판 현미경을 한쪽 눈 바로 앞에 대고, 판 너머의 시료 바늘을 들여다본다
+  const P = pose({ elR: [92, -318], haR: [40, -372], elL: [-56, -262], haL: [-22, -222], tilt: 0.06 });
   const fx = 196, fy = 704, fs = 0.76;
   drawFigure(sk, fx, fy, fs, P, { ...LEEUWENHOEK, name: "leeu", face: "wide", hands: "L" });
-  const hx = fx + fs * 96, hy = fy - fs * 402;
-  const plate = rrect(hx - 6, hy - 74, 38, 64, 8);
-  sk.fill(plate, "#D2A84A", { seed: 294, tex: true }); sk.ink(plate, { w: 7, seed: 295 });
-  sk.dot(hx + 13, hy - 52, 6, "#DDF1FB");
-  handDot(sk, [hx + 8, hy], C.skin, 296, 12);
-  sk.ink(dense([[hx + 42, hy - 58], [cx - r + 24, cy - 70]]), { w: 5, color: C.gray, dash: [12, 10], seed: 297, wob: 0.4 });
+  const ex = fx + fs * 30, ey = fy - fs * 424; // 오른쪽 눈 자리
+  const plate = rrect(ex - 17, ey - 30, 34, 58, 7);
+  sk.fill(plate, "#D2A84A", { seed: 294, tex: true }); sk.ink(plate, { w: 6, seed: 295 });
+  sk.dot(ex, ey - 6, 5, "#DDF1FB");
+  // 판 앞쪽의 시료 바늘(끝에 물방울)
+  sk.ink(dense([[ex + 17, ey + 14], [ex + 40, ey + 8], [ex + 40, ey - 8]]), { w: 4, color: "#8A8A90", seed: 298, wob: 0.2 });
+  sk.dot(ex + 40, ey - 12, 4.5, "#8CC8EC");
+  handDot(sk, [fx + fs * 40, fy - fs * 372], C.skin, 296, 12);
+  sk.ink(dense([[ex + 52, ey - 14], [cx - r + 24, cy - 70]]), { w: 5, color: C.gray, dash: [12, 10], seed: 297, wob: 0.4 });
   // 호수에서 떠 온 물 한 병
   const jar = curve([[316, 704], [306, 640], [318, 600], [318, 584], [362, 584], [362, 600], [374, 640], [364, 704]], true, 4);
   sk.fill(jar, "#CFEBD0", { seed: 298, dx: 0.8, dy: 1, alpha: 0.95 }); sk.ink(jar, { w: 8, seed: 299 });
@@ -316,7 +411,7 @@ function p7() {
 /* ---------- 8. 오늘날: 사람의 몸도 세포로 ---------- */
 function p8() {
   const sk = new Sk(W, H, { id: "h" });
-  cellsView(sk, 684, 300, 226, { seed: 911, fill: "#F9D3DA", wall: "#D9788A", w: 6, nucleus: "#B24C63", bg: "#FFF4F6" });
+  bodyCellsView(sk, 684, 300, 226, { seed: 911, s: 50 });
   // 학생: 손바닥을 들여다본다
   const P = pose({ elR: [66, -300], haR: [112, -356], elL: [-56, -262], haL: [-22, -222], tilt: 0.1 });
   const fx = 200, fy = 704, fs = 0.8;
@@ -341,8 +436,8 @@ function p8() {
 
 export const META = {
   title: "코르크 속<br><em>작은 방</em>의 발견",
-  lead: "가벼운 코르크 한 조각에서 '세포'라는 이름이 태어났어요.",
-  narrator: "1660년대 영국 런던, 현미경이 아직 신기한 도구였던 때로 가 볼까요? 한 과학자가 코르크를 얇게 저며 들여다본 순간, <b>생물학에서 가장 유명한 이름</b>이 태어나요.",
+  lead: "가벼운 코르크 한 조각에서 세포를 부르는 이름, 셀(cell)이 태어났어요.",
+  narrator: "1660년대 영국 런던, 현미경이 아직 신기한 도구였던 때로 가 볼까요? 한 과학자가 코르크를 얇게 저며 들여다본 일이 <b>생물학에서 가장 유명한 이름</b>으로 이어져요.",
   cta: "직접 크게 보러 가기",
 };
 
@@ -354,32 +449,32 @@ const TEXT = [
   },
   {
     when: "1663년, 영국 런던", whenPos: "tr", stage: "궁금증", title: "코르크는 왜 가벼울까",
-    caption: "훅이 고른 것 가운데 하나는 <b>코르크</b>였어요. 코르크는 아주 가벼워 물에 둥둥 뜨고, 꾹 누르면 들어갔다가 다시 부풀어요. 훅은 그 까닭이 코르크 속의 생김새에 있을 거라고 생각했지요.",
+    caption: "훅이 고른 것 가운데 하나는 코르크참나무의 껍질인 <b>코르크</b>였어요. 아주 가벼워 물에 둥둥 뜨고, 꾹 누르면 들어갔다가 다시 펴지지요. 훅은 그 까닭이 코르크 속의 생김새에 있을 거라고 생각했어요.",
     bubbles: [{ who: "hooke", text: "눌러도<br>다시 펴지네?" }],
   },
   {
     when: "1663년, 영국 런던", whenPos: "tr", stage: "관찰 준비", title: "면도칼처럼 날카롭게",
-    caption: "훅은 면도칼처럼 간 칼로 코르크를 <b>아주 얇게</b> 저몄어요. 하얀 조각이 잘 보이도록 검은 받침에 올리고, 볼록한 유리로 빛을 모아 비췄지요. 밤에는 등잔 불빛을 소금물 유리공으로 모으는 장치를 썼어요.",
+    caption: "훅은 면도칼처럼 날카롭게 간 칼로 코르크를 <b>아주 얇게</b> 저몄어요. 하얀 조각이 잘 보이도록 검은 받침에 올리고, 볼록한 유리로 빛을 모아 비췄지요. 밤에는 소금물을 채운 유리공으로 등잔 불빛을 모으는 장치를 썼어요.",
     bubbles: [{ who: "hooke", text: "종잇장보다<br>얇게!" }],
   },
   {
     when: "1663년, 영국 런던", stage: "발견", title: "벌집 같은 작은 칸들",
-    caption: "렌즈 너머로 <b>벌집처럼 작은 칸</b>이 빼곡했어요. 칸 속은 텅 비고 <b>얇은 벽</b>만 있었지요. 코르크가 가벼운 까닭은 칸마다 든 공기였어요. 훅은 이런 구멍을 본 사람은 아마 자기가 처음일 거라고 적었어요.",
-    bubbles: [{ who: "hooke", text: "벌집하고<br>꼭 닮았네!" }],
+    caption: "렌즈 너머로 <b>작은 칸</b>이 벌집처럼 빼곡했어요. 칸 속은 텅 비고 <b>얇은 벽</b>만 있었지요. 코르크가 가벼운 것은 칸마다 공기가 들어 있어서였어요. 훅은 이런 칸을 본 사람은 아마 자기가 처음일 거라고 적었어요.",
+    bubbles: [{ who: "hooke", text: "벌집하고<br>닮았네!" }],
   },
   {
     when: "1665년, 영국 런던", stage: "이름 짓기", title: "작은 방, 셀(cell)",
     caption: "1665년, 훅은 그동안의 관찰 그림을 모아 책 「마이크로그라피아」를 펴냈어요. 책에서 코르크의 칸을 <b>셀(cell)</b>이라고 불렀는데, '작은 방'을 뜻하는 말이에요. 우리말로는 <b>세포</b>라고 해요.",
-    term: { name: "세포(cell)", def: "'작은 방'이라는 뜻의 말에서 온 이름. 생물을 이루는 기본 단위예요." },
+    term: { name: "세포(cell)", def: "'작은 방'이라는 뜻의 말에서 온 이름이에요. 생물을 이루는 기본 단위예요." },
   },
   {
     when: "1665년, 영국 런던", stage: "셈해 보기", title: "칸은 몇 개일까",
-    caption: "훅은 칸의 수도 세어 봤어요. 그의 셈으로는 1인치(약 2.5 cm) 길이에 칸이 1000개 넘게 늘어서고, 가로, 세로, 높이가 1인치인 코르크 덩이에는 칸이 12억 개가 넘었어요. 칸 하나하나가 맨눈으로는 보이지 않을 만큼 작다는 뜻이지요.",
+    caption: "이 책에는 훅이 코르크의 칸을 세어 본 결과도 실렸어요. 1인치(약 2.5 cm) 길이에 칸이 1000개 넘게 늘어서니, 가로, 세로, 높이가 1인치인 코르크라면 칸이 12억 개가 넘는다는 셈이었지요. 칸 하나가 맨눈으로는 안 보일 만큼 작은 거예요.",
     bubbles: [{ who: "hooke", text: "믿기지<br>않는 수!" }],
   },
   {
     when: "1674년, 네덜란드 델프트", stage: "살아 있는 세포", title: "물방울 속의 작은 생물",
-    caption: "1674년, 네덜란드 델프트의 <b>레이우엔훅</b>은 손수 만든 작은 현미경으로 호수에서 떠 온 물을 들여다봤어요. 그 속에서 작은 생물들이 헤엄치고 있었지요. 몸 전체가 세포 하나뿐인 생물도 많았어요. 훅이 본 빈 칸과 달리 <b>살아 있는 세포</b>였어요.",
+    caption: "1674년, 네덜란드 델프트의 <b>레이우엔훅</b>은 손수 만든 작은 현미경으로 호수에서 떠 온 물을 들여다봤어요. 그 속에서 작은 생물들이 헤엄치고 있었지요. 몸 전체가 세포 하나뿐인 생물도 많았어요. 훅이 본 빈 칸과 달리 이 세포들은 <b>살아서 움직였어요</b>.",
     bubbles: [{ who: "leeu", text: "움직인다!" }],
   },
   {

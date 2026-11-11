@@ -19,13 +19,15 @@ const DARWIN_1859 = { hair: "bald", coat: { color: "#3F3F48", buttons: C.gold, s
 // 1970년대의 그랜트 부부: 마흔 즈음이라 머리가 아직 짙다(옛 설정의 회색 머리는 요즘 모습)
 const PETER = { ...GRANT_A, hairColor: "#6B5040" };
 const ROSEMARY = { ...GRANT_B, hairColor: "#A07A50" };
-// 옆머리와 구레나룻(머리 둘레 양옆). 인물을 그린 뒤 같은 좌표로 덧그린다
+// 옆머리와 구레나룻: 이 화풍이 모자 아래 옆머리에 쓰는 삐친 머리 다발(figure.mjs 의 tophat 옆머리와 같은 꼴)을 조금 크게 두고,
+// 그 아래로 턱 옆까지 내려오는 구레나룻 한 줄을 더한다(둥근 덩어리로 그리면 귀마개처럼 보인다). 인물을 그린 뒤 같은 좌표로 덧그린다
 function sideHair(sk, fx, fy, s, p, col, sd = 151) {
   sk.at(fx + s * p.head[0], fy + s * p.head[1], s, () => {
     for (const sg of [-1, 1]) {
-      const h = curve([[-82, -60], [-104, -30], [-108, 10], [-100, 48], [-82, 82], [-62, 96], [-60, 70], [-74, 36], [-80, 0], [-76, -40]].map(([x, y]) => [sg * x, y]), true, 4);
-      sk.fill(h, col, { dx: 1, dy: 1.2, wob: 0.8, seed: sd + (sg > 0 ? 1 : 0), tex: true });
-      sk.ink(h, { w: 9, wob: 0.8, seed: sd + 2 + (sg > 0 ? 1 : 0) });
+      const tuft = [[-104, -40], [-112, -2], [-104, 30], [-94, 14], [-88, 40], [-74, 4], [-70, -26], [-86, -16], [-104, -40]].map(([x, y]) => [sg * x, y]);
+      sk.fill(dense(tuft, 4), col, { dx: 1, dy: 1.5, wob: 0.9, seed: sd + (sg > 0 ? 1 : 0) });
+      sk.ink(dense(tuft, 4), { w: 8, wob: 0.9, seed: sd + 2 + (sg > 0 ? 1 : 0) });
+      sk.ink(curve([[sg * -90, 30], [sg * -86, 58], [sg * -74, 80]]), { w: 9, color: col, wob: 0.4, seed: sd + 4 + (sg > 0 ? 1 : 0) });
     }
   }, p.tilt ?? 0);
 }
@@ -133,6 +135,7 @@ function hardSeed(sk, x, y, r, sd = 421, split = false) {
     half.push(half[0]);
     sk.fill(half, "#8A6A3E", { dx: 0, dy: 0, wob: 0.4, seed: sd + 1 + i }); sk.ink(half, { w: 6, seed: sd + 3 + i, wob: 0.4 });
     sk.fill(ell(cx - sg * r * 0.08, y, r * 0.22, r * 0.62), "#F3E3BF", { dx: 0, dy: 0, wob: 0.2, seed: sd + 5 + i });
+    for (const a of sg < 0 ? [Math.PI * 0.75, Math.PI, Math.PI * 1.25] : [-Math.PI * 0.25, 0, Math.PI * 0.25]) sk.ink(dense([[cx + r * 0.8 * Math.cos(a), y + r * Math.sin(a)], [cx + r * 1.3 * Math.cos(a), y + r * 1.5 * Math.sin(a)]]), { w: 5, seed: sd + 7 + i, wob: 0.2 });
   }
 }
 // 두 섬의 거북(문제 그림과 2컷이 함께 쓴다). 원점 = 섬 땅의 가운데
@@ -156,7 +159,7 @@ const satchel = sk => () => { sk.ink(dense([[-24, -330], [36, -226]]), { w: 8, c
 /* ---------- 1. 1835년, 갈라파고스: 거북 등에 오른 다윈 ---------- */
 function p1() {
   const sk = new Sk(W, H, { id: "a" });
-  // 먼 화산섬과 바다, 닻을 내린 비글호
+  // 먼 화산섬과 바다, 비글호
   const isl = curve([[560, 428], [640, 370], [700, 342], [760, 366], [850, 398], [960, 428]], false, 4);
   sk.fill([...isl, isl[0]], "#9A948C", { seed: 11, tex: true, texAng: 0.6 }); sk.ink(isl, { w: 8, seed: 12 });
   sea(sk, -10, 970, 424, 548, { seed: 13, waves: 3 });
@@ -171,7 +174,7 @@ function p1() {
   const shellTop = ty - ts * (50 + 142);
   const ride = pose({ hip: [0, -212], knL: [108, -204], ftL: [118, -112], knR: [94, -196], ftR: [104, -104], elL: [-84, -300], haL: [-170, -338], elR: [90, -312], haR: [176, -366], tilt: -0.12 });
   const fs = 0.62, fx = tx - 20, fy = shellTop + 18 + fs * 212;
-  tortoise(sk, tx, ty, ts, { kind: "dome", seed: 341 });
+  const lw0 = sk.lwK; sk.lwK = 0.78; tortoise(sk, tx, ty, ts, { kind: "dome", seed: 341 }); sk.lwK = lw0;
   drawFigure(sk, fx, fy, fs, ride, { ...DARWIN, name: "darwin", face: "shock", under: satchel(sk) });
   // 걷는 거북의 움직임 표시와 진땀
   for (const [y, i] of [[ty - 70, 0], [ty - 40, 1]]) sk.ink(dense([[tx - ts * 150, y], [tx - ts * 186, y + 2]]), { w: 6, color: C.gray, seed: 31 + i, wob: 0.3 });
@@ -182,21 +185,27 @@ function p1() {
 /* ---------- 2. 찰스섬: 등딱지만 봐도 안다고? ---------- */
 function p2() {
   const sk = new Sk(W, H, { id: "b" });
-  // 두 섬 사이의 바다
-  sk.ink(curve([[640, 672], [658, 664], [676, 672], [694, 664], [712, 672]]), { w: 8, color: C.blue, seed: 41, wob: 0.4 });
-  sk.ink(curve([[648, 698], [666, 690], [684, 698], [702, 690]]), { w: 7, color: C.blue, seed: 42, wob: 0.4 });
-  islandA(sk, 500, 660, 0.7);
+  // 떨어진 두 섬: 섬마다 모래 둔덕을 깔고, 사이에 바다
+  for (const [x0, x1, i] of [[350, 636, 0], [676, 972, 1]]) {
+    const m = [...curve([[x0, 704], [x0 + 18, 668], [lerp(x0, x1, 0.5), 660], [x1 - 18, 668], [x1, 704]], false, 4)];
+    m.push(m[0]);
+    sk.fill(m, "#EAD9B8", { seed: 43 + i, tex: true, texAng: 0.1 }); sk.ink(m.slice(0, -1), { w: 7, seed: 45 + i });
+  }
+  const wtop = curve([[634, 684], [648, 678], [662, 684], [676, 678]], false, 3);
+  const wv = [...wtop, [680, 704], [632, 704]];
+  wv.push(wv[0]);
+  sk.fill(wv, C.sea, { dx: 0, dy: 0, wob: 0.4, seed: 47 }); sk.ink(wtop, { w: 6, color: C.blue, seed: 48, wob: 0.3 });
+  islandA(sk, 488, 660, 0.7);
   islandB(sk, 826, 660, 0.7);
-  // 다윈: 손에 든 새를 들여다보느라 등을 돌리고 있다
-  const busy = pose({ elL: [-70, -300], haL: [-110, -366], elR: [50, -262], haR: [22, -222], tilt: -0.16 });
-  const dx = 92, dy = 704, ds = 0.56;
-  drawFigure(sk, dx, dy, ds, busy, { ...DARWIN, name: "darwin", face: "curious", hands: "R", under: satchel(sk) });
-  const rx = dx - ds * 110, ry = dy - ds * 366;
-  finch(sk, rx + 14, ry + 4, 0.34, { beak: 0.7, seed: 51, legs: false, flip: -1 });
-  handDot(sk, [rx, ry], C.skin, 56, 9);
+  // 다윈: 로슨에게 등을 돌리고 손에 든 새만 들여다본다(흘려듣는다)
+  const busy = pose({ elR: [70, -300], haR: [116, -370], elL: [-50, -262], haL: [-24, -222], tilt: 0.14 });
+  const dx = 116, dy = 704, ds = 0.56;
+  drawFigure(sk, dx, dy, ds, busy, { ...DARWIN, name: "darwin", face: "curious", look: 1, mirror: true, under: satchel(sk) });
+  const rx = dx - ds * 116, ry = dy - ds * 370;
+  finch(sk, rx - 4, ry - 4, 0.34, { beak: 0.7, seed: 51, legs: false, flip: -1 });
   // 로슨: 거북을 가리킨다
   const point = pose({ elR: [88, -316], haR: [170, -338], elL: [-50, -260], haL: [-24, -218], tilt: 0.05 });
-  drawFigure(sk, 236, 704, 0.56, point, { ...LAWSON, name: "lawson", face: "smile" });
+  drawFigure(sk, 244, 704, 0.56, point, { ...LAWSON, name: "lawson", face: "smile" });
   return sk;
 }
 
@@ -204,12 +213,13 @@ function p2() {
 function p3() {
   const sk = new Sk(W, H, { id: "c" });
   desk(sk, 300, 540, 380, { seed: 61 });
-  // 부리만 다른 새 넷(표본 받침 위)
-  [[1, 0], [0.68, 1], [0.36, 2], [0.04, 3]].forEach(([k, i]) => {
-    const x = 360 + i * 88;
-    const st = rrect(x - 28, 524, 56, 16, 6);
+  // 서로 다른 종류의 핀치 넷(표본 받침 위): 몸 크기, 깃털 색, 부리가 모두 다르다
+  //   큰땅핀치(크고 검다, 굵은 부리), 선인장핀치(갈색, 길고 뾰족한 부리), 작은나무핀치(잿빛 올리브, 짧은 부리), 휘파람새핀치(작은 올리브빛, 가는 부리)
+  [[1, 0.5, "#3A3532"], [0.18, 0.42, "#6E5A4A"], [0.62, 0.38, "#8C8C74"], [0, 0.32, "#9AA36A"]].forEach(([k, s, col], i) => {
+    const x = 352 + i * 92;
+    const st = rrect(x - 30, 524, 60, 16, 6);
     sk.fill(st, "#E9E6DF", { dx: 0, dy: 0, wob: 0.3, seed: 63 + i }); sk.ink(st, { w: 6, seed: 67 + i, wob: 0.4 });
-    finch(sk, x - 8, 524, 0.42, { beak: k, seed: 311 + i * 13, color: i % 2 ? "#6E5A4A" : BIRD });
+    finch(sk, x - 10, 524, s, { beak: k, seed: 311 + i * 13, color: col });
   });
   const point = pose({ elR: [86, -300], haR: [150, -292], elL: [-50, -260], haL: [-24, -218], tilt: 0.05 });
   drawFigure(sk, 160, 704, 0.72, point, { ...GOULD, name: "gould", face: "smile" });
@@ -271,7 +281,7 @@ function p5() {
   drawFigure(sk, fx, fy, fs, up, { ...DARWIN_1859, name: "darwin", hands: "L" });
   sideHair(sk, fx, fy, fs, up, "#6E5B4C", 151);
   const hx = fx + fs * 158, hy = fy - fs * 404;
-  sk.at(hx + 46, hy - 80, 1, () => {
+  sk.at(hx + 84, hy - 44, 1, () => {
     for (const sg of [-1, 1]) {
       const pg = curve([[0, 60], [sg * 50, 54], [sg * 98, 60], [sg * 100, -62], [sg * 50, -70], [0, -64]], true, 4);
       sk.fill(pg, "#FBF6E6", { seed: 161 + (sg > 0 ? 1 : 0), dx: 1, dy: 1.2 }); sk.ink(pg, { w: 7, seed: 163 + (sg > 0 ? 1 : 0) });
@@ -287,8 +297,7 @@ function p5() {
     for (let i = 0; i < 6; i++) sk.ink(dense([[-86, -44 + i * 17], [-16 - (i % 2) * 10, -44 + i * 17]]), { w: 4, color: C.grayLight, seed: 175 + i, wob: 0.2 });
   }, 0.08);
   handDot(sk, [hx, hy], C.skin, 181, 12);
-  sparkle(sk, hx + 196, hy - 116, 15, { seed: 182 });
-  sparkle(sk, hx - 10, hy - 140, 10, { seed: 183 });
+  sparkle(sk, hx + 226, hy - 86, 15, { seed: 182 });
   return sk;
 }
 
@@ -299,16 +308,16 @@ function p6() {
   const rock = [...curve([[30, 704], [52, 600], [110, 560], [220, 548], [340, 558], [396, 610], [414, 704]], false, 4)];
   rock.push(rock[0]);
   sk.fill(rock, "#CFC3B0", { seed: 191, tex: true, texAng: 0.2 }); sk.ink(rock.slice(0, -1), { w: 9, seed: 192 });
-  finch(sk, 112, 566, 0.62, { beak: 0.3, seed: 201 });
-  finch(sk, 220, 552, 0.62, { beak: 0.55, seed: 214 });
-  finch(sk, 326, 560, 0.62, { beak: 0.85, seed: 227 });
+  finch(sk, 112, 566, 0.62, { beak: 0.4, seed: 201 });
+  finch(sk, 220, 552, 0.62, { beak: 0.56, seed: 214 });
+  finch(sk, 326, 560, 0.62, { beak: 0.74, seed: 227 });
   sk.ink(dense([[20, 704], [940, 704]], 6), { w: 8, seed: 193 });
   // 로즈메리: 새를 손에 얹어 든다. 피터: 부리에 캘리퍼스를 댄다
   const hold = pose({ elR: [84, -288], haR: [140, -300], elL: [-50, -260], haL: [-24, -218], tilt: 0.05 });
   const ax = 530, ay = 702, as = 0.7;
   drawFigure(sk, ax, ay, as, hold, { ...ROSEMARY, name: "rosemary", face: "smile" });
   const bx0 = ax + as * 140, by0 = ay - as * 300;
-  finch(sk, bx0 + 42, by0 - 12, 0.5, { beak: 0.7, seed: 241, legs: false });
+  finch(sk, bx0 + 4, by0 - 8, 0.5, { beak: 0.6, seed: 241 });
   const meas = pose({ elL: [-86, -296], haL: [-146, -320], elR: [50, -260], haR: [24, -218], tilt: -0.05 });
   const gx = 846, gy = 702;
   drawFigure(sk, gx, gy, as, meas, { ...PETER, name: "peter", face: "curious", hands: "R" });
@@ -323,34 +332,36 @@ function p6() {
 /* ---------- 7. 1977년, 가뭄: 부리 큰 새가 더 많이 살아남았다 ---------- */
 function p7() {
   const sk = new Sk(W, H, { id: "g" });
-  sun(sk, 896, 124, 40, { seed: 701 });
+  sun(sk, 906, 104, 34, { seed: 701 });
   // 메마른 땅(갈라진 금)
   const ground = [...curve([[-12, 596], [300, 588], [640, 596], [972, 590]], false, 5), [972, 730], [-12, 730]];
   ground.push(ground[0]);
   sk.fill(ground, "#EBDDBE", { seed: 261, tex: true, texAng: 0.1 }); sk.ink(ground.slice(0, -3), { w: 9, seed: 262 });
   for (const [x, i] of [[150, 0], [420, 1], [560, 2], [880, 3]]) sk.ink(dense([[x, 620], [x + 18, 648], [x + 6, 668], [x + 24, 700]], 3), { w: 5, color: "#B8A07A", seed: 263 + i, wob: 0.3 });
-  // 왼쪽: 부리 큰 새가 단단한 씨앗을 깨 먹었다 + 그 뒤에 부리 굵은 새끼 둘
-  chick(sk, 50, 612, 0.86, 301, true); chick(sk, 104, 618, 0.86, 311, true);
-  finch(sk, 206, 604, 0.78, { beak: 1, seed: 271 });
-  hardSeed(sk, 316, 584, 18, 281, true);
-  check(sk, 220, 410, 1);
-  // 가운데: 부리 작은 새는 단단한 씨앗 앞에서 쩔쩔맨다
-  finch(sk, 460, 604, 0.74, { beak: 0.06, seed: 321 });
-  hardSeed(sk, 566, 588, 18, 331);
-  drop(sk, 458, 470, 1.1); drop(sk, 536, 456, 0.9);
-  // 오른쪽: 기록하는 로즈메리
-  const note = pose({ elR: [-30, -268], haR: [-70, -300], elL: [-60, -270], haL: [-104, -300], tilt: -0.05 });
-  const fx = 680, fy = 704, fs = 0.68;
+  // 왼쪽: 부리가 조금 더 큰 새가 가시 돋친 단단한 씨앗을 쪼개 먹었다
+  finch(sk, 170, 604, 0.78, { beak: 0.82, seed: 271 });
+  hardSeed(sk, 282, 584, 18, 281, true);
+  hardSeed(sk, 76, 614, 15, 291);
+  check(sk, 186, 410, 1);
+  // 가운데: 부리가 조금 더 작은 같은 종류의 새는 같은 씨앗 앞에서 쩔쩔맨다
+  finch(sk, 440, 604, 0.78, { beak: 0.36, seed: 321 });
+  hardSeed(sk, 552, 588, 18, 331);
+  drop(sk, 444, 466, 1.1); drop(sk, 522, 452, 0.9);
+  // 오른쪽: 한 손에 공책을 들고 다른 손의 연필로 적는 로즈메리
+  const note = pose({ elL: [-70, -270], haL: [-112, -304], elR: [50, -262], haR: [-20, -300], tilt: -0.05 });
+  const fx = 662, fy = 704, fs = 0.68;
   drawFigure(sk, fx, fy, fs, note, { ...ROSEMARY, name: "rosemary", face: "wide", hands: false });
-  notebook(sk, fx - fs * 88, fy - fs * 312, 0.8, { seed: 341, rot: 0.15 });
-  handDot(sk, [fx - fs * 104, fy - fs * 300], C.skin, 342, 11);
-  handDot(sk, [fx - fs * 70, fy - fs * 300], C.skin, 343, 11);
+  const nx = fx - fs * 70, ny = fy - fs * 318;
+  notebook(sk, nx, ny, 0.8, { seed: 341, rot: -0.12 });
+  handDot(sk, [fx - fs * 112, fy - fs * 304], C.skin, 342, 11);
+  sk.ink(dense([[fx - fs * 20, fy - fs * 300], [nx + 6, ny + 6]]), { w: 6, color: C.yellow, seed: 344, wob: 0.2 });
+  handDot(sk, [fx - fs * 20, fy - fs * 300], C.skin, 343, 11);
   return sk;
 }
 
 export const META = {
   title: "다윈의<br><em>이상한 섬들</em>",
-  lead: "섬마다 거북도 새도 조금씩 달랐어요. 그 까닭을 찾아간 사람들의 이야기예요.",
+  lead: "섬마다 거북도 새도 조금씩 달랐어요. 그 까닭을 찾아 나선 사람들의 이야기예요.",
   narrator: "1831년 영국을 떠난 측량선 비글호는 남아메리카 해안을 돌며 바다 지도를 그렸어요. 배에는 스물두 살 박물학자 <b>찰스 다윈</b>이 타고 있었지요. 4년 가까이 지나 배는 태평양의 화산섬들에 닿아요.",
   cta: "변이 정리하러 가기",
 };
@@ -369,7 +380,7 @@ const TEXT = [
   {
     when: "1837년, 영국 런던", stage: "반전", title: "모두 핀치였다",
     caption: "영국에 돌아온 다윈은 새 표본을 조류학자 <b>굴드</b>에게 맡겼어요. 부리가 제각각이라 서로 먼 새인 줄 알았던 작은 새들이 모두 <b>핀치</b>였어요. 여러 종류였지만 아주 가까운 친척들이었지요. 다윈은 어느 섬에서 잡았는지 적어 두지 않은 것을 아쉬워했어요.",
-    bubbles: [{ who: "gould", text: "모두 핀치<br>무리요!" }],
+    bubbles: [{ who: "gould", text: "모두 다른<br>핀치예요!" }],
   },
   {
     when: "1837년, 영국 런던", stage: "질문", title: "가지를 치는 생각",
@@ -388,8 +399,8 @@ const TEXT = [
   },
   {
     when: "1977년, 대프니메이저섬", stage: "가뭄", title: "가뭄이 고른 부리",
-    caption: "1977년 큰 가뭄으로 작고 무른 씨앗이 바닥나고 크고 단단한 씨앗만 남았어요. 이 씨앗을 깰 수 있는 <b>부리 큰 새가 더 많이 살아남아</b> 새끼를 남겼고, 다음 세대는 부리가 평균 조금 더 커졌어요. 새 한 마리의 부리가 자란 것이 아니에요.",
-    bubbles: [{ who: "rosemary", text: "부리 큰 새가<br>살아남았어!" }],
+    caption: "1977년 큰 가뭄으로 작고 무른 씨앗이 바닥나고 크고 단단한 씨앗이 주로 남았어요. 이 씨앗을 깰 수 있는 <b>부리 큰 새가 더 많이 살아남았고</b>, 이듬해 태어난 새끼들은 부리가 평균 조금 더 컸어요. 새 한 마리의 부리가 자란 것이 아니에요.",
+    bubbles: [{ who: "rosemary", text: "부리 큰 새가<br>더 많이 살았어!" }],
   },
 ];
 
