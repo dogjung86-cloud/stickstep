@@ -163,16 +163,19 @@ const LABS = {
   },
   async sensor(id) {
     await at(id, "sensor-start");
-    await must(id, ".g2u5x-run", 2800);
+    await must(id, ".g2u5x-run", 3400);
+    await dsIs(id, "g5Last", "empty", "모종 없이 잰 결과가 보이지 않음");
+    await at(id, "sensor-empty");
+    await must(id, K("plant"));
+    await must(id, ".g2u5x-run", 3400);
     await dsIs(id, "g5Last", "open", "뚜껑을 연 채 잰 실패가 보이지 않음");
     await at(id, "sensor-open");
-    await must(id, K("plant"));
     await must(id, K("lid"));
-    await must(id, ".g2u5x-run", 2800);
+    await must(id, ".g2u5x-run", 3400);
     await dsIs(id, "g5Kept", "d", "전등을 끈 측정이 남지 않음");
     await at(id, "sensor-dark");
     await must(id, K("light"));
-    await must(id, ".g2u5x-run", 2800);
+    await must(id, ".g2u5x-run", 3400);
     await dsIs(id, "g5Kept", "bd", "전등을 켠 측정이 남지 않음");
     await at(id, "sensor-both");
     await must(id, ".g2u5x-go");
@@ -243,7 +246,7 @@ const LABS = {
     await must(id, ".g2u5x-pick", 400);
     await dsIs(id, "g5Farm", "temp", "온도 단계로 넘어가지 않음");
     await at(id, "farm-temp");
-    for (let i = 0; i < 4; i++) await must(id, S("t+"), 200);
+    for (let i = 0; i < 6; i++) await must(id, S("t+"), 200);
     await at(id, "farm-hot");
     await W(1800);
     await must(id, ".g2u5x-pick", 400);
@@ -257,15 +260,15 @@ const LABS = {
   },
   async dark(id) {
     await at(id, "dark-start");
-    await must(id, ".g2u5x-run", 2800);
+    await must(id, ".g2u5x-run", 3400);
     await dsIs(id, "g5Last", "leaf", "잎을 넣은 측정이 남지 않음");
     await at(id, "dark-leaf");
     await must(id, K("none"));
-    await must(id, ".g2u5x-run", 2800);
+    await must(id, ".g2u5x-run", 3400);
     await at(id, "dark-none");
     await must(id, K("root"));
     await at(id, "dark-root-in", false);
-    await must(id, ".g2u5x-run", 2800);
+    await must(id, ".g2u5x-run", 3400);
     await dsIs(id, "g5Kept", "3", "세 측정이 모이지 않음");
     await at(id, "dark-three");
     await must(id, ".g2u5x-go");

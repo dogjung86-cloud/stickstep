@@ -71,12 +71,12 @@ export const g2u5StarchLab: StepRenderer = (host, step, api) => {
   };
 
   // 준비: 어둠상자와 하루 두기
-  const cBox = chip("box", "어둠상자", "씌우지 않음", () => {
+  const cBox = chip("box", "모종 나에 어둠상자", "씌우지 않음", () => {
     if (busy) return;
     tap();
     box = !box;
     cBox.on(box);
-    cBox.sub(box ? "모종 나에 씌움" : "씌우지 않음");
+    cBox.sub(box ? "씌움" : "씌우지 않음");
     draw();
   });
   const day = bvBtn("main g2u5x-day", "햇빛이 드는 곳에 하루 두기");
@@ -228,7 +228,7 @@ export const g2u5StoreLab: StepRenderer = (host, step, api) => {
       out += cropArt(k, x, 89);
       if (done.has(k)) out += `<ellipse class="${last === k ? "g2u5x-pop" : ""}" cx="${x}" cy="89" rx="${c.starch ? 17 : 9}" ry="${c.starch ? 14 : 7}" fill="${c.starch ? BLUE : IODINE}" opacity="${c.starch ? ".95" : ".85"}"/>`;
       out += txt(x, 146, c.name, { size: 13, fill: "#E8EEF9", weight: 800 }) + txt(x, 162, c.part, { size: 12, fill: P.dim });
-      if (done.has(k)) out += txt(x, 186, c.starch ? "청람색" : "변화 없음", { size: 12, fill: c.starch ? "#A9B0FF" : "#E3C27A" }) + txt(x, 206, c.form, { size: 13, fill: "#fff", weight: 800 });
+      if (done.has(k)) out += txt(x, 186, c.starch ? "청람색" : "변화 없음", { size: 12, fill: c.starch ? "#A9B0FF" : "#E3C27A" }) + txt(x, 206, c.starch ? "녹말" : "녹말 아님", { size: 13, fill: "#fff", weight: 800 });
     });
     if (last) {
       const x = X(ORDER.indexOf(last));
@@ -255,7 +255,7 @@ export const g2u5StoreLab: StepRenderer = (host, step, api) => {
         f.say(`${c.name}는 <b>청람색</b>으로 변했어요. ${c.part}에 녹말이 저장돼 있어요.`);
       } else {
         tap();
-        f.say(`${c.name}${k === "bean" ? "은" : "는"} 색이 변하지 않아요. 양분이 <b>${c.form}</b>${k === "bean" ? "로" : "으로"} 저장돼 있어요.`);
+        f.say(`색이 변하지 않아요. 녹말이 아니에요. ${c.name}${k === "bean" ? "은" : "는"} 주로 <b>${c.form}</b>${k === "bean" ? "로" : "으로"} 저장해요.`);
       }
       if (done.size === 5) {
         f.pips(1);
@@ -268,7 +268,7 @@ export const g2u5StoreLab: StepRenderer = (host, step, api) => {
   go.addEventListener("click", () => {
     tap();
     lab.judge("색이 <b>변하지 않은</b> 포도, 콩, 깨에 대해 알맞은 것은?", [{ t: "녹말이 아닌 양분을 저장한다", ok: true }, { t: "양분을 저장하지 않는다" }, { t: "녹말을 가장 많이 저장한다" }], "이 용액은 <b>녹말</b>만 찾아내요.", () =>
-      lab.finish("식물은 양분을 <b>녹말</b>로만 저장하지 않아요. 포도는 <b>포도당</b>, 콩은 <b>단백질</b>, 깨는 <b>지방</b>으로 저장해요."),
+      lab.finish("식물은 양분을 <b>녹말</b>로만 저장하지 않아요. 포도는 주로 <b>포도당</b>, 콩은 <b>단백질</b>, 깨는 <b>지방</b>으로 저장해요."),
     );
   });
   f.slot.setControls(row(chips[0].el, chips[1].el, chips[2].el), row(chips[3].el, chips[4].el), go);

@@ -87,7 +87,7 @@ export const g2u5SensorLab: StepRenderer = (host, step, api) => {
     busy = true;
     tap();
     const full = st.plant && st.lid;
-    const kind = !st.lid ? "open" : !st.plant ? "empty" : st.light ? "bright" : "dark";
+    const kind = !st.plant ? "empty" : !st.lid ? "open" : st.light ? "bright" : "dark";
     live = { co2: full ? ramp(st.light ? 0.18 : 0.62) : ramp(0.5), o2: full ? ramp(st.light ? 0.84 : 0.4) : ramp(0.5), dash: kind !== "bright", t: 0 };
     [cPlant, cLid, cLight].forEach((c) => c.lock(true));
     run.disabled = true;
@@ -110,7 +110,7 @@ export const g2u5SensorLab: StepRenderer = (host, step, api) => {
       if (kind === "empty") {
         bad();
         toast(lab, "농도가 변하지 않아요", true);
-        f.say("용기 안에 식물이 없으면 두 기체의 농도가 <b>그대로</b>예요.");
+        f.say("용기 안에 식물이 없으면 농도가 <b>그대로</b>예요. 모종을 넣고 재요.");
         return;
       }
       good();
@@ -171,7 +171,7 @@ export const g2u5DarkLab: StepRenderer = (host, step, api) => {
       co2.push({ v: ramp(IN[k].co2), color: IN[k].color, upto: mine ? liveT : 1 });
       o2.push({ v: ramp(IN[k].o2), color: IN[k].color, upto: mine ? liveT : 1 });
     });
-    const inside = pick === "leaf" ? leafPile(77, 190) : pick === "root" ? carrot(112, 190) : "";
+    const inside = pick === "leaf" ? leafPile(77, 190) : pick === "root" ? carrot(108, 180) : "";
     stage.set(`
       ${jar(22, 60, 110, 136, { lid: true, foil: wrapped, inside })}
       <line x1="10" y1="198" x2="160" y2="198" stroke="#3B5273" stroke-width="2"/>
@@ -353,6 +353,8 @@ export const g2u5DesignLab: StepRenderer = (host, step, api) => {
       sLamp.lock(true);
       sTemp.lock(true);
       run.disabled = true;
+      off.clear();
+      draw();
       f.say("네 가지를 모두 쟀어요. 막대의 높이를 <b>견줘</b> 보세요.");
       tm.later(() => {
         lab.judge("전등을 <b>3개에서 4개</b>로 늘렸을 때 광합성량은?", [{ t: "더 늘지 않았다", ok: true }, { t: "계속 늘었다" }, { t: "오히려 줄었다" }], "3개와 4개의 막대 높이가 <b>같아요</b>.", () =>

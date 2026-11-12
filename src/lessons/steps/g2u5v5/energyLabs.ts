@@ -83,7 +83,10 @@ export const g2u5FarmLab: StepRenderer = (host, step, api) => {
       bad();
       toast(lab, "잎이 처지고 있어요", true);
       f.say("온도가 너무 높아요. 광합성량이 <b>뚝 떨어졌어요</b>.");
-    } else f.say(PT[ti] > before ? "온도를 높이자 광합성량이 <b>늘었어요</b>." : PT[ti] < before ? "광합성량이 <b>줄었어요</b>. 가장 큰 곳은 어디일까요?" : "더 바꿀 수 없어요.");
+    } else {
+      lab.f.stage.querySelector(".g2u5x-toast")?.remove();
+      f.say(PT[ti] > before ? "온도를 높이자 광합성량이 <b>늘었어요</b>." : PT[ti] < before ? "광합성량이 <b>줄었어요</b>. 가장 큰 곳은 어디일까요?" : "더 바꿀 수 없어요.");
+    }
   });
   sC.set("1단계");
   sT.set(`${TS[ti]} ℃`);
@@ -103,11 +106,13 @@ export const g2u5FarmLab: StepRenderer = (host, step, api) => {
     }
     good();
     phase = "temp";
+    ti = 1;
+    sT.set(`${TS[ti]} ℃`);
     seenT.add(ti);
     f.pips(1);
     draw();
     f.slot.setControls(sT.el, pickT);
-    f.say("농도를 정했어요. 4단계부터는 더 넣어도 그대로였어요. 이제 <b>온도</b>를 바꿔요.");
+    f.say("농도를 정했어요. 이제 낮은 온도에서 시작해 <b>온도</b>를 올려 가며 재요.");
   });
   const pickT = bvBtn("main g2u5x-pick", "이 온도로 정하기");
   pickT.addEventListener("click", () => {
@@ -327,7 +332,7 @@ export const g2u5LightLab: StepRenderer = (host, step, api) => {
       return;
     }
     good();
-    toast(lab, m === 0 ? "산소가 나가요" : "이산화 탄소가 나가요");
+    toast(lab, m === 0 ? "성공, 산소가 나가요" : m === 1 ? "성공, 이산화 탄소가 나가요" : "성공, 빛이 있어도 나가요");
     m += 1;
     f.pips(m);
     draw();
