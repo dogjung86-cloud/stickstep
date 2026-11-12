@@ -25,6 +25,10 @@ export const OPENERS = {
   "g2u3-dots": async ({ page, L }) => {
     await L.hold(page, '[data-k="back"]', 1900);
   },
+  "g2u3-float": async ({ page }) => {
+    await page.evaluate(() => document.querySelector(".screen.active .opn-g2u3-hit")?.click());
+    await page.waitForTimeout(2600);
+  },
 };
 
 /** 거울과 렌즈 관찰: 두 종류에서 가까울 때와 멀 때를 적는다. */
@@ -256,5 +260,47 @@ export const LABS = {
     await L.tapK(page, "confirm", 400);
     await c.judge("pixel", wrong);
     await c.done("pixel");
+  },
+  ball: async (c, wrong) => {
+    const { page, L, check } = c;
+    // 예측(정오 없음)
+    check("ball 예측이 뜸", await L.waitAsk(page));
+    await c.fit("ball 예측");
+    await L.answer(page, true);
+    check("ball 예측 뒤 조작", await L.waitDs(page, "lx", "play"));
+    await L.W(page, 300);
+    const calm = () => L.waitFor(page, () => document.querySelector(".screen.active .step")?.dataset.lxBusy === "0", null, 120);
+    // 겹치게 두 번 눌러 본다(기록되지 않는다)
+    await L.tapK(page, "press", 700);
+    await L.tapK(page, "press", 500);
+    await c.fit("ball 겹친 물결");
+    await c.shot("ball-dirty");
+    await calm();
+    await L.tapK(page, "press", 1300);
+    await c.shot("ball-wave");
+    await calm();
+    await L.setRange(page, 270);
+    await L.tapK(page, "press", 300);
+    await calm();
+    await c.judge("ball", wrong);
+    await c.done("ball");
+  },
+  wave: async (c, wrong) => {
+    const { page, L, check } = c;
+    await L.tapK(page, "2", 400);
+    await c.fit("wave 진폭 2칸");
+    await L.tapK(page, "3", 400);
+    check("진폭 3칸이면 다음 주문", await L.waitDs(page, "lx", "len"));
+    await c.shot("wave-amp");
+    // 흔드는 횟수 버튼은 둘째 줄이다
+    const tapF = (k) => page.evaluate((k) => [...document.querySelectorAll(`.screen.active .step .g2u3x-segs`)][1]?.querySelector(`[data-k="${k}"]`)?.click(), k);
+    await tapF("2");
+    await L.W(page, 400);
+    await c.fit("wave 마루 사이 4칸");
+    await tapF("4");
+    await L.W(page, 500);
+    await c.shot("wave-len");
+    await c.judge("wave", wrong);
+    await c.done("wave");
   },
 };

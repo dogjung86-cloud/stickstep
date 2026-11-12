@@ -102,6 +102,16 @@
 /* 6. 점으로 그린 물고기 */
 .opn-g2u3-dots .fish { transform-box: view-box; }
 
+/* 7. 연못의 낚시찌 */
+.opn-g2u3-cone { transition: transform .5s cubic-bezier(.5, 0, 1, .6), opacity .15s; }
+.opn-g2u3-rip .ring { fill: none; stroke: #2F8EE0; stroke-width: 6; opacity: 0; transform-box: view-box; }
+.opn-stage.ripple .opn-g2u3-rip .ring { animation: opnG2u3Ring 2.6s ease-out both; }
+.opn-stage.ripple .opn-g2u3-rip .ring.r1 { animation-delay: .5s; }
+.opn-stage.ripple .opn-g2u3-rip .ring.r2 { animation-delay: 1s; }
+@keyframes opnG2u3Ring { 0% { opacity: .9; transform: scale(.4); } 100% { opacity: 0; transform: scale(15, 5); } }
+.opn-stage.bob .opn-g2u3-flt { animation: opnG2u3Bob .7s ease-in-out 3; }
+@keyframes opnG2u3Bob { 0%, 100% { transform: translateY(0); } 30% { transform: translateY(-20px); } 70% { transform: translateY(16px); } }
+
 /* ── g2u3l6 켜고 끄는 버튼(손전등, 화소)과 네 칸 표 ── */
 .g2u3x-seg.g2u3x-ch { height: 56px; }
 .g2u3x-seg.g2u3x-ch.r.on { border-color: #E8453C; background: #FFF0EF; box-shadow: 0 0 0 1px #E8453C inset; }

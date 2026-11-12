@@ -407,4 +407,35 @@ const dots: OpenerScene = (c) => {
   );
 };
 
-export const G2U3_SCENES: Record<string, OpenerScene> = { "g2u3-town": town, "g2u3-straw": straw, "g2u3-dark": dark, "g2u3-cat": catMirror, "g2u3-spoon": spoon, "g2u3-dots": dots };
+// ── 7. 연못의 낚시찌 ────────────────────────────────────────────
+const floatScene: OpenerScene = (c) => {
+  const M = meta(c).float;
+  art(c, "floatBase");
+  const ov = overlay(c, "opn-g2u3-rip");
+  const rings = [0, 1, 2].map((i) => {
+    const e = svgEl(ov, "ellipse", { cx: M.splash[0], cy: M.splash[1], rx: 30, ry: 7, class: `ring r${i}` });
+    e.style.transformOrigin = `${M.splash[0]}px ${M.splash[1]}px`;
+    return e;
+  });
+  void rings;
+  const cone = c.stage.querySelector<SVGElement>(".opn-g2u3-cone");
+  const b = hit(c, M.hit, "솔방울을 눌러 연못에 떨어뜨리기");
+  let done = false;
+  const verdict = bet(c, "연못에 솔방울이 떨어져 물결이 퍼져 나가요. 물결이 지나갈 때 낚시찌는 어떻게 될까요?", ["제자리에서 오르내려요", "물결을 따라 밀려가요", "솔방울 쪽으로 끌려와요"], "예측 완료! 나뭇가지의 <b>솔방울</b>을 눌러 연못에 떨어뜨려 보세요.");
+  b.addEventListener("click", () => {
+    if (!playing(c) || done) return;
+    done = true;
+    haptic(HAPTIC.tap);
+    c.stage.classList.add("touched");
+    if (cone) cone.style.transform = `translateY(${M.splash[1] - M.cone[1]}px)`;
+    c.later(() => {
+      c.stage.classList.add("ripple");
+      if (cone) cone.style.opacity = "0";
+      c.say("퐁당! 물결이 퍼져 나가요. <b>낚시찌</b>를 지켜보세요.");
+    }, 520);
+    c.later(() => c.stage.classList.add("bob"), 1900);
+    c.later(() => end(c, `${verdict()} 찌는 제자리에서 오르내리기만 했어요. 물결은 지나갔는데 찌는 왜 밀려가지 않을까요?`), 4300);
+  });
+};
+
+export const G2U3_SCENES: Record<string, OpenerScene> = { "g2u3-town": town, "g2u3-straw": straw, "g2u3-dark": dark, "g2u3-cat": catMirror, "g2u3-spoon": spoon, "g2u3-dots": dots, "g2u3-float": floatScene };

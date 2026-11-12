@@ -185,6 +185,46 @@ export function dotsBase() {
   return { sk };
 }
 
+/* ══════════ 7. 연못의 낚시찌 (g2u3l7) ══════════ */
+export const FLOAT = { water: 340, cone: [250, 150], splash: [250, 340], float: [640, 340], hit: [150, 60, 210, 200] };
+export function floatBase() {
+  const sk = new Sk(W, H, { id: "g3h" });
+  // 연못
+  sk.raw(`<rect x="40" y="${FLOAT.water}" width="800" height="170" fill="${C.sea}" opacity=".55"/>`);
+  sk.ink(dense([[40, FLOAT.water], [840, FLOAT.water + 2]], 8), { w: 8, color: C.seaDeep, wob: 1.6, seed: 161 });
+  // 둑과 학생
+  const bank = poly([[820, 300], [930, 296], [930, 512], [800, 512]], 6);
+  sk.fill(bank, "#DDE9C9", { dx: 0, dy: 0, wob: 1, seed: 162, tex: true });
+  sk.ink(dense([[800, 512], [820, 300], [930, 296]], 6), { w: 9, wob: 1.2, seed: 163 });
+  drawFigure(sk, 872, 300, 0.42, pose({ elR: [-110, -300], haR: [-190, -350] }), { ...STUDENT });
+  // 낚싯대
+  sk.ink(dense([[792, 152], [700, 60]], 6), { w: 6, color: C.woodDark, wob: 0.4, seed: 165 });
+  // 소나무 가지
+  sk.ink(curve([[40, 96], [170, 84], [300, 104]]), { w: 14, color: C.woodDark, wob: 1, seed: 166 });
+  [[90, 78], [150, 70], [210, 78]].forEach(([x, y], i) => rays(sk, x, y, 6, 34, 5, { color: C.green, w: 6, seed: 167 + i * 5 }));
+  // 솔방울(앱이 떨어뜨린다)
+  g(sk, "opn-g2u3-cone", () => {
+    const [x, y] = FLOAT.cone;
+    const cn = ell(x, y, 22, 30);
+    sk.fill(cn, C.wood, { dx: 0, dy: 0, wob: 0.5, seed: 181, tex: true });
+    sk.ink(cn, { w: 7, wob: 0.6, seed: 182 });
+    sk.ink(dense([[x - 16, y - 8], [x + 16, y - 8]], 4), { w: 4, color: C.woodDark, wob: 0.3, seed: 183 });
+    sk.ink(dense([[x - 18, y + 8], [x + 18, y + 8]], 4), { w: 4, color: C.woodDark, wob: 0.3, seed: 184 });
+  });
+  // 낚시찌(앱이 위아래로 움직인다)와 낚싯줄
+  g(sk, "opn-g2u3-flt", () => {
+    const [x, y] = FLOAT.float;
+    sk.ink(dense([[700, 60], [x, y - 56]], 6), { w: 3, color: C.gray, wob: 0.2, seed: 191 });
+    const top = poly([[x - 9, y - 54], [x + 9, y - 54], [x + 11, y - 6], [x - 11, y - 6]], 4);
+    sk.fill(top, C.red, { dx: 0, dy: 0, wob: 0.3, seed: 192 });
+    sk.ink(top, { w: 6, wob: 0.4, seed: 193 });
+    const bot = poly([[x - 11, y - 6], [x + 11, y - 6], [x + 5, y + 30], [x - 5, y + 30]], 4);
+    sk.fill(bot, C.white, { dx: 0, dy: 0, wob: 0.3, seed: 194 });
+    sk.ink(bot, { w: 6, wob: 0.4, seed: 195 });
+  });
+  return { sk };
+}
+
 /** build-intro.mjs가 부른다: 그림을 싣고 장면별 좌표를 돌려준다. */
 export function build(add) {
   return {
@@ -193,6 +233,7 @@ export function build(add) {
     cat: { ...CATM, ...add("catBase", catBase()) },
     spoon: { ...SPOON, ...add("spoonBase", spoonBase()) },
     dots: { ...DOTS, ...add("dotsBase", dotsBase()) },
+    float: { ...FLOAT, ...add("floatBase", floatBase()) },
     straw: { ...STRAW, ...add("strawBase", strawBase()), ...add("strawCup", strawCup()) },
   };
 }

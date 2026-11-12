@@ -16,6 +16,24 @@ const MINI: Record<string, string> = {
   seePath: `<circle cx="13" cy="14" r="6" fill="#FFC83D"/><rect x="24" y="44" width="16" height="11" rx="2" fill="#F5F0E4" stroke="#C9413A" stroke-width="2"/><path d="M47 24c4-5 10-5 14 0c-4 5-10 5-14 0z" fill="#fff" stroke="${INK}" stroke-width="1.8"/><circle cx="54" cy="24" r="2.6" fill="${INK}"/><path d="M17 19L29 41" stroke="#F0A422" stroke-width="2.4"/><path d="M29 41l-5.4-3.2M29 41l.4-6.2" stroke="#F0A422" stroke-width="2.4"/><path d="M36 42L50 28" stroke="#F0A422" stroke-width="2.4"/><path d="M50 28l-6 .8M50 28l-.8 6" stroke="#F0A422" stroke-width="2.4"/>`,
 };
 
+/** 문제 그림: 모눈 위의 파동 한 장면. 진폭은 ampCells칸, 파장은 lenCells칸(한 칸 20). 마루와 골의 자리는 계산으로 찍는다. */
+export function waveGridFig(ampCells: number, lenCells: number): string {
+  const C = 20;
+  const W = 320;
+  const H = 180;
+  const x0 = 20;
+  const cy = 90;
+  let grid = "";
+  for (let x = x0; x <= W - 20; x += C) grid += `<line x1="${x}" y1="10" x2="${x}" y2="170" stroke="#E5E8EB"/>`;
+  for (let y = 10; y <= 170; y += C) grid += `<line x1="${x0}" y1="${y}" x2="${W - 20}" y2="${y}" stroke="#E5E8EB"/>`;
+  let d = "";
+  for (let x = x0; x <= W - 20; x += 2) {
+    const y = cy - ampCells * C * Math.sin((2 * Math.PI * (x - x0)) / (lenCells * C));
+    d += `${x === x0 ? "M" : "L"}${x} ${y.toFixed(1)}`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" ${NS} role="img" aria-label="모눈 위에 그린 파동의 한 장면"><rect width="${W}" height="${H}" rx="12" fill="#fff"/>${grid}<line x1="${x0}" y1="${cy}" x2="${W - 20}" y2="${cy}" stroke="#8B95A1" stroke-width="1.5" stroke-dasharray="5 4"/><path d="${d}" fill="none" stroke="#2F8EE0" stroke-width="3" stroke-linejoin="round"/><text x="${W - 24}" y="${cy + 15}" text-anchor="end" font-size="12" font-weight="700" fill="#4E5968">진동 중심</text></svg>`;
+}
+
 /** 정리 카드의 미니 그림. */
 export function lxMini(key: string): string {
   return `<svg viewBox="0 0 64 64" ${NS} fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${MINI[key] ?? ""}</svg>`;
