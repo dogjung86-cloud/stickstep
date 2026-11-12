@@ -2,6 +2,7 @@
 // 조사와 콘티: qa/sketch/research/g2u6l3.md
 //   1 옛 생각(간에서 만들어져 몸 끝에서 사라진다) → 2 파도바의 스승 파브리키우스와 정맥 판막 그림 → 3 하비의 셈(반 시간, 몸 전체의 피)
 //   → 4 팔을 세게 묶기(동맥이 막힘) → 5 조금 풀기(정맥만 막힘) → 6 정맥 판막 손가락 실험 → 7 결론(순환) → 8 1661년 말피기(모세혈관)
+// 8컷의 확대 그림은 허파의 혈관이라 빨강과 파랑을 쓰지 않는다(허파로 들어가는 관에는 산소가 적은 피가 흐른다). 한 가지 중립색 + 화살표.
 // 색의 뜻: 심장에서 나가는 길(동맥)은 빨강, 심장으로 돌아오는 길(정맥)은 파랑. 옛 생각의 화살표는 갈색(빨강과 파랑을 쓰지 않는다).
 // 팔 그림은 모두 손이 왼쪽, 심장이 오른쪽(작은 하트 기호)이다. 유혈, 해부, 심장 판막은 그리지 않는다.
 import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, emark, qmark, xmark, check, sparkle, arrow, heart } from "../lib/sk.mjs";
@@ -11,13 +12,13 @@ import { board, microscope } from "../lib/props.mjs";
 const W = 960, H = 720;
 const thin = (sk, k, fn) => { const o = sk.lwK; sk.lwK = k; fn(); sk.lwK = o; };
 const RED = C.red, BLUE = C.blue, OLD = "#B5651D", SKIN = "#F8DCC6", GLASS = "#F6FBFD";
-const BLACK = "#33333A", SEAM = "#6F6F7A";
+const BLACK = "#33333A", SEAM = "#6F6F7A", NEUT = "#8E4A40";
 
 /* ---------- 인물 ---------- */
 // 하비(1628년에 50세): 짧은 검은 머리, 콧수염과 짧은 뾰족 턱수염, 검은 웃옷에 흰 깃. 키가 작아 축척을 조금 낮춘다.
 const HARVEY = { hair: "short", hairColor: "#2B2B2E", fringe: 24, coat: { color: BLACK, seam: SEAM, buttons: C.gold }, seed: 311, mini: true, face: "calm", collar: true, stache: "#2B2B2E", goatee: "#2B2B2E" };
-// 파도바 시절의 하비(22세 무렵): 수염 없이, 학생 가운
-const HARVEY_YOUNG = { hair: "short", hairColor: "#2B2B2E", fringe: 24, coat: { color: "#5B6478", seam: "#3C4354" }, seed: 311, mini: true, face: "calm", collar: true };
+// 파도바 시절의 하비(22세 무렵): 뒤 컷의 하비와 같은 검은 웃옷과 흰 깃, 수염만 없다
+const HARVEY_YOUNG = { hair: "short", hairColor: "#2B2B2E", fringe: 24, coat: { color: BLACK, seam: SEAM, buttons: C.gold }, seed: 311, mini: true, face: "calm", collar: true };
 // 파브리키우스: 그 시대 노학자의 차림(흰 수염, 둥근 검은 모자, 긴 검은 가운). 초상의 특징을 지어내지 않는다.
 const FABRICIUS = { hair: "bald", beard: "#F4F1EA", coat: { color: BLACK, seam: SEAM, len: 112 }, seed: 331, mini: true, face: "calm", cap: BLACK };
 // 말피기(1661년에 33세): 어깨까지 오는 검은 머리, 콧수염, 검은 옷에 흰 깃
@@ -136,9 +137,9 @@ function cushion(sk, x0, x1, y, sd) {
 function p1() {
   const sk = new Sk(W, H, { id: "a" });
   ground(sk, 704, 11);
-  thin(sk, 0.85, () => board(sk, 304, 110, 292, 438, { color: "#FBF6E6", legs: 150, seed: 13 }));
+  thin(sk, 0.85, () => board(sk, 326, 110, 276, 438, { color: "#FBF6E6", legs: 150, seed: 13 }));
   // 그림판: 사람 윤곽, 배 속의 간(갈색), 간에서 팔다리 끝으로 퍼지다 점으로 흩어져 사라지는 화살표
-  const bx = 450, by = 512, bh = 330;
+  const bx = 464, by = 512, bh = 312;
   bodyIcon(sk, bx, by, bh, { seed: 21, fill: "#FFFDF6", w: 6 });
   const liver = curve([[bx - 46, by - 0.49 * bh], [bx - 22, by - 0.535 * bh], [bx + 22, by - 0.52 * bh], [bx + 40, by - 0.485 * bh], [bx + 14, by - 0.455 * bh], [bx - 30, by - 0.445 * bh]], true, 3);
   sk.fill(liver, "#9C5A3C", { dx: 0, dy: 0, wob: 0.4, seed: 23 }); sk.ink(liver, { w: 5, seed: 24, wob: 0.4 });
@@ -155,9 +156,9 @@ function p1() {
   });
   // 학생(왼쪽), 쌤(오른쪽, 그림판을 가리킨다)
   const sp = pose({ elL: [-52, -262], haL: [-40, -214], elR: [60, -300], haR: [96, -356], tilt: -0.08 });
-  drawFigure(sk, 132, 704, 0.62, sp, { ...STUDENT, name: "student", mirror: true });
+  drawFigure(sk, 184, 704, 0.62, sp, { ...STUDENT, name: "student", mirror: true });
   const tp = pose({ elL: [-96, -318], haL: [-176, -352], elR: [52, -262], haR: [40, -214], tilt: -0.05 });
-  drawFigure(sk, 722, 704, 0.68, tp, { ...TEACHER, name: "teacher" });
+  drawFigure(sk, 724, 704, 0.68, tp, { ...TEACHER, name: "teacher" });
   return sk;
 }
 
@@ -166,26 +167,24 @@ function p2() {
   const sk = new Sk(W, H, { id: "b" });
   ground(sk, 704, 51);
   table(sk, 300, 760, 520, 53);
-  // 책 받침에 세워 펼친 큰 책: 펼친 면에 팔과 정맥 그림(파란 정맥을 따라 마디), 글은 줄로만
-  const bx0 = 316, bx1 = 744, by0 = 196, by1 = 520, mid = (bx0 + bx1) / 2;
+  // 나무판에 핀으로 꽂아 세운 낱장 그림(스승이 그린 그림): 끈으로 묶은 팔, 파란 정맥을 따라 마디. 글은 없다
+  const bx0 = 316, bx1 = 744, by0 = 196, by1 = 520;
   thin(sk, 0.85, () => {
-    const cover = poly([[bx0 - 12, by0 - 4], [bx1 + 12, by0 - 4], [bx1 + 12, by1], [bx0 - 12, by1]], 4);
-    sk.fill(cover, "#7A5A45", { seed: 55, tex: true, texAng: 0.04 }); sk.ink(cover, { w: 10, seed: 56 });
-    for (const sg of [-1, 1]) {
-      const xa = sg < 0 ? bx0 : mid, xb = sg < 0 ? mid : bx1;
-      const pg = [...curve([[xa, by0 + 12], [(xa + xb) / 2, by0 + (sg < 0 ? 4 : 8)], [xb, by0 + 12]], false, 4), [xb, by1 - 10], ...curve([[xb, by1 - 10], [(xa + xb) / 2, by1 - 16], [xa, by1 - 10]], false, 4)];
-      pg.push(pg[0]);
-      sk.fill(pg, "#FFFDF4", { dx: 0, dy: 0, wob: 0.4, seed: 57 + sg }); sk.ink(pg, { w: 8, seed: 59 + sg, wob: 0.6 });
-    }
-    for (const sg of [-1, 1]) for (let i = 0; i < 3; i++) { const lx = sg < 0 ? bx0 + 26 : mid + 24; sk.ink(dense([[lx, 430 + i * 22], [lx + (i === 2 ? 110 : 164), 430 + i * 22 - 2]]), { w: 4, color: C.gray, seed: 61 + i + sg, wob: 0.3 }); }
+    const back = poly([[bx0 - 14, by0 - 12], [bx1 + 14, by0 - 12], [bx1 + 14, by1], [bx0 - 14, by1]], 4);
+    sk.fill(back, C.wood, { seed: 55, tex: true, texAng: 0.04 }); sk.ink(back, { w: 10, seed: 56 });
+    const sheet = [...curve([[bx0 + 8, by0 + 14], [(bx0 + bx1) / 2, by0 + 8], [bx1 - 8, by0 + 16]], false, 4), ...curve([[bx1 - 8, by0 + 16], [bx1 - 4, 360], [bx1 - 10, by1 - 44], [bx1 - 44, by1 - 20]], false, 4), ...curve([[bx1 - 44, by1 - 20], [(bx0 + bx1) / 2, by1 - 26], [bx0 + 10, by1 - 20]], false, 4)];
+    sheet.push(sheet[0]);
+    sk.fill(sheet, C.parchment, { dx: 0, dy: 0, wob: 0.5, seed: 57 }); sk.ink(sheet, { w: 8, seed: 58, wob: 0.7 });
+    const fold = poly([[bx1 - 10, by1 - 44], [bx1 - 44, by1 - 20], [bx1 - 40, by1 - 50]], 3); sk.fill(fold, "#E2D2A8", { dx: 0, dy: 0, wob: 0.3, seed: 59 }); sk.ink(fold, { w: 6, seed: 60, wob: 0.4 });
+    for (const px of [bx0 + 34, bx1 - 34]) { const pin = circ(px, by0 + 34, 8, { over: 0.1, seed: 61 + px }); sk.fill(pin, "#B0504A", { dx: 0, dy: 0, wob: 0.2, seed: 62 }); sk.ink(pin, { w: 4.5, seed: 63 + px, wob: 0.3 }); }
   });
-  const yc = 316;
-  armShape(sk, { x0: 338, xw: 404, xe: 566, x1: 716, yc, tw: 19, te: 31, tu: 35, sd: 71, w: 7, k: 0.8 });
+  const yc = 350;
+  armShape(sk, { x0: 338, xw: 404, xe: 566, x1: 716, yc, tw: 19, te: 31, tu: 35, sd: 71, w: 7, k: 0.8, skin: "#F3E3C4" });
   sk.ink(dense([[716, yc - 37], [716, yc + 37]]), { w: 6, seed: 73, wob: 0.3 });
   thin(sk, 0.8, () => { const b = dense([[640, yc - 37], [638, yc], [640, yc + 39]], 4); sk.ink(b, { w: 14, seed: 75, wob: 0.3, cap: "butt" }); sk.ink(b, { w: 8, color: "#B98A5E", seed: 75, wob: 0.3, cap: "butt" }); });
   vein(sk, [[392, yc + 2], [450, yc - 8], [520, yc - 4], [580, yc - 12], [630, yc - 8]], 9, [[450, yc - 8], [520, yc - 4], [580, yc - 12]], 77);
   sk.ink(circ(520, yc - 4, 30, { over: 0.25, seed: 81 }), { w: 6, color: C.gold, seed: 82, wob: 0.6 });
-  // 파브리키우스(왼쪽): 책의 그림을 가리킨다. 젊은 하비(오른쪽): 들여다보며 궁금해한다
+  // 파브리키우스(왼쪽): 자기가 그린 그림을 가리킨다. 젊은 하비(오른쪽): 들여다보며 궁금해한다
   const fp = pose({ elR: [92, -306], haR: [164, -338], elL: [-52, -262], haL: [-40, -214], tilt: 0.05 });
   person(sk, 156, 704, 0.66, fp, FABRICIUS, { name: "fabricius" });
   const hp = pose({ elL: [-70, -290], haL: [-100, -352], elR: [52, -262], haR: [40, -214], tilt: -0.1 });
@@ -216,11 +215,11 @@ function p3() {
 }
 
 /* ---------- 4, 5. 팔 묶기 ---------- */
-const ARM = { x0: 396, xw: 512, xe: 700, x1: 1010, yc: 432, tw: 40, te: 60, tu: 70 }, XT = 764;
+const ARM = { x0: 396, xw: 512, xe: 676, x1: 1010, yc: 432, tw: 40, te: 60, tu: 70 }, XT = 738;
 function armScene(sk, tight, sd) {
   ground(sk, 704, sd);
   table(sk, 540, 1010, 524, sd + 2);
-  cushion(sk, 610, 770, 524, sd + 4);
+  cushion(sk, 590, 750, 524, sd + 4);
   const { yc } = ARM;
   armShape(sk, { ...ARM, sd: sd + 6, hand: tight ? SKIN : "#F3A99B", skin: SKIN });
   if (tight) {
@@ -231,15 +230,15 @@ function armScene(sk, tight, sd) {
     arrow(sk, [[960, yc + 10], [XT + 36, yc + 10]], { w: 15, color: RED, seed: sd + 10, straight: true, head: 26, wob: 0.3 });
     for (const [r, i] of [[24, 0], [40, 1]]) sk.ink(ell(XT + 66, yc - 96, r, r, -2.25, -0.9), { w: 6, color: RED, seed: sd + 12 + i, wob: 0.2 });
   } else {
-    // 느슨히: 깊은 동맥(빨강 점선)은 끈 밑을 지나 손까지 간다. 겉의 정맥(파랑)은 손에서 돌아오다 끈에 막혀 불룩하다
-    arrow(sk, [[940, yc + 30], [720, yc + 30], [ARM.xw + 2, yc + 18]], { w: 10, color: RED, dash: [18, 12], seed: sd + 8, head: 20, wob: 0.2 });
-    sk.ink(dense([[XT + 22, yc - 24], [920, yc - 26]]), { w: 6, color: mix(BLUE, SKIN, 0.55), seed: sd + 14, wob: 0.3 });
-    vein(sk, [[ARM.xw - 8, yc - 8], [574, yc - 22], [642, yc - 14], [712, yc - 30], [XT - 22, yc - 24]], 19, [[574, yc - 22], [642, yc - 14], [712, yc - 30]], sd + 16);
+    // 느슨히: 깊은 동맥(빨강 실선, 겉의 정맥보다 가늘게)은 끈 밑을 지나 손까지 간다. 겉의 정맥(파랑)은 손에서 돌아오다 끈에 막혀 불룩하다
+    arrow(sk, [[940, yc + 30], [700, yc + 30], [ARM.xw + 2, yc + 18]], { w: 10, color: RED, seed: sd + 8, head: 20, wob: 0.3 });
+    sk.ink(dense([[XT + 22, yc - 24], [880, yc - 26]]), { w: 6, color: mix(BLUE, SKIN, 0.55), seed: sd + 14, wob: 0.3 });
+    vein(sk, [[ARM.xw - 8, yc - 8], [566, yc - 22], [626, yc - 14], [686, yc - 30], [XT - 22, yc - 24]], 19, [[566, yc - 22], [626, yc - 14], [686, yc - 30]], sd + 16);
     arrow(sk, [[556, yc - 96], [XT - 50, yc - 112]], { w: 9, color: BLUE, seed: sd + 30, straight: true, head: 20, wob: 0.3 });
   }
-  sleeve(sk, 934, yc, ARM.tu, sd + 34);
+  sleeve(sk, 872, yc, ARM.tu, sd + 34);
   tie(sk, XT, yc, ARM.tu - 2, tight, sd + 40);
-  heart(sk, 900, 262, 1.0, { color: RED, seed: sd + 60 });
+  heart(sk, 910, 250, 1.0, { color: RED, seed: sd + 60 });
 }
 function p4() {
   const sk = new Sk(W, H, { id: "d" });
@@ -276,13 +275,12 @@ function pressHand(sk, x, tipY, sd) {
 }
 function p6() {
   const sk = new Sk(W, H, { id: "f" });
-  // 가까이 본 팔뚝(손은 왼쪽 화면 밖, 심장은 오른쪽)
-  const top = curve([[-30, 252], [300, 238], [640, 226], [990, 210]], false, 5), bot = curve([[990, 486], [640, 474], [300, 466], [-30, 456]], false, 5);
-  thin(sk, 0.9, () => { sk.fill([...top, ...bot, top[0]], SKIN, { dx: 0, dy: 0, wob: 0.6, seed: 401 }); sk.ink(top, { w: 9, seed: 402 }); sk.ink(bot, { w: 9, seed: 403 }); });
+  // 가까이 본 팔뚝(왼쪽 끝에 손목과 손, 심장은 오른쪽)
+  armShape(sk, { x0: 14, xw: 164, xe: 640, x1: 1020, yc: 356, tw: 70, te: 112, tu: 132, sd: 401, k: 0.9, w: 9 });
   const vy = x => 352 - (x - 480) * 0.02;
-  const XF = 330, XV = 596;
+  const XF = 372, XV = 606;
   // 정맥: 누른 손가락의 손 쪽은 피가 차서 불룩, 손가락과 마디(판막) 사이는 비어 옅고 납작, 마디의 심장 쪽은 다시 차 있다
-  sk.ink(dense([[-30, vy(-30)], [XF - 4, vy(XF)]]), { w: 28, color: BLUE, seed: 405, wob: 0.5 });
+  sk.ink(dense([[150, vy(150) + 4], [XF - 4, vy(XF)]]), { w: 28, color: BLUE, seed: 405, wob: 0.5 });
   sk.ink(dense([[XF + 20, vy(XF)], [XV - 26, vy(XV)]]), { w: 16, color: "#D5E6F6", seed: 407, wob: 0.4 });
   for (const dy of [-10, 10]) sk.ink(dense([[XF + 30, vy(XF) + dy], [XV - 26, vy(XV) + dy]]), { w: 3.5, color: mix(BLUE, "#ffffff", 0.35), dash: [10, 9], seed: 409 + dy, wob: 0.2 });
   sk.ink(dense([[XV, vy(XV)], [990, vy(990)]]), { w: 28, color: BLUE, seed: 411, wob: 0.5 });
@@ -327,7 +325,7 @@ function p7() {
 /* ---------- 8. 1661년: 현미경이 찾은 가는 길 ---------- */
 function frogDish(sk, x, y, sd) {
   thin(sk, 0.85, () => {
-    const d = curve([[x - 62, y - 16], [x - 46, y], [x + 46, y], [x + 62, y - 16]], false, 3); sk.fill([...d, d[0]], "#EEF3F6", { dx: 0, dy: 0, wob: 0.3, seed: sd }); sk.ink([...d, d[0]], { w: 7, seed: sd + 1 });
+    const d = rrect(x - 60, y - 10, 120, 10, 3); sk.fill(d, "#D8ECF6", { dx: 0, dy: 0, wob: 0.3, seed: sd }); sk.ink(d, { w: 5.5, seed: sd + 1, wob: 0.4 });
     const G = "#5FAE5A";
     for (const sg of [-1, 1]) sk.ink(curve([[x + sg * 14, y - 22], [x + sg * 40, y - 30], [x + sg * 30, y - 16], [x + sg * 46, y - 15]]), { w: 8, color: G, seed: sd + 3 + sg, wob: 0.3 });
     const b = ell(x, y - 30, 30, 17); sk.fill(b, G, { dx: 0, dy: 0, wob: 0.4, seed: sd + 5 }); sk.ink(b, { w: 5, seed: sd + 6, wob: 0.4 });
@@ -338,34 +336,33 @@ function p8() {
   const sk = new Sk(W, H, { id: "h" });
   ground(sk, 704, 601);
   table(sk, 330, 690, 590, 603);
-  // 확대해 본 모습: 빨간 굵은 관(동맥)과 파란 굵은 관(정맥)을 잇는 아주 가는 관의 그물
+  // 확대해 본 모습(개구리 허파): 굵은 관 둘을 잇는 아주 가는 관의 그물. 한 가지 색, 방향은 화살표로만
   const cx = 730, cy = 292, r = 186;
   sk.ink(dense([[432, 548], [cx - r * 0.94, cy + r * 0.36]]), { w: 4, color: C.gray, dash: [9, 9], seed: 605, wob: 0 });
   sk.ink(dense([[404, 540], [cx - r * 0.6, cy - r * 0.8]]), { w: 4, color: C.gray, dash: [9, 9], seed: 606, wob: 0 });
   const ring = circ(cx, cy, r, { over: 0.1, seed: 607 });
   sk.fill(ring, "#FFF5EA", { dx: 0, dy: 0, wob: 0.6, seed: 608 });
   const A = [cx - 62, cy - 26], B = [cx + 62, cy + 26];
-  sk.ink(curve([[cx - 150, cy - 96], [cx - 104, cy - 58], A]), { w: 30, color: RED, seed: 611, wob: 0.5 });
-  sk.ink(curve([B, [cx + 104, cy + 58], [cx + 150, cy + 96]]), { w: 30, color: BLUE, seed: 613, wob: 0.5 });
-  // 그물: 여러 갈래의 가는 길. 동맥 쪽은 빨강, 정맥 쪽은 파랑으로 이어진다
+  sk.ink(curve([[cx - 150, cy - 96], [cx - 104, cy - 58], A]), { w: 30, color: NEUT, seed: 611, wob: 0.5 });
+  sk.ink(curve([B, [cx + 104, cy + 58], [cx + 150, cy + 96]]), { w: 30, color: NEUT, seed: 613, wob: 0.5 });
+  // 그물: 여러 갈래의 가는 길. 굵은 관 둘과 같은 색(색으로 피의 종류를 가르지 않는다)
   const lanes = [[-78, -40], [-46, -22], [-18, -8], [14, 10], [44, 26], [78, 44]];
   lanes.forEach(([n, bend], i) => {
     const nx = 0.39, ny = -0.92; // 길의 수직 방향
     const m0 = [cx - 22 + nx * n * 0.9, cy - 9 + ny * n * 0.9 + bend * 0.1], m1 = [cx + 22 + nx * n * 0.9, cy + 9 + ny * n * 0.9 - bend * 0.1];
-    const mid = [(m0[0] + m1[0]) / 2, (m0[1] + m1[1]) / 2];
-    sk.ink(curve([A, m0, mid]), { w: 5, color: RED, seed: 621 + i, wob: 0.5 });
-    sk.ink(curve([mid, m1, B]), { w: 5, color: BLUE, seed: 631 + i, wob: 0.5 });
-    sk.ink(dense([lerpP(m0, mid, 0.72), lerpP(mid, m1, 0.28)]), { w: 5.4, color: "#8E6FC4", seed: 641 + i, wob: 0.2 });
+    sk.ink(curve([A, m0, m1, B]), { w: 5, color: NEUT, seed: 621 + i, wob: 0.5 });
   });
-  arrow(sk, [[cx - 152, cy - 34], [cx - 106, cy + 6]], { w: 6, color: RED, seed: 651, straight: true, head: 14, wob: 0.2 });
-  arrow(sk, [[cx + 106, cy - 6], [cx + 152, cy + 34]], { w: 6, color: BLUE, seed: 653, straight: true, head: 14, wob: 0.2 });
+  // 흐르는 방향은 화살표로만: 굵은 관 → 그물 → 굵은 관
+  arrow(sk, [[cx - 156, cy - 30], [cx - 108, cy + 10]], { w: 6.5, color: "#5A5F68", seed: 651, straight: true, head: 15, wob: 0.2 });
+  arrow(sk, [[cx - 20, cy + 78], [cx + 30, cy + 98]], { w: 6.5, color: "#5A5F68", seed: 652, straight: true, head: 15, wob: 0.2 });
+  arrow(sk, [[cx + 108, cy - 10], [cx + 156, cy + 30]], { w: 6.5, color: "#5A5F68", seed: 653, straight: true, head: 15, wob: 0.2 });
   thin(sk, 0.9, () => sk.ink(ring, { w: 10, seed: 609, wob: 0.8 }));
   emark(sk, 524, 150, 0.72, { seed: 655 });
   // 말피기: 현미경을 들여다본다
-  const P = pose({ head: [22, -430], elR: [96, -256], haR: [150, -196], elL: [-52, -262], haL: [-40, -214], tilt: 0.2 });
-  person(sk, 248, 704, 0.64, P, MALPIGHI, { name: "malpighi", face: "curious" });
+  const P = pose({ neck: [14, -340], head: [50, -428], elR: [84, -252], haR: [122, -190], elL: [-52, -262], haL: [-40, -214], tilt: 0.3 });
+  person(sk, 262, 704, 0.64, P, MALPIGHI, { name: "malpighi", face: "curious" });
   microscope(sk, 430, 590, 0.82, { seed: 661, sample: false });
-  frogDish(sk, 596, 590, 671);
+  frogDish(sk, 548, 590, 671);
   return sk;
 }
 function lerpP(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]; }
@@ -384,8 +381,8 @@ const CUTS = [
     bubbles: [{ who: "student", text: "피가<br>사라져요?" }, { who: "teacher", text: "그렇게<br>믿었대요" }],
   },
   {
-    fn: p2, when: "1600년대 초, 이탈리아 파도바", stage: "스승의 발견", title: "정맥 속 작은 문",
-    caption: "영국 청년 하비는 1600년 무렵 이탈리아 파도바 대학에서 파브리키우스 교수에게 배웠어요. 스승은 정맥을 따라 마디처럼 놓인 작은 <b>판막</b>을 자세히 그려 1603년에 책으로 펴냈어요. 다만 스승은 판막이 피를 천천히 흘려 고루 나누는 장치라고 생각했어요.",
+    fn: p2, when: "1600년 무렵, 이탈리아 파도바", stage: "스승의 발견", title: "정맥 속 작은 문",
+    caption: "영국 청년 하비는 1600년 무렵 이탈리아 파도바 대학에서 파브리키우스 교수에게 배웠어요. 스승은 정맥을 따라 마디처럼 놓인 작은 <b>판막</b>을 1574년에 처음 보았고, 강의에서 학생들에게 보여 주었어요. 1603년에는 그림을 곁들여 책으로도 펴냈지요. 다만 스승은 판막이 피를 천천히 흘려 고루 나누는 장치라고 생각했어요.",
   },
   {
     fn: p3, when: "1620년대, 영국 런던", stage: "셈", title: "반 시간이면 온몸의 피보다 많아",
@@ -405,13 +402,13 @@ const CUTS = [
     caption: "하비는 불룩한 정맥을 한 손가락으로 누르고, 다른 손가락으로 피를 훑어 보았어요. 심장 쪽으로는 피가 밀려가 그 사이가 비었어요. 하지만 손 쪽으로 되밀면 마디에 있는 <b>판막</b>에 막혀 넘어가지 않았어요. 정맥 속 피는 심장 쪽으로만 흘러요.",
   },
   {
-    fn: p7, when: "1628년, 독일 프랑크푸르트", stage: "결론", title: "같은 피가 돌고 돈다",
-    caption: "1628년, 하비는 셈과 실험을 모아 독일 프랑크푸르트에서 책을 펴냈어요. 심장은 펌프처럼 피를 밀어내고, 같은 피가 온몸을 돌아 다시 심장으로 와요. 이것을 혈액의 <b>순환</b>이라고 해요. 심장이 쉬지 않고 뛰는 까닭이지요.",
+    fn: p7, when: "1628년, 영국 런던", stage: "결론", title: "같은 피가 돌고 돈다",
+    caption: "1628년, 런던의 하비는 셈과 실험을 모아 책을 썼어요. 책은 독일 프랑크푸르트에서 찍혀 나왔어요. 심장은 펌프처럼 피를 밀어내고, 같은 피가 온몸을 돌아 다시 심장으로 와요. 이것이 혈액의 <b>순환</b>이고, 심장이 쉬지 않고 뛰는 까닭이에요.",
     bubbles: [{ who: "harvey", text: "피는 원을 그리며<br>돌아요" }],
   },
   {
     fn: p8, when: "1661년, 이탈리아 볼로냐", stage: "마지막 빈칸", title: "현미경이 찾은 가는 길",
-    caption: "하비는 동맥과 정맥이 어떻게 이어지는지는 끝내 보지 못하고 1657년에 세상을 떠났어요. 1661년, 이탈리아 볼로냐의 말피기가 현미경으로 개구리 허파를 들여다보다 둘을 잇는 아주 가는 혈관의 그물을 찾았어요. 오늘날 <b>모세혈관</b>이라 부르는 길이에요.",
+    caption: "하비는 동맥과 정맥이 어떻게 이어지는지는 끝내 보지 못하고 1657년에 세상을 떠났어요. 1661년, 이탈리아 볼로냐의 말피기가 현미경으로 개구리 허파를 들여다보다 굵은 혈관에서 온 피가 아주 가는 혈관의 그물을 지나 다른 굵은 혈관으로 가는 것을 보았어요. 동맥과 정맥을 잇는 이 가는 길이 오늘날 <b>모세혈관</b>이에요.",
     term: { name: "순환계", def: "심장, 혈관, 혈액으로 이루어져 몸속에서 물질을 운반하는 기관계예요." },
   },
 ];
