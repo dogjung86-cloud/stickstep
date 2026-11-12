@@ -49,6 +49,48 @@
 .g2u8x-log.tight .g2u8x-log-row { height: 38px; }
 .g2u8x-photo { position: absolute; object-fit: cover; border-radius: 10px; pointer-events: none; user-select: none; }
 
+/* ── 실사를 얹는 무대 ───────────────────────────────── */
+.g2u8x-mw { right: 12px; top: 130px; width: 116px; height: 58px; object-position: 50% 46%; filter: brightness(1.5); border: 1px solid rgba(255, 255, 255, .35); border-radius: 6px; }
+.g2u8x-gal { left: 8px; top: 10px; width: 210px; height: 210px; border-radius: 12px; }
+.g2u8x-mwview {
+  position: absolute; right: 8px; top: 28px; width: calc(100% - 236px); height: 84px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .3);
+  background-color: #000; background-repeat: no-repeat; background-size: 420% auto; background-position: 50% 46%; filter: brightness(1.6);
+  opacity: .18; transition: opacity .3s, background-position .5s var(--ease-out);
+}
+.g2u8x-mwview.on { opacity: 1; }
+.g2u8x-mwview.out { background-position: 1% 46%; }
+.g2u8x-zoom { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; opacity: 0; transition: opacity .35s; pointer-events: none; }
+.g2u8x-zoom.on { opacity: 1; }
+.g2u8x-tag {
+  position: absolute; left: 12px; top: 12px; height: 26px; padding: 0 11px; border-radius: 999px; display: none; align-items: center;
+  background: rgba(11, 21, 36, .78); border: 1px solid rgba(255, 255, 255, .2); color: #E8EEF9; font-size: 12.5px; font-weight: 800; pointer-events: none;
+}
+.g2u8x-tag.on { display: flex; }
+.g2u8x-album { position: absolute; inset: 0; display: none; grid-template-columns: repeat(5, 1fr); gap: 5px; padding: 26px 8px 8px; background: #070D1C; border-radius: inherit; align-content: start; }
+.g2u8x-album.on { display: grid; }
+.g2u8x-album-it { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; text-align: center; }
+.g2u8x-album-it img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
+.g2u8x-album-it b { font-size: 12px; font-weight: 800; color: #FFD166; white-space: nowrap; letter-spacing: -.04em; }
+.g2u8x-album-it span { font-size: 12px; font-weight: 600; color: #E8EEF9; line-height: 15px; letter-spacing: -.05em; word-break: keep-all; }
+.g2u8x-real { position: absolute; right: 8px; top: 28px; width: 100px; height: 100px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .3); opacity: 0; transition: opacity .3s; pointer-events: none; }
+.g2u8x-real.on { opacity: 1; }
+.g2u8x-shot { position: absolute; right: 10px; top: 14px; width: 108px; height: 108px; object-fit: cover; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .3); opacity: 0; transition: opacity .3s; pointer-events: none; }
+.g2u8x-shot.on { opacity: 1; }
+.g2u8x-mars { position: absolute; right: 12px; top: 46px; width: 96px; height: 96px; object-fit: cover; border-radius: 50%; pointer-events: none; }
+
+.g2u8x-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.g2u8x-chips.c3 { grid-template-columns: repeat(3, 1fr); }
+.g2u8x-chip {
+  height: 40px; padding: 0 4px; border-radius: 12px; border: 1.5px solid var(--n300); background: #fff; font-size: 13px; font-weight: 700; color: var(--ink);
+  box-shadow: var(--sh-card); transition: transform .12s, border-color .2s, background .2s; white-space: nowrap; letter-spacing: -.04em;
+}
+.g2u8x-chips.c3 .g2u8x-chip { height: 48px; }
+.g2u8x-chip:active { transform: scale(.97); }
+.g2u8x-chip.on { border-color: var(--subj-star); background: var(--subj-star-tint); color: var(--x-ink); font-weight: 800; }
+.g2u8x-chip.miss { border-color: var(--red); background: #FFF4F5; color: var(--red); }
+.g2u8x-seg.done { border-color: var(--green); color: #087F5B; }
+.g2u8x-step .bv-card b { font-size: 13.5px; letter-spacing: -.04em; }
+
 /* ── 도입(opener) 일곱 장면 ────────────────────────
    그림의 묶음: -s0(조작 전에만) · -s1(조작 뒤) · -mv(움직이는 것) · -far(조금만 움직이는 것). 무대의 on1 클래스가 바꾼다. */
 .opn-g2u8-btn {

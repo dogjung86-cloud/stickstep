@@ -8,6 +8,7 @@ import type { Step } from "../../lessons/types";
 import { G2_UNIT8 } from "./unit8";
 import { remakeUnit } from "../v5remake";
 import { L1, L2, L3, L4 } from "./unit8v5parts";
+import { L5, L6, L7, L8 } from "./unit8v5parts2";
 
 const all = (steps: Step[]) => ({ after: (): Step[] => steps });
 
@@ -16,4 +17,9 @@ export const G2_UNIT8_V5: Unit | null = remakeUnit(G2_UNIT8, {
   g2u8l2: all(L2),
   g2u8l3: all(L3),
   g2u8l4: all(L4),
+  g2u8l5: all(L5),
+  g2u8l6: all(L6),
+  // 맨 앞의 만화(정본의 첫 스텝)는 자리와 내용 모두 그대로 둔다
+  g2u8l7: { after: (steps: Step[]): Step[] => [steps[0], ...L7] },
+  g2u8l8: all(L8),
 });

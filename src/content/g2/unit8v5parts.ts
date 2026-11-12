@@ -11,6 +11,7 @@ export const lab = (type: string) => (o: { title: string; cta?: string }): Step 
 type Block = NonNullable<Parameters<typeof concept>[0]["blocks"]>[number];
 export const term = (name: string, def: string): Block => ({ k: "term", name, def }) as Block;
 export const note = (html: string, tone: "blue" | "amber" | "violet" = "amber"): Block => ({ k: "note", tone, html }) as Block;
+export const fig = (svg: string, cap: string): Block => ({ k: "figure", svg, cap }) as Block;
 export const words = (o: { title: string; lead: string; blocks: Block[]; cta: string }): Step => concept({ kicker: "과학 용어 정복하기", kickerTone: "star", ...o });
 /** 선택형, OX, 복수 선택에 "몇 번째 / 모두 몇 개" 번호를 매긴다. */
 export const numbered = (steps: Step[]): Step[] => {

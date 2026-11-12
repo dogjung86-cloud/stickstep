@@ -10,6 +10,14 @@ import { magLab } from "./magLab";
 import { absLab } from "./absLab";
 import { heaterLab } from "./heaterLab";
 import { starTempLab } from "./starTempLab";
+import { modelLab } from "./modelLab";
+import { galaxyLab } from "./galaxyLab";
+import { observeLab } from "./observeLab";
+import { nebulaLab } from "./nebulaLab";
+import { balloonLab } from "./balloonLab";
+import { centerLab } from "./centerLab";
+import { missionLab } from "./missionLab";
+import { planLab } from "./planLab";
 
 export const G2U8V5_STEPS: Record<string, StepRenderer> = {
   g2u8PencilLab: pencilLab,
@@ -20,4 +28,12 @@ export const G2U8V5_STEPS: Record<string, StepRenderer> = {
   g2u8AbsLab: absLab,
   g2u8HeaterLab: heaterLab,
   g2u8StarTempLab: starTempLab,
+  g2u8ModelLab: modelLab,
+  g2u8GalaxyLab: galaxyLab,
+  g2u8ObserveLab: observeLab,
+  g2u8NebulaLab: nebulaLab,
+  g2u8BalloonLab: balloonLab,
+  g2u8CenterLab: centerLab,
+  g2u8MissionLab: missionLab,
+  g2u8PlanLab: planLab,
 };

@@ -86,7 +86,8 @@ export function sCap(text: string): HTMLElement {
   return el("div", { class: "g2u8x-cap", html: text });
 }
 
-/** 꾹 누르는 동안 켜지는 버튼. 손을 떼거나 밖으로 나가면 꺼진다. 키보드는 누를 때마다 켜고 끈다. */
+/** 꾹 누르는 동안 켜지는 버튼. 손을 떼거나 밖으로 나가면 꺼진다. 키보드는 누를 때마다 켜고 끈다.
+ *  일이 끝나 버튼을 놓은 상태로 되돌릴 때는 sRelease(버튼)을 부른다. */
 export function sHold(cls: string, text: string, on: (held: boolean) => void): HTMLButtonElement {
   const b = el("button", { class: `bv-btn g2u8x-hold ${cls}`, text, attrs: { type: "button" } }) as HTMLButtonElement;
   let held = false;
@@ -107,8 +108,10 @@ export function sHold(cls: string, text: string, on: (held: boolean) => void): H
     if ((e as MouseEvent).detail === 0 && !b.disabled) set(!held);
   });
   b.addEventListener("contextmenu", (e) => e.preventDefault());
+  b.addEventListener("g2u8-release", () => set(false));
   return b;
 }
+export const sRelease = (b: HTMLButtonElement): void => void b.dispatchEvent(new Event("g2u8-release"));
 
 /** 기록 줄(해 본 것이 차례로 채워진다). */
 export interface SLog {
