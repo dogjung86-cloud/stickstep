@@ -56,7 +56,7 @@ export const g2u1WarmLab: StepRenderer = (host, step, api) => {
     const n = Math.round(left * 9);
     for (let i = 0; i < n; i++) g += `<circle cx="${(66 + (i % 6) * 7.6 + r() * 3).toFixed(1)}" cy="${(180 - Math.floor(i / 6) * 5.4 - r() * 2).toFixed(1)}" r="3" fill="${P.kno3}" stroke="rgba(0,0,0,.25)" stroke-width=".6"/>`;
     pile.innerHTML = g;
-    log.set([`물 10 g + 질산 칼륨 <b class="k">6 g</b>`, `<b>${T} ℃</b> · 녹은 양 <b>${fx(dis)} g</b> · 남은 양 <b class="${left > 0.05 ? "w" : ""}">${fx(left)} g</b>`]);
+    log.set([`질산 칼륨 <b class="k">6 g</b> · 물 <b>${T} ℃</b>`, `녹은 양 <b>${fx(dis)} g</b> · 남은 양 <b class="${left > 0.05 ? "w" : ""}">${fx(left)} g</b>`]);
     host.dataset.g2u1Wm = String(T);
   }
   const range = bvRange({

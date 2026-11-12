@@ -108,7 +108,7 @@ export function g1BoilFig(): string {
   ];
   return wrap(
     "액체 가, 나, 다를 가열할 때 시간에 따른 온도 그래프. 세 액체 모두 꺾인 뒤부터 끓고 있다",
-    a.svg + C.map(([t, p, c]) => line(p, a, c) + tag(a.gx(11), a.gy(p[2][1]) - 7 + (t === "(나)" ? 16 : 0), t, c)).join(""),
+    a.svg + C.map(([t, p, c]) => line(p, a, c) + (t === "(나)" ? tag(a.gx(7.4), a.gy(89.5) - 12, t, c) : tag(a.gx(11), a.gy(p[2][1]) - 7, t, c))).join(""),
   );
 }
 

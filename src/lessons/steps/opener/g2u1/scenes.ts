@@ -56,14 +56,14 @@ export function sea(c: OpenerCtx): void {
   });
 }
 
-/** g2u1l3 「설탕은 넣는 대로 다 녹을까요?」 한 숟갈씩 넣는다. */
+/** g2u1l3 「소금은 넣는 대로 다 녹을까요?」 물 한 컵에 큰 숟갈로 한 숟갈씩 넣는다(물 200 g에 소금은 약 72 g, 큰 숟갈로 네 숟갈 남짓까지 녹는다). */
 export function cocoa(c: OpenerCtx): void {
   const M = metaOf(c).cocoa;
   layer(c, "cocoaBase");
   const fall = part(c, ".opn-g2u1-cc-fall");
   let n = 0;
-  bet(c, "따뜻한 코코아에 설탕을 한 숟갈씩 계속 넣으며 저을 거예요. 어떻게 될까요?", ["어느 순간부터 바닥에 쌓인다", "넣는 대로 다 녹는다"], "버튼을 눌러 <b>설탕</b>을 넣어 보세요.", (picked) => {
-    const b = ctlBtn(c, "설탕 한 숟갈 넣기");
+  bet(c, "물 한 컵에 소금을 큰 숟갈로 한 숟갈씩 계속 넣으며 저을 거예요. 어떻게 될까요?", ["어느 순간부터 바닥에 쌓인다", "넣는 대로 다 녹는다"], "버튼을 눌러 <b>소금</b>을 넣어 보세요.", (picked) => {
+    const b = ctlBtn(c, "소금 한 숟갈 넣기");
     b.addEventListener("click", () => {
       if (n >= M.spoons) return;
       n += 1;
@@ -72,10 +72,10 @@ export function cocoa(c: OpenerCtx): void {
       fall?.classList.remove("go");
       void fall?.getBoundingClientRect();
       fall?.classList.add("go");
-      b.textContent = n < M.spoons ? `설탕 한 숟갈 넣기 (${n}숟갈 넣음)` : "설탕 여섯 숟갈을 넣었어요";
+      b.textContent = n < M.spoons ? `소금 한 숟갈 넣기 (${n}숟갈 넣음)` : "소금 여섯 숟갈을 넣었어요";
       if (n > M.limit) c.later(() => c.stage.classList.add(`pile${n - M.limit}`), 500);
       if (n === M.limit) c.say("네 숟갈째도 저으니 <b>다 녹았어요</b>. 더 넣어 보세요.");
-      if (n === M.limit + 1) c.later(() => c.say("어, 바닥에 <b>녹지 않은 설탕</b>이 보여요. 한 번 더!"), 500);
+      if (n === M.limit + 1) c.later(() => c.say("어, 바닥에 <b>녹지 않은 소금</b>이 보여요. 한 번 더!"), 500);
       if (n === M.spoons) {
         b.disabled = true;
         c.later(() => wrap(c, `${head(picked, "어느 순간")} 다섯째 숟갈부터는 저어도 <b>바닥에 쌓였어요</b>. 녹는 양에 끝이 있는 걸까요?`), 1000);
@@ -84,7 +84,7 @@ export function cocoa(c: OpenerCtx): void {
   });
 }
 
-/** g2u1l4 「한여름 낮, 물고기는 어디에?」 꾹 눌러 한낮으로 보낸다. */
+/** g2u1l4 「한여름의 물고기는 어디에?」 꾹 눌러 시원한 봄에서 더운 한여름으로 보낸다. */
 export function fish(c: OpenerCtx): void {
   const M = metaOf(c).fish;
   layer(c, "fishBase");
@@ -98,8 +98,8 @@ export function fish(c: OpenerCtx): void {
     c.stage.classList.toggle("gulp", p > 0.85);
   };
   paint(0);
-  bet(c, "이른 아침의 연못이에요. 해가 높이 떠 물이 따뜻해지면 물고기는?", ["수면 가까이 올라온다", "바닥 가까이 내려간다", "제자리에 그대로 있다"], "버튼을 <b>꾹 눌러</b> 한낮으로 보내 보세요.", (picked) => {
-    hold(c, ctlBtn(c, "꾹 눌러 한낮으로"), 3000, paint, () => wrap(c, `${head(picked, "수면")} 물고기가 <b>수면</b>에서 입을 뻐끔거려요. 따뜻해진 물속에서 무엇이 모자라졌을까요?`));
+  bet(c, "시원한 봄날의 연못이에요. 더운 한여름이 되어 물이 따뜻해지면 물고기는?", ["수면 가까이 올라온다", "바닥 가까이 내려간다", "제자리에 그대로 있다"], "버튼을 <b>꾹 눌러</b> 한여름으로 보내 보세요.", (picked) => {
+    hold(c, ctlBtn(c, "꾹 눌러 한여름으로"), 3000, paint, () => wrap(c, `${head(picked, "수면")} 물고기가 <b>수면</b>에서 입을 뻐끔거려요. 따뜻해진 물속에서 무엇이 모자라졌을까요?`));
   });
 }
 

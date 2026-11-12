@@ -200,7 +200,12 @@ export const g2u1MeasureLab: StepRenderer = (host, step, api) => {
     lab.todo("[data-k='calc']");
     const bCalc = bvBtn("main", "질량 ÷ 부피 계산하기");
     bCalc.dataset.k = "calc";
-    cards.forEach((c) => (c.el.disabled = true));
+    cards.forEach((c) => {
+      c.el.disabled = true;
+      c.on(false);
+    });
+    sel = -1;
+    paint();
     f.say("가와 나는 크기가 같은데 질량이 달라요. 조각마다 <b>질량 ÷ 부피</b>를 계산해 봐요.");
     f.slot.setControls(bvCards(2, ...cards), bCalc);
     api.setCTA("질량 ÷ 부피를 계산해 보세요", { enabled: false });

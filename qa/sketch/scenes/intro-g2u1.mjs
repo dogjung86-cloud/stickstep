@@ -2,7 +2,7 @@
 // 그림 속에 글자와 숫자는 넣지 않는다(기호만). 움직일 부분은 <g class>로 묶고 앱의 CSS와 코드가 움직인다.
 //   rings  (g2u1l1) 윗접시저울과 똑같아 보이는 반지 둘
 //   sea    (g2u1l2) 수영장과 소금 호수에 누운 두 사람
-//   cocoa  (g2u1l3) 유리컵의 코코아와 설탕
+//   cocoa  (g2u1l3) 물 한 컵과 소금(장면 이름은 처음 지은 대로 둔다)
 //   fish   (g2u1l4) 연못의 물고기와 해
 //   gallium(g2u1l5) 손바닥 위의 갈륨 동전과 철 동전
 //   milk   (g2u1l6) 우유 컵과 확대해 본 동그란 창
@@ -83,14 +83,14 @@ export function seaBase() {
   return { sk };
 }
 
-/* ══════════ 3. 코코아와 설탕 (g2u1l3) ══════════ */
+/* ══════════ 3. 물 한 컵과 소금 (g2u1l3) ══════════ */
 export const CC = { spoons: 6, limit: 4 };
 export function cocoaBase() {
   const sk = new Sk(W, H, { id: "cc" });
   floor(sk, 500, 3);
   const liquid = poly([[352, 220], [608, 220], [590, 480], [370, 480]], 6);
-  sk.fill(liquid, "#B9783F", { dx: 0, dy: 0, wob: 0.5, seed: 5, tex: 0.6 });
-  // 바닥에 쌓이는 설탕(다섯째, 여섯째 숟갈)
+  sk.fill(liquid, "#CFE8F7", { dx: 0, dy: 0, wob: 0.5, seed: 5, tex: 0.5 });
+  // 바닥에 쌓이는 소금(다섯째, 여섯째 숟갈)
   [[480, 462, 70, 16], [480, 448, 96, 28]].forEach(([x, y, rx, ry], i) => {
     g(sk, `opn-g2u1-cc-pile p${i + 1}`, () => {
       const pile = closed(curve([[x - rx, 478], [x - rx * 0.5, 478 - ry], [x, 478 - ry * 1.3], [x + rx * 0.5, 478 - ry], [x + rx, 478]], false, 3));
@@ -100,9 +100,9 @@ export function cocoaBase() {
   });
   const cup = dense([[330, 150], [366, 490], [594, 490], [630, 150]], 6);
   sk.ink(cup, { w: 11, wob: 0.8, seed: 15 });
-  sk.ink(dense([[352, 220], [608, 220]], 6), { w: 7, color: "#8A5526", wob: 0.6, seed: 16 });
+  sk.ink(dense([[352, 220], [608, 220]], 6), { w: 7, color: C.blue, wob: 0.6, seed: 16 });
   sk.ink(dense([[352, 180], [360, 250]]), { w: 6, color: C.white, wob: 0.3, seed: 17 });
-  // 숟가락과 떨어지는 설탕(앱이 넣을 때마다 떨어뜨린다)
+  // 숟가락과 떨어지는 소금(앱이 넣을 때마다 떨어뜨린다)
   g(sk, "opn-g2u1-cc-spoon", () => {
     sk.ink(dense([[700, 60], [560, 130]], 6), { w: 10, color: C.gray, wob: 0.5, seed: 21 });
     const bowl = ell(530, 142, 40, 18);
