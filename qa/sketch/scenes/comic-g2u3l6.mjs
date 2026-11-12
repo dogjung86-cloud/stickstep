@@ -124,7 +124,7 @@ function p1() {
   });
   qmark(sk, W - 538, 236, 0.5, { color: "#F5E9C9", seed: 67 });
   const P = pose({ elR: [104, -316], haR: [196, -372], elL: [-50, -262], haL: [-30, -214], tilt: 0.06 });
-  drawFigure(sk, 168, 704, 0.63, P, { ...NEWTON, name: "newton", face: "curious" });
+  drawFigure(sk, 182, 704, 0.63, P, { ...NEWTON, name: "newton", face: "curious" });
   return sk;
 }
 
@@ -166,7 +166,7 @@ function p2() {
   arrow(sk, ell(c1[0], c1[1] + 6, 70, 70, -2.5, -0.75), { w: 6, color: "#F5E9C9", seed: 119, head: 16, wob: 0.2, straight: true });
   });
   const P = pose({ elR: [104, -322], haR: [190, -392], elL: [-56, -262], haL: [-40, -214], tilt: 0.06 });
-  drawFigure(sk, 168, 704, 0.63, P, { ...NEWTON, name: "newton", face: "determined" });
+  drawFigure(sk, 182, 704, 0.63, P, { ...NEWTON, name: "newton", face: "determined" });
   return sk;
 }
 
@@ -208,15 +208,15 @@ function p3() {
   sk.ink(spot, { w: 4, color: "#F2DF9A", seed: 177, wob: 0.3 });
   });
   const P = pose({ elL: [-104, -322], haL: [-180, -400], elR: [100, -322], haR: [170, -400], tilt: 0.04 });
-  drawFigure(sk, 168, 704, 0.63, P, { ...NEWTON, name: "newton", face: "wide" });
+  drawFigure(sk, 182, 704, 0.63, P, { ...NEWTON, name: "newton", face: "wide" });
   return sk;
 }
 
 /* ---------- 4. 물체의 색은 되돌려 보낸 빛 ---------- */
-// 햇빛 화살표: 흰 화살표에 노란 테
+// 햇빛 화살표: 속이 흰 화살표에 잉크색 테(노란 빛으로 읽히지 않게)
 function sunArrow(sk, pts, sd) {
-  arrow(sk, pts, { w: 13, color: "#EDB92E", seed: sd, straight: true, head: 24, wob: 0.2 });
-  arrow(sk, pts, { w: 5, color: C.white, seed: sd, straight: true, head: 24, wob: 0.2 });
+  arrow(sk, pts, { w: 15, color: C.ink, seed: sd, straight: true, head: 26, wob: 0.2 });
+  arrow(sk, pts, { w: 8.5, color: C.white, seed: sd, straight: true, head: 26, wob: 0.2 });
 }
 // 안료 가루를 담은 얕은 접시. (x, y) = 접시 테 높이의 가운데
 function dish(sk, x, y, color, sd) {
@@ -247,15 +247,15 @@ function p4() {
   dish(sk, A, dy, "#E2572B", 201);
   dish(sk, Bx, dy, "#3C7BD0", 211);
   // 들어오는 햇빛(흰빛)
-  sunArrow(sk, [[A + 128, 168], [A + 34, dy - 62]], 221);
-  sunArrow(sk, [[Bx + 110, 168], [Bx + 34, dy - 62]], 223);
+  sunArrow(sk, [[A + 150, 168], [A + 50, dy - 52]], 221);
+  sunArrow(sk, [[Bx + 126, 168], [Bx + 50, dy - 52]], 223);
   // 되돌려 보내는 빛: 붉은 가루는 빨간 빛을 많이, 푸른 가루는 파란 빛을 많이
-  arrow(sk, [[A - 22, dy - 62], [A - 124, 300]], { w: 12, color: RED, seed: 225, straight: true, head: 30, wob: 0.3 });
-  arrow(sk, [[A - 56, dy - 44], [A - 96, dy - 108]], { w: 5, color: GREEN, seed: 227, straight: true, head: 12, wob: 0.2 });
-  arrow(sk, [[A - 82, dy - 30], [A - 126, dy - 86]], { w: 5, color: BLUE, seed: 229, straight: true, head: 12, wob: 0.2 });
-  arrow(sk, [[Bx - 22, dy - 62], [Bx - 124, 300]], { w: 12, color: BLUE, seed: 231, straight: true, head: 30, wob: 0.3 });
-  arrow(sk, [[Bx - 56, dy - 44], [Bx - 96, dy - 108]], { w: 5, color: GREEN, seed: 233, straight: true, head: 12, wob: 0.2 });
-  arrow(sk, [[Bx - 82, dy - 30], [Bx - 126, dy - 86]], { w: 5, color: RED, seed: 235, straight: true, head: 12, wob: 0.2 });
+  arrow(sk, [[A + 4, dy - 50], [A - 96, 290]], { w: 12, color: RED, seed: 225, straight: true, head: 30, wob: 0.3 });
+  arrow(sk, [[A - 14, dy - 40], [A - 56, dy - 110]], { w: 5, color: GREEN, seed: 227, straight: true, head: 12, wob: 0.2 });
+  arrow(sk, [[A - 36, dy - 30], [A - 92, dy - 90]], { w: 5, color: BLUE, seed: 229, straight: true, head: 12, wob: 0.2 });
+  arrow(sk, [[Bx + 4, dy - 50], [Bx - 96, 290]], { w: 12, color: BLUE, seed: 231, straight: true, head: 30, wob: 0.3 });
+  arrow(sk, [[Bx - 14, dy - 40], [Bx - 56, dy - 110]], { w: 5, color: GREEN, seed: 233, straight: true, head: 12, wob: 0.2 });
+  arrow(sk, [[Bx - 36, dy - 30], [Bx - 92, dy - 90]], { w: 5, color: RED, seed: 235, straight: true, head: 12, wob: 0.2 });
   // 편지를 쓰는 뉴턴
   const letter = poly([[236, 562], [338, 562], [356, 530], [254, 530]], 4);
   sk.fill(letter, C.parchment, { dx: 0, dy: 0, wob: 0.4, seed: 237 }); sk.ink(letter, { w: 6, seed: 238, wob: 0.5 });
@@ -297,11 +297,9 @@ function p5() {
     sk.ink(circ(cx, cy, r1, { over: 0.05, seed: 281 }), { w: 7, seed: 282, wob: 0.6 });
     sk.ink(circ(cx, cy, r0, { over: 0.05, seed: 283 }), { w: 6, seed: 284, wob: 0.5 });
   });
-  // 가운데의 흰 점과 물음표, 둘레의 세 곳에서 가운데로 가는 점선 화살표
-  for (const [k, an] of [-Math.PI / 2 + 0.33, Math.PI / 6 + 0.33, Math.PI * 5 / 6 + 0.33].entries()) arrow(sk, [[cx + (r0 - 10) * Math.cos(an), cy + (r0 - 10) * Math.sin(an)], [cx + 50 * Math.cos(an), cy + 50 * Math.sin(an)]], { w: 5, color: "#6B7280", dash: [8, 7], seed: 291 + k, straight: true, head: 13, wob: 0.1 });
-  const dot = circ(cx, cy, 36, { over: 0.1, seed: 295 });
-  sk.fill(dot, C.white, { dx: 0, dy: 0, wob: 0.3, seed: 296 }); sk.ink(dot, { w: 5, color: C.gray, seed: 297, wob: 0.3 });
-  qmark(sk, cx, cy + 4, 0.42, { color: C.ink, seed: 299 });
+  // 가운데: 빈 점선 동그라미 셋과 물음표(어느 색인지 고르지 않는다. 몇 가지 빛이면 될지 모른다는 것만)
+  for (const [k, an] of [-Math.PI / 2, Math.PI / 6, Math.PI * 5 / 6].entries()) sk.ink(circ(cx + 64 * Math.cos(an), cy + 64 * Math.sin(an), 25, { over: 0, seed: 291 + k }), { w: 5, color: "#6B7280", dash: [9, 8], seed: 294 + k, wob: 0.2 });
+  qmark(sk, cx, cy + 6, 0.36, { color: C.ink, seed: 299 });
   const P = pose({ elR: [100, -310], haR: [186, -356], elL: [-50, -260], haL: [-30, -214], tilt: 0.06 });
   drawFigure(sk, 178, 704, 0.66, P, { ...NEWTON_OLD, name: "newton", face: "curious" });
   return sk;
@@ -374,37 +372,43 @@ function p6() {
   cell(sk, 740, 606, 32, 96, BLUE, 329);
   // 사진기가 리본꽃을 본다(점선)
   sk.ink(dense([[lxE + 54, lyE], [782, 400]]), { w: 4, color: C.gray, dash: [9, 9], seed: 333, wob: 0 });
-  const P = pose({ elR: [96, -300], haR: [170, -326], elL: [-50, -260], haL: [-30, -214], tilt: 0.06 });
-  maxwell(sk, 140, 0.64, P);
+  const P = pose({ elR: [88, -296], haR: [146, -322], elL: [-50, -260], haL: [-30, -214], tilt: 0.06 });
+  maxwell(sk, 186, 0.64, P);
   return sk;
 }
 
 /* ---------- 7. 세 빛을 한곳에 ---------- */
 // 환등기(오른쪽을 본다): 굴뚝 달린 상자 + 놋쇠 렌즈 통 + 색 액체 통. (x, ly) = 몸통 왼쪽, 렌즈 높이. 빛이 나가는 점을 돌려준다
-function lantern(sk, x, ly, color, sd) {
+function lantern(sk, x, ly, color, sd, rot = 0) {
   thin(sk, 0.8, () => {
-    sk.ink(dense([[x + 14, ly + 44], [x + 14, 700]], 6), { w: 9, color: WOODD, seed: sd, wob: 0.4 });
-    sk.ink(dense([[x - 12, ly + 46], [x + 104, ly + 46]], 6), { w: 9, color: WOODD, seed: sd + 1, wob: 0.4 });
-    const ch = rrect(x + 26, ly - 92, 34, 54, 5); sk.fill(ch, "#5A5F68", { dx: 0, dy: 0, wob: 0.3, seed: sd + 2 }); sk.ink(ch, { w: 7, seed: sd + 3 });
-    sk.ink(dense([[x + 16, ly - 94], [x + 70, ly - 94]]), { w: 8, seed: sd + 4, wob: 0.3 });
-    const body = rrect(x, ly - 44, 92, 86, 8); sk.fill(body, "#7A808C", { dx: 0, dy: 0, wob: 0.4, seed: sd + 5, tex: 0.7 }); sk.ink(body, { w: 8, seed: sd + 6 });
-    const barrel = rrect(x + 90, ly - 16, 48, 32, 6); sk.fill(barrel, BRASS, { dx: 0, dy: 0, wob: 0.3, seed: sd + 7 }); sk.ink(barrel, { w: 7, seed: sd + 8 });
+    sk.ink(dense([[x + 14, ly + 50], [x + 14, 700]], 6), { w: 9, color: WOODD, seed: sd, wob: 0.4 });
+    sk.ink(dense([[x - 12, ly + 52], [x + 104, ly + 52]], 6), { w: 9, color: WOODD, seed: sd + 1, wob: 0.4 });
   });
-  cell(sk, x + 144, ly - 30, 16, 60, color, sd + 10);
-  return [x + 162, ly];
+  // 몸통은 스크린 쪽으로 기울여 렌즈 통의 방향과 빛의 방향을 맞춘다
+  sk.at(x + 46, ly, 1, () => {
+    thin(sk, 0.8, () => {
+      const ch = rrect(-20, -92, 34, 54, 5); sk.fill(ch, "#5A5F68", { dx: 0, dy: 0, wob: 0.3, seed: sd + 2 }); sk.ink(ch, { w: 7, seed: sd + 3 });
+      sk.ink(dense([[-30, -94], [24, -94]]), { w: 8, seed: sd + 4, wob: 0.3 });
+      const body = rrect(-46, -44, 92, 86, 8); sk.fill(body, "#7A808C", { dx: 0, dy: 0, wob: 0.4, seed: sd + 5, tex: 0.7 }); sk.ink(body, { w: 8, seed: sd + 6 });
+      const barrel = rrect(44, -16, 48, 32, 6); sk.fill(barrel, BRASS, { dx: 0, dy: 0, wob: 0.3, seed: sd + 7 }); sk.ink(barrel, { w: 7, seed: sd + 8 });
+    });
+    cell(sk, 98, -30, 16, 60, color, sd + 10);
+  }, rot);
+  return [x + 46 + 116 * Math.cos(rot), ly + 116 * Math.sin(rot)];
 }
 function p7() {
   const sk = new Sk(W, H, { id: "g" });
   darkBand(sk, 341);
   ground(sk, 704, 343);
-  // 스크린
-  const scr = poly([[764, 84], [918, 66], [918, BAND - 2], [764, BAND - 10]], 6);
+  // 스크린(환등기들과 같은 높이)
+  const img = [852, 400], ir = 72;
+  stand(sk, 856, 560, 347);
+  const scr = poly([[782, 262], [932, 244], [932, 566], [782, 556]], 6);
   sk.fill(scr, "#F4F1E8", { dx: 0, dy: 0, wob: 0.6, seed: 345 });
   thin(sk, 0.8, () => sk.ink(scr, { w: 8, seed: 346, wob: 0.8 }));
-  stand(sk, 842, BAND - 6, 347);
-  const img = [840, 196], ir = 74;
-  // 환등기 세 대(층층이 놓았다)와 세 빛의 뿔: 스크린의 같은 자리에 모인다
-  const tips = [[336, 282, RED, 351], [396, 412, GREEN, 371], [456, 542, BLUE, 391]].map(([x, ly, col, sd]) => [lantern(sk, x, ly, col, sd), col]);
+  // 환등기 세 대(층층이 놓고 스크린 쪽으로 기울였다)와 세 빛의 뿔: 스크린의 같은 자리에 모인다
+  const aim = (x, ly) => Math.atan2(img[1] - ly, img[0] - (x + 46));
+  const tips = [[340, 204, RED, 351], [540, 400, GREEN, 371], [340, 596, BLUE, 391]].map(([x, ly, col, sd]) => [lantern(sk, x, ly, col, sd, aim(x, ly)), col]);
   tips.forEach(([tp, col], i) => {
     const cone = poly([tp, [img[0], img[1] - ir], [img[0], img[1] + ir]], 6);
     sk.fill(cone, col, { dx: 0, dy: 0, wob: 0.3, seed: 401 + i, alpha: 0.3 });
@@ -413,9 +417,9 @@ function p7() {
   // 세 빛이 겹친 자리에 떠오른 색 있는 리본꽃
   rosette(sk, img[0], img[1] - 22, 44, 411);
   // 관객(뒷모습)
-  [[610, { hair: "tophat", seed: 421 }], [742, { hair: "bob", hairColor: "#8A5A33", seed: 431 }], [872, { hair: "short", hairColor: "#3F3A36", seed: 441 }]].forEach(([x, o]) => sk.at(x, 716, 0.5, () => drawHead(sk, o)));
-  const P = pose({ elR: [96, -310], haR: [170, -372], elL: [-50, -260], haL: [-30, -214], tilt: 0.06 });
-  maxwell(sk, 150, 0.64, P, { face: "happy" });
+  [[588, { hair: "tophat", seed: 421 }], [720, { hair: "bob", hairColor: "#8A5A33", seed: 431 }], [944, { hair: "short", hairColor: "#3F3A36", seed: 441 }]].forEach(([x, o]) => sk.at(x, 716, 0.5, () => drawHead(sk, o)));
+  const P = pose({ elR: [84, -330], haR: [136, -410], elL: [-50, -260], haL: [-30, -214], tilt: 0.06 });
+  maxwell(sk, 186, 0.64, P, { face: "happy" });
   return sk;
 }
 
@@ -466,7 +470,7 @@ const CUTS = [
   },
   {
     fn: p2, when: "1666년 무렵, 영국", stage: "결정적 실험", title: "한 색만 골라 보내다",
-    caption: "그 무렵에는 색은 유리가 흰빛을 바꿔서 만든다는 생각이 흔했어요. 편지에 따르면 뉴턴은 구멍 뚫은 판 두 장을 세우고 첫 프리즘을 천천히 돌려, 색 띠에서 <b>한 가지 색</b>만 두 번째 프리즘에 보냈어요. 보라 쪽 빛은 두 번째 프리즘에서도 빨강 쪽 빛보다 더 많이 꺾였고, 한번 골라 낸 색은 끝까지 제 색을 지켰어요. 뉴턴은 이것을 결정적 실험이라고 불렀어요.",
+    caption: "그 무렵에는 색은 유리가 흰빛을 바꿔서 만든다는 생각이 흔했어요. 1672년 편지에 따르면 뉴턴은 구멍 뚫은 판 두 장을 세우고 첫 프리즘을 천천히 돌려, 색 띠에서 <b>한 가지 색</b>만 두 번째 프리즘에 보냈어요. 보라 쪽 빛은 두 번째 프리즘에서도 빨강 쪽 빛보다 더 많이 꺾였고, 한번 골라 낸 색은 끝까지 제 색을 지켰어요. 뉴턴은 이것을 결정적 실험이라고 불렀어요.",
     bubbles: [{ who: "newton", text: "색마다<br>꺾임이 달라!" }],
   },
   {
@@ -491,15 +495,15 @@ const CUTS = [
   },
   {
     fn: p7, when: "1861년, 런던", stage: "놀라운 결과", title: "세 빛을 한곳에",
-    caption: "1861년 5월 런던의 강연장에서 맥스웰은 세 사진을 환등기 세 대로 한 스크린에 겹쳐 비췄어요. 환등기마다 사진을 찍을 때와 같은 색 액체를 대자, 세 빛이 겹친 자리에 <b>색이 있는 리본</b>이 떠올랐어요. 색이 완벽하진 않았지만, 세 가지 빛으로 색을 짓는 길이 열렸어요.",
+    caption: "1861년 5월 런던의 강연장에서 맥스웰은 세 사진을 환등기(사진을 크게 비추는 기계) 세 대로 한 스크린에 겹쳐 비췄어요. 환등기마다 사진을 찍을 때와 같은 색 액체를 대자, 세 빛이 겹친 자리에 <b>색이 있는 리본</b>이 떠올랐어요. 색이 완벽하진 않았지만, 세 가지 빛으로 색을 짓는 길이 열렸어요.",
     term: { name: "빛의 합성", def: "두 가지 색 이상의 빛을 한곳에 비추었을 때, 빛이 합쳐져 다른 색의 빛으로 보이는 현상이에요." },
     bubbles: [{ who: "maxwell", text: "색이 있는<br>상이에요" }],
   },
   {
     fn: p8, stage: "오늘날", title: "세 빛으로 짓는 색",
-    caption: "오늘날 휴대 전화 사진기도 빛을 빨강, 초록, 파랑으로 나눠 기록하고, 화면은 그 세 빛을 다시 합쳐 색을 보여 줘요. 세 빛의 밝기만 바꾸면 정말 여러 가지 색이 될까요? 이제 실험실에서 조명을 직접 켜고 겹쳐 봐요.",
+    caption: "오늘날 휴대 전화 사진기도 빛을 빨강, 초록, 파랑으로 나눠 기록하고, 화면은 그 세 빛을 다시 합쳐 색을 보여 줘요. 세 빛만으로 정말 여러 가지 색이 될까요? 이제 실험실에서 조명을 직접 켜고 겹쳐서 확인해 봐요.",
     term: { name: "빛의 삼원색", def: "빨간색, 초록색, 파란색 빛이에요. 이 세 빛의 밝기를 바꿔 합성하면 여러 가지 색의 빛을 만들 수 있어요." },
-    bubbles: [{ who: "student", text: "세 빛으로<br>다?" }, { who: "teacher", text: "실험실에서<br>봐요!" }],
+    bubbles: [{ who: "student", text: "세 빛으로<br>다 돼요?" }, { who: "teacher", text: "실험실에서<br>봐요!" }],
   },
 ];
 
