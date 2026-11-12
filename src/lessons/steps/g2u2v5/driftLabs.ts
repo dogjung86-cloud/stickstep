@@ -11,11 +11,12 @@
 //   책의 그림(대륙 이동설의 증거: 빙하의 흔적)과 스스로 확인하기(열대인 인도 남부의 빙하 흔적)를 손으로 한다.
 //   학생이 정하는 것: 대륙을 모으는 정도(막대). 먼저 예측한다(정오를 매기지 않는다).
 //   판정 하나: 대륙을 모으자 빙하의 흔적이 어떻게 됐는가. 통찰 하나: 대륙이 한곳에 모여 있다가 이동했다.
-//   대륙의 모양과 자리는 간추린 도해다(실제 지도가 아니다).
+//   대륙의 모양은 실제 해안선이다(Natural Earth 110m, gondwanaData.ts). 대륙을 모으는 움직임은 곤드와나 대륙의 맞춤 회전을 따른다.
 
 import type { StepRenderer } from "../../types";
 import { bvRange } from "../bio6/b6Lab";
 import { G, gBtn, gLab, gPredict, haptic, HAPTIC, label, svgOpen, type GStep } from "./kit";
+import { GONDWANA, type GondwanaLand } from "./gondwanaData";
 
 /* ══════════ 랩 1: 해안선 맞추기 ══════════ */
 const EDGE = "C98 44 98 50 100 56 C106 62 120 64 126 72 C130 80 118 86 112 94 C106 104 100 118 96 134";
@@ -84,41 +85,92 @@ export const g2u2FitLab: StepRenderer = (host, step, api) => {
 };
 
 /* ══════════ 랩 2: 빙하의 흔적 모으기 ══════════ */
-// [이름, 지금 자리, 모였을 때 자리, 가로 반지름, 세로 반지름, 색, 빙하 흔적(가운데에서의 치우침과 반지름)]
-const LAND: { k: string; name: string; now: [number, number]; old: [number, number]; rx: number; ry: number; c: string; ice: [number, number, number] }[] = [
-  { k: "sa", name: "남아메리카", now: [62, 112], old: [118, 124], rx: 24, ry: 36, c: "#86C06C", ice: [12, 22, 17] },
-  { k: "af", name: "아프리카", now: [160, 92], old: [166, 104], rx: 32, ry: 38, c: "#D9B45F", ice: [4, 30, 18] },
-  { k: "in", name: "인도", now: [236, 56], old: [214, 132], rx: 15, ry: 19, c: "#E8915A", ice: [-6, 10, 12] },
-  { k: "au", name: "오스트레일리아", now: [292, 138], old: [236, 168], rx: 27, ry: 19, c: "#C49AE8", ice: [-17, -2, 13] },
-  { k: "an", name: "남극", now: [172, 204], old: [174, 184], rx: 46, ry: 19, c: "#BFD7EA", ice: [0, -9, 24] },
-];
-const blobPath = (rx: number, ry: number): string => `M${-rx} 0 C${-rx} ${-ry * 0.7} ${-rx * 0.5} ${-ry} 0 ${-ry} C${rx * 0.6} ${-ry} ${rx} ${-ry * 0.6} ${rx} 0 C${rx} ${ry * 0.7} ${rx * 0.4} ${ry} 0 ${ry} C${-rx * 0.6} ${ry} ${-rx} ${ry * 0.6} ${-rx} 0 Z`;
+// 지도는 남극을 가운데에 둔 그림이다. 대륙의 자리는 남극에서 잰 거리(위도)와 방향(경도)으로 놓고,
+// 대륙의 모양은 저마다 제 가운데를 기준으로 펼쳐서(방위 정거) 눈에 익은 모양 그대로 보이게 한다.
+// 막대를 밀면 대륙마다 정해진 회전(gondwanaData.ts, 남극 고정)의 일부만큼 지구 위에서 돌려 옮긴다.
+const RAD = Math.PI / 180;
+const PX = 1.15; // 1도 = 1.15px
+const POLE: [number, number] = [173, 166]; // 무대에서 남극점의 자리
+const LON0 = 37; // 이 경도가 위쪽을 향한다
+type V3 = [number, number, number];
+const vec = (lon: number, lat: number): V3 => [Math.cos(lat * RAD) * Math.cos(lon * RAD), Math.cos(lat * RAD) * Math.sin(lon * RAD), Math.sin(lat * RAD)];
+const dot = (a: V3, b: V3): number => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+const cross = (a: V3, b: V3): V3 => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+const norm = (a: V3): V3 => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+/** 극 k를 축으로 ang도 돌린다(로드리게스 회전). */
+function spin(v: V3, k: V3, ang: number): V3 {
+  const c = Math.cos(ang * RAD), s = Math.sin(ang * RAD), d = dot(k, v), cr = cross(k, v);
+  return [v[0] * c + cr[0] * s + k[0] * d * (1 - c), v[1] * c + cr[1] * s + k[1] * d * (1 - c), v[2] * c + cr[2] * s + k[2] * d * (1 - c)];
+}
+interface Land {
+  d: GondwanaLand;
+  pts: V3[];
+  ice: V3[];
+  mid: V3;
+  pole: V3;
+}
+const LANDS: Land[] = GONDWANA.map((d) => {
+  const pts = d.outline.map(([lon, lat]) => vec(lon, lat));
+  const mid = norm(pts.reduce<V3>((a, p) => [a[0] + p[0], a[1] + p[1], a[2] + p[2]], [0, 0, 0]));
+  // 빙하의 흔적: 가운데에서 반지름만큼 떨어진 점들을 이은 둥근 테두리(대륙 윤곽으로 잘라 보인다)
+  const c = vec(d.ice[0], d.ice[1]);
+  const side = norm(cross(c, Math.abs(c[2]) > 0.9 ? [1, 0, 0] : [0, 0, 1]));
+  const rim = spin(c, side, d.ice[2]);
+  const ice = Array.from({ length: 20 }, (_, i) => spin(rim, c, i * 18));
+  return { d, pts, ice, mid, pole: vec(d.rot[1], d.rot[0]) };
+});
+/** 대륙 하나를 t(0 지금, 1 먼 옛날)만큼 옮겨 무대 좌표로 펼친다. */
+function place(l: Land, t: number): { path: string; ice: string; at: [number, number]; top: number } {
+  const ang = l.d.rot[2] * t;
+  const m = spin(l.mid, l.pole, ang);
+  const lat = Math.asin(Math.max(-1, Math.min(1, m[2]))) / RAD, th = (Math.atan2(m[1], m[0]) / RAD - LON0) * RAD;
+  const r = (90 + lat) * PX;
+  const at: [number, number] = [POLE[0] + r * Math.sin(th), POLE[1] - r * Math.cos(th)];
+  const u: [number, number] = [Math.sin(th), -Math.cos(th)], e: [number, number] = [Math.cos(th), Math.sin(th)]; // 북쪽(남극에서 멀어지는 쪽)과 동쪽
+  const north = norm([-m[0] * m[2], -m[1] * m[2], 1 - m[2] * m[2]]), east = norm(cross([0, 0, 1], m));
+  let top = at[1];
+  const flat = (list: V3[]): string => list.map((p0) => {
+    const p = spin(p0, l.pole, ang);
+    const dist = Math.acos(Math.max(-1, Math.min(1, dot(m, p))));
+    const k = (dist < 1e-6 ? 1 : dist / Math.sin(dist)) / RAD * PX;
+    const pn = dot(p, north) * k, pe = dot(p, east) * k;
+    const x = at[0] + pn * u[0] + pe * e[0], y = at[1] + pn * u[1] + pe * e[1];
+    if (y < top) top = y;
+    return `${x.toFixed(1)} ${y.toFixed(1)}`;
+  }).join(" L");
+  const path = `M${flat(l.pts)} Z`;
+  return { path, ice: `M${flat(l.ice)} Z`, at, top };
+}
 
 export const g2u2IceLab: StepRenderer = (host, step, api) => {
   const lab = gLab(host, api, step as unknown as GStep, { steps: 3, cls: "g2u2x-icel" });
   const { f, tm } = lab;
+  const eq = 90 * PX;
   f.stage.innerHTML = `${svgOpen}
     <rect width="346" height="230" fill="#12325C"/>
-    <path d="M0 74 H346" stroke="#FFD43B" stroke-width="1.4" stroke-dasharray="6 5" opacity=".8"/>${label(338, 90, "적도(더운 곳)", { anchor: "end", size: 12, fill: G.gold })}
-    <defs>${LAND.map((l) => `<clipPath id="g2ic-${l.k}"><path d="${blobPath(l.rx, l.ry)}"/></clipPath>`).join("")}</defs>
-    ${LAND.map((l) => `<g class="g2u2x-ic-l l-${l.k}"><path d="${blobPath(l.rx, l.ry)}" fill="${l.c}" stroke="rgba(0,0,0,.35)" stroke-width="1.2"/>
-      <g clip-path="url(#g2ic-${l.k})"><circle cx="${l.ice[0]}" cy="${l.ice[1]}" r="${l.ice[2]}" fill="#F4FAFF"/><g stroke="#8FB6D6" stroke-width="1.4" stroke-linecap="round">${[-5, 0, 5].map((d) => `<path d="M${l.ice[0] + d - 3} ${l.ice[1] - 4} l6 8"/>`).join("")}</g></g>
-</g>`).join("")}
-    ${LAND.map((l) => label(0, 0, l.name, { size: 12, cls: `g2u2x-halo g2u2x-ic-nm n-${l.k}` })).join("")}
-    <ellipse class="g2u2x-ic-cap" cx="178" cy="150" rx="52" ry="34" stroke="#fff" stroke-width="2" stroke-dasharray="5 5" fill="none"/>
-    <rect x="232" y="8" width="14" height="10" rx="3" fill="#F4FAFF"/>${label(252, 18, "빙하의 흔적", { anchor: "start", size: 12.5 })}
+    <circle cx="${POLE[0]}" cy="${POLE[1]}" r="${eq}" stroke="#FFD43B" stroke-width="1.4" stroke-dasharray="6 5" opacity=".8"/>
+    <defs>${LANDS.map((l) => `<clipPath id="g2ic-${l.d.k}"><path class="g2u2x-ic-c c-${l.d.k}"/></clipPath>`).join("")}</defs>
+    ${LANDS.map((l) => `<path class="g2u2x-ic-l l-${l.d.k}" fill="${l.d.color}" stroke="rgba(0,0,0,.45)" stroke-width="1" stroke-linejoin="round"/>
+      <path class="g2u2x-ic-i i-${l.d.k}" clip-path="url(#g2ic-${l.d.k})" fill="#F4FAFF" stroke="#8FB6D6" stroke-width="1.2"/>`).join("")}
+    <circle class="g2u2x-ic-cap" cx="${POLE[0] - 4}" cy="${POLE[1] - 14}" r="52" stroke="#fff" stroke-width="2" stroke-dasharray="5 5" fill="none"/>
+    ${LANDS.map((l) => label(0, 0, l.d.name, { size: 12, cls: `g2u2x-halo n-${l.d.k}` })).join("")}
+    ${label(POLE[0] + eq * Math.sin(62 * RAD) + 5, POLE[1] - eq * Math.cos(62 * RAD), "적도(더운 곳)", { anchor: "start", size: 12, fill: G.gold, cls: "g2u2x-halo" })}
+    <rect x="10" y="9" width="14" height="10" rx="3" fill="#F4FAFF"/>${label(30, 19, "빙하의 흔적", { anchor: "start", size: 12.5 })}
+    ${label(336, 19, "남극을 가운데에 둔 지도", { anchor: "end", size: 12, fill: G.dim, weight: 600 })}
   </svg>`;
-  const groups = LAND.map((l) => lab.q<SVGGElement>(`.l-${l.k}`));
-  const names = LAND.map((l) => lab.q<SVGTextElement>(`.n-${l.k}`));
+  const q = (c: string): SVGElement[] => LANDS.map((l) => lab.q<SVGElement>(`.${c}-${l.d.k}`));
+  const land = q("l"), clip = q("c"), ice = q("i"), names = q("n");
   let g = 0, pred = "", locked = false;
   const paint = (): void => {
     const t = g / 100;
-    LAND.forEach((l, i) => {
-      const x = l.now[0] + (l.old[0] - l.now[0]) * t, y = l.now[1] + (l.old[1] - l.now[1]) * t;
-      groups[i].setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
-      // 이름표는 맨 위 겹에 따로 둔다(다른 대륙에 가리지 않게). 남극은 아래쪽, 나머지는 대륙 위쪽에 붙인다.
-      names[i].setAttribute("x", (l.k === "au" ? Math.min(300, x + 8) : l.k === "sa" ? Math.max(40, x - 8) : x).toFixed(1));
-      names[i].setAttribute("y", (l.k === "an" ? y + 14 : y - l.ry - 5).toFixed(1));
+    LANDS.forEach((l, i) => {
+      const p = place(l, t);
+      land[i].setAttribute("d", p.path);
+      clip[i].setAttribute("d", p.path);
+      ice[i].setAttribute("d", p.ice);
+      // 이름표는 맨 위 겹에 둔다. 남극은 대륙 아래쪽, 나머지는 대륙 위쪽에 붙인다.
+      names[i].setAttribute("x", Math.max(34, Math.min(300, p.at[0])).toFixed(1));
+      names[i].setAttribute("y", (l.d.k === "an" ? p.at[1] + 40 : Math.max(34, p.top - 4)).toFixed(1));
     });
     host.dataset.g2G = String(g);
   };
