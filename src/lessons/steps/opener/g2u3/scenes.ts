@@ -344,4 +344,67 @@ const spoon: OpenerScene = (c) => {
   bOut.addEventListener("click", () => show("out"));
 };
 
-export const G2U3_SCENES: Record<string, OpenerScene> = { "g2u3-town": town, "g2u3-straw": straw, "g2u3-dark": dark, "g2u3-cat": catMirror, "g2u3-spoon": spoon };
+// ── 6. 점으로 그린 물고기 ───────────────────────────────────────
+const dots: OpenerScene = (c) => {
+  const M = meta(c).dots;
+  art(c, "dotsBase");
+  const ov = overlay(c, "opn-g2u3-dots");
+  const [bx, by, rx, ry] = M.body;
+  const tail = M.tail.map((p) => `${p[0]},${p[1]}`).join(" ");
+  const grp = svgEl(ov, "g", { class: "fish" });
+  grp.style.transformOrigin = `${bx - 40}px ${by}px`;
+  // 빨간 점과 초록 점을 번갈아 찍는다
+  const inTail = (x: number, y: number): boolean => {
+    const [a, b, d] = M.tail;
+    const s = (p: readonly number[], q: readonly number[]): number => (x - q[0]) * (p[1] - q[1]) - (p[0] - q[0]) * (y - q[1]);
+    const d1 = s(a, b);
+    const d2 = s(b, d);
+    const d3 = s(d, a);
+    return !((d1 < 0 || d2 < 0 || d3 < 0) && (d1 > 0 || d2 > 0 || d3 > 0));
+  };
+  const dotG = svgEl(grp, "g", { class: "pts" });
+  let i = 0;
+  for (let y = by - ry - 60; y <= by + ry + 60; y += M.gap * 0.86) {
+    i += 1;
+    for (let x = bx - rx - 110 + (i % 2) * (M.gap / 2), j = 0; x <= bx + rx; x += M.gap, j++) {
+      const inBody = ((x - bx) / rx) ** 2 + ((y - by) / ry) ** 2 <= 1;
+      if (!inBody && !inTail(x, y)) continue;
+      svgEl(dotG, "circle", { cx: x.toFixed(1), cy: y.toFixed(1), r: M.r, fill: (i + j) % 2 ? "#E8453C" : "#35B24F" });
+    }
+  }
+  // 멀리서 본 모습(점이 섞여 보인다)
+  const blend = svgEl(grp, "g", { class: "blend" });
+  svgEl(blend, "ellipse", { cx: bx, cy: by, rx, ry, fill: "#F2D21E" });
+  svgEl(blend, "polygon", { points: tail, fill: "#F2D21E" });
+  svgEl(grp, "circle", { cx: M.eye[0], cy: M.eye[1], r: 9, fill: "#1c1c1e" });
+  const paint = (v: number): void => {
+    grp.style.transform = `scale(${1 - 0.62 * v})`;
+    blend.style.opacity = String(Math.max(0, (v - 0.35) / 0.55));
+    dotG.style.opacity = String(1 - Math.max(0, (v - 0.55) / 0.45));
+  };
+  paint(0);
+  let done = false;
+  let kept = 0;
+  const back = btn(c, "back", "뒤로 물러나기", "꾹 누르고 있어요");
+  c.controls.classList.add("opn-g2u3-one");
+  const verdict = bet(c, "빨간 점과 초록 점만 촘촘히 찍어 물고기를 그렸어요. 멀리 물러나서 보면 무슨 색으로 보일까요?", ["노란색으로 보여요", "갈색으로 보여요", "빨강과 초록 그대로 보여요"], "예측 완료! <b>뒤로 물러나기</b>를 꾹 눌러 그림에서 멀어져 보세요.");
+  holdFill(
+    c,
+    back,
+    1500,
+    () => playing(c) && !done,
+    (v) => paint(Math.max(kept, v)),
+    (v) => {
+      kept = Math.max(kept, v);
+      if (kept < 0.9) {
+        c.say("조금 더 길게 <b>꾹</b> 눌러 더 멀리 물러나 보세요.");
+        return;
+      }
+      done = true;
+      back.disabled = true;
+      c.later(() => end(c, `${verdict()} 멀리서 보니 노란 물고기예요. 노란 점은 하나도 없는데 어떻게 된 걸까요?`), 600);
+    },
+  );
+};
+
+export const G2U3_SCENES: Record<string, OpenerScene> = { "g2u3-town": town, "g2u3-straw": straw, "g2u3-dark": dark, "g2u3-cat": catMirror, "g2u3-spoon": spoon, "g2u3-dots": dots };

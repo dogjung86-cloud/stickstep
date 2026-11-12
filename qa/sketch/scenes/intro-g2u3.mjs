@@ -170,6 +170,21 @@ export function spoonBase() {
   return { sk };
 }
 
+/* ══════════ 6. 점으로 그린 물고기 (g2u3l6) ══════════ */
+export const DOTS = { body: [606, 262, 168, 96], tail: [[446, 262], [352, 186], [352, 338]], eye: [704, 236], gap: 25, r: 10 };
+export function dotsBase() {
+  const sk = new Sk(W, H, { id: "g3g" });
+  ground(sk);
+  // 이젤 위의 도화지(물고기는 앱이 점으로 찍는다)
+  const paper = rrect(300, 58, 610, 410, 18);
+  sk.fill(paper, "#FFFDF6", { dx: 0, dy: 0, wob: 0.6, seed: 151 });
+  sk.ink(paper, { w: 9, color: C.woodDark, wob: 1, seed: 152 });
+  sk.ink(dense([[380, 470], [350, 506]], 5), { w: 9, color: C.woodDark, wob: 0.5, seed: 153 });
+  sk.ink(dense([[830, 470], [860, 506]], 5), { w: 9, color: C.woodDark, wob: 0.5, seed: 154 });
+  drawFigure(sk, 150, 512, 0.58, pose({ elR: [100, -290], haR: [170, -330] }), { ...STUDENT });
+  return { sk };
+}
+
 /** build-intro.mjs가 부른다: 그림을 싣고 장면별 좌표를 돌려준다. */
 export function build(add) {
   return {
@@ -177,6 +192,7 @@ export function build(add) {
     dark: { ...DARK, ...add("darkBase", darkBase()) },
     cat: { ...CATM, ...add("catBase", catBase()) },
     spoon: { ...SPOON, ...add("spoonBase", spoonBase()) },
+    dots: { ...DOTS, ...add("dotsBase", dotsBase()) },
     straw: { ...STRAW, ...add("strawBase", strawBase()), ...add("strawCup", strawCup()) },
   };
 }

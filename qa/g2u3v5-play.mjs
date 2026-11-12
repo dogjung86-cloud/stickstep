@@ -22,6 +22,9 @@ export const OPENERS = {
     await L.tapK(page, "in", 500);
     await L.tapK(page, "out", 500);
   },
+  "g2u3-dots": async ({ page, L }) => {
+    await L.hold(page, '[data-k="back"]', 1900);
+  },
 };
 
 /** 거울과 렌즈 관찰: 두 종류에서 가까울 때와 멀 때를 적는다. */
@@ -206,5 +209,52 @@ export const LABS = {
     await c.shot("use-convex");
     await c.judge("use", wrong);
     await c.done("use");
+  },
+  lamp: async (c, wrong) => {
+    const { page, L } = c;
+    await L.tapK(page, "w", 400);
+    await L.tapK(page, "r", 400);
+    await c.fit("lamp 빨간 조명");
+    await c.shot("lamp-red");
+    await L.tapK(page, "g", 400);
+    await c.judge("lamp", wrong);
+    await c.done("lamp");
+  },
+  torch: async (c, wrong) => {
+    const { page, L } = c;
+    await L.tapK(page, "r");
+    await L.tapK(page, "g", 400);
+    await c.fit("torch 두 빛");
+    await c.shot("torch-rg");
+    await L.tapK(page, "b", 400);
+    await c.shot("torch-rgb");
+    await L.tapK(page, "g", 300);
+    await L.tapK(page, "r", 300);
+    await L.tapK(page, "g", 300);
+    await c.fit("torch 네 칸");
+    await c.judge("torch", wrong);
+    await c.done("torch");
+  },
+  pixel: async (c, wrong) => {
+    const { page, L, check } = c;
+    for (const k of ["r", "g", "b"]) await L.tapK(page, k, 350);
+    await c.shot("pixel-look");
+    check("세 부분을 보면 만들기 국면", await L.waitDs(page, "lx", "make"));
+    await L.W(page, 300);
+    // 틀린 조합으로 한 번
+    await L.tapK(page, "r");
+    await L.tapK(page, "b");
+    await L.tapK(page, "confirm", 400);
+    await c.fit("pixel 어긋남");
+    await c.shot("pixel-wrong");
+    await L.tapK(page, "b");
+    await L.tapK(page, "g");
+    await L.tapK(page, "confirm", 400);
+    await c.shot("pixel-yellow");
+    await L.W(page, 2700);
+    for (const k of ["r", "g", "b"]) await L.tapK(page, k, 200);
+    await L.tapK(page, "confirm", 400);
+    await c.judge("pixel", wrong);
+    await c.done("pixel");
   },
 };
