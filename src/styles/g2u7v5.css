@@ -71,3 +71,43 @@
 }
 .g2u7x-wbar .g2u7x-seg.on { border-color: var(--subj-elec); background: rgba(239, 184, 0, .22); color: #FFE08A; }
 .g2u7x-wtap:active { transform: scale(.97); }
+
+/* ── 도입(opener) 여덟 장면 ────────────────────────
+   그림의 묶음: -s0(조작 전에만) · -s1, -s2(첫째, 둘째 조작 뒤) · -mv(움직이는 것). 무대의 on1, on2 클래스가 바꾼다. */
+.opn-g2u7-btn {
+  grid-column: 1 / -1; height: 52px; border-radius: 16px; border: 1.5px solid var(--subj-elec);
+  background: var(--subj-elec-tint); color: #8A6500; font-size: 15px; font-weight: 800;
+  box-shadow: var(--sh-card); transition: transform .12s, background .15s, color .15s, opacity .2s;
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.opn-g2u7-btn:active, .opn-g2u7-btn.on { transform: scale(.975); background: var(--subj-elec); color: #3A2A00; }
+.opn-g2u7-btn:disabled { opacity: .45; }
+.opn-g2u7-s0, .opn-g2u7-s1, .opn-g2u7-s2 { transition: opacity .35s; }
+.opn-g2u7-s1, .opn-g2u7-s2 { opacity: 0; }
+.opn-stage.on1 .opn-g2u7-s0 { opacity: 0; }
+.opn-stage.on1 .opn-g2u7-s1 { opacity: 1; }
+.opn-stage.on2 .opn-g2u7-s1 { opacity: 0; }
+.opn-stage.on2 .opn-g2u7-s2 { opacity: 1; }
+.opn-g2u7-mv { transition: transform .7s var(--ease-out); }
+/* 1. 빗질: 누를 때마다 빗이 머리를 훑고, 다 빗으면 빗을 뗀다 */
+.opn-g2u7-comb .opn-g2u7-mv { transform: translate(-96px, 34px); }
+.opn-g2u7-comb.nudge .opn-g2u7-mv { animation: opnG2u7Comb .45s ease-in-out; }
+.opn-g2u7-comb.on1 .opn-g2u7-mv { transform: translate(70px, -40px); animation: none; }
+.opn-g2u7-comb.on1 .opn-g2u7-s1 { transition-delay: .35s; }
+@keyframes opnG2u7Comb { 0%, 100% { transform: translate(-96px, 34px); } 50% { transform: translate(-40px, 74px); } }
+/* 2. 풍선: 꾹 누르는 동안 내려오고, 다 내려오면 인형이 일어선다 */
+.opn-g2u7-foil.holding .opn-g2u7-mv { transform: translateY(44px); transition-duration: 1.1s; }
+.opn-g2u7-foil.on1 .opn-g2u7-mv { transform: translateY(44px); }
+/* 3. 시계: 전지를 끼우면 초침이 돈다 */
+.opn-g2u7-hand { transform-box: view-box; transform-origin: 330px 250px; }
+.opn-g2u7-clock.on1 .opn-g2u7-hand { animation: opnG2u7Tick 8s steps(16) infinite; }
+@keyframes opnG2u7Tick { to { transform: rotate(360deg); } }
+/* 5. 멀티탭: 스탠드의 플러그가 뽑힌다 */
+.opn-g2u7-tap.on1 .opn-g2u7-mv { transform: translate(-22px, -64px); }
+/* 6. 계량기: 원판의 표시가 선풍기에서는 천천히, 헤어드라이어에서는 빨리 지나간다 */
+.opn-g2u7-meter.on1 .opn-g2u7-disc { animation: opnG2u7Disc 2.6s linear infinite; }
+.opn-g2u7-meter.on2 .opn-g2u7-disc { animation-duration: .45s; }
+@keyframes opnG2u7Disc { 0% { transform: translateX(-66px); } 100% { transform: translateX(66px); } }
+/* 7. 나침반: 전류가 흐르면 바늘이 돈다 */
+.opn-g2u7-needle { transform-box: view-box; transform-origin: 480px 330px; transition: transform .6s var(--spring-soft); }
+.opn-g2u7-wire.on1 .opn-g2u7-needle { transform: rotate(68deg); }
