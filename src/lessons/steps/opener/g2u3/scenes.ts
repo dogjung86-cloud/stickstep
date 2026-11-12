@@ -294,4 +294,29 @@ const dark: OpenerScene = (c) => {
   });
 };
 
-export const G2U3_SCENES: Record<string, OpenerScene> = { "g2u3-town": town, "g2u3-straw": straw, "g2u3-dark": dark };
+// ── 4. 거울 앞의 고양이 ─────────────────────────────────────────
+const catMirror: OpenerScene = (c) => {
+  const M = meta(c).cat;
+  art(c, "catBase");
+  const real = c.stage.querySelector<SVGElement>(".opn-g2u3-cat");
+  const twin = c.stage.querySelector<SVGElement>(".opn-g2u3-cat2");
+  let n = 0;
+  const go = btn(c, "step", "한 걸음 다가가기", "고양이가 거울 쪽으로");
+  c.controls.classList.add("opn-g2u3-one");
+  const verdict = bet(c, "고양이가 거울을 보고 있어요. 고양이가 거울 쪽으로 한 걸음 다가가면 거울 속 고양이는?", ["똑같이 한 걸음 다가와요", "제자리에 그대로 있어요", "한 걸음 뒤로 물러나요"], "예측 완료! 고양이를 거울 쪽으로 <b>세 걸음</b> 걷게 해 보세요.");
+  go.addEventListener("click", () => {
+    if (!playing(c) || n >= M.steps) return;
+    n += 1;
+    haptic(HAPTIC.tap);
+    if (real) real.style.transform = `translateX(${n * M.step}px)`;
+    if (twin) twin.style.transform = `translateX(${-n * M.step}px)`;
+    if (n < M.steps) {
+      c.say(`거울 속 고양이도 움직였어요. <b>${M.steps - n}걸음</b> 더 다가가 보세요.`);
+      return;
+    }
+    go.disabled = true;
+    c.later(() => end(c, `${verdict()} 거울 속 고양이도 똑같이 다가왔어요. 거울 속 고양이는 거울에서 얼마나 떨어져 있을까요?`), 800);
+  });
+};
+
+export const G2U3_SCENES: Record<string, OpenerScene> = { "g2u3-town": town, "g2u3-straw": straw, "g2u3-dark": dark, "g2u3-cat": catMirror };

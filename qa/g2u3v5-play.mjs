@@ -15,6 +15,9 @@ export const OPENERS = {
     await L.tapK(page, "stare", 2100);
     await L.tapK(page, "torch", 400);
   },
+  "g2u3-cat": async ({ page, L }) => {
+    for (let i = 0; i < 3; i++) await L.tapK(page, "step", 600);
+  },
 };
 
 // ── 랩 ──
@@ -120,5 +123,47 @@ export const LABS = {
     await c.shot("path-tank");
     await c.judge("path", wrong);
     await c.done("path");
+  },
+  half: async (c, wrong) => {
+    const { page, L, check } = c;
+    const moveB = async (to) => {
+      for (let i = 0; i < 8; i++) {
+        const b = Number(await L.ds(page, "lxB"));
+        if (b === to) return;
+        await L.tapK(page, b > to ? "bL" : "bR", 120);
+      }
+    };
+    // 보통 거울로는 맞출 수 없다
+    await L.tapK(page, "plain");
+    await L.tapK(page, "confirm", 400);
+    await c.fit("half 보통 거울");
+    await c.shot("half-plain");
+    await L.tapK(page, "half");
+    // 어긋난 채 확인
+    await L.tapK(page, "confirm", 400);
+    await c.shot("half-off");
+    await moveB(Number(await L.ds(page, "lxA")));
+    await L.tapK(page, "confirm", 400);
+    await c.fit("half 겹침");
+    await c.shot("half-ok");
+    await L.tapK(page, "aL", 150);
+    await L.tapK(page, "aL", 150);
+    await moveB(Number(await L.ds(page, "lxA")));
+    await L.tapK(page, "confirm", 400);
+    check("두 번 기록하면 판정", await L.waitDs(page, "lx", "ask"));
+    await c.judge("half", wrong);
+    await c.done("half");
+  },
+  extend: async (c, wrong) => {
+    const { page, L } = c;
+    for (const v of [110, 150, 200]) {
+      await L.setRange(page, v);
+      await L.W(page, 150);
+      await L.tapK(page, "keep", 300);
+    }
+    await c.fit("extend 연장선 셋");
+    await c.shot("extend-three");
+    await c.judge("extend", wrong);
+    await c.done("extend");
   },
 };

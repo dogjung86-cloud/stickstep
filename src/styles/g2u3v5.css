@@ -91,6 +91,18 @@
 .opn-stage.lit .opn-g2u3-dark .cone { opacity: .5; }
 .opn-stage.lit .opn-g2u3-dark .eyes { opacity: 0; }
 
+/* 4. 거울 앞의 고양이 */
+.opn-g2u3-cat, .opn-g2u3-cat2 { transition: transform .5s var(--ease); }
+.opn-g2u3-cat2 { opacity: .62; }
+
+/* ── g2u3l4 반투명 거울: 물체를 한 칸씩 옮기는 버튼 ── */
+.g2u3x-stepper {
+  height: 56px; display: grid; grid-template-columns: 48px 1fr 48px; align-items: center; border-radius: 14px; border: 1.5px solid var(--n300); background: #fff; box-shadow: var(--sh-card); overflow: hidden;
+}
+.g2u3x-stepper span { text-align: center; font-size: 13.5px; font-weight: 800; color: var(--ink); white-space: nowrap; }
+.g2u3x-stepb { height: 56px; border: 0; background: var(--n50); font-size: 15px; font-weight: 800; color: var(--subj-light-press); transition: background .15s, transform .12s; }
+.g2u3x-stepb:active { background: var(--subj-light-tint); transform: scale(.94); }
+
 /* ── g2u3l3 빛의 길: 누르는 자리와 그린 화살표 ── */
 .g2u3x-node { position: absolute; z-index: 2; padding: 0; border: 0; background: none; border-radius: 50%; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .g2u3x-node:active { background: rgba(255, 255, 255, .08); }

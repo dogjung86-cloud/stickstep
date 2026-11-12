@@ -109,11 +109,30 @@ export function darkBase() {
   return { sk };
 }
 
+/* ══════════ 4. 거울 앞의 고양이 (g2u3l4) ══════════ */
+export const CATM = { mirror: 480, step: 62, steps: 3 };
+export function catBase() {
+  const sk = new Sk(W, H, { id: "g3e" });
+  // 거울 속(오른쪽)은 옅은 하늘색으로 깐다
+  sk.raw(`<rect x="${CATM.mirror}" y="40" width="440" height="466" fill="#DCEEFB"/>`);
+  ground(sk);
+  // 거울(옆에서 본 모습)과 받침
+  const m = poly([[CATM.mirror - 8, 60], [CATM.mirror + 8, 60], [CATM.mirror + 8, 504], [CATM.mirror - 8, 504]], 6);
+  sk.fill(m, C.sea, { dx: 0, dy: 0, wob: 0.3, seed: 101 });
+  sk.ink(m, { w: 7, wob: 0.5, seed: 102 });
+  // 진짜 고양이(왼쪽, 거울을 본다)
+  g(sk, "opn-g2u3-cat", () => sk.at(CATM.mirror - 290, 500, 1, () => cat(sk, 0, 0, 1.05, 111), 0, -1));
+  // 거울 속 고양이(오른쪽, 마주 본다)
+  g(sk, "opn-g2u3-cat2", () => sk.at(CATM.mirror + 290, 500, 1, () => cat(sk, 0, 0, 1.05, 111)));
+  return { sk };
+}
+
 /** build-intro.mjs가 부른다: 그림을 싣고 장면별 좌표를 돌려준다. */
 export function build(add) {
   return {
     town: { ...TOWN, ...add("townBase", townBase()) },
     dark: { ...DARK, ...add("darkBase", darkBase()) },
+    cat: { ...CATM, ...add("catBase", catBase()) },
     straw: { ...STRAW, ...add("strawBase", strawBase()), ...add("strawCup", strawCup()) },
   };
 }

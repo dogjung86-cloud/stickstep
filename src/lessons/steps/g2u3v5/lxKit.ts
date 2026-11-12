@@ -100,7 +100,7 @@ export function lxFrame(host: HTMLElement, o: { title: string; steps: number; ap
 }
 
 /** 무대 안의 글자(12.5px 이상, 어두운 테두리로 어느 바탕에서도 읽힌다). */
-export function lxText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, o: { color?: string; px?: number; align?: CanvasTextAlign; w?: number } = {}): void {
+export function lxText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, o: { color?: string; px?: number; align?: CanvasTextAlign; w?: number; plain?: boolean } = {}): void {
   ctx.save();
   ctx.font = LX.font(o.px ?? 12.5, o.w ?? 700);
   ctx.textAlign = o.align ?? "center";
@@ -108,7 +108,7 @@ export function lxText(ctx: CanvasRenderingContext2D, text: string, x: number, y
   ctx.lineJoin = "round";
   ctx.lineWidth = 4;
   ctx.strokeStyle = "rgba(11,21,36,.88)";
-  ctx.strokeText(text, x, y);
+  if (!o.plain) ctx.strokeText(text, x, y); // plain: 밝은 바탕(모눈종이) 위의 글자는 테두리 없이 쓴다
   ctx.fillStyle = o.color ?? LX.ink;
   ctx.fillText(text, x, y);
   ctx.restore();
