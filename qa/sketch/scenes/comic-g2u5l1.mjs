@@ -10,7 +10,7 @@
 // 잉엔하우스는 중1 만화 u3l3의 INGEN 설정과 귀 옆 말림(wigRolls)을 그대로 옮겨 왔다.
 import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, hash, emark, qmark, xmark, check, squiggle, drop, arrow } from "../lib/sk.mjs";
 import { drawFigure, handDot, pose, TEACHER, STUDENT } from "../lib/figure.mjs";
-import { sun, cloud, kettle, notebook } from "../lib/props.mjs";
+import { sun, kettle, notebook } from "../lib/props.mjs";
 
 const W = 960, H = 720;
 const thin = (sk, k, fn) => { const o = sk.lwK; sk.lwK = k; fn(); sk.lwK = o; };
@@ -103,11 +103,12 @@ function willow(sk, x, y, h, o = {}) {
   sk.at(x, y, 1, () => {
     if (o.roots) for (let i = 0; i < 6; i++) { const a = (i - 2.5) * 0.42; sk.ink(curve([[0, -6], [Math.sin(a) * o.roots * 0.55, o.roots * 0.5], [Math.sin(a) * o.roots * 1.1 + (i % 2 ? 9 : -9), o.roots * (0.8 + 0.25 * hash(sd + i))]]), { w: 6, color: "#8A6A3E", seed: sd + 80 + i, wob: 0.6 }); }
     const blob = curve([[u0 * spread - 18, -h + droop * 0.8], [u0 * spread * 0.98 - 6, -h + droop * 0.1], [u0 * spread * 0.6, -h - h * 0.1], [um * spread * 0.5, -h - h * 0.2], [u1 * spread * 0.6, -h - h * 0.1], [u1 * spread * 0.98 + 6, -h + droop * 0.1], [u1 * spread + 18, -h + droop * 0.8], [um * spread, -h + droop * 0.55]], true, 5);
-    sk.fill(blob, "#DDF0CF", { dx: 0, dy: 0, wob: 1.2, seed: sd + 60 });
+    sk.fill(o.tiers ? blob.map(([px, py]) => [px * 0.92, py + h * 0.16]) : blob, "#DDF0CF", { dx: 0, dy: 0, wob: 1.2, seed: sd + 60 });
     for (let i = 0; i < n; i++) {
       const u = u0 + (u1 - u0) * (n === 1 ? 0.5 : i / (n - 1)), au = Math.abs(u);
-      const peak = [u * spread * 0.55, -h - (1 - au) * h * 0.13 - h * 0.04], end = [u * spread + u * 10, -h + droop * (0.62 + 0.38 * hash(sd + i * 3.3)) * (0.45 + 0.55 * au)];
-      const p = curve([[0, -h * 0.9], peak, [u * spread * 0.96, -h + droop * 0.2 * (0.4 + 0.6 * au)], end]);
+      const sy = o.tiers ? -h * (0.9 - 0.34 * ((i * 5) % n) / n) : -h * 0.9, lift = o.tiers ? (sy + h * 0.9) * 0.8 : 0, sp = o.tiers ? spread * (0.62 + 0.38 * hash(sd + i * 7.1)) : spread;
+      const peak = [u * sp * 0.55, -h - (1 - au) * h * 0.13 - h * 0.04 + lift], end = [u * sp + u * 10, -h + lift + droop * (0.62 + 0.38 * hash(sd + i * 3.3)) * (0.45 + 0.55 * au)];
+      const p = curve([[0, sy], peak, [u * sp * 0.96, -h + lift + droop * 0.2 * (0.4 + 0.6 * au)], end]);
       sk.ink(p, { w: o.bw ?? 5, color: LEAF_D, seed: sd + i, wob: 0.5 });
       for (let k = Math.floor(p.length * 0.28), j = 0; k < p.length; k += 5, j++) { const q = p[k], sg = j % 2 ? 1 : -1; sk.ink(dense([q, [q[0] + sg * 11, q[1] + 10]]), { w: 5, color: LEAF, seed: sd + 100 + i * 20 + j, wob: 0.2 }); }
     }
@@ -118,8 +119,8 @@ function willow(sk, x, y, h, o = {}) {
 // 처음 심은 가는 버드나무 줄기(잎 몇 장). (x, y) = 쥔 자리, 위로 up, 아래로 down
 function cutting(sk, x, y, up, down, sd) {
   const st = curve([[x + 4, y + down], [x - 2, y], [x + 3, y - up * 0.5], [x - 2, y - up]]);
-  sk.ink(st, { w: 15, seed: sd, wob: 0.4 }); sk.ink(st, { w: 8, color: BARK, seed: sd, wob: 0.4 });
-  for (const [t, sg, i] of [[0.55, 1, 0], [0.72, -1, 1], [0.9, 1, 2], [1.0, -1, 3]]) leaf(sk, x + (sg > 0 ? 4 : -4), y - up * t, 34, sg > 0 ? -0.7 : Math.PI + 0.7, sd + 5 + i * 4);
+  sk.ink(st, { w: 21, seed: sd, wob: 0.4 }); sk.ink(st, { w: 13, color: BARK, seed: sd, wob: 0.4 });
+  for (const [t, sg, i] of [[0.42, 1, 0], [0.56, -1, 1], [0.7, 1, 2], [0.82, -1, 3], [0.93, 1, 4], [1.0, -1, 5]]) leaf(sk, x + (sg > 0 ? 6 : -6), y - up * t, 36, sg > 0 ? -0.7 : Math.PI + 0.7, sd + 5 + i * 4);
 }
 // 둥근 큰 나무(오늘날의 학교 나무). (x, y) = 밑동
 function bigTree(sk, x, y, sd) {
@@ -237,8 +238,8 @@ function trough(sk, x, y, w, h, sd, o = {}) {
 }
 // 철사 끝에 얹어 병 속에 넣은 초. xo = 철사가 병 밖으로 나온 자리, (x, yc) = 초 받침, yu = 철사가 병 입구를 지나는 높이
 function wireCandle(sk, xo, x, yu, yc, lit, sd) {
-  sk.ink(dense([[xo, yu - 170], [xo, yu], [x, yu], [x, yc]], 6), { w: 5, color: METAL, seed: sd, wob: 0.3 });
-  sk.ink(dense([[xo - 12, yu - 170], [xo + 12, yu - 170]]), { w: 5, color: METAL, seed: sd + 1, wob: 0.2 });
+  sk.ink(dense([[xo, yu - 58], [xo, yu], [x, yu], [x, yc]], 6), { w: 5, color: METAL, seed: sd, wob: 0.3 });
+  sk.ink(circ(xo, yu - 66, 8, { over: 0.1, seed: sd + 1 }), { w: 4.5, color: METAL, seed: sd + 1, wob: 0.2 });
   sk.ink(dense([[x - 17, yc], [x + 17, yc]]), { w: 7, color: METAL, seed: sd + 2, wob: 0.2 });
   const c = rrect(x - 11, yc - 62, 22, 60, 5); sk.fill(c, "#FBF6E6", { dx: 0, dy: 0, wob: 0.3, seed: sd + 3 }); sk.ink(c, { w: 6, seed: sd + 4 });
   sk.ink(dense([[x, yc - 62], [x, yc - 74]]), { w: 4, seed: sd + 5, wob: 0 });
@@ -271,7 +272,7 @@ function p1() {
   const fx = 178, fy = 704, fs = 0.68;
   person(sk, fx, fy, fs, P, HELMONT, { name: "helmont", face: "curious", hands: "L" });
   const hx = fx + fs * 156, hy = fy - fs * 396;
-  cutting(sk, hx, hy, 150, 64, 51);
+  cutting(sk, hx, hy, 196, 96, 51);
   handDot(sk, [hx, hy], C.skin, 61, 10);
   return sk;
 }
@@ -289,12 +290,9 @@ function pitcher(sk, x, y, s, rot, sd) {
 function p2() {
   const sk = new Sk(W, H, { id: "b" });
   ground(sk, 704, 71);
-  // 비구름과 빗방울
-  cloud(sk, 742, 100, 230, 96, { seed: 73, color: "#E3E8EE" });
-  for (const [x, y, i] of [[676, 196, 0], [742, 214, 1], [806, 190, 2], [704, 268, 3], [776, 276, 4], [834, 252, 5], [742, 330, 6]]) drop(sk, x, y, 0.8, { rot: 0.12, seed: 75 + i });
   // 화분: 구멍 뚫린 덮개 가운데로 줄기만 나온다
   const px = 560, ty = pot(sk, px, 704, 204, 186, 81, { lid: true });
-  willow(sk, px, ty + 2, 300, { seed: 91, spread: 150, droop: 170, strands: 9, tw: 12 });
+  willow(sk, px, ty + 2, 330, { seed: 91, spread: 176, droop: 230, strands: 13, tw: 13, tiers: true });
   // 네 번의 가을 동안 떨어진 잎: 무게에 넣지 않았다
   const LY = "#E9C24A", LYD = "#A8801E";
   for (const [x, y, a, i] of [[772, 696, 0.2, 0], [806, 690, -0.5, 1], [836, 698, 0.6, 2], [868, 694, -0.2, 3], [790, 676, 0.9, 4], [826, 670, -0.9, 5], [856, 676, 0.3, 6], [812, 656, 0.1, 7], [900, 698, -0.7, 8], [744, 700, -0.3, 9]]) leaf(sk, x, y, 34, a, 101 + i * 4, LY, LYD);
@@ -315,23 +313,28 @@ function p2() {
 }
 
 /* ---------- 3. 흙은 거의 그대로 ---------- */
-// 뿌리째 뽑아 눕힌 큰 버드나무: 왼쪽에 뿌리, 굵은 줄기, 오른쪽에 땅으로 처진 가지
+// 뿌리째 뽑아 눕힌 큰 버드나무: 왼쪽에 뿌리, 굵은 줄기, 줄기 방향을 따라 오른쪽으로 길게 누운 가지(잔가지는 땅 쪽으로 처진다)
 function fallenWillow(sk, sd) {
-  const bx = 84, tx = 286, ty = 628;
-  for (let i = 0; i < 7; i++) { const a = Math.PI + (i - 3) * 0.3; sk.ink(curve([[bx + 6, 650], [bx + 40 * Math.cos(a), 650 + 40 * Math.sin(a)], [bx + 78 * Math.cos(a) + (i % 2 ? 4 : -4), 650 + 78 * Math.sin(a) * 0.9 + (i % 2 ? 8 : -6)]]), { w: 6, color: "#8A6A3E", seed: sd + 80 + i, wob: 0.6 }); }
-  const blob = curve([[tx - 40, ty - 40], [tx - 20, ty - 200], [tx + 90, ty - 262], [tx + 196, ty - 200], [tx + 244, ty - 60], [tx + 240, 700], [tx + 60, 702], [tx - 30, 690]], true, 5);
+  const bx = 72, tx = 314, ty = 636;
+  for (let i = 0; i < 8; i++) { const a = Math.PI + (i - 3.5) * 0.27; sk.ink(curve([[bx + 8, 640], [bx + 44 * Math.cos(a), 640 + 50 * Math.sin(a)], [bx + 84 * Math.cos(a) + (i % 2 ? 4 : -4), 640 + 96 * Math.sin(a) * 0.9 + (i % 2 ? 8 : -6)]]), { w: 7, color: "#8A6A3E", seed: sd + 80 + i, wob: 0.6 }); }
+  const blob = curve([[tx - 30, ty - 30], [tx + 40, ty - 150], [tx + 150, ty - 196], [tx + 250, ty - 150], [tx + 284, ty - 40], [tx + 282, 700], [tx + 120, 702], [tx - 24, 696]], true, 5);
   sk.fill(blob, "#DDF0CF", { dx: 0, dy: 0, wob: 1.2, seed: sd + 60 });
-  const n = 9;
-  for (let i = 0; i < n; i++) {
-    const a = -1.62 + i * 0.2, L = 212 + 22 * hash(sd + i * 2.3);
-    const mid = [tx + L * 0.55 * Math.cos(a), ty + L * 0.55 * Math.sin(a) - 10], far = [tx + L * Math.cos(a) + 14, Math.min(690, ty + L * Math.sin(a) + 40 + 60 * (1 - i / n))];
-    const end = [far[0] + 10, Math.min(696, far[1] + 70)];
-    const p = curve([[tx - 6, ty], mid, far, end]);
-    sk.ink(p, { w: 6, color: LEAF_D, seed: sd + i, wob: 0.5 });
-    for (let k = Math.floor(p.length * 0.3), j = 0; k < p.length; k += 5, j++) { const q = p[k], sg = j % 2 ? 1 : -1; sk.ink(dense([q, [q[0] + sg * 12, q[1] + 11]]), { w: 5, color: LEAF, seed: sd + 100 + i * 20 + j, wob: 0.2 }); }
-  }
+  // 굵은 가지 다섯: 줄기 끝에서 오른쪽으로 부채처럼
+  const boughs = [[[tx + 80, ty - 110], [tx + 170, ty - 168]], [[tx + 110, ty - 70], [tx + 236, ty - 116]], [[tx + 130, ty - 22], [tx + 266, ty - 44]], [[tx + 126, ty + 18], [tx + 262, ty + 22]], [[tx + 96, ty + 44], [tx + 210, ty + 56]]];
+  boughs.forEach(([m, e], i) => {
+    const p = curve([[tx - 10, ty], m, e]);
+    sk.ink(p, { w: 15, seed: sd + i, wob: 0.5 }); sk.ink(p, { w: 8, color: BARK, seed: sd + i, wob: 0.5 });
+    // 잔가지: 가지에서 땅 쪽으로 처진다
+    for (let k = Math.floor(p.length * 0.25), j = 0; k < p.length; k += 6, j++) {
+      const q = p[k], len = Math.min(698 - q[1], 46 + 40 * hash(sd + i * 9 + j));
+      if (len < 14) continue;
+      const tw = curve([q, [q[0] + 8, q[1] + len * 0.5], [q[0] + 4, q[1] + len]]);
+      sk.ink(tw, { w: 5, color: LEAF_D, seed: sd + 200 + i * 20 + j, wob: 0.4 });
+      for (let t = 3, c = 0; t < tw.length; t += 4, c++) { const r = tw[t], sg = c % 2 ? 1 : -1; sk.ink(dense([r, [r[0] + sg * 11, r[1] + 9]]), { w: 5, color: LEAF, seed: sd + 300 + i * 40 + j * 5 + c, wob: 0.2 }); }
+    }
+  });
   thin(sk, 0.9, () => {
-    const trunk = poly([[bx, 618], [tx, ty - 12], [tx, ty + 14], [bx, 684]], 4);
+    const trunk = poly([[bx, 596], [tx, ty - 20], [tx, ty + 20], [bx, 686]], 4);
     sk.fill(trunk, BARK, { seed: sd + 70, tex: true, texAng: 0.05 }); sk.ink(trunk, { w: 10, seed: sd + 71 });
   });
 }
@@ -341,16 +344,12 @@ function p3() {
   // 뿌리째 뽑아 눕힌 버드나무: 처음의 가는 줄기와 견줄 수 없이 크다
   fallenWillow(sk, 211);
   // 다시 말린 흙: 처음과 같은 추에 거의 수평
-  const b = balance(sk, 650, 704, { h: 300, arm: 70, drop: 126, pw: 38, tilt: 0.07, seed: 231 });
-  sack(sk, b.L[0], b.L[1] + 4, 0.62, 241);
-  weights(sk, b.R[0], b.R[1] + 4, 0.72, 245);
-  // 줄어든 흙 한 줌
-  const pile = curve([[556, 702], [566, 688], [580, 684], [594, 688], [604, 702]], false, 3);
-  sk.fill([...pile, pile[0]], SOIL, { dx: 0, dy: 0, wob: 0.3, seed: 251 }); sk.ink(pile, { w: 5, seed: 252, wob: 0.3 });
-  arrow(sk, [[580, 606], [580, 668]], { w: 6, color: C.red, seed: 253, straight: true, head: 14, wob: 0.2 });
+  const b = balance(sk, 708, 704, { h: 300, arm: 60, drop: 126, pw: 34, tilt: 0.07, seed: 231 });
+  sack(sk, b.L[0], b.L[1] + 4, 0.56, 241);
+  weights(sk, b.R[0], b.R[1] + 4, 0.64, 245);
   // 반 헬몬트
-  const P = pose({ elL: [-122, -326], haL: [-152, -440], elR: [50, -262], haR: [40, -206], tilt: -0.04 });
-  person(sk, 880, 704, 0.66, P, HELMONT, { name: "helmont", face: "wide" });
+  const P = pose({ elL: [-46, -262], haL: [-40, -200], elR: [50, -262], haR: [40, -206], tilt: -0.05 });
+  person(sk, 870, 704, 0.66, P, HELMONT, { name: "helmont", face: "wide" });
   return sk;
 }
 
@@ -362,14 +361,14 @@ function p4() {
   const yb = 564, jw = 156, jh = 318;
   // 왼쪽: 식물 없이 둔 공기. 새 초가 꺼진다
   jarFill(sk, 190, yb, jw, jh, 311);
-  wireCandle(sk, 312, 190, yb - 6, yb - 110, false, 321);
+  wireCandle(sk, 296, 190, yb - 6, yb - 110, false, 321);
   jarLine(sk, 190, yb, jw, jh, 313);
   trough(sk, 190, 572, 236, 58, 331);
   xmark(sk, 78, 300, 0.56, { seed: 335 });
   // 오른쪽: 박하 가지를 넣어 둔 공기. 새 초가 탄다
   jarFill(sk, 478, yb, jw, jh, 341);
-  sprig(sk, 446, yb - 8, 216, 351, { pairs: 4, len: 50, lean: -6 });
-  wireCandle(sk, 600, 516, yb - 6, yb - 110, true, 361);
+  sprig(sk, 456, yb - 8, 216, 351, { pairs: 4, len: 38, lean: -4 });
+  wireCandle(sk, 584, 524, yb - 6, yb - 110, true, 361);
   jarLine(sk, 478, yb, jw, jh, 343);
   trough(sk, 478, 572, 236, 58, 371);
   check(sk, 362, 302, 0.62);
@@ -436,19 +435,19 @@ function p6() {
   table(sk, 24, 700, 584, 503);
   sun(sk, 86, 92, 42, { seed: 505 });
   // 작은 대조: 끓여서 녹아 있던 기체를 뺀 물. 햇빛을 받아도 기포가 없다
-  kettle(sk, 82, 584, 0.5, { seed: 511, lift: 8 });
-  for (const [x, i] of [[128, 0], [142, 1]]) sk.ink(squiggle(x, 512, 44, 5, 2, i * 1.5), { w: 4, color: C.gray, wob: 0, seed: 515 + i });
-  leafJar(sk, 232, 584, 521, { bub: false, jw: 104, jh: 214, tw: 164 });
-  ray(sk, [136, 136], [196, 340], 531, { w: 6, head: 15 });
+  kettle(sk, 74, 584, 0.5, { seed: 511, lift: 8 });
+  for (const [x, i] of [[120, 0], [134, 1]]) sk.ink(squiggle(x, 512, 44, 5, 2, i * 1.5), { w: 4, color: C.gray, wob: 0, seed: 515 + i });
+  leafJar(sk, 216, 584, 521, { bub: false, jw: 104, jh: 214, tw: 164 });
+  ray(sk, [132, 136], [182, 340], 531, { w: 6, head: 15 });
   // 가운데: 이산화 탄소를 녹인 물. 기포가 많이 오른다
-  const J = leafJar(sk, 468, 584, 541, { bub: true, jw: 176, jh: 380, tw: 264, gas: 44, gap: 26, dots: [[-66, -40], [-48, -120], [-70, -196], [60, -60], [70, -150], [52, -230], [-30, -26], [26, -30], [-58, -262], [66, -288]] });
-  co2dots(sk, [[362, 566], [574, 566]], 6);
-  ray(sk, [152, 108], [372, 300], 551);
-  ray(sk, [160, 80], [392, 214], 553);
-  for (const [a, b, i] of [[[404, 420], [434, 404], 0], [[532, 404], [504, 380], 1]]) co2arrow(sk, [a, b], 561 + i, { w: 5.5, head: 12, straight: true });
+  const J = leafJar(sk, 438, 584, 541, { bub: true, jw: 176, jh: 380, tw: 264, gas: 44, gap: 26, dots: [[-66, -40], [-48, -120], [-70, -196], [60, -60], [70, -150], [52, -216], [-30, -26], [26, -30], [-62, -236], [68, -240]] });
+  co2dots(sk, [[332, 566], [544, 566]], 6);
+  ray(sk, [152, 108], [342, 300], 551);
+  ray(sk, [160, 80], [362, 214], 553);
+  for (const [a, b, i] of [[[374, 420], [404, 404], 0], [[502, 404], [474, 380], 1]]) co2arrow(sk, [a, b], 561 + i, { w: 5.5, head: 12, straight: true });
   // 이산화 탄소를 녹인 물병에서 그릇으로
   gasBottle(sk, 652, 584, 0.8, 571);
-  co2arrow(sk, [[640, 424], [606, 440], [582, 520]], 581, { w: 7 });
+  co2arrow(sk, [[636, 424], [590, 440], [560, 520]], 581, { w: 7 });
   // 세네비에
   const P = pose({ elL: [-100, -310], haL: [-176, -330], elR: [52, -262], haR: [34, -214], tilt: -0.05 });
   person(sk, 838, 704, 0.66, P, SENEBIER, { name: "senebier", face: "happy" });
@@ -466,7 +465,7 @@ function p7() {
   const ty = pot(sk, x, yb - 4, 104, 74, 621);
   // 흙에서 줄기를 따라 오르는 물(파랑)
   const tips = sprig(sk, x, ty, 176, 631, { pairs: 3, len: 58, sw: 7 });
-  for (const [dx, dy, i] of [[-26, -24, 0], [24, -42, 1], [-4, -52, 2]]) drop(sk, x + dx, yb + dy - 12, 0.55, { seed: 641 + i, color: "#9FD0F2" });
+  for (const [dx, i] of [[-30, 0], [32, 1]]) drop(sk, x + dx, ty - 1, 0.42, { seed: 641 + i, color: "#9FD0F2", w: 6 });
   waterArrow(sk, [[x + 16, ty - 8], [x + 17, ty - 110]], 651, { straight: true, w: 6.5, head: 15 });
   // 덮개 속 공기의 이산화 탄소(회색 점)에서 잎으로
   co2dots(sk, [[x - 84, yb - 252], [x - 62, yb - 286], [x - 92, yb - 300], [x + 74, yb - 268], [x + 88, yb - 232], [x + 58, yb - 300], [x - 96, yb - 196], [x + 96, yb - 180]], 7);
@@ -509,12 +508,13 @@ function p8() {
   co2dots(sk, [[878, 480], [906, 452], [918, 500], [890, 524], [936, 474], [858, 512]], 7.5);
   co2arrow(sk, [[872, 462], [848, 420], [816, 382]], 751, { w: 8, head: 19 });
   // 산소: 잎에서 공기로(하늘색 기포)
-  for (const [x, y, r, i] of [[862, 196, 9, 0], [888, 172, 11, 1], [914, 148, 9, 2], [884, 132, 7, 3], [924, 112, 10, 4]]) bubble(sk, x, y, r, 761 + i * 3);
+  arrow(sk, [[848, 222], [886, 180], [930, 150]], { w: 8, color: "#6EC5E9", seed: 759, head: 19, wob: 0.3 });
+  for (const [x, y, r, i] of [[884, 228, 8, 0], [912, 202, 10, 1], [936, 184, 7, 2], [872, 150, 8, 3], [906, 122, 10, 4]]) bubble(sk, x, y, r, 761 + i * 3);
   // 쌤과 학생
-  const tp = pose({ elR: [96, -306], haR: [172, -342], elL: [-50, -260], haL: [-30, -214], tilt: 0.05 });
-  drawFigure(sk, 338, gy, 0.6, tp, { ...TEACHER, name: "teacher" });
-  const sp = pose({ elL: [-124, -326], haL: [-190, -420], elR: [124, -326], haR: [190, -420], tilt: 0.03 });
-  drawFigure(sk, 134, gy, 0.6, sp, { ...STUDENT, name: "student", mirror: true });
+  const tp = pose({ elR: [92, -306], haR: [150, -342], elL: [-50, -260], haL: [-30, -214], tilt: 0.05 });
+  drawFigure(sk, 366, gy, 0.6, tp, { ...TEACHER, name: "teacher" });
+  const sp = pose({ elL: [-136, -316], haL: [-196, -398], elR: [136, -316], haR: [196, -398], tilt: 0.03 });
+  drawFigure(sk, 186, gy, 0.58, sp, { ...STUDENT, name: "student", mirror: true });
   return sk;
 }
 
@@ -551,12 +551,12 @@ const CUTS = [
   },
   {
     fn: p6, when: "1782년, 제네바", whenPos: "tr", stage: "재료 찾기", title: "물에 녹은 기체",
-    caption: "1782년, 제네바의 <b>세네비에</b>는 잎을 담그는 물을 바꿔 보았어요. 오늘날 <b>이산화 탄소</b>라고 부르는 기체를 녹인 물에서는 잎이 기포를 더 많이 냈어요. 끓여서 녹아 있던 기체를 뺀 물에서는 햇빛을 받아도 기포가 나오지 않았지요. 공기 속의 이 기체도 식물의 재료였어요.",
+    caption: "1782년, 제네바의 <b>세네비에</b>는 잎을 담그는 물을 바꿔 보았어요. 오늘날 <b>이산화 탄소</b>라고 부르는 기체를 녹인 물에서는 잎이 보통 물보다 기포를 더 많이 냈어요. 끓여서 녹아 있던 기체를 뺀 물에서는 햇빛을 받아도 기포가 나오지 않았지요. 오늘날 보면, 공기 속의 이 기체도 식물의 재료예요.",
     bubbles: [{ who: "senebier", text: "이 기체가<br>있어야 해!" }],
   },
   {
     fn: p7, when: "1804년, 제네바", stage: "마지막 조각", title: "물도 몸이 됐어요",
-    caption: "1804년, 제네바의 <b>소쉬르</b>는 유리 덮개 속에서 식물을 기르며 식물과 이산화 탄소의 무게를 앞뒤로 쟀어요. 식물이 늘어난 무게는 공기에서 받아들인 것보다 더 컸어요. 모자란 만큼은 뿌리로 빨아올린 <b>물</b>이 식물의 몸이 되어 채운 거예요. 반 헬몬트의 생각은 절반이 맞았어요.",
+    caption: "1804년, 제네바의 <b>소쉬르</b>는 유리 덮개 속에서 식물을 기르며 식물과 이산화 탄소의 무게를 실험 전과 후에 쟀어요. 식물의 늘어난 무게는 공기에서 받아들인 것보다 더 컸어요. 모자란 만큼은 뿌리로 빨아올린 <b>물</b>이 식물의 몸이 되어 채운 거예요. 반 헬몬트의 생각은 절반이 맞았어요.",
     bubbles: [{ who: "saussure", text: "물도 몸이<br>됐구나!" }],
   },
   {
