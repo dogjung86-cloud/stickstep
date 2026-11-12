@@ -37,6 +37,16 @@ import { G2_UNIT5_V3 } from "./g2/unit5v3";
 import { G2_UNIT6_V3 } from "./g2/unit6v3";
 import { G2_UNIT7 } from "./g2/unit7";
 import { G2_UNIT8 } from "./g2/unit8";
+// 중2 과학 전면 재제작(v5, 2026-11-12) 병행 배선: 단원마다 주소 ?g2u3v5 (세션 "ss.g2u3v5"), 여덟 단원 한꺼번에 ?g2v5 (v5toggle.ts).
+// 단원 파일(g2/unitNv5.ts)이 null이거나 토글이 꺼져 있으면 정본이 그대로 실린다. 단원을 맡은 세션은 자기 unitNv5.ts만 채운다.
+import { G2_UNIT1_V5 } from "./g2/unit1v5";
+import { G2_UNIT2_V5 } from "./g2/unit2v5";
+import { G2_UNIT3_V5 } from "./g2/unit3v5";
+import { G2_UNIT4_V5 } from "./g2/unit4v5";
+import { G2_UNIT5_V5 } from "./g2/unit5v5";
+import { G2_UNIT6_V5 } from "./g2/unit6v5";
+import { G2_UNIT7_V5 } from "./g2/unit7v5";
+import { G2_UNIT8_V5 } from "./g2/unit8v5";
 import { MATH_CURRICULA } from "./math/curriculum";
 import { SOC_CURRICULA } from "./soc/curriculum";
 import { HIS_CURRICULA } from "./his/curriculum";
@@ -69,14 +79,14 @@ export const CURRICULUM: Unit[] = [
 
 // 중2 — 대단원 8개.
 export const CURRICULUM_G2: Unit[] = [
-  G2_UNIT1,
-  G2_UNIT2,
-  G2_UNIT3,
-  G2_UNIT4,
-  G2_UNIT5_V3,
-  G2_UNIT6_V3,
-  G2_UNIT7,
-  G2_UNIT8,
+  pickV5("g2u1", G2_UNIT1, G2_UNIT1_V5),
+  pickV5("g2u2", G2_UNIT2, G2_UNIT2_V5),
+  pickV5("g2u3", G2_UNIT3, G2_UNIT3_V5),
+  pickV5("g2u4", G2_UNIT4, G2_UNIT4_V5),
+  pickV5("g2u5", G2_UNIT5_V3, G2_UNIT5_V5),
+  pickV5("g2u6", G2_UNIT6_V3, G2_UNIT6_V5),
+  pickV5("g2u7", G2_UNIT7, G2_UNIT7_V5),
+  pickV5("g2u8", G2_UNIT8, G2_UNIT8_V5),
 ];
 
 export const CURRICULA: Record<GradeId, Unit[]> = { g1: CURRICULUM, g2: CURRICULUM_G2 };

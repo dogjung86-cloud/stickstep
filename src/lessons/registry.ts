@@ -331,6 +331,15 @@ import { U4V5_STEPS } from "./steps/u4v5";
 import { U5V5_STEPS } from "./steps/u5v5";
 import { U6V5_STEPS } from "./steps/u6v5";
 import { U7V5_STEPS } from "./steps/u7v5";
+// 중2 과학 v5(전면 재제작, 2026-11-12): 단원마다 자기 등록표(steps/g2uNv5/index.ts)를 채운다. 이 파일은 고치지 않는다.
+import { G2U1V5_STEPS } from "./steps/g2u1v5";
+import { G2U2V5_STEPS } from "./steps/g2u2v5";
+import { G2U3V5_STEPS } from "./steps/g2u3v5";
+import { G2U4V5_STEPS } from "./steps/g2u4v5";
+import { G2U5V5_STEPS } from "./steps/g2u5v5";
+import { G2U6V5_STEPS } from "./steps/g2u6v5";
+import { G2U7V5_STEPS } from "./steps/g2u7v5";
+import { G2U8V5_STEPS } from "./steps/g2u8v5";
 
 const R: Record<string, StepRenderer> = {
   concept,
@@ -669,6 +678,15 @@ const R: Record<string, StepRenderer> = {
   ...U5V5_STEPS,
   ...U6V5_STEPS,
   ...U7V5_STEPS,
+  // 중2 과학 v5 단원별 등록표(타입 이름은 "g2u3…"로 시작한다)
+  ...G2U1V5_STEPS,
+  ...G2U2V5_STEPS,
+  ...G2U3V5_STEPS,
+  ...G2U4V5_STEPS,
+  ...G2U5V5_STEPS,
+  ...G2U6V5_STEPS,
+  ...G2U7V5_STEPS,
+  ...G2U8V5_STEPS,
 };
 
 export function getRenderer(type: string): StepRenderer | undefined {
