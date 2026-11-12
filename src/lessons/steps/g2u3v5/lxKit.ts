@@ -32,6 +32,8 @@ export interface LxStage {
   stop: () => void;
   /** 포인터 이벤트의 설계 판 좌표 */
   pt: (e: PointerEvent) => { x: number; y: number };
+  /** 설계 판의 네모(x, y, w, h)를 무대 위 DOM 요소의 자리(px)로 옮긴다. 무대 폭이 바뀌어도 그림과 같은 자리에 놓인다. */
+  place: (node: HTMLElement, x: number, y: number, w: number, h: number) => void;
 }
 
 export function lxCanvas(stage: HTMLElement): LxStage {
@@ -80,6 +82,13 @@ export function lxCanvas(stage: HTMLElement): LxStage {
       fit();
       const r = cv.getBoundingClientRect();
       return { x: (e.clientX - r.left - ox) / k, y: (e.clientY - r.top - oy) / k };
+    },
+    place(node, x, y, w, h) {
+      fit();
+      node.style.left = `${ox + x * k}px`;
+      node.style.top = `${oy + y * k}px`;
+      node.style.width = `${w * k}px`;
+      node.style.height = `${h * k}px`;
     },
   };
 }

@@ -11,6 +11,10 @@ export const OPENERS = {
     await L.hold(page, '[data-k="pour"]', 500);
     await L.hold(page, '[data-k="pour"]', 1700);
   },
+  "g2u3-dark": async ({ page, L }) => {
+    await L.tapK(page, "stare", 2100);
+    await L.tapK(page, "torch", 400);
+  },
 };
 
 // ── 랩 ──
@@ -89,5 +93,32 @@ export const LABS = {
     await c.shot("coin-ghost");
     await c.judge("coin", wrong);
     await c.done("coin");
+  },
+  path: async (c, wrong) => {
+    const { page, L, check } = c;
+    // 틀린 방향(눈에서 책으로)을 먼저 그려 본다
+    await L.tapK(page, "eye");
+    await L.tapK(page, "obj");
+    await L.tapK(page, "send", 500);
+    await c.fit("path 틀린 화살표");
+    await c.shot("path-bad");
+    await L.tapK(page, "clear");
+    await L.tapK(page, "lamp");
+    await L.tapK(page, "obj");
+    await L.tapK(page, "obj");
+    await L.tapK(page, "eye");
+    await L.tapK(page, "send", 500);
+    await c.shot("path-room");
+    check("책이 보이면 어항으로", await L.waitDs(page, "lx", "tank"));
+    await L.W(page, 300);
+    await L.tapK(page, "lamp");
+    await L.tapK(page, "obj");
+    await L.tapK(page, "obj");
+    await L.tapK(page, "eye");
+    await c.fit("path 어항 그리기");
+    await L.tapK(page, "send", 700);
+    await c.shot("path-tank");
+    await c.judge("path", wrong);
+    await c.done("path");
   },
 };

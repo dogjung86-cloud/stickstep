@@ -229,4 +229,69 @@ const straw: OpenerScene = (c) => {
   );
 };
 
-export const G2U3_SCENES: Record<string, OpenerScene> = { "g2u3-town": town, "g2u3-straw": straw };
+// ── 3. 깜깜한 방 ────────────────────────────────────────────────
+const dark: OpenerScene = (c) => {
+  const M = meta(c).dark;
+  art(c, "darkBase");
+  const S = meta(c).stage;
+  const ov = overlay(c, "opn-g2u3-dark");
+  svgEl(ov, "polygon", { class: "cone", points: `${M.torch[0]},${M.torch[1] - 20} ${S.w},${M.cat[1] - 250} ${S.w},${M.cat[1] + 130} ${M.torch[0]},${M.torch[1] + 20}` });
+  svgEl(ov, "rect", { class: "night", x: 0, y: 0, width: S.w, height: S.h });
+  const eyes = svgEl(ov, "g", { class: "eyes" });
+  [-24, 24].forEach((dx) => {
+    svgEl(eyes, "ellipse", { cx: M.eyes[0] + dx, cy: M.eyes[1], rx: 13, ry: 15, fill: "#fff" });
+    svgEl(eyes, "circle", { cx: M.eyes[0] + dx + 4, cy: M.eyes[1], r: 6, fill: "#1c1c1e" });
+  });
+  eyes.style.transformOrigin = `${M.eyes[0]}px ${M.eyes[1]}px`;
+  const tried = { stare: false, torch: false };
+  let busy = false;
+  let lit = false;
+  let over = false;
+  const stare = btn(c, "stare", "눈 크게 뜨기", "빛 없이 기다려요");
+  const torch = btn(c, "torch", "손전등 켜기", "고양이 쪽으로");
+  const torchLabel = torch.querySelector("b") as HTMLElement;
+  c.controls.classList.add("opn-g2u3-two");
+  const verdict = bet(c, "빛이 전혀 없는 깜깜한 방에 고양이가 있어요. 눈을 크게 뜨고 기다리면 고양이가 보일까요?", ["끝까지 보이지 않아요", "조금 지나면 어렴풋이 보여요", "눈을 크게 뜨면 보여요"], "예측 완료! 먼저 <b>눈을 크게 뜨고</b> 기다려 보세요.");
+  const finishIf = (): void => {
+    if (over || !tried.stare || !tried.torch) return;
+    over = true;
+    c.later(() => end(c, `${verdict()} 빛이 없을 때는 끝까지 안 보였고, 손전등을 켜자 보였어요. 그 빛은 어디로 갔을까요?`), 700);
+  };
+  stare.addEventListener("click", () => {
+    if (!playing(c) || busy || over) return;
+    if (lit) {
+      lit = false;
+      c.stage.classList.remove("lit");
+      torchLabel.textContent = "손전등 켜기";
+    }
+    busy = true;
+    haptic(HAPTIC.tap);
+    c.stage.classList.add("wide");
+    c.say("눈을 크게 뜨고 기다리는 중이에요.");
+    c.later(() => {
+      busy = false;
+      c.stage.classList.remove("wide");
+      tried.stare = true;
+      stare.classList.add("tried");
+      if (!tried.torch) c.say("아무리 기다려도 <b>깜깜</b>해요. 이번엔 <b>손전등</b>을 켜 보세요.");
+      finishIf();
+    }, 1800);
+  });
+  torch.addEventListener("click", () => {
+    if (!playing(c) || busy || over) return;
+    haptic(HAPTIC.tap);
+    lit = !lit;
+    c.stage.classList.toggle("lit", lit);
+    torchLabel.textContent = lit ? "손전등 끄기" : "손전등 켜기";
+    if (!lit) {
+      c.say("다시 깜깜해졌어요.");
+      return;
+    }
+    tried.torch = true;
+    torch.classList.add("tried");
+    if (!tried.stare) c.say("고양이가 보여요! 손전등을 끄고 <b>눈을 크게 떠서</b> 기다려 보면 어떨까요?");
+    finishIf();
+  });
+};
+
+export const G2U3_SCENES: Record<string, OpenerScene> = { "g2u3-town": town, "g2u3-straw": straw, "g2u3-dark": dark };

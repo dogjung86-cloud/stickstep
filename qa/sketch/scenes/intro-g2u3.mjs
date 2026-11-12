@@ -74,10 +74,46 @@ export function strawCup() {
   return { sk };
 }
 
+/* ══════════ 3. 깜깜한 방 (g2u3l3) ══════════ */
+export const DARK = { eyes: [196, 246], torch: [372, 308], cat: [720, 420] };
+function cat(sk, x, y, s, sd) {
+  // 앉은 고양이(옆모습): 몸통, 머리, 귀, 꼬리
+  const body = ell(x, y - 46 * s, 62 * s, 50 * s);
+  sk.fill(body, "#F2B872", { dx: 1, dy: 1.2, wob: 0.8, seed: sd, tex: true });
+  sk.ink(body, { w: 8, wob: 0.8, seed: sd + 1 });
+  const head = circ(x - 56 * s, y - 104 * s, 36 * s, { seed: sd + 2 });
+  sk.fill(head, "#F2B872", { dx: 1, dy: 1.2, wob: 0.6, seed: sd + 3 });
+  sk.ink(head, { w: 8, wob: 0.6, seed: sd + 4 });
+  [[-82, -128, -74, -158, -60, -134], [-52, -138, -36, -162, -30, -130]].forEach((e, i) => {
+    const ear = poly([[x + e[0] * s, y + e[1] * s], [x + e[2] * s, y + e[3] * s], [x + e[4] * s, y + e[5] * s]], 3);
+    sk.fill(ear, "#F2B872", { dx: 0, dy: 0, wob: 0.3, seed: sd + 5 + i });
+    sk.ink(ear, { w: 6, wob: 0.3, seed: sd + 7 + i });
+  });
+  sk.ink(curve([[x + 56 * s, y - 20 * s], [x + 100 * s, y - 30 * s], [x + 108 * s, y - 80 * s]]), { w: 9, color: "#C98A45", wob: 0.5, seed: sd + 9 });
+  sk.dot(x - 70 * s, y - 108 * s, 4 * s);
+  sk.dot(x - 48 * s, y - 108 * s, 4 * s);
+}
+export function darkBase() {
+  const sk = new Sk(W, H, { id: "g3d" });
+  ground(sk);
+  // 방석과 고양이
+  const cush = ell(DARK.cat[0], DARK.cat[1] + 76, 120, 18);
+  sk.fill(cush, C.red, { dx: 0, dy: 0, wob: 0.6, seed: 81 });
+  sk.ink(cush, { w: 7, wob: 0.8, seed: 82 });
+  cat(sk, DARK.cat[0], DARK.cat[1] + 70, 1.15, 83);
+  // 손전등을 든 학생
+  drawFigure(sk, 200, 506, 0.6, pose({ elR: [110, -300], haR: [220, -330] }), { ...STUDENT });
+  const t = poly([[DARK.torch[0] - 62, DARK.torch[1] - 14], [DARK.torch[0] - 14, DARK.torch[1] - 14], [DARK.torch[0], DARK.torch[1] - 24], [DARK.torch[0], DARK.torch[1] + 24], [DARK.torch[0] - 14, DARK.torch[1] + 14], [DARK.torch[0] - 62, DARK.torch[1] + 14]], 4);
+  sk.fill(t, C.navy, { dx: 0, dy: 0, wob: 0.3, seed: 95 });
+  sk.ink(t, { w: 6, wob: 0.4, seed: 96 });
+  return { sk };
+}
+
 /** build-intro.mjs가 부른다: 그림을 싣고 장면별 좌표를 돌려준다. */
 export function build(add) {
   return {
     town: { ...TOWN, ...add("townBase", townBase()) },
+    dark: { ...DARK, ...add("darkBase", darkBase()) },
     straw: { ...STRAW, ...add("strawBase", strawBase()), ...add("strawCup", strawCup()) },
   };
 }

@@ -81,3 +81,25 @@
 /* ── 랩: 준비물 버튼(세 칸) ── */
 .g2u3x-segs.tall .g2u3x-seg { height: 62px; }
 .g2u3x-segs.tall .g2u3x-seg i { font-size: 11.5px; }
+
+/* 3. 깜깜한 방 */
+.opn-g2u3-dark .night { fill: #0B1524; opacity: .97; transition: opacity .35s; }
+.opn-g2u3-dark .cone { fill: #FFE27A; opacity: 0; transition: opacity .35s; }
+.opn-g2u3-dark .eyes { transform-box: view-box; transition: transform .4s var(--ease); }
+.opn-stage.wide .opn-g2u3-dark .eyes { transform: scale(1.45); }
+.opn-stage.lit .opn-g2u3-dark .night { opacity: .12; }
+.opn-stage.lit .opn-g2u3-dark .cone { opacity: .5; }
+.opn-stage.lit .opn-g2u3-dark .eyes { opacity: 0; }
+
+/* ── g2u3l3 빛의 길: 누르는 자리와 그린 화살표 ── */
+.g2u3x-node { position: absolute; z-index: 2; padding: 0; border: 0; background: none; border-radius: 50%; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.g2u3x-node:active { background: rgba(255, 255, 255, .08); }
+.g2u3x-arrows { display: flex; flex-wrap: wrap; gap: 6px; height: 74px; align-content: flex-start; overflow: hidden; }
+.g2u3x-chip {
+  height: 34px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--n300); background: #fff; display: inline-flex; align-items: center;
+  font-size: 13.5px; font-weight: 800; color: var(--ink); white-space: nowrap;
+}
+.g2u3x-chip.none { border-style: dashed; background: var(--n50); color: var(--ter); font-weight: 700; }
+.g2u3x-chip.ok { border-color: var(--green); background: #EFFBF4; color: var(--green-press); }
+.g2u3x-chip.bad { border-color: var(--red); background: #FFF2F3; color: var(--red-press); text-decoration: line-through; }
+.g2u3x-chip.dry { border-style: dashed; color: var(--ter); }
