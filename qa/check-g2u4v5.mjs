@@ -41,8 +41,8 @@ const kind = () =>
     if (!s) return "";
     if (s.classList.contains("opn-step")) return "opener:" + (s.dataset.opnScene ?? "");
     if (s.classList.contains("g2u4x-step")) return "lab:" + (s.querySelector(".bv-stage")?.className.match(/g2u4x-(?!stage)[a-z0-9]+/)?.[0].slice(6) ?? "");
-    if (s.querySelector(".comic-art, .comic-narrator")) return "comic";
     if (s.querySelector(".hook-scene")) return "hook";
+    if (s.querySelector(".comic-art, .comic-narrator")) return "comic";
     if (s.querySelector(".opts, .ox-grid")) return "quiz";
     return "read";
   });
@@ -430,7 +430,7 @@ ok(!/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(all), "화면 글에 이모�
 ok(!/ - /.test(all), "화면 글에 삽입구용 하이픈이 있음: " + (all.match(/.{0,12} - .{0,12}/)?.[0] ?? ""));
 
 // 토글을 끈 화면
-if (!ONLY) {
+if (!ONLY || ONLY === "off") {
   await open("g2u4l1", false);
   const k = await kind();
   ok(k === "hook", `토글을 끈 첫 레슨이 지금 화면(훅)으로 열리지 않음: ${k}`);
