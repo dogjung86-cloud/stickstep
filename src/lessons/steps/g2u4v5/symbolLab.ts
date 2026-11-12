@@ -206,7 +206,7 @@ export const g2u4CardLab: StepRenderer = (host, step, api) => {
           place();
           busy = false;
           if (at >= PATH.length) {
-            lab.finish("이름과 기호가 달라 보이는 원소도 있어요. <b>Na, Fe, Cu, Ag, Au</b>는 라틴어 이름에서 온 기호예요.");
+            lab.finish("라틴어 이름에서 온 원소 기호도 많아요. <b>Na, Fe, Cu, Ag, Au</b>가 그런 기호예요.");
             return;
           }
           f.say(`맞아요, ${name}의 기호는 <b>${want}</b>예요. 이번에는 <b>${PATH[at][0]}</b>의 기호 카드를 찾아요.`);

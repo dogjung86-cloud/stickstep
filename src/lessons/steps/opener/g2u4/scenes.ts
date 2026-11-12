@@ -215,7 +215,7 @@ export function blot(c: OpenerCtx): void {
   const spot = q<SVGGElement>(c, ".opn-g2u4-bl-spot")[0];
   const dropEl = q<SVGGElement>(c, ".opn-g2u4-bl-drop")[0];
   c.step.dataset.opnPhase = "ask";
-  c.ask("젖은 거름종이에 파란 황산 구리 수용액을 한 방울 떨어뜨리면요?", {
+  c.ask("젖은 거름종이에 파란 황산 구리(Ⅱ) 수용액을 한 방울 떨어뜨리면요?", {
     choices: ["사방으로 둥글게 번진다", "한쪽으로만 번진다", "번지지 않고 그대로다"],
     neutral: true,
     good: "예측 완료! 버튼을 눌러 한 방울 <b>떨어뜨려</b> 보세요.",

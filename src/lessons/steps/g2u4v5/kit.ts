@@ -68,6 +68,7 @@ export function g4Lab(host: HTMLElement, api: StepAPI, s: G4Step, o: { steps: nu
       done = true;
       host.dataset.g4Phase = "done";
       f.pips(o.steps);
+      f.say("잘했어요. <b>알게 된 것</b>을 읽고 다음으로 넘어가요.");
       f.slot.conclude(html);
       haptic(HAPTIC.ctaUnlock);
       api.recordQuiz(wrong === 0);

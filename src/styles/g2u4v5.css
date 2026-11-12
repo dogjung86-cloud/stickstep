@@ -17,7 +17,7 @@
 /* ── 무대 위 글, 알림 ─────────────────────────────── */
 .g2u4x-cap {
   position: absolute; left: 12px; top: 10px; max-width: calc(100% - 24px); padding: 4px 10px; border-radius: 999px;
-  background: rgba(255, 255, 255, .09); border: 1px solid rgba(255, 255, 255, .13);
+  background: #22324D; border: 1px solid #3A4D6E;
   color: #E8EEF9; font-size: 12.5px; font-weight: 700; white-space: nowrap; pointer-events: none;
 }
 .g2u4x-cap:empty { display: none; }

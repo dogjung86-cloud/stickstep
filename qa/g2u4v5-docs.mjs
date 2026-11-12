@@ -134,7 +134,7 @@ for (const p of data.probs) {
   }
   no += 1;
   const head = `**문제 ${no}** (${p.lesson} 스텝 ${p.step}, ${p.type === "quiz" ? { mcq: "하나 고르기", ox: "O/X", multi: "모두 고르기" }[p.kind || "mcq"] : { binSort: "분류", order: "순서", pairMatch: "짝 잇기" }[p.type]})`;
-  blind.push(head, "", p.prompt + (p.lead ? ` ${p.lead}` : ""), "");
+  blind.push(head, "", p.prompt + (p.lead ? `: ${p.lead}` : ""), "");
   if (p.fig) blind.push(`(그림: figs/${p.fig}.png. 그림 설명: ${p.figAria})`, "");
   if (p.type === "quiz" && p.kind === "ox") {
     blind.push("O 또는 X", "");
