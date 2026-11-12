@@ -17,6 +17,15 @@ import "./styles/u4v5.css";
 import "./styles/u5v5.css";
 import "./styles/u6v5.css";
 import "./styles/u7v5.css";
+// 중2 과학 v5(전면 재제작, 2026-11-12) 단원별 시트. 접두 .g2uNx-, 도입은 .opn-g2uN-
+import "./styles/g2u1v5.css";
+import "./styles/g2u2v5.css";
+import "./styles/g2u3v5.css";
+import "./styles/g2u4v5.css";
+import "./styles/g2u5v5.css";
+import "./styles/g2u6v5.css";
+import "./styles/g2u7v5.css";
+import "./styles/g2u8v5.css";
 import "./styles/plant3.css"; // 중2 Ⅴ v3 재제작(2026-08-10) 공용 크롬 — ss.g2u5v3 병행 배선
 import "./styles/plant3-hook.css"; // v3 훅 5장면(hookPlant3)
 import "./styles/body3.css"; // 중2 Ⅵ v3 재제작(2026-08-10) 공용 크롬 — ss.g2u6v3 병행 배선

@@ -16,7 +16,7 @@ const OUT = join(HERE, "..", "..", "src", "ui", "introArt.generated.ts");
 //   qa/sketch/scenes/intro-u3.mjs 의 build(add) 를 불러 src/ui/introArt.u3.generated.ts 를 쓴다(Ⅰ단원 intro-u1.mjs 와 같은 약속).
 //   단원마다 파일이 따로라 다른 단원의 세션과 겹치지 않는다. 인자가 없으면 아래의 Ⅰ·Ⅱ단원 표를 만든다.
 const UNIT = process.argv[2] ?? "";
-if (UNIT && !/^u[3-7]$/.test(UNIT)) throw new Error(`단원 이름은 u3~u7 가운데 하나여야 한다: ${UNIT}`);
+if (UNIT && !/^(u[3-7]|g2u[1-8])$/.test(UNIT)) throw new Error(`단원 이름은 u3~u7, g2u1~g2u8 가운데 하나여야 한다: ${UNIT}`);
 const OUT_FILE = UNIT ? join(HERE, "..", "..", "src", "ui", `introArt.${UNIT}.generated.ts`) : OUT;
 const SRC_NAME = UNIT ? `intro-${UNIT}.mjs` : "intro-u2.mjs";
 
