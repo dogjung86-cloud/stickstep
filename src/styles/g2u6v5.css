@@ -1,3 +1,98 @@
 /* 중2 Ⅵ 동물과 에너지 v5(전면 재제작)의 시트. main.ts가 이미 싣는다.
    이 단원의 클래스는 .g2u6x- 로 시작한다. 도입 장면은 .opn-g2u6- 로 시작한다.
-   공용 뼈대(.bv-, .opn-)의 치수를 조정할 때는 이 단원의 클래스 아래에서만 한다(예: .g2u6x-step .bv-stage). 전역 규칙은 덮어쓰지 않는다. */
+   공용 뼈대(.bv-, .opn-)의 치수와 색은 이 단원의 클래스 아래에서만 고친다. 전역 규칙은 덮어쓰지 않는다.
+   한 화면 예산은 뼈대 그대로다(390×700의 스크롤 영역 554px 안에 제목, 도움말, 무대 230, 높이 고정 조작 칸 208). */
+
+/* ── 뼈대의 색을 단원 색(엽록소 초록)으로 ─────────────── */
+.g2u6x-step .bv-pips i.on { background: var(--subj-body); }
+.g2u6x-step .bv-helper { border-left-color: var(--subj-body); }
+.g2u6x-step .bv-btn.main { border-color: var(--subj-body); background: var(--subj-body-tint); color: var(--subj-body-press); }
+.g2u6x-step .bv-qt b { color: var(--subj-body-press); }
+.g2u6x-step .bv-done.show { background: var(--subj-body-tint); border-color: #F6C6CC; }
+.g2u6x-step .bv-done-k, .g2u6x-step .bv-done-t b { color: var(--subj-body-press); }
+.g2u6x-step .bv-btn { font-size: 14.5px; }
+.g2u6x-stage text { font-family: inherit; }
+
+/* ── 무대 위 글, 알림 ─────────────────────────────── */
+.g2u6x-cap {
+  position: absolute; left: 12px; top: 10px; max-width: calc(100% - 24px); padding: 4px 10px; border-radius: 999px;
+  background: #22324D; border: 1px solid #3A4D6E;
+  color: #E8EEF9; font-size: 12.5px; font-weight: 700; white-space: nowrap; pointer-events: none;
+}
+.g2u6x-cap:empty { display: none; }
+.g2u6x-cap.right { left: auto; right: 12px; }
+.g2u6x-toast {
+  position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); padding: 8px 14px; border-radius: 999px;
+  background: rgba(39, 134, 75, .96); color: #fff; font-size: 13.5px; font-weight: 800; white-space: nowrap; pointer-events: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .35); animation: g2u6xToast 1.9s var(--ease-out) both; z-index: 3;
+}
+.g2u6x-toast.bad { background: rgba(240, 68, 82, .95); }
+@keyframes g2u6xToast { 0% { opacity: 0; margin-top: 8px; } 12%, 80% { opacity: 1; margin-top: 0; } 100% { opacity: 0; } }
+.g2u6x-pop { animation: g2u6xPop .4s var(--ease-out) both; }
+@keyframes g2u6xPop { 0% { opacity: 0; } 100% { opacity: 1; } }
+.g2u6x-blink { animation: g2u6xBlink .5s ease-in-out 3; }
+@keyframes g2u6xBlink { 50% { opacity: .25; } }
+.g2u6x-focus { animation: g2u6xFocus .45s var(--ease-out) both; }
+@keyframes g2u6xFocus { 0% { opacity: .15; } 100% { opacity: 1; } }
+.g2u6x-flow { animation: g2u6xFlow 1.1s ease-in-out infinite; }
+@keyframes g2u6xFlow { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+.g2u6x-dash { animation: g2u6xDash .9s linear infinite; }
+@keyframes g2u6xDash { to { stroke-dashoffset: -22; } }
+.g2u6x-rise { animation: g2u6xRise 1.8s linear infinite; }
+.g2u6x-rise.d1 { animation-delay: -.6s; }
+.g2u6x-rise.d2 { animation-delay: -1.2s; }
+@keyframes g2u6xRise { 0% { transform: translateY(26px); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-14px); opacity: 0; } }
+.g2u6x-sink { animation: g2u6xSink 1.8s linear infinite; }
+.g2u6x-sink.d1 { animation-delay: -.6s; }
+.g2u6x-sink.d2 { animation-delay: -1.2s; }
+@keyframes g2u6xSink { 0% { transform: translateY(-14px); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(26px); opacity: 0; } }
+.g2u6x-shake { animation: g2u6xShake .4s ease-in-out 2; }
+@keyframes g2u6xShake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.g2u6x-ray { animation: g2u6xFlow 1.4s ease-in-out infinite; }
+
+/* ── 조작 부품 ────────────────────────────────────── */
+.g2u6x-row { display: grid; gap: 8px; }
+.g2u6x-chipbtn {
+  position: relative; height: 50px; padding: 0 4px; border-radius: 14px; border: 1.5px solid var(--n300); background: #fff;
+  color: var(--ink); font-size: 14px; font-weight: 800; box-shadow: var(--sh-card); white-space: nowrap; min-width: 0;
+  display: grid; place-items: center; align-content: center; transition: transform .12s, border-color .2s, background .2s;
+}
+.g2u6x-chipbtn b { font-size: 14px; font-weight: 800; line-height: 18px; letter-spacing: -.03em; }
+.g2u6x-chipbtn i { font-style: normal; font-size: 12px; font-weight: 600; color: var(--ter); line-height: 15px; }
+.g2u6x-chipbtn i[hidden] { display: none; }
+.g2u6x-chipbtn:active { transform: scale(.96); }
+.g2u6x-chipbtn:disabled { opacity: .45; }
+.g2u6x-chipbtn.on { border-color: var(--subj-body); background: var(--subj-body-tint); box-shadow: 0 0 0 1px var(--subj-body) inset; }
+.g2u6x-chipbtn.on i { color: var(--subj-body-press); }
+.g2u6x-chipbtn.done::after {
+  content: ""; position: absolute; right: 5px; top: 5px; width: 9px; height: 9px; border-radius: 50%; background: var(--subj-body);
+}
+.g2u6x-chipbtn.miss { border-color: var(--red); animation: g2u6xShake .4s ease-in-out 1; }
+
+/* ══ 도입 장면 ═══════════════════════════════════════ */
+.opn-g2u6-btn {
+  height: 52px; border-radius: 16px; border: 1.5px solid var(--subj-body); background: var(--subj-body-tint);
+  color: var(--subj-body-press); font-size: 15.5px; font-weight: 800; box-shadow: var(--sh-card);
+  touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; transition: transform .12s, background .2s;
+}
+.opn-g2u6-btn.wide { grid-column: 1 / -1; }
+.opn-g2u6-btn:active { transform: scale(.975); background: var(--subj-body); color: #fff; }
+.opn-g2u6-btn:disabled { opacity: .45; }
+
+/* ── 랩 무대의 누르는 조각, 조작 칸의 안내 글 ─────────────── */
+.g2u6x-stage [data-k] { cursor: pointer; }
+.g2u6x-stage svg { touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+.g2u6x-note {
+  padding: 10px 12px; border-radius: 14px; background: var(--n50); border: 1px solid var(--n200);
+  color: var(--n700); font-size: 13.5px; font-weight: 600; line-height: 20px;
+}
+.g2u6x-note b { color: var(--ink); }
+.g2u6x-note i { font-style: normal; display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin: 0 4px 0 0; vertical-align: 0; }
+.g2u6x-chipbtn.wide b { font-size: 13.5px; }
+.g2u6x-squeeze { animation: g2u6xSqueeze .5s var(--ease-out) both; }
+@keyframes g2u6xSqueeze { 0% { opacity: .35; } 100% { opacity: 1; } }
+/* 묶음은 꺼 두었다가 코드가 켠다 */
+.opn-g2u6-g, .opn-g2u6-rub { opacity: 0; transition: opacity .4s; }
+.opn-g2u6-g.on, .opn-g2u6-rub.on { opacity: 1; }
+.opn-g2u6-w { transition: opacity .4s; }
+.opn-g2u6-w.off { opacity: 0; }
