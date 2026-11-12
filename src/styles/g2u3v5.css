@@ -72,3 +72,12 @@
 .opn-g2u3-shade { transition: opacity .5s; }
 .opn-stage.lit .opn-g2u3-lit { opacity: 1; }
 .opn-stage.lit .opn-g2u3-shade { opacity: 0; }
+
+/* 2. 유리컵과 빨대 */
+.opn-g2u3-straw .w { fill: #8CC8EC; opacity: .6; }
+.opn-g2u3-straw .s { stroke: #E0503A; stroke-width: 15; stroke-linecap: round; }
+.opn-g2u3-straw .s.lo { stroke-width: 19; }
+
+/* ── 랩: 준비물 버튼(세 칸) ── */
+.g2u3x-segs.tall .g2u3x-seg { height: 62px; }
+.g2u3x-segs.tall .g2u3x-seg i { font-size: 11.5px; }

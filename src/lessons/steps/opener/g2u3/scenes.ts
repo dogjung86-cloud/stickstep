@@ -177,4 +177,56 @@ const town: OpenerScene = (c) => {
   const verdict = bet(c, "산에 가려 해가 들지 않는 마을이 있어요. 맞은편 언덕의 거울로 광장을 밝힐 수 있을까요?", ["각도를 잘 맞추면 밝아져요", "거울은 빛을 못 내서 안 돼요", "어느 각도로 두어도 밝아져요"], "예측 완료! 거울을 기울여 햇빛을 <b>광장</b>에 보내 보세요.");
 };
 
-export const G2U3_SCENES: Record<string, OpenerScene> = { "g2u3-town": town };
+// ── 2. 유리컵과 빨대 ────────────────────────────────────────────
+const straw: OpenerScene = (c) => {
+  const M = meta(c).straw;
+  art(c, "strawBase");
+  const ov = overlay(c, "opn-g2u3-straw");
+  const [cx, , cw] = M.cup;
+  const water = svgEl(ov, "rect", { x: cx + 6, y: M.wy0, width: cw - 12, height: 0, class: "w" });
+  const upper = svgEl(ov, "line", { class: "s" });
+  const lower = svgEl(ov, "line", { class: "s lo" });
+  art(c, "strawCup");
+  const along = (y: number): number => M.top[0] + ((M.bot[0] - M.top[0]) * (y - M.top[1])) / (M.bot[1] - M.top[1]);
+  const paint = (v: number): void => {
+    const wy = M.wy0 + (M.wy1 - M.wy0) * v;
+    water.setAttribute("y", String(wy));
+    water.setAttribute("height", String(M.wy0 - wy));
+    const sx = along(wy);
+    const set = (ln: SVGLineElement, x1: number, y1: number, x2: number, y2: number): void => {
+      ln.setAttribute("x1", String(x1));
+      ln.setAttribute("y1", String(y1));
+      ln.setAttribute("x2", String(x2));
+      ln.setAttribute("y2", String(y2));
+    };
+    set(upper, M.top[0], M.top[1], v > 0.02 ? sx : M.bot[0], v > 0.02 ? wy : M.bot[1]);
+    // 물에 잠긴 부분: 수면에서 꺾여 보인다
+    set(lower, sx, wy, M.bot[0] + M.bend * Math.min(1, v * 1.4), M.bot[1]);
+    lower.style.opacity = v > 0.02 ? "1" : "0";
+  };
+  paint(0);
+  let done = false;
+  let kept = 0;
+  const pour = btn(c, "pour", "물 붓기", "꾹 누르고 있어요");
+  c.controls.classList.add("opn-g2u3-one");
+  const verdict = bet(c, "빈 유리컵에 빨대를 꽂아 두었어요. 여기에 물을 부으면 빨대는 어떻게 보일까요?", ["수면에서 꺾여 보여요", "그대로 곧게 보여요", "물속 부분이 안 보여요"], "예측 완료! <b>물 붓기</b>를 꾹 눌러 컵에 물을 채워 보세요.");
+  holdFill(
+    c,
+    pour,
+    1400,
+    () => playing(c) && !done,
+    (v) => paint(Math.max(kept, v)),
+    (v) => {
+      kept = Math.max(kept, v);
+      if (kept < 0.75) {
+        c.say("조금 더 길게 <b>꾹</b> 눌러 물을 더 채워 보세요.");
+        return;
+      }
+      done = true;
+      pour.disabled = true;
+      c.later(() => end(c, `${verdict()} 빨대가 수면에서 꺾여 보여요. 빨대는 그대로인데 왜 꺾여 보일까요?`), 600);
+    },
+  );
+};
+
+export const G2U3_SCENES: Record<string, OpenerScene> = { "g2u3-town": town, "g2u3-straw": straw };

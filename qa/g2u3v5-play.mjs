@@ -7,6 +7,10 @@ export const OPENERS = {
     check("거울 숙이기 1", await L.tapK(page, "down", 700));
     check("거울 숙이기 2", await L.tapK(page, "down", 700));
   },
+  "g2u3-straw": async ({ page, L }) => {
+    await L.hold(page, '[data-k="pour"]', 500);
+    await L.hold(page, '[data-k="pour"]', 1700);
+  },
 };
 
 // ── 랩 ──
@@ -49,5 +53,41 @@ export const LABS = {
     await c.fit("rough 다섯 줄기");
     await c.judge("rough", wrong);
     await c.done("rough");
+  },
+  tank: async (c, wrong) => {
+    const { page, L, check } = c;
+    await L.tapK(page, "fire", 400);
+    await c.shot("tank-nothing");
+    await L.tapK(page, "smoke", 400);
+    await c.fit("tank 연기만");
+    await c.shot("tank-smoke");
+    await L.tapK(page, "milk", 400);
+    await L.tapK(page, "dark", 400);
+    check("준비가 끝나면 재는 국면", await L.waitDs(page, "lx", "measure"));
+    await L.W(page, 300);
+    await c.fit("tank 재기");
+    for (const v of [2, 4, 6]) {
+      await L.setRange(page, v);
+      await L.W(page, 150);
+      await L.tapK(page, "rec");
+    }
+    await c.shot("tank-measure");
+    await c.judge("tank", wrong);
+    await c.done("tank");
+  },
+  coin: async (c, wrong) => {
+    const { page, L, check } = c;
+    await L.setRange(page, 30);
+    await L.W(page, 300);
+    await c.fit("coin 물이 낮을 때");
+    await c.shot("coin-low");
+    await L.setRange(page, 92);
+    await L.W(page, 300);
+    check("물을 부으면 동전이 보임", (await L.ds(page, "lxSee")) === "1");
+    check("자리 보기 버튼", await L.tapK(page, "ghost", 600));
+    await c.fit("coin 떠오른 자리");
+    await c.shot("coin-ghost");
+    await c.judge("coin", wrong);
+    await c.done("coin");
   },
 };

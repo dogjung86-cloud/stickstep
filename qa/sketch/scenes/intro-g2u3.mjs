@@ -1,6 +1,7 @@
 // 중2 과학 Ⅲ 빛과 파동 도입(opener) 여덟 장면의 그림(손그림 코드 그림). intro-u5.mjs와 같은 엔진, 같은 무대(960×544).
 // 그림 속에 글자와 숫자는 넣지 않는다(기호만). 움직일 부분은 <g class>로 묶고 앱의 CSS와 코드가 움직인다.
 //   town   (g2u3l1) 산에 가린 마을, 맞은편 언덕의 거울(앱이 돌리고 햇빛 줄기를 긋는다)
+//   straw  (g2u3l2) 탁자 위의 유리컵과 지켜보는 학생(물과 빨대는 앱이 그린다)
 // build-intro.mjs g2u3 이 build(add)를 불러 src/ui/introArt.g2u3.generated.ts에 싣는다.
 import { Sk, C, curve, dense, circ, ell, arc, poly, rrect, arrow, rays } from "../lib/sk.mjs";
 import { drawFigure, pose, STUDENT, TEACHER } from "../lib/figure.mjs";
@@ -53,9 +54,30 @@ export function townBase() {
   return { sk };
 }
 
+/* ══════════ 2. 유리컵과 빨대 (g2u3l2) ══════════ */
+export const STRAW = { cup: [392, 150, 176, 318], top: [612, 70], bot: [436, 452], wy0: 462, wy1: 216, bend: 58 };
+export function strawBase() {
+  const sk = new Sk(W, H, { id: "g3b" });
+  // 탁자
+  sk.ink(dense([[250, 476], [760, 478]], 8), { w: 10, color: C.woodDark, wob: 1, seed: 71 });
+  sk.ink(dense([[300, 480], [296, 540]], 6), { w: 9, color: C.woodDark, wob: 0.6, seed: 72 });
+  sk.ink(dense([[712, 480], [716, 540]], 6), { w: 9, color: C.woodDark, wob: 0.6, seed: 73 });
+  drawFigure(sk, 150, 520, 0.6, pose({ elR: [96, -300], haR: [170, -340] }), { ...STUDENT });
+  return { sk };
+}
+/** 컵의 테두리는 물과 빨대 위에 얹는다(앱이 겹 차례를 맞춘다). */
+export function strawCup() {
+  const sk = new Sk(W, H, { id: "g3c" });
+  const [x, y, w, h] = STRAW.cup;
+  sk.ink(dense([[x, y], [x + 6, y + h], [x + w - 6, y + h], [x + w, y]], 6), { w: 9, color: C.navy, wob: 0.8, seed: 75 });
+  sk.ink(arc(x + 34, y + 60, 26, 2.6, 3.6), { w: 6, color: "#FFFFFF", wob: 0.3, seed: 76 });
+  return { sk };
+}
+
 /** build-intro.mjs가 부른다: 그림을 싣고 장면별 좌표를 돌려준다. */
 export function build(add) {
   return {
     town: { ...TOWN, ...add("townBase", townBase()) },
+    straw: { ...STRAW, ...add("strawBase", strawBase()), ...add("strawCup", strawCup()) },
   };
 }

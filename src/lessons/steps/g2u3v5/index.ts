@@ -3,8 +3,11 @@
 // 랩 뼈대는 ../bio6/b6Lab 의 bvFrame 을 그대로 쓴다(뼈대 파일과 bio6.css 는 고치지 않는다). 공용 부품은 ./lxKit.
 import type { StepRenderer } from "../../types";
 import { reflectLab5, roughLab } from "./reflectLabs";
+import { tankLab, coinLab } from "./refractLabs";
 
 export const G2U3V5_STEPS: Record<string, StepRenderer> = {
   g2u3ReflectLab: reflectLab5,
   g2u3RoughLab: roughLab,
+  g2u3TankLab: tankLab,
+  g2u3CoinLab: coinLab,
 };
