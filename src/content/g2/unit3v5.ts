@@ -21,4 +21,7 @@ const plan = (id: string): V5LessonPlan => {
 export const G2_UNIT3_V5: Unit | null = remakeUnit(G2_UNIT3, Object.fromEntries(Object.keys(G2U3_PARTS).map((id) => [id, plan(id)])));
 
 // 검사 도구(qa/g2u3v5-lib.mjs)가 문제의 정답을 찾을 때 쓰는 단원 표. 개발 모드에서만 내놓는다.
-if (import.meta.env.DEV && typeof window !== "undefined") (window as unknown as { __g2u3v5?: unknown }).__g2u3v5 = G2_UNIT3_V5;
+if (import.meta.env.DEV && typeof window !== "undefined") {
+  (window as unknown as { __g2u3v5?: unknown }).__g2u3v5 = G2_UNIT3_V5;
+  (window as unknown as { __g2u3base?: unknown }).__g2u3base = G2_UNIT3;
+}
