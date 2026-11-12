@@ -2,5 +2,38 @@
 // 스텝 타입 이름은 "g2u8"로 시작한다(다른 단원, 기존 랩과 겹치지 않게). 예: { g2u8SomethingLab: somethingLab }
 // 랩 뼈대는 ../bio6/b6Lab 의 bvFrame 을 그대로 쓴다(뼈대 파일과 bio6.css 는 고치지 않는다).
 import type { StepRenderer } from "../../types";
+import { pencilLab } from "./pencilLab";
+import { parallaxLab } from "./parallaxLab";
+import { luxLab } from "./luxLab";
+import { spreadLab } from "./spreadLab";
+import { magLab } from "./magLab";
+import { absLab } from "./absLab";
+import { heaterLab } from "./heaterLab";
+import { starTempLab } from "./starTempLab";
+import { modelLab } from "./modelLab";
+import { galaxyLab } from "./galaxyLab";
+import { observeLab } from "./observeLab";
+import { nebulaLab } from "./nebulaLab";
+import { balloonLab } from "./balloonLab";
+import { centerLab } from "./centerLab";
+import { missionLab } from "./missionLab";
+import { planLab } from "./planLab";
 
-export const G2U8V5_STEPS: Record<string, StepRenderer> = {};
+export const G2U8V5_STEPS: Record<string, StepRenderer> = {
+  g2u8PencilLab: pencilLab,
+  g2u8ParallaxLab: parallaxLab,
+  g2u8LuxLab: luxLab,
+  g2u8SpreadLab: spreadLab,
+  g2u8MagLab: magLab,
+  g2u8AbsLab: absLab,
+  g2u8HeaterLab: heaterLab,
+  g2u8StarTempLab: starTempLab,
+  g2u8ModelLab: modelLab,
+  g2u8GalaxyLab: galaxyLab,
+  g2u8ObserveLab: observeLab,
+  g2u8NebulaLab: nebulaLab,
+  g2u8BalloonLab: balloonLab,
+  g2u8CenterLab: centerLab,
+  g2u8MissionLab: missionLab,
+  g2u8PlanLab: planLab,
+};
