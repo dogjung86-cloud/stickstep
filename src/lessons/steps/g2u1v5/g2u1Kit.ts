@@ -271,7 +271,7 @@ export function tube(cx: number, y: number, w: number, h: number, fill: string, 
   const r = w / 2;
   const top = y + (h - r) * (1 - level);
   return `<g>
-    <path class="${ns}-liq" d="M${cx - r + 2} ${top} h${w - 4} V${y + h - r} a${r - 2} ${r - 2} 0 0 1 ${-(w - 4)} 0 Z" fill="${fill}" opacity="0.5"/>
+    <path class="${ns}-liq" d="M${cx - r + 2} ${top} h${w - 4} V${y + h - r} a${r - 2} ${r - 2} 0 0 1 ${-(w - 4)} 0 Z" fill="${fill}" opacity="0.75"/>
     <path d="M${cx - r} ${y} V${y + h - r} a${r} ${r} 0 0 0 ${w} 0 V${y}" stroke="${P.glass}" stroke-width="2.2"/>
     <path d="M${cx - r - 3} ${y} h${w + 6}" stroke="${P.glass}" stroke-width="2.2" stroke-linecap="round"/>
   </g>`;

@@ -70,6 +70,13 @@
 .g2u1x-ds-fall.go { animation: g2u1xFall .65s ease-in both; }
 @keyframes g2u1xFall { 0% { opacity: 1; transform: translateY(0); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(96px); } }
 
+/* ── 4~6. 기포 랩, 가열 곡선 랩 ─────────────────────── */
+.g2u1x-step .g2u1x-fz-card, .g2u1x-step .g2u1x-cv-card { height: 52px; padding: 0 8px; gap: 6px; }
+.g2u1x-step .g2u1x-cv-card .bv-card-ic { width: 26px; height: 26px; border-radius: 8px; }
+.g2u1x-step .g2u1x-cv-card b { font-size: 13.5px; }
+.g2u1x-step .g2u1x-cv-card i, .g2u1x-step .g2u1x-fz-card i { font-size: 12px; }
+.g2u1x-cv-glow { transition: opacity .2s; }
+
 /* ══════════ 도입 장면(.opn-g2u1-) ══════════ */
 .opn-step[data-opn-scene^="g2u1-"] .hook-choices .hook-q b { color: var(--subj-chem-press); }
 .opn-g2u1-btn {
