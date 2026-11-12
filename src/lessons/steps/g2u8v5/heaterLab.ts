@@ -133,7 +133,18 @@ export const heaterLab: StepRenderer = (host, step, api) => {
     sBox(ctx, gx, gy, 14, gh, 7, "rgba(255,255,255,.1)", "rgba(255,255,255,.2)", 1);
     sBox(ctx, gx + 2, gy + gh - 2 - (gh - 4) * temp, 10, Math.max(0, (gh - 4) * temp), 5, col);
     sText(ctx, "온도", gx + 7, gy - 12, { color: S.dim, px: 12 });
-    sText(ctx, k < 0 ? "니크롬선: 아직 빛나지 않아요" : `니크롬선: ${STAGES[k].name}`, bx, h - 14, { color: k < 0 ? S.dim : S.gold, px: 13, align: "left", w: 800 });
+    if (finished) {
+      // 판정의 근거: 본 색을 뜨거워진 차례로 남겨 둔다
+      sText(ctx, "뜨거워진 차례", bx, h - 14, { color: S.dim, px: 12, align: "left" });
+      STAGES.forEach((v, i) => {
+        const x = bx + 92 + i * 52;
+        ctx.fillStyle = `rgb(${v.c.join(",")})`;
+        ctx.beginPath();
+        ctx.arc(x, h - 14, 6, 0, Math.PI * 2);
+        ctx.fill();
+        sText(ctx, v.name.replace("색", ""), x + 9, h - 14, { color: S.ink, px: 12, align: "left" });
+      });
+    } else sText(ctx, k < 0 ? "니크롬선: 아직 빛나지 않아요" : `니크롬선: ${STAGES[k].name}`, bx, h - 14, { color: k < 0 ? S.dim : S.gold, px: 13, align: "left", w: 800 });
     if (held && !finished) sText(ctx, "전원 켜짐", bx + bw - 4, by - 12, { color: S.ok, px: 12, align: "right" });
   });
 

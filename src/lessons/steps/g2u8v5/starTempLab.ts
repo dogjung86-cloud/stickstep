@@ -80,7 +80,7 @@ export const starTempLab: StepRenderer = (host, step, api) => {
   }
   function finish(): void {
     f.say("관측 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("별의 색은 <b>표면 온도</b>가 정해요. 표면 온도가 낮을수록 붉은색 빛을 많이 내 <b>붉게</b>, 높을수록 파란색 빛을 많이 내 <b>하얗고 파랗게</b> 보여요.");
+    f.slot.conclude("별의 색을 정하는 것은 <b>표면 온도</b>예요. 온도가 낮을수록 붉은색 빛을 많이 내 <b>붉게</b>, 높을수록 파란색 빛을 많이 내 <b>하얗고 파랗게</b> 보여요.");
     api.enableCTA(s.cta ?? "다음");
   }
 

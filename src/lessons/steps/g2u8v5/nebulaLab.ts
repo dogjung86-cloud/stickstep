@@ -120,7 +120,7 @@ export const nebulaLab: StepRenderer = (host, step, api) => {
       sText(ctx, "뒤의 별빛이 가려져요", cx, cy, { color: "rgba(232,238,249,.75)", px: 12 });
     } else sText(ctx, "가스와 티끌의 구름", cx, cy, { color: S.ink, px: 12.5 });
     // 오른쪽: 같은 모습의 실제 천체
-    sText(ctx, mode ? `실제 사진: ${REAL[mode].name}` : "실제 사진", w - 58, 16, { color: S.ink, px: 12 });
+    sText(ctx, mode ? `실제 사진: ${REAL[mode].name}` : "실제 사진", w - 8, 16, { color: S.ink, px: 12, align: "right" });
   });
 
   f.say("가스와 티끌이 모인 <b>구름</b>이에요. 구름 둘레의 <b>별을 어디에 둘지</b> 골라 구름이 어떻게 보이는지 살펴보세요.");
