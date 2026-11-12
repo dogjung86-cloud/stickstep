@@ -1,7 +1,7 @@
 // 중2 Ⅳ v5 내용 2부: 레슨 4~6(주기율표 · 원자, 분자, 이온 · 이온의 이동). 설계와 책의 실험 대응표는 design/g2u4v5-plan.md.
 // 레슨 4의 만화 스텝은 자리와 내용 모두 정본 그대로다(그림 세션이 새로 만든다). 개념 스텝에는 컷이 없다.
 import type { V5LessonPlan } from "../v5remake";
-import { binSort, mcq, multi, opener, order, ox, recap } from "../dsl";
+import { binSort, mcq, multi, opener, order, ox, recap, cut } from "../dsl";
 import { atomMiniArt, fourModelFig, miniTableFig } from "../../ui/atomFigures";
 import { paperFig } from "../../ui/g2u4v5Figures";
 import { C, alkaliLab, canLab, ionLab, molLab, moveLab, nobleLab, note, poleLab, problems, tableLab, term, words, type Block } from "./unit4v5kit";
@@ -18,6 +18,7 @@ export const PLAN_B: Record<string, V5LessonPlan> = {
           title: "주기율표,<br>번호와 줄에 붙은 이름",
           lead: "원소를 양성자수 차례로 놓아 표의 빈칸을 채웠어요. 표와 번호, 가로줄과 세로줄에 이름을 붙여요.",
           blocks: [
+      { k: "figure", svg: cut("atom", "g2u4l4", "줄지어 놓인 빈 의자들 앞에서 번호표를 든 스틱맨이 세로 한 줄과 가로 한 줄을 두 팔로 가리키는 장면"), cap: "번호대로 앉으면 세로줄과 가로줄이 생겨요" },
             term("주기율표", "원소를 <b>일정한 규칙</b>에 따라 늘어놓은 표예요. 지금의 주기율표는 원소를 원자 번호 차례로 놓아요."),
             term("원자 번호", "원자핵 속 <b>양성자수</b>와 같은 번호예요. 9번 칸의 플루오린은 양성자가 9개, 11번 칸의 나트륨은 양성자가 11개예요."),
             term("족과 주기", "주기율표의 <b>세로줄을 족</b>, <b>가로줄을 주기</b>라고 해요. 족은 18개, 주기는 7개가 있어요. 맨 왼쪽 세로줄이 1족, 맨 오른쪽 세로줄이 18족이에요."),
@@ -102,6 +103,7 @@ export const PLAN_B: Record<string, V5LessonPlan> = {
           title: "분자,<br>성질을 지닌 가장 작은 입자",
           lead: "산소 원자 하나를 더 붙이자 다른 물질이 됐고, 물 분자를 원자로 나누자 물의 성질이 사라졌어요.",
           blocks: [
+      { k: "figure", svg: cut("atom", "g2u4l5", "블록 세 개로 조립한 작은 자동차는 굴러가고, 옆에 낱개로 흩어진 블록 세 개는 굴러가지 못하는 것을 스틱맨이 번갈아 보는 장면"), cap: "낱개로 나누면 굴러가는 성질이 사라져요" },
             term("분자", "<b>독립된 입자</b>로 존재하면서 물질의 성질을 나타내는 <b>가장 작은 입자</b>예요. 대부분 2개 이상의 원자가 결합해 이루어져요. 물 분자는 수소 원자 2개와 산소 원자 1개가 결합한 입자예요."),
             term("원자로 이루어진 물질", "금, 구리, 철 같은 금속과 연필심의 흑연은 분자를 이루지 않아요. 한 종류의 <b>원자가 규칙적으로 늘어서</b> 있어요."),
             note("분자는 같은 종류의 원자끼리 결합해도 만들어져요. 산소 분자(O<sub>2</sub>)는 산소 원자 2개가 결합한 분자예요. 헬륨처럼 원자 1개가 그대로 분자 구실을 하는 것도 있어요."),
@@ -118,6 +120,7 @@ export const PLAN_B: Record<string, V5LessonPlan> = {
           title: "이온,<br>전하를 띠게 된 입자",
           lead: "나트륨은 전자를 내주고 전하의 합이 +1이, 염소는 전자를 받아 −1이 됐어요. 이 입자와 적는 법에 이름을 붙여요.",
           blocks: [
+      { k: "figure", svg: cut("atom", "g2u4l5b", "마주 선 두 스틱맨 가운데 한 사람이 작은 구슬 하나를 건네고, 건넨 사람 머리 위에는 더하기, 받은 사람 머리 위에는 빼기 기호가 뜬 장면"), cap: "하나를 건네면 더하기, 하나를 받으면 빼기" },
             term("이온", "원자가 전자를 <b>잃거나 얻어서 전하를 띠게 된 입자</b>예요. 전자를 잃어 (+)전하를 띠면 <b>양이온</b>, 전자를 얻어 (−)전하를 띠면 <b>음이온</b>이에요."),
             term("이온식", "원소 기호의 <b>오른쪽 위</b>에 잃거나 얻은 전자 수와 전하의 종류를 적은 식이에요. 전자 1개를 잃은 나트륨 이온은 Na<sup>+</sup>(1은 쓰지 않아요), 전자 2개를 얻은 산화 이온은 O<sup>2−</sup>예요."),
             term("이온의 이름", "양이온은 원소 이름 뒤에 '이온'을 붙여요(나트륨 이온). 음이온은 원소 이름 뒤에 '화 이온'을 붙이는데, 염소와 산소는 '소'를 빼고 염화 이온, 산화 이온이라고 읽어요."),

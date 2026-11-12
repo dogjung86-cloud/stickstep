@@ -11,11 +11,13 @@ import { textRules } from "./lib/bubble.mjs";
 
 const [OUT, ...ONLY] = process.argv.slice(2);
 if (OUT) mkdirSync(OUT, { recursive: true });
-const LESSONS = { u1: 5, u2: 10, u3: 5, u4: 6, u5: 7, u6: 5, u7: 6 };
+// G2=1 이면 중2 과학 여덟 단원을 새 판 토글(?g2v5)을 켠 채 본다(중2의 정본에는 코드 그림 컷이 없어 정본 실행은 건너뛴다)
+const G2 = !!process.env.G2;
+const LESSONS = G2 ? { g2u1: 9, g2u2: 9, g2u3: 8, g2u4: 6, g2u5: 6, g2u6: 6, g2u7: 8, g2u8: 8 } : { u1: 5, u2: 10, u3: 5, u4: 6, u5: 7, u6: 5, u7: 6 };
 const units = Object.keys(LESSONS).filter((u) => !ONLY.length || ONLY.includes(u));
 const RUNS = [
-  { name: "새 판", query: "g1v5", units },
-  { name: "정본", query: "g1v5=0", units: units.filter((u) => u === "u2") },
+  { name: "새 판", query: G2 ? "g2v5" : "g1v5", units },
+  { name: "정본", query: "g1v5=0", units: G2 ? [] : units.filter((u) => u === "u2") },
 ];
 
 const browser = await launch();

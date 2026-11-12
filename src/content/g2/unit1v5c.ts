@@ -1,6 +1,6 @@
 // 중2 Ⅰ v5: 레슨 4~6(기체의 용해도, 녹는점과 끓는점, 순물질과 혼합물)의 새 스텝. unit1v5.ts가 모아 remakeUnit에 넘긴다.
 import type { V5LessonPlan } from "../v5remake";
-import { binSort, mcq, multi, opener, ox, recap, rimg } from "../dsl";
+import { binSort, mcq, multi, opener, ox, recap, rimg, cut } from "../dsl";
 import { chemMiniArt } from "../../ui/chemFigures";
 import { g1BoilFig, g1HeatFig } from "../../ui/g2u1v5Figures";
 import { boilLab, fizzLab, meltLab, note, problems, pumpLab, saltLab, term, words } from "./unit1v5kit";
@@ -99,6 +99,7 @@ export const L5: V5LessonPlan = {
         title: "녹는점과 끓는점",
         lead: "가열하는 동안 온도가 멈춘 구간이 있었어요. 그때의 온도에 이름을 붙여요.",
         blocks: [
+      { k: "figure", svg: cut("chem", "g2u1l5", "처마 끝 고드름이 햇볕에 끝부터 녹아 물방울로 떨어지고, 모닥불 위 주전자에서는 김이 솟는 것을 온도계를 든 스틱맨이 지켜보는 장면"), cap: "녹을 때도 끓을 때도 온도계를 대 봐요" },
           term("녹는점", "일정한 압력에서 <b>고체가 액체로 변할 때 일정하게 유지되는 온도</b>예요. 로르산은 1 g도 2 g도 43.8 ℃, 팔미트산은 62.5 ℃였어요."),
           term("끓는점", "일정한 압력에서 <b>액체가 기체로 변할 때 일정하게 유지되는 온도</b>예요. 뚜껑 없는 냄비에서 물은 100 ℃, 에탄올은 78 ℃였어요."),
           note("녹는점과 끓는점은 양이 달라도 같고 물질마다 달라서 <b>물질의 특성</b>이에요. 다만 끓는점은 주위의 압력에 따라 달라지므로 압력을 함께 말해요. 물의 끓는점 100 ℃는 1기압일 때의 값이에요."),
@@ -190,6 +191,7 @@ export const L6: V5LessonPlan = {
       title: "순물질과 혼합물",
       lead: "우유 속에는 물, 기름방울, 그 밖의 알갱이가 함께 있었어요. 물질을 이루는 것이 한 가지인지 여러 가지인지로 나눠요.",
       blocks: [
+      { k: "figure", svg: cut("chem", "g2u1l6", "사과만 가득한 바구니와 사과, 귤, 포도가 섞인 바구니 옆에서 스틱맨이 섞인 바구니의 귤 하나를 집어 들어 보이는 장면"), cap: "섞여 있어도 귤은 여전히 귤이에요" },
         term("순물질", "다른 물질이 섞이지 않고 <b>한 종류의 물질로만</b> 이루어진 물질이에요. 물, 구리, 설탕, 금이 순물질이에요."),
         term("혼합물", "<b>두 가지 이상의 순물질이 섞여 있는</b> 물질이에요. 우유, 암석, 공기, 소금물이 혼합물이에요. 섞인 순물질은 각각의 성질을 그대로 지녀요. 우유 속의 물은 여전히 물이에요."),
         note("맑고 고르게 보인다고 순물질은 아니에요. 소금물과 공기는 어디를 보아도 똑같지만 여러 물질이 고르게 섞인 <b>혼합물</b>이에요."),

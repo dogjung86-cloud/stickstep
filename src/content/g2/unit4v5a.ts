@@ -1,7 +1,7 @@
 // 중2 Ⅳ v5 내용 1부: 레슨 1~3(원소와 화합물 · 원소 기호와 화학식 · 원자의 구조). 설계와 책의 실험 대응표는 design/g2u4v5-plan.md.
 // 개념 스텝에는 컷이 없다(그림 세션이 output/g2-v5/u4/concept-cuts.md 를 보고 그린 뒤 싣는다).
 import type { V5LessonPlan } from "../v5remake";
-import { binSort, mcq, multi, opener, ox, pairMatch, recap } from "../dsl";
+import { binSort, mcq, multi, opener, ox, pairMatch, recap, cut } from "../dsl";
 import { atomMiniArt, atomModelFig } from "../../ui/atomFigures";
 import { electrolysisFig, threeModelsFig } from "../../ui/g2u4v5Figures";
 import { C, cardLab, formulaLab, kindLab, neutralLab, note, problems, sortLab, symbolLab, term, waterLab, words, type Block } from "./unit4v5kit";
@@ -20,6 +20,7 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
           title: "원소와 화합물,<br>성분으로 가른 두 물질",
           lead: "물은 수소와 산소로 분해됐고, 다이아몬드는 성분이 탄소 한 가지뿐이었어요. 두 가지 물질에 이름을 붙여요.",
           blocks: [
+      { k: "figure", svg: cut("atom", "g2u4l1", "같은 색 구슬만 담긴 유리병과, 서로 다른 색 구슬 둘이 꼭 붙은 쌍만 담긴 유리병을 양손에 들고 견주어 보는 스틱맨"), cap: "한 가지 구슬만 든 병, 두 구슬이 짝을 이룬 병" },
             term("원소", "순물질 가운데 <b>한 가지 종류의 입자</b>로 이루어진 물질이에요. 다이아몬드(탄소), 헬륨, 알루미늄, 산소처럼 성분이 하나뿐이라 다른 물질로 분해되지 않아요."),
             term("화합물", "순물질 가운데 <b>서로 다른 종류의 입자</b>로 이루어진 물질이에요. 서로 다른 원소가 결합해 생긴 새로운 물질이라서 성분 원소로 분해할 수 있어요. 물은 수소와 산소로 분해됐어요."),
             note("화합물은 성분 원소를 그냥 섞어 놓은 것이 아니에요. 결합하면 <b>전혀 다른 성질</b>의 새 물질이 돼요. 물은 불에 타는 수소와도, 다른 물질이 타는 것을 돕는 산소와도 성질이 달라요."),
@@ -117,6 +118,7 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
                 title: "원소 기호,<br>세계가 함께 쓰는 약속",
                 lead: "탄소는 C, 염소는 Cl, 칼슘은 Ca. 방금 기호를 지은 방식에 이름을 붙여요.",
                 blocks: [
+      { k: "figure", svg: cut("atom", "g2u4l2", "옷차림이 서로 다른 세 과학자가 금속 덩어리에 걸린 빈 이름표 하나를 함께 가리키고, 머리 위에 체크 표시가 뜬 장면"), cap: "나라가 달라도 이름표는 하나로 통해요" },
                   term("원소 기호", "원소를 <b>알파벳</b>으로 나타낸 기호예요. 원소 이름의 <b>첫 글자를 대문자</b>로 쓰고, 첫 글자가 같은 원소가 있으면 중간 글자 하나를 골라 <b>소문자</b>로 붙여요."),
                   term("자주 만나는 기호", "수소 H, 탄소 C, 질소 N, 산소 O, 나트륨 Na, 염소 Cl, 칼슘 Ca, 철 Fe, 구리 Cu, 은 Ag, 금 Au. 철 Fe, 구리 Cu, 은 Ag, 금 Au는 라틴어 이름에서 온 기호라 우리말 이름과 글자가 달라요."),
                   note("Co는 코발트 한 가지 원소이고, CO는 탄소(C)와 산소(O) 두 원소예요. <b>대문자와 소문자</b>를 바꿔 쓰면 전혀 다른 뜻이 돼요."),
@@ -128,6 +130,7 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
               title: "원자와 화학식,<br>종류와 개수를 적는 법",
               lead: "원소 기호에 숫자를 더하면 물질 하나를 한 줄로 나타낼 수 있어요. 직접 써 보기 전에 규칙부터 익혀요.",
               blocks: [
+      { k: "figure", svg: cut("atom", "g2u4l2b", "큰 공 하나에 작은 공 둘이 붙은 모형을 탁자에 놓고, 작은 공을 가리키며 손가락 두 개를 펴 보이는 스틱맨"), cap: "어떤 공이 몇 개인지, 그대로 적으면 돼요" },
                 term("원자", "원소를 이루는 <b>작은 입자</b>예요. 물은 수소 원자와 산소 원자로, 구리는 구리 원자로 이루어져 있어요."),
                 term("화학식", "원소 기호와 숫자로 물질을 이루는 <b>원자의 종류와 개수</b>를 나타낸 식이에요. 개수는 기호의 <b>오른쪽 아래</b>에 작은 숫자로 쓰고, 1개일 때는 숫자를 쓰지 않아요. 물은 수소 원자 2개와 산소 원자 1개라서 H<sub>2</sub>O예요."),
                 note("철(Fe), 구리(Cu)처럼 한 가지 원자가 끝없이 이어져 있는 물질은 개수를 셀 수 없어서 <b>원소 기호만</b> 써요."),
@@ -227,6 +230,7 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
           title: "원자의 구조,<br>원자핵과 전자",
           lead: "원자핵 속을 들여다보고, 전자를 넣어 원자를 완성했어요. 본 것에 이름을 붙여요.",
           blocks: [
+      { k: "figure", svg: cut("atom", "g2u4l3", "넓은 운동장 한가운데 놓인 작은 구슬 하나를 스틱맨이 내려다보고, 운동장 가장자리 멀리 더 작은 점들이 떠 있는 장면"), cap: "가운데에 작은 원자핵, 그 주위에 더 작은 전자" },
             p("<b>전하</b>는 전기 현상을 일으키는 원인이에요. (+)전하와 (−)전하 두 가지가 있어요."),
             term("원자핵", "원자의 <b>가운데</b>에 있고 (+)전하를 띠어요. (+)전하를 띠는 <b>양성자</b>와 전하를 띠지 않는 <b>중성자</b>로 이루어져 있고, 원자 질량의 대부분을 차지해요."),
             term("전자", "원자핵 <b>주위</b>에 있고 (−)전하를 띠는 입자예요. 질량이 아주 작아서 거의 무시할 수 있어요."),

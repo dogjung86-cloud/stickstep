@@ -1,6 +1,6 @@
 // 중2 Ⅱ v5의 레슨 2~3(광물의 특성, 화성암): 도입, 랩, 용어, 정리, 문제.
 import type { V5LessonPlan } from "../v5remake";
-import { mcq, multi, opener, ox, recap } from "../dsl";
+import { mcq, multi, opener, ox, recap, cut } from "../dsl";
 import { geoMiniArt, igneousGridFig, mineralFlowFig } from "../../ui/geoFigures";
 import { v5Mini } from "../../ui/g2u2v5Figures";
 import { gset, lab, note, problems, term, words } from "./unit2v5kit";
@@ -18,6 +18,7 @@ export const L2: V5LessonPlan = {
       title: "광물,<br>암석을 이루는 알갱이",
       lead: "돋보기 속에서 색이 다른 알갱이들을 봤어요. 그 알갱이에 이름을 붙여요.",
       blocks: [
+      { k: "figure", svg: cut("geo", "g2u2l2", "잡곡밥 한 그릇에 섞인 흰 쌀, 검은콩, 노란 조를 스틱맨이 젓가락으로 가리키는 장면"), cap: "밥 한 그릇에 여러 알갱이가 섞여 있어요" },
         term("광물", "암석을 이루는 <b>각각의 알갱이</b>예요. 돋보기로 본 흰색, 분홍색, 검은색 알갱이가 저마다 다른 광물이에요. 지구에는 수천 종의 광물이 있어요."),
         term("조암 광물", "여러 광물 가운데 <b>암석을 이루는 주된 광물</b>이에요. 석영, 장석, 흑운모, 각섬석, 방해석 등이 있어요. '조암'은 암석을 이룬다는 뜻이에요."),
         note("암석과 광물은 같은 말이 아니에요. 김밥 한 줄이 암석이라면 밥알, 단무지, 시금치가 광물이에요. 암석 하나에 여러 광물이 섞여 있어요."),

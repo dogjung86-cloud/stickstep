@@ -38,6 +38,8 @@ for (const vp of VIEWS) {
   for (const c of COMICS) {
     const tag = `${vp.name} ${c.id}`;
     await openLesson(page, c.id, QUERY);
+    // 만화가 첫 스텝이 아닌 레슨(도입 뒤에 만화가 오는 중2 g2u3l6 등)은 앞으로 가기로 만화까지 넘긴다
+    for (let k = 0; k < 3 && !(await page.$(".screen.active .comic-dots")); k++) { await page.click(".screen.active .xbtn.fwd").catch(() => {}); await wait(page, 500); }
     await page.waitForSelector(".screen.active .comic-dots", { timeout: 15000 }).catch(() => {});
     const n = await page.evaluate(() => document.querySelectorAll(".screen.active .comic-dots i").length);
     ok(n === c.panels.length, `${tag}: 컷 수 ${n} (장면 파일 ${c.panels.length})`);
