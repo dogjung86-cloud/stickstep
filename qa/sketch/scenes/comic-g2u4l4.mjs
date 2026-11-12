@@ -176,8 +176,8 @@ function p3() {
     for (const [y, c, i] of [[540, "#7A5A45", 0], [514, C.teal, 1]]) { const b = rrect(760 + i * 10, y, 130 - i * 16, 26, 5); sk.fill(b, c, { dx: 0, dy: 0, wob: 0.3, seed: 177 + i, tex: true }); sk.ink(b, { w: 7, seed: 179 + i }); }
   });
   // 긴 종이 띠: 가벼운 것(작은 동그라미)에서 무거운 것(큰 동그라미)으로
-  thin(sk, 0.85, () => { const strip = poly([[372, 296], [938, 288], [940, 400], [374, 408]], 4); sk.fill(strip, C.parchment, { seed: 181, dx: 1, dy: 1.2, wob: 0.5 }); sk.ink(strip, { w: 8, seed: 182, wob: 0.8 }); for (const [lx, i] of [[384, 0], [930, 1]]) sk.ink(dense([[lx, 406 - i * 6], [lx, 566]]), { w: 6, color: "#8A5A33", seed: 183 + i, wob: 0.3 }); });
-  const cx = i => 406 + i * 39, cy = i => 350 - i * 0.5, cr = i => 9.5 + i * 0.85;
+  thin(sk, 0.85, () => { const strip = poly([[394, 296], [940, 288], [942, 400], [396, 408]], 4); sk.fill(strip, C.parchment, { seed: 181, dx: 1, dy: 1.2, wob: 0.5 }); sk.ink(strip, { w: 8, seed: 182, wob: 0.8 }); for (const [lx, i] of [[406, 0], [932, 1]]) sk.ink(dense([[lx, 406 - i * 6], [lx, 566]]), { w: 6, color: "#8A5A33", seed: 183 + i, wob: 0.3 }); });
+  const cx = i => 426 + i * 37.6, cy = i => 350 - i * 0.5, cr = i => 9.5 + i * 0.85;
   for (let i = 0; i < 14; i++) {
     const col = i % 7 === 0 ? RED_G : i % 7 === 6 ? GRN_G : GRAY_E;
     const c = circ(cx(i), cy(i), cr(i), { over: 0.15, seed: 185 + i }); sk.fill(c, col, { dx: 0, dy: 0, wob: 0.3, seed: 201 + i }); sk.ink(c, { w: 4.5, seed: 217 + i, wob: 0.3 });
@@ -185,9 +185,9 @@ function p3() {
   // 같은 색끼리 잇는 화살표: 빨강은 위로, 초록은 아래로 돈다
   arrow(sk, [[cx(0), 318], [cx(2), 246], [cx(5), 240], [cx(7), 310]], { w: 6, color: RED_G, seed: 233, head: 15, wob: 0.4 });
   arrow(sk, [[cx(6), 384], [cx(8), 452], [cx(11), 458], [cx(13), 392]], { w: 6, color: GRN_G, seed: 237, head: 15, wob: 0.4 });
-  arrow(sk, [[404, 446], [560, 444]], { w: 5, color: C.gray, seed: 241, straight: true, head: 13, wob: 0.3 });
+  arrow(sk, [[424, 446], [580, 444]], { w: 5, color: C.gray, seed: 241, straight: true, head: 13, wob: 0.3 });
   const P = pose({ elR: [92, -288], haR: [150, -300], elL: [-52, -262], haL: [-40, -214], tilt: 0.05 });
-  const fx = 156, fs = 0.66;
+  const fx = 190, fs = 0.66;
   drawFigure(sk, fx, 704, fs, P, { ...MENDELEEV, name: "mendeleev", face: "happy", hands: "L" });
   const hx = fx + fs * 150, hy = 704 - fs * 300;
   quill(sk, hx - 12, hy + 32, 0.8, { rot: 0.3, seed: 243 });
@@ -205,7 +205,7 @@ const COL8 = [RED_G, "#F2B880", "#B9C4D0", "#B9A58A", "#C9B6E0", "#F2DE8A", GRN_
 function p4() {
   const sk = new Sk(W, H, { id: "d" });
   ground(sk, 704, 251);
-  const x0 = 352, y0 = 144, cw = 53, ch = 39;
+  const x0 = 394, y0 = 144, cw = 48, ch = 39;
   thin(sk, 0.85, () => {
     const sheet = poly([[x0 - 12, y0 - 12], [x0 + 8 * cw + 12, y0 - 12], [x0 + 8 * cw + 12, y0 + 12 * ch + 12], [x0 - 12, y0 + 12 * ch + 12]], 4);
     sk.fill(sheet, "#FBF6E6", { dx: 1, dy: 1.2, wob: 0.5, seed: 253 }); sk.ink(sheet, { w: 8, seed: 254, wob: 0.8 });
@@ -222,19 +222,16 @@ function p4() {
   const hx = x0 + 2 * cw, hy = y0 + 4 * ch;
   sk.ink(poly([[hx, hy], [hx + cw, hy], [hx + cw, hy + ch], [hx, hy + ch]], 4), { w: 6, color: C.yellow, seed: 601, wob: 0.4 });
   thin(sk, 0.85, () => {
-    sk.ink(dense([[x0 + 8 * cw + 14, hy + ch / 2], [806, hy + ch / 2]]), { w: 5, color: C.yellow, dash: [8, 8], seed: 603, wob: 0 });
-    const note = rrect(806, 232, 138, 150, 12); sk.fill(note, "#FFF6CF", { dx: 0, dy: 0, wob: 0.4, seed: 605 }); sk.ink(note, { w: 6, color: C.yellow, seed: 606, wob: 0.5 });
+    sk.ink(dense([[x0 + 8 * cw + 14, hy + ch / 2], [812, hy + ch / 2]]), { w: 5, color: C.yellow, dash: [6, 6], seed: 603, wob: 0 });
+    const note = rrect(812, 232, 134, 150, 12); sk.fill(note, "#FFF6CF", { dx: 0, dy: 0, wob: 0.4, seed: 605 }); sk.ink(note, { w: 6, color: C.yellow, seed: 606, wob: 0.5 });
   });
-  balance(sk, 846, 300, 0.26, 611);
-  drop(sk, 846, 346, 0.8);
-  for (const [y, i] of [[274, 0], [290, 1], [338, 2], [354, 3]]) sk.ink(dense([[880, y], [i % 2 ? 914 : 930, y]]), { w: 4, color: "#8A8F98", seed: 621 + i, wob: 0.3 });
-  // 멘델레예프: 막대로 빈칸을 가리킨다
-  const P = pose({ elR: [84, -300], haR: [150, -330], elL: [-52, -262], haL: [-40, -214], tilt: 0.05 });
-  const fx = 176, fs = 0.62;
-  const sx = fx + fs * 150, sy = 704 - fs * 330;
-  drawFigure(sk, fx, 704, fs, P, { ...MENDELEEV, name: "mendeleev", face: "determined", hands: "L" });
-  sk.ink(dense([[sx - 14, sy + 10], [hx + 14, hy + ch - 8]]), { w: 6, color: "#8A5A33", seed: 631, wob: 0.4 });
-  handDot(sk, [sx, sy], C.skin, 633, 10);
+  balance(sk, 850, 300, 0.26, 611);
+  drop(sk, 850, 346, 0.8);
+  for (const [y, i] of [[274, 0], [290, 1], [338, 2], [354, 3]]) sk.ink(dense([[884, y], [i % 2 ? 914 : 930, y]]), { w: 4, color: "#8A8F98", seed: 621 + i, wob: 0.3 });
+  // 멘델레예프: 표 쪽을 가리킨다(막대는 쓰지 않는다. 표의 동그라미를 가리지 않게)
+  const P = pose({ elR: [92, -300], haR: [168, -326], elL: [-52, -262], haL: [-40, -214], tilt: 0.05 });
+  const fx = 196, fs = 0.62;
+  drawFigure(sk, fx, 704, fs, P, { ...MENDELEEV, name: "mendeleev", face: "determined" });
   return sk;
 }
 
@@ -259,19 +256,19 @@ function p5() {
   // 분광기: 둥근 받침 위 덮개 씌운 프리즘, 놋쇠 관 둘
   const px = 628, py = 482;
   thin(sk, 0.85, () => {
-    sk.ink(dense([[px, 566], [px, py + 20]]), { w: 16, color: "#B8892E", seed: 671, wob: 0.3 });
-    const foot = curve([[px - 60, 566], [px - 40, 546], [px + 40, 546], [px + 60, 566]], false, 3); sk.fill([...foot, foot[0]], "#C9A24A", { dx: 0, dy: 0, wob: 0.3, seed: 673 }); sk.ink([...foot, foot[0]], { w: 7, seed: 674 });
+    sk.ink(dense([[px, 566], [px, py + 20]]), { w: 26, seed: 671, wob: 0.3, cap: "butt" }); sk.ink(dense([[px, 566], [px, py + 20]]), { w: 16, color: "#B8892E", seed: 671, wob: 0.3, cap: "butt" });
+    const foot = curve([[px - 84, 566], [px - 56, 540], [px + 56, 540], [px + 84, 566]], false, 3); sk.fill([...foot, foot[0]], "#C9A24A", { dx: 0, dy: 0, wob: 0.3, seed: 673 }); sk.ink([...foot, foot[0]], { w: 7, seed: 674 });
     brassTube(sk, [px - 24, py - 10], [376, 428], 24, 675);  // 보는 망원경(왼쪽, 눈 쪽)
     brassTube(sk, [376, 428], [346, 425], 16, 677);
-    brassTube(sk, [px + 24, py - 10], [826, 432], 24, 679);  // 빛을 들이는 관(오른쪽, 불꽃 쪽)
+    brassTube(sk, [px + 24, py - 14], [826, py - 14], 24, 679);  // 빛을 들이는 관(오른쪽, 불꽃 쪽)
     const plate = ell(px, py + 20, 78, 13); sk.fill(plate, "#C9A24A", { dx: 0, dy: 0, wob: 0.3, seed: 681 }); sk.ink(plate, { w: 7, seed: 682 });
     const cover = rrect(px - 36, py - 46, 72, 64, 10); sk.fill(cover, "#5A5F68", { dx: 0, dy: 0, wob: 0.3, seed: 683 }); sk.ink(cover, { w: 8, seed: 684 });
     // 전기 불꽃: 두 금속 끝 사이
-    sk.ink(dense([[906, 566], [906, 380]]), { w: 9, color: "#6B4A32", seed: 685, wob: 0.3 });
-    for (const y of [394, 456]) sk.ink(dense([[906, y], [868, y + (y < 425 ? 14 : -14)]]), { w: 6, color: "#5A5F68", seed: 686 + y, wob: 0.2 });
-    sk.ink(dense([[868, 408], [876, 418], [862, 426], [870, 442]], 3), { w: 5, color: C.yellow, seed: 689, wob: 0.2 });
+    sk.ink(dense([[906, 566], [906, 420]]), { w: 9, color: "#6B4A32", seed: 685, wob: 0.3 });
+    for (const y of [436, 498]) sk.ink(dense([[906, y], [868, y + (y < 467 ? 14 : -14)]]), { w: 6, color: "#5A5F68", seed: 686 + y, wob: 0.2 });
+    sk.ink(dense([[868, 450], [876, 460], [862, 468], [870, 484]], 3), { w: 5, color: C.yellow, seed: 689, wob: 0.2 });
   });
-  for (const [a, i] of [[-2.6, 0], [-3.4, 1], [2.9, 2]]) sk.ink(dense([[856 + 14 * Math.cos(a), 425 + 14 * Math.sin(a)], [856 + 28 * Math.cos(a), 425 + 28 * Math.sin(a)]]), { w: 4, color: C.orange, seed: 691 + i, wob: 0 });
+  for (const [a, i] of [[-2.6, 0], [-3.4, 1], [2.9, 2]]) sk.ink(dense([[852 + 12 * Math.cos(a), 440 + 12 * Math.sin(a)], [852 + 24 * Math.cos(a), 440 + 24 * Math.sin(a)]]), { w: 4, color: C.orange, seed: 691 + i, wob: 0 });
   // 관 속에 보이는 빛의 띠: 어두운 바탕에 밝은 선 몇 개, 오른쪽 끝에 처음 보는 보라 선
   thin(sk, 0.85, () => {
     for (const [x1, i] of [[486, 0], [856, 1]]) sk.ink(dense([[420, 408], [x1, 292]]), { w: 3.5, color: C.gray, dash: [8, 8], seed: 701 + i, wob: 0 });
@@ -308,17 +305,17 @@ function p6() {
   lump(sk, 452, 248, 40, "#B4B8BE", 781, { sy: 0.9, w: 6 }); xmark(sk, 476, 276, 0.55, { seed: 785 });
   lump(sk, 604, 248, 40, "#D3D9E0", 787, { sy: 0.9, w: 6 }); shine(sk, 604, 248, 34); check(sk, 632, 276, 0.7);
   arrow(sk, [[502, 248], [552, 248]], { w: 5, color: C.gray, seed: 791, straight: true, head: 12, wob: 0.2 });
-  // 러시아에서 온 편지
-  sk.at(858, 548, 1, () => {
-    const env = poly([[-52, -26], [52, -26], [52, 18], [-52, 18]], 4); sk.fill(env, "#FBF6E6", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 793 }); sk.ink(env, { w: 7, seed: 794 });
-    sk.ink(dense([[-50, -24], [0, 2], [50, -24]], 4), { w: 5, seed: 795, wob: 0.3 });
-    sk.dot(0, 2, 6, C.red);
-  }, -0.08);
-  arrow(sk, [[944, 410], [916, 440], [886, 500]], { w: 5, color: C.gray, seed: 797, head: 13, wob: 0.3, dash: [10, 8] });
+  // 멘델레예프의 글이 실린 학술지(책상에 기대 세운 종이 묶음, 글은 줄로만)
+  sk.at(862, 566, 1, () => {
+    for (const [d, i] of [[10, 0], [5, 1]]) { const back = poly([[-44 + d, -118 - d], [44 + d, -118 - d], [44 + d, -d], [-44 + d, -d]], 4); sk.fill(back, "#EDE6D2", { dx: 0, dy: 0, wob: 0.3, seed: 792 + i }); sk.ink(back, { w: 5, seed: 796 + i, wob: 0.3 }); }
+    const pg = poly([[-44, -118], [44, -118], [44, 0], [-44, 0]], 4); sk.fill(pg, "#FBF6E6", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 793 }); sk.ink(pg, { w: 7, seed: 794 });
+    sk.ink(dense([[-28, -98], [28, -98]]), { w: 6, color: "#5A5F68", seed: 795, wob: 0.2 });
+    for (let i = 0; i < 5; i++) sk.ink(dense([[-32, -76 + i * 15], [i === 4 ? 6 : 32, -76 + i * 15]]), { w: 3.5, color: "#8A8F98", seed: 798 + i, wob: 0.3 });
+  }, 0.07);
   // 르코크: 맞아떨어진 쪽을 가리킨다
   const P = pose({ elR: [96, -330], haR: [168, -404], elL: [-52, -262], haL: [-40, -214], tilt: 0.05 });
-  const fx = 180, fs = 0.66;
-  drawFigure(sk, fx, 704, fs, P, { ...LECOQ, name: "lecoq", face: "happy" });
+  const fx = 200, fs = 0.66;
+  drawFigure(sk, fx, 704, fs, P, { ...LECOQ, name: "lecoq", face: "smile" });
   onHead(sk, fx, 704, fs, P, () => moustache(sk, LECOQ.hairColor, 721));
   return sk;
 }
@@ -356,7 +353,7 @@ function p7() {
   arrow(sk, st.slice(0, -1).concat([[lx(5) + 16, Y0 + 6 * RH - 6]]), { w: 4.5, color: C.orange, seed: 851, straight: true, head: 12, wob: 0 });
   // 모즐리: 사진판 쪽을 가리킨다
   const P = pose({ elR: [96, -306], haR: [176, -338], elL: [-52, -262], haL: [-40, -214], tilt: 0.05 });
-  const fx = 160, fs = 0.66;
+  const fx = 190, fs = 0.66;
   drawFigure(sk, fx, 704, fs, P, { ...MOSELEY, name: "moseley", face: "smile", under: tie(sk) });
   return sk;
 }
@@ -365,25 +362,33 @@ function p7() {
 function p8() {
   const sk = new Sk(W, H, { id: "h" });
   ground(sk, 704, 861);
-  const x0 = 352, y0 = 36, cw = 32, ch = 29, fy0 = y0 + 7 * ch + 12;
+  const x0 = 390, y0 = 36, cw = 30, ch = 29, fy0 = y0 + 7 * ch + 12;
   const BLUE_G = C.blue;
+  let cells = 0;
   const cell = (c, r, yy, sd) => {
     const p = poly([[x0 + c * cw + 2, yy + r * ch + 2], [x0 + (c + 1) * cw - 2, yy + r * ch + 2], [x0 + (c + 1) * cw - 2, yy + (r + 1) * ch - 2], [x0 + c * cw + 2, yy + (r + 1) * ch - 2]], 5);
-    const col = yy === y0 && c === 0 ? (r === 0 ? mix(RED_G, "#ffffff", 0.55) : RED_G) : yy === y0 && c === 17 ? BLUE_G : "#F4F1E8";
+    const col = yy !== y0 ? "#F4F1E8" : c === 0 ? (r === 0 ? mix(RED_G, "#ffffff", 0.55) : RED_G) : c === 16 ? GRN_G : c === 17 ? BLUE_G : "#F4F1E8";
+    cells++;
     sk.fill(p, col, { dx: 0, dy: 0, wob: 0.2, seed: sd }); sk.ink(p, { w: 3, seed: sd + 1, wob: 0.25, color: "#4A4A52" });
   };
   thin(sk, 1, () => {
     const boardP = rrect(x0 - 14, y0 - 14, 18 * cw + 28, 7 * ch + 2 * ch + 12 + 28, 14); sk.fill(boardP, C.white, { dx: 1, dy: 1.2, wob: 0.4, seed: 863 }); sk.ink(boardP, { w: 7, seed: 864, wob: 0.6 });
     for (let r = 0; r < 7; r++) for (let c = 0; c < 18; c++) {
-      const on = r === 0 ? (c === 0 || c === 17) : r < 3 ? (c < 2 || c > 11) : true;
+      // 6, 7주기의 셋째 칸은 비운다(그 자리의 원소 열다섯씩이 아래 두 줄로 내려가 있다)
+      const on = r === 0 ? (c === 0 || c === 17) : r < 3 ? (c < 2 || c > 11) : r < 5 ? true : c !== 2;
       if (on) cell(c, r, y0, 871 + r * 40 + c * 2);
     }
     for (let r = 0; r < 2; r++) for (let c = 2; c < 17; c++) cell(c, r, fy0, 1201 + r * 40 + c * 2);
+    // 비운 두 칸(점선 테)과 아래 두 줄을 잇는 점선
+    const gx = x0 + 2 * cw, gy = y0 + 5 * ch;
+    sk.ink(poly([[gx + 3, gy + 3], [gx + cw - 3, gy + 3], [gx + cw - 3, gy + 2 * ch - 3], [gx + 3, gy + 2 * ch - 3]], 4), { w: 2.5, color: "#8A8F98", dash: [5, 5], seed: 1291, wob: 0 });
+    sk.ink(dense([[gx + cw / 2, gy + 2 * ch - 2], [gx + cw / 2, fy0 + 1]]), { w: 2.5, color: "#8A8F98", dash: [4, 4], seed: 1293, wob: 0 });
   });
+  if (cells !== 118) throw new Error("g2u4l4 8컷: 주기율표 칸 수가 118이 아니다: " + cells);
   // 맨 왼쪽 세로줄을 아래로 훑는 화살표
-  arrow(sk, [[x0 - 34, y0 + 10], [x0 - 34, y0 + 7 * ch - 6]], { w: 6, color: RED_G, seed: 1301, straight: true, head: 15, wob: 0.3 });
+  arrow(sk, [[x0 - 27, y0 + 10], [x0 - 27, y0 + 7 * ch - 6]], { w: 6, color: RED_G, seed: 1301, straight: true, head: 15, wob: 0.3 });
   const tp = pose({ elR: [92, -330], haR: [168, -410], elL: [-52, -262], haL: [-40, -214], tilt: 0.05 });
-  drawFigure(sk, 138, 704, 0.64, tp, { ...TEACHER, name: "teacher" });
+  drawFigure(sk, 184, 704, 0.64, tp, { ...TEACHER, name: "teacher" });
   const sp = pose({ elL: [-104, -330], haL: [-150, -430], elR: [50, -262], haR: [40, -214], tilt: -0.04 });
   drawFigure(sk, 650, 704, 0.45, sp, { ...STUDENT, name: "student" });
   return sk;
@@ -412,7 +417,7 @@ const CUTS = [
   },
   {
     fn: p4, when: "1871년, 상트페테르부르크", stage: "빈칸", title: "비워 둔 자리",
-    caption: "멘델레예프는 순서에 맞는 원소가 없는 자리를 억지로 채우지 않고 <b>빈칸</b>으로 남겼어요. 1871년에 고쳐 낸 표에서는 닮은 원소가 지금처럼 같은 세로줄에 모였어요. 그는 알루미늄과 같은 세로줄의 빈칸에 올 원소의 질량과 밀도까지 미리 적어 두었어요.",
+    caption: "멘델레예프는 순서에 맞는 원소가 없는 자리를 억지로 채우지 않고 <b>빈칸</b>으로 남겼어요. 1871년에 고쳐 낸 표에서는 닮은 원소가 지금처럼 같은 세로줄에 모였어요. 그림에서 노란 테를 두른 빈칸은 알루미늄과 같은 세로줄이에요. 그는 이 칸에 올 원소의 질량과 밀도까지 미리 적어 두었어요.",
     bubbles: [{ who: "mendeleev", text: "아직 못 찾은<br>원소가 있어요" }],
   },
   {
@@ -422,17 +427,17 @@ const CUTS = [
   },
   {
     fn: p6, when: "1876년, 프랑스", stage: "적중", title: "다시 재 보니",
-    caption: "르코크는 예언을 모른 채 갈륨을 찾았고, 처음 잰 밀도는 4.7 g/cm³로 멘델레예프가 적어 둔 값(약 5.9 g/cm³)과 달랐어요. 멘델레예프의 권유로 갈륨을 더 많이 모아 다시 재자 약 <b>5.9 g/cm³</b>가 나왔어요. 그 뒤 1879년과 1886년에 찾은 두 원소도 빈칸에 들어맞자 이 표를 믿는 과학자가 크게 늘었어요.",
-    bubbles: [{ who: "lecoq", text: "예언과<br>꼭 맞네요!" }],
+    caption: "르코크는 예언을 모른 채 갈륨을 찾았고, 처음 잰 밀도는 4.7 g/cm³로 멘델레예프가 적어 둔 값(약 5.9 g/cm³)과 달랐어요. 멘델레예프가 프랑스 학술지에 글을 실어 다시 재 보기를 권했고, 갈륨을 더 많이 모아 다시 재자 약 <b>5.9 g/cm³</b>가 나왔어요. 그 뒤 1879년과 1886년에 찾은 두 원소도 빈칸에 들어맞자 이 표를 믿는 과학자가 크게 늘었어요.",
+    bubbles: [{ who: "lecoq", text: "예언한 값이<br>나왔어요" }],
   },
   {
     fn: p7, when: "1913년, 영국 맨체스터", stage: "새 기준", title: "한 칸에 한 계단씩",
-    caption: "1913년, 영국의 모즐리는 원소마다 정해진 <b>번호</b>가 있고, 그 번호를 실험으로 잴 수 있다는 것을 알아냈어요. 원소를 표의 차례대로 바꿔 가며 빛을 쬐어 찍었더니, 사진판의 선이 한 칸에 한 계단씩 고르게 옮겨 갔거든요. 이 번호가 원자핵 속 양성자의 수, 곧 <b>원자 번호</b>예요. 그 뒤로 원소는 질량이 아니라 원자 번호 순서로 줄을 서요.",
+    caption: "1913년, 영국의 모즐리는 원소마다 정해진 <b>번호</b>가 있고, 그 번호를 실험으로 잴 수 있다는 것을 알아냈어요. 유리관 속의 원소를 표의 차례대로 바꿔 가며 그 원소가 내는 눈에 보이지 않는 빛을 사진판에 찍었더니, 선이 한 칸에 한 계단씩 고르게 옮겨 갔거든요. 이 번호가 원자핵 속 양성자의 수, 곧 <b>원자 번호</b>예요. 그 뒤로 원소는 질량이 아니라 원자 번호 순서로 줄을 서요.",
     bubbles: [{ who: "moseley", text: "한 칸에<br>한 계단씩!" }],
   },
   {
     fn: p8, stage: "오늘날", title: "118칸의 원소 지도",
-    caption: "오늘날 주기율표에는 <b>118가지</b> 원소가 원자 번호 순서로 놓여 있어요. 마지막 칸들의 이름은 2016년에 정해졌어요. 성질이 닮은 원소가 같은 세로줄에 모여 있어서, 자리만 보고도 성질을 짐작할 수 있어요.",
+    caption: "오늘날 주기율표에는 <b>118가지</b> 원소가 원자 번호 순서로 놓여 있어요. 마지막 칸들의 이름은 2016년에 정해졌어요. 성질이 닮은 원소가 그림의 색칠한 줄처럼 같은 세로줄에 모여 있어서, 자리만 보고도 성질을 짐작할 수 있어요.",
     term: { name: "주기율표", def: "원소를 원자 번호 순서로 늘어놓아, 성질이 비슷한 원소가 같은 세로줄에 오도록 정리한 표예요." },
     bubbles: [{ who: "teacher", text: "세로줄을<br>눈여겨봐요" }, { who: "student", text: "118칸이나!" }],
   },
