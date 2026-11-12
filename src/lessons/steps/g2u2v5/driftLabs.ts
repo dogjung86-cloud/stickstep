@@ -5,7 +5,7 @@
 //   학생이 정하는 것: 남아메리카 조각을 옮기는 거리와 돌리는 각도(막대 둘). '맞춰 보기'로 확인한다.
 //   실패가 보이는 길: 덜 옮기면 틈이 남고, 방향이 어긋나면 해안선이 겹치거나 벌어진다(어긋난 채로 보인다).
 //   판정 하나: 두 대륙에서 같은 화석이 나오는 띠가 맞춘 뒤 어떻게 됐는가. 통찰 하나: 해안선도, 화석의 분포도 이어진다.
-//   두 조각의 모양은 지금 단원의 도입 그림(맞물리는 해안선 곡선)을 도구로 가져왔다.
+//   두 조각의 모양은 실제 해안선이다(Natural Earth 110m, gondwanaData.ts). 옮기는 움직임은 두 대륙의 맞춤 회전을 따른다.
 //
 // 랩 2 「더운 인도에 왜 빙하의 흔적이 있을까요?」(g2u2IceLab)
 //   책의 그림(대륙 이동설의 증거: 빙하의 흔적)과 스스로 확인하기(열대인 인도 남부의 빙하 흔적)를 손으로 한다.
@@ -19,32 +19,58 @@ import { G, gBtn, gLab, gPredict, haptic, HAPTIC, label, svgOpen, type GStep } f
 import { GONDWANA, type GondwanaLand } from "./gondwanaData";
 
 /* ══════════ 랩 1: 해안선 맞추기 ══════════ */
-const EDGE = "C98 44 98 50 100 56 C106 62 120 64 126 72 C130 80 118 86 112 94 C106 104 100 118 96 134";
-const EDGE_REV = "C100 118 106 104 112 94 C118 86 130 80 126 72 C120 64 106 62 100 56 C98 50 98 44 106 38";
-const SA = `M106 38 ${EDGE} Q94 144 88 151 Q81 156 79 148 Q76 140 78 131 Q73 114 69 98 Q63 78 67 62 Q72 46 86 40 Q98 34 106 38 Z`;
-const AF = `M96 134 ${EDGE_REV} Q120 32 138 33 Q157 35 163 47 Q167 54 171 59 Q163 67 157 75 Q152 96 142 112 Q131 129 119 137 Q104 144 96 134 Z`;
+// 두 대륙은 실제 해안선이다(gondwanaData.ts). 두 대륙 사이의 한 점을 가운데로 펼친 지도(방위 정거)에 북쪽을 위로 놓는다.
+// '옮기기' 막대는 남아메리카를 아프리카에 붙이는 맞춤 회전(극 북위 45.5도, 서경 32.2도, 58.2도)의 일부만큼 지구 위에서 돌린다.
+// '돌리기' 막대는 그 위에 조각을 제자리에서 더 돌린 각도다(가운데 값일 때 어긋남이 없다).
+const FIT_POLE: [number, number, number] = [45.5, -32.2, 58.2];
+const FIT_C: [number, number] = [-18, -6]; // 지도의 가운데(경도, 위도)
+const FIT_PX = 2.3, FIT_AT: [number, number] = [176, 112];
+// 같은 화석이 나오는 곳: 남아메리카 남동부의 띠(경도, 위도). 아프리카 쪽 띠는 이 띠를 바다 쪽으로 더 늘인 선을 맞춘 자리로 옮긴 것이라 맞추면 한 줄이 된다.
+const FOSSIL_SA: [[number, number], [number, number]] = [[-58, -31.5], [-48.6, -28]];
+const FOSSIL_EXT: [number, number] = [-38.2, -24.1];
 
 export const g2u2FitLab: StepRenderer = (host, step, api) => {
   const lab = gLab(host, api, step as unknown as GStep, { steps: 3, cls: "g2u2x-fit" });
   const { f, tm } = lab;
+  const c0 = vec(FIT_C[0], FIT_C[1]);
+  const north = norm([-c0[0] * c0[2], -c0[1] * c0[2], 1 - c0[2] * c0[2]]), east = norm(cross([0, 0, 1], c0));
+  const flat = (p: V3): [number, number] => {
+    const dist = Math.acos(Math.max(-1, Math.min(1, dot(c0, p))));
+    const k = ((dist < 1e-6 ? 1 : dist / Math.sin(dist)) / RAD) * FIT_PX;
+    return [FIT_AT[0] + dot(p, east) * k, FIT_AT[1] - dot(p, north) * k];
+  };
+  const pathOf = (pts: V3[]): string => `M${pts.map((p) => flat(p).map((v) => v.toFixed(1)).join(" ")).join(" L")} Z`;
+  const pole = vec(FIT_POLE[1], FIT_POLE[0]);
+  const SAL = GONDWANA.find((l) => l.k === "sa")!, AFL = GONDWANA.find((l) => l.k === "af")!;
+  const saPts = SAL.outline.map(([lon, lat]) => vec(lon, lat)), afPts = AFL.outline.map(([lon, lat]) => vec(lon, lat));
+  const saMid = norm(saPts.reduce<V3>((a, p) => [a[0] + p[0], a[1] + p[1], a[2] + p[2]], [0, 0, 0]));
+  const fsA = FOSSIL_SA.map(([lon, lat]) => vec(lon, lat));
+  const afA = flat(spin(fsA[1], pole, FIT_POLE[2])), afB = flat(spin(vec(FOSSIL_EXT[0], FOSSIL_EXT[1]), pole, FIT_POLE[2]));
+  const afMid = flat(norm(afPts.reduce<V3>((a, p) => [a[0] + p[0], a[1] + p[1], a[2] + p[2]], [0, 0, 0])));
   f.stage.innerHTML = `${svgOpen}
     <rect width="346" height="230" fill="#12325C"/>
-    <g transform="translate(64 -24) scale(1.36)">
-      <g class="g2u2x-ft-af"><path d="${AF}" fill="#D9B45F" stroke="#8E6A24" stroke-width="1.4"/><path d="M110 97 L142 88" stroke="#12A594" stroke-width="11" stroke-linecap="round" opacity=".85"/></g>
-      <g class="g2u2x-ft-sa"><path d="${SA}" fill="#86C06C" stroke="#4E7A38" stroke-width="1.4"/><path d="M80 105 L110 97" stroke="#12A594" stroke-width="11" stroke-linecap="round" opacity=".85"/></g>
-      <path class="g2u2x-ft-seam" d="M106 38 ${EDGE}" stroke="#fff" stroke-width="2.2" fill="none"/>
-    </g>
-    ${label(258, 208, "아프리카", { size: 13, cls: "g2u2x-halo" })}
+    <defs><clipPath id="g2ftA"><path d="${pathOf(afPts)}"/></clipPath><clipPath id="g2ftS"><path class="g2u2x-ft-sc"/></clipPath></defs>
+    <path class="g2u2x-ft-land" d="${pathOf(afPts)}" fill="#D9B45F" stroke="#8E6A24" stroke-width="1.2" stroke-linejoin="round"/>
+    <path clip-path="url(#g2ftA)" d="M${afA[0].toFixed(1)} ${afA[1].toFixed(1)} L${afB[0].toFixed(1)} ${afB[1].toFixed(1)}" stroke="#12A594" stroke-width="12" stroke-linecap="round" opacity=".9"/>
+    <g class="g2u2x-ft-sa"><path class="g2u2x-ft-land g2u2x-ft-sp" fill="#86C06C" stroke="#4E7A38" stroke-width="1.2" stroke-linejoin="round"/>
+      <path class="g2u2x-ft-sf" clip-path="url(#g2ftS)" stroke="#12A594" stroke-width="12" stroke-linecap="round" opacity=".9"/></g>
+    ${label(afMid[0] + 8, afMid[1] - 12, "아프리카", { size: 13, cls: "g2u2x-halo" })}
     ${label(0, 0, "남아메리카", { size: 13, cls: "g2u2x-ft-sn g2u2x-halo" })}
     <rect x="10" y="10" width="14" height="10" rx="3" fill="#12A594"/>${label(30, 20, "같은 화석이 나오는 곳", { anchor: "start", size: 12.5, cls: "g2u2x-halo" })}
   </svg>`;
-  const sa = lab.q<SVGGElement>(".g2u2x-ft-sa"), sn = lab.q<SVGTextElement>(".g2u2x-ft-sn");
+  const sa = lab.q<SVGGElement>(".g2u2x-ft-sa"), sp = lab.q<SVGPathElement>(".g2u2x-ft-sp"), sc = lab.q<SVGPathElement>(".g2u2x-ft-sc"), sf = lab.q<SVGPathElement>(".g2u2x-ft-sf"), sn = lab.q<SVGTextElement>(".g2u2x-ft-sn");
   let mv = 8, rot = 8, locked = false;
   const paint = (): void => {
-    const dx = -(1 - mv / 100) * 72, deg = locked ? 0 : rot - 30;
-    sa.setAttribute("transform", `translate(${dx.toFixed(1)} ${((1 - mv / 100) * 10).toFixed(1)}) rotate(${deg} 88 95)`);
-    sn.setAttribute("x", (64 + (84 + dx) * 1.36).toFixed(1));
-    sn.setAttribute("y", "208");
+    const ang = FIT_POLE[2] * (mv / 100), deg = locked ? 0 : (rot - 30) * 1.2;
+    const d = pathOf(saPts.map((p) => spin(p, pole, ang)));
+    sp.setAttribute("d", d);
+    sc.setAttribute("d", d);
+    const [a, b] = fsA.map((p) => flat(spin(p, pole, ang)));
+    sf.setAttribute("d", `M${a[0].toFixed(1)} ${a[1].toFixed(1)} L${b[0].toFixed(1)} ${b[1].toFixed(1)}`);
+    const m = flat(spin(saMid, pole, ang));
+    sa.setAttribute("transform", `rotate(${deg.toFixed(1)} ${m[0].toFixed(1)} ${m[1].toFixed(1)})`);
+    sn.setAttribute("x", Math.max(40, m[0] - 6).toFixed(1));
+    sn.setAttribute("y", (m[1] - 14).toFixed(1));
     host.dataset.g2Fit = `${mv},${rot}`;
   };
   const rMv = bvRange({ cls: "g2u2x-ft-mv", min: 0, max: 100, value: mv, label: "남아메리카를 아프리카 쪽으로 옮기기", onInput: (v) => { if (!locked) { mv = v; paint(); hintNow(); } } });
