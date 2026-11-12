@@ -104,7 +104,7 @@ export const pencilLab: StepRenderer = (host, step, api) => {
 
   st.run((ctx, w, _h, _t, dt) => {
     const cx = w / 2;
-    const k = Math.min(1, dt * 0.012);
+    const k = Math.min(1, dt * 0.2);
     py += (EYE_Y - DIST[arm] - py) * k;
     const target = closed ? hitX(arm, closed) : 0;
     hx += (target - hx) * k;

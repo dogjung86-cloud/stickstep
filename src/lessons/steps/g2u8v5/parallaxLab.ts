@@ -118,7 +118,7 @@ export const parallaxLab: StepRenderer = (host, step, api) => {
 
   st.run((ctx, w, _h, t, dt) => {
     const cx = w / 2;
-    dShow += (PC[di] - dShow) * Math.min(1, dt * 0.01);
+    dShow += (PC[di] - dShow) * Math.min(1, dt * 0.17);
     const sy = SUN_Y - 56 * dShow;
     // 먼 배경 별(천구)
     ctx.fillStyle = "rgba(143,180,255,.08)";

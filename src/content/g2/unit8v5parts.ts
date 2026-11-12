@@ -126,8 +126,8 @@ export const L1: Step[] = numbered([
 // ══ 2. 별의 밝기와 거리 ══
 export const L2: Step[] = numbered([
   opener({ title: "먼 가로등은 어떻게 보일까요?", scene: "g2u8-lamps", wait: "가로등을 켜 보세요", cta: "실험실 열기" }),
-  luxLab({ title: "전등에서 멀어지면 밝기는 얼마나 줄까요?", cta: "빛이 퍼지는 모습 보기" }),
-  spreadLab({ title: "거리가 2배가 되면 빛은 몇 칸에 퍼질까요?", cta: "이름 붙이기" }),
+  luxLab({ title: "멀어지면 밝기는 얼마나 줄까요?", cta: "빛이 퍼지는 모습 보기" }),
+  spreadLab({ title: "멀어지면 빛은 몇 칸에 퍼질까요?", cta: "이름 붙이기" }),
   words({
     title: "별의 밝기,<br>거리의 제곱에 반비례해요",
     lead: "전등에서 2배 멀어지자 밝기가 4분의 1이 됐고, 빛은 4칸에 나뉘어 퍼졌어요. 이 규칙을 말로 정리해요.",
@@ -194,7 +194,7 @@ export const L2: Step[] = numbered([
 // ══ 3. 별의 등급 ══
 export const L3: Step[] = numbered([
   opener({ title: "가장 밝은 별은 몇 등성일까요?", scene: "g2u8-rank", wait: "별을 줄 세워 보세요", cta: "관측소 열기" }),
-  magLab({ title: "밝은 별일수록 등급의 숫자는 어떻게 될까요?", cta: "이름 붙이기" }),
+  magLab({ title: "밝은 별의 등급은 클까요, 작을까요?", cta: "이름 붙이기" }),
   words({
     title: "겉보기 등급,<br>눈에 보이는 밝기의 숫자",
     lead: "가장 밝은 별부터 1등성, 2등성 하고 이름을 붙였고, 등급 하나마다 밝기가 약 2.5배씩 달랐어요. 이 숫자의 이름을 정리해요.",
@@ -205,7 +205,7 @@ export const L3: Step[] = numbered([
     ],
     cta: "실제 밝기 견주기",
   }),
-  absLab({ title: "같은 거리에 놓으면 어느 별이 가장 밝을까요?", cta: "이름 붙이기" }),
+  absLab({ title: "같은 거리에서는 어느 별이 밝을까요?", cta: "이름 붙이기" }),
   words({
     title: "절대 등급,<br>같은 거리에 놓고 견줘요",
     lead: "세 별을 모두 10 pc 자리로 옮기자 밝기의 차례가 뒤집혔어요. 같은 거리에 놓고 매긴 등급에 이름을 붙여요.",
@@ -291,7 +291,7 @@ export const L3: Step[] = numbered([
 // ══ 4. 별의 색과 표면 온도 ══
 export const L4: Step[] = numbered([
   opener({ title: "막 나온 용암과 멀리 간 용암, 색이 같을까요?", scene: "g2u8-lava", wait: "용암을 흘려보내 보세요", cta: "실험실 열기" }),
-  heaterLab({ title: "니크롬선이 뜨거워지면 색은 어떻게 변할까요?", cta: "별의 색 맞추기" }),
+  heaterLab({ title: "뜨거워지면 니크롬선의 색은?", cta: "별의 색 맞추기" }),
   starTempLab({ title: "별의 색은 무엇이 정할까요?", cta: "이름 붙이기" }),
   words({
     title: "별의 색,<br>표면 온도가 정해요",

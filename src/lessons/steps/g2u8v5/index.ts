@@ -4,8 +4,20 @@
 import type { StepRenderer } from "../../types";
 import { pencilLab } from "./pencilLab";
 import { parallaxLab } from "./parallaxLab";
+import { luxLab } from "./luxLab";
+import { spreadLab } from "./spreadLab";
+import { magLab } from "./magLab";
+import { absLab } from "./absLab";
+import { heaterLab } from "./heaterLab";
+import { starTempLab } from "./starTempLab";
 
 export const G2U8V5_STEPS: Record<string, StepRenderer> = {
   g2u8PencilLab: pencilLab,
   g2u8ParallaxLab: parallaxLab,
+  g2u8LuxLab: luxLab,
+  g2u8SpreadLab: spreadLab,
+  g2u8MagLab: magLab,
+  g2u8AbsLab: absLab,
+  g2u8HeaterLab: heaterLab,
+  g2u8StarTempLab: starTempLab,
 };

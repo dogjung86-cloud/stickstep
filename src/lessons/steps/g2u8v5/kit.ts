@@ -148,6 +148,13 @@ export function sPhoto(cls: string, file: string, alt: string): HTMLImageElement
   return el("img", { class: `g2u8x-photo ${cls}`, attrs: { src: starPhoto(file), alt, draggable: "false" } }) as HTMLImageElement;
 }
 
+/** 받침에 맞는 조사를 붙인다. josa("북극성", "은", "는") → "북극성은" */
+export const josa = (word: string, withBatchim: string, without: string): string => {
+  const c = word.charCodeAt(word.length - 1);
+  const has = c >= 0xac00 && c <= 0xd7a3 && (c - 0xac00) % 28 !== 0;
+  return word + (has ? withBatchim : without);
+};
+
 // ── 캔버스 그리기 ───────────────────────────────────────────────────
 /** 흔들리지 않는 난수(같은 n이면 같은 값). */
 export const rnd = (n: number): number => {
