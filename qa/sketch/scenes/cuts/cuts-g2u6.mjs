@@ -29,86 +29,89 @@ const WALK = { knL: [-30, -108], ftL: [-72, 0], knR: [28, -104], ftR: [56, -4], 
 /* ---------- g2u6l1: 급식 식판에 밥, 생선구이, 나물, 과일, 우유, 물이 골고루 ---------- */
 function cutL1() {
   const sk = new Sk(W, H, { id: "a" });
-  const GY = 676, TX = 344, TY = 150, TW = 590, TH = 440;
-  ground(sk, GY, 11, 14, 326);
+  const GY = 676, TX = 352, TY = 118, TW = 576, TH = 428;
+  ground(sk, GY, 11);
   thin(sk, 0.8, () => {
+    // 급식대(비스듬히 내려다본 모습)
+    for (const x of [TX - 2, 928]) sk.ink(dense([[x, TY + TH + 44], [x, GY]]), { w: 10, seed: 3 + x });
+    shp(sk, box(TX - 26, TY + TH + 24, 952, TY + TH + 46), WOODD, 5, 8);
+    shp(sk, poly([[TX - 6, TY - 22], [946, TY - 22], [952, TY + TH + 24], [TX - 26, TY + TH + 24]], 5), "#EBD9BA", 7, 8, { tex: 0.8, texAng: 0.02 });
     shp(sk, rrect(TX, TY, TW, TH, 44), "#C5CEDA", 13, 10);
-    [[26, 26, 168, 170], [211, 26, 168, 170], [396, 26, 168, 170], [26, 222, 262, 192], [304, 222, 260, 192]].forEach(([x, y, w, h], i) => shp(sk, rrect(TX + x, TY + y, w, h, 26), "#F1F4F8", 17 + i * 2, 6));
+    [[24, 24, 164, 166], [206, 24, 164, 166], [388, 24, 164, 166], [24, 214, 256, 190], [298, 214, 254, 190]].forEach(([x, y, w, h], i) => shp(sk, rrect(TX + x, TY + y, w, h, 26), "#F1F4F8", 17 + i * 2, 6));
   });
   // 나물
-  const c0 = [TX + 110, TY + 116];
+  const c0 = [TX + 106, TY + 112];
   shp(sk, circ(c0[0], c0[1], 60, { over: 0.05, seed: 31, lump: 0.08, sy: 0.72 }), "#8CCB7A", 33, 6);
   for (let i = 0; i < 6; i++) sk.ink(curve([[c0[0] - 42 + i * 16, c0[1] + 20], [c0[0] - 36 + i * 16, c0[1] - 2], [c0[0] - 22 + i * 16, c0[1] - 20]]), { w: 4.5, color: i % 3 === 1 ? "#F08A2E" : "#3F8F4F", seed: 35 + i, wob: 0.3 });
   // 생선구이
-  sk.at(TX + 295, TY + 114, 1.08, () => {
+  sk.at(TX + 288, TY + 108, 1.05, () => {
     shp(sk, poly([[44, 0], [78, -28], [70, 0], [78, 28]], 3), "#C9853F", 43, 6);
     shp(sk, curve([[-64, 0], [-34, -27], [18, -25], [52, -5], [52, 5], [18, 25], [-34, 27]], true, 3), "#DFA057", 45, 6);
     for (let i = 0; i < 3; i++) sk.ink(dense([[-18 + i * 24, -17], [-4 + i * 24, 17]]), { w: 5, color: "#7A4526", seed: 47 + i, wob: 0.2 });
     sk.dot(-44, -4, 4.5);
   }, -0.12);
   // 과일
-  orange(sk, TX + 452, TY + 126, 40, { leaf: false, seed: 51 });
-  orange(sk, TX + 516, TY + 110, 37, { color: "#E0503A", seed: 61 });
+  orange(sk, TX + 442, TY + 120, 39, { leaf: false, seed: 51 });
+  orange(sk, TX + 504, TY + 104, 36, { color: "#E0503A", seed: 61 });
   // 밥
-  const c3 = [TX + 157, TY + 324];
+  const c3 = [TX + 152, TY + 316];
   shp(sk, [...ell(c3[0], c3[1], 86, 66, Math.PI, Math.PI * 2), [c3[0] - 86, c3[1]]], C.white, 71, 6);
   for (const [dx, dy, i] of [[-38, -22, 0], [-8, -40, 1], [26, -26, 2], [-20, -10, 3], [44, -8, 4], [8, -14, 5]]) sk.ink(dense([[c3[0] + dx, c3[1] + dy], [c3[0] + dx + 9, c3[1] + dy - 3]]), { w: 3.5, color: C.gray, seed: 73 + i, wob: 0 });
   shp(sk, [...ell(c3[0], c3[1], 100, 72, 0, Math.PI), [c3[0] + 100, c3[1]]], "#BFD3EA", 81, 7);
   // 우유와 물
-  const mx = TX + 366, my = TY + 398;
+  const mx = TX + 358, my = TY + 388;
   shp(sk, box(mx - 36, my - 128, mx + 36, my), C.white, 91, 6);
   sk.fill(box(mx - 33, my - 84, mx + 33, my - 40), "#7DB6E8", { dx: 0, dy: 0, wob: 0.2, seed: 93 });
   shp(sk, poly([[mx - 36, my - 128], [mx - 20, my - 156], [mx + 20, my - 156], [mx + 36, my - 128]], 3), C.white, 95, 6);
   shp(sk, box(mx - 20, my - 166, mx + 20, my - 156), C.white, 97, 5);
-  const gx = TX + 486;
+  const gx = TX + 476;
   sk.fill(poly([[gx - 37, my - 100], [gx + 37, my - 100], [gx + 30, my - 3], [gx - 30, my - 3]], 3), "#BFE3F7", { dx: 0, dy: 0, wob: 0.2, seed: 101 });
   sk.ink(dense([[gx - 41, my - 134], [gx - 31, my], [gx + 31, my], [gx + 41, my - 134]]), { w: 6, seed: 103, wob: 0.3 });
   sk.ink(dense([[gx - 37, my - 100], [gx + 37, my - 100]]), { w: 4, color: "#5FAEDD", seed: 105, wob: 0.3 });
-  sparkle(sk, TX + 40, TY - 42, 26, { seed: 111 }); sparkle(sk, TX + TW - 60, TY - 50, 20, { seed: 115 });
+  sparkle(sk, TX - 44, TY + 26, 24, { seed: 111 }); sparkle(sk, TX - 84, TY + 92, 16, { seed: 115 });
   // 학생: 한 손으로 식판을 잡고 흐뭇해한다
-  const kx = 232, ks = 0.66, hand = [TX + 4, 452];
+  const kx = 228, ks = 0.66, hand = [TX + 4, 470];
   const PK = pose({ ...local(kx, GY, ks, { haR: hand, elR: [hand[0] - 52, hand[1] + 36] }), elL: [-88, -296], haL: [-128, -386], tilt: 0.08 });
   drawFigure(sk, kx, GY, ks, PK, { ...STUDENT, name: "student", hands: "L" });
   handDot(sk, hand, C.skin, 121, 15 * ks);
-  heart(sk, kx + 6, 236, 1.25, { rot: -0.15 });
+  heart(sk, kx - 40, 232, 1.25, { rot: -0.15 });
   return sk;
 }
 
 /* ---------- g2u6l1b: 감자 단면에 갈색 용액 한 방울, 그 자리만 짙은 남색 ---------- */
 function cutL1b() {
   const sk = new Sk(W, H, { id: "b" });
-  const GY = 676, TT = 590, PC = [578, 470], BROWN = "#9A5A2A", NAVY = "#2B2F77";
+  const GY = 676, TT = 590, PC = [566, 492], BROWN = "#9A5A2A", NAVY = "#2B2F77", SKIN = "#B07F45";
   ground(sk, GY, 11);
-  table(sk, 400, 828, TT, GY, 13);
-  // 감자 반쪽: 자른 면이 위를 본다
-  const face = curve([[-178, 4], [-150, -44], [-70, -74], [30, -78], [128, -56], [176, -8], [150, 42], [60, 70], [-50, 72], [-140, 46]].map(([x, y]) => [PC[0] + x, PC[1] + y]), true, 4);
-  const skin = curve([[-180, 0], [-176, 60], [-110, 112], [0, 124], [116, 108], [176, 52], [178, -10], [100, 30], [-60, 40]].map(([x, y]) => [PC[0] + x, PC[1] + y]), true, 4);
-  shp(sk, skin, "#B98A52", 21, 8, { tex: 0.8 });
-  for (const [dx, dy, i] of [[-128, 76, 0], [-40, 100, 1], [60, 98, 2], [138, 66, 3]]) sk.dot(PC[0] + dx, PC[1] + dy, 4.5, "#7A5A30");
-  shp(sk, face, "#F8ECB8", 25, 7);
-  // 나머지 반쪽(껍질 쪽이 위)
-  const half = curve([[724, 590], [730, 548], [768, 524], [808, 544], [818, 590]], false, 4);
-  shp(sk, [...half, half[0]], "#B98A52", 27, 7, { tex: 0.8 });
-  for (const [x, y] of [[752, 556], [782, 544], [794, 572]]) sk.dot(x, y, 4, "#7A5A30");
+  table(sk, 404, 850, TT, GY, 13);
+  // 감자 반쪽: 자른 면이 위를 보고, 갈색 껍질이 둘레와 아래를 감싼다
+  const M = pts => pts.map(([x, y]) => [PC[0] + x, PC[1] + y]);
+  shp(sk, curve(M([[-160, -6], [-150, -52], [-70, -80], [30, -82], [122, -64], [162, -14], [160, 44], [112, 90], [10, 102], [-96, 92], [-152, 50]]), true, 4), SKIN, 21, 8, { tex: 0.8 });
+  for (const [dx, dy] of [[-118, 62], [-40, 84], [52, 84], [124, 56], [148, 14], [-146, 20]]) sk.dot(PC[0] + dx, PC[1] + dy, 4.5, "#70502A");
+  shp(sk, curve(M([[-138, -6], [-122, -40], [-60, -62], [28, -64], [104, -48], [138, -10], [116, 24], [50, 44], [-44, 46], [-114, 28]]), true, 4), "#F8ECB8", 25, 6);
+  // 나머지 반쪽(자른 면이 아래)
+  const half = curve([[682, 590], [686, 548], [718, 514], [770, 506], [816, 528], [836, 590]], false, 4);
+  shp(sk, [...half, half[0]], SKIN, 27, 7, { tex: 0.8 });
+  for (const [x, y] of [[716, 556], [752, 532], [790, 546], [806, 572], [744, 574]]) sk.dot(x, y, 4.5, "#70502A");
+  sk.ink(dense([[690, 587], [828, 587]]), { w: 5, color: "#F8ECB8", seed: 29, wob: 0.2 });
   // 용액이 떨어진 자리만 짙은 남색(청람색)
-  sk.fill(circ(PC[0] - 6, PC[1] - 2, 74, { over: 0, seed: 31, lump: 0.1, sy: 0.47 }), NAVY, { dx: 0, dy: 0, wob: 0.6, seed: 33 });
-  for (const [dx, dy, r, i] of [[92, 18, 10, 0], [-104, -14, 8, 1], [34, 46, 7, 2], [-64, 38, 6, 3]]) sk.fill(ell(PC[0] + dx, PC[1] + dy, r, r * 0.5), NAVY, { dx: 0, dy: 0, wob: 0.2, seed: 35 + i });
+  sk.fill(circ(PC[0] - 2, PC[1] - 10, 46, { over: 0, seed: 31, lump: 0.08, sy: 0.46 }), NAVY, { dx: 0, dy: 0, wob: 0.5, seed: 33 });
   // 스포이트와 떨어지는 갈색 방울
-  const Hd = [488, 318], d = [0.9, 0.436], tip = [Hd[0] + d[0] * 112, Hd[1] + d[1] * 112], bulb = [Hd[0] - d[0] * 34, Hd[1] - d[1] * 34];
+  const tip = [560, 386], d = [0.71, 0.71], Hd = [tip[0] - d[0] * 112, tip[1] - d[1] * 112], bulb = [Hd[0] - d[0] * 34, Hd[1] - d[1] * 34];
   const tube = dense([[Hd[0] - d[0] * 10, Hd[1] - d[1] * 10], [tip[0] - d[0] * 20, tip[1] - d[1] * 20]]);
   sk.ink(tube, { w: 19, seed: 41, wob: 0.2 }); sk.ink(tube, { w: 12, color: "#EAF2F8", seed: 41, wob: 0.2 });
   sk.ink(dense([[Hd[0] + d[0] * 40, Hd[1] + d[1] * 40], [tip[0] - d[0] * 20, tip[1] - d[1] * 20]]), { w: 12, color: BROWN, seed: 43, wob: 0.2 });
   sk.ink(dense([[tip[0] - d[0] * 22, tip[1] - d[1] * 22], tip]), { w: 9, seed: 45, wob: 0.1 }); sk.ink(dense([[tip[0] - d[0] * 22, tip[1] - d[1] * 22], tip]), { w: 4, color: BROWN, seed: 45, wob: 0.1 });
   shp(sk, circ(bulb[0], bulb[1], 25, { over: 0.05, seed: 47 }), "#4A5568", 48, 6);
-  drop(sk, tip[0] + 2, tip[1] + 40, 1.2, { color: BROWN, line: "#5E3415" });
+  drop(sk, tip[0] + 2, tip[1] + 42, 1.1, { color: BROWN, line: "#5E3415" });
   // 쌤: 스포이트를 쥐고 떨어뜨린다
-  const tx = 348, ts = 0.72;
-  const PT = pose({ ...local(tx, GY, ts, { haR: Hd, elR: [Hd[0] - 56, Hd[1] + 62] }), elL: [-52, -262], haL: [-80, -196], tilt: 0.06 });
+  const tx = 336, ts = 0.72;
+  const PT = pose({ ...local(tx, GY, ts, { haR: Hd, elR: [Hd[0] - 42, Hd[1] + 88] }), elL: [-52, -262], haL: [-80, -196], tilt: 0.06 });
   drawFigure(sk, tx, GY, ts, PT, { ...TEACHER, name: "teacher", hands: "L" });
   handDot(sk, Hd, C.skin, 51, 15 * ts);
   // 학생: 놀란다
-  const kx = 884, ks = 0.56;
-  const PK = pose({ elL: [-92, -300], haL: [-136, -384], elR: [84, -300], haR: [112, -388], tilt: -0.08 });
+  const kx = 890, ks = 0.56;
+  const PK = pose({ elL: [-70, -280], haL: [-118, -356], elR: [70, -280], haR: [108, -360], tilt: -0.08 });
   drawFigure(sk, kx, GY, ks, PK, { ...STUDENT, name: "student", flip: -1 });
   emark(sk, kx - 8, 256, 0.95);
   return sk;
@@ -122,74 +125,75 @@ function brick(sk, x, y, w, h, col, sd, studs = true) {
 }
 function cutL2() {
   const sk = new Sk(W, H, { id: "c" });
-  const GY = 676, BW = 76, BH = 58, X0 = 26, WX = 648, WW = 76, GAP = 108;
+  const GY = 676, BW = 76, BH = 58, X0 = 22, WL = 572, DX = 718, DW = 98, DH = 86;
   ground(sk, GY, 11);
+  // 벽과 문틀이 있는 작은 문(낱개 블록 하나가 겨우 지나가는 크기)
+  thin(sk, 0.8, () => {
+    shp(sk, box(WL, 64, 950, GY), "#E6EAEF", 101, 9);
+    for (let y = 126, i = 0; y < GY - 20; y += 62, i++) {
+      sk.ink(dense([[WL + 4, y], [946, y]]), { w: 3, color: "#B4BEC9", seed: 103 + i, wob: 0.3 });
+      for (let x = WL + (i % 2 ? 46 : 94); x < 940; x += 96) sk.ink(dense([[x, y - 62], [x, y]]), { w: 3, color: "#B4BEC9", seed: 113 + i * 7 + x, wob: 0.2 });
+    }
+    shp(sk, box(DX - 16, GY - DH - 16, DX + DW + 16, GY), WOODD, 121, 7, { tex: 0.8 });
+    shp(sk, box(DX, GY - DH, DX + DW, GY), "#4A5568", 123, 5);
+  });
+  // 문을 지나가는 중인 낱개 블록
+  brick(sk, DX + 11, GY - BH, BW, BH, BCOL[4], 141);
   // 블록 성
   for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) brick(sk, X0 + c * BW, GY - (r + 1) * BH, BW, BH, BCOL[(r * 2 + c) % 5], 21 + r * 17 + c * 3, r === 3 && (c === 1 || c === 3));
   for (const c of [0, 2]) brick(sk, X0 + c * BW, GY - 5 * BH, BW, BH, BCOL[(c + 3) % 5], 91 + c * 5);
-  // 벽과 작은 문
-  thin(sk, 0.8, () => {
-    const wall = box(WX, 30, WX + WW, GY - GAP);
-    shp(sk, wall, "#D5DAE2", 101, 9, { tex: 0.8 });
-    for (let y = 96, i = 0; y < GY - GAP - 20; y += 62, i++) { sk.ink(dense([[WX + 3, y], [WX + WW - 3, y]]), { w: 3.5, color: GRAYD, seed: 103 + i, wob: 0.3 }); sk.ink(dense([[WX + (i % 2 ? 26 : 50), y], [WX + (i % 2 ? 26 : 50), y + 62]]), { w: 3.5, color: GRAYD, seed: 123 + i, wob: 0.2 }); }
-  });
-  // 문을 지난 낱개 블록
-  brick(sk, WX + 14, GY - BH, BW, BH, BCOL[4], 141);
-  brick(sk, 792, GY - BH, BW, BH, BCOL[1], 151);
-  brick(sk, 874, GY - BH, BW, BH, BCOL[2], 161);
-  arrow(sk, [[744, GY - 104], [884, GY - 104]], { w: 10, color: GREEN, straight: true, seed: 171, head: 24, wob: 0.2 });
-  // 성은 통째로는 못 지난다
-  arrow(sk, [[300, 300], [420, 226], [540, 214], [626, 232]], { w: 9, color: GRAYD, seed: 175, head: 22, wob: 0.3 });
-  xmark(sk, WX + WW / 2, 236, 0.85, { w: 14 });
+  // 성은 통째로는 문을 못 지난다: 성에서 문으로 가는 화살표와 가위표
+  arrow(sk, [[X0 + 4 * BW + 14, 430], [410, 286], [600, 268], [DX + 36, 470]], { w: 9, color: GRAYD, seed: 175, head: 22, wob: 0.3 });
+  xmark(sk, DX + DW / 2, GY - DH - 66, 0.9, { w: 14 });
   // 학생: 떼어 낸 블록 하나를 들고 문 쪽으로
-  const kx = 446, ks = 0.62, hand = [548, 506];
-  const PK = pose({ ...local(kx, GY, ks, { haR: hand, elR: [hand[0] - 56, hand[1] + 22] }), elL: [-56, -262], haL: [-92, -204], tilt: 0.05 });
+  const kx = 420, ks = 0.58, hand = [506, 528];
+  const PK = pose({ ...local(kx, GY, ks, { haR: hand, elR: [hand[0] - 50, hand[1] + 14] }), elL: [-56, -262], haL: [-92, -204], tilt: 0.05 });
   drawFigure(sk, kx, GY, ks, PK, { ...STUDENT, name: "student", hands: "L" });
-  brick(sk, 528, 446, BW, BH, BCOL[0], 181);
+  brick(sk, 484, 468, BW, BH, BCOL[0], 181);
   handDot(sk, hand, C.skin, 191, 15 * ks);
+  arrow(sk, [[578, 520], [640, 580], [DX - 30, GY - 40]], { w: 10, color: GREEN, seed: 171, head: 24, wob: 0.2 });
   return sk;
 }
 
 /* ---------- g2u6l2b: 매끈한 비닐로 닦으면 물이 그대로, 올이 빽빽한 수건으로 닦으면 싹 닦인다 ---------- */
-function deck(sk, x0, x1, ty, gy, sd) { // 비스듬히 내려다본 탁자
+function deck(sk, x0, x1, ty, gy, sd, dep = 160) { // 비스듬히 내려다본 허리 높이의 탁자
   thin(sk, 0.8, () => {
     for (const [x, i] of [[x0 + 18, 0], [x1 - 18, 1]]) sk.ink(dense([[x, ty + 20], [x, gy]]), { w: 10, seed: sd + i });
     shp(sk, box(x0, ty, x1, ty + 20), WOODD, sd + 2, 8);
-    shp(sk, poly([[x0 + 46, ty - 216], [x1 - 46, ty - 216], [x1, ty], [x0, ty]], 5), "#EBD9BA", sd + 4, 8, { tex: 0.8, texAng: 0.02 });
+    shp(sk, poly([[x0 + 34, ty - dep], [x1 - 34, ty - dep], [x1, ty], [x0, ty]], 5), "#EBD9BA", sd + 4, 8, { tex: 0.8, texAng: 0.02 });
   });
 }
 function cutL2b() {
   const sk = new Sk(W, H, { id: "d" });
-  const GY = 676, TY = 486, WATER = "#BFE3F7", WLINE = "#5FAEDD";
+  const GY = 676, TY = 574, WATER = "#BFE3F7", WLINE = "#5FAEDD", s = 0.7;
   ground(sk, GY, 11);
-  deck(sk, 160, 474, TY, GY, 13); deck(sk, 486, 800, TY, GY, 23);
+  deck(sk, 178, 474, TY, GY, 13); deck(sk, 486, 782, TY, GY, 23);
   // 왼쪽: 물이 그대로 남았다
-  const pud = curve([[206, TY - 84], [256, TY - 176], [340, TY - 160], [404, TY - 184], [446, TY - 106], [424, TY - 30], [326, TY - 18], [236, TY - 24]], true, 4);
+  const pud = curve([[212, TY - 66], [254, TY - 138], [336, TY - 126], [398, TY - 142], [440, TY - 80], [422, TY - 22], [326, TY - 10], [238, TY - 14]], true, 4);
   sk.fill(pud, WATER, { dx: 0, dy: 0, wob: 0.4, seed: 31 }); sk.ink(pud, { w: 5.5, color: WLINE, seed: 32, wob: 0.5 });
-  sk.ink(curve([[366, TY - 140], [400, TY - 150], [424, TY - 124]]), { w: 4.5, color: C.white, seed: 33, wob: 0.2 });
-  const vin = poly([[232, TY - 146], [350, TY - 146], [378, TY - 40], [212, TY - 40]], 4);
-  sk.fill(vin, "#F4F8FB", { dx: 0, dy: 0, wob: 0.3, seed: 35, alpha: 0.82 }); sk.ink(vin, { w: 5.5, color: GRAYD, seed: 36, wob: 0.4 });
-  sk.ink(dense([[286, TY - 128], [338, TY - 128]]), { w: 4.5, color: C.white, seed: 37, wob: 0.2 }); sk.ink(dense([[300, TY - 60], [354, TY - 60]]), { w: 4.5, color: "#C9D6E2", seed: 38, wob: 0.2 });
-  drop(sk, 396, TY - 250, 1.5, { line: WLINE }); drop(sk, 446, TY - 232, 1.2, { line: WLINE, rot: 0.3 });
-  // 오른쪽: 수건이 물을 빨아들여 탁자가 말랐다
-  const tx0 = 548, tx1 = 742, tb = TY - 40, tt = TY - 150, TOW = "#FFD66B";
-  const tow = [...dense([[tx0, tb], [tx1, tb], [tx1 + 6, tt]])];
-  for (let x = tx1 - 5; x > tx0 + 10; x -= 26) tow.push(...ell(x - 8, tt, 13, 15, 0, -Math.PI));
-  tow.push([tx0 - 6, tt], [tx0, tb]);
-  sk.fill(tow, TOW, { dx: 0, dy: 0, wob: 0.3, seed: 41 });
-  sk.fill(poly([[tx0 + 2, tb - 2], [tx1 - 2, tb - 2], [tx1, tb - 42], [tx0 + 96, tb - 34], [tx0, tb - 44]], 4), "#8CC8EC", { dx: 0, dy: 0, wob: 0.6, seed: 43 });
-  for (let r = 0; r < 4; r++) for (let x = tx0 + 16 + (r % 2) * 10, i = 0; x < tx1 - 8; x += 20, i++) sk.ink(ell(x, tt + 22 + r * 21, 6.5, 7.5, Math.PI * 0.1, Math.PI * 0.9), { w: 3.4, color: r === 3 ? "#4E97C4" : "#D49A1C", seed: 45 + i + r * 20, wob: 0 });
-  sk.ink(tow, { w: 6.5, seed: 47, wob: 0.3 });
-  sparkle(sk, 560, TY - 184, 20, { seed: 51 }); sparkle(sk, 772, TY - 70, 24, { seed: 55 }); sparkle(sk, 636, TY - 18, 14, { seed: 57 });
-  // 닦는 손의 움직임
-  for (const [x, y, sg, i] of [[204, TY - 176, -1, 0], [770, TY - 180, 1, 1]]) for (const k of [0, 1]) sk.ink(curve([[x + sg * k * 14, y - 16], [x + sg * (10 + k * 14), y], [x + sg * k * 14, y + 16]]), { w: 4.5, color: C.gray, seed: 61 + i * 2 + k, wob: 0.2 });
-  // 두 학생
-  const s = 0.62, hL = [244, TY - 84], hR = [722, TY - 100];
-  const PL = pose({ ...local(72, GY, s, { haR: hL, elR: [hL[0] - 80, hL[1] + 30] }), tilt: 0.14, head: [16, -430] });
-  drawFigure(sk, 72, GY, s, PL, { ...STUDENT, name: "left", hands: "L" });
+  sk.ink(curve([[384, TY - 112], [410, TY - 116], [424, TY - 96]]), { w: 4.5, color: C.white, seed: 33, wob: 0.2 });
+  // 반들반들한 투명 비닐(물이 비쳐 보이고 빛이 반사된다)
+  const vin = poly([[236, TY - 122], [354, TY - 122], [380, TY - 24], [214, TY - 24]], 4);
+  sk.fill(vin, C.white, { dx: 0, dy: 0, wob: 0.3, seed: 35, alpha: 0.5 }); sk.ink(vin, { w: 5, color: GRAYD, seed: 36, wob: 0.4 });
+  for (const [x, l, i] of [[300, 62, 0], [326, 40, 1]]) sk.ink(dense([[x, TY - 40], [x + l * 0.5, TY - 40 - l]]), { w: 6, color: C.white, seed: 37 + i, wob: 0.1 });
+  sparkle(sk, 356, TY - 122, 15, { color: C.white, seed: 39, w: 3.5 });
+  drop(sk, 396, TY - 196, 1.4, { line: WLINE }); drop(sk, 442, TY - 180, 1.1, { line: WLINE, rot: 0.3 });
+  // 오른쪽: 올이 보이는 수건(양 끝에 술)이 물을 빨아들여 탁자가 말랐다
+  const tx0 = 552, tx1 = 730, tb = TY - 22, tt = TY - 126, TOW = "#FFD66B";
+  const tow = poly([[tx0 + 8, tt], [tx1 - 8, tt], [tx1, tb], [tx0, tb]], 4);
+  for (let y = tt + 5, i = 0; y < tb; y += 8, i++) { const u = (y - tt) / (tb - tt); sk.ink(dense([[tx0 + 8 - 8 * u, y], [tx0 - 18 - 8 * u, y + 2]]), { w: 4, color: "#C98A00", seed: 41 + i, wob: 0.2 }); sk.ink(dense([[tx1 - 8 + 8 * u, y], [tx1 + 18 + 8 * u, y + 2]]), { w: 4, color: "#C98A00", seed: 61 + i, wob: 0.2 }); }
+  sk.fill(tow, TOW, { dx: 0, dy: 0, wob: 0.3, seed: 81 });
+  sk.fill(poly([[tx0 + 2, tb - 2], [tx1 - 2, tb - 2], [tx1 - 3, tb - 40], [tx0 + 90, tb - 32], [tx0 + 3, tb - 42]], 4), "#8CC8EC", { dx: 0, dy: 0, wob: 0.6, seed: 83 });
+  for (let r = 0; r < 5; r++) for (let x = tx0 + 20 + (r % 2) * 10, i = 0; x < tx1 - 12; x += 20, i++) sk.ink(ell(x, tt + 12 + r * 19, 6.5, 8, Math.PI * 0.1, Math.PI * 0.9), { w: 3.2, color: r >= 4 ? "#4E97C4" : "#D49A1C", seed: 85 + i + r * 20, wob: 0 });
+  sk.ink(tow, { w: 6.5, seed: 87, wob: 0.3 });
+  sparkle(sk, 536, TY - 140, 18, { seed: 91 }); sparkle(sk, 762, TY - 30, 20, { seed: 95 });
+  // 두 학생: 팔이 어깨에서 나와 탁자 위로 뻗는다
+  const hL = [250, TY - 72], hR = [708, TY - 76];
+  const PL = pose({ ...local(126, GY, s, { haR: hL, elR: [186, 478] }), tilt: 0.1 });
+  drawFigure(sk, 126, GY, s, PL, { ...STUDENT, name: "left", hands: "L" });
   handDot(sk, hL, C.skin, 71, 15 * s);
-  const PR = pose({ ...local(880, GY, s, { haL: hR, elL: [hR[0] + 80, hR[1] + 34] }), tilt: -0.14, head: [-16, -430] });
-  drawFigure(sk, 880, GY, s, PR, { hair: "bob", hairColor: "#B9703A", seed: 221, name: "right", hands: "R" });
+  const PR = pose({ ...local(834, GY, s, { haL: hR, elL: [774, 478] }), tilt: -0.1 });
+  drawFigure(sk, 834, GY, s, PR, { hair: "bob", hairColor: "#B9703A", seed: 221, name: "right", hands: "R" });
   handDot(sk, hR, C.skin, 75, 15 * s);
   return sk;
 }
@@ -197,37 +201,29 @@ function cutL2b() {
 /* ---------- g2u6l3: 한쪽으로만 도는 회전문. 차례로 나가고, 거꾸로 가려는 사람은 막힌다 ---------- */
 function cutL3() {
   const sk = new Sk(W, H, { id: "e" });
-  const GY = 662, DX = 478, L = 306, R = 650, TOP = 172, GLASS = "#CFE6F5";
-  ground(sk, GY, 11);
+  const cx = 486, cy = 440, RX = 232, RY = 104, HH = 276, GLASS = "#CFE6F5", PI = Math.PI, s = 0.56;
+  const rim = (a, up = 0) => [cx + RX * Math.cos(a), cy + RY * Math.sin(a) - up];
+  const wing = (a, sd) => { const q = poly([[cx, cy], rim(a), rim(a, HH), [cx, cy - HH]], 5); sk.fill(q, GLASS, { dx: 0, dy: 0, wob: 0.2, seed: sd, alpha: 0.72 }); sk.ink(q, { w: 6.5, seed: sd + 1, wob: 0.4 }); };
   thin(sk, 0.8, () => {
-    // 둥근 바닥과 유리 통
-    sk.ink(curve([[L, GY], [DX - 90, GY + 24], [DX + 90, GY + 24], [R, GY]]), { w: 6, color: GRAYD, seed: 13, wob: 0.3 });
-    sk.fill(box(L, TOP, R, GY), "#EEF6FB", { dx: 0, dy: 0, wob: 0, seed: 15 });
-    // 날개: 왼쪽 날개는 넓게(길을 막는다), 오른쪽 날개는 비스듬히 좁게
-    const wl = box(L + 14, TOP + 16, DX, GY - 4), wr = poly([[DX, TOP + 16], [DX + 96, TOP + 34], [DX + 96, GY - 22], [DX, GY - 4]], 5);
-    sk.fill(wr, GLASS, { dx: 0, dy: 0, wob: 0.2, seed: 17, alpha: 0.75 }); sk.ink(wr, { w: 6, seed: 18, wob: 0.4 });
-    sk.fill(wl, GLASS, { dx: 0, dy: 0, wob: 0.2, seed: 19, alpha: 0.9 }); sk.ink(wl, { w: 7, seed: 20, wob: 0.4 });
-    sk.ink(dense([[L + 60, TOP + 60], [L + 100, TOP + 130]]), { w: 5, color: C.white, seed: 21, wob: 0.2 }); sk.ink(dense([[L + 88, TOP + 56], [L + 112, TOP + 98]]), { w: 5, color: C.white, seed: 22, wob: 0.2 });
-    sk.ink(dense([[L + 34, 452], [DX - 22, 452]]), { w: 8, color: STEEL, seed: 23, wob: 0.2 });
-    for (const x of [L, R]) sk.ink(dense([[x, TOP], [x, GY]]), { w: 9, seed: 25 + x, wob: 0.4 });
-    sk.ink(dense([[DX, TOP], [DX, GY - 2]]), { w: 11, seed: 27, wob: 0.3 });
-    shp(sk, ell(DX, TOP - 14, 196, 40), "#8E9FB6", 29, 9, { tex: 0.8 });
+    shp(sk, ell(cx, cy, RX, RY), "#EEF1F4", 13, 8);
+    // 뒤쪽 절반은 막힌 벽, 앞쪽 절반이 지나는 길
+    shp(sk, [...ell(cx, cy, RX, RY, PI, PI * 2), ...ell(cx, cy - HH, RX, RY, PI * 2, PI)], "#BCC8D7", 15, 8, { tex: 0.8 });
+    wing(PI * 1.1, 21); wing(PI * 1.6, 25);
+    wing(PI * 0.1, 29); wing(PI * 0.6, 33);
+    sk.ink(dense([[cx, cy], [cx, cy - HH]]), { w: 12, seed: 37, wob: 0.3 });
   });
-  // 문이 도는 방향(한쪽으로만)
-  arrow(sk, ell(DX, TOP - 20, 132, 20, Math.PI * 0.12, Math.PI * 0.88), { w: 7, color: C.white, seed: 33, head: 18, wob: 0.2 });
-  // 나가는 방향
-  arrow(sk, [[924, 100], [700, 76], [300, 76], [60, 100]], { w: 13, color: GREEN, seed: 37, head: 32, wob: 0.4 });
-  // 차례로 나가는 사람들(스스로 걸어간다)
-  const s = 0.58;
-  drawFigure(sk, 738, GY, 0.54, pose({ ...WALK, tilt: -0.04 }), { ...STUDENT, name: "a", flip: -1 });
-  drawFigure(sk, 884, GY, 0.54, pose({ ...WALK, tilt: -0.04 }), { hair: "bob", hairColor: "#B9703A", seed: 221, name: "b", flip: -1 });
-  // 거꾸로 들어가려는 사람: 날개가 돌지 않아 막힌다
-  const cx = 208, hand = [L + 16, 448];
-  const PC = pose({ ...local(cx, GY, s, { haR: hand, elR: [hand[0] - 54, hand[1] + 22] }), elL: [-44, -262], haL: [-70, -196], tilt: 0.1 });
-  drawFigure(sk, cx, GY, s, PC, { hair: "knit", capColor: "#9B7FD1", seed: 271, name: "c", hands: "L" });
-  handDot(sk, hand, C.skin, 41, 15 * s);
-  for (const [dy, i] of [[-30, 0], [0, 1], [30, 2]]) sk.ink(dense([[hand[0] + 26, hand[1] + dy], [hand[0] + 44, hand[1] + dy * 1.5]]), { w: 4.5, color: C.gray, seed: 43 + i, wob: 0.2 });
-  xmark(sk, L + 96, 318, 1.05, { w: 15 });
+  // 도는 방향이자 지나가는 방향(하나뿐)
+  arrow(sk, ell(cx, cy + 16, RX + 54, RY + 46, PI * 0.13, PI * 0.76), { w: 13, color: GREEN, seed: 41, head: 32, wob: 0.3 });
+  // 지나가는 중인 사람과 차례를 기다리는 사람(스스로 걷는다)
+  drawFigure(sk, cx + 86, cy + 74, s, pose({ ...WALK, tilt: -0.04 }), { ...STUDENT, name: "a", flip: -1 });
+  drawFigure(sk, cx + RX + 104, cy + 54, s, pose({ ...WALK, tilt: -0.04 }), { hair: "bob", hairColor: "#B9703A", seed: 221, name: "b", flip: -1 });
+  // 거꾸로 들어가려는 사람: 날개가 거꾸로는 돌지 않아 막힌다
+  const fx = 176, fy = cy + 66, e = rim(PI * 1.1), hand = [e[0] - 4, e[1] - 76];
+  const PC = pose({ ...local(fx, fy, s, { haR: hand, elR: [hand[0] - 44, hand[1] + 26] }), elL: [-44, -262], haL: [-70, -196], tilt: 0.1 });
+  drawFigure(sk, fx, fy, s, PC, { hair: "knit", capColor: "#9B7FD1", seed: 271, name: "c", hands: "L" });
+  handDot(sk, hand, C.skin, 51, 15 * s);
+  for (const [dy, i] of [[-28, 0], [0, 1], [28, 2]]) sk.ink(dense([[hand[0] + 22, hand[1] + dy], [hand[0] + 40, hand[1] + dy * 1.5]]), { w: 4.5, color: C.gray, seed: 53 + i, wob: 0.2 });
+  xmark(sk, cx - 118, cy - 196, 1.0, { w: 15 });
   return sk;
 }
 
@@ -278,30 +274,34 @@ function fire(sk, x, gy, k, lean, sd) {
   fl(1, "#F58A2E", sd + 3); fl(0.55, "#FFD84A", sd + 5);
 }
 function bellowsRow(sk, GY, open, sd) {
-  const s = 0.52, kx = 86, AY = GY - 182, HX = 166, NX = 506, half = open ? 58 : 15;
+  const s = 0.52, kx = 118, L = 320, half = open ? 46 : 13, ROT = 0.15, Hc = [198, GY - 138];
   ground(sk, GY, sd);
-  const U = x => AY - (6 + (half - 6) * (NX - x) / (NX - HX)), Lw = x => AY + (6 + (half - 6) * (NX - x) / (NX - HX));
-  // 가죽 주머니
-  const lx = HX + 54, bulge = open ? 22 : 5;
-  const skin = [...dense([[lx, U(lx)], [NX - 14, U(NX - 14)], [NX - 14, Lw(NX - 14)], [lx, Lw(lx)]]), ...curve([[lx, Lw(lx)], [lx - bulge, AY], [lx, U(lx)]])];
-  shp(sk, skin, "#C07A4F", sd + 2, 6, { tex: 0.8 });
-  for (let x = lx + 34, i = 0; x < NX - 40; x += 44, i++) sk.ink(curve([[x, U(x) + 3], [x - (open ? 9 : 3), AY], [x, Lw(x) - 3]]), { w: 4, color: "#7A4526", seed: sd + 5 + i, wob: 0.2 });
-  // 두 나무판과 손잡이, 바람 구멍
-  thin(sk, 0.8, () => {
-    pipe(sk, dense([[HX - 18, U(HX - 18)], [NX, AY - 6]]), 12, WOOD, sd + 15, 0.3);
-    pipe(sk, dense([[HX - 18, Lw(HX - 18)], [NX, AY + 6]]), 12, WOOD, sd + 16, 0.3);
-    shp(sk, poly([[NX - 6, AY - 13], [NX + 56, AY - 5], [NX + 56, AY + 5], [NX - 6, AY + 13]], 3), STEEL, sd + 17, 6);
-  });
-  // 공기
-  const tipx = NX + 66;
-  for (const [dy, i] of [[-50, 0], [0, 1], [50, 2]]) {
-    const far = [tipx + 118 - Math.abs(dy) * 0.3, AY + dy], near = [tipx + 8, AY + dy * 0.2];
-    arrow(sk, open ? [far, near] : [near, far], { w: 9, color: AIR, straight: true, seed: sd + 21 + i * 5, head: 22, wob: 0.2 });
-  }
-  fire(sk, 812, GY, open ? 0.5 : 1.22, open ? 0 : 1, sd + 40);
-  // 학생: 두 손잡이를 잡는다
-  const hu = [HX, U(HX) - 2], hl = [HX, Lw(HX) + 2];
-  const PK = pose({ ...local(kx, GY, s, { haR: hu, elR: [hu[0] - 44, hu[1] + (open ? 44 : 34)], haL: hl, elL: [hl[0] - 50, hl[1] + (open ? -6 : 22)] }), tilt: 0.06 });
+  const T = (x, y) => [Hc[0] + x * Math.cos(ROT) - y * Math.sin(ROT), Hc[1] + x * Math.sin(ROT) + y * Math.cos(ROT)];
+  const U = x => -(6 + (half - 6) * (L - x) / L), Lw = x => -U(x);
+  sk.at(Hc[0], Hc[1], 1, () => {
+    // 가죽 주머니
+    const lx = 54, bulge = open ? 22 : 5;
+    const skin = [...dense([[lx, U(lx)], [L - 14, U(L - 14)], [L - 14, Lw(L - 14)], [lx, Lw(lx)]]), ...curve([[lx, Lw(lx)], [lx - bulge, 0], [lx, U(lx)]])];
+    shp(sk, skin, "#C07A4F", sd + 2, 6, { tex: 0.8 });
+    for (let x = lx + 34, i = 0; x < L - 40; x += 44, i++) sk.ink(curve([[x, U(x) + 3], [x - (open ? 9 : 3), 0], [x, Lw(x) - 3]]), { w: 4, color: "#7A4526", seed: sd + 5 + i, wob: 0.2 });
+    // 두 나무판과 손잡이, 바람 구멍
+    thin(sk, 0.8, () => {
+      pipe(sk, dense([[-18, U(-18)], [L, -6]]), 12, WOOD, sd + 15, 0.3);
+      pipe(sk, dense([[-18, Lw(-18)], [L, 6]]), 12, WOOD, sd + 16, 0.3);
+      shp(sk, poly([[L - 6, -13], [L + 56, -5], [L + 56, 5], [L - 6, 13]], 3), STEEL, sd + 17, 6);
+    });
+    // 공기
+    const tipx = L + 66;
+    for (const [dy, i] of [[-46, 0], [0, 1], [46, 2]]) {
+      const far = [tipx + 112 - Math.abs(dy) * 0.3, dy], near = [tipx + 8, dy * 0.2];
+      arrow(sk, open ? [far, near] : [near, far], { w: 9, color: AIR, straight: true, seed: sd + 21 + i * 5, head: 22, wob: 0.2 });
+    }
+  }, ROT);
+  // 모닥불: 바람 구멍이 향하는 자리
+  fire(sk, 782, GY, open ? 0.5 : 1.15, open ? 0 : 1, sd + 40);
+  // 학생: 두 손잡이를 잡는다(팔은 어깨에서 내려와 손잡이로)
+  const hu = T(0, U(0) - 2), hl = T(0, Lw(0) + 2);
+  const PK = pose({ ...local(kx, GY, s, { haR: hu, elR: [hu[0] - 40, hu[1] + (open ? 30 : 22)], haL: hl, elL: [hl[0] - 50, hl[1] - (open ? 30 : 4)] }), tilt: 0.04 });
   drawFigure(sk, kx, GY, s, PK, { ...STUDENT, name: open ? "open" : "shut", hands: false });
   handDot(sk, hu, C.skin, sd + 61, 15 * s); handDot(sk, hl, C.skin, sd + 63, 15 * s);
 }
@@ -363,6 +363,8 @@ function cutL5() {
     sk.fill(box(40, 110, 530, GY), "#FFF8E6", { dx: 0, dy: 0, wob: 0, seed: 11 });
     sk.ink(dense([[40, GY], [40, 110], [530, 110], [530, 286]]), { w: 9, seed: 12, wob: 0.5 });
     shp(sk, rrect(96, 178, 150, 124, 8), "#CFE9F8", 13, 7);
+    shp(sk, poly([[530, 286], [580, 306], [580, GY - 2], [530, GY]], 5), WOOD, 17, 7, { tex: 0.8 });
+    sk.dot(566, 480, 6, "#E2B23C");
     sk.ink(dense([[171, 180], [171, 300]]), { w: 5, seed: 15, wob: 0.2 }); sk.ink(dense([[98, 240], [244, 240]]), { w: 5, seed: 16, wob: 0.2 });
   });
   table(sk, 84, 318, 500, GY, 21);
@@ -403,41 +405,41 @@ function marble(sk, x, y, r, sd) {
 }
 function cutL5b() {
   const sk = new Sk(W, H, { id: "j" });
-  const GY = 676, cx = 262, cy = 232, RX = 184, RY = 54, DEP = 44, SOIL = "#B98A52";
+  const GY = 676, cx = 250, cy = 258, RX = 182, RY = 58, DEP = 36, SOIL = "#B98A52";
   ground(sk, GY, 11);
-  // 받침 다리
-  thin(sk, 0.8, () => { for (const sg of [-1, 1]) sk.ink(dense([[cx + sg * 156, cy + 50], [cx + sg * 190, GY]]), { w: 10, seed: 13 + sg, wob: 0.4 }); });
-  // 떨어지는 고운 흙
-  for (let i = 0; i < 34; i++) { const x = cx - 104 + 208 * hash(i * 3.7 + 1), y = cy + 84 + (GY - 190 - cy) * hash(i * 5.3 + 2); sk.dot(x, y, 3.2 + 2.4 * hash(i * 1.9), SOIL); }
-  arrow(sk, [[cx - 4, cy + 86], [cx - 4, cy + 176]], { w: 8, color: "#8A6A4A", straight: true, seed: 17, head: 20, wob: 0.2 });
-  marble(sk, cx - 52, 420, 13, 21); marble(sk, cx + 58, 372, 13, 25);
-  // 흙더미와 그 속의 구슬
-  const heap = curve([[cx - 160, GY - 2], [cx - 100, GY - 52], [cx - 8, GY - 84], [cx + 92, GY - 56], [cx + 160, GY - 2]], false, 4);
+  // 받침(곧은 다리)
+  thin(sk, 0.8, () => { for (const sg of [-1, 1]) sk.ink(dense([[cx + sg * 168, cy + 30], [cx + sg * 168, GY]]), { w: 10, seed: 13 + sg, wob: 0.4 }); });
+  // 그물 아래로 빠지는 고운 흙과 구슬
+  for (let i = 0; i < 34; i++) { const x = cx - 108 + 216 * hash(i * 3.7 + 1), y = cy + 84 + (GY - 196 - cy) * hash(i * 5.3 + 2); sk.dot(x, y, 3.2 + 2.4 * hash(i * 1.9), SOIL); }
+  arrow(sk, [[cx - 4, cy + 84], [cx - 4, cy + 170]], { w: 8, color: "#8A6A4A", straight: true, seed: 17, head: 20, wob: 0.2 });
+  marble(sk, cx - 56, 452, 13, 21); marble(sk, cx + 60, 400, 13, 25);
+  // 흙더미(구슬은 남기지 않는다)
+  const heap = curve([[cx - 150, GY - 2], [cx - 96, GY - 50], [cx - 8, GY - 80], [cx + 88, GY - 54], [cx + 150, GY - 2]], false, 4);
   sk.fill([...heap, heap[0]], SOIL, { dx: 0, dy: 0, wob: 0.4, seed: 31, tex: 0.8 }); thin(sk, 0.8, () => sk.ink(heap, { w: 8, seed: 32, wob: 0.8 }));
-  marble(sk, cx - 70, GY - 38, 16, 35); marble(sk, cx + 4, GY - 66, 16, 39); marble(sk, cx + 78, GY - 34, 16, 43);
-  // 체: 그물 바닥 위에 큰 돌이 남았다
+  // 체: 둥근 나무 테와 그물망, 그 위에 남은 큰 돌
   thin(sk, 0.8, () => {
-    shp(sk, ell(cx, cy, RX, RY), "#EEF1F4", 51, 8);
-    for (let dx = -160; dx <= 160; dx += 32) { const h = (RY - 6) * Math.sqrt(1 - (dx / (RX - 8)) ** 2); sk.ink(dense([[cx + dx, cy - h], [cx + dx, cy + h]]), { w: 2.5, color: STEEL, seed: 53 + dx, wob: 0 }); }
-    for (let dy = -36; dy <= 36; dy += 18) { const w = (RX - 8) * Math.sqrt(1 - (dy / (RY - 4)) ** 2); sk.ink(dense([[cx - w, cy + dy], [cx + w, cy + dy]]), { w: 2.5, color: STEEL, seed: 73 + dy, wob: 0 }); }
+    shp(sk, ell(cx, cy, RX, RY), WOOD, 51, 8);
+    shp(sk, ell(cx, cy, RX - 20, RY - 11), "#F7F8FA", 53, 5);
+    for (let dx = -144; dx <= 144; dx += 24) { const h = (RY - 13) * Math.sqrt(1 - (dx / (RX - 20)) ** 2); sk.ink(dense([[cx + dx, cy - h], [cx + dx, cy + h]]), { w: 3, color: GRAYD, seed: 55 + dx, wob: 0 }); }
+    for (let dy = -36; dy <= 36; dy += 12) { const w = (RX - 22) * Math.sqrt(1 - (dy / (RY - 11)) ** 2); sk.ink(dense([[cx - w, cy + dy], [cx + w, cy + dy]]), { w: 3, color: GRAYD, seed: 75 + dy, wob: 0 }); }
   });
-  for (const [dx, dy, r, col, i] of [[-92, -28, 48, "#9AA7B4", 0], [4, -40, 58, "#8793A2", 1], [102, -24, 44, "#A9B4C0", 2]]) {
-    const st = circ(cx + dx, cy + dy, r, { over: 0.05, seed: 81 + i * 3, lump: 0.1, sy: 0.84 });
-    shp(sk, st, col, 83 + i * 3, 7, { tex: 0.8 });
+  for (const [dx, dy, r, col, i] of [[-84, -30, 44, "#9AA7B4", 0], [6, -40, 54, "#8793A2", 1], [96, -26, 40, "#A9B4C0", 2]]) {
+    shp(sk, circ(cx + dx, cy + dy, r, { over: 0.05, seed: 81 + i * 3, lump: 0.1, sy: 0.84 }), col, 83 + i * 3, 7, { tex: 0.8 });
     sk.ink(curve([[cx + dx - r * 0.5, cy + dy - r * 0.2], [cx + dx - r * 0.25, cy + dy - r * 0.48], [cx + dx + r * 0.1, cy + dy - r * 0.55]]), { w: 4, color: "#D5DCE4", seed: 91 + i, wob: 0.2 });
   }
   thin(sk, 0.8, () => shp(sk, [...ell(cx, cy, RX, RY, 0, Math.PI), ...ell(cx, cy + DEP, RX, RY, Math.PI, 0)], WOOD, 95, 8, { tex: 0.8, texAng: 0 }));
-  // 구슬만 다시 주머니로
-  const hand = [678, 540], pc = [666, 488];
-  arrow(sk, [[cx + 122, GY - 98], [470, 470], [540, 398], [606, 382]], { w: 10, color: TEAL, seed: 101, head: 26, wob: 0.3 });
-  marble(sk, 638, 388, 15, 105);
-  sparkle(sk, 664, 344, 17, { seed: 109 });
-  shp(sk, curve([[pc[0] - 30, pc[1] - 44], [pc[0] - 52, pc[1] - 6], [pc[0] - 40, pc[1] + 38], [pc[0], pc[1] + 50], [pc[0] + 40, pc[1] + 38], [pc[0] + 52, pc[1] - 6], [pc[0] + 30, pc[1] - 44]], true, 3), "#A98BE0", 121, 7, { tex: 0.8 });
-  shp(sk, ell(pc[0], pc[1] - 46, 31, 11), "#5E4A8C", 123, 5.5);
-  sk.ink(curve([[pc[0] - 40, pc[1] - 24], [pc[0], pc[1] - 14], [pc[0] + 40, pc[1] - 24]]), { w: 4.5, color: "#5E4A8C", seed: 125, wob: 0.2 });
+  // 구슬은 모두 주머니로: 흙더미에서 주머니 입구로
+  const hand = [650, 560], pc = [612, 518];
+  arrow(sk, [[cx + 116, GY - 86], [424, 480], [500, 402], [566, 404], [594, 444]], { w: 10, color: TEAL, seed: 101, head: 26, wob: 0.3 });
+  marble(sk, 414, 500, 15, 105); marble(sk, 470, 424, 15, 109); marble(sk, 536, 394, 15, 113);
+  shp(sk, curve([[pc[0] - 32, pc[1] - 48], [pc[0] - 56, pc[1] - 6], [pc[0] - 42, pc[1] + 40], [pc[0], pc[1] + 52], [pc[0] + 42, pc[1] + 40], [pc[0] + 56, pc[1] - 6], [pc[0] + 32, pc[1] - 48]], true, 3), "#A98BE0", 121, 7, { tex: 0.8 });
+  shp(sk, ell(pc[0], pc[1] - 50, 35, 13), "#5E4A8C", 123, 5.5);
+  marble(sk, pc[0] - 8, pc[1] - 54, 14, 117);
+  sk.ink(curve([[pc[0] - 44, pc[1] - 26], [pc[0], pc[1] - 16], [pc[0] + 44, pc[1] - 26]]), { w: 4.5, color: "#5E4A8C", seed: 125, wob: 0.2 });
+  sparkle(sk, 548, 516, 15, { seed: 127 });
   // 학생
-  const kx = 782, ks = 0.66;
-  const PK = pose({ ...local(kx, GY, ks, { haL: hand, elL: [hand[0] + 70, hand[1] + 4] }), elR: [90, -296], haR: [132, -384], tilt: -0.08 });
+  const kx = 738, ks = 0.66;
+  const PK = pose({ ...local(kx, GY, ks, { haL: hand, elL: [hand[0] + 66, hand[1] - 16] }), elR: [90, -296], haR: [132, -384], tilt: -0.08 });
   drawFigure(sk, kx, GY, ks, PK, { ...STUDENT, name: "student", flip: -1, hands: "R" });
   handDot(sk, hand, C.skin, 131, 15 * ks);
   return sk;
@@ -485,16 +487,16 @@ function cutL6() {
 
 export function cuts() {
   return [
-    { name: "g2u6l1", theme: "body", orig: null, sk: cutL1(), alt: "밥, 생선구이, 나물, 과일, 우유, 물이 골고루 담긴 급식 식판을 스틱맨이 잡고 흐뭇해하는 장면", cap: "식판에 밥, 생선, 나물, 과일, 우유, 물이 골고루 담겼어요" },
-    { name: "g2u6l1b", theme: "body", orig: null, sk: cutL1b(), alt: "스틱맨 쌤이 반으로 자른 감자의 단면에 갈색 용액을 한 방울 떨어뜨리자 그 자리만 짙은 남색으로 변하고 옆에서 스틱맨이 놀라는 장면", cap: "갈색 용액이 떨어진 자리만 짙은 남색으로 변했어요" },
-    { name: "g2u6l2", theme: "body", orig: null, sk: cutL2(), alt: "블록으로 쌓은 큰 성은 벽의 작은 문을 지나지 못하고, 스틱맨이 낱개로 떼어 낸 블록만 문을 지나가는 장면", cap: "큰 성은 문에 걸리고, 낱개로 뗀 블록만 문을 지나가요" },
-    { name: "g2u6l2b", theme: "body", orig: null, sk: cutL2b(), alt: "엎지른 물을 매끈한 비닐로 닦는 스틱맨의 탁자에는 물이 그대로 남아 있고, 올이 빽빽한 수건으로 닦는 스틱맨의 탁자는 말라 있는 장면", cap: "매끈한 비닐은 물을 못 닦고, 올이 빽빽한 수건은 물을 빨아들여요" },
-    { name: "g2u6l3", theme: "body", orig: null, sk: cutL3(), alt: "한쪽으로만 도는 회전문으로 사람들이 차례로 걸어 나가고, 반대쪽에서 거꾸로 들어가려는 사람은 문 날개에 막혀 서 있는 장면", cap: "회전문은 한쪽으로만 돌아서, 거꾸로 가려는 사람은 막혀요" },
+    { name: "g2u6l1", theme: "body", orig: null, sk: cutL1(), alt: "밥, 생선구이, 나물, 과일, 우유, 물이 골고루 담긴 급식 식판이 급식대 위에 놓여 있고 스틱맨이 식판을 잡고 흐뭇해하는 장면", cap: "식판에 밥, 생선, 나물, 과일, 우유, 물이 골고루 담겼어요" },
+    { name: "g2u6l1b", theme: "body", orig: null, sk: cutL1b(), alt: "스틱맨 쌤이 반으로 자른 감자의 단면에 갈색 용액을 한 방울 떨어뜨리자 그 자리만 짙은 남색으로 변하고 옆에서 스틱맨이 놀라는 장면", cap: "감자 단면에 갈색 용액을 떨어뜨리니 그 자리만 청람색으로 변했어요" },
+    { name: "g2u6l2", theme: "body", orig: null, sk: cutL2(), alt: "블록으로 쌓은 큰 성은 벽의 작은 문을 지나지 못하고, 스틱맨이 낱개로 떼어 낸 블록만 문을 지나가는 장면", cap: "큰 성은 작은 문을 못 지나가고, 낱개로 뗀 블록만 문을 지나가요" },
+    { name: "g2u6l2b", theme: "body", orig: null, sk: cutL2b(), alt: "엎지른 물을 매끈한 비닐로 닦는 스틱맨의 탁자에는 물이 그대로 남아 있고, 올이 빽빽한 수건으로 닦는 스틱맨의 탁자는 말라 있는 장면", cap: "반들반들한 비닐은 물을 못 닦고, 올이 빽빽한 수건은 물을 빨아들여요" },
+    { name: "g2u6l3", theme: "body", orig: null, sk: cutL3(), alt: "비스듬히 내려다본 날개 넷짜리 회전문을 한 사람이 화살표 방향으로 지나가고 다음 사람이 차례를 기다리며, 반대쪽에서 거꾸로 들어가려는 사람은 문 날개에 막혀 서 있는 장면", cap: "회전문은 화살표 쪽으로만 돌아서, 거꾸로 들어가려는 사람은 날개에 막혀요" },
     { name: "g2u6l3b", theme: "body", orig: null, sk: cutL3b(), alt: "가운데 정류장 하나에서 만나는 크고 작은 두 고리 모양의 길을 순환 버스가 한 방향으로 달리고, 작은 고리 안에는 숲이, 큰 고리 안에는 마을이 있는 장면", cap: "버스는 숲 고리와 마을 고리를 번갈아 돌며 가운데 정류장을 지나요" },
-    { name: "g2u6l4", theme: "body", orig: null, sk: cutL4(), alt: "위쪽에서는 스틱맨이 손풀무의 손잡이를 벌려 풀무가 부풀며 공기가 들어가고, 아래쪽에서는 손잡이를 오므려 바람이 나가 모닥불이 커지는 장면", cap: "풀무를 벌리면 공기가 들어오고, 오므리면 나가서 불이 커져요" },
+    { name: "g2u6l4", theme: "body", orig: null, sk: cutL4(), alt: "위쪽에서는 스틱맨이 손풀무의 손잡이를 벌려 풀무가 부풀며 공기가 들어가고, 아래쪽에서는 손잡이를 오므려 풀무가 납작해지며 공기가 모닥불 쪽으로 밀려 나가는 장면", cap: "풀무를 벌려 안이 넓어지면 공기가 들어오고, 오므려 좁아지면 공기가 밀려 나가요" },
     { name: "g2u6l4b", theme: "body", orig: null, sk: cutL4b(), alt: "집 문 앞에서 배달원이 새 상자를 건네고 집주인은 다 쓴 빈 상자를 건네며, 두 상자 곁의 화살표가 서로 반대 방향을 가리키는 장면", cap: "새 상자는 집으로, 빈 상자는 밖으로 서로 반대로 오가요" },
     { name: "g2u6l5", theme: "body", orig: null, sk: cutL5(), alt: "스틱맨이 방에서 생긴 쓰레기를 봉투에 담아 묶어 문밖 수거함에 내놓고, 방 안은 깨끗하게 반짝이는 장면", cap: "방에서 생긴 쓰레기를 묶어 문밖 수거함에 내놓아요" },
-    { name: "g2u6l5b", theme: "body", orig: null, sk: cutL5b(), alt: "체 위에는 큰 돌이 남고 아래로 고운 흙과 구슬이 빠지며, 스틱맨이 흙더미에서 구슬만 다시 주머니에 담는 장면", cap: "큰 돌은 체 위에 남고, 흙과 함께 빠진 구슬만 다시 주머니에 담아요" },
+    { name: "g2u6l5b", theme: "body", orig: null, sk: cutL5b(), alt: "체 위에는 큰 돌이 남고 아래로 고운 흙과 구슬이 빠지며, 흙더미에서 나온 구슬이 모두 스틱맨이 든 주머니 입구로 들어가는 장면", cap: "큰 돌은 체 위에 남고, 아래로 빠진 것 가운데 구슬은 모두 다시 주머니에 담아요" },
     { name: "g2u6l6", theme: "body", orig: null, sk: cutL6(), alt: "스틱맨이 탄 자동차가 연료와 앞쪽의 공기를 받아 달리고 뒤쪽 배기구로 김이 나오는 장면", cap: "자동차는 연료와 공기를 받아 달리고, 배기구로 김을 내보내요" },
   ];
 }
