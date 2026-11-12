@@ -20,8 +20,12 @@ import { P, arrow, bad, bvBtn, chip, dot, g6Lab, g6Svg, good, noteLine, onStageT
 type Where = "atrium" | "ventricle" | "artery" | "back";
 interface Side {
   key: "R" | "L";
-  ax: number; // 심방 왼쪽
-  vx: number; // 심실 왼쪽
+  /** 심방과 심실의 안쪽 공간(경로), 수축할 때 줄어드는 중심 */
+  atriumD: string;
+  atriumC: [number, number];
+  ventD: string;
+  ventC: [number, number];
+  mx: number; // 심방과 심실 사이 판막의 가운데 x
   tubeX: number; // 동맥 관 왼쪽
   veinX: number; // 정맥이 들어오는 x
   color: string;
@@ -29,12 +33,49 @@ interface Side {
   ventricle: string;
   artery: string;
   vein: string;
-  wall: number;
+  wall: number; // 심실 벽의 두께
+  tagV: [number, number];
 }
+// 앞에서 본 심장: 화면 왼쪽이 몸의 오른쪽이다. 두 심실은 아래로 갈수록 좁아져 심장 끝(화면 오른쪽 아래)에서 만난다.
 const SIDES: Side[] = [
-  { key: "R", ax: 72, vx: 40, tubeX: 40, veinX: 111, color: P.dark, atrium: "우심방", ventricle: "우심실", artery: "폐동맥", vein: "대정맥", wall: 3 },
-  { key: "L", ax: 196, vx: 196, tubeX: 282, veinX: 235, color: P.red, atrium: "좌심방", ventricle: "좌심실", artery: "대동맥", vein: "폐정맥", wall: 5.5 },
+  {
+    key: "R",
+    atriumD: "M76 96 Q66 62 98 58 L150 58 Q164 60 164 76 L164 96 Z",
+    atriumC: [118, 78],
+    ventD: "M38 108 L164 108 L164 180 Q156 194 138 182 Q62 160 38 108 Z",
+    ventC: [112, 140],
+    mx: 120,
+    tubeX: 38,
+    veinX: 128,
+    color: P.dark,
+    atrium: "우심방",
+    ventricle: "우심실",
+    artery: "폐동맥",
+    vein: "대정맥",
+    wall: 5,
+    tagV: [98, 140],
+  },
+  {
+    key: "L",
+    atriumD: "M182 96 L182 76 Q182 60 196 58 L248 58 Q280 62 270 96 Z",
+    atriumC: [228, 78],
+    ventD: "M182 108 L308 108 Q296 164 222 196 Q196 206 182 188 Z",
+    ventC: [236, 146],
+    mx: 226,
+    tubeX: 286,
+    veinX: 218,
+    color: P.red,
+    atrium: "좌심방",
+    ventricle: "좌심실",
+    artery: "대동맥",
+    vein: "폐정맥",
+    wall: 10,
+    tagV: [246, 142],
+  },
 ];
+const MUSCLE = "#D98A94";
+const VALVE = "#FFE9A8";
+const VALVE_LINE = "#B98A2A";
 
 export const g2u6HeartLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
@@ -48,34 +89,52 @@ export const g2u6HeartLab: StepRenderer = (host, step, api) => {
   let seenBack = false;
   let busy = false;
 
+  const leaf = (d: string): string => `<path d="${d}" fill="${VALVE}" stroke="${VALVE_LINE}" stroke-width="1" stroke-linejoin="round"/>`;
+  /** 심방과 심실 사이의 판막: 두 장의 얇은 막. 닫히면 가운데에서 맞닿고, 열리면 심실 쪽으로 늘어진다. 가는 끈이 심실 벽에 이어져 있다. */
+  const avValve = (mx: number, open: boolean): string => {
+    const a = mx - 17;
+    const b = mx + 17;
+    const cord = (x0: number, y0: number, x1: number): string => `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="148" stroke="${VALVE}" stroke-width="1" opacity=".65"/>`;
+    if (open) return cord(a + 5, 122, a - 4) + cord(b - 5, 122, b + 4) + leaf(`M${a} 100 Q${a + 7} 110 ${a + 5} 123 Q${a - 1} 114 ${a} 104 Z`) + leaf(`M${b} 100 Q${b - 7} 110 ${b - 5} 123 Q${b + 1} 114 ${b} 104 Z`);
+    return cord(mx - 2, 110, a - 4) + cord(mx + 2, 110, b + 4) + leaf(`M${a} 100 Q${mx - 8} 100 ${mx} 110 Q${mx - 10} 109 ${a} 104 Z`) + leaf(`M${b} 100 Q${mx + 8} 100 ${mx} 110 Q${mx + 10} 109 ${b} 104 Z`);
+  };
+  /** 심실과 동맥 사이의 판막: 주머니 모양의 막 두 장. 닫히면 가운데에서 맞닿고, 열리면 혈관 벽에 붙는다. */
+  const slValve = (x0: number, open: boolean): string => {
+    const x1 = x0 + 22;
+    const m = x0 + 11;
+    if (open) return leaf(`M${x0 + 1} 106 Q${x0 + 6} 98 ${x0 + 4} 88 L${x0 + 1} 90 Z`) + leaf(`M${x1 - 1} 106 Q${x1 - 6} 98 ${x1 - 4} 88 L${x1 - 1} 90 Z`);
+    return leaf(`M${x0 + 1} 96 Q${x0 + 2} 108 ${m} 104 L${m} 99 Q${x0 + 6} 102 ${x0 + 1} 96 Z`) + leaf(`M${x1 - 1} 96 Q${x1 - 2} 108 ${m} 104 L${m} 99 Q${x1 - 6} 102 ${x1 - 1} 96 Z`);
+  };
+  const shrink = (c: [number, number], k: number): string => `transform="translate(${c[0]} ${c[1]}) scale(${k}) translate(${-c[0]} ${-c[1]})"`;
   const draw = (): void => {
+    const EMPTY = "#1A2740";
     let out = "";
     SIDES.forEach((d) => {
-      const fillA = where === "atrium" || where === "back" ? d.color : "rgba(200,225,255,.07)";
-      const fillV = where === "ventricle" ? d.color : "rgba(200,225,255,.07)";
-      const fillT = where === "artery" || where === "back" ? d.color : "rgba(200,225,255,.07)";
-      const sqA = squeeze === "atrium" ? 5 : 0;
-      const sqV = squeeze === "ventricle" ? 7 : 0;
+      const inA = where === "atrium" || where === "back";
+      const inV = where === "ventricle";
+      const inT = where === "artery" || where === "back";
+      const tx = d.tubeX + 11;
       // 정맥(위에서 심방으로), 동맥(심실에서 위로)
-      out += `<rect x="${d.veinX - 11}" y="22" width="22" height="34" fill="${where === "atrium" ? d.color : "rgba(200,225,255,.07)"}" stroke="${P.glass}" stroke-width="1.4" opacity=".85"/>`;
-      out += `<rect x="${d.tubeX}" y="22" width="24" height="90" fill="${fillT}" stroke="${P.glass}" stroke-width="1.4"/>`;
-      out += txt(d.veinX, 14, d.vein, { size: 12, fill: P.dim }) + txt(d.tubeX + 12, 14, d.artery, { size: 12, fill: P.dim });
-      // 심방, 심실
-      out += `<rect${squeeze === "atrium" ? ` class="g2u6x-squeeze"` : ""} x="${d.ax + sqA}" y="${56 + sqA}" width="${78 - sqA * 2}" height="${46 - sqA * 2}" rx="10" fill="${fillA}" stroke="#E9B4BA" stroke-width="2.4"/>`;
-      out += `<rect${squeeze === "ventricle" ? ` class="g2u6x-squeeze"` : ""} x="${d.vx + sqV}" y="${112 + sqV}" width="${110 - sqV * 2}" height="${78 - sqV * 2}" rx="14" fill="${fillV}" stroke="#E9B4BA" stroke-width="${d.wall}"/>`;
-      out += tag(d.ax + 39, 84, d.atrium, { size: 12 }) + tag(d.vx + 55, 158, d.ventricle, { size: 12 });
-      // 판막: 심방과 심실 사이, 심실과 동맥 사이
-      if (valves) {
-        const mx = d.ax + 39;
-        out += `<path d="M${mx - 14} 104 L${mx} 111 L${mx + 14} 104" fill="none" stroke="#FFE08A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
-        out += `<path d="M${d.tubeX + 3} 112 L${d.tubeX + 12} 104 L${d.tubeX + 21} 112" fill="none" stroke="#FFE08A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
-      }
+      out += `<path d="M${d.veinX - 10} 24 L${d.veinX - 10} 62 L${d.veinX + 10} 62 L${d.veinX + 10} 24" fill="${where === "atrium" ? d.color : EMPTY}" stroke="${MUSCLE}" stroke-width="2.4" opacity=".9"/>`;
+      out += `<path d="M${d.tubeX} 24 L${d.tubeX} 112 L${d.tubeX + 22} 112 L${d.tubeX + 22} 24" fill="${inT ? d.color : EMPTY}" stroke="${MUSCLE}" stroke-width="3"/>`;
+      out += txt(d.veinX, 15, d.vein, { size: 12, fill: P.dim }) + txt(tx, 15, d.artery, { size: 12, fill: P.dim });
+      // 심방과 심실을 잇는 목(판막이 놓이는 자리)
+      out += `<rect x="${d.mx - 19}" y="94" width="38" height="16" fill="${inV && squeeze === "atrium" ? d.color : inA ? d.color : EMPTY}" stroke="none"/>`;
+      // 심방(벽이 얇다), 심실(벽이 두껍다)
+      out += `<path${squeeze === "atrium" ? ` class="g2u6x-squeeze" ${shrink(d.atriumC, 0.88)}` : ""} d="${d.atriumD}" fill="${inA ? d.color : EMPTY}" stroke="${MUSCLE}" stroke-width="3.4" stroke-linejoin="round"/>`;
+      out += `<path${squeeze === "ventricle" ? ` class="g2u6x-squeeze" ${shrink(d.ventC, 0.9)}` : ""} d="${d.ventD}" fill="${inV ? d.color : EMPTY}" stroke="${MUSCLE}" stroke-width="${d.wall}" stroke-linejoin="round"/>`;
+      // 목과 동맥 입구를 벽 위에 다시 뚫는다
+      out += `<rect x="${d.mx - 17}" y="92" width="34" height="20" fill="${inV && squeeze === "atrium" ? d.color : inA ? d.color : inV ? d.color : EMPTY}"/>`;
+      out += `<rect x="${d.tubeX + 1.5}" y="100" width="19" height="${10 + d.wall / 2}" fill="${inT ? d.color : inV ? d.color : EMPTY}"/>`;
+      out += tag(d.atriumC[0], d.atriumC[1] + 5, d.atrium, { size: 12 }) + tag(d.tagV[0], d.tagV[1] + 14, d.ventricle, { size: 12 });
+      // 판막
+      if (valves) out += avValve(d.mx, inV && squeeze === "atrium") + slValve(d.tubeX, inT && squeeze === "ventricle");
       // 흐름 화살표
-      if (where === "ventricle" && squeeze === "atrium") out += arrow(d.ax + 39, 90, d.ax + 39, 128, "#fff", 3, "g2u6x-pop");
-      if ((where === "artery" || where === "back") && squeeze === "ventricle") out += arrow(d.tubeX + 12, 118, d.tubeX + 12, 40, "#fff", 3, "g2u6x-pop");
-      if (where === "back" && squeeze === "ventricle") out += arrow(d.ax + 52, 126, d.ax + 52, 74, P.bad, 3.4, "g2u6x-blink");
+      if (inV && squeeze === "atrium") out += arrow(d.mx, 86, d.mx, 132, "#fff", 3, "g2u6x-pop");
+      if (inT && squeeze === "ventricle") out += arrow(tx, 120, tx, 42, "#fff", 3, "g2u6x-pop");
+      if (where === "back" && squeeze === "ventricle") out += arrow(d.mx, 130, d.mx, 76, P.bad, 3.4, "g2u6x-blink");
     });
-    out += txt(173, 218, valves ? "노란 꺾쇠가 판막이에요" : "판막을 빼 둔 상태예요", { size: 12, fill: valves ? "#FFE08A" : P.bad });
+    out += valves ? `<path d="M88 208 Q98 208 104 216 Q94 215 88 212 Z" fill="${VALVE}" stroke="${VALVE_LINE}" stroke-width="1"/>` + txt(182, 217, "연노란 막이 판막이에요", { size: 12, fill: VALVE }) : txt(173, 217, "판막을 빼 둔 상태예요", { size: 12, fill: P.bad });
     stage.set(out);
     host.dataset.g6Where = where;
     host.dataset.g6Valves = valves ? "1" : "0";

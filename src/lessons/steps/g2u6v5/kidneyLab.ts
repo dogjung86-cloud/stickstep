@@ -29,19 +29,19 @@ interface Tok {
   /** 처음에는 혈액에 남았다가 분비되는 요소 */
   secrete?: boolean;
 }
-// 세뇨관은 y 44~70의 가로 관, 모세혈관은 y 112~138의 가로 관이다.
+// 세뇨관은 y 44~70의 가로 관, 모세혈관은 y 121~147의 가로 관이다.
 const TOKS: Tok[] = [
-  { kind: "rbc", g: [46, 70], t: null, c: [100, 125] },
-  { kind: "pro", g: [66, 88], t: null, c: [124, 125] },
-  { kind: "glu", g: [44, 94], t: [136, 57], c: [148, 121] },
-  { kind: "glu", g: [70, 62], t: [176, 57], c: [166, 129] },
-  { kind: "water", g: [56, 80], t: [156, 52], c: [184, 121] },
-  { kind: "water", g: [38, 82], t: [196, 62], c: [202, 129] },
-  { kind: "water", g: [76, 76], t: [216, 52], c: [220, 121] },
-  { kind: "water", g: [58, 60], t: [256, 62], c: [238, 129] },
-  { kind: "urea", g: [52, 104], t: [236, 57], c: [256, 121] },
-  { kind: "urea", g: [80, 98], t: [276, 57], c: [272, 129] },
-  { kind: "urea", g: [34, 68], t: null, c: [84, 125], secrete: true },
+  { kind: "rbc", g: [62, 68], t: null, c: [100, 134] },
+  { kind: "pro", g: [76, 81], t: null, c: [124, 134] },
+  { kind: "glu", g: [60, 85], t: [136, 57], c: [148, 130] },
+  { kind: "glu", g: [78, 62], t: [176, 57], c: [166, 138] },
+  { kind: "water", g: [69, 75], t: [156, 52], c: [184, 130] },
+  { kind: "water", g: [56, 76], t: [196, 62], c: [202, 138] },
+  { kind: "water", g: [83, 72], t: [216, 52], c: [220, 130] },
+  { kind: "water", g: [70, 61], t: [256, 62], c: [238, 138] },
+  { kind: "urea", g: [66, 92], t: [236, 57], c: [256, 130] },
+  { kind: "urea", g: [85, 88], t: [276, 57], c: [272, 138] },
+  { kind: "urea", g: [53, 67], t: null, c: [64, 134], secrete: true },
 ];
 
 export const g2u6NephronLab: StepRenderer = (host, step, api) => {
@@ -70,16 +70,22 @@ export const g2u6NephronLab: StepRenderer = (host, step, api) => {
   };
   const draw = (): void => {
     let out = "";
-    // 모세혈관(토리에서 나와 세뇨관 아래를 지난다)
-    out += `<path d="M78 104 Q84 125 104 125 L286 125" fill="none" stroke="#7A2F3C" stroke-width="28" stroke-linecap="round"/><path d="M78 104 Q84 125 104 125 L286 125" fill="none" stroke="#3A1820" stroke-width="23" stroke-linecap="round"/>`;
-    // 세뇨관(보먼주머니에서 오른쪽으로, 끝에서 아래로 꺾여 콩팥깔때기로)
-    out += `<path d="M96 57 L316 57 L316 188" fill="none" stroke="#C9B26A" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/><path d="M96 57 L316 57 L316 188" fill="none" stroke="#2A2616" stroke-width="25" stroke-linecap="round" stroke-linejoin="round"/>`;
-    // 보먼주머니와 토리
-    out += `<path d="M98 40 A44 44 0 1 0 98 116" fill="none" stroke="#C9B26A" stroke-width="5" stroke-linecap="round"/>`;
-    out += `<circle cx="58" cy="80" r="34" fill="#3A1820" stroke="#7A2F3C" stroke-width="3"/>`;
-    out += `<path d="M6 80 L24 80" stroke="#7A2F3C" stroke-width="12" stroke-linecap="round"/>`;
+    // 들어가는 혈관(콩팥동맥에서)과 나가는 혈관: 둘 다 보먼주머니의 열린 쪽(왼쪽)으로 드나든다
+    const vessel = (d: string, w: number): string => `<path d="${d}" fill="none" stroke="#7A2F3C" stroke-width="${w}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#4A1C26" stroke-width="${w - 5}" stroke-linecap="round"/>`;
+    out += vessel("M40 134 L286 134", 28);
+    // 세뇨관(보먼주머니에 이어져 오른쪽으로, 끝에서 아래로 꺾여 콩팥깔때기로)
+    const TUBE = "M100 57 L316 57 L316 188";
+    out += `<path d="${TUBE}" fill="none" stroke="#C9B26A" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>`;
+    // 보먼주머니: 토리를 감싸는 주머니. 왼쪽이 열려 있고 오른쪽은 세뇨관으로 이어진다
+    out += `<path d="M34 50 Q40 34 70 34 Q100 34 108 46 L108 70 Q104 116 70 116 Q40 116 34 100" fill="#2A2616" stroke="#C9B26A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    out += `<path d="${TUBE}" fill="none" stroke="#2A2616" stroke-width="25" stroke-linecap="round" stroke-linejoin="round"/>`;
+    out += vessel("M2 56 Q24 56 50 66", 13) + vessel("M50 88 Q24 92 22 112 Q22 128 42 133", 13);
+    // 토리: 모세혈관이 실뭉치처럼 뭉친 곳
+    out += `<circle cx="70" cy="75" r="27" fill="#4A1C26"/>` + [0, 36, 72, 108, 144].map((r) => `<ellipse cx="70" cy="75" rx="25" ry="11" fill="none" stroke="#C24A5A" stroke-width="4.2" transform="rotate(${r} 70 75)"/>`).join("") + `<circle cx="70" cy="75" r="27" fill="none" stroke="#7A2F3C" stroke-width="2.4"/>`;
+    out += txt(16, 44, "혈액", { size: 12, fill: "#F0A0AA" });
     // 이름표
-    out += tag(58, 22, "토리", { size: 12 }) + tag(40, 142, "보먼주머니", { size: 12 }) + tag(206, 28, "세뇨관", { size: 12 }) + tag(196, 158, "모세혈관", { size: 12 });
+    out += `<line x1="70" y1="27" x2="70" y2="50" stroke="#8CA2C0" stroke-width="1.2"/><line x1="118" y1="92" x2="104" y2="96" stroke="#8CA2C0" stroke-width="1.2"/>`;
+    out += tag(70, 20, "토리", { size: 12 }) + tag(154, 96, "보먼주머니", { size: 12 }) + tag(206, 28, "세뇨관", { size: 12 }) + tag(196, 168, "모세혈관", { size: 12 });
     out += txt(316, 222, "오줌", { size: 12.5, fill: "#F2DE8A", weight: 800 });
     // 알갱이
     TOKS.forEach((t, i) => {
