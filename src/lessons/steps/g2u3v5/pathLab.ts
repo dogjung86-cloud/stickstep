@@ -350,6 +350,18 @@ export const pathLab: StepRenderer = (host, step, api) => {
     lxText(ctx, "전등", P.lamp.x + 34, P.lamp.y - 18, { color: LX.dim });
     lxText(ctx, scn.obj, P.obj.x, P.obj.y + (scn.key === "room" ? 30 : 24), { color: LX.dim });
     lxText(ctx, "눈", P.eye.x + 2, P.eye.y + 26, { color: LX.dim });
+    // 아직 아무것도 그리지 않았으면 누를 수 있는 세 곳을 알려 준다
+    if (!sel && !arrows.length && !lock) {
+      ctx.strokeStyle = `rgba(232,238,249,${0.25 + 0.25 * Math.sin(t / 300)})`;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 5]);
+      (Object.keys(P) as Node[]).forEach((n) => {
+        ctx.beginPath();
+        ctx.arc(P[n].x, P[n].y, 27, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+      ctx.setLineDash([]);
+    }
     // 고른 시작점
     if (sel) {
       ctx.strokeStyle = `rgba(255,196,90,${0.6 + 0.3 * Math.sin(t / 200)})`;

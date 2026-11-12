@@ -509,7 +509,7 @@ export const useLab: StepRenderer = (host, step, api) => {
     ctx.stroke();
     ctx.restore();
     lxText(ctx, kind ? NAMES[kind] : "거울을 세울 자리", MC.x + 66, 24, { color: LX.ink });
-    if (kind) lxPill(ctx, "노란 곳: 거울에 비치는 범위", LX.gold);
+    if (kind) lxPill(ctx, "노란 곳: 거울에 비치는 범위", LX.gold, false, 198);
   });
 
   f.say("건물에 가려 양옆에서 오는 차가 보이지 않아요. 길 건너편에 세울 <b>거울</b>을 골라 비치는 범위를 견줘 보세요.");

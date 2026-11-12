@@ -294,8 +294,8 @@ export const roughLab: StepRenderer = (host, step, api) => {
     fiveBtn.disabled = !ready;
     f.pips(ready ? 1 + fiveSeen.size : 0);
     if (five) return;
-    if (face === "flat") f.say(roughN >= 3 ? "매끈한 면은 어디에 닿아도 수직선의 방향이 같아요. 이제 <b>다섯 줄기</b>를 비춰 보세요." : "매끈한 면에서는 두 각이 같아요. 이제 <b>거친 면</b>을 골라 닿는 자리를 옮겨 보세요.");
-    else if (roughN < 3) f.say(`닿는 자리마다 수직선이 기울어요. 두 각을 견주며 <b>${3 - roughN}곳</b> 더 옮겨 보세요.`);
+    if (face === "flat") f.say(roughN >= 3 ? "매끈한 면은 어디에 닿아도 법선의 방향이 같아요. 이제 <b>다섯 줄기</b>를 비춰 보세요." : "매끈한 면에서는 두 각이 같아요. 이제 <b>거친 면</b>을 골라 닿는 자리를 옮겨 보세요.");
+    else if (roughN < 3) f.say(`닿는 자리마다 법선이 기울어요. 두 각을 견주며 <b>${3 - roughN}곳</b> 더 옮겨 보세요.`);
     else f.say("거친 면에서도 닿는 자리마다 <b>두 각은 같았어요</b>. 이제 <b>다섯 줄기</b>를 비춰 보세요.");
   }
 
@@ -317,7 +317,7 @@ export const roughLab: StepRenderer = (host, step, api) => {
         "거친 면에서 반사한 빛이 여러 방향으로 흩어지는 까닭은 무엇일까요?",
         [{ t: "닿는 곳마다 면의 기울기가 달라서", ok: true }, { t: "거친 면에서는 두 각이 달라져서" }, { t: "거친 면이 빛을 모두 흡수해서" }],
         (ok) => api.recordQuiz(ok),
-        { why: "어느 자리에서나 두 각은 같았어요. 달랐던 것은 <b>수직선의 방향</b>이에요.", onNext: finish },
+        { why: "어느 자리에서나 두 각은 같았어요. 달랐던 것은 <b>법선의 방향</b>이에요.", onNext: finish },
       );
     }, 1700);
   });
@@ -386,7 +386,7 @@ export const roughLab: StepRenderer = (host, step, api) => {
   });
 
   touch();
-  f.say("빛 한 줄기가 면에 닿아요. <b>닿는 자리</b>를 옮기며 그 자리의 수직선과 두 각을 견줘 보세요.");
+  f.say("빛 한 줄기가 면에 닿아요. <b>닿는 자리</b>를 옮기며 그 자리의 법선과 두 각을 견줘 보세요.");
   api.setCTA("두 면에서 두 각을 견줘 보세요", { enabled: false });
   return () => {
     tm.clear();

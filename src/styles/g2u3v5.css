@@ -62,6 +62,7 @@
 .opn-g2u3-btn b { font-size: 14.5px; line-height: 20px; font-weight: 800; color: var(--ink); }
 .opn-g2u3-btn span { font-size: 12.5px; line-height: 17px; font-weight: 600; color: var(--sub); }
 .opn-g2u3-btn.tried { border-color: var(--subj-light); background: var(--subj-light-tint); }
+.opn-g2u3-btn.on { box-shadow: 0 0 0 2px var(--subj-light) inset; }
 .opn-g2u3-btn:disabled { opacity: .5; }
 @media (prefers-reduced-motion: reduce) { .opn-stage.play .opn-g2u3-hit::after { animation: none; } }
 

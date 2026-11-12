@@ -372,7 +372,7 @@ export const waveLab: StepRenderer = (host, step, api) => {
     ctx.lineTo(X1, CY);
     ctx.stroke();
     ctx.setLineDash([]);
-    lxText(ctx, "진동 중심", X1 - 30, CY + 12, { color: LX.dim });
+    lxText(ctx, "점선: 진동 중심", X0, 14, { color: LX.dim, align: "left" });
     // 파동
     ctx.strokeStyle = "#7ED6FF";
     ctx.lineWidth = 3;
@@ -391,8 +391,8 @@ export const waveLab: StepRenderer = (host, step, api) => {
     lxText(ctx, "마루", c1, CY - A - 12, { color: LX.ink, w: 800 });
     if (trough < X1 - 10) lxText(ctx, "골", trough, CY + A + 12, { color: LX.ink, w: 800 });
     // 진폭
-    arrowV(ctx, c1, CY, CY - A, "#FFC45A");
-    lxText(ctx, `${amp}칸`, c1 + 18, CY - A / 2, { color: "#FFC45A", w: 800 });
+    arrowV(ctx, X0 - 13, CY, CY - A, "#FFC45A");
+    lxText(ctx, `${amp}칸`, X0 - 13, CY + 14, { color: "#FFC45A", w: 800 });
     // 마루 사이
     if (c2 < X1 - 4) {
       const yy = CY - A - 26;

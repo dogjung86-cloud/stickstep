@@ -200,8 +200,9 @@ const straw: OpenerScene = (c) => {
       ln.setAttribute("y2", String(y2));
     };
     set(upper, M.top[0], M.top[1], v > 0.02 ? sx : M.bot[0], v > 0.02 ? wy : M.bot[1]);
-    // 물에 잠긴 부분: 수면에서 꺾여 보인다
-    set(lower, sx, wy, M.bot[0] + M.bend * Math.min(1, v * 1.4), M.bot[1]);
+    // 물에 잠긴 부분: 실제보다 떠올라 보인다(끝이 위로 올라가 수면 쪽으로 눕는다)
+    const k = Math.min(1, v * 1.4);
+    set(lower, sx, wy, M.bot[0] - 16 * k, M.bot[1] - M.bend * k);
     lower.style.opacity = v > 0.02 ? "1" : "0";
   };
   paint(0);
@@ -333,6 +334,8 @@ const spoon: OpenerScene = (c) => {
     haptic(HAPTIC.tap);
     c.stage.classList.toggle("side-in", k === "in");
     c.stage.classList.toggle("side-out", k === "out");
+    bIn.classList.toggle("on", k === "in");
+    bOut.classList.toggle("on", k === "out");
     tried[k] = true;
     (k === "in" ? bIn : bOut).classList.add("tried");
     if (tried.in && tried.out) {
