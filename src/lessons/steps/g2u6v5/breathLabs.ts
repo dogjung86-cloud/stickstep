@@ -126,6 +126,12 @@ export const g2u6ChestLab: StepRenderer = (host, step, api) => {
   const cPush = chip("push", "막 올리기", "위로", () => setPull(-1));
   go.addEventListener("click", () => {
     tap();
+    // 판정의 근거가 무대에 남도록 고무 막을 당긴 모습으로 되돌린다.
+    lift = 0;
+    pull = 1;
+    lastMove = "up";
+    draw();
+    f.say("고무 막을 아래로 당긴 모습이에요. 풍선이 <b>부풀어</b> 있어요.");
     lab.judge("고무 막을 아래로 당기면 풍선이 <b>부푸는</b> 까닭은?", [{ t: "컵 속 압력이 낮아져서", ok: true }, { t: "고무 막이 공기를 밀어 넣어서" }, { t: "풍선이 스스로 늘어나서" }], "컵 속 부피가 커지면 압력이 낮아져 <b>바깥 공기</b>가 들어와요.", () =>
       lab.finish("컵 속 <b>부피가 커지면</b> 압력이 낮아져 공기가 풍선으로 들어오고, <b>부피가 작아지면</b> 압력이 높아져 공기가 나가요. 풍선은 스스로 움직이지 않았어요."),
     );

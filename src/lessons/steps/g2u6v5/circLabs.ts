@@ -163,10 +163,10 @@ const PARTS = [
   { key: "pla", name: "혈장" },
 ];
 const JOBS = [
-  { ask: "온몸의 세포에 <b>산소</b>를 날라야 해요. 무엇이 맡을까요?", ans: "rbc", done: "적혈구가 <b>산소</b>를 싣고 세포로 갔어요.", scene: "o2" },
-  { ask: "몸속에 <b>세균</b>이 들어왔어요. 무엇이 맡을까요?", ans: "wbc", done: "백혈구가 세균을 <b>잡아먹었어요</b>.", scene: "germ" },
-  { ask: "상처가 나서 <b>피가 나요</b>. 무엇이 맡을까요?", ans: "plt", done: "혈소판이 모여 혈액을 굳혀 <b>피가 멎었어요</b>.", scene: "cut" },
-  { ask: "<b>영양소와 노폐물</b>을 녹여서 날라야 해요. 무엇이 맡을까요?", ans: "pla", done: "액체인 혈장이 영양소와 노폐물을 <b>녹여 날랐어요</b>.", scene: "nut" },
+  { ask: "온몸의 세포에 <b>산소</b>를 날라야 해요. 무엇이 맡을까요?", ans: "rbc", short: "세포에 산소 나르기", done: "적혈구가 <b>산소</b>를 싣고 세포로 갔어요.", scene: "o2" },
+  { ask: "몸속에 <b>세균</b>이 들어왔어요. 무엇이 맡을까요?", ans: "wbc", short: "몸속의 세균 없애기", done: "백혈구가 세균을 <b>잡아먹었어요</b>.", scene: "germ" },
+  { ask: "상처가 나서 <b>피가 나요</b>. 무엇이 맡을까요?", ans: "plt", short: "상처의 피 멎게 하기", done: "혈소판이 모여 혈액을 굳혀 <b>피가 멎었어요</b>.", scene: "cut" },
+  { ask: "<b>영양소와 노폐물</b>을 녹여서 날라야 해요. 무엇이 맡을까요?", ans: "pla", short: "영양소와 노폐물 녹여 나르기", done: "액체인 혈장이 영양소와 노폐물을 <b>녹여 날랐어요</b>.", scene: "nut" },
 ];
 const MISS: Record<string, string> = {
   rbc: "적혈구는 산소를 나르는 일을 해요.",
@@ -247,9 +247,11 @@ export const g2u6BloodLab: StepRenderer = (host, step, api) => {
       }, 1700);
     }),
   );
+  const jobNote = noteLine("이제 일이 네 가지 생겨요. 일마다 <b>맡을 성분</b>을 하나씩 골라요.");
   const nextJob = (): void => {
     job += 1;
     solved = false;
+    jobNote.innerHTML = `일 ${job + 1} / 4: <b>${JOBS[job].short}</b><br>이 일을 맡을 성분을 아래에서 골라요.`;
     draw();
     f.say(JOBS[job].ask);
   };
@@ -261,7 +263,7 @@ export const g2u6BloodLab: StepRenderer = (host, step, api) => {
     f.pips(1);
     draw();
     f.say("위는 노란 액체 <b>혈장</b>, 아래는 <b>혈구</b>예요. 붉은 원반이 적혈구, 핵이 있는 큰 것이 백혈구, 작은 조각이 혈소판이에요.");
-    f.slot.setControls(noteLine("이제 일이 네 가지 생겨요. 일마다 <b>맡을 성분</b>을 하나씩 골라요."), row(chips[0].el, chips[1].el), row(chips[2].el, chips[3].el));
+    f.slot.setControls(jobNote, row(chips[0].el, chips[1].el), row(chips[2].el, chips[3].el));
     tm.later(nextJob, 3200);
   });
   f.slot.setControls(spin);

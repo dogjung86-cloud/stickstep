@@ -23,13 +23,12 @@ export function peanutBase() {
   sk.ink(paper, { w: 8, color: C.gray, wob: 0.8, seed: 6 });
   // 기름 얼룩(세 단계): 종이가 비쳐 보이는 누런 회색
   const stain = (r, sd, a) => {
-    const c = circ(470, 290, r, { seed: sd, lump: 0.1 });
-    sk.fill(c, "#CFC49A", { dx: 0, dy: 0, wob: 1.2, seed: sd + 1, alpha: a });
-    sk.ink(c, { w: 5, color: "#A89A66", wob: 1, seed: sd + 2 });
+    const c = circ(500, 300, r, { seed: sd, lump: 0.24 });
+    sk.fill(c, "#A9A58E", { dx: 0, dy: 0, wob: 1.6, seed: sd + 1, alpha: a });
   };
-  g(sk, "opn-g2u6-g s1", () => stain(46, 11, 0.55));
-  g(sk, "opn-g2u6-g s2", () => stain(86, 21, 0.7));
-  g(sk, "opn-g2u6-g s3", () => stain(128, 31, 0.85));
+  g(sk, "opn-g2u6-g s1", () => stain(60, 11, 0.45));
+  g(sk, "opn-g2u6-g s2", () => stain(120, 21, 0.55));
+  g(sk, "opn-g2u6-g s3", () => stain(175, 31, 0.65));
   // 땅콩 한 알(껍질을 깐 알맹이 두 쪽)
   const nut = curve([[420, 250], [440, 214], [486, 206], [522, 232], [528, 282], [504, 324], [456, 332], [420, 302]], true, 3);
   sk.fill(nut, "#D9A066", { dx: 0, dy: 0, wob: 0.5, seed: 41, tex: 0.6 });

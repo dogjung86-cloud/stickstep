@@ -149,7 +149,7 @@ for (const p of data.probs) {
     blind.push(`통: ${p.bins.map((b) => b.label).join(" / ")}`, `항목: ${shuffled(p.items, r).map((o) => o.v.label).join(" · ")}`, "");
     key.push(`문제 ${no}: ${p.bins.map((b) => `${b.label} = ${p.items.filter((i) => i.bin === b.id).map((i) => i.label).join(", ")}`).join(" / ")}`);
   } else if (p.type === "order") {
-    blind.push(...shuffled(p.items, r).map((o, i) => `(${"가나다라마"[i]}) ${o.v}`), "");
+    blind.push(...shuffled(p.items, r).map((o, i) => `(${"가나다라마바사아"[i]}) ${o.v}`), "");
     key.push(`문제 ${no}: ${p.items.join(" → ")}`);
   } else if (p.type === "pairMatch") {
     blind.push(`왼쪽: ${p.pairs.map((x) => x.a).join(" · ")}`, `오른쪽: ${shuffled(p.pairs, r).map((o) => o.v.b).join(" · ")}`, "");

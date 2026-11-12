@@ -3,7 +3,7 @@
 // 레슨 3의 만화 스텝은 정본 그대로 따라온다(손대지 않는다).
 import type { V5LessonPlan } from "../v5remake";
 import { binSort, mcq, multi, opener, order, ox, pairMatch, recap } from "../dsl";
-import { b6MiniArt, starchFlowFig } from "../../ui/body3Figures";
+import { b6MiniArt } from "../../ui/body3Figures";
 import { plateRowFig, salivaTubesFig } from "../../ui/g2u6v5Figures";
 import { C, benedictLab, bloodLab, enzymeLab, heartLab, loopLab, note, plateLab, problems, salivaLab, term, villiLab, words } from "./unit6v5kit";
 
@@ -184,8 +184,8 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
             color: C.amber,
             art: b6MiniArt("enzymeScissors"),
             text: "소화효소는 <b>정해진 영양소</b>만 분해해요. 세 영양소가 모두 분해되는 곳은 작은창자예요.",
-            examples: ["녹말: 아밀레이스(입, 작은창자) → 포도당", "단백질: 펩신(위), 트립신(작은창자) → 아미노산", "지방: 라이페이스(작은창자) → 지방산과 모노글리세라이드"],
-            more: "<b class='rm-h'>어디에서 무엇이 분해될까요?</b>입에서는 침 속의 아밀레이스가 녹말을 엿당으로 분해해요. 위에서는 위액 속의 펩신이 염산의 도움을 받아 단백질을 분해해요. 작은창자에서는 이자액 속의 아밀레이스, 트립신, 라이페이스가 녹말, 단백질, 지방을 각각 분해해요.<b class='rm-h'>마지막에 무엇이 될까요?</b>작은창자에서 소화가 끝나면 녹말은 포도당, 단백질은 아미노산, 지방은 지방산과 모노글리세라이드가 돼요. 이 작은 영양소들이 몸 안으로 흡수돼요.<b class='rm-h'>헷갈리지 마세요</b>쓸개즙은 지방의 소화를 돕지만 소화효소가 아니에요. 지방을 분해하는 소화효소는 이자액 속의 라이페이스예요. 위액 속의 염산도 소화효소가 아니에요. 펩신의 작용을 돕고 음식물 속의 세균을 죽여요.<span class='fun'><b>알고 있나요?</b> 무에는 아밀레이스가 들어 있어요. 그래서 예부터 면 음식에 무를 곁들여 먹었어요.</span>",
+            examples: ["녹말: 아밀레이스(입, 작은창자) → 엿당 → 포도당", "단백질: 펩신(위), 트립신(작은창자) → 아미노산", "지방: 라이페이스(작은창자) → 지방산과 모노글리세라이드"],
+            more: "<b class='rm-h'>어디에서 무엇이 분해될까요?</b>입에서는 침 속의 아밀레이스가 녹말을 엿당으로 분해해요. 위에서는 위액 속의 펩신이 염산의 도움을 받아 단백질을 분해해요. 작은창자에서는 이자액 속의 아밀레이스, 트립신, 라이페이스가 녹말, 단백질, 지방을 각각 분해해요.<b class='rm-h'>마지막에 무엇이 될까요?</b>아밀레이스가 만든 엿당도 작은창자에서 더 분해돼요. 작은창자에서 소화가 끝나면 녹말은 포도당, 단백질은 아미노산, 지방은 지방산과 모노글리세라이드가 돼요. 이 작은 영양소들이 몸 안으로 흡수돼요.<b class='rm-h'>헷갈리지 마세요</b>쓸개즙은 지방의 소화를 돕지만 소화효소가 아니에요. 지방을 분해하는 소화효소는 이자액 속의 라이페이스예요. 위액 속의 염산도 소화효소가 아니에요. 펩신의 작용을 돕고 음식물 속의 세균을 죽여요.<span class='fun'><b>알고 있나요?</b> 무에는 아밀레이스가 들어 있어요. 그래서 예부터 면 음식에 무를 곁들여 먹었어요.</span>",
           },
           {
             name: "작은창자의 흡수",
@@ -240,8 +240,7 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
           explainBad: "단백질을 분해하는 소화효소는 둘이에요. <b>펩신</b>은 위에서, <b>트립신</b>은 작은창자에서 작용해요. 지방을 분해하는 것은 라이페이스이고, 쓸개즙은 소화효소가 없어요.",
         }),
         mcq({
-          prompt: "그림은 녹말이 소화되는 과정을 나타낸 것이에요. 작은창자에서 소화가 끝났을 때 생기는 ㉠은?",
-          figure: starchFlowFig(["final"]),
+          prompt: "녹말은 입에서 엿당으로 분해되기 시작해 작은창자에서 소화가 끝나요. 작은창자에서 소화가 끝났을 때 녹말이 마지막으로 되는 것은?",
           options: ["포도당", "아미노산", "지방산", "엿당", "모노글리세라이드"],
           answer: 0,
           explainGood: "맞아요. 녹말은 엿당을 거쳐 작은창자에서 <b>포도당</b>으로 분해돼요.",

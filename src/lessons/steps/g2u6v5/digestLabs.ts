@@ -239,6 +239,9 @@ export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
     if (hit) {
       good();
       const extra = r === 2 ? " 쓸개즙이 이 일을 도와요." : "";
+      if (c === 2 && r < 2) {
+        f.say(`이자액 속 <b>${hit.enz}</b>${r === 1 ? "이" : "가"} ${fd}을 분해하고, 작은창자에서 <b>${hit.out}</b>까지 분해돼요.`);
+      } else
       f.say(`${o.juice} 속 <b>${hit.enz}</b>${hit.enz === "펩신" || hit.enz === "트립신" ? "이" : "가"} ${fd}을 <b>${hit.out}</b>${hit.out.endsWith("당") || hit.out.endsWith("산") ? "으로" : "로"} 분해했어요.${extra}`);
     } else {
       tap();

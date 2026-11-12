@@ -97,7 +97,7 @@ const OFF_SAY: Record<Sys, string> = {
   dig: "소화계가 멈추자 <b>영양소</b>가 끊겼어요. 산소가 와도 세포는 에너지를 얻지 못해요.",
   res: "호흡계가 멈추자 <b>산소</b>가 끊기고 이산화 탄소가 몸에 쌓여요. 에너지를 얻지 못해요.",
   cir: "순환계가 멈추자 영양소도 산소도 노폐물도 <b>모두</b> 움직이지 못해요.",
-  exc: "배설계가 멈추자 <b>요소</b>가 혈액에 쌓여요. 에너지는 나오지만 몸이 위험해져요.",
+  exc: "배설계가 멈추자 요소 같은 <b>노폐물</b>이 혈액에 쌓여요. 에너지는 나오지만 몸이 위험해져요.",
 };
 
 export const g2u6TeamLab: StepRenderer = (host, step, api) => {
@@ -129,10 +129,10 @@ export const g2u6TeamLab: StepRenderer = (host, step, api) => {
     out += flow(60, 46, 108, 86, P.glucose, "영양소", 50, 80, nut, "middle");
     out += flow(270, 46, 228, 84, P.o2, "산소", 240, 56, oxy, "end");
     out += flow(252, 110, 324, 48, P.co2, "이산화 탄소", 340, 98, co2, "end");
-    out += flow(173, 170, 173, 188, P.urea, "요소", 190, 184, ure, "start");
+    out += flow(173, 170, 173, 188, P.urea, "노폐물", 190, 184, ure, "start");
     // 쌓이는 것
     if (off === "res" || off === "cir") out += tag(282, 152, "이산화 탄소 쌓임", { size: 12, fill: P.bad, stroke: P.bad });
-    if (off === "exc" || off === "cir") out += tag(56, 150, "요소 쌓임", { size: 12, fill: P.bad, stroke: P.bad });
+    if (off === "exc" || off === "cir") out += tag(60, 152, "노폐물 쌓임", { size: 12, fill: P.bad, stroke: P.bad });
     stage.set(out);
     host.dataset.g6Off = off ?? "";
     host.dataset.g6Seen = String(seen.size);
@@ -161,7 +161,7 @@ export const g2u6TeamLab: StepRenderer = (host, step, api) => {
   go.addEventListener("click", () => {
     tap();
     lab.judge("멈추자 영양소, 산소, 노폐물의 이동이 <b>모두</b> 끊긴 기관계는?", [{ t: "순환계", ok: true }, { t: "소화계" }, { t: "호흡계" }], "기관계 사이에서 물질을 <b>실어 나르는</b> 일은 순환계가 맡아요.", () =>
-      lab.finish("소화계는 <b>영양소</b>를, 호흡계는 <b>산소</b>를 받아들이고 순환계가 세포로 날라요. 세포에서 생긴 이산화 탄소는 호흡계로, 요소는 배설계로 실려 나가요."),
+      lab.finish("소화계는 <b>영양소</b>를, 호흡계는 <b>산소</b>를 받아들이고 순환계가 세포로 날라요. 세포에서 생긴 이산화 탄소는 호흡계로, 요소 같은 노폐물은 배설계로 실려 나가요."),
     );
   });
   f.slot.setControls(row(chips[0].el, chips[1].el), row(chips[2].el, chips[3].el), go);
