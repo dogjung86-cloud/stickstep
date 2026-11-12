@@ -138,7 +138,7 @@ export const luxLab: StepRenderer = (host, step, api) => {
       sText(ctx, String(r.v), x, 57.5, { color: col, px: 13, w: 800 });
       sLine(ctx, x, 68, x, 78, col, 1.2, [2, 3]);
     });
-    if (rec.size) sText(ctx, "lx", w - 12, 57, { color: S.dim, px: 12, align: "right" });
+    if (rec.size) sText(ctx, "lx", 12, 57, { color: S.dim, px: 12, align: "left" });
     // 스마트 기기(세워 둔 화면이 전등을 향한다)
     sBox(ctx, px - 6, ry - 62, 12, 62, 3, "#DDE5EE", "#fff", 1.5);
     sBox(ctx, px - 4, ry - 56, 3, 46, 1, flash > 0 ? "#7FE3C4" : "#4A5568");

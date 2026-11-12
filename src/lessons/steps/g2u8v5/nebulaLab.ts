@@ -101,6 +101,15 @@ export const nebulaLab: StepRenderer = (host, step, api) => {
     // 구름
     const tone = mode === "in" ? [236, 86, 110] : mode === "side" ? [110, 160, 255] : mode === "back" ? [6, 8, 16] : [70, 78, 104];
     const alpha = mode === "back" ? 0.5 + 0.45 * k : mode ? 0.16 + 0.2 * k : 0.2;
+    if (mode === "back")
+      BLOBS.forEach((b) => {
+        // 검은 구름의 가장자리가 보이게 뒤에 옅은 빛을 깐다
+        const halo = ctx.createRadialGradient(cx + b.x, cy + b.y, b.r * 0.6, cx + b.x, cy + b.y, b.r * 1.25);
+        halo.addColorStop(0, `rgba(150,170,230,${0.16 * k})`);
+        halo.addColorStop(1, "rgba(150,170,230,0)");
+        ctx.fillStyle = halo;
+        ctx.fillRect(cx + b.x - b.r * 1.3, cy + b.y - b.r * 1.3, b.r * 2.6, b.r * 2.6);
+      });
     BLOBS.forEach((b) => {
       const g = ctx.createRadialGradient(cx + b.x, cy + b.y, 0, cx + b.x, cy + b.y, b.r);
       g.addColorStop(0, `rgba(${tone.join(",")},${alpha})`);

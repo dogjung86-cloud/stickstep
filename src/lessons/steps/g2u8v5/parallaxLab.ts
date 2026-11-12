@@ -159,8 +159,8 @@ export const parallaxLab: StepRenderer = (host, step, api) => {
       ctx.arc(cx, sy, 22, a2, a1);
       ctx.stroke();
       ctx.restore();
-      sText(ctx, `시차 ${fmt(2 / PC[di])}`, cx, sy + 36, { color: S.gold, px: 13, w: 800 });
-      sText(ctx, `절반 ${fmt(1 / PC[di])}`, cx, sy + 52, { color: "#fff", px: 13, w: 800 });
+      sText(ctx, `시차 ${fmt(2 / PC[di])}`, w - 12, 76, { color: S.gold, px: 13, w: 800, align: "right" });
+      sText(ctx, `절반 ${fmt(1 / PC[di])}`, w - 12, 94, { color: "#fff", px: 13, w: 800, align: "right" });
     }
     // 별 S
     sGlow(ctx, cx, sy, 11 + Math.sin(t / 400) * 1, S.star);

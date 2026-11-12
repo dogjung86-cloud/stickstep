@@ -15,9 +15,9 @@ const celsius = (k: number): number => Math.round((k - 273) / 100) * 100;
 const colorName = (k: number): string => (k < 3700 ? "적색" : k < 5200 ? "주황색" : k < 6000 ? "황색" : k < 7500 ? "황백색" : k < 10000 ? "백색" : "청백색");
 const planck = (nm: number, k: number): number => 1 / ((nm / 1000) ** 5 * (Math.exp(14388 / ((nm / 1000) * k)) - 1));
 const TARGETS = [
-  { name: "안타레스", color: "적색", k: 3473 },
-  { name: "알데바란", color: "주황색", k: 3873 },
-  { name: "시리우스", color: "백색", k: 9873 },
+  { name: "안타레스", color: "적색", k: 3473, dot: "#FF6A4D" },
+  { name: "알데바란", color: "주황색", k: 3873, dot: "#FFAA5C" },
+  { name: "시리우스", color: "백색", k: 9873, dot: "#F2F6FF" },
 ];
 
 export const starTempLab: StepRenderer = (host, step, api) => {
@@ -104,7 +104,7 @@ export const starTempLab: StepRenderer = (host, step, api) => {
     TARGETS.forEach((t, i) => {
       const x = 30 + i * 54;
       const done = i < cur || finished;
-      sDisk(ctx, x, 26, 11, rgb(tempColor(t.k)), i === cur && !finished ? "#fff" : undefined, 2);
+      sDisk(ctx, x, 26, 11, t.dot, i === cur && !finished ? "#fff" : undefined, 2);
       sText(ctx, t.name, x, 48, { color: i === cur && !finished ? "#fff" : done ? S.ok : S.dim, px: 12, w: i === cur ? 800 : 700 });
     });
     // 별이 내는 두 빛의 양

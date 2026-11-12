@@ -74,7 +74,7 @@ export function lampsBase() {
     // 켠 불빛: 먼 것일수록 훨씬 작고 흐리다
     g(sk, S1, () => {
       const r = [150, 66, 30, 13][i];
-      disk(sk, x, y - 284 * s, r, r, "#FFE27A", 31 + i * 5, { ink: false });
+      disk(sk, x, y - 284 * s, r, r, ["#FFE27A", "#D9C47E", "#A9A07C", "#7C7B74"][i], 31 + i * 5, { ink: false });
       disk(sk, x, y - 284 * s, 26 * s, 18 * s, "#FFFBE0", 33 + i * 5, { w: 3 + 4 * s, color: C.gold });
     });
   });

@@ -169,7 +169,13 @@ export const balloonLab: StepRenderer = (host, step, api) => {
       const cm = grow >= 1 ? CM1 : CM0;
       PAIRS.forEach(([a, b]) => {
         sLine(ctx, pos[a][0], pos[a][1], pos[b][0], pos[b][1], "#FFF3B0", 2.5);
-        sText(ctx, arc(a, b, cm).toFixed(1), (pos[a][0] + pos[b][0]) / 2, (pos[a][1] + pos[b][1]) / 2 - 9, { color: "#fff", px: 12.5, w: 800 });
+        // 값은 선의 가운데에서 세 딱지의 한가운데 반대쪽으로 비켜 적는다(딱지에 가리지 않게)
+        const mx = (pos[a][0] + pos[b][0]) / 2;
+        const my = (pos[a][1] + pos[b][1]) / 2;
+        const gx = (pos[0][0] + pos[1][0] + pos[2][0]) / 3;
+        const gy = (pos[0][1] + pos[1][1] + pos[2][1]) / 3;
+        const dl = Math.hypot(mx - gx, my - gy) || 1;
+        sText(ctx, arc(a, b, cm).toFixed(1), mx + ((mx - gx) / dl) * 15, my + ((my - gy) / dl) * 15, { color: "#fff", px: 12.5, w: 800 });
       });
     }
     // 딱지(크기는 변하지 않는다)

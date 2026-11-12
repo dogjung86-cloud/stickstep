@@ -134,8 +134,7 @@ export const centerLab: StepRenderer = (host, step, api) => {
     ctx.beginPath();
     ctx.arc(cx, cy, 20, 0, Math.PI * 2);
     ctx.stroke();
-    sText(ctx, "내가 선 곳", cx, cy - 29, { color: "#fff", px: 12 });
-    sText(ctx, k > 1.02 ? "모눈 한 칸이 넓어졌어요" : "모눈은 우주 공간이에요", 12, h - 12, { color: S.dim, px: 12, align: "left" });
+    sText(ctx, k > 1.02 ? "모눈 한 칸이 넓어졌어요" : "흰 동그라미가 내가 선 곳", 10, 14, { color: S.dim, px: 12, align: "left" });
   });
 
   f.say("모눈은 <b>우주 공간</b>이고, 은하들은 모눈 위에 놓여 있어요. <b>공간 늘리기</b>를 눌러 우주를 팽창시켜 보세요.");
