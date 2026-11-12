@@ -238,5 +238,7 @@ export function seeded(seed: number): () => number {
   };
 }
 
+/** 받침에 따라 조사를 고른다: josa("자갈", "이", "가") → "이". */
+export const josa = (word: string, withFinal: string, without: string): string => ((word.charCodeAt(word.length - 1) - 0xac00) % 28 ? withFinal : without);
 export const clamp = (v: number, a = 0, b = 1): number => Math.max(a, Math.min(b, v));
 export { haptic, HAPTIC, el };

@@ -135,3 +135,16 @@
 .g2u2x-ig-tap::before { display: none; }
 .g2u2x-ig-tap:not(:disabled):active { background: rgba(255, 255, 255, .08); }
 .g2u2x-ign .g2u2x-sw:has(img) { width: 40px; height: 40px; }
+
+/* ── 4~6레슨 ─────────────────────────────────────── */
+.g2u2x-meta .bv-range-in { height: 44px; }
+.g2u2x-ri-tool {
+  border: 1.5px solid rgba(255, 255, 255, .5); background: rgba(255, 255, 255, .1); border-radius: 14px;
+  color: #fff; font-size: 13.5px; font-weight: 800;
+}
+.g2u2x-ri-tool::before { display: none; }
+.g2u2x-ri-tool:active { background: rgba(255, 255, 255, .22); }
+.g2u2x-cy-e path { stroke: #4A5C78; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: stroke .3s; }
+.g2u2x-cy-e.on path { stroke: #FFD43B; stroke-width: 2.6; }
+.g2u2x-cy-n rect { transition: stroke-width .2s; }
+.g2u2x-cy-n.now rect { stroke-width: 4; fill: rgba(255, 255, 255, .16); }

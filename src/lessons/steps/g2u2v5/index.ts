@@ -6,6 +6,8 @@ import { g2u2SystemLab } from "./systemLab";
 import { g2u2LayerLab, g2u2ProbeLab } from "./earthLabs";
 import { g2u2MineralLab, g2u2PowderLab } from "./mineralLabs";
 import { g2u2CoolLab, g2u2IgneousLab } from "./igneousLabs";
+import { g2u2MetaLab, g2u2PressLab, g2u2SedLab } from "./sedMetaLabs";
+import { g2u2CycleLab, g2u2RockIdLab } from "./rockLabs";
 
 export const G2U2V5_STEPS: Record<string, StepRenderer> = {
   g2u2SystemLab,
@@ -15,4 +17,9 @@ export const G2U2V5_STEPS: Record<string, StepRenderer> = {
   g2u2MineralLab,
   g2u2CoolLab,
   g2u2IgneousLab,
+  g2u2SedLab,
+  g2u2PressLab,
+  g2u2MetaLab,
+  g2u2RockIdLab,
+  g2u2CycleLab,
 };
