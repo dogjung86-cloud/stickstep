@@ -12,7 +12,7 @@
 //   문제: 새 랩의 판정과 같은 것을 다시 묻는 문항은 빼고, 랩에서 본 것의 까닭과 옮겨 쓰기를 묻는 문항을 새로 썼다. 남긴 문항은 정본 객체를 그대로 쓴다(keep).
 import type { Step } from "../lessons/types";
 import type { Unit } from "./curriculum";
-import { opener, concept, mcq, ox, multi } from "./dsl";
+import { opener, concept, mcq, ox, multi, cut } from "./dsl";
 import { UNIT3 } from "./unit3";
 import { remakeUnit } from "./v5remake";
 
@@ -77,13 +77,18 @@ const rebuild = (steps: Step[], make: (old: Step[]) => { concept: Step; recap: S
   const m = make(steps);
   return [...steps.slice(0, cut), m.concept, m.recap, ...numbered(m.problems)];
 };
-const terms = (o: { title: string; lead: string; terms: [string, string][]; note: string }): Step =>
+/** cut: [컷 이름, 대체 글, 캡션] 스틱맨 개념 컷(코드 그림 qa/sketch/scenes/cuts/cuts-u3.mjs)을 첫 블록에 둔다 */
+const terms = (o: { title: string; lead: string; cut?: [string, string, string]; terms: [string, string][]; note: string }): Step =>
   concept({
     kicker: "과학 용어 정복하기",
     kickerTone: "heat",
     title: o.title,
     lead: o.lead,
-    blocks: [...o.terms.map(([name, def]) => ({ k: "term" as const, name, def })), { k: "note" as const, tone: "amber" as const, html: o.note }],
+    blocks: [
+      ...(o.cut ? [{ k: "figure" as const, svg: cut("heat3", o.cut[0], o.cut[1]), cap: o.cut[2] }] : []),
+      ...o.terms.map(([name, def]) => ({ k: "term" as const, name, def })),
+      { k: "note" as const, tone: "amber" as const, html: o.note },
+    ],
     cta: "카드로 정리하기",
   });
 
@@ -95,6 +100,7 @@ export const UNIT3_V5: Unit | null = remakeUnit(UNIT3, {
     after: (steps) =>
       rebuild(steps, (old) => ({
         concept: terms({
+          cut: ["u3l1", "돋보기로 김이 나는 찻잔 속을 들여다보니 작은 입자들이 바쁘게 움직이는 장면", "돋보기로 보면 뜨거운 물속은 입자들의 운동회예요"],
           title: "온도,<br>입자가 움직이는 정도",
           lead: "막대를 밀 때마다 달라지던 입자의 움직임. 거기에 붙은 이름을 정리해요.",
           terms: [
@@ -139,6 +145,7 @@ export const UNIT3_V5: Unit | null = remakeUnit(UNIT3, {
     after: (steps) =>
       rebuild(steps, (old) => ({
         concept: terms({
+          cut: ["u3l2", "추운 날 따뜻한 손난로를 두 손으로 감싸 쥔 학생, 손난로에서 손으로 열이 흐른다", "따뜻한 쪽에서 차가운 쪽으로, 열이 흘러요"],
           title: "열과 열평형",
           lead: "컵의 벽을 건너던 노란 화살표, 그리고 두 선이 만난 자리. 두 가지에 이름을 붙여요.",
           terms: [
@@ -205,6 +212,7 @@ export const UNIT3_V5: Unit | null = remakeUnit(UNIT3, {
     after: (steps) =>
       rebuild(steps, (old) => ({
         concept: terms({
+          cut: ["u3l3", "공을 전하는 세 가지 방법: 줄 서서 건네기, 들고 달려가기, 멀리 던지기", "건네고, 들고 가고, 던지고. 열이 가는 세 가지 길"],
           title: "전도, 대류, 복사",
           lead: "막대, 방 안의 공기, 유리 상자. 세 실험에서 열이 이동한 방식에 이름을 붙여요.",
           terms: [
@@ -267,6 +275,7 @@ export const UNIT3_V5: Unit | null = remakeUnit(UNIT3, {
     after: (steps) =>
       rebuild(steps, (old) => ({
         concept: terms({
+          cut: ["u3l4", "김이 오르는 뚝배기와 이미 식어 맨손으로 만지는 얇은 금속 냄비", "뚝배기는 천천히 식고, 얇은 금속 냄비는 금방 식어요"],
           title: "열량과 비열",
           lead: "식용유는 20초, 물은 43초. 같은 온도만큼 올리는 데 든 열이 달랐어요. 이 차이에 이름을 붙여요.",
           terms: [
@@ -320,6 +329,7 @@ export const UNIT3_V5: Unit | null = remakeUnit(UNIT3, {
     after: (steps) =>
       rebuild(steps, (old) => ({
         concept: terms({
+          cut: ["u3l5", "꽉 닫힌 유리병의 금속 뚜껑에 따뜻한 물을 붓자 뚜껑이 헐거워지는 장면", "안 열리는 병뚜껑엔 따뜻한 물, 금속이 늘어나 헐거워져요"],
           title: "열팽창과 바이메탈",
           lead: "한여름의 철로는 길어지고, 붙인 두 띠는 휘었어요. 두 가지에 이름을 붙여요.",
           terms: [

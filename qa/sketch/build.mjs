@@ -1,13 +1,15 @@
 // 코드 그림 빌드: 장면 코드 → 정적 SVG(public/sketch) + 앱이 읽는 표(src/ui/sketchArt.generated.ts).
 // 실행: node qa/sketch/build.mjs
-//   만화 컷, 스플래시 컷, 로그인과 계정 그림, 과목 카드 그림 = 정적 SVG 파일(<img>로 싣는다. 실행 중 그리는 비용 0)
+//   만화 컷, 개념 컷, 스플래시 컷, 로그인과 계정 그림, 과목 카드 그림 = 정적 SVG 파일(<img>로 싣는다. 실행 중 그리는 비용 0)
 //   원형 스틱맨 쌤 5종 = 생성 표에 SVG 문자열로(작고, 표정을 바꿀 때 바로 갈아 끼워야 해서)
-//   말풍선 = 그림이 기록한 화자 머리 기준점에서 % 좌표를 계산해 표에 싣는다
+//   말풍선과 때와 곳 상자 = 그림이 기록한 화자 머리 기준점에서 % 좌표를 계산해 표에 싣는다(lib/bubble.mjs)
+//   만화의 글(머리말, 단계 배지, 제목, 설명, 용어 카드)은 장면 파일이 정본이다. 표에 함께 싣고, 단원 파일은 comic(comicStory("<레슨>"))로 쓴다.
 import { mkdirSync, writeFileSync, readFileSync, existsSync, readdirSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { frames } from "./scenes/splash.mjs";
 import { avatars, reading } from "./scenes/avatars.mjs";
+import { FRAME_W, placeBubble, whenBox, hit, textRules } from "./lib/bubble.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..", "..");
@@ -16,56 +18,73 @@ const PUB = join(ROOT, "public", "sketch");
 const writeIfChanged = (f, text) => { if (!existsSync(f) || readFileSync(f, "utf8") !== text) writeFileSync(f, text); };
 const made = new Set();
 const put = (rel, text) => { const f = join(PUB, rel); mkdirSync(dirname(f), { recursive: true }); writeIfChanged(f, text); made.add(rel); return Buffer.byteLength(text); };
-
-/* ---------- 말풍선 자리 계산 ----------
-   앱의 .cut-bubble 은 (x%, y%)가 몸통의 아래 가운데다. 가운데 꼬리는 몸통 아래로 약 7px,
-   뿔 꼬리(tail left/right)는 몸통 끝에서 16px 바깥, 27px 아래에 끝이 온다(ui.css, figures.cutTailHorn).
-   폰 화면의 컷 폭(350px)을 기준으로 몸통 크기를 어림해 컷 밖으로 나가지 않는 자리를 고른다.
-   b = { who: 기준점 이름, text, side?: "left" | "right"(뿔 꼬리를 강제), dx?, dy?(px 미세 조정) } */
-const FRAME_W = 350;
-function textWidth(line) {
-  let w = 0;
-  for (const ch of line.replace(/<[^>]+>/g, "")) w += /[가-힣]/.test(ch) ? 11.6 : ch === " " ? 3.2 : /[0-9A-Za-z]/.test(ch) ? 7.2 : 4.8;
-  return w;
-}
-function placeBubble(sk, b, where) {
-  const a = sk.anchors[b.who];
-  if (!a) throw new Error(`${where}: 기준점 '${b.who}' 가 없다`);
-  const FH = FRAME_W * sk.h / sk.w;
-  const ax = a.x / sk.w * FRAME_W + (b.dx ?? 0), ay = a.y / sk.h * FH + (b.dy ?? 0);
-  const lines = b.text.split("<br>");
-  const bw = Math.min(FRAME_W * 0.52, Math.max(84, Math.max(...lines.map(textWidth)) + 25.2));
-  const bh = lines.length * 15.6 + 16.2;
-  let cx = ax, by = ay - 9, tail = b.side;
-  if (!tail && ax - bw / 2 < 5) tail = "left";
-  else if (!tail && (ax + bw / 2 > FRAME_W - 5 || FRAME_W - ax < Math.max(84, bw) - 1)) tail = "right"; // 오른쪽 폭이 모자라면 몸통을 왼쪽으로
-  if (tail === "left") { cx = ax + 16 + bw / 2; by = ay - 29; }
-  if (tail === "right") { cx = ax - 16 - bw / 2; by = ay - 29; }
-  const box = { l: cx - bw / 2, r: cx + bw / 2, t: by - bh, b: by };
-  if (box.l < 2 || box.r > FRAME_W - 2 || box.t < 2) console.warn(`  ! ${where}: 말풍선 "${b.text}" 이 컷 밖으로 나간다`, JSON.stringify(box));
-  // 말풍선은 left 기준으로 놓이므로 오른쪽에 남은 폭보다 넓으면 브라우저가 줄을 더 나눈다. <br> 로 줄을 직접 나눠 맞춘다.
-  if (bw > Math.max(84, FRAME_W - cx) + 1) console.warn(`  ! ${where}: 말풍선 "${b.text}" 이 오른쪽 폭(${Math.round(FRAME_W - cx)}px)보다 넓다(${Math.round(bw)}px). <br> 로 줄을 나누거나 side: "right" 를 줄 것`);
-  const out = { text: b.text, x: +(cx / FRAME_W * 100).toFixed(1), y: +(by / FH * 100).toFixed(1) };
-  if (tail) out.tail = tail;
-  return out;
-}
+let warned = 0;
+const warn = (m) => { warned++; console.warn("  ! " + m); };
 
 const sizes = {};
 
-// 만화: scenes/comic-<레슨>.mjs 마다 한 편. panels() 가 [{ sk, bubbles? }] 를 돌려준다.
+// 만화: scenes/comic-<레슨>.mjs 마다 한 편.
+//   panels() 가 [{ sk, bubbles?, when?, whenPos?, stage, title, caption, term? }] 를, META 가 { title, lead?, narrator?, cta? } 를 준다.
+//   bubbles = [{ who: 기준점 이름, text, side?, dx?, dy? }](자리 계산은 lib/bubble.mjs 의 placeBubble)
 const comic = {};
+const comicMeta = {};
 for (const f of readdirSync(join(HERE, "scenes")).filter(n => /^comic-.+\.mjs$/.test(n)).sort()) {
   const id = f.replace(/^comic-|\.mjs$/g, "");
   const mod = await import(pathToFileURL(join(HERE, "scenes", f)).href);
+  const story = !!mod.META;
+  if (story) {
+    const { title, lead, narrator, cta } = mod.META;
+    if (!title) throw new Error(`${id}: META.title 이 없다`);
+    comicMeta[id] = Object.fromEntries(Object.entries({ title, lead, narrator, cta }).filter(([, v]) => v));
+  }
   comic[id] = mod.panels().map((p, i) => {
+    const where = `${id} 컷 ${i + 1}`;
     const rel = `comics/${id}/${i}.svg`;
     sizes[rel] = put(rel, p.sk.svg());
     const e = { img: `sketch/${rel}` };
-    if (p.bubbles?.length) e.bubbles = p.bubbles.map(b => placeBubble(p.sk, b, `${id} 컷 ${i + 1}`));
+    const bs = (p.bubbles ?? []).map(b => placeBubble(p.sk, b, where, warn));
+    // 자리는 컷 폭 350px 기준으로 본다. 앱이 좁은 폰에서 말풍선과 상자를 그림과 같은 비율로 줄이므로(ui.css .comic-art.code) 이 폭만 맞으면 된다.
+    for (let a = 0; a < bs.length; a++) for (let c = a + 1; c < bs.length; c++) if (hit(bs[a].box, bs[c].box)) warn(`${where}: 말풍선 둘이 겹친다`);
+    if (bs.length) e.bubbles = bs.map(({ box, ...b }) => b);
+    if (p.when) {
+      e.when = p.when;
+      if (p.whenPos === "tr") e.whenPos = "tr";
+      const wb = whenBox(p.when, p.whenPos);
+      for (const b of bs) if (hit({ ...wb, b: wb.b + 3 }, b.box)) warn(`${where}: 때와 곳 상자가 말풍선 "${b.text}" 과 겹친다(3px 안쪽으로 붙어도 경고)`);
+      if (wb.r > FRAME_W - 4) warn(`${where}: 때와 곳 상자 "${p.when}" 이 너무 길다`);
+    }
+    if (story) {
+      for (const k of ["stage", "title", "caption"]) if (!p[k]) throw new Error(`${where}: ${k} 가 없다`);
+      if (/\d/.test(p.stage)) warn(`${where}: 단계 배지 "${p.stage}" 에 숫자가 있다(연도는 when 으로)`);
+      Object.assign(e, { stage: p.stage, title: p.title, caption: p.caption });
+      if (p.term) e.term = { name: p.term.name, def: p.term.def };
+    }
     return e;
   });
+  if (story) {
+    const texts = [...Object.values(comicMeta[id]), ...comic[id].flatMap(p => [p.when, p.stage, p.title, p.caption, p.term?.name, p.term?.def, ...(p.bubbles ?? []).map(b => b.text)])].filter(Boolean).join("\n");
+    for (const m of textRules(texts)) warn(`${id} 글: ${m}`);
+  }
   // 덤 그림(문제 그림처럼 만화 밖에서 쓰는 것): extras() 가 [{ name, sk }] 를 돌려주면 comics/<레슨>/<name>.svg 로 쓴다
   for (const x of mod.extras?.() ?? []) { const rel = `comics/${id}/${x.name}.svg`; sizes[rel] = put(rel, x.sk.svg()); }
+}
+
+// 개념 컷: scenes/cuts/cuts-*.mjs 의 cuts() 가 [{ name, theme, sk, alt, cap, spare? }] 를 돌려준다.
+//   cuts/<테마>/<이름>.svg 로 쓰고 표 CUT_ART["<테마>/<이름>"] 에 싣는다. dsl.ts 의 cut(theme, name, alt) 가 이 표를 먼저 본다.
+//   alt 와 cap 의 정본은 단원 파일의 개념 스텝이다(장면 파일의 것은 미리보기 mock-cuts.mjs 용 가안).
+//   spare: 지금 레슨에 쓰지 않는 예비 장면(미리보기에서만 본다)
+const cutArt = {};
+const CUT_DIR = join(HERE, "scenes", "cuts");
+for (const f of readdirSync(CUT_DIR).filter(n => /^cuts-.+\.mjs$/.test(n)).sort()) {
+  const mod = await import(pathToFileURL(join(CUT_DIR, f)).href);
+  for (const c of mod.cuts()) {
+    if (c.spare) continue;
+    const key = `${c.theme}/${c.name}`;
+    if (cutArt[key]) throw new Error(`개념 컷 이름이 겹친다: ${key}`);
+    const rel = `cuts/${key}.svg`;
+    sizes[rel] = put(rel, c.sk.svg());
+    cutArt[key] = `sketch/${rel}`;
+  }
 }
 
 // 스플래시
@@ -94,13 +113,31 @@ const ts = `// 자동 생성물: node qa/sketch/build.mjs 가 만든다. 손으�
 // 코드로 그린 스틱맨 그림의 표. 그림 원본은 qa/sketch/scenes/ 의 장면 코드다.
 
 export interface SketchBubble { text: string; x: number; y: number; flip?: boolean; tail?: "left" | "right" }
-export interface SketchPanelArt { img: string; bubbles?: SketchBubble[] }
+/** 만화 컷 한 장. when 은 그림 왼쪽 위(whenPos "tr"이면 오른쪽 위)에 얹는 때와 곳 상자.
+ *  stage 부터 term 까지는 장면 파일이 글까지 쓰는 편(COMIC_META 가 있는 편)에만 있다. */
+export interface SketchPanelArt {
+  img: string;
+  bubbles?: SketchBubble[];
+  when?: string;
+  whenPos?: "tl" | "tr";
+  stage?: string;
+  title?: string;
+  caption?: string;
+  term?: { name: string; def: string };
+}
+export interface SketchComicMeta { title: string; lead?: string; narrator?: string; cta?: string }
 
 /** 원형 스틱맨 쌤 5종(인라인 SVG) */
 export const TEACHER_SVG: Record<string, string> = ${JSON.stringify(avatar, null, 2)};
 
-/** 만화 컷: 레슨별 그림 경로와 말풍선(화자 머리 기준점에서 계산한 자리) */
+/** 만화 컷: 레슨별 그림 경로, 말풍선(화자 머리 기준점에서 계산한 자리), 때와 곳, 컷의 글 */
 export const COMIC_ART: Record<string, SketchPanelArt[]> = ${JSON.stringify(comic, null, 2)};
+
+/** 만화 스텝의 머리말(제목, 이끄는 글, 쌤의 말, 마지막 컷 버튼) */
+export const COMIC_META: Record<string, SketchComicMeta> = ${JSON.stringify(comicMeta, null, 2)};
+
+/** 개념 컷: "<테마>/<이름>" → 그림 경로 */
+export const CUT_ART: Record<string, string> = ${JSON.stringify(cutArt, null, 2)};
 
 /** 스플래시 플립북(놀이 컷은 넘기는 순서대로) */
 export const SPLASH_ART: { frames: string[]; settle: string[]; study: string } = ${JSON.stringify(splash, null, 2)};
@@ -126,4 +163,7 @@ sweep(PUB);
 const kb = n => (n / 1024).toFixed(1) + "KB";
 const sum = pre => Object.entries(sizes).filter(([k]) => k.startsWith(pre)).reduce((s, [, v]) => s + v, 0);
 for (const id of Object.keys(comic)) console.log(`만화 ${id}: ${comic[id].length}컷 ${kb(sum(`comics/${id}/`))}` + comic[id].map((p, i) => (p.bubbles ? ` [${i + 1}:${p.bubbles.map(b => b.text.replace("<br>", " ")).join(" / ")}]` : "")).join(""));
+const themes = [...new Set(Object.keys(cutArt).map(k => k.split("/")[0]))];
+console.log("개념 컷", Object.keys(cutArt).length, "장", kb(sum("cuts/")), "|", themes.map(t => `${t} ${Object.keys(cutArt).filter(k => k.startsWith(t + "/")).length}`).join(", "));
 console.log("스플래시", splash.frames.length + 1, "컷", kb(sum("splash/")), "| 계정", kb(sizes["account.svg"]), "| 과목 카드", Object.keys(subject).length, kb(sum("subj/")), "| 원형 스틱맨 5종(인라인)", kb(Object.values(avatar).join("").length));
+if (warned) console.warn(`경고 ${warned}건`);

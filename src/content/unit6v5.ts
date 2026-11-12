@@ -9,7 +9,7 @@
 // 설계와 대응표는 design/u6v5-plan.md.
 import type { Step } from "../lessons/types";
 import type { Unit } from "./curriculum";
-import { opener, concept, recap, mcq, ox, multi, order, binSort } from "./dsl";
+import { opener, concept, recap, mcq, ox, multi, order, binSort, cut } from "./dsl";
 import { remakeUnit } from "./v5remake";
 import { UNIT6 } from "./unit6";
 import { gasMiniArt } from "../ui/gasFigures";
@@ -36,6 +36,7 @@ export const UNIT6_V5: Unit | null = remakeUnit(UNIT6, {
         title: "압력과<br>기체의 압력",
         lead: "빨대로 누른 뚜껑과 풍선 속 입자. 두 실험에 이름을 붙여요.",
         blocks: [
+          { k: "figure", svg: cut("gas6", "u6l1", "눈밭에서 운동화를 신은 아이는 무릎까지 빠져 있고, 넓적한 눈신발을 신은 쌤은 눈 위에 서서 손을 내미는 장면"), cap: "같은 눈인데 누구는 푹, 누구는 사뿐. 닿는 넓이가 달라서예요" },
           { k: "term", name: "압력", def: "<b>일정한 면적에 작용하는 힘의 크기</b>예요. 힘이 클수록, 힘을 받는 면적이 좁을수록 커져요. 빨대의 뾰족한 쪽은 닿는 면적이 좁아 같은 힘으로도 압력이 커서 뚜껑이 뚫렸죠." },
           { k: "term", name: "기체의 압력", def: "기체 입자가 벽에 <b>충돌</b>하면서 일정한 면적에 가하는 힘이에요. 풍선 벽이 번쩍이던 자리마다 입자가 벽을 한 번씩 민 거예요. 쇠구슬이 손바닥을 톡톡 밀던 것과 같아요." },
           { k: "note", tone: "amber", html: "기체의 압력은 아래쪽으로만 작용하지 않아요. 입자가 <b>모든 방향</b>으로 움직여 풍선의 위, 아래, 옆을 모두 밀어요. 풍선이 사방으로 둥글게 부푸는 까닭이에요." },
@@ -100,6 +101,7 @@ export const UNIT6_V5: Unit | null = remakeUnit(UNIT6, {
         title: "보일 법칙,<br>누르면 줄어드는 규칙",
         lead: "방금 기록한 세 점에 이름을 붙여요.",
         blocks: [
+          { k: "figure", svg: cut("gas6", "u6l2", "시소의 한쪽에 앉은 쌤이 내려가자 반대쪽의 아이가 그만큼 올라가는 장면"), cap: "한쪽이 내려가면 다른 쪽은 올라가요" },
           { k: "term", name: "반비례", def: "한쪽이 2배, 4배로 커질 때 다른 쪽은 <b>2분의 1, 4분의 1</b>로 작아지는 관계예요. 그래서 둘을 곱한 값이 늘 같아요. 24×1, 12×2, 6×4가 모두 24였죠." },
           { k: "term", name: "보일 법칙", def: "<b>온도가 일정할 때 기체의 압력과 부피는 반비례해요.</b> 영국의 과학자 보일이 실험으로 밝혀서 붙은 이름이에요." },
           { k: "note", tone: "amber", html: "피스톤을 눌러도 입자의 <b>개수</b>와 <b>빠르기</b>는 그대로예요. 달라지는 것은 입자 사이의 거리와 벽에 부딪히는 횟수예요." },
@@ -172,6 +174,7 @@ export const UNIT6_V5: Unit | null = remakeUnit(UNIT6, {
         title: "대기압과 수압,<br>기체를 누르는 압력",
         lead: "산 위와 바닷속에서 풍선을 누르던 압력에 이름을 붙여요.",
         blocks: [
+          { k: "figure", svg: cut("gas6", "u6l3", "산꼭대기에서 배낭을 연 아이가 빵빵해진 과자 봉지를 꺼내 들고 놀라는 장면, 산 아래에 작은 마을"), cap: "산꼭대기에서 과자 봉지가 빵빵해졌어요" },
           { k: "term", name: "대기압", def: "지구를 둘러싼 <b>공기가 누르는 압력</b>이에요. 바닷가 높이에서는 약 1기압이고, 높이 올라갈수록 작아져요. 산 5500 m에서 풍선을 누르던 0.5기압이 그곳의 대기압이에요." },
           { k: "term", name: "수압", def: "<b>물이 누르는 압력</b>이에요. 깊이 들어갈수록 커져요. 바닷속에서는 10 m 내려갈 때마다 약 1기압씩 더해져서, 바닷속 30 m의 풍선은 대기압 1기압까지 합쳐 4기압을 받았어요." },
           { k: "note", tone: "amber", html: "풍선이 부풀 때도 쪼그라들 때도 속에 든 기체 입자의 <b>개수는 그대로</b>예요. 누르는 압력에 따라 입자 사이의 거리만 달라져요." },
@@ -255,6 +258,7 @@ export const UNIT6_V5: Unit | null = remakeUnit(UNIT6, {
         title: "샤를 법칙,<br>데우면 늘어나는 규칙",
         lead: "직접 찍은 네 점이 만든 직선에 이름을 붙여요.",
         blocks: [
+          { k: "figure", svg: cut("gas6", "u6l4", "겨울 운동장에서 찌그러진 축구공을 든 아이와, 난로 옆에서 다시 탱탱해진 공을 든 쌤"), cap: "찬 바깥에선 쭈글, 따뜻한 난로 옆에선 탱탱" },
           { k: "term", name: "샤를 법칙", def: "<b>압력이 일정할 때 기체의 온도가 높아지면 부피가 일정한 비율로 늘어나요.</b> 프랑스의 과학자 샤를이 밝혀서 붙은 이름이에요. 실험에서는 20 ℃ 오를 때마다 2 mL씩 늘었죠." },
           { k: "note", tone: "blue", html: "'압력이 일정할 때'는 바깥에서 누르는 압력이 그대로라는 뜻이에요. 주사기의 피스톤은 자유롭게 움직여서, 속 기체가 세게 밀면 밀려나고 약하게 밀면 내려와요." },
           { k: "note", tone: "amber", html: "온도가 2배가 된다고 부피가 2배가 되지는 않아요. 20 ℃에서 40 ℃가 될 때 30.0 mL는 <b>32.0 mL</b>가 됐을 뿐이에요." },

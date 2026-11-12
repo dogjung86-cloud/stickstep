@@ -2,6 +2,8 @@
 import type { Lesson, Step } from "../lessons/types";
 import type { Block } from "../ui/blocks";
 import { cutTailHorn } from "../ui/figures";
+// 생성 표를 직접 읽는다(ui/sketchArt.ts 는 스타일 파일을 함께 불러와, 내용 파일만 묶어 돌리는 검사 스크립트가 깨진다)
+import { CUT_ART } from "../ui/sketchArt.generated";
 
 type Obj = Record<string, unknown>;
 
@@ -26,6 +28,10 @@ export interface CutBubble {
  *  중2 VII(elec)이 기준 구현. lazy 금지(.scroll 컨테이너에서 안 뜸 — CLAUDE.md 사고 14).
  *  bubbles를 주면 이미지 위에 위트 말풍선을 겹친다(글자 생성 리스크 없는 라스터+HTML 하이브리드). */
 export const cut = (theme: string, name: string, alt: string, bubbles?: CutBubble[]): string => {
+  // 코드로 그린 컷(qa/sketch/scenes/cuts, public/sketch/cuts/<theme>/<name>.svg)이 있으면 그것을 먼저 싣는다.
+  // 발주 그림에 맞춰 잡은 말풍선 자리는 코드 그림과 맞지 않으므로 이때는 싣지 않는다.
+  const code = CUT_ART[`${theme}/${name}`];
+  if (code) return `<img src="${RECAP_IMG_BASE}${code}" alt="${alt}" style="display:block;width:100%;border-radius:12px"/>`;
   const img = `<img src="${RECAP_IMG_BASE}${theme}/cuts/${name}.webp" alt="${alt}" style="display:block;width:100%;border-radius:12px"/>`;
   if (!bubbles?.length) return img;
   const bs = bubbles
@@ -166,9 +172,14 @@ export const recap = (o: {
 
 // comic panels[].bubbles = CutBubble 하이브리드(발주 컷엔 연기만, 앱이 한글 말풍선을 얹는다).
 // 컷당 1~2개·한 풍선 20자 안쪽, 사건 설명은 캡션 몫 — 역사 트랙이 파일럿(하위 호환: 없으면 기존 그대로).
+/** 만화. 코드 그림 만화는 글까지 장면 파일이 쓰므로 `comic(comicStory("u3l3"))`(ui/sketchArt)로 만든다.
+ *  when: 그림 왼쪽 위(whenPos "tr"이면 오른쪽 위)의 때와 곳 상자. code: 코드 그림 만화 표시(steps/comic.ts 머리말). */
 export const comic = (o: {
-  title?: string; lead?: string; narrator?: string; cta?: string;
-  panels: { img?: string; stage: string; title: string; caption: string; term?: { name: string; def: string }; bubbles?: CutBubble[] }[];
+  title?: string; lead?: string; narrator?: string; cta?: string; code?: boolean;
+  panels: {
+    img?: string; stage: string; title: string; caption: string; term?: { name: string; def: string };
+    bubbles?: CutBubble[]; when?: string; whenPos?: "tl" | "tr";
+  }[];
 }): Step => ({ type: "comic", ...o });
 
 // ── 열 단원(III) 랩 ──────────────────────────────────────────

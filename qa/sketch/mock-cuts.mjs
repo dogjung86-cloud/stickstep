@@ -1,4 +1,4 @@
-// 배선 전 개념 컷 미리보기: 단원 파일(scenes/cuts/cuts-uN.mjs)의 그림을 폰 화면(390px)의 개념 카드 모양으로 찍는다.
+// 개념 컷 미리보기(앱 없이): 단원 파일(scenes/cuts/cuts-uN.mjs)의 그림을 폰 화면(390px)의 개념 카드 모양으로 찍는다. 앱에서의 확인은 check-cuts.mjs.
 // 실행: node qa/sketch/mock-cuts.mjs cuts/cuts-u2 [출력 PNG] [--compare] [--only=u2l1,u2l2]
 //   --compare: 원본 발주 그림(public/<테마>/cuts/<컷>.webp, 없으면 재제작 브랜치의 같은 경로)을 왼쪽에 나란히 둔다.
 //   단원 파일 형식: export function cuts() { return [{ name, theme, orig?, sk, cap, alt }] }

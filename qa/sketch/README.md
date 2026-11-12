@@ -2,14 +2,14 @@
 
 스틱맨 그림을 이미지 생성 모델 없이 코드로 그려 SVG로 뽑는 도구다. 그리는 코드는 번들 밖(`qa/sketch`)에 있고, 앱은 미리 뽑아 둔 정적 SVG만 싣는다.
 
-지금 코드 그림으로 바뀐 곳(2026-11-11, `sketch-art-sample` 브랜치)
+지금 코드 그림으로 바뀐 곳
 
-- 스플래시 플립북 14컷과 정착 컷, 로그인과 계정 화면 그림, 소개 페이지 대표 그림
-- 원형 스틱맨 쌤 5종(만화, 훅, 정리 화면의 얼굴)
-- 과목 카드 그림 4종
-- 중1 과학 만화 열 편: u1l1, u1l3, u2l1, u2l7, u3l3, u4l3, u4l6, u5l3, u6l2, u7l3
+- 스플래시 플립북 14컷과 정착 컷, 로그인과 계정 화면 그림, 소개 페이지 대표 그림(2026-11-11)
+- 원형 스틱맨 쌤 5종(만화, 훅, 정리 화면의 얼굴), 과목 카드 그림 4종(2026-11-11)
+- 중1 과학 만화 열 편: u1l1, u1l3, u2l1, u2l7, u3l3, u4l3, u4l6, u5l3, u6l2, u7l3(2026-11-11, 2026-11-12에 직접 조사해 이야기부터 다시 짠 판으로 바꿈)
+- 중1 과학 개념 컷 46장: Ⅰ 5, Ⅱ 14, Ⅲ 5, Ⅳ 5, Ⅴ 6, Ⅵ 4, Ⅶ 7(2026-11-12)
 
-중2 과학, 역사, 사회 만화와 개념 컷(`cut()`)은 아직 발주 그림 그대로다.
+중2 과학, 역사, 사회 만화와 그 밖의 개념 컷(`cut()`)은 아직 발주 그림 그대로다.
 
 ## 파일
 
@@ -18,13 +18,18 @@
 | `lib/sk.mjs` | 손그림 SVG 엔진: 떨리는 굵은 선(`ink`), 살짝 어긋난 채움과 마커 결(`fill`), 경로 단순화, 기준점 기록(`mark`), 기호(물음표, 느낌표, 화살표, 반짝임 등) |
 | `lib/figure.mjs` | 막대 인물: 머리 모양과 모자, 안경, 수염, 표정, 머리띠, 겉옷, 관절 좌표 자세. 인물 설정(TEACHER, STUDENT, LIND, HOOKE, DARWIN, OFFICIAL 등) |
 | `lib/props.mjs` | 여러 장면이 함께 쓰는 소품(책상, 책, 지구, 구름, 해와 달, 현미경 등). 한 편에서만 쓰는 소품은 그 장면 파일 안에 둔다 |
-| `scenes/comic-<레슨>.mjs` | 만화 한 편. `panels()`가 `[{ sk, bubbles? }]`를 돌려준다. `extras()`를 두면 문제 그림처럼 만화 밖에서 쓰는 그림도 함께 뽑는다 |
+| `lib/bubble.mjs` | 만화 컷 위의 말풍선과 때와 곳 상자 자리 계산, 화면 글 규칙 검사. `build.mjs`와 `mock-comic.mjs`가 함께 쓴다 |
+| `lib/app.mjs` | 앱 검사(`check-*.mjs`)용으로 앱을 연다: 개발 서버(`PORT`) 또는 서버 없이 개발 모드 번들(`DIST`), 레슨 바로 열기 |
+| `scenes/comic-<레슨>.mjs` | 만화 한 편. `META`(머리말)와 `panels()`(그림, 말풍선, 때와 곳, 컷의 글)가 정본이다. `extras()`를 두면 문제 그림처럼 만화 밖에서 쓰는 그림도 함께 뽑는다 |
+| `scenes/cuts/cuts-u<단원>.mjs` | 개념 컷. `cuts()`가 `[{ name, theme, sk, alt, cap, orig?, spare? }]`를 돌려준다(`spare`는 미리보기에만 쓰는 예비 장면) |
 | `scenes/splash.mjs`, `avatars.mjs`, `subjects.mjs` | 스플래시, 원형 스틱맨과 계정 그림, 과목 카드 |
-| `research/<레슨>.md` | 만화마다의 내용 조사(레슨에서의 역할, 사실 확인과 출처, 재편성안). 캡션이나 장면을 고칠 때 먼저 읽는다 |
-| `build.mjs` | 장면 → `public/sketch/**.svg`와 `src/ui/sketchArt.generated.ts`. 말풍선 자리는 화자 머리 기준점에서 계산한다. 바뀐 파일만 다시 쓴다 |
+| `research/<레슨>.md` | 만화마다의 내용 조사(레슨에서 맡을 일, 사실 확인과 출처, 고른 이야기와 까닭, 컷 표). 글이나 장면을 고칠 때 먼저 읽는다 |
+| `build.mjs` | 장면 → `public/sketch/**.svg`와 `src/ui/sketchArt.generated.ts`. 말풍선 자리는 화자 머리 기준점에서 계산하고, 겹침과 글 규칙을 경고한다. 바뀐 파일만 다시 쓴다 |
 | `preview.mjs`, `one.mjs`, `sheet-characters.mjs` | 눈검수용 시트(앱 없이 그림만) |
-| `board.sh`, `../shot-sketch.mjs` | 앱 화면에서 만화 한 편을 찍어 한 장으로 모은다(말풍선과 글까지 확인) |
-| `check-comics.mjs` | 열 편을 폰 두 크기에서 끝까지 넘기며 그림 로드, 말풍선이 컷 밖으로 나가는지와 서로 겹치는지, 페이지 오류를 기계로 확인 |
+| `mock-comic.mjs`, `mock-cuts.mjs` | 앱 없이 폰 화면 모양으로 찍는 시트(만화는 글과 때와 곳 상자까지, 개념 컷은 개념 카드 모양으로) |
+| `board.sh`, `../shot-sketch.mjs` | 개발 서버의 앱 화면에서 만화 한 편을 찍어 한 장으로 모은다 |
+| `check-comics.mjs` | 만화 열 편을 폰 세 크기(360, 375, 390)에서 끝까지 넘기며 기계로 확인(컷 수, 그림 로드, 말풍선과 때와 곳 상자 자리, 배지의 숫자, 글 규칙, 마지막 버튼, 페이지 오류) |
+| `check-cuts.mjs` | 중1 과학 전 레슨을 걸어 개념 스텝마다 첫 블록이 뜨는 코드 그림인지 확인하고, 단원별 모아 보기 시트를 만든다 |
 
 `public/sketch/*.svg`와 `src/ui/sketchArt.generated.ts`는 생성물이라 손으로 고치지 않는다.
 
@@ -35,24 +40,51 @@ node qa/sketch/build.mjs
 ```
 
 ```bash
-node qa/sketch/preview.mjs u3l3 4 1
+node qa/sketch/mock-comic.mjs comic-u3l3 "D:/Brilliant Science/output/comics-v2/u3l3.png" 4
 ```
 
 ```bash
-bash qa/sketch/board.sh u3l3 "열의 이동" "III." "D:/Brilliant Science/output/sketch-art-sample/만화/u3l3.png"
+node qa/sketch/mock-cuts.mjs cuts/cuts-u3 "D:/Brilliant Science/output/concept-cut-samples/u3/sheet.png"
+```
+
+앱 검사는 개발 서버가 없으면 개발 모드 번들을 만들어 넘긴다(`qa/shots/`는 git이 무시하는 폴더다).
+
+```bash
+NODE_ENV=development npx vite build --mode development --outDir qa/shots/devdist --emptyOutDir
 ```
 
 ```bash
-PORT=5537 node qa/sketch/check-comics.mjs
+DIST=qa/shots/devdist node qa/sketch/check-comics.mjs
+```
+
+```bash
+DIST=qa/shots/devdist node qa/sketch/check-cuts.mjs
 ```
 
 ## 만화 한 편을 만드는 순서
 
-1. `research/<레슨>.md`의 사실 확인과 재편성안을 읽고 컷을 정한다. 뒤 스텝(개념, 정리, 문제)이 쓰는 용어를 만화가 먼저 겪게 하는지 본다.
-2. `scenes/comic-<레슨>.mjs`를 쓴다. 한 컷은 960×720. 인물에 `name`을 주면 머리 꼭대기 좌표가 기록되고, `BUBBLES`에 `{ who, text }`를 적으면 말풍선 자리가 계산된다. 줄은 `<br>`로 직접 나눈다.
-3. `preview.mjs`로 찍어 보며 좌표를 고친다.
-4. 콘텐츠 파일의 패널을 `{ ...comicArt("<레슨>", i), stage, title, caption, term? }`로 쓰고 `build.mjs`, `npx tsc --noEmit`을 돌린다.
-5. `board.sh`로 앱 화면을 찍어 말풍선이 그림을 가리지 않는지 본다. 마지막에 `check-comics.mjs`.
+1. `research/<레슨>.md`에 사실 확인과 출처, 레슨에서 맡을 일, 컷 표를 정리한다. 뒤 스텝(개념, 정리, 문제)이 쓰는 용어를 만화가 먼저 겪게 하는지 본다.
+2. `scenes/comic-<레슨>.mjs`를 쓴다. 한 컷은 960×720. 인물에 `name`을 주면 머리 꼭대기 좌표가 기록되고, 컷의 `bubbles`에 `{ who, text }`를 적으면 말풍선 자리가 계산된다. 줄은 `<br>`로 직접 나눈다.
+3. `preview.mjs`, `mock-comic.mjs`로 찍어 보며 좌표와 글을 고친다.
+4. 단원 파일에는 `comic(comicStory("<레슨>"))` 한 줄만 둔다. `build.mjs`(경고 0건), `npx tsc --noEmit`.
+5. `check-comics.mjs`로 앱에서 끝까지 넘겨 본다.
+
+## 만화의 형식과 글의 규칙(2026-11-12)
+
+- 형식: `export const META = { title, lead?, narrator, cta }`(만화 스텝 머리), `export function panels()`가 `[{ sk, bubbles?, when?, whenPos?, stage, title, caption, term? }]`를 돌려준다. 이 글이 앱에 그대로 나간다(빌드가 표에 싣는다).
+- **연도와 장소는 그림 안으로.** 그 컷의 때와 곳을 `when`에 적으면 앱이 그림 왼쪽 위(`whenPos: "tr"`이면 오른쪽 위)에 노란 상자로 얹는다(그림 속에 글자를 그리지 않는 규칙은 그대로). 그림을 그릴 때 그 자리(960×720 기준 왼쪽 위 약 400×90)에 중요한 것을 두지 않는다.
+- 자리는 폰 컷 폭 350px(390px 폰) 기준으로 계산한다. 더 좁은 폰에서는 앱이 말풍선과 상자를 그림과 같은 비율로 줄이므로(ui.css `.comic-art.code`) 350px에서만 맞추면 된다. 빌드는 말풍선이 상자에 3px 안쪽으로 붙어도 경고한다.
+- 단계 배지(`stage`)에는 이야기 단계(궁금증, 발견 등)만 쓰고 연도를 넣지 않는다. 배지 색은 컷에 처음 나온 차례대로 정해진다.
+- 내레이션(`caption`)은 그 컷만 읽어도 뜻이 통하게 쓴다. "바로 이해에 나왔지요"처럼 다른 곳에 적힌 연도를 가리키기만 하는 말은 쓰지 않고, 필요하면 연도를 글에 직접 쓴다("1665년, 훅은 … 책을 펴냈어요").
+- 학생을 "너"라고 부르지 않는다. "너의 몸도 모두 세포로"가 아니라 "사람의 몸도 모두 세포로"처럼 일반적인 표현을 쓴다.
+- 이야기는 과학사가 아니어도 된다. 내용을 이해하는 데 더 맞으면 일상 장면을 쓴다(u4l3).
+
+## 개념 컷(2026-11-12)
+
+- 장면은 `scenes/cuts/cuts-u<단원>.mjs`. 빌드가 `public/sketch/cuts/<테마>/<이름>.svg`로 뽑고, 단원 파일의 `cut("<테마>", "<이름>", "<대체 글>")`이 코드 그림을 먼저 싣는다(없으면 발주 그림 `public/<테마>/cuts/<이름>.webp`).
+- 테마: Ⅰ civ, Ⅱ bio4, Ⅲ heat3, Ⅳ matter4, Ⅴ force5, Ⅵ gas6, Ⅶ space7. 이름은 레슨 id, 그 레슨의 둘째 개념 스텝은 끝에 b(`u7l1b`).
+- 대체 글과 캡션의 정본은 단원 파일의 개념 스텝이다. 장면 파일의 `alt`, `cap`은 미리보기용 가안이다.
+- 장면은 랩과 도입에서 쓴 소재가 아닌 새 각도의 일상 장면으로. 개념 스텝의 글과 어긋나지 않는지, 과학적으로 맞는지 함께 본다.
 
 ## 그릴 때 지킬 것
 
@@ -66,19 +98,3 @@ PORT=5537 node qa/sketch/check-comics.mjs
 - 크게 키운 소품의 선이 두꺼워지면 `sk.lwK`를 잠시 낮춘다(`thin` 헬퍼).
 - 집, 성벽, 장치처럼 화면을 크게 차지하는 구조물도 선이 인물(축척 0.72에서 약 9px)보다 굵어지지 않게 `thin`으로 낮춘다. 그림 아래쪽을 어두운 면으로 넓게 칠하지 않는다(검은 선이 묻히고 화면이 무거워진다).
 - 열의 흐름은 만화의 문법을 따른다: 대류는 오름 빨강, 내림 파랑. 복사는 주황 물결 화살표(`ray`). 데워진 금속은 색이 변하는 막대(`hotBar`)지만, 국이나 물 정도의 온도에서 쇠가 빨갛게 달아오르게 그리지 않는다. 돋보기는 금색 테(`#B8892E`, 13)와 외곽선 없는 갈색 손잡이(`#8A5A33`, 16).
-
-## 다시 만드는 만화(v2, 2026-11-12~, 배선 전)
-
-사용자 요청으로 중1 과학 만화 열 편을 새로 조사하고 콘티부터 다시 짠다. 다른 세션들이 같은 단원의 랩과 문제를 고치는 중이라 **앱 배선은 나중에 한 번에** 한다. 그때까지는 그림과 글을 장면 파일에만 둔다.
-
-- 장면 파일은 `scenes/v2/comic-<레슨>.mjs`. 하위 폴더라 `build.mjs`가 집어 가지 않는다(바로 위 `scenes/comic-*.mjs`는 빌드가 집어 공개 그림을 덮어쓰고, 만들지 않은 SVG는 지운다. 배선 전에 그 파일들을 고치거나 `build.mjs`를 돌리지 않는다).
-- 형식: `export const META = { title, lead?, narrator, cta }`(만화 스텝 머리), `export function panels()`가 `[{ sk, bubbles?, when?, whenPos?, stage, title, caption, term? }]`를 돌려준다. 문제 그림처럼 만화 밖에서 쓰는 그림은 지금처럼 `extras()`.
-- 조사와 콘티는 `research/v2/<레슨>.md`(사실과 출처, 레슨에서 맡을 일, 컷 표). 지금의 `research/<레슨>.md`는 지금 만화의 기록이라 그대로 둔다.
-- 미리보기는 `node qa/sketch/mock-comic.mjs v2/comic-<레슨> <출력 PNG> 4`. 앱의 만화 CSS를 그대로 써서 폰 화면(390px)의 컷을 찍고, 말풍선이 컷 밖으로 나가거나 서로, 또는 때와 곳 상자와 겹치면 경고한다. 글 규칙(대시, '교과서', 학생을 '너'로 부르는 말, '이해에'처럼 연도를 가리키기만 하는 말)도 본다.
-
-**글의 규칙(사용자 지적, 2026-11-12)**
-
-- **연도와 장소는 그림 안으로.** 지금 만화는 "1665년, 런던" 같은 때와 곳이 제목 위 배지에 있어 잘 안 보인다. v2에서는 그 컷의 때와 곳을 `when`에 적고, 앱이 그림 왼쪽 위(또는 `whenPos: "tr"`이면 오른쪽 위)에 노란 상자로 얹는다(그림 속에 글자를 그리지 않는 규칙은 그대로). 특정한 때의 장면이면 컷마다 `when`을 단다. 그림을 그릴 때 그 자리(960×720 기준 왼쪽 위 약 400×90)에 중요한 것을 두지 않는다.
-- 단계 배지(`stage`)에는 이야기 단계(궁금증, 발견 등)만 쓰고 연도를 넣지 않는다.
-- 내레이션(`caption`)은 그 컷만 읽어도 뜻이 통하게 쓴다. "바로 이해에 나왔지요"처럼 다른 곳에 적힌 연도를 가리키기만 하는 말은 쓰지 않고, 필요하면 연도를 글에 직접 쓴다("1665년, 훅은 … 책을 펴냈어요").
-- 학생을 "너"라고 부르지 않는다. "너의 몸도 모두 세포로"가 아니라 "사람의 몸도 모두 세포로"처럼 일반적인 표현을 쓴다.

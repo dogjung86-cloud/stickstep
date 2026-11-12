@@ -11,7 +11,7 @@ import {
   gasPressure, boyleSyringe, diverBubble, charlesSyringe, hotairRide,
 } from "./dsl";
 import { balloonParticleFig, pvCurveFig, graphChoicesFig, pistonWeightsFig, tempVolLineFig, gasMiniArt } from "../ui/gasFigures";
-import { comicArt } from "../ui/sketchArt";
+import { comicStory } from "../ui/sketchArt";
 
 // ══════════════════════════════════════════════════════════
 // 레슨 1. 기체의 압력 (책 198~199쪽)
@@ -115,58 +115,8 @@ const L2 = {
   standard: "책 200~203쪽",
   doneNote: "압력과 부피의 반비례(보일 법칙)를 배웠어요",
   steps: [
-    comic({
-      title: "계단 위의<br><em>J자 유리관</em>",
-      lead: "스틱맨 쌤이 들려주는 보일과 훅의 실험 이야기",
-      narrator: "1660년대 영국, 계단에 매단 기다란 유리관에 <b>수은</b>을 부어 공기를 눌러 본 두 사람이 있었어요.",
-      cta: "주사기 연구소 열기",
-      // 그림은 코드로 그린다(qa/sketch/scenes/comic-u6l2.mjs). 편성 근거와 사실 확인은 qa/sketch/research/u6l2.md.
-      panels: [
-        {
-          ...comicArt("u6l2", 0),
-          stage: "1661년, 영국",
-          title: "공기에 용수철이?",
-          caption: "<b>로버트 보일</b>은 공기를 누르면 <b>용수철</b>처럼 되밀어낸다고 믿었어요. 다른 학자가 그 힘으로는 수은 기둥도 못 버틴다고 하자, 보일은 공기가 얼마나 세게 버티는지 직접 재 보기로 했어요.",
-        },
-        {
-          ...comicArt("u6l2", 1),
-          stage: "실험 준비",
-          title: "계단에 매단 J자 관",
-          caption: "아래가 굽고 <b>짧은 쪽 끝을 막은</b> 유리관이에요. 너무 길어서 방에 세우지 못하고 계단에 매달았지요. 막힌 끝에는 공기가 갇혀 있어요. 조수는 코르크에서 세포를 찾아낸 바로 그 <b>훅</b>이었다고 해요.",
-        },
-        {
-          ...comicArt("u6l2", 2),
-          stage: "수은을 붓다",
-          title: "위에서 붓고, 아래서 재고",
-          caption: "한 사람이 위에서 무거운 액체 금속 <b>수은</b>을 붓고, 한 사람은 아래에서 공기 기둥의 길이를 쟀어요. 긴 쪽의 수은이 높아질수록 갇힌 공기는 점점 <b>짧아졌어요</b>.",
-        },
-        {
-          ...comicArt("u6l2", 3),
-          stage: "와장창",
-          title: "관이 깨졌다",
-          caption: "갇힌 공기가 처음의 <b>절반</b>이 되는 것까지 본 순간, 관이 그만 깨지고 말았어요. 다행히 아래에 둔 상자가 수은을 받아 냈지요. 보일은 더 정확히 재려고 실험을 처음부터 다시 했어요.",
-        },
-        {
-          ...comicArt("u6l2", 4),
-          stage: "놀라운 규칙",
-          title: "두 배로 누르면 절반",
-          caption: "다시 잰 결과, 공기가 <b>절반</b>이 됐을 때 더 부은 수은 기둥은 대기가 누르는 힘과 맞먹었어요. 처음부터 누르던 대기에 그만큼을 더했으니 누르는 힘이 <b>2배</b>가 된 거예요. 4배로 누르면 부피는 4분의 1이 되었고요.",
-        },
-        {
-          ...comicArt("u6l2", 5),
-          stage: "반대로 당기면",
-          title: "늘어나는 공기",
-          caption: "이번에는 공기를 끌어올려 누르는 힘을 줄였더니 부피가 <b>늘어났어요</b>. 누르는 힘과 부피를 곱하면 늘 비슷한 값이었지요. 친구 타운리가 짐작한 규칙을 보일이 실험으로 확인한 거예요. 단, <b>온도가 그대로</b>일 때의 이야기예요.",
-          term: { name: "보일 법칙", def: "온도가 일정할 때, 기체의 압력과 부피는 반비례한다" },
-        },
-        {
-          ...comicArt("u6l2", 6),
-          stage: "오늘날",
-          title: "용수철 대신 입자로",
-          caption: "보일은 이 힘을 공기의 용수철이라고 불렀어요. 오늘날에는 <b>입자</b>로 설명해요. 입자 사이에는 빈 공간이 있어서, 누르면 개수는 그대로인 채 사이만 가까워져요. 이제 주사기로 직접 눌러 봐요!",
-        },
-      ],
-    }),
+    // 만화: 글과 그림 모두 장면 파일 qa/sketch/scenes/comic-u6l2.mjs 가 정본(편성 근거와 사실 확인은 qa/sketch/research/u6l2.md).
+    comic(comicStory("u6l2")),
     boyleSyringe({
       title: "주사기 연구소,<br>누르면 압력은?",
       lead: "24 mL·1기압에서 시작해요. 피스톤을 밀고 당기며 압력계와 그래프를 지켜보세요.",

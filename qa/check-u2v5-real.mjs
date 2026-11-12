@@ -103,7 +103,7 @@ console.log(`[PORT ${PORT}] 옛 주소 ?u2v5 = 같은 판`);
   const page = await newPage();
   await boot(page, "?u2v5");
   await openNode(page, 0);
-  await cta(page, 7);
+  await cta(page, 8); // 만화 여덟 컷(코드 그림 v2, 2026-11-12)
   const r = await page.evaluate(() => ({ v3: !!document.querySelector(".screen.active .zrl-mag"), v5: !!document.querySelector(".screen.active .bv-step"), flag: sessionStorage.getItem("ss.u2v5") }));
   ok(r.v5 && !r.v3 && r.flag === null, "옛 주소로 들어와도 u2l1 만화 뒤에 새 랩이 열리고 세션 표식은 남지 않는다");
   await page.close();
@@ -116,7 +116,7 @@ console.log("표식 없음 = 새 판(정본) · u2l1 확대 랩");
   await boot(page);
   ok((await page.evaluate(() => sessionStorage.getItem("ss.u2v5"))) === null, "세션 표식 없이 연다");
   await openNode(page, 0);
-  await cta(page, 7);
+  await cta(page, 8); // 만화 여덟 컷(코드 그림 v2, 2026-11-12)
   ok(await page.locator(`${A} .bv-step .mgf-range`).isVisible(), "u2l1 만화 뒤에 새 랩(확대 막대)이 열린다");
   await dragRange(page, ".mgf-range", 1, 600);
   ok((await page.locator(`${A} .mgf-mag b`).textContent()) === "×400", "양파: 막대를 끝까지 끌면 ×400");
@@ -254,7 +254,7 @@ console.log("u2l7 두 섬의 새 랩");
   const page = await newPage();
   await boot(page);
   await openNode(page, 6);
-  await cta(page, 9); // 만화 여덟 컷(코드 그림으로 다시 편성하며 7 → 8) + 개념
+  await cta(page, 8); // 만화 일곱 컷(코드 그림 v2로 다시 편성하며 8 → 7, 2026-11-12) + 개념
   ok(await page.locator(`${A} .bv-step .bki-svg`).isVisible(), "만화와 개념 뒤에 두 섬의 새 랩이 열린다");
   await waitAsk(page);
   await page.locator(`${A} .bv-q.show .bv-choice`, { hasText: "두꺼운 부리" }).click();

@@ -665,6 +665,11 @@ src/
   `qa/order-cuts.sh`(단원별 순차 배치 — 병렬 codex 금지). 변환 전 새 폴더를 process-geo.mjs ASPECT_DIRS에
   등록. 발주 후 Read 도구로 눈 검수(글자 없음·손가락 5개·과학 정확), 로드 검증은 `qa/check-cuts.mjs`
   (전 트랙 스캔 → naturalWidth>0). **중2 III(빛과 파동)은 concept 스텝이 0개**(훅→랩→recap 구조)라 컷 대상 아님.
+  **중1 과학의 개념 컷은 코드 그림이다(2026-11-12, 46장)**: 장면은 `qa/sketch/scenes/cuts/cuts-uN.mjs`, 빌드가
+  `public/sketch/cuts/<테마>/<이름>.svg`로 뽑고 `cut()`이 이 표(CUT_ART)를 먼저 본다. 테마는 civ·bio4·heat3·matter4·
+  force5·gas6·space7, 이름은 레슨 id(그 레슨의 둘째 개념 스텝은 끝에 b). 이 단원들의 새 컷은 발주하지 않고 장면 파일에 그린다
+  (아래 "코드 그림" 섹션). alt와 cap의 정본은 단원 파일이다. 확인은 `qa/sketch/check-cuts.mjs`(전 레슨을 걸어 개념 스텝마다 첫 블록이
+  뜨는 코드 그림인지 본다).
 - hotspot 스텝은 `spot.photo`(+photoCredit)로 부위별 실사 사진 카드를 설명 아래에 띄울 수 있다(태양 지도가 기준).
 
 ## 새 도입 틀 opener (중1 과학 Ⅰ·Ⅱ, 2026-11-12 정본)
@@ -709,16 +714,30 @@ src/
 
 ## 코드 그림 (2026-11-11, 스틱맨 그림을 생성형 이미지 대신 코드로)
 - **무엇이 바뀌었나**: 스플래시 15컷, 로그인·계정 그림, 소개 페이지 대표 그림, 원형 스틱맨 쌤 5종, 과목 카드 4종,
-  **중1 과학 만화 열 편**(u1l1·u1l3·u2l1·u2l7·u3l3·u4l3·u4l6·u5l3·u6l2·u7l3)이 코드로 그린 SVG다. 이미지 생성 모델을
-  쓰지 않는다. 중2 과학·사회·역사 만화와 개념 컷(`cut()`)은 아직 발주 그림 그대로다.
+  **중1 과학 만화 열 편**(u1l1·u1l3·u2l1·u2l7·u3l3·u4l3·u4l6·u5l3·u6l2·u7l3), **중1 과학 개념 컷 46장**(Ⅰ~Ⅶ, 2026-11-12)이
+  코드로 그린 SVG다. 이미지 생성 모델을 쓰지 않는다. 중2 과학·사회·역사 만화와 그 밖의 개념 컷(`cut()`)은 아직 발주 그림 그대로다.
+  만화 열 편은 2026-11-12에 직접 조사해 이야기부터 다시 짠 판(v2)으로 바뀌었다(옛 편성은 git 기록에만 있다).
 - **구조**: 그리는 코드는 번들 밖 `qa/sketch/`에 있다(엔진 lib/sk.mjs, 인물 lib/figure.mjs, 소품 lib/props.mjs,
-  장면 scenes/*.mjs). `node qa/sketch/build.mjs`가 `public/sketch/**.svg`와 `src/ui/sketchArt.generated.ts`를 만든다.
-  앱은 `src/ui/sketchArt.ts`만 본다(`comicArt(레슨, i)`·`teacherSvg(kind)`·`SPLASH_FRAMES`·`STUDY_ART`·`ACCOUNT_ART`·
-  `subjectArt(key)`). **생성물(SVG와 generated.ts)은 손으로 고치지 않는다.** 원형 스틱맨만 인라인 SVG(작고, 표정을
+  말풍선과 때와 곳 상자 자리 lib/bubble.mjs, 장면 scenes/*.mjs, 개념 컷 scenes/cuts/*.mjs). `node qa/sketch/build.mjs`가
+  `public/sketch/**.svg`와 `src/ui/sketchArt.generated.ts`를 만든다. 앱은 `src/ui/sketchArt.ts`만 본다(`comicStory(레슨)`·
+  `comicArt(레슨, i)`·`cutArt(테마, 이름)`·`teacherSvg(kind)`·`SPLASH_FRAMES`·`STUDY_ART`·`ACCOUNT_ART`·`subjectArt(key)`).
+  예외 하나: `dsl.ts`의 `cut()`은 생성 표의 CUT_ART를 직접 읽는다(sketchArt.ts는 스타일 파일을 불러와, 내용 파일만 esbuild로 묶어
+  돌리는 검사 스크립트가 깨진다). **생성물(SVG와 generated.ts)은 손으로 고치지 않는다.** 원형 스틱맨만 인라인 SVG(작고, 표정을
   바로 갈아 끼워야 해서), 나머지는 정적 SVG를 `<img>`로 싣는다.
-- **만화 콘텐츠 문법**: 패널은 `{ ...comicArt("u3l3", 0), stage, title, caption, term? }`. 그림 경로와 말풍선이 함께
-  온다. **말풍선 좌표를 손으로 적지 않는다**: 장면 코드에서 인물에 `name`을 주고 `BUBBLES`에 `{ who, text }`를 적으면
-  빌드가 머리 꼭대기 좌표에서 자리를 계산한다(컷 밖으로 나가면 빌드가 경고). 줄은 `<br>`로 직접 나눈다.
+- **만화 콘텐츠 문법(2026-11-12)**: 만화 한 편 = 장면 파일 하나(`qa/sketch/scenes/comic-<레슨>.mjs`). 그림, 말풍선, 때와 곳,
+  글(머리말 `META` = title·lead·narrator·cta, 컷마다 stage·title·caption·term)까지 **장면 파일이 정본**이고 빌드가 표에 싣는다.
+  단원 파일은 `comic(comicStory("u3l3"))` 한 줄로 싣는다(레슨 흐름 때문에 바꿀 것만 `comic({ ...comicStory("u3l3"), cta: "…" })`).
+  **글을 고쳐도 장면 파일을 고치고 빌드를 돌린다**(단원 파일에는 만화 글이 없다). **말풍선 좌표를 손으로 적지 않는다**: 장면 코드에서
+  인물에 `name`을 주고 컷의 `bubbles`에 `{ who, text }`를 적으면 빌드가 머리 꼭대기 좌표에서 자리를 계산한다. 줄은 `<br>`로 직접 나눈다.
+- **때와 곳 상자와 좁은 폰**: 컷의 `when`("1757년, 뉴욕")은 그림 왼쪽 위에 노란 상자로 얹는다(`whenPos: "tr"`이면 오른쪽 위).
+  연도는 단계 배지에 넣지 않는다(배지는 제목 위라 잘 안 보였다, 사용자 지적). `comicStory`가 붙이는 `code: true`로 두 가지가 달라진다:
+  단계 배지 색이 STAGE_COLOR 대신 처음 나온 차례대로 정해지고, 말풍선과 때와 곳 상자가 그림과 같은 비율로 줄어든다(자리는 컷 폭
+  350px 기준이고, 더 좁으면 comic.ts가 `--k`를 0.85까지 넣는다. 그래서 360px 갤럭시에서도 390px 폰과 배치가 같다). 빌드는 350px
+  기준으로 말풍선이 컷 밖으로 나가거나 서로 겹치는지, 때와 곳 상자에 붙는지(3px 안쪽), 배지에 숫자가 있는지, 글 규칙(대시, '교과서',
+  '너의', '이해에')을 어기는지 경고한다. **경고 0건을 지킨다.**
+- **만화 글 기준(2026-11-12 사용자 지적)**: 내레이션은 그 컷만 읽어도 뜻이 통하게 쓴다("바로 이해에 나왔지요"처럼 다른 곳의 연도를
+  가리키기만 하는 말 금지, 필요하면 연도를 글에 직접 쓴다). 학생을 "너"라고 부르지 않는다("사람의 몸도 모두 세포로"). 이야기는
+  과학사가 아니어도 이해에 더 맞으면 일상 장면도 좋다(u4l3은 일상, u4l6은 과학사와 일상을 섞었다).
 - **만화를 새로 만들거나 고칠 때**: 먼저 `qa/sketch/research/<레슨>.md`(내용 조사: 레슨에서의 역할, 사실 확인과 출처,
   재편성안)를 읽는다. 내용 재조사를 에이전트에 맡길 때는 Opus로(사용자 지시). 순서와 그릴 때의 요령(큰 머리 비례에서
   읽히는 자세, 말풍선 자리 비워 두기, 어두운 배경은 위쪽 띠로만)은 **qa/sketch/README.md가 정본**이다.
@@ -726,17 +745,20 @@ src/
   가운, 학생 = 노란 모자). 스플래시·로그인 그림·원형 스틱맨 쌤 5종은 눈동자 없이 안경만 쓴 얼굴이다(`bare: true`, 볼 터치와 입만, 2026-11-12 사용자 결정). 눈동자가 있는 큰 얼굴은 과목 카드에만 남아 있다. 예외: 이름 있는 실존 인물(다윈·훅·뉴턴 등)은
   만화에서도 작은 얼굴(점 눈 + 짧은 입, 인물 설정의 `mini: true`)을 쓰고 컷마다 `face`로 표정을 준다(2026-11-12). 그림 속 글자와 숫자 금지(기호는 허용),
   과학자가 나오면 그 과학자를 따로 그린다(쌤이 역을 맡지 않는다). 비율은 4:3(960×720).
-- **QA**: `node qa/sketch/preview.mjs <레슨> 4 1`(그림만 시트) → `bash qa/sketch/board.sh <레슨> "<지도 노드 이름>"
-  "<단원 탭 머리글자>" <출력 png>`(앱 화면에서 한 편을 한 장으로) → `PORT=<포트> node qa/sketch/check-comics.mjs`
-  (열 편을 폰 두 크기에서 끝까지 넘기며 그림 로드·말풍선이 컷 밖으로 나가는지와 서로 겹치는지·페이지 오류 확인).
+- **QA**: `node qa/sketch/preview.mjs <레슨> 4 1`(그림만 시트) → `node qa/sketch/mock-comic.mjs comic-<레슨> <출력 png> 4`
+  (서버 없이 폰 화면의 만화 시트, 글과 때와 곳 상자까지) → 앱 검사 `node qa/sketch/check-comics.mjs [저장 폴더]`(열 편을 폰 세 크기
+  360·375·390에서 끝까지 넘기며 컷 수, 그림 로드, 말풍선과 때와 곳 상자의 자리, 배지, 글 규칙, 마지막 버튼, 페이지 오류를 본다).
+  개념 컷은 `node qa/sketch/mock-cuts.mjs cuts/cuts-uN [출력 png] [--only=…]`(카드 시트) → `node qa/sketch/check-cuts.mjs [저장 폴더]`.
+  앱 검사 둘은 개발 서버(`PORT=`) 또는 서버 없이 개발 모드 번들(`DIST=`)로 돈다: `NODE_ENV=development npx vite build --mode
+  development --outDir <폴더> --emptyOutDir` 뒤 `DIST=<폴더>`(레슨 바로 열기 `?open=`이 살아 있다, qa/sketch/lib/app.mjs).
 - **옛 만화 그림은 지웠다(2026-11-11)**: `public/comics/`의 u1l1·u1l3·u2v3l1·u2v3l7·u3l3·u4l3·u4l6·u5l3·u6l2·u7l3
   열 폴더(webp 70장)와 `public/brand/subj`. 남긴 것은 `comics/avatar/*.png`(구버전 프로필 저장분과 스플래시 폴백),
   `brand/loading`·`brand/study.webp`(위 스플래시 항목), `comics/u2l1`(배선 해제된 옛 unit2.ts). **병합하지 않은
   병행 재제작 브랜치(sci-u3-v3·sci-u4-v3·sci-u2-v4·codex/u3-astra)의 새 단원 파일은 만화 블록이 아직 옛 webp
-  경로를 가리킨다.** 그 브랜치를 합칠 때는 만화 블록을 main의 `comicArt(...)` 블록(그림과 서술 글 모두)으로 바꿔야
+  경로를 가리킨다.** 그 브랜치를 합칠 때는 만화 블록을 main의 `comic(comicStory(...))` 한 줄로 바꿔야
   한다. 그대로 합치면 그림이 뜨지 않고 폴백 스틱맨만 보인다(오류가 나지 않아 눈에 안 띈다).
 - **프리미엄 레슨의 문제 그림**: u2l7 거북 문제는 만화 장면 파일의 `extras()`가 뽑는 인물 없는 두 섬 그림
-  (`sketch/comics/u2l7/island-a.svg`·`island-b.svg`)을 `ppair`로 쓴다. 3컷의 구도를 바꿀 때 함께 본다.
+  (`sketch/comics/u2l7/island-a.svg`·`island-b.svg`)을 `ppair`로 쓴다. 2컷의 구도를 바꿀 때 함께 본다.
 
 ## 만화 컷 이미지 발주 (codex auth → ChatGPT 이미지 생성)
 - **중1 과학 만화 열 편은 2026-11-11에 코드 그림으로 바뀌었다(위 섹션).** 아래 발주 절차와 편별 기록 가운데 중1 과학

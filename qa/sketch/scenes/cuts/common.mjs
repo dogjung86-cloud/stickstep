@@ -1,5 +1,5 @@
 // 개념 컷 코드 그림의 공통 도우미(단원 파일 cuts-uN.mjs 가 함께 쓴다).
-// 개념 컷 = 개념 스텝 첫 블록의 스틱맨 그림(cut()). 배선 전에는 qa/sketch/mock-cuts.mjs 로만 본다.
+// 개념 컷 = 개념 스텝 첫 블록의 스틱맨 그림. build.mjs 가 public/sketch/cuts/<테마>/<이름>.svg 로 뽑고 dsl.ts 의 cut() 이 먼저 싣는다. 앱 없이 볼 때는 mock-cuts.mjs.
 import { C, curve, ell, circ, mix, squiggle, arrow } from "../../lib/sk.mjs";
 
 export const W = 960, H = 720;

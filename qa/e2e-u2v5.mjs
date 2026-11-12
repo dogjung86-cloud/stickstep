@@ -227,9 +227,10 @@ for (const wrong of ONLY ? [] : [false, true]) {
     const meta = await openLesson(page, 0);
     ok(meta.id === "u2l1" && meta.types.join(",") === "comic,magnifyLab,concept,recap,binSort,quiz,quiz,quiz,quiz", `스텝 구성 ${meta.types.join(" ")}`);
     await grab(page, "u2l1 만화");
-    for (let i = 0; i < 7; i++) {
+    // 만화 여덟 컷(코드 그림 v2로 다시 편성하며 7 → 8, 2026-11-12)
+    for (let i = 0; i < 8; i++) {
       await cta(page);
-      if (i < 6) await grab(page, `u2l1 만화 ${i + 2}`);
+      if (i < 7) await grab(page, `u2l1 만화 ${i + 2}`);
     }
     ok((await stepType(page)).includes("bv-step"), "만화 뒤에 랩이 열림");
     await lab(page, "u2l1 확대 랩", playMagnify, {}, "세포, 이름으로 정리하기", wrong);
@@ -421,10 +422,10 @@ for (const wrong of ONLY ? [] : [false, true]) {
     const meta = await openLesson(page, 6);
     ok(meta.id === "u2l7" && meta.types.join(",") === "comic,concept,beakIslesLab,recap,quiz,quiz,order,quiz,quiz", `스텝 구성 ${meta.types.join(" ")}`);
     await grab(page, "u2l7 만화");
-    // 만화 여덟 컷(main이 코드 그림으로 다시 편성하며 7 → 8)
-    for (let i = 0; i < 8; i++) {
+    // 만화 일곱 컷(코드 그림 v2로 다시 편성하며 8 → 7, 2026-11-12)
+    for (let i = 0; i < 7; i++) {
       await cta(page);
-      if (i < 7) await grab(page, `u2l7 만화 ${i + 2}`);
+      if (i < 6) await grab(page, `u2l7 만화 ${i + 2}`);
     }
     await grab(page, "u2l7 개념");
     ok(await cutLoaded(page), "u2l7 개념 컷 그림");

@@ -1,10 +1,10 @@
-// 배선 전 만화 미리보기: 장면 파일(scenes/v2/comic-<레슨>.mjs)만으로 폰 화면의 만화 컷을 앱과 같은 모양으로 찍는다.
-// 실행: node qa/sketch/mock-comic.mjs v2/comic-u2l1 [출력 PNG] [열 수]
+// 만화 미리보기: 장면 파일(scenes/comic-<레슨>.mjs)만으로 폰 화면의 만화 컷을 앱과 같은 모양으로 찍는다(앱을 띄우지 않는다).
+// 실행: node qa/sketch/mock-comic.mjs comic-u2l1 [출력 PNG] [열 수]
 //   앱(src)도 공개 그림(public/sketch)도 건드리지 않는다. 앱의 만화 CSS(ui.css)를 그대로 읽어 쓰고,
-//   말풍선 자리는 build.mjs 와 같은 계산(placeBubble)을 쓴다.
-//   새로 들어가는 것: 그림 안 왼쪽 위(또는 오른쪽 위)의 "때와 곳" 상자(when). 배선할 때 comic.ts 와 ui.css 에 같은 것을 옮긴다.
-// 장면 파일 형식(v2):
-//   export const META = { title, lead?, narrator, cta }           만화 스텝 머리(앱의 comic({ ... }))
+//   말풍선과 때와 곳 상자의 자리는 build.mjs 와 같은 계산(lib/bubble.mjs)을 쓴다.
+//   앱 화면에서 끝까지 넘겨 보는 검사는 check-comics.mjs 다.
+// 장면 파일 형식:
+//   export const META = { title, lead?, narrator, cta }           만화 스텝 머리(앱의 comic(comicStory("<레슨>")))
 //   export function panels() { return [{ sk, bubbles?, when?, whenPos?, stage, title, caption, term? }] }
 //     when: "1665년, 영국 런던" 처럼 그 컷의 때와 곳(그림 속에 글자를 그리지 않으므로 앱이 상자로 얹는다)
 //     whenPos: "tl"(기본, 왼쪽 위) | "tr"(오른쪽 위). 상자 자리에는 중요한 그림을 두지 않는다
@@ -17,40 +17,7 @@ import { chromium } from "playwright-core";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, "..", "..");
 
-/* ---------- 말풍선 자리(build.mjs 와 같은 계산. 고치면 양쪽을 함께 고친다) ---------- */
-const FRAME_W = 350;
-export function textWidth(line) {
-  let w = 0;
-  for (const ch of line.replace(/<[^>]+>/g, "")) w += /[가-힣]/.test(ch) ? 11.6 : ch === " " ? 3.2 : /[0-9A-Za-z]/.test(ch) ? 7.2 : 4.8;
-  return w;
-}
-export function placeBubble(sk, b, where, warn) {
-  const a = sk.anchors[b.who];
-  if (!a) throw new Error(`${where}: 기준점 '${b.who}' 가 없다`);
-  const FH = FRAME_W * sk.h / sk.w;
-  const ax = a.x / sk.w * FRAME_W + (b.dx ?? 0), ay = a.y / sk.h * FH + (b.dy ?? 0);
-  const lines = b.text.split("<br>");
-  const bw = Math.min(FRAME_W * 0.52, Math.max(84, Math.max(...lines.map(textWidth)) + 25.2));
-  const bh = lines.length * 15.6 + 16.2;
-  let cx = ax, by = ay - 9, tail = b.side;
-  if (!tail && ax - bw / 2 < 5) tail = "left";
-  else if (!tail && (ax + bw / 2 > FRAME_W - 5 || FRAME_W - ax < Math.max(84, bw) - 1)) tail = "right";
-  if (tail === "left") { cx = ax + 16 + bw / 2; by = ay - 29; }
-  if (tail === "right") { cx = ax - 16 - bw / 2; by = ay - 29; }
-  const box = { l: cx - bw / 2, r: cx + bw / 2, t: by - bh, b: by };
-  if (box.l < 2 || box.r > FRAME_W - 2 || box.t < 2) warn(`${where}: 말풍선 "${b.text}" 이 컷 밖으로 나간다 ${JSON.stringify(box)}`);
-  if (bw > Math.max(84, FRAME_W - cx) + 1) warn(`${where}: 말풍선 "${b.text}" 이 오른쪽 폭(${Math.round(FRAME_W - cx)}px)보다 넓다. <br> 로 줄을 나누거나 side: "right"`);
-  const out = { text: b.text, x: +(cx / FRAME_W * 100).toFixed(1), y: +(by / FH * 100).toFixed(1), box };
-  if (tail) out.tail = tail;
-  return out;
-}
-// 때와 곳 상자의 자리(350px 컷 기준). 앱에 옮길 CSS 도 이 수치를 쓴다: 위 10px, 옆 10px, 글자 12px, 안쪽 여백 4px 8px
-export function whenBox(text, pos = "tl") {
-  const w = textWidth(text) * (12 / 12.5) + 16 + 3.2, h = 12 * 1.25 + 8 + 3.2;
-  const l = pos === "tr" ? FRAME_W - 10 - w : 10;
-  return { l, r: l + w, t: 10, b: 10 + h };
-}
-const hit = (a, b) => a.l < b.r && b.l < a.r && a.t < b.b && b.t < a.b;
+import { FRAME_W, placeBubble, whenBox, hit, textRules } from "./lib/bubble.mjs";
 
 /* ---------- 앱 CSS 에서 만화 규칙만 뽑기 ---------- */
 function pickCss() {
@@ -67,12 +34,8 @@ function pickCss() {
 }
 const BULB = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 18h5"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 4 10.5c-.7.7-1 1.5-1 2.5H9c0-1-.3-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg>`;
 const TAIL = `<svg class="cut-tail" viewBox="0 0 70 34" aria-hidden="true"><path d="M1 0 L62 27 L30 0 Z" fill="#FFFFFF"/><path d="M1 0 L62 27 L30 0" fill="none" stroke="#39424E" stroke-width="1.6" stroke-linejoin="miter" stroke-miterlimit="8"/></svg>`;
-// 배선 때 ui.css 에 옮길 새 규칙(때와 곳 상자)과 미리보기 전용 틀
+// 미리보기 전용 틀(때와 곳 상자 .comic-when 은 ui.css 에서 함께 뽑아 온다)
 const EXTRA = `
-.comic-when { position: absolute; top: 10px; left: 10px; z-index: 2; padding: 4px 8px; border-radius: 6px; border: 1.6px solid #39424E;
-  background: #FFF4D2; color: #1E2A38; font-size: 12px; font-weight: 800; line-height: 1.25; white-space: nowrap; letter-spacing: -.01em;
-  box-shadow: 0 2px 6px -2px rgba(42, 58, 94, .28); pointer-events: none; }
-.comic-when.tr { left: auto; right: 10px; }
 body { margin: 0; background: #E9ECEF; font-family: "Pretendard Variable", Pretendard, "Malgun Gothic", sans-serif; letter-spacing: -.012em; }
 .grid { display: grid; gap: 22px; padding: 22px; align-items: start; }
 .phone { width: 390px; background: #fff; border-radius: 26px; box-shadow: 0 2px 14px rgba(0,0,0,.10); padding: 10px 22px 26px; box-sizing: border-box; }
@@ -119,10 +82,7 @@ export async function mockComic(modPath, out, cols = 4) {
   });
   // 화면 글 규칙 검사: 대시, '교과서', '너의'
   const texts = [meta?.title, meta?.lead, meta?.narrator, meta?.cta, ...list.flatMap(p => [p.when, p.stage, p.title, p.caption, p.term?.name, p.term?.def, ...(p.bubbles ?? []).map(b => b.text)])].filter(Boolean).join("\n");
-  if (/[—–]/.test(texts)) warnings.push("글: 대시(—, –)가 있다");
-  if (/교과서/.test(texts)) warnings.push("글: '교과서'가 있다");
-  if (/너의|네 몸|너희/.test(texts)) warnings.push("글: 학생을 '너'로 부르는 말이 있다(사람의, 우리 등으로)");
-  if (/이해에|그해에|그 해에/.test(texts)) warnings.push("글: '이해에, 그해에'처럼 연도를 가리키기만 하는 말이 있다(연도를 글에 직접 쓴다)");
+  for (const m of textRules(texts)) warnings.push("글: " + m);
   const n = cells.length, c = Math.min(cols, n);
   const html = `<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pretendard/1.3.9/variable/pretendardvariable-dynamic-subset.min.css"><style>${pickCss()}${EXTRA}.grid{grid-template-columns:repeat(${c},390px)}</style><div class="grid">${cells.join("")}</div>`;
   const browser = await chromium.launch({ channel: "chrome", headless: true });
@@ -140,7 +100,7 @@ export async function mockComic(modPath, out, cols = 4) {
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   const [modPath, out, cols] = process.argv.slice(2);
-  if (!modPath) { console.log("쓰는 법: node qa/sketch/mock-comic.mjs v2/comic-u2l1 [출력 PNG] [열 수]"); process.exit(1); }
+  if (!modPath) { console.log("쓰는 법: node qa/sketch/mock-comic.mjs comic-u2l1 [출력 PNG] [열 수]"); process.exit(1); }
   const r = await mockComic(modPath, out, Number(cols ?? 4));
   console.log(r.out);
   for (const w of r.warnings) console.log("  ! " + w);

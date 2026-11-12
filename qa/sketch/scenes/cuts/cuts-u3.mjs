@@ -388,8 +388,8 @@ export function cuts() {
     { name: "u3l3", theme: "heat3", orig: null, sk: cutU3l3(), alt: "공을 전하는 세 가지 방법: 줄 서서 건네기, 들고 달려가기, 멀리 던지기", cap: "건네고, 들고 가고, 던지고. 열이 가는 세 가지 길" },
     { name: "u3l4", theme: "heat3", orig: null, sk: cutU3l4(), alt: "김이 오르는 뚝배기와 이미 식어 맨손으로 만지는 얇은 금속 냄비", cap: "뚝배기는 천천히 식고, 얇은 금속 냄비는 금방 식어요" },
     { name: "u3l5", theme: "heat3", orig: "u3l5", sk: cutU3l5(), alt: "꽉 닫힌 유리병의 금속 뚜껑에 따뜻한 물을 붓자 뚜껑이 헐거워지는 장면", cap: "안 열리는 병뚜껑엔 따뜻한 물, 금속이 늘어나 헐거워져요" },
-    { name: "v3-u3l3", theme: "heat3", orig: "u3l3", sk: cutV3U3l3(), alt: "뜨거운 국에 꽂힌 금속 숟가락 손잡이를 잡았다가 깜짝 놀라는 스틱맨, 옆에는 멀쩡한 나무 숟가락", cap: "금속 숟가락은 열의 고속도로, 나무 숟가락은 비포장길이에요" },
-    { name: "v3-u3l3b", theme: "heat3", orig: "u3l3b", sk: cutV3U3l3b(), alt: "아궁이 불이 구들장을 데우고 방 안 공기가 도는 온돌방에 팔베개를 하고 누운 스틱맨 단면", cap: "온돌방 하나에 전도·대류·복사가 다 들어 있어요" },
-    { name: "v3-u3l4", theme: "heat3", orig: "u3l4", sk: cutV3U3l4(), alt: "똑같은 두 냄비를 똑같은 불에 올렸는데 한쪽만 펄펄 끓어 어리둥절한 초시계 든 스틱맨", cap: "같은 불, 같은 시간인데 한쪽만 펄펄, 물질이 다르기 때문이에요" },
+    { name: "v3-u3l3", spare: true, theme: "heat3", orig: "u3l3", sk: cutV3U3l3(), alt: "뜨거운 국에 꽂힌 금속 숟가락 손잡이를 잡았다가 깜짝 놀라는 스틱맨, 옆에는 멀쩡한 나무 숟가락", cap: "금속 숟가락은 열의 고속도로, 나무 숟가락은 비포장길이에요" },
+    { name: "v3-u3l3b", spare: true, theme: "heat3", orig: "u3l3b", sk: cutV3U3l3b(), alt: "아궁이 불이 구들장을 데우고 방 안 공기가 도는 온돌방에 팔베개를 하고 누운 스틱맨 단면", cap: "온돌방 하나에 전도·대류·복사가 다 들어 있어요" },
+    { name: "v3-u3l4", spare: true, theme: "heat3", orig: "u3l4", sk: cutV3U3l4(), alt: "똑같은 두 냄비를 똑같은 불에 올렸는데 한쪽만 펄펄 끓어 어리둥절한 초시계 든 스틱맨", cap: "같은 불, 같은 시간인데 한쪽만 펄펄, 물질이 다르기 때문이에요" },
   ];
 }

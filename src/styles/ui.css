@@ -560,6 +560,22 @@
 .comic-art.is-fallback { background: repeating-linear-gradient(135deg, #fff 0 14px, #FAFBFC 14px 28px); }
 .comic-fallback { width: 62%; max-width: 200px; display: grid; place-items: center; padding: 10px 0; }
 .comic-fallback svg { width: 100%; height: auto; }
+/* 때와 곳 상자(2026-11-12): 그 컷의 연도와 장소를 그림 왼쪽 위에 얹는다(.tr이면 오른쪽 위). 말풍선(.cut-bubble)과 같은 잉크 테두리.
+   자리 수치는 qa/sketch/lib/bubble.mjs 의 whenBox 와 짝이다(빌드가 말풍선과 겹치는지 미리 본다). 고치면 함께 고친다. */
+.comic-when {
+  position: absolute; top: 10px; left: 10px; z-index: 2; padding: 4px 8px; border-radius: 6px; border: 1.6px solid #39424E;
+  background: #FFF4D2; color: #1E2A38; font-size: 12px; font-weight: 800; line-height: 1.25; white-space: nowrap; letter-spacing: -.01em;
+  box-shadow: 0 2px 6px -2px rgba(42, 58, 94, .28); pointer-events: none;
+}
+.comic-when.tr { left: auto; right: 10px; }
+/* 코드 그림 만화(comic.ts 의 code): 자리는 컷 폭 350px 기준으로 계산했다. 컷이 좁아지면 comic.ts 가 --k(0.85~1)를 넣고
+   말풍선과 때와 곳 상자를 같은 비율로 줄여, 좁은 폰에서도 390px 폰과 같은 배치가 되게 한다(글자가 그림보다 커져 겹치는 일을 막는다).
+   줄바꿈은 장면 파일의 <br> 만 따른다(폭에 따라 줄이 달라지지 않게). */
+.comic-art.code .cut-bubble { transform: translate(-50%, -100%) scale(var(--k, 1)); transform-origin: 50% 100%; }
+.comic-art.code .cut-bubble.flip { transform: translate(-50%, 0) scale(var(--k, 1)); transform-origin: 50% 0; }
+.comic-art.code .cut-bubble.wrap { white-space: nowrap; max-width: none; }
+.comic-art.code .comic-when { top: calc(10px * var(--k, 1)); left: calc(10px * var(--k, 1)); transform: scale(var(--k, 1)); transform-origin: 0 0; }
+.comic-art.code .comic-when.tr { left: auto; right: calc(10px * var(--k, 1)); transform-origin: 100% 0; }
 
 .comic-caption { margin-top: 16px; font-size: 15.5px; line-height: 1.64; color: var(--sub); word-break: keep-all; }
 .comic-caption b { color: var(--ink); font-weight: 700; }

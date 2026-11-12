@@ -1,269 +1,403 @@
-// 중1 과학 u6l2 도입 만화: 계단 위의 J자 유리관(보일 법칙). 7컷.
-// 편성 근거와 사실 확인은 qa/sketch/research/u6l2.md.
-//   1 공기에 용수철이? → 2 계단에 매단 J자 관 → 3 위에서 붓고 아래서 재고 → 4 관이 깨졌다(첫 시도)
-//   → 5 다시 잰 결과, 두 배로 누르면 절반 → 6 반대로 당기면 늘어나는 공기(보일 법칙, 온도 일정)
-//   → 7 오늘날: 용수철 대신 입자로
-// 보일 자신의 설명은 "공기의 용수철"이었다. 입자 사이 빈 공간은 오늘날의 설명이라 마지막 컷에서 쌤이 한다.
-import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, emark, qmark, check, sparkle, drop, arrow } from "../lib/sk.mjs";
-import { drawFigure, handDot, pose, TEACHER, HOOKE } from "../lib/figure.mjs";
-import { notebook, quill } from "../lib/props.mjs";
+// 중1 과학 u6l2 만화 v2(배선 전 미리보기): 계단 위의 J자 유리관(보일 법칙). 8컷.
+// 조사와 콘티: qa/sketch/research/u6l2.md
+//   1 1661년, 공기가 수은 기둥을 떠받칠까 → 2 끝을 막은 J자 관(갇힌 공기, 바깥 공기만큼 눌림) → 3 절반이 된 공기(누르는 힘 2배)
+//   → 4 첫 관이 깨지고, 계단에 매단 더 긴 관 → 5 4배로 누르면 4분의 1 → 6 촛불을 대 보니(온도) → 7 반대로 늘이면(보일 법칙)
+//   → 8 오늘날: 입자로 보면
+// 보일 자신의 설명은 "공기의 용수철"이었다. 입자 설명은 마지막 컷에서 쌤이 한다. 수은을 부은 사람의 이름은 기록에 없어 이름 없는 조수로 그린다.
+import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, hash, emark, qmark, xmark, check, sparkle, drop, arrow } from "../lib/sk.mjs";
+import { drawFigure, handDot, pose, TEACHER, HOOKE, R } from "../lib/figure.mjs";
+import { notebook, openBook } from "../lib/props.mjs";
 
 const W = 960, H = 720;
-// 보일: 밝은 곱슬 가발 + 푸른 외투. 훅은 세포 만화의 그 훅(갈색 곱슬머리 + 갈색 외투). 다른 학자: 챙 넓은 모자 + 잿빛 망토
+const thin = (sk, k, fn) => { const o = sk.lwK; sk.lwK = k; fn(); sk.lwK = o; };
+// 보일: 밝은 곱슬 가발 + 푸른 외투(지금 만화의 보일과 같은 모습). 훅은 세포 만화의 그 훅. 조수: 짧은 머리 + 가죽 앞치마(이름 없음)
 const BOYLE = { hair: "curls", hairColor: "#DAD3C3", coat: { color: "#3F5E8C", buttons: C.gold, seam: "#2A3F5F" }, seed: 231, mini: true, face: "calm" };
-const CRITIC = { hair: "short", hairColor: "#5B463A", fringe: 24, hat: "brim", hatColor: "#3A3A40", coat: { color: "#7A7F88", seam: "#55595F" }, seed: 241 };
-const AIR = "#BFE9E2", HG = "#AEB6C0", GLASS = "#F6FBFD";
+const HELPER = { hair: "short", hairColor: "#6B4A32", fringe: 24, coat: { color: "#A8794A", seam: "#7A5634", len: 52 }, seed: 251 };
+const AIR = "#BFE9E2", HG = "#AEB6C0", GLASS = "#F6FBFD", PUSH = C.red, OUTSIDE = C.teal;
 const ground = (sk, y, sd) => sk.ink(curve([[14, y + 3], [300, y - 2], [640, y + 2], [946, y - 2]]), { w: 9, seed: sd });
 
-// J자 유리관. 긴 다리(xl, 위가 열림)와 짧은 다리(xs, 위가 막힘)가 아래에서 굽어 이어진다.
-//   top: 긴 다리 꼭대기, shortTop: 짧은 다리 꼭대기, yb: 굽은 곳의 중심 높이
-//   air: 갇힌 공기 기둥의 길이, long: 긴 다리 수은 면의 높이(y), stub: 긴 다리가 깨져 남은 꼭대기(y)
+/* ---------- 유리관과 수은 ---------- */
+
+// J자 유리관: 긴 다리(xl, 위가 열림)와 짧은 다리(xs, 위가 막힘)가 아래에서 굽어 이어진다.
+//   top: 긴 다리 꼭대기, sTop: 짧은 다리 꼭대기(막힌 끝), yb: 굽은 곳 중심 높이, air: 갇힌 공기 길이, hgL: 긴 다리 수은 면(y)
 function jtube(sk, o) {
-  const { xl, xs, top, shortTop, yb, air } = o, tw = o.tw ?? 26, sd = o.sd ?? 301, r = (xl - xs) / 2;
+  const { xl, xs, top, sTop, yb, air } = o, tw = o.tw ?? 26, sd = o.sd ?? 301, r = (xl - xs) / 2;
   const bend = ell((xl + xs) / 2, yb, r, r, 0, Math.PI);
-  const lTop = o.stub ?? top;
-  const cl = [...dense([[xl, lTop], [xl, yb]], 6), ...bend, ...dense([[xs, yb], [xs, shortTop]], 6)];
-  sk.ink(cl, { w: tw + 12, seed: sd, wob: 0.5 });
-  sk.ink([...dense([[xl, lTop - 9], [xl, yb]], 6), ...bend, ...dense([[xs, yb], [xs, shortTop + 4]], 6)], { w: tw, color: GLASS, seed: sd, wob: 0.5, cap: "butt" });
-  const yS = shortTop + air;
-  if (o.long !== undefined) sk.ink([...dense([[xl, o.long], [xl, yb]], 6), ...bend, ...dense([[xs, yb], [xs, yS]], 6)], { w: tw - 5, color: HG, seed: sd, wob: 0.5, cap: "butt" });
-  sk.ink(dense([[xs, yS], [xs, shortTop + 6]], 6), { w: tw - 5, color: AIR, seed: sd, wob: 0.5, cap: "butt" });
-  // 짧은 다리의 종이 눈금
-  if (o.scale !== false) for (let i = 0; i <= 8; i++) sk.ink(dense([[xs - tw / 2 - 20, shortTop + 10 + i * 17], [xs - tw / 2 - (i % 4 ? 10 : 4), shortTop + 10 + i * 17]]), { w: 3.5, color: "#8A6A4A", seed: sd + 3 + i, wob: 0 });
+  const path = (yL, yS) => [...dense([[xl, yL], [xl, yb]], 6), ...bend, ...dense([[xs, yb], [xs, yS]], 6)];
+  const yS = sTop + air;
+  thin(sk, o.k ?? 1, () => {
+    sk.ink(path(top, sTop), { w: tw + 12, seed: sd, wob: 0.5, cap: "butt" });
+    sk.ink(path(top, sTop + 4), { w: tw, color: GLASS, seed: sd, wob: 0.5, cap: "butt" });
+    for (const sg of [-1, 1]) sk.ink(dense([[xl + sg * (tw / 2 + 3), top + 2], [xl + sg * (tw / 2 + 13), top - 6]]), { w: 6, seed: sd + 7 + sg, wob: 0.2 });
+    sk.ink(path(o.hgL ?? yS, yS), { w: tw - 6, color: HG, seed: sd, wob: 0.5, cap: "butt" });
+    sk.ink(dense([[xs, yS], [xs, sTop + 7]], 6), { w: tw - 6, color: o.airColor ?? AIR, seed: sd, wob: 0.5, cap: "butt" });
+    sk.fill(circ(xs, sTop - 2, tw * 0.62, { over: 0, seed: sd + 2 }), GLASS, { dx: 0, dy: 0, wob: 0.3, seed: sd + 3 });
+    sk.ink(ell(xs, sTop - 2, tw * 0.62 + 2, tw * 0.62 + 2, Math.PI, Math.PI * 2), { w: 10, seed: sd + 4, wob: 0.3 });
+  });
   return { yS };
 }
-// 계단: 오른쪽으로 내려가는 층계. 위 층계참에 조수가 선다
-function stairs(sk, sd = 321) {
-  const st = poly([[610, 404], [792, 404], [792, 474], [838, 474], [838, 544], [884, 544], [884, 614], [930, 614], [930, 684], [974, 684], [974, 734], [610, 734]], 5);
-  sk.fill(st, "#D9B07A", { seed: sd, tex: true, texAng: 0.03 }); sk.ink(st, { w: 10, seed: sd + 1 });
+// 종이 눈금(눈금선만, 숫자 없음): 관 옆에 붙인 종이 띠. side = 눈금이 관 쪽(-1 왼쪽에 붙임, 1 오른쪽)
+function scaleStrip(sk, x, y0, y1, step, sd) {
+  const strip = poly([[x - 9, y0], [x + 9, y0], [x + 9, y1], [x - 9, y1]], 3);
+  sk.fill(strip, "#F5E9C9", { dx: 0, dy: 0, wob: 0.3, seed: sd });
+  for (let y = y0 + step / 2, i = 0; y < y1; y += step, i++) sk.ink(dense([[x - 9, y], [x + (i % 4 ? -1 : 6), y]]), { w: 3, color: "#8A6A4A", seed: sd + 1 + i, wob: 0 });
+  sk.ink(strip, { w: 5, color: "#8A6A4A", seed: sd + 60, wob: 0.3 });
 }
-// 관을 매단 걸이와 끈
-function hanger(sk, xl, sd = 331) {
-  sk.ink(dense([[630, 404], [630, 226]]), { w: 10, color: "#6B4A32", seed: sd, wob: 0.5 });
-  sk.ink(dense([[634, 228], [xl - 30, 228]]), { w: 10, color: "#6B4A32", seed: sd + 1, wob: 0.5 });
-  for (const [y, i] of [[262, 0], [376, 1]]) { sk.ink(dense([[xl - 20, 230], [xl - 18, y]]), { w: 3.5, color: "#8A6A4A", seed: sd + 2 + i, wob: 0.4 }); sk.ink(dense([[xl - 20, y], [xl + 20, y + 3]]), { w: 6, color: "#8A6A4A", seed: sd + 4 + i, wob: 0.3 }); }
+// 누르는 힘의 크기를 화살표 개수로(위로 향한 빨간 화살표 n개): 갇힌 공기의 아래 경계(y) 왼쪽에 둔다
+function pushArrows(sk, x, y, n, sd) {
+  for (let i = 0; i < n; i++) arrow(sk, [[x - i * 24, y + 52], [x - i * 24, y + 8]], { w: 6, color: PUSH, seed: sd + i, straight: true, head: 13, wob: 0.2 });
 }
-// 쏟아지는 수은을 받는 나무 상자
-function tray(sk, x0, x1, sd = 341) {
-  const b = poly([[x0, 630], [x1, 630], [x1 - 6, 704], [x0 + 6, 704]], 4);
-  sk.fill(b, "#C49A5E", { seed: sd, tex: true, texAng: 0.03 }); sk.ink(b, { w: 9, seed: sd + 1 });
-  sk.ink(dense([[x0 + 3, 664], [x1 - 3, 664]]), { w: 5, color: C.woodDark, seed: sd + 2, wob: 0.4 });
+// 바깥 공기가 위에서 누르는 화살표(청록)
+const outsidePush = (sk, x, y0, y1, sd) => arrow(sk, [[x, y0], [x, y1]], { w: 7, color: OUTSIDE, seed: sd, straight: true, head: 16, wob: 0.2 });
+// 처음 공기 길이(점선)와 지금 길이(청록 실선)를 짧은 다리 옆에 나란히
+function airLengths(sk, x, y0, yNow, yWas, sd) {
+  sk.ink(dense([[x, y0], [x, yWas]]), { w: 5, color: C.gray, dash: [9, 9], seed: sd, wob: 0 });
+  sk.ink(dense([[x - 10, yWas], [x + 10, yWas]]), { w: 5, color: C.gray, seed: sd + 1, wob: 0 });
+  sk.ink(dense([[x - 22, y0 + 4], [x - 22, yNow]]), { w: 7, color: OUTSIDE, seed: sd + 2, wob: 0.2 });
+  for (const y of [y0 + 4, yNow]) sk.ink(dense([[x - 32, y], [x - 12, y]]), { w: 6, color: OUTSIDE, seed: sd + 3 + y, wob: 0 });
 }
-const beads = (sk, list, sd) => list.forEach(([x, y, r], i) => { const b = circ(x, y, r, { over: 0.15, seed: sd + i }); sk.fill(b, HG, { dx: 0, dy: 0, wob: 0.4, seed: sd + 20 + i }); sk.ink(b, { w: Math.max(4, r * 0.4), seed: sd + 40 + i, wob: 0.4 }); sk.dot(x - r * 0.3, y - r * 0.3, r * 0.22, C.white); });
-const XL = 560, XS = 490, TOP = 200, STOP = 440, YB = 612;
+// 높이 표시 괄호(주황)
+function bracket(sk, x, y0, y1, sd) {
+  sk.ink(dense([[x, y0], [x, y1]]), { w: 7, color: C.orange, seed: sd, wob: 0.2 });
+  for (const y of [y0, y1]) sk.ink(dense([[x - 10, y], [x + 10, y]]), { w: 6, color: C.orange, seed: sd + 1 + y, wob: 0 });
+}
+// 토리첼리의 수은 기둥: 수은 그릇에 거꾸로 세운 관. (x, dish) = 그릇 수은 면, colH = 그릇 면 위 수은 기둥 높이, tubeH = 관 높이
+function barometer(sk, x, dish, colH, tubeH, sd, o = {}) {
+  const d = curve([[x - 70, dish - 6], [x - 58, dish + 30], [x + 58, dish + 30], [x + 70, dish - 6]], false, 3);
+  sk.fill([...d, d[0]], HG, { dx: 0, dy: 0, wob: 0.4, seed: sd });
+  thin(sk, 0.9, () => {
+    sk.ink(dense([[x, dish + 12], [x, dish - tubeH]]), { w: 34, seed: sd + 1, wob: 0.4 });
+    sk.ink(dense([[x, dish + 12], [x, dish - tubeH + 6]]), { w: 22, color: GLASS, seed: sd + 1, wob: 0.4, cap: "butt" });
+    sk.ink(dense([[x, dish + 12], [x, dish - colH]]), { w: 18, color: HG, seed: sd + 1, wob: 0.4, cap: "butt" });
+    sk.ink(d, { w: 9, seed: sd + 2 });
+  });
+  if (o.push) for (const dx of [-46, 46]) outsidePush(sk, x + dx, dish - 64, dish - 12, sd + 4 + dx);
+}
 
-/* ---------- 1. 1661년, 영국: 공기에 용수철이? ---------- */
+/* ---------- 소품 ---------- */
+
+function table(sk, x0, x1, y, sd, bottom = 704) {
+  thin(sk, 0.85, () => {
+    for (const lx of [x0 + 24, x1 - 24]) sk.ink(dense([[lx, y + 20], [lx, bottom]]), { w: 11, color: "#6B4A32", seed: sd + lx, wob: 0.3 });
+    const top = rrect(x0, y, x1 - x0, 24, 8); sk.fill(top, C.wood, { seed: sd, tex: true, texAng: 0.02 }); sk.ink(top, { w: 10, seed: sd + 1 });
+  });
+}
+// 유리를 구부리던 기름 등잔: 놋쇠 몸통 + 주둥이 심지의 맨 불꽃(유리 갓 없음). (x, y) = 바닥 가운데
+function oilLamp(sk, x, y, s, sd) {
+  sk.at(x, y, s, () => {
+    const base = curve([[-40, 0], [-34, -30], [-14, -44], [14, -44], [34, -30], [40, 0]], false, 3);
+    sk.fill([...base, base[0]], "#C9A24A", { dx: 0.6, dy: 0.8, wob: 0.4, seed: sd }); sk.ink([...base, base[0]], { w: 8, seed: sd + 1 });
+    const spout = poly([[24, -40], [62, -52], [64, -44], [30, -30]], 3);
+    sk.fill(spout, "#C9A24A", { dx: 0, dy: 0, wob: 0.3, seed: sd + 2 }); sk.ink(spout, { w: 6, seed: sd + 3 });
+    const fl = curve([[62, -52], [50, -74], [62, -104], [74, -74]], true, 3); sk.fill(fl, C.orange, { dx: 0, dy: 0, wob: 0.3, seed: sd + 4 }); sk.ink(fl, { w: 5, color: C.red, seed: sd + 5, wob: 0.3 });
+    const core = curve([[62, -58], [56, -70], [62, -86], [68, -70]], true, 3); sk.fill(core, C.yellow, { dx: 0, dy: 0, wob: 0.2, seed: sd + 6 });
+  });
+}
+// 촛불. (x, y) = 촛대 바닥
+function candle(sk, x, y, s, sd) {
+  sk.at(x, y, s, () => {
+    const dish = ell(0, 0, 40, 10); sk.fill(dish, "#C9A24A", { dx: 0, dy: 0, wob: 0.3, seed: sd }); sk.ink(dish, { w: 7, seed: sd + 1 });
+    const c = rrect(-14, -110, 28, 110, 6); sk.fill(c, "#FBF6E6", { dx: 0.6, dy: 0.8, wob: 0.3, seed: sd + 2 }); sk.ink(c, { w: 8, seed: sd + 3 });
+    sk.ink(dense([[0, -110], [0, -122]]), { w: 4, seed: sd + 4, wob: 0 });
+    const fl = curve([[0, -118], [-14, -140], [0, -178], [14, -140]], true, 3); sk.fill(fl, C.orange, { dx: 0, dy: 0, wob: 0.3, seed: sd + 5 }); sk.ink(fl, { w: 5, color: C.red, seed: sd + 6, wob: 0.3 });
+    const core = curve([[0, -124], [-6, -136], [0, -152], [6, -136]], true, 3); sk.fill(core, C.yellow, { dx: 0, dy: 0, wob: 0.2, seed: sd + 7 });
+  });
+}
+// 깨진 유리 조각
+function shards(sk, list, sd) {
+  list.forEach(([x, y, rot], i) => sk.at(x, y, 1, () => { const s = poly([[-16, 9], [0, -18], [17, 11]], 2); sk.fill(s, "#E6F2F9", { dx: 0, dy: 0, wob: 0.3, seed: sd + i }); sk.ink(s, { w: 5, seed: sd + 20 + i, wob: 0.3 }); }, rot));
+}
+// 수은 방울
+const beads = (sk, list, sd) => list.forEach(([x, y, r], i) => { const b = circ(x, y, r, { over: 0.15, seed: sd + i }); sk.fill(b, HG, { dx: 0, dy: 0, wob: 0.4, seed: sd + 20 + i }); sk.ink(b, { w: Math.max(4, r * 0.4), seed: sd + 40 + i, wob: 0.4 }); sk.dot(x - r * 0.3, y - r * 0.3, r * 0.22, C.white); });
+// 손거울(수은 면을 비춰 보던 작은 거울). (x, y) = 손잡이 끝
+function handMirror(sk, x, y, s, rot, sd) {
+  sk.at(x, y, s, () => {
+    sk.ink(dense([[0, 0], [0, -40]]), { w: 9, color: "#8A5A33", seed: sd, wob: 0.2 });
+    const m = ell(0, -72, 26, 34); sk.fill(m, "#CFE6F5", { dx: 0, dy: 0, wob: 0.3, seed: sd + 1 }); sk.ink(m, { w: 8, color: "#B8892E", seed: sd + 2, wob: 0.3 });
+    sk.ink(curve([[-10, -86], [-2, -96], [8, -98]]), { w: 4, color: C.white, seed: sd + 3, wob: 0.1 });
+  }, rot);
+}
+// 잰 값을 적은 표(칸만 있고 숫자는 없다). (x, y) = 가운데
+function tablePaper(sk, x, y, s, rot, sd) {
+  sk.at(x, y, s, () => {
+    const p = poly([[-60, -76], [60, -76], [60, 76], [-60, 76]], 4);
+    sk.fill(p, C.parchment, { dx: 1, dy: 1.2, wob: 0.4, seed: sd }); sk.ink(p, { w: 8, seed: sd + 1 });
+    for (let i = 1; i < 5; i++) sk.ink(dense([[-50, -76 + i * 30], [50, -76 + i * 30]]), { w: 3, color: C.gray, seed: sd + 2 + i, wob: 0.1 });
+    for (const cx of [-20, 18]) sk.ink(dense([[cx, -66], [cx, 66]]), { w: 3, color: C.gray, seed: sd + 10 + cx, wob: 0.1 });
+    for (let i = 0; i < 4; i++) for (const cx of [-40, -2, 36]) sk.ink(dense([[cx, -38 + i * 30], [cx + 12, -38 + i * 30]]), { w: 4, color: "#5A5F68", seed: sd + 20 + i + cx, wob: 0.2 });
+  }, rot);
+}
+// 끝을 막은 주사기와 그 속의 입자(옆에서 본 단면). (x0, y) = 통 왼쪽 끝 가운데, len = 통 길이, px = 피스톤 위치(x)
+function syringe(sk, x0, y, len, px, sd, hit) {
+  const x1 = x0 + len;
+  const barrel = rrect(x0, y - 50, len, 100, 16);
+  sk.fill(barrel, GLASS, { dx: 0, dy: 0, wob: 0.4, seed: sd });
+  sk.fill(poly([[px + 14, y - 42], [x1 - 8, y - 42], [x1 - 8, y + 42], [px + 14, y + 42]], 4), "#E4F6F3", { dx: 0, dy: 0, wob: 0.3, seed: sd + 1 });
+  sk.ink(barrel, { w: 9, seed: sd + 2 });
+  const pis = rrect(px - 10, y - 46, 24, 92, 6); sk.fill(pis, "#5A5F68", { dx: 0, dy: 0, wob: 0.3, seed: sd + 3 }); sk.ink(pis, { w: 6, seed: sd + 4 });
+  const hx = px - 250; // 손잡이는 피스톤과 함께 움직인다(막대 길이 일정)
+  sk.ink(dense([[px - 10, y], [hx, y]]), { w: 12, color: "#8A9099", seed: sd + 5, wob: 0.3 });
+  sk.ink(dense([[hx, y - 44], [hx, y + 44]]), { w: 12, seed: sd + 6, wob: 0.4 });
+  sk.ink(dense([[x0, y - 62], [x0, y + 62]]), { w: 9, seed: sd + 11, wob: 0.4 });
+  const tip = rrect(x1, y - 12, 40, 24, 6); sk.fill(tip, GLASS, { dx: 0, dy: 0, wob: 0.3, seed: sd + 7 }); sk.ink(tip, { w: 7, seed: sd + 8 });
+  const cap = rrect(x1 + 36, y - 18, 22, 36, 6); sk.fill(cap, C.red, { dx: 0, dy: 0, wob: 0.3, seed: sd + 9 }); sk.ink(cap, { w: 7, seed: sd + 10 });
+  // 입자 여덟 개: 피스톤과 끝 사이에 고르게
+  const room = x1 - 10 - (px + 20), pts = [[0.12, 0.25], [0.38, 0.7], [0.62, 0.22], [0.86, 0.68], [0.24, 0.78], [0.5, 0.42], [0.74, 0.86], [0.92, 0.3]];
+  pts.forEach(([u, v], i) => { const c = circ(px + 20 + u * room, y - 34 + v * 68, 11, { over: 0.15, seed: sd + 20 + i }); sk.fill(c, C.teal, { dx: 0, dy: 0, wob: 0.3, seed: sd + 30 + i }); sk.ink(c, { w: 5, seed: sd + 40 + i, wob: 0.3 }); });
+  if (hit) for (const [hx, hy, a] of [[x1 - 6, y - 20, 0], [x1 - 6, y + 22, 0], [(px + x1) / 2, y - 50, -Math.PI / 2], [(px + x1) / 2, y + 50, Math.PI / 2], [px + 16, y, Math.PI]]) for (const da of [-0.5, 0, 0.5]) sk.ink(dense([[hx + 12 * Math.cos(a + da), hy + 12 * Math.sin(a + da)], [hx + 28 * Math.cos(a + da), hy + 28 * Math.sin(a + da)]]), { w: 4.5, color: C.orange, seed: sd + 60, wob: 0 });
+}
+
+/* ---------- 1. 1661년: 공기가 수은 기둥을 떠받칠까 ---------- */
 function p1() {
   const sk = new Sk(W, H, { id: "a" });
-  ground(sk, 700, 11);
-  // 보일: 두 손 사이의 공기를 누른다(공기는 용수철처럼 되밀어낸다)
-  const P = pose({ elL: [10, -300], haL: [84, -328], elR: [60, -262], haR: [240, -328] });
-  const fx = 236, fy = 700, fs = 0.76;
-  drawFigure(sk, fx, fy, fs, P, { ...BOYLE, name: "boyle", face: "smile", hands: false });
-  const ax = fx + fs * 162, ay = fy - fs * 328;
-  const blob = circ(ax, ay, 46, { over: 0.15, seed: 13, lump: 0.08 });
-  sk.fill(blob, AIR, { dx: 0, dy: 0, wob: 0.8, seed: 14 }); sk.ink(blob, { w: 7, color: "#5FB7AA", seed: 15, dash: [10, 9], wob: 0.5 });
-  for (const [sg, i] of [[-1, 0], [1, 1]]) { arrow(sk, [[ax + sg * 14, ay], [ax + sg * 40, ay]], { w: 6, color: C.teal, seed: 16 + i, straight: true, head: 13, wob: 0.2 }); const h = rrect(ax + sg * 54 - 9, ay - 34, 18, 68, 8); sk.fill(h, C.skin, { dx: 0, dy: 0, wob: 0.4, seed: 18 + i }); sk.ink(h, { w: 7, seed: 20 + i, wob: 0.5 }); }
-  arrow(sk, [[ax, ay - 12], [ax, ay - 80]], { w: 6, color: C.teal, seed: 22, straight: true, head: 13, wob: 0.2 });
-  arrow(sk, [[ax, ay + 12], [ax, ay + 80]], { w: 6, color: C.teal, seed: 23, straight: true, head: 13, wob: 0.2 });
-  // 다른 학자
-  const C2 = pose({ elL: [-52, -262], haL: [-10, -238], elR: [52, -262], haR: [10, -226], tilt: -0.08 });
-  drawFigure(sk, 760, 700, 0.76, C2, { ...CRITIC, name: "critic" });
-  qmark(sk, 900, 250, 0.7, { color: C.gray, seed: 25 });
+  ground(sk, 704, 11);
+  table(sk, 470, 900, 600, 13);
+  // 토리첼리의 수은 기둥: 바깥 공기가 그릇의 수은을 눌러 기둥을 떠받친다
+  barometer(sk, 640, 584, 360, 420, 15, { push: true });
+  bracket(sk, 696, 224, 580, 21);
+  // 반박하는 책과 물음표
+  openBook(sk, 820, 600, 0.8, { color: "#7A5A45", seed: 23 });
+  qmark(sk, 820, 470, 0.7, { color: C.gray, seed: 25 });
+  const P = pose({ elR: [96, -320], haR: [170, -360], elL: [-56, -262], haL: [-40, -214], tilt: 0.06 });
+  drawFigure(sk, 250, 704, 0.72, P, { ...BOYLE, name: "boyle", face: "determined" });
   return sk;
 }
 
-// 계단에 매단 J자 관(2~4컷이 함께 쓴다)
-function rig(sk, o) {
-  stairs(sk);
-  hanger(sk, XL);
-  const t = jtube(sk, { xl: XL, xs: XS, top: TOP, shortTop: STOP, yb: YB, air: o.air, long: o.long, stub: o.stub, sd: 301 });
-  tray(sk, 432, 606);
-  return t;
-}
-
-/* ---------- 2. 실험 준비: 계단에 매단 J자 관 ---------- */
+/* ---------- 2. 끝을 막은 J자 관 ---------- */
+const XS = 470, XL = 550, STOP = 380, YB = 640, AIR0 = 168;
 function p2() {
   const sk = new Sk(W, H, { id: "b" });
-  ground(sk, 700, 31);
-  rig(sk, { air: 132, long: STOP + 132 });
-  arrow(sk, [[XL, 120], [XL, 180]], { w: 7, color: C.teal, seed: 33, straight: true, head: 18, wob: 0.3 });
-  // 훅: 층계참에서 관을 붙잡는다
-  const hp = pose({ elL: [-86, -322], haL: [-176, -330], elR: [50, -260], haR: [24, -218], tilt: -0.06 });
-  drawFigure(sk, 680, 404, 0.46, hp, { ...HOOKE, name: "hooke" });
-  // 보일: 갇힌 공기를 가리킨다
-  const bp = pose({ elR: [86, -296], haR: [160, -290], elL: [-50, -260], haL: [-24, -218], tilt: 0.06 });
-  drawFigure(sk, 236, 700, 0.62, bp, { ...BOYLE, name: "boyle" });
+  ground(sk, 704, 31);
+  // 관을 구부린 등잔
+  table(sk, 730, 920, 560, 33);
+  oilLamp(sk, 820, 560, 1, 35);
+  const t = jtube(sk, { xl: XL, xs: XS, top: 110, sTop: STOP, yb: YB, air: AIR0, hgL: STOP + AIR0, sd: 301 });
+  scaleStrip(sk, XS - 36, STOP + 6, STOP + 200, 14, 311);
+  scaleStrip(sk, XL + 36, 130, YB - 40, 18, 331);
+  outsidePush(sk, XL, 40, 100, 37);
+  pushArrows(sk, XS - 78, t.yS, 1, 39);
+  const P = pose({ elR: [96, -296], haR: [176, -306], elL: [-50, -260], haL: [-24, -218], tilt: 0.06 });
+  drawFigure(sk, 200, 704, 0.66, P, { ...BOYLE, name: "boyle" });
   return sk;
 }
 
-/* ---------- 3. 수은을 붓다: 위에서 붓고, 아래서 재고 ---------- */
+/* ---------- 3. 절반이 된 공기 ---------- */
 function p3() {
   const sk = new Sk(W, H, { id: "c" });
-  ground(sk, 700, 41);
-  rig(sk, { air: 96, long: 388 });
-  // 훅: 위에서 수은을 붓는다
-  const hp = pose({ elL: [-96, -372], haL: [-150, -436], elR: [50, -260], haR: [24, -218], tilt: -0.08 });
-  const hx0 = 680, hy0 = 404, hs = 0.46;
-  drawFigure(sk, hx0, hy0, hs, hp, { ...HOOKE, name: "hooke", face: "curious", hands: "R" });
-  const fx = hx0 - hs * 150, fy = hy0 - hs * 436;
-  sk.at(fx - 8, fy - 6, 1, () => { const fl = curve([[-14, -30], [-20, 6], [0, 22], [20, 6], [14, -30]], false, 3); sk.fill([...fl, fl[0]], "#DCE4EA", { dx: 0, dy: 0, wob: 0.4, seed: 43 }); sk.ink([...fl, fl[0]], { w: 7, seed: 44 }); }, -2.2);
-  sk.ink(curve([[fx - 32, fy + 4], [XL + 4, fy + 14], [XL, TOP + 4]]), { w: 7, color: HG, seed: 45, wob: 0.4 });
-  handDot(sk, [fx + 6, fy + 2], C.skin, 46, 8);
-  // 보일: 눈금을 들여다보며 적는다
-  const bp = pose({ elR: [70, -290], haR: [124, -314], elL: [40, -262], haL: [96, -262], tilt: 0.1 });
-  const bx = 250, by = 700, bs = 0.62;
-  drawFigure(sk, bx, by, bs, bp, { ...BOYLE, name: "boyle", hands: false });
-  notebook(sk, bx + bs * 130, by - bs * 276, 0.72, { rot: -0.12, seed: 47 });
-  quill(sk, bx + bs * 124 + 12, by - bs * 314 + 6, 0.5, { rot: 0.5, seed: 48 });
-  handDot(sk, [bx + bs * 96, by - bs * 262], C.skin, 49, 9);
-  // 갇힌 공기가 눌린다
-  arrow(sk, [[XS - 62, STOP + 30], [XS - 62, STOP + 86]], { w: 6, color: C.red, seed: 50, straight: true, head: 15, wob: 0.3 });
+  ground(sk, 704, 51);
+  const air = AIR0 / 2, Hh = 406;
+  const yS = STOP + air;
+  jtube(sk, { xl: XL, xs: XS, top: 40, sTop: STOP, yb: YB, air, hgL: yS - Hh, sd: 303 });
+  airLengths(sk, XS - 40, STOP, yS, STOP + AIR0, 53);
+  pushArrows(sk, XS - 96, yS, 2, 57);
+  bracket(sk, XL + 40, yS - Hh, yS, 59);
+  // 옆에 세운 수은 기둥: 같은 높이
+  barometer(sk, 790, 650, Hh, Hh + 50, 61);
+  bracket(sk, 846, 650 - Hh, 646, 67);
+  for (const dy of [0, 18]) sk.ink(dense([[640, 360 + dy], [690, 360 + dy]]), { w: 7, color: C.orange, seed: 69 + dy, wob: 0.2 });
+  const P = pose({ elR: [96, -300], haR: [172, -300], elL: [-60, -300], haL: [-110, -360], tilt: 0.06 });
+  drawFigure(sk, 200, 704, 0.66, P, { ...BOYLE, name: "boyle", face: "happy" });
   return sk;
 }
 
-/* ---------- 4. 와장창: 관이 깨졌다 ---------- */
+/* ---------- 4. 첫 관이 깨지고, 계단에 매단 더 긴 관 ---------- */
+// 계단(오른쪽으로 올라간다) + 난간
+function stairs(sk, x0, y0, n, rise, run, sd = 321) {
+  const pts = [[x0, y0]];
+  for (let i = 0; i < n; i++) { pts.push([x0 + i * run, y0 - (i + 1) * rise]); pts.push([x0 + (i + 1) * run, y0 - (i + 1) * rise]); }
+  pts.push([980, y0 - n * rise], [980, y0 + 40], [x0, y0 + 40]);
+  thin(sk, 0.8, () => {
+    sk.fill(poly(pts, 4), "#D9B07A", { seed: sd, tex: true, texAng: 0.03 }); sk.ink(poly(pts, 4), { w: 10, seed: sd + 1 });
+    for (let i = 0; i < n; i++) { const bx = x0 + i * run + run * 0.5, by = y0 - (i + 1) * rise; sk.ink(dense([[bx, by], [bx, by - 150]]), { w: 6, color: "#8A5A33", seed: sd + 3 + i, wob: 0.3 }); }
+    sk.ink(dense([[x0 + run * 0.5 - 20, y0 - rise - 150 + rise * 0.4], [x0 + (n - 0.5) * run + 40, y0 - n * rise - 150 - rise * 0.4]]), { w: 12, color: "#8A5A33", seed: sd + 30, wob: 0.5 });
+  });
+}
+// 쏟아지는 수은을 받는 나무 상자
+function box(sk, x0, x1, y, sd = 341) {
+  thin(sk, 0.85, () => {
+    const b = poly([[x0, y - 74], [x1, y - 74], [x1 - 6, y], [x0 + 6, y]], 4);
+    sk.fill(b, "#C49A5E", { seed: sd, tex: true, texAng: 0.03 }); sk.ink(b, { w: 9, seed: sd + 1 });
+    sk.ink(dense([[x0 + 3, y - 38], [x1 - 3, y - 38]]), { w: 5, color: C.woodDark, seed: sd + 2, wob: 0.4 });
+  });
+}
+// 깨진 첫 관: 굽은 토막 + 곧은 토막(끝이 들쭉날쭉) + 흩어진 수은
+function brokenTube(sk, sd) {
+  sk.at(150, 662, 1, () => {
+    const bend = ell(0, 0, 34, 34, 0, Math.PI);
+    const legs = [...dense([[34, -70], [34, 0]], 6), ...bend, ...dense([[-34, 0], [-34, -40]], 6)];
+    sk.ink(legs, { w: 30, seed: sd, wob: 0.4, cap: "butt" }); sk.ink(legs, { w: 18, color: GLASS, seed: sd, wob: 0.4, cap: "butt" });
+    for (const [x, y] of [[34, -70], [-34, -40]]) sk.ink(dense([[x - 15, y], [x - 6, y - 12], [x + 3, y + 2], [x + 15, y - 10]], 3), { w: 5, seed: sd + x, wob: 0.2 });
+  }, 1.35);
+  sk.at(70, 690, 1, () => {
+    sk.ink(dense([[0, 0], [110, -6]]), { w: 30, seed: sd + 5, wob: 0.4, cap: "butt" }); sk.ink(dense([[0, 0], [110, -6]]), { w: 18, color: GLASS, seed: sd + 5, wob: 0.4, cap: "butt" });
+    sk.ink(dense([[110, -21], [100, -10], [114, -2], [106, 9]], 3), { w: 5, seed: sd + 6, wob: 0.2 });
+  }, -0.05);
+  beads(sk, [[230, 694, 14], [262, 690, 9], [196, 698, 8], [290, 696, 7], [120, 700, 6]], sd + 10);
+}
 function p4() {
   const sk = new Sk(W, H, { id: "d" });
-  ground(sk, 700, 51);
-  rig(sk, { air: 66, long: 420, stub: 372 });
-  // 깨진 자리와 매달려 흔들리는 윗동강
-  sk.ink(dense([[XL - 20, 372], [XL - 8, 356], [XL + 4, 374], [XL + 20, 354]], 3), { w: 6, seed: 53, wob: 0.3 });
-  sk.at(XL - 6, 232, 1, () => { sk.ink(dense([[0, 0], [0, 96]]), { w: 38, seed: 54, wob: 0.4 }); sk.ink(dense([[0, -8], [0, 96]]), { w: 26, color: GLASS, seed: 54, wob: 0.4, cap: "butt" }); sk.ink(dense([[-18, 100], [-6, 116], [6, 98], [18, 114]], 3), { w: 6, seed: 55, wob: 0.3 }); }, 0.22);
-  for (const [x, y, rot, i] of [[520, 420, 0.4, 0], [606, 470, -0.6, 1], [470, 520, 1.1, 2], [590, 560, 0.2, 3]]) sk.at(x, y, 1, () => { const sh = poly([[-14, 8], [0, -16], [15, 10]], 2); sk.fill(sh, "#E6F2F9", { dx: 0, dy: 0, wob: 0.3, seed: 56 + i }); sk.ink(sh, { w: 5, seed: 60 + i, wob: 0.3 }); }, rot);
-  beads(sk, [[384, 684, 17], [338, 690, 12], [416, 652, 10], [296, 694, 9], [640, 688, 12], [470, 616, 11], [540, 620, 9], [592, 614, 8]], 65);
-  // 훅: 두 팔을 번쩍
-  const hp = pose({ elL: [-104, -362], haL: [-156, -448], elR: [104, -362], haR: [156, -448], tilt: 0.06 });
-  drawFigure(sk, 706, 404, 0.46, hp, { ...HOOKE, name: "hooke", face: "shock" });
-  drop(sk, 800, 190, 1);
-  // 보일: 기록을 꼭 쥔다
-  const bp = pose({ elR: [56, -262], haR: [70, -210], elL: [-56, -262], haL: [-70, -206], tilt: -0.05 });
-  const bx = 220, by = 700, bs = 0.62;
-  drawFigure(sk, bx, by, bs, bp, { ...BOYLE, name: "boyle", face: "wide", hands: "L" });
-  notebook(sk, bx + bs * 70 + 14, by - bs * 210 - 10, 0.7, { rot: 0.1, seed: 95, check: true });
-  handDot(sk, [bx + bs * 70, by - bs * 210], C.skin, 96, 9);
-  emark(sk, 372, 300, 0.8, { color: C.red, rot: -0.1 });
+  ground(sk, 704, 71);
+  stairs(sk, 430, 704, 6, 62, 54, 321);
+  // 끈으로 층계참 난간에 매단 긴 관: 굽은 곳은 나무 상자 안, 입구는 층계참 바로 위
+  const xs = 630, xl = 700, sTop = 520, yb = 660;
+  for (const [y, i] of [[330, 0], [470, 1]]) { sk.ink(dense([[xl + 2, y], [790, y - 120]]), { w: 3.5, color: "#8A6A4A", seed: 73 + i, wob: 0.3 }); sk.ink(dense([[xl - 18, y], [xl + 18, y + 2]]), { w: 6, color: "#8A6A4A", seed: 75 + i, wob: 0.3 }); }
+  jtube(sk, { xl, xs, top: 296, sTop, yb, air: 44, hgL: 470, sd: 305, tw: 22 });
+  scaleStrip(sk, xs - 30, sTop + 4, sTop + 64, 8, 313);
+  box(sk, 580, 750, 704, 341);
+  brokenTube(sk, 77);
+  // 조수: 층계참에 서서 관 입구 위에서 조금씩 붓는다
+  const hp = pose({ elL: [-70, -360], haL: [-150, -330], elR: [56, -268], haR: [30, -220], tilt: -0.1 });
+  const hx0 = 806, hy0 = 704 - 6 * 62, hs = 0.48;
+  drawFigure(sk, hx0, hy0, hs, hp, { ...HELPER, name: "helper", hands: "R" });
+  const fx = hx0 - hs * 150, fy = hy0 - hs * 330;
+  sk.at(fx - 10, fy + 4, 1, () => { const fl = curve([[-14, -30], [-20, 6], [0, 22], [20, 6], [14, -30]], false, 3); sk.fill([...fl, fl[0]], "#DCE4EA", { dx: 0, dy: 0, wob: 0.4, seed: 85 }); sk.ink([...fl, fl[0]], { w: 7, seed: 86 }); }, -2.0);
+  sk.ink(curve([[fx - 30, fy + 18], [xl + 8, fy + 40], [xl, 300]]), { w: 6, color: HG, seed: 87, wob: 0.3 });
+  handDot(sk, [fx + 4, fy + 4], C.skin, 88, 8);
+  // 보일: 아래에서 손거울로 짧은 쪽 수은 면을 보며 알려 준다
+  const bp = pose({ elR: [80, -300], haR: [150, -330], elL: [-50, -260], haL: [-24, -218], tilt: 0.08 });
+  const bx = 400, bs = 0.6;
+  drawFigure(sk, bx, 704, bs, bp, { ...BOYLE, name: "boyle", hands: "L" });
+  handMirror(sk, bx + bs * 150, 704 - bs * 330, 0.8, 0.3, 89);
+  handDot(sk, [bx + bs * 150, 704 - bs * 330], C.skin, 91, 9);
   return sk;
 }
 
-/* ---------- 5. 놀라운 규칙: 두 배로 누르면 절반 ---------- */
+/* ---------- 5. 4배로 누르면 4분의 1 ---------- */
 function p5() {
   const sk = new Sk(W, H, { id: "e" });
-  ground(sk, 700, 101);
-  // 새로 만든 관: 공기가 절반이 되었을 때
-  const xl = 600, xs = 520, sTop = 400, air0 = 136, air = 68, lv = sTop + air - 236;
-  jtube(sk, { xl, xs, top: 70, shortTop: sTop, yb: 606, air, long: lv, sd: 311, tw: 30, scale: false });
-  tray(sk, 462, 656, 351);
-  // 처음 공기 기둥의 길이(점선)와 지금 길이
-  const bx0 = xs - 42;
-  sk.ink(dense([[bx0, sTop + 6], [bx0, sTop + air0]]), { w: 5, color: C.gray, dash: [9, 9], seed: 103, wob: 0 });
-  sk.ink(dense([[bx0 - 10, sTop + air0], [bx0 + 10, sTop + air0]]), { w: 5, color: C.gray, seed: 104, wob: 0 });
-  sk.ink(dense([[bx0 - 26, sTop + 6], [bx0 - 26, sTop + air]]), { w: 7, color: C.teal, seed: 105, wob: 0.2 });
-  for (const y of [sTop + 6, sTop + air]) sk.ink(dense([[bx0 - 36, y], [bx0 - 16, y]]), { w: 6, color: C.teal, seed: 106 + y, wob: 0 });
-  // 더한 수은 기둥의 높이 = 대기가 받치는 수은 기둥의 높이
-  const rx = xl + 46;
-  sk.ink(dense([[rx, lv], [rx, sTop + air]]), { w: 7, color: C.orange, seed: 109, wob: 0.2 });
-  for (const y of [lv, sTop + air]) sk.ink(dense([[rx - 10, y], [rx + 10, y]]), { w: 6, color: C.orange, seed: 110 + y, wob: 0 });
-  // 옆의 기압계: 같은 높이의 수은 기둥
-  const gx = 800, dish = 630, h = 236;
-  const d = curve([[gx - 62, dish - 26], [gx - 50, dish + 8], [gx + 50, dish + 8], [gx + 62, dish - 26]], false, 3);
-  sk.fill([...d, d[0]], HG, { dx: 0, dy: 0, wob: 0.4, seed: 113 });
-  sk.ink(dense([[gx, dish - 10], [gx, dish - h - 50]]), { w: 34, seed: 114, wob: 0.4 });
-  sk.ink(dense([[gx, dish - 6], [gx, dish - h - 46]]), { w: 22, color: GLASS, seed: 114, wob: 0.4, cap: "butt" });
-  sk.ink(dense([[gx, dish - 6], [gx, dish - h]]), { w: 18, color: HG, seed: 114, wob: 0.4, cap: "butt" });
-  sk.ink(d, { w: 9, seed: 115 });
-  sk.ink(dense([[gx + 40, dish - 14], [gx + 40, dish - h]]), { w: 7, color: C.orange, seed: 116, wob: 0.2 });
-  for (const y of [dish - 14, dish - h]) sk.ink(dense([[gx + 30, y], [gx + 50, y]]), { w: 6, color: C.orange, seed: 117 + y, wob: 0 });
-  for (const dy of [0, 16]) sk.ink(dense([[706, 372 + dy], [740, 372 + dy]]), { w: 7, color: C.orange, seed: 119 + dy, wob: 0.2 });
-  // 보일
-  const bp = pose({ elR: [86, -300], haR: [160, -300], elL: [-50, -260], haL: [-24, -218], tilt: 0.06 });
-  drawFigure(sk, 220, 700, 0.74, bp, { ...BOYLE, name: "boyle", face: "wide" });
-  emark(sk, 380, 300, 0.8, { color: C.red, rot: 0.1 });
+  ground(sk, 704, 101);
+  // 가까이 본 관: 긴 쪽 수은 기둥은 그림 위로 한참 더 이어진다
+  const xs = 450, xl = 530, sTop = 330, yb = 640, air = AIR0 / 4;
+  const t = jtube(sk, { xl, xs, top: -30, sTop, yb, air, hgL: -30, sd: 307 });
+  airLengths(sk, xs - 40, sTop, t.yS, sTop + AIR0, 103);
+  pushArrows(sk, xs - 96, t.yS, 4, 107);
+  arrow(sk, [[xl + 56, 200], [xl + 56, 70]], { w: 8, color: C.orange, seed: 111, straight: true, head: 20, wob: 0.2 });
+  // 보일: 잰 값을 적은 표를 들고 있다
+  const P = pose({ elL: [-70, -300], haL: [-130, -330], elR: [56, -262], haR: [40, -214], tilt: -0.04 });
+  const fx = 780, fy = 704, fs = 0.66;
+  drawFigure(sk, fx, fy, fs, P, { ...BOYLE, name: "boyle", face: "smile", hands: "R" });
+  tablePaper(sk, fx - fs * 130 - 40, fy - fs * 330, 0.9, -0.1, 113);
+  handDot(sk, [fx - fs * 130, fy - fs * 330], C.skin, 115, 10);
+  check(sk, fx - fs * 130 - 20, fy - fs * 330 - 100, 0.6);
   return sk;
 }
 
-/* ---------- 6. 반대로 당기면: 늘어나는 공기 ---------- */
+/* ---------- 6. 촛불을 대 보니 ---------- */
 function p6() {
   const sk = new Sk(W, H, { id: "f" });
-  ground(sk, 700, 131);
-  // 수은을 채운 굵은 관과 그 속에 꽂은 가는 관
-  const wx = 600;
-  const wide = poly([[wx - 44, 300], [wx + 44, 300], [wx + 44, 690], [wx - 44, 690]], 5);
-  sk.fill(wide, HG, { dx: 0, dy: 0, wob: 0.5, seed: 133, tex: 0.5, texAng: 1.5 });
-  sk.ink(dense([[wx - 44, 286], [wx - 44, 690], [wx + 44, 690], [wx + 44, 286]], 5), { w: 10, seed: 134 });
-  // 가는 관: 꼭대기에 갇힌 공기가 길게 늘어났다
-  sk.ink(dense([[wx, 86], [wx, 560]]), { w: 34, seed: 135, wob: 0.4 });
-  sk.ink(dense([[wx, 92], [wx, 566]]), { w: 22, color: GLASS, seed: 135, wob: 0.4, cap: "butt" });
-  sk.ink(dense([[wx, 262], [wx, 566]]), { w: 18, color: HG, seed: 135, wob: 0.4, cap: "butt" });
-  sk.ink(dense([[wx, 96], [wx, 262]]), { w: 18, color: AIR, seed: 135, wob: 0.4, cap: "butt" });
-  // 처음 길이(짧았던 공기)
-  const bx0 = wx + 40;
-  sk.ink(dense([[bx0, 96], [bx0, 138]]), { w: 5, color: C.gray, dash: [9, 9], seed: 137, wob: 0 });
-  sk.ink(dense([[bx0 - 10, 138], [bx0 + 10, 138]]), { w: 5, color: C.gray, seed: 138, wob: 0 });
-  sk.ink(dense([[bx0 + 26, 96], [bx0 + 26, 262]]), { w: 7, color: C.teal, seed: 139, wob: 0.2 });
-  for (const y of [96, 262]) sk.ink(dense([[bx0 + 16, y], [bx0 + 36, y]]), { w: 6, color: C.teal, seed: 140 + y, wob: 0 });
-  arrow(sk, [[wx + 118, 250], [wx + 118, 130]], { w: 9, color: C.teal, seed: 143, straight: true, head: 22, wob: 0.4 });
-  // 온도는 그대로(온도계 + 체크)
-  const tx = 840, ty = 600;
-  sk.ink(dense([[tx, ty - 150], [tx, ty]]), { w: 26, seed: 145, wob: 0.3 }); sk.ink(dense([[tx, ty - 146], [tx, ty]]), { w: 14, color: C.white, seed: 145, wob: 0.3, cap: "butt" });
-  const bulb = circ(tx, ty + 18, 24, { over: 0.15, seed: 146 }); sk.fill(bulb, C.red, { dx: 0, dy: 0, wob: 0.4, seed: 147 }); sk.ink(bulb, { w: 7, seed: 148 });
-  sk.ink(dense([[tx, ty - 70], [tx, ty + 6]]), { w: 8, color: C.red, seed: 149, wob: 0, cap: "butt" });
-  check(sk, tx + 62, ty - 80, 0.8);
-  // 보일: 가는 관을 끌어올린다
-  const bp = pose({ elR: [140, -372], haR: [246, -432], elL: [128, -316], haL: [234, -360], tilt: 0.05 });
-  const fx = 400, fy = 700, fs = 0.74;
-  drawFigure(sk, fx, fy, fs, bp, { ...BOYLE, name: "boyle", face: "smile" });
+  ground(sk, 704, 121);
+  // 가까이 본 짧은 다리: 눌린 공기에 촛불을 대자 공기가 늘어나 수은을 밀어낸다
+  const xs = 560, xl = 680, sTop = 170, yb = 600, air = 120;
+  const t = jtube(sk, { xl, xs, top: -30, sTop, yb, air, hgL: -30, sd: 309, tw: 46, airColor: "#F7D9B8" });
+  sk.ink(dense([[xs - 60, sTop + 6], [xs - 60, sTop + 92]]), { w: 5, color: C.gray, dash: [9, 9], seed: 123, wob: 0 });
+  sk.ink(dense([[xs - 70, sTop + 92], [xs - 50, sTop + 92]]), { w: 5, color: C.gray, seed: 124, wob: 0 });
+  arrow(sk, [[xs + 46, t.yS - 40], [xs + 46, t.yS + 20]], { w: 7, color: C.orange, seed: 125, straight: true, head: 16, wob: 0.2 });
+  for (const [y, i] of [[206, 0], [234, 1], [262, 2]]) sk.ink(curve([[420, y], [440, y - 8], [462, y + 6], [484, y - 6], [506, y + 4], [524, y]]), { w: 5, color: C.orange, seed: 127 + i, wob: 0.3, alpha: 0.85 });
+  // 보일: 촛불을 갇힌 공기 높이로 들고, 깨질까 걱정한다
+  const P = pose({ elR: [100, -430], haR: [176, -540], elL: [-50, -260], haL: [-24, -218], tilt: 0.04 });
+  const fx = 300, fy = 704, fs = 0.66;
+  drawFigure(sk, fx, fy, fs, P, { ...BOYLE, name: "boyle", face: "wide", hands: "L" });
+  candle(sk, fx + fs * 176 + 2, fy - fs * 540 + 44, 0.6, 131);
+  handDot(sk, [fx + fs * 176, fy - fs * 540 + 30], C.skin, 133, 10);
+  drop(sk, 206, 336, 1);
   return sk;
 }
 
-/* ---------- 7. 오늘날: 용수철 대신 입자로 ---------- */
+/* ---------- 7. 반대로 늘이면 ---------- */
 function p7() {
   const sk = new Sk(W, H, { id: "g" });
-  ground(sk, 704, 151);
-  // 확대해 본 주사기 속: 같은 개수의 입자가 좁은 곳에 모인다
-  const box = (x, w, sd, hit) => {
-    const b = rrect(x, 96, w, 200, 22);
-    sk.fill(b, "#EAF7F5", { dx: 0, dy: 0, wob: 0.5, seed: sd }); sk.ink(b, { w: 10, seed: sd + 1 });
-    const pts = [[0.2, 0.22], [0.62, 0.16], [0.84, 0.4], [0.4, 0.46], [0.16, 0.7], [0.58, 0.72], [0.82, 0.82], [0.4, 0.86]];
-    pts.forEach(([u, v], i) => { const c = circ(x + 18 + u * (w - 36), 114 + v * 164, 13, { over: 0.15, seed: sd + 2 + i }); sk.fill(c, C.teal, { dx: 0, dy: 0, wob: 0.3, seed: sd + 12 + i }); sk.ink(c, { w: 5, seed: sd + 22 + i, wob: 0.3 }); });
-    if (hit) for (const [hx, hy, a] of [[x + w, 150, 0], [x + w, 250, 0], [x, 200, Math.PI], [x + w * 0.5, 96, -Math.PI / 2], [x + w * 0.5, 296, Math.PI / 2]]) for (const da of [-0.5, 0, 0.5]) sk.ink(dense([[hx + 12 * Math.cos(a + da), hy + 12 * Math.sin(a + da)], [hx + 28 * Math.cos(a + da), hy + 28 * Math.sin(a + da)]]), { w: 4.5, color: C.orange, seed: sd + 40, wob: 0 });
-  };
-  box(416, 280, 153, false);
-  arrow(sk, [[716, 196], [770, 196]], { w: 9, color: C.gray, seed: 155, straight: true, head: 22, wob: 0.3 });
-  box(800, 130, 173, true);
-  // 끝을 막은 주사기
-  const sy = 470, x0 = 470, x1 = 800, px = 610;
-  const barrel = rrect(x0, sy - 44, x1 - x0, 88, 14);
-  sk.fill(barrel, GLASS, { dx: 0, dy: 0, wob: 0.4, seed: 201 });
-  const gas = poly([[px + 14, sy - 36], [x1 - 8, sy - 36], [x1 - 8, sy + 36], [px + 14, sy + 36]], 4);
-  sk.fill(gas, AIR, { dx: 0, dy: 0, wob: 0.3, seed: 202 });
-  sk.ink(barrel, { w: 9, seed: 203 });
-  const pis = rrect(px - 12, sy - 40, 26, 80, 6); sk.fill(pis, "#5A5F68", { dx: 0, dy: 0, wob: 0.3, seed: 204 }); sk.ink(pis, { w: 6, seed: 205 });
-  sk.ink(dense([[px - 12, sy], [x0 - 70, sy]]), { w: 12, color: "#8A9099", seed: 206, wob: 0.3 });
-  sk.ink(dense([[x0 - 70, sy - 46], [x0 - 70, sy + 46]]), { w: 12, seed: 207, wob: 0.4 });
-  sk.ink(dense([[x0, sy - 60], [x0, sy + 60]]), { w: 9, seed: 208, wob: 0.4 });
-  const tip = rrect(x1, sy - 12, 44, 24, 6); sk.fill(tip, GLASS, { dx: 0, dy: 0, wob: 0.3, seed: 209 }); sk.ink(tip, { w: 7, seed: 210 });
-  const cap = rrect(x1 + 40, sy - 18, 22, 36, 6); sk.fill(cap, C.red, { dx: 0, dy: 0, wob: 0.3, seed: 211 }); sk.ink(cap, { w: 7, seed: 212 });
-  arrow(sk, [[x0 - 150, sy + 84], [x0 - 92, sy + 84]], { w: 8, color: C.red, seed: 213, straight: true, head: 20, wob: 0.3 });
-  // 쌤: 피스톤을 누른다
-  const P = pose({ elR: [84, -300], haR: [162, -316], elL: [-50, -260], haL: [-24, -218], tilt: 0.05 });
-  const fx = 240, fy = 704, fs = 0.74;
-  drawFigure(sk, fx, fy, fs, P, { ...TEACHER, name: "teacher" });
-  // 구석의 작은 J자 관(옛 실험의 흔적)
-  jtube(sk, { xl: 900, xs: 868, top: 520, shortTop: 610, yb: 660, air: 22, long: 560, sd: 321, tw: 12, scale: false });
+  ground(sk, 704, 141);
+  // 수은을 채운 굵은 관 + 그 속에 꽂은 가는 관. 가는 관을 끌어올리면 꼭대기에 갇힌 공기가 늘어난다
+  const wx = 560, top = 300;
+  thin(sk, 0.9, () => {
+    const wide = poly([[wx - 46, top], [wx + 46, top], [wx + 46, 690], [wx - 46, 690]], 5);
+    sk.fill(wide, HG, { dx: 0, dy: 0, wob: 0.5, seed: 143, tex: 0.5, texAng: 1.5 });
+    sk.ink(dense([[wx - 46, top - 14], [wx - 46, 690], [wx + 46, 690], [wx + 46, top - 14]], 5), { w: 10, seed: 144 });
+    sk.ink(dense([[wx, 90], [wx, 640]]), { w: 32, seed: 145, wob: 0.4 });
+    sk.ink(dense([[wx, 96], [wx, 646]]), { w: 20, color: GLASS, seed: 145, wob: 0.4, cap: "butt" });
+    sk.ink(dense([[wx, 236], [wx, 646]]), { w: 16, color: HG, seed: 145, wob: 0.4, cap: "butt" });
+    sk.ink(dense([[wx, 100], [wx, 236]]), { w: 16, color: AIR, seed: 145, wob: 0.4, cap: "butt" });
+    const wax = circ(wx, 88, 20, { over: 0.15, seed: 146, lump: 0.1 }); sk.fill(wax, "#B0504A", { dx: 0, dy: 0, wob: 0.4, seed: 147 }); sk.ink(wax, { w: 7, seed: 148 });
+  });
+  // 처음 공기 길이(점선)와 늘어난 길이
+  sk.ink(dense([[wx + 44, 102], [wx + 44, 168]]), { w: 5, color: C.gray, dash: [9, 9], seed: 149, wob: 0 });
+  sk.ink(dense([[wx + 34, 168], [wx + 54, 168]]), { w: 5, color: C.gray, seed: 150, wob: 0 });
+  sk.ink(dense([[wx + 70, 102], [wx + 70, 236]]), { w: 7, color: OUTSIDE, seed: 151, wob: 0.2 });
+  for (const y of [102, 236]) sk.ink(dense([[wx + 60, y], [wx + 80, y]]), { w: 6, color: OUTSIDE, seed: 152 + y, wob: 0 });
+  arrow(sk, [[wx + 130, 250], [wx + 130, 140]], { w: 9, color: C.teal, seed: 155, straight: true, head: 22, wob: 0.3 });
+  // 보일: 두 손을 들어 가는 관을 끌어올린다. 훅: 굵은 관을 붙든다
+  const bp = pose({ elR: [96, -470], haR: [196, -600], elL: [92, -420], haL: [190, -540], tilt: 0.04 });
+  const bx = 410, bs = 0.68;
+  drawFigure(sk, bx, 704, bs, bp, { ...BOYLE, name: "boyle", face: "happy" });
+  const hp = pose({ elL: [-90, -290], haL: [-150, -262], elR: [56, -262], haR: [30, -214], tilt: -0.04 });
+  drawFigure(sk, 712, 704, 0.62, hp, { ...HOOKE, name: "hooke", face: "smile" });
   return sk;
 }
 
-const BUBBLES = [
-  [{ who: "boyle", text: "눌러도<br>버텨요!" }, { who: "critic", text: "그럴<br>리가요?" }],
-  [{ who: "boyle", text: "아래엔<br>상자를!" }, { who: "hooke", text: "꽉 묶었어요" }],
-  [{ who: "boyle", text: "줄어든다,<br>줄어들어!" }, { who: "hooke", text: "더 붓습니다!" }],
-  [{ who: "boyle", text: "절반까지는<br>봤어요" }, { who: "hooke", text: "으악, 관이!" }],
-  [{ who: "boyle", text: "2배면<br>절반!" }],
-  [{ who: "boyle", text: "당기면<br>늘어나네!" }],
-  [{ who: "teacher", text: "개수는<br>그대로!" }],
+/* ---------- 8. 오늘날: 입자로 보면 ---------- */
+function p8() {
+  const sk = new Sk(W, H, { id: "h" });
+  ground(sk, 704, 161);
+  // 끝을 막은 주사기 둘: 피스톤을 누르면 입자의 개수는 그대로, 사이만 가까워지고 벽에 더 자주 부딪힌다
+  syringe(sk, 520, 220, 380, 556, 163, false);
+  syringe(sk, 520, 480, 380, 746, 201, true);
+  arrow(sk, [[396, 480], [478, 480]], { w: 9, color: C.red, seed: 241, straight: true, head: 22, wob: 0.3 });
+  const P = pose({ elR: [88, -316], haR: [158, -340], elL: [-50, -260], haL: [-24, -218], tilt: 0.06 });
+  drawFigure(sk, 150, 704, 0.66, P, { ...TEACHER, name: "teacher" });
+  return sk;
+}
+
+export const META = {
+  title: "계단 위의<br><em>J자 유리관</em>",
+  lead: "1661년 영국, 공기를 가두고 수은으로 눌러 본 보일의 실험을 따라가요.",
+  narrator: "보이지도 않는 공기가 얼마나 세게 되밀어 낼까요? 보일은 끝을 막은 유리관에 공기를 가두고 <b>수은</b>을 부어 그 힘을 쟀어요.",
+  cta: "실험실 열기",
+};
+
+const CUTS = [
+  {
+    fn: p1, when: "1661년, 영국", stage: "궁금증", title: "공기가 수은을 떠받칠까",
+    caption: "수은을 채운 유리관을 수은 그릇에 거꾸로 세우면 수은이 75 cm쯤 높이에서 멈춰요. <b>로버트 보일</b>은 바깥 공기가 그릇의 수은을 눌러 이 기둥을 떠받친다고 보았어요. 그런데 한 학자가 공기의 힘만으로는 어림없고 보이지 않는 끈이 수은을 매단다고 반박했어요. 보일은 공기가 얼마나 세게 버티는지 재 보기로 했지요.",
+    bubbles: [{ who: "boyle", text: "공기가<br>떠받쳐요!" }],
+  },
+  {
+    fn: p2, when: "1661년, 영국", stage: "실험 준비", title: "끝을 막은 J자 관",
+    caption: "솜씨 좋은 사람이 등불로 긴 유리관의 아래를 J자로 구부렸어요. 짧은 쪽 끝은 막고 양쪽에 종이 눈금을 붙였지요. 수은을 조금 부어 양쪽 높이를 맞추자 짧은 쪽 끝에 <b>공기가 갇혔어요</b>. 이 공기는 바깥 공기와 같은 힘으로 눌려 있어요.",
+    bubbles: [{ who: "boyle", text: "공기를<br>가뒀어요" }],
+  },
+  {
+    fn: p3, when: "1661년, 영국", stage: "놀라운 결과", title: "절반이 된 공기",
+    caption: "긴 쪽에 수은을 부어 갇힌 공기를 눌렀어요. 공기가 처음의 <b>절반</b>이 되었을 때, 긴 쪽 수은은 짧은 쪽보다 29인치(약 74 cm) 높았어요. 그날 바깥 공기가 떠받치던 수은 기둥과 같은 높이예요. 처음부터 누르던 바깥 공기에 그만큼을 더했으니 누르는 힘이 <b>2배</b>가 된 거예요.",
+    bubbles: [{ who: "boyle", text: "절반이<br>됐어!" }],
+  },
+  {
+    fn: p4, when: "1661년, 영국", stage: "다시 도전", title: "계단에 매단 더 긴 관",
+    caption: "그런데 첫 관이 그만 깨지고 말았어요. 보일은 방에 세울 수 없을 만큼 긴 관을 구해 밝은 계단에 끈으로 매달고, 아래에는 수은을 받을 나무 상자를 두었어요. 두 사람이 함께했는데, 한 사람은 위에서 수은을 붓고 다른 한 사람은 아래에서 눈금을 보며 조금씩 부으라고 알려 주었어요.",
+    bubbles: [{ who: "boyle", text: "조금씩<br>부어요!" }],
+  },
+  {
+    fn: p5, when: "1661년, 영국", stage: "더 세게", title: "4분의 1이 된 공기",
+    caption: "긴 쪽 수은이 짧은 쪽보다 88인치(약 2.25 m)나 높아지도록 부어 누르는 힘을 처음의 4배로 만들자, 공기는 처음의 <b>4분의 1</b>이 되었어요. 2배로 누르면 절반, 4배로 누르면 4분의 1. 보일이 표에 적은 값은 이 규칙으로 짐작한 값과 100분의 1쯤밖에 다르지 않았어요.",
+    bubbles: [{ who: "boyle", text: "4배면<br>4분의 1!" }],
+  },
+  {
+    fn: p6, when: "1661년, 영국", stage: "뜻밖의 발견", title: "촛불을 대 보니",
+    caption: "보일은 눌린 공기에 촛불을 가까이 대 보았어요. 그러자 공기가 늘어나며 수은을 밀어냈어요. 유리가 깨질까 봐 더 데우지는 못했지요. 공기의 부피는 누르는 힘뿐 아니라 <b>온도</b>에 따라서도 달라져요. 그래서 누르는 힘과 부피의 규칙은 온도가 같을 때의 이야기예요.",
+    bubbles: [{ who: "boyle", text: "유리가<br>깨질라!" }],
+  },
+  {
+    fn: p7, when: "1661년, 영국", stage: "반대로 늘이면", title: "늘어나는 공기",
+    caption: "이번엔 수은 속에 꽂은 가는 관을 끌어올려 갇힌 공기를 늘였어요. 조수 <b>훅</b>이 도운 것으로 보여요. 누르는 힘이 절반으로 줄자 부피는 2배가 되었어요. 한쪽이 2배가 되면 다른 쪽은 절반이 되는 <b>반비례</b>예요. 친구 타운리가 짐작한 규칙을 보일이 실험으로 확인한 거예요.",
+    term: { name: "보일 법칙", def: "온도가 일정할 때, 기체의 압력과 부피는 반비례해요." },
+    bubbles: [{ who: "boyle", text: "늘이면<br>늘어나네!", side: "right" }],
+  },
+  {
+    fn: p8, stage: "오늘날", title: "입자로 보면",
+    caption: "보일은 눌린 공기가 되밀어 내는 힘을 '공기의 용수철'이라고 불렀지만 왜 그런지는 정하지 못했어요. 오늘날에는 <b>입자</b>로 설명해요. 끝을 막은 주사기를 누르면 입자의 개수는 그대로인 채 사이만 가까워져, 벽에 더 자주 부딪혀요. 그래서 압력이 커지지요.",
+    bubbles: [{ who: "teacher", text: "개수는<br>그대로!" }],
+  },
 ];
 
 export function panels() {
-  return [p1, p2, p3, p4, p5, p6, p7].map((fn, i) => { const sk = fn(); return { sk, bubbles: BUBBLES[i] }; });
+  return CUTS.map(c => ({ sk: c.fn(), bubbles: c.bubbles, when: c.when, whenPos: c.whenPos, stage: c.stage, title: c.title, caption: c.caption, term: c.term }));
 }

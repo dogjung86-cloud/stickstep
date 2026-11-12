@@ -28,6 +28,11 @@ interface Panel {
   caption: string;
   term?: { name: string; def: string };
   bubbles?: PanelBubble[];
+  /** 그 컷의 때와 곳("1757년, 뉴욕"). 그림 속에 글자를 그리지 않으므로 그림 왼쪽 위에 노란 상자로 얹는다.
+   *  연도는 단계 배지가 아니라 여기에 둔다(배지는 제목 위라 눈에 잘 띄지 않았다, 2026-11-12 사용자 지적). */
+  when?: string;
+  /** "tr"이면 상자를 오른쪽 위에(왼쪽 위에 중요한 그림이 있는 컷) */
+  whenPos?: "tl" | "tr";
 }
 interface ComicStep {
   title?: string;
@@ -35,6 +40,10 @@ interface ComicStep {
   narrator?: string;
   panels: Panel[];
   cta?: string;
+  /** 코드 그림 만화(ui/sketchArt 의 comicStory, 장면 파일이 정본). 두 가지가 달라진다.
+   *  ① 단계 배지 색을 STAGE_COLOR 대신 컷에 처음 나온 차례대로 고른다(미리보기 mock-comic.mjs 와 같다).
+   *  ② 말풍선과 때와 곳 상자가 그림과 같은 비율로 줄어든다(자리는 컷 폭 350px 기준으로 계산했다. 좁은 폰에서도 배치가 같다). */
+  code?: boolean;
 }
 
 const STAGE_COLOR: Record<string, string> = {
@@ -85,6 +94,13 @@ function stageColor(stage: string): string {
   for (const key of Object.keys(STAGE_COLOR)) if (stage.includes(key)) return STAGE_COLOR[key];
   return "#3182F6";
 }
+/** 코드 그림 만화의 배지 색 차례. 같은 이름의 배지는 같은 색, 새 이름이 나올 때마다 다음 색(미리보기 qa/sketch/mock-comic.mjs 와 같다) */
+const ORDER_TINT = ["#3182F6", "#FF9500", "#8A6BFF", "#12B886", "#0CA6C0", "#04B45F", "#F04452", "#E8850C"];
+function orderTints(panels: Panel[]): Map<string, string> {
+  const m = new Map<string, string>();
+  for (const p of panels) if (!m.has(p.stage)) m.set(p.stage, ORDER_TINT[m.size % ORDER_TINT.length]);
+  return m;
+}
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 
 export const comic: StepRenderer = (host, step, api) => {
@@ -106,6 +122,17 @@ export const comic: StepRenderer = (host, step, api) => {
   host.append(dots, panelEl);
 
   let i = 0;
+  const tints = s.code ? orderTints(s.panels) : null;
+  // 코드 그림 만화: 컷 폭이 350px보다 좁으면 말풍선과 때와 곳 상자를 같은 비율(--k)로 줄인다(ui.css 의 .comic-art.code)
+  const setK = (a: HTMLElement, w: number): void => {
+    if (w > 0) a.style.setProperty("--k", String(Math.min(1, Math.max(0.85, w / 350))));
+  };
+  const fit =
+    s.code && typeof ResizeObserver !== "undefined"
+      ? new ResizeObserver((entries) => {
+          for (const e of entries) setK(e.target as HTMLElement, e.contentRect.width);
+        })
+      : null;
   // 프레임 원비율 추종(2026-08-03): 첫 컷 로드에서 실측한 비율 — 한 만화 = 한 비율(폴더 균일)이라
   // 이후 컷은 로드 전에 선적용돼 높이 점프가 없다. 로드 전 기본 예약은 CSS의 4:3.
   let artRatio: string | null = null;
@@ -124,7 +151,7 @@ export const comic: StepRenderer = (host, step, api) => {
 
   function render(): void {
     const p = s.panels[i];
-    const color = stageColor(p.stage);
+    const color = tints?.get(p.stage) ?? stageColor(p.stage);
     clear(panelEl);
 
     const prevBtn = el(
@@ -152,8 +179,12 @@ export const comic: StepRenderer = (host, step, api) => {
     );
     const title = el("div", { class: "comic-title", html: p.title });
 
-    const art = el("div", { class: "comic-art" });
+    const art = el("div", { class: s.code ? "comic-art code" : "comic-art" });
     if (artRatio) art.style.aspectRatio = artRatio;
+    if (fit) {
+      fit.disconnect();
+      fit.observe(art);
+    }
     if (p.img) {
       const img = el("img", { class: "comic-img", attrs: { src: base + p.img, alt: p.title, loading: "eager" } }) as HTMLImageElement;
       const applyRatio = () => {
@@ -169,6 +200,8 @@ export const comic: StepRenderer = (host, step, api) => {
         art.appendChild(fallback());
       });
       art.appendChild(img);
+      // 때와 곳 상자(로드 실패 시 clear(art)가 함께 걷어낸다)
+      if (p.when) art.appendChild(el("span", { class: `comic-when${p.whenPos === "tr" ? " tr" : ""}`, text: p.when }));
       // 말풍선 하이브리드 — 이미지 % 좌표에 얹는 HTML(로드 실패 시 clear(art)가 함께 걷어낸다).
       // wrap 변형: cut()의 nowrap 한 줄과 달리 만화 대사는 2줄까지 줄바꿈 허용(폰 폭 390 가독성).
       for (const b of p.bubbles ?? []) {
@@ -187,6 +220,7 @@ export const comic: StepRenderer = (host, step, api) => {
 
     const cap = el("div", { class: "comic-caption", html: p.caption });
     panelEl.append(head, title, art, cap);
+    if (s.code) setK(art, art.clientWidth); // 관찰자가 알려 주기 전 첫 화면부터 맞는 크기로
     if (p.term) panelEl.appendChild(renderBlock({ k: "term", name: p.term.name, def: p.term.def, icon: "bulb" }));
 
     // reflow 후 .in 부여 — rAF에 의존하지 않고 항상 보이면서 전환 애니메이션도 재생.
@@ -212,4 +246,5 @@ export const comic: StepRenderer = (host, step, api) => {
   }
 
   render();
+  return () => fit?.disconnect();
 };

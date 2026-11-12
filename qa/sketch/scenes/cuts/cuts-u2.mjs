@@ -1,5 +1,6 @@
 // 중1 과학 Ⅱ단원(생물의 구성과 다양성) 개념 컷 코드 그림. 원본은 public/bio4/cuts/*.webp(정본 unit2v5.ts 의 cut("bio4", …) 열두 곳).
-import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, emark, qmark, drop, squiggle, arrow, hash } from "../../lib/sk.mjs";
+import { Sk, C, curve, dense, circ, ell, poly, rrect, mix, emark, qmark, drop, squiggle, arrow, hash, sparkle } from "../../lib/sk.mjs";
+import { sun, notebook } from "../../lib/props.mjs";
 import { drawFigure, handDot, pose, TEACHER, STUDENT, KID } from "../../lib/figure.mjs";
 import { W, H, lerpx, lerp2, heat, jiggle, thin, wavy, ray, steam } from "./common.mjs";
 
@@ -612,6 +613,162 @@ function cutU2l9() {
   return sk;
 }
 
+/* ---------- u2l5b: 두 계단을 나란히 놓으니 한 칸씩 달랐다(동물의 기관계, 식물의 조직계) ---------- */
+// 새 판(v6) u2l5 둘째 개념 스텝. 가운데 쌤 양옆으로 동물 계단(왼쪽으로 오른다)과 식물 계단(오른쪽으로 오른다).
+// 동물: 세포, 조직, 기관(위), 기관계(소화계), 개체(강아지). 식물: 세포, 조직, 조직계(줄기 단면), 기관(잎), 개체(나무).
+// 서로 다른 칸(동물의 넷째, 식물의 셋째)만 청록 띠로 칠해, 끼어드는 자리(높이)가 다르다는 것이 보이게 한다.
+// 그림은 디딤판 가운데보다 낮은 쪽(가운데 쌤 쪽)으로 조금 물려 놓는다(높은 쪽 옆판에 닿지 않게).
+function plantCell(sk, x, y, w, h, sd) { // 세포벽이 두꺼운 네모난 식물 세포. (x, y) = 아래 가운데
+  const c = rrect(x - w / 2, y - h, w, h, Math.min(w, h) * 0.2);
+  sk.fill(c, "#BFE3A6", { dx: 0.6, dy: 0.8, wob: 0.3, seed: sd });
+  sk.ink(c, { w: 6, color: "#3F7D3A", seed: sd + 1 });
+  sk.dot(x + w * 0.14, y - h * 0.52, Math.min(w, h) * 0.17, "#3F7D3A");
+}
+function cutU2l5b() {
+  const sk = new Sk(W, H, { id: "q" });
+  const GY = 680, sw = 74, sh = 98, n = 5, LX = 404, RX = 556;
+  const ODD = { a: 3, p: 2 };
+  ground(sk, GY, 11);
+  // 디딤판 i 의 그림 자리: 가운데보다 낮은 쪽으로 off 만큼 물린 점(디딤판 윗면)
+  const tread = (side, i, off = 0.1) => { const dir = side === "a" ? -1 : 1, x0 = side === "a" ? LX : RX; return [x0 + dir * (i + 0.5 - off) * sw, GY - (i + 1) * sh]; };
+  thin(sk, 0.78, () => {
+    for (const side of ["a", "p"]) {
+      const dir = side === "a" ? -1 : 1, x0 = side === "a" ? LX : RX, xEnd = x0 + dir * n * sw, s0 = side === "a" ? 21 : 41;
+      for (let i = 0; i < n; i++) {
+        const xi = x0 + dir * i * sw, y = GY - (i + 1) * sh;
+        const blk = poly([[xi, y], [xEnd, y], [xEnd, y + sh], [xi, y + sh]], 4);
+        sk.fill(blk, ODD[side] === i ? "#BDEBE1" : i % 2 ? "#E9DCC6" : "#F1E6D3", { dx: 0, dy: 0, wob: 0.4, seed: s0 + i });
+      }
+      for (let i = 0; i < n; i++) {
+        const xi = x0 + dir * i * sw, y = GY - (i + 1) * sh;
+        if (ODD[side] === i) sk.ink(dense([[xi + dir * 6, y + 10], [xEnd - dir * 6, y + 10]]), { w: 9, color: C.teal, seed: s0 + 10 + i, wob: 0.2 });
+        sk.ink(dense([[xi, y + sh], [xi, y], [xi + dir * sw, y]]), { w: 11, seed: s0 + 5 + i });
+      }
+      sk.ink(dense([[xEnd, GY - n * sh], [xEnd, GY]]), { w: 11, seed: s0 + 16 });
+      sk.ink(dense([[x0, GY], [xEnd, GY]]), { w: 11, seed: s0 + 17 });
+    }
+  });
+  const cellDot = (x, y, r, sd) => { const c = circ(x, y, r, { over: 0.1, seed: sd }); sk.fill(c, "#F6BFAE", { dx: 0.6, dy: 0.8, wob: 0.3, seed: sd + 1 }); sk.ink(c, { w: Math.max(5, r * 0.26), seed: sd + 2 }); sk.dot(x + r * 0.15, y, r * 0.3, "#B0476A"); };
+  // 동물 계단
+  { const [x, y] = tread("a", 0); cellDot(x, y - 28, 24, 101); }
+  { const [x, y] = tread("a", 1); [[-23, -15], [0, -15], [23, -15], [-11.5, -38], [11.5, -38], [0, -61]].forEach(([dx, dy], i) => cellDot(x + dx, y + dy, 12.5, 110 + i * 4)); }
+  const stomach = (x, y, k, sd) => sk.at(x, y, k, () => {
+    sk.ink(curve([[-2, -124], [-4, -104], [-8, -86]]), { w: 12, color: "#E78A96", seed: sd, wob: 0.3 });
+    const st = curve([[-8, -86], [14, -100], [38, -92], [50, -66], [46, -30], [26, -4], [-6, 2], [-28, -6], [-40, -14], [-30, -28], [-16, -40], [-12, -62]], true, 3);
+    sk.fill(st, "#F49AA4", { dx: 0.6, dy: 0.8, wob: 0.3, seed: sd + 1 }); sk.ink(st, { w: 7, seed: sd + 2 });
+    sk.ink(curve([[-38, -12], [-54, -6], [-60, 10]]), { w: 10, color: "#E78A96", seed: sd + 3, wob: 0.3 });
+  });
+  { const [x, y] = tread("a", 2, 0.2); stomach(x + 6, y - 12, 0.66, 141); }
+  { const [x, y] = tread("a", 3, 0.2); fit(sk, 0.78, [x, y], [x, y - 4], () => {
+    const LI = [[x - 46, y - 4], [x - 52, y - 70], [x - 26, y - 88], [x + 30, y - 86], [x + 54, y - 66], [x + 50, y - 4]];
+    sk.ink(curve(LI), { w: 17, color: "#E9B66B", seed: 151 }); sk.ink(curve(LI), { w: 4, color: "#B5741F", seed: 152, wob: 0.2 });
+    const SI = [[x - 18, y - 74], [x - 28, y - 62], [x + 26, y - 62], [x + 28, y - 48], [x - 28, y - 46], [x - 28, y - 32], [x + 28, y - 32], [x + 26, y - 18], [x - 6, y - 14]];
+    sk.ink(curve(SI), { w: 9, color: "#F2A6A0", seed: 153 }); sk.ink(curve(SI), { w: 3, color: "#C0566B", seed: 154, wob: 0.2 });
+    stomach(x + 4, y - 74, 0.5, 155); }); }
+  { const [x, y] = tread("a", 4, 0.3); dog(sk, x - 4, y, 0.6, 161); }
+  // 식물 계단
+  { const [x, y] = tread("p", 0); plantCell(sk, x, y - 4, 46, 40, 201); }
+  { const [x, y] = tread("p", 1); for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) plantCell(sk, x - 23 + c * 23, y - 4 - r * 23, 22, 22, 210 + r * 3 + c); }
+  { const [x, y] = tread("p", 2, 0.15); // 조직계: 줄기 한 토막(겉껍질, 관다발 고리, 속)
+    const hw = 26, ht = 62;
+    const body = poly([[x - hw, y - ht], [x + hw, y - ht], [x + hw, y - 2], [x - hw, y - 2]], 3);
+    sk.fill(body, "#9BD07F", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 231 });
+    sk.ink(dense([[x - 9, y - ht + 4], [x - 9, y - 4]]), { w: 5, color: "#3F7D3A", seed: 232, wob: 0.2 });
+    sk.ink(dense([[x + 9, y - ht + 4], [x + 9, y - 4]]), { w: 5, color: "#3F7D3A", seed: 233, wob: 0.2 });
+    sk.ink(body, { w: 6, seed: 234 });
+    const top = ell(x, y - ht, hw, 10, 0, Math.PI * 2);
+    sk.fill(top, "#D6EFC4", { dx: 0, dy: 0, wob: 0.2, seed: 235 }); sk.ink(top, { w: 5, color: "#3F7D3A", seed: 236 });
+    for (let k = 0; k < 7; k++) { const a = k / 7 * Math.PI * 2; sk.dot(x + Math.cos(a) * 14, y - ht + Math.sin(a) * 5.2, 2.8, "#2E6B2A"); } }
+  { const [x, y] = tread("p", 3, 0.15); // 기관: 잎
+    sk.ink(curve([[x - 2, y - 2], [x + 2, y - 18]]), { w: 6, color: "#3F7D3A", seed: 241 });
+    const lf = curve([[x + 2, y - 18], [x - 26, y - 40], [x - 22, y - 72], [x + 2, y - 86], [x + 26, y - 70], [x + 28, y - 38]], true, 3);
+    sk.fill(lf, "#7CC36A", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 242 }); sk.ink(lf, { w: 6, seed: 243 });
+    sk.ink(curve([[x + 2, y - 20], [x + 1, y - 52], [x + 2, y - 82]]), { w: 4, color: "#3F7D3A", seed: 244, wob: 0.2 }); }
+  { const [x, y] = tread("p", 4, 0.25); // 개체: 나무 한 그루
+    const tr = poly([[x - 8, y], [x + 8, y], [x + 6, y - 56], [x - 6, y - 56]], 3);
+    sk.fill(tr, C.woodDark, { dx: 0, dy: 0, wob: 0.3, seed: 251 }); sk.ink(tr, { w: 6, seed: 252 });
+    const cn = curve([[x - 36, y - 60], [x - 48, y - 98], [x - 26, y - 134], [x + 8, y - 140], [x + 40, y - 120], [x + 46, y - 80], [x + 20, y - 56]], true, 3);
+    sk.fill(cn, "#7CC36A", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 253 }); sk.ink(cn, { w: 7, seed: 254 }); }
+  // 쌤: 두 계단 사이 바닥에서 양팔로 청록 칸을 하나씩 가리킨다(왼쪽은 더 높은 칸, 오른쪽은 낮은 칸)
+  const P = pose({ elL: [-74, -340], haL: [-142, -410], elR: [74, -326], haR: [146, -348], tilt: 0 });
+  drawFigure(sk, (LX + RX) / 2, GY, 0.6, P, { ...TEACHER, name: "teacher" });
+  return sk;
+}
+
+/* ---------- u2l9b: 햇빛으로 만들고, 분해해서 얻고, 먹어서 얻고(식물계, 균계, 동물계) ---------- */
+// 새 판(v6) u2l9 둘째 개념 스텝. 양분을 얻는 길이 셋: 화분의 풀은 햇빛을 받고, 버섯은 썩은 통나무에서, 강아지는 사료를 먹는다.
+// 고개를 숙여 그릇의 사료를 먹는 개(dog 의 머리만 목에서 아래로 돌린 모양). 원점 = 발 사이 바닥, 오른쪽을 본다
+function dogEating(sk, x, y, s, sd) {
+  sk.at(x, y, s, () => {
+    sk.ink(curve([[-64, -66], [-86, -88], [-84, -108]]), { w: 9, seed: sd, wob: 0.4 });
+    for (const [lx, i] of [[-48, 0], [40, 1], [-34, 2], [54, 3]]) { const leg = poly([[lx - 9, -56], [lx + 9, -56], [lx + 7, 0], [lx - 7, 0]], 3); sk.fill(leg, i < 2 ? "#C9944F" : "#D9A55E", { dx: 0, dy: 0, wob: 0.3, seed: sd + 1 + i }); sk.ink(leg, { w: 6, seed: sd + 5 + i, wob: 0.3 }); }
+    const body = curve([[-70, -66], [-40, -84], [40, -84], [72, -66], [66, -44], [-64, -44]], true, 3);
+    sk.fill(body, "#D9A55E", { seed: sd + 9, dx: 0.8, dy: 1 }); sk.ink(body, { w: 8, seed: sd + 10 });
+    sk.at(60, -74, 1, () => {
+      const head = curve([[-10, -10], [4, -42], [36, -46], [58, -26], [52, -10], [20, -2]], true, 3);
+      sk.fill(head, "#D9A55E", { seed: sd + 11, dx: 0.8, dy: 1 }); sk.ink(head, { w: 8, seed: sd + 12 });
+      const ear = curve([[6, -38], [-4, -18], [4, -2], [14, -24]], true, 3);
+      sk.fill(ear, "#9C6A33", { dx: 0, dy: 0, wob: 0.3, seed: sd + 13 }); sk.ink(ear, { w: 6, seed: sd + 14, wob: 0.3 });
+      sk.dot(34, -32, 4.2); sk.dot(57, -24, 4.6);
+    }, 0.62);
+  });
+}
+function cutU2l9b() {
+  const sk = new Sk(W, H, { id: "r" });
+  const GY = 668;
+  fit(sk, 1.2, [486, GY], [480, 678], () => {
+    ground(sk, GY, 11, 70, 900);
+    sun(sk, 232, 196, 38, { seed: 301 });
+    // 화분의 풀(식물계): 해에서 오는 빛을 잎으로 받는다
+    const px = 318;
+    thin(sk, 0.85, () => {
+      const pot = poly([[px - 46, GY - 84], [px + 46, GY - 84], [px + 35, GY], [px - 35, GY]], 4);
+      sk.fill(pot, "#D9774A", { seed: 311, dx: 0.8, dy: 1 }); sk.ink(pot, { w: 10, seed: 312 });
+      const rim = rrect(px - 53, GY - 104, 106, 22, 6);
+      sk.fill(rim, "#E58B5E", { seed: 313, dx: 0.6, dy: 0.8 }); sk.ink(rim, { w: 10, seed: 314 });
+    });
+    sk.ink(curve([[px, GY - 104], [px + 4, GY - 176], [px - 2, GY - 244]]), { w: 9, color: "#4E9A46", seed: 315 });
+    [[-1, GY - 146, 0], [1, GY - 174, 1], [-1, GY - 206, 2], [1, GY - 232, 3]].forEach(([sg, y, i]) => {
+      const lf = curve([[px, y], [px + sg * 32, y - 24], [px + sg * 64, y - 9], [px + sg * 32, y + 8]], true, 3);
+      sk.fill(lf, "#7CC36A", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 321 + i }); sk.ink(lf, { w: 6, seed: 325 + i });
+    });
+    ray(sk, [258, 248], [px - 30, GY - 222], 331);
+    ray(sk, [276, 232], [px + 36, GY - 250], 333);
+    // 썩은 통나무의 버섯(균계): 죽은 나무를 분해하며 자란다
+    const L0 = 428, L1 = 600, LT = GY - 62;
+    thin(sk, 0.85, () => {
+      const log = rrect(L0, LT, L1 - L0, 62, 27);
+      sk.fill(log, "#A9743F", { seed: 341, tex: true, texAng: 0.02 }); sk.ink(log, { w: 10, seed: 342 });
+      for (const [x, yy, r, i] of [[496, GY - 26, 12, 0], [556, GY - 42, 8, 1], [578, GY - 18, 6, 2]]) { const b = ell(x, yy, r * 1.6, r, 0, Math.PI * 2); sk.fill(b, "#6E4522", { dx: 0, dy: 0, wob: 0.4, seed: 343 + i }); }
+      const end = ell(L0 + 16, GY - 31, 19, 31, 0, Math.PI * 2);
+      sk.fill(end, "#E3C08E", { dx: 0, dy: 0, wob: 0.3, seed: 347 }); sk.ink(end, { w: 8, seed: 348 });
+      sk.ink(ell(L0 + 16, GY - 31, 9, 16, 0, Math.PI * 2), { w: 4, color: "#9A6A36", seed: 349 });
+    });
+    for (const [x, h, r, i] of [[470, 30, 27, 0], [520, 46, 31, 1], [570, 27, 22, 2]]) {
+      const stem = poly([[x - 7, LT + 4], [x + 7, LT + 4], [x + 6, LT - h], [x - 6, LT - h]], 3);
+      sk.fill(stem, "#F4E6CF", { dx: 0, dy: 0, wob: 0.3, seed: 351 + i }); sk.ink(stem, { w: 5, seed: 354 + i });
+      const cap = curve([[x - r, LT - h + 2], [x - r * 0.7, LT - h - r * 0.62], [x, LT - h - r * 0.8], [x + r * 0.7, LT - h - r * 0.62], [x + r, LT - h + 2]], false, 3);
+      sk.fill([...cap, cap[0]], "#C9955E", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 357 + i }); sk.ink([...cap, cap[0]], { w: 6, seed: 360 + i });
+    }
+    // 사료를 먹는 강아지(동물계)
+    const bx = 812;
+    thin(sk, 0.85, () => {
+      const bowl = curve([[bx - 40, GY - 30], [bx - 30, GY - 2], [bx + 30, GY - 2], [bx + 40, GY - 30]], false, 3);
+      sk.fill([...bowl, bowl[0]], "#5B8FD6", { dx: 0.6, dy: 0.8, wob: 0.3, seed: 371 }); sk.ink([...bowl, bowl[0]], { w: 8, seed: 372 });
+    });
+    for (const [dx, dy, i] of [[-22, -36, 0], [-8, -39, 1], [6, -37, 2], [20, -35, 3]]) sk.dot(bx + dx, GY + dy, 5.5, "#9C6A33");
+    dogEating(sk, 702, GY, 0.66, 381);
+    // 쌤: 왼쪽에서 수첩을 들고 셋을 견준다
+    const P = pose({ elR: [74, -292], haR: [112, -316], elL: [-50, -262], haL: [-26, -220], tilt: 0.04 });
+    const fx = 132, fs = 0.6;
+    drawFigure(sk, fx, GY, fs, P, { ...TEACHER, name: "teacher", hands: "L" });
+    const hx = fx + fs * 112, hy = GY - fs * 316;
+    notebook(sk, hx + 22, hy - 4, 0.62, { seed: 391, check: true, rot: 0.08 });
+    handDot(sk, [hx, hy], C.skin, 395, 11);
+  });
+  return sk;
+}
+
 /* ---------- u2l10: 그물코가 많을수록 잘 버틴다 ---------- */
 function cutU2l10() {
   const sk = new Sk(W, H, { id: "p" });
@@ -661,6 +818,8 @@ export function cuts() {
     { name: "u2l8", theme: "bio4", sk: cutU2l8(), alt: "생물 카드를 기준에 따라 상자에 나눠 담는 스틱맨", cap: "좋은 기준이 좋은 분류를 만든다" },
     { name: "u2l8b", theme: "bio4", sk: cutU2l8b(), alt: "당나귀와 말과 노새를 견주어 보는 스틱맨", cap: "새끼를 낳을 수 있어도 같은 종이 아닐 수 있다?" },
     { name: "u2l9", theme: "bio4", sk: cutU2l9(), alt: "다섯 개의 문 앞에서 생물들을 안내하는 스틱맨 문지기", cap: "생물의 왕국은 다섯. 문지기의 질문만 기억하면 돼요" },
+    { name: "u2l5b", theme: "bio4", orig: null, sk: cutU2l5b(), alt: "가운데 선 스틱맨 쌤 양옆으로 동물의 계단(세포, 조직, 위, 소화계, 강아지)과 식물의 계단(세포, 조직, 줄기 단면, 잎, 나무)이 오르고, 서로 다른 칸(소화계와 줄기 단면)만 청록으로 칠해진 장면", cap: "닮은 두 계단, 다른 칸은 하나씩. 자리도 달라요" },
+    { name: "u2l9b", theme: "bio4", orig: null, sk: cutU2l9b(), alt: "햇빛을 받는 화분의 풀, 썩은 통나무에서 자라는 버섯, 사료 그릇 앞의 강아지를 수첩을 든 스틱맨 쌤이 견주어 보는 장면", cap: "햇빛으로 만들고, 썩은 것을 분해하고, 먹이를 먹고" },
     { name: "u2l10", theme: "bio4", sk: cutU2l10(), alt: "구멍 난 그물을 기워 생물들을 지키는 스틱맨", cap: "그물코가 많을수록 잘 버텨요. 다양성이 안전망!" },
   ];
 }
