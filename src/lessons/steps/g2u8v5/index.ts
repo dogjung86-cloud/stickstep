@@ -2,5 +2,10 @@
 // 스텝 타입 이름은 "g2u8"로 시작한다(다른 단원, 기존 랩과 겹치지 않게). 예: { g2u8SomethingLab: somethingLab }
 // 랩 뼈대는 ../bio6/b6Lab 의 bvFrame 을 그대로 쓴다(뼈대 파일과 bio6.css 는 고치지 않는다).
 import type { StepRenderer } from "../../types";
+import { pencilLab } from "./pencilLab";
+import { parallaxLab } from "./parallaxLab";
 
-export const G2U8V5_STEPS: Record<string, StepRenderer> = {};
+export const G2U8V5_STEPS: Record<string, StepRenderer> = {
+  g2u8PencilLab: pencilLab,
+  g2u8ParallaxLab: parallaxLab,
+};

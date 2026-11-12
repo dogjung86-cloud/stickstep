@@ -1,3 +1,74 @@
 /* 중2 Ⅷ 별과 우주 v5(전면 재제작)의 시트. main.ts가 이미 싣는다.
    이 단원의 클래스는 .g2u8x- 로 시작한다. 도입 장면은 .opn-g2u8- 로 시작한다.
    공용 뼈대(.bv-, .opn-)의 치수를 조정할 때는 이 단원의 클래스 아래에서만 한다(예: .g2u8x-step .bv-stage). 전역 규칙은 덮어쓰지 않는다. */
+
+/* ── 랩 공용 ───────────────────────────────────────── */
+.g2u8x-step { --x-ink: #232D73; }
+.g2u8x-step .bv-pips i.on { background: var(--subj-star); }
+.g2u8x-step .bv-helper { border-left-color: var(--subj-star); }
+.g2u8x-step .bv-btn.main { border-color: var(--subj-star); background: var(--subj-star-tint); color: var(--x-ink); }
+.g2u8x-step .bv-btn:disabled { opacity: .45; }
+.g2u8x-step .bv-btn.g2u8x-off { text-decoration: line-through; }
+.g2u8x-step .bv-card.on { border-color: var(--subj-star); background: var(--subj-star-tint); box-shadow: 0 0 0 1px var(--subj-star) inset; }
+.g2u8x-step .bv-card.done::after { background-color: var(--subj-star-press); }
+.g2u8x-step .bv-card:disabled { opacity: .5; }
+.g2u8x-step .bv-qt b { color: var(--x-ink); }
+.g2u8x-step .bv-range-in::-webkit-slider-runnable-track { background: linear-gradient(90deg, var(--subj-star) var(--p, 0%), var(--n200) var(--p, 0%)); }
+.g2u8x-step .bv-range-in::-webkit-slider-thumb { border-color: var(--subj-star); box-shadow: 0 2px 8px rgba(46, 58, 140, .35); }
+.g2u8x-step .bv-range-in::-moz-range-progress { background: var(--subj-star); }
+.g2u8x-step .bv-range-in::-moz-range-thumb { border-color: var(--subj-star); }
+.g2u8x-stage { background: #070D1C; }
+
+.g2u8x-segs { display: grid; gap: 8px; }
+.g2u8x-seg {
+  height: 48px; padding: 0 4px; border-radius: 14px; border: 1.5px solid var(--n300); background: #fff; font-size: 14px; font-weight: 800; color: var(--sub);
+  box-shadow: var(--sh-card); transition: transform .12s, border-color .2s, background .2s, opacity .2s; white-space: nowrap; letter-spacing: -.03em;
+}
+.g2u8x-seg:active { transform: scale(.97); }
+.g2u8x-seg.on { border-color: var(--subj-star); background: var(--subj-star-tint); color: var(--x-ink); }
+.g2u8x-seg:disabled { opacity: .45; }
+.g2u8x-row { display: grid; gap: 8px; }
+.g2u8x-row .bv-btn { font-size: 14.5px; letter-spacing: -.03em; }
+.g2u8x-cap { font-size: 12.5px; font-weight: 700; color: var(--sub); line-height: 18px; }
+.g2u8x-hold { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.g2u8x-step .bv-btn.g2u8x-hold.on { background: var(--subj-star); color: #fff; transform: scale(.975); }
+
+.g2u8x-log { display: grid; gap: 8px; }
+.g2u8x-log-row {
+  height: 46px; padding: 0 12px; border-radius: 14px; border: 1.5px dashed var(--n300); background: var(--n50);
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0;
+  font-size: 13px; color: var(--sub); transition: border-color .2s, background .2s; letter-spacing: -.03em;
+}
+.g2u8x-log-row.on { border-style: solid; background: #fff; color: var(--ink); box-shadow: var(--sh-card); }
+.g2u8x-log-row.bad { border-style: solid; border-color: var(--red); background: #FFF4F5; color: var(--ink); }
+.g2u8x-log-n { font-weight: 700; white-space: nowrap; }
+.g2u8x-log-v { font-weight: 800; color: var(--ter); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; }
+.g2u8x-log-row.on .g2u8x-log-v { color: var(--x-ink); }
+.g2u8x-log-row.bad .g2u8x-log-v { color: var(--red); }
+.g2u8x-log.tight { gap: 6px; }
+.g2u8x-log.tight .g2u8x-log-row { height: 38px; }
+.g2u8x-photo { position: absolute; object-fit: cover; border-radius: 10px; pointer-events: none; user-select: none; }
+
+/* ── 도입(opener) 일곱 장면 ────────────────────────
+   그림의 묶음: -s0(조작 전에만) · -s1(조작 뒤) · -mv(움직이는 것) · -far(조금만 움직이는 것). 무대의 on1 클래스가 바꾼다. */
+.opn-g2u8-btn {
+  grid-column: 1 / -1; height: 52px; border-radius: 16px; border: 1.5px solid var(--subj-star);
+  background: var(--subj-star-tint); color: #232D73; font-size: 15px; font-weight: 800;
+  box-shadow: var(--sh-card); transition: transform .12s, background .15s, color .15s, opacity .2s;
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.opn-g2u8-btn:active, .opn-g2u8-btn.on { transform: scale(.975); background: var(--subj-star); color: #fff; }
+.opn-g2u8-btn:disabled { opacity: .45; }
+.opn-g2u8-s0, .opn-g2u8-s1 { transition: opacity .45s; }
+.opn-g2u8-s1 { opacity: 0; }
+.opn-stage.on1 .opn-g2u8-s0 { opacity: 0; }
+.opn-stage.on1 .opn-g2u8-s1 { opacity: 1; }
+.opn-g2u8-mv, .opn-g2u8-far { transition: transform .7s var(--ease-out), opacity .7s; }
+/* 1. 걸어가며 보기: 가까운 나무는 크게, 먼 학교는 조금만 옮겨 간다 */
+.opn-g2u8-tree.holding .opn-g2u8-mv, .opn-g2u8-tree.on1 .opn-g2u8-mv { transform: translateX(-470px); transition-duration: 1.2s; }
+.opn-g2u8-tree.holding .opn-g2u8-far, .opn-g2u8-tree.on1 .opn-g2u8-far { transform: translateX(-24px); transition-duration: 1.2s; }
+/* 5. 망원경: 누르는 동안 살짝 들린다 */
+.opn-g2u8-band .opn-g2u8-mv { transform-box: view-box; transform-origin: 352px 444px; }
+.opn-g2u8-band.holding .opn-g2u8-mv, .opn-g2u8-band.on1 .opn-g2u8-mv { transform: rotate(-8deg); }
+/* 6. 검은 얼룩: 흐려져 뒤의 별이 비친다 */
+.opn-g2u8-dark.on1 .opn-g2u8-mv { opacity: .16; }
