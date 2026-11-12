@@ -1,6 +1,6 @@
 // 중2 Ⅰ v5: 레슨 2~3(뜨고 가라앉기, 고체의 용해도)의 새 스텝. unit1v5.ts가 모아 remakeUnit에 넘긴다.
 import type { V5LessonPlan } from "../v5remake";
-import { mcq, multi, opener, ox, recap } from "../dsl";
+import { mcq, multi, opener, ox, recap, cut } from "../dsl";
 import { chemMiniArt } from "../../ui/chemFigures";
 import { g1LayersFig, g1SolPointFig } from "../../ui/g2u1v5Figures";
 import { dissolveLab, layerLab, note, problems, term, warmLab, words } from "./unit1v5kit";
@@ -83,6 +83,7 @@ export const L3: V5LessonPlan = {
         title: "포화 용액과 용해도",
         lead: "설탕물에서 녹는 설탕이 <b>용질</b>, 녹이는 물이 <b>용매</b>, 고르게 섞인 설탕물이 <b>용액</b>이에요. 병에서 본 한계에 이름을 붙여요.",
         blocks: [
+      { k: "figure", svg: cut("chem", "g2u1l3", "레모네이드 가판대에서 스틱맨이 작은 컵에 설탕을 퍼 넣어 바닥에 설탕이 쌓였고, 옆의 커다란 물통에는 같은 양의 설탕이 흔적 없이 녹아 있는 장면"), cap: "같은 설탕인데 물이 적은 컵에서는 다 녹지 못했어요" },
           term("포화 용액", "어떤 온도에서 일정한 양의 용매에 용질이 <b>최대로 녹아 있는</b> 용액이에요. 질산 칼륨을 3.0 g까지 녹인 병에 0.5 g을 더 넣자 녹지 않고 남았죠. 그 병의 용액이 포화 용액이에요."),
           term("불포화 용액", "포화 용액보다 용질이 적게 녹아 있어서 <b>용질이 더 녹을 수 있는</b> 용액이에요. 질산 칼륨을 1.0 g만 넣었을 때의 병이 그랬어요."),
           term("용해도", "어떤 온도에서 <b>용매 100 g에 최대로 녹을 수 있는 용질의 질량(g)</b>이에요. 온도와 용매가 같으면 물질마다 값이 정해져 있어서 물질의 특성이에요. 20 ℃의 물에서 질산 칼륨의 용해도는 31.6이에요(물 100 g에 31.6 g)."),

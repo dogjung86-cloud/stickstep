@@ -1,6 +1,6 @@
 // 중2 Ⅰ v5: 레슨 7~9(밀도 차 분리, 재결정, 증류)의 새 스텝. unit1v5.ts가 모아 remakeUnit에 넘긴다.
 import type { V5LessonPlan } from "../v5remake";
-import { mcq, multi, opener, order, ox, recap } from "../dsl";
+import { mcq, multi, opener, order, ox, recap, cut } from "../dsl";
 import { chemMiniArt } from "../../ui/chemFigures";
 import { g1DistillFig, g1TwoSolFig } from "../../ui/g2u1v5Figures";
 import { crystalLab, distillLab5, funnelLab, note, problems, seedLab, term, words } from "./unit1v5kit";
@@ -86,6 +86,7 @@ export const L8: V5LessonPlan = {
         title: "석출과 재결정",
         lead: "모두 녹인 용액을 식히자 바늘 모양의 고체가 나타났어요. 이 일과 이 방법에 이름을 붙여요.",
         blocks: [
+      { k: "figure", svg: cut("chem", "g2u1l8", "겨울 아침 부엌에서 스틱맨이 밤새 식은 꿀단지 바닥에 가라앉은 하얀 결정을 숟가락으로 떠 올리는 장면"), cap: "식은 꿀단지 바닥에 하얀 결정이 생겼어요" },
           term("석출", "높은 온도의 용액을 식힐 때 용액에 녹아 있던 용질이 <b>고체가 되어 가라앉는</b> 현상이에요. 식히면 용해도가 작아져서, 더는 녹아 있을 수 없는 만큼이 고체로 나와요."),
           term("재결정", "고체 혼합물을 용매에 모두 녹인 다음 <b>용액의 온도를 낮추거나 용매를 증발시켜 순수한 고체 물질을 얻는 방법</b>이에요. 질산 칼륨만 결정으로 얻은 실험이 재결정이에요."),
           note("식힌다고 녹아 있던 물질이 모두 나오는 것은 아니에요. 그 온도에서도 <b>다 녹아 있을 수 있는 양</b>이라면 나오지 않아요. 염화 나트륨 2 g이 그랬어요.", "blue"),
@@ -165,6 +166,7 @@ export const L9: V5LessonPlan = {
         title: "증류",
         lead: "가열하는 동안 온도가 거의 일정한 구간이 두 번 나타났고, 구간마다 다른 물질이 끓어 나왔어요. 이 방법에 이름을 붙여요.",
         blocks: [
+      { k: "figure", svg: cut("chem", "g2u1l9", "햇볕을 받은 흙탕물 웅덩이에서 김이 올라가 구름이 되고, 구름에서 떨어지는 맑은 빗방울을 스틱맨이 컵으로 받는 장면. 흙은 웅덩이에 그대로 남아 있다"), cap: "물만 올라갔다가 맑은 물로 돌아와요" },
           term("증류", "혼합물을 가열할 때 <b>끓는점 차를 이용해 물질을 나누는 방법</b>이에요. 끓는점이 낮은 물질이 먼저 기체가 되어 나오고, 그 기체를 식히면 다시 액체로 모여요."),
           note("물과 에탄올처럼 <b>서로 잘 섞이는</b> 액체는 층으로 나뉘지 않아서 분별 깔때기로는 나눌 수 없어요. 이럴 때 끓는점 차를 이용해요."),
         ],

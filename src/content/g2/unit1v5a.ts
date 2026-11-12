@@ -1,6 +1,6 @@
 // 중2 Ⅰ v5: 레슨 1~3(밀도, 뜨고 가라앉기, 고체의 용해도)의 새 스텝. unit1v5.ts가 모아 remakeUnit에 넘긴다.
 import type { V5LessonPlan } from "../v5remake";
-import { mcq, multi, opener, ox, recap } from "../dsl";
+import { mcq, multi, opener, ox, recap, cut } from "../dsl";
 import { chemMiniArt } from "../../ui/chemFigures";
 import { g1ScatterFig } from "../../ui/g2u1v5Figures";
 import { measureLab, note, problems, sizeLab, term, words } from "./unit1v5kit";
@@ -16,6 +16,7 @@ export const L1: V5LessonPlan = {
         title: "물질의 특성과 밀도",
         lead: "크기가 달라도 같은 금속이면 질량 ÷ 부피가 같았어요. 이런 성질과 이 값에 이름을 붙여요.",
         blocks: [
+      { k: "figure", svg: cut("chem", "g2u1l1", "크기가 똑같은 상자 둘을 양손에 든 스틱맨. 솜이 가득한 상자는 가볍게 들고, 쇠구슬이 가득한 상자 쪽 팔은 축 처진 장면"), cap: "크기는 같은데 한쪽 팔만 축 처져요" },
           term("물질의 특성", "물질의 여러 성질 가운데 <b>다른 물질과 구별되는 고유한 성질</b>이에요. 물질의 양이 많든 적든 달라지지 않아서, 이 성질을 견주면 어떤 물질인지 가려낼 수 있어요."),
           term("밀도", "<b>단위 부피당 질량</b>, 곧 질량을 부피로 나눈 값이에요. 단위는 g/cm³나 g/mL를 써요. 철은 큰 조각도 작은 조각도 7.87 g/cm³예요."),
           note("질량과 부피는 물질의 특성이 아니에요. 조각이 크면 커지고 작으면 작아지니까요. 밀도가 큰 물질은 그냥 무거운 물질이 아니라 <b>같은 부피일 때 더 무거운</b> 물질이에요."),
