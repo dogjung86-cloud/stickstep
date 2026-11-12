@@ -36,9 +36,9 @@ await openLesson(page, "g2u8l1");
 const data = await page.evaluate(async ({ labTexts }) => {
   const strip = (h) => String(h ?? "").replace(/<br\s*\/?>/g, " ").replace(/<[^>]+>/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\s+/g, " ").trim();
   const tight = (h) => strip(h).replace(/\s+/g, "");
-  const m = await import("/src/content/g2/unit8v5.ts");
+  const m = await import("/src/content/g2/unit8.ts");
   const ex = await import("/src/content/exams/index.ts");
-  const unit = m.G2_UNIT8_V5;
+  const unit = m.G2_UNIT8;
   const probs = [];
   const steps = {};
   unit.lessons.forEach((l) => {

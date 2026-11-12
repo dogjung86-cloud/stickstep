@@ -1,27 +1,15 @@
-// 중2 Ⅱ v5 내용 파일들이 함께 쓰는 저작 도구(랩 팩토리, 용어 스텝, 문제 구간 바꾸기, 실사 그림).
+// 중2 Ⅱ 지권의 변화의 내용 파일들이 함께 쓰는 저작 도구(랩 팩토리, 레슨 스텝 잇기, 용어 스텝, 실사 그림).
 import type { Step } from "../../lessons/types";
 import { concept } from "../dsl";
 
 /** 새 랩 스텝의 팩토리(dsl.ts를 고치지 않는다). */
 export const lab = (type: string) => (o: { title: string; cta?: string }): Step => ({ type, ...o }) as unknown as Step;
 
-const warn = (msg: string): void => {
-  if (import.meta.env.DEV) console.warn(`[v5] g2u2: ${msg}`);
-};
-
-/** 정리 뒤의 문제 구간을 새 배열로 바꾼다. 선택형, OX, 복수 선택에는 "몇 번째 / 모두 몇 개" 번호를 다시 매긴다. */
-export function problems(steps: Step[], next: Step[]): Step[] {
-  let at = -1;
-  steps.forEach((st, i) => {
-    if (st.type === "recap") at = i;
-  });
-  if (at < 0) {
-    warn("정리 스텝을 찾지 못해 문제를 바꾸지 않았다");
-    return steps;
-  }
-  const of = next.filter((st) => st.type === "quiz").length;
+/** 한 레슨의 스텝 배열: 도입부터 정리까지(body) 뒤에 문제(probs)를 잇는다. 선택형, OX, 복수 선택에는 "몇 번째 / 모두 몇 개" 번호를 매긴다. */
+export function lessonSteps(body: Step[], probs: Step[]): Step[] {
+  const of = probs.filter((st) => st.type === "quiz").length;
   let n = 0;
-  return [...steps.slice(0, at + 1), ...next.map((st) => (st.type === "quiz" ? ({ ...st, n: ++n, of } as Step) : st))];
+  return [...body, ...probs.map((st) => (st.type === "quiz" ? ({ ...st, n: ++n, of } as Step) : st))];
 }
 
 type Block = NonNullable<Parameters<typeof concept>[0]["blocks"]>[number];

@@ -1,18 +1,15 @@
 // 중2 Ⅵ v5 내용 2부: 레슨 4~6(호흡 · 배설 · 세포호흡과 기관계의 협력). 설계와 책의 실험 대응표는 design/g2u6v5-plan.md.
 // 개념 스텝에는 컷이 없다(그림 세션이 output/g2-v5/u6/concept-cuts.md 를 보고 그린 뒤 싣는다).
-import type { V5LessonPlan } from "../v5remake";
+// 레슨마다 스텝 배열을 내놓고, 정본 unit6.ts가 레슨에 싣는다.
+import type { Step } from "../../lessons/types";
 import { binSort, mcq, multi, opener, order, ox, pairMatch, recap, cut } from "../dsl";
 import { b6MiniArt } from "../../ui/body3Figures";
 import { chestModelFig, urineTableFig } from "../../ui/g2u6v5Figures";
-import { C, chestLab, gasLab, nephronLab, note, problems, respLab, teamLab, term, words } from "./unit6v5kit";
+import { C, chestLab, gasLab, nephronLab, note, numbered, respLab, teamLab, term, words } from "./unit6v5kit";
 
-export const PLAN_B: Record<string, V5LessonPlan> = {
   // ══ 4. 호흡: 도입(가슴둘레) → 호흡운동 모형 → 용어 → 기체 교환 → 용어 → 정리 → 문제 ══
-  g2u6l4: {
-    intro: opener({ title: "숨을 들이쉬면 가슴둘레가 달라질까요?", scene: "g2u6-breath", wait: "먼저 숨을 쉬어 보세요", cta: "모형으로 알아보기" }),
-    swap: {
-      concept: null,
-      chestModelLab: [
+export const G2U6L4_STEPS: Step[] = [
+  opener({ title: "숨을 들이쉬면 가슴둘레가 달라질까요?", scene: "g2u6-breath", wait: "먼저 숨을 쉬어 보세요", cta: "모형으로 알아보기" }),
         chestLab({ title: "풍선은 어떻게 부풀까요?", cta: "이름 붙이기" }),
         words({
           title: "호흡운동,<br>부피와 압력으로 쉬는 숨",
@@ -39,8 +36,7 @@ export const PLAN_B: Record<string, V5LessonPlan> = {
           ],
           cta: "정리하기",
         }),
-      ],
-      recap: recap({
+      recap({
         title: "호흡,<br>카드 세 장으로 정리",
         narrator: "컵 속의 풍선은 <b>압력이 낮아질 때</b> 부풀었고, 산소와 이산화 탄소는 허파꽈리와 조직세포에서 <b>서로 반대 방향</b>으로 이동했어요.",
         cards: [
@@ -72,9 +68,7 @@ export const PLAN_B: Record<string, V5LessonPlan> = {
         note: { icon: "bulb", tone: "blue", title: "한 줄 요약", html: "갈비뼈와 가로막이 <b>흉강의 부피</b>를 바꿔 공기를 드나들게 하고, 허파꽈리와 조직세포에서 <b>기체 교환</b>이 일어나요." },
         cta: "문제 풀기",
       }),
-    },
-    after: (steps) =>
-      problems(steps, [
+      ...numbered([
         mcq({
           prompt: "그림은 호흡운동 모형이에요. (다)와 (라)에 해당하는 우리 몸의 부분을 차례대로 고른 것은?",
           figure: chestModelFig(),
@@ -129,15 +123,12 @@ export const PLAN_B: Record<string, V5LessonPlan> = {
           explainBad: "이산화 탄소는 허파꽈리에서 혈액으로 가는 것이 아니라 <b>혈액에서 허파꽈리로</b> 나와요. 그리고 허파에는 근육이 없어서 허파꽈리가 스스로 수축하지 않아요.",
         }),
       ]),
-  },
+];
 
   // ══ 5. 배설: 도입(물과 오줌) → 용어 → 콩팥단위에서 오줌 만들기 → 용어 → 정리 → 문제 ══
-  g2u6l5: {
-    intro: opener({ title: "물을 많이 마시면 오줌이 달라질까요?", scene: "g2u6-water", wait: "먼저 물을 마셔 보세요", cta: "오줌에 담기는 것 알아보기" }),
-    swap: {
-      concept: (_old, i) =>
-        i === 0
-          ? words({
+export const G2U6L5_STEPS: Step[] = [
+  opener({ title: "물을 많이 마시면 오줌이 달라질까요?", scene: "g2u6-water", wait: "먼저 물을 마셔 보세요", cta: "오줌에 담기는 것 알아보기" }),
+          words({
               title: "배설,<br>노폐물을 내보내는 일",
               lead: "물을 많이 마시자 오줌의 양이 늘고 색이 옅어졌어요. 오줌에는 물 말고도 몸이 내보내야 하는 물질이 녹아 있어요.",
               blocks: [
@@ -148,9 +139,7 @@ export const PLAN_B: Record<string, V5LessonPlan> = {
                 note("대변을 내보내는 것은 배설이 아니에요. 대변은 소화되지 않고 <b>흡수되지 않은 찌꺼기</b>라서, 세포에서 생긴 노폐물이 아니에요."),
               ],
               cta: "오줌 만들어 보기",
-            })
-          : null,
-      kidneyFilterLab: [
+            }),
         nephronLab({ title: "오줌에는 무엇을 담아 내보낼까요?", cta: "이름 붙이기" }),
         words({
           title: "콩팥단위,<br>거르고 되돌리고 내보내는 곳",
@@ -164,8 +153,7 @@ export const PLAN_B: Record<string, V5LessonPlan> = {
           ],
           cta: "정리하기",
         }),
-      ],
-      recap: recap({
+      recap({
         title: "배설,<br>카드 세 장으로 정리",
         narrator: "토리에서 <b>작은 물질</b>만 걸러졌고, 몸에 필요한 것은 되돌아갔고, 요소와 남은 물이 오줌이 됐어요. 카드 세 장으로 정리해요.",
         cards: [
@@ -197,9 +185,7 @@ export const PLAN_B: Record<string, V5LessonPlan> = {
         note: { icon: "bulb", tone: "blue", title: "한 줄 요약", html: "요소는 콩팥단위에서 <b>여과, 재흡수, 분비</b>를 거쳐 만들어진 오줌에 담겨 몸 밖으로 나가요." },
         cta: "문제 풀기",
       }),
-    },
-    after: (steps) =>
-      problems(steps, [
+      ...numbered([
         mcq({
           prompt: "표는 건강한 사람의 토리의 혈액, 보먼주머니로 여과된 액체, 오줌에 세 가지 물질이 있는지를 나타낸 것이에요. ㉠에 들어갈 말과 그 까닭을 바르게 짝지은 것은?",
           figure: urineTableFig(),
@@ -243,14 +229,11 @@ export const PLAN_B: Record<string, V5LessonPlan> = {
           explainBad: "콩팥은 혈액 속의 노폐물을 걸러 내는 곳이에요. 그래서 콩팥에서 나오는 <b>콩팥정맥의 혈액</b>에는 요소가 더 적어요. 포도당은 재흡수되어 혈액으로 되돌아오고, 적혈구는 애초에 여과되지 않아요.",
         }),
       ]),
-  },
+];
 
   // ══ 6. 세포호흡과 기관계: 도입(제자리 뛰기) → 세포호흡 → 용어 → 기관계 멈춰 보기 → 정리 → 문제 ══
-  g2u6l6: {
-    intro: opener({ title: "제자리 뛰기를 하면 몸이 달라질까요?", scene: "g2u6-run", wait: "먼저 제자리 뛰기를 해 보세요", cta: "세포 속 들여다보기" }),
-    swap: {
-      concept: null,
-      bodyTeamLab: [
+export const G2U6L6_STEPS: Step[] = [
+  opener({ title: "제자리 뛰기를 하면 몸이 달라질까요?", scene: "g2u6-run", wait: "먼저 제자리 뛰기를 해 보세요", cta: "세포 속 들여다보기" }),
         respLab({ title: "세포는 무엇으로 에너지를 얻을까요?", cta: "이름 붙이기" }),
         words({
           title: "세포호흡,<br>세포가 에너지를 얻는 과정",
@@ -265,8 +248,7 @@ export const PLAN_B: Record<string, V5LessonPlan> = {
           cta: "기관계 연결하기",
         }),
         teamLab({ title: "기관계 하나가 멈추면 어떻게 될까요?", cta: "정리하기" }),
-      ],
-      recap: recap({
+      recap({
         title: "세포호흡과 기관계,<br>카드 세 장으로 정리",
         narrator: "세포는 <b>포도당과 산소</b>가 모두 있어야 에너지를 얻었고, 기관계 하나만 멈춰도 세포에 문제가 생겼어요. 카드 세 장으로 정리해요.",
         cards: [
@@ -298,9 +280,7 @@ export const PLAN_B: Record<string, V5LessonPlan> = {
         note: { icon: "bulb", tone: "blue", title: "한 줄 요약", html: "세포는 <b>세포호흡</b>으로 에너지를 얻고, 그러려면 <b>소화계, 호흡계, 순환계, 배설계</b>가 함께 일해야 해요." },
         cta: "문제 풀기",
       }),
-    },
-    after: (steps) =>
-      problems(steps, [
+      ...numbered([
         mcq({
           prompt: "세포호흡을 나타낸 다음 식에서 ㉠에 들어갈 물질은?<br><br>포도당 + ( ㉠ ) → 이산화 탄소 + 물 + 에너지",
           options: ["산소", "요소", "녹말", "암모니아", "질소"],
@@ -343,5 +323,4 @@ export const PLAN_B: Record<string, V5LessonPlan> = {
           explainBad: "산소를 받아들이는 곳은 소화계가 아니라 <b>호흡계</b>예요. 그리고 소화계에서 흡수한 영양소도 <b>순환계</b>에 실려야 온몸의 세포까지 갈 수 있어요.",
         }),
       ]),
-  },
-};
+];

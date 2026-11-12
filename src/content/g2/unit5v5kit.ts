@@ -1,4 +1,4 @@
-// 중2 Ⅴ v5 내용 파일들이 함께 쓰는 저작 도구(랩 팩토리, 개념 스텝, 문제 구간 바꾸기). dsl.ts를 고치지 않고 여기에 둔다.
+// 중2 Ⅴ 내용 파일들이 함께 쓰는 저작 도구(랩 팩토리, 개념 스텝, 문제 번호 매기기). dsl.ts를 고치지 않고 여기에 둔다.
 import type { Step } from "../../lessons/types";
 import { concept } from "../dsl";
 
@@ -20,23 +20,11 @@ export const cycleLab = lab("g2u5CycleLab");
 export const routeLab = lab("g2u5RouteLab");
 export const storeLab = lab("g2u5StoreLab");
 
-const warn = (msg: string): void => {
-  if (import.meta.env.DEV) console.warn(`[v5] g2u5: ${msg}`);
-};
-
-/** 정리 뒤의 문제 구간을 새 배열로 바꾸고, 선택형 문항에 "몇 번째 / 모두 몇 개" 번호를 매긴다. */
-export function problems(steps: Step[], next: Step[]): Step[] {
-  let at = -1;
-  steps.forEach((st, i) => {
-    if (st.type === "recap") at = i;
-  });
-  if (at < 0) {
-    warn("정리 스텝을 찾지 못해 문제를 바꾸지 않았다");
-    return steps;
-  }
+/** 정리 뒤의 문제 구간. 선택형 문항에 "몇 번째 / 모두 몇 개" 번호를 매긴다. */
+export function problems(next: Step[]): Step[] {
   const of = next.filter((st) => st.type === "quiz").length;
   let n = 0;
-  return [...steps.slice(0, at + 1), ...next.map((st) => (st.type === "quiz" ? ({ ...st, n: ++n, of } as Step) : st))];
+  return next.map((st) => (st.type === "quiz" ? ({ ...st, n: ++n, of } as Step) : st));
 }
 
 export type Block = NonNullable<Parameters<typeof concept>[0]["blocks"]>[number];

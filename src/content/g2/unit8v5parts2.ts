@@ -1,5 +1,5 @@
-// 중2 Ⅷ 별과 우주 v5: 레슨 5~8(우리은하, 성단과 성운, 팽창하는 우주, 우주 탐사)의 새 스텝.
-// 레슨마다 도입 → 랩 → 용어 → 정리 → 문제. g2u8l7은 정본의 만화가 맨 앞에 그대로 오고(unit8v5.ts가 붙인다), 여기에는 그 뒤의 스텝만 있다.
+// 중2 Ⅷ 별과 우주(정본 unit8.ts가 싣는다): 레슨 5~8(우리은하, 성단과 성운, 팽창하는 우주, 우주 탐사)의 새 스텝.
+// 레슨마다 도입 → 랩 → 용어 → 정리 → 문제. g2u8l7은 만화가 맨 앞에 오고(unit8.ts가 붙인다), 여기에는 그 뒤의 스텝만 있다.
 // 개념 스텝에는 컷을 싣지 않는다(그림 세션이 output/g2-v5/u8/concept-cuts.md 를 보고 그린 뒤 싣는다).
 import type { Step } from "../../lessons/types";
 import { binSort, mcq, multi, opener, order, ox, pairMatch, recap, cut } from "../dsl";

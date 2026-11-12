@@ -1,20 +1,16 @@
 // 중2 Ⅵ v5 내용 1부: 레슨 1~3(영양소 · 소화 · 순환). 설계와 책의 실험 대응표는 design/g2u6v5-plan.md.
 // 개념 스텝에는 컷이 없다(그림 세션이 output/g2-v5/u6/concept-cuts.md 를 보고 그린 뒤 싣는다).
-// 레슨 3의 만화 스텝은 정본 그대로 따라온다(손대지 않는다).
-import type { V5LessonPlan } from "../v5remake";
+// 레슨마다 스텝 배열을 내놓고, 정본 unit6.ts가 레슨에 싣는다. 레슨 3의 만화 스텝은 unit6.ts가 맨 앞에 둔다.
+import type { Step } from "../../lessons/types";
 import { binSort, mcq, multi, opener, order, ox, pairMatch, recap, cut } from "../dsl";
 import { b6MiniArt } from "../../ui/body3Figures";
 import { plateRowFig, salivaTubesFig } from "../../ui/g2u6v5Figures";
-import { C, benedictLab, bloodLab, enzymeLab, heartLab, loopLab, note, plateLab, problems, salivaLab, term, villiLab, words } from "./unit6v5kit";
+import { C, benedictLab, bloodLab, enzymeLab, heartLab, loopLab, note, plateLab, numbered, salivaLab, term, villiLab, words } from "./unit6v5kit";
 
-export const PLAN_A: Record<string, V5LessonPlan> = {
   // ══ 1. 영양소: 도입(땅콩과 종이) → 용어 → 홈판 검출 → 베네딕트 검사 → 용어 → 정리 → 문제 ══
-  g2u6l1: {
-    intro: opener({ title: "땅콩을 종이에 문지르면 무엇이 남을까요?", scene: "g2u6-peanut", wait: "먼저 땅콩을 문질러 보세요", cta: "영양소 알아보기" }),
-    swap: {
-      concept: (_old, i) =>
-        i === 0
-          ? words({
+export const G2U6L1_STEPS: Step[] = [
+  opener({ title: "땅콩을 종이에 문지르면 무엇이 남을까요?", scene: "g2u6-peanut", wait: "먼저 땅콩을 문질러 보세요", cta: "영양소 알아보기" }),
+          words({
               title: "영양소,<br>몸을 이루고 움직이는 물질",
               lead: "땅콩을 문지른 종이에 기름 얼룩이 남았어요. 땅콩 속에 들어 있던 지방이에요. 음식물 속의 이런 물질에 이름을 붙여요.",
               blocks: [
@@ -25,10 +21,7 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
                 note("에너지원이 아니라고 덜 중요한 것이 아니에요. 여섯 가지 가운데 <b>한 가지라도 부족하면</b> 건강하게 생활할 수 없어요. 그래서 음식을 골고루 먹어야 해요."),
               ],
               cta: "영양소 찾으러 가기",
-            })
-          : null,
-      binSort: null,
-      colorClueLab: [
+            }),
         plateLab({ title: "음식물에 어떤 영양소가 들어 있을까요?", cta: "양파즙 더 알아보기" }),
         benedictLab({ title: "양파즙에는 아무 영양소도 없을까요?", cta: "이름 붙이기" }),
         words({
@@ -43,8 +36,7 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
           ],
           cta: "정리하기",
         }),
-      ],
-      recap: recap({
+      recap({
         title: "영양소,<br>카드 세 장으로 정리",
         narrator: "홈판과 시험관에서 음식물 속 <b>녹말, 단백질, 지방, 당분</b>을 색으로 찾아냈어요. 영양소의 종류와 찾는 방법을 카드 세 장으로 정리해요.",
         cards: [
@@ -76,9 +68,7 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
         note: { icon: "bulb", tone: "blue", title: "한 줄 요약", html: "영양소는 여섯 가지이고 그 가운데 <b>탄수화물, 단백질, 지방</b>이 에너지원이에요. 음식물 속 영양소는 <b>검출 반응의 색</b>으로 찾아요." },
         cta: "문제 풀기",
       }),
-    },
-    after: (steps) =>
-      problems(steps, [
+      ...numbered([
         mcq({
           prompt: "어떤 음료를 홈판의 세 홈에 넣고 시약을 한 가지씩 떨어뜨렸더니 그림과 같았어요. 이 음료에 들어 있는 영양소를 모두 고른 것은?",
           figure: plateRowFig(),
@@ -133,14 +123,11 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
           explainBad: "<b>지방</b>은 탄수화물, 단백질과 함께 에너지원으로 쓰여요. 그리고 바이타민과 무기염류는 대부분 몸 안에서 만들 수 없어서 <b>음식물로 섭취</b>해야 해요.",
         }),
       ]),
-  },
+];
 
   // ══ 2. 소화: 도입(밥 씹기) → 침의 소화 실험 → 용어 → 소화액과 영양소 → 작은창자 벽 → 용어 → 정리 → 문제 ══
-  g2u6l2: {
-    intro: opener({ title: "밥을 오래 씹으면 맛이 달라질까요?", scene: "g2u6-chew", wait: "먼저 밥을 씹어 보세요", cta: "침으로 실험하기" }),
-    swap: {
-      concept: null,
-      salivaRaceLab: [
+export const G2U6L2_STEPS: Step[] = [
+  opener({ title: "밥을 오래 씹으면 맛이 달라질까요?", scene: "g2u6-chew", wait: "먼저 밥을 씹어 보세요", cta: "침으로 실험하기" }),
         salivaLab({ title: "침은 녹말을 어떻게 바꿀까요?", cta: "이름 붙이기" }),
         words({
           title: "소화와 소화효소,<br>잘게 나누는 일",
@@ -154,8 +141,6 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
           ],
           cta: "다른 소화액 알아보기",
         }),
-      ],
-      foodTripLab: [
         enzymeLab({ title: "소화액마다 어떤 영양소를 분해할까요?", cta: "분해된 영양소 흡수하기" }),
         villiLab({ title: "작은창자 벽은 왜 주름져 있을까요?", cta: "이름 붙이기" }),
         words({
@@ -170,8 +155,7 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
           ],
           cta: "정리하기",
         }),
-      ],
-      recap: recap({
+      recap({
         title: "소화와 흡수,<br>카드 세 장으로 정리",
         narrator: "침이 녹말을 당분으로 바꿨고, 소화액마다 <b>정해진 영양소</b>를 분해했고, 주름과 융털이 있는 벽이 영양소를 가장 많이 흡수했어요.",
         cards: [
@@ -203,9 +187,7 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
         note: { icon: "bulb", tone: "blue", title: "한 줄 요약", html: "큰 영양소는 소화효소로 <b>작게 분해</b>되고, 작은창자의 <b>융털</b>에서 흡수돼요." },
         cta: "문제 풀기",
       }),
-    },
-    after: (steps) =>
-      problems(steps, [
+      ...numbered([
         mcq({
           prompt: "그림과 같이 녹말 용액이 든 시험관 (가)에는 증류수를, (나)에는 침 용액을 넣고 37 ℃의 물에 담가 두었어요. 두 시험관의 용액에 아이오딘-아이오딘화 칼륨 용액을 떨어뜨렸을 때의 결과는?",
           figure: salivaTubesFig(),
@@ -257,13 +239,10 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
           explainBad: "영양소를 분해하는 것은 소화효소가 하는 일이에요. 주름과 융털은 이미 분해된 영양소와 닿는 <b>표면적을 넓혀</b> 더 많이 흡수하기 위한 구조예요.",
         }),
       ]),
-  },
+];
 
   // ══ 3. 순환: 만화(그대로) → 심장과 판막 → 용어 → 혈액의 구성 → 순환 경로 → 용어 → 정리 → 문제 ══
-  g2u6l3: {
-    swap: {
-      concept: null,
-      heartPumpLab: [
+export const G2U6L3_STEPS: Step[] = [
         heartLab({ title: "판막이 없으면 혈액은 어디로 흐를까요?", cta: "이름 붙이기" }),
         words({
           title: "심장과 혈관,<br>혈액이 흐르는 방향",
@@ -278,8 +257,6 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
           cta: "혈액 속 들여다보기",
         }),
         bloodLab({ title: "혈액 속의 무엇이 이 일을 맡을까요?", cta: "혈액이 도는 길 따라가기" }),
-      ],
-      twoLoopsLab: [
         loopLab({ title: "혈액은 어떤 길로 온몸을 돌까요?", cta: "이름 붙이기" }),
         words({
           title: "혈액과 순환,<br>두 갈래의 길",
@@ -293,8 +270,7 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
           ],
           cta: "정리하기",
         }),
-      ],
-      recap: recap({
+      recap({
         title: "순환,<br>카드 네 장으로 정리",
         narrator: "판막이 혈액을 <b>한 방향</b>으로만 흐르게 했고, 혈액은 온몸과 허파를 번갈아 돌았어요. 심장, 혈관, 혈액, 순환 경로를 카드 네 장으로 정리해요.",
         cards: [
@@ -334,9 +310,7 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
         note: { icon: "bulb", tone: "blue", title: "한 줄 요약", html: "심장이 내보낸 혈액은 <b>판막</b> 덕분에 한 방향으로 흐르며 <b>온몸순환과 허파순환</b>을 번갈아 돌아요." },
         cta: "문제 풀기",
       }),
-    },
-    after: (steps) =>
-      problems(steps, [
+      ...numbered([
         mcq({
           prompt: "어떤 사람의 심장에서 심방과 심실 사이의 판막이 제대로 닫히지 않아요. 심실이 수축할 때 일어나는 일로 가장 알맞은 것은?",
           options: ["혈액의 일부가 심방으로 되돌아가 동맥으로 나가는 양이 줄어든다", "혈액이 평소보다 더 세게 동맥으로 나간다", "혈액 속의 산소가 갑자기 늘어난다", "심방이 대신 수축해 혈액을 동맥으로 내보낸다", "아무 변화도 일어나지 않는다"],
@@ -398,5 +372,4 @@ export const PLAN_A: Record<string, V5LessonPlan> = {
           explainBad: "온몸을 돈 혈액은 우심방으로 돌아와 다시 우심실에서 허파로 나가고, 허파를 돈 혈액은 좌심방으로 돌아와요. 한 바퀴 도는 동안 심장을 <b>두 번</b> 지나요.",
         }),
       ]),
-  },
-};
+];

@@ -2,51 +2,32 @@
 // 학년별 트랙: 중1(CURRICULUM)·중2(CURRICULUM_G2). 홈이 getViewGrade()로 전환한다.
 import type { Lesson } from "../lessons/types";
 import { isDone, isPremium, isReviewMode } from "../core/store";
-import { UNIT1 } from "./unit1";
 // 중1 Ⅱ = v5가 정본(2026-11-11 사용자 판정 "정본으로 올리기". 병행 토글 ss.u2v5와 주소 ?u2v5는 없앴다).
 // v5(content/unit2v5.ts)는 혼자 서는 파일이다. v3(content/unit2v3.ts, steps/bio4/*)와 그 앞의 판(content/unit2.ts 등)은
 // Ⅴ·Ⅵ과 같은 규칙으로 파일만 남긴다(배선 없음). Ⅱ단원의 글을 고칠 때는 unit2v5.ts를 고친다.
-import { UNIT2_V5 } from "./unit2v5";
-// 중1 Ⅰ·Ⅱ 새 도입(opener, 2026-11-12 정본): 기본 켜짐. 주소 ?u2intro=0으로 끄면 UNIT2_V5 그대로다(같은 객체).
-import { withU2IntroSamples } from "./unit2intro";
-import { withU1IntroSamples } from "./unit1intro"; // 중1 Ⅰ 도입(같은 토글). 꺼져 있으면 UNIT1 그대로다
+// 중1 과학 랩과 도입 재제작(v5, 2026-11-12) 병행 배선: 단원마다 주소 ?u3v5 (세션 "ss.u3v5") 로 켠다(v5toggle.ts).
+// 단원 파일(unitNv5.ts)이 null이거나 토글이 꺼져 있으면 정본이 그대로 실린다. 단원을 맡은 세션은 자기 unitNv5.ts만 채운다.
+// 중2 Ⅴ = v3 재제작본이 정본(2026-08-10 사용자 판정 합격 — 병행 토글 ss.g2u5v3·?g2u5v3 폐기).
+// 구판(content/g2/unit5.ts — 2026-07-26 확정판)과 v2 산출물(unit5v2·steps/plant2/* 등)은 보존만.
+// 중2 Ⅵ = v3 재제작본이 정본(2026-08-10 사용자 판정 합격 — 병행 토글 ss.g2u6v3·?v3=g2u6 폐기).
+// 구판(content/g2/unit6.ts)과 v2 산출물(unit6v2·steps/anim/* 등)은 보존만.
+// 중2 과학 전면 재제작(v5, 2026-11-12) 병행 배선: 단원마다 주소 ?g2u3v5 (세션 "ss.g2u3v5"), 여덟 단원 한꺼번에 ?g2v5 (v5toggle.ts).
+// 단원 파일(g2/unitNv5.ts)이 null이거나 토글이 꺼져 있으면 정본이 그대로 실린다. 단원을 맡은 세션은 자기 unitNv5.ts만 채운다.
+import { UNIT1 } from "./unit1";
+import { UNIT2 } from "./unit2";
 import { UNIT3 } from "./unit3";
 import { UNIT4 } from "./unit4";
 import { UNIT5 } from "./unit5";
 import { UNIT6 } from "./unit6";
 import { UNIT7 } from "./unit7";
-// 중1 과학 랩과 도입 재제작(v5, 2026-11-12) 병행 배선: 단원마다 주소 ?u3v5 (세션 "ss.u3v5") 로 켠다(v5toggle.ts).
-// 단원 파일(unitNv5.ts)이 null이거나 토글이 꺼져 있으면 정본이 그대로 실린다. 단원을 맡은 세션은 자기 unitNv5.ts만 채운다.
-import { pickV5 } from "./v5toggle";
-import { UNIT1_V5 } from "./unit1v5";
-import { UNIT2_V6 } from "./unit2v6"; // Ⅱ단원은 v5가 정본이고, 개념 글을 다시 쓴 판(v6)이 ?u2v6 뒤에 선다
-import { UNIT3_V5 } from "./unit3v5";
-import { UNIT4_V5 } from "./unit4v5";
-import { UNIT5_V5 } from "./unit5v5";
-import { UNIT6_V5 } from "./unit6v5";
-import { UNIT7_V5 } from "./unit7v5";
 import { G2_UNIT1 } from "./g2/unit1";
 import { G2_UNIT2 } from "./g2/unit2";
 import { G2_UNIT3 } from "./g2/unit3";
 import { G2_UNIT4 } from "./g2/unit4";
-// 중2 Ⅴ = v3 재제작본이 정본(2026-08-10 사용자 판정 합격 — 병행 토글 ss.g2u5v3·?g2u5v3 폐기).
-// 구판(content/g2/unit5.ts — 2026-07-26 확정판)과 v2 산출물(unit5v2·steps/plant2/* 등)은 보존만.
-import { G2_UNIT5_V3 } from "./g2/unit5v3";
-// 중2 Ⅵ = v3 재제작본이 정본(2026-08-10 사용자 판정 합격 — 병행 토글 ss.g2u6v3·?v3=g2u6 폐기).
-// 구판(content/g2/unit6.ts)과 v2 산출물(unit6v2·steps/anim/* 등)은 보존만.
-import { G2_UNIT6_V3 } from "./g2/unit6v3";
+import { G2_UNIT5 } from "./g2/unit5";
+import { G2_UNIT6 } from "./g2/unit6";
 import { G2_UNIT7 } from "./g2/unit7";
 import { G2_UNIT8 } from "./g2/unit8";
-// 중2 과학 전면 재제작(v5, 2026-11-12) 병행 배선: 단원마다 주소 ?g2u3v5 (세션 "ss.g2u3v5"), 여덟 단원 한꺼번에 ?g2v5 (v5toggle.ts).
-// 단원 파일(g2/unitNv5.ts)이 null이거나 토글이 꺼져 있으면 정본이 그대로 실린다. 단원을 맡은 세션은 자기 unitNv5.ts만 채운다.
-import { G2_UNIT1_V5 } from "./g2/unit1v5";
-import { G2_UNIT2_V5 } from "./g2/unit2v5";
-import { G2_UNIT3_V5 } from "./g2/unit3v5";
-import { G2_UNIT4_V5 } from "./g2/unit4v5";
-import { G2_UNIT5_V5 } from "./g2/unit5v5";
-import { G2_UNIT6_V5 } from "./g2/unit6v5";
-import { G2_UNIT7_V5 } from "./g2/unit7v5";
-import { G2_UNIT8_V5 } from "./g2/unit8v5";
 import { MATH_CURRICULA } from "./math/curriculum";
 import { SOC_CURRICULA } from "./soc/curriculum";
 import { HIS_CURRICULA } from "./his/curriculum";
@@ -66,28 +47,10 @@ export interface Unit {
 export type GradeId = "g1" | "g2";
 export const GRADE_LABEL: Record<GradeId, string> = { g1: "중1", g2: "중2" };
 
-// Ⅲ·Ⅳ v3 브랜치도 이 줄을 고친다(U3_ACTIVE, U4_ACTIVE). 합칠 때 한 줄 충돌이 나면 두 쪽의 이름을 다 살리면 된다.
-export const CURRICULUM: Unit[] = [
-  pickV5("u1", withU1IntroSamples(UNIT1), UNIT1_V5),
-  pickV5("u2", withU2IntroSamples(UNIT2_V5), UNIT2_V6),
-  pickV5("u3", UNIT3, UNIT3_V5),
-  pickV5("u4", UNIT4, UNIT4_V5),
-  pickV5("u5", UNIT5, UNIT5_V5),
-  pickV5("u6", UNIT6, UNIT6_V5),
-  pickV5("u7", UNIT7, UNIT7_V5),
-];
+export const CURRICULUM: Unit[] = [UNIT1, UNIT2, UNIT3, UNIT4, UNIT5, UNIT6, UNIT7];
 
 // 중2 — 대단원 8개.
-export const CURRICULUM_G2: Unit[] = [
-  pickV5("g2u1", G2_UNIT1, G2_UNIT1_V5),
-  pickV5("g2u2", G2_UNIT2, G2_UNIT2_V5),
-  pickV5("g2u3", G2_UNIT3, G2_UNIT3_V5),
-  pickV5("g2u4", G2_UNIT4, G2_UNIT4_V5),
-  pickV5("g2u5", G2_UNIT5_V3, G2_UNIT5_V5),
-  pickV5("g2u6", G2_UNIT6_V3, G2_UNIT6_V5),
-  pickV5("g2u7", G2_UNIT7, G2_UNIT7_V5),
-  pickV5("g2u8", G2_UNIT8, G2_UNIT8_V5),
-];
+export const CURRICULUM_G2: Unit[] = [G2_UNIT1, G2_UNIT2, G2_UNIT3, G2_UNIT4, G2_UNIT5, G2_UNIT6, G2_UNIT7, G2_UNIT8];
 
 export const CURRICULA: Record<GradeId, Unit[]> = { g1: CURRICULUM, g2: CURRICULUM_G2 };
 
