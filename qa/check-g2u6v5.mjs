@@ -383,7 +383,7 @@ async function answer() {
     const s = document.querySelector(".screen.active .step");
     const here = s.innerText.replace(/\s+/g, "");
     let unit;
-    try { unit = (await import("/src/content/g2/unit6v5.ts")).G2_UNIT6_V5; } catch { return { skip: true }; }
+    try { unit = (await import("/src/content/g2/unit6.ts")).G2_UNIT6; } catch { return { skip: true }; }
     for (const l of unit.lessons) for (const st of l.steps) {
       if (st.type !== "quiz" || !here.includes(strip(st.prompt).slice(0, 30))) continue;
       const mode = st.mode ?? "mcq";

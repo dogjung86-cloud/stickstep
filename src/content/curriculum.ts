@@ -2,17 +2,8 @@
 // 학년별 트랙: 중1(CURRICULUM)·중2(CURRICULUM_G2). 홈이 getViewGrade()로 전환한다.
 import type { Lesson } from "../lessons/types";
 import { isDone, isPremium, isReviewMode } from "../core/store";
-// 중1 Ⅱ = v5가 정본(2026-11-11 사용자 판정 "정본으로 올리기". 병행 토글 ss.u2v5와 주소 ?u2v5는 없앴다).
-// v5(content/unit2v5.ts)는 혼자 서는 파일이다. v3(content/unit2v3.ts, steps/bio4/*)와 그 앞의 판(content/unit2.ts 등)은
-// Ⅴ·Ⅵ과 같은 규칙으로 파일만 남긴다(배선 없음). Ⅱ단원의 글을 고칠 때는 unit2v5.ts를 고친다.
-// 중1 과학 랩과 도입 재제작(v5, 2026-11-12) 병행 배선: 단원마다 주소 ?u3v5 (세션 "ss.u3v5") 로 켠다(v5toggle.ts).
-// 단원 파일(unitNv5.ts)이 null이거나 토글이 꺼져 있으면 정본이 그대로 실린다. 단원을 맡은 세션은 자기 unitNv5.ts만 채운다.
-// 중2 Ⅴ = v3 재제작본이 정본(2026-08-10 사용자 판정 합격 — 병행 토글 ss.g2u5v3·?g2u5v3 폐기).
-// 구판(content/g2/unit5.ts — 2026-07-26 확정판)과 v2 산출물(unit5v2·steps/plant2/* 등)은 보존만.
-// 중2 Ⅵ = v3 재제작본이 정본(2026-08-10 사용자 판정 합격 — 병행 토글 ss.g2u6v3·?v3=g2u6 폐기).
-// 구판(content/g2/unit6.ts)과 v2 산출물(unit6v2·steps/anim/* 등)은 보존만.
-// 중2 과학 전면 재제작(v5, 2026-11-12) 병행 배선: 단원마다 주소 ?g2u3v5 (세션 "ss.g2u3v5"), 여덟 단원 한꺼번에 ?g2v5 (v5toggle.ts).
-// 단원 파일(g2/unitNv5.ts)이 null이거나 토글이 꺼져 있으면 정본이 그대로 실린다. 단원을 맡은 세션은 자기 unitNv5.ts만 채운다.
+// 과학 단원은 단원 파일 하나가 정본이다(중1 unitN.ts, 중2 g2/unitN.ts). 옛 판과 병행 토글은 2026-11-12에 모두 지웠다.
+// 단원의 글을 고칠 때는 그 단원 파일과 그 파일이 가져다 쓰는 부품 파일(unitNv5parts.ts 등)을 고친다.
 import { UNIT1 } from "./unit1";
 import { UNIT2 } from "./unit2";
 import { UNIT3 } from "./unit3";

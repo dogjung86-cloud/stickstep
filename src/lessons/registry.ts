@@ -3,41 +3,11 @@
 import type { StepRenderer } from "./types";
 import { concept } from "./steps/concept";
 import { quiz } from "./steps/quiz";
-import { table } from "./steps/table";
 import { order } from "./steps/order";
 import { binSort } from "./steps/binSort";
 import { hotspot } from "./steps/hotspot";
-import { dataGraph } from "./steps/dataGraph";
-import { historyCase } from "./steps/historyCase";
-import { techCards } from "./steps/techCards";
-import { orgLevels } from "./steps/orgLevels";
-import { finchSim } from "./steps/finchSim";
-import { microscope } from "./steps/microscope";
-import { dichotomKey } from "./steps/dichotomKey";
-import { biodiversityLab } from "./steps/biodiversityLab";
 // ── 중1 Ⅱ 재제작 랩 11종(2026-07-25) — 구작 orgLevels·finchSim·microscope·dichotomKey는 보존만 하고 쓰지 않는다 ──
-import { cellScaleLab } from "./steps/cellScaleLab";
-import { cellFactoryLab } from "./steps/cellFactoryLab";
-import { cellCompareLab } from "./steps/cellCompareLab";
-import { microscopeLab } from "./steps/microscopeLab";
-import { cellJobLab } from "./steps/cellJobLab";
-import { orgLadderLab } from "./steps/orgLadderLab";
-import { diversityLab } from "./steps/diversityLab";
-import { finchIslandLab } from "./steps/finchIslandLab";
-import { classifyLab } from "./steps/classifyLab";
-import { rankLab } from "./steps/rankLab";
-import { kingdomKeyLab } from "./steps/kingdomKeyLab";
-import { webStabilityLab } from "./steps/webStabilityLab";
 // ── 중1 Ⅱ v3 랩 9종(2026-08-10 재제작, steps/bio4/*) — 병행 배선(unit2v3) 전용 ──
-import { zoomRulerLab } from "./steps/bio4/zoomRulerLab";
-import { slideMakeLab } from "./steps/bio4/slideMakeLab";
-import { shapeJobLab } from "./steps/bio4/shapeJobLab";
-import { lifeStackLab } from "./steps/bio4/lifeStackLab";
-import { ecoScanLab } from "./steps/bio4/ecoScanLab";
-import { beakIslandsLab } from "./steps/bio4/beakIslandsLab";
-import { groupRuleLab } from "./steps/bio4/groupRuleLab";
-import { kingdomGateLab } from "./steps/bio4/kingdomGateLab";
-import { webDropLab } from "./steps/bio4/webDropLab";
 // ── 중1 Ⅱ v5 랩 12종(2026-11-11, steps/bio6/*): 정본(unit2v5) ──
 import { magnifyLab } from "./steps/bio6/magnifyLab";
 import { cellWorkLab } from "./steps/bio6/cellWorkLab";
@@ -52,140 +22,14 @@ import { rankWidenLab } from "./steps/bio6/rankWidenLab";
 import { kingdomPathLab } from "./steps/bio6/kingdomPathLab";
 import { foodWebLab } from "./steps/bio6/foodWebLab";
 // ── 중2 Ⅴ v3 랩 7종(2026-08-10 재제작, steps/plant3/*) — 병행 배선(unit5v3) 전용 ──
-import { greenHuntLab } from "./steps/plant3/greenHuntLab";
-import { gasCrossLab } from "./steps/plant3/gasCrossLab";
-import { starchQuestLab } from "./steps/plant3/starchQuestLab";
-import { factorCurveLab } from "./steps/plant3/factorCurveLab";
-import { flipEngineLab } from "./steps/plant3/flipEngineLab";
-import { sunGaugeLab } from "./steps/plant3/sunGaugeLab";
-import { sapFlowLab } from "./steps/plant3/sapFlowLab";
 // ── 중2 Ⅵ v3 랩 8종(2026-08-10 재제작, steps/body3/*) — 병행 배선(unit6v3) 전용 ──
-import { colorClueLab } from "./steps/body3/colorClueLab";
-import { salivaRaceLab } from "./steps/body3/salivaRaceLab";
-import { foodTripLab } from "./steps/body3/foodTripLab";
-import { heartPumpLab } from "./steps/body3/heartPumpLab";
-import { twoLoopsLab } from "./steps/body3/twoLoopsLab";
-import { chestModelLab } from "./steps/body3/chestModelLab";
-import { kidneyFilterLab } from "./steps/body3/kidneyFilterLab";
-import { bodyTeamLab } from "./steps/body3/bodyTeamLab";
 import { comic } from "./steps/comic";
 import { hook } from "./steps/hook";
 import { recap } from "./steps/recap";
-import { heatParticles } from "./steps/heatParticles";
-import { heatContact } from "./steps/heatContact";
-import { conduction } from "./steps/conduction";
-import { convection } from "./steps/convection";
-import { radiation } from "./steps/radiation";
-import { specificHeat } from "./steps/specificHeat";
-import { expansion } from "./steps/expansion";
-import { directorLab } from "./steps/directorLab"; // [임시 프리뷰] 적용 랩 시제품 — 폐기 시 이 줄과 R 항목 삭제
-import { diffusion } from "./steps/diffusion";
-import { evaporation } from "./steps/evaporation";
-import { matterTemp } from "./steps/matterTemp";
-import { matterShape } from "./steps/matterShape";
-import { matterCompare } from "./steps/matterCompare";
-import { phaseNames } from "./steps/phaseNames";
-import { sublimation } from "./steps/sublimation";
-import { phaseVolume } from "./steps/phaseVolume";
-import { heatCurve } from "./steps/heatCurve";
-import { springLab } from "./steps/springLab";
-import { tugOfWar } from "./steps/tugOfWar";
-import { gravityDrop } from "./steps/gravityDrop";
-import { frictionPush } from "./steps/frictionPush";
-import { buoyancyLab } from "./steps/buoyancyLab";
-import { forceStudio } from "./steps/forceStudio";
-import { windSoccer } from "./steps/windSoccer";
-import { gasPressure } from "./steps/gasPressure";
-import { boyleSyringe } from "./steps/boyleSyringe";
-import { diverBubble } from "./steps/diverBubble";
-import { charlesSyringe } from "./steps/charlesSyringe";
-import { hotairRide } from "./steps/hotairRide";
-import { solarTour } from "./steps/solarTour";
-import { sunLab } from "./steps/sunLab";
-import { skyDaily } from "./steps/skyDaily";
-import { zodiacRing } from "./steps/zodiacRing";
-import { moonPhase3d } from "./steps/moonPhase3d";
-import { eclipse3d } from "./steps/eclipse3d";
-import { reflectLab, diffuseLab } from "./steps/lightReflect";
-import { refractLab } from "./steps/lightRefract";
-import { seeLab } from "./steps/lightSee";
-import { mirrorImageLab } from "./steps/lightMirror";
-import { mirrorLens } from "./steps/lightBench";
-import { opticView } from "./steps/opticView";
-import { objectColorLab, colorMixLab, pixelLab } from "./steps/lightColor";
-import { waveLab } from "./steps/waveTank";
-import { soundLab } from "./steps/soundLab";
-import { elementLab, moleculeLab } from "./steps/chemParticles";
-import { atomLab, ionLab } from "./steps/chemAtom";
-import { periodicLab } from "./steps/chemTable";
-import { ionMoveLab } from "./steps/chemIonMove";
-import { leafFactoryLab } from "./steps/plantFactoryLab";
-import { photoEvidenceLab } from "./steps/plantEvidenceLab";
-import { photoFactorLab } from "./steps/plantFactorLab";
-import { plantRespireLab, dayNightLab } from "./steps/plantRespirationLab";
-import { sugarJourneyLab } from "./steps/sugarJourneyLab";
 // 중2 Ⅴ 식물과 에너지 v2(전면 재제작) — 구 plant* 랩과 타입명이 겹치지 않는다.
-import { leafZoomLab } from "./steps/plant2/leafZoomLab";
-import { photoBuildLab } from "./steps/plant2/photoBuildLab";
-import { gasSensorLab } from "./steps/plant2/gasSensorLab";
-import { iodineTestLab } from "./steps/plant2/iodineTestLab";
-import { photoDesignLab } from "./steps/plant2/photoDesignLab";
-import { photoCurveLab } from "./steps/plant2/photoCurveLab";
-import { dayNightGasLab } from "./steps/plant2/dayNightGasLab";
-import { sugarFlowLab } from "./steps/plant2/sugarFlowLab";
 // 중2 Ⅵ 동물과 에너지 v2(전면 재제작) — 구 body* 랩과 타입명이 겹치지 않는다(an 접두).
-import { animalHook } from "./steps/hookAnimal";
-import "./steps/hookAnimal2"; // 뒤쪽 6장면을 ANIMAL_SCENES에 등록(부수 효과 import)
-import { anMealLab } from "./steps/anim/anMealLab";
-import { anReagentLab } from "./steps/anim/anReagentLab";
-import { anOrganLab } from "./steps/anim/anOrganLab";
-import { anEnzymeLab } from "./steps/anim/anEnzymeLab";
-import { anVilliLab } from "./steps/anim/anVilliLab";
-import { anHeartLab } from "./steps/anim/anHeartLab";
-import { anBloodLab } from "./steps/anim/anBloodLab";
-import { anPathLab } from "./steps/anim/anPathLab";
-import { anBreathLab } from "./steps/anim/anBreathLab";
-import { anGasSwapLab } from "./steps/anim/anGasSwapLab";
-import { anNephronLab } from "./steps/anim/anNephronLab";
-import { anEnergyLab } from "./steps/anim/anEnergyLab";
-import { nutrientTestLab } from "./steps/nutrientTestLab";
-import { digestJourneyLab } from "./steps/digestJourneyLab";
-import { circulationLab } from "./steps/circulationLab";
-import { breathModelLab } from "./steps/breathModelLab";
-import { nephronLab } from "./steps/nephronLab";
-import { bodyIntegrateLab } from "./steps/bodyIntegrateLab";
 import { pairMatch } from "./steps/pairMatch";
-import { formulaLab } from "./steps/formulaLab";
-import { frictionLab, rubLab } from "./steps/elecStatic";
-import { inductionLab } from "./steps/elecInduction";
-import { waterCircuit } from "./steps/elecWater";
-import { waterCircuit3d } from "./steps/elecWater3d";
-import { ohmLab } from "./steps/elecOhm";
-import { circuitLab } from "./steps/elecCircuit";
-import { coilFieldLab } from "./steps/elecCoil";
-import { swingLab3d } from "./steps/elecSwing3d";
 import { figTabs } from "./steps/figTabs";
-import { parallaxLab } from "./steps/parallaxLab";
-import { starLight3d } from "./steps/starLight3d";
-import { starColorLab } from "./steps/starColorLab";
-import { balloonUniverse } from "./steps/balloonUniverse";
-import { galaxy3d } from "./steps/galaxy3d";
-import { densityLab } from "./steps/densityLab";
-import { densityPool } from "./steps/densityPool";
-import { solubilityLab } from "./steps/solubilityLab";
-import { gasFizz } from "./steps/gasFizz";
-import { meltCurve } from "./steps/meltCurve";
-import { sepFunnel } from "./steps/sepFunnel";
-import { recrystal } from "./steps/recrystal";
-import { distillLab } from "./steps/distillLab";
-import { earthCut3d } from "./steps/earthCut3d";
-import { streakLab } from "./steps/streakLab";
-import { coolingLab } from "./steps/coolingLab";
-import { strataLab } from "./steps/strataLab";
-import { foliationLab } from "./steps/foliationLab";
-import { rockCycle } from "./steps/rockCycle";
-import { driftLab } from "./steps/driftLab";
-import { plateMap } from "./steps/plateMap";
 import { mathHook } from "./steps/hookMath";
 import { mathDrill } from "./steps/mathDrill";
 import { sieveLab } from "./steps/sieveLab";
@@ -346,126 +190,9 @@ const R: Record<string, StepRenderer> = {
   comic,
   hook,
   recap,
-  heatParticles,
-  heatContact,
-  conduction,
-  convection,
-  radiation,
-  specificHeat,
-  expansion,
-  directorLab, // [임시 프리뷰] 적용 랩 시제품
 
-  diffusion,
-  evaporation,
-  matterTemp,
-  matterShape,
-  matterCompare,
-  phaseNames,
-  sublimation,
-  phaseVolume,
-  heatCurve,
-  springLab,
-  tugOfWar,
-  gravityDrop,
-  frictionPush,
-  buoyancyLab,
-  forceStudio,
-  windSoccer,
-  gasPressure,
-  boyleSyringe,
-  diverBubble,
-  charlesSyringe,
-  hotairRide,
-  solarTour,
-  sunLab,
-  skyDaily,
-  zodiacRing,
-  moonPhase3d,
-  eclipse3d,
-  reflectLab,
-  diffuseLab,
-  refractLab,
-  seeLab,
-  mirrorImageLab,
-  mirrorLens,
-  opticView,
-  objectColorLab,
-  colorMixLab,
-  pixelLab,
-  waveLab,
-  soundLab,
-  elementLab,
-  moleculeLab,
-  atomLab,
-  periodicLab,
-  ionLab,
-  ionMoveLab,
-  leafFactoryLab,
-  photoEvidenceLab,
-  photoFactorLab,
-  plantRespireLab,
-  dayNightLab,
-  sugarJourneyLab,
-  leafZoomLab,
-  photoBuildLab,
-  gasSensorLab,
-  iodineTestLab,
-  photoDesignLab,
-  photoCurveLab,
-  dayNightGasLab,
-  sugarFlowLab,
-  animalHook,
-  anMealLab,
-  anReagentLab,
-  anOrganLab,
-  anEnzymeLab,
-  anVilliLab,
-  anHeartLab,
-  anBloodLab,
-  anPathLab,
-  anBreathLab,
-  anGasSwapLab,
-  anNephronLab,
-  anEnergyLab,
-  nutrientTestLab,
-  digestJourneyLab,
-  circulationLab,
-  breathModelLab,
-  nephronLab,
-  bodyIntegrateLab,
   pairMatch,
-  formulaLab,
-  frictionLab,
-  rubLab,
-  inductionLab,
-  waterCircuit,
-  waterCircuit3d,
-  ohmLab,
-  circuitLab,
-  coilFieldLab,
-  swingLab3d,
   figTabs,
-  parallaxLab,
-  starLight3d,
-  starColorLab,
-  balloonUniverse,
-  galaxy3d,
-  densityLab,
-  densityPool,
-  solubilityLab,
-  gasFizz,
-  meltCurve,
-  sepFunnel,
-  recrystal,
-  distillLab,
-  earthCut3d,
-  streakLab,
-  coolingLab,
-  strataLab,
-  foliationLab,
-  rockCycle,
-  driftLab,
-  plateMap,
   mathHook,
   mathDrill,
   sieveLab,
@@ -604,41 +331,11 @@ const R: Record<string, StepRenderer> = {
   feastLab,
   timelineLab,
   quiz,
-  table,
   order,
   binSort,
   hotspot,
-  dataGraph,
-  historyCase,
-  techCards,
-  orgLevels,
-  finchSim,
-  microscope,
-  dichotomKey,
-  biodiversityLab,
   // 중1 Ⅱ 재제작 랩
-  cellScaleLab,
-  cellFactoryLab,
-  cellCompareLab,
-  microscopeLab,
-  cellJobLab,
-  orgLadderLab,
-  diversityLab,
-  finchIslandLab,
-  classifyLab,
-  rankLab,
-  kingdomKeyLab,
-  webStabilityLab,
   // 중1 Ⅱ v3 랩(2026-08-10 재제작)
-  zoomRulerLab,
-  slideMakeLab,
-  shapeJobLab,
-  lifeStackLab,
-  ecoScanLab,
-  beakIslandsLab,
-  groupRuleLab,
-  kingdomGateLab,
-  webDropLab,
   // 중1 Ⅱ v5 랩(2026-11-11)
   magnifyLab,
   cellWorkLab,
@@ -653,22 +350,7 @@ const R: Record<string, StepRenderer> = {
   kingdomPathLab,
   foodWebLab,
   // 중2 Ⅴ v3 랩(2026-08-10 재제작)
-  greenHuntLab,
-  gasCrossLab,
-  starchQuestLab,
-  factorCurveLab,
-  flipEngineLab,
-  sunGaugeLab,
-  sapFlowLab,
   // 중2 Ⅵ v3 랩(2026-08-10 재제작)
-  colorClueLab,
-  salivaRaceLab,
-  foodTripLab,
-  heartPumpLab,
-  twoLoopsLab,
-  chestModelLab,
-  kidneyFilterLab,
-  bodyTeamLab,
   // 중1 Ⅱ 도입 샘플(2026-11-11, 병행 토글 ss.u2intro)
   opener,
   // 중1 과학 v5 단원별 등록표(타입 이름은 단원 접두 "u3…"로 시작해 위의 것과 겹치지 않는다)

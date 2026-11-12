@@ -1,17 +1,17 @@
 import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/ui.css";
-import "./styles/bio3.css"; // 중1 Ⅱ 재제작 전용 시트(공용 크롬) — 랩별 시트는 각 렌더러가 자체 import
-import "./styles/bio3-hook.css"; // 훅 10종(hookBio2)은 자체 import를 하지 않아 여기서 싣는다
-import "./styles/bio4.css"; // 중1 Ⅱ v3 재제작(2026-08-10) 공용 크롬 — ss.u2v3 병행 배선
-import "./styles/bio6.css"; // 중1 Ⅱ v5(2026-11-11 정본) 랩 뼈대와 랩 12종
-import "./styles/bio4-hook.css"; // v3 훅 8장면(hookBio4)
-import "./styles/opener.css"; // 중1 Ⅱ 도입 샘플(opener 스텝, 병행 토글 ss.u2intro)
-import "./styles/opener-u2rest.css"; // 중1 Ⅱ 도입의 나머지 다섯 장면(opener.css 뒤에 읽힌다)
-import "./styles/opener-u1.css"; // 중1 Ⅰ 도입 세 장면(같은 opener 틀)
+import "./styles/bio3.css";
+import "./styles/bio3-hook.css";
+import "./styles/bio4.css";
+import "./styles/bio6.css";
+import "./styles/bio4-hook.css";
+import "./styles/opener.css";
+import "./styles/opener-u2rest.css";
+import "./styles/opener-u1.css";
 // 중1 과학 v5(랩과 도입 재제작, 2026-11-12) 단원별 시트. 단원을 맡은 세션은 자기 시트만 채운다(접두 .uNx-, 도입은 .opn-uN-)
 import "./styles/u1v5.css";
-import "./styles/u2v6.css"; // Ⅱ단원 개념 글을 다시 쓴 판(v6, 접두 .u2x-)
+import "./styles/u2v6.css";
 import "./styles/u3v5.css";
 import "./styles/u4v5.css";
 import "./styles/u5v5.css";
@@ -26,10 +26,10 @@ import "./styles/g2u5v5.css";
 import "./styles/g2u6v5.css";
 import "./styles/g2u7v5.css";
 import "./styles/g2u8v5.css";
-import "./styles/plant3.css"; // 중2 Ⅴ v3 재제작(2026-08-10) 공용 크롬 — ss.g2u5v3 병행 배선
-import "./styles/plant3-hook.css"; // v3 훅 5장면(hookPlant3)
-import "./styles/body3.css"; // 중2 Ⅵ v3 재제작(2026-08-10) 공용 크롬 — ss.g2u6v3 병행 배선
-import "./styles/body3-hook.css"; // v3 훅 5장면(hookBody3)
+import "./styles/plant3.css";
+import "./styles/plant3-hook.css";
+import "./styles/body3.css";
+import "./styles/body3-hook.css";
 import "./styles/math.css";
 import "./styles/math2.css";
 import "./styles/body-hook.css";
@@ -41,7 +41,7 @@ import "./styles/game.css";
 import "./styles/plant2.css";
 import "./styles/soc.css";
 import "./styles/his.css";
-import "./styles/desktop.css"; // 데스크톱 셸(옵트인·≥1024px) — html.dt 게이트, 캐스케이드 최후순위
+import "./styles/desktop.css";
 
 import { nav } from "./core/router";
 import { parseRoute, writeHash } from "./core/route";
@@ -66,9 +66,6 @@ import { examScreen } from "./screens/exam";
 import { weakDrillScreen } from "./screens/weakDrill";
 import { createLessonPlayer } from "./lessons/player";
 import { findLesson, findUnit, isPremiumLocked, subjectOfUnit, gradeOfUnit } from "./content/curriculum";
-import { U2_INTRO_OPEN } from "./content/unit2intro";
-import { U1_INTRO_OPEN } from "./content/unit1intro";
-import { V5_OPEN } from "./content/v5toggle";
 import { initAuth, onAuthChange, isPrivilegedUser, currentUser, isAuthConfigured, hasStoredSession } from "./core/auth";
 import { initSync } from "./core/sync";
 import { capturePaymentReturn, resumePaymentConfirm } from "./core/purchase";
@@ -622,29 +619,11 @@ try {
   /* 무시 */
 }
 
-// [임시 프리뷰] 적용 랩 시제품 — DEV에서 ?preview=u3l1v2 로 진입. 폐기 시 이 분기를 지우고 start()만 남긴다.
+// [검수용, 개발 서버 전용] ?open=u3l2 처럼 레슨 id를 주면 그 레슨을 바로 연다(완료를 기록하지 않는다). 운영 번들에는 이 분기가 없다.
 const bootRoute = parseRoute(location.hash);
-if (import.meta.env.DEV && new URLSearchParams(location.search).get("preview") === "u3l1v2") {
-  void import("./content/previewU3l1").then(({ previewU3L1 }) => {
-    const player = createLessonPlayer(previewU3L1(), {
-      onExit: goHome,
-      onComplete: () => goHome(), // 프리뷰는 완료를 기록하지 않는다(store 오염 방지)
-    });
-    nav.go(player);
-  });
-} else if (import.meta.env.DEV && U2_INTRO_OPEN && findLesson(U2_INTRO_OPEN)) {
-  // [도입 검수용, 개발 서버에서만] ?u2intro=u2l4 처럼 레슨을 주면 그 레슨을 바로 연다(완료를 기록하지 않는다).
-  // 운영 번들에서는 프리미엄 잠금이 걸린 레슨을 열지 않는다(주소로 잠금을 건너뛰지 못하게). 개발 서버에서는 잠금과 무관하게 연다.
-  const player = createLessonPlayer(findLesson(U2_INTRO_OPEN)!.lesson, { onExit: goHome, onComplete: () => goHome() });
-  nav.go({ el: player.el });
-} else if (import.meta.env.DEV && U1_INTRO_OPEN && findLesson(U1_INTRO_OPEN)) {
-  // [도입 판정용] ?u2intro=u1l2 처럼 Ⅰ단원 레슨을 주면 그 레슨을 바로 연다(위 Ⅱ단원 분기와 같은 규칙).
-  const player = createLessonPlayer(findLesson(U1_INTRO_OPEN)!.lesson, { onExit: goHome, onComplete: () => goHome() });
-  nav.go({ el: player.el });
-} else if (import.meta.env.DEV && V5_OPEN && findLesson(V5_OPEN)) {
-  // [v5 판정용, 개발 서버 전용] ?open=u3l2 처럼 레슨 id를 주면 그 레슨을 바로 연다(완료를 기록하지 않는다).
-  // 단원 토글과 함께 쓴다: ?u3v5&open=u3l2. 운영 번들에는 이 분기가 없다.
-  nav.go(createLessonPlayer(findLesson(V5_OPEN)!.lesson, { onExit: goHome, onComplete: () => goHome() }));
+const devOpen = import.meta.env.DEV ? new URLSearchParams(location.search).get("open") : null;
+if (devOpen && findLesson(devOpen)) {
+  nav.go(createLessonPlayer(findLesson(devOpen)!.lesson, { onExit: goHome, onComplete: () => goHome() }));
 } else if (bootRoute) {
   enterFromRoute(bootRoute); // 딥링크(#/pricing·#/login 등) — 스플래시를 건너뛰고 해당 화면으로(2026-08-14)
 } else {

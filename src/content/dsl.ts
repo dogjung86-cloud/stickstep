@@ -106,17 +106,6 @@ export const figTabs = (o: {
 export const parallaxLab = (o: { title: string; lead?: string; cta?: string; curio?: { q: string; a: string } }): Step =>
   ({ type: "parallaxLab", ...o });
 
-export const starLight3d = (o: { title: string; lead?: string; cta?: string; curio?: { q: string; a: string } }): Step =>
-  ({ type: "starLight3d", ...o });
-
-export const starColorLab = (o: { title: string; lead?: string; cta?: string; curio?: { q: string; a: string } }): Step =>
-  ({ type: "starColorLab", ...o });
-
-export const balloonUniverse = (o: { title: string; lead?: string; cta?: string; curio?: { q: string; a: string } }): Step =>
-  ({ type: "balloonUniverse", ...o });
-
-export const galaxy3d = (o: { title: string; lead?: string; cta?: string }): Step => ({ type: "galaxy3d", ...o });
-
 export const hook = (o: {
   title: string; lead?: string; narrator: string; done?: string;
   scene: "cups" | "egg" | "beach" | "wire" | "smell" | "juice" | "wrap" | "ramen"
@@ -203,9 +192,6 @@ export const convection = (o: { title: string; lead?: string; cta?: string }): S
 export const radiation = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "radiation", ...o });
 
-export const specificHeat = (o: { title: string; lead?: string; cta?: string }): Step =>
-  ({ type: "specificHeat", ...o });
-
 export const expansion = (o: { title: string; lead?: string; cta?: string }): Step =>
   ({ type: "expansion", ...o });
 
@@ -223,20 +209,11 @@ export const matterTemp = (o: {
 export const matterShape = (o: { title: string; lead?: string; cta?: string }): Step =>
   ({ type: "matterShape", ...o });
 
-export const matterCompare = (o: { title: string; lead?: string; note?: string; cta?: string }): Step =>
-  ({ type: "matterCompare", ...o });
-
-export const phaseNames = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "phaseNames", ...o });
-
 export const sublimation = (o: { title: string; lead?: string; cta?: string }): Step =>
   ({ type: "sublimation", ...o });
 
 export const phaseVolume = (o: { title: string; lead?: string; cta?: string }): Step =>
   ({ type: "phaseVolume", ...o });
-
-export const heatCurve = (o: { title: string; lead?: string; mode?: "heat" | "cool"; cta?: string }): Step =>
-  ({ type: "heatCurve", ...o });
 
 // ── 힘의 작용 단원(V) 랩 ───────────────────────────────────
 export const springLab = (o: { title: string; lead?: string; cta?: string }): Step =>
@@ -259,18 +236,6 @@ export const forceStudio = (o: { title: string; lead?: string; cta?: string }): 
 
 export const windSoccer = (o: { title: string; lead?: string; cta?: string }): Step =>
   ({ type: "windSoccer", ...o });
-
-// ── 기체 단원(VI) 랩 ────────────────────────────────────────
-export const gasPressure = (o: { title: string; lead?: string; cta?: string }): Step =>
-  ({ type: "gasPressure", ...o });
-export const boyleSyringe = (o: { title: string; lead?: string; cta?: string }): Step =>
-  ({ type: "boyleSyringe", ...o });
-export const diverBubble = (o: { title: string; lead?: string; cta?: string }): Step =>
-  ({ type: "diverBubble", ...o });
-export const charlesSyringe = (o: { title: string; lead?: string; cta?: string }): Step =>
-  ({ type: "charlesSyringe", ...o });
-export const hotairRide = (o: { title: string; lead?: string; cta?: string }): Step =>
-  ({ type: "hotairRide", ...o });
 
 // ── 태양계 단원(VII) 랩 ─────────────────────────────────────
 export const solarTour = (o: { title: string; lead?: string; cta?: string }): Step =>
@@ -328,76 +293,14 @@ export const ionLab = (o: { title: string; lead?: string; cta?: string; curio?: 
   ({ type: "ionLab", ...o });
 export const ionMoveLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "ionMoveLab", ...o });
-
-// ── 중2 V 식물과 에너지 랩 ──────────────────────────────────
-export const leafFactoryLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "leafFactoryLab", ...o });
-export const photoEvidenceLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "photoEvidenceLab", ...o });
-export const photoFactorLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "photoFactorLab", ...o });
-export const plantRespireLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "plantRespireLab", ...o });
-export const dayNightLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "dayNightLab", ...o });
-export const sugarJourneyLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "sugarJourneyLab", ...o });
-// ── 중2 Ⅴ 식물과 에너지 랩(v2 — 전면 재제작, steps/plant2/*) ──
-export const leafZoomLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "leafZoomLab", ...o });
-export const photoBuildLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "photoBuildLab", ...o });
-export const gasSensorLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "gasSensorLab", ...o });
-export const iodineTestLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "iodineTestLab", ...o });
-export const photoDesignLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "photoDesignLab", ...o });
-export const photoCurveLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "photoCurveLab", ...o });
-export const dayNightGasLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "dayNightGasLab", ...o });
-export const sugarFlowLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "sugarFlowLab", ...o });
-
-// ── 중2 VI 동물과 에너지 랩 ─────────────────────────────────
-export const nutrientTestLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "nutrientTestLab", ...o });
-export const digestJourneyLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "digestJourneyLab", ...o });
-export const circulationLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "circulationLab", ...o });
-export const breathModelLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "breathModelLab", ...o });
 export const nephronLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "nephronLab", ...o });
-export const bodyIntegrateLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "bodyIntegrateLab", ...o });
 
 // ── 중2 Ⅵ 동물과 에너지(g2u6, 2026-07-25 재제작) ─────────────
 // 훅은 과학 hook.ts와 분리된 독립 타입 `animalHook`(steps/hookAnimal.ts)을 쓴다.
 export type AnimalScene =
   | "lunchtray" | "mysterytube" | "cellgate" | "pineapple" | "foldtowel" | "pulsecheck"
   | "spintube" | "twoloop" | "holdbreath" | "windowair" | "saltysnack" | "afterswim";
-
-export const animalHook = (o: {
-  title: string; lead?: string; narrator: string; done?: string;
-  scene: AnimalScene; choices?: string[]; cta?: string;
-}): Step => ({ type: "animalHook", ...o });
-
-type AnLabOpt = { title: string; lead?: string; cta?: string; curio?: CurioOpt };
-export const anMealLab = (o: AnLabOpt): Step => ({ type: "anMealLab", ...o });
-export const anReagentLab = (o: AnLabOpt): Step => ({ type: "anReagentLab", ...o });
-export const anOrganLab = (o: AnLabOpt): Step => ({ type: "anOrganLab", ...o });
-export const anEnzymeLab = (o: AnLabOpt): Step => ({ type: "anEnzymeLab", ...o });
-export const anVilliLab = (o: AnLabOpt): Step => ({ type: "anVilliLab", ...o });
-export const anHeartLab = (o: AnLabOpt): Step => ({ type: "anHeartLab", ...o });
-export const anBloodLab = (o: AnLabOpt): Step => ({ type: "anBloodLab", ...o });
-export const anPathLab = (o: AnLabOpt): Step => ({ type: "anPathLab", ...o });
-export const anBreathLab = (o: AnLabOpt): Step => ({ type: "anBreathLab", ...o });
-export const anGasSwapLab = (o: AnLabOpt): Step => ({ type: "anGasSwapLab", ...o });
-export const anNephronLab = (o: AnLabOpt): Step => ({ type: "anNephronLab", ...o });
-export const anEnergyLab = (o: AnLabOpt): Step => ({ type: "anEnergyLab", ...o });
 
 // ── 중2 전기와 자기 단원(g2 VII) 랩 ─────────────────────────
 export const frictionLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
@@ -406,8 +309,6 @@ export const rubLab = (o: { title: string; lead?: string; cta?: string; curio?: 
   ({ type: "rubLab", ...o });
 export const inductionLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "inductionLab", ...o });
-export const waterCircuit = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "waterCircuit", ...o });
 // 3D 판(현행). 위 2D 판은 원본 보존용으로 남겨 둔다.
 export const waterCircuit3d = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "waterCircuit3d", ...o });
@@ -426,40 +327,8 @@ export const pairMatch = (o: {
 }): Step => ({ type: "pairMatch", ...o });
 export const formulaLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "formulaLab", ...o });
-
-// ── 중2 물질의 특성 단원(g2 I) 랩 ───────────────────────────
-export const densityLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "densityLab", ...o });
-export const densityPool = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "densityPool", ...o });
-export const solubilityLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "solubilityLab", ...o });
-export const gasFizz = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "gasFizz", ...o });
-export const meltCurve = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "meltCurve", ...o });
-export const sepFunnel = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "sepFunnel", ...o });
-export const recrystal = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "recrystal", ...o });
 export const distillLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "distillLab", ...o });
-
-// ── 중2 지권의 변화 단원(g2 II) 랩 ──────────────────────────
-export const earthCut3d = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "earthCut3d", ...o });
-export const streakLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "streakLab", ...o });
-export const coolingLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "coolingLab", ...o });
-export const strataLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "strataLab", ...o });
-export const foliationLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "foliationLab", ...o });
-export const rockCycle = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "rockCycle", ...o });
-export const driftLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "driftLab", ...o });
 export const plateMap = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "plateMap", ...o });
 
@@ -526,49 +395,8 @@ export const shieldLab = (o: { title: string; lead?: string; cta?: string; curio
   ({ type: "shieldLab", ...o });
 export const workRightLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "workRightLab", ...o });
-
-// ── 중1 Ⅱ 생물의 구성과 다양성 랩 11종(2026-07-25 재제작) ────────────
-// 전부 같은 계약: { title, lead?, cta?, curio? }. 구작 랩(orgLevels·finchSim·microscope·
-// dichotomKey·biodiversityLab)은 아래 Obj 팩토리로 보존만 하고 새 단원에선 쓰지 않는다.
-export const cellScaleLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "cellScaleLab", ...o });
-export const cellFactoryLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "cellFactoryLab", ...o });
-/** 동물세포·식물세포를 나란히 놓고 공통점·차이점을 찾는 비교 랩(실사용 피드백 2026-07-25). */
-export const cellCompareLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "cellCompareLab", ...o });
-export const microscopeLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "microscopeLab", ...o });
-export const cellJobLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "cellJobLab", ...o });
-export const orgLadderLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "orgLadderLab", ...o });
-export const diversityLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "diversityLab", ...o });
-/** L7 기함 — 변이 → 환경 적응 → 종 분화를 집단 분포의 이동으로 보여 준다. */
-export const finchIslandLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "finchIslandLab", ...o });
-export const classifyLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "classifyLab", ...o });
-export const rankLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "rankLab", ...o });
 export const kingdomKeyLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
   ({ type: "kingdomKeyLab", ...o });
-export const webStabilityLab = (o: { title: string; lead?: string; cta?: string; curio?: CurioOpt }): Step =>
-  ({ type: "webStabilityLab", ...o });
-
-// ── 중1 Ⅱ 생물의 구성과 다양성 v3 랩 9종(2026-08-10 재제작 — steps/bio4/*) ──
-// 병행 배선(unit2v3.ts + ss.u2v3 토글) 전용 — 현행 unit2 계열과 이름이 겹치지 않는다.
-type B4LabOpt = { title: string; lead?: string; cta?: string; curio?: CurioOpt };
-export const zoomRulerLab = (o: B4LabOpt): Step => ({ type: "zoomRulerLab", ...o });
-export const slideMakeLab = (o: B4LabOpt): Step => ({ type: "slideMakeLab", ...o });
-export const shapeJobLab = (o: B4LabOpt): Step => ({ type: "shapeJobLab", ...o });
-export const lifeStackLab = (o: B4LabOpt): Step => ({ type: "lifeStackLab", ...o });
-export const ecoScanLab = (o: B4LabOpt): Step => ({ type: "ecoScanLab", ...o });
-export const beakIslandsLab = (o: B4LabOpt): Step => ({ type: "beakIslandsLab", ...o });
-export const groupRuleLab = (o: B4LabOpt): Step => ({ type: "groupRuleLab", ...o });
-export const kingdomGateLab = (o: B4LabOpt): Step => ({ type: "kingdomGateLab", ...o });
-export const webDropLab = (o: B4LabOpt): Step => ({ type: "webDropLab", ...o });
 
 // ── 중1 Ⅱ v5 랩 12종(2026-11-11, steps/bio6/*) ──
 // 정본 unit2v5.ts가 쓴다. 제목은 학생이 답할 질문 한 줄이고 리드는 없다.
@@ -588,40 +416,14 @@ export const rankWidenLab = (o: B6LabOpt): Step => ({ type: "rankWidenLab", ...o
 export const kingdomPathLab = (o: B6LabOpt): Step => ({ type: "kingdomPathLab", ...o });
 export const foodWebLab = (o: B6LabOpt): Step => ({ type: "foodWebLab", ...o });
 
-// ── 중2 Ⅴ 식물과 에너지 v3 랩 7종(2026-08-10 재제작 — steps/plant3/*) ──
-// 병행 배선(unit5v3.ts + ss.g2u5v3 토글) 전용 — 현행 unit5 계열·v2(plant2)와 이름이 겹치지 않는다.
-export const greenHuntLab = (o: B4LabOpt): Step => ({ type: "greenHuntLab", ...o });
-export const gasCrossLab = (o: B4LabOpt): Step => ({ type: "gasCrossLab", ...o });
-export const starchQuestLab = (o: B4LabOpt): Step => ({ type: "starchQuestLab", ...o });
-export const factorCurveLab = (o: B4LabOpt): Step => ({ type: "factorCurveLab", ...o });
-export const flipEngineLab = (o: B4LabOpt): Step => ({ type: "flipEngineLab", ...o });
-export const sunGaugeLab = (o: B4LabOpt): Step => ({ type: "sunGaugeLab", ...o });
-export const sapFlowLab = (o: B4LabOpt): Step => ({ type: "sapFlowLab", ...o });
-
-// ── 중2 Ⅵ 동물과 에너지 v3 랩 8종(2026-08-10 재제작 — steps/body3/*) ──
-// 병행 배선(unit6v3.ts + ss.g2u6v3 토글) 전용 — 현행 unit6 계열·v2(anim)와 이름이 겹치지 않는다.
-export const colorClueLab = (o: B4LabOpt): Step => ({ type: "colorClueLab", ...o });
-export const salivaRaceLab = (o: B4LabOpt): Step => ({ type: "salivaRaceLab", ...o });
-export const foodTripLab = (o: B4LabOpt): Step => ({ type: "foodTripLab", ...o });
-export const heartPumpLab = (o: B4LabOpt): Step => ({ type: "heartPumpLab", ...o });
-export const twoLoopsLab = (o: B4LabOpt): Step => ({ type: "twoLoopsLab", ...o });
-export const chestModelLab = (o: B4LabOpt): Step => ({ type: "chestModelLab", ...o });
-export const kidneyFilterLab = (o: B4LabOpt): Step => ({ type: "kidneyFilterLab", ...o });
-export const bodyTeamLab = (o: B4LabOpt): Step => ({ type: "bodyTeamLab", ...o });
-
 // ── 중1 Ⅱ 도입 샘플(2026-11-11, steps/opener/*) ──
 // 병행 배선(unit2intro.ts + ss.u2intro 토글) 전용. hook과 다른 틀(제목, 무대, 아래 칸 한 화면)을 쓴다.
 // scene: Ⅰ·Ⅱ단원의 장면 이름, 또는 단원 묶음(steps/opener/uN/index.ts)에 등록한 "u3-…" 꼴의 이름.
 export const opener = (o: { title: string; scene: "longcell" | "baskets" | "factory" | "suncups" | "speaker" | "blanket" | "droplens" | "blockbloom" | "dokdo" | "shelves" | "beeswitch" | `u${number}-${string}` | `g2u${number}-${string}`; wait?: string; cta?: string }): Step => ({ type: "opener", ...o });
-
-export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
-export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });
-export const techCards = (o: Obj): Step => ({ type: "techCards", ...o });
 export const orgLevels = (o: Obj): Step => ({ type: "orgLevels", ...o });
 export const finchSim = (o: Obj): Step => ({ type: "finchSim", ...o });
 export const microscope = (o: Obj): Step => ({ type: "microscope", ...o });
 export const dichotomKey = (o: Obj): Step => ({ type: "dichotomKey", ...o });
-export const biodiversityLab = (o: Obj): Step => ({ type: "biodiversityLab", ...o });
 
 export function lesson(l: Lesson): Lesson {
   return l;

@@ -370,7 +370,7 @@ if (!ONLY.length) {
 // 내용 파일의 글(개념, 정리, 문제)도 같은 규칙으로 본다
 {
   const fs = await import("node:fs");
-  const src = fs.readFileSync("src/content/unit7v5.ts", "utf8").replace(/^\s*\/\/.*$/gm, "");
+  const src = fs.readFileSync("src/content/unit7.ts", "utf8").replace(/^\s*\/\/.*$/gm, "");
   const lits = [...src.matchAll(/"((?:[^"\\\n]|\\.)*)"/g)].map((m) => m[1]).filter((t) => /[가-힣]/.test(t)).join("\n");
   ok(!/[—–]/.test(lits), "내용 파일에 대시");
   ok(!/교과서|분자/.test(lits), "내용 파일에 '교과서'나 '분자'");
