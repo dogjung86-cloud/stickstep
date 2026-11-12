@@ -2,7 +2,7 @@
 //   컷 수가 장면 파일과 같은가 · 그림이 실제로 떴는가(naturalWidth > 0) · 말풍선이 컷 밖으로 나가거나 서로 겹치지 않는가
 //   · 때와 곳 상자가 장면 파일대로 떴는가, 컷 안에 있고 말풍선과 겹치지 않는가 · 단계 배지에 숫자(연도)가 없는가
 //   · 화면 글 규칙(대시, '교과서', '너의', '이해에') · 마지막 컷 버튼이 장면 파일의 cta 인가 · 페이지 오류가 없는가
-// 실행: DIST=<개발 모드 번들 폴더> node qa/sketch/check-comics.mjs [저장 폴더] [레슨…]   (만드는 법은 lib/app.mjs 머리말)
+// 실행: DIST=<개발 모드 번들 폴더> node qa/sketch/check-comics.mjs [저장 폴더 또는 -] [레슨…]   (만드는 법은 lib/app.mjs 머리말)
 //       PORT=5173 node qa/sketch/check-comics.mjs …   (개발 서버. 도는 동안 src 를 고치지 않는다)
 //   V5=1 이면 새 판 토글(?g1v5)을 켠 채 본다(만화는 같아야 한다). 저장 폴더를 주면 컷마다 폰 화면(SHOT, 기본 360x780)을 남긴다.
 import { mkdirSync, readdirSync } from "node:fs";
@@ -12,7 +12,9 @@ import { launch, phone, openLesson, wait } from "./lib/app.mjs";
 import { textRules } from "./lib/bubble.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const [OUT, ...ONLY] = process.argv.slice(2).filter((a) => a !== "-");
+const ARGS = process.argv.slice(2);
+const OUT = ARGS[0] && ARGS[0] !== "-" ? ARGS[0] : ""; // 저장하지 않고 레슨만 고르려면 첫 인자에 - 를 준다
+const ONLY = ARGS.slice(1);
 if (OUT) mkdirSync(OUT, { recursive: true });
 const QUERY = process.env.V5 ? "g1v5" : "";
 const VIEWS = [{ name: "360x780", width: 360, height: 780 }, { name: "375x812", width: 375, height: 812 }, { name: "390x700", width: 390, height: 700 }];
