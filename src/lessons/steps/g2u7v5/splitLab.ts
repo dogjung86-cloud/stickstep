@@ -112,7 +112,7 @@ export const splitLab: StepRenderer = (host, step, api) => {
     toolSeg.lock(water);
     if (water) waterSeen[mode] = true;
     hint();
-    if (water && !(waterSeen.series && waterSeen.parallel)) f.say(`${mode === "series" ? "물길이 <b>하나</b>예요. 높이 차를 둘이 나눠 써요." : "물길이 <b>두 갈래</b>예요. 물이 나뉘어 흘러요."} 위에서 ${mode === "series" ? "병렬" : "직렬"}연결의 물길도 봐요.`);
+    if (water && !(waterSeen.series && waterSeen.parallel)) f.say(`${mode === "series" ? "물길이 <b>하나</b>예요. 높이 차를 둘이 나눠 써요." : "물길이 <b>두 갈래</b>예요. 물이 나뉘어 흘러요."} 아래 버튼으로 ${mode === "series" ? "병렬" : "직렬"}연결의 물길도 봐요.`);
     after();
   });
   st.cv.addEventListener("pointerdown", (e) => {

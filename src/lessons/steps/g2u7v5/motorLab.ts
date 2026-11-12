@@ -101,7 +101,7 @@ export const motorLab: StepRenderer = (host, step, api) => {
     ctx.save();
     ctx.scale(k, k);
     const cx = 173;
-    const cy = 122;
+    const cy = 112;
     const P = (x: number, y: number, z: number): [number, number] => [cx + x + z * 0.5, cy - y - z * 0.3];
     // 돌기: 왼쪽 변이 위로 힘을 받으면 시계 방향(각이 줄어든다)
     const goal = on ? -up() * 0.045 : 0;
@@ -110,14 +110,14 @@ export const motorLab: StepRenderer = (host, step, api) => {
     // 자석
     const nC = "#E0503A";
     const sC = "#3D8FE8";
-    xBox(ctx, 14, 70, 54, 104, 10, nLeft ? nC : sC, "rgba(255,255,255,.25)");
-    xBox(ctx, 278, 70, 54, 104, 10, nLeft ? sC : nC, "rgba(255,255,255,.25)");
-    xText(ctx, nLeft ? "N극" : "S극", 41, 122, { px: 15, w: 800, color: "#fff" });
-    xText(ctx, nLeft ? "S극" : "N극", 305, 122, { px: 15, w: 800, color: "#fff" });
+    xBox(ctx, 14, 60, 54, 104, 10, nLeft ? nC : sC, "rgba(255,255,255,.25)");
+    xBox(ctx, 278, 60, 54, 104, 10, nLeft ? sC : nC, "rgba(255,255,255,.25)");
+    xText(ctx, nLeft ? "N극" : "S극", 41, 112, { px: 15, w: 800, color: "#fff" });
+    xText(ctx, nLeft ? "S극" : "N극", 305, 112, { px: 15, w: 800, color: "#fff" });
     // 자기장(N극에서 S극)
     const d = nLeft ? 1 : -1;
-    for (const y of [92, 152]) xArrow(ctx, cx - d * 92, y, cx + d * 92, y, "rgba(255,123,107,.55)", 2, 8);
-    xText(ctx, "자기장", 100, 80, { px: 12, color: X.field });
+    for (const y of [82, 142]) xArrow(ctx, cx - d * 92, y, cx + d * 92, y, "rgba(255,123,107,.55)", 2, 8);
+    xText(ctx, "자기장", 100, 70, { px: 12, color: X.field });
     // 회전축
     ctx.save();
     ctx.setLineDash([5, 4]);
@@ -153,8 +153,8 @@ export const motorLab: StepRenderer = (host, step, api) => {
         const ax = [a[0] + (b[0] - a[0]) * 0.2, a[1] + (b[1] - a[1]) * 0.2, a[0] + (b[0] - a[0]) * 0.8, a[1] + (b[1] - a[1]) * 0.8] as const;
         xArrow(ctx, ...ax, "#6E3F16", 5.2, 12);
         xArrow(ctx, ...ax, X.cur, 2.6, 9);
-        xArrow(ctx, mx, my, mx, my - fdir * 38, X.force, 3.2, 10);
-        xText(ctx, name, mx, my - fdir * 50, { px: 12.5, color: X.force });
+        xArrow(ctx, mx, my, mx, my - fdir * 30, X.force, 3.2, 10);
+        xText(ctx, name, mx, my - fdir * 41, { px: 12.5, color: X.force });
       };
       side(left, cur, up(), "힘");
       side(right, -cur, -up(), "힘");

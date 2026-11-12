@@ -81,7 +81,7 @@ export const coilLab: StepRenderer = (host, step, api) => {
     dir = dir === 1 ? -1 : 1;
     if (on && n() >= 3) {
       seen.flip = true;
-      f.say("전류의 방향을 바꾸자 코일 양 끝의 바늘이 <b>반대쪽</b>을 가리켜요.");
+      f.say("전류의 방향을 바꾸자 바늘이 <b>반대쪽으로</b> 돌아가요.");
     } else need();
     after();
   });
@@ -103,8 +103,8 @@ export const coilLab: StepRenderer = (host, step, api) => {
 
   function ask1(): void {
     f.slot.ask(
-      "전류의 방향을 바꾸자 코일 끝에 놓은 나침반의 N극은?",
-      [{ t: "반대쪽을 가리켰어요", ok: true }, { t: "그대로였어요" }, { t: "북쪽으로 돌아갔어요" }],
+      "전류의 방향을 바꾸자 코일 끝에 놓은 나침반 바늘은?",
+      [{ t: "반대쪽으로 돌아갔어요", ok: true }, { t: "그대로였어요" }, { t: "북쪽만 가리켰어요" }],
       (ok) => api.recordQuiz(ok),
       { why: "전류의 방향이 바뀌면 <b>자기장의 방향</b>도 반대가 돼요.", onNext: ask2 },
     );
@@ -129,7 +129,7 @@ export const coilLab: StepRenderer = (host, step, api) => {
     let bx = 0;
     let by = -1;
     if (on) {
-      const m = dir * (strong ? 3.2 : 0.7);
+      const m = dir * (strong ? 10 : 2.2);
       const rx = (x - C.x) / 60;
       const ry = (y - C.y) / 60;
       const r = Math.hypot(rx, ry);

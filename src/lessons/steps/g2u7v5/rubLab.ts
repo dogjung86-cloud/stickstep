@@ -78,7 +78,7 @@ export const rubLab: StepRenderer = (host, step, api) => {
       togetherTo = 0;
       busy = false;
       paint();
-      f.say(moved >= MAX_MOVE ? `전자가 <b>${moved}개</b> 건너갔어요. 이제 떼어 놓고 두 물체의 (+)와 (−) 개수를 견줘 보세요.` : `전자 <b>1개</b>가 털가죽에서 빨대로 건너갔어요. 더 문지르거나, 떼어 놓고 살펴보세요.`);
+      f.say(moved >= MAX_MOVE ? `전자가 <b>${moved}개</b> 건너갔어요. 이제 떼어 놓고 두 물체의 (+)와 (−) 개수를 견줘 보세요.` : `전자가 모두 <b>${moved}개</b> 건너갔어요. 더 문지르거나, 떼어 놓고 살펴보세요.`);
     }, 1100);
   });
   pull.addEventListener("click", () => {

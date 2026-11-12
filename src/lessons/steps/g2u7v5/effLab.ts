@@ -85,7 +85,7 @@ export const effLab: StepRenderer = (host, step, api) => {
       "LED 전구에 넣은 50 J 가운데 빛이 된 것은 20 J이에요. 나머지 30 J은?",
       [{ t: "열에너지로 바뀌었어요", ok: true }, { t: "사라져 없어졌어요" }, { t: "전구 속에 남아 있어요" }],
       (v) => api.recordQuiz(v),
-      { why: "막대의 붉은 부분이 <b>열에너지</b>였어요. 에너지는 사라지지 않아요.", onNext: finish },
+      { why: "그래프의 붉은 막대가 <b>열에너지</b>였어요. 에너지는 사라지지 않아요.", onNext: finish },
     );
   }
   function finish(): void {
@@ -129,7 +129,7 @@ export const effLab: StepRenderer = (host, step, api) => {
     xText(ctx, `넣은 전기 에너지 ${supply} J`, bx, 26, { px: 13, align: "left", color: X.cur, w: 800 });
     xBox(ctx, bx, 38, bw, 20, 6, "rgba(255,255,255,.06)", X.line);
     if (supply > 0) xBox(ctx, bx, 38, Math.max(3, supply * scale), 20, 6, "rgba(255,196,90,.8)");
-    xText(ctx, `빛에너지 ${light.toFixed(1)} J`, bx, 80, { px: 13, align: "left", color: "#FFE08A", w: 800 });
+    xText(ctx, `빛에너지 ${light.toFixed(1)} J (4배로 키운 눈금)`, bx, 80, { px: 13, align: "left", color: "#FFE08A", w: 800 });
     xBox(ctx, bx, 92, bw, 20, 6, "rgba(255,255,255,.06)", X.line);
     if (light > 0) xBox(ctx, bx, 92, Math.min(bw, Math.max(3, light * scale * 4)), 20, 6, "#FFE08A");
     // 목표선(빛 20 J)

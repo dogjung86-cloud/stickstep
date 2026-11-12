@@ -37,7 +37,7 @@ export function twoBulbFig(kind: "series" | "parallel"): string {
   const body =
     kind === "series"
       ? `<path d="M148 168H40V56H95M125 56H195M225 56H280V168H158" fill="none" stroke="#333D4B" stroke-width="1.6"/>${bulb(110, 56, "(가)")}${bulb(210, 56, "(나)")}`
-      : `<path d="M148 168H40V48H145M175 48H280V168H158M40 108H100M132 104L104 96M132 108H145M175 108H280" fill="none" stroke="#333D4B" stroke-width="1.6"/><circle cx="102" cy="108" r="2.6" fill="#333D4B"/><circle cx="132" cy="108" r="2.6" fill="#333D4B"/><text x="117" y="130" text-anchor="middle">스위치</text>${bulb(160, 48, "(가)")}${bulb(160, 108, "(나)")}`;
+      : `<path d="M148 168H40V48H145M175 48H280V168H158M40 108H145M175 108H280" fill="none" stroke="#333D4B" stroke-width="1.6"/><circle cx="102" cy="108" r="2.6" fill="#333D4B"/><circle cx="132" cy="108" r="2.6" fill="#333D4B"/><text x="117" y="130" text-anchor="middle">스위치</text>${bulb(160, 48, "(가)")}${bulb(160, 108, "(나)")}`;
   const alt = kind === "series" ? "전지에 전구 (가)와 (나)를 한 줄로 이은 회로" : "전지에 전구 (가)와 (나)를 두 갈래로 나눠 이은 회로. (나)가 있는 갈래에 스위치가 있다";
   return `<svg viewBox="0 0 320 196" ${NS} role="img" aria-label="${alt}" font-family="Pretendard, sans-serif" font-size="12" fill="#4E5968">${body}${batt}</svg>`;
 }

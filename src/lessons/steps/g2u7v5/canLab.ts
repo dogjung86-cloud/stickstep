@@ -198,19 +198,20 @@ export const canLab: StepRenderer = (host, step, api) => {
       drawElectron(ctx, cx + ex, cy + y + 6, 5.5);
     });
     // 막대
-    const tip = cx + side * (R + 8 + (1 - closeness) * 86);
-    const rx = side < 0 ? tip - 96 : tip;
+    const tip = cx + side * (R + 8 + (1 - closeness) * 34);
+    const rx = side < 0 ? tip - 80 : tip;
     ctx.fillStyle = charged ? "#3D8FE8" : "#9AA7BD";
     ctx.strokeStyle = charged ? "#1F5FB0" : "#66738A";
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.roundRect(rx, cy - 8, 96, 16, 8);
+    ctx.roundRect(rx, cy - 8, 80, 16, 8);
     ctx.fill();
     ctx.stroke();
-    if (charged) for (let i = 0; i < 4; i++) xSign(ctx, rx + 14 + i * 23, cy, false, 5.5);
-    xText(ctx, "플라스틱 막대", rx + 48, cy - 22, { px: 12, color: X.dim });
+    if (charged) for (let i = 0; i < 4; i++) xSign(ctx, rx + 12 + i * 19, cy, false, 5.5);
+    xText(ctx, "막대", rx + 40, cy - 22, { px: 12, color: X.dim });
     // 띠는 전기
-    if (shift > 0.45) {
+    if (touched && charged) xText(ctx, "전자가 건너와 (−)전기", cx, cy - R - 12, { px: 13, color: X.minus, w: 800 });
+    else if (shift > 0.45) {
       xText(ctx, "(+)전기", cx + side * (R - 6), cy - R - 12, { px: 13, color: X.plus, w: 800 });
       xText(ctx, "(−)전기", cx - side * (R - 6), cy - R - 12, { px: 13, color: X.minus, w: 800 });
     }
@@ -218,7 +219,7 @@ export const canLab: StepRenderer = (host, step, api) => {
   });
 
   f.say("깡통 속 붉은 점은 원자핵(+), 파란 알갱이는 전자(−)예요. 막대를 골라 <b>가까이</b> 가져가 보세요.");
-  api.setCTA("세 가지로 가져가 보세요", { enabled: false });
+  api.setCTA("막대를 깡통에 가져가 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();
