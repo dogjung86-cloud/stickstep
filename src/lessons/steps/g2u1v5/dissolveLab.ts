@@ -8,7 +8,7 @@
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvBtn } from "../bio6/b6Lab";
-import { P, fx, g1Lab, g1Log, g1Row, g1Seg, seeded, svgOpen, type G1Step } from "./g2u1Kit";
+import { P, fx, g1Lab, g1Row, g1Seg, g1Strip, seeded, svgOpen, type G1Step } from "./g2u1Kit";
 
 const SOL = [
   { name: "질산 칼륨", eul: "질산 칼륨을", eun: "질산 칼륨은", limit: 3.0, grain: "#F4F7FB", tint: "#4DABF7" },
@@ -31,8 +31,12 @@ export const g2u1DissolveLab: StepRenderer = (host, step, api) => {
     <path d="M${B.x} ${B.y + 14} V${B.y + B.h - 8} a8 8 0 0 0 8 8 h${B.w - 16} a8 8 0 0 0 8 -8 V${B.y + 14}" stroke="${P.glass}" stroke-width="2.4"/>
     <path d="M${B.x} ${B.y + 14} q0 -10 14 -12 M${B.x + B.w} ${B.y + 14} q0 -10 -14 -12" stroke="${P.glass}" stroke-width="2.4"/>
     <path d="M${CXB - 26} ${B.y - 34} L${CXB - 5} ${B.y - 8} V${B.y + 10} M${CXB + 26} ${B.y - 34} L${CXB + 5} ${B.y - 8} V${B.y + 10} M${CXB - 28} ${B.y - 34} h56" stroke="${P.glass}" stroke-width="2" stroke-linecap="round"/>
+    <text x="250" y="96" text-anchor="middle" font-size="12.5" font-weight="700" fill="${P.dim}">넣은 양</text>
+    <text class="g2u1x-ds-n" x="250" y="134" text-anchor="middle" font-size="34" font-weight="800" fill="${P.text}">0.0 g</text>
+    <text x="250" y="158" text-anchor="middle" font-size="12.5" font-weight="700" fill="${P.dim}">실온의 물 10 g</text>
   </svg>`;
-  const log = g1Log(lab, "r");
+  const strip = g1Strip();
+  const nEl = f.stage.querySelector(".g2u1x-ds-n") as SVGTextElement;
   const liq = f.stage.querySelector(".g2u1x-ds-liq") as SVGRectElement;
   const pile = f.stage.querySelector(".g2u1x-ds-pile") as SVGGElement;
   const fall = f.stage.querySelector(".g2u1x-ds-fall") as SVGGElement;
@@ -55,11 +59,11 @@ export const g2u1DissolveLab: StepRenderer = (host, step, api) => {
       g += `<circle cx="${(CXB - 32 + (i % 9) * 8 + r2() * 4).toFixed(1)}" cy="${(B.y + B.h - 8 - row * 5 - r2() * 2).toFixed(1)}" r="3" fill="${s.grain}" stroke="rgba(0,0,0,.25)" stroke-width=".6"/>`;
     }
     pile.innerHTML = g;
-    const rows = [`실온의 물 <b>10 g</b>`, `${s.name}`, `넣은 양 <b class="k">${fx(added[cur])} g</b>`, `바닥에 남은 것 <b class="${left > 0 ? "w" : ""}">${left > 0 ? "있음" : "없음"}</b>`];
+    nEl.textContent = `${fx(added[cur])} g`;
+    strip.set(`<span>${s.name}  ·  바닥에 남은 것 <b class="${left > 0 ? "w" : ""}">${left > 0 ? "있음" : "없음"}</b></span>`);
     SOL.forEach((x, i) => {
-      if (rec[i] !== null) rows.push(`${x.name} 최대 <b>${fx(rec[i] as number)} g</b>`);
+      if (rec[i] !== null) seg.btns[i].innerHTML = `${x.name}<i>최대 ${fx(rec[i] as number)} g</i>`;
     });
-    log.set(rows);
     host.dataset.g2u1Ds = `${cur}:${added[cur]}`;
   }
 
@@ -137,7 +141,7 @@ export const g2u1DissolveLab: StepRenderer = (host, step, api) => {
 
   seg.set(0);
   paint();
-  f.slot.setControls(seg.el, g1Row(bAdd, bRec));
+  f.slot.setControls(strip.el, seg.el, g1Row(bAdd, bRec));
   f.say("실온의 물 10 g이 든 병이에요. <b>0.5 g씩</b> 넣으며 더 녹지 않는 때를 찾아보세요.");
   sync();
   return lab.cleanup;

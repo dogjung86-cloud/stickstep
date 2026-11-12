@@ -36,6 +36,14 @@
 .g2u1x-seg-b.on { border-color: var(--subj-chem); background: var(--subj-chem-tint); color: var(--subj-chem-press); box-shadow: 0 0 0 1px var(--subj-chem) inset; }
 .g2u1x-seg-b:disabled { opacity: .5; }
 .g2u1x-seg-b.used { border-color: #F3A8C4; }
+.g2u1x-strip {
+  height: 30px; border-radius: 10px; background: var(--n100); display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; color: var(--n700); white-space: nowrap; overflow: hidden;
+}
+.g2u1x-strip span { white-space: pre; }
+.g2u1x-strip b { color: var(--ink); font-weight: 800; }
+.g2u1x-strip b.w { color: var(--red); }
+.g2u1x-seg-b i { font-style: normal; font-size: 12px; font-weight: 800; color: var(--subj-chem-press); margin-left: 4px; }
 .g2u1x-cap { font-size: 12.5px; font-weight: 800; color: var(--n700); padding: 0 2px; }
 
 /* 무대 위에 얹는 글(12px 이상) */

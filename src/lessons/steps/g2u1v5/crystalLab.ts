@@ -10,7 +10,7 @@ import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvRange } from "../bio6/b6Lab";
 import { kno3, nacl } from "../../../ui/g2u1v5Figures";
-import { P, fx, g1Lab, g1Log, plot, ptsOf, seeded, svgOpen, type G1Step } from "./g2u1Kit";
+import { P, fx, g1Lab, g1Strip, plot, ptsOf, seeded, svgOpen, type G1Step } from "./g2u1Kit";
 
 const K = 10; // 질산 칼륨(g)
 const N = 2; // 염화 나트륨(g)
@@ -18,7 +18,7 @@ const N = 2; // 염화 나트륨(g)
 export const g2u1CrystalLab: StepRenderer = (host, step, api) => {
   const lab = g1Lab(host, api, step as unknown as G1Step, { steps: 3, cls: "g2u1x-cr" });
   const { f, tm } = lab;
-  const pl = plot({ x: 208, y: 34, w: 126, h: 150, x0: 0, x1: 80, y0: 0, y1: 160, xl: "온도(℃)", yl: "물 100 g에 녹는 양(g)", xt: [20, 40, 60, 80], yt: [40, 80, 120, 160] });
+  const pl = plot({ x: 208, y: 34, w: 126, h: 150, x0: 0, x1: 80, y0: 0, y1: 160, xl: "온도(℃)", yl: "녹는 양(g/물 100 g)", xt: [20, 40, 60, 80], yt: [40, 80, 120, 160] });
   const cv = (fn: (t: number) => number): string => ptsOf(Array.from({ length: 21 }, (_, i) => [pl.px(i * 4), pl.py(fn(i * 4))] as [number, number]));
   f.stage.innerHTML = `${svgOpen}
     ${pl.svg}
@@ -26,17 +26,17 @@ export const g2u1CrystalLab: StepRenderer = (host, step, api) => {
     <polyline points="${cv(nacl)}" stroke="${P.green}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M${pl.px(0)} ${pl.py(K * 10)} H${pl.px(80)}" stroke="${P.rose}" stroke-width="1.3" stroke-dasharray="4 3"/>
     <path d="M${pl.px(0)} ${pl.py(N * 10)} H${pl.px(80)}" stroke="${P.green}" stroke-width="1.3" stroke-dasharray="4 3"/>
-    <text x="${pl.px(2)}" y="${pl.py(K * 10) - 5}" font-size="12" font-weight="800" fill="${P.rose}">질산 칼륨</text>
-    <text x="${pl.px(80)}" y="${pl.py(N * 10) + 14}" text-anchor="end" font-size="12" font-weight="800" fill="${P.green}">염화 나트륨</text>
+    <text x="${pl.px(2)}" y="${pl.py(K * 10) - 5}" font-size="12" font-weight="800" fill="${P.rose}">질산 칼륨 10 g</text>
+    <text x="${pl.px(80)}" y="${pl.py(N * 10) + 14}" text-anchor="end" font-size="12" font-weight="800" fill="${P.green}">염화 나트륨 2 g</text>
     <path class="g2u1x-cr-v" d="M0 0" stroke="rgba(255,255,255,.5)" stroke-width="1.4"/>
     <rect class="g2u1x-cr-bath" x="22" y="120" width="140" height="78" rx="8" fill="${P.cold}" opacity="0"/>
     <rect class="g2u1x-cr-liq" x="49" y="108" width="86" height="80" rx="5" fill="${P.water}" opacity=".4"/>
     <g class="g2u1x-cr-pile"></g>
     <path d="M46 92 V182 a9 9 0 0 0 9 9 h74 a9 9 0 0 0 9 -9 V92 M40 92 h104" stroke="${P.glass}" stroke-width="2.4" stroke-linecap="round"/>
-    <text class="g2u1x-cr-t" x="150" y="84" text-anchor="middle" font-size="18" font-weight="800" fill="${P.text}"></text>
+    <text class="g2u1x-cr-t" x="92" y="52" text-anchor="middle" font-size="22" font-weight="800" fill="${P.text}"></text>
     <text class="g2u1x-cr-m" x="92" y="216" text-anchor="middle" font-size="12.5" font-weight="700" fill="${P.dim}"></text>
   </svg>`;
-  const log = g1Log(lab);
+  const strip = g1Strip();
   const q = <T extends Element>(s: string): T => f.stage.querySelector(s) as T;
   const vline = q<SVGPathElement>(".g2u1x-cr-v");
   const bath = q<SVGRectElement>(".g2u1x-cr-bath");
@@ -67,7 +67,7 @@ export const g2u1CrystalLab: StepRenderer = (host, step, api) => {
       g += melted ? `<path d="M${fx(x - 3)} ${fx(y + 2)} L${fx(x + 4)} ${fx(y - 4)}" stroke="#F4F7FB" stroke-width="2.2" stroke-linecap="round"/>` : `<circle cx="${fx(x)}" cy="${fx(y)}" r="2.8" fill="#F4F7FB" stroke="rgba(0,0,0,.25)" stroke-width=".6"/>`;
     }
     pile.innerHTML = g;
-    log.set([`질산 칼륨 <b class="k">10 g</b>`, `염화 나트륨 <b class="k">2 g</b>`, `바닥의 고체 <b class="${left > 0.05 ? "w" : ""}">${fx(left)} g</b>`]);
+    if (phase === "play") strip.set(`<span>물 10 g  ·  바닥의 고체 <b class="${left > 0.05 ? "w" : ""}">${fx(left)} g</b></span>`);
     host.dataset.g2u1Cr = String(T);
   }
   const range = bvRange({
@@ -124,8 +124,8 @@ export const g2u1CrystalLab: StepRenderer = (host, step, api) => {
     range.input.disabled = true;
     bFilter.disabled = true;
     f.pips(2);
-    log.set([`거름종이 위: 질산 칼륨 <b>${fx(left)} g</b>`, `거른 용액: 염화 나트륨 <b>${fx(N)} g</b>`, `거른 용액: 질산 칼륨 <b>${fx(K - left)} g</b>`]);
-    f.say("거름종이에는 <b>질산 칼륨 결정</b>만 남았어요. 염화 나트륨은 녹은 채 거름종이를 지나갔어요.");
+    strip.set(`<span>거름종이 <b>질산 칼륨 ${fx(left)} g</b>  ·  용액 <b>염화 나트륨 ${fx(N)} g</b></span>`);
+    f.say(`거름종이에는 <b>질산 칼륨 결정 ${fx(left)} g</b>만 남았어요. 염화 나트륨 2 g은 녹은 채 지나갔어요.`);
     tm.later(
       () =>
         lab.judge(
@@ -139,7 +139,7 @@ export const g2u1CrystalLab: StepRenderer = (host, step, api) => {
   });
 
   paint();
-  f.slot.setControls(range.el, bFilter);
+  f.slot.setControls(strip.el, range.el, bFilter);
   f.say("물 10 g에 혼합물을 넣었더니 다 녹지 않았어요. <b>온도를 올려</b> 모두 녹인 뒤 식혀서 걸러요.");
   api.setCTA("온도를 올려 모두 녹여 보세요", { enabled: false });
   lab.todo(".g2u1x-cr-range", 70);

@@ -7,14 +7,14 @@
 import type { StepRenderer } from "../../types";
 import { bvRange } from "../bio6/b6Lab";
 import { kno3 } from "../../../ui/g2u1v5Figures";
-import { P, fx, g1Lab, g1Log, g1Predict, plot, ptsOf, seeded, svgOpen, type G1Step } from "./g2u1Kit";
+import { P, fx, g1Lab, g1Predict, g1Strip, plot, ptsOf, seeded, svgOpen, type G1Step } from "./g2u1Kit";
 
 const PUT = 6; // 병에 넣은 질산 칼륨(g), 물 10 g
 
 export const g2u1WarmLab: StepRenderer = (host, step, api) => {
   const lab = g1Lab(host, api, step as unknown as G1Step, { steps: 2, cls: "g2u1x-wm" });
   const { f } = lab;
-  const pl = plot({ x: 208, y: 34, w: 126, h: 150, x0: 0, x1: 80, y0: 0, y1: 160, xl: "온도(℃)", yl: "물 100 g에 녹는 양(g)", xt: [20, 40, 60, 80], yt: [40, 80, 120, 160] });
+  const pl = plot({ x: 208, y: 34, w: 126, h: 150, x0: 0, x1: 80, y0: 0, y1: 160, xl: "온도(℃)", yl: "녹는 양(g/물 100 g)", xt: [20, 40, 60, 80], yt: [40, 80, 120, 160] });
   const curve: Array<[number, number]> = [];
   for (let t = 0; t <= 80; t += 4) curve.push([pl.px(t), pl.py(kno3(t))]);
   f.stage.innerHTML = `${svgOpen}
@@ -30,8 +30,10 @@ export const g2u1WarmLab: StepRenderer = (host, step, api) => {
     <g class="g2u1x-wm-pile"></g>
     <path d="M58 70 V180 a7 7 0 0 0 7 7 h40 a7 7 0 0 0 7 -7 V70" stroke="${P.glass}" stroke-width="2.2"/>
     <rect x="54" y="60" width="62" height="12" rx="4" fill="#59657A" stroke="#8B9BB0" stroke-width="1.2"/>
+    <text class="g2u1x-wm-t" x="85" y="40" text-anchor="middle" font-size="22" font-weight="800" fill="${P.text}"></text>
   </svg>`;
-  const log = g1Log(lab);
+  const strip = g1Strip();
+  const tEl = f.stage.querySelector(".g2u1x-wm-t") as SVGTextElement;
   const dot = f.stage.querySelector(".g2u1x-wm-dot") as SVGCircleElement;
   const vline = f.stage.querySelector(".g2u1x-wm-v") as SVGPathElement;
   const bath = f.stage.querySelector(".g2u1x-wm-bath") as SVGRectElement;
@@ -56,7 +58,8 @@ export const g2u1WarmLab: StepRenderer = (host, step, api) => {
     const n = Math.round(left * 9);
     for (let i = 0; i < n; i++) g += `<circle cx="${(66 + (i % 6) * 7.6 + r() * 3).toFixed(1)}" cy="${(180 - Math.floor(i / 6) * 5.4 - r() * 2).toFixed(1)}" r="3" fill="${P.kno3}" stroke="rgba(0,0,0,.25)" stroke-width=".6"/>`;
     pile.innerHTML = g;
-    log.set([`질산 칼륨 <b class="k">6 g</b> · 물 <b>${T} ℃</b>`, `녹은 양 <b>${fx(dis)} g</b> · 남은 양 <b class="${left > 0.05 ? "w" : ""}">${fx(left)} g</b>`]);
+    tEl.textContent = `${T} ℃`;
+    strip.set(`<span>넣은 양 <b>6 g</b>  ·  녹은 양 <b>${fx(dis)} g</b>  ·  남은 양 <b class="${left > 0.05 ? "w" : ""}">${fx(left)} g</b></span>`);
     host.dataset.g2u1Wm = String(T);
   }
   const range = bvRange({
@@ -102,7 +105,7 @@ export const g2u1WarmLab: StepRenderer = (host, step, api) => {
   g1Predict(lab, "이 병을 <b>따뜻한 물</b>에 담그면 바닥의 질산 칼륨은?", ["더 녹는다", "그대로 남는다", "더 많이 생긴다"], (picked) => {
     pred = picked;
     phase = "heat";
-    f.slot.setControls(range.el);
+    f.slot.setControls(strip.el, range.el);
     f.say("막대를 밀어 <b>물의 온도</b>를 올려 보세요. 오른쪽 그래프의 점도 함께 움직여요.");
     api.setCTA("물의 온도를 올려 보세요", { enabled: false });
     lab.todo(".g2u1x-wm-range", 70);

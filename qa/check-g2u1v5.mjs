@@ -177,7 +177,7 @@ async function runLab(id) {
     else await click(todo);
     await W(260);
     if (acts % 3 === 0) await measure(`${tag} 조작 ${acts}`);
-    if (!midShot && acts === 5) { midShot = true; await shot(`${id}-L${labNo}-1-mid`); }
+    if (!midShot && acts === 2) { midShot = true; await shot(`${id}-L${labNo}-1-mid`); }
   }
   ok(await vis(".bv-done.show"), `${tag}(${name}): 결론까지 가지 못함 (todo=${await ds("todo")})`);
   ok(wrong, `${tag}(${name}): 판정이 한 번도 없었음`);

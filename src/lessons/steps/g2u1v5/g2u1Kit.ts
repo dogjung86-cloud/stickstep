@@ -202,6 +202,12 @@ export function g1Log(lab: G1Lab, cls = ""): { el: HTMLElement; add: (html: stri
   };
 }
 
+/** 기록 띠: 조작 칸의 맨 위에 놓는 한 줄(30px). 무대 안에 숫자를 쌓지 않고 여기에 적는다. */
+export function g1Strip(): { el: HTMLElement; set: (html: string) => void } {
+  const box = el("div", { class: "g2u1x-strip", attrs: { role: "status" } });
+  return { el: box, set: (html) => void (box.innerHTML = html) };
+}
+
 export const fx = (v: number, d = 1): string => v.toFixed(d);
 export const clamp = (v: number, a = 0, b = 1): number => Math.max(a, Math.min(b, v));
 /** 온도 표기(음수는 U+2212). */
