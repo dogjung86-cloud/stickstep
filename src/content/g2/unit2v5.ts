@@ -8,6 +8,7 @@ import { G2_UNIT2 } from "./unit2";
 import { L1 } from "./unit2v5a";
 import { L2, L3 } from "./unit2v5b";
 import { L4, L5, L6 } from "./unit2v5c";
+import { L7, L8, L9 } from "./unit2v5d";
 
 export const G2_UNIT2_V5: Unit | null = remakeUnit(G2_UNIT2, {
   g2u2l1: L1,
@@ -16,5 +17,8 @@ export const G2_UNIT2_V5: Unit | null = remakeUnit(G2_UNIT2, {
   g2u2l4: L4,
   g2u2l5: L5,
   g2u2l6: L6,
+  g2u2l7: L7,
+  g2u2l8: L8,
+  g2u2l9: L9,
 });
 if (import.meta.env.DEV) Object.assign(globalThis as unknown as Record<string, unknown>, { __g2u2v5: G2_UNIT2_V5 });

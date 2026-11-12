@@ -148,3 +148,28 @@
 .g2u2x-cy-e.on path { stroke: #FFD43B; stroke-width: 2.6; }
 .g2u2x-cy-n rect { transition: stroke-width .2s; }
 .g2u2x-cy-n.now rect { stroke-width: 4; fill: rgba(255, 255, 255, .16); }
+
+/* ── 7~9레슨 ─────────────────────────────────────── */
+.g2u2x-fr-moon { opacity: 0; transition: opacity .3s; }
+.g2u2x-fr-sun { transition: opacity .3s; }
+.g2u2x-frost.night .g2u2x-fr-moon { opacity: 1; }
+.g2u2x-frost.night .g2u2x-fr-sun { opacity: 0; }
+.g2u2x-fr-rain { opacity: 0; }
+.raining .g2u2x-fr-rain { opacity: 1; animation: g2u2xRain .3s linear 3; }
+@keyframes g2u2xRain { 0% { transform: translate(4px, -12px); } 100% { transform: translate(-4px, 12px); } }
+.g2u2x-fr-l, .g2u2x-fr-r { transform-box: fill-box; transform-origin: 50% 100%; }
+.g2u2x-so-plant { opacity: 0; transition: opacity .5s; }
+.g2u2x-soil.green .g2u2x-so-plant { opacity: 1; }
+.g2u2x-ft-seam { opacity: 0; transition: opacity .4s; }
+.g2u2x-fit.fit .g2u2x-ft-seam { opacity: 1; }
+.g2u2x-fit .bv-range-in, .g2u2x-icel .bv-range-in { height: 44px; }
+.g2u2x-ic-cap { opacity: 0; transition: opacity .5s; }
+.g2u2x-icel.joined .g2u2x-ic-cap { opacity: 1; }
+.g2u2x-pl-q, .g2u2x-pl-v { opacity: 0; transition: opacity .25s; }
+.quakes .g2u2x-pl-q, .volcs .g2u2x-pl-v { opacity: 1; }
+.g2u2x-pl-b { stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset 1.6s ease-in-out; }
+.bounds .g2u2x-pl-b { stroke-dashoffset: 0; }
+.g2u2x-pl-kj { opacity: 0; transition: opacity .4s; }
+.kj .g2u2x-pl-kj { opacity: 1; }
+.g2u2x-qk-tap { position: absolute; left: 0; right: 0; top: 13%; bottom: 11.5%; background: none; border: 0; padding: 0; cursor: crosshair; -webkit-tap-highlight-color: transparent; }
+.g2u2x-qk-tap:disabled { cursor: default; }

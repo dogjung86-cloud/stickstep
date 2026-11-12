@@ -8,6 +8,9 @@ import { g2u2MineralLab, g2u2PowderLab } from "./mineralLabs";
 import { g2u2CoolLab, g2u2IgneousLab } from "./igneousLabs";
 import { g2u2MetaLab, g2u2PressLab, g2u2SedLab } from "./sedMetaLabs";
 import { g2u2CycleLab, g2u2RockIdLab } from "./rockLabs";
+import { g2u2FrostLab, g2u2SoilLab } from "./weatherLabs";
+import { g2u2FitLab, g2u2IceLab } from "./driftLabs";
+import { g2u2PlateLab, g2u2QuakeLab } from "./plateLabs";
 
 export const G2U2V5_STEPS: Record<string, StepRenderer> = {
   g2u2SystemLab,
@@ -22,4 +25,10 @@ export const G2U2V5_STEPS: Record<string, StepRenderer> = {
   g2u2MetaLab,
   g2u2RockIdLab,
   g2u2CycleLab,
+  g2u2FrostLab,
+  g2u2SoilLab,
+  g2u2FitLab,
+  g2u2IceLab,
+  g2u2QuakeLab,
+  g2u2PlateLab,
 };
