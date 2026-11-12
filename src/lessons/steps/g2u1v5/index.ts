@@ -4,8 +4,14 @@
 import type { StepRenderer } from "../../types";
 import { g2u1MeasureLab } from "./measureLab";
 import { g2u1SizeLab } from "./sizeLab";
+import { g2u1LayerLab } from "./layerLab";
+import { g2u1DissolveLab } from "./dissolveLab";
+import { g2u1WarmLab } from "./warmLab";
 
 export const G2U1V5_STEPS: Record<string, StepRenderer> = {
   g2u1MeasureLab,
   g2u1SizeLab,
+  g2u1LayerLab,
+  g2u1DissolveLab,
+  g2u1WarmLab,
 };

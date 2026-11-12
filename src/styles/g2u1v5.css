@@ -57,6 +57,19 @@
 .g2u1x-step .g2u1x-ms-card { height: 52px; }
 .g2u1x-step .g2u1x-ms-card i { font-size: 12px; }
 
+/* ── 2. 층 쌓기 랩 ─────────────────────────────────── */
+.g2u1x-ly-in { transform-box: fill-box; transform-origin: 50% 100%; animation: g2u1xRise .6s var(--ease-out) both; }
+@keyframes g2u1xRise { 0% { transform: scaleY(.05); opacity: 0; } 100% { transform: none; opacity: .62; } }
+.g2u1x-ly-obj { transition: transform .9s var(--ease-out); }
+.g2u1x-ly-stream { transition: opacity .2s; }
+
+/* ── 3. 녹이기 랩, 데우기 랩 ───────────────────────── */
+.g2u1x-ds-bar { transform-box: fill-box; transform-origin: 50% 50%; animation: g2u1xSpin .5s linear infinite; }
+@keyframes g2u1xSpin { 0% { transform: scaleX(1); } 50% { transform: scaleX(.25); } 100% { transform: scaleX(1); } }
+.g2u1x-ds-fall { opacity: 0; }
+.g2u1x-ds-fall.go { animation: g2u1xFall .65s ease-in both; }
+@keyframes g2u1xFall { 0% { opacity: 1; transform: translateY(0); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(96px); } }
+
 /* ══════════ 도입 장면(.opn-g2u1-) ══════════ */
 .opn-step[data-opn-scene^="g2u1-"] .hook-choices .hook-q b { color: var(--subj-chem-press); }
 .opn-g2u1-btn {

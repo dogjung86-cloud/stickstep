@@ -41,4 +41,43 @@ export function g1ScatterFig(): string {
   );
 }
 
+// ── 용해도(g/물 100 g, 자연값). 표의 값 사이는 로그 눈금에서 곧게 이어 매끄러운 곡선으로 만든다. 랩과 문제 그림이 함께 쓴다. ──
+const KNO3: Array<[number, number]> = [[0, 13.3], [20, 31.6], [40, 63.9], [60, 110], [80, 169]];
+const NACL: Array<[number, number]> = [[0, 35.7], [20, 36.0], [40, 36.6], [60, 37.3], [80, 38.4]];
+function interp(tab: Array<[number, number]>, t: number): number {
+  const x = Math.max(0, Math.min(80, t));
+  const i = Math.min(tab.length - 2, Math.floor(x / 20));
+  const [t0, s0] = tab[i];
+  const [t1, s1] = tab[i + 1];
+  return Math.exp(Math.log(s0) + ((Math.log(s1) - Math.log(s0)) * (x - t0)) / (t1 - t0));
+}
+/** 질산 칼륨의 용해도(g/물 100 g) */
+export const kno3 = (t: number): number => interp(KNO3, t);
+/** 염화 나트륨의 용해도(g/물 100 g) */
+export const nacl = (t: number): number => interp(NACL, t);
+const curveOf = (fn: (t: number) => number): Array<[number, number]> => Array.from({ length: 21 }, (_, i) => [i * 4, fn(i * 4)] as [number, number]);
+
+/** g2u1l2: 세 액체 (가), (나), (다)의 층과 물체 X, Y. X는 (가)와 (나) 사이, Y는 바닥. */
+export function g1LayersFig(): string {
+  const L = [["(가)", "#D9CCFF"], ["(나)", "#FFE8A3"], ["(다)", "#BFE0FF"]];
+  const x = 112, w = 120, y0 = 22, h = 48;
+  let s = "";
+  L.forEach(([n, c], i) => {
+    s += `<rect x="${x}" y="${y0 + i * h}" width="${w}" height="${h}" fill="${c}"/>${tag(x + w + 26, y0 + i * h + h / 2 + 4, n)}`;
+  });
+  s += `<path d="M${x} 12 V${y0 + 3 * h} a6 6 0 0 0 6 6 h${w - 12} a6 6 0 0 0 6 -6 V12" stroke="${AX}" stroke-width="2.4"/>`;
+  s += `<rect x="${x + 30}" y="${y0 + h - 12}" width="24" height="24" rx="4" fill="#fff" stroke="${TX}" stroke-width="1.6"/>${tag(x + 42, y0 + h + 5, "X", TX, 12)}`;
+  s += `<circle cx="${x + 84}" cy="${y0 + 3 * h - 12}" r="12" fill="#fff" stroke="${TX}" stroke-width="1.6"/>${tag(x + 84, y0 + 3 * h - 8, "Y", TX, 12)}`;
+  return wrap("세 액체 가, 나, 다가 위에서부터 차례로 층을 이룬 컵. 물체 X는 가와 나 사이에, 물체 Y는 바닥에 있다", s, 184);
+}
+
+/** g2u1l3: 질산 칼륨의 용해도 곡선과 점 A(60 ℃, 60 g). */
+export function g1SolPointFig(): string {
+  const a = axes({ x1: 80, y1: 160, xt: [20, 40, 60, 80], yt: [40, 80, 120, 160], xl: "온도(℃)", yl: "용해도(g/물 100 g)" });
+  return wrap(
+    "질산 칼륨의 용해도 곡선과 점 A. A는 60도, 60그램 자리에 있다",
+    a.svg + line(curveOf(kno3), a, ROSE) + tag(a.gx(70), a.gy(kno3(70)) - 10, "질산 칼륨", ROSE, 12) + `<circle cx="${a.gx(60)}" cy="${a.gy(60)}" r="5" fill="${BLUE}"/>${tag(a.gx(60) + 13, a.gy(60) + 4, "A", BLUE)}`,
+  );
+}
+
 export { axes as g1Axes, wrap as g1Wrap, line as g1Line, tag as g1Tag, ROSE as G1_ROSE, BLUE as G1_BLUE, TX as G1_TX, DIM as G1_DIM, AX as G1_AX, NS as G1_NS };

@@ -5,7 +5,8 @@
 import type { Unit } from "../curriculum";
 import { remakeUnit } from "../v5remake";
 import { G2_UNIT1 } from "./unit1";
-import { L1, L2, L3 } from "./unit1v5a";
+import { L1 } from "./unit1v5a";
+import { L2, L3 } from "./unit1v5b";
 
 export const G2_UNIT1_V5: Unit | null = remakeUnit(G2_UNIT1, {
   g2u1l1: L1,

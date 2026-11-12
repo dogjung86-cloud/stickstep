@@ -1,6 +1,6 @@
 // 중2 Ⅰ v5: 레슨 1~3(밀도, 뜨고 가라앉기, 고체의 용해도)의 새 스텝. unit1v5.ts가 모아 remakeUnit에 넘긴다.
 import type { V5LessonPlan } from "../v5remake";
-import { mcq, multi, opener, ox, recap, order } from "../dsl";
+import { mcq, multi, opener, ox, recap } from "../dsl";
 import { chemMiniArt } from "../../ui/chemFigures";
 import { g1ScatterFig } from "../../ui/g2u1v5Figures";
 import { measureLab, note, problems, sizeLab, term, words } from "./unit1v5kit";
@@ -89,7 +89,3 @@ export const L1: V5LessonPlan = {
       }),
     ]),
 };
-
-export const L2: V5LessonPlan = {};
-export const L3: V5LessonPlan = {};
-void order;
