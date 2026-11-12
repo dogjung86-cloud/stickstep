@@ -77,6 +77,9 @@
 .g2u1x-step .g2u1x-cv-card i, .g2u1x-step .g2u1x-fz-card i { font-size: 12px; }
 .g2u1x-cv-glow { transition: opacity .2s; }
 
+/* ── 7~9. 볍씨 랩 ─────────────────────────────────── */
+.g2u1x-sd-seed { transition: transform .8s var(--ease-out), opacity .5s; }
+
 /* ══════════ 도입 장면(.opn-g2u1-) ══════════ */
 .opn-step[data-opn-scene^="g2u1-"] .hook-choices .hook-q b { color: var(--subj-chem-press); }
 .opn-g2u1-btn {

@@ -9,6 +9,10 @@ import { g2u1DissolveLab } from "./dissolveLab";
 import { g2u1WarmLab } from "./warmLab";
 import { g2u1FizzLab, g2u1PumpLab } from "./fizzLabs";
 import { g2u1BoilLab, g2u1MeltLab, g2u1SaltLab } from "./curveLabs";
+import { g2u1FunnelLab } from "./funnelLab";
+import { g2u1SeedLab } from "./seedLab";
+import { g2u1CrystalLab } from "./crystalLab";
+import { g2u1DistillLab } from "./distillLab";
 
 export const G2U1V5_STEPS: Record<string, StepRenderer> = {
   g2u1MeasureLab,
@@ -21,4 +25,8 @@ export const G2U1V5_STEPS: Record<string, StepRenderer> = {
   g2u1MeltLab,
   g2u1BoilLab,
   g2u1SaltLab,
+  g2u1FunnelLab,
+  g2u1SeedLab,
+  g2u1CrystalLab,
+  g2u1DistillLab,
 };

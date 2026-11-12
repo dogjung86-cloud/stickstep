@@ -8,6 +8,7 @@ import { G2_UNIT1 } from "./unit1";
 import { L1 } from "./unit1v5a";
 import { L2, L3 } from "./unit1v5b";
 import { L4, L5, L6 } from "./unit1v5c";
+import { L7, L8, L9 } from "./unit1v5d";
 
 export const G2_UNIT1_V5: Unit | null = remakeUnit(G2_UNIT1, {
   g2u1l1: L1,
@@ -16,6 +17,9 @@ export const G2_UNIT1_V5: Unit | null = remakeUnit(G2_UNIT1, {
   g2u1l4: L4,
   g2u1l5: L5,
   g2u1l6: L6,
+  g2u1l7: L7,
+  g2u1l8: L8,
+  g2u1l9: L9,
 });
 
 // 검사 도구(qa/check-g2u1v5.mjs)가 문제의 정답을 찾는 표. 개발 모드에서만 내놓는다(운영 번들에는 없다).
