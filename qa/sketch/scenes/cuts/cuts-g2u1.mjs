@@ -36,10 +36,10 @@ function cutL1() {
   const sk = new Sk(W, H, { id: "a" });
   const GY = 668, fx = 462, s = 0.8;
   ground(sk, GY, 11);
-  const P = pose({ elL: [-124, -296], haL: [-226, -344], elR: [118, -252], haR: [238, -124], tilt: 0.1, head: [-6, -436] });
+  const P = pose({ elL: [-124, -296], haL: [-226, -344], elR: [108, -164], haR: [200, -130], tilt: 0.1, head: [-6, -436] });
   drawFigure(sk, fx, GY, s, P, { ...TEACHER, name: "teacher", hands: false });
   // 왼쪽(가벼운 쪽): 솜이 가득
-  const lh = [fx - s * 226, GY - s * 344], rh = [fx + s * 238, GY - s * 124];
+  const lh = [fx - s * 226, GY - s * 344], rh = [fx + s * 200, GY - s * 130];
   const LX = lh[0] - 24, LB = lh[1] - 6;
   box(sk, LX, LB, 21, () => {
     const pts = [[-48, -40], [0, -38], [48, -40], [-26, -76], [26, -78], [-50, -112], [0, -118], [50, -112], [-24, -134], [26, -134]];
@@ -50,14 +50,14 @@ function cutL1() {
     });
   });
   // 오른쪽(무거운 쪽): 쇠구슬이 가득
-  const RX = rh[0] + 44, RB = rh[1] - 6;
+  const RX = rh[0] + 72, RB = rh[1] - 6;
   box(sk, RX, RB, 71, () => {
     for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) ball(sk, RX + (c - 1) * 49, RB - 38 - r * 44, 21.5, STEEL, 81 + r * 20 + c * 5, 6);
   });
   handDot(sk, lh, C.skin, 151, 13);
   handDot(sk, rh, C.skin, 153, 13);
-  // 처지는 쪽: 아래로 끌리는 짧은 선과 땀방울
-  for (const [dx, len, i] of [[-50, 26, 0], [0, 38, 1], [50, 26, 2]]) sk.ink(dense([[RX + dx, RB + 20], [RX + dx, RB + 20 + len]]), { w: 6, color: C.gray, seed: 161 + i, wob: 0.3 });
+  // 처지는 쪽: 아래 화살표와 땀방울
+  arrow(sk, [[RX + BW / 2 + 34, RB - 132], [RX + BW / 2 + 34, RB - 30]], { w: 10, color: C.gray, straight: true, seed: 161, head: 24, wob: 0.2 });
   drop(sk, fx + 96, GY - s * 436 - 62, 0.9, { seed: 171 });
   return sk;
 }
@@ -76,8 +76,17 @@ function vessel(sk, cx, by, w, h, level, sd, inside, lid, col = WATER, line = "#
   });
 }
 function cubes(sk, cx, y, sd) {
-  for (let i = 0; i < 3; i++) { const c = rrect(cx - 52 + i * 38, y, 28, 28, 5); sk.fill(c, "#F1F3F6", { dx: 0, dy: 0, wob: 0.2, seed: sd + i }); sk.ink(c, { w: 5.5, seed: sd + 4 + i, wob: 0.4 }); sk.dot(cx - 44 + i * 38, y + 10, 2, "#AEB7C1"); sk.dot(cx - 33 + i * 38, y + 19, 2, "#AEB7C1"); }
-  arrow(sk, [[cx, y + 42], [cx, y + 84]], { w: 7, color: C.gray, straight: true, seed: sd + 9, head: 16, wob: 0.2 });
+  // 각설탕 셋: 옆면과 윗면이 보이는 흰 덩어리(두 그릇에 넣은 양이 같다)
+  for (let i = 0; i < 3; i++) {
+    const x = cx - 76 + i * 54, d = 11;
+    const side = poly([[x + 40, y], [x + 40 + d, y - d], [x + 40 + d, y + 40 - d], [x + 40, y + 40]], 3), top = poly([[x, y], [x + d, y - d], [x + 40 + d, y - d], [x + 40, y]], 3), face = rrect(x, y, 40, 40, 4);
+    sk.fill(side, "#B9C6D3", { dx: 0, dy: 0, wob: 0.2, seed: sd + i }); sk.ink(side, { w: 5, seed: sd + 20 + i, wob: 0.3 });
+    sk.fill(top, "#DEE6EE", { dx: 0, dy: 0, wob: 0.2, seed: sd + i }); sk.ink(top, { w: 5, seed: sd + 30 + i, wob: 0.3 });
+    sk.fill(face, C.white, { dx: 0, dy: 0, wob: 0.2, seed: sd + i }); sk.ink(face, { w: 6, seed: sd + 4 + i, wob: 0.4 });
+    for (const [gx, gy] of [[11, 12], [27, 17], [16, 28], [30, 31]]) sk.dot(x + gx, y + gy, 2.2, "#AEB7C1");
+  }
+  sparkle(sk, cx + 104, y - 8, 15, { seed: sd + 50 });
+  arrow(sk, [[cx, y + 54], [cx, y + 92]], { w: 7, color: C.gray, straight: true, seed: sd + 9, head: 16, wob: 0.2 });
 }
 function cutL3() {
   const sk = new Sk(W, H, { id: "b" });
@@ -93,11 +102,11 @@ function cutL3() {
     for (const [dx, dy, i] of [[-22, -22, 0], [8, -30, 1], [26, -16, 2], [-4, -44, 3]]) sk.dot(cx + dx, TY + dy, 2.6, "#B9C2CC");
     for (const [dx, dy] of [[-10, -84], [6, -102], [-4, -70]]) sk.dot(cx + dx, TY + dy, 3.4, C.white);
   });
-  cubes(sk, cx, TY - ch - 150, 41);
+  cubes(sk, cx, TY - ch - 176, 41);
   // 커다란 물통: 같은 양이 흔적 없이 녹았다
   const tx = 730, tw = 290, th = 330;
   vessel(sk, tx, TY, tw, th, 286, 61, null, true);
-  cubes(sk, tx, 62, 81);
+  cubes(sk, tx, 52, 81);
   sparkle(sk, tx + 62, TY - 150, 24, { seed: 91 });
   lemon(sk, 548, TY - 22, 24, { seed: 95 });
   // 숟가락을 든 학생
@@ -249,10 +258,14 @@ function cutL8() {
   ground(sk, GY, 11);
   // 겨울 아침의 창
   thin(sk, 0.7, () => {
-    const win = rrect(742, 52, 176, 168, 10);
-    sk.fill(win, "#DDEEF8", { dx: 0, dy: 0, wob: 0.3, seed: 15 });
-    for (const [x, y] of [[776, 84], [826, 112], [884, 78], [790, 150], [856, 164], [898, 138], [816, 190]]) sk.dot(x, y, 5.5, C.white);
-    sk.ink(dense([[830, 54], [830, 218]]), { w: 7, seed: 16, wob: 0.4 }); sk.ink(dense([[744, 136], [916, 136]]), { w: 7, seed: 17, wob: 0.4 });
+    const win = rrect(716, 36, 212, 204, 10);
+    sk.fill(win, "#A9CFEA", { dx: 0, dy: 0, wob: 0.3, seed: 15 });
+    // 큰 눈송이(여섯 갈래)와 창턱에 쌓인 눈
+    for (const [x, y, r, i] of [[766, 84, 20, 0], [876, 78, 17, 1], [790, 168, 16, 2], [884, 158, 21, 3]]) for (let k = 0; k < 3; k++) { const a = k * Math.PI / 3 + i * 0.3; sk.ink(dense([[x - r * Math.cos(a), y - r * Math.sin(a)], [x + r * Math.cos(a), y + r * Math.sin(a)]]), { w: 6, color: C.white, seed: 150 + i * 4 + k, wob: 0.2 }); }
+    for (const [x, y] of [[822, 62], [838, 118], [742, 128], [906, 116], [846, 190], [744, 196]]) sk.dot(x, y, 5, C.white);
+    const heap = [...curve([[718, 240], [730, 214], [790, 206], [850, 216], [900, 204], [926, 240]]), [718, 240]];
+    sk.fill(heap, C.white, { dx: 0, dy: 0, wob: 0.3, seed: 19 }); sk.ink(heap, { w: 6, seed: 20, wob: 0.5 });
+    sk.ink(dense([[822, 38], [822, 208]]), { w: 7, seed: 16, wob: 0.4 }); sk.ink(dense([[718, 132], [926, 132]]), { w: 7, seed: 17, wob: 0.4 });
     sk.ink(win, { w: 10, seed: 18 });
   });
   table(sk, 380, 936, TY, GY, 21);
@@ -316,7 +329,7 @@ function cutL9() {
 export function cuts() {
   return [
     { name: "g2u1l1", theme: "chem", orig: null, sk: cutL1(), alt: "크기가 똑같은 상자 둘을 양손에 든 스틱맨. 솜이 가득한 상자는 가볍게 들고, 쇠구슬이 가득한 상자 쪽 팔은 축 처진 장면", cap: "크기는 같은데 한쪽 팔만 축 처져요" },
-    { name: "g2u1l3", theme: "chem", orig: null, sk: cutL3(), alt: "레모네이드 가판대에서 스틱맨이 작은 컵에 설탕을 퍼 넣어 바닥에 설탕이 쌓였고, 옆의 커다란 물통에는 같은 양의 설탕이 흔적 없이 녹아 있는 장면", cap: "작은 컵은 더 못 녹이고, 큰 물통은 아직 여유로워요" },
+    { name: "g2u1l3", theme: "chem", orig: null, sk: cutL3(), alt: "레모네이드 가판대에서 스틱맨이 작은 컵에 설탕을 퍼 넣어 바닥에 설탕이 쌓였고, 옆의 커다란 물통에는 같은 양의 설탕이 흔적 없이 녹아 있는 장면", cap: "같은 설탕인데 물이 적은 컵에서는 다 녹지 못했어요" },
     { name: "g2u1l5", theme: "chem", orig: null, sk: cutL5(), alt: "처마 끝 고드름이 햇볕에 끝부터 녹아 물방울로 떨어지고, 모닥불 위 주전자에서는 김이 솟는 것을 온도계를 든 스틱맨이 지켜보는 장면", cap: "녹을 때도 끓을 때도 온도계를 대 봐요" },
     { name: "g2u1l6", theme: "chem", orig: null, sk: cutL6(), alt: "사과만 가득한 바구니와 사과, 귤, 포도가 섞인 바구니 옆에서 스틱맨이 섞인 바구니의 귤 하나를 집어 들어 보이는 장면", cap: "섞여 있어도 귤은 여전히 귤이에요" },
     { name: "g2u1l8", theme: "chem", orig: null, sk: cutL8(), alt: "겨울 아침 부엌에서 스틱맨이 밤새 식은 꿀단지 바닥에 가라앉은 하얀 결정을 숟가락으로 떠 올리는 장면", cap: "밤새 식었더니 바닥에 결정이 생겼어요" },

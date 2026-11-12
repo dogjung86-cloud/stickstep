@@ -24,8 +24,12 @@ function cutL1() {
   const GY = 632, fx = 330, s = 0.66, ux = fx - s * 122;
   // 젖은 흙(밝은 띠)과 땅 선
   const soil = poly([[16, GY], [944, GY - 1], [944, GY + 46], [16, GY + 46]], 6);
-  sk.fill(soil, "#DDBE96", { dx: 0, dy: 0, wob: 1.2, seed: 11, tex: 0.8, texAng: 0.05 });
-  for (let i = 0; i < 16; i++) sk.dot(50 + i * 57 + 20 * hash(i * 3.3), GY + 16 + 18 * hash(i * 7.1), 5 + 3 * hash(i), "#B98A5E");
+  sk.fill(soil, "#EAD5B0", { dx: 0, dy: 0, wob: 1.2, seed: 11 });
+  // 비를 맞은 쪽은 짙게 젖었다(우산 아래만 마른 색)
+  const wet = [...curve([[ux + 236, GY], [ux + 222, GY + 16], [ux + 240, GY + 32], [ux + 226, GY + 46]], false, 4), [944, GY + 46], [944, GY - 1], [ux + 236, GY]];
+  sk.fill(wet, "#A8754A", { dx: 0, dy: 0, wob: 0.8, seed: 12, tex: 0.8, texAng: 0.05, texDark: 0.22 });
+  for (let i = 0; i < 12; i++) { const x = ux + 262 + i * 40 + 16 * hash(i * 3.3), y = GY + 12 + 24 * hash(i * 7.1); sk.ink(dense([[x - 9, y], [x + 9, y + 1]]), { w: 4, color: "#7A5236", seed: 13 + i, wob: 0.3 }); }
+  for (let i = 0; i < 5; i++) sk.dot(60 + i * 70 + 20 * hash(i * 3.3), GY + 16 + 18 * hash(i * 7.1), 4, "#CDAE80");
   // 달과 구름
   thin(sk, 0.55, () => moon(sk, 716, 104, 50));
   thin(sk, 0.8, () => {
@@ -85,9 +89,14 @@ function cutL1b() {
   ground(sk, GY, 11);
   table(sk, 384, 944, TY, GY, 21);
   // 뒤에 엎어 둔 나머지 반쪽
-  const dome = [...curve([[790, TY], [800, 468], [846, 440], [896, 466], [908, TY]], false, 4), [790, TY]];
-  sk.fill(dome, "#F29A8A", { dx: 0, dy: 0, wob: 0.5, seed: 31, tex: 0.9 });
-  thin(sk, 0.8, () => sk.ink(dome, { w: 10, seed: 32 }));
+  const dome = [...curve([[800, TY], [796, 470], [826, 428], [862, 420], [900, 432], [932, 474], [930, TY]], false, 4), [800, TY]];
+  sk.fill(dome, "#FBC49A", { dx: 0, dy: 0, wob: 0.5, seed: 31 });
+  sk.fill(curve([[838, 440], [872, 432], [912, 452], [920, 492], [884, 500], [848, 478]], true, 4), "#F0808A", { dx: 0, dy: 0, wob: 0.5, seed: 33, alpha: 0.75 });
+  thin(sk, 0.8, () => {
+    sk.ink(curve([[862, 424], [848, 462], [852, TY - 6]]), { w: 5, color: "#C8643C", seed: 34, wob: 0.4 });
+    sk.ink(dense([[862, 424], [866, 404]]), { w: 9, color: "#7A5236", seed: 35, wob: 0.2 });
+    sk.ink(dome, { w: 10, seed: 32 });
+  });
   // 자른 면: 복숭아 꼴(위가 살짝 패고 아래가 조금 뾰족하다)
   const shape = k => { const p = []; for (let i = 0; i <= 72; i++) { const a = -Math.PI / 2 + i / 72 * Math.PI * 2, d = Math.atan2(Math.sin(a + Math.PI / 2), Math.cos(a + Math.PI / 2)), b = Math.atan2(Math.sin(a - Math.PI / 2), Math.cos(a - Math.PI / 2)); const r = R * k * (1 - 0.06 * Math.exp(-(d * d) / 0.05) + 0.035 * Math.exp(-(b * b) / 0.08)); p.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); } return p; };
   // 꼭지와 잎
@@ -97,10 +106,10 @@ function cutL1b() {
     sk.fill(leaf, C.green, { ...flat, seed: 42 }); sk.ink(leaf, { w: 8, seed: 43, wob: 0.5 });
   });
   const outer = shape(1);
-  sk.fill(outer, "#D9415E", { ...flat, seed: 51 });                 // 껍질: 얇은 붉은 테
-  sk.fill(shape(0.955), "#FFD27A", { ...flat, seed: 52, tex: 1.3, texAng: 0.6, texDark: 0.06 }); // 과육
+  sk.fill(outer, "#D4183D", { ...flat, seed: 51 });                 // 껍질: 얇은 붉은 테
+  sk.fill(shape(0.94), "#FFD98A", { ...flat, seed: 52, tex: 1.3, texAng: 0.6, texDark: 0.06 }); // 과육
   thin(sk, 0.75, () => {
-    sk.ink(outer, { w: 9, seed: 53, wob: 0.8 });
+    sk.ink(outer, { w: 6, seed: 53, wob: 0.5 });
     // 씨의 겉(짙고 울퉁불퉁하다)과 속(밝은 알맹이)
     const pit = circ(cx, cy + 6, R * 0.52, { over: 0.05, seed: 61, lump: 0.05 });
     sk.fill(pit, "#8A5A33", { ...flat, seed: 62, tex: 0.6, texAng: 1.2 });
@@ -328,10 +337,12 @@ function cutL6() {
   arrow(sk, [[px - 60, TY - 200], [px - 104, TY - 246], [rh[0] + 66, rh[1] - 44]], { w: 9, color: C.gray, seed: 131, head: 18, wob: 0.3 });
   sk.at(rh[0] + 4, rh[1] - 6, 1, () => {
     const bw = 27, L = 118;
-    const band = (y0, y1, col, sd) => sk.fill(poly([[-bw, y0], [bw, y0 - 6], [bw, y1 - 6], [-bw, y1]], 3), col, { ...flat, seed: sd });
-    band(8, -22, "#3F7CC0", 141); band(-22, -50, "#F2C230", 142); band(-50, -76, "#E0503A", 143); band(-76, -L + 6, "#3FAE5A", 144);
+    // 냄비 속과 같은 보랏빛 바탕에 다른 색이 얼룩덜룩 섞여 굳은 한 덩어리
+    sk.fill(rrect(-bw, -L, bw * 2, L + 8, 7), "#9B6BD6", { ...flat, seed: 141 });
+    [[-10, -8, 11, 1], [12, -30, 9, 0], [-8, -52, 12, 2], [11, -72, 10, 1], [-12, -92, 8, 3], [8, -104, 7, 0], [2, 0, 6, 3]].forEach(([x, y, r, c], i) => sk.fill(circ(x, y, r, { over: 0.1, seed: 142 + i, lump: 0.2, sx: 1.25 }), ["#F2C230", "#E0503A", "#3F7CC0", "#3FAE5A"][c], { ...flat, seed: 152 + i }));
     const tip = poly([[-bw + 6, -L], [bw - 6, -L], [7, -L - 34], [-7, -L - 34]], 3);
     sk.fill(tip, "#9B6BD6", { ...flat, seed: 145 });
+    sk.fill(circ(1, -L - 12, 6, { over: 0.1, seed: 149 }), "#F2C230", { ...flat, seed: 150 });
     thin(sk, 0.8, () => { sk.ink(tip, { w: 8, seed: 146, wob: 0.4 }); sk.ink(rrect(-bw, -L, bw * 2, L + 8, 7), { w: 9, seed: 147, wob: 0.5 }); });
   }, 0.16);
   handDot(sk, rh, C.skin, 151, 13);
@@ -347,7 +358,9 @@ function cutL7() {
   const sk = new Sk(W, H, { id: "h" });
   const GY = 668;
   ground(sk, GY, 11, 14, 340);
-  const st = dense([[326, GY], [326, 600], [333, 578], [350, 564], [378, 558], [520, 560], [520, 490], [527, 468], [544, 454], [572, 448], [712, 450], [712, 380], [719, 358], [736, 344], [764, 338], [946, 340], [946, GY], [326, GY]], 5);
+  // 디딤판 모서리가 크게 닳아 둥글다(오른쪽 안쪽 모서리는 각이 살아 있어 견주어진다)
+  const rc = (x, y) => curve([[x, y + 92], [x + 6, y + 50], [x + 28, y + 20], [x + 62, y + 4], [x + 104, y]], false, 4);
+  const st = [...dense([[326, GY], [326, 652]], 5), ...rc(326, 560), ...dense([[430, 560], [520, 560], [520, 542]], 5), ...rc(520, 450), ...dense([[624, 450], [712, 450], [712, 432]], 5), ...rc(712, 340), ...dense([[816, 340], [946, 340], [946, GY], [326, GY]], 5)];
   sk.fill(st, "#DADDE1", { dx: 0, dy: 0, wob: 0.8, seed: 21, tex: 1.2, texAng: 0.1, texDark: 0.08 });
   thin(sk, 0.8, () => {
     // 돌과 돌 사이의 이음
@@ -366,7 +379,8 @@ function cutL7() {
   tuft(sk, 436, 566, 4, 64, 61); tuft(sk, 628, 458, 5, 84, 71); tuft(sk, 852, 346, 3, 50, 81);
   tuft(sk, 526, 560, 3, 40, 91); tuft(sk, 718, 450, 3, 40, 95);
   // 떨어져 나온 부스러기
-  for (const [x, y, r, i] of [[300, 656, 11, 0], [276, 660, 7, 1], [312, 640, 6, 2], [498, 552, 6, 3]]) { const c = circ(x, y, r, { over: 0.1, seed: 101 + i, lump: 0.1 }); sk.fill(c, "#C9CDD2", { ...flat, seed: 105 + i }); sk.ink(c, { w: 4, seed: 109 + i, wob: 0.4 }); }
+  thin(sk, 0.8, () => { for (const [x, y, i] of [[326, 560, 0], [520, 450, 1], [712, 340, 2]]) sk.ink(curve([[x + 22, y + 70], [x + 34, y + 40], [x + 62, y + 22]]), { w: 4, color: "#9AA1A8", seed: 97 + i, wob: 0.3 }); });
+  for (const [x, y, r, i] of [[296, 654, 14, 0], [268, 659, 9, 1], [312, 636, 8, 2], [244, 661, 6, 9], [462, 549, 9, 3], [480, 553, 6, 4], [402, 552, 6, 10], [660, 440, 9, 5], [678, 444, 6, 6], [594, 443, 6, 11], [878, 331, 8, 7], [894, 334, 5, 8]]) { const c = circ(x, y, r, { over: 0.1, seed: 101 + i, lump: 0.1 }); sk.fill(c, "#C9CDD2", { ...flat, seed: 105 + i }); sk.ink(c, { w: 4, seed: 109 + i, wob: 0.4 }); }
   // 빗방울 몇 개
   for (const [x, y, i] of [[470, 250, 0], [560, 180, 1], [650, 290, 2], [760, 150, 3], [840, 230, 4], [910, 120, 5], [690, 110, 6]]) sk.ink(dense([[x, y], [x + 7, y + 28]]), { w: 5, color: "#5FAEDD", seed: 121 + i, wob: 0.2 });
   // 학생: 올려다본다
@@ -486,7 +500,7 @@ function cutL9() {
     sk.ink(egg, { w: 10, seed: 33, wob: 0.6 });
   });
   // 들썩임: 금 양쪽의 짧은 떨림 선
-  mids.forEach(([mx, my, nx, ny], i) => { if (i === 5 || i === 8) return; for (const sg of [-1, 1]) for (const d of [16, 26]) { const tx = -ny, ty = nx, hl = d === 16 ? 15 : 9; sk.ink(dense([[mx + sg * nx * d - tx * hl, my + sg * ny * d - ty * hl], [mx + sg * nx * d + tx * hl, my + sg * ny * d + ty * hl]]), { w: 4.5, color: C.red, seed: 61 + i * 4 + d + sg, wob: 0.3 }); } });
+  mids.forEach(([mx, my, nx, ny], i) => { if (![0, 2, 6, 7].includes(i)) return; for (const sg of [-1, 1]) for (const d of [13]) { const tx = -ny, ty = nx, hl = 17; sk.ink(dense([[mx + sg * nx * d - tx * hl, my + sg * ny * d - ty * hl], [mx + sg * nx * d + tx * hl, my + sg * ny * d + ty * hl]]), { w: 4.5, color: C.red, seed: 61 + i * 4 + d + sg, wob: 0.3 }); } });
   // 달걀 받침
   thin(sk, 0.8, () => {
     const cup = poly([[cx - 92, cy + 150], [cx + 92, cy + 150], [cx + 58, TY - 2], [cx - 58, TY - 2]], 4);
@@ -510,7 +524,8 @@ export function cuts() {
     { name: "g2u2l1", theme: "geo", orig: null, sk: cutL1(), alt: "비 오는 날 우산을 쓴 스틱맨이 화분의 풀을 가리키고, 곁에 웅덩이와 젖은 흙, 구름 사이로 달이 보이는 장면", cap: "비, 흙, 풀, 웅덩이, 달이 한 장면에 이어져 있어요" },
     { name: "g2u2l1b", theme: "geo", orig: null, sk: cutL1b(), alt: "반으로 자른 복숭아의 얇은 껍질을 스틱맨이 손가락으로 짚고, 자른 면에 두꺼운 과육과 씨의 겉과 속이 보이는 장면", cap: "껍질은 종이처럼 얇고, 과육이 가장 두꺼워요" },
     { name: "g2u2l2", theme: "geo", orig: null, sk: cutL2(), alt: "잡곡밥 한 그릇에 섞인 흰 쌀, 검은콩, 노란 조를 스틱맨이 젓가락으로 가리키는 장면", cap: "밥 한 그릇에 여러 알갱이가 섞여 있어요" },
-    { name: "g2u2l2b", theme: "geo", orig: null, sk: cutL2b(), alt: "스틱맨이 색이 같은 분필 두 자루를 칠판에 그었는데 한 줄은 흰색, 한 줄은 붉은색으로 그어진 장면", cap: "겉은 같아도 그은 자국의 색은 달라요" },
+    // 예비 장면: 실제 분필은 겉 색과 자국 색이 같아 사실과 다르다. 정식 컷에서 뺐다(빌드는 spare 를 건너뛴다).
+    { name: "g2u2l2b", spare: true, theme: "geo", orig: null, sk: cutL2b(), alt: "스틱맨이 색이 같은 분필 두 자루를 칠판에 그었는데 한 줄은 흰색, 한 줄은 붉은색으로 그어진 장면", cap: "[예비 장면, 정식 컷 아님] 겉은 같아도 그은 자국의 색은 달라요" },
     { name: "g2u2l4", theme: "geo", orig: null, sk: cutL4(), alt: "유리컵에 색이 다른 시리얼과 요거트를 한 겹씩 번갈아 담고 옆에서 줄무늬를 들여다보는 스틱맨", cap: "먼저 담은 것이 아래에 있어요" },
     { name: "g2u2l5", theme: "geo", orig: null, sk: cutL5(), alt: "제멋대로 놓인 낙엽 뭉치와, 두꺼운 책 더미 사이에 끼워 누르자 모두 납작하게 나란히 누운 낙엽을 견주는 장면", cap: "위에서 누르면 옆으로 나란히 누워요" },
     { name: "g2u2l6", theme: "geo", orig: null, sk: cutL6(), alt: "스틱맨이 부순 크레파스 조각을 틀에 눌러 담고, 다른 손으로는 녹여 굳힌 새 크레파스를 들어 보이는 장면", cap: "부수고, 누르고, 녹이고, 굳히면 다른 모습이 돼요" },

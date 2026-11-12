@@ -51,11 +51,11 @@ function cutL1() {
   });
   // 오른쪽 병: 서로 다른 색 구슬 둘이 꼭 붙은 쌍만
   jar(sk, R, JB, 190, 236, 81, () => {
-    const pairs = [[-44, -31, 0.1], [44, -33, -0.25], [-40, -88, -0.5], [42, -96, 0.45]];
+    const pairs = [[-50, -30, 0.12], [50, -32, -0.2], [0, -104, 0.45]];
     pairs.forEach(([dx, dy, a], i) => {
-      const cx = R + dx, cy = JB + dy, ox = Math.cos(a) * 17, oy = Math.sin(a) * 17;
-      ball(sk, cx - ox, cy - oy, 21, "#F2B63A", 91 + i * 8);
-      ball(sk, cx + ox, cy + oy, 21, "#E0503A", 95 + i * 8);
+      const cx = R + dx, cy = JB + dy, ox = Math.cos(a) * 16, oy = Math.sin(a) * 16;
+      ball(sk, cx - ox, cy - oy, 20, "#F2B63A", 91 + i * 8);
+      ball(sk, cx + ox, cy + oy, 20, "#E0503A", 95 + i * 8);
     });
   });
   // 병을 받쳐 든 두 손
@@ -64,42 +64,41 @@ function cutL1() {
   return sk;
 }
 
-/* ---------- g2u4l2: 세 나라 과학자가 금속 덩어리의 빈 이름표 하나를 함께 가리킨다 ---------- */
-const SCI_B = { hair: "short", hairColor: "#3F3A36", fringe: 24, hat: "brim", hatColor: "#6B4A32", coat: { color: "#5E7B5A", buttons: C.gold, seam: "#3E5540", len: 34 }, seed: 131 };
-const SCI_C = { hair: "bob", hairColor: "#B9703A", coat: { color: "#3E5C76", buttons: C.gold, seam: "#2A3F52" }, seed: 181 };
+/* ---------- g2u4l2: 세 나라 과학자가 금속 덩이의 빈 이름표 하나를 함께 가리킨다 ---------- */
+// 셋 다 시리즈의 쌤이 아닌 차림(머리 모양, 모자, 옷 색이 서로 다르다)
+const SCI_A = { hair: "short", hairColor: "#3F3A36", fringe: 24, hat: "brim", hatColor: "#6B4A32", coat: { color: "#5E7B5A", buttons: C.gold, seam: "#3E5540", len: 34 }, seed: 131 };
+const SCI_B = { hair: "bob", hairColor: "#B9703A", coat: { color: "#3E5C76", buttons: C.gold, seam: "#2A3F52" }, seed: 181 };
+const SCI_C = { hair: "curls", hairColor: "#2E2E33", coat: { color: "#B5483B", buttons: C.gold, seam: "#7E2E25" }, seed: 151 };
 function cutL2() {
   const sk = new Sk(W, H, { id: "b" });
   const GY = 668, s = 0.6;
   ground(sk, GY, 11);
-  // 뒤에 선 과학자(가운데)
-  const cx = 440;
-  const PC = pose({ elR: [112, -296], haR: [70, -236], tilt: 0.05 });
-  drawFigure(sk, cx, GY, s, PC, { ...SCI_C, name: "c", hands: "L" });
-  // 낮은 탁자와 금속 덩어리
-  table(sk, 286, 594, 590, GY, 21, 0.7);
-  const bar = poly([[336, 590], [544, 590], [516, 498], [364, 498]], 3);
-  sk.fill(bar, "#E2B23C", { seed: 31, tex: 0.7, texAng: 0.1 });
+  // 가운데 과학자는 낮은 탁자 뒤에 선다(온몸이 보인다)
+  const PB = pose({ elR: [108, -284], haR: [124, -226], tilt: 0.05 });
+  drawFigure(sk, 574, GY, s, PB, { ...SCI_B, name: "b", mirror: true });
+  table(sk, 262, 648, 604, GY, 21, 0.7);
+  // 낮고 작은 금속 덩이와 반짝임
+  const nx = 452, ny = 604;
+  const nug = curve([[nx - 50, ny], [nx - 56, ny - 22], [nx - 34, ny - 44], [nx - 6, ny - 52], [nx + 26, ny - 46], [nx + 50, ny - 26], [nx + 54, ny]], false, 3);
+  sk.fill([...nug, nug[0]], "#E2B23C", { dx: 0, dy: 0, wob: 0.3, seed: 31 });
   thin(sk, 0.8, () => {
-    sk.ink(dense([[372, 512], [508, 512]]), { w: 6, color: "#F8DF8E", seed: 32, wob: 0.3 });
-    sk.ink(bar, { w: 10, seed: 33 });
+    sk.ink(curve([[nx - 34, ny - 26], [nx - 18, ny - 38], [nx + 4, ny - 40]]), { w: 6, color: "#F8E3A0", seed: 32, wob: 0.2 });
+    sk.ink(curve([[nx + 8, ny - 14], [nx + 26, ny - 22], [nx + 36, ny - 12]]), { w: 5, color: "#B8892E", seed: 33, wob: 0.2 });
+    sk.ink([...nug, nug[0]], { w: 9, seed: 34 });
   });
-  sparkle(sk, 556, 484, 20, { seed: 35 });
-  // 빈 이름표(끈으로 걸었다)
-  sk.ink(curve([[404, 498], [392, 520], [404, 540]]), { w: 4, color: "#8A5A33", seed: 41, wob: 0.2 });
-  const tag = poly([[392, 540], [410, 524], [500, 524], [500, 582], [410, 582], [392, 566]], 3);
+  sparkle(sk, nx + 6, ny - 88, 19, { seed: 35 }); sparkle(sk, nx - 50, ny - 72, 12, { seed: 37 });
+  // 덩이에 끈으로 건 빈 이름표
+  sk.ink(curve([[nx - 44, ny - 20], [nx - 62, ny - 30], [nx - 74, ny - 22]]), { w: 4, color: "#8A5A33", seed: 41, wob: 0.2 });
+  const tag = poly([[nx - 68, ny - 24], [nx - 86, ny - 50], [nx - 172, ny - 44], [nx - 168, ny + 2], [nx - 82, ny - 2]], 3);
   sk.fill(tag, C.white, { dx: 0, dy: 0, wob: 0.3, seed: 42 });
   thin(sk, 0.8, () => sk.ink(tag, { w: 8, seed: 43 }));
-  sk.dot(408, 553, 4.5, "#8A5A33");
-  // 가운데 과학자의 앞팔과 손(덩어리 앞으로)
-  const el = [cx + s * 112, GY - s * 296], ha = [cx + s * 70, GY - s * 236];
-  sk.ink(curve([el, [lerpx(el[0], ha[0], 0.5) + 4, lerpx(el[1], ha[1], 0.5)], ha]), { w: 13 * s, seed: 45, wob: 1 });
-  handDot(sk, ha, C.skin, 46, 15 * s);
+  sk.dot(nx - 86, ny - 26, 5, "#8A5A33");
   // 양옆의 두 과학자
   const PA = pose({ elR: [104, -292], haR: [182, -262], tilt: 0.06 });
-  drawFigure(sk, 150, GY, s, PA, { ...TEACHER, name: "a" });
-  drawFigure(sk, 740, GY, s, PA, { ...SCI_B, name: "b", mirror: true });
+  drawFigure(sk, 170, GY, s, PA, { ...SCI_A, name: "a" });
+  drawFigure(sk, 806, GY, s, PA, { ...SCI_C, name: "c", mirror: true });
   // 같은 약속에 고개를 끄덕인다: 머리 위 체크
-  check(sk, 150, 268, 0.8); check(sk, cx, 292, 0.8); check(sk, 740, 258, 0.8);
+  check(sk, 170, 256, 0.8); check(sk, 574, 292, 0.8); check(sk, 806, 282, 0.8);
   return sk;
 }
 
@@ -147,7 +146,7 @@ function cutL3() {
   const P = pose({ tilt: 0.3, head: [16, -430], elR: [60, -262], haR: [92, -206] });
   drawFigure(sk, 540, 512, 0.42, P, { ...STUDENT, name: "student", mirror: true });
   // 가장자리 멀리 떠 있는 더 작은 점들(전자)
-  const es = [[58, 420], [150, 316], [332, 262], [700, 266], [842, 330], [908, 452], [190, 636], [770, 642]];
+  const es = [[104, 318], [296, 408], [236, 590], [702, 318], [812, 548], [636, 628], [78, 520], [906, 400]]; // 구슬에서의 거리를 서로 달리해 흩는다(고리 하나로 읽히지 않게)
   es.forEach(([x, y], i) => {
     ball(sk, x, y, 10, BLUE, 41 + i * 5, 4);
     const sg = x < cx ? -1 : 1;

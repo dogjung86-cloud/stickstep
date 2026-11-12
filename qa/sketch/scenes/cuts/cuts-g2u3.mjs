@@ -1,5 +1,5 @@
 // 중2 과학 Ⅲ단원(빛과 파동) 개념 컷 코드 그림.
-// 목록은 Ⅲ단원 v5 세션이 낸 것(D:\Brilliant Science\output\g2-v5\u3\concept-cuts.md): g2u3l1 ~ g2u3l7b(단원 세션이 레슨을 끝낼 때마다 줄이 는다).
+// 목록은 Ⅲ단원 v5 세션이 낸 것(D:\Brilliant Science\output\g2-v5\u3\concept-cuts.md): g2u3l1 ~ g2u3l8(단원 세션이 레슨을 끝낼 때마다 줄이 는다).
 // 색의 뜻: 빛이 가는 길은 노란 주황(LIGHT) 화살표. 견주는 두 쪽(들어간 길과 나온 길)은 주황과 청록.
 // 눈이 느끼는 길(연장선)과 실제 자리는 점선. 거울 속과 물속은 옅은 하늘색 면.
 // 빛의 길은 눈대중이 아니라 계산으로 놓는다(반사 = 법선에 대칭, 굴절 = 스넬 법칙, 거울 상 = 거울 면에 대칭).
@@ -33,6 +33,7 @@ function cutL1() {
   const P = [480, FY0], DX = 222, DY = 250; // 쿠션에 닿는 점. 들어간 길과 나온 길은 법선(세로선)에 대칭
   const S = [P[0] - DX, P[1] + DY], E = [P[0] + DX, P[1] + DY];
   thin(sk, 0.75, () => {
+    for (const [x, i] of [[TX0 + 44, 0], [TX1 - 44, 1]]) { const leg = box(x - 17, TY1 - 10, x + 17, GY - 2); sk.fill(leg, "#A9773F", { dx: 0, dy: 0, wob: 0.3, seed: 5 + i }); sk.ink(leg, { w: 10, seed: 7 + i }); }
     const outer = rrect(TX0, TY0, TX1 - TX0, TY1 - TY0, 26);
     sk.fill(outer, "#B9824A", { seed: 11, tex: true, texAng: 0.05 });
     const felt = rrect(FX0, FY0, FX1 - FX0, FY1 - FY0, 10);
@@ -63,14 +64,14 @@ function cutL1() {
   sk.fill(b, C.white, { dx: 0, dy: 0, wob: 0.3, seed: 62 }); sk.ink(b, { w: 7, seed: 63, wob: 0.4 });
   // 학생: 방금 친 큐대를 세워 들고 공이 간 쪽을 가리킨다
   ground(sk, GY, 71);
-  const kx = 178;
+  const kx = 262;
   const PK = pose({ elL: [-100, -290], haL: [-152, -268], elR: [100, -300], haR: [168, -372], tilt: -0.05 });
   cue(sk, [kx - s * 152 - 2, GY - 4], [kx - s * 152 + 4, GY - 318], 75);
   drawFigure(sk, kx, GY, s, PK, { ...STUDENT, name: "student" });
   handDot(sk, [kx - s * 152, GY - s * 268], C.skin, 79, 15 * s);
-  // 쌤: 큐대(법선) 바로 앞에서 두 팔을 양쪽 길 쪽으로 벌려 견준다
-  const PT = pose({ elL: [-112, -300], haL: [-200, -388], elR: [112, -300], haR: [200, -388] });
-  drawFigure(sk, P[0], GY, s, PT, { ...TEACHER, name: "teacher" });
+  // 쌤: 큐대(법선) 바로 앞에서 한 팔은 들어간 길, 다른 팔은 나온 길을 곧게 가리킨다
+  const PT = pose({ elL: [-104, -372], haL: [-176, -456], elR: [116, -330], haR: [226, -352], tilt: -0.05 });
+  drawFigure(sk, P[0] + 20, GY, s, PT, { ...TEACHER, name: "teacher" });
   return sk;
 }
 
@@ -101,6 +102,7 @@ function cutL2() {
   sk.save(); sk.translate(SX, 0);
   const side = [[589, WY], [564, 522], [544, 574], [528, 620], [536, 646], [566, 652], [596, 630], [626, 588], [650, 530], [661, WY]];
   const real = curve(side, false, 4);
+  sk.fill([...real, real[0]], "#7FA9C6", { dx: 0, dy: 0, wob: 0.3, seed: 22, alpha: 0.45 });
   sk.ink(real, { w: 7, color: "#557F9E", dash: [12, 9], seed: 23, wob: 0.2 });
   const seen = curve(side.map(up), false, 4);
   sk.fill([...seen, seen[0]], SEAL, { dx: 0, dy: 0, wob: 0.3, seed: 25 });
@@ -130,6 +132,7 @@ function cutL2() {
   const tip = lerp2(Q, EYE, 0.8);
   arrow(sk, [Q, tip], { w: 9, color: LIGHT, straight: true, seed: 54, head: 24, wob: 0.3 });
   sk.dot(T[0], T[1], 8, LIGHT);
+  arrow(sk, [[T[0] + 78, T[1] + 6], [T[0] + 78, A[1] + 14]], { w: 9, color: TEAL, straight: true, seed: 57, head: 22, wob: 0.2 }); // 실제 자리에서 보이는 자리로: 떠 보인다
   // 학생: 깜짝 놀라 한 팔을 든다
   const PK = pose({ elL: [-104, -300], haL: [-176, -384], elR: [62, -262], haR: [110, -212], tilt: 0.1 });
   drawFigure(sk, kx, GY, ks, PK, { ...STUDENT, name: "student" });
@@ -240,63 +243,65 @@ function cutL4() {
 const COLS3 = ["#E0503A", "#3F8FD8", "#F2B63A"];
 function cutL5() {
   const sk = new Sk(W, H, { id: "e" });
-  const GY = 668, kx = 205, ks = 0.7, AY = GY - ks * 436, MX = 352, MAG = 1.6, GLASS = "#E4F1F8";
+  const GY = 668, kx = 226, ks = 0.7, AY = GY - ks * 436, MAG = 1.5, GLASS = "#E4F1F8";
   ground(sk, GY, 11);
   // 천장과 벽의 구석, 뒤쪽 진열대
   thin(sk, 0.7, () => {
-    sk.ink(dense([[590, 40], [934, 40], [934, 318]]), { w: 8, color: C.gray, seed: 12, wob: 0.6 });
-    const fr = box(772, 336, 930, GY - 4);
+    sk.ink(dense([[560, 30], [938, 30], [938, 330]]), { w: 8, color: C.gray, seed: 12, wob: 0.6 });
+    const fr = box(772, 356, 930, GY - 4);
     sk.fill(fr, "#F3EEE4", { dx: 0, dy: 0, wob: 0.2, seed: 13 });
     const cols = ["#E0503A", "#3F8FD8", "#F2B63A", "#3FAE5A", "#F08A2E"];
     for (let r = 0; r < 3; r++) {
-      const by = 430 + r * 100;
-      for (let i = 0; i < 4; i++) { const bx = 786 + i * 35, bh = 44 + ((i * 7 + r * 5) % 3) * 9; const b = rrect(bx, by - bh, 27, bh, 4); sk.fill(b, cols[(i + r * 2) % 5], { dx: 0, dy: 0, wob: 0.2, seed: 15 + r * 9 + i }); sk.ink(b, { w: 5, seed: 16 + r * 9 + i, wob: 0.3 }); }
+      const by = 446 + r * 96;
+      for (let i = 0; i < 4; i++) { const bx = 786 + i * 35, bh = 40 + ((i * 7 + r * 5) % 3) * 9; const b = rrect(bx, by - bh, 27, bh, 4); sk.fill(b, cols[(i + r * 2) % 5], { dx: 0, dy: 0, wob: 0.2, seed: 15 + r * 9 + i }); sk.ink(b, { w: 5, seed: 16 + r * 9 + i, wob: 0.3 }); }
       sk.ink(dense([[772, by], [930, by]]), { w: 8, seed: 50 + r });
     }
     sk.ink(fr, { w: 9, seed: 14 });
   });
   // 볼록 거울: 가운데가 볼록 나온 둥근 거울. 가게 안이 넓고 작게, 바로 선 모습으로 비친다
-  const DC = [836, 140], DR = 98;
+  const DC = [800, 172], DR = 128;
   thin(sk, 0.8, () => {
-    sk.ink(dense([[930, 44], [DC[0] + 60, DC[1] - 60]]), { w: 12, seed: 61 });
-    const back = ell(DC[0] + 20, DC[1] - 16, DR - 4, DR - 4);
+    sk.ink(dense([[934, 34], [DC[0] + 80, DC[1] - 80]]), { w: 12, seed: 61 });
+    const back = ell(DC[0] + 22, DC[1] - 18, DR - 4, DR - 4);
     sk.fill(back, "#8FA0B5", { dx: 0, dy: 0, wob: 0.3, seed: 62 }); sk.ink(back, { w: 8, seed: 63, wob: 0.4 });
     const dome = circ(DC[0], DC[1], DR, { over: 0.06, seed: 64 });
     sk.fill(dome, "#DCEBF4", { dx: 0, dy: 0, wob: 0.3, seed: 65 });
     // 비친 가게(작게, 굽어 보인다)
-    sk.ink(curve([[DC[0] - 76, DC[1] + 34], [DC[0], DC[1] + 52], [DC[0] + 70, DC[1] + 30]]), { w: 4, color: "#7F9FB3", seed: 67, wob: 0.2 });
-    for (const [dx, i] of [[-62, 0], [36, 1]]) {
-      const sh = poly([[DC[0] + dx, DC[1] - 26 + i * 4], [DC[0] + dx + 26, DC[1] - 30 + (1 - i) * 8], [DC[0] + dx + 26, DC[1] + 36 - i * 2], [DC[0] + dx, DC[1] + 34 + i * 4]], 3);
-      sk.fill(sh, "#F3EEE4", { dx: 0, dy: 0, wob: 0.1, seed: 68 + i }); sk.ink(sh, { w: 4, seed: 70 + i, wob: 0.2 });
-      for (let r = 0; r < 3; r++) sk.dot(DC[0] + dx + 13, DC[1] - 14 + r * 18, 5, COLS3[(r + i) % 3]);
+    sk.ink(curve([[DC[0] - 104, DC[1] + 44], [DC[0], DC[1] + 72], [DC[0] + 100, DC[1] + 40]]), { w: 5, color: "#7F9FB3", seed: 67, wob: 0.2 });
+    for (const [dx, i] of [[-92, 0], [52, 1]]) {
+      const sh = poly([[DC[0] + dx, DC[1] - 40 + i * 6], [DC[0] + dx + 40, DC[1] - 46 + (1 - i) * 12], [DC[0] + dx + 40, DC[1] + 52 - i * 4], [DC[0] + dx, DC[1] + 48 + i * 6]], 3);
+      sk.fill(sh, "#F3EEE4", { dx: 0, dy: 0, wob: 0.1, seed: 68 + i }); sk.ink(sh, { w: 5, seed: 70 + i, wob: 0.2 });
+      for (let r = 0; r < 3; r++) sk.dot(DC[0] + dx + 20, DC[1] - 22 + r * 26, 8, COLS3[(r + i) % 3]);
     }
-    drawFigure(sk, DC[0] - 2, DC[1] + 48, 0.15, pose({ elR: [70, -262], haR: [104, -196] }), { ...STUDENT, lw: 30 });
+    drawFigure(sk, DC[0] - 4, DC[1] + 68, 0.22, pose({ elR: [70, -262], haR: [104, -196] }), { ...STUDENT, lw: 24 });
     sk.ink(dome, { w: 9, seed: 72, wob: 0.5 });
-    sk.ink(ell(DC[0], DC[1], DR - 16, DR - 16, 3.5, 4.3), { w: 7, color: C.white, seed: 73, wob: 0.2 });
+    sk.ink(ell(DC[0], DC[1], DR - 18, DR - 18, 3.5, 4.3), { w: 8, color: C.white, seed: 73, wob: 0.2 });
   });
-  // 오목 거울 속에 보이는 얼굴: 거울 뒤로 더 멀리, 더 크게, 바로 선 모습(좌우는 바뀐다)
-  const ix = MX + (MX - kx) * MAG;
-  sk.fill(ell(ix - 30, AY, 204, 152), GLASS, { dx: 0, dy: 0, wob: 0.6, seed: 81 });
-  sk.save(); sk.translate(ix, AY); sk.scale(ks * MAG); drawHead(sk, { ...STUDENT, flip: -1 }); sk.restore();
-  sk.fill(ell(ix - 30, AY, 204, 152), GLASS, { dx: 0, dy: 0, wob: 0.6, seed: 81, alpha: 0.45 });
   // 계산대
   thin(sk, 0.8, () => {
-    for (const [x, i] of [[330, 0], [690, 1]]) sk.ink(dense([[x, 562], [x, GY]]), { w: 12, seed: 83 + i });
-    const top = rrect(296, 540, 428, 24, 8);
+    for (const [x, i] of [[340, 0], [640, 1]]) sk.ink(dense([[x, 574], [x, GY]]), { w: 12, seed: 83 + i });
+    const top = rrect(306, 552, 372, 24, 8);
     sk.fill(top, C.wood, { seed: 85, tex: true, texAng: 0.02 }); sk.ink(top, { w: 11, seed: 86 });
   });
-  // 오목 거울(옆모습): 가운데가 오목하게 들어가 얼굴을 감싸는 쪽으로 굽었다
-  const RC = 224, A0 = 0.5;
-  const front = ell(MX - RC, AY, RC, RC, -A0, A0), backA = ell(MX - RC, AY, RC + 15, RC + 15, A0, -A0);
+  // 오목 거울(계산대 위의 확대 거울): 틀 안에 얼굴이 실제보다 크게, 바로 선 모습으로 담긴다(좌우는 바뀐다)
+  const MC = [506, AY + 6], MRX = 132, MRY = 160;
   thin(sk, 0.8, () => {
-    sk.ink(dense([[MX + 10, AY + 60], [MX + 10, 540]]), { w: 10, seed: 91 });
-    const base = rrect(MX - 26, 528, 72, 14, 6);
+    sk.ink(dense([[MC[0], MC[1] + MRY], [MC[0], 552]]), { w: 12, seed: 91 });
+    const base = rrect(MC[0] - 44, 540, 88, 14, 6);
     sk.fill(base, "#8FA0B5", { dx: 0, dy: 0, wob: 0.2, seed: 92 }); sk.ink(base, { w: 8, seed: 93 });
-    const shell = [...front, ...backA, front[0]];
-    sk.fill(shell, "#8FC6E4", { dx: 0, dy: 0, wob: 0.2, seed: 94 }); sk.ink(shell, { w: 8, seed: 95, wob: 0.4 });
   });
+  const frame = ell(MC[0], MC[1], MRX, MRY);
+  sk.fill(frame, GLASS, { dx: 0, dy: 0, wob: 0.3, seed: 94 });
+  sk.defs.push('<clipPath id="eMir"><ellipse cx="' + MC[0] + '" cy="' + MC[1] + '" rx="' + (MRX - 3) + '" ry="' + (MRY - 3) + '"/></clipPath>');
+  sk.raw('<g clip-path="url(#eMir)">');
+  sk.save(); sk.translate(MC[0] + 26, AY + 4); sk.scale(ks * MAG); drawHead(sk, { ...STUDENT, flip: -1 }); sk.restore();
+  sk.fill(box(MC[0] - MRX, MC[1] - MRY, MC[0] + MRX, MC[1] + MRY), GLASS, { dx: 0, dy: 0, wob: 0, seed: 95, alpha: 0.3 });
+  // 오목하게 들어간 안쪽 턱(왼쪽 가장자리의 초승달 그늘)
+  sk.fill([...ell(MC[0], MC[1], MRX, MRY, Math.PI * 0.5, Math.PI * 1.5), ...ell(MC[0] + 22, MC[1], MRX, MRY, Math.PI * 1.5, Math.PI * 0.5)], "#9CCBE6", { dx: 0, dy: 0, wob: 0, seed: 96, alpha: 0.8 });
+  sk.raw('</g>');
+  thin(sk, 0.8, () => { sk.ink(frame, { w: 13, color: "#6F8FA6", seed: 97, wob: 0.5 }); sk.ink(ell(MC[0], MC[1], MRX + 7, MRY + 7), { w: 5, seed: 98, wob: 0.5 }); });
   // 학생: 얼굴을 거울에 바짝 댄다
-  const PK = pose({ elR: [84, -250], haR: [150, -196], tilt: 0.04 });
+  const PK = pose({ elR: [84, -250], haR: [140, -180], tilt: 0.04 });
   drawFigure(sk, kx, GY, ks, PK, { ...STUDENT, name: "student" });
   return sk;
 }
@@ -330,7 +335,7 @@ function cutL5b() {
   // 풀밭과 멀리 선 나무
   ground(sk, GY, 11, 14, 946, { color: "#4E9A5B" });
   for (const [x, i] of [[60, 0], [330, 1], [470, 2], [720, 3], [930, 4]]) for (const d of [-9, 0, 9]) sk.ink(dense([[x + d, GY], [x + d * 1.8, GY - 16]]), { w: 5, color: "#4E9A5B", seed: 13 + i * 3 + d, wob: 0.2 });
-  thin(sk, 0.85, () => tree(sk, 884, GY, 236, 62, 21));
+  thin(sk, 0.85, () => tree(sk, 846, GY, 226, 66, 21));
   // 학생: 돋보기로 개미를 내려다본다
   const kx = 180, ks = 0.7, LC = [400, 584], LR = 68;
   const PK = pose({ elR: [96, -262], haR: [168, -206], tilt: 0.22, head: [10, -432] });
@@ -345,26 +350,24 @@ function cutL5b() {
   sk.ink(ell(LC[0], LC[1], LR - 15, LR - 15, 3.5, 4.4), { w: 6, color: C.white, seed: 36, wob: 0.2 });
   handDot(sk, hand, C.skin, 37, 15 * ks);
   for (const [x, i] of [[500, 0], [552, 1]]) ant(sk, x, GY - 12, 0.85, 41 + i * 12); // 맨눈으로 본 개미
-  // 쌤: 벗어 든 안경. 안경알 너머로 나무가 작게, 바로 보인다
+  // 쌤: 오목 렌즈 한 알을 나무 앞에 대어 본다. 렌즈 너머로 나무가 작게, 바로 보인다
   const tx = 622, ts = 0.66;
-  const PT = pose({ elR: [108, -292], haR: [160, -356], tilt: -0.04 });
-  drawFigure(sk, tx, GY, ts, PT, { ...TEACHER, glasses: false, name: "teacher", hands: "L" });
-  const G1 = [778, 412], G2 = [886, 412], GR = 48, th = [tx + ts * 160, GY - ts * 356];
-  sk.ink(dense([th, [G1[0] - GR, G1[1] - 6]]), { w: 7, seed: 61, wob: 0.3 });
-  for (const [g, i] of [[G1, 0], [G2, 1]]) {
-    const c = circ(g[0], g[1], GR, { over: 0.06, seed: 63 + i });
-    sk.fill(c, "#F2FAFD", { dx: 0, dy: 0, wob: 0.2, seed: 65 + i });
-    sk.ink(dense([[g[0] - 32, g[1] + 22], [g[0] + 32, g[1] + 22]]), { w: 3.5, color: "#4E9A5B", seed: 67 + i, wob: 0.2 });
-    if (i === 1) sk.at(g[0] - 2, g[1] + 22, 0.5, () => tree(sk, 0, 0, -78, 26, 71, 0.9));
-    sk.ink(c, { w: 8, seed: 69 + i, wob: 0.5 });
-  }
-  sk.ink(curve([[G1[0] + GR, G1[1] - 6], [(G1[0] + G2[0]) / 2, G1[1] - 15], [G2[0] - GR, G2[1] - 6]]), { w: 7, seed: 75, wob: 0.3 });
+  const PT = pose({ elR: [108, -292], haR: [160, -340], tilt: -0.04 });
+  drawFigure(sk, tx, GY, ts, PT, { ...TEACHER, name: "teacher", hands: "L" });
+  const G1 = [846, 420], GR = 70, th = [tx + ts * 160, GY - ts * 340];
+  sk.ink(dense([th, [G1[0] - GR, G1[1] + 6]]), { w: 12, color: "#6F7F92", seed: 61, wob: 0.3 });
+  const gc = circ(G1[0], G1[1], GR, { over: 0.05, seed: 63 });
+  sk.fill(gc, "#F2FAFD", { dx: 0, dy: 0, wob: 0.2, seed: 65 });
+  sk.ink(dense([[G1[0] - 48, G1[1] + 40], [G1[0] + 48, G1[1] + 40]]), { w: 4, color: "#4E9A5B", seed: 67, wob: 0.2 });
+  sk.at(G1[0], G1[1] + 40, 0.78, () => tree(sk, 0, 0, -84, 27, 71, 0.95));
+  sk.ink(gc, { w: 11, color: "#6F7F92", seed: 69, wob: 0.5 });
+  sk.ink(ell(G1[0], G1[1], GR - 14, GR - 14, 3.5, 4.3), { w: 6, color: C.white, seed: 70, wob: 0.2 });
   handDot(sk, th, C.skin, 77, 15 * ts);
   // 두 렌즈의 옆모습
   sk.ink(dense([[LC[0] + LR + 12, LC[1] - 6], [506, 548]]), { w: 4, color: C.gray, dash: [7, 7], seed: 81, wob: 0 });
   lensGlyph(sk, 530, 536, "convex", 83);
-  sk.ink(dense([[G1[0] - 10, G1[1] + GR + 10], [792, 520]]), { w: 4, color: C.gray, dash: [7, 7], seed: 85, wob: 0 });
-  lensGlyph(sk, 796, 566, "concave", 87);
+  sk.ink(dense([[G1[0] - 34, G1[1] + GR + 4], [776, 524]]), { w: 4, color: C.gray, dash: [7, 7], seed: 85, wob: 0 });
+  lensGlyph(sk, 768, 572, "concave", 87);
   return sk;
 }
 
@@ -394,7 +397,8 @@ function cutL6() {
   thin(sk, 0.8, () => sk.ink(dense([[CX - 300, 52], [CX + 300, 52]]), { w: 12, color: "#C9D2DE", seed: 17, wob: 0.6 }));
   for (const i of [1, 2, 0]) {
     const c = scr(cen[i]);
-    sk.fill(poly([[lampX[i] - 16, LY + 20], [lampX[i] + 16, LY + 20], [c[0] + R, c[1]], [c[0] - R, c[1]]], 6), col[i], { dx: 0, dy: 0, wob: 0, seed: 21 + i, alpha: 0.2 });
+    sk.fill(poly([[lampX[i] - 16, LY + 20], [lampX[i] + 16, LY + 20], [c[0] + R, c[1]], [c[0] - R, c[1]]], 6), col[i], { dx: 0, dy: 0, wob: 0, seed: 21 + i, alpha: 0.09 });
+    for (const sg of [-1, 1]) sk.ink(dense([[lampX[i] + sg * 16, LY + 20], [c[0] + sg * R, c[1]]]), { w: 4, color: col[i], seed: 23 + i * 2 + sg, wob: 0.2, alpha: 0.75, dash: [14, 10] });
   }
   thin(sk, 0.8, () => {
     for (let i = 0; i < 3; i++) {
@@ -434,11 +438,11 @@ const CROWD = [
 ];
 function cutL7() {
   const sk = new Sk(W, H, { id: "h" });
-  const GY = 690, BT = 480, BB = 610, X0 = 76, GAP = 104, cs = 0.38, PEAK = 4, RISE = 80, NP = 7;
+  const GY = 690, BT = 480, BB = 610, X0 = 76, GAP = 104, cs = 0.38, PEAK = 4, RISE = 122, NP = 7;
   ground(sk, GY, 11);
   // 관중: 앉은 사람은 머리와 어깨만, 일어선 사람은 몸까지 보인다. 자리는 그대로다
   for (let i = 0; i < NP; i++) {
-    const r = Math.exp(-(((i - PEAK) / 1.25) ** 2)), x = X0 + i * GAP, fy = BT + 95 - r * RISE;
+    const r = Math.exp(-(((i - PEAK) / 1.25) ** 2)), x = X0 + i * GAP, fy = BT + 136 - r * RISE;
     const P = r > 0.5 ? pose({ elL: [-112, -356], haL: [-172, -466], elR: [112, -356], haR: [172, -466] })
       : r > 0.1 ? pose({ elL: [-92, -300], haL: [-128, -352], elR: [92, -300], haR: [128, -352] }) : pose();
     drawFigure(sk, x, fy, cs, P, CROWD[i + 1]);
@@ -455,10 +459,10 @@ function cutL7() {
   arrow(sk, [[px, BT + 66], [px, BT + 18]], { w: 9, color: ORG, straight: true, seed: 41, head: 20, wob: 0.2 });
   arrow(sk, [[px, BT + 66], [px, BB - 30]], { w: 9, color: ORG, straight: true, seed: 45, head: 20, wob: 0.2 });
   sk.ink(dense([[px - 22, BB - 16], [px + 22, BB - 16]]), { w: 8, color: ORG, seed: 49, wob: 0.2 });
-  arrow(sk, [[130, 236], [700, 236]], { w: 12, color: TEAL, straight: true, seed: 51, head: 32, wob: 0.3 });
+  arrow(sk, [[130, 214], [720, 214]], { w: 12, color: TEAL, straight: true, seed: 51, head: 32, wob: 0.3 });
   // 쌤: 한 손은 그 사람의 자리, 한 손은 물결이 가는 쪽
-  const PT = pose({ elL: [-104, -286], haL: [-184, -246], elR: [96, -306], haR: [120, -392], tilt: -0.04 });
-  drawFigure(sk, 862, GY, 0.56, PT, { ...TEACHER, name: "teacher" });
+  const PT = pose({ elL: [-84, -250], haL: [-146, -176], elR: [104, -318], haR: [182, -318], tilt: -0.04 });
+  drawFigure(sk, 838, GY, 0.56, PT, { ...TEACHER, name: "teacher" });
   return sk;
 }
 
@@ -473,9 +477,9 @@ function ribbon(sk, x, y, col, sd, o = {}) {
 }
 function cutL7b() {
   const sk = new Sk(W, H, { id: "i" });
-  const GY = 668, tx = 112, ts = 0.66, MY = 300, AMP = 62, LAM = 240, PX = 884;
+  const GY = 668, tx = 112, ts = 0.66, MY = 300, AMP = 62, PX = 884;
   ground(sk, GY, 11);
-  const hand = [tx + ts * 168, MY];
+  const hand = [tx + ts * 168, MY], LAM = (PX - hand[0]) / 2.5; // 손에서 기둥까지 파장 두 개 반: 묶인 끝이 줄의 가운데 높이에 온다
   const yAt = x => MY - AMP * Math.sin((x - hand[0]) / LAM * Math.PI * 2);
   // 줄을 묶은 기둥
   thin(sk, 0.8, () => sk.ink(dense([[PX, GY], [PX, MY - 96]]), { w: 18, color: "#8A5A33", seed: 13, wob: 0.5 }));
@@ -495,10 +499,10 @@ function cutL7b() {
   handDot(sk, hand, C.skin, 41, 15 * ts);
   for (const sg of [-1, 1]) sk.ink(curve([[hand[0] - 26, MY + sg * 30], [hand[0], MY + sg * 44], [hand[0] + 26, MY + sg * 30]]), { w: 6, color: C.gray, seed: 43 + sg, wob: 0.2 });
   // 학생: 초시계를 들고 리본이 오르내리는 것을 센다
-  const kx = 650, ks = 0.5;
-  const PK = pose({ elL: [-96, -300], haL: [-150, -372], elR: [70, -262], haR: [104, -196], tilt: -0.14 });
-  drawFigure(sk, kx, GY, ks, PK, { ...STUDENT, name: "student", flip: -1, hands: "R" });
-  const wc = [kx - ks * 150, GY - ks * 372 - 30];
+  const kx = 700, ks = 0.5;
+  const PK = pose({ elL: [-104, -310], haL: [-176, -384], elR: [96, -290], haR: [150, -330], tilt: 0.16 });
+  drawFigure(sk, kx, GY, ks, PK, { ...STUDENT, name: "student", flip: -1, hands: "L" });
+  const wc = [kx + ks * 150, GY - ks * 330 - 30];
   thin(sk, 0.8, () => {
     sk.ink(dense([[wc[0], wc[1] - 26], [wc[0], wc[1] - 38]]), { w: 9, seed: 51, wob: 0 });
     const w = circ(wc[0], wc[1], 27, { over: 0.08, seed: 52 });
@@ -506,20 +510,74 @@ function cutL7b() {
     sk.ink(dense([[wc[0], wc[1]], [wc[0] + 11, wc[1] - 14]]), { w: 5, color: C.red, seed: 55, wob: 0 });
     sk.dot(wc[0], wc[1], 4);
   });
-  handDot(sk, [kx - ks * 150, GY - ks * 372], C.skin, 57, 15 * ks);
+  handDot(sk, [kx + ks * 150, GY - ks * 330], C.skin, 57, 15 * ks);
+  return sk;
+}
+
+/* ---------- g2u3l8: 큰북은 세게, 트라이앵글은 살짝. 큰 소리와 높은 소리를 따로 가린다 ---------- */
+// 소리의 모습: 떨림의 크기(세기)는 물결의 높이로, 떨림의 빠르기(높낮이)는 물결의 촘촘함으로
+function soundWave(sk, x0, x1, y, amp, n, sd) {
+  sk.ink(dense([[x0, y], [x1, y]]), { w: 3.5, color: C.gray, dash: [8, 8], seed: sd, wob: 0 });
+  const pts = []; for (let x = x0; x <= x1; x += 2) pts.push([x, y - amp * Math.sin((x - x0) / (x1 - x0) * n * Math.PI * 2)]);
+  sk.ink(pts, { w: 8, color: "#3F7CC0", seed: sd + 1, wob: 0 });
+}
+function cutL8() {
+  const sk = new Sk(W, H, { id: "j" });
+  const GY = 668, tx = 350, ts = 0.62, DR = [150, 512], WY = 196;
+  ground(sk, GY, 11);
+  // 큰북(받침 위, 북면이 보인다)
+  thin(sk, 0.8, () => {
+    for (const [a, b, i] of [[[96, 600], [66, GY], 0], [[204, 600], [234, GY], 1]]) sk.ink(dense([a, b]), { w: 12, seed: 13 + i });
+    const rim = circ(DR[0], DR[1], 112, { over: 0.06, seed: 15 });
+    sk.fill(rim, "#D9534F", { dx: 0, dy: 0, wob: 0.3, seed: 16, tex: 0.8 }); sk.ink(rim, { w: 11, seed: 17 });
+    const skin = circ(DR[0], DR[1], 90, { over: 0.06, seed: 18 });
+    sk.fill(skin, "#FBF3E0", { dx: 0, dy: 0, wob: 0.3, seed: 19 }); sk.ink(skin, { w: 8, seed: 20 });
+  });
+  // 세게 친 자국: 크게 떠는 북면
+  for (let i = 0; i < 7; i++) { const a = Math.PI * (0.62 + i * 0.2); sk.ink(dense([[DR[0] + 128 * Math.cos(a), DR[1] + 128 * Math.sin(a)], [DR[0] + 166 * Math.cos(a), DR[1] + 166 * Math.sin(a)]]), { w: 9, color: ORG, seed: 23 + i, wob: 0.3 }); }
+  // 트라이앵글(받침대에 매달린 작은 세모)
+  const TR = [[500, 318], [462, 384], [538, 384]];
+  thin(sk, 0.8, () => {
+    sk.ink(dense([[578, GY], [578, 278], [500, 278]]), { w: 10, seed: 31 });
+    sk.ink(dense([[500, 280], TR[0]]), { w: 4, seed: 33, wob: 0.2 });
+  });
+  const tri = dense([lerp2(TR[1], TR[0], 0.16), TR[0], TR[2], TR[1], lerp2(TR[1], TR[0], 0.02)], 4);
+  sk.ink(tri, { w: 13, seed: 35, wob: 0.3 });
+  sk.ink(tri, { w: 7, color: "#C9D2DE", seed: 36, wob: 0.3 });
+  for (const [x, y, a, i] of [[556, 336, -0.5, 0], [562, 362, 0, 1], [444, 344, 3.6, 2]]) sk.ink(dense([[x, y], [x + 16 * Math.cos(a), y + 16 * Math.sin(a)]]), { w: 5, color: ORG, seed: 38 + i, wob: 0.2 });
+  // 두 소리의 모습: 큰북은 높고 성긴 물결(크고 낮은 소리), 트라이앵글은 낮고 촘촘한 물결(작고 높은 소리)
+  soundWave(sk, 36, 272, WY, 56, 2, 41);
+  soundWave(sk, 404, 640, WY, 15, 9, 45);
+  // 쌤: 한 손의 북채로 큰북을 세게, 다른 손의 쇠막대로 트라이앵글을 살짝
+  const PT = pose({ elL: [-108, -292], haL: [-190, -300], elR: [100, -300], haR: [160, -356], tilt: -0.05 });
+  const hl = [tx - ts * 190, GY - ts * 300], hr = [tx + ts * 160, GY - ts * 356];
+  drawFigure(sk, tx, GY, ts, PT, { ...TEACHER, name: "teacher", hands: false });
+  sk.ink(dense([hl, [DR[0] + 34, DR[1] - 14]]), { w: 9, color: "#8A5A33", seed: 51, wob: 0.3 });
+  const mb = circ(DR[0] + 28, DR[1] - 12, 17, { over: 0.1, seed: 52 });
+  sk.fill(mb, "#F6EFDC", { dx: 0, dy: 0, wob: 0.2, seed: 53 }); sk.ink(mb, { w: 7, seed: 54, wob: 0.3 });
+  sk.ink(dense([hr, [476, 392]]), { w: 6, color: "#6F7F92", seed: 55, wob: 0.2 });
+  handDot(sk, hl, C.skin, 56, 15 * ts); handDot(sk, hr, C.skin, 58, 15 * ts);
+  // 학생: 눈을 가린 채 한 팔은 크게 벌리고(큰 소리), 다른 팔은 위로 든다(높은 소리)
+  const kx = 800, ks = 0.66, hd = [kx, GY - ks * 436];
+  const PK = pose({ elL: [-112, -322], haL: [-214, -330], elR: [140, -372], haR: [206, -486], tilt: -0.03 });
+  drawFigure(sk, kx, GY, ks, PK, { ...STUDENT, name: "student", flip: -1 });
+  const band = poly([[hd[0] - 65, hd[1] - 2], [hd[0] + 65, hd[1] - 2], [hd[0] + 62, hd[1] + 24], [hd[0] - 62, hd[1] + 24]], 4);
+  sk.fill(band, "#4A5568", { dx: 0, dy: 0, wob: 0.3, seed: 61 }); sk.ink(band, { w: 6, seed: 62, wob: 0.4 });
+  for (const [dy, i] of [[-8, 0], [18, 1]]) sk.ink(curve([[hd[0] + 64, hd[1] + 10], [hd[0] + 84, hd[1] + 6 + dy], [hd[0] + 98, hd[1] + 14 + dy * 1.4]]), { w: 8, color: "#4A5568", seed: 63 + i, wob: 0.3 });
   return sk;
 }
 
 export function cuts() {
   return [
-    { name: "g2u3l1", theme: "light", orig: null, sk: cutL1(), alt: "당구대에서 공이 쿠션에 비스듬히 맞고 같은 기울기로 튀어 나가고, 쿠션에 수직으로 놓인 큐대를 가운데 두고 스틱맨이 두 팔을 양쪽 길로 벌려 견주는 장면", cap: "큐대를 가운데 두면 들어간 길과 나온 길의 기울기가 같아요" },
+    { name: "g2u3l1", theme: "light", orig: null, sk: cutL1(), alt: "당구대에서 공이 쿠션에 비스듬히 맞고 같은 기울기로 튀어 나가고, 쿠션에 수직으로 놓인 큐대를 가운데 두고 스틱맨이 한 팔로는 들어간 길, 다른 팔로는 나온 길을 가리키는 장면", cap: "큐대를 가운데 두면 들어간 길과 나온 길의 기울기가 같아요" },
     { name: "g2u3l2", theme: "light", orig: null, sk: cutL2(), alt: "유리 수조 속 물개의 수면 위 머리와 물속 몸통이 어긋나 보여 스틱맨이 깜짝 놀라고, 다른 스틱맨이 수면을 가리키는 장면", cap: "수면을 지나며 꺾인 빛 때문에 몸통이 떠올라 보여요" },
     { name: "g2u3l3", theme: "light", orig: null, sk: cutL3(), alt: "어두운 영화관에서 영사기의 빛이 스크린에 닿았다가 객석에 앉은 스틱맨의 눈으로 돌아오는 길을 화살표 둘로 나타낸 장면", cap: "빛은 영사기에서 스크린으로, 스크린에서 눈으로 와요" },
     { name: "g2u3l4", theme: "light", orig: null, sk: cutL4(), alt: "벽 거울 앞에 한 팔을 들고 선 스틱맨과 거울 속에 같은 크기로 마주 선 모습, 바닥에는 거울 앞과 거울 속에 같은 길이의 줄자가 놓인 장면", cap: "거울 앞 거리와 거울 속 거리, 줄자로 재면 같아요" },
     { name: "g2u3l5", theme: "light", orig: null, sk: cutL5(), alt: "편의점 천장 구석의 둥근 볼록 거울에 가게 안이 넓고 작게 비치고, 계산대 옆에서 스틱맨이 오목한 확대 거울에 얼굴을 바짝 대어 크게 비춰 보는 장면", cap: "볼록 거울은 넓고 작게, 오목 거울은 바짝 대면 크게" },
-    { name: "g2u3l5b", theme: "light", orig: null, sk: cutL5b(), alt: "풀밭에서 스틱맨이 돋보기로 개미를 크게 들여다보고, 옆에서 다른 스틱맨이 벗어 든 안경알 너머로 나무가 작게 보이는 장면", cap: "가운데가 두꺼우면 크게, 가장자리가 두꺼우면 작게 보여요" },
+    { name: "g2u3l5b", theme: "light", orig: null, sk: cutL5b(), alt: "풀밭에서 스틱맨이 돋보기로 개미를 크게 들여다보고, 옆에서 다른 스틱맨이 오목 렌즈를 나무 앞에 대자 렌즈 너머로 나무가 작게 보이는 장면", cap: "가운데가 두꺼우면 크게, 가장자리가 두꺼우면 작게 보여요" },
     { name: "g2u3l6", theme: "light", orig: null, sk: cutL6(), alt: "무대에서 빨간색, 초록색, 파란색 조명 세 개가 한 자리에 모여 가운데가 하얗게 빛나고, 스틱맨이 손가락 셋을 펴 보이는 장면", cap: "세 가지 빛이 다 모인 가운데는 하얗게 빛나요" },
     { name: "g2u3l7", theme: "light", orig: null, sk: cutL7(), alt: "관중석의 파도타기 응원에서 사람들은 제자리에서 일어났다 앉을 뿐인데 물결 모양이 옆으로 옮겨 가고, 스틱맨이 한 사람의 자리와 물결이 가는 방향을 따로 가리키는 장면", cap: "사람은 제자리에서 오르내리고, 물결만 옆으로 가요" },
     { name: "g2u3l7b", theme: "light", orig: null, sk: cutL7b(), alt: "스틱맨이 긴 줄의 한쪽 끝을 위아래로 흔들어 줄에 높은 곳과 낮은 곳이 번갈아 생기고, 다른 스틱맨이 초시계를 들고 줄에 묶인 리본이 오르내리는 것을 세는 장면", cap: "줄에는 높은 곳과 낮은 곳이, 리본은 제자리에서 오르내려요" },
+    { name: "g2u3l8", theme: "light", orig: null, sk: cutL8(), alt: "음악실에서 눈을 가린 스틱맨 앞에서 다른 스틱맨이 큰북을 세게 치고 작은 트라이앵글을 살짝 치자, 눈을 가린 스틱맨이 한 팔은 크게 벌리고 다른 팔은 위로 들어 두 소리를 구별하는 장면", cap: "큰북은 크고 낮은 소리, 트라이앵글은 작고 높은 소리" },
   ];
 }
