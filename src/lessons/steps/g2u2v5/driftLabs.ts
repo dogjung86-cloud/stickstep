@@ -99,19 +99,27 @@ export const g2u2IceLab: StepRenderer = (host, step, api) => {
   const { f, tm } = lab;
   f.stage.innerHTML = `${svgOpen}
     <rect width="346" height="230" fill="#12325C"/>
-    <path d="M0 74 H346" stroke="#FFD43B" stroke-width="1.4" stroke-dasharray="6 5" opacity=".8"/>${label(8, 68, "적도(더운 곳)", { anchor: "start", size: 12, fill: G.gold })}
+    <path d="M0 74 H346" stroke="#FFD43B" stroke-width="1.4" stroke-dasharray="6 5" opacity=".8"/>${label(338, 90, "적도(더운 곳)", { anchor: "end", size: 12, fill: G.gold })}
     <defs>${LAND.map((l) => `<clipPath id="g2ic-${l.k}"><path d="${blobPath(l.rx, l.ry)}"/></clipPath>`).join("")}</defs>
     ${LAND.map((l) => `<g class="g2u2x-ic-l l-${l.k}"><path d="${blobPath(l.rx, l.ry)}" fill="${l.c}" stroke="rgba(0,0,0,.35)" stroke-width="1.2"/>
       <g clip-path="url(#g2ic-${l.k})"><circle cx="${l.ice[0]}" cy="${l.ice[1]}" r="${l.ice[2]}" fill="#F4FAFF"/><g stroke="#8FB6D6" stroke-width="1.4" stroke-linecap="round">${[-5, 0, 5].map((d) => `<path d="M${l.ice[0] + d - 3} ${l.ice[1] - 4} l6 8"/>`).join("")}</g></g>
-      ${l.k === "an" ? label(0, 12, l.name, { size: 12, fill: "#1B2430" }) : label(0, l.k === "au" ? l.ry + 14 : -l.ry - 5, l.name, { size: 12, cls: "g2u2x-halo" })}</g>`).join("")}
+</g>`).join("")}
+    ${LAND.map((l) => label(0, 0, l.name, { size: 12, cls: `g2u2x-halo g2u2x-ic-nm n-${l.k}` })).join("")}
     <ellipse class="g2u2x-ic-cap" cx="178" cy="150" rx="52" ry="34" stroke="#fff" stroke-width="2" stroke-dasharray="5 5" fill="none"/>
     <rect x="232" y="8" width="14" height="10" rx="3" fill="#F4FAFF"/>${label(252, 18, "빙하의 흔적", { anchor: "start", size: 12.5 })}
   </svg>`;
   const groups = LAND.map((l) => lab.q<SVGGElement>(`.l-${l.k}`));
+  const names = LAND.map((l) => lab.q<SVGTextElement>(`.n-${l.k}`));
   let g = 0, pred = "", locked = false;
   const paint = (): void => {
     const t = g / 100;
-    LAND.forEach((l, i) => groups[i].setAttribute("transform", `translate(${(l.now[0] + (l.old[0] - l.now[0]) * t).toFixed(1)} ${(l.now[1] + (l.old[1] - l.now[1]) * t).toFixed(1)})`));
+    LAND.forEach((l, i) => {
+      const x = l.now[0] + (l.old[0] - l.now[0]) * t, y = l.now[1] + (l.old[1] - l.now[1]) * t;
+      groups[i].setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
+      // 이름표는 맨 위 겹에 따로 둔다(다른 대륙에 가리지 않게). 남극은 아래쪽, 나머지는 대륙 위쪽에 붙인다.
+      names[i].setAttribute("x", (l.k === "au" ? Math.min(300, x + 8) : l.k === "sa" ? Math.max(40, x - 8) : x).toFixed(1));
+      names[i].setAttribute("y", (l.k === "an" ? y + 14 : y - l.ry - 5).toFixed(1));
+    });
     host.dataset.g2G = String(g);
   };
   const range = bvRange({ cls: "g2u2x-ic-r", min: 0, max: 100, value: 0, label: "떨어진 대륙을 하나로 모으기", ticks: ["지금", "먼 옛날"], onInput: (v) => {

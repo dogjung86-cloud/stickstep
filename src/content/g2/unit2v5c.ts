@@ -62,7 +62,7 @@ export const L4: V5LessonPlan = {
           ["rocks/conglomerate.webp", "둥근 자갈이 박힌 암석의 표면", "(나)"],
           ["rocks/mudstone.webp", "알갱이가 보이지 않을 만큼 고운 암석의 표면", "(다)"],
         ]),
-        options: ["(가), 사암", "(나), 역암", "(다), 이암", "(나), 이암"],
+        options: ["(가), 역암", "(나), 역암", "(다), 역암", "(나), 사암"],
         answer: 1,
         shuffle: false,
         explainGood: "맞아요. 둥근 자갈이 박혀 있는 (나)가 가장 굵은 퇴적물인 자갈이 굳은 <b>역암</b>이에요.",

@@ -24,7 +24,7 @@ const MAP = `<rect width="346" height="230" fill="#0B1524"/><image href="${geo("
 const quakeDots = (): string => QUAKES.map(([lon, lat], i) => `<circle class="g2u2x-pl-q" style="transition-delay:${((i * 37) % 95) * 18}ms" cx="${xOf(lon).toFixed(1)}" cy="${yOf(lat).toFixed(1)}" r="2.6" fill="#FFE066" stroke="#7A5B00" stroke-width=".6"/>`).join("");
 const volcDots = (): string => VOLCS.map(([lon, lat], i) => { const x = xOf(lon), y = yOf(lat); return `<path class="g2u2x-pl-v" style="transition-delay:${((i * 29) % 60) * 26}ms" d="M${(x - 3.4).toFixed(1)} ${(y + 2.6).toFixed(1)} L${x.toFixed(1)} ${(y - 3.6).toFixed(1)} L${(x + 3.4).toFixed(1)} ${(y + 2.6).toFixed(1)} Z" fill="#FF5A3C" stroke="#5A0F00" stroke-width=".6"/>`; }).join("");
 const boundLines = (): string => BOUNDS.map((line) => `<path class="g2u2x-pl-b" pathLength="100" d="M${line.map(([lon, lat]) => `${xOf(lon).toFixed(1)} ${yOf(lat).toFixed(1)}`).join(" L")}" stroke="#7CF2E0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`).join("");
-const legend = (items: [string, string][]): string => items.map(([c, t], i) => `<circle cx="${14 + i * 92}" cy="16" r="5" fill="${c}"/>${label(24 + i * 92, 20.5, t, { anchor: "start", size: 12.5 })}`).join("");
+const legend = (items: [string, string][]): string => items.map(([c, t], i) => `${t === "화산 활동" ? `<path d="M${8 + i * 92} 21 l6 -10 l6 10 Z" fill="${c}"/>` : t === "판의 경계" ? `<path d="M${7 + i * 92} 16 h14" stroke="${c}" stroke-width="3" stroke-linecap="round"/>` : `<circle cx="${14 + i * 92}" cy="16" r="5" fill="${c}"/>`}${label(24 + i * 92, 20.5, t, { anchor: "start", size: 12.5 })}`).join("");
 
 /* ══════════ 랩 1: 깃발 꽂고 지진 자료와 견주기 ══════════ */
 const PRESET: [number, number][] = [[60, 96], [173, 150], [300, 80]]; // 검사 도구가 누를 때 쓰는 자리(대륙 한가운데, 바다 한가운데, 태평양 가장자리)
@@ -192,7 +192,8 @@ export const g2u2PlateLab: StepRenderer = (host, step, api) => {
         hintNow();
         return;
       }
-      f.say("화산 활동과 지진을 모두 판의 경계와 견줬어요. 지도를 보고 답해 보세요.");
+      f.stage.classList.add("quakes", "volcs", "bounds"); // 판정의 근거를 무대에 남긴다: 세 자료를 모두 켠다
+      f.say("화산 활동과 지진을 모두 판의 경계와 견줬어요. 세 자료를 함께 켠 지도를 보고 답해 보세요.");
       tm.later(() => lab.ask("화산대와 지진대는 <b>판의 경계</b>와 어떤 관계인가요?", ["대체로 일치한다", "서로 엇갈려 있다", "아무 관계가 없다"], "세모와 점이 대부분 <b>청록색 선</b>을 따라 놓여 있어요.", () => {
         f.stage.classList.add("kj");
         f.say("지도에 <b>우리나라와 일본</b>을 표시했어요. 판의 경계와 얼마나 가까운지 견줘 보세요.");

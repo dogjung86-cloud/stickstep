@@ -55,7 +55,6 @@ export const g2u2ProbeLab: StepRenderer = (host, step, api) => {
     <g class="g2u2x-pb-layers">
       <path d="${wedge(R)}" fill="${COL.crust}"/><path d="${wedge(R - 3)}" fill="${COL.mantle}"/>
       <path d="${wedge(rOf(2900))}" fill="${COL.outer}"/><path d="${wedge(rOf(5100))}" fill="${COL.inner}"/>
-      ${label(CX, CY - R + 50, "맨틀", { fill: "#3A1A08" })}${label(CX, CY - rOf(2900) + 40, "외핵", { fill: "#4A2A00" })}${label(CX + 30, CY - 12, "내핵", { fill: "#FFE08A", size: 12, anchor: "start" })}
     </g>
     ${label(CX, 118, "?", { size: 44, fill: "#55688A", cls: "g2u2x-pb-q" })}
     <path class="g2u2x-pb-drill" pathLength="100" d="M${CX - 30} ${CY - R + 1} v5" stroke="#FF6B6B" stroke-width="3" stroke-linecap="round"/>
@@ -128,7 +127,7 @@ export const g2u2ProbeLab: StepRenderer = (host, step, api) => {
       "지구 속이 <b>여러 층</b>이라는 것을 알려 준 방법은?",
       ["지진파 연구", "시추", "화산 분출물 조사"],
       "지진파는 <b>지구 속을 통과</b>해요. 다른 두 방법은 지표 부근만 알려 줘요.",
-      () => lab.finish("직접 뚫거나 화산 분출물을 조사해서는 지표 부근만 알 수 있어요. 지구 속을 통과하는 <b>지진파</b>를 연구해서 지구 속이 여러 층으로 된 <b>층상 구조</b>라는 것을 알아냈어요."),
+      () => lab.finish("직접 뚫거나 화산 분출물을 조사해서는 지표 부근만 알 수 있어요. 지구 속을 통과하는 <b>지진파</b>를 연구해서 지구 속이 <b>여러 층</b>으로 이루어져 있다는 것을 알아냈어요."),
     );
   }
 

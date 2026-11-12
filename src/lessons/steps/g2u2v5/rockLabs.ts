@@ -184,7 +184,7 @@ const NO: Record<Node, string> = {
 };
 const VERB: Record<Proc, string> = { break: "부서지고 깎여", pack: "다져지고 굳어", heat: "열과 압력을 받아", melt: "녹아", cool: "식어서 굳어" };
 const TASK: { from: Node; to: Node; say: string; path: Proc[] }[] = [
-  { from: "ign", to: "sed", say: "산꼭대기의 <b>화성암</b>이 <b>퇴적암</b>이 되려면 무슨 일이 차례로 일어나야 할까요?", path: ["break", "pack"] },
+  { from: "ign", to: "sed", say: "금빛 자리가 지금의 암석이에요. 아래에서 <b>일어날 일</b>을 골라 화성암을 퇴적암으로 바꿔 보세요.", path: ["break", "pack"] },
   { from: "sed", to: "ign", say: "이번에는 그 <b>퇴적암</b>이 다시 <b>화성암</b>이 되는 길을 찾아보세요.", path: ["melt", "cool"] },
 ];
 
@@ -278,7 +278,7 @@ export const g2u2CycleLab: StepRenderer = (host, step, api) => {
       return;
     }
     f.say("퇴적암이 돌고 돌아 다시 <b>화성암</b>이 됐어요. 길은 하나가 아니에요.");
-    tm.later(() => lab.ask("퇴적암 속에서 <b>화성암 조각</b>이 나왔어요. 이 조각이 거친 일은?", ["부서진 뒤 쌓여 다져졌다", "녹았다가 식어서 굳었다", "열과 압력만 받았다"], "화성암이 <b>부서져</b> 퇴적물이 되고, 그 퇴적물이 <b>다져져</b> 퇴적암이 돼요.", () =>
+    tm.later(() => lab.ask("화성암 조각이 <b>퇴적암 속에 들어가기까지</b> 거친 일은?", ["부서진 뒤 쌓여 다져졌다", "녹았다가 식어서 굳었다", "열과 압력만 받았다"], "화성암이 <b>부서져</b> 퇴적물이 되고, 그 퇴적물이 <b>다져져</b> 퇴적암이 돼요.", () =>
       lab.finish("암석은 만들어진 그대로 있지 않아요. 부서지고, 다져지고, 열과 압력을 받고, 녹고, 식으면서 <b>끊임없이 다른 암석으로</b> 변해요. 어떤 암석이든 환경이 바뀌면 다른 암석이 될 수 있어요."),
     ), 1200);
   }

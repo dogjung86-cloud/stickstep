@@ -203,7 +203,7 @@ export const g2u2IgneousLab: StepRenderer = (host, step, api) => {
     ), 900);
   }
   f.slot.setControls(gGrid(2, ...picks));
-  f.say("화성암 표본이 네 개 있어요. <b>암석을 하나 골라</b> 크게 보고 표의 알맞은 칸에 놓아 보세요.");
+  f.say("마그마가 식어 굳은 암석이 네 개 있어요. <b>하나를 골라</b> 크게 보고 표의 알맞은 칸에 놓아 보세요.");
   api.setCTA("네 암석을 표에 놓아 보세요", { enabled: false });
   hintNow();
   return lab.cleanup;

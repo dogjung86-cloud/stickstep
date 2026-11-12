@@ -126,7 +126,7 @@ export const g2u2SedLab: StepRenderer = (host, step, api) => {
   }
   paint();
   f.slot.setControls(gGrid(2, ...picks), hold);
-  f.say("물속 바닥에 <b>퇴적물</b>을 부어 쌓아요. 무엇을 어떤 차례로 부을지 정해서 세 번 넘게 부어 보세요.");
+  f.say("바닥에 쌓이는 자갈, 모래, 진흙 등이 <b>퇴적물</b>이에요. 차례를 정해 세 번 넘게 부어 보세요.");
   api.setCTA("퇴적물을 쌓고 다져 보세요", { enabled: false });
   hintNow();
   return lab.cleanup;
@@ -152,7 +152,7 @@ export const g2u2PressLab: StepRenderer = (host, step, api) => {
     <g class="g2u2x-pr-dots">${dots.map(() => `<circle r="3.4" fill="#EFE9E0" stroke="#7B7268" stroke-width=".8"/>`).join("")}</g>
     <g class="g2u2x-pr-fl" stroke="#2E2A2A" stroke-width="3" stroke-linecap="round">${flakes.map(() => "<path/>").join("")}</g>
     <g class="g2u2x-pr-arrows"></g>
-    ${(["v", "h", "heat"] as Way[]).map((w, i) => `${label(14, 172 + i * 19, `${WAY[w].name}:`, { anchor: "start", size: 12.5, fill: G.dim, weight: 700 })}${label(150, 172 + i * 19, "아직 안 해 봄", { anchor: "start", size: 12.5, fill: G.dim, weight: 600, cls: `g2u2x-pr-log r-${w}` })}`).join("")}
+    ${(["v", "h", "heat"] as Way[]).map((w, i) => `${label(14, 180 + i * 17, `${WAY[w].name}:`, { anchor: "start", size: 12.5, fill: G.dim, weight: 700 })}${label(150, 180 + i * 17, "아직 안 해 봄", { anchor: "start", size: 12.5, fill: G.dim, weight: 600, cls: `g2u2x-pr-log r-${w}` })}`).join("")}
   </svg>`;
   const block = lab.q<SVGRectElement>(".g2u2x-pr-block");
   const fl = lab.qa<SVGPathElement>(".g2u2x-pr-fl path"), dt = lab.qa<SVGCircleElement>(".g2u2x-pr-dots circle"), arrows = lab.q<SVGGElement>(".g2u2x-pr-arrows");
@@ -190,7 +190,7 @@ export const g2u2PressLab: StepRenderer = (host, step, api) => {
       dt[i].setAttribute("cy", (MY + k.y * sy).toFixed(1));
       dt[i].setAttribute("r", (3.4 * (way === "heat" ? 1 + 0.9 * p : 1)).toFixed(1));
     });
-    const g = 26 - 8 * p;
+    const g = 20 - 6 * p;
     arrows.innerHTML = way === "v" ? arrow(MX, MY - h / 2 - g - 4, 0, g) + arrow(MX, MY + h / 2 + g + 4, 0, -g)
       : way === "h" ? arrow(MX - w / 2 - g - 4, MY, g, 0) + arrow(MX + w / 2 + g + 4, MY, -g, 0)
       : way === "heat" ? [0, 1, 2].map((i) => `<path d="M${BX + BW + 22} ${BY + 22 + i * 32} q8 -8 0 -16 q-8 -8 0 -16" stroke="${G.hot}" stroke-width="3" stroke-linecap="round" fill="none" opacity="${0.4 + 0.6 * p}"/>`).join("") : "";
@@ -295,8 +295,18 @@ export const g2u2MetaLab: StepRenderer = (host, step, api) => {
         if (s.steps.every((x) => seen.has(`${s.k}>${x.name}`))) picks[cur].done();
         if (seen.size >= NEED) {
           range.input.disabled = true;
-          tm.later(() => lab.ask("<b>이암</b>이 받는 열과 압력이 점점 세지면?", ["편암을 거쳐 편마암이 된다", "규암을 거쳐 대리암이 된다", "더 변하지 않는다"], "이암은 변성된 정도에 따라 <b>편암</b>이나 <b>편마암</b>이 돼요.", () =>
-            lab.finish("암석이 열과 압력을 받으면 성질이 변해 <b>새로운 암석</b>이 돼요. 원래 암석과 변성된 정도에 따라 화강암은 편마암, 이암은 편암이나 편마암, 사암은 규암, 석회암은 대리암이 돼요."),
+          // 판정의 근거를 무대에 남긴다: 이암이 거친 변화를 다시 보여 준다
+          tm.later(() => {
+            A.innerHTML = specimen("g2mtA", SRC[1].img, 16, 28, 120, 124, 14);
+            B.innerHTML = specimen("g2mtB", SRC[1].steps[1].img, 206, 28, 120, 124, 14);
+            an.textContent = "이암";
+            bn.textContent = "편암 → 편마암";
+            bf.textContent = "약하면 편암, 세면 편마암";
+            picks.forEach((x) => x.on(false));
+            f.say("다섯 가지 변화를 모두 찾았어요. 무대에 다시 올린 <b>이암</b>의 변화를 보고 답해 보세요.");
+          }, 900);
+          tm.later(() => lab.ask("<b>이암</b>이 받는 열과 압력이 점점 세지면?", ["편암을 거쳐 편마암이 된다", "규암을 거쳐 대리암이 된다", "더 변하지 않는다"], "이암은 열과 압력이 약하면 <b>편암</b>, 세면 <b>편마암</b>이 돼요.", () =>
+            lab.finish("암석이 열과 압력을 받으면 성질이 변해 <b>새로운 암석</b>이 돼요. 원래 암석과 열과 압력의 세기에 따라 화강암은 편마암, 이암은 편암이나 편마암, 사암은 규암, 석회암은 대리암이 돼요."),
           ), 1100);
         }
       }
