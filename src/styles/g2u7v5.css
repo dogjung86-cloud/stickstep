@@ -1,0 +1,113 @@
+/* 중2 Ⅶ 전기와 자기 v5(전면 재제작)의 시트. main.ts가 이미 싣는다.
+   이 단원의 클래스는 .g2u7x- 로 시작한다. 도입 장면은 .opn-g2u7- 로 시작한다.
+   공용 뼈대(.bv-, .opn-)의 치수를 조정할 때는 이 단원의 클래스 아래에서만 한다(예: .g2u7x-step .bv-stage). 전역 규칙은 덮어쓰지 않는다. */
+
+/* ── 랩 공용 ───────────────────────────────────────── */
+.g2u7x-step { --x-ink: #8A6500; }
+.g2u7x-step .bv-pips i.on { background: var(--subj-elec); }
+.g2u7x-step .bv-helper { border-left-color: var(--subj-elec); }
+.g2u7x-step .bv-btn.main { border-color: var(--subj-elec); background: var(--subj-elec-tint); color: var(--x-ink); }
+.g2u7x-step .bv-card.on { border-color: var(--subj-elec); background: var(--subj-elec-tint); box-shadow: 0 0 0 1px var(--subj-elec) inset; }
+.g2u7x-step .bv-card.done::after { background-color: var(--subj-elec-press); }
+.g2u7x-step .bv-card:disabled { opacity: .5; }
+.g2u7x-step .bv-qt b { color: var(--x-ink); }
+.g2u7x-step .bv-range-in::-webkit-slider-runnable-track { background: linear-gradient(90deg, var(--subj-elec) var(--p, 0%), var(--n200) var(--p, 0%)); }
+.g2u7x-step .bv-range-in::-webkit-slider-thumb { border-color: var(--subj-elec); box-shadow: 0 2px 8px rgba(239, 184, 0, .4); }
+.g2u7x-step .bv-range-in::-moz-range-progress { background: var(--subj-elec); }
+.g2u7x-step .bv-range-in::-moz-range-thumb { border-color: var(--subj-elec); }
+.g2u7x-stage canvas.u5x-cv { cursor: pointer; }
+
+.g2u7x-segs { display: grid; gap: 8px; }
+.g2u7x-seg {
+  height: 48px; padding: 0 4px; border-radius: 14px; border: 1.5px solid var(--n300); background: #fff; font-size: 14px; font-weight: 800; color: var(--sub);
+  box-shadow: var(--sh-card); transition: transform .12s, border-color .2s, background .2s, opacity .2s; white-space: nowrap; letter-spacing: -.03em;
+}
+.g2u7x-seg:active { transform: scale(.97); }
+.g2u7x-seg.on { border-color: var(--subj-elec); background: var(--subj-elec-tint); color: var(--x-ink); }
+.g2u7x-seg:disabled { opacity: .45; }
+.g2u7x-seg[hidden] { display: none; }
+.g2u7x-row { display: grid; gap: 8px; }
+.g2u7x-row .bv-btn { font-size: 14.5px; letter-spacing: -.03em; }
+.g2u7x-cap { font-size: 12.5px; font-weight: 700; color: var(--sub); line-height: 18px; }
+.g2u7x-hold { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.g2u7x-step .bv-btn.g2u7x-hold.on { background: var(--subj-elec); color: #3A2A00; transform: scale(.975); }
+
+.g2u7x-log { display: grid; gap: 8px; }
+.g2u7x-log-row {
+  height: 46px; padding: 0 14px; border-radius: 14px; border: 1.5px dashed var(--n300); background: var(--n50);
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0;
+  font-size: 13.5px; color: var(--sub); transition: border-color .2s, background .2s;
+}
+.g2u7x-log-row.on { border-style: solid; background: #fff; color: var(--ink); box-shadow: var(--sh-card); }
+.g2u7x-log-n { font-weight: 700; white-space: nowrap; }
+.g2u7x-log-v { font-weight: 800; color: var(--ter); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; }
+.g2u7x-log-row.on .g2u7x-log-v { color: var(--x-ink); }
+.g2u7x-log.tight { gap: 6px; }
+.g2u7x-log.tight .g2u7x-log-row { height: 38px; }
+
+/* ── 3D 무대(전기 그네) ────────────────────────────── */
+.g2u7x-cv3d { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+.g2u7x-tag {
+  position: absolute; left: 12px; top: 12px; height: 26px; padding: 0 11px; border-radius: 999px; display: flex; align-items: center;
+  background: rgba(11, 21, 36, .72); border: 1px solid rgba(255, 255, 255, .16); color: #E8EEF9; font-size: 12.5px; font-weight: 700; pointer-events: none;
+}
+.g2u7x-tip {
+  position: absolute; right: 12px; bottom: 10px; font-size: 12px; font-weight: 700; color: rgba(232, 238, 249, .6); pointer-events: none; transition: opacity .3s;
+}
+.g2u7x-tip.off { opacity: 0; }
+
+/* ── 가로 화면(물길과 전기 회로) ───────────────────── */
+.g2u7x-wcv { position: absolute; left: 0; top: 0; touch-action: none; }
+.g2u7x-wsay {
+  position: absolute; left: 16px; right: 16px; top: 50px; height: 32px; padding: 6px 14px; border-radius: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14); color: #E8EEF9; font-size: 13.5px; line-height: 19px; font-weight: 600;
+}
+.g2u7x-wsay b { color: #FFE08A; font-weight: 800; }
+.g2u7x-wsay[data-done="1"] { border-color: #7FE3C4; }
+.g2u7x-wbar { position: absolute; left: 16px; right: 16px; bottom: 12px; display: grid; grid-template-columns: 1.7fr 1fr; gap: 10px; }
+.g2u7x-wbar .g2u7x-seg, .g2u7x-wtap {
+  height: 48px; border-radius: 14px; border: 1.5px solid rgba(255, 255, 255, .22); background: rgba(255, 255, 255, .08); color: #E8EEF9;
+  font-size: 14px; font-weight: 800; box-shadow: none; letter-spacing: -.03em;
+}
+.g2u7x-wbar .g2u7x-seg.on { border-color: var(--subj-elec); background: rgba(239, 184, 0, .22); color: #FFE08A; }
+.g2u7x-wtap:active { transform: scale(.97); }
+
+/* ── 도입(opener) 여덟 장면 ────────────────────────
+   그림의 묶음: -s0(조작 전에만) · -s1, -s2(첫째, 둘째 조작 뒤) · -mv(움직이는 것). 무대의 on1, on2 클래스가 바꾼다. */
+.opn-g2u7-btn {
+  grid-column: 1 / -1; height: 52px; border-radius: 16px; border: 1.5px solid var(--subj-elec);
+  background: var(--subj-elec-tint); color: #8A6500; font-size: 15px; font-weight: 800;
+  box-shadow: var(--sh-card); transition: transform .12s, background .15s, color .15s, opacity .2s;
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.opn-g2u7-btn:active, .opn-g2u7-btn.on { transform: scale(.975); background: var(--subj-elec); color: #3A2A00; }
+.opn-g2u7-btn:disabled { opacity: .45; }
+.opn-g2u7-s0, .opn-g2u7-s1, .opn-g2u7-s2 { transition: opacity .35s; }
+.opn-g2u7-s1, .opn-g2u7-s2 { opacity: 0; }
+.opn-stage.on1 .opn-g2u7-s0 { opacity: 0; }
+.opn-stage.on1 .opn-g2u7-s1 { opacity: 1; }
+.opn-stage.on2 .opn-g2u7-s1 { opacity: 0; }
+.opn-stage.on2 .opn-g2u7-s2 { opacity: 1; }
+.opn-g2u7-mv { transition: transform .7s var(--ease-out); }
+/* 1. 빗질: 누를 때마다 빗이 머리를 훑고, 다 빗으면 빗을 뗀다 */
+.opn-g2u7-comb .opn-g2u7-mv { transform: translate(-96px, 34px); }
+.opn-g2u7-comb.nudge .opn-g2u7-mv { animation: opnG2u7Comb .45s ease-in-out; }
+.opn-g2u7-comb.on1 .opn-g2u7-mv { transform: translate(70px, -40px); animation: none; }
+.opn-g2u7-comb.on1 .opn-g2u7-s1 { transition-delay: .35s; }
+@keyframes opnG2u7Comb { 0%, 100% { transform: translate(-96px, 34px); } 50% { transform: translate(-40px, 74px); } }
+/* 2. 풍선: 꾹 누르는 동안 내려오고, 다 내려오면 인형이 일어선다 */
+.opn-g2u7-foil.holding .opn-g2u7-mv { transform: translateY(44px); transition-duration: 1.1s; }
+.opn-g2u7-foil.on1 .opn-g2u7-mv { transform: translateY(44px); }
+/* 3. 시계: 전지를 끼우면 초침이 돈다 */
+.opn-g2u7-hand { transform-box: view-box; transform-origin: 330px 250px; }
+.opn-g2u7-clock.on1 .opn-g2u7-hand { animation: opnG2u7Tick 8s steps(16) infinite; }
+@keyframes opnG2u7Tick { to { transform: rotate(360deg); } }
+/* 5. 멀티탭: 스탠드의 플러그가 뽑힌다 */
+.opn-g2u7-tap.on1 .opn-g2u7-mv { transform: translate(-22px, -64px); }
+/* 6. 계량기: 원판의 표시가 선풍기에서는 천천히, 헤어드라이어에서는 빨리 지나간다 */
+.opn-g2u7-meter.on1 .opn-g2u7-disc { animation: opnG2u7Disc 2.6s linear infinite; }
+.opn-g2u7-meter.on2 .opn-g2u7-disc { animation-duration: .45s; }
+@keyframes opnG2u7Disc { 0% { transform: translateX(-66px); } 100% { transform: translateX(66px); } }
+/* 7. 나침반: 전류가 흐르면 바늘이 돈다 */
+.opn-g2u7-needle { transform-box: view-box; transform-origin: 480px 330px; transition: transform .6s var(--spring-soft); }
+.opn-g2u7-wire.on1 .opn-g2u7-needle { transform: rotate(68deg); }

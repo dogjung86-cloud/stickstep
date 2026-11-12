@@ -1,0 +1,172 @@
+/* 중2 Ⅲ 빛과 파동 v5(전면 재제작)의 시트. main.ts가 이미 싣는다.
+   이 단원의 클래스는 .g2u3x- 로 시작한다. 도입 장면은 .opn-g2u3- 로 시작한다.
+   공용 뼈대(.bv-, .opn-)의 치수를 조정할 때는 이 단원의 클래스 아래에서만 한다(예: .g2u3x-step .bv-stage). 전역 규칙은 덮어쓰지 않는다. */
+
+/* ── 랩 공용 ───────────────────────────────────────── */
+.g2u3x-step .bv-pips i.on { background: var(--subj-light); }
+.g2u3x-step .bv-helper { border-left-color: var(--subj-light); }
+.g2u3x-step .bv-qt b, .g2u3x-step .bv-done-k, .g2u3x-step .bv-done-t b { color: var(--subj-light-press); }
+.g2u3x-step .bv-done.show { background: var(--subj-light-tint); border-color: #EFC6E4; }
+.g2u3x-step .bv-btn.main { border-color: var(--subj-light); background: var(--subj-light-tint); color: var(--subj-light-press); }
+.g2u3x-step .bv-range-in::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--subj-light) 0, var(--subj-light) var(--p, 0%), var(--n200) var(--p, 0%), var(--n200) 100%);
+}
+.g2u3x-step .bv-range-in::-webkit-slider-thumb { border-color: var(--subj-light); box-shadow: 0 2px 8px rgba(200, 56, 166, .35); }
+.g2u3x-step .bv-range-in::-moz-range-progress { background: var(--subj-light); }
+.g2u3x-step .bv-range-in::-moz-range-thumb { border-color: var(--subj-light); }
+.g2u3x-cv { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+.g2u3x-log { display: grid; gap: 6px; }
+.g2u3x-log-c {
+  height: 50px; padding: 5px 4px; border-radius: 13px; border: 1.5px dashed var(--n300); background: var(--n50);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; text-align: center;
+}
+.g2u3x-log-c.cur { border-style: solid; border-color: var(--subj-light); background: var(--subj-light-tint); }
+.g2u3x-log-c.on { border-style: solid; border-color: var(--n300); background: #fff; box-shadow: var(--sh-card); }
+.g2u3x-log-n { font-size: 12px; line-height: 16px; font-weight: 700; color: var(--sub); white-space: nowrap; }
+.g2u3x-log-v { font-size: 14px; line-height: 19px; font-weight: 800; color: var(--subj-light-press); white-space: nowrap; min-height: 19px; }
+.g2u3x-log.slim .g2u3x-log-c { height: 40px; }
+.g2u3x-segs { display: grid; gap: 8px; }
+.g2u3x-seg {
+  position: relative; height: 50px; padding: 0 4px; border-radius: 14px; border: 1.5px solid var(--n300); background: #fff; box-shadow: var(--sh-card);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0;
+  transition: transform .12s, border-color .2s, background .2s, opacity .2s;
+}
+.g2u3x-seg:active { transform: scale(.97); }
+.g2u3x-seg b { font-size: 14px; line-height: 19px; font-weight: 800; color: var(--ink); white-space: nowrap; }
+.g2u3x-seg i { font-style: normal; font-size: 12px; line-height: 15px; font-weight: 600; color: var(--ter); white-space: nowrap; }
+.g2u3x-seg.on { border-color: var(--subj-light); background: var(--subj-light-tint); box-shadow: 0 0 0 1px var(--subj-light) inset; }
+.g2u3x-seg.on b { color: var(--subj-light-press); }
+.g2u3x-seg:disabled { opacity: .4; }
+.g2u3x-seg.done::after {
+  content: ""; position: absolute; right: 6px; top: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+}
+.g2u3x-segs.low .g2u3x-seg { height: 48px; }
+.g2u3x-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.g2u3x-cap { font-size: 12.5px; font-weight: 700; line-height: 18px; color: var(--sub); }
+
+/* ── 도입 공용 ─────────────────────────────────────── */
+.opn-g2u3-hit { position: absolute; background: none; border: 0; padding: 0; border-radius: 16px; touch-action: none; cursor: pointer; -webkit-tap-highlight-color: transparent; z-index: 3; }
+.opn-stage:not(.play) .opn-g2u3-hit { pointer-events: none; }
+.opn-stage.play:not(.touched) .opn-g2u3-hit::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; border: 2.5px dashed var(--subj-light); opacity: .7; animation: opnG2u3Pulse 1.4s ease-in-out infinite;
+}
+@keyframes opnG2u3Pulse { 0%, 100% { opacity: .25; } 50% { opacity: .8; } }
+.opn-controls.opn-g2u3-two { grid-template-columns: 1fr 1fr; }
+.opn-controls.opn-g2u3-one { grid-template-columns: 1fr; }
+.opn-g2u3-btn {
+  min-height: 52px; padding: 6px 8px; border-radius: 14px; border: 1.5px solid var(--n300); background: #fff; box-shadow: var(--sh-card);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform .12s, border-color .2s, background .2s, opacity .2s;
+  touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.opn-g2u3-btn:active { transform: scale(.97); }
+.opn-g2u3-btn b { font-size: 14.5px; line-height: 20px; font-weight: 800; color: var(--ink); }
+.opn-g2u3-btn span { font-size: 12.5px; line-height: 17px; font-weight: 600; color: var(--sub); }
+.opn-g2u3-btn.tried { border-color: var(--subj-light); background: var(--subj-light-tint); }
+.opn-g2u3-btn.on { box-shadow: 0 0 0 2px var(--subj-light) inset; }
+.opn-g2u3-btn:disabled { opacity: .5; }
+@media (prefers-reduced-motion: reduce) { .opn-stage.play .opn-g2u3-hit::after { animation: none; } }
+
+/* 1. 산에 가린 마을 */
+.opn-g2u3-mir { transform-box: view-box; transition: transform .5s var(--ease); }
+.opn-g2u3-beam line { stroke: #FFC83D; stroke-width: 9; stroke-linecap: round; opacity: .85; }
+.opn-g2u3-lit { opacity: 0; transition: opacity .5s; }
+.opn-g2u3-shade { transition: opacity .5s; }
+.opn-stage.lit .opn-g2u3-lit { opacity: 1; }
+.opn-stage.lit .opn-g2u3-shade { opacity: 0; }
+
+/* 2. 유리컵과 빨대 */
+.opn-g2u3-straw .w { fill: #8CC8EC; opacity: .6; }
+.opn-g2u3-straw .s { stroke: #E0503A; stroke-width: 15; stroke-linecap: round; }
+.opn-g2u3-straw .s.lo { stroke-width: 19; }
+
+/* ── 랩: 준비물 버튼(세 칸) ── */
+.g2u3x-segs.tall .g2u3x-seg { height: 62px; }
+.g2u3x-segs.tall .g2u3x-seg i { font-size: 11.5px; }
+
+/* 3. 깜깜한 방 */
+.opn-g2u3-dark .night { fill: #0B1524; opacity: .97; transition: opacity .35s; }
+.opn-g2u3-dark .cone { fill: #FFE27A; opacity: 0; transition: opacity .35s; }
+.opn-g2u3-dark .eyes { transform-box: view-box; transition: transform .4s var(--ease); }
+.opn-stage.wide .opn-g2u3-dark .eyes { transform: scale(1.45); }
+.opn-stage.lit .opn-g2u3-dark .night { opacity: .12; }
+.opn-stage.lit .opn-g2u3-dark .cone { opacity: .5; }
+.opn-stage.lit .opn-g2u3-dark .eyes { opacity: 0; }
+
+/* 4. 거울 앞의 고양이 */
+.opn-g2u3-cat, .opn-g2u3-cat2 { transition: transform .5s var(--ease); }
+.opn-g2u3-cat2 { opacity: .62; }
+
+/* 5. 숟가락에 비친 얼굴 */
+.opn-g2u3-sp { opacity: 0; transition: opacity .3s; }
+.opn-stage.side-in .opn-g2u3-sp.in, .opn-stage.side-out .opn-g2u3-sp.out { opacity: 1; }
+
+/* 6. 점으로 그린 물고기 */
+.opn-g2u3-dots .fish { transform-box: view-box; }
+
+/* 7. 연못의 낚시찌 */
+.opn-g2u3-cone { transition: transform .5s cubic-bezier(.5, 0, 1, .6), opacity .15s; }
+.opn-g2u3-rip .ring { fill: none; stroke: #2F8EE0; stroke-width: 6; opacity: 0; transform-box: view-box; }
+.opn-stage.ripple .opn-g2u3-rip .ring { animation: opnG2u3Ring 2.6s ease-out both; }
+.opn-stage.ripple .opn-g2u3-rip .ring.r1 { animation-delay: .5s; }
+.opn-stage.ripple .opn-g2u3-rip .ring.r2 { animation-delay: 1s; }
+@keyframes opnG2u3Ring { 0% { opacity: .9; transform: scale(.4); } 100% { opacity: 0; transform: scale(15, 5); } }
+.opn-stage.bob .opn-g2u3-flt { animation: opnG2u3Bob .7s ease-in-out 3; }
+@keyframes opnG2u3Bob { 0%, 100% { transform: translateY(0); } 30% { transform: translateY(-20px); } 70% { transform: translateY(16px); } }
+
+/* 8. 칼림바 */
+.opn-g2u3-note { opacity: 0; transition: opacity .25s; }
+.opn-stage.pl-long .opn-g2u3-note.lo, .opn-stage.pl-short .opn-g2u3-note.hi { opacity: 1; }
+.opn-stage.pl-long .opn-g2u3-tine.t-long { animation: opnG2u3Twang .5s ease-out; }
+.opn-stage.pl-short .opn-g2u3-tine.t-short { animation: opnG2u3Twang .3s ease-out; }
+@keyframes opnG2u3Twang { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-7px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(2px); } }
+
+/* ── g2u3l8 소리: 바꿀 것 버튼 ── */
+.g2u3x-seg.g2u3x-fac { height: 56px; }
+.g2u3x-seg.g2u3x-fac i { font-size: 13px; font-weight: 800; color: var(--ink); }
+.g2u3x-seg.g2u3x-fac b { font-size: 12.5px; color: var(--sub); }
+.g2u3x-seg.g2u3x-fac.on i { color: var(--subj-light-press); }
+
+/* ── g2u3l6 켜고 끄는 버튼(손전등, 화소)과 네 칸 표 ── */
+.g2u3x-seg.g2u3x-ch { height: 56px; }
+.g2u3x-seg.g2u3x-ch.r.on { border-color: #E8453C; background: #FFF0EF; box-shadow: 0 0 0 1px #E8453C inset; }
+.g2u3x-seg.g2u3x-ch.g.on { border-color: #1FA54A; background: #ECFAF0; box-shadow: 0 0 0 1px #1FA54A inset; }
+.g2u3x-seg.g2u3x-ch.b.on { border-color: #3D6BF2; background: #EEF3FF; box-shadow: 0 0 0 1px #3D6BF2 inset; }
+.g2u3x-seg.g2u3x-ch.r.on b { color: #C22B25; }
+.g2u3x-seg.g2u3x-ch.g.on b { color: #157F38; }
+.g2u3x-seg.g2u3x-ch.b.on b { color: #2A50C8; }
+.g2u3x-log.four { gap: 5px; }
+.g2u3x-log.four .g2u3x-log-n { font-size: 12px; letter-spacing: -.04em; }
+.g2u3x-log.four .g2u3x-log-v { font-size: 13.5px; }
+
+/* ── g2u3l5 관찰 기록 칸(누르면 지금 보이는 모습이 적힌다) ── */
+.g2u3x-cell {
+  height: 56px; padding: 5px 4px; border-radius: 14px; border: 1.5px dashed var(--subj-light); background: var(--subj-light-tint);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; transition: transform .12s, background .2s, border-color .2s;
+}
+.g2u3x-cell:active { transform: scale(.97); }
+.g2u3x-cell .g2u3x-log-v { color: var(--subj-light-press); font-size: 13.5px; }
+.g2u3x-cell.on { border-style: solid; border-color: var(--n300); background: #fff; box-shadow: var(--sh-card); }
+.g2u3x-cell.on .g2u3x-log-v { color: var(--ink); font-size: 14.5px; }
+
+/* ── g2u3l4 반투명 거울: 물체를 한 칸씩 옮기는 버튼 ── */
+.g2u3x-stepper {
+  height: 56px; display: grid; grid-template-columns: 48px 1fr 48px; align-items: center; border-radius: 14px; border: 1.5px solid var(--n300); background: #fff; box-shadow: var(--sh-card); overflow: hidden;
+}
+.g2u3x-stepper span { text-align: center; font-size: 13.5px; font-weight: 800; color: var(--ink); white-space: nowrap; }
+.g2u3x-stepb { height: 56px; border: 0; background: var(--n50); font-size: 15px; font-weight: 800; color: var(--subj-light-press); transition: background .15s, transform .12s; }
+.g2u3x-stepb:active { background: var(--subj-light-tint); transform: scale(.94); }
+
+/* ── g2u3l3 빛의 길: 누르는 자리와 그린 화살표 ── */
+.g2u3x-node { position: absolute; z-index: 2; padding: 0; border: 0; background: none; border-radius: 50%; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.g2u3x-node:active { background: rgba(255, 255, 255, .08); }
+.g2u3x-arrows { display: flex; flex-wrap: wrap; gap: 6px; height: 74px; align-content: flex-start; overflow: hidden; }
+.g2u3x-chip {
+  height: 34px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--n300); background: #fff; display: inline-flex; align-items: center;
+  font-size: 13.5px; font-weight: 800; color: var(--ink); white-space: nowrap;
+}
+.g2u3x-chip.none { border-style: dashed; background: var(--n50); color: var(--ter); font-weight: 700; }
+.g2u3x-chip.ok { border-color: var(--green); background: #EFFBF4; color: var(--green-press); }
+.g2u3x-chip.bad { border-color: var(--red); background: #FFF2F3; color: var(--red-press); text-decoration: line-through; }
+.g2u3x-chip.dry { border-style: dashed; color: var(--ter); }
+
+.g2u3x-segs[hidden], .g2u3x-row2[hidden] { display: none; }

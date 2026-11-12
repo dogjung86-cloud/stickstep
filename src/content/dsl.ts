@@ -612,7 +612,7 @@ export const bodyTeamLab = (o: B4LabOpt): Step => ({ type: "bodyTeamLab", ...o }
 // ── 중1 Ⅱ 도입 샘플(2026-11-11, steps/opener/*) ──
 // 병행 배선(unit2intro.ts + ss.u2intro 토글) 전용. hook과 다른 틀(제목, 무대, 아래 칸 한 화면)을 쓴다.
 // scene: Ⅰ·Ⅱ단원의 장면 이름, 또는 단원 묶음(steps/opener/uN/index.ts)에 등록한 "u3-…" 꼴의 이름.
-export const opener = (o: { title: string; scene: "longcell" | "baskets" | "factory" | "suncups" | "speaker" | "blanket" | "droplens" | "blockbloom" | "dokdo" | "shelves" | "beeswitch" | `u${number}-${string}`; wait?: string; cta?: string }): Step => ({ type: "opener", ...o });
+export const opener = (o: { title: string; scene: "longcell" | "baskets" | "factory" | "suncups" | "speaker" | "blanket" | "droplens" | "blockbloom" | "dokdo" | "shelves" | "beeswitch" | `u${number}-${string}` | `g2u${number}-${string}`; wait?: string; cta?: string }): Step => ({ type: "opener", ...o });
 
 export const dataGraph = (o: Obj): Step => ({ type: "dataGraph", ...o });
 export const historyCase = (o: Obj): Step => ({ type: "historyCase", ...o });

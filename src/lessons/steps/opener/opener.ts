@@ -30,13 +30,22 @@ import { U4_OPENERS } from "./u4";
 import { U5_OPENERS } from "./u5";
 import { U6_OPENERS } from "./u6";
 import { U7_OPENERS } from "./u7";
+// 중2 과학 도입 장면 묶음(2026-11-12): 단원마다 자기 묶음(./g2uN/index.ts)을 채운다. 이 파일은 고치지 않는다.
+import { G2U1_OPENERS } from "./g2u1";
+import { G2U2_OPENERS } from "./g2u2";
+import { G2U3_OPENERS } from "./g2u3";
+import { G2U4_OPENERS } from "./g2u4";
+import { G2U5_OPENERS } from "./g2u5";
+import { G2U6_OPENERS } from "./g2u6";
+import { G2U7_OPENERS } from "./g2u7";
+import { G2U8_OPENERS } from "./g2u8";
 
 type BuiltinScene = "longcell" | "baskets" | "factory" | "suncups" | "speaker" | "blanket" | "droplens" | "blockbloom" | "dokdo" | "shelves" | "beeswitch";
 
 export interface OpenerStep {
   title: string;
   /** Ⅰ·Ⅱ단원의 장면 이름, 또는 단원 묶음에 등록한 "u3-…" 꼴의 이름 */
-  scene: BuiltinScene | `u${number}-${string}`;
+  scene: BuiltinScene | `u${number}-${string}` | `g2u${number}-${string}`;
   /** 조작을 마치기 전 아래 버튼의 글 */
   wait?: string;
   cta?: string;
@@ -75,7 +84,8 @@ export interface OpenerPack {
   /** 그림 표(node qa/sketch/build-intro.mjs u3 이 만든 introArt.u3.generated.ts). 없으면 빈 표로 장면을 돌린다 */
   art?: () => Promise<{ INTRO_ART: Record<string, string>; INTRO_META: unknown }>;
 }
-const packs: OpenerPack[] = [U3_OPENERS, U4_OPENERS, U5_OPENERS, U6_OPENERS, U7_OPENERS];
+const packs: OpenerPack[] = [U3_OPENERS, U4_OPENERS, U5_OPENERS, U6_OPENERS, U7_OPENERS,
+  G2U1_OPENERS, G2U2_OPENERS, G2U3_OPENERS, G2U4_OPENERS, G2U5_OPENERS, G2U6_OPENERS, G2U7_OPENERS, G2U8_OPENERS];
 
 export const opener: StepRenderer = (host, step, api) => {
   const s = step as unknown as OpenerStep;
