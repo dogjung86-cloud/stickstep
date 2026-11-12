@@ -23,43 +23,44 @@ const nightBand = (sk, y1, sd) => sk.fill(dense([[-12, -12], [W + 12, -12], [W +
 /* ---------- g2u8l1: 달리는 기차의 창밖. 가까운 전봇대는 뒤로 크게 밀려나고 먼 산은 거의 제자리 ---------- */
 function cutL1() {
   const sk = new Sk(W, H, { id: "a" });
-  const GY = 690, X0 = 34, X1 = 716, Y0 = 40, Y1 = 456, HZ = 292;
+  const GY = 690, X0 = 26, X1 = 770, Y0 = 34, Y1 = 478, HZ = 300;
   // 창밖 풍경
-  sk.fill(rrect(X0, Y0, X1 - X0, Y1 - Y0, 30), "#DDF0FB", { ...F0, seed: 11 });
-  sk.fill(poly([[X0 + 3, HZ], [X1 - 3, HZ], [X1 - 3, Y1 - 24], [X1 - 26, Y1 - 3], [X0 + 26, Y1 - 3], [X0 + 3, Y1 - 24]], 6), "#DCEBC6", { ...F0, seed: 12 });
+  sk.fill(rrect(X0, Y0, X1 - X0, Y1 - Y0, 34), "#DDF0FB", { ...F0, seed: 11 });
+  sk.fill(poly([[X0 + 3, HZ], [X1 - 3, HZ], [X1 - 3, Y1 - 26], [X1 - 28, Y1 - 3], [X0 + 28, Y1 - 3], [X0 + 3, Y1 - 26]], 6), "#DCEBC6", { ...F0, seed: 12 });
   // 먼 산(작고 옅게, 거의 제자리)
-  const mt = [...curve([[306, HZ], [352, 244], [392, 214], [430, 250], [470, 228], [548, HZ]]), [306, HZ]];
+  const mt = [...curve([[330, HZ], [378, 250], [420, 220], [458, 256], [498, 234], [578, HZ]]), [330, HZ]];
   sk.fill(mt, "#B5C3D3", { ...F0, seed: 13 }); sk.ink(mt, { w: 5, color: "#7F8FA6", seed: 14, wob: 0.5 });
   sk.ink(dense([[X0 + 4, HZ], [X1 - 4, HZ]]), { w: 4.5, color: "#8FA58A", seed: 15, wob: 0.5 });
-  arrow(sk, [[452, 182], [418, 182]], { w: 7, color: ORANGE, straight: true, seed: 17, head: 13, wob: 0.2 });
+  arrow(sk, [[482, 186], [446, 186]], { w: 7, color: ORANGE, straight: true, seed: 17, head: 13, wob: 0.2 });
   // 가까운 전봇대: 앞선 자리(점선)에서 뒤로 크게 밀려났다
   const pole = (x, gh) => {
     const o = gh ? { w: 6, color: GH, dash: [11, 9], wob: 0.2 } : null;
     const draw = (pts, w, sd) => gh ? sk.ink(pts, { ...o, seed: sd }) : pipe(sk, pts, w, "#A9773F", sd);
-    draw(dense([[x, Y1 - 8], [x, Y0 + 12]]), 17, 21);
-    draw(dense([[x - 66, 104], [x + 66, 104]]), 11, 23);
-    draw(dense([[x - 44, 150], [x + 44, 150]]), 9, 25);
+    draw(dense([[x, Y1 - 8], [x, Y0 + 12]]), 18, 21);
+    draw(dense([[x - 70, 104], [x + 70, 104]]), 12, 23);
+    draw(dense([[x - 46, 152], [x + 46, 152]]), 10, 25);
   };
-  pole(596, true);
-  for (const [y, l, i] of [[210, 96, 0], [258, 132, 1], [330, 110, 2]]) sk.ink(dense([[208, y], [208 + l, y]]), { w: 6, color: GH, seed: 31 + i, wob: 0.3 });
-  pole(166, false);
-  arrow(sk, [[566, 398], [214, 398]], { w: 14, color: ORANGE, straight: true, seed: 35, head: 34, wob: 0.3 });
-  // 기차 벽과 창틀, 손잡이
+  pole(650, true);
+  // 가까운 풍경이 뒤로 흐르는 선
+  for (const [x, y, l, i] of [[206, 206, 110, 0], [206, 262, 150, 1], [70, 440, 250, 2], [380, 452, 300, 3], [206, 336, 120, 4]]) sk.ink(dense([[x, y], [x + l, y]]), { w: 6, color: i === 2 || i === 3 ? "#A9C58F" : GH, seed: 31 + i, wob: 0.3 });
+  pole(164, false);
+  arrow(sk, [[620, 398], [214, 398]], { w: 15, color: ORANGE, straight: true, seed: 37, head: 36, wob: 0.3 });
+  // 기차 안: 창틀, 손잡이, 좌석 등받이
   thin(sk, 0.8, () => {
-    sk.ink(rrect(X0, Y0, X1 - X0, Y1 - Y0, 30), { w: 13, seed: 41, wob: 0.8 });
-    sk.ink(dense([[10, 512], [X1 + 20, 512]]), { w: 6, color: C.gray, seed: 43, wob: 0.6 });
-    for (const [x, i] of [[788, 0], [896, 1]]) {
-      sk.ink(dense([[x, 0], [x, 62]]), { w: 7, seed: 45 + i, wob: 0.2 });
-      const g = [[x - 24, 62], [x + 24, 62], [x + 15, 104], [x - 15, 104], [x - 24, 62]];
-      sk.ink(dense(g), { w: 8, seed: 47 + i, wob: 0.3 });
+    sk.ink(rrect(X0, Y0, X1 - X0, Y1 - Y0, 34), { w: 14, seed: 41, wob: 0.8 });
+    for (const [x, i] of [[820, 0], [912, 1]]) {
+      sk.ink(dense([[x, 0], [x, 58]]), { w: 7, seed: 45 + i, wob: 0.2 });
+      sk.ink(dense([[x - 24, 58], [x + 24, 58], [x + 15, 100], [x - 15, 100], [x - 24, 58]]), { w: 8, seed: 47 + i, wob: 0.3 });
+    }
+    for (const [x, i] of [[60, 0], [300, 1], [540, 2]]) {
+      const back = rrect(x, 532, 190, 170, 26), head = rrect(x + 40, 500, 110, 46, 16);
+      sk.fill(back, "#6FA8DC", { ...F0, seed: 51 + i, tex: 0.9, texAng: 1.57 }); sk.ink(back, { w: 10, seed: 54 + i, wob: 0.6 });
+      sk.fill(head, "#A9CBEE", { ...F0, seed: 57 + i }); sk.ink(head, { w: 8, seed: 60 + i, wob: 0.5 });
     }
   });
-  // 기차가 달리는 쪽
-  for (const [y, i] of [[572, 0], [606, 1]]) sk.ink(dense([[90 + i * 30, y], [170 + i * 30, y]]), { w: 6, color: TEAL, seed: 51 + i, wob: 0.3 });
-  arrow(sk, [[230, 589], [470, 589]], { w: 11, color: TEAL, straight: true, seed: 53, head: 26, wob: 0.3 });
-  ground(sk, GY, 55);
+  ground(sk, GY, 65);
   // 학생: 창밖을 가리킨다
-  const kx = 846, ks = 0.56;
+  const kx = 866, ks = 0.56;
   const PK = pose({ elL: [-110, -322], haL: [-192, -356], elR: [56, -262], haR: [86, -198], tilt: -0.08 });
   drawFigure(sk, kx, GY, ks, PK, { ...STUDENT, name: "student", flip: -1 });
   return sk;
@@ -125,13 +126,13 @@ function cutL2() {
   const WX = 866, K = 0.22, s = 0.44, DN = 250;
   const rows = [
     { gy: 318, d: DN, col: "#FFDD2E", ca: 0.62, sa: 1, sd: 11 },
-    { gy: 676, d: DN * 2, col: "#FFE98A", ca: 0.34, sa: 0.42, sd: 51 },
+    { gy: 676, d: DN * 2, col: "#FFF2A6", ca: 0.5, sa: 0.5, sd: 51 },
   ];
   for (const r of rows) {
     const ty = r.gy - 118, tip = [WX - r.d, ty], ry = K * r.d, rx = ry * 0.44;
     // 벽(비스듬히 본 어두운 벽)
     const wall = poly([[WX - 74, ty - 168], [WX + 78, ty - 196], [WX + 78, r.gy + 22], [WX - 74, r.gy]], 6);
-    thin(sk, 0.8, () => { sk.fill(wall, "#4A5578", { ...F0, seed: r.sd }); sk.ink(wall, { w: 8, seed: r.sd + 1, wob: 0.5 }); });
+    thin(sk, 0.8, () => { sk.fill(wall, "#6C79A3", { ...F0, seed: r.sd }); sk.ink(wall, { w: 8, seed: r.sd + 1, wob: 0.5 }); });
     // 빛: 퍼져 나가 벽에 동그라미를 만든다
     sk.fill(dense([tip, [WX, ty - ry], ...ell(WX, ty, rx, ry, -Math.PI / 2, Math.PI / 2), [WX, ty + ry], tip], 6), r.col, { dx: 0, dy: 0, wob: 0, seed: r.sd + 2, alpha: r.ca });
     const spot = ell(WX, ty, rx, ry);
@@ -181,32 +182,33 @@ function cutL3() {
 /* ---------- g2u8l3b: 한 줄 위에 나란히 세운 조명등, 손전등, 촛불. 원래 자리는 점선(조명등은 멀리, 촛불은 가까이) ---------- */
 // 세 광원은 (x, y) = 바닥 가운데. gh = 원래 자리(점선 테만)
 function flood(sk, x, y, k, sd, gh) {
-  const st = gh ? { w: 6 / k, color: GH, dash: [9 / k, 8 / k], wob: 0.2 } : null, hy = -214;
-  if (!gh) sk.glow(x, y + hy * k, 206 * k, LIT, 0.95, 0.3);
+  const st = gh ? { w: 6 / k, color: GH, dash: [9 / k, 8 / k], wob: 0.2 } : null, hy = -236;
+  if (!gh) sk.glow(x, y + hy * k, 250 * k, LIT, 1, 0.3);
   sk.at(x, y, k, () => {
-    for (const [dx, i] of [[-62, 0], [0, 1], [62, 2]]) sk.ink(dense([[0, -128], [dx, 0]]), st ? { ...st, seed: sd + i } : { w: 9, seed: sd + i, wob: 0.4 });
-    sk.ink(dense([[0, -128], [0, hy + 62]]), st ? { ...st, seed: sd + 3 } : { w: 10, seed: sd + 3, wob: 0.3 });
-    const head = circ(0, hy, 66, { over: 0.06, seed: sd + 4 });
-    if (gh) sk.ink(head, { ...st, seed: sd + 5 });
-    else {
-      sk.fill(head, "#FFE23D", { ...F0, seed: sd + 5 }); sk.ink(head, { w: 9, seed: sd + 6, wob: 0.5 });
-      sk.ink(circ(0, hy, 44, { over: 0, seed: sd + 7 }), { w: 5, color: "#FFF6C2", seed: sd + 8, wob: 0.3 });
-      for (let i = 0; i < 12; i++) { const a = i * Math.PI / 6 + 0.26; sk.ink(dense([[80 * Math.cos(a), hy + 80 * Math.sin(a)], [124 * Math.cos(a), hy + 124 * Math.sin(a)]]), { w: 8, color: "#F2A31B", seed: sd + 10 + i, wob: 0.2 }); }
-    }
+    const line = (pts, w, i) => sk.ink(pts, st ? { ...st, seed: sd + i } : { w, seed: sd + i, wob: 0.4 });
+    line(dense([[-66, 0], [66, 0]]), 11, 0);
+    line(dense([[0, 0], [0, hy + 76]]), 11, 1);
+    const house = rrect(-92, hy - 76, 184, 152, 14), hood = poly([[-104, hy - 76], [104, hy - 76], [84, hy - 108], [-84, hy - 108]], 4), lens = rrect(-72, hy - 56, 144, 112, 8);
+    if (gh) { sk.ink(house, { ...st, seed: sd + 2 }); sk.ink(hood, { ...st, seed: sd + 3 }); return; }
+    shape(sk, house, "#55606E", sd + 2, 9); shape(sk, hood, "#3E4652", sd + 4, 8);
+    shape(sk, lens, "#FFE633", sd + 6, 7);
+    for (const dx of [-24, 24]) sk.ink(dense([[dx, hy - 54], [dx, hy + 54]]), { w: 4, color: "#F2B81B", seed: sd + 8 + dx, wob: 0.2 });
+    sk.ink(dense([[-70, hy], [70, hy]]), { w: 4, color: "#F2B81B", seed: sd + 9, wob: 0.2 });
+    for (const [a, i] of [[-0.35, 0], [0.35, 1], [Math.PI - 0.35, 2], [Math.PI + 0.35, 3]]) sk.ink(dense([[122 * Math.cos(a), hy + 106 * Math.sin(a)], [168 * Math.cos(a), hy + 146 * Math.sin(a)]]), { w: 8, color: "#F2A31B", seed: sd + 12 + i, wob: 0.2 });
   });
 }
 function torchUp(sk, x, y, k, sd) {
-  sk.glow(x, y - 150 * k, 96 * k, LIT, 0.8, 0.25);
+  sk.glow(x, y - 146 * k, 78 * k, LIT, 0.7, 0.2);
   sk.at(x, y, k, () => {
     shape(sk, rrect(-19, -92, 38, 92, 8), C.red, sd, 7);
     shape(sk, poly([[-19, -90], [-38, -122], [38, -122], [19, -90]], 4), STEEL, sd + 2, 7);
     shape(sk, ell(0, -122, 38, 10), "#FFE98A", sd + 4, 5);
-    for (const [a, i] of [[-2.0, 0], [-1.57, 1], [-1.14, 2]]) sk.ink(dense([[52 * Math.cos(a), -128 + 52 * Math.sin(a)], [84 * Math.cos(a), -128 + 84 * Math.sin(a)]]), { w: 6, color: "#F2A31B", seed: sd + 6 + i, wob: 0.2 });
+    for (const [a, i] of [[-1.9, 0], [-1.24, 1]]) sk.ink(dense([[52 * Math.cos(a), -128 + 52 * Math.sin(a)], [74 * Math.cos(a), -128 + 74 * Math.sin(a)]]), { w: 5, color: "#F2A31B", seed: sd + 6 + i, wob: 0.2 });
   });
 }
 function candle(sk, x, y, k, sd, gh) {
   const st = gh ? { w: 6 / k, color: GH, dash: [9 / k, 8 / k], wob: 0.2 } : null;
-  if (!gh) sk.glow(x, y - 96 * k, 46 * k, LIT, 0.7, 0.2);
+  if (!gh) sk.glow(x, y - 98 * k, 34 * k, LIT, 0.6, 0.2);
   sk.at(x, y, k, () => {
     const body = rrect(-17, -70, 34, 70, 6), fl = curve([[0, -122], [11, -96], [8, -82], [0, -78], [-8, -82], [-11, -96]], true, 3);
     if (gh) { sk.ink(body, { ...st, seed: sd }); sk.ink(fl, { ...st, seed: sd + 1 }); return; }
@@ -221,13 +223,13 @@ function cutL3b() {
   // 같은 거리의 줄
   sk.ink(dense([[40, LY + 2], [740, LY - 2]]), { w: 13, color: TEAL, seed: 11, wob: 0.6 });
   // 원래 자리(점선): 조명등은 줄 뒤 멀리, 촛불은 줄 앞 가까이
-  flood(sk, 488, 196, 0.5, 21, true);
+  flood(sk, 520, 206, 0.5, 21, true);
   candle(sk, 716, 694, 1.3, 25, true);
-  arrow(sk, [[430, 120], [360, 150], [318, 204]], { w: 6.5, color: GH, dash: [11, 8], seed: 27, head: 18, wob: 0.2 });
+  arrow(sk, [[452, 112], [408, 120], [372, 150]], { w: 6.5, color: GH, dash: [11, 8], seed: 27, head: 18, wob: 0.2 });
   arrow(sk, [[668, 566], [652, 544], [634, 522]], { w: 6.5, color: GH, dash: [11, 8], seed: 31, head: 18, wob: 0.2 });
   // 줄 위에 나란히 선 세 광원
-  flood(sk, 176, LY, 1, 41);
-  torchUp(sk, 414, LY, 1, 71);
+  flood(sk, 196, LY, 1, 41);
+  torchUp(sk, 448, LY, 1, 71);
   candle(sk, 606, LY, 1, 85);
   // 쌤: 줄을 가리킨다
   const tx = 868, ts = 0.56;
@@ -282,35 +284,37 @@ function cutL4() {
 /* ---------- g2u8l5: 넓고 납작한 호떡. 가운데가 볼록하고, 깨 한 알은 가장자리 쪽에 있다 ---------- */
 function cutL5() {
   const sk = new Sk(W, H, { id: "g" });
-  const GY = 690, cx = 420, cy = 440, RX = 366, RY = 50, TH = 26, DOUGH = "#EDBB6C", CRUST = "#C98A3B";
-  // 상과 접시
+  const GY = 690, cx = 392, cy = 492, HW = 332;
+  // 옆에서 본 호떡: 납작한 원반이고 가운데만 위아래로 볼록하다
+  const edge = dx => 17 * Math.sqrt(Math.max(0, 1 - (dx / HW) ** 2)), bul = dx => Math.exp(-((dx / 112) ** 2));
+  const top = dx => cy - edge(dx) - 64 * bul(dx), bot = dx => cy + edge(dx) + 28 * bul(dx);
+  // 도마와 상
   thin(sk, 0.8, () => {
-    const top = box(10, 546, 836, 574);
-    sk.fill(top, C.wood, { ...F0, seed: 11, tex: 0.8, texAng: 0.02 }); sk.ink(top, { w: 9, seed: 12, wob: 0.6 });
-    for (const [x, i] of [[60, 0], [786, 1]]) sk.ink(dense([[x, 574], [x, GY]]), { w: 11, seed: 13 + i, wob: 0.4 });
-    const plate = ell(cx, cy + 50, RX + 34, RY + 12);
-    sk.fill(plate, C.white, { ...F0, seed: 15 }); sk.ink(plate, { w: 7, seed: 16, wob: 0.6 });
+    const brd = rrect(22, cy + 48, 760, 28, 8);
+    sk.fill(brd, C.wood, { ...F0, seed: 11, tex: 0.8, texAng: 0.02 }); sk.ink(brd, { w: 9, seed: 12, wob: 0.6 });
+    for (const [x, i] of [[70, 0], [734, 1]]) sk.ink(dense([[x, cy + 76], [x, GY]]), { w: 11, seed: 13 + i, wob: 0.4 });
   });
-  // 호떡: 납작한 원반(옆면이 얇다)
-  const side = dense([...ell(cx, cy, RX, RY, Math.PI, 0), ...ell(cx, cy + TH, RX, RY, 0, Math.PI), [cx - RX, cy]], 5);
-  sk.fill(side, CRUST, { ...F0, seed: 21 }); sk.ink(side, { w: 8, seed: 22, wob: 0.6 });
-  const face = ell(cx, cy, RX, RY);
-  sk.fill(face, DOUGH, { dx: 0, dy: 0, wob: 0.4, seed: 23, tex: 0.9, texAng: 0 }); sk.ink(face, { w: 8, seed: 24, wob: 0.6 });
-  for (const [dx, dy, r, i] of [[-250, 8, 20, 0], [-150, -18, 14, 1], [190, 22, 16, 2], [-60, 34, 13, 3], [286, -6, 12, 4]]) sk.fill(ell(cx + dx, cy + dy, r * 1.6, r * 0.5), "#D99A4A", { ...F0, seed: 25 + i });
-  // 볼록한 가운데
-  const BW = 128, BH = 104;
-  const dome = dense([...curve([[cx - BW, cy], [cx - BW * 0.72, cy - BH * 0.66], [cx, cy - BH], [cx + BW * 0.72, cy - BH * 0.66], [cx + BW, cy]]), ...ell(cx, cy, BW, 19, 0, Math.PI), [cx - BW, cy]], 5);
-  sk.fill(dome, "#F6CF86", { ...F0, seed: 31 }); sk.ink(dome, { w: 8, seed: 32, wob: 0.6 });
-  sk.ink(curve([[cx - 70, cy - 52], [cx - 34, cy - 78], [cx + 6, cy - 84]]), { w: 6, color: "#FFF1CF", seed: 33, wob: 0.3 });
-  sk.fill(ell(cx + 36, cy - 30, 30, 12), "#DDA052", { ...F0, seed: 34 });
+  const out = [];
+  for (let dx = -HW; dx <= HW; dx += 4) out.push([cx + dx, top(dx)]);
+  for (let dx = HW; dx >= -HW; dx -= 4) out.push([cx + dx, bot(dx)]);
+  out.push(out[0]);
+  sk.fill(out, "#E2A450", { dx: 0, dy: 0, wob: 0.3, seed: 21, tex: 0.9, texAng: 0 });
+  // 구운 자국(노릇한 얼룩)
+  for (const [dx, f, rx, i] of [[-250, 0.5, 34, 0], [-150, 0.42, 30, 1], [-52, 0.3, 30, 2], [40, 0.5, 34, 3], [120, 0.38, 26, 4], [270, 0.5, 26, 5], [-10, 0.78, 44, 6]]) {
+    const y = top(dx) + (bot(dx) - top(dx)) * f;
+    sk.fill(ell(cx + dx, y, rx, Math.min(11, (bot(dx) - top(dx)) * 0.2)), "#A9652B", { ...F0, seed: 23 + i, alpha: 0.85 });
+  }
+  sk.ink(curve([[cx - 60, top(-60) + 12], [cx - 20, top(-20) + 10], [cx + 24, top(24) + 11]]), { w: 6, color: "#F6CF86", seed: 31, wob: 0.3 });
+  sk.ink(out, { w: 8.5, seed: 22, wob: 0.6 });
+  steam(sk, cx, top(0) - 22, 3, 70, 33, 44);
   // 깨 한 알: 가운데가 아니라 가장자리 쪽
-  const sx = cx + RX * 0.62, sy = cy + 6;
-  sk.ink(circ(sx, sy, 40, { over: 0.05, seed: 41 }), { w: 7, color: TEAL, seed: 42, wob: 0.4 });
-  sk.at(sx, sy, 1, () => { const sd = curve([[-17, 0], [-4, -9], [15, -4], [17, 2], [2, 9], [-13, 6]], true, 3); sk.fill(sd, "#FFFBEF", { ...F0, seed: 43 }); sk.ink(sd, { w: 5, seed: 44, wob: 0.2 }); }, -0.3);
-  // 학생: 깨를 가리킨다
-  const kx = 880, ks = 0.56;
-  drawFigure(sk, kx, GY, ks, pose({ elL: [-112, -318], haL: [-194, -352], elR: [56, -262], haR: [86, -198], tilt: -0.12 }), { ...STUDENT, name: "student", flip: -1 });
-  ground(sk, GY, 51, 800, 946);
+  const sdx = HW * 0.62, sx = cx + sdx, sy = top(sdx) - 9;
+  sk.ink(circ(sx, sy, 38, { over: 0.05, seed: 41 }), { w: 7, color: TEAL, seed: 42, wob: 0.4 });
+  sk.at(sx, sy, 1, () => { const sd = curve([[-20, 0], [-5, -11], [17, -6], [20, 2], [3, 11], [-15, 7]], true, 3); sk.fill(sd, "#FFFBEF", { ...F0, seed: 43 }); sk.ink(sd, { w: 5.5, seed: 44, wob: 0.2 }); }, -0.2);
+  // 학생: 손끝이 깨를 가리킨다
+  const kx = 836, ks = 0.64, hand = [sx + 70, sy - 26];
+  drawFigure(sk, kx, GY, ks, pose({ ...local(kx, GY, ks, { haL: hand, elL: [hand[0] + 76, hand[1] + 26] }), elR: [56, -262], haR: [86, -198], tilt: -0.1 }), { ...STUDENT, name: "student", flip: -1 });
+  ground(sk, GY, 51, 760, 946);
   return sk;
 }
 
@@ -334,11 +338,8 @@ function cutL6() {
   // 가운데 가름선
   sk.ink(dense([[484, 60], [484, 660]]), { w: 4.5, color: C.grayLight, dash: [12, 12], seed: 91, wob: 0 });
   // 오른쪽: 공 모양으로 빽빽이 모인 아이들
-  const cx = 720, cy = 356, RR = 212, DX = 58, DY = 50, hs = 0.275, pts = [];
-  for (let r = -5; r <= 5; r++) for (let c = -5; c <= 5; c++) {
-    const x = cx + c * DX + (r % 2 ? DX / 2 : 0), y = cy + r * DY;
-    if (Math.hypot(x - cx, (y - cy) * 1.02) <= RR - 22) pts.push([x, y]);
-  }
+  const cx = 722, cy = 348, RR = 196, N = 46, hs = 0.275, pts = [];
+  for (let i = 0; i < N; i++) { const r = RR * Math.sqrt((i + 0.5) / N), a = i * 2.39996; pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a) * 0.96]); }
   pts.sort((a, b) => a[1] - b[1] || a[0] - b[0]);
   thin(sk, 1.5, () => pts.forEach(([x, y], i) => {
     sk.ink(dense([[x, y + 20], [x, y + 62]]), { w: 5, seed: 101 + i, wob: 0.2 });
@@ -374,7 +375,8 @@ function cutL6b() {
   // 오른쪽: 가로등 앞을 가린 짙은 안개 덩어리는 검게 보인다(둘레로 빛이 샌다)
   sk.glow(DX, HY, 214, "#FFF3B0", 0.95, 0.3);
   lamp(sk, DX, HY, GY, 61);
-  const blob = [[-70, -6, 66], [-8, -40, 76], [62, -10, 70], [16, 44, 74], [-50, 44, 60], [84, 40, 50]];
+  for (const [a, i] of [[-2.75, 0], [-2.2, 1], [-0.94, 2], [-0.4, 3]]) sk.ink(dense([[DX + 62 * Math.cos(a), HY - 8 + 62 * Math.sin(a)], [DX + 104 * Math.cos(a), HY - 8 + 104 * Math.sin(a)]]), { w: 7, color: "#FFE84D", seed: 65 + i, wob: 0.2 });
+  const blob = [[-128, 44, 46], [-70, 30, 60], [-4, 40, 66], [64, 34, 58], [122, 48, 44], [-30, 76, 50], [40, 80, 46], [168, 62, 28], [-170, 60, 26]];
   blob.forEach(([dx, dy, r], i) => sk.fill(circ(DX + dx, HY + dy, r + 5, { over: 0, seed: 71 + i, lump: 0.1 }), "#0E1222", { dx: 0, dy: 0, wob: 0.5, seed: 77 + i }));
   blob.forEach(([dx, dy, r], i) => sk.fill(circ(DX + dx, HY + dy, r, { over: 0, seed: 71 + i, lump: 0.1 }), "#262C40", { dx: 0, dy: 0, wob: 0.5, seed: 77 + i }));
   // 길 위에 깔린 안개
@@ -475,25 +477,21 @@ function cutL8() {
   const sk = new Sk(W, H, { id: "k" });
   const GY = 690, BY = 408;
   nightBand(sk, BY, 11);
-  for (const [x, y, r, i] of [[60, 60, 4, 0], [210, 150, 3, 1], [130, 300, 3.5, 2], [420, 70, 3, 3], [560, 366, 3, 4], [900, 60, 3.5, 5], [900, 300, 4, 6], [820, 370, 3, 7], [150, 380, 3, 8], [520, 200, 2.5, 9]]) sk.dot(x, y, r, "#DCE3F5");
+  for (const [x, y, r, i] of [[60, 60, 4, 0], [210, 150, 3, 1], [130, 300, 3.5, 2], [380, 60, 3, 3], [560, 366, 3, 4], [720, 250, 3.5, 5], [900, 300, 4, 6], [820, 370, 3, 7], [150, 380, 3, 8], [520, 200, 2.5, 9]]) sk.dot(x, y, r, "#DCE3F5");
   // 지구 둘레를 도는 길(높이가 서로 다르다)
   const orbit = (y0, sag, sd) => sk.ink(curve([[-10, y0 + sag], [240, y0 + sag * 0.25], [480, y0], [720, y0 + sag * 0.25], [970, y0 + sag]]), { w: 3.5, color: "#9FB0E6", dash: [10, 11], seed: sd, wob: 0 });
-  orbit(306, 56, 21); orbit(210, 48, 22); orbit(118, 40, 23);
-  station(sk, 366, 314, 0.92, 31);
-  sat(sk, 652, 204, 0.86, 81);
-  scope(sk, 836, 136, 0.8, 101);
+  orbit(316, 56, 21); orbit(226, 48, 22); orbit(150, 40, 23);
+  station(sk, 318, 322, 0.8, 31);
+  sat(sk, 548, 226, 0.78, 81);
+  scope(sk, 706, 158, 0.72, 101);
   // 탐사선: 가장 멀리, 지구를 떠나 날아간다
-  sk.ink(dense([[470, 96], [690, 58]]), { w: 4.5, color: "#FFD84A", dash: [9, 10], seed: 121, wob: 0 });
-  arrow(sk, [[790, 40], [834, 32]], { w: 5.5, color: "#FFD84A", straight: true, seed: 123, head: 15, wob: 0.1 });
-  probe(sk, 742, 50, 0.72, 131);
-  // 옥상: 난간과 물탱크
+  sk.ink(dense([[770, 190], [832, 96]]), { w: 4.5, color: "#FFD84A", dash: [9, 10], seed: 121, wob: 0 });
+  arrow(sk, [[908, 40], [946, 28]], { w: 5.5, color: "#FFD84A", straight: true, seed: 123, head: 15, wob: 0.1 });
+  probe(sk, 862, 64, 0.95, 131);
+  // 옥상 난간
   thin(sk, 0.8, () => {
     sk.ink(dense([[14, 584], [946, 580]]), { w: 8, color: STEEL, seed: 141, wob: 0.5 });
     for (let x = 40, i = 0; x < 940; x += 112, i++) sk.ink(dense([[x, 584], [x, GY - 4]]), { w: 6, color: STEEL, seed: 143 + i, wob: 0.3 });
-    for (const [x, i] of [[730, 0], [880, 1]]) sk.ink(dense([[x, 600], [x, GY - 3]]), { w: 9, seed: 161 + i, wob: 0.3 });
-    const tank = rrect(700, 490, 210, 122, 16);
-    sk.fill(tank, "#8FC1E8", { ...F0, seed: 165, tex: 0.9, texAng: 1.57 }); sk.ink(tank, { w: 9, seed: 166, wob: 0.6 });
-    sk.ink(dense([[700, 530], [910, 530]]), { w: 4.5, seed: 167, wob: 0.3 });
   });
   ground(sk, GY, 171);
   // 학생: 밤하늘을 올려다보며 가리킨다
@@ -505,16 +503,16 @@ function cutL8() {
 export function cuts() {
   const T = "star";
   return [
-    { name: "g2u8l1", theme: T, orig: null, sk: cutL1(), alt: "달리는 기차 안에서 스틱맨 학생이 창밖을 가리키는데, 가까운 전봇대는 점선으로 남은 앞선 자리에서 뒤로 크게 밀려나 있고 먼 산은 거의 제자리에 있는 장면", cap: "가까운 전봇대는 휙 밀려나는데 먼 산은 거의 그대로예요" },
+    { name: "g2u8l1", theme: T, orig: null, sk: cutL1(), alt: "달리는 기차의 좌석 옆에서 스틱맨 학생이 큰 창밖을 가리키는데, 가까운 전봇대는 점선으로 남은 앞선 자리에서 뒤로 크게 밀려나 있고 먼 산은 거의 제자리에 있는 장면", cap: "가까운 전봇대는 휙 밀려나는데 먼 산은 거의 그대로예요" },
     { name: "g2u8l1b", theme: T, orig: null, sk: cutL1b(), alt: "둥근 트랙의 맞은편 두 자리에 선 같은 스틱맨 학생이 트랙 밖의 가까운 깃대를 가리키고, 두 시선이 깃대에서 엇갈려 멀리 있는 나무들 가운데 서로 다른 나무에 닿는 장면", cap: "트랙 맞은편에서 보면 깃대가 다른 나무 앞에 겹쳐 보여요" },
     { name: "g2u8l2", theme: T, orig: null, sk: cutL2(), alt: "스틱맨 학생이 손전등으로 벽을 비추는데, 가까이 섰을 때는 벽의 빛 동그라미가 작고 밝고, 두 배 거리로 물러섰을 때는 지름이 두 배로 크고 흐린 장면", cap: "두 배 물러서니 빛 동그라미가 커지면서 흐려졌어요" },
-    { name: "g2u8l3", theme: T, orig: null, sk: cutL3(), alt: "달리기 시상대의 가장 높은 단에 가장 밝게 빛나는 별 인형이, 낮은 단으로 갈수록 덜 빛나는 별 인형이 서 있고 스틱맨 학생이 가장 높은 단을 가리키는 장면", cap: "높은 단에 선 별일수록 더 밝게 빛나요. 앞 순위일수록 밝은 별이에요" },
-    { name: "g2u8l3b", theme: T, orig: null, sk: cutL3b(), alt: "스틱맨 쌤이 바닥에 그은 한 줄 위에 큰 조명등, 손전등, 촛불을 나란히 세워 놓았고, 조명등이 멀리 있던 자리와 촛불이 가까이 있던 자리가 점선으로 남아 있는 장면", cap: "멀리 있던 조명등과 가까이 있던 촛불을 한 줄에 세워 견줘요" },
+    { name: "g2u8l3", theme: T, orig: null, sk: cutL3(), alt: "달리기 시상대의 가장 높은 단에 가장 밝게 빛나는 별 인형이, 낮은 단으로 갈수록 덜 빛나는 별 인형이 서 있고 스틱맨 학생이 가장 높은 단을 가리키는 장면", cap: "시상대의 1등처럼, 등급의 숫자가 작을수록 더 밝은 별이에요" },
+    { name: "g2u8l3b", theme: T, orig: null, sk: cutL3b(), alt: "스틱맨 쌤이 바닥에 그은 한 줄 위에 큰 조명등, 손전등, 촛불을 나란히 세워 놓았고, 조명등이 멀리 있던 자리와 촛불이 가까이 있던 자리가 점선으로 남아 있는 장면", cap: "같은 거리에 세우니 조명등이 촛불보다 훨씬 밝은 것이 드러나요" },
     { name: "g2u8l4", theme: T, orig: null, sk: cutL4(), alt: "대장간에서 대장장이가 집게로 주황색으로 달아오른 쇳덩이를 들고 있고, 화덕 속의 쇠는 노랗게 빛나며 모루 위에서 식는 쇠는 검붉은 장면", cap: "화덕 속 쇠는 노랗고, 꺼낸 쇠는 주황, 식는 쇠는 검붉어요" },
-    { name: "g2u8l5", theme: T, orig: null, sk: cutL5(), alt: "가운데가 볼록 솟은 넓고 납작한 호떡의 가장자리 쪽에 깨 한 알이 얹혀 있고 스틱맨 학생이 그 깨를 가리키는 장면", cap: "납작한 호떡은 가운데만 볼록하고, 깨 한 알은 가장자리 쪽에 있어요" },
+    { name: "g2u8l5", theme: T, orig: null, sk: cutL5(), alt: "옆에서 본 넓고 납작한 호떡이 가운데만 위아래로 볼록하고, 가장자리 쪽에 얹힌 깨 한 알을 스틱맨 학생이 손끝으로 가리키는 장면", cap: "가운데가 볼록한 납작한 원반, 태양계는 이 깨처럼 중심에서 벗어나 있어요" },
     { name: "g2u8l6", theme: T, orig: null, sk: cutL6(), alt: "왼쪽에는 아이들 여섯 명이 듬성듬성 흩어져 놀고, 오른쪽에는 많은 아이들이 공 모양으로 빽빽하게 모여 선 장면", cap: "왼쪽은 몇 명이 듬성듬성, 오른쪽은 여럿이 공 모양으로 빽빽이 모였어요" },
     { name: "g2u8l6b", theme: T, orig: null, sk: cutL6b(), alt: "밤의 안개 낀 길에서 한 가로등 둘레의 안개는 빛을 받아 환하게 보이고, 다른 가로등 앞을 가린 짙은 안개 덩어리는 검게 보이는 장면", cap: "가로등 둘레의 안개는 환하고, 불빛을 가린 짙은 안개는 검게 보여요" },
     { name: "g2u8l7", theme: T, orig: null, sk: cutL7(), alt: "오븐 속에서 건포도 빵이 부풀어 올라, 점선으로 그린 부풀기 전의 작은 반죽과 견주면 건포도 사이가 모두 벌어졌고 건포도의 크기는 그대로인 장면", cap: "빵이 부풀자 건포도 사이가 모두 벌어졌어요. 건포도 크기는 그대로예요" },
-    { name: "g2u8l8", theme: T, orig: null, sk: cutL8(), alt: "옥상에서 스틱맨 학생이 밤하늘을 가리키고, 하늘에는 우주 정거장, 인공위성, 우주 망원경이 서로 다른 높이에서 지구 둘레를 돌며 탐사선은 가장 멀리 날아가는 장면", cap: "우주 정거장, 인공위성, 우주 망원경이 높이를 달리해 돌고 탐사선은 멀리 날아가요" },
+    { name: "g2u8l8", theme: T, orig: null, sk: cutL8(), alt: "옥상에서 스틱맨 학생이 밤하늘을 가리키고, 하늘에는 우주 정거장, 인공위성, 우주 망원경이 서로 다른 높이에서 지구 둘레를 돌며 탐사선은 가장 멀리 날아가는 장면", cap: "정거장, 인공위성, 망원경은 지구 둘레를 돌고 탐사선은 멀리 떠나요" },
   ];
 }
