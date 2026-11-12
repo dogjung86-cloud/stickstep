@@ -81,7 +81,7 @@ export const coilLab: StepRenderer = (host, step, api) => {
     dir = dir === 1 ? -1 : 1;
     if (on && n() >= 3) {
       seen.flip = true;
-      f.say("전류의 방향을 바꾸자 바늘이 <b>반대쪽으로</b> 돌아가요.");
+      f.say("코일의 전류 화살표가 뒤집히자 바늘도 <b>반대쪽으로</b> 돌아가요.");
     } else need();
     after();
   });
@@ -176,6 +176,16 @@ export const coilLab: StepRenderer = (host, step, api) => {
     }
     xText(ctx, "코일", C.x, C.y - 34, { px: 12, color: X.dim });
     if (on) {
+      // 코일에 흐르는 전류의 방향(앞쪽에서 본 감긴 방향). 오른손 네 손가락을 이 방향으로 감아 쥐면 엄지가 코일 속 자기장의 방향이다
+      for (const i of [0, 4, 8]) {
+        const x = 124 + i * 12.2 + 7;
+        const y0 = C.y - dir * 13;
+        const y1 = C.y + dir * 13;
+        xArrow(ctx, x, y0, x, y1, "#6E3F16", 5, 11);
+        xArrow(ctx, x, y0, x, y1, X.cur, 2.4, 8);
+      }
+    }
+    if (on) {
       xArrow(ctx, C.x - dir * 34, C.y, C.x + dir * 34, C.y, X.field, 2.6, 9);
       const ph = (t / 600) % 1;
       ctx.fillStyle = "rgba(255,123,107,.5)";
@@ -231,7 +241,7 @@ export const coilLab: StepRenderer = (host, step, api) => {
       ctx.fill();
       ctx.restore();
     });
-    xText(ctx, "빨간 끝이 N극", 290, 212, { px: 12, color: X.dim });
+    xText(ctx, on ? "노란 화살표: 전류" : "빨간 끝이 N극", 284, 212, { px: 12, color: on ? X.cur : X.dim });
     ctx.restore();
   });
 

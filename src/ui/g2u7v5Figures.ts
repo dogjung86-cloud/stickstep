@@ -31,15 +31,23 @@ export function viPairFig(): string {
 
 /** 전구 두 개의 회로 문제 그림. series: 한 줄, parallel: 두 갈래(아래 갈래에 스위치). 전구 이름은 (가), (나). */
 export function twoBulbFig(kind: "series" | "parallel"): string {
+  // 전구와 전지는 회로 기호가 아니라 물건의 모습으로 그린다(이 단원은 회로 기호를 배우지 않는다. 책의 문제 그림도 그렇다).
   const bulb = (x: number, y: number, name: string): string =>
-    `<circle cx="${x}" cy="${y}" r="15" fill="#FFF3C4" stroke="#333D4B" stroke-width="1.5"/><path d="M${x - 9} ${y - 9}L${x + 9} ${y + 9}M${x + 9} ${y - 9}L${x - 9} ${y + 9}" stroke="#333D4B" stroke-width="1.3"/><text x="${x}" y="${y - 22}" text-anchor="middle" font-weight="800" fill="#333D4B">${name}</text>`;
-  const batt = `<path d="M150 168V152M150 184V168" stroke="none"/><path d="M148 156V180" stroke="#333D4B" stroke-width="2.2"/><path d="M158 162V174" stroke="#333D4B" stroke-width="4"/><text x="140" y="150" text-anchor="middle">(+)</text><text x="168" y="150" text-anchor="middle">(−)</text>`;
+    `<path d="M${x - 9} ${y - 31}l-4 -5M${x} ${y - 34}v-6M${x + 9} ${y - 31}l4 -5" stroke="#F0A422" stroke-width="1.6" stroke-linecap="round"/>` +
+    `<circle cx="${x}" cy="${y - 17}" r="13" fill="#FFE98A" stroke="#333D4B" stroke-width="1.5"/>` +
+    `<path d="M${x - 4} ${y - 6}v-7l4 -5l4 5v7" fill="none" stroke="#B5852A" stroke-width="1.2"/>` +
+    `<rect x="${x - 6}" y="${y - 6}" width="12" height="11" rx="2" fill="#B0B8C1" stroke="#333D4B" stroke-width="1.5"/>` +
+    `<text x="${x + 24}" y="${y - 22}" text-anchor="middle" font-weight="800" fill="#333D4B">${name}</text>`;
+  const batt =
+    `<rect x="131" y="158" width="40" height="20" rx="4" fill="#DDE3EA" stroke="#333D4B" stroke-width="1.5"/><rect x="131" y="158" width="15" height="20" rx="4" fill="#F0902B" stroke="#333D4B" stroke-width="1.5"/>` +
+    `<rect x="127" y="164" width="4" height="8" rx="1" fill="#8B95A1" stroke="#333D4B" stroke-width="1.2"/>` +
+    `<text x="124" y="150" text-anchor="middle">(+)</text><text x="176" y="150" text-anchor="middle">(−)</text><text x="151" y="194" text-anchor="middle">전지</text>`;
   const body =
     kind === "series"
-      ? `<path d="M148 168H40V56H95M125 56H195M225 56H280V168H158" fill="none" stroke="#333D4B" stroke-width="1.6"/>${bulb(110, 56, "(가)")}${bulb(210, 56, "(나)")}`
-      : `<path d="M148 168H40V48H145M175 48H280V168H158M40 108H145M175 108H280" fill="none" stroke="#333D4B" stroke-width="1.6"/><circle cx="102" cy="108" r="2.6" fill="#333D4B"/><circle cx="132" cy="108" r="2.6" fill="#333D4B"/><text x="117" y="130" text-anchor="middle">스위치</text>${bulb(160, 48, "(가)")}${bulb(160, 108, "(나)")}`;
+      ? `<path d="M127 168H40V56H104M116 56H204M216 56H280V168H171" fill="none" stroke="#333D4B" stroke-width="1.6"/>${bulb(110, 56, "(가)")}${bulb(210, 56, "(나)")}`
+      : `<path d="M127 168H40V48H154M166 48H280V168H171M40 108H154M166 108H280" fill="none" stroke="#333D4B" stroke-width="1.6"/><path d="M82 108H112" stroke="#333D4B" stroke-width="4" stroke-linecap="round"/><circle cx="82" cy="108" r="3.4" fill="#fff" stroke="#333D4B" stroke-width="1.5"/><circle cx="112" cy="108" r="3.4" fill="#fff" stroke="#333D4B" stroke-width="1.5"/><text x="97" y="128" text-anchor="middle">스위치</text>${bulb(160, 48, "(가)")}${bulb(160, 108, "(나)")}`;
   const alt = kind === "series" ? "전지에 전구 (가)와 (나)를 한 줄로 이은 회로" : "전지에 전구 (가)와 (나)를 두 갈래로 나눠 이은 회로. (나)가 있는 갈래에 스위치가 있다";
-  return `<svg viewBox="0 0 320 196" ${NS} role="img" aria-label="${alt}" font-family="Pretendard, sans-serif" font-size="12" fill="#4E5968">${body}${batt}</svg>`;
+  return `<svg viewBox="0 0 320 200" ${NS} role="img" aria-label="${alt}" font-family="Pretendard, sans-serif" font-size="12" fill="#4E5968">${body}${batt}</svg>`;
 }
 
 const MINI: Record<string, string> = {
