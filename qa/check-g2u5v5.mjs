@@ -161,6 +161,100 @@ const LABS = {
     await wrongOnce(id, "supply");
     await done(id, "supply");
   },
+  async sensor(id) {
+    await at(id, "sensor-start");
+    await must(id, ".g2u5x-run", 2800);
+    await dsIs(id, "g5Last", "open", "뚜껑을 연 채 잰 실패가 보이지 않음");
+    await at(id, "sensor-open");
+    await must(id, K("plant"));
+    await must(id, K("lid"));
+    await must(id, ".g2u5x-run", 2800);
+    await dsIs(id, "g5Kept", "d", "전등을 끈 측정이 남지 않음");
+    await at(id, "sensor-dark");
+    await must(id, K("light"));
+    await must(id, ".g2u5x-run", 2800);
+    await dsIs(id, "g5Kept", "bd", "전등을 켠 측정이 남지 않음");
+    await at(id, "sensor-both");
+    await must(id, ".g2u5x-go");
+    await wrongOnce(id, "sensor");
+    await done(id, "sensor");
+  },
+  async starch(id) {
+    await at(id, "starch-start");
+    await must(id, ".g2u5x-day", 500);
+    await at(id, "starch-bench");
+    await must(id, K("drop"), 600);
+    await dsIs(id, "g5Fail", "green", "탈색하지 않은 실패가 보이지 않음");
+    await at(id, "starch-green");
+    await W(2300);
+    await must(id, K("fire"), 500);
+    await at(id, "starch-fire");
+    await W(1500);
+    await must(id, K("bath"), 400);
+    await at(id, "starch-pale", false);
+    await must(id, K("rinse"));
+    await must(id, K("drop"), 600);
+    await dsIs(id, "g5Fail", "nobox", "어둠상자 없는 실패가 보이지 않음");
+    await at(id, "starch-nobox");
+    await W(2700);
+    await dsIs(id, "g5Stage", "prep", "처음으로 돌아가지 않음");
+    await must(id, K("box"));
+    await at(id, "starch-box", false);
+    await must(id, ".g2u5x-day", 500);
+    await must(id, K("bath"), 400);
+    await must(id, K("rinse"));
+    await must(id, K("drop"), 600);
+    await at(id, "starch-blue");
+    await wrongOnce(id, "starch");
+    await done(id, "starch");
+  },
+  async design(id) {
+    const S = (k) => `.g2u5x-st-b[data-k="${k}"]`;
+    await at(id, "design-start");
+    await must(id, ".g2u5x-run", 1300);
+    await must(id, S("temp+"));
+    await must(id, S("lamp+"));
+    await must(id, ".g2u5x-run", 1300);
+    await dsIs(id, "g5Off", "1", "온도를 함께 바꾼 실패가 표시되지 않음");
+    await at(id, "design-odd");
+    await must(id, S("temp-"));
+    await must(id, ".g2u5x-run", 1300);
+    await must(id, S("lamp+"));
+    await must(id, ".g2u5x-run", 1300);
+    await at(id, "design-three", false);
+    await must(id, S("lamp+"));
+    await must(id, ".g2u5x-run", 1300);
+    await dsIs(id, "g5Valid", "4", "네 측정이 모이지 않음");
+    await at(id, "design-four");
+    await wrongOnce(id, "design");
+    await done(id, "design");
+  },
+  async farm(id) {
+    const S = (k) => `.g2u5x-st-b[data-k="${k}"]`;
+    await at(id, "farm-start");
+    for (let i = 0; i < 5; i++) await must(id, S("c+"), 150);
+    await at(id, "farm-flat");
+    for (let i = 0; i < 3; i++) await must(id, S("c-"), 150);
+    await must(id, ".g2u5x-pick", 400);
+    await dsIs(id, "g5Farm", "co2", "낮은 농도로 정해도 넘어감");
+    await at(id, "farm-low");
+    await W(1600);
+    await must(id, S("c+"), 150);
+    await must(id, ".g2u5x-pick", 400);
+    await dsIs(id, "g5Farm", "temp", "온도 단계로 넘어가지 않음");
+    await at(id, "farm-temp");
+    for (let i = 0; i < 4; i++) await must(id, S("t+"), 200);
+    await at(id, "farm-hot");
+    await W(1800);
+    await must(id, ".g2u5x-pick", 400);
+    await dsIs(id, "g5Farm", "temp", "높은 온도로 정해도 넘어감");
+    await W(1800);
+    for (let i = 0; i < 3; i++) await must(id, S("t-"), 200);
+    await at(id, "farm-best", false);
+    await must(id, ".g2u5x-pick", 400);
+    await wrongOnce(id, "farm");
+    await done(id, "farm");
+  },
   /*MORE*/
 };
 

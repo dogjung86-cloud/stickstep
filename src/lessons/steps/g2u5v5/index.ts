@@ -3,8 +3,22 @@
 // 랩 뼈대는 ../bio6/b6Lab 의 bvFrame 을 그대로 쓴다(뼈대 파일과 bio6.css 는 고치지 않는다). 단원 공용 도구는 ./kit.
 import type { StepRenderer } from "../../types";
 import { g2u5ScopeLab, g2u5SupplyLab } from "./cellLabs";
+import { g2u5DarkLab, g2u5DesignLab, g2u5SensorLab } from "./gasLabs";
+import { g2u5StarchLab, g2u5StoreLab } from "./iodineLabs";
+import { g2u5CycleLab, g2u5FarmLab, g2u5LightLab, g2u5SproutLab } from "./energyLabs";
+import { g2u5RouteLab } from "./routeLab";
 
 export const G2U5V5_STEPS: Record<string, StepRenderer> = {
   g2u5ScopeLab,
   g2u5SupplyLab,
+  g2u5SensorLab,
+  g2u5StarchLab,
+  g2u5DesignLab,
+  g2u5FarmLab,
+  g2u5DarkLab,
+  g2u5SproutLab,
+  g2u5LightLab,
+  g2u5CycleLab,
+  g2u5RouteLab,
+  g2u5StoreLab,
 };

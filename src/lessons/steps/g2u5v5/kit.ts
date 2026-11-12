@@ -182,30 +182,38 @@ export function lamp(x: number, y: number, on: boolean, len = 30): string {
   return `<g>${rays}<rect x="${x - 15}" y="${y - 6}" width="30" height="12" rx="5" fill="${on ? "#FFE58A" : "#4A5870"}" stroke="${on ? "#B8860B" : "#77869E"}" stroke-width="1.4"/><rect x="${x - 3}" y="${y - 13}" width="6" height="8" fill="#77869E"/></g>`;
 }
 
-/** 시간에 따른 농도 그래프. series의 값은 0~1(0.5가 처음 농도). upto는 0~1(그려진 만큼). */
+/** 시간에 따른 농도 그래프. series의 값은 0~1(0.5가 처음 농도). upto는 0~1(그려진 만큼, 선마다 따로 줄 수 있다). */
 export interface Series {
   v: number[];
   color: string;
   dash?: boolean;
-  name?: string;
+  upto?: number;
 }
-export function timeGraph(x: number, y: number, w: number, h: number, title: string, series: Series[], upto = 1): string {
+export function timeGraph(x: number, y: number, w: number, h: number, title: string, series: Series[], titleColor = "#E8EEF9"): string {
   const px = (i: number, n: number): number => x + 8 + ((w - 14) * i) / (n - 1);
   const py = (v: number): number => y + h - 8 - (h - 30) * v;
   let out = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="9" fill="#101D33" stroke="#263B5C"/>`;
-  out += txt(x + 8, y + 15, title, { anchor: "start", size: 12, fill: "#E8EEF9" });
+  out += txt(x + 8, y + 15, title, { anchor: "start", size: 12, fill: titleColor });
+  out += txt(x + w - 6, y + 15, "10분", { anchor: "end", size: 12, fill: P.dim });
   out += `<line x1="${x + 8}" y1="${py(0.5)}" x2="${x + w - 6}" y2="${py(0.5)}" stroke="#3B5273" stroke-dasharray="3 4"/>`;
   out += `<line x1="${x + 8}" y1="${y + 22}" x2="${x + 8}" y2="${y + h - 8}" stroke="#55698A"/><line x1="${x + 8}" y1="${y + h - 8}" x2="${x + w - 6}" y2="${y + h - 8}" stroke="#55698A"/>`;
-  series.forEach((s, si) => {
+  series.forEach((s) => {
     const n = s.v.length;
-    const cut = Math.max(1, Math.round((n - 1) * upto));
+    const cut = Math.max(0, Math.round((n - 1) * (s.upto ?? 1)));
+    if (cut < 1) return;
     const pts = s.v.slice(0, cut + 1).map((v, i) => `${px(i, n).toFixed(1)},${py(v).toFixed(1)}`);
-    out += `<polyline points="${pts.join(" ")}" fill="none" stroke="${s.color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"${s.dash ? ' stroke-dasharray="5 4"' : ""}/>`;
-    if (s.name && upto >= 1) {
-      const last = s.v[n - 1];
-      const ly = Math.min(y + h - 12, Math.max(y + 32, py(last) + (last >= 0.5 ? -6 : 14) + si * 0));
-      out += txt(x + w - 8, ly, s.name, { anchor: "end", size: 12, fill: s.color });
-    }
+    out += `<polyline points="${pts.join(" ")}" fill="none" stroke="${s.color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"${s.dash ? ` stroke-dasharray="5 4"` : ""}/>`;
+  });
+  return out;
+}
+/** 선의 뜻을 알려 주는 범례 한 줄(왼쪽부터 차례로). */
+export function legend(x: number, y: number, items: { name: string; color: string; dash?: boolean }[]): string {
+  let cx = x;
+  let out = "";
+  items.forEach((it) => {
+    out += `<line x1="${cx}" y1="${y - 4}" x2="${cx + 16}" y2="${y - 4}" stroke="${it.color}" stroke-width="3" stroke-linecap="round"${it.dash ? ` stroke-dasharray="5 4"` : ""}/>`;
+    out += txt(cx + 20, y, it.name, { anchor: "start", size: 12, fill: "#E8EEF9" });
+    cx += 20 + it.name.length * 11.2 + 12;
   });
   return out;
 }

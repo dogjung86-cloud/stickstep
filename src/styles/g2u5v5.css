@@ -77,3 +77,26 @@
 }
 .g2u5x-st-b:active { transform: scale(.94); }
 .g2u5x-st-b:disabled { opacity: .45; }
+
+/* ══ 도입 장면 ═══════════════════════════════════════ */
+.opn-g2u5-btn {
+  height: 52px; border-radius: 16px; border: 1.5px solid var(--subj-plant); background: var(--subj-plant-tint);
+  color: var(--subj-plant-press); font-size: 15.5px; font-weight: 800; box-shadow: var(--sh-card);
+  touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; transition: transform .12s, background .2s;
+}
+.opn-g2u5-btn.wide { grid-column: 1 / -1; }
+.opn-g2u5-btn:active { transform: scale(.975); background: var(--subj-plant); color: #fff; }
+.opn-g2u5-btn:disabled { opacity: .45; }
+/* 묶음은 꺼 두었다가 코드가 켠다 */
+.opn-g2u5-io-b, .opn-g2u5-sh-p, .opn-g2u5-fl-w, .opn-g2u5-fl-p, .opn-g2u5-fl-d, .opn-g2u5-jr-p, .opn-g2u5-th-big { opacity: 0; transition: opacity .4s; }
+.opn-g2u5-io-b.on, .opn-g2u5-sh-p.on, .opn-g2u5-fl-w.on, .opn-g2u5-fl-p.on, .opn-g2u5-fl-d.on, .opn-g2u5-jr-p.on { opacity: 1; }
+.opn-g2u5-fl-pot.wet { opacity: 0; transition: opacity .4s; }
+.opn-stage.wet .opn-g2u5-fl-pot.wet { opacity: 1; }
+.opn-stage.opn-g2u5-jar { transition: background .5s; }
+.opn-stage.opn-g2u5-jar.night { background: #DCE2F1; }
+.opn-g2u5-jr-sun, .opn-g2u5-jr-moon { transition: opacity .5s; }
+.opn-g2u5-jr-moon, .opn-stage.night .opn-g2u5-jr-sun { opacity: 0; }
+.opn-stage.night .opn-g2u5-jr-moon { opacity: 1; }
+.opn-g2u5-th-f { transition: opacity .35s; }
+.opn-g2u5-th-f.off, .opn-stage.ripe .opn-g2u5-th-f { opacity: 0; }
+.opn-stage.ripe .opn-g2u5-th-big { opacity: 1; }
