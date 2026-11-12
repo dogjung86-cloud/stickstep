@@ -100,7 +100,7 @@ export const UNIT3_V5: Unit | null = remakeUnit(UNIT3, {
     after: (steps) =>
       rebuild(steps, (old) => ({
         concept: terms({
-          cut: ["u3l1", "돋보기로 김이 나는 찻잔 속을 들여다보니 작은 입자들이 바쁘게 움직이는 장면", "돋보기로 보면 뜨거운 물속은 입자들의 운동회예요"],
+          cut: ["u3l1", "돋보기로 김이 나는 찻잔 속을 들여다보니 작은 입자들이 바쁘게 움직이는 장면", "돋보기로 보니 뜨거운 물속 입자들이 바쁘게 움직여요"],
           title: "온도,<br>입자가 움직이는 정도",
           lead: "막대를 밀 때마다 달라지던 입자의 움직임. 거기에 붙은 이름을 정리해요.",
           terms: [
