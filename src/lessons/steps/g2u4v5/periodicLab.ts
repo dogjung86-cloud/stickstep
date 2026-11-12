@@ -38,7 +38,7 @@ export const g2u4TableLab: StepRenderer = (host, step, api) => {
       const blank = sym in BLANKS;
       const cell = el(blank ? "button" : "div", { class: `g2u4x-tb-cell${blank ? " blank" : ""}`, attrs: blank ? { type: "button", "aria-label": `${no}번 빈칸` } : {} }, el("i", { text: String(no) }), el("b", { text: blank ? "?" : sym }));
       cell.style.left = `${13 + ci * 40}px`;
-      cell.style.top = `${23 + ri * 46}px`;
+      cell.style.top = `${12 + ri * 52}px`;
       if (blank) {
         cell.dataset.no = String(no);
         cell.addEventListener("click", () => {

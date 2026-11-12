@@ -36,7 +36,7 @@ export const g2u4WaterLab: StepRenderer = (host, step, api) => {
         <rect x="146" y="128" width="54" height="74" rx="5" fill="#2E3B52" stroke="#111A2A" stroke-width="1.6"/>
         <rect x="146" y="128" width="54" height="22" rx="5" fill="#D9A441"/>
         <rect x="155" y="118" width="9" height="11" rx="2" fill="#C9D2DC"/><rect x="179" y="116" width="14" height="13" rx="3" fill="#C9D2DC"/>
-        ${txt(159, 110, "(+)", { size: 12.5, fill: "#FFB4A8" })}${txt(187, 110, "(−)", { size: 12.5, fill: "#A8CCFF" })}
+        ${txt(159, 144, "(+)", { size: 12.5, fill: "#5A2A00", weight: 800 })}${txt(187, 144, "(−)", { size: 12.5, fill: "#5A2A00", weight: 800 })}
         ${txt(173, 180, "9 V", { size: 13, fill: "#DCE5F2" })}
       </g>`
           : ""

@@ -285,7 +285,7 @@ export const g2u4PoleLab: StepRenderer = (host, step, api) => {
     f.say("왼쪽이 (+)극이 됐어요. 보라색이 <b>되돌아가요</b>.");
     slide(-1, 3400, () => {
       good();
-      lab.finish("이온은 전하를 띠고 있어요. <b>양이온은 (−)극</b>으로, <b>음이온은 (+)극</b>으로 이동해요.");
+      lab.finish("이온은 전하를 띠고 있어요. <b>양이온은 (−)극</b> 쪽으로 끌려가고 <b>음이온은 (+)극</b> 쪽으로 끌려가요.");
     });
   });
   f.slot.setControls(bDrop);
