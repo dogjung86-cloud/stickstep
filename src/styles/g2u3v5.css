@@ -95,6 +95,20 @@
 .opn-g2u3-cat, .opn-g2u3-cat2 { transition: transform .5s var(--ease); }
 .opn-g2u3-cat2 { opacity: .62; }
 
+/* 5. 숟가락에 비친 얼굴 */
+.opn-g2u3-sp { opacity: 0; transition: opacity .3s; }
+.opn-stage.side-in .opn-g2u3-sp.in, .opn-stage.side-out .opn-g2u3-sp.out { opacity: 1; }
+
+/* ── g2u3l5 관찰 기록 칸(누르면 지금 보이는 모습이 적힌다) ── */
+.g2u3x-cell {
+  height: 56px; padding: 5px 4px; border-radius: 14px; border: 1.5px dashed var(--subj-light); background: var(--subj-light-tint);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; transition: transform .12s, background .2s, border-color .2s;
+}
+.g2u3x-cell:active { transform: scale(.97); }
+.g2u3x-cell .g2u3x-log-v { color: var(--subj-light-press); font-size: 13.5px; }
+.g2u3x-cell.on { border-style: solid; border-color: var(--n300); background: #fff; box-shadow: var(--sh-card); }
+.g2u3x-cell.on .g2u3x-log-v { color: var(--ink); font-size: 14.5px; }
+
 /* ── g2u3l4 반투명 거울: 물체를 한 칸씩 옮기는 버튼 ── */
 .g2u3x-stepper {
   height: 56px; display: grid; grid-template-columns: 48px 1fr 48px; align-items: center; border-radius: 14px; border: 1.5px solid var(--n300); background: #fff; box-shadow: var(--sh-card); overflow: hidden;

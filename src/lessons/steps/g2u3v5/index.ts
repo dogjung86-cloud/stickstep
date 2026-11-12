@@ -6,6 +6,7 @@ import { reflectLab5, roughLab } from "./reflectLabs";
 import { tankLab, coinLab } from "./refractLabs";
 import { pathLab } from "./pathLab";
 import { halfMirrorLab, extendLab } from "./mirrorLabs";
+import { curveLab, useLab } from "./curveLabs";
 
 export const G2U3V5_STEPS: Record<string, StepRenderer> = {
   g2u3ReflectLab: reflectLab5,
@@ -15,4 +16,6 @@ export const G2U3V5_STEPS: Record<string, StepRenderer> = {
   g2u3PathLab: pathLab,
   g2u3HalfMirrorLab: halfMirrorLab,
   g2u3ExtendLab: extendLab,
+  g2u3CurveLab: curveLab,
+  g2u3UseLab: useLab,
 };

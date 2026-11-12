@@ -18,6 +18,34 @@ export const OPENERS = {
   "g2u3-cat": async ({ page, L }) => {
     for (let i = 0; i < 3; i++) await L.tapK(page, "step", 600);
   },
+  "g2u3-spoon": async ({ page, L }) => {
+    await L.tapK(page, "in", 500);
+    await L.tapK(page, "out", 500);
+  },
+};
+
+/** 거울과 렌즈 관찰: 두 종류에서 가까울 때와 멀 때를 적는다. */
+const curve = (tag) => async (c, wrong) => {
+  const { page, L, check } = c;
+  // 멀리 둔 채 '가까울 때' 칸을 누르면 적히지 않는다
+  await L.setRange(page, 18);
+  await L.tapK(page, "near");
+  check(`${tag} 잘못 누르면 적히지 않음`, (await L.ds(page, "lxN")) == null);
+  await c.fit(`${tag} 잘못 적기`);
+  for (const dev of ["cvx", "ccv"]) {
+    await L.tapK(page, dev);
+    await L.setRange(page, 3);
+    await L.W(page, 200);
+    await L.tapK(page, "near");
+    if (dev === "ccv") await c.shot(`${tag}-near`);
+    await L.setRange(page, 18);
+    await L.W(page, 200);
+    await L.tapK(page, "far");
+    await c.shot(`${tag}-${dev}-far`);
+  }
+  await c.fit(`${tag} 네 칸`);
+  await c.judge(tag, wrong);
+  await c.done(tag);
 };
 
 // ── 랩 ──
@@ -165,5 +193,18 @@ export const LABS = {
     await c.shot("extend-three");
     await c.judge("extend", wrong);
     await c.done("extend");
+  },
+  mirror: curve("mirror"),
+  lens: curve("lens"),
+  use: async (c, wrong) => {
+    const { page, L } = c;
+    await L.tapK(page, "plane", 400);
+    await c.fit("use 평면거울");
+    await c.shot("use-plane");
+    await L.tapK(page, "concave", 400);
+    await L.tapK(page, "convex", 500);
+    await c.shot("use-convex");
+    await c.judge("use", wrong);
+    await c.done("use");
   },
 };

@@ -127,12 +127,56 @@ export function catBase() {
   return { sk };
 }
 
+/* ══════════ 5. 숟가락에 비친 얼굴 (g2u3l5) ══════════ */
+export const SPOON = { bowl: [668, 250, 150, 196] };
+function miniFace(sk, x, y, s, inv, sd) {
+  sk.at(x, y, s, () => {
+    // 어깨
+    const sh = poly([[-78, 150], [-40, 64], [40, 64], [78, 150]], 4);
+    sk.fill(sh, C.cloth, { dx: 0, dy: 0, wob: 0.4, seed: sd });
+    sk.ink(sh, { w: 9, wob: 0.5, seed: sd + 1 });
+    // 얼굴(비워 둔다)과 노란 모자
+    const head = circ(0, 0, 70, { seed: sd + 2 });
+    sk.fill(head, C.skin, { dx: 0, dy: 0, wob: 0.5, seed: sd + 3 });
+    const capTop = ell(0, -8, 72, 66, PI_, PI_ * 2);
+    sk.fill([...capTop, [72, -8]], C.yellow, { dx: 0, dy: 0, wob: 0.4, seed: sd + 4 });
+    sk.ink(head, { w: 10, wob: 0.6, seed: sd + 5 });
+    sk.ink(dense([[-74, -8], [96, -8]], 5), { w: 11, color: C.orange, wob: 0.4, seed: sd + 6 });
+  }, inv ? PI_ : 0);
+}
+const PI_ = Math.PI;
+export function spoonBase() {
+  const sk = new Sk(W, H, { id: "g3f" });
+  ground(sk);
+  const [bx, by, rx, ry] = SPOON.bowl;
+  // 손잡이
+  sk.ink(dense([[bx - 96, by + 158], [330, 474]], 6), { w: 26, color: "#B9C2CE", wob: 0.6, seed: 121 });
+  sk.ink(dense([[bx - 96, by + 170], [330, 486]], 6), { w: 6, wob: 0.8, seed: 122 });
+  drawFigure(sk, 170, 512, 0.58, pose({ elR: [120, -250], haR: [250, -130] }), { ...STUDENT });
+  // 숟가락의 둥근 부분
+  const bowl = ell(bx, by, rx, ry);
+  sk.fill(bowl, "#E6EAF0", { dx: 1, dy: 1.2, wob: 1, seed: 123, tex: true });
+  // 오목한 쪽: 위쪽 안에 그늘
+  g(sk, "opn-g2u3-sp in", () => {
+    sk.ink(ell(bx, by + 10, rx - 26, ry - 28, PI_ * 1.08, PI_ * 1.92), { w: 22, color: "#B4BDCA", wob: 0.6, seed: 125 });
+    miniFace(sk, bx, by + 6, 0.62, true, 131);
+  });
+  // 볼록한 쪽: 가운데가 밝게 빛난다
+  g(sk, "opn-g2u3-sp out", () => {
+    sk.glow(bx - 30, by - 50, 120, "#FFFFFF", 0.9, 0.1);
+    miniFace(sk, bx, by - 6, 0.5, false, 141);
+  });
+  sk.ink(bowl, { w: 10, wob: 1, seed: 124 });
+  return { sk };
+}
+
 /** build-intro.mjs가 부른다: 그림을 싣고 장면별 좌표를 돌려준다. */
 export function build(add) {
   return {
     town: { ...TOWN, ...add("townBase", townBase()) },
     dark: { ...DARK, ...add("darkBase", darkBase()) },
     cat: { ...CATM, ...add("catBase", catBase()) },
+    spoon: { ...SPOON, ...add("spoonBase", spoonBase()) },
     straw: { ...STRAW, ...add("strawBase", strawBase()), ...add("strawCup", strawCup()) },
   };
 }

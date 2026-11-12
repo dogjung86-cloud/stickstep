@@ -319,4 +319,29 @@ const catMirror: OpenerScene = (c) => {
   });
 };
 
-export const G2U3_SCENES: Record<string, OpenerScene> = { "g2u3-town": town, "g2u3-straw": straw, "g2u3-dark": dark, "g2u3-cat": catMirror };
+// ── 5. 숟가락에 비친 얼굴 ───────────────────────────────────────
+const spoon: OpenerScene = (c) => {
+  art(c, "spoonBase");
+  const tried = { in: false, out: false };
+  let over = false;
+  const bIn = btn(c, "in", "오목한 쪽 보기", "숟가락의 안쪽");
+  const bOut = btn(c, "out", "볼록한 쪽 보기", "숟가락의 뒷면");
+  c.controls.classList.add("opn-g2u3-two");
+  const verdict = bet(c, "숟가락을 들고 오목한 안쪽에 얼굴을 비춰요. 얼굴은 어떻게 보일까요?", ["거꾸로 보여요", "똑바로 크게 보여요", "평소와 똑같이 보여요"], "예측 완료! 숟가락의 <b>두 쪽</b>에 얼굴을 비춰 보세요.");
+  const show = (k: "in" | "out"): void => {
+    if (!playing(c) || over) return;
+    haptic(HAPTIC.tap);
+    c.stage.classList.toggle("side-in", k === "in");
+    c.stage.classList.toggle("side-out", k === "out");
+    tried[k] = true;
+    (k === "in" ? bIn : bOut).classList.add("tried");
+    if (tried.in && tried.out) {
+      over = true;
+      c.later(() => end(c, `${verdict()} 오목한 쪽에서는 거꾸로, 볼록한 쪽에서는 바로 보였어요. 같은 숟가락인데 왜 다를까요?`), 900);
+    } else c.say(k === "in" ? "얼굴이 <b>거꾸로</b> 보여요. 이번엔 <b>볼록한 쪽</b>에 비춰 보세요." : "얼굴이 작지만 <b>바로</b> 보여요. 이번엔 <b>오목한 쪽</b>에 비춰 보세요.");
+  };
+  bIn.addEventListener("click", () => show("in"));
+  bOut.addEventListener("click", () => show("out"));
+};
+
+export const G2U3_SCENES: Record<string, OpenerScene> = { "g2u3-town": town, "g2u3-straw": straw, "g2u3-dark": dark, "g2u3-cat": catMirror, "g2u3-spoon": spoon };
