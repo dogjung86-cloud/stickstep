@@ -4,9 +4,15 @@
 import type { StepRenderer } from "../../types";
 import { g2u2SystemLab } from "./systemLab";
 import { g2u2LayerLab, g2u2ProbeLab } from "./earthLabs";
+import { g2u2MineralLab, g2u2PowderLab } from "./mineralLabs";
+import { g2u2CoolLab, g2u2IgneousLab } from "./igneousLabs";
 
 export const G2U2V5_STEPS: Record<string, StepRenderer> = {
   g2u2SystemLab,
   g2u2ProbeLab,
   g2u2LayerLab,
+  g2u2PowderLab,
+  g2u2MineralLab,
+  g2u2CoolLab,
+  g2u2IgneousLab,
 };

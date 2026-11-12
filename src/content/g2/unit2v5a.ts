@@ -1,7 +1,8 @@
-// 중2 Ⅱ v5의 레슨 1~3(지구계와 지구 내부, 광물의 특성, 화성암): 도입, 랩, 용어, 정리, 문제.
+// 중2 Ⅱ v5의 레슨 1(지구계와 지구 내부): 도입, 랩, 용어, 정리, 문제.
 import type { V5LessonPlan } from "../v5remake";
 import { mcq, multi, opener, order, ox, recap } from "../dsl";
 import { earthLayersFig, geoMiniArt } from "../../ui/geoFigures";
+import { v5Mini } from "../../ui/g2u2v5Figures";
 import { lab, note, problems, term, words } from "./unit2v5kit";
 
 const systemLab = lab("g2u2SystemLab");
@@ -57,7 +58,7 @@ export const L1: V5LessonPlan = {
         {
           name: "지구 속을 조사하는 방법",
           color: "#12A594",
-          art: geoMiniArt("probeMini"),
+          art: v5Mini("wave"),
           text: "시추와 화산 분출물로는 지표 부근만 알 수 있어요. 지구 속 전체는 <b>지진파</b>를 연구해 알아냈어요.",
           examples: ["시추: 직접 뚫기", "화산 분출물 조사", "지진파 연구"],
           more: "<b class='rm-h'>세 가지 방법</b>시추는 땅에 구멍을 뚫어 직접 조사하는 방법이고, 화산 분출물 조사는 화산이 폭발할 때 나온 물질을 살펴보는 방법이에요. 지진파 연구는 지진이 날 때 생긴 진동이 지구 속을 지나온 모습을 분석하는 방법이에요.<b class='rm-h'>알아낸 깊이를 견주면</b>사람이 가장 깊이 뚫은 구멍도 약 12 km예요. 지구 중심까지가 약 6400 km이니 500분의 1쯤만 내려간 셈이에요. 화산 분출물도 지표 부근에서 온 물질이에요. 지진파만 지구 속을 통과해서 중심까지의 정보를 알려 줬어요.<b class='rm-h'>헷갈리지 마세요</b>시추와 화산 분출물 조사가 쓸모없다는 뜻이 아니에요. 이 두 방법은 지구 속 물질을 <b>직접</b> 볼 수 있다는 장점이 있어요. 다만 지표 부근까지만 알 수 있어서 지구 속 전체의 구조를 알아내는 데에는 한계가 있어요.",

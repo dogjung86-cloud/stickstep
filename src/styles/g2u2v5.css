@@ -103,3 +103,35 @@
 .opn-stage.push .opn-g2u2-ic-crash { opacity: 1; }
 .opn-g2u2-ic-calm { opacity: 0; transition: opacity .3s .5s; }
 .opn-stage.push .opn-g2u2-ic-calm { opacity: 1; }
+
+/* ── 2레슨: 조흔판, 도구로 가려내기 ───────────────── */
+.g2u2x-powder:not(.play) .g2u2x-tap::before { opacity: 0; }
+.g2u2x-powder .g2u2x-tap::before { top: 40%; width: 62px; height: 62px; margin: -31px 0 0 -31px; }
+.g2u2x-pw-ore { transform-box: fill-box; transform-origin: 50% 50%; }
+.g2u2x-pw-ore.rub { animation: g2u2xRub .9s ease-in-out both; }
+@keyframes g2u2xRub {
+  0%, 100% { transform: none; } 18% { transform: translate(-12px, 78px); } 32% { transform: translate(12px, 85px); }
+  46% { transform: translate(-12px, 93px); } 60% { transform: translate(12px, 100px); } 74% { transform: translate(-10px, 108px); } 86% { transform: translate(8px, 114px); }
+}
+}
+.g2u2x-pw-streak { stroke-dasharray: 100; stroke-dashoffset: 100; fill: none; }
+.g2u2x-pw-streak.on { animation: g2u2xRay .7s .12s linear both; }
+.g2u2x-mn-clip { transform-box: fill-box; transform-origin: 50% 0; }
+.g2u2x-mn-clip.stick { animation: g2u2xStick .8s var(--ease-out) both; }
+.g2u2x-mn-clip.fall { animation: g2u2xFall 1s ease-in both; }
+@keyframes g2u2xStick { 0% { transform: translate(34px, -6px) rotate(18deg); opacity: 0; } 30% { opacity: 1; } 100% { transform: translate(-22px, 6px) rotate(-8deg); opacity: 1; } }
+@keyframes g2u2xFall { 0% { transform: translate(34px, -6px) rotate(18deg); opacity: 0; } 25% { transform: translate(0, 0); opacity: 1; } 55% { transform: translate(0, 0); opacity: 1; } 100% { transform: translate(6px, 46px) rotate(30deg); opacity: 0; } }
+.g2u2x-mn-drop { animation: g2u2xDrop .6s ease-in both; }
+@keyframes g2u2xDrop { 0% { transform: translateY(-16px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(26px); opacity: 0; } }
+.g2u2x-mn-bub { opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; animation: g2u2xBub .9s ease-out 3 both; }
+@keyframes g2u2xBub { 0% { opacity: 0; transform: scale(.3); } 40% { opacity: 1; transform: scale(1) translateY(-4px); } 100% { opacity: .15; transform: scale(1.2) translateY(-14px); } }
+.g2u2x-mn-plate { animation: bvIn .3s var(--ease-out) both; }
+.g2u2x-mineral.rubbing .g2u2x-mn-sq { animation: g2u2xScr 1.1s ease-in-out both; }
+@keyframes g2u2xScr { 0%, 100% { transform: none; } 20% { transform: translate(78px, -6px) rotate(8deg); } 40% { transform: translate(96px, 12px) rotate(8deg); } 60% { transform: translate(80px, 0) rotate(8deg); } 80% { transform: translate(98px, 18px) rotate(8deg); } }
+.g2u2x-mn-mark { opacity: 0; transition: opacity .3s; }
+.g2u2x-mineral.marked .g2u2x-mn-mark { opacity: 1; }
+
+/* ── 3레슨: 화성암 분류표 ─────────────────────────── */
+.g2u2x-ig-tap::before { display: none; }
+.g2u2x-ig-tap:not(:disabled):active { background: rgba(255, 255, 255, .08); }
+.g2u2x-ign .g2u2x-sw:has(img) { width: 40px; height: 40px; }
