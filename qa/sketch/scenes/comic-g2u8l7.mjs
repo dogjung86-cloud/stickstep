@@ -18,8 +18,8 @@ const HUBBLE = { hair: "short", hairColor: "#3A2E28", fringe: 24, coat: { color:
 // 리비트: 틀어 올린 머리(장면에서 머리 뒤에 덧그린다) + 발목까지 오는 긴 옷
 const LEAVITT = { hair: "short", hairColor: "#6B4A32", fringe: 24, coat: { color: "#7A7391", buttons: "#F4F1EA", seam: "#544E69", len: 186 }, seed: 331, mini: true, face: "calm" };
 // 생김새의 근거를 찾지 못한 인물: 그 시대 정장의 학자로만 그린다(옷 색으로만 구분)
-const SHAPLEY = { hair: "short", hairColor: "#5B463A", fringe: 24, coat: { color: "#4A5568", seam: "#2D3748" }, seed: 351, mini: true, face: "calm" };
-const CURTIS = { hair: "short", hairColor: "#6B5A4A", fringe: 24, coat: { color: "#7A5A45", seam: "#4E382B" }, seed: 371, mini: true, face: "calm" };
+const SHAPLEY = { hair: "short", hairColor: "#5B463A", fringe: 24, coat: { color: "#6B7280", seam: "#454B57" }, seed: 351, mini: true, face: "calm" };
+const CURTIS = { hair: "short", hairColor: "#6B5A4A", fringe: 24, coat: { color: "#3E5C76", seam: "#2A3F52" }, seed: 371, mini: true, face: "calm" };
 const SLIPHER = { hair: "short", hairColor: "#5B463A", fringe: 24, coat: { color: "#5E6F5A", seam: "#3E4C3C" }, seed: 391, mini: true, face: "calm" };
 const HUMASON = { hair: "short", hairColor: "#4E3B2E", fringe: 24, coat: { color: "#7A7F8A", seam: "#50545C" }, seed: 411, mini: true, face: "calm" };
 
@@ -95,9 +95,9 @@ function p1() {
   arrow(sk, [[540, 256], [500, 296], [448, 318]], { w: 6, color: NEAR, seed: 23, head: 15, wob: 0.4 });
   arrow(sk, [[596, 232], [680, 196]], { w: 6, color: FAR, seed: 25, head: 15, straight: true, wob: 0.3 });
   const ps = pose({ elR: [90, -330], haR: [170, -380], elL: [-50, -260], haL: [-30, -214], tilt: 0.05 });
-  drawFigure(sk, 130, 704, 0.62, ps, { ...SHAPLEY, name: "shapley", face: "determined" });
+  drawFigure(sk, 130, 704, 0.62, ps, { ...SHAPLEY, name: "shapley", face: "calm" });
   const pc = pose({ elL: [-90, -330], haL: [-170, -380], elR: [50, -260], haR: [30, -214], tilt: -0.05 });
-  drawFigure(sk, 850, 704, 0.62, pc, { ...CURTIS, name: "curtis", face: "determined" });
+  drawFigure(sk, 850, 704, 0.62, pc, { ...CURTIS, name: "curtis", face: "curious" });
   return sk;
 }
 
@@ -151,22 +151,22 @@ function p3() {
   sk.ink(dense([[560, -12], [600, 124], [866, 124], [900, -12]], 5), { w: 6, color: "#8A9099", seed: 85, wob: 0.6 });
   ground(sk, 704, 87);
   const cx = 545, cy = 400;
-  thin(sk, 0.6, () => {
+  thin(sk, 0.5, () => {
     // 두 받침 기둥과 그 사이에 비스듬히 걸친 멍에(긴 네모 틀)
     for (const [x, y, i] of [[285, 550, 0], [805, 250, 1]]) { const pr = poly([[x - 38, y], [x + 38, y], [x + 56, 704], [x - 56, 704]], 5); sk.fill(pr, "#E4E1D8", { seed: 89 + i, tex: true, texAng: 1.5 }); sk.ink(pr, { w: 10, seed: 91 + i }); }
     sk.at(cx, cy, 1, () => {
       const fr = rrect(-310, -84, 620, 168, 22);
-      sk.ink(fr, { w: 34, seed: 93, wob: 0.6 }); sk.ink(fr, { w: 20, color: "#9FB0C0", seed: 93, wob: 0.6 });
+      sk.ink(fr, { w: 30, color: "#9AA3AD", seed: 93, wob: 0.6 }); sk.ink(fr, { w: 20, color: "#DDE3E9", seed: 93, wob: 0.6 });
     }, -0.5236);
     // 격자 뼈대의 원통: 아래 끝은 거울이 든 통, 위는 뼈대만
     sk.at(cx, cy, 1, () => {
       const cell = poly([[-270, -62], [-170, -62], [-170, 62], [-270, 62]], 5);
-      sk.fill(cell, "#7F8FA3", { seed: 95, tex: true }); sk.ink(cell, { w: 12, seed: 96 });
+      sk.fill(cell, "#5F6E82", { seed: 95, tex: true }); sk.ink(cell, { w: 17, seed: 96 });
       const xs = [-170, -52, 66, 184, 302];
-      for (let i = 0; i < xs.length - 1; i++) { sk.ink(dense([[xs[i], -58], [xs[i + 1], 58]]), { w: 6, color: "#6B7888", seed: 97 + i, wob: 0.4 }); sk.ink(dense([[xs[i], 58], [xs[i + 1], -58]]), { w: 6, color: "#6B7888", seed: 103 + i, wob: 0.4 }); }
-      for (const sg of [-1, 1]) sk.ink(dense([[-170, sg * 60], [302, sg * 60]]), { w: 12, seed: 109 + sg, wob: 0.6 });
-      xs.forEach((x, i) => sk.ink(dense([[x, -60], [x, 60]]), { w: i === xs.length - 1 ? 14 : 9, seed: 113 + i, wob: 0.4 }));
-      const piv = circ(0, 0, 26, { seed: 119 }); sk.fill(piv, "#C9D2DB", { dx: 0, dy: 0, wob: 0.3, seed: 120 }); sk.ink(piv, { w: 10, seed: 121 });
+      sk.fill(poly([[-170, -60], [302, -60], [302, 60], [-170, 60]], 6), "#F3F5F7", { dx: 0, dy: 0, wob: 0.3, seed: 94 });
+      for (let i = 0; i < xs.length - 1; i++) { sk.ink(dense([[xs[i], -58], [xs[i + 1], 58]]), { w: 7, color: "#4A5568", seed: 97 + i, wob: 0.4 }); sk.ink(dense([[xs[i], 58], [xs[i + 1], -58]]), { w: 7, color: "#4A5568", seed: 103 + i, wob: 0.4 }); }
+      for (const sg of [-1, 1]) sk.ink(dense([[-170, sg * 60], [302, sg * 60]]), { w: 17, seed: 109 + sg, wob: 0.6 });
+      xs.forEach((x, i) => sk.ink(dense([[x, -60], [x, 60]]), { w: i === xs.length - 1 ? 18 : 12, seed: 113 + i, wob: 0.4 }));
     }, -0.924);
   });
   // 허블: 유리 건판을 들고 망원경을 올려다본다(망원경이 사람보다 훨씬 크다)
@@ -205,10 +205,12 @@ function p4() {
   plate(sk, hd[0] + 6, hd[1] - 156, 204, 160, 161, { n: 26 });
   // 밝기가 변하는 별: 빨간 동그라미. 그 옆은 줄을 그어 지운 처음의 표시
   const sx = hd[0] + 160, sy = hd[1] - 112;
-  sk.dot(sx, sy, 5.5, "#2E2E33");
+  sk.fill(circ(sx, sy, 22, { over: 0, seed: 162 }), GLASSP, { dx: 0, dy: 0, wob: 0, seed: 162 });
+  sk.dot(sx, sy, 6, "#2E2E33");
   sk.ink(circ(sx, sy, 19, { seed: 163, over: 0.3 }), { w: 5, color: C.red, seed: 164, wob: 0.6 });
-  sk.ink(curve([[sx - 62, sy - 6], [sx - 54, sy - 16], [sx - 46, sy - 2], [sx - 38, sy - 14]]), { w: 4, color: "#5A5F68", seed: 165, wob: 0.2 });
-  sk.ink(dense([[sx - 68, sy - 2], [sx - 32, sy - 14]]), { w: 4.5, color: C.red, seed: 166, wob: 0.3 });
+  sk.fill(circ(sx - 52, sy - 6, 17, { over: 0, seed: 168 }), GLASSP, { dx: 0, dy: 0, wob: 0, seed: 168 });
+  for (const sg of [-1, 1]) sk.ink(dense([[sx - 60, sy - 6 - sg * 8], [sx - 44, sy - 6 + sg * 8]]), { w: 4, color: "#7A808A", seed: 165 + sg, wob: 0.2 });
+  sk.ink(dense([[sx - 70, sy - 6], [sx - 34, sy - 6]]), { w: 4.5, color: C.red, seed: 166, wob: 0.3 });
   emark(sk, 640, 262, 0.85, { seed: 167 });
   handDot(sk, hd, C.skin, 169, 10);
   return sk;
@@ -229,12 +231,12 @@ function p5() {
   ground(sk, 704, 195);
   // 멀리 보이는 천문대의 둥근 지붕
   thin(sk, 0.8, () => {
-    const wall = poly([[150, 704], [150, 610], [350, 610], [350, 704]], 5); sk.fill(wall, "#EFEDE6", { dx: 0, dy: 0, wob: 0.4, seed: 196 });
-    const dm = [...ell(250, 610, 100, 96, Math.PI, TAU), [150, 610]]; sk.fill(dm, "#DCE6F0", { dx: 0, dy: 0, wob: 0.4, seed: 197 });
-    const sl = poly([[262, 516], [296, 528], [296, 610], [262, 610]], 4); sk.fill(sl, NIGHT, { dx: 0, dy: 0, wob: 0.2, seed: 198 });
-    sk.ink(dm, { w: 9, seed: 199 }); sk.ink(dense([[150, 610], [150, 704]]), { w: 9, seed: 200 }); sk.ink(dense([[350, 610], [350, 704]]), { w: 9, seed: 202 }); sk.ink(sl, { w: 5, seed: 206, wob: 0.3 });
+    const wall = poly([[690, 704], [690, 610], [890, 610], [890, 704]], 5); sk.fill(wall, "#EFEDE6", { dx: 0, dy: 0, wob: 0.4, seed: 196 });
+    const dm = [...ell(790, 610, 100, 96, Math.PI, TAU), [690, 610]]; sk.fill(dm, "#DCE6F0", { dx: 0, dy: 0, wob: 0.4, seed: 197 });
+    const sl = poly([[802, 516], [836, 528], [836, 610], [802, 610]], 4); sk.fill(sl, NIGHT, { dx: 0, dy: 0, wob: 0.2, seed: 198 });
+    sk.ink(dm, { w: 9, seed: 199 }); sk.ink(dense([[690, 610], [690, 704]]), { w: 9, seed: 200 }); sk.ink(dense([[890, 610], [890, 704]]), { w: 9, seed: 202 }); sk.ink(sl, { w: 5, seed: 206, wob: 0.3 });
   });
-  const fx = 640, fs = 0.58, P = pose({ elL: [-90, -330], haL: [-164, -404], elR: [50, -262], haR: [40, -206] });
+  const fx = 500, fs = 0.58, P = pose({ elL: [-90, -330], haL: [-164, -404], elR: [50, -262], haR: [40, -206] });
   drawFigure(sk, fx, 704, fs, P, { ...HUBBLE, name: "hubble", face: "happy" });
   pipe(sk, fx, 704 - fs * 436, fs, 1);
   return sk;
@@ -246,31 +248,36 @@ function p6() {
   ground(sk, 704, 201);
   // 굴절 망원경과 그 끝에 단 네모 상자(빛을 무지개 띠로 펼치는 장치)
   thin(sk, 0.8, () => {
-    const pier = poly([[350, 516], [414, 516], [430, 704], [334, 704]], 5); sk.fill(pier, "#D8D6CF", { seed: 203, tex: true, texAng: 1.5 }); sk.ink(pier, { w: 9, seed: 204 });
-    // 균형추
-    sk.ink(dense([[384, 506], [436, 566]]), { w: 9, seed: 214, wob: 0.3 });
-    const wt = circ(444, 576, 19, { seed: 215 }); sk.fill(wt, "#8A9099", { dx: 0, dy: 0, wob: 0.3, seed: 216 }); sk.ink(wt, { w: 8, seed: 217 });
-    const a = [270, 600], b = [492, 414];
+    const pier = poly([[352, 536], [414, 536], [430, 704], [336, 704]], 5); sk.fill(pier, "#D8D6CF", { seed: 203, tex: true, texAng: 1.5 }); sk.ink(pier, { w: 9, seed: 204 });
+    sk.ink(dense([[384, 528], [432, 590]]), { w: 9, seed: 214, wob: 0.3 });
+    const wt = circ(440, 600, 19, { seed: 215 }); sk.fill(wt, "#8A9099", { dx: 0, dy: 0, wob: 0.3, seed: 216 }); sk.ink(wt, { w: 8, seed: 217 });
+    const a = [262, 580], b = [500, 470];
     sk.ink(dense([a, b]), { w: 58, seed: 205, wob: 0.5, cap: "butt" }); sk.ink(dense([a, b]), { w: 42, color: "#C9A24A", seed: 205, wob: 0.5, cap: "butt" });
-    sk.ink(dense([[474, 429], [500, 407]]), { w: 72, seed: 206, wob: 0.3, cap: "butt" }); sk.ink(dense([[476, 427], [498, 409]]), { w: 56, color: "#8A6A2E", seed: 206, wob: 0.3, cap: "butt" });
-    const hub = circ(382, 506, 24, { seed: 208 }); sk.fill(hub, "#8A9099", { dx: 0, dy: 0, wob: 0.3, seed: 209 }); sk.ink(hub, { w: 8, seed: 210 });
+    sk.ink(dense([[480, 479], [510, 465]]), { w: 72, seed: 206, wob: 0.3, cap: "butt" }); sk.ink(dense([[482, 478], [508, 466]]), { w: 56, color: "#8A6A2E", seed: 206, wob: 0.3, cap: "butt" });
+    const hub = circ(382, 526, 24, { seed: 208 }); sk.fill(hub, "#8A9099", { dx: 0, dy: 0, wob: 0.3, seed: 209 }); sk.ink(hub, { w: 8, seed: 210 });
     // 접안부에 단 네모 상자
-    sk.at(236, 628, 1, () => { const bx = rrect(-52, -42, 104, 84, 10); sk.fill(bx, "#6B7280", { seed: 211, tex: true }); sk.ink(bx, { w: 10, seed: 212 }); const win = rrect(-30, -12, 60, 24, 6); sk.fill(win, "#C9D2DB", { dx: 0, dy: 0, wob: 0.3, seed: 213 }); sk.ink(win, { w: 5, seed: 218, wob: 0.3 }); }, -0.7);
+    sk.at(226, 597, 1, () => { const bx = rrect(-52, -42, 104, 84, 10); sk.fill(bx, "#6B7280", { seed: 211, tex: true }); sk.ink(bx, { w: 10, seed: 212 }); const win = rrect(-30, -12, 60, 24, 6); sk.fill(win, "#C9D2DB", { dx: 0, dy: 0, wob: 0.3, seed: 213 }); sk.ink(win, { w: 5, seed: 218, wob: 0.3 }); }, -0.43);
   });
-  // 위 띠: 견줄 기준. 아래 띠: 성운의 빛. 검은 줄이 붉은색(오른쪽) 쪽으로 밀려 있다
-  const bx = 505, bw = 410, shift = 40, fr = [0.2, 0.44, 0.62];
+  // 위 띠: 실험실의 멈춰 있는 빛(작은 등불). 아래 띠: 성운의 빛. 검은 줄이 붉은색(오른쪽) 쪽으로 밀려 있다
+  const bx = 505, bw = 410, shift = 40, fr = [0.2, 0.44, 0.62], y0 = 96, y1 = 232, bh = 62;
   const l0 = fr.map(f => bx + bw * f), l1 = l0.map(x => x + shift);
-  band(sk, bx, 112, bw, 66, l0, 221);
-  band(sk, bx, 262, bw, 66, l1, 281);
+  band(sk, bx, y0, bw, bh, l0, 221);
+  band(sk, bx, y1, bw, bh, l1, 281);
   l0.forEach((x, i) => {
-    sk.ink(dense([[x, 184], [x, 256]]), { w: 4, color: C.gray, dash: [7, 7], seed: 341 + i, wob: 0 });
-    arrow(sk, [[x + 4, 222], [x + shift, 222]], { w: 5, color: FAR, seed: 345 + i, straight: true, head: 11, wob: 0.2 });
+    sk.ink(dense([[x, y0 + bh + 6], [x, y1 - 6]]), { w: 4, color: C.gray, dash: [7, 7], seed: 341 + i, wob: 0 });
+    arrow(sk, [[x + 4, (y0 + bh + y1) / 2], [x + shift, (y0 + bh + y1) / 2]], { w: 5, color: FAR, seed: 345 + i, straight: true, head: 11, wob: 0.2 });
   });
-  spiral(sk, 462, 296, 24, { q: 0.55, rot: -0.4, sd: 351, haze: 0.5, color: "#8FA6C4" });
+  // 작은 등불(실험실의 빛)
+  sk.at(456, y0 + bh - 2, 1, () => {
+    const base = poly([[-20, 0], [20, 0], [14, -22], [-14, -22]], 3); sk.fill(base, "#C9A24A", { dx: 0, dy: 0, wob: 0.3, seed: 331 }); sk.ink(base, { w: 6, seed: 332 });
+    const fl = curve([[0, -24], [-13, -40], [0, -72], [13, -40]], true, 3); sk.fill(fl, C.orange, { dx: 0, dy: 0, wob: 0.3, seed: 333 }); sk.ink(fl, { w: 4.5, color: C.red, seed: 334, wob: 0.3 });
+    const core = curve([[0, -28], [-6, -38], [0, -52], [6, -38]], true, 3); sk.fill(core, C.yellow, { dx: 0, dy: 0, wob: 0.2, seed: 335 });
+  });
+  spiral(sk, 456, y1 + bh / 2, 24, { q: 0.55, rot: -0.4, sd: 351, haze: 0.5, color: "#8FA6C4" });
   // 멀어지는 나선 성운
-  spiral(sk, 640, 500, 48, { q: 0.55, rot: -0.4, sd: 355, haze: 0.45, color: "#8FA6C4" });
-  arrow(sk, [[716, 500], [880, 500]], { w: 9, color: FAR, seed: 359, straight: true, head: 22, wob: 0.3 });
-  for (const [y, i] of [[474, 0], [526, 1]]) sk.ink(dense([[560, y], [520, y]]), { w: 5, color: C.gray, seed: 361 + i, wob: 0.3 });
+  spiral(sk, 668, 392, 46, { q: 0.55, rot: -0.4, sd: 355, haze: 0.45, color: "#8FA6C4" });
+  arrow(sk, [[738, 364], [838, 318]], { w: 9, color: FAR, seed: 359, straight: true, head: 22, wob: 0.3 });
+  for (const [d, i] of [[-22, 0], [22, 1]]) sk.ink(dense([[604 + d * 0.42, 422 + d * 0.91], [572 + d * 0.42, 437 + d * 0.91]]), { w: 5, color: C.gray, seed: 361 + i, wob: 0.3 });
   const P = pose({ elR: [90, -322], haR: [166, -372], elL: [-50, -262], haL: [-40, -206], tilt: 0.05 });
   drawFigure(sk, 104, 704, 0.62, P, { ...SLIPHER, name: "slipher", face: "curious" });
   return sk;
@@ -305,23 +312,23 @@ function p7() {
 /* ---------- 8. 오늘: 그럼 우리가 한가운데? ---------- */
 function p8() {
   const sk = new Sk(W, H, { id: "h" });
-  const sky = poly([[-12, -12], [972, -12], [972, 236], [-12, 236]], 6);
+  const sky = poly([[-12, -12], [972, -12], [972, 200], [-12, 200]], 6);
   sk.fill(sky, NIGHT, { dx: 0, dy: 0, wob: 0, seed: 391 });
   // 가운데가 우리은하. 둘레의 은하는 바깥으로, 먼 것일수록 긴 화살표
-  const cx = 480, cy = 108;
+  const cx = 480, cy = 96;
   spiral(sk, cx, cy, 30, { color: MW, sd: 393, haze: 0.35, q: 0.8 });
-  const gal = [[396, 58, 14, 30], [572, 64, 14, 30], [416, 176, 13, 30], [566, 166, 14, 32], [292, 128, 15, 56], [672, 116, 15, 56], [138, 70, 16, 86], [836, 66, 16, 82], [150, 178, 15, 86], [822, 180, 15, 84]];
+  const gal = [[396, 50, 14, 28], [572, 54, 14, 28], [410, 144, 13, 28], [560, 140, 14, 28], [292, 112, 15, 56], [672, 92, 15, 56], [138, 52, 16, 86], [836, 50, 16, 82], [150, 150, 15, 86], [822, 148, 15, 84]];
   gal.forEach(([x, y, r, len], i) => {
     spiral(sk, x, y, r, { q: 0.6, rot: hash(i * 5.1) * 2 - 1, sd: 401 + i * 7, haze: 0.5 });
     const d = Math.hypot(x - cx, y - cy), ux = (x - cx) / d, uy = (y - cy) / d;
     arrow(sk, [[x + ux * (r + 8), y + uy * (r + 8)], [x + ux * (r + 8 + len), y + uy * (r + 8 + len)]], { w: 5, color: FAR, seed: 471 + i, straight: true, head: 12, wob: 0.2 });
   });
-  for (const [x, y, r, i] of [[60, 30, 5, 0], [250, 40, 4, 1], [700, 30, 5, 2], [910, 130, 4, 3], [480, 214, 4, 4], [40, 200, 4, 5]]) star(sk, x, y, r, 491 + i);
+  for (const [x, y, r, i] of [[60, 24, 5, 0], [250, 30, 4, 1], [700, 24, 5, 2], [920, 104, 4, 3], [480, 178, 4, 4], [40, 110, 4, 5]]) star(sk, x, y, r, 491 + i);
   ground(sk, 704, 497);
   // 학생: 하늘을 가리킨다. 쌤: 붙임딱지를 붙인 풍선
   const sp = pose({ elL: [-92, -336], haL: [-158, -452], elR: [50, -262], haR: [40, -206], tilt: -0.05 });
-  drawFigure(sk, 300, 704, 0.6, sp, { ...STUDENT, name: "student", mirror: true });
-  const tx = 660, ts = 0.62, tp = pose({ elR: [92, -296], haR: [150, -336], elL: [-50, -262], haL: [-40, -206], tilt: 0.04 });
+  drawFigure(sk, 300, 704, 0.5, sp, { ...STUDENT, name: "student", mirror: true });
+  const tx = 660, ts = 0.52, tp = pose({ elR: [92, -296], haR: [150, -336], elL: [-50, -262], haL: [-40, -206], tilt: 0.04 });
   drawFigure(sk, tx, 704, ts, tp, { ...TEACHER, name: "teacher", hands: "L" });
   const hd = [tx + ts * 150, 704 - ts * 336];
   thin(sk, 0.85, () => {
@@ -345,11 +352,11 @@ export const META = {
 const CUTS = [
   {
     fn: p1, when: "1920년, 미국 워싱턴", stage: "궁금증", title: "저 성운은 어디에 있을까",
-    caption: "1920년 4월 26일, 미국 워싱턴에서 천문학자 섀플리와 커티스가 차례로 강연했어요. 쟁점은 안드로메다자리의 뿌연 나선 <b>성운</b>이었어요. 섀플리는 우리은하 안의 구름이라고 했고, 커티스는 우리은하 밖 먼 곳의 또 다른 별 무리라고 했지요. 거리를 잴 방법이 없어 이날은 결론이 나지 않았어요.",
+    caption: "1920년 4월 26일, 미국 워싱턴에서 천문학자 섀플리와 커티스가 차례로 강연했어요. 안드로메다 성운 같은 뿌연 나선 <b>성운</b>들이 쟁점이었어요. 섀플리는 우리은하 안의 구름이라고 했고, 커티스는 우리은하 밖 먼 곳의 또 다른 별 무리라고 했지요. 거리를 잴 방법이 없어 이날은 결론이 나지 않았어요.",
   },
   {
     fn: p2, when: "1912년, 하버드 천문대", stage: "거리의 자", title: "밝을수록 느리게 깜빡이는 별",
-    caption: "1912년, 미국 하버드 대학 천문대의 <b>헨리에타 리비트</b>는 별을 찍은 유리 건판을 돋보기로 하나하나 견주었어요. 밝기가 변하는 별들 가운데 밝은 별일수록 천천히 밝아졌다 어두워진다는 규칙을 찾았지요. 깜빡이는 빠르기로 별의 진짜 밝기를 알면, 보이는 밝기와 견주어 <b>거리</b>를 잴 수 있어요.",
+    caption: "1912년, 미국 하버드 대학 천문대의 <b>헨리에타 리비트</b>는 별을 찍은 유리 건판을 돋보기로 하나하나 견주었어요. 밝기가 변하는 별들을 한 별 무리 안에서 견주어, 밝은 별일수록 천천히 밝아졌다 어두워진다는 규칙을 찾았지요. 깜빡이는 빠르기로 별의 진짜 밝기를 알면, 보이는 밝기와 견주어 <b>거리</b>를 잴 수 있어요.",
     bubbles: [{ who: "leavitt", text: "밝은 별일수록<br>천천히 깜빡여요" }],
   },
   {
@@ -365,11 +372,11 @@ const CUTS = [
     fn: p5, when: "1924년, 미국", stage: "놀라운 결과", title: "우리은하 밖의 은하",
     caption: "1924년, 허블은 밝기가 변하는 별로 안드로메다 성운까지의 거리를 약 90만 광년으로 계산했어요. 우리은하의 크기보다 훨씬 먼 거리라서, 이 성운은 우리은하 밖에 있는 또 하나의 <b>은하</b>였어요. 오늘날 다시 잰 거리는 약 250만 광년이에요.",
     term: { name: "외부 은하", def: "우리은하 밖에 있는 은하예요. 우리은하처럼 수많은 별로 이루어져 있어요." },
-    bubbles: [{ who: "hubble", text: "우리은하보다<br>훨씬 멀어!" }],
+    bubbles: [{ who: "hubble", text: "우리은하 크기보다<br>훨씬 멀어!" }],
   },
   {
     fn: p6, when: "1912~1917년, 로웰 천문대", stage: "또 하나의 단서", title: "빛의 줄이 붉은 쪽으로",
-    caption: "허블보다 먼저, 미국 로웰 천문대의 <b>베스토 슬라이퍼</b>는 1912년부터 망원경에 단 장치로 나선 성운의 빛을 무지개 띠로 펼쳐 찍었어요. 띠 속 검은 줄이 붉은색 쪽으로 밀려 있었는데, 우리에게서 빨리 <b>멀어지는</b> 천체일수록 이 줄이 더 많이 밀려요. 1917년까지 잰 25개 가운데 21개가 멀어지고 있었어요.",
+    caption: "허블보다 먼저, 미국 로웰 천문대의 <b>베스토 슬라이퍼</b>는 1912년부터 망원경에 단 장치로 나선 성운의 빛을 무지개 띠로 펼쳐 찍었어요. 실험실의 빛과 견주면 대부분의 나선 성운에서 띠 속 검은 줄이 붉은색 쪽으로 밀려 있었어요. 우리에게서 빨리 <b>멀어지는</b> 천체일수록 이 줄이 더 많이 밀려요. 1917년까지 잰 25개 가운데 21개가 멀어지고 있었어요.",
   },
   {
     fn: p7, when: "1929년, 윌슨산 천문대", stage: "법칙", title: "멀수록 더 빨리",
