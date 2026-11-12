@@ -16,8 +16,8 @@ const GAL: { name: string; x: number; y: number; c: string }[] = [
   { name: "은하 다", x: 2, y: -1, c: "#C9B6FF" },
   { name: "은하 라", x: -2, y: 1, c: "#9FE8C8" },
 ];
-const CELL = 30;
-const BIG = 1.45;
+const CELL = 38;
+const BIG = 1.35;
 
 export const centerLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
@@ -127,7 +127,7 @@ export const centerLab: StepRenderer = (host, step, api) => {
       ctx.arc(0, 0, 15, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
-      if (x > 20 && x < w - 20 && y > 10 && y < h - 10) sText(ctx, q.name, x, y + 17, { color: i === view ? "#fff" : S.dim, px: 12, w: i === view ? 800 : 700 });
+      if (x > 20 && x < w - 20 && y > 10 && y < h - 10) sText(ctx, q.name, x, y > h - 40 ? y - 17 : y + 17, { color: i === view ? "#fff" : S.dim, px: 12, w: i === view ? 800 : 700 });
     });
     ctx.strokeStyle = "#fff";
     ctx.lineWidth = 1.6;
