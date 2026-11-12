@@ -112,6 +112,19 @@
 .opn-stage.bob .opn-g2u3-flt { animation: opnG2u3Bob .7s ease-in-out 3; }
 @keyframes opnG2u3Bob { 0%, 100% { transform: translateY(0); } 30% { transform: translateY(-20px); } 70% { transform: translateY(16px); } }
 
+/* 8. 칼림바 */
+.opn-g2u3-note { opacity: 0; transition: opacity .25s; }
+.opn-stage.pl-long .opn-g2u3-note.lo, .opn-stage.pl-short .opn-g2u3-note.hi { opacity: 1; }
+.opn-stage.pl-long .opn-g2u3-tine.t-long { animation: opnG2u3Twang .5s ease-out; }
+.opn-stage.pl-short .opn-g2u3-tine.t-short { animation: opnG2u3Twang .3s ease-out; }
+@keyframes opnG2u3Twang { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-7px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(2px); } }
+
+/* ── g2u3l8 소리: 바꿀 것 버튼 ── */
+.g2u3x-seg.g2u3x-fac { height: 56px; }
+.g2u3x-seg.g2u3x-fac i { font-size: 13px; font-weight: 800; color: var(--ink); }
+.g2u3x-seg.g2u3x-fac b { font-size: 12.5px; color: var(--sub); }
+.g2u3x-seg.g2u3x-fac.on i { color: var(--subj-light-press); }
+
 /* ── g2u3l6 켜고 끄는 버튼(손전등, 화소)과 네 칸 표 ── */
 .g2u3x-seg.g2u3x-ch { height: 56px; }
 .g2u3x-seg.g2u3x-ch.r.on { border-color: #E8453C; background: #FFF0EF; box-shadow: 0 0 0 1px #E8453C inset; }
@@ -154,3 +167,5 @@
 .g2u3x-chip.ok { border-color: var(--green); background: #EFFBF4; color: var(--green-press); }
 .g2u3x-chip.bad { border-color: var(--red); background: #FFF2F3; color: var(--red-press); text-decoration: line-through; }
 .g2u3x-chip.dry { border-style: dashed; color: var(--ter); }
+
+.g2u3x-segs[hidden], .g2u3x-row2[hidden] { display: none; }

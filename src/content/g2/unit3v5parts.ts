@@ -6,7 +6,7 @@ import type { Step } from "../../lessons/types";
 import type { Block } from "../../ui/blocks";
 import { opener, concept, recap, mcq, ox, multi, order, binSort, pairMatch } from "../dsl";
 import { lightMiniArt } from "../../ui/lightFigures";
-import { lxMini, waveGridFig } from "../../ui/g2u3v5Figures";
+import { lxMini, soundTrioFig, waveGridFig } from "../../ui/g2u3v5Figures";
 
 export interface G2U3Part {
   intro: Step;
@@ -29,6 +29,7 @@ const torchLab = lab("g2u3TorchLab");
 const pixelLab = lab("g2u3PixelLab");
 const ballLab = lab("g2u3BallLab");
 const waveLab = lab("g2u3WaveLab");
+const soundLab = lab("g2u3SoundLab");
 
 /** 개념 스텝. 빛 단원의 색(dsl의 kickerTone 목록에 light가 없어 여기서 붙인다). */
 const term = (o: { title: string; lead: string; blocks: Block[]; cta?: string }): Step =>
@@ -592,6 +593,93 @@ const L7: G2U3Part = {
   ],
 };
 
+// ══════════ g2u3l8 소리의 특성 ══════════
+const L8: G2U3Part = {
+  intro: opener({ title: "어느 막대에서 더 높은 소리가 날까요?", scene: "g2u3-kalimba", wait: "두 막대를 튕겨 보세요", cta: "실험실 열기" }),
+  body: [
+    soundLab({ title: "소리가 다르면 파동은 어떻게 다를까요?", cta: "용어 정리하기" }),
+    term({
+      title: "소리의 차이에<br>이름을 붙여요",
+      lead: "기준 소리에서 하나씩만 바꿔 두 화면을 견줬어요. 달라진 세 가지와 소리의 이름을 정리해요.",
+      blocks: [
+        { k: "term", name: "음파", def: "소리는 물체의 진동이 공기 같은 <b>매질을 통해 전달되는 파동</b>이에요. 이것을 음파라고 해요. 칼림바의 막대가 떨면 주변의 공기가 진동하며 소리가 퍼져 나가요." },
+        { k: "term", name: "소리의 세기와 높낮이", def: "소리의 <b>세기</b>(큰 소리, 작은 소리)는 파동의 <b>진폭</b>에 따라, 소리의 <b>높낮이</b>는 파동의 <b>진동수</b>에 따라 달라져요." },
+        { k: "term", name: "음색과 파형", def: "화면에 나타난 파동의 모양을 <b>파형</b>이라고 해요. 악기마다 소리의 파형이 달라 서로 구분되는 특징이 <b>음색</b>이에요." },
+        { k: "note", tone: "amber", html: "소리의 세기, 높낮이, 음색을 <b>소리의 3요소</b>라고 해요. 큰 소리와 높은 소리는 다른 말이에요. 세게 튕긴다고 음이 높아지지는 않아요." },
+      ],
+      cta: "정리하기",
+    }),
+    recap({
+      title: "소리의 3요소,<br>카드 석 장으로 정리",
+      narrator: "하나만 바꿔야 무엇 때문인지 알 수 있었어요. 세기는 <b>진폭</b>, 막대의 길이는 <b>진동수</b>, 악기는 <b>파동의 모양</b>을 바꿨죠.",
+      cards: [
+        {
+          name: "소리의 세기", color: "#F0A422", art: lightMiniArt("ampMini"),
+          text: "큰 소리일수록 파동의 <b>진폭</b>이 커요. 소리의 세기는 진폭에 따라 달라져요.",
+          examples: ["세게 튕기면 진폭이 커져요", "진동수와 파형은 그대로", "북을 세게 치면 큰 소리"],
+          more: "<b class='rm-h'>무엇이 달라질까요</b>같은 금속 막대를 약하게 튕길 때와 세게 튕길 때를 견주면, 화면의 파동이 위아래로 흔들리는 폭이 달라져요. 큰 소리가 날 때 진폭이 커요. 소리의 세기는 파동의 진폭이 정해요.<b class='rm-h'>실험에서는</b>세기만 '세게'로 바꾸자 아래 화면의 진폭이 기준 소리보다 커졌어요. 같은 시간 동안 진동한 횟수와 파동의 모양은 그대로였죠. 같은 막대, 같은 악기였기 때문이에요.<b class='rm-h'>헷갈리기 쉬운 점</b>큰 소리와 높은 소리를 섞어 쓰기 쉬워요. '소리를 높여라'라고 말할 때가 있지만, 과학에서 크기는 세기(진폭), 높이는 높낮이(진동수)예요. 텔레비전의 음량을 키우면 진폭이 커질 뿐 음의 높이는 그대로예요.",
+        },
+        {
+          name: "소리의 높낮이", color: "#37B6D8", art: lightMiniArt("freqMini"),
+          text: "높은 소리일수록 파동의 <b>진동수</b>가 커요. 소리의 높낮이는 진동수에 따라 달라져요.",
+          examples: ["짧은 막대: 진동수가 커요", "같은 시간에 더 많이 진동", "긴 막대: 낮은 소리"],
+          more: "<b class='rm-h'>무엇이 달라질까요</b>길이가 다른 금속 막대를 같은 세기로 튕기면 소리의 높이가 달라요. 화면에서는 같은 시간 동안 파동이 진동한 횟수, 곧 진동수가 달라져요. 높은 소리가 날 때 진동수가 커요.<b class='rm-h'>실험에서는</b>막대만 '짧은 막대'로 바꾸자 같은 폭의 화면 안에 파동이 더 촘촘하게 들어찼어요. 기준 소리가 세 번 진동하는 동안 여섯 번 진동했죠. 진폭은 그대로였어요. 칼림바에서 짧은 막대가 더 높은 소리를 낸 것과 같은 결과예요.<b class='rm-h'>헷갈리기 쉬운 점</b>파동이 촘촘해 보인다고 소리가 큰 것이 아니에요. 촘촘함은 높낮이를, 위아래 폭은 세기를 나타내요. <span class='fun'>피아노는 오른쪽 건반으로 갈수록 진동수가 큰 소리가 나요. 사람이 들을 수 있는 소리의 진동수는 대략 20 Hz에서 20000 Hz 사이예요.</span>",
+        },
+        {
+          name: "음색", color: "#C838A6", art: lightMiniArt("toneMini"),
+          text: "세기와 높낮이가 같아도 악기마다 <b>파형</b>이 달라요. 이렇게 구분되는 특징이 <b>음색</b>이에요.",
+          examples: ["칼림바와 리코더의 파형", "목소리로 친구를 알아봐요", "진폭과 진동수는 같을 수 있어요"],
+          more: "<b class='rm-h'>무엇이 달라질까요</b>두 악기로 높이가 같은 음을 비슷한 세기로 내면 진폭과 진동수는 비슷해요. 그런데도 소리는 달라요. 화면에 나타난 파동의 모양, 곧 파형이 다르기 때문이에요. 파형이 달라 구분되는 소리의 특징을 음색이라고 해요.<b class='rm-h'>실험에서는</b>악기만 리코더로 바꾸자 파동의 높이와 촘촘함은 기준 소리와 같았지만 모양이 달라졌어요. 매끈한 물결 대신 울퉁불퉁한 모양이 되풀이됐죠.<b class='rm-h'>정리하면</b>소리의 세기, 높낮이, 음색을 소리의 3요소라고 해요. 세기는 진폭, 높낮이는 진동수, 음색은 파형이 정해요. 전화 목소리만 듣고 누구인지 알아보는 것도 사람마다 목소리의 파형이 다르기 때문이에요.",
+        },
+      ],
+      note: { icon: "bulb", tone: "blue", title: "한 줄 요약", html: "세기는 <b>진폭</b>, 높낮이는 <b>진동수</b>, 음색은 <b>파형</b>. 이 셋이 소리의 3요소예요." },
+      cta: "문제 풀기",
+    }),
+    mcq({
+      prompt: "그림은 세 가지 소리를 같은 소리 분석 화면으로 본 것이에요(가로는 시간). (가)보다 <b>큰 소리</b>와 (가)보다 <b>높은 소리</b>를 차례대로 고르면?",
+      figure: soundTrioFig([{ amp: 12, cycles: 2 }, { amp: 30, cycles: 2 }, { amp: 12, cycles: 5 }]),
+      options: ["(나), (나)", "(나), (다)", "(다), (나)", "(다), (다)"],
+      answer: 1,
+      shuffle: false,
+      explainGood: "맞아요. (나)는 (가)보다 진폭이 커서 큰 소리, (다)는 같은 시간에 더 많이 진동해 진동수가 커서 높은 소리예요.",
+      explainBad: "큰 소리는 <b>진폭</b>이 큰 소리예요. (가)보다 위아래 폭이 큰 것은 (나)예요. 높은 소리는 <b>진동수</b>가 큰 소리예요. 같은 시간 동안 더 많이 진동한 것은 (다)예요.",
+    }),
+    binSort({
+      title: "소리의 3요소 가운데<br>무엇이 다를까요?",
+      lead: "두 소리를 견줄 때 <b>세기</b>, <b>높낮이</b>, <b>음색</b> 가운데 무엇이 다른지 가려 보세요.",
+      instruction: "각 상황을 알맞은 통에 담아요.",
+      bins: [
+        { id: "amp", label: "세기", color: "#F0A422", hint: "진폭이 달라요" },
+        { id: "freq", label: "높낮이", color: "#37B6D8", hint: "진동수가 달라요" },
+        { id: "tone", label: "음색", color: "#C838A6", hint: "파형이 달라요" },
+      ],
+      items: [
+        { label: "북을 약하게, 세게 치기", bin: "amp" },
+        { label: "텔레비전 음량 키우기", bin: "amp" },
+        { label: "실로폰의 긴 막대, 짧은 막대", bin: "freq" },
+        { label: "피아노의 왼쪽, 오른쪽 건반", bin: "freq" },
+        { label: "같은 음의 플루트와 바이올린", bin: "tone" },
+        { label: "목소리로 친구 알아보기", bin: "tone" },
+      ],
+      explainGood: "맞아요. 세게 내면 세기가, 길이나 건반이 바뀌면 높낮이가, 악기나 사람이 바뀌면 음색이 달라져요.",
+      explainBad: "얼마나 <b>세게</b> 냈는지가 다르면 세기(진폭), 막대의 <b>길이</b>나 건반의 자리가 다르면 높낮이(진동수), <b>악기나 사람</b>이 다르면 음색(파형)이 달라요.",
+    }),
+    ox({
+      prompt: "칼림바의 같은 금속 막대를 더 세게 튕기면 소리의 진동수가 커져서 더 높은 소리가 나요.",
+      answer: false,
+      explainGood: "맞아요, 틀린 말이에요. 세게 튕기면 <b>진폭</b>이 커져 큰 소리가 날 뿐, 진동수는 그대로라 높이는 같아요.",
+      explainBad: "같은 막대를 세게 튕기면 달라지는 것은 <b>진폭</b>이에요. 소리가 커질 뿐이에요. 진동수는 막대의 길이가 달라질 때 바뀌어요. 그래서 소리의 높이는 그대로예요.",
+    }),
+    mcq({
+      prompt: "리코더로 낮은 '도'를 불다가 같은 세기로 높은 '솔'을 불었어요. 소리의 파동에서 달라진 것은 무엇일까요?",
+      options: ["진동수가 커졌다", "진폭이 커졌다", "진동수가 작아졌다", "진폭이 작아졌다", "매질이 바뀌었다"],
+      answer: 0,
+      explainGood: "맞아요. 높은 소리일수록 진동수가 커요. 같은 세기로 불었으니 진폭은 그대로예요.",
+      explainBad: "소리의 높낮이는 <b>진동수</b>가 정해요. 더 높은 음을 냈으니 진동수가 커졌어요. 같은 세기로 불었으니 진폭은 달라지지 않았고, 소리를 전하는 매질은 그대로 공기예요.",
+    }),
+  ],
+};
+
 export const G2U3_PARTS: Record<string, G2U3Part> = {
   g2u3l1: L1,
   g2u3l2: L2,
@@ -600,7 +688,5 @@ export const G2U3_PARTS: Record<string, G2U3Part> = {
   g2u3l5: L5,
   g2u3l6: L6,
   g2u3l7: L7,
+  g2u3l8: L8,
 };
-void order;
-void binSort;
-void pairMatch;

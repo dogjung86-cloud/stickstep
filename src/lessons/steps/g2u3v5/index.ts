@@ -9,6 +9,7 @@ import { halfMirrorLab, extendLab } from "./mirrorLabs";
 import { curveLab, useLab } from "./curveLabs";
 import { lampLab, torchLab, pixelLab } from "./colorLabs";
 import { ballLab, waveLab } from "./waveLabs";
+import { soundLab } from "./soundLab";
 
 export const G2U3V5_STEPS: Record<string, StepRenderer> = {
   g2u3ReflectLab: reflectLab5,
@@ -25,4 +26,5 @@ export const G2U3V5_STEPS: Record<string, StepRenderer> = {
   g2u3PixelLab: pixelLab,
   g2u3BallLab: ballLab,
   g2u3WaveLab: waveLab,
+  g2u3SoundLab: soundLab,
 };

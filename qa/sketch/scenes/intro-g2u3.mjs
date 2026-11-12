@@ -3,9 +3,9 @@
 //   town   (g2u3l1) 산에 가린 마을, 맞은편 언덕의 거울(앱이 돌리고 햇빛 줄기를 긋는다)
 //   straw  (g2u3l2) 탁자 위의 유리컵과 지켜보는 학생(물과 빨대는 앱이 그린다)
 // build-intro.mjs g2u3 이 build(add)를 불러 src/ui/introArt.g2u3.generated.ts에 싣는다.
-import { Sk, C, curve, dense, circ, ell, arc, poly, rrect, arrow, rays } from "../lib/sk.mjs";
-import { drawFigure, pose, STUDENT, TEACHER } from "../lib/figure.mjs";
-import { sun, cloud } from "../lib/props.mjs";
+import { Sk, C, curve, dense, circ, ell, arc, poly, rrect, rays } from "../lib/sk.mjs";
+import { drawFigure, pose, STUDENT } from "../lib/figure.mjs";
+import { sun, note } from "../lib/props.mjs";
 
 const W = 960, H = 544;
 const g = (sk, cls, fn) => { sk.raw(`<g class="${cls}">`); fn(); sk.raw("</g>"); };
@@ -225,6 +225,34 @@ export function floatBase() {
   return { sk };
 }
 
+/* ══════════ 8. 칼림바 (g2u3l8) ══════════ */
+export const KAL = { long: [420, 190, 250], mid: [540, 190, 190], short: [660, 190, 130], hitLong: [345, 170, 150, 290], hitShort: [585, 170, 150, 290] };
+export function kalimbaBase() {
+  const sk = new Sk(W, H, { id: "g3i" });
+  ground(sk);
+  // 울림통
+  const body = rrect(320, 130, 440, 360, 40);
+  sk.fill(body, C.wood, { dx: 1, dy: 1.2, wob: 1, seed: 201, tex: true });
+  sk.ink(body, { w: 10, wob: 1.2, seed: 202 });
+  const hole = circ(540, 420, 34, { seed: 203 });
+  sk.fill(hole, C.woodDark, { dx: 0, dy: 0, wob: 0.4, seed: 204 });
+  // 막대를 누르는 받침
+  sk.ink(dense([[360, 196], [720, 196]], 6), { w: 16, color: C.navy, wob: 0.4, seed: 205 });
+  // 금속 막대 셋(긴 것, 가운데, 짧은 것). 앱이 튕긴 막대를 떨게 한다
+  [["t-long", KAL.long], ["t-mid", KAL.mid], ["t-short", KAL.short]].forEach(([cls, [x, y, len]], i) => {
+    g(sk, `opn-g2u3-tine ${cls}`, () => {
+      const t = rrect(x - 17, y - 26, 34, len, 14);
+      sk.fill(t, "#DDE3EA", { dx: 0, dy: 0, wob: 0.3, seed: 211 + i * 3 });
+      sk.ink(t, { w: 6, wob: 0.4, seed: 212 + i * 3 });
+    });
+  });
+  // 음표: 낮은 소리(아래쪽)와 높은 소리(위쪽). 앱이 켠다
+  g(sk, "opn-g2u3-note lo", () => note(sk, 250, 400, 1.5, { seed: 221, color: C.blue }));
+  g(sk, "opn-g2u3-note hi", () => note(sk, 836, 150, 1.5, { seed: 225, color: C.red }));
+  drawFigure(sk, 130, 512, 0.5, pose({ elR: [90, -300], haR: [60, -390] }), { ...STUDENT });
+  return { sk };
+}
+
 /** build-intro.mjs가 부른다: 그림을 싣고 장면별 좌표를 돌려준다. */
 export function build(add) {
   return {
@@ -234,6 +262,7 @@ export function build(add) {
     spoon: { ...SPOON, ...add("spoonBase", spoonBase()) },
     dots: { ...DOTS, ...add("dotsBase", dotsBase()) },
     float: { ...FLOAT, ...add("floatBase", floatBase()) },
+    kalimba: { ...KAL, ...add("kalimbaBase", kalimbaBase()) },
     straw: { ...STRAW, ...add("strawBase", strawBase()), ...add("strawCup", strawCup()) },
   };
 }

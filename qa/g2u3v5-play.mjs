@@ -29,6 +29,10 @@ export const OPENERS = {
     await page.evaluate(() => document.querySelector(".screen.active .opn-g2u3-hit")?.click());
     await page.waitForTimeout(2600);
   },
+  "g2u3-kalimba": async ({ page, L }) => {
+    await L.tapK(page, "long", 700);
+    await L.tapK(page, "short", 700);
+  },
 };
 
 /** 거울과 렌즈 관찰: 두 종류에서 가까울 때와 멀 때를 적는다. */
@@ -302,5 +306,37 @@ export const LABS = {
     await c.shot("wave-len");
     await c.judge("wave", wrong);
     await c.done("wave");
+  },
+  sound: async (c, wrong) => {
+    const { page, L, check } = c;
+    // 두 가지를 한꺼번에 바꾸면 기록되지 않는다
+    await L.tapK(page, "power");
+    await L.tapK(page, "bar");
+    await L.tapK(page, "rec", 400);
+    check("두 가지를 바꾸면 기록 안 됨", (await L.ds(page, "lx")) === "set");
+    await c.fit("sound 두 가지");
+    await c.shot("sound-two");
+    await L.tapK(page, "bar");
+    const one = async (pick, bad) => {
+      await L.tapK(page, "rec", 300);
+      if (bad) {
+        await L.tapK(page, bad, 300);
+        await c.fit("sound 잘못 고름");
+      }
+      await L.tapK(page, pick, 400);
+    };
+    await one("amp", "freq");
+    await c.shot("sound-amp");
+    await L.tapK(page, "power");
+    await L.tapK(page, "bar");
+    await one("freq");
+    await c.shot("sound-freq");
+    await L.tapK(page, "bar");
+    await L.tapK(page, "inst");
+    await L.tapK(page, "hear", 200);
+    await one("shape");
+    await c.shot("sound-shape");
+    await c.judge("sound", wrong);
+    await c.done("sound");
   },
 };

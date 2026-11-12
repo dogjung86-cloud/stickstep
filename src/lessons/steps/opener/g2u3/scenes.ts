@@ -438,4 +438,71 @@ const floatScene: OpenerScene = (c) => {
   });
 };
 
-export const G2U3_SCENES: Record<string, OpenerScene> = { "g2u3-town": town, "g2u3-straw": straw, "g2u3-dark": dark, "g2u3-cat": catMirror, "g2u3-spoon": spoon, "g2u3-dots": dots, "g2u3-float": floatScene };
+// ── 8. 칼림바 ──────────────────────────────────────────────────
+const kalimba: OpenerScene = (c) => {
+  const M = meta(c).kalimba;
+  art(c, "kalimbaBase");
+  const tried = { long: false, short: false };
+  let over = false;
+  let ac: AudioContext | null = null;
+  const ping = (hz: number): void => {
+    try {
+      const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AC) return;
+      ac = ac ?? new AC();
+      const t0 = ac.currentTime;
+      const o = ac.createOscillator();
+      const g = ac.createGain();
+      o.type = "sine";
+      o.frequency.value = hz;
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.16, t0 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.8);
+      o.connect(g);
+      g.connect(ac.destination);
+      o.start(t0);
+      o.stop(t0 + 0.85);
+    } catch {
+      /* 소리를 낼 수 없는 기기에서는 음표만 보인다 */
+    }
+  };
+  c.onCleanup(() => {
+    try {
+      void ac?.close();
+    } catch {
+      /* 이미 닫힌 경우 */
+    }
+  });
+  const verdict = bet(c, "칼림바의 긴 막대와 짧은 막대를 같은 세기로 튕겨요. 어느 쪽에서 더 높은 소리가 날까요?", ["짧은 막대", "긴 막대", "둘 다 같은 높이예요"], "예측 완료! <b>긴 막대</b>와 <b>짧은 막대</b>를 한 번씩 눌러 튕겨 보세요.");
+  const pluck = (k: "long" | "short"): void => {
+    if (!playing(c) || over) return;
+    haptic(HAPTIC.tap);
+    c.stage.classList.add("touched");
+    ping(k === "long" ? 262 : 523);
+    c.stage.classList.remove("pl-long", "pl-short");
+    void c.stage.offsetWidth; // 같은 막대를 다시 눌러도 떨림이 처음부터 돈다
+    c.stage.classList.add(`pl-${k}`);
+    tried[k] = true;
+    if (tried.long && tried.short) {
+      over = true;
+      c.later(() => end(c, `${verdict()} 짧은 막대에서 더 높은 소리가 났어요. 높은 소리와 낮은 소리는 무엇이 다를까요?`), 1000);
+    } else c.say(k === "long" ? "낮은 소리가 났어요(음표가 아래쪽에 떠요). 이번엔 <b>짧은 막대</b>를 튕겨 보세요." : "높은 소리가 났어요(음표가 위쪽에 떠요). 이번엔 <b>긴 막대</b>를 튕겨 보세요.");
+  };
+  const bl = hit(c, M.hitLong, "긴 막대 튕기기");
+  const bs = hit(c, M.hitShort, "짧은 막대 튕기기");
+  bl.dataset.k = "long";
+  bs.dataset.k = "short";
+  bl.addEventListener("click", () => pluck("long"));
+  bs.addEventListener("click", () => pluck("short"));
+};
+
+export const G2U3_SCENES: Record<string, OpenerScene> = {
+  "g2u3-town": town,
+  "g2u3-straw": straw,
+  "g2u3-dark": dark,
+  "g2u3-cat": catMirror,
+  "g2u3-spoon": spoon,
+  "g2u3-dots": dots,
+  "g2u3-float": floatScene,
+  "g2u3-kalimba": kalimba,
+};
