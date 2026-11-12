@@ -3,19 +3,21 @@
 // 한 통찰: 별의 색은 표면 온도가 정한다. 표면 온도가 낮을수록 붉고 높을수록 하얗고 파랗다.
 // 학생이 정하는 것: 별의 표면 온도. 세 별의 색에 맞을 때까지 온도를 맞춘다(색이 다르면 맞지 않는다).
 // 두 빛의 양은 온도에 따른 빛의 세기 식(파장 650 nm와 450 nm)으로 계산한다. 별의 색은 kit의 tempColor.
+// 화면의 온도는 ℃로 적는다(중2는 켈빈을 배우지 않는다). 계산은 켈빈(℃ + 273)으로 한다.
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvRange, bvTimers } from "../bio6/b6Lab";
 import { josa, rgb, S, sBox, sCanvas, sDisk, sFrame, sLog, sText, tempColor, type LabStep } from "./kit";
 
-const KELVIN = (i: number): number => 3000 + i * 100;
+const KELVIN = (i: number): number => 3000 + i * 100 + 273; // 막대의 한 칸은 100 ℃, 3000 ℃에서 12000 ℃까지
+const celsius = (k: number): number => Math.round((k - 273) / 100) * 100;
 const colorName = (k: number): string => (k < 3700 ? "적색" : k < 5200 ? "주황색" : k < 6000 ? "황색" : k < 7500 ? "황백색" : k < 10000 ? "백색" : "청백색");
 const planck = (nm: number, k: number): number => 1 / ((nm / 1000) ** 5 * (Math.exp(14388 / ((nm / 1000) * k)) - 1));
 const TARGETS = [
-  { name: "안타레스", color: "적색", k: 3500 },
-  { name: "알데바란", color: "주황색", k: 3900 },
-  { name: "시리우스", color: "백색", k: 9900 },
+  { name: "안타레스", color: "적색", k: 3473 },
+  { name: "알데바란", color: "주황색", k: 3873 },
+  { name: "시리우스", color: "백색", k: 9873 },
 ];
 
 export const starTempLab: StepRenderer = (host, step, api) => {
@@ -36,7 +38,7 @@ export const starTempLab: StepRenderer = (host, step, api) => {
     max: 90,
     value: 30,
     label: "별의 표면 온도",
-    ticks: ["3000 K", "6000 K", "9000 K", "12000 K"],
+    ticks: ["3000 ℃", "6000 ℃", "9000 ℃", "12000 ℃"],
     onInput: (v) => {
       k = KELVIN(v);
     },
@@ -58,13 +60,13 @@ export const starTempLab: StepRenderer = (host, step, api) => {
     cur += 1;
     f.pips(cur);
     if (cur < 3) {
-      f.say(`맞았어요! ${t.name}의 표면 온도는 <b>약 ${t.k} K</b>예요. 다음은 <b>${TARGETS[cur].name}</b>예요.`);
+      f.say(`맞았어요! ${t.name}의 표면 온도는 <b>약 ${celsius(t.k)} ℃</b>예요. 다음은 <b>${TARGETS[cur].name}</b>예요.`);
     } else {
       finished = true;
       cur = 2;
       bSet.disabled = true;
       range.input.disabled = true;
-      f.say(`맞았어요! ${t.name}의 표면 온도는 <b>약 ${t.k} K</b>예요. 세 별을 견주어 볼까요?`);
+      f.say(`맞았어요! ${t.name}의 표면 온도는 <b>약 ${celsius(t.k)} ℃</b>예요. 세 별을 견주어 볼까요?`);
       tm.later(askFinal, 1700);
     }
   });
@@ -75,7 +77,7 @@ export const starTempLab: StepRenderer = (host, step, api) => {
       "세 별 가운데 표면 온도가 가장 높은 별은?",
       [{ t: "백색 별 시리우스", ok: true }, { t: "적색 별 안타레스" }, { t: "주황색 별 알데바란" }],
       (ok) => api.recordQuiz(ok),
-      { why: "적색은 약 3500 K, 주황색은 약 3900 K, 백색은 <b>약 9900 K</b>였어요.", onNext: finish },
+      { why: "적색은 약 3200 ℃, 주황색은 약 3600 ℃, 백색은 <b>약 9600 ℃</b>였어요.", onNext: finish },
     );
   }
   function finish(): void {
@@ -96,7 +98,7 @@ export const starTempLab: StepRenderer = (host, step, api) => {
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, 180, h);
     sDisk(ctx, cx, cy, 34, rgb(col));
-    sText(ctx, `${Math.round(kShow / 100) * 100} K`, cx, cy + 54, { color: "#fff", px: 14, w: 800 });
+    sText(ctx, `${celsius(kShow)} ℃`, cx, cy + 54, { color: "#fff", px: 14, w: 800 });
     sText(ctx, colorName(kShow), cx, cy + 72, { color: S.gold, px: 13, w: 800 });
     // 맞출 별 셋
     TARGETS.forEach((t, i) => {

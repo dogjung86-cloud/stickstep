@@ -168,9 +168,9 @@ const LAB = {
     await setRange(page, 40); await W(page, 500);
     await tapText(page, "이 색"); await W(page, 400);
     await at("temp-wrong");
-    await setRange(page, 4); await W(page, 500);
+    await setRange(page, 2); await W(page, 500);
     await tapText(page, "이 색"); await W(page, 400);
-    await setRange(page, 9); await W(page, 500);
+    await setRange(page, 6); await W(page, 500);
     await tapText(page, "이 색"); await W(page, 400);
     await at("temp-two");
     await setRange(page, 62); await W(page, 500);
