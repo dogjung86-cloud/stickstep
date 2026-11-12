@@ -172,7 +172,7 @@ export const g2u5SproutLab: StepRenderer = (host, step, api) => {
       ${grow > 0.72 ? `<ellipse cx="121" cy="${top + 2}" rx="10" ry="5" fill="#7BC66A" stroke="#2F7D46" stroke-width="1.2" transform="rotate(-24 121 ${top + 2})"/><ellipse cx="139" cy="${top + 2}" rx="10" ry="5" fill="#7BC66A" stroke="#2F7D46" stroke-width="1.2" transform="rotate(24 139 ${top + 2})"/>` : ""}
       <ellipse cx="130" cy="146" rx="28" ry="20" fill="#E9CF96" stroke="#9A7A3A" stroke-width="1.8"/>
       <ellipse cx="130" cy="147" rx="${(21 * (1 - grow * 0.75)).toFixed(1)}" ry="${(14 * (1 - grow * 0.75)).toFixed(1)}" fill="${P.sugar}" opacity=".9"/>
-      ${txt(130, 184, "콩 속의 양분", { size: 12, fill: P.sugar })}
+      ${txt(166, 182, "콩 속의 양분", { anchor: "start", size: 12, fill: P.sugar })}
       ${o2 && grow < 1 ? spark(170, 126, 0) + spark(184, 146, 0.3) + spark(170, 166, 0.6) + txt(196, 112, "에너지", { anchor: "start", size: 12, fill: P.energy }) : ""}
       ${o2 && grow < 1 ? gasDot(158, 100, "co2", 4.5, "g2u5x-rise") + gasDot(170, 92, "co2", 4.5, "g2u5x-rise d1") : ""}
       ${mark(40, "빛 없이도 자람", seenDark)}${mark(60, "산소 없으면 멈춤", seenLit)}

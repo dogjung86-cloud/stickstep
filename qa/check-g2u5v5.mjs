@@ -255,7 +255,113 @@ const LABS = {
     await wrongOnce(id, "farm");
     await done(id, "farm");
   },
-  /*MORE*/
+  async dark(id) {
+    await at(id, "dark-start");
+    await must(id, ".g2u5x-run", 2800);
+    await dsIs(id, "g5Last", "leaf", "잎을 넣은 측정이 남지 않음");
+    await at(id, "dark-leaf");
+    await must(id, K("none"));
+    await must(id, ".g2u5x-run", 2800);
+    await at(id, "dark-none");
+    await must(id, K("root"));
+    await at(id, "dark-root-in", false);
+    await must(id, ".g2u5x-run", 2800);
+    await dsIs(id, "g5Kept", "3", "세 측정이 모이지 않음");
+    await at(id, "dark-three");
+    await must(id, ".g2u5x-go");
+    await wrongOnce(id, "dark");
+    await done(id, "dark");
+  },
+  async sprout(id) {
+    await at(id, "sprout-start");
+    await must(id, K("light"), 1700);
+    await dsIs(id, "g5Grow", "0", "산소 없이 빛만으로 자람");
+    await at(id, "sprout-lit");
+    await must(id, K("o2"), 3000);
+    await at(id, "sprout-grow");
+    await must(id, K("light"), 1500);
+    ok(await L.waitFor(page, () => document.querySelector(".screen.active .step")?.dataset.g5Grow === "100", null, 120), `${id} sprout: 싹이 끝까지 자라지 않음`);
+    await W(400);
+    await at(id, "sprout-full");
+    await must(id, ".g2u5x-go");
+    await wrongOnce(id, "sprout");
+    await done(id, "sprout");
+  },
+  async light(id) {
+    const S = (k) => `.g2u5x-st-b[data-k="${k}"]`;
+    await at(id, "light-start");
+    await must(id, ".g2u5x-check", 500);
+    await dsIs(id, "g5M", "0", "빛이 없는데 첫 과제가 통과됨");
+    await at(id, "light-miss");
+    await W(1600);
+    await must(id, S("lv+"));
+    await must(id, S("lv+"));
+    await must(id, ".g2u5x-check", 500);
+    await dsIs(id, "g5M", "1", "첫 과제가 통과되지 않음");
+    await at(id, "light-o2");
+    await W(1600);
+    await must(id, S("lv-"));
+    await must(id, S("lv-"));
+    await must(id, ".g2u5x-check", 500);
+    await dsIs(id, "g5M", "2", "둘째 과제가 통과되지 않음");
+    await at(id, "light-night");
+    await W(1600);
+    await must(id, S("lv+"));
+    await at(id, "light-weak", false);
+    await must(id, ".g2u5x-check", 500);
+    await wrongOnce(id, "light");
+    await done(id, "light");
+  },
+  async cycle(id) {
+    await at(id, "cycle-start");
+    await must(id, K("물"), 500);
+    await dsIs(id, "g5Miss", "1", "틀린 붙임딱지를 알려 주지 않음");
+    await at(id, "cycle-miss");
+    for (const k of ["빛에너지", "포도당", "산소"]) await must(id, K(k), 300);
+    await at(id, "cycle-half");
+    for (const k of ["이산화 탄소", "물", "에너지"]) await must(id, K(k), 300);
+    await dsIs(id, "g5At", "4", "빈칸이 다 채워지지 않음");
+    await at(id, "cycle-full");
+    await wrongOnce(id, "cycle");
+    await done(id, "cycle");
+  },
+  async route(id) {
+    await at(id, "route-start");
+    await must(id, K("starch"));
+    await must(id, K("phloem"));
+    await must(id, ".g2u5x-send", 500);
+    await dsIs(id, "g5Fail", "starch", "녹말 그대로 보낸 실패가 보이지 않음");
+    await at(id, "route-starch");
+    await W(1600);
+    await must(id, K("sugar"));
+    await must(id, K("xylem"));
+    await must(id, ".g2u5x-send", 500);
+    await dsIs(id, "g5Fail", "xylem", "물관으로 보낸 실패가 보이지 않음");
+    await at(id, "route-xylem");
+    await W(1600);
+    await must(id, K("phloem"));
+    await must(id, ".g2u5x-send", 500);
+    await dsIs(id, "g5Open", "1", "설탕과 체관으로도 길이 열리지 않음");
+    await at(id, "route-open");
+    for (const k of ["shoot", "flower", "root"]) await must(id, K(k), 1500);
+    await dsIs(id, "g5Got", "3", "세 곳에 다 닿지 않음");
+    await at(id, "route-all");
+    await must(id, ".g2u5x-go");
+    await wrongOnce(id, "route");
+    await done(id, "route");
+  },
+  async store(id) {
+    await at(id, "store-start");
+    await must(id, K("sweet"), 400);
+    await must(id, K("grape"), 400);
+    await at(id, "store-two");
+    for (const k of ["potato", "bean", "sesame"]) await must(id, K(k), 400);
+    await dsIs(id, "g5Done", "5", "다섯 작물을 다 검사하지 못함");
+    await at(id, "store-five");
+    await must(id, ".g2u5x-go");
+    await wrongOnce(id, "store");
+    await done(id, "store");
+  },
 };
 
 

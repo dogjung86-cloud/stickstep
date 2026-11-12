@@ -171,7 +171,7 @@ export const g2u5DarkLab: StepRenderer = (host, step, api) => {
       co2.push({ v: ramp(IN[k].co2), color: IN[k].color, upto: mine ? liveT : 1 });
       o2.push({ v: ramp(IN[k].o2), color: IN[k].color, upto: mine ? liveT : 1 });
     });
-    const inside = pick === "leaf" ? leafPile(77, 190) : pick === "root" ? carrot(52, 188) : "";
+    const inside = pick === "leaf" ? leafPile(77, 190) : pick === "root" ? carrot(112, 190) : "";
     stage.set(`
       ${jar(22, 60, 110, 136, { lid: true, foil: wrapped, inside })}
       <line x1="10" y1="198" x2="160" y2="198" stroke="#3B5273" stroke-width="2"/>
