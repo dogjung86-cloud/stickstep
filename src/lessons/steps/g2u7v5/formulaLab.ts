@@ -73,7 +73,7 @@ export const formulaLab: StepRenderer = (host, step, api) => {
           haptic(HAPTIC.correct);
           f.pips(3);
           seg.lock(true);
-          f.say("저항이 2배가 되면 전류는 <b>절반</b>이 돼요. 전류는 저항에 반비례해요.");
+          f.say("저항을 2배로 키우면 전류는 <b>절반</b>으로 줄어요. 전류는 저항에 반비례해요.");
           tm.later(ask, 2600);
         } else f.say(`${rPick} Ω에 6 V를 걸자 <b>${Math.round(6000 / rPick)} mA</b>가 흘러요. 다른 저항도 연결해 보세요.`);
       },
@@ -87,7 +87,7 @@ export const formulaLab: StepRenderer = (host, step, api) => {
   function ask(): void {
     phase = "end";
     f.slot.ask(
-      "저항이 30 Ω인 니크롬선에 3 V의 전압을 걸면 전류는?",
+      "30 Ω인 니크롬선에 3 V를 걸면 흐르는 전류는?",
       [{ t: "0.1 A", ok: true }, { t: "10 A" }, { t: "90 A" }],
       (ok) => api.recordQuiz(ok),
       { why: "전류 = 전압 ÷ 저항 = 3 ÷ 30 = <b>0.1 A</b>예요.", onNext: finish },

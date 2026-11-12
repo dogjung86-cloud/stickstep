@@ -59,7 +59,7 @@
 /* ── 가로 화면(물길과 전기 회로) ───────────────────── */
 .g2u7x-wcv { position: absolute; left: 0; top: 0; touch-action: none; }
 .g2u7x-wsay {
-  position: absolute; left: 16px; right: 150px; top: 12px; min-height: 30px; padding: 6px 14px; border-radius: 14px;
+  position: absolute; left: 16px; right: 16px; top: 50px; height: 32px; padding: 6px 14px; border-radius: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14); color: #E8EEF9; font-size: 13.5px; line-height: 19px; font-weight: 600;
 }
 .g2u7x-wsay b { color: #FFE08A; font-weight: 800; }

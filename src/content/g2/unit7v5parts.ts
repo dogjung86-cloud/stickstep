@@ -19,6 +19,16 @@ export const numbered = (steps: Step[]): Step[] => {
   return steps.map((st) => (st.type === "quiz" ? ({ ...st, n: ++n, of } as Step) : st));
 };
 export const H = (t: string): string => `<b class='rm-h'>${t}</b>`;
+const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
+/** 지금 단원이 쓰는 손 사진(public/elec/figs)에 한글 이름표를 얹은 그림 블록. 사진 속에는 글자가 없다. */
+export const handFig = (file: string, alt: string, labels: { x: number; y: number; t: string; c: string }[], cap: string): Block =>
+  ({
+    k: "figure",
+    svg: `<div style="position:relative"><img src="${IMG_BASE}elec/figs/${file}" alt="${alt}" style="display:block;width:100%;border-radius:14px"/>${labels
+      .map((l) => `<span style="position:absolute;left:${l.x}%;top:${l.y}%;transform:translate(-50%,-50%);background:rgba(255,255,255,.93);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:800;color:${l.c};white-space:nowrap;box-shadow:0 1px 4px rgba(20,30,50,.18)">${l.t}</span>`)
+      .join("")}</div>`,
+    cap,
+  }) as Block;
 
 const strawLab = lab("g2u7StrawLab");
 const rubLab = lab("g2u7RubLab");
@@ -338,7 +348,7 @@ export const L4: Step[] = numbered([
   ox({
     prompt: "걸린 전압이 같을 때, 저항이 2배인 니크롬선에는 전류도 <b>2배</b>로 세게 흐른다.",
     answer: false,
-    explainGood: "맞아요. 전류는 저항에 반비례해요. 저항이 2배가 되면 전류는 절반이 돼요.",
+    explainGood: "맞아요. 전류는 저항에 반비례해요. 저항이 2배로 커지면 전류는 반으로 줄어요.",
     explainBad: "전류는 저항에 <b>반비례</b>해요. 6 V에서 15 Ω일 때 400 mA, 30 Ω일 때 200 mA였죠. 저항이 2배가 되면 전류는 절반이에요.",
   }),
   binSort({

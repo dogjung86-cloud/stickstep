@@ -13,7 +13,7 @@ export { u5Canvas as xCanvas, u5Text as xText, u5Pill as xPill, u5Read as xRead,
 export const X = {
   minus: "#6FB6FF", // 전자, (−)전기
   plus: "#FF9D8A", // (+)전기
-  cur: "#FFC45A", // 전류
+  cur: "#FFD400", // 전류(구리 코일과 헷갈리지 않게 볼트 옐로. 코일 위에서는 진갈색 테두리를 두른다)
   field: "#FF7B6B", // 자기장
   force: "#3FD6C0", // 힘
   ink: "#E8EEF9",

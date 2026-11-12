@@ -38,8 +38,8 @@ function drawPair(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, 
   const big = w > 500;
   const fs = big ? 13.5 : 12;
   const pw = w / 2;
-  const base = h * (big ? 0.72 : 0.84);
-  const rise = h * (big ? 0.2 : 0.22) + (v.level === 2 ? h * 0.16 : 0);
+  const base = h * (big ? 0.68 : 0.84);
+  const rise = h * (big ? 0.18 : 0.22) + (v.level === 2 ? h * (big ? 0.12 : 0.16) : 0);
   const top = base - rise;
   const on = v.level > 0 && v.open;
   const hits = {} as Record<PairKey, Rect[]>;
@@ -110,7 +110,7 @@ function drawPair(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, 
     xArrow(ctx, gx, base - 6, gx, top + 3, "rgba(232,238,249,.7)", 1.6, 6);
   }
   if (on) {
-    xArrow(ctx, tx + 18, top - 18, tx + 44, top - 18, wat, 2.2, 7);
+    xArrow(ctx, tx + 46, top - 18, tx + 74, top - 18, wat, 2.2, 7);
     xArrow(ctx, pw * 0.6, base + 24, pw * 0.44, base + 24, wat, 2.2, 7);
   }
   // ── 오른쪽: 전기 회로 ──
@@ -146,20 +146,19 @@ function drawPair(ctx: CanvasRenderingContext2D, w: number, h: number, v: View, 
   ctx.moveTo(pw, h * 0.12);
   ctx.lineTo(pw, base + 30);
   ctx.stroke();
-  xText(ctx, "물길", pw * 0.5, big ? 54 : 16, { px: fs + 1, w: 800 });
-  xText(ctx, "전기 회로", ox + pw * 0.5, big ? 54 : 16, { px: fs + 1, w: 800 });
+  xText(ctx, "물길", pw * 0.5, big ? base + 44 : 16, { px: fs + 1, w: 800 });
+  xText(ctx, "전기 회로", ox + pw * 0.5, big ? base + 44 : 16, { px: fs + 1, w: 800 });
   // 눌러 찾을 자리(왼쪽, 오른쪽)
   mark("pump", [px - 22, top - 40, 44, 44], "펌프");
   mark("pump", [L - 22, mid - 34, 44, 68], "전지");
-  mark("gap", [gx - 22, top, 44, base - top], "높이 차");
+  mark("gap", [gx - 22, top + 18, 44, base - top - 18], "높이 차");
   mark("gap", [L + 26, mid - 22, 50, 44], "전압");
-  mark("flow", [tx + 14, top - 34, 44, 30], "물의 흐름");
+  mark("flow", [tx + 38, top - 34, 46, 30], "물의 흐름");
   mark("flow", [(L + Rr) / 2 + 26, T - 34, 44, 30], "전류");
   mark("tap", [tx - 22, top - 40, 34, 44], "수도꼭지");
   mark("tap", [(L + Rr) / 2 - 24, T - 20, 48, 40], "스위치");
   mark("wheel", [fx - wr * 0.55 - wr - 4, wy - wr - 4, wr * 2 + 8, wr * 2 + 8], "물레방아");
   mark("wheel", [Rr - 24, mid - 26, 48, 52], "전구");
-  if (labels && v.level > 0) xText(ctx, v.level === 2 ? "전지 2개" : "전지 1개", L + 50, mid, { px: fs, color: X.dim });
   return hits;
 }
 
@@ -229,8 +228,8 @@ export const waterLab: StepRenderer = (host, step, api) => {
     const say = (msg?: string): void => {
       const left = PAIRS.filter((p) => !v.found.has(p.k)).length;
       const on = v.level > 0 && v.open;
-      const base = msg ?? (!on ? (v.level === 0 ? "펌프가 없으니 물이 흐르지 않고, 전지가 없으니 전류도 흐르지 않아요." : "수도꼭지를 잠그자 물이 멈추고, 스위치를 열자 전류도 멈췄어요.") : v.level === 2 ? "높이 차가 커지자 물이 세게 흐르고, 전구도 더 밝아졌어요." : "두 그림에서 닮은 곳을 눌러 보세요.");
-      status.innerHTML = missionDone() ? "다 찾았어요! <b>세로로 돌아가기</b>를 눌러 마무리해요." : `${base} <b>남은 짝 ${left}개</b>${tried.strong ? "" : " · 세게도 해 봐요"}${tried.off ? "" : " · 잠가도 봐요"}`;
+      const base = msg ?? (!on ? (v.level === 0 ? "펌프도 전지도 없어 물도 전류도 흐르지 않아요." : "수도꼭지를 잠그고 스위치를 열자 물도 전류도 멈췄어요.") : v.level === 2 ? "높이 차가 커지자 물이 세게 흐르고 전구도 더 밝아요." : "두 그림에서 닮은 곳을 눌러 보세요.");
+      status.innerHTML = missionDone() ? "다 찾았어요! <b>세로로 돌아가기</b>를 눌러 마무리해요." : `${base} <b>남은 짝 ${left}개</b>${tried.strong ? "" : " · 세게 해 보기"}${tried.off ? "" : " · 잠가 보기"}`;
       status.dataset.done = missionDone() ? "1" : "0";
     };
     cv.addEventListener("pointerdown", (e) => {
@@ -241,7 +240,7 @@ export const waterLab: StepRenderer = (host, step, api) => {
           haptic(v.found.has(pair.k) ? HAPTIC.tap : HAPTIC.correct);
           v.found.add(pair.k);
           v.hot = pair.k;
-          say(`<b>${pair.a}</b>와 짝이 되는 것은 <b>${pair.b}</b>예요.`);
+          say(`<b>${pair.a}</b>의 짝은 <b>${pair.b}</b>예요.`);
           return;
         }
       }

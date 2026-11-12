@@ -120,7 +120,7 @@ export const coilLab: StepRenderer = (host, step, api) => {
   function finish(): void {
     f.pips(4);
     f.say("실험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("전류가 흐르는 코일 주위에는 <b>자기장</b>이 생겨요. 전류의 방향을 바꾸면 자기장의 방향도 반대가 되고, 전류가 셀수록 자기장도 세져요.");
+    f.slot.conclude("코일에 전류가 흐르면 그 주위에 <b>자기장</b>이 생겨요. 전류의 방향을 바꾸면 자기장의 방향도 반대가 되고, 전류가 셀수록 자기장도 세져요.");
     api.enableCTA(s.cta ?? "다음");
   }
 

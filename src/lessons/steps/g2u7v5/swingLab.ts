@@ -150,8 +150,8 @@ export const swingLab: StepRenderer = (host, step, api) => {
     box(0.42, 1.98, 1.0, 0x9aa7bd, -1.41, 0, 0);
     const lTop = S.makeLabel("S극", { size: 0.62, color: "#9CC8FF" });
     const lBot = S.makeLabel("N극", { size: 0.62, color: "#FFB3A6" });
-    lTop.position.set(-0.6, 0.78, 0.62);
-    lBot.position.set(-0.6, -0.78, 0.62);
+    lTop.position.set(-1.0, 0.78, 0.62);
+    lBot.position.set(-1.0, -0.78, 0.62);
     scene.add(lTop, lBot);
     // 그네(가로대에 매단 코일)
     const swing = new T.Group();
@@ -173,13 +173,13 @@ export const swingLab: StepRenderer = (host, step, api) => {
       scene.add(a);
       return a;
     });
-    const curArrow = new T.ArrowHelper(new T.Vector3(0, 0, 1), new T.Vector3(0, -2.6, 0), 0.8, 0xffc45a, 0.3, 0.2);
+    const curArrow = new T.ArrowHelper(new T.Vector3(0, 0, 1), new T.Vector3(0, -2.6, 0), 0.8, 0xffd400, 0.3, 0.2);
     const forceArrow = new T.ArrowHelper(new T.Vector3(1, 0, 0), new T.Vector3(0, -2.6, 0), 1.0, 0x3fd6c0, 0.34, 0.24);
     swing.add(curArrow, forceArrow);
     const lField = S.makeLabel("자기장", { size: 0.58, color: "#FFB3A6" });
     const lCur = S.makeLabel("전류", { size: 0.58, color: "#FFD98A" });
     const lForce = S.makeLabel("힘", { size: 0.64, color: "#8FF0DF" });
-    lField.position.set(1.25, 0, 0.6);
+    lField.position.set(1.45, 0, -0.75);
     scene.add(lField);
     swing.add(lCur, lForce);
 
@@ -217,9 +217,9 @@ export const swingLab: StepRenderer = (host, step, api) => {
       forceArrow.setLength(strong ? 1.4 : 0.95, 0.34, 0.24);
       lCur.position.set(0, -3.0, cur * 0.8);
       lForce.position.set(out * (strong ? 1.75 : 1.3), -2.3, 0);
-      const r = 7.4;
-      camera.position.set(Math.cos(elv) * Math.cos(az) * r, 0.6 + Math.sin(elv) * r, Math.cos(elv) * Math.sin(az) * r);
-      camera.lookAt(0, 0.6, 0);
+      const r = 8.4;
+      camera.position.set(Math.cos(elv) * Math.cos(az) * r, 0.75 + Math.sin(elv) * r, Math.cos(elv) * Math.sin(az) * r);
+      camera.lookAt(0, 0.75, 0);
       // 글자표는 그 장면에서 직접 바꿀 수 없어 극이 바뀌면 자리만 맞바꾼다
       lTop.position.y = nBottom ? 0.78 : -0.78;
       lBot.position.y = nBottom ? -0.78 : 0.78;

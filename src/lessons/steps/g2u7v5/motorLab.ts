@@ -150,7 +150,9 @@ export const motorLab: StepRenderer = (host, step, api) => {
         const [a, b] = cdir > 0 ? pts : [pts[1], pts[0]];
         const mx = (a[0] + b[0]) / 2;
         const my = (a[1] + b[1]) / 2;
-        xArrow(ctx, a[0] + (b[0] - a[0]) * 0.2, a[1] + (b[1] - a[1]) * 0.2, a[0] + (b[0] - a[0]) * 0.8, a[1] + (b[1] - a[1]) * 0.8, X.cur, 2.6, 8);
+        const ax = [a[0] + (b[0] - a[0]) * 0.2, a[1] + (b[1] - a[1]) * 0.2, a[0] + (b[0] - a[0]) * 0.8, a[1] + (b[1] - a[1]) * 0.8] as const;
+        xArrow(ctx, ...ax, "#6E3F16", 5.2, 12);
+        xArrow(ctx, ...ax, X.cur, 2.6, 9);
         xArrow(ctx, mx, my, mx, my - fdir * 38, X.force, 3.2, 10);
         xText(ctx, name, mx, my - fdir * 50, { px: 12.5, color: X.force });
       };

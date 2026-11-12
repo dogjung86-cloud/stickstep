@@ -210,7 +210,7 @@ const LAB = {
     await at("coil-flip");
     await tapKey(page, "strong"); await W(page, 900);
     await at("coil-strong");
-    await finishLab("coil", "정리하기", 2);
+    await finishLab("coil", "쉽게 기억하는 법", 2);
   },
   async swing() {
     await W(page, 1500);
