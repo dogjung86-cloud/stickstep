@@ -426,6 +426,7 @@ const Q4 = mcq({
 // 문제: (별 랩 뒤) 그림(남쪽 하늘) / (정리 뒤) 그림(북쪽 하늘) → 세 시간 뒤 → 그림(황도 12궁) → 복수 선택(공전)
 const L4 = {
   id: "u7l4",
+  premium: true,
   unitId: "u7",
   title: "지구의 자전과 공전",
   subtitle: "하늘이 도는 게 아니었어",
@@ -547,6 +548,7 @@ const Q5 = mcq({
 // 문제: 그림(다섯 모습) → 그림(네 자리) → 삭 → 대보름 → 분류(자리와 이름)
 const L5 = {
   id: "u7l5",
+  premium: true,
   unitId: "u7",
   title: "달의 위상 변화",
   subtitle: "달이 깎이는 게 아니었어",
@@ -671,6 +673,7 @@ const Q6 = mcq({
 // 문제: 그림(손전등과 두 공) → 그림(그림자 속의 길) → 붉은 달 → 관측 범위 → 매달 일어나지 않는 까닭
 const L6 = {
   id: "u7l6",
+  premium: true,
   unitId: "u7",
   title: "일식과 월식",
   subtitle: "세 천체가 한 줄이 되는 날",
