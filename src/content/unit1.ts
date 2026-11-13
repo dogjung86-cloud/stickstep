@@ -244,6 +244,7 @@ const L3 = {
 // ── 레슨 4. 첨단 과학기술과 미래 사회 ────────────────────────
 const L4 = {
   id: "u1l4",
+  premium: true,
   unitId: "u1",
   title: "첨단 과학기술",
   subtitle: "미래를 바꾸는 기술들",
@@ -311,6 +312,7 @@ const L4 = {
 // ── 레슨 5. 과학기술과 지속가능한 삶 ────────────────────────
 const L5 = {
   id: "u1l5",
+  premium: true,
   unitId: "u1",
   title: "지속가능한 삶",
   subtitle: "미래 세대를 위한 과학기술",
