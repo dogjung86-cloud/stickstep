@@ -17,6 +17,8 @@ import { parCurLab } from "./parCurLab";
 import { powerLab } from "./powerLab";
 import { effLab } from "./effLab";
 import { coilLab } from "./coilLab";
+import { gripLab } from "./gripLab";
+import { palmLab } from "./palmLab";
 import { swingLab } from "./swingLab";
 import { motorLab } from "./motorLab";
 
@@ -36,6 +38,8 @@ export const G2U7V5_STEPS: Record<string, StepRenderer> = {
   g2u7PowerLab: powerLab,
   g2u7EffLab: effLab,
   g2u7CoilLab: coilLab,
+  g2u7GripLab: gripLab,
+  g2u7PalmLab: palmLab,
   g2u7SwingLab: swingLab,
   g2u7MotorLab: motorLab,
 };

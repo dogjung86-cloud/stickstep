@@ -12,15 +12,15 @@ import { haptic, HAPTIC } from "../../../core/haptics";
 import { drawBattery, drawWire } from "../../../ui/elecKit";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvTimers } from "../bio6/b6Lab";
-import { BAT, C, G, cPaint, cProbe, cRes, cSpot, cTag, hit, pathLen, type Pt } from "./circuitKit";
+import { BAT, C, G, cPaint, cProbe, cRes, cSpotBox, cTag, hit, pathLen, type Pt } from "./circuitKit";
 import { X, xCanvas, xFrame, xLog, xPill, xRow, xText, type LabStep } from "./kit";
 
-const YA = 62;
-const YB = 134;
+const YA = 60;
+const YB = 130;
 const RX = 173;
 const TOP = 96; // 직렬로 바꿨을 때의 윗줄
-const SAX = 232;
-const SBX = 114;
+const SAX = 114;
+const SBX = 232;
 // 병렬: (+)극 쪽 도선(전지에서 나와 두 저항의 오른쪽 끝까지), (−)극 쪽 도선(두 저항의 왼쪽 끝에서 전지까지)
 const P_HI: Pt[] = [[BAT.out, G.By], [G.R, G.By], [G.R, YA], [RX + 23, YA]];
 const P_HI2: Pt[] = [[G.R, YB], [RX + 23, YB]];
@@ -28,9 +28,9 @@ const P_LO: Pt[] = [[BAT.in, G.By], [G.L, G.By], [G.L, YA], [RX - 23, YA]];
 const P_LO2: Pt[] = [[G.L, YB], [RX - 23, YB]];
 const FORK = G.R - BAT.out + (G.By - YB); // 전지에서 아래 갈래가 갈라지는 곳까지의 거리
 // 직렬
-const S_HI: Pt[] = [[BAT.out, G.By], [G.R, G.By], [G.R, TOP], [SAX + 23, TOP]];
-const S_MID: Pt[] = [[SAX - 23, TOP], [SBX + 23, TOP]];
-const S_LO: Pt[] = [[BAT.in, G.By], [G.L, G.By], [G.L, TOP], [SBX - 23, TOP]];
+const S_HI: Pt[] = [[BAT.out, G.By], [G.R, G.By], [G.R, TOP], [SBX + 23, TOP]];
+const S_MID: Pt[] = [[SBX - 23, TOP], [SAX + 23, TOP]];
+const S_LO: Pt[] = [[BAT.in, G.By], [G.L, G.By], [G.L, TOP], [SAX - 23, TOP]];
 
 export const parVoltLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
@@ -79,6 +79,7 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
 
   function predict(): void {
     f.say("두 저항 모두 빨간 도선과 파란 도선 <b>사이</b>에 놓여 있어요.");
+    api.setCTA("먼저 예측해 보세요", { enabled: false });
     f.slot.ask(
       "A는 10 Ω, B는 20 Ω이에요. 걸리는 전압은?",
       [{ t: "둘 다 3 V로 같아요", ok: true }, { t: "저항이 큰 B에 더 많이 걸려요" }, { t: "저항이 작은 A에 더 많이 걸려요" }],
@@ -104,7 +105,7 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
     if (phase === "mp") {
       log.set(0, "3 V와 3 V");
       f.pips(2);
-      f.say(`${guess ? "예측대로" : "저항이 달라도"} 둘 다 <b>3 V</b>예요. 양 끝이 같은 두 도선에 닿아 있으니까요.`);
+      f.say(`${guess ? "예측대로" : "저항이 달라도"} 둘 다 <b>3 V</b>예요. 같은 저항을 직렬로 바꾸면 어떨까요?`);
       toSer.disabled = false;
       api.setCTA("직렬로 바꿔 견줘 보세요", { enabled: false });
     } else if (phase === "ms") {
@@ -112,7 +113,14 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
       log.set(1, "1 V와 2 V");
       f.pips(3);
       f.say("직렬은 높이 차 3 V를 <b>나눠</b> 쓰고, 병렬은 저마다 <b>3 V를 다</b> 써요.");
-      tm.later(ask1, 3200);
+      api.setCTA("두 연결을 모두 쟀어요", { enabled: false });
+      tm.later(() => {
+        // 판정은 병렬 회로를 앞에 두고 묻는다
+        mode = "par";
+        got.add("A");
+        got.add("B");
+        ask1();
+      }, 3200);
     }
   }
   toSer.addEventListener("click", () => {
@@ -183,10 +191,12 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
     const R = (pts: Pt[]): Pt[] => [...pts].reverse();
     if (mode === "par") {
       // 전류: A에 0.3 A, B에 0.15 A, 합쳐서 0.45 A(알갱이의 빠르기만 다르게)
-      W(P_HI, 1.5);
+      W([[BAT.out, G.By], [G.R, G.By], [G.R, YB]], 1.5);
+      W([[G.R, YB], [G.R, YA], [RX + 23, YA]], 1);
       W(P_HI2, 0.5);
-      W(R(P_LO), 1.5);
+      W([[RX - 23, YA], [G.L, YA], [G.L, YB]], 1);
       W(R(P_LO2), 0.5);
+      W([[G.L, YB], [G.L, G.By], [BAT.in, G.By]], 1.5);
       const d1 = pathLen(P_HI);
       if (hi > 0) {
         cPaint(ctx, P_HI, C.hi, hi);
@@ -222,7 +232,7 @@ export const parVoltLab: StepRenderer = (host, step, api) => {
       if (got.has(q.id)) {
         cProbe(ctx, q.x - 23, q.x + 23, q.y, ty);
         cTag(ctx, q.x, ty, mode === "par" ? "3 V" : q.id === "A" ? "1 V" : "2 V", C.volt);
-      } else if (live) cSpot(ctx, q.x, q.y, C.volt, t, 24);
+      } else if (live) cSpotBox(ctx, q.x, q.y, C.volt, t);
     });
     ctx.restore();
     xPill(ctx, mode === "par" ? "병렬: 갈래를 나눠 이음" : "직렬: 한 줄로 이음", X.cur);

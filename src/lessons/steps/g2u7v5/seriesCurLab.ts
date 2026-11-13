@@ -54,7 +54,7 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
   const ampText = (): string => (big ? "0.05 A" : "0.1 A");
 
   const log = xLog(SPOTS.map((q) => `${q.name} (${q.where})`), 1, true);
-  const swap = bvBtn("main", "뒤 전구를 저항이 큰 것으로 바꾸기");
+  const swap = bvBtn("main", "왼쪽 전구를 45 Ω 저항으로 바꾸기");
   swap.disabled = true;
   f.slot.setControls(log.el, swap);
 
@@ -67,12 +67,13 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
       return;
     }
     if (phase === "m1") {
-      f.say(`${guess ? "예측대로" : "줄어들지 않고"} 세 곳 모두 <b>0.1 A</b>예요. 이번에는 뒤 전구를 바꿔 봐요.`);
+      f.say(`${guess ? "예측대로" : "줄어들지 않고"} 세 곳 모두 <b>0.1 A</b>예요. 이번에는 왼쪽 전구를 큰 저항으로 바꿔 봐요.`);
       swap.disabled = false;
-      api.setCTA("뒤 전구를 바꿔 다시 재 보세요", { enabled: false });
+      api.setCTA("왼쪽 전구를 바꿔 다시 재 보세요", { enabled: false });
     } else {
       phase = "end";
-      f.say("이번에도 세 곳 모두 <b>0.05 A</b>예요. 길이 하나라 새거나 쌓일 곳이 없어요.");
+      f.say("이번에도 세 곳 모두 <b>0.05 A</b>예요. 어느 한 곳만 약해지지 않았어요.");
+      api.setCTA("세 곳을 모두 쟀어요", { enabled: false });
       tm.later(ask1, 2800);
     }
   }
@@ -84,7 +85,7 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
     got.clear();
     SPOTS.forEach((_, i) => log.clear(i));
     swap.disabled = true;
-    swap.textContent = "뒤를 45 Ω 저항으로 바꿨어요";
+    swap.textContent = "왼쪽을 45 Ω 저항으로 바꿨어요";
     f.pips(2);
     f.say("알갱이가 <b>모든 곳에서 함께</b> 느려졌어요. 가, 나, 다를 다시 재 보세요.");
     api.setCTA("가, 나, 다를 다시 재 보세요", { enabled: false });
@@ -113,7 +114,7 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
           phase = "m1";
           f.slot.showControls();
           f.pips(1);
-          f.say("점선 동그라미 <b>가, 나, 다</b>를 하나씩 눌러 전류계를 대 보세요.");
+          f.say("노란 알갱이가 전류예요. 점선 <b>가, 나, 다</b>를 하나씩 눌러 전류계를 대 보세요.");
           api.setCTA("가, 나, 다에서 전류를 재 보세요", { enabled: false });
         },
       },
@@ -121,7 +122,7 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
   }
   function ask1(): void {
     f.slot.ask(
-      "뒤 전구를 저항이 큰 것으로 바꾸자 전류는?",
+      "왼쪽 전구를 큰 저항으로 바꾸자 전류는?",
       [{ t: "세 곳 모두 똑같이 약해졌어요", ok: true }, { t: "바꾼 곳 뒤(다)만 약해졌어요" }, { t: "세 곳 모두 그대로였어요" }],
       (ok) => api.recordQuiz(ok),
       { why: "가, 나, 다 모두 <b>0.05 A</b>로 함께 약해졌어요.", onNext: ask2 },
@@ -185,11 +186,11 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
     xArrow(ctx, 228, G.By - 14, 258, G.By - 14, X.cur, 2.4, 7);
     xText(ctx, "전류", 243, G.By - 27, { px: 12, color: X.cur });
     drawBulb(ctx, 228, TOP - 4, 19, big ? 0.1 : 0.3);
-    xText(ctx, "15 Ω", 228, TOP - 34, { px: 12, color: X.dim });
+    xText(ctx, "15 Ω", 228, TOP + 32, { px: 12, color: X.ink });
     if (big) cRes(ctx, 118, TOP, { ohm: "45 Ω" });
     else {
       drawBulb(ctx, 118, TOP - 4, 19, 0.3);
-      xText(ctx, "15 Ω", 118, TOP - 34, { px: 12, color: X.dim });
+      xText(ctx, "15 Ω", 118, TOP + 32, { px: 12, color: X.ink });
     }
     SPOTS.forEach((q) => {
       const n = got.get(q.id);
@@ -214,7 +215,7 @@ export const seriesCurLab: StepRenderer = (host, step, api) => {
       }
     });
     ctx.restore();
-    xPill(ctx, "직렬: 길이 하나", X.cur);
+    xPill(ctx, "직렬: 한 줄로 이음", X.cur);
   });
 
   f.say("전류는 (+)극에서 나와 전구 둘을 차례로 지나요. 먼저 <b>예측</b>해 보세요.");

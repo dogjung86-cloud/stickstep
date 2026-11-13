@@ -175,7 +175,7 @@ const LAB = {
     await tapStage(page, 173, 74); await W(page, 2600);
     await tapStage(page, 44, 132); await W(page, 2600);
     await at("scur-same");
-    await tapText(page, "뒤 전구를"); await W(page, 700);
+    await tapText(page, "왼쪽 전구를"); await W(page, 700);
     await at("scur-swapped");
     for (const [x, y] of [[302, 132], [173, 74], [44, 132]]) { await tapStage(page, x, y); await W(page, 2600); }
     await at("scur-slow");
@@ -203,7 +203,7 @@ const LAB = {
   },
   async pvolt() {
     await at("pvolt-start");
-    await tapStage(page, 173, 62); await W(page, 200); // 칠하기 전에는 전압계가 닿지 않는다
+    await tapStage(page, 173, 60); await W(page, 200); // 칠하기 전에는 전압계가 닿지 않는다
     await tapText(page, "(+)극"); await W(page, 1700);
     await at("pvolt-hi");
     await tapText(page, "(−)극"); await W(page, 1700);
@@ -212,9 +212,9 @@ const LAB = {
     await W(page, 300);
     await at("pvolt-predict");
     await answer(page, false); await W(page, 1600);
-    await tapStage(page, 173, 62); await W(page, 300);
+    await tapStage(page, 173, 60); await W(page, 300);
     await at("pvolt-one");
-    await tapStage(page, 173, 134); await W(page, 400);
+    await tapStage(page, 173, 130); await W(page, 400);
     await at("pvolt-par");
     await tapText(page, "직렬로"); await W(page, 600);
     await at("pvolt-ser-start");
@@ -268,11 +268,23 @@ const LAB = {
     await at("coil-nocompass", false);
     await tapStage(page, 76, 112); await tapStage(page, 270, 112); await tapStage(page, 173, 50); await tapStage(page, 173, 172); await W(page, 900);
     await at("coil-on");
-    await tapText(page, "전류 방향"); await W(page, 900);
+    await tapText(page, "전류 방향");
+    ok(await waitAsk(page), "coil: 예측 질문이 뜨지 않음");
+    await W(page, 300);
+    await at("coil-predict");
+    await answer(page, true); await W(page, 2200);
     await at("coil-flip");
     await tapKey(page, "strong"); await W(page, 900);
     await at("coil-strong");
-    await finishLab("coil", "쉽게 기억하는 법", 2);
+    await tapText(page, "막대자석"); await W(page, 700);
+    await at("coil-magnet");
+    await tapText(page, "코일로"); await W(page, 700);
+    await at("coil-ns");
+    await finishLab("coil", "쉽게 기억하는 법", 3);
+  },
+  async grip() {
+    await at("grip-start");
+    await finishLab("grip", "정리하기", 3);
   },
   async swing() {
     await W(page, 1500);
@@ -281,8 +293,16 @@ const LAB = {
     await page.mouse.move(195, 560); await page.mouse.down(); await W(page, 900);
     await at("swing-out");
     await page.mouse.up(); await W(page, 300);
-    await tapText(page, "전류 방향"); await holdBtn(page, ".bv-ctl .g2u7x-hold", 900);
+    await tapText(page, "전류 방향");
+    ok(await waitAsk(page), "swing: 전류 예측 질문이 뜨지 않음");
+    await W(page, 300);
+    await at("swing-predict");
+    await answer(page, true); await W(page, 1700);
+    await holdBtn(page, ".bv-ctl .g2u7x-hold", 900); await W(page, 300);
     await tapText(page, "자석의 극");
+    ok(await waitAsk(page), "swing: 자석 예측 질문이 뜨지 않음");
+    await W(page, 300);
+    await answer(page, false); await W(page, 1700);
     const b = await page.evaluate(() => { const r = document.querySelector(".screen.active .bv-ctl .g2u7x-hold").getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
     await page.mouse.move(b.x, b.y); await page.mouse.down(); await W(page, 900);
     await at("swing-both");
@@ -292,17 +312,28 @@ const LAB = {
   },
   async motor() {
     await at("motor-start");
-    await tapText(page, "전류 흐르게"); await W(page, 900);
+    await tapText(page, "전류 흐르게"); await W(page, 1200);
+    await at("motor-left");
+    ok(await waitAsk(page), "motor: 예측 질문이 뜨지 않음");
+    await W(page, 300);
+    await at("motor-predict");
+    await answer(page, true); await W(page, 1700);
+    await at("motor-both");
+    await tapText(page, "코일 놓기"); await W(page, 900);
     await at("motor-on");
     await tapText(page, "전류 방향"); await W(page, 700);
     await tapText(page, "자석의 극"); await W(page, 900);
     await at("motor-flip");
     await finishLab("motor", "이름 붙이기", 1);
   },
+  async palm() {
+    await at("palm-start");
+    await finishLab("palm", "정리하기", 3);
+  },
 };
 const PLAN = {
   g2u7l1: ["straw", "rub"], g2u7l2: ["can"], g2u7l3: ["wire", "water"], g2u7l4: ["ohm", "formula"],
-  g2u7l5: ["bulb", "scur", "svolt", "pvolt", "pcur"], g2u7l6: ["power", "eff"], g2u7l7: ["coil"], g2u7l8: ["swing", "motor"],
+  g2u7l5: ["bulb", "scur", "svolt", "pvolt", "pcur"], g2u7l6: ["power", "eff"], g2u7l7: ["coil", "grip"], g2u7l8: ["swing", "motor", "palm"],
 };
 /** 도입: 예측을 고르고(첫 보기) 조작 줄의 버튼을 끝까지 누른다. */
 async function intro() {

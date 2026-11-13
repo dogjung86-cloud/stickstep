@@ -97,6 +97,19 @@ export function cSpot(ctx: CanvasRenderingContext2D, x: number, y: number, color
   ctx.restore();
 }
 
+/** 전압계를 댈 자리: 저항을 감싸는 점선 상자(이름표를 가리지 않는다). */
+export function cSpotBox(ctx: CanvasRenderingContext2D, x: number, y: number, color: string, tMs: number, w = 62, h = 27): void {
+  ctx.save();
+  ctx.globalAlpha = 0.6 + 0.4 * Math.sin(tMs / 260);
+  ctx.setLineDash([5, 4]);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(x - w / 2, y - h / 2, w, h, 10);
+  ctx.stroke();
+  ctx.restore();
+}
+
 /** 도선에 색을 입힌다(처음부터 frac만큼). 전지의 어느 극에 이어진 도선인지 보일 때 쓴다. */
 export function cPaint(ctx: CanvasRenderingContext2D, pts: Pt[], color: string, frac = 1): void {
   if (frac <= 0) return;

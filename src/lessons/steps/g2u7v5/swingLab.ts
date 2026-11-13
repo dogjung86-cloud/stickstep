@@ -5,6 +5,7 @@
 // 학생이 정하는 것: 스위치를 누르는 것, 전류의 방향, 자석의 극, 전류의 세기(차례는 자유). 무대를 끌어 돌려 볼 수 있다.
 // 실패하는 길: 스위치를 누르지 않으면 그네는 움직이지 않는다. 스위치를 오래 누르고 있으면 코일이 뜨거워져 전류를 끊어야 한다.
 // 옛 랩(swingLab3d)은 가로 화면의 3D 장면에서 차례로 눌렀다. 여기서는 세로 한 화면에서 장치를 돌려 보며 학생이 고른 조합마다 힘을 계산한다.
+// 걸음(2026-11-14 보강): 전류의 방향이나 자석의 극을 처음 바꿀 때는 예측을 먼저 하고, 스위치를 눌러 확인한다.
 // 힘의 방향은 전류(선의 방향)와 자기장(N극에서 S극)의 벡터곱으로 계산한다. three.js는 열릴 때만 내려받는다(ui/space3d, 동적 import).
 
 import { el } from "../../../core/dom";
@@ -33,6 +34,32 @@ export const swingLab: StepRenderer = (host, step, api) => {
   let az = 0.62;
   let elv = 0.26;
   const seen = { press: false, cur: false, pole: false, strong: false };
+  const guessed = { cur: false, pole: false };
+  let asking = false;
+  /** 처음 바꿀 때는 예측부터. 예측을 띄웠으면 true(바꾸는 일은 답한 뒤에 한다). */
+  const predictFirst = (which: "cur" | "pole", go: () => void): boolean => {
+    if (guessed[which]) return false;
+    if (!seen.press) {
+      f.say("먼저 <b>스위치를 눌러</b> 그네가 어느 쪽으로 움직이는지 봐 두세요.");
+      return true;
+    }
+    asking = true;
+    f.slot.ask(
+      which === "cur" ? "전류의 방향만 반대로 바꾸면 그네는?" : "자석의 두 극만 바꾸면 그네는?",
+      [{ t: "방금과 반대쪽으로 움직여요", ok: true }, { t: "방금과 같은 쪽으로 움직여요" }, { t: "움직이지 않아요" }],
+      () => undefined,
+      {
+        predict: true,
+        onNext: () => {
+          guessed[which] = true;
+          asking = false;
+          f.slot.showControls();
+          go();
+        },
+      },
+    );
+    return true;
+  };
   /** 그네가 받는 힘의 x방향(+1이 자석 바깥쪽). 전류 z × 자기장 y = −x */
   const fx = (): number => -cur * (nBottom ? 1 : -1);
 
@@ -64,17 +91,23 @@ export const swingLab: StepRenderer = (host, step, api) => {
     },
   );
   f.slot.setControls(sw, xRow(bCur, bPole), power.el);
-  bCur.addEventListener("click", () => {
-    if (finished) return;
-    haptic(HAPTIC.tap);
+  const flipCur = (): void => {
     cur = cur === 1 ? -1 : 1;
-    f.say("<b>전류의 방향</b>을 바꿨어요. 스위치를 눌러 그네가 어느 쪽으로 가는지 봐요.");
+    f.say("<b>전류의 방향</b>을 바꿨어요. 스위치를 눌러 예측과 견줘 보세요.");
+  };
+  const flipPole = (): void => {
+    nBottom = !nBottom;
+    f.say("<b>자석의 두 극</b>을 바꿨어요. 스위치를 눌러 예측과 견줘 보세요.");
+  };
+  bCur.addEventListener("click", () => {
+    if (finished || asking || held) return;
+    haptic(HAPTIC.tap);
+    if (!predictFirst("cur", flipCur)) flipCur();
   });
   bPole.addEventListener("click", () => {
-    if (finished) return;
+    if (finished || asking || held) return;
     haptic(HAPTIC.tap);
-    nBottom = !nBottom;
-    f.say("<b>자석의 두 극</b>을 바꿨어요. 스위치를 눌러 그네가 어느 쪽으로 가는지 봐요.");
+    if (!predictFirst("pole", flipPole)) flipPole();
   });
   function after(): void {
     f.pips((seen.press ? 1 : 0) + (seen.cur ? 1 : 0) + (seen.pole ? 1 : 0) + (seen.strong ? 1 : 0));

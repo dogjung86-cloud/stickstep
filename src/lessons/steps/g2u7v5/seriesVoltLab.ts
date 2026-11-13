@@ -11,13 +11,13 @@ import { haptic, HAPTIC } from "../../../core/haptics";
 import { drawBattery, drawWire } from "../../../ui/elecKit";
 import type { StepRenderer } from "../../types";
 import { bvTimers } from "../bio6/b6Lab";
-import { BAT, C, G, cInk, cProbe, cRes, cSpot, cTag, hit, type Pt } from "./circuitKit";
+import { BAT, C, G, cInk, cProbe, cRes, cSpotBox, cTag, hit, type Pt } from "./circuitKit";
 import { X, xBox, xCanvas, xFrame, xLog, xSegs, xText, type LabStep } from "./kit";
 
 type RB = "10" | "20" | "50";
 const TOP = 104;
-const AX = 232; // 저항 A(전류가 먼저 지난다)
-const BX = 114; // 저항 B
+const AX = 114; // 저항 A(왼쪽)
+const BX = 232; // 저항 B(오른쪽)
 const CASES: Record<RB, { amp: string; va: string; vb: string; a: number; b: number; row: string }> = {
   "10": { amp: "0.15", va: "1.5 V", vb: "1.5 V", a: 1.5, b: 1.5, row: "1.5 V + 1.5 V = 3 V" },
   "20": { amp: "0.1", va: "1 V", vb: "2 V", a: 1, b: 2, row: "1 V + 2 V = 3 V" },
@@ -72,6 +72,7 @@ export const seriesVoltLab: StepRenderer = (host, step, api) => {
   }
   function predict(k: RB): void {
     asking = true;
+    api.setCTA("먼저 예측해 보세요", { enabled: false });
     f.slot.ask(
       "B를 더 큰 저항으로 바꾸면 B에 걸리는 전압은?",
       [{ t: "1.5 V보다 커져요", ok: true }, { t: "1.5 V 그대로예요" }, { t: "1.5 V보다 작아져요" }],
@@ -84,6 +85,7 @@ export const seriesVoltLab: StepRenderer = (host, step, api) => {
           f.slot.showControls();
           seg.set(k);
           apply(k);
+          api.setCTA("A와 B의 전압을 재 보세요", { enabled: false });
         },
       },
     );
@@ -97,11 +99,12 @@ export const seriesVoltLab: StepRenderer = (host, step, api) => {
     log.set(ORDER.indexOf(rb), CASES[rb].row);
     f.pips(doneCase.size);
     if (rb === "10") f.say("똑같은 저항은 3 V를 <b>반씩</b> 나눠요. 아래에서 B를 더 큰 저항으로 바꿔 봐요.");
-    else if (rb === "20") f.say("같은 0.1 A가 흐르는데 B는 저항이 2배라 전압도 <b>2배</b>예요. 더하면 3 V.");
-    else f.say("B의 저항이 5배라 전압도 <b>5배</b>예요. 그래도 더하면 3 V 그대로예요.");
+    else if (rb === "20") f.say("B의 저항이 A의 2배가 되자 전압도 <b>2배</b>예요. 더하면 3 V예요.");
+    else f.say("B의 저항이 A의 5배가 되자 전압도 <b>5배</b>예요. 더하면 그대로 3 V예요.");
     if (doneCase.size === ORDER.length && !finished) {
       finished = true;
       seg.lock(true);
+      api.setCTA("세 경우를 모두 쟀어요", { enabled: false });
       tm.later(ask1, 3000);
     } else if (doneCase.size > 1) api.setCTA("남은 저항으로도 바꿔 재 보세요", { enabled: false });
   }
@@ -146,9 +149,9 @@ export const seriesVoltLab: StepRenderer = (host, step, api) => {
     ctx.save();
     ctx.scale(k, k);
     const P = (pts: Pt[]): void => drawWire(ctx, pts.map(([x, y]) => ({ x, y })), { on: true, flow: ph, dir: 1, width: 3.5 });
-    P([[BAT.out, G.By], [G.R, G.By], [G.R, TOP], [AX + 23, TOP]]);
-    P([[AX - 23, TOP], [BX + 23, TOP]]);
-    P([[BX - 23, TOP], [G.L, TOP], [G.L, G.By], [BAT.in, G.By]]);
+    P([[BAT.out, G.By], [G.R, G.By], [G.R, TOP], [BX + 23, TOP]]);
+    P([[BX - 23, TOP], [AX + 23, TOP]]);
+    P([[AX - 23, TOP], [G.L, TOP], [G.L, G.By], [BAT.in, G.By]]);
     drawBattery(ctx, BAT.x, G.By, G.bw, 30, false);
     xText(ctx, "전지 3 V", BAT.x, G.By - 25, { px: 12, color: X.dim });
     cRes(ctx, AX, TOP, { name: "A", ohm: "10 Ω", below: true });
@@ -160,21 +163,21 @@ export const seriesVoltLab: StepRenderer = (host, step, api) => {
     xBox(ctx, bx, by, bw, 16, 8, "rgba(255,255,255,.07)", "rgba(178,204,238,.45)", 1.2);
     const wb = (bw * cs.b) / 3;
     const wa = (bw * cs.a) / 3;
-    if (got.has("B")) {
-      xBox(ctx, bx, by, wb, 16, 8, "rgba(155,232,196,.85)");
-      cInk(ctx, `B ${cs.vb}`, bx + wb / 2, by + 8.5, "#0B2A1E");
-    }
     if (got.has("A")) {
-      xBox(ctx, bx + wb, by, wa, 16, 8, "rgba(255,212,0,.85)");
-      cInk(ctx, wa > 50 ? `A ${cs.va}` : "A", bx + wb + wa / 2, by + 8.5, "#3A2A00");
+      xBox(ctx, bx, by, wa, 16, 8, "rgba(255,212,0,.85)");
+      cInk(ctx, wa > 50 ? `A ${cs.va}` : "A", bx + wa / 2, by + 8.5, "#3A2A00");
     }
-    xText(ctx, "전지의 전압 3 V", bx, by - 13, { px: 12, color: X.dim, align: "left" });
+    if (got.has("B")) {
+      xBox(ctx, bx + wa, by, wb, 16, 8, "rgba(155,232,196,.85)");
+      cInk(ctx, `B ${cs.vb}`, bx + wa + wb / 2, by + 8.5, "#0B2A1E");
+    }
+    xText(ctx, "전지의 전압 3 V", bx, by - 13, { px: 12, color: X.ink, align: "left" });
     xText(ctx, `회로의 전류 ${cs.amp} A`, bx + bw, by - 13, { px: 12, color: X.cur, align: "right" });
     SPOTS.forEach((q) => {
       if (got.has(q.id)) {
         cProbe(ctx, q.x - 23, q.x + 23, TOP, TOP - 30);
         cTag(ctx, q.x, TOP - 30, q.id === "A" ? cs.va : cs.vb, C.volt);
-      } else if (!finished && !asking) cSpot(ctx, q.x, TOP, C.volt, t, 24);
+      } else if (!finished && !asking) cSpotBox(ctx, q.x, TOP, C.volt, t);
     });
     ctx.restore();
   });

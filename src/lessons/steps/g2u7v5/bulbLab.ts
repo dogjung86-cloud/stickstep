@@ -87,7 +87,7 @@ export const bulbLab: StepRenderer = (host, step, api) => {
       f.say("하나를 뺐더니 남은 전구도 <b>꺼졌어요</b>. 전류가 지나갈 길이 끊겼거든요.");
     } else if (mode === "parallel" && out) {
       seen.pOut = true;
-      log.set(2, "0.4 A, 하나 빼도 그대로");
+      log.set(2, "0.4 A, 빼도 밝기 그대로");
       f.say("하나를 빼도 남은 전구는 <b>그대로 밝아요</b>. 다른 갈래로 전류가 흘러요.");
     } else if (mode === "one") f.say(out ? "전구를 빼자 회로가 끊겼어요. 다시 눌러 끼워요." : "다시 켜졌어요. 이번에는 전구를 <b>두 개</b> 연결해 보세요.");
     else f.say("전구를 다시 끼웠어요.");
@@ -129,8 +129,13 @@ export const bulbLab: StepRenderer = (host, step, api) => {
     const By = 186;
     const live = stt.amps > 0;
     // 전류는 전지의 (+)극(오른쪽)에서 나와 오른쪽으로 올라가 전구를 지나 왼쪽으로 내려와 (−)극으로 들어간다
-    P([[215, By], [Rx, By], [Rx, mode === "parallel" ? 56 : 62]], live);
-    P([[Lx, mode === "parallel" ? 56 : 62], [Lx, By], [131, By]], live);
+    if (mode === "parallel") {
+      P([[215, By], [Rx, By], [Rx, 118]], live);
+      P([[Lx, 118], [Lx, By], [131, By]], live);
+    } else {
+      P([[215, By], [Rx, By], [Rx, 62]], live);
+      P([[Lx, 62], [Lx, By], [131, By]], live);
+    }
     if (mode === "one") {
       P([[Rx, 62], [195, 62]], live);
       P([[151, 62], [Lx, 62]], live);
@@ -139,13 +144,12 @@ export const bulbLab: StepRenderer = (host, step, api) => {
       P([[206, 62], [140, 62]], live);
       P([[96, 62], [Lx, 62]], live);
     } else {
-      BULBS.parallel.forEach(([, y], i) => {
-        const on = inPlace[i];
-        P([[Rx, y], [195, y]], on, 0.5);
-        P([[151, y], [Lx, y]], on, 0.5);
-      });
-      P([[Rx, 56], [Rx, 118]], inPlace[1], 0.5);
-      P([[Lx, 118], [Lx, 56]], inPlace[1], 0.5);
+      // 갈림길 (Rx, 118)에서 위 갈래와 아래 갈래로 나뉘고 (Lx, 118)에서 다시 합쳐진다. 갈래의 빠르기는 그 갈래의 전류만큼
+      const sp = (i: number): number => (stt.amps > 0 && inPlace[i] ? 0.2 / stt.amps : 0);
+      P([[Rx, 118], [Rx, 56], [195, 56]], inPlace[0], sp(0));
+      P([[151, 56], [Lx, 56], [Lx, 118]], inPlace[0], sp(0));
+      P([[Rx, 118], [195, 118]], inPlace[1], sp(1));
+      P([[151, 118], [Lx, 118]], inPlace[1], sp(1));
     }
     drawBattery(ctx, 173, By, 84, 30, false);
     BULBS[mode].forEach(([x, y], i) => {

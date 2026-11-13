@@ -5,6 +5,9 @@
 // 학생이 정하는 것: 전류를 흐르게 할지, 전류의 방향, 자석의 극(차례는 자유).
 // 실패하는 길: 전류를 끊으면 힘이 사라져 코일이 서서히 멈춘다.
 // 옛 판은 전동기를 눌러 보는 그림(hotspot)으로만 다뤘다. 여기서는 양쪽 부분이 받는 힘을 그 자리에서 계산해 그리고 코일을 돌린다.
+// 걸음(2026-11-14 보강): 코일을 붙잡은 채 전류를 흘려 왼쪽 변의 힘부터 본다 → 오른쪽 변의 힘을 예측한다 → 코일을 놓아 도는 것을 본다 → 전류와 자석을 바꾼다.
+// 그림은 비스듬히 내려다본 모습이라 화면에서 오른쪽 위가 뒤쪽(먼 쪽)이다. 오른쪽 x, 위 y, 보는 사람 쪽 z로 두면 힘 = 전류 × 자기장.
+//   전류가 뒤쪽(−z)으로 흐르고 자기장이 오른쪽(+x)이면 (−z) × x = −y, 아래쪽 힘이다(2026-11-14에 부호를 바로잡았다. 그전에는 위쪽으로 그렸다).
 // 힘은 전류(코일 변의 방향)와 자기장(N극에서 S극)의 벡터곱으로 계산한다. 왼쪽에 온 변에는 늘 같은 방향의 전류가 흐른다고 둔다(실제 전동기의 정류자가 하는 일).
 
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -25,7 +28,8 @@ export const motorLab: StepRenderer = (host, step, api) => {
   let cur: 1 | -1 = 1;
   let nLeft = true;
   let finished = false;
-  let th = 0.25; // 코일이 돈 각
+  let th = 0; // 코일이 돈 각
+  let hold: "off" | "left" | "both" | "free" = "off"; // 코일을 붙잡고 있는 걸음. free부터 코일이 돈다
   let speed = 0;
   const seen = { on: false, cur: false, pole: false };
 
@@ -35,11 +39,12 @@ export const motorLab: StepRenderer = (host, step, api) => {
   const log = xLog(["코일이 도는 방향"], 1, true);
   f.slot.setControls(sw, xRow(bCur, bPole), log.el);
 
-  /** 왼쪽에 온 변이 받는 힘의 방향(+1 위). 전류 z × 자기장 x = y */
-  const up = (): number => cur * (nLeft ? 1 : -1);
+  /** 왼쪽에 온 변이 받는 힘의 방향(+1 위). cur = 1이면 왼쪽 변의 전류가 뒤쪽(먼 쪽)으로 흐른다: (−z) × (+x) = −y */
+  const up = (): number => -cur * (nLeft ? 1 : -1);
+  const dirName = (v: number): string => (v > 0 ? "위" : "아래");
   const turnName = (): string => (up() > 0 ? "시계 방향" : "시계 반대 방향");
   const after = (): void => {
-    log.set(0, on ? turnName() : "멈춤");
+    log.set(0, hold !== "free" ? "붙잡고 있음" : on ? turnName() : "멈춤");
     f.pips((seen.on ? 1 : 0) + (seen.cur ? 1 : 0) + (seen.pole ? 1 : 0));
     if (seen.on && seen.cur && seen.pole && !finished) {
       finished = true;
@@ -49,17 +54,54 @@ export const motorLab: StepRenderer = (host, step, api) => {
       tm.later(ask, 3000);
     }
   };
+  bCur.disabled = true;
+  bPole.disabled = true;
   sw.addEventListener("click", () => {
     if (finished) return;
     haptic(HAPTIC.tap);
+    if (hold === "off") {
+      hold = "left";
+      on = true;
+      sw.disabled = true;
+      f.say(`코일을 붙잡은 채 전류를 흘렸어요. 왼쪽 변은 <b>${dirName(up())}</b>로 힘을 받아요.`);
+      tm.later(predict, 2400);
+      return;
+    }
+    if (hold === "both") {
+      hold = "free";
+      seen.on = true;
+      sw.textContent = "전류 끊기";
+      bCur.disabled = false;
+      bPole.disabled = false;
+      f.say("양쪽이 반대로 힘을 받아 코일이 <b>돌아요</b>. 전류의 방향과 자석의 극도 바꿔 보세요.");
+      after();
+      return;
+    }
     on = !on;
     sw.textContent = on ? "전류 끊기" : "전류 흐르게 하기";
-    if (on) {
-      seen.on = true;
-      f.say("코일의 왼쪽과 오른쪽이 <b>반대 방향</b>으로 힘을 받아 돌아요. 화살표를 견줘 보세요.");
-    } else f.say("전류를 끊자 힘이 사라져 코일이 <b>서서히 멈춰요</b>.");
+    if (on) f.say("코일의 왼쪽과 오른쪽이 <b>반대 방향</b>으로 힘을 받아 돌아요. 화살표를 견줘 보세요.");
+    else f.say("전류를 끊자 힘이 사라져 코일이 <b>서서히 멈춰요</b>.");
     after();
   });
+  function predict(): void {
+    const l = up();
+    f.slot.ask(
+      "오른쪽 변에는 전류가 반대 방향으로 흘러요. 오른쪽 변이 받는 힘은?",
+      [{ t: `왼쪽과 반대로 ${dirName(-l)}쪽`, ok: true }, { t: `왼쪽과 같이 ${dirName(l)}쪽` }, { t: "힘을 받지 않아요" }],
+      () => undefined,
+      {
+        predict: true,
+        onNext: () => {
+          hold = "both";
+          f.slot.showControls();
+          sw.disabled = false;
+          sw.textContent = "코일 놓기";
+          f.say(`오른쪽 변은 전류가 반대라 힘도 반대(<b>${dirName(-l)}</b>)예요. 이제 코일을 놓아 봐요.`);
+          api.setCTA("코일을 놓아 보세요", { enabled: false });
+        },
+      },
+    );
+  }
   bCur.addEventListener("click", () => {
     if (finished) return;
     haptic(HAPTIC.tap);
@@ -83,10 +125,10 @@ export const motorLab: StepRenderer = (host, step, api) => {
 
   function ask(): void {
     f.slot.ask(
-      "코일의 왼쪽 부분이 위쪽으로 힘을 받을 때 오른쪽 부분이 받는 힘은?",
-      [{ t: "아래쪽", ok: true }, { t: "위쪽" }, { t: "힘을 받지 않아요" }],
+      "전동기 속 코일이 한쪽으로 밀려나지 않고 도는 까닭은?",
+      [{ t: "양쪽 변이 서로 반대로 힘을 받아서", ok: true }, { t: "양쪽 변이 같은 쪽으로 힘을 받아서" }, { t: "한쪽 변만 힘을 받아서" }],
       (ok) => api.recordQuiz(ok),
-      { why: "두 부분은 <b>전류의 방향이 반대</b>라 힘의 방향도 반대예요.", onNext: finish },
+      { why: "두 변은 <b>전류의 방향이 반대</b>라 힘의 방향도 반대예요.", onNext: finish },
     );
   }
   function finish(): void {
@@ -104,7 +146,7 @@ export const motorLab: StepRenderer = (host, step, api) => {
     const cy = 112;
     const P = (x: number, y: number, z: number): [number, number] => [cx + x + z * 0.5, cy - y - z * 0.3];
     // 돌기: 왼쪽 변이 위로 힘을 받으면 시계 방향(각이 줄어든다)
-    const goal = on ? -up() * 0.045 : 0;
+    const goal = on && hold === "free" ? -up() * 0.045 : 0;
     speed += (goal - speed) * Math.min(1, dt * 0.03);
     th += speed * dt;
     // 자석
@@ -146,25 +188,26 @@ export const motorLab: StepRenderer = (host, step, api) => {
       const first = -A * c < 0; // q[0]~q[1] 변이 왼쪽에 있나
       const left = first ? [q[0], q[1]] : [q[3], q[2]];
       const right = first ? [q[3], q[2]] : [q[0], q[1]];
-      const side = (pts: number[][], cdir: number, fdir: number, name: string): void => {
+      const side = (pts: number[][], cdir: number, fdir: number, name: string, force = true): void => {
         const [a, b] = cdir > 0 ? pts : [pts[1], pts[0]];
         const mx = (a[0] + b[0]) / 2;
         const my = (a[1] + b[1]) / 2;
         const ax = [a[0] + (b[0] - a[0]) * 0.2, a[1] + (b[1] - a[1]) * 0.2, a[0] + (b[0] - a[0]) * 0.8, a[1] + (b[1] - a[1]) * 0.8] as const;
         xArrow(ctx, ...ax, "#6E3F16", 5.2, 12);
         xArrow(ctx, ...ax, X.cur, 2.6, 9);
+        if (!force) return;
         xArrow(ctx, mx, my, mx, my - fdir * 30, X.force, 3.2, 10);
         xText(ctx, name, mx, my - fdir * 41, { px: 12.5, color: X.force });
       };
       side(left, cur, up(), "힘");
-      side(right, -cur, -up(), "힘");
+      side(right, -cur, -up(), "힘", hold !== "left");
     }
-    xText(ctx, on ? "노란 화살표는 전류, 청록 화살표는 힘" : "전류가 흐르지 않아요", cx, 212, { px: 12, color: X.dim });
+    xText(ctx, hold === "left" || hold === "both" ? "코일을 붙잡고 있어요(오른쪽 위가 뒤쪽)" : on ? "노란 화살표는 전류, 청록 화살표는 힘" : "전류가 흐르지 않아요", cx, 212, { px: 12, color: X.dim });
     ctx.restore();
   });
 
-  log.set(0, "멈춤");
-  f.say("두 자석 사이에 코일이 있어요. <b>전류를 흐르게 해서</b> 코일의 양쪽이 받는 힘을 견줘 보세요.");
+  log.set(0, "붙잡고 있음");
+  f.say("두 자석 사이의 코일을 손으로 붙잡고 있어요. <b>전류를 흐르게 해서</b> 왼쪽 변이 받는 힘부터 봐요.");
   api.setCTA("전류와 자석을 바꿔 보세요", { enabled: false });
   return () => {
     tm.clear();

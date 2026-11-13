@@ -85,9 +85,10 @@ export const parCurLab: StepRenderer = (host, step, api) => {
   }
   function predict(k: RB): void {
     asking = true;
+    api.setCTA("먼저 예측해 보세요", { enabled: false });
     const up = k === "30";
     f.slot.ask(
-      `갈래 B의 저항을 ${k} Ω으로 ${up ? "키우면" : "줄이면"} 전류는?`,
+      `갈래 B의 저항을 ${k} Ω으로 ${up ? "키우면" : "줄이면"} 두 갈래의 전류는?`,
       [{ t: `B로 흐르는 전류가 ${up ? "줄어요" : "늘어요"}`, ok: true }, { t: `A로 흐르는 전류가 ${up ? "줄어요" : "늘어요"}` }, { t: "여전히 반씩 나뉘어요" }],
       () => undefined,
       {
@@ -98,6 +99,7 @@ export const parCurLab: StepRenderer = (host, step, api) => {
           f.slot.showControls();
           seg.set(k);
           apply(k);
+          api.setCTA("나뉘기 전과 두 갈래를 재 보세요", { enabled: false });
         },
       },
     );
@@ -113,11 +115,12 @@ export const parCurLab: StepRenderer = (host, step, api) => {
     log.set(ORDER.indexOf(rb), CASES[rb].row);
     f.pips(doneCase.size);
     if (rb === "15") f.say("0.4 A가 갈림길에서 <b>0.2 A씩</b> 나뉘었다가 다시 0.4 A로 합쳐져요. B를 바꿔 봐요.");
-    else if (rb === "30") f.say("A는 그대로 0.2 A, B만 <b>0.1 A</b>로 줄었어요. 둘 다 3 V인데 B의 저항이 크니까요.");
+    else if (rb === "30") f.say("A는 그대로 0.2 A, B만 <b>0.1 A</b>로 줄었어요. 더하면 나뉘기 전의 0.3 A예요.");
     else f.say("이번에는 저항이 작은 B로 <b>0.3 A</b>가 흘러요. 더하면 나뉘기 전의 0.5 A예요.");
     if (doneCase.size === ORDER.length && !finished) {
       finished = true;
       seg.lock(true);
+      api.setCTA("세 경우를 모두 쟀어요", { enabled: false });
       tm.later(ask1, 3200);
     } else if (doneCase.size > 1) api.setCTA("남은 저항으로도 바꿔 재 보세요", { enabled: false });
   }
@@ -125,7 +128,7 @@ export const parCurLab: StepRenderer = (host, step, api) => {
     if (finished || asking) return;
     const k = st.w() / 346;
     const p = st.pt(e);
-    const sp = hit(SPOTS.filter((q) => !got.has(q.id)), p.x / k, p.y / k, 30);
+    const sp = hit(SPOTS.filter((q) => !got.has(q.id) && (q.id !== "out" || doneCase.size === 0)), p.x / k, p.y / k, 30);
     if (!sp) return;
     haptic(HAPTIC.tap);
     got.add(sp.id);
@@ -175,7 +178,6 @@ export const parCurLab: StepRenderer = (host, step, api) => {
     xText(ctx, "전지 3 V", BAT.x, G.By - 25, { px: 12, color: X.dim });
     cRes(ctx, RX, YA, { name: "A", ohm: "15 Ω" });
     cRes(ctx, RX, YB, { name: "B", ohm: `${rb} Ω` });
-    xText(ctx, "갈림길", G.R - 8, YB + 14, { px: 12, color: X.dim, align: "right" });
     SPOTS.forEach((q) => {
       if (got.has(q.id)) cTag(ctx, q.tx, q.ty, fmt(val(q.id)), C.amp);
       else if (!finished && !asking && (q.id !== "out" || doneCase.size === 0)) cSpot(ctx, q.x, q.y, C.amp, t);
