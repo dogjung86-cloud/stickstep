@@ -36,7 +36,7 @@ export const motorLab: StepRenderer = (host, step, api) => {
   const sw = bvBtn("main", "전류 흐르게 하기");
   const bCur = bvBtn("", "전류 방향 바꾸기");
   const bPole = bvBtn("", "자석의 극 바꾸기");
-  const log = xLog(["코일이 도는 방향"], 1, true);
+  const log = xLog(["도는 방향(앞에서 볼 때)"], 1, true);
   f.slot.setControls(sw, xRow(bCur, bPole), log.el);
 
   /** 왼쪽에 온 변이 받는 힘의 방향(+1 위). cur = 1이면 왼쪽 변의 전류가 뒤쪽(먼 쪽)으로 흐른다: (−z) × (+x) = −y */
@@ -74,6 +74,7 @@ export const motorLab: StepRenderer = (host, step, api) => {
       bCur.disabled = false;
       bPole.disabled = false;
       f.say("양쪽이 반대로 힘을 받아 코일이 <b>돌아요</b>. 전류의 방향과 자석의 극도 바꿔 보세요.");
+      api.setCTA("전류와 자석을 바꿔 보세요", { enabled: false });
       after();
       return;
     }
@@ -159,7 +160,7 @@ export const motorLab: StepRenderer = (host, step, api) => {
     // 자기장(N극에서 S극)
     const d = nLeft ? 1 : -1;
     for (const y of [82, 142]) xArrow(ctx, cx - d * 92, y, cx + d * 92, y, "rgba(255,123,107,.55)", 2, 8);
-    xText(ctx, "자기장", 100, 70, { px: 12, color: X.field });
+    xText(ctx, "자기장", 108, 70, { px: 12, color: X.field, align: "right" });
     // 회전축
     ctx.save();
     ctx.setLineDash([5, 4]);
@@ -202,7 +203,7 @@ export const motorLab: StepRenderer = (host, step, api) => {
       side(left, cur, up(), "힘");
       side(right, -cur, -up(), "힘", hold !== "left");
     }
-    xText(ctx, hold === "left" || hold === "both" ? "코일을 붙잡고 있어요(오른쪽 위가 뒤쪽)" : on ? "노란 화살표는 전류, 청록 화살표는 힘" : "전류가 흐르지 않아요", cx, 212, { px: 12, color: X.dim });
+    xText(ctx, hold === "left" || hold === "both" ? "코일을 붙잡고 있어요(오른쪽 위가 뒤쪽)" : on ? "" : "전류가 흐르지 않아요", cx, 212, { px: 12, color: X.dim });
     ctx.restore();
   });
 

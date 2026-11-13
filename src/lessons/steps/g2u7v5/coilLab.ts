@@ -15,6 +15,7 @@ import { mBar, mCoil, mCompass } from "./magKit";
 import { X, xArrow, xBox, xCanvas, xFrame, xRow, xSegs, xText, type LabStep } from "./kit";
 
 const C = { x: 173, y: 112 };
+const MAG_BUSY = "지금은 막대자석을 놓아 견주는 중이에요. <b>코일로 돌아가서</b> 바꿔 보세요.";
 const SPOTS: [number, number][] = [[76, 112], [270, 112], [173, 50], [173, 172], [104, 58], [258, 164]];
 
 export const coilLab: StepRenderer = (host, step, api) => {
@@ -51,6 +52,11 @@ export const coilLab: StepRenderer = (host, step, api) => {
       } else need();
       after();
     },
+    () => {
+      if (!magnet) return true;
+      f.say(MAG_BUSY);
+      return false;
+    },
   );
   const cmp = bvBtn("", "막대자석으로 바꿔 견주기");
   f.slot.setControls(xRow(sw, flip), power.el, cmp);
@@ -71,8 +77,12 @@ export const coilLab: StepRenderer = (host, step, api) => {
     }
   }
   sw.addEventListener("click", () => {
-    if (finished) return;
+    if (finished || asking) return;
     haptic(HAPTIC.tap);
+    if (magnet) {
+      f.say(MAG_BUSY);
+      return;
+    }
     on = !on;
     sw.textContent = on ? "스위치 열기" : "스위치 닫기";
     if (on && n() >= 3) {
@@ -94,7 +104,7 @@ export const coilLab: StepRenderer = (host, step, api) => {
     if (finished || asking) return;
     haptic(HAPTIC.tap);
     if (magnet) {
-      f.say("지금은 막대자석을 놓아 견주는 중이에요. <b>코일로 돌아가서</b> 바꿔 보세요.");
+      f.say(MAG_BUSY);
       return;
     }
     if (on && n() >= 3 && !guessed) {
@@ -151,7 +161,7 @@ export const coilLab: StepRenderer = (host, step, api) => {
 
   function ask1(): void {
     f.slot.ask(
-      "전류의 방향을 바꾸자 코일 끝에 놓은 나침반 바늘은?",
+      "전류의 방향을 바꾸자 나침반 바늘은?",
       [{ t: "반대쪽으로 돌아갔어요", ok: true }, { t: "그대로였어요" }, { t: "북쪽만 가리켰어요" }],
       (ok) => api.recordQuiz(ok),
       { why: "전류의 방향이 바뀌면 <b>자기장의 방향</b>도 반대가 돼요.", onNext: ask2 },
@@ -201,9 +211,9 @@ export const coilLab: StepRenderer = (host, step, api) => {
     ctx.save();
     ctx.scale(k, k);
     // 전원 장치와 전선
-    xBox(ctx, 12, 192, 84, 28, 8, "rgba(255,255,255,.07)", X.line);
-    xText(ctx, "전원 장치", 54, 206.5, { px: 12, color: X.dim });
     if (!magnet) {
+      xBox(ctx, 12, 192, 84, 28, 8, "rgba(255,255,255,.07)", X.line);
+      xText(ctx, "전원 장치", 54, 206.5, { px: 12, color: X.dim });
       ctx.strokeStyle = on ? "rgba(255,196,90,.75)" : "rgba(143,164,194,.7)";
       ctx.lineWidth = 2.2;
       ctx.beginPath();
@@ -235,9 +245,10 @@ export const coilLab: StepRenderer = (host, step, api) => {
         ctx.beginPath();
         ctx.arc(C.x - dir * 34 + dir * 68 * ph, C.y, 3, 0, Math.PI * 2);
         ctx.fill();
+        xText(ctx, "코일 속 자기장", C.x, C.y + 35, { px: 12, color: X.field });
         if (seen.mag) {
-          xText(ctx, "N극", C.x + dir * 52, C.y + 35, { px: 12, color: "#FFB3A6" });
-          xText(ctx, "S극", C.x - dir * 52, C.y + 35, { px: 12, color: "#9CC8FF" });
+          xText(ctx, "N극", C.x + dir * 54, C.y - 34, { px: 12, color: "#FFB3A6" });
+          xText(ctx, "S극", C.x - dir * 54, C.y - 34, { px: 12, color: "#9CC8FF" });
         }
       }
     }
@@ -265,7 +276,7 @@ export const coilLab: StepRenderer = (host, step, api) => {
       ang[i] += d * Math.min(1, dt * 0.08);
       mCompass(ctx, x, y, ang[i]);
     });
-    xText(ctx, on && !magnet ? "노란 화살표: 전류" : "빨간 끝이 N극", 284, 212, { px: 12, color: on && !magnet ? X.cur : X.dim });
+    xText(ctx, "빨간 끝이 N극", 284, 212, { px: 12, color: X.dim });
     ctx.restore();
   });
 
