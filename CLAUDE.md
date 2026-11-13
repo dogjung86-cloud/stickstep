@@ -884,6 +884,23 @@ src/
   만 14세 미만(로그인 없이 전 기능 = 미수집이 1차 방어)·국외 이전(Supabase·Vercel, 법 28조의8 1항 3호
   공개 방식)·최소 수집(프로필 사진 미저장) 포함. 스타일은 styles/policy.css(공유 시트 오염 금지).
 
+## 내 학교 등록 (2026-11-14, 브랜치 school-register. 운영 반영 전)
+- **무엇**: 마이 탭 프로필 카드의 학교 줄(.mypf-school) → "내 학교" 시트(검색, 등록, 변경, 해제). 선택 입력이고 게스트도 쓴다
+  (게스트는 기기에만 저장, 로그인하면 profiles.school_* 네 컬럼에도 반영). 화면은 screens/my.ts, 창구는 **core/school.ts**
+  (검색 searchSchools, 서버 반영 pushSchool), 스타일 styles/school.css(접두 `.sch-`).
+- **검색**: 나이스 교육정보 개방 포털 학교기본정보를 Supabase 엣지 함수 `school-search`가 대신 부른다(인증키는 서버 시크릿
+  NEIS_API_KEY, 번들에 싣지 않는다). 함수는 verify_jwt=false로 배포한다(게스트도 검색). 돌려주는 항목과 저장 항목은
+  **표준학교코드·학교명·지역(시도 + 시군구)·학교급 넷뿐**이다. 항목을 늘리면 privacy.html(1의 다)도 함께 고친다.
+  학교급은 `SCHOOL_KINDS`(지금 중학교만)에 값을 더하면 시트에 세그가 생긴다(서버 허용 목록은 이미 초·중·고).
+- **DEV 스텁**: 개발 서버에서는 고정 목록에서 찾고 서버 반영은 `window.__ssSchoolPush`에만 적는다. 실호출 강제는
+  sessionStorage `"ss.schoolreal"="1"`, 실패 화면은 `"ss.schoolstub"="fail"`.
+- **동기화**: 닉네임과 같은 규칙(sync.ts fullSync의 학교 단계). 같은 계정·첫 로그인은 기기 값 우선, 기기에 없으면 서버 값,
+  계정 전환은 교체. **progress가 아니라 profiles라서 rowOf에 넣지 않는다.** 학교 컬럼 조회는 닉네임 조회와 따로 한다
+  (운영 DB에 컬럼이 없을 때 닉네임 동기화까지 죽지 않게). 회원탈퇴는 서버(cascade)와 기기의 학교를 함께 지운다.
+- **운영 반영 때 할 일**: supabase/migrations/2026-11-14-school.sql 실행 → 나이스 인증키를 시크릿에 등록 → school-search 배포 →
+  privacy.html 시행일과 버전 갱신(파일 상단 TODO). 순서와 명령은 output/school-register/README.md.
+- **QA**: `PORT=<dev 포트> node qa/e2e-school.mjs [스크린샷 폴더]`(41검증, 폰 390×700).
+
 ## IA·홈 구조 (2026-07-12 개편 — 사용자 확정)
 - **진입**: **스플래시 = 랜딩**(별도 랜딩 화면 없음 — 사용자 확정). 플립북 정착 후 하단 버튼 3개
   (프라이머리 **"한번 둘러보기"**(무로그인)/로그인/학부모·선생님 준비 중 스낵)가 워드마크 리듬으로 샥 나타난다

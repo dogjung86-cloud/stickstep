@@ -9,6 +9,10 @@
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   nickname text, -- 리더보드 표시명(후속 기능) — 가입 시 null, 나중에 사용자가 정한다
+  school_code text, -- 내 학교(선택 입력): 나이스 표준학교코드. 기존 프로젝트는 migrations/2026-11-14-school.sql 실행
+  school_name text, -- 학교명
+  school_region text, -- 지역(시도 + 시군구, 동명 학교 구분용). 주소 전체는 저장하지 않는다
+  school_kind text, -- 학교급(중학교 등)
   created_at timestamptz not null default now()
 );
 

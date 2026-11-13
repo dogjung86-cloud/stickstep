@@ -91,6 +91,9 @@ export interface AppState {
   // progress 테이블 컬럼이 아니라 profiles.nickname에 실린다(sync.ts fullSync가 채택·푸시 —
   // rowOf에 넣으면 400으로 push 전체가 죽는 avatarCustom과 같은 함정 주의).
   nickname: string | null;
+  // 내 학교(마이 탭 '내 학교' 시트, 선택 입력). 최소 항목만 담는다. null·없음 = 등록 안 함.
+  // 게스트는 기기에만, 로그인 상태면 profiles.school_*에도 실린다(닉네임과 같은 결, rowOf 금지).
+  school?: SchoolInfo | null;
   // 최근에 연 단원("<과목>:<학년>" → unitId, 2026-07-21) — 재접속·과목 전환 시 홈 지도가 이
   // 단원부터 열린다(구 방식 = 첫 미완료 단원뿐이라 건너뛰며 학습하면 "최근"이 아니었음).
   // viewGrade처럼 기기 화면 상태라 동기화 제외. 구버전 저장분엔 없어서 optional.
@@ -102,6 +105,14 @@ export interface AppState {
   // 다른 계정이 로그인하면 sync.ts가 병합 대신 서버 상태로 교체하기 위한 소유 표식 —
   // 로그아웃해도 지우지 않는다(그래야 다음 로그인 때 주인을 판별). 기기 메타라 동기화 제외.
   syncedUserId?: string | null;
+}
+
+/** 등록한 학교. code = 나이스 표준학교코드, region = 시도 + 시군구(동명 학교 구분용), kind = 학교급. */
+export interface SchoolInfo {
+  code: string;
+  name: string;
+  region: string;
+  kind: string;
 }
 
 const KEY = "science-app.v1";
@@ -404,6 +415,16 @@ export function setAvatarCustom(v: StickAvatarCfg | null): void {
 export function setNickname(v: string | null): void {
   const t = v?.replace(/\s+/g, " ").trim().slice(0, 12) ?? "";
   state.nickname = t || null;
+  save();
+}
+
+/** 내 학교 등록·변경·해제(null). 문자열은 길이를 잘라 저장한다. */
+export function setSchool(v: SchoolInfo | null): void {
+  const cut = (s: unknown, n: number): string => (typeof s === "string" ? s.trim().slice(0, n) : "");
+  state.school =
+    v && cut(v.code, 12) && cut(v.name, 40)
+      ? { code: cut(v.code, 12), name: cut(v.name, 40), region: cut(v.region, 30), kind: cut(v.kind, 12) }
+      : null;
   save();
 }
 

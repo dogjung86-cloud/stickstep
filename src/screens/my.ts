@@ -11,9 +11,10 @@ import { refreshWide } from "../core/wide";
 import { el } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
-import { getState, currentStreak, setNickname, isWideOff, setWideOff, isPremium } from "../core/store";
+import { getState, currentStreak, setNickname, setSchool, isWideOff, setWideOff, isPremium } from "../core/store";
 import { onAuthChange, currentUser, pushNickname, signOut } from "../core/auth";
 import { ownedPremiumSubjectIds, SELLABLE_SUBJECTS } from "../core/purchase";
+import { SCHOOL_KINDS, SCHOOL_QUERY_MIN, SCHOOL_QUERY_MAX, cleanSchoolQuery, pushSchool, searchSchools, type School } from "../core/school";
 import { bootLevel, BOOT_TIERS } from "../core/level";
 import { bootArt } from "../ui/boots";
 import { profileAvatar, setProfileAvatar } from "../ui/avatar";
@@ -61,6 +62,21 @@ export function myScreen(o: {
     attrs: { "aria-label": "닉네임 바꾸기", "aria-haspopup": "dialog" },
     html: icon("pencil", 11),
   });
+  // 내 학교 줄(선택 입력). 게스트도 쓸 수 있고(기기에만 저장) 누르면 "내 학교" 시트가 열린다.
+  const schoolTxt = el("span", { class: "mypf-school-t" });
+  const schoolBtn = el(
+    "button",
+    { class: "mypf-school", attrs: { "aria-haspopup": "dialog" } },
+    el("span", { class: "mypf-school-ic", html: icon("school", 13) }),
+    schoolTxt,
+  );
+  function refreshSchoolLine(): void {
+    const sc = getState().school ?? null;
+    schoolTxt.textContent = sc ? sc.name : "학교 등록하기";
+    schoolBtn.classList.toggle("empty", !sc);
+    schoolBtn.setAttribute("aria-label", sc ? `내 학교 ${sc.name}, 바꾸거나 해제하기` : "내 학교 등록하기");
+  }
+  refreshSchoolLine();
   const badge = el("div", { class: "boot-badge" });
   // 레벨 숫자는 쓰지 않는다(총 14단계라 숫자가 작아 심심 — 장화 이름이 곧 등급, 사용자 확정 2026-07-12)
   badge.innerHTML = `${bootArt(lv.tier.id, 20)}<span>${lv.tier.name}</span>`;
@@ -81,7 +97,7 @@ export function myScreen(o: {
       "div",
       { class: "mypf-top" },
       el("div", { class: "mypf-avawrap" }, avaFrame, editBtn),
-      el("div", { class: "mypf-who" }, el("div", { class: "mypf-name-row" }, nameEl, nickBtn), badge),
+      el("div", { class: "mypf-who" }, el("div", { class: "mypf-name-row" }, nameEl, nickBtn), badge, schoolBtn),
     ),
     prog,
     progCap,
@@ -210,6 +226,159 @@ export function myScreen(o: {
     nickInput.focus({ preventScroll: true }); // openSheet의 X 포커스를 입력으로 재지정(입력이 본론)
   });
 
+  // ---- 내 학교 시트: 지금 등록한 학교(해제) + 이름 검색 → 결과를 누르면 바로 등록(앱 관례, 저장 버튼 없음) ----
+  // 검색은 core/school.ts(나이스 학교기본정보, 서버 함수 경유. DEV는 스텁). 입력을 멈추고 0.3초 뒤,
+  // 두 글자 이상일 때만 찾는다. 늦게 도착한 이전 검색 결과는 버린다(schSeq).
+  const schCur = el("div", { class: "sch-cur" });
+  const schInput = el("input", {
+    class: "nick-input sch-input",
+    attrs: {
+      type: "search",
+      maxlength: String(SCHOOL_QUERY_MAX),
+      placeholder: "학교 이름을 두 글자 이상 적어 주세요",
+      "aria-label": "학교 이름 검색",
+      autocomplete: "off",
+      enterkeyhint: "search",
+    },
+  }) as HTMLInputElement;
+  const schList = el("div", { class: "sch-list", attrs: { "aria-live": "polite" } });
+  let schKind = SCHOOL_KINDS[0];
+  let schSeq = 0;
+  let schTimer = 0;
+  const schKinds = el("div", { class: "seg sch-kinds", attrs: { "aria-label": "학교급" } });
+  if (SCHOOL_KINDS.length > 1) {
+    SCHOOL_KINDS.forEach((k) => {
+      const b = el("button", { class: k === schKind ? "on" : "", text: k });
+      b.addEventListener("click", () => {
+        haptic(HAPTIC.tap);
+        schKind = k;
+        schKinds.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
+        void runSchoolSearch();
+      });
+      schKinds.appendChild(b);
+    });
+  }
+  function schNote(state: "idle" | "loading" | "empty" | "error", msg: string, retry?: boolean): void {
+    schList.dataset.state = state;
+    schList.replaceChildren(el("div", { class: `sch-note ${state}`, text: msg }));
+    if (retry) {
+      const again = el("button", { class: "sch-retry", text: "다시 시도" });
+      again.addEventListener("click", () => {
+        haptic(HAPTIC.tap);
+        void runSchoolSearch();
+      });
+      schList.appendChild(again);
+    }
+  }
+  function renderSchoolCurrent(): void {
+    const sc = getState().school ?? null;
+    schCur.replaceChildren();
+    schCur.hidden = !sc;
+    if (!sc) return;
+    const off = el("button", { class: "sch-off", text: "등록 해제" });
+    off.addEventListener("click", () => {
+      haptic(HAPTIC.tap);
+      setSchool(null);
+      void pushSchool(null); // 로그인 상태면 서버 프로필에서도 지운다
+      refreshSchoolLine();
+      renderSchoolCurrent();
+      snack("학교 등록을 해제했어요");
+    });
+    schCur.append(
+      el("span", { class: "sch-cur-ic", html: icon("school", 17) }),
+      el(
+        "div",
+        { class: "sch-cur-who" },
+        el("div", { class: "sch-cur-cap", text: "지금 등록한 학교" }),
+        el("div", { class: "sch-cur-name", text: sc.name }),
+        el("div", { class: "sch-cur-region", text: sc.region }),
+      ),
+      off,
+    );
+  }
+  function pickSchool(sc: School): void {
+    haptic(HAPTIC.tap);
+    const had = !!getState().school;
+    setSchool(sc);
+    void pushSchool(getState().school ?? null);
+    refreshSchoolLine();
+    closeSheet();
+    snack(had ? "학교를 바꿨어요" : "학교를 등록했어요");
+  }
+  async function runSchoolSearch(): Promise<void> {
+    window.clearTimeout(schTimer);
+    const seq = ++schSeq;
+    const q = cleanSchoolQuery(schInput.value);
+    if (q.length < SCHOOL_QUERY_MIN) {
+      schNote("idle", q ? "한 글자만 더 적어 주세요" : "다니는 학교 이름으로 찾아보세요");
+      return;
+    }
+    schNote("loading", "찾는 중이에요");
+    const r = await searchSchools(q, schKind);
+    if (seq !== schSeq) return; // 그 사이 검색어가 바뀌었다
+    if (!r.ok) {
+      schNote("error", "학교 목록을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.", true);
+      return;
+    }
+    if (!r.items.length) {
+      schNote("empty", "찾은 학교가 없어요. 이름을 다시 확인해 주세요.");
+      return;
+    }
+    schList.dataset.state = "results";
+    const curCode = getState().school?.code;
+    schList.replaceChildren(
+      ...r.items.map((sc) => {
+        const b = el(
+          "button",
+          { class: `sch-item ${sc.code === curCode ? "on" : ""}`, attrs: { "data-code": sc.code } },
+          el("span", { class: "sch-item-name", text: sc.name }),
+          el("span", { class: "sch-item-region", text: sc.region }), // 이름이 같은 학교는 지역으로 구분한다
+        );
+        b.addEventListener("click", () => pickSchool(sc));
+        return b;
+      }),
+    );
+    if (r.total > r.items.length)
+      schList.appendChild(
+        el("div", { class: "sch-more", text: `${r.total}곳 가운데 ${r.items.length}곳만 보여요. 이름을 더 자세히 적어 보세요.` }),
+      );
+  }
+  schInput.addEventListener("input", () => {
+    window.clearTimeout(schTimer);
+    schSeq += 1; // 입력 중에 도착하는 이전 결과는 버린다
+    schTimer = window.setTimeout(() => void runSchoolSearch(), 300);
+  });
+  schInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      void runSchoolSearch();
+      schInput.blur(); // 자판을 내려 결과를 넓게 보여 준다
+    }
+  });
+  const schBody = el("div", { class: "mysheet-body sch-body" }, schCur);
+  if (SCHOOL_KINDS.length > 1) schBody.appendChild(schKinds);
+  schBody.append(
+    schInput,
+    el("div", { class: "nick-hint sch-hint", text: "선택 입력이에요 · 학교 이름과 지역만 저장해요 · 언제든 해제할 수 있어요" }),
+    schList,
+  );
+  const schoolSheet = sheetShell("내 학교", schBody);
+  schoolSheet.classList.add("sch");
+  // 자판이 화면을 덮는 기기(iOS)에서 결과 목록 끝이 자판 밑에 깔리지 않게 그만큼 아래 여백을 준다.
+  const vv = window.visualViewport;
+  const onVv = (): void => {
+    const kb = Math.max(0, Math.round(window.innerHeight - (vv?.height ?? window.innerHeight)));
+    schoolSheet.style.setProperty("--sch-kb", `${kb}px`);
+  };
+  vv?.addEventListener("resize", onVv);
+  schoolBtn.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    schInput.value = "";
+    renderSchoolCurrent();
+    void runSchoolSearch(); // 빈 검색어라 안내 문구만 그린다
+    openSheet(schoolSheet, schoolBtn);
+    if (!getState().school) schInput.focus({ preventScroll: true }); // 처음 등록이면 입력이 본론
+  });
+
   // ---- 메뉴(흰 카드 하나에 행 목록) ----
   function row(opts: { ic: string; gold?: boolean; title: string; value?: string; onClick: (btn: HTMLElement) => void }): HTMLElement {
     const r = el(
@@ -331,6 +500,7 @@ export function myScreen(o: {
     avaSheet,
     bootSheet,
     nickSheet,
+    schoolSheet,
   );
 
   let snackTimer = 0;
@@ -349,6 +519,7 @@ export function myScreen(o: {
     nickBtn.classList.toggle("hidden", !signedIn); // 닉네임 편집은 로그인 전용(등록 즉시 1회 호출로 초기 상태도 처리)
     accountTitle.textContent = signedIn ? "계정 관리" : "계정 관리 · 로그인";
     refreshPremiumRow();
+    refreshSchoolLine(); // 로그인 직후 동기화가 서버의 학교를 채택했거나 계정이 바뀐 경우
     logoutBtn.hidden = !signedIn;
     legalSep.hidden = !signedIn;
     refreshGnavMyIcon(bar); // 로그인·로그아웃 즉시 탭바 아이콘도 아바타 ⇄ user로 전환
@@ -358,6 +529,8 @@ export function myScreen(o: {
     el: elm,
     onExit: () => {
       offAuth();
+      window.clearTimeout(schTimer);
+      vv?.removeEventListener("resize", onVv);
       document.removeEventListener("keydown", onKey);
     },
   };
