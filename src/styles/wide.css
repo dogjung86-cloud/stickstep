@@ -1,0 +1,266 @@
+/* 넓은 화면(태블릿 가로, PC) 배치. core/wide.ts가 <html class="wide dt">를 붙였을 때만 걸린다(2026-11-14).
+   조건: 가로 방향, 폭 1024px 이상, 높이 600px 이상. 폰과 펼친 폴드, 세로로 든 태블릿은 폰 모양 그대로다.
+   원칙: 보는 것은 왼쪽에 크게, 읽고 답하는 것은 오른쪽 노트에. 다음 버튼은 늘 노트 아래 같은 자리.
+   홈과 탭의 뼈대(왼쪽 메뉴, 가운데 단)는 desktop.css(html.dt)가 깔고, 이 시트가 그 위에서 다시 놓는다.
+   desktop.css의 가운데 단 규칙은 선택자에 id가 들어 있어 무겁다. 그것을 이겨야 하는 줄은 :not(#sc-home)으로 무게를 맞췄다.
+   랩 무대는 설계 크기 346×230을 통째로 키운다(zoom: var(--lk)). 배율과 칸 폭 변수는 core/wide.ts가 넣는다.
+   접두 .wd- (랩의 두 묶음 .wd-main/.wd-note, 스텝 표식 .wd-split/.wd-opener 등, 왼쪽에 둘 요소 .wd-left) */
+
+@media (orientation: landscape) and (min-width: 1024px) and (min-height: 600px) {
+  /* ── 공통: 폰 틀을 풀고 머리 줄을 얇게 ───────────────────── */
+  html.wide #frame { max-width: none; height: 100dvh; border-radius: 0; border: 0; box-shadow: none; }
+  html.wide .lesson-screen .lheader { min-height: 48px; height: 48px; padding: 6px 20px; }
+  html.wide .lesson-screen .lheader .pwrap { max-width: 300px; margin-right: auto; }
+  /* 랩이 아닌 스텝(개념, 문제, 도입)은 가운데 한 단으로 조금 키워 둔다(이번 시안의 대상은 랩이다) */
+  html.wide .lesson-screen:not(:has(.bv-step, .wd-split, .wd-recap)) .stepWrap { max-width: 620px; margin: 0 auto; zoom: 1.15; }
+  html.wide .lesson-screen:not(:has(.bv-step, .wd-split)) .footer .btn.cta { display: block; max-width: 560px; margin: 0 auto; }
+
+  html.wide .screen.lesson-screen { left: var(--lx, 0px); right: var(--lx, 0px); }
+  /* 랩 스텝 공통: 한 화면에 고정, 무대는 통째로 확대 */
+  html.wide .lesson-screen:has(.bv-step) .scroll { overflow: hidden auto; }
+  html.wide .step.bv-step { height: calc(100dvh - 48px); padding: 12px 24px 16px; display: grid; column-gap: 20px; }
+  html.wide .bv-stage { width: 346px; height: 230px; margin: 0; zoom: var(--lk, 1.6); }
+  html.wide .bv-title { white-space: normal; overflow: visible; }
+  html.wide .bv-helper { height: auto; min-height: 0; margin-top: 0; overflow: visible; }
+
+  /* ══ C 탐구 노트 ═══════════════════════════════════════════
+     왼쪽: 무대 + 바로 아래 조작 / 오른쪽 노트: 안내, 질문, 판정, 답한 것의 기록 + 다음 버튼
+     (core/wide.ts가 뼈대를 .wd-main / .wd-note 두 묶음으로 다시 묶는다) */
+  html.wide .step.bv-step { grid-template-columns: minmax(0, 1fr) var(--lp, 400px); grid-template-rows: minmax(0, 1fr); padding: 14px 24px 16px; }
+  html.wide .wd-main { grid-column: 1; display: flex; flex-direction: column; align-items: center; gap: 12px; min-width: 0; }
+  html.wide .wd-main .bv-slot { margin: 0; zoom: var(--lck, 1.18); width: calc(346px * var(--lk, 1.6) / var(--lck, 1.18)); }
+  html.wide .wd-main .bv-slot:has(> .bv-ctl[hidden])::after {
+    content: "오른쪽 노트에서 답해 보세요"; display: grid; place-items: center; height: 64px; border-radius: 16px;
+    border: 1.5px dashed var(--n300); font-size: 14px; font-weight: 700; color: var(--n500);
+  }
+  html.wide .wd-note {
+    grid-column: 2; display: flex; flex-direction: column; min-height: 0; padding: 18px 20px 96px;
+    border-radius: 8px 26px 26px 8px; background: #FFFDF6; box-shadow: 0 0 0 1px #EADFC4 inset, 6px 0 0 0 #F3E9CF inset;
+  }
+  html.wide .wd-note-k { font-size: 12.5px; font-weight: 800; color: #A08542; margin-bottom: 8px; padding-left: 8px; }
+  html.wide .wd-note .bv-head { height: auto; align-items: flex-start; padding-left: 8px; }
+  html.wide .wd-note .bv-title { font-size: 22px; line-height: 30px; }
+  html.wide .wd-note .bv-pips { margin-top: 11px; }
+  html.wide .wd-note .bv-helper { margin: 10px 0 16px 8px; min-height: 48px; font-size: 15.5px; line-height: 24px; }
+  html.wide .wd-note .bv-q, html.wide .wd-note .bv-done { margin-left: 8px; }
+  html.wide .wd-logwrap { display: none; margin: 18px 0 0 8px; min-height: 0; flex: 1; flex-direction: column; }
+  html.wide .wd-logwrap.on { display: flex; }
+  html.wide .wd-log-k { font-size: 12.5px; font-weight: 800; color: #A08542; padding-bottom: 6px; border-bottom: 1.5px solid #EADFC4; }
+  html.wide .wd-log { overflow-y: auto; min-height: 0; }
+  html.wide .wd-log-i { display: grid; gap: 2px; padding: 9px 0 9px 22px; border-bottom: 1px dashed #E6DBBF; position: relative; animation: bvIn .3s var(--ease-out) both; }
+  html.wide .wd-log-i::before { content: ""; position: absolute; left: 2px; top: 14px; width: 10px; height: 10px; border-radius: 50%; background: var(--green); }
+  html.wide .wd-log-i.miss::before { background: #fff; box-shadow: 0 0 0 2px var(--n400) inset; }
+  html.wide .wd-log-q { font-size: 12.5px; line-height: 1.45; color: var(--n600); word-break: keep-all; }
+  html.wide .wd-log-a { font-size: 14.5px; line-height: 1.4; font-weight: 800; color: var(--ink); word-break: keep-all; }
+  html.wide .step.bv-step .curio { display: none; }
+  html.wide .lesson-screen:has(.bv-step) .footer {
+    position: absolute; right: 24px; bottom: 16px; width: var(--lp, 400px); padding: 12px 20px 16px 28px; background: none; z-index: 3;
+  }
+
+  /* ── C: 랩이 아닌 스텝 ─────────────────────────────────────
+     보는 것(도입 무대, 만화 컷, 개념 그림, 문제의 질문과 그림)은 왼쪽, 읽고 답하는 것은 오른쪽 노트.
+     core/wide.ts가 스텝에 .wd-split 과 종류(.wd-opener 등), 왼쪽 요소에 .wd-left 를 붙인다. */
+  html.wide .step.wd-split {
+    position: relative; display: grid; grid-template-columns: minmax(0, 1fr) var(--lq, 480px); grid-template-rows: repeat(14, auto) 1fr;
+    column-gap: 20px; min-height: calc(100dvh - 48px); padding: 34px 24px 112px; align-content: start;
+  }
+  html.wide .step.wd-split::before {
+    content: ""; position: absolute; right: 24px; top: 14px; bottom: 16px; width: var(--lq, 480px);
+    border-radius: 8px 26px 26px 8px; background: #FFFDF6; box-shadow: 0 0 0 1px #EADFC4 inset, 6px 0 0 0 #F3E9CF inset;
+  }
+  html.wide .step.wd-split > *,
+  html.wide .step.wd-comic > .comic-panel > * { grid-column: 2; position: relative; margin-left: 26px; margin-right: 20px; zoom: var(--lqk, 1.2); }
+  html.wide .step.wd-split > :first-child { margin-top: 0; }
+  html.wide .step.wd-split .wd-left { grid-column: 1; margin-left: 0; margin-right: 0; zoom: 1; }
+  html.wide .lesson-screen:has(.wd-split) .footer {
+    position: absolute; right: 24px; bottom: 16px; width: var(--lq, 480px); padding: 12px 22px 16px 30px; background: none; z-index: 3;
+  }
+  /* 판정 시트도 아래에서 화면을 덮지 않고 노트 자리에 뜬다 */
+  html.wide .lesson-screen:has(.wd-split) .scrim { background: rgba(25, 31, 40, .12); }
+  html.wide .lesson-screen:has(.wd-split) .sheet { left: auto; right: 24px; bottom: 16px; width: var(--lq, 480px); }
+  html.wide .lesson-screen:has(.wd-split) .sheet:not(.open) { transform: translateY(calc(100% + 40px)); }
+  html.wide .lesson-screen:has(.wd-split) .footer::before {
+    content: ""; position: absolute; left: 8px; right: 2px; top: -18px; bottom: -1px; z-index: -1;
+    background: linear-gradient(#FFFDF600, #FFFDF6 36%); border-radius: 0 0 24px 0;
+  }
+  html.wide .lesson-screen:has(.wd-split) .sheet-card { border-radius: 26px; padding: 24px 24px 22px; }
+  html.wide .lesson-screen:has(.wd-split) .sheet-card::before { display: none; }
+  html.wide .lesson-screen:has(.wd-split) .sheet-expl { font-size: 16.5px; }
+
+  /* 도입(새 틀): 무대 왼쪽, 제목과 예측 보기와 쌤의 말은 노트 */
+  html.wide .step.wd-opener > .opn-stage { grid-row: 1 / -1; align-self: start; justify-self: center; width: 346px; zoom: var(--lko, 1.8); margin-top: 0; }
+
+  /* 만화: 컷 왼쪽에 크게, 이야기 글은 노트 */
+  html.wide .step.wd-comic > .comic-panel { display: contents; zoom: 1; }
+  html.wide .step.wd-comic > .comic-panel > .comic-art {
+    grid-column: 1; grid-row: 1 / -1; align-self: start; justify-self: center; width: 350px; margin: 0; zoom: var(--lkc, 1.8);
+    position: sticky; top: calc(34px / var(--lkc, 1.8)); /* 이야기 글이 길어 노트가 조금 넘쳐도 컷은 제자리에 있다 */
+  }
+
+  /* 개념: 첫 그림(컷) 왼쪽에 붙박이, 설명과 용어 카드는 노트에서 읽어 내려간다 */
+  html.wide .step.wd-concept > .c-figure.wd-left { grid-row: 1 / -1; align-self: start; position: sticky; top: 34px; }
+  html.wide .step.wd-concept > .c-figure.wd-left .c-figure-art img,
+  html.wide .step.wd-concept > .c-figure.wd-left .c-figure-art svg { width: 100%; max-height: calc(100dvh - 200px); object-fit: contain; }
+  html.wide .step.wd-concept > .c-figure.wd-left .c-figure-cap { font-size: 16.5px; padding: 14px 18px; }
+
+  /* 문제: 질문과 그림 왼쪽, 보기와 확인 버튼은 노트 */
+  html.wide .step.wd-quiz > .opts { grid-row: 1 / -1; align-self: start; margin-top: 4px; }
+  html.wide .step.wd-quiz > .wd-left { zoom: 1.32; margin-right: 12px; }
+  html.wide .step.wd-quiz > .q-figure.wd-left { zoom: 1; margin: 22px 0 0; }
+  html.wide .step.wd-quiz > .q-figure.wd-left .q-figure-art svg,
+  html.wide .step.wd-quiz > .q-figure.wd-left .q-figure-art img { max-height: calc(100dvh - 300px); }
+
+  /* 정리: 카드를 세 칸으로 펼친다 */
+  html.wide .lesson-screen:has(.wd-recap) .stepWrap { max-width: 1060px; margin: 0 auto; }
+  html.wide .step.wd-recap > .rc-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 14px; }
+  html.wide .lesson-screen:has(.wd-recap) .footer .btn.cta { display: block; max-width: 560px; margin: 0 auto; }
+  /* ── 시작 화면(넓은 화면): 왼쪽에 플립북, 오른쪽에 이름과 발자국과 버튼, 아래 한 줄에 사업자 정보 ──
+     .splash-mid 와 .splash-foot 를 풀어(display: contents) 격자에 다시 놓는다. --fz 는 플립북 배율.
+     놀이 컷이 넘어가는 동안에는 플립북이 화면 가운데에 있다가, 정착하는 순간(.settled) 왼쪽 제자리로 미끄러진다. */
+  html.wide #sc-splash {
+    --sg: clamp(36px, 6vw, 96px);
+    --sr: 430px;
+    display: grid; overflow: hidden auto;
+    grid-template-columns: minmax(0, 1fr) var(--sr);
+    grid-template-rows: 1fr repeat(7, auto) 1.1fr auto auto;
+    column-gap: var(--sg);
+    padding: 0 max(40px, calc((100% - 1080px) / 2)) 18px;
+    background: radial-gradient(90% 90% at 50% 40%, #EAF2FF 0%, #fff 62%);
+  }
+  html.wide #sc-splash > .splash-mid, html.wide #sc-splash > .splash-foot { display: contents; }
+  html.wide #sc-splash .flipbook {
+    grid-column: 1; grid-row: 1 / 10; align-self: center; justify-self: center; zoom: var(--fz, 1.6);
+    translate: calc((var(--sg) + var(--sr)) / 2 / var(--fz, 1.6)) 0;
+  }
+  html.wide #sc-splash .flipbook.settled { translate: 0 0; transition: translate .6s var(--ease-out); }
+  html.wide #sc-splash.instant .flipbook.settled { transition: none; }
+  html.wide #sc-splash .wordmark { grid-column: 2; grid-row: 2; margin: 0; font-size: 68px; line-height: 1.08; }
+  html.wide #sc-splash .splash-step-wrap { grid-column: 2; grid-row: 3; margin: 14px 0 0 -4px; zoom: 1.2; }
+  html.wide #sc-splash .tagline { grid-column: 2; grid-row: 4; margin-top: 18px; font-size: 23px; }
+  html.wide #sc-splash .splash-note { grid-column: 2; grid-row: 5; margin-top: 12px; font-size: 15px; }
+  html.wide #sc-splash .splash-foot > .btn { grid-column: 2; grid-row: 6; margin-top: 36px; height: 62px; font-size: 18px; }
+  html.wide #sc-splash .ld-login { grid-column: 2; grid-row: 7; margin-top: 12px; height: 56px; font-size: 16.5px; }
+  html.wide #sc-splash .ld-teacher { grid-column: 2; grid-row: 8; margin-top: 10px; text-align: left; padding-left: 4px; font-size: 14px; }
+  html.wide #sc-splash .splash-business {
+    grid-column: 1 / -1; grid-row: 10; margin: 0; padding: 14px 0 0; border-top: 1px solid var(--n150);
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 2px 16px;
+  }
+  html.wide #sc-splash .splash-business-title { margin: 0; font-size: 11.5px; }
+  html.wide #sc-splash .splash-business-line { margin: 0; font-size: 11.5px; }
+  html.wide #sc-splash .splash-legal { grid-column: 1 / -1; grid-row: 11; margin-top: 6px; }
+  /* ── 단원 지도(넓은 화면): 왼쪽에 지도를 크게, 오른쪽 칸에 학년, 단원 카드, 단원 목록, 이어서 학습 ──
+     "넓은 화면 레이아웃"(html.dt)이 켜져 있을 때의 홈을 다시 놓는다. --hs 메뉴 폭, --hp 오른쪽 칸 폭, --mz 지도 배율(core/wide.ts). */
+  html.wide #sc-home { padding-left: var(--hs, 88px); padding-right: 0; }
+  html.wide .gnav { width: var(--hs, 88px); }
+  html.wide #sc-home .appbar { width: auto; max-width: none; margin: 0; padding-left: 24px; padding-right: 24px; }
+  html.wide #sc-home .scroll {
+    overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) var(--hp, 380px); grid-template-rows: auto auto auto 1fr;
+    column-gap: 20px; padding: 0 24px 20px;
+  }
+  html.wide #sc-home .scroll > * { grid-column: 2; width: auto; max-width: none; margin-left: 0; margin-right: 0; min-width: 0; }
+  html.wide #sc-home .map-swap {
+    grid-column: 1; grid-row: 1 / -1; min-height: 0; height: 100%; overflow: hidden auto; overscroll-behavior: contain;
+    border-radius: 28px; box-shadow: 0 0 0 1px var(--n200) inset; background: #fff;
+  }
+  html.wide #sc-home .map-head { position: sticky; top: 0; z-index: 5; background: linear-gradient(#fff 70%, #fff0); padding-left: 22px; }
+  html.wide #sc-home .gamemap { zoom: var(--mz, 1.3); }
+  html.wide #sc-home .grade-row { grid-row: 1; padding-left: 0; padding-right: 0; }
+  html.wide #sc-home .ucar-wrap { grid-row: 2; }
+  html.wide #sc-home .unit-tabs {
+    grid-row: 3; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 12px 0 0; overflow: visible;
+  }
+  html.wide #sc-home .unit-tab { width: 100%; min-height: 42px; text-align: left; white-space: normal; line-height: 1.3; word-break: keep-all; }
+  /* 오른쪽 칸 맨 아래: '이어서 학습' 카드만 남긴다(연속 학습과 보유 스텝은 위 칩에 이미 있다) */
+  html.wide .home-rail {
+    display: flex; position: absolute; top: auto; right: 24px; bottom: 20px; width: var(--hp, 380px); max-height: none; overflow: visible;
+  }
+  html.wide .home-rail .hr-card { display: none; }
+  html.wide .home-rail .hr-card:last-child {
+    width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 14px; align-items: center;
+    background: var(--n0); border: 1px solid var(--n200); border-radius: 18px; padding: 14px 16px; box-shadow: var(--sh-card);
+  }
+  html.wide .home-rail .hr-card:last-child > * { grid-column: 1; }
+  html.wide .home-rail .hr-k { font-size: 12.5px; font-weight: 800; color: var(--n500); margin-bottom: 4px; }
+  html.wide .home-rail .hr-v { font-size: 18px; font-weight: 900; color: var(--n900); }
+  html.wide .home-rail .hr-s { font-size: 12.5px; color: var(--n500); margin-top: 3px; }
+  html.wide .home-rail .hr-btn {
+    grid-column: 2 !important; grid-row: 1 / 4; margin: 0; width: 116px; height: 52px; border-radius: 14px; background: var(--grad-blue); color: #fff;
+    font-size: 15px; font-weight: 800; text-align: center; box-shadow: var(--sh-cta);
+  }
+}
+/* 태블릿 폭에서는 왼쪽 메뉴를 좁은 아이콘 줄로 접는다 */
+@media (orientation: landscape) and (min-width: 1024px) and (max-width: 1279px) and (min-height: 600px) {
+  html.wide .gnav { padding: 18px 8px; align-items: stretch; }
+  html.wide .gnav::before { display: none; }
+  html.wide .gnav-item { flex-direction: column; justify-content: center; gap: 4px; padding: 10px 0; }
+  html.wide .gnav-tx { font-size: 12px; }
+}
+
+/* ═══ 레슨 화면의 옛 가운데 단 풀기, 지도 다듬기, 탭 셋, 시험 ═══ */
+@media (orientation: landscape) and (min-width: 1024px) and (min-height: 600px) {
+  /* 넓은 화면 레이아웃(html.dt)의 "레슨은 가운데 760 한 단" 규칙을 푼다(C 배치가 화면 전체를 쓴다) */
+  html.wide .screen.lesson-screen:not(#sc-home) > .lheader,
+  html.wide .screen.lesson-screen:not(#sc-home) > .scroll,
+  html.wide .screen.lesson-screen:not(#sc-home) > .footer { max-width: none; margin-left: 0; margin-right: 0; }
+  html.wide .lesson-screen:has(.bv-step, .wd-split) .stepWrap { max-width: none; margin: 0; }
+  html.wide .lesson-screen:not(#sc-home):has(.bv-step) > .footer { width: var(--lp, 400px); }
+  html.wide .lesson-screen:not(#sc-home):has(.wd-split) > .footer { width: var(--lq, 480px); }
+  html.wide .lesson-screen:has(.bv-step, .wd-split) .footer .btn.cta { max-width: none; }
+
+  /* ── 단원 지도 다듬기 ── */
+  html.wide #sc-home .ustrip .unit-band.ucard { flex-basis: 100%; }
+  html.wide #sc-home .ucard:not(.on) { opacity: 0; }
+  html.wide .home-rail .hr-card:last-child { display: block; }
+  html.wide .home-rail .hr-next { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 14px; align-items: center; }
+  html.wide .home-rail .hr-next > * { grid-column: 1; min-width: 0; }
+  html.wide .home-rail .hr-next > .hr-btn { grid-column: 2; grid-row: 1 / 3; width: 118px; height: 52px; margin: 0; }
+  html.wide #sc-home .unit-tabs { padding-bottom: 120px; }
+
+  /* ── 탭 화면 공통(복습, 도전, 마이): 메뉴 폭만큼 비우고 본문을 넓게 ── */
+  html.wide .tabscr { padding-left: var(--hs, 88px); }
+  html.wide .tabscr .tab-head,
+  html.wide .tabscr .scroll > .pad { max-width: 1040px; padding-left: 28px; padding-right: 28px; }
+
+  /* 복습: 세 가지 도구를 카드 세 장으로 나란히 */
+  html.wide .tabscr .pad:has(> .nb-entry) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: stretch; padding-top: 10px; }
+  html.wide .tabscr .pad:has(> .nb-entry) > button { margin: 0; min-height: 112px; }
+  html.wide .tabscr .pad:has(> .nb-entry) > .tab-footnote { grid-column: 1 / -1; }
+
+  /* 도전: 게임 넷을 한 줄로(스크롤 없이 한 화면) */
+  html.wide .tabscr .arc-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  html.wide .tabscr .arc-panel { padding-bottom: 16px; }
+
+  /* 마이: 왼쪽에 내 캐릭터와 숫자, 오른쪽에 메뉴 */
+  html.wide .tabscr .pad:has(> .my-prof) { display: grid; grid-template-columns: minmax(320px, 0.82fr) minmax(0, 1fr); column-gap: 20px; align-items: start; }
+  html.wide .tabscr .pad:has(> .my-prof) > .my-prof { grid-column: 1; grid-row: 1; }
+  html.wide .tabscr .pad:has(> .my-prof) > .my-stats { grid-column: 1; grid-row: 2; }
+  html.wide .tabscr .pad:has(> .my-prof) > .my-menu { grid-column: 2; grid-row: 1 / 4; margin-top: 10px; }
+  html.wide .tabscr .pad:has(> .my-prof) > .my-legal { grid-column: 1; grid-row: 3; text-align: left; padding-left: 4px; }
+
+  /* ── 시험 ── */
+  html.wide .screen:has(> .ex-footer):not(#sc-home) > .lheader,
+  html.wide .screen:has(> .ex-footer):not(#sc-home) > .scroll,
+  html.wide .screen:has(> .ex-footer):not(#sc-home) > .footer { max-width: 1120px; }
+  /* 안내: 왼쪽에 시험 얼굴, 오른쪽에 규칙 카드 */
+  html.wide .ex-intro {
+    display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr); grid-template-rows: repeat(4, auto) 1fr; column-gap: 40px; align-items: start; padding-top: 24px;
+  }
+  html.wide .ex-intro > * { grid-column: 2; }
+  html.wide .ex-intro > .ex-hero { grid-column: 1; grid-row: 1 / -1; align-self: center; zoom: 1.25; padding-bottom: 40px; }
+  html.wide .ex-intro > .ex-rules { margin-top: 0; }
+  /* 문제: 왼쪽에 문제와 그림, 오른쪽 칸에 답(보기 또는 숫자판)과 다음 버튼 */
+  html.wide .ex-q:has(.q-figure) {
+    display: grid; grid-template-columns: minmax(0, 1fr) var(--lq, 460px); grid-template-rows: auto auto auto auto 1fr; column-gap: 32px;
+    min-height: 100%; padding-top: 16px; padding-bottom: 24px;
+  }
+  html.wide .ex-q:has(.q-figure) > * { grid-column: 2; margin-top: 0; }
+  html.wide .ex-q:has(.q-figure) > :nth-child(1) { grid-column: 1; grid-row: 1; }
+  html.wide .ex-q:has(.q-figure) > :nth-child(2) { grid-column: 1; grid-row: 2 / -1; margin-top: 8px; }
+  html.wide .ex-q:has(.q-figure) > :nth-child(3) { grid-row: 2; margin-top: 8px; }
+  html.wide .ex-q:has(.q-figure) > :nth-child(n + 4) { margin-top: 12px; }
+  html.wide .ex-q:has(.q-figure) .h1 { font-size: 26px; }
+  html.wide .ex-q .q-figure-art svg, html.wide .ex-q .q-figure-art img { max-height: calc(100dvh - 330px); }
+  html.wide .screen:has(.ex-q .q-figure) > .ex-footer { padding-left: calc(100% - var(--lq, 460px) - 22px); }
+  html.wide .screen:has(.ex-q .q-figure) > .ex-footer .btn.cta { max-width: none; }
+  html.wide .ex-q:not(:has(.q-figure)) { max-width: 700px; margin: 0 auto; padding-top: 20px; zoom: 1.12; }
+}

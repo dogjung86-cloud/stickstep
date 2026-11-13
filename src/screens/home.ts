@@ -2,6 +2,7 @@
 // 리디자인(2026-07-14 확정): 스펙 정본 = design/README.md("확정된 방향"+탐색 1~7차).
 // e2e 계약: .gm-node(.now/.done/.exam/.conq)·.gm-med·.gm-label·.gm-ribbon·.gm-exam-best·.unit-tab의
 // 클래스·DOM 소속을 유지하고, 스킨 클래스(.bsn·.ucard)만 얹는다 — qa/ 15개+ 스크립트가 이 셀렉터를 쓴다.
+import { isWide } from "../core/wide";
 import { el, clear, afterPaint } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
@@ -198,10 +199,10 @@ export function homeScreen(
   }
 
   // ---- 우측 위젯 레일(데스크톱 셸 시안 B 완성 — 스트릭·스텝·오답·이어하기) ----
-  // DOM 자체를 desktopMode(옵트인)일 때만 만든다 — 모바일·e2e(420px)는 DOM이 아예 없어 셀렉터 계약 안전.
-  // 표시 게이트는 desktop.css(html.dt + min-width:1280px)가 소유 — 1024~1279px 애매 구간은 자동 숨김.
+  // DOM 자체를 넓은 화면(core/wide.ts isWide)일 때만 만든다 — 모바일·e2e(420px)는 DOM이 아예 없어 셀렉터 계약 안전.
+  // 넓은 화면에서는 styles/wide.css가 오른쪽 칸 아래에 '이어서 학습' 카드만 보인다(나머지 카드는 위 칩과 겹쳐 숨긴다).
   let updateRailNext: ((u: Unit) => void) | null = null;
-  if (getState().desktopMode) {
+  if (isWide()) {
     const railDay = (d: Date): string => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
     const dayDiff = (a: string, b: string): number => Math.round((new Date(b + "T00:00:00").getTime() - new Date(a + "T00:00:00").getTime()) / 86400000);
     // ① 연속 학습 — 최근 7일 도트(오른쪽 끝 = 오늘). 스트릭 정의(연속 학습일)를 그대로 역산:

@@ -42,6 +42,8 @@ import "./styles/plant2.css";
 import "./styles/soc.css";
 import "./styles/his.css";
 import "./styles/desktop.css";
+import "./styles/wide.css";
+import { initWide } from "./core/wide";
 
 import { nav } from "./core/router";
 import { parseRoute, writeHash } from "./core/route";
@@ -73,9 +75,9 @@ import { capturePaymentReturn, resumePaymentConfirm } from "./core/purchase";
 const frame = document.getElementById("frame")!;
 nav.init(frame);
 
-// 데스크톱 셸은 옵트인(사용자 확정 2026-07-20) — 기본은 넓은 화면에서도 폰 프레임.
-// 마이 탭 "넓은 화면 레이아웃" 토글이 저장(store.desktopMode)·클래스 갱신을 함께 수행한다.
-document.documentElement.classList.toggle("dt", getState().desktopMode);
+// 넓은 화면은 자동 전환이다(2026-11-14 사용자 확정. 2026-07-20의 "켠 사람만"을 뒤집었다).
+// 마이 탭 "넓은 화면 레이아웃" 줄은 끄는 스위치(store.wideOff)이고, 바꾸면 core/wide.ts refreshWide()가 그 자리에서 반영한다.
+initWide(); // 넓은 화면(태블릿 가로, PC)이면 스위치 없이 넓은 배치로(core/wide.ts가 html.wide와 html.dt를 붙인다)
 
 // 마지막으로 연 단원 — 레슨 완료·X 이탈 후 홈이 그 단원 지도로 돌아가게 한다.
 let lastUnitId: string | undefined;
