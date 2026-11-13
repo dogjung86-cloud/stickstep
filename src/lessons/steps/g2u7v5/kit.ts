@@ -113,6 +113,8 @@ export function xHold(cls: string, text: string, on: (held: boolean) => void): H
 export interface XLog {
   el: HTMLElement;
   set: (i: number, value: string) => void;
+  /** 줄을 다시 비운다(조건을 바꿔 다시 잴 때). */
+  clear: (i: number) => void;
   has: (i: number) => boolean;
 }
 export function xLog(rows: string[], cols = 1, tight = false): XLog {
@@ -128,6 +130,11 @@ export function xLog(rows: string[], cols = 1, tight = false): XLog {
       items[i].v.textContent = value;
       items[i].row.classList.add("on");
       items[i].on = true;
+    },
+    clear(i) {
+      items[i].v.textContent = "아직";
+      items[i].row.classList.remove("on");
+      items[i].on = false;
     },
     has: (i) => items[i].on,
   };

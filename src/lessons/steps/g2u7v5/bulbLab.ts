@@ -128,7 +128,7 @@ export const bulbLab: StepRenderer = (host, step, api) => {
     const Rx = 302;
     const By = 186;
     const live = stt.amps > 0;
-    // 전지에서 나와 오른쪽으로 올라가 전구를 지나 왼쪽으로 내려온다
+    // 전류는 전지의 (+)극(오른쪽)에서 나와 오른쪽으로 올라가 전구를 지나 왼쪽으로 내려와 (−)극으로 들어간다
     P([[215, By], [Rx, By], [Rx, mode === "parallel" ? 56 : 62]], live);
     P([[Lx, mode === "parallel" ? 56 : 62], [Lx, By], [131, By]], live);
     if (mode === "one") {
@@ -147,7 +147,7 @@ export const bulbLab: StepRenderer = (host, step, api) => {
       P([[Rx, 56], [Rx, 118]], inPlace[1], 0.5);
       P([[Lx, 118], [Lx, 56]], inPlace[1], 0.5);
     }
-    drawBattery(ctx, 173, By, 84, 30, true);
+    drawBattery(ctx, 173, By, 84, 30, false);
     BULBS[mode].forEach(([x, y], i) => {
       if (inPlace[i]) drawBulb(ctx, x, y - 4, 20, stt.bright[i]);
       else {

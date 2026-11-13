@@ -76,7 +76,7 @@ export const G2_UNIT7: Unit = {
       subtitle: "직렬은 한 줄, 병렬은 여러 갈래",
       label: "저항의 연결",
       icon: "bolt",
-      minutes: 12,
+      minutes: 16,
       standard: "책 254~255쪽",
       doneNote: "직렬·병렬연결의 특징을 비교할 수 있어요",
       steps: L5,
