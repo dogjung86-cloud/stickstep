@@ -36,6 +36,18 @@
 .u7x-moon-sun, .u7x-moon-earth { left: 0; top: 0; will-change: transform; }
 .u7x-moon-earth { color: #CFE0FF; }
 
+/* 일식과 월식의 2D 랩 넷(위에서 내려다본 그림): 무대 글자, 끌 수 있는 것의 고리, "여기서 본 모습" 창 */
+.u7x-ecl-svg { touch-action: none; cursor: grab; }
+.u7x-st { font: 800 12.5px Pretendard, sans-serif; fill: #DCE7FB; paint-order: stroke; stroke: rgba(7, 13, 26, .78); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.u7x-st.sun { fill: #FFE9B8; }
+.u7x-st.dim { fill: #A9BBDA; font-weight: 700; }
+.u7x-ecl-halo { animation: u7xHalo 1.6s ease-in-out infinite; }
+@keyframes u7xHalo { 0%, 100% { opacity: .14; } 50% { opacity: .34; } }
+@media (prefers-reduced-motion: reduce) { .u7x-ecl-halo { animation: none; } }
+.u7x-ec-inset { overflow: hidden; background: #070d1a; }
+.u7x-ec-inset svg { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.u7x-ec-inset span { z-index: 1; }
+
 /* 달의 위상: 궤도의 여덟 자리 표시와 찍은 사진 여덟 칸 */
 .u7x-mpos { position: absolute; left: 0; top: 0; width: 11px; height: 11px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .6); pointer-events: none; will-change: transform; }
 .u7x-mpos.on { background: #FFE08A; border-color: #FFE08A; }

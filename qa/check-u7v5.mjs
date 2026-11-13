@@ -265,7 +265,7 @@ const LABS = {
     await finish(id, "이름 정리하기");
     await newQuiz(id, 4, 0);
   },
-  // u7l6: 일식과 월식(가로 3D)
+  // u7l6: 일식과 월식(가로 3D 하나 + 위에서 내려다본 2D 넷)
   async u7l6(id) {
     await isLab(id);
     await at(id, "1first");
@@ -297,8 +297,82 @@ const LABS = {
       await W(page, 700);
       await judge(id, { second: true });
     }
-    await finish(id, "이름 정리하기");
-    await newQuiz(id, 6, 0);
+    await finish(id, "그때 달의 모양 보기");
+
+    // 둘째 랩: 한 줄일 때 달의 위상(달을 끌어 망 자리에, 검사 손잡이로 삭 자리에)
+    await isLab(id);
+    await W(page, 300);
+    await at(id + "b", "1first");
+    await mouseDrag(await stagePt(page, 170, 184), await stagePt(page, 236, 127));
+    ok(await waitDs(page, "u7Found", "1", 30), `${id}b: 달을 망 자리로 끌어도 반응이 없음`);
+    await W(page, 400);
+    await at(id + "b", "2full");
+    await dev(page, "elong", 60);
+    await W(page, 200);
+    await at(id + "b", "2crescent", { cap: true });
+    await dev(page, "elong", 0);
+    ok(await waitDs(page, "u7Found", "2", 30), `${id}b: 삭 자리에서 반응이 없음`);
+    await at(id + "b", "2new");
+    await judge(id + "b", { second: true });
+    await finish(id + "b", "이름 정리하기");
+    await goStep(page, 1); // 개념 스텝을 지나 셋째 랩으로
+
+    // 셋째 랩: 일식이 보이는 곳(사람을 그림자 밖, 옅은 곳, 짙은 곳에)
+    await isLab(id);
+    await W(page, 300);
+    await at(id + "c", "1first");
+    await dev(page, "at", -46);
+    ok(await waitDs(page, "u7Found", "1", 30) && (await ds(page, "u7Kind")) === "none", `${id}c: 그림자 밖에서 반응이 없음`);
+    await at(id + "c", "2none");
+    { const q = await stagePt(page, 321 - 95 * Math.cos(18 * Math.PI / 180), 115 - 95 * Math.sin(18 * Math.PI / 180)); await page.mouse.click(q.x, q.y); }
+    ok(await waitDs(page, "u7Found", "2", 30) && (await ds(page, "u7Kind")) === "partial", `${id}c: 옅은 곳을 눌러도 부분일식이 아님(${await ds(page, "u7Kind")})`);
+    await W(page, 300);
+    await at(id + "c", "2partial");
+    { const q = await stagePt(page, 228, 119); await page.mouse.click(q.x, q.y); } // 한가운데 가까이를 누르면 가운데에 선다
+    ok(await waitDs(page, "u7Found", "3", 30) && (await ds(page, "u7Kind")) === "total", `${id}c: 짙은 곳에서 개기일식이 아님(${await ds(page, "u7Kind")})`);
+    await W(page, 300);
+    await at(id + "c", "2total");
+    await judge(id + "c");
+    await finish(id + "c", "가려지는 쪽 보기");
+
+    // 넷째 랩: 태양이 가려지는 쪽(예상 → 달을 움직인다)
+    await isLab(id);
+    await W(page, 300);
+    await at(id + "d", "1predict");
+    ok(!!(await pickWrong(page)), `${id}d: 예상 보기를 누르지 못함`);
+    ok(await waitDs(page, "u7Phase", "play", 30), `${id}d: 예상 뒤에 조작으로 넘어가지 않음`);
+    await W(page, 300);
+    await mouseDrag(await stagePt(page, 147, 76), await stagePt(page, 144, 95));
+    ok(await waitDs(page, "u7Found", "1", 30) && (await ds(page, "u7Kind")) === "partial", `${id}d: 달을 끌어도 가려지기 시작하지 않음`);
+    await at(id + "d", "2in");
+    await dev(page, "moon", 0);
+    ok(await waitDs(page, "u7Found", "2", 30), `${id}d: 한 줄에서 개기일식이 아님`);
+    await at(id + "d", "2total");
+    await dev(page, "moon", -6);
+    ok(await waitDs(page, "u7Found", "3", 30), `${id}d: 지나간 뒤 다시 보이는 단계가 없음`);
+    await at(id + "d", "2out");
+    await judge(id + "d");
+    await finish(id + "d", "월식 자세히 보기");
+
+    // 다섯째 랩: 월식(예상 → 달을 그림자에 넣었다 뺀다)
+    await isLab(id);
+    await W(page, 300);
+    await at(id + "e", "1predict");
+    ok(!!(await pickWrong(page)), `${id}e: 예상 보기를 누르지 못함`);
+    ok(await waitDs(page, "u7Phase", "play", 30), `${id}e: 예상 뒤에 조작으로 넘어가지 않음`);
+    await W(page, 300);
+    await mouseDrag(await stagePt(page, 204, 167), await stagePt(page, 210, 146));
+    ok(await waitDs(page, "u7Found", "1", 30) && (await ds(page, "u7Kind")) === "partial", `${id}e: 달을 끌어도 부분월식이 아님(${await ds(page, "u7Kind")})`);
+    await at(id + "e", "2in");
+    await dev(page, "moon", 0);
+    ok(await waitDs(page, "u7Found", "2", 30), `${id}e: 한 줄에서 개기월식이 아님`);
+    await at(id + "e", "2total");
+    await dev(page, "moon", -9);
+    ok(await waitDs(page, "u7Found", "3", 30), `${id}e: 빠져나오는 단계가 없음`);
+    await at(id + "e", "2out");
+    await judge(id + "e");
+    await finish(id + "e", "정리하기");
+    await newQuiz(id, 5, 0);
   },
 };
 

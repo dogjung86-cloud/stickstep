@@ -343,8 +343,18 @@ export function eclipseModelFig(): string {
  *  (나)는 경로 위·본그림자 중심(깊숙이), (가)는 경로 위·아래쪽 경계에 정확히 걸친다:
  *  0.417t = 12.35 − 0.0504t → t=26.4 → (220,85), h(220)=11.0 = |y−74| 검산 일치(절반만 가려짐). */
 export function lunarPathFig(): string {
-  // 경로 위 점: P(t) = (196 + 0.909t, 74 + 0.417t)
-  const P = (t: number): [number, number] => [196 + 0.909 * t, 74 + 0.417 * t];
+  return lunarPathSvg(1);
+}
+
+/** 같은 그림을 위아래로 뒤집은 판: 달의 길이 오른쪽 위로 올라간다. 북극 위에서 내려다볼 때 달은 반시계로 돌므로
+ *  (태양이 왼쪽이면 지구 뒤에서 위로) 레슨의 월식 랩(u7LunarLab)과 방향이 같다. (가)는 그림자의 위쪽 경계에 걸친다. */
+export function lunarPathUpFig(): string {
+  return lunarPathSvg(-1);
+}
+
+function lunarPathSvg(sy: 1 | -1): string {
+  // 경로 위 점: P(t) = (196 + 0.909t, 74 ± 0.417t)
+  const P = (t: number): [number, number] => [196 + 0.909 * t, 74 + sy * 0.417 * t];
   const [nx, ny] = P(0); // (나) — 본그림자 깊숙이
   const [gx, gy] = P(26.4); // (가) — 본그림자 아래 경계 위(절반 노출)
   const [p0x, p0y] = P(-36);
@@ -368,15 +378,15 @@ export function lunarPathFig(): string {
     <text x="112" y="106" fill="#BFD4F2" font-size="10" text-anchor="middle" font-family="Pretendard, sans-serif">지구</text>
     <!-- 달의 이동 경로(직선) + 진행 화살표 -->
     <path d="M${p0x.toFixed(1)} ${p0y.toFixed(1)}L${p1x.toFixed(1)} ${p1y.toFixed(1)}" stroke="#3D5378" stroke-width="1.3" stroke-dasharray="4 4"/>
-    <path d="M${(p1x + 6.4).toFixed(1)} ${(p1y + 2.9).toFixed(1)}L${(p1x - 1.6).toFixed(1)} ${(p1y + 3.5).toFixed(1)}L${(p1x + 1.6).toFixed(1)} ${(p1y - 3.5).toFixed(1)}z" fill="#5A78A8"/>
+    <path d="M${(p1x + 6.4).toFixed(1)} ${(p1y + sy * 2.9).toFixed(1)}L${(p1x - 1.6).toFixed(1)} ${(p1y + sy * 3.5).toFixed(1)}L${(p1x + 1.6).toFixed(1)} ${(p1y - sy * 3.5).toFixed(1)}z" fill="#5A78A8"/>
     <!-- (나) 본그림자 깊숙이, 붉은 달 -->
     <circle cx="${nx.toFixed(1)}" cy="${ny.toFixed(1)}" r="7" fill="#E8DCB8"/>
     <circle cx="${nx.toFixed(1)}" cy="${ny.toFixed(1)}" r="7" fill="rgba(120,30,16,.78)"/>
     <text x="${(nx - 4).toFixed(1)}" y="${(ny + 25).toFixed(1)}" fill="#FFD0B4" font-size="11" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">(나)</text>
     <!-- (가) 아래 경계 걸치기, 위 절반(그림자 안)만 붉게 -->
     <circle cx="${gx.toFixed(1)}" cy="${gy.toFixed(1)}" r="7" fill="#E8DCB8"/>
-    <path d="M${(gx - 7).toFixed(1)} ${gy.toFixed(1)}a7 7 0 0 1 14 0z" fill="rgba(120,30,16,.78)" transform="rotate(-3.2 ${gx.toFixed(1)} ${gy.toFixed(1)})"/>
-    <text x="${gx.toFixed(1)}" y="${(gy + 22).toFixed(1)}" fill="#FFD0B4" font-size="11" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">(가)</text>
+    <path d="M${(gx - 7).toFixed(1)} ${gy.toFixed(1)}a7 7 0 0 ${sy === 1 ? 1 : 0} 14 0z" fill="rgba(120,30,16,.78)" transform="rotate(${-3.2 * sy} ${gx.toFixed(1)} ${gy.toFixed(1)})"/>
+    <text x="${gx.toFixed(1)}" y="${(gy + (sy === 1 ? 22 : -12)).toFixed(1)}" fill="#FFD0B4" font-size="11" font-weight="700" text-anchor="middle" font-family="Pretendard, sans-serif">(가)</text>
   `,
     `<radialGradient id="spf-sunl" cx=".5" cy=".5" r=".5">
       <stop offset="0" stop-color="#FFEDBE"/><stop offset="1" stop-color="#FFA82E"/>
