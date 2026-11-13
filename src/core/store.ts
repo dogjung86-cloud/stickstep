@@ -68,6 +68,7 @@ export interface AppState {
   premiumSubjectIds?: string[];
   reviewMode: boolean; // 검토 모드(브랜드 7연타) — 순차·프리미엄 잠금 전부 해제(콘텐츠 검수용)
   desktopMode: boolean; // 데스크톱 셸 옵트인(마이 탭 토글) — 기본 false = 넓은 화면에서도 폰 프레임. 기기 설정이라 동기화 제외
+  wideOff?: boolean; // 넓은 화면 자동 전환 끄기(마이 탭 스위치). 기기 설정, 동기화 제외
   goalMin: number;
   streak: number;
   lastStudyDay: string | null; // 'YYYY-MM-DD'
@@ -115,6 +116,7 @@ const DEFAULT_STATE: AppState = {
   premiumSubjectIds: [],
   reviewMode: false,
   desktopMode: false,
+  wideOff: false,
   goalMin: 10,
   streak: 0,
   lastStudyDay: null,
@@ -277,6 +279,17 @@ export function isDesktopMode(): boolean {
 
 export function setDesktopMode(v: boolean): void {
   state.desktopMode = v;
+  save();
+}
+
+/** 넓은 화면 자동 전환을 끄는 스위치(2026-11-14). 기본은 꺼지지 않음 = 넓은 화면이면 넓은 배치(core/wide.ts).
+ *  마이 탭의 "넓은 화면 레이아웃" 줄이 바꾼다. 기기 설정이라 동기화하지 않는다. 옛 desktopMode 값은 이제 아무도 읽지 않는다. */
+export function isWideOff(): boolean {
+  return !!state.wideOff;
+}
+
+export function setWideOff(v: boolean): void {
+  state.wideOff = v;
   save();
 }
 

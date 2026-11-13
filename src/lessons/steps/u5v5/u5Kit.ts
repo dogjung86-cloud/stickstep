@@ -3,6 +3,7 @@
 // 무대는 지금까지의 힘 단원처럼 캔버스에 그린다(ui/forceProps의 화살표, 용수철, 밧줄, 상자와 ui/stick의 막대 인물).
 // 그리기 루프는 core/anim의 Loop를 쓰고 cleanup에서 반드시 멈춘다.
 
+import { stageDpr } from "../../../core/wide";
 import { el } from "../../../core/dom";
 import { createLoop, type Loop } from "../../../core/anim";
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -41,7 +42,7 @@ export function u5Canvas(stage: HTMLElement): U5Stage {
   const fit = (): void => {
     const cw = cv.clientWidth || 346;
     const ch = cv.clientHeight || 230;
-    const d = Math.min(window.devicePixelRatio || 1, 2);
+    const d = stageDpr();
     if (cw === w && ch === h && d === dpr && cv.width === Math.round(cw * d)) return;
     w = cw;
     h = ch;

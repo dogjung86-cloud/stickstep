@@ -7,10 +7,11 @@
 // 소셜 프로필 사진은 쓰지 않는다(미성년 개인정보). 하단에는 개인정보처리방침과 로그인 상태의
 // 로그아웃만 작게 두고, 사업자 정보는 로그인 없이 볼 수 있는 공개 스플래시가 전담한다.
 
+import { refreshWide } from "../core/wide";
 import { el } from "../core/dom";
 import { icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
-import { getState, currentStreak, setNickname, isDesktopMode, setDesktopMode, isPremium } from "../core/store";
+import { getState, currentStreak, setNickname, isWideOff, setWideOff, isPremium } from "../core/store";
 import { onAuthChange, currentUser, pushNickname, signOut } from "../core/auth";
 import { ownedPremiumSubjectIds, SELLABLE_SUBJECTS } from "../core/purchase";
 import { bootLevel, BOOT_TIERS } from "../core/level";
@@ -263,11 +264,11 @@ export function myScreen(o: {
   const desktopRow = row({
     ic: icon("monitor", 17),
     title: "넓은 화면 레이아웃(PC, 태블릿용)",
-    value: isDesktopMode() ? "켜짐" : "꺼짐",
+    value: isWideOff() ? "꺼짐" : "켜짐",
     onClick: (b) => {
-      const on = !isDesktopMode();
-      setDesktopMode(on);
-      document.documentElement.classList.toggle("dt", on); // 저장 + 즉시 반영(재렌더 불필요 — 순수 CSS 재배치)
+      const on = isWideOff(); // 꺼져 있으면 켠다
+      setWideOff(!on);
+      refreshWide(); // 저장 + 즉시 반영(넓은 화면이면 자동으로 켜지고, 이 줄은 끄는 스위치다)
       const v = b.querySelector<HTMLElement>(".my-row-v");
       if (v) v.textContent = on ? "켜짐" : "꺼짐";
       snack(on ? "넓은 화면 레이아웃을 켰어요" : "폰 화면 보기로 돌아왔어요");

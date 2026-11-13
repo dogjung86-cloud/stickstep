@@ -5,6 +5,7 @@
 //   그리기 도우미: 글자, 알약 표시, 비커, 그래프 축, 온도계
 // 무대 안 글자는 12px 이상으로 쓴다.
 
+import { stageDpr } from "../../../core/wide";
 import { el } from "../../../core/dom";
 import { createLoop } from "../../../core/anim";
 import { haptic, HAPTIC } from "../../../core/haptics";
@@ -46,7 +47,7 @@ export function u3Canvas(stage: HTMLElement, draw: (ctx: Ctx, dt: number, tMs: n
   const fit = (): void => {
     const cw = stage.clientWidth || SW;
     const ch = stage.clientHeight || SH;
-    const d = Math.min(window.devicePixelRatio || 1, 2);
+    const d = stageDpr();
     if (cw === w && ch === h && d === dpr) return;
     w = cw;
     h = ch;
