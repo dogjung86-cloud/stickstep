@@ -98,20 +98,49 @@ export function videoScreen(ep: VideoEpisode, o: { onBack: () => void; onClosed?
     });
     frame.appendChild(frameEl);
   } else if (ep.src) {
+    // 영상 파일을 <video>로 튼다(R2의 web.mp4: 앞머리 정보가 맨 앞이라 받으면서 바로 재생하고, 넘기면 그 자리부터 받는다).
+    // crossorigin을 달지 않는다(달면 R2에 CORS 설정이 있어야 재생된다).
     video = el("video", {
       class: "vp-video",
       attrs: { src: ep.src.url, playsinline: "", controls: "", preload: "metadata", controlslist: "nodownload noplaybackrate", disablepictureinpicture: "" },
     }) as HTMLVideoElement;
+    if (ep.src.poster) video.poster = ep.src.poster;
     if (ep.src.captions) {
       video.appendChild(el("track", { attrs: { kind: "subtitles", srclang: "ko", label: "한국어", src: ep.src.captions, default: "" } }));
     }
     const v = video;
+    // 영상 칸을 누른 그 손길 안에서 재생을 건다. 아이폰 사파리는 누른 직후가 아니면 소리 있는 자동 재생을 막는다
+    // (불러온 뒤에 play를 부르면 막힌다). 그래도 막힌 기기에서는 사용자가 재생 버튼을 누르면 된다.
+    void v.play().catch(() => {
+      /* 자동 재생이 막힌 기기 */
+    });
     v.addEventListener("loadedmetadata", () => {
       // 보던 영상은 그 자리에서 잇는다(다 본 영상이나 끝에 가까우면 처음부터)
       if (saved && !saved.done && saved.sec >= 5 && saved.sec < v.duration * DONE_RATIO) v.currentTime = saved.sec;
-      void v.play().catch(() => {
-        /* 자동 재생이 막힌 기기에서는 사용자가 재생 버튼을 누른다 */
+    });
+    // 받다가 끊기면(지하철, 약한 와이파이) 검은 화면 대신 안내와 다시 불러오기 단추를 보인다.
+    v.addEventListener("error", () => {
+      if (closed || !v.error || v.error.code === 1 /* 사용자가 끊음 */ || frame.querySelector(".vp-empty")) return;
+      const at = v.currentTime;
+      const retry = el("button", { class: "vp-mark", text: "다시 불러오기" });
+      const box = el(
+        "div",
+        { class: "vp-empty" },
+        el("span", { class: "vp-empty-ic", attrs: { "aria-hidden": "true" }, html: icon("play", 26) }),
+        el("b", { text: "영상을 불러오지 못했어요" }),
+        el("p", { text: "인터넷 연결을 확인하고 다시 불러와 주세요." }),
+        retry,
+      );
+      retry.addEventListener("click", () => {
+        haptic(HAPTIC.tap);
+        box.remove();
+        v.hidden = false;
+        v.addEventListener("loadedmetadata", () => at > 1 && (v.currentTime = at), { once: true });
+        v.load();
+        void v.play().catch(() => {});
       });
+      v.hidden = true;
+      frame.appendChild(box);
     });
     v.addEventListener("timeupdate", () => {
       if (!v.duration) return;
