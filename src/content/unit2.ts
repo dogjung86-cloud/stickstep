@@ -16,6 +16,7 @@ import { b4MiniArt, rankLadderFig } from "../ui/bio4Figures";
 import { onionRulerFig, foodWebFig, cellPartsFigV5, cellTrioFig } from "../ui/bio6Figures";
 import { organism } from "../ui/figures";
 import { comicStory } from "../ui/sketchArt";
+import { sciFig } from "./sciFigG1";
 
 const IMG_BASE = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 /** public 아래 사진 한 장. lazy 로딩 금지(스크롤 컨테이너 안에서 안 뜬다). */
@@ -640,6 +641,7 @@ export const UNIT2: Unit = {
             { k: "figure", svg: cut("bio4", "u2l5b", "가운데 선 스틱맨 쌤 양옆으로 동물의 계단(세포, 조직, 위, 소화계, 강아지)과 식물의 계단(세포, 조직, 줄기 단면, 잎, 나무)이 오르고, 서로 다른 칸(소화계와 줄기 단면)만 청록으로 칠해진 장면"), cap: "닮은 두 계단, 다른 칸은 하나씩. 자리도 달라요" },
             term("기관계", "<b>동물에만</b> 있는 단계로, 연관된 기능을 하는 <b>기관들이 모인 것</b>이에요. 위와 작은창자, 큰창자가 모인 소화계가 기관계예요."),
             term("조직계", "<b>식물에만</b> 있는 단계로, <b>몇 개의 조직이 모여</b> 일정한 기능을 맡아요. 뿌리부터 잎까지 식물의 몸 전체에 이어져 있어요."),
+            sciFig("u2l5f1"),
             memo("끼어드는 자리도 달라요. 동물은 세포, 조직, 기관, <b>기관계</b>, 개체의 차례이고 식물은 세포, 조직, <b>조직계</b>, 기관, 개체의 차례예요. 기관계는 기관의 뒤, 조직계는 기관의 앞이에요."),
           ],
           cta: "정리하기",
