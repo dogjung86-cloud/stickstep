@@ -4,6 +4,7 @@
 import { hueFor } from "./palette";
 import type { MatterRenderer } from "./types";
 import type { MatterSim } from "../engine/matterSim";
+import { wideStageScale } from "../core/wide";
 
 // 발광점 스프라이트 캐시 — hue를 6도 단위로 양자화해 캐시 수를 묶는다.
 const spriteCache = new Map<string, { cv: HTMLCanvasElement; size: number }>();
@@ -48,12 +49,12 @@ export class DotRenderer implements MatterRenderer {
   }
 
   resize(): void {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const rect = this.canvas.getBoundingClientRect();
-    this.w = rect.width;
-    this.h = rect.height;
-    this.canvas.width = Math.max(1, Math.round(rect.width * dpr));
-    this.canvas.height = Math.max(1, Math.round(rect.height * dpr));
+    // 크기는 확대 전 무대 px(clientWidth·clientHeight), 넓은 화면의 확대 배율은 픽셀 밀도에만 곱한다(meta.ts와 같은 규칙).
+    const dpr = Math.min(window.devicePixelRatio || 1, 2) * wideStageScale();
+    this.w = this.canvas.clientWidth;
+    this.h = this.canvas.clientHeight;
+    this.canvas.width = Math.max(1, Math.round(this.w * dpr));
+    this.canvas.height = Math.max(1, Math.round(this.h * dpr));
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 

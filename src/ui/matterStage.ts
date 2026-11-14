@@ -11,6 +11,7 @@ import { MatterSim, type MatterSimOpts } from "../engine/matterSim";
 import { MetaRenderer } from "../renderers/meta";
 import { DotRenderer } from "../renderers/dot";
 import { icon } from "../core/icons";
+import { wideStageScale } from "../core/wide";
 
 export type MatterView = "matter" | "particle";
 
@@ -128,13 +129,15 @@ export function createMatterStage(opts: MatterStageOpts): MatterStage {
   }
 
   // ---- 크기 ----
+  // 시뮬레이션 칸과 세 캔버스의 좌표는 확대 전 무대 px다(clientWidth·clientHeight). 넓은 화면은 무대를 CSS zoom으로 키우는데
+  // getBoundingClientRect는 커진 크기를 준다. 그걸로 재면 입자만 작아지고 바닥이 무대 위 칩 밑으로 내려갔다(2026-11-15 사용자 적발).
+  // 확대 배율(wideStageScale, 폰 1)은 픽셀 밀도에만 곱한다(캔버스 픽셀 수는 예전과 같다).
   function resize(): void {
-    const rect = box.getBoundingClientRect();
-    w = Math.max(1, rect.width);
-    h = Math.max(1, rect.height);
+    w = Math.max(1, box.clientWidth);
+    h = Math.max(1, box.clientHeight);
     meta.resize();
     dot.resize();
-    overlayDpr = Math.min(window.devicePixelRatio || 1, 2);
+    overlayDpr = Math.min(window.devicePixelRatio || 1, 2) * wideStageScale();
     overlayCv.width = Math.max(1, Math.round(w * overlayDpr));
     overlayCv.height = Math.max(1, Math.round(h * overlayDpr));
     overlayCtx.setTransform(overlayDpr, 0, 0, overlayDpr, 0, 0);

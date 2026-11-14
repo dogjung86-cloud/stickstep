@@ -1127,6 +1127,14 @@ src/
     이겨야 하는 줄은 같은 `:not(#sc-home)`으로 무게를 맞췄다(빼면 다음 버튼이 노트 밖으로 튀어나온다, 실제로 겪었다).
   - 캔버스로 그리는 랩 무대(u3v5, u5v5, u6v5, g2u3v5 킷)는 확대된 만큼 촘촘히 그려야 글자가 번지지 않는다. `stageDpr()`(wide.ts)을 쓴다.
     새 캔버스 킷도 `Math.min(devicePixelRatio, 2)` 대신 이것을 쓴다. 세포 입체 무대(WebGL)는 아직 올리지 않았다.
+  - **무대 안 캔버스와 시뮬레이션의 크기를 `getBoundingClientRect`로 잡지 않는다(2026-11-15 사용자 적발: PC에서 Ⅳ 입자 모형 랩의 입자가
+    아래 칩 밑에 깔림).** zoom 아래에서 Chrome의 BCR은 커진 크기(화면 px)를 주는데 무대 안의 글자와 칩은 설계 px라, 그 크기로 판을 잡으면
+    그림만 배율만큼 작아지거나(높이를 따로 주면) 한쪽으로 늘어난다. 크기는 `clientWidth`·`clientHeight`(확대 전 px)로 잡고 픽셀 밀도만
+    `stageDpr()`나 `wideStageScale()`로 올린다. 2D 캔버스는 `fitStageCanvas()`(ui/canvas.ts)가 이 일을 한다(Ⅳ의 matterStage와
+    renderers/meta·dot, 가열 곡선 그래프, Ⅶ 하늘·태양 랩이 이렇게 바뀌었다. 공용 `fitCanvas`는 사회 랩과 게임이 써서 그대로다). 비율로만 쓰는
+    BCR(누른 자리 ÷ 폭)과 `void el.getBoundingClientRect()`(애니메이션 다시 걸기)는 괜찮다. 전수 검사는
+    `PORT=<dev 포트> node qa/audit-wide-zoom.mjs [출력 폴더] [단원들(쉼표)]`(과학 랩과 도입을 PC 크기로 걸으며 zoom 아래 BCR 호출 위치를 모으고
+    무대를 폰 모양과 함께 찍는다) → `python qa/sheet-wide-zoom.py <출력 폴더>`(차이 큰 순 견주기판), `qa/grid-wide-zoom.py`(작은 격자판).
   - 새 스텝 종류를 좌우로 나누려면 `wide.ts`의 `tagStep()`에 판별을 넣고 `wide.css`에 배치를 쓴다. 랩이 아닌 스텝은 요소를 옮기지 않고
     표식(.wd-split, .wd-left)만 붙인다(격자의 마지막 줄 1fr이 왼쪽 큰 요소의 남는 높이를 받아 오른쪽 글 사이가 벌어지지 않는다).
   - 홈의 오른쪽 카드(home-rail)는 넓은 화면에서 홈을 만들 때만 DOM이 생긴다(폰과 e2e에는 없다).

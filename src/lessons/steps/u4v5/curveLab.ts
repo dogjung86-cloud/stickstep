@@ -11,7 +11,7 @@
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { colFor } from "../../../renderers/palette";
-import { fitCanvas } from "../../../ui/canvas";
+import { fitStageCanvas } from "../../../ui/canvas";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvCard, bvCards } from "../bio6/b6Lab";
 import { deg, u4Hold, u4Lab, u4Matter, u4Predict, type U4Step } from "./u4Kit";
@@ -192,7 +192,9 @@ export const u4CurveLab: StepRenderer = (host, step, api) => {
   }
 
   function draw(): void {
-    const { ctx, w, h } = fitCanvas(graph);
+    // 그래프 판은 확대 전 무대 px로 잡고 픽셀만 촘촘히 깐다(fitStageCanvas). 넓은 화면의 zoom 아래에서
+    // getBoundingClientRect(공용 fitCanvas)로 재면 판이 배율만큼 커져 눈금과 글자가 쪼그라들었다(2026-11-15).
+    const { ctx, w, h } = fitStageCanvas(graph);
     ctx.clearRect(0, 0, w, h);
     const ax = AXIS[mode];
     const padL = 34, padR = 24, padT = 50, padB = 30;

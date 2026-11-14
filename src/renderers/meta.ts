@@ -8,6 +8,7 @@
 import { thermalColors } from "./palette";
 import type { MatterRenderer } from "./types";
 import type { MatterSim } from "../engine/matterSim";
+import { wideStageScale } from "../core/wide";
 
 export const MAX_BALLS = 48;
 
@@ -192,12 +193,13 @@ export class MetaRenderer implements MatterRenderer {
 
   resize(): void {
     // WebGL은 DPR을 1.75로 캡 — 셰이더가 픽셀 단위라 고해상도 비용이 가파르다(프로토타입 확정값).
-    this.dpr = Math.min(window.devicePixelRatio || 1, 1.75);
-    const rect = this.canvas.getBoundingClientRect();
-    this.w = rect.width;
-    this.h = rect.height;
-    this.canvas.width = Math.max(1, Math.round(rect.width * this.dpr));
-    this.canvas.height = Math.max(1, Math.round(rect.height * this.dpr));
+    // 크기는 확대 전 무대 px(clientWidth·clientHeight. 넓은 화면의 zoom 아래에서 getBoundingClientRect는 커진 크기라 쓰지 않는다),
+    // 확대 배율(wideStageScale, 폰 1)은 픽셀 밀도에만 곱한다(캔버스 픽셀 수는 예전과 같다, matterStage.ts 크기 절 참고).
+    this.dpr = Math.min(window.devicePixelRatio || 1, 1.75) * wideStageScale();
+    this.w = this.canvas.clientWidth;
+    this.h = this.canvas.clientHeight;
+    this.canvas.width = Math.max(1, Math.round(this.w * this.dpr));
+    this.canvas.height = Math.max(1, Math.round(this.h * this.dpr));
     if (this.ok && this.gl) this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
   }
 
