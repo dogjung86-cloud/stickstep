@@ -2,8 +2,9 @@
 // 진입은 마이 탭 프로필 카드의 학교 줄 → "내 학교" 시트(screens/my.ts) 한 곳뿐.
 // - 검색은 Supabase 엣지 함수 school-search가 대신 부른다(나이스 인증키를 번들에 싣지 않는다).
 // - 저장은 최소 항목만: 표준학교코드·학교명·지역(시도 + 시군구)·학교급. 주소 전체, 전화번호 등은 받지도 않는다.
-// - 게스트는 기기에만 저장(서버 전송 없음), 로그인 상태면 profiles의 school_* 컬럼에도 반영한다
-//   (닉네임과 같은 결. progress 테이블이 아니라서 sync.ts rowOf에 넣지 않는다).
+// - 로그인한 사람만 등록한다(닉네임과 같은 결, 2026-11-14 사용자 결정. 게스트에게는 로그인 권유 줄만 보인다).
+//   profiles의 school_* 컬럼에 반영한다(progress 테이블이 아니라서 sync.ts rowOf에 넣지 않는다).
+//   DEV에서 로그인 없이 화면을 보려면 sessionStorage "ss.schoolauth"="1".
 // - 스텁 문법은 결제(purchase.ts)·접수함과 같다: DEV 기본은 네트워크 없는 스텁(고정 목록에서 검색,
 //   서버 반영은 window.__ssSchoolPush에만 기록), sessionStorage "ss.schoolreal"="1"이면 실호출.
 //   DEV에서 실패 화면을 보려면 "ss.schoolstub"="fail".
@@ -12,8 +13,10 @@ import type { SchoolInfo } from "./store";
 
 export type School = SchoolInfo;
 
-/** 검색할 학교급. 지금은 중학교만 연다. 값을 더하면 시트에 학교급 세그가 생긴다(서버 허용 목록과 같아야 한다). */
-export const SCHOOL_KINDS: readonly string[] = ["중학교"];
+/** 검색할 학교급(시트의 학교급 세그 순서). 서버 함수 허용 목록과 같아야 한다. 등록은 학교급과 상관없이 한 곳뿐이다. */
+export const SCHOOL_KINDS: readonly string[] = ["초등학교", "중학교", "고등학교"];
+/** 시트를 처음 열 때 고르는 학교급(등록한 학교가 있으면 그 학교급). */
+export const SCHOOL_KIND_DEFAULT = "중학교";
 export const SCHOOL_QUERY_MIN = 2;
 export const SCHOOL_QUERY_MAX = 20;
 
@@ -27,6 +30,11 @@ const SUPABASE_URL = cleanEnv(env.VITE_SUPABASE_URL);
 const SUPABASE_ANON_KEY = cleanEnv(env.VITE_SUPABASE_ANON_KEY);
 
 const useStub = (): boolean => env.DEV && sessionStorage.getItem("ss.schoolreal") !== "1";
+
+/** 학교를 등록할 수 있는 상태인가(로그인 전용). DEV는 "ss.schoolauth"="1"로 로그인 없이 연다(e2e용). */
+export function schoolAllowed(): boolean {
+  return !!currentUser() || (env.DEV && sessionStorage.getItem("ss.schoolauth") === "1");
+}
 
 /** 검색어 정리: 공백 접기 + 길이 컷. 화면과 서버가 같은 규칙을 쓴다. */
 export function cleanSchoolQuery(raw: string): string {
@@ -61,7 +69,7 @@ function asSchool(v: unknown): School | null {
 }
 
 /** 학교 이름으로 검색. 두 글자 미만이면 호출하지 않고 "short"를 돌려준다. */
-export async function searchSchools(rawQuery: string, kind: string = SCHOOL_KINDS[0]): Promise<SchoolSearchResult> {
+export async function searchSchools(rawQuery: string, kind: string = SCHOOL_KIND_DEFAULT): Promise<SchoolSearchResult> {
   const q = cleanSchoolQuery(rawQuery);
   if (q.length < SCHOOL_QUERY_MIN) return { ok: false, reason: "short" };
 

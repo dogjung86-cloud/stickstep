@@ -14,7 +14,7 @@ import { haptic, HAPTIC } from "../core/haptics";
 import { getState, currentStreak, setNickname, setSchool, isWideOff, setWideOff, isPremium } from "../core/store";
 import { onAuthChange, currentUser, pushNickname, signOut } from "../core/auth";
 import { ownedPremiumSubjectIds, SELLABLE_SUBJECTS } from "../core/purchase";
-import { SCHOOL_KINDS, SCHOOL_QUERY_MIN, SCHOOL_QUERY_MAX, cleanSchoolQuery, pushSchool, searchSchools, type School } from "../core/school";
+import { SCHOOL_KINDS, SCHOOL_KIND_DEFAULT, SCHOOL_QUERY_MIN, SCHOOL_QUERY_MAX, cleanSchoolQuery, pushSchool, schoolAllowed, searchSchools, type School } from "../core/school";
 import { bootLevel, BOOT_TIERS } from "../core/level";
 import { bootArt } from "../ui/boots";
 import { profileAvatar, setProfileAvatar } from "../ui/avatar";
@@ -62,7 +62,8 @@ export function myScreen(o: {
     attrs: { "aria-label": "닉네임 바꾸기", "aria-haspopup": "dialog" },
     html: icon("pencil", 11),
   });
-  // 내 학교 줄(선택 입력). 게스트도 쓸 수 있고(기기에만 저장) 누르면 "내 학교" 시트가 열린다.
+  // 내 학교 줄(선택 입력, 로그인 전용). 로그인 상태면 "내 학교" 시트를 열고, 게스트에게는 로그인을 권한다
+  // (닉네임처럼 게스트에게는 저장된 학교도 보이지 않는다. 로그인하면 돌아온다).
   const schoolTxt = el("span", { class: "mypf-school-t" });
   const schoolBtn = el(
     "button",
@@ -71,10 +72,12 @@ export function myScreen(o: {
     schoolTxt,
   );
   function refreshSchoolLine(): void {
-    const sc = getState().school ?? null;
-    schoolTxt.textContent = sc ? sc.name : "학교 등록하기";
+    const can = schoolAllowed();
+    const sc = can ? (getState().school ?? null) : null;
+    schoolTxt.textContent = sc ? sc.name : can ? "학교 등록하기" : "로그인하고 학교 등록하기";
     schoolBtn.classList.toggle("empty", !sc);
-    schoolBtn.setAttribute("aria-label", sc ? `내 학교 ${sc.name}, 바꾸거나 해제하기` : "내 학교 등록하기");
+    schoolBtn.setAttribute("aria-haspopup", can ? "dialog" : "false");
+    schoolBtn.setAttribute("aria-label", sc ? `내 학교 ${sc.name}, 바꾸거나 해제하기` : can ? "내 학교 등록하기" : "로그인하고 내 학교 등록하기");
   }
   refreshSchoolLine();
   const badge = el("div", { class: "boot-badge" });
@@ -219,6 +222,7 @@ export function myScreen(o: {
     ),
     el("div", { class: "mysheet-foot" }, nickSave),
   );
+  nickSheet.classList.add("nick");
   nickBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     nickInput.value = getState().nickname ?? "";
@@ -242,17 +246,20 @@ export function myScreen(o: {
     },
   }) as HTMLInputElement;
   const schList = el("div", { class: "sch-list", attrs: { "aria-live": "polite" } });
-  let schKind = SCHOOL_KINDS[0];
+  let schKind = SCHOOL_KIND_DEFAULT;
   let schSeq = 0;
   let schTimer = 0;
   const schKinds = el("div", { class: "seg sch-kinds", attrs: { "aria-label": "학교급" } });
+  const setSchKind = (k: string): void => {
+    schKind = SCHOOL_KINDS.includes(k) ? k : SCHOOL_KIND_DEFAULT;
+    schKinds.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x.getAttribute("data-kind") === schKind));
+  };
   if (SCHOOL_KINDS.length > 1) {
     SCHOOL_KINDS.forEach((k) => {
-      const b = el("button", { class: k === schKind ? "on" : "", text: k });
+      const b = el("button", { class: k === schKind ? "on" : "", text: k, attrs: { "data-kind": k } });
       b.addEventListener("click", () => {
         haptic(HAPTIC.tap);
-        schKind = k;
-        schKinds.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
+        setSchKind(k);
         void runSchoolSearch();
       });
       schKinds.appendChild(b);
@@ -358,21 +365,29 @@ export function myScreen(o: {
   if (SCHOOL_KINDS.length > 1) schBody.appendChild(schKinds);
   schBody.append(
     schInput,
-    el("div", { class: "nick-hint sch-hint", text: "선택 입력이에요 · 학교 이름과 지역만 저장해요 · 언제든 해제할 수 있어요" }),
+    el("div", { class: "nick-hint sch-hint", text: "한 곳만 등록돼요 · 이름과 지역만 저장해요 · 언제든 해제할 수 있어요" }),
     schList,
   );
   const schoolSheet = sheetShell("내 학교", schBody);
   schoolSheet.classList.add("sch");
   // 자판이 화면을 덮는 기기(iOS)에서 결과 목록 끝이 자판 밑에 깔리지 않게 그만큼 아래 여백을 준다.
   const vv = window.visualViewport;
+  // 닉네임 시트는 바닥에 붙은 낮은 시트라 통째로 자판에 가려진다. 자판 높이만큼 시트를 들어 올린다(.mysheet.nick).
   const onVv = (): void => {
-    const kb = Math.max(0, Math.round(window.innerHeight - (vv?.height ?? window.innerHeight)));
+    const kb = vv ? Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop)) : 0;
     schoolSheet.style.setProperty("--sch-kb", `${kb}px`);
+    nickSheet.style.setProperty("--my-kb", `${kb}px`);
   };
   vv?.addEventListener("resize", onVv);
+  vv?.addEventListener("scroll", onVv);
   schoolBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
+    if (!schoolAllowed()) {
+      o.onOpenAccount(); // 게스트는 로그인 화면으로
+      return;
+    }
     schInput.value = "";
+    setSchKind(getState().school?.kind ?? SCHOOL_KIND_DEFAULT); // 등록한 학교가 있으면 그 학교급에서 시작
     renderSchoolCurrent();
     void runSchoolSearch(); // 빈 검색어라 안내 문구만 그린다
     openSheet(schoolSheet, schoolBtn);
@@ -531,6 +546,7 @@ export function myScreen(o: {
       offAuth();
       window.clearTimeout(schTimer);
       vv?.removeEventListener("resize", onVv);
+      vv?.removeEventListener("scroll", onVv);
       document.removeEventListener("keydown", onKey);
     },
   };

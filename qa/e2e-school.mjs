@@ -99,6 +99,16 @@ const type = async (text) => {
 
 // ── [A] 프로필 카드의 학교 줄 ─────────────────────────────────────────
 await bootToMy();
+// 게스트: 학교 줄은 로그인 권유이고, 눌러도 학교 시트가 열리지 않는다
+check((await page.textContent("#sc-my .mypf-school-t")) === "로그인하고 학교 등록하기", "게스트: 학교 줄이 '로그인하고 학교 등록하기'");
+check(await inView("#sc-my .mypf-school"), "게스트: 로그인 권유 줄이 잘리지 않고 화면 안에 있다");
+await page.click("#sc-my .mypf-school");
+await W(500);
+check(!(await page.$eval(SHEET, (n) => n.classList.contains("open"))), "게스트: 눌러도 학교 시트가 열리지 않는다(로그인 화면으로 보낸다)");
+await shot("00-my-guest");
+// 여기부터는 로그인한 상태를 흉내 낸다(DEV 전용 표식)
+await page.evaluate(() => sessionStorage.setItem("ss.schoolauth", "1"));
+await bootToMy();
 check((await page.textContent("#sc-my .mypf-school-t")) === "학교 등록하기", "등록 전: 학교 줄이 '학교 등록하기'");
 check(await inView("#sc-my .my-prof"), "프로필 카드가 폰 한 화면(390×700) 안에 다 들어온다");
 check(await inView("#sc-my .my-menu"), "학교 줄이 생긴 뒤에도 메뉴가 한 화면 안에 들어온다");
@@ -131,6 +141,16 @@ const same = res.filter((r) => r.name === "중앙중학교");
 check(same.length === 3 && new Set(same.map((r) => r.region)).size === 3, "이름이 같은 학교 셋이 지역으로 구분된다");
 check(res.every((r) => r.region.length > 0), "모든 결과에 지역이 붙는다");
 check(!res.some((r) => /고등학교|초등학교/.test(r.name)), "기본 검색은 중학교만 찾는다");
+// 학교급 세그: 초등학교, 중학교, 고등학교를 따로 찾는다
+check((await page.$$eval(`${SHEET} .sch-kinds button`, (bs) => bs.map((b) => b.textContent).join(","))) === "초등학교,중학교,고등학교", "학교급 세그가 초·중·고 셋이다");
+await page.click(`${SHEET} .sch-kinds button[data-kind="고등학교"]`);
+await page.waitForFunction((sel) => [...document.querySelectorAll(sel)].some((n) => n.textContent.includes("중앙고등학교")), `${SHEET} .sch-item`, { timeout: 4000 });
+check((await items()).every((r) => r.name.includes("고등학교")), "고등학교를 고르면 고등학교만 나온다");
+await page.click(`${SHEET} .sch-kinds button[data-kind="초등학교"]`);
+await page.waitForFunction((sel) => [...document.querySelectorAll(sel)].some((n) => n.textContent.includes("중앙초등학교")), `${SHEET} .sch-item`, { timeout: 4000 });
+check((await items()).every((r) => r.name.includes("초등학교")), "초등학교를 고르면 초등학교만 나온다");
+await page.click(`${SHEET} .sch-kinds button[data-kind="중학교"]`);
+await page.waitForFunction((sel) => [...document.querySelectorAll(sel)].some((n) => n.textContent.includes("중앙중학교")), `${SHEET} .sch-item`, { timeout: 4000 });
 check(await inView(`${SHEET} .sch-item`), "첫 결과가 화면 안에 보인다");
 check(
   await page.$eval(SHEET, (n) => {
@@ -215,6 +235,27 @@ await page.keyboard.press("Escape");
 await W(400);
 check(!(await page.$eval(SHEET, (n) => n.classList.contains("open"))), "Esc로 시트가 닫힌다");
 
+// 닉네임 시트: 자판이 화면을 덮으면(visualViewport가 줄면) 그만큼 시트가 올라와 입력이 가려지지 않는다
+await page.$eval(".mypf-nick-edit", (b) => b.classList.remove("hidden")); // 연필은 로그인 전용이라 게스트 검사에서는 드러내고 누른다
+await page.click(".mypf-nick-edit");
+await page.waitForSelector(".mysheet.nick.open");
+await W(500);
+const kbLift = await page.evaluate(async () => {
+  const vv = window.visualViewport;
+  const full = window.innerHeight;
+  Object.defineProperty(vv, "height", { configurable: true, get: () => full - 300 });
+  vv.dispatchEvent(new Event("resize"));
+  await new Promise((r) => setTimeout(r, 100));
+  const sheet = document.querySelector(".mysheet.nick").getBoundingClientRect();
+  const input = document.querySelector(".mysheet.nick .nick-input").getBoundingClientRect();
+  const save = document.querySelector(".mysheet.nick .mysheet-done").getBoundingClientRect();
+  delete vv.height;
+  vv.dispatchEvent(new Event("resize"));
+  return { sheetBottom: Math.round(sheet.bottom), inputBottom: Math.round(input.bottom), saveBottom: Math.round(save.bottom), top: Math.round(sheet.top), limit: full - 300 };
+});
+check(kbLift.sheetBottom <= kbLift.limit + 1 && kbLift.inputBottom < kbLift.limit && kbLift.saveBottom <= kbLift.limit && kbLift.top >= 0, `자판 300px이 올라오면 닉네임 입력과 저장 버튼이 자판 위에 있다(${JSON.stringify(kbLift)})`);
+await page.keyboard.press("Escape");
+await W(300);
 check(pageErrors === 0, `페이지 오류 0건(실제 ${pageErrors})`);
 console.log(`\n${fails === 0 ? "ALL PASS" : "FAILED"} ${checks - fails}/${checks}`);
 await browser.close();

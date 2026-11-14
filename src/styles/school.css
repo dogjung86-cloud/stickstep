@@ -19,6 +19,11 @@
 .sch-input::-webkit-search-cancel-button { -webkit-appearance: none; }
 .sch-hint { flex: none; }
 .sch-kinds { flex: none; margin: 0 0 10px; }
+.sch-kinds button { height: 36px; font-size: 13.5px; }
+
+/* 닉네임 시트: 자판이 화면을 덮는 기기에서 자판 높이(--my-kb, my.ts가 visualViewport로 잰다)만큼 들어 올린다. */
+.mysheet.nick { bottom: var(--my-kb, 0px); }
+.mysheet.nick .mysheet-foot { padding-bottom: calc(12px + max(0px, var(--safe-b) - var(--my-kb, 0px))); }
 
 .sch-cur { flex: none; display: flex; align-items: center; gap: 11px; margin-bottom: 12px; padding: 12px 12px 12px 13px; border-radius: 14px; background: var(--blue-tint); }
 .sch-cur[hidden] { display: none; }
