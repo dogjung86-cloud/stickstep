@@ -5,6 +5,7 @@ import type { StepRenderer } from "../../types";
 import { g2u6BenedictLab, g2u6PlateLab } from "./nutrientLabs";
 import { g2u6EnzymeLab, g2u6SalivaLab, g2u6VilliLab } from "./digestLabs";
 import { g2u6BloodLab, g2u6HeartLab, g2u6LoopLab } from "./circLabs";
+import { g2u6RideLab } from "./rideLab";
 import { g2u6ChestLab, g2u6GasLab } from "./breathLabs";
 import { g2u6NephronLab } from "./kidneyLab";
 import { g2u6RespLab, g2u6TeamLab } from "./energyLabs";
@@ -18,6 +19,7 @@ export const G2U6V5_STEPS: Record<string, StepRenderer> = {
   g2u6HeartLab,
   g2u6BloodLab,
   g2u6LoopLab,
+  g2u6RideLab,
   g2u6ChestLab,
   g2u6GasLab,
   g2u6NephronLab,

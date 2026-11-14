@@ -15,6 +15,7 @@ export const villiLab = lab("g2u6VilliLab");
 export const heartLab = lab("g2u6HeartLab");
 export const bloodLab = lab("g2u6BloodLab");
 export const loopLab = lab("g2u6LoopLab");
+export const rideLab = lab("g2u6RideLab");
 export const chestLab = lab("g2u6ChestLab");
 export const gasLab = lab("g2u6GasLab");
 export const nephronLab = lab("g2u6NephronLab");

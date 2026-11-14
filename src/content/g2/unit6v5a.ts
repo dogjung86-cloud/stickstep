@@ -5,7 +5,7 @@ import type { Step } from "../../lessons/types";
 import { binSort, mcq, multi, opener, order, ox, pairMatch, recap, cut } from "../dsl";
 import { b6MiniArt } from "../../ui/body3Figures";
 import { plateRowFig, salivaTubesFig } from "../../ui/g2u6v5Figures";
-import { C, benedictLab, bloodLab, enzymeLab, heartLab, loopLab, note, plateLab, numbered, salivaLab, term, villiLab, words } from "./unit6v5kit";
+import { C, benedictLab, bloodLab, enzymeLab, heartLab, loopLab, note, plateLab, numbered, rideLab, salivaLab, term, villiLab, words } from "./unit6v5kit";
 
   // ══ 1. 영양소: 도입(땅콩과 종이) → 용어 → 홈판 검출 → 베네딕트 검사 → 용어 → 정리 → 문제 ══
 export const G2U6L1_STEPS: Step[] = [
@@ -241,7 +241,7 @@ export const G2U6L2_STEPS: Step[] = [
       ]),
 ];
 
-  // ══ 3. 순환: 만화(그대로) → 심장과 판막 → 용어 → 혈액의 구성 → 순환 경로 → 용어 → 정리 → 문제 ══
+  // ══ 3. 순환: 만화(그대로) → 심장과 판막 → 용어 → 혈액의 구성 → 순환 경로 → 용어 → 몸속 순환 여행(입체, 세로로 긴 무대) → 정리 → 문제 ══
 export const G2U6L3_STEPS: Step[] = [
         heartLab({ title: "판막이 없으면 혈액은 어디로 흐를까요?", cta: "이름 붙이기" }),
         words({
@@ -268,8 +268,9 @@ export const G2U6L3_STEPS: Step[] = [
             term("허파순환", "<b>우심실</b>에서 나간 혈액이 폐동맥, 허파의 모세혈관, 폐정맥을 거쳐 <b>좌심방</b>으로 돌아오는 순환이에요. 허파에서 이산화 탄소를 내보내고 산소를 받아 와요."),
             note("온몸순환과 허파순환은 따로 도는 두 개의 고리가 아니에요. <b>하나로 이어진 길</b>이에요. 그래서 혈액이 몸을 한 바퀴 도는 동안 심장을 <b>두 번</b> 지나요."),
           ],
-          cta: "정리하기",
+          cta: "몸속에서 따라가 보기",
         }),
+        rideLab({ title: "혈액은 몸속 어디를 돌까요?", cta: "정리하기" }),
       recap({
         title: "순환,<br>카드 네 장으로 정리",
         narrator: "판막이 혈액을 <b>한 방향</b>으로만 흐르게 했고, 혈액은 온몸과 허파를 번갈아 돌았어요. 심장, 혈관, 혈액, 순환 경로를 카드 네 장으로 정리해요.",

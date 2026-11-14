@@ -28,6 +28,7 @@ import "./styles/g2u3v5.css";
 import "./styles/g2u4v5.css";
 import "./styles/g2u5v5.css";
 import "./styles/g2u6v5.css";
+import "./styles/g2u6ride.css";
 import "./styles/g2u7v5.css";
 import "./styles/g2u8v5.css";
 import "./styles/plant3.css";
