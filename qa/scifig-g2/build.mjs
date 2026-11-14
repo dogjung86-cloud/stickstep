@@ -2,6 +2,7 @@
 //   node qa/scifig-g2/build.mjs                 모든 그림
 //   node qa/scifig-g2/build.mjs g2u4l3f1 g2u2l1f1   고른 그림만
 //   --png=<폴더>   같은 그림을 PNG로도 저장(시트·검수용)    --q=0.84   webp 품질    --dpr=3   화소 밀도
+//   --table        그리지 않고 그림 표만 다시 쓴다(그림 파일을 지운 뒤)
 // 그림 모듈 계약: export const meta = { key, w, h, alt }, export default async function draw(root, kit)
 //   root는 w×h CSS px 상자(position: relative). 캔버스와 SVG를 그 안에 쌓는다. kit = { paint, svg, noise, cells }.
 // 끝에 src/content/g2/sciFigG2.ts 의 그림 표(// <FIGS> ~ // </FIGS>)를 public 폴더의 실제 파일로 다시 쓴다.
@@ -94,7 +95,7 @@ function writeTable() {
   console.log(`표: 그림 ${rows.length}장 (${TABLE.replace(REPO, "").slice(1)})`);
 }
 
-const figs = figFiles().filter((f) => !only.length || only.includes(f.key));
+const figs = "table" in opt ? [] : figFiles().filter((f) => !only.length || only.includes(f.key));
 if (!figs.length) {
   console.log("그릴 그림이 없어요", only);
   writeTable();

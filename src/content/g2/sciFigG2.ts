@@ -10,7 +10,7 @@ const BASE = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BA
 /** 빌드가 다시 쓰는 표: 키 → [단원 폴더, 가로 px, 세로 px]. 손으로 고치지 않는다. */
 const FIGS: Record<string, [string, number, number]> = {
   // <FIGS>
-  g2u4l3f1: ["u4", 1020, 1116],
+  g2u4l5f1: ["u4", 1020, 1152],
   g2u5l1f1: ["u5", 1020, 1212],
   g2u7l7f1: ["u7", 1020, 900],
   // </FIGS>

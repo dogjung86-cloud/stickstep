@@ -5,7 +5,6 @@ import { binSort, mcq, multi, opener, ox, pairMatch, recap, cut } from "../dsl";
 import { atomMiniArt, atomModelFig } from "../../ui/atomFigures";
 import { electrolysisFig, threeModelsFig } from "../../ui/g2u4v5Figures";
 import { C, cardLab, formulaLab, kindLab, neutralLab, note, problems, sortLab, symbolLab, term, waterLab, words, type Block } from "./unit4v5kit";
-import { sciFig } from "./sciFigG2";
 
 const p = (html: string): Block => ({ k: "p", html }) as Block;
 
@@ -219,7 +218,6 @@ export const G2U4L3_STEPS: Step[] = [
       p("<b>전하</b>는 전기 현상을 일으키는 원인이에요. (+)전하와 (−)전하 두 가지가 있어요."),
       term("원자핵", "원자의 <b>가운데</b>에 있고 (+)전하를 띠어요. (+)전하를 띠는 <b>양성자</b>와 전하를 띠지 않는 <b>중성자</b>로 이루어져 있고, 원자 질량의 대부분을 차지해요."),
       term("전자", "원자핵 <b>주위</b>에 있고 (−)전하를 띠는 입자예요. 질량이 아주 작아서 거의 무시할 수 있어요."),
-      sciFig("g2u4l3f1", "헬륨 원자 모형. 가운데의 작은 원자핵을 전자 2개가 둘러싸고 있고, 원자핵을 확대하면 (+)전하를 띠는 양성자 2개와 전하가 없는 중성자 2개가 뭉쳐 있어요.", "헬륨 원자는 양성자 2개와 중성자 2개로 된 원자핵, 그 주위의 전자 2개로 이루어져요. 실제 원자핵은 원자 지름의 약 10만분의 1이라 크게 키워 그렸어요."),
       term("원자 모형", "원자는 너무 작아서 보통의 현미경으로는 볼 수 없어요. 그래서 원자핵과 전자를 그림으로 나타내는데, 이것을 원자 모형이라고 해요."),
       note("원자핵은 (+)전하를 띠지만 원자 전체는 전기를 띠지 않아요. <b>양성자수와 전자 수가 같아서</b> 전하의 합이 0이기 때문이에요. 이것을 전기적으로 중성이라고 해요."),
     ],
