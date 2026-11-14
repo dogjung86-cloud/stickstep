@@ -19,13 +19,15 @@
 // srx.daily 문법)·자정 리셋. 검토 모드 면제, 소진 시 스낵 + 헤더 카운터가 done 스타일로 전환.
 // 순서: ① 페이월 게이트(비프리미엄 → main.ts가 페이월) ② 상한 확인 ③ 입장료 차감 ④ 판수 기록 —
 // 요금을 게이트·상한보다 먼저 걷으면 못 들어갈 유저의 스텝을 훔치게 되니 순서를 바꾸지 말 것.
-// 랭킹은 서버 검증 채점(+검토 모드 우회 제거)이 선행 조건이라 자리만 잡는다.
+// **학교 랭킹(2026-11-14 사용자 확정)**: 랭킹 카드가 학교 랭킹 시트(ui/schoolRank.ts)를 연다. 학교별 누적 스텝
+// 합계 순위와 우리 학교 안의 순위다. 게임 점수 랭킹은 여전히 서버 검증 채점이 선행 조건이라 없다.
 
 import { el } from "../core/dom";
 import { gameIcon, icon } from "../core/icons";
 import { haptic, HAPTIC } from "../core/haptics";
 import { bestScore, getState, spendXp, isPremium, isReviewMode } from "../core/store";
 import { gnav, type GnavKey } from "../ui/gnav";
+import { openSchoolRank } from "../ui/schoolRank";
 import type { Screen } from "../core/router";
 
 /** 게임 1회 입장 스텝 — 레슨 한 번(약 100~160스텝)으로 5~8판 놀 수 있는 수준. */
@@ -61,31 +63,6 @@ export function challengeScreen(o: {
   onPlayOneStroke?: () => void;
   onPlayLaserMaze?: () => void;
 }): Screen {
-  function prepCard(ic: Parameters<typeof icon>[0], title: string, desc: string, o2: { accent?: boolean; premium?: boolean } = {}): HTMLElement {
-    const card = el(
-      "button",
-      { class: `prep-card ${o2.accent ? "accent" : ""}` },
-      el("span", { class: "prep-ic", html: icon(ic, 20) }),
-      el(
-        "span",
-        { class: "prep-tx" },
-        el(
-          "b",
-          {},
-          el("span", { text: title }),
-          o2.premium ? el("i", { class: "prep-pill gold", html: `${icon("crown", 11)}<span>프리미엄</span>` }) : null,
-          el("i", { class: "prep-pill", text: "준비 중" }),
-        ),
-        el("span", { class: "prep-desc", text: desc }),
-      ),
-    );
-    card.addEventListener("click", () => {
-      haptic(HAPTIC.tap);
-      snack("준비 중이에요. 곧 열려요");
-    });
-    return card;
-  }
-
   /** 카드 키 비주얼 — 발주 webp 우선, 로드 실패 시 톤 글로우 + gameIcon 폴백(subjArt 문법). */
   function tileArt(tone: string, art: Parameters<typeof gameIcon>[0]): HTMLElement {
     const wrap = el("span", { class: "arc-art", attrs: { "aria-hidden": "true" } });
@@ -195,6 +172,20 @@ export function challengeScreen(o: {
     gameCard("btn-onestroke", "stroke", "neonStar", "onestroke", "판", "네온 한붓그리기", "정해진 기회 안에 한 붓으로 네온 사인의 빛을 모두 켜 보자!", o.onPlayOneStroke),
   );
 
+  // 학교 랭킹 카드: 게임 아래에 두고, 누르면 학교 랭킹 시트가 이 화면 위에 열린다.
+  const rankCard = el(
+    "button",
+    { class: "prep-card accent rank-card", attrs: { "aria-haspopup": "dialog" } },
+    el("span", { class: "prep-ic", html: icon("trophy", 20) }),
+    el(
+      "span",
+      { class: "prep-tx" },
+      el("b", {}, el("span", { text: "학교 랭킹" })),
+      el("span", { class: "prep-desc", text: "우리 학교는 몇 위일까? 같은 학교 친구들과 스텝으로 겨뤄요" }),
+    ),
+    el("span", { class: "my-row-go", html: icon("chevron", 15) }),
+  );
+
   const elm = el(
     "section",
     { class: "screen tabscr", attrs: { id: "sc-challenge" } },
@@ -217,11 +208,15 @@ export function challengeScreen(o: {
         { class: "pad" },
         el("div", { class: "arc-panel" }, playHead, playNote, gameGrid),
         // 준비 중 카드는 실콘텐츠(게임) 아래로 — 탭 첫인상이 '비활성'으로 시작하지 않게
-        prepCard("trophy", "친구·우리 학교 랭킹", "같은 학교 친구들과 스텝으로 겨루는 주간 랭킹", { accent: true }),
+        rankCard,
       ),
     ),
     gnav("challenge", o.onTab),
   );
+  rankCard.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    openSchoolRank(elm, { onNeedSchool: () => o.onTab("my"), from: rankCard });
+  });
   elm.querySelector(".tab-back")?.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     o.onTab("home");

@@ -254,8 +254,96 @@ const kbLift = await page.evaluate(async () => {
   return { sheetBottom: Math.round(sheet.bottom), inputBottom: Math.round(input.bottom), saveBottom: Math.round(save.bottom), top: Math.round(sheet.top), limit: full - 300 };
 });
 check(kbLift.sheetBottom <= kbLift.limit + 1 && kbLift.inputBottom < kbLift.limit && kbLift.saveBottom <= kbLift.limit && kbLift.top >= 0, `자판 300px이 올라오면 닉네임 입력과 저장 버튼이 자판 위에 있다(${JSON.stringify(kbLift)})`);
+// 닉네임 금칙어: 쓸 수 없는 말은 저장되지 않고 안내가 뜬다(닉네임은 학교 랭킹에 보인다)
+await page.fill(".mysheet.nick .nick-input", "시 발왕");
+await page.click(".mysheet.nick .mysheet-done");
+await W(200);
+check(
+  (await page.$eval(".mysheet.nick", (n) => n.classList.contains("open"))) && (await page.$eval(".mysheet.nick .nick-hint", (n) => n.classList.contains("bad"))),
+  "쓸 수 없는 닉네임은 저장되지 않고 안내가 뜬다",
+);
+await page.fill(".mysheet.nick .nick-input", "별똥별");
+await page.click(".mysheet.nick .mysheet-done");
+await W(400);
+check((await page.evaluate(() => JSON.parse(localStorage.getItem("science-app.v1")).nickname)) === "별똥별", "보통 닉네임은 저장된다");
+
+// ── [G] 학교 랭킹 ─────────────────────────────────────────────────────
+const RANK = ".mysheet.srk";
+await page.click("#sc-my .mypf-school");
+await page.waitForSelector(`${SHEET}.open`);
+check((await page.textContent(`${SHEET} .sch-note`)).includes("랭킹"), "학교 시트가 랭킹에 함께할 수 있다고 알려 준다");
+await type("시흥");
+await page.waitForSelector(`${SHEET} .sch-item[data-code="7531003"]`, { timeout: 4000 });
+await page.click(`${SHEET} .sch-item[data-code="7531003"]`);
+await W(500);
+await page.click("#sc-my .mypf-school");
+await page.waitForSelector(`${SHEET}.open`);
+await W(400);
+check(await inView(`${SHEET} .sch-rank`), "등록한 학교 카드에 '우리 학교 순위 보기'가 있다");
+await page.click(`${SHEET} .sch-rank`);
+await page.waitForSelector(`${RANK}.open`);
+await page.waitForFunction((sel) => document.querySelector(sel)?.dataset.state === "members", `${RANK} .srk-body`, { timeout: 4000 });
+await W(450);
+const mem = await page.evaluate((sel) => {
+  const q = (x) => [...document.querySelectorAll(`${sel} ${x}`)];
+  return {
+    rows: q(".srk-row").length,
+    me: q(".srk-row.me .srk-name-t").map((n) => n.textContent),
+    names: q(".srk-name-t").map((n) => n.textContent),
+    on: document.querySelector(`${sel} .srk-switch`)?.classList.contains("on"),
+    merow: document.querySelector(`${sel} .srk-merow`)?.textContent ?? null,
+  };
+}, RANK);
+check(mem.rows === 10, `우리 학교 순위는 위에서 10명까지 보인다(실제 ${mem.rows})`);
+check(mem.names.includes("스텝 친구"), "닉네임이 없는 사람은 기본 이름 '스텝 친구'로 보인다");
+check(mem.on === true && (mem.me[0] === "별똥별" || (mem.merow ?? "").includes("내 순위")), `내 이름이 순위에 올라 있다(${JSON.stringify({ me: mem.me, merow: mem.merow })})`);
+check(
+  await page.$eval(RANK, (n) => {
+    const r = n.getBoundingClientRect();
+    return r.top >= 0 && r.bottom <= window.innerHeight + 1 && r.left >= 0 && r.right <= window.innerWidth;
+  }),
+  "랭킹 시트가 화면 밖으로 나가지 않는다",
+);
+check(await page.$eval(`${RANK} .srk-body`, (n) => n.scrollWidth <= n.clientWidth), "랭킹 시트에 가로 넘침이 없다");
+await shot("08-rank-mine");
+await page.$eval(`${RANK} .srk-switch`, (n) => n.scrollIntoView({ block: "center" }));
+await shot("08b-rank-mine-switch");
+await page.click(`${RANK} .srk-switch`);
+await page.waitForFunction((sel) => document.querySelector(sel) && !document.querySelector(sel).classList.contains("on"), `${RANK} .srk-switch`, { timeout: 4000 });
+check((await page.$$(`${RANK} .srk-row.me`)).length === 0 && !(await page.$(`${RANK} .srk-merow`)), "이름 올리기를 끄면 내 이름이 순위에서 빠진다");
+await page.$eval(`${RANK} .srk-switch`, (n) => n.scrollIntoView({ block: "center" }));
+await page.click(`${RANK} .srk-switch`);
+await page.waitForFunction((sel) => document.querySelector(sel)?.classList.contains("on"), `${RANK} .srk-switch`, { timeout: 4000 });
+await page.click(`${RANK} .srk-tabs button[data-tab="schools"]`);
+await page.waitForFunction((sel) => document.querySelector(sel)?.dataset.state === "schools", `${RANK} .srk-body`, { timeout: 4000 });
+const sch = await page.evaluate((sel) => ({
+  rows: document.querySelectorAll(`${sel} .srk-row`).length,
+  me: document.querySelector(`${sel} .srk-row.me`)?.dataset.code ?? null,
+  mine: document.querySelector(`${sel} .srk-mine-stat`)?.textContent ?? "",
+  kind: document.querySelector(`${sel} .srk-kinds button.on`)?.textContent ?? "",
+}), RANK);
+check(sch.rows === 6 && sch.kind === "중학교", `학교 순위에 학교들이 순서대로 보인다(실제 ${sch.rows}곳, ${sch.kind})`);
+check(sch.me === "7531003" && sch.mine.includes("1위"), `우리 학교가 표시되고 순위가 보인다(${sch.mine})`);
+await shot("09-rank-schools");
+await page.click(`${RANK} .srk-kinds button[data-kind="고등학교"]`);
+await page.waitForFunction((sel) => document.querySelector(sel)?.dataset.state === "empty", `${RANK} .srk-body`, { timeout: 4000 });
+check((await page.textContent(`${RANK} .srk-note`)).includes("3명"), "순위에 오른 학교가 없으면 3명 조건을 알려 준다");
 await page.keyboard.press("Escape");
-await W(300);
+await W(500);
+check(!(await page.$(RANK)), "Esc로 랭킹 시트가 닫히고 치워진다");
+// 도전 탭의 랭킹 카드
+await page.evaluate(() => [...document.querySelectorAll("#sc-my .gnav-item")].find((b) => b.textContent.includes("도전")).click());
+await page.waitForSelector("#sc-challenge .rank-card", { timeout: 8000 });
+await W(600);
+check(!(await page.textContent("#sc-challenge .rank-card")).includes("준비 중"), "도전 탭 랭킹 카드가 준비 중이 아니다");
+await page.$eval("#sc-challenge .rank-card", (n) => n.scrollIntoView({ block: "center" }));
+await shot("10-challenge-card");
+await page.click("#sc-challenge .rank-card");
+await page.waitForSelector(`#sc-challenge ${RANK}.open`);
+await page.waitForFunction((sel) => document.querySelector(sel)?.dataset.state === "schools", `#sc-challenge ${RANK} .srk-body`, { timeout: 4000 });
+check((await page.$$(`#sc-challenge ${RANK} .srk-row`)).length === 6, "도전 탭 카드가 학교 순위를 연다");
+await page.click(`#sc-challenge ${RANK} .mysheet-x`);
+await W(500);
 check(pageErrors === 0, `페이지 오류 0건(실제 ${pageErrors})`);
 console.log(`\n${fails === 0 ? "ALL PASS" : "FAILED"} ${checks - fails}/${checks}`);
 await browser.close();
