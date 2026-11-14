@@ -8,6 +8,7 @@
 // (또는 sessionStorage "ss.vid"="1") 주소가 없는 영상도 자리 표시 재생 화면과 함께 전부 보인다.
 
 import { findLesson, isPremiumLocked } from "./curriculum";
+import { isDone, isReviewMode, videoProgressOf } from "../core/store";
 
 /**
  * 영상이 있는 곳. 영상 파일은 앱 번들에 싣지 않는다(2026-11-14 사용자 지시: 바깥에 올려 두고 주소로 튼다).
@@ -140,4 +141,39 @@ export function isVideoLocked(e: VideoEpisode): boolean {
 /** "3분", "4분"처럼 반올림한 길이. */
 export function videoMinutes(e: VideoEpisode): string {
   return `${Math.max(1, Math.round(e.seconds / 60))}분`;
+}
+
+/** 영상 칸을 지나갔나: 끝까지(9할 넘게) 봤거나, 지도에서 건너뛰었다. */
+export function isVideoPassed(e: VideoEpisode): boolean {
+  const p = videoProgressOf(e.id);
+  return !!p && (p.done || !!p.skipped);
+}
+
+/**
+ * 영상 걸음(2026-11-15 사용자 확정 "보거나 건너뛰면"): 영상 칸도 지도의 한 걸음이다. 묶음의 첫 레슨은 앞 레슨을 마치고,
+ * 그 묶음의 영상을 다 보거나 건너뛰어야 열린다. 걷는 캐릭터는 그동안 영상 칸에 선다.
+ * 운영 번들에서는 늘 켜져 있다. 개발 서버에서는 기존 지도 검사들의 계약(첫 발자국을 바로 연다, .gm-node.now)을 지키려고
+ * 미리 보기(?vid=1)이거나 sessionStorage "ss.vidstep"="1"일 때만 켠다("0"이면 운영 번들에서도 끈다). 검토 모드는 끈다.
+ */
+export function videoStepsOn(): boolean {
+  if (isReviewMode()) return false;
+  try {
+    const f = sessionStorage.getItem("ss.vidstep");
+    if (f === "0") return false;
+    if (f === "1") return true;
+  } catch {
+    /* 저장소를 못 쓰면 기본값 */
+  }
+  return !import.meta.env.DEV || videoPreviewOn();
+}
+
+/**
+ * 영상 관문: 이 레슨이 아직 지나가지 않은 영상의 묶음 첫 레슨이면 그 영상을, 아니면 null.
+ * 순차 잠금(앞 레슨을 마쳐야 열림), 유료 잠금과 따로 겹치는 층이다. 이미 마친 레슨은 막지 않는다(다른 기기에서 마친 진도 포함.
+ * 시청 기록은 기기에만 있어서 기기를 바꾸면 지금 할 레슨 앞의 영상 하나만 다시 묻는다).
+ */
+export function videoGateOf(lessonId: string): VideoEpisode | null {
+  if (!videoStepsOn() || isDone(lessonId)) return null;
+  const e = VIDEO_EPISODES.find((x) => x.lessons[0] === lessonId);
+  return e && isVideoVisible(e) && !isVideoPassed(e) ? e : null;
 }
