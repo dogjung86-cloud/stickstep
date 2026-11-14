@@ -1,6 +1,10 @@
+import { findEpisode, episodeOfLesson, isVideoVisible, isVideoLocked } from "./content/videos";
+import { videoScreen } from "./screens/video";
+import { runningLoops } from "./core/anim";
 import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/ui.css";
+import "./styles/video.css";
 import "./styles/bio3.css";
 import "./styles/bio3-hook.css";
 import "./styles/bio4.css";
@@ -98,7 +102,7 @@ function goHome(): void {
     homeScreen(
       openLesson,
       lastUnitId,
-      { onOpenExam: openExam, onTab: goTab, onOpenNotebook: openNotebook, onOpenSplash: () => showSplash(true) },
+      { onOpenExam: openExam, onTab: goTab, onOpenNotebook: openNotebook, onOpenSplash: () => showSplash(true), onOpenVideo: openVideo },
       { walkFrom },
     ),
   );
@@ -547,6 +551,27 @@ function rememberUnit(unitId: string): void {
   setLastUnit(`${subjectOfUnit(unitId)}:${gradeOfUnit(unitId)}`, unitId);
 }
 
+/** 개념 영상을 연다. 닫으면(닫기 버튼이든 뒤로가기든) onClosed로 연 쪽에 알린다. 유료 잠금은 연 쪽이 먼저 거른다. */
+function openVideo(episodeId: string, onClosed?: () => void): void {
+  const ep = findEpisode(episodeId);
+  if (!ep || !isVideoVisible(ep) || isVideoLocked(ep)) return;
+  rememberUnit(ep.unitId);
+  lastUnitId = ep.unitId;
+  // 영상 화면으로 넘어가면 라우터가 그리기 루프를 모두 멈춘다. 돌아왔을 때 보던 화면(랩의 무대 등)이 멈춘 채로 남지 않게,
+  // 돌고 있던 루프를 받아 두었다가 영상이 닫히면 다시 돌린다. 화면을 다시 그리지 않으므로 스텝 안의 진행은 그대로다.
+  const opener = nav.top?.el;
+  const paused = runningLoops();
+  nav.go(
+    videoScreen(ep, {
+      onBack: () => nav.back(),
+      onClosed: () => {
+        if (opener?.isConnected && nav.top?.el === opener) paused.forEach((l) => l.start());
+        onClosed?.();
+      },
+    }),
+  );
+}
+
 function openLesson(id: string): void {
   const found = findLesson(id);
   if (!found) return;
@@ -565,7 +590,9 @@ function openLesson(id: string): void {
     return;
   }
   const wasDone = isDone(id); // 첫 완료 판정 — 복습 재플레이 귀환에는 걷기 연출이 없다
+  const lessonVideo = episodeOfLesson(id); // 이 레슨을 맡는 개념 영상(없거나 아직 안 보이면 null)
   const player = createLessonPlayer(found.lesson, {
+    video: lessonVideo ? { onOpen: () => openVideo(lessonVideo.id) } : undefined,
     onExit: goHome,
     onComplete: (r) => {
       const gained = completeLesson(r.lessonId, r.acc, r.xp);
@@ -626,7 +653,14 @@ try {
 const bootRoute = parseRoute(location.hash);
 const devOpen = import.meta.env.DEV ? new URLSearchParams(location.search).get("open") : null;
 if (devOpen && findLesson(devOpen)) {
-  nav.go(createLessonPlayer(findLesson(devOpen)!.lesson, { onExit: goHome, onComplete: () => goHome() }));
+  const devVideo = episodeOfLesson(devOpen); // 바로 연 레슨에도 머리줄의 영상 버튼을 단다(검수용)
+  nav.go(
+    createLessonPlayer(findLesson(devOpen)!.lesson, {
+      onExit: goHome,
+      onComplete: () => goHome(),
+      video: devVideo ? { onOpen: () => openVideo(devVideo.id) } : undefined,
+    }),
+  );
 } else if (bootRoute) {
   enterFromRoute(bootRoute); // 딥링크(#/pricing·#/login 등) — 스플래시를 건너뛰고 해당 화면으로(2026-08-14)
 } else {

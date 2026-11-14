@@ -20,7 +20,12 @@ export interface LessonResult {
 
 export function createLessonPlayer(
   lesson: Lesson,
-  hooks: { onExit: () => void; onComplete: (r: LessonResult) => void },
+  hooks: {
+    onExit: () => void;
+    onComplete: (r: LessonResult) => void;
+    /** 이 레슨을 맡는 개념 영상이 있으면 머리줄에 상시 "영상" 버튼을 단다(없으면 버튼도 없다). */
+    video?: { onOpen: () => void };
+  },
 ): { el: HTMLElement; onExit: () => void } {
   const steps = lesson.steps;
   let idx = 0;
@@ -42,14 +47,15 @@ export function createLessonPlayer(
   const fwdBtn = el("button", { class: "xbtn fwd", attrs: { "aria-label": "다음 단계" }, html: icon("chevron", 20, { sw: 2.4 }) });
   if (!freeNav) fwdBtn.style.display = "none"; // 일반 진행에서는 자리도 차지하지 않는다
   const xbtn = el("button", { class: "xbtn", attrs: { "aria-label": "닫기" }, html: icon("x", 20, { sw: 2.4 }) });
-  const header = el(
-    "div",
-    { class: "lheader" },
-    backBtn,
-    el("div", { class: "pwrap" }, pbar),
-    fwdBtn,
-    xbtn,
-  );
+  // 개념 영상 버튼: 어느 스텝에서든 닫기 왼쪽에 늘 있다(2026-11-14 사용자 확정)
+  const vidBtn = hooks.video
+    ? el("button", { class: "lvid", attrs: { "aria-label": "개념 영상 보기" } }, el("span", { class: "lvid-dot", attrs: { "aria-hidden": "true" }, html: icon("play", 11) }), "영상")
+    : null;
+  vidBtn?.addEventListener("click", () => {
+    haptic(HAPTIC.tap);
+    hooks.video?.onOpen();
+  });
+  const header = el("div", { class: "lheader" }, backBtn, el("div", { class: "pwrap" }, pbar), fwdBtn, vidBtn, xbtn);
 
   const stepWrap = el("div", { class: "stepWrap" });
   const scroll = el("div", { class: "scroll" }, stepWrap);
