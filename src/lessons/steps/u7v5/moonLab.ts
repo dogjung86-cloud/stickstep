@@ -10,6 +10,7 @@
 import { el } from "../../../core/dom";
 import { createLoop, type Loop } from "../../../core/anim";
 import { haptic, HAPTIC } from "../../../core/haptics";
+import { wideStageScale, zoomOf } from "../../../core/wide";
 import type { StepRenderer } from "../../types";
 import type { SpaceStage, THREE as T } from "../../../ui/space3d";
 import { bvBtn, bvCapture } from "../bio6/b6Lab";
@@ -303,11 +304,19 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
     if (wantShot) {
       wantShot = false;
       const pr = canvas.width / w;
-      const ctx = films[k].cv.getContext("2d");
+      const fc = films[k].cv;
+      // 넓은 화면에서는 칸이 커 보이므로 화면에 보이는 장치 픽셀만큼 담는다(2026-11-15 PC 화질 분석: 76 고정이라 PC 0.71배, 맥 0.43배).
+      // 폰은 예전 그대로 76.
+      const side = wideStageScale() > 1 && fc.clientWidth > 0 ? Math.min(320, Math.max(76, Math.round(fc.clientWidth * zoomOf(fc) * (window.devicePixelRatio || 1)))) : 76;
+      if (fc.width !== side) {
+        fc.width = side;
+        fc.height = side;
+      }
+      const ctx = fc.getContext("2d");
       if (ctx) {
         ctx.fillStyle = "#070d1a";
-        ctx.fillRect(0, 0, 76, 76);
-        ctx.drawImage(canvas, (ix + 12) * pr, (INSET_PAD + 4) * pr, (INSET - 24) * pr, (INSET - 24) * pr, 0, 0, 76, 76);
+        ctx.fillRect(0, 0, side, side);
+        ctx.drawImage(canvas, (ix + 12) * pr, (INSET_PAD + 4) * pr, (INSET - 24) * pr, (INSET - 24) * pr, 0, 0, side, side);
       }
       took(k);
     }

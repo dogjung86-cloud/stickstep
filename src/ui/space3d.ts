@@ -5,34 +5,48 @@
 //     (public/textures/, Solar System Scope CC BY 4.0)가 로드되면 바꿔 끼운다
 //     — 네트워크·파일 유무와 무관하게 무대가 비지 않는다.
 //   · dispose() 규율: 지오메트리·재질·텍스처 해제 + forceContextLoss (meta.ts와 동일 철학).
-//   · DPR 캡 1.75, rAF 루프는 스텝 쪽 createLoop가 소유한다(여기서는 render()만 제공).
+//   · 픽셀 배율은 stagePixelRatio(): 폰과 가로 3D는 DPR 캡 1.75, 넓은 화면에서 키운 랩 무대 안은 그 배율만큼(아래 주석).
+//   · rAF 루프는 스텝 쪽 createLoop가 소유한다(여기서는 render()만 제공).
 
 import * as THREE from "three";
 import { wideStageScale } from "../core/wide";
 
 export { THREE };
 
-/** 무대 안 3D 한 장이 그리는 픽셀 상한(약 80만 개). 1920×1080·2560×1440 모니터에서는 닿지 않고, 4K·레티나에서만 걸린다. */
+/** 무대 안 3D 한 장이 그리는 픽셀 상한(약 80만 개). 1920×1080·2560×1440 모니터에서는 닿지 않고 4K·레티나·아이패드에서만 걸린다. */
 const MAX_STAGE_PX = 800_000;
 
-/** [시험 수정, pc-quality-audit] 3D 캔버스의 픽셀 배율.
- *  폰과 화면 전체를 쓰는 가로 3D(일식, 태양계 여행)는 예전 그대로 min(dpr, 1.75).
- *  넓은 화면에서 CSS zoom으로 키운 랩 무대(.bv-stage) 안의 캔버스만 키운 만큼 촘촘히 그린다
- *  (상한 4는 2D의 stageDpr과 같고, 여기에 픽셀 상한 MAX_STAGE_PX를 더 건다).
- *  견주기용(이 브랜치에서만): 세션 저장소 ss.pr3d가 "old"면 예전 값, "full"이면 픽셀 상한 없이, 숫자면 그 배율을 상한으로. */
+/** 3D 캔버스의 픽셀 배율(2026-11-15 PC 화질 분석 뒤 사용자 결정 "상한 두고 진행", 근거는 output/pc-quality/README.md).
+ *  · 폰과 화면 전체를 쓰는 가로 3D(일식, 태양계 여행)는 예전 그대로 min(dpr, 1.75).
+ *  · 넓은 화면에서 CSS zoom으로 키운 랩 무대(.bv-stage) 안이면 키운 만큼 촘촘히 그린다. 예전에는 폰 크기로 그린 것을 2.6배로
+ *    늘려 보여 흐렸다(세포 구조 입체 무대, 별자리, 달의 위상, 전기 그네가 0.38배). 상한은 2D의 stageDpr과 같은 4이고,
+ *    여기에 픽셀 상한 MAX_STAGE_PX를 더 건다(약한 그래픽에 큰 화면이 붙은 경우의 부담을 묶는다).
+ *  · w, h는 확대 전 CSS 크기(clientWidth·clientHeight). getBoundingClientRect는 커진 크기라 쓰지 않는다.
+ *  · 셰이더에 기기 픽셀 단위 값을 넣는 무대는 renderer.getPixelRatio()를 곱해야 한다(cellStage3d의 uPx).
+ *  · 창 크기만 바뀌면 무대의 CSS 크기는 그대로라 ResizeObserver가 모른다. resize를 매 프레임 부르지 않는 무대는
+ *    그리기 루프에서 renderer.getPixelRatio()와 이 값을 견주어 다시 맞춘다(cellStage3d, swingLab).
+ *  · 개발 서버에서만: 세션 저장소 ss.pr3d = "old"(예전 값) | "full"(픽셀 상한 없이) | 숫자(그 배율을 상한으로). qa/perf-pc-3d.mjs가 견줄 때 쓴다. */
 export function stagePixelRatio(canvas: HTMLCanvasElement, w = canvas.clientWidth, h = canvas.clientHeight): number {
   const base = Math.min(window.devicePixelRatio || 1, 1.75);
-  let mode = "";
-  try {
-    mode = sessionStorage.getItem("ss.pr3d") || "";
-  } catch {
-    /* 세션 저장소를 못 쓰는 환경 */
-  }
   const z = canvas.closest(".bv-stage") ? wideStageScale() : 1;
-  if (mode === "old" || z <= 1) return base;
-  const cap = mode && mode !== "full" && Number.isFinite(Number(mode)) ? Number(mode) : 4;
-  const budget = mode === "full" ? Infinity : Math.sqrt(MAX_STAGE_PX / Math.max(1, w * h));
+  if (z <= 1) return base;
+  let cap = 4;
+  let budget = Math.sqrt(MAX_STAGE_PX / Math.max(1, w * h));
+  if (import.meta.env.DEV) {
+    const m = devPr3d();
+    if (m === "old") return base;
+    if (m === "full") budget = Infinity;
+    else if (m && Number.isFinite(Number(m))) cap = Number(m);
+  }
   return Math.max(base, Math.min(base * z, cap, budget));
+}
+
+function devPr3d(): string {
+  try {
+    return sessionStorage.getItem("ss.pr3d") || "";
+  } catch {
+    return ""; // 세션 저장소를 못 쓰는 환경
+  }
 }
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";

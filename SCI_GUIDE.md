@@ -45,6 +45,15 @@ CLAUDE.md에서 분리(2026-07-21, 원문 그대로 — 요약·삭제 없음). 
   `optimizeDeps.include: ["three"]` 필수, 없으면 dev 첫 로드 때 최적화 풀리로드가 나서 레슨 상태가 날아간다).
 - 규율: DPR 캡 1.75 · rAF는 스텝의 `createLoop`가 소유 · **프레임마다 `st.render()` 호출**(빼먹으면 검은 무대) ·
   cleanup에서 `st.dispose()`(지오메트리·재질·텍스처 해제 + forceContextLoss). WebGL 실패 시 `null` → 텍스트 폴백 후 CTA 개방.
+- **넓은 화면(PC, 태블릿 가로)의 3D 화질(2026-11-15 사용자 결정 "상한 두고 진행")**: 랩 무대(`.bv-stage`) 안의 3D는 넓은 화면에서
+  CSS zoom으로 2.6배까지 커진다. 픽셀 배율은 `space3d.ts`의 `stagePixelRatio()`가 정한다: 폰과 가로 화면 3D(rotateStage)는 위 캡 1.75
+  그대로, 무대 안이면 `min(dpr, 1.75) × 무대 배율`(상한 4, 한 장이 그리는 픽셀 80만). 예전에는 배율을 곱하지 않아 세포 구조 입체 무대,
+  별자리, 달의 위상, 전기 그네가 1920×1080 모니터에서 0.38배로 흐렸다(분석과 측정: `output/pc-quality/README.md`).
+  새 3D 무대는 `createSpaceStage`의 `resize(w, h)`에 확대 전 크기(`clientWidth`·`clientHeight`)를 넘기면 저절로 따른다. `resize`를 매 프레임
+  부르지 않으면 그리기 루프에서 `renderer.getPixelRatio()`와 `stagePixelRatio()`를 견주어 다시 맞추고(창 크기만 바뀌면 ResizeObserver가 모른다),
+  셰이더에 기기 픽셀 단위 값을 넣으면 `renderer.getPixelRatio()`를 곱한다(cellStage3d의 막 테두리 `uPx`). 무대 안 3D의 1픽셀 선(궤도, 화살표 대)은
+  넓은 화면에서 모니터 픽셀 하나 굵기라 폰보다 가늘어 보인다. 확인은 `PORT=<포트> node qa/audit-pc-quality.mjs <출력 폴더> fhd100 u2,u7,g2u7`
+  (3D가 1.0이어야 한다), 부담은 `qa/perf-pc-3d.mjs`(개발 서버에서 세션 저장소 `ss.pr3d` = old·full·숫자로 예전 배율과 견준다).
 - **가로 모드** `ui/rotateStage.ts`: fixed 오버레이 안에 90° 회전 무대. 포인터는 `rot.mapPoint(e)`로
   리매핑(스테이지 x = clientY − top, y = right − clientX). solarTour·eclipse3d가 사용.
 - **solarTour = 궤도형 태양계**(교과서 일렬 그림의 확장): 한 손가락 드래그 = 시점 회전(구면 궤도 카메라),

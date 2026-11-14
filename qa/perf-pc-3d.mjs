@@ -3,8 +3,8 @@
 //  · gpu: 이 PC의 그래픽 카드(headless 크롬도 실제 GPU를 쓴다). soft: SwiftShader(CPU로 그리는 소프트웨어 GPU, 아주 약한 그래픽의 대용).
 //  · 무대를 찍어 전후 견주기 그림도 남긴다.
 // 개발 서버 필요: PORT=<포트> node qa/perf-pc-3d.mjs <출력 폴더> <gpu|soft> <설정> <레슨:스텝,...> [모드들: old,new]
-//   모드 = 세션 저장소 ss.pr3d 값(src/ui/space3d.ts의 stagePixelRatio): old 예전 배율, new 새 배율(픽셀 상한 80만), full 새 배율(픽셀 상한 없이),
-//   숫자 = 그 배율을 상한으로. 2026-11-15 첫 측정의 new는 픽셀 상한을 넣기 전이라 지금의 full과 같다.
+//   모드 = 세션 저장소 ss.pr3d 값(src/ui/space3d.ts의 stagePixelRatio, 개발 서버에서만 읽는다): old 예전 배율, new 지금 배율(픽셀 상한 80만),
+//   full 픽셀 상한 없이, 숫자 = 그 배율을 상한으로. 2026-11-15 첫 측정(output/pc-quality/perf)의 new는 픽셀 상한을 넣기 전이라 full과 같다.
 //   CPU=4 를 주면 메인 스레드를 4배 느리게(저사양 CPU 흉내, 크롬 개발자 도구의 CPU throttling과 같다).
 import { chromium } from "playwright-core";
 import { mkdirSync, writeFileSync } from "node:fs";
