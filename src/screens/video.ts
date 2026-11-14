@@ -44,6 +44,7 @@ export function videoScreen(ep: VideoEpisode, o: { onBack: () => void; onClosed?
 
   let offMessage: (() => void) | null = null;
   let ctl: HTMLElement | null = null; // 파일 영상의 아래 줄(10초 뒤로, 재생과 멈춤, 10초 앞으로)
+  let tapLayer: HTMLElement | null = null; // 파일 영상 위의 두 번 톡 층(손가락 기기만)
   let offFile: (() => void) | null = null;
   if (ep.src?.kind === "vimeo") {
     // Vimeo 임베드. 플레이어 스크립트를 싣지 않고 iframe과 postMessage만으로 재생 위치를 받는다(누르기 전에는 아무것도 받지 않는다).
@@ -138,12 +139,14 @@ export function videoScreen(ep: VideoEpisode, o: { onBack: () => void; onClosed?
         box.remove();
         v.hidden = false;
         if (ctl) ctl.hidden = false;
+        if (tapLayer) tapLayer.hidden = false;
         v.addEventListener("loadedmetadata", () => at > 1 && (v.currentTime = at), { once: true });
         v.load();
         void v.play().catch(() => {});
       });
       v.hidden = true;
       if (ctl) ctl.hidden = true;
+      if (tapLayer) tapLayer.hidden = true; // 안내의 "다시 불러오기"를 덮지 않게
       frame.appendChild(box);
     });
     v.addEventListener("timeupdate", () => {
@@ -218,9 +221,55 @@ export function videoScreen(ep: VideoEpisode, o: { onBack: () => void; onClosed?
       e.preventDefault();
     };
     window.addEventListener("keydown", onKey);
+
+    // 두 번 톡(2026-11-15 사용자 요청, 유튜브처럼): 영상 오른쪽을 두 번 치면 5초 앞으로, 왼쪽은 5초 뒤로, 이어서 톡톡 치면 5초씩 더.
+    // 한 번 톡은 멈춤과 재생(쇼츠처럼). 두 번인지 가리느라 한 번 톡은 TAP_GAP만큼 늦게 반응한다.
+    // 손가락 기기에서만 켠다(video.css의 hover·pointer 조건). PC는 브라우저 기본(누르면 멈춤, 두 번 누르면 전체 화면)에 단추와 ←→ 키.
+    // 영상 아래쪽 띠는 비워 두어 기본 재생 막대(시간, 끌어서 옮기기)는 그대로 쓴다.
+    const TAP_GAP = 300; // 이 안에 같은 쪽을 다시 치면 두 번 톡(ms)
+    const STREAK = 800; // 두 번 톡 뒤 이 안에 같은 쪽을 또 치면 5초 더(ms)
+    const tap = el("div", { class: "vp-tap", attrs: { "aria-hidden": "true" } });
+    tapLayer = tap;
+    frame.appendChild(tap);
+    let downX = 0;
+    let downY = 0;
+    let lastAt = -1e9;
+    let lastSide = 0;
+    let streakSide = 0;
+    let single = 0;
+    tap.addEventListener("pointerdown", (e) => {
+      downX = e.clientX;
+      downY = e.clientY;
+    });
+    tap.addEventListener("pointerup", (e) => {
+      if (!e.isPrimary || Math.hypot(e.clientX - downX, e.clientY - downY) > 14) return; // 끌기는 톡이 아니다
+      const r = tap.getBoundingClientRect(); // 비율로 셈하므로 넓은 화면의 확대와 무관하다
+      const side = (e.clientX - r.left) / r.width < 0.5 ? -1 : 1;
+      const now = e.timeStamp;
+      if ((streakSide === side && now - lastAt < STREAK) || (single && side === lastSide && now - lastAt < TAP_GAP)) {
+        clearTimeout(single);
+        single = 0;
+        streakSide = side;
+        lastAt = now;
+        haptic(HAPTIC.tap);
+        seek(side * 5);
+        return;
+      }
+      streakSide = 0;
+      lastSide = side;
+      lastAt = now;
+      clearTimeout(single);
+      single = window.setTimeout(() => {
+        single = 0;
+        if (v.paused || v.ended) void v.play().catch(() => {});
+        else v.pause();
+      }, TAP_GAP);
+    });
+
     offFile = () => {
       window.removeEventListener("keydown", onKey);
       clearTimeout(flashTimer);
+      clearTimeout(single);
     };
   } else {
     // 영상 파일이 아직 없다(검수용 미리 보기에서만 여기까지 온다)
