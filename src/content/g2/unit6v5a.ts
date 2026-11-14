@@ -141,7 +141,7 @@ export const G2U6L2_STEPS: Step[] = [
           ],
           cta: "다른 소화액 알아보기",
         }),
-        enzymeLab({ title: "소화액마다 어떤 영양소를 분해할까요?", cta: "분해된 영양소 흡수하기" }),
+        enzymeLab({ title: "영양소는 어디에서 무엇이 될까요?", cta: "분해된 영양소 흡수하기" }),
         villiLab({ title: "작은창자 벽은 왜 주름져 있을까요?", cta: "이름 붙이기" }),
         words({
           title: "소화계와 융털,<br>분해하고 흡수하는 곳",

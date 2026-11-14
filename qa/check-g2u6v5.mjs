@@ -208,18 +208,37 @@ const LABS = {
     await wrongOnce(id, "saliva2");
     await done(id, "saliva");
   },
-  async enzyme(id) {
-    await at(id, "enzyme-start");
-    await S(id, "c0-0", 350);
-    await S(id, "c2-0", 350);
-    await at(id, "enzyme-two");
-    for (const k of ["c0-1", "c0-2", "c1-0", "c1-1", "c1-2", "c2-1", "c2-2"]) await S(id, k, 250);
-    await dsIs(id, "g6Done", "9", "아홉 칸이 채워지지 않음");
-    await at(id, "enzyme-all");
-    await must(id, ".g2u6x-go", 400);
-    await wrongOnce(id, "enzyme");
-    await rightOnce(id, "enzyme2");
-    await done(id, "enzyme");
+  // 소화기관 랩(2026-11-15, 옛 아홉 칸 표 랩을 갈아 끼움). 입에서는 맞게, 위와 쓸개즙에서는 일부러 틀리게 고른다.
+  async organ(id) {
+    await at(id, "organ-start");
+    await must(id, K("n0"));
+    await must(id, ".g2u6x-mix", 2300);
+    await dsIs(id, "g6Miss", "0", "입에서 녹말만 골랐는데 틀림으로 처리됨");
+    await at(id, "organ-mouth");
+    await must(id, ".g2u6x-mix", 2100);
+    await dsIs(id, "g6At", "stomach", "위에 닿지 않음");
+    await must(id, K("n0"));
+    await must(id, ".g2u6x-mix", 2100);
+    await dsIs(id, "g6Fail", "pred", "위액에 녹말을 골랐는데 그대로 표시가 없음");
+    await at(id, "organ-stomach-miss");
+    await must(id, ".g2u6x-mix", 1700);
+    await dsIs(id, "g6At", "bile", "작은창자에 닿지 않음");
+    await must(id, K("n2"));
+    await must(id, ".g2u6x-mix", 2300);
+    await dsIs(id, "g6Fail", "pred", "쓸개즙에 지방을 골랐는데 아직 지방 표시가 없음");
+    await at(id, "organ-bile-miss");
+    await must(id, ".g2u6x-mix", 500);
+    for (const k of ["n0", "n1", "n2"]) await must(id, K(k), 150);
+    await must(id, ".g2u6x-mix", 5600);
+    await dsIs(id, "g6Form", "332", "작은창자에서 소화가 끝나지 않음");
+    await at(id, "organ-pancreas");
+    await must(id, ".g2u6x-mix", 2500);
+    await dsIs(id, "g6At", "large", "큰창자에 닿지 않음");
+    await at(id, "organ-large");
+    await must(id, ".g2u6x-mix", 700);
+    await wrongOnce(id, "organ");
+    await wrongOnce(id, "organ2");
+    await done(id, "organ");
   },
   async villi(id) {
     await at(id, "villi-start");
