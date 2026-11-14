@@ -10,6 +10,7 @@
 
 import { clamp, el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
+import { zoomOf } from "../../../core/wide";
 import type { OpenerCtx } from "./opener";
 
 type Side = "plant" | "animal";
@@ -134,8 +135,10 @@ export function baskets(c: OpenerCtx): void {
   });
   mush.addEventListener("pointermove", (e) => {
     if (!dragging) return;
-    dx = clamp((e.clientX - sx) / k(), -M.homeX + 90, W - M.homeX - 90);
-    dy = clamp((e.clientY - sy) / k(), -M.homeY + 200, H - M.homeY - 20);
+    // 손가락이 간 화면 px를 무대 단위로. 넓은 화면은 무대를 zoom으로 키우므로 그 배율까지 나눈다(안 나누면 버섯이 손보다 빨리 간다)
+    const kp = k() * zoomOf(c.stage);
+    dx = clamp((e.clientX - sx) / kp, -M.homeX + 90, W - M.homeX - 90);
+    dy = clamp((e.clientY - sy) / kp, -M.homeY + 200, H - M.homeY - 20);
     place(dx, dy - LIFT, 1.04);
     const over = M.homeY + dy - LIFT - mh / 2 < M.dropY; // 버섯의 가운데가 바구니 높이까지 올라왔는가
     c.stage.classList.toggle("over-plant", over && M.homeX + dx < M.dropL);
