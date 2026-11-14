@@ -68,6 +68,10 @@
 .vp-flash.l { left: 12%; }
 .vp-flash.r { right: 12%; }
 .vp-flash.on { opacity: 1; }
+/* 두 번 톡 층(영상 오른쪽 두 번 = 5초 앞으로, 왼쪽 = 5초 뒤로, 한 번 = 멈춤과 재생). 손가락 기기에서만 켜고,
+   아래 72px는 비워 브라우저 기본 재생 막대(시간, 끌어서 옮기기)를 그대로 쓴다. 투명해서 눈에는 안 보인다. */
+.vp-tap { position: absolute; left: 0; right: 0; top: 0; bottom: 72px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+@media (hover: hover) and (pointer: fine) { .vp-tap { display: none; } }
 .vp-empty { padding: 0 28px; text-align: center; }
 .vp-empty-ic { display: grid; place-items: center; width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; background: rgba(255, 255, 255, .1); }
 .vp-empty b { display: block; font-size: 18px; font-weight: 800; letter-spacing: -.02em; }
