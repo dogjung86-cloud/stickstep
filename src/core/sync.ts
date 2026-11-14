@@ -7,6 +7,7 @@ import type { AppState, ExamRecord, LessonProgress, WrongNote } from "./store";
 import { applySyncedState, getState, setOnStateSaved } from "./store";
 import { getSupabase, isAuthConfigured, onAuthChange } from "./auth";
 import { refreshEntitlements } from "./purchase";
+import { schoolColumns, schoolFromRow } from "./school";
 
 interface ProgressRow {
   user_id: string;
@@ -174,6 +175,7 @@ export function accountSwitchPatch(local: Readonly<AppState>, row: ProgressRow |
     // 서버 미동기 정체성·추적 필드 — 이전 계정 흔적이 남지 않게 리셋.
     // 닉네임은 아래 fullSync 닉네임 단계가 새 계정 profiles 값을 채택한다.
     nickname: null,
+    school: null, // 내 학교도 계정 정보다. 아래 fullSync 학교 단계가 새 계정의 서버 값을 채택한다
     avatarCustom: null,
     avatarPreset: null,
     lastUnits: {},
@@ -236,6 +238,21 @@ async function fullSync(userId: string): Promise<void> {
     const serverNick = (prof?.nickname as string | null | undefined) ?? null;
     if (localNick && localNick !== serverNick) await sb.from("profiles").update({ nickname: localNick }).eq("id", userId);
     else if (!localNick && serverNick) applySyncedState({ nickname: serverNick });
+    // 내 학교(profiles.school_*): 닉네임과 같은 규칙. 같은 계정·첫 로그인은 기기 값 우선, 기기에 없으면
+    // 서버 값 채택(계정 전환은 교체 패치가 기기 값을 비워 둔다). 닉네임과 따로 조회한다: 운영 DB에
+    // 학교 컬럼을 아직 만들지 않았으면 이 조회만 실패하고(오류는 반환값) 닉네임 동기화는 그대로 돈다.
+    const { data: sch, error: schErr } = await sb
+      .from("profiles")
+      .select("school_code, school_name, school_region, school_kind")
+      .eq("id", userId)
+      .maybeSingle();
+    if (!schErr) {
+      const localSchool = getState().school ?? null;
+      const serverSchool = schoolFromRow(sch as Record<string, unknown> | null);
+      if (localSchool && localSchool.code !== serverSchool?.code)
+        await sb.from("profiles").update(schoolColumns(localSchool)).eq("id", userId);
+      else if (!localSchool && serverSchool) applySyncedState({ school: serverSchool });
+    }
   } catch {
     /* 실패해도 학습은 로컬로 계속 — 다음 저장 push가 재시도 역할 */
   } finally {

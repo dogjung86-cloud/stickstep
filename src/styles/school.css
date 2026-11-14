@@ -1,0 +1,43 @@
+/* 내 학교 등록: 마이 탭 프로필 카드의 학교 줄(.mypf-school)과 "내 학교" 시트(.sch-).
+   시트 껍데기(.mysheet-*)와 입력(.nick-input)은 ui.css 마이 탭 섹션 것을 그대로 쓴다. */
+
+/* 프로필 카드: 장화 배지 아래 한 줄. 등록 전에는 파란 글씨로 권한다. */
+/* 이름 칸이 남은 폭을 다 쓰게 한다(안 그러면 칸 폭이 장화 배지 폭에 묶여 학교 이름이 잘린다). 긴 이름은 말줄임. */
+.mypf-who { flex: 1 1 0; }
+.mypf-school { display: inline-flex; align-items: center; gap: 5px; max-width: 100%; min-height: 24px; padding: 2px 9px 2px 6px; margin-left: -2px; border-radius: 999px; font-size: 12.5px; font-weight: 700; color: var(--n700); transition: transform .12s var(--spring-soft), background .15s; }
+.mypf-school:active { transform: scale(.965); background: var(--n100); }
+.mypf-school-ic { flex: none; display: grid; place-items: center; color: var(--n500); }
+.mypf-school-t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mypf-school.empty { color: var(--blue); background: var(--blue-tint); }
+.mypf-school.empty .mypf-school-ic { color: var(--blue); }
+
+/* 시트: 위에서부터 채우는 큰 시트(자판이 올라와도 입력과 첫 결과가 보이게). */
+.mysheet.sch { top: max(28px, calc(100% - 640px)); }
+.mysheet.sch .mysheet-card { height: 100%; max-height: none; }
+.sch-body { display: flex; flex-direction: column; padding-bottom: calc(14px + var(--safe-b) + var(--sch-kb, 0px)); }
+.sch-input { flex: none; margin-top: 2px; -webkit-appearance: none; appearance: none; }
+.sch-input::-webkit-search-cancel-button { -webkit-appearance: none; }
+.sch-hint { flex: none; }
+.sch-kinds { flex: none; margin: 0 0 10px; }
+
+.sch-cur { flex: none; display: flex; align-items: center; gap: 11px; margin-bottom: 12px; padding: 12px 12px 12px 13px; border-radius: 14px; background: var(--blue-tint); }
+.sch-cur[hidden] { display: none; }
+.sch-cur-ic { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--n0); color: var(--blue); }
+.sch-cur-who { flex: 1; min-width: 0; }
+.sch-cur-cap { font-size: 11.5px; font-weight: 700; color: var(--blue); }
+.sch-cur-name { margin-top: 1px; font-size: 15.5px; font-weight: 800; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sch-cur-region { font-size: 12px; font-weight: 600; color: var(--n600); }
+.sch-off { flex: none; padding: 8px 12px; border-radius: 999px; background: var(--n0); border: 1px solid var(--n200); font-size: 12.5px; font-weight: 700; color: var(--n700); transition: transform .12s var(--spring-soft); }
+.sch-off:active { transform: scale(.95); background: var(--n50); }
+
+.sch-list { margin-top: 12px; display: grid; gap: 7px; align-content: start; }
+.sch-note { padding: 22px 8px 6px; text-align: center; font-size: 13.5px; font-weight: 600; color: var(--n500); line-height: 1.55; word-break: keep-all; }
+.sch-note.error { color: var(--n700); }
+.sch-retry { justify-self: center; padding: 9px 16px; border-radius: 999px; background: var(--blue-tint); color: var(--blue); font-size: 13.5px; font-weight: 800; }
+.sch-retry:active { transform: scale(.965); }
+.sch-item { display: grid; gap: 2px; justify-items: start; width: 100%; padding: 12px 14px; border-radius: 13px; background: var(--n0); border: 1.5px solid var(--n200); text-align: left; transition: transform .12s var(--spring-soft), border-color .15s; }
+.sch-item:active { transform: scale(.985); border-color: var(--blue); }
+.sch-item.on { border-color: var(--blue); background: var(--blue-tint); }
+.sch-item-name { font-size: 15px; font-weight: 800; color: var(--ink); }
+.sch-item-region { font-size: 12.5px; font-weight: 600; color: var(--n600); }
+.sch-more { padding: 6px 4px 0; font-size: 12px; font-weight: 600; color: var(--n500); text-align: center; line-height: 1.5; word-break: keep-all; }

@@ -43,6 +43,7 @@ import "./styles/soc.css";
 import "./styles/his.css";
 import "./styles/desktop.css";
 import "./styles/wide.css";
+import "./styles/school.css";
 import { initWide } from "./core/wide";
 
 import { nav } from "./core/router";
