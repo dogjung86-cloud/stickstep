@@ -41,6 +41,25 @@ export function stageDpr(): number {
   return Math.min(Math.min(window.devicePixelRatio || 1, 2) * wideStageScale(), 4);
 }
 
+/** 요소가 화면에서 커져 보이는 배율(조상의 CSS zoom이나 transform을 모두 친 값, 폰에서는 1).
+ *  화면 px로 잰 이동량(clientX의 차이)을 요소 안의 CSS px로 바꿀 때 나눈다. HTML 요소용(SVG는 getScreenCTM을 쓴다). */
+export function zoomOf(node: Element): number {
+  const w = (node as HTMLElement).offsetWidth;
+  const rw = node.getBoundingClientRect().width;
+  return w > 0 && rw > 0 ? rw / w : 1;
+}
+
+/** 화면 좌표(clientX, clientY)를 요소 안의 CSS px 좌표로 바꾼다.
+ *  넓은 화면은 무대를 CSS zoom으로 키운다. 그러면 getBoundingClientRect와 clientX는 커진 크기로 재고,
+ *  clientWidth와 그리기 좌표(설계 판)는 키우기 전 크기라서, 빼기만 하면 누른 자리가 배율만큼 어긋난다
+ *  (2026-11-15 사용자 적발: 저항의 연결에서 전구를 눌러도 빠지지 않음). 포인터를 무대 좌표로 바꾸는 곳은 이 함수를 거친다. */
+export function localPt(node: Element, clientX: number, clientY: number): { x: number; y: number } {
+  const r = node.getBoundingClientRect();
+  const w = (node as HTMLElement).offsetWidth;
+  const z = w > 0 && r.width > 0 ? r.width / w : 1;
+  return { x: (clientX - r.left) / z, y: (clientY - r.top) / z };
+}
+
 function fit(): void {
   const root = document.documentElement;
   const set = (k: string, v: string): void => root.style.setProperty(k, v);

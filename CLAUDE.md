@@ -1117,6 +1117,13 @@ src/
   - 새 스텝 종류를 좌우로 나누려면 `wide.ts`의 `tagStep()`에 판별을 넣고 `wide.css`에 배치를 쓴다. 랩이 아닌 스텝은 요소를 옮기지 않고
     표식(.wd-split, .wd-left)만 붙인다(격자의 마지막 줄 1fr이 왼쪽 큰 요소의 남는 높이를 받아 오른쪽 글 사이가 벌어지지 않는다).
   - 홈의 오른쪽 카드(home-rail)는 넓은 화면에서 홈을 만들 때만 DOM이 생긴다(폰과 e2e에는 없다).
+  - **포인터 좌표는 확대를 되돌려서 쓴다(2026-11-15 사용자 적발: 저항의 연결에서 전구를 눌러도 안 빠지고 점선을 눌러도 안 됨).**
+    zoom으로 키운 무대 안에서 `getBoundingClientRect()`와 `clientX`는 커진 크기, `clientWidth`·`offsetWidth`와 그리기 좌표는 키우기 전
+    크기다. 둘을 섞어 `clientX - rect.left`를 그대로 무대 px로 쓰면 누른 자리가 배율(2배 안팎)만큼 오른쪽 아래로 밀려 판정된다.
+    무대 안 좌표는 `localPt(요소, clientX, clientY)`(wide.ts)로 얻고, 끌기의 이동량(clientX의 차이)은 `zoomOf(요소)`로 나눈다.
+    SVG는 `bvSvgPoint`(getScreenCTM이 zoom을 친다), 비율로 셈하는 코드(`(clientX - r.left) / r.width`)는 그대로 맞다. 폰에서는 배율이 1이라
+    폰 검사는 이 사고를 잡지 못한다. 확인은 `PORT=<dev 포트> node qa/check-g2-taps.mjs [g2u7 | u5 ...]`(폰과 PC 크기에서 같은 설계 좌표를
+    실제 마우스로 눌러 반응을 견주고, 눌러야 하는 것의 가운데가 가려졌는지 본다).
 - **확인**: `PORT=<dev 포트> node qa/check-wide-switch.mjs`(27검증: 폰에서 안 켜짐, 랩 도중 회전, 마이 탭 스위치, 경계 크기) ·
   `PPORT=<preview 포트> node qa/check-wide-dist.mjs [캡처 폴더]`(운영 번들을 태블릿, PC, 폰 크기로 실제 사용자 길 따라 31검증) ·
   눈검수 `qa/shot-wide-{steps,range,shell,tabs}.mjs`, 지도 동작 `qa/check-wide-home.mjs`.
