@@ -99,6 +99,16 @@ const type = async (text) => {
 
 // ── [A] 프로필 카드의 학교 줄 ─────────────────────────────────────────
 await bootToMy();
+// 게스트: 학교 줄은 로그인 권유이고, 눌러도 학교 시트가 열리지 않는다
+check((await page.textContent("#sc-my .mypf-school-t")) === "로그인하고 학교 등록하기", "게스트: 학교 줄이 '로그인하고 학교 등록하기'");
+check(await inView("#sc-my .mypf-school"), "게스트: 로그인 권유 줄이 잘리지 않고 화면 안에 있다");
+await page.click("#sc-my .mypf-school");
+await W(500);
+check(!(await page.$eval(SHEET, (n) => n.classList.contains("open"))), "게스트: 눌러도 학교 시트가 열리지 않는다(로그인 화면으로 보낸다)");
+await shot("00-my-guest");
+// 여기부터는 로그인한 상태를 흉내 낸다(DEV 전용 표식)
+await page.evaluate(() => sessionStorage.setItem("ss.schoolauth", "1"));
+await bootToMy();
 check((await page.textContent("#sc-my .mypf-school-t")) === "학교 등록하기", "등록 전: 학교 줄이 '학교 등록하기'");
 check(await inView("#sc-my .my-prof"), "프로필 카드가 폰 한 화면(390×700) 안에 다 들어온다");
 check(await inView("#sc-my .my-menu"), "학교 줄이 생긴 뒤에도 메뉴가 한 화면 안에 들어온다");

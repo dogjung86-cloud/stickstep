@@ -885,8 +885,9 @@ src/
   공개 방식)·최소 수집(프로필 사진 미저장) 포함. 스타일은 styles/policy.css(공유 시트 오염 금지).
 
 ## 내 학교 등록 (2026-11-14, 운영 반영)
-- **무엇**: 마이 탭 프로필 카드의 학교 줄(.mypf-school) → "내 학교" 시트(검색, 등록, 변경, 해제). 선택 입력이고 게스트도 쓴다
-  (게스트는 기기에만 저장, 로그인하면 profiles.school_* 네 컬럼에도 반영). 화면은 screens/my.ts, 창구는 **core/school.ts**
+- **무엇**: 마이 탭 프로필 카드의 학교 줄(.mypf-school) → "내 학교" 시트(검색, 등록, 변경, 해제). 선택 입력이고 **로그인 전용**이다
+  (2026-11-14 사용자 결정. 게스트에게는 "로그인하고 학교 등록하기" 줄이 로그인 화면으로 보낸다. DEV에서 로그인 없이 보려면
+  sessionStorage `"ss.schoolauth"="1"`). profiles.school_* 네 컬럼에 반영한다. 화면은 screens/my.ts, 창구는 **core/school.ts**
   (검색 searchSchools, 서버 반영 pushSchool), 스타일 styles/school.css(접두 `.sch-`).
 - **검색**: 나이스 교육정보 개방 포털 학교기본정보를 Supabase 엣지 함수 `school-search`가 대신 부른다(인증키는 서버 시크릿
   NEIS_API_KEY, 번들에 싣지 않는다). 함수는 verify_jwt=false로 배포한다(게스트도 검색). 돌려주는 항목과 저장 항목은
@@ -901,7 +902,7 @@ src/
 - **운영 상태(2026-11-14)**: 마이그레이션(supabase/migrations/2026-11-14-school.sql) 실행 끝, 시크릿 NEIS_API_KEY 등록 끝,
   school-search는 대시보드 편집기로 배포(JWT 검증 끔). 함수 코드를 고치면 대시보드에서 다시 배포한다(이 기기에는 supabase CLI 로그인이 없다).
   방침은 v1.1(시행일 2026-11-14)로 올렸다. 점검: 함수 주소를 GET으로 열면 `{ok:true, keyed:true}`.
-- **QA**: `PORT=<dev 포트> node qa/e2e-school.mjs [스크린샷 폴더]`(45검증, 폰 390×700).
+- **QA**: `PORT=<dev 포트> node qa/e2e-school.mjs [스크린샷 폴더]`(48검증, 폰 390×700).
 
 ## IA·홈 구조 (2026-07-12 개편 — 사용자 확정)
 - **진입**: **스플래시 = 랜딩**(별도 랜딩 화면 없음 — 사용자 확정). 플립북 정착 후 하단 버튼 3개

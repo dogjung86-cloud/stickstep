@@ -14,7 +14,7 @@ import { haptic, HAPTIC } from "../core/haptics";
 import { getState, currentStreak, setNickname, setSchool, isWideOff, setWideOff, isPremium } from "../core/store";
 import { onAuthChange, currentUser, pushNickname, signOut } from "../core/auth";
 import { ownedPremiumSubjectIds, SELLABLE_SUBJECTS } from "../core/purchase";
-import { SCHOOL_KINDS, SCHOOL_KIND_DEFAULT, SCHOOL_QUERY_MIN, SCHOOL_QUERY_MAX, cleanSchoolQuery, pushSchool, searchSchools, type School } from "../core/school";
+import { SCHOOL_KINDS, SCHOOL_KIND_DEFAULT, SCHOOL_QUERY_MIN, SCHOOL_QUERY_MAX, cleanSchoolQuery, pushSchool, schoolAllowed, searchSchools, type School } from "../core/school";
 import { bootLevel, BOOT_TIERS } from "../core/level";
 import { bootArt } from "../ui/boots";
 import { profileAvatar, setProfileAvatar } from "../ui/avatar";
@@ -62,7 +62,8 @@ export function myScreen(o: {
     attrs: { "aria-label": "닉네임 바꾸기", "aria-haspopup": "dialog" },
     html: icon("pencil", 11),
   });
-  // 내 학교 줄(선택 입력). 게스트도 쓸 수 있고(기기에만 저장) 누르면 "내 학교" 시트가 열린다.
+  // 내 학교 줄(선택 입력, 로그인 전용). 로그인 상태면 "내 학교" 시트를 열고, 게스트에게는 로그인을 권한다
+  // (닉네임처럼 게스트에게는 저장된 학교도 보이지 않는다. 로그인하면 돌아온다).
   const schoolTxt = el("span", { class: "mypf-school-t" });
   const schoolBtn = el(
     "button",
@@ -71,10 +72,12 @@ export function myScreen(o: {
     schoolTxt,
   );
   function refreshSchoolLine(): void {
-    const sc = getState().school ?? null;
-    schoolTxt.textContent = sc ? sc.name : "학교 등록하기";
+    const can = schoolAllowed();
+    const sc = can ? (getState().school ?? null) : null;
+    schoolTxt.textContent = sc ? sc.name : can ? "학교 등록하기" : "로그인하고 학교 등록하기";
     schoolBtn.classList.toggle("empty", !sc);
-    schoolBtn.setAttribute("aria-label", sc ? `내 학교 ${sc.name}, 바꾸거나 해제하기` : "내 학교 등록하기");
+    schoolBtn.setAttribute("aria-haspopup", can ? "dialog" : "false");
+    schoolBtn.setAttribute("aria-label", sc ? `내 학교 ${sc.name}, 바꾸거나 해제하기` : can ? "내 학교 등록하기" : "로그인하고 내 학교 등록하기");
   }
   refreshSchoolLine();
   const badge = el("div", { class: "boot-badge" });
@@ -379,6 +382,10 @@ export function myScreen(o: {
   vv?.addEventListener("scroll", onVv);
   schoolBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
+    if (!schoolAllowed()) {
+      o.onOpenAccount(); // 게스트는 로그인 화면으로
+      return;
+    }
     schInput.value = "";
     setSchKind(getState().school?.kind ?? SCHOOL_KIND_DEFAULT); // 등록한 학교가 있으면 그 학교급에서 시작
     renderSchoolCurrent();
