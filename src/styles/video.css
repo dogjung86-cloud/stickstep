@@ -48,9 +48,26 @@
 .vp-rate { height: 32px; min-width: 52px; padding: 0 10px; border-radius: 99px; border: 0; background: rgba(255, 255, 255, .12); color: #fff; font: inherit; font-size: 12.5px; font-weight: 800; flex: none; cursor: pointer; }
 .vp-stage { flex: 1; min-height: 0; display: grid; place-items: center; padding: 0 0 env(safe-area-inset-bottom, 0px); }
 /* 세로 9:16 틀: 남은 높이를 다 쓰고, 폭이 모자라면 폭에 맞춘다 */
-.vp-frame { height: 100%; max-width: 100%; aspect-ratio: 9 / 16; background: #000; border-radius: 14px; overflow: hidden; display: grid; place-items: center; }
+.vp-frame { position: relative; height: 100%; max-width: 100%; aspect-ratio: 9 / 16; background: #000; border-radius: 14px; overflow: hidden; display: grid; place-items: center; }
 .vp-video { width: 100%; height: 100%; object-fit: contain; background: #000; display: block; }
 .vp-video[hidden] { display: none; }
+
+/* 파일 영상의 아래 줄: 10초 뒤로, 재생과 멈춤, 10초 앞으로(틀은 남은 높이에 맞춰 그만큼 줄어든다) */
+#sc-video.has-ctl .vp-stage { padding-bottom: 0; }
+.vp-ctl { flex: none; display: flex; align-items: center; justify-content: center; gap: 28px; padding: 12px 16px calc(14px + env(safe-area-inset-bottom, 0px)); }
+.vp-ctl[hidden] { display: none; }
+.vp-skip, .vp-pp { display: grid; place-items: center; border: 0; border-radius: 50%; padding: 0; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: transform .12s var(--ease-out), background-color .12s var(--ease-out); }
+.vp-skip { width: 52px; height: 52px; background: rgba(255, 255, 255, .1); color: #fff; }
+.vp-pp { width: 60px; height: 60px; background: #fff; color: #0E1116; }
+.vp-skip:active, .vp-pp:active { transform: scale(.965); }
+.vp-skip:active { background: rgba(255, 255, 255, .2); }
+.vp-skip svg, .vp-pp svg { display: block; }
+.vp-skip:focus-visible, .vp-pp:focus-visible { outline: 3px solid #9EC5FF; outline-offset: 3px; }
+/* 건너뛸 때 영상 위 그 쪽에 잠깐 뜨는 "−10초" */
+.vp-flash { position: absolute; top: 50%; padding: 8px 14px; border-radius: 99px; background: rgba(14, 17, 22, .72); color: #fff; font-size: 15px; font-weight: 800; letter-spacing: -.01em; pointer-events: none; opacity: 0; transform: translateY(-50%); transition: opacity .18s var(--ease-out); }
+.vp-flash.l { left: 12%; }
+.vp-flash.r { right: 12%; }
+.vp-flash.on { opacity: 1; }
 .vp-empty { padding: 0 28px; text-align: center; }
 .vp-empty-ic { display: grid; place-items: center; width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; background: rgba(255, 255, 255, .1); }
 .vp-empty b { display: block; font-size: 18px; font-weight: 800; letter-spacing: -.02em; }

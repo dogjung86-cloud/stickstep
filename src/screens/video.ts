@@ -43,6 +43,8 @@ export function videoScreen(ep: VideoEpisode, o: { onBack: () => void; onClosed?
   const markDone = (): void => setVideoProgress(ep.id, video ? video.currentTime : ep.seconds, true);
 
   let offMessage: (() => void) | null = null;
+  let ctl: HTMLElement | null = null; // 파일 영상의 아래 줄(10초 뒤로, 재생과 멈춤, 10초 앞으로)
+  let offFile: (() => void) | null = null;
   if (ep.src?.kind === "vimeo") {
     // Vimeo 임베드. 플레이어 스크립트를 싣지 않고 iframe과 postMessage만으로 재생 위치를 받는다(누르기 전에는 아무것도 받지 않는다).
     const src = ep.src;
@@ -135,11 +137,13 @@ export function videoScreen(ep: VideoEpisode, o: { onBack: () => void; onClosed?
         haptic(HAPTIC.tap);
         box.remove();
         v.hidden = false;
+        if (ctl) ctl.hidden = false;
         v.addEventListener("loadedmetadata", () => at > 1 && (v.currentTime = at), { once: true });
         v.load();
         void v.play().catch(() => {});
       });
       v.hidden = true;
+      if (ctl) ctl.hidden = true;
       frame.appendChild(box);
     });
     v.addEventListener("timeupdate", () => {
@@ -159,6 +163,65 @@ export function videoScreen(ep: VideoEpisode, o: { onBack: () => void; onClosed?
       rateBtn.textContent = `${RATES[ri]}배`;
     });
     frame.appendChild(v);
+
+    // 10초 뒤로, 재생과 멈춤, 10초 앞으로(2026-11-15 사용자 요청). 브라우저 기본 컨트롤에는 건너뛰기가 없어서 틀 아래 한 줄로 둔다.
+    // 누를 때마다 영상 위 그 쪽에 "−10초"를 잠깐 띄우고, 이어 누르면 "−20초"처럼 더해 보인다. PC는 ←, → 키도 같다.
+    const backBtn = el("button", { class: "vp-skip", attrs: { "aria-label": "10초 뒤로" }, html: icon("skipBack", 30) });
+    const ppBtn = el("button", { class: "vp-pp" });
+    const fwdBtn = el("button", { class: "vp-skip", attrs: { "aria-label": "10초 앞으로" }, html: icon("skipFwd", 30) });
+    ctl = el("div", { class: "vp-ctl" }, backBtn, ppBtn, fwdBtn);
+    const syncPP = (): void => {
+      const paused = v.paused || v.ended;
+      ppBtn.innerHTML = icon(paused ? "play" : "pause", 26);
+      ppBtn.setAttribute("aria-label", paused ? "재생" : "일시 정지");
+    };
+    v.addEventListener("play", syncPP);
+    v.addEventListener("pause", syncPP);
+    v.addEventListener("ended", syncPP);
+    syncPP();
+    ppBtn.addEventListener("click", () => {
+      haptic(HAPTIC.tap);
+      if (v.paused || v.ended) void v.play().catch(() => {});
+      else v.pause();
+    });
+
+    const flash = el("div", { class: "vp-flash", attrs: { "aria-hidden": "true" } });
+    frame.appendChild(flash);
+    let flashSum = 0;
+    let flashTimer = 0;
+    const seek = (d: number): void => {
+      if (!Number.isFinite(v.duration)) return; // 아직 길이를 모른다(불러오는 중)
+      v.currentTime = Math.min(v.duration, Math.max(0, v.currentTime + d));
+      flashSum = flashTimer && Math.sign(flashSum) === Math.sign(d) ? flashSum + d : d;
+      flash.textContent = `${flashSum < 0 ? "−" : "+"}${Math.abs(flashSum)}초`;
+      flash.className = `vp-flash on ${d < 0 ? "l" : "r"}`;
+      clearTimeout(flashTimer);
+      flashTimer = window.setTimeout(() => {
+        flash.classList.remove("on");
+        flashTimer = 0;
+      }, 700);
+    };
+    backBtn.addEventListener("click", () => {
+      haptic(HAPTIC.tap);
+      seek(-10);
+    });
+    fwdBtn.addEventListener("click", () => {
+      haptic(HAPTIC.tap);
+      seek(10);
+    });
+    const onKey = (e: KeyboardEvent): void => {
+      // 영상 자체에 초점이 있으면 브라우저 기본 동작에 맡긴다(두 번 넘어가지 않게)
+      if (e.target === v || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      if (e.key === "ArrowLeft") seek(-10);
+      else if (e.key === "ArrowRight") seek(10);
+      else return;
+      e.preventDefault();
+    };
+    window.addEventListener("keydown", onKey);
+    offFile = () => {
+      window.removeEventListener("keydown", onKey);
+      clearTimeout(flashTimer);
+    };
   } else {
     // 영상 파일이 아직 없다(검수용 미리 보기에서만 여기까지 온다)
     rateBtn.style.visibility = "hidden";
@@ -182,12 +245,13 @@ export function videoScreen(ep: VideoEpisode, o: { onBack: () => void; onClosed?
     frame.appendChild(box);
   }
 
-  const elm = el("section", { class: "screen", attrs: { id: "sc-video", "data-vid": ep.id } }, top, stage);
+  const elm = el("section", { class: ctl ? "screen has-ctl" : "screen", attrs: { id: "sc-video", "data-vid": ep.id } }, top, stage, ctl);
 
   const onExit = (): void => {
     if (closed) return;
     closed = true;
     offMessage?.();
+    offFile?.();
     if (video) {
       try {
         video.pause();

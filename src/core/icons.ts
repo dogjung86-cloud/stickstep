@@ -18,6 +18,10 @@ const ICONS: Record<string, IconDef> = {
   drop: { v: '<path d="M12 3.5C15 8 18 11.2 18 14.6a6 6 0 0 1-12 0C6 11.2 9 8 12 3.5z"/>', sw: 2 },
   cloud: { v: '<path d="M7 18a4 4 0 0 1-.6-7.96 5.5 5.5 0 0 1 10.7-1.1A4.3 4.3 0 0 1 16.8 18z"/>', sw: 2 },
   play: { v: '<path d="M8 5.5v13l11-6.5z"/>', fill: true },
+  pause: { v: '<rect x="6.5" y="5" width="4" height="14" rx="1.3"/><rect x="13.5" y="5" width="4" height="14" rx="1.3"/>', fill: true },
+  // 영상 10초 뒤로·앞으로: 위에서 시작해 돌아가는 화살표 안에 "10"
+  skipBack: { v: '<path d="M12 5.2A7.8 7.8 0 1 1 5.25 9.1"/><path d="M14.6 2.6L12 5.2l2.6 2.6"/><text x="12" y="15.7" text-anchor="middle" font-size="7.4" font-weight="800" letter-spacing="-.2" fill="currentColor" stroke="none">10</text>', sw: 2 },
+  skipFwd: { v: '<path d="M12 5.2A7.8 7.8 0 1 0 18.75 9.1"/><path d="M9.4 2.6L12 5.2 9.4 7.8"/><text x="12" y="15.7" text-anchor="middle" font-size="7.4" font-weight="800" letter-spacing="-.2" fill="currentColor" stroke="none">10</text>', sw: 2 },
   chevron: { v: '<path d="M9.5 6l6 6-6 6"/>', sw: 2.4 },
   back: { v: '<path d="M15 6l-6 6 6 6"/>', sw: 2.2 },
   chevronDown: { v: '<path d="M6 9.5l6 6 6-6"/>', sw: 2.4 },
