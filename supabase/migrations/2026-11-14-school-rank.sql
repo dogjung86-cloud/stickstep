@@ -6,6 +6,13 @@
 -- 남에게 보이는 것은 닉네임과 누적 스텝뿐이다. 닉네임이 없거나 쓸 수 없는 말이면 기본 이름("스텝 친구").
 -- 소셜 이름, 이메일, 아바타, 사용자 id는 돌려주지 않는다.
 
+-- 먼저 progress의 빠진 컬럼을 채운다. 운영 DB에는 life_step과 avatar_id가 없었다(2026-11-14 확인).
+-- 앱은 이 두 값을 진행도와 함께 올리는데 컬럼이 없으면 저장 요청 전체가 거절된다. 그래서 운영에서는 2026-07-11 뒤로
+-- 진행도가 서버에 저장되지 않고 있었다. 랭킹은 life_step(누적 스텝)을 쓰므로 여기서 함께 만든다(schema.sql 정본과 같다).
+alter table public.progress add column if not exists life_step int not null default 0;
+alter table public.progress add column if not exists avatar_id smallint;
+update public.progress set life_step = total_step where life_step < total_step; -- 옛 행은 보유 스텝이 하한
+
 -- 순위에 내 이름을 올리지 않는 스위치(학교 합계에는 그대로 더해진다)
 alter table public.profiles add column if not exists rank_hidden boolean not null default false;
 
