@@ -50,6 +50,7 @@
 /* 세로 9:16 틀: 남은 높이를 다 쓰고, 폭이 모자라면 폭에 맞춘다 */
 .vp-frame { height: 100%; max-width: 100%; aspect-ratio: 9 / 16; background: #000; border-radius: 14px; overflow: hidden; display: grid; place-items: center; }
 .vp-video { width: 100%; height: 100%; object-fit: contain; background: #000; display: block; }
+.vp-video[hidden] { display: none; }
 .vp-empty { padding: 0 28px; text-align: center; }
 .vp-empty-ic { display: grid; place-items: center; width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; background: rgba(255, 255, 255, .1); }
 .vp-empty b { display: block; font-size: 18px; font-weight: 800; letter-spacing: -.02em; }

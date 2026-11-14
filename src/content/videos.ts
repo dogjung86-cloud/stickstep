@@ -3,18 +3,18 @@
 // 영상은 레슨과 일대일이 아니다. 한 편이 이어진 레슨 하나에서 셋까지를 아우른다(중1 일곱 단원: 28편이 레슨 44개를
 // 빠짐없이 덮는다). 짝의 출처는 output/video-scripts/uN/uN-plan.md의 "아우르는 스텝" 열이다.
 //
-// 보이는 조건: 영상이 있는 곳(src, 예: { kind: "vimeo", id: "123456789" })이 적힌 영상만 지도와 레슨에 나타난다. 주소가 하나도 없는 지금은 아무것도
-// 나타나지 않는다(지도는 예전 그대로). 검수할 때는 주소 끝에 ?vid=1을 붙이면(또는 sessionStorage "ss.vid"="1")
-// 주소가 없는 영상도 자리 표시 재생 화면과 함께 전부 보인다.
+// 보이는 조건: 영상이 있는 곳(src)이 적힌 영상만 지도와 레슨에 나타난다. 2026-11-15부터 Ⅰ단원 두 편과 Ⅱ단원 다섯 편이
+// R2(Cloudflare)에 올라가 있다(아래 PUBLISHED). 나머지는 아직 나타나지 않는다. 검수할 때는 주소 끝에 ?vid=1을 붙이면
+// (또는 sessionStorage "ss.vid"="1") 주소가 없는 영상도 자리 표시 재생 화면과 함께 전부 보인다.
 
 import { findLesson, isPremiumLocked } from "./curriculum";
 
 /**
- * 영상이 있는 곳. 영상 파일은 앱에 싣지 않는다(2026-11-14 사용자 지시: Vimeo 같은 곳에 올려 임베드한다).
+ * 영상이 있는 곳. 영상 파일은 앱 번들에 싣지 않는다(2026-11-14 사용자 지시: 바깥에 올려 두고 주소로 튼다).
  *  - vimeo: Vimeo 영상 번호(id)와, 일부 공개 영상이면 주소의 h 값. 재생 화면이 Vimeo 플레이어를 iframe으로 싣는다.
- *  - file: 영상 파일 주소를 그대로 튼다(다른 호스팅의 mp4 주소용, 검수용).
+ *  - file: 영상 파일 주소를 <video>로 그대로 튼다. 지금 올린 영상은 모두 이것이다(R2의 web.mp4, 표지 poster.jpg).
  */
-export type VideoSource = { kind: "vimeo"; id: string; h?: string } | { kind: "file"; url: string; captions?: string };
+export type VideoSource = { kind: "vimeo"; id: string; h?: string } | { kind: "file"; url: string; poster?: string; captions?: string };
 
 export interface VideoEpisode {
   id: string; // "u3v1"
@@ -39,13 +39,13 @@ const ep = (unitId: string, no: number, title: string, lessonNos: number[], seco
 
 export const VIDEO_EPISODES: VideoEpisode[] = [
   // Ⅰ. 과학과 인류의 지속가능한 삶
-  ep("u1", 1, "과학적 탐구 방법", [1, 2], 200),
+  ep("u1", 1, "과학적 탐구 방법", [1, 2], 193),
   ep("u1", 2, "과학의 발전과 지속가능한 삶", [3, 4, 5], 202, "과학의 발전"),
   // Ⅱ. 생물의 구성과 다양성
-  ep("u2", 1, "세포", [1, 2, 3], 201),
-  ep("u2", 2, "다양한 세포와 생물의 구성 단계", [4, 5], 186, "세포와 구성 단계"),
-  ep("u2", 3, "생물다양성과 변이", [6, 7], 178),
-  ep("u2", 4, "생물의 분류", [8, 9], 194),
+  ep("u2", 1, "세포", [1, 2, 3], 203),
+  ep("u2", 2, "다양한 세포와 생물의 구성 단계", [4, 5], 202, "세포와 구성 단계"),
+  ep("u2", 3, "생물다양성과 변이", [6, 7], 188),
+  ep("u2", 4, "생물의 분류", [8, 9], 203),
   ep("u2", 5, "생물다양성 보전", [10], 185),
   // Ⅲ. 열
   ep("u3", 1, "온도와 열평형", [1, 2], 174),
@@ -74,6 +74,27 @@ export const VIDEO_EPISODES: VideoEpisode[] = [
   ep("u7", 4, "달의 위상 변화", [5], 143),
   ep("u7", 5, "일식과 월식", [6], 158),
 ];
+
+/**
+ * 올린 영상: 영상 id → R2 폴더("판/영상"). 여기에 적힌 영상만 지도와 레슨에 나타난다(길이 seconds도 실제 영상 길이로 고친다).
+ * 영상은 output/r2-test/hls-vN/<영상>/에 변환해 R2의 t13edcb467bf1/vN/에 올리고, 앱은 그 폴더의 web.mp4(1080 한 파일, 앞머리 정보가
+ * 맨 앞이라 받으면서 바로 재생)와 poster.jpg를 쓴다. .mp4는 1년 캐시라 고친 영상은 같은 자리에 덮어쓰지 않고 새 판 폴더(v5/ 등)에
+ * 올린 뒤 여기 그 영상의 판만 바꾼다. 만드는 법과 기록은 output/r2-test/README.md.
+ */
+const R2_BASE = "https://v.stickstep-media.com/t13edcb467bf1/";
+const PUBLISHED: Record<string, string> = {
+  u1v1: "v4/u1-ep01",
+  u1v2: "v4/u1-ep02",
+  u2v1: "v4/u2-ep01",
+  u2v2: "v4/u2-ep02",
+  u2v3: "v4/u2-ep03",
+  u2v4: "v4/u2-ep04",
+  u2v5: "v4/u2-ep05",
+};
+for (const e of VIDEO_EPISODES) {
+  const dir = PUBLISHED[e.id];
+  if (dir) e.src = { kind: "file", url: `${R2_BASE}${dir}/web.mp4`, poster: `${R2_BASE}${dir}/poster.jpg` };
+}
 
 /** 검수용 미리 보기(주소가 없는 영상도 자리 표시와 함께 보인다). ?vid=1 로 켜고 ?vid=0 으로 끈다. */
 export function videoPreviewOn(): boolean {
