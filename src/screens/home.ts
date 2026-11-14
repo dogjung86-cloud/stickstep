@@ -12,6 +12,8 @@ import { CURRICULA_OF, GRADE_LABEL, gradeOfUnit, subjectOfUnit, isUnlocked, isPr
 import { bootLevel } from "../core/level";
 import { bootArt } from "../ui/boots";
 import { examForUnit } from "../content/exams";
+import { visibleEpisodesOf, isVideoLocked, videoMinutes, type VideoEpisode } from "../content/videos";
+import { videoProgressOf } from "../core/store";
 import { serpentine, smoothPath } from "../ui/serpentine";
 import { mapDecorArt } from "../ui/mapDecor";
 import { soleDefs, soleSvg, stampTrail, stampOne, walkerSvg, themeInk, type SoleState } from "../ui/soleMap";
@@ -42,7 +44,7 @@ function splayOf(i: number): number {
 export function homeScreen(
   onOpenLesson: (id: string) => void,
   focusUnitId?: string,
-  nav2?: { onOpenExam?: (unitId: string) => void; onTab?: (k: GnavKey) => void; onOpenNotebook?: () => void; onOpenSplash?: () => void },
+  nav2?: { onOpenExam?: (unitId: string) => void; onTab?: (k: GnavKey) => void; onOpenNotebook?: () => void; onOpenSplash?: () => void; onOpenVideo?: (episodeId: string, onClosed: () => void) => void },
   opts?: { walkFrom?: string },
 ): Screen {
   const st = getState();
@@ -482,6 +484,41 @@ export function homeScreen(
     mapHost.style.opacity = "";
   }
 
+  /**
+   * 개념 영상 칸(길 위의 네모 화면). 상태 넷: 안 봄(재생 표시) · 보는 중("이어 보기") · 다 봄(초록 테두리, 귀퉁이 체크,
+   * "봤어요") · 유료 잠금(귀퉁이 자물쇠, 누르면 페이월). 닫고 돌아오면 그 자리에서 상태만 다시 칠한다.
+   */
+  function videoTile(ep: VideoEpisode): HTMLElement {
+    const small = el("small", {});
+    const tile = el(
+      "button",
+      { class: "gm-vid", attrs: { "data-vid": ep.id } },
+      el("span", { class: "gv-med", attrs: { "aria-hidden": "true" }, html: icon("play", 18) }),
+      el("span", { class: "gv-label" }, el("em", { text: "영상" }), el("b", { text: ep.label ?? ep.title }), small),
+    );
+    const paint = (): void => {
+      const locked = isVideoLocked(ep);
+      const pr = videoProgressOf(ep.id);
+      const seen = !!pr?.done;
+      const part = !seen && !!pr && pr.sec >= 5;
+      tile.classList.toggle("locked", locked);
+      tile.classList.toggle("seen", seen && !locked);
+      tile.classList.toggle("part", part && !locked);
+      small.textContent = locked ? "프리미엄" : seen ? "봤어요" : part ? "이어 보기" : videoMinutes(ep);
+      tile.setAttribute("aria-label", `개념 영상, ${ep.title}, ${locked ? "프리미엄 이용권으로 열려요" : seen ? "다 본 영상" : part ? "보던 영상" : videoMinutes(ep)}`);
+    };
+    paint();
+    tile.addEventListener("click", () => {
+      haptic(HAPTIC.navTap);
+      if (isVideoLocked(ep)) {
+        onOpenLesson(ep.lessons[0]); // 유료 레슨의 관문(main.ts openLesson)이 페이월로 보낸다
+        return;
+      }
+      nav2?.onOpenVideo?.(ep.id, paint);
+    });
+    return tile;
+  }
+
   function renderMap(u: Unit): void {
     cancelWalk?.();
     cancelWalk = null;
@@ -617,6 +654,24 @@ export function homeScreen(
       nodeEls.push(node);
     }
 
+    // 개념 영상 칸: 영상 한 편이 맡는 발자국 묶음의 첫 발자국 앞, 길 위에 한 칸으로 선다(2026-11-14 사용자 확정).
+    // 발자국(.gm-node)이 아니다. 그래서 순차 잠금, 정복률, 걷는 캐릭터가 서는 자리와 무관하고 언제든 눌린다.
+    // 보일 영상이 없으면 slotEls는 nodeEls와 같아 지도가 예전 그대로다. slotOfNode[i] = nodeEls[i]가 길에서 몇째 칸인지.
+    const slotEls: HTMLElement[] = [];
+    const slotOfNode: number[] = [];
+    const eps = visibleEpisodesOf(u.id);
+    nodeEls.forEach((nodeEl, i) => {
+      const lesson = u.lessons[i];
+      const ep = lesson ? eps.find((e) => e.lessons[0] === lesson.id) : undefined;
+      if (ep) {
+        const tile = videoTile(ep);
+        nodesLayer.insertBefore(tile, nodeEl);
+        slotEls.push(tile);
+      }
+      slotOfNode.push(slotEls.length);
+      slotEls.push(nodeEl);
+    });
+
     // 워커가 서 있는 노드 = 첫 미완료 레슨(프리미엄 잠금 포함 — 관문 앞에 선다), 전부 완료면 시험 노드.
     const firstUndone = u.lessons.findIndex((l) => !isDone(l.id));
     const lessonsDone = firstUndone < 0 ? u.lessons.length : firstUndone;
@@ -638,22 +693,25 @@ export function homeScreen(
     afterPaint(() => {
       const W = gm.clientWidth || 340;
       const amp = Math.min(102, W * 0.25);
-      const { points, height } = serpentine(nodeEls.length, { width: W, gap: 122, top: 66, bottom: 100, amp, pattern: STEP_PATTERN });
+      const { points, height } = serpentine(slotEls.length, { width: W, gap: 122, top: 66, bottom: 100, amp, pattern: STEP_PATTERN });
       gm.style.height = `${height}px`;
       // 노드는 폭 대비 %로 배치 → SVG(폭 100%로 신축)와 함께 스케일되어 회전/리사이즈에 강함.
       points.forEach((p, i) => {
-        nodeEls[i].style.left = `${(p.x / W) * 100}%`;
-        nodeEls[i].style.top = `${p.y}px`;
+        slotEls[i].style.left = `${(p.x / W) * 100}%`;
+        slotEls[i].style.top = `${p.y}px`;
         // 라벨 지그재그(지도 단순화 ①): 왼쪽 치우침 노드 → 라벨 오른쪽(lab-r), 오른쪽 → 왼쪽(lab-l).
         // 판정은 화면 중앙선이 아니라 이웃 노드 평균 = 국소 진행선 기준(중앙 부근 노드의 임의성 제거).
         // 라벨이 항상 지도 안쪽을 향해 화면 잘림이 구조적으로 불가능(규칙의 부수 효과 — 유지).
         const nb = [points[i - 1], points[i + 1]].filter(Boolean);
         const ref = nb.length ? nb.reduce((a, q) => a + q.x, 0) / nb.length : p.x + 1;
-        nodeEls[i].classList.add(p.x <= ref ? "lab-r" : "lab-l");
+        slotEls[i].classList.add(p.x <= ref ? "lab-r" : "lab-l");
       });
+      // 길은 영상 칸까지 모두 지나고, 걷는 캐릭터와 "걸어온 길"의 기준은 발자국이다(영상 칸에는 서지 않는다).
+      const nodePts = slotOfNode.map((si) => points[si]);
+      const anchorSlot = slotOfNode[anchorIdx];
       // 발자국 트레일 — 연결선·점선 폐기: 걸어온 길은 진한 잉크, 갈 길은 옅은 발자국(확정안 A).
-      const walkedD = anchorIdx > 0 ? smoothPath(points.slice(0, anchorIdx + 1)) : "";
-      const futureD = anchorIdx < points.length - 1 ? smoothPath(points.slice(anchorIdx)) : "";
+      const walkedD = anchorSlot > 0 ? smoothPath(points.slice(0, anchorSlot + 1)) : "";
+      const futureD = anchorSlot < points.length - 1 ? smoothPath(points.slice(anchorSlot)) : "";
       const holder = el("div", {});
       holder.innerHTML =
         `<svg class="gm-path" viewBox="0 0 ${W} ${height}" width="${W}" height="${height}" preserveAspectRatio="none">` +
@@ -671,12 +729,13 @@ export function homeScreen(
         ? stampTrail(svgEl, future, { from: 42, endGap: 40, fill: "rgba(143,161,181,.30)", delayBase: 340, delayStep: 18, reduce: reduceMotion })
         : [];
       // 스틱맨 워커 — 발 앵커 = 노드 중심 +8px(패드 중심). 깃발은 단원 테마색.
-      const wp = points[anchorIdx];
+      const wp = nodePts[anchorIdx];
       walker.style.left = `${((wp.x / W) * 100).toFixed(3)}%`;
       walker.style.top = `${wp.y + 8}px`;
       placeDecor(decorLayer, points, W, u.id);
       if (walking && destNode && futureD) {
-        startWalk({ svgEl, futureD, walker, destNode, dest: points[walkIdx], W, futureStamps });
+        // 다음 발자국까지 사이에 영상 칸이 있으면 그 칸을 지나 두 구간을 걷는다
+        startWalk({ svgEl, futureD, walker, destNode, dest: nodePts[walkIdx], W, futureStamps, segs: slotOfNode[walkIdx] - slotOfNode[fromIdx] });
       }
     });
   }
@@ -697,12 +756,14 @@ export function homeScreen(
     dest: { x: number; y: number };
     W: number;
     futureStamps: { g: SVGGElement; d: number }[];
+    segs: number; // 걸을 구간 수(사이에 영상 칸이 없으면 1)
   }): void {
     // 걷기 구간 = 갈 길 경로의 첫 베지어(출발 노드 → 다음 노드) — 트레일 도장과 같은 곡선을 밟는다
     const parts = o.futureD.split(" C ");
+    const segs = Math.max(1, Math.min(o.segs, parts.length - 1));
     if (parts.length < 2) return;
     const wp = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    wp.setAttribute("d", `${parts[0]} C ${parts[1]}`);
+    wp.setAttribute("d", parts.slice(0, segs + 1).join(" C "));
     wp.setAttribute("fill", "none");
     wp.setAttribute("stroke", "none");
     o.svgEl.appendChild(wp);
@@ -757,7 +818,7 @@ export function homeScreen(
         }
       });
       const t0 = performance.now();
-      const DUR = 2100;
+      const DUR = 2100 + 800 * (segs - 1); // 영상 칸을 지나 두 구간을 걸으면 조금 더 걸린다
       // 도착 노드가 출발점보다 왼쪽이면 왼쪽을 보고 걷는다(항상 오른쪽만 보던 것 수정)
       o.walker.classList.toggle("face-l", o.dest.x < wp.getPointAtLength(0).x);
       pose("pa");

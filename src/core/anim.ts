@@ -39,6 +39,11 @@ export function createLoop(fn: LoopFn): Loop {
   return new Loop(fn);
 }
 
+/** 지금 돌고 있는 루프들. 화면을 잠깐 덮었다가(개념 영상) 그대로 돌아올 때 멈춘 루프를 다시 돌리려고 미리 받아 둔다. */
+export function runningLoops(): Loop[] {
+  return Array.from(active);
+}
+
 export function stopAllLoops(): void {
   for (const loop of Array.from(active)) loop.stop();
 }

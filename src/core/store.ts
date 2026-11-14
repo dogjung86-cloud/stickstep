@@ -105,6 +105,15 @@ export interface AppState {
   // 다른 계정이 로그인하면 sync.ts가 병합 대신 서버 상태로 교체하기 위한 소유 표식 —
   // 로그아웃해도 지우지 않는다(그래야 다음 로그인 때 주인을 판별). 기기 메타라 동기화 제외.
   syncedUserId?: string | null;
+  // 개념 영상 시청 기록(영상 id → 어디까지 봤는지, 다 봤는지). 기기 저장이고 동기화에서 뺀다
+  // (progress 표에 컬럼이 없다. rowOf에 넣으면 push 전체가 400으로 죽는다).
+  videos?: Record<string, VideoProgress>;
+}
+
+/** 개념 영상 한 편의 시청 기록. sec = 마지막으로 본 위치(초), done = 끝까지(9할 넘게) 본 적이 있다. */
+export interface VideoProgress {
+  sec: number;
+  done: boolean;
 }
 
 /** 등록한 학교. code = 나이스 표준학교코드, region = 시도 + 시군구(동명 학교 구분용), kind = 학교급. */
@@ -346,6 +355,20 @@ export function setLastUnit(key: string, unitId: string): void {
   if (state.lastUnits?.[key] === unitId && state.recentUnitId === unitId) return;
   state.lastUnits = { ...(state.lastUnits ?? {}), [key]: unitId };
   state.recentUnitId = unitId;
+  save();
+}
+
+/** 개념 영상 시청 기록. 본 적이 없으면 null. */
+export function videoProgressOf(id: string): VideoProgress | null {
+  return state.videos?.[id] ?? null;
+}
+
+/** 시청 위치를 적는다. done은 한 번 켜지면 꺼지지 않는다(다시 보다가 중간에 나가도 "봤어요"는 남는다). */
+export function setVideoProgress(id: string, sec: number, done: boolean): void {
+  const prev = state.videos?.[id];
+  const next = { sec: Math.max(0, Math.round(sec)), done: done || !!prev?.done };
+  if (prev && prev.sec === next.sec && prev.done === next.done) return;
+  state.videos = { ...(state.videos ?? {}), [id]: next };
   save();
 }
 
