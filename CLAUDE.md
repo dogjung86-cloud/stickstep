@@ -891,7 +891,8 @@ src/
 - **검색**: 나이스 교육정보 개방 포털 학교기본정보를 Supabase 엣지 함수 `school-search`가 대신 부른다(인증키는 서버 시크릿
   NEIS_API_KEY, 번들에 싣지 않는다). 함수는 verify_jwt=false로 배포한다(게스트도 검색). 돌려주는 항목과 저장 항목은
   **표준학교코드·학교명·지역(시도 + 시군구)·학교급 넷뿐**이다. 항목을 늘리면 privacy.html(1의 다)도 함께 고친다.
-  학교급은 `SCHOOL_KINDS`(지금 중학교만)에 값을 더하면 시트에 세그가 생긴다(서버 허용 목록은 이미 초·중·고).
+  학교급은 `SCHOOL_KINDS`(초·중·고 세그, 처음 값은 `SCHOOL_KIND_DEFAULT` 중학교, 등록한 학교가 있으면 그 학교급). 등록은 한 곳뿐이다.
+  닉네임 시트는 자판 높이만큼 들어 올린다(`.mysheet.nick`, `--my-kb`. my.ts onVv가 visualViewport로 잰다).
 - **DEV 스텁**: 개발 서버에서는 고정 목록에서 찾고 서버 반영은 `window.__ssSchoolPush`에만 적는다. 실호출 강제는
   sessionStorage `"ss.schoolreal"="1"`, 실패 화면은 `"ss.schoolstub"="fail"`.
 - **동기화**: 닉네임과 같은 규칙(sync.ts fullSync의 학교 단계). 같은 계정·첫 로그인은 기기 값 우선, 기기에 없으면 서버 값,
@@ -900,7 +901,7 @@ src/
 - **운영 상태(2026-11-14)**: 마이그레이션(supabase/migrations/2026-11-14-school.sql) 실행 끝, 시크릿 NEIS_API_KEY 등록 끝,
   school-search는 대시보드 편집기로 배포(JWT 검증 끔). 함수 코드를 고치면 대시보드에서 다시 배포한다(이 기기에는 supabase CLI 로그인이 없다).
   방침은 v1.1(시행일 2026-11-14)로 올렸다. 점검: 함수 주소를 GET으로 열면 `{ok:true, keyed:true}`.
-- **QA**: `PORT=<dev 포트> node qa/e2e-school.mjs [스크린샷 폴더]`(41검증, 폰 390×700).
+- **QA**: `PORT=<dev 포트> node qa/e2e-school.mjs [스크린샷 폴더]`(45검증, 폰 390×700).
 
 ## IA·홈 구조 (2026-07-12 개편 — 사용자 확정)
 - **진입**: **스플래시 = 랜딩**(별도 랜딩 화면 없음 — 사용자 확정). 플립북 정착 후 하단 버튼 3개

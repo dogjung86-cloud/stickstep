@@ -12,8 +12,10 @@ import type { SchoolInfo } from "./store";
 
 export type School = SchoolInfo;
 
-/** 검색할 학교급. 지금은 중학교만 연다. 값을 더하면 시트에 학교급 세그가 생긴다(서버 허용 목록과 같아야 한다). */
-export const SCHOOL_KINDS: readonly string[] = ["중학교"];
+/** 검색할 학교급(시트의 학교급 세그 순서). 서버 함수 허용 목록과 같아야 한다. 등록은 학교급과 상관없이 한 곳뿐이다. */
+export const SCHOOL_KINDS: readonly string[] = ["초등학교", "중학교", "고등학교"];
+/** 시트를 처음 열 때 고르는 학교급(등록한 학교가 있으면 그 학교급). */
+export const SCHOOL_KIND_DEFAULT = "중학교";
 export const SCHOOL_QUERY_MIN = 2;
 export const SCHOOL_QUERY_MAX = 20;
 
@@ -61,7 +63,7 @@ function asSchool(v: unknown): School | null {
 }
 
 /** 학교 이름으로 검색. 두 글자 미만이면 호출하지 않고 "short"를 돌려준다. */
-export async function searchSchools(rawQuery: string, kind: string = SCHOOL_KINDS[0]): Promise<SchoolSearchResult> {
+export async function searchSchools(rawQuery: string, kind: string = SCHOOL_KIND_DEFAULT): Promise<SchoolSearchResult> {
   const q = cleanSchoolQuery(rawQuery);
   if (q.length < SCHOOL_QUERY_MIN) return { ok: false, reason: "short" };
 
