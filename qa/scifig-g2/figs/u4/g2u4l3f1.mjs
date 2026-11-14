@@ -27,16 +27,26 @@ export default async function draw(root, { paint: P, svg: S, noise: N }) {
     const dens = 0.62 * Math.exp(-2.4 * s2) + 0.2 * nzv; // 시선 방향으로 겹친 구름의 두께
     const n = nz.fbm(x * 0.03, y * 0.03, 3) * 0.1;
     const lit = P.clamp(0.5 - (dx * 0.55 + dy * 0.6) * 0.5 + 0.25 * nzv); // 왼쪽 위 밝음
-    const rim = Math.pow(s, 6) * 0.25; // 가장자리 산란
+    const rim = Math.pow(s, 5) * 0.32; // 가장자리 산란
     const edge = P.smooth(1.02, 0.9, s);
     const col = P.mixc(deep, pale, P.clamp(0.35 + 0.55 * lit - 0.25 * dens));
     const c = P.srgb(col);
-    return [c[0], c[1], c[2], P.clamp((dens * (1 + n) * 0.72 + rim) * edge)];
+    return [c[0], c[1], c[2], P.clamp((dens * (1 + n) * 0.9 + rim) * edge)];
   });
-  // 점 구름: 전자가 있을 확률을 점의 밀도로 나타낸다(지름 방향 분포 r²e^(−2r/λ)의 표본을 평면에 투영)
-  const lam = 36;
+  // 구의 입체감: 왼쪽 위 옅은 빛 번짐, 오른쪽 아래 안쪽 그늘
   ctx.save();
-  for (let i = 0; i < 2300; i++) {
+  ctx.beginPath();
+  ctx.arc(A[0], A[1], R * 0.99, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.fillStyle = P.rg(ctx, A[0] - R * 0.42, A[1] - R * 0.48, 0, A[0] - R * 0.42, A[1] - R * 0.48, R * 0.62, [[0, "rgba(255,255,255,.42)"], [1, "rgba(255,255,255,0)"]]);
+  ctx.fillRect(A[0] - R, A[1] - R, 2 * R, 2 * R);
+  ctx.fillStyle = P.rg(ctx, A[0] - R * 0.25, A[1] - R * 0.3, R * 0.55, A[0] - R * 0.1, A[1] - R * 0.1, R * 1.15, [[0, "rgba(20,60,150,0)"], [1, "rgba(20,60,150,.16)"]]);
+  ctx.fillRect(A[0] - R, A[1] - R, 2 * R, 2 * R);
+  ctx.restore();
+  // 점 구름: 전자가 있을 확률을 점의 밀도로 나타낸다(지름 방향 분포 r²e^(−2r/λ)의 표본을 평면에 투영)
+  const lam = 34;
+  ctx.save();
+  for (let i = 0; i < 3200; i++) {
     const r = (-lam / 2) * Math.log(rand() * rand() * rand() + 1e-9);
     if (r > R * 0.96) continue;
     const ct = 2 * rand() - 1, ph = rand() * Math.PI * 2;
