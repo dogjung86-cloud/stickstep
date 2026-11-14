@@ -7,6 +7,7 @@ import { elecMiniArt } from "../../ui/elecFigures";
 import { twoBulbFig, x7Mini } from "../../ui/g2u7v5Figures";
 import { concept } from "../dsl";
 import { H, handFig, lab, note, numbered, term, words } from "./unit7v5parts";
+import { sciFig } from "./sciFigG2";
 
 const bulbLab = lab("g2u7BulbLab");
 const seriesCurLab = lab("g2u7SeriesCurLab");
@@ -231,6 +232,7 @@ export const L7: Step[] = numbered([
       term("자기력", "자석과 자석, 자석과 쇠붙이 사이에 작용하는 힘이에요. 나침반 바늘도 작은 자석이라 자기력을 받아 움직여요."),
       term("자기장", "<b>자기력이 작용하는 공간</b>이에요. 자석 주위에는 자기장이 있어서, 그 안에 나침반을 놓으면 바늘이 돌아가요."),
       term("자기장의 방향", "그 자리에 놓은 <b>나침반 바늘의 N극이 가리키는 방향</b>이에요. 자석이 가까이 없을 때 N극이 북쪽을 가리키는 것은 지구도 자기장을 만들기 때문이에요."),
+      sciFig("g2u7l7f1", "막대자석 주위에 뿌린 쇳가루가 N극과 S극을 잇는 굽은 줄무늬로 늘어서 있고, 둘레에 놓은 나침반 바늘의 N극이 자석의 N극에서 나와 S극으로 들어가는 방향을 가리켜요.", "막대자석 둘레에 나침반을 놓으면 바늘의 N극은 자석의 N극에서 나와 S극으로 들어가는 쪽을 가리켜요. 쇳가루도 같은 길을 따라 늘어서요."),
     ],
     cta: "실험실 열기",
   }),

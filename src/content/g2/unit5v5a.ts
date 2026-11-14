@@ -6,6 +6,7 @@ import { binSort, comic, mcq, multi, opener, order, ox, pairMatch, recap, cut } 
 import { factorShapesFig, p3MiniArt, psFlowFig } from "../../ui/plant3Figures";
 import { gasLinesFig, lampBarsFig, leafPiecesFig } from "../../ui/g2u5v5Figures";
 import { C, designLab, farmLab, note, problems, scopeLab, sensorLab, starchLab, supplyLab, term, words } from "./unit5v5kit";
+import { sciFig } from "./sciFigG2";
 
 // ══ 1. 광합성: 만화(그대로) → 현미경 관찰 → 용어 → 재료 주고 끊기 → 용어 → 정리 → 문제 ══
 export const G2U5L1_STEPS: Step[] = [
@@ -31,6 +32,7 @@ export const G2U5L1_STEPS: Step[] = [
       { k: "figure", svg: cut("plant", "g2u5l1b", "학생이 물뿌리개로 화분의 흙에 물을 주고 쌤은 잎 뒷면을 돋보기로 들여다보며, 흙에서 줄기를 따라 올라가는 파란 화살표와 공기에서 잎으로 들어가는 회색 화살표가 그려진 장면"), cap: "물은 흙에서 줄기로 올라오고, 이산화 탄소는 잎의 작은 구멍인 기공으로 들어와요" },
       term("기공", "잎에 있는 아주 작은 구멍이에요. 광합성에 필요한 <b>이산화 탄소</b>가 주로 이곳으로 들어오고, 광합성으로 생긴 <b>산소</b>도 이곳으로 나가요."),
       term("물관", "뿌리에서 흡수한 <b>물</b>이 잎까지 올라가는 통로예요. 광합성에 쓰이는 물은 이 길로 잎에 닿아요."),
+      sciFig("g2u5l1f1", "잎을 잘라 본 단면. 위 표피 아래에 엽록체가 가득한 길쭉한 세포가 빽빽하고, 그 아래 둥근 세포 사이에 공기 틈이 있어요. 잎맥 속 물관으로 물이 들어오고, 아래 표피의 기공으로 이산화 탄소가 들어오고 산소가 나가요.", "잎을 가로로 자른 단면이에요. 이산화 탄소는 잎 뒷면의 기공으로, 물은 잎맥의 물관으로 들어와 엽록체가 가득한 세포에서 만나요."),
       term("포도당과 녹말", "광합성으로 만들어지는 양분은 <b>포도당</b>이에요. 포도당은 곧 <b>녹말</b>로 바뀌어 엽록체에 저장돼요. 녹말은 포도당이 아주 많이 이어져 이루어진 물질이에요."),
       note("물은 잎이 아니라 <b>뿌리</b>에서 흡수되고, 이산화 탄소는 뿌리가 아니라 주로 <b>잎의 기공</b>으로 들어와요. 두 재료가 들어오는 길이 달라요."),
     ],
