@@ -12,8 +12,9 @@ import { CURRICULA_OF, GRADE_LABEL, gradeOfUnit, subjectOfUnit, isUnlocked, isPr
 import { bootLevel } from "../core/level";
 import { bootArt } from "../ui/boots";
 import { examForUnit } from "../content/exams";
-import { visibleEpisodesOf, isVideoLocked, videoMinutes, type VideoEpisode } from "../content/videos";
-import { videoProgressOf } from "../core/store";
+import { visibleEpisodesOf, isVideoLocked, isVideoPassed, videoGateOf, videoStepsOn, videoMinutes, type VideoEpisode } from "../content/videos";
+import { videoProgressOf, skipVideo } from "../core/store";
+import { openVideoGateSheet } from "../ui/videoGate";
 import { serpentine, smoothPath } from "../ui/serpentine";
 import { mapDecorArt } from "../ui/mapDecor";
 import { soleDefs, soleSvg, stampTrail, stampOne, walkerSvg, themeInk, type SoleState } from "../ui/soleMap";
@@ -37,6 +38,8 @@ const UNIT_THEME: Record<string, string> = { u2: "bio", u3: "heat", u4: "matter"
 const STEP_PATTERN = [0.24, -0.12, 0.66, 0.1, 0.46, -0.36, 0, -0.62];
 // 발끝 벌림(스플레이) — 목업 확정 시퀀스 +6/−8/+8/−6 계승(오른발 시계+, 왼발 반시계−).
 const SPLAY_SEQ = [6, -8, 8, -6];
+// 영상 칸(높이 44)에 선 캐릭터의 발 높이: 발자국에 설 때(중심 +8px)보다 이만큼 위, 곧 칸의 윗변에 올라선다.
+const TILE_DY = -30;
 function splayOf(i: number): number {
   return SPLAY_SEQ[i % SPLAY_SEQ.length];
 }
@@ -51,6 +54,10 @@ export function homeScreen(
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   // 걷기 연출(새 레슨 첫 완료 귀환) — 첫 지도 렌더가 한 번만 소비. reduced-motion은 도장만 즉시(연출 생략).
   let pendingWalkFrom = reduceMotion ? undefined : opts?.walkFrom;
+  // 영상 걸음을 방금 지나갔을 때(영상을 다 보고 닫음) 그 영상 칸에서 레슨으로 걷는다. 다음 지도 렌더가 한 번만 소비.
+  let pendingVideoWalk: string | undefined;
+  // 지금 지도의 영상 칸 다시 칠하기(영상 id → paint). 지도를 다시 그리지 않고 칸 상태만 고칠 때 쓴다.
+  const tilePaints = new Map<string, () => void>();
   let cancelWalk: (() => void) | null = null; // 지도 재렌더·화면 이탈 시 타이머/rAF 정리
   let finishWalk: (() => void) | null = null; // 걷는 중 노드 탭 = 즉시 완주 처리(인터랙션 차단 금지)
   // 과목·학년 트랙 — 방금 학습한 단원이 있으면 그 단원의 과목·학년으로 따라간다.
@@ -280,6 +287,27 @@ export function homeScreen(
       }
       const lesson = u.lessons[idx];
       const prem = isPremiumLocked(lesson);
+      const gateEp = prem ? null : videoGateOf(lesson.id);
+      if (gateEp) {
+        // 영상 걸음: 이어서 할 것은 그 묶음의 개념 영상이다(보거나 건너뛰면 레슨이 열린다)
+        nextBody.append(
+          el("div", { class: "hr-v", text: gateEp.label ?? gateEp.title }),
+          el("div", { class: "hr-s", text: `개념 영상 · ${videoMinutes(gateEp)} · 보면 다음 레슨이 열려요` }),
+        );
+        const watchBtn = el("button", { class: "hr-btn", text: "영상 보기" });
+        watchBtn.addEventListener("click", () => {
+          haptic(HAPTIC.tap);
+          watchEpisode(gateEp);
+        });
+        const skipBtn = el("button", { class: "hr-skip", text: "건너뛰고 레슨 시작" });
+        skipBtn.addEventListener("click", () => {
+          haptic(HAPTIC.tap);
+          skipVideo(gateEp.id);
+          onOpenLesson(lesson.id);
+        });
+        nextBody.append(watchBtn, skipBtn);
+        return;
+      }
       nextBody.append(
         el("div", { class: "hr-v", text: lesson.label ?? lesson.title }),
         el("div", { class: "hr-s", text: `${u.roman}. ${u.title} · 레슨 ${idx + 1}${prem ? " · 프리미엄" : ""}` }),
@@ -508,15 +536,41 @@ export function homeScreen(
       tile.setAttribute("aria-label", `개념 영상, ${ep.title}, ${locked ? "프리미엄 이용권으로 열려요" : seen ? "다 본 영상" : part ? "보던 영상" : videoMinutes(ep)}`);
     };
     paint();
+    tilePaints.set(ep.id, paint);
     tile.addEventListener("click", () => {
       haptic(HAPTIC.navTap);
       if (isVideoLocked(ep)) {
         onOpenLesson(ep.lessons[0]); // 유료 레슨의 관문(main.ts openLesson)이 페이월로 보낸다
         return;
       }
-      nav2?.onOpenVideo?.(ep.id, paint);
+      watchEpisode(ep);
     });
     return tile;
+  }
+
+  /**
+   * 영상을 연다(영상 칸, 영상 걸음 시트, 넓은 화면의 '이어서 학습'이 같은 길을 쓴다). 닫으면 그 칸의 상태만 다시 칠하고,
+   * 이번에 영상 걸음을 지나갔으면(다 봄) 지도를 다시 그려 캐릭터가 영상 칸에서 레슨으로 걸어가게 한다.
+   */
+  function watchEpisode(ep: VideoEpisode): void {
+    const wasPassed = isVideoPassed(ep);
+    nav2?.onOpenVideo?.(ep.id, () => {
+      tilePaints.get(ep.id)?.();
+      if (wasPassed || !isVideoPassed(ep) || !videoStepsOn()) return;
+      if (!reduceMotion) pendingVideoWalk = ep.id;
+      renderMap(cur[sel]);
+    });
+  }
+
+  /** 영상을 지나가지 않은 채 묶음의 첫 레슨을 눌렀다: 영상을 볼지, 건너뛰고 레슨을 시작할지 묻는다. */
+  function askVideoGate(ep: VideoEpisode, lessonId: string): void {
+    openVideoGateSheet(elm, ep, {
+      onWatch: () => watchEpisode(ep),
+      onSkip: () => {
+        skipVideo(ep.id);
+        onOpenLesson(lessonId);
+      },
+    });
   }
 
   function renderMap(u: Unit): void {
@@ -551,7 +605,7 @@ export function homeScreen(
       ),
     );
 
-    const gm = el("div", { class: "gamemap" });
+    const gm = el("div", { class: "gamemap", style: `--gm-ink:${ink}` }); // --gm-ink: 영상 칸의 "지금 여기" 고리 색
     const terrain = el("div", { class: `gm-terrain ${theme}` });
     const decorLayer = el("div", { class: "gm-decor" });
     const nodesLayer = el("div", { class: "gm-nodes" });
@@ -573,16 +627,20 @@ export function homeScreen(
     nodesLayer.addEventListener("click", () => finishWalk?.(), true);
 
     let premRibbon = false; // 첫 프리미엄 노드에만 리본을 달아 소음을 줄인다
+    tilePaints.clear();
     const nodeEls: HTMLElement[] = u.lessons.map((lesson, i) => {
       const unlocked = isUnlocked(u, i);
       const done = isDone(lesson.id);
       const prem = !done && isPremiumLocked(lesson); // 완료된 레슨은 그대로 훈장
-      const now = unlocked && !done && !prem;
+      // 영상 걸음(2026-11-15): 앞 레슨을 마쳤어도 묶음 영상을 보거나 건너뛰기 전에는 잠긴 모양이고, 누르면 고르는 시트가 뜬다
+      const gateEp = unlocked && !done && !prem ? videoGateOf(lesson.id) : null;
+      const now = unlocked && !done && !prem && !gateEp;
       const state: SoleState = done ? "done" : prem ? "prem" : now ? "now" : "locked";
       const splay = splayOf(i);
       const cls = ["gm-node", "bsn"];
       if (theme) cls.push(theme);
       cls.push(done ? "done" : prem ? "prem" : now ? "now" : "locked");
+      if (gateEp) cls.push("vgate");
 
       const med = el("div", {
         class: "gm-med",
@@ -595,11 +653,13 @@ export function homeScreen(
           ? "프리미엄 · 이용권으로 열려요"
           : now
             ? "학습 시작 가능"
-            : "잠김 · 이전 레슨을 먼저 완료해요";
+            : gateEp
+              ? "잠김 · 영상을 보거나 건너뛰면 열려요"
+              : "잠김 · 이전 레슨을 먼저 완료해요";
       const node = el("button", {
         class: cls.join(" "),
         style: `--splay:${splay}deg`,
-        attrs: now || done || prem
+        attrs: now || done || prem || gateEp
           ? { "aria-label": `${lesson.label ?? lesson.title}, ${stateLabel}` }
           : { "aria-label": `${lesson.label ?? lesson.title}, ${stateLabel}`, "aria-disabled": "true" },
       }, med);
@@ -614,6 +674,11 @@ export function homeScreen(
           // 프리미엄 잠금 — 페이월로 안내(main.ts openLesson이 라우팅)
           haptic(HAPTIC.navTap);
           onOpenLesson(lesson.id);
+          return;
+        }
+        if (gateEp) {
+          haptic(HAPTIC.navTap);
+          askVideoGate(gateEp, lesson.id);
           return;
         }
         if (!unlocked) {
@@ -655,10 +720,13 @@ export function homeScreen(
     }
 
     // 개념 영상 칸: 영상 한 편이 맡는 발자국 묶음의 첫 발자국 앞, 길 위에 한 칸으로 선다(2026-11-14 사용자 확정).
-    // 발자국(.gm-node)이 아니다. 그래서 순차 잠금, 정복률, 걷는 캐릭터가 서는 자리와 무관하고 언제든 눌린다.
+    // 발자국(.gm-node)이 아니어서 정복률과 발자국 수에는 들지 않고, 앞 레슨을 마치지 않아도 언제든 눌린다.
+    // 다만 영상 걸음(2026-11-15)이 켜져 있으면 지도의 한 걸음이다: 묶음의 첫 레슨은 그 영상을 보거나 건너뛰어야 열리고,
+    // 그동안 걷는 캐릭터는 영상 칸에 선다(content/videos.ts videoGateOf).
     // 보일 영상이 없으면 slotEls는 nodeEls와 같아 지도가 예전 그대로다. slotOfNode[i] = nodeEls[i]가 길에서 몇째 칸인지.
     const slotEls: HTMLElement[] = [];
     const slotOfNode: number[] = [];
+    const tileSlot = new Map<string, number>(); // 영상 id → 길에서 몇째 칸인지
     const eps = visibleEpisodesOf(u.id);
     nodeEls.forEach((nodeEl, i) => {
       const lesson = u.lessons[i];
@@ -666,34 +734,49 @@ export function homeScreen(
       if (ep) {
         const tile = videoTile(ep);
         nodesLayer.insertBefore(tile, nodeEl);
+        tileSlot.set(ep.id, slotEls.length);
         slotEls.push(tile);
       }
       slotOfNode.push(slotEls.length);
       slotEls.push(nodeEl);
     });
 
-    // 워커가 서 있는 노드 = 첫 미완료 레슨(프리미엄 잠금 포함 — 관문 앞에 선다), 전부 완료면 시험 노드.
+    // 워커가 서는 자리 = 첫 미완료 레슨(프리미엄 잠금 포함, 관문 앞에 선다), 전부 완료면 시험 노드.
+    // 영상 걸음: 그 레슨 앞의 영상을 아직 보지도 건너뛰지도 않았으면 영상 칸에 선다(유료로 잠긴 영상이면 그 칸이 관문이다).
     const firstUndone = u.lessons.findIndex((l) => !isDone(l.id));
     const lessonsDone = firstUndone < 0 ? u.lessons.length : firstUndone;
     const walkIdx = Math.min(lessonsDone, nodeEls.length - 1);
+    const stopLesson = u.lessons[walkIdx];
+    const stopEp = stopLesson ? videoGateOf(stopLesson.id) : null;
+    const stopSlot = stopEp ? tileSlot.get(stopEp.id) : undefined;
+    const walkerSlot = stopSlot ?? slotOfNode[walkIdx];
+    if (stopSlot !== undefined) slotEls[stopSlot].classList.add("here");
     const walker = el("div", { class: "gm-walker", attrs: { "aria-hidden": "true" }, html: walkerSvg(ink) });
     nodesLayer.appendChild(walker);
 
-    // 걷기 연출 판정 — 방금 첫 완료한 레슨 노드에서 다음 노드로(자연 진행일 때만). 1회 소비.
+    // 걷기 연출 판정(1회 소비): ① 방금 첫 완료한 레슨에서 다음 자리로(자연 진행일 때만. 다음 자리는 다음 레슨이거나,
+    // 그 앞의 아직 안 본 영상 칸이다) ② 방금 다 본 영상 칸에서 바로 뒤의 레슨으로.
     const walkFromId = pendingWalkFrom;
     pendingWalkFrom = undefined;
+    const walkFromVideo = pendingVideoWalk;
+    pendingVideoWalk = undefined;
     const fromIdx = walkFromId ? u.lessons.findIndex((l) => l.id === walkFromId) : -1;
-    const walking = fromIdx >= 0 && walkIdx === fromIdx + 1;
-    // 걷기 전엔 이전 상태(출발 노드 기준)로 그리고, 진한 도장은 걸으면서 찍는다
-    const anchorIdx = walking ? fromIdx : walkIdx;
+    let fromSlot = -1;
+    if (fromIdx >= 0 && walkIdx === fromIdx + 1) fromSlot = slotOfNode[fromIdx];
+    else if (walkFromVideo && stopSlot === undefined && tileSlot.get(walkFromVideo) === walkerSlot - 1) fromSlot = walkerSlot - 1;
+    const walking = fromSlot >= 0 && walkerSlot > fromSlot;
+    // 걷기 전엔 이전 상태(출발 자리 기준)로 그리고, 진한 도장은 걸으면서 찍는다
+    const anchorSlot = walking ? fromSlot : walkerSlot;
     // 이제 막 열리는 레슨은 걷는 동안 잠금색으로 두고 도착 순간 해금(테마색 점등) — .now 클래스 계약은 유지
-    const destNode = walking ? nodeEls[walkIdx] : null;
+    const destNode = walking ? slotEls[walkerSlot] : null;
     if (destNode?.classList.contains("now")) destNode.classList.add("arriving");
 
     afterPaint(() => {
       const W = gm.clientWidth || 340;
       const amp = Math.min(102, W * 0.25);
-      const { points, height } = serpentine(slotEls.length, { width: W, gap: 122, top: 66, bottom: 100, amp, pattern: STEP_PATTERN });
+      // 길의 첫 칸이 영상 칸이면 위 여백을 더 둔다(그 칸 윗변에 올라선 캐릭터의 머리와 깃발이 지도 위로 잘리지 않게)
+      const top = slotEls[0]?.classList.contains("gm-vid") ? 100 : 66;
+      const { points, height } = serpentine(slotEls.length, { width: W, gap: 122, top, bottom: 100, amp, pattern: STEP_PATTERN });
       gm.style.height = `${height}px`;
       // 노드는 폭 대비 %로 배치 → SVG(폭 100%로 신축)와 함께 스케일되어 회전/리사이즈에 강함.
       points.forEach((p, i) => {
@@ -706,9 +789,9 @@ export function homeScreen(
         const ref = nb.length ? nb.reduce((a, q) => a + q.x, 0) / nb.length : p.x + 1;
         slotEls[i].classList.add(p.x <= ref ? "lab-r" : "lab-l");
       });
-      // 길은 영상 칸까지 모두 지나고, 걷는 캐릭터와 "걸어온 길"의 기준은 발자국이다(영상 칸에는 서지 않는다).
-      const nodePts = slotOfNode.map((si) => points[si]);
-      const anchorSlot = slotOfNode[anchorIdx];
+      // 길은 영상 칸까지 모두 지나고, "걸어온 길"은 캐릭터가 선 자리(발자국이나 영상 칸)까지다.
+      // 영상 칸에 선 캐릭터는 칸 위에 올라선다(TILE_DY만큼 위. 칸의 재생 표시를 가리지 않게).
+      const dyOf = (s: number): number => (slotEls[s]?.classList.contains("gm-vid") ? TILE_DY : 0);
       // 발자국 트레일 — 연결선·점선 폐기: 걸어온 길은 진한 잉크, 갈 길은 옅은 발자국(확정안 A).
       const walkedD = anchorSlot > 0 ? smoothPath(points.slice(0, anchorSlot + 1)) : "";
       const futureD = anchorSlot < points.length - 1 ? smoothPath(points.slice(anchorSlot)) : "";
@@ -729,13 +812,13 @@ export function homeScreen(
         ? stampTrail(svgEl, future, { from: 42, endGap: 40, fill: "rgba(143,161,181,.30)", delayBase: 340, delayStep: 18, reduce: reduceMotion })
         : [];
       // 스틱맨 워커 — 발 앵커 = 노드 중심 +8px(패드 중심). 깃발은 단원 테마색.
-      const wp = nodePts[anchorIdx];
+      const wp = points[anchorSlot];
       walker.style.left = `${((wp.x / W) * 100).toFixed(3)}%`;
-      walker.style.top = `${wp.y + 8}px`;
+      walker.style.top = `${wp.y + 8 + dyOf(anchorSlot)}px`;
       placeDecor(decorLayer, points, W, u.id);
       if (walking && destNode && futureD) {
-        // 다음 발자국까지 사이에 영상 칸이 있으면 그 칸을 지나 두 구간을 걷는다
-        startWalk({ svgEl, futureD, walker, destNode, dest: nodePts[walkIdx], W, futureStamps, segs: slotOfNode[walkIdx] - slotOfNode[fromIdx] });
+        // 사이에 이미 지나간 영상 칸이 있으면 그 칸을 지나 두 구간을 걷는다
+        startWalk({ svgEl, futureD, walker, destNode, dest: points[walkerSlot], W, futureStamps, segs: walkerSlot - fromSlot, fromDy: dyOf(fromSlot), toDy: dyOf(walkerSlot) });
       }
     });
   }
@@ -757,7 +840,13 @@ export function homeScreen(
     W: number;
     futureStamps: { g: SVGGElement; d: number }[];
     segs: number; // 걸을 구간 수(사이에 영상 칸이 없으면 1)
+    fromDy?: number; // 출발 자리와 도착 자리가 영상 칸이면 그 위에 올라선 높이(TILE_DY), 발자국이면 0
+    toDy?: number;
   }): void {
+    const fromDy = o.fromDy ?? 0;
+    const toDy = o.toDy ?? 0;
+    // 진한 도장을 그치는 자리(경로 끝에서 얼마 앞). 영상 칸 위에 올라서는 걸음은 칸 둘레에서 일찍 그친다(캐릭터 옆에 도장이 남지 않게)
+    const stampStop = toDy ? 40 : 8;
     // 걷기 구간 = 갈 길 경로의 첫 베지어(출발 노드 → 다음 노드) — 트레일 도장과 같은 곡선을 밟는다
     const parts = o.futureD.split(" C ");
     const segs = Math.max(1, Math.min(o.segs, parts.length - 1));
@@ -786,7 +875,7 @@ export function homeScreen(
       pose("idle");
       o.walker.classList.remove("face-l"); // 깃발 플랜팅은 기본 방향(오른쪽) — 정지 워커와 표정 일치
       o.walker.style.left = `${((o.dest.x / o.W) * 100).toFixed(3)}%`;
-      o.walker.style.top = `${o.dest.y + 8}px`;
+      o.walker.style.top = `${o.dest.y + 8 + toDy}px`;
       o.destNode.classList.remove("arriving");
       cancelWalk = null;
       finishWalk = null;
@@ -801,7 +890,7 @@ export function homeScreen(
     finishWalk = () => {
       // 걷는 중 노드 탭 — 남은 도장을 즉시 찍고 완주 처리
       stop();
-      while (lastD + 24 < L - 8) {
+      while (lastD + 24 < L - stampStop) {
         lastD += 24;
         stampNext();
       }
@@ -830,8 +919,9 @@ export function homeScreen(
         const d = e * L;
         const p = wp.getPointAtLength(d);
         o.walker.style.left = `${p.x.toFixed(1)}px`;
-        o.walker.style.top = `${(p.y + 8).toFixed(1)}px`; // 걷기 경로도 패드 중심(+8px)을 밟는다
-        while (d - lastD >= 24 && d < L - 8) {
+        // 걷기 경로도 패드 중심(+8px)을 밟는다. 영상 칸에서 내려오거나 칸 위로 올라갈 때는 그 높이를 걸음에 맞춰 나눠 옮긴다
+        o.walker.style.top = `${(p.y + 8 + fromDy + (toDy - fromDy) * e).toFixed(1)}px`;
+        while (d - lastD >= 24 && d < L - stampStop) {
           lastD += 24;
           stampNext();
         }

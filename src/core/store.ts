@@ -110,10 +110,12 @@ export interface AppState {
   videos?: Record<string, VideoProgress>;
 }
 
-/** 개념 영상 한 편의 시청 기록. sec = 마지막으로 본 위치(초), done = 끝까지(9할 넘게) 본 적이 있다. */
+/** 개념 영상 한 편의 시청 기록. sec = 마지막으로 본 위치(초), done = 끝까지(9할 넘게) 본 적이 있다,
+ *  skipped = 지도에서 "건너뛰고 레슨 시작"을 골랐다(영상 걸음을 지나간 것으로 친다, 2026-11-15). */
 export interface VideoProgress {
   sec: number;
   done: boolean;
+  skipped?: boolean;
 }
 
 /** 등록한 학교. code = 나이스 표준학교코드, region = 시도 + 시군구(동명 학교 구분용), kind = 학교급. */
@@ -366,9 +368,18 @@ export function videoProgressOf(id: string): VideoProgress | null {
 /** 시청 위치를 적는다. done은 한 번 켜지면 꺼지지 않는다(다시 보다가 중간에 나가도 "봤어요"는 남는다). */
 export function setVideoProgress(id: string, sec: number, done: boolean): void {
   const prev = state.videos?.[id];
-  const next = { sec: Math.max(0, Math.round(sec)), done: done || !!prev?.done };
+  const next: VideoProgress = { sec: Math.max(0, Math.round(sec)), done: done || !!prev?.done };
+  if (prev?.skipped) next.skipped = true; // 건너뛴 표시는 그대로 둔다
   if (prev && prev.sec === next.sec && prev.done === next.done) return;
   state.videos = { ...(state.videos ?? {}), [id]: next };
+  save();
+}
+
+/** 영상 걸음을 건너뛴다(지도의 "건너뛰고 레슨 시작"). 본 위치는 그대로 두고, 이미 다 본 영상이면 아무것도 하지 않는다. */
+export function skipVideo(id: string): void {
+  const prev = state.videos?.[id];
+  if (prev?.done || prev?.skipped) return;
+  state.videos = { ...(state.videos ?? {}), [id]: { sec: prev?.sec ?? 0, done: false, skipped: true } };
   save();
 }
 

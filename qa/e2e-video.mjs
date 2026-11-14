@@ -1,7 +1,8 @@
-// 개념 영상 진입점 검사: 지도의 영상 칸, 재생 화면, 완료 표시, 유료 잠금, 레슨 머리줄 버튼, 넓은 화면.
+// 개념 영상 진입점 검사: 지도의 영상 칸, 재생 화면, 완료 표시, 유료 잠금, 레슨 머리줄 버튼, 넓은 화면,
+// 영상 걸음([F], 2026-11-15: 묶음의 첫 레슨은 영상을 보거나 건너뛰어야 열리고 캐릭터는 그동안 영상 칸에 선다).
 // DEV 서버 필요. PORT=<포트> node qa/e2e-video.mjs [스크린샷 폴더]
-// 영상이 올라간 곳(src)이 아직 하나도 없으므로 재생 자체(Vimeo 임베드, 파일 재생)는 여기서 보지 않는다.
-// 검수용 미리 보기(sessionStorage "ss.vid"="1")로 자리 표시 재생 화면까지의 길을 본다.
+// R2 영상을 받지 않으려고 주소가 없는 Ⅲ단원 영상으로 돈다. 검수용 미리 보기(sessionStorage "ss.vid"="1")가
+// 자리 표시 재생 화면과 "다 본 것으로 표시(검수용)" 단추를 주고, 개발 서버의 영상 걸음도 이 미리 보기에서 켜진다.
 import { chromium } from "playwright-core";
 import fs from "fs";
 
@@ -13,16 +14,17 @@ let checks = 0, fails = 0, pageErrors = 0;
 const check = (ok, msg) => { checks += 1; if (!ok) fails += 1; console.log(`${ok ? "PASS" : "FAIL"} [${checks}] ${msg}`); };
 const STUB = "export const createHotContext=()=>({accept(){},dispose(){},prune(){},on(){},send(){}});export function updateStyle(id,css){let s=document.querySelector('style[data-vite-dev-id=\"'+id+'\"]');if(!s){s=document.createElement('style');s.setAttribute('data-vite-dev-id',id);document.head.appendChild(s)}s.textContent=css}export function removeStyle(){}export function injectQuery(u){return u}";
 
-async function open({ vp = { width: 390, height: 700 }, preview = true, premium = true, lessons = { u3l1: { done: true, acc: 100, xp: 100 } }, query = "" } = {}) {
+async function open({ vp = { width: 390, height: 700 }, preview = true, premium = true, lessons = { u3l1: { done: true, acc: 100, xp: 100 } }, videos = {}, vidstep = "", query = "" } = {}) {
   const ctx = await browser.newContext({ viewport: vp, deviceScaleFactor: 2 });
   const page = await ctx.newPage();
   page.on("pageerror", (e) => { pageErrors += 1; console.log("PAGEERROR:", e.message); });
   await page.route("**/@vite/client", (r) => r.fulfill({ contentType: "application/javascript", body: STUB }));
-  await page.addInitScript(({ preview, premium, lessons }) => {
+  await page.addInitScript(({ preview, premium, lessons, videos, vidstep }) => {
     if (preview) sessionStorage.setItem("ss.vid", "1");
+    if (vidstep) sessionStorage.setItem("ss.vidstep", vidstep);
     if (!localStorage.getItem("science-app.v1"))
-      localStorage.setItem("science-app.v1", JSON.stringify({ version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci", premium, reviewMode: false, goalMin: 10, streak: 1, lastStudyDay: null, totalXp: 0, lessons, minigame: {} }));
-  }, { preview, premium, lessons });
+      localStorage.setItem("science-app.v1", JSON.stringify({ version: 1, onboarded: true, grade: "g1", viewGrade: "g1", viewSubject: "sci", premium, reviewMode: false, goalMin: 10, streak: 1, lastStudyDay: null, totalXp: 0, lessons, videos, minigame: {} }));
+  }, { preview, premium, lessons, videos, vidstep });
   const W = (ms) => page.waitForTimeout(ms);
   await page.goto(`http://localhost:${PORT}/${query}`, { waitUntil: "networkidle" });
   if (!query) {
@@ -76,7 +78,7 @@ const mapInfo = (page) => page.evaluate(() => {
   check(m.vids.every((v) => v.label.l >= m.left && v.label.r <= m.right), "[B] 이름표가 지도 밖으로 나가지 않는다");
   check(m.vids.every((v) => v.small === "3분"), "[B] 안 본 영상은 길이를 보인다");
   const now = m.nodes.find((n) => / now /.test(` ${n.cls} `));
-  check(!!now && Math.abs(m.walker.x - now.x) < 6, "[B] 걷는 캐릭터는 영상 칸이 아니라 지금 할 발자국에 서 있다");
+  check(!!now && Math.abs(m.walker.x - now.x) < 6, "[B] 묶음의 둘째 레슨이 지금 할 레슨이면 캐릭터는 그 발자국에 서 있다(영상 칸은 이미 지났다)");
   await shot("b-map");
   // 잠긴 발자국들 사이의 2편을 누른다(앞 레슨을 마치지 않아도 열린다)
   check(m.nodes[2].cls.includes("locked"), "[B] 레슨 3 발자국은 잠겨 있다");
@@ -95,7 +97,7 @@ const mapInfo = (page) => page.evaluate(() => {
   const v2 = m.vids.find((v) => v.id === "u3v2");
   check(v2.cls.includes("seen") && v2.small === "봤어요", "[B] 다 본 영상은 그 자리에서 완료 표시로 바뀐다");
   check((await page.evaluate(() => JSON.parse(localStorage.getItem("science-app.v1")).videos?.u3v2?.done)) === true, "[B] 시청 기록이 기기에 남는다");
-  check(m.nodes[2].cls.includes("locked"), "[B] 영상을 봐도 발자국 잠금은 풀리지 않는다");
+  check(m.nodes[2].cls.includes("locked"), "[B] 앞 레슨을 마치지 않았으면 영상을 봐도 다음 발자국은 잠겨 있다");
   await shot("b-map-seen");
   // 하드웨어 뒤로가기로 닫기
   await page.locator('.gm-vid[data-vid="u3v3"]').click();
@@ -190,6 +192,99 @@ const mapInfo = (page) => page.evaluate(() => {
   const fr = await page.locator("#sc-video .vp-frame").boundingBox();
   check(Math.abs(fr.width / fr.height - 9 / 16) < 0.02 && fr.height > 600, `[E] 넓은 화면의 재생 틀(${Math.round(fr.width)}x${Math.round(fr.height)})`);
   await shot("e-wide-player");
+  await ctx.close();
+}
+
+// [F] 영상 걸음(2026-11-15 사용자 확정 "보거나 건너뛰면"): 묶음의 첫 레슨은 영상을 다 보거나 건너뛰어야 열린다
+const stored = (page) => page.evaluate(() => JSON.parse(localStorage.getItem("science-app.v1")).videos ?? {});
+const done = (ids) => Object.fromEntries(ids.map((id) => [id, { done: true, acc: 100, xp: 100 }]));
+{
+  // 새 단원: 캐릭터가 첫 영상 칸에 서고, 레슨 1은 잠긴 모양이다
+  const { ctx, page, W, unit, shot } = await open({ lessons: {} });
+  await unit("열");
+  let m = await mapInfo(page);
+  const v1 = m.vids.find((v) => v.id === "u3v1");
+  check(v1.cls.includes("here") && Math.abs(m.walker.x - v1.x) < 6 && m.walker.y < v1.y, "[F] 새 단원: 캐릭터가 첫 영상 칸 위에 서 있다");
+  check(m.nodes[0].cls.includes("vgate") && m.nodes[0].cls.includes("locked") && !m.nodes.some((n) => / now /.test(` ${n.cls} `)), "[F] 영상을 보거나 건너뛰기 전에는 레슨 1도 잠긴 모양이다");
+  check(m.walker.y - 60 > (await page.locator(".gamemap").boundingBox()).y, "[F] 맨 위 영상 칸에 선 캐릭터가 지도 위로 잘리지 않는다");
+  await shot("f-fresh");
+  // 레슨 1을 누르면 고르는 시트, 바깥을 누르면 아무것도 하지 않고 닫힌다
+  await page.locator(".gm-node:not(.exam)").first().click();
+  await page.waitForSelector(".sheet.vgs.open", { timeout: 4000 });
+  const txt = await page.locator(".sheet.vgs").innerText();
+  check(txt.includes("열평형") || txt.includes("온도와 열평형"), "[F] 시트에 그 묶음의 영상 제목이 있다");
+  check((await page.locator(".sheet.vgs .vgs-watch").innerText()).includes("영상 보기") && (await page.locator(".sheet.vgs .vgs-skip").innerText()).includes("건너뛰고 레슨 시작"), "[F] 시트의 두 단추: 영상 보기, 건너뛰고 레슨 시작");
+  await shot("f-sheet");
+  await page.mouse.click(195, 120);
+  await W(500);
+  check((await page.locator(".sheet.vgs").count()) === 0 && Object.keys(await stored(page)).length === 0, "[F] 바깥을 누르면 아무것도 적지 않고 닫힌다");
+  // 건너뛰고 시작: 레슨이 열리고, 닫고 오면 캐릭터가 레슨 1에 서 있다(영상 칸은 안 본 채로 남는다)
+  await page.locator(".gm-node:not(.exam)").first().click();
+  await page.waitForSelector(".sheet.vgs.open");
+  await page.locator(".sheet.vgs .vgs-skip").click();
+  await page.waitForSelector(".lesson-screen.active", { timeout: 6000 });
+  check((await stored(page)).u3v1?.skipped === true, "[F] 건너뛰면 레슨이 열리고 건너뛴 것이 기기에 남는다");
+  await page.locator('.lesson-screen .lheader .xbtn[aria-label="닫기"]').click();
+  await page.waitForSelector("#sc-home.active", { timeout: 6000 });
+  await W(1200);
+  m = await mapInfo(page);
+  const n0 = m.nodes[0];
+  check(n0.cls.includes("now") && Math.abs(m.walker.x - n0.x) < 6, "[F] 건너뛴 뒤에는 레슨 1이 열리고 캐릭터가 그 발자국에 선다");
+  const v1b = m.vids.find((v) => v.id === "u3v1");
+  check(!v1b.cls.includes("seen") && !v1b.cls.includes("here") && v1b.small === "3분", "[F] 건너뛴 영상 칸은 '봤어요'가 아니다(언제든 볼 수 있다)");
+  await ctx.close();
+}
+{
+  // 다 보고 닫으면 캐릭터가 영상 칸에서 레슨 1로 걸어가고, 도착하면 레슨 1이 켜진다
+  const { ctx, page, W, unit, shot } = await open({ lessons: {} });
+  await unit("열");
+  await page.locator('.gm-vid[data-vid="u3v1"]').click();
+  await page.waitForSelector("#sc-video.active");
+  await page.locator("#sc-video .vp-mark").click();
+  await page.locator("#sc-video .vp-x").click();
+  // 재생 화면이 물러나는 움직임이 끝나야(onExit) 지도를 다시 그린다. 그 뒤 걷기는 0.3초 쉬었다가 시작한다
+  await page.waitForSelector("#sc-video", { state: "detached" });
+  await W(150);
+  const mid = await mapInfo(page);
+  check(mid.nodes[0].cls.includes("arriving"), "[F] 영상을 다 보고 오면 레슨 1은 캐릭터가 도착할 때까지 잠금색이다");
+  await W(3400);
+  const m = await mapInfo(page);
+  check(m.nodes[0].cls.includes("now") && !m.nodes[0].cls.includes("arriving") && Math.abs(m.walker.x - m.nodes[0].x) < 6, "[F] 캐릭터가 영상 칸에서 레슨 1로 걸어가고 레슨 1이 켜진다");
+  check(m.vids.find((v) => v.id === "u3v1").cls.includes("seen") && (await stored(page)).u3v1?.done === true, "[F] 다 본 영상은 '봤어요'로 남는다");
+  await shot("f-after-watch");
+  await ctx.close();
+}
+{
+  // 묶음의 마지막 레슨을 처음 마치면 다음 레슨이 아니라 다음 영상 칸까지 걸어간다
+  const { ctx, page, W, unit, shot } = await open({ lessons: done(["u3l1", "u3l2"]), videos: { u3v1: { sec: 170, done: true } } });
+  await unit("열");
+  await page.evaluate(() => window.__walkHome("u3l2"));
+  await page.waitForSelector("#sc-home.active");
+  await W(3600);
+  const m = await mapInfo(page);
+  const v2 = m.vids.find((v) => v.id === "u3v2");
+  check(v2.cls.includes("here") && Math.abs(m.walker.x - v2.x) < 6, "[F] 레슨 2를 마치면 캐릭터가 다음 영상 칸까지 걸어가 선다");
+  check(m.nodes[2].cls.includes("vgate"), "[F] 그 뒤의 레슨 3은 영상을 보거나 건너뛰기 전까지 잠겨 있다");
+  await shot("f-walk-to-video");
+  await ctx.close();
+}
+{
+  // 넓은 화면: '이어서 학습'이 영상 걸음을 보여 주고 건너뛰기 글자 단추로 레슨을 연다
+  const { ctx, page, W, unit } = await open({ vp: { width: 1280, height: 800 }, lessons: {} });
+  await unit("열");
+  const rail = await page.locator(".home-rail .hr-next").innerText();
+  check(rail.includes("개념 영상") && rail.includes("영상 보기") && rail.includes("건너뛰고 레슨 시작"), "[F] 넓은 화면의 '이어서 학습'이 영상 걸음을 보여 준다");
+  await page.locator(".home-rail .hr-skip").click();
+  await page.waitForSelector(".lesson-screen.active", { timeout: 6000 });
+  check(true, "[F] '건너뛰고 레슨 시작'으로 레슨이 열린다");
+  await ctx.close();
+}
+{
+  // 끄는 표식(ss.vidstep=0)이면 예전처럼 캐릭터가 레슨 1에 서고 레슨 1이 바로 열린다
+  const { ctx, page, unit } = await open({ lessons: {}, vidstep: "0" });
+  await unit("열");
+  const m = await mapInfo(page);
+  check(m.nodes[0].cls.includes("now") && Math.abs(m.walker.x - m.nodes[0].x) < 6 && !m.vids.some((v) => v.cls.includes("here")), "[F] ss.vidstep=0이면 영상 걸음이 꺼진다(캐릭터는 레슨 1)");
   await ctx.close();
 }
 

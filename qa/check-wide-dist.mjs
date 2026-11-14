@@ -45,14 +45,27 @@ for (const [name, vp, wide] of [["태블릿 1180×760", { width: 1180, height: 7
     const map = await box("#sc-home .map-swap");
     const tabs = await box("#sc-home .unit-tabs");
     ok(map.x + map.width <= tabs.x, "지도 왼쪽, 단원 목록 오른쪽");
-    ok((await p.locator(".home-rail .hr-btn").last().isVisible()) === true, "'이어서 하기' 버튼이 보인다");
+    ok((await p.locator(".home-rail .hr-btn").last().isVisible()) === true, "'이어서 학습' 카드의 단추가 보인다(레슨 앞의 영상을 안 봤으면 '영상 보기')");
   } else {
     ok((await p.locator(".home-rail").count()) === 0, "폰에는 오른쪽 카드가 없다");
   }
   await shot("2-home");
-  // 첫 레슨 열기
-  if (wide) await p.locator(".home-rail .hr-btn").last().click();
-  else await p.locator(".gm-node").first().click();
+  // 첫 레슨 열기. 영상 걸음(2026-11-15): Ⅰ단원 첫 레슨 앞의 영상을 아직 안 봤으면 "건너뛰고 레슨 시작"으로 들어간다
+  // (넓은 화면은 '이어서 학습' 카드의 글자 단추, 폰은 발자국을 눌러 뜬 시트의 단추)
+  if (wide) {
+    const skip = p.locator(".home-rail .hr-skip");
+    if (await skip.count()) await skip.click();
+    else await p.locator(".home-rail .hr-btn").last().click();
+  } else {
+    await p.locator(".gm-node").first().click();
+    const skip = p.locator(".sheet.vgs .vgs-skip");
+    try {
+      await skip.waitFor({ state: "visible", timeout: 2500 });
+      await skip.click();
+    } catch {
+      /* 영상 걸음이 없으면 레슨이 바로 열린다 */
+    }
+  }
   await p.waitForSelector(".lesson-screen");
   await sleep(1200);
   await shot("3-lesson-first");
