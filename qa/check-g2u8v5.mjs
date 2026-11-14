@@ -86,23 +86,89 @@ const LAB = {
     await at("pencil-one");
     await tapKey(page, "R"); await W(page, 700);
     await at("pencil-bend");
-    await tapKey(page, "straight"); await W(page, 300);
+    await predict("pencil");
+    await at("pencil-straight0");
     await tapKey(page, "L"); await W(page, 500);
     await tapKey(page, "R"); await W(page, 900);
     await at("pencil-straight");
+    await tapKey(page, "far"); await W(page, 400);
+    await tapKey(page, "L"); await W(page, 500);
+    await tapKey(page, "R"); await W(page, 900);
+    await at("pencil-far");
     await finishLab("pencil", "이름 붙이기", 1);
   },
+  async orbit() {
+    await at("orbit-start");
+    await tapText(page, "지금"); await W(page, 600);
+    await at("orbit-noted");
+    await predict("orbit");
+    await at("orbit-ready");
+    await setRange(page, 1); await W(page, 1300);
+    await at("orbit-3m");
+    await setRange(page, 4); await W(page, 1500);
+    await at("orbit-1y");
+    await setRange(page, 2); await W(page, 1300);
+    await at("orbit-6m");
+    await finishLab("orbit", "별을 멀리 보내기", 1);
+  },
   async parallax() {
-    await at("parallax-start");
-    await tapText(page, "지금"); await W(page, 400);
-    await tapText(page, "1년"); await W(page, 2900);
-    await at("parallax-year");
-    await tapText(page, "6개월"); await W(page, 2900);
+    await predict("parallax");
+    await at("parallax-1x");
+    await setRange(page, 2); await W(page, 900);
+    await at("parallax-2x");
+    await setRange(page, 3); await W(page, 700);
+    await setRange(page, 4); await W(page, 1000);
+    await at("parallax-4x");
+    // 판정 1(한 번 틀려 본다) 뒤에 각을 반으로 나누는 걸음이 이어진다
+    ok(await waitAsk(page), "parallax: 판정 1이 뜨지 않음");
+    await W(page, 400);
+    await at("parallax-ask");
+    await answer(page, false); await W(page, 500);
+    await at("parallax-miss");
+    await next(page); await W(page, 700);
+    await at("parallax-half0");
+    await tapText(page, "반으로"); await W(page, 3200);
     await at("parallax-half");
-    await setRange(page, 1); await W(page, 500);
+    await setRange(page, 4); await W(page, 1200);
+    await at("parallax-half4");
+    await setRange(page, 1); await W(page, 1200);
+    await at("parallax-half1");
+    ok(await waitAsk(page), "parallax: 판정 2가 뜨지 않음");
+    await W(page, 400);
+    await answer(page, true); await W(page, 500);
+    await at("parallax-hit");
+    await next(page); await W(page, 700);
+    await finishLab("parallax", "이름 붙이기", 0);
+  },
+  async parsec() {
+    await at("parsec-start");
+    await tapText(page, "재기"); await W(page, 2000);
+    await at("parsec-1pc");
+    await setRange(page, 1); await W(page, 700);
+    await tapText(page, "재기"); await W(page, 2200);
+    await at("parsec-2pc");
     await setRange(page, 2); await W(page, 700);
-    await at("parallax-2pc");
-    await finishLab("parallax", "이름 붙이기", 1);
+    await tapText(page, "재기"); await W(page, 2200);
+    await at("parsec-4pc");
+    await setRange(page, 3); await W(page, 900);
+    await tapText(page, "재기"); await W(page, 1200);
+    await at("parsec-10pc");
+    ok(await waitAsk(page), "parsec: 판정 1이 뜨지 않음");
+    await W(page, 400);
+    await at("parsec-ask");
+    await answer(page, false); await W(page, 500);
+    await at("parsec-miss");
+    await next(page); await W(page, 900);
+    await setRange(page, 4); await W(page, 1200);
+    await at("parsec-far0");
+    await tapText(page, "재기"); await W(page, 1200);
+    await at("parsec-far");
+    ok(await waitAsk(page), "parsec: 판정 2가 뜨지 않음");
+    await W(page, 400);
+    await answer(page, true); await W(page, 500);
+    await at("parsec-hit");
+    await next(page); await W(page, 700);
+    await finishLab("parsec", "정리하기", 0);
   },
   async lux() {
     await at("lux-start");
@@ -280,7 +346,7 @@ const LAB = {
   },
 };
 const PLAN = {
-  g2u8l1: ["pencil", "parallax"], g2u8l2: ["lux", "spread"], g2u8l3: ["mag", "abs"], g2u8l4: ["heater", "temp"],
+  g2u8l1: ["pencil", "orbit", "parallax", "parsec"], g2u8l2: ["lux", "spread"], g2u8l3: ["mag", "abs"], g2u8l4: ["heater", "temp"],
   g2u8l5: ["model", "galaxy"], g2u8l6: ["observe", "nebula"], g2u8l7: ["balloon", "center"], g2u8l8: ["mission", "plan"],
 };
 /** 만화로 시작하는 레슨(g2u8l7): 만화를 끝까지 넘긴다. 만화는 정본 그대로다. */

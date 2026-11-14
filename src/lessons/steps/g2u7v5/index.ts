@@ -10,10 +10,15 @@ import { waterLab } from "./waterLab";
 import { ohmLab } from "./ohmLab";
 import { formulaLab } from "./formulaLab";
 import { bulbLab } from "./bulbLab";
-import { splitLab } from "./splitLab";
+import { seriesCurLab } from "./seriesCurLab";
+import { seriesVoltLab } from "./seriesVoltLab";
+import { parVoltLab } from "./parVoltLab";
+import { parCurLab } from "./parCurLab";
 import { powerLab } from "./powerLab";
 import { effLab } from "./effLab";
 import { coilLab } from "./coilLab";
+import { gripLab } from "./gripLab";
+import { palmLab } from "./palmLab";
 import { swingLab } from "./swingLab";
 import { motorLab } from "./motorLab";
 
@@ -26,10 +31,15 @@ export const G2U7V5_STEPS: Record<string, StepRenderer> = {
   g2u7OhmLab: ohmLab,
   g2u7FormulaLab: formulaLab,
   g2u7BulbLab: bulbLab,
-  g2u7SplitLab: splitLab,
+  g2u7SeriesCurLab: seriesCurLab,
+  g2u7SeriesVoltLab: seriesVoltLab,
+  g2u7ParVoltLab: parVoltLab,
+  g2u7ParCurLab: parCurLab,
   g2u7PowerLab: powerLab,
   g2u7EffLab: effLab,
   g2u7CoilLab: coilLab,
+  g2u7GripLab: gripLab,
+  g2u7PalmLab: palmLab,
   g2u7SwingLab: swingLab,
   g2u7MotorLab: motorLab,
 };

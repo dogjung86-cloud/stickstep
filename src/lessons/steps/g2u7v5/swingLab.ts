@@ -5,6 +5,7 @@
 // 학생이 정하는 것: 스위치를 누르는 것, 전류의 방향, 자석의 극, 전류의 세기(차례는 자유). 무대를 끌어 돌려 볼 수 있다.
 // 실패하는 길: 스위치를 누르지 않으면 그네는 움직이지 않는다. 스위치를 오래 누르고 있으면 코일이 뜨거워져 전류를 끊어야 한다.
 // 옛 랩(swingLab3d)은 가로 화면의 3D 장면에서 차례로 눌렀다. 여기서는 세로 한 화면에서 장치를 돌려 보며 학생이 고른 조합마다 힘을 계산한다.
+// 걸음(2026-11-14 보강): 전류의 방향이나 자석의 극을 처음 바꿀 때는 예측을 먼저 하고, 스위치를 눌러 확인한다.
 // 힘의 방향은 전류(선의 방향)와 자기장(N극에서 S극)의 벡터곱으로 계산한다. three.js는 열릴 때만 내려받는다(ui/space3d, 동적 import).
 
 import { el } from "../../../core/dom";
@@ -33,6 +34,37 @@ export const swingLab: StepRenderer = (host, step, api) => {
   let az = 0.62;
   let elv = 0.26;
   const seen = { press: false, cur: false, pole: false, strong: false };
+  const guessed = { cur: false, pole: false };
+  let asking = false;
+  let pending = false; // 하나를 바꾼 뒤 아직 스위치로 확인하지 않았다
+  /** 처음 바꿀 때는 예측부터. 예측을 띄웠으면 true(바꾸는 일은 답한 뒤에 한다). */
+  const predictFirst = (which: "cur" | "pole", go: () => void): boolean => {
+    if (pending) {
+      f.say("먼저 <b>스위치를 눌러</b> 방금 바꾼 것부터 확인해 보세요.");
+      return true;
+    }
+    if (guessed[which]) return false;
+    if (!seen.press) {
+      f.say("먼저 <b>스위치를 눌러</b> 그네가 어느 쪽으로 움직이는지 봐 두세요.");
+      return true;
+    }
+    asking = true;
+    f.slot.ask(
+      which === "cur" ? "전류의 방향만 반대로 바꾸면 그네는?" : "자석의 두 극만 바꾸면 그네는?",
+      [{ t: "방금과 반대쪽으로 움직여요", ok: true }, { t: "방금과 같은 쪽으로 움직여요" }, { t: "움직이지 않아요" }],
+      () => undefined,
+      {
+        predict: true,
+        onNext: () => {
+          guessed[which] = true;
+          asking = false;
+          f.slot.showControls();
+          go();
+        },
+      },
+    );
+    return true;
+  };
   /** 그네가 받는 힘의 x방향(+1이 자석 바깥쪽). 전류 z × 자기장 y = −x */
   const fx = (): number => -cur * (nBottom ? 1 : -1);
 
@@ -40,6 +72,7 @@ export const swingLab: StepRenderer = (host, step, api) => {
     if (finished) return;
     held = v;
     if (v) {
+      pending = false;
       hot = 0;
       seen.press = true;
       if (cur === 1) seen.cur = true;
@@ -64,17 +97,25 @@ export const swingLab: StepRenderer = (host, step, api) => {
     },
   );
   f.slot.setControls(sw, xRow(bCur, bPole), power.el);
-  bCur.addEventListener("click", () => {
-    if (finished) return;
-    haptic(HAPTIC.tap);
+  const flipCur = (): void => {
+    pending = true;
     cur = cur === 1 ? -1 : 1;
-    f.say("<b>전류의 방향</b>을 바꿨어요. 스위치를 눌러 그네가 어느 쪽으로 가는지 봐요.");
+    f.say("<b>전류의 방향</b>을 바꿨어요. 스위치를 눌러 예측과 견줘 보세요.");
+  };
+  const flipPole = (): void => {
+    pending = true;
+    nBottom = !nBottom;
+    f.say("<b>자석의 두 극</b>을 바꿨어요. 스위치를 눌러 예측과 견줘 보세요.");
+  };
+  bCur.addEventListener("click", () => {
+    if (finished || asking || held) return;
+    haptic(HAPTIC.tap);
+    if (!predictFirst("cur", flipCur)) flipCur();
   });
   bPole.addEventListener("click", () => {
-    if (finished) return;
+    if (finished || asking || held) return;
     haptic(HAPTIC.tap);
-    nBottom = !nBottom;
-    f.say("<b>자석의 두 극</b>을 바꿨어요. 스위치를 눌러 그네가 어느 쪽으로 가는지 봐요.");
+    if (!predictFirst("pole", flipPole)) flipPole();
   });
   function after(): void {
     f.pips((seen.press ? 1 : 0) + (seen.cur ? 1 : 0) + (seen.pole ? 1 : 0) + (seen.strong ? 1 : 0));
@@ -173,13 +214,13 @@ export const swingLab: StepRenderer = (host, step, api) => {
       scene.add(a);
       return a;
     });
-    const curArrow = new T.ArrowHelper(new T.Vector3(0, 0, 1), new T.Vector3(0, -2.6, 0), 0.8, 0xffd400, 0.3, 0.2);
+    const curArrow = new T.ArrowHelper(new T.Vector3(0, 0, 1), new T.Vector3(0, -2.34, 0), 1.1, 0xffd400, 0.36, 0.24);
     const forceArrow = new T.ArrowHelper(new T.Vector3(1, 0, 0), new T.Vector3(0, -2.6, 0), 1.0, 0x3fd6c0, 0.34, 0.24);
     swing.add(curArrow, forceArrow);
     const lField = S.makeLabel("자기장", { size: 0.58, color: "#FFB3A6" });
     const lCur = S.makeLabel("전류", { size: 0.58, color: "#FFD98A" });
     const lForce = S.makeLabel("힘", { size: 0.64, color: "#8FF0DF" });
-    lField.position.set(1.45, 0, -0.75);
+    lField.position.set(1.5, 0.95, -0.75);
     scene.add(lField);
     swing.add(lCur, lForce);
 
@@ -212,11 +253,11 @@ export const swingLab: StepRenderer = (host, step, api) => {
       lCur.visible = held;
       lForce.visible = held;
       curArrow.setDirection(new T.Vector3(0, 0, cur));
-      curArrow.position.set(0, -2.6, -cur * 0.4);
+      curArrow.position.set(0, -2.34, -cur * 0.55);
       forceArrow.setDirection(new T.Vector3(out, 0, 0));
       forceArrow.setLength(strong ? 1.4 : 0.95, 0.34, 0.24);
-      lCur.position.set(0, -3.0, cur * 0.8);
-      lForce.position.set(out * (strong ? 1.75 : 1.3), -2.3, 0);
+      lCur.position.set(0, -1.95, cur * 1.2);
+      lForce.position.set(out * (strong ? 1.75 : 1.3), -3.05, 0);
       const r = 8.4;
       camera.position.set(Math.cos(elv) * Math.cos(az) * r, 0.75 + Math.sin(elv) * r, Math.cos(elv) * Math.sin(az) * r);
       camera.lookAt(0, 0.75, 0);

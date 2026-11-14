@@ -161,22 +161,84 @@ const LAB = {
     await tapKey(page, "parallel"); await W(page, 600);
     await tapStage(page, 173, 126); await W(page, 700);
     await at("bulb-parallel-out");
-    await finishLab("bulb", "전압과 전류 재기", 2);
+    await finishLab("bulb", "직렬의 전류부터 재기", 2);
   },
-  async split() {
-    await at("split-start");
-    await tapStage(page, 302, 132); await tapStage(page, 173, 76);
-    await tapKey(page, "volt"); await tapStage(page, 112, 72); await tapStage(page, 234, 72); await W(page, 300);
-    await at("split-series");
-    await tapKey(page, "parallel"); await W(page, 200);
-    await tapStage(page, 150, 62); await tapStage(page, 150, 120);
-    await tapKey(page, "amp"); await tapStage(page, 302, 164); await tapStage(page, 250, 66); await tapStage(page, 250, 124); await W(page, 300);
-    await at("split-parallel");
-    await tapText(page, "물길 그림"); await W(page, 500);
-    await at("split-water-p");
-    await tapKey(page, "series"); await W(page, 500);
-    await at("split-water-s");
-    await finishLab("split", "이름 붙이기", 2);
+  async scur() {
+    ok(await waitAsk(page), "scur: 예측 질문이 뜨지 않음");
+    await W(page, 300);
+    await at("scur-predict");
+    await answer(page, false); await W(page, 1600);
+    await at("scur-start");
+    await tapStage(page, 302, 132); await W(page, 900);
+    await at("scur-counting");
+    await W(page, 1700);
+    await tapStage(page, 173, 74); await W(page, 2600);
+    await tapStage(page, 44, 132); await W(page, 2600);
+    await at("scur-same");
+    await tapText(page, "왼쪽 전구를"); await W(page, 700);
+    await at("scur-swapped");
+    for (const [x, y] of [[302, 132], [173, 74], [44, 132]]) { await tapStage(page, x, y); await W(page, 2600); }
+    await at("scur-slow");
+    await finishLab("scur", "직렬의 전압 재기", 2);
+  },
+  async svolt() {
+    await at("svolt-start");
+    await tapKey(page, "20"); await W(page, 300);
+    await at("svolt-guard", false);
+    await tapStage(page, 232, 104); await W(page, 300);
+    await at("svolt-one");
+    await tapStage(page, 114, 104); await W(page, 400);
+    await at("svolt-half");
+    await tapKey(page, "20");
+    ok(await waitAsk(page), "svolt: 예측 질문이 뜨지 않음");
+    await W(page, 300);
+    await at("svolt-predict");
+    await answer(page, true); await W(page, 1600);
+    await tapStage(page, 232, 104); await tapStage(page, 114, 104); await W(page, 400);
+    await at("svolt-20");
+    await tapKey(page, "50"); await W(page, 300);
+    await tapStage(page, 232, 104); await tapStage(page, 114, 104); await W(page, 400);
+    await at("svolt-50");
+    await finishLab("svolt", "병렬로 넘어가기", 2);
+  },
+  async pvolt() {
+    await at("pvolt-start");
+    await tapStage(page, 173, 60); await W(page, 200); // 칠하기 전에는 전압계가 닿지 않는다
+    await tapText(page, "(+)극"); await W(page, 1700);
+    await at("pvolt-hi");
+    await tapText(page, "(−)극"); await W(page, 1700);
+    await at("pvolt-both");
+    ok(await waitAsk(page), "pvolt: 예측 질문이 뜨지 않음");
+    await W(page, 300);
+    await at("pvolt-predict");
+    await answer(page, false); await W(page, 1600);
+    await tapStage(page, 173, 60); await W(page, 300);
+    await at("pvolt-one");
+    await tapStage(page, 173, 130); await W(page, 400);
+    await at("pvolt-par");
+    await tapText(page, "직렬로"); await W(page, 600);
+    await at("pvolt-ser-start");
+    await tapStage(page, 232, 96); await tapStage(page, 114, 96); await W(page, 400);
+    await at("pvolt-ser");
+    await finishLab("pvolt", "갈림길의 전류 재기", 2);
+  },
+  async pcur() {
+    await at("pcur-start");
+    await tapStage(page, 302, 162); await W(page, 300);
+    await at("pcur-one");
+    for (const [x, y] of [[238, 66], [238, 126], [44, 162]]) { await tapStage(page, x, y); await W(page, 250); }
+    await at("pcur-15");
+    await tapKey(page, "30");
+    ok(await waitAsk(page), "pcur: 예측 질문이 뜨지 않음");
+    await W(page, 300);
+    await at("pcur-predict");
+    await answer(page, true); await W(page, 1600);
+    for (const [x, y] of [[302, 162], [238, 66], [238, 126]]) { await tapStage(page, x, y); await W(page, 250); }
+    await at("pcur-30");
+    await tapKey(page, "10"); await W(page, 300);
+    for (const [x, y] of [[302, 162], [238, 66], [238, 126]]) { await tapStage(page, x, y); await W(page, 250); }
+    await at("pcur-10");
+    await finishLab("pcur", "이름 붙이기", 2);
   },
   async power() {
     await at("power-start");
@@ -206,11 +268,23 @@ const LAB = {
     await at("coil-nocompass", false);
     await tapStage(page, 76, 112); await tapStage(page, 270, 112); await tapStage(page, 173, 50); await tapStage(page, 173, 172); await W(page, 900);
     await at("coil-on");
-    await tapText(page, "전류 방향"); await W(page, 900);
+    await tapText(page, "전류 방향");
+    ok(await waitAsk(page), "coil: 예측 질문이 뜨지 않음");
+    await W(page, 300);
+    await at("coil-predict");
+    await answer(page, true); await W(page, 2200);
     await at("coil-flip");
     await tapKey(page, "strong"); await W(page, 900);
     await at("coil-strong");
-    await finishLab("coil", "쉽게 기억하는 법", 2);
+    await tapText(page, "막대자석"); await W(page, 700);
+    await at("coil-magnet");
+    await tapText(page, "코일로"); await W(page, 700);
+    await at("coil-ns");
+    await finishLab("coil", "쉽게 기억하는 법", 3);
+  },
+  async grip() {
+    await at("grip-start");
+    await finishLab("grip", "정리하기", 3);
   },
   async swing() {
     await W(page, 1500);
@@ -219,8 +293,16 @@ const LAB = {
     await page.mouse.move(195, 560); await page.mouse.down(); await W(page, 900);
     await at("swing-out");
     await page.mouse.up(); await W(page, 300);
-    await tapText(page, "전류 방향"); await holdBtn(page, ".bv-ctl .g2u7x-hold", 900);
+    await tapText(page, "전류 방향");
+    ok(await waitAsk(page), "swing: 전류 예측 질문이 뜨지 않음");
+    await W(page, 300);
+    await at("swing-predict");
+    await answer(page, true); await W(page, 1700);
+    await holdBtn(page, ".bv-ctl .g2u7x-hold", 900); await W(page, 300);
     await tapText(page, "자석의 극");
+    ok(await waitAsk(page), "swing: 자석 예측 질문이 뜨지 않음");
+    await W(page, 300);
+    await answer(page, false); await W(page, 1700);
     const b = await page.evaluate(() => { const r = document.querySelector(".screen.active .bv-ctl .g2u7x-hold").getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
     await page.mouse.move(b.x, b.y); await page.mouse.down(); await W(page, 900);
     await at("swing-both");
@@ -230,17 +312,28 @@ const LAB = {
   },
   async motor() {
     await at("motor-start");
-    await tapText(page, "전류 흐르게"); await W(page, 900);
+    await tapText(page, "전류 흐르게"); await W(page, 1200);
+    await at("motor-left");
+    ok(await waitAsk(page), "motor: 예측 질문이 뜨지 않음");
+    await W(page, 300);
+    await at("motor-predict");
+    await answer(page, true); await W(page, 1700);
+    await at("motor-both");
+    await tapText(page, "코일 놓기"); await W(page, 900);
     await at("motor-on");
     await tapText(page, "전류 방향"); await W(page, 700);
     await tapText(page, "자석의 극"); await W(page, 900);
     await at("motor-flip");
     await finishLab("motor", "이름 붙이기", 1);
   },
+  async palm() {
+    await at("palm-start");
+    await finishLab("palm", "정리하기", 3);
+  },
 };
 const PLAN = {
   g2u7l1: ["straw", "rub"], g2u7l2: ["can"], g2u7l3: ["wire", "water"], g2u7l4: ["ohm", "formula"],
-  g2u7l5: ["bulb", "split"], g2u7l6: ["power", "eff"], g2u7l7: ["coil"], g2u7l8: ["swing", "motor"],
+  g2u7l5: ["bulb", "scur", "svolt", "pvolt", "pcur"], g2u7l6: ["power", "eff"], g2u7l7: ["coil", "grip"], g2u7l8: ["swing", "motor", "palm"],
 };
 /** 도입: 예측을 고르고(첫 보기) 조작 줄의 버튼을 끝까지 누른다. */
 async function intro() {
@@ -314,9 +407,6 @@ for (const id of lessons) {
 const bad = seen.filter((t) => /[—–]|교과서|\p{Extended_Pictographic}/u.test(t.replace(/[↓→←↑⊙]/g, "")) || / - /.test(t));
 bad.slice(0, 12).forEach((t) => console.log("  금지어: " + t));
 ok(bad.length === 0, `금지어 ${bad.length}건`);
-// 토글을 끈 첫 레슨은 지금 판(옛 훅)으로 열린다
-await openLesson(page, "g2u7l1", false);
-ok(await page.evaluate(() => !document.querySelector(".screen.active .step")?.classList.contains("opn-step")), "토글을 껐는데 새 도입이 열림");
 ok(errors.length === 0, `페이지 오류 ${errors.length}건: ${errors.slice(0, 3).join(" | ")}`);
 console.log(`\n${fail ? "FAIL" : "PASS"} ${pass}/${pass + fail}`);
 await close();

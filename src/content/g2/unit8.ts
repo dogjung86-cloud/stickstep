@@ -26,10 +26,10 @@ export const G2_UNIT8: Unit = {
       subtitle: "손가락 하나로 재는 우주",
       label: "연주 시차",
       icon: "sparkle",
-      minutes: 11,
+      minutes: 14,
       standard: "책 282~283쪽",
       doneNote: "시차와 연주 시차로 별까지의 거리를 비교할 수 있어요",
-      // 도입 > 연필 랩 > 용어 > 연주 시차 랩 > 용어 > 정리 > 문제
+      // 도입 > 연필 랩 > 용어 > 지구 공전 랩 > 거리와 시차 랩 > 용어 > 연주 시차와 pc 랩 > 정리 > 문제
       steps: [...L1],
     },
     {

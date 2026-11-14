@@ -3,7 +3,9 @@
 // 랩 뼈대는 ../bio6/b6Lab 의 bvFrame 을 그대로 쓴다(뼈대 파일과 bio6.css 는 고치지 않는다).
 import type { StepRenderer } from "../../types";
 import { pencilLab } from "./pencilLab";
+import { orbitLab } from "./orbitLab";
 import { parallaxLab } from "./parallaxLab";
+import { parsecLab } from "./parsecLab";
 import { luxLab } from "./luxLab";
 import { spreadLab } from "./spreadLab";
 import { magLab } from "./magLab";
@@ -21,7 +23,9 @@ import { planLab } from "./planLab";
 
 export const G2U8V5_STEPS: Record<string, StepRenderer> = {
   g2u8PencilLab: pencilLab,
+  g2u8OrbitLab: orbitLab,
   g2u8ParallaxLab: parallaxLab,
+  g2u8ParsecLab: parsecLab,
   g2u8LuxLab: luxLab,
   g2u8SpreadLab: spreadLab,
   g2u8MagLab: magLab,
