@@ -8,8 +8,32 @@
 //   · DPR 캡 1.75, rAF 루프는 스텝 쪽 createLoop가 소유한다(여기서는 render()만 제공).
 
 import * as THREE from "three";
+import { wideStageScale } from "../core/wide";
 
 export { THREE };
+
+/** 무대 안 3D 한 장이 그리는 픽셀 상한(약 80만 개). 1920×1080·2560×1440 모니터에서는 닿지 않고, 4K·레티나에서만 걸린다. */
+const MAX_STAGE_PX = 800_000;
+
+/** [시험 수정, pc-quality-audit] 3D 캔버스의 픽셀 배율.
+ *  폰과 화면 전체를 쓰는 가로 3D(일식, 태양계 여행)는 예전 그대로 min(dpr, 1.75).
+ *  넓은 화면에서 CSS zoom으로 키운 랩 무대(.bv-stage) 안의 캔버스만 키운 만큼 촘촘히 그린다
+ *  (상한 4는 2D의 stageDpr과 같고, 여기에 픽셀 상한 MAX_STAGE_PX를 더 건다).
+ *  견주기용(이 브랜치에서만): 세션 저장소 ss.pr3d가 "old"면 예전 값, "full"이면 픽셀 상한 없이, 숫자면 그 배율을 상한으로. */
+export function stagePixelRatio(canvas: HTMLCanvasElement, w = canvas.clientWidth, h = canvas.clientHeight): number {
+  const base = Math.min(window.devicePixelRatio || 1, 1.75);
+  let mode = "";
+  try {
+    mode = sessionStorage.getItem("ss.pr3d") || "";
+  } catch {
+    /* 세션 저장소를 못 쓰는 환경 */
+  }
+  const z = canvas.closest(".bv-stage") ? wideStageScale() : 1;
+  if (mode === "old" || z <= 1) return base;
+  const cap = mode && mode !== "full" && Number.isFinite(Number(mode)) ? Number(mode) : 4;
+  const budget = mode === "full" ? Infinity : Math.sqrt(MAX_STAGE_PX / Math.max(1, w * h));
+  return Math.max(base, Math.min(base * z, cap, budget));
+}
 
 const base = (import.meta as unknown as { env: { BASE_URL: string } }).env?.BASE_URL || "/";
 const texLoader = new THREE.TextureLoader();
@@ -52,7 +76,7 @@ export function createSpaceStage(canvas: HTMLCanvasElement, o?: { fov?: number }
   const camera = new THREE.PerspectiveCamera(o?.fov ?? 42, 1, 0.1, 4000);
 
   function resize(w: number, h: number): void {
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+    renderer.setPixelRatio(stagePixelRatio(canvas, w, h));
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();

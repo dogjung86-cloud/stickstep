@@ -515,6 +515,8 @@ export function modelCellStage(box: HTMLElement, o: CellStageOpts): CellStage {
       W = box.clientWidth || 346;
       H = box.clientHeight || 230;
       stage.resize(W, H);
+      // [시험 수정] 막 띠의 최소 굵기(기기 픽셀)는 실제 그리는 배율을 따라야 넓은 화면에서 가늘어지지 않는다
+      if (!plant) outerMat.uniforms.uPx.value = 3.4 * stage.renderer.getPixelRatio();
       over.setAttribute("viewBox", `0 0 ${W} ${H}`);
       tagKeys.forEach((k) => {
         const t = tags[k];
@@ -571,6 +573,8 @@ export function modelCellStage(box: HTMLElement, o: CellStageOpts): CellStage {
     let drawn = false;
 
     loop = createLoop((dtN) => {
+      // [시험 수정] 창 크기만 바뀌어 무대 배율이 달라지면(무대의 CSS 크기는 그대로라 ResizeObserver가 모른다) 다시 맞춘다
+      if (stage.renderer.getPixelRatio() !== S.stagePixelRatio(canvas, W, H)) fit();
       const dt = Math.min(0.05, dtN * 0.0167);
       time += dt;
       const off = st.off;

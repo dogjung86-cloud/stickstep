@@ -227,7 +227,7 @@ export const swingLab: StepRenderer = (host, step, api) => {
     loop = createLoop((dt) => {
       const w = f.stage.clientWidth || 346;
       const h = f.stage.clientHeight || 230;
-      if (cv.width !== Math.round(w * Math.min(window.devicePixelRatio || 1, 1.75))) stage.resize(w, h);
+      if (cv.width !== Math.floor(w * S.stagePixelRatio(cv, w, h))) stage.resize(w, h); // [시험 수정] three는 내림(floor)으로 잡는다
       if (held) {
         hot += dt / 60;
         if (hot > 5) {
