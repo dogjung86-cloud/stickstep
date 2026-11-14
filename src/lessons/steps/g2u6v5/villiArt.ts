@@ -14,7 +14,7 @@ import { P } from "./kit";
 
 export type Pt = [number, number];
 
-const X0 = 12;
+const X0 = 20;
 const X1 = 314;
 const BASE = 192; // 주름 사이 골짜기(매끈한 벽이면 겉면)의 높이
 const BOTTOM = 230;
@@ -237,7 +237,7 @@ export function villiInset(): string {
   s += `<path d="M${vx - 3} ${bot} L${vx - 3} ${top + 20} A3 3 0 0 1 ${vx + 3} ${top + 20} L${vx + 3} ${bot} Z" fill="${C.lacteal}" stroke="#B8901F" stroke-width=".8"/>`;
   s += `</g>`;
   // 이름표와 가리키는 선
-  s += `<line x1="${lx - 1}" y1="${top + 30}" x2="${bx + 64}" y2="${by + 28}" stroke="#FF9AA5" stroke-width="1"/>` + label(bx + 66, by + 32, "모세혈관", "#FFB3BB", "start");
+  s += `<line x1="${rx + 1}" y1="${top + 30}" x2="${bx + 64}" y2="${by + 28}" stroke="#FF9AA5" stroke-width="1"/>` + label(bx + 66, by + 32, "모세혈관", "#FFB3BB", "start");
   s += `<line x1="${vx + 3}" y1="${top + 50}" x2="${bx + 64}" y2="${by + 60}" stroke="${C.lacteal}" stroke-width="1"/>` + label(bx + 66, by + 64, "암죽관", "#F5DA70", "start");
   s += label(bx + W - 8, by + 16, "융털 속", "#C6D3E6", "end");
   return s;

@@ -77,6 +77,9 @@
 .g2u6x-chipbtn.lack { border: 1.5px dashed var(--red); }
 .g2u6x-chipbtn.lack i { color: var(--red-press); }
 .g2u6x-chipbtn.ro { pointer-events: none; }
+/* 고르는 중(아직 견주기 전)은 파랑. 단원 색(분홍, 빨강 계열)으로 두면 틀린 것처럼 보였다(2026-11-15 눈검수). */
+.g2u6x-chipbtn.pk.on { border-color: var(--blue); background: var(--blue-tint); box-shadow: 0 0 0 1px var(--blue) inset; }
+.g2u6x-chipbtn.pk.on i { color: var(--blue-press); }
 .g2u6x-mk { position: absolute; right: 5px; top: 5px; width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; color: #fff; }
 .g2u6x-chipbtn.hit .g2u6x-mk { background: var(--green); }
 .g2u6x-chipbtn.miss .g2u6x-mk { background: var(--red); }

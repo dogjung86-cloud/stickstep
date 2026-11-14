@@ -209,8 +209,9 @@ export const g2u6VilliLab: StepRenderer = (host, step, api) => {
       // 흡수되는 것은 벽에 고르게 나눈 자리(융털이 있으면 융털 끝)로, 나머지는 오른쪽으로 흘러 나간다.
       const spread = [-3, 2, -1, 3, -2, 1][i % 6]; // 주름 꼭대기에만 모이지 않게 조금씩 비킨다
       const target = tg[Math.max(0, Math.min(tg.length - 1, Math.floor(((i + 0.5) / got) * tg.length) + (level === 2 ? 0 : spread)))] ?? tg[0];
+      const tx = Math.max(9, target[0]);
       if (run < 0) out += dot(sx, sy, 4.6, P.glucose, "#8A5A0A");
-      else if (absorbed) out += dot(sx + (target[0] - sx) * run, sy + (target[1] - sy) * run, 4.6, P.glucose, "#8A5A0A");
+      else if (absorbed) out += dot(sx + (tx - sx) * run, sy + (target[1] - sy) * run, 4.6, P.glucose, "#8A5A0A");
       else out += `<g opacity="${(1 - run * 0.85).toFixed(2)}">${dot(sx + 70 * run, sy, 4.6, P.glucose, "#8A5A0A")}</g>`;
     }
     if (level === 2) out += villiInset();
@@ -258,7 +259,7 @@ export const g2u6VilliLab: StepRenderer = (host, step, api) => {
   sum.addEventListener("click", () => {
     if (busy) return;
     tap();
-    lab.judge("주름과 융털이 있을 때 <b>더 많이</b> 흡수된 까닭은?", [{ t: "영양소와 닿는 표면적이 넓어서", ok: true }, { t: "영양소의 크기가 더 작아져서" }, { t: "벽이 더 두꺼워져서" }], "같은 길이의 창자라도 벽이 구불구불할수록 <b>닿는 면</b>이 넓어요.", () =>
+    lab.judge("주름과 융털이 있을 때 <b>더 많이</b> 흡수된 까닭은?", [{ t: "영양소와 닿는 표면적이 넓어서", ok: true }, { t: "영양소의 크기가 더 작아져서" }, { t: "근육층이 더 두꺼워져서" }], "같은 길이의 창자라도 벽이 구불구불할수록 <b>닿는 면</b>이 넓어요.", () =>
       lab.finish("작은창자 안쪽 벽은 <b>주름과 융털</b> 덕분에 영양소와 닿는 <b>표면적</b>이 매우 넓어요. 그래서 영양소를 효율적으로 흡수해요."),
     );
   });

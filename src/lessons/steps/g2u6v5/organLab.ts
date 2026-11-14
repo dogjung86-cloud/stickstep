@@ -31,9 +31,9 @@ const NUT = [
 ];
 /** 칸의 왼쪽 끝과 폭. 지방 칸은 "모노글리세라이드"(12px에 약 82px)가 들어가게 넓다. */
 const LANE = [
-  { x: 112, w: 64 },
-  { x: 180, w: 64 },
-  { x: 248, w: 94 },
+  { x: 112, w: 62 },
+  { x: 178, w: 68 },
+  { x: 250, w: 92 },
 ];
 const cx = (i: number): number => LANE[i].x + LANE[i].w / 2;
 const BOX_Y = 158;
@@ -59,7 +59,7 @@ const STOPS: Stop[] = [
   { key: "mouth", juice: "침", color: "#63E6BE", y: 32, tags: ["아밀레이스", null, null], cut: [true, false, false], from: [61, 31], focus: ["mouth", "gland"], labels: ["mouth", "gland"] },
   { key: "stomach", juice: "위액", color: "#C9A0F0", y: 78, tags: [null, "펩신", null], cut: [false, true, false], from: null, focus: ["stomach"], labels: ["stomach"] },
   { key: "bile", juice: "쓸개즙", color: "#9BD15F", y: 118, tags: [null, null, "효소 없음"], cut: [false, false, false], from: PAPILLA, focus: ["gall", "liver"], labels: ["liver", "gall", "small"] },
-  { key: "pancreas", juice: "이자액", color: "#FF9F7A", y: 140, tags: ["아밀레이스", "트립신", "라이페이스"], cut: [true, true, true], from: PAPILLA, focus: ["pancreas"], labels: ["pancreas", "small"] },
+  { key: "pancreas", juice: "이자액", color: "#FF9F7A", y: 140, tags: ["아밀레이스", "트립신", "라이페이스"], cut: [true, true, true], from: PAPILLA, focus: ["pancreas"], labels: ["liver", "gall", "pancreas", "small"] },
 ];
 const PILL_X = 88; // 소화액 이름표의 가운데(몸 그림의 오른쪽 가장자리)
 
@@ -71,16 +71,16 @@ const PILL_X = 88; // 소화액 이름표의 가운데(몸 그림의 오른쪽 �
 const hexPts = (x: number, y: number, r: number): string =>
   [0, 1, 2, 3, 4, 5].map((k) => `${(x + r * Math.cos((Math.PI / 3) * k)).toFixed(1)},${(y + r * Math.sin((Math.PI / 3) * k)).toFixed(1)}`).join(" ");
 function unitShape(kind: number, x: number, y: number, fill: string, line: string): string {
-  if (kind < 0) return `<polygon points="${hexPts(x, y, 4.3)}" fill="${fill}" stroke="${line}" stroke-width="1.1"/>`;
+  if (kind < 0) return `<polygon points="${hexPts(x, y, 3.8)}" fill="${fill}" stroke="${line}" stroke-width="1.1"/>`;
   const k = kind % 4;
-  if (k === 0) return `<circle cx="${x}" cy="${y}" r="3.9" fill="${fill}" stroke="${line}" stroke-width="1.1"/>`;
-  if (k === 1) return `<polygon points="${x},${y - 4.4} ${x + 4.2},${y + 3.4} ${x - 4.2},${y + 3.4}" fill="${fill}" stroke="${line}" stroke-width="1.1"/>`;
-  if (k === 2) return `<rect x="${x - 3.6}" y="${y - 3.6}" width="7.2" height="7.2" rx="1" fill="${fill}" stroke="${line}" stroke-width="1.1"/>`;
-  return `<polygon points="${x},${y - 4.6} ${x + 4.4},${y} ${x},${y + 4.6} ${x - 4.4},${y}" fill="${fill}" stroke="${line}" stroke-width="1.1"/>`;
+  if (k === 0) return `<circle cx="${x}" cy="${y}" r="3.4" fill="${fill}" stroke="${line}" stroke-width="1.1"/>`;
+  if (k === 1) return `<polygon points="${x},${y - 3.9} ${x + 3.7},${y + 3} ${x - 3.7},${y + 3}" fill="${fill}" stroke="${line}" stroke-width="1.1"/>`;
+  if (k === 2) return `<rect x="${x - 3.2}" y="${y - 3.2}" width="6.4" height="6.4" rx="1" fill="${fill}" stroke="${line}" stroke-width="1.1"/>`;
+  return `<polygon points="${x},${y - 4.1} ${x + 3.9},${y} ${x},${y + 4.1} ${x - 3.9},${y}" fill="${fill}" stroke="${line}" stroke-width="1.1"/>`;
 }
-/** 사슬 조각들. groups는 조각마다 알갱이 수, 알갱이 사이 9.6, 조각 사이 gap. 알갱이마다 가운데 x를 돌려준다. */
+/** 사슬 조각들. groups는 조각마다 알갱이 수, 알갱이 사이 8.4, 조각 사이 gap. 조각마다 가운데 x를 돌려준다. */
 function chains(i: number, groups: number[], y: number, gap: number): { svg: string; centers: number[] } {
-  const step = 9.6;
+  const step = 8.4;
   const width = groups.reduce((a, n) => a + (n - 1) * step, 0) + gap * (groups.length - 1);
   let x = cx(i) - width / 2;
   let svg = "";
@@ -121,15 +121,15 @@ function nutrientBox(i: number, form: number): string {
   if (i === 0) {
     if (form === 0) out += chains(0, [6], GY, 0).svg + lab(cx(0), LY1, "녹말", n.head);
     else if (form === 1) {
-      const c = chains(0, [4, 2], GY, 15);
+      const c = chains(0, [4, 2], GY, 11);
       out += c.svg + lab(c.centers[0], LY1, "녹말", n.head) + lab(c.centers[1], LY1, "엿당", n.head);
-    } else if (form === 2) out += chains(0, [2, 2, 2], GY, 13).svg + lab(cx(0), LY1, "엿당", n.head);
-    else out += chains(0, [1, 1, 1, 1, 1, 1], GY, 10.4).svg + lab(cx(0), LY1, "포도당", n.head);
+    } else if (form === 2) out += chains(0, [2, 2, 2], GY, 11).svg + lab(cx(0), LY1, "엿당", n.head);
+    else out += chains(0, [1, 1, 1, 1, 1, 1], GY, 9.2).svg + lab(cx(0), LY1, "포도당", n.head);
   } else if (i === 1) {
     if (form === 0) out += chains(1, [6], GY, 0).svg + lab(cx(1), LY1, "단백질", n.head);
-    else if (form === 1) out += chains(1, [3, 3], GY, 15).svg + lab(cx(1), LY1, "작은 조각", n.head);
-    else if (form === 2) out += chains(1, [2, 2, 2], GY, 13).svg + lab(cx(1), LY1, "더 작은 조각", n.head);
-    else out += chains(1, [1, 1, 1, 1, 1, 1], GY, 10.4).svg + lab(cx(1), LY1, "아미노산", n.head);
+    else if (form === 1) out += chains(1, [3, 3], GY, 12).svg + lab(cx(1), LY1, "작은 조각", n.head);
+    else if (form === 2) out += chains(1, [2, 2, 2], GY, 11).svg + lab(cx(1), LY1, "더 작은 조각", n.head);
+    else out += chains(1, [1, 1, 1, 1, 1, 1], GY, 9.2).svg + lab(cx(1), LY1, "아미노산", n.head);
   } else {
     const x = cx(2);
     if (form === 0) {
@@ -222,7 +222,7 @@ export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
     });
     // 지금 모습 상자
     NUT.forEach((_, i) => {
-      out += `<rect x="${LANE[i].x + 2}" y="${BOX_Y}" width="${LANE[i].w - 4}" height="68" rx="10" fill="rgba(11,21,36,.55)" stroke="${marks[i] ? P.bad : "rgba(200,225,255,.14)"}" stroke-width="${marks[i] ? 1.6 : 1}"${marks[i] ? ` stroke-dasharray="4 3"` : ""}/>`;
+      out += `<rect x="${LANE[i].x + 2}" y="${BOX_Y}" width="${LANE[i].w - 4}" height="68" rx="10" fill="rgba(11,21,36,.55)" stroke="${marks[i] ? P.bad : "rgba(200,225,255,.14)"}" stroke-width="${marks[i] ? 1.8 : 1}"/>`;
       out += `<g${pop ? ` class="g2u6x-pop"` : ""}>${nutrientBox(i, form[i])}</g>`;
       if (marks[i]) out += lanePill(cx(i), BOX_Y, at === 2 && i === 2 ? "아직 지방" : "그대로", P.bad);
     });
@@ -273,13 +273,14 @@ export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
       mark(c, "");
     });
   };
+  chips.forEach((c) => c.el.classList.add("pk"));
   const main = bvBtn("main g2u6x-mix", "침 섞기");
 
   const PROMPT: Record<StopKey, string> = {
     mouth: "음식물이 입에 들어왔어요. <b>침</b>이 분해할 영양소를 모두 골라요.",
     stomach: "위에 닿았어요. <b>위액</b>이 분해할 영양소를 모두 골라요.",
-    bile: "간에서 만든 <b>쓸개즙</b>이 쓸개에서 나와요. 분해할 영양소를 골라요.",
-    pancreas: "이번에는 이자에서 <b>이자액</b>이 나와요. 분해할 영양소를 모두 골라요.",
+    bile: "작은창자에 닿자 간에서 만든 <b>쓸개즙</b>이 쓸개에서 나와요. 분해할 영양소를 골라요.",
+    pancreas: "작은창자에 이자에서 만든 <b>이자액</b>도 나와요. 분해할 영양소를 모두 골라요.",
   };
   const RIGHT: Record<StopKey, string> = {
     mouth: "맞아요. 침 속 <b>아밀레이스</b>가 녹말을 <b>엿당</b>으로 분해하기 시작했어요.",
@@ -290,7 +291,7 @@ export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
   const WRONG: Record<StopKey, string> = {
     mouth: "침 속 <b>아밀레이스</b>는 녹말만 분해해요. 녹말 일부가 <b>엿당</b>이 됐어요.",
     stomach: "위액 속 <b>펩신</b>은 단백질만 분해해요. 녹말과 지방은 그대로예요.",
-    bile: "쓸개즙에는 <b>소화효소가 없어요</b>. 지방을 작은 방울로 나눌 뿐이에요.",
+    bile: "쓸개즙에는 <b>소화효소가 없어요</b>. 지방을 작은 방울로 나눠 소화를 도울 뿐이에요.",
     pancreas: "이자액의 <b>아밀레이스, 트립신, 라이페이스</b>가 세 영양소를 모두 분해해요.",
   };
   const NEXT_LABEL: Record<StopKey, string> = { mouth: "삼켜서 위로 보내기", stomach: "작은창자로 보내기", bile: "이자액도 알아보기", pancreas: "큰창자로 보내기" };
@@ -347,13 +348,14 @@ export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
         }
         // 고른 것과 견준다(채점하지 않는다). 고른 것이 맞으면 hit, 고른 것이 틀리면 miss, 골랐어야 하는데 안 고르면 lack.
         const none = !st.cut.some(Boolean);
+        chips.forEach((c) => c.on(false));
         st.cut.forEach((c, i) => {
           const p = pick.has(i);
-          chips[i].sub(c ? "분해됐어요" : st.key === "bile" && i === 2 ? "방울만 작아짐" : "그대로예요");
+          chips[i].sub(c ? "분해됐어요" : st.key === "bile" && i === 2 ? "방울만 작아져요" : "그대로예요");
           mark(chips[i], p ? (c ? "hit" : "miss") : c ? "lack" : "");
           marks[i] = p && !c;
         });
-        chips[3].sub(none ? "분해 없음" : "분해 있음");
+        chips[3].sub(none ? "분해 없어요" : "분해 있어요");
         mark(chips[3], pick.has(3) ? (none ? "hit" : "miss") : none ? "lack" : "");
         const wrong = chips.filter((c) => c.el.classList.contains("miss") || c.el.classList.contains("lack")).length;
         host.dataset.g6Miss = String(wrong);
@@ -384,7 +386,7 @@ export const g2u6EnzymeLab: StepRenderer = (host, step, api) => {
             marks = [false, false, false];
             popBox = true;
             draw();
-            f.say("작은창자에서 소화가 끝나 녹말은 <b>포도당</b>, 단백질은 <b>아미노산</b>이 됐어요.");
+            f.say("소화가 끝나 녹말은 <b>포도당</b>, 단백질은 <b>아미노산</b>, 지방은 <b>지방산과 모노글리세라이드</b>가 됐어요.");
             after();
           });
         }, 1500);
