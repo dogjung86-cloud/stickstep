@@ -8,6 +8,7 @@
 
 import { clamp, el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
+import { zoomOf } from "../../../core/wide";
 import type { OpenerCtx } from "./opener";
 
 const WORD = ["작", "은", "글", "씨", "예", "요"];
@@ -81,7 +82,7 @@ export function dropLens(c: OpenerCtx): void {
     if (Math.abs(d) > 5) moved = true;
     if (!moved) return;
     c.stage.classList.add("moved");
-    setX(x0 + (d / k()) * 1.6); // 손가락이 간 거리의 1.6배: 짧게 끌어도 끝까지 간다
+    setX(x0 + (d / (k() * zoomOf(c.stage))) * 1.6); // 손가락이 간 거리의 1.6배: 짧게 끌어도 끝까지 간다(넓은 화면의 zoom 배율은 나눈다)
   });
   const up = (e: PointerEvent): void => {
     if (!dragging) return;

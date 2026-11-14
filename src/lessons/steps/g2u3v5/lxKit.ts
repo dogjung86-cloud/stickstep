@@ -3,7 +3,7 @@
 // 무대는 캔버스 한 장에 그린다. 설계 좌표는 늘 346×230이고 무대 폭이 달라지면 통째로 줄이거나 키운다(글자와 그림이 함께 간다).
 // 광선은 ui/lightKit의 drawBeam만 쓴다(단원의 약속). 그리기 루프는 cleanup에서 반드시 멈춘다.
 
-import { stageDpr } from "../../../core/wide";
+import { localPt, stageDpr } from "../../../core/wide";
 import { el } from "../../../core/dom";
 import { createLoop, type Loop } from "../../../core/anim";
 import type { StepAPI } from "../../types";
@@ -81,8 +81,8 @@ export function lxCanvas(stage: HTMLElement): LxStage {
     },
     pt(e) {
       fit();
-      const r = cv.getBoundingClientRect();
-      return { x: (e.clientX - r.left - ox) / k, y: (e.clientY - r.top - oy) / k };
+      const p = localPt(cv, e.clientX, e.clientY); // 넓은 화면의 확대(zoom)를 되돌린 무대 px
+      return { x: (p.x - ox) / k, y: (p.y - oy) / k };
     },
     place(node, x, y, w, h) {
       fit();

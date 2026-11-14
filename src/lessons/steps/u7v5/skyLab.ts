@@ -8,7 +8,8 @@
 // 그리기는 조작이 있을 때만 한다(그리기 루프 없음).
 
 import { el } from "../../../core/dom";
-import { fitCanvas } from "../../../ui/canvas";
+import { fitStageCanvas } from "../../../ui/canvas";
+import { localPt } from "../../../core/wide";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvRange } from "../bio6/b6Lab";
@@ -203,7 +204,7 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
 
   function draw(): void {
     if (disposed || !canvas.isConnected) return;
-    const fit = fitCanvas(canvas, H);
+    const fit = fitStageCanvas(canvas, H);
     const { ctx, w: W } = fit;
     const t = q / 4;
     const bg = ctx.createLinearGradient(0, 0, 0, H);
@@ -295,10 +296,10 @@ export const u7SkyLab: StepRenderer = (host, step, api) => {
 
   canvas.addEventListener("pointerdown", (e) => {
     if (phase !== "pole") return;
-    const r = canvas.getBoundingClientRect();
-    const x = e.clientX - r.left;
-    const y = ((e.clientY - r.top) / r.height) * H;
-    if (Math.hypot(x - r.width / 2, y - POLE_Y) <= 26) {
+    const p = localPt(canvas, e.clientX, e.clientY); // 넓은 화면의 확대를 되돌린 무대 px(그림과 같은 판)
+    const x = p.x;
+    const y = (p.y / (canvas.clientHeight || H)) * H;
+    if (Math.hypot(x - canvas.clientWidth / 2, y - POLE_Y) <= 26) {
       poleFound = true;
       haptic(HAPTIC.correct);
       draw();

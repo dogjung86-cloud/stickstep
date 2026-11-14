@@ -8,7 +8,8 @@
 
 import { el, clamp } from "../../../core/dom";
 import { createLoop, type Loop } from "../../../core/anim";
-import { fitCanvas } from "../../../ui/canvas";
+import { fitStageCanvas } from "../../../ui/canvas";
+import { localPt } from "../../../core/wide";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { curioCard, type Curio } from "../../../ui/curio";
 import type { StepRenderer } from "../../types";
@@ -158,14 +159,14 @@ export const u7SunLab: StepRenderer = (host, step, api) => {
 
   canvas.addEventListener("pointerdown", (e) => {
     if (mode !== "surf" || coverT > 0.1) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = ((e.clientY - rect.top) / rect.height) * H;
+    const p = localPt(canvas, e.clientX, e.clientY); // 넓은 화면의 확대를 되돌린 무대 px(그림과 같은 판)
+    const x = p.x;
+    const y = (p.y / (canvas.clientHeight || H)) * H;
     const n = spotCount();
     let best = -1;
     let bestD = 1e9;
     for (let i = 0; i < n && i < SPOTS.length; i++) {
-      const [sx, sy] = spotAt(i, rect.width / 2);
+      const [sx, sy] = spotAt(i, canvas.clientWidth / 2);
       const d = Math.hypot(x - sx, y - sy);
       if (d < bestD) {
         bestD = d;
@@ -197,7 +198,7 @@ export const u7SunLab: StepRenderer = (host, step, api) => {
   };
 
   const loop: Loop = createLoop((dt, tMs) => {
-    const fit = fitCanvas(canvas, H);
+    const fit = fitStageCanvas(canvas, H);
     const ctx = fit.ctx;
     const W = fit.w;
     const cx = W / 2;

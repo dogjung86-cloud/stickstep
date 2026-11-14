@@ -2,7 +2,7 @@
 // 뼈대는 Ⅱ단원과 같은 bvFrame(질문 한 줄, 도움말 두 줄, 무대 230px, 높이 고정 조작 칸 208px)이다.
 // 무대는 캔버스 하나다. 346×230 설계 좌표로 그리고, 무대 폭이 달라지면 통째로 비율을 맞춘다.
 // 입자는 ui/gasKit의 GasBox(자유 입자, 벽 충돌 번쩍임, 충돌 수)를 그대로 쓴다.
-import { stageDpr } from "../../../core/wide";
+import { localPt, stageDpr } from "../../../core/wide";
 import { el } from "../../../core/dom";
 import { createLoop, type Loop } from "../../../core/anim";
 import { bvFrame, bvTimers, type BvFrame, type BvTimers } from "../bio6/b6Lab";
@@ -74,8 +74,8 @@ export function u6Lab(host: HTMLElement, api: StepAPI, o: { title: string; steps
       }).start();
     },
     toDesign(clientX, clientY) {
-      const r = cv.getBoundingClientRect();
-      return { x: (clientX - r.left - (cw - SW * k) / 2) / k, y: (clientY - r.top - oy) / k };
+      const p = localPt(cv, clientX, clientY); // 넓은 화면의 확대(zoom)를 되돌린 무대 px
+      return { x: (p.x - (cw - SW * k) / 2) / k, y: (p.y - oy) / k };
     },
     phase(name) {
       host.dataset.u6Phase = name;
