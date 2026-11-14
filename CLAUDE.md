@@ -901,8 +901,16 @@ src/
   (운영 DB에 컬럼이 없을 때 닉네임 동기화까지 죽지 않게). 회원탈퇴는 서버(cascade)와 기기의 학교를 함께 지운다.
 - **운영 상태(2026-11-14)**: 마이그레이션(supabase/migrations/2026-11-14-school.sql) 실행 끝, 시크릿 NEIS_API_KEY 등록 끝,
   school-search는 대시보드 편집기로 배포(JWT 검증 끔). 함수 코드를 고치면 대시보드에서 다시 배포한다(이 기기에는 supabase CLI 로그인이 없다).
-  방침은 v1.1(시행일 2026-11-14)로 올렸다. 점검: 함수 주소를 GET으로 열면 `{ok:true, keyed:true}`.
-- **QA**: `PORT=<dev 포트> node qa/e2e-school.mjs [스크린샷 폴더]`(48검증, 폰 390×700).
+  방침은 v1.2(시행일 2026-11-14, 학교 랭킹 포함)다. 점검: 함수 주소를 GET으로 열면 `{ok:true, keyed:true}`.
+- **학교 랭킹(2026-11-14 사용자 확정)**: 시트 하나(ui/schoolRank.ts, 접두 `.srk-`)에 "학교 순위"(학교급별 누적 스텝 합계,
+  3명 이상 등록한 학교만)와 "우리 학교"(같은 학교 안에서 위에서 10명과 내 순위) 두 쪽. 진입은 도전 탭의 랭킹 카드(.rank-card)와
+  학교 시트의 "우리 학교 순위 보기". 자료는 core/schoolRank.ts가 서버 함수 `school_rank_board(p_kind)`, `school_member_board()`를
+  부른다(supabase/migrations/2026-11-14-school-rank.sql. 표는 직접 읽지 않는다). 남에게 보이는 것은 **닉네임과 누적 스텝뿐**이고,
+  닉네임이 없거나 금칙어면 "스텝 친구"다(소셜 이름은 절대 내보내지 않는다). 금칙어 목록은 core/nickFilter.ts와 SQL의 rank_name
+  두 곳이 같아야 한다. 이름 올리기는 profiles.rank_hidden으로 끈다(학교 합계에는 그대로 더한다). 순위용 스텝은 서버가
+  "하루 1,500 x (가입 뒤 날수 + 1)"로 자른다(rank_steps, 느슨한 조작 방어). 주간 순위와 전국 개인 순위는 없다.
+  DEV 스텁은 학교 검색과 같은 표식을 쓰고 이름 숨김은 sessionStorage `"ss.rankhidden"`. 보이는 항목을 늘리면 privacy.html 2절도 고친다.
+- **QA**: `PORT=<dev 포트> node qa/e2e-school.mjs [스크린샷 폴더]`(64검증, 폰 390×700).
 
 ## IA·홈 구조 (2026-07-12 개편 — 사용자 확정)
 - **진입**: **스플래시 = 랜딩**(별도 랜딩 화면 없음 — 사용자 확정). 플립북 정착 후 하단 버튼 3개

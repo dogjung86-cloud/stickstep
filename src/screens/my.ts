@@ -15,6 +15,8 @@ import { getState, currentStreak, setNickname, setSchool, isWideOff, setWideOff,
 import { onAuthChange, currentUser, pushNickname, signOut } from "../core/auth";
 import { ownedPremiumSubjectIds, SELLABLE_SUBJECTS } from "../core/purchase";
 import { SCHOOL_KINDS, SCHOOL_KIND_DEFAULT, SCHOOL_QUERY_MIN, SCHOOL_QUERY_MAX, cleanSchoolQuery, pushSchool, schoolAllowed, searchSchools, type School } from "../core/school";
+import { nickBlocked } from "../core/nickFilter";
+import { openSchoolRank } from "../ui/schoolRank";
 import { bootLevel, BOOT_TIERS } from "../core/level";
 import { bootArt } from "../ui/boots";
 import { profileAvatar, setProfileAvatar } from "../ui/avatar";
@@ -199,9 +201,17 @@ export function myScreen(o: {
     class: "nick-input",
     attrs: { type: "text", maxlength: "12", placeholder: "별명을 입력해 주세요", "aria-label": "닉네임", autocomplete: "off", enterkeyhint: "done" },
   }) as HTMLInputElement;
+  const NICK_HINT = "실명 대신 별명을 추천해요 · 학교 랭킹에 보여요 · 최대 12자";
+  const nickHint = el("div", { class: "nick-hint", text: NICK_HINT });
   const nickSave = el("button", { class: "mysheet-done", text: "저장" });
   function saveNick(): void {
     haptic(HAPTIC.tap);
+    // 닉네임은 학교 랭킹에서 같은 학교 친구에게 보인다. 쓸 수 없는 말은 저장하지 않는다.
+    if (nickBlocked(nickInput.value)) {
+      nickHint.textContent = "쓸 수 없는 말이 들어 있어요. 다른 별명으로 적어 주세요.";
+      nickHint.classList.add("bad");
+      return;
+    }
     setNickname(nickInput.value);
     void pushNickname(getState().nickname); // 로그인 상태면 profiles.nickname에도 반영(아니면 no-op)
     nameEl.textContent = displayName();
@@ -218,7 +228,7 @@ export function myScreen(o: {
       "div",
       { class: "mysheet-body" },
       nickInput,
-      el("div", { class: "nick-hint", text: "실명 대신 별명을 추천해요 · 최대 12자 · 비우면 기본 이름으로 돌아가요" }),
+      nickHint,
     ),
     el("div", { class: "mysheet-foot" }, nickSave),
   );
@@ -226,6 +236,8 @@ export function myScreen(o: {
   nickBtn.addEventListener("click", () => {
     haptic(HAPTIC.tap);
     nickInput.value = getState().nickname ?? "";
+    nickHint.textContent = NICK_HINT;
+    nickHint.classList.remove("bad");
     openSheet(nickSheet, nickBtn);
     nickInput.focus({ preventScroll: true }); // openSheet의 X 포커스를 입력으로 재지정(입력이 본론)
   });
@@ -291,16 +303,27 @@ export function myScreen(o: {
       renderSchoolCurrent();
       snack("학교 등록을 해제했어요");
     });
+    const rankGo = el("button", { class: "sch-rank", attrs: { "aria-haspopup": "dialog" } }, el("span", { html: icon("trophy", 14) }), el("span", { text: "우리 학교 순위 보기" }));
+    rankGo.addEventListener("click", () => {
+      haptic(HAPTIC.tap);
+      closeSheet();
+      openSchoolRank(elm, { tab: "mine", onNeedSchool: () => schoolBtn.click(), from: schoolBtn });
+    });
     schCur.append(
-      el("span", { class: "sch-cur-ic", html: icon("school", 17) }),
       el(
         "div",
-        { class: "sch-cur-who" },
-        el("div", { class: "sch-cur-cap", text: "지금 등록한 학교" }),
-        el("div", { class: "sch-cur-name", text: sc.name }),
-        el("div", { class: "sch-cur-region", text: sc.region }),
+        { class: "sch-cur-top" },
+        el("span", { class: "sch-cur-ic", html: icon("school", 17) }),
+        el(
+          "div",
+          { class: "sch-cur-who" },
+          el("div", { class: "sch-cur-cap", text: "지금 등록한 학교" }),
+          el("div", { class: "sch-cur-name", text: sc.name }),
+          el("div", { class: "sch-cur-region", text: sc.region }),
+        ),
+        off,
       ),
-      off,
+      rankGo,
     );
   }
   function pickSchool(sc: School): void {
@@ -310,14 +333,14 @@ export function myScreen(o: {
     void pushSchool(getState().school ?? null);
     refreshSchoolLine();
     closeSheet();
-    snack(had ? "학교를 바꿨어요" : "학교를 등록했어요");
+    snack(had ? "학교를 바꿨어요" : "학교를 등록했어요. 학교 랭킹에 함께해요");
   }
   async function runSchoolSearch(): Promise<void> {
     window.clearTimeout(schTimer);
     const seq = ++schSeq;
     const q = cleanSchoolQuery(schInput.value);
     if (q.length < SCHOOL_QUERY_MIN) {
-      schNote("idle", q ? "한 글자만 더 적어 주세요" : "다니는 학교 이름으로 찾아보세요");
+      schNote("idle", q ? "한 글자만 더 적어 주세요" : "학교를 등록하면 학교별 스텝 랭킹에 함께할 수 있어요. 다니는 학교 이름으로 찾아보세요.");
       return;
     }
     schNote("loading", "찾는 중이에요");

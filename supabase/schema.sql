@@ -13,6 +13,7 @@ create table if not exists public.profiles (
   school_name text, -- 학교명
   school_region text, -- 지역(시도 + 시군구, 동명 학교 구분용). 주소 전체는 저장하지 않는다
   school_kind text, -- 학교급(중학교 등)
+  rank_hidden boolean not null default false, -- 학교 랭킹에 내 이름을 올리지 않음(집계 함수는 migrations/2026-11-14-school-rank.sql)
   created_at timestamptz not null default now()
 );
 
