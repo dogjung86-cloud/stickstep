@@ -204,6 +204,8 @@ const LABS = {
     await dsIs(id, "g6Fail", "", "바르게 했는데 실패로 처리됨");
     await at(id, "saliva-both");
     await wrongOnce(id, "saliva");
+    // 둘째 판정(증류수 쪽 결과로 알 수 있는 것, 2026-11-15). 틀린 직후의 카드가 가장 길어 이것도 틀려 보며 잰다.
+    await wrongOnce(id, "saliva2");
     await done(id, "saliva");
   },
   async enzyme(id) {
