@@ -3,8 +3,11 @@
 // g2u6SalivaLab 「침은 녹말을 어떻게 바꿀까요?」
 //   책의 탐구 「침의 소화 작용 탐구하기」: 녹말 용액이 든 시험관 (가)에 증류수, (나)에 침 용액을 넣고 35~40 ℃ 물에 10분 담근 뒤
 //   아이오딘-아이오딘화 칼륨 용액(받침 유리에 한 방울)과 베네딕트 용액(넣고 뜨거운 물에)으로 견준다.
-//   학생이 정하는 것: 두 시험관에 넣을 것, 담가 둘 물의 온도, 검사의 차례.
+//   학생이 정하는 것: 두 시험관에 넣을 것(증류수 5 mL 또는 침 용액 5 mL), 담가 둘 물의 온도. 두 검사는 어느 것부터 해도 결과가 같다.
 //   실패하는 길: ① 두 시험관에 같은 것을 넣으면 결과가 같아 견줄 수 없다 ② 얼음물이나 끓는 물에 담그면 침을 넣은 쪽도 청람색이다.
+//   검사 뒤 쌤의 말은 색만 말하고 해석하지 않는다(2026-11-15 점검: 화면이 "녹말이 사라졌어요"를 먼저 말해 판정이 거저였다).
+//   판정 둘: ① 침을 넣은 쪽에서 일어난 일(두 검사를 다 읽어야 오답을 지운다)
+//            ② 증류수 쪽 결과로 알 수 있는 것(같은 물, 같은 시간이었으니 시간이나 따뜻한 물 탓이 아니라 침 때문이다).
 //
 // g2u6EnzymeLab 「소화액마다 어떤 영양소를 분해할까요?」
 //   책의 해 보기 「소화 과정을 소화효소의 작용과 관련지어 추론하기」와 그림(영양소의 소화 과정).
@@ -18,15 +21,16 @@ import type { StepRenderer } from "../../types";
 import { P, bad, bvBtn, bvTween, chip, dot, g6Lab, g6Svg, good, noteLine, onStageTap, row, tag, tap, toast, tube, txt, type G6Step } from "./kit";
 
 // ── 침의 소화 작용 ─────────────────────────────────────────────────
+// fail: 침이 일을 못 한 까닭의 말. 얼음물에서도 아주 조금은 작용하므로 "거의"를 붙인다(레슨 문제의 "잘 작용하지 못해서"와 맞춘다).
 const TEMPS = [
-  { name: "얼음물", sub: "0~5 ℃", fill: "rgba(140,200,255,.20)", line: "#8CC8FF", ok: false },
-  { name: "따뜻한 물", sub: "35~40 ℃", fill: "rgba(255,200,120,.20)", line: "#FFC878", ok: true },
-  { name: "끓는 물", sub: "100 ℃", fill: "rgba(255,120,90,.24)", line: "#FF8A6A", ok: false },
+  { name: "얼음물", sub: "0~5 ℃", fill: "rgba(140,200,255,.20)", line: "#8CC8FF", ok: false, fail: "거의 작용하지 못했어요" },
+  { name: "따뜻한 물", sub: "35~40 ℃", fill: "rgba(255,200,120,.20)", line: "#FFC878", ok: true, fail: "" },
+  { name: "끓는 물", sub: "100 ℃", fill: "rgba(255,120,90,.24)", line: "#FF8A6A", ok: false, fail: "작용하지 못했어요" },
 ];
 
 export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G6Step;
-  const lab = g6Lab(host, api, s, { steps: 3, cls: "g2u6x-saliva", wait: "실험을 차례대로 해 보세요" });
+  const lab = g6Lab(host, api, s, { steps: 4, cls: "g2u6x-saliva", wait: "실험을 차례대로 해 보세요" });
   const { f, tm } = lab;
   const stage = g6Svg(lab, "녹말 용액이 든 시험관 두 개와 물이 담긴 비커, 받침 유리");
   let phase: "prep" | "test" = "prep";
@@ -36,7 +40,8 @@ export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
   let ben = false;
   let busy = false;
 
-  const TX = [108, 238];
+  // 두 이름표(폭 최대 약 158)가 맞붙지 않게 시험관 간격을 164로 둔다(물통 40~306, 받침 유리 x±44 안쪽).
+  const TX = [91, 255];
   const works = (i: number): boolean => sal[i] && temp >= 0 && TEMPS[temp].ok;
   const draw = (): void => {
     let out = "";
@@ -65,11 +70,11 @@ export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
   };
 
   const cTube = [0, 1].map((i) =>
-    chip(`t${i}`, i ? "(나)에 넣기" : "(가)에 넣기", "증류수", () => {
+    chip(`t${i}`, i ? "(나)에 넣기" : "(가)에 넣기", "증류수 5 mL", () => {
       if (busy) return;
       tap();
       sal[i] = !sal[i];
-      cTube[i].sub(sal[i] ? "침 용액" : "증류수");
+      cTube[i].sub(sal[i] ? "침 용액 5 mL" : "증류수 5 mL");
       cTube[i].on(sal[i]);
       draw();
     }),
@@ -107,7 +112,7 @@ export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
     f.pips(1);
     draw();
     f.slot.setControls(row(cIod.el), row(cBen.el));
-    f.say("10분이 지났어요. 두 가지 검사로 시험관 속을 <b>견줘</b> 봐요.");
+    f.say("두 시험관을 같은 물에 10분 함께 담갔어요. 두 가지 검사로 <b>견줘</b> 봐요.");
   });
 
   const fail = (kind: string, msg: string, say: string): void => {
@@ -121,18 +126,34 @@ export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
   };
   const after = (): void => {
     if (sal[0] === sal[1]) return fail("same", "두 시험관의 결과가 같아요", "두 시험관에 <b>같은 것</b>을 넣어서 침이 한 일을 알 수 없어요. 다시 준비해요.");
-    if (!TEMPS[temp].ok) return fail("temp", "침을 넣은 쪽도 그대로예요", `${TEMPS[temp].name}에서는 침이 작용하지 못했어요. <b>체온과 비슷한</b> 온도로 다시 해요.`);
+    if (!TEMPS[temp].ok) return fail("temp", "침을 넣은 쪽도 그대로예요", `${TEMPS[temp].name}에서는 침이 ${TEMPS[temp].fail}. <b>체온과 비슷한</b> 온도로 다시 해요.`);
     host.dataset.g6Fail = "";
     if (iod && ben) {
       f.pips(2);
       good();
-      f.say("침을 넣은 쪽은 아이오딘 반응이 <b>없고</b>, 베네딕트 반응이 <b>나타났어요</b>.");
+      // 해석은 판정에서 학생이 한다. 여기서는 색이 다 나왔다는 것만 말한다.
+      f.say("두 검사의 색이 다 나왔어요. 침을 넣은 쪽에서 <b>무슨 일</b>이 일어났을까요?");
       tm.later(() => {
-        lab.judge("<b>침 용액</b>을 넣은 시험관에서만 일어난 일은?", [{ t: "녹말이 없어지고 당분이 생겼다", ok: true }, { t: "녹말이 더 많아졌다" }, { t: "아무 변화도 없었다" }], "청람색은 <b>녹말</b>, 황적색은 <b>당분</b>이 있다는 표시예요.", () =>
-          lab.finish("침은 <b>녹말</b>을 <b>당분(엿당)</b>으로 분해해요. 침은 체온과 비슷한 온도에서 잘 작용해요."),
+        // 오답 보기 둘은 한쪽 검사만 읽은 답이다(아이오딘을 안 읽으면 "녹말은 그대로", 베네딕트를 안 읽으면 "당분은 없다").
+        lab.judge(
+          "<b>침 용액</b>을 넣은 시험관에서만 일어난 일은?",
+          [{ t: "녹말이 없어지고 당분이 생겼다", ok: true }, { t: "녹말은 그대로이고 당분이 생겼다" }, { t: "녹말이 없어졌지만 당분은 없다" }],
+          "청람색은 <b>녹말</b>, 황적색은 <b>당분</b>이 있다는 표시예요.",
+          () => {
+            // 증류수 쪽은 침만 빼고 똑같이 둔 시험관이다. 오답 보기 둘은 그 시험관이 지워 주는 다른 까닭(시간, 따뜻한 물)이다.
+            f.pips(3);
+            f.say("이번에는 <b>증류수 쪽</b>을 봐요. 같은 물에 10분 함께 담가 둔 시험관이에요.");
+            lab.judge(
+              "<b>증류수 쪽</b> 결과로 알 수 있는 것은?",
+              [{ t: "녹말이 없어진 것은 침 때문이다", ok: true }, { t: "녹말은 10분이면 저절로 없어진다" }, { t: "따뜻한 물만으로도 녹말이 없어진다" }],
+              "침만 빼고 똑같이 둔 쪽은 녹말이 그대로였어요.",
+              () =>
+                lab.finish("침만 빼고 똑같이 둔 시험관은 녹말이 그대로였으니, 녹말을 <b>당분(엿당)</b>으로 분해한 것은 <b>침</b>이에요. 침은 체온과 비슷한 온도에서 잘 작용해요."),
+            );
+          },
         );
       }, 1500);
-    } else f.say(iod ? "증류수 쪽만 <b>청람색</b>이에요. 침을 넣은 쪽은 녹말이 사라졌어요. 다른 검사도 해요." : "침을 넣은 쪽만 <b>황적색</b>이에요. 당분이 생겼어요. 다른 검사도 해요.");
+    } else f.say(iod ? "증류수 쪽은 <b>청람색</b>, 침을 넣은 쪽은 변화가 없어요. 다른 검사도 해요." : "증류수 쪽은 <b>푸른색</b>, 침을 넣은 쪽은 <b>황적색</b>이에요. 다른 검사도 해요.");
   };
   const cIod = chip("iod", "아이오딘 검사", "받침 유리에 덜어 한 방울씩", () => {
     if (busy || iod) return;
@@ -142,7 +163,7 @@ export const g2u6SalivaLab: StepRenderer = (host, step, api) => {
     draw();
     after();
   });
-  const cBen = chip("ben", "베네딕트 검사", "넣고 뜨거운 물에 담그기", () => {
+  const cBen = chip("ben", "베네딕트 검사", "넣고 뜨거운 물(80~90 ℃)에 담그기", () => {
     if (busy || ben) return;
     tap();
     ben = true;
