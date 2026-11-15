@@ -42,8 +42,11 @@ PORT=<dev 포트> node qa/scifig-g2/check.mjs [캡처 폴더] [키 …]
   통째로 지워질 수 있다. 그 부분을 따로 캔버스(`willReadFrequently: true`)에 그려 붙이거나 그림자를 직접 겹쳐 그려 피한다.
 
 ## 이번에 실은 그림 (2026-11-15)
-46장: Ⅰ 7, Ⅱ 8, Ⅲ 4, Ⅳ 5, Ⅴ 5, Ⅵ 5(레슨 4~6), Ⅶ 6, Ⅷ 6. 목록과 판정 자료는 `D:\Brilliant Science\output\sci-figures\g2\README.md`, `figure-list.md`.
+45장: Ⅰ 7, Ⅱ 8, Ⅲ 4, Ⅳ 5, Ⅴ 4, Ⅵ 5(레슨 4~6), Ⅶ 6, Ⅷ 6. 목록과 판정 자료는 `D:\Brilliant Science\output\sci-figures\g2\README.md`, `figure-list.md`.
 독립 과학 검산(그리지 않은 에이전트 둘) 지적 열한 장을 고쳤다(`output/sci-figures/g2/review/findings-1.md`, `findings-2.md`).
+처음에는 46장이었다. main에 들어온 뒤 Ⅴ 랩 무대를 다시 그린 판(c495794)과 견줘 보니, 레슨 6의 g2u5l6f1(줄기 속 물관과 체관)이
+바로 앞 RouteLab과 같은 장면(세로로 가른 줄기, 단면 원, 같은 색과 이름표, 물과 설탕의 흐름)이 되어 사용자 결정으로 뺐다
+(그리는 코드는 e3c2719에 있다. 대조 자료 `output/sci-figures/g2/review/u5-labcheck/`).
 
 ## 그리는 규칙
 
@@ -55,6 +58,8 @@ PORT=<dev 포트> node qa/scifig-g2/check.mjs [캡처 폴더] [키 …]
 - 라벨과 캡션은 그 스텝까지 학생이 이미 만난 말만 쓴다(용어 선경험 원칙). 대시 금지, '교과서' 금지.
 - 천체(태양, 행성, 달, 별)의 겉면은 그리지 않는다(실사 사진). 궤도, 위치, 축척 도해만 코드로.
 - 그림마다 같은 자리의 `<키>.md`에 검산 메모를 남긴다.
+- 바로 앞 랩이 같은 장면을 크게 보여 주면 그리지 않는다(헬륨 원자, 줄기 속 물관과 체관을 이 이유로 뺐다).
+  랩 무대를 다시 그리면, 그 뒤 개념 스텝과 정리 카드의 그림이 겹치지 않는지 다시 본다.
 
 ## 병합할 때 CLAUDE.md에 넣을 문단(초안)
 
