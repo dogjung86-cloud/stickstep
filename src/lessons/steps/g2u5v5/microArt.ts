@@ -1,13 +1,10 @@
-// [중2 Ⅴ v5] 랩 무대의 확대 그림: 현미경 시야의 세포, 엽록체, 마이토콘드리아, 잎의 단면, 줄기의 단면, 현미경(2026-11-15).
-// 책의 그림을 따른다: Ⅴ-1(상추와 검정말의 잎세포, 눈금 막대), Ⅴ-2(엽록체), 185쪽 해 보기(엽록체와 마이토콘드리아), 187쪽 Ⅴ-5(체관과 물관).
+// [중2 Ⅴ v5] 랩 무대의 확대 그림: 현미경 시야의 세포, 엽록체, 마이토콘드리아, 현미경(2026-11-15).
+// 책의 그림을 따른다: Ⅴ-1(상추와 검정말의 잎세포, 눈금 막대), Ⅴ-2(엽록체), 185쪽 해 보기(엽록체와 마이토콘드리아).
 // 과학 가드(검산 메모는 output/g2-v5/u5/lab-art/README.md):
 //   · 검정말 잎세포는 벽돌처럼 늘어선 긴 네모 세포이고 엽록체는 세포벽을 따라 많다(살아 있는 잎은 세포질이 벽 쪽에 얇게 있다). 잎은 두 겹이라 아래 겹이 흐리게 비친다.
 //   · 양파 비늘잎 안쪽 껍질 세포는 길쭉하고 핵이 하나씩 있으며 엽록체가 없다(물들이지 않은 모습).
 //   · 엽록체는 두 겹의 막 안에 틸라코이드가 동전처럼 쌓인 그라나와 그 사이를 잇는 막, 녹말 알갱이가 있다.
 //   · 마이토콘드리아는 바깥막이 매끈하고 안쪽 막이 안으로 접혀 주름(크리스타)을 이룬다.
-//   · 잎의 단면: 위표피(한 겹, 투명), 울타리 조직(길쭉한 세포가 빽빽, 엽록체가 많다), 해면 조직(둥근 세포 사이에 공기 틈), 아래표피의 공변세포 두 개 사이가 기공.
-//     공변세포에는 엽록체가 있고 다른 표피 세포에는 거의 없다. 잎맥(관다발)에서 물관은 위쪽, 체관은 아래쪽.
-//   · 쌍떡잎식물 줄기의 관다발은 고리 모양으로 늘어서고, 관다발 안에서 물관은 안쪽(가운데 쪽), 체관은 바깥쪽이며 그 사이에 형성층이 있다.
 
 import { f1, poly, rng, smooth, type Pt } from "./art";
 
@@ -272,7 +269,8 @@ function lensPath(w: number, h: number, p = 2.4, n = 48): Pt[] {
   });
 }
 /** 엽록체(두 겹 막, 그라나와 이음 막, 녹말 알갱이). (cx, cy) 가운데, w×h, rot 도. starch 녹말 알갱이 수. dim이면 회색으로(멈춤). */
-export function chloroplast(ns: string, cx: number, cy: number, w: number, h: number, o: { rot?: number; starch?: number; seed?: number; dim?: boolean } = {}): string {
+/** soft면 그라나와 막을 옅게 그린다(속 구조보다 드나드는 물질이 주인공인 무대에서). */
+export function chloroplast(ns: string, cx: number, cy: number, w: number, h: number, o: { rot?: number; starch?: number; seed?: number; dim?: boolean; soft?: boolean } = {}): string {
   const r = rng(o.seed ?? 5);
   const outer = lensPath(w, h);
   const inner = lensPath(w - 4.2, h - 4.2);
@@ -295,6 +293,7 @@ export function chloroplast(ns: string, cx: number, cy: number, w: number, h: nu
     }
   }
   const lam = o.dim ? "#7C8878" : "#4C9A47";
+  const g0 = s.length;
   centers.forEach(([ax, ay], i) => {
     const near = centers.filter(([bx, by], j) => j !== i && bx > ax && bx - ax < dwBase * 2.4 && Math.abs(by - ay) < h * 0.4).slice(0, 2);
     near.forEach(([bx, by]) => (s += `<path d="M${f1(ax)} ${f1(ay)} C${f1((ax + bx) / 2)} ${f1(ay)}, ${f1((ax + bx) / 2)} ${f1(by)}, ${f1(bx)} ${f1(by)}" stroke="${lam}" stroke-width=".8" fill="none" opacity=".9"/>`));
@@ -307,6 +306,7 @@ export function chloroplast(ns: string, cx: number, cy: number, w: number, h: nu
       s += `<rect x="${f1(x - dw / 2)}" y="${f1(yy - disc / 2)}" width="${f1(dw)}" height="${f1(disc)}" rx="${f1(disc / 2)}" fill="${o.dim ? "#7C8878" : `url(#${ns}granum)`}" stroke="${o.dim ? "#5E6A5C" : "#1D5E28"}" stroke-width=".3"/>`;
     }
   });
+  if (o.soft) s = s.slice(0, g0) + `<g opacity=".38">${s.slice(g0)}</g>`;
   // 녹말 알갱이(광합성으로 만든 포도당이 바뀌어 쌓인 것)와 기름 방울
   for (let k = 0; k < (o.starch ?? 0); k++) {
     const x = (k - ((o.starch ?? 1) - 1) / 2) * w * 0.3 + (r() - 0.5) * 6;
@@ -341,148 +341,4 @@ export function mitochondrion(ns: string, cx: number, cy: number, w: number, h: 
     s += `<path d="${d}" fill="${o.dim ? "#C9C1B8" : "#FFD9C2"}" stroke="${o.dim ? "#7A726A" : "#B54E2A"}" stroke-width=".9" stroke-linejoin="round"/>`;
   }
   return `<g transform="translate(${f1(cx)} ${f1(cy)}) rotate(${o.rot ?? 0})">${s}</g>`;
-}
-
-// ── 잎의 단면(입체 덩어리) ──────────────────────────────────────────
-/** 잎을 잘라 낸 덩어리. 앞면이 자른 면(단면). (x, y)는 앞면 왼쪽 위, w 폭, 층 두께는 고정(위표피 8, 울타리 24, 해면 34, 아래표피 8).
- *  stomaX: 기공 자리(앞면 x). vein: 잎맥(관다발) 자리(앞면 x). dim: 빛이 없을 때 조금 어둡게. 돌려주는 값: 그림과 기공 아래 점. */
-export function leafBlock(ns: string, x: number, y: number, w: number, o: { stomaX: number; veinX?: number; depth?: Pt; seed?: number }): { svg: string; stoma: Pt; bottom: number } {
-  const r = rng(o.seed ?? 9);
-  const D: Pt = o.depth ?? [16, -10];
-  const tE = 8;
-  const tP = 24;
-  const tS = 34;
-  const H = tE + tP + tS + tE;
-  const yP = y + tE;
-  const yS = yP + tP;
-  const yL = yS + tS;
-  const yB = y + H;
-  let s = "";
-  // 윗면(잎의 겉): 짙은 초록에 표피 세포 무늬와 잎맥
-  const top: Pt[] = [[x, y], [x + w, y], [x + w + D[0], y + D[1]], [x + D[0], y + D[1]]];
-  s += `<path d="${poly(top)}" fill="#3F9A4C" stroke="#1F5F2A" stroke-width=".8"/>`;
-  for (let i = 0; i < 18; i++) {
-    const u = (i + 0.5) / 18;
-    s += `<path d="M${f1(x + w * u)} ${f1(y)} l${f1(D[0])} ${f1(D[1])}" stroke="#67B86A" stroke-width=".5" opacity=".6"/>`;
-  }
-  s += `<path d="M${f1(x)} ${f1(y + D[1] * 0.5)} L${f1(x + w + D[0] * 0.5)} ${f1(y + D[1] * 0.5)}" stroke="#67B86A" stroke-width=".5" opacity=".6"/>`;
-  if (o.veinX !== undefined) s += `<path d="M${f1(o.veinX)} ${f1(y)} l${f1(D[0])} ${f1(D[1])}" stroke="#A9DB8C" stroke-width="2.4" opacity=".7"/>`;
-  // 옆면(오른쪽): 층의 결
-  const side: Pt[] = [[x + w, y], [x + w + D[0], y + D[1]], [x + w + D[0], yB + D[1]], [x + w, yB]];
-  s += `<path d="${poly(side)}" fill="#2D6E35" stroke="#1F5F2A" stroke-width=".8"/>`;
-  for (let k = 1; k < 6; k++) s += `<path d="M${f1(x + w + (D[0] * k) / 6)} ${f1(yP + (D[1] * k) / 6)} L${f1(x + w + (D[0] * k) / 6)} ${f1(yS + (D[1] * k) / 6)}" stroke="#4E9A55" stroke-width="1"/>`;
-  s += `<path d="M${f1(x + w)} ${f1(yP)} l${f1(D[0])} ${f1(D[1])} M${f1(x + w)} ${f1(yS)} l${f1(D[0])} ${f1(D[1])} M${f1(x + w)} ${f1(yL)} l${f1(D[0])} ${f1(D[1])}" stroke="#1F5F2A" stroke-width=".7"/>`;
-  // 앞면(자른 면): 공기 틈 바탕
-  s += `<rect x="${x}" y="${y}" width="${w}" height="${H}" fill="#173322"/>`;
-  // 위표피(투명한 네모 세포 한 줄)와 큐티클
-  for (let cx = x; cx < x + w - 1; ) {
-    const cw = Math.min(x + w - cx, 11 + r() * 5);
-    s += `<rect x="${f1(cx + 0.5)}" y="${f1(y + 0.8)}" width="${f1(cw - 1)}" height="${f1(tE - 1.4)}" rx="1.6" fill="#E9F5E1" stroke="#7FAF79" stroke-width=".5"/>`;
-    cx += cw;
-  }
-  s += `<path d="M${x} ${f1(y + 0.4)} L${x + w} ${f1(y + 0.4)}" stroke="#F4FFE9" stroke-width=".9"/>`;
-  // 울타리 조직: 세로로 긴 세포, 엽록체가 벽을 따라 줄지어
-  for (let cx = x + 0.5; cx < x + w - 4; ) {
-    const cw = 7.6 + r() * 1.6;
-    const ww = Math.min(cw, x + w - cx - 0.5);
-    s += `<rect x="${f1(cx)}" y="${f1(yP + 0.6)}" width="${f1(ww - 0.9)}" height="${f1(tP - 1.4)}" rx="3" fill="#CDEAB5" stroke="#5E9A55" stroke-width=".5"/>`;
-    if (ww > 5) for (let j = 0; j < 5; j++) {
-      const yy = yP + 3.4 + j * 4.2 + (r() - 0.5);
-      s += `<ellipse cx="${f1(cx + 1.9)}" cy="${f1(yy)}" rx="1.25" ry="1.75" fill="url(#${ns}chl)"/><ellipse cx="${f1(cx + ww - 2.8)}" cy="${f1(yy + 1.6)}" rx="1.25" ry="1.75" fill="url(#${ns}chl)"/>`;
-    }
-    cx += cw;
-  }
-  // 해면 조직: 둥근 세포가 성기게, 사이가 공기 틈. 기공 위의 큰 공기 방은 비운다.
-  const air: Pt = [o.stomaX, yL - 9];
-  const spongy: Pt[] = [];
-  for (let tries = 0; tries < 900 && spongy.length < 90; tries++) {
-    const px = x + 4 + r() * (w - 8);
-    const py = yS + 4 + r() * (tS - 8);
-    if (Math.hypot((px - air[0]) * 0.8, py - air[1]) < 13) continue;
-    if (o.veinX !== undefined && Math.hypot(px - o.veinX, py - (yS + 11)) < 14) continue;
-    if (spongy.some((q) => Math.hypot(q[0] - px, q[1] - py) < 9.6)) continue;
-    spongy.push([px, py]);
-  }
-  spongy.forEach(([px, py]) => {
-    const rx = 4.4 + r() * 1.6;
-    const ry = 3.4 + r() * 1.4;
-    const a = r() * 180;
-    s += `<ellipse cx="${f1(px)}" cy="${f1(py)}" rx="${f1(rx)}" ry="${f1(ry)}" transform="rotate(${Math.round(a)} ${f1(px)} ${f1(py)})" fill="#C9E6AE" stroke="#5E9A55" stroke-width=".5"/>`;
-    for (let j = 0; j < 3; j++) {
-      const t = r() * Math.PI * 2;
-      s += `<ellipse cx="${f1(px + Math.cos(t) * rx * 0.6)}" cy="${f1(py + Math.sin(t) * ry * 0.6)}" rx="1.2" ry=".9" fill="url(#${ns}chl)"/>`;
-    }
-  });
-  // 잎맥(관다발): 위쪽은 물관(두꺼운 벽의 큰 관), 아래쪽은 체관(작은 세포), 둘레는 관다발집 세포
-  if (o.veinX !== undefined) {
-    const vx = o.veinX;
-    const vy = yS + 11;
-    s += `<ellipse cx="${f1(vx)}" cy="${f1(vy)}" rx="12.5" ry="10.5" fill="#E3F0D6" stroke="#6E9E62" stroke-width=".6"/>`;
-    [[-4.6, -4], [0.2, -5.2], [4.8, -3.6], [-2, -0.4], [2.8, -0.2]].forEach(([dx, dy], i) => (s += `<circle cx="${f1(vx + dx)}" cy="${f1(vy + dy)}" r="${i < 3 ? 2.3 : 1.8}" fill="#E8F3FF" stroke="#4E7FB8" stroke-width="1.1"/>`));
-    [[-4, 4.4], [-1, 5.6], [2, 5.2], [5, 3.8], [0.6, 3]].forEach(([dx, dy]) => (s += `<circle cx="${f1(vx + dx)}" cy="${f1(vy + dy)}" r="1.25" fill="#F7E2B4" stroke="#B88A2E" stroke-width=".55"/>`));
-  }
-  // 아래표피와 공변세포(엽록체가 있다), 그 사이의 기공
-  for (let cx = x; cx < x + w - 1; ) {
-    const cw = Math.min(x + w - cx, 11 + r() * 5);
-    if (cx + cw > o.stomaX - 9 && cx < o.stomaX + 9) {
-      cx = o.stomaX + 9;
-      continue;
-    }
-    s += `<rect x="${f1(cx + 0.5)}" y="${f1(yL + 0.6)}" width="${f1(Math.min(cw, cx < o.stomaX ? o.stomaX - 9 - cx : cw) - 1)}" height="${f1(tE - 1.4)}" rx="1.6" fill="#E9F5E1" stroke="#7FAF79" stroke-width=".5"/>`;
-    cx += cw;
-  }
-  const gx = o.stomaX;
-  [-1, 1].forEach((sg) => {
-    s += `<path d="M${f1(gx + sg * 1.6)} ${f1(yL + 0.6)} C${f1(gx + sg * 8.6)} ${f1(yL - 0.4)}, ${f1(gx + sg * 9.2)} ${f1(yB - 0.2)}, ${f1(gx + sg * 1.6)} ${f1(yB - 0.6)} C${f1(gx + sg * 3.4)} ${f1(yB - 3)}, ${f1(gx + sg * 3.4)} ${f1(yL + 3)}, ${f1(gx + sg * 1.6)} ${f1(yL + 0.6)} Z" fill="#B9E09C" stroke="#4E8A45" stroke-width=".7"/>`;
-    s += `<ellipse cx="${f1(gx + sg * 5.6)}" cy="${f1(yL + 2.8)}" rx="1.1" ry=".85" fill="url(#${ns}chl)"/><ellipse cx="${f1(gx + sg * 6)}" cy="${f1(yL + 5.4)}" rx="1.1" ry=".85" fill="url(#${ns}chl)"/>`;
-  });
-  s += `<path d="M${x} ${f1(yB - 0.3)} L${x + w} ${f1(yB - 0.3)}" stroke="#F4FFE9" stroke-width=".7" opacity=".7"/>`;
-  return { svg: `<g>${s}</g>`, stoma: [gx, yB], bottom: yB };
-}
-
-// ── 줄기의 단면 ─────────────────────────────────────────────────────
-/** 쌍떡잎식물 줄기를 가로로 자른 면. 관다발 bundles개가 고리로 늘어서고, 관다발 안에서 물관은 안쪽, 체관은 바깥쪽, 사이에 형성층. */
-export function stemSection(cx: number, cy: number, R: number, o: { bundles?: number; seed?: number } = {}): string {
-  const r = rng(o.seed ?? 4);
-  const nb = o.bundles ?? 8;
-  let s = `<circle cx="${cx}" cy="${cy}" r="${f1(R + 1.2)}" fill="#1F5A28"/>`;
-  // 겉질(초록 세포)과 표피
-  s += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="#7DBB6A" stroke="#2F6F2F" stroke-width="1.2"/>`;
-  for (let k = 0; k < 40; k++) {
-    const a = r() * Math.PI * 2;
-    const d = R * (0.8 + r() * 0.14);
-    s += `<circle cx="${f1(cx + Math.cos(a) * d)}" cy="${f1(cy + Math.sin(a) * d)}" r="${f1(1.4 + r())}" fill="#9CCF86" stroke="#5E9A55" stroke-width=".35"/>`;
-  }
-  // 고갱이(가운데 큰 세포)
-  s += `<circle cx="${cx}" cy="${cy}" r="${f1(R * 0.5)}" fill="#F1F5E3" stroke="#B7C99F" stroke-width=".6"/>`;
-  for (let k = 0; k < 16; k++) {
-    const a = r() * Math.PI * 2;
-    const d = r() * R * 0.42;
-    s += `<circle cx="${f1(cx + Math.cos(a) * d)}" cy="${f1(cy + Math.sin(a) * d)}" r="${f1(2 + r() * 1.4)}" fill="none" stroke="#CBD8B5" stroke-width=".5"/>`;
-  }
-  // 형성층 고리(가는 선)
-  s += `<circle cx="${cx}" cy="${cy}" r="${f1(R * 0.66)}" fill="none" stroke="#5E8F4E" stroke-width=".8" stroke-dasharray="1.5 1.5" opacity=".9"/>`;
-  // 관다발: 바깥쪽 체관(앰버), 안쪽 물관(하늘색 관, 두꺼운 벽)
-  for (let k = 0; k < nb; k++) {
-    const a = (k / nb) * Math.PI * 2 + 0.2;
-    const ca = Math.cos(a);
-    const sa = Math.sin(a);
-    const P = (d: number, t: number): Pt => [cx + ca * d - sa * t, cy + sa * d + ca * t];
-    const wB = R * 0.2;
-    // 체관부(바깥쪽 반달)
-    const ph = [P(R * 0.69, -wB), P(R * 0.8, -wB * 0.7), P(R * 0.84, 0), P(R * 0.8, wB * 0.7), P(R * 0.69, wB)];
-    s += `<path d="${smooth(ph, true)}" fill="#F3D78C" stroke="#A97C1E" stroke-width=".6"/>`;
-    for (let j = 0; j < 4; j++) {
-      const q = P(R * (0.72 + r() * 0.07), (r() - 0.5) * wB * 1.2);
-      s += `<circle cx="${f1(q[0])}" cy="${f1(q[1])}" r=".9" fill="#C59A3A"/>`;
-    }
-    // 물관부(안쪽 쐐기)
-    const xy = [P(R * 0.64, -wB * 0.95), P(R * 0.64, wB * 0.95), P(R * 0.5, wB * 0.45), P(R * 0.46, 0), P(R * 0.5, -wB * 0.45)];
-    s += `<path d="${smooth(xy, true)}" fill="#CFE3FA" stroke="#3E73B0" stroke-width=".6"/>`;
-    [[0.6, -0.45], [0.6, 0.45], [0.53, 0], [0.57, 0.02]].forEach(([d, t], j) => {
-      const q = P(R * d, t * wB);
-      if (j < 3) s += `<circle cx="${f1(q[0])}" cy="${f1(q[1])}" r="${f1(R * 0.045)}" fill="#EAF4FF" stroke="#2F5F9E" stroke-width=".9"/>`;
-    });
-  }
-  return s;
 }

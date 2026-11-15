@@ -4,8 +4,9 @@
 //   책의 세 그래프 가운데 둘과 스마트팜(이산화 탄소 공급 장치, 냉난방 장치). 학생이 정하는 것: 온실의 이산화 탄소 농도, 이어서 온도.
 //   한 번에 하나만 바꾼다(농도를 정한 뒤 온도). 한 단계 바꿀 때마다 잰 점이 그래프에 찍힌다.
 //   실패하는 길: 더 늘릴 수 있는 곳에서 정하면 되돌려 보낸다. 온도를 지나치게 올리면 광합성량이 뚝 떨어지고 잎이 처진다.
-//   그림(2026-11-15 다시 그림): 책의 스마트팜 그림처럼 둥근 지붕의 유리 온실, 재배대의 상추 넷, 오른쪽의 이산화 탄소 공급 장치(통과 천장의 관, 분사구에서
-//   나오는 분자 수가 농도 단계를 따른다), 왼쪽의 냉난방 장치(온도 표시). 그래프는 잰 점을 매끈한 선으로 잇는다(책의 그림 Ⅴ-3과 같은 모양).
+//   그림(2026-11-15 다시 그림, 같은 날 손봄): 맨 위 전체 폭에 광합성량 막대(조건을 바꿀 때마다 바로 보이는 결과), 그 아래 낮은 띠에 책의 스마트팜처럼
+//   둥근 지붕의 유리 온실(재배대의 상추, 오른쪽 이산화 탄소 통, 왼쪽 냉난방 장치의 온도 표시). 이산화 탄소 농도는 온실 공기 속 분자 수로 보인다(단계마다 늚).
+//   그래프는 잰 점을 매끈한 선으로 잇는다(책의 그림 Ⅴ-3과 같은 모양). 한때 온실을 크게 그리고 막대를 지붕 밑에 작게 두었더니 결과가 묻혔다(사용자 지적).
 //
 // g2u5SproutLab 「싹이 자랄 에너지는 무엇으로 얻을까요?」 (g2u5l4)
 //   땅속의 강낭콩. 학생이 정하는 것: 흙 속 산소와 빛을 주고 끊는 일.
@@ -13,12 +14,15 @@
 //   그림(2026-11-15 다시 그림): 흙은 알갱이 사이의 틈이 보이게(산소가 있으면 틈에 공기와 산소 분자, 끊으면 틈이 물로 찬다).
 //   강낭콩은 실제처럼 싹이 튼다: 먼저 어린뿌리가 내려가 뿌리털이 나고, 배축이 갈고리처럼 굽어 흙을 밀고 올라가며 떡잎을 끌어올린다.
 //   끝까지 자라면 떡잎이 땅 위로 나와 벌어지고 사이에서 본잎 둘이 나온다(강낭콩은 떡잎이 땅 위로 나오는 식물). 떡잎 속 양분(앰버)은 자랄수록 준다.
+//   손봄(같은 날, 사용자 지적 "세부에 초점을 맞춰 내용이 묻힘"): 흙 알갱이를 바탕색 가까이 성기게, 싹은 굵고 또렷하게,
+//   콩 속 양분은 떡잎 안의 앰버 덩어리와 오른쪽 아래 막대로 함께 보인다(자랄수록 준다).
 //
 // g2u5LightLab 「잎이 내보내는 기체는 무엇이 정할까요?」 (g2u5l5)
 //   책의 낮과 밤 그림과 순서도. 학생이 정하는 것: 빛의 세기 네 단계. 주어진 세 상황을 만들어 확인한다.
 //   호흡의 양은 늘 같고 광합성의 양만 빛에 따라 달라진다. 광합성량과 호흡량이 같은 단계는 두지 않았다(책 밖).
-//   그림(2026-11-15 다시 그림): 잎을 잘라 낸 단면(표피, 울타리 조직, 해면 조직, 잎맥, 공변세포와 기공). 광합성 칸은 울타리 세포의 엽록체를,
-//   호흡 칸은 해면 세포의 마이토콘드리아를 가리킨다. 기공 아래로 기체 분자가 드나든다.
+//   그림(2026-11-15 다시 그림, 같은 날 손봄): 단순한 잎 한 장 안에 광합성 칸(엽록체)과 호흡 칸(마이토콘드리아)을 나란히 두고, 칸마다 쓰고 내놓는 기체를
+//   분자 개수 그대로 그린다. 그 아래 한 줄이 두 양을 견준다. 공변세포 사이의 기공으로 남는 기체가 나가고 모자란 기체가 들어온다.
+//   한때 잎 조직(울타리, 해면, 잎맥)을 자세히 그렸으나 요점(두 양의 비교)이 묻혀(사용자 지적) 조직은 그리지 않는다.
 //
 // g2u5CycleLab 「광합성과 호흡은 어떻게 이어질까요?」 (g2u5l5)
 //   책의 해 보기(붙임딱지). 빈칸 여섯 개에 붙임딱지를 붙인다. 틀린 딱지는 붙지 않고 까닭이 뜬다.
@@ -27,7 +31,7 @@
 import type { StepRenderer } from "../../types";
 import { P, arrow, bad, bvBtn, chip, g5Lab, good, row, stepper, tag, tap, toast, txt, type G5Step } from "./kit";
 import { beam, f1, g5Layers, glassDefs, label, lettuce, memo, mol, newNs, particleDefs, plantDefs, rng, rootStrand, smooth, spark, sun, sunDefs, type Pt } from "./art";
-import { chloroplast, leafBlock, microDefs, mitochondrion } from "./microArt";
+import { chloroplast, microDefs, mitochondrion } from "./microArt";
 
 /** 측정한 점들을 지나는 매끈한 선(넘치지 않는 단조 3차 보간). */
 function monoPath(pts: Pt[]): string {
@@ -63,11 +67,13 @@ function monoPath(pts: Pt[]): string {
 const PC = [0.3, 0.55, 0.8, 1, 1, 1];
 const TS = [10, 15, 20, 25, 30, 35, 40, 45];
 const PT = [0.2, 0.4, 0.62, 0.84, 1, 0.55, 0.15, 0.03];
-/** 둥근 지붕의 높이(x에서): (12, 58)에서 (334, 58)까지, 가운데 꼭대기 y 14. */
+/** 온실의 둥근 지붕 높이(x에서): 벽 위 (12, 74)에서 (334, 74)까지, 가운데 꼭대기 y 46. 광합성량 막대(맨 위) 아래의 낮은 띠에 둔다. */
 const roofY = (x: number): number => {
   const t = (x - 12) / 322;
-  return 58 - 176 * t * (1 - t);
+  return 74 - 112 * t * (1 - t);
 };
+// 온실 공기 속 이산화 탄소 분자의 자리(농도 단계마다 둘씩 늘어난다, 상추 위 공기)
+const AIR_CO2: Pt[] = [[104, 62], [226, 66], [160, 58], [272, 61], [132, 69], [196, 63], [248, 70], [116, 56], [182, 70], [288, 55]];
 
 export const g2u5FarmLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
@@ -88,24 +94,20 @@ export const g2u5FarmLab: StepRenderer = (host, step, api) => {
   const seenC = new Set<number>([0]);
   const seenT = new Set<number>();
 
-  // 온실 몸체(유리 지붕, 뼈대, 재배대, 이산화 탄소 통과 관, 냉난방 장치)는 바뀌지 않는다
+  // 온실 몸체(유리 지붕, 뼈대 몇 줄, 재배대, 이산화 탄소 통, 냉난방 장치)는 바뀌지 않는다. 그래프와 막대가 주인공이라 낮고 옅게 둔다.
   ly.set(
     "house",
     (() => {
-      let h = `<path d="M12 96 L12 58 Q173 -30 334 58 L334 96 Z" fill="url(#${A}pane)" stroke="#8FB0D6" stroke-width="1.6"/>`;
-      for (let x = 52; x < 334; x += 40) h += `<line x1="${x}" y1="96" x2="${x}" y2="${f1(roofY(x))}" stroke="#6F8FB8" stroke-width="1" opacity=".7"/>`;
-      h += `<path d="M12 58 L334 58" stroke="#6F8FB8" stroke-width=".8" opacity=".5"/>`;
-      h += `<path d="M30 52 Q90 10 150 18" stroke="#FFFFFF" stroke-width="2" fill="none" opacity=".18"/>`;
+      let h = `<path d="M12 100 L12 74 Q173 18 334 74 L334 100 Z" fill="url(#${A}pane)" stroke="#6F8FB8" stroke-width="1.3"/>`;
+      for (let x = 76; x < 334; x += 64) h += `<line x1="${x}" y1="100" x2="${x}" y2="${f1(roofY(x))}" stroke="#5E7FA8" stroke-width=".9" opacity=".55"/>`;
       // 재배대(흙)
-      h += `<rect x="70" y="86" width="226" height="10" rx="2" fill="url(#${A}bed)" stroke="#2A1A10" stroke-width=".8"/>`;
-      h += `<line x1="0" y1="96" x2="346" y2="96" stroke="#3B5273" stroke-width="2"/>`;
-      // 이산화 탄소 공급 장치: 통(초록), 조절 밸브, 천장을 따라가는 관과 분사구
-      h += `<rect x="306" y="60" width="16" height="36" rx="5" fill="url(#${A}tank)" stroke="#0E3A1E" stroke-width=".8"/><rect x="310" y="54" width="8" height="7" rx="1.5" fill="url(#${A}metal)" stroke="#2D3748" stroke-width=".6"/>`;
-      h += `<path d="M314 54 L314 46 L108 46" stroke="#9AA8BC" stroke-width="2.2" fill="none" stroke-linejoin="round"/>`;
-      [124, 172, 220, 268].forEach((x) => (h += `<rect x="${x - 2.5}" y="46" width="5" height="5" rx="1" fill="#C9D3E0" stroke="#4A5568" stroke-width=".6"/>`));
+      h += `<rect x="70" y="91" width="226" height="9" rx="2" fill="url(#${A}bed)" stroke="#2A1A10" stroke-width=".8"/>`;
+      h += `<line x1="0" y1="100" x2="346" y2="100" stroke="#3B5273" stroke-width="2"/>`;
+      // 이산화 탄소 공급 장치(초록 통과 밸브, 짧은 분사구)
+      h += `<rect x="308" y="76" width="14" height="24" rx="4.5" fill="url(#${A}tank)" stroke="#0E3A1E" stroke-width=".8"/><rect x="311" y="71" width="8" height="6" rx="1.5" fill="url(#${A}metal)" stroke="#2D3748" stroke-width=".6"/><path d="M315 71 L315 66 L304 66" stroke="#9AA8BC" stroke-width="2" fill="none"/>`;
       // 냉난방 장치(바람구멍과 온도 표시창)
-      h += `<rect x="18" y="62" width="40" height="30" rx="4" fill="#2C3B55" stroke="#8FA3BC" stroke-width="1"/>`;
-      for (let k = 0; k < 4; k++) h += `<line x1="22" y1="${80 + k * 2.6}" x2="54" y2="${80 + k * 2.6}" stroke="#5E7598" stroke-width="1"/>`;
+      h += `<rect x="18" y="72" width="42" height="26" rx="4" fill="#2C3B55" stroke="#8FA3BC" stroke-width="1"/>`;
+      for (let k = 0; k < 3; k++) h += `<line x1="22" y1="${90 + k * 2.6}" x2="56" y2="${90 + k * 2.6}" stroke="#5E7598" stroke-width="1"/>`;
       return h;
     })(),
   );
@@ -137,26 +139,18 @@ export const g2u5FarmLab: StepRenderer = (host, step, api) => {
     const v = value();
     const hot = TS[ti] >= 40;
     const cold = TS[ti] <= 10;
-    ly.set("plants", art(`p${hot}${cold}`, () => [92, 135, 178, 221, 264].map((x, i) => lettuce(A, x, 87, 0.44, { pale: hot || cold, droop: hot ? 1 : 0, seed: 3 + i * 4 })).join("")));
-    // 분사구에서 나오는 이산화 탄소: 단계가 높을수록 옅은 분사 줄기가 굵어지고 공기 속 분자가 많아진다.
-    // 분자는 분사구와 상추 사이의 공기(y 50~58)에 서로 떨어뜨려 두고 잎에 닿기 전에 흐려진다(잎 위에 얹으면 꽃이나 열매로 보였다).
-    let gas = "";
-    const SPOT = [-10, 10, -2, 16, -16];
-    [124, 172, 220, 268].forEach((x, k) => {
-      if (ci > 0) gas += `<path d="M${x - 2} 51 L${x + 2} 51 L${f1(x + 6 + ci * 2.4)} 62 L${f1(x - 6 - ci * 2.4)} 62 Z" fill="${P.co2}" opacity="${f1(0.06 + ci * 0.035)}"/>`;
-      for (let j = 0; j < ci; j++) {
-        const r = rng(k * 11 + j);
-        gas += `<g class="g2u5x-flow" style="animation-delay:-${f1(j * 0.35 + k * 0.2)}s">${mol(A, "co2", x + SPOT[j], 53 + (j % 2) * 4, 0.52, { rot: r() * 180 })}</g>`;
-      }
-    });
+    ly.set("plants", art(`p${hot}${cold}`, () => [96, 138, 180, 222, 264].map((x, i) => lettuce(A, x, 92, 0.4, { pale: hot || cold, droop: hot ? 1 : 0, seed: 3 + i * 4 })).join("")));
+    // 온실 공기 속 이산화 탄소: 농도 단계가 높을수록 분자가 많다(1단계 2개 ~ 6단계 10개). 상추 위 공기에만 둔다.
+    let gas = AIR_CO2.slice(0, [2, 3, 5, 6, 8, 10][ci]).map(([x, y], i) => `<g class="g2u5x-flow" style="animation-delay:-${f1(i * 0.27)}s">${mol(A, "co2", x, y, 0.6, { rot: (i * 53) % 180 })}</g>`).join("");
     const tc = TS[ti] >= 35 ? P.bad : TS[ti] <= 15 ? P.o2 : P.leafHi;
-    gas += `<rect x="22" y="65" width="32" height="13" rx="2" fill="#081221" stroke="#3B5273" stroke-width=".8"/>` + txt(38, 76, `${TS[ti]} ℃`, { size: 12, fill: tc });
+    gas += `<rect x="22" y="75" width="34" height="13" rx="2" fill="#081221" stroke="#3B5273" stroke-width=".8"/>` + txt(39, 86, `${TS[ti]} ℃`, { size: 12, fill: tc });
     ly.set("gas", gas);
+    // 광합성량 막대: 맨 위 전체 폭(조건을 바꿀 때마다 바로 보이는 결과)
     ly.set(
       "meter",
-      txt(173, 27, "광합성량", { size: 12, fill: "#E8EEF9" }) +
-        `<rect x="104" y="31" width="138" height="10" rx="5" fill="#0E1A2E" stroke="#2A4266"/>` +
-        `<rect x="105" y="32" width="${f1(Math.max(4, 136 * v))}" height="8" rx="4" fill="${hot ? P.bad : P.leafHi}"/>`,
+      txt(12, 29, "광합성량", { anchor: "start", size: 12.5, fill: "#E8EEF9" }) +
+        `<rect x="76" y="14" width="258" height="22" rx="11" fill="#0E1A2E" stroke="#2A4266"/>` +
+        `<rect x="79" y="17" width="${f1(Math.max(8, 252 * v))}" height="16" rx="8" fill="${hot ? P.bad : P.leafHi}"/>`,
     );
     ly.set("charts", chart(8, "이산화 탄소 농도", 6, PC.map((p) => p * 0.84), seenC, ci, "낮음", "높음", phase === "co2") + chart(178, "온도", 8, PT.map((p) => p * PC[ci]), seenT, ti, "10 ℃", "45 ℃", phase !== "co2"));
     host.dataset.g5Farm = phase;
@@ -253,8 +247,9 @@ function soilSection(o2: boolean): string {
   const r = rng(31);
   let s = `<rect x="0" y="${SOIL}" width="346" height="${230 - SOIL}" fill="${o2 ? "#22170F" : "#1F3A52"}"/>`;
   if (!o2) s += `<rect x="0" y="${SOIL}" width="346" height="${230 - SOIL}" fill="#5AB0F2" opacity=".14"/>`;
-  const tones = ["#5E4330", "#6E4F37", "#7C5A3E", "#4E3726", "#8A6A4C"];
-  for (let i = 0; i < 150; i++) {
+  // 알갱이는 바탕과 가까운 색으로 성기게 둔다(대비가 강하면 싹보다 흙이 먼저 보였다, 사용자 지적)
+  const tones = o2 ? ["#33241A", "#3B2A1E", "#2E2017", "#44301F"] : ["#264764", "#2C4F6D", "#22405A", "#305676"];
+  for (let i = 0; i < 70; i++) {
     const x = r() * 346;
     const y = SOIL + 4 + r() * (230 - SOIL);
     const rr = 3 + r() * 6;
@@ -264,9 +259,9 @@ function soilSection(o2: boolean): string {
       const q = rr * (0.75 + r() * 0.4);
       return [x + Math.cos(a) * q, y + Math.sin(a) * q * 0.8] as Pt;
     });
-    s += `<path d="${smooth(pts, true)}" fill="${tones[i % 5]}" stroke="#2A1C12" stroke-width=".5"/>`;
+    s += `<path d="${smooth(pts, true)}" fill="${tones[i % 4]}" stroke="${o2 ? "#1E140D" : "#1A3248"}" stroke-width=".5"/>`;
   }
-  if (!o2) for (let i = 0; i < 14; i++) s += `<path d="M${f1(r() * 330)} ${f1(SOIL + 10 + r() * 150)} q4 -2 8 0 q4 2 8 0" stroke="#BFE3FF" stroke-width=".7" fill="none" opacity=".5"/>`;
+  if (!o2) for (let i = 0; i < 10; i++) s += `<path d="M${f1(r() * 330)} ${f1(SOIL + 10 + r() * 150)} q4 -2 8 0 q4 2 8 0" stroke="#BFE3FF" stroke-width=".7" fill="none" opacity=".45"/>`;
   s += `<rect x="0" y="${SOIL - 1}" width="346" height="4" fill="#5A3E2B"/><line x1="0" y1="${SOIL}" x2="346" y2="${SOIL}" stroke="#8A6A4C" stroke-width="1.4"/>`;
   return s;
 }
@@ -315,7 +310,7 @@ function bean(ns: string, g: number, lit: boolean): { svg: string; cot: Pt; up: 
   // 어린뿌리(아래로), 뿌리털, 곁뿌리
   if (g > 0.02) {
     const root: Pt[] = [J, [J[0] - 3, J[1] + rl * 0.35], [J[0] + 1, J[1] + rl * 0.7], [J[0] - 1, J[1] + rl]];
-    s += rootStrand(ns, root, 4.2, { hairs: g > 0.25 ? Math.round(10 + g * 14) : 0, seed: 5, hairLen: 5 });
+    s += rootStrand(ns, root, 5, { hairs: g > 0.25 ? Math.round(10 + g * 14) : 0, seed: 5, hairLen: 5.5 });
     if (g > 0.55) {
       const k = ss(0.55, 1, g);
       s += rootStrand(ns, [[J[0] - 2, J[1] + rl * 0.3], [J[0] - 12 * k, J[1] + rl * 0.38], [J[0] - 22 * k, J[1] + rl * 0.5]], 1.8, { hairs: 6, seed: 7, hairLen: 3.5 });
@@ -325,8 +320,8 @@ function bean(ns: string, g: number, lit: boolean): { svg: string; cot: Pt; up: 
   // 배축(줄기 아랫부분): 땅속에서는 희고, 땅 위로 나온 곳은 빛에 따라 초록이나 연노랑
   if (hook > 2) {
     const d = u > 0.02 ? `M${J[0]} ${J[1]} C${J[0] - 2} ${f1((J[1] + H[1]) / 2)}, ${H[0] - 2} ${f1(H[1] + 20)}, ${H[0]} ${f1(H[1])}` : `M${J[0]} ${J[1]} C${J[0] - 3} ${f1((J[1] + H[1]) / 2)}, ${H[0] - 6} ${f1(H[1] + 8)}, ${H[0]} ${f1(H[1])} C${H[0] + 4} ${f1(H[1] - 4)}, ${f1(H[0] + 12)} ${f1(H[1] - 2)}, ${f1(C[0])} ${f1(C[1])}`;
-    s += `<path d="${d}" stroke="#8C8460" stroke-width="5.6" fill="none" stroke-linecap="round"/><path d="${d}" stroke="#ECE3C2" stroke-width="4" fill="none" stroke-linecap="round"/>`;
-    if (H[1] < SOIL) s += `<g clip-path="url(#${ns}sky)"><path d="${d}" stroke="${green}" stroke-width="4" fill="none" stroke-linecap="round"/></g>`;
+    s += `<path d="${d}" stroke="#6E6440" stroke-width="7" fill="none" stroke-linecap="round"/><path d="${d}" stroke="#F2EBCF" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+    if (H[1] < SOIL) s += `<g clip-path="url(#${ns}sky)"><path d="${d}" stroke="${green}" stroke-width="5" fill="none" stroke-linecap="round"/></g>`;
   }
   // 떡잎: 저장한 양분이 많을수록 짙은 크림(앰버 빛)이고 쓸수록 옅어진다. 땅 위에서 빛을 받으면 초록빛이 돈다.
   const food = 1 - g * 0.75;
@@ -347,13 +342,14 @@ function bean(ns: string, g: number, lit: boolean): { svg: string; cot: Pt; up: 
     const w = 27;
     const h = 13.5;
     s += `<g transform="translate(${f1(cot[0])} ${f1(cot[1])}) rotate(64)"><path d="M${-w} 0 C${-w} ${f1(-h * 1.2)}, ${f1(-w * 0.35)} ${f1(-h * 1.15)}, 0 ${f1(-h * 0.7)} C${f1(w * 0.35)} ${f1(-h * 1.15)}, ${w} ${f1(-h * 1.2)}, ${w} 0 C${w} ${f1(h * 1.25)}, ${f1(w * 0.4)} ${f1(h * 1.3)}, 0 ${f1(h * 1.25)} C${f1(-w * 0.4)} ${f1(h * 1.3)}, ${-w} ${f1(h * 1.25)}, ${-w} 0 Z" fill="${cotFill}" stroke="#8C7A4A" stroke-width="1"/>` +
-      `<path d="M${f1(-w * 0.92)} 1 C${f1(-w * 0.4)} 3, ${f1(w * 0.4)} 3, ${f1(w * 0.92)} 1" stroke="#A8935A" stroke-width=".9" fill="none"/>${grains(Math.round(9 * food), w * 1.4, h * 1.6)}</g>`;
+      `<ellipse cx="0" cy="${f1(h * 0.15)}" rx="${f1(w * 0.72 * food)}" ry="${f1(h * 0.8 * food)}" fill="${P.sugar}" opacity=".85"/>` +
+      `<path d="M${f1(-w * 0.92)} 1 C${f1(-w * 0.4)} 3, ${f1(w * 0.4)} 3, ${f1(w * 0.92)} 1" stroke="#A8935A" stroke-width=".9" fill="none"/>${grains(Math.round(6 * food), w * 1.2, h * 1.2)}</g>`;
   } else {
     const open = u;
     [-1, 1].forEach((side) => {
       const ang = side * (8 + open * 62) + (1 - open) * 90;
       s += `<g transform="translate(${f1(cot[0])} ${f1(cot[1])}) rotate(${f1(ang)})"><path d="M0 0 C${side * -2} -8, ${side * 4} -26, ${side * 13} -24 C${side * 22} -22, ${side * 22} -4, ${side * 12} 2 C${side * 7} 4, ${side * 2} 3, 0 0 Z" fill="${cotFill}" stroke="#8C7A4A" stroke-width="1"/>` +
-        `<g transform="translate(${side * 11} -11)">${grains(Math.round(5 * food), 12, 14)}</g></g>`;
+        `<ellipse cx="${side * 11}" cy="-11" rx="${f1(6.5 * food)}" ry="${f1(8 * food)}" fill="${P.sugar}" opacity=".85"/></g>`;
     });
     // 땅 위로 나와 펴지면 떡잎 사이에서 본잎 둘이 나온다(빛이 없으면 작고 연노랗다)
     if (open > 0.6) {
@@ -409,9 +405,11 @@ export const g2u5SproutLab: StepRenderer = (host, step, api) => {
       fx += `<g class="g2u5x-mv out" style="--dx:6px;--dy:-26px">${mol(A, "co2", cx + 22, cy - 26, 0.75)}</g><g class="g2u5x-mv out" style="--dx:10px;--dy:-26px;animation-delay:-.9s">${mol(A, "co2", cx + 30, cy - 18, 0.75, { rot: 40 })}</g>`;
       fx += `<g class="g2u5x-mv" style="--dx:-24px;--dy:6px">${mol(A, "o2", cx - 30, cy + 4, 0.8)}</g>` + label(cx - 50, cy - 12, "산소", { size: 12, fill: P.o2 });
     }
-    // 양분 이름표: 떡잎이 땅속이면 오른쪽 아래, 땅 위로 나오면 떡잎 왼쪽 아래(지시선)
-    if (b.up) fx += `<path d="M${f1(cx - 28)} ${f1(cy + 14)} L${f1(cx - 12)} ${f1(cy + 4)}" stroke="${P.sugar}" stroke-width=".9"/>` + label(cx - 30, cy + 22, "콩 속의 양분", { anchor: "end", size: 12, fill: P.sugar });
-    else fx += label(cx + 34, cy + 36, "콩 속의 양분", { anchor: "start", size: 12, fill: P.sugar });
+    // 콩 속의 양분: 오른쪽 아래의 막대가 자랄수록 줄어든다(양분을 써서 자란다는 것이 바로 보이게)
+    const left = 1 - grow * 0.75;
+    fx += `<rect x="262" y="150" width="72" height="14" rx="7" fill="#0E1A2E" stroke="#5A4A2A" stroke-width="1"/><rect x="264" y="152" width="${f1(68 * left)}" height="10" rx="5" fill="${P.sugar}"/>`;
+    fx += label(298, 142, "콩 속의 양분", { size: 12.5, fill: P.sugar });
+    fx += label(298, 182, grow >= 1 ? "자라는 데 썼어요" : grow > 0 ? "쓰는 중" : "그대로", { size: 12, fill: "#E8EEF9" });
     ly.set("fx", fx);
     ly.set("marks", mark(40, "빛 없이도 자람", seenDark) + mark(60, "산소 없으면 멈춤", seenLit));
     host.dataset.g5Grow = String(Math.round(grow * 100));
@@ -501,45 +499,62 @@ const MISSION = [
   { say: "이번에는 <b>이산화 탄소</b>가 잎 밖으로 나가게 해 보세요.", ok: (lv: number): boolean => KP[lv] < RESP },
   { say: "<b>빛이 있는데도</b> 이산화 탄소가 나가게 할 수 있을까요?", ok: (lv: number): boolean => lv === 1 },
 ];
-// 잎 덩어리: 앞면 왼쪽 위 (LBX, LBY), 폭 LBW. 기공은 앞면 x STX.
-const LBX = 12;
-const LBY = 50;
-const LBW = 198;
-const STX = 112;
+// 잎은 바탕일 뿐이다(2026-11-15 사용자 지적: 잎 조직을 자세히 그렸더니 요점이 묻혔다). 조직은 그리지 않고,
+// 잎 안의 두 칸에 광합성과 호흡이 쓰고 내놓는 기체를 분자 개수 그대로 나란히 두어 두 양을 견주게 한다.
+// 기공은 잎 아래 가장자리 STOMA. 남는 기체가 여기로 나가고 모자란 기체가 들어온다.
+const STOMA: Pt = [122, 186];
+const LEAF_OUT: Pt[] = [[228, 112], [214, 76], [180, 50], [128, 40], [74, 47], [32, 72], [12, 106], [28, 146], [66, 172], [122, 186], [178, 176], [212, 148]];
+
+/** 잎 한 장(단순한 모양, 맥은 옅게). */
+function plainLeaf(ns: string): string {
+  let s = `<path d="M228 112 L240 114" stroke="#2F7D46" stroke-width="3" stroke-linecap="round"/>`;
+  s += `<path d="${smooth(LEAF_OUT, true)}" fill="url(#${ns}pleaf)" stroke="#3E9150" stroke-width="1.4"/>`;
+  s += `<path d="M228 112 C170 106, 90 104, 14 106" stroke="#5FAE6A" stroke-width="1.6" fill="none" opacity=".55"/>`;
+  [[196, 109, 186, 62], [196, 109, 196, 164], [150, 107, 136, 46], [150, 107, 150, 180], [104, 106, 84, 50], [104, 106, 98, 176], [60, 106, 44, 68], [60, 106, 52, 150]].forEach(
+    ([x0, y0, x1, y1]) => (s += `<path d="M${x0} ${y0} Q${f1((x0 + x1) / 2 + (y1 < y0 ? -6 : -6))} ${f1((y0 + y1) / 2)} ${x1} ${y1}" stroke="#4E9F5C" stroke-width=".9" fill="none" opacity=".35"/>`),
+  );
+  return s;
+}
+/** 기공: 공변세포 둘(엽록체가 있다)과 그 사이의 구멍. */
+function stoma(x: number, y: number): string {
+  let s = "";
+  [-1, 1].forEach((sg) => {
+    s += `<path d="M${x + sg * 1.6} ${y - 7} C${x + sg * 12} ${y - 8}, ${x + sg * 12.5} ${y + 7}, ${x + sg * 1.6} ${y + 6} C${x + sg * 4} ${y + 2.5}, ${x + sg * 4} ${y - 3.5}, ${x + sg * 1.6} ${y - 7} Z" fill="#9CD58A" stroke="#2F7D32" stroke-width="1"/>`;
+    s += `<circle cx="${x + sg * 7.4}" cy="${y - 2.4}" r="1.3" fill="#2E8B3E"/><circle cx="${x + sg * 8}" cy="${y + 2}" r="1.3" fill="#2E8B3E"/>`;
+  });
+  return s + `<ellipse cx="${x}" cy="${y - 0.5}" rx="1.4" ry="5.2" fill="#0B1524"/>`;
+}
 
 export const g2u5LightLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as G5Step;
   const lab = g5Lab(host, api, s, { steps: 4, cls: "g2u5x-light", wait: "빛의 세기를 맞춰 확인해 보세요" });
   const { f, tm } = lab;
   const A = newNs("lt");
-  const ly = g5Layers(lab, "잎의 단면과 그 속의 광합성과 호흡, 기공으로 드나드는 기체", ["defs", "leaf", "sky", "cards", "gas", "panel"]);
-  ly.set("defs", `<defs>${particleDefs(A)}${sunDefs(A)}${microDefs(A)}</defs>`);
-  const block = leafBlock(A, LBX, LBY, LBW, { stomaX: STX, veinX: 62, seed: 9 });
-  // 가리키는 자리: 두 칸 모두 같은 울타리 세포 하나(한 세포 안에서 광합성은 엽록체, 호흡은 마이토콘드리아. 호흡은 살아 있는 모든 세포에서 일어난다)
-  const cell: Pt = [STX, 70];
-  const pChl: Pt = [cell[0] - 1, cell[1] + 7];
-  const pMito: Pt = [cell[0] + 1, cell[1] + 7];
+  const ly = g5Layers(lab, "잎 속의 광합성과 호흡이 쓰고 내놓는 기체, 기공으로 드나드는 기체", ["defs", "leaf", "sky", "cards", "gas", "panel"]);
+  ly.set(
+    "defs",
+    `<defs>${particleDefs(A)}${sunDefs(A)}${microDefs(A)}<linearGradient id="${A}pleaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#235F3A"/><stop offset="1" stop-color="#173F28"/></linearGradient></defs>`,
+  );
   ly.set(
     "leaf",
-    block.svg +
-      `<rect x="${cell[0] - 5.5}" y="${cell[1] - 12}" width="11" height="25" rx="4" fill="none" stroke="#FFFFFF" stroke-width="1.3"/>` +
-      label(STX + 30, block.bottom + 14, "기공", { size: 12, fill: P.dim, anchor: "start" }) +
-      `<path d="M${STX + 28} ${block.bottom + 10} L${STX + 6} ${block.bottom + 2}" stroke="#8CA2C0" stroke-width=".9"/>`,
+    plainLeaf(A) + stoma(STOMA[0], STOMA[1]) + `<path d="M${STOMA[0] + 12} ${STOMA[1] + 4} L148 198" stroke="#8CA2C0" stroke-width=".9"/>` + label(150, 204, "기공", { size: 12, fill: P.dim, anchor: "start" }),
   );
   let lv = 0;
   let m = 0;
   let busy = false;
 
-  /** 칸 하나: 세포 속 구조 그림, 이름, 쓰는 것과 내놓는 것의 수. */
-  const card = (x: number, w: number, name: string, icon: string, useKind: "o2" | "co2", outKind: "o2" | "co2", n: number, off: string, edge: string, to: Pt): string => {
-    const y = 156;
-    const h = 68;
-    let out = `<path d="M${x + w / 2} ${y} L${to[0]} ${to[1] + 6}" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="3 2" opacity=".7"/>`;
-    out += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="11" fill="#12213A" stroke="${edge}" stroke-width="1.6" opacity="${n ? 1 : 0.6}"/>`;
-    out += icon + txt(x + 46, y + 19, name, { anchor: "start", size: 13, fill: "#FFFFFF", weight: 800 });
-    if (!n) return out + txt(x + w / 2, y + 48, off, { size: 12, fill: "#E8EEF9" });
-    out += mol(A, useKind, x + 16, y + 38, 0.82) + txt(x + 30, y + 42, `${n}개 씀`, { anchor: "start", size: 12, fill: "#FFFFFF" });
-    out += mol(A, outKind, x + 16, y + 57, 0.82) + txt(x + 30, y + 61, `${n}개 내놓음`, { anchor: "start", size: 12, fill: "#FFFFFF" });
+  /** 칸 하나: 세포 속 구조 그림과 이름, 쓰는 기체와 내놓는 기체를 개수만큼(한 줄에 셋). */
+  const card = (x: number, name: string, icon: string, useKind: "o2" | "co2", outKind: "o2" | "co2", n: number, off: string, edge: string): string => {
+    const y = 54;
+    const w = 98;
+    const h = 98;
+    let out = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="#0B1729" fill-opacity=".86" stroke="${edge}" stroke-width="1.6"/>`;
+    out += icon + txt(x + 40, y + 21, name, { anchor: "start", size: 13.5, fill: "#FFFFFF", weight: 800 });
+    if (!n) return out + txt(x + w / 2, y + 62, off, { size: 12, fill: "#E8EEF9" });
+    const rowOf = (kind: "o2" | "co2", y0: number): string => Array.from({ length: n }, (_, i) => mol(A, kind, x + 53 + (i % 3) * 17, y0 + Math.floor(i / 3) * 14, 0.72)).join("");
+    out += txt(x + 8, y + 44, "씀", { anchor: "start", size: 12, fill: P.dim }) + rowOf(useKind, y + 40);
+    out += `<line x1="${x + 8}" y1="${y + 62}" x2="${x + w - 8}" y2="${y + 62}" stroke="#2A4266" stroke-width="1"/>`;
+    out += txt(x + 8, y + 78, "내놓음", { anchor: "start", size: 12, fill: P.dim }) + rowOf(outKind, y + 74);
     return out;
   };
   const list = (cx: number, y: number, kind: "o2" | "co2", n: number): string => Array.from({ length: n }, (_, i) => mol(A, kind, cx - ((n - 1) * 19) / 2 + i * 19, y, 0.78)).join("");
@@ -553,27 +568,29 @@ export const g2u5LightLab: StepRenderer = (host, step, api) => {
     let sky = sun(A, 20, 18, 9, lv > 0);
     for (let i = 0; i < lv * 2; i++) sky += beam(A, [26 + i * 2, 24 + i], [64 + i * 24, 45], 6, { cls: "g2u5x-flow", op: 0.95 });
     ly.set("sky", sky + tag(150, 22, LV[lv], { size: 12, fill: lv ? P.energy : "#C6D3E6" }));
+    // 두 칸과 두 양의 비교(광합성은 빛에 따라, 호흡은 늘 같다)
+    const cmp = k === 0 ? "빛이 없어 호흡만 해요" : k > RESP ? "광합성이 호흡보다 많아요" : "광합성이 호흡보다 적어요";
     ly.set(
       "cards",
-      card(12, 100, "광합성", `<g opacity="${k ? 1 : 0.45}">${chloroplast(A, 30, 173, 30, 17, { rot: -12, seed: 3 })}</g>`, "co2", "o2", k, "빛이 없어 멈춤", "#2F9450", pChl) +
-        card(122, 100, "호흡", mitochondrion(A, 140, 173, 30, 16, { rot: -10 }), "o2", "co2", RESP, "", "#C0703E", pMito),
+      card(20, "광합성", `<g opacity="${k ? 1 : 0.45}">${chloroplast(A, 38, 71, 30, 17, { rot: -12, seed: 3 })}</g>`, "co2", "o2", k, "빛이 없어 멈춤", "#3FA35B") +
+        card(126, "호흡", mitochondrion(A, 144, 71, 30, 16, { rot: -10 }), "o2", "co2", RESP, "", "#D07A44") +
+        label(122, 170, cmp, { size: 12.5, fill: k > RESP ? "#B9F0C2" : "#FFD9BF" }),
     );
-    // 기공으로 드나드는 기체: 나가는 것은 아래로, 들어오는 것은 위로
-    const sx = block.stoma[0];
-    const sy = block.stoma[1];
-    let gas = arrow(sx - 10, sy + 4, sx - 10, sy + 30, outKind === "o2" ? P.o2 : P.co2, 2.4, "g2u5x-flow") + arrow(sx + 10, sy + 30, sx + 10, sy + 4, inKind === "o2" ? P.o2 : P.co2, 2.4, "g2u5x-flow");
-    gas += `<g class="g2u5x-mv out" style="--dx:0px;--dy:16px">${mol(A, outKind, sx - 24, sy + 14, 0.7, { rot: 90 })}</g><g class="g2u5x-mv" style="--dx:0px;--dy:16px;animation-delay:-.9s">${mol(A, inKind, sx + 24, sy + 12, 0.7, { rot: 90 })}</g>`;
+    // 기공으로 드나드는 기체: 남는 기체는 아래로 나가고, 모자란 기체는 위로 들어온다
+    const [sx, sy] = STOMA;
+    let gas = arrow(sx - 12, sy + 8, sx - 12, sy + 36, outKind === "o2" ? P.o2 : P.co2, 2.6, "g2u5x-flow") + arrow(sx + 12, sy + 36, sx + 12, sy + 8, inKind === "o2" ? P.o2 : P.co2, 2.6, "g2u5x-flow");
+    gas += `<g class="g2u5x-mv out" style="--dx:0px;--dy:16px">${mol(A, outKind, sx - 28, sy + 16, 0.72, { rot: 90 })}</g><g class="g2u5x-mv" style="--dx:0px;--dy:16px;animation-delay:-.9s">${mol(A, inKind, sx + 28, sy + 14, 0.72, { rot: 90 })}</g>`;
     ly.set("gas", gas);
     ly.set(
       "panel",
-      `<rect x="234" y="48" width="106" height="174" rx="12" fill="#0E1A2E" stroke="#2A4266"/>` +
-        txt(287, 68, "잎 밖으로", { size: 12, fill: P.dim }) +
-        txt(287, 90, "나가는 기체", { size: 12, fill: "#E8EEF9" }) +
-        txt(287, 112, outKind === "o2" ? "산소" : "이산화 탄소", { size: 14.5, fill: outKind === "o2" ? P.o2 : P.co2, weight: 800 }) +
-        list(287, 129, outKind, n) +
-        txt(287, 160, "들어오는 기체", { size: 12, fill: "#E8EEF9" }) +
-        txt(287, 182, inKind === "o2" ? "산소" : "이산화 탄소", { size: 14.5, fill: inKind === "o2" ? P.o2 : P.co2, weight: 800 }) +
-        list(287, 199, inKind, n),
+      `<rect x="244" y="48" width="96" height="174" rx="12" fill="#0E1A2E" stroke="#2A4266"/>` +
+        txt(292, 68, "잎 밖으로", { size: 12, fill: P.dim }) +
+        txt(292, 90, "나가는 기체", { size: 12, fill: "#E8EEF9" }) +
+        txt(292, 112, outKind === "o2" ? "산소" : "이산화 탄소", { size: 14.5, fill: outKind === "o2" ? P.o2 : P.co2, weight: 800 }) +
+        list(292, 129, outKind, n) +
+        txt(292, 160, "들어오는 기체", { size: 12, fill: "#E8EEF9" }) +
+        txt(292, 182, inKind === "o2" ? "산소" : "이산화 탄소", { size: 14.5, fill: inKind === "o2" ? P.o2 : P.co2, weight: 800 }) +
+        list(292, 199, inKind, n),
     );
     host.dataset.g5Lv = String(lv);
     host.dataset.g5M = String(m);
