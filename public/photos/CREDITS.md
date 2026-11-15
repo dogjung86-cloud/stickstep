@@ -46,9 +46,12 @@ NASA 이미지는 퍼블릭 도메인이며 NASA의 보증을 의미하지 않�
 - C.R. Scotese, **PALEOMAP Project** (PALEOMAP PaleoAtlas for GPlates) — 교육 목적 사용, 출처 표기.
 - 사용 시대: 현재(000) · 66 Ma(K-Pg 경계) · 150 Ma(쥐라기 후기) · 200 Ma(트라이아스-쥐라기 경계) · 280 Ma(페름기 초기, 판게아)
 - 중2 II 대륙 이동설 랩(driftLab)·판의 경계 랩(plateMap) 배경으로 사용.
+- `*-640.webp` 넷(000, 066, 150, 280)은 같은 지도를 640×320으로 줄인 사본이다(대륙 이동 네 장면 문제 그림 driftStagesFig, 2026-11-15).
 
 ## public/geo/{rocks,minerals,evid}/ — 암석·광물 표본, 증거·문제 사진
 - 전부 앱 자체 발주 생성 이미지(교육용 일러스트·실사풍) — 외부 저작물 아님.
+- 로컬 손질본(2026-11-15, 원본은 그대로 둠): `minerals/magnetite-plain.webp`(magnetite.webp에서 클립 셋을 지움),
+  `rocks/marble-plain.webp`(marble.webp의 진한 회색 결을 밝힘), `rocks/rhyolite-soft.webp`(rhyolite.webp의 흐름 줄무늬 대비를 낮춤).
 
 ## public/exam/ — 중2 종합 평가 실사 교체분
 | 파일 | 출처 · 크레딧 | 라이선스 |

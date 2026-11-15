@@ -7,7 +7,7 @@ const NS = `xmlns="http://www.w3.org/2000/svg"`;
  *  층 이름은 쓰지 않고 (가)~(라)만 — 마무리 3·4번용. (가)=지각(테두리 얇은 띠),
  *  (나)=맨틀, (다)=외핵, (라)=내핵 자리. */
 export function earthLayersFig(): string {
-  const cx = 40;
+  const cx = 47; // 왼쪽 깊이 숫자(13.5px)가 그림 밖으로 잘리지 않게 조금 오른쪽으로
   const cy = 192;
   const R = 168;
   const rOf = (depth: number): number => R * (1 - depth / 6400);
@@ -27,27 +27,28 @@ export function earthLayersFig(): string {
     <!-- (가) 지각: 실제 비례로는 선 굵기 수준의 얇은 껍질 -->
     <path d="M${cx} ${cy - R} A${R} ${R} 0 0 1 ${cx + R} ${cy}" stroke="#7A5C3E" stroke-width="3"/>
     <path d="M${cx} ${cy - R} L${cx} ${cy} L${cx + R} ${cy}" stroke="#8B95A1" stroke-width="1.4"/>
-    <!-- 세로 절단면의 깊이 라벨 -->
-    <text x="${cx - 8}" y="${cy - R + 4}" text-anchor="end" font-size="10.5" fill="#8B95A1">0</text>
-    <line x1="${cx - 4}" y1="${cy - rMantle + 6}" x2="${cx + 14}" y2="${cy - rMantle + 14}" stroke="#C4CAD2" stroke-width="1.2"/>
-    <text x="${cx - 8}" y="${cy - rMantle + 16}" text-anchor="end" font-size="10.5" fill="#8B95A1">35</text>
-    <text x="${cx - 8}" y="${cy - rOuter + 4}" text-anchor="end" font-size="10.5" fill="#8B95A1">2900</text>
-    <text x="${cx - 8}" y="${cy - rInner + 4}" text-anchor="end" font-size="10.5" fill="#8B95A1">5100</text>
-    <text x="${cx - 8}" y="${cy + 4}" text-anchor="end" font-size="10.5" fill="#8B95A1">6400</text>
-    <text x="14" y="14" font-size="10.5" fill="#4E5968">깊이(km)</text>
+    <!-- 세로 절단면의 깊이 라벨(고체와 액체의 경계를 읽는 근거라 폰에서 12px 이상: 설계 13.5) -->
+    <text x="${cx - 7}" y="${cy - R + 5}" text-anchor="end" font-size="13.5" font-weight="600" fill="#6B7684">0</text>
+    <line x1="${cx - 4}" y1="${cy - rMantle + 7}" x2="${cx + 14}" y2="${cy - rMantle + 15}" stroke="#C4CAD2" stroke-width="1.2"/>
+    <text x="${cx - 7}" y="${cy - rMantle + 19}" text-anchor="end" font-size="13.5" font-weight="600" fill="#6B7684">35</text>
+    <text x="${cx - 7}" y="${cy - rOuter + 5}" text-anchor="end" font-size="13.5" font-weight="600" fill="#6B7684">2900</text>
+    <text x="${cx - 7}" y="${cy - rInner + 5}" text-anchor="end" font-size="13.5" font-weight="600" fill="#6B7684">5100</text>
+    <text x="${cx - 7}" y="${cy + 5}" text-anchor="end" font-size="13.5" font-weight="600" fill="#6B7684">6400</text>
+    <text x="0" y="12" font-size="13.5" font-weight="600" fill="#4E5968">깊이(km)</text>
     <!-- (가)~(라) 눈금(수평 변 아래) -->
     ${tick((R + rMantle) / 2, "(가)")}
     ${tick((rMantle + rOuter) / 2, "(나)")}
     ${tick((rOuter + rInner) / 2, "(다)")}
     ${tick(rInner / 2, "(라)")}
-    <!-- 지표 장식(수직 변 위 끝) -->
-    <path d="M${cx + 6} ${cy - R - 6} q5 -7 10 0 M${cx + 24} ${cy - R - 3} q4 -6 8 0" stroke="#0CA678" stroke-width="1.6"/>
+    <!-- 지표 장식(호 위, 깊이 제목과 겹치지 않게 오른쪽으로) -->
+    <path d="M${cx + 26} ${cy - R - 2} q5 -7 10 0 M${cx + 46} ${cy - R + 2} q4 -6 8 0" stroke="#0CA678" stroke-width="1.6"/>
   </svg>`;
 }
 
 /** 화성암 2×2 분류표 — x축 색(어둡다↔밝다), y축 결정 크기(작다↔크다), 빈칸 (가)~(라).
  *  (가)=어둡다·크다(반려암), (나)=밝다·크다(화강암), (다)=어둡다·작다(현무암), (라)=밝다·작다(유문암) 자리 — 마무리 6번용. */
-export function igneousGridFig(): string {
+export function igneousGridFig(o: { lab?: boolean } = {}): string {
+  if (o.lab) return igneousTableFig();
   const cell = (x: number, y: number, label: string): string =>
     `<rect x="${x}" y="${y}" width="116" height="62" rx="10" fill="#F8FAFC" stroke="#B0B8C1" stroke-width="1.4" stroke-dasharray="5 4"/>
      <text x="${x + 58}" y="${y + 37}" text-anchor="middle" font-size="15" font-weight="800" fill="#4E5968">${label}</text>`;
@@ -72,6 +73,25 @@ export function igneousGridFig(): string {
   </svg>`;
 }
 
+/** 레슨 문제용 화성암 분류표: 바로 앞 분류표 랩의 표와 같은 배치(위 줄 = 결정이 작다, 아래 줄 = 결정이 크다,
+ *  왼쪽 = 색이 어둡다, 오른쪽 = 색이 밝다). (가)=어둡고 작다(현무암), (나)=밝고 작다(유문암), (다)=어둡고 크다(반려암), (라)=밝고 크다(화강암).
+ *  시험 문항은 위의 igneousGridFig() 축 그림(위가 크다)을 그대로 쓴다(정답 짝이 그 배치에 묶여 있다). */
+function igneousTableFig(): string {
+  const CX = [88, 214], CY = [34, 106], CW = 118, CH = 64;
+  const cell = (x: number, y: number, label: string): string =>
+    `<rect x="${x}" y="${y}" width="${CW}" height="${CH}" rx="12" fill="#F8FAFC" stroke="#B0B8C1" stroke-width="1.4" stroke-dasharray="5 4"/>
+     <text x="${x + CW / 2}" y="${y + CH / 2 + 6}" text-anchor="middle" font-size="16" font-weight="800" fill="#4E5968">${label}</text>`;
+  const head = (x: number, y: number, t: string, anchor = "middle"): string =>
+    `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="13.5" font-weight="700" fill="#4E5968">${t}</text>`;
+  return `<svg viewBox="0 0 344 180" ${NS} fill="none" role="img" aria-label="화성암 분류표. 열은 왼쪽이 색이 어둡다, 오른쪽이 색이 밝다이고, 줄은 위가 결정이 작다, 아래가 결정이 크다예요. 네 칸은 가, 나, 다, 라 빈칸이에요">
+    ${head(CX[0] + CW / 2, 22, "색이 어둡다")}${head(CX[1] + CW / 2, 22, "색이 밝다")}
+    ${head(44, CY[0] + CH / 2 - 3, "결정이")}${head(44, CY[0] + CH / 2 + 14, "작다")}
+    ${head(44, CY[1] + CH / 2 - 3, "결정이")}${head(44, CY[1] + CH / 2 + 14, "크다")}
+    ${cell(CX[0], CY[0], "(가)")}${cell(CX[1], CY[0], "(나)")}
+    ${cell(CX[0], CY[1], "(다)")}${cell(CX[1], CY[1], "(라)")}
+  </svg>`;
+}
+
 /** 광물 분류 흐름도 — 석영·방해석·자철석을 두 가지 성질 검사로 가르기.
  *  (가)=방해석(묽은 염산 반응), (나)=자철석(클립 끌어당김), (다)=석영 자리 — L2 흐름도 문제용.
  *  판정 순서(염산 먼저 → 자성 나중)는 unit2.ts 문항 선지와 반드시 일치시킬 것. */
@@ -81,33 +101,32 @@ export function mineralFlowFig(): string {
      ${x1 === x2
        ? `<path d="M${x2} ${y2} l-4.5 -7 h9 z" fill="#8B95A1"/>`
        : `<path d="M${x2} ${y2} l-7 -4.5 v9 z" fill="#8B95A1"/>`}`;
-  const result = (x: number, y: number, label: string): string =>
-    `<rect x="${x}" y="${y}" width="76" height="40" rx="10" fill="#F8FAFC" stroke="#B0B8C1" stroke-width="1.4" stroke-dasharray="5 4"/>
-     <text x="${x + 38}" y="${y + 25}" text-anchor="middle" font-size="14.5" font-weight="800" fill="#4E5968">(${label})</text>`;
+  const result = (x: number, y: number, w: number, label: string): string =>
+    `<rect x="${x}" y="${y}" width="${w}" height="40" rx="10" fill="#F8FAFC" stroke="#B0B8C1" stroke-width="1.4" stroke-dasharray="5 4"/>
+     <text x="${x + w / 2}" y="${y + 26}" text-anchor="middle" font-size="15.5" font-weight="800" fill="#4E5968">(${label})</text>`;
+  // 카드 폭을 다 쓴다: 질문 상자는 왼쪽부터 넓게, '예'의 결과는 같은 높이의 오른쪽 칸. 글자는 폰에서 12px 이상(설계 13.5)
   return `<svg viewBox="0 0 344 248" ${NS} fill="none" role="img" aria-label="광물 분류 흐름도. 석영, 방해석, 자철석을 묽은 염산과 반응하는지, 클립을 끌어당기는지 두 번 물어 가, 나, 다로 가릅니다">
     <!-- 시작 -->
-    <rect x="82" y="10" width="150" height="34" rx="17" fill="#F2F4F6" stroke="#C4CAD2" stroke-width="1.4"/>
-    <text x="157" y="31" text-anchor="middle" font-size="12.5" font-weight="800" fill="#333D4B">석영 · 방해석 · 자철석</text>
-    ${arrow(157, 44, 157, 66)}
+    <rect x="36" y="6" width="200" height="36" rx="18" fill="#F2F4F6" stroke="#C4CAD2" stroke-width="1.4"/>
+    <text x="136" y="29" text-anchor="middle" font-size="14" font-weight="800" fill="#333D4B">석영 · 방해석 · 자철석</text>
+    ${arrow(136, 42, 136, 64)}
     <!-- 질문 1 -->
-    <rect x="62" y="68" width="190" height="38" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
-    <text x="157" y="91" text-anchor="middle" font-size="12" font-weight="700" fill="#1B64DA">묽은 염산과 반응하는가?</text>
-    <line x1="252" y1="87" x2="284" y2="87" stroke="#8B95A1" stroke-width="1.8"/>
-    <path d="M284 87 l-7 -4.5 v9 z" fill="#8B95A1"/>
-    <text x="266" y="80" text-anchor="middle" font-size="10.5" font-weight="800" fill="#0CA678">예</text>
-    ${result(258, 96, "가")}
-    ${arrow(157, 106, 157, 130)}
-    <text x="144" y="123" text-anchor="end" font-size="10.5" font-weight="800" fill="#8B95A1">아니요</text>
+    <rect x="6" y="66" width="260" height="40" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
+    <text x="136" y="91" text-anchor="middle" font-size="14" font-weight="700" fill="#1B64DA">묽은 염산과 반응하는가?</text>
+    ${arrow(266, 86, 284, 86)}
+    <text x="275" y="78" text-anchor="middle" font-size="13.5" font-weight="800" fill="#0CA678">예</text>
+    ${result(286, 66, 54, "가")}
+    ${arrow(136, 106, 136, 130)}
+    <text x="127" y="123" text-anchor="end" font-size="13.5" font-weight="800" fill="#6B7684">아니요</text>
     <!-- 질문 2 -->
-    <rect x="62" y="132" width="190" height="38" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
-    <text x="157" y="155" text-anchor="middle" font-size="12" font-weight="700" fill="#1B64DA">클립을 끌어당기는가?</text>
-    <line x1="252" y1="151" x2="284" y2="151" stroke="#8B95A1" stroke-width="1.8"/>
-    <path d="M284 151 l-7 -4.5 v9 z" fill="#8B95A1"/>
-    <text x="266" y="144" text-anchor="middle" font-size="10.5" font-weight="800" fill="#0CA678">예</text>
-    ${result(258, 160, "나")}
-    ${arrow(157, 170, 157, 196)}
-    <text x="144" y="188" text-anchor="end" font-size="10.5" font-weight="800" fill="#8B95A1">아니요</text>
-    ${result(119, 198, "다")}
+    <rect x="6" y="132" width="260" height="40" rx="12" fill="#EAF2FD" stroke="#5AA2F8" stroke-width="1.5"/>
+    <text x="136" y="157" text-anchor="middle" font-size="14" font-weight="700" fill="#1B64DA">클립을 끌어당기는가?</text>
+    ${arrow(266, 152, 284, 152)}
+    <text x="275" y="144" text-anchor="middle" font-size="13.5" font-weight="800" fill="#0CA678">예</text>
+    ${result(286, 132, 54, "나")}
+    ${arrow(136, 172, 136, 196)}
+    <text x="127" y="189" text-anchor="end" font-size="13.5" font-weight="800" fill="#6B7684">아니요</text>
+    ${result(96, 198, 80, "다")}
   </svg>`;
 }
 
@@ -219,38 +238,27 @@ export function rockCycleFig(): string {
   </svg>`;
 }
 
-/** 대륙 이동 4단계 미니 지도 — 순서를 섞어 (가)~(라)로 배치(마무리 13번: 순서 맞추기).
- *  정답 순서: (나) 판게아 → (라) 분리 시작 → (가) 이동 → (다) 현재. */
+/** 대륙 이동 4단계 지도: 순서를 섞어 (가)~(라)로 배치(순서 맞추기 문제).
+ *  정답 순서: (나) 판게아 → (라) 분리 시작 → (가) 이동 → (다) 현재.
+ *  칸마다 앱에 있는 옛 지도(PALEOMAP, C.R. Scotese, public/geo/maps의 640px 사본)를 잘라 넣는다:
+ *  (나) 약 2억 8천만 년 전, (라) 약 1억 5천만 년 전, (가) 약 6천6백만 년 전, (다) 현재. 칸 안에 연도는 쓰지 않는다(답이 드러난다). */
+const MAP_BASE = (import.meta as unknown as { env: { BASE_URL?: string } }).env?.BASE_URL || "/";
 export function driftStagesFig(): string {
-  const panel = (x: number, y: number, label: string, land: string): string => `
+  const uid = Math.random().toString(36).slice(2, 8);
+  const map = (i: number, x: number, y: number, label: string, file: string): string => `
     <g>
-      <rect x="${x}" y="${y}" width="158" height="86" rx="10" fill="#DDF0FB" stroke="#B8D6EC" stroke-width="1.5"/>
-      <g transform="translate(${x} ${y})" fill="#C9A26A" stroke="#8E6A34" stroke-width="1.1">${land}</g>
-      <rect x="${x + 8}" y="${y + 8}" width="34" height="19" rx="9.5" fill="#FFFFFF" stroke="#C4CAD2" stroke-width="1.2"/>
-      <text x="${x + 25}" y="${y + 21.5}" text-anchor="middle" font-size="11.5" font-weight="800" fill="#4E5968">${label}</text>
+      <clipPath id="dsf${uid}${i}"><rect x="${x}" y="${y}" width="158" height="86" rx="10"/></clipPath>
+      <rect x="${x}" y="${y}" width="158" height="86" rx="10" fill="#17406E"/>
+      <image href="${MAP_BASE}geo/maps/${file}-640.webp" x="${x}" y="${y}" width="158" height="86" preserveAspectRatio="xMidYMid slice" clip-path="url(#dsf${uid}${i})"/>
+      <rect x="${x}" y="${y}" width="158" height="86" rx="10" stroke="#B8D6EC" stroke-width="1.5"/>
+      <rect x="${x + 6}" y="${y + 6}" width="36" height="20" rx="10" fill="#FFFFFF" stroke="#C4CAD2" stroke-width="1.2"/>
+      <text x="${x + 24}" y="${y + 20.5}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#4E5968">${label}</text>
     </g>`;
-  // 1단계: 판게아(한 덩어리, C자)
-  const pangea = `<path d="M62 18 q34 -6 44 14 q6 14 -8 20 q16 8 10 22 q-8 16 -34 12 q-30 -4 -34 -26 q-4 -28 22 -42z"/>`;
-  // 2단계: 남북 두 덩어리로 분리 시작(사이에 바다 쐐기)
-  const split = `<path d="M56 18 q40 -8 52 12 q4 10 -10 16 q-30 6 -48 -2 q-10 -14 6 -26z"/>
-    <path d="M60 52 q30 -8 46 4 q10 12 -2 22 q-22 8 -40 0 q-14 -10 -4 -26z"/>`;
-  // 3단계: 여러 조각으로 이동 중(대서양이 벌어짐)
-  const moving = `<path d="M34 22 q16 -6 22 6 q2 10 -8 14 q4 8 -2 14 q-10 2 -14 -8 q-6 -14 2 -26z"/>
-    <path d="M52 58 q10 -2 12 8 q0 10 -8 16 q-8 -4 -8 -12 q0 -8 4 -12z"/>
-    <path d="M84 28 q16 -8 28 2 q8 12 0 24 q-12 10 -24 2 q-10 -14 -4 -28z"/>
-    <path d="M120 22 q22 -6 34 6 q6 10 -4 16 q-14 6 -26 0 q-10 -10 -4 -22z"/>
-    <path d="M126 62 q10 -4 16 4 q2 8 -8 10 q-8 -4 -8 -14z"/>`;
-  // 4단계: 현재(아메리카 / 아프리카·유라시아 / 오세아니아)
-  const today = `<path d="M28 22 q14 -4 18 8 q0 8 -8 10 q6 8 0 16 q-4 10 -10 2 q-8 -18 0 -36z"/>
-    <path d="M74 30 q10 -4 16 2 q-2 8 -10 8 q-4 -4 -6 -10z"/>
-    <path d="M78 44 q12 -4 18 6 q4 12 -4 20 q-10 4 -14 -6 q-4 -12 0 -20z"/>
-    <path d="M100 26 q26 -8 42 4 q8 8 -2 14 q-18 8 -32 0 q-12 -8 -8 -18z"/>
-    <path d="M130 62 q10 -2 14 6 q-2 8 -12 6 q-6 -6 -2 -12z"/>`;
-  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="대륙 이동 네 장면이 순서 없이 놓여 있어요. 가는 여러 대륙이 이동 중, 나는 한 덩어리 대륙, 다는 현재 모습, 라는 두 덩어리로 갈라지기 시작한 모습이에요">
-    ${panel(10, 10, "(가)", moving)}
-    ${panel(176, 10, "(나)", pangea)}
-    ${panel(10, 104, "(다)", today)}
-    ${panel(176, 104, "(라)", split)}
+  return `<svg viewBox="0 0 344 200" ${NS} fill="none" role="img" aria-label="대륙 분포 지도 네 장이 순서 없이 놓여 있어요. 가는 여러 대륙이 흩어져 이동하는 모습, 나는 대륙이 한 덩어리로 모인 모습, 다는 지금의 대륙 모습, 라는 한 덩어리가 갈라지기 시작한 모습이에요">
+    ${map(0, 10, 10, "(가)", "Map16a_KT_Boundary_066")}
+    ${map(1, 176, 10, "(나)", "Map54a_EP_Artinskian_280")}
+    ${map(2, 10, 104, "(다)", "Map01a_PALEOMAP_PaleoAtlas_000")}
+    ${map(3, 176, 104, "(라)", "Map33a_LtJ_Tithonian_150")}
   </svg>`;
 }
 
@@ -354,6 +362,24 @@ const MINI: Record<string, string> = {
     <circle cx="33" cy="31" r="1.8"/><circle cx="40" cy="26" r="1.8"/><circle cx="47" cy="22" r="1.8"/></g>
     <path d="M19 34 l4 -7 4 7 z" fill="#FF9A4A" stroke="#D95F14" stroke-width="1.2"/>
     <path d="M41 21 l3.4 -6 3.4 6 z" fill="#FF9A4A" stroke="#D95F14" stroke-width="1.2"/>`,
+  // 색과 조흔색: 겉이 똑같이 검은 조각 둘, 그 아래 조흔판에 검은 줄과 적갈색 줄(자철석과 적철석)
+  streakMini: `<path d="M8 25 l4 -10 l9 -4 l8 6 l-1 8 l-9 4 z" fill="#2B2B31" stroke="#141418" stroke-width="1.6"/>
+    <path d="M35 25 l4 -10 l9 -4 l8 6 l-1 8 l-9 4 z" fill="#2B2B31" stroke="#141418" stroke-width="1.6"/>
+    <path d="M13 15 l6 -3 M40 15 l6 -3" stroke="#77777F" stroke-width="1.6"/>
+    <rect x="6" y="35" width="52" height="23" rx="4" fill="#F4EFE6" stroke="#A89F8C" stroke-width="1.6"/>
+    <path d="M11 40 l9 3 l-9 3 l9 3 l-7 3" fill="none" stroke="#1C1C20" stroke-width="2.6"/>
+    <path d="M38 40 l9 3 l-9 3 l9 3 l-7 3" fill="none" stroke="#A0432F" stroke-width="2.6"/>`,
+  // 암석의 세 갈래: 맞물린 결정(화성암), 둥근 알갱이가 쌓인 층(퇴적암), 물결 줄무늬(변성암). 색이 아니라 만들어진 흔적으로 나눈다
+  rockTypesMini: `<rect x="3" y="18" width="18" height="28" rx="4" fill="#E9E4DC" stroke="#6B6157" stroke-width="1.6"/>
+    <path d="M3 29 l7 -2 l5 5 l6 -1 M10 27 l1 -9 M15 32 l-2 14 M3 38 l10 1" fill="none" stroke="#6B6157" stroke-width="1.2"/>
+    <path d="M10.5 18.6 l9.8 0 l0 8.6 l-5.4 4.6 l-4 -4.8 z" fill="#5A5560"/><path d="M13.2 39.2 l7.6 -1.2 l0 7.4 l-7.9 0 z" fill="#E7B9A6"/>
+    <rect x="23" y="18" width="18" height="28" rx="4" fill="#E2C48A" stroke="#8E6A34" stroke-width="1.6"/>
+    <path d="M23 27.5 h18 M23 37 h18" stroke="#8E6A34" stroke-width="1.2"/>
+    <circle cx="27.5" cy="41.5" r="2.4" fill="#B9A894" stroke="#5E4A30" stroke-width="1"/><circle cx="33" cy="42" r="2.2" fill="#B9A894" stroke="#5E4A30" stroke-width="1"/><circle cx="37.8" cy="41.2" r="2.3" fill="#B9A894" stroke="#5E4A30" stroke-width="1"/>
+    <g fill="#A77B22"><circle cx="27" cy="32" r=".9"/><circle cx="31" cy="30.5" r=".9"/><circle cx="35" cy="33" r=".9"/><circle cx="38" cy="30" r=".9"/></g>
+    <rect x="43" y="18" width="18" height="28" rx="4" fill="#D9D2C8" stroke="#6B6157" stroke-width="1.6"/>
+    <path d="M43 24.5 q4.5 -3 9 0 t9 0 M43 31.5 q4.5 -3 9 0 t9 0 M43 38.5 q4.5 -3 9 0 t9 0" fill="none" stroke="#4A4540" stroke-width="2"/>
+    <path d="M8 54 h48" stroke="#C4CAD2" stroke-width="2.4"/>`,
 };
 
 export function geoMiniArt(key: string): string {

@@ -80,7 +80,8 @@ const AFR_ANT = qInv(ANT_AFR);
 const ROT = { an: [0, 0, 0], af: poleOf(AFR_ANT), sa: poleOf(qMul(AFR_ANT, SAM_AFR)), in: poleOf(IND_ANT), au: poleOf(AUS_ANT) };
 
 // 빙하의 흔적(지금 좌표의 가운데 경도, 위도, 반지름 도). 석탄기와 페름기의 빙하 퇴적층이 알려진 곳을 간추렸다.
-const ICE = { sa: [-54, -27, 10], af: [24, -26, 11], in: [80, 20, 7], au: [134, -31, 9], an: [70, -80, 16] };
+// 인도는 가운데와 동쪽 일부(탈치르 빙하 퇴적층이 있는 곤드와나 분지들)만 덮는다. 땅 색이 보이게 작게(2026-11-15).
+const ICE = { sa: [-54, -27, 10], af: [24, -26, 11], in: [82, 21, 4], au: [134, -31, 9], an: [70, -80, 16] };
 const NAME = { sa: "남아메리카", af: "아프리카", in: "인도", au: "오스트레일리아", an: "남극" };
 const COLOR = { sa: "#86C06C", af: "#D9B45F", in: "#E8915A", au: "#C49AE8", an: "#BFD7EA" };
 

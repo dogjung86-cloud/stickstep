@@ -12,7 +12,7 @@
 //   판정 둘: 클립이 붙은 광물의 성질, 서로 긁었을 때 더 단단한 쪽. 통찰 하나: 광물마다 특성이 달라 그 특성으로 구별한다.
 
 import type { StepRenderer } from "../../types";
-import { G, gBtn, gGrid, gLab, gPick, gPredict, gTap, haptic, HAPTIC, label, specimen, svgOpen, type GStep } from "./kit";
+import { G, acidMark, gBtn, gGrid, gLab, gPick, gPredict, gTap, haptic, HAPTIC, label, specimen, svgOpen, type GStep } from "./kit";
 
 /* ══════════ 랩 1: 조흔판에 긁기 ══════════ */
 const ORE = [
@@ -97,7 +97,8 @@ export const g2u2PowderLab: StepRenderer = (host, step, api) => {
 type Tool = "clip" | "acid" | "plate";
 const MIN: Record<string, { name: string; img: string; clip: boolean; acid: boolean; plate: string }> = {
   bio: { name: "흑운모", img: "minerals/biotite.webp", clip: false, acid: false, plate: "흰색 가루" },
-  mag: { name: "자철석", img: "minerals/magnetite.webp", clip: true, acid: false, plate: "검은색 가루" },
+  // 자철석 사진은 클립을 지운 판(클립이 붙은 원본은 "클립이 달라붙었어요" 시험 문항에만 쓴다)
+  mag: { name: "자철석", img: "minerals/magnetite-plain.webp", clip: true, acid: false, plate: "검은색 가루" },
   qtz: { name: "석영", img: "minerals/quartz.webp", clip: false, acid: false, plate: "가루 없음" },
   fel: { name: "장석", img: "minerals/feldspar.webp", clip: false, acid: false, plate: "흰색 가루" },
   cal: { name: "방해석", img: "minerals/calcite.webp", clip: false, acid: true, plate: "흰색 가루" },
@@ -127,22 +128,33 @@ export const g2u2MineralLab: StepRenderer = (host, step, api) => {
   const next = gBtn("next", "다음 광물로");
   next.hidden = true;
 
+  // 무대 배치: 사진(위) → 이름 → 조흔판 조각 자리(사진 아래 빈 칸) → 기록 세 줄. 사진은 광물 수에 따라 크게
+  const geom = (n: number): { w: number; h: number; gap: number; nameY: number; plateY: number } => {
+    const w = n === 2 ? 124 : 100, h = n === 2 ? 100 : 96;
+    return { w, h, gap: (346 - w * n) / (n + 1), nameY: 10 + h + 17, plateY: 10 + h + 24 };
+  };
+  const cxOf = (n: number, i: number): number => { const g = geom(n); return g.gap + i * (g.w + g.gap) + g.w / 2; };
   function draw(): void {
-    const set = TASKS[task].set;
-    const w = set.length === 2 ? 104 : 92, gap = (346 - w * set.length) / (set.length + 1);
+    const set = TASKS[task].set, g = geom(set.length);
     f.stage.innerHTML = `${svgOpen}${set.map((k, i) => {
-      const x = gap + i * (w + gap), cx = x + w / 2, m = MIN[k];
-      return `${specimen(`g2mn${task}${i}`, m.img, x, 12, w, 92)}
-        ${label(cx, 122, m.name, { size: 13.5 })}
-        <g class="g2u2x-mn-fx fx-${k}"></g>
-        ${[0, 1, 2].map((j) => label(cx, 144 + j * 19, "", { size: 12.5, weight: 700, fill: G.dim, cls: `g2u2x-mn-log l-${k}-${j}` })).join("")}`;
+      const cx = cxOf(set.length, i), x = cx - g.w / 2, m = MIN[k];
+      return `${specimen(`g2mn${task}${i}`, m.img, x, 10, g.w, g.h)}
+        <g class="g2u2x-mn-fx fa-${k}"></g><g class="g2u2x-mn-fx fc-${k}"></g>
+        ${label(cx, g.nameY, m.name, { size: 13.5 })}
+        <g class="g2u2x-mn-pl pl-${k}"></g>
+        ${[0, 1, 2].map((j) => label(cx, 172 + j * 18, "", { size: 12.5, weight: 700, fill: G.dim, cls: `g2u2x-mn-log l-${k}-${j}` })).join("")}`;
     }).join("")}</svg>`;
   }
-  function fx(k: string, tool: Tool, hit: boolean, cx: number): string {
+  function fx(tool: Tool, hit: boolean, cx: number): string {
     if (tool === "clip") return `<g class="g2u2x-mn-clip ${hit ? "stick" : "fall"}"><path d="M${cx + 20} 30 v26 a7 7 0 0 0 14 0 v-30 a10 10 0 0 0 -20 0 v34" stroke="#DDE6F2" stroke-width="3" stroke-linecap="round" fill="none"/></g>`;
-    if (tool === "acid") return `<g class="g2u2x-mn-drop"><path d="M${cx} 22 q-7 10 0 14 q7 -4 0 -14" fill="#B6F3C8"/></g>${hit ? [-14, -4, 8, 16, 2].map((d, n) => `<circle class="g2u2x-mn-bub" style="animation-delay:${0.5 + n * 0.12}s" cx="${cx + d}" cy="${62 - (n % 2) * 8}" r="${4 + (n % 3)}" fill="rgba(255,255,255,.85)"/>`).join("") : ""}`;
+    // 묽은 염산: 방울이 떨어진 자리에 짙은 젖은 자국이 남고, 반응하는 광물에서만 진한 테두리의 거품이 일어 그대로 남는다
+    if (tool === "acid") return `<g class="g2u2x-mn-drop"><path d="M${cx} 20 q-7 10 0 14 q7 -4 0 -14" fill="#B6F3C8" stroke="#2F6B45" stroke-width="1"/></g>${acidMark(cx, 64, hit)}`;
+    return "";
+  }
+  function plate(k: string): string {
+    const n = TASKS[task].set.length, cx = cxOf(n, TASKS[task].set.indexOf(k)), y = geom(n).plateY;
     const col = MIN[k].plate.startsWith("검") ? "#1C1C20" : "#FFFFFF";
-    return `<g class="g2u2x-mn-plate"><rect x="${cx - 30}" y="74" width="60" height="24" rx="5" fill="#EDE7DC" stroke="#B9B09E" stroke-width="1.2"/>${MIN[k].plate === "가루 없음" ? `<path d="M${cx - 18} 86 h36" stroke="#9A917F" stroke-width="1.6" stroke-dasharray="3 3"/>` : `<path d="M${cx - 20} 86 h40" stroke="${col}" stroke-width="5" stroke-linecap="round"/><path d="M${cx - 20} 86 h40" stroke="#8D8573" stroke-width="5.6" stroke-linecap="round" opacity=".25"/>`}</g>`;
+    return `<g class="g2u2x-mn-plate"><rect x="${cx - 32}" y="${y}" width="64" height="20" rx="5" fill="#EDE7DC" stroke="#B9B09E" stroke-width="1.2"/>${MIN[k].plate === "가루 없음" ? `<path d="M${cx - 20} ${y + 10} h40" stroke="#9A917F" stroke-width="1.6" stroke-dasharray="3 3"/>` : `<path d="M${cx - 22} ${y + 10} h44" stroke="#8D8573" stroke-width="6.2" stroke-linecap="round" opacity=".3"/><path d="M${cx - 22} ${y + 10} h44" stroke="${col}" stroke-width="5" stroke-linecap="round"/>`}</g>`;
   }
   const hintNow = (): void => {
     if (solved) lab.hint("next");
@@ -156,12 +168,11 @@ export const g2u2MineralLab: StepRenderer = (host, step, api) => {
     haptic(HAPTIC.tap);
     picks.forEach((x) => x.on(x === p));
     const set = T.set;
-    const w = set.length === 2 ? 104 : 92, gap = (346 - w * set.length) / (set.length + 1);
     set.forEach((k, i) => {
-      const cx = gap + i * (w + gap) + w / 2;
       const m = MIN[k];
       const hit = tool === "clip" ? m.clip : tool === "acid" ? m.acid : m.plate !== "가루 없음";
-      lab.q(`.fx-${k}`).innerHTML = fx(k, tool, hit, cx);
+      if (tool === "plate") lab.q(`.pl-${k}`).innerHTML = plate(k);
+      else lab.q(`.${tool === "clip" ? "fc" : "fa"}-${k}`).innerHTML = fx(tool, hit, cxOf(set.length, i)); // 도구마다 제 자리에 남는다
     });
     tm.later(() => {
       const first = !used.has(tool);

@@ -126,7 +126,7 @@ export const POOL_G2U2L5: ExamItem[] = [
       "(가)는 조개껍데기 같은 생물의 유해가 쌓여 굳은 암석이에요. (가)가 지하 깊은 곳에서 높은 열과 압력을 받으면 (나)와 같은 암석으로 변해요. (가)와 (나)의 이름을 순서대로 옳게 짝 지은 것은?",
     figure: pic2(
       ["geo/rocks/limestone.webp", "연한 잿빛의 무른 느낌이 나는 암석 표본"],
-      ["geo/rocks/marble.webp", "밝고 매끈하며 결정이 은은하게 반짝이는 암석 표본"],
+      ["geo/rocks/marble-plain.webp", "밝고 매끈하며 결정이 은은하게 반짝이는 암석 표본"],
     ),
     options: ["석회암, 규암", "석회암, 대리암", "사암, 대리암", "사암, 규암", "이암, 편마암"],
     answer: 1,
@@ -141,7 +141,7 @@ export const POOL_G2U2L5: ExamItem[] = [
     type: "mcq",
     diff: 2,
     prompt: "사진의 암석은 <b>대리암</b>이에요. 이 암석에 묽은 염산을 떨어뜨리면 어떻게 될까요?",
-    figure: pic("geo/rocks/marble.webp", "밝고 매끈하며 결정이 은은하게 반짝이는 암석 표본"),
+    figure: pic("geo/rocks/marble-plain.webp", "밝고 매끈하며 결정이 은은하게 반짝이는 암석 표본"),
     options: [
       "거품이 일어난다, 변하기 전 암석의 성분을 물려받았기 때문",
       "아무 변화가 없다, 변성되면서 성분이 완전히 사라졌기 때문",

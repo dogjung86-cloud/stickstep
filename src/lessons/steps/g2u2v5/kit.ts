@@ -221,6 +221,18 @@ export function specimen(id: string, path: string, x: number, y: number, w: numb
     <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" stroke="rgba(255,255,255,.35)" stroke-width="1.4"/>`;
 }
 
+/** 묽은 염산이 떨어진 자리(2레슨 도구 랩, 6레슨 표본 랩이 함께 쓴다). (cx, cy)는 자국의 가운데.
+ *  짙은 젖은 자국을 깔아 흰 표본 위에서도 대비가 생기게 하고, 반응하면 진한 테두리의 거품이 일어 무대에 그대로 남는다(판정의 근거). */
+export function acidMark(cx: number, cy: number, fizz: boolean, k = 1): string {
+  const f = (v: number): string => v.toFixed(1);
+  const wet = `<ellipse class="g2u2x-acid-wet" cx="${f(cx)}" cy="${f(cy)}" rx="${f(23 * k)}" ry="${f(9 * k)}" fill="rgba(10,24,40,.34)" stroke="rgba(10,24,40,.5)" stroke-width="1"/>`;
+  if (!fizz) return wet;
+  const B: [number, number, number][] = [[-14, -1, 5.5], [-4, -7, 7], [9, -4, 6], [18, 2, 4.6], [3, 3, 4.6], [-10, 5, 4]];
+  const bubs = B.map(([dx, dy, r], n) => `<circle class="g2u2x-acid-bub" style="animation-delay:${(0.55 + n * 0.1).toFixed(2)}s" cx="${f(cx + dx * k)}" cy="${f(cy + dy * k)}" r="${f(r * k)}" fill="rgba(255,255,255,.95)" stroke="#16324F" stroke-width="1.7"/>`).join("");
+  const rise = [[-7, -15], [12, -17]].map(([dx, dy], n) => `<circle class="g2u2x-acid-rise" style="animation-delay:${(1.1 + n * 0.35).toFixed(2)}s" cx="${f(cx + dx * k)}" cy="${f(cy + dy * k)}" r="${f(2.6 * k)}" fill="rgba(255,255,255,.95)" stroke="#16324F" stroke-width="1.4"/>`).join("");
+  return wet + bubs + rise;
+}
+
 /** 무대 글자(12px 이상). */
 export function label(x: number, y: number, t: string, o: { size?: number; fill?: string; anchor?: string; cls?: string; weight?: number } = {}): string {
   return `<text${o.cls ? ` class="${o.cls}"` : ""} x="${x}" y="${y}" text-anchor="${o.anchor ?? "middle"}" font-size="${o.size ?? 12.5}" font-weight="${o.weight ?? 800}" fill="${o.fill ?? G.text}">${t}</text>`;

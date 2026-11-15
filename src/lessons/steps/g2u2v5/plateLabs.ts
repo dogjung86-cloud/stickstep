@@ -3,42 +3,171 @@
 // 랩 1 「다음 지진은 어디에서 날까요?」(g2u2QuakeLab)
 //   책의 해 보기(화산 활동이 활발한 지역과 지진이 자주 발생하는 지역 알아보기)를 내기로 한다.
 //   학생이 정하는 것: 지진이 날 것 같은 곳 세 군데(지도를 눌러 깃발을 꽂는다. 이것이 예측이다).
-//   그다음 지진 자료를 재생해 깃발과 견준다(맞은 깃발과 빗나간 깃발이 표시된다). 이어서 화산 자료도 겹쳐 본다.
+//   그다음 지진 자료를 재생해 깃발과 비교한다(맞은 깃발과 빗나간 깃발이 표시된다). 이어서 화산 자료도 겹쳐 본다.
 //   판정 둘: 지진이 난 곳들의 모양, 화산과 지진의 관계. 통찰 하나: 지진과 화산은 띠 모양으로, 비슷한 곳에서 일어난다.
 //
 // 랩 2 「그 띠는 무엇과 겹칠까요?」(g2u2PlateLab)
 //   책의 탐구(빅데이터를 활용하여 화산대 및 지진대와 판의 경계의 관련성 탐구하기: 자료 유형을 고르고 재생한다)를 한다.
 //   학생이 정하는 것: 지도에 올릴 자료(지진, 화산 활동, 판의 경계)와 재생.
-//   실패가 보이는 길: 판의 경계를 켜지 않고 재생하면 견줄 것이 없다. 두 가지(화산과 경계, 지진과 경계)를 모두 견줘야 끝난다.
+//   실패가 보이는 길: 판의 경계를 켜지 않고 재생하면 비교할 것이 없다. 두 가지(화산과 경계, 지진과 경계)를 모두 비교해야 끝난다.
 //   판정 둘: 화산대와 지진대와 판의 경계의 관계, 우리나라보다 일본에서 지진과 화산 활동이 잦은 까닭.
-// 지도는 지금 단원이 쓰는 세계 지도(public/geo/maps, 경도 -180~180의 정거 원통 도법)이고 점의 자리는 경도와 위도에서 계산한다.
+//   둘째 판정 때는 지도를 동아시아(동경 110~160도, 북위 25~50도)로 옮겨 크게 본다(두 나라와 경계선의 거리 차가 보이게).
+//
+// 지도(2026-11-15 다시 그림): 태평양을 가운데에 둔 정거 원통 도법(이음매는 경도 25도, 아프리카 동쪽과 인도양 쪽)이라
+//   '태평양 가장자리의 불의 고리'가 고리로 보인다. 땅은 한 색 실루엣(Natural Earth 110m, worldMap.generated.ts의 WORLD_LAND_PATH)이고
+//   바다와 판은 어둡고 차분하게, 판마다 아주 옅게 다른 밝기를 깔아 판이 크고 작은 조각으로 보이게 한다. 점과 세모는 지도보다 진하다.
+//   판의 경계는 plateData.ts의 닫힌 경계(주요 판 13개)다. 확대할 때는 벡터를 다시 그려 흐리지 않고, 점과 세모는 조금만 커진다.
 
 import type { StepRenderer } from "../../types";
-import { G, gBtn, gGrid, gLab, gPick, geo, haptic, HAPTIC, label, svgOpen, type GStep } from "./kit";
-import { BOUNDS, QUAKES, VOLCS } from "./plateData";
+import { bvTween } from "../bio6/b6Lab";
+import { WORLD_LAND_PATH } from "../../../ui/worldMap.generated";
+import { G, gBtn, gGrid, gLab, gPick, haptic, HAPTIC, label, svgOpen, type GStep } from "./kit";
+import { BOUNDS, PLATES, QUAKES, VOLCS } from "./plateData";
 
 const MY = 30, MW = 346, MH = 173;
-const xOf = (lon: number): number => ((lon + 180) / 360) * MW;
-const yOf = (lat: number): number => MY + ((90 - lat) / 180) * MH;
-const MAP = `<rect width="346" height="230" fill="#0B1524"/><image href="${geo("maps/Map01a_PALEOMAP_PaleoAtlas_000.webp")}" x="0" y="${MY}" width="${MW}" height="${MH}" preserveAspectRatio="none"/>`;
-const quakeDots = (): string => QUAKES.map(([lon, lat], i) => `<circle class="g2u2x-pl-q" style="transition-delay:${((i * 37) % 95) * 18}ms" cx="${xOf(lon).toFixed(1)}" cy="${yOf(lat).toFixed(1)}" r="2.6" fill="#FFE066" stroke="#7A5B00" stroke-width=".6"/>`).join("");
-const volcDots = (): string => VOLCS.map(([lon, lat], i) => { const x = xOf(lon), y = yOf(lat); return `<path class="g2u2x-pl-v" style="transition-delay:${((i * 29) % 60) * 26}ms" d="M${(x - 3.4).toFixed(1)} ${(y + 2.6).toFixed(1)} L${x.toFixed(1)} ${(y - 3.6).toFixed(1)} L${(x + 3.4).toFixed(1)} ${(y + 2.6).toFixed(1)} Z" fill="#FF5A3C" stroke="#5A0F00" stroke-width=".6"/>`; }).join("");
-const boundLines = (): string => BOUNDS.map((line) => `<path class="g2u2x-pl-b" pathLength="100" d="M${line.map(([lon, lat]) => `${xOf(lon).toFixed(1)} ${yOf(lat).toFixed(1)}`).join(" L")}" stroke="#7CF2E0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`).join("");
-const legend = (items: [string, string][]): string => items.map(([c, t], i) => `${t === "화산 활동" ? `<path d="M${8 + i * 92} 21 l6 -10 l6 10 Z" fill="${c}"/>` : t === "판의 경계" ? `<path d="M${7 + i * 92} 16 h14" stroke="${c}" stroke-width="3" stroke-linecap="round"/>` : `<circle cx="${14 + i * 92}" cy="16" r="5" fill="${c}"/>`}${label(24 + i * 92, 20.5, t, { anchor: "start", size: 12.5 })}`).join("");
+const SEAM = 25; // 지도의 이음매(경도)
+interface View { lon: number; lat: number; s: number } // 지도 가운데의 경도와 위도, 1도당 px
+const FULL: View = { lon: SEAM + 180 - 360, lat: 0, s: MW / 360 };
+const EASIA: View = { lon: 135, lat: 37.5, s: MW / 50 };
+const OCEAN = "#0F2236";
+const f1 = (v: number): string => v.toFixed(1);
+const wrap = (d: number): number => ((((d + 180) % 360) + 360) % 360) - 180;
 
-/* ══════════ 랩 1: 깃발 꽂고 지진 자료와 견주기 ══════════ */
-const PRESET: [number, number][] = [[60, 96], [173, 150], [300, 80]]; // 검사 도구가 누를 때 쓰는 자리(대륙 한가운데, 바다 한가운데, 태평양 가장자리)
+/** 판마다 옅은 밝기를 칠한 바탕 그림(경도 -180~180, 위도 90~-90의 정거 원통). 경계선을 벽으로 두고 판의 씨앗에서 메운다. 한 번만 만든다. */
+let tintCache = "";
+function tintUrl(): string {
+  if (tintCache) return tintCache;
+  const W = 1080, H = 540, k = W / 360;
+  const cv = document.createElement("canvas");
+  cv.width = W;
+  cv.height = H;
+  const c = cv.getContext("2d");
+  if (!c) return "";
+  c.lineWidth = 2.4;
+  c.lineJoin = "round";
+  c.lineCap = "round";
+  c.strokeStyle = "#000";
+  for (const line of BOUNDS) for (const sh of [-720, -360, 0, 360, 720]) {
+    c.beginPath();
+    line.forEach(([lon, lat], i) => (i ? c.lineTo((lon + 180 + sh) * k, (90 - lat) * k) : c.moveTo((lon + 180 + sh) * k, (90 - lat) * k)));
+    c.stroke();
+  }
+  const src = c.getImageData(0, 0, W, H).data;
+  const mark = new Uint8Array(W * H); // 0 빈칸, 1 벽, 2 칠함
+  for (let i = 0; i < W * H; i++) mark[i] = src[i * 4 + 3] > 8 ? 1 : 0;
+  const out = c.createImageData(W, H), o = out.data;
+  const TONE = [0, 0.03, 0.075, 0.12, 0.17];
+  const stack = new Int32Array(W * H * 4 + 16);
+  for (const p of PLATES) {
+    const a = Math.round(255 * TONE[p.tone]);
+    let n = 0;
+    stack[n++] = Math.round((90 - p.at[1]) * k) * W + Math.round((wrap(p.at[0]) + 180) * k);
+    while (n) {
+      const i = stack[--n];
+      if (mark[i]) continue;
+      mark[i] = 2;
+      o[i * 4] = o[i * 4 + 1] = o[i * 4 + 2] = 255;
+      o[i * 4 + 3] = a;
+      const x = i % W, y = (i - x) / W;
+      stack[n++] = y * W + ((x + 1) % W);
+      stack[n++] = y * W + ((x + W - 1) % W);
+      if (y > 0) stack[n++] = i - W;
+      if (y < H - 1) stack[n++] = i + W;
+    }
+  }
+  // 경계선 자리(벽)는 옆 칸의 밝기로 메운다(선 아래가 비지 않게)
+  for (let i = 0; i < W * H; i++) if (mark[i] === 1) {
+    const x = i % W, nb = [i - W, i + W, i - x + ((x + 1) % W), i - x + ((x + W - 1) % W)].find((j) => j >= 0 && j < W * H && mark[j] === 2);
+    if (nb !== undefined) { o[i * 4] = o[i * 4 + 1] = o[i * 4 + 2] = 255; o[i * 4 + 3] = o[nb * 4 + 3]; }
+  }
+  c.putImageData(out, 0, 0);
+  tintCache = cv.toDataURL("image/png");
+  return tintCache;
+}
+
+/** 지도 뼈대(SVG 조각). 점과 선의 자리는 mapCtl().draw(view)가 넣는다. */
+function mapSkeleton(uid: string): string {
+  return `<defs><clipPath id="g2plC${uid}"><rect x="0" y="${MY}" width="${MW}" height="${MH}"/></clipPath>
+      <path id="g2plL${uid}" d="${WORLD_LAND_PATH}" fill-rule="evenodd" vector-effect="non-scaling-stroke"/></defs>
+    <rect x="0" y="${MY}" width="${MW}" height="${MH}" fill="${OCEAN}"/>
+    <g clip-path="url(#g2plC${uid})">
+      <g class="g2u2x-pl-tint">${[0, 1, 2].map(() => `<image href="${tintUrl()}" preserveAspectRatio="none"/>`).join("")}</g>
+      <g class="g2u2x-pl-land" fill="#3B5274" fill-opacity=".7" stroke="#8FA9CB" stroke-opacity=".5" stroke-width=".7">${[0, 1, 2].map(() => `<use href="#g2plL${uid}"/>`).join("")}</g>
+      <g class="g2u2x-pl-bs"></g>
+      <g class="g2u2x-pl-qs">${QUAKES.map((_, i) => `<circle class="g2u2x-pl-q" style="transition-delay:${((i * 37) % 95) * 16}ms" fill="#FFE066" stroke="#5C4400" stroke-width=".8"/>`).join("")}</g>
+      <g class="g2u2x-pl-vs">${VOLCS.map((_, i) => `<path class="g2u2x-pl-v" style="transition-delay:${((i * 29) % 60) * 24}ms" fill="#FF5A3C" stroke="#4A0D00" stroke-width=".8"/>`).join("")}</g>
+    </g>`;
+}
+
+interface MapCtl {
+  draw: (v: View) => void;
+  /** 지금 보이는 지도에서 경도와 위도의 무대 자리 */
+  pt: (lon: number, lat: number) => [number, number];
+  view: () => View;
+}
+function mapCtl(root: ParentNode): MapCtl {
+  const tint = Array.from(root.querySelectorAll<SVGImageElement>(".g2u2x-pl-tint image"));
+  const land = Array.from(root.querySelectorAll<SVGUseElement>(".g2u2x-pl-land use"));
+  const bs = root.querySelector<SVGGElement>(".g2u2x-pl-bs")!;
+  const qs = Array.from(root.querySelectorAll<SVGCircleElement>(".g2u2x-pl-q"));
+  const vs = Array.from(root.querySelectorAll<SVGPathElement>(".g2u2x-pl-v"));
+  let cur = FULL;
+  const ptIn = (lon: number, lat: number, v: View): [number, number] => [MW / 2 + wrap(lon - v.lon) * v.s, MY + MH / 2 - (lat - v.lat) * v.s];
+  const draw = (v: View): void => {
+    cur = v;
+    const W = 360 * v.s, x0 = MW / 2 + (-180 - v.lon) * v.s, y0 = MY + MH / 2 - (90 - v.lat) * v.s, a = 0.36 * v.s;
+    // 이음매 둘레를 덮도록 세계 그림 셋을 나란히(가운데 것이 지금 경도 둘레)
+    const base = x0 + Math.round((MW / 2 - (x0 + W / 2)) / W) * W;
+    tint.forEach((im, i) => {
+      im.setAttribute("x", f1(base + (i - 1) * W));
+      im.setAttribute("y", f1(y0));
+      im.setAttribute("width", f1(W));
+      im.setAttribute("height", f1(W / 2));
+    });
+    land.forEach((u, i) => u.setAttribute("transform", `matrix(${a.toFixed(4)} 0 0 ${a.toFixed(4)} ${f1(base + (i - 1) * W)} ${f1(y0)})`));
+    // 판의 경계: 이어진 경도로 적은 선을 360도씩 옮긴 사본 가운데 화면에 걸리는 것만
+    bs.innerHTML = BOUNDS.map((line) => {
+      const xs = line.map(([lon]) => MW / 2 + (lon - v.lon) * v.s), lo = Math.min(...xs), hi = Math.max(...xs);
+      const out: string[] = [];
+      for (let k = -3; k <= 3; k++) {
+        if (hi + k * W < -20 || lo + k * W > MW + 20) continue;
+        out.push(`<path class="g2u2x-pl-b" pathLength="100" d="M${line.map(([, lat], i) => `${f1(xs[i] + k * W)} ${f1(MY + MH / 2 - (lat - v.lat) * v.s)}`).join(" L")}" stroke="#7CF2E0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`);
+      }
+      return out.join("");
+    }).join("");
+    const z = Math.max(0, Math.min(1, (v.s - FULL.s) / (EASIA.s - FULL.s)));
+    const r = 3 + 1.6 * z, t = 3.7 + 1.9 * z;
+    qs.forEach((c, i) => {
+      const [x, y] = ptIn(QUAKES[i][0], QUAKES[i][1], v);
+      c.setAttribute("cx", f1(x));
+      c.setAttribute("cy", f1(y));
+      c.setAttribute("r", r.toFixed(2));
+    });
+    vs.forEach((p, i) => {
+      const [x, y] = ptIn(VOLCS[i][0], VOLCS[i][1], v);
+      p.setAttribute("d", `M${f1(x - t)} ${f1(y + t * 0.72)} L${f1(x)} ${f1(y - t)} L${f1(x + t)} ${f1(y + t * 0.72)} Z`);
+    });
+  };
+  return { draw, pt: (lon, lat) => ptIn(lon, lat, cur), view: () => cur };
+}
+const legend = (items: [string, string][]): string => items.map(([c, t], i) => `${t === "화산 활동" ? `<path d="M${8 + i * 92} 21 l6 -10 l6 10 Z" fill="${c}"/>` : t === "판의 경계" ? `<path d="M${7 + i * 92} 16 h14" stroke="${c}" stroke-width="3" stroke-linecap="round"/>` : `<circle cx="${14 + i * 92}" cy="16" r="5" fill="${c}"/>`}${label(24 + i * 92, 20.5, t, { anchor: "start", size: 12.5 })}`).join("");
+const uidOf = (): string => Math.random().toString(36).slice(2, 7);
+
+/* ══════════ 랩 1: 깃발 꽂고 지진 자료와 비교하기 ══════════ */
+const PRESET: [number, number][] = [[72, 59], [187, 145], [111, 80]]; // 검사 도구가 누를 때 쓰는 자리(시베리아 한가운데, 남태평양 한가운데, 일본 앞바다)
 
 export const g2u2QuakeLab: StepRenderer = (host, step, api) => {
   const lab = gLab(host, api, step as unknown as GStep, { steps: 3, cls: "g2u2x-quake" });
   const { f, tm } = lab;
-  f.stage.innerHTML = `${svgOpen}${MAP}
-    <g class="g2u2x-pl-qs">${quakeDots()}</g><g class="g2u2x-pl-vs">${volcDots()}</g>
+  const uid = uidOf();
+  f.stage.innerHTML = `${svgOpen}${mapSkeleton(uid)}
     <g class="g2u2x-qk-pins"></g>
     ${legend([["#FFE066", "지진"], ["#FF5A3C", "화산 활동"]])}
     ${label(338, 20.5, "깃발 0 / 3", { anchor: "end", size: 12.5, fill: G.gold, cls: "g2u2x-qk-cnt" })}
     ${label(173, 222, "", { size: 12.5, fill: G.gold, cls: "g2u2x-qk-res" })}
   </svg>`;
+  const map = mapCtl(f.stage);
+  map.draw(FULL);
   const pins: [number, number][] = [];
   const pinsG = lab.q<SVGGElement>(".g2u2x-qk-pins");
   const tap = document.createElement("button");
@@ -73,7 +202,7 @@ export const g2u2QuakeLab: StepRenderer = (host, step, api) => {
     tap.disabled = true;
     play.disabled = false;
     f.pips(1);
-    f.say("깃발 세 개를 다 꽂았어요. 이제 실제로 <b>지진이 난 곳</b>을 재생해서 견줘 보세요.");
+    f.say("깃발 세 개를 다 꽂았어요. 이제 실제로 <b>지진이 난 곳</b>을 재생해서 비교해 보세요.");
     lab.hint("play");
   });
   play.addEventListener("click", () => {
@@ -82,7 +211,7 @@ export const g2u2QuakeLab: StepRenderer = (host, step, api) => {
     f.stage.classList.add("quakes");
     f.say("노란 점 하나가 지진 한 번이에요. 점들이 <b>어디에</b> 찍히는지 지켜보세요.");
     tm.later(() => {
-      const hits = pins.map(([x, y]) => QUAKES.some(([lon, lat]) => Math.hypot(xOf(lon) - x, yOf(lat) - y) < 13));
+      const hits = pins.map(([x, y]) => QUAKES.some(([lon, lat]) => { const [qx, qy] = map.pt(lon, lat); return Math.hypot(qx - x, qy - y) < 13; }));
       drawPins(hits);
       const n = hits.filter(Boolean).length;
       lab.q<SVGTextElement>(".g2u2x-qk-res").textContent = `깃발 3개 가운데 ${n}개가 지진이 난 곳 가까이에 있어요`;
@@ -112,20 +241,21 @@ export const g2u2QuakeLab: StepRenderer = (host, step, api) => {
   return lab.cleanup;
 };
 
-/* ══════════ 랩 2: 자료를 골라 판의 경계와 견주기 ══════════ */
+/* ══════════ 랩 2: 자료를 골라 판의 경계와 비교하기 ══════════ */
 type Layer = "q" | "v" | "b";
 const KR: [number, number] = [127.5, 36.5], JP: [number, number] = [138.5, 36.5];
 
 export const g2u2PlateLab: StepRenderer = (host, step, api) => {
   const lab = gLab(host, api, step as unknown as GStep, { steps: 3, cls: "g2u2x-plate" });
   const { f, tm } = lab;
-  f.stage.innerHTML = `${svgOpen}${MAP}
-    <g class="g2u2x-pl-bs">${boundLines()}</g><g class="g2u2x-pl-qs">${quakeDots()}</g><g class="g2u2x-pl-vs">${volcDots()}</g>
-    <g class="g2u2x-pl-kj"><circle cx="${xOf(KR[0]).toFixed(1)}" cy="${yOf(KR[1]).toFixed(1)}" r="5" stroke="#fff" stroke-width="2" fill="none"/>${label(xOf(KR[0]) - 8, yOf(KR[1]) + 4, "우리나라", { anchor: "end", size: 12, cls: "g2u2x-halo" })}
-      <circle cx="${xOf(JP[0]).toFixed(1)}" cy="${yOf(JP[1]).toFixed(1)}" r="5" stroke="#fff" stroke-width="2" fill="none"/>${label(xOf(JP[0]) + 8, yOf(JP[1]) + 4, "일본", { anchor: "start", size: 12, cls: "g2u2x-halo" })}</g>
+  const uid = uidOf();
+  f.stage.innerHTML = `${svgOpen}${mapSkeleton(uid)}
+    <g class="g2u2x-pl-kj"></g>
     ${legend([["#FFE066", "지진"], ["#FF5A3C", "화산 활동"], ["#7CF2E0", "판의 경계"]])}
-    ${label(173, 222, "견준 것: 아직 없음", { size: 12.5, fill: G.dim, weight: 700, cls: "g2u2x-pl-log" })}
+    ${label(173, 222, "비교한 것: 아직 없음", { size: 12.5, fill: G.dim, weight: 700, cls: "g2u2x-pl-log" })}
   </svg>`;
+  const map = mapCtl(f.stage);
+  map.draw(FULL);
   const on: Record<Layer, boolean> = { q: false, v: false, b: false };
   const seen = { v: false, q: false };
   let busy = false;
@@ -151,6 +281,23 @@ export const g2u2PlateLab: StepRenderer = (host, step, api) => {
     else if (!on.b) lab.hint("b");
     else lab.hint("play");
   }
+  /** 둘째 판정 전에 지도를 동아시아로 옮겨 크게 보고, 우리나라와 일본을 표시한다. */
+  function zoomToKoreaJapan(done: () => void): void {
+    const a = map.view(), dl = wrap(EASIA.lon - a.lon), ls0 = Math.log(a.s), ls1 = Math.log(EASIA.s);
+    bvTween(tm, 1200, (t) => map.draw({ lon: a.lon + dl * t, lat: a.lat + (EASIA.lat - a.lat) * t, s: Math.exp(ls0 + (ls1 - ls0) * t) }), () => {
+      // 이름표는 원의 왼쪽(일본은 왼쪽 위): 일본 둘레의 점과 경계선을 덮지 않게
+      const mk = (ll: [number, number], name: string, dy: number): string => {
+        const [x, y] = map.pt(ll[0], ll[1]);
+        return `<circle cx="${f1(x)}" cy="${f1(y)}" r="6.5" stroke="#fff" stroke-width="2.4" fill="rgba(255,255,255,.18)"/>${label(x - 10, y + dy, name, { anchor: "end", size: 13, cls: "g2u2x-halo" })}`;
+      };
+      lab.q(".g2u2x-pl-kj").innerHTML = mk(KR, "우리나라", 4.5) + mk(JP, "일본", -8);
+      f.stage.classList.add("kj");
+      const t = lab.q<SVGTextElement>(".g2u2x-pl-log");
+      t.textContent = "우리나라와 일본 둘레를 크게 본 지도";
+      t.setAttribute("fill", G.dim);
+      done();
+    });
+  }
   play.addEventListener("click", () => {
     if (busy || lab.finished()) return;
     if (!on.q && !on.v && !on.b) {
@@ -170,12 +317,12 @@ export const g2u2PlateLab: StepRenderer = (host, step, api) => {
       if (!on.b) {
         haptic(HAPTIC.wrong);
         host.dataset.g2Miss = String(Number(host.dataset.g2Miss ?? 0) + 1);
-        f.say("띠 모양은 보이지만 <b>견줄 것</b>이 없어요. 판의 경계도 함께 켜서 다시 재생해 보세요.");
+        f.say("띠 모양은 보이지만 <b>비교할 것</b>이 없어요. 판의 경계도 함께 켜서 다시 재생해 보세요.");
         hintNow();
         return;
       }
       if (!on.q && !on.v) {
-        f.say("판의 경계만 보여요. <b>화산 활동</b>이나 <b>지진</b>을 함께 켜서 견줘 보세요.");
+        f.say("판의 경계만 보여요. <b>화산 활동</b>이나 <b>지진</b>을 함께 켜서 비교해 보세요.");
         hintNow();
         return;
       }
@@ -184,28 +331,31 @@ export const g2u2PlateLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.correct);
       const log = [seen.v ? "화산 활동과 판의 경계" : "", seen.q ? "지진과 판의 경계" : ""].filter(Boolean).join(", ");
       const t = lab.q<SVGTextElement>(".g2u2x-pl-log");
-      t.textContent = `견준 것: ${log}`;
+      t.textContent = `비교한 것: ${log}`;
       t.setAttribute("fill", G.gold);
       f.pips(seen.v && seen.q ? 2 : 1);
       if (!(seen.v && seen.q)) {
-        f.say(`${on.v ? "붉은 세모" : "노란 점"}가 청록색 선을 따라 놓여 있어요. 이번에는 <b>${seen.v ? "지진" : "화산 활동"}</b>과 판의 경계를 견줘 보세요.`);
+        f.say(`${on.v ? "붉은 세모" : "노란 점"}가 청록색 선을 따라 놓여 있어요. 이번에는 <b>${seen.v ? "지진" : "화산 활동"}</b>과 판의 경계를 비교해 보세요.`);
         hintNow();
         return;
       }
       f.stage.classList.add("quakes", "volcs", "bounds"); // 판정의 근거를 무대에 남긴다: 세 자료를 모두 켠다
-      f.say("화산 활동과 지진을 모두 판의 경계와 견줬어요. 세 자료를 함께 켠 지도를 보고 답해 보세요.");
+      f.say("화산 활동과 지진을 모두 판의 경계와 비교했어요. 세 자료를 함께 켠 지도를 보고 답해 보세요.");
       tm.later(() => lab.ask("화산대와 지진대는 <b>판의 경계</b>와 어떤 관계인가요?", ["대체로 일치한다", "서로 엇갈려 있다", "아무 관계가 없다"], "세모와 점이 대부분 <b>청록색 선</b>을 따라 놓여 있어요.", () => {
-        f.stage.classList.add("kj");
-        f.say("지도에 <b>우리나라와 일본</b>을 표시했어요. 판의 경계와 얼마나 가까운지 견줘 보세요.");
-        lab.ask("우리나라보다 <b>일본</b>에서 지진과 화산 활동이 잦은 까닭은?", ["판의 경계에 더 가까워서", "섬으로 이루어진 나라라서", "우리나라보다 더 따뜻해서"], "일본은 <b>판의 경계</b> 바로 위에 있고 우리나라는 조금 떨어져 있어요.", () =>
-          lab.finish("화산 활동과 지진은 주로 <b>판의 경계</b>에서 일어나요. 그래서 화산대와 지진대는 판의 경계와 대체로 일치하고, 판의 경계에 가까운 일본에서는 우리나라보다 지진과 화산 활동이 잦아요."),
-        );
+        busy = true;
+        f.say("지도를 <b>우리나라와 일본</b> 둘레로 옮겨 크게 볼게요.");
+        zoomToKoreaJapan(() => {
+          f.say("<b>우리나라와 일본</b>을 표시했어요. 판의 경계와 얼마나 가까운지 비교해 보세요.");
+          lab.ask("우리나라보다 <b>일본</b>에서 지진과 화산 활동이 잦은 까닭은?", ["판의 경계에 더 가까워서", "섬으로 이루어진 나라라서", "우리나라보다 더 따뜻해서"], "일본은 <b>판의 경계</b> 바로 위에 있고 우리나라는 조금 떨어져 있어요.", () =>
+            lab.finish("화산 활동과 지진은 주로 <b>판의 경계</b>에서 일어나요. 그래서 화산대와 지진대는 판의 경계와 대체로 일치하고, 판의 경계에 가까운 일본에서는 우리나라보다 지진과 화산 활동이 잦아요."),
+          );
+        });
       }), 1000);
     }, 2400);
   });
   f.slot.setControls(gGrid(3, ...picks), play);
-  f.say("지도에 올릴 <b>자료</b>를 고르고 재생해 보세요. 먼저 화산 활동과 판의 경계를 견줘 볼까요?");
-  api.setCTA("자료를 골라 견줘 보세요", { enabled: false });
+  f.say("지도에 올릴 <b>자료</b>를 고르고 재생해 보세요. 먼저 화산 활동과 판의 경계를 비교해 볼까요?");
+  api.setCTA("자료를 골라 비교해 보세요", { enabled: false });
   hintNow();
   return lab.cleanup;
 };
