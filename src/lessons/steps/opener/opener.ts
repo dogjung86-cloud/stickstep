@@ -137,8 +137,9 @@ export const opener: StepRenderer = (host, step, api) => {
       face: (kind) => setStickAvatar(avatar, kind),
       ask: (question, o) => {
         bubble.innerHTML = question; // ask()가 이 글을 보기 위(.hook-q)로 옮기고, 말풍선은 안내로 바꾼다
-        api.setCTA("먼저 예측을 골라 보세요", { enabled: false });
+        api.setCTA("먼저 결과를 예측해 보세요", { enabled: false });
         hookAsk(choices, bubble, {
+          hint: "정답을 몰라도 괜찮아요. 느낌대로 하나를 골라 보세요. 예측은 채점하지 않아요!",
           ...o,
           onDone: () => {
             const mine = choices.querySelector(".hook-choice.sel, .hook-choice.miss");

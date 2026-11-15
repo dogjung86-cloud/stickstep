@@ -22,6 +22,8 @@ export interface AskOpts {
   neutral?: boolean;
   /** 표시 순서 셔플(기본 true) */
   shuffle?: boolean;
+  /** 질문을 보기 위로 옮긴 뒤 helper에 남길 안내(없으면 기본 문구). 과학 도입(opener)만 넘긴다. */
+  hint?: string;
   onDone: () => void;
 }
 
@@ -32,7 +34,7 @@ export function ask(box: HTMLElement, helper: HTMLElement, o: AskOpts): void {
   const q = helper.innerHTML.trim();
   if (q) {
     box.appendChild(el("div", { class: "hook-q", html: q }));
-    helper.innerHTML = "정답을 몰라도 괜찮아요. 직감으로 하나를 골라 보세요, 예측은 채점하지 않아요!";
+    helper.innerHTML = o.hint ?? "정답을 몰라도 괜찮아요. 직감으로 하나를 골라 보세요, 예측은 채점하지 않아요!";
   }
   const order = o.choices.map((_, i) => i);
   if (o.shuffle !== false) {

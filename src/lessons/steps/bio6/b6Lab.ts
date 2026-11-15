@@ -85,9 +85,61 @@ export interface BvAskOpts {
   nextDelay?: number;
 }
 
+// ── 글 맞춤(2026-11-16, 도입과 랩 글 다듬기) ─────────────────────────
+// 글이 길어져도 잘리거나 상자를 넘치지 않게 상자가 글에 맞춘다. 맞춤 없이 들어가는 글은 예전 모양 그대로다.
+//   제목(한 줄 말줄임): 넘치면 18px, 그래도 넘치면 18px 두 줄(머리 44px).
+//   도움말(두 줄 고정): 넘치면 그 랩이 끝날 때까지 세 줄 상자. 처음부터 세 줄 글이 있는 랩은
+//     bvFrame({ tall: true })로 세 줄을 잡아 두면 랩 도중에 무대가 밀리지 않는다.
+//   두 줄 제목이나 세 줄 도움말이 생기면 위아래 여백을 줄여 한 화면(390×700의 554px)을 지킨다(bio6.css 「글 맞춤」).
+//   판정 질문: 두 줄이 넘치면 13.5px. 판정 보기와 오답 카드의 정답 글: 한 줄이 넘치면 13px 두 줄(보기 높이 48px 그대로).
+//   조건 카드(bvCard): 이름이나 보조 글이 넘치면 작게, 그래도 넘치면 두 줄.
+// 제목과 도움말 맞춤은 폰 모양에서만 한다(넓은 화면은 wide.css가 두 상자를 이미 풀어 둔다).
+// 개발 모드에서는 맞춤이 일어나거나 맞춤으로도 모자라면 console.warn("[bv-fit] …")을 남긴다(검사 스크립트가 모은다).
+const wideView = (): boolean => document.documentElement.classList.contains("wide");
+const overX = (e: Element): boolean => e.scrollWidth > e.clientWidth + 1;
+const overY = (e: Element): boolean => e.scrollHeight > e.clientHeight + 1;
+function fitWarn(kind: string, e: Element): void {
+  if (import.meta.env.DEV) console.warn(`[bv-fit] ${kind}: ${(e.textContent ?? "").trim().slice(0, 70)}`);
+}
+/** 화면에 그려진 뒤(크기가 정해진 뒤) fn을 부른다. 이미 그려져 있으면 바로, 아니면 다음 프레임에 한 번 더 본다. */
+function whenLaid(e: Element, fn: () => void): void {
+  if (e.isConnected && (e as HTMLElement).offsetParent !== null) fn();
+  else requestAnimationFrame(() => {
+    if (e.isConnected) fn();
+  });
+}
+/** 판정 보기 하나: 한 줄에 안 들어가면 두 줄 모양(two). */
+function fitChoice(b: HTMLElement): void {
+  const t = b.querySelector(".bv-choice-t");
+  if (!t) return;
+  b.classList.remove("two");
+  if (!overX(t)) return;
+  b.classList.add("two");
+  fitWarn("보기 두 줄", t);
+  if (overY(t)) fitWarn("보기 넘침(두 줄로도 모자람)", t);
+}
+/** 조건 카드 하나: 이름(b)과 보조 글(i)이 카드 폭을 넘으면 작게(fs), 그래도 넘으면 두 줄(two). */
+function fitCard(card: HTMLElement): void {
+  const b = card.querySelector(".bv-card-tx > b");
+  const i = card.querySelector(".bv-card-tx > i");
+  card.classList.remove("fs-b", "two-b", "two-i");
+  if (b && overX(b)) {
+    card.classList.add("fs-b");
+    if (overX(b)) {
+      card.classList.add("two-b");
+      fitWarn("카드 이름 두 줄", b);
+    }
+  }
+  if (i && i.textContent && overX(i)) {
+    card.classList.add("two-i");
+    fitWarn("카드 보조 글 두 줄", i);
+  }
+  if (overY(card)) fitWarn("카드 넘침", card);
+}
+
 /** 판정이 뜨는 동안 맨 아래 큰 버튼(잠긴 채 지금 할 일을 알려 주는 글)에 쓸 말. 이미 끝낸 조작을 시키는 글이 남지 않게 한다. */
 const CTA_ASK = "질문에 답해 보세요";
-const CTA_NEXT = "'다음'을 눌러 이어 가요";
+const CTA_NEXT = "'다음'을 눌러 계속해 보세요";
 
 function ask(box: HTMLElement, question: string, choices: BvChoice[], onPick: (ok: boolean) => void, opts: BvAskOpts, api?: Pick<StepAPI, "setCTA">): void {
   box.innerHTML = "";
@@ -96,6 +148,12 @@ function ask(box: HTMLElement, question: string, choices: BvChoice[], onPick: (o
   // 질문 글자는 span 하나로 감싼다(.bv-qt가 flex라 굵은 글씨 앞뒤의 띄어쓰기가 사라지는 것을 막는다).
   const qEl = el("div", { class: "bv-qt" }, el("span", { html: question }));
   box.appendChild(qEl);
+  // 질문이 두 줄(42px)을 넘으면 글씨를 조금 줄인다(보기 셋과 함께 조작 칸 208px에 들게).
+  whenLaid(qEl, () => {
+    if (wideView() || qEl.offsetHeight <= 43) return;
+    qEl.classList.add("small");
+    fitWarn("질문 세 줄", qEl);
+  });
   // 보기 순서는 매번 섞는다(첫 칸이 정답이라는 버릇을 막는다).
   const order = choices.map((_, i) => i);
   for (let i = order.length - 1; i > 0; i--) {
@@ -138,6 +196,8 @@ function ask(box: HTMLElement, question: string, choices: BvChoice[], onPick: (o
         el("span", { class: "bv-vd-ic", html: icon(ok ? "check" : "xThick", 13), attrs: { "aria-hidden": "true" } }),
         el("span", { class: "bv-vd-tx" }, el("span", { class: "bv-vd", text: ok ? "정답이에요" : "오답이에요" }), label),
       );
+      // 판정 모양은 표시 동그라미만큼 글 자리가 좁다. 한 줄에 안 들어가면 두 줄 모양으로 다시 맞춘다.
+      if (!b.classList.contains("two") && overX(label)) b.classList.add("two");
       btns.forEach((x) => {
         if (x !== b) x.classList.add("gone");
       });
@@ -159,12 +219,18 @@ function ask(box: HTMLElement, question: string, choices: BvChoice[], onPick: (o
         }
         card.appendChild(foot);
         b.after(card);
+        const ansT = card.querySelector(".bv-ans-t");
+        if (ansT && overX(ansT)) {
+          ansT.classList.add("two");
+          fitWarn("정답 글 두 줄", ansT);
+        }
         if (fn) api?.setCTA(CTA_NEXT, { enabled: false });
       }
       onPick(ok);
     });
     box.appendChild(b);
   });
+  whenLaid(box, () => btns.forEach(fitChoice));
 }
 
 // ── 조작 칸 ─────────────────────────────────────────────────────────
@@ -212,7 +278,7 @@ function makeSlot(qCls: string, api?: Pick<StepAPI, "setCTA">): BvSlot {
       qBox.innerHTML = "";
       qBox.classList.remove("show");
       done.innerHTML = "";
-      done.append(el("div", { class: "bv-done-k", text: "알게 된 것" }), el("div", { class: "bv-done-t", html }));
+      done.append(el("div", { class: "bv-done-k", text: "핵심 정리" }), el("div", { class: "bv-done-t", html }));
       done.classList.add("show");
     },
   };
@@ -220,7 +286,7 @@ function makeSlot(qCls: string, api?: Pick<StepAPI, "setCTA">): BvSlot {
 
 // ── 랩 틀 ──────────────────────────────────────────────────────────
 export interface BvFrame {
-  /** 도움말(지금 할 일)을 바꾼다. 두 줄(46자 안쪽)이 예산이다. */
+  /** 도움말(지금 할 일)을 바꾼다. 두 줄(46자 안쪽)이 예산이고, 넘치면 세 줄 상자로 바뀐다(위 「글 맞춤」). */
   say: (html: string) => void;
   helper: HTMLElement;
   stage: HTMLElement;
@@ -231,15 +297,59 @@ export interface BvFrame {
 
 /** 랩 한 판의 뼈대를 host에 놓는다. cls는 무대에 붙는 랩 전용 클래스, qCls는 판정 상자 클래스.
  *  api를 넘기면 판정이 뜨는 동안 맨 아래 큰 버튼의 글을 "질문에 답해 보세요", 답한 뒤에는 "'다음'을 눌러 이어 가요"로 바꾼다. */
-export function bvFrame(host: HTMLElement, o: { title: string; steps: number; cls: string; qCls: string; api?: Pick<StepAPI, "setCTA"> }): BvFrame {
+export function bvFrame(host: HTMLElement, o: { title: string; steps: number; cls: string; qCls: string; api?: Pick<StepAPI, "setCTA">; tall?: boolean }): BvFrame {
   host.classList.add("bv-step");
   const pipEls = Array.from({ length: o.steps }, () => el("i"));
-  const head = el("div", { class: "bv-head" }, el("div", { class: "bv-title", html: o.title }), el("div", { class: "bv-pips", attrs: { "aria-hidden": "true" } }, ...pipEls));
+  const titleEl = el("div", { class: "bv-title", html: o.title });
+  const head = el("div", { class: "bv-head" }, titleEl, el("div", { class: "bv-pips", attrs: { "aria-hidden": "true" } }, ...pipEls));
   const helper = el("div", { class: "bv-helper" });
   const stage = el("div", { class: `bv-stage ${o.cls}` });
   const slot = makeSlot(o.qCls, o.api);
   host.append(head, helper, stage, slot.el);
   let lastSay = "";
+  // 세 줄 도움말: 랩이 처음부터 잡아 두었거나(o.tall), 넘치는 글이 한 번 나온 뒤로는 랩이 끝날 때까지 그대로 둔다(되돌리면 무대가 오르내린다).
+  let tall = !!o.tall;
+  if (tall) host.classList.add("bv-tall");
+  const fitTitle = (): void => {
+    titleEl.classList.remove("fs18", "two");
+    host.classList.remove("bv-t2");
+    if (wideView() || !overX(titleEl)) return;
+    titleEl.classList.add("fs18");
+    if (!overX(titleEl)) return;
+    titleEl.classList.remove("fs18");
+    titleEl.classList.add("two");
+    host.classList.add("bv-t2");
+    fitWarn("제목 두 줄", titleEl);
+    if (overY(titleEl)) fitWarn("제목 넘침(두 줄로도 모자람)", titleEl);
+  };
+  const fitHelper = (): void => {
+    helper.classList.remove("dense");
+    if (wideView() || !helper.textContent) return;
+    if (!tall && overY(helper)) {
+      tall = true;
+      host.classList.add("bv-tall");
+      fitWarn("도움말 세 줄(랩 처음부터 tall: true로 잡으면 무대가 밀리지 않아요)", helper);
+    }
+    if (tall && overY(helper)) {
+      helper.classList.add("dense");
+      if (overY(helper)) fitWarn("도움말 넘침(세 줄로도 모자람)", helper);
+    }
+  };
+  // 폭이 바뀔 때(처음 그려질 때, 화면 회전, 넓은 화면 전환) 다시 맞춘다. 높이 변화에는 반응하지 않는다(맞춤이 높이를 바꾸므로).
+  let lastW = -1;
+  const ro = new ResizeObserver(() => {
+    if (!host.isConnected) {
+      if (lastW >= 0) ro.disconnect();
+      return;
+    }
+    const w = titleEl.clientWidth + helper.clientWidth * 1000;
+    if (w === lastW) return;
+    lastW = w;
+    fitTitle();
+    fitHelper();
+  });
+  ro.observe(titleEl);
+  ro.observe(helper);
   return {
     helper,
     stage,
@@ -248,6 +358,7 @@ export function bvFrame(host: HTMLElement, o: { title: string; steps: number; cl
       if (html === lastSay) return;
       lastSay = html;
       helper.innerHTML = html;
+      if (helper.isConnected) fitHelper();
     },
     pips(n) {
       pipEls.forEach((p, i) => p.classList.toggle("on", i < n));
@@ -279,9 +390,24 @@ export function bvCard(cls: string, o: { name: string; sub?: string; icon?: stri
   ) as HTMLButtonElement;
   if (o.key) b.dataset.k = o.key;
   let finished = false;
+  // 글 맞춤: 그려질 때와 폭이 바뀔 때, 보조 글을 바꿀 때 카드 폭에 맞춘다(위 「글 맞춤」).
+  let lastW = -1;
+  const ro = new ResizeObserver(() => {
+    if (!b.isConnected) {
+      if (lastW >= 0) ro.disconnect();
+      return;
+    }
+    if (b.clientWidth === lastW) return;
+    lastW = b.clientWidth;
+    fitCard(b);
+  });
+  ro.observe(b);
   return {
     el: b,
-    sub: (t) => (subEl.textContent = t),
+    sub: (t) => {
+      subEl.textContent = t;
+      if (b.isConnected && lastW >= 0) fitCard(b);
+    },
     on: (v) => b.classList.toggle("on", v),
     done() {
       finished = true;
