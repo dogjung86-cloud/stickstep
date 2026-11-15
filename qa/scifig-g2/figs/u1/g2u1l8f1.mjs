@@ -404,12 +404,12 @@ export default async function draw(root, kit) {
     // 부리가 원점에 오도록: 왼쪽 위 테두리 = (0, 0)
     beaker(t, { cx: RX, top: 0, bot: HT, rx: RX, ry: 3.2, spout: "l", marks: 0, shadow: false });
     ctx.restore();
-    // 기운 비커 속 용액(수면은 수평)
+    // 기운 비커 속 용액(수면은 수평). 용액이 흘러나오려면 수면이 따르는 입까지 와야 하므로 수면 높이 = 입(테두리의 가장 낮은 곳) 바로 위
     {
       const c = Math.cos(ang), s = Math.sin(ang);
       const toW = (u, v) => [tip[0] + u * c - v * s, tip[1] + u * s + v * c];
       const quad = [toW(1.4, 1), toW(2 * RX - 1.4, 1), toW(2 * RX - 1.4, HT - 2.4), toW(1.4, HT - 2.4)];
-      const surfY = tip[1] + 6;
+      const surfY = tip[1] - 0.5;
       ctx.save();
       ctx.beginPath();
       quad.forEach((p, i) => (i ? ctx.lineTo(...p) : ctx.moveTo(...p)));
@@ -423,10 +423,13 @@ export default async function draw(root, kit) {
       ctx.moveTo(tip[0] - 10, surfY);
       ctx.lineTo(tip[0] + 70, surfY);
       ctx.stroke();
-      // 아래로 가라앉은 결정 몇 개(바닥 쪽 벽에)
-      for (let k = 0; k < 7; k++) {
-        const [x, y] = toW(2 * RX - 4 - rnd() * 5, 10 + rnd() * (HT - 16));
-        needle(x, y, 5 + rnd() * 3, 1.2, ang + Math.PI / 2 + (rnd() - 0.5) * 0.8);
+      // 아직 남은 결정 몇 개: 용액보다 무거워 가장 낮은 곳(따르는 입 쪽 벽과 바닥이 만나는 귀퉁이)의 용액 속에 가라앉아 있다.
+      // (예전 그림이 쓰던 난수 28개는 그대로 넘겨 확대 원의 섬유와 점 배치가 바뀌지 않게 한다)
+      for (let k = 0; k < 28; k++) rnd();
+      const wallDir = ang + Math.PI / 2; // 따르는 입 쪽 벽과 나란한 방향
+      for (const [u, v, L, a] of [[2.3, 29.6, 8, wallDir], [3.7, 24.4, 6.5, wallDir + 0.1], [5.4, 32.8, 6.5, ang + 0.08], [2.4, 20.4, 5.5, wallDir - 0.06]]) {
+        const [x, y] = toW(u, v);
+        needle(x, y, L, 1.3, a);
       }
       ctx.restore();
     }
@@ -450,7 +453,7 @@ export default async function draw(root, kit) {
 
   // ══ 확대 원: 거름종이의 섬유와 구멍 ══
   const band = { y0: LZ.y - 9, y1: LZ.y + 15 }; // 거름종이 두께(원 안)
-  const pores = [LZ.x - 33, LZ.x - 4, LZ.x + 27]; // 큰 구멍 자리(x)
+  const pores = [LZ.x - 44, LZ.x, LZ.x + 44]; // 큰 구멍 자리(x): 결정과 결정 사이, 결정 옆(구멍 바로 위에는 결정이 없다)
   const dotsAbove = [], dotsBelow = [], dotsIn = [];
   lens(t, LZ.x, LZ.y, LZ.r, () => {
     const x0 = LZ.x - LZ.r, x1 = LZ.x + LZ.r;
@@ -556,15 +559,16 @@ export default async function draw(root, kit) {
       ctx.stroke();
       ctx.restore();
     };
-    big(LZ.x - 20, band.y0 - 6.5, 46, 11, -0.06);
-    big(LZ.x + 26, band.y0 - 6, 38, 10, 0.08);
-    big(LZ.x + 4, band.y0 - 15.5, 40, 9, 0.12);
+    // 종이 위에 누운 두 개(구멍 사이에), 오른쪽 것 위에 하나 더. 구멍 위 세로 줄은 비워 용액이 내려가는 길을 남긴다
+    big(LZ.x - 22, band.y0 - 6.5, 33, 11, -0.05); // x 47~81
+    big(LZ.x + 22, band.y0 - 6, 33, 10, 0.06); // x 91~125
+    big(LZ.x + 20, band.y0 - 15.8, 26, 9, 0.09); // x 93~119, 아래 결정 위에 얹힘
   }, { bg: ["#EEF7FF", "#DDEEFC"] });
 
   // ══ 겹층: 화살표와 라벨 ══
   const sv = S.svgLayer(root, w, h);
-  // 구멍을 지나가는 물과 녹아 있는 물질(가는 파란 화살표)
-  for (const px of pores) S.rayArrow(sv, [px, band.y0 - 9], [px, band.y1 + 9], { color: "#1C7ED6", w: 1.3, hl: 5, hw: 3 });
+  // 구멍을 지나가는 물과 녹아 있는 물질(가는 파란 화살표): 결정 사이와 옆의 용액에서 시작해 종이를 지난다(결정은 종이 위에 남는다)
+  for (const px of pores) S.rayArrow(sv, [px, band.y0 - 18], [px, band.y1 + 9], { color: "#1C7ED6", w: 1.3, hl: 5, hw: 3 });
   // 단계 화살표
   S.fatArrow(sv, [[128, 112], [196, 112]].map((p, i) => (i ? [194, 112] : [150, 112])), { fill: "#9AA8BA", w0: 3, w1: 5.5, head: 9, hw: 7, sw: 1 });
   S.fatArrow(sv, [[C2.cx, 168], [C2.cx, 192]], { fill: "#9AA8BA", w0: 3, w1: 5.5, head: 9, hw: 7, sw: 1 });
@@ -585,8 +589,12 @@ export default async function draw(root, kit) {
   // ③ 라벨
   S.label(sv, 291, 254, "깔때기", { size: 13.5 });
   S.leader(sv, [[289, 250], [F.cx + rAt(F.rim + 14) - 1, F.rim + 14]]);
-  S.label(sv, 338, 280, "거름종이", { size: 13.5, anchor: "end" });
-  S.leader(sv, [[286, 276], [F.cx + 9, fLv - 4]]);
+  // 거름종이: 깔때기 속 종이의 맨 종이 면(유리 막대 왼쪽, 깔때기 앞 테두리와 고리 사이)을 가리킨다.
+  // 이름표는 기운 비커 오른쪽 아래 빈자리, 지시선은 비커 밑 귀퉁이 아래로 지나 막대의 끝보다 한참 위에서 막대를 건넌다
+  S.label(sv, 312, 220, "거름\n종이", { size: 13.5, lh: 16 });
+  const rY = F.rim + 9, rR = rAt(rY) + 2.2; // 고리(위 ③에서 그린 것과 같은 값)
+  const paperX = 228, paperY = (F.rim + F.ry * Math.sqrt(1 - ((paperX - F.cx) / F.rx) ** 2) + rY + 2.6 * Math.sqrt(1 - ((paperX - F.cx) / rR) ** 2)) / 2;
+  S.leader(sv, [[309, 231], [292, 239.5], [paperX, paperY]], { dotR: 1.7 });
   S.label(sv, 287, 334, "거른\n용액", { size: 13.5, lh: 16 });
   S.leader(sv, [[285, 340], [RB.cx + 9, RB.lv + 9]]);
   S.label(sv, 190, 230, "스탠드", { size: 13.5 });
@@ -598,6 +606,7 @@ export default async function draw(root, kit) {
   S.label(sv, 8, 211, "녹아 있는 물질", { size: 13.5 });
   S.leader(sv, [[100, 206], [da[0], da[1]]], { dotR: 1.4 });
   S.label(sv, 8, 380, "거름종이의 구멍", { size: 13.5 });
-  S.leader(sv, [[48, 366], [pores[0] + 1, band.y1 - 2]], { dotR: 1.6 });
+  // 왼쪽 구멍의 아래 입구, 화살표 왼쪽(지시선이 화살촉을 가리지 않게 비스듬히 들어온다)
+  S.leader(sv, [[14, 366], [pores[0] - 3.4, band.y1 - 1.6]], { dotR: 1.6 });
   S.label(sv, 8, 397, "크기는 실제와 다르게 그렸어요", { size: 13.5, weight: 600, color: "#5B6676" });
 }

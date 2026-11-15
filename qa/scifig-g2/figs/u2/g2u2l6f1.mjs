@@ -241,14 +241,17 @@ export default async function draw(root, kit) {
   big([[T.mag[0] - 30, T.mag[1] + 2], [150, 354], [112, 300], [T.ign[0] + 3, T.ign[1] + 13]], ARW);
   // 지름길(점선): 화성암 → 변성암, 변성암 → 지표로 드러남(산비탈), 퇴적암 → 마그마
   dash([[126, 216], [190, 252], [T.met[0] - 31, T.met[1] + 1]], "#7B5FD0");
-  dash([[156, 238], [159, 170], [153, 100]], "#7B5FD0");
+  // 변성암이 솟아 지표로 드러남: 산 밑의 변성암(보라 띠) 속에서 시작해(화성암 → 변성암 점선보다 20 px 넘게 위, 따로 떨어져) 산비탈 지표에서 끝난다
+  const upX = 163;
+  dash([[upX + 1, 212], [upX + 3, 150], [upX, ground(upX) + 2.5]], "#7B5FD0");
   dash([[T.sed[0] + 26, T.sed[1] + 8], [326, 256], [292, 318]], "#D9480F");
   tag(...T.sedi, "퇴적물", COL.sedi);
   tag(...T.sed, "퇴적암", COL.sed);
   tag(...T.met, "변성암", COL.met);
   tag(...T.mag, "마그마", COL.mag);
   tag(...T.ign, "화성암", COL.ign);
-  // 과정 이름(다섯 말 + 지표로 드러남). 같은 일로 같은 자리에 닿는 두 화살표는 이름 하나를 함께 쓴다
+  // 과정 이름(다섯 말 + 지표로 드러남). 같은 일로 같은 자리에 닿는 두 화살표는 이름 하나를 함께 쓴다(열과 압력을 받음, 녹음).
+  // 지표로 드러남은 두 화살표가 닿는 자리(산꼭대기, 산비탈)가 달라 화살표마다 오른쪽 곁에 이름을 하나씩 둔다
   S.label(s, 206, 18, "잘게 부서짐", { size: 13.5, anchor: "middle" });
   S.label(s, 278, 168, "다져지고 굳어짐", { size: 13.5, anchor: "end" });
   S.label(s, 226, 232, "열과 압력을 받음", { size: 13.5, anchor: "middle" });
@@ -256,6 +259,8 @@ export default async function draw(root, kit) {
   S.label(s, 150, 374, "식어서 굳어짐", { size: 13.5, anchor: "middle" });
   S.label(s, 128, 138, "지표로", { size: 13.5, anchor: "middle" });
   S.label(s, 128, 155, "드러남", { size: 13.5, anchor: "middle" });
+  S.label(s, upX + 24, 117, "지표로", { size: 13.5, anchor: "middle" });
+  S.label(s, upX + 24, 134, "드러남", { size: 13.5, anchor: "middle" });
   S.label(s, 192, 88, "강", { size: 14, anchor: "middle", color: "#1D5C8F" });
   S.label(s, 312, 116, "바다", { size: 14, anchor: "middle", color: "#1D5C8F" });
   S.label(s, 170, 408, "깊이와 가로 길이는 실제 비율이 아님", { size: 13.5, anchor: "middle", weight: 600, color: "#6B7684" });

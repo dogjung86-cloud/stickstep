@@ -31,7 +31,7 @@ const FIGS: Record<string, [string, number, number]> = {
   g2u3l7f1: ["u3", 1020, 1038],
   g2u4l1f1: ["u4", 1020, 990],
   g2u4l1f2: ["u4", 1020, 1146],
-  g2u4l4f1: ["u4", 1020, 924],
+  g2u4l4f1: ["u4", 1020, 960],
   g2u4l5f1: ["u4", 1020, 1152],
   g2u4l5f2: ["u4", 1020, 1230],
   g2u5l1f1: ["u5", 1020, 1212],
@@ -55,7 +55,7 @@ const FIGS: Record<string, [string, number, number]> = {
   g2u8l5f1: ["u8", 1020, 1218],
   g2u8l6f1: ["u8", 1020, 1140],
   g2u8l7f1: ["u8", 1020, 816],
-  g2u8l8f1: ["u8", 1020, 1080],
+  g2u8l8f1: ["u8", 1020, 1140],
   // </FIGS>
 };
 

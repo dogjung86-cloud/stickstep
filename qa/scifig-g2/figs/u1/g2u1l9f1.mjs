@@ -277,10 +277,17 @@ export default async function draw(root, kit) {
     // 판(잘린 면)
     ctx.fillStyle = P.lg(ctx, 0, ty, 0, ty + 2.2, [[0, "#EEF2F6"], [1, "#9AA5B2"]]);
     ctx.fillRect(plateL, ty, plateR - plateL, 2.2);
-    // 덮개 셋: 판 구멍 위의 뒤집힌 컵, 가장자리로 기체가 거품이 되어 액체를 뚫는다
+    // 덮개: 판 구멍 위의 뒤집힌 컵, 가장자리로 기체가 거품이 되어 액체를 뚫는다.
+    // 위 선반에서 액체가 내려오는 관(내려가는 관)의 아래 자리에는 덮개도 기체 화살표도 두지 않는다(그 관으로는 액체만 내려간다)
     const nCap = 3;
+    const inlet = k === 0 ? null : (k - 1) % 2 === 0 ? [IL, IL + dcW] : [IR - dcW, IR]; // 위 선반의 내려가는 관이 차지한 가로 자리
     for (let c = 0; c < nCap; c++) {
       const cx = plateL + ((plateR - plateL) * (c + 0.5)) / nCap;
+      if (inlet && cx + 6.5 > inlet[0] && cx - 6.5 < inlet[1]) {
+        rnd();
+        rnd(); // 거품 자리 난수 몫은 넘겨 다른 덮개의 거품을 그대로 둔다
+        continue;
+      }
       ctx.fillStyle = P.lg(ctx, cx - 4, ty - 8, cx + 4, ty - 3, [[0, "#F4F6F8"], [0.5, "#B9C2CC"], [1, "#7D8794"]]);
       ctx.beginPath();
       ctx.moveTo(cx - 4.2, ty - 2.2);

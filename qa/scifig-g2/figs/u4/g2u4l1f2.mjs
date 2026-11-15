@@ -361,8 +361,9 @@ export default async function draw(root, kit) {
   S.label(sv, 62, 262, "흑연(연필심)", { anchor: "middle", size: 14 });
   // 다이아몬드: 탄소, 이웃 4개
   {
-    const left = dp.filter((q) => q.x < DC[0] - 40).sort((a, c) => c.z - a.z)[0];
-    S.leader(sv, [[44, 134], [left.x - 5, left.y + 2]]);
+    // 탄소: 앞쪽 절반(z > 0) 원자 가운데 가장 왼쪽 것(확대 원 왼쪽 위). '이웃 4개' 지시선(아래 이름표 → 가운데 원자)보다 늘 위로 지나가 서로 엇갈리지 않는다
+    const tanso = dp.filter((q) => q.z > 0).sort((a, c) => a.x - c.x)[0];
+    S.leader(sv, [[44, 134], [tanso.x - 5, tanso.y + 2]]);
     S.label(sv, 12, 139, "탄소", { size: 14 });
     S.leader(sv, [[84, 165], [dCenter.x - 4, dCenter.y + 5]], { color: "#8A5A00" });
     S.label(sv, 12, 166, "이웃 4개와", { size: 14, color: "#8A5A00" });

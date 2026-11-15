@@ -304,7 +304,6 @@ export default async function draw(root, kit) {
   S.label(s, 258, 255, "평균 약 5 km", { size: 13.5, anchor: "middle", weight: 600, color: "#4E5968" });
   S.leader(s, [[178, 304], [178, mohoY(178)]]);
   S.label(s, 178, 318, "지각과 맨틀의 경계", { size: 14, anchor: "middle" });
-  S.label(s, 178, 335, "(모호면)", { size: 13.5, anchor: "middle", weight: 600, color: "#4E5968" });
   S.label(s, 96, 368, "맨틀(고체)", { size: 14, anchor: "middle" });
   // 깊이 눈금(해수면 = 0)
   depthAxis(s, 304, S0, K, [0, 10, 20, 30, 40, 50, 60]);

@@ -266,7 +266,16 @@ export default async function draw(root, kit) {
   big(rungs[0].y + 12, "1°");
   big(rungs[1].y + 12, "1′");
   big(rungs[2].y + 12, "1″");
-  S.label(s, SX1, rungs[0].y - 7, "팔을 뻗었을 때 새끼손가락 폭", { size: 13.5, anchor: "end", color: "#4E5968", weight: 700 });
+  // 1° 띠 전체를 감싸는 중괄호와 그 꼭지 위의 설명: 노란 한 칸(1′)이 아니라 띠 전체(1°)가 새끼손가락 폭이다
+  {
+    const yE = rungs[0].y - 2.5, yL = rungs[0].y - 6.5, yP = rungs[0].y - 10.5, r = 4.5, cx = (SX0 + SX1) / 2;
+    const x0 = SX0 + 0.6, x1 = SX1 - 0.6;
+    S.el(s, "path", {
+      d: `M${x0} ${yE} Q${x0} ${yL} ${x0 + r} ${yL} L${cx - r} ${yL} Q${cx} ${yL} ${cx} ${yP} Q${cx} ${yL} ${cx + r} ${yL} L${x1 - r} ${yL} Q${x1} ${yL} ${x1} ${yE}`,
+      fill: "none", stroke: "#4E5968", "stroke-width": 1.3, "stroke-linecap": "round", "stroke-linejoin": "round",
+    });
+    S.label(s, cx, yP - 5.5, "팔을 뻗었을 때 새끼손가락 폭", { size: 13.5, anchor: "middle", color: "#4E5968", weight: 700 });
+  }
   S.label(s, 66, 72, "60배 확대", { size: 13.5, color: "#C25E00", weight: 800 });
   S.label(s, SX1, 126, "60배 확대", { size: 13.5, anchor: "end", color: "#C25E00", weight: 800 });
   S.label(s, SX0, rungs[2].y + SH + 21, "1° = 60′ = 3600″", { size: 13.5, color: "#4E5968", weight: 700 });

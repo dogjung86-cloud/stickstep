@@ -4,7 +4,7 @@
 export const meta = {
   key: "g2u4l4f1",
   w: 340,
-  h: 308,
+  h: 320,
   alt: "원소 118가지를 원자 번호 차례로 늘어놓은 주기율표예요. 세로줄은 1족부터 18족까지, 가로줄은 1주기부터 7주기까지 있어요. 칸의 색은 실온에서의 상태로, 기체는 수소와 18족 등 11가지, 액체는 브로민과 수은 2가지, 나머지는 고체이고 104번부터 118번은 확인되지 않았어요.",
 };
 
@@ -236,30 +236,27 @@ export default async function draw(root, kit) {
   S.label(sv, 0.5, Y0 - 6, "족", { size: 13.5, color: "#C2410C", haloW: 3 });
   S.label(sv, 0.5, cy(7) + RH + 12, "주기", { size: 13.5, color: "#C2410C", haloW: 3 });
 
-  // ── 아래 두 줄 이름 ──
-  S.label(sv, FX - 6, YF + 8, "란타넘족", { anchor: "end", size: 13.5, color: "#5F3DC4" });
-  S.label(sv, FX - 6, YF + 23, "57~71", { anchor: "end", size: 13.5, color: "#5F3DC4" });
-  S.label(sv, FX - 6, YA + 7, "악티늄족", { anchor: "end", size: 13.5, color: "#087F5B" });
-  S.label(sv, FX - 6, YA + 22, "89~103", { anchor: "end", size: 13.5, color: "#087F5B" });
+  // ── 아래 두 줄 이름: 원자 번호 범위만(이 줄들의 무리 이름은 배우지 않은 말이고 '족'은 세로줄 이름과 헷갈린다) ──
+  S.label(sv, FX - 6, YF + 14.9, "57~71번", { anchor: "end", size: 13.5, color: "#5F3DC4" });
+  S.label(sv, FX - 6, YA + 14.9, "89~103번", { anchor: "end", size: 13.5, color: "#087F5B" });
 
-  // ── 보기: 크게 그린 칸(원자 번호, 원소 기호)과 상태 색 ──
+  // ── 보기: 크게 그린 칸(원소 기호)과 상태 색, 그리고 칸의 차례 ──
+  // 표의 칸에는 원자 번호를 쓰지 않으므로(13.5 px 글자가 칸에 들어가지 않는다) 보기 칸도 원소 기호만 보이고, 차례는 글로 밝힌다
   const LY = YA + RH + 12;
   {
-    const x = 8, y = LY, wd = 36, ht = 44;
+    const x = 8, y = LY, wd = 36, ht = 36;
     tile(x, y, wd, ht, "gas");
-    S.el(sv, "text", { x: x + 4, y: y + 15, "font-size": 13.5, "font-weight": 700, fill: ST.gas.ink, "font-family": "'Pretendard Variable', Pretendard, sans-serif" }, "1");
-    S.el(sv, "text", { x: x + wd / 2, y: y + 37, "text-anchor": "middle", "font-size": 21, "font-weight": 800, fill: ST.gas.ink, "font-family": "'Pretendard Variable', Pretendard, sans-serif" }, "H");
-    S.leader(sv, [[56, LY + 10], [x + 13, LY + 10]], { dotR: 1.8 });
-    S.label(sv, 58, LY + 15, "원자 번호", { size: 13.5 });
-    S.leader(sv, [[56, LY + 32], [x + 26, LY + 31]], { dotR: 1.8 });
-    S.label(sv, 58, LY + 37, "원소 기호", { size: 13.5 });
+    S.el(sv, "text", { x: x + wd / 2, y: y + 26, "text-anchor": "middle", "font-size": 21, "font-weight": 800, fill: ST.gas.ink, "font-family": "'Pretendard Variable', Pretendard, sans-serif" }, "H");
+    S.leader(sv, [[56, LY + 18.5], [x + 25.5, LY + 18.5]], { dotR: 1.8 });
+    S.label(sv, 58, LY + 23, "원소 기호", { size: 13.5 });
   }
   const key = (x, y, st, text) => {
     tile(x, y, 17, 15, st);
     S.label(sv, x + 22, y + 12, text, { size: 13.5, color: ST[st].ink });
   };
-  key(136, LY + 2, "sol", "고체");
-  key(196, LY + 2, "liq", "액체");
-  key(136, LY + 24, "gas", "기체");
-  key(196, LY + 24, "unk", "확인되지 않음");
+  key(136, LY + 1, "sol", "고체");
+  key(196, LY + 1, "liq", "액체");
+  key(136, LY + 21, "gas", "기체");
+  key(196, LY + 21, "unk", "확인되지 않음");
+  S.label(sv, 8, LY + 55, "칸은 원자 번호 차례예요(1번 수소부터)", { size: 13.5, weight: 600, color: "#4E5968" });
 }
