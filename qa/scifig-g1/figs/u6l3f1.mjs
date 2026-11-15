@@ -63,8 +63,8 @@ export async function draw(root, kit) {
   const A = panel(2, false, "(가) 발을 들었을 때");
   const B = panel(176, true, "(나) 착지할 때");
   // 이름
-  kit.label(svg, { at: [A.bx + 14, A.bag[1] + 6], via: [A.bx - 2, A.G + 26], to: [A.bx + 2, A.G + 26], text: "공기 주머니", side: "r", size: 12 });
-  kit.label(svg, { at: [A.bx + A.bw - 16, A.midTop + 6], via: [A.bx + A.bw + 2, A.midTop - 22], to: [A.bx + A.bw + 6, A.midTop - 22], text: "밑창", side: "r", size: 12, dot: true });
+  kit.label(svg, { at: [A.bx + 0.6, A.bag[1]], via: [A.bx - 4, A.G + 26], to: [A.bx, A.G + 26], text: "공기 주머니", side: "r", size: 12 }); // 끝점은 주머니 왼쪽 끝(입자 위가 아니라 주머니 테두리)
+  kit.label(svg, { at: [A.bx + A.bw + 9, (A.midTop + A.G) / 2 - 2], via: [A.bx + A.bw + 14, A.midTop - 22], to: [A.bx + A.bw + 18, A.midTop - 22], text: "밑창", side: "r", size: 12, dot: true }); // 끝점은 주머니 오른쪽 옆의 폼
   kit.text(svg, B.bag[0], B.G + 24, "부피가 줄고,", { size: 13, weight: 700, color: "#1C6CC1" });
   kit.text(svg, B.bag[0], B.G + 40, "기체가 세게 되밀어요", { size: 13, weight: 700, color: "#1C6CC1" });
   kit.text(svg, A.bag[0] + 0, A.G + 44, "입자 수는 같아요(10개)", { size: 12, weight: 600, color: "#5B6475" });

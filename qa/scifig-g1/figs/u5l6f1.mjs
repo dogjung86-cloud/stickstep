@@ -16,7 +16,7 @@ export async function draw(root, kit) {
   const redM = new T.MeshPhysicalMaterial({ color: 0xb33a2e, roughness: 0.6 });
   const deckM = new T.MeshStandardMaterial({ color: 0x8c949e, roughness: 0.7 });
   const whiteM = new T.MeshPhysicalMaterial({ color: 0xf2f4f7, roughness: 0.5, clearcoat: 0.3 });
-  const boxCols = [0xd9480f, 0x1c7ed6, 0x2b8a3e, 0xf08c00, 0x845ef7, 0xe03131];
+  const boxCols = [0x1c7ed6, 0xf08c00, 0x845ef7, 0x0c8599, 0xfab005, 0x868e96]; // 초록, 빨강은 부력, 중력 화살표 색이라 쓰지 않는다
   const ship = (waterY, draft, loaded) => {
     const g = new T.Group();
     const bottomY = waterY - draft; // 배 바닥 높이
@@ -69,8 +69,8 @@ export async function draw(root, kit) {
     // 힘: 배 한가운데 점에서 위로 부력(초록), 아래로 중력(빨강). 길이 = 잠긴 깊이 × 1.9(같은 장면에서 같은 길이)
     const c = P(-22, WATER[i] - DRAFT[i] + 24);
     const len = DRAFT[i] * 1.55;
-    kit.flowArrow(svg, `M${c[0]} ${c[1]} L${c[0]} ${c[1] - len}`, { w: 4, head: 10, hw: 2.4, fill: "#2B8A3E" });
-    kit.flowArrow(svg, `M${c[0]} ${c[1]} L${c[0]} ${c[1] + len}`, { w: 4, head: 10, hw: 2.4, fill: "#E03131" });
+    kit.flowArrow(svg, `M${c[0]} ${c[1]} L${c[0]} ${c[1] - len}`, { w: 4, head: 10, hw: 2.4, fill: "#2B8A3E", stroke: "#FFFFFF" }); // 흰 테: 초록 컨테이너 위에서도 갈리게
+    kit.flowArrow(svg, `M${c[0]} ${c[1]} L${c[0]} ${c[1] + len}`, { w: 4, head: 10, hw: 2.4, fill: "#E03131", stroke: "#FFFFFF" });
     svg.appendChild(kit.s("circle", { cx: c[0], cy: c[1], r: 3.2, fill: "#FFFFFF", stroke: "#2B3445", "stroke-width": 1.4 }));
     kit.text(svg, c[0] + 9, c[1] - len + 6, "부력", { size: 13, weight: 800, color: "#2B8A3E", anchor: "start" });
     kit.text(svg, c[0] + 9, c[1] + len - 6, "중력", { size: 13, weight: 800, color: "#C92A2A", anchor: "start" });

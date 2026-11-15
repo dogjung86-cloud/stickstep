@@ -39,9 +39,9 @@ export async function draw(root, kit) {
   const cs = new T.Shape(cellPoly.map(([x, y]) => new T.Vector2(x, y)));
   const cellG = new T.ExtrudeGeometry(cs, { depth: 1.2, bevelEnabled: true, bevelThickness: 1.4, bevelSize: 1.6, bevelSegments: 4 });
   const cellM = new T.MeshPhysicalMaterial({ color: 0xf6c4c4, roughness: 0.35, transmission: 0.35, thickness: 2, clearcoat: 0.5, sheen: 0.4, sheenColor: 0xffffff });
-  const cell = new T.Mesh(cellG, cellM); cell.position.set(-62, HY + 4, 4); cell.castShadow = true; cell.receiveShadow = true; scene.add(cell);
+  const cell = new T.Mesh(cellG, cellM); cell.position.set(-52, HY + 4, 4); cell.castShadow = true; cell.receiveShadow = true; scene.add(cell); // 왼쪽 끝과 굵기 눈금에서 떨어지게
   const nucl = new T.Mesh(new T.SphereGeometry(4.2, 48, 32), new T.MeshPhysicalMaterial({ color: 0x8b5cc8, roughness: 0.45, clearcoat: 0.4 }));
-  nucl.scale.set(1, 0.92, 0.4); nucl.position.set(-62 + 2, HY + 4 + 1, 5.9); scene.add(nucl);
+  nucl.scale.set(1, 0.92, 0.4); nucl.position.set(-52 + 2, HY + 4 + 1, 5.9); scene.add(nucl);
 
   // ── 적혈구: 지름 약 8 µm, 가운데가 오목한 원반, 핵 없음 ──
   const rbcProfile = []; // (반지름, 두께의 절반): 가장자리 약 2 µm, 가운데 약 1 µm
@@ -70,7 +70,7 @@ export async function draw(root, kit) {
   const dx = 14;
   svg.appendChild(kit.s("path", { d: `M${dx} ${top[1]} V${bot[1]} M${dx - 5} ${top[1]} H${dx + 5} M${dx - 5} ${bot[1]} H${dx + 5}`, stroke: "#2B3445", "stroke-width": 1.4, fill: "none" }));
   kit.text(svg, dx - 4, top[1] - 13, "머리카락 굵기 약 100 µm", { size: 13, weight: 700, anchor: "start" });
-  const cP = P([-62 - 16, HY + 4 - 14, 6]), rP = P([8, HY + 8, 13]), bP = P([46 + 1.6, HY - 6 - 1.6, 9]);
+  const cP = P([-52 - 16, HY + 4 - 14, 6]), rP = P([8, HY + 8, 13]), bP = P([46 + 1.6, HY - 6 - 1.6, 9]);
   kit.label(svg, { at: cP, via: [cP[0] - 2, bot[1] + 16], to: [cP[0] + 2, bot[1] + 16], text: "입안 상피세포 약 50 µm", side: "r", size: 13 });
   kit.label(svg, { at: rP, via: [rP[0] + 4, top[1] - 13], to: [rP[0] + 8, top[1] - 13], text: "적혈구 약 8 µm", side: "r", size: 13 });
   // 세균은 점(2.6px)보다 작아서 끝점 없이, 바로 곁에서 멈추는 선으로 가리킨다

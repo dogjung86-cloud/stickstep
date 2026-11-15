@@ -51,6 +51,15 @@ export async function draw(root, kit) {
   const P = (p) => st.project(p);
   const yH0 = P([0, GY + H0, 0])[1], yH1 = P([0, GY + H1, 0])[1];
   const xl = P([XL, 0, 0])[0], xr = P([XR, 0, 0])[0];
+  // 가는 유리관의 빈 윗부분과 관 벽(입체의 투명 관은 흰 바탕에서 거의 안 보여, 관이 액체 끝에서 끝난 것처럼 읽혔다)
+  for (const [X, top] of [[XL, H0], [XR, H1]]) {
+    const a = P([X, GY + top, 0]), b = P([X, GY + TUBE_TOP, 0]), c = P([X, GY + 113, 0]);
+    const hw = (TUBE_R + 1.1) * (P([X + 1, GY + top, 0])[0] - a[0]);
+    svg.appendChild(kit.s("rect", { x: a[0] - hw, y: b[1], width: hw * 2, height: a[1] - b[1] - 1.2, fill: "#EEF4FB", "fill-opacity": 0.95 }));
+    for (const sx of [-1, 1]) svg.appendChild(kit.s("path", { d: `M${a[0] + sx * hw} ${c[1]} L${a[0] + sx * hw} ${b[1]}`, stroke: "#8EA3BE", "stroke-width": 0.9 }));
+    svg.appendChild(kit.s("path", { d: `M${a[0] - hw * 0.35} ${b[1] + 4} L${a[0] - hw * 0.35} ${a[1] - 4}`, stroke: "#FFFFFF", "stroke-width": 1, opacity: 0.9 }));
+    svg.appendChild(kit.s("ellipse", { cx: a[0], cy: b[1], rx: hw, ry: 1.1, fill: "#DCE6F2", stroke: "#8EA3BE", "stroke-width": 0.8 }));
+  }
   // 처음 높이 점선(두 관에 걸쳐)과 나중 높이 점선(오른쪽)
   svg.appendChild(kit.s("path", { d: `M${xl - 18} ${yH0} H${xr + 18}`, stroke: "#5B6475", "stroke-width": 1.2, "stroke-dasharray": "4 3" }));
   svg.appendChild(kit.s("path", { d: `M${xr - 18} ${yH1} H${xr + 18}`, stroke: "#D9480F", "stroke-width": 1.4, "stroke-dasharray": "4 3" }));

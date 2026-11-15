@@ -20,7 +20,8 @@ export async function draw(root, kit) {
   const { RoundedBoxGeometry } = await import("three/addons/geometries/RoundedBoxGeometry.js");
   const tilt = (o) => { o.rotation.x = 0.35; o.rotation.y = -0.5; return o; };
   // 흰 바탕에서 사라지지 않게 옅은 빛깔의 반투명 유리(투과 재질이 아니라 투명도)
-  const glassM = new T.MeshPhysicalMaterial({ color: 0xc9dcee, transparent: true, opacity: 0.38, roughness: 0.05, clearcoat: 1, clearcoatRoughness: 0.05, side: T.DoubleSide, depthWrite: false });
+  // 앞면 한 겹만(양면이면 두 겹의 유리와 흰 반사가 겹쳐 속의 기름과 에탄올이 하얗게 묻혔다)
+  const glassM = new T.MeshPhysicalMaterial({ color: 0xb4c8e0, transparent: true, opacity: 0.24, roughness: 0.08, clearcoat: 0.5, clearcoatRoughness: 0.1, side: T.FrontSide, depthWrite: false });
   ROWS.forEach((r, i) => {
     const cy = TOP + i * ROW + ROW / 2;
     const g = new T.Group(); g.position.copy(at(ICON_X, cy, 0)); scene.add(g);
@@ -41,8 +42,8 @@ export async function draw(root, kit) {
       const isCup = r.k === "water";
       const prof = isCup ? [[0, 0], [8.5, 0], [10, 22], [9, 22], [7.6, 1.6], [0, 1.6]] : [[0, 0], [8, 0], [8.6, 2], [8.6, 14], [4, 19], [3.4, 24], [2.6, 24], [3.2, 19], [7.6, 14], [7.6, 2], [0, 1.5]];
       const bottle = new T.Mesh(new T.LatheGeometry(prof.map(([a, b]) => new T.Vector2(a, b)), 48), glassM); bottle.position.y = -12; g.add(bottle);
-      const liqColor = r.k === "oil" ? 0xf2c230 : r.k === "eth" ? 0xe9f1f7 : 0x5aa0e8;
-      const lp = isCup ? [[0, 1.7], [7.7, 1.7], [9.2, 17], [0, 17]] : [[0, 1.6], [7.5, 1.6], [7.5, 12], [0, 12]];
+      const liqColor = r.k === "oil" ? 0xeaa812 : r.k === "eth" ? 0xa9cdf0 : 0x5aa0e8; // 에탄올은 본래 무색이지만 흰 바탕에서 액체로 읽히게 옅은 파랑
+      const lp = isCup ? [[0, 1.7], [7.7, 1.7], [9.2, 17], [0, 17]] : [[0, 1.6], [7.5, 1.6], [7.5, 13.4], [0, 13.4]];
       const liq = new T.Mesh(new T.LatheGeometry(lp.map(([a, b]) => new T.Vector2(a, b)), 48), new T.MeshPhysicalMaterial({ color: liqColor, roughness: 0.12, clearcoat: 1 }));
       liq.position.y = -12; g.add(liq);
       if (!isCup) { const cap = new T.Mesh(new T.CylinderGeometry(2.8, 2.8, 3, 20), new T.MeshStandardMaterial({ color: r.k === "oil" ? 0xd9480f : 0x4a6fa8, roughness: 0.5 })); cap.position.y = 13.5; g.add(cap); }
@@ -52,6 +53,15 @@ export async function draw(root, kit) {
   await kit.frame();
 
   const svg = kit.layer(root, W, H);
+  // 병과 컵의 테두리(투명한 유리라 흰 바탕에서 모양이 사라지지 않게, 입체와 같은 회전체 윤곽을 그대로 긋는다)
+  ROWS.forEach((r, i) => {
+    if (!["oil", "eth", "water"].includes(r.k)) return;
+    const cy = TOP + i * ROW + ROW / 2;
+    const outer = r.k === "water" ? [[0, 0], [8.5, 0], [10, 22]] : [[0, 0], [8, 0], [8.6, 2], [8.6, 14], [4, 19], [3.4, 24]];
+    const pt = ([rr, y], sx) => `${(ICON_X + sx * rr).toFixed(2)} ${(cy + 12 - y).toFixed(2)}`;
+    const d = "M" + [...outer.map((q) => pt(q, -1)), ...outer.slice().reverse().map((q) => pt(q, 1))].join(" L");
+    svg.appendChild(kit.s("path", { d, fill: "none", stroke: "#7F93AE", "stroke-width": 1, "stroke-linejoin": "round" }));
+  });
   kit.text(svg, 8, 14, "물을 1로 놓았을 때", { size: 12.5, weight: 700, color: "#4E5968", anchor: "start" });
   // 눈금(0, 0.5, 1)
   for (const t of [0, 0.5, 1]) {

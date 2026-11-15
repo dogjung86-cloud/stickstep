@@ -15,10 +15,10 @@ export async function draw(root, kit) {
   // 바깥 윤곽(px, 아래가 0): 둥근 바닥, 몸통의 홈 둘, 어깨, 목
   const OUT = [[0, 1.6], [10, 0.4], [20, 1.2], [25.6, 3.8], [27, 9], [27, 30], [25.9, 33], [27, 36], [27, 58], [25.9, 61], [27, 64], [27, 86], [26, 94], [22.5, 103], [17, 111], [12.6, 117], [11.2, 121], [11.2, 125], [13.4, 125.6], [13.4, 127.4], [11.4, 128]];
   const bulge = (r, y) => {
-    // 얼린 병: 몸통 가운데가 9% 부풀고, 바닥 가운데가 아래로 6px 밀려 나온다(어깨 위와 목은 그대로)
+    // 얼린 병: 몸통 가운데가 10% 부풀고, 바닥 가운데가 아래로 7px 밀려 나온다(어깨 위와 목은 그대로)
     const k = y > 4 && y < 98 ? Math.sin((Math.PI * (y - 4)) / 94) : 0;
-    const r2 = r * (1 + 0.09 * k);
-    const y2 = y < 10 ? y - 6 * (1 - r / 27) : y;
+    const r2 = r * (1 + 0.1 * k);
+    const y2 = y < 10 ? y - 7 * (1 - r / 27) : y;
     return [r2, y2];
   };
   const shellM = new T.MeshPhysicalMaterial({ color: 0xf2f8ff, roughness: 0.06, transparent: true, opacity: 0.28, clearcoat: 1, side: T.DoubleSide, depthWrite: false });
@@ -107,19 +107,33 @@ export async function draw(root, kit) {
   zoom(BX[0], GROUND - 60, WAT); zoom(BX[1], GROUND - 60, ICE);
   kit.text(svg, BX[0], 13, "물을 가득 채운 병", { size: 12.5, weight: 800 });
   kit.text(svg, BX[1], 13, "얼린 뒤: 옆과 바닥이 부풀어요", { size: 12.5, weight: 800 });
-  // 얼린 병 위에 얼리기 전 모습의 윤곽(점선, 목과 마개를 맞춰서)
+  // 병 테두리(겉 유리, 반지름 그대로): 투명한 병이 흰 바탕에서 사라지지 않게. 얼린 병에는 얼리기 전 윤곽(점선)을 목과 마개를 맞춰 겹친다.
   {
-    const fprof = OUT.map(([r, y]) => bulge(r, y)), minY = Math.min(...fprof.map((p) => p[1]));
-    const base = -(GROUND + minY);
+    const outline = (bx, prof, base, attrs) => {
+      for (const sgn of [-1, 1]) {
+        const pts = prof.filter(([, y]) => y <= 112).map(([r, y]) => st.project([bx + sgn * r, base + y, 0]));
+        svg.appendChild(kit.s("path", { d: pts.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(2)} ${p[1].toFixed(2)}`).join(" "), fill: "none", ...attrs }));
+      }
+      const b0 = prof.filter(([, y]) => y < 10);
+      const bot = [...b0.slice().reverse().map(([r, y]) => st.project([bx - r, base + y, 0])), ...b0.map(([r, y]) => st.project([bx + r, base + y, 0]))];
+      svg.appendChild(kit.s("path", { d: bot.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(2)} ${p[1].toFixed(2)}`).join(" "), fill: "none", ...attrs }));
+    };
+    const minW = Math.min(...OUT.map((p) => p[1])), fprof = OUT.map(([r, y]) => bulge(r, y)), minF = Math.min(...fprof.map((p) => p[1]));
+    const solid = { stroke: "#7F93AE", "stroke-width": 1.1, "stroke-linejoin": "round" };
+    outline(BX[0], OUT, -(GROUND + minW), solid);
+    outline(BX[1], fprof, -(GROUND + minF), solid);
+    outline(BX[1], OUT, -(GROUND + minF), { stroke: "#E8590C", "stroke-width": 1.2, "stroke-dasharray": "3 2.4" });
+    // 부푼 쪽을 가리키는 작은 화살표(옆 둘, 바닥 하나)
+    const base = -(GROUND + minF), mid = 52;
     for (const sgn of [-1, 1]) {
-      const pts = OUT.filter(([, y]) => y <= 112).map(([r, y]) => st.project([BX[1] + sgn * r, base + y, 0]));
-      svg.appendChild(kit.s("path", { d: pts.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(2)} ${p[1].toFixed(2)}`).join(" "), stroke: "#E8590C", "stroke-width": 1.1, "stroke-dasharray": "3 2.4", fill: "none" }));
+      const a = st.project([BX[1] + sgn * 27, base + mid, 0]), b = st.project([BX[1] + sgn * 27 * 1.1 + sgn * 9, base + mid, 0]);
+      kit.flowArrow(svg, `M${a[0] + sgn * 1} ${a[1]} L${b[0]} ${b[1]}`, { w: 2, head: 5.5, hw: 2.4, fill: "#E8590C" });
     }
-    const lp = st.project([BX[1] - 27, base + 40, 0]);
-    kit.label(svg, { at: lp, via: [lp[0] - 22, lp[1] + 18], to: [lp[0] - 26, lp[1] + 18], text: "얼리기 전", side: "l", size: 12, color: "#C2410C" });
+    const c0 = st.project([BX[1], base + 0.4, 0]), c1 = st.project([BX[1], base - 7 - 6, 0]);
+    void c0; void c1;
+    const lp = st.project([BX[1] - 27, base + 82, 0]);
+    kit.label(svg, { at: lp, via: [lp[0] - 22, lp[1] - 16], to: [lp[0] - 26, lp[1] - 16], text: "얼리기 전", side: "l", size: 12, color: "#C2410C" });
   }
-  kit.text(svg, WAT.x, WAT.y + WAT.R + 13, "물: 가깝고 불규칙", { size: 12, weight: 700, color: "#4E5968" });
-  kit.text(svg, ICE.x, ICE.y + ICE.R + 13, "얼음: 고리 꼴, 빈틈이 많아요", { size: 12, weight: 700, color: "#4E5968" });
   // 빈틈(가운데 육각형의 빈 가운데)을 가리키는 이름표
   kit.label(svg, { at: [ICE.x, ICE.y], via: [ICE.x - 30, ICE.y - 52], to: [ICE.x - 34, ICE.y - 52], text: "빈틈", side: "l", size: 12.5 });
   kit.text(svg, W / 2, H - 10, "두 창의 입자 수(24개)와 크기는 같아요", { size: 12, weight: 600, color: "#5B6475" });

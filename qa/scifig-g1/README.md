@@ -68,6 +68,10 @@ node qa/scifig-g1/build.mjs u7l5f1 --png-only   # public 에 쓰지 않고 검�
 - 고리 질감(`saturn_ring.png`)은 가로가 반지름 방향이다. RingGeometry의 UV를 반지름으로 다시 매기고, 카시니 간극 자리로 안팎 반지름을 맞춘다(1.176~2.327 R).
 - 고리가 토성 몸에 드리운 그림자는 몸 아래가 잘린 것처럼 보였다. 몸 → 고리 그림자만 둔다.
 - 별 자취에서 따뜻한 색 자취가 주황 화살표와 헷갈렸다. 자취의 따뜻한 색은 옅게, 개수도 줄였다.
+- 화살표가 닿은 점을 덮으면 손이 물체에서 떨어져 보인다(u5l4f1). 닿는 쪽 물체를 화살표보다 크게.
+- 투명한 유리(관, 병)는 흰 바탕에서 사라진다. 빈 부분과 테두리는 SVG로 긋는다(u3l5f1, u3l4f1, u4l4f2). 양면 유리 두 겹은 속을 하얗게 덮으니 앞면 한 겹으로.
+- 힘 화살표와 같은 색의 물체(초록 컨테이너)는 화살표를 묻는다. 그림 안 물체 색에서 화살표 색을 뺀다.
+- 그림을 고친 뒤에는 처음 보는 에이전트에게 다시 보인다. 이번 검수에서 그린 세션이 못 본 결함 열 가지가 나왔다(output/sci-figures/g1/README.md).
 - 긴 heredoc은 잘린다. 고칠 글은 파이썬 스크립트 파일로 바꾸고, 윈도 콘솔(cp949)로 한글을 찍지 말고 UTF-8 파일로 써서 읽는다.
 - 정리 카드는 카드 어디를 눌러도 접힌다. 그림을 눌러 크게 보려다 카드가 접힐 수 있다(아래 제안).
 
@@ -86,7 +90,7 @@ check-app은 그림이 실린 스텝까지 걸어가(정리 카드는 펼쳐서)
 
 - 눌러서 크게 보기: 정리 카드 안의 그림을 누르면 카드가 접힌다. 그림만 눌렀을 때 화면 가득 보여 주는 공용 보기(그리고 카드 접힘 막기)가 있으면 좋다.
 - `dsl.ts`의 `rimg()`가 `loading="lazy"`를 단다(아트 파이프라인 규칙과 어긋남).
-- 이 브랜치가 바꾼 생성 그림 셋(`public/recap/u7-phase-map.webp`, `u7-star-trails.webp`, `u4-ice-lattice.webp`)은 이제 아무도 쓰지 않는다. 병합 뒤 지워도 된다.
+- 이 브랜치가 글에서 뺀 생성 그림 넷(`public/recap/u7-phase-map.webp`, `u7-star-trails.webp`, `u4-ice-lattice.webp`, `u5-friction-zoom.webp`)은 이제 아무도 쓰지 않는다. 병합 뒤 지워도 된다.
 - `public/photos/CREDITS.md`에 "public/scifig/g1 도해가 public/textures(Solar System Scope, CC BY 4.0)와 sun_whitelight.jpg(NOIRLab, CC BY 4.0)를 쓴다"는 줄을 더한다(공용 파일이라 손대지 않았다).
 
 ## 병합할 때 CLAUDE.md에 넣을 문단(초안)

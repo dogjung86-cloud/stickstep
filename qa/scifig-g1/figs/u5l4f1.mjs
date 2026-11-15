@@ -45,13 +45,13 @@ export async function draw(root, kit) {
       const thumb = cap(3.2, 10, skin); thumb.rotation.z = Math.PI / 2; thumb.position.copy(at(end + 30, sc.yc - 11.5, 4)); scene.add(thumb);
       const arm = cap(8.5, 60, sleeve); arm.rotation.z = Math.PI / 2; arm.position.copy(at(end + 80, sc.yc + 2, 0)); scene.add(arm);
     } else {
-      // 끝판과 누르는 손가락
+      // 끝판과 누르는 주먹: 주먹의 손가락 마디 쪽이 끝판에 바로 닿는다(닿은 곳이 화살표에 가리지 않게. 처음 판의 손가락은 빨간 화살표에 덮여 손이 떨어져 보였다)
       const plate = new T.Mesh(new T.CylinderGeometry(11, 11, 3, 36), steel); plate.rotation.z = Math.PI / 2; plate.position.copy(at(end + 1.5, sc.yc)); scene.add(plate);
       contact = [end + 3, sc.yc];
-      const finger = cap(3.4, 15, skin); finger.rotation.z = Math.PI / 2; finger.position.copy(at(end + 3 + 3.4 + 7.5, sc.yc)); scene.add(finger);
-      const fist = new T.Mesh(new RoundedBoxGeometry(18, 24, 20, 4, 6), skin); fist.position.copy(at(end + 31, sc.yc + 7, 0)); scene.add(fist);
-      for (let k = 0; k < 3; k++) { const f = cap(3.2, 9, skin); f.rotation.x = Math.PI / 2; f.position.copy(at(end + 23, sc.yc + 6 + k * 5.2, 7)); scene.add(f); }
-      const arm = cap(8.5, 60, sleeve); arm.rotation.z = Math.PI / 2; arm.position.copy(at(end + 78, sc.yc + 8, 0)); scene.add(arm);
+      const fist = new T.Mesh(new RoundedBoxGeometry(18, 22, 20, 4, 6), skin); fist.position.copy(at(end + 3 + 3.3 + 9, sc.yc + 1, 2)); scene.add(fist);
+      for (let k = 0; k < 4; k++) { const f = cap(3.3, 9, skin); f.rotation.x = Math.PI / 2; f.position.copy(at(end + 3 + 3.3, sc.yc - 7.6 + k * 5.1, 7)); scene.add(f); }
+      const thumb = cap(3.2, 10, skin); thumb.rotation.z = Math.PI / 2; thumb.position.copy(at(end + 11, sc.yc - 11.5, 4)); scene.add(thumb);
+      const arm = cap(8.5, 60, sleeve); arm.rotation.z = Math.PI / 2; arm.position.copy(at(end + 3 + 3.3 + 18 + 38, sc.yc + 2, 0)); scene.add(arm);
     }
     out.push({ ...sc, end, contact });
   }

@@ -117,12 +117,21 @@ export async function draw(root, kit) {
   flame(fire[0], fire[1] + 12, 15, 34, "#FFC24A", "#FFF3B0");
   // 복사: 불에서 사방으로 뻗는 곧은 주황 점선(손에 닿는 것을 포함해 여러 줄)
   const RAY = "#F08C00";
-  for (const a of [-2.75, -2.25, -1.75, -0.95, -0.45, 0.0, 0.32]) {
-    const r0 = 34, r1 = a > -0.6 && a < 0.5 ? 92 : 64;
-    const x0 = fire[0] + Math.cos(a) * r0, y0 = fire[1] - 8 + Math.sin(a) * r0 * 0.9, x1 = fire[0] + Math.cos(a) * r1, y1 = fire[1] - 8 + Math.sin(a) * r1 * 0.9;
+  const ray = (x0, y0, x1, y1) => {
     svg.appendChild(kit.s("path", { d: `M${x0} ${y0} L${x1} ${y1}`, stroke: RAY, "stroke-width": 2.2, "stroke-dasharray": "5 4", "stroke-linecap": "round", fill: "none" }));
     const ang = Math.atan2(y1 - y0, x1 - x0);
     svg.appendChild(kit.s("path", { d: `M${x1 + Math.cos(ang) * 6} ${y1 + Math.sin(ang) * 6} L${x1 + Math.cos(ang + 2.5) * 6} ${y1 + Math.sin(ang + 2.5) * 6} L${x1 + Math.cos(ang - 2.5) * 6} ${y1 + Math.sin(ang - 2.5) * 6} Z`, fill: RAY }));
+  };
+  // 사방으로 뻗는 줄(손 쪽이 아닌 것)
+  for (const a of [-2.75, -2.25, -1.75, -0.95, -0.45, 0.42]) {
+    const r0 = 34, r1 = a > -0.6 && a < 0.5 ? 86 : 64;
+    ray(fire[0] + Math.cos(a) * r0, fire[1] - 8 + Math.sin(a) * r0 * 0.9, fire[0] + Math.cos(a) * r1, fire[1] - 8 + Math.sin(a) * r1 * 0.9);
+  }
+  // 두 손바닥에 닿는 줄: 손바닥 왼쪽 면을 겨냥해 끝까지(기둥 앞을 지나간다). 처음 판은 기둥에서 끝나 기둥이 막는 것처럼 보였다
+  for (const dy of [6, -14]) {
+    const t = P([FX + 112 - 4.5, GY + 66 + dy + 3, dy === 6 ? 14 : -8]);
+    const a = Math.atan2(t[1] - (fire[1] - 8), t[0] - fire[0]), d = Math.hypot(t[0] - fire[0], t[1] - (fire[1] - 8));
+    ray(fire[0] + Math.cos(a) * 34, fire[1] - 8 + Math.sin(a) * 34, fire[0] + Math.cos(a) * (d - 7), fire[1] - 8 + Math.sin(a) * (d - 7));
   }
   // 대류: 냄비 속 물의 고리 둘(가운데에서 오르고 수면에서 양옆으로, 벽을 따라 내려와 바닥을 따라 가운데로)
   const wc = P([FX, POT_Y + 2.6 + (WATER_H - 2.6) / 2, 0]);
@@ -152,7 +161,7 @@ export async function draw(root, kit) {
   sm(fire[0], fire[1] + 44, "모닥불");
   const rodMid = P(rodA.clone().add(rodD.clone().multiplyScalar(0.62)));
   kit.label(svg, { at: rodMid, via: [rodMid[0] - 6, rodMid[1] + 26], to: [rodMid[0] - 10, rodMid[1] + 26], text: "쇠막대", side: "l", size: 12 });
-  kit.label(svg, { at: [wc[0] + 4, wc[1] + 2], via: [wl[0] - 18, wc[1] - 20], to: [wl[0] - 22, wc[1] - 20], text: "냄비 속 물", side: "l", size: 12, dot: false });
+  kit.label(svg, { at: [wl[0] + 7, wt[1] + 5], via: [wl[0] - 18, wc[1] - 20], to: [wl[0] - 22, wc[1] - 20], text: "냄비 속 물", side: "l", size: 12 }); // 끝점은 고리가 없는 왼쪽 위 물
   console.log("proj", JSON.stringify({ fire, wc, wl, wr, wt, wb, ra, rb }));
   void camera;
 }

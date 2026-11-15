@@ -19,7 +19,7 @@ export async function draw(root, kit) {
   for (const s of SET) {
     const h = hueOf(s.t), sp = speedOf(s.t);
     const g = drawSyringe(svg, kit, { cx: s.cx, bot: BOT, vol: s.vol, ppm: PPM, halfW: HW, cap: CAP, rod: ROD, n: 12, seed: s.seed, tail: 9.2 * sp,
-      color: hsl(h, 78, 58), dark: hsl(h, 70, 34), tailColor: hsl(h, 80, 80), hits: [0, 1, 2].map(() => ({ size: 0.5 + sp * 0.45 })) });
+      color: hsl(h, 78, 58), dark: hsl(h, 70, 34), tailColor: hsl(h, 80, 80), hits: [0, 1, 2].map(() => ({ size: 0.25 + sp * 0.95 })) }); // 표시 크기 0.77, 0.98, 1.55: 뜨거울수록 세게(수는 그대로)
     // 바깥에서 누르는 힘(셋 다 같은 길이)
     kit.flowArrow(svg, `M${s.cx} ${g.hy - 28} L${s.cx} ${g.hy - 2}`, { w: 3.4, head: 8, hw: 2.2, fill: "#E03131" });
     // 온도 띠와 글자
