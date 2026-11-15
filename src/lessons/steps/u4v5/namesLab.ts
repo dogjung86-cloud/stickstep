@@ -3,13 +3,48 @@
 // 이름을 주면 학생이 그 변화를 일으킨다. 다른 변화를 일으키면 그 자리에서 무엇을 일으켰는지 알려 준다(틀린 조작도 해 볼 수 있다).
 //   50℃ 물에서 시작: 기화(올린다. 내리면 응고) → 액화 → 응고(더 내린다. 올리면 기화) → 융해.
 // 판정 질문은 따로 없다(조작이 곧 판정이다). 한 번도 어긋나지 않았으면 맞힌 것으로 기록한다.
+// 그림(2026-11-15, 감사 하 후보): 물이 허공에 뜨지 않게 그릇 윤곽(공용 유리 그리기)을 두르고, 결론 때는 무대를 세 상태와 이름 붙은 화살 넷
+//   (위는 온도를 올렸을 때의 융해와 기화, 아래는 내렸을 때의 응고와 액화)으로 바꿔 '서로 반대 방향'을 한 장에 보인다.
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import { colFor } from "../../../renderers/palette";
+import { glassVessel } from "../../../ui/labProps";
 import type { StepRenderer } from "../../types";
 import { bvRange } from "../bio6/b6Lab";
-import { deg, u4Lab, u4Matter, u4ViewBtn, type U4Step } from "./u4Kit";
+import { deg, svgOpen, u4Lab, u4Matter, u4ViewBtn, type U4Step } from "./u4Kit";
+
+/** 결론 그림: 고체, 액체, 기체 세 칸과 그 사이의 이름 붙은 화살 넷. */
+function summarySvg(): string {
+  const P = "#6E9EDB";
+  const dot = (x: number, y: number): string => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.4" fill="${P}"/><circle cx="${(x - 1.3).toFixed(1)}" cy="${(y - 1.4).toFixed(1)}" r="1.3" fill="#fff" opacity=".5"/>`;
+  const X = [52, 173, 294];
+  const Y = 96;
+  const icon = [
+    [-10, 0, 10].flatMap((dx) => [-10, 0, 10].map((dy) => dot(X[0] + dx, Y + 6 + dy))).join(""),
+    [[-15, 22], [-5, 23], [5, 21], [15, 22], [-10, 13], [0, 12], [10, 13], [-1, 4]].map(([dx, dy]) => dot(X[1] + dx, Y + dy)).join(""),
+    [[-22, -16], [12, -20], [-4, 0], [22, 6], [-18, 22], [8, 24]].map(([dx, dy], i) => `<path d="M${X[2] + dx - 6 + (i % 2) * 12} ${Y + dy + 4} L${X[2] + dx} ${Y + dy}" stroke="#9FC2EE" stroke-width="2" stroke-linecap="round" opacity=".55"/>${dot(X[2] + dx, Y + dy)}`).join(""),
+  ];
+  const names = [["고체", "얼음"], ["액체", "물"], ["기체", "수증기"]];
+  const node = (i: number): string => `<rect x="${X[i] - 38}" y="${Y - 34}" width="76" height="68" rx="14" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.18)" stroke-width="1.3"/>${icon[i]}
+    <text x="${X[i]}" y="${Y + 53}" text-anchor="middle" font-size="14" font-weight="800" fill="#E8EEF7">${names[i][0]}</text>
+    <text x="${X[i]}" y="${Y + 69}" text-anchor="middle" font-size="12" font-weight="700" fill="#8CA2C0">${names[i][1]}</text>`;
+  const UP = "#FF922B", DN = "#74C0FC";
+  const pair = (x0: number, x1: number, fwd: string, back: string): string => `
+    <path d="M${x0} ${Y - 10} H${x1 - 2}" stroke="${UP}" stroke-width="2.8" stroke-linecap="round"/><path d="M${x1 - 8} ${Y - 15} L${x1 - 1} ${Y - 10} L${x1 - 8} ${Y - 5}" stroke="${UP}" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="${(x0 + x1) / 2}" y="${Y - 18}" text-anchor="middle" font-size="13" font-weight="800" fill="${UP}">${fwd}</text>
+    <path d="M${x1} ${Y + 10} H${x0 + 2}" stroke="${DN}" stroke-width="2.8" stroke-linecap="round"/><path d="M${x0 + 8} ${Y + 5} L${x0 + 1} ${Y + 10} L${x0 + 8} ${Y + 15}" stroke="${DN}" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="${(x0 + x1) / 2}" y="${Y + 28}" text-anchor="middle" font-size="13" font-weight="800" fill="${DN}">${back}</text>`;
+  return `${svgOpen}
+    ${node(0)}${node(1)}${node(2)}
+    ${pair(X[0] + 42, X[1] - 42, "융해", "응고")}
+    ${pair(X[1] + 42, X[2] - 42, "기화", "액화")}
+    <path d="M70 211 H90" stroke="${UP}" stroke-width="2.6" stroke-linecap="round"/><path d="M85 206.5 L90 211 L85 215.5" stroke="${UP}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="96" y="215.5" font-size="12.5" font-weight="700" fill="#B9C8DE">온도를 올리면</text>
+    <path d="M196 211 H216" stroke="${DN}" stroke-width="2.6" stroke-linecap="round"/><path d="M201 206.5 L196 211 L201 215.5" stroke="${DN}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="222" y="215.5" font-size="12.5" font-weight="700" fill="#B9C8DE">온도를 내리면</text>
+  </svg>`;
+}
 
 type Ph = "sol" | "liq" | "gas";
 const phaseOf = (t: number): Ph => (t < 0.5 ? "sol" : t < 100 ? "liq" : "gas");
@@ -35,10 +70,21 @@ export const u4NamesLab: StepRenderer = (host, step, api) => {
 
   const dot = el("span", { class: "pdot" });
   const name = el("span", { text: STATE.liq });
-  const m = u4Matter(lab, { sim: { count: 48, r: 6.5, temp: T0, walls: (w, h) => ({ x0: 6, y0: 6, x1: w - 6, y1: h - 46 }) }, onReady: () => paint() });
+  const m = u4Matter(lab, {
+    sim: { count: 48, r: 6.5, temp: T0, walls: (w, h) => ({ x0: 6, y0: 6, x1: w - 6, y1: h - 46 }) },
+    overlay: (ctx, _w, _h, sim) => glassVessel(ctx, sim.bounds()),
+    onReady: () => paint(),
+  });
   m.pill.append(dot, name);
   const chips = MISSIONS.map((ms) => el("span", { class: "u4x-chip", text: ms.name }));
-  f.stage.appendChild(el("div", { class: "u4x-chips" }, ...chips));
+  const chipRow = el("div", { class: "u4x-chips" }, ...chips);
+  f.stage.appendChild(chipRow);
+  /** 결론: 무대를 세 상태와 이름 붙은 화살 넷으로 바꾼다. */
+  const showSummary = (): void => {
+    chipRow.style.display = "none";
+    f.stage.appendChild(el("div", { class: "u4x-names-sum", html: summarySvg() }));
+    host.dataset.u4Sum = "1";
+  };
 
   function paint(): void {
     m.ms.setTemp(T);
@@ -67,7 +113,10 @@ export const u4NamesLab: StepRenderer = (host, step, api) => {
       if (idx >= MISSIONS.length) {
         api.recordQuiz(slips === 0);
         range.input.disabled = true;
-        lab.tm.later(() => lab.finish("<b>융해와 응고</b>, <b>기화와 액화</b>는 서로 반대 방향이에요. 이렇게 물질의 상태가 바뀌는 것이 <b>상태 변화</b>예요."), 1200);
+        lab.tm.later(() => {
+          showSummary();
+          lab.finish("<b>융해와 응고</b>, <b>기화와 액화</b>는 서로 반대 방향이에요. 이렇게 물질의 상태가 바뀌는 것이 <b>상태 변화</b>예요.");
+        }, 1200);
         f.say(`<b>${did}</b> 성공! ${WORD[a]}가 ${WORD[b]}로 변했어요. 이름 넷을 모두 일으켰어요.`);
       } else f.say(`<b>${did}</b> 성공! 다음은 <b>${MISSIONS[idx].name}</b>예요. ${WORD[MISSIONS[idx].from]}를 ${WORD[MISSIONS[idx].to]}로 바꿔 보세요.`);
     } else if (a === ms.from) {
