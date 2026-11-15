@@ -66,7 +66,7 @@ export const starTempLab: StepRenderer = (host, step, api) => {
       cur = 2;
       bSet.disabled = true;
       range.input.disabled = true;
-      f.say(`맞았어요! ${t.name}의 표면 온도는 <b>약 ${celsius(t.k)} ℃</b>예요. 세 별을 견주어 볼까요?`);
+      f.say(`맞았어요! ${t.name}의 표면 온도는 <b>약 ${celsius(t.k)} ℃</b>예요. 세 별을 비교해 볼까요?`);
       tm.later(askFinal, 1700);
     }
   });

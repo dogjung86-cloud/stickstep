@@ -96,7 +96,7 @@ export const soundLab: StepRenderer = (host, step, api) => {
       haptic(HAPTIC.tap);
       show = 0;
       const n = FACTORS.filter((x) => cur[x] !== BASE[x]).length;
-      f.say(n === 0 ? "기준 소리와 같아졌어요. <b>하나</b>를 골라 바꿔 보세요." : n === 1 ? "하나를 바꿨어요. 두 화면을 견주고 <b>견주어 기록하기</b>를 눌러요." : "지금은 <b>두 가지 넘게</b> 바뀌어 있어요. 기준 소리와 하나만 다르게 해 보세요.");
+      f.say(n === 0 ? "기준 소리와 같아졌어요. <b>하나</b>를 골라 바꿔 보세요." : n === 1 ? "하나를 바꿨어요. 두 화면을 비교하고 <b>비교해 기록하기</b>를 눌러요." : "지금은 <b>두 가지 넘게</b> 바뀌어 있어요. 기준 소리와 하나만 다르게 해 보세요.");
     });
     return b;
   });
@@ -104,7 +104,7 @@ export const soundLab: StepRenderer = (host, step, api) => {
   facRow.style.gridTemplateColumns = "repeat(3, 1fr)";
   const hear = bvBtn("", "소리 듣기");
   hear.dataset.k = "hear";
-  const rec = bvBtn("main", "견주어 기록하기");
+  const rec = bvBtn("main", "비교해 기록하기");
   rec.dataset.k = "rec";
   const actRow = el("div", { class: "g2u3x-row2" }, hear, rec);
   const picks = (["amp", "freq", "shape"] as Pick[]).map((p) => {
@@ -146,7 +146,7 @@ export const soundLab: StepRenderer = (host, step, api) => {
     host.dataset.lx = "pick";
     actRow.hidden = true;
     pickRow.hidden = false;
-    f.say("두 화면을 견줘요. 기준 소리와 견주어 파동의 <b>무엇이</b> 달라졌나요?");
+    f.say("두 화면을 비교해요. 기준 소리와 비교해 파동의 <b>무엇이</b> 달라졌나요?");
   });
 
   function choose(p: Pick): void {
@@ -178,7 +178,7 @@ export const soundLab: StepRenderer = (host, step, api) => {
     f.say("세 가지를 모두 견줬어요. 표를 보며 생각해 봐요.");
     tm.later(() => {
       f.slot.ask(
-        "짧은 막대를 세게 튕기면, 긴 막대를 약하게 튕긴 기준 소리와 견주어 파동은 어떻게 달라질까요?",
+        "짧은 막대를 세게 튕기면, 긴 막대를 약하게 튕긴 기준 소리와 비교해 파동은 어떻게 달라질까요?",
         [{ t: "진폭도 진동수도 커져요", ok: true }, { t: "진폭만 커지고 진동수는 같아요" }, { t: "진동수만 커지고 진폭은 같아요" }],
         (ok) => api.recordQuiz(ok),
         { why: "세게 튕기면 <b>진폭</b>이, 짧은 막대는 <b>진동수</b>가 커져요. 두 가지가 함께 달라져요.", onNext: finish },
@@ -249,7 +249,7 @@ export const soundLab: StepRenderer = (host, step, api) => {
     panel(ctx, 124, cur, `바꾼 소리: ${LABEL.inst[cur.inst]}, ${LABEL.bar[cur.bar]}, ${LABEL.power[cur.power]}`, show, flash > 0.4);
   });
 
-  f.say("위는 <b>기준 소리</b>의 화면이에요. 세기, 막대, 악기 가운데 <b>하나만</b> 바꿔 아래 화면과 견주고 기록해 보세요.");
+  f.say("위는 <b>기준 소리</b>의 화면이에요. 세기, 막대, 악기 가운데 <b>하나만</b> 바꿔 아래 화면과 비교하고 기록해 보세요.");
   api.setCTA("세 가지를 하나씩 견줘 보세요", { enabled: false });
   return () => {
     tm.clear();

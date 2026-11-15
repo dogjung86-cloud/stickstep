@@ -195,7 +195,7 @@ export const L2: Step[] = numbered([
 // ══ 3. 전류와 전압 ══
 export const L3: Step[] = numbered([
   opener({ title: "전지는 시계 속에서 무슨 일을 할까요?", scene: "g2u7-clock", wait: "시계에 전지를 끼워 보세요", cta: "실험실 열기" }),
-  wireLab({ title: "스위치를 닫으면 전자는?", cta: "물길과 견주기" }),
+  wireLab({ title: "스위치를 닫으면 전자는?", cta: "물길과 비교하기" }),
   waterLab({ title: "물길과 회로는 어디가 닮았나요?", cta: "이름 붙이기" }),
   words({
     title: "전류와 전압,<br>흐름과 흐르게 하는 능력",

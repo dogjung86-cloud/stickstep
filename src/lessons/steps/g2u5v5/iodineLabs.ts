@@ -453,7 +453,7 @@ export const g2u5StoreLab: StepRenderer = (host, step, api) => {
       }
     }),
   );
-  const go = bvBtn("main g2u5x-go", "다섯 작물 견주기");
+  const go = bvBtn("main g2u5x-go", "다섯 작물 비교하기");
   go.disabled = true;
   go.addEventListener("click", () => {
     tap();

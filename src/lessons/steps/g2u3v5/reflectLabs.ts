@@ -295,7 +295,7 @@ export const roughLab: StepRenderer = (host, step, api) => {
     f.pips(ready ? 1 + fiveSeen.size : 0);
     if (five) return;
     if (face === "flat") f.say(roughN >= 3 ? "매끈한 면은 어디에 닿아도 법선의 방향이 같아요. 이제 <b>다섯 줄기</b>를 비춰 보세요." : "매끈한 면에서는 두 각이 같아요. 이제 <b>거친 면</b>을 골라 닿는 자리를 옮겨 보세요.");
-    else if (roughN < 3) f.say(`닿는 자리마다 법선이 기울어요. 두 각을 견주며 <b>${3 - roughN}곳</b> 더 옮겨 보세요.`);
+    else if (roughN < 3) f.say(`닿는 자리마다 법선이 기울어요. 두 각을 비교하며 <b>${3 - roughN}곳</b> 더 옮겨 보세요.`);
     else f.say("거친 면에서도 닿는 자리마다 <b>두 각은 같았어요</b>. 이제 <b>다섯 줄기</b>를 비춰 보세요.");
   }
 

@@ -137,7 +137,7 @@ export const g2u6TeamLab: StepRenderer = (host, step, api) => {
     host.dataset.g6Off = off ?? "";
     host.dataset.g6Seen = String(seen.size);
   };
-  const go = bvBtn("main g2u6x-go", "네 기관계 견주기");
+  const go = bvBtn("main g2u6x-go", "네 기관계 비교하기");
   go.disabled = true;
   const chips = SYS.map((sy) =>
     chip(sy.key, sy.name, "일하는 중", () => {

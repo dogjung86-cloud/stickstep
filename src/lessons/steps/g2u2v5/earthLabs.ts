@@ -131,7 +131,7 @@ export const g2u2ProbeLab: StepRenderer = (host, step, api) => {
     );
   }
 
-  f.say("지구 속은 직접 볼 수 없어요. 조사하는 방법 세 가지를 견주기 전에 먼저 예측해 보세요.");
+  f.say("지구 속은 직접 볼 수 없어요. 조사하는 방법 세 가지를 비교하기 전에 먼저 예측해 보세요.");
   gPredict(lab, "지구 <b>중심까지</b> 알려 줄 방법은 무엇일까요?", ["시추", "화산 분출물 조사", "지진파 연구"], (picked) => {
     pred = picked;
     f.slot.setControls(gGrid(3, ...picks));
@@ -190,7 +190,7 @@ export const g2u2LayerLab: StepRenderer = (host, step, api) => {
   const rb = bvRange({ cls: "g2u2x-ly-rb", min: 6, max: 63, value: b, label: "외핵과 내핵의 경계 깊이", onInput: (v) => { if (locked) return; b = v; if (a >= b) { a = b - 1; ra.set(a); } paint(); } });
   ra.input.dataset.k = "a";
   rb.input.dataset.k = "b";
-  const check = gBtn("check", "조사 자료와 견주기");
+  const check = gBtn("check", "조사 자료와 비교하기");
   const hintNow = (): void => lab.hint(Math.abs(a - 29) > 2 ? "range:a=29" : Math.abs(b - 51) > 2 ? "range:b=51" : "check");
   [ra.input, rb.input].forEach((n) => n.addEventListener("input", hintNow));
   check.addEventListener("click", () => {
