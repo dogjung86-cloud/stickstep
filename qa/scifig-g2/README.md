@@ -36,6 +36,14 @@ PORT=<dev 포트> node qa/scifig-g2/check.mjs [캡처 폴더] [키 …]
 
 - 크롬은 `playwright-core`의 `channel: "chrome"`(설치된 크롬)으로 띄운다. 라벨 글꼴은 Pretendard를 CDN에서 받으므로 인터넷이 필요하다.
 - 화소 밀도 3(설계 폭 340 px → 1020 px), webp 품질 0.84. 한 장 대략 200 KB 이하를 지킨다(빌드가 230 KB 넘으면 알린다).
+- 여럿이 동시에 구울 때는 `--notable`(그림 표를 쓰지 않음)로 굽고, 끝에 한 사람이 `node qa/scifig-g2/build.mjs --table`로 표만 다시 쓴다.
+  단원 안 공용 도우미는 `figs/<단원>/_lib.mjs`(밑줄로 시작하면 그림으로 치지 않는다), 실사 사진은 페이지에서 `/public/photos/…`로 불러 캔버스에 그린다.
+- 헤드리스 크롬 캔버스 함정(그림 에이전트들이 겪음): clip 안에서 큰 오목 다각형을 채우거나 `shadowBlur`를 여러 번 쓰면 그때까지 그린 캔버스가 오류 없이
+  통째로 지워질 수 있다. 그 부분을 따로 캔버스(`willReadFrequently: true`)에 그려 붙이거나 그림자를 직접 겹쳐 그려 피한다.
+
+## 이번에 실은 그림 (2026-11-15)
+46장: Ⅰ 7, Ⅱ 8, Ⅲ 4, Ⅳ 5, Ⅴ 5, Ⅵ 5(레슨 4~6), Ⅶ 6, Ⅷ 6. 목록과 판정 자료는 `D:\Brilliant Science\output\sci-figures\g2\README.md`, `figure-list.md`.
+독립 과학 검산(그리지 않은 에이전트 둘) 지적 열한 장을 고쳤다(`output/sci-figures/g2/review/findings-1.md`, `findings-2.md`).
 
 ## 그리는 규칙
 
