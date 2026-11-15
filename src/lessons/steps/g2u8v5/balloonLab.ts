@@ -2,8 +2,11 @@
 // 책의 어디에서: 탐구 '풍선 모형으로 우주 팽창 알아보기'(풍선을 조금 불어 집게로 막고, 붙임딱지 ㄱ, ㄴ, ㄷ을 서로 다른 간격으로 붙이고, 줄자로 간격을 잰다. 바람을 더 넣고 다시 잰다).
 // 한 통찰: 풍선 표면이 늘어나면 딱지 사이의 간격이 모두 늘어나고, 멀리 떨어진 딱지일수록 더 많이 멀어진다.
 // 학생이 정하는 것: 딱지를 붙일 자리, 재기와 불기의 차례.
-// 실패하는 길: 처음 간격을 재지 않고 바람부터 넣으면 '처음' 칸이 비어 견줄 수 없다(바람을 빼고 다시 해야 한다).
+// 실패하는 길: 처음 간격을 재지 않고 바람부터 넣으면 '처음' 칸이 비어 비교할 수 없다(바람을 빼고 다시 해야 한다).
 // 간격은 풍선 표면을 따라 잰 길이다(풍선의 반지름 × 두 딱지 사이의 각). 작은 풍선의 반지름은 8 cm, 큰 풍선은 12 cm.
+// 세 간격이 비슷하면 늘어난 양도 비슷해 '멀수록 더 많이'가 보이지 않는다. 그래서 딱지 ㄷ은 한 간격이 다른 간격의 1.5배를 넘게 붙이도록 안내하고,
+// 넘지 않으면 다시 붙이게 한다(모든 간격이 1.5배로 늘므로 늘어난 양도 1.5배 넘게 차이 난다).
+// 판정 때는 큰 풍선 뒤에 작은 풍선과 처음 딱지 자리를 점선으로 남기고, 줄자 값을 '처음→나중'과 '+늘어난 만큼'으로 적어 가장 많이 는 쌍을 밝힌다.
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
@@ -20,6 +23,7 @@ const R0 = 52; // 작은 풍선(화면)
 const R1 = 78; // 큰 풍선(화면)
 const CM0 = 8;
 const CM1 = 12;
+const SPREAD = 1.5; // 가장 먼 간격은 가장 가까운 간격의 1.5배를 넘게
 
 export const balloonLab: StepRenderer = (host, step, api) => {
   const s = step as unknown as LabStep;
@@ -78,9 +82,18 @@ export const balloonLab: StepRenderer = (host, step, api) => {
       return;
     }
     tags.push(v);
+    if (tags.length === 3) {
+      const d = PAIRS.map(([a, b]) => arc(a, b, 1));
+      if (Math.max(...d) < SPREAD * Math.min(...d)) {
+        tags.pop();
+        haptic(HAPTIC.wrong);
+        f.say("세 간격이 비슷해요. 한 간격이 다른 간격의 <b>1.5배</b>를 넘게 딱지 ㄷ을 다시 붙여 보세요.");
+        return;
+      }
+    }
     haptic(HAPTIC.tap);
     paint();
-    f.say(tags.length < 3 ? `딱지 <b>${NAMES[tags.length - 1]}</b>을 붙였어요. 다음 딱지는 간격이 다르게 붙여 보세요.` : "딱지 셋을 다 붙였어요. 이제 <b>간격을 잴지</b>, <b>바람을 더 넣을지</b> 차례를 정해 보세요.");
+    f.say(tags.length === 1 ? "딱지 <b>ㄱ</b>을 붙였어요. 이번에는 딱지 ㄴ을 붙여 보세요." : tags.length === 2 ? "딱지 ㄷ은 한 간격이 다른 간격보다 <b>1.5배 넘게</b> 멀어지게 붙여요." : "딱지 셋을 다 붙였어요. 이제 <b>간격을 잴지</b>, <b>바람을 더 넣을지</b> 차례를 정해 보세요.");
   });
   bMeas.addEventListener("click", () => {
     haptic(HAPTIC.tap);
@@ -113,6 +126,7 @@ export const balloonLab: StepRenderer = (host, step, api) => {
   function askFinal(): void {
     const far = PAIRS.map((_, i) => after![i] - before![i]);
     const top = far.indexOf(Math.max(...far));
+    f.say("점선은 처음의 작은 풍선이에요. <b>처음 간격과 나중 간격</b>을 비교해 보세요.");
     f.slot.ask(
       "풍선이 커지자 딱지 사이의 간격은?",
       [{ t: "세 간격이 모두 늘어났어요", ok: true }, { t: "가까운 딱지끼리만 늘어났어요" }, { t: "세 간격 모두 그대로예요" }],
@@ -165,17 +179,55 @@ export const balloonLab: StepRenderer = (host, step, api) => {
     } else sText(ctx, "후우", cx + R + 30, cy, { color: "#fff", px: 13, w: 800 });
     // 줄자(딱지 사이를 잇는 선)와 값
     const pos = tags.map((t) => [cx + t[0] * R, cy + t[1] * R] as [number, number]);
+    const cmp = finished && !!before && !!after; // 판정 때: 처음과 나중을 한 무대에서 비교한다
+    if (cmp) {
+      // 처음의 작은 풍선과 딱지 자리(점선)
+      ctx.save();
+      ctx.strokeStyle = "rgba(255,255,255,.7)";
+      ctx.lineWidth = 1.6;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.arc(cx, cy, R0, 0, Math.PI * 2);
+      ctx.stroke();
+      const p0 = tags.map((t) => [cx + t[0] * R0, cy + t[1] * R0] as [number, number]);
+      ctx.strokeStyle = "rgba(255,243,176,.55)";
+      ctx.lineWidth = 1.4;
+      PAIRS.forEach(([a, b]) => {
+        ctx.beginPath();
+        ctx.moveTo(p0[a][0], p0[a][1]);
+        ctx.lineTo(p0[b][0], p0[b][1]);
+        ctx.stroke();
+      });
+      ctx.strokeStyle = "rgba(255,216,74,.85)";
+      ctx.lineWidth = 1.5;
+      p0.forEach((p) => {
+        ctx.beginPath();
+        ctx.arc(p[0], p[1], 6, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+      ctx.restore();
+    }
     if (showTape && tags.length === 3) {
       const cm = grow >= 1 ? CM1 : CM0;
-      PAIRS.forEach(([a, b]) => {
-        sLine(ctx, pos[a][0], pos[a][1], pos[b][0], pos[b][1], "#FFF3B0", 2.5);
+      // 늘어난 만큼은 화면에 적힌 두 값(소수 첫째 자리)의 차로 적는다(적힌 숫자끼리 빼면 늘 맞게)
+      const gain = cmp ? PAIRS.map((_, i) => (Math.round(after![i] * 10) - Math.round(before![i] * 10)) / 10) : [];
+      const best = cmp ? gain.indexOf(Math.max(...gain)) : -1;
+      const gx = (pos[0][0] + pos[1][0] + pos[2][0]) / 3;
+      const gy = (pos[0][1] + pos[1][1] + pos[2][1]) / 3;
+      PAIRS.forEach(([a, b], i) => sLine(ctx, pos[a][0], pos[a][1], pos[b][0], pos[b][1], i === best ? S.gold : "#FFF3B0", i === best ? 3.4 : 2.5));
+      PAIRS.forEach(([a, b], i) => {
         // 값은 선의 가운데에서 세 딱지의 한가운데 반대쪽으로 비켜 적는다(딱지에 가리지 않게)
         const mx = (pos[a][0] + pos[b][0]) / 2;
         const my = (pos[a][1] + pos[b][1]) / 2;
-        const gx = (pos[0][0] + pos[1][0] + pos[2][0]) / 3;
-        const gy = (pos[0][1] + pos[1][1] + pos[2][1]) / 3;
         const dl = Math.hypot(mx - gx, my - gy) || 1;
-        sText(ctx, arc(a, b, cm).toFixed(1), mx + ((mx - gx) / dl) * 15, my + ((my - gy) / dl) * 15, { color: "#fff", px: 12.5, w: 800 });
+        if (!cmp) {
+          sText(ctx, arc(a, b, cm).toFixed(1), mx + ((mx - gx) / dl) * 15, my + ((my - gy) / dl) * 15, { color: "#fff", px: 12.5, w: 800 });
+          return;
+        }
+        const lx = Math.max(34, Math.min(w - 34, mx + ((mx - gx) / dl) * 27));
+        const ly = Math.max(20, Math.min(h - 22, my + ((my - gy) / dl) * 27));
+        sText(ctx, `${before![i].toFixed(1)}→${after![i].toFixed(1)}`, lx, ly - 7, { color: "#fff", px: 12, w: 800 });
+        sText(ctx, `+${gain[i].toFixed(1)}`, lx, ly + 8, { color: i === best ? S.gold : "#FFF3B0", px: i === best ? 13.5 : 12, w: 800 });
       });
     }
     // 딱지(크기는 변하지 않는다)
@@ -183,7 +235,8 @@ export const balloonLab: StepRenderer = (host, step, api) => {
       sDisk(ctx, p[0], p[1], 10, "#FFD84A", "#8A6500", 1.5);
       sInk(ctx, NAMES[i], p[0], p[1] + 0.5, { color: "#3A2A00", px: 12 });
     });
-    sText(ctx, grow >= 1 ? "큰 풍선" : grow > 0 ? "커지는 중" : "작은 풍선", 12, 16, { color: S.dim, px: 12, align: "left" });
+    sText(ctx, grow >= 1 ? (cmp ? "큰 풍선과 처음의 작은 풍선(점선)" : "큰 풍선") : grow > 0 ? "커지는 중" : "작은 풍선", 12, 16, { color: S.dim, px: 12, align: "left" });
+    if (cmp) sText(ctx, "단위: cm", 12, h - 14, { color: S.dim, px: 12, align: "left" });
     if (tags.length < 3) sText(ctx, `풍선을 눌러 딱지 ${NAMES[tags.length]}을 붙여요`, w / 2, h - 14, { color: S.gold, px: 12.5, w: 800 });
   });
 

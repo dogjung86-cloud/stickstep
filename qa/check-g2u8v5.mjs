@@ -288,17 +288,25 @@ const LAB = {
   },
   async nebula() {
     await at("nebula-start");
-    await tapKey(page, "in"); await W(page, 1400);
-    await at("nebula-in");
-    await tapKey(page, "side"); await W(page, 1400);
-    await at("nebula-side");
-    await tapKey(page, "back"); await W(page, 1400);
-    await at("nebula-back");
+    // 고르기는 구름 곁에 무엇이 있는지(아주 뜨거운 별, 덜 뜨거운 별, 별 없이 뒤의 밝은 빛)
+    await tapKey(page, "hot"); await W(page, 1400);
+    await at("nebula-hot");
+    await tapKey(page, "none"); await W(page, 1400);
+    await at("nebula-none");
+    await tapKey(page, "cool"); await W(page, 1400);
+    await at("nebula-cool");
+    // 판정은 암흑 성운을 묻는다: 마지막에 다른 장면을 골랐어도 판정이 뜨면 무대가 검게 보이는 구름으로 돌아온다
+    ok(await waitAsk(page), "nebula: 판정이 뜨지 않음");
+    ok(await page.evaluate(() => document.querySelector(".screen.active .bv-ctl [data-k=none]")?.classList.contains("on")), "nebula: 판정 때 무대가 검은 구름으로 돌아오지 않음");
     await finishLab("nebula", "이름 붙이기", 1);
   },
   async balloon() {
     await at("balloon-start");
-    for (const [x, y] of [[136, 111], [164, 142], [185, 105]]) { await tapStage(page, x, y); await W(page, 250); }
+    // 딱지 ㄷ은 한 간격이 다른 간격의 1.5배를 넘게 붙여야 한다: 세 간격이 비슷한 자리(165, 104)는 받지 않는다
+    for (const [x, y] of [[134, 108], [152, 131], [165, 104]]) { await tapStage(page, x, y); await W(page, 250); }
+    ok((await page.evaluate(() => document.querySelector(".screen.active .bv-helper")?.textContent ?? "")).includes("비슷해요"), "balloon: 간격이 비슷한 딱지 ㄷ을 받아 버림");
+    await at("balloon-near");
+    await tapStage(page, 196, 100); await W(page, 250);
     await at("balloon-tags");
     await hold("바람 더", 1900);
     await W(page, 400);

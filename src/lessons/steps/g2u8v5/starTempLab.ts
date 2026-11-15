@@ -1,23 +1,52 @@
 // [중2 Ⅷ v5] g2u8l4 starTempLab: 「별의 색은 무엇이 정할까요?」
-// 책의 어디에서: 본문(표면 온도가 낮은 별은 붉은색 빛을, 높은 별은 파란색 빛을 더 많이 낸다), 해 보기 과정 2(시리우스, 안타레스, 알데바란의 색 견주기).
+// 책의 어디에서: 본문(표면 온도가 낮은 별은 붉은색 빛을, 높은 별은 파란색 빛을 더 많이 낸다), 해 보기 과정 2(시리우스, 안타레스, 알데바란의 색 비교하기).
 // 한 통찰: 별의 색은 표면 온도가 정한다. 표면 온도가 낮을수록 붉고 높을수록 하얗고 파랗다.
 // 학생이 정하는 것: 별의 표면 온도. 세 별의 색에 맞을 때까지 온도를 맞춘다(색이 다르면 맞지 않는다).
-// 두 빛의 양은 온도에 따른 빛의 세기 식(파장 650 nm와 450 nm)으로 계산한다. 별의 색은 kit의 tempColor.
+// 두 빛의 양은 온도에 따른 빛의 세기 식(파장 650 nm와 450 nm)으로 계산한다.
+// 별의 칠은 책 그림 '별의 색과 표면 온도'의 일곱 색(적색, 주황색, 황색, 황백색, 백색, 청백색, 청색)이다. 색 이름의 구간(K)마다 그 색이고,
+// 구간의 경계 가까이(±120 K)에서만 이웃 색과 부드럽게 잇는다. 그래서 무대의 별과 아래 글자의 색 이름이 늘 맞고, 맞출 별의 점도 같은 색에서 뽑는다.
+// (흑체 근사색은 3000~6500 ℃가 살구색과 흰색 사이에 몰려 색 이름과 어긋났다.) 무대 아래 가장자리에 일곱 색 띠와 지금 자리를 둔다.
 // 화면의 온도는 ℃로 적는다(중2는 켈빈을 배우지 않는다). 계산은 켈빈(℃ + 273)으로 한다.
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvBtn, bvRange, bvTimers } from "../bio6/b6Lab";
-import { josa, rgb, S, sBox, sCanvas, sDisk, sFrame, sLog, sText, tempColor, type LabStep } from "./kit";
+import { josa, rgb, S, sBox, sCanvas, sDisk, sFrame, sLog, sText, type LabStep } from "./kit";
 
+type C3 = [number, number, number];
 const KELVIN = (i: number): number => 3000 + i * 100 + 273; // 막대의 한 칸은 100 ℃, 3000 ℃에서 12000 ℃까지
 const celsius = (k: number): number => Math.round((k - 273) / 100) * 100;
-const colorName = (k: number): string => (k < 3700 ? "적색" : k < 5200 ? "주황색" : k < 6000 ? "황색" : k < 7500 ? "황백색" : k < 10000 ? "백색" : "청백색");
+/** 책의 일곱 색. 어두운 무대에서 이름대로 읽히게 조금 진하게 맞췄다. */
+const BAND: { name: string; c: C3 }[] = [
+  { name: "적색", c: [244, 96, 58] },
+  { name: "주황색", c: [255, 162, 38] },
+  { name: "황색", c: [255, 222, 92] },
+  { name: "황백색", c: [247, 241, 196] },
+  { name: "백색", c: [236, 242, 249] },
+  { name: "청백색", c: [190, 216, 250] },
+  { name: "청색", c: [120, 170, 240] },
+];
+/** 색 구간의 경계(K). 청색은 이 막대(12000 ℃)보다 훨씬 뜨거운 별이라 띠에만 보인다. */
+const EDGE = [3700, 5200, 6000, 7500, 10000, 25000];
+/** 띠에서 각 구간이 차지하는 온도(K)의 양 끝. 가장 차가운 쪽과 가장 뜨거운 쪽은 이 랩에서 쓰는 만큼만 잡았다. */
+const LO = [2700, ...EDGE];
+const HI = [...EDGE, 40000];
+const bandIndex = (k: number): number => EDGE.filter((e) => k >= e).length;
+const colorName = (k: number): string => BAND[bandIndex(k)].name;
+const mixC = (a: C3, b: C3, t: number): C3 => [0, 1, 2].map((i) => Math.round(a[i] + (b[i] - a[i]) * t)) as C3;
+/** 표면 온도(K)의 색: 구간마다 그 색, 경계의 ±120 K에서만 이웃 색과 섞는다. */
+const BLEND = 120;
+function bandColor(k: number): C3 {
+  const i = bandIndex(k);
+  if (i > 0 && k < EDGE[i - 1] + BLEND) return mixC(BAND[i - 1].c, BAND[i].c, 0.5 + (k - EDGE[i - 1]) / (2 * BLEND));
+  if (i < EDGE.length && k > EDGE[i] - BLEND) return mixC(BAND[i].c, BAND[i + 1].c, 0.5 - (EDGE[i] - k) / (2 * BLEND));
+  return BAND[i].c;
+}
 const planck = (nm: number, k: number): number => 1 / ((nm / 1000) ** 5 * (Math.exp(14388 / ((nm / 1000) * k)) - 1));
 const TARGETS = [
-  { name: "안타레스", color: "적색", k: 3473, dot: "#FF6A4D" },
-  { name: "알데바란", color: "주황색", k: 3873, dot: "#FFAA5C" },
-  { name: "시리우스", color: "백색", k: 9873, dot: "#F2F6FF" },
+  { name: "안타레스", color: "적색", k: 3473 },
+  { name: "알데바란", color: "주황색", k: 3873 },
+  { name: "시리우스", color: "백색", k: 9873 },
 ];
 
 export const starTempLab: StepRenderer = (host, step, api) => {
@@ -88,7 +117,7 @@ export const starTempLab: StepRenderer = (host, step, api) => {
 
   st.run((ctx, w, h, _t, dt) => {
     kShow += (k - kShow) * Math.min(1, dt * 0.25);
-    const col = tempColor(kShow);
+    const col = bandColor(kShow);
     // 내 별
     const cx = 86;
     const cy = h / 2 + 12;
@@ -104,7 +133,7 @@ export const starTempLab: StepRenderer = (host, step, api) => {
     TARGETS.forEach((t, i) => {
       const x = 30 + i * 54;
       const done = i < cur || finished;
-      sDisk(ctx, x, 26, 11, t.dot, i === cur && !finished ? "#fff" : undefined, 2);
+      sDisk(ctx, x, 26, 11, rgb(bandColor(t.k)), i === cur && !finished ? "#fff" : undefined, 2);
       sText(ctx, t.name, x, 48, { color: i === cur && !finished ? "#fff" : done ? S.ok : S.dim, px: 12, w: i === cur ? 800 : 700 });
     });
     // 별이 내는 두 빛의 양
@@ -125,6 +154,29 @@ export const starTempLab: StepRenderer = (host, step, api) => {
       sBox(ctx, x + 6, base - hh, 38, hh, 6, bar.c);
       sText(ctx, bar.n, x + 25, base + 15, { color: S.ink, px: 12 });
     });
+    // 무대 아래 가장자리: 책의 일곱 색 띠(왼쪽이 낮은 온도)와 지금 온도의 자리
+    const lx = 14;
+    const lw = w - 28;
+    const ly = h - 9;
+    const seg = lw / BAND.length;
+    BAND.forEach((band, i) => {
+      ctx.fillStyle = rgb(band.c);
+      ctx.fillRect(lx + i * seg + (i ? 0.5 : 0), ly, seg - (i < BAND.length - 1 ? 1 : 0), 5);
+    });
+    const bi = bandIndex(kShow);
+    const mx = lx + (bi + Math.max(0, Math.min(1, (kShow - LO[bi]) / (HI[bi] - LO[bi])))) * seg;
+    ctx.save();
+    ctx.fillStyle = "#fff";
+    ctx.strokeStyle = "rgba(11,21,36,.9)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(mx, ly - 1);
+    ctx.lineTo(mx - 5, ly - 8);
+    ctx.lineTo(mx + 5, ly - 8);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.fill();
+    ctx.restore();
   });
 
   brief();

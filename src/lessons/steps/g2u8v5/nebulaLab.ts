@@ -1,20 +1,23 @@
 // [중2 Ⅷ v5] g2u8l6 nebulaLab: 「같은 구름이 왜 다르게 보일까요?」
 // 책의 어디에서: 본문(방출 성운은 주변의 별빛에 가열되어 스스로 빛을 내고, 반사 성운은 주변의 별빛을 반사하며, 암흑 성운은 뒤쪽에서 오는 별빛을 가로막는다).
-// 한 통찰: 가스와 티끌의 구름은 둘레의 별이 어디에 있느냐에 따라 붉게 빛나거나, 파랗게 비치거나, 검게 가린다.
-// 학생이 정하는 것: 구름 둘레의 별을 어디에 둘지(구름 속의 아주 뜨거운 별, 구름 옆의 별, 구름 뒤의 별들).
+// 한 통찰: 가스와 티끌의 구름은 곁에 무엇이 있느냐에 따라 다르게 보인다. 곁의 별이 가스를 달굴 만큼 아주 뜨거우면 가스가 스스로 붉게 빛나고(방출),
+//          그만큼 뜨겁지 않으면 티끌이 별빛을 반사해 파랗게 보이고(반사), 곁에 별이 없으면 뒤에서 오는 빛을 가로막아 검게 보인다(암흑).
+// 학생이 정하는 것: 구름 곁에 무엇이 있을지(아주 뜨거운 별, 덜 뜨거운 별, 별 없이 뒤의 밝은 빛).
+// 가르는 것은 별의 자리가 아니라 곁에 있는 별의 종류다. 그래서 앞의 두 장면은 별을 같은 자리에 두고 별의 색과 크기만 달리 그린다
+// (아주 뜨거운 별은 크고 푸르게, 덜 뜨거운 별은 작고 희게. 반사 성운을 비추는 별도 흰빛이 도는 뜨거운 별이라 붉게 그리지 않는다).
 // 실사: 라군 성운(ESO), M78(ESO), 말머리성운. 같은 모습의 실제 천체를 무대 오른쪽에 보여 준다.
 
 import { el } from "../../../core/dom";
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
 import { bvTimers } from "../bio6/b6Lab";
-import { rnd, S, sCanvas, sFrame, sGlow, sLine, sLog, sSegs, starPhoto, sText, type LabStep } from "./kit";
+import { rnd, S, sCanvas, sFrame, sLog, sSegs, starPhoto, sText, type LabStep } from "./kit";
 
-type Mode = "in" | "side" | "back";
+type Mode = "hot" | "cool" | "none";
 const REAL: Record<Mode, { file: string; name: string; alt: string }> = {
-  in: { file: "lagoon.webp", name: "라군 성운", alt: "붉게 빛나는 성운" },
-  side: { file: "m78-reflection.webp", name: "M78", alt: "파랗게 빛나는 성운" },
-  back: { file: "horsehead.webp", name: "말머리성운", alt: "검게 보이는 성운" },
+  hot: { file: "lagoon.webp", name: "라군 성운", alt: "붉게 빛나는 성운" },
+  cool: { file: "m78-reflection.webp", name: "M78", alt: "파랗게 빛나는 성운" },
+  none: { file: "horsehead.webp", name: "말머리성운", alt: "검게 보이는 성운" },
 };
 
 export const nebulaLab: StepRenderer = (host, step, api) => {
@@ -28,30 +31,34 @@ export const nebulaLab: StepRenderer = (host, step, api) => {
   let mode: Mode | null = null;
   let k = 0; // 장면이 바뀐 정도(0에서 1로)
   let finished = false;
-  const log = sLog(["별이 구름 속", "별이 구름 옆", "별이 구름 뒤"], 1, true);
+  const log = sLog(["아주 뜨거운 별이 곁에", "덜 뜨거운 별이 곁에", "별 없이 뒤에 밝은 빛"], 1, true);
+  /** 무대를 그 장면으로 바꾼다(기록은 건드리지 않는다). */
+  const show = (m: Mode): void => {
+    mode = m;
+    k = 0;
+    pic.src = starPhoto(REAL[m].file);
+    pic.alt = REAL[m].alt;
+    pic.classList.add("on");
+  };
   const seg = sSegs<Mode>(
     [
-      { k: "in", t: "별이 구름 속" },
-      { k: "side", t: "별이 구름 옆" },
-      { k: "back", t: "별이 구름 뒤" },
+      { k: "hot", t: "아주 뜨거운 별" },
+      { k: "cool", t: "덜 뜨거운 별" },
+      { k: "none", t: "뒤에 밝은 빛" },
     ],
     null,
     (m) => {
-      mode = m;
-      k = 0;
+      show(m);
       haptic(HAPTIC.tap);
-      pic.src = starPhoto(REAL[m].file);
-      pic.alt = REAL[m].alt;
-      pic.classList.add("on");
-      if (m === "in") {
+      if (m === "hot") {
         log.set(0, "스스로 붉게 빛남");
-        f.say("<b>아주 뜨거운 별</b>이 구름 속에 있어요. 구름의 가스가 별빛에 달궈져 <b>스스로 붉게</b> 빛나요.");
-      } else if (m === "side") {
+        f.say("<b>아주 뜨거운 별</b>이 곁에 있어요. 구름의 가스가 별빛에 달궈져 <b>스스로 붉게</b> 빛나요.");
+      } else if (m === "cool") {
         log.set(1, "별빛을 반사해 파랗게");
-        f.say("별이 구름 <b>옆</b>에 있어요. 구름의 티끌이 별빛을 <b>반사해</b> 파랗게 보여요.");
+        f.say("<b>덜 뜨거운 별</b>이 곁에 있어요. 구름의 티끌이 별빛을 <b>반사해</b> 파랗게 보여요.");
       } else {
-        log.set(2, "뒤의 별빛을 가려 검게");
-        f.say("가까이에 별이 없어요. 구름이 <b>뒤에서 오는 별빛을 가로막아</b> 검게 보여요.");
+        log.set(2, "뒤의 빛을 가려 검게");
+        f.say("곁에 별이 없어요. 구름이 <b>뒤에서 오는 빛을 가로막아</b> 검게 보여요.");
       }
       const n = [0, 1, 2].filter((i) => log.has(i)).length;
       f.pips(n);
@@ -67,7 +74,12 @@ export const nebulaLab: StepRenderer = (host, step, api) => {
   f.slot.setControls(seg.el, log.el);
 
   function askFinal(): void {
-    f.say("세 장면을 떠올리며 아래 질문에 답해 보세요.");
+    // 판정은 검게 보인 구름을 묻는다. 무대를 그 장면으로 되돌려 놓고 묻는다.
+    if (mode !== "none") {
+      show("none");
+      seg.set("none");
+    }
+    f.say("검게 보이는 구름을 보며 아래 질문에 답해 보세요.");
     f.slot.ask(
       "구름 뒤의 별빛이 우리에게 오지 못한 까닭은?",
       [{ t: "구름이 별빛을 가로막아서", ok: true }, { t: "뒤의 별이 빛을 내지 않아서" }, { t: "구름이 별을 삼켜 버려서" }],
@@ -77,7 +89,7 @@ export const nebulaLab: StepRenderer = (host, step, api) => {
   }
   function finish(): void {
     f.say("탐험 끝! 아래에서 오늘 알게 된 것을 읽어 봐요.");
-    f.slot.conclude("가스와 티끌이 모인 구름은 둘레의 별에 따라 다르게 보여요. 별빛에 달궈지면 <b>스스로 붉게</b> 빛나고, 별빛을 <b>반사하면 파랗게</b>, 뒤의 별빛을 <b>가로막으면 검게</b> 보여요.");
+    f.slot.conclude("가스와 티끌의 구름은 곁에 무엇이 있느냐에 따라 달라 보여요. <b>아주 뜨거운 별</b>에 달궈지면 스스로 붉게 빛나고, 덜 뜨거운 별의 빛을 <b>반사하면 파랗게</b>, 뒤의 빛을 <b>가로막으면 검게</b> 보여요.");
     api.enableCTA(s.cta ?? "다음");
   }
 
@@ -87,8 +99,21 @@ export const nebulaLab: StepRenderer = (host, step, api) => {
     k = Math.min(1, k + dt / 40);
     const cx = (w - 110) / 2 + 4;
     const cy = h / 2 + 6;
-    // 뒤의 별밭
-    for (let i = 0; i < 110; i++) {
+    // 앞의 두 장면에서 별이 서는 자리(같은 자리)
+    const sx = cx - 16;
+    const sy = cy - 4;
+    // 암흑 장면: 구름 뒤의 밝은 빛(붉게 빛나는 성운과 촘촘한 별밭)
+    if (mode === "none") {
+      const back = ctx.createRadialGradient(cx + 20, cy - 4, 6, cx + 16, cy, 175);
+      back.addColorStop(0, `rgba(255,128,150,${0.62 * k})`);
+      back.addColorStop(0.5, `rgba(214,74,110,${0.34 * k})`);
+      back.addColorStop(1, "rgba(214,74,110,0)");
+      ctx.fillStyle = back;
+      ctx.fillRect(0, 0, w, h);
+    }
+    // 뒤의 별밭(암흑 장면은 더 촘촘하다)
+    const nStar = mode === "none" ? 190 : 110;
+    for (let i = 0; i < nStar; i++) {
       const x = rnd(i * 2.1 + 9) * (w - 108);
       const y = rnd(i * 4.7 + 5) * h;
       ctx.globalAlpha = 0.35 + rnd(i) * 0.6;
@@ -98,42 +123,64 @@ export const nebulaLab: StepRenderer = (host, step, api) => {
       ctx.fill();
     }
     ctx.globalAlpha = 1;
-    // 구름
-    const tone = mode === "in" ? [236, 86, 110] : mode === "side" ? [110, 160, 255] : mode === "back" ? [6, 8, 16] : [70, 78, 104];
-    const alpha = mode === "back" ? 0.5 + 0.45 * k : mode ? 0.16 + 0.2 * k : 0.2;
-    if (mode === "back")
-      BLOBS.forEach((b) => {
-        // 검은 구름의 가장자리가 보이게 뒤에 옅은 빛을 깐다
-        const halo = ctx.createRadialGradient(cx + b.x, cy + b.y, b.r * 0.6, cx + b.x, cy + b.y, b.r * 1.25);
-        halo.addColorStop(0, `rgba(150,170,230,${0.16 * k})`);
-        halo.addColorStop(1, "rgba(150,170,230,0)");
-        ctx.fillStyle = halo;
-        ctx.fillRect(cx + b.x - b.r * 1.3, cy + b.y - b.r * 1.3, b.r * 2.6, b.r * 2.6);
-      });
+    // 구름: 아주 뜨거운 별 곁이면 붉게, 덜 뜨거운 별 곁이면 파랗게(별 가까이가 더 밝다), 뒤에 빛만 있으면 검게 가린다
+    const tone = mode === "hot" ? [236, 86, 110] : mode === "cool" ? [110, 160, 255] : mode === "none" ? [5, 7, 14] : [70, 78, 104];
     BLOBS.forEach((b) => {
-      const g = ctx.createRadialGradient(cx + b.x, cy + b.y, 0, cx + b.x, cy + b.y, b.r);
-      g.addColorStop(0, `rgba(${tone.join(",")},${alpha})`);
+      const bx = cx + b.x;
+      const by = cy + b.y;
+      let a = 0.2;
+      if (mode === "none") a = 0.55 + 0.42 * k;
+      else if (mode) {
+        // 별에서 가까운 덩어리일수록 더 밝다
+        const near = Math.max(0, 1 - Math.hypot(bx - sx, by - sy) / 110);
+        a = 0.1 + (0.12 + 0.34 * near) * k;
+      }
+      const g = ctx.createRadialGradient(bx, by, 0, bx, by, b.r);
+      g.addColorStop(0, `rgba(${tone.join(",")},${a})`);
+      if (mode === "none") g.addColorStop(0.62, `rgba(${tone.join(",")},${a * 0.92})`); // 검은 구름은 가장자리까지 진하게(뒤의 빛을 또렷이 가린다)
       g.addColorStop(1, `rgba(${tone.join(",")},0)`);
       ctx.fillStyle = g;
-      ctx.fillRect(cx + b.x - b.r, cy + b.y - b.r, b.r * 2, b.r * 2);
+      ctx.fillRect(bx - b.r, by - b.r, b.r * 2, b.r * 2);
     });
-    if (mode === "in") {
-      sGlow(ctx, cx, cy, 14 + Math.sin(t / 300), S.hot, 0.36);
-      sText(ctx, "아주 뜨거운 별", cx, cy + 26, { color: "#fff", px: 12 });
-    } else if (mode === "side") {
-      const sx = cx - 96;
-      sGlow(ctx, sx, cy - 30, 13, "#EAF1FF", 0.36);
-      sText(ctx, "별", sx, cy - 8, { color: "#fff", px: 12 });
-      for (let i = 0; i < 3; i++) sLine(ctx, sx + 14, cy - 28 + i * 6, cx - 40, cy - 14 + i * 14, "rgba(170,200,255,.5)", 1.2, [4, 5]);
-    } else if (mode === "back") {
-      sText(ctx, "뒤의 별빛이 가려져요", cx, cy, { color: "rgba(232,238,249,.75)", px: 12 });
+    if (mode === "hot" || mode === "cool") {
+      // 별 곁의 빛무리(구름이 별 가까이에서 가장 밝다)
+      const glow = ctx.createRadialGradient(sx, sy, 2, sx, sy, 62);
+      const c = mode === "hot" ? "255,110,130" : "150,190,255";
+      glow.addColorStop(0, `rgba(${c},${0.42 * k})`);
+      glow.addColorStop(1, `rgba(${c},0)`);
+      ctx.fillStyle = glow;
+      ctx.fillRect(sx - 62, sy - 62, 124, 124);
+      // 같은 자리의 별: 아주 뜨거운 별은 크고 푸르게(청색), 덜 뜨거운 별은 작고 희게(백색)
+      const star = (r: number, glow: string, core: string, cr: number): void => {
+        const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, r);
+        sg.addColorStop(0, `rgba(${glow},.95)`);
+        sg.addColorStop(0.3, `rgba(${glow},.5)`);
+        sg.addColorStop(1, `rgba(${glow},0)`);
+        ctx.fillStyle = sg;
+        ctx.beginPath();
+        ctx.arc(sx, sy, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = core;
+        ctx.beginPath();
+        ctx.arc(sx, sy, cr, 0, Math.PI * 2);
+        ctx.fill();
+      };
+      if (mode === "hot") {
+        star(24 + Math.sin(t / 300), "110,160,255", "#CFE0FF", 7.5);
+        sText(ctx, "아주 뜨거운 별", sx, sy + 30, { color: "#fff", px: 12 });
+      } else {
+        star(12, "255,255,255", "#FFFFFF", 4);
+        sText(ctx, "덜 뜨거운 별", sx, sy + 22, { color: "#fff", px: 12 });
+      }
+    } else if (mode === "none") {
+      sText(ctx, "뒤의 빛을 가로막아요", cx - 4, cy + 4, { color: "rgba(232,238,249,.8)", px: 12 });
     } else sText(ctx, "가스와 티끌의 구름", cx, cy, { color: S.ink, px: 12.5 });
     // 오른쪽: 같은 모습의 실제 천체
     sText(ctx, mode ? `실제 사진: ${REAL[mode].name}` : "실제 사진", w - 8, 16, { color: S.ink, px: 12, align: "right" });
   });
 
-  f.say("가스와 티끌이 모인 <b>구름</b>이에요. 구름 둘레의 <b>별을 어디에 둘지</b> 골라 구름이 어떻게 보이는지 살펴보세요.");
-  api.setCTA("별의 자리를 세 가지로 바꿔 보세요", { enabled: false });
+  f.say("가스와 티끌이 모인 <b>구름</b>이에요. 구름 <b>곁에 무엇이 있을지</b> 골라 구름이 어떻게 보이는지 살펴보세요.");
+  api.setCTA("구름 곁을 세 가지로 바꿔 보세요", { enabled: false });
   return () => {
     tm.clear();
     st.stop();

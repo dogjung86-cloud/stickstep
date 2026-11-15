@@ -4,7 +4,7 @@
 import type { Step } from "../../lessons/types";
 import { concept, mcq, multi, opener, order, ox, recap, cut } from "../dsl";
 import { starMiniArt } from "../../ui/starFigures";
-import { magTableFig, starImg, x8Mini } from "../../ui/g2u8v5Figures";
+import { magTableFig, starStrip, x8Mini } from "../../ui/g2u8v5Figures";
 import { sciFigMore } from "./sciFigG2";
 
 // ── 공용 조각(레슨 5~8의 파일도 가져다 쓴다) ──
@@ -341,7 +341,7 @@ export const L4: Step[] = numbered([
   }),
   mcq({
     prompt: "사진은 망원경으로 본 두 별이에요. <b>주황색 별</b>과 <b>청백색 별</b> 가운데 표면 온도가 더 높은 별과 그 까닭으로 옳은 것은?",
-    figure: starImg("albireo.webp", "어두운 하늘에 나란히 보이는 주황색 별과 청백색 별"),
+    figure: starStrip("albireo-pair.webp", "어두운 하늘에 나란히 보이는 주황색 별과 청백색 별", "20 / 9", 400),
     options: ["청백색 별, 표면 온도가 높을수록 파란색을 띠므로", "주황색 별, 표면 온도가 높을수록 붉은색을 띠므로", "청백색 별, 지구에 더 가까이 있으므로", "주황색 별, 더 밝게 보이므로", "두 별의 표면 온도는 같다"],
     answer: 0,
     explainGood: "맞아요. 별은 표면 온도가 높을수록 파란색, 낮을수록 붉은색을 띠어요.",
