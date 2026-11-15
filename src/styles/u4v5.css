@@ -120,7 +120,7 @@
 .u4x-heat-tag {
   position: absolute; left: 8px; top: 44px; height: 26px; padding: 0 10px; border-radius: 999px; display: grid; place-items: center;
   font-size: 12px; font-weight: 800; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .2s;
-  background: rgba(240, 112, 94, .28); border: 1px solid rgba(255, 170, 150, .6); color: #FFE0D8;
+  background: rgba(255, 146, 43, .26); border: 1px solid rgba(255, 192, 120, .62); color: #FFE8CC; /* 열이 들어옴: 주황(빨강은 오답 색) */
 }
 .u4x-curve.is-freeze .u4x-heat-tag { background: rgba(116, 192, 252, .25); border-color: rgba(160, 210, 255, .6); color: #DDF0FF; }
 .u4x-curve.act .u4x-heat-tag { opacity: 1; }
@@ -138,7 +138,7 @@
 .u4x-around-ex { position: absolute; left: 14px; bottom: 9px; max-width: 236px; font-size: 12.5px; line-height: 17px; font-weight: 700; color: #B9C8DE; white-space: nowrap; pointer-events: none; }
 .u4x-around-card.col { height: 60px; }
 .u4x-around-card.cool { border-color: #74C0FC; background: #EEF7FF; }
-.u4x-around-card.warm { border-color: #F7A08F; background: #FFF3F0; }
+.u4x-around-card.warm { border-color: #FFB45C; background: #FFF4E6; } /* 따뜻해짐: 주황(빨강은 오답 색) */
 
 /* ══════════ 도입 장면(.opn-u4-) ══════════ */
 .opn-step[data-opn-scene^="u4-"] .hook-choices .hook-q b { color: var(--subj-matter-press); }
