@@ -5,6 +5,9 @@
 // 실패하는 길: 온도가 평평한 구간과 오르는 구간이 한 시험관에 함께 모이면 에탄올과 물이 섞여 다시 해야 한다.
 // 통찰 하나: 끓는점이 낮은 에탄올이 먼저 끓어 나오고 끓는점이 높은 물이 나중에 나온다.
 // 수치: 끓는점은 에탄올 78 ℃, 물 100 ℃(자연값). 가열 시간은 이 랩에서 정했다.
+// 장치(2026-11-15 그래픽 감사): 온도계 끝은 가지(옆으로 난 관) 높이, 플라스크 바닥에 끓임쪽. 얼음물 비커에는 지금 받는 시험관 하나만 두고
+//   유리관 끝이 그 시험관 속(바닥에 닿지 않게)으로 들어간다. 다 받은 시험관은 옆 시험관대로 옮겨 세운다(모인 액체 색은 그대로).
+//   그래프의 시험관 이름은 바꾼 자리가 아니라 각 구간의 가운데 아래쪽에 쓴다(짧은 구간에서 이름끼리 붙지 않게).
 
 import { haptic, HAPTIC } from "../../../core/haptics";
 import type { StepRenderer } from "../../types";
@@ -17,65 +20,83 @@ const EDGE = [0, 6, 12, 15, TMAX];
 const temp = (t: number): number => (t < 6 ? 25 + (53 * t) / 6 : t < 12 ? 78 + (3 * (t - 6)) / 6 : t < 15 ? 81 + (19 * (t - 12)) / 3 : 100);
 const region = (t: number): number => (t < 6 ? 0 : t < 12 ? 1 : t < 15 ? 2 : 3);
 const NAME = ["(가)", "(나)", "(다)", "(라)"];
+const ICE_X = 100; // 얼음물 속 시험관의 가운데
+const RACK_X = [142, 167, 192]; // 시험관대 칸(다 받은 시험관). 그래프 세로축(x 208)과 눈금 40의 아래로 띄운다
 
 export const g2u1DistillLab: StepRenderer = (host, step, api) => {
   const lab = g1Lab(host, api, step as unknown as G1Step, { steps: 3, cls: "g2u1x-dt" });
   const { f, tm } = lab;
   const pl = plot({ x: 208, y: 34, w: 126, h: 150, x0: 0, x1: TMAX, y0: 20, y1: 110, xl: "가열 시간(분)", yl: "온도(℃)", xt: [7, 14, 21], yt: [40, 60, 80, 100] });
-  const TX = [112, 134, 156, 178];
+  const chips = [[22, 189], [31, 191], [47, 190], [57, 188]].map(([x, y]) => `<path d="M${x - 2.6} ${y + 1.4} l1.6 -3.2 l3.2 .6 l1 2.6 l-2.2 1.6 Z" fill="#F1F3F5" stroke="#ADB5BD" stroke-width=".8"/>`).join("");
+  const ice = [[85, 164, 8, 12], [115, 163, 8, -10], [85, 177, 7, -8], [116, 178, 7, 14]].map(([x, y, w, a]) => `<rect x="${x - w / 2}" y="${y - w / 2}" width="${w}" height="${w}" rx="2" fill="#E6F6FF" fill-opacity=".9" stroke="#9BD0F2" stroke-width="1" transform="rotate(${a} ${x} ${y})"/>`).join("");
   f.stage.innerHTML = `${svgOpen}
     ${pl.svg}
     <g class="g2u1x-dt-cuts"></g><g class="g2u1x-dt-lines"></g>
-    ${heater(8, 200, 84)}
-    <path d="M40 116 V150 L18 190 a6 6 0 0 0 5 9 h54 a6 6 0 0 0 5 -9 L60 150 V116" stroke="${P.glass}" stroke-width="2.2" stroke-linejoin="round"/>
-    <path class="g2u1x-dt-mix" d="M24 180 L20 191 a4 4 0 0 0 4 6 h52 a4 4 0 0 0 4 -6 L76 180 Z" fill="#9FB8F5" opacity=".6"/>
-    <rect x="36" y="108" width="28" height="9" rx="3" fill="#59657A" stroke="#C8D2DE" stroke-width="1"/>
-    <path d="M50 104 V140" stroke="${P.hot}" stroke-width="2.4" stroke-linecap="round"/>
-    <path d="M60 128 H92 Q100 128 100 136 V150" stroke="${P.glass}" stroke-width="2.2" stroke-linecap="round"/>
-    <path class="g2u1x-dt-arm" d="M100 150 V158" stroke="${P.glass}" stroke-width="2.2" stroke-linecap="round"/>
-    <rect x="98" y="164" width="96" height="40" rx="6" fill="${P.cold}" opacity=".3"/>
-    <path d="M96 158 V200 a6 6 0 0 0 6 6 h88 a6 6 0 0 0 6 -6 V158" stroke="${P.glass}" stroke-width="2"/>
-    ${TX.map((x, i) => `<rect class="g2u1x-dt-fill" data-i="${i}" x="${x - 6}" y="196" width="12" height="0" fill="${P.ethanol}" opacity=".85"/><path d="M${x - 7} 148 V190 a7 7 0 0 0 14 0 V148" stroke="${P.glass}" stroke-width="1.8"/><text x="${x}" y="222" text-anchor="middle" font-size="12" font-weight="800" fill="${P.dim}" class="g2u1x-dt-nm" data-i="${i}">${NAME[i]}</text>`).join("")}
-    <circle class="g2u1x-dt-drop" cx="100" cy="160" r="2.6" fill="#DCE7F5" opacity="0"/>
-    <text class="g2u1x-dt-t" x="50" y="96" text-anchor="middle" font-size="18" font-weight="800" fill="${P.text}">25.0 ℃</text>
-    <text x="100" y="22" text-anchor="middle" font-size="12.5" font-weight="700" fill="${P.dim}">물 + 에탄올 혼합물</text>
-    <text class="g2u1x-dt-ice" x="146" y="142" text-anchor="middle" font-size="12" font-weight="700" fill="${P.dim}">얼음물 속 시험관</text>
+    ${heater(4, 200, 72)}
+    <path class="g2u1x-dt-mix" d="M19.6 172 H60.4 L67 183.5 Q69 191 62 192 H18 Q11 191 13 183.5 Z" fill="#9FB8F5" opacity=".6"/>
+    ${chips}
+    <path d="M33 98 V148 L11 186 a6 6 0 0 0 5.2 9 H63.8 a6 6 0 0 0 5.2 -9 L47 148 V98" stroke="${P.glass}" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M47 125 L62 129 H90 Q100 129 100 139 V156" stroke="${P.glass}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="30" y="90" width="20" height="9" rx="3" fill="#59657A" stroke="#C8D2DE" stroke-width="1"/>
+    <rect x="37.5" y="70" width="5" height="58" rx="2.5" fill="rgba(255,255,255,.14)" stroke="${P.glass}" stroke-width="1.2"/>
+    <path d="M40 124 V100" stroke="${P.hot}" stroke-width="2.2" stroke-linecap="round"/>
+    <circle cx="40" cy="127" r="3.6" fill="${P.hot}"/>
+    <rect x="80" y="160" width="40" height="44" rx="5" fill="${P.cold}" opacity=".3"/>
+    ${ice}
+    <path d="M78 150 V200 a6 6 0 0 0 6 6 H116 a6 6 0 0 0 6 -6 V150 M74 150 H126" stroke="${P.glass}" stroke-width="2" stroke-linecap="round"/>
+    <rect x="130" y="187" width="74" height="4" rx="2" fill="#59657A"/>
+    <rect x="132" y="187" width="3" height="19" fill="#59657A"/><rect x="199" y="187" width="3" height="19" fill="#59657A"/>
+    <rect x="128" y="205" width="78" height="5" rx="2" fill="#59657A"/>
+    <g class="g2u1x-dt-tubes"></g>
+    <circle class="g2u1x-dt-drop" cx="${ICE_X}" cy="159" r="2.6" fill="#DCE7F5" opacity="0"/>
+    <text class="g2u1x-dt-t" x="40" y="62" text-anchor="middle" font-size="18" font-weight="800" fill="${P.text}">25.0 ℃</text>
+    <text x="100" y="20" text-anchor="middle" font-size="12.5" font-weight="700" fill="${P.dim}">물 + 에탄올 혼합물</text>
   </svg>`;
   const q = <T extends Element>(s: string): T => f.stage.querySelector(s) as T;
   const lines = q<SVGGElement>(".g2u1x-dt-lines");
   const cuts = q<SVGGElement>(".g2u1x-dt-cuts");
-  const arm = q<SVGPathElement>(".g2u1x-dt-arm");
+  const tubes = q<SVGGElement>(".g2u1x-dt-tubes");
   const drop = q<SVGCircleElement>(".g2u1x-dt-drop");
   const tEl = q<SVGTextElement>(".g2u1x-dt-t");
-  const fills = Array.from(f.stage.querySelectorAll<SVGRectElement>(".g2u1x-dt-fill"));
-  const names = Array.from(f.stage.querySelectorAll<SVGTextElement>(".g2u1x-dt-nm"));
 
   let cur = 0; // 지금 받고 있는 시험관
   let got: number[][] = [0, 1, 2, 3].map(() => [0, 0, 0, 0]); // 시험관마다 구간별로 받은 시간
   let lastT = 0;
+  let segT = 0; // 지금 시험관으로 받기 시작한 때(그래프의 구간 이름 자리)
   let tries = 0;
 
+  /** 시험관 하나: 가운데 x, 입구 top, 바닥 bot, 폭 w. 모인 액체의 색은 에탄올(보라), 물(파랑), 섞임(회색). */
+  function tubeSvg(i: number, x: number, top: number, bot: number, w: number): string {
+    const g = got[i];
+    const sum = g[1] + g[2] + g[3];
+    const h = Math.min(30, sum * 3.2);
+    const pure = sum > 0 ? Math.max(g[1], g[3]) / sum : 1;
+    const fill = pure < 0.8 ? "#9A9FB5" : g[1] >= g[3] ? P.ethanol : P.water;
+    const r = w / 2;
+    const liq = h > 0.4 ? `<rect class="g2u1x-dt-fill" data-i="${i}" x="${x - r + 2}" y="${fx(bot - 2 - h)}" width="${w - 4}" height="${fx(h)}" rx="${fx(Math.min(r - 2, h / 2))}" fill="${fill}" opacity=".85"/>` : "";
+    return `${liq}<path d="M${x - r} ${top} V${bot - r} a${r} ${r} 0 0 0 ${w} 0 V${top} M${x - r - 2.5} ${top} h${w + 5}" stroke="${P.glass}" stroke-width="1.8"/>
+      <text x="${x}" y="224" text-anchor="middle" font-size="12" font-weight="800" fill="${i === cur ? P.yellow : P.dim}" class="g2u1x-dt-nm" data-i="${i}">${NAME[i]}</text>`;
+  }
+  /** 지금 받는 시험관은 얼음물 속에, 다 받은 시험관은 시험관대에 차례로 세운다. 아직 쓰지 않은 시험관은 그리지 않는다. */
   function paintTubes(): void {
-    const x = TX[cur];
-    arm.setAttribute("d", `M100 150 Q100 ${x === 112 ? 150 : 140} ${x} 150 V158`);
-    drop.setAttribute("cx", String(x));
-    got.forEach((g, i) => {
-      const sum = g[1] + g[2] + g[3];
-      const h = Math.min(40, sum * 4.2);
-      fills[i].setAttribute("y", fx(196 - h));
-      fills[i].setAttribute("height", fx(h));
-      const pure = sum > 0 ? Math.max(g[1], g[3]) / sum : 1;
-      fills[i].setAttribute("fill", pure < 0.8 ? "#9A9FB5" : g[1] >= g[3] ? P.ethanol : P.water);
-      names[i].setAttribute("fill", i === cur ? P.yellow : P.dim);
-    });
+    let s = "";
+    for (let i = 0; i < cur; i++) s += tubeSvg(i, RACK_X[i], 170, 204, 12);
+    s += tubeSvg(cur, ICE_X, 138, 198, 14);
+    tubes.innerHTML = s;
+  }
+  /** 그래프에 시험관 이름: 그 시험관으로 받은 구간의 가운데 아래쪽. */
+  function segName(i: number, t0: number, t1: number): void {
+    cuts.insertAdjacentHTML("beforeend", `<text x="${fx(pl.px((t0 + t1) / 2))}" y="${pl.py(20) - 6}" text-anchor="middle" font-size="12" font-weight="800" fill="${P.yellow}" stroke="#0E1A2C" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${NAME[i]}</text>`);
   }
   const bSwap = bvBtn("", "다음 시험관으로 바꾸기");
   bSwap.dataset.k = "swap";
   bSwap.addEventListener("click", () => {
     if (cur >= 3) return;
     haptic(HAPTIC.tap);
+    cuts.insertAdjacentHTML("afterbegin", `<path d="M${fx(pl.px(lastT))} ${pl.py(20)} V${pl.py(110)}" stroke="${P.yellow}" stroke-width="1.2" stroke-dasharray="3 3"/>`);
+    segName(cur, segT, lastT);
+    segT = lastT;
     cur += 1;
-    cuts.insertAdjacentHTML("beforeend", `<path d="M${fx(pl.px(lastT))} ${pl.py(20)} V${pl.py(110)}" stroke="${P.yellow}" stroke-width="1.2" stroke-dasharray="3 3"/><text x="${fx(pl.px(lastT) + 3)}" y="${pl.py(110) + 12}" font-size="12" font-weight="800" fill="${P.yellow}">${NAME[cur]}</text>`);
     bSwap.textContent = cur < 3 ? `다음 시험관으로 바꾸기 (지금 ${NAME[cur]})` : "마지막 시험관 (라)";
     bSwap.disabled = cur >= 3;
     paintTubes();
@@ -87,6 +108,7 @@ export const g2u1DistillLab: StepRenderer = (host, step, api) => {
     cur = 0;
     got = [0, 1, 2, 3].map(() => [0, 0, 0, 0]);
     lastT = 0;
+    segT = 0;
     lines.innerHTML = "";
     cuts.innerHTML = "";
     bSwap.disabled = false;
@@ -108,6 +130,7 @@ export const g2u1DistillLab: StepRenderer = (host, step, api) => {
       },
       onEnd: () => {
         drop.setAttribute("opacity", "0");
+        segName(cur, segT, TMAX);
         bSwap.disabled = true;
         tm.later(grade, 500);
       },

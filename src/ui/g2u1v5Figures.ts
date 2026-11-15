@@ -76,25 +76,26 @@ export function g1SolPointFig(): string {
   const a = axes({ x1: 80, y1: 160, xt: [20, 40, 60, 80], yt: [40, 80, 120, 160], xl: "온도(℃)", yl: "용해도(g/물 100 g)" });
   return wrap(
     "질산 칼륨의 용해도 곡선과 점 A. A는 60도, 60그램 자리에 있다",
-    a.svg + line(curveOf(kno3), a, ROSE) + tag(a.gx(70), a.gy(kno3(70)) - 10, "질산 칼륨", ROSE, 12) + `<circle cx="${a.gx(60)}" cy="${a.gy(60)}" r="5" fill="${BLUE}"/>${tag(a.gx(60) + 13, a.gy(60) + 4, "A", BLUE)}`,
+    // 이름표는 곡선의 왼쪽 위 빈자리(55 ℃, 130 g). 그 높이에서 곡선은 약 68 ℃(x 277)에 있어 글자(x 210~260)와 17 px 떨어진다.
+    a.svg + line(curveOf(kno3), a, ROSE) + tag(a.gx(55), a.gy(130) + 4, "질산 칼륨", ROSE, 12) + `<circle cx="${a.gx(60)}" cy="${a.gy(60)}" r="5" fill="${BLUE}"/>${tag(a.gx(60) + 13, a.gy(60) + 4, "A", BLUE)}`,
   );
 }
 
-/** 가열 곡선 한 줄: t0 ℃에서 오르다가 stop ℃에서 a~b분 동안 멈추고 다시 오른다(drift는 멈춘 구간에서 오르는 정도). */
-const heatPts = (t0: number, stop: number, a: number, b: number, end: number, tMax: number, drift = 0): Array<[number, number]> => [[0, t0], [a, stop], [b, stop + drift], [tMax, end]];
-
-/** g2u1l5: 고체 A~D의 가열 곡선. A와 C는 50 ℃에서, B는 70 ℃에서, D는 60 ℃에서 멈춘다. */
+/** g2u1l5: 고체 A~D의 가열 곡선. A와 C는 50 ℃에서, B는 70 ℃에서, D는 60 ℃에서 멈춘다.
+ *  네 곡선은 같은 점(0분, 25 ℃)에서 출발해 부채꼴로 갈라지고, 어느 때든 B > D > A > C의 차례를 지켜 서로 닿지 않는다(가장 가까운 곳도 5 ℃ 넘게 떨어진다).
+ *  같은 물질인 A와 C: C는 A의 2배 양이라 오르는 빠르기가 절반(6.25, 3.125 ℃/분), 멈춘 구간은 2배(1.5분, 3분)다.
+ *  두 50 ℃ 구간은 4~5.5분과 8~11분으로 떼어 놓았다. 글자는 각 평평한 구간의 가운데 바로 위에 쓴다. */
 export function g1HeatFig(): string {
   const a = axes({ x1: 12, y0: 20, y1: 90, xt: [2, 4, 6, 8, 10, 12], yt: [30, 50, 70, 90], xl: "가열 시간(분)", yl: "온도(℃)" });
   const C: Array<[string, Array<[number, number]>, string]> = [
-    ["A", heatPts(25, 50, 2, 4, 84, 8), ROSE],
-    ["B", heatPts(25, 70, 3, 6, 88, 9), BLUE],
-    ["C", heatPts(25, 50, 4, 9, 66, 12), "#F08C00"],
-    ["D", heatPts(25, 60, 5, 8, 80, 12), "#2F9E44"],
+    ["A", [[0, 25], [4, 50], [5.5, 50], [7.5, 74]], ROSE],
+    ["B", [[0, 25], [1.5, 70], [2.5, 70], [4, 88]], BLUE],
+    ["C", [[0, 25], [8, 50], [11, 50], [12, 56]], "#F08C00"],
+    ["D", [[0, 25], [2.5, 60], [4, 60], [5.5, 78]], "#2F9E44"],
   ];
   return wrap(
     "고체 A, B, C, D를 가열할 때 시간에 따른 온도 그래프. 네 곡선 모두 중간에 온도가 일정한 구간이 있다",
-    a.svg + C.map(([t, p, c]) => line(p, a, c) + tag(a.gx(p[3][0]) - 4, a.gy(p[3][1]) - 7, t, c)).join(""),
+    a.svg + C.map(([t, p, c]) => line(p, a, c) + tag(a.gx((p[1][0] + p[2][0]) / 2), a.gy(p[1][1]) - 7, t, c)).join(""),
   );
 }
 
@@ -108,7 +109,10 @@ export function g1BoilFig(): string {
   ];
   return wrap(
     "액체 가, 나, 다를 가열할 때 시간에 따른 온도 그래프. 세 액체 모두 꺾인 뒤부터 끓고 있다",
-    a.svg + C.map(([t, p, c]) => line(p, a, c) + (t === "(나)" ? tag(a.gx(7.4), a.gy(89.5) - 12, t, c) : tag(a.gx(11), a.gy(p[2][1]) - 7, t, c))).join(""),
+    // (나)는 주황 선 바로 아래(9분, 선에서 글자 윗면까지 약 7 px)에 쓴다. 이 자리는 (나) 선과 (가) 선(78 ℃) 사이가 29 px로 넓어
+    // 글자가 (가) 선과는 13 px 떨어지고, (가) 이름표(11분)와도 x로 20 px 넘게 떨어진다. 위쪽의 (다) 선과는 닿지 않는다.
+    a.svg +
+      C.map(([t, p, c]) => line(p, a, c) + (t === "(나)" ? tag(a.gx(9), a.gy(84 + (13 * 5) / 8) + 16, t, c) : tag(a.gx(11), a.gy(p[2][1]) - 7, t, c))).join(""),
   );
 }
 

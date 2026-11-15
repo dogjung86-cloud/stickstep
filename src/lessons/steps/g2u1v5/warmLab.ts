@@ -59,7 +59,7 @@ export const g2u1WarmLab: StepRenderer = (host, step, api) => {
     for (let i = 0; i < n; i++) g += `<circle cx="${(66 + (i % 6) * 7.6 + r() * 3).toFixed(1)}" cy="${(180 - Math.floor(i / 6) * 5.4 - r() * 2).toFixed(1)}" r="3" fill="${P.kno3}" stroke="rgba(0,0,0,.25)" stroke-width=".6"/>`;
     pile.innerHTML = g;
     tEl.textContent = `${T} ℃`;
-    strip.set(`<span>넣은 양 <b>6 g</b>  ·  녹은 양 <b>${fx(dis)} g</b>  ·  남은 양 <b class="${left > 0.05 ? "w" : ""}">${fx(left)} g</b></span>`);
+    strip.set(`<span>넣은 양 <b>6 g</b>  ·  녹은 양 <b>${fx(dis)} g</b>  ·  남은 양 <b class="${left > 0.05 ? "k" : ""}">${fx(left)} g</b></span>`);
     host.dataset.g2u1Wm = String(T);
   }
   const range = bvRange({

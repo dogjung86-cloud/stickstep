@@ -322,34 +322,38 @@ export function plot(o: { x: number; y: number; w: number; h: number; x0: number
 /** 점 목록을 polyline의 points 글로. */
 export const ptsOf = (pts: Array<[number, number]>): string => pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
 
-/** 보글보글 기포를 묶음 요소에 n개 그린다(자리는 시드 난수). 영역은 (x, y, w, h). */
-export function bubbles(g: Element, n: number, x: number, y: number, w: number, h: number, rnd: () => number): void {
+/** 보글보글 기포를 묶음 요소에 n개 그린다(자리는 시드 난수). 영역은 (x, y, w, h). rise는 떠오르는 거리(px, 얕은 물에서는 짧게). */
+export function bubbles(g: Element, n: number, x: number, y: number, w: number, h: number, rnd: () => number, rise?: number): void {
   let s = "";
+  const up = rise === undefined ? "" : `--rise:${-rise}px;`;
   for (let i = 0; i < n; i++) {
     const r = 1.6 + rnd() * 2.4;
-    s += `<circle class="g2u1x-bub" cx="${(x + rnd() * w).toFixed(1)}" cy="${(y + rnd() * h).toFixed(1)}" r="${r.toFixed(1)}" stroke="#EAF4FF" stroke-width="1" fill="rgba(255,255,255,.18)" style="animation-delay:${(-rnd() * 1.4).toFixed(2)}s"/>`;
+    s += `<circle class="g2u1x-bub" cx="${(x + rnd() * w).toFixed(1)}" cy="${(y + rnd() * h).toFixed(1)}" r="${r.toFixed(1)}" stroke="#EAF4FF" stroke-width="1" fill="rgba(255,255,255,.18)" style="${up}animation-delay:${(-rnd() * 1.4).toFixed(2)}s"/>`;
   }
   g.innerHTML = s;
 }
 
-/** 가열 곡선을 꾹 누르는 동안 그려 가는 버튼. 시간 t(0~tMax)가 차는 동안 f(t)의 점을 이어 붙인다. 다 차면 onEnd. */
-export function g1Curve(lab: G1Lab, pl: G1Plot, layer: Element, o: { tMax: number; ms: number; f: (t: number) => number; color: string; text?: string; onTick?: (t: number, v: number) => void; onEnd: () => void }): HTMLButtonElement {
+/** 가열 곡선을 꾹 누르는 동안 그려 가는 버튼. 시간 t(0~tMax)가 차는 동안 f(t)의 점을 이어 붙인다. 다 차면 onEnd.
+ *  tEnd를 주면 그 시간에 가열을 멈춘다(축은 tMax 그대로). dash를 주면 점선으로 그린다(같은 물질의 2배 양). */
+export function g1Curve(lab: G1Lab, pl: G1Plot, layer: Element, o: { tMax: number; tEnd?: number; ms: number; f: (t: number) => number; color: string; dash?: string; text?: string; onTick?: (t: number, v: number) => void; onEnd: () => void }): HTMLButtonElement {
   const line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
   line.setAttribute("stroke", o.color);
-  line.setAttribute("stroke-width", "2.4");
+  line.setAttribute("stroke-width", o.dash ? "2.6" : "2.4");
   line.setAttribute("stroke-linejoin", "round");
-  line.setAttribute("stroke-linecap", "round");
+  line.setAttribute("stroke-linecap", o.dash ? "butt" : "round");
+  if (o.dash) line.setAttribute("stroke-dasharray", o.dash);
   line.setAttribute("fill", "none");
   layer.appendChild(line);
+  const end = Math.min(o.tMax, o.tEnd ?? o.tMax);
   let t = 0;
   const pts: Array<[number, number]> = [[pl.px(0), pl.py(o.f(0))]];
   const b = g1Hold(lab, o.text ?? "꾹 눌러 가열하기", (ms) => {
-    t = Math.min(o.tMax, t + (ms / o.ms) * o.tMax);
+    t = Math.min(end, t + (ms / o.ms) * o.tMax);
     const v = o.f(t);
     pts.push([pl.px(t), pl.py(v)]);
     line.setAttribute("points", ptsOf(pts));
     o.onTick?.(t, v);
-    if (t >= o.tMax) {
+    if (t >= end) {
       b.disabled = true;
       o.onEnd();
       return false;
