@@ -388,9 +388,15 @@ export default async function draw(root, kit) {
   for (const [ax, ay] of [[F.x + 18, F.y - 6], [F.x + 86, F.y - 30]]) S.rayArrow(s, [ax - 36, ay - 48], [ax, ay], { color: "#F08C00", w: 1.8, hl: 7, hw: 4, glow: "#FFE8A3" });
   S.label(s, 20, 44, "빛", { size: 14 });
   S.label(s, 304, 76, "자른 곳", { size: 13.5, anchor: "middle", color: "#C2255C" });
-  // 물: 잎맥을 따라 안쪽에서 앞쪽으로
-  S.fatArrow(s, [[vein1[0] - 2, vein1[1] + 2], [B[0] + D[0] * 0.2, F.y + D[1] * 0.2]], { fill: "#339AF0", w0: 3, w1: 5.5, head: 9, hw: 7 });
-  S.label(s, vein1[0] + 9, vein1[1] + 3, "물", { size: 14 });
+  // 물: 자른 면의 잎맥(관다발) 속 물관으로 들어온다. 화살은 잎맥이 뻗는 방향(덩어리의 깊이 방향 D)과 나란히 앞에서 물관으로 향한다.
+  // (예전에는 윗면의 잎맥 줄기 위에 빛 화살과 나란히 두어 '물이 잎 윗면으로 스며든다'로 읽혔다.)
+  {
+    const tip = [B[0] - 18, B[1] + 1.5];
+    const u = Math.hypot(D[0], D[1]);
+    const tail = [tip[0] - (D[0] / u) * 74, tip[1] - (D[1] / u) * 74];
+    S.fatArrow(s, [tail, tip], { fill: "#339AF0", w0: 3.5, w1: 6, head: 11, hw: 8, sw: 1.4 });
+    S.label(s, tail[0] - 5, tail[1] + 6, "물", { size: 14, anchor: "end" });
+  }
   // 엽록체(왼쪽 칸)
   const pc = palCells[1];
   S.leader(s, [[52, 168], [pc.x + 3.6, 168]]);
