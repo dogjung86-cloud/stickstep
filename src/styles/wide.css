@@ -96,6 +96,10 @@
     grid-column: 1; grid-row: 1 / -1; align-self: start; justify-self: center; width: 350px; margin: 0; zoom: var(--lkc, 1.8);
     position: sticky; top: calc(34px / var(--lkc, 1.8)); /* 이야기 글이 길어 노트가 조금 넘쳐도 컷은 제자리에 있다 */
   }
+  /* 코드 그림 만화(중1·중2 과학): 둘째 컷부터 도입 글과 쌤 말풍선을 접는다(첫 컷에서 읽은 소개).
+     높이 768 노트북에서 본문 끝이 아래 버튼에 깔리던 것을 막는다. 표식(.comic-later)과 노트 배율 맞춤은 steps/comic.ts */
+  html.wide .step.wd-comic.comic-later > .sub,
+  html.wide .step.wd-comic.comic-later > .comic-narrator { display: none; }
 
   /* 개념: 첫 그림(컷) 왼쪽에 붙박이, 설명과 용어 카드는 노트에서 읽어 내려간다 */
   html.wide .step.wd-concept > .c-figure.wd-left { grid-row: 1 / -1; align-self: start; position: sticky; top: 34px; }

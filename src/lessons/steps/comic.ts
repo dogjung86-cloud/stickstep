@@ -149,24 +149,18 @@ export const comic: StepRenderer = (host, step, api) => {
     });
   }
 
-  function render(): void {
-    const p = s.panels[i];
-    const color = tints?.get(p.stage) ?? stageColor(p.stage);
-    clear(panelEl);
-
-    const prevBtn = el(
+  function prevButton(): HTMLButtonElement {
+    return el(
       "button",
       { class: "comic-prev", attrs: { type: "button", "aria-label": "이전 컷" } },
       el("span", { text: "‹ 이전 컷" }),
     ) as HTMLButtonElement;
-    prevBtn.disabled = i === 0;
-    prevBtn.addEventListener("click", () => {
-      if (i === 0) return;
-      i -= 1;
-      haptic(HAPTIC.tap);
-      render();
-    });
-    const head = el(
+  }
+  /** 컷 k의 배지 줄(배지, 이전 컷, 차례). render와 넓은 화면 노트 맞춤(fitNote)이 함께 쓴다. */
+  function headRow(k: number, prevBtn: HTMLButtonElement): HTMLElement {
+    const p = s.panels[k];
+    const color = tints?.get(p.stage) ?? stageColor(p.stage);
+    return el(
       "div",
       { class: "comic-head" },
       el("span", { class: "comic-badge", style: `--bc:${color}`, text: p.stage }),
@@ -174,9 +168,27 @@ export const comic: StepRenderer = (host, step, api) => {
         "span",
         { class: "comic-nav" },
         prevBtn,
-        el("span", { class: "comic-count", text: `${i + 1} / ${s.panels.length}` }),
+        el("span", { class: "comic-count", text: `${k + 1} / ${s.panels.length}` }),
       ),
     );
+  }
+  function termCard(p: Panel): HTMLElement | null {
+    return p.term ? renderBlock({ k: "term", name: p.term.name, def: p.term.def, icon: "bulb" }) : null;
+  }
+
+  function render(): void {
+    const p = s.panels[i];
+    clear(panelEl);
+
+    const prevBtn = prevButton();
+    prevBtn.disabled = i === 0;
+    prevBtn.addEventListener("click", () => {
+      if (i === 0) return;
+      i -= 1;
+      haptic(HAPTIC.tap);
+      render();
+    });
+    const head = headRow(i, prevBtn);
     const title = el("div", { class: "comic-title", html: p.title });
 
     const art = el("div", { class: s.code ? "comic-art code" : "comic-art" });
@@ -221,7 +233,9 @@ export const comic: StepRenderer = (host, step, api) => {
     const cap = el("div", { class: "comic-caption", html: p.caption });
     panelEl.append(head, title, art, cap);
     if (s.code) setK(art, art.clientWidth); // 관찰자가 알려 주기 전 첫 화면부터 맞는 크기로
-    if (p.term) panelEl.appendChild(renderBlock({ k: "term", name: p.term.name, def: p.term.def, icon: "bulb" }));
+    const term = termCard(p);
+    if (term) panelEl.appendChild(term);
+    if (s.code) host.classList.toggle("comic-later", i > 0);
 
     // reflow 후 .in 부여 — rAF에 의존하지 않고 항상 보이면서 전환 애니메이션도 재생.
     panelEl.classList.remove("in");
@@ -245,6 +259,96 @@ export const comic: StepRenderer = (host, step, api) => {
     }
   }
 
+  // ── 넓은 화면 노트 맞춤(코드 그림 만화 = 중1·중2 과학 열다섯 편만, 다른 과목 만화와 폰은 그대로) ──
+  // 넓은 화면은 노트 글을 칸 폭에 맞춰 키운다(--lqk, 1366 폭이면 1.36배). 높이 768인 노트북에서는 머리말(제목, 도입 글, 쌤 말풍선)과
+  // 컷 글이 함께 쌓여 본문 끝이 아래 버튼에 깔렸다(2026-11-16 만화 글 다듬기 때 실측: 1366×768에서 116컷 중 75컷, 1024×768에서 21컷).
+  //   ① 둘째 컷부터는 도입 글과 쌤 말풍선을 접는다(.comic-later, styles/wide.css). 첫 컷에서 이미 읽은 소개다.
+  //   ② 컷마다 노트 글을 임시로 놓아 재고, 가장 긴 컷도 버튼 위에 들어오는 가장 큰 배율을 만화 한 편에 하나 정한다(컷마다 글자 크기가
+  //      바뀌지 않게). 폰 글자 크기(배율 1)보다 작게는 줄이지 않는다. 그래도 넘치면 지금처럼 노트를 내려 읽는다.
+  const NOTE_MIN = 1;
+  let fitKey = "";
+  let fitTries = 0;
+  let fitTimer = 0;
+  /** 컷 k의 글을 노트에 임시로 놓았을 때 노트 글의 아래 끝(화면 좌표). 그림은 왼쪽 칸이라 넣지 않는다. */
+  function noteBottomAt(k: number): number {
+    const p = s.panels[k];
+    host.classList.toggle("comic-later", k > 0);
+    clear(panelEl);
+    panelEl.append(headRow(k, prevButton()), el("div", { class: "comic-title", html: p.title }), el("div", { class: "comic-caption", html: p.caption }));
+    const term = termCard(p);
+    if (term) panelEl.appendChild(term);
+    let b = 0;
+    for (const c of Array.from(panelEl.children)) b = Math.max(b, c.getBoundingClientRect().bottom);
+    return b;
+  }
+  function fitNote(force = false): void {
+    if (!s.code) return;
+    const wide = document.documentElement.classList.contains("wide");
+    if (wide && host.isConnected && !host.classList.contains("wd-comic")) {
+      // 넓은 화면 표식(wide.ts)이 아직 붙지 않았다: 조금 뒤에 다시
+      if (fitTries++ < 10) fitTimer = window.setTimeout(() => fitNote(force), 60);
+      return;
+    }
+    const on = wide && host.isConnected;
+    const key = on ? `${window.innerWidth}x${window.innerHeight}` : "off";
+    if (!force && key === fitKey) return;
+    fitKey = key;
+    host.style.removeProperty("--lqk");
+    if (!on) return;
+    const top = host.firstElementChild as HTMLElement | null;
+    const footer = host.closest(".lesson-screen")?.querySelector<HTMLElement>(".footer");
+    if (!top || !footer || !top.getBoundingClientRect().height) {
+      fitKey = "";
+      return;
+    }
+    const base = parseFloat(getComputedStyle(top).zoom) || 1;
+    if (base <= NOTE_MIN) return;
+    // 노트 맨 위에서 버튼 위까지. 노트를 내려 읽은 만큼(스크롤)을 되돌려 첫 화면 기준으로 잰다.
+    let sc: HTMLElement | null = host.parentElement;
+    while (sc && !/auto|scroll/.test(getComputedStyle(sc).overflowY)) sc = sc.parentElement;
+    const scrolled = sc ? sc.scrollTop : window.scrollY;
+    const avail = footer.getBoundingClientRect().top - (top.getBoundingClientRect().top + scrolled) - 8;
+    const keep = Array.from(panelEl.childNodes);
+    const tallest = (z: number): number => {
+      host.style.setProperty("--lqk", String(z));
+      const t0 = top.getBoundingClientRect().top;
+      let m = 0;
+      for (let k = 0; k < s.panels.length; k++) m = Math.max(m, noteBottomAt(k) - t0);
+      return m;
+    };
+    let z = base;
+    if (tallest(base) > avail) {
+      let lo = NOTE_MIN;
+      let hi = base;
+      if (tallest(lo) <= avail) {
+        for (let n = 0; n < 6; n++) {
+          const mid = (lo + hi) / 2;
+          if (tallest(mid) > avail) hi = mid;
+          else lo = mid;
+        }
+      }
+      z = lo;
+    }
+    clear(panelEl);
+    panelEl.append(...keep);
+    host.classList.toggle("comic-later", i > 0);
+    if (z < base) host.style.setProperty("--lqk", z.toFixed(3));
+    else host.style.removeProperty("--lqk");
+  }
+  const onResize = (): void => {
+    window.clearTimeout(fitTimer);
+    fitTimer = window.setTimeout(() => fitNote(), 150);
+  };
+
   render();
-  return () => fit?.disconnect();
+  if (s.code) {
+    fitTimer = window.setTimeout(() => fitNote(), 0);
+    void document.fonts?.ready.then(() => fitNote(true));
+    window.addEventListener("resize", onResize);
+  }
+  return () => {
+    fit?.disconnect();
+    window.clearTimeout(fitTimer);
+    window.removeEventListener("resize", onResize);
+  };
 };
