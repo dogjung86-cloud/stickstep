@@ -823,7 +823,7 @@ src/
 - 그림을 고치면 검산 메모의 사실 목록과 함께 고친다. 확인은 `DIST=<개발 번들> node qa/scifig-g1/check-app.mjs`.
   자세한 것은 `qa/scifig-g1/README.md`.
 
-### 중2 (46장)
+### 중2 (45장)
 - 헤드리스 크롬에서 캔버스와 SVG로 그려 3배 해상도 webp로 굽는다. 그림 하나 = `qa/scifig-g2/figs/<단원>/<키>.mjs`와
   검산 메모 `<키>.md`. 빌드 `node qa/scifig-g2/build.mjs [키 …]`가 `public/scifig/g2/<단원>/<키>.webp`와
   `src/content/g2/sciFigG2.ts`의 그림 표를 쓴다.
