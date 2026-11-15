@@ -11,6 +11,7 @@ import type { Unit } from "./curriculum";
 import { opener, comic, concept, recap, mcq, ox, multi, order, binSort, cut } from "./dsl";
 import { balloonParticleFig, pvCurveFig, graphChoicesFig, pistonWeightsFig, tempVolLineFig, gasMiniArt } from "../ui/gasFigures";
 import { comicStory } from "../ui/sketchArt";
+import { sciFigMore } from "./sciFigG1";
 
 const lab = (type: string, o: { title: string; cta?: string }): Step => ({ type, ...o });
 const TERMS = { kicker: "과학 용어 정복하기", kickerTone: "gas" as const, cta: "개념 정리하기" };
@@ -286,7 +287,7 @@ const L3 = {
           art: gasMiniArt("snackBag"),
           text: "기체를 누르는 압력이 커지면 기체의 <b>부피가 줄어요</b>. 줄어든 기체는 더 세게 <b>되밀어요</b>.",
           examples: ["뽁뽁이 포장", "공기 주머니 운동화", "공기 침대에 눕기"],
-          more: "<b class='rm-h'>왜 푹신할까요?</b>밖에서 누르는 압력이 커지면 속 기체의 부피가 줄어요. 바닷속 30 m에서 풍선이 4분의 1로 쪼그라든 것처럼요. 부피가 줄면 입자가 벽에 더 자주 부딪혀 기체의 압력이 커지고, 그만큼 세게 되밀어요. 도입에서 뽁뽁이를 누를수록 손가락이 덜 들어가던 까닭이에요. 눌리면서 버티는 이 성질이 충격을 부드럽게 받아 내요.<b class='rm-h'>생활 속에서는</b>밑창에 공기 주머니가 든 운동화는 뛰어올랐다 착지할 때 공기 주머니의 부피가 줄면서 충격을 받아 줘요. 공기 침대에 누우면 침대 속 기체의 부피가 줄며 몸을 받쳐요. 뽁뽁이로 싼 유리컵이 잘 깨지지 않는 것도 같은 까닭이에요.<b class='rm-h'>헷갈리기 쉬운 점</b>눌려서 부피가 줄어도 <b>입자의 개수는 그대로</b>예요. 기체가 빠져나간 것이 아니라 입자 사이의 거리가 가까워진 거예요. 그래서 손을 떼면 뽁뽁이가 다시 볼록해져요. 터뜨려서 공기가 빠져나가면 돌아오지 않아요.<span class='fun'><b>알고 있나요?</b> 과자 봉지에 질소를 채우는 까닭 가운데 하나도 이것이에요. 봉지 속 기체가 과자가 부서지지 않게 받쳐 줘요.</span>",
+          more: "<b class='rm-h'>왜 푹신할까요?</b>밖에서 누르는 압력이 커지면 속 기체의 부피가 줄어요. 바닷속 30 m에서 풍선이 4분의 1로 쪼그라든 것처럼요. 부피가 줄면 입자가 벽에 더 자주 부딪혀 기체의 압력이 커지고, 그만큼 세게 되밀어요. 도입에서 뽁뽁이를 누를수록 손가락이 덜 들어가던 까닭이에요. 눌리면서 버티는 이 성질이 충격을 부드럽게 받아 내요.<b class='rm-h'>생활 속에서는</b>밑창에 공기 주머니가 든 운동화는 뛰어올랐다 착지할 때 공기 주머니의 부피가 줄면서 충격을 받아 줘요. 공기 침대에 누우면 침대 속 기체의 부피가 줄며 몸을 받쳐요. 뽁뽁이로 싼 유리컵이 잘 깨지지 않는 것도 같은 까닭이에요." + sciFigMore("u6l3f1") + "<b class='rm-h'>헷갈리기 쉬운 점</b>눌려서 부피가 줄어도 <b>입자의 개수는 그대로</b>예요. 기체가 빠져나간 것이 아니라 입자 사이의 거리가 가까워진 거예요. 그래서 손을 떼면 뽁뽁이가 다시 볼록해져요. 터뜨려서 공기가 빠져나가면 돌아오지 않아요.<span class='fun'><b>알고 있나요?</b> 과자 봉지에 질소를 채우는 까닭 가운데 하나도 이것이에요. 봉지 속 기체가 과자가 부서지지 않게 받쳐 줘요.</span>",
         },
       ],
       note: { icon: "bulb", tone: "blue", title: "생활 속 문제를 만나면", html: "기체를 <b>누르는 압력이 커졌는지, 작아졌는지</b>부터 따져요. 커졌으면 부피가 줄고, 작아졌으면 부피가 늘어요." },
