@@ -190,7 +190,7 @@ const L2 = {
   standard: "책 234~235쪽",
   doneNote: "지구형 행성과 목성형 행성의 특징을 배웠어요",
   steps: [
-    opener({ title: "목성 옆에 지구를 세우면?", scene: "u7-jupiterrow", wait: "먼저 지구를 세워 보세요", cta: "여덟 행성 견주기" }),
+    opener({ title: "목성 옆에 지구를 세우면?", scene: "u7-jupiterrow", wait: "먼저 지구를 세워 보세요", cta: "여덟 행성 비교하기" }),
     lab("u7PlanetLab", { title: "여덟 행성, 어떻게 나눌까요?", cta: "용어로 정리하기" }),
     C2,
     R2,

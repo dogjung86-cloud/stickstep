@@ -163,7 +163,7 @@ export const slopeLab: StepRenderer = (host, step, api) => {
   function toPull(): void {
     scene = "pull";
     busy = false;
-    f.say("이번에는 나무판을 눕히고 도막을 <b>힘 센서</b>로 끌어요. 꾹 누르면 끄는 힘이 커져요. 도막 수를 바꿔 견줘 보세요.");
+    f.say("이번에는 나무판을 눕히고 도막을 <b>힘 센서</b>로 끌어요. 꾹 누르면 끄는 힘이 커져요. 도막 수를 바꿔 비교해 보세요.");
     paintPull();
     f.slot.setControls(el("div", { class: "u5x-segs" }, seg1, seg2), pullBtn, note2);
     api.setCTA("도막 1개와 2개를 끌어 보세요", { enabled: false });

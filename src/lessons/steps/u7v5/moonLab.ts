@@ -64,7 +64,7 @@ export const u7MoonLab: StepRenderer = (host, step, api) => {
   const shutter = bvBtn("main", "이 자리에서 사진 찍기");
   shutter.classList.add("u7x-shutter");
   f.slot.setControls(el("div", { class: "u7x-cap", text: "찍은 사진(자리 차례대로 놓여요)" }), strip, shutter);
-  f.say("달을 끌어 자리에 놓고 <b>사진 찍기</b>를 눌러요. 여덟 자리를 모두 찍어 견줘 봐요.");
+  f.say("달을 끌어 자리에 놓고 <b>사진 찍기</b>를 눌러요. 여덟 자리를 모두 찍어 비교해 봐요.");
   f.pips(1);
   api.setCTA("여덟 자리의 달을 찍어요", { enabled: false });
   host.dataset.u7Phase = "play";

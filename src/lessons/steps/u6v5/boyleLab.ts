@@ -109,7 +109,7 @@ export const boyleLab: StepRenderer = (host, step, api) => {
     frame.pips(1);
     const v = Math.min(...recs.keys());
     const k = 24 / v;
-    frame.say(`기록표에서 24 mL일 때와 ${v} mL일 때를 견줘 보세요.`);
+    frame.say(`기록표에서 24 mL일 때와 ${v} mL일 때를 비교해 보세요.`);
     frame.slot.ask(
       `부피가 24 mL에서 ${v} mL로 <b>${k}분의 1</b>이 되자 압력은?`,
       [{ t: `${k}배가 됐어요`, ok: true }, { t: `${k}분의 1이 됐어요` }, { t: "변하지 않았어요" }],

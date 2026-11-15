@@ -100,7 +100,7 @@ export const seaSkyLab: StepRenderer = (host, step, api) => {
   function askWhy(): void {
     lab.phase("ask");
     frame.pips(1);
-    frame.say("자리마다 적힌 <b>압력</b>과 풍선의 크기를 견줘 보세요.");
+    frame.say("자리마다 적힌 <b>압력</b>과 풍선의 크기를 비교해 보세요.");
     frame.slot.ask(
       "산 위에서 풍선이 <b>커진</b> 까닭은 무엇일까요?",
       [{ t: "풍선을 누르는 압력이 작아져서", ok: true }, { t: "풍선 속 입자가 늘어나서" }, { t: "산 위의 공기가 풍선에 들어가서" }],

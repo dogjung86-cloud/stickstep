@@ -214,7 +214,7 @@ export const fanLab: StepRenderer = (host, step, api) => {
   });
 
   paint();
-  f.say("마찰이 거의 없는 매끈한 바닥을 위에서 본 모습이에요. 먼저 <b>선풍기 없이</b> 굴려 보고, 자리를 바꿔 가며 견줘 보세요.");
+  f.say("마찰이 거의 없는 매끈한 바닥을 위에서 본 모습이에요. 먼저 <b>선풍기 없이</b> 굴려 보고, 자리를 바꿔 가며 비교해 보세요.");
   api.setCTA("네 가지로 공을 굴려 보세요", { enabled: false });
   return () => {
     tm.clear();

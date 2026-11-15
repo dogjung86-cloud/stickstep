@@ -270,7 +270,7 @@ export const arrowLab: StepRenderer = (host, step, api) => {
         u5Text(ctx, "여기서 아래로", mid + 14, gy - 2 * C - 10, { color: U5.dim, align: "left" });
       }
     }
-    u5Pill(ctx, m === 0 ? "오른쪽 점선까지" : m === 1 ? "왼쪽 점선까지" : m === 2 ? "점선 모양으로 누르기" : "그린 화살표 견주기", U5.push);
+    u5Pill(ctx, m === 0 ? "오른쪽 점선까지" : m === 1 ? "왼쪽 점선까지" : m === 2 ? "점선 모양으로 누르기" : "그린 화살표 비교하기", U5.push);
   });
 
   setM(0);

@@ -170,7 +170,7 @@ export const graphLab: StepRenderer = (host, step, api) => {
       paintTurn();
       if (idx >= ORDER.length) {
         busy = true;
-        f.say("여섯 점을 모두 찍었어요. 세 선이 올라가는 모습을 견줘 봐요.");
+        f.say("여섯 점을 모두 찍었어요. 세 선이 올라가는 모습을 비교해 봐요.");
         tm.later(askFinal, 1700);
       }
       return;

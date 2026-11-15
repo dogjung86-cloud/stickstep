@@ -120,7 +120,7 @@ export const tempFixLab: StepRenderer = (host, step, api) => {
     lab.phase("ask2");
     frame.pips(2);
     range.input.disabled = true;
-    frame.say("무대에 남은 두 기록을 견줘 보세요. 땅에서와 가장 높이 떴을 때예요.");
+    frame.say("무대에 남은 두 기록을 비교해 보세요. 땅에서와 가장 높이 떴을 때예요.");
     frame.slot.ask(
       "떠오를 때 풍선 속 <b>입자 수</b>는 어떻게 됐나요?",
       [{ t: "줄었어요", ok: true }, { t: "늘었어요" }, { t: "그대로였어요" }],

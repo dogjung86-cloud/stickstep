@@ -77,7 +77,7 @@ export const u4DryIceLab: StepRenderer = (host, step, api) => {
     film0.setAttribute("opacity", "1");
     f.pips(2);
     const head = pred.startsWith("드라이아이스") ? "예측대로" : "예측과 달리";
-    f.say(`${head} <b>드라이아이스 컵</b>의 막만 부풀었어요. 두 컵의 바닥도 견줘 보세요.`);
+    f.say(`${head} <b>드라이아이스 컵</b>의 막만 부풀었어요. 두 컵의 바닥도 비교해 보세요.`);
     tm.later(judge, 1100);
     return false;
   });

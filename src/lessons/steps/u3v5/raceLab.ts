@@ -200,7 +200,7 @@ export const raceLab: StepRenderer = (host, step, api) => {
   }
 
   function askFinal(): void {
-    f.say("그래프의 두 시간을 견주어 보고 골라 봐요. 오래 가열할수록 열을 많이 준 거예요.");
+    f.say("그래프의 두 시간을 비교해 보고 골라 봐요. 오래 가열할수록 열을 많이 준 거예요.");
     f.slot.ask(
       "20℃에서 60℃까지 데우는 데 <b>열이 더 많이</b> 든 쪽은?",
       [{ t: "물", ok: true }, { t: "식용유" }, { t: "둘이 같다" }],
@@ -221,7 +221,7 @@ export const raceLab: StepRenderer = (host, step, api) => {
   f.slot.setControls(el("div", { class: "u3x-row" }, m100, m200), hold);
   hold.disabled = true;
   api.setCTA("두 액체를 가열해 보세요", { enabled: false });
-  f.say("물과 식용유를 같은 세기로 가열해 온도를 견줄 거예요. 먼저 <b>예측</b>부터 해 봐요.");
+  f.say("물과 식용유를 같은 세기로 가열해 온도를 비교할 거예요. 먼저 <b>예측</b>부터 해 봐요.");
   f.slot.ask(
     "같은 양을 똑같이 가열하면 온도가 <b>더 빨리</b> 오르는 쪽은?",
     [{ t: "물" }, { t: "식용유" }, { t: "둘이 같다" }],
@@ -232,7 +232,7 @@ export const raceLab: StepRenderer = (host, step, api) => {
         pred = f.slot.qBox.querySelector(".bv-choice.sel")?.textContent ?? "";
         phase = "setup";
         f.slot.showControls();
-        f.say("물은 <b>200 g</b>을 담았어요. 공정하게 견주려면 식용유는 얼마나 담아야 할까요? 골라서 담아 봐요.");
+        f.say("물은 <b>200 g</b>을 담았어요. 공정하게 비교하려면 식용유는 얼마나 담아야 할까요? 골라서 담아 봐요.");
         api.setCTA("두 액체를 가열해 보세요", { enabled: false });
       },
     },

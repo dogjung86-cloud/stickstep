@@ -122,7 +122,7 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
     const last = ROUTES[r].levels[4];
     cards[r] = bvCard("blv-card", { name: ROUTES[r].card, sub: ROUTES[r].sub, icon: `<img src="${bvSrc(last.img)}" alt="" draggable="false" />`, key: r });
   });
-  const cmpBtn = bvBtn("main blv-cmp", "두 계단 견주어 보기");
+  const cmpBtn = bvBtn("main blv-cmp", "두 계단 비교하기");
   cmpBtn.hidden = true;
 
   const mark = (level: number): void => {
@@ -189,7 +189,7 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
         tm.later(() => {
           cmpBtn.hidden = false;
           range.el.hidden = true;
-          f.say("두 계단을 다 쌓았어요. 이제 <b>두 계단을 나란히</b> 놓고 견주어 봐요.");
+          f.say("두 계단을 다 쌓았어요. 이제 <b>두 계단을 나란히</b> 놓고 비교해 봐요.");
         }, 1300);
       }
     }
@@ -275,7 +275,7 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
     phase = "duo";
     f.stage.classList.add("duo");
     mark(4);
-    f.say("왼쪽은 동물, 오른쪽은 식물의 계단이에요. 칸을 하나씩 견주어 봐요.");
+    f.say("왼쪽은 동물, 오른쪽은 식물의 계단이에요. 칸을 하나씩 비교해 봐요.");
     f.slot.ask(
       "동물의 계단에만 있는 단계는 무엇인가요?",
       [{ t: "기관계", ok: true }, { t: "조직계" }, { t: "기관" }],
@@ -299,7 +299,7 @@ export const levelBuildLab: StepRenderer = (host, step, api) => {
     phase = "done";
     f.pips(3);
     mark(4);
-    f.say("두 계단을 견주어 봤어요. 아래에서 알게 된 것을 읽어 봐요.");
+    f.say("두 계단을 비교해 봤어요. 아래에서 알게 된 것을 읽어 봐요.");
     f.slot.conclude("생물의 몸은 <b>세포, 조직, 기관, 개체</b>의 단계로 이루어져요. 동물에는 기관계가, 식물에는 조직계가 더 있어요.");
     api.enableCTA(s.cta ?? "다음");
     if (s.curio) host.appendChild(curioCard(s.curio));

@@ -100,7 +100,7 @@ export const buoyLab: StepRenderer = (host, step, api) => {
 
   function askBig(): void {
     f.slot.ask(
-      "무게는 같고 부피가 2배인 큰 추를 완전히 잠그면, 눈금은 작은 추(14 N)와 견주어 어떨까요?",
+      "무게는 같고 부피가 2배인 큰 추를 완전히 잠그면, 눈금은 작은 추(14 N)와 비교해 어떨까요?",
       [{ t: "14 N보다 작아요" }, { t: "똑같이 14 N이에요" }, { t: "14 N보다 커요" }],
       () => undefined,
       {

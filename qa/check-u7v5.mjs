@@ -415,7 +415,7 @@ async function playOpener(id, { pick, mid, rest, want }) {
 }
 const OPENERS = {
   u7l1: (id) => playOpener(id, { pick: "아주 밝은 별", want: "태양계로 출발", mid: () => holdOn(".opn-u7-hit", 800), rest: () => holdOn(".opn-u7-hit", 1500) }),
-  u7l2: (id) => playOpener(id, { pick: "6개쯤", want: "여덟 행성 견주기", mid: () => holdOn(".opn-u7-btn.hold", 1100), rest: () => holdOn(".opn-u7-btn.hold", 2200) }),
+  u7l2: (id) => playOpener(id, { pick: "6개쯤", want: "여덟 행성 비교하기", mid: () => holdOn(".opn-u7-btn.hold", 1100), rest: () => holdOn(".opn-u7-btn.hold", 2200) }),
   u7l4: (id) => playOpener(id, { pick: "왼쪽으로", want: "밤하늘 살펴보기", mid: async () => { await tap(page, '.opn-u7-btn[data-n="2"]'); await W(page, 600); }, rest: () => tap(page, '.opn-u7-btn[data-n="3"]') }),
   u7l5: (id) => playOpener(id, { pick: "가느다란", want: "달을 직접 옮겨 보기", mid: () => holdOn(".opn-u7-btn.hold", 1300), rest: () => holdOn(".opn-u7-btn.hold", 2300) }),
   u7l6: (id) => playOpener(id, { pick: "구름", want: "세 천체를 한 줄로", mid: () => holdOn(".opn-u7-btn.hold", 1100), rest: () => holdOn(".opn-u7-btn.hold", 2200) }),

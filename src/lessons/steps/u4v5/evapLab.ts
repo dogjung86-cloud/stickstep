@@ -133,7 +133,7 @@ export const u4EvapLab: StepRenderer = (host, step, api) => {
     f.pips(done.size);
     if (done.size === 1) {
       const head = pred.startsWith("점점 줄어") ? "예측대로" : "예측과 달리";
-      f.say(`${head} 숫자가 <b>줄었어요</b>. 같은 양을 <b>다르게 발라</b> 같은 시간 동안 견주어요.`);
+      f.say(`${head} 숫자가 <b>줄었어요</b>. 같은 양을 <b>다르게 발라</b> 같은 시간 동안 비교해요.`);
       tm.later(choose, 700);
     } else {
       f.say("같은 양, 같은 시간인데 <b>넓게 펴 바른 쪽</b>이 훨씬 많이 줄었어요.");

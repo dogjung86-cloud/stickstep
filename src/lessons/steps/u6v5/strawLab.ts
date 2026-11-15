@@ -85,12 +85,12 @@ export const strawLab: StepRenderer = (host, step, api) => {
     if (minPierce <= flatMax) {
       frame.pips(1);
       push.disabled = true;
-      api.setCTA("기록을 견줘 보세요", { enabled: false });
-      frame.say(ok ? "뚫렸어요! 같은 힘으로 누른 <b>편평한 쪽</b>의 기록과 견줘 보세요." : "같은 힘인데 편평한 쪽은 안 뚫려요. <b>뾰족한 쪽</b>의 기록과 견줘 보세요.");
+      api.setCTA("기록을 비교해 보세요", { enabled: false });
+      frame.say(ok ? "뚫렸어요! 같은 힘으로 누른 <b>편평한 쪽</b>의 기록과 비교해 보세요." : "같은 힘인데 편평한 쪽은 안 뚫려요. <b>뾰족한 쪽</b>의 기록과 비교해 보세요.");
       tm.later(ask, 1500);
     } else if (animEnd === "flat") frame.say("뚜껑이 움푹 들어갔다 되돌아왔어요. 이번에는 <b>뾰족한 쪽</b>으로 눌러 보세요.");
     else if (!ok) frame.say("힘이 너무 약했어요. 조금 더 <b>세게</b> 눌러 보세요.");
-    else frame.say(`힘 ${animForce}로 뚫렸어요. <b>편평한 쪽</b>도 같은 힘(${animForce} 이상)으로 눌러 견줘 보세요.`);
+    else frame.say(`힘 ${animForce}로 뚫렸어요. <b>편평한 쪽</b>도 같은 힘(${animForce} 이상)으로 눌러 비교해 보세요.`);
   };
 
   push.addEventListener("click", () => {

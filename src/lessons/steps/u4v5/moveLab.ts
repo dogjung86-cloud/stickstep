@@ -115,9 +115,9 @@ export const u4MoveLab: StepRenderer = (host, step, api) => {
   const controls = (): void => f.slot.setControls(bvCards(3, cards.sol, cards.liq, cards.gas), swap, rec);
 
   const SAY: Record<Key, Record<Shape, string>> = {
-    sol: { cup: "얼음을 컵에 담았어요. <b>그릇 바꾸기</b>를 눌러 접시로 옮겨 보세요.", dish: "얼음을 접시로 옮겼어요. 모양과 <b>부피 눈금</b>을 컵일 때와 견줘 보세요." },
-    liq: { cup: "물을 컵에 담았어요. 모양과 <b>부피 눈금</b>을 보고 접시로 옮겨 보세요.", dish: "물을 접시로 옮겼어요. 모양과 <b>부피 눈금</b>을 컵일 때와 견줘 보세요." },
-    gas: { cup: "공기를 <b>뚜껑 덮은</b> 컵에 담았어요. 어디까지 차 있는지 보세요.", dish: "공기를 <b>뚜껑 덮은</b> 접시로 옮겼어요. 컵일 때와 견줘 보세요." },
+    sol: { cup: "얼음을 컵에 담았어요. <b>그릇 바꾸기</b>를 눌러 접시로 옮겨 보세요.", dish: "얼음을 접시로 옮겼어요. 모양과 <b>부피 눈금</b>을 컵일 때와 비교해 보세요." },
+    liq: { cup: "물을 컵에 담았어요. 모양과 <b>부피 눈금</b>을 보고 접시로 옮겨 보세요.", dish: "물을 접시로 옮겼어요. 모양과 <b>부피 눈금</b>을 컵일 때와 비교해 보세요." },
+    gas: { cup: "공기를 <b>뚜껑 덮은</b> 컵에 담았어요. 어디까지 차 있는지 보세요.", dish: "공기를 <b>뚜껑 덮은</b> 접시로 옮겼어요. 컵일 때와 비교해 보세요." },
   };
 
   function refresh(): void {
@@ -182,7 +182,7 @@ export const u4MoveLab: StepRenderer = (host, step, api) => {
       refresh();
       f.say(
         !okShape
-          ? `${p.word}의 <b>모양</b>을 다시 보세요. 컵과 접시에 번갈아 담아 견줘 보세요.`
+          ? `${p.word}의 <b>모양</b>을 다시 보세요. 컵과 접시에 번갈아 담아 비교해 보세요.`
           : cur === "gas"
             ? "공기는 그릇 안을 <b>가득</b> 채웠어요. 부피 눈금이 컵과 접시에서 같았나요?"
             : `${p.word}의 <b>부피 눈금</b>을 다시 보세요. 컵에서도 접시에서도 ${p.ml.cup} mL였어요.`,
