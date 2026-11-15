@@ -273,6 +273,13 @@ HMI 백색광 전면 프레임(2024-04-26, NASA/SDO — Public Domain)에서 하
 | star/coalsack.webp | 석탄자루 암흑 성운(별밭 속 검은 영역) | ESO (eso1539a) | CC BY 4.0 |
 | star/lagoon.webp | 라군 성운(붉게 빛나며 번지는 방출 성운) | ESO/VPHAS+ team (eso1403a) | CC BY 4.0 |
 
+## public/scifig/ (과학 개념·정리 그림에 들어간 실사, 2026-11-15)
+코드로 그린 과학 그림(`qa/scifig-g1`, `qa/scifig-g2`)은 아래 실사를 질감으로 입히거나 잘라 넣어 구웠다. 원본의 출처와 라이선스는 위 절과 같다.
+| 그림 | 쓴 실사 | 출처 · 크레딧 | 라이선스 |
+|---|---|---|---|
+| g1/ 행성, 지구, 달 | public/textures/ 질감(+ saturn_ring.png) | Solar System Scope Textures | CC BY 4.0 |
+| g1/ 태양 | public/photos/sun_whitelight.jpg | NOIRLab/NSF/AURA | CC BY 4.0 |
+
 ## 사회 Ⅷ 다양한 문화의 이해 (public/soc/culture — qa/fetch-soc8-culture.mjs + retry)
 - ganggang.webp — 강강술래 공연(유네스코 인류무형유산) | File:Korean.Dance-03.jpg | CC BY 2.0 | photoren
 - tinikling.webp — 티니클링(필리핀 대나무 춤, 광장 실연) | File:Tinikling sa Plaza.jpg | CC BY-SA 4.0 | Richmond Chi

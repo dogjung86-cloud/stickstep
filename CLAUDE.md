@@ -807,6 +807,22 @@ src/
   chemKit·lightKit·elecKit·bodyKit·plantKit 등 — 위 아키텍처 트리)이 각 표현의 단일 진실 공급원 —
   입자·천체·광선·회로 표현은 반드시 해당 킷을 쓴다(재구현 금지).
 
+## 과학 개념·정리 그림 (2026-11-15, 코드로 그린 디테일 그림)
+- 개념 스텝("과학 용어 정복하기")과 정리 카드의 자세히에, 교과서처럼 실제 과학 내용을 담은 그림을 싣는다.
+  첫 블록의 스틱맨 비유 컷과는 따로다. 발주나 이미지 생성 없이 코드로 그려 webp로 굽고, 학년마다 도구가 따로다
+  (중1 `qa/scifig-g1`, 중2 `qa/scifig-g2`). 그림에 들어간 실사의 출처는 `public/photos/CREDITS.md`의 `public/scifig/` 절.
+
+### 중1 (32장)
+- 그리는 코드 `qa/scifig-g1/figs/<키>.mjs`(+ 검산 메모 `<키>.md`, 공용 `lib/cell`·`phasecurve`·`syringe`),
+  빌드 `node qa/scifig-g1/build.mjs [키...]` → `public/scifig/g1/<단원>/<키>.webp`(생성물). 키는 `u<단원>l<레슨>f<번호>`.
+- 앱은 `src/content/sciFigG1.ts` 하나로 싣는다: 표 FIGS(크기, 대체 글, 캡션의 정본), 개념은 `sciFig(키)` 블록,
+  정리 카드는 `sciFigMore(키)`. 내용 파일이 부르므로 CSS를 불러오지 않는다. lazy 로딩 금지.
+- 화풍: three.js 입체 + 주변광 가림 + 재질 색 윤곽선(kit.renderIllus), 왼쪽 위 빛, 흰 바탕(우주는 남색 하늘),
+  라벨은 함께 굽는다(설계 13px 이상, 폰 12px 이상). 천체 겉은 `public/textures` 실사 질감, 방향과 개수는 식에서
+  나오게 하고 같아야 하는 값은 코드가 확인한다.
+- 그림을 고치면 검산 메모의 사실 목록과 함께 고친다. 확인은 `DIST=<개발 번들> node qa/scifig-g1/check-app.mjs`.
+  자세한 것은 `qa/scifig-g1/README.md`.
+
 ## 사회 트랙 — 정본은 SOC_GUIDE.md
 - **사회(soc) 트랙 작업 전 반드시 SOC_GUIDE.md(사회 헌법)를 읽는다** — Ⅰ~Ⅶ 제작 관례·대륙 공통
   문법·일반사회 문법·중립 가드 전문이 그쪽으로 분리됐다(2026-07-21, 원문 그대로). 최소 요약:
