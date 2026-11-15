@@ -18,13 +18,13 @@
 // 흑점 약 11년 주기(실관측 1990~2010 창, 극소 1996·극대 2000 무렵).
 import type { Unit } from "./curriculum";
 import type { Step } from "../lessons/types";
-import { opener, comic, concept, recap, mcq, ox, multi, binSort, hotspot, rimg, cut } from "./dsl";
+import { opener, comic, concept, recap, mcq, ox, multi, binSort, hotspot, cut } from "./dsl";
 import {
   sunspotFig, sunspotGraphFig, uranusTiltFig, planetGroupsFig, northSkyFig, southTrailFig,
   zodiacQuizFig, moonOrbitFig, fivePhasesFig, eclipseModelFig, lunarPathUpFig, sunAnatomyFig, spaceMiniArt,
 } from "../ui/spaceFigures";
 import { comicStory } from "../ui/sketchArt";
-import { sciFigMore } from "./sciFigG1";
+import { sciFig, sciFigMore } from "./sciFigG1";
 
 /** 이 단원의 랩 스텝. 제목은 학생이 답할 질문 한 줄(15자 안쪽, 한 줄에 들어가야 한다). */
 const lab = (type: string, o: { title: string; cta: string; [k: string]: unknown }): Step => ({ type, ...o });
@@ -139,6 +139,7 @@ const C2 = concept({
     { k: "figure", svg: cut("space7", "u7l2", "학생이 탁자 위의 공들을 두 바구니에 나눠 담는다. 한쪽은 작고 단단한 돌 공, 다른 쪽은 고리 띠를 두른 큰 풍선 공"), cap: "공을 두 바구니로 나눠요. 작고 단단한 무리와 크고 기체로 된 무리" },
     term("지구형 행성", "<b>수성, 금성, 지구, 화성</b>이에요. 질량과 반지름이 작고, 표면이 <b>단단한 암석</b>이에요. 고리가 없고 위성은 없거나 적어요."),
     term("목성형 행성", "<b>목성, 토성, 천왕성, 해왕성</b>이에요. 질량과 반지름이 크고, 표면이 <b>기체</b>예요. 고리가 있고 위성이 많아요."),
+    sciFig("u7l2f1"),
     { k: "note", tone: "blue", html: "이름은 무리를 대표하는 행성에서 왔어요. 지구와 닮은 무리, 목성과 닮은 무리라는 뜻이에요. 고리는 토성에만 있는 것이 아니라 <b>목성형 행성 넷 모두</b>에 있어요." },
   ],
   cta: "정리하기",
@@ -379,6 +380,7 @@ const C4A = concept({
     term("지구의 자전", "지구가 <b>자전축을 중심으로 하루에 한 바퀴씩</b> 스스로 도는 운동이에요. 도는 방향은 <b>서쪽에서 동쪽</b>이에요."),
     term("일주 운동", "지구가 자전하기 때문에 별이나 태양 같은 천체가 <b>하루에 한 바퀴씩 도는 것처럼 보이는</b> 운동이에요. 실제로 도는 것이 아니라서 <b>겉보기 운동</b>이라고 해요."),
     term("천구", "밤하늘을 보면 별들이 둥근 하늘에 붙어 있는 것처럼 보여요. 이 <b>가상의 둥근 하늘</b>이 천구예요."),
+    sciFig("u7l4f1"),
     { k: "note", tone: "amber", html: "별이 동쪽에서 서쪽으로 움직여 보이는 까닭은 지구가 그 <b>반대 방향</b>(서쪽에서 동쪽)으로 돌기 때문이에요. 달리는 차 안에서 창밖 풍경이 뒤로 가는 것처럼 보이는 것과 같아요." },
   ],
   cta: "다음으로",
@@ -404,7 +406,7 @@ const R4 = recap({
       name: "자전과 일주 운동", color: "#5AA2F8", art: spaceMiniArt("spin"),
       text: "지구가 <b>하루에 한 바퀴, 서쪽에서 동쪽으로</b> 자전해요. 그래서 천체가 하루에 한 바퀴 도는 것처럼 보여요(<b>일주 운동</b>).",
       examples: ["동쪽: 오른쪽 위로 떠올라요", "남쪽: 왼쪽에서 오른쪽으로", "북쪽: 북극성 둘레를 시계 반대로"],
-      more: "<b class='rm-h'>시각을 밀며 본 것</b>동쪽 하늘의 별은 오른쪽 위로 비스듬히 떠오르고, 남쪽 하늘에서는 왼쪽에서 오른쪽으로 지나가고, 서쪽 하늘에서는 오른쪽 아래로 비스듬히 졌어요. 북쪽 하늘의 별은 <b>북극성을 가운데 두고 시계 반대 방향</b>으로 돌았어요.<b class='rm-h'>왜 그렇게 보일까요</b>별이 도는 것이 아니라 <b>우리가 탄 지구가 도는</b> 거예요. 지구가 서쪽에서 동쪽으로 자전하니 별은 반대로 동쪽에서 서쪽으로 움직여 보여요. 하루에 한 바퀴(360°)이니 한 시간에 <b>15°</b>씩 움직여요. 북극성은 지구의 자전축을 늘인 방향 가까이에 있어서 거의 움직이지 않아요.<b class='rm-h'>헷갈리기 쉬운 점</b>별의 자취 사진에서 하늘의 방향을 가릴 때, 둥글게 돌면 북쪽, 지평선과 나란히 지나가면 남쪽, 오른쪽 위로 오르면 동쪽, 오른쪽 아래로 내리면 서쪽이에요." + rimg("u7-star-trails.webp", "동쪽, 남쪽, 서쪽, 북쪽 하늘의 별 자취. 북쪽은 북극성을 가운데 둔 원"),
+      more: "<b class='rm-h'>시각을 밀며 본 것</b>동쪽 하늘의 별은 오른쪽 위로 비스듬히 떠오르고, 남쪽 하늘에서는 왼쪽에서 오른쪽으로 지나가고, 서쪽 하늘에서는 오른쪽 아래로 비스듬히 졌어요. 북쪽 하늘의 별은 <b>북극성을 가운데 두고 시계 반대 방향</b>으로 돌았어요.<b class='rm-h'>왜 그렇게 보일까요</b>별이 도는 것이 아니라 <b>우리가 탄 지구가 도는</b> 거예요. 지구가 서쪽에서 동쪽으로 자전하니 별은 반대로 동쪽에서 서쪽으로 움직여 보여요. 하루에 한 바퀴(360°)이니 한 시간에 <b>15°</b>씩 움직여요. 북극성은 지구의 자전축을 늘인 방향 가까이에 있어서 거의 움직이지 않아요.<b class='rm-h'>헷갈리기 쉬운 점</b>별의 자취 사진에서 하늘의 방향을 가릴 때, 둥글게 돌면 북쪽, 지평선과 나란히 지나가면 남쪽, 오른쪽 위로 오르면 동쪽, 오른쪽 아래로 내리면 서쪽이에요." + sciFigMore("u7l4f2"),
     },
     {
       name: "공전과 연주 운동", color: "#FFB03A", art: spaceMiniArt("zodiac"),
